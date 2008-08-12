@@ -155,23 +155,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-<<<<<<< .working
-				Optimization="2"
-				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\zlib\;..\..\src\other\curl\include"
-				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG;BROKEN_DINPUT"
-				StringPooling="true"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile="./bzflag_release/bzflag.pch"
-				AssemblerListingLocation="./bzflag_release/"
-				ObjectFile="./bzflag_release/"
-				ProgramDataBaseFileName="./bzflag_release/"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				CompileAs="0"
-=======
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\zlib\;..\..\src\other\curl\include"
@@ -187,7 +170,6 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
->>>>>>> .merge-right.r18330
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -748,22 +730,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\HUDuiScrollList.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\HUDuiServerInfo.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\HUDuiServerList.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\HUDuiServerListItem.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\LocalCommand.cxx"
 				>
 			</File>
@@ -896,6 +862,30 @@
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\HUDuiList.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiNestedContainer.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiScrollList.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerInfo.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerList.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerListItem.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiTabbedControl.cxx"
 					>
 				</File>
 				<File
@@ -1087,14 +1077,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiNestedContainer.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\HUDuiTabbedControl.cxx"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\InputMenu.cxx"
 					>
 				</File>
@@ -1171,15 +1153,6 @@
 					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
-			<File
-				RelativePath="bzflag.ico"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -1611,6 +1584,15 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\XfireGameClient.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
+			<File
+				RelativePath="bzflag.ico"
 				>
 			</File>
 		</Filter>

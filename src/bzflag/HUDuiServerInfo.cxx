@@ -103,7 +103,7 @@ void HUDuiServerInfo::resize()
 
   float x = getX() + fontHeight;
   fs.setMin(10, 10);
-  for (int i=0; i<readouts.size(); i++) {
+  for (int i=0; i<(int) readouts.size(); i++) {
     if ((i + 1) % 7 == 1) {
       x = (0.125f + 0.25f * (float)(i / 7)) * (float)getWidth();
       y = y0;
@@ -345,7 +345,7 @@ void HUDuiServerInfo::doRender()
 
   fillReadouts();
 
-  for (int i=0; i<readouts.size(); i++)
+  for (int i=0; i<(int) readouts.size(); i++)
   {
     readouts[i]->render();
   }

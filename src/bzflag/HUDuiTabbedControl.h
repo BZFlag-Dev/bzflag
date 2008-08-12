@@ -22,6 +22,8 @@
 #include "HUDuiNestedContainer.h"
 
 #include "HUDNavigationQueue.h"
+#include <map>
+#include <vector>
 
 class HUDuiTabbedControl : public HUDuiNestedContainer {
   public:
@@ -29,16 +31,33 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
       ~HUDuiTabbedControl();
 
     HUDuiControl* getActiveTab();
-	void setActiveTab(HUDuiControl* activeTab);
+    void setActiveTab(int tab);
 	
-	void addTab(HUDuiControl* newTab);
-	//void removeTab(HUDuiControl* );
+    void addTab(HUDuiControl* tabControl, std::string tabName);
+    void removeTab(int tabIndex);
+
+    void setSize(float width, float height);
+    void setFontSize(float size);
+    void setFontFace(const LocalFontFace* face);
+    void setPosition(float x, float y);
 
   protected:
-	std::map<std::string, HUDuiControl*>;
+    std::vector<std::pair<std::string, HUDuiControl*>> tabs;
+    void doRender();
+
+    void drawTabs();
+    void drawTabBody();
+
+    void addControl(HUDuiControl *control);
+
+    bool doKeyPress(const BzfKeyEvent& key);
 
   private:
+    int activeTab;
 
+    HUDNavigationQueue::iterator tabNavQueuePosition;
+
+    HUDuiControl* activeControl;
 };
 
 #endif // __HUDUITABBEDCONTROL_H__

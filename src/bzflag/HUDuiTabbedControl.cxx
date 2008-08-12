@@ -64,7 +64,7 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName)
 
 void HUDuiTabbedControl::setActiveTab(int tab)
 {
-  if ((tab >= 0)&&(tab < tabs.size()))
+  if ((tab >= 0)&&(tab < (int) tabs.size()))
   {
     activeTab = tab;
     activeControl = tabs[activeTab].second;
