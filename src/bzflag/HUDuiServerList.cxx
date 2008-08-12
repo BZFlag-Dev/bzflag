@@ -133,7 +133,9 @@ void HUDuiServerList::addItem(ServerItem item)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
   originalItems.push_back(newItem);
+  originalItems.unique();
   items.push_back(newItem);
+  items.unique();
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
   newItem->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);

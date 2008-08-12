@@ -37,6 +37,8 @@
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.chr == 'f') {
+    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
+      return false;
     menu->favoritesList->addItem(*(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer()));
     return true;
   }
