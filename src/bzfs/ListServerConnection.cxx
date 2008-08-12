@@ -33,6 +33,33 @@
 /* local implementation headers */
 #include "bzfs.h"
 
+/* auth headers */
+#include "../bzAuthCommon/Socket.h"
+#include "../bzAuthCommon/Protocol.h"
+#include "../bzAuthCommon/RSA.h"
+
+SocketHandler authSockHandler;
+
+class TokenConnectSocket : public ConnectSocket
+{
+public:
+  TokenConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
+  void onReadData(PacketHandlerBase *&, Packet &packet) {
+    switch(packet.getOpcode()) {
+      case DMSG_TOKEN_VALIDATE:
+        break;
+      default:
+        logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
+        disconnect();
+    }
+  }
+
+  void onDisconnect()
+  {
+  }
+private:
+};
+
 const int ListServerLink::NotConnected = -1;
 
 extern bz_eTeamType convertTeam ( TeamColor team );
@@ -362,7 +389,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += gameInfo;
   msg += "&build=";
   msg += getAppVersion();
-  msg += "&checktokens=";
+  /*msg += "&checktokens=";
 
   std::set<std::string> callSigns;
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
@@ -387,7 +414,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
     msg += "=";
     msg += playerData->player.getToken();
     msg += "%0D%0A";
-  }
+  }*/
 
   msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
