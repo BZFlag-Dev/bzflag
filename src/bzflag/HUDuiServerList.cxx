@@ -49,6 +49,11 @@ HUDuiServerList::~HUDuiServerList()
   // do nothing
 }
 
+bool HUDuiServerList::comp(HUDuiControl* first, HUDuiControl* second)
+{
+  return (((HUDuiServerListItem*)first)->getServerKey() < ((HUDuiServerListItem*)second)->getServerKey());
+}
+
 struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::string, bool>
 {
 public:
@@ -132,10 +137,13 @@ public:
 void HUDuiServerList::addItem(ServerItem item)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
+
+  if (std::binary_search(originalItems.begin(), originalItems.end(), (HUDuiControl*) newItem, comp))
+    return;
+
   originalItems.push_back(newItem);
-  originalItems.unique();
+  originalItems.sort(comp);
   items.push_back(newItem);
-  items.unique();
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
   newItem->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);

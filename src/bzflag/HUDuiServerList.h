@@ -78,6 +78,8 @@ class HUDuiServerList : public HUDuiScrollList {
     struct search;
     template<int sortType> struct compare;
 
+    static bool comp(HUDuiControl* first, HUDuiControl* second);
+
     static ServerList* dataList;
 
     size_t callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod);
