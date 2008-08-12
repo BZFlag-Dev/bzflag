@@ -117,6 +117,9 @@ ServerMenu::~ServerMenu()
 
 void ServerMenu::execute()
 {
+  if ((tabbedControl->hasFocus())||(tabbedControl->getActiveTab()->hasFocus()))
+    return;
+
   // update startup info
   StartupInfo* info = getStartupInfo();
   ServerItem* selectedServer = ((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer();
