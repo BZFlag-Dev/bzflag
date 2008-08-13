@@ -118,11 +118,11 @@ public:
 	      break;
 
 	    case Jumping:
-	      returnValue = (server->ping.gameOptions & JumpingGameStyle);
+	      returnValue = ((server->ping.gameOptions & JumpingGameStyle) != 0);
 	      break;
 
 	    case AntidoteFlag:
-	      returnValue = (server->ping.gameOptions & AntidoteGameStyle);
+	      returnValue = ((server->ping.gameOptions & AntidoteGameStyle) != 0);
 	      break;
 	  }
 	}
