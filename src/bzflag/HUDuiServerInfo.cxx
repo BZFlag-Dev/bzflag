@@ -97,7 +97,7 @@ void HUDuiServerInfo::resize()
   // reposition server readouts
   float fontSize = fs.getFontSize(getFontFace()->getFMFace(), "alertFontSize");
   float fontHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
-  const float y0 = getY() + getHeight() - fontHeight/2;
+  const float y0 = getY() + getHeight() - fontHeight - fontHeight/2;
   
   float y = y0;
 
@@ -317,6 +317,15 @@ void HUDuiServerInfo::doRender()
     return;
   }
 
+  FontManager &fm = FontManager::instance();
+  FontSizer fs = FontSizer(getWidth(), getHeight());
+
+  float fontSize = fs.getFontSize(getFontFace()->getFMFace(), "alertFontSize");
+  float fontHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
+  float titleWidth = fm.getStringWidth(getFontFace()->getFMFace(), fontSize, "Server Information");
+
+  fm.drawString(getX() + (getWidth()/2) - (titleWidth/2), getY() + getHeight() - fontHeight, 0, getFontFace()->getFMFace(), fontSize, "Server Information");
+
   float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
   OpenGLGState::resetState();  // fixme: shouldn't be needed
@@ -327,6 +336,9 @@ void HUDuiServerInfo::doRender()
 
   glVertex2f(getX(), getY());
   glVertex2f(getX(), getY() + getHeight());
+
+  glVertex2f(getX(), getY() + getHeight() - fontHeight - fontHeight/2);
+  glVertex2f(getX() + getWidth(), getY() + getHeight() - fontHeight - fontHeight/2);
 
   glVertex2f(getX(), getY());
   glVertex2f(getX() + getWidth(), getY());

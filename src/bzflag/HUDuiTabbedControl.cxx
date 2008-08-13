@@ -95,7 +95,7 @@ void HUDuiTabbedControl::setSize(float width, float height)
 
   for (int i=0; i<(int)tabs.size(); i++)
   {
-    tabs[i].second->setSize(getWidth(), getHeight() - 2*tabsHeight);
+    tabs[i].second->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
   }
 }
 
@@ -109,7 +109,7 @@ void HUDuiTabbedControl::setFontSize(float size)
   for (int i=0; i<(int)tabs.size(); i++)
   {
     tabs[i].second->setFontSize(size);
-    tabs[i].second->setSize(getWidth(), getHeight() - 2*tabsHeight);
+    tabs[i].second->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
   }
 }
 
@@ -162,7 +162,7 @@ void HUDuiTabbedControl::drawTabs()
   float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
   float sideSpacer = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "X");
-  float topSpacer = tabsHeight/2;
+  //float topSpacer = tabsHeight/2;
 
   float x = getX();
   float y = (getY() + (getHeight() - tabsHeight));
@@ -173,15 +173,15 @@ void HUDuiTabbedControl::drawTabs()
 
     x = x + sideSpacer;
     if (activeTab == i)
-      fm.drawString(x, y - topSpacer, 0, getFontFace()->getFMFace(), getFontSize(), text, activeColor);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text, activeColor);
     else
-      fm.drawString(x, y - topSpacer, 0, getFontFace()->getFMFace(), getFontSize(), text);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text);
 		
     x = x + fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), text) + sideSpacer;
 
     glBegin(GL_LINES);
     glVertex2f(x, getY() + getHeight()); // Top vertex of divider
-    glVertex2f(x, y - 2*topSpacer); // Bottom vertex of divider
+    glVertex2f(x, y - tabsHeight/2); // Bottom vertex of divider
     glEnd();
 
   }
@@ -191,11 +191,11 @@ void HUDuiTabbedControl::drawTabs()
   glVertex2f(getX(), (getY() + getHeight())); // Top line left vertex
   glVertex2f(x, (getY() + getHeight())); // Top line right vertex
 
-  glVertex2f(getX(), (getY() + getHeight() - tabsHeight - 2*topSpacer)); // Bottom line left vertex
-  glVertex2f(x, (getY() + getHeight() - tabsHeight - 2*topSpacer)); // Bottom line right vertex
+  glVertex2f(getX(), (getY() + getHeight() - tabsHeight - tabsHeight/2)); // Bottom line left vertex
+  glVertex2f(x, (getY() + getHeight() - tabsHeight - tabsHeight/2)); // Bottom line right vertex
 
   glVertex2f(getX(), (getY() + getHeight())); // Left line top vertex
-  glVertex2f(getX(), (getY() + getHeight() - tabsHeight - 2*topSpacer)); // Left line bottom vertex
+  glVertex2f(getX(), (getY() + getHeight() - tabsHeight - tabsHeight/2)); // Left line bottom vertex
 
   glEnd();
 }
