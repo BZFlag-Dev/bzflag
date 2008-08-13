@@ -28,7 +28,7 @@
 #include "ServerListCache.h"
 
 
-ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false)
+ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false), recent(false)
 {
 }
 

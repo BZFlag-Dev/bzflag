@@ -39,6 +39,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.chr == 'f') {
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
+    menu->markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
     menu->favoritesList->addItem(*(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer()));
     return true;
   }
@@ -68,6 +69,8 @@ ServerMenu::ServerMenu(): defaultKey(this), inverted(false)
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   addPlayingCallback(&playingCB, this);
+
+  serverList.updateFromCache();
   serverList.startServerPings(getStartupInfo());
 
   normalList = new HUDuiServerList();
@@ -115,6 +118,18 @@ ServerMenu::ServerMenu(): defaultKey(this), inverted(false)
 ServerMenu::~ServerMenu()
 {
   // Blank
+}
+
+void ServerMenu::markAsFavorite(ServerItem* item)
+{
+  std::string addrname = item->getAddrName();
+  ServerListCache *cache = ServerListCache::get();
+  ServerListCache::SRV_STR_MAP::iterator i = cache->find(addrname);
+  if (i!= cache->end()) {
+    i->second.favorite = true;
+  }
+
+  serverList.markFav(addrname, true);
 }
 
 void ServerMenu::execute()
@@ -217,7 +232,13 @@ void ServerMenu::updateStatus()
     normalList->clear();
 
   for (int i = (int) normalList->size(); i < (int) serverList.size(); i++)
+  {
     normalList->addItem(*(serverList.getServerAt(i)));
+    if (serverList.getServerAt(i)->favorite)
+      favoritesList->addItem(*(serverList.getServerAt(i)));
+    if (serverList.getServerAt(i)->recent)
+      recentList->addItem(*(serverList.getServerAt(i)));
+  }
 }
 
 void ServerMenu::playingCB(void* _self)

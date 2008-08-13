@@ -177,7 +177,7 @@ void HUDuiServerList::setSize(float width, float height)
   FontManager &fm = FontManager::instance();
 
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-  HUDuiScrollList::setSize(width, height - 2*columnsHeight);
+  HUDuiScrollList::setSize(width, height - columnsHeight - columnsHeight/2);
 
   calculateLines();
 }
@@ -196,6 +196,15 @@ void HUDuiServerList::update()
   calculateLines();
 }
 
+float HUDuiServerList::getHeight() const
+{
+  FontManager &fm = FontManager::instance();
+
+  float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
+
+  return HUDuiScrollList::getHeight() + columnsHeight + columnsHeight/2;
+}
+
 void HUDuiServerList::calculateLines()
 {
   float width = getWidth();
@@ -205,8 +214,6 @@ void HUDuiServerList::calculateLines()
 
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
-  height = height + 2*columnsHeight;
-
   linesToRender.clear();
 
   // Four lines for the edges of our control
@@ -214,9 +221,6 @@ void HUDuiServerList::calculateLines()
   linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(0, 0), std::pair<float, float>(width, 0)));
   linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(width, height), std::pair<float, float>(0, height)));
   linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(width, 0), std::pair<float, float>(width, height)));
-
-  // Header line
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(0, height - 2*columnsHeight), std::pair<float, float>(width, height - 2*columnsHeight)));
 
   // Column lines
   float x = ((float)DOMAIN_PERCENTAGE*(width));
@@ -227,6 +231,12 @@ void HUDuiServerList::calculateLines()
 
   x = x + ((float)PLAYER_PERCENTAGE*(width));
   linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(x, 0), std::pair<float, float>(x, height)));
+
+  height = height - columnsHeight - columnsHeight/2;
+
+  // Header line
+  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(0, height), std::pair<float, float>(width, height)));
+
 }
 
 void HUDuiServerList::doRender()
@@ -253,31 +263,33 @@ void HUDuiServerList::doRender()
     glEnd();
   }
 
+  float y = getY() + getHeight() - columnsHeight;
+
   if ((activeColumn == DomainName)&&(hasFocus()))
-    fm.drawString(getX(), getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Address", activeColor);
+    fm.drawString(getX(), y, 0, getFontFace()->getFMFace(), getFontSize(), "Address", activeColor);
   else
-    fm.drawString(getX(), getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Address");
+    fm.drawString(getX(), y, 0, getFontFace()->getFMFace(), getFontSize(), "Address");
 
   float x = getX() + ((float)DOMAIN_PERCENTAGE*(getWidth())); // Address column divider
 
   if ((activeColumn == ServerName)&&(hasFocus()))
-    fm.drawString(x, getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name", activeColor);
+    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name", activeColor);
   else
-    fm.drawString(x, getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name");
+    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name");
 
   x = x + ((float)SERVER_PERCENTAGE*(getWidth())); // Server column divider
 
   if ((activeColumn == PlayerCount)&&(hasFocus()))
-    fm.drawString(x, getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count", activeColor);
+    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count", activeColor);
   else
-    fm.drawString(x, getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count");
+    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count");
 
   x = x + ((float)PLAYER_PERCENTAGE*(getWidth())); // Player column divider
 
   if ((activeColumn == Ping)&&(hasFocus()))
-    fm.drawString(x, getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Ping", activeColor);
+    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Ping", activeColor);
   else
-    fm.drawString(x, getY() + getHeight() + columnsHeight/2, 0, getFontFace()->getFMFace(), getFontSize(), "Ping");
+    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Ping");
 
   if (devInfo)
   {

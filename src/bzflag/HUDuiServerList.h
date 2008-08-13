@@ -66,6 +66,8 @@ class HUDuiServerList : public HUDuiScrollList {
     void sortBy(SortConstants sortType);
     void searchServers(std::string pattern);
 
+    float getHeight() const;
+
     void applyFilters();
     void toggleFilter(FilterConstants filter);
 

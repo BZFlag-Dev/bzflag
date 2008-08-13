@@ -23,6 +23,7 @@
 
 #include "HUDuiServerList.h"
 #include "ServerList.h"
+#include "ServerItem.h"
 #include "HUDuiTabbedControl.h"
 #include "HUDuiServerInfo.h"
 
@@ -56,6 +57,7 @@ public:
   static void	callback(HUDuiControl* w, void* data);
 
   void updateStatus();
+  void markAsFavorite(ServerItem* item);
 
   static void playingCB(void*);
 
