@@ -303,11 +303,7 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
 	int playerID = atoi(i->c_str());
 	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
 	const char *playerIP = bz_getPlayerIPAddress(playerID);
-	if (!bz_IPBanUser(playerID, playerIP, duration, s2.c_str())) {
-	  if (error.empty()) error = "Couldn't ban: ";
-	  error += playerIP;
-	  error += ", ";
-	}
+	bz_IPBanUser(playerID, playerIP, duration, s2.c_str());
       }
     } else if (request.getParam("idban", v)) {
       request.getParam("duration", s1);
@@ -316,11 +312,7 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
 	int playerID = atoi(i->c_str());
 	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
 	const char *callsign = bz_getPlayerCallsign(playerID);
-	if (!bz_IPBanUser(playerID, callsign, duration, s2.c_str())) {
-	  if (error.empty()) error = "Couldn't ban: ";
-	  else error += ", ";
-	  error += callsign;
-	}
+	bz_IPBanUser(playerID, callsign, duration, s2.c_str()));
       }
     }
   }
