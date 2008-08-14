@@ -144,10 +144,13 @@ void HUDuiServerList::addItem(ServerItem item)
   originalItems.push_back(newItem);
   originalItems.sort(comp);
   items.push_back(newItem);
+  //sortBy(sortMode);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
   newItem->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);
   addControl(newItem);
+  sortBy(sortMode);
+  applyFilters();
   resizeItems(); // May not be very efficient way of doing it
   update();
 }
@@ -336,7 +339,7 @@ void HUDuiServerList::applyFilters()
 
   refreshNavQueue();
   setSelected(0);
-  getNav().set((size_t) 0);
+  //getNav().set((size_t) 0);
 }
 
 void HUDuiServerList::toggleFilter(FilterConstants filter)
@@ -411,6 +414,7 @@ size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
 void HUDuiServerList::refreshNavQueue()
 {
   HUDuiControl* currentFocus = getNav().get();
+  bool inFocus = currentFocus->hasFocus();
   getNav().clear();
 
   getNav().push_front(this);
@@ -422,7 +426,10 @@ void HUDuiServerList::refreshNavQueue()
     HUDuiControl* item = *it;
     addControl(item);
   }
-  getNav().set(currentFocus);
+  if (inFocus)
+    getNav().set(currentFocus);
+  else
+    getNav().setWithoutFocus(currentFocus);
 }
 
 bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)

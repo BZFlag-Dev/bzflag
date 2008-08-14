@@ -63,7 +63,9 @@ size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUD
   // If the nested container is getting focus, decide who to pass focus to
   if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex((int) proposedFocus))
   {
-    // If the container is empty
+    // If the container is empty...
+    if (((HUDuiNestedContainer*)data)->getNav().size() <= 0)
+      return HUDNavigationQueue::SkipSetFocus;
 
     // Find out which control inside the container has focus
     HUDuiControl* childInFocus = ((HUDuiNestedContainer*)data)->getNav().get();

@@ -26,6 +26,7 @@
 #include "ServerItem.h"
 #include "HUDuiTabbedControl.h"
 #include "HUDuiServerInfo.h"
+#include "HUDuiServerListCustomTab.h"
 
 class ServerMenu;
 
@@ -72,6 +73,7 @@ public:
   HUDuiLabel* title;
   HUDuiTabbedControl* tabbedControl;
   HUDuiServerInfo* serverInfo;
+  HUDuiServerListCustomTab* customTabControl;
 
   bool inverted;
 };

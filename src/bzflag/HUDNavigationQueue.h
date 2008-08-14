@@ -48,6 +48,9 @@ public:
   bool set(size_t index);
   bool set(HUDuiControl* control);
 
+  bool setWithoutFocus(size_t index);
+  bool setWithoutFocus(HUDuiControl* control);
+
   HUDuiControl* get() const;
   size_t getIndex() const;
 
@@ -57,7 +60,7 @@ public:
   static const size_t SkipSetFocus = ~0U;
 
 private:
-  bool internal_set(size_t index, HUDNavChangeMethod changeMethod);
+  bool internal_set(size_t index, HUDNavChangeMethod changeMethod, bool setFocus = true);
 
   size_t focus;
   HUDuiNavCallbackList callbackList;

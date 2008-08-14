@@ -31,10 +31,16 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
       ~HUDuiTabbedControl();
 
     HUDuiControl* getActiveTab();
+    std::string getActiveTabName();
+
     void setActiveTab(int tab);
 	
     void addTab(HUDuiControl* tabControl, std::string tabName);
+    void addTab(HUDuiControl* tabControl, std::string tabName, int index);
     void removeTab(int tabIndex);
+
+    int getTabCount();
+    HUDuiControl* getTab(int index);
 
     void setSize(float width, float height);
     void setFontSize(float size);

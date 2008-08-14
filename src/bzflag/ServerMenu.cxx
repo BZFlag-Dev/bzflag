@@ -37,6 +37,9 @@
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.chr == 'f') {
+    if (menu->tabbedControl->getActiveTabName() == "Create New Tab")
+      return false;
+
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
     menu->markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
@@ -94,19 +97,24 @@ ServerMenu::ServerMenu(): defaultKey(this), inverted(false)
   serverInfo->setFontSize(16.0f);
   serverInfo->setPosition(200, 200);
 
+  customTabControl = new HUDuiServerListCustomTab();
+  customTabControl->setFontFace(fontFace);
+  customTabControl->setSize(800,200);
+
   title = new HUDuiLabel();
   title->setString("Servers");
   title->setFontFace(fontFace);
 
   tabbedControl = new HUDuiTabbedControl;
-  tabbedControl->addTab(normalList, "All");
-  tabbedControl->addTab(recentList, "Recent");
-  tabbedControl->addTab(favoritesList, "Favorites");
-  tabbedControl->setActiveTab(0);
   tabbedControl->setFontFace(fontFace);
   tabbedControl->setPosition(300,500);
   tabbedControl->setFontSize(12.0f);
   tabbedControl->setSize(800, 200);
+  tabbedControl->addTab(normalList, "All");
+  tabbedControl->addTab(recentList, "Recent");
+  tabbedControl->addTab(favoritesList, "Favorites");
+  tabbedControl->addTab(customTabControl, "Create New Tab");
+  tabbedControl->setActiveTab(0);
 
   addControl(title, false);
   addControl(tabbedControl);
@@ -134,7 +142,20 @@ void ServerMenu::markAsFavorite(ServerItem* item)
 
 void ServerMenu::execute()
 {
-  if ((tabbedControl->hasFocus())||(tabbedControl->getActiveTab()->hasFocus()))
+  if ((tabbedControl->getActiveTabName() == "Create New Tab")&&(((HUDuiServerListCustomTab*)tabbedControl->getActiveTab())->createNew->hasFocus()))
+  {
+    HUDuiControl* newServerList = customTabControl->createServerList();
+    tabbedControl->addTab(newServerList, ((HUDuiServerListCustomTab*)tabbedControl->getActiveTab())->tabName->getString(), tabbedControl->getTabCount() - 1);
+    for (int i=0; i<(int)serverList.size(); i++)
+    {
+      ((HUDuiServerList*)newServerList)->addItem(*(serverList.getServerAt(i)));
+    }
+    tabbedControl->getNav().set(tabbedControl->getActiveTab());
+    ((HUDuiNestedContainer*)(tabbedControl->getTab(tabbedControl->getTabCount() - 1)))->getNav().setWithoutFocus((size_t)0);
+    return;
+  }
+
+  if ((tabbedControl->hasFocus())||(tabbedControl->getActiveTab()->hasFocus())||(tabbedControl->getActiveTabName() == "Create New Tab"))
     return;
 
   // update startup info
@@ -221,10 +242,12 @@ void ServerMenu::refresh()
 
 void ServerMenu::updateStatus()
 {
-  serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
+  //serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
 
-  if ((tabbedControl->hasFocus())||(((HUDuiServerList*)tabbedControl->getActiveTab())->hasFocus()))
+  if ((tabbedControl->hasFocus())||(((HUDuiServerList*)tabbedControl->getActiveTab())->hasFocus())||(tabbedControl->getActiveTabName() == "Create New Tab"))
     serverInfo->setServerItem(NULL);
+  else
+    serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
 
   if (serverList.size() == normalList->size())
     return;
@@ -234,6 +257,10 @@ void ServerMenu::updateStatus()
   for (int i = (int) normalList->size(); i < (int) serverList.size(); i++)
   {
     normalList->addItem(*(serverList.getServerAt(i)));
+    for (int j=3; j < tabbedControl->getTabCount() - 1; j++)
+    {
+      ((HUDuiServerList*)tabbedControl->getTab(j))->addItem(*(serverList.getServerAt(i)));
+    }
     if (serverList.getServerAt(i)->favorite)
       favoritesList->addItem(*(serverList.getServerAt(i)));
     if (serverList.getServerAt(i)->recent)

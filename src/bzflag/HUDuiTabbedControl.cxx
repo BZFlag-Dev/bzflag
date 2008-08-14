@@ -48,16 +48,69 @@ void HUDuiTabbedControl::addControl(HUDuiControl *control)
   control->setParent(this);
 }
 
+int HUDuiTabbedControl::getTabCount()
+{
+  return (int) tabs.size();
+}
+
+HUDuiControl* HUDuiTabbedControl::getTab(int index)
+{
+  return tabs[index].second;
+}
+
 void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName)
 {
   tabs.push_back(std::pair<std::string, HUDuiControl*>(tabName, tabControl));
   //activeTab = (int) tabs.size() - 1;
 
   if (tabs.size() == 1) // First tab
+  {
     getNav().push_back(tabControl);
     tabNavQueuePosition = getNav().begin() + (((int)getNav().size()) - 1);
+  }
+
+  FontManager &fm = FontManager::instance();
+
+  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
+  tabControl->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
+  tabControl->setFontFace(getFontFace());
+  tabControl->setFontSize(getFontSize());
+  tabControl->setPosition(getX(), getY());
 
   setActiveTab((int) tabs.size() - 1);
+
+  addControl(tabControl);
+}
+
+void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, int index)
+{
+  if (index < 0)
+    index = 0;
+  else if (index >= (int) tabs.size())
+    index = (int) tabs.size() - 1;
+
+  std::vector<std::pair<std::string, HUDuiControl*>>::iterator it = tabs.begin();
+  std::advance(it, index);
+
+  tabs.insert(it, std::pair<std::string, HUDuiControl*>(tabName, tabControl));
+
+  tabControl->setFontFace(getFontFace());
+
+  if (tabs.size() == 1) // First tab
+  {
+    getNav().push_back(tabControl);
+    tabNavQueuePosition = getNav().begin() + (((int)getNav().size()) - 1);
+  }
+
+  FontManager &fm = FontManager::instance();
+
+  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
+  tabControl->setFontFace(getFontFace());
+  tabControl->setFontSize(getFontSize());
+  tabControl->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
+  tabControl->setPosition(getX(), getY());
+
+  setActiveTab(index);
 
   addControl(tabControl);
 }
@@ -76,6 +129,11 @@ void HUDuiTabbedControl::setActiveTab(int tab)
 HUDuiControl* HUDuiTabbedControl::getActiveTab()
 {
   return activeControl;
+}
+
+std::string HUDuiTabbedControl::getActiveTabName()
+{
+  return tabs[activeTab].first;
 }
 
 void HUDuiTabbedControl::removeTab(int tabIndex)

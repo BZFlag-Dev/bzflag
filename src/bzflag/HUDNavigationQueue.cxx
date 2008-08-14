@@ -65,6 +65,22 @@ bool HUDNavigationQueue::set(HUDuiControl* control)
   return false;
 }
 
+bool HUDNavigationQueue::setWithoutFocus(size_t index)
+{
+  return internal_set(index, hnExplicitIndex, false);
+}
+
+bool HUDNavigationQueue::setWithoutFocus(HUDuiControl* control)
+{
+  if (!control || !size()) return false;
+
+  for (size_t i = 0; i < size(); ++i)
+    if (at(i) == control)
+      return internal_set(i, hnExplicitPointer, false);
+
+  return false;
+}
+
 HUDuiControl* HUDNavigationQueue::get() const
 {
   if (!size()) return NULL;
@@ -77,7 +93,7 @@ size_t HUDNavigationQueue::getIndex() const
   return focus;
 }
 
-bool HUDNavigationQueue::internal_set(size_t index, HUDNavChangeMethod changeMethod)
+bool HUDNavigationQueue::internal_set(size_t index, HUDNavChangeMethod changeMethod, bool setFocus)
 {
   if (index >= size()) return false;
 
@@ -89,7 +105,8 @@ bool HUDNavigationQueue::internal_set(size_t index, HUDNavChangeMethod changeMet
 
   if (index != SkipSetFocus) {
     focus = index;
-    HUDui::setFocus(at(focus));
+    if (setFocus)
+      HUDui::setFocus(at(focus));
   }
   return true;
 }
