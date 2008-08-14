@@ -52,12 +52,6 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path) : ShotStrategy(_pa
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
 {
-//CLIENTEDIT
-//  // free scene nodes
-//  if (!headless) {
-//    delete boltSceneNode;
-//  }
-//ENDCLIENTEDIT
 }
 
 void			SegmentedShotStrategy::update(float dt)
@@ -307,29 +301,6 @@ void			SegmentedShotStrategy::setCurrentSegment(int _segment)
 //    }
 //  }
 //  return minTime;
-//}
-//
-//
-//void			SegmentedShotStrategy::addShot(
-//				SceneDatabase* scene, bool colorblind)
-//{
-//  const ShotPath& shotPath = getPath();
-//  boltSceneNode->move(shotPath.getPosition(), shotPath.getVelocity());
-//  if (boltSceneNode->getColorblind() != colorblind) {
-//    boltSceneNode->setColorblind(colorblind);
-//    TeamColor currentTeam = colorblind ? RogueTeam : team;
-//
-//    const float* c = Team::getRadarColor(currentTeam);
-//    boltSceneNode->setColor(c[0], c[1], c[2]);
-//
-//    TextureManager &tm = TextureManager::instance();
-//    std::string imageName = Team::getImagePrefix(currentTeam);
-//    imageName += BZDB.get("boltTexture");
-//    int texture = tm.getTextureID(imageName.c_str());
-//    if (texture >= 0)
-//      boltSceneNode->setTexture(texture);
-//  }
-//  scene->addDynamicNode(boltSceneNode);
 //}
 //
 //ENDCHANGEEDIT

@@ -1019,8 +1019,23 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
   for (int i = 0; i < count; i++) {
     ShotPath* shot = getShot(i);
     if (shot && !shot->isExpiring() && !shot->isExpired())
-      // Add the shot
-      shot->addShot(scene, colorblind);
+      // Add the shot to the scene
+      boltSceneNodes[i]->move(shot->getPosition(), shot->getVelocity());
+    if (boltSceneNodes[i]->getColorblind() != colorblind) {
+      boltSceneNodes[i]->setColorblind(colorblind);
+      TeamColor currentTeam = colorblind ? RogueTeam : team;
+
+      const float* c = Team::getRadarColor(currentTeam);
+      boltSceneNodes[i]->setColor(c[0], c[1], c[2]);
+
+      TextureManager &tm = TextureManager::instance();
+      std::string imageName = Team::getImagePrefix(currentTeam);
+      imageName += BZDB.get("boltTexture");
+      int texture = tm.getTextureID(imageName.c_str());
+    if (texture >= 0)
+      boltSceneNodes[i]->setTexture(texture);
+    }
+    scene->addDynamicNode(boltSceneNodes[i]);
   }
 }
 

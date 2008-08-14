@@ -128,13 +128,15 @@ void			LocalPlayer::doUpdate(float dt)
     wasPaused = false;
   }
 
-  // reap dead (reloaded) shots
+  // reap dead (reloaded) shots and their associated bolt scene nodes
   for (i = 0; i < numShots; i++)
     if (shots[i] && shots[i]->isReloaded()) {
       if (!shots[i]->isExpired())
 	shots[i]->setExpired();
       delete shots[i];
       shots[i] = NULL;
+      delete boltSceneNodes[i];
+      boltSceneNodes[i] = NULL;
     }
 
   // update shots
