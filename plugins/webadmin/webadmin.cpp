@@ -312,7 +312,7 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
 	int playerID = atoi(i->c_str());
 	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
 	const char *callsign = bz_getPlayerCallsign(playerID);
-	bz_IPBanUser(playerID, callsign, duration, s2.c_str()));
+	bz_IPBanUser(playerID, callsign, duration, s2.c_str());
       }
     }
   }
