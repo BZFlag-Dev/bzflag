@@ -358,10 +358,13 @@ void WebAdmin::groupPageCallback (const HTTPRequest &request)
     } else if (request.request == ePost) {
       delete(stringList);
       listSize = bzu_standardPerms().size();
-      std::string dummy;
+      std::string perm;
+      std::vector<std::string> perms;
+      request.getParam("perm", perms);
       for (loopPos = 0; loopPos < listSize; loopPos++) {
-	if (request.getParam(std::string("perm") + bzu_standardPerms()[loopPos], dummy)) {
-	  if (!bz_groupAllowPerm(name.c_str(), bzu_standardPerms()[loopPos].c_str())) {
+	perm = bzu_standardPerms()[loopPos];
+	if (find(perms.begin(), perms.end(), perm) != perms.end()) {
+	  if (!bz_groupAllowPerm(name.c_str(), perm.c_str())) {
 	    error += "Couldn't change permissions for group: ";
 	    error += name + ". ";
 	  }
