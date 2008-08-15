@@ -26,6 +26,8 @@
 #include "Ping.h"
 #include "TimeKeeper.h"
 
+class TokenConnectSocket;
+
 class ListServerLink : private cURLManager {
 public:
   // c'tor will fill list and local server information variables and
@@ -59,12 +61,19 @@ private:
   std::string publicizeDescription;
   std::string advertiseGroups;
 
+  // callsigns/tokens that were sent off to be verified
+  typedef std::map<std::string, GameKeeper::Player *> CallSignMap;
+  CallSignMap callSigns;
+
+  class TokenConnectSocket *tokenSocket;
+
   virtual void finalization(char *data, unsigned int length, bool good);
   std::string verifyGroupPermissions(const std::string& groups);
 
   // messages to send, used by sendQueuedMessages
   void addMe(PingPacket pingInfo, std::string publicizedAddress,
 	     std::string publicizedTitle, std::string advertiseGroups);
+  void checkTokens(std::string &msg);
   void removeMe(std::string publicizedAddress);
   void sendQueuedMessages();
 

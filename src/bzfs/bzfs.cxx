@@ -64,6 +64,9 @@
 #include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
 
+// auth headers
+#include "../bzAuthCommon/Socket.h"
+
 // only include this if we are going to use plugins and export the API
 #ifdef BZ_PLUGINS
 #  include "bzfsPlugins.h"
@@ -164,6 +167,8 @@ bool worldWasSentToAPlayer   = false;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int,NetConnectedPeer> netConnectedPeers;
+
+SocketHandler authSockHandler; 
 
 // FIXME forward declarations probably unnecessary
 int bz_pwrite(NetHandler *handler, const void *b, int l);
@@ -5012,6 +5017,9 @@ int main(int argc, char **argv)
     std::cerr << "ERROR: Unable to start the server, perhaps one is already running?" << std::endl;
     return 2;
   }
+
+  // init the auth sockets
+  authSockHandler.initialize(32000);
 
   GameKeeper::Player::passTCPMutex();
 

@@ -38,15 +38,20 @@
 #include "../bzAuthCommon/Protocol.h"
 #include "../bzAuthCommon/RSA.h"
 
-SocketHandler authSockHandler;
+extern SocketHandler authSockHandler;
 
 class TokenConnectSocket : public ConnectSocket
 {
 public:
-  TokenConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
+  TokenConnectSocket(ListServerLink *l, SocketHandler *h) : ConnectSocket(h), link(k) {}
   void onReadData(PacketHandlerBase *&, Packet &packet) {
     switch(packet.getOpcode()) {
       case DMSG_TOKEN_VALIDATE:
+        for(int i = 0; i < num_expected; i++)
+        {
+          uint32 token;
+          packet >> token;
+        }
         break;
       default:
         logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
@@ -58,6 +63,7 @@ public:
   {
   }
 private:
+  ListServerLink *link;
 };
 
 const int ListServerLink::NotConnected = -1;
@@ -389,32 +395,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += gameInfo;
   msg += "&build=";
   msg += getAppVersion();
-  /*msg += "&checktokens=";
 
-  std::set<std::string> callSigns;
-  // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if ((playerData->_LSAState != GameKeeper::Player::required)
-	&& (playerData->_LSAState != GameKeeper::Player::requesting))
-      continue;
-    if (callSigns.count(playerData->player.getCallSign()))
-      continue;
-    callSigns.insert(playerData->player.getCallSign());
-    playerData->_LSAState = GameKeeper::Player::checking;
-    NetHandler *handler = playerData->netHandler;
-    msg += TextUtils::url_encode(playerData->player.getCallSign());
-    Address addr = handler->getIPAddress();
-    if (!addr.isPrivate()) {
-	msg += "@";
-	msg += handler->getTargetIP();
-    }
-    msg += "=";
-    msg += playerData->player.getToken();
-    msg += "%0D%0A";
-  }*/
+  checkTokens(msg);
 
   msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
@@ -444,6 +426,58 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 
   setPostMode(msg);
   addHandle();
+}
+
+void ListServerLink::checkTokens(std::string &msg)
+{
+  if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, authSockHandler);
+  //msg += "&checktokens=";
+
+  size_t packetLen = 1;
+  // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if ((playerData->_LSAState != GameKeeper::Player::required)
+	&& (playerData->_LSAState != GameKeeper::Player::requesting))
+      continue;
+    if (callSigns.count(playerData->player.getCallSign()))
+      continue;
+    callSigns[playerData->player.getCallSign()] = playerData;
+    packetLen += strlen(playerData->player.getCallSign()) + 5;
+  }
+
+  if(callSigns.empty()) return;
+
+  uint8 peerType = BZAUTHD_PEER_SERVER;
+  uint16 protoVersion = 1;
+  Packet handshakeMsg(MSG_HANDSHAKE, 3);
+  handshakeMsg << peerType << protoVersion;
+  tokenSocket->sendData(handshakeMsg);
+
+  Packet tokenMsg(SMSG_TOKEN_VALIDATE, packetLen);
+  tokenMsg << (uint8)callSigns.size();
+  for(CallSignMap::iterator itr = callSigns.begin(); itr != callSigns.end(); ++itr)
+  {
+    GameKeeper::Player *playerData = itr->second;
+    playerData->_LSAState = GameKeeper::Player::checking;
+    NetHandler *handler = playerData->netHandler;
+    tokenMsg << (uint32)atoi(playerData->player.getToken());
+    tokenMsg << (uint8)itr->first.size();
+    tokenMsg.append((const uint8*)itr->first.c_str(), itr->first.size());
+
+    /*msg += TextUtils::url_encode(playerData->player.getCallSign());
+    Address addr = handler->getIPAddress();
+    if (!addr.isPrivate()) {
+	msg += "@";
+	msg += handler->getTargetIP();
+    }
+    msg += "=";
+    msg += playerData->player.getToken();
+    msg += "%0D%0A";*/
+  }
+  tokenSocket->sendData(tokenMsg);
 }
 
 // Local Variables: ***
