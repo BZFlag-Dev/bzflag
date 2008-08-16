@@ -43,16 +43,24 @@ extern SocketHandler authSockHandler;
 class TokenConnectSocket : public ConnectSocket
 {
 public:
-  TokenConnectSocket(ListServerLink *l, SocketHandler *h) : ConnectSocket(h), link(k) {}
+  TokenConnectSocket(ListServerLink *l, SocketHandler *h) : ConnectSocket(h), link(l) {}
   void onReadData(PacketHandlerBase *&, Packet &packet) {
     switch(packet.getOpcode()) {
       case DMSG_TOKEN_VALIDATE:
-        for(int i = 0; i < num_expected; i++)
+      {
+        uint8 count;
+        if(!(packet >> count)) { disconnect(); break; }
+        for(int i = 0; i < count; i++)
         {
+          // TODO: use proper max callsign len
+          char callsign[1024];
+          if(!packet.read_string((uint8*)callsign, 1024)) { disconnect(); break; }
           uint32 token;
-          packet >> token;
+          if(!(packet >> token)) { disconnect(); break; }
+          link->processAuthReply(true, true, callsign, "");
         }
         break;
+      }
       default:
         logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
         disconnect();
@@ -210,50 +218,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	    while (*group && (*group == ':')) *group++ = 0;
 	  }
 	}
-	GameKeeper::Player *playerData = NULL;
-	int playerIndex;
-	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData)
-	    continue;
-	  if (playerData->_LSAState != GameKeeper::Player::checking)
-	    continue;
-	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
-					 callsign))
-	    break;
-	}
-	logDebugMessage(3,"[%d]\n", playerIndex);
-
-	if (playerIndex < curMaxPlayers) {
-	  if (registered) {
-	    if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
-	    if (verified) {
-	      playerData->_LSAState = GameKeeper::Player::verified;
-	      playerData->accessInfo.setPermissionRights();
-	      while (group && *group) {
-		char *nextgroup = group;
-		if (nextgroup) {
-		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
-		}
-		playerData->accessInfo.addGroup(group);
-		group = nextgroup;
-	      }
-	      playerData->authentication.global(true);
-	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	    } else {
-	      playerData->_LSAState = GameKeeper::Player::failed;
-	      sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
-	    }
-	  } else {
-	    playerData->_LSAState = GameKeeper::Player::notRequired;
-	    if (!playerData->player.isBot()) {
-	      sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
-	      sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
-	    }
-	  }
-	  playerData->player.clearToken();
-	}
+        processAuthReply(registered, verified, callsign, group);
       }
 
       // next reply
@@ -272,6 +237,54 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     // There was a pending request arrived after we write:
     // we should redo all the stuff
     sendQueuedMessages();
+  }
+}
+
+void ListServerLink::processAuthReply(bool registered, bool verified, char *callsign, char *group)
+{
+  GameKeeper::Player *playerData = NULL;
+  int playerIndex;
+  for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
+    playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (!playerData)
+      continue;
+    if (playerData->_LSAState != GameKeeper::Player::checking)
+      continue;
+    if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
+				   callsign))
+      break;
+  }
+  logDebugMessage(3,"[%d]\n", playerIndex);
+
+  if (playerIndex < curMaxPlayers) {
+    if (registered) {
+      if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
+      if (verified) {
+        playerData->_LSAState = GameKeeper::Player::verified;
+        playerData->accessInfo.setPermissionRights();
+        while (group && *group) {
+	  char *nextgroup = group;
+	  if (nextgroup) {
+	    while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+	    while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+	  }
+	  playerData->accessInfo.addGroup(group);
+	  group = nextgroup;
+        }
+        playerData->authentication.global(true);
+        sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+      } else {
+        playerData->_LSAState = GameKeeper::Player::failed;
+        sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
+      }
+    } else {
+      playerData->_LSAState = GameKeeper::Player::notRequired;
+      if (!playerData->player.isBot()) {
+        sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
+        sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
+      }
+    }
+    playerData->player.clearToken();
   }
 }
 
@@ -430,8 +443,11 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 
 void ListServerLink::checkTokens(std::string &msg)
 {
-  if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, authSockHandler);
+  if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, &authSockHandler);
   //msg += "&checktokens=";
+  
+  typedef std::map<std::string, GameKeeper::Player *> CallSignMap;
+  CallSignMap callSigns;
 
   size_t packetLen = 1;
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A

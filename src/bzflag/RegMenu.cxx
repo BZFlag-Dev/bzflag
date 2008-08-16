@@ -43,10 +43,10 @@ public:
         uint8 *key_n;
         uint32 e;
         uint16 n_len;
-        assert(packet >> n_len);
+        if(!(packet >> n_len)) { disconnect(); break; }
         key_n = new uint8[n_len];
         packet.read(key_n, (size_t)n_len);
-        assert(packet >> e);
+        if(!(packet >> e)) { delete[] key_n; disconnect(); break; }
 
         sRSAManager.initialize();
         sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
