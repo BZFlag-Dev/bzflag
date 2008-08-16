@@ -37,7 +37,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     bool                predictVelocity(float dt, float p[3]) const;
     float		checkHit(const ShotCollider&, float[3]) const;
     void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    const std::vector<ShotPathSegment>&	getSegments() const;
     TeamColor	team;
 
   protected:
@@ -47,8 +47,7 @@ class SegmentedShotStrategy : public ShotStrategy {
 			Reflect = 2
     };
     void		makeSegments(ObstacleEffect = Stop);
-    const std::vector<ShotPathSegment>&	getSegments() const;
-
+ 
     void		setCurrentTime(const double);
     double		getLastTime() const;
 
@@ -89,7 +88,6 @@ class ThiefStrategy : public SegmentedShotStrategy {
     void		update(float dt);
     bool		isStoppedByHit() const;
     void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
 
   private:
     float		cumTime;
@@ -111,7 +109,6 @@ class LaserStrategy : public SegmentedShotStrategy {
     void		update(float dt);
     bool		isStoppedByHit() const;
     void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
 
   private:
     float		cumTime;

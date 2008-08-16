@@ -14,13 +14,13 @@
 #include "RadarRenderer.h"
 
 // common implementation headers
-#include "SceneRenderer.h"
+#include "BZDBCache.h"
 #include "MainWindow.h"
 #include "OpenGLGState.h"
-#include "BZDBCache.h"
-#include "TextureManager.h"
 #include "PhysicsDriver.h"
-
+#include "SceneRenderer.h"
+#include "SegmentedShotStrategy.h"
+#include "TextureManager.h"
 #include "TimeKeeper.h"
 
 // local implementation headers
@@ -686,40 +686,44 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
 
-	switch (shot->shotType) {
+	switch (shot->getShotType()) {
 	case RapidFireShot:
 	  break;
 	case ThiefShot:
-	  //	  // draw all segments
-	  //	  const std::vector<ShotPathSegment>& segmts = getSegments();
-	  //	  const size_t numSegments = segmts.size();
-	  //	  glBegin(GL_LINES);
-	  //	  for (size_t i = 0; i < numSegments; i++) {
-	  //	    const ShotPathSegment& segm = segmts[i];
-	  //	    const float* origin = segm.ray.getOrigin();
-	  //	    const float* direction = segm.ray.getDirection();
-	  //	    const float dt = float(segm.end - segm.start);
-	  //	    glVertex2fv(origin);
-	  //	    glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
-	  //	  }
-	  //	  glEnd();
+	  {
+	    // draw all segments
+	    const std::vector<ShotPathSegment>& segmts = ((ThiefStrategy*)shot->getStrategy())->getSegments();
+	    const size_t numSegments = segmts.size();
+	    glBegin(GL_LINES);
+	    for (size_t i = 0; i < numSegments; i++) {
+	      const ShotPathSegment& segm = segmts[i];
+	      const float* origin = segm.ray.getOrigin();
+	      const float* direction = segm.ray.getDirection();
+	      const float dt = float(segm.end - segm.start);
+	      glVertex2fv(origin);
+	      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+	    }
+	    glEnd();
+	  }
 	  break;
 	case MachineGunShot:
 	  break;
 	case LaserShot:
-//  // draw all segments
-//  const std::vector<ShotPathSegment>& segmts = getSegments();
-//  const size_t numSegments = segmts.size();
-//  glBegin(GL_LINES);
-//    for (size_t i = 0; i < numSegments; i++) {
-//      const ShotPathSegment& segm = segmts[i];
-//      const float* origin = segm.ray.getOrigin();
-//      const float* direction = segm.ray.getDirection();
-//      const float dt = float(segm.end - segm.start);
-//      glVertex2fv(origin);
-//      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
-//    }
-//  glEnd();
+	  {
+	    // draw all segments
+	    const std::vector<ShotPathSegment>& segmts = ((LaserStrategy*)shot->getStrategy())->getSegments();
+	    const size_t numSegments = segmts.size();
+	    glBegin(GL_LINES);
+	    for (size_t i = 0; i < numSegments; i++) {
+	      const ShotPathSegment& segm = segmts[i];
+	      const float* origin = segm.ray.getOrigin();
+	      const float* direction = segm.ray.getDirection();
+	      const float dt = float(segm.end - segm.start);
+	      glVertex2fv(origin);
+	      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+	    }
+	  }
+	  glEnd();
 	  break;
 	case RicoShot:
 	  break;

@@ -58,6 +58,7 @@ public:
   double getCurrentTime() const;
   const float *getPosition() const;
   const float *getVelocity() const;
+  const ShotStrategy *getStrategy() const;
 
   float checkHit(const ShotCollider &, float[3]) const;
   void setExpiring();
@@ -81,7 +82,6 @@ public:
 
 protected:
   void updateShot(float dt);
-  const ShotStrategy *getStrategy() const;
   ShotStrategy *getStrategy();
 
   friend class ShotStrategy;

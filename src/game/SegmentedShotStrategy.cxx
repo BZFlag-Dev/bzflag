@@ -295,12 +295,6 @@ void			SegmentedShotStrategy::setCurrentSegment(int _segment)
 //}
 //
 //ENDCHANGEEDIT
-//CLIENTEDIT
-//void			SegmentedShotStrategy::radarRender() const
-//{
-//}
-//
-//ENDCLIENTEDIT
 void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 {
   // compute segments of shot until total length of segments exceeds the
@@ -618,12 +612,6 @@ void			ThiefStrategy::addShot(SceneDatabase* scene, bool)
     scene->addDynamicNode(thiefNodes[i]);
 }
 
-//CLIENTEDIT
-//void			ThiefStrategy::radarRender() const
-//{
-//}
-//
-//ENDCLIENTEDIT
 bool			ThiefStrategy::isStoppedByHit() const
 {
   return false;
@@ -782,12 +770,6 @@ void			LaserStrategy::addShot(SceneDatabase* scene, bool)
 //ENDCLIENTEDIT
 }
 
-//CLIENTEDIT
-//void			LaserStrategy::radarRender() const
-//{
-//}
-//
-//ENDCLIENTEDIT
 bool			LaserStrategy::isStoppedByHit() const
 {
   return false;

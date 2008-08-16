@@ -205,7 +205,6 @@ protected:
   const Obstacle*	  lastObstacle; // last obstacle touched
 
   std::vector<ShotPath*>  shots;
-  //friend class ShotStrategy;
   std::vector<BoltSceneNode*> boltSceneNodes;
   float			  handicap;
   TimeKeeper		  jamTime;

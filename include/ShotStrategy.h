@@ -62,7 +62,6 @@ class ShotStrategy {
     virtual bool	isStoppedByHit() const;
     //virtual void	addShot(SceneDatabase*, bool colorblind) = 0;
     virtual void	expire();
-    virtual void	radarRender() const = 0;
 
     // first part of message must be the
     // ShotUpdate portion of FiringInfo.
