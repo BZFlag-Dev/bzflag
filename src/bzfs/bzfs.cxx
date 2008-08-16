@@ -2028,7 +2028,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       && playerData->accessInfo.isRegistered()
       && playerData->_LSAState != GameKeeper::Player::verified) {
     // nick is in the DB send him a message to identify.
-    if (playerData->accessInfo.isIdentifyRequired())
+    if (playerData->accessInfo.areNamesProtected())
       sendMessage(ServerPlayer, playerIndex,
 		  "This callsign is registered.  "
 		  "You must use global registration.");

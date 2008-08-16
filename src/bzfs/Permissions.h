@@ -85,7 +85,7 @@ public:
     rejoin,
     removePerms,
     replay,
-    requireIdentify,
+    protectRegisteredNames,
     say,
     sendHelp,
     setAll,
@@ -148,7 +148,7 @@ public:
   bool	hasCustomPerm(const char* right) const;
 
   bool	isRegistered() const;
-  bool	isIdentifyRequired();
+  bool	areNamesProtected();
   bool	isAllowedToEnter();
   bool	isVerified() const;
   uint8_t     getPlayerProperties();
