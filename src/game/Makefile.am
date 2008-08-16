@@ -13,7 +13,6 @@ libGame_la_LDFLAGS = -static
 libGame_la_SOURCES =			\
 	BzMaterial.cxx			\
 	CollisionManager.cxx		\
-	CommandsStandard.cxx		\
 	DirectoryNames.cxx		\
 	DynamicColor.cxx		\
 	Frustum.cxx			\
