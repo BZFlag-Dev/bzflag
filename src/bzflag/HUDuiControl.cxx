@@ -93,9 +93,9 @@ void			HUDuiControl::showFocus(bool _showingFocus)
   showingFocus = _showingFocus;
 }
 
-void HUDuiControl::isNested(bool isNested)
+void HUDuiControl::isNested(bool _nested)
 {
-  nested = isNested;
+  nested = _nested;
 }
 
 void HUDuiControl::setParent(HUDuiControl* parentControl)
