@@ -21,6 +21,7 @@
 #include "LocalFontFace.h"
 
 #include "OpenGLGState.h"
+#include "OpenGlUtils.h"
 #include "bzfgl.h"
 
 //
@@ -144,7 +145,6 @@ void HUDuiServerList::addItem(ServerItem item)
   originalItems.push_back(newItem);
   originalItems.sort(comp);
   items.push_back(newItem);
-  //sortBy(sortMode);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());
   newItem->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);
@@ -164,15 +164,11 @@ void HUDuiServerList::addItem(HUDuiControl* item)
 void HUDuiServerList::setFontSize(float size)
 {
   HUDuiScrollList::setFontSize(size);
-
-  calculateLines();
 }
 
 void HUDuiServerList::setFontFace(const LocalFontFace* face)
 {
   HUDuiScrollList::setFontFace(face);
-
-  calculateLines();
 }
 
 void HUDuiServerList::setSize(float width, float height)
@@ -181,8 +177,6 @@ void HUDuiServerList::setSize(float width, float height)
 
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
   HUDuiScrollList::setSize(width, height - columnsHeight - columnsHeight/2);
-
-  calculateLines();
 }
 
 void HUDuiServerList::update()
@@ -195,8 +189,6 @@ void HUDuiServerList::update()
   {
     ((HUDuiServerListItem*)(*it))->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);
   }
-
-  calculateLines();
 }
 
 float HUDuiServerList::getHeight() const
@@ -210,36 +202,7 @@ float HUDuiServerList::getHeight() const
 
 void HUDuiServerList::calculateLines()
 {
-  float width = getWidth();
-  float height = getHeight();
-
-  FontManager &fm = FontManager::instance();
-
-  float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-
-  linesToRender.clear();
-
-  // Four lines for the edges of our control
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(0, 0), std::pair<float, float>(0, height)));
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(0, 0), std::pair<float, float>(width, 0)));
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(width, height), std::pair<float, float>(0, height)));
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(width, 0), std::pair<float, float>(width, height)));
-
-  // Column lines
-  float x = ((float)DOMAIN_PERCENTAGE*(width));
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(x, 0), std::pair<float, float>(x, height)));
-
-  x = x + ((float)SERVER_PERCENTAGE*(width));
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(x, 0), std::pair<float, float>(x, height)));
-
-  x = x + ((float)PLAYER_PERCENTAGE*(width));
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(x, 0), std::pair<float, float>(x, height)));
-
-  height = height - columnsHeight - columnsHeight/2;
-
-  // Header line
-  linesToRender.push_back(std::pair<std::pair<float, float>, std::pair<float, float>>(std::pair<float, float>(0, height), std::pair<float, float>(width, height)));
-
+// do nothing
 }
 
 void HUDuiServerList::doRender()
@@ -251,22 +214,14 @@ void HUDuiServerList::doRender()
   float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   float activeColor[3] = {0.0f, 1.0f, 0.0f};
 
-  OpenGLGState::resetState();  // fixme: shouldn't be needed
-  glLineWidth(1.0f);
   glColor4fv(color);
 
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
-  // Draw lines
-  for (int i=0; i<(int)linesToRender.size(); i++)
-  {
-    glBegin(GL_LINES);
-    glVertex2f(getX() + linesToRender[i].first.first, getY() + linesToRender[i].first.second);
-    glVertex2f(getX() + linesToRender[i].second.first, getY() + linesToRender[i].second.second);
-    glEnd();
-  }
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() + 1, -0.5f);
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - columnsHeight - columnsHeight/2 + 1, -0.5f);
 
-  float y = getY() + getHeight() - columnsHeight;
+  float y = getY() + getHeight() - columnsHeight/* - columnsHeight/2*/;
 
   if ((activeColumn == DomainName)&&(hasFocus()))
     fm.drawString(getX(), y, 0, getFontFace()->getFMFace(), getFontSize(), "Address", activeColor);
@@ -275,6 +230,8 @@ void HUDuiServerList::doRender()
 
   float x = getX() + ((float)DOMAIN_PERCENTAGE*(getWidth())); // Address column divider
 
+  glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
+
   if ((activeColumn == ServerName)&&(hasFocus()))
     fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name", activeColor);
   else
@@ -282,12 +239,16 @@ void HUDuiServerList::doRender()
 
   x = x + ((float)SERVER_PERCENTAGE*(getWidth())); // Server column divider
 
+  glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
+
   if ((activeColumn == PlayerCount)&&(hasFocus()))
     fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count", activeColor);
   else
     fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count");
 
   x = x + ((float)PLAYER_PERCENTAGE*(getWidth())); // Player column divider
+
+  glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
 
   if ((activeColumn == Ping)&&(hasFocus()))
     fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Ping", activeColor);
@@ -339,7 +300,6 @@ void HUDuiServerList::applyFilters()
 
   refreshNavQueue();
   setSelected(0);
-  //getNav().set((size_t) 0);
 }
 
 void HUDuiServerList::toggleFilter(FilterConstants filter)
@@ -444,7 +404,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 
       case BzfKeyEvent::Up:
 	if (hasFocus())
-          navList->prev();
+          getNavList()->prev();
         break;
 
       case BzfKeyEvent::Left:

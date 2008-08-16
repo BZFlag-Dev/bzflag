@@ -20,6 +20,7 @@
 #include "LocalFontFace.h"
 
 #include "HUDuiLabel.h"
+#include "OpenGLUtils.h"
 
 //
 // HUDuiServerInfo
@@ -328,28 +329,10 @@ void HUDuiServerInfo::doRender()
 
   float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-  OpenGLGState::resetState();  // fixme: shouldn't be needed
-  glLineWidth(1.0f);
   glColor4fv(color);
 
-  glBegin(GL_LINES);
-
-  glVertex2f(getX(), getY());
-  glVertex2f(getX(), getY() + getHeight());
-
-  glVertex2f(getX(), getY() + getHeight() - fontHeight - fontHeight/2);
-  glVertex2f(getX() + getWidth(), getY() + getHeight() - fontHeight - fontHeight/2);
-
-  glVertex2f(getX(), getY());
-  glVertex2f(getX() + getWidth(), getY());
-
-  glVertex2f(getX() + getWidth(), getY());
-  glVertex2f(getX() + getWidth(), getY() + getHeight());
-
-  glVertex2f(getX() + getWidth(), getY() + getHeight());
-  glVertex2f(getX(), getY() + getHeight());
-
-  glEnd();
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight(), -0.5f);
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getHeight() - fontHeight, -0.5f);
 
   if (server == NULL) {
     return;

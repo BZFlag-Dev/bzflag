@@ -171,11 +171,6 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
         }
         break;
 
-      // Testing purposes only
-      case BzfKeyEvent::Home:
-        setPaged(!pagedList);
-        break;
-
       default:
         return false;
   }
@@ -252,7 +247,6 @@ void HUDuiScrollList::doRender()
   for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
     if (i < (int)items.size()) {
       HUDuiControl* item = *it;
-      item->setFontSize(getFontSize());
       item->setPosition(getX(), ((getY() + getHeight()) - itemHeight*((i + 1)-(getSelected() - visiblePosition))));
       item->render();
       std::advance(it, 1);

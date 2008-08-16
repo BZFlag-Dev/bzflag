@@ -29,7 +29,7 @@ HUDuiNestedContainer::HUDuiNestedContainer() : HUDuiControl()
 HUDuiNestedContainer::~HUDuiNestedContainer()
 {
   // clean up
-  navList->removeCallback(gotFocus, this);
+  getNavList()->removeCallback(gotFocus, this);
 }
 
 void HUDuiNestedContainer::addControl(HUDuiControl *control)
@@ -47,8 +47,8 @@ void HUDuiNestedContainer::addControl(HUDuiControl *control)
 void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
 {
   // if we're changing nav lists, pull the old callback
-  if (navList)
-    navList->removeCallback(gotFocus, this);
+  if (getNavList())
+    getNavList()->removeCallback(gotFocus, this);
 
   // then set the list
   HUDuiControl::setNavQueue(_navList);
@@ -79,67 +79,14 @@ size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUD
 
     // Set that control in it's parent navList, to grab focus
     if (childInFocus != NULL)
-      ((HUDuiNestedContainer*)childInFocus)->navList->set(childInFocus);
+      ((HUDuiNestedContainer*)childInFocus)->getNavList()->set(childInFocus);
 
     return HUDNavigationQueue::SkipSetFocus;
-
-    // Otherwise, let's find the actual control that should be in focus
-    /*bool foundNonContainerControl = false;
-    while (!foundNonContainerControl)
-    {
-      if (!childInFocus->isContainer())
-      {
-	foundNonContainerControl = true;
-      }
-      else
-      {
-	childInFocus = childInFocus;
-      }
-    }*/
-
-    /*
-    HUDNavigationQueue nestedNav;
-    HUDuiControl* currentFocus = ((HUDuiNestedContainer*)data)->navList->at(oldFocus);
-
-    //if (currentFocus == (HUDuiControl*)data)
-    //  return proposedFocus;
-
-    currentFocus = (HUDuiControl*)data;
-
-    HUDuiControl* newFocus = ((HUDuiNestedContainer*)data)->getNav().get();
-
-    nestedNav = ((HUDuiNestedContainer*)currentFocus)->getNav();
-    bool containerFound = true;
-    while (containerFound)
-    {
-      if (!(currentFocus->isContainer()))
-      {
-	containerFound = false;
-      }
-      else
-      {
-	newFocus = ((HUDuiNestedContainer*)currentFocus)->getNav().get();
-	if (currentFocus == newFocus)
-	{
-	  //containerFound = false;
-	  return proposedFocus;
-	}
-	else
-	{
-	  nestedNav = ((HUDuiNestedContainer*)currentFocus)->getNav();
-	  currentFocus = newFocus;
-	}
-      }
-    }
-    nestedNav.set(currentFocus);
-    return HUDNavigationQueue::SkipSetFocus;
-    */
   }
   else
   {
     return proposedFocus;
   }
-  //return proposedFocus;
 }
 
 HUDuiControl* HUDuiNestedContainer::recursiveFocus(HUDuiControl* control)
@@ -152,14 +99,14 @@ HUDuiControl* HUDuiNestedContainer::recursiveFocus(HUDuiControl* control)
     // Container is empty, set focus to the actual container
     if (((HUDuiNestedContainer*)control)->getNav().size() == 0)
     {
-      ((HUDuiNestedContainer*)control)->navList->set(control);
+      ((HUDuiNestedContainer*)control)->getNavList()->set(control);
       return NULL;
     }
     HUDuiControl* childControl = ((HUDuiNestedContainer*)control)->getNav().get();
     if (childControl == control)
     {
-      ((HUDuiNestedContainer*)control)->navList->set(childControl);
-      return NULL; // ?
+      ((HUDuiNestedContainer*)control)->getNavList()->set(childControl);
+      return NULL;
     }
     return recursiveFocus(childControl);
   }

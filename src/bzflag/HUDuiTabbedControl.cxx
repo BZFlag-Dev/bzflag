@@ -18,8 +18,7 @@
 #include "FontManager.h"
 #include "LocalFontFace.h"
 
-#include "OpenGLGState.h"
-#include "bzfgl.h"
+#include "OpenGLUtils.h"
 
 //
 // HUDuiTabbedControl
@@ -33,14 +32,11 @@ HUDuiTabbedControl::HUDuiTabbedControl() : HUDuiNestedContainer()
 
 HUDuiTabbedControl::~HUDuiTabbedControl()
 {
-  // clean up
-  //navList->removeCallback(gotFocus, this);
+  // do nothing
 }
 
 void HUDuiTabbedControl::addControl(HUDuiControl *control)
 {
-  //HUDuiNestedContainer::addControl(control);
-  //nestedNavList.push_back(control);
   if ((getNav().size() == 1)&&(hasFocus()))
     getNav().set((size_t) 0);
   control->setNavQueue(&getNav());
@@ -61,7 +57,6 @@ HUDuiControl* HUDuiTabbedControl::getTab(int index)
 void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName)
 {
   tabs.push_back(std::pair<std::string, HUDuiControl*>(tabName, tabControl));
-  //activeTab = (int) tabs.size() - 1;
 
   if (tabs.size() == 1) // First tab
   {
@@ -69,9 +64,6 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName)
     tabNavQueuePosition = getNav().begin() + (((int)getNav().size()) - 1);
   }
 
-  FontManager &fm = FontManager::instance();
-
-  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
   tabControl->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
   tabControl->setFontFace(getFontFace());
   tabControl->setFontSize(getFontSize());
@@ -149,7 +141,7 @@ void HUDuiTabbedControl::setSize(float width, float height)
   HUDuiNestedContainer::setSize(width, height);
   FontManager &fm = FontManager::instance();
 
-  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
+  tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
   for (int i=0; i<(int)tabs.size(); i++)
   {
@@ -162,7 +154,7 @@ void HUDuiTabbedControl::setFontSize(float size)
   HUDuiNestedContainer::setFontSize(size);
   FontManager &fm = FontManager::instance();
 
-  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), size);
+  tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), size);
 
   for (int i=0; i<(int)tabs.size(); i++)
   {
@@ -212,15 +204,9 @@ void HUDuiTabbedControl::drawTabs()
   activeColor[1] = 1.0f;
   activeColor[2] = 0.0f;
 
-  OpenGLGState::resetState();  // fixme: shouldn't be needed
-  glLineWidth(1.0f);
   glColor4fv(color);
-  
-  // Draw top tabs
-  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
   float sideSpacer = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "X");
-  //float topSpacer = tabsHeight/2;
 
   float x = getX();
   float y = (getY() + (getHeight() - tabsHeight));
@@ -237,25 +223,10 @@ void HUDuiTabbedControl::drawTabs()
 		
     x = x + fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), text) + sideSpacer;
 
-    glBegin(GL_LINES);
-    glVertex2f(x, getY() + getHeight()); // Top vertex of divider
-    glVertex2f(x, y - tabsHeight/2); // Bottom vertex of divider
-    glEnd();
-
+    glOutlineBoxHV(1.0f, getX(), getY() + getHeight() - tabsHeight - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);
   }
 
-  glBegin(GL_LINES);
-
-  glVertex2f(getX(), (getY() + getHeight())); // Top line left vertex
-  glVertex2f(x, (getY() + getHeight())); // Top line right vertex
-
-  glVertex2f(getX(), (getY() + getHeight() - tabsHeight - tabsHeight/2)); // Bottom line left vertex
-  glVertex2f(x, (getY() + getHeight() - tabsHeight - tabsHeight/2)); // Bottom line right vertex
-
-  glVertex2f(getX(), (getY() + getHeight())); // Left line top vertex
-  glVertex2f(getX(), (getY() + getHeight() - tabsHeight - tabsHeight/2)); // Left line bottom vertex
-
-  glEnd();
+  glOutlineBoxHV(1.0f, getX(), getY() + getHeight() - tabsHeight - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);
 }
 
 void HUDuiTabbedControl::doRender()

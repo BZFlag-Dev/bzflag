@@ -64,6 +64,8 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
     HUDNavigationQueue::iterator tabNavQueuePosition;
 
     HUDuiControl* activeControl;
+
+    float tabsHeight;
 };
 
 #endif // __HUDUITABBEDCONTROL_H__

@@ -22,6 +22,7 @@
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 #include "HUDuiList.h"
+#include "OpenGLUtils.h"
 
 //
 // HUDuiServerListCustomTab
@@ -99,9 +100,9 @@ size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus,
 {
   if ((oldFocus == 0)&&(changeMethod == hnPrev))
   {
-    ((HUDuiServerListCustomTab*)data)->navList->prev();
-    if (((HUDuiServerListCustomTab*)data)->navList->get()->isContainer())
-      ((HUDuiNestedContainer*)((HUDuiServerListCustomTab*)data)->navList->get())->getNav().set(((HUDuiServerListCustomTab*)data)->navList->get());
+    ((HUDuiServerListCustomTab*)data)->getNavList()->prev();
+    if (((HUDuiServerListCustomTab*)data)->getNavList()->get()->isContainer())
+      ((HUDuiNestedContainer*)((HUDuiServerListCustomTab*)data)->getNavList()->get())->getNav().set(((HUDuiServerListCustomTab*)data)->getNavList()->get());
     return HUDNavigationQueue::SkipSetFocus;
   }
   
@@ -235,24 +236,9 @@ void HUDuiServerListCustomTab::doRender()
 
   float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-  OpenGLGState::resetState();  // fixme: shouldn't be needed
-  glLineWidth(1.0f);
   glColor4fv(color);
 
-  glBegin(GL_LINES);
-
-  glVertex2f(getX(), getY());
-  glVertex2f(getX(), getY() + getHeight());
-  glVertex2f(getX(), getY());
-  glVertex2f(getX() + getWidth(), getY());
-
-  glVertex2f(getX() + getWidth(), getY());
-  glVertex2f(getX() + getWidth(), getY() + getHeight());
-
-  glVertex2f(getX() + getWidth(), getY() + getHeight());
-  glVertex2f(getX(), getY() + getHeight());
-
-  glEnd();
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() + 1, -0.5f);
 
   tabName->render();
   domainName->render();
