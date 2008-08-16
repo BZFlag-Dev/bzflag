@@ -3474,6 +3474,7 @@ void initGroups()
   info.explicitAllows[PlayerAccessInfo::spawn] = true;
   info.explicitAllows[PlayerAccessInfo::talk] = true;
   info.groupState[PlayerAccessInfo::isGroup] = true;
+  info.groupState[PlayerAccessInfo::protectRegisteredNames] = true;
   info.groupState[PlayerAccessInfo::isDefault] = true;
   groupAccess["EVERYONE"] = info;
 
