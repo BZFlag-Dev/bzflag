@@ -685,7 +685,99 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       if (shot) {
 	const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
 	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-	//shot->radarRender();
+
+	switch (shot->shotType) {
+	case RapidFireShot:
+	  break;
+	case ThiefShot:
+	  //	  // draw all segments
+	  //	  const std::vector<ShotPathSegment>& segmts = getSegments();
+	  //	  const size_t numSegments = segmts.size();
+	  //	  glBegin(GL_LINES);
+	  //	  for (size_t i = 0; i < numSegments; i++) {
+	  //	    const ShotPathSegment& segm = segmts[i];
+	  //	    const float* origin = segm.ray.getOrigin();
+	  //	    const float* direction = segm.ray.getDirection();
+	  //	    const float dt = float(segm.end - segm.start);
+	  //	    glVertex2fv(origin);
+	  //	    glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+	  //	  }
+	  //	  glEnd();
+	  break;
+	case MachineGunShot:
+	  break;
+	case LaserShot:
+//  // draw all segments
+//  const std::vector<ShotPathSegment>& segmts = getSegments();
+//  const size_t numSegments = segmts.size();
+//  glBegin(GL_LINES);
+//    for (size_t i = 0; i < numSegments; i++) {
+//      const ShotPathSegment& segm = segmts[i];
+//      const float* origin = segm.ray.getOrigin();
+//      const float* direction = segm.ray.getDirection();
+//      const float dt = float(segm.end - segm.start);
+//      glVertex2fv(origin);
+//      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+//    }
+//  glEnd();
+	  break;
+	case RicoShot:
+	  break;
+	case SuperShot:
+	  break;
+	case PhantomShot:
+	  break;
+	default:
+	  break;
+	}
+	    
+	const float *orig = shot->getPosition();
+	const int length = BZDBCache::linedRadarShots;
+	const int size   = BZDBCache::sizedRadarShots;
+
+	float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
+
+	// Display leading lines
+	if (length > 0) {
+	  const float* vel = shot->getVelocity();
+	  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
+	  float dir[3];
+	  dir[0] = vel[0] * d * shotTailLength * length;
+	  dir[1] = vel[1] * d * shotTailLength * length;
+	  dir[2] = vel[2] * d * shotTailLength * length;
+	  glBegin(GL_LINES);
+	  glVertex2fv(orig);
+	  if (BZDBCache::leadingShotLine) {
+	    glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+	  } else {
+	    glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+	  }
+	  glEnd();
+
+	  // draw a "bright" bullet tip
+	  if (size > 0) {
+	    glColor3f(0.75, 0.75, 0.75);
+	    glPointSize((float)size);
+	    glBegin(GL_POINTS);
+	    glVertex2f(orig[0], orig[1]);
+	    glEnd();
+	    glPointSize(1.0f);
+	  }
+	} else {
+	  if (size > 0) {
+	    // draw a sized bullet
+	    glPointSize((float)size);
+	    glBegin(GL_POINTS);
+	    glVertex2fv(orig);
+	    glEnd();
+	    glPointSize(1.0f);
+	  } else {
+	    // draw the tiny little bullet
+	    glBegin(GL_POINTS);
+	    glVertex2fv(orig);
+	    glEnd();
+	  }
+	}
       }
     }
 
