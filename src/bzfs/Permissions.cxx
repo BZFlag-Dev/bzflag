@@ -125,12 +125,8 @@ bool PlayerAccessInfo::isRegistered() const {
   return userExists(regName);
 }
 
-bool PlayerAccessInfo::areNamesProtected() {
-  return getUserInfo(regName).hasPerm(protectRegisteredNames);
-}
-
 bool PlayerAccessInfo::isAllowedToEnter() {
-  return verified || !isRegistered() || !areNamesProtected();
+  return verified || !isRegistered();
 }
 
 bool PlayerAccessInfo::isVerified() const{
@@ -346,7 +342,6 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::rejoin: return "rejoin";
     case PlayerAccessInfo::removePerms: return "removePerms";
     case PlayerAccessInfo::replay: return "replay";
-    case PlayerAccessInfo::protectRegisteredNames: return "protectRegisteredNames";
     case PlayerAccessInfo::say: return "say";
     case PlayerAccessInfo::sendHelp : return "sendHelp";
     case PlayerAccessInfo::setAll: return "setAll";
@@ -413,7 +408,6 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "REJOIN") return PlayerAccessInfo::rejoin;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
   if (name == "REPLAY") return PlayerAccessInfo::replay;
-  if (name == "PROTECTREGISTERDNAMES") return PlayerAccessInfo::protectRegisteredNames;
   if (name == "SAY") return PlayerAccessInfo::say;
   if (name == "SENDHELP") return PlayerAccessInfo::sendHelp;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
