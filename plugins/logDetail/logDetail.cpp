@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstring>
 #include "bzfsAPI.h"
 
 BZ_GET_PLUGIN_VERSION

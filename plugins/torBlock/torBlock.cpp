@@ -3,12 +3,13 @@
 
 #include "bzfsAPI.h"
 #include <string>
+#include <cstring>
 #include <algorithm>
 #include <sstream>
-#include <stdarg.h>
+#include <cstdarg>
 #include <vector>
-#include <stdio.h>
-#include <assert.h>
+#include <cstdio>
+#include <cassert>
 #include <map>
 #include <vector>
 

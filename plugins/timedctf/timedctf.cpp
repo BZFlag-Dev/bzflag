@@ -1,6 +1,7 @@
 // timedctf.cpp : Defines the entry point for the DLL application.
 
 #include "bzfsAPI.h"
+#include <cstring>
 
 BZ_GET_PLUGIN_VERSION
 

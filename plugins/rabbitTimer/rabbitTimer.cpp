@@ -2,6 +2,7 @@
 //
 
 #include "bzfsAPI.h"
+#include <cstdlib>
 
 BZ_GET_PLUGIN_VERSION
 

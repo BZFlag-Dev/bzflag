@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <math.h>
+#include <cmath>
+#include <cstdlib>
 
 BZ_GET_PLUGIN_VERSION
 
