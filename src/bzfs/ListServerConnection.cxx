@@ -21,6 +21,7 @@
 #include <math.h>
 #include <errno.h>
 #include <set>
+#include <assert.h>
 
 /* common implementation headers */
 #include "bzfio.h"
@@ -32,8 +33,6 @@
 
 /* local implementation headers */
 #include "bzfs.h"
-
-/* auth headers */
 #include "../bzAuthCommon/Socket.h"
 #include "../bzAuthCommon/Protocol.h"
 #include "../bzAuthCommon/RSA.h"
@@ -50,15 +49,15 @@ public:
       {
         uint8 count;
         if(!(packet >> count)) { disconnect(); break; }
-        for(int i = 0; i < count; i++)
-        {
+        for(int i = 0; i < count; i++) {
           // TODO: use proper max callsign len
           char callsign[1024];
           if(!packet.read_string((uint8*)callsign, 1024)) { disconnect(); break; }
-          uint32 token;
-          if(!(packet >> token)) { disconnect(); break; }
-          link->processAuthReply(true, true, callsign, "");
+          uint32 valid_state;
+          if(!(packet >> valid_state)) { disconnect(); break; }
+          link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, "");
         }
+        link->token_phase = 2;
         break;
       }
       default:
@@ -69,6 +68,8 @@ public:
 
   void onDisconnect()
   {
+    link->tokenSocket = NULL;
+    link->token_phase = -1;
   }
 private:
   ListServerLink *link;
@@ -84,6 +85,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedTitle,
 			       std::string _advertiseGroups)
 {
+  token_phase = -1;
 
   std::string bzfsUserAgent = "bzfs ";
   bzfsUserAgent	    += getAppVersion();
@@ -119,6 +121,9 @@ ListServerLink::ListServerLink()
 
 ListServerLink::~ListServerLink()
 {
+  // cancel the token validation request
+  if(tokenSocket) authSockHandler.removeSocket(tokenSocket);
+
   // now tell the list server that we're going away.  this can
   // take some time but we don't want to wait too long.  we do
   // our own multiplexing loop and wait for a maximum of 3 seconds
@@ -242,6 +247,8 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 
 void ListServerLink::processAuthReply(bool registered, bool verified, char *callsign, char *group)
 {
+  if(!publicizeServer) return;
+
   GameKeeper::Player *playerData = NULL;
   int playerIndex;
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
@@ -296,7 +303,7 @@ void ListServerLink::queueMessage(MessageType type)
   // record next message to send.
   nextMessageType = type;
 
-  if (!queuedRequest)
+  if (!queuedRequest && token_phase == -1)
     sendQueuedMessages();
   else
     logDebugMessage(3,"There is a message already queued to the list server: not sending this one yet.\n");
@@ -409,7 +416,9 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&build=";
   msg += getAppVersion();
 
-  checkTokens(msg);
+  //checkTokens(&msg);
+  if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, &authSockHandler);
+  token_phase = 0;
 
   msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
@@ -441,10 +450,11 @@ void ListServerLink::removeMe(std::string publicizedAddress)
   addHandle();
 }
 
-void ListServerLink::checkTokens(std::string &msg)
+void ListServerLink::checkTokens(std::string *pMsg)
 {
-  if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, &authSockHandler);
-  //msg += "&checktokens=";
+  assert(pMsg || (token_phase == 1 && tokenSocket));
+
+  if(pMsg) *pMsg += "&checktokens=";
   
   typedef std::map<std::string, GameKeeper::Player *> CallSignMap;
   CallSignMap callSigns;
@@ -474,8 +484,7 @@ void ListServerLink::checkTokens(std::string &msg)
 
   Packet tokenMsg(SMSG_TOKEN_VALIDATE, packetLen);
   tokenMsg << (uint8)callSigns.size();
-  for(CallSignMap::iterator itr = callSigns.begin(); itr != callSigns.end(); ++itr)
-  {
+  for(CallSignMap::iterator itr = callSigns.begin(); itr != callSigns.end(); ++itr) {
     GameKeeper::Player *playerData = itr->second;
     playerData->_LSAState = GameKeeper::Player::checking;
     NetHandler *handler = playerData->netHandler;
@@ -483,17 +492,33 @@ void ListServerLink::checkTokens(std::string &msg)
     tokenMsg << (uint8)itr->first.size();
     tokenMsg.append((const uint8*)itr->first.c_str(), itr->first.size());
 
-    /*msg += TextUtils::url_encode(playerData->player.getCallSign());
-    Address addr = handler->getIPAddress();
-    if (!addr.isPrivate()) {
-	msg += "@";
-	msg += handler->getTargetIP();
+    if(pMsg) {
+      std::string &msg = *pMsg;
+      msg += TextUtils::url_encode(playerData->player.getCallSign());
+      Address addr = handler->getIPAddress();
+      if (!addr.isPrivate()) {
+	  msg += "@";
+	  msg += handler->getTargetIP();
+      }
+      msg += "=";
+      msg += playerData->player.getToken();
+      msg += "%0D%0A";
     }
-    msg += "=";
-    msg += playerData->player.getToken();
-    msg += "%0D%0A";*/
   }
   tokenSocket->sendData(tokenMsg);
+}
+
+void ListServerLink::update()
+{
+  if(!publicizeServer) return;
+  if(token_phase == 0 && tokenSocket->connect("127.0.0.1", 1234) == 0) {
+    checkTokens(NULL);
+    token_phase = 1;
+  }
+  if(token_phase >= 1) {
+    // update the auth sockets
+    authSockHandler.update();
+  }
 }
 
 // Local Variables: ***

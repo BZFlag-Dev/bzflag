@@ -45,6 +45,7 @@ public:
   // connection functions
   void queueMessage(MessageType type);
 
+  void update();
 private:
   friend class TokenConnectSocket;
 
@@ -63,7 +64,9 @@ private:
   std::string publicizeDescription;
   std::string advertiseGroups;
 
+  // info for token validation
   class TokenConnectSocket *tokenSocket;
+  int token_phase;
 
   virtual void finalization(char *data, unsigned int length, bool good);
   std::string verifyGroupPermissions(const std::string& groups);
@@ -72,7 +75,8 @@ private:
   // messages to send, used by sendQueuedMessages
   void addMe(PingPacket pingInfo, std::string publicizedAddress,
 	     std::string publicizedTitle, std::string advertiseGroups);
-  void checkTokens(std::string &msg);
+  void checkTokens(std::string *pMsg);
+  void buildTokenMsg(std::string &msg);
   void removeMe(std::string publicizedAddress);
   void sendQueuedMessages();
 

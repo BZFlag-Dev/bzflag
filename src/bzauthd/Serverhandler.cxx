@@ -28,6 +28,7 @@ bool PacketHandler::handleTokenValidate(Packet &packet)
     if(!(packet >> token)) return false;
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
+    response.append(callsign, strlen(callsign)+1);
     response << (uint32)sTokenMgr.checkToken((char *)callsign, token);
   }
   m_socket->sendData(response);

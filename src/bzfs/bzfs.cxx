@@ -4598,6 +4598,9 @@ static void runMainLoop ( void )
     if (Replay::playing())
       Replay::sendPackets ();
 
+    // update the listserverlink
+    if(listServerLink) listServerLink->update();
+
     // game time updates
     if (!Replay::enabled())
       sendPendingGameTime();
