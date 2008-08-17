@@ -62,8 +62,6 @@ public:
 
   static void playingCB(void*);
 
-  void refresh();
-
   HUDuiServerList* normalList;
   HUDuiServerList* recentList;
   HUDuiServerList* favoritesList;
@@ -74,8 +72,6 @@ public:
   HUDuiTabbedControl* tabbedControl;
   HUDuiServerInfo* serverInfo;
   HUDuiServerListCustomTab* customTabControl;
-
-  bool inverted;
 };
 
 

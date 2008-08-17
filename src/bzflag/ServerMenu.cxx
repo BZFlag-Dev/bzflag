@@ -39,11 +39,6 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     menu->favoritesList->addItem(*(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer()));
     return true;
   }
-  if (key.chr == 'i') {
-    menu->inverted = !menu->inverted;
-    menu->refresh();
-    return true;
-  }
 
   return MenuDefaultKey::keyPress(key);
 }
@@ -59,7 +54,7 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-ServerMenu::ServerMenu(): defaultKey(this), inverted(false)
+ServerMenu::ServerMenu(): defaultKey(this)
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -182,28 +177,14 @@ void ServerMenu::resize(int _width, int _height)
   float remainingSpace = y - bottomSpacer*2;
   float listHeight = remainingSpace*0.7f;
 
-  HUDuiControl* topControl;
-  HUDuiControl* bottomControl;
-
   tabbedControl->setSize((_width - (2*edgeSpacer)),listHeight);
   serverInfo->setSize((_width - (2*edgeSpacer)), (remainingSpace - bottomSpacer)*0.3f);
 
-  if (inverted)
-  {
-    topControl = serverInfo;
-    bottomControl = tabbedControl;
-  }
-  else
-  {
-    topControl = tabbedControl;
-    bottomControl = serverInfo;
-  }
+  y = y - (titleHeight/2) - tabbedControl->getHeight();
 
-  y = y - (titleHeight/2) - topControl->getHeight();
+  tabbedControl->setPosition(edgeSpacer, y);
 
-  topControl->setPosition(edgeSpacer, y);
-
-  bottomControl->setPosition(edgeSpacer, bottomSpacer/2);
+  serverInfo->setPosition(edgeSpacer, bottomSpacer/2);
 
   tabbedControl->setFontSize(fontSize);
 
@@ -213,11 +194,6 @@ void ServerMenu::resize(int _width, int _height)
 void ServerMenu::callback(HUDuiControl* w, void* data)
 {
   // Blank
-}
-
-void ServerMenu::refresh()
-{
-  resize(getWidth(), getHeight());
 }
 
 void ServerMenu::updateStatus()
