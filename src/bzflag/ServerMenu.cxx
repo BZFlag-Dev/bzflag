@@ -27,13 +27,6 @@
 #include "LocalFontFace.h"
 #include "playing.h"
 
-#include "HUDuiList.h"
-#include "HUDuiServerList.h"
-#include "HUDuiServerListItem.h"
-
-#include "HUDuiTabbedControl.h"
-
-
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   if (key.chr == 'f') {
@@ -78,28 +71,21 @@ ServerMenu::ServerMenu(): defaultKey(this), inverted(false)
 
   normalList = new HUDuiServerList();
   normalList->setFontFace(fontFace);
-  normalList->setSize(800,200);
   normalList->setServerList(&serverList);
 
   favoritesList = new HUDuiServerList();
   favoritesList->setFontFace(fontFace);
-  favoritesList->setSize(800,200);
   favoritesList->setServerList(&serverList);
 
   recentList = new HUDuiServerList();
   recentList->setFontFace(fontFace);
-  recentList->setSize(800,200);
   recentList->setServerList(&serverList);
 
   serverInfo = new HUDuiServerInfo();
   serverInfo->setFontFace(fontFace);
-  serverInfo->setSize(500, 300);
-  serverInfo->setFontSize(16.0f);
-  serverInfo->setPosition(200, 200);
 
   customTabControl = new HUDuiServerListCustomTab();
   customTabControl->setFontFace(fontFace);
-  customTabControl->setSize(800,200);
 
   title = new HUDuiLabel();
   title->setString("Servers");
@@ -107,9 +93,6 @@ ServerMenu::ServerMenu(): defaultKey(this), inverted(false)
 
   tabbedControl = new HUDuiTabbedControl;
   tabbedControl->setFontFace(fontFace);
-  tabbedControl->setPosition(300,500);
-  tabbedControl->setFontSize(12.0f);
-  tabbedControl->setSize(800, 200);
   tabbedControl->addTab(normalList, "All");
   tabbedControl->addTab(recentList, "Recent");
   tabbedControl->addTab(favoritesList, "Favorites");
@@ -178,7 +161,6 @@ void ServerMenu::resize(int _width, int _height)
 
   // reposition title
   float x, y;
-  //fontFace = title->getFontFace();
 
   // use a big font for title, smaller font for the rest
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
@@ -190,8 +172,6 @@ void ServerMenu::resize(int _width, int _height)
   x = 0.5f * ((float)_width - titleWidth);
   y = (float)_height - titleHeight;
   title->setPosition(x, y);
-
-  //fontFace = MainMenu::getFontFace();
 
   fs.setMin(40,10);
   const float fontSize = fs.getFontSize(fontFace->getFMFace(), "alertFontSize");
@@ -242,8 +222,6 @@ void ServerMenu::refresh()
 
 void ServerMenu::updateStatus()
 {
-  //serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
-
   if ((tabbedControl->hasFocus())||(((HUDuiServerList*)tabbedControl->getActiveTab())->hasFocus())||(tabbedControl->getActiveTabName() == "Create New Tab"))
     serverInfo->setServerItem(NULL);
   else

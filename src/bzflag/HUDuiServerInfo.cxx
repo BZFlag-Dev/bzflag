@@ -332,7 +332,7 @@ void HUDuiServerInfo::doRender()
   glColor4fv(color);
 
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight(), -0.5f);
-  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getHeight() - fontHeight, -0.5f);
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - fontHeight - fontHeight/2, -0.5f);
 
   if (server == NULL) {
     return;
