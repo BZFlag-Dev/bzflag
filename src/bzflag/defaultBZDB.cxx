@@ -187,6 +187,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "ricoEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "tpEffect",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "fogEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "shotLength",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // URL timeouts
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL },
