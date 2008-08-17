@@ -38,6 +38,7 @@ libGame_la_SOURCES =			\
 	ShotStrategy.cxx		\
 	StartupInfo.cxx			\
 	TextureMatrix.cxx		\
+	TankCollisions.cxx		\
 	VotingArbiter.cxx		\
 	WorldContentInfo.cxx
 

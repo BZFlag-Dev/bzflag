@@ -127,6 +127,7 @@ noinst_HEADERS =			\
 	SphereSceneNode.h		\
 	StartupInfo.h			\
 	StateDatabase.h			\
+	TankCollisions.h		\
 	TankGeometryMgr.h		\
 	TankSceneNode.h			\
 	Team.h				\

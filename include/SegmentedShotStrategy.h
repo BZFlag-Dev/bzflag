@@ -21,6 +21,7 @@
 
 /* common interface headers */
 #include "SceneDatabase.h"
+#include "TankCollisions.h"
 #include "TimeKeeper.h"
 #include "LaserSceneNode.h"
 
@@ -28,6 +29,8 @@
 #include "ShotPathSegment.h"
 
 class SegmentedShotStrategy : public ShotStrategy {
+  friend class TankCollisions;
+
   public:
 			SegmentedShotStrategy(ShotPath*);
 			~SegmentedShotStrategy();
@@ -36,9 +39,14 @@ class SegmentedShotStrategy : public ShotStrategy {
     bool                predictPosition(float dt, float p[3]) const;
     bool                predictVelocity(float dt, float p[3]) const;
     float		checkHit(const ShotCollider&, float[3]) const;
+    bool		isOverlapping(const float (*bbox1)[3],
+				const float (*bbox2)[3]) const;
     void		addShot(SceneDatabase*, bool colorblind);
+    double		getLastTime() const;
+    double              getPreviousTime() const;
     const std::vector<ShotPathSegment>&	getSegments() const;
     TeamColor	team;
+    float		bbox[2][3];
 
   protected:
     enum ObstacleEffect {
@@ -49,10 +57,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     void		makeSegments(ObstacleEffect = Stop);
  
     void		setCurrentTime(const double);
-    double		getLastTime() const;
-
-    bool		isOverlapping(const float (*bbox1)[3],
-				const float (*bbox2)[3]) const;
 
     void		setCurrentSegment(int segment);
 
@@ -62,10 +66,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     double		lastTime;
     int			segment, lastSegment;
     std::vector<ShotPathSegment>	segments;
-//CLIENTEDIT
-//    BoltSceneNode*	boltSceneNode;
-//ENDCLIENTEDIT
-    float		bbox[2][3];
     int			firstSegment;
 };
 
