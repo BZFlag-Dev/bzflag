@@ -1492,6 +1492,11 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
   else if (shots[shotNum] != NULL)
     delete shots[shotNum];
 
+  if (shotNum >= (int)boltSceneNodes.size())
+    boltSceneNodes.resize(shotNum+1);
+  else if (boltSceneNodes[shotNum] != NULL)
+    delete boltSceneNodes[shotNum];
+
   shots[shotNum] = shot;
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
 
