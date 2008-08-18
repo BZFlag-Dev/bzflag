@@ -40,7 +40,15 @@ class HUDuiServerList : public HUDuiScrollList {
       JumpingOff   = 0x0010,
       RicochetOn   = 0x0020,
       RicochetOff  = 0x0040,
-      AntidoteFlag = 0x0080,
+      AntidoteFlagOn = 0x0080,
+      AntidoteFlagOff = 0x0100,
+      SuperFlagsOn = 0x0200,
+      SuperFlagsOff = 0x0400,
+      HandicapOn = 0x0800,
+      HandicapOff = 0x1000,
+      ClassicCTFGameMode = 0x2000,
+      RabbitChaseGameMode = 0x4000,
+      OpenFFAGameMode = 0x8000,
       EndOfFilterConstants
     } FilterConstants;
 
@@ -52,10 +60,10 @@ class HUDuiServerList : public HUDuiScrollList {
       NoSort
     } SortConstants;
 
-    static double DOMAIN_PERCENTAGE;
-    static double SERVER_PERCENTAGE;
-    static double PLAYER_PERCENTAGE;
-    static double PING_PERCENTAGE;
+    static float DOMAIN_PERCENTAGE;
+    static float SERVER_PERCENTAGE;
+    static float PLAYER_PERCENTAGE;
+    static float PING_PERCENTAGE;
 
     void addItem(ServerItem item);
     void addItem(HUDuiControl* item);
@@ -78,14 +86,14 @@ class HUDuiServerList : public HUDuiScrollList {
     void setFontFace(const LocalFontFace* face);
     void setSize(float width, float height);
 
+    static ServerList* dataList;
+
   protected:
     struct filter;
     struct search;
     template<int sortType> struct compare;
 
     static bool comp(HUDuiControl* first, HUDuiControl* second);
-
-    static ServerList* dataList;
 
     size_t callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod);
 
@@ -97,14 +105,11 @@ class HUDuiServerList : public HUDuiScrollList {
     void refreshNavQueue();
 
     void doRender();
-    void calculateLines();
 
     bool reverseSort;
 
   private:
     std::list<HUDuiControl*> originalItems;
-
-    std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>> linesToRender;
 
     SortConstants sortMode;
     uint16_t filterOptions;

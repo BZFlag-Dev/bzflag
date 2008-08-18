@@ -54,38 +54,15 @@ HUDuiControl* HUDuiTabbedControl::getTab(int index)
   return tabs[index].second;
 }
 
-void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName)
-{
-  tabs.push_back(std::pair<std::string, HUDuiControl*>(tabName, tabControl));
-
-  if (tabs.size() == 1) // First tab
-  {
-    getNav().push_back(tabControl);
-    tabNavQueuePosition = getNav().begin() + (((int)getNav().size()) - 1);
-  }
-
-  tabControl->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
-  tabControl->setFontFace(getFontFace());
-  tabControl->setFontSize(getFontSize());
-  tabControl->setPosition(getX(), getY());
-
-  setActiveTab((int) tabs.size() - 1);
-
-  addControl(tabControl);
-}
-
 void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, int index)
 {
-  if (index < 0)
-    index = 0;
-  else if (index >= (int) tabs.size())
-    index = (int) tabs.size() - 1;
+  if ((index < 0)||(index >= (int) tabs.size()))
+    index = (int) tabs.size();
 
   std::vector<std::pair<std::string, HUDuiControl*>>::iterator it = tabs.begin();
   std::advance(it, index);
 
   tabs.insert(it, std::pair<std::string, HUDuiControl*>(tabName, tabControl));
-
 
   if (tabs.size() == 1) // First tab
   {

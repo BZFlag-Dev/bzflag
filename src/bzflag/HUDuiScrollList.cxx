@@ -87,10 +87,12 @@ void HUDuiScrollList::setSelected(int _index)
 // Add a new item to our scrollable list
 void HUDuiScrollList::addItem(HUDuiControl* item)
 {
+  item->setFontFace(getFontFace());
+  item->setFontSize(getFontSize());  
+  item->setSize(getWidth(), 10);  
+
   items.push_back(item);
   addControl(item);
-  resizeItems(); // May not be very efficient way of doing it
-  update();
 }
 
 void HUDuiScrollList::refreshNavQueue()
@@ -210,8 +212,7 @@ void HUDuiScrollList::resizeItems()
   // Determine how many items are visible
   FontManager &fm = FontManager::instance();
   float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-  float listHeight = getHeight();
-  numVisibleItems = (int)floorf(listHeight/itemHeight);
+  numVisibleItems = (int)floorf(getHeight()/itemHeight);
 
   // If it's a paged list make it one item shorter so we can fit the page label
   if (pagedList) {

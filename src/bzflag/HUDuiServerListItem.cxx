@@ -33,7 +33,7 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), doma
   serverKey = item.description;
   char temp[50];
 
-  sprintf(temp, "%ld", item.ping.pingTime);
+  sprintf(temp, "%d", item.ping.pingTime);
   std::string ping = temp;
 
   sprintf(temp, "%d/%d", item.getPlayerCount(), item.ping.maxPlayers);
@@ -47,17 +47,13 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), doma
     addr.resize(pos);
   }
 
-  domainName = addr;
-  displayDomain = domainName;
+  displayDomain = domainName = addr;
 
-  serverName = desc;
-  displayServer = serverName;
+  displayServer = serverName = desc;
 
-  playerCount = players;
-  displayPlayer = playerCount;
+  displayPlayer = playerCount = players;
 
-  serverPing = ping;
-  displayPing = serverPing;
+  displayPing = serverPing = ping;
 }
 
 HUDuiServerListItem::~HUDuiServerListItem()
@@ -97,6 +93,8 @@ void HUDuiServerListItem::setColumnSizes(float domain, float server, float playe
   server_percentage = server;
   player_percentage = player;
   ping_percentage = ping;
+
+  resize();
 }
 
 void HUDuiServerListItem::resize()

@@ -273,6 +273,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
   }
 }
 
+/*
 // mark server identified by host:port string as favorite
 void		    ServerList::markFav(const std::string &serverAddress, bool fav)
 {
@@ -286,6 +287,28 @@ void		    ServerList::markFav(const std::string &serverAddress, bool fav)
       break;
     }
   }
+}
+*/
+void ServerList::markAsRecent(ServerItem* item)
+{
+  std::string addrname = item->getAddrName();
+  ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
+  if (i!= serverCache->end()) {
+    i->second.recent = true;
+  }
+
+  item->recent = true;
+}
+
+void ServerList::markAsFavorite(ServerItem* item)
+{
+  std::string addrname = item->getAddrName();
+  ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
+  if (i!= serverCache->end()) {
+    i->second.favorite = true;
+  }
+
+  item->favorite = true;
 }
 
 ServerItem* ServerList::lookupServer(std::string key)

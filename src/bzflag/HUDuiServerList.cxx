@@ -28,10 +28,10 @@
 // HUDuiServerList
 //
 
-double HUDuiServerList::DOMAIN_PERCENTAGE = 0.375;
-double HUDuiServerList::SERVER_PERCENTAGE = 0.375;
-double HUDuiServerList::PLAYER_PERCENTAGE = 0.125;
-double HUDuiServerList::PING_PERCENTAGE = 0.125;
+float HUDuiServerList::DOMAIN_PERCENTAGE = 0.375f;
+float HUDuiServerList::SERVER_PERCENTAGE = 0.375f;
+float HUDuiServerList::PLAYER_PERCENTAGE = 0.125f;
+float HUDuiServerList::PING_PERCENTAGE = 0.125f;
 
 ServerList* HUDuiServerList::dataList = NULL;
 
@@ -146,21 +146,24 @@ public:
 void HUDuiServerList::addItem(ServerItem item)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
+  newItem->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
+  newItem->setFontFace(getFontFace());
+  newItem->setFontSize(getFontSize());  
+  newItem->setSize(getWidth(), 10);  
 
-  if (std::binary_search(originalItems.begin(), originalItems.end(), (HUDuiControl*) newItem, comp))
+  // Don't add duplicates to the list, apply filters now before adding
+  if ((std::binary_search(originalItems.begin(), originalItems.end(), (HUDuiControl*) newItem, comp))||
+     (std::bind2nd(filter(), filterOptions)(newItem)))
+  {
+    delete newItem;
     return;
+  }
 
   originalItems.push_back(newItem);
-  originalItems.sort(comp);
   items.push_back(newItem);
-  newItem->setFontFace(getFontFace());
-  newItem->setFontSize(getFontSize());
-  newItem->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);
+
   addControl(newItem);
   sortBy(sortMode);
-  applyFilters();
-  resizeItems(); // May not be very efficient way of doing it
-  update();
 }
 
 // Over-ride the generic HUDuiControl version of addItem
@@ -195,7 +198,7 @@ void HUDuiServerList::update()
 
   for (it=items.begin(); it != items.end(); it++)
   {
-    ((HUDuiServerListItem*)(*it))->setColumnSizes((float)DOMAIN_PERCENTAGE, (float)SERVER_PERCENTAGE, (float)PLAYER_PERCENTAGE, (float)PING_PERCENTAGE);
+    ((HUDuiServerListItem*)(*it))->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   }
 }
 
@@ -206,11 +209,6 @@ float HUDuiServerList::getHeight() const
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
   return HUDuiScrollList::getHeight() + columnsHeight + columnsHeight/2;
-}
-
-void HUDuiServerList::calculateLines()
-{
-// do nothing
 }
 
 void HUDuiServerList::doRender()
@@ -428,6 +426,10 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
       default:
         return false;
   }
+  else if (key.chr == 'z')
+  {
+    dataList->clear();
+  }
   else if (key.chr == 's')
   {
       if (hasFocus())
@@ -455,23 +457,23 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
     {
 	switch (getActiveColumn()) {
 	  case DomainName:
-	    HUDuiServerList::DOMAIN_PERCENTAGE += 0.005;
-	    HUDuiServerList::SERVER_PERCENTAGE -= 0.005;
+	    HUDuiServerList::DOMAIN_PERCENTAGE += 0.005f;
+	    HUDuiServerList::SERVER_PERCENTAGE -= 0.005f;
 	    break;
 
 	  case ServerName:
-	    HUDuiServerList::SERVER_PERCENTAGE += 0.005;
-	    HUDuiServerList::PLAYER_PERCENTAGE -= 0.005;
+	    HUDuiServerList::SERVER_PERCENTAGE += 0.005f;
+	    HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
 	    break;
 
 	  case PlayerCount:
-	    HUDuiServerList::PLAYER_PERCENTAGE += 0.005;
-	    HUDuiServerList::PING_PERCENTAGE -= 0.005;
+	    HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
+	    HUDuiServerList::PING_PERCENTAGE -= 0.005f;
 	    break;
 
 	  case Ping:
-	    HUDuiServerList::PING_PERCENTAGE += 0.005;
-	    HUDuiServerList::PLAYER_PERCENTAGE -= 0.005;
+	    HUDuiServerList::PING_PERCENTAGE += 0.005f;
+	    HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
 	    break;
 	}
 	update();
@@ -481,23 +483,23 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
     {
 	switch (getActiveColumn()) {
 	  case DomainName:
-	    HUDuiServerList::DOMAIN_PERCENTAGE -= 0.005;
-	    HUDuiServerList::SERVER_PERCENTAGE += 0.005;
+	    HUDuiServerList::DOMAIN_PERCENTAGE -= 0.005f;
+	    HUDuiServerList::SERVER_PERCENTAGE += 0.005f;
 	    break;
 
 	  case ServerName:
-	    HUDuiServerList::SERVER_PERCENTAGE -= 0.005;
-	    HUDuiServerList::PLAYER_PERCENTAGE += 0.005;
+	    HUDuiServerList::SERVER_PERCENTAGE -= 0.005f;
+	    HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
 	    break;
 
 	  case PlayerCount:
-	    HUDuiServerList::PLAYER_PERCENTAGE -= 0.005;
-	    HUDuiServerList::PING_PERCENTAGE += 0.005;
+	    HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
+	    HUDuiServerList::PING_PERCENTAGE += 0.005f;
 	    break;
 
 	  case Ping:
-	    HUDuiServerList::PING_PERCENTAGE -= 0.005;
-	    HUDuiServerList::PLAYER_PERCENTAGE += 0.005;
+	    HUDuiServerList::PING_PERCENTAGE -= 0.005f;
+	    HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
 	    break;
 	}
 	update();

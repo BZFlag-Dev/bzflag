@@ -32,10 +32,12 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
 {
   tabName = new HUDuiTypeIn();
   tabName->setLabel("Enter Tab Name:");
+  tabName->setString("New Tab");
   tabName->setMaxLength(16);
 
   domainName = new HUDuiTypeIn();
   domainName->setLabel("Domain Name Filter:");
+  domainName->setString("*");
   domainName->setMaxLength(32);
 
   serverName = new HUDuiTypeIn();

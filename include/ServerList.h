@@ -50,8 +50,10 @@ public:
   ServerItem* getServerAt(int index);
 
 public:
+  void markAsFavorite(ServerItem* item);
+  void markAsRecent(ServerItem* item);
   void addToList(ServerItem, bool doCache=false);
-  void markFav(const std::string &, bool);
+  //void markFav(const std::string &, bool);
   void clear();
   void sort();
 

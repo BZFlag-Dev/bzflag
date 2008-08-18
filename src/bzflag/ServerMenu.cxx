@@ -35,7 +35,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
-    menu->markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
+    HUDuiServerList::dataList->markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
     menu->favoritesList->addItem(*(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer()));
     return true;
   }
@@ -104,18 +104,6 @@ ServerMenu::ServerMenu(): defaultKey(this)
 ServerMenu::~ServerMenu()
 {
   // Blank
-}
-
-void ServerMenu::markAsFavorite(ServerItem* item)
-{
-  std::string addrname = item->getAddrName();
-  ServerListCache *cache = ServerListCache::get();
-  ServerListCache::SRV_STR_MAP::iterator i = cache->find(addrname);
-  if (i!= cache->end()) {
-    i->second.favorite = true;
-  }
-
-  serverList.markFav(addrname, true);
 }
 
 void ServerMenu::execute()

@@ -34,8 +34,8 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
 
     void setActiveTab(int tab);
 	
-    void addTab(HUDuiControl* tabControl, std::string tabName);
-    void addTab(HUDuiControl* tabControl, std::string tabName, int index);
+    //void addTab(HUDuiControl* tabControl, std::string tabName);
+    void addTab(HUDuiControl* tabControl, std::string tabName, int index = -1);
     void removeTab(int tabIndex);
 
     int getTabCount();
