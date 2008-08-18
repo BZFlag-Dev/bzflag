@@ -105,9 +105,9 @@ public:
 
       bool returnValue = false;
 
-      for (int i = 0; i < EndOfFilterConstants; ++i)
+      for (int i = 2; i < EndOfFilterConstants; ++i)
       {
-	if (filter & i)
+	if ((filter & i) == i)
 	{
 	  switch (i) {
 	    case EmptyServer:
@@ -118,12 +118,20 @@ public:
 	      returnValue = (server->getPlayerCount() == server->ping.maxPlayers);
 	      break;
 
-	    case Jumping:
-	      returnValue = ((server->ping.gameOptions & JumpingGameStyle) != 0);
+	    case JumpingOn:
+	      returnValue = ((server->ping.gameOptions & JumpingGameStyle) != JumpingGameStyle);
 	      break;
 
-	    case AntidoteFlag:
-	      returnValue = ((server->ping.gameOptions & AntidoteGameStyle) != 0);
+	    case JumpingOff:
+	      returnValue = ((server->ping.gameOptions & JumpingGameStyle) == JumpingGameStyle);
+	      break;
+
+	    case RicochetOn:
+	      returnValue = ((server->ping.gameOptions & RicochetGameStyle) != RicochetGameStyle);
+	      break;
+
+	    case RicochetOff:
+	      returnValue = ((server->ping.gameOptions & RicochetGameStyle) == RicochetGameStyle);
 	      break;
 	  }
 	}

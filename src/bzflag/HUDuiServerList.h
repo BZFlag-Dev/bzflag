@@ -36,8 +36,11 @@ class HUDuiServerList : public HUDuiScrollList {
     typedef enum {
       EmptyServer  = 0x0002,
       FullServer   = 0x0004,
-      Jumping      = 0x0008,
-      AntidoteFlag = 0x0010,
+      JumpingOn    = 0x0008,
+      JumpingOff   = 0x0010,
+      RicochetOn   = 0x0020,
+      RicochetOff  = 0x0040,
+      AntidoteFlag = 0x0080,
       EndOfFilterConstants
     } FilterConstants;
 

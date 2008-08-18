@@ -16,7 +16,6 @@
 // common implementation headers
 #include "BundleMgr.h"
 #include "Bundle.h"
-#include "FontManager.h"
 #include "LocalFontFace.h"
 #include "bzUnicode.h"
 
@@ -24,12 +23,12 @@
 // HUDuiServerListItem
 //
 
-HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl()
+HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl(), fm(FontManager::instance())
 {
   // Do nothing
 }
 
-HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f)
+HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f), fm(FontManager::instance())
 {
   serverKey = item.description;
   char temp[50];
@@ -105,7 +104,6 @@ void HUDuiServerListItem::resize()
   if (getFontFace() == NULL)
     return;
 
-  FontManager &fm = FontManager::instance();
   spacerWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "I");
 
   displayDomain = shorten(domainName, (domain_percentage*getWidth())-2*spacerWidth);
@@ -116,9 +114,6 @@ void HUDuiServerListItem::resize()
 
 std::string HUDuiServerListItem::shorten(std::string string, float width)
 {
-  // Trim string to fit our available space
-  FontManager &fm = FontManager::instance();
-
   // Skip if it already fits
   if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.c_str()) <= width)
     return string;
@@ -168,7 +163,6 @@ void HUDuiServerListItem::doRender()
     return;
   }
 
-  FontManager &fm = FontManager::instance();
   float darkness;
   if (hasFocus()) {
     darkness = 1.0f;

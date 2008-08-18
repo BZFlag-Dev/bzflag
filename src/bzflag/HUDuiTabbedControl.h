@@ -22,7 +22,6 @@
 #include "HUDuiNestedContainer.h"
 
 #include "HUDNavigationQueue.h"
-#include <map>
 #include <vector>
 
 class HUDuiTabbedControl : public HUDuiNestedContainer {

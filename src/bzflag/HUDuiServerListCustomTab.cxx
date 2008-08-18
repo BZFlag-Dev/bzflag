@@ -40,6 +40,7 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
 
   serverName = new HUDuiTypeIn();
   serverName->setLabel("Server Name Filter:");
+  serverName->setString("*");
   serverName->setMaxLength(32);
 
   emptyServer = new HUDuiList();
@@ -54,12 +55,12 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   fullServer->getList().push_back("False");
   fullServer->update();
 
-  richochet = new HUDuiList();
-  richochet->setLabel("Ricochet:");
-  richochet->getList().push_back("On");
-  richochet->getList().push_back("Off");
-  richochet->getList().push_back("Either");
-  richochet->update();
+  ricochet = new HUDuiList();
+  ricochet->setLabel("Ricochet:");
+  ricochet->getList().push_back("On");
+  ricochet->getList().push_back("Off");
+  ricochet->getList().push_back("Either");
+  ricochet->update();
 
   superFlags = new HUDuiList();
   superFlags->setLabel("Super Flags:");
@@ -83,7 +84,7 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   addControl(serverName);
   addControl(emptyServer);
   addControl(fullServer);
-  addControl(richochet);
+  addControl(ricochet);
   addControl(superFlags);
   addControl(jumping);
   addControl(createNew);
@@ -189,11 +190,11 @@ void HUDuiServerListCustomTab::resize()
 
   y = y - fontHeight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), richochet->getLabel().c_str());
+  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), ricochet->getLabel().c_str());
 
-  richochet->setFontFace(getFontFace());
-  richochet->setFontSize(getFontSize());
-  richochet->setPosition(getX() + width + spacer, y);
+  ricochet->setFontFace(getFontFace());
+  ricochet->setFontSize(getFontSize());
+  ricochet->setPosition(getX() + width + spacer, y);
 
   y = y - fontHeight;
 
@@ -225,6 +226,14 @@ HUDuiServerList* HUDuiServerListCustomTab::createServerList()
     newServerList->toggleFilter(HUDuiServerList::EmptyServer);
   if (fullServer->getList().at(fullServer->getIndex()) == "False")
     newServerList->toggleFilter(HUDuiServerList::FullServer);
+  if (jumping->getList().at(jumping->getIndex()) == "On")
+    newServerList->toggleFilter(HUDuiServerList::JumpingOn);
+  if (jumping->getList().at(jumping->getIndex()) == "Off")
+    newServerList->toggleFilter(HUDuiServerList::JumpingOff);
+  if (ricochet->getList().at(ricochet->getIndex()) == "On")
+    newServerList->toggleFilter(HUDuiServerList::RicochetOn);
+  if (ricochet->getList().at(ricochet->getIndex()) == "Off")
+    newServerList->toggleFilter(HUDuiServerList::RicochetOff);
   return newServerList;
 }
 
@@ -245,7 +254,7 @@ void HUDuiServerListCustomTab::doRender()
   serverName->render();
   emptyServer->render();
   fullServer->render();
-  richochet->render();
+  ricochet->render();
   superFlags->render();
   jumping->render();
   createNew->render();

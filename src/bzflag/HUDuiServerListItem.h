@@ -22,6 +22,8 @@
 // ancestor class
 #include "HUDuiControl.h"
 
+#include "FontManager.h"
+
 #include "ServerItem.h"
 #include <string>
 
@@ -68,6 +70,8 @@ class HUDuiServerListItem : public HUDuiControl {
     float ping_percentage;
 
     float spacerWidth;
+
+    FontManager &fm;
 };
 
 #endif // __HUDuiServerListItem_H__

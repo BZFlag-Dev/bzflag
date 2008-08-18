@@ -86,7 +86,6 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, i
 
   tabs.insert(it, std::pair<std::string, HUDuiControl*>(tabName, tabControl));
 
-  tabControl->setFontFace(getFontFace());
 
   if (tabs.size() == 1) // First tab
   {
@@ -94,9 +93,6 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, i
     tabNavQueuePosition = getNav().begin() + (((int)getNav().size()) - 1);
   }
 
-  FontManager &fm = FontManager::instance();
-
-  float tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
   tabControl->setFontFace(getFontFace());
   tabControl->setFontSize(getFontSize());
   tabControl->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
@@ -191,18 +187,9 @@ void HUDuiTabbedControl::drawTabBody()
 void HUDuiTabbedControl::drawTabs()
 {
   FontManager &fm = FontManager::instance();
-  float color[4];
 
-  color[0] = 1.0f;
-  color[1] = 1.0f;
-  color[2] = 1.0f;
-  color[3] = 1.0f;
-
-  float activeColor[3];
-
-  activeColor[0] = 0.0f;
-  activeColor[1] = 1.0f;
-  activeColor[2] = 0.0f;
+  float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+  float activeColor[3] = {0.0f, 1.0f, 0.0f};
 
   glColor4fv(color);
 
