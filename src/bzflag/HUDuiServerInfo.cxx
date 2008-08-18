@@ -97,12 +97,12 @@ void HUDuiServerInfo::resize()
 
   // reposition server readouts
   float fontSize = fs.getFontSize(getFontFace()->getFMFace(), "alertFontSize");
-  float fontHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
-  const float y0 = getY() + getHeight() - fontHeight - fontHeight/2;
+  float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
+  const float y0 = getY() + getHeight() - itemHeight - itemHeight/2;
   
   float y = y0;
 
-  float x = getX() + fontHeight;
+  float x = getX() + itemHeight;
   fs.setMin(10, 10);
   for (int i=0; i<(int) readouts.size(); i++) {
     if ((i + 1) % 7 == 1) {
@@ -110,11 +110,11 @@ void HUDuiServerInfo::resize()
       y = y0;
     }
 
-    HUDuiLabel* label = readouts[i];
-    label->setFontSize(fontSize);
-    label->setFontFace(getFontFace());
-    y -= 1.0f * fontHeight;
-    label->setPosition(x, y);
+    HUDuiLabel* readout = readouts[i];
+    readout->setFontSize(fontSize);
+    readout->setFontFace(getFontFace());
+    y -= 1.0f * itemHeight;
+    readout->setPosition(x, y);
   }
 }
 
@@ -127,8 +127,8 @@ void HUDuiServerInfo::fillReadouts()
   char buf[60];
   std::vector<HUDuiLabel*>& listHUD = readouts;
 
-  const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
-			     ping.blueMax, ping.purpleMax, ping.observerMax };
+  //const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
+	//		     ping.blueMax, ping.purpleMax, ping.observerMax };
 
   // if this is a cached item set the player counts to "?/max count"
   if (item.cached && item.getPlayerCount() == 0) {
