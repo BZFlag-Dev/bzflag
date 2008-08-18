@@ -177,6 +177,81 @@ void test_search()
 
 }
 
+void test_search2()
+{
+    char *attrs[2] = { LDAP_NO_ATTRS, NULL };
+    LDAPMessage *res, *msg;
+    TEST( ldap_search_s(ld, "cn=Bawrrbara Jensen,dc=my-domain,dc=com", LDAP_SCOPE_BASE, "(objectClass=*)", attrs, 0, &res) );
+
+    for (msg = ldap_first_message(ld, res); msg; msg = ldap_next_message(ld, msg))
+    {
+        switch(ldap_msgtype(msg))
+        {
+            case LDAP_RES_SEARCH_ENTRY:
+            {
+                // print the dn
+                printf("LOG: found match\n"); 
+                char *dn = ldap_get_dn(ld, msg);
+                printf("dn: %s\n", dn);
+                ldap_memfree(dn);
+                // print the values of the attributes
+                BerElement *ber_itr;
+                for(char *attr = ldap_first_attribute(ld, msg, &ber_itr); attr; attr = ldap_next_attribute(ld, msg, ber_itr))
+                {
+                    printf("%s:", attr);
+                    char **values = ldap_get_values(ld, msg, attr);
+                    int nrvalues = ldap_count_values(values);
+                    for(int i = 0; i < nrvalues; i++)
+                    {
+                        if(i > 0) printf(";");
+                        printf(" %s", values[i]);
+                    }
+                    printf("\n");
+                    ldap_value_free(values);
+                    ldap_memfree(attr);
+                }
+                ber_free(ber_itr, 0); // 0 or 1 ?
+            } break;
+            case LDAP_RES_SEARCH_RESULT:
+            {
+                int errcode;
+                char *matcheddn;
+                char *errmsg;
+                char **referrals;
+                LDAPControl **serverctrls;
+                if(!test_ret( ldap_parse_result(ld, msg, &errcode, &matcheddn, &errmsg, &referrals, &serverctrls, 0) ))
+                    break;
+                if(test_ret(errcode))
+                    printf("LOG: search successful\n");
+
+                if(errmsg)
+                {
+                    if(errmsg[0]) printf("ERROR: %s\n", errmsg);
+                    ldap_memfree(errmsg);
+                }
+                if(matcheddn)
+                {
+                    if(matcheddn[0]) printf("Matched dn: %s\n", matcheddn);
+                    ldap_memfree(matcheddn);
+                }
+                if(referrals)
+                {
+                    ldap_value_free(referrals);
+                }
+                if(serverctrls)
+                {
+                    ldap_controls_free(serverctrls);
+                }
+            } break;
+            default:
+                printf("LOG: unknown message type %d\n", ldap_msgtype(msg));
+        }
+    }
+    
+    ldap_msgfree(res);
+}
+
+
 void test_modify()
 {
     char* attr = "description";
@@ -205,6 +280,7 @@ void test_ldap()
     test_add();
     test_modify();
     test_search();
+    test_search2();
     test_delete();
     test_unbind();
 }

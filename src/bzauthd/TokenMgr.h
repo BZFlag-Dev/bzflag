@@ -34,6 +34,7 @@ private:
   uint32 nextToken;
   typedef HM_NAMESPACE::hash_map<uint32, std::string> TokenMapType;
   TokenMapType tokenMap;
+  void removeToken(TokenMapType::iterator &itr);
 };
 
 #define sTokenMgr TokenMgr::instance()

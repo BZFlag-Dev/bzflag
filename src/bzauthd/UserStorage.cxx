@@ -120,6 +120,34 @@ bool UserStore::authUser(UserInfo &info)
   return bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8*)dn.c_str(), (const uint8*)info.password.c_str()); 
 }
 
+bool UserStore::isRegistered(std::string callsign)
+{
+  std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+
+  char *attrs[2] = { LDAP_NO_ATTRS, NULL };
+  LDAPMessage *res, *msg;
+  LDAP_FCHECK( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", attrs, 0, &res) );
+
+  bool found = false;
+  for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
+    if(ldap_msgtype(msg) == LDAP_RES_SEARCH_RESULT) {
+      int errcode;
+      char *errmsg;
+      if(!ldap_check( ldap_parse_result(rootld, msg, &errcode, NULL, &errmsg, NULL, NULL, 0) ))
+        break; 
+      if(errmsg) {
+        if(errmsg[0]) printf("ERROR: %s\n", errmsg);
+        ldap_memfree(errmsg);
+      }
+      if(errcode == LDAP_SUCCESS)
+        found = true;
+    }
+  }
+
+  ldap_msgfree(msg);
+  return found;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

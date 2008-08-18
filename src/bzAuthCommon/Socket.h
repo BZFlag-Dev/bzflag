@@ -26,6 +26,9 @@
 #ifdef min
 #undef min
 #endif
+#ifdef max
+#undef max
+#endif
 
 class ConnectSocket;
 
@@ -88,7 +91,7 @@ public:
 
   void append(const uint8 *x, size_t size)
   {
-    if(m_wpoz + size >= m_size)
+    while(m_wpoz + size >= m_size)
     {
       m_data = (uint8*)realloc((void*)m_data, 2*m_size);
       m_size *= 2;
@@ -115,7 +118,7 @@ public:
   {
     for(size_t i = m_rpoz; i < std::min(m_rpoz + buf_size, m_size); i++)
     {
-      x[i] = m_data[i];
+      x[i-m_rpoz] = m_data[i];
       if(m_data[i] == '\0')
       {
         m_rpoz = i + 1;
@@ -138,7 +141,7 @@ protected:
   void init(size_t size, uint16 opcode)
   {
     m_data = (uint8*)malloc(size);
-    m_size = size;
+    m_size = std::max(size, (size_t)1);
     m_rpoz = 0;
     m_wpoz = 0;
     m_opcode = opcode;

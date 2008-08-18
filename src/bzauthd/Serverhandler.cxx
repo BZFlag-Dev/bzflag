@@ -21,6 +21,7 @@ bool PacketHandler::handleTokenValidate(Packet &packet)
   if(!(packet >> n)) return false;
 
   Packet response(DMSG_TOKEN_VALIDATE, n*4);
+  response << n;
   for(int i = 0; i < n; i++)
   {
     uint8 callsign[MAX_CALLSIGN_LEN+1];
@@ -28,8 +29,13 @@ bool PacketHandler::handleTokenValidate(Packet &packet)
     if(!(packet >> token)) return false;
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
-    response.append(callsign, strlen(callsign)+1);
-    response << (uint32)sTokenMgr.checkToken((char *)callsign, token);
+    response.append(callsign, strlen((char*)callsign)+1);
+    if(sTokenMgr.checkToken((char *)callsign, token))
+      response << (uint32)2;                          // registered, verified
+    else if(sUserStore.isRegistered((char*)callsign))
+      response << (uint32)1;                          // registered, not verified
+    else
+      response << (uint32)0;                          // not registered
   }
   m_socket->sendData(response);
 

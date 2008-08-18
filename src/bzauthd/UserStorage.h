@@ -37,6 +37,7 @@ public:
   
   void registerUser(UserInfo &info);
   bool authUser(UserInfo &info);
+  bool isRegistered(std::string callsign);
   void update();
 
   size_t hashLen();

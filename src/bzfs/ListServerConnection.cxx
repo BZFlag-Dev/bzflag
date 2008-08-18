@@ -48,6 +48,7 @@ public:
       case DMSG_TOKEN_VALIDATE:
       {
         uint8 count;
+
         if(!(packet >> count)) { disconnect(); break; }
         for(int i = 0; i < count; i++) {
           // TODO: use proper max callsign len
@@ -58,6 +59,7 @@ public:
           link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, "");
         }
         link->token_phase = 2;
+        disconnect();
         break;
       }
       default:
@@ -68,6 +70,7 @@ public:
 
   void onDisconnect()
   {
+    link->finalizeLSA();
     link->tokenSocket = NULL;
     link->token_phase = -1;
   }
@@ -85,6 +88,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedTitle,
 			       std::string _advertiseGroups)
 {
+  tokenSocket = NULL;
   token_phase = -1;
 
   std::string bzfsUserAgent = "bzfs ";
@@ -230,15 +234,11 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       base = scan;
     }
   }
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if (playerData->_LSAState != GameKeeper::Player::checking)
-      continue;
-    playerData->_LSAState = GameKeeper::Player::timedOut;
-  }
-  if (nextMessageType != ListServerLink::NONE) {
+
+  // finalizeLSA();
+
+  // only do the next message if both this and the token validation sequence has finished
+  if (token_phase == -1 && nextMessageType != ListServerLink::NONE) {
     // There was a pending request arrived after we write:
     // we should redo all the stuff
     sendQueuedMessages();
@@ -292,6 +292,18 @@ void ListServerLink::processAuthReply(bool registered, bool verified, char *call
       }
     }
     playerData->player.clearToken();
+  }
+}
+
+void ListServerLink::finalizeLSA()
+{
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData)
+      continue;
+    if (playerData->_LSAState != GameKeeper::Player::checking)
+      continue;
+    playerData->_LSAState = GameKeeper::Player::timedOut;
   }
 }
 
@@ -452,7 +464,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 
 void ListServerLink::checkTokens(std::string *pMsg)
 {
-  assert(pMsg || (token_phase == 1 && tokenSocket));
+  assert(pMsg || (token_phase == 0 && tokenSocket));
 
   if(pMsg) *pMsg += "&checktokens=";
   
@@ -474,13 +486,18 @@ void ListServerLink::checkTokens(std::string *pMsg)
     packetLen += strlen(playerData->player.getCallSign()) + 5;
   }
 
-  if(callSigns.empty()) return;
-
   uint8 peerType = BZAUTHD_PEER_SERVER;
   uint16 protoVersion = 1;
   Packet handshakeMsg(MSG_HANDSHAKE, 3);
   handshakeMsg << peerType << protoVersion;
   tokenSocket->sendData(handshakeMsg);
+
+  if(!callSigns.size()) {
+    authSockHandler.removeSocket(tokenSocket);
+    tokenSocket = NULL;
+    token_phase = -1;
+    return;
+  }
 
   Packet tokenMsg(SMSG_TOKEN_VALIDATE, packetLen);
   tokenMsg << (uint8)callSigns.size();
@@ -489,8 +506,8 @@ void ListServerLink::checkTokens(std::string *pMsg)
     playerData->_LSAState = GameKeeper::Player::checking;
     NetHandler *handler = playerData->netHandler;
     tokenMsg << (uint32)atoi(playerData->player.getToken());
-    tokenMsg << (uint8)itr->first.size();
     tokenMsg.append((const uint8*)itr->first.c_str(), itr->first.size());
+    tokenMsg << '\0';
 
     if(pMsg) {
       std::string &msg = *pMsg;
@@ -506,15 +523,15 @@ void ListServerLink::checkTokens(std::string *pMsg)
     }
   }
   tokenSocket->sendData(tokenMsg);
+  token_phase = 1;
 }
 
 void ListServerLink::update()
 {
   if(!publicizeServer) return;
-  if(token_phase == 0 && tokenSocket->connect("127.0.0.1", 1234) == 0) {
+  if(token_phase == 0 && tokenSocket->connect("127.0.0.1", 1234) == 0)
     checkTokens(NULL);
-    token_phase = 1;
-  }
+
   if(token_phase >= 1) {
     // update the auth sockets
     authSockHandler.update();

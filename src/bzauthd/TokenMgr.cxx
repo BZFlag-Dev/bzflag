@@ -20,7 +20,8 @@ INSTANTIATE_SINGLETON(TokenMgr);
 
 TokenMgr::TokenMgr()
 {
-  nextToken = 0;
+  // reserve token 0 for unregistered users
+  nextToken = 1;
 }
 
 TokenMgr::~TokenMgr()
@@ -49,8 +50,15 @@ bool TokenMgr::checkToken(std::string name, uint32 token)
 
 void TokenMgr::removeToken(uint32 token)
 {
-  sLog.outLog("TokenMgr: removing token %d", token);
-  tokenMap.erase(token);
+  TokenMapType::iterator itr = tokenMap.find(token);
+  if(itr != tokenMap.end()) removeToken(itr);
+  else sLog.outLog("TokenMgr: can't remove token %d, not found!", token);
+}
+
+void TokenMgr::removeToken(TokenMapType::iterator &itr)
+{
+  sLog.outLog("TokenMgr: removing token %d", itr->first);
+  tokenMap.erase(itr);
 }
 
 void TokenMgr::expireCallback(void *data)

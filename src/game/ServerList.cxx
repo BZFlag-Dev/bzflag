@@ -188,8 +188,8 @@ void ServerList::readServerList()
       continue;
     } else if (!strncmp(base, noTokenIdentifier,
 			strlen(noTokenIdentifier))) {
-      printError("ERROR: did not get token:");
-      printError(base);
+      //printError("ERROR: did not get token:");
+      //printError(base);
       //strcpy(startupInfo->token, "badtoken\0");
       base = scan;
       continue;

@@ -75,10 +75,12 @@ private:
   // messages to send, used by sendQueuedMessages
   void addMe(PingPacket pingInfo, std::string publicizedAddress,
 	     std::string publicizedTitle, std::string advertiseGroups);
-  void checkTokens(std::string *pMsg);
-  void buildTokenMsg(std::string &msg);
   void removeMe(std::string publicizedAddress);
   void sendQueuedMessages();
+
+  void checkTokens(std::string *pMsg);
+  void buildTokenMsg(std::string &msg);
+  void finalizeLSA();
 
   bool queuedRequest;
 };
