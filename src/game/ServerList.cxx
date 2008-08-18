@@ -39,7 +39,7 @@
 
 /* auth headers */
 #include "../bzAuthCommon/Socket.h"
-#include "../bzAuthCommon/Protocol.h"
+#include "../bzAuthCommon/AuthProtocol.h"
 #include "../bzAuthCommon/RSA.h"
 
 SocketHandler authSockHandler;
@@ -55,11 +55,11 @@ public:
     switch(packet.getOpcode()) {
       case DMSG_AUTH_CHALLENGE: {
         // receive the RSA key components (n,e)
-        uint8 *key_n;
-        uint32 e;
-        uint16 n_len;
+        uint8_t *key_n;
+        uint32_t e;
+        uint16_t n_len;
         assert(packet >> n_len);
-        key_n = new uint8[n_len];
+        key_n = new uint8_t[n_len];
         packet.read(key_n, (size_t)n_len);
         assert(packet >> e);
 
@@ -72,15 +72,15 @@ public:
         message += " ";
         message += serverList->startupInfo->password;
 
-        uint8 *cipher = NULL;
+        uint8_t *cipher = NULL;
         size_t cipher_len;
 
-        sRSAManager.getPublicKey().encrypt((uint8*)message.c_str(), message.size(), cipher, cipher_len);
+        sRSAManager.getPublicKey().encrypt((uint8_t*)message.c_str(), message.size(), cipher, cipher_len);
 
         // send the response
         {
           Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
-          response << (uint16)cipher_len;
+          response << (uint16_t)cipher_len;
           response.append(cipher, cipher_len);
           sendData(response);
         }
@@ -91,7 +91,7 @@ public:
         delete[] key_n;
       } break;
       case DMSG_AUTH_SUCCESS:
-        uint32 token;
+        uint32_t token;
         packet >> token;
         logDebugMessage(0, "Auth successful, token %d\n", token);
         snprintf(serverList->startupInfo->token, TokenLen, "%d", token);
@@ -99,7 +99,7 @@ public:
         serverList->auth_phase = 3;
         break;
       case DMSG_AUTH_FAIL:
-        uint32 reason;
+        uint32_t reason;
         packet >> reason;
         logDebugMessage(0, "Auth failed, reason %d\n", reason);
         snprintf(serverList->startupInfo->token, TokenLen, "badtoken");
@@ -396,13 +396,13 @@ void			ServerList::checkEchos(StartupInfo *info)
     phase = 1;
   }
 
-  if(auth_phase == 0 && authSocket->connect(BZDB.get("authd")) == 0)
+  if(auth_phase == 0 && authSocket->connect(BZDB.get(StateDatabase::BZDB_AUTHD)) == 0)
   {
     // send a handshake to the auth daemon, including the request for auth
-    uint8 commType = BZAUTH_COMM_AUTH;
-    uint8 peerType = BZAUTHD_PEER_CLIENT;
-    uint16 protoVersion = 1;
-    uint32 cliVersion = 2;
+    uint8_t commType = BZAUTH_COMM_AUTH;
+    uint8_t peerType = BZAUTHD_PEER_CLIENT;
+    uint16_t protoVersion = 1;
+    uint32_t cliVersion = 2;
     Packet msg(MSG_HANDSHAKE);
     msg << peerType << protoVersion << cliVersion << commType;
     authSocket->sendData(msg);

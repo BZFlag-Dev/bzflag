@@ -18,11 +18,10 @@
 #ifndef __BZAUTHD_CONFIG_H__
 #define __BZAUTHD_CONFIG_H__
 
-#include "../bzAuthCommon/Platform.h"
 #include <vector>
 #include <string>
 #include <hash_map>
-#include "../bzAuthCommon/Singleton.h"
+#include <Singleton.h>
 
 enum ConfTypes
 {
@@ -50,18 +49,18 @@ public:
   ~Config();
   void initialize();
   /** Functions for setting and retrieving config values */
-  void setStringValue(uint16 key, const uint8 *value);
-  const uint8 * getStringValue(uint16 key);
-  uint32 getIntValue(uint16 key);
-  void setIntValue(uint16 key, uint32 value);
+  void setStringValue(uint16_t key, const uint8_t *value);
+  const uint8_t * getStringValue(uint16_t key);
+  uint32_t getIntValue(uint16_t key);
+  void setIntValue(uint16_t key, uint32_t value);
   /** Mapping functions for string keys and key types */
-  void registerKey(std::string stringKey, uint16 intKey, uint32 defaultValue);
-  void registerKey(std::string stringKey, uint16 intKey, const char * defaultValue);
-  uint16 lookupKey(std::string stringKey);
-  uint8 lookupType(uint16 key);
+  void registerKey(std::string stringKey, uint16_t intKey, uint32_t defaultValue);
+  void registerKey(std::string stringKey, uint16_t intKey, const char * defaultValue);
+  uint16_t lookupKey(std::string stringKey);
+  uint8_t lookupType(uint16_t key);
 protected:
-  typedef HM_NAMESPACE::hash_map<std::string, uint16 /*key*/> KeyRegisterType;
-  typedef std::vector<uint8 /*type*/> TypeRegisterType;
+  typedef HM_NAMESPACE::hash_map<std::string, uint16_t /*key*/> KeyRegisterType;
+  typedef std::vector<uint8_t /*type*/> TypeRegisterType;
   typedef std::vector<void *> ValuesType;
 
   KeyRegisterType keyRegister;

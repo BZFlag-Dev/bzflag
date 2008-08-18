@@ -26,14 +26,14 @@ class TokenMgr : public Singleton<TokenMgr>
 public:
   TokenMgr();
   ~TokenMgr();
-  uint32 newToken(std::string name);
-  void addToken(std::string name, uint32 token);
-  bool checkToken(std::string name, uint32 token);
-  void removeToken(uint32 token);
+  uint32_t newToken(std::string name);
+  void addToken(std::string name, uint32_t token);
+  bool checkToken(std::string name, uint32_t token);
+  void removeToken(uint32_t token);
   static void expireCallback(void *data);
 private:
-  uint32 nextToken;
-  typedef HM_NAMESPACE::hash_map<uint32, std::string> TokenMapType;
+  uint32_t nextToken;
+  typedef HM_NAMESPACE::hash_map<uint32_t, std::string> TokenMapType;
   TokenMapType tokenMap;
   void removeToken(TokenMapType::iterator &itr);
 };

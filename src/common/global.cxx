@@ -15,6 +15,7 @@
 #endif
 
 #include "global.h"
+#include "protocol.h"
 
 
 const struct GlobalDBItem globalDBItems[] = {
@@ -24,6 +25,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_ambientLight",		"none",				false, StateDatabase::Locked},
   { "_angleTolerance",		"0.05",				false, StateDatabase::Locked},
   { "_angularAd",		"1.5",				false, StateDatabase::Locked},
+  { "_authd",			DefaultAuthDaemon,	        false, StateDatabase::Locked},
   { "_autoAllowTime",		"-1.0",				false, StateDatabase::Locked},
   { "_avenueSize",		"2.0*_boxBase",			false, StateDatabase::Locked},
   { "_baseSize",		"60.0",				false, StateDatabase::Locked},

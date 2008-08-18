@@ -13,6 +13,7 @@
 #ifndef __BZAUTHD_USERSTORAGE_H__
 #define __BZAUTHD_USERSTORAGE_H__
 
+#include <Singleton.h>
 #include <string>
 
 typedef struct ldap LDAP;
@@ -42,9 +43,9 @@ public:
   void update();
 
   size_t hashLen();
-  void hash(uint8 *message, size_t message_len, uint8 *digest);
+  void hash(uint8_t *message, size_t message_len, uint8_t *digest);
 private:
-  bool bind(LDAP *&ld, const uint8 *addr, const uint8 *dn, const uint8 *pw);
+  bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
   void unbind(LDAP *&ld);
   LDAP *rootld;
 };

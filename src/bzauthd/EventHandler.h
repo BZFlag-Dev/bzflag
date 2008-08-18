@@ -18,6 +18,7 @@
 #ifndef __BZAUTHD_EVENTHANDLER_H__
 #define __BZAUTHD_EVENTHANDLER_H__
 
+#include <Singleton.h>
 #include <map>
 
 class EventHandler : public Singleton<EventHandler>
@@ -42,7 +43,7 @@ private:
     void call();
     void delink();
   
-    uint16 refCounter;
+    uint16_t refCounter;
     CBFunc func;
     void *data;
     TimeMapType::iterator itr;

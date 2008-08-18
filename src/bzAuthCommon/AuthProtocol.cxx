@@ -11,7 +11,7 @@
 */
 
 #include "Common.h"
-#include "Protocol.h"
+#include "AuthProtocol.h"
 
 const char *bzAuthOpcodeNames[NUM_OPCODES] = {
   "MSG_HANDSHAKE",

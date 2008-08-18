@@ -30,7 +30,7 @@
 
 /* auth headers */
 #include "../bzAuthCommon/Socket.h"
-#include "../bzAuthCommon/Protocol.h"
+#include "../bzAuthCommon/AuthProtocol.h"
 #include "../bzAuthCommon/RSA.h"
 
 /* The socket used for connecting to the auth daemon to register users */
@@ -42,11 +42,11 @@ public:
     switch(packet.getOpcode()) {
       case DMSG_REGISTER_CHALLENGE: {
         // receive the RSA key components (n,e)
-        uint8 *key_n;
-        uint32 e;
-        uint16 n_len;
+        uint8_t *key_n;
+        uint32_t e;
+        uint16_t n_len;
         if(!(packet >> n_len)) { disconnect(); break; }
-        key_n = new uint8[n_len];
+        key_n = new uint8_t[n_len];
         packet.read(key_n, (size_t)n_len);
         if(!(packet >> e)) { delete[] key_n; disconnect(); break; }
 
@@ -59,15 +59,15 @@ public:
         message += " ";
         message += menu->password->getString();
 
-        uint8 *cipher = NULL;
+        uint8_t *cipher = NULL;
         size_t cipher_len;
 
-        sRSAManager.getPublicKey().encrypt((uint8*)message.c_str(), message.size(), cipher, cipher_len);
+        sRSAManager.getPublicKey().encrypt((uint8_t*)message.c_str(), message.size(), cipher, cipher_len);
 
         // send the response
         {
           Packet response(CMSG_REGISTER_RESPONSE, 2 + cipher_len);
-          response << (uint16)cipher_len;
+          response << (uint16_t)cipher_len;
           response.append(cipher, cipher_len);
           sendData(response);
         }
@@ -241,12 +241,12 @@ void RegMenu::setStatus(const char* msg, const std::vector<std::string> *)
 void RegMenu::update()
 {
   if(phase == -1) return;
-  if(phase == 0 && regSocket->connect(BZDB.get("authd")) == 0)
+  if(phase == 0 && regSocket->connect(BZDB.get(StateDatabase::BZDB_AUTHD)) == 0)
   {
-    uint8 commType = BZAUTH_COMM_REG;
-    uint8 peerType = BZAUTHD_PEER_CLIENT;
-    uint16 protoVersion = 1;
-    uint32 cliVersion = 2;
+    uint8_t commType = BZAUTH_COMM_REG;
+    uint8_t peerType = BZAUTHD_PEER_CLIENT;
+    uint16_t protoVersion = 1;
+    uint32_t cliVersion = 2;
     Packet msg(MSG_HANDSHAKE);
     msg << peerType << protoVersion << cliVersion << commType;
     regSocket->sendData(msg);

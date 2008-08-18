@@ -18,7 +18,7 @@ SocketHandler::~SocketHandler()
   if(socketSet) { net_FreeSocketSet(socketSet); socketSet = NULL; }
 }
 
-teTCPError SocketHandler::initialize(uint32 connections)
+teTCPError SocketHandler::initialize(uint32_t connections)
 {
   maxUsers = connections;
 
@@ -57,7 +57,7 @@ bool SocketHandler::global_init()
   return net_Init() == 0;
 }
 
-teTCPError ListenSocket::listen(uint16 port)
+teTCPError ListenSocket::listen(uint16_t port)
 {
   //disconnect();
 
@@ -161,7 +161,7 @@ teTCPError ConnectSocket::connect(std::string server_and_port)
   return connect(server_and_port.substr(0, pos), port);
 }
 
-teTCPError ConnectSocket::connect(std::string server, uint16 port)
+teTCPError ConnectSocket::connect(std::string server, uint16_t port)
 {
   if ( net_ResolveHost(&serverIP, server.c_str(), port))
     return eTCPUnknownError;
@@ -205,11 +205,11 @@ Packet * ConnectSocket::readData()
 
     if(!remainingHeader)
     {
-      remainingData = *(uint16*)(buffer+2);
+      remainingData = *(uint16_t*)(buffer+2);
       if(remainingData == 0)
       {
-        uint16 opcode = *(uint16*)buffer;
-        Packet * ret = new Packet(opcode, (uint8*)"", 0);
+        uint16_t opcode = *(uint16_t*)buffer;
+        Packet * ret = new Packet(opcode, (uint8_t*)"", 0);
         initRead();
         return ret;
       }
@@ -232,8 +232,8 @@ Packet * ConnectSocket::readData()
 
   if(!remainingData)
   {
-    uint16 opcode = *(uint16*)buffer;
-    uint16 len = *(uint16*)(buffer+2);
+    uint16_t opcode = *(uint16_t*)buffer;
+    uint16_t len = *(uint16_t*)(buffer+2);
     Packet * ret = new Packet(opcode, buffer + 4, (size_t)len);
     initRead();
     return ret;
@@ -248,13 +248,13 @@ teTCPError ConnectSocket::sendData(Packet &packet)
     return eTCPSocketNFG;
 
   void *data = (void*)packet.getData();
-  uint16 opcode = packet.getOpcode();
-  uint16 len = (uint16)packet.getLength();
+  uint16_t opcode = packet.getOpcode();
+  uint16_t len = (uint16_t)packet.getLength();
 
   // send the header first
   char header[4];
-  *(uint16*)header = opcode;
-  *(uint16*)(header + 2) = len;
+  *(uint16_t*)header = opcode;
+  *(uint16_t*)(header + 2) = len;
   int lenSent = net_TCP_Send(socket, header, 4);
   if (lenSent < 4)
     return eTCPConnectionFailed;

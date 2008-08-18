@@ -53,8 +53,8 @@
 #include <algorithm>
 
 namespace base64 {
-  typedef unsigned uint32;
-  typedef unsigned char uint8;
+  typedef unsigned uint32_t;
+  typedef unsigned char uint8_t;
 
   extern const char* to_table;
   extern const char* to_table_end;
@@ -72,20 +72,20 @@ namespace base64 {
 
     int bytes;
     do {
-      uint32 input = 0;
+      uint32_t input = 0;
 
       // get the next three bytes into "in" (and count how many we actually get)
       bytes = 0;
       for(; (bytes < 3) && (it != end); ++bytes, ++it) {
 	input <<= 8;
-	input += static_cast<uint8>(*it);
+	input += static_cast<uint8_t>(*it);
       }
 
       // convert to base64
       int bits = bytes*8;
       while (bits > 0) {
 	bits -= 6;
-	const uint8 index = ((bits < 0) ? input << -bits : input >> bits) & 0x3F;
+	const uint8_t index = ((bits < 0) ? input << -bits : input >> bits) & 0x3F;
 	*out = to_table[index];
 	++out;
 	++lineSize;
@@ -120,12 +120,12 @@ namespace base64 {
     int chars;
 
     do {
-      uint8 input[4] = {0, 0, 0, 0};
+      uint8_t input[4] = {0, 0, 0, 0};
 
       // get four characters
       chars=0;
       while((chars<4) && (it != end)) {
-	uint8 c = static_cast<char>(*it);
+	uint8_t c = static_cast<char>(*it);
 	if (c == '=') break; // pad character marks the end of the stream
 	++it;
 
@@ -137,13 +137,13 @@ namespace base64 {
 
       // output the binary data
       if (chars >= 2) {
-	*out = static_cast<uint8>((input[0] << 2) + (input[1] >> 4));
+	*out = static_cast<uint8_t>((input[0] << 2) + (input[1] >> 4));
 	++out;
 	if (chars >= 3) {
-	  *out = static_cast<uint8>((input[1] << 4) + (input[2] >> 2));
+	  *out = static_cast<uint8_t>((input[1] << 4) + (input[2] >> 2));
 	  ++out;
 	  if (chars >= 4) {
-	    *out = static_cast<uint8>((input[2] << 6) + input[3]);
+	    *out = static_cast<uint8_t>((input[2] << 6) + input[3]);
 	    ++out;
 	  }
 	}

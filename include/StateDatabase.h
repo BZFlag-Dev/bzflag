@@ -197,6 +197,7 @@ public:
   static const std::string	BZDB_AMBIENTLIGHT;
   static const std::string	BZDB_ANGLETOLERANCE;
   static const std::string	BZDB_ANGULARAD;
+  static const std::string	BZDB_AUTHD;
   static const std::string	BZDB_AUTOALLOWTIME;
   static const std::string	BZDB_AVENUESIZE;
   static const std::string	BZDB_BASESIZE;

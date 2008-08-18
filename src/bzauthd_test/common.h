@@ -13,19 +13,19 @@
 #ifndef __BZAUTHD_TEST_COMMON_H__
 #define __BZAUTHD_TEST_COMMON_H__
 
+#include <common.h>
+#include <conio.h>
+
 // the net test will use windows threads, disable it when doing builds for other platforms
 #define TEST_NET
 
-#include <stdio.h>
-#include <conio.h>
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
 #include <gcrypt.h>
-#include <set>
 
 #ifdef TEST_NET
-#include <windows.h>
-#include <process.h>
+//#include <windows.h>
+//#include <process.h>
 #endif
 
 void test_ldap();

@@ -14,7 +14,7 @@
 #define __BZAUTHD_NETHANDLER_H__
 
 #include <Socket.h>
-#include <Protocol.h>
+#include <AuthProtocol.h>
 
 class Packet;
 

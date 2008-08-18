@@ -14,7 +14,7 @@
 #include "TokenMgr.h"
 #include "EventHandler.h"
 #include "Log.h"
-#include "Config.h"
+#include "ConfigMgr.h"
 
 INSTANTIATE_SINGLETON(TokenMgr);
 
@@ -29,26 +29,26 @@ TokenMgr::~TokenMgr()
 
 }
 
-void TokenMgr::addToken(std::string name, uint32 token)
+void TokenMgr::addToken(std::string name, uint32_t token)
 {
   sLog.outLog("TokenMgr: adding token %d (%s)", token, name.c_str());
   tokenMap[nextToken] = name;
-  sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32(token), sConfig.getIntValue(CONFIG_TOKEN_EXPIRE_DELAY) / 1000.0);
+  sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32_t(token), sConfig.getIntValue(CONFIG_TOKEN_EXPIRE_DELAY) / 1000.0);
 }
 
-uint32 TokenMgr::newToken(std::string name)
+uint32_t TokenMgr::newToken(std::string name)
 {
   addToken(name, nextToken);
   return nextToken++;
 }
 
-bool TokenMgr::checkToken(std::string name, uint32 token)
+bool TokenMgr::checkToken(std::string name, uint32_t token)
 {
   TokenMapType::iterator itr = tokenMap.find(token);
   return itr != tokenMap.end() && itr->second == name;
 }
 
-void TokenMgr::removeToken(uint32 token)
+void TokenMgr::removeToken(uint32_t token)
 {
   TokenMapType::iterator itr = tokenMap.find(token);
   if(itr != tokenMap.end()) removeToken(itr);
@@ -63,8 +63,8 @@ void TokenMgr::removeToken(TokenMapType::iterator &itr)
 
 void TokenMgr::expireCallback(void *data)
 {
-  sTokenMgr.removeToken(*(uint32*)data);
-  delete (uint32*)data;
+  sTokenMgr.removeToken(*(uint32_t*)data);
+  delete (uint32_t*)data;
 }
 
 // Local Variables: ***

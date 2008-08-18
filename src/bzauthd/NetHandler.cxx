@@ -12,7 +12,7 @@
 
 #include <common.h>
 #include "NetHandler.h"
-#include "Config.h"
+#include "ConfigMgr.h"
 #include "Log.h"
 
 INSTANTIATE_SINGLETON(NetHandler);
@@ -66,7 +66,7 @@ void NetConnectSocket::onReadData(PacketHandlerBase *&handler, Packet &packet)
   {
     if(!(((PacketHandler*)handler)->*handlerTable[packet.getOpcode()])(packet))
     {
-      sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(packet), (uint16)packet.getLength());
+      sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(packet), (uint16_t)packet.getLength());
       disconnect();
     }
   }
@@ -100,7 +100,7 @@ bool NetHandler::initialize()
 
   sockHandler->initialize(32000);
 
-  uint32 listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
+  uint32_t listenPort = sConfig.getIntValue(CONFIG_LOCALPORT);
 
   teTCPError err = localServer->listen(listenPort);
   if(err != eTCPNoError)

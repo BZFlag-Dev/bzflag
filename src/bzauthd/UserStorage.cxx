@@ -14,7 +14,7 @@
 #include "UserStorage.h"
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
-#include "Config.h"
+#include "ConfigMgr.h"
 #include <Log.h>
 #include <gcrypt.h>
 #include "base64.h"
@@ -50,7 +50,7 @@ void UserStore::unbind(LDAP *& ld)
   }
 }
 
-bool UserStore::bind(LDAP *& ld, const uint8 *addr, const uint8 *dn, const uint8 *pw)
+bool UserStore::bind(LDAP *& ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw)
 {
   unbind(ld);
   sLog.outLog("UserStore: binding to %s, with root dn %s", addr, dn);
@@ -72,10 +72,10 @@ size_t UserStore::hashLen()
   return (size_t)gcry_md_get_algo_dlen(GCRY_MD_MD5) / 2 * 3 + 5;
 }
 
-void UserStore::hash(uint8 *message, size_t message_len, uint8 *digest)
+void UserStore::hash(uint8_t *message, size_t message_len, uint8_t *digest)
 {
   int md5len = gcry_md_get_algo_dlen(GCRY_MD_MD5);
-  uint8 *tmpbuf = new uint8[md5len];
+  uint8_t *tmpbuf = new uint8_t[md5len];
   gcry_md_hash_buffer(GCRY_MD_MD5, tmpbuf, message, message_len);
   strcpy((char*)digest, "{md5}");
   base64::encode(tmpbuf, tmpbuf + md5len, digest+5);
@@ -115,7 +115,7 @@ bool UserStore::authUser(UserInfo &info)
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
   LDAP *ld = NULL;
-  return bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8*)dn.c_str(), (const uint8*)info.password.c_str()); 
+  return bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8_t*)dn.c_str(), (const uint8_t*)info.password.c_str()); 
 }
 
 bool UserStore::isRegistered(std::string callsign)
@@ -132,7 +132,7 @@ bool UserStore::isRegistered(std::string callsign)
       int errcode;
       char *errmsg;
       if(!ldap_check( ldap_parse_result(rootld, msg, &errcode, NULL, &errmsg, NULL, NULL, 0) ))
-        break; 
+        break;
       if(errmsg) {
         if(errmsg[0]) printf("ERROR: %s\n", errmsg);
         ldap_memfree(errmsg);

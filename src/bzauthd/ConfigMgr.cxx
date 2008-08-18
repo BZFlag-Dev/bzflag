@@ -11,7 +11,8 @@
 */
 
 #include <common.h>
-#include "Config.h"
+#include <assert.h>
+#include "ConfigMgr.h"
 
 INSTANTIATE_SINGLETON(Config);
 
@@ -33,54 +34,54 @@ Config::Config()
 
 Config::~Config()
 {
-  for(uint8 i = 0; i < values.size(); i++)
+  for(uint8_t i = 0; i < values.size(); i++)
     if(values[i] != NULL) free(values[i]);
 }
 
-void Config::setStringValue(uint16 key, const uint8 *value)
+void Config::setStringValue(uint16_t key, const uint8_t *value)
 {
   assert(lookupType(key) == CONFIG_TYPE_STRING);
 
   values[key] = (void*)strdup((const char*)value);
 }
 
-const uint8 * Config::getStringValue(uint16 key)
+const uint8_t * Config::getStringValue(uint16_t key)
 {
   assert(lookupType(key) == CONFIG_TYPE_STRING);
 
-  return (const uint8*) values[key];
+  return (const uint8_t*) values[key];
 }
 
-uint32 Config::getIntValue(uint16 key)
+uint32_t Config::getIntValue(uint16_t key)
 {
   assert(lookupType(key) == CONFIG_TYPE_INTEGER);
 
-  return *(uint32*) values[key];
+  return *(uint32_t*) values[key];
 }
 
-void Config::setIntValue(uint16 key, uint32 value)
+void Config::setIntValue(uint16_t key, uint32_t value)
 {
   assert(lookupType(key) == CONFIG_TYPE_INTEGER);
 
   values[key] = (void*)malloc(4);
-  *(uint32*)values[key] = value;
+  *(uint32_t*)values[key] = value;
 }
 
-void Config::registerKey(std::string stringKey, uint16 intKey, uint32 defaultValue)
+void Config::registerKey(std::string stringKey, uint16_t intKey, uint32_t defaultValue)
 {
   keyRegister[stringKey] = intKey;
   typeRegister[intKey] = CONFIG_TYPE_INTEGER;
   setIntValue(intKey, defaultValue);
 } 
 
-void Config::registerKey(std::string stringKey, uint16 intKey, const char * defaultValue)
+void Config::registerKey(std::string stringKey, uint16_t intKey, const char * defaultValue)
 {
   keyRegister[stringKey] = intKey;
   typeRegister[intKey] = CONFIG_TYPE_STRING;
-  setStringValue(intKey, (const uint8*)defaultValue);
+  setStringValue(intKey, (const uint8_t*)defaultValue);
 }
 
-uint16 Config::lookupKey(std::string stringKey)
+uint16_t Config::lookupKey(std::string stringKey)
 {
   KeyRegisterType::iterator itr = keyRegister.find(stringKey);
   if(itr != keyRegister.end())
@@ -89,7 +90,7 @@ uint16 Config::lookupKey(std::string stringKey)
     return CONFIG_MAX;
 }
 
-uint8 Config::lookupType(uint16 key)
+uint8_t Config::lookupType(uint16_t key)
 {
   if(key < typeRegister.size())
     return typeRegister[key];

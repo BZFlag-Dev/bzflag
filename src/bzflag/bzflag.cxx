@@ -220,7 +220,7 @@ static void parse(int argc, char **argv)
       anonymous = true;
     } else if (strcmp(argv[i], "-authd") == 0) {
       checkArgc(i, argc, argv[i]);
-      BZDB.set("authd", argv[i]);
+      BZDB.set(StateDatabase::BZDB_AUTHD, argv[i]);
     } else if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()

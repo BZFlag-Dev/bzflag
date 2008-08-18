@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;"
+				AdditionalIncludeDirectories="./;../../include;../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;BZAUTHCOMMON_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;"
+				AdditionalIncludeDirectories="./;../../include;../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;BZAUTHCOMMON_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -150,6 +150,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\bzAuthCommon\AuthProtocol.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzAuthCommon\base64.cpp"
 				>
 			</File>
@@ -172,10 +176,14 @@
 			<File
 				RelativePath="..\..\src\bzAuthCommon\net.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzAuthCommon\Protocol.cxx"
-				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzAuthCommon\RSA.cxx"
@@ -185,10 +193,6 @@
 				RelativePath="..\..\src\bzAuthCommon\Socket.cxx"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\bzAuthCommon\TCPConnection.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -196,11 +200,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\bzAuthCommon\base64.h"
+				RelativePath="..\..\src\bzAuthCommon\AuthProtocol.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzAuthCommon\Common.h"
+				RelativePath="..\..\src\bzAuthCommon\base64.h"
 				>
 			</File>
 			<File
@@ -212,27 +216,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzAuthCommon\Platform.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzAuthCommon\Protocol.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzAuthCommon\RSA.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzAuthCommon\Singleton.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzAuthCommon\Socket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzAuthCommon\TCPConnection.h"
 				>
 			</File>
 		</Filter>

@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include;../../src/bzAuthCommon/"
+				AdditionalIncludeDirectories="./;../../include;../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include;../../src/bzAuthCommon/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -121,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include;../../src/bzAuthCommon/"
+				AdditionalIncludeDirectories="./;../../include;../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include;../../src/bzAuthCommon/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -250,26 +250,8 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzauthd\Config.cxx"
+				RelativePath="..\..\src\bzauthd\ConfigMgr.cxx"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\EventHandler.cxx"
@@ -340,24 +322,6 @@
 			<File
 				RelativePath="..\..\src\bzauthd\TimeKeeper.cxx"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\TokenMgr.cxx"
@@ -410,7 +374,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\bzauthd\Config.h"
+				RelativePath="..\..\src\bzauthd\ConfigMgr.h"
 				>
 			</File>
 			<File

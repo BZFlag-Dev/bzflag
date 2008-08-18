@@ -87,6 +87,7 @@ const std::string StateDatabase::BZDB_AGILITYVELDELTA	= std::string("_agilityVel
 const std::string StateDatabase::BZDB_AMBIENTLIGHT	= std::string("_ambientLight");
 const std::string StateDatabase::BZDB_ANGLETOLERANCE    = std::string("_angleTolerance");
 const std::string StateDatabase::BZDB_ANGULARAD		= std::string("_angularAd");
+const std::string StateDatabase::BZDB_AUTHD		= std::string("_authd");
 const std::string StateDatabase::BZDB_AUTOALLOWTIME	= std::string("_autoAllowTime");
 const std::string StateDatabase::BZDB_AVENUESIZE	= std::string("_avenueSize");
 const std::string StateDatabase::BZDB_BASESIZE		= std::string("_baseSize");

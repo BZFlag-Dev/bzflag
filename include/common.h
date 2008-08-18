@@ -346,6 +346,14 @@ typedef unsigned char	uint8_t;
 #define BZ_ATTR_23 __attribute__ ((__format__ (__printf__, 2, 3)))
 #define BZ_ATTR_12 __attribute__ ((__format__ (__printf__, 1, 2)))
 
+/** hashmap defines */
+#if defined(_MSC_VER) && _MSC_VER >= 1300
+#define HM_NAMESPACE stdext
+#elif defined( __GNUC__ ) && __GNUC__ >= 3
+#define HM_NAMESPACE __gnu_cxx
+#else
+#define HM_NAMESPACE std
+#endif
 
 #endif /* BZF_COMMON_H */
 

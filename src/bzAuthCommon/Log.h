@@ -18,6 +18,7 @@
 #define __BZAUTHD_LOG_H__
 
 #include <stdio.h>
+#include <Singleton.h>
 
 class Log : public Singleton<Log>
 {

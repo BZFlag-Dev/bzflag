@@ -108,6 +108,8 @@ public:
   inline static const T& constInstance() { return *instance(); }
 };
 
+#define INSTANTIATE_SINGLETON(T) template <> T* Singleton<T>::_instance = (T*)0;
+
 #endif /* __SINGLETON_H__ */
 
 

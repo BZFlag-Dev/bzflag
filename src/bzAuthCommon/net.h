@@ -64,12 +64,12 @@ static inline unsigned int NET_Swap32(unsigned int D) {
 #ifdef NET_HAS_64BIT_TYPE
 #ifndef NET_Swap64
 static inline long long SDLNET_Swap64(long long val) {
-  Uint32 hi, lo;
+  uint32_t hi, lo;
 
   /* Separate into high and low 32-bit values and swap them */
-  lo = (Uint32)(val&0xFFFFFFFF);
+  lo = (uint32_t)(val&0xFFFFFFFF);
   val >>= 32;
-  hi = (Uint32)(val&0xFFFFFFFF);
+  hi = (uint32_t)(val&0xFFFFFFFF);
   val = NET_Swap32(lo);
   val <<= 32;
   val |= NET_Swap32(hi);

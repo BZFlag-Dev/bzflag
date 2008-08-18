@@ -28,10 +28,10 @@ void sleep_thread(void *)
     {
         if(sleep_var != 0)
         {
-            _sleep(sleep_var);
+            Sleep(sleep_var);
             sleep_var = 0;
         }
-        _sleep(1);
+        Sleep(1);
     }
 }
 
@@ -46,11 +46,11 @@ public:
     switch(packet.getOpcode())
     {
       case DMSG_REGISTER_CHALLENGE: {
-        uint8 *key_n;
-        uint32 e;
-        uint16 n_len;
+        uint8_t *key_n;
+        uint32_t e;
+        uint16_t n_len;
         assert(packet >> n_len);
-        key_n = new uint8[n_len];
+        key_n = new uint8_t[n_len];
         packet.read(key_n, (size_t)n_len);
         assert(packet >> e);
 
@@ -58,14 +58,14 @@ public:
         sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
         
         char message[] = "newuser password";
-        uint8 *cipher = NULL;
+        uint8_t *cipher = NULL;
         size_t cipher_len;
 
-        sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
+        sRSAManager.getPublicKey().encrypt((uint8_t*)message, strlen(message), cipher, cipher_len);
 
         {
           Packet response(CMSG_REGISTER_RESPONSE, 2 + cipher_len);
-          response << (uint16)cipher_len;
+          response << (uint16_t)cipher_len;
           response.append(cipher, cipher_len);
           sendData(response);
         }
@@ -74,11 +74,11 @@ public:
         delete[] key_n;
       } break;
       case DMSG_AUTH_CHALLENGE: {
-        uint8 *key_n;
-        uint32 e;
-        uint16 n_len;
+        uint8_t *key_n;
+        uint32_t e;
+        uint16_t n_len;
         assert(packet >> n_len);
-        key_n = new uint8[n_len];
+        key_n = new uint8_t[n_len];
         packet.read(key_n, (size_t)n_len);
         assert(packet >> e);
 
@@ -86,14 +86,14 @@ public:
         sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
         
         char message[] = "newuser password";
-        uint8 *cipher = NULL;
+        uint8_t *cipher = NULL;
         size_t cipher_len;
 
-        sRSAManager.getPublicKey().encrypt((uint8*)message, strlen(message), cipher, cipher_len);
+        sRSAManager.getPublicKey().encrypt((uint8_t*)message, strlen(message), cipher, cipher_len);
 
         {
           Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
-          response << (uint16)cipher_len;
+          response << (uint16_t)cipher_len;
           response.append(cipher, cipher_len);
           sendData(response);
         }
@@ -102,11 +102,11 @@ public:
         delete[] key_n;
       } break;
       case DMSG_AUTH_SUCCESS:
-        uint32 token;
+        uint32_t token;
         packet >> token;
         printf("Auth successful, token %d\n", token); break;
       case DMSG_AUTH_FAIL:
-        uint32 reason;
+        uint32_t reason;
         packet >> reason;
         printf("Auth failed, reason %d\n", reason); break; 
       case DMSG_REGISTER_SUCCESS:
@@ -169,7 +169,7 @@ void test_random()
     }*/
 }
 
-void test_comm(uint8 commType)
+void test_comm(uint8_t commType)
 {
     SocketHandler *handler = new SocketHandler;
     handler->initialize(32000);
@@ -183,9 +183,9 @@ void test_comm(uint8 commType)
     printf("Connected\n");
 
     {
-      uint8 peerType = BZAUTHD_PEER_CLIENT;
-      uint16 protoVersion = 1;
-      uint32 cliVersion = 2;
+      uint8_t peerType = BZAUTHD_PEER_CLIENT;
+      uint16_t protoVersion = 1;
+      uint32_t cliVersion = 2;
       Packet msg(MSG_HANDSHAKE);
       msg << peerType << protoVersion << cliVersion << commType;
       client->sendData(msg);

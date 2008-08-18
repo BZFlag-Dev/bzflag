@@ -11,13 +11,14 @@
 */
 
 #include <common.h>
-#include "Config.h"
+#include "ConfigMgr.h"
 #include "Log.h"
 #include "NetHandler.h"
 #include "RSA.h"
 #include "UserStorage.h"
 #include "TimeKeeper.h"
 #include "EventHandler.h"
+#include <conio.h>
 
 int main()
 {

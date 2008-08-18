@@ -34,7 +34,7 @@
 /* local implementation headers */
 #include "bzfs.h"
 #include "../bzAuthCommon/Socket.h"
-#include "../bzAuthCommon/Protocol.h"
+#include "../bzAuthCommon/AuthProtocol.h"
 #include "../bzAuthCommon/RSA.h"
 
 extern SocketHandler authSockHandler;
@@ -48,14 +48,14 @@ public:
     switch(packet.getOpcode()) {
       case DMSG_TOKEN_VALIDATE:
       {
-        uint8 count;
+        uint8_t count;
 
         if(!(packet >> count)) { disconnect(); break; }
         for(int i = 0; i < count; i++) {
           // TODO: use proper max callsign len
           char callsign[1024];
-          if(!packet.read_string((uint8*)callsign, 1024)) { disconnect(); break; }
-          uint32 valid_state;
+          if(!packet.read_string((uint8_t*)callsign, 1024)) { disconnect(); break; }
+          uint32_t valid_state;
           if(!(packet >> valid_state)) { disconnect(); break; }
           link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, "");
         }
@@ -487,8 +487,8 @@ void ListServerLink::checkTokens(std::string *pMsg)
     packetLen += strlen(playerData->player.getCallSign()) + 5;
   }
 
-  uint8 peerType = BZAUTHD_PEER_SERVER;
-  uint16 protoVersion = 1;
+  uint8_t peerType = BZAUTHD_PEER_SERVER;
+  uint16_t protoVersion = 1;
   Packet handshakeMsg(MSG_HANDSHAKE, 3);
   handshakeMsg << peerType << protoVersion;
   tokenSocket->sendData(handshakeMsg);
@@ -501,13 +501,13 @@ void ListServerLink::checkTokens(std::string *pMsg)
   }
 
   Packet tokenMsg(SMSG_TOKEN_VALIDATE, packetLen);
-  tokenMsg << (uint8)callSigns.size();
+  tokenMsg << (uint8_t)callSigns.size();
   for(CallSignMap::iterator itr = callSigns.begin(); itr != callSigns.end(); ++itr) {
     GameKeeper::Player *playerData = itr->second;
     playerData->_LSAState = GameKeeper::Player::checking;
     NetHandler *handler = playerData->netHandler;
-    tokenMsg << (uint32)atoi(playerData->player.getToken());
-    tokenMsg.append((const uint8*)itr->first.c_str(), itr->first.size());
+    tokenMsg << (uint32_t)atoi(playerData->player.getToken());
+    tokenMsg.append((const uint8_t*)itr->first.c_str(), itr->first.size());
     tokenMsg << '\0';
 
     if(pMsg) {
@@ -531,7 +531,7 @@ void ListServerLink::update()
 {
   if(!publicizeServer) return;
   // try connect and ask for token validation (if there's anything to validate)
-  if(token_phase == 0 && tokenSocket->connect(BZDB.get("authd")) == 0)
+  if(token_phase == 0 && tokenSocket->connect(BZDB.get(StateDatabase::BZDB_AUTHD)) == 0)
     checkTokens(NULL);
 
   if(token_phase >= 1) {

@@ -11,6 +11,7 @@
 */
 
 #include "common.h"
+#include <assert.h>
 #include "RSA.h"
 #include <gcrypt.h>
 #include "Log.h"
@@ -32,19 +33,19 @@ void RSAKey::_setKey(gcry_ac_key_t k)
   key = k;
 }
 
-uint8 * RSAKey::_getValueN(size_t *n_len)
+uint8_t * RSAKey::_getValueN(size_t *n_len)
 {
   gcry_ac_data_t data = gcry_ac_key_data_get(key);
   gcry_mpi_t mpi;
   if(gcry_ac_data_get_name(data, 0, "n", &mpi)) return NULL;
-  uint8 buf[1024];
+  uint8_t buf[1024];
   size_t len;
   if(gcry_mpi_print(GCRYMPI_FMT_STD, buf, 1024, &len, mpi)) return NULL;
   // the first byte is left 0 in this case (don't ask..)
   // this makes the returned length one more than it should be (129)
   // reconstructing the mpi doesn't work without this byte
   // TODO: maybe we can save a byte by trimming it here and adding it back there
-  uint8 *ret = (uint8*)malloc(len);
+  uint8_t *ret = (uint8_t*)malloc(len);
   memcpy(ret, buf, len);
   if(n_len) *n_len = len;
   return ret;
@@ -55,7 +56,7 @@ int RSAKey::_getValueE()
   gcry_ac_data_t data = gcry_ac_key_data_get(key);
   gcry_mpi_t mpi;
   if(gcry_ac_data_get_name(data, 0, "e", &mpi)) return 0;
-  uint8 buf[10];
+  uint8_t buf[10];
   // the mpi doesn't store the last bytes of the value if they are 0
   // so clear the mem before interpreting the bytes as an integer
   memset(buf, 0, sizeof(buf));
@@ -64,7 +65,7 @@ int RSAKey::_getValueE()
   return *(int*)buf;
 }
 
-bool RSAKey::setValues(uint8 *n, size_t n_len, uint32 e)
+bool RSAKey::setValues(uint8_t *n, size_t n_len, uint32_t e)
 {
   gcry_ac_handle_t handle = sRSAManager._getHandle();
 
@@ -100,7 +101,7 @@ RSAPublicKey::RSAPublicKey()
 {
 }
 
-bool RSAPublicKey::encrypt(uint8 *message, size_t message_len, uint8 *&cipher, size_t &cipher_len)
+bool RSAPublicKey::encrypt(uint8_t *message, size_t message_len, uint8_t *&cipher, size_t &cipher_len)
 {
   // NOTE: cipher must either be an array that's large enough to hold the output
   //       or a NULL pointer to signal the memory to be allocated inside this function
@@ -119,7 +120,7 @@ RSASecretKey::RSASecretKey()
 {
 }
 
-bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, size_t &message_len)
+bool RSASecretKey::decrypt(uint8_t *cipher, size_t cipher_len, uint8_t *&message, size_t &message_len)
 {
   // NOTE: message must either be an array that's large enough to hold the output
   //       or a NULL pointer to signal the memory to be allocated inside this function
@@ -134,7 +135,7 @@ bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, si
   return gcry_ac_data_decrypt_scheme(handle, GCRY_AC_ES_PKCS_V1_5, 0, NULL, key, &io_cipher, &io_message) == 0;
 }
 
-bool RSAKey::getValues(uint8 *&n, size_t &n_len, uint32 &e)
+bool RSAKey::getValues(uint8_t *&n, size_t &n_len, uint32_t &e)
 {
   assert(key);
   n = _getValueN(&n_len);

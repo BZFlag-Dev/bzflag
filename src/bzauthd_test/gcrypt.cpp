@@ -26,10 +26,10 @@ size_t hashLen()
   return gcry_md_get_algo_dlen(GCRY_MD_MD5) / 2 * 3;
 }
 
-void hash(uint8 *message, size_t message_len, uint8 *digest)
+void hash(uint8_t *message, size_t message_len, uint8_t *digest)
 {
   int md5len = gcry_md_get_algo_dlen(GCRY_MD_MD5);
-  uint8 *tmpbuf = new uint8[md5len];
+  uint8_t *tmpbuf = new uint8_t[md5len];
   gcry_md_hash_buffer(GCRY_MD_MD5, tmpbuf, message, message_len);
   base64::encode(tmpbuf, tmpbuf + md5len, digest);
   delete[] tmpbuf;
@@ -39,9 +39,9 @@ void md5test()
 {
     int digest_len = (int)hashLen();
 
-    uint8 *digest = new uint8[digest_len+1];
+    uint8_t *digest = new uint8_t[digest_len+1];
     memset(digest, 0, digest_len+1);
-    uint8 buffer[] = "password";
+    uint8_t buffer[] = "password";
     size_t buffer_len = (int)strlen((const char*)buffer);
 
     hash(buffer, buffer_len, digest);
@@ -60,8 +60,8 @@ void test_gcrypt()
 
     // decompose the key into values that can be sent in packets
     size_t n_len;
-    uint8 *key_n;
-    uint32 e;
+    uint8_t *key_n;
+    uint32_t e;
     if(!sRSAManager.getPublicKey().getValues(key_n, n_len, e)) return;
     assert(e == 65537);
 
@@ -76,14 +76,14 @@ void test_gcrypt()
     char *cipher = NULL;
     size_t cipher_len = 0;
 
-    if(!publicKey.encrypt((uint8*)message, strlen(message), (uint8*&)cipher, cipher_len)) return;
+    if(!publicKey.encrypt((uint8_t*)message, strlen(message), (uint8_t*&)cipher, cipher_len)) return;
     printf("encrypted: "); nputs((char*)cipher, cipher_len); printf("\n");
 
     // decrypt the cipher
     char *output = NULL;
     size_t output_len = 0;
 
-    if(!sRSAManager.getSecretKey().decrypt((uint8*)cipher, cipher_len, (uint8*&)output, output_len)) return;
+    if(!sRSAManager.getSecretKey().decrypt((uint8_t*)cipher, cipher_len, (uint8_t*&)output, output_len)) return;
     printf("decrypted: "); nputs(output, output_len); printf("\n");
 
     gcry_free(cipher);

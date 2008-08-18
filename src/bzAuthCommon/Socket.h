@@ -13,7 +13,6 @@
 #ifndef __BZAUTHD_SOCKET_H__
 #define __BZAUTHD_SOCKET_H__
 
-#include "Platform.h"
 #include "Singleton.h"
 #include <string.h>
 #include <string>
@@ -45,8 +44,8 @@ protected:
 class Packet
 {
 public:
-  Packet(uint16 opcode, uint8 *data, size_t size) { init(data, size, opcode); }
-  Packet(uint16 opcode, size_t size = 1024) { init(size, opcode); }
+  Packet(uint16_t opcode, uint8_t *data, size_t size) { init(data, size, opcode); }
+  Packet(uint16_t opcode, size_t size = 1024) { init(size, opcode); }
   Packet(Packet & packet) { init(packet.m_data, packet.m_size, packet.m_opcode); }
 
   ~Packet() { free(m_data); }
@@ -68,11 +67,11 @@ public:
   template < class T >
   Packet &operator << (const T &x)
   {
-    append((const uint8*)&x, sizeof(T));
+    append((const uint8_t*)&x, sizeof(T));
     return (*this);
   }
 
-  Packet &operator << (const uint8 * &x)
+  Packet &operator << (const uint8_t * &x)
   {
     // get string length and protect against overflow
     size_t len = 0;
@@ -86,15 +85,15 @@ public:
   template <>
   Packet &operator << (const std::string &x)
   {
-    append((const uint8*)x.c_str(), x.size());
+    append((const uint8_t*)x.c_str(), x.size());
     return (*this);
   }
 
-  void append(const uint8 *x, size_t size)
+  void append(const uint8_t *x, size_t size)
   {
     while(m_wpoz + size >= m_size)
     {
-      m_data = (uint8*)realloc((void*)m_data, 2*m_size);
+      m_data = (uint8_t*)realloc((void*)m_data, 2*m_size);
       m_size *= 2;
     }
 
@@ -102,7 +101,7 @@ public:
     m_wpoz += size;
   }
 
-  bool read(uint8 *x, size_t size)
+  bool read(uint8_t *x, size_t size)
   {
     if(m_rpoz + size > m_size)
     {
@@ -116,7 +115,7 @@ public:
   }
 
   // read a string of length at most buf_size (including the terminating '\0')
-  bool read_string(uint8 *x, size_t buf_size)
+  bool read_string(uint8_t *x, size_t buf_size)
   {
     for(size_t i = m_rpoz; i < std::min(m_rpoz + buf_size, m_size); i++)
     {
@@ -136,28 +135,28 @@ public:
   operator bool() const { return m_rpoz <= m_size; }
 
   size_t getLength() const { return m_wpoz; }
-  uint16 getOpcode() const { return m_opcode; }
-  const uint8 * getData() const { return (const uint8 *)m_data; }
+  uint16_t getOpcode() const { return m_opcode; }
+  const uint8_t * getData() const { return (const uint8_t *)m_data; }
 
 protected:
-  void init(size_t size, uint16 opcode)
+  void init(size_t size, uint16_t opcode)
   {
-    m_data = (uint8*)malloc(size);
+    m_data = (uint8_t*)malloc(size);
     m_size = std::max(size, (size_t)1);
     m_rpoz = 0;
     m_wpoz = 0;
     m_opcode = opcode;
   }
 
-  void init(uint8 *data, size_t size, uint16 opcode)
+  void init(uint8_t *data, size_t size, uint16_t opcode)
   {
     init(size, opcode);
     memcpy(m_data, data, size);
     m_wpoz = size;
   }
 
-  uint16 m_opcode;
-  uint8 *m_data;
+  uint16_t m_opcode;
+  uint8_t *m_data;
   size_t m_size;
   size_t m_rpoz;
   size_t m_wpoz;
@@ -188,7 +187,7 @@ public:
   Socket(SocketHandler *h, const TCPsocket &s) : socket(s), sockHandler(h) {}
   Socket(SocketHandler *h) : socket(NULL), sockHandler(h) {}
   virtual ~Socket() {}
-  uint16 getPort() const { return serverIP.port; }
+  uint16_t getPort() const { return serverIP.port; }
   virtual void disconnect() = 0;
   TCPsocket &getSocket() { return socket; }
 
@@ -211,7 +210,7 @@ public:
   teTCPError sendData(Packet &packet);
 
   teTCPError connect(std::string server_and_port);
-  teTCPError connect(std::string server, uint16 port);
+  teTCPError connect(std::string server, uint16_t port);
 
   /* Set/get the connected state
    * The socket will only be really disconnected
@@ -226,10 +225,10 @@ public:
 private:
   bool update(PacketHandlerBase *& handler);
   void initRead();
-  uint8 buffer[MAX_PACKET_SIZE];
-  uint16 poz;
-  uint16 remainingHeader;
-  uint16 remainingData;
+  uint8_t buffer[MAX_PACKET_SIZE];
+  uint16_t poz;
+  uint16_t remainingHeader;
+  uint16_t remainingData;
   bool connected;
 };
 
@@ -239,7 +238,7 @@ class ListenSocket : public Socket
 public:
   ListenSocket(SocketHandler *h) : Socket(h) {}
   ~ListenSocket() { disconnect(); }
-  teTCPError listen(uint16 port);
+  teTCPError listen(uint16_t port);
 
   void disconnect();
   
@@ -257,19 +256,19 @@ public:
   SocketHandler() : socketSet(NULL), is_init(false) {}
   ~SocketHandler();
   static bool global_init();
-  teTCPError initialize(uint32 connections);
+  teTCPError initialize(uint32_t connections);
   void update();
   void addSocket(Socket *socket);
   void removeSocket(Socket *socket);
 
   // accept at most this many sockets
-  uint32 getMaxConnections () const { return maxUsers; }
+  uint32_t getMaxConnections () const { return maxUsers; }
   bool isInitialized() const { return is_init; }
 private:
   net_SocketSet socketSet;
   typedef std::map<Socket *, PacketHandlerBase *> SocketMapType;
   SocketMapType socketMap;
-  uint32 maxUsers;
+  uint32_t maxUsers;
   bool is_init;
 
   void removeSocket(SocketMapType::iterator &itr);
