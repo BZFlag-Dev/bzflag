@@ -13,11 +13,13 @@
 /* BZW */
 #include "BZW/Box.h"
 
+#include <iostream>
+
 namespace BZW
 {
-  void Box::readLine(const std::istringstream& line)
+  void Box::readLine(std::istringstream& line)
   {
-    string pname;
+    std::string pname;
     line >> pname;
     if(pname == "position")
     {
@@ -41,7 +43,7 @@ namespace BZW
     }
     else
     {
-        cerr << "Warning! Unrecognized parameter" << endl;
+      std::cerr << "Warning! Unrecognized parameter" << std::endl;
     }
     //FIXME check for erroneous extra strings maybe?
   }

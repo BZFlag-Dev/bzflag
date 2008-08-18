@@ -31,9 +31,15 @@ namespace BZW
   {
     public:
       /// Constructor
-      Parser(std::istream& input);
-      //TODO register callbacks for blocks
+      Parser();
+      /// Destructor
+      ~Parser();
+      /// Parse a BZW file from an istream
+      void Parse(std::istream& input);
+      /// Register a WorldObjectFactory callback
+      bool addWorldObjectFactory(const std::string& tag, WorldObjectFactory factory);
     private:
+      std::map<std::string, World::WorldObjectFactory> factories;
       WorldObject* current_object;
 
   };

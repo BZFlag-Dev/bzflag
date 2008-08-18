@@ -13,6 +13,8 @@
 #ifndef __BOX_H__
 #define __BOX_H__
 
+#include <string>
+#include <sstream>
 
 /* BZW */
 #include "WorldObject.h"
@@ -25,7 +27,7 @@ namespace BZW
       /// Default Constructor
       Box();
       /// Read and parse a parameter line in BZW format
-      void readLine(const std::istringstream& line);
+      void readLine(std::istringstream& line);
     private:
       float position[3];
       float size[3];

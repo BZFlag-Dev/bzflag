@@ -22,15 +22,6 @@ namespace BZW
   {
   }
 
-  /// Read/Create a world from a stream
-  World::World(std::istream& input)
-  {
-    /* TODO: decide if this should parse immediately or store the stream
-     * untul a parse method is called, to allow for registration of custom
-     * objects, or whatever.
-     */
-  }
-
   /// Destructor
   World::~World()
   {
@@ -41,7 +32,17 @@ namespace BZW
   void World::read(std::istream& input)
   {
     Parser p;
-    //TODO register objects with parser
+    /* add custom objects first */
+    for(std::map<std::string, WorldObjectFactory>::iterator i = custom_objects.begin(); i < custom_objects.end(); i++)
+    {
+      p.addWorldFactoryObject(i->first, i->second);
+    }
+
+    /* add default objects */
+    p.addWorldFactoryObject("box", addBox);
+
+    /* parse */
+    p.parse(input);
   }
 
   void World::write(std::ostream& output)
@@ -49,16 +50,30 @@ namespace BZW
 
   }
 
-  void World::registerObject(std::string tag, WorldObjectFactory factory)
+  bool World::registerObjectCallback(std::string tag, WorldObjectFactory factory)
   {
-    customObjects.insert(std::make_pair(tag, factory));
+    std::map<std::string, std::vector<WorldObjectFactory> >::iterator i = custom_objects.insert(std::make_pair(tag, factory));
+    return i.second
+  }
+
+  bool World::insertWorldObject(const std::string& tag, WorldObject* wobj)
+  {
+    std::map<std::string, vector<WorldObject*> >::iterator i = world_objects.find(tag);
+
+    if(i > world_objects.end())
+      i = world_objects.insert(std::make_pair(tag, std::vector<WorldObject*>()));
+
+    if(i.second)
+      i.first.second.push_back(wobj);
+
+    return i.second;
   }
 
   // World Objects
   Box* World::addBox()
   {
     Box* new_box = new Box();
-    world_objects.push_back(new_box);
+    insertWorldObject("box",new_box);
     return new_box;
   }
 }

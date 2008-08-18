@@ -21,13 +21,29 @@
 
 namespace BZW
 {
-  Parser::Parser(std::istream& input)
+  void Parser::parse(std::istream& input)
   {
     istreambuf_iterator<char> stream_begin(input);
     multi_pass<istreambuf_iterator<char> > begin(make_multi_pass(stream_begin)), end;
     bzw_grammar the_grammar(*this);
     bzw_skip_grammar the_skipper;
     parse(begin, end, the_grammar, the_skipper);
+  }
+
+  Parser::Parser() : current_object(NULL)
+  {
+
+  }
+
+  Parser::~Parser()
+  {
+
+  }
+
+  bool Parser::addWorldObjectFactory(const std::string& tag, WorldObjectFactory factory)
+  {
+    std::map<std::string, World::WorldObjectFactory>::iterator i = factories.insert(std::make_pair(tag, factory));
+    return i.first;
   }
 }
 // Local Variables: ***
