@@ -15,7 +15,6 @@
 
 // common implementation headers
 #include "HUDNavigationQueue.h"
-#include "HUDui.h"
 
 //
 // HUDuiNestedContainer
@@ -58,7 +57,7 @@ void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
 }
 
 // Pass the focus down to the container's children, unless the container itself has focus
-size_t HUDuiNestedContainer::gotFocus(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
+size_t HUDuiNestedContainer::gotFocus(size_t /*oldFocus*/, size_t proposedFocus, HUDNavChangeMethod /*changeMethod*/, void* data)
 {
   // If the nested container is getting focus, decide who to pass focus to
   if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex((int) proposedFocus))
