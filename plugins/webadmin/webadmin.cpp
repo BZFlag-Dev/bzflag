@@ -170,7 +170,7 @@ bool WebAdmin::loopCallback (const std::string &key)
       templateVars["permission"] = perm;
       return true;
     } else {
-      delete(stringList);
+      bz_deleteStringList(stringList);
     }
   } else if (key == "helpmsgs") {
     if (!loopPos) {
@@ -181,7 +181,7 @@ bool WebAdmin::loopCallback (const std::string &key)
       templateVars["helpmsgname"] = (*stringList)[loopPos++].c_str();
       return true;
     } else {
-      delete(stringList);
+      bz_deleteStringList(stringList);
     }
   } else if (key == "groups") {
     if (!loopPos) {
@@ -192,7 +192,7 @@ bool WebAdmin::loopCallback (const std::string &key)
       templateVars["groupname"] = (*stringList)[loopPos++].c_str();
       return true;
     } else {
-      delete(stringList);
+      bz_deleteStringList(stringList);
     }
   } else if (key == "servervars") {
     if (!loopPos) {
@@ -231,6 +231,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 {
   size_t size;
   std::string pagename = request.resource;
+  std::string filename;
   const char *username;
 
   reply.returnCode = HTTPReply::e200OK;
@@ -241,10 +242,10 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case VERIFIED:
     if (pagename.empty()) {
       pagename = "main";
-      std::string dummy;
     } else {
       size = pagename.size();
-      if (size > 0 && pagename[size-1] == '/') pagename.erase(size-1);
+      if (size > 0 && pagename[size-1] == '/')
+	pagename.erase(size-1);
     }
 
     if (pagename == "logout") {
@@ -272,9 +273,8 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 	reply.body = format("No such resource: %s", pagename.c_str());
     }
     break;
-    //reply.body = format("Not authenticated(Verified) sessionID %d",request.sessionID);
   default:
-    reply.body = format("Not authenticated sessionID %d, access level %d",request.sessionID,level);
+    reply.body = format("Not authenticated sessionID %d", request.sessionID);
   }
 
   templateVars.clear();
@@ -317,7 +317,7 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
     }
   }
   // update server vars
-  stringList = new bz_APIStringList;
+  stringList = bz_newStringList();
   listSize = bz_getBZDBVarList(stringList);
   for (loopPos = 0; loopPos < listSize; loopPos++) {
     s1 = "var";
@@ -325,6 +325,7 @@ void WebAdmin::mainPageCallback (const HTTPRequest &request)
     if (request.getParam(s1, s2))
       bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str());
   }
+  bz_deleteStringList(stringList);
   if (!error.empty())
     templateVars["error"] = error;
 }
@@ -356,7 +357,7 @@ void WebAdmin::groupPageCallback (const HTTPRequest &request)
       editing = true;
       return;
     } else if (request.request == ePost) {
-      delete(stringList);
+      bz_deleteStringList(stringList);
       listSize = bzu_standardPerms().size();
       std::string perm;
       std::vector<std::string> perms;
