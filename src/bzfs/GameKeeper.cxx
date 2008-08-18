@@ -562,6 +562,15 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
   myShot.running     = true;
 
   shotsInfo[id] = myShot;
+
+  if (id >= (int)shotStrategies.size())
+    shotStrategies.resize(id + 1);
+  else if (shotStrategies[id] != NULL)
+    delete shotStrategies[id];
+
+  float time = TimeKeeper::getCurrent().getSeconds();
+  
+  shotStrategies[id] = new SegmentedShotStrategy(new ShotPath(firingInfo, time));
   return true;
 }
 
@@ -583,6 +592,7 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
     return false;
   shotsInfo[id].running = false;
   firingInfo = shotsInfo[id].firingInfo;
+  delete(shotStrategies[id]);
   return true;
 }
 

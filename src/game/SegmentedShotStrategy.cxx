@@ -475,6 +475,8 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
   const int numSegments = (const int)(getSegments().size());
   thiefNodes = new LaserSceneNode*[numSegments];
 
+//CLIENTEDIT
+/*
   TextureManager &tm = TextureManager::instance();
   int texture = tm.getTextureID("thief");
 
@@ -497,6 +499,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
 	thiefNodes[i]->setColor(0,1,1);
 	thiefNodes[i]->setCenterColor(0,0,0);
   }
+*/
   setCurrentSegment(numSegments - 1);
 }
 

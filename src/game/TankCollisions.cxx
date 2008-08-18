@@ -13,7 +13,7 @@
 /* interface header */
 #include "TankCollisions.h"
 
-bool			TankCollisions::test(const ShotCollider& tank, const ShotPath* shotPath) const
+float			TankCollisions::test(const ShotCollider& tank, const ShotPath* shotPath) const
 {
   SegmentedShotStrategy* strategy = (SegmentedShotStrategy*) shotPath->getStrategy();
 

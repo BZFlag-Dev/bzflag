@@ -10,35 +10,32 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/*
- * TankCollisions:
- *        Interface for testing collisions between shots and tanks.
- */
-
-#ifndef __TANKCOLLISIONS_H__
-#define __TANKCOLLISIONS_H__
-
-#include "common.h"
+#ifndef _COLLISIONHANDLER_H_
+#define _COLLISIONHANDLER_H_
 
 /* system interface headers */
+#include <string>
+#include <cstring>
 #include <vector>
+#include <cstdlib>
 
 /* common interface headers */
-#include "Flag.h"
-#include "Intersect.h"
-#include "SegmentedShotStrategy.h"
-#include "ShotStrategy.h"
-#include "ShotUpdate.h"
+#include "bzfsAPI.h"
+#include "TankCollisions.h"
+#include "GameKeeper.h"
 
-class TankCollisions {
- public:
-  TankCollisions() { ; }
-  ~TankCollisions();
+class CollisionHandler : public bz_EventHandler
+{
 
-  float test (const ShotCollider& tank, const ShotPath* shotPath) const;
+  float lastUpdate;
+  TankCollisions* colDet;
+
+public:
+  CollisionHandler();
+  virtual void process(bz_EventData* data);
 };
 
-#endif // TANKCOLLISIONS_H
+#endif // _COLLISIONHANDLER_H_
 
 // Local Variables: ***
 // mode: C++ ***

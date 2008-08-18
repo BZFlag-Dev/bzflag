@@ -54,6 +54,7 @@
 #include "bzfsPlayerStateVerify.h"
 #include "AutoAllowTimer.h"
 #include "ServerIntangibilityManager.h"
+#include "CollisionHandler.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -63,6 +64,7 @@
 #include "GameTime.h"
 #include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
+#include "TankCollisions.h"
 
 // only include this if we are going to use plugins and export the API
 #ifdef BZ_PLUGINS
@@ -3900,6 +3902,9 @@ static bool initServer(int argc, char **argv)
 
   if (clOptions->startRecording)
     Record::start(AllPlayers);
+
+  // initilize the collision detector
+  bz_registerEvent(bz_eTickEvent, new CollisionHandler);
 
   // trap some signals
   if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)

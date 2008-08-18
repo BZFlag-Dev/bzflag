@@ -1018,7 +1018,8 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
   const int count = getMaxShots();
   for (int i = 0; i < count; i++) {
     ShotPath* shot = getShot(i);
-    if (shot && !shot->isExpiring() && !shot->isExpired()) {
+    if (shot && !shot->isExpiring() && !shot->isExpired() && boltSceneNodes[i]) {
+      // FIXME make a better consistency check between the shots and associated scene nodes
       // Add the shot to the scene
      boltSceneNodes[i]->move(shot->getPosition(), shot->getVelocity());
      if (boltSceneNodes[i]->getColorblind() != colorblind) {

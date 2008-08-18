@@ -46,6 +46,8 @@ bzfs_SOURCES = \
 	BZWReader.h \
 	CmdLineOptions.cxx \
 	CmdLineOptions.h \
+	CollisionHandler.cxx \
+	CollisionHandler.h \
 	CustomArc.cxx \
 	CustomArc.h \
 	CustomBase.cxx \

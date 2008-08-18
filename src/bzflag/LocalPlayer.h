@@ -22,6 +22,7 @@
 
 /* common interface headers */
 #include "Obstacle.h"
+#include "TankCollisions.h"
 #include "TimeKeeper.h"
 
 /* local interface headers */

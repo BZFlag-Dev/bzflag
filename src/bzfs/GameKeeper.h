@@ -29,6 +29,7 @@
 #include "PlayerState.h"
 #include "TimeKeeper.h"
 #include "bzfsAPI.h"
+#include "SegmentedShotStrategy.h"
 
 // implementation-specific bzfs-specific headers
 #include "CmdLineOptions.h"
@@ -42,7 +43,7 @@
 #include "messages.h"
 #include "ShotUpdate.h"
 #include "BufferedNetworkMessage.h"
-
+#include "CollisionHandler.h"
 
 struct FiringInfo;
 class ShotInfo {
@@ -80,6 +81,7 @@ typedef void (*tcpCallback)(NetHandler &netPlayer, int i, const RxStatus e);
 class GameKeeper {
 public:
   class Player {
+    friend class CollisionHandler;
   public:
     Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback);
     Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
@@ -234,7 +236,10 @@ public:
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
     static int	     maxShots;
+
+    // Shot tracking
     std::vector<ShotInfo> shotsInfo;
+    std::vector<SegmentedShotStrategy*> shotStrategies;
 
     int						idFlag;
 	TimeKeeper				agilityTime;
