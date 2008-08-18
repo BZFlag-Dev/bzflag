@@ -170,6 +170,7 @@ static void usage()
 {
   printFatalError("usage: %s"
 		  " [-anonymous]"
+                  " [-authd <auth-daemon-url>]"
 		  " [-badwords <filterfile>]"
 		  " [-configdir <config dir name>]"
 		  " [-d | -debug]"
@@ -217,6 +218,9 @@ static void parse(int argc, char **argv)
     if (strcmp(argv[i], "-a") == 0 ||
 	strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
+    } else if (strcmp(argv[i], "-authd") == 0) {
+      checkArgc(i, argc, argv[i]);
+      BZDB.set("authd", argv[i]);
     } else if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()

@@ -531,7 +531,7 @@ void ListServerLink::update()
 {
   if(!publicizeServer) return;
   // try connect and ask for token validation (if there's anything to validate)
-  if(token_phase == 0 && tokenSocket->connect("127.0.0.1", 1234) == 0)
+  if(token_phase == 0 && tokenSocket->connect(BZDB.get("authd")) == 0)
     checkTokens(NULL);
 
   if(token_phase >= 1) {

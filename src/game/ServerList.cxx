@@ -396,7 +396,7 @@ void			ServerList::checkEchos(StartupInfo *info)
     phase = 1;
   }
 
-  if(auth_phase == 0 && authSocket->connect("127.0.0.1", 1234) == 0)
+  if(auth_phase == 0 && authSocket->connect(BZDB.get("authd")) == 0)
   {
     // send a handshake to the auth daemon, including the request for auth
     uint8 commType = BZAUTH_COMM_AUTH;

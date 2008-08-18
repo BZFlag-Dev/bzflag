@@ -583,6 +583,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "Invalid group list for -advertise" << std::endl;
       else
 	options.advertiseGroups = argv[i];
+    } else if (strcmp(argv[i], "-authd") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      BZDB.set("authd", argv[i]);
     } else if (strcmp(argv[i], "-autoTeam") == 0) {
       options.autoTeam = true;
     } else if (strcmp(argv[i], "-b") == 0) {

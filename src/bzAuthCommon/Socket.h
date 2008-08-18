@@ -210,6 +210,7 @@ public:
   Packet * readData();
   teTCPError sendData(Packet &packet);
 
+  teTCPError connect(std::string server_and_port);
   teTCPError connect(std::string server, uint16 port);
 
   /* Set/get the connected state

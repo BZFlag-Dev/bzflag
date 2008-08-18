@@ -152,6 +152,15 @@ void ConnectSocket::disconnect()
   connected = false;
 }
 
+teTCPError ConnectSocket::connect(std::string server_and_port)
+{
+  int port = 0;
+  std::string::size_type pos = server_and_port.find(':');
+  if(pos != std::string::npos)
+    port = atoi(server_and_port.substr(pos+1).c_str());
+  return connect(server_and_port.substr(0, pos), port);
+}
+
 teTCPError ConnectSocket::connect(std::string server, uint16 port)
 {
   if ( net_ResolveHost(&serverIP, server.c_str(), port))

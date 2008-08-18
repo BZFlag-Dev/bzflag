@@ -241,7 +241,7 @@ void RegMenu::setStatus(const char* msg, const std::vector<std::string> *)
 void RegMenu::update()
 {
   if(phase == -1) return;
-  if(phase == 0 && regSocket->connect("127.0.0.1", 1234) == 0)
+  if(phase == 0 && regSocket->connect(BZDB.get("authd")) == 0)
   {
     uint8 commType = BZAUTH_COMM_REG;
     uint8 peerType = BZAUTHD_PEER_CLIENT;
