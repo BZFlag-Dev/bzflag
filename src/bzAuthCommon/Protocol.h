@@ -13,6 +13,10 @@
 #ifndef _BZAUTH_PROTOCOL_H_
 #define _BZAUTH_PROTOCOL_H_
 
+/** Constants, enums and structures
+  * specific to the auth protocol
+  */
+
 enum BzAuthOpcodes
 {
   MSG_HANDSHAKE             = 0,

@@ -28,8 +28,7 @@ void EventHandler::update()
 {
   double now = TimeKeeper::getTick().getSeconds();
    
-  while(!timeMap.empty() && timeMap.begin()->first <= now)
-  {
+  while(!timeMap.empty() && timeMap.begin()->first <= now) {
     Event *e = timeMap.begin()->second;
     e->call();
     e->delink();
@@ -52,8 +51,7 @@ EventHandler::Event::Event(CBFunc f, void *d, TimeMapType::iterator &i)
 
 void EventHandler::Event::delink()
 {
-  if(itr != sEventHandler.timeMap.end())
-  {
+  if(itr != sEventHandler.timeMap.end()) {
     sEventHandler.timeMap.erase(itr);
     itr = sEventHandler.timeMap.end();
     refCounter--;

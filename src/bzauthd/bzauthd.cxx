@@ -38,8 +38,7 @@ int main()
     return 1;
 
   /* main loop */
-  while(!kbhit())
-  {
+  while(!kbhit()) {
     TimeKeeper::setTick();
     sNetHandler.update();
     sEventHandler.update();

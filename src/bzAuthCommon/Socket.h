@@ -41,6 +41,7 @@ protected:
   ConnectSocket *m_socket;
 };
 
+/** Packet class for both sent and received packets */
 class Packet
 {
 public:
@@ -114,6 +115,7 @@ public:
     return true;
   }
 
+  // read a string of length at most buf_size (including the terminating '\0')
   bool read_string(uint8 *x, size_t buf_size)
   {
     for(size_t i = m_rpoz; i < std::min(m_rpoz + buf_size, m_size); i++)
@@ -178,6 +180,7 @@ typedef enum
 
 class SocketHandler;
 
+/** Abstract base class for the sockets */
 class Socket
 {
 public:
@@ -197,6 +200,7 @@ protected:
   SocketHandler *sockHandler;
 };
 
+/** Socket for both outgoing and incoming connections */
 class ConnectSocket : public Socket
 {
 public:
@@ -207,6 +211,13 @@ public:
   teTCPError sendData(Packet &packet);
 
   teTCPError connect(std::string server, uint16 port);
+
+  /* Set/get the connected state
+   * The socket will only be really disconnected
+   * when removed from the handler.
+   * That can happen if the connected state is changed is changed
+   * during an update or if the RemoveSocket is called explicitly
+   */
   void disconnect();
   bool isConnected() { return connected; }
 
@@ -221,6 +232,7 @@ private:
   bool connected;
 };
 
+/** Socket that listens for incoming connections */
 class ListenSocket : public Socket
 {
 public:
@@ -237,6 +249,7 @@ private:
   bool update(PacketHandlerBase *&);
 };
 
+/** SocketHandler updates and manages all of the sockets */
 class SocketHandler
 {
 public:
@@ -248,6 +261,7 @@ public:
   void addSocket(Socket *socket);
   void removeSocket(Socket *socket);
 
+  // accept at most this many sockets
   uint32 getMaxConnections () const { return maxUsers; }
   bool isInitialized() const { return is_init; }
 private:

@@ -46,6 +46,7 @@ SocketHandler authSockHandler;
 
 class ServerList;
 
+/* The socket used for connecting to the auth daemon to authenticate users */
 class AuthConnectSocket : public ConnectSocket
 {
 public:
@@ -53,6 +54,7 @@ public:
   void onReadData(PacketHandlerBase *&, Packet &packet) {
     switch(packet.getOpcode()) {
       case DMSG_AUTH_CHALLENGE: {
+        // receive the RSA key components (n,e)
         uint8 *key_n;
         uint32 e;
         uint16 n_len;
@@ -61,9 +63,11 @@ public:
         packet.read(key_n, (size_t)n_len);
         assert(packet >> e);
 
+        // create an RSA key using the components
         sRSAManager.initialize();
         sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
         
+        // encrypt the message 'callsign password' with the key
         std::string message = serverList->startupInfo->callsign;
         message += " ";
         message += serverList->startupInfo->password;
@@ -73,6 +77,7 @@ public:
 
         sRSAManager.getPublicKey().encrypt((uint8*)message.c_str(), message.size(), cipher, cipher_len);
 
+        // send the response
         {
           Packet response(CMSG_AUTH_RESPONSE, 2 + cipher_len);
           response << (uint16)cipher_len;
@@ -80,6 +85,7 @@ public:
           sendData(response);
         }
 
+        // clean up
         sRSAManager.rsaFree(cipher);
         serverList->auth_phase = 2;
         delete[] key_n;

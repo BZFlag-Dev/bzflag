@@ -32,8 +32,7 @@ UserStore::~UserStore()
 
 bool ldap_check(int ret)
 {
-  if(ret != LDAP_SUCCESS)
-  {
+  if(ret != LDAP_SUCCESS) {
     sLog.outError("LDAP %d: %s", ret, ldap_err2string(ret));
     return false;
   }
@@ -45,8 +44,7 @@ bool ldap_check(int ret)
 
 void UserStore::unbind(LDAP *& ld)
 {
-  if(ld)
-  {
+  if(ld) {
     LDAP_VCHECK( ldap_unbind(ld) );
     sLog.outLog("UserStore: unbound");
   }
@@ -103,9 +101,9 @@ void UserStore::registerUser(UserInfo &info)
 {
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
-  LDAPMod1 attr_oc(LDAP_MOD_ADD, "objectClass", "person");
-  LDAPMod1 attr_cn(LDAP_MOD_ADD, "cn", info.name.c_str());
-  LDAPMod1 attr_sn(LDAP_MOD_ADD, "sn", info.name.c_str());
+  LDAPMod1 attr_oc (LDAP_MOD_ADD, "objectClass", "person");
+  LDAPMod1 attr_cn (LDAP_MOD_ADD, "cn", info.name.c_str());
+  LDAPMod1 attr_sn (LDAP_MOD_ADD, "sn", info.name.c_str());
   LDAPMod1 attr_pwd(LDAP_MOD_ADD, "userPassword", info.password.c_str());
   LDAPMod *attrs[5] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, NULL };
 

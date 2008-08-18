@@ -102,6 +102,9 @@ RSAPublicKey::RSAPublicKey()
 
 bool RSAPublicKey::encrypt(uint8 *message, size_t message_len, uint8 *&cipher, size_t &cipher_len)
 {
+  // NOTE: cipher must either be an array that's large enough to hold the output
+  //       or a NULL pointer to signal the memory to be allocated inside this function
+  //       in that case use RSAFree to free the memory
   assert(key);
   gcry_ac_io_t io_message, io_cipher;
   gcry_ac_io_init(&io_message, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, message, message_len);
@@ -118,6 +121,9 @@ RSASecretKey::RSASecretKey()
 
 bool RSASecretKey::decrypt(uint8 *cipher, size_t cipher_len, uint8 *&message, size_t &message_len)
 {
+  // NOTE: message must either be an array that's large enough to hold the output
+  //       or a NULL pointer to signal the memory to be allocated inside this function
+  //       in that case use RSAFree to free the memory
   assert(key);
   gcry_ac_io_t io_cipher, io_message;
   gcry_ac_io_init(&io_cipher, GCRY_AC_IO_READABLE, GCRY_AC_IO_STRING, cipher, cipher_len);

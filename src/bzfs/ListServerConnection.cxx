@@ -39,6 +39,7 @@
 
 extern SocketHandler authSockHandler;
 
+/* The socket that is used to connect to the auth daemon */
 class TokenConnectSocket : public ConnectSocket
 {
 public:
@@ -529,6 +530,7 @@ void ListServerLink::checkTokens(std::string *pMsg)
 void ListServerLink::update()
 {
   if(!publicizeServer) return;
+  // try connect and ask for token validation (if there's anything to validate)
   if(token_phase == 0 && tokenSocket->connect("127.0.0.1", 1234) == 0)
     checkTokens(NULL);
 

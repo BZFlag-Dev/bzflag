@@ -22,8 +22,7 @@ bool PacketHandler::handleTokenValidate(Packet &packet)
 
   Packet response(DMSG_TOKEN_VALIDATE, n*4);
   response << n;
-  for(int i = 0; i < n; i++)
-  {
+  for(int i = 0; i < n; i++) {
     uint8 callsign[MAX_CALLSIGN_LEN+1];
     uint32 token;
     if(!(packet >> token)) return false;

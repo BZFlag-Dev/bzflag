@@ -60,6 +60,7 @@ class ServerSession : public Session
 public:
 };
 
+/* Main packet handler for the daemon */
 class PacketHandler : public PacketHandlerBase
 {
 public:
@@ -95,6 +96,15 @@ struct OpcodeEntry
 
 const char *getOpcodeName(Packet &packet);
 
+/** The socket that listens for incoming connections */
+class NetListenSocket : public ListenSocket
+{
+public:
+  NetListenSocket(SocketHandler *h) : ListenSocket(h) {}
+  ConnectSocket* onConnect(TCPsocket &socket);
+};
+
+/** The socket created by the NetListenSocket for incoming connection */
 class NetConnectSocket : public ConnectSocket
 {
 public:
@@ -102,13 +112,6 @@ public:
   NetConnectSocket(SocketHandler *h) : ConnectSocket(h) {}
   void onReadData(PacketHandlerBase *&handler, Packet &packet);
   void onDisconnect();
-};
-
-class NetListenSocket : public ListenSocket
-{
-public:
-  NetListenSocket(SocketHandler *h) : ListenSocket(h) {}
-  ConnectSocket* onConnect(TCPsocket &socket);
 };
 
 class NetHandler : public Singleton<NetHandler>

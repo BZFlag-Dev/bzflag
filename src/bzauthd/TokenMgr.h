@@ -10,7 +10,8 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-/** The TokenMgr stores session tokens 
+/** The TokenMgr stores session tokens
+  * that invalidate after some time.
   */
 
 

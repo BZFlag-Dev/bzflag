@@ -33,6 +33,7 @@
 #include "../bzAuthCommon/Protocol.h"
 #include "../bzAuthCommon/RSA.h"
 
+/* The socket used for connecting to the auth daemon to register users */
 class RegConnectSocket : public ConnectSocket
 {
 public:
@@ -40,6 +41,7 @@ public:
   void onReadData(PacketHandlerBase *&, Packet &packet) {
     switch(packet.getOpcode()) {
       case DMSG_REGISTER_CHALLENGE: {
+        // receive the RSA key components (n,e)
         uint8 *key_n;
         uint32 e;
         uint16 n_len;
@@ -48,9 +50,11 @@ public:
         packet.read(key_n, (size_t)n_len);
         if(!(packet >> e)) { delete[] key_n; disconnect(); break; }
 
+        // create an RSA key using the components
         sRSAManager.initialize();
         sRSAManager.getPublicKey().setValues(key_n, (size_t)n_len, e);
         
+        // encrypt the message 'callsign password' with the key
         std::string message = menu->callsign->getString();
         message += " ";
         message += menu->password->getString();
@@ -60,6 +64,7 @@ public:
 
         sRSAManager.getPublicKey().encrypt((uint8*)message.c_str(), message.size(), cipher, cipher_len);
 
+        // send the response
         {
           Packet response(CMSG_REGISTER_RESPONSE, 2 + cipher_len);
           response << (uint16)cipher_len;
@@ -67,6 +72,7 @@ public:
           sendData(response);
         }
 
+        // cleanup
         sRSAManager.rsaFree(cipher);
         delete[] key_n;
         menu->phase = 2;

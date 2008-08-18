@@ -28,6 +28,8 @@ public:
   EventHandler();
   ~EventHandler();
   void update();
+
+  /** Add an event to the handler that will occur in delta seconds */
   void addDelta(CBFunc func, void * data, double delta);
 private:
   class Event;

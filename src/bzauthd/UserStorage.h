@@ -28,6 +28,7 @@ struct UserInfo
   std::string password;
 };
 
+/** The UserStore abstracts the method used for storing users */
 class UserStore : public Singleton<UserStore>
 {
 public:
