@@ -122,12 +122,13 @@ void ServerMenu::execute()
 {
   if ((tabbedControl->getActiveTabName() == "Create New Tab")&&(((HUDuiServerListCustomTab*)tabbedControl->getActiveTab())->createNew->hasFocus()))
   {
-    HUDuiControl* newServerList = customTabControl->createServerList();
-    tabbedControl->addTab(newServerList, ((HUDuiServerListCustomTab*)tabbedControl->getActiveTab())->tabName->getString(), tabbedControl->getTabCount() - 1);
+    HUDuiServerList* newServerList = customTabControl->createServerList();
+    tabbedControl->addTab(newServerList, customTabControl->tabName->getString(), tabbedControl->getTabCount() - 1);
     for (int i=0; i<(int)serverList.size(); i++)
     {
       ((HUDuiServerList*)newServerList)->addItem(*(serverList.getServerAt(i)));
     }
+    newServerList->searchServers(customTabControl->serverName->getString());
     tabbedControl->getNav().set(tabbedControl->getActiveTab());
     ((HUDuiNestedContainer*)(tabbedControl->getTab(tabbedControl->getTabCount() - 1)))->getNav().setWithoutFocus((size_t)0);
     return;
@@ -203,12 +204,12 @@ void ServerMenu::updateStatus()
   else
     serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
 
-  if (serverList.size() == normalList->size())
+  if (serverList.size() == normalList->getSize())
     return;
-  else if (serverList.size() < normalList->size())
+  else if (serverList.size() < normalList->getSize())
     normalList->clear();
 
-  for (int i = (int) normalList->size(); i < (int) serverList.size(); i++)
+  for (int i = (int) normalList->getSize(); i < (int) serverList.size(); i++)
   {
     normalList->addItem(*(serverList.getServerAt(i)));
     for (int j=3; j < tabbedControl->getTabCount() - 1; j++)

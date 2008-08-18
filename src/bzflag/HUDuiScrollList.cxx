@@ -261,9 +261,9 @@ void HUDuiScrollList::doRender()
     std::vector<std::string> args;
     char msg[50];
 
-    sprintf(msg, "%ld", currentPage);
+    sprintf(msg, "%d", currentPage);
     args.push_back(msg);
-    sprintf(msg, "%ld", numPages);
+    sprintf(msg, "%d", numPages);
     args.push_back(msg);
 
     pageLabel->setString("Page: {1}/{2}", &args);
