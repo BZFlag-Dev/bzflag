@@ -60,7 +60,6 @@ public:
   const float *getVelocity() const;
   const ShotStrategy *getStrategy() const;
 
-  float checkHit(const ShotCollider &, float[3]) const;
   void setExpiring();
   void setExpired();
   bool isStoppedByHit() const;

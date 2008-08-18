@@ -670,7 +670,7 @@ void			LaserStrategy::update(float dt)
   if (cumTime >= endTime) setExpired();
 }
 
-void			LaserStrategy::addShot(SceneDatabase* scene, bool)
+void			LaserStrategy::addShot(SceneDatabase* /*scene*/, bool)
 {
 //CLIENTEDIT
 //  // laser is so fast we always show every segment

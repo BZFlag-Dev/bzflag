@@ -1538,6 +1538,7 @@ bool			LocalPlayer::checkHit(const Player* source,
     collider.testLastSegment = getId() == shot->getPlayer();
     memcpy(collider.bbox,bbox,sizeof(bbox));
 
+    /*
     const float t = shot->checkHit(collider, position);
     if (t >= minTime) continue;
 
@@ -1552,6 +1553,7 @@ bool			LocalPlayer::checkHit(const Player* source,
     goodHit = true;
     hit = shot;
     minTime = t;
+    */
   }
   return goodHit;
 }
