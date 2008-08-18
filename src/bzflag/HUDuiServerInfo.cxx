@@ -322,17 +322,17 @@ void HUDuiServerInfo::doRender()
   FontSizer fs = FontSizer(getWidth(), getHeight());
 
   float fontSize = fs.getFontSize(getFontFace()->getFMFace(), "alertFontSize");
-  float fontHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
+  float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
   float titleWidth = fm.getStringWidth(getFontFace()->getFMFace(), fontSize, "Server Information");
 
-  fm.drawString(getX() + (getWidth()/2) - (titleWidth/2), getY() + getHeight() - fontHeight, 0, getFontFace()->getFMFace(), fontSize, "Server Information");
+  fm.drawString(getX() + (getWidth()/2) - (titleWidth/2), getY() + getHeight() - itemHeight, 0, getFontFace()->getFMFace(), fontSize, "Server Information");
 
   float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
   glColor4fv(color);
 
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight(), -0.5f);
-  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - fontHeight - fontHeight/2, -0.5f);
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - itemHeight - itemHeight/2, -0.5f);
 
   if (server == NULL) {
     return;
