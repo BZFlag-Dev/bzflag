@@ -36,6 +36,10 @@
 #include "ServerListCache.h"
 #include "StartupInfo.h"
 
+// initialize the singleton
+template <>
+ServerList* Singleton<ServerList>::_instance = (ServerList*)0;
+
 
 ServerList::ServerList() :
 	phase(-1),
@@ -245,15 +249,28 @@ void ServerList::addToList(ServerItem info, bool doCache)
   if (serverCache->isFavorite(serverAddress))
     info.favorite = true;
 
+  if (serverCache->isRecent(serverAddress))
+    info.recent = true;
+
+  // Get the server's server key
   const ServerItem& constInfo = info;
+  std::string serverKey = constInfo.name;
+  const unsigned int port = (int)ntohs((unsigned short)constInfo.port);
+  if (port != ServerPort) {
+    char portBuf[20];
+    sprintf(portBuf, "%d", port);
+    serverKey += ":";
+    serverKey += portBuf;
+  }
+
   if (insertPoint == -1){ // no spot to insert it into -- goes on back
     //servers.push_back(info);
-    servers.insert(std::pair<std::string, ServerItem>(info.description, constInfo));
+    servers.insert(std::pair<std::string, ServerItem>(serverKey, constInfo));
   } else {  // found a spot to insert it into
     //servers.insert(servers.begin() + insertPoint, info);
     std::map<std::string, ServerItem>::iterator location = servers.begin();
     std::advance(location, insertPoint);
-    servers.insert(location, std::pair<std::string, ServerItem>(info.description, constInfo));
+    servers.insert(location, std::pair<std::string, ServerItem>(serverKey, constInfo));
   }
 
   // check if we need to show cached values
@@ -313,7 +330,10 @@ void ServerList::markAsFavorite(ServerItem* item)
 
 ServerItem* ServerList::lookupServer(std::string key)
 {
-  return &(servers[key]);
+  if (servers.find(key) != servers.end())
+    return &(servers[key]);
+  else
+    return NULL;
 }
 
 ServerItem* ServerList::getServerAt(int index)

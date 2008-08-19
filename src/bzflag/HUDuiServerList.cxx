@@ -33,14 +33,14 @@ float HUDuiServerList::SERVER_PERCENTAGE = 0.375f;
 float HUDuiServerList::PLAYER_PERCENTAGE = 0.125f;
 float HUDuiServerList::PING_PERCENTAGE = 0.125f;
 
-ServerList* HUDuiServerList::dataList = NULL;
+//ServerList* HUDuiServerList::dataList = NULL;
 
-HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false)
+HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false), dataList(ServerList::instance())
 {
   getNav().push_front(this);
 }
 
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), filterOptions(0), sortMode(NoSort)
+HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), filterOptions(0), sortMode(NoSort), dataList(ServerList::instance())
 {
   // do nothing
 }
@@ -100,8 +100,9 @@ struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, uint1
 public:
   result_type operator()(first_argument_type control, second_argument_type filter) const
     {
+      ServerList &serverList = ServerList::instance();
       HUDuiServerListItem* item = (HUDuiServerListItem*) control;
-      ServerItem* server = dataList->lookupServer(item->getServerKey());
+      ServerItem* server = serverList.lookupServer(item->getServerKey());
 
       bool returnValue = false;
 
@@ -160,6 +161,7 @@ void HUDuiServerList::addItem(ServerItem item)
   }
 
   originalItems.push_back(newItem);
+  originalItems.sort(comp);
   items.push_back(newItem);
 
   addControl(newItem);
@@ -271,14 +273,9 @@ void HUDuiServerList::doRender()
   }
 }
 
-void HUDuiServerList::setServerList(ServerList* list)
-{
-  dataList = list;
-}
-
 ServerItem* HUDuiServerList::getSelectedServer()
 {
-  if ((items.size() <= 0)||(dataList == NULL))
+  if (items.size() <= 0)
     return NULL;
 
   std::list<HUDuiControl*>::iterator it;
@@ -286,7 +283,7 @@ ServerItem* HUDuiServerList::getSelectedServer()
   std::advance(it, getSelected());
 
   HUDuiServerListItem* selected = (HUDuiServerListItem*) *it;
-  return dataList->lookupServer(selected->getServerKey());
+  return dataList.lookupServer(selected->getServerKey());
 }
 
 void HUDuiServerList::searchServers(std::string pattern)
@@ -425,10 +422,6 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 
       default:
         return false;
-  }
-  else if (key.chr == 'z')
-  {
-    dataList->clear();
   }
   else if (key.chr == 's')
   {

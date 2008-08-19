@@ -75,6 +75,12 @@ bool ServerListCache::isFavorite(const std::string &serverAddress) const
   return i!=serverCache.end() && i->second.favorite;
 }
 
+bool ServerListCache::isRecent(const std::string &serverAddress) const
+{
+  SRV_STR_MAP::const_iterator i = serverCache.find(serverAddress);
+  return i!=serverCache.end() && i->second.recent;
+}
+
 std::string	     ServerListCache::getCacheFilename() const
 {
   // get a file named e.g. BZFS1910Server.bzs in the cache dir

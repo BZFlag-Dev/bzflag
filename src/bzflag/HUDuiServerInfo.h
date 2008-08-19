@@ -45,7 +45,7 @@ class HUDuiServerInfo : public HUDuiControl {
     void fillReadouts();
 
   private:
-    ServerItem* server;
+    std::string serverKey;
 
     std::vector<HUDuiLabel*> readouts;
 };

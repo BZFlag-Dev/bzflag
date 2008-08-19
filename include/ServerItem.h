@@ -33,6 +33,7 @@ public:
   bool		readFromFile(std::istream& in); // serialize in
   void		resetAge(); // set last updated to now
   void		setAge(time_t minutes, time_t seconds);
+  std::string   getServerKey() const;
   int		getPlayerCount() const;
   std::string	getAddrName() const;
   time_t	getAgeMinutes() const;
@@ -49,7 +50,8 @@ public:
   time_t	updateTime; // last time I was updated
   bool		cached;     // was I cached ?
   bool		favorite;   // favorite server, user selection
-  bool		recent;	    // recently played server
+  bool		test;
+  bool		recent;     // recent server
 };
 
 bool	operator<(const ServerItem &left, const ServerItem &right);

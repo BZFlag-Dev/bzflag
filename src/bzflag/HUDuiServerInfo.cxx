@@ -14,6 +14,7 @@
 #include "HUDuiServerInfo.h"
 
 #include "playing.h"
+#include "ServerList.h"
 
 #include "FontManager.h"
 #include "FontSizer.h"
@@ -26,7 +27,7 @@
 // HUDuiServerInfo
 //
 
-HUDuiServerInfo::HUDuiServerInfo() : HUDuiControl(), server(NULL)
+HUDuiServerInfo::HUDuiServerInfo() : HUDuiControl()
 {
   readouts.push_back(new HUDuiLabel);	// 0
   readouts.push_back(new HUDuiLabel);	// 1
@@ -59,7 +60,9 @@ HUDuiServerInfo::~HUDuiServerInfo()
 
 void HUDuiServerInfo::setServerItem(ServerItem* item)
 {
-  server = item;
+  if (item == NULL)
+    return;
+  serverKey = item->getServerKey();
 }
 
 void HUDuiServerInfo::setSize(float width, float height)
@@ -120,7 +123,12 @@ void HUDuiServerInfo::resize()
 
 void HUDuiServerInfo::fillReadouts()
 {
-  const ServerItem& item = *server;
+  ServerItem* itemPointer = ServerList::instance().lookupServer(serverKey);
+
+  if (itemPointer == NULL)
+    return;
+
+  const ServerItem& item = *itemPointer;
   const PingPacket& ping = item.ping;
 
   // update server readouts
@@ -333,10 +341,6 @@ void HUDuiServerInfo::doRender()
 
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight(), -0.5f);
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - itemHeight - itemHeight/2, -0.5f);
-
-  if (server == NULL) {
-    return;
-  }
 
   fillReadouts();
 

@@ -53,7 +53,7 @@ public:
   void		execute();
   void		resize(int width, int height);
 
-  ServerList serverList;
+  ServerList &serverList;
 
   static void	callback(HUDuiControl* w, void* data);
 

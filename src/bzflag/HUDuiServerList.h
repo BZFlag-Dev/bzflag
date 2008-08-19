@@ -69,8 +69,6 @@ class HUDuiServerList : public HUDuiScrollList {
     void addItem(HUDuiControl* item);
 
     void update();
-	
-    void setServerList(ServerList* list);
 
     ServerItem* getSelectedServer();
 
@@ -86,7 +84,7 @@ class HUDuiServerList : public HUDuiScrollList {
     void setFontFace(const LocalFontFace* face);
     void setSize(float width, float height);
 
-    static ServerList* dataList;
+    ServerList &dataList;
 
   protected:
     struct filter;

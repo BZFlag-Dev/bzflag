@@ -24,13 +24,14 @@
 #include "ServerItem.h"
 #include "ServerListCache.h"
 #include "cURLManager.h"
+#include "Singleton.h"
 
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
  * server entries in case of list server unavailability.
  */
-class ServerList : private cURLManager {
+class ServerList : private cURLManager, public Singleton<ServerList> {
 
 public:
   ServerList();
@@ -56,6 +57,9 @@ public:
   //void markFav(const std::string &, bool);
   void clear();
   void sort();
+
+protected:
+  friend class Singleton<ServerList>;
 
 private:
   void readServerList();

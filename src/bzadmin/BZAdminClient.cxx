@@ -423,7 +423,7 @@ bool BZAdminClient::isValid() const {
 void BZAdminClient::outputServerList() const {
   if (ui)
     ui->outputMessage(std::string("Server List:"), Yellow);
-  ServerList serverList;
+  ServerList &serverList = ServerList::instance();
 
   serverList.startServerPings(&startupInfo);
 

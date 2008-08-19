@@ -12,6 +12,7 @@
 
 // interface headers
 #include "HUDuiServerListItem.h"
+#include "Protocol.h"
 
 // common implementation headers
 #include "BundleMgr.h"
@@ -30,7 +31,16 @@ HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl(), fm(FontManager::ins
 
 HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f), fm(FontManager::instance())
 {
-  serverKey = item.description;
+  std::string key = item.name;
+  const unsigned int port = (int)ntohs((unsigned short)item.port);
+  if (port != ServerPort) {
+    char portBuf[20];
+    sprintf(portBuf, "%d", port);
+    key += ":";
+    key += portBuf;
+  }
+
+  serverKey = key;
   char temp[50];
 
   sprintf(temp, "%d", item.ping.pingTime);

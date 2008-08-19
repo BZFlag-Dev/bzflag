@@ -5211,6 +5211,25 @@ static void joinInternetGame2()
     startupInfo.token);
   startupInfo.token[0] = '\0';
 
+  // Get the server's server key
+  std::string serverKey = startupInfo.serverName;
+  const unsigned int port = (int)ntohs((unsigned short)startupInfo.serverPort);
+  if (port != ServerPort) {
+    char portBuf[20];
+    sprintf(portBuf, "%d", port);
+    serverKey += ":";
+    serverKey += portBuf;
+  }
+
+  //ServerItem server = new ServerItem();
+  //Address::getHostByAddress(info.ping.serverId.serverHost);
+
+  ServerList &serverList = ServerList::instance();
+  ServerItem* test = serverList.lookupServer(serverKey);
+
+  if (!(serverList.lookupServer(serverKey) == NULL))
+    serverList.markAsRecent(serverList.lookupServer(serverKey));
+
   serverLink->sendCaps(myTank->getId(),true,!noSounds);
 
 

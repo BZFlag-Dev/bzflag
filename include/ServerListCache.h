@@ -78,6 +78,10 @@ public:
   /** is given server in cache and marked as favorite? */
   bool		  isFavorite(const std::string &serverAddress) const;
 
+  /** is given server in cache and marked as recent? */
+  bool		  isRecent(const std::string &serverAddress) const;
+
+
 private:
   /** the full path of the file the cache is stored in **/
   std::string getCacheFilename() const;

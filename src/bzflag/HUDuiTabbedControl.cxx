@@ -44,16 +44,6 @@ void HUDuiTabbedControl::addControl(HUDuiControl *control)
   control->setParent(this);
 }
 
-int HUDuiTabbedControl::getTabCount()
-{
-  return (int) tabs.size();
-}
-
-HUDuiControl* HUDuiTabbedControl::getTab(int index)
-{
-  return tabs[index].second;
-}
-
 void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, int index)
 {
   if ((index < 0)||(index >= (int) tabs.size()))
@@ -89,16 +79,6 @@ void HUDuiTabbedControl::setActiveTab(int tab)
     tabNavQueuePosition = getNav().erase(tabNavQueuePosition);
     tabNavQueuePosition = getNav().insert(tabNavQueuePosition, activeControl);
   }
-}
-
-HUDuiControl* HUDuiTabbedControl::getActiveTab()
-{
-  return activeControl;
-}
-
-std::string HUDuiTabbedControl::getActiveTabName()
-{
-  return tabs[activeTab].first;
 }
 
 void HUDuiTabbedControl::removeTab(int tabIndex)
@@ -187,10 +167,10 @@ void HUDuiTabbedControl::drawTabs()
 		
     x = x + fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), text) + sideSpacer;
 
-    glOutlineBoxHV(1.0f, getX(), getY() + getHeight() - tabsHeight - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);
+    glOutlineBoxHV(1.0f, getX(), y - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);
   }
 
-  glOutlineBoxHV(1.0f, getX(), getY() + getHeight() - tabsHeight - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);
+  glOutlineBoxHV(1.0f, getX(), y - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);
 }
 
 void HUDuiTabbedControl::doRender()
@@ -234,7 +214,6 @@ bool HUDuiTabbedControl::doKeyPress(const BzfKeyEvent& key)
   }
 
   switch (key.chr) {
-    case 13:
     case 27:
       return false;
   }
