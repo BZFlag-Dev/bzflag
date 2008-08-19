@@ -65,6 +65,8 @@ class HUDuiServerList : public HUDuiScrollList {
     static float PLAYER_PERCENTAGE;
     static float PING_PERCENTAGE;
 
+    std::map<int, std::pair<std::string, float*>> columns; 
+
     void addItem(ServerItem item);
     void addItem(HUDuiControl* item);
 

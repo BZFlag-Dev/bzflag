@@ -33,10 +33,12 @@ float HUDuiServerList::SERVER_PERCENTAGE = 0.375f;
 float HUDuiServerList::PLAYER_PERCENTAGE = 0.125f;
 float HUDuiServerList::PING_PERCENTAGE = 0.125f;
 
-//ServerList* HUDuiServerList::dataList = NULL;
-
 HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false), dataList(ServerList::instance())
 {
+  columns[DomainName] = std::pair<std::string, float*>("Addressed", &DOMAIN_PERCENTAGE);
+  columns[ServerName] = std::pair<std::string, float*>("Server Name", &SERVER_PERCENTAGE);
+  columns[PlayerCount] = std::pair<std::string, float*>("Player Count", &PLAYER_PERCENTAGE);
+  columns[Ping] = std::pair<std::string, float*>("Ping", &PING_PERCENTAGE);
   getNav().push_front(this);
 }
 
@@ -229,46 +231,34 @@ void HUDuiServerList::doRender()
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() + 1, -0.5f);
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - columnsHeight - columnsHeight/2 + 1, -0.5f);
 
-  float y = getY() + getHeight() - columnsHeight/* - columnsHeight/2*/;
+  float y = getY() + getHeight() - columnsHeight;
+  float x = getX();
 
-  if ((activeColumn == DomainName)&&(hasFocus()))
-    fm.drawString(getX(), y, 0, getFontFace()->getFMFace(), getFontSize(), "Address", activeColor);
-  else
-    fm.drawString(getX(), y, 0, getFontFace()->getFMFace(), getFontSize(), "Address");
+  std::string columnTitle = "";
 
-  float x = getX() + ((float)DOMAIN_PERCENTAGE*(getWidth())); // Address column divider
+  for (int i=DomainName; i != NoSort; i++)
+  {
+    if (sortMode == i)
+      if (reverseSort)
+	columnTitle = columns[i].first + "   V";
+      else
+	columnTitle = columns[i].first + "   ^";
+    else
+      columnTitle = columns[i].first;
 
-  glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
+    if ((activeColumn == i)&&(hasFocus()))
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), activeColor);
+    else
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), color);
 
-  if ((activeColumn == ServerName)&&(hasFocus()))
-    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name", activeColor);
-  else
-    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Server Name");
-
-  x = x + ((float)SERVER_PERCENTAGE*(getWidth())); // Server column divider
-
-  glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
-
-  if ((activeColumn == PlayerCount)&&(hasFocus()))
-    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count", activeColor);
-  else
-    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Player Count");
-
-  x = x + ((float)PLAYER_PERCENTAGE*(getWidth())); // Player column divider
-
-  glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
-
-  if ((activeColumn == Ping)&&(hasFocus()))
-    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Ping", activeColor);
-  else
-    fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), "Ping");
+    x = x + ((*columns[i].second)*(getWidth()));
+    glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
+  }
 
   if (devInfo)
   {
     char temp[50];
-
     sprintf(temp, "COLUMN SIZES: %f %f %f %f", HUDuiServerList::DOMAIN_PERCENTAGE, HUDuiServerList::SERVER_PERCENTAGE, HUDuiServerList::PLAYER_PERCENTAGE, HUDuiServerList::PING_PERCENTAGE);
-
     fm.drawString(getX(), getY() + getHeight() + 7*columnsHeight, 0, getFontFace()->getFMFace(), getFontSize(), temp);
   }
 }
