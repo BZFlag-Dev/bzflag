@@ -288,6 +288,30 @@ void ServerList::addToList(ServerItem info, bool doCache)
       serverCache->insert(serverAddress, info);
     }
   }
+
+  for (ServerCallbackList::iterator itr = serverCallbackList.begin();
+       itr != serverCallbackList.end(); ++itr)
+  {
+    (*itr).first(&info, (*itr).second);
+  }
+
+  if (info.favorite)
+  {
+    for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
+	 itr != favoritesCallbackList.end(); ++itr)
+    {
+      (*itr).first(&info, (*itr).second);
+    }
+  }
+
+  if (info.recent)
+  {
+    for (ServerCallbackList::iterator itr = recentCallbackList.begin();
+	 itr != recentCallbackList.end(); ++itr)
+    {
+      (*itr).first(&info, (*itr).second);
+    }
+  }
 }
 
 /*
@@ -315,6 +339,12 @@ void ServerList::markAsRecent(ServerItem* item)
   }
 
   item->recent = true;
+
+  for (ServerCallbackList::iterator itr = recentCallbackList.begin();
+       itr != recentCallbackList.end(); ++itr)
+  {
+    (*itr).first(item, (*itr).second);
+  }
 }
 
 void ServerList::markAsFavorite(ServerItem* item)
@@ -326,6 +356,13 @@ void ServerList::markAsFavorite(ServerItem* item)
   }
 
   item->favorite = true;
+
+  for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
+       itr != favoritesCallbackList.end(); ++itr)
+  {
+    (*itr).first(item, (*itr).second);
+  }
+
 }
 
 ServerItem* ServerList::lookupServer(std::string key)
@@ -495,6 +532,54 @@ bool ServerList::searchActive() const {
 
 bool ServerList::serverFound() const {
   return (phase >= 2) ? true : false;
+}
+
+void ServerList::addServerCallback(ServerListCallback _cb, void* _data)
+{
+  serverCallbackList.push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
+}
+
+void ServerList::removeServerCallback(ServerListCallback _cb, void* data)
+{
+  for (ServerCallbackList::iterator itr = serverCallbackList.begin();
+       itr != serverCallbackList.end(); ++itr) {
+    if (itr->first == _cb && itr->second == data) {
+      serverCallbackList.remove(*itr);
+      return;
+    }
+  }
+}
+
+void ServerList::addFavoriteServerCallback(ServerListCallback _cb, void* _data)
+{
+  favoritesCallbackList.push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
+}
+
+void ServerList::removeFavoriteServerCallback(ServerListCallback _cb, void* data)
+{
+  for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
+       itr != favoritesCallbackList.end(); ++itr) {
+    if (itr->first == _cb && itr->second == data) {
+      favoritesCallbackList.remove(*itr);
+      return;
+    }
+  }
+}
+
+void ServerList::addRecentServerCallback(ServerListCallback _cb, void* _data)
+{
+  recentCallbackList.push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
+}
+
+void ServerList::removeRecentServerCallback(ServerListCallback _cb, void* data)
+{
+  for (ServerCallbackList::iterator itr = recentCallbackList.begin();
+       itr != recentCallbackList.end(); ++itr) {
+    if (itr->first == _cb && itr->second == data) {
+      recentCallbackList.remove(*itr);
+      return;
+    }
+  }
 }
 
 void ServerList::_shutDown() {

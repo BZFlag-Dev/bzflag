@@ -60,6 +60,8 @@ public:
   void updateStatus();
   void markAsFavorite(ServerItem* item);
 
+  static void newServer(ServerItem* addedServer, void* data);
+
   static void playingCB(void*);
 
   HUDuiServerList* normalList;

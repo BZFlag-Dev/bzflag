@@ -61,8 +61,9 @@ HUDuiServerInfo::~HUDuiServerInfo()
 void HUDuiServerInfo::setServerItem(ServerItem* item)
 {
   if (item == NULL)
-    return;
-  serverKey = item->getServerKey();
+    serverKey = "";
+  else
+    serverKey = item->getServerKey();
 }
 
 void HUDuiServerInfo::setSize(float width, float height)
@@ -341,6 +342,9 @@ void HUDuiServerInfo::doRender()
 
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight(), -0.5f);
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - itemHeight - itemHeight/2, -0.5f);
+
+  if (serverKey == "")
+    return;
 
   fillReadouts();
 

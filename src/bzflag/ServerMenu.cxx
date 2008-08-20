@@ -38,7 +38,6 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
     serverList.markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
-    menu->favoritesList->addItem(*(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer()));
     return true;
   }
 
@@ -56,7 +55,10 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance())
+ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
+			  normalList(new HUDuiServerList()), favoritesList(new HUDuiServerList()),
+			  recentList(new HUDuiServerList()), serverInfo(new HUDuiServerInfo()),
+			  customTabControl(new HUDuiServerListCustomTab())
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -66,19 +68,10 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance())
   serverList.updateFromCache();
   serverList.startServerPings(getStartupInfo());
 
-  normalList = new HUDuiServerList();
   normalList->setFontFace(fontFace);
-
-  favoritesList = new HUDuiServerList();
   favoritesList->setFontFace(fontFace);
-
-  recentList = new HUDuiServerList();
   recentList->setFontFace(fontFace);
-
-  serverInfo = new HUDuiServerInfo();
   serverInfo->setFontFace(fontFace);
-
-  customTabControl = new HUDuiServerListCustomTab();
   customTabControl->setFontFace(fontFace);
 
   title = new HUDuiLabel();
@@ -93,6 +86,10 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance())
   tabbedControl->addTab(customTabControl, "Create New Tab");
   tabbedControl->setActiveTab(0);
 
+  serverList.addServerCallback(newServer, normalList);
+  serverList.addFavoriteServerCallback(newServer, favoritesList);
+  serverList.addRecentServerCallback(newServer, recentList);
+
   addControl(title, false);
   addControl(tabbedControl);
   addControl(serverInfo);
@@ -103,6 +100,11 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance())
 ServerMenu::~ServerMenu()
 {
   // Blank
+}
+
+void ServerMenu::newServer(ServerItem* addedServer, void* data)
+{
+  ((HUDuiServerList*)data)->addItem(*addedServer);
 }
 
 void ServerMenu::execute()
@@ -173,17 +175,9 @@ void ServerMenu::resize(int _width, int _height)
   y = y - (titleHeight/2) - tabbedControl->getHeight();
 
   tabbedControl->setPosition(edgeSpacer, y);
-
   serverInfo->setPosition(edgeSpacer, bottomSpacer/2);
-
   tabbedControl->setFontSize(fontSize);
-
   serverInfo->setFontSize(fontSize);
-}
-
-void ServerMenu::callback(HUDuiControl* w, void* data)
-{
-  // Blank
 }
 
 void ServerMenu::updateStatus()
@@ -192,30 +186,11 @@ void ServerMenu::updateStatus()
     serverInfo->setServerItem(NULL);
   else
     serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
-
-  if (serverList.size() == normalList->getSize())
-    return;
-  else if (serverList.size() < normalList->getSize())
-    normalList->clear();
-
-  for (int i = (int) normalList->getSize(); i < (int) serverList.size(); i++)
-  {
-    normalList->addItem(*(serverList.getServerAt(i)));
-    for (int j=3; j < tabbedControl->getTabCount() - 1; j++)
-    {
-      ((HUDuiServerList*)tabbedControl->getTab(j))->addItem(*(serverList.getServerAt(i)));
-    }
-    if (serverList.getServerAt(i)->favorite)
-      favoritesList->addItem(*(serverList.getServerAt(i)));
-    if (serverList.getServerAt(i)->recent)
-      recentList->addItem(*(serverList.getServerAt(i)));
-  }
 }
 
 void ServerMenu::playingCB(void* _self)
 {
   ((ServerMenu*)_self)->serverList.checkEchos(getStartupInfo());
-
   ((ServerMenu*)_self)->updateStatus();
 }
 

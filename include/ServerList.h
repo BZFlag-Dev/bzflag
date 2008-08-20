@@ -26,6 +26,9 @@
 #include "cURLManager.h"
 #include "Singleton.h"
 
+typedef void (*ServerListCallback)(ServerItem* addedServer, void*);
+
+typedef std::list< std::pair<ServerListCallback, void*> > ServerCallbackList;
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
@@ -49,6 +52,18 @@ public:
   void finalization(char *data, unsigned int length, bool good);
 
   ServerItem* getServerAt(int index);
+
+  void addServerCallback(ServerListCallback cb, void* data);
+  void removeServerCallback(ServerListCallback cb, void* data);
+
+  void addFavoriteServerCallback(ServerListCallback cb, void* data);
+  void removeFavoriteServerCallback(ServerListCallback cb, void* data);
+
+  void addRecentServerCallback(ServerListCallback cb, void* data);
+  void removeRecentServerCallback(ServerListCallback cb, void* data);
+
+  void addClearedListCallback(ServerListCallback cb, void* data);
+  void removeClearedListCallback(ServerListCallback cb, void* data);
 
 public:
   void markAsFavorite(ServerItem* item);
@@ -75,6 +90,11 @@ private:
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;
   StartupInfo *startupInfo;
+
+  ServerCallbackList serverCallbackList;
+  ServerCallbackList favoritesCallbackList;
+  ServerCallbackList recentCallbackList;
+  ServerCallbackList clearedCallbacklist;
 };
 
 #endif  /* __SERVERLIST_H__ */

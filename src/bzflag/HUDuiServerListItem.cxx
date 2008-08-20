@@ -58,11 +58,8 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), doma
   }
 
   displayDomain = domainName = addr;
-
   displayServer = serverName = desc;
-
   displayPlayer = playerCount = players;
-
   displayPing = serverPing = ping;
 }
 
@@ -140,30 +137,6 @@ std::string HUDuiServerListItem::shorten(std::string string, float width)
   return "";
 }
 
-// Returns the domain name of the server list item
-std::string HUDuiServerListItem::getDomainName()
-{
-  return domainName;
-}
-
-// Returns the server name of the server list item
-std::string HUDuiServerListItem::getServerName()
-{
-  return serverName;
-}
-
-// Returns the player count of the server list item
-std::string HUDuiServerListItem::getPlayerCount()
-{
-  return playerCount;
-}
-
-// Returns the server ping of the server list item
-std::string HUDuiServerListItem::getServerPing()
-{
-  return serverPing;
-}
-
 // Render the scrollable list item
 void HUDuiServerListItem::doRender()
 {
@@ -171,31 +144,23 @@ void HUDuiServerListItem::doRender()
     return;
   }
 
-  float darkness;
-  if (hasFocus()) {
+  float darkness = 0.7f;
+
+  if (hasFocus())
     darkness = 1.0f;
-  } else {
-    darkness = 0.7f;
-  }
   
   float domainX = getX() + spacerWidth;
   float serverX = getX() + domain_percentage*getWidth() + spacerWidth;
   float playerX = getX() + domain_percentage*getWidth() + server_percentage*getWidth() + spacerWidth;
   float pingX = getX() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
 
+  int face = getFontFace()->getFMFace();
+
   fm.setDarkness(darkness);
-  fm.drawString(domainX, getY(), 0,
-		getFontFace()->getFMFace(), getFontSize(),
-		displayDomain.c_str());
-  fm.drawString(serverX, getY(), 0,
-		getFontFace()->getFMFace(), getFontSize(),
-		displayServer.c_str());
-  fm.drawString(playerX, getY(), 0,
-		getFontFace()->getFMFace(), getFontSize(),
-		displayPlayer.c_str());
-  fm.drawString(pingX, getY(), 0,
-		getFontFace()->getFMFace(), getFontSize(),
-		displayPing.c_str());
+  fm.drawString(domainX, getY(), 0, face, getFontSize(), displayDomain.c_str());
+  fm.drawString(serverX, getY(), 0, face, getFontSize(), displayServer.c_str());
+  fm.drawString(playerX, getY(), 0, face, getFontSize(), displayPlayer.c_str());
+  fm.drawString(pingX, getY(), 0, face, getFontSize(), displayPing.c_str());
   fm.setDarkness(1.0f);
 }
 

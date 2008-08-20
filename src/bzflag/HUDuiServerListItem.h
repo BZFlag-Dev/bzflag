@@ -39,10 +39,10 @@ class HUDuiServerListItem : public HUDuiControl {
 
     void setColumnSizes(float domain, float server, float player, float ping);
 	
-    std::string getDomainName();
-    std::string getServerName();
-    std::string getPlayerCount();
-    std::string getServerPing();
+    std::string getDomainName() { return domainName; }
+    std::string getServerName() { return serverName; }
+    std::string getPlayerCount() { return playerCount; }
+    std::string getServerPing() { return serverPing; }
 
     std::string getServerKey();
 
