@@ -24,6 +24,7 @@
 #include "HUDuiServerList.h"
 #include "ServerList.h"
 #include "ServerItem.h"
+#include "ServerPing.h"
 #include "HUDuiTabbedControl.h"
 #include "HUDuiServerInfo.h"
 #include "HUDuiServerListCustomTab.h"
@@ -63,6 +64,8 @@ public:
   static void newServer(ServerItem* addedServer, void* data);
 
   static void playingCB(void*);
+
+  static std::map<ServerPing*, std::pair<ServerItem, HUDuiServerList*>> activePings;
 
   HUDuiServerList* normalList;
   HUDuiServerList* recentList;

@@ -50,7 +50,6 @@ public:
   time_t	updateTime; // last time I was updated
   bool		cached;     // was I cached ?
   bool		favorite;   // favorite server, user selection
-  bool		test;
   bool		recent;     // recent server
 };
 

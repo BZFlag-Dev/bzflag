@@ -55,6 +55,8 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
+std::map<ServerPing*, std::pair<ServerItem, HUDuiServerList*>> ServerMenu::activePings;
+
 ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
 			  normalList(new HUDuiServerList()), favoritesList(new HUDuiServerList()),
 			  recentList(new HUDuiServerList()), serverInfo(new HUDuiServerInfo()),
@@ -104,8 +106,15 @@ ServerMenu::~ServerMenu()
 
 void ServerMenu::newServer(ServerItem* addedServer, void* data)
 {
-  ((HUDuiServerList*)data)->addItem(*addedServer);
-}
+  if (addedServer->ping.pingTime != 0)
+  {
+    ((HUDuiServerList*)data)->addItem(*addedServer);
+    return;
+  }
+
+  ServerPing *newping = new ServerPing(addedServer->ping.serverId.serverHost, ntohs(addedServer->ping.serverId.port));
+  newping->start();
+  ServerMenu::activePings.insert(std::pair<ServerPing*, std::pair<ServerItem, HUDuiServerList*>>(newping, std::pair<ServerItem, HUDuiServerList*>((*addedServer), ((HUDuiServerList*)data))));}
 
 void ServerMenu::execute()
 {
@@ -190,6 +199,25 @@ void ServerMenu::updateStatus()
 
 void ServerMenu::playingCB(void* _self)
 {
+  ServerList &list = ServerList::instance();
+  for (std::map<ServerPing*, std::pair<ServerItem, HUDuiServerList*>>::iterator
+    i = ServerMenu::activePings.begin(); i != ServerMenu::activePings.end();) {
+    i->first->doPings();
+    if (i->first->done()) {
+      std::string test = i->second.first.getServerKey();
+      //ServerList &list = ServerList::instance();
+      ServerItem* server = list.lookupServer(i->second.first.getServerKey());
+      if (server == NULL)
+	break;
+      server->ping.pingTime = i->first->calcLag();
+      i->second.second->addItem(*(server));
+      delete i->first;
+      ServerMenu::activePings.erase(i++);
+      continue;
+    }
+    ++i;
+  }
+
   ((ServerMenu*)_self)->serverList.checkEchos(getStartupInfo());
   ((ServerMenu*)_self)->updateStatus();
 }

@@ -35,7 +35,7 @@ float HUDuiServerList::PING_PERCENTAGE = 0.125f;
 
 HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false), dataList(ServerList::instance())
 {
-  columns[DomainName] = std::pair<std::string, float*>("Addressed", &DOMAIN_PERCENTAGE);
+  columns[DomainName] = std::pair<std::string, float*>("Address", &DOMAIN_PERCENTAGE);
   columns[ServerName] = std::pair<std::string, float*>("Server Name", &SERVER_PERCENTAGE);
   columns[PlayerCount] = std::pair<std::string, float*>("Player Count", &PLAYER_PERCENTAGE);
   columns[Ping] = std::pair<std::string, float*>("Ping", &PING_PERCENTAGE);
@@ -90,7 +90,10 @@ public:
 	  break;
 
 	case Ping:
-	  return (_first->getServerPing().compare(_second->getServerPing()) < 0);
+	  int firstPing = atoi(_first->getServerPing().c_str());
+	  int secondPing = atoi(_second->getServerPing().c_str());
+	  return (firstPing < secondPing);
+	  //return (_first->getServerPing()(_second->getServerPing()) < 0);
 	  break;
       }
       return false;
@@ -105,6 +108,9 @@ public:
       ServerList &serverList = ServerList::instance();
       HUDuiServerListItem* item = (HUDuiServerListItem*) control;
       ServerItem* server = serverList.lookupServer(item->getServerKey());
+
+      if (server == NULL)
+	return true;
 
       bool returnValue = false;
 
