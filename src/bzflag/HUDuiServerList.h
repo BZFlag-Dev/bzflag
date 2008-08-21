@@ -67,8 +67,10 @@ class HUDuiServerList : public HUDuiScrollList {
 
     std::map<int, std::pair<std::string, float*>> columns; 
 
-    void addItem(ServerItem item);
+    void addItem(ServerItem* item);
     void addItem(HUDuiControl* item);
+
+    void removeItem(ServerItem* item);
 
     void update();
 
@@ -94,6 +96,7 @@ class HUDuiServerList : public HUDuiScrollList {
     template<int sortType> struct compare;
 
     static bool comp(HUDuiControl* first, HUDuiControl* second);
+    static bool equal(HUDuiControl* first, HUDuiControl* second);
 
     size_t callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod);
 

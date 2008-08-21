@@ -57,6 +57,11 @@ bool HUDuiServerList::comp(HUDuiControl* first, HUDuiControl* second)
   return (((HUDuiServerListItem*)first)->getServerKey() < ((HUDuiServerListItem*)second)->getServerKey());
 }
 
+bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second)
+{
+  return (((HUDuiServerListItem*)first)->getServerKey() == ((HUDuiServerListItem*)second)->getServerKey());
+}
+
 struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::string, bool>
 {
 public:
@@ -152,17 +157,23 @@ public:
 };
 
 // Add a new item to our scrollable list
-void HUDuiServerList::addItem(ServerItem item)
+void HUDuiServerList::addItem(ServerItem* item)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
   newItem->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());  
-  newItem->setSize(getWidth(), 10);  
+  newItem->setSize(getWidth(), 10);
 
-  // Don't add duplicates to the list, apply filters now before adding
-  if ((std::binary_search(originalItems.begin(), originalItems.end(), (HUDuiControl*) newItem, comp))||
-     (std::bind2nd(filter(), filterOptions)(newItem)))
+  // Don't add duplicates to the list
+  if (std::binary_search(originalItems.begin(), originalItems.end(), (HUDuiControl*) newItem, comp))
+  {
+    delete newItem;
+    return;
+  }
+     
+  // Apply filters now before adding
+  if (std::bind2nd(filter(), filterOptions)(newItem))
   {
     delete newItem;
     return;
@@ -170,10 +181,49 @@ void HUDuiServerList::addItem(ServerItem item)
 
   originalItems.push_back(newItem);
   originalItems.sort(comp);
-  items.push_back(newItem);
 
   addControl(newItem);
   sortBy(sortMode);
+  applyFilters();
+}
+
+void HUDuiServerList::removeItem(ServerItem* item)
+{
+  HUDuiServerListItem* oldItem = new HUDuiServerListItem(item);
+  std::list<HUDuiControl*>::iterator it = std::search_n(originalItems.begin(), originalItems.end(), 1, oldItem, equal);
+  std::list<HUDuiControl*>::iterator sec_it = std::search_n(items.begin(), items.end(), 1, oldItem, equal);
+  
+  HUDuiControl* oneBeforeItem;
+  if ((sec_it == --items.end())&&(items.size() > (size_t) 1)) {
+    --sec_it;
+    oneBeforeItem = *sec_it;
+  }
+  else if ((sec_it != items.end())&&(items.size() > (size_t) 1)) {
+    ++sec_it;
+    oneBeforeItem = *sec_it;
+  }
+  else {
+    oneBeforeItem = NULL;
+  }
+  HUDuiControl* itemToRemove = *it;
+  originalItems.remove(itemToRemove);
+  items.remove(itemToRemove);
+  bool inFocus = getNav().get()->hasFocus();
+  refreshNavQueue();
+
+  std::list<HUDuiControl*>::iterator newFocus = std::search_n(items.begin(), items.end(), 1, oneBeforeItem, equal);
+
+  delete oldItem;
+  if (newFocus == items.end())
+  {
+    getNav().set((size_t) 0);
+    return;
+  }
+
+  if (inFocus)
+    getNav().set(*newFocus);
+  else
+    getNav().setWithoutFocus(*newFocus);
 }
 
 // Over-ride the generic HUDuiControl version of addItem
@@ -385,6 +435,12 @@ void HUDuiServerList::refreshNavQueue()
     HUDuiControl* item = *it;
     addControl(item);
   }
+  if (std::search_n(items.begin(), items.end(), 1, currentFocus, equal) == items.end())
+  {
+    getNav().set((size_t) 0);
+    return;
+  }
+
   if (inFocus)
     getNav().set(currentFocus);
   else

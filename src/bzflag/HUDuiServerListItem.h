@@ -25,12 +25,13 @@
 #include "FontManager.h"
 
 #include "ServerItem.h"
+#include "ServerList.h"
 #include <string>
 
 class HUDuiServerListItem : public HUDuiControl {
   public:
       HUDuiServerListItem();
-      HUDuiServerListItem(ServerItem item);
+      HUDuiServerListItem(ServerItem* item);
       ~HUDuiServerListItem();
 	
     void setSize(float width, float height);
@@ -44,7 +45,13 @@ class HUDuiServerListItem : public HUDuiControl {
     std::string getPlayerCount() { return playerCount; }
     std::string getServerPing() { return serverPing; }
 
-    std::string getServerKey();
+    std::string calculateDomainName();
+    std::string calculateServerName();
+    std::string calculatePlayers();
+    std::string calculatePing();
+
+    ServerItem* getServer() { return serverList.lookupServer(serverKey); }
+    std::string getServerKey() { return serverKey; }
 
   protected:
     void doRender();
@@ -52,6 +59,7 @@ class HUDuiServerListItem : public HUDuiControl {
     std::string shorten(std::string string, float width);
 
   private:
+    ServerList &serverList;
     std::string serverKey;
 
     std::string domainName;

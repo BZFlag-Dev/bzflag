@@ -24,43 +24,22 @@
 // HUDuiServerListItem
 //
 
-HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl(), fm(FontManager::instance())
+HUDuiServerListItem::HUDuiServerListItem() : HUDuiControl(), serverList(ServerList::instance()), fm(FontManager::instance())
 {
   // Do nothing
 }
 
-HUDuiServerListItem::HUDuiServerListItem(ServerItem item) : HUDuiControl(), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f), fm(FontManager::instance())
+HUDuiServerListItem::HUDuiServerListItem(ServerItem* item) : HUDuiControl(), serverList(ServerList::instance()), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f), fm(FontManager::instance())
 {
-  std::string key = item.name;
-  const unsigned int port = (int)ntohs((unsigned short)item.port);
-  if (port != ServerPort) {
-    char portBuf[20];
-    sprintf(portBuf, "%d", port);
-    key += ":";
-    key += portBuf;
-  }
+  if (item == NULL)
+    return;
 
-  serverKey = key;
-  char temp[50];
+  serverKey = item->getServerKey();
 
-  sprintf(temp, "%d", item.ping.pingTime);
-  std::string ping = temp;
-
-  sprintf(temp, "%d/%d", item.getPlayerCount(), item.ping.maxPlayers);
-  std::string players = temp;
-
-  std::string addr = stripAnsiCodes(item.description.c_str());
-  std::string desc;
-  std::string::size_type pos = addr.find_first_of(';');
-  if (pos != std::string::npos) {
-    desc = addr.substr(pos > 0 ? pos+1 : pos);
-    addr.resize(pos);
-  }
-
-  displayDomain = domainName = addr;
-  displayServer = serverName = desc;
-  displayPlayer = playerCount = players;
-  displayPing = serverPing = ping;
+  displayDomain = domainName = calculateDomainName();
+  displayServer = serverName = calculateServerName();
+  displayPlayer = playerCount = calculatePlayers();
+  displayPing = serverPing = calculatePing();
 }
 
 HUDuiServerListItem::~HUDuiServerListItem()
@@ -68,9 +47,62 @@ HUDuiServerListItem::~HUDuiServerListItem()
   // do nothing
 }
 
-std::string HUDuiServerListItem::getServerKey()
+std::string HUDuiServerListItem::calculateDomainName()
 {
-  return serverKey;
+  ServerItem* server = serverList.lookupServer(serverKey);
+
+  if (server == NULL)
+    return "";
+
+  std::string addr = stripAnsiCodes(server->description.c_str());
+  std::string desc;
+  std::string::size_type pos = addr.find_first_of(';');
+  if (pos != std::string::npos) {
+    desc = addr.substr(pos > 0 ? pos+1 : pos);
+    addr.resize(pos);
+  }
+  return addr;
+}
+
+std::string HUDuiServerListItem::calculateServerName()
+{
+  ServerItem* server = serverList.lookupServer(serverKey);
+
+  if (server == NULL)
+    return "";
+
+  std::string addr = stripAnsiCodes(server->description.c_str());
+  std::string desc;
+  std::string::size_type pos = addr.find_first_of(';');
+  if (pos != std::string::npos) {
+    desc = addr.substr(pos > 0 ? pos+1 : pos);
+    addr.resize(pos);
+  }
+  return desc;
+}
+
+std::string HUDuiServerListItem::calculatePing()
+{
+  ServerItem* server = serverList.lookupServer(serverKey);
+
+  if (server == NULL)
+    return "";
+
+  char ping[5];
+  sprintf(ping, "%d", server->ping.pingTime);
+  return ping;
+}
+
+std::string HUDuiServerListItem::calculatePlayers()
+{
+  ServerItem* server = serverList.lookupServer(serverKey);
+
+  if (server == NULL)
+    return "";
+
+  char players[20];
+  sprintf(players, "%d/%d", server->getPlayerCount(), server->ping.maxPlayers);
+  return players;
 }
 
 void HUDuiServerListItem::setSize(float width, float height)
@@ -144,10 +176,25 @@ void HUDuiServerListItem::doRender()
     return;
   }
 
+  ServerItem* server = serverList.lookupServer(serverKey);
+
+  if (server == NULL)
+    return;
+
   float darkness = 0.7f;
 
   if (hasFocus())
     darkness = 1.0f;
+
+  if ((domainName.compare(calculateDomainName()) == 0)||(serverName.compare(calculateServerName()) == 0)||
+      (playerCount.compare(calculatePlayers()) == 0)||(serverPing.compare(calculatePing()) == 0))
+  {
+    displayDomain = domainName = calculateDomainName();
+    displayServer = serverName = calculateServerName();
+    displayPlayer = playerCount = calculatePlayers();
+    displayPing = serverPing = calculatePing();
+    resize();
+  }
   
   float domainX = getX() + spacerWidth;
   float serverX = getX() + domain_percentage*getWidth() + spacerWidth;

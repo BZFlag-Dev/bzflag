@@ -31,6 +31,9 @@
 
 class ServerMenu;
 
+typedef std::map<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*>>> pingsMap;
+typedef std::pair<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*>>> pingMapPair;
+
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
@@ -65,7 +68,7 @@ public:
 
   static void playingCB(void*);
 
-  static std::map<ServerPing*, std::pair<ServerItem, HUDuiServerList*>> activePings;
+  static pingsMap activePings;
 
   HUDuiServerList* normalList;
   HUDuiServerList* recentList;

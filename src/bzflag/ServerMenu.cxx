@@ -41,6 +41,34 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
+  if (key.chr == 'r') {
+    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
+      return false;
+
+    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
+      return false;
+
+    ServerItem* server = ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer();
+    ServerPing *newping = new ServerPing(server->ping.serverId.serverHost, ntohs(server->ping.serverId.port));
+    newping->start();
+    std::vector<HUDuiServerList*> serverListsVector;
+    serverListsVector.push_back((HUDuiServerList*)menu->tabbedControl->getActiveTab());
+    ServerMenu::activePings.insert(pingMapPair(server->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*>>(newping, serverListsVector)));
+    server->ping.pinging = true;
+    return true;
+  }
+
+  if (key.chr == 'h') {
+    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
+      return false;
+
+    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
+      return false;
+
+    ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->removeItem(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
+    return true;
+  }
+
   return MenuDefaultKey::keyPress(key);
 }
 
@@ -55,7 +83,7 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-std::map<ServerPing*, std::pair<ServerItem, HUDuiServerList*>> ServerMenu::activePings;
+pingsMap ServerMenu::activePings;
 
 ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
 			  normalList(new HUDuiServerList()), favoritesList(new HUDuiServerList()),
@@ -101,20 +129,26 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
 
 ServerMenu::~ServerMenu()
 {
-  // Blank
+  serverList.removeServerCallback(newServer, normalList);
+  serverList.removeFavoriteServerCallback(newServer, favoritesList);
+  serverList.removeRecentServerCallback(newServer, recentList);
 }
 
 void ServerMenu::newServer(ServerItem* addedServer, void* data)
 {
-  if (addedServer->ping.pingTime != 0)
+  if ((addedServer->ping.pingTime != 0)||(addedServer->ping.pinging))
   {
-    ((HUDuiServerList*)data)->addItem(*addedServer);
+    ServerMenu::activePings[addedServer->getServerKey()].second.push_back((HUDuiServerList*)data);
     return;
   }
 
   ServerPing *newping = new ServerPing(addedServer->ping.serverId.serverHost, ntohs(addedServer->ping.serverId.port));
   newping->start();
-  ServerMenu::activePings.insert(std::pair<ServerPing*, std::pair<ServerItem, HUDuiServerList*>>(newping, std::pair<ServerItem, HUDuiServerList*>((*addedServer), ((HUDuiServerList*)data))));}
+  std::vector<HUDuiServerList*> serverListsVector;
+  serverListsVector.push_back((HUDuiServerList*)data);
+  ServerMenu::activePings.insert(pingMapPair(addedServer->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*>>(newping, serverListsVector)));
+  addedServer->ping.pinging = true;
+}
 
 void ServerMenu::execute()
 {
@@ -125,7 +159,7 @@ void ServerMenu::execute()
     tabbedControl->addTab(newServerList, customTabControl->tabName->getString(), tabbedControl->getTabCount() - 1);
     for (int i=0; i<(int)serverList.size(); i++)
     {
-      ((HUDuiServerList*)newServerList)->addItem(*(serverList.getServerAt(i)));
+      ((HUDuiServerList*)newServerList)->addItem(serverList.getServerAt(i));
     }
     newServerList->searchServers(customTabControl->serverName->getString());
     ((HUDuiNestedContainer*)(tabbedControl->getTab(tabbedControl->getTabCount() - 2)))->getNav().set((size_t)1);
@@ -200,18 +234,19 @@ void ServerMenu::updateStatus()
 void ServerMenu::playingCB(void* _self)
 {
   ServerList &list = ServerList::instance();
-  for (std::map<ServerPing*, std::pair<ServerItem, HUDuiServerList*>>::iterator
+  for (pingsMap::iterator
     i = ServerMenu::activePings.begin(); i != ServerMenu::activePings.end();) {
-    i->first->doPings();
-    if (i->first->done()) {
-      std::string test = i->second.first.getServerKey();
-      //ServerList &list = ServerList::instance();
-      ServerItem* server = list.lookupServer(i->second.first.getServerKey());
+    i->second.first->doPings();
+    if (i->second.first->done()) {
+      ServerItem* server = list.lookupServer(i->first);
       if (server == NULL)
 	break;
-      server->ping.pingTime = i->first->calcLag();
-      i->second.second->addItem(*(server));
-      delete i->first;
+      server->ping.pingTime = i->second.first->calcLag();
+      server->ping.pinging = false;
+      for (int j=0; j<(int)(i->second.second.size()); j++) {
+	i->second.second[j]->addItem(server);
+      }
+      delete i->second.first;
       ServerMenu::activePings.erase(i++);
       continue;
     }
