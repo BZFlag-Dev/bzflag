@@ -71,8 +71,11 @@ class HUDuiServerList : public HUDuiScrollList {
     void addItem(HUDuiControl* item);
 
     void removeItem(ServerItem* item);
+    void clearList();
 
     void update();
+
+    HUDuiServerListItem* get(int index);
 
     ServerItem* getSelectedServer();
 

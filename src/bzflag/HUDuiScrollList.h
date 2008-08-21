@@ -41,7 +41,9 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 
     virtual void addItem(HUDuiControl* item);
 
-    size_t getSize() { return items.size(); }
+    int getSize() { return (int) items.size(); }
+
+    HUDuiControl* get(int index);
 
     void update();
     void refreshNavQueue();

@@ -41,6 +41,28 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
+  if (key.chr == 'c') {
+    if ((menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList))
+      return false;
+
+    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList) {
+      for (int i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
+      {
+	serverList.unmarkAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->get(i)->getServer());
+      }
+    }
+
+    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList) {
+      for (int i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
+      {
+	serverList.unmarkAsRecent(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->get(i)->getServer());
+      }
+    }
+
+    ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->clearList();
+    return true;
+  }
+
   if (key.chr == 'r') {
     if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
       return false;
@@ -64,6 +86,12 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
+
+    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)
+      serverList.unmarkAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
+
+    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList)
+      serverList.unmarkAsRecent(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
 
     ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->removeItem(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
     return true;

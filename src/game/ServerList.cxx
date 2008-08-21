@@ -347,6 +347,17 @@ void ServerList::markAsRecent(ServerItem* item)
   }
 }
 
+void ServerList::unmarkAsRecent(ServerItem* item)
+{
+  std::string addrname = item->getAddrName();
+  ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
+  if (i!= serverCache->end()) {
+    i->second.recent = false;
+  }
+
+  item->recent = false;
+}
+
 void ServerList::markAsFavorite(ServerItem* item)
 {
   std::string addrname = item->getAddrName();
@@ -362,7 +373,17 @@ void ServerList::markAsFavorite(ServerItem* item)
   {
     (*itr).first(item, (*itr).second);
   }
+}
 
+void ServerList::unmarkAsFavorite(ServerItem* item)
+{
+  std::string addrname = item->getAddrName();
+  ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
+  if (i!= serverCache->end()) {
+    i->second.favorite = false;
+  }
+
+  item->favorite = false;
 }
 
 ServerItem* ServerList::lookupServer(std::string key)

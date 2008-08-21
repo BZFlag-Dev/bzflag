@@ -84,6 +84,18 @@ void HUDuiScrollList::setSelected(int _index)
   index = _index;
 }
 
+HUDuiControl* HUDuiScrollList::get(int index)
+{
+  if (index < 0)
+    index = 0;
+  else if (index >= getSize())
+    index = getSize() - 1;
+
+  std::list<HUDuiControl*>::iterator it = items.begin();
+  std::advance(it, index);
+  return (*it);
+}
+
 // Add a new item to our scrollable list
 void HUDuiScrollList::addItem(HUDuiControl* item)
 {

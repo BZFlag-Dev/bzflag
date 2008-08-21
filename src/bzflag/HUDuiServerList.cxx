@@ -187,6 +187,16 @@ void HUDuiServerList::addItem(ServerItem* item)
   applyFilters();
 }
 
+void HUDuiServerList::clearList()
+{
+  items.clear();
+  originalItems.clear();
+  getNav().clear();
+  getNav().push_front(this);
+  if (!getParent()->hasFocus())
+    getNav().set((size_t) 0);
+}
+
 void HUDuiServerList::removeItem(ServerItem* item)
 {
   HUDuiServerListItem* oldItem = new HUDuiServerListItem(item);
@@ -330,6 +340,18 @@ ServerItem* HUDuiServerList::getSelectedServer()
 
   HUDuiServerListItem* selected = (HUDuiServerListItem*) *it;
   return dataList.lookupServer(selected->getServerKey());
+}
+
+HUDuiServerListItem* HUDuiServerList::get(int index)
+{
+  if (index < 0)
+    index = 0;
+  else if (index >= getSize())
+    index = getSize() - 1;
+
+  std::list<HUDuiControl*>::iterator it = items.begin();
+  std::advance(it, index);
+  return (HUDuiServerListItem*)(*it);
 }
 
 void HUDuiServerList::searchServers(std::string pattern)

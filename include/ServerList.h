@@ -68,6 +68,9 @@ public:
 public:
   void markAsFavorite(ServerItem* item);
   void markAsRecent(ServerItem* item);
+  void unmarkAsFavorite(ServerItem* item);
+  void unmarkAsRecent(ServerItem* item);
+
   void addToList(ServerItem, bool doCache=false);
   //void markFav(const std::string &, bool);
   void clear();
