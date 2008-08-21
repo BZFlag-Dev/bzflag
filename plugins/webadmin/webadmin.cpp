@@ -383,4 +383,4 @@ void WebAdmin::groupPageCallback (const HTTPRequest &request)
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// ex: shiftwidth=2 tabstop=2 expandtab
+// ex: shiftwidth=2 tabstop=8
