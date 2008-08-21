@@ -189,7 +189,7 @@ void ServerMenu::execute()
     {
       ((HUDuiServerList*)newServerList)->addItem(serverList.getServerAt(i));
     }
-    newServerList->searchServers(customTabControl->serverName->getString());
+    //newServerList->searchServers(customTabControl->serverName->getString());
     ((HUDuiNestedContainer*)(tabbedControl->getTab(tabbedControl->getTabCount() - 2)))->getNav().set((size_t)1);
     return;
   }

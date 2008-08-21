@@ -33,7 +33,7 @@ float HUDuiServerList::SERVER_PERCENTAGE = 0.375f;
 float HUDuiServerList::PLAYER_PERCENTAGE = 0.125f;
 float HUDuiServerList::PING_PERCENTAGE = 0.125f;
 
-HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false), dataList(ServerList::instance())
+HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), filterPatterns(std::pair<std::string, std::string>("*", "*")), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false), dataList(ServerList::instance())
 {
   columns[DomainName] = std::pair<std::string, float*>("Address", &DOMAIN_PERCENTAGE);
   columns[ServerName] = std::pair<std::string, float*>("Server Name", &SERVER_PERCENTAGE);
@@ -42,7 +42,7 @@ HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), sortMo
   getNav().push_front(this);
 }
 
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), filterOptions(0), sortMode(NoSort), dataList(ServerList::instance())
+HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), filterOptions(0), filterPatterns(std::pair<std::string, std::string>("*", "*")), sortMode(NoSort), dataList(ServerList::instance())
 {
   // do nothing
 }
@@ -62,14 +62,16 @@ bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second)
   return (((HUDuiServerListItem*)first)->getServerKey() == ((HUDuiServerListItem*)second)->getServerKey());
 }
 
-struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::string, bool>
+struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::pair<std::string, std::string>, bool>
 {
 public:
-  result_type operator()(first_argument_type control, second_argument_type pattern) const
+  result_type operator()(first_argument_type control, second_argument_type patterns) const
     {
       HUDuiServerListItem* item = (HUDuiServerListItem*) control;
 
-      return !(glob_match(TextUtils::tolower(pattern), TextUtils::tolower(item->getServerName())));
+      bool serverName = !(glob_match(TextUtils::tolower(patterns.first), TextUtils::tolower(item->getServerName())));
+      bool domainName = !(glob_match(TextUtils::tolower(patterns.second), TextUtils::tolower(item->getDomainName())));
+      return ((serverName)||(domainName));
     }
 };
 
@@ -105,7 +107,7 @@ public:
     }
 };
 
-struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, uint16_t, bool>
+struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, uint32_t, bool>
 {
 public:
   result_type operator()(first_argument_type control, second_argument_type filter) const
@@ -146,6 +148,46 @@ public:
 
 	    case RicochetOff:
 	      returnValue = ((server->ping.gameOptions & RicochetGameStyle) == RicochetGameStyle);
+	      break;
+
+	    case AntidoteFlagOn:
+	      returnValue = ((server->ping.gameOptions & AntidoteGameStyle) != AntidoteGameStyle);
+	      break;
+
+	    case AntidoteFlagOff:
+	      returnValue = ((server->ping.gameOptions & AntidoteGameStyle) == AntidoteGameStyle);
+	      break;
+
+	    case SuperFlagsOn:
+	      returnValue = ((server->ping.gameOptions & SuperFlagGameStyle) != SuperFlagGameStyle);
+	      break;
+
+	    case SuperFlagsOff:
+	      returnValue = ((server->ping.gameOptions & SuperFlagGameStyle) == SuperFlagGameStyle);
+	      break;
+
+	    case HandicapOn:
+	      returnValue = ((server->ping.gameOptions & HandicapGameStyle) != HandicapGameStyle);
+	      break;
+
+	    case HandicapOff:
+	      returnValue = ((server->ping.gameOptions & HandicapGameStyle) == HandicapGameStyle);
+	      break;
+
+	    case ClassicCTFGameMode:
+	      returnValue = (server->ping.gameType == ClassicCTF);
+	      break;
+
+	    case RabbitChaseGameMode:
+	      returnValue = (server->ping.gameType == RabbitChase);
+	      break;
+
+	    case OpenFFAGameMode:
+	      returnValue = (server->ping.gameType == OpenFFA);
+	      break;
+
+	    case TeamFFAGameMode:
+	      returnValue = (server->ping.gameType == TeamFFA);
 	      break;
 	  }
 	}
@@ -354,13 +396,16 @@ HUDuiServerListItem* HUDuiServerList::get(int index)
   return (HUDuiServerListItem*)(*it);
 }
 
-void HUDuiServerList::searchServers(std::string pattern)
+void HUDuiServerList::serverNameFilter(std::string pattern)
 {
+  filterPatterns.first = pattern;
   applyFilters();
-  items.remove_if(std::bind2nd(search(), pattern));
-  refreshNavQueue();
-  setSelected(0);
-  getNav().set((size_t) 0);
+}
+
+void HUDuiServerList::domainNameFilter(std::string pattern)
+{
+  filterPatterns.second = pattern;
+  applyFilters();
 }
 
 void HUDuiServerList::applyFilters()
@@ -368,9 +413,11 @@ void HUDuiServerList::applyFilters()
   items = originalItems;
 
   items.remove_if(std::bind2nd(filter(), filterOptions));
+  items.remove_if(std::bind2nd(search(), filterPatterns));
 
   refreshNavQueue();
   setSelected(0);
+  //getNav().set((size_t) 0);
 }
 
 void HUDuiServerList::toggleFilter(FilterConstants filter)

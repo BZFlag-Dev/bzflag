@@ -45,7 +45,6 @@ class HUDuiServerListCustomTab : public HUDuiNestedContainer {
 
     HUDuiLabel* createNew;
     HUDuiTypeIn* tabName;
-    HUDuiTypeIn* serverName;
 
   protected:
     void doRender();
@@ -54,12 +53,19 @@ class HUDuiServerListCustomTab : public HUDuiNestedContainer {
 
   private:
     HUDuiTypeIn* domainName;
+    HUDuiTypeIn* serverName;
 
     HUDuiList* emptyServer;
     HUDuiList* fullServer;
+    HUDuiList* teamFFAServers;
+    HUDuiList* openFFAServers;
+    HUDuiList* classicCTFServers;
+    HUDuiList* rabbitChaseServers;
     HUDuiList* ricochet;
     HUDuiList* superFlags;
+    HUDuiList* antidoteFlag;
     HUDuiList* jumping;
+    HUDuiList* handicap;
 
     std::list<HUDuiControl*> controls;
 };

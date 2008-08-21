@@ -34,21 +34,22 @@ class HUDuiServerList : public HUDuiScrollList {
       ~HUDuiServerList();
 
     typedef enum {
-      EmptyServer  = 0x0002,
-      FullServer   = 0x0004,
-      JumpingOn    = 0x0008,
-      JumpingOff   = 0x0010,
-      RicochetOn   = 0x0020,
-      RicochetOff  = 0x0040,
-      AntidoteFlagOn = 0x0080,
-      AntidoteFlagOff = 0x0100,
-      SuperFlagsOn = 0x0200,
-      SuperFlagsOff = 0x0400,
-      HandicapOn = 0x0800,
-      HandicapOff = 0x1000,
-      ClassicCTFGameMode = 0x2000,
-      RabbitChaseGameMode = 0x4000,
-      OpenFFAGameMode = 0x8000,
+      EmptyServer  = 0x00002,
+      FullServer   = 0x00004,
+      JumpingOn    = 0x00008,
+      JumpingOff   = 0x00010,
+      RicochetOn   = 0x00020,
+      RicochetOff  = 0x00040,
+      AntidoteFlagOn = 0x00080,
+      AntidoteFlagOff = 0x00100,
+      SuperFlagsOn = 0x00200,
+      SuperFlagsOff = 0x00400,
+      HandicapOn = 0x00800,
+      HandicapOff = 0x01000,
+      ClassicCTFGameMode = 0x02000,
+      RabbitChaseGameMode = 0x04000,
+      OpenFFAGameMode = 0x08000,
+      TeamFFAGameMode = 0x10000,
       EndOfFilterConstants
     } FilterConstants;
 
@@ -80,11 +81,12 @@ class HUDuiServerList : public HUDuiScrollList {
     ServerItem* getSelectedServer();
 
     void sortBy(SortConstants sortType);
-    void searchServers(std::string pattern);
 
     float getHeight() const;
 
     void applyFilters();
+    void serverNameFilter(std::string pattern);
+    void domainNameFilter(std::string pattern);
     void toggleFilter(FilterConstants filter);
 
     void setFontSize(float size);
@@ -118,7 +120,8 @@ class HUDuiServerList : public HUDuiScrollList {
     std::list<HUDuiControl*> originalItems;
 
     SortConstants sortMode;
-    uint16_t filterOptions;
+    uint32_t filterOptions;
+    std::pair<std::string, std::string> filterPatterns;
 
     int activeColumn;
 
