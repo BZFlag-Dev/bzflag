@@ -164,11 +164,19 @@ ServerMenu::~ServerMenu()
 
 void ServerMenu::newServer(ServerItem* addedServer, void* data)
 {
-  if ((addedServer->ping.pingTime != 0)||(addedServer->ping.pinging))
+  // Server already has a ping
+  if (addedServer->ping.pingTime != 0)
   {
-    ServerMenu::activePings[addedServer->getServerKey()].second.push_back((HUDuiServerList*)data);
+    ((HUDuiServerList*)data)->addItem(addedServer);
     return;
   }
+
+  // Pinging in process, add on to the list vector
+  if (addedServer->ping.pinging)
+  {
+    ServerMenu::activePings[addedServer->getServerKey()].second.push_back((HUDuiServerList*)data);
+  }
+
 
   ServerPing *newping = new ServerPing(addedServer->ping.serverId.serverHost, ntohs(addedServer->ping.serverId.port));
   newping->start();

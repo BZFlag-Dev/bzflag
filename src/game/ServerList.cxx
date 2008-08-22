@@ -336,9 +336,11 @@ void ServerList::markAsRecent(ServerItem* item)
   ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
   if (i!= serverCache->end()) {
     i->second.recent = true;
+    i->second.recentTime = item->getNow();
   }
 
   item->recent = true;
+  item->recentTime = item->getNow();
 
   for (ServerCallbackList::iterator itr = recentCallbackList.begin();
        itr != recentCallbackList.end(); ++itr)
@@ -356,6 +358,7 @@ void ServerList::unmarkAsRecent(ServerItem* item)
   }
 
   item->recent = false;
+  item->recentTime = 0;
 }
 
 void ServerList::markAsFavorite(ServerItem* item)

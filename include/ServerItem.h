@@ -51,6 +51,7 @@ public:
   bool		cached;     // was I cached ?
   bool		favorite;   // favorite server, user selection
   bool		recent;     // recent server
+  time_t	recentTime; // when it was made recent;
 };
 
 bool	operator<(const ServerItem &left, const ServerItem &right);

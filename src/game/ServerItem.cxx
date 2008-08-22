@@ -28,7 +28,7 @@
 #include "ServerListCache.h"
 
 
-ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false), recent(false)
+ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false), recent(false), recentTime(0)
 {
 }
 
@@ -60,9 +60,20 @@ void ServerItem::writeToFile(std::ostream& out) const
   nboPackUByte(buffer, favorite);
   out.write(buffer, 1);
 
+  // recent server from more than 10 days ago, unmark as recent
+  //if ((recent)&&((getNow() - recentTime) >= 60*60*24*10)) {
+  //  recent = false;
+  //  recentTime = 0;
+  //}
+
   // write out recent status
   nboPackUByte(buffer, recent);
   out.write(buffer, 1);
+
+  // write out recent time
+  memset(buffer,0,sizeof(buffer));
+  nboPackInt(buffer,(int32_t)recentTime);
+  out.write(&buffer[0], 4);
 
   // write out current time
   memset(buffer,0,sizeof(buffer));
@@ -114,6 +125,19 @@ bool ServerItem::readFromFile(std::istream& in)
   in.read(buffer, 1);
   nboUnpackUByte(buffer, rec);
   recent = (rec != 0);
+
+  // read in recent time
+  in.read(&buffer[0],4);
+  if (in.gcount() < 4) return false;
+  int32_t rTime;
+  nboUnpackInt(&buffer[0],rTime);
+  recentTime = (time_t) rTime;
+
+  // recent server from more than 10 days ago, unmark as recent
+  //if ((recent)&&((getNow() - recentTime) >= 60*60*24*10)) {
+    recent = false;
+    recentTime = 0;
+  }
 
   // read in time
   in.read(&buffer[0],4);
