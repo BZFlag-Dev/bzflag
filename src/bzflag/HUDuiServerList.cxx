@@ -424,7 +424,7 @@ ServerItem* HUDuiServerList::getSelectedServer()
   return dataList.lookupServer(selected->getServerKey());
 }
 
-HUDuiServerListItem* HUDuiServerList::get(int index)
+HUDuiServerListItem* HUDuiServerList::get(size_t index)
 {
   if (index < 0)
     index = 0;
@@ -502,7 +502,7 @@ void HUDuiServerList::sortBy(SortConstants sortType)
     items.reverse();
 
   refreshNavQueue();
-  setSelected((int) getNav().getIndex());
+  setSelected(getNav().getIndex());
 }
 
 void HUDuiServerList::setActiveColumn(int column)
@@ -533,12 +533,12 @@ size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
   // Don't scroll past the bottom of the list
   if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 
-  int newFocus = (int) proposedFocus - 1;
+  size_t newFocus = proposedFocus - 1;
   setSelected(newFocus);
   if (newFocus != -1)
-    return (size_t) getSelected() + 1;
+    return getSelected() + 1;
   else
-    return (size_t) getSelected();
+    return getSelected();
 }
 
 void HUDuiServerList::refreshNavQueue()

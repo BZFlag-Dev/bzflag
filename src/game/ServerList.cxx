@@ -297,7 +297,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
   if (serverKeyCallbackList.find(info.getServerKey()) != serverKeyCallbackList.end())
   {
-    for (int i=0; i<serverKeyCallbackList[info.getServerKey()].size(); i++)
+    for (size_t i=0; i<serverKeyCallbackList[info.getServerKey()].size(); i++)
     {
       serverKeyCallbackList[info.getServerKey()][i].first(&info, serverKeyCallbackList[info.getServerKey()][i].second);
     }
@@ -405,7 +405,7 @@ ServerItem* ServerList::lookupServer(std::string key)
     return NULL;
 }
 
-ServerItem* ServerList::getServerAt(int index)
+ServerItem* ServerList::getServerAt(size_t index)
 {
   std::map<std::string, ServerItem>::iterator serverIterator;
   

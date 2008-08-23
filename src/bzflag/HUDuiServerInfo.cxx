@@ -136,7 +136,7 @@ void HUDuiServerInfo::resize()
 
   float x = getX() + itemHeight;
   fs.setMin(10, 10);
-  for (int i=0; i<(int) readouts.size(); i++) {
+  for (size_t i=0; i<readouts.size(); i++) {
     if ((i + 1) % 7 == 1) {
       x = (0.125f + 0.25f * (float)(i / 7)) * (float)getWidth();
       y = y0;
@@ -152,7 +152,7 @@ void HUDuiServerInfo::resize()
   float spacer = fm.getStringWidth(getFontFace()->getFMFace(), fontSize, "X");
   x = (0.125f + 0.25f * (float)(1 / 7)) * (float)getWidth();
   y = y0;
-  for (int i=0; i<(int) playerLabels.size(); i++) {
+  for (size_t i=0; i<playerLabels.size(); i++) {
     HUDuiLabel* label = playerLabels[i];
     label->setFontSize(fontSize);
     label->setFontFace(getFontFace());
@@ -387,15 +387,11 @@ void HUDuiServerInfo::doRender()
 
   fillReadouts();
 
-  for (int i=0; i<(int) readouts.size(); i++)
-  {
-    readouts[i]->render();
-  }
+  for (std::vector<HUDuiLabel*>::iterator itr = readouts.begin(); itr != readouts.end(); ++itr)
+    (*itr)->render();
 
-  for (int i=0; i<(int) playerLabels.size(); i++)
-  {
-    playerLabels[i]->render();
-  }
+  for (std::vector<HUDuiLabel*>::iterator itr = playerLabels.begin(); itr != playerLabels.end(); ++itr)
+    (*itr)->render();
 }
 
 

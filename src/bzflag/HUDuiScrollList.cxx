@@ -13,6 +13,9 @@
 // interface headers
 #include "HUDuiScrollList.h"
 
+// system implementation headers
+#include <sstream>
+
 // common implementation headers
 #include "BundleMgr.h"
 #include "Bundle.h"
@@ -39,7 +42,7 @@ HUDuiScrollList::~HUDuiScrollList()
   getNav().removeCallback(callback, this);
 }
 
-int HUDuiScrollList::getSelected() const
+size_t HUDuiScrollList::getSelected() const
 {
   return index;
 }
@@ -50,11 +53,11 @@ void HUDuiScrollList::clear()
   setSelected(0);
 }
 
-void HUDuiScrollList::setSelected(int _index)
+void HUDuiScrollList::setSelected(size_t _index)
 {
   // Ensure the index is not past the end of our list
-  if (_index >= (int)items.size())
-    _index = (int)items.size() - 1;
+  if (_index >= items.size())
+    _index = items.size() - 1;
 
   // Make sure the index isn't negative either
   if (_index < 0)
@@ -62,7 +65,7 @@ void HUDuiScrollList::setSelected(int _index)
 
   if (pagedList) {
     // Figure out what page the new index is on
-    int newPage = (_index/numVisibleItems) + 1;
+    size_t newPage = (_index/numVisibleItems) + 1;
     visiblePosition = _index - ((newPage - 1)*numVisibleItems);
   } else {
     // The new index falls within the portion of the list already on screen
@@ -84,7 +87,7 @@ void HUDuiScrollList::setSelected(int _index)
   index = _index;
 }
 
-HUDuiControl* HUDuiScrollList::get(int index)
+HUDuiControl* HUDuiScrollList::get(size_t index)
 {
   if (index < 0)
     index = 0;
@@ -141,8 +144,8 @@ size_t HUDuiScrollList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
   // Don't scroll past the bottom of the list
   if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 
-  setSelected((int) proposedFocus);
-  return (size_t) getSelected();
+  setSelected(proposedFocus);
+  return getSelected();
 }
 
 size_t HUDuiScrollList::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
@@ -166,7 +169,7 @@ void HUDuiScrollList::setPaged(bool paged)
 bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
 {
   // Figure out what page the user is on
-  int currentPage = (index/numVisibleItems) + 1;
+  size_t currentPage = (index/numVisibleItems) + 1;
 
   if (key.chr == 0)
     switch (key.button) {
@@ -174,14 +177,14 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
       case BzfKeyEvent::PageUp:
         if ((pagedList)&&(index != -1)) {
           // Jump back to the previous page
-          getNav().set((size_t) (currentPage - 2)*numVisibleItems);
+          getNav().set((currentPage - 2)*numVisibleItems);
         }
         break;
 
       case BzfKeyEvent::PageDown:
         if ((pagedList)&&(index != -1)) {
           // Skip to the next page
-          getNav().set((size_t) (currentPage)*numVisibleItems);
+          getNav().set((currentPage)*numVisibleItems);
         }
         break;
 
@@ -257,8 +260,8 @@ void HUDuiScrollList::doRender()
   std::advance(it, (getSelected() - visiblePosition));
 
   // Draw the list items
-  for (int i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
-    if (i < (int)items.size()) {
+  for (size_t i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
+    if (i < items.size()) {
       HUDuiControl* item = *it;
       item->setPosition(getX(), ((getY() + getHeight()) - itemHeight*((i + 1)-(getSelected() - visiblePosition))));
       item->render();
@@ -268,18 +271,12 @@ void HUDuiScrollList::doRender()
 
   // Draw the page label
   if (pagedList) {
-    int numPages = (((int)items.size() - 1)/numVisibleItems) + 1;
-    int currentPage = (getSelected()/numVisibleItems) + 1;
+    size_t numPages = ((items.size() - 1)/numVisibleItems) + 1;
+    size_t currentPage = (getSelected()/numVisibleItems) + 1;
 
     std::vector<std::string> args;
-    char msg[50];
-
-    sprintf(msg, "%d", currentPage);
-    args.push_back(msg);
-    sprintf(msg, "%d", numPages);
-    args.push_back(msg);
-
-    pageLabel->setString("Page: {1}/{2}", &args);
+    std::stringstream msg;
+    msg << "Page: " << currentPage << "/" << numPages;
 
     float labelWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), pageLabel->getString().c_str());
 

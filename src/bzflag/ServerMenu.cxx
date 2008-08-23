@@ -46,14 +46,14 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
       return false;
 
     if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList) {
-      for (int i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
+      for (size_t i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
       {
 	serverList.unmarkAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->get(i)->getServer());
       }
     }
 
     if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList) {
-      for (int i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
+      for (size_t i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
       {
 	serverList.unmarkAsRecent(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->get(i)->getServer());
       }
@@ -167,7 +167,7 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()), 
   tabbedControl->addTab(recentList, "Recent");
   tabbedControl->addTab(favoritesList, "Favorites");
 
-  for (int i=3; i<(int)cachedLists.size(); i++)
+  for (size_t i=3; i<cachedLists.size(); i++)
   {
     cachedLists[i].first->setFontFace(fontFace);
     tabbedControl->addTab(cachedLists[i].first, cachedLists[i].second);
@@ -227,7 +227,7 @@ void ServerMenu::execute()
     HUDuiServerList* newServerList = customTabControl->createServerList();
     listsCache.addNewList(newServerList, customTabControl->tabName->getString());
     tabbedControl->addTab(newServerList, customTabControl->tabName->getString(), tabbedControl->getTabCount() - 1);
-    for (int i=0; i<(int)serverList.size(); i++)
+    for (size_t i=0; i<serverList.size(); i++)
     {
       ((HUDuiServerList*)newServerList)->addItem(serverList.getServerAt(i));
     }
@@ -317,7 +317,7 @@ void ServerMenu::playingCB(void* _self)
 	break;
       server->ping.pingTime = i->second.first->calcLag();
       server->ping.pinging = false;
-      for (int j=0; j<(int)(i->second.second.size()); j++) {
+      for (size_t j=0; j<(i->second.second.size()); j++) {
 	i->second.second[j]->addItem(server);
       }
       delete i->second.first;

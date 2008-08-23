@@ -65,7 +65,7 @@ class HUDuiControl : public HUDuiElement {
 
     void		render();
 
-    bool isAtNavQueueIndex(int index);
+    bool isAtNavQueueIndex(size_t index);
 
     static int  getArrow() { return arrow; }
 

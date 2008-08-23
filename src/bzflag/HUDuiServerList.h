@@ -77,7 +77,7 @@ class HUDuiServerList : public HUDuiScrollList {
 
     void update();
 
-    HUDuiServerListItem* get(int index);
+    HUDuiServerListItem* get(size_t index);
 
     ServerItem* getSelectedServer();
 

@@ -60,7 +60,7 @@ void HUDuiNestedContainer::setNavQueue(HUDNavigationQueue* _navList)
 size_t HUDuiNestedContainer::gotFocus(size_t /*oldFocus*/, size_t proposedFocus, HUDNavChangeMethod /*changeMethod*/, void* data)
 {
   // If the nested container is getting focus, decide who to pass focus to
-  if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex((int) proposedFocus))
+  if (((HUDuiNestedContainer*)data)->isAtNavQueueIndex(proposedFocus))
   {
     // If the container is empty...
     if (((HUDuiNestedContainer*)data)->getNav().size() <= 0)

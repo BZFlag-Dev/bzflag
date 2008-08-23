@@ -80,7 +80,7 @@ void HUDuiServerListCache::saveCache()
     nboPackUByte(buffer, cachedLists[2].first->getReverseSort());
     outFile->write(buffer, 1);
 
-    for (int i=3; i<(int)cachedLists.size(); i++)
+    for (size_t i=3; i<cachedLists.size(); i++)
     {
       // write out the list's tab name
       memset(buffer,0,sizeof(buffer));
@@ -116,11 +116,11 @@ void HUDuiServerListCache::saveCache()
 
       // write out the number of servers in the list
       memset(buffer,0,sizeof(buffer));
-      nboPackInt(buffer,cachedLists[i].first->getSize());
+      nboPackInt(buffer,(int)cachedLists[i].first->getSize());
       outFile->write(&buffer[0], 4);
 
       // write out the server keys of servers in the list
-      for (int j=0; j<cachedLists[i].first->getSize(); j++)
+      for (size_t j=0; j<cachedLists[i].first->getSize(); j++)
       {
 	memset(buffer,0,sizeof(buffer));
 	copyLength = int(cachedLists[i].first->get(j)->getServerKey().size() < max_string ? cachedLists[i].first->get(j)->getServerKey().size(): max_string);

@@ -52,7 +52,7 @@ public:
   void collectData(char *ptr, int len);
   void finalization(char *data, unsigned int length, bool good);
 
-  ServerItem* getServerAt(int index);
+  ServerItem* getServerAt(size_t index);
 
   void addServerCallback(ServerListCallback cb, void* data);
   void removeServerCallback(ServerListCallback cb, void* data);

@@ -49,10 +49,10 @@ public:
     UTF8StringItr::operator=(value);
   }
 
-  inline int getCount() const { return counter; }
+  inline size_t getCount() const { return counter; }
 
 private:
-  int counter;
+  size_t counter;
 };
 
 class HUDuiTypeIn : public HUDuiControl {
@@ -64,7 +64,7 @@ class HUDuiTypeIn : public HUDuiControl {
     int			getMaxLength() const;
     std::string		getString() const;
 
-    void		setMaxLength(int);
+    void		setMaxLength(size_t);
     void		setString(const std::string&);
     void		setEditing(bool _allowEdit);
 
@@ -74,7 +74,7 @@ class HUDuiTypeIn : public HUDuiControl {
     void		doRender();
 
   private:
-    int			maxLength;
+    size_t		maxLength;
     std::string		string;
     CountUTF8StringItr	cursorPos;
     bool		allowEdit;

@@ -36,14 +36,14 @@ class HUDuiScrollList : public HUDuiNestedContainer {
       HUDuiScrollList(bool paged);
       ~HUDuiScrollList();
 
-    int getSelected() const;
-    void setSelected(int _index);
+    size_t getSelected() const;
+    void setSelected(size_t _index);
 
     virtual void addItem(HUDuiControl* item);
 
-    int getSize() { return (int) items.size(); }
+    size_t getSize() { return items.size(); }
 
-    HUDuiControl* get(int index);
+    HUDuiControl* get(size_t index);
 
     void update();
     void refreshNavQueue();
@@ -69,9 +69,9 @@ class HUDuiScrollList : public HUDuiNestedContainer {
     std::list<HUDuiControl*> items;
 
   private:
-    int	index;
-    int visiblePosition;
-    int numVisibleItems;
+    size_t index;
+    size_t visiblePosition;
+    size_t numVisibleItems;
     bool pagedList;
 
     HUDuiLabel* pageLabel;
