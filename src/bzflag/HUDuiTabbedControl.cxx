@@ -97,6 +97,9 @@ void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
   
   if (it != tabs.end())
     tabs.erase(it);
+
+  if (activeTab >= tabs.size())
+    activeTab = tabs.size() - 1;
 }
 
 void HUDuiTabbedControl::setSize(float width, float height)
