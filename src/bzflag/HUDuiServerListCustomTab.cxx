@@ -47,38 +47,38 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
 
   emptyServer = new HUDuiList();
   emptyServer->setLabel("Show Empty Servers:");
-  emptyServer->getList().push_back("True");
-  emptyServer->getList().push_back("False");
+  emptyServer->getList().push_back("Yes");
+  emptyServer->getList().push_back("No");
   emptyServer->update();
 
   fullServer = new HUDuiList();
   fullServer->setLabel("Show Full Servers:");
-  fullServer->getList().push_back("True");
-  fullServer->getList().push_back("False");
+  fullServer->getList().push_back("Yes");
+  fullServer->getList().push_back("No");
   fullServer->update();
 
   teamFFAServers = new HUDuiList();
   teamFFAServers->setLabel("Show Team Free-For-All Servers:");
-  teamFFAServers->getList().push_back("True");
-  teamFFAServers->getList().push_back("False");
+  teamFFAServers->getList().push_back("Yes");
+  teamFFAServers->getList().push_back("No");
   teamFFAServers->update();
 
   openFFAServers = new HUDuiList();
   openFFAServers->setLabel("Show Open Free-For-All Servers:");
-  openFFAServers->getList().push_back("True");
-  openFFAServers->getList().push_back("False");
+  openFFAServers->getList().push_back("Yes");
+  openFFAServers->getList().push_back("No");
   openFFAServers->update();
 
   classicCTFServers = new HUDuiList();
   classicCTFServers->setLabel("Show Capture The Flag Servers:");
-  classicCTFServers->getList().push_back("True");
-  classicCTFServers->getList().push_back("False");
+  classicCTFServers->getList().push_back("Yes");
+  classicCTFServers->getList().push_back("No");
   classicCTFServers->update();
 
   rabbitChaseServers = new HUDuiList();
   rabbitChaseServers->setLabel("Show Rabbit Chase Servers:");
-  rabbitChaseServers->getList().push_back("True");
-  rabbitChaseServers->getList().push_back("False");
+  rabbitChaseServers->getList().push_back("Yes");
+  rabbitChaseServers->getList().push_back("No");
   rabbitChaseServers->update();
 
   ricochet = new HUDuiList();

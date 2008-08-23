@@ -67,6 +67,9 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList))
       return false;
 
+    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
+      return false;
+
     HUDuiServerList* tab = (HUDuiServerList*)menu->tabbedControl->getActiveTab();
     std::string tabName = menu->tabbedControl->getActiveTabName();
     HUDuiServerListCache::instance().removeList(tab, tabName);
@@ -74,21 +77,6 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   if (key.chr == 'r') {
-    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
-      return false;
-
-    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
-      return false;
-
-    /*
-    ServerItem* server = ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer();
-    ServerPing *newping = new ServerPing(server->ping.serverId.serverHost, ntohs(server->ping.serverId.port));
-    newping->start();
-    std::vector<HUDuiServerList*> serverListsVector;
-    serverListsVector.push_back((HUDuiServerList*)menu->tabbedControl->getActiveTab());
-    ServerMenu::activePings.insert(pingMapPair(server->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*>>(newping, serverListsVector)));
-    server->ping.pinging = true;
-    */
     ServerList::instance().clear();
     ServerList::instance().startServerPings(getStartupInfo());
     return true;
