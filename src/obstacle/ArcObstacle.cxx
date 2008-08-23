@@ -318,9 +318,9 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
   }
 
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
-			  vertices, normals, texcoords, fcount,
-			  false, smoothBounce,
-			  driveThrough, shootThrough, ricochet);
+	                        vertices, normals, texcoords, fcount,
+	                        false, smoothBounce,
+	                        driveThrough, shootThrough, ricochet);
 
   // now make the faces
   int vlen, nlen;
