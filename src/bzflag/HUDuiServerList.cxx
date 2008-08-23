@@ -533,12 +533,14 @@ size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
   // Don't scroll past the bottom of the list
   if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 
-  size_t newFocus = proposedFocus - 1;
-  setSelected(newFocus);
-  if (newFocus != -1)
-    return getSelected() + 1;
-  else
+  // no move at the beginning of the list
+  if (proposedFocus == 0) {
+    setSelected(0);
     return getSelected();
+  } else {
+    setSelected(proposedFocus - 1);
+    return getSelected() + 1;
+  }
 }
 
 void HUDuiServerList::refreshNavQueue()

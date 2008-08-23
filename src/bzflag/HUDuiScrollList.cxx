@@ -59,10 +59,6 @@ void HUDuiScrollList::setSelected(size_t _index)
   if (_index >= items.size())
     _index = items.size() - 1;
 
-  // Make sure the index isn't negative either
-  if (_index < 0)
-    _index = 0;
-
   if (pagedList) {
     // Figure out what page the new index is on
     size_t newPage = (_index/numVisibleItems) + 1;
