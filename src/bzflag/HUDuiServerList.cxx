@@ -225,7 +225,47 @@ void HUDuiServerList::addItem(ServerItem* item)
   originalItems.sort(comp);
 
   addControl(newItem);
-  sortBy(sortMode);
+  //sortBy(sortMode);
+  applyFilters();
+}
+
+void HUDuiServerList::addItem(std::string key)
+{
+  HUDuiServerListItem* newItem = new HUDuiServerListItem(key);
+  newItem->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
+  newItem->setFontFace(getFontFace());
+  newItem->setFontSize(getFontSize());  
+  newItem->setSize(getWidth(), 10);
+
+  // Don't add duplicates to the list
+  if (std::binary_search(originalItems.begin(), originalItems.end(), (HUDuiControl*) newItem, comp))
+  {
+    delete newItem;
+    return;
+  }
+
+  std::string wtf = newItem->getServerPing();
+  if (newItem->getServerPing() == "")
+  {
+    originalItems.push_back(newItem);
+    originalItems.sort(comp);
+    //items.push_back(newItem);
+
+    addControl(newItem);
+  }
+     
+  // Apply filters now before adding
+  if (std::bind2nd(filter(), filterOptions)(newItem))
+  {
+    delete newItem;
+    return;
+  }
+
+  originalItems.push_back(newItem);
+  originalItems.sort(comp);
+
+  addControl(newItem);
+  //sortBy(sortMode);
   applyFilters();
 }
 
@@ -408,6 +448,11 @@ void HUDuiServerList::domainNameFilter(std::string pattern)
   applyFilters();
 }
 
+void HUDuiServerList::applyFilters(uint32_t filters)
+{
+  filterOptions = filters;
+}
+
 void HUDuiServerList::applyFilters()
 {
   items = originalItems;
@@ -416,6 +461,7 @@ void HUDuiServerList::applyFilters()
   items.remove_if(std::bind2nd(search(), filterPatterns));
 
   refreshNavQueue();
+  sortBy(sortMode);
   setSelected(0);
   //getNav().set((size_t) 0);
 }
@@ -428,10 +474,11 @@ void HUDuiServerList::toggleFilter(FilterConstants filter)
 
 void HUDuiServerList::sortBy(SortConstants sortType)
 {
-  if (sortMode == sortType)
-    reverseSort = !reverseSort;
-  else
-    sortMode = sortType;
+  //if (sortMode == sortType)
+  //  reverseSort = !reverseSort;
+  //else
+  //  sortMode = sortType;
+  sortMode = sortType;
 
   switch (sortType) {
     case DomainName:
@@ -471,6 +518,11 @@ void HUDuiServerList::setActiveColumn(int column)
 int HUDuiServerList::getActiveColumn()
 {
   return activeColumn;
+}
+
+void HUDuiServerList::setReverseSort(bool reverse)
+{
+  reverseSort = reverse;
 }
 
 size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod)
@@ -548,6 +600,10 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
   {
       if (hasFocus())
       {
+	if (getActiveColumn() == sortMode)
+	{
+	  reverseSort = !reverseSort;
+	}
 	switch (getActiveColumn()) {
 	  case DomainName:
 	    sortBy(DomainName);
@@ -564,7 +620,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 	  case Ping:
 	    sortBy(Ping);
 	    break;
-	}
+	} 
       }
   } else if (key.chr == '+') {
     if (hasFocus())

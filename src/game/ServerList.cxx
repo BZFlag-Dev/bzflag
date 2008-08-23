@@ -295,6 +295,14 @@ void ServerList::addToList(ServerItem info, bool doCache)
     (*itr).first(&info, (*itr).second);
   }
 
+  if (serverKeyCallbackList.find(info.getServerKey()) != serverKeyCallbackList.end())
+  {
+    for (int i=0; i<serverKeyCallbackList[info.getServerKey()].size(); i++)
+    {
+      serverKeyCallbackList[info.getServerKey()][i].first(&info, serverKeyCallbackList[info.getServerKey()][i].second);
+    }
+  }
+
   if (info.favorite)
   {
     for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
@@ -572,6 +580,18 @@ void ServerList::removeServerCallback(ServerListCallback _cb, void* data)
       return;
     }
   }
+}
+
+void ServerList::addServerKeyCallback(std::string key, ServerListCallback _cb, void* _data)
+{
+  serverKeyCallbackList[key].push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
+}
+
+void ServerList::removeServerKeyCallback(std::string key, ServerListCallback _cb, void* data)
+{
+  std::vector<std::pair<ServerListCallback, void*>>::iterator it = std::find(serverKeyCallbackList[key].begin(), serverKeyCallbackList[key].end(), std::make_pair<ServerListCallback, void*>(_cb, data));
+  if (it != serverKeyCallbackList[key].end())
+    serverKeyCallbackList[key].erase(it);
 }
 
 void ServerList::addFavoriteServerCallback(ServerListCallback _cb, void* _data)

@@ -60,12 +60,6 @@ void ServerItem::writeToFile(std::ostream& out) const
   nboPackUByte(buffer, favorite);
   out.write(buffer, 1);
 
-  // recent server from more than 10 days ago, unmark as recent
-  //if ((recent)&&((getNow() - recentTime) >= 60*60*24*10)) {
-  //  recent = false;
-  //  recentTime = 0;
-  //}
-
   // write out recent status
   nboPackUByte(buffer, recent);
   out.write(buffer, 1);
@@ -134,7 +128,7 @@ bool ServerItem::readFromFile(std::istream& in)
   recentTime = (time_t) rTime;
 
   // recent server from more than 10 days ago, unmark as recent
-  //if ((recent)&&((getNow() - recentTime) >= 60*60*24*10)) {
+  if ((recent)&&((getNow() - recentTime) >= 60*60*24*10)) {
     recent = false;
     recentTime = 0;
   }

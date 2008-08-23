@@ -91,6 +91,8 @@ bzflag_SOURCES =			\
 	HUDuiServerInfo.h		\
 	HUDuiServerList.cxx		\
 	HUDuiServerList.h		\
+	HUDuiServerListCache.cxx	\
+	HUDuiServerListCache.h		\
 	HUDuiServerListItem.cxx		\
 	HUDuiServerListItem.h		\
 	HUDuiServerListCustomTab.cxx	\

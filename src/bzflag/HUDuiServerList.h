@@ -69,6 +69,7 @@ class HUDuiServerList : public HUDuiScrollList {
     std::map<int, std::pair<std::string, float*>> columns; 
 
     void addItem(ServerItem* item);
+    void addItem(std::string key);
     void addItem(HUDuiControl* item);
 
     void removeItem(ServerItem* item);
@@ -82,12 +83,20 @@ class HUDuiServerList : public HUDuiScrollList {
 
     void sortBy(SortConstants sortType);
 
+    SortConstants getSortMode() { return sortMode; }
+    bool getReverseSort() { return reverseSort; }
+    void setReverseSort(bool reverse);
+
     float getHeight() const;
 
     void applyFilters();
+    void applyFilters(uint32_t filters);
     void serverNameFilter(std::string pattern);
     void domainNameFilter(std::string pattern);
     void toggleFilter(FilterConstants filter);
+
+    uint32_t getFilterOptions() { return filterOptions; }
+    std::pair<std::string, std::string> getFilterPatterns() { return filterPatterns; }
 
     void setFontSize(float size);
     void setFontFace(const LocalFontFace* face);

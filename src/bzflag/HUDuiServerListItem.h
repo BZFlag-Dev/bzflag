@@ -32,6 +32,7 @@ class HUDuiServerListItem : public HUDuiControl {
   public:
       HUDuiServerListItem();
       HUDuiServerListItem(ServerItem* item);
+      HUDuiServerListItem(std::string key);
       ~HUDuiServerListItem();
 	
     void setSize(float width, float height);

@@ -20,6 +20,8 @@
 
 #include "OpenGLUtils.h"
 
+#include <algorithm>
+
 //
 // HUDuiTabbedControl
 //
@@ -87,6 +89,14 @@ void HUDuiTabbedControl::removeTab(int tabIndex)
     return;
 
   tabs.erase(tabs.begin() + tabIndex);
+}
+
+void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
+{
+  std::vector<std::pair<std::string, HUDuiControl*>>::iterator it = std::find(tabs.begin(), tabs.end(), std::pair<std::string, HUDuiControl*>(tabName, control));
+  
+  if (it != tabs.end())
+    tabs.erase(it);
 }
 
 void HUDuiTabbedControl::setSize(float width, float height)

@@ -881,6 +881,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerListCache.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDuiServerListCustomTab.cxx"
 					>
 				</File>
@@ -1336,6 +1340,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiServerList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerListCache.h"
 				>
 			</File>
 			<File

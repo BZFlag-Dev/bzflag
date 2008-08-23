@@ -22,6 +22,7 @@
 #include "HUDuiControl.h"
 
 #include "HUDuiServerList.h"
+#include "HUDuiServerListCache.h"
 #include "ServerList.h"
 #include "ServerItem.h"
 #include "ServerPing.h"
@@ -57,6 +58,7 @@ public:
   void		execute();
   void		resize(int width, int height);
 
+  HUDuiServerListCache &listsCache;
   ServerList &serverList;
 
   static void	callback(HUDuiControl* w, void* data);

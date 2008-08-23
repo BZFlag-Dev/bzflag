@@ -29,6 +29,7 @@
 typedef void (*ServerListCallback)(ServerItem* addedServer, void*);
 
 typedef std::list< std::pair<ServerListCallback, void*> > ServerCallbackList;
+typedef std::map<std::string, std::vector<std::pair<ServerListCallback, void*>>> ServerKeyCallbackList;
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
@@ -55,6 +56,9 @@ public:
 
   void addServerCallback(ServerListCallback cb, void* data);
   void removeServerCallback(ServerListCallback cb, void* data);
+
+  void addServerKeyCallback(std::string key, ServerListCallback cb, void* data);
+  void removeServerKeyCallback(std::string key, ServerListCallback cb, void* data);
 
   void addFavoriteServerCallback(ServerListCallback cb, void* data);
   void removeFavoriteServerCallback(ServerListCallback cb, void* data);
@@ -95,6 +99,7 @@ private:
   StartupInfo *startupInfo;
 
   ServerCallbackList serverCallbackList;
+  ServerKeyCallbackList serverKeyCallbackList;
   ServerCallbackList favoritesCallbackList;
   ServerCallbackList recentCallbackList;
   ServerCallbackList clearedCallbacklist;

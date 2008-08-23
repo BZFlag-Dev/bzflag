@@ -42,6 +42,19 @@ HUDuiServerListItem::HUDuiServerListItem(ServerItem* item) : HUDuiControl(), ser
   displayPing = serverPing = calculatePing();
 }
 
+HUDuiServerListItem::HUDuiServerListItem(std::string key) : HUDuiControl(), serverList(ServerList::instance()), domain_percentage(0.0f), server_percentage(0.0f), player_percentage(0.0f), ping_percentage(0.0f), fm(FontManager::instance())
+{
+  if (key == "")
+    return;
+
+  serverKey = key;
+
+  displayDomain = domainName = calculateDomainName();
+  displayServer = serverName = calculateServerName();
+  displayPlayer = playerCount = calculatePlayers();
+  displayPing = serverPing = calculatePing();
+}
+
 HUDuiServerListItem::~HUDuiServerListItem()
 {
   // do nothing

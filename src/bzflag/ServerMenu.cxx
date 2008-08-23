@@ -63,6 +63,16 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
+  if (key.chr == 'd') {
+    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList))
+      return false;
+
+    HUDuiServerList* tab = (HUDuiServerList*)menu->tabbedControl->getActiveTab();
+    std::string tabName = menu->tabbedControl->getActiveTabName();
+    HUDuiServerListCache::instance().removeList(tab, tabName);
+    menu->tabbedControl->removeTab(tab, tabName);
+  }
+
   if (key.chr == 'r') {
     if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
       return false;
@@ -113,10 +123,10 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 
 pingsMap ServerMenu::activePings;
 
-ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
-			  normalList(new HUDuiServerList()), favoritesList(new HUDuiServerList()),
-			  recentList(new HUDuiServerList()), serverInfo(new HUDuiServerInfo()),
-			  customTabControl(new HUDuiServerListCustomTab())
+ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()), listsCache(HUDuiServerListCache::instance()),
+			  //normalList(new HUDuiServerList()), favoritesList(new HUDuiServerList()),
+			  //recentList(new HUDuiServerList()),
+			  serverInfo(new HUDuiServerInfo()), customTabControl(new HUDuiServerListCustomTab())
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -125,6 +135,25 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
 
   serverList.updateFromCache();
   serverList.startServerPings(getStartupInfo());
+  listsCache.loadCache();
+
+  std::vector<std::pair<HUDuiServerList*, std::string>> cachedLists = listsCache.readCachedLists();
+
+  if (cachedLists.size() > (size_t) 0)
+  {
+    normalList = cachedLists[0].first;
+    recentList = cachedLists[1].first;
+    favoritesList = cachedLists[2].first;
+  }
+  else
+  {
+    normalList = new HUDuiServerList;
+    favoritesList = new HUDuiServerList;
+    recentList = new HUDuiServerList;
+    listsCache.addNewList(normalList, "");
+    listsCache.addNewList(favoritesList, "");
+    listsCache.addNewList(recentList, "");
+  }
 
   normalList->setFontFace(fontFace);
   favoritesList->setFontFace(fontFace);
@@ -141,6 +170,13 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()),
   tabbedControl->addTab(normalList, "All");
   tabbedControl->addTab(recentList, "Recent");
   tabbedControl->addTab(favoritesList, "Favorites");
+
+  for (int i=3; i<(int)cachedLists.size(); i++)
+  {
+    cachedLists[i].first->setFontFace(fontFace);
+    tabbedControl->addTab(cachedLists[i].first, cachedLists[i].second);
+  }
+
   tabbedControl->addTab(customTabControl, "Create New Tab");
   tabbedControl->setActiveTab(0);
 
@@ -192,6 +228,7 @@ void ServerMenu::execute()
      (((HUDuiServerListCustomTab*)tabbedControl->getActiveTab())->createNew->hasFocus()))
   {
     HUDuiServerList* newServerList = customTabControl->createServerList();
+    listsCache.addNewList(newServerList, customTabControl->tabName->getString());
     tabbedControl->addTab(newServerList, customTabControl->tabName->getString(), tabbedControl->getTabCount() - 1);
     for (int i=0; i<(int)serverList.size(); i++)
     {
