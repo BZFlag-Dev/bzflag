@@ -65,6 +65,7 @@ void GroupInstance::init()
   material = NULL;
   driveThrough = 0;
   shootThrough = 0;
+  ricochet = false;
 
   return;
 }
@@ -157,6 +158,13 @@ void GroupInstance::setShootThrough()
 }
 
 
+void GroupInstance::setCanRicochet()
+{
+  ricochet = true;
+  return;
+}
+
+
 void GroupInstance::addMaterialSwap(const BzMaterial* srcMat,
 				    const BzMaterial* dstMat)
 {
@@ -212,12 +220,13 @@ void* GroupInstance::pack(void* buf)
   buf = transform.pack(buf);
 
   uint8_t bits = 0;
-  if (modifyTeam)	   bits |= (1 << 0);
-  if (modifyColor)	   bits |= (1 << 1);
+  if (modifyTeam)          bits |= (1 << 0);
+  if (modifyColor)         bits |= (1 << 1);
   if (modifyPhysicsDriver) bits |= (1 << 2);
-  if (modifyMaterial)	   bits |= (1 << 3);
-  if (driveThrough)	   bits |= (1 << 4);
-  if (shootThrough)	   bits |= (1 << 5);
+  if (modifyMaterial)      bits |= (1 << 3);
+  if (driveThrough)        bits |= (1 << 4);
+  if (shootThrough)        bits |= (1 << 5);
+  if (ricochet)            bits |= (1 << 6);
   buf = nboPackUByte(buf, bits);
 
   if (modifyTeam) {
@@ -268,12 +277,13 @@ void* GroupInstance::unpack(void* buf)
 
   uint8_t bits;
   buf = nboUnpackUByte(buf, bits);
-  modifyTeam =		((bits & (1 << 0)) == 0) ? false : true;
-  modifyColor =		((bits & (1 << 1)) == 0) ? false : true;
+  modifyTeam          = ((bits & (1 << 0)) == 0) ? false : true;
+  modifyColor         = ((bits & (1 << 1)) == 0) ? false : true;
   modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
-  modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
-  driveThrough =	((bits & (1 << 4)) == 0) ? 0 : 0xFF;
-  shootThrough =	((bits & (1 << 5)) == 0) ? 0 : 0xFF;
+  modifyMaterial      = ((bits & (1 << 3)) == 0) ? false : true;
+  driveThrough        = ((bits & (1 << 4)) == 0) ? 0 : 0xFF;
+  shootThrough        = ((bits & (1 << 5)) == 0) ? 0 : 0xFF;
+  ricochet            = ((bits & (1 << 6)) == 0) ? false : true;
 
   if (modifyTeam) {
     uint16_t tmpTeam;
@@ -374,12 +384,9 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     }
   }
 
-  if (driveThrough) {
-    out << indent << "  driveThrough " << phydrv << std::endl;
-  }
-  if (shootThrough) {
-    out << indent << "  shootTHrough " << phydrv << std::endl;
-  }
+  if (driveThrough) { out << indent << "  driveThrough" << std::endl; }
+  if (shootThrough) { out << indent << "  shootThrough" << std::endl; }
+  if (ricochet)     { out << indent << "  ricochet"     << std::endl; }
 
   out << indent << "end" << std::endl;
 
@@ -414,54 +421,33 @@ Obstacle* GroupDefinition::newObstacle(int type)
 {
   Obstacle* obs = NULL;
 
-  if (type == wallType) {
-    obs = new WallObstacle();
-  } else if (type == boxType) {
-    obs = new BoxBuilding();
-  } else if (type == pyrType) {
-    obs = new PyramidBuilding();
-  } else if (type == baseType) {
-    obs = new BaseBuilding();
-  } else if (type == teleType) {
-    obs = new Teleporter();
-  } else if (type == meshType) {
-    obs = new MeshObstacle();
-  } else if (type == arcType) {
-    obs = new ArcObstacle();
-  } else if (type == coneType) {
-    obs = new ConeObstacle();
-  } else if (type == sphereType) {
-    obs = new SphereObstacle();
-  } else if (type == tetraType) {
-    obs = new TetraBuilding();
-  }
+       if (type == wallType)   { obs = new WallObstacle();    }
+  else if (type == boxType)    { obs = new BoxBuilding();     }
+  else if (type == pyrType)    { obs = new PyramidBuilding(); }
+  else if (type == baseType)   { obs = new BaseBuilding();    }
+  else if (type == teleType)   { obs = new Teleporter();      }
+  else if (type == meshType)   { obs = new MeshObstacle();    }
+  else if (type == arcType)    { obs = new ArcObstacle();     }
+  else if (type == coneType)   { obs = new ConeObstacle();    }
+  else if (type == sphereType) { obs = new SphereObstacle();  }
+  else if (type == tetraType)  { obs = new TetraBuilding();   }
 
   return obs;
 }
 
 int obstacleTypeNameToEnum ( const char* type )
 {
-  if (WallObstacle::getClassName() == type)
-    return wallType;
-  else if (BoxBuilding::getClassName() == type)
-    return boxType;
-  else if (BaseBuilding::getClassName() == type)
-    return baseType;
-  else if (PyramidBuilding::getClassName() == type)
-    return pyrType;
-  else if (Teleporter::getClassName() == type)
-    return teleType;
-  else if (MeshObstacle::getClassName() == type)
-    return meshType;
-  else if (ArcObstacle::getClassName() == type)
-    return arcType;
-  else if (ConeObstacle::getClassName() == type)
-    return coneType;
-  else if (SphereObstacle::getClassName() == type)
-    return sphereType;
-  else if (TetraBuilding::getClassName() == type)
-    return tetraType;
-
+       if (WallObstacle::getClassName()    == type) { return wallType;   }
+  else if (BoxBuilding::getClassName()     == type) { return boxType;    }
+  else if (BaseBuilding::getClassName()    == type) { return baseType;   }
+  else if (PyramidBuilding::getClassName() == type) { return pyrType;    }
+  else if (Teleporter::getClassName()      == type) { return teleType;   }
+  else if (MeshObstacle::getClassName()    == type) { return meshType;   }
+  else if (ArcObstacle::getClassName()     == type) { return arcType;    }
+  else if (ConeObstacle::getClassName()    == type) { return coneType;   }
+  else if (SphereObstacle::getClassName()  == type) { return sphereType; }
+  else if (TetraBuilding::getClassName()   == type) { return tetraType;  }
+  
   return -1;
 }
 
@@ -686,7 +672,7 @@ void GroupDefinition::replaceBasesWithBoxes()
       new BoxBuilding(base->getPosition(), base->getRotation(),
 		      baseSize[0], baseSize[1], baseSize[2],
 		      base->isDriveThrough(), base->isShootThrough(),
-		      false);
+		      base->canRicochet(), false);
     delete base;
     list.remove(i);
     i--;

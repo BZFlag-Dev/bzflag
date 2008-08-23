@@ -50,9 +50,10 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 
 
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
-		   float** _vertices, float** _normals, float** _texcoords,
-		   const BzMaterial* _bzMaterial, int physics,
-		   bool _noclusters, bool bounce, unsigned char drive, unsigned char shoot)
+                   float** _vertices, float** _normals, float** _texcoords,
+                   const BzMaterial* _bzMaterial, int physics,
+                   bool _noclusters, bool bounce,
+                   unsigned char drive, unsigned char shoot, bool rico)
 {
   mesh = _mesh;
   vertexCount = _vertexCount;
@@ -65,6 +66,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
   edges = NULL;
   edgePlanes = NULL;
   specialData = NULL;
@@ -565,6 +567,7 @@ void *MeshFace::pack(void *buf) const
   stateByte |= isShootThrough() ? (1 << 3) : 0;
   stateByte |= smoothBounce     ? (1 << 4) : 0;
   stateByte |= noclusters       ? (1 << 5) : 0;
+  stateByte |= canRicochet()    ? (1 << 6) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   // vertices
@@ -609,12 +612,13 @@ void *MeshFace::unpack(void *buf)
   bool tmpNormals, tmpTexcoords;
   unsigned char stateByte = 0;
   buf = nboUnpackUByte(buf, stateByte);
-  tmpNormals   = (stateByte & (1 << 0)) != 0;
-  tmpTexcoords = (stateByte & (1 << 1)) != 0;
+  tmpNormals   =  (stateByte & (1 << 0)) != 0;
+  tmpTexcoords =  (stateByte & (1 << 1)) != 0;
   driveThrough = ((stateByte & (1 << 2)) != 0) ? 0xFF : 0;
   shootThrough = ((stateByte & (1 << 3)) != 0) ? 0xFF : 0;
-  smoothBounce = (stateByte & (1 << 4)) != 0;
-  noclusters   = (stateByte & (1 << 5)) != 0;
+  smoothBounce =  (stateByte & (1 << 4)) != 0;
+  noclusters   =  (stateByte & (1 << 5)) != 0;
+  ricochet     =  (stateByte & (1 << 6)) != 0;
 
   // vertices
   buf = nboUnpackInt(buf, inTmp);
@@ -767,6 +771,9 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     if (shootThrough && !mesh->isShootThrough()) {
       out << indent << "    shootThrough" << std::endl;
     }
+  }
+  if (ricochet && !mesh->canRicochet()) {
+    out << indent << "    ricochet" << std::endl;
   }
 
   out << indent << "  endface" << std::endl;

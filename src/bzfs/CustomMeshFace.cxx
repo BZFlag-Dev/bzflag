@@ -109,6 +109,10 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "passable") == 0) {
     driveThrough = shootThrough = 0xFF;
   }
+  else if ((strcasecmp(cmd, "rico")     == 0) ||
+           (strcasecmp(cmd, "ricochet") == 0)) {
+    ricochet = true;
+  }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
@@ -127,7 +131,8 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 {
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
   mesh->addFace(vertices, normals, texcoords, matref, phydrv,
-		noclusters, smoothBounce, driveThrough, shootThrough,
+		noclusters, smoothBounce,
+		driveThrough, shootThrough, ricochet,
 		true /* triangulate if required */);
   return;
 }

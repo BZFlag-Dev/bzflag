@@ -46,7 +46,7 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
 			     const bool _useNormals[4],
 			     const bool _useTexcoords[4],
 			     const BzMaterial* _materials[4],
-			     unsigned char drive, unsigned char shoot)
+			     unsigned char drive, unsigned char shoot, bool rico)
 {
   // tetra specific parameters
   memcpy (vertices, _vertices, sizeof(vertices));
@@ -60,6 +60,7 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
   // common obstace parameters
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
 
   finalize();
 
@@ -81,7 +82,7 @@ Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
   TetraBuilding* copy =
     new TetraBuilding(tmpXform, vertices, normals, texcoords,
 		      useNormals, useTexcoords, (const BzMaterial**)materials,
-		      driveThrough, shootThrough);
+		      driveThrough, shootThrough, ricochet);
   return copy;
 }
 
@@ -124,7 +125,8 @@ MeshObstacle* TetraBuilding::makeMesh()
 
   mesh = new MeshObstacle(transform,
 			  checkTypes, checkPoints, verts, norms, texcds,
-			  4, false, false, driveThrough, shootThrough);
+			  4, false, false,
+			  driveThrough, shootThrough, ricochet);
 
   // add the faces to the mesh
   std::vector<int> vlist;

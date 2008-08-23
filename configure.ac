@@ -1264,6 +1264,7 @@ AC_CONFIG_FILES([
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/tank/Makefile
+	src/lua/Makefile
 	src/mediafile/Makefile
 	src/net/Makefile
 	src/obstacle/Makefile

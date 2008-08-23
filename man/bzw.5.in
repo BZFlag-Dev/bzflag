@@ -247,6 +247,8 @@ Instantiates a group, and possibly modifies subobjects
 .br 
 \fB  shootthrough\fR  # make all subobjects shootthrough
 .br 
+\fB  ricochet\fR      # make all subobjects ricochet
+.br 
 \fB  phydrv\fR example_phydrv     # reassign any valid physics drivers
 .br 
 \fB  matref\fR example_material # set material properties
@@ -1071,6 +1073,8 @@ obstacle :=
 .br 
 	| "passable"
 .br 
+	| "ricochet"
+.br 
 	| location
 .br 
 .TP 
@@ -1387,6 +1391,8 @@ face :=
 	| "shootthrough"
 .br 
 	| "passable"
+.br 
+	| "ricochet"
 .br 
 	| material
 .br 

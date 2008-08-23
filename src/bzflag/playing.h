@@ -132,7 +132,7 @@ typedef struct _ThirdPersonVars
 	bool b3rdPerson;
 	float cameraOffsetXY;
 	float cameraOffsetOffsetZ;
-	float targetMultiplyer;
+	float targetMultiplier;
 	float nearTargetDistance;
 	float nearTargetSize;
 	float farTargetDistance;

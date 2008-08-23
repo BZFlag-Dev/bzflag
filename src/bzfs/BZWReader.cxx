@@ -460,8 +460,9 @@ WorldInfo* BZWReader::defineWorldFromFile()
     if (bases.find(color) == bases.end()) {
       bases[color] = TeamBases((TeamColor)color);
     }
-    bases[color].addBase(base->getPosition(), base->getSize(),
-			 base->getRotation());
+    bases[color].addBase(base->getPosition(),
+                         base->getSize(),
+                         base->getRotation());
   }
 
   // add objects

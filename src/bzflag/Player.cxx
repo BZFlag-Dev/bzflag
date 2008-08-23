@@ -23,6 +23,7 @@
 #include "WallObstacle.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
+#include "EventHandler.h"
 
 // local implementation headers
 #include "playing.h"
@@ -412,6 +413,7 @@ void Player::setStatus(short _status)
 void Player::setExplode(const TimeKeeper& t)
 {
   if (!isAlive()) return;
+  eventHandler.PlayerDied(*this);
   explodeTime = t;
   setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
 	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));

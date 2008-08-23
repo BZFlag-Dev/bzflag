@@ -32,7 +32,7 @@ class TetraBuilding : public Obstacle {
 		  const float vertices[4][3], const float normals[4][3][3],
 		  const float texCoords[4][3][2], const bool useNormals[4],
 		  const bool useTexCoords[4], const BzMaterial* materials[4],
-		  unsigned char drive = 0, unsigned char shoot = 0);
+		  unsigned char drive, unsigned char shoot, bool ricochet);
     ~TetraBuilding();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;

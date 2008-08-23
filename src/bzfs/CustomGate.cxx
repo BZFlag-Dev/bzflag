@@ -50,7 +50,7 @@ void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
   Teleporter* tele =
     new Teleporter(pos, rotation,
 		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-		   border, horizontal, driveThrough, shootThrough);
+		   border, horizontal, driveThrough, shootThrough, ricochet);
 
   if (!telename.size() && name.size())
     tele->setName(name);

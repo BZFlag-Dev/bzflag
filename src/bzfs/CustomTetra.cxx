@@ -124,8 +124,8 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
   TetraBuilding* tetra = new TetraBuilding(transform, vertices, normals, texcoords,
-					   useNormals, useTexcoords,
-					   mats, driveThrough, shootThrough);
+					   useNormals, useTexcoords, mats,
+					   driveThrough, shootThrough, ricochet);
   tetra->setName(name.c_str());
 
   if (tetra->isValid()) {

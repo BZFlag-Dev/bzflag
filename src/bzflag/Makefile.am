@@ -47,6 +47,10 @@ bzflag_SOURCES =			\
 	EffectsMenu.h			\
 	EntryZone.cxx			\
 	EntryZone.h			\
+	EventHandler.cxx		\
+	EventHandler.h			\
+	EventClient.cxx			\
+	EventClient.h			\
 	ExportInformation.cxx		\
 	ExportInformation.h		\
 	FlashClock.cxx			\
@@ -242,6 +246,7 @@ LDADD =	\
 	../ogl/libGLKit.la		\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
+	../lua/libBzLua.la		\
 	../common/libCommon.la		\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\

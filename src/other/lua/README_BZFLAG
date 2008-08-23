@@ -1,16 +1,17 @@
+
 Lua-5.1.3 source code modifications:
 
   1. Applied the pushhstring patch
 
 *  4. Made the following adjustments in luaconf.h:
 
-     //SPRING#define LUA_NUMBER_DOUBLE
+     //BZ#define LUA_NUMBER_DOUBLE
      #undef LUA_NUMBER_DOUBLE
 
-     //SPRING#define LUA_NUMBER  double
+     //BZ#define LUA_NUMBER  double
      #define LUA_NUMBER  float                                               
 
-     //SPRING#define LUA_NUMBER_SCAN "%lf"
+     //BZ#define LUA_NUMBER_SCAN "%lf"
      #define LUA_NUMBER_SCAN "%f"
 
 *  5. Moved the *.c files to *.cpp for C++ compilation

@@ -44,6 +44,7 @@ class CustomMeshFace {
     bool smoothBounce;
     unsigned char driveThrough;
     unsigned char shootThrough;
+    bool          ricochet;
 };
 
 

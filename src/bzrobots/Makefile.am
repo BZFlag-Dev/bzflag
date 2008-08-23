@@ -103,6 +103,10 @@ genericfiles =				\
 	../bzflag/Downloads.h			\
 	../bzflag/EntryZone.cxx			\
 	../bzflag/EntryZone.h			\
+	../bzflag/EventHandler.cxx		\
+	../bzflag/EventHandler.h		\
+	../bzflag/EventClient.cxx		\
+	../bzflag/EventClient.h			\
 	../bzflag/FlashClock.cxx		\
 	../bzflag/FlashClock.h			\
 	../bzflag/FontSizer.cxx			\
@@ -258,7 +262,8 @@ LDADD =	\
 	../ogl/libGLKit.la		\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
-	../common/libCommon.la		\
+	../lua/libBzLua.la              \
+        ../common/libCommon.la		\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\

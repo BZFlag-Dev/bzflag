@@ -18,6 +18,7 @@
 
 /* system interface headers */
 #include <iostream>
+#include <string>
 
 /* local interface headers */
 #include "WorldInfo.h"
@@ -35,6 +36,7 @@ protected:
   bool createWalls;
   double _size;
   double _fHeight;
+  std::string luaDirectory;
 };
 
 

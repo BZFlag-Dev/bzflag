@@ -404,19 +404,22 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 {
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
-  const ShotPath  &shotPath  = getPath();
-  const float	  *v	 = shotPath.getVelocity();
-  double	  startTime = shotPath.getStartTime();
-  float		  timeLeft	    = shotPath.getLifetime();
-  float		  minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
-  World		  *world = World::getWorld();
+  const ShotPath &shotPath = getPath();
+  const float    *v        = shotPath.getVelocity();
+  double         startTime = shotPath.getStartTime();
+  float          timeLeft  = shotPath.getLifetime();
+  float          minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) /
+                             hypotf(v[0], hypotf(v[1], v[2]));
+  World          *world    = World::getWorld();
 
-  if (!world)
+  if (!world) {
     return; /* no world, no shots */
+  }
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
-  if (e == Stop && world->allShotsRicochet())
+  if ((e == Stop) && world->allShotsRicochet()) {
     e = Reflect;
+  }
 
   // prepare first segment
   float o[3], d[3];
@@ -440,14 +443,10 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     o2[2] = o[2] - minTime * d[2];
 
     // Sometime shot start outside world
-    if (o2[0] <= -worldSize)
-      o2[0] = -worldSize;
-    if (o2[0] >= worldSize)
-      o2[0] = worldSize;
-    if (o2[1] <= -worldSize)
-      o2[1] = -worldSize;
-    if (o2[1] >= worldSize)
-      o2[1] = worldSize;
+    if (o2[0] <= -worldSize) { o2[0] = -worldSize; }
+    if (o2[0] >= +worldSize) { o2[0] = +worldSize; }
+    if (o2[1] <= -worldSize) { o2[1] = -worldSize; }
+    if (o2[1] >= +worldSize) { o2[1] = +worldSize; }
 
     Ray r(o2, d);
     Ray rs(o, d);
@@ -496,7 +495,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       o[1] += t * d[1];
       o[2] += t * d[2];
       reason = ShotPathSegment::Boundary;
-    } else if (teleporter) {
+    }
+    else if (teleporter) {
       // entered teleporter -- teleport it
       unsigned int seed = shotPath.getShotId() + i;
       int source = world->getTeleporter(teleporter, face);
@@ -514,36 +514,40 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
       switch (e) {
-	case Stop:
-	  timeLeft = 0.0f;
-	break;
+	case Stop: {
+	  if (!building->canRicochet()) {
+            timeLeft = 0.0f;
+            break;
+          } else {
+            // pass-through to the Reflect case
+          }
+        }
+        case Reflect: {
+          // move origin to point of reflection
+          o[0] += t * d[0];
+          o[1] += t * d[1];
+          o[2] += t * d[2];
 
-      case Reflect: {
-	// move origin to point of reflection
-	o[0] += t * d[0];
-	o[1] += t * d[1];
-	o[2] += t * d[2];
-
-	// reflect direction about normal to building
-	float normal[3];
-	building->get3DNormal(o, normal);
-	reflect(d, normal);
-	reason = ShotPathSegment::Ricochet;
-	}
-	break;
-
-      case Through:
-	assert(0);
+          // reflect direction about normal to building
+          float normal[3];
+          building->get3DNormal(o, normal);
+          reflect(d, normal);
+          reason = ShotPathSegment::Ricochet;
+          break;
+        }
+        case Through: {
+          assert(0);
+          break;
+        }
       }
     }
-    else if (hitGround)	// we hit the ground
-    {
+    else if (hitGround)	{ // we hit the ground
       switch (e) {
 	case Stop:
-	case Through:
+	case Through: {
 	  timeLeft = 0.0f;
 	  break;
-
+        }
 	case Reflect: {
 	  // move origin to point of reflection
 	  o[0] += t * d[0];

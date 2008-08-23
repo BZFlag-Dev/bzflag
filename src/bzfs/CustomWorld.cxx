@@ -45,6 +45,8 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
     createWalls = false;
   } else if (strcasecmp(cmd, "freeCtfSpawns") == 0) {
     BZDB.setBool("freeCtfSpawns", true);
+  } else if (strcasecmp(cmd, "luaDirectory") == 0) {
+    input >> luaDirectory;
   } else {
     return WorldFileObject::read(cmd, input);
   }
@@ -57,41 +59,47 @@ void CustomWorld::writeToWorld(WorldInfo* world) const
 {
   if (createWalls) {
     float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-    float worldSize = BZDBCache::worldSize * 0.5f;
-    world->addWall(0.0f, worldSize, 0.0f, 1.5f*(float)M_PI, worldSize, wallHeight);
-    world->addWall(worldSize, 0.0f, 0.0f, (float)M_PI, worldSize, wallHeight);
-    world->addWall(0.0f, -worldSize, 0.0f, 0.5f*(float)M_PI, worldSize, wallHeight);
-    world->addWall(-worldSize, 0.0f, 0.0f, 0.0f, worldSize, wallHeight);
+    float ws = BZDBCache::worldSize * 0.5f;
+    world->addWall(0.0f, +ws,  0.0f, 1.5f * (float)M_PI, ws, wallHeight);
+    world->addWall(+ws,  0.0f, 0.0f,        (float)M_PI, ws, wallHeight);
+    world->addWall(0.0f, -ws,  0.0f, 0.5f * (float)M_PI, ws, wallHeight);
+    world->addWall(-ws,  0.0f, 0.0f, 0.0f,               ws, wallHeight);
   }
 }
 
-std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
 
-bool registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
+std::map<std::string,bz_CustomMapObjectHandler*> customObjectMap;
+
+
+bool registerCustomMapObject(const char* object, bz_CustomMapObjectHandler* handler)
 {
   std::string objectName = TextUtils::toupper(object);
 
-  if (customObjectMap.find(objectName) != customObjectMap.end())
+  if (customObjectMap.find(objectName) != customObjectMap.end()) {
     return false;
+  }
 
   customObjectMap[objectName] = handler;
 
   return true;
 }
 
-bool removeCustomMapObject ( const char* object )
+
+bool removeCustomMapObject(const char* object)
 {
   std::string objectName = TextUtils::toupper(object);
 
   std::map<std::string,bz_CustomMapObjectHandler*>::iterator itr =  customObjectMap.find(objectName);
 
-  if ( itr != customObjectMap.end() )
+  if (itr != customObjectMap.end()) {
     customObjectMap.erase(itr);
-  else
+  } else {
     return false;
+  }
 
   return true;
 }
+
 
 // Local variables: ***
 // mode: C++ ***

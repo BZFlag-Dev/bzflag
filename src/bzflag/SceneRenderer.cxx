@@ -1079,51 +1079,54 @@ void draw3rdPersonTarget ( SceneRenderer*  /* renderer */ )
 {
 	LocalPlayer* myTank = LocalPlayer::getMyTank();
 
-	if ( myTank && thirdPersonVars.b3rdPerson )
-	{
-		const float *myTankPos = myTank->getPosition();
-		const float *myTankDir = myTank->getForward();
-		float muzzleHeight = myTank->getMuzzleHeight();
+	if (myTank && thirdPersonVars.b3rdPerson) {
+		const float* myTankPos = myTank->getPosition();
+		const float* myTankDir = myTank->getForward();
+		const float muzzleHeight = myTank->getMuzzleHeight();
 
-		float radCon = 57.295779513082320876798154814105f;
+		const float radCon = 57.295779513082320876798154814105f;
 
 		glPushMatrix();
 		float distance = thirdPersonVars.nearTargetDistance;
-		glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
+		glTranslatef(myTankPos[0] + (myTankDir[0] * distance),
+		             myTankPos[1] + (myTankDir[1] * distance),
+		             myTankPos[2] + muzzleHeight);
 		glRotatef(myTank->getAngle()*radCon,0,0,1);
 
 		float size = thirdPersonVars.nearTargetSize;
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_LIGHTING);
 
-		glColor4f(1,1,1,0.5f);
+		glColor4f(1, 1, 1, 0.5f);
 		glBegin(GL_LINES);
-		glVertex3f(0,0,1.0f*size);
-		glVertex3f(0,0,0.25f*size);
-		glVertex3f(0,0,-1.0f*size);
-		glVertex3f(0,0,-0.25f*size);
-		glVertex3f(0,1.0f*size,0);
-		glVertex3f(0,0.25f*size,0);
-		glVertex3f(0,-1.0f*size,0);
-		glVertex3f(0,-0.25f*size,0);
+		glVertex3f(0, 0, 1.0f * size);
+		glVertex3f(0, 0, 0.25f * size);
+		glVertex3f(0, 0, -1.0f * size);
+		glVertex3f(0, 0, -0.25f * size);
+		glVertex3f(0, 1.0f * size, 0);
+		glVertex3f(0, 0.25f * size, 0);
+		glVertex3f(0, -1.0f * size, 0);
+		glVertex3f(0, -0.25f * size, 0);
 		glEnd();
 		glPopMatrix();
 
 		glPushMatrix();
 		distance = thirdPersonVars.farTargetDistance;
-		glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
-		glRotatef(myTank->getAngle()*radCon,0,0,1);
+		glTranslatef(myTankPos[0] + (myTankDir[0] * distance),
+		             myTankPos[1] + (myTankDir[1] * distance),
+		             myTankPos[2] + muzzleHeight);
+		glRotatef(myTank->getAngle()*radCon, 0, 0, 1);
 		size = thirdPersonVars.farTargetSize;
-		glColor4f(0.5f,0.5f,0.5f,0.25f);
+		glColor4f(0.5f, 0.5f, 0.5f, 0.25f);
 		glBegin(GL_LINES);
-		glVertex3f(0,0,1.0f*size);
-		glVertex3f(0,0,0.25f*size);
-		glVertex3f(0,0,-1.0f*size);
-		glVertex3f(0,0,-0.25f*size);
-		glVertex3f(0,1.0f*size,0);
-		glVertex3f(0,0.25f*size,0);
-		glVertex3f(0,-1.0f*size,0);
-		glVertex3f(0,-0.25f*size,0);
+		glVertex3f(0, 0, 1.0f * size);
+		glVertex3f(0, 0, 0.25f * size);
+		glVertex3f(0, 0, -1.0f * size);
+		glVertex3f(0, 0, -0.25f * size);
+		glVertex3f(0, 1.0f * size, 0);
+		glVertex3f(0, 0.25f * size, 0);
+		glVertex3f(0, -1.0f * size, 0);
+		glVertex3f(0, -0.25f * size, 0);
 		glEnd();
 
 		glEnable(GL_TEXTURE_2D);
@@ -1171,7 +1174,7 @@ void SceneRenderer::doRender()
 
 void SceneRenderer::renderPreDimming()
 {
-  float worldSize = BZDBCache::worldSize;
+  const float worldSize = BZDBCache::worldSize;
 
   if (useDimming) {
     const float density = dimDensity;

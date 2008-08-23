@@ -38,15 +38,16 @@ class MeshObstacle : public Obstacle {
 		 const std::vector<cfvec3>& vertices,
 		 const std::vector<cfvec3>& normals,
 		 const std::vector<cfvec2>& texcoords,
-		 int faceCount, bool noclusters,
-		 bool bounce, unsigned char drive, unsigned char shoot);
+		 int faceCount, bool noclusters, bool bounce,
+		 unsigned char drive, unsigned char shoot, bool ricochet);
 
-    bool addFace (const std::vector<int>& vertices,
-      const std::vector<int>& normals,
-		  const std::vector<int>& texcoords,
-		  const BzMaterial* bzMaterial, int physics,
-		  bool noclusters, bool bounce, unsigned char drive, unsigned char shoot,
-		  bool triangulate);
+    bool addFace(const std::vector<int>& vertices,
+                 const std::vector<int>& normals,
+                 const std::vector<int>& texcoords,
+                 const BzMaterial* bzMaterial, int physics,
+                 bool noclusters, bool bounce,
+                 unsigned char drive, unsigned char shoot, bool ricochet,
+                 bool triangulate);
 
     ~MeshObstacle();
 

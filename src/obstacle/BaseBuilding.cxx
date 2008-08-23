@@ -26,9 +26,9 @@ BaseBuilding::BaseBuilding()
 }
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
-	const float *_size, int _team) :
-		Obstacle(p, rotation, _size[0], _size[1], _size[2]),
-		team(_team)
+                           const float *_size, int _team, bool rico)
+: Obstacle(p, rotation, _size[0], _size[1], _size[2], false, false, rico)
+, team(_team)
 {
   finalize();
   return;
@@ -56,7 +56,8 @@ Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
   bool flipped;
   tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
 
-  BaseBuilding* copy = new BaseBuilding(newPos, newAngle, newSize, team);
+  BaseBuilding* copy =
+    new BaseBuilding(newPos, newAngle, newSize, team, ricochet);
 
   return copy;
 }
@@ -239,6 +240,7 @@ void* BaseBuilding::pack(void* buf) const
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  stateByte |= canRicochet()    ? _RICOCHET   : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -259,6 +261,7 @@ void* BaseBuilding::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0 ? 0xFF : 0;
+  ricochet     = (stateByte & _RICOCHET)   != 0;
 
   finalize();
 
@@ -298,6 +301,9 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
     if (isShootThrough()) {
       out << indent << "  shootthrough" << std::endl;
     }
+  }
+  if (canRicochet()) {
+    out << indent << "  ricochet" << std::endl;
   }
   out << indent << "end" << std::endl;
   return;

@@ -25,8 +25,10 @@ BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
 }
 
 BoxBuilding::BoxBuilding(const float* p, float a, float w, float b, float h,
-			 unsigned char drive, unsigned char shoot, bool invisible) :
-  Obstacle(p, a, w, b, h,drive,shoot), noNodes(invisible)
+                         unsigned char drive, unsigned char shoot, bool rico,
+                         bool invisible)
+: Obstacle(p, a, w, b, h, drive, shoot, rico)
+, noNodes(invisible)
 {
   finalize();
   return;
@@ -56,7 +58,7 @@ Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const
 
   BoxBuilding* copy =
     new BoxBuilding(newPos, newAngle, newSize[0], newSize[1], newSize[2],
-		    driveThrough, shootThrough, noNodes);
+                    driveThrough, shootThrough, ricochet, noNodes);
   return copy;
 }
 
@@ -228,6 +230,7 @@ void* BoxBuilding::pack(void* buf) const
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  stateByte |= canRicochet()    ? _RICOCHET   : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -244,6 +247,7 @@ void* BoxBuilding::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0 ? 0xFF : 0;
+  ricochet     = (stateByte & _RICOCHET)   != 0;
 
   finalize();
 
@@ -281,6 +285,9 @@ void BoxBuilding::print(std::ostream& out, const std::string& indent) const
     if (isShootThrough()) {
       out << indent << "  shootthrough" << std::endl;
     }
+  }
+  if (canRicochet()) {
+    out << indent << "  ricochet" << std::endl;
   }
   out << indent << "end" << std::endl;
   return;

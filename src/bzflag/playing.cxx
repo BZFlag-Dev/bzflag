@@ -42,6 +42,7 @@
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
+#include "EventHandler.h"
 #include "FileManager.h"
 #include "FlagSceneNode.h"
 #include "GameTime.h"
@@ -216,15 +217,15 @@ ThirdPersonVars thirdPersonVars;
 
 void ThirdPersonVars::load(void)
 {
-  b3rdPerson = BZDB.isTrue(std::string("3rdPersonCam"));
-  cameraOffsetXY = BZDB.eval(std::string("3rdPersonCamXYOffset"));
-  cameraOffsetOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
-  targetMultiplyer = BZDB.eval(std::string("3rdPersonCamTargetMult"));
+  b3rdPerson          = BZDB.isTrue(std::string("3rdPersonCam"));
 
-  nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
-  nearTargetSize = BZDB.eval(std::string("3rdPersonNearTargetSize"));
-  farTargetDistance = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
-  farTargetSize = BZDB.eval(std::string("3rdPersonFarTargetSize"));
+  cameraOffsetXY      = BZDB.eval(std::string("3rdPersonCamXYOffset"));
+  cameraOffsetOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
+  targetMultiplier    = BZDB.eval(std::string("3rdPersonCamTargetMult"));
+  nearTargetDistance  = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
+  nearTargetSize      = BZDB.eval(std::string("3rdPersonNearTargetSize"));
+  farTargetDistance   = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
+  farTargetSize       = BZDB.eval(std::string("3rdPersonFarTargetSize"));
 }
 
 void ThirdPersonVars::clear(void)
@@ -1991,9 +1992,12 @@ static void handleAliveMessage(void *msg)
       }
 #endif
     }
-
+    eventHandler.PlayerSpawned(*tank);
     if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
-      if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) || (tank != ROAM.getTargetTank()))) || BZDB.isTrue("enableLocalSpawnEffect")) {
+      if (((tank != myTank) &&
+           ((ROAM.getMode() != Roaming::roamViewFP) ||
+            (tank != ROAM.getTargetTank()))) ||
+          BZDB.isTrue("enableLocalSpawnEffect")) {
 	if (myTank->getFlag() != Flags::Colorblindness) {
 	  static float cbColor[4] = {1,1,1,1};
 	  EFFECTS.addSpawnEffect(cbColor, pos);
@@ -5499,9 +5503,9 @@ void drawFrame(const float dt)
     targetPoint[2] = eyePoint[2] + myTankDir[2];
 
     if (myTank && thirdPersonVars.b3rdPerson) {
-      targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
-      targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
-      targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
+      targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplier;
+      targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplier;
+      targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplier;
 
       eyePoint[0] -= myTankDir[0] * thirdPersonVars.cameraOffsetXY;
       eyePoint[1] -= myTankDir[1] * thirdPersonVars.cameraOffsetXY;

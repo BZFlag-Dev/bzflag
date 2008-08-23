@@ -98,22 +98,23 @@ enum GameType
 };
 // game styles
 enum GameOptions {
-  SuperFlagGameStyle  =	 0x0002, // superflags allowed
-  NoTeamKills	      =  0x0004, // teams can't kill each other
-  JumpingGameStyle    =	 0x0008, // jumping allowed
-  InertiaGameStyle    =	 0x0010, // momentum for all
-  RicochetGameStyle   =	 0x0020, // all shots ricochet
-  ShakableGameStyle   =	 0x0040, // can drop bad flags
-  AntidoteGameStyle   =	 0x0080, // anti-bad flags
-  HandicapGameStyle   =	 0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
-  FreezeTagGameStyle  =  0x0200 // collisions freeze player farther from base
+  SuperFlagGameStyle = (1 << 1), // superflags allowed
+  NoTeamKills        = (1 << 2), // teams can't kill each other
+  JumpingGameStyle   = (1 << 3), // jumping allowed
+  InertiaGameStyle   = (1 << 4), // momentum for all
+  RicochetGameStyle  = (1 << 5), // all shots ricochet
+  ShakableGameStyle  = (1 << 6), // can drop bad flags
+  AntidoteGameStyle  = (1 << 7), // anti-bad flags
+  HandicapGameStyle  = (1 << 8), // handicap players based on score (eek! was TimeSyncGameStyle)
+  FreezeTagGameStyle = (1 << 9)  // collisions freeze player farther from base
   // add here before reusing old ones above
 };
 
 // map object flags
-#define _DRIVE_THRU	0x01
-#define _SHOOT_THRU	0x02
-#define _FLIP_Z		0x04
+#define _DRIVE_THRU (1 << 0)
+#define _SHOOT_THRU (1 << 1)
+#define _FLIP_Z     (1 << 2)
+#define _RICOCHET   (1 << 3)
 
 const int mapVersion = 1;
 

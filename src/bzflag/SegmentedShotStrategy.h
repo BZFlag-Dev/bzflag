@@ -45,7 +45,7 @@ class SegmentedShotStrategy : public ShotStrategy {
 
   protected:
     enum ObstacleEffect {
-			Stop = 0,
+			Stop    = 0,
 			Through = 1,
 			Reflect = 2
     };
