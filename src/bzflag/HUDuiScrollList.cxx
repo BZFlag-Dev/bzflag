@@ -257,15 +257,17 @@ void HUDuiScrollList::doRender()
 
   std::list<HUDuiControl*>::iterator it;
   it = items.begin();
-  std::advance(it, (getSelected() - visiblePosition));
+  if (it != items.end()) {
+    std::advance(it, (getSelected() - visiblePosition));
 
-  // Draw the list items
-  for (size_t i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
-    if (i < items.size()) {
-      HUDuiControl* item = *it;
-      item->setPosition(getX(), ((getY() + getHeight()) - itemHeight*((i + 1)-(getSelected() - visiblePosition))));
-      item->render();
-      std::advance(it, 1);
+    // Draw the list items
+    for (size_t i = (getSelected() - visiblePosition); i<((numVisibleItems - visiblePosition) + getSelected()); i++) {
+      if (i < items.size()) {
+	HUDuiControl* item = *it;
+	item->setPosition(getX(), ((getY() + getHeight()) - itemHeight*((i + 1)-(getSelected() - visiblePosition))));
+	item->render();
+	std::advance(it, 1);
+      }
     }
   }
 
