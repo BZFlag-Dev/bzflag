@@ -109,8 +109,7 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "passable") == 0) {
     driveThrough = shootThrough = 0xFF;
   }
-  else if ((strcasecmp(cmd, "rico")     == 0) ||
-           (strcasecmp(cmd, "ricochet") == 0)) {
+  else if (strcasecmp(cmd, "ricochet") == 0) {
     ricochet = true;
   }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {

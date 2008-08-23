@@ -161,8 +161,7 @@ bool CustomBox::read(const char *cmd, std::istream& input)
     shootThrough = 0xFF; // for old boxes
     return true;
   }
-  else if ((strcasecmp(cmd, "rico")     == 0) ||
-           (strcasecmp(cmd, "ricochet") == 0)) {
+  else if (strcasecmp(cmd, "ricochet") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
       ricochets[f] = true;
