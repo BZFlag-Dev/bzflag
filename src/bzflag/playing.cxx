@@ -4718,11 +4718,14 @@ static void enteringServer(void *buf)
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
 
-  if ((myTank->getTeam() == ObserverTeam) || devDriving)
-    ROAM.setMode(Roaming::roamViewFP);
-  //    ROAM.resetCamera();
-  else
+  if ((myTank->getTeam() == ObserverTeam) || devDriving) {
+    if (ROAM.getMode() == Roaming::roamViewDisabled) {
+      ROAM.setMode(Roaming::roamViewFP);
+    }
+  }
+  else {
     ROAM.setMode(Roaming::roamViewDisabled);
+  }
 
   setTankFlags();
 
@@ -4762,10 +4765,10 @@ static void enteringServer(void *buf)
   fireButton = false;
   firstLife = true;
 
-  BZDB.setBool("displayMainFlags", true);
+  BZDB.setBool("displayMainFlags",  true);
   BZDB.setBool("displayRadarFlags", true);
-  BZDB.setBool("displayRadar", true);
-  BZDB.setBool("displayConsole", true);
+  BZDB.setBool("displayRadar",      true);
+  BZDB.setBool("displayConsole",    true);
 
   entered = true;
 }

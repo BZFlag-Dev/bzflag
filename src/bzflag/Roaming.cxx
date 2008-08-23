@@ -24,10 +24,12 @@
 template <>
 Roaming* Singleton<Roaming>::_instance = (Roaming*)0;
 
-Roaming::Roaming() : view(roamViewDisabled),
-		     targetManual(-1),
-		     targetWinner(-1),
-		     targetFlag(-1) {
+Roaming::Roaming()
+: view(roamViewDisabled)
+, targetManual(-1)
+, targetWinner(-1)
+, targetFlag(-1)
+{
   resetCamera();
 }
 
