@@ -27,7 +27,7 @@ Lua-5.1.3 source code modifications:
   5. Changed the return type of lua_toboolean from int to bool to prevent
      compiler performance warnings on Visual Studio 2005.
 
-  9. Undefined (in include/luaconf.h):
+  9. Undefined (in luaconf.h):
        LUA_COMPAT_VARARG
        LUA_COMPAT_MOD
        LUA_COMPAT_LSTR

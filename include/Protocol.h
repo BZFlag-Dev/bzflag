@@ -47,21 +47,22 @@ enum PlayerAttribute {
 const uint16_t		MsgNull = 0x0000;
 
 // server message codes
-const uint16_t		MsgAccept = 0x6163;				// 'ac'
+const uint16_t		MsgAccept = 0x6163;			// 'ac'
 const uint16_t		MsgAdminInfo = 0x6169;			// 'ai'
-const uint16_t		MsgAlive = 0x616c;				// 'al'
-const uint16_t		MsgAllow = 0x696f;				// 'ao'
+const uint16_t		MsgAlive = 0x616c;			// 'al'
+const uint16_t		MsgAllow = 0x696f;			// 'ao'
 const uint16_t		MsgAddPlayer = 0x6170;			// 'ap'
 const uint16_t		MsgAllowSpawn = 0x6173;			// 'as'
 const uint16_t		MsgAutoPilot = 0x6175;			// 'au'
 const uint16_t		MsgCapBits = 0x6362;			// 'cb'
 const uint16_t		MsgCaptureFlag = 0x6366;		// 'cf'
-const uint16_t		MsgCollide = 0x636f;	    // 'co'
+const uint16_t		MsgClientScript = 0x4373;		// 'Cs'
+const uint16_t		MsgCollide = 0x636f;	    		// 'co'
 const uint16_t		MsgCustomSound = 0x6373;		// 'cs'
 const uint16_t		MsgCacheURL = 0x6375;			// 'cu'
 const uint16_t		MsgDropFlag = 0x6466;			// 'df'
-const uint16_t		MsgEnter = 0x656e;				// 'en'
-const uint16_t		MsgExit = 0x6578;				// 'ex'
+const uint16_t		MsgEnter = 0x656e;			// 'en'
+const uint16_t		MsgExit = 0x6578;			// 'ex'
 const uint16_t		MsgFlagType = 0x6674;			// 'ft'
 const uint16_t		MsgFlagUpdate = 0x6675;			// 'fu'
 const uint16_t		MsgFetchResources = 0x6672;		// 'fr'
@@ -71,28 +72,28 @@ const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
 const uint16_t		MsgGameSettings = 0x6773;		// 'gs'
 const uint16_t		MsgGameTime = 0x6774;			// 'gt'
 const uint16_t		MsgHandicap = 0x6863;			// 'hc'
-const uint16_t		MsgHit = 0x6869;				// 'hi'
-const uint16_t		MsgKilled = 0x6b6c;				// 'kl'
+const uint16_t		MsgHit = 0x6869;			// 'hi'
+const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgLagState = 0x6c73;			// 'ls'
-const uint16_t		MsgLimboMessage = 0x6c6d;			// 'lm'
+const uint16_t		MsgLimboMessage = 0x6c6d;		// 'lm'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t		MsgNewPlayer = 0x6e70;			// 'np'
 const uint16_t		MsgNearFlag = 0x4e66;			// 'Nf'
 const uint16_t		MsgNewRabbit = 0x6e52;			// 'nR'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
-const uint16_t		MsgPause = 0x7061;				// 'pa'
+const uint16_t		MsgPause = 0x7061;			// 'pa'
 const uint16_t		MsgPlayerInfo = 0x7062;			// 'pb'
 const uint16_t		MsgPlayerUpdate = 0x7075;		// 'pu'
-const uint16_t		MsgPlayerUpdateSmall = 0x7073;	// 'ps'
+const uint16_t		MsgPlayerUpdateSmall = 0x7073;		// 'ps'
 const uint16_t		MsgQueryGame = 0x7167;			// 'qg'
 const uint16_t		MsgQueryPlayers = 0x7170;		// 'qp'
-const uint16_t		MsgReject = 0x726a;				// 'rj'
+const uint16_t		MsgReject = 0x726a;			// 'rj'
 const uint16_t		MsgRemovePlayer = 0x7270;		// 'rp'
 const uint16_t		MsgReplayReset = 0x7272;		// 'rr'
 const uint16_t		MsgShotBegin = 0x7362;			// 'sb'
 const uint16_t		MsgWShotBegin = 0x7762;			// 'wb'
 const uint16_t		MsgWhatTimeIsIt = 0x7774;		// 'wt'
-const uint16_t		MsgScore = 0x7363;				// 'sc'
+const uint16_t		MsgScore = 0x7363;			// 'sc'
 const uint16_t		MsgScoreOver = 0x736f;			// 'so'
 const uint16_t		MsgShotEnd = 0x7365;			// 'se'
 const uint16_t		MsgSuperKill = 0x736b;			// 'sk'
@@ -194,6 +195,10 @@ const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
 
 // lag ping sent by server to client and reply from client
 const uint16_t		MsgLagPing = 0x7069;			// 'pi'
+
+// Client script identifiers
+const uint16_t		ClientScriptLuaUser  = 0x4c75;		// 'Lu'
+const uint16_t		ClientScriptLuaWorld = 0x4c77;		// 'Lw'
 
 /* server communication protocol:
   --> incoming messages (to server)
@@ -307,6 +312,8 @@ server to player messages:
 			<== id, from-teleporter, to-teleporter
   MsgMessage		message to players
 			<== from-id, to-id/team-id, message string
+  MsgClientScript	message to client-side scripts  (can be for all players)
+			<-- scriptID(u16), message len(u32), message string(variable)
   MsgQueryGame		game status
   MsgQueryPlayers	list of players
   MsgWantWHash		md5 digest of world file

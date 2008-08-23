@@ -98,6 +98,7 @@ static MsgStringList handleMsgHit(PacketInfo *pi);
 static MsgStringList handleMsgKilled(PacketInfo *pi);
 static MsgStringList handleMsgLagState(PacketInfo *pi);
 static MsgStringList handleMsgLimboMessage(PacketInfo *pi);
+static MsgStringList handleMsgClientScript(PacketInfo *pi);
 static MsgStringList handleMsgMessage(PacketInfo *pi);
 static MsgStringList handleMsgNewPlayer(PacketInfo *pi);
 static MsgStringList handleMsgNearFlag(PacketInfo *pi);
@@ -180,6 +181,7 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgHit),
   PACKET_LIST_ENTRY (MsgKilled),
   PACKET_LIST_ENTRY (MsgLagState),
+  PACKET_LIST_ENTRY (MsgClientScript),
   PACKET_LIST_ENTRY (MsgLimboMessage),
   PACKET_LIST_ENTRY (MsgMessage),
   PACKET_LIST_ENTRY (MsgNewPlayer),
@@ -841,6 +843,14 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
 static MsgStringList handleMsgLagState (PacketInfo *pi)
 {
   // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+
+static MsgStringList handleMsgClientScript (PacketInfo *pi)
+{
+  // not recorded //???
   MsgStringList list = listMsgBasics (pi);
   return list;
 }
