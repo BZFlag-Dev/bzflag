@@ -279,6 +279,7 @@ void HUDuiScrollList::doRender()
     std::vector<std::string> args;
     std::stringstream msg;
     msg << "Page: " << currentPage << "/" << numPages;
+    pageLabel->setString(msg.str());
 
     float labelWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), pageLabel->getString().c_str());
 
