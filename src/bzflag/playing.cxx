@@ -590,16 +590,19 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
       HUDDialogStack::get()->push(mainMenu);
     }
     return true;
-  } else if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_SELECTING) {
+  }
+  else if (scoreboard->getHuntState() == ScoreboardRenderer::HUNT_SELECTING) {
     if (key.button == BzfKeyEvent::Down || KEYMGR.get(key, true) == "identify") {
       if (pressed)
 	scoreboard->setHuntNextEvent();
       return true;
-    } else if (key.button == BzfKeyEvent::Up || KEYMGR.get(key, true) == "drop") {
+    }
+    else if (key.button == BzfKeyEvent::Up || KEYMGR.get(key, true) == "drop") {
       if (pressed)
 	scoreboard->setHuntPrevEvent();
       return true;
-    } else if (KEYMGR.get(key, true) == "fire") {
+    } 
+    else if (KEYMGR.get(key, true) == "fire") {
       if (pressed) {
 	scoreboard->setHuntSelectEvent();
       }
@@ -650,13 +653,15 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
       break;
   }
   if (!cmd.empty()) {
-    if (cmd=="fire")
+    if (cmd == "fire") {
       fireButton = pressed;
+    }
     roamButton = pressed;
     if (keyboardMovement == None) {
       std::string result = CMDMGR.run(cmd);
-      if (!result.empty())
+      if (!result.empty()) {
 	std::cerr << result << std::endl;
+      }
     }
     return true;
   }
@@ -668,70 +673,76 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
   // built-in unchangeable keys.  only perform if not masked.
   // TODO: not localizable
   switch (key.chr) {
-  case 'T':
-  case 't':
-    // toggle frames-per-second display
-    if (pressed) {
-      showFPS = !showFPS;
-      if (!showFPS) {
-	hud->setFPS(-1.0);
+    case 'T':
+    case 't': {
+      // toggle frames-per-second display
+      if (pressed) {
+        showFPS = !showFPS;
+        if (!showFPS) {
+          hud->setFPS(-1.0);
+        }
       }
+      return true;
     }
-    return true;
-
-  case 'Y':
-  case 'y':
-    // toggle milliseconds for drawing
-    if (pressed) {
-      showDrawTime = !showDrawTime;
-      if (!showDrawTime) {
-	hud->setDrawTime(-1.0);
+    case 'Y':
+    case 'y': {
+      // toggle milliseconds for drawing
+      if (pressed) {
+        showDrawTime = !showDrawTime;
+        if (!showDrawTime) {
+          hud->setDrawTime(-1.0);
+        }
       }
+      return true;
     }
-    return true;
-
     // for testing forced recreation of OpenGL context
 #if defined(DEBUG_RENDERING)
-  case 'X':
-    if (pressed && ((shiftKeyStatus &BzfKeyEvent::AltKey) != 0)) {
-      // destroy OpenGL context
-      getMainWindow()->getWindow()->freeContext();
+    case 'X': {
+      if (pressed && ((shiftKeyStatus &BzfKeyEvent::AltKey) != 0)) {
+        // destroy OpenGL context
+        getMainWindow()->getWindow()->freeContext();
 
-      // recreate OpenGL context
-      getMainWindow()->getWindow()->makeContext();
+        // recreate OpenGL context
+        getMainWindow()->getWindow()->makeContext();
 
-      // force a redraw (mainly for control panel)
-      getMainWindow()->getWindow()->callExposeCallbacks();
+        // force a redraw (mainly for control panel)
+        getMainWindow()->getWindow()->callExposeCallbacks();
 
-      // cause sun/moon to be repositioned immediately
-      lastEpochOffset = epochOffset - 5.0;
+        // cause sun/moon to be repositioned immediately
+        lastEpochOffset = epochOffset - 5.0;
 
-      // reload display lists and textures and initialize other state
-      OpenGLGState::initContext();
+        // reload display lists and textures and initialize other state
+        OpenGLGState::initContext();
+      }
+      return true;
     }
-    return true;
 #endif // DEBUG_RENDERING
 
-  case ']':
-  case '}':
-    // plus 30 seconds
-    if (pressed) clockAdjust += 30.0f;
-    return true;
+    case ']':
+    case '}': {
+      // plus 30 seconds
+      if (pressed) clockAdjust += 30.0f;
+      return true;
+    }
 
-  case '[':
-  case '{':
-    // minus 30 seconds
-    if (pressed) clockAdjust -= 30.0f;
-    return true;
+    case '[':
+    case '{': {
+      // minus 30 seconds
+      if (pressed) clockAdjust -= 30.0f;
+      return true;
+    }
 
-  default:
-    break;
+    default: {
+      break;
+    }
   } // end switch on key
+
   // Shot/Accuracy Statistics display
   if (key.button == BzfKeyEvent::Home && pressed) {
     HUDDialogStack::get()->push(new ShotStats);
     return true;
   }
+
   return false;
 }
 
@@ -792,7 +803,7 @@ static void doKey(const BzfKeyEvent &key, bool pressed) {
 
   if (HUDui::getFocus()) {
     if ((pressed && HUDui::keyPress(key)) ||
-      (!pressed && HUDui::keyRelease(key)))
+        (!pressed && HUDui::keyRelease(key)))
       return;
   }
 
@@ -1010,8 +1021,8 @@ static void doEvent(BzfDisplay *disply)
 
   case BzfEvent::MouseMove:
     if (myTank && myTank->isAlive() &&
-      (myTank->getInputMethod() != LocalPlayer::Mouse) &&
-      (BZDB.isTrue("allowInputChange")))
+        (myTank->getInputMethod() != LocalPlayer::Mouse) &&
+        (BZDB.isTrue("allowInputChange")))
       myTank->setInputMethod(LocalPlayer::Mouse);
     break;
 
@@ -5612,8 +5623,9 @@ void drawFrame(const float dt)
     viewFrustum.setView(eyePoint, targetPoint);
 
     // let the hud save off the view matrix so it can do view projections
-    if (hud)
+    if (hud) {
       hud->saveMatrixes(viewFrustum.getViewMatrix(),viewFrustum.getProjectionMatrix());
+    }
 
     // add dynamic nodes
     SceneDatabase *scene = RENDERER.getSceneDatabase();
@@ -5634,8 +5646,9 @@ void drawFrame(const float dt)
       myTank->addShots(scene, false);
 
       // add server shells
-      if (world)
+      if (world) {
 	world->getWorldWeapons()->addShots(scene, false);
+      }
 
       // add antidote flag
       myTank->addAntidote(scene);
@@ -5643,10 +5656,8 @@ void drawFrame(const float dt)
       // add flags
       world->addFlags(scene, seerView);
 
-
       // add other tanks and shells
-      for (i = 0; i < curMaxPlayers; i++) 
-      {
+      for (i = 0; i < curMaxPlayers; i++) {
 	if (player[i]) {
 	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 	  player[i]->addShots(scene, colorblind);
@@ -5667,10 +5678,12 @@ void drawFrame(const float dt)
 	    (ROAM.getTargetTank()->getId() == i);
 	  const bool showPlayer = !inCockpt || showTreads;
 
-	  if (myTank->getFlag() == Flags::Seer || showPlayer)// add player tank if required
+	  // add player tank if required
+	  if ((myTank->getFlag() == Flags::Seer) || showPlayer) {
 	    player[i]->addToScene(scene, effectiveTeam,
-	    inCockpt, seerView,
-	    showPlayer, showPlayer,thirdPersonVars.b3rdPerson);
+	                          inCockpt, seerView, showPlayer, showPlayer,
+	                          thirdPersonVars.b3rdPerson);
+          }
 	}
       }
 
@@ -5707,8 +5720,9 @@ void drawFrame(const float dt)
       clipPos[2] = eye[2];
       const Obstacle *obs;
       obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
-      if (obs != NULL)
+      if (obs != NULL) {
 	insideDim = true;
+      }
     }
     RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
       ((myTank && !ROAM.isRoaming() && !devDriving) &&
@@ -5716,17 +5730,19 @@ void drawFrame(const float dt)
 
     // turn on panel dimming when showing the menu (both radar and chat)
     if (HUDDialogStack::get()->isActive()) {
-      if (controlPanel)
+      if (controlPanel) {
 	controlPanel->setDimming(0.8f);
-
-      if (radar)
+      }
+      if (radar) {
 	radar->setDimming(0.8f);
+      }
     } else {
-      if (controlPanel)
+      if (controlPanel) {
 	controlPanel->setDimming(0.0f);
-
-      if (radar)
+      }
+      if (radar) {
 	radar->setDimming(0.0f);
+      }
     }
 
     // set hud state
@@ -5739,18 +5755,20 @@ void drawFrame(const float dt)
     if (showDrawTime) {
 #if defined(DEBUG_RENDERING)
       // get an accurate measure of frame time (at expense of frame rate)
-      if (BZDB.isTrue("glFinish"))
+      if (BZDB.isTrue("glFinish")) {
 	glFinish();
+      }
 #endif
       media->stopwatch(true);
     }
 
     // so observers can have enhanced radar
     if (ROAM.isRoaming() && myTank && !devDriving) {
-      if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank())
+      if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank()) {
 	myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
-      else
+      } else {
 	myTank->setZpos(ROAM.getCamera()->pos[2]);
+      }
     }
 
     // draw frame
@@ -5800,10 +5818,12 @@ void drawFrame(const float dt)
     } else if (viewType == SceneRenderer::Stacked) {
       float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      if (BZDB.isSet("eyesep"))
+      if (BZDB.isSet("eyesep")) {
 	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
+      }
+      if (BZDB.isSet("focal")) {
 	FocalPlane = BZDB.eval("focal");
+      }
 
       // setup view for left eye
       viewFrustum.setOffset(EyeDisplacement, FocalPlane);
@@ -5827,10 +5847,12 @@ void drawFrame(const float dt)
     } else if (viewType == SceneRenderer::Stereo) {
       float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      if (BZDB.isSet("eyesep"))
+      if (BZDB.isSet("eyesep")) {
 	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
+      }
+      if (BZDB.isSet("focal")) {
 	FocalPlane = BZDB.eval("focal");
+      }
 
       // setup view for left eye
 #ifdef USE_GL_STEREO
@@ -5871,10 +5893,12 @@ void drawFrame(const float dt)
     } else if (viewType == SceneRenderer::Anaglyph) {
       float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      if (BZDB.isSet("eyesep"))
+      if (BZDB.isSet("eyesep")) {
 	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
+      }
+      if (BZDB.isSet("focal")) {
 	FocalPlane = BZDB.eval("focal");
+      }
 
       // setup view for left eye
       glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
@@ -5898,10 +5922,12 @@ void drawFrame(const float dt)
       float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
       const int width = mainWindow->getWidth();
       const int height = mainWindow->getHeight();
-      if (BZDB.isSet("eyesep"))
+      if (BZDB.isSet("eyesep")) {
 	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
+      }
+      if (BZDB.isSet("focal")) {
 	FocalPlane = BZDB.eval("focal");
+      }
 
       if (BZDBCache::stencilShadows) {
 	BZDB.set("stencilShadows", "0");
@@ -5984,16 +6010,19 @@ void drawFrame(const float dt)
 	glPixelZoom((float)zoomFactor, (float)zoomFactor);
 	glCopyPixels(x, y, w, h, GL_COLOR);
 	glPixelZoom(1.0f, 1.0f);
-	if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+	if (BZDB.isTrue("dither")) {
+	  glEnable(GL_DITHER);
+        }
       } else {
 	// normal rendering
 	RENDERER.render();
       }
 
       // draw other stuff
+      eventHandler.DrawScreenEffects();
       drawUI();
+      eventHandler.DrawScreen();
     }
-
 
     // get frame end time
     if (showDrawTime) {
@@ -6042,9 +6071,9 @@ void drawFrame(const float dt)
     mainWindow->getWindow()->swapBuffers();
 
     // remove dynamic nodes from this frame
-    if (scene)
+    if (scene) {
       scene->removeDynamicNodes();
-
+    }
   } else {
     // wait around a little to avoid spinning the CPU when iconified
     TimeKeeper::sleep(0.05f);
@@ -6092,9 +6121,9 @@ static void setupRoamingCamera(float dt)
   // adjust for slow keyboard
   if (BZDB.isTrue("slowMotion")) {
     float st = BZDB.eval("roamSmoothTime");
-    if (st < 0.1f)
+    if (st < 0.1f) {
       st = 0.1f;
-
+    }
     const float at = (dt / st);
     const float bt = 1.0f - at;
     deltaCamera.pos[0] = (at * deltaCamera.pos[0]) + (bt * prevDeltaCamera.pos[0]);
@@ -6128,8 +6157,8 @@ static void prepareTheHUD()
       for (int i = 0; i < numFlags; i++) {
 	Flag &flag = world->getFlag(i);
 	if ((flag.type->flagTeam == myTank->getTeam())
-	  && ((flag.status != FlagOnTank) ||
-	  (flag.owner != myTank->getId()))) {
+	    && ((flag.status != FlagOnTank) ||
+	        (flag.owner != myTank->getId()))) {
 	    const float *flagPos = flag.position;
 	    float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
 	    hud->addMarker(heading, myTeamColor);
@@ -6141,7 +6170,7 @@ static void prepareTheHUD()
       // marker for my antidote flag
       const GLfloat *antidotePos = myTank->getAntidoteLocation();
       float heading = atan2f(antidotePos[1] - myPos[1],
-	antidotePos[0] - myPos[0]);
+                             antidotePos[0] - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
       hud->AddEnhancedMarker(antidotePos,antidoteColor,false,BZDBCache::flagPoleSize*2);

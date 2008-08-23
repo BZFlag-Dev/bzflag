@@ -31,6 +31,7 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 #include "FlagSceneNode.h"
+#include "EventHandler.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
@@ -1030,6 +1031,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     // THE BIG RENDERING //
     ///////////////////////
     doRender();
+    eventHandler.DrawWorld();
 
 
     if (useHiddenLineOn) {

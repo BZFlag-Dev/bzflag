@@ -453,7 +453,8 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     float t = timeLeft + minTime;
     int face;
     bool hitGround = getGround(r, Epsilon, t);
-    Obstacle* building = (Obstacle*)((e != Through) ? getFirstBuilding(r, Epsilon, t) : NULL);
+    Obstacle* building =
+      (Obstacle*)((e == Through) ? NULL : getFirstBuilding(r, Epsilon, t));
     const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
     t -= minTime;
     minTime = 0.0f;
@@ -470,10 +471,11 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // construct next shot segment and add it to list
     double endTime(startTime);
 
-    if (t < 0.0f)
+    if (t < 0.0f) {
       endTime += Epsilon;
-     else
+    } else {
       endTime += t;
+    }
 
     ShotPathSegment segm(startTime, endTime, rs, reason);
     segments.push_back(segm);
@@ -580,12 +582,12 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     bbox[1][2] = firstSeg.bbox[1][2];
     for (size_t j = 1; j < numSegments; ++j) {
       const ShotPathSegment& segm = segments[j];
-      if (bbox[0][0] > segm.bbox[0][0]) bbox[0][0] = segm.bbox[0][0];
-      if (bbox[1][0] < segm.bbox[1][0]) bbox[1][0] = segm.bbox[1][0];
-      if (bbox[0][1] > segm.bbox[0][1]) bbox[0][1] = segm.bbox[0][1];
-      if (bbox[1][1] < segm.bbox[1][1]) bbox[1][1] = segm.bbox[1][1];
-      if (bbox[0][2] > segm.bbox[0][2]) bbox[0][2] = segm.bbox[0][2];
-      if (bbox[1][2] < segm.bbox[1][2]) bbox[1][2] = segm.bbox[1][2];
+      if (bbox[0][0] > segm.bbox[0][0]) { bbox[0][0] = segm.bbox[0][0]; }
+      if (bbox[1][0] < segm.bbox[1][0]) { bbox[1][0] = segm.bbox[1][0]; }
+      if (bbox[0][1] > segm.bbox[0][1]) { bbox[0][1] = segm.bbox[0][1]; }
+      if (bbox[1][1] < segm.bbox[1][1]) { bbox[1][1] = segm.bbox[1][1]; }
+      if (bbox[0][2] > segm.bbox[0][2]) { bbox[0][2] = segm.bbox[0][2]; }
+      if (bbox[1][2] < segm.bbox[1][2]) { bbox[1][2] = segm.bbox[1][2]; }
     }
   } else {
     bbox[0][0] = bbox[1][0] = 0.0f;

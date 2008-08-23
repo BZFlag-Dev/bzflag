@@ -20,6 +20,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
+#include "EventHandler.h"
 
 #include "TimeKeeper.h"
 
@@ -855,6 +856,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     if (!observer) {
       // revert to the centered transformation
+      glPushMatrix();
       glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
       glTranslatef(-myPos[0], -myPos[1], 0.0f);
 
@@ -867,7 +869,14 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       // my tank
       glColor3f(1.0f, 1.0f, 1.0f);
       drawTank(myTank, true);
+      glPopMatrix();
     }
+
+    glPushMatrix();
+    glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glTranslatef(-myPos[0], -myPos[1], 0.0f);
+    eventHandler.DrawRadar();
+    glPopMatrix();
 
     if (dimming > 0.0f) {
       if (!smooth) {

@@ -34,13 +34,16 @@ else
 FREETYPE_DIR =
 endif
 
+LUA_DIR = lua
+
 SUBDIRS = \
 	${ZLIB_DIR} \
 	${ARES_DIR} \
 	${CURL_DIR} \
 	${FREETYPE_DIR} \
 	${FTGL_DIR} \
-	${REGEX_DIR}
+	${REGEX_DIR} \
+	${LUA_DIR}
 
 DIST_SUBDIRS = \
 	ftgl \

@@ -1273,6 +1273,7 @@ AC_CONFIG_FILES([
 	src/other/freetype/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
+	src/other/lua/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
 	src/platform/MacOSX/Makefile
 	src/platform/Makefile

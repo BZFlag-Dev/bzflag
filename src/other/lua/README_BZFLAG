@@ -3,7 +3,7 @@ Lua-5.1.3 source code modifications:
 
   1. Applied the pushhstring patch
 
-*  4. Made the following adjustments in luaconf.h:
+  2. Made the following adjustments in luaconf.h:
 
      //BZ#define LUA_NUMBER_DOUBLE
      #undef LUA_NUMBER_DOUBLE
@@ -14,7 +14,8 @@ Lua-5.1.3 source code modifications:
      //BZ#define LUA_NUMBER_SCAN "%lf"
      #define LUA_NUMBER_SCAN "%f"
 
-*  5. Moved the *.c files to *.cpp for C++ compilation
+  3. Moved the *.c files to *.cxx for C++ compilation
+     (except for lua.c and luac.c)
 
 *  6. GZIP'ed the following files:
      doc/*
@@ -23,7 +24,7 @@ Lua-5.1.3 source code modifications:
      src/lua.c
      src/luac.c
 
-*  7. Changed the return type of lua_toboolean from int to bool to prevent
+  5. Changed the return type of lua_toboolean from int to bool to prevent
      compiler performance warnings on Visual Studio 2005.
 
   9. Undefined (in include/luaconf.h):
