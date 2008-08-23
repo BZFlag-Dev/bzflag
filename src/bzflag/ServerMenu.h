@@ -79,6 +79,7 @@ public:
   ServerMenuDefaultKey	defaultKey;
 
   HUDuiLabel* title;
+  HUDuiLabel* help;
   HUDuiTabbedControl* tabbedControl;
   HUDuiServerInfo* serverInfo;
   HUDuiServerListCustomTab* customTabControl;

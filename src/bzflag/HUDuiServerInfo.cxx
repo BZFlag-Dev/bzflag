@@ -51,6 +51,34 @@ HUDuiServerInfo::HUDuiServerInfo() : HUDuiControl()
   readouts.push_back(new HUDuiLabel);	// 19 ping time
   readouts.push_back(new HUDuiLabel);	// 20 cached status
   readouts.push_back(new HUDuiLabel);	// 21 cached age
+
+  HUDuiLabel* allPlayers = new HUDuiLabel;
+  allPlayers->setString("Players");
+  playerLabels.push_back(allPlayers);
+
+  HUDuiLabel* rogue = new HUDuiLabel;
+  rogue->setString("Rogue");
+  playerLabels.push_back(rogue);
+
+  HUDuiLabel* red = new HUDuiLabel;
+  red->setString("Red");
+  playerLabels.push_back(red);
+
+  HUDuiLabel* green = new HUDuiLabel;
+  green->setString("Green");
+  playerLabels.push_back(green);
+
+  HUDuiLabel* blue = new HUDuiLabel;
+  blue->setString("Blue");
+  playerLabels.push_back(blue);
+
+  HUDuiLabel* purple = new HUDuiLabel;
+  purple->setString("Purple");
+  playerLabels.push_back(purple);
+
+  HUDuiLabel* observers = new HUDuiLabel;
+  observers->setString("Observers");
+  playerLabels.push_back(observers);
 }
 
 HUDuiServerInfo::~HUDuiServerInfo()
@@ -119,6 +147,17 @@ void HUDuiServerInfo::resize()
     readout->setFontFace(getFontFace());
     y -= 1.0f * itemHeight;
     readout->setPosition(x, y);
+  }
+
+  float spacer = fm.getStringWidth(getFontFace()->getFMFace(), fontSize, "X");
+  x = (0.125f + 0.25f * (float)(1 / 7)) * (float)getWidth();
+  y = y0;
+  for (int i=0; i<(int) playerLabels.size(); i++) {
+    HUDuiLabel* label = playerLabels[i];
+    label->setFontSize(fontSize);
+    label->setFontFace(getFontFace());
+    y -= 1.0f * itemHeight;
+    label->setPosition(x, y);
   }
 }
 
@@ -351,6 +390,11 @@ void HUDuiServerInfo::doRender()
   for (int i=0; i<(int) readouts.size(); i++)
   {
     readouts[i]->render();
+  }
+
+  for (int i=0; i<(int) playerLabels.size(); i++)
+  {
+    playerLabels[i]->render();
   }
 }
 

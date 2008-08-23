@@ -48,6 +48,7 @@ class HUDuiServerInfo : public HUDuiControl {
     std::string serverKey;
 
     std::vector<HUDuiLabel*> readouts;
+    std::vector<HUDuiLabel*> playerLabels;
 };
 
 #endif // __HUDUISERVERINFO_H__

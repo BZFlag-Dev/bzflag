@@ -63,7 +63,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
-  if (key.chr == 'd') {
+  if (key.chr == 'v') {
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList))
       return false;
 
@@ -169,6 +169,10 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()), 
   title->setString("Servers");
   title->setFontFace(fontFace);
 
+  help = new HUDuiLabel();
+  help->setString("f - add server to favorites      h - remove server from tab      c - clear tab      v - delete tab      r - refresh server list");
+  help->setFontFace(fontFace);
+
   tabbedControl = new HUDuiTabbedControl;
   tabbedControl->setFontFace(fontFace);
   tabbedControl->addTab(normalList, "All");
@@ -191,6 +195,7 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()), 
   addControl(title, false);
   addControl(tabbedControl);
   addControl(serverInfo);
+  addControl(help, false);
 
   initNavigation();
 }
@@ -287,17 +292,21 @@ void ServerMenu::resize(int _width, int _height)
   float bottomSpacer = fm.getStringHeight(fontFace->getFMFace(), fontSize);
 
   float remainingSpace = y - bottomSpacer*2;
-  float listHeight = remainingSpace*0.7f;
+  float listHeight = remainingSpace*0.65f;
 
   tabbedControl->setSize((_width - (2*edgeSpacer)),listHeight);
-  serverInfo->setSize((_width - (2*edgeSpacer)), (remainingSpace - bottomSpacer)*0.3f);
+  serverInfo->setSize((_width - (2*edgeSpacer)), (remainingSpace - 4*bottomSpacer)*0.35f);
 
   y = y - (titleHeight/2) - tabbedControl->getHeight();
 
+  float helpLength = fm.getStringWidth(fontFace->getFMFace(), fontSize, help->getString().c_str());
+
   tabbedControl->setPosition(edgeSpacer, y);
-  serverInfo->setPosition(edgeSpacer, bottomSpacer/2);
+  serverInfo->setPosition(edgeSpacer, bottomSpacer/2 + bottomSpacer);
+  help->setPosition((_width - helpLength)/2, bottomSpacer/2);
   tabbedControl->setFontSize(fontSize);
   serverInfo->setFontSize(fontSize);
+  help->setFontSize(fontSize);
 }
 
 void ServerMenu::updateStatus()
