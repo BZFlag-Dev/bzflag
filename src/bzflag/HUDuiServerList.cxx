@@ -558,13 +558,13 @@ void HUDuiServerList::refreshNavQueue()
   }
   if (std::search_n(items.begin(), items.end(), 1, currentFocus, equal) == items.end())
   {
-    getNav().set((size_t) 0);
-    return;
+    currentFocus = getNav().at((size_t) 0);
+    inFocus = false;
   }
 
   if (inFocus)
     getNav().set(currentFocus);
-  else
+  else if (currentFocus != NULL)
     getNav().setWithoutFocus(currentFocus);
 }
 

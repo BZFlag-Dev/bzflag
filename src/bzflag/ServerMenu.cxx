@@ -80,6 +80,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
 
+    /*
     ServerItem* server = ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer();
     ServerPing *newping = new ServerPing(server->ping.serverId.serverHost, ntohs(server->ping.serverId.port));
     newping->start();
@@ -87,6 +88,9 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     serverListsVector.push_back((HUDuiServerList*)menu->tabbedControl->getActiveTab());
     ServerMenu::activePings.insert(pingMapPair(server->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*>>(newping, serverListsVector)));
     server->ping.pinging = true;
+    */
+    ServerList::instance().clear();
+    ServerList::instance().startServerPings(getStartupInfo());
     return true;
   }
 

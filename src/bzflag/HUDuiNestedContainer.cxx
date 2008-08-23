@@ -37,7 +37,7 @@ void HUDuiNestedContainer::addControl(HUDuiControl *control)
     return;
   nestedNavList.push_back(control);
   if ((nestedNavList.size() == 1)&&(hasFocus()))
-    nestedNavList.set((size_t) 0);
+    nestedNavList.setWithoutFocus((size_t) 0);
   control->setNavQueue(&nestedNavList);
   control->isNested(true);
   control->setParent(this);
