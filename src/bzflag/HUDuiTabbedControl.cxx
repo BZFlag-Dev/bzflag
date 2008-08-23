@@ -46,10 +46,10 @@ void HUDuiTabbedControl::addControl(HUDuiControl *control)
   control->setParent(this);
 }
 
-void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, int index)
+void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, size_t index)
 {
-  if ((index < 0)||(index >= (int) tabs.size()))
-    index = (int) tabs.size();
+  if ((index < 0)||(index >= tabs.size()))
+    index = tabs.size();
 
   std::vector<std::pair<std::string, HUDuiControl*>>::iterator it = tabs.begin();
   std::advance(it, index);
@@ -59,7 +59,7 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, i
   if (tabs.size() == 1) // First tab
   {
     getNav().push_back(tabControl);
-    tabNavQueuePosition = getNav().begin() + (((int)getNav().size()) - 1);
+    tabNavQueuePosition = getNav().begin() + ((getNav().size()) - 1);
   }
 
   tabControl->setFontFace(getFontFace());
@@ -72,9 +72,9 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, i
   addControl(tabControl);
 }
 
-void HUDuiTabbedControl::setActiveTab(int tab)
+void HUDuiTabbedControl::setActiveTab(size_t tab)
 {
-  if ((tab >= 0)&&(tab < (int) tabs.size()))
+  if ((tab >= 0)&&(tab < tabs.size()))
   {
     activeTab = tab;
     activeControl = tabs[activeTab].second;
@@ -83,12 +83,15 @@ void HUDuiTabbedControl::setActiveTab(int tab)
   }
 }
 
-void HUDuiTabbedControl::removeTab(int tabIndex)
+void HUDuiTabbedControl::removeTab(size_t tabIndex)
 {
-  if (tabIndex >= (int) tabs.size())
+  if (tabIndex >= tabs.size())
     return;
 
   tabs.erase(tabs.begin() + tabIndex);
+
+  if (activeTab >= tabs.size())
+    activeTab = tabs.size() - 1;
 }
 
 void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
@@ -109,7 +112,7 @@ void HUDuiTabbedControl::setSize(float width, float height)
 
   tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
-  for (int i=0; i<(int)tabs.size(); i++)
+  for (size_t i=0; i<tabs.size(); i++)
   {
     tabs[i].second->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
   }
@@ -122,7 +125,7 @@ void HUDuiTabbedControl::setFontSize(float size)
 
   tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), size);
 
-  for (int i=0; i<(int)tabs.size(); i++)
+  for (size_t i=0; i<tabs.size(); i++)
   {
     tabs[i].second->setFontSize(size);
     tabs[i].second->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
@@ -133,7 +136,7 @@ void HUDuiTabbedControl::setFontFace(const LocalFontFace* face)
 {
   HUDuiNestedContainer::setFontFace(face);
 
-  for (int i=0; i<(int)tabs.size(); i++)
+  for (size_t i=0; i<tabs.size(); i++)
   {
     tabs[i].second->setFontFace(face);
   }
@@ -143,7 +146,7 @@ void HUDuiTabbedControl::setPosition(float x, float y)
 {
   HUDuiNestedContainer::setPosition(x, y);
 
-  for (int i=0; i<(int)tabs.size(); i++)
+  for (size_t i=0; i<tabs.size(); i++)
   {
     tabs[i].second->setPosition(x, y);
   }
@@ -168,7 +171,7 @@ void HUDuiTabbedControl::drawTabs()
   float x = getX();
   float y = (getY() + (getHeight() - tabsHeight));
 
-  for (int i=0; i<(int)tabs.size(); i++)
+  for (size_t i=0; i<tabs.size(); i++)
   {
     const char* text = tabs[i].first.c_str();
 

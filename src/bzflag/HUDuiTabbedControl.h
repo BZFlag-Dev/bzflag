@@ -32,14 +32,14 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
     HUDuiControl* getActiveTab() { return activeControl; }
     std::string getActiveTabName() { return tabs[activeTab].first; }
 
-    void setActiveTab(int tab);
+    void setActiveTab(size_t tab);
 	
-    void addTab(HUDuiControl* tabControl, std::string tabName, int index = -1);
+    void addTab(HUDuiControl* tabControl, std::string tabName, size_t index = -1);
     void removeTab(HUDuiControl* control, std::string tabName);
-    void removeTab(int tabIndex);
+    void removeTab(size_t tabIndex);
 
-    int getTabCount() { return (int) tabs.size(); }
-    HUDuiControl* getTab(int index) { return tabs[index].second; }
+    size_t getTabCount() { return tabs.size(); }
+    HUDuiControl* getTab(size_t index) { return tabs[index].second; }
 
     void setSize(float width, float height);
     void setFontSize(float size);
@@ -58,7 +58,7 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
     bool doKeyPress(const BzfKeyEvent& key);
 
   private:
-    int activeTab;
+    size_t activeTab;
 
     HUDNavigationQueue::iterator tabNavQueuePosition;
 
