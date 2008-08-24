@@ -720,7 +720,8 @@ union luai_Cast { double l_d; long l_l; };
 ** CHANGE (define) this if you really need that. This value must be
 ** a multiple of the maximum alignment required for your machine.
 */
-#define LUAI_EXTRASPACE		0
+//BZ#define LUAI_EXTRASPACE		0
+#define LUAI_EXTRASPACE		64
 
 
 /*

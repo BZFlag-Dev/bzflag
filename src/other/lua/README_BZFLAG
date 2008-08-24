@@ -34,6 +34,8 @@ Lua-5.1.3 source code modifications:
        LUA_COMPAT_GFIND
        LUA_COMPAT_OPENLIB
 
+  7. Added the custom LUA_CALLINSINDEX table  (also look for 'callins')
+
 *  10. Added the following to lua.h  (and associated code)
         lua_set_fopen()
         lua_set_popen()
