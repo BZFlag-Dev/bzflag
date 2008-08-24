@@ -14,20 +14,20 @@ Lua-5.1.3 source code modifications:
      //BZ#define LUA_NUMBER_SCAN "%lf"
      #define LUA_NUMBER_SCAN "%f"
 
-  3. Moved the *.c files to *.cxx for C++ compilation
-     (except for lua.c and luac.c)
-
-*  6. GZIP'ed the following files:
+  3. GZIP'ed the following files:
      doc/*
      etc/*
      test/*
      src/lua.c
      src/luac.c
 
+  4. Moved the *.c files to *.cxx for C++ compilation
+     (except for lua.c and luac.c)
+
   5. Changed the return type of lua_toboolean from int to bool to prevent
      compiler performance warnings on Visual Studio 2005.
 
-  9. Undefined (in luaconf.h):
+  6. Undefined (in luaconf.h):
        LUA_COMPAT_VARARG
        LUA_COMPAT_MOD
        LUA_COMPAT_LSTR
