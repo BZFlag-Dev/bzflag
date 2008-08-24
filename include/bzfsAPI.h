@@ -1440,7 +1440,7 @@ public:
 
   bz_eTeamType team;
 
-  float					lastUpdateTime;
+  float			lastUpdateTime;
   bz_PlayerUpdateState	lastKnownState;
   bz_PlayerUpdateState	currentState;
 
@@ -1450,6 +1450,7 @@ public:
   bz_ApiString currentFlag;
   bz_APIStringList flagHistory;
 
+  bz_ApiString	clientVersion;
   bool spawned;
   bool verified;
   bool globalUser;

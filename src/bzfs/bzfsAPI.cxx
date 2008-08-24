@@ -1142,6 +1142,7 @@ bz_BasePlayerRecord *APIPlayerFromRecord ( GameKeeper::Player *player )
   playerRecord->verified=player->accessInfo.isVerified();
   playerRecord->globalUser=player->authentication.isGlobal();
 
+  playerRecord->clientVersion = player->player.getClientVersion();
   playerRecord->ipAddress=player->netHandler->getTargetIP();
   playerRecord->update();
   return playerRecord;
