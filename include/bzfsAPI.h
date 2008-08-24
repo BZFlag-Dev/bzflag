@@ -1392,9 +1392,6 @@ class BZF_API bz_BasePlayerRecord
 
   bz_eTeamType team;
 
-  float lastUpdateTime;
-  bz_PlayerUpdateState lastKnownState;
-  bz_PlayerUpdateState currentState;
 
   bz_ApiString ipAddress;
 
@@ -1402,6 +1399,11 @@ class BZF_API bz_BasePlayerRecord
   bz_ApiString currentFlag;
   bz_APIStringList flagHistory;
 
+  float lastUpdateTime;
+  bz_PlayerUpdateState lastKnownState;
+  bz_PlayerUpdateState currentState;
+
+  bz_ApiString	clientVersion;
   bool spawned;
   bool verified;
   bool globalUser;
