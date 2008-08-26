@@ -54,13 +54,15 @@ class HUDuiServerList : public HUDuiScrollList {
     } FilterConstants;
 
     typedef enum {
-      DomainName = 0,
+      Modes = 0,
+      DomainName,
       ServerName,
       PlayerCount,
       Ping,
       NoSort
     } SortConstants;
 
+    static float MODES_PERCENTAGE;
     static float DOMAIN_PERCENTAGE;
     static float SERVER_PERCENTAGE;
     static float PLAYER_PERCENTAGE;

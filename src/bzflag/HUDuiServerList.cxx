@@ -28,16 +28,18 @@
 // HUDuiServerList
 //
 
+float HUDuiServerList::MODES_PERCENTAGE = 0.125f;
 float HUDuiServerList::DOMAIN_PERCENTAGE = 0.375f;
 float HUDuiServerList::SERVER_PERCENTAGE = 0.375f;
-float HUDuiServerList::PLAYER_PERCENTAGE = 0.125f;
-float HUDuiServerList::PING_PERCENTAGE = 0.125f;
+float HUDuiServerList::PLAYER_PERCENTAGE = 0.0625f;
+float HUDuiServerList::PING_PERCENTAGE = 0.0625f;
 
 HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), filterPatterns(std::pair<std::string, std::string>("*", "*")), sortMode(NoSort), activeColumn(DomainName), reverseSort(false), devInfo(false), dataList(ServerList::instance())
 {
+  columns[Modes] = std::pair<std::string, float*>("", &MODES_PERCENTAGE);
   columns[DomainName] = std::pair<std::string, float*>("Address", &DOMAIN_PERCENTAGE);
   columns[ServerName] = std::pair<std::string, float*>("Server Name", &SERVER_PERCENTAGE);
-  columns[PlayerCount] = std::pair<std::string, float*>("Player Count", &PLAYER_PERCENTAGE);
+  columns[PlayerCount] = std::pair<std::string, float*>("Players", &PLAYER_PERCENTAGE);
   columns[Ping] = std::pair<std::string, float*>("Ping", &PING_PERCENTAGE);
   getNav().push_front(this);
 }
@@ -202,7 +204,7 @@ public:
 void HUDuiServerList::addItem(ServerItem* item)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
-  newItem->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
+  newItem->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());  
   newItem->setSize(getWidth(), 10);
@@ -232,7 +234,7 @@ void HUDuiServerList::addItem(ServerItem* item)
 void HUDuiServerList::addItem(std::string key)
 {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(key);
-  newItem->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
+  newItem->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
   newItem->setFontSize(getFontSize());  
   newItem->setSize(getWidth(), 10);
@@ -350,7 +352,7 @@ void HUDuiServerList::update()
 
   for (it=items.begin(); it != items.end(); it++)
   {
-    ((HUDuiServerListItem*)(*it))->setColumnSizes(DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
+    ((HUDuiServerListItem*)(*it))->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   }
 }
 
@@ -384,7 +386,7 @@ void HUDuiServerList::doRender()
 
   std::string columnTitle = "";
 
-  for (int i=DomainName; i != NoSort; i++)
+  for (int i=Modes; i != NoSort; i++)
   {
     if (sortMode == i)
       if (reverseSort)

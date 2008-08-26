@@ -49,6 +49,7 @@ HUDuiServerListItem::HUDuiServerListItem(std::string key) : HUDuiControl(), serv
 
   serverKey = key;
 
+  displayModes = modes = calculateModes();
   displayDomain = domainName = calculateDomainName();
   displayServer = serverName = calculateServerName();
   displayPlayer = playerCount = calculatePlayers();
@@ -58,6 +59,63 @@ HUDuiServerListItem::HUDuiServerListItem(std::string key) : HUDuiControl(), serv
 HUDuiServerListItem::~HUDuiServerListItem()
 {
   // do nothing
+}
+
+std::string HUDuiServerListItem::calculateModes()
+{
+  ServerItem* server = serverList.lookupServer(serverKey);
+
+  if (server == NULL)
+    return "";
+
+  std::string modesText;
+  if (BZDB.isTrue("listIcons")) {
+    // game mode
+    if ((server->ping.observerMax == 16) && (server->ping.maxPlayers == 200))
+      modesText += ANSI_STR_FG_CYAN "*  "; // replay
+    else if (server->ping.gameType == ClassicCTF)
+      modesText += ANSI_STR_FG_RED "*  "; // ctf
+    else if (server->ping.gameType == RabbitChase)
+      modesText += ANSI_STR_FG_WHITE "*  "; // white rabbit
+    else
+      modesText += ANSI_STR_FG_YELLOW "*  "; // free-for-all
+
+    // jumping?
+    if (server->ping.gameOptions & JumpingGameStyle)
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
+    else
+      modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
+
+    // superflags ?
+    if (server->ping.gameOptions & SuperFlagGameStyle)
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
+    else
+      modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
+
+    // ricochet?
+    if (server->ping.gameOptions & RicochetGameStyle)
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R ";
+    else
+      modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "R ";
+
+    if (server->ping.pingTime <= 0)
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
+    else if (server->ping.pingTime < BZDB.eval("pingLow"))
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "L";
+    else if (server->ping.pingTime < BZDB.eval("pingMed"))
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_YELLOW "L";
+    else if (server->ping.pingTime < BZDB.eval("pingHigh"))
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_ORANGE "L";
+    else if (server->ping.pingTime >= BZDB.eval("pingHigh") && server->ping.pingTime < INT_MAX)
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_RED "L";
+    else if (server->ping.pingTime >= BZDB.eval("pingHigh"))
+      modesText += ANSI_STR_PULSATING ANSI_STR_REVERSE ANSI_STR_FG_RED "L";
+    else
+      // shouldn't reach here
+      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
+  }
+
+  return modesText;
 }
 
 std::string HUDuiServerListItem::calculateDomainName()
@@ -139,8 +197,9 @@ void HUDuiServerListItem::setFontFace(const LocalFontFace *face)
   resize();
 }
 
-void HUDuiServerListItem::setColumnSizes(float domain, float server, float player, float ping)
+void HUDuiServerListItem::setColumnSizes(float modes_percent, float domain, float server, float player, float ping)
 {
+  modes_percentage = modes_percent;
   domain_percentage = domain;
   server_percentage = server;
   player_percentage = player;
@@ -156,6 +215,7 @@ void HUDuiServerListItem::resize()
 
   spacerWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "I");
 
+  displayModes = shorten(modes, (modes_percentage*getWidth())-2*spacerWidth);
   displayDomain = shorten(domainName, (domain_percentage*getWidth())-2*spacerWidth);
   displayServer = shorten(serverName, (server_percentage*getWidth())-2*spacerWidth);
   displayPlayer = shorten(playerCount, (player_percentage*getWidth())-2*spacerWidth);
@@ -202,6 +262,7 @@ void HUDuiServerListItem::doRender()
   if ((domainName.compare(calculateDomainName()) == 0)||(serverName.compare(calculateServerName()) == 0)||
       (playerCount.compare(calculatePlayers()) == 0)||(serverPing.compare(calculatePing()) == 0))
   {
+    displayModes = modes = calculateModes();
     displayDomain = domainName = calculateDomainName();
     displayServer = serverName = calculateServerName();
     displayPlayer = playerCount = calculatePlayers();
@@ -209,18 +270,48 @@ void HUDuiServerListItem::doRender()
     resize();
   }
   
-  float domainX = getX() + spacerWidth;
-  float serverX = getX() + domain_percentage*getWidth() + spacerWidth;
-  float playerX = getX() + domain_percentage*getWidth() + server_percentage*getWidth() + spacerWidth;
-  float pingX = getX() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
+  float modesX = getX() + spacerWidth;
+  float domainX = getX() + modes_percentage*getWidth() + spacerWidth;
+  float serverX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + spacerWidth;
+  float playerX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + spacerWidth;
+  float pingX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
 
   int face = getFontFace()->getFMFace();
 
+  float color[3] = {1.0f, 1.0f, 1.0f};
+
+  // colorize server descriptions by shot counts
+  const int maxShots = server->ping.maxShots;
+  if (maxShots <= 0) {
+    color[0] = 0.4f;
+    color[1] = 0.0f;
+    color[2] = 0.6f;
+  } else if (maxShots == 1) {
+    color[0] = 0.25f;
+    color[1] = 0.25f;
+    color[2] = 1.0f;
+  } else if (maxShots == 2) {
+    color[0] = 0.25f;
+    color[1] = 1.0f;
+    color[2] = 0.25f;
+  } else if (maxShots == 3) {
+    color[0] = 1.0f;
+    color[1] = 1.0f;
+    color[2] = 0.25f;
+  } else {
+    // graded orange/red
+    const float shotScale = std::min(1.0f, log10f((float)(maxShots - 3)));
+    color[0] = 1.0f;
+    color[1] = 0.4f * (1.0f - shotScale);
+    color[2] = 0.25f * color[1];
+  }
+
   fm.setDarkness(darkness);
-  fm.drawString(domainX, getY(), 0, face, getFontSize(), displayDomain.c_str());
-  fm.drawString(serverX, getY(), 0, face, getFontSize(), displayServer.c_str());
-  fm.drawString(playerX, getY(), 0, face, getFontSize(), displayPlayer.c_str());
-  fm.drawString(pingX, getY(), 0, face, getFontSize(), displayPing.c_str());
+  fm.drawString(modesX, getY(), 0, face, getFontSize(), displayModes.c_str());
+  fm.drawString(domainX, getY(), 0, face, getFontSize(), displayDomain.c_str(), color);
+  fm.drawString(serverX, getY(), 0, face, getFontSize(), displayServer.c_str(), color);
+  fm.drawString(playerX, getY(), 0, face, getFontSize(), displayPlayer.c_str(), color);
+  fm.drawString(pingX, getY(), 0, face, getFontSize(), displayPing.c_str(), color);
   fm.setDarkness(1.0f);
 }
 

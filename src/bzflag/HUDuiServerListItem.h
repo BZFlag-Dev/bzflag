@@ -39,13 +39,14 @@ class HUDuiServerListItem : public HUDuiControl {
     void setFontSize(float size);
     void setFontFace(const LocalFontFace *face);
 
-    void setColumnSizes(float domain, float server, float player, float ping);
+    void setColumnSizes(float modes_percent, float domain, float server, float player, float ping);
 	
     std::string getDomainName() { return domainName; }
     std::string getServerName() { return serverName; }
     std::string getPlayerCount() { return playerCount; }
     std::string getServerPing() { return serverPing; }
 
+    std::string calculateModes();
     std::string calculateDomainName();
     std::string calculateServerName();
     std::string calculatePlayers();
@@ -63,16 +64,19 @@ class HUDuiServerListItem : public HUDuiControl {
     ServerList &serverList;
     std::string serverKey;
 
+    std::string modes;
     std::string domainName;
     std::string serverName;
     std::string playerCount;
     std::string serverPing;
 
+    std::string displayModes;
     std::string displayDomain;
     std::string displayServer;
     std::string displayPlayer;
     std::string displayPing;
 
+    float modes_percentage;
     float domain_percentage;
     float server_percentage;
     float player_percentage;
