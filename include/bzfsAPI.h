@@ -1795,7 +1795,6 @@ BZF_API bool bz_callbackExists(const char* name);
 
 // team info
 BZF_API int bz_getTeamCount(bz_eTeamType team);
-BZF_API int bz_getTeamMaxPlayers (bz_eTeamType team);
 BZF_API int bz_getTeamScore(bz_eTeamType team);
 BZF_API int bz_getTeamWins(bz_eTeamType team);
 BZF_API int bz_getTeamLosses(bz_eTeamType team);

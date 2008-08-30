@@ -3267,17 +3267,6 @@ BZF_API int bz_getTeamCount(bz_eTeamType _team)
   return count;
 }
 
-BZF_API int bz_getTeamMaxPlayers (bz_eTeamType _team)
-{
-  int teamIndex=(int)convertTeam(_team);
-
-  int count=0;
-  if(teamIndex < 0 || teamIndex >= NumTeams)
-    return 0;
-
-  return clOptions->maxTeam[teamIndex];
-}
-
 //-------------------------------------------------------------------------
 
 BZF_API int bz_getTeamScore(bz_eTeamType _team)
