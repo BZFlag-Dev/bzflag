@@ -91,6 +91,8 @@ void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eve
   if (!eventData || getEventCount(eventType)==0 )
     return;
 
+  eventData->eventType = eventType;
+
   tvEventList	eList = getEventList(eventType);
 
   for ( unsigned int i = 0; i < eList.size(); i++)
