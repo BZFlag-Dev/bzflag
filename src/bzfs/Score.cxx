@@ -39,7 +39,7 @@ float Score::ranking() const {
   // otherwise do score-based ranking
   int sum = wins + losses;
   if (sum == 0)
-    return BZDB.eval(StateDatabase::BZDB_DEFAULTRANK);
+    return BZDB.eval(StateDatabase::BZDB_STARTINGRANK);
   float average = (float)wins/(float)sum;
   // IIRC that is how wide is the gaussian
   float penalty = (1.0f - 0.5f / sqrt((float)sum));

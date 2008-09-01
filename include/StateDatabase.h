@@ -213,7 +213,6 @@ public:
   static const std::string	BZDB_CULLELEMENTS;
   static const std::string	BZDB_CULLOCCLUDERS;
   static const std::string	BZDB_DISABLEBOTS;
-  static const std::string	BZDB_DEFAULTRANK;
   static const std::string	BZDB_DMZWIDTH;
   static const std::string	BZDB_DRAWCELESTIAL;
   static const std::string	BZDB_DRAWCLOUDS;
@@ -298,6 +297,7 @@ public:
   static const std::string	BZDB_SQUISHTIME;
   static const std::string	BZDB_SPEEDCHECKSLOGONLY;
   static const std::string	BZDB_SRRADIUSMULT;
+  static const std::string	BZDB_STARTINGRANK;
   static const std::string	BZDB_SYNCLOCATION;
   static const std::string	BZDB_SYNCTIME;
   static const std::string	BZDB_TANKANGVEL;
