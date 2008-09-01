@@ -3,10 +3,18 @@ bzflag (@VERSION@) unstable; urgency=medium
   * SVN Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.13.20080901-1) unstable; urgency=medium
+
+  * Convert to free fonts (Closes: #491984)
+  * Split out data file deb (Closes: #491982)
+  * Add .desktop file (Closes: #475070, #396080)
+  * GCC 4.3 fixes
+ -- Tim Riker <Tim@Rikers.org>  Mon, 01 Sep 2008 02:08:51 +0000
+
 bzflag (2.0.10.20071115) unstable; urgency=medium
 
   * fix network and timing issues on newer hardware
-  * fix bashisms in debian/rules  (Closes: #439075)
+  * fix bashisms in debian/rules (Closes: #439075)
   * stability improvements (Closes: #288684)
   * newer gcc support (Closes: #417128)
   * list server, and map selection fixes (Closes: #326498)

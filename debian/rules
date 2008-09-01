@@ -137,13 +137,13 @@ bzflag-data: build
 #ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 #	dh_strip -p$@
 #endif
-	dh_link -p$@
+	#dh_link -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
 	#dh_makeshlibs -p$@
 	#dh_perl -p$@
-	dh_shlibdeps -p$@
+	#dh_shlibdeps -p$@
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@

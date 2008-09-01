@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 4), groff-base, xlibmesa-gl-dev | libgl-dev, libglu
 
 
 Package: bzflag
-Architecture: any
+Architecture: all
 Depends: bzflag-client, bzflag-server
 Suggests: bzflag-server
 Description: a 3D first person tank battle game
@@ -39,8 +39,8 @@ Description: BZFlag client
  BZFlag client application.
 
 Package: bzflag-data
-Architecture: any
-Depends: ${shlibs:Depends}
+Architecture: all
+Depends:
 Description: BZFlag data file
  Data files needed by BZFlag client. Arch independant.
 
