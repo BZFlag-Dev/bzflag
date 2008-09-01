@@ -14,7 +14,9 @@ else
  MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < src/date/buildDate.cxx`
  MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < src/date/buildDate.cxx`
  REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < src/date/buildDate.cxx`
- PKGVER=1
+ if [ -z "$PKGVER" ] ; then
+  PKGVER=1
+ fi
  date=`date -u --rfc-822`
  version=${MAJOR_VERSION}.${MINOR_VERSION}.${REV}.`date -u +%Y%m%d`-$PKGVER
  sed -e "s/@VERSION@/$version/g" -e "s/@DATE@/$date/g" < debian/changelog.in > debian/changelog
