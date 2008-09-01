@@ -22,6 +22,8 @@ fi
 echo "Starting on $date to build:"
 arch=$(dpkg-architecture -qDEB_HOST_ARCH)
 echo "../bzflag_${version}.${arch}.deb"
+echo "../bzflag-client_${version}_${arch}.deb"
+echo "../bzflag-data_${version}_${arch}.deb"
 echo "../bzflag-server_${version}_${arch}.deb"
 echo -n "debian/changelog entry: "
 head -n 1 debian/changelog

@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 4), groff-base, xlibmesa-gl-dev | libgl-dev, libglu
 
 Package: bzflag
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: bzflag-client, bzflag-server
 Suggests: bzflag-server
 Description: a 3D first person tank battle game
  BZFlag is a 3D multi-player multiplatform tank battle game
@@ -29,6 +29,20 @@ Description: a 3D first person tank battle game
  from that team's score, and adds one to your team's score.
  In free-for-all, there are no team flags or team bases.
  The object is simply to get as high a score as possible.
+ .
+ This metapackage installs the client and server.
+
+Package: bzflag-client
+Architecture: any
+Depends: bzflag-data, ${shlibs:Depends}
+Description: BZFlag client
+ BZFlag client application.
+
+Package: bzflag-data
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: BZFlag data file
+ Data files needed by BZFlag client. Arch independant.
 
 Package: bzflag-server
 Architecture: any

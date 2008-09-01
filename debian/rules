@@ -51,11 +51,11 @@ install: build
 	#dh_movefiles
 
 # Build architecture-independent files here.
-binary-indep: build install
+binary-indep: build install bzflag bzflag-data
 # We have nothing to do by default.
 
 # Build architecture-dependent files here.
-binary-arch: build install bzflag bzflag-server
+binary-arch: build install bzflag-client bzflag-server
 
 # "Target Specific Variable Values" seems to be broken, do it verbosely
 #bzflag: DH_OPTIONS = -pbzflag	# I ought to be able to do DH_OPTIONS=-p$@
@@ -63,21 +63,42 @@ bzflag: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	dh_installdirs -p$@ usr/games usr/share/bzflag/l10n usr/share/bzflag/fonts usr/share/man/man6 usr/share/applications usr/share/pixmaps
+	#dh_installdirs -p$@ usr/games
+	#dh_installdebconf -p$@
+	dh_installdocs -p$@
+	#dh_installmenu -p$@
+	#dh_installmanpages -p$@
+	#dh_installinfo -p$@
+	#dh_undocumented -p$@
+	dh_installchangelogs -p$@ ChangeLog
+#ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	#dh_strip -p$@
+#endif
+	#dh_link -p$@
+	#dh_compress -p$@
+	dh_fixperms -p$@
+	dh_installdeb -p$@
+	#dh_makeshlibs -p$@
+	#dh_perl -p$@
+	#dh_shlibdeps -p$@
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+bzflag-client: DH_OPTIONS = -pbzflag-client
+bzflag-client: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs -p$@ usr/games
 	# copy files into debian/$@/ here
-	-cp -p data/[!CM]* debian/$@/usr/share/bzflag/
-	cp -p data/l10n/[!CM]* debian/$@/usr/share/bzflag/l10n/
-	cp -p data/fonts/[!CM]* debian/$@/usr/share/bzflag/fonts/
-	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
 	cp -p src/bzflag/bzflag debian/$@/usr/games/
-	cp -p data/bzflag.desktop debian/$@/usr/share/applications/
-	cp -p data/bzflag-48x48.png debian/$@/usr/share/pixmaps/
-#	dh_installdebconf -p$@
+	#dh_installdebconf -p$@
 	dh_installdocs -p$@
 	dh_installmenu -p$@
-#	dh_installmanpages -p$@
+	#dh_installmanpages -p$@
 	dh_installinfo -p$@
-#	dh_undocumented -p$@
+	#dh_undocumented -p$@
 	dh_installchangelogs -p$@ ChangeLog
 ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
@@ -86,8 +107,42 @@ endif
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-#	dh_makeshlibs -p$@
-#	dh_perl -p$@
+	#dh_makeshlibs -p$@
+	#dh_perl -p$@
+	dh_shlibdeps -p$@
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+bzflag-data: DH_OPTIONS = -pbzflag-data
+bzflag-data: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs -p$@ usr/share/bzflag/l10n usr/share/bzflag/fonts usr/share/man/man6 usr/share/applications usr/share/pixmaps
+	# copy files into debian/$@/ here
+	-cp -p data/[!CM]* debian/$@/usr/share/bzflag/
+	cp -p data/l10n/[!CM]* debian/$@/usr/share/bzflag/l10n/
+	cp -p data/fonts/[!CM]* debian/$@/usr/share/bzflag/fonts/
+	cp -p man/bzflag.6 debian/$@/usr/share/man/man6/
+	cp -p data/bzflag.desktop debian/$@/usr/share/applications/
+	cp -p data/bzflag-48x48.png debian/$@/usr/share/pixmaps/
+	#dh_installdebconf -p$@
+	dh_installdocs -p$@
+	dh_installmenu -p$@
+	#dh_installmanpages -p$@
+	dh_installinfo -p$@
+	#dh_undocumented -p$@
+	dh_installchangelogs -p$@ ChangeLog
+#ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+#	dh_strip -p$@
+#endif
+	dh_link -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_installdeb -p$@
+	#dh_makeshlibs -p$@
+	#dh_perl -p$@
 	dh_shlibdeps -p$@
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
@@ -105,18 +160,18 @@ bzflag-server: build
 	cp -p src/bzfs/bzfs src/bzadmin/bzadmin debian/$@/usr/games
 	cp -p misc/bzfquery.pl debian/$@/usr/games/bzfquery
 	chmod a+rx debian/$@/usr/games/bzfquery
-#	dh_installdebconf -p$@
+	#dh_installdebconf -p$@
 	dh_installdocs -p$@
 	cp -p misc/*.bzw debian/$@/usr/share/doc/$@/
 	dh_installexamples -p$@
 	dh_installmenu -p$@
-#	dh_installemacsen -p$@
-#	dh_installpam -p$@
-#	dh_installinit -p$@
+	#dh_installemacsen -p$@
+	#dh_installpam -p$@
+	#dh_installinit -p$@
 	dh_installcron -p$@
-#	dh_installmanpages -p$@
+	#dh_installmanpages -p$@
 	dh_installinfo -p$@
-#	dh_undocumented -p$@ bzfquery.pl.6
+	#dh_undocumented -p$@ bzfquery.pl.6
 	dh_installchangelogs -p$@
 ifneq (nostrip,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -p$@
@@ -125,8 +180,8 @@ endif
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-#	dh_makeshlibs -p$@
-#	dh_perl -p$@
+	#dh_makeshlibs -p$@
+	#dh_perl -p$@
 	dh_shlibdeps -p$@
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
