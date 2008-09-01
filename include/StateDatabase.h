@@ -213,6 +213,7 @@ public:
   static const std::string	BZDB_CULLELEMENTS;
   static const std::string	BZDB_CULLOCCLUDERS;
   static const std::string	BZDB_DISABLEBOTS;
+  static const std::string	BZDB_DEFAULTRANK;
   static const std::string	BZDB_DMZWIDTH;
   static const std::string	BZDB_DRAWCELESTIAL;
   static const std::string	BZDB_DRAWCLOUDS;

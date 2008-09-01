@@ -41,6 +41,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_cullDist",		"fog",				false, StateDatabase::Locked},
   { "_cullElements",		"16",				false, StateDatabase::Locked},
   { "_cullOccluders",		"0",				false, StateDatabase::Locked},
+  { "_defaultRank",		"0.5",				false, StateDatabase::Locked},
   { "_disableBots",		"0",				false, StateDatabase::Locked},
   { "_dmzWidth",		"20.0",				false, StateDatabase::Locked},
   { "_drawCelestial",		"1",				false, StateDatabase::Locked},

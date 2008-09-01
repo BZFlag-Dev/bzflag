@@ -102,6 +102,7 @@ const std::string StateDatabase::BZDB_COUNTDOWNRESTIME	= std::string("_countdown
 const std::string StateDatabase::BZDB_CULLDEPTH		= std::string("_cullDepth");
 const std::string StateDatabase::BZDB_CULLELEMENTS      = std::string("_cullElements");
 const std::string StateDatabase::BZDB_CULLOCCLUDERS     = std::string("_cullOccluders");
+const std::string StateDatabase::BZDB_DEFAULTRANK	= std::string("_defaultRank");
 const std::string StateDatabase::BZDB_DISABLEBOTS       = std::string("_disableBots");
 const std::string StateDatabase::BZDB_DMZWIDTH		= std::string("_dmzWidth");
 const std::string StateDatabase::BZDB_DRAWCELESTIAL	= std::string("_drawCelestial");
