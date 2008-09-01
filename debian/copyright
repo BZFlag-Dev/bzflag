@@ -9,11 +9,6 @@ Copyright: Copyright (c) 1993 - 2008 Tim Riker
 The sources may be redistributed under the terms of the GNU LGPL, Version 2.1
 found in the file '/usr/share/common-licenses/LGPL-2.1' on Debian systems.
 
-Note that the Debian package uses libadns which which means the binaries are
-under the GPL like the binaries for libadns. On Debian systems, a copy of the
-GNU General Public License (version 2 or newer) can be found in
-`/usr/share/common-licenses/GPL'.
-
     bzflag - a multiplayer 3D tank battle game
     Copyright (c) 1993 - 2008 Tim Riker
 
@@ -24,3 +19,20 @@ GNU General Public License (version 2 or newer) can be found in
     THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
     IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+
+
+Other components in this source package to the extent allowable by law,
+the whole is distributed under the terms of the GNU LGPL Version 2.1 as
+explained above.
+
+libregex - regular expressions - bsd licensed
+
+c-ares - async dns - MIT style license
+
+zlib - compression - bsd style license
+
+md5 code - public domain
+
+DejaVu derived bitmaps - free use?
+ Note: freely modifiable and redistributable source files are not included.
