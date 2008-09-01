@@ -3,6 +3,11 @@ bzflag (@VERSION@) unstable; urgency=medium
   * SVN Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.13.20080901-2) unstable; urgency=medium
+
+  * More info in copyright (Closes: #497434)
+ -- Tim Riker <Tim@Rikers.org>  Mon, 01 Sep 2008 20:32:16 +0000
+
 bzflag (2.0.13.20080901-1) unstable; urgency=medium
 
   * Convert to free fonts (Closes: #491984)
