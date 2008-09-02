@@ -35,14 +35,14 @@ Description: a 3D first person tank battle game
 Package: bzflag-client
 Architecture: any
 Depends: bzflag-data, ${shlibs:Depends}
-Replaces: bzflag < 2.0.13.20080902-1
+Replaces: bzflag (<< 2.0.13.20080902-1)
 Description: BZFlag client
  BZFlag client application.
 
 Package: bzflag-data
 Architecture: all
 Depends:
-Replaces: bzflag < 2.0.13.20080902-1
+Replaces: bzflag (<< 2.0.13.20080902-1)
 Description: BZFlag data file
  Data files needed by BZFlag client. Arch independant.
 
