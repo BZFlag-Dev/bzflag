@@ -3,6 +3,12 @@ bzflag (@VERSION@) unstable; urgency=medium
   * SVN Build
  -- Tim Riker <Tim@Rikers.org>  @DATE@
 
+bzflag (2.0.13.20080902-1) unstable; urgency=medium
+
+  * add Replaces on -data and -client (Closes: #497520)
+  * more updates to debian/copyright (See #497434)
+ -- Tim Riker <Tim@Rikers.org>  Tue, 02 Sep 2008 20:12:54 +0000
+
 bzflag (2.0.13.20080901-2) unstable; urgency=medium
 
   * More info in copyright (Closes: #497434)
