@@ -1,50 +1,10 @@
-This package is maintained by Tim Riker <Tim@Rikers.org>
+License
 
-Upstream Author: Tim Riker <Tim@Rikers.org>
+From DejaVuWiki
 
-Sources from http://download.sourceforge.net/bzflag/
-
-Copyright: Copyright (c) 1993 - 2008 Tim Riker
-
-The sources may be redistributed under the terms of the GNU LGPL, Version 2.1
-found in the file '/usr/share/common-licenses/LGPL-2.1' on Debian systems.
-
-    bzflag - a multiplayer 3D tank battle game
-    Copyright (c) 1993 - 2008 Tim Riker
-
-    This package is free software;  you can redistribute it and/or
-    modify it under the terms of the license found in the file
-    named COPYING that should have accompanied this file.
-
-    THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-    IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-
-
-Other components in this source package to the extent allowable by law,
-the whole is distributed under the terms of the GNU LGPL Version 2.1 as
-explained above.
-
-libregex - regular expressions - bsd licensed
-
-c-ares - async dns - MIT style license
-
-zlib - compression - bsd style license
-
-md5 code - public domain
-
-DejaVu derived bitmaps - free use?
- Note: freely modifiable and redistributable source files are not included.
- License from original ttf files as follows:
-
-DejaVu License
-
-From DejaVuWiki (http://dejavu.sourceforge.net/wiki/index.php/License)
-
-   Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
+   Fonts are © Bitstream (see below). DejaVu changes are in public domain.
    Explanation of copyright is on [3]Gnome page on Bitstream Vera fonts.
-   Glyphs imported from [4]Arev fonts are (c) Tavmjung Bah (see below)
+   Glyphs imported from [4]Arev fonts are © Tavmjung Bah (see below)
 
 Bitstream Vera Fonts Copyright
 
