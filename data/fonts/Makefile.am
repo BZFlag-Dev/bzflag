@@ -1,5 +1,6 @@
 fontdir = $(pkgdatadir)/fonts
 dist_font_DATA = \
+	DejaVu.License \
 	DejaVuSansCondensedBold_12.fmt \
 	DejaVuSansCondensedBold_12.png \
 	DejaVuSansCondensedBold_16.fmt \
