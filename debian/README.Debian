@@ -3,8 +3,6 @@ BZFlag for Debian
 
 - the data files are stored in /usr/share/bzflag/data
 
-- there is no manual page for bzfquery.pl
-
 If you wish to:
 - play by yourself
 - play amongst a small group of people on a private network
