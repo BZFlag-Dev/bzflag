@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="webstats"
 	ProjectGUID="{1048DC03-DCEC-4967-98C0-97077D522379}"
+	RootNamespace="webstats"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -192,6 +193,14 @@
 			<File
 				RelativePath=".\Makefile.am"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\webstats.cpp"

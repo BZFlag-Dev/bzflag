@@ -1,4 +1,4 @@
-// SAMPLE_PLUGIN.cpp : Defines the entry point for the DLL application.
+// chatlog.cpp : Defines the entry point for the DLL application.
 //
 
 #include "bzfsAPI.h"
