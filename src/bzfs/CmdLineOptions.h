@@ -48,9 +48,6 @@ enum RabbitSelection {
 typedef std::map<FlagType*, int> FlagNumberMap;
 typedef std::map<FlagType*,bool> FlagOptionMap;
 
-#define _DEFAULT_LIN_ACCEL 0.0f
-#define _DEFAULT_ANGLE_ACCELL 0.0f
-
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
  */
