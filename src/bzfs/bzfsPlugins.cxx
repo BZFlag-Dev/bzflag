@@ -289,7 +289,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config ) {
 
     int version = getPluginVersion(hLib);
     if (version > BZ_API_VERSION) {
-      logDebugMessage(1,"Plugin:%s found but expects an newer API version (%d), upgrade your bzfs", plugin.c_str(), version);
+      logDebugMessage(1,"Plugin:%s found but expects a newer API version (%d), upgrade your bzfs", plugin.c_str(), version);
       dlclose(hLib);
       return eLoadFailedError;
     } else {
