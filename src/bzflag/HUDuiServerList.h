@@ -30,7 +30,6 @@
 class HUDuiServerList : public HUDuiScrollList {
   public:
       HUDuiServerList();
-      ~HUDuiServerList();
 
     typedef enum {
       EmptyServer  = 0x0001,
