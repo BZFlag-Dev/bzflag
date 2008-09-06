@@ -1149,7 +1149,7 @@ float HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
   if (world->allowRabbit())
     return b->getRabbitScore() - a->getRabbitScore();
   else
-    return b->getScore() - a->getScore();
+    return float(b->getScore() - a->getScore());
 }
 
 int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)

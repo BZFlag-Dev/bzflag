@@ -41,7 +41,7 @@ void		HUDuiTypeIn::setObfuscation(bool on)
   obfuscate = on;
 }
 
-int			HUDuiTypeIn::getMaxLength() const
+size_t			HUDuiTypeIn::getMaxLength() const
 {
   return maxLength;
 }

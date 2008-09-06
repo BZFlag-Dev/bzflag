@@ -814,7 +814,7 @@ Player **  ScoreboardRenderer::newSortedList(int sortType, bool obsLast, int *_n
 	sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
 	break;
       case SortTeam:
-	sorter[i].i1 = p->getTeam();
+	sorter[i].i1 = float(p->getTeam());
 	sorter[i].i2 = (p->getNormalizedScore() * 100000);
 	break;
       case SortMyRatio:
@@ -832,8 +832,8 @@ Player **  ScoreboardRenderer::newSortedList(int sortType, bool obsLast, int *_n
 	sorter[i].cp = p->getCallSign();
 	break;
       case SortHuntLevel: {
-	const int huntLevel = p->getAutoHuntLevel();
-	sorter[i].i1 = p->isHunted() ? 10 : huntLevel;
+	const float huntLevel = float(p->getAutoHuntLevel());
+	sorter[i].i1 = p->isHunted() ? 10.0f : huntLevel;
 	sorter[i].i2 = p->getScore();
 	break;
       }

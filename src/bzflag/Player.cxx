@@ -61,7 +61,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   fromTeleporter(0),
   toTeleporter(0),
   teleporterProximity(0.0f),
-  rank(0.42),			// rank is received from the server on join
+  rank(0.42f),			// rank is received from the server on join
   wins(0),
   losses(0),
   tks(0),

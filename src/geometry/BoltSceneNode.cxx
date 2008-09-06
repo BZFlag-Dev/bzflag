@@ -632,7 +632,7 @@ void BoltSceneNode::BoltRenderNode::render()
           glPopMatrix();            
           glPushMatrix();
 
-          const float s = size * (0.65f + (1.0f * bzfrand()));
+          const float s = size * (0.65f + (1.0f * (float)bzfrand()));
           const float shift = s * shiftScale;
           pos[0] += dx * shift;
           pos[1] += dy * shift;
