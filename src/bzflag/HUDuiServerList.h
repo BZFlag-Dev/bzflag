@@ -30,7 +30,6 @@
 class HUDuiServerList : public HUDuiScrollList {
   public:
       HUDuiServerList();
-      HUDuiServerList(bool paged);
       ~HUDuiServerList();
 
     typedef enum {

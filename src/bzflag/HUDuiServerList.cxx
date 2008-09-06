@@ -44,11 +44,6 @@ HUDuiServerList::HUDuiServerList() : HUDuiScrollList(), filterOptions(0), filter
   getNav().push_front(this);
 }
 
-HUDuiServerList::HUDuiServerList(bool paged) : HUDuiScrollList(paged), filterOptions(0), filterPatterns(std::pair<std::string, std::string>("*", "*")), sortMode(NoSort), dataList(ServerList::instance())
-{
-  // do nothing
-}
-
 HUDuiServerList::~HUDuiServerList()
 {
   // do nothing
