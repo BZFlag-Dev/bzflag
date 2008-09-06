@@ -1224,11 +1224,12 @@ void notifyBzfKeyMapChanged()
 //
 static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 {
-  uint16_t team, type, rank, wins, losses, tks;
+  uint16_t team, type, wins, losses, tks;
+  float rank;
   char callsign[CallSignLen];
   msg = nboUnpackUShort (msg, type);
   msg = nboUnpackUShort (msg, team);
-  msg = nboUnpackUShort (msg, rank);
+  msg = nboUnpackFloat (msg, rank);
   msg = nboUnpackUShort (msg, wins);
   msg = nboUnpackUShort (msg, losses);
   msg = nboUnpackUShort (msg, tks);
@@ -1268,7 +1269,7 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
     || PlayerType (type) == ComputerPlayer
     || PlayerType (type) == ChatPlayer) {
       player[i] = new RemotePlayer (id, TeamColor (team), callsign, PlayerType (type));
-      player[i]->changeScore (short(rank), short (wins), short (losses), short (tks));
+      player[i]->changeScore (rank, short (wins), short (losses), short (tks));
   }
 
 #ifdef ROBOT
@@ -2676,12 +2677,13 @@ static void handleScore(void *msg)
 {
   uint8_t numScores;
   PlayerId id;
-  uint16_t rank, wins, losses, tks;
+  float rank;
+  uint16_t wins, losses, tks;
   msg = nboUnpackUByte(msg, numScores);
 
   for (uint8_t s = 0; s < numScores; s++) {
     msg = nboUnpackUByte(msg, id);
-    msg = nboUnpackUShort(msg, rank);
+    msg = nboUnpackFloat(msg, rank);
     msg = nboUnpackUShort(msg, wins);
     msg = nboUnpackUShort(msg, losses);
     msg = nboUnpackUShort(msg, tks);
@@ -4638,10 +4640,11 @@ static void enteringServer(void* buf)
 #endif
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
-  uint16_t team, type, rank, wins, losses, tks;
+  uint16_t team, type, wins, losses, tks;
+  float rank;
   tmpbuf = nboUnpackUShort(tmpbuf, type);
   tmpbuf = nboUnpackUShort(tmpbuf, team);
-  tmpbuf = nboUnpackUShort(tmpbuf, rank);
+  tmpbuf = nboUnpackFloat(tmpbuf, rank);
   tmpbuf = nboUnpackUShort(tmpbuf, wins);
   tmpbuf = nboUnpackUShort(tmpbuf, losses);
   tmpbuf = nboUnpackUShort(tmpbuf, tks);

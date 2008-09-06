@@ -534,7 +534,8 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   World *world = World::getWorld();
   if (world && world->allowRabbit())
-    snprintf(score, 40, "%2d%% %4d %3d-%-3d%s[%2d]", player->getRabbitScore(),
+    snprintf(score, 40, "%2.0f%% %4d %3d-%-3d%s[%2d]",
+	     player->getRabbitScore() * 100,
 	     player->getScore(), player->getWins(), player->getLosses(),
 	     highlightTKratio ? ColorStrings[CyanColor] : "",
 	     player->getTeamKills());
@@ -737,8 +738,8 @@ Player* ScoreboardRenderer::getLeader(std::string *label)
 
 struct st_playersort {
   Player *player;
-  int i1;
-  int i2;
+  float i1;
+  float i2;
   const char *cp;
 };
 typedef struct st_playersort sortEntry;
@@ -756,9 +757,15 @@ int       ScoreboardRenderer::sortCompareI2(const void* _a, const void* _b)
 {
   sortEntry *a = (sortEntry *)_a;
   sortEntry *b = (sortEntry *)_b;
-  if (a->i1 != b->i1)
-    return b->i1 - a->i1;
-  return b->i2 - a->i2;
+  if (a->i1 == b->i1) {
+    if (b->i2 > a->i2) return 1;
+    if (b->i2 < a->i2) return -1;
+    return 0;
+  } else if (b->i1 > a->i1) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 
@@ -800,25 +807,25 @@ Player **  ScoreboardRenderer::newSortedList(int sortType, bool obsLast, int *_n
       switch (sortType) {
       case SortTKs:
 	sorter[i].i1 = p->getTeamKills();
-	sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
+	sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
 	break;
       case SortTkRatio:
-	sorter[i].i1 = (int)(p->getTKRatio() * 1000);
-	sorter[i].i2 = 0 - (int)(p->getNormalizedScore() * 100000);
+	sorter[i].i1 = (p->getTKRatio() * 1000);
+	sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
 	break;
       case SortTeam:
 	sorter[i].i1 = p->getTeam();
-	sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
+	sorter[i].i2 = (p->getNormalizedScore() * 100000);
 	break;
       case SortMyRatio:
 	if (p == myTank)
 	  sorter[i].i1 = -100001;
 	else
-	  sorter[i].i1 = 0 - (int)(p->getLocalNormalizedScore() * 100000);
-	sorter[i].i2 = (int)(p->getNormalizedScore() * 100000);
+	  sorter[i].i1 = 0 - (p->getLocalNormalizedScore() * 100000);
+	sorter[i].i2 = (p->getNormalizedScore() * 100000);
 	break;
       case SortNormalized:
-	sorter[i].i1 = (int)(p->getNormalizedScore() * 100000);
+	sorter[i].i1 = (p->getNormalizedScore() * 100000);
 	sorter[i].i2 = 0;
 	break;
       case SortCallsign:

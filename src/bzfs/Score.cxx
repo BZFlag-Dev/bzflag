@@ -66,8 +66,7 @@ void Score::kill() {
 }
 
 void* Score::pack(void* buf) const {
-  uint16_t rank( ranking() * 100 + 0.5 );
-  buf = nboPackUShort(buf, rank);
+  buf = nboPackFloat(buf, ranking());
   buf = nboPackUShort(buf, wins);
   buf = nboPackUShort(buf, losses);
   buf = nboPackUShort(buf, tks);
@@ -75,8 +74,7 @@ void* Score::pack(void* buf) const {
 }
 
 void Score::pack(BufferedNetworkMessage* msg) const {
-  uint16_t rank( ranking() * 100 + 0.5 );
-  msg->packUShort(rank);
+  msg->packFloat( ranking() );
   msg->packUShort(wins);
   msg->packUShort(losses);
   msg->packUShort(tks);

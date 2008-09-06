@@ -1623,7 +1623,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
   }
 }
 
-void			LocalPlayer::changeScore(short newRank,
+void			LocalPlayer::changeScore(float newRank,
 						 short newWins,
 						 short newLosses,
 						 short newTks)

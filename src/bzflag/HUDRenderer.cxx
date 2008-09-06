@@ -1138,7 +1138,7 @@ void			HUDRenderer::renderStatus(void)
   fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
 }
 
-int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
+float HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
 {
   World *world = World::getWorld();
   if (!world) {

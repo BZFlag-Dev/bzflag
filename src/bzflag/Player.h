@@ -84,7 +84,7 @@ public:
 	  return color;
   }
 #endif
-  short		getRabbitScore() const;
+  float		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
   short		getLocalTeamKills() const;
@@ -167,7 +167,7 @@ public:
   void		setUserAngVel(float angvel);
   void		changeTeam(TeamColor);
   virtual void	setFlag(FlagType*);
-  virtual void	changeScore(short newRank, short newWins, short newLosses, short newTeamKills);
+  virtual void	changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void	  setHandicap(float handicap);
   void		setStatus(short);
@@ -275,7 +275,7 @@ private:
   short			fromTeleporter;		// teleporter I entered
   short			toTeleporter;		// teleporter I exited
   float			teleporterProximity;	// how close to a teleporter
-  short			rank;			// server ranking
+  float			rank;			// server ranking
   short			wins;			// number of kills
   short			losses;			// number of deaths
   short			tks;			// number of teamkills
