@@ -107,7 +107,6 @@ public:
     void	  packAdminInfo(BufferedNetworkMessage *msg);
     void	  *packPlayerInfo(void *buf);
     void	  packPlayerInfo(BufferedNetworkMessage *msg);
-    void	  *packPlayerUpdate(void *buf);
     void	  packPlayerUpdate(BufferedNetworkMessage *msg);
 
     void	  setPlayerAddMessage ( PlayerAddMessage &msg );

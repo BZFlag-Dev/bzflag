@@ -785,6 +785,15 @@ const char* getMimeType(HTTPReply::DocumentType docType)
   case HTTPReply::eHTML:
     return "text/html";
 
+  case HTTPReply::eCSS:
+    return "text/css";
+
+  case HTTPReply::eXML:
+    return "application/xml";
+
+  case HTTPReply::eJSON:
+    return "application/json";
+
   default:
     break;
   }

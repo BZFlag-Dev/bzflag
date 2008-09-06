@@ -39,6 +39,7 @@ public:
 	static bool  showShotGuide;
 	static int   linedRadarShots;
 	static int   sizedRadarShots;
+	static float shotLength;
 	static float pulseRate;
 	static float pulseDepth;
 	static bool  showCollisionGrid;

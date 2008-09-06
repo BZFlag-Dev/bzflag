@@ -259,15 +259,6 @@ void GameKeeper::Player::packPlayerInfo(BufferedNetworkMessage *msg)
   PackPlayerInfo(msg,playerIndex, accessInfo.getPlayerProperties());
 }
 
-void *GameKeeper::Player::packPlayerUpdate(void *buf)
-{
-  buf = nboPackUByte(buf, playerIndex);
-  buf = player.packUpdate(buf);
-  buf = score.pack(buf);
-  buf = player.packId(buf);
-  return buf;
-}
-
 void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
 {
   msg->packUByte(playerIndex);
@@ -275,18 +266,6 @@ void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
   score.pack(msg);
   player.packId(msg);
 }
-
-void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
-{
-  msg.playerID = playerIndex;
-  msg.team = player.getTeam();
-  msg.type = player.getType();
-  msg.wins = score.getWins();
-  msg.losses = score.getLosses();
-  msg.tks = score.getTKs();
-  msg.callsign =  player.getCallSign();
-}
-
 
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 					     int targetPlayer)

@@ -93,6 +93,7 @@ void WorldEventManager::callEvents(bz_eEventType eventType, bz_EventData *eventD
   if (!eventData)
     return;
 
+  eventData->eventType = eventType;
   tvEventList	eList = getEventList(eventType);
 
   for (unsigned int i = 0; i < eList.size(); i++)

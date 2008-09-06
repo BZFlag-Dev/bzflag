@@ -141,7 +141,7 @@ static float rabbitRank (int wins, int losses)
   // otherwise do score-based ranking
   int sum = wins + losses;
   if (sum == 0)
-    return 0.5;
+    return BZDB.eval(StateDatabase::BZDB_STARTINGRANK);
 
   float average = (float)wins/(float)sum;
 

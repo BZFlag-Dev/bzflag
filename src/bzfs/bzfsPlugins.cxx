@@ -186,7 +186,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
   if (hLib) {
     if (getPluginVersion(hLib) > BZ_API_VERSION) {
-      logDebugMessage(1,"Plugin:%s found but expects an newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
+      logDebugMessage(1,"Plugin:%s found but expects a newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
       FreeLibrary(hLib);
       return eLoadFailedError;
     } else {
@@ -288,8 +288,8 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config ) {
     }
 
     int version = getPluginVersion(hLib);
-    if (version < BZ_API_VERSION) {
-      logDebugMessage(1,"Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
+    if (version > BZ_API_VERSION) {
+      logDebugMessage(1,"Plugin:%s found but expects a newer API version (%d), upgrade your bzfs", plugin.c_str(), version);
       dlclose(hLib);
       return eLoadFailedError;
     } else {

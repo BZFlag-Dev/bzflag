@@ -706,6 +706,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\CommandsStandard.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\Downloads.cxx"
 				>
 			</File>
@@ -1192,6 +1196,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\commands.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\CommandsStandard.h"
 				>
 			</File>
 			<File

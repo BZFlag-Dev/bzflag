@@ -1132,6 +1132,7 @@ void draw3rdPersonTarget ( SceneRenderer*  /* renderer */ )
 	}
 }
 
+
 void SceneRenderer::doRender()
 {
   const bool mirrorPass = (mirror && clearZbuffer);

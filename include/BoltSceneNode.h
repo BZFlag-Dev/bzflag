@@ -46,7 +46,8 @@ class BoltSceneNode : public ShotSceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-	bool phasingShot;
+  public:
+    bool		phasingShot;
 
   protected:
     class BoltRenderNode : public RenderNode {
@@ -71,7 +72,7 @@ class BoltSceneNode : public ShotSceneNode {
 	GLfloat		outerColor[4];
 	GLfloat		coronaColor[4];
 	GLfloat		flareColor[4];
-  GLfloat		textureColor[4];
+	GLfloat		textureColor[4];
 	int		numFlares;
 	float		theta[6];
 	float		phi[6];
@@ -87,18 +88,18 @@ class BoltSceneNode : public ShotSceneNode {
 
   private:
     bool		drawFlares;
-	bool        invisible;
+    bool		invisible;
     bool		texturing;
     bool		colorblind;
     float		size;
+    GLfloat		velocity[3];
     GLfloat		color[4];
     OpenGLLight		light;
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;
     BoltRenderNode	renderNode;
 
-	GLfloat		azimuth, elevation,length;
-
+    GLfloat		azimuth, elevation, length;
 };
 
 #endif // BZF_BOLT_SCENE_NODE_H

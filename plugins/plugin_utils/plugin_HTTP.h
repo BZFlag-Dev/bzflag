@@ -174,6 +174,9 @@ public:
     eOctetStream,
     eBinary,
     eHTML,
+    eCSS,
+    eXML,
+    eJSON,
     eOther
   } DocumentType;
 

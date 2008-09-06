@@ -538,10 +538,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\CommandsStandard.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\game\DirectoryNames.cxx"
 				>
 			</File>
@@ -641,10 +637,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\CollisionManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\CommandsStandard.h"
 				>
 			</File>
 			<File

@@ -297,6 +297,7 @@ public:
   static const std::string	BZDB_SQUISHTIME;
   static const std::string	BZDB_SPEEDCHECKSLOGONLY;
   static const std::string	BZDB_SRRADIUSMULT;
+  static const std::string	BZDB_STARTINGRANK;
   static const std::string	BZDB_SYNCLOCATION;
   static const std::string	BZDB_SYNCTIME;
   static const std::string	BZDB_TANKANGVEL;
