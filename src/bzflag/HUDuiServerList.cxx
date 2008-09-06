@@ -59,7 +59,9 @@ bool HUDuiServerList::comp(HUDuiControl* first, HUDuiControl* second)
 
 bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second)
 {
-  return (((HUDuiServerListItem*)first)->getServerKey() == ((HUDuiServerListItem*)second)->getServerKey());
+  HUDuiServerListItem* f1 = dynamic_cast<HUDuiServerListItem*>(first);
+  HUDuiServerListItem* f2 = dynamic_cast<HUDuiServerListItem*>(second);
+  return f1->getServerKey() == f2->getServerKey();
 }
 
 struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::pair<std::string, std::string>, bool>
