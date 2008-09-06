@@ -51,7 +51,7 @@ std::string		HUDuiTypeIn::getString() const
   return string;
 }
 
-void			HUDuiTypeIn::setMaxLength(int _maxLength)
+void			HUDuiTypeIn::setMaxLength(size_t _maxLength)
 {
   maxLength = _maxLength;
   string = string.substr(0, maxLength);
@@ -91,7 +91,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   unsigned int c = key.chr;
   if (c == 0) switch (key.button) {
     case BzfKeyEvent::Left: {
-      int pos = cursorPos.getCount();
+      size_t pos = cursorPos.getCount();
       // uhh...there's not really any way to reverse over a multibyte string
       // do this the hard way: reset to the beginning and advance to the current
       // position, minus a character.
@@ -139,7 +139,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return false;
 
   if (c == backspace) {
-    int pos = cursorPos.getCount();
+    size_t pos = cursorPos.getCount();
     if (pos == 1) {
       goto noRoom;
     } else {
@@ -152,7 +152,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       // skip the deleted character
       ++cursorPos;
       // copy the remainder
-      pos = (int)(cursorPos.getBufferFromHere() - string.c_str());
+      pos = (cursorPos.getBufferFromHere() - string.c_str());
       temp += string.substr(pos, string.length() - pos);
       string = temp;
       // new buffer, restart cursor
@@ -172,7 +172,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     if (cusi.getCount() >= maxLength) goto noRoom;
 
     bzUTF8Char ch(c);
-    int pos = (int)(cursorPos.getBufferFromHere() - string.c_str());
+    size_t pos = (cursorPos.getBufferFromHere() - string.c_str());
     // copy to the current cursor location
     std::string temp = string.substr(0, pos);
     // insert the new character

@@ -423,7 +423,7 @@ bool BZAdminClient::isValid() const {
 void BZAdminClient::outputServerList() const {
   if (ui)
     ui->outputMessage(std::string("Server List:"), Yellow);
-  ServerList serverList;
+  ServerList &serverList = ServerList::instance();
 
   serverList.startServerPings(&startupInfo);
 
@@ -446,11 +446,11 @@ void BZAdminClient::outputServerList() const {
   serverList.checkEchos(&startupInfo);
 
   if (ui) {
-    std::vector<ServerItem> servers = serverList.getServers();
-    for (std::vector<ServerItem>::const_iterator server = servers.begin();
+    std::map<std::string, ServerItem> servers = serverList.getServers();
+    for (std::map<std::string, ServerItem>::const_iterator server = servers.begin();
 	 server != servers.end();
 	 server++) {
-      ui->outputMessage(std::string("  ") + server->description, Yellow);
+      ui->outputMessage(std::string("  ") + (*server).second.description, Yellow);
     }
     ui->outputMessage(std::string("End Server List."), Yellow);
   }

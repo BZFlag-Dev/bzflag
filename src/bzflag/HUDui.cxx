@@ -44,14 +44,34 @@ bool			HUDui::keyPress(const BzfKeyEvent& key)
 {
   if (defaultKey && defaultKey->keyPress(key)) return true;
   if (focus && focus->doKeyPress(key)) return true;
-  return false;
+  
+  bool handlerFound = false;
+  HUDuiControl* currentControl = focus;
+  while (!handlerFound)
+  {
+    if (!currentControl->isNested()) return false;
+    currentControl = currentControl->getParent();
+    handlerFound = currentControl->doKeyPress(key);
+  }
+  
+  return handlerFound;
 }
 
 bool			HUDui::keyRelease(const BzfKeyEvent& key)
 {
   if (defaultKey && defaultKey->keyRelease(key)) return true;
   if (focus && focus->doKeyRelease(key)) return true;
-  return false;
+  
+  bool handlerFound = false;
+  HUDuiControl* currentControl = focus;
+  while (!handlerFound)
+  {
+    if (!currentControl->isNested()) return false;
+    currentControl = currentControl->getParent();
+    handlerFound = currentControl->doKeyRelease(key);
+  }
+  
+  return handlerFound;
 }
 
 

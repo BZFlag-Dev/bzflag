@@ -869,6 +869,38 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HUDuiNestedContainer.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiScrollList.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerInfo.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerList.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerListCache.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerListCustomTab.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiServerListItem.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HUDuiTabbedControl.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HUDuiTypeIn.cxx"
 					>
 				</File>
@@ -1300,6 +1332,38 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HUDuiList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiNestedContainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiScrollList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerListCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerListCustomTab.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiServerListItem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HUDuiTabbedControl.h"
 				>
 			</File>
 			<File

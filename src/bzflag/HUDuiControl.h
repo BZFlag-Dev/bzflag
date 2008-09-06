@@ -47,13 +47,25 @@ class HUDuiControl : public HUDuiElement {
     void		setCallback(HUDuiCallback, void*);
     HUDuiCallback	getCallback() const;
     void*		getUserData() const;
+	
+    bool isNested() { return nested; }
+    void isNested(bool _nested);
+
+    virtual bool isContainer() { return false; }
+	
+    HUDuiControl* getParent() { return parent; }
+    void setParent(HUDuiControl* parentControl);
+
+    HUDNavigationQueue* getNavList() { return navList; }
 
     bool		hasFocus() const;
     void		showFocus(bool);
 
-    void		setNavQueue(HUDNavigationQueue*);
+    virtual void		setNavQueue(HUDNavigationQueue*);
 
     void		render();
+
+    bool isAtNavQueueIndex(size_t index);
 
     static int  getArrow() { return arrow; }
 
@@ -75,6 +87,9 @@ class HUDuiControl : public HUDuiElement {
     static int		arrowFrame;
     static TimeKeeper	lastTime;
     static int		totalCount;
+
+    bool nested;
+    HUDuiControl* parent;
 };
 
 #endif // __HUDUICONTROL_H__

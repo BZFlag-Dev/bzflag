@@ -19,6 +19,8 @@
 // local implementation headers
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "HUDuiNestedContainer.h"
+
 
 
 //
@@ -33,7 +35,7 @@ TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(true), navList(NULL), cb(NULL),
-				userData(NULL)
+				userData(NULL), nested(false), parent(NULL)
 {
   if (totalCount == 0) {
     // load arrow texture
@@ -89,6 +91,22 @@ bool			HUDuiControl::hasFocus() const
 void			HUDuiControl::showFocus(bool _showingFocus)
 {
   showingFocus = _showingFocus;
+}
+
+void HUDuiControl::isNested(bool _nested)
+{
+  nested = _nested;
+}
+
+void HUDuiControl::setParent(HUDuiControl* parentControl)
+{
+  parent = parentControl;
+}
+
+bool HUDuiControl::isAtNavQueueIndex(size_t index)
+{
+  if (!navList) return false;
+  return navList->at(index) == this;
 }
 
 void			HUDuiControl::doCallback()

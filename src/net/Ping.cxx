@@ -54,7 +54,8 @@ PingPacket::PingPacket() : gameType(TeamFFA), gameOptions(0),
 				purpleMax(1),
 				observerCount(0),
 				observerMax(1),
-                                pingTime(0)
+                                pingTime(0),
+				pinging(false)
 {
   // do nothing
 }

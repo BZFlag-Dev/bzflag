@@ -28,10 +28,12 @@ class ServerItem {
 
 public:
   ServerItem();
+  ~ServerItem();
   void		writeToFile(std::ostream& out) const; // serialize out
   bool		readFromFile(std::istream& in); // serialize in
   void		resetAge(); // set last updated to now
   void		setAge(time_t minutes, time_t seconds);
+  std::string   getServerKey() const;
   int		getPlayerCount() const;
   std::string	getAddrName() const;
   time_t	getAgeMinutes() const;
@@ -48,6 +50,8 @@ public:
   time_t	updateTime; // last time I was updated
   bool		cached;     // was I cached ?
   bool		favorite;   // favorite server, user selection
+  bool		recent;     // recent server
+  time_t	recentTime; // when it was made recent;
 };
 
 bool	operator<(const ServerItem &left, const ServerItem &right);

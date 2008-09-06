@@ -80,6 +80,7 @@ class PingPacket {
     uint8_t		observerMax;
     
     int                 pingTime; //ms - is not set when packet is read
+    bool		pinging;
 
   private:
     static int		hex2bin(char);

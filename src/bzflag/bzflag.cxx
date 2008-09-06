@@ -59,6 +59,7 @@
 #include "PlatformFactory.h"
 #include "Protocol.h"
 #include "ServerListCache.h"
+#include "HUDuiServerListCache.h"
 #include "StateDatabase.h"
 #include "Team.h"
 #include "TextUtils.h"
@@ -535,6 +536,7 @@ void dumpResources()
   BZDB.set("serverCacheAge", TextUtils::format("%1d", (int)(ServerListCache::get())->getMaxCacheAge()));
 
   (ServerListCache::get())->saveCache();
+  (HUDuiServerListCache::instance()).saveCache();
 }
 
 static bool needsFullscreen()

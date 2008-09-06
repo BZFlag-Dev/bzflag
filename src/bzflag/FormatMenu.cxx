@@ -92,6 +92,10 @@ size_t FormatMenu::navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChan
       while (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "")
 	--proposedFocus;
     }
+  } else {
+    // switched pages - if this entry is empty, find the last non-empty entry
+    while (proposedFocus > 0 && ((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "")
+      --proposedFocus;
   }
   return proposedFocus;
 }
@@ -125,12 +129,13 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
     HUDuiLabel* label = (HUDuiLabel*)(getElements()[NumReadouts - 3]);
     label->setString("Press Enter to select and T to test a format. Esc to exit.");
     initNavigation();
-    getNav().setCallback(&navCallback, this);
+    getNav().addCallback(&navCallback, this);
   }
 }
 
 FormatMenu::~FormatMenu()
 {
+  getNav().removeCallback(&navCallback, this);
   delete[] badFormats;
 }
 

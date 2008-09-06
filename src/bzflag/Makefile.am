@@ -85,6 +85,22 @@ bzflag_SOURCES =			\
 	HUDuiLabel.h			\
 	HUDuiList.cxx			\
 	HUDuiList.h			\
+	HUDuiNestedContainer.cxx	\
+	HUDuiNestedContainer.h		\
+	HUDuiScrollList.cxx		\
+	HUDuiScrollList.h		\
+	HUDuiServerInfo.cxx		\
+	HUDuiServerInfo.h		\
+	HUDuiServerList.cxx		\
+	HUDuiServerList.h		\
+	HUDuiServerListCache.cxx	\
+	HUDuiServerListCache.h		\
+	HUDuiServerListItem.cxx		\
+	HUDuiServerListItem.h		\
+	HUDuiServerListCustomTab.cxx	\
+	HUDuiServerListCustomTab.h		\
+	HUDuiTabbedControl.cxx	\
+	HUDuiTabbedControl.h	\
 	HUDuiTypeIn.cxx			\
 	HUDuiTypeIn.h			\
 	HelpCreditsMenu.cxx		\

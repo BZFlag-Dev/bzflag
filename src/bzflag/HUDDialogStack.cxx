@@ -59,7 +59,7 @@ void HUDDialogStack::push(HUDDialog* dialog)
   }
   stack.push_back(dialog);
   HUDui::setDefaultKey(dialog->getDefaultKey());
-  HUDui::setFocus(dialog->getFocus());
+  dialog->reFocus();
   dialog->resize(getMainWindow()->getWidth(), getMainWindow()->getHeight());
   dialog->show();
 }
@@ -75,7 +75,7 @@ void HUDDialogStack::pop()
     if (index > 0) {
       HUDDialog* dialog = stack[index - 1];
       HUDui::setDefaultKey(dialog->getDefaultKey());
-      HUDui::setFocus(dialog->getFocus());
+	  dialog->reFocus();
       dialog->resize(getMainWindow()->getWidth(),
 		     getMainWindow()->getHeight());
       dialog->show();

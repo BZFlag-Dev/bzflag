@@ -28,8 +28,13 @@
 #include "ServerListCache.h"
 
 
-ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false)
+ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false), recent(false), recentTime(0)
 {
+}
+
+ServerItem::~ServerItem()
+{
+  return;
 }
 
 void ServerItem::writeToFile(std::ostream& out) const
@@ -51,13 +56,37 @@ void ServerItem::writeToFile(std::ostream& out) const
   // write out pingpacket
   ping.writeToFile(out);
 
+  // write out favorite status
   nboPackUByte(buffer, favorite);
   out.write(buffer, 1);
+
+  // write out recent status
+  nboPackUByte(buffer, recent);
+  out.write(buffer, 1);
+
+  // write out recent time
+  memset(buffer,0,sizeof(buffer));
+  nboPackInt(buffer,(int32_t)recentTime);
+  out.write(&buffer[0], 4);
 
   // write out current time
   memset(buffer,0,sizeof(buffer));
   nboPackInt(buffer,(int32_t)updateTime);
   out.write(&buffer[0], 4);
+}
+
+std::string ServerItem::getServerKey() const
+{
+  // Get the server's server key
+  std::string serverKey = name;
+  const unsigned int serverPort = (int)ntohs((unsigned short)port);
+  if (serverPort != ServerPort) {
+    char portBuf[20];
+    sprintf(portBuf, "%d", serverPort);
+    serverKey += ":";
+    serverKey += portBuf;
+  }
+  return serverKey;
 }
 
 bool ServerItem::readFromFile(std::istream& in)
@@ -84,6 +113,25 @@ bool ServerItem::readFromFile(std::istream& in)
   in.read(buffer, 1);
   nboUnpackUByte(buffer, fav);
   favorite = (fav != 0);
+
+  // read in recent flag
+  uint8_t rec;
+  in.read(buffer, 1);
+  nboUnpackUByte(buffer, rec);
+  recent = (rec != 0);
+
+  // read in recent time
+  in.read(&buffer[0],4);
+  if (in.gcount() < 4) return false;
+  int32_t rTime;
+  nboUnpackInt(&buffer[0],rTime);
+  recentTime = (time_t) rTime;
+
+  // recent server from more than 10 days ago, unmark as recent
+  if ((recent)&&((getNow() - recentTime) >= 60*60*24*10)) {
+    recent = false;
+    recentTime = 0;
+  }
 
   // read in time
   in.read(&buffer[0],4);
