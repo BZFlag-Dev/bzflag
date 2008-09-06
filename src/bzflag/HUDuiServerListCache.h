@@ -37,7 +37,7 @@ public:
   bool	loadCache();
   void	clearCache();
 
-  std::vector<std::pair<HUDuiServerList*, std::string>> readCachedLists() { return cachedLists; }
+  std::vector<std::pair<HUDuiServerList*, std::string> > readCachedLists() { return cachedLists; }
   
   void addNewList(HUDuiServerList* newList, std::string tabName);
   void removeList(HUDuiServerList* list, std::string tabName);
@@ -49,7 +49,7 @@ private:
   void applySort(int index, int _sort, bool reverse);
   std::string getCacheFilename() const;
   static const size_t max_string = 200;
-  std::vector<std::pair<HUDuiServerList*, std::string>> cachedLists;
+  std::vector<std::pair<HUDuiServerList*, std::string> > cachedLists;
   bool cacheLoaded;
 };
 

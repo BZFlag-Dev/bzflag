@@ -129,7 +129,7 @@ ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()), 
   serverList.startServerPings(getStartupInfo());
   listsCache.loadCache();
 
-  std::vector<std::pair<HUDuiServerList*, std::string>> cachedLists = listsCache.readCachedLists();
+  std::vector<std::pair<HUDuiServerList*, std::string> > cachedLists = listsCache.readCachedLists();
 
   if (cachedLists.size() > (size_t) 0)
   {
@@ -215,7 +215,7 @@ void ServerMenu::newServer(ServerItem* addedServer, void* data)
   newping->start();
   std::vector<HUDuiServerList*> serverListsVector;
   serverListsVector.push_back((HUDuiServerList*)data);
-  ServerMenu::activePings.insert(pingMapPair(addedServer->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*>>(newping, serverListsVector)));
+  ServerMenu::activePings.insert(pingMapPair(addedServer->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*> >(newping, serverListsVector)));
   addedServer->ping.pinging = true;
 }
 

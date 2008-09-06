@@ -51,7 +51,7 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, s
   if ((index < 0)||(index >= tabs.size()))
     index = tabs.size();
 
-  std::vector<std::pair<std::string, HUDuiControl*>>::iterator it = tabs.begin();
+  std::vector<std::pair<std::string, HUDuiControl*> >::iterator it = tabs.begin();
   std::advance(it, index);
 
   tabs.insert(it, std::pair<std::string, HUDuiControl*>(tabName, tabControl));
@@ -96,7 +96,7 @@ void HUDuiTabbedControl::removeTab(size_t tabIndex)
 
 void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
 {
-  std::vector<std::pair<std::string, HUDuiControl*>>::iterator it = std::find(tabs.begin(), tabs.end(), std::pair<std::string, HUDuiControl*>(tabName, control));
+  std::vector<std::pair<std::string, HUDuiControl*> >::iterator it = std::find(tabs.begin(), tabs.end(), std::pair<std::string, HUDuiControl*>(tabName, control));
   
   if (it != tabs.end())
     tabs.erase(it);

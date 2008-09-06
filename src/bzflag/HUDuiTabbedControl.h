@@ -47,7 +47,7 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
     void setPosition(float x, float y);
 
   protected:
-    std::vector<std::pair<std::string, HUDuiControl*>> tabs;
+    std::vector<std::pair<std::string, HUDuiControl*> > tabs;
     void doRender();
 
     void drawTabs();

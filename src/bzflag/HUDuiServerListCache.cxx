@@ -304,7 +304,7 @@ void HUDuiServerListCache::addNewList(HUDuiServerList* newList, std::string tabN
 
 void HUDuiServerListCache::removeList(HUDuiServerList* list, std::string tabName)
 {
-  std::vector<std::pair<HUDuiServerList*, std::string>>::iterator it = std::find(cachedLists.begin(), cachedLists.end(), std::pair<HUDuiServerList*, std::string>(list, tabName));
+  std::vector<std::pair<HUDuiServerList*, std::string> >::iterator it = std::find(cachedLists.begin(), cachedLists.end(), std::pair<HUDuiServerList*, std::string>(list, tabName));
 
   // Do not remove the first 3 lists: normal, recent, favorites
   if ((it == cachedLists.begin())||(it == cachedLists.begin() + 1)||(it == cachedLists.begin() + 2))
