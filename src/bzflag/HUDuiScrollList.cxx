@@ -83,15 +83,15 @@ void HUDuiScrollList::setSelected(size_t _index)
   index = _index;
 }
 
-HUDuiControl* HUDuiScrollList::get(size_t index)
+HUDuiControl* HUDuiScrollList::get(size_t _index)
 {
-  if (index < 0)
-    index = 0;
-  else if (index >= getSize())
-    index = getSize() - 1;
+  if (_index < 0)
+    _index = 0;
+  else if (_index >= getSize())
+    _index = getSize() - 1;
 
   std::list<HUDuiControl*>::iterator it = items.begin();
-  std::advance(it, index);
+  std::advance(it, _index);
   return (*it);
 }
 
