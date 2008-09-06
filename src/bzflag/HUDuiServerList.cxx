@@ -21,7 +21,7 @@
 #include "LocalFontFace.h"
 
 #include "OpenGLGState.h"
-#include "OpenGlUtils.h"
+#include "OpenGLUtils.h"
 #include "bzfgl.h"
 
 //
