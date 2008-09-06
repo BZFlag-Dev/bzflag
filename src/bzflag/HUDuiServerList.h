@@ -33,22 +33,22 @@ class HUDuiServerList : public HUDuiScrollList {
       ~HUDuiServerList();
 
     typedef enum {
-      EmptyServer  = 0x00002,
-      FullServer   = 0x00004,
-      JumpingOn    = 0x00008,
-      JumpingOff   = 0x00010,
-      RicochetOn   = 0x00020,
-      RicochetOff  = 0x00040,
-      AntidoteFlagOn = 0x00080,
-      AntidoteFlagOff = 0x00100,
-      SuperFlagsOn = 0x00200,
-      SuperFlagsOff = 0x00400,
-      HandicapOn = 0x00800,
-      HandicapOff = 0x01000,
-      ClassicCTFGameMode = 0x02000,
-      RabbitChaseGameMode = 0x04000,
-      OpenFFAGameMode = 0x08000,
-      TeamFFAGameMode = 0x10000,
+      EmptyServer  = 0x0001,
+      FullServer   = 0x0002,
+      JumpingOn    = 0x0004,
+      JumpingOff   = 0x0008,
+      RicochetOn   = 0x0010,
+      RicochetOff  = 0x0020,
+      AntidoteFlagOn = 0x0040,
+      AntidoteFlagOff = 0x0080,
+      SuperFlagsOn = 0x0100,
+      SuperFlagsOff = 0x0200,
+      HandicapOn = 0x0400,
+      HandicapOff = 0x0800,
+      ClassicCTFGameMode = 0x1000,
+      RabbitChaseGameMode = 0x2000,
+      OpenFFAGameMode = 0x4000,
+      TeamFFAGameMode = 0x8000,
       EndOfFilterConstants
     } FilterConstants;
 

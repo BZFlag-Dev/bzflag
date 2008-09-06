@@ -118,7 +118,7 @@ public:
 
       bool returnValue = false;
 
-      for (int i = 2; i < EndOfFilterConstants; ++i)
+      for (uint32_t i = 1; i < EndOfFilterConstants; i <<= 1)
       {
 	if ((filter & i) == i)
 	{
