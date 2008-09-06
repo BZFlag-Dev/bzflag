@@ -338,6 +338,10 @@ NetHandler::NetHandler(const struct sockaddr_in &serverAddr)
 #endif
   , extraInfo(0)
 {
+  // Create a socket and bind connect it to the requested server.
+  // Note that this will block until the connection is made (or
+  // refused) but that should be acceptable in this case.
+  
 #ifdef NETWORK_STATS
   // initialize the inbound/outbound counters to zero
   msgBytes[0] = 0;
@@ -940,7 +944,7 @@ NetListener::~NetListener()
 
 }
 
-bool NetListener::listen (  Address serverAddress, unsigned short port, bool fallback )
+bool NetListener::listen (  Address const& serverAddress, unsigned short port, bool fallback )
 {
   // init addr:port structure
   struct sockaddr_in addr;

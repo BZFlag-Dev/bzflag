@@ -422,7 +422,7 @@ public:
 
   // Create a socket an listen on the specified port. In case of a
   // bind error, use an ephemeral port if 'fallback' is true
-  bool listen ( Address serverAddress, unsigned short port, bool fallback=false );
+  bool listen ( Address const& serverAddress, unsigned short port, bool fallback=false );
 
   // Return the address of the bound socket, or 0 if the socket isn't
   // bound. Useful if 'fallback' was enabled on listen()

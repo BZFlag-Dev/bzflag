@@ -71,6 +71,20 @@ int			getErrno()
 
 }
 
+/**
+ * Connect a TCP socket to the requested endpoint.
+ * This is a blocking operation.
+ */
+SOCKET BzfNetwork::connect(Address& address)
+{
+  SOCKET fd = socket(AF_INET, SOCK_STREAM, 0);
+  if (fd == INVALID_SOCKET) return fd;
+
+  /// TBS
+
+  return fd;
+}
+
 int			BzfNetwork::setNonBlocking(int fd)
 {
   int mode = fcntl(fd, F_GETFL, 0);

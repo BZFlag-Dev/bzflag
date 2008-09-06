@@ -43,53 +43,53 @@
 
 #if !defined(_WIN32)
 
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
+# include <sys/time.h>
+# include <sys/ioctl.h>
+# include <sys/socket.h>
 
-#ifndef GUSI_20
+# ifndef GUSI_20
 #  include <sys/param.h>
-#endif
+# endif
 
-#include <net/if.h>
-#include <netinet/in.h>
+# include <net/if.h>
+# include <netinet/in.h>
 
-#if defined(__linux__)
+# if defined(__linux__)
 /* these are defined in both socket.h and tcp.h without ifdef guards. */
 #  undef TCP_NODELAY
 #  undef TCP_MAXSEG
-#endif
+# endif
 
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#ifdef HAVE_BSTRING_H
+# include <netinet/tcp.h>
+# include <arpa/inet.h>
+# include <netdb.h>
+# ifdef HAVE_BSTRING_H
 #  include <bstring.h>
-#endif
+# endif
 
-#if defined(__linux__) && !defined(_old_linux_)
+# if defined(__linux__) && !defined(_old_linux_)
 #  define AddrLen		unsigned int
 /* setsockopt incorrectly prototypes the 4th arg without const. */
 #  define SSOType		void*
-#elif defined(BSD) || defined(sun) || defined(__GLIBC__)
+# elif defined(BSD) || defined(sun) || defined(__GLIBC__)
 #  define AddrLen		socklen_t
-#elif defined (__APPLE__)
+# elif defined (__APPLE__)
 #  include <AvailabilityMacros.h>
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 #    define AddrLen		socklen_t
 #  endif
-#endif
+# endif
 
-#if defined(sun)
+# if defined(sun)
 /* setsockopt prototypes the 4th arg as const char*. */
 #  define SSOType		const char*
 /* connect prototypes the 2nd arg without const */
 #  define CNCTType	struct sockaddr
-#endif
+# endif
 
 extern "C" {
 
-#define herror(_x)	bzfherror(_x)
+# define herror(_x)	bzfherror(_x)
 
   void			nerror(const char* msg);
   void			bzfherror(const char* msg);
@@ -98,26 +98,26 @@ extern "C" {
 }
 
 /* BeOS net_server has closesocket(), which _must_ be used in place of close() */
-#if defined(__BEOS__) && (IPPROTO_TCP != 6)
+# if defined(__BEOS__) && (IPPROTO_TCP != 6)
 #  define close(__x) closesocket(__x)
-#endif
+# endif
 
 #else /* !defined(_WIN32) */
 
-#define	MAXHOSTNAMELEN	64
+# define	MAXHOSTNAMELEN	64
 
-#define EINPROGRESS	WSAEWOULDBLOCK
-#define	EWOULDBLOCK	WSAEWOULDBLOCK
-#define	ECONNRESET	WSAECONNRESET
-#define	EBADMSG		WSAECONNRESET	/* not defined by windows */
+# define	EINPROGRESS	WSAEWOULDBLOCK
+# define	EWOULDBLOCK	WSAEWOULDBLOCK
+# define	ECONNRESET	WSAECONNRESET
+# define	EBADMSG		WSAECONNRESET	/* not defined by windows */
 
 /* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType		const char*
+# define	SSOType		const char*
 
 inline int close(SOCKET s) { return closesocket(s); }
-#define	ioctl(__fd, __req, __arg) \
+# define	ioctl(__fd, __req, __arg) \
 			ioctlsocket(__fd, __req, (u_long*)__arg)
-#define	gethostbyaddr(__addr, __len, __type) \
+# define	gethostbyaddr(__addr, __len, __type) \
 			gethostbyaddr((const char*)__addr, __len, __type)
 
 extern "C" {
@@ -146,6 +146,8 @@ extern "C" {
 #  define INADDR_NONE	((in_addr_t)0xffffffff)
 #endif
 
+class Address;
+
 class BzfNetwork {
 public:
   static int		setNonBlocking(int fd);
@@ -155,6 +157,7 @@ public:
 			 std::string& hostname,
 			 int& port,
 			 std::string& pathname);
+  static SOCKET		connect(Address& addr);
 };
 
 #endif // BZF_NETWORK_H

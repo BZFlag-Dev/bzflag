@@ -92,37 +92,14 @@ void RCLink::startListening(int port)
 #ifdef _USE_FAKE_NET
   return;
 #else
-  struct sockaddr_in sa;
-
   if (status != Disconnected) {
     return;
   }
 
-  sa.sin_family = AF_INET;
-  sa.sin_port = htons(port);
-  //sa.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  sa.sin_addr.s_addr = htonl(INADDR_ANY);
+  Address serverAddress;
+  NetListener listener;
 
-  listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listenfd == -1)
-    return;
-
- /* Used so we can re-bind to our port while a previous connection is
-  * still in TIME_WAIT state.
-  */
-  int reuse_addr = 1;
-
-  setsockopt(connfd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
-
-  if (bind(listenfd, (sockaddr*)&sa, sizeof(sa)) == -1) {
-    close(listenfd);
-    return;
-  }
-
-  if (listen(listenfd, 1) == -1) {
-    close(listenfd);
-    return;
-  }
+  bool result = listener.listen( serverAddress, port );
 
   int flags = fcntl(listenfd, F_GETFL);
   fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
