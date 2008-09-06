@@ -5237,7 +5237,6 @@ static void joinInternetGame2()
   //Address::getHostByAddress(info.ping.serverId.serverHost);
 
   ServerList &serverList = ServerList::instance();
-  ServerItem* test = serverList.lookupServer(serverKey);
 
   if (!(serverList.lookupServer(serverKey) == NULL))
     serverList.markAsRecent(serverList.lookupServer(serverKey));

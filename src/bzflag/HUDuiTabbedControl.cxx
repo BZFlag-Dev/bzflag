@@ -48,7 +48,7 @@ void HUDuiTabbedControl::addControl(HUDuiControl *control)
 
 void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, size_t index)
 {
-  if ((index < 0)||(index >= tabs.size()))
+  if (index >= tabs.size())
     index = tabs.size();
 
   std::vector<std::pair<std::string, HUDuiControl*> >::iterator it = tabs.begin();
@@ -56,8 +56,7 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, s
 
   tabs.insert(it, std::pair<std::string, HUDuiControl*>(tabName, tabControl));
 
-  if (tabs.size() == 1) // First tab
-  {
+  if (tabs.size() == 1) {	// First tab
     getNav().push_back(tabControl);
     tabNavQueuePosition = getNav().begin() + ((getNav().size()) - 1);
   }
@@ -74,8 +73,7 @@ void HUDuiTabbedControl::addTab(HUDuiControl* tabControl, std::string tabName, s
 
 void HUDuiTabbedControl::setActiveTab(size_t tab)
 {
-  if ((tab >= 0)&&(tab < tabs.size()))
-  {
+  if (tab < tabs.size()) {
     activeTab = tab;
     activeControl = tabs[activeTab].second;
     tabNavQueuePosition = getNav().erase(tabNavQueuePosition);
@@ -112,8 +110,7 @@ void HUDuiTabbedControl::setSize(float width, float height)
 
   tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
-  for (size_t i=0; i<tabs.size(); i++)
-  {
+  for (size_t i=0; i<tabs.size(); i++) {
     tabs[i].second->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
   }
 }
@@ -125,8 +122,7 @@ void HUDuiTabbedControl::setFontSize(float size)
 
   tabsHeight = fm.getStringHeight(getFontFace()->getFMFace(), size);
 
-  for (size_t i=0; i<tabs.size(); i++)
-  {
+  for (size_t i=0; i<tabs.size(); i++) {
     tabs[i].second->setFontSize(size);
     tabs[i].second->setSize(getWidth(), getHeight() - tabsHeight - tabsHeight/2);
   }
@@ -136,8 +132,7 @@ void HUDuiTabbedControl::setFontFace(const LocalFontFace* face)
 {
   HUDuiNestedContainer::setFontFace(face);
 
-  for (size_t i=0; i<tabs.size(); i++)
-  {
+  for (size_t i=0; i<tabs.size(); i++) {
     tabs[i].second->setFontFace(face);
   }
 }
@@ -146,8 +141,7 @@ void HUDuiTabbedControl::setPosition(float x, float y)
 {
   HUDuiNestedContainer::setPosition(x, y);
 
-  for (size_t i=0; i<tabs.size(); i++)
-  {
+  for (size_t i=0; i<tabs.size(); i++) {
     tabs[i].second->setPosition(x, y);
   }
 }
@@ -171,8 +165,7 @@ void HUDuiTabbedControl::drawTabs()
   float x = getX();
   float y = (getY() + (getHeight() - tabsHeight));
 
-  for (size_t i=0; i<tabs.size(); i++)
-  {
+  for (size_t i=0; i<tabs.size(); i++) {
     const char* text = tabs[i].first.c_str();
 
     x = x + sideSpacer;
@@ -208,30 +201,32 @@ void HUDuiTabbedControl::doRender()
 
 bool HUDuiTabbedControl::doKeyPress(const BzfKeyEvent& key)
 {
-  if (key.chr == 0)
+  if (key.chr == 0) {
     switch (key.button) {
-      case BzfKeyEvent::Left:
-	if (hasFocus())
-	  setActiveTab(activeTab - 1);
-        break;
+    case BzfKeyEvent::Left:
+      if (hasFocus())
+	setActiveTab(activeTab - 1);
+      break;
 
-      case BzfKeyEvent::Right:
-	if (hasFocus())
-	  setActiveTab(activeTab + 1);
-        break;
+    case BzfKeyEvent::Right:
+      if (hasFocus())
+	setActiveTab(activeTab + 1);
+      break;
 
-      case BzfKeyEvent::Down:
-	if (hasFocus())
-	  getNav().next();
-	break;
+    case BzfKeyEvent::Down:
+      if (hasFocus())
+	getNav().next();
+      break;
 
-      default:
-        return false;
+    default:
+      return false;
+    }
   }
 
+  // Does this do anything?
   switch (key.chr) {
-    case 27:
-      return false;
+  case 27:
+    return false;
   }
 
   return false;

@@ -115,10 +115,18 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 
 pingsMap ServerMenu::activePings;
 
-ServerMenu::ServerMenu(): defaultKey(this), serverList(ServerList::instance()), listsCache(HUDuiServerListCache::instance()),
-			  //normalList(new HUDuiServerList()), favoritesList(new HUDuiServerList()),
-			  //recentList(new HUDuiServerList()),
-			  serverInfo(new HUDuiServerInfo()), customTabControl(new HUDuiServerListCustomTab())
+ServerMenu::ServerMenu()
+  : listsCache(HUDuiServerListCache::instance())
+  , serverList(ServerList::instance())
+//   , normalList(new HUDuiServerList())
+//   , recentList(new HUDuiServerList())
+//   , favoritesList(new HUDuiServerList())
+  , defaultKey(this)
+  , title(0)
+  , help(0)
+  , tabbedControl(0)
+  , serverInfo(new HUDuiServerInfo())
+  , customTabControl(new HUDuiServerListCustomTab())
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();

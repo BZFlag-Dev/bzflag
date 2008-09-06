@@ -229,12 +229,9 @@ std::string HUDuiServerListItem::shorten(std::string string, float width)
     return string;
 
   // Iterate through each character. Expensive.
-  for (int i=0; i<=(int)string.size(); i++)
-  {
-    float temp = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i).c_str());
+  for (int i=0; i<=(int)string.size(); i++) {
     // Is it too big yet?
-    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i).c_str()) > width)
-    {
+    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i).c_str()) > width) {
       return string.substr(0, i - 1);
     }
   }
@@ -260,8 +257,7 @@ void HUDuiServerListItem::doRender()
     darkness = 1.0f;
 
   if ((domainName.compare(calculateDomainName()) == 0)||(serverName.compare(calculateServerName()) == 0)||
-      (playerCount.compare(calculatePlayers()) == 0)||(serverPing.compare(calculatePing()) == 0))
-  {
+      (playerCount.compare(calculatePlayers()) == 0)||(serverPing.compare(calculatePing()) == 0)) {
     displayModes = modes = calculateModes();
     displayDomain = domainName = calculateDomainName();
     displayServer = serverName = calculateServerName();

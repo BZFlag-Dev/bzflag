@@ -85,9 +85,7 @@ void HUDuiScrollList::setSelected(size_t _index)
 
 HUDuiControl* HUDuiScrollList::get(size_t _index)
 {
-  if (_index < 0)
-    _index = 0;
-  else if (_index >= getSize())
+  if (_index >= getSize())
     _index = getSize() - 1;
 
   std::list<HUDuiControl*>::iterator it = items.begin();
@@ -171,14 +169,14 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
     switch (key.button) {
 
       case BzfKeyEvent::PageUp:
-        if ((pagedList)&&(index != -1)) {
+        if (pagedList) {
           // Jump back to the previous page
           getNav().set((currentPage - 2)*numVisibleItems);
         }
         break;
 
       case BzfKeyEvent::PageDown:
-        if ((pagedList)&&(index != -1)) {
+        if (pagedList) {
           // Skip to the next page
           getNav().set((currentPage)*numVisibleItems);
         }

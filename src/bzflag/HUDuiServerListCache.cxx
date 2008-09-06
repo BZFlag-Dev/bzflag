@@ -48,7 +48,6 @@ void HUDuiServerListCache::saveCache()
   if (fileName == "") return;
 
   std::ostream* outFile = FILEMGR.createDataOutStream(fileName, true, true);
-  int lenCpy = max_string;
 
   if (outFile != NULL){
     char buffer[max_string+1];
