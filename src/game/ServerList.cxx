@@ -589,7 +589,7 @@ void ServerList::addServerKeyCallback(std::string key, ServerListCallback _cb, v
 
 void ServerList::removeServerKeyCallback(std::string key, ServerListCallback _cb, void* data)
 {
-  std::vector<std::pair<ServerListCallback, void*>>::iterator it = std::find(serverKeyCallbackList[key].begin(), serverKeyCallbackList[key].end(), std::make_pair<ServerListCallback, void*>(_cb, data));
+  std::vector<std::pair<ServerListCallback, void*> >::iterator it = std::find(serverKeyCallbackList[key].begin(), serverKeyCallbackList[key].end(), std::make_pair<ServerListCallback, void*>(_cb, data));
   if (it != serverKeyCallbackList[key].end())
     serverKeyCallbackList[key].erase(it);
 }
