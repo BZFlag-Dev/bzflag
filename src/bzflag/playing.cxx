@@ -1222,12 +1222,13 @@ void notifyBzfKeyMapChanged()
 //
 // server message handling
 //
-static Player *addPlayer(PlayerId id, void *msg, int showMessage)
+static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 {
-  uint16_t team, type, wins, losses, tks;
+  uint16_t team, type, rank, wins, losses, tks;
   char callsign[CallSignLen];
   msg = nboUnpackUShort (msg, type);
   msg = nboUnpackUShort (msg, team);
+  msg = nboUnpackUShort (msg, rank);
   msg = nboUnpackUShort (msg, wins);
   msg = nboUnpackUShort (msg, losses);
   msg = nboUnpackUShort (msg, tks);
@@ -1267,7 +1268,7 @@ static Player *addPlayer(PlayerId id, void *msg, int showMessage)
     || PlayerType (type) == ComputerPlayer
     || PlayerType (type) == ChatPlayer) {
       player[i] = new RemotePlayer (id, TeamColor (team), callsign, PlayerType (type));
-      player[i]->changeScore (short (wins), short (losses), short (tks));
+      player[i]->changeScore (short(rank), short (wins), short (losses), short (tks));
   }
 
 #ifdef ROBOT
@@ -1275,6 +1276,7 @@ static Player *addPlayer(PlayerId id, void *msg, int showMessage)
     for (int j = 0; j < numRobots; j++)
       if (robots[j] && !strncmp (robots[j]->getCallSign (), callsign, CallSignLen)) {
 	robots[j]->setTeam (TeamColor (team));
+	robots[j]->changeScore(rank, wins, losses, tks);
 	break;
       }
 #endif
@@ -1895,7 +1897,7 @@ static void handleScoreOver(void *msg)
 #endif
 }
 
-static void handleAddPlayer(void *msg, bool &checkScores)
+static void handleAddPlayer(void* msg, bool& checkScores)
 {
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
@@ -2674,11 +2676,12 @@ static void handleScore(void *msg)
 {
   uint8_t numScores;
   PlayerId id;
-  uint16_t wins, losses, tks;
+  uint16_t rank, wins, losses, tks;
   msg = nboUnpackUByte(msg, numScores);
 
   for (uint8_t s = 0; s < numScores; s++) {
     msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUShort(msg, rank);
     msg = nboUnpackUShort(msg, wins);
     msg = nboUnpackUShort(msg, losses);
     msg = nboUnpackUShort(msg, tks);
@@ -2702,7 +2705,7 @@ static void handleScore(void *msg)
 	  ExportInformation::eitPlayerStatistics,
 	  ExportInformation::eipPrivate);
       }
-      sPlayer->changeScore(wins, losses, tks);
+      sPlayer->changeScore(rank, wins, losses, tks);
     }
   }
 }
@@ -4625,7 +4628,7 @@ static void setTankFlags()
 }
 
 
-static void enteringServer(void *buf)
+static void enteringServer(void* buf)
 {
 #if defined(ROBOT)
   int i;
@@ -4635,9 +4638,15 @@ static void enteringServer(void *buf)
 #endif
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
-  uint16_t team, type;
+  uint16_t team, type, rank, wins, losses, tks;
   tmpbuf = nboUnpackUShort(tmpbuf, type);
   tmpbuf = nboUnpackUShort(tmpbuf, team);
+  tmpbuf = nboUnpackUShort(tmpbuf, rank);
+  tmpbuf = nboUnpackUShort(tmpbuf, wins);
+  tmpbuf = nboUnpackUShort(tmpbuf, losses);
+  tmpbuf = nboUnpackUShort(tmpbuf, tks);
+
+  myTank->changeScore(rank, wins, losses, tks);
 
   // if server assigns us a different team, display a message
   std::string teamMsg;

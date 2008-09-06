@@ -93,7 +93,7 @@ public:
 			 float& minTime) const;
   bool		checkCollision(const Player* otherTank);
   void		setFlag(FlagType*);
-  void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+  void		changeScore(short newRank, short newWins, short newLosses, short newTeamKills);
 
   void		addAntidote(SceneDatabase*);
 

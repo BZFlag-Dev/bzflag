@@ -441,10 +441,11 @@ static void		updateHighScores()
 //
 static Player*		addPlayer(PlayerId id, void* msg, int)
 {
-  uint16_t team, type, wins, losses, tks;
+  uint16_t team, type, rank, wins, losses, tks;
   char callsign[CallSignLen];
   msg = nboUnpackUShort (msg, type);
   msg = nboUnpackUShort (msg, team);
+  msg = nboUnpackUShort (msg, rank);
   msg = nboUnpackUShort (msg, wins);
   msg = nboUnpackUShort (msg, losses);
   msg = nboUnpackUShort (msg, tks);
@@ -485,7 +486,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
       || PlayerType (type) == ChatPlayer) {
     player[i] = new RemotePlayer (id, TeamColor (team), callsign,
 				  PlayerType (type));
-    player[i]->changeScore (short (wins), short (losses), short (tks));
+    player[i]->changeScore (short (rank), short (wins), short (losses), short (tks));
   }
 
   if (PlayerType (type) == ComputerPlayer)
@@ -1548,11 +1549,12 @@ static void		handleServerMessage(bool human, uint16_t code,
   case MsgScore: {
     uint8_t numScores;
     PlayerId id;
-    uint16_t wins, losses, tks;
+    uint16_t rank, wins, losses, tks;
     msg = nboUnpackUByte(msg, numScores);
 
     for (uint8_t s = 0; s < numScores; s++) {
       msg = nboUnpackUByte(msg, id);
+      msg = nboUnpackUShort(msg, rank);
       msg = nboUnpackUShort(msg, wins);
       msg = nboUnpackUShort(msg, losses);
       msg = nboUnpackUShort(msg, tks);
@@ -1564,7 +1566,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       else
 	logDebugMessage(1, "Recieved score update for unknown player!\n");
       if (sPlayer)
-	sPlayer->changeScore(wins, losses, tks);
+	sPlayer->changeScore(rank, wins, losses, tks);
     }
     break;
   }

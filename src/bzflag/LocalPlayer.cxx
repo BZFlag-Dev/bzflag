@@ -1623,18 +1623,19 @@ void			LocalPlayer::setFlag(FlagType* flag)
   }
 }
 
-void			LocalPlayer::changeScore(short deltaWins,
-						 short deltaLosses,
-						 short deltaTks)
+void			LocalPlayer::changeScore(short newRank,
+						 short newWins,
+						 short newLosses,
+						 short newTks)
 {
-  Player::changeScore(deltaWins, deltaLosses, deltaTks);
+  Player::changeScore(newRank, newWins, newLosses, newTks);
   World *world = World::getWorld();
   if (!world) {
     return;
   }
-  if (deltaWins > 0 && world->allowShakeWins() &&
+  if (newWins > 0 && world->allowShakeWins() &&
       flagShakingWins > 0) {
-    flagShakingWins -= deltaWins;
+    flagShakingWins -= newWins;
     if (flagShakingWins <= 0) {
       flagShakingWins = 0;
       server->sendDropFlag(getPosition());

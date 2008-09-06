@@ -21,11 +21,12 @@
 #include "Pack.h"
 
 
-float Score::tkKickRatio = 3.0;
-int   Score::score       = 999;
-bool  Score::randomRanking = false;
+float Score::tkKickRatio( 3.0 );
+int   Score::score( 999 );
+bool  Score::randomRanking( false );
 
-Score::Score(): wins(0), losses(0), tks(0) {
+Score::Score(): wins(0), losses(0), tks(0) 
+{
 }
 
 void Score::dump() const {
@@ -64,14 +65,18 @@ void Score::kill() {
   wins++;
 }
 
-void *Score::pack(void *buf) const {
+void* Score::pack(void* buf) const {
+  uint16_t rank( ranking() * 100 + 0.5 );
+  buf = nboPackUShort(buf, rank);
   buf = nboPackUShort(buf, wins);
   buf = nboPackUShort(buf, losses);
   buf = nboPackUShort(buf, tks);
   return buf;
 }
 
-void Score::pack(BufferedNetworkMessage *msg) const {
+void Score::pack(BufferedNetworkMessage* msg) const {
+  uint16_t rank( ranking() * 100 + 0.5 );
+  msg->packUShort(rank);
   msg->packUShort(wins);
   msg->packUShort(losses);
   msg->packUShort(tks);

@@ -61,6 +61,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   fromTeleporter(0),
   toTeleporter(0),
   teleporterProximity(0.0f),
+  rank(42),
   wins(0),
   losses(0),
   tks(0),
@@ -134,22 +135,6 @@ Player::~Player()
   freePlayerAvatar (avatar);
 }
 
-// Take into account the quality of player wins/(wins+loss)
-// Try to penalize winning casuality
-static float rabbitRank (int wins, int losses) 
-{
-  // otherwise do score-based ranking
-  int sum = wins + losses;
-  if (sum == 0)
-    return BZDB.eval(StateDatabase::BZDB_STARTINGRANK);
-
-  float average = (float)wins/(float)sum;
-
-  // IIRC that is how wide is the gaussian
-  float penalty = (1.0f - 0.5f / sqrt((float)sum));
-  return average * penalty;
-}
-
 float Player::getTKRatio() const
 {
   if (wins == 0)
@@ -213,7 +198,7 @@ float Player::getLocalNormalizedScore() const
 
 short Player::getRabbitScore() const
 {
-  return (int)(rabbitRank(wins, losses) * 100.0);
+  return rank;
 }
 
 
@@ -676,13 +661,15 @@ void Player::updateTreads(float dt)
 }
 
 
-void Player::changeScore(short deltaWins,
-			 short deltaLosses,
-			 short deltaTeamKills)
+void Player::changeScore(short newRank,
+			 short newWins,
+			 short newLosses,
+			 short newTeamKills)
 {
-  wins   = deltaWins;
-  losses = deltaLosses;
-  tks    = deltaTeamKills;
+  rank   = newRank;
+  wins   = newWins;
+  losses = newLosses;
+  tks    = newTeamKills;
 }
 
 

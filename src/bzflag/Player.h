@@ -167,7 +167,7 @@ public:
   void		setUserAngVel(float angvel);
   void		changeTeam(TeamColor);
   virtual void	setFlag(FlagType*);
-  virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+  virtual void	changeScore(short newRank, short newWins, short newLosses, short newTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void	  setHandicap(float handicap);
   void		setStatus(short);
@@ -275,6 +275,7 @@ private:
   short			fromTeleporter;		// teleporter I entered
   short			toTeleporter;		// teleporter I exited
   float			teleporterProximity;	// how close to a teleporter
+  short			rank;			// server ranking
   short			wins;			// number of kills
   short			losses;			// number of deaths
   short			tks;			// number of teamkills
