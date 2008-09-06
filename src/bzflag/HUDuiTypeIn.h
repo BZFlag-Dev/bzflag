@@ -61,7 +61,7 @@ class HUDuiTypeIn : public HUDuiControl {
 			~HUDuiTypeIn();
 
     void		setObfuscation(bool on);
-    int			getMaxLength() const;
+    size_t		getMaxLength() const;
     std::string		getString() const;
 
     void		setMaxLength(size_t);
