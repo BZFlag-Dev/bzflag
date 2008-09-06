@@ -990,12 +990,12 @@ public:
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
+BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord* playerRecord)
 {
   if(!playerRecord)
     return false;
 
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
+  GameKeeper::Player* player=GameKeeper::Player::getPlayerByIndex(playerRecord->playerID);
   if(!player)
     return false;
 
@@ -1005,14 +1005,14 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
   playerStateToAPIState(playerRecord->currentState, player->getCurrentStateAsState());
 
   playerRecord->currentFlagID=player->player.getFlag();
-  FlagInfo *flagInfo=FlagInfo::get(playerRecord->currentFlagID);
+  FlagInfo* flagInfo=FlagInfo::get(playerRecord->currentFlagID);
 
   std::string label;
   if(flagInfo && flagInfo->flag.type)
     label=flagInfo->flag.type->label();
   playerRecord->currentFlag=label;
 
-  std::vector < FlagType * > flagHistoryList=player->flagHistory.get();
+  std::vector < FlagType* > flagHistoryList=player->flagHistory.get();
 
   playerRecord->flagHistory.clear();
   for(unsigned int i=0; i < flagHistoryList.size(); i++)
@@ -1029,8 +1029,9 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord *playerRecord)
   playerRecord->spawned=player->player.isAlive();
   playerRecord->lag=player->lagInfo.getLag();
   playerRecord->jitter=player->lagInfo.getJitter();
-  playerRecord->packetloss=(float)player->lagInfo.getLoss();
+  playerRecord->packetLoss=(float)player->lagInfo.getLoss();
 
+  playerRecord->rank=player->score.ranking();
   playerRecord->wins=player->score.getWins();
   playerRecord->losses=player->score.getLosses();
   playerRecord->teamKills=player->score.getTKs();
@@ -1429,6 +1430,17 @@ BZF_API bool bz_setPlayerTKs(int playerId, int tks)
 }
 
 //-------------------------------------------------------------------------
+BZF_API float bz_getPlayerRank (int playerId)
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if(!player)
+    return -1;
+
+  return player->score.ranking();
+}
+
+//-------------------------------------------------------------------------
 BZF_API int bz_getPlayerWins (int playerId)
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
@@ -1523,7 +1535,7 @@ BZF_API int bz_getPlayerJitter(int playerId)
 
 //-------------------------------------------------------------------------
 
-BZF_API float bz_getPlayerPacketloss(int playerId)
+BZF_API float bz_getPlayerPacketLoss(int playerId)
 {
   if(!GameKeeper::Player::getPlayerByIndex(playerId))
     return 0;
@@ -4070,7 +4082,7 @@ void bz_ServerSidePlayerHandler::playerIPUpdate(int, const char*){}
 
 void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, float){}
 
-void bz_ServerSidePlayerHandler::playerScoreUpdate(int, int, int, int){}
+void bz_ServerSidePlayerHandler::playerScoreUpdate(int, float, int, int, int){}
 
 void bz_ServerSidePlayerHandler::flagTransfer(int, int, int, bz_eShotType){}
 

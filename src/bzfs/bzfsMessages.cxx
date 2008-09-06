@@ -133,6 +133,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
       playerRecord.index = i;
       playerRecord.type = (bz_ePlayerType)otherData->player.getType();
       playerRecord.team = convertTeam(otherData->player.getTeam());
+      playerRecord.score.rank = otherData->score.ranking();
       playerRecord.score.wins = otherData->score.getWins();
       playerRecord.score.losses = otherData->score.getLosses();
       playerRecord.score.tks = otherData->score.getTKs();
@@ -847,7 +848,11 @@ void sendPlayerScoreUpdate( GameKeeper::Player *player )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->playerScoreUpdate(player->getIndex(),player->score.getWins(),player->score.getLosses(),player->score.getTKs());
+      otherData->playerHandler->playerScoreUpdate(player->getIndex(),
+						  player->score.ranking(),
+						  player->score.getWins(),
+						  player->score.getLosses(),
+						  player->score.getTKs());
   }
 }
 

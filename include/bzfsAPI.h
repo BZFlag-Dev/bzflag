@@ -1153,27 +1153,14 @@ class BZF_API bz_BasePlayerRecord
 {
  public:
   bz_BasePlayerRecord()
+    : version(1), playerID(-1), team(eNoTeam)
+    , currentFlagID(-1)
+    , lastUpdateTime(0.0)
+    , spawned(false), verified(false), globalUser(false)
+    , admin(false), op(false), canSpawn(false)
+    , lag(0), jitter(0), packetLoss(0.0)
+    , rank(0.0), wins(0), losses(0), teamKills(0)
     {
-      playerID = -1;
-      team = eNoTeam;
-
-      spawned = false;
-      verified = false;
-      globalUser = false;
-      admin = false;
-      op = false;
-      canSpawn = false;
-
-      lag = 0;
-      jitter = 0;
-      packetloss = 0;
-
-      wins = 0;
-      losses = 0;
-      version = 1;
-      bzID = "";
-
-      currentFlagID = -1;
     };
 
   ~bz_BasePlayerRecord() {};
@@ -1213,8 +1200,9 @@ class BZF_API bz_BasePlayerRecord
 
   int lag;
   int jitter;
-  float packetloss;
+  float packetLoss;
 
+  float rank;
   int wins;
   int losses;
   int teamKills;
@@ -1230,6 +1218,7 @@ BZF_API bool bz_setPlayerWins(int playerId, int wins);
 BZF_API bool bz_setPlayerLosses(int playerId, int losses);
 BZF_API bool bz_setPlayerTKs(int playerId, int tks);
 
+BZF_API float bz_getPlayerRank(int playerId);
 BZF_API int bz_getPlayerWins(int playerId);
 BZF_API int bz_getPlayerLosses(int playerId);
 BZF_API int bz_getPlayerTKs(int playerId);
@@ -1242,7 +1231,7 @@ BZF_API bool bz_setPlayerShotType(int playerId, bz_eShotType shotType);
 // player lag info
 BZF_API int bz_getPlayerLag(int playerId);
 BZF_API int bz_getPlayerJitter(int playerId);
-BZF_API float bz_getPlayerPacketloss(int playerId);
+BZF_API float bz_getPlayerPacketLoss(int playerId);
 
 // groups API
 BZF_API bz_APIStringList* bz_getGroupList(void);
@@ -1722,6 +1711,7 @@ typedef struct {
 } bz_FlagUpdateRecord;
 
 typedef struct {
+  float rank;
   int wins;
   int losses;
   int tks;
@@ -1813,7 +1803,7 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void playerIPUpdate(int player, const char *ipAddress);
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
 				 float timestamp);
-  virtual void playerScoreUpdate(int player, int wins, int losses, int TKs);
+  virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs);
   virtual void flagTransfer(int from, int to, int flagID, bz_eShotType shotType);
   virtual void nearestFlag(const char* flagName, float pos[3]);
   virtual void grabFlag(int player, int flagID, const char* flagType, bz_eShotType shotType);

@@ -425,6 +425,9 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
   } else if (key == "callsign") {
     if (rec)
       data = rec->callsign.c_str();
+  } else if (key == "rank") {
+    if (rec)
+      data = format("%f%%", rec->rank);
   } else if (key == "wins") {
     if (rec)
       data = format("%d", rec->wins);
@@ -459,7 +462,7 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
       data = format("%d", rec->jitter);
   } else if (key == "packetloss") {
     if (rec)
-      data = format("%f", rec->packetloss);
+      data = format("%f", rec->packetLoss);
   } else if (key == "groupcount") {
     if (rec)
       data = format("%d", rec->groups.size());
