@@ -98,6 +98,7 @@ enum GameType
 };
 // game styles
 enum GameOptions {
+  Unused              =  0x0001,
   SuperFlagGameStyle  =	 0x0002, // superflags allowed
   NoTeamKills	      =  0x0004, // teams can't kill each other
   JumpingGameStyle    =	 0x0008, // jumping allowed
