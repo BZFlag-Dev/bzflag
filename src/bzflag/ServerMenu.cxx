@@ -31,10 +31,10 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   ServerList &serverList = ServerList::instance();
 
-  if (key.chr == 'f') {
-    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
-      return false;
+  if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
+    return MenuDefaultKey::keyPress(key);
 
+  if (key.chr == 'f') {
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
     serverList.markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
@@ -67,9 +67,6 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList))
       return false;
 
-    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
-      return false;
-
     HUDuiServerList* tab = (HUDuiServerList*)menu->tabbedControl->getActiveTab();
     std::string tabName = menu->tabbedControl->getActiveTabName();
     HUDuiServerListCache::instance().removeList(tab, tabName);
@@ -83,9 +80,6 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   if (key.chr == 'h') {
-    if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
-      return false;
-
     if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
       return false;
 

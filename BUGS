@@ -64,9 +64,6 @@ Regressions
   
 * bullets no longer bounce off the walls in replays even when ricochets have
   been enabled
-
-* can't type "r" as part of a server list tab name (possibly other chars as
-  well)
   
 Documentation
 -------------
