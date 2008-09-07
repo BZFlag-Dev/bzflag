@@ -544,6 +544,9 @@ size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
 void HUDuiServerList::refreshNavQueue()
 {
   HUDuiControl* currentFocus = getNav().get();
+  // If the focus isn't on a server list item, nothing has to happen
+  if (dynamic_cast<HUDuiServerListItem*>(currentFocus) == 0) return;
+
   bool inFocus = currentFocus->hasFocus();
   getNav().clear();
 
