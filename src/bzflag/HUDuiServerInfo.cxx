@@ -158,7 +158,8 @@ void HUDuiServerInfo::resize()
     _label->setFontSize(fontSize);
     _label->setFontFace(getFontFace());
     y -= 1.0f * itemHeight;
-    _label->setPosition(x, y);}
+    _label->setPosition(x, y);
+  }
 }
 
 void HUDuiServerInfo::fillReadouts()
