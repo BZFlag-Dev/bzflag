@@ -154,12 +154,11 @@ void HUDuiServerInfo::resize()
   x = (0.125f + 0.25f * (float)(1 / 7)) * (float)getWidth();
   y = y0;
   for (size_t i=0; i<playerLabels.size(); i++) {
-    HUDuiLabel* label = playerLabels[i];
-    label->setFontSize(fontSize);
-    label->setFontFace(getFontFace());
+    HUDuiLabel* _label = playerLabels[i];
+    _label->setFontSize(fontSize);
+    _label->setFontFace(getFontFace());
     y -= 1.0f * itemHeight;
-    label->setPosition(x, y);
-  }
+    _label->setPosition(x, y);}
 }
 
 void HUDuiServerInfo::fillReadouts()

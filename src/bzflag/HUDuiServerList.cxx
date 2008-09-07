@@ -99,11 +99,13 @@ public:
       break;
 
     case Ping:
-      int firstPing = atoi(_first->getServerPing().c_str());
-      int secondPing = atoi(_second->getServerPing().c_str());
-      return (firstPing < secondPing);
-      //return (_first->getServerPing()(_second->getServerPing()) < 0);
-      break;
+      {
+	int firstPing = atoi(_first->getServerPing().c_str());
+	int secondPing = atoi(_second->getServerPing().c_str());
+	return (firstPing < secondPing);
+	//return (_first->getServerPing()(_second->getServerPing()) < 0);
+	break;
+      }
 
     default:
       break;
@@ -115,7 +117,7 @@ public:
 struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, uint32_t, bool>
 {
 public:
-  result_type operator()(first_argument_type control, second_argument_type filter) const
+  result_type operator()(first_argument_type control, second_argument_type _filter) const
   {
     ServerList &serverList = ServerList::instance();
     HUDuiServerListItem* item = (HUDuiServerListItem*) control;
@@ -127,7 +129,7 @@ public:
     bool returnValue = false;
 
     for (uint32_t i = 1; i < EndOfFilterConstants; i <<= 1) {
-      if ((filter & i) == i) {
+      if ((_filter & i) == i) {
 	switch (i) {
 	case EmptyServer:
 	  returnValue = (server->getPlayerCount() == 0);
@@ -419,13 +421,13 @@ ServerItem* HUDuiServerList::getSelectedServer()
   return dataList.lookupServer(selected->getServerKey());
 }
 
-HUDuiServerListItem* HUDuiServerList::get(size_t index)
+HUDuiServerListItem* HUDuiServerList::get(size_t _index)
 {
-  if (index >= getSize())
-    index = getSize() - 1;
+  if (_index >= getSize())
+    _index = getSize() - 1;
 
   std::list<HUDuiControl*>::iterator it = items.begin();
-  std::advance(it, index);
+  std::advance(it, _index);
   return (HUDuiServerListItem*)(*it);
 }
 
@@ -459,9 +461,9 @@ void HUDuiServerList::applyFilters()
   //getNav().set((size_t) 0);
 }
 
-void HUDuiServerList::toggleFilter(FilterConstants filter)
+void HUDuiServerList::toggleFilter(FilterConstants _filter)
 {
-  filterOptions ^= filter;
+  filterOptions ^= _filter;
   applyFilters();
 }
 

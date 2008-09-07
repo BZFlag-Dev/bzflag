@@ -297,9 +297,9 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
   if (serverKeyCallbackList.find(info.getServerKey()) != serverKeyCallbackList.end())
   {
-    for (size_t i=0; i<serverKeyCallbackList[info.getServerKey()].size(); i++)
+    for (size_t j=0; j<serverKeyCallbackList[info.getServerKey()].size(); j++)
     {
-      serverKeyCallbackList[info.getServerKey()][i].first(&info, serverKeyCallbackList[info.getServerKey()][i].second);
+      serverKeyCallbackList[info.getServerKey()][j].first(&info, serverKeyCallbackList[info.getServerKey()][j].second);
     }
   }
 
