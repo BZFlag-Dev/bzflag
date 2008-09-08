@@ -2,7 +2,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(FTGL, 2.1.3~rc5, [sam@zoy.org], ftgl)
+AC_INIT(FTGL, 2.2.0, [sam@zoy.org], ftgl)
 AC_CONFIG_SRCDIR(src/FTPoint.cpp)
 AC_CONFIG_AUX_DIR(.auto)
 AM_INIT_AUTOMAKE([1.6 no-define dist-zip dist-bzip2])
@@ -13,8 +13,8 @@ AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Use included versio
 FTGL_PROG_CXX
 
 LT_MAJOR="2"
-LT_MINOR="1"
-LT_MICRO="3"
+LT_MINOR="2"
+LT_MICRO="0"
 AC_SUBST(LT_MAJOR)
 AC_SUBST(LT_MINOR)
 AC_SUBST(LT_MICRO)
@@ -82,8 +82,9 @@ AC_PATH_PROG(KPSEWHICH, kpsewhich, no)
 AC_PATH_PROG(DVIPS, dvips, no)
 AC_PATH_PROG(CONVERT, convert, no)
 AC_PATH_PROG(EPSTOPDF, epstopdf, no)
+AC_PATH_TOOL(SED, sed, no)
 if test "${DVIPS}" = "no" -o "${KPSEWHICH}" = "no" -o "${EPSTOPDF}" = "no" \
-     -o "${CONVERT}" = "no"; then
+     -o "${CONVERT}" = "no" -o "${SED}" = "no"; then
   LATEX="no"
 fi
 if test "${LATEX}" != "no"; then

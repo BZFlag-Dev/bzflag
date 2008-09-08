@@ -544,6 +544,7 @@ void parsekey(unsigned char key, int x, int y)
 void parseSpecialKey(int key, int x, int y)
 {
     FTSimpleLayout *l = NULL;
+	unsigned int s;
 
     // If the currentLayout is a SimpleLayout store a pointer in l
     if(layouts[currentLayout]
@@ -561,7 +562,9 @@ void parseSpecialKey(int key, int x, int y)
         current_font = (GetFace()*NumStyles + (current_font + NumStyles - 1)%NumStyles)%totalFonts;
         break;
     case GLUT_KEY_LEFT:
-        fonts[current_font]->FaceSize(fonts[current_font]->FaceSize() - 1);
+		s = fonts[current_font]->FaceSize();
+		if (s >= 2)
+			fonts[current_font]->FaceSize(s - 1);
         break;
     case GLUT_KEY_RIGHT:
         fonts[current_font]->FaceSize(fonts[current_font]->FaceSize() + 1);

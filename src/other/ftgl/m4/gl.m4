@@ -11,6 +11,8 @@ AC_ARG_WITH([--with-gl-inc],
     AC_HELP_STRING([--with-gl-inc=DIR],[Directory where GL/gl.h is installed]))
 AC_ARG_WITH([--with-gl-lib],
     AC_HELP_STRING([--with-gl-lib=DIR],[Directory where OpenGL libraries are installed]))
+AC_ARG_WITH([--with-glu-lib],
+    AC_HELP_STRING([--with-glu-lib=DIR],[Directory where OpenGL GLU library is installed]))
 
 AC_LANG_SAVE
 AC_LANG_C
@@ -48,7 +50,9 @@ LIBS="$LIBS -Xlinker -framework -Xlinker OpenGL"
 # -Xlinker is used because libtool is busted prior to 1.6 wrt frameworks
 AC_TRY_LINK([#include <OpenGL/gl.h>], [glBegin(GL_POINTS)],
     [FRAMEWORK_OPENGL="-Xlinker -framework -Xlinker OpenGL" ; ac_cv_search_glBegin="-Xlinker -framework -Xlinker OpenGL" ; AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-with_gl_lib="$FRAMEWORK_OPENGL"
+if test x"$FRAMEWORK_OPENGL" != "x"; then
+  with_gl_lib="$FRAMEWORK_OPENGL"
+fi
 AC_SUBST(FRAMEWORK_OPENGL)
 LIBS="$PRELIBS"
 
@@ -62,7 +66,12 @@ if test "x$with_gl_lib" != "x" ; then
 else
     LIBS="-lGL"
 fi
-AC_LINK_IFELSE([AC_LANG_CALL([],[glBegin])],[HAVE_GL=yes], [HAVE_GL=no])
+AC_LINK_IFELSE([AC_LANG_CALL([],[glBegin])],[HAVE_GL=yes],[
+dnl This is done here so that we can check for the Win32 version of the
+dnl GL library, which may not use cdecl calling convention.
+ AC_TRY_LINK([#include <GL/gl.h>],[glBegin(GL_POINTS)],[HAVE_GL=yes],[HAVE_GL=no])]
+)
+
 if test "x$HAVE_GL" = xno ; then
     if test "x$GL_X_LIBS" != x ; then
         LIBS="-lGL $GL_X_LIBS"
@@ -103,8 +112,20 @@ AC_TRY_COMPILE([
 if test "x$FRAMEWORK_OPENGL" = "x" ; then
 
 AC_MSG_CHECKING([for GLU library])
-LIBS="-lGLU $GL_LIBS"
-AC_LINK_IFELSE([AC_LANG_CALL([],[gluNewTess])],[HAVE_GLU=yes], [HAVE_GLU=no])
+if test "x$with_glu_lib" != "x" ; then
+    if test -d "$with_glu_lib" ; then
+        LIBS="$GL_LIBS -L$with_glu_lib -lGLU"
+    else
+        LIBS="$GL_LIBS $with_glu_lib"
+    fi
+else
+    LIBS="$GL_LIBS -lGLU"
+fi
+AC_LINK_IFELSE([AC_LANG_CALL([],[gluNewTess])],[HAVE_GLU=yes], [
+dnl This is done here so that we can check for the Win32 version of the
+dnl GL library, which may not use cdecl calling convention.
+ AC_TRY_LINK([#include <GL/glu.h>],[gluNewTess()],[HAVE_GLU=yes],[HAVE_GLU=no])]
+)
 if test "x$HAVE_GLU" = xno ; then
     if test "x$GL_X_LIBS" != x ; then
         LIBS="-lGLU $GL_LIBS $GL_X_LIBS"

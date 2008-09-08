@@ -19,6 +19,11 @@ Projects are listed in alphabetical order.
   Interfaces, relaying (almost) only on OpenGl. Hence should be rather
   platform-independant.
 
+\subsection Haskell %FTGL
+
+  Haskell %FTGL (http://www.haskell.org/haskellwiki/FTGL) is a Haskell
+  binding interface to %FTGL.
+
 \subsection ruby-ftgl Ruby %FTGL
 
   Ruby %FTGL# (http://rubyforge.org/projects/ruby-ftgl/) is a collection
