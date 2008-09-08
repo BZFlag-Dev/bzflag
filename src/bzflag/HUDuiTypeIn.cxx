@@ -54,13 +54,7 @@ std::string		HUDuiTypeIn::getString() const
 void			HUDuiTypeIn::setMaxLength(size_t _maxLength)
 {
   maxLength = _maxLength;
-  string = string.substr(0, maxLength);
-  if (cursorPos.getCount() > maxLength)
-  {
-    cursorPos = string.c_str();
-    while (*cursorPos)
-      ++cursorPos;
-  }
+  setString(string.substr(0, maxLength));
   onSetFont();
 }
 
