@@ -4120,7 +4120,7 @@ void setLookAtMarker(void)
     return;
 
   std::string label = bestTarget->getCallSign();
-  if (bestTarget->getFlag()) {
+  if (bestTarget->getFlag() != Flags::Null) {
     std::string flagName = bestTarget->getFlag()->flagAbbv;
     label += std::string("(") + flagName + std::string(")");
   }
