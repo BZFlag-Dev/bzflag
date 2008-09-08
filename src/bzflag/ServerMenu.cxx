@@ -31,46 +31,60 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   ServerList &serverList = ServerList::instance();
 
-  if (menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))
+  HUDuiServerList* activeTab( dynamic_cast<HUDuiServerList*>(menu->tabbedControl->getActiveTab()));
+  // This may be a bit Draconian, since not all the tests below
+  // actually depend on the active tab being of type HUDuiServerList*,
+  // but they were all blindly casting before, so assume this is a SNH
+  // condition
+  if (activeTab == 0) return false;
+
+  // Note that many of the if statments below test for this condition
+  // as well and have a different return. Seems like a logic error.
+  if (activeTab == static_cast<HUDuiControl*>(menu->customTabControl))
     return MenuDefaultKey::keyPress(key);
 
   if (key.chr == 'f') {
-    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
+    if ((activeTab == menu->favoritesList) ||
+	(activeTab->hasFocus()) ||
+	(menu->tabbedControl->hasFocus()))
       return false;
-    serverList.markAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
-    return true;
+    if (activeTab != 0) {
+      serverList.markAsFavorite(activeTab->getSelectedServer());
+      return true;
+    }
+    return false;
   }
 
   if (key.chr == 'c') {
-    if ((menu->tabbedControl->getActiveTab() == (HUDuiControl*)(menu->customTabControl))||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList))
+    if ((activeTab == static_cast<HUDuiControl*>(menu->customTabControl)) ||
+	(activeTab == menu->normalList))
       return false;
 
-    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList) {
-      for (size_t i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
-      {
-	serverList.unmarkAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->get(i)->getServer());
+    if (activeTab == menu->favoritesList) {
+      for (size_t i=0; i<activeTab->getSize(); i++) {
+	serverList.unmarkAsFavorite(activeTab->get(i)->getServer());
       }
     }
 
-    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList) {
-      for (size_t i=0; i<((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSize(); i++)
-      {
-	serverList.unmarkAsRecent(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->get(i)->getServer());
+    if (activeTab == menu->recentList) {
+      for (size_t i=0; i<activeTab->getSize(); i++) {
+	serverList.unmarkAsRecent(activeTab->get(i)->getServer());
       }
     }
 
-    ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->clearList();
+    activeTab->clearList();
     return true;
   }
 
   if (key.chr == 'v') {
-    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList))
+    if ((activeTab == menu->favoritesList) ||
+	(activeTab == menu->normalList) ||
+	(activeTab == menu->recentList))
       return false;
 
-    HUDuiServerList* tab = (HUDuiServerList*)menu->tabbedControl->getActiveTab();
     std::string tabName = menu->tabbedControl->getActiveTabName();
-    HUDuiServerListCache::instance().removeList(tab, tabName);
-    menu->tabbedControl->removeTab(tab, tabName);
+    HUDuiServerListCache::instance().removeList(activeTab, tabName);
+    menu->tabbedControl->removeTab(activeTab, tabName);
   }
 
   if (key.chr == 'r') {
@@ -80,16 +94,18 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   if (key.chr == 'h') {
-    if ((((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->normalList)||(((HUDuiServerList*)menu->tabbedControl->getActiveTab()->hasFocus()))||(((HUDuiServerList*)menu->tabbedControl->hasFocus())))
+    if ((activeTab == menu->normalList) ||
+	(activeTab->hasFocus()) ||
+	(menu->tabbedControl->hasFocus()))
       return false;
 
-    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->favoritesList)
-      serverList.unmarkAsFavorite(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
+    if (activeTab == menu->favoritesList)
+      serverList.unmarkAsFavorite(activeTab->getSelectedServer());
 
-    if (((HUDuiServerList*)menu->tabbedControl->getActiveTab()) == menu->recentList)
-      serverList.unmarkAsRecent(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
+    if (activeTab == menu->recentList)
+      serverList.unmarkAsRecent(activeTab->getSelectedServer());
 
-    ((HUDuiServerList*)menu->tabbedControl->getActiveTab())->removeItem(((HUDuiServerList*)menu->tabbedControl->getActiveTab())->getSelectedServer());
+    activeTab->removeItem(activeTab->getSelectedServer());
     return true;
   }
 
@@ -107,20 +123,20 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-pingsMap ServerMenu::activePings;
+ServerMenu::PingsMap ServerMenu::activePings;
 
 ServerMenu::ServerMenu()
-  : listsCache(HUDuiServerListCache::instance())
-  , serverList(ServerList::instance())
-//   , normalList(new HUDuiServerList())
-//   , recentList(new HUDuiServerList())
-//   , favoritesList(new HUDuiServerList())
-  , defaultKey(this)
-  , title(0)
-  , help(0)
+  : normalList(0)
+  , recentList(0)
+  , favoritesList(0)
   , tabbedControl(0)
   , serverInfo(new HUDuiServerInfo())
   , customTabControl(new HUDuiServerListCustomTab())
+  , listsCache(HUDuiServerListCache::instance())
+  , serverList(ServerList::instance())
+  , defaultKey(this)
+  , title(0)
+  , help(0)
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -133,14 +149,11 @@ ServerMenu::ServerMenu()
 
   std::vector<std::pair<HUDuiServerList*, std::string> > cachedLists = listsCache.readCachedLists();
 
-  if (cachedLists.size() > (size_t) 0)
-  {
+  if (cachedLists.size() > (size_t) 0) {
     normalList = cachedLists[0].first;
     recentList = cachedLists[1].first;
     favoritesList = cachedLists[2].first;
-  }
-  else
-  {
+  } else {
     normalList = new HUDuiServerList;
     favoritesList = new HUDuiServerList;
     recentList = new HUDuiServerList;
@@ -169,8 +182,7 @@ ServerMenu::ServerMenu()
   tabbedControl->addTab(recentList, "Recent");
   tabbedControl->addTab(favoritesList, "Favorites");
 
-  for (size_t i=3; i<cachedLists.size(); i++)
-  {
+  for (size_t i=3; i<cachedLists.size(); i++) {
     cachedLists[i].first->setFontFace(fontFace);
     tabbedControl->addTab(cachedLists[i].first, cachedLists[i].second);
   }
@@ -199,42 +211,41 @@ ServerMenu::~ServerMenu()
 
 void ServerMenu::newServer(ServerItem* addedServer, void* data)
 {
+  HUDuiServerList* serverData( static_cast<HUDuiServerList*>(data) );
+
   // Server already has a ping
-  if (addedServer->ping.pingTime != 0)
-  {
-    ((HUDuiServerList*)data)->addItem(addedServer);
+  if (addedServer->ping.pingTime != 0) {
+    serverData->addItem(addedServer);
     return;
   }
 
   // Pinging in process, add on to the list vector
-  if (addedServer->ping.pinging)
-  {
-    ServerMenu::activePings[addedServer->getServerKey()].second.push_back((HUDuiServerList*)data);
+  if (addedServer->ping.pinging) {
+    ServerMenu::activePings[addedServer->getServerKey()].second.push_back(serverData);
   }
 
 
-  ServerPing *newping = new ServerPing(addedServer->ping.serverId.serverHost, ntohs(addedServer->ping.serverId.port));
+  ServerPing* newping = new ServerPing(addedServer->ping.serverId.serverHost, ntohs(addedServer->ping.serverId.port));
   newping->start();
   std::vector<HUDuiServerList*> serverListsVector;
-  serverListsVector.push_back((HUDuiServerList*)data);
-  ServerMenu::activePings.insert(pingMapPair(addedServer->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*> >(newping, serverListsVector)));
+  serverListsVector.push_back(serverData);
+  ServerMenu::activePings.insert(PingsMap::value_type(addedServer->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*> >(newping, serverListsVector)));
   addedServer->ping.pinging = true;
 }
 
 void ServerMenu::execute()
 {
-  if ((tabbedControl->getActiveTab() == (HUDuiControl*)customTabControl)&&
-     (((HUDuiServerListCustomTab*)tabbedControl->getActiveTab())->createNew->hasFocus()))
+  if ((tabbedControl->getActiveTab() == customTabControl) &&
+      (dynamic_cast<HUDuiServerListCustomTab*>(tabbedControl->getActiveTab())->createNew->hasFocus()))
   {
     HUDuiServerList* newServerList = customTabControl->createServerList();
     listsCache.addNewList(newServerList, customTabControl->tabName->getString());
     tabbedControl->addTab(newServerList, customTabControl->tabName->getString(), tabbedControl->getTabCount() - 1);
-    for (size_t i=0; i<serverList.size(); i++)
-    {
-      ((HUDuiServerList*)newServerList)->addItem(serverList.getServerAt(i));
+    for (size_t i=0; i<serverList.size(); i++) {
+      newServerList->addItem(serverList.getServerAt(i));
     }
     //newServerList->searchServers(customTabControl->serverName->getString());
-    ((HUDuiNestedContainer*)(tabbedControl->getTab(tabbedControl->getTabCount() - 2)))->getNav().set((size_t)1);
+    dynamic_cast<HUDuiNestedContainer*>(tabbedControl->getTab(tabbedControl->getTabCount() - 2))->getNav().set(1);
     return;
   }
 
@@ -245,7 +256,7 @@ void ServerMenu::execute()
 
   // update startup info
   StartupInfo* info = getStartupInfo();
-  ServerItem* selectedServer = ((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer();
+  ServerItem* selectedServer = dynamic_cast<HUDuiServerList*>(tabbedControl->getActiveTab())->getSelectedServer();
   strncpy(info->serverName, selectedServer->name.c_str(), ServerNameLen-1);
   info->serverPort = ntohs((unsigned short) selectedServer->ping.serverId.port);
 
@@ -301,17 +312,19 @@ void ServerMenu::resize(int _width, int _height)
 
 void ServerMenu::updateStatus()
 {
-  if ((tabbedControl->hasFocus())||(((HUDuiServerList*)tabbedControl->getActiveTab())->hasFocus())||(tabbedControl->getActiveTabName() == "Create New Tab"))
+  if (tabbedControl->hasFocus() ||
+      tabbedControl->getActiveTab()->hasFocus() ||
+      tabbedControl->getActiveTabName() == "Create New Tab")
     serverInfo->setServerItem(NULL);
   else
-    serverInfo->setServerItem(((HUDuiServerList*)tabbedControl->getActiveTab())->getSelectedServer());
+    serverInfo->setServerItem(dynamic_cast<HUDuiServerList*>(tabbedControl->getActiveTab())->getSelectedServer());
 }
 
 void ServerMenu::playingCB(void* _self)
 {
   ServerList &list = ServerList::instance();
-  for (pingsMap::iterator
-    i = ServerMenu::activePings.begin(); i != ServerMenu::activePings.end();) {
+  for (PingsMap::iterator i = ServerMenu::activePings.begin(); 
+       i != ServerMenu::activePings.end();) {
     i->second.first->doPings();
     if (i->second.first->done()) {
       ServerItem* server = list.lookupServer(i->first);
@@ -329,8 +342,8 @@ void ServerMenu::playingCB(void* _self)
     ++i;
   }
 
-  ((ServerMenu*)_self)->serverList.checkEchos(getStartupInfo());
-  ((ServerMenu*)_self)->updateStatus();
+  static_cast<ServerMenu*>(_self)->serverList.checkEchos(getStartupInfo());
+  static_cast<ServerMenu*>(_self)->updateStatus();
 }
 
 // Local Variables: ***

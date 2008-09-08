@@ -32,9 +32,6 @@
 
 class ServerMenu;
 
-typedef std::map<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*> > > pingsMap;
-typedef std::pair<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*> > > pingMapPair;
-
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
@@ -49,6 +46,7 @@ private:
 };
 
 class ServerMenu : public HUDDialog {
+  typedef std::map<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*> > > PingsMap;
 public:
   ServerMenu();
   ~ServerMenu();
@@ -58,6 +56,18 @@ public:
   void		execute();
   void		resize(int width, int height);
 
+  static void newServer(ServerItem* addedServer, void* data);
+
+public: 			// need better encapsulation
+  HUDuiServerList* normalList;
+  HUDuiServerList* recentList;
+  HUDuiServerList* favoritesList;
+
+  HUDuiTabbedControl* tabbedControl;
+  HUDuiServerInfo* serverInfo;
+  HUDuiServerListCustomTab* customTabControl;
+
+private:
   HUDuiServerListCache &listsCache;
   ServerList &serverList;
 
@@ -66,23 +76,14 @@ public:
   void updateStatus();
   void markAsFavorite(ServerItem* item);
 
-  static void newServer(ServerItem* addedServer, void* data);
-
   static void playingCB(void*);
 
-  static pingsMap activePings;
-
-  HUDuiServerList* normalList;
-  HUDuiServerList* recentList;
-  HUDuiServerList* favoritesList;
+  static PingsMap activePings;
 
   ServerMenuDefaultKey	defaultKey;
 
   HUDuiLabel* title;
   HUDuiLabel* help;
-  HUDuiTabbedControl* tabbedControl;
-  HUDuiServerInfo* serverInfo;
-  HUDuiServerListCustomTab* customTabControl;
 };
 
 
