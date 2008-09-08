@@ -169,7 +169,7 @@ class FTFace
          */
         void BuildKerningCache();
         static const unsigned int MAX_PRECOMPUTED = 128;
-        float *kerningCache;
+        FTGL_DOUBLE* kerningCache;
 
         /**
          * Current error code. Zero means no error.

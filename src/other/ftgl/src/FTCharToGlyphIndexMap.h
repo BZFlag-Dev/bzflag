@@ -81,7 +81,7 @@ class FTCharToGlyphIndexMap
             }
         }
 
-        void clear()
+        inline void clear()
         {
             if(this->Indices)
             {

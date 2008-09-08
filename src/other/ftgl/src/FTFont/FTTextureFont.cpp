@@ -134,8 +134,8 @@ FTTextureFontImpl::~FTTextureFontImpl()
 
 FTGlyph* FTTextureFontImpl::MakeGlyphImpl(FT_GlyphSlot ftGlyph)
 {
-    glyphHeight = static_cast<int>(charSize.Height() + 0.5);
-    glyphWidth = static_cast<int>(charSize.Width() + 0.5);
+    glyphHeight = static_cast<int>(charSize.Height() + 0.5f);
+    glyphWidth = static_cast<int>(charSize.Width() + 0.5f);
 
     if(glyphHeight < 1) glyphHeight = 1;
     if(glyphWidth < 1) glyphWidth = 1;
