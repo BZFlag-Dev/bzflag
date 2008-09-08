@@ -21,6 +21,7 @@ EXTRA_DIST = \
 	autogen.sh \
 	configure.ac \
 	ftgl.pc.in \
+	m4 \
 	$(NULL)
 
 # Print out an informative summary.

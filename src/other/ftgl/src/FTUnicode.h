@@ -1,7 +1,14 @@
 /*
  * FTGL - OpenGL font library
  *
- * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2008 Daniel Remenak <dtremenak@users.sourceforge.net>
+ *
+ * Portions derived from ConvertUTF.c Copyright (C) 2001-2004 Unicode, Inc
+ *   Unicode, Inc. hereby grants the right to freely use the information
+ *   supplied in this file in the creation of products supporting the
+ *   Unicode Standard, and to make copies of this file in any form
+ *   for internal or external distribution as long as this notice
+ *   remains attached.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
