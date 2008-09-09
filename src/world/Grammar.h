@@ -24,12 +24,14 @@
 /* BZW */
 #include "Parser.h"
 
-using namespace boost;
-using namespace boost::spirit;
-
 namespace BZW
 {
-  struct bzw_grammar : boost::spirit::grammar<bzw_grammar>
+  class Parser; //resolve ambiguity issues
+  using namespace std;
+  using namespace boost;
+  using namespace boost::spirit;
+
+  struct bzw_grammar : grammar<bzw_grammar>
   {
     bzw_grammar(Parser& _parser)
       : parser(_parser) {}

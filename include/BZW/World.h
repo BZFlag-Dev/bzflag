@@ -44,7 +44,7 @@ namespace BZW
       bool registerObjectCallback(const std::string& tag, WorldObjectFactory factory);
 
       /// Internal WorldObjectFactories
-      Box* addBox();
+      WorldObject* addBox();
     protected:
       bool insertWorldObject(const std::string& tag, WorldObject* wobj);
     private:

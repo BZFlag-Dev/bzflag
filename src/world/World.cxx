@@ -11,7 +11,7 @@
  */
 
 #include "BZW/World.h"
-#include "WorldObjects.h"
+#include "BZW/WorldObjects.h"
 #include "Parser.h"
 
 namespace BZW
@@ -33,13 +33,13 @@ namespace BZW
   {
     Parser p;
     /* add custom objects first */
-    for(std::map<std::string, WorldObjectFactory>::iterator i = custom_objects.begin(); i < custom_objects.end(); i++)
+    for(std::map<std::string, WorldObjectFactory>::iterator i = custom_objects.begin(); i != custom_objects.end(); i++)
     {
-      p.addWorldFactoryObject(i->first, i->second);
+      p.addWorldObjectFactory(i->first, i->second);
     }
 
     /* add default objects */
-    p.addWorldFactoryObject("box", addBox);
+    p.addWorldObjectFactory("box", &World::addBox);
 
     /* parse */
     p.parse(input);
@@ -70,7 +70,7 @@ namespace BZW
   }
 
   // World Objects
-  Box* World::addBox()
+  WorldObject* World::addBox()
   {
     Box* new_box = new Box();
     insertWorldObject("box",new_box);
