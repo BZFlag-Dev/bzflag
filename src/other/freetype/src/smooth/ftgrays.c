@@ -144,10 +144,10 @@
 
 #include "ftsmerrs.h"
 
-#define ErrRaster_Invalid_Mode     Smooth_Err_Cannot_Render_Glyph
-#define ErrRaster_Invalid_Outline  Smooth_Err_Invalid_Outline
-#define ErrRaster_Memory_Overflow  Smooth_Err_Out_Of_Memory
-#define ErrRaster_Invalid_Argument Smooth_Err_Bad_Argument
+#define ErrRaster_Invalid_Mode      Smooth_Err_Cannot_Render_Glyph
+#define ErrRaster_Invalid_Outline   Smooth_Err_Invalid_Outline
+#define ErrRaster_Memory_Overflow   Smooth_Err_Out_Of_Memory
+#define ErrRaster_Invalid_Argument  Smooth_Err_Bad_Argument
 
 #endif /* !_STANDALONE_ */
 
@@ -197,7 +197,7 @@
 
 #define ONE_PIXEL       ( 1L << PIXEL_BITS )
 #define PIXEL_MASK      ( -1L << PIXEL_BITS )
-#define TRUNC( x )      ( (TCoord)((x) >> PIXEL_BITS) )
+#define TRUNC( x )      ( (TCoord)( (x) >> PIXEL_BITS ) )
 #define SUBPIXELS( x )  ( (TPos)(x) << PIXEL_BITS )
 #define FLOOR( x )      ( (x) & -ONE_PIXEL )
 #define CEILING( x )    ( ( (x) + ONE_PIXEL - 1 ) & -ONE_PIXEL )
@@ -398,6 +398,9 @@
     int     x = ras.ex;
 
 
+    if ( x > ras.max_ex )
+      x = ras.max_ex;
+
     pcell = &ras.ycells[ras.ey];
     for (;;)
     {
@@ -462,6 +465,10 @@
     /* All cells that are on the left of the clipping region go to the */
     /* min_ex - 1 horizontal position.                                 */
     ey -= ras.min_ey;
+
+    if ( ex > ras.max_ex )
+      ex = ras.max_ex;
+
     ex -= ras.min_ex;
     if ( ex < 0 )
       ex = -1;
@@ -492,6 +499,9 @@
   gray_start_cell( RAS_ARG_ TCoord  ex,
                             TCoord  ey )
   {
+    if ( ex > ras.max_ex )
+      ex = (TCoord)( ras.max_ex );
+
     if ( ex < ras.min_ex )
       ex = (TCoord)( ras.min_ex - 1 );
 
@@ -1196,6 +1206,10 @@
     y += (TCoord)ras.min_ey;
     x += (TCoord)ras.min_ex;
 
+    /* FT_Span.x is a 16-bit short, so limit our coordinates appropriately */
+    if ( x >= 32768 )
+      x = 32767;
+
     if ( coverage )
     {
       /* see whether we can add this span to the current list */
@@ -1602,15 +1616,14 @@
 
     volatile int  error = 0;
 
+
     if ( ft_setjmp( ras.jump_buffer ) == 0 )
     {
       error = FT_Outline_Decompose( &ras.outline, &func_interface, &ras );
       gray_record_cell( RAS_VAR );
     }
     else
-    {
       error = ErrRaster_Memory_Overflow;
-    }
 
     return error;
   }
@@ -1645,7 +1658,7 @@
     ras.count_ex = ras.max_ex - ras.min_ex;
     ras.count_ey = ras.max_ey - ras.min_ey;
 
-    /* simple heuristic used to speed-up the bezier decomposition -- see */
+    /* simple heuristic used to speed up the bezier decomposition -- see */
     /* the code in gray_render_conic() and gray_render_cubic() for more  */
     /* details                                                           */
     ras.conic_level = 32;
@@ -1664,10 +1677,12 @@
       ras.cubic_level <<= level;
     }
 
-    /* setup vertical bands */
+    /* set up vertical bands */
     num_bands = (int)( ( ras.max_ey - ras.min_ey ) / ras.band_size );
-    if ( num_bands == 0 )  num_bands = 1;
-    if ( num_bands >= 39 ) num_bands = 39;
+    if ( num_bands == 0 )
+      num_bands = 1;
+    if ( num_bands >= 39 )
+      num_bands = 39;
 
     ras.band_shoot = 0;
 
@@ -1782,11 +1797,14 @@
     if ( !raster || !raster->buffer || !raster->buffer_size )
       return ErrRaster_Invalid_Argument;
 
+    if ( !outline )
+      return ErrRaster_Invalid_Outline;
+
     /* return immediately if the outline is empty */
     if ( outline->n_points == 0 || outline->n_contours <= 0 )
       return 0;
 
-    if ( !outline || !outline->contours || !outline->points )
+    if ( !outline->contours || !outline->points )
       return ErrRaster_Invalid_Outline;
 
     if ( outline->n_points !=
@@ -1836,10 +1854,10 @@
 
     gray_init_cells( worker, raster->buffer, raster->buffer_size );
 
-    ras.outline   = *outline;
-    ras.num_cells = 0;
-    ras.invalid   = 1;
-    ras.band_size = raster->band_size;
+    ras.outline        = *outline;
+    ras.num_cells      = 0;
+    ras.invalid        = 1;
+    ras.band_size      = raster->band_size;
     ras.num_gray_spans = 0;
 
     if ( target_map )

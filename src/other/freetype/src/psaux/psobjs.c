@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Auxiliary functions for PostScript fonts (body).                     */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007 by             */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 by       */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -169,7 +169,7 @@
                 void*       object,
                 FT_PtrDist  length )
   {
-    if ( idx < 0 || idx > table->max_elems )
+    if ( idx < 0 || idx >= table->max_elems )
     {
       FT_ERROR(( "ps_table_add: invalid index\n" ));
       return PSaux_Err_Invalid_Argument;
@@ -592,7 +592,6 @@
       error = PSaux_Err_Invalid_File_Format;
     }
 
-    FT_ASSERT( parser->error == PSaux_Err_Ok );
     parser->error  = error;
     parser->cursor = cur;
   }
@@ -785,8 +784,7 @@
 
     if ( c == '[' )
       ender = ']';
-
-    if ( c == '{' )
+    else if ( c == '{' )
       ender = '}';
 
     if ( ender )
@@ -795,7 +793,8 @@
     /* now, read the coordinates */
     while ( cur < limit )
     {
-      FT_Short dummy;
+      FT_Short  dummy;
+      FT_Byte*  old_cur;
 
 
       /* skip whitespace in front of data */
@@ -803,20 +802,29 @@
       if ( cur >= limit )
         goto Exit;
 
-      if ( coords != NULL && count >= max_coords )
-        break;
-
       if ( *cur == ender )
       {
         cur++;
         break;
       }
 
+      old_cur = cur;
+
+      if ( coords != NULL && count >= max_coords )
+        break;
+
       /* call PS_Conv_ToFixed() even if coords == NULL */
       /* to properly parse number at `cur'             */
       *( coords != NULL ? &coords[count] : &dummy ) =
         (FT_Short)( PS_Conv_ToFixed( &cur, limit, 0 ) >> 16 );
-      count++;
+
+      if ( old_cur == cur )
+      {
+        count = -1;
+        goto Exit;
+      }
+      else
+        count++;
 
       if ( !ender )
         break;
@@ -830,7 +838,7 @@
 
   /* first character must be a delimiter or a part of a number */
   /* NB: `values' can be NULL if we just want to skip the      */
-  /*     array in this case we ignore `max_values'             */
+  /*     array; in this case we ignore `max_values'            */
 
   static FT_Int
   ps_tofixedarray( FT_Byte*  *acur,
@@ -854,8 +862,7 @@
 
     if ( c == '[' )
       ender = ']';
-
-    if ( c == '{' )
+    else if ( c == '{' )
       ender = '}';
 
     if ( ender )
@@ -864,7 +871,8 @@
     /* now, read the values */
     while ( cur < limit )
     {
-      FT_Fixed dummy;
+      FT_Fixed  dummy;
+      FT_Byte*  old_cur;
 
 
       /* skip whitespace in front of data */
@@ -872,20 +880,29 @@
       if ( cur >= limit )
         goto Exit;
 
-      if ( values != NULL && count >= max_values )
-        break;
-
       if ( *cur == ender )
       {
         cur++;
         break;
       }
 
+      old_cur = cur;
+
+      if ( values != NULL && count >= max_values )
+        break;
+
       /* call PS_Conv_ToFixed() even if coords == NULL */
       /* to properly parse number at `cur'             */
       *( values != NULL ? &values[count] : &dummy ) =
         PS_Conv_ToFixed( &cur, limit, power_ten );
-      count++;
+
+      if ( old_cur == cur )
+      {
+        count = -1;
+        goto Exit;
+      }
+      else
+        count++;
 
       if ( !ender )
         break;
@@ -1161,9 +1178,18 @@
         {
           FT_Fixed  temp[4];
           FT_BBox*  bbox = (FT_BBox*)q;
+          FT_Int    result;
 
 
-          (void)ps_tofixedarray( &token.start, token.limit, 4, temp, 0 );
+          result = ps_tofixedarray( &cur, limit, 4, temp, 0 );
+
+          if ( result < 0 )
+          {
+            FT_ERROR(( "ps_parser_load_field: "
+                       "expected four integers in bounding box\n" ));
+            error = PSaux_Err_Invalid_File_Format;
+            goto Exit;
+          }
 
           bbox->xMin = FT_RoundFix( temp[0] );
           bbox->yMin = FT_RoundFix( temp[1] );
@@ -1227,8 +1253,8 @@
       error = PSaux_Err_Ignore;
       goto Exit;
     }
-    if ( num_elements > T1_MAX_TABLE_ELEMENTS )
-      num_elements = T1_MAX_TABLE_ELEMENTS;
+    if ( (FT_UInt)num_elements > field->array_max )
+      num_elements = field->array_max;
 
     old_cursor = parser->cursor;
     old_limit  = parser->limit;
@@ -1311,7 +1337,7 @@
     {
       if ( cur < parser->limit && *cur != '>' )
       {
-        FT_ERROR(( "ps_tobytes: Missing closing delimiter `>'\n" ));
+        FT_ERROR(( "ps_parser_to_bytes: Missing closing delimiter `>'\n" ));
         error = PSaux_Err_Invalid_File_Format;
         goto Exit;
       }
@@ -1455,12 +1481,6 @@
 
       if ( hinting )
         builder->hints_funcs = glyph->internal->glyph_hints;
-    }
-
-    if ( size )
-    {
-      builder->scale_x = size->metrics.x_scale;
-      builder->scale_y = size->metrics.y_scale;
     }
 
     builder->pos_x = 0;
@@ -1614,26 +1634,23 @@
   t1_builder_close_contour( T1_Builder  builder )
   {
     FT_Outline*  outline = builder->current;
+    FT_Int       first;
 
 
     if ( !outline )
       return;
 
-    /* XXXX: We must not include the last point in the path if it */
-    /*       is located on the first point.                       */
+    first = outline->n_contours <= 1
+            ? 0 : outline->contours[outline->n_contours - 2] + 1;
+
+    /* We must not include the last point in the path if it */
+    /* is located on the first point.                       */
     if ( outline->n_points > 1 )
     {
-      FT_Int      first   = 0;
       FT_Vector*  p1      = outline->points + first;
       FT_Vector*  p2      = outline->points + outline->n_points - 1;
       FT_Byte*    control = (FT_Byte*)outline->tags + outline->n_points - 1;
 
-
-      if ( outline->n_contours > 1 )
-      {
-        first = outline->contours[outline->n_contours - 2] + 1;
-        p1    = outline->points + first;
-      }
 
       /* `delete' last point only if it coincides with the first */
       /* point and it is not a control point (which can happen). */
@@ -1643,8 +1660,18 @@
     }
 
     if ( outline->n_contours > 0 )
-      outline->contours[outline->n_contours - 1] =
-        (short)( outline->n_points - 1 );
+    {
+      /* Don't add contours only consisting of one point, i.e., */
+      /* check whether begin point and last point are the same. */
+      if ( first == outline->n_points - 1 )
+      {
+        outline->n_contours--;
+        outline->n_points--;
+      }
+      else
+        outline->contours[outline->n_contours - 1] =
+          (short)( outline->n_points - 1 );
+    }
   }
 
 

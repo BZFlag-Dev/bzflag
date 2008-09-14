@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Auto-fitter glyph loading routines (body).                           */
 /*                                                                         */
-/*  Copyright 2003, 2004, 2005, 2006, 2007 by                              */
+/*  Copyright 2003, 2004, 2005, 2006, 2007, 2008 by                        */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -165,15 +165,16 @@
 
       /* now load the slot image into the auto-outline and run the */
       /* automatic hinting process                                 */
-      metrics->clazz->script_hints_apply( hints,
-                                          &gloader->current.outline,
-                                          metrics );
+      if ( metrics->clazz->script_hints_apply )
+        metrics->clazz->script_hints_apply( hints,
+                                            &gloader->current.outline,
+                                            metrics );
 
       /* we now need to hint the metrics according to the change in */
       /* width/positioning that occurred during the hinting process */
       if ( scaler->render_mode != FT_RENDER_MODE_LIGHT )
       {
-        FT_Pos        old_advance, old_rsb, old_lsb, new_lsb;
+        FT_Pos        old_rsb, old_lsb, new_lsb;
         FT_Pos        pp1x_uh, pp2x_uh;
         AF_AxisHints  axis  = &hints->axis[AF_DIMENSION_HORZ];
         AF_Edge       edge1 = axis->edges;         /* leftmost edge  */
@@ -183,7 +184,6 @@
 
         if ( axis->num_edges > 1 && AF_HINTS_DO_ADVANCE( hints ) )
         {
-          old_advance = loader->pp2.x - loader->pp1.x;
           old_rsb     = loader->pp2.x - edge2->opos;
           old_lsb     = edge1->opos;
           new_lsb     = edge1->pos;
@@ -391,12 +391,12 @@
         FT_Outline_Transform( &gloader->base.outline, &loader->trans_matrix );
         FT_Vector_Transform( &vvector, &loader->trans_matrix );
       }
-
+#if 1
       /* we must translate our final outline by -pp1.x and compute */
       /* the new metrics                                           */
       if ( loader->pp1.x )
         FT_Outline_Translate( &gloader->base.outline, -loader->pp1.x, 0 );
-
+#endif
       FT_Outline_Get_CBox( &gloader->base.outline, &bbox );
 
       bbox.xMin = FT_PIX_FLOOR( bbox.xMin );
@@ -493,10 +493,17 @@
     if ( !error )
     {
       AF_ScriptMetrics  metrics;
+      FT_UInt           options = 0;
 
+
+#ifdef FT_OPTION_AUTOFIT2
+      /* XXX: undocumented hook to activate the latin2 hinter */
+      if ( load_flags & ( 1UL << 20 ) )
+        options = 2;
+#endif
 
       error = af_face_globals_get_metrics( loader->globals, gindex,
-                                           &metrics );
+                                           options, &metrics );
       if ( !error )
       {
         loader->metrics = metrics;
@@ -509,9 +516,13 @@
         load_flags |=  FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_TRANSFORM;
         load_flags &= ~FT_LOAD_RENDER;
 
-        error = metrics->clazz->script_hints_init( &loader->hints, metrics );
-        if ( error )
-          goto Exit;
+        if ( metrics->clazz->script_hints_init )
+        {
+          error = metrics->clazz->script_hints_init( &loader->hints,
+                                                     metrics );
+          if ( error )
+            goto Exit;
+        }
 
         error = af_loader_load_g( loader, &scaler, gindex, load_flags, 0 );
       }

@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    The FreeType private base classes (specification).                   */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2008 by             */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -89,6 +89,25 @@ FT_BEGIN_HEADER
   ft_highpow2( FT_UInt32  value );
 
 
+  /*
+   *  character classification functions -- since these are used to parse
+   *  font files, we must not use those in <ctypes.h> which are
+   *  locale-dependent
+   */
+#define  ft_isdigit( x )   ( ( (unsigned)(x) - '0' ) < 10U )
+
+#define  ft_isxdigit( x )  ( ( (unsigned)(x) - '0' ) < 10U || \
+                             ( (unsigned)(x) - 'a' ) < 6U  || \
+                             ( (unsigned)(x) - 'A' ) < 6U  )
+
+  /* the next two macros assume ASCII representation */
+#define  ft_isupper( x )  ( ( (unsigned)(x) - 'A' ) < 26U )
+#define  ft_islower( x )  ( ( (unsigned)(x) - 'a' ) < 26U )
+
+#define  ft_isalpha( x )  ( ft_isupper( x ) || ft_islower( x ) )
+#define  ft_isalnum( x )  ( ft_isdigit( x ) || ft_isalpha( x ) )
+
+
   /*************************************************************************/
   /*************************************************************************/
   /*************************************************************************/
@@ -141,6 +160,31 @@ FT_BEGIN_HEADER
   (*FT_CMap_CharNextFunc)( FT_CMap     cmap,
                            FT_UInt32  *achar_code );
 
+  typedef FT_UInt
+  (*FT_CMap_CharVarIndexFunc)( FT_CMap    cmap,
+                               FT_CMap    unicode_cmap,
+                               FT_UInt32  char_code,
+                               FT_UInt32  variant_selector );
+
+  typedef FT_Bool
+  (*FT_CMap_CharVarIsDefaultFunc)( FT_CMap    cmap,
+                                   FT_UInt32  char_code,
+                                   FT_UInt32  variant_selector );
+
+  typedef FT_UInt32 *
+  (*FT_CMap_VariantListFunc)( FT_CMap    cmap,
+                              FT_Memory  mem );
+
+  typedef FT_UInt32 *
+  (*FT_CMap_CharVariantListFunc)( FT_CMap    cmap,
+                                  FT_Memory  mem,
+                                  FT_UInt32  char_code );
+
+  typedef FT_UInt32 *
+  (*FT_CMap_VariantCharListFunc)( FT_CMap    cmap,
+                                  FT_Memory  mem,
+                                  FT_UInt32  variant_selector );
+
 
   typedef struct  FT_CMap_ClassRec_
   {
@@ -149,6 +193,15 @@ FT_BEGIN_HEADER
     FT_CMap_DoneFunc       done;
     FT_CMap_CharIndexFunc  char_index;
     FT_CMap_CharNextFunc   char_next;
+
+    /* Subsequent entries are special ones for format 14 -- the variant */
+    /* selector subtable which behaves like no other                    */
+
+    FT_CMap_CharVarIndexFunc      char_var_index;
+    FT_CMap_CharVarIsDefaultFunc  char_var_default;
+    FT_CMap_VariantListFunc       variant_list;
+    FT_CMap_CharVariantListFunc   charvariant_list;
+    FT_CMap_VariantCharListFunc   variantchar_list;
 
   } FT_CMap_ClassRec;
 
@@ -287,7 +340,28 @@ FT_BEGIN_HEADER
   } FT_GlyphSlot_InternalRec;
 
 
+#if 0
+
   /*************************************************************************/
+  /*                                                                       */
+  /* <Struct>                                                              */
+  /*    FT_Size_InternalRec                                                */
+  /*                                                                       */
+  /* <Description>                                                         */
+  /*    This structure contains the internal fields of each FT_Size        */
+  /*    object.  Currently, it's empty.                                    */
+  /*                                                                       */
+  /*************************************************************************/
+
+  typedef struct  FT_Size_InternalRec_
+  {
+    /* empty */
+
+  } FT_Size_InternalRec;
+
+#endif
+
+
   /*************************************************************************/
   /*************************************************************************/
   /****                                                                 ****/

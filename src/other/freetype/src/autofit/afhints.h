@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Auto-fitter hinting routines (specification).                        */
 /*                                                                         */
-/*  Copyright 2003, 2004, 2005, 2006, 2007 by                              */
+/*  Copyright 2003, 2004, 2005, 2006, 2007, 2008 by                        */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -21,6 +21,7 @@
 
 #include "aftypes.h"
 
+#define xxAF_SORT_SEGMENTS
 
 FT_BEGIN_HEADER
 
@@ -29,7 +30,7 @@ FT_BEGIN_HEADER
   *  script analysis routines (until now).
   */
 
-  typedef enum
+  typedef enum  AF_Dimension_
   {
     AF_DIMENSION_HORZ = 0,  /* x coordinates,                    */
                             /* i.e., vertical segments & edges   */
@@ -43,7 +44,7 @@ FT_BEGIN_HEADER
 
   /* hint directions -- the values are computed so that two vectors are */
   /* in opposite directions iff `dir1 + dir2 == 0'                      */
-  typedef enum
+  typedef enum  AF_Direction_
   {
     AF_DIR_NONE  =  4,
     AF_DIR_RIGHT =  1,
@@ -55,7 +56,7 @@ FT_BEGIN_HEADER
 
 
   /* point hint flags */
-  typedef enum
+  typedef enum  AF_Flags_
   {
     AF_FLAG_NONE = 0,
 
@@ -86,7 +87,7 @@ FT_BEGIN_HEADER
 
 
   /* edge hint flags */
-  typedef enum
+  typedef enum  AF_Edge_Flags_
   {
     AF_EDGE_NORMAL = 0,
     AF_EDGE_ROUND  = 1 << 0,
@@ -171,6 +172,9 @@ FT_BEGIN_HEADER
     FT_Int        num_segments;
     FT_Int        max_segments;
     AF_Segment    segments;
+#ifdef AF_SORT_SEGMENTS
+    FT_Int        mid_segments;
+#endif
 
     FT_Int        num_edges;
     FT_Int        max_edges;
@@ -262,6 +266,7 @@ FT_BEGIN_HEADER
   FT_LOCAL( FT_Error)
   af_axis_hints_new_edge( AF_AxisHints  axis,
                           FT_Int        fpos,
+                          AF_Direction  dir,
                           FT_Memory     memory,
                           AF_Edge      *edge );
 
@@ -281,7 +286,8 @@ FT_BEGIN_HEADER
 
   FT_LOCAL( FT_Error )
   af_glyph_hints_reload( AF_GlyphHints  hints,
-                         FT_Outline*    outline );
+                         FT_Outline*    outline,
+                         FT_Bool        get_inflections );
 
   FT_LOCAL( void )
   af_glyph_hints_save( AF_GlyphHints  hints,

@@ -230,17 +230,22 @@
       if ( !face->root.internal->incremental_interface )
         error = tt_face_load_loca( face, stream );
       if ( !error )
-        error = tt_face_load_cvt( face, stream )  ||
-                tt_face_load_fpgm( face, stream ) ||
-                tt_face_load_prep( face, stream );
+        error = tt_face_load_cvt( face, stream );
+      if ( !error )
+        error = tt_face_load_fpgm( face, stream );
+      if ( !error )
+        error = tt_face_load_prep( face, stream );
 
 #else
 
       if ( !error )
-        error = tt_face_load_loca( face, stream ) ||
-                tt_face_load_cvt( face, stream )  ||
-                tt_face_load_fpgm( face, stream ) ||
-                tt_face_load_prep( face, stream );
+        error = tt_face_load_loca( face, stream );
+      if ( !error )
+        error = tt_face_load_cvt( face, stream );
+      if ( !error )
+        error = tt_face_load_fpgm( face, stream );
+      if ( !error )
+        error = tt_face_load_prep( face, stream );
 
 #endif
 
@@ -693,21 +698,15 @@
       size->GS = tt_default_graphics_state;
 
       error = tt_size_run_prep( size );
+      if ( !error )
+        size->cvt_ready = 1;
     }
+
   Exit:
     return error;
   }
 
-#else /* !TT_USE_BYTECODE_INTERPRETER */
-
-  FT_LOCAL_DEF( FT_Error )
-  tt_size_ready_bytecode( TT_Size  size )
-  {
-    FT_UNUSED( size );
-    return 0;
-  }
-
-#endif /* !TT_USE_BYTECODE_INTERPRETER */
+#endif /* TT_USE_BYTECODE_INTERPRETER */
 
 
   /*************************************************************************/
