@@ -39,7 +39,7 @@ namespace BZW
     }
 
     /* add default objects */
-    p.addWorldObjectFactory("box", &World::addBox);
+    p.addWorldObjectFactory("box", World::addBox);
 
     /* parse */
     p.parse(input);
@@ -50,27 +50,26 @@ namespace BZW
 
   }
 
-  bool World::registerObjectCallback(std::string tag, WorldObjectFactory factory)
+  bool World::registerObjectCallback(const std::string& tag, WorldObjectFactory factory)
   {
-    std::map<std::string, std::vector<WorldObjectFactory> >::iterator i = custom_objects.insert(std::make_pair(tag, factory));
-    return i.second
+    return (custom_objects.insert(std::make_pair(tag, factory))).second;
   }
 
   bool World::insertWorldObject(const std::string& tag, WorldObject* wobj)
   {
-    std::map<std::string, vector<WorldObject*> >::iterator i = world_objects.find(tag);
+    std::pair<std::map<std::string, std::vector<WorldObject*> >::iterator, bool> result;
 
-    if(i > world_objects.end())
-      i = world_objects.insert(std::make_pair(tag, std::vector<WorldObject*>()));
+    if(world_objects.find(tag) = world_objects.end())
+      result = world_objects.insert(std::make_pair(tag, std::vector<WorldObject*>()));
 
-    if(i.second)
-      i.first.second.push_back(wobj);
+    if(result.second)
+      result.first.second.push_back(wobj);
 
     return i.second;
   }
 
   // World Objects
-  WorldObject* World::addBox()
+  static WorldObject* World::addBox()
   {
     Box* new_box = new Box();
     insertWorldObject("box",new_box);

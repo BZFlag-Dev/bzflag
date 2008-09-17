@@ -35,7 +35,7 @@ namespace BZW
       /// Destructor
       ~Parser();
       /// Parse a BZW file from an istream
-      void Parse(std::istream& input);
+      void parse(std::istream& input);
       /// Register a WorldObjectFactory callback
       bool addWorldObjectFactory(const std::string& tag, World::WorldObjectFactory factory);
     private:
