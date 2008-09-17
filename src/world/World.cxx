@@ -57,23 +57,32 @@ namespace BZW
 
   bool World::insertWorldObject(const std::string& tag, WorldObject* wobj)
   {
-    std::pair<std::map<std::string, std::vector<WorldObject*> >::iterator, bool> result;
+    typedef std::map<std::string, std::vector<WorldObject*> >::iterator world_objects_iter;
+    std::pair<world_objects_iter, bool> result;
+    world_objects_iter i = world_objects.find(tag);
 
-    if(world_objects.find(tag) = world_objects.end())
+    if(i == world_objects.end())
+    {
       result = world_objects.insert(std::make_pair(tag, std::vector<WorldObject*>()));
+      if(result.second)
+        i = result.first;
+      else
+        return false;
+    }
 
-    if(result.second)
-      result.first.second.push_back(wobj);
+    i->second.push_back(wobj);
 
-    return i.second;
+    return true;
   }
 
   // World Objects
   static WorldObject* World::addBox()
   {
     Box* new_box = new Box();
-    insertWorldObject("box",new_box);
-    return new_box;
+    if(insertWorldObject("box", new_box))
+      return new_box;
+    else
+      return NULL;
   }
 }
 // Local Variables: ***
