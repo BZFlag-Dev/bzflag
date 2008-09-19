@@ -19,38 +19,38 @@
 /* bzflag common headers */
 #include "WorldObjects.h"
 
+#include "Factory.h"
+
 namespace BZW
 {
-
   /**
    * World class
    */
-  class World
+
+  class World :public Factory<WorldObject, std::string>
   {
     public:
       /// WorldObject factory function pointer typedef
-      typedef WorldObject* (*WorldObjectFactory)(void);
       /// Default constructor
       World();
       /// Default destructor
-      ~World();
+      virtual ~World();
 
       /// Read/Create a world from a stream
       void read(std::istream& input);
       /// Write current world to a stream
       void write(std::ostream& output);
+ 
+      WorldObject* newObject ( const std::string &name );
 
-      /// Simple object registration, with callbacks
-      bool registerObjectCallback(const std::string& tag, WorldObjectFactory factory);
+      void addCallback ( const std::string &object, CustomObjectCallback *callback );
+      void removeCallback ( const std::string &object, CustomObjectCallback *callback );
 
-      /// Internal WorldObjectFactories
-      WorldObject* addBox();
-    protected:
-      bool insertWorldObject(const std::string& tag, WorldObject* wobj);
-    private:
-      std::map<std::string, WorldObjectFactory> custom_objects;
-      std::map<std::string, std::vector<WorldObject*> > world_objects;
+  private:
+      std::list<WorldObject*> worldObjects;
 
+      typedef std::map<std::string, std::list<CustomObjectCallback*> > CallbackMap;
+      CallbackMap customCallbacks;
   };
 
 }

@@ -17,35 +17,9 @@
 
 namespace BZW
 {
-  void Box::readLine(std::istringstream& line)
+  void Box::Box ( )
   {
-    std::string pname;
-    line >> pname;
-    if(pname == "position")
-    {
-        line
-            >> position[0]
-            >> position[1]
-            >> position[2]
-            ;
-    }
-    else if(pname == "size")
-    {
-        line
-            >> size[0]
-            >> size[1]
-            >> size[2]
-            ;
-    }
-    else if(pname == "rotation")
-    {
-        line >> rotation;
-    }
-    else
-    {
-      std::cerr << "Warning! Unrecognized parameter" << std::endl;
-    }
-    //FIXME check for erroneous extra strings maybe?
+	  // do nothing
   }
 }
 

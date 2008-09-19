@@ -14,12 +14,15 @@
 #include "BZW/WorldObjects.h"
 #include "Parser.h"
 
+#include "BZW/Box.h"
+
 namespace BZW
 {
-
   /// Default constructor
   World::World()
   {
+    Register<GenericWorldObject>("generic");
+    Register<Box>("box");
   }
 
   /// Destructor
@@ -31,7 +34,7 @@ namespace BZW
   /// Read a world from stream
   void World::read(std::istream& input)
   {
-    Parser p;
+    Parser p(&this);
     /* add custom objects first */
     for(std::map<std::string, WorldObjectFactory>::iterator i = custom_objects.begin(); i != custom_objects.end(); i++)
     {
@@ -50,39 +53,55 @@ namespace BZW
 
   }
 
-  bool World::registerObjectCallback(const std::string& tag, WorldObjectFactory factory)
+  WorldObject* World::newObject ( const std::string &name )
   {
-    return (custom_objects.insert(std::make_pair(tag, factory))).second;
-  }
+    WorldObject *obj = NULL;
 
-  bool World::insertWorldObject(const std::string& tag, WorldObject* wobj)
-  {
-    typedef std::map<std::string, std::vector<WorldObject*> >::iterator world_objects_iter;
-    std::pair<world_objects_iter, bool> result;
-    world_objects_iter i = world_objects.find(tag);
-
-    if(i == world_objects.end())
+    if (IsRegistered(name))
+      obj = Create(name);
+    else
     {
-      result = world_objects.insert(std::make_pair(tag, std::vector<WorldObject*>()));
-      if(result.second)
-        i = result.first;
-      else
-        return false;
+      obj = Create("generic");
+      ((GenericWorldObject*)obj)->className = name;
+
+      CallbackMap::iterator itr = customCallbacks.find(name);
+      if (itr != customCallbacks.end())
+	((GenericWorldObject*)obj)->callbacks = itr->second;
     }
 
-    i->second.push_back(wobj);
-
-    return true;
+    worldObjects.push_back(obj);
   }
 
-  // World Objects
-  static WorldObject* World::addBox()
+  void World::addCallback ( const std::string &object, CustomObjectCallback *callback )
   {
-    Box* new_box = new Box();
-    if(insertWorldObject("box", new_box))
-      return new_box;
+    CallbackMap::iterator itr = customCallbacks.find(object);
+
+    if (itr != customCallbacks.end())
+      itr->second.push_back(callback);
     else
-      return NULL;
+    {
+      std::list<CustomObjectCallback*> tmp;
+      customCallbacks[object] = tmp;
+      customCallbacks[object].push_back(callback);
+    }
+  }
+
+  void World::removeCallback ( const std::string &object, CustomObjectCallback *callback )
+  {
+    CallbackMap::iterator itr = customCallbacks.find(object);
+
+    if (itr != customCallbacks.end())
+    {
+      std::list<CustomObjectCallback*>::iterator listItr = itr->second.begin();
+      while (listItr != itr->second.end())
+      {
+	if (*listItr == callback)
+	{
+	  itr->second.erase(listItr);
+	  return;
+	}
+      }
+    }
   }
 }
 // Local Variables: ***

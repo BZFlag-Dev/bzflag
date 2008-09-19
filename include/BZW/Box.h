@@ -21,17 +21,15 @@
 
 namespace BZW
 {
-  class Box : public WorldObject
+  class Box : public PostionalWorldObject
   {
     public:
       /// Default Constructor
       Box();
-      /// Read and parse a parameter line in BZW format
-      void readLine(std::istringstream& line);
+
+      // for the base object this will probably be NOTHING
+      // maybe a geometric descriptor or something
     private:
-      float position[3];
-      float size[3];
-      float rotation;
   };
 
 }
