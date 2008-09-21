@@ -483,8 +483,9 @@ void BZFSHTTPAuth::flushTasks ( void )
 }
 
 
-Templateiser::Templateiser()
+Templateiser::Templateiser( Templateiser *t )
 {
+  parent = t;
   startTimer();
   setDefaultTokens();
 }
@@ -668,6 +669,9 @@ bool Templateiser::callKey ( std::string &data, const std::string &key )
     return true;
   }
 
+  if (parent)
+    return parent->callKey(data,key);
+
   return false;
 }
 
@@ -684,6 +688,9 @@ bool Templateiser::callLoop ( const std::string &key )
   if (itr2 != loopFuncCallbacks.end())
     return (itr2->second)(key);
 
+  if (parent)
+    return parent->callLoop(key);
+
   return false;
 }
 
@@ -699,6 +706,9 @@ bool Templateiser::callIF ( const std::string &key )
   TestMap::iterator itr2 = ifFuncCallbacks.find(lowerKey);
   if (itr2 != ifFuncCallbacks.end())
     return (itr2->second)(key);
+
+  if (parent)
+    return parent->callIF(key);
 
   return false;
 }

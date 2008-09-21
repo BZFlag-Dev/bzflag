@@ -41,7 +41,7 @@ public:
 class Templateiser : public TemplateCallbackClass
 {
 public:
-  Templateiser();
+  Templateiser(Templateiser * t = NULL);
   virtual ~Templateiser();
 
   void addKey(const char *key, TemplateKeyCallback callback);
@@ -110,6 +110,8 @@ private:
   std::string pluginName,baseURL;
 
   std::vector<std::string> filePaths;
+
+  Templateiser *parent;
 };
 
 typedef enum {
