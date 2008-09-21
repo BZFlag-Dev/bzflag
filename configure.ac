@@ -1197,6 +1197,10 @@ if test x$enable_plugins != xno ; then
 fi
 if test "x$BUILD_FTGL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ftgl)
+    if test "x$BUILD_FREETYPE" = "xyes" -a "x$enable_freetype_build" != "xyes" ; then
+	# instruct FTGL to use the included freetype
+	ac_configure_args="$ac_configure_args --enable-freetype-build"
+    fi
 fi
 if test "x$BUILD_ARES" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ares)
