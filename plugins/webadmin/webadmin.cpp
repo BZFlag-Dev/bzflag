@@ -8,6 +8,30 @@
 #include <cstring>
 #include <algorithm>
 
+#include "pages.h"
+
+class LoopStatus
+{
+public:
+  size_t pos;
+  size_t end;
+
+  bool isEnded ( void )
+  {
+    return pos >= end;
+  }
+
+  bool isSet ( void )
+  {
+    return end == 0;
+  }
+
+  void clear ( void )
+  {
+    pos = end = 0;
+  }
+};
+
 class WebAdmin : public BZFSHTTPAuth, TemplateCallbackClass
 {
 public:
@@ -25,22 +49,19 @@ public:
   virtual bool ifCallback (const std::string &key);
 
 private:
-  unsigned int loopPos;
-  std::map<std::string,std::string> templateVars;
+  void clearLoops ( void );
+ 
+//   unsigned int loopPos;
+//   std::map<std::string,std::string> templateVars;
 
-  std::vector<std::string> pagenames;
+//   std::vector<std::string> pagenames;
 
-  void pageCallback (const std::string &pagename, const HTTPRequest &request);
+//   bool editing, checked;
 
-  void mainPageCallback (const HTTPRequest &request);
-  void banlistPageCallback (const HTTPRequest &request);
-  void groupPageCallback (const HTTPRequest &request);
+  typedef std::map<std::string,BasePageHandler*> PageHandlerMap;
+  PageHandlerMap  pageHandlers;
 
-  bz_APIIntList players;
-  bz_APIStringList *stringList;
-  int listSize;
-
-  bool editing, checked;
+//    std::string generatedPage;
 };
 
 WebAdmin *webAdmin = NULL;
@@ -68,64 +89,50 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   return 0;
 }
 
-WebAdmin::WebAdmin():BZFSHTTPAuth(),loopPos(0)
+WebAdmin::WebAdmin():BZFSHTTPAuth()
 {
   registerVDir();
 
-  // add new pages here
-  pagenames.push_back("main");
-  pagenames.push_back("banlist");
-  pagenames.push_back("helpmsg");
-  pagenames.push_back("group");
-}
-
-void WebAdmin::pageCallback(const std::string &pagename, const HTTPRequest &request)
-{
-  if (pagename == "main")
-    mainPageCallback(request);
-  else if (pagename == "banlist")
-    banlistPageCallback(request);
-  else if (pagename == "helpmsg")
-    ;
-  else if (pagename == "group")
-    groupPageCallback(request);
+  pageHandlers["main"] = new Mainpage(&templateSystem);
+  pageHandlers["banlist"] = new Banlistpage(&templateSystem);
+  pageHandlers["helpmsg"] = new HelpMsgpage(&templateSystem);
+  pageHandlers["group"] = new GroupPage(&templateSystem);
 }
 
 void WebAdmin::init(const char* cmdln)
 {
   templateSystem.addSearchPath(cmdln ? cmdln : "./");
 
-  // level one has admin perms
-  addPermToLevel(1,"ADMIN");
-
-  templateSystem.addIF("IsCurrentPage",this);
-  templateSystem.addIF("Error",this);
-  templateSystem.addIF("Editing",this);
-  templateSystem.addIF("Checked",this);
-
-  templateSystem.addKey("Error",this);
-  templateSystem.addKey("UserName",this);
-  templateSystem.addKey("Callsign",this);
-  templateSystem.addKey("BannedUser",this);
-  templateSystem.addKey("PageName",this);
-  templateSystem.addKey("CurrentPage",this);
-  templateSystem.addKey("HelpMsgName",this);
-  templateSystem.addKey("HelpMsgBody",this);
-  templateSystem.addKey("GroupName",this);
-  templateSystem.addKey("Permission",this);
-  templateSystem.addKey("ServerVarName",this);
-  templateSystem.addKey("ServerVarValue",this);
-
-  templateSystem.addLoop("Navigation",this);
-  templateSystem.addLoop("Players",this);
-  templateSystem.addLoop("ServerVars",this);
-  templateSystem.addLoop("IPBanList",this);
-  templateSystem.addLoop("IDBanList",this);
-  templateSystem.addLoop("HelpMsgs",this);
-  templateSystem.addLoop("Groups",this);
-  templateSystem.addLoop("Permissions", this);
-
-  templateSystem.setPluginName("webadmin", getBaseURL().c_str());
+//   level one has admin perms
+//     addPermToLevel(1,"ADMIN");
+//   
+//     templateSystem.addIF("Error",this);
+//     templateSystem.addIF("Editing",this);
+//     templateSystem.addIF("Checked",this);
+//   
+//     templateSystem.addKey("Error",this);
+//     templateSystem.addKey("UserName",this);
+//     templateSystem.addKey("Callsign",this);
+//     templateSystem.addKey("BannedUser",this);
+//     templateSystem.addKey("PageName",this);
+//     templateSystem.addKey("CurrentPage",this);
+//     templateSystem.addKey("HelpMsgName",this);
+//     templateSystem.addKey("HelpMsgBody",this);
+//     templateSystem.addKey("GroupName",this);
+//     templateSystem.addKey("Permission",this);
+//     templateSystem.addKey("ServerVarName",this);
+//     templateSystem.addKey("ServerVarValue",this);
+//   
+//     templateSystem.addLoop("Navigation",this);
+//     templateSystem.addLoop("Players",this);
+//     templateSystem.addLoop("ServerVars",this);
+//     templateSystem.addLoop("IPBanList",this);
+//     templateSystem.addLoop("IDBanList",this);
+//     templateSystem.addLoop("HelpMsgs",this);
+//     templateSystem.addLoop("Groups",this);
+//     templateSystem.addLoop("Permissions", this);
+//   
+//     templateSystem.setPluginName("webadmin", getBaseURL().c_str());
 
   setupAuth();
 }
@@ -133,97 +140,97 @@ void WebAdmin::init(const char* cmdln)
 // event hook for [$Something] in templates
 void WebAdmin::keyCallback (std::string &data, const std::string &key)
 {
-  const std::map<std::string,std::string>::iterator &pair = templateVars.find(key);
-  if (pair != templateVars.end())
-    data = pair->second;
+//   const std::map<std::string,std::string>::iterator &pair = templateVars.find(key);
+//   if (pair != templateVars.end())
+//     data = pair->second;
 }
 
 // condition check for [*START] in templates
 bool WebAdmin::loopCallback (const std::string &key)
-{
-  if (key == "players") {
-    if (!loopPos) {
-      bz_getPlayerIndexList(&players);
-      listSize = players.size();
-    }
-    if (loopPos < listSize) {
-      templateVars["playerid"] = players[loopPos];
-      templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
-      return true;
-    } else {
-      players.clear();
-    }
-  } else if (key == "navigation") {
-    if (!loopPos)
-      listSize = pagenames.size();
-    if (loopPos < pagenames.size()) {
-      templateVars["pagename"] = pagenames[loopPos++];
-      return true;
-    }
-  } else if (key == "permissions") {
-    if (!loopPos)
-      listSize = bzu_standardPerms().size();
-    if (loopPos < listSize) {
-      const std::string perm = bzu_standardPerms()[loopPos++];
-      if (stringList)
-	checked = stringList->contains(perm);
-      templateVars["permission"] = perm;
-      return true;
-    } else {
-      bz_deleteStringList(stringList);
-    }
-  } else if (key == "helpmsgs") {
-    if (!loopPos) {
-      stringList = bz_getHelpTopics();
-      listSize = stringList->size();
-    }
-    if (loopPos < listSize) {
-      templateVars["helpmsgname"] = (*stringList)[loopPos++].c_str();
-      return true;
-    } else {
-      bz_deleteStringList(stringList);
-    }
-  } else if (key == "groups") {
-    if (!loopPos) {
-      stringList = bz_getGroupList();
-      listSize = stringList->size();
-    }
-    if (loopPos < listSize) {
-      templateVars["groupname"] = (*stringList)[loopPos++].c_str();
-      return true;
-    } else {
-      bz_deleteStringList(stringList);
-    }
-  } else if (key == "servervars") {
-    if (!loopPos) {
-      stringList = bz_newStringList();
-      listSize = bz_getBZDBVarList(stringList);
-    }
-    if (loopPos < listSize) {
-      const char *varname = (*stringList)[loopPos++].c_str();
-      templateVars["servervarname"] = varname;
-      templateVars["servervarvalue"] = bz_getBZDBString(varname).c_str();
-      return true;
-    } else {
-      bz_deleteStringList(stringList);
-    }
-  } else {
+ {
+//   if (key == "players") {
+//     if (!loopPos) {
+//       bz_getPlayerIndexList(&players);
+//       listSize = players.size();
+//     }
+//     if (loopPos < listSize) {
+//       templateVars["playerid"] = players[loopPos];
+//       templateVars["callsign"] = bz_getPlayerCallsign(players[loopPos++]);
+//       return true;
+//     } else {
+//       players.clear();
+//     }
+//   } else if (key == "navigation") {
+//     if (!loopPos)
+//       listSize = pagenames.size();
+//     if (loopPos < pagenames.size()) {
+//       templateVars["pagename"] = pagenames[loopPos++];
+//       return true;
+//     }
+//   } else if (key == "permissions") {
+//     if (!loopPos)
+//       listSize = bzu_standardPerms().size();
+//     if (loopPos < listSize) {
+//       const std::string perm = bzu_standardPerms()[loopPos++];
+//       if (stringList)
+// 	checked = stringList->contains(perm);
+//       templateVars["permission"] = perm;
+//       return true;
+//     } else {
+//       bz_deleteStringList(stringList);
+//     }
+//   } else if (key == "helpmsgs") {
+//     if (!loopPos) {
+//       stringList = bz_getHelpTopics();
+//       listSize = stringList->size();
+//     }
+//     if (loopPos < listSize) {
+//       templateVars["helpmsgname"] = (*stringList)[loopPos++].c_str();
+//       return true;
+//     } else {
+//       bz_deleteStringList(stringList);
+//     }
+//   } else if (key == "groups") {
+//     if (!loopPos) {
+//       stringList = bz_getGroupList();
+//       listSize = stringList->size();
+//     }
+//     if (loopPos < listSize) {
+//       templateVars["groupname"] = (*stringList)[loopPos++].c_str();
+//       return true;
+//     } else {
+//       bz_deleteStringList(stringList);
+//     }
+//   } else if (key == "servervars") {
+//     if (!loopPos) {
+//       stringList = bz_newStringList();
+//       listSize = bz_getBZDBVarList(stringList);
+//     }
+//     if (loopPos < listSize) {
+//       const char *varname = (*stringList)[loopPos++].c_str();
+//       templateVars["servervarname"] = varname;
+//       templateVars["servervarvalue"] = bz_getBZDBString(varname).c_str();
+//       return true;
+//     } else {
+//       bz_deleteStringList(stringList);
+//     }
+//   } else {
     return false;
-  }
-  return loopPos = 0;
+//   }
+//   return loopPos = 0;
 }
 
 // condition check for [?IF] in templates
 bool WebAdmin::ifCallback (const std::string &key)
 {
-  if (key == "iscurrentpage")
-    return templateVars["pagename"] == templateVars["currentpage"];
-  if (key == "editing")
-    return editing;
-  if (key == "checked")
-    return checked;
-  if (key == "error")
-    return templateVars.find("error") != templateVars.end();
+//   if (key == "iscurrentpage")
+//     return templateVars["pagename"] == templateVars["currentpage"];
+//   if (key == "editing")
+//     return editing;
+//   if (key == "checked")
+//     return checked;
+//   if (key == "error")
+//     return templateVars.find("error") != templateVars.end();
   return false;
 }
 
@@ -232,7 +239,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   size_t size;
   std::string pagename = request.resource;
   std::string filename;
-  const char *username;
+//  const char *username;
 
   reply.returnCode = HTTPReply::e200OK;
   reply.docType = HTTPReply::eHTML;
@@ -240,142 +247,50 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   switch(level) {
   case 1:
   case VERIFIED:
-    if (pagename.empty()) {
-      pagename = "main";
-    } else {
-      size = pagename.size();
-      if (size > 0 && pagename[size-1] == '/')
-	pagename.erase(size-1);
-    }
-
-    if (pagename == "logout") {
-      invalidateSession(request.sessionID);
-      reply.returnCode = HTTPReply::e301Redirect;
-      reply.redirectLoc = std::string("/") + getVDir();
-      return true;
-    }
-
-    if (username = getSessionUser(request.sessionID))
-      templateVars["username"] = username;
-
-    if (find(pagenames.begin(), pagenames.end(), pagename) != pagenames.end()) {
-      templateVars["currentpage"] = pagename;
-      pageCallback(pagename, request);
-      loopPos = 0;
-      if (!templateSystem.processTemplateFile(reply.body, (pagename + ".tmpl").c_str())) {
-	reply.returnCode = HTTPReply::e500ServerError;
-	if (!templateSystem.processTemplateFile(reply.body, "500.tmpl"))
-	  reply.body = format("Missing template: %s.tmpl", pagename.c_str());
+    {
+      if (pagename.empty())
+      {
+	pagename = "main";
+      } 
+      else 
+      {
+	size = pagename.size();
+	if (size > 0 && pagename[size-1] == '/')
+	  pagename.erase(size-1);
       }
-    } else {
-      reply.returnCode = HTTPReply::e404NotFound;
-      if (!templateSystem.processTemplateFile(reply.body, "404.tmpl"))
-	reply.body = format("No such resource: %s", pagename.c_str());
+
+      if (pagename == "logout")
+      {
+	invalidateSession(request.sessionID);
+	reply.returnCode = HTTPReply::e301Redirect;
+	reply.redirectLoc = std::string("/") + getVDir();
+	return true;
+      }
+
+     // if (username = getSessionUser(request.sessionID))
+     //   templateVars["username"] = username;
+
+      PageHandlerMap::iterator itr = pageHandlers.find(pagename);
+      if (itr != pageHandlers.end())
+      {
+	itr->second->process(pagename,request,reply); // add some auth crap in a struct here
+      }
+      else
+      {
+	reply.returnCode = HTTPReply::e404NotFound;
+	if (!templateSystem.processTemplateFile(reply.body, "404.tmpl"))
+	  reply.body = format("No such resource: %s", pagename.c_str());
+      }
     }
-    break;
+   break;
+
   default:
     reply.body = format("Not authenticated sessionID %d", request.sessionID);
   }
 
-  templateVars.clear();
-  editing = false;
   return true;
 }
 
-void WebAdmin::mainPageCallback (const HTTPRequest &request)
-{
-  std::string s1, s2, error;
-  if (request.request != ePost)
-    return;
-  std::vector<std::string> v;
-  // kick/ban players
-  if (request.getParam("players", v)) {
-    bool notify = request.getParam("notify", s1);
-    request.getParam("reason", s2);
-    std::vector<std::string>::iterator i;
-    if (request.getParam("kick", s1)) {
-      for (i = v.begin(); i != v.end(); i++)
-	bz_kickUser(atoi(i->c_str()), s2.c_str(), notify);
-    } else if (request.getParam("ipban", v)) {
-      request.getParam("duration", s1);
-      int duration = atoi(s1.c_str());
-      for (i = v.begin(); i != v.end(); i++) {
-	int playerID = atoi(i->c_str());
-	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-	const char *playerIP = bz_getPlayerIPAddress(playerID);
-	bz_IPBanUser(playerID, playerIP, duration, s2.c_str());
-      }
-    } else if (request.getParam("idban", v)) {
-      request.getParam("duration", s1);
-      int duration = atoi(s1.c_str());
-      for (i = v.begin(); i != v.end(); i++) {
-	int playerID = atoi(i->c_str());
-	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-	const char *callsign = bz_getPlayerCallsign(playerID);
-	bz_IPBanUser(playerID, callsign, duration, s2.c_str());
-      }
-    }
-  }
-  // update server vars
-  stringList = bz_newStringList();
-  listSize = bz_getBZDBVarList(stringList);
-  for (loopPos = 0; loopPos < listSize; loopPos++) {
-    s1 = "var";
-    s1 += (*stringList)[loopPos].c_str();
-    if (request.getParam(s1, s2))
-      bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str());
-  }
-  bz_deleteStringList(stringList);
-  if (!error.empty())
-    templateVars["error"] = error;
-}
-
-void WebAdmin::banlistPageCallback (const HTTPRequest &request)
-{
-  if (request.request != ePost)
-    return;
-  std::vector<std::string> banRemovals;
-  std::vector<std::string>::iterator i;
-  if (request.getParam("delip", banRemovals))
-    for(i = banRemovals.begin(); i != banRemovals.end(); i++)
-      bz_IPUnbanUser(i->c_str());
-  if (request.getParam("delid", banRemovals))
-    for(i = banRemovals.begin(); i != banRemovals.end(); i++)
-      bz_IDUnbanUser(i->c_str());
-}
-
-void WebAdmin::groupPageCallback (const HTTPRequest &request)
-{
-  std::string name, error;
-  if (request.getParam("name", name)) {
-    stringList = bz_getGroupPerms(name.c_str());
-    if (!stringList) {
-      error += "No such group: ";
-      error += name + ". ";
-    } else if (request.request == eGet) {
-      templateVars["groupname"] = name;
-      editing = true;
-      return;
-    } else if (request.request == ePost) {
-      bz_deleteStringList(stringList);
-      listSize = bzu_standardPerms().size();
-      std::string perm;
-      std::vector<std::string> perms;
-      request.getParam("perm", perms);
-      for (loopPos = 0; loopPos < listSize; loopPos++) {
-	perm = bzu_standardPerms()[loopPos];
-	if (find(perms.begin(), perms.end(), perm) != perms.end()) {
-	  if (!bz_groupAllowPerm(name.c_str(), perm.c_str())) {
-	    error += "Couldn't change permissions for group: ";
-	    error += name + ". ";
-	  }
-	} // TODO: else remove permission
-      }
-    }
-  }
-  if (!error.empty())
-    templateVars["error"] = error;
-}
 
 // Local Variables: ***
 // mode: C++ ***

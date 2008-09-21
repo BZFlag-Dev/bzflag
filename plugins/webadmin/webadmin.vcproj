@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="webadmin"
 	ProjectGUID="{0BD63F70-CAE9-475A-A03B-6EC77559C706}"
+	RootNamespace="webadmin"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -190,7 +191,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Makefile"
+				RelativePath=".\Makefile.am"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -210,6 +211,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\pages.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\webadmin.cpp"
 				>
 			</File>
@@ -225,6 +230,10 @@
 			>
 			<File
 				RelativePath="..\..\include\bzfsAPI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\pages.h"
 				>
 			</File>
 		</Filter>
