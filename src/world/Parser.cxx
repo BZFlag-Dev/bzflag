@@ -21,7 +21,7 @@
 
 namespace BZW
 {
-	void Parser::parse(std::istream& input)
+  void Parser::parse(std::istream& input)
   {
     istreambuf_iterator<char> stream_begin(input);
     multi_pass<istreambuf_iterator<char> > begin(make_multi_pass(stream_begin)), end;
@@ -29,22 +29,22 @@ namespace BZW
     bzw_skip_grammar the_skipper;
     parse(begin, end, the_grammar, the_skipper);
 
-	// So I don't know how this is done but this is the basic idea,
-	// as you are parsing, your grammar will get you the type of the object
-	while (parsing)
-	{
-	  std::string newObjectType = "put something real here from your grammar"; // get the new object type from the grammar 
+    // So I don't know how this is done but this is the basic idea,
+    // as you are parsing, your grammar will get you the type of the object
+    while (parsing)
+    {
+      std::string newObjectType = "put something real here from your grammar"; // get the new object type from the grammar 
 
-	  current_object = world.newObject(newObjectType); //ask the world to make one for you
+      current_object = world.newObject(newObjectType); //ask the world to make one for you
 
-	  while (!shitDone)	// read untill the end of the object and pass it lines to parse
-		current_object->readLine(some_line_shit);
+      while (!shitDone)// read untill the end of the object and pass it lines to parse
+        current_object->readLine(some_line_shit);
 
-	  // tell the object we are done with it
-	  current_object->finalize();
-	}
+      // tell the object we are done with it
+      current_object->finalize();
+    }
 
-	current_object = NULL;
+    current_object = NULL;
   }
 
   Parser::Parser( World &w) : current_object(NULL), : world(w)

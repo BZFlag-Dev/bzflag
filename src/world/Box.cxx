@@ -19,7 +19,7 @@ namespace BZW
 {
   void Box::Box ( )
   {
-	  // do nothing
+    // do nothing
   }
 }
 

@@ -37,10 +37,10 @@ namespace BZW
       /// Parse a BZW file from an istream
       void parse(std::istream& input);
 
-  private:
+    private:
 
-	  WorldObject* current_object;
-	  World &world;
+      WorldObject* current_object;
+      World &world;
   };
 }
 

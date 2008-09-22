@@ -66,7 +66,7 @@ namespace BZW
 
       CallbackMap::iterator itr = customCallbacks.find(name);
       if (itr != customCallbacks.end())
-	((GenericWorldObject*)obj)->callbacks = itr->second;
+        ((GenericWorldObject*)obj)->callbacks = itr->second;
     }
 
     worldObjects.push_back(obj);
@@ -95,11 +95,11 @@ namespace BZW
       std::list<CustomObjectCallback*>::iterator listItr = itr->second.begin();
       while (listItr != itr->second.end())
       {
-	if (*listItr == callback)
-	{
-	  itr->second.erase(listItr);
-	  return;
-	}
+        if (*listItr == callback)
+        {
+          itr->second.erase(listItr);
+          return;
+        }
       }
     }
   }

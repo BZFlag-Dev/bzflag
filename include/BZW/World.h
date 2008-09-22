@@ -40,13 +40,13 @@ namespace BZW
       void read(std::istream& input);
       /// Write current world to a stream
       void write(std::ostream& output);
- 
+
       WorldObject* newObject ( const std::string &name );
 
       void addCallback ( const std::string &object, CustomObjectCallback *callback );
       void removeCallback ( const std::string &object, CustomObjectCallback *callback );
 
-  private:
+    private:
       std::list<WorldObject*> worldObjects;
 
       typedef std::map<std::string, std::list<CustomObjectCallback*> > CallbackMap;
