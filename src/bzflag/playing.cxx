@@ -6708,8 +6708,8 @@ void doFPSLimit(void)
   static bool notify = false;
 
 #ifndef DEBUG
-  if (fpsLimit < 25.0f || isnan(fpsLimit)) {
-    fpsLimit = 25.0f;
+  if (fpsLimit < 30.0f || isnan(fpsLimit)) {
+    fpsLimit = 30.0f;
     BZDB.setFloat("fpsLimit", fpsLimit);
     notify = true;
   }
