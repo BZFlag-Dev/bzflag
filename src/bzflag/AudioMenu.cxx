@@ -44,7 +44,6 @@ AudioMenu::AudioMenu()
 
   HUDuiList* option = new HUDuiList;
 
-  option = new HUDuiList;
   std::vector<std::string>* options;
 
   // Sound Volume
