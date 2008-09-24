@@ -134,7 +134,7 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
     std::vector<std::string> files = getFilesInDir(templateDirs[d],"*.page",false);
 
     for ( size_t f = 0; f < files.size(); f++ )
-      pages.push_back(getFileTitle(files[f]));
+      pages.push_back(replace_all(getFileTitle(files[f]),std::string("_"),std::string(" ")));
   }
 
   size = pages.size();
