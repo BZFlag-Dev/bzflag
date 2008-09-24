@@ -6702,7 +6702,7 @@ void doFPSLimit(void)
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   float fpsLimit = 200;
 
-  if (BZDB.isTrue("saveEnergy"))  // limit the fps to save battery life by minimizing cpu usage
+  if (BZDB.isTrue("saveEnergy") && (BZDB.eval("fpsLimit") < fpsLimit) )  // limit the fps to save battery life by minimizing cpu usage
     fpsLimit = BZDB.eval("fpsLimit");
 
   static bool notify = false;
@@ -6714,8 +6714,8 @@ void doFPSLimit(void)
     notify = true;
   }
 #else
-  if (fpsLimit < 0.0f) {
-    fpsLimit = 0.0;
+  if (fpsLimit < 15.0f) {
+    fpsLimit = 15.0;
     BZDB.setFloat("fpsLimit", fpsLimit);
     notify = true;
   }
