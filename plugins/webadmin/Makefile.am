@@ -6,7 +6,13 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 webadmin_la_SOURCES = \
 		webadmin.cpp \
 		pages.cpp \
-		pages.h 
+		pages.h 	\
+		loops.cpp \
+		loops.h \
+		actions.cpp\
+		actions.h \
+		commonItems.cpp \
+		commonItems.h 
 		
 webadmin_la_LDFLAGS = -module -avoid-version
 webadmin_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
