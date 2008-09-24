@@ -281,6 +281,14 @@ std::string getPathForOS(const char* file)
   return convertPathToDelims(file);
 }
 
+std::string concatPaths ( const char* path1, const char* path2 )
+{
+  std::string ret = getPathForOS(path1);
+  ret += getPathForOS(path2);
+
+  return ret;
+}
+
 std::string getFileDir(const char* file)
 {
   std::string f = convertPathToDelims(file);

@@ -45,6 +45,9 @@ inline std::vector<std::string> getFileTextLines ( const std::string &file ){ret
 unsigned int getFileLen ( const char* file );
 inline unsigned int getFileLen ( std::string &file ){return getFileLen(file.c_str());}
 
+std::string concatPaths ( const char* path1, const char* path2 );
+inline std::string concatPaths ( const std::string &p1, const std::string &p2 ){return concatPaths(p1.c_str(),p2.c_str());}
+
 
 #endif //_PLUGIN_FILES_H_
 
