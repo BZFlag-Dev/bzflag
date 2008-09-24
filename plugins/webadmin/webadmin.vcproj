@@ -191,6 +191,18 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\actions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\commonItems.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\loops.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Makefile.am"
 				>
 				<FileConfiguration
@@ -229,7 +241,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\actions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\bzfsAPI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\commonItems.h"
+				>
+			</File>
+			<File
+				RelativePath=".\loops.h"
 				>
 			</File>
 			<File
@@ -271,7 +295,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\templates\banlist.tmpl"
+				RelativePath=".\templates\Bans.Page"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -283,7 +307,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\templates\group.tmpl"
+				RelativePath=".\templates\Groups.Page"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -307,7 +331,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\templates\helpmsg.tmpl"
+				RelativePath=".\templates\Help_Messages.page"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -319,7 +343,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\templates\main.tmpl"
+				RelativePath=".\templates\Main.Page"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
