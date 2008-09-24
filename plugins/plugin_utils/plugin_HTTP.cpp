@@ -23,6 +23,16 @@
 BZFSHTTP::BZFSHTTP()
 {
   bz_loadPlugin("HTTPServer",NULL);
+
+  serviceMimeResources = false;
+  resourceRootPath = "./";
+
+  mimeTypes[std::string("htm")]= std::string("text/html");
+  mimeTypes[std::string("txt")]= std::string("text/plain");
+  mimeTypes[std::string("css")]= std::string("text/css");
+  mimeTypes[std::string("png")]= std::string("image/png");
+  mimeTypes[std::string("ico")]= std::string("image/vnd.microsoft.icon");
+  mimeTypes[std::string("*")]= std::string("application/octet-stream");
 }
 
 void BZFSHTTP::registerVDir ( void )
@@ -35,6 +45,12 @@ BZFSHTTP::~BZFSHTTP()
 {
   bz_callCallback("RemoveHTTPDVDir",this);
 }
+
+void BZFSHTTP::addMimeType ( const std::string &extension, const std::string &type )
+{
+  mimeTypes[extension] = type;
+}
+
 std::string BZFSHTTP::getBaseURL ( void )
 {
   std::string URL = "http://";
@@ -51,6 +67,46 @@ std::string BZFSHTTP::getBaseURL ( void )
   URL += "/";
 
   return URL;
+}
+
+bool BZFSHTTP::handleRequest(const HTTPRequest &request, HTTPReply &reply)
+{
+  if (serviceMimeResources && resourceRootPath.size() && mimeTypes.size())
+  {
+    // parse out the resource and see if we know what it is
+    std::string ext;
+    tolower(getFileExtension(request.resource),ext);
+
+    if (ext.size())
+    {
+      if ( mimeTypes.find(ext) != mimeTypes.end() )
+      {
+	// it's one we do, try and find it
+	std::string filepath = concatPaths(resourceRootPath.c_str(),request.resource.c_str()+1);
+
+	FILE *fp = fopen(filepath.c_str(),"fb");
+	if (fp)
+	{
+	  fseek(fp,0,SEEK_END);
+	  size_t s = ftell(fp);
+	  fseek(fp,0,SEEK_SET);
+
+	  char *buffer = (char*)malloc(s);
+	  fread(buffer,s,1,fp);
+	  fclose(fp);
+
+	  reply.docType = HTTPReply::eOther;
+	  reply.otherMimeType = mimeTypes[ext];
+	  reply.body = buffer;
+	  free(buffer);
+	  reply.returnCode = HTTPReply::e200OK;
+	  return true;
+	}
+      }
+    }
+  }
+
+  return generatePage(request,reply);
 }
 
 bool HTTPRequest::getParam ( const char* param, std::string &val ) const
@@ -276,7 +332,7 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
   return false;
 }
 
-bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
+bool BZFSHTTPAuth::generatePage ( const HTTPRequest &request, HTTPReply &reply )
 {
   if (!authPage.size())
     setupAuth();

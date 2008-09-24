@@ -233,12 +233,24 @@ public:
   virtual const char * getDescription(void) { return ""; }
   virtual bool supportPut(void) { return false; }
 
-  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply) = 0;
+  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply);
 
   virtual bool resumeTask(int /*requestID*/) {return true; }
 
 protected:
+  virtual bool generatePage(const HTTPRequest &request, HTTPReply &reply){return true;}
+  
   std::string getBaseURL(void);
+
+  void addMimeType ( const std::string &extension, const std::string &type );
+  void addMimeType ( const char* extension, const char* type ){addMimeType(std::string(extension),std::string(type));}
+
+  void clearMimeTypes ( void ){mimeTypes.clear();}
+
+  bool serviceMimeResources;
+  std::string resourceRootPath;
+
+  std::map<std::string,std::string> mimeTypes;
 };
 
 #define UNAUTHENTICATED -1
@@ -255,9 +267,7 @@ public:
 
   virtual const char * getVDir(void) { return NULL; }
 
-  // do not overide these, they are used buy the auth system
-  // use the 2 variants below
-  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply);
+  // do not overide this, they are used buy the auth system
   virtual bool resumeTask(int requestID);
 
   // authed versions of the main callbacks
@@ -265,7 +275,10 @@ public:
   virtual bool resumeAuthedTask(int /*requestID*/) { return true; }
 
 protected:
-  Templateiser	templateSystem;
+  // do not overide this, they are used buy the auth system
+  virtual bool generatePage(const HTTPRequest &request, HTTPReply &reply);
+
+ Templateiser	templateSystem;
 
   class TSURLCallback : public TemplateCallbackClass
   {
