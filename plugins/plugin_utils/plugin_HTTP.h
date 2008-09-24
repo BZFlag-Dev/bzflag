@@ -73,6 +73,8 @@ public:
   void addSearchPath(const char* path);
   void flushSearchPaths(void);
 
+  std::vector<std::string> getSearchPaths ( void ) { return filePaths;}
+
 protected:
   typedef std::map<std::string,TemplateKeyCallback> KeyMap;
   typedef std::map<std::string,TemplateTestCallback> TestMap;
