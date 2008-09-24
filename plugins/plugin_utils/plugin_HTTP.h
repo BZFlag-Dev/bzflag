@@ -238,7 +238,7 @@ public:
   virtual bool resumeTask(int /*requestID*/) {return true; }
 
 protected:
-  virtual bool generatePage(const HTTPRequest &request, HTTPReply &reply){return true;}
+  virtual bool generatePage(const HTTPRequest &/*request*/, HTTPReply &/*reply*/){return true;}
   
   std::string getBaseURL(void);
 
