@@ -28,6 +28,7 @@ BZFSHTTP::BZFSHTTP()
   resourceRootPath = "./";
 
   mimeTypes[std::string("htm")]= std::string("text/html");
+  mimeTypes[std::string("html")]= std::string("text/html");
   mimeTypes[std::string("txt")]= std::string("text/plain");
   mimeTypes[std::string("css")]= std::string("text/css");
   mimeTypes[std::string("png")]= std::string("image/png");
