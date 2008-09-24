@@ -141,7 +141,7 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
 
   ts.addLoop("navigation",this);
   ts.addKey("pagename",this);
-  ts.addIF("currentpage",this);
+  ts.addIF("iscurrentpage",this);
 }
 
 void NavLoop::getKey (size_t item, std::string &data, const std::string &key )
@@ -152,7 +152,7 @@ void NavLoop::getKey (size_t item, std::string &data, const std::string &key )
 
 bool NavLoop::getIF  (size_t item, const std::string &key)
 {
-  if (key == "currentpage")
+  if (key == "iscurrentpage")
     return currentTemplate == pages[item];
   return false;
 }
