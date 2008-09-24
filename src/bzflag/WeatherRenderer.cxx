@@ -264,7 +264,7 @@ void WeatherRenderer::set(void)
 	tm.getTextureID(BZDB.get("_rainPuddleTexture").c_str()));
     }
 
-    // see if the texture is specificly overiden
+    // see if the texture is specifically overridden
     if (dbItemSet("_rainTexture"))
     {
       int textureID = tm.getTextureID(BZDB.get("_rainTexture").c_str());
@@ -279,7 +279,7 @@ void WeatherRenderer::set(void)
 
     texturedRainState = gstate.getState();
 
-    // if there is a specific overides for stuff
+    // if there is a specific override for stuff
     if (dbItemSet("_rainSpread"))
       rainSpread = BZDB.eval("_rainSpread");
 

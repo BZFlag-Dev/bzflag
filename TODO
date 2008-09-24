@@ -425,7 +425,7 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 * Create a tab for user defined "favorate" servers ( bookmarks ).
 
 * Create some sort of server "rating" system like the movies use, to let players know what to expect.
-  Provide some way to overide and controll it at a list server level, as well as make it so the client
+  Provide some way to override and control it at a list server level, as well as make it so the client
   can filter out servers with ratings higher then it wants.
 
 //------------------------- BZROBOTS TODO--------------------------------

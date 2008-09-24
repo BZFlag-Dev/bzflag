@@ -380,7 +380,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float length,
 
 void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 {
-  // bzdb these 2? they controll the shot size
+  // bzdb these 2? they control the shot size
   float lenMod = 0.025f;
   float baseRadius = 0.2f;
 
@@ -453,7 +453,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 
 void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 {
-  // bzdb these 2? they controll the shot size
+  // bzdb these 2? they control the shot size
   float lenMod = 0.025f;
   float baseRadius = 0.225f;
 

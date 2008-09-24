@@ -267,7 +267,7 @@ public:
 
   virtual const char * getVDir(void) { return NULL; }
 
-  // do not overide this, they are used buy the auth system
+  // do not override this, they are used by the auth system
   virtual bool resumeTask(int requestID);
 
   // authed versions of the main callbacks
@@ -275,7 +275,7 @@ public:
   virtual bool resumeAuthedTask(int /*requestID*/) { return true; }
 
 protected:
-  // do not overide this, they are used buy the auth system
+  // do not override this, they are used by the auth system
   virtual bool generatePage(const HTTPRequest &request, HTTPReply &reply);
 
  Templateiser	templateSystem;

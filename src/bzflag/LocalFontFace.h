@@ -23,7 +23,7 @@
 /**
  * Refcounted font face holder that does automatic lookup from generic
  * face family names (console, serif, sans serif, etc) to locale-specific
- * and user-overriden font names.
+ * and user overridden font names.
  */
 class LocalFontFace
 {
