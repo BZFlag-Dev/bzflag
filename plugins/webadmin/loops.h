@@ -49,6 +49,9 @@ class NavLoop : public LoopHandler
 {
 public:
   NavLoop(Templateiser &ts);
+
+  virtual void keyCallback (std::string &data, const std::string &key);
+
   virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual bool getIF  (size_t item, const std::string &key);
 

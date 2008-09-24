@@ -141,7 +141,17 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
 
   ts.addLoop("navigation",this);
   ts.addKey("pagename",this);
+  ts.addKey("currentpage",this);
   ts.addIF("iscurrentpage",this);
+}
+
+// CurrentPage dosn't use a loop, so just service it as normal
+void NavLoop::keyCallback (std::string &data, const std::string &key)
+{
+  if (key=="curerntpage")
+    data += replace_all(getFileTitle(currentTemplate),std::string("_"),std::string(" "));
+  else
+    LoopHandler::keyCallback(data,key);
 }
 
 void NavLoop::getKey (size_t item, std::string &data, const std::string &key )
