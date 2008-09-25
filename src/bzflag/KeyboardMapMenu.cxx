@@ -199,7 +199,6 @@ void KeyboardMapMenu::execute()
   const HUDuiControl* const _focus = getNav().get();
   if (_focus == reset) {
     ActionBinding::instance().resetBindings();
-    update();
   } else if (_focus == quickKeys) {
     if (!quickKeysMenu) quickKeysMenu = new QuickKeysMenu;
     HUDDialogStack::get()->push(quickKeysMenu);
