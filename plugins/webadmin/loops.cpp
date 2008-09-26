@@ -39,7 +39,7 @@ bool LoopHandler::increment ( void )
   if (pos == max_loop)
     return false;
   pos++;
-  if ( pos < size )
+  if ( pos >= size )
   {
     pos = max_loop;
     return false;
