@@ -134,14 +134,16 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
     std::vector<std::string> files = getFilesInDir(templateDirs[d],"*.page",false);
 
     for ( size_t f = 0; f < files.size(); f++ )
-      pages.push_back(replace_all(getFileTitle(files[f]),std::string("_"),std::string(" ")));
+      pages.push_back(getFileTitle(files[f]));
   }
 
   size = pages.size();
 
   ts.addLoop("navigation",this);
   ts.addKey("pagename",this);
+  ts.addKey("pagetitle",this);
   ts.addKey("currentpage",this);
+  ts.addKey("currentpagetitle",this);
   ts.addIF("iscurrentpage",this);
 }
 
@@ -149,6 +151,8 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
 void NavLoop::keyCallback (std::string &data, const std::string &key)
 {
   if (key=="curerntpage")
+    data += currentTemplate;
+  else if (key=="curerntpagetitle")
     data += replace_all(getFileTitle(currentTemplate),std::string("_"),std::string(" "));
   else
     LoopHandler::keyCallback(data,key);
@@ -158,6 +162,8 @@ void NavLoop::getKey (size_t item, std::string &data, const std::string &key )
 {
   if (key == "pagename")
     data += pages[item];
+  if (key == "pagetitle")
+    data +=   replace_all(pages[item],std::string("_"),std::string(" "));
 }
 
 bool NavLoop::getIF  (size_t item, const std::string &key)

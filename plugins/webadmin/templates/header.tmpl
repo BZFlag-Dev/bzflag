@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <title>[$PluginName] for [$HostName] &mdash; [$CurrentPage]</title>
+  <title>[$PluginName] for [$HostName] &mdash; [$CurrentPageTitle]</title>
   <style type="text/css" media="screen">
     h1, h2, h3 { text-transform: lowercase; }
     .error { color: red; }
@@ -13,12 +13,13 @@
   <h1><a href="[$BaseURL]">[$UserName]@[$HostName]/[$PluginName]</a></h1>
   <div id="nav">
 [*START Navigation]
-[?IF IsCurrentPage]
-    <a id="nav_current">[$PageName]</a>
-[?ELSE IsCurrentPage]
-    <a href="[$BaseURL][$PageName]">[$PageName]</a>
-[?END IsCurrentPage]
+	[?IF IsCurrentPage]
+		<a id="nav_current">[$PageTitle]</a>
+	[?ELSE IsCurrentPage]
+		<a href="[$BaseURL][$PageName]">[$PageTitle]</a>
+	[?END IsCurrentPage]
 [*END Navigation]
+	NAV ERROR!
 [*EMPTY Navigation]
     <a id="logout" href="[$BaseURL]logout">log out</a>
   </div>
