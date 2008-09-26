@@ -7,4 +7,5 @@
   [*END ChatLines]
       <tr><td>No chat</td></tr>
   [*EMPTY ChatLines]
+  </table>
 [!footer.tmpl]
