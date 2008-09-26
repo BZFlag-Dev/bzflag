@@ -1987,6 +1987,67 @@ BZF_API bool bz_setBZDBInt(const char *variable, int val, int perms, bool persis
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_updateBZDBDouble(const char *variable, double val, int perms, bool persistent)
+{
+  if(!variable)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+ 
+  BZDB.set(std::string(variable), TextUtils::format("%f", val));
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBString(const char *variable, const char *val)
+{
+  if(!variable || !val)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), std::string(val));
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBBool(const char *variable, bool val)
+{
+  if(!variable)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), TextUtils::format("%d", val));
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBInt(const char *variable, int val)
+{
+  if(!variable)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), TextUtils::format("%d", val));
+
+  return true;
+}
+
+
+//-------------------------------------------------------------------------
+
 void bzdbIterator(const std::string &name, void *userData)
 {
   bz_APIStringList *varList=static_cast < bz_APIStringList * > (userData);

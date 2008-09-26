@@ -1283,6 +1283,11 @@ BZF_API bool bz_setBZDBString(const char* variable, const char *val, int perms =
 BZF_API bool bz_setBZDBBool(const char* variable, bool val, int perms = 0, bool persistent = false);
 BZF_API bool bz_setBZDBInt(const char* variable, int val, int perms = 0, bool persistent = false);
 
+BZF_API bool bz_updateBZDBDouble(const char* variable, double val);
+BZF_API bool bz_updateBZDBString(const char* variable, const char *val);
+BZF_API bool bz_updateBZDBBool(const char* variable, bool val);
+BZF_API bool bz_updateBZDBInt(const char* variable, int val);
+
 BZF_API int bz_getBZDBVarList(bz_APIStringList *varList);
 
 BZF_API void bz_resetBZDBVar(const char* variable);
