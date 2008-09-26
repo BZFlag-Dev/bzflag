@@ -20,7 +20,7 @@ std::string UpdateBZDBVars::process ( const HTTPRequest &request )
     if ( itr->second.size())
     { 
       // vars only use the first param with the name.
-      const std::string &val = itr->second[0];
+      const std::string val = url_decode(itr->second[0]);
       if (strncmp(key.c_str(),"var",3) == 0)
       {
 	// it's a var, 
