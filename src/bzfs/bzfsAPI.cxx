@@ -1987,7 +1987,7 @@ BZF_API bool bz_setBZDBInt(const char *variable, int val, int perms, bool persis
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_updateBZDBDouble(const char *variable, double val, int perms, bool persistent)
+BZF_API bool bz_updateBZDBDouble(const char *variable, double val, int /*perms*/, bool /*persistent*/)
 {
   if(!variable)
     return false;
