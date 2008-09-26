@@ -180,6 +180,26 @@ bool HTTPRequest::getParam ( const std::string &param, std::vector<std::string> 
   return false;
 }
 
+bool HTTPRequest::getParam(const char* param) const
+{
+  if (!param)
+    return false;
+
+  std::string p;
+  tolower(param,p);
+
+  return parameters.find(p) != parameters.end();
+}
+
+bool HTTPRequest::getParam(const std::string &param) const
+{
+  std::string p;
+  tolower(param,p);
+
+  return parameters.find(p) != parameters.end();
+}
+
+
 
 class PendingTokenTask : public bz_BaseURLHandler
 {

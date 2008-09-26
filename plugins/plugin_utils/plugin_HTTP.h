@@ -166,6 +166,9 @@ public:
   bool getParam(const char* param, std::vector<std::string> &val) const;
   bool getParam(const std::string &param, std::vector<std::string> &val) const;
 
+  bool getParam(const char* param) const;
+  bool getParam(const std::string &param) const;
+
 };
 
 class HTTPReply
