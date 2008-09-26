@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-std::string UpdateBZDBVars::process ( const HTTPRequest &request )
+std::string UpdateBZDBVars::process ( const std::string &inputPage, const HTTPRequest &request )
 {
   std::map<std::string, std::vector<std::string> >::const_iterator itr = request.parameters.begin();
 
@@ -30,7 +30,7 @@ std::string UpdateBZDBVars::process ( const HTTPRequest &request )
     }
     itr++;
   }
-  return "Main";
+  return inputPage;
 }
 
 bool UpdateBZDBVars::varChanged ( const char * key , const char * val)
@@ -40,6 +40,14 @@ bool UpdateBZDBVars::varChanged ( const char * key , const char * val)
   return bz_getBZDBString(key) != val;
 }
 
+std::string SendChatMessage::process ( const std::string &inputPage, const HTTPRequest &request )
+{
+  std::string message;
+
+  if (request.getParam("message",message) && message.size())
+    bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
+  return inputPage;
+}
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

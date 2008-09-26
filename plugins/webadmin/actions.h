@@ -13,7 +13,7 @@ class Action
 public:
   virtual ~Action(){};
 
-  virtual std::string process ( const HTTPRequest &request ) = 0;
+  virtual std::string process ( const std::string &inputPage, const HTTPRequest &request ) = 0;
 
   virtual const char* name ( void ) = 0;
 };
@@ -21,12 +21,20 @@ public:
 class UpdateBZDBVars : public Action
 {
 public:
-  virtual std::string process ( const HTTPRequest &request );
+  virtual std::string process ( const std::string &inputPage, const HTTPRequest &request );
 
   virtual const char* name ( void ){ return "updatevars";}
 
 protected:
   bool varChanged ( const char * key , const char * val);
+};
+
+class SendChatMessage : public Action
+{
+public:
+  virtual std::string process ( const std::string &inputPage, const HTTPRequest &request );
+
+  virtual const char* name ( void ){ return "sendchatmessage";}
 };
 
 

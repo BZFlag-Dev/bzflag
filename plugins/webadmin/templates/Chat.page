@@ -17,4 +17,10 @@
       <tr><td>No chat</td></tr>
   [*EMPTY ChatLines]
   </table>
+  <hr>
+  <form id="send_chat_message" action="[$BaseURL]/[$CurrentPageTitle]" method="post">
+  <input type="hidden" name="action" value="sendchatmessage">
+   Message<input type="text" name="message">
+    <input type="submit" value="send">
+  </form>
 [!footer.tmpl]

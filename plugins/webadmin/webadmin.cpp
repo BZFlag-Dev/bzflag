@@ -106,9 +106,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     {
       callNewPageCallbacks(request);
 
-      if (pagename.empty())
-	pagename = "main";
-      else 
+      if (pagename.size())
       {
 	size_t size = pagename.size();
 	if (size > 0 && pagename[size-1] == '/')
@@ -130,8 +128,11 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 	// find an action handler, call it, and get the pagename back
 	makeupper(action);
 	if (actions.find(action) != actions.end())
-	  pagename = actions[action]->process(request);
+	  pagename = actions[action]->process(pagename,request);
       }
+
+      if (!pagename.size())
+	pagename = "main";
 
       if (navLoop)
 	navLoop->currentTemplate = pagename;
