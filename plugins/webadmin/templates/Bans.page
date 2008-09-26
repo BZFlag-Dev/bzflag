@@ -24,5 +24,4 @@
     
     <input type="submit" value="remove">
   </form>
-</body>
-</html>
+[!footer.tmpl]

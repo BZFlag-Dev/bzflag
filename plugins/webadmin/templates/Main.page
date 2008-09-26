@@ -44,5 +44,4 @@
     </ul>
     <input type="submit" value="update">
   </form>
-</body>
-</html>
+[!footer.tmpl]

@@ -1,0 +1,10 @@
+[!header.tmpl]
+  <h2>Chat</h2>
+  
+  <table border="0">
+  [*START ChatLines]
+	<tr><td>[$ChatLineUser]([$ChatLineTeam])</td><td>[$ChatLineText]</td></tr>
+  [*END ChatLines]
+      <tr><td>No chat</td></tr>
+  [*EMPTY ChatLines]
+[!footer.tmpl]

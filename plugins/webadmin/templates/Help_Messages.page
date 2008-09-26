@@ -28,5 +28,4 @@
     <input type="submit" value="new">
   </form>
 [?END Editing]
-</body>
-</html>
+[!footer.tmpl]
