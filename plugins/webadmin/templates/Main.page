@@ -29,19 +29,4 @@
       <input type="submit" value="ipban" name="ipban">
     </div>
   </form>
-  
-  <form id="server_vars" action="[$BaseURL]" method="post">
-  <input type="hidden" name="action" value="updatevars">
-    <h3>Server variables</h3>
-    <ul>
-[*START ServerVars]
-      <li><input type="text" id="var[$ServerVarName]"
-                 name="var[$ServerVarName]" value="[$ServerVarValue]">
-          <label for="var[$ServerVarName]">[$ServerVarName]</label></li>
-[*END ServerVars]
-      <li>No server vars</li>
-[*EMPTY ServerVars]
-    </ul>
-    <input type="submit" value="update">
-  </form>
 [!footer.tmpl]
