@@ -7,6 +7,8 @@
 PlayerLoop *playerLoop = NULL;
 NavLoop *navLoop = NULL;
 VarsLoop *varsLoop = NULL;
+ChatLoop *chatLoop = NULL;
+
 
 size_t	max_loop = 0xFFFFFFFF;
 
@@ -15,6 +17,7 @@ void initLoops ( Templateiser &ts )
   playerLoop = new PlayerLoop(ts);
   navLoop = new NavLoop(ts);
   varsLoop = new VarsLoop(ts);
+  chatLoop = new ChatLoop(ts);
 }
 
 //--------------LoopHandler
@@ -28,7 +31,7 @@ bool LoopHandler::atStart ( void )
 {
   if ( pos == max_loop )
   {
-    pos = 0;
+    pos = getStart();
     return true;
   }
   return false;
@@ -38,7 +41,7 @@ bool LoopHandler::increment ( void )
 {
   if (pos == max_loop)
     return false;
-  pos++;
+  pos = getNext(pos);
   if ( pos >= size )
   {
     pos = max_loop;
@@ -51,6 +54,7 @@ bool LoopHandler::done ( void )
 {
   if ( (pos == max_loop) || (pos >= size) )
   {
+    terminate();
     pos = max_loop;
     return true;
   }
@@ -210,6 +214,130 @@ void VarsLoop::setSize ( void )
   size = keys.size();
 }
 
+ChatLoop::ChatLoop(Templateiser &ts) : LoopHandler()
+{
+  chatLimit = 20;
+  addNewPageCallback(this);
+  bz_registerEvent(bz_eRawChatMessageEvent,this);
+  ts.addLoop("chatlines",this);
+  ts.addKey("chatlinetime",this);
+  ts.addKey("chatlineuser",this);
+  ts.addKey("chatlineteam",this);
+  ts.addKey("chatlineto",this);
+  ts.addKey("chatlinetext",this);
+
+  ts.addIF("chatlineisforteam",this);
+
+  // debug
+#ifdef _DEBUG
+  ChatMessage message;
+
+  bz_Time now;
+
+  bz_getUTCtime(&now);
+  message.time = printTime(&now);
+
+  message.from = "DEBUG";
+  message.to = "All";
+  message.fromTeam = "";
+  message.teamType = eNoTeam;
+  message.message = "Chat Log Startup";
+
+  messages.push_back(message);
+#endif
+}
+
+ChatLoop::~ChatLoop()
+{
+  removeNewPageCallback(this);
+  bz_removeEvent(bz_eRawChatMessageEvent,this);
+}
+
+// check for any filter params
+void ChatLoop::newPage ( const HTTPRequest &request )
+{
+  chatLimit = 20;
+
+  std::string val;
+  if (request.getParam("chatlimit",val))
+  {
+    chatLimit = (size_t)atoi(val.c_str());
+    if (chatLimit > 1)
+      chatLimit = 1;
+  }
+}
+
+void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
+{
+  ChatMessage &message = messages[item];
+
+  if (key == "chatlinetime")
+    data += message.time;
+  else if (key == "chatlineuser")
+    data += message.from;
+  else if (key == "chatlineteam")
+    data += message.fromTeam;
+  else if (key == "chatlineto")
+    data += message.to;
+  else if (key == "chatlinetext")
+    data += message.message;
+}
+
+bool ChatLoop::getIF  (size_t item, const std::string &key)
+{
+  ChatMessage &message = messages[item];
+  if (key == "chatlineisforteam")
+    return message.teamType != eNoTeam;
+
+  return false;
+}
+
+ void ChatLoop::process(bz_EventData *eventData)
+ {
+   bz_ChatEventData_V1* data = (bz_ChatEventData_V1*)eventData;
+   if (data)
+   {
+     ChatMessage message;
+
+     bz_Time now;
+
+     bz_getUTCtime(&now);
+     message.time = printTime(&now);
+
+     message.message = data->message.c_str();
+     message.teamType = eNoTeam;
+
+     if (data->from != BZ_SERVER)
+     {
+       message.from = bz_getPlayerCallsign(data->from);
+       message.teamType = bz_getPlayerTeam(data->from);
+       message.fromTeam = bzu_GetTeamName(message.teamType);
+     }
+     else
+       message.from = "server";
+
+     if (data->to == BZ_NULLUSER)
+       message.to = bzu_GetTeamName(data->team);
+     else if ( data->to == BZ_ALLUSERS)
+       message.to = "all";
+     else
+       message.to = bz_getPlayerCallsign(data->to);
+
+     messages.push_back(message);
+   }
+ }
+
+ void ChatLoop::setSize ( void )
+ {
+   size = messages.size();
+ }
+
+ size_t ChatLoop::getStart ( void )
+ {
+   if ( messages.size() < chatLimit)
+     return 0;
+   return messages.size() - chatLimit; // always start the limit up from the bottom
+ }
 
 // Local Variables: ***
 // mode: C++ ***

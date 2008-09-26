@@ -16,6 +16,35 @@ void initCommonItems ( Templateiser &ts )
   error = new Error(ts);
 }
 
+std::vector<NewPageCallback*> newPageCallbacks;
+
+void addNewPageCallback ( NewPageCallback *callback )
+{
+  if (callback)
+    newPageCallbacks.push_back(callback);
+}
+
+void removeNewPageCallback ( NewPageCallback *callback )
+{
+  std::vector<NewPageCallback*> ::iterator itr = newPageCallbacks.begin();
+  while (itr != newPageCallbacks.end())
+  {
+    if (*itr == callback)
+    {
+      newPageCallbacks.erase(itr);
+      return;
+    }
+    itr++;
+  }
+}
+
+void callNewPageCallbacks ( const HTTPRequest &request )
+{
+  std::vector<NewPageCallback*> ::iterator itr = newPageCallbacks.begin();
+  while (itr != newPageCallbacks.end())
+    (*itr++)->newPage(request);
+}
+
 //----------------UserInfo
 UserInfo::UserInfo(Templateiser &ts)
 {

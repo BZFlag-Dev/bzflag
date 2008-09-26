@@ -36,6 +36,20 @@ extern Error *error;
 extern UserInfo *userInfo;
 
 
+// newpage callbacks
+
+class NewPageCallback
+{
+public:
+  virtual ~NewPageCallback(){};
+  virtual void newPage ( const HTTPRequest &request ) =0;
+};
+
+void addNewPageCallback ( NewPageCallback *callback );
+void removeNewPageCallback ( NewPageCallback *callback );
+void callNewPageCallbacks ( const HTTPRequest &request );
+
+
 #endif //_COMMON_ITEMS_H_
 
 // Local Variables: ***

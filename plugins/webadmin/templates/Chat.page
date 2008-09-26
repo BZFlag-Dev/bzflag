@@ -2,8 +2,17 @@
   <h2>Chat</h2>
   
   <table border="0">
+  <tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
   [*START ChatLines]
-	<tr><td>[$ChatLineUser]([$ChatLineTeam])</td><td>[$ChatLineText]</td></tr>
+	<tr>
+	<td>[$ChatLineTime]</td><td>[$ChatLineUser]
+	[?IF ChatLineIsToTeam]
+		([$ChatLineTeam])
+	[?END ChatLineIsToTeam]
+	</td>
+	<td>[$ChatLineTo]</td>
+	<td>[$ChatLineText]</td>
+	</tr>
   [*END ChatLines]
       <tr><td>No chat</td></tr>
   [*EMPTY ChatLines]

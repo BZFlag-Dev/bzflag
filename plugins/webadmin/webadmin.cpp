@@ -104,6 +104,8 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case 1:
   case VERIFIED:
     {
+      callNewPageCallbacks(request);
+
       if (pagename.empty())
 	pagename = "main";
       else 
