@@ -252,6 +252,9 @@ std::vector<std::string> getFilesInDir(const char* dir, const char* filter,
 
   std::string directory  = convertPathToDelims(dir);
 
+  if (directory.size() && *(directory.end()-1) == _DirDelim)
+    directory.erase(directory.end()-1);
+
 #ifdef _WIN32
   WindowsAddFileStack(directory.c_str(), realFilter.c_str(),recrusive,list);
 #else
@@ -328,9 +331,7 @@ std::string getFileTitle(const char* file)
 
   char *p2 = (char*)strrchr(temp.c_str(),'.');
   if (p2)
-    // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
-    *(p2+1) = 0;
+    *(p2) = 0; // kill the . too
 
   return std::string(temp.c_str());
 }
