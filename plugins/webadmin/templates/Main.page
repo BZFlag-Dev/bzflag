@@ -31,6 +31,7 @@
   </form>
   
   <form id="server_vars" action="[$BaseURL]" method="post">
+  <input type="hidden" name="action" value="updatevars">
     <h3>Server variables</h3>
     <ul>
 [*START ServerVars]

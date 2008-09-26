@@ -18,6 +18,19 @@ public:
   virtual const char* name ( void ) = 0;
 };
 
+class UpdateBZDBVars : public Action
+{
+public:
+  virtual std::string process ( const HTTPRequest &request );
+
+  virtual const char* name ( void ){ return "updatevars";}
+
+protected:
+  bool varChanged ( const char * key , const char * val);
+};
+
+
+
 
 
 #endif //_ACTIONS_H_

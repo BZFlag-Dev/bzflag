@@ -63,7 +63,11 @@ WebAdmin::WebAdmin():BZFSHTTPAuth()
 void WebAdmin::addAction ( Action *action )
 {
   if (action && action->name())
-    actions[std::string(action->name())] = action;
+  {
+    std::string name;
+    toupper(action->name(),name);
+    actions[name] = action;
+  }
 }
 
 void WebAdmin::init(const char* cmdln)
@@ -73,6 +77,8 @@ void WebAdmin::init(const char* cmdln)
   templateSystem.addSearchPath(cmdln ? cmdln : "./");
   initLoops(templateSystem);
   initCommonItems(templateSystem);
+
+  addAction(new UpdateBZDBVars());
 
 //   level one has admin perms
   addPermToLevel(1,"ADMIN");
