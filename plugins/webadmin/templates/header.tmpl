@@ -1,31 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-  <title>[$PluginName] for [$HostName] &mdash; [$CurrentPageTitle]</title>
-  <style type="text/css" media="screen">
-    h1, h2, h3 { text-transform: lowercase; }
-    .error { color: red; }
-    #current_players { float: right; padding-right: 2em; }
-  </style>
-</head>
-<body>
-  <h1><a href="[$BaseURL]">[$UserName]@[$HostName]/[$PluginName]</a></h1>
-  <div id="nav">
-[*START Navigation]
-	[?IF IsCurrentPage]
-		<a id="nav_current">[$PageTitle]</a>
-	[?ELSE IsCurrentPage]
-		<a href="[$BaseURL][$PageName]">[$PageTitle]</a>
-	[?END IsCurrentPage]
-[*END Navigation]
-	NAV ERROR!
-[*EMPTY Navigation]
-    <a id="logout" href="[$BaseURL]logout">log out</a>
-  </div>
-
-[?IF Error]
-  <p class="error">[$Error]</p>
-[?END Error]
+[!header1.tmpl]
+[!header2.tmpl]
 
 [-This header is intended to be included in other templates.]
+[-It includes both parts of the header for pages that don't need to add anything to the head section.]

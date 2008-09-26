@@ -1,0 +1,16 @@
+
+  <div id="nav">
+[*START Navigation]
+	[?IF IsCurrentPage]
+		<a id="nav_current">[$PageTitle]</a>
+	[?ELSE IsCurrentPage]
+		<a href="[$BaseURL][$PageName]">[$PageTitle]</a>
+	[?END IsCurrentPage]
+[*END Navigation]
+	NAV ERROR!
+[*EMPTY Navigation]
+    <a id="logout" href="[$BaseURL]logout">log out</a>
+  </div>
+[?IF Error]
+  <p class="error">[$Error]</p>
+[?END Error]
