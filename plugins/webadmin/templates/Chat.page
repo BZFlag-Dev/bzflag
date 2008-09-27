@@ -2,7 +2,6 @@
 [-split this up so we can do a meta refresh]
 <meta http-equiv="refresh" content="60"/>
 [!header2.tmpl]
-[!navbar.tmpl]
   <h2>Chat</h2>
   
   <table border="0">
