@@ -381,6 +381,19 @@ unsigned int getFileLen(const char* file)
   return i;
 }
 
+bool fileExists ( const char *path )
+{
+  if (!path)
+    return false;
+
+  FILE *fp = fopen(convertPathToDelims(path).c_str(),"rb");
+  if (!fp)
+    return false;
+  fclose(fp);
+
+  return true;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

@@ -48,6 +48,9 @@ inline unsigned int getFileLen ( std::string &file ){return getFileLen(file.c_st
 std::string concatPaths ( const char* path1, const char* path2 );
 inline std::string concatPaths ( const std::string &p1, const std::string &p2 ){return concatPaths(p1.c_str(),p2.c_str());}
 
+bool fileExists ( const char *path );
+inline bool fileExists ( const std::string &p1 ){ return fileExists(p1.c_str());}
+
 
 #endif //_PLUGIN_FILES_H_
 
