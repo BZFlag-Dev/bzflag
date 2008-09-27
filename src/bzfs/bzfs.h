@@ -53,6 +53,8 @@ extern void removePlayer(int	 playerIndex,
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
+
+extern void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *message );
 extern void  pausePlayer(int playerIndex, bool paused);
 extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  dropFlag(FlagInfo &flag);

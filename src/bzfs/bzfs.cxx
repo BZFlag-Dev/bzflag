@@ -1382,9 +1382,16 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
+  sendChatMessage(srcPlayer,dstPlayer,message);
+}
 
+void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *message )
+{
   bz_ChatEventData_V1 chatData;
-  chatData.from = srcPlayer;
+  chatData.from = BZ_SERVER;
+  if (srcPlayer != ServerPlayer)
+    chatData.from = srcPlayer;
+
   chatData.to = BZ_NULLUSER;
 
   if (dstPlayer == AllPlayers)

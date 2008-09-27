@@ -1629,7 +1629,7 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char *message)
   else
     playerIndex=from;
 
-  sendMessage(playerIndex, dstPlayer, message);
+  sendChatMessage(playerIndex,dstPlayer,message);
   return true;
 }
 
@@ -4259,7 +4259,7 @@ void bz_ServerSidePlayerHandler::sendChatMessage(const char *text, int targetPla
 
   PlayerId dstPlayer=targetPlayer==BZ_ALLUSERS ? AllPlayers : targetPlayer;
 
-  sendPlayerMessage(player, dstPlayer, text);
+  ::sendChatMessage(player->getIndex(),dstPlayer,text);
 }
 
 //-------------------------------------------------------------------------
@@ -4291,7 +4291,7 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
       break;
   }
 
-  sendPlayerMessage(player, dstPlayer, text);
+  ::sendChatMessage(player->getIndex(),dstPlayer,text);
 }
 
 //-------------------------------------------------------------------------
