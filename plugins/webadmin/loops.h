@@ -109,6 +109,40 @@ protected:
   size_t chatLimit;
 };
 
+class LogLoop : public LoopHandler, bz_EventHandler, NewPageCallback
+{
+public:
+  LogLoop(Templateiser &ts);
+  virtual ~LogLoop();
+  virtual void setSize ( void );
+
+  virtual void process(bz_EventData *eventData);
+  virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+
+  virtual size_t getStart ( void );
+
+  typedef struct  
+  {
+    std::string time;
+    std::string message;
+  }LogMessage;
+
+  std::vector<LogMessage> messages;
+  size_t displayLimit;
+
+private:
+  void logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message );
+  void logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join );
+  void logSpawnMessage ( bz_PlayerSpawnEventData_V1 *data, LogMessage &message );
+  void logDieMessage ( bz_PlayerDieEventData_V1 *data, LogMessage &message );
+
+  void logGetWorldMessage ( bz_GetWorldEventData_V1 *data, LogMessage &message );
+  void logWorldDoneMessage ( LogMessage &message );
+};
+
 extern NavLoop *navLoop;
 
 

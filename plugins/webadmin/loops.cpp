@@ -8,6 +8,7 @@ PlayerLoop *playerLoop = NULL;
 NavLoop *navLoop = NULL;
 VarsLoop *varsLoop = NULL;
 ChatLoop *chatLoop = NULL;
+LogLoop *logLoop = NULL;
 
 
 size_t	max_loop = 0xFFFFFFFF;
@@ -18,6 +19,7 @@ void initLoops ( Templateiser &ts )
   navLoop = new NavLoop(ts);
   varsLoop = new VarsLoop(ts);
   chatLoop = new ChatLoop(ts);
+  logLoop = new LogLoop(ts);
 }
 
 //--------------LoopHandler
@@ -233,7 +235,7 @@ void VarsLoop::setSize ( void )
 
   size = keys.size();
 }
-
+//-----------ChatLoop
 ChatLoop::ChatLoop(Templateiser &ts) : LoopHandler()
 {
   chatLimit = 20;
@@ -282,11 +284,7 @@ void ChatLoop::newPage ( const std::string &pagename, const HTTPRequest &request
 
   std::string val;
   if (request.getParam("chatlimit",val))
-  {
     chatLimit = (size_t)atoi(val.c_str());
-    if (chatLimit > 1)
-      chatLimit = 1;
-  }
 }
 
 void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
@@ -356,9 +354,202 @@ bool ChatLoop::getIF  (size_t item, const std::string &key)
 
  size_t ChatLoop::getStart ( void )
  {
+   if (chatLimit <= 0)
+     return 0;
    if ( messages.size() < chatLimit)
      return 0;
    return messages.size() - chatLimit; // always start the limit up from the bottom
+ }
+
+ //-----------LogLoop
+ LogLoop::LogLoop(Templateiser &ts) : LoopHandler()
+ {
+   displayLimit = 40;
+   addNewPageCallback(this);
+   ts.addLoop("loglines",this);
+   ts.addKey("loglinetime",this);
+   ts.addKey("loglinetext",this);
+
+   bz_registerEvent(bz_eRawChatMessageEvent,this);
+   bz_registerEvent(bz_ePlayerJoinEvent,this);
+   bz_registerEvent(bz_ePlayerPartEvent,this);
+   bz_registerEvent(bz_ePlayerDieEvent,this);
+   bz_registerEvent(bz_ePlayerSpawnEvent,this);
+   bz_registerEvent(bz_eGetWorldEvent,this);
+   bz_registerEvent(bz_eWorldFinalized,this);
+
+
+   // debug
+#ifdef _DEBUG
+   LogMessage message;
+
+   bz_Time now;
+
+   bz_getUTCtime(&now);
+   message.time = printTime(&now);
+
+   message.message = "Log Startup";
+
+   messages.push_back(message);
+#endif
+ }
+
+ LogLoop::~LogLoop()
+ {
+   removeNewPageCallback(this);
+   bz_removeEvent(bz_eRawChatMessageEvent,this);
+   bz_removeEvent(bz_ePlayerJoinEvent,this);
+   bz_removeEvent(bz_ePlayerPartEvent,this);
+   bz_removeEvent(bz_ePlayerDieEvent,this);
+   bz_removeEvent(bz_ePlayerSpawnEvent,this);
+   bz_removeEvent(bz_eGetWorldEvent,this);
+   bz_removeEvent(bz_eWorldFinalized,this);
+ }
+
+ // check for any filter params
+ void LogLoop::newPage ( const std::string &pagename, const HTTPRequest &request )
+ {
+   displayLimit = 20;
+   if (!pagename.size() || compare_nocase(pagename,"main"))
+     displayLimit = 5;
+
+   std::string val;
+   if (request.getParam("loglimit",val))
+     displayLimit = (size_t)atoi(val.c_str());
+ }
+
+ void LogLoop::getKey (size_t item, std::string &data, const std::string &key)
+ {
+   LogMessage &message = messages[item];
+
+   if (key == "loglinetime")
+     data += message.time;
+   else if (key == "loglinetext")
+     data += message.message;
+ }
+
+ void LogLoop::process(bz_EventData *eventData)
+ {
+   if (!eventData)
+     return;
+
+   LogMessage message;
+
+   bz_Time now;
+
+   bz_getUTCtime(&now);
+   message.time = printTime(&now);
+
+   switch(eventData->eventType)
+   {
+     case bz_eRawChatMessageEvent:
+	logChatMessage((bz_ChatEventData_V1*)eventData,message);
+	break;
+
+     case bz_ePlayerJoinEvent:
+     case bz_ePlayerPartEvent:
+      logJoinPartMessage((bz_PlayerJoinPartEventData_V1*)eventData,message,eventData->eventType==bz_ePlayerJoinEvent);
+      break;
+
+     case bz_ePlayerSpawnEvent:
+	logSpawnMessage ( (bz_PlayerSpawnEventData_V1*)eventData, message );
+	break;
+
+     case bz_ePlayerDieEvent:
+       logDieMessage ( (bz_PlayerDieEventData_V1*)eventData, message );
+       break;
+
+     case bz_eGetWorldEvent:
+       logGetWorldMessage((bz_GetWorldEventData_V1*)eventData,message);
+       break;
+
+     case bz_eWorldFinalized:
+       logWorldDoneMessage(message);
+       break;
+
+     default:
+       break;
+   }
+
+   if (message.message.size())
+     messages.push_back(message);
+ }
+
+ void LogLoop::logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message )
+ {
+   std::string from;
+   std::string to;
+
+   if (data->from != BZ_SERVER)
+     from = bz_getPlayerCallsign(data->from);
+   else
+     from = "server";
+
+   if (data->to == BZ_NULLUSER)
+     to = bzu_GetTeamName(data->team);
+   else if ( data->to == BZ_ALLUSERS)
+     to = "all";
+   else
+     to = bz_getPlayerCallsign(data->to);
+
+   message.message = format("Chat from %s to %s : %s",from.c_str(),to.c_str(),data->message.c_str());
+ }
+
+ void LogLoop::logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join )
+ {
+    message.message = format("Player %s(%d)",data->record->callsign.c_str(),data->playerID);
+    if (join)
+      message.message += "joined";
+    else
+      message.message += "parted";
+    if (data->reason.size())
+    {
+      message.message += " reason: ";
+      message.message += data->reason.c_str();
+    }
+ }
+
+ void LogLoop::logSpawnMessage ( bz_PlayerSpawnEventData_V1 *data, LogMessage &message )
+ {
+   message.message = format("Player %s(%d) spawned at %f %f %f (%f)",bz_getPlayerCallsign(data->playerID),data->playerID,data->state.pos[0],data->state.pos[1],data->state.pos[2],data->state.rotation);
+ }
+
+ void LogLoop::logDieMessage ( bz_PlayerDieEventData_V1 *data, LogMessage &message )
+ {
+   message.message = format("Player %s(%d) died at %f %f %f (%f)",bz_getPlayerCallsign(data->playerID),data->playerID,data->state.pos[0],data->state.pos[1],data->state.pos[2],data->state.rotation);
+
+   if (data->killerID != -1)
+     message.message += format(" by %s(%d) with %s",bz_getPlayerCallsign(data->killerID),data->killerID,data->flagKilledWith.c_str());
+ }
+
+ void LogLoop::logGetWorldMessage ( bz_GetWorldEventData_V1 *data, LogMessage &message )
+ {
+   std::string world = "random";
+   if (data->worldFile.size())
+     world = data->worldFile.c_str();
+   if (data->worldBlob)
+     world = "Custom";
+
+    message.message = format("World %s loading",world.c_str());
+ }
+
+ void LogLoop::logWorldDoneMessage ( LogMessage &message )
+ {
+   message.message = "World loaded";
+ }
+
+ void LogLoop::setSize ( void )
+ {
+   size = messages.size();
+ }
+
+ size_t LogLoop::getStart ( void )
+ {
+   if (displayLimit <= 0)
+     return 0;
+   if ( messages.size() < displayLimit)
+     return 0;
+   return messages.size() - displayLimit; // always start the limit up from the bottom
  }
 
 // Local Variables: ***

@@ -67,6 +67,13 @@ border-color:Black;
 	border-color:Black;
 }
 
+.logTable
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
 .teamScoreTable
 {
 	border-style:solid;

@@ -1,0 +1,17 @@
+[!header1.tmpl]
+[-split this up so we can do a meta refresh]
+<meta http-equiv="refresh" content="60"/>
+[!header2.tmpl]
+	<div>&nbsp;</div>
+	<table class="titleBox"><tr><td>Logs</td></tr></table>
+	<table class="logTable">
+	[*START LogLines]
+	<tr>
+	<td>[$LogLineTime]:</td>
+	<td>[$LogLineText]</td>
+	</tr>
+	[*END LogLines]
+	  <tr><td>No Log Items</td></tr>
+	[*EMPTY LogLines]
+	</table>
+[!footer.tmpl]
