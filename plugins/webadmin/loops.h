@@ -87,7 +87,7 @@ public:
   virtual void setSize ( void );
 
   virtual void process(bz_EventData *eventData);
-  virtual void newPage ( const HTTPRequest &request );
+  virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
 
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);

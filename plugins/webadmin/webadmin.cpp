@@ -104,8 +104,6 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   case 1:
   case VERIFIED:
     {
-      callNewPageCallbacks(request);
-
       if (pagename.size())
       {
 	size_t size = pagename.size();
@@ -133,6 +131,8 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 
       if (!pagename.size())
 	pagename = "main";
+
+      callNewPageCallbacks(pagename,request);
 
       if (navLoop)
 	navLoop->currentTemplate = pagename;

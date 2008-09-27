@@ -254,9 +254,11 @@ ChatLoop::~ChatLoop()
 }
 
 // check for any filter params
-void ChatLoop::newPage ( const HTTPRequest &request )
+void ChatLoop::newPage ( const std::string &pagename, const HTTPRequest &request )
 {
   chatLimit = 20;
+  if (!pagename.size() || compare_nocase(pagename,"main"))
+    chatLimit = 5;
 
   std::string val;
   if (request.getParam("chatlimit",val))

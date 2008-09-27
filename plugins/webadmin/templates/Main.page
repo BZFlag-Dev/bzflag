@@ -1,32 +1,41 @@
 [!header.tmpl]
-  <h2>Main</h2>
-  <form id="current_players" action="" method="post">
-    <h3>Current players</h3>
-    <ul>
-[*START Players]
-      <li><input type="checkbox" id="player_[$PlayerID]"
-                 name="player" value="[$PlayerID]">
-        <label for="player_[$PlayerID]">[$Callsign]</label></li>
-[*END Players]
-      <li>No Players</li>
-[*EMPTY Players]
+	</hr>
+	   <h2>Current players</h2>
+		<ul>
+	[*START Players]
+		  <li><input type="checkbox" id="player_[$PlayerID]"
+					 name="player" value="[$PlayerID]">
+			<label for="player_[$PlayerID]">[$Callsign]</label></li>
+	[*END Players]
+		  <li>No Players</li>
+	[*EMPTY Players]
+  </hr>
+  <h2>Recent Chat</h2>
+  <br>
+  <table border="0" align="left">
+  <tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
+  [*START ChatLines]
+	<tr>
+	<td>[$ChatLineTime]</td><td>[$ChatLineUser]
+	[?IF ChatLineIsToTeam]
+		([$ChatLineTeam])
+	[?END ChatLineIsToTeam]
+	</td>
+	<td>[$ChatLineTo]</td>
+	<td>[$ChatLineText]</td>
+	</tr>
+  [*END ChatLines]
+      <tr><td>No chat</td></tr>
+  [*EMPTY ChatLines]
+  </table>
+  <br>
+  </hr>
+  <h2>Server Info</h2>
+  <p> Map Name: [$MapFile]</p>
+  <p><h3>TeamScores</h3></p>
+  <p>Red:[$RedTeamScore]</p>
+  <p>Green:[$GreenTeamScore]</p>
+  <p>Blue:[$BlueTeamScore]</p>
+  <p>Purple:[$PurpleTeamScore]</p>
 
-    </ul>
-    <input type="submit" action="[$BaseURL]" value="unban" name="unban">
-    <div>
-      <label for="kick_reason">reason</label>
-      <input type="text" name="reason" id="kickban_reason">
-    </div>
-    <div>
-      <input type="checkbox" name="notify" id="notify_kickee" value="yes">
-      <label for="notify_kickee">notify</label>
-      <input type="submit" value="kick" name="kick">
-    </div>
-    <div>
-      <input type="text" maxlength="4" id="ban_duration" name="duration">
-      <label for="ban_duration">min</label>
-      <input type="submit" value="idban" name="idban">
-      <input type="submit" value="ipban" name="ipban">
-    </div>
-  </form>
 [!footer.tmpl]
