@@ -432,7 +432,7 @@ void LogLoop::getLogAsFile ( std::string &file )
   for (size_t i = 0; i < messages.size(); i++)
   {
     file += messages[i].time + ":";
-    file += messages[i].message + "\n";
+    file += messages[i].message + "\r\n";
   }
 }
 

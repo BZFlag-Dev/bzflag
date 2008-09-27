@@ -62,6 +62,7 @@ bool SaveLogFile::process ( std::string &inputPage, const HTTPRequest &request, 
 
   reply.body = logFile;
   reply.docType = HTTPReply::eText;
+  reply.headers["Content-Disposition"] = "attachment; filename=\"logs.txt\"";
   return true;
 }
 
