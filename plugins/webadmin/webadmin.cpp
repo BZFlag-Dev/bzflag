@@ -75,6 +75,10 @@ void WebAdmin::init(const char* cmdln)
   actions.clear();
 
   templateSystem.addSearchPath(cmdln ? cmdln : "./");
+
+  serviceMimeResources = true;
+  resourceRootPath = cmdln ? cmdln : "./";
+
   initLoops(templateSystem);
   initCommonItems(templateSystem);
 
