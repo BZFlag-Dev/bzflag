@@ -4,6 +4,7 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
+#include "plugin_files.h"
 #include <fstream>
 #include <cstring>
 #include <algorithm>
@@ -32,10 +33,15 @@ private:
 
 WebAdmin *webAdmin = NULL;
 
+std::string binRoot;
+
 BZ_GET_PLUGIN_VERSION
 
 BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
+  // save off where we are
+  binRoot = bz_pluginBinPath();
+
   if(webAdmin)
     delete(webAdmin);
   webAdmin = new WebAdmin;
@@ -74,10 +80,41 @@ void WebAdmin::init(const char* cmdln)
 {
   actions.clear();
 
-  templateSystem.addSearchPath(cmdln ? cmdln : "./");
+  if (cmdln && strlen(cmdln))
+  {
+    templateSystem.addSearchPath(cmdln);
+    serviceMimeResources = true;
+    resourceRootPath = cmdln;
+  }
+  else if (binRoot.size())
+  {
+    // ok make a heroic effort to find the 404 item, cus if we can find that we got us a template dir
+    std::string searchpath = concatPaths(binRoot,"templates/");
+    if (!fileExists(searchpath+"404.tmpl"))
+    {
+      searchpath = concatPaths(binRoot,"webadmin/templates/");
+      if (!fileExists(searchpath+"404.tmpl"))
+      {
+	searchpath = concatPaths(binRoot,"plugins/webadmin/templates/");
+	if (!fileExists(searchpath+"404.tmpl"))
+	  searchpath = "";
+      }
+    }
 
-  serviceMimeResources = true;
-  resourceRootPath = cmdln ? cmdln : "./";
+    if (searchpath.size())
+    {
+      bz_debugMessagef(1,"webadmin: using template path %s",searchpath.c_str());
+
+      templateSystem.addSearchPath(searchpath.c_str());
+      serviceMimeResources = true;
+      resourceRootPath = searchpath;
+    }
+  }
+  else
+  {
+    bz_debugMessage(0,"No paths found, unable to run, BLAAAAGGGGG!");
+  }
+
 
   initLoops(templateSystem);
   initCommonItems(templateSystem);
