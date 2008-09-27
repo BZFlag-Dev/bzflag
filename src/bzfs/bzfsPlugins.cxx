@@ -374,14 +374,16 @@ bool loadPlugin ( std::string plugin, std::string config )
 
   tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
+  bool ret = false;
   if (itr != customPluginMap.end() && itr->second) {
     bz_APIPluginHandler *handler = itr->second;
-    return handler->handle(plugin,config);
+    ret = handler->handle(plugin,config);
   }
   else
-    return load1Plugin(plugin,config) == eLoadComplete;
+    ret = load1Plugin(plugin,config) == eLoadComplete;
 
   lastPluginDir = "";
+  return ret;
 }
 
 bool unloadPlugin ( std::string plugin )
