@@ -121,8 +121,111 @@ public:
 
     bool update(int connectionID);
 
-    std::string page;
+   // std::string page;
     size_t pos;
+
+    // a binary data management class
+    class PageBuffer
+    {
+    public:
+      virtual ~PageBuffer(){if(data)free(data);}
+      PageBuffer() : bufferSize(0), data(NULL){};
+
+      PageBuffer( const char* str )
+      {
+	bufferSize = strlen(str);
+	data = (char*)malloc(bufferSize);
+	memcpy(data,str,bufferSize);
+      }
+
+      PageBuffer( const std::string &r )
+      {
+	bufferSize = r.size();
+	data = (char*)malloc(bufferSize);
+	memcpy(data,r.c_str(),bufferSize);
+      }
+
+      PageBuffer( const PageBuffer &r )
+      {
+	bufferSize = r.size();
+	data = (char*)malloc(bufferSize);
+	memcpy(data,r.data,bufferSize);
+      }
+
+      size_t append ( const char * newData, size_t newSize )
+      {
+	if (!data)
+	{
+	  data = (char*)malloc(newSize);
+	  memcpy(data,newData,newSize);
+	  bufferSize = newSize;
+	}
+	else
+	{
+	  char *p = (char*)malloc(bufferSize+newSize);
+	  memcpy(p,data,bufferSize);
+	  memcpy(p+bufferSize,newData,newSize);
+	  bufferSize+=newSize;
+	  free(data);
+	  data = p;
+	}
+	return bufferSize;
+      }
+
+      PageBuffer& operator += ( const char* p )
+      {
+	if (p)
+	  append(p,strlen(p));
+	return *this;
+      }
+
+      PageBuffer& operator += ( const std::string &p )
+      {
+	if (p.size())
+	  append(p.c_str(),p.size());
+	return *this;
+      }
+
+      PageBuffer& operator = ( const char* p )
+      {
+	if (data)
+	  free (data);
+	data = NULL;
+
+	if (p)
+	    append(p,strlen(p));
+	return *this;
+      }
+
+      PageBuffer& operator = ( const std::string &p )
+      {
+	if (data)
+	  free (data);
+	data = NULL;
+
+	if (p.size())
+	  append(p.c_str(),p.size());
+	return *this;
+      }
+
+      PageBuffer& operator = ( const PageBuffer &p )
+      {
+	if (data)
+	  free (data);
+	data = NULL;
+
+	if (p.size())
+	  append(p.getData(),p.size());
+	return *this;
+      }
+      const size_t size(void)const {return bufferSize;}
+      const char* getData ( void ) const { return data;}
+
+    protected:
+      size_t bufferSize;
+      char * data;
+    };
+    PageBuffer pageBuffer;
 
     bool forceClose;
   };
@@ -808,66 +911,70 @@ HTTPConnection::HTTPTask::HTTPTask(HTTPReply& r, bool noBody):pos(0)
 void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 {
   // start a new one
-  page = "HTTP/1.1";
+  pageBuffer = "HTTP/1.1";
 
   forceClose = true;
 
-  switch(r.returnCode) {
+  switch(r.returnCode) 
+  {
   case HTTPReply::e200OK:
-    page += " 200 OK\n";
+    pageBuffer += " 200 OK\n";
     forceClose = false;
     break;
 
   case HTTPReply::e301Redirect:
-    if (r.redirectLoc.size()) {
-      page += " 301 Moved Permanently\n";
-      page += "Location: " + r.redirectLoc + "\n";
-    } else {
-      page += " 500 Server Error\n";
+    if (r.redirectLoc.size()) 
+    {
+      pageBuffer += " 301 Moved Permanently\n";
+      pageBuffer += "Location: " + r.redirectLoc + "\n";
     }
-    page += "Host: " + serverHostname + "\n";
+    else
+      pageBuffer += " 500 Server Error\n";
+    pageBuffer += "Host: " + serverHostname + "\n";
 
     break;
 
   case HTTPReply::e302Found:
-    if (r.redirectLoc.size()) {
-      page += " 302 Found\n";
-      page += "Location: " + r.redirectLoc + "\n";
-    } else {
-      page += " 500 Server Error\n";
+    if (r.redirectLoc.size()) 
+    {
+      pageBuffer += " 302 Found\n";
+      pageBuffer += "Location: " + r.redirectLoc + "\n";
     }
-    page += "Host: " + serverHostname + "\n";
+    else
+      pageBuffer += " 500 Server Error\n";
+
+    pageBuffer += "Host: " + serverHostname + "\n";
     break;
 
   case HTTPReply::e500ServerError:
-    page += " 500 Server Error\n";
+    pageBuffer += " 500 Server Error\n";
     break;
 
   case HTTPReply::e401Unauthorized:
-    page += " 401 Unauthorized\n";
-    page += "WWW-Authenticate: ";
+    pageBuffer += " 401 Unauthorized\n";
+    pageBuffer += "WWW-Authenticate: ";
 
     if (r.authType.size())
-      page += r.authType;
+      pageBuffer += r.authType;
     else
-      page += "Basic";
+      pageBuffer += "Basic";
 
-    page += " realm=\"";
+    pageBuffer += " realm=\"";
     if (r.authRealm.size())
-      page += r.authRealm;
+      pageBuffer += r.authRealm;
     else
-      page += serverHostname;
-    page += "\"\n";
+      pageBuffer += serverHostname;
+    pageBuffer += "\"\n";
     forceClose = false;
     break;
 
   case HTTPReply::e404NotFound:
-    page += " 404 Not Found\n";
+    pageBuffer += " 404 Not Found\n";
     forceClose = false;
    break;
 
   case HTTPReply::e403Forbiden:
-    page += " 403 Forbidden\n";
+    pageBuffer += " 403 Forbidden\n";
     forceClose = false;
    break;
   }
@@ -876,76 +983,72 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     forceClose = true;
 
   if (forceClose)
-    page += "Connection: close\n";
+    pageBuffer += "Connection: close\n";
 
   if (r.getBodySize()) {
-    page += format("Content-Length: %d\n", r.getBodySize());
+    pageBuffer += format("Content-Length: %d\n", r.getBodySize());
 
-    page += "Content-Type: ";
+    pageBuffer += "Content-Type: ";
     if (r.docType == HTTPReply::eOther && r.otherMimeType.size())
-      page += r.otherMimeType;
+      pageBuffer += r.otherMimeType;
     else
-      page += getMimeType(r.docType);
-    page += "\n";
+      pageBuffer += getMimeType(r.docType);
+    pageBuffer += "\n";
   }
 
   // write the cache info
   if(r.forceNoCache)
-    page += "Cache-Control: no-cache\n";
+    pageBuffer += "Cache-Control: no-cache\n";
 
   if (r.md5.size())
-    page += "Content-MD5: " + r.md5 + "\n";
+    pageBuffer += "Content-MD5: " + r.md5 + "\n";
 
   // dump the basic stat block
-  page += "Server: " + serverVersion + "\n";
+  pageBuffer += "Server: " + serverVersion + "\n";
 
   bz_Time ts;
   bz_getUTCtime (&ts);
-  page += "Date: ";
-  appendTime(page,&ts,"UTC");
-  page += "\n";
+  pageBuffer += "Date: ";
+  pageBuffer += printTime(&ts,"UTC");
+  pageBuffer += "\n";
 
   // dump the headers
   std::map<std::string,std::string>::iterator itr = r.headers.begin();
 
   while (itr != r.headers.end()) {
-    page += itr->first + ": " + itr->second = "\n";
+    pageBuffer += itr->first + ": " + itr->second = "\n";
     itr++;
   }
 
   if (r.returnCode == HTTPReply::e200OK) {
     itr = r.cookies.begin();
     while (itr != r.cookies.end()) {
-      page += "Set-Cookie: " +itr->first + "=" + itr->second + "\n";
+      pageBuffer += "Set-Cookie: " +itr->first + "=" + itr->second + "\n";
       itr++;
     }
   }
 
-  page += "\n";
+  pageBuffer += "\n";
 
   if (!noBody && r.getBodySize())
   {
     if (r.body.size())
-      page += r.body;
+      pageBuffer += r.body;
     else // it's bin data
-    {
-      const char* p=r.getBody();
-      for ( size_t s = 0; s < r.getBodySize();s++)
-	page += p[s];
-    }
+      pageBuffer.append(r.getBody(),r.getBodySize());
   }
 }
 
 HTTPConnection::HTTPTask::HTTPTask(const HTTPTask& t)
 {
-  page = t.page;
+  pageBuffer = t.pageBuffer;
   pos = t.pos;
 }
 
 bool HTTPConnection::HTTPTask::update(int connectionID)
 {
   // find out how much to write
-  if (pos >= page.size())
+  if (pos >= pageBuffer.size())
     return true;
 
   // only send out another message if the buffer is nearing being empty, so we don't flood it out and
@@ -955,17 +1058,17 @@ bool HTTPConnection::HTTPTask::update(int connectionID)
     return false;
 
   size_t write = 1000;
-  size_t left = page.size()-pos;
+  size_t left = pageBuffer.size()-pos;
 
   if (left <= 1000)
     write = left;
 
-  if (!bz_sendNonPlayerData (connectionID, page.c_str()+pos, (unsigned int)write))
+  if (!bz_sendNonPlayerData (connectionID, pageBuffer.getData()+pos, (unsigned int)write))
     return true;
 
   pos += write;
 
-  return pos >= page.size();
+  return pos >= pageBuffer.size();
 }
 
 // Local Variables: ***
