@@ -121,6 +121,7 @@ void WebAdmin::init(const char* cmdln)
 
   addAction(new UpdateBZDBVars());
   addAction(new SendChatMessage());
+  addAction(new SaveLogFile());
 
 //   level one has admin perms
   addPermToLevel(1,"ADMIN");
@@ -171,7 +172,10 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 	// find an action handler, call it, and get the pagename back
 	makeupper(action);
 	if (actions.find(action) != actions.end())
-	  pagename = actions[action]->process(pagename,request);
+	{
+	  if(actions[action]->process(pagename,request,reply))
+	    return true;
+	}
       }
 
       if (!pagename.size())

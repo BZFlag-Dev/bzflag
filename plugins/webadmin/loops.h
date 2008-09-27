@@ -118,6 +118,8 @@ public:
 
   virtual void process(bz_EventData *eventData);
   virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
+  
+  void getLogAsFile ( std::string &file );
 
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
@@ -133,6 +135,7 @@ protected:
   std::vector<LogMessage> messages;
   size_t displayLimit;
 
+
 private:
   void logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message );
   void logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join );
@@ -144,6 +147,7 @@ private:
 };
 
 extern NavLoop *navLoop;
+extern LogLoop *logLoop;
 
 
 #endif //_PAGES_H_

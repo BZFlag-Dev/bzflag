@@ -14,4 +14,5 @@
 	  <tr><td>No Log Items</td></tr>
 	[*EMPTY LogLines]
 	</table>
+	<a href="[$BaseURL][$CurrentPageTitle]?action=savelog" target="new" >Save Log File</a>
 [!footer.tmpl]

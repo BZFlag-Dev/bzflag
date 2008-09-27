@@ -2,6 +2,7 @@
 //
 
 #include "actions.h"
+#include "loops.h"
 #include <fstream>
 #include <cstring>
 #include <algorithm>
@@ -10,7 +11,7 @@
 #include <vector>
 #include <string>
 
-std::string UpdateBZDBVars::process ( const std::string &inputPage, const HTTPRequest &request )
+bool UpdateBZDBVars::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
 {
   std::map<std::string, std::vector<std::string> >::const_iterator itr = request.parameters.begin();
 
@@ -30,7 +31,7 @@ std::string UpdateBZDBVars::process ( const std::string &inputPage, const HTTPRe
     }
     itr++;
   }
-  return inputPage;
+  return false;
 }
 
 bool UpdateBZDBVars::varChanged ( const char * key , const char * val)
@@ -40,14 +41,30 @@ bool UpdateBZDBVars::varChanged ( const char * key , const char * val)
   return bz_getBZDBString(key) != val;
 }
 
-std::string SendChatMessage::process ( const std::string &inputPage, const HTTPRequest &request )
+bool SendChatMessage::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
 {
   std::string message;
 
   if (request.getParam("message",message) && message.size())
     bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
-  return inputPage;
+  return false;
 }
+
+bool SaveLogFile::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!logLoop)
+    return false;
+
+  std::string logFile;
+  logLoop->getLogAsFile(logFile);
+  if (!logFile.size())
+    return false;
+
+  reply.body = logFile;
+  reply.docType = HTTPReply::eText;
+  return true;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

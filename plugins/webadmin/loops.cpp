@@ -378,7 +378,6 @@ bool ChatLoop::getIF  (size_t item, const std::string &key)
    bz_registerEvent(bz_eGetWorldEvent,this);
    bz_registerEvent(bz_eWorldFinalized,this);
 
-
    // debug
 #ifdef _DEBUG
    LogMessage message;
@@ -427,6 +426,15 @@ bool ChatLoop::getIF  (size_t item, const std::string &key)
    else if (key == "loglinetext")
      data += message.message;
  }
+
+void LogLoop::getLogAsFile ( std::string &file )
+{
+  for (size_t i = 0; i < messages.size(); i++)
+  {
+    file += messages[i].time + ":";
+    file += messages[i].message + "\n";
+  }
+}
 
  void LogLoop::process(bz_EventData *eventData)
  {
