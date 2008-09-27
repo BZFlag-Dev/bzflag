@@ -27,6 +27,8 @@ bool removeCustomPluginHandler ( std::string extension, bz_APIPluginHandler *han
 
 std::vector<std::string> getPluginList ( void );
 
+extern std::string lastPluginDir;
+
 #endif //_BZFS_PLUGINS_H_
 
 // Local Variables: ***

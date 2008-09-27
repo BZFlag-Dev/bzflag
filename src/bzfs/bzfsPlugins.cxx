@@ -39,6 +39,8 @@ std::string globalPluginDir = "./";
 #  endif
 #endif
 
+std::string lastPluginDir;
+
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
 tmCustomPluginMap customPluginMap;
 
@@ -63,6 +65,27 @@ typedef enum {
   eLoadFailedRuntime,
   eLoadComplete
 } PluginLoadReturn;
+
+std::string getPluginPath ( const std::string & path )
+{
+  if ( path.find('/') == std::string::npos && path.find('\\') == std::string::npos )
+  {
+    return std::string ("./");
+  }
+
+  std::string newPath = path;
+  size_t lastSlash = newPath.find_last_of('/');
+  if (lastSlash != std::string::npos)
+    newPath.erase(newPath.begin()+lastSlash+1,newPath.end());
+  else
+  {
+    lastSlash = newPath.find_last_of('\\');
+    if (lastSlash != std::string::npos)
+      newPath.erase(newPath.begin()+lastSlash+1,newPath.end());
+  }
+
+  return newPath;
+}
 
 bool pluginExists ( std::string plugin )
 {
@@ -192,6 +215,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
     } else {
       lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
       if (lpProc) {
+	lastPluginDir = getPluginPath(realPluginName);
 	if (lpProc(config.c_str())!= 0) {
 	  logDebugMessage(1,"Plugin:%s found but bz_Load returned an error\n",plugin.c_str());
 	  FreeLibrary(hLib);
@@ -295,6 +319,7 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config ) {
     } else {
       lpProc = force_cast<int (*)(const char*)>(dlsym(hLib,"bz_Load"));
       if (lpProc) {
+	lastPluginDir = getPluginPath(realPluginName);
 	if((*lpProc)(config.c_str())) {
 	  logDebugMessage(1,"Plugin:%s found but bz_Load returned an error\n",plugin.c_str());
 	  return eLoadFailedRuntime;
@@ -355,6 +380,8 @@ bool loadPlugin ( std::string plugin, std::string config )
   }
   else
     return load1Plugin(plugin,config) == eLoadComplete;
+
+  lastPluginDir = "";
 }
 
 bool unloadPlugin ( std::string plugin )

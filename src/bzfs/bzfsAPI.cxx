@@ -3154,6 +3154,11 @@ BZF_API bool bz_unloadPlugin( const char* path )
 #endif
 }
 
+BZF_API const char* bz_pluginBinPath(void)
+{
+  return lastPluginDir.c_str();
+}
+
 
 //-------------------------------------------------------------------------
 
