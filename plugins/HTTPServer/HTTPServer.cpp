@@ -878,8 +878,8 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   if (forceClose)
     page += "Connection: close\n";
 
-  if (r.body.size()) {
-    page += format("Content-Length: %d\n", r.body.size());
+  if (r.getBodySize()) {
+    page += format("Content-Length: %d\n", r.getBodySize());
 
     page += "Content-Type: ";
     if (r.docType == HTTPReply::eOther && r.otherMimeType.size())
@@ -923,8 +923,17 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 
   page += "\n";
 
-  if (!noBody && r.body.size())
-    page += r.body;
+  if (!noBody && r.getBodySize())
+  {
+    if (r.body.size())
+      page += r.body;
+    else // it's bin data
+    {
+      const char* p=r.getBody();
+      for ( size_t s = 0; s < r.getBodySize();s++)
+	page += p[s];
+    }
+  }
 }
 
 HTTPConnection::HTTPTask::HTTPTask(const HTTPTask& t)

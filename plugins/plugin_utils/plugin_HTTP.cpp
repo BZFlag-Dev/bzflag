@@ -83,23 +83,27 @@ bool BZFSHTTP::handleRequest(const HTTPRequest &request, HTTPReply &reply)
       if ( mimeTypes.find(ext) != mimeTypes.end() )
       {
 	// it's one we do, try and find it
-	std::string filepath = concatPaths(resourceRootPath.c_str(),request.resource.c_str()+1);
+	std::string filepath = concatPaths(resourceRootPath.c_str(),request.resource.c_str());
 
-	FILE *fp = fopen(filepath.c_str(),"fb");
+	FILE *fp = fopen(filepath.c_str(),"rb");
 	if (fp)
 	{
-	  fseek(fp,0,SEEK_END);
-	  size_t s = ftell(fp);
-	  fseek(fp,0,SEEK_SET);
+	  char buffer[1024];
+	  bool done = false;
 
-	  char *buffer = (char*)malloc(s);
-	  fread(buffer,s,1,fp);
+	  while (!done)
+	  {
+	    size_t read = fread(buffer,1,1024,fp);
+	    if (read)
+	      reply.addBody(buffer,read);
+
+	    if (read != 1024)
+	      done = true;
+	  }
 	  fclose(fp);
 
 	  reply.docType = HTTPReply::eOther;
 	  reply.otherMimeType = mimeTypes[ext];
-	  reply.body = buffer;
-	  free(buffer);
 	  reply.returnCode = HTTPReply::e200OK;
 	  return true;
 	}
@@ -199,7 +203,38 @@ bool HTTPRequest::getParam(const std::string &param) const
   return parameters.find(p) != parameters.end();
 }
 
+size_t HTTPReply::addBody ( const char* data, size_t size )
+{
+  if (!bodyData)
+  {
+    bodyData = (char*)malloc(size);
+    memcpy(bodyData,data,size);
+    bodySize = size;
+  }
+  else
+  {
+    char *t = (char*)malloc(bodySize+size);
+    memcpy(t,bodyData,bodySize);
+    memcpy(t+bodySize,data,size);
+    bodySize += size;
+  }
 
+  return bodySize;
+}
+size_t HTTPReply::getBodySize ( void )
+{
+  if (bodyData)
+   return bodySize;
+  else return body.size();
+}
+
+const char * HTTPReply::getBody ( void )
+{
+  if (bodyData)
+    return bodyData;
+  else
+    return body.c_str();
+}
 
 class PendingTokenTask : public bz_BaseURLHandler
 {

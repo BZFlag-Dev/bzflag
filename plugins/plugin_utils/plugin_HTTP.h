@@ -132,7 +132,7 @@ typedef enum {
 class HTTPRequest
 {
 public:
-  HTTPRequest() : requestID(-1), request(eUnknown) {};
+  HTTPRequest() : requestID(-1), request(eUnknown){};
 
   int		  sessionID;
   int		  requestID;
@@ -141,7 +141,6 @@ public:
   std::string vdir;
   std::string resource;
   std::map<std::string, std::vector<std::string> > parameters;
-
 
   std::map<std::string, std::string> headers;
   std::map<std::string, std::string> cookies;
@@ -174,7 +173,8 @@ public:
 class HTTPReply
 {
 public:
-  HTTPReply(): docType(eText), returnCode(e404NotFound), forceNoCache(true) {};
+  HTTPReply(): docType(eText), returnCode(e404NotFound), forceNoCache(true), bodyData(NULL), bodySize(0) {};
+  virtual ~HTTPReply(){if (bodyData)free(bodyData);}
 
   typedef enum {
     eText,
@@ -205,6 +205,10 @@ public:
 
   std::string body;
 
+  size_t addBody ( const char* data, size_t size );
+  size_t getBodySize ( void );
+  const char * getBody ( void );
+
   // authentication method
   std::string authType;
   std::string authRealm;
@@ -216,6 +220,10 @@ public:
   std::string md5;
 
   std::string redirectLoc;
+
+protected:
+  char *bodyData;
+  size_t bodySize;
 };
 
 class BZFSHTTP
