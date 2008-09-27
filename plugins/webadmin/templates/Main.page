@@ -1,18 +1,16 @@
 [!header.tmpl]
-	</hr>
-	   <h2>Current players</h2>
-		<ul>
+	<div>&nbsp;</div>
+	<table class="titleBox"><tr><td>Current players</td></tr></table>
+	<table class="playerlist">
 	[*START Players]
-		  <li><input type="checkbox" id="player_[$PlayerID]"
-					 name="player" value="[$PlayerID]">
-			<label for="player_[$PlayerID]">[$Callsign]</label></li>
-	[*END Players]
-		  <li>No Players</li>
+	<tr><td>[$PlayerID]</td><td>[$Callsign]</td></tr>
+	[*END Players]</td></tr>
+	<tr><td>No Players</li>
 	[*EMPTY Players]
-  </hr>
-  <h2>Recent Chat</h2>
-  <br>
-  <table border="0" align="left">
+	</table>
+  <div>&nbsp;</div>
+  <table class="titleBox"><tr><td>Recent Chat</td></tr></table></br>
+  <table class="chatTable">
   <tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
   [*START ChatLines]
 	<tr>
@@ -28,14 +26,39 @@
       <tr><td>No chat</td></tr>
   [*EMPTY ChatLines]
   </table>
-  <br>
-  </hr>
-  <h2>Server Info</h2>
-  <p> Map Name: [$MapFile]</p>
-  <p><h3>TeamScores</h3></p>
-  <p>Red:[$RedTeamScore]</p>
-  <p>Green:[$GreenTeamScore]</p>
-  <p>Blue:[$BlueTeamScore]</p>
-  <p>Purple:[$PurpleTeamScore]</p>
-
+  
+  <div>&nbsp;</div>
+  <table class="titleBox"><tr><td>Server Info</td></tr></table>
+  <p>Map Name: [$MapFile]</p>
+  <table class="minibox"><tr><td>TeamScores</td></tr></table>
+  <table class="teamScoreTable">
+  <tr><th>Team</th><th>Score</th><th>Wins</th><th>Losses</th><tr>
+  <tr>
+  <td>Red</td>
+  <td>[$RedTeamScore]</td>
+  <td>[$RedTeamWins]</td>
+  <td>[$RedTeamLosses]</td>
+  </tr>
+  
+  <tr>
+  <td>Green</td>
+  <td>[$GreenTeamScore]</td>
+  <td>[$GreenTeamWins]</td>
+  <td>[$GreenTeamLosses]</td>
+  </tr>
+  
+  <tr>
+  <td>Blue</td>
+  <td>[$BlueTeamScore]</td>
+  <td>[$BlueTeamWins]</td>
+  <td>[$BlueTeamLosses]</td>
+  </tr>
+  
+  <tr>
+  <td>Purple</td>
+  <td>[$PurpleTeamScore]</td>
+  <td>[$PurpleTeamWins]</td>
+  <td>[$PurpleTeamLosses]</td>
+  </tr>
+</table>
 [!footer.tmpl]

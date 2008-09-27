@@ -2,11 +2,12 @@
 [-split this up so we can do a meta refresh]
 <meta http-equiv="refresh" content="60"/>
 [!header2.tmpl]
-  <h2>Chat</h2>
-  
-  <table border="0">
-  <tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
-  [*START ChatLines]
+
+	<div>&nbsp;</div>
+	<table class="titleBox"><tr><td>Chat</td></tr></table>
+	<table class="chatTable">
+	<tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
+	[*START ChatLines]
 	<tr>
 	<td>[$ChatLineTime]</td><td>[$ChatLineUser]
 	[?IF ChatLineIsToTeam]
@@ -16,12 +17,12 @@
 	<td>[$ChatLineTo]</td>
 	<td>[$ChatLineText]</td>
 	</tr>
-  [*END ChatLines]
-      <tr><td>No chat</td></tr>
-  [*EMPTY ChatLines]
-  </table>
-  <hr>
-  <form id="send_chat_message" action="[$BaseURL]/[$CurrentPageTitle]" method="post">
+	[*END ChatLines]
+	  <tr><td>No chat</td></tr>
+	[*EMPTY ChatLines]
+	</table>
+	
+  <form id="send_chat_message" action="[$BaseURL][$CurrentPageTitle]" method="post">
   <input type="hidden" name="action" value="sendchatmessage">
    Message<input type="text" name="message">
     <input type="submit" value="send">

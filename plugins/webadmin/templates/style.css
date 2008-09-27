@@ -1,0 +1,102 @@
+body
+{
+background-color: #000088;
+text-align: center;
+}
+
+html, body { height: 95%; }
+
+#logoImg{
+width: 307px;
+height: 81px;
+margin-top: 13px;
+background-image: url(images/logo.png);
+background-repeat: no-repeat;
+float:none;
+}
+
+#topBarImg
+{
+text-align:left;
+width: 100%;
+height: 13px;
+background-image: url(images/small_blue_bar.png);
+background-repeat: repeat-x;
+float: none;
+}
+
+.titleBox{
+height: 52px;
+background-image: url(images/title_box_tile.png);
+background-repeat: repeat-x;
+font-weight:bold;
+font-size:x-large;
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+
+}
+
+.minibox{
+height: 35px;
+background-image: url(images/title_box_tile.png);
+background-repeat: repeat-x;
+font-size:large;
+border-style:solid;
+border-width:thin;
+border-color:Black;
+
+}
+
+.minibox tr
+{
+	vertical-align:bottom;
+}
+
+.playerlist
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
+.chatTable
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
+.teamScoreTable
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
+#outerFrame{
+	width: 95%;
+	height: 100%;
+	background-color: #FFFFFF;
+	margin: 0 auto;
+	padding: 5px;
+	text-align: left;
+}
+
+.authHeader
+{
+	background-color: #000055;
+}
+
+.authHeader a 
+{
+	text-decoration: none;
+	color: #ffffff;
+}
+
+.authSelect
+{
+	background-color: #000099;
+	color: #ffffff;
+	text-decoration: none;
+}

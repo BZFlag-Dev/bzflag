@@ -1,16 +1,17 @@
-
-  <div id="nav">
-[*START Navigation]
-	[?IF IsCurrentPage]
-		<a id="nav_current">[$PageTitle]</a>
-	[?ELSE IsCurrentPage]
-		<a href="[$BaseURL][$PageName]">[$PageTitle]</a>
-	[?END IsCurrentPage]
-[*END Navigation]
-	NAV ERROR!
-[*EMPTY Navigation]
-    <a id="logout" href="[$BaseURL]logout">log out</a>
-  </div>
+<table class="authHeader" width ="100%">
+    <tr>
+        [*START Navigation]
+            <td class= [?IF IsCurrentPage] "authSelect" [?ELSE IsCurrentPage] "authHeader" [?END IsCurrentPage]>
+            <a href="[$BaseURL][$PageName]">[$PageTitle]</a>
+            </td>
+        [*END Navigation]
+            <td>NAV ERROR!</td>
+        [*EMPTY Navigation]
+        <td class="authHeader">
+            <a id="logout" href="[$BaseURL]logout">Log Out</a>
+        </td>
+    </tr>
+</table>
 [?IF Error]
-  <p class="error">[$Error]</p>
+<p class="error">[$Error]</p>
 [?END Error]
