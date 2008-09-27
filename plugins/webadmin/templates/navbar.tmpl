@@ -1,17 +1,14 @@
-<table class="authHeader" width ="100%">
-    <tr>
-        [*START Navigation]
-            <td class= [?IF IsCurrentPage] "authSelect" [?ELSE IsCurrentPage] "authHeader" [?END IsCurrentPage]>
-            <a href="[$BaseURL][$PageName]">[$PageTitle]</a>
-            </td>
-        [*END Navigation]
-            <td>NAV ERROR!</td>
-        [*EMPTY Navigation]
-        <td class="authHeader">
-            <a id="logout" href="[$BaseURL]logout">Log Out</a>
-        </td>
-    </tr>
-</table>
+
+<div id="headerbar">
+    [*START Navigation]
+    <span id= [?IF IsCurrentPage] "headerbarSelect" [?ELSE IsCurrentPage=] "headerbar" [?END IsCurrentPage]>
+    <a href="[$BaseURL][$PageName]">[$PageTitle]</a>
+    </span>
+    [*END Navigation]
+    <span id ="headerbar" >NAV ERROR!</span>
+    [*EMPTY Navigation]
+    <span id ="headerbar" ><a id="logout" href="[$BaseURL]logout">Log Out</a></span>
+</div>
 [?IF Error]
 <p class="error">[$Error]</p>
 [?END Error]
