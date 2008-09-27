@@ -20,11 +20,11 @@ public:
   std::string userName;
 };
 
-class Error : public TemplateCallbackClass
+class ServerError : public TemplateCallbackClass
 {
 public:
 
-  Error(Templateiser &ts);
+  ServerError(Templateiser &ts);
   virtual void keyCallback (std::string &data, const std::string &key);
   virtual bool ifCallback (const std::string &key);
 
@@ -45,7 +45,7 @@ protected:
 };
 
 // cheap singletons
-extern Error *error;
+extern ServerError *serverError;
 extern UserInfo *userInfo;
 
 // newpage callbacks

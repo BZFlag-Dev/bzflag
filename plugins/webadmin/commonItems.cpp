@@ -8,13 +8,13 @@
 #include <string>
 
 UserInfo *userInfo = NULL;
-Error *error = NULL;
+ServerError *serverError = NULL;
 GameInfo *gameInfo = NULL;
 
 void initCommonItems ( Templateiser &ts )
 {
   userInfo = new UserInfo(ts);
-  error = new Error(ts);
+  serverError = new ServerError(ts);
   gameInfo = new GameInfo(ts);
 }
 
@@ -59,20 +59,20 @@ void UserInfo::keyCallback (std::string &data, const std::string &/*key*/)
 }
 
 //--------------Error
-Error::Error(Templateiser &ts)
+ServerError::ServerError(Templateiser &ts)
 {
   ts.addKey("error",this);
   ts.addIF("error",this);
 }
 
-void Error::keyCallback (std::string &data, const std::string &/*key*/)
+void ServerError::keyCallback (std::string &data, const std::string &/*key*/)
 {
   data += errorMessage;
 }
 
-bool Error::ifCallback (const std::string &/*key*/)
+bool ServerError::ifCallback (const std::string &/*key*/)
 {
-  return errorMessage.size();
+  return errorMessage.size() != 0;
 }
 
 //--------------GameInfo

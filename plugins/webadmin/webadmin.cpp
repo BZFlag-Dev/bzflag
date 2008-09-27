@@ -138,10 +138,14 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 //  const char *username;
 
   if(userInfo)
-    userInfo->userName = getSessionUser(request.sessionID);
+  {
+    userInfo->userName = "";
+    if (getSessionUser(request.sessionID))
+      userInfo->userName = getSessionUser(request.sessionID);
+  }
 
-  if(error) // clar out the error message
-    error->errorMessage ="";
+  if(serverError) // clear out the error message
+    serverError->errorMessage ="";
 
   reply.returnCode = HTTPReply::e200OK;
   reply.docType = HTTPReply::eHTML;
