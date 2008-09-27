@@ -1016,7 +1016,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
   std::map<std::string,std::string>::iterator itr = r.headers.begin();
 
   while (itr != r.headers.end()) {
-    pageBuffer += itr->first + ": " + itr->second = "\n";
+    pageBuffer += itr->first + ": " + itr->second + "\n";
     itr++;
   }
 
