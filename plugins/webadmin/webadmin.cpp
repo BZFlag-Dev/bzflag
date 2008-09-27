@@ -83,6 +83,7 @@ void WebAdmin::init(const char* cmdln)
   initCommonItems(templateSystem);
 
   addAction(new UpdateBZDBVars());
+  addAction(new SendChatMessage());
 
 //   level one has admin perms
   addPermToLevel(1,"ADMIN");
@@ -97,6 +98,9 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   std::string pagename = request.resource;
   std::string filename;
 //  const char *username;
+
+  if(userInfo)
+    userInfo->userName = getSessionUser(request.sessionID);
 
   if(error) // clar out the error message
     error->errorMessage ="";

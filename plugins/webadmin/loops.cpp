@@ -133,12 +133,32 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
   // scan the dirs for files with title 
   std::vector<std::string> templateDirs = ts.getSearchPaths();
 
+  bool haveMain = false;
   for ( size_t d = 0; d < templateDirs.size(); d++ )
   {
     std::vector<std::string> files = getFilesInDir(templateDirs[d],"*.page",false);
 
     for ( size_t f = 0; f < files.size(); f++ )
-      pages.push_back(getFileTitle(files[f]));
+    {
+      std::string page = getFileTitle(files[f]);
+      if (compare_nocase(page,"main")==0)
+	haveMain = true;
+      pages.push_back(page);
+    }
+  }
+
+  // ok sort that sucker so main is first
+
+  if (haveMain)
+  {
+    std::vector<std::string> files = pages;
+    pages.clear();
+    pages.push_back("Main");
+    for ( size_t f = 0; f < files.size(); f++ )
+    {
+      if (compare_nocase(files[f],"main")!= 0)
+	pages.push_back(files[f]);
+    }
   }
 
   size = pages.size();
@@ -156,7 +176,7 @@ void NavLoop::keyCallback (std::string &data, const std::string &key)
 {
   if (key=="curerntpage")
     data += currentTemplate;
-  else if (key=="curerntpagetitle")
+  else if (key=="currentpagetitle")
     data += replace_all(getFileTitle(currentTemplate),std::string("_"),std::string(" "));
   else
     LoopHandler::keyCallback(data,key);
