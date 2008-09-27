@@ -217,6 +217,8 @@ size_t HTTPReply::addBody ( const char* data, size_t size )
     memcpy(t,bodyData,bodySize);
     memcpy(t+bodySize,data,size);
     bodySize += size;
+    free(bodyData);
+    bodyData = t;
   }
 
   return bodySize;
