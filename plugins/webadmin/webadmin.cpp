@@ -87,6 +87,8 @@ WebAdmin::~WebAdmin()
   {
     if (itr->second)
       delete(itr->second);
+
+    itr++;
   }
 }
 
@@ -129,7 +131,6 @@ void WebAdmin::init(const char* cmdln)
   {
     bz_debugMessage(0,"No paths found, unable to run, BLAAAAGGGGG!");
   }
-
 
   initLoops(templateSystem);
   initCommonItems(templateSystem);
