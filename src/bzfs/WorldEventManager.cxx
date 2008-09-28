@@ -34,8 +34,7 @@ WorldEventManager::~WorldEventManager()
   tmEventTypeList::iterator eventItr = eventList.begin();
   while (eventItr != eventList.end())
   {
-    tvEventList& eventList = eventItr->second;
-    tvEventList::iterator itr = eventList.begin();
+    tvEventList::iterator itr = eventItr->second.begin();
     while (itr != eventItr->second.end())
     {
       if ((*itr) && (*itr)->autoDelete())
