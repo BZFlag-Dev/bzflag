@@ -252,6 +252,25 @@ void VarsLoop::setSize ( void )
 
   size = keys.size();
 }
+
+//-------------PermsLoop
+
+PermsLoop::PermsLoop(Templateiser &ts)
+{
+  bz_APIStringList *permList = bz_getStandardPermList();
+  for ( unsigned int i = 0; i < permList->size(); i++ )
+    perms.push_back(std::string(permList->get(i).c_str()));
+
+  bz_deleteStringList(permList);
+  size = perms.size();
+}
+
+void PermsLoop::getKey (size_t item, std::string &data, const std::string &key)
+{
+  data += perms[item];
+}
+
+
 //-----------ChatLoop
 ChatLoop::ChatLoop(Templateiser &ts) : LoopHandler()
 {

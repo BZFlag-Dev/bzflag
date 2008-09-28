@@ -83,6 +83,17 @@ protected:
   std::vector<std::string> values;
 };
 
+class PermsLoop : public LoopHandler
+{
+public:
+  PermsLoop(Templateiser &ts);
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+
+  std::vector<std::string> perms;
+};
+
 class ChatLoop : public LoopHandler, bz_EventHandler, NewPageCallback
 {
 public:
