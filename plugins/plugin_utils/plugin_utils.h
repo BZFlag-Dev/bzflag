@@ -30,6 +30,9 @@ const std::string& toupper(const char* s, std::string& dest);
 const std::string& makelower(std::string& s);
 const std::string& makeupper(std::string& s);
 
+inline std::string makelower(const char *s){ std::string t;if(s)tolower(s,t); return t;}
+inline std::string makeupper(const char *s){ std::string t;if(s)toupper(s,t); return t;}
+
 std::string format(const char* fmt, ...)_ATTRIBUTE12;
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset = 0);
 std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
@@ -40,6 +43,8 @@ std::string base64_encode(const std::string &text);
 std::string base64_decode(const std::string &text);
 
 size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset = 0);
+
+std::string getStringRange ( const std::string &find, size_t start, size_t end );
 
 void trimLeadingWhitespace ( std::string &text );
 std::string trimLeadingWhitespace ( const std::string &text );

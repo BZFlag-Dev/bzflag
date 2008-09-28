@@ -440,6 +440,20 @@ size_t find_first_substr(const std::string &findin, const std::string findwhat, 
   return std::string::npos;
 }
 
+std::string getStringRange ( const std::string &find, size_t start, size_t end )
+{
+  std::string ret;
+
+  if (end <= start || start > find.size() || end > find.size())
+    return ret;
+
+  for ( size_t p = start; p <= end; p++)
+    ret += find[p];
+
+  return ret;
+}
+
+
 void trimLeadingWhitespace(std::string &text)
 {
   for(size_t s = 0; s < text.size(); s++) {
