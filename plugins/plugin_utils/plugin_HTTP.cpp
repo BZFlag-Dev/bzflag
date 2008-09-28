@@ -398,6 +398,7 @@ bool BZFSHTTPAuth::generatePage ( const HTTPRequest &request, HTTPReply &reply )
   flushTasks();
   int sessionID = request.sessionID;
   reply.docType = HTTPReply::eHTML;
+  reply.returnCode = HTTPReply::e200OK;
 
   std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
   if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
