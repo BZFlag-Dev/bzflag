@@ -24,6 +24,7 @@
 	  <tr><td>No chat</td></tr>
 	[*EMPTY ChatLines]
 	</table>
+	Show <a href="[$BaseURL][$CurrentPageTitle]?chatlimit=20">20</a> <a href="[$BaseURL][$CurrentPageTitle]?chatlimit=50">50</a> <a href="[$BaseURL][$CurrentPageTitle]?chatlimit=0">all</a>
 	
   <form id="send_chat_message" action="[$BaseURL][$CurrentPageTitle]" method="post">
   <input type="hidden" name="action" value="sendchatmessage">
