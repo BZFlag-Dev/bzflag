@@ -277,7 +277,7 @@ class DirectDisplay
   CGDisplayCount num_displays;
   CGDirectDisplayID* display_ids;
 
-  void DumpDisplayModeValues(CFDictionaryRef values) {
+  void DumpDisplayModeValues(CFDictionaryRef /* values */) {
   /*
     dprintf("   ----- Display Mode Info for %d -----\n", get_value(values, kCGDisplayMode));
     dprintf("   Bounds = %d x %d\n", get_value(values, kCGDisplayWidth), get_value(values, kCGDisplayHeight));
