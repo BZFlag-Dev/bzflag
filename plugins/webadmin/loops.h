@@ -58,13 +58,16 @@ public:
   NavLoop(Templateiser &ts);
 
   virtual void keyCallback (std::string &data, const std::string &key);
- 
+  virtual void setSize ( void );
+
+  void computePageList ( void );
   std::string currentTemplate;
+  std::vector<std::string> pages;
+
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual bool getIF  (size_t item, const std::string &key);
 
-  std::vector<std::string> pages;
 };
 
 class VarsLoop : public LoopHandler

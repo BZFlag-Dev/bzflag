@@ -25,6 +25,9 @@ public:
 
   virtual bool handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply );
 
+  void buildAuthPermsFromPages ( void );
+  void fillPageList ( std::vector<std::string> &pages );
+
 protected:
   void addAction ( Action *action );
 
@@ -93,7 +96,6 @@ WebAdmin::~WebAdmin()
   }
 }
 
-
 void WebAdmin::init(const char* cmdln)
 {
   actions.clear();
@@ -140,22 +142,54 @@ void WebAdmin::init(const char* cmdln)
   addAction(new SendChatMessage());
   addAction(new SaveLogFile());
 
-//   level one has admin perms
-  addPermToLevel(1,"ADMIN");
+  buildAuthPermsFromPages();
 
   templateSystem.setPluginName("webadmin", getBaseURL().c_str());
 
   setupAuth();
 }
 
+void WebAdmin::fillPageList ( std::vector<std::string> &pages )
+{
+  std::vector<std::string> templateDirs = templateSystem.getSearchPaths();
+
+  pages.clear();
+
+  for ( size_t d = 0; d < templateDirs.size(); d++ )
+  {
+    std::vector<std::string> files = getFilesInDir(templateDirs[d],"*.page",false);
+
+    for ( size_t f = 0; f < files.size(); f++ )
+      pages.push_back(getFileTitle(files[f]) + "." + getFileExtension(files[f]));
+  }
+}
+
+void WebAdmin::buildAuthPermsFromPages ( void )
+{
+  std::vector<std::string> pages;
+  fillPageList(pages);
+  for ( size_t i = 0; i < pages.size(); i++ )
+  {
+    TemplateMetaData meta;
+    templateSystem.getTemplateFileMetaData(meta,pages[i].c_str());
+    if (meta.exists("RequirePerm"))
+    {
+      std::vector<std::string> items = meta.get("RequirePerm");
+      for (size_t i = 0; i < items.size(); i++)
+	addPermToLevel(1,items[i]);
+    }
+  }
+}
+
 bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTPReply &reply )
 {
   std::string pagename = request.resource;
   std::string filename;
-//  const char *username;
 
   if(userInfo)
   {
+    userInfo->sessionAuth = this;
+    userInfo->sessionID = request.sessionID;
     userInfo->userName = "";
     if (getSessionUser(request.sessionID))
       userInfo->userName = getSessionUser(request.sessionID);
@@ -186,9 +220,9 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 	return true;
       }
 
-      // check for actions, fill out an auth thingy or something
+      // check for actions, if we have a userinfo
       std::string action;
-      if (request.getParam("action",action))
+      if (userInfo && request.getParam("action",action))
       {
 	// find an action handler, call it, and get the pagename back
 	makeupper(action);
@@ -202,10 +236,54 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       if (!pagename.size())
 	pagename = "Main";
 
-      callNewPageCallbacks(pagename,request);
+      // build up the list of pages by permision
+      std::vector<std::string> allPages;
+      std::vector<std::string> authedPages;
+
+      bool requestedPageIsAuthed = false;
+      fillPageList(allPages);
+      for ( size_t i = 0; i < allPages.size(); i++ )
+      {
+	TemplateMetaData meta;
+	templateSystem.getTemplateFileMetaData(meta,allPages[i].c_str());
+	if (meta.exists("RequirePerm"))
+	{
+	  std::vector<std::string> items = meta.get("RequirePerm");
+	  bool hasPerms = items.size() > 0;
+	  for (size_t s = 0; s < items.size(); s++)
+	  {
+	    // the user must have all the perms for the page
+	    if (!getSessionPermision(request.sessionID,items[s]))
+	      hasPerms = false;
+	  }
+	  if (hasPerms)
+	  {
+	    authedPages.push_back(getFileTitle(allPages[i]));
+
+	    if (find_first_substr(allPages[i],pagename) != std::string::npos)
+	      requestedPageIsAuthed = true;
+	  }
+	}
+      }
+
+      if (!authedPages.size())
+      {
+	reply.body = format("Verified user, but no authorized pages found");
+	return true;
+      }
+
+      // do something better here to get a valid default page if main isn't authed
+      if (!requestedPageIsAuthed)
+	pagename = "Main";
 
       if (navLoop)
+      {
 	navLoop->currentTemplate = pagename;
+	navLoop->pages = authedPages;
+	navLoop->computePageList();
+      }
+
+      callNewPageCallbacks(pagename,request);
 
       pagename += ".page";
       // if it's regular page then go for it
@@ -219,7 +297,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
    break;
 
   case VERIFIED:
-    reply.body = format("Verified user, but no authorized permision groups found");
+    reply.body = format("Verified user, but no authorized permission groups found");
     break;
 
   case UNAUTHENTICATED:

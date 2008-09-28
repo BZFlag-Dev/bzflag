@@ -1,3 +1,5 @@
+[#RequirePerm:sendHelp]
+
 [!header.tmpl]
 [?IF Editing]
   <h2>Editing helpmsg: [$HelpMsgName]</h2>

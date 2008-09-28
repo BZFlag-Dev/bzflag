@@ -1,3 +1,6 @@
+[#RequirePerm:viewReports]
+[#RequirePerm:playerList]
+
 [!header.tmpl]
 	<div>&nbsp;</div>
 	<table class="titleBox"><tr><td>Current players</td></tr></table>

@@ -1,3 +1,6 @@
+[#RequirePerm:viewReports]
+[#RequirePerm:playerList]
+
 [!header1.tmpl]
 [-split this up so we can do a meta refresh]
 <meta http-equiv="refresh" content="60"/>

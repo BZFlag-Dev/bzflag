@@ -1,3 +1,5 @@
+[#RequirePerm:setVar]
+
 [!header.tmpl] 
   <form id="server_vars" action="[$BaseURL]" method="post">
   <input type="hidden" name="action" value="updatevars">

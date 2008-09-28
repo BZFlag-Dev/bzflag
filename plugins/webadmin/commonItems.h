@@ -18,7 +18,25 @@ public:
   UserInfo(Templateiser &ts);
   virtual void keyCallback (std::string &data, const std::string &key);
 
-  std::string userName;
+  bool hasPerm ( const char* perm )
+  {
+    if (!sessionAuth)
+      return false;
+
+    return sessionAuth->getSessionPermision(sessionID,perm);
+  }
+
+  bool hasPerm ( const std::string &perm )
+  {
+    if (!sessionAuth)
+      return false;
+
+    return sessionAuth->getSessionPermision(sessionID,perm);
+  }
+
+  BZFSHTTPAuth *sessionAuth;
+  int		sessionID;
+  std::string	userName;
 };
 
 class ServerError : public TemplateCallbackClass

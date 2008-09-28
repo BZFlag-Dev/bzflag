@@ -147,21 +147,26 @@ void PlayerLoop::setSize ( void )
 //------------------NavLoop
 NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
 {
+  size = pages.size();
+
+  ts.addLoop("navigation",this);
+  ts.addKey("pagename",this);
+  ts.addKey("pagetitle",this);
+  ts.addKey("currentpage",this);
+  ts.addKey("currentpagetitle",this);
+  ts.addIF("iscurrentpage",this);
+}
+
+void NavLoop::computePageList ( void )
+{
   // scan the dirs for files with title 
-  std::vector<std::string> templateDirs = ts.getSearchPaths();
 
   bool haveMain = false;
-  for ( size_t d = 0; d < templateDirs.size(); d++ )
+  for ( size_t f = 0; f < pages.size(); f++ )
   {
-    std::vector<std::string> files = getFilesInDir(templateDirs[d],"*.page",false);
-
-    for ( size_t f = 0; f < files.size(); f++ )
-    {
-      std::string page = getFileTitle(files[f]);
-      if (compare_nocase(page,"main")==0)
+    std::string page = getFileTitle(pages[f]);
+    if (compare_nocase(page,"main")==0)
 	haveMain = true;
-      pages.push_back(page);
-    }
   }
 
   // ok sort that sucker so main is first
@@ -177,16 +182,13 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
 	pages.push_back(files[f]);
     }
   }
-
-  size = pages.size();
-
-  ts.addLoop("navigation",this);
-  ts.addKey("pagename",this);
-  ts.addKey("pagetitle",this);
-  ts.addKey("currentpage",this);
-  ts.addKey("currentpagetitle",this);
-  ts.addIF("iscurrentpage",this);
 }
+
+void NavLoop::setSize ( void )
+{
+  size = pages.size();
+}
+
 
 // CurrentPage dosn't use a loop, so just service it as normal
 void NavLoop::keyCallback (std::string &data, const std::string &key)

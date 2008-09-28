@@ -3,6 +3,8 @@
 
 #include "actions.h"
 #include "loops.h"
+#include "commonItems.h"
+
 #include <fstream>
 #include <cstring>
 #include <algorithm>
@@ -14,6 +16,12 @@
 bool UpdateBZDBVars::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
 {
   std::map<std::string, std::vector<std::string> >::const_iterator itr = request.parameters.begin();
+
+  if (!userInfo->hasPerm("setVar"))
+  {
+    serverError->errorMessage = "Update BZDB Var: Invalid Permission";
+    return false;
+  }
 
   if (!inputPage.size())
     inputPage = "Vars";
@@ -37,6 +45,7 @@ bool UpdateBZDBVars::process ( std::string &inputPage, const HTTPRequest &reques
   return false;
 }
 
+
 bool UpdateBZDBVars::varChanged ( const char * key , const char * val)
 {
   if (!bz_BZDBItemExists(key))
@@ -46,6 +55,12 @@ bool UpdateBZDBVars::varChanged ( const char * key , const char * val)
 
 bool SendChatMessage::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
 {
+  if (!userInfo->hasPerm("say"))
+  {
+    serverError->errorMessage = "Send Chat Message: Invalid Permission";
+    return false;
+  }
+
   std::string message;
 
   if (request.getParam("message",message) && message.size())
@@ -58,6 +73,12 @@ bool SaveLogFile::process ( std::string &inputPage, const HTTPRequest &request, 
   if (!logLoop)
     return false;
 
+  if (!userInfo->hasPerm("viewReports") || !userInfo->hasPerm("playerList"))
+  {
+    serverError->errorMessage = "Save Log File: Invalid Permission";
+    return false;
+  }
+
   std::string logFile;
   logLoop->getLogAsFile(logFile);
   if (!logFile.size())
@@ -68,6 +89,7 @@ bool SaveLogFile::process ( std::string &inputPage, const HTTPRequest &request, 
   reply.headers["Content-Disposition"] = "attachment; filename=\"logs.txt\"";
   return true;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

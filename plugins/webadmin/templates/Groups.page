@@ -1,3 +1,5 @@
+[#RequirePerm:listPerms]
+
 [!header.tmpl]
 [- This is a very minimal permissions interface and may be
    extended later to include other features of groupdb files.]

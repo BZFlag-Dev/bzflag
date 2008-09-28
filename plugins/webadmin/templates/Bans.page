@@ -1,3 +1,5 @@
+[#RequirePerm:banlist]
+
 [!header.tmpl]
   <h2>editing banlist</h2>
   

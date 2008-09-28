@@ -62,6 +62,8 @@ void callNewPageCallbacks (  const std::string &pagename, const HTTPRequest &req
 //----------------UserInfo
 UserInfo::UserInfo(Templateiser &ts)
 {
+  sessionAuth = NULL;
+  sessionID = -1;
   ts.addKey("username",this);
 }
 
