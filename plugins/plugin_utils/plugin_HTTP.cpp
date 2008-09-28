@@ -375,7 +375,12 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
       else
 	groupsWithPerm = findGroupsWithPerm(perm);
 
-      groups.insert(groups.end(),groupsWithPerm.begin(),groupsWithPerm.end());
+      // only add groups that are not in the list yet
+      for (size_t g = 0; g < groupsWithPerm.size(); g++)
+      {
+	if (std::find(groups.begin(),groups.end(),groupsWithPerm[g]) == groups.end())
+	  groups.push_back(groupsWithPerm[g]);
+      }
     }
     itr++;
   }
