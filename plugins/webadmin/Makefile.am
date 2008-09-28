@@ -9,6 +9,7 @@ webadmin_la_SOURCES = \
 		pages.h 	\
 		loops.cpp \
 		loops.h \
+		logs.cpp \
 		actions.cpp\
 		actions.h \
 		commonItems.cpp \

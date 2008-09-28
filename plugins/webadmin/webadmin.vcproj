@@ -199,10 +199,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\loops.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Makefile.am"
 				>
 				<FileConfiguration
@@ -234,6 +230,18 @@
 				RelativePath=".\webadmin.def"
 				>
 			</File>
+			<Filter
+				Name="loops"
+				>
+				<File
+					RelativePath=".\logs.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\loops.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
