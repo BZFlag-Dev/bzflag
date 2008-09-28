@@ -105,7 +105,16 @@ GameInfo::GameInfo(Templateiser &ts)
   ts.addKey("PurpleTeamWins",this);
   ts.addKey("PurpleTeamLosses",this);
 
+  ts.addKey("KBIn",this);
+  ts.addKey("KBOut",this);
+
   bz_registerEvent(bz_eGetWorldEvent,this);
+  bz_registerEvent(bz_eNetDataReceveEvent,this);
+  bz_registerEvent(bz_eNetDataSendEvent,this);
+
+  startTime = bz_getCurrentTime();
+  bytesIn = 0;
+  bytesOut = 0;
 
   mapFile = "Unknown";
 }
@@ -113,11 +122,15 @@ GameInfo::GameInfo(Templateiser &ts)
 GameInfo::~GameInfo(void)
 {
   bz_removeEvent(bz_eGetWorldEvent,this);
+  bz_removeEvent(bz_eNetDataReceveEvent,this);
+  bz_removeEvent(bz_eNetDataSendEvent,this);
 }
 
 
 void GameInfo::keyCallback (std::string &data, const std::string &key)
 {
+  double now = bz_getCurrentTime();
+
   if (key == "mapfile")
     data += mapFile;
   else if ( key == "redteamscore")
@@ -144,21 +157,37 @@ void GameInfo::keyCallback (std::string &data, const std::string &key)
     data += format("%d",bz_getTeamWins(ePurpleTeam));
   else if ( key == "purpletteamlosses")
     data += format("%d",bz_getTeamLosses(ePurpleTeam));
+  else if ( key == "kbin")
+    data += format("%f",(double)bytesIn/1024.0);
+  else if ( key == "kbout")
+    data += format("%f",(double)bytesOut/1024.0);
 }
 
 void GameInfo::process(bz_EventData *eventData)
 {
-  if (eventData->eventType == bz_eGetWorldEvent)
+  switch (eventData->eventType)
   {
-    bz_GetWorldEventData_V1 *data = (bz_GetWorldEventData_V1*)eventData;
-    mapFile = data->worldFile.c_str();
-    if (!mapFile.size())
+    case bz_eGetWorldEvent:
     {
-      if (data->worldBlob)
-	mapFile = "Custom";
-      else
-	mapFile = "Random";
+      bz_GetWorldEventData_V1 *data = (bz_GetWorldEventData_V1*)eventData;
+      mapFile = data->worldFile.c_str();
+      if (!mapFile.size())
+      {
+	if (data->worldBlob)
+	  mapFile = "Custom";
+	else
+	  mapFile = "Random";
+      }
+      break;
     }
+
+    case bz_eNetDataReceveEvent:
+      bytesIn += ((bz_NetTransferEventData_V1*)eventData)->iSize;
+      break;
+
+    case bz_eNetDataSendEvent:
+      bytesOut+= ((bz_NetTransferEventData_V1*)eventData)->iSize;
+      break;
   }
 }
 

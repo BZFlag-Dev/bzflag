@@ -44,6 +44,10 @@ public:
 
 protected:
   std::string mapFile;
+
+  double startTime;
+  size_t bytesIn;
+  size_t bytesOut;
 };
 
 // cheap singletons

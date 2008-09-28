@@ -27,9 +27,11 @@
   [*EMPTY ChatLines]
   </table>
   
+  
   <div>&nbsp;</div>
   <table class="titleBox"><tr><td>Server Info</td></tr></table>
   <p>Map Name: [$MapFile]</p>
+  
   <table class="minibox"><tr><td>TeamScores</td></tr></table>
   <table class="teamScoreTable">
   <tr><th>Team</th><th>Score</th><th>Wins</th><th>Losses</th><tr>
