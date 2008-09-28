@@ -1611,6 +1611,16 @@ BZF_API bool bz_groupAllowPerm(const char *group, const char *perm)
   return false;
 }
 
+BZF_API bz_APIStringList* bz_getStandardPermList ( void )
+{
+  bz_APIStringList* perms = bz_newStringList();
+
+  for (int i = 0; i < (int)PlayerAccessInfo::lastPerm; i++)
+    perms->push_back(nameFromPerm((PlayerAccessInfo::AccessPerm)i));
+
+  return perms;
+}
+
 //-------------------------------------------------------------------------
 
 

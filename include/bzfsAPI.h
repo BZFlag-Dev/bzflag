@@ -1251,6 +1251,7 @@ BZF_API float bz_getPlayerPacketLoss(int playerId);
 BZF_API bz_APIStringList* bz_getGroupList(void);
 BZF_API bz_APIStringList* bz_getGroupPerms(const char* group);
 BZF_API bool bz_groupAllowPerm(const char* group, const char* perm);
+BZF_API bz_APIStringList* bz_getStandardPermList ( void );
 
 // message API
 BZF_API bool bz_sendTextMessage(int from, int to, const char* message);
