@@ -35,35 +35,35 @@
   <table class="titleBox"><tr><td>Server Info</td></tr></table>
   <p>Map Name: [$MapFile]</p>
   
-  <table class="minibox"><tr><td>TeamScores</td></tr></table>
+  <table class="minibox"><tr><td>Team Scores</td></tr></table>
   <table class="teamScoreTable">
   <tr><th>Team</th><th>Score</th><th>Wins</th><th>Losses</th><tr>
   <tr>
   <td>Red</td>
-  <td>[$RedTeamScore]</td>
-  <td>[$RedTeamWins]</td>
-  <td>[$RedTeamLosses]</td>
+  <td align=right>[$RedTeamScore]</td>
+  <td align=right>[$RedTeamWins]</td>
+  <td align=right>[$RedTeamLosses]</td>
   </tr>
   
   <tr>
   <td>Green</td>
-  <td>[$GreenTeamScore]</td>
-  <td>[$GreenTeamWins]</td>
-  <td>[$GreenTeamLosses]</td>
+  <td align=right>[$GreenTeamScore]</td>
+  <td align=right>[$GreenTeamWins]</td>
+  <td align=right>[$GreenTeamLosses]</td>
   </tr>
   
   <tr>
   <td>Blue</td>
-  <td>[$BlueTeamScore]</td>
-  <td>[$BlueTeamWins]</td>
-  <td>[$BlueTeamLosses]</td>
+  <td align=right>[$BlueTeamScore]</td>
+  <td align=right>[$BlueTeamWins]</td>
+  <td align=right>[$BlueTeamLosses]</td>
   </tr>
   
   <tr>
   <td>Purple</td>
-  <td>[$PurpleTeamScore]</td>
-  <td>[$PurpleTeamWins]</td>
-  <td>[$PurpleTeamLosses]</td>
+  <td align=right>[$PurpleTeamScore]</td>
+  <td align=right>[$PurpleTeamWins]</td>
+  <td align=right>[$PurpleTeamLosses]</td>
   </tr>
 </table>
 [!footer.tmpl]
