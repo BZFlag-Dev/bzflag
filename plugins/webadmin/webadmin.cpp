@@ -75,6 +75,8 @@ void WebAdmin::addAction ( Action *action )
     toupper(action->name(),name);
     actions[name] = action;
   }
+  else if (action)
+    delete(action);
 }
 
 WebAdmin::~WebAdmin()

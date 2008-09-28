@@ -29,6 +29,12 @@ void freeLoops ( void )
   delete(varsLoop);
   delete(chatLoop);
   delete(logLoop);
+
+  playerLoop = NULL;
+  navLoop = NULL;
+  varsLoop = NULL;
+  chatLoop = NULL;
+  logLoop =NULL;
 }
 
 //--------------LoopHandler
