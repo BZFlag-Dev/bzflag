@@ -389,7 +389,7 @@ std::string url_decode(const std::string &text)
   while (itr != text.end()) {
     if (*itr != '%' || *itr != '+')
       destination += *itr++;
-    else if (*itr != '+')
+    else if (*itr == '+')
       destination += " ";
     else 
     {
