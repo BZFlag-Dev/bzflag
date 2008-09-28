@@ -899,21 +899,24 @@ bool Templateiser::callLoop ( const std::string &key )
   return false;
 }
 
-bool Templateiser::callIF ( const std::string &key )
+bool Templateiser::callIF ( const std::string &key, const std::string &param )
 {
   std::string lowerKey;
   tolower(key,lowerKey);
 
   ClassMap::iterator itr = ifClassCallbacks.find(lowerKey);
   if (itr != ifClassCallbacks.end())
+  { 
+    itr->second->ifParam = param;
     return itr->second->ifCallback(key);
+  }
 
   TestMap::iterator itr2 = ifFuncCallbacks.find(lowerKey);
   if (itr2 != ifFuncCallbacks.end())
     return (itr2->second)(key);
 
   if (parent)
-    return parent->callIF(key);
+    return parent->callIF(key,param);
 
   return false;
 }
@@ -1279,6 +1282,10 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
     return;
   }
 
+  std::string param;
+  if (commandParts.size() > 2)
+    param = commandParts[2];
+
   // now get the code for the next section
   std::string trueSection,elseSection;
 
@@ -1301,7 +1308,7 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   }
 
   // test the if, stuff that dosn't exist is false
-  if (callIF(commandParts[1])) {
+  if (callIF(commandParts[1],param)) {
     std::string newCode;
     processTemplate(newCode,trueSection);
     code += newCode;

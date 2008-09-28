@@ -57,6 +57,8 @@ public:
   virtual void keyCallback(std::string & /* data */, const std::string & /* key */) {};
   virtual bool loopCallback(const std::string &/* key */) { return false; }
   virtual bool ifCallback(const std::string &/* key */) { return false; }
+
+  std::string ifParam;
 };
 
 class Templateiser : public TemplateCallbackClass
@@ -113,7 +115,7 @@ protected:
 
   bool callKey(std::string &data, const std::string &key);
   bool callLoop(const std::string &key);
-  bool callIF(const std::string &key);
+  bool callIF(const std::string &key,const std::string& param);
 
   void setDefaultTokens(void);
 
