@@ -904,21 +904,24 @@ bool Templateiser::callKey ( std::string &data, const std::string &key )
   return false;
 }
 
-bool Templateiser::callLoop ( const std::string &key )
+bool Templateiser::callLoop ( const std::string &key, const std::string &param )
 {
   std::string lowerKey;
   tolower(key,lowerKey);
 
   ClassMap::iterator itr = loopClassCallbacks.find(lowerKey);
   if (itr != loopClassCallbacks.end())
-    return itr->second->loopCallback(key);
+  {
+    itr->second->templateParam = param;
+   return itr->second->loopCallback(key);
+  }
 
   TestMap::iterator itr2 = loopFuncCallbacks.find(lowerKey);
   if (itr2 != loopFuncCallbacks.end())
     return (itr2->second)(key);
 
   if (parent)
-    return parent->callLoop(key);
+    return parent->callLoop(key,param);
 
   return false;
 }
@@ -931,7 +934,7 @@ bool Templateiser::callIF ( const std::string &key, const std::string &param )
   ClassMap::iterator itr = ifClassCallbacks.find(lowerKey);
   if (itr != ifClassCallbacks.end())
   { 
-    itr->second->ifParam = param;
+    itr->second->templateParam = param;
     return itr->second->ifCallback(key);
   }
 
@@ -1219,7 +1222,7 @@ void Templateiser::replaceVar ( std::string &code, std::string::const_iterator &
 
 void Templateiser::processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
 {
-  std::string key;
+  std::string key,loopSection,emptySection,param;
 
   // read the rest of the key
   std::string::const_iterator itr = readKey(key,inItr,str);
@@ -1235,14 +1238,14 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   makelower(commandParts[0]);
   makelower(commandParts[1]);
 
+  if (commandParts.size() > 2)
+    param = commandParts[2];
+
   if ( commandParts[0] != "start" )
   {
     inItr = itr;
     return;
   }
-
-  // now get the code for the loop section section
-  std::string loopSection,emptySection;
 
   std::vector<std::string> checkKeys;
   checkKeys.push_back(format("*end %s",commandParts[1].c_str()));
@@ -1262,13 +1265,13 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   checkKeys.push_back(format("*empty %s",commandParts[1].c_str()));
   itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
 
-  if (callLoop(commandParts[1]))
+  if (callLoop(commandParts[1],param))
   {
     std::string newCode;
     processTemplate(newCode,loopSection);
     code += newCode;
 
-    while(callLoop(commandParts[1]))
+    while(callLoop(commandParts[1],param))
     {
       newCode = "";
       processTemplate(newCode,loopSection);

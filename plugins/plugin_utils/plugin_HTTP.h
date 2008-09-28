@@ -41,7 +41,6 @@ public:
   std::string getFirst ( const char* key );
   std::string getFirst ( const std::string &key ){return getFirst(key.c_str());}
 
-
   void add ( const char* key, const char* val );
   void add ( const std::string &key, const std::string &val ){add(key.c_str(),val.c_str());}
 
@@ -58,7 +57,7 @@ public:
   virtual bool loopCallback(const std::string &/* key */) { return false; }
   virtual bool ifCallback(const std::string &/* key */) { return false; }
 
-  std::string ifParam;
+  std::string templateParam;
 };
 
 class Templateiser : public TemplateCallbackClass
@@ -114,7 +113,7 @@ protected:
   ClassMap ifClassCallbacks;
 
   bool callKey(std::string &data, const std::string &key);
-  bool callLoop(const std::string &key);
+  bool callLoop(const std::string &key, const std::string &param);
   bool callIF(const std::string &key,const std::string& param);
 
   void setDefaultTokens(void);
