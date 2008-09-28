@@ -166,9 +166,9 @@ void GameInfo::keyCallback (std::string &data, const std::string &key)
     data += format("%d",bz_getTeamLosses(eBlueTeam));
   else if ( key == "purpleteamscore")
     data += format("%d",bz_getTeamScore(ePurpleTeam));
-  else if ( key == "purpletteamwins")
+  else if ( key == "purpleteamwins")
     data += format("%d",bz_getTeamWins(ePurpleTeam));
-  else if ( key == "purpletteamlosses")
+  else if ( key == "purpleteamlosses")
     data += format("%d",bz_getTeamLosses(ePurpleTeam));
   else if ( key == "kbin")
     data += format("%f",(double)bytesIn/1024.0);
