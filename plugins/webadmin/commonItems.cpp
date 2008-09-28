@@ -65,11 +65,22 @@ UserInfo::UserInfo(Templateiser &ts)
   sessionAuth = NULL;
   sessionID = -1;
   ts.addKey("username",this);
+
+  ts.addIF("hasperm",this);
+
 }
 
 void UserInfo::keyCallback (std::string &data, const std::string &/*key*/)
 {
   data += userName;
+}
+
+bool UserInfo::ifCallback (const std::string &key)
+{
+  if (sessionAuth && key == "hasperm" && ifParam.size())
+    return sessionAuth->getSessionPermision(sessionID,ifParam);
+
+  return false;
 }
 
 //--------------Error

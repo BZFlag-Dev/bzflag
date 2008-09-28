@@ -17,6 +17,7 @@ public:
 
   UserInfo(Templateiser &ts);
   virtual void keyCallback (std::string &data, const std::string &key);
+  virtual bool ifCallback (const std::string &key);
 
   bool hasPerm ( const char* perm )
   {
