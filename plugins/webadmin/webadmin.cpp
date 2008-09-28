@@ -17,6 +17,7 @@ class WebAdmin : public BZFSHTTPAuth
 {
 public:
   WebAdmin();
+  ~WebAdmin();
   virtual const char * getVDir ( void ){return "webadmin";}
   virtual const char * getDescription ( void ){return "Server Administration (Login Required)";}
 
@@ -75,6 +76,18 @@ void WebAdmin::addAction ( Action *action )
     actions[name] = action;
   }
 }
+
+WebAdmin::~WebAdmin()
+{
+  freeLoops();
+  std::map<std::string,Action*>::iterator itr = actions.begin();
+  while (itr != actions.end())
+  {
+    if (itr->second)
+      delete(itr->second);
+  }
+}
+
 
 void WebAdmin::init(const char* cmdln)
 {

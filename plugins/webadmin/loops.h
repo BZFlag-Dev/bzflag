@@ -11,6 +11,7 @@
 #include <vector>
 
 void initLoops ( Templateiser &ts );
+void freeLoops ( void );
 
 class LoopHandler : public TemplateCallbackClass
 {

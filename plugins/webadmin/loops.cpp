@@ -22,6 +22,15 @@ void initLoops ( Templateiser &ts )
   logLoop = new LogLoop(ts);
 }
 
+void freeLoops ( void )
+{
+  delete(playerLoop);
+  delete(navLoop);
+  delete(varsLoop);
+  delete(chatLoop);
+  delete(logLoop);
+}
+
 //--------------LoopHandler
 LoopHandler::LoopHandler()
 {
