@@ -29,6 +29,27 @@ typedef void (*TemplateKeyCallback)(std::string &data, const std::string &key);
 // for if test called to determine true or false
 typedef bool (*TemplateTestCallback)(const std::string &key);
 
+class TemplateMetaData
+{
+public:
+  bool exists ( const char* key );
+  bool exists ( const std::string &key ){return exists(key.c_str());}
+
+  std::vector<std::string> get ( const char* key );
+  std::vector<std::string> get ( const std::string &key ){return get(key.c_str());}
+
+  std::string getFirst ( const char* key );
+  std::string getFirst ( const std::string &key ){return getFirst(key.c_str());}
+
+
+  void add ( const char* key, const char* val );
+  void add ( const std::string &key, const std::string &val ){add(key.c_str(),val.c_str());}
+
+protected:
+
+  std::map< std::string, std::vector<std::string> > data;
+};
+
 class TemplateCallbackClass
 {
 public:
@@ -61,6 +82,9 @@ public:
 
   void processTemplate(std::string &code, const std::string &templateText);
   bool processTemplateFile(std::string &code, const char *file);
+
+  void getTemplateMetaData(TemplateMetaData &metadata, const std::string &templateText);
+  bool getTemplateFileMetaData(TemplateMetaData &metadata, const char *file);
 
   // for the default template tokens
   virtual void keyCallback(std::string &data, const std::string &key);
@@ -285,6 +309,14 @@ public:
   virtual bool handleAuthedRequest(int level, const HTTPRequest &request, HTTPReply &reply) = 0;
   virtual bool resumeAuthedTask(int /*requestID*/) { return true; }
 
+  const char* getSessionUser ( int sessionID );
+  size_t getSessionGroups ( int sessionID, std::vector<std::string> &groups );
+
+  bool getSessionPermision ( int sessionID, const char *perm );
+  inline bool getSessionPermision ( int sessionID, const std::string &perm ){return getSessionPermision(sessionID,perm.c_str());}
+
+  bool invalidateSession ( int sessionID );
+
 protected:
   // do not override this, they are used by the auth system
   virtual bool generatePage(const HTTPRequest &request, HTTPReply &reply);
@@ -318,9 +350,6 @@ protected:
 
   int getLevelFromGroups(const std::vector<std::string> &groups);
 
-  const char* getSessionUser ( int sessionID );
-  bool invalidateSession ( int sessionID );
-
 private:
   void flushTasks(void);
   bool verifyToken(const HTTPRequest &request, HTTPReply &reply);
@@ -329,6 +358,7 @@ private:
     double time;
     int level;
     std::string username;
+    std::vector<std::string> groups;
   } AuthInfo;
 
   std::map<int,AuthInfo> authedSessions;

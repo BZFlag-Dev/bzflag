@@ -435,6 +435,8 @@ bool BZFSHTTPAuth::generatePage ( const HTTPRequest &request, HTTPReply &reply )
 	{
 	  info.username = pendingItr->second->groups[0];
 	  info.level = getLevelFromGroups(pendingItr->second->groups);
+	  info.groups = pendingItr->second->groups;
+	  info.groups.erase(info.groups.begin()); // pull off the first 'group' because it's a name
 	}
 	if (info.level >= 0)
 	  authedSessions[request.sessionID] = info;
@@ -494,6 +496,38 @@ const char* BZFSHTTPAuth::getSessionUser ( int sessionID )
 
   return NULL;
 }
+
+size_t BZFSHTTPAuth::getSessionGroups ( int sessionID, std::vector<std::string> &groups )
+{
+  groups.clear();
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+
+  if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+    groups = authItr->second.groups;
+
+  return groups.size();
+}
+
+bool BZFSHTTPAuth::getSessionPermision ( int sessionID, const char *perm )
+{
+  if (!perm)
+    return false;
+
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+
+  if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+  {
+    std::vector<std::string> &groups = authItr->second.groups;
+    for (size_t i = 0; i < groups.size(); i++)
+    {
+      if (bz_groupAllowPerm(groups[i].c_str(),perm))
+	return true;
+    }
+  }
+
+  return false;
+}
+
 
 bool BZFSHTTPAuth::invalidateSession ( int sessionID )
 {
@@ -597,6 +631,62 @@ void BZFSHTTPAuth::flushTasks ( void )
   }
 }
 
+bool TemplateMetaData::exists ( const char* key )
+{
+  if (!key)
+    return false;
+
+  std::string keyName = makeupper(key);
+
+  return data.find(keyName) != data.end();
+}
+
+std::vector<std::string> TemplateMetaData::get ( const char* key )
+{
+  std::vector<std::string> vals;
+
+  if (key)
+  {
+    std::string keyName = makeupper(key);
+
+    if ( data.find(keyName) != data.end())
+      vals = data[keyName];
+  }
+
+  return vals;
+}
+
+std::string TemplateMetaData::getFirst ( const char* key )
+{
+  std::string val;
+
+  if (key)
+  {
+    std::string keyName = makeupper(key);
+
+    if ( data.find(keyName) != data.end())
+    {
+      if (data[keyName].size())
+	val = data[keyName][0];
+    }
+  }
+  return val;
+}
+
+void TemplateMetaData::add ( const char* key, const char* val )
+{
+  if (!key || !val)
+    return;
+
+  std::string keyName = makeupper(key);
+
+  if (!exists(key))
+  {
+    std::vector<std::string> t;
+    data[keyName] = t;
+  }
+  data[keyName].push_back(std::string(val));
+}
 
 Templateiser::Templateiser( Templateiser *t )
 {
@@ -852,7 +942,6 @@ bool Templateiser::processTemplateFile ( std::string &code, const char *file )
   return false;
 }
 
-
 void Templateiser::processTemplate ( std::string &code, const std::string &templateText )
 {
   std::string::const_iterator templateItr = templateText.begin();
@@ -883,6 +972,7 @@ void Templateiser::processTemplate ( std::string &code, const std::string &templ
 	  processIF(code,++templateItr,templateText);
 	  break;
 	case '-':
+	case '#': // treat metadata as comments when parsing
 	  processComment(code,++templateItr,templateText);
 	  break;
 	case '!':
@@ -893,6 +983,55 @@ void Templateiser::processTemplate ( std::string &code, const std::string &templ
     }
   }
 }
+
+void Templateiser::getTemplateMetaData(TemplateMetaData &metadata, const std::string &templateText)
+{
+  size_t pos = 0;
+  while ( pos < templateText.size() && pos != std::string::npos)
+  {
+    pos = find_first_substr(templateText,std::string("[#"),pos);
+    if ( pos < templateText.size() && pos != std::string::npos )
+    {
+      size_t start = pos;
+
+      pos = find_first_substr(templateText,std::string("]"),pos);
+      if ( pos < templateText.size() && pos != std::string::npos )
+      {
+	std::string dataKey = getStringRange(templateText,start+2,pos-1);
+
+	std::vector<std::string> chunks = tokenize(dataKey,std::string(":"),0,true);
+	if (chunks.size() > 1)
+	  metadata.add(chunks[0],chunks[1]);
+      }
+    }
+  }
+}
+
+bool Templateiser::getTemplateFileMetaData(TemplateMetaData &metadata, const char *file)
+{
+  if (!file)
+    return false;
+
+  // find the file
+  for (size_t i = 0; i < filePaths.size(); i++ )
+  {
+    std::string path = filePaths[i] + file;
+    FILE *fp = fopen(getPathForOS(path).c_str(),"rt");
+    std::string val;
+    if (fp)
+    {
+      char c;
+      while(fscanf(fp,"%c",&c) == 1)
+	val += c;
+      fclose(fp);
+
+      getTemplateMetaData(metadata,val);
+      return true;
+    }
+  }
+  return false;
+}
+
 
 void Templateiser::setPluginName ( const char* name, const char* URL )
 {
