@@ -3,7 +3,7 @@
 
 [!header1.tmpl]
 [-split this up so we can do a meta refresh]
-<meta http-equiv="refresh" content="60"/>
+  <meta http-equiv="refresh" content="60">
 [!header2.tmpl]
 
 	<div>&nbsp;</div>

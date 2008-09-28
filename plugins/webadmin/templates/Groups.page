@@ -11,14 +11,14 @@
 [*START Permissions]
       <li><input type="checkbox"
             id="perm_[$Permission]" name="perm" value="[$Permission]"
-            [?IF Checked]checked="checked"[?ELSE Checked][?END Checked] />
+            [?IF Checked]checked="checked"[?ELSE Checked][?END Checked] >
         <label for="perm_[$Permission]">[$Permission]</label></li>
 [*END Permissions]
       <li>No permissions!?</li>
 [*EMPTY Permissions]
     </ul>
-    <input type="hidden" name="name" value="[$GroupName]" />
-    <input type="submit" value="save" />
+    <input type="hidden" name="name" value="[$GroupName]" >
+    <input type="submit" value="save" >
   </form>
 [?ELSE Editing]
   <h2>Groups</h2>
@@ -27,7 +27,7 @@
     <ul>
 [*START Groups]
       <li><input type="checkbox" id="group_[$GroupName]"
-                 name="delgroup" value="[$GroupName]" />
+                 name="delgroup" value="[$GroupName]" >
         <label for="group_[$GroupName]">[$GroupName]</label>
         <a class="edit" href="?name=[$GroupName]">edit</a></li>
 [*END Groups]
@@ -38,8 +38,8 @@
   </form>
   
   <form id="group_new" action="[$BaseURL][$CurrentPage]" method="get">
-    <input type="text" name="name" />
-    <input type="submit" value="new" />
+    <input type="text" name="name" >
+    <input type="submit" value="new" >
   </form>
 [?END Editing]
 [!footer.tmpl]
