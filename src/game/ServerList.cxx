@@ -152,7 +152,7 @@ void ServerList::readServerList()
 	    dot[1] >= 0 && dot[1] <= 255 &&
 	    dot[2] >= 0 && dot[2] <= 255 &&
 	    dot[3] >= 0 && dot[3] <= 255) {
-	  InAddr addr;
+	  in_addr addr;
 	  unsigned char* paddr = (unsigned char*)&addr.s_addr;
 	  paddr[0] = (unsigned char)dot[0];
 	  paddr[1] = (unsigned char)dot[1];

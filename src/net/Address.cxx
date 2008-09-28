@@ -43,7 +43,7 @@
 
 Address::Address()
 {
-  InAddr tempAddr;
+  in_addr tempAddr;
 
   memset(&tempAddr, 0, sizeof(tempAddr));
   tempAddr.s_addr = htonl(INADDR_ANY);
@@ -61,7 +61,7 @@ Address::Address(const Address& address) : addr(address.addr)
   // do nothing
 }
 
-Address::Address(const InAddr& _addr)
+Address::Address(const in_addr& _addr)
 {
   addr.push_back(_addr);
 }
@@ -83,7 +83,7 @@ Address&		Address::operator=(const Address& address)
   return *this;
 }
 
-Address::operator InAddr() const
+Address::operator in_addr() const
 {
   return addr[0];
 }
@@ -132,7 +132,7 @@ uint8_t			Address::getIPVersion() const {
 Address			Address::getHostAddress(const std::string hname)
 {
   Address a;
-  InAddr tempAddr;
+  in_addr tempAddr;
   int j;
 
   struct hostent* hent;
@@ -163,7 +163,7 @@ Address			Address::getHostAddress(const std::string hname)
   return a;
 }
 
-std::string		Address::getHostByAddress(InAddr addr)
+std::string		Address::getHostByAddress(in_addr addr)
 {
   int addrLen = sizeof(addr);
   struct hostent* hent = gethostbyaddr((char*)&addr, addrLen, AF_INET);
@@ -197,7 +197,7 @@ void*			Address::pack(void* _buf) const
 {
   unsigned char* buf = (unsigned char*)_buf;
   buf = (unsigned char*)nboPackUByte(_buf, 4);
-  // everything in InAddr  is already in network byte order
+  // everything in in_addr  is already in network byte order
   int32_t hostaddr = int32_t(addr[0].s_addr);
   ::memcpy(buf, &hostaddr, sizeof(int32_t));	buf += sizeof(int32_t);
   return (void*)buf;
@@ -206,11 +206,11 @@ void*			Address::pack(void* _buf) const
 void*			Address::unpack(void* _buf)
 {
   unsigned char* buf = (unsigned char*)_buf;
-  InAddr tempAddr;
+  in_addr tempAddr;
   // FIXME - should actually parse the first byte to see if it's IPv4 or
   // IPv6
   ++buf;
-  // everything in InAddr should be stored in network byte order
+  // everything in in_addr should be stored in network byte order
   int32_t hostaddr;
   ::memcpy(&hostaddr, buf, sizeof(int32_t));	buf += sizeof(int32_t);
   tempAddr.s_addr = u_long(hostaddr);

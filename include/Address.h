@@ -32,19 +32,19 @@
 #include "network.h"
 #include "Pack.h"
 
-typedef struct in_addr	InAddr;			// shorthand
+// typedef struct in_addr	InAddr;			// shorthand
 
 class Address {
   public:
 			Address();
 			Address(const std::string&);
 			Address(const Address&);
-			Address(const InAddr&);		    // input in nbo
+			Address(const in_addr&);		    // input in nbo
 			Address(const struct sockaddr_in&); // input in nbo
 			~Address();
     Address&		operator=(const Address&);
 
-			operator InAddr() const;
+			operator in_addr() const;
     bool		operator==(const Address&) const;
     bool		operator!=(const Address&) const;
     bool		isAny() const;
@@ -56,11 +56,11 @@ class Address {
     void*		unpack(void*);
 
     static Address	getHostAddress(const std::string hostname = std::string(""));
-    static std::string	getHostByAddress(InAddr);
+    static std::string	getHostByAddress(in_addr);
     static const std::string getHostName(const std::string hostname = std::string(""));
 
   private:
-    std::vector <InAddr> addr;
+    std::vector <in_addr> addr;
 };
 
 typedef uint8_t		PlayerId;
@@ -85,7 +85,7 @@ class ServerId {
 
   public:
     // host and port in network byte order
-    InAddr		serverHost;		// server host
+    in_addr		serverHost;		// server host
     int16_t		port;			// server port
     int16_t		number;			// local player number
 };

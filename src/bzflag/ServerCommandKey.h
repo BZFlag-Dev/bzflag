@@ -65,7 +65,7 @@ public:
   };
 
 private:
-  std::string		makePattern(const InAddr& address);
+  std::string		makePattern(Address const& address);
   void		updatePrompt();
 
 private:
