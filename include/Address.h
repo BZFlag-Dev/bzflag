@@ -32,14 +32,12 @@
 #include "network.h"
 #include "Pack.h"
 
-// typedef struct in_addr	InAddr;			// shorthand
-
 class Address {
   public:
 			Address();
 			Address(const std::string&);
 			Address(const Address&);
-			Address(const in_addr&);		    // input in nbo
+			Address(const in_addr&);	    // input in nbo
 			Address(const struct sockaddr_in&); // input in nbo
 			~Address();
     Address&		operator=(const Address&);
