@@ -263,6 +263,9 @@ PermsLoop::PermsLoop(Templateiser &ts)
 
   bz_deleteStringList(permList);
   size = perms.size();
+
+  ts.addLoop("Permissions",this);
+  ts.addKey("Permission",this);
 }
 
 void PermsLoop::getKey (size_t item, std::string &data, const std::string &key)
