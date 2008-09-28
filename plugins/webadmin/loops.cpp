@@ -287,7 +287,11 @@ ChatLoop::ChatLoop(Templateiser &ts) : LoopHandler()
   ts.addKey("chatlineto",this);
   ts.addKey("chatlinetext",this);
 
+  ts.addKey("chattotal",this);
+  ts.addKey("chatitemnumber",this);
+
   ts.addIF("chatlineisforteam",this);
+  ts.addIF("chatlimit",this);
 
   // debug
 #ifdef _DEBUG
@@ -333,6 +337,24 @@ bool ChatLoop::loopCallback (const std::string &key)
   return LoopHandler::loopCallback(key);
 }
 
+// CurrentPage dosn't use a loop, so just service it as normal
+void ChatLoop::keyCallback (std::string &data, const std::string &key)
+{
+  if (key=="chattotal")
+    data += format("%d",messages.size());
+  else
+    LoopHandler::keyCallback(data,key);
+}
+
+bool ChatLoop::ifCallback (const std::string &key)
+{
+  if (key == "chatlimit" && templateParam.size())
+    return chatLimit == atoi(templateParam.c_str());
+
+  return LoopHandler::ifCallback(key);
+}
+
+
 void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
 {
   ChatMessage &message = messages[item];
@@ -347,6 +369,8 @@ void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
     data += message.to;
   else if (key == "chatlinetext")
     data += message.message;
+  else if (key == "chatlinetext")
+    data += format("%d",pos);
 }
 
 bool ChatLoop::getIF  (size_t item, const std::string &key)

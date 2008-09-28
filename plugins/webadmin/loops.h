@@ -105,6 +105,9 @@ public:
   virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
 
   virtual bool loopCallback (const std::string &key);
+  virtual void keyCallback (std::string &data, const std::string &key);
+  virtual bool ifCallback (const std::string &key);
+
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual bool getIF  (size_t item, const std::string &key);
