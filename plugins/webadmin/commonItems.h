@@ -9,6 +9,7 @@
 #include "plugin_HTTP.h"
 
 void initCommonItems ( Templateiser &ts );
+void freeCommonItems ( void );
 
 class UserInfo : public TemplateCallbackClass
 {
@@ -36,6 +37,7 @@ class GameInfo : public TemplateCallbackClass, bz_EventHandler
 public:
 
   GameInfo(Templateiser &ts);
+  virtual ~GameInfo(void);
   virtual void keyCallback (std::string &data, const std::string &key);
 
   virtual void process(bz_EventData *eventData);

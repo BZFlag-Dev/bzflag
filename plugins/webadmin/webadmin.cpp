@@ -81,6 +81,7 @@ void WebAdmin::addAction ( Action *action )
 
 WebAdmin::~WebAdmin()
 {
+  freeCommonItems();
   freeLoops();
   std::map<std::string,Action*>::iterator itr = actions.begin();
   while (itr != actions.end())

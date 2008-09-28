@@ -18,6 +18,18 @@ void initCommonItems ( Templateiser &ts )
   gameInfo = new GameInfo(ts);
 }
 
+void freeCommonItems ( void )
+{
+  delete (userInfo);
+  delete (serverError);
+  delete (gameInfo);
+
+  userInfo = NULL;
+  serverError = NULL;
+  gameInfo = NULL;
+}
+
+
 std::vector<NewPageCallback*> newPageCallbacks;
 
 void addNewPageCallback ( NewPageCallback *callback )
@@ -97,6 +109,12 @@ GameInfo::GameInfo(Templateiser &ts)
 
   mapFile = "Unknown";
 }
+
+GameInfo::~GameInfo(void)
+{
+  bz_removeEvent(bz_eGetWorldEvent,this);
+}
+
 
 void GameInfo::keyCallback (std::string &data, const std::string &key)
 {
