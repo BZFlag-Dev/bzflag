@@ -200,7 +200,7 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       }
 
       if (!pagename.size())
-	pagename = "main";
+	pagename = "Main";
 
       callNewPageCallbacks(pagename,request);
 

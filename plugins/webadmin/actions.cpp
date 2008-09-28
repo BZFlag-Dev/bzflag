@@ -15,6 +15,9 @@ bool UpdateBZDBVars::process ( std::string &inputPage, const HTTPRequest &reques
 {
   std::map<std::string, std::vector<std::string> >::const_iterator itr = request.parameters.begin();
 
+  if (!inputPage.size())
+    inputPage = "Vars";
+
   while (itr != request.parameters.end())
   {
     const std::string &key = itr->first;
