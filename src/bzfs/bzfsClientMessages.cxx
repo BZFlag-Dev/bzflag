@@ -688,6 +688,13 @@ public:
     buf = nboUnpackUShort(buf, from);
     buf = nboUnpackUShort(buf, to);
 
+    bz_TeleportEventData_V1 eventData;
+    eventData.playerID = player->getIndex();
+    eventData.from = from;
+    eventData.to = to;
+
+    worldEventManager.callEvents(eventData);
+
     sendMsgTeleport(player->getIndex(), from, to);
     return true;
   }

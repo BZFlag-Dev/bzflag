@@ -150,6 +150,7 @@ typedef enum {
   bz_eAllowFlagGrabEvent,
   bz_eAllowKillCommandEvent,
   bz_eReportFiledEvent,
+  bz_eTeleportEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1086,6 +1087,19 @@ public:
 
   int playerID;
   bz_ApiString message;
+};
+
+class BZF_API bz_TeleportEventData_V1 : public bz_EventData
+{
+public:
+  bz_TeleportEventData_V1() : bz_EventData(bz_eTeleportEvent)
+    , playerID(-1)
+  {
+  }
+
+  int playerID;
+  int from;
+  int to;
 };
 
 // event handler callback
