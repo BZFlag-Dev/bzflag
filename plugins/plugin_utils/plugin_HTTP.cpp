@@ -333,6 +333,24 @@ void BZFSHTTPAuth::TSURLCallback::keyCallback(std::string &data, const std::stri
     data += URL;
 }
 
+bool ipIsLocal ( const std::string &ip )
+{
+  std::vector<std::string> v = tokenize(ip,std::string("."),0,false);
+  if (v.size()< 4)
+    return true;
+
+  if (v[0] == "127" || v[0] == "10")
+    return true;
+
+  if (v[0] == "192" && v[1]== "168")
+    return true;
+
+  if (v[0] == "172" && ( (atoi(v[1].c_str()) >= 16)  && (atoi(v[1].c_str()) <= 31) ) )
+    return true;
+
+  return false;
+}
+
 bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
 {
   // build up the groups list
@@ -373,6 +391,8 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
   task->requestID = request.requestID;
   task->URL = "http://my.bzflag.org/db/";
   task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user);
+  if (!ipIsLocal(request.ip))
+    task->URL += "@" + request.ip;
   task->URL += "%3D" + token;
 
   task->URL += "&groups=";
