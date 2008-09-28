@@ -387,7 +387,7 @@ std::string url_decode(const std::string &text)
 
   std::string::const_iterator itr = text.begin();
   while (itr != text.end()) {
-    if (*itr != '%')
+    if (*itr != '%' || *itr != '+')
       destination += *itr++;
     else if (*itr != '+')
       destination += " ";
