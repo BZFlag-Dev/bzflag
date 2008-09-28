@@ -104,6 +104,7 @@ public:
   virtual void process(bz_EventData *eventData);
   virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
 
+  virtual bool loopCallback (const std::string &key);
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual bool getIF  (size_t item, const std::string &key);
@@ -122,6 +123,7 @@ protected:
 
   std::vector<ChatMessage> messages;
   size_t chatLimit;
+  size_t formChatLimit;
 };
 
 class LogLoop : public LoopHandler, bz_EventHandler, NewPageCallback

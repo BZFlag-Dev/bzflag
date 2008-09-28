@@ -15,7 +15,7 @@
   <table class="titleBox"><tr><td>Recent Chat</td></tr></table></br>
   <table class="chatTable">
   <tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
-  [*START ChatLines]
+  [*START ChatLines 5]
 	<tr>
 	<td>[$ChatLineTime]</td><td>[$ChatLineUser]
 	[?IF ChatLineIsToTeam]

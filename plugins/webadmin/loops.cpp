@@ -317,13 +317,20 @@ ChatLoop::~ChatLoop()
 // check for any filter params
 void ChatLoop::newPage ( const std::string &pagename, const HTTPRequest &request )
 {
-  chatLimit = 20;
-  if (!pagename.size() || compare_nocase(pagename,"main"))
-    chatLimit = 5;
+  formChatLimit = 20;
 
   std::string val;
   if (request.getParam("chatlimit",val))
-    chatLimit = (size_t)atoi(val.c_str());
+    formChatLimit = (size_t)atoi(val.c_str());
+}
+
+bool ChatLoop::loopCallback (const std::string &key)
+{
+  if (templateParam.size())
+    chatLimit = atoi(templateParam.c_str());
+  else
+    chatLimit = formChatLimit;
+  return LoopHandler::loopCallback(key);
 }
 
 void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
