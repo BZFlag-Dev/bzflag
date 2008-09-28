@@ -372,8 +372,7 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
   }
   task->requestID = request.requestID;
   task->URL = "http://my.bzflag.org/db/";
-  task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
-  task->URL += request.ip;
+  task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user);
   task->URL += "%3D" + token;
 
   task->URL += "&groups=";
