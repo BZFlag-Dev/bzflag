@@ -167,9 +167,9 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
   reply.returnCode = HTTPReply::e200OK;
   reply.docType = HTTPReply::eHTML;
 
-  switch(level) {
+  switch(level)
+  {
   case 1:
-  case VERIFIED:
     {
       if (pagename.size())
       {
@@ -218,8 +218,14 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
     }
    break;
 
+  case VERIFIED:
+    reply.body = format("Verified user, but no authorized permision groups found");
+    break;
+
+  case UNAUTHENTICATED:
   default:
-    reply.body = format("Not authenticated sessionID %d", request.sessionID);
+    reply.body = format("Not authenticated user, global auth verify failed");
+    break;
   }
 
   return true;
