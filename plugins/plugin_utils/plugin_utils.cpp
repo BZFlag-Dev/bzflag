@@ -387,9 +387,12 @@ std::string url_decode(const std::string &text)
 
   std::string::const_iterator itr = text.begin();
   while (itr != text.end()) {
-    if (*itr != '%') {
+    if (*itr != '%')
       destination += *itr++;
-    } else {
+    else if (*itr != '+')
+      destination += " ";
+    else 
+    {
       char hex[5] = "0x00";
 
       itr++;;
