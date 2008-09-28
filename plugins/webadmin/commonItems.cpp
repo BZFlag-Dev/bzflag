@@ -77,8 +77,8 @@ void UserInfo::keyCallback (std::string &data, const std::string &/*key*/)
 
 bool UserInfo::ifCallback (const std::string &key)
 {
-  if (sessionAuth && key == "hasperm" && ifParam.size())
-    return sessionAuth->getSessionPermision(sessionID,ifParam);
+  if (sessionAuth && key == "hasperm" && templateParam.size())
+    return sessionAuth->getSessionPermision(sessionID,templateParam);
 
   return false;
 }
