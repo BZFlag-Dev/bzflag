@@ -34,6 +34,8 @@
   <div>&nbsp;</div>
   <table class="titleBox"><tr><td>Server Info</td></tr></table>
   <p>Map Name: [$MapFile]</p>
+  <p>KB inbound: [$KBin]</p>
+  <p>KB outbound: [$KBOut]</p>
   
   <table class="minibox"><tr><td>Team Scores</td></tr></table>
   <table class="teamScoreTable">
