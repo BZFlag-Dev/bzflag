@@ -13,21 +13,29 @@
 /* interface header */
 #include "NetHandler.h"
 
-std::vector<NetworkDataLogCallback*> logCallbacks;
+namespace {
+  typedef std::vector<NetworkDataLogCallback*> LogCallbacks;
+
+  LogCallbacks& logCallbacks()
+  {
+    static LogCallbacks myCallbacks;
+    return myCallbacks;
+  }
+}
 
 void addNetworkLogCallback(NetworkDataLogCallback * cb )
 {
   if (cb)
-    logCallbacks.push_back(cb);
+    logCallbacks().push_back(cb);
 }
 
 void removeNetworkLogCallback(NetworkDataLogCallback * cb )
 {
-  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
+  for ( size_t i = 0; i < logCallbacks().size(); i++)
   {
-    if ( logCallbacks[i] == cb )
+    if ( logCallbacks()[i] == cb )
     {
-      logCallbacks.erase(logCallbacks.begin()+i);
+      logCallbacks().erase(logCallbacks().begin()+i);
       return;
     }
   }
@@ -35,8 +43,8 @@ void removeNetworkLogCallback(NetworkDataLogCallback * cb )
 
 void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsigned int size, void *param = NULL )
 {
-  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
-    logCallbacks[i]->networkDataLog(send,udp,data,size,param);
+  for ( size_t i = 0; i < logCallbacks().size(); i++)
+    logCallbacks()[i]->networkDataLog(send,udp,data,size,param);
 }
 
 // system headers
