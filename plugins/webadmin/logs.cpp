@@ -171,7 +171,11 @@ void LogLoop::getLogAsFile ( std::string &file )
      case bz_eIdBanEvent:
        logIDBanMessage ( (bz_IdBanEventData_V1*)eventData, message );
        break;
+
     case bz_eKickEvent:
+      logKickMessage ( (bz_KickEventData_V1*)eventData, message );
+      break;
+
      case bz_eKillEvent:
      case bz_ePlayerPausedEvent:
      case bz_eMessageFilteredEvent:
@@ -238,6 +242,24 @@ void LogLoop::getLogAsFile ( std::string &file )
      message.message += "(" + bannie + ")";
 
    message.message += " for " + format("%d ",data->duration);
+   if (data->reason.size())
+     message.message += data->reason.c_str();
+ }
+
+ void LogLoop::logKickMessage ( bz_KickEventData_V1 *data, LogMessage &message )
+ {
+   std::string kicker = "Server";
+   if (data->kickerID != BZ_SERVER)
+     kicker = bz_getPlayerCallsign(data->kickerID);
+
+   std::string kickie;
+   if (data->kickedID >= 0)
+     kickie = bz_getPlayerCallsign(data->kickedID);
+
+   message.message = format("Host Ban Event: %s banned %d",kicker.c_str(),data->kickerID);
+   if (kickie.size())
+     message.message += "(" + kickie + ") ";
+
    if (data->reason.size())
      message.message += data->reason.c_str();
  }

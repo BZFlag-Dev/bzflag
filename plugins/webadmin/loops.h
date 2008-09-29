@@ -168,6 +168,7 @@ private:
   void logBanMessage ( bz_BanEventData_V1 *data, LogMessage &message );
   void logHostBanMessage ( bz_HostBanEventData_V1 *data, LogMessage &message );
   void logIDBanMessage ( bz_IdBanEventData_V1 *data, LogMessage &message );
+  void logKickMessage ( bz_KickEventData_V1 *data, LogMessage &message );
 };
 
 extern NavLoop *navLoop;
