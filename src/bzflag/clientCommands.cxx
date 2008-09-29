@@ -12,6 +12,7 @@
 
 /* interface header */
 #include "commands.h"
+#include "MotionUtils.h"
 
 /* system implementation headers */
 #include "zlib.h"
@@ -360,6 +361,8 @@ static std::string cmdRestart(const std::string&,
 static std::string cmdDestruct(const std::string&,
 			       const CommandManager::ArgList& args, bool*)
 {
+  char msgBuf[40];
+
   if (args.size() != 0)
     return "usage: destruct";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -368,10 +371,17 @@ static std::string cmdDestruct(const std::string&,
       destructCountdown = 0.0f;
       hud->setAlert(1, "Self Destruct cancelled", 1.5f, true);
     } else {
-      destructCountdown = 5.0f;
-      char msgBuf[40];
-      sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-      hud->setAlert(1, msgBuf, 1.0f, false);
+      if (getMagnitude(myTank->getVelocity()) > 0.01f)
+      {
+	sprintf(msgBuf, "No Self Destruct while moving");
+	hud->setAlert(1, msgBuf, 1.0f, false);
+      }
+      else
+      {
+	destructCountdown = 5.0f;
+	sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
+	hud->setAlert(1, msgBuf, 1.0f, false);
+      }
     }
   }
   return std::string();
