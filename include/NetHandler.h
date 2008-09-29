@@ -53,11 +53,8 @@ class NetworkDataLogCallback
 public:
   virtual ~NetworkDataLogCallback(){};
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param = NULL ) = 0;
+  virtual void networkDataLog ( bool send, bool udp, const unsigned char* data, size_t size, void* param ) = 0;
 };
-
-void addNetworkLogCallback(NetworkDataLogCallback * cb );
-void removeNetworkLogCallback(NetworkDataLogCallback * cb );
 
 void setNoDelay(SOCKET fd);
 
@@ -113,6 +110,15 @@ public:
       needed for udp communications
   */
   static bool initHandlers(struct sockaddr_in addr);
+
+  /** Network data log callbacks
+   * Register/deregister data log callbacks
+   */
+  static void addNetworkLogCallback(NetworkDataLogCallback * cb );
+  static void removeNetworkLogCallback(NetworkDataLogCallback * cb );
+private:
+  static void callNetworkDataLog(bool send, bool udp, unsigned char const* data, size_t size, void* param);
+public:
 
   // Iterators......
   /**

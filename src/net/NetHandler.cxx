@@ -15,30 +15,38 @@
 
 #include "network.h"
 
-std::vector<NetworkDataLogCallback*> logCallbacks;
+namespace {
+  typedef std::vector<NetworkDataLogCallback*> LogCallbacks;
 
-void addNetworkLogCallback(NetworkDataLogCallback * cb )
-{
-  if (cb)
-    logCallbacks.push_back(cb);
+  LogCallbacks& logCallbacks()
+  {
+    static LogCallbacks myCallbacks;
+    return myCallbacks;
+  }
 }
 
-void removeNetworkLogCallback(NetworkDataLogCallback * cb )
+void NetHandler::addNetworkLogCallback(NetworkDataLogCallback * cb )
 {
-  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
-  {
-    if ( logCallbacks[i] == cb )
-    {
-      logCallbacks.erase(logCallbacks.begin()+i);
-      return;
+  if (cb)
+    logCallbacks().push_back(cb);
+}
+
+void NetHandler::removeNetworkLogCallback(NetworkDataLogCallback * cb )
+{
+  for (LogCallbacks::iterator itr = logCallbacks().begin(); itr != logCallbacks().end(); ++itr) {
+    if ( *itr == cb ) {
+      logCallbacks().erase(itr);
+      break;
     }
   }
 }
 
-void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsigned int size, void *param = NULL )
+void NetHandler::callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, size_t size, void* param )
 {
-  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
-    logCallbacks[i]->networkDataLog(send,udp,data,size,param);
+  for (LogCallbacks::iterator cb = logCallbacks().begin();
+       cb != logCallbacks().end(); ++cb) {
+      (*cb)->networkDataLog(send, udp, data, size, param);
+  }
 }
 
 // system headers
@@ -438,11 +446,11 @@ NetHandler::Status NetHandler::getMsg(FramingFunction framer, char* buf, size_t&
     }
   }
 
-  // Disposition the resulting message
-  if (result == GoodMsg) {
-    // Log the data
-    callNetworkDataLog(false, isUDP, reinterpret_cast<unsigned char*>(buf), len, this);
-  }
+//   // Disposition the resulting message
+//   if (result == GoodMsg) {
+//     // Log the data
+//     callNetworkDataLog(false, isUDP, reinterpret_cast<unsigned char*>(buf), len, this);
+//   }
 
   // All done
   return result;
@@ -459,6 +467,10 @@ void NetHandler::flushUDP()
   if (udpOutputLen) {
     sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
 	   (struct sockaddr*)&uaddr, sizeof(uaddr));
+
+    // Log the data
+    callNetworkDataLog(true, true, (unsigned char const*)udpOutputBuffer, udpOutputLen, this);
+
     udpOutputLen = 0;
   }
 }
@@ -498,8 +510,6 @@ int NetHandler::pwrite(const void *b, int l)
 	  break;
     }
   }
-
-  callNetworkDataLog(true,useUDP,(unsigned char*)b,l,this);
 
   // always sent MsgUDPLinkRequest over udp with udpSend
   if (useUDP || code == MsgUDPLinkRequest) {
@@ -629,6 +639,7 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr,
 int NetHandler::send(const void *buffer, size_t length) 
 {
 
+  callNetworkDataLog(true, false, (unsigned char*)buffer, length, this);
   int n = ::send(fd, (const char *)buffer, (int)length, 0);
   if (n >= 0)
     return n;
@@ -740,6 +751,10 @@ RxStatus NetHandler::receive(size_t length)
     return ReadAll;
   int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
   if (size > 0) {
+
+    // Log the data
+    callNetworkDataLog(false, false, (unsigned char const*)tcpmsg+tcplen, size, this);
+
     tcplen += size;
     if (tcplen == length)
       returnValue = ReadAll;
@@ -784,6 +799,9 @@ void NetHandler::tcpRead()
 
   // On a good read, increment the size of the buffer
   if (nRead > 0) {
+    // Log the data
+    callNetworkDataLog(false, false, (unsigned char const*)buf, nRead, this);
+
     tcplen += nRead;
   } else if (nRead == 0) {
     // This value is only when the peer has gracefully closed the
@@ -834,6 +852,10 @@ void NetHandler::udpSend(const void *b, size_t l)
   if (udpOutputLen && (udpOutputLen + l > (int)MaxPacketLen)) {
     sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
 	   (struct sockaddr*)&uaddr, sizeof(uaddr));
+
+    // Log the data
+    callNetworkDataLog(true, true, (unsigned char const*)udpOutputBuffer, udpOutputLen, this);
+
     udpOutputLen = 0;
   }
   // If nothing is buffered and new data will mostly fill it, send
@@ -841,6 +863,10 @@ void NetHandler::udpSend(const void *b, size_t l)
   if (!udpOutputLen && ((int)l > sizeLimit)) {
     sendto(udpSocket, (const char *)b, (int)l, 0, (struct sockaddr*)&uaddr,
 	   sizeof(uaddr));
+
+    // Log the data
+    callNetworkDataLog(true, true, (unsigned char const*)b, l, this);
+
   } else {
     // Buffer new data
     memcpy(&udpOutputBuffer[udpOutputLen], (const char *)b, l);
@@ -849,6 +875,10 @@ void NetHandler::udpSend(const void *b, size_t l)
     if (udpOutputLen > sizeLimit) {
       sendto(udpSocket, udpOutputBuffer, udpOutputLen, 0,
 	     (struct sockaddr*)&uaddr, sizeof(uaddr));
+
+      // Log the data
+      callNetworkDataLog(true, true, (unsigned char const*)udpOutputBuffer, udpOutputLen, this);
+
       udpOutputLen = 0;
     }
   }

@@ -610,10 +610,10 @@ BZFSNetworkMessageTransferCallback bzfsTransferCallback;
 class BZFSNetLogCB : NetworkDataLogCallback
 {
 public:
-  BZFSNetLogCB(){addNetworkLogCallback(this);}
-  virtual ~BZFSNetLogCB(){removeNetworkLogCallback(this);}
+  BZFSNetLogCB(){NetHandler::addNetworkLogCallback(this);}
+  virtual ~BZFSNetLogCB(){NetHandler::removeNetworkLogCallback(this);}
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void* param = NULL )
+  virtual void networkDataLog ( bool send, bool udp, unsigned char const* data, size_t size, void* param )
   {
     NetHandler *h = (NetHandler*)param;
 
