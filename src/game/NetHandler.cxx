@@ -308,6 +308,7 @@ bool NetHandler::isFdSet(fd_set *set) {
 
 int NetHandler::send(const void *buffer, size_t length) {
 
+  callNetworkDataLog(true,false,(unsigned char*)buffer,(unsigned int)length,this);
   int n = ::send(fd, (const char *)buffer, (int)length, 0);
   if (n >= 0)
     return n;
@@ -445,8 +446,6 @@ int NetHandler::pwrite(const void *b, int l) {
     }
   }
 
-  callNetworkDataLog(true,useUDP,(unsigned char*)b,l,this);
-
   // always sent MsgUDPLinkRequest over udp with udpSend
   if (useUDP || code == MsgUDPLinkRequest) {
     udpSend(b, l);
@@ -542,6 +541,8 @@ RxStatus NetHandler::receive(size_t length) {
       }
     }
   }
+
+  callNetworkDataLog(false,false,(const unsigned char*)tcpmsg,tcplen);
   return returnValue;
 }
 
@@ -659,6 +660,8 @@ void NetHandler::udpSend(const void *b, size_t l) {
     return;
   }
 #endif
+
+  callNetworkDataLog(true,true,(unsigned char*)b,(unsigned int)l,this);
 
   // setting sizeLimit to -1 will disable udp-buffering
   const int sizeLimit = (int)MaxPacketLen - 4;
