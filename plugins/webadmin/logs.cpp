@@ -160,23 +160,26 @@ void LogLoop::getLogAsFile ( std::string &file )
        break;
 
      case bz_eBanEvent:
-       logBanMessage ( (bz_BanEventData_V1*)eventData, message);
+       logBanMessage ((bz_BanEventData_V1*)eventData, message);
 	break;
 
      case bz_eHostBanNotifyEvent:
      case bz_eHostBanModifyEvent:
-      logHostBanMessage ( (bz_HostBanEventData_V1*)eventData, message );
+      logHostBanMessage ((bz_HostBanEventData_V1*)eventData, message);
       break;
 
      case bz_eIdBanEvent:
-       logIDBanMessage ( (bz_IdBanEventData_V1*)eventData, message );
+       logIDBanMessage ((bz_IdBanEventData_V1*)eventData, message);
        break;
 
     case bz_eKickEvent:
-      logKickMessage ( (bz_KickEventData_V1*)eventData, message );
+      logKickMessage ((bz_KickEventData_V1*)eventData, message);
       break;
 
      case bz_eKillEvent:
+       logKillMessage ((bz_KillEventData_V1*)eventData, message);
+       break;
+
      case bz_ePlayerPausedEvent:
      case bz_eMessageFilteredEvent:
 
@@ -195,151 +198,169 @@ void LogLoop::getLogAsFile ( std::string &file )
      messages.push_back(message);
  }
 
- void LogLoop::logBanMessage ( bz_BanEventData_V1 *data, LogMessage &message )
- {
-   std::string baner = "Server";
-   if (data->bannerID != BZ_SERVER)
-     baner = bz_getPlayerCallsign(data->bannerID);
+void LogLoop::logKillMessage ( bz_KillEventData_V1 *data, LogMessage &message )
+{
+  std::string killer = "Server";
+  if (data->killerID != BZ_SERVER)
+    killer = bz_getPlayerCallsign(data->killerID);
 
-   std::string bannie;
-   if (data->banneeID >= 0)
-     bannie = bz_getPlayerCallsign(data->banneeID);
+  std::string killie;
+  if (data->killedID >= 0)
+    killie = bz_getPlayerCallsign(data->killedID);
 
-   message.message = format("Ban Event: %s banned %s",baner.c_str(),data->ipAddress.c_str());
-   if (bannie.size())
-     message.message += "(" + bannie + ")";
+  message.message = format("Kill Event: %s killed %d",killer.c_str(),data->killedID);
+  if (killie.size())
+    message.message += "(" + killie + ") ";
 
-   message.message += " for " + format("%d ",data->duration);
-   if (data->reason.size())
-     message.message += data->reason.c_str();
- }
+  if (data->reason.size())
+    message.message += data->reason.c_str();
+}
 
- void LogLoop::logHostBanMessage ( bz_HostBanEventData_V1 *data, LogMessage &message )
- {
-   std::string baner = "Server";
-   if (data->bannerID != BZ_SERVER)
-     baner = bz_getPlayerCallsign(data->bannerID);
+void LogLoop::logBanMessage ( bz_BanEventData_V1 *data, LogMessage &message )
+{
+ std::string baner = "Server";
+ if (data->bannerID != BZ_SERVER)
+   baner = bz_getPlayerCallsign(data->bannerID);
 
-   message.message = format("Host Ban Event: %s banned %s",baner.c_str(),data->hostPattern.c_str());
+ std::string bannie;
+ if (data->banneeID >= 0)
+   bannie = bz_getPlayerCallsign(data->banneeID);
 
-   message.message += " for " + format("%d ",data->duration);
-   if (data->reason.size())
-     message.message += data->reason.c_str();
- }
+ message.message = format("Ban Event: %s banned %s",baner.c_str(),data->ipAddress.c_str());
+ if (bannie.size())
+   message.message += "(" + bannie + ")";
 
- void LogLoop::logIDBanMessage ( bz_IdBanEventData_V1 *data, LogMessage &message )
- {
-   std::string baner = "Server";
-   if (data->bannerID != BZ_SERVER)
-     baner = bz_getPlayerCallsign(data->bannerID);
+ message.message += " for " + format("%d ",data->duration);
+ if (data->reason.size())
+   message.message += data->reason.c_str();
+}
 
-   std::string bannie;
-   if (data->banneeID >= 0)
-     bannie = bz_getPlayerCallsign(data->banneeID);
+void LogLoop::logHostBanMessage ( bz_HostBanEventData_V1 *data, LogMessage &message )
+{
+ std::string baner = "Server";
+ if (data->bannerID != BZ_SERVER)
+   baner = bz_getPlayerCallsign(data->bannerID);
 
-   message.message = format("ID Ban Event: %s banned %s",baner.c_str(),data->bzId.c_str());
-   if (bannie.size())
-     message.message += "(" + bannie + ")";
+ message.message = format("Host Ban Event: %s banned %s",baner.c_str(),data->hostPattern.c_str());
 
-   message.message += " for " + format("%d ",data->duration);
-   if (data->reason.size())
-     message.message += data->reason.c_str();
- }
+ message.message += " for " + format("%d ",data->duration);
+ if (data->reason.size())
+   message.message += data->reason.c_str();
+}
 
- void LogLoop::logKickMessage ( bz_KickEventData_V1 *data, LogMessage &message )
- {
-   std::string kicker = "Server";
-   if (data->kickerID != BZ_SERVER)
-     kicker = bz_getPlayerCallsign(data->kickerID);
+void LogLoop::logIDBanMessage ( bz_IdBanEventData_V1 *data, LogMessage &message )
+{
+ std::string baner = "Server";
+ if (data->bannerID != BZ_SERVER)
+   baner = bz_getPlayerCallsign(data->bannerID);
 
-   std::string kickie;
-   if (data->kickedID >= 0)
-     kickie = bz_getPlayerCallsign(data->kickedID);
+ std::string bannie;
+ if (data->banneeID >= 0)
+   bannie = bz_getPlayerCallsign(data->banneeID);
 
-   message.message = format("Host Ban Event: %s banned %d",kicker.c_str(),data->kickerID);
-   if (kickie.size())
-     message.message += "(" + kickie + ") ";
+ message.message = format("ID Ban Event: %s banned %s",baner.c_str(),data->bzId.c_str());
+ if (bannie.size())
+   message.message += "(" + bannie + ")";
 
-   if (data->reason.size())
-     message.message += data->reason.c_str();
- }
+ message.message += " for " + format("%d ",data->duration);
+ if (data->reason.size())
+   message.message += data->reason.c_str();
+}
 
- void LogLoop::logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message )
- {
-   std::string from;
-   std::string to;
+void LogLoop::logKickMessage ( bz_KickEventData_V1 *data, LogMessage &message )
+{
+ std::string kicker = "Server";
+ if (data->kickerID != BZ_SERVER)
+   kicker = bz_getPlayerCallsign(data->kickerID);
 
-   if (data->from != BZ_SERVER)
-     from = bz_getPlayerCallsign(data->from);
-   else
-     from = "server";
+ std::string kickie;
+ if (data->kickedID >= 0)
+   kickie = bz_getPlayerCallsign(data->kickedID);
 
-   if (data->to == BZ_NULLUSER)
-     to = bzu_GetTeamName(data->team);
-   else if ( data->to == BZ_ALLUSERS)
-     to = "all";
-   else
-     to = bz_getPlayerCallsign(data->to);
+ message.message = format("Host Ban Event: %s banned %d",kicker.c_str(),data->kickerID);
+ if (kickie.size())
+   message.message += "(" + kickie + ") ";
 
-   message.message = format("Chat from %s to %s : %s",from.c_str(),to.c_str(),data->message.c_str());
- }
+ if (data->reason.size())
+   message.message += data->reason.c_str();
+}
 
- void LogLoop::logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join )
- {
-    message.message = format("Player %s(%d) ",data->record->callsign.c_str(),data->playerID);
-    if (join)
-      message.message += "joined";
-    else
-      message.message += "parted";
-    if (data->reason.size())
-    {
-      message.message += " reason: ";
-      message.message += data->reason.c_str();
-    }
- }
+void LogLoop::logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message )
+{
+ std::string from;
+ std::string to;
 
- void LogLoop::logSpawnMessage ( bz_PlayerSpawnEventData_V1 *data, LogMessage &message )
- {
-   message.message = format("Player %s(%d) spawned at %f %f %f (%f)",bz_getPlayerCallsign(data->playerID),data->playerID,data->state.pos[0],data->state.pos[1],data->state.pos[2],data->state.rotation);
- }
+ if (data->from != BZ_SERVER)
+   from = bz_getPlayerCallsign(data->from);
+ else
+   from = "server";
 
- void LogLoop::logDieMessage ( bz_PlayerDieEventData_V1 *data, LogMessage &message )
- {
-   message.message = format("Player %s(%d) died at %f %f %f (%f)",bz_getPlayerCallsign(data->playerID),data->playerID,data->state.pos[0],data->state.pos[1],data->state.pos[2],data->state.rotation);
+ if (data->to == BZ_NULLUSER)
+   to = bzu_GetTeamName(data->team);
+ else if ( data->to == BZ_ALLUSERS)
+   to = "all";
+ else
+   to = bz_getPlayerCallsign(data->to);
 
-   if (data->killerID != -1)
-     message.message += format(" by %s(%d) with %s",bz_getPlayerCallsign(data->killerID),data->killerID,data->flagKilledWith.c_str());
- }
+ message.message = format("Chat from %s to %s : %s",from.c_str(),to.c_str(),data->message.c_str());
+}
 
- void LogLoop::logGetWorldMessage ( bz_GetWorldEventData_V1 *data, LogMessage &message )
- {
-   std::string world = "random";
-   if (data->worldFile.size())
-     world = data->worldFile.c_str();
-   if (data->worldBlob)
-     world = "Custom";
+void LogLoop::logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join )
+{
+  message.message = format("Player %s(%d) ",data->record->callsign.c_str(),data->playerID);
+  if (join)
+    message.message += "joined";
+  else
+    message.message += "parted";
+  if (data->reason.size())
+  {
+    message.message += " reason: ";
+    message.message += data->reason.c_str();
+  }
+}
 
-    message.message = format("World %s loading",world.c_str());
- }
+void LogLoop::logSpawnMessage ( bz_PlayerSpawnEventData_V1 *data, LogMessage &message )
+{
+ message.message = format("Player %s(%d) spawned at %f %f %f (%f)",bz_getPlayerCallsign(data->playerID),data->playerID,data->state.pos[0],data->state.pos[1],data->state.pos[2],data->state.rotation);
+}
 
- void LogLoop::logWorldDoneMessage ( LogMessage &message )
- {
-   message.message = "World loaded";
- }
+void LogLoop::logDieMessage ( bz_PlayerDieEventData_V1 *data, LogMessage &message )
+{
+ message.message = format("Player %s(%d) died at %f %f %f (%f)",bz_getPlayerCallsign(data->playerID),data->playerID,data->state.pos[0],data->state.pos[1],data->state.pos[2],data->state.rotation);
 
- void LogLoop::setSize ( void )
- {
-   size = messages.size();
- }
+ if (data->killerID != -1)
+   message.message += format(" by %s(%d) with %s",bz_getPlayerCallsign(data->killerID),data->killerID,data->flagKilledWith.c_str());
+}
 
- size_t LogLoop::getStart ( void )
- {
-   if (displayLimit <= 0)
-     return 0;
-   if ( messages.size() < displayLimit)
-     return 0;
-   return messages.size() - displayLimit; // always start the limit up from the bottom
- }
+void LogLoop::logGetWorldMessage ( bz_GetWorldEventData_V1 *data, LogMessage &message )
+{
+ std::string world = "random";
+ if (data->worldFile.size())
+   world = data->worldFile.c_str();
+ if (data->worldBlob)
+   world = "Custom";
+
+  message.message = format("World %s loading",world.c_str());
+}
+
+void LogLoop::logWorldDoneMessage ( LogMessage &message )
+{
+ message.message = "World loaded";
+}
+
+void LogLoop::setSize ( void )
+{
+ size = messages.size();
+}
+
+size_t LogLoop::getStart ( void )
+{
+ if (displayLimit <= 0)
+   return 0;
+ if ( messages.size() < displayLimit)
+   return 0;
+ return messages.size() - displayLimit; // always start the limit up from the bottom
+}
 
 // Local Variables: ***
 // mode: C++ ***
