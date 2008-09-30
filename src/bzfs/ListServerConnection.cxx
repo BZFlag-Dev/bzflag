@@ -193,6 +193,12 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 
 	if (playerIndex < curMaxPlayers) {
 	  if (registered) {
+
+	    bz_PlayerAuthEventData_V1 commandData;
+	    commandData.playerID = playerIndex;
+	    commandData.globalAuth = verified;
+	    worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
+
 	    if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
 	    if (verified) {
 	      playerData->_LSAState = GameKeeper::Player::verified;

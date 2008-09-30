@@ -810,11 +810,13 @@ class BZF_API bz_PlayerAuthEventData_V1 : public bz_EventData
 {
  public:
   bz_PlayerAuthEventData_V1() : bz_EventData(bz_ePlayerAuthEvent)
-    , playerID(-1)
+    , playerID(-1), password(false), globalAuth(false)
     {
     }
 
   int playerID;
+  bool password;
+  bool globalAuth;
 };
 
 class BZF_API bz_ServerMsgEventData_V1 : public bz_EventData

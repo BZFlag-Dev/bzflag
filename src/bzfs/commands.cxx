@@ -965,6 +965,7 @@ bool PasswordCommand::operator() (const char *message,
       // Notify plugins of player authentication change
       bz_PlayerAuthEventData_V1 commandData;
       commandData.playerID = t;
+      commandData.password = true;
       worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
     } else {
       sendMessage(ServerPlayer, t, "Wrong Password!");
