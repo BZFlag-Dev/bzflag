@@ -105,7 +105,6 @@ int numFlags = 0;
 bool done = false;
 // true if hit time/score limit
 bool gameOver = true;
-static int exitCode = 0;
 // "real" players, i.e. do not count observers
 uint16_t maxRealPlayers = MaxPlayers;
 // players + observers
@@ -2404,7 +2403,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
       if (clOptions->oneGameOnly) {
 	done = true;
-	exitCode = 0;
       } else {
 	// republicize ourself.  this dereferences the URL chain
 	// again so we'll notice any pointer change when any game
@@ -2554,10 +2552,8 @@ static void checkTeamScore(int playerIndex, int teamIndex)
     sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
 
     gameOver = true;
-    if (clOptions->oneGameOnly) {
+    if (clOptions->oneGameOnly)
       done = true;
-      exitCode = 0;
-    }
   }
 }
 
@@ -2626,10 +2622,8 @@ void checkForScoreLimit ( GameKeeper::Player* killer )
     sendScoreOverMessage(killer->getIndex(), NoTeam);
 
     gameOver = true;
-    if (clOptions->oneGameOnly) {
+    if (clOptions->oneGameOnly)
       done = true;
-      exitCode = 0;
-    }
   }
 }
 
@@ -3233,7 +3227,6 @@ static void terminateServer(int /*sig*/)
 {
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
-  exitCode = 0;
   done = true;
 }
 
@@ -4158,10 +4151,8 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 
       sendMsgTimeUpdate((int)timeLeft);
       clOptions->timeElapsed = newTimeElapsed;
-      if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+      if (clOptions->oneGameOnly && timeLeft == 0.0f)
 	done = true;
-	exitCode = 0;
-      }
     }
   }
 }
@@ -5034,7 +5025,7 @@ int main(int argc, char **argv)
   cleanupDefaultHandlers();
 
   // done
-  return exitCode;
+  return 0;
 }
 
 bool worldStateChanging ( void )
