@@ -2552,8 +2552,11 @@ static void checkTeamScore(int playerIndex, int teamIndex)
     sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
 
     gameOver = true;
-    if (clOptions->oneGameOnly)
+    if (clOptions->oneGameOnly) {
+      sendMessage(ServerPlayer, AllPlayers,
+		  "automatically shutting down now that the game is over");
       done = true;
+    }
   }
 }
 
@@ -2622,8 +2625,11 @@ void checkForScoreLimit ( GameKeeper::Player* killer )
     sendScoreOverMessage(killer->getIndex(), NoTeam);
 
     gameOver = true;
-    if (clOptions->oneGameOnly)
+    if (clOptions->oneGameOnly) {
+      sendMessage(ServerPlayer, AllPlayers,
+		  "automatically shutting down now that the game is over");
       done = true;
+    }
   }
 }
 
@@ -3227,6 +3233,7 @@ static void terminateServer(int /*sig*/)
 {
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
+  sendMessage(ServerPlayer, AllPlayers, "shutting down now");
   done = true;
 }
 
@@ -4151,8 +4158,11 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 
       sendMsgTimeUpdate((int)timeLeft);
       clOptions->timeElapsed = newTimeElapsed;
-      if (clOptions->oneGameOnly && timeLeft == 0.0f)
+      if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+	sendMessage(ServerPlayer, AllPlayers,
+		    "automatically shutting down now that the game is over");
 	done = true;
+      }
     }
   }
 }
