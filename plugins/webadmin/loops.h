@@ -170,6 +170,11 @@ private:
   void logIDBanMessage ( bz_IdBanEventData_V1 *data, LogMessage &message );
   void logKickMessage ( bz_KickEventData_V1 *data, LogMessage &message );
   void logKillMessage ( bz_KillEventData_V1 *data, LogMessage &message );
+  void logPausedMessage ( bz_PlayerPausedEventData_V1 *data, LogMessage &message );
+  void logGameStartEndMessage ( bz_GameStartEndEventData_V1 *data, LogMessage &message, bool start );
+  void logSlashMessage ( bz_SlashCommandEventData_V1 *data, LogMessage &message );
+  void logAuthMessage ( bz_PlayerAuthEventData_V1 *data, LogMessage &message );
+  void logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &message );
 };
 
 extern NavLoop *navLoop;

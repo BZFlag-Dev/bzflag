@@ -116,87 +116,152 @@ void LogLoop::getLogAsFile ( std::string &file )
   }
 }
 
- void LogLoop::process(bz_EventData *eventData)
+void LogLoop::process(bz_EventData *eventData)
+{
+ if (!eventData)
+   return;
+
+ LogMessage message;
+
+ bz_Time now;
+
+ bz_getUTCtime(&now);
+ message.time = printTime(&now);
+
+ switch(eventData->eventType)
  {
-   if (!eventData)
-     return;
-
-   LogMessage message;
-
-   bz_Time now;
-
-   bz_getUTCtime(&now);
-   message.time = printTime(&now);
-
-   switch(eventData->eventType)
-   {
-     case bz_eRawChatMessageEvent:
+   case bz_eRawChatMessageEvent:
 	logChatMessage((bz_ChatEventData_V1*)eventData,message);
 	break;
 
-     case bz_ePlayerJoinEvent:
-     case bz_ePlayerPartEvent:
-      logJoinPartMessage((bz_PlayerJoinPartEventData_V1*)eventData,message,eventData->eventType==bz_ePlayerJoinEvent);
-      break;
+   case bz_ePlayerJoinEvent:
+   case bz_ePlayerPartEvent:
+    logJoinPartMessage((bz_PlayerJoinPartEventData_V1*)eventData,message,eventData->eventType==bz_ePlayerJoinEvent);
+    break;
 
-     case bz_ePlayerSpawnEvent:
+   case bz_ePlayerSpawnEvent:
 	logSpawnMessage ( (bz_PlayerSpawnEventData_V1*)eventData, message );
 	break;
 
-     case bz_ePlayerDieEvent:
-       logDieMessage ( (bz_PlayerDieEventData_V1*)eventData, message );
-       break;
+   case bz_ePlayerDieEvent:
+     logDieMessage ( (bz_PlayerDieEventData_V1*)eventData, message );
+     break;
 
-     case bz_eGetWorldEvent:
-       logGetWorldMessage((bz_GetWorldEventData_V1*)eventData,message);
-       break;
+   case bz_eGetWorldEvent:
+     logGetWorldMessage((bz_GetWorldEventData_V1*)eventData,message);
+     break;
 
-     case bz_eWorldFinalized:
-       logWorldDoneMessage(message);
-       break;
+   case bz_eWorldFinalized:
+     logWorldDoneMessage(message);
+     break;
 
-     case bz_eListServerUpdateEvent:
-       message.message = "List server update";
-       break;
+   case bz_eListServerUpdateEvent:
+     message.message = "List server update";
+     break;
 
-     case bz_eBanEvent:
-       logBanMessage ((bz_BanEventData_V1*)eventData, message);
+   case bz_eBanEvent:
+     logBanMessage ((bz_BanEventData_V1*)eventData, message);
 	break;
 
-     case bz_eHostBanNotifyEvent:
-     case bz_eHostBanModifyEvent:
-      logHostBanMessage ((bz_HostBanEventData_V1*)eventData, message);
-      break;
+   case bz_eHostBanNotifyEvent:
+   case bz_eHostBanModifyEvent:
+    logHostBanMessage ((bz_HostBanEventData_V1*)eventData, message);
+    break;
 
-     case bz_eIdBanEvent:
-       logIDBanMessage ((bz_IdBanEventData_V1*)eventData, message);
-       break;
+   case bz_eIdBanEvent:
+     logIDBanMessage ((bz_IdBanEventData_V1*)eventData, message);
+     break;
 
-    case bz_eKickEvent:
-      logKickMessage ((bz_KickEventData_V1*)eventData, message);
-      break;
+  case bz_eKickEvent:
+    logKickMessage ((bz_KickEventData_V1*)eventData, message);
+    break;
 
-     case bz_eKillEvent:
-       logKillMessage ((bz_KillEventData_V1*)eventData, message);
-       break;
+   case bz_eKillEvent:
+     logKillMessage ((bz_KillEventData_V1*)eventData, message);
+     break;
 
-     case bz_ePlayerPausedEvent:
-     case bz_eMessageFilteredEvent:
+   case bz_ePlayerPausedEvent:
+     logPausedMessage ((bz_PlayerPausedEventData_V1*)eventData, message);
+     break;
 
-     case bz_eGameStartEvent:
-     case bz_eGameEndEvent:
-     case bz_eSlashCommandEvent:
-     case bz_ePlayerAuthEvent:
-     case bz_eReportFiledEvent:
-       break;
+   case bz_eMessageFilteredEvent:
+     message.message = "Message Filtered Event";
+     break;
 
-     default:
-       break;
-   }
+   case bz_eGameStartEvent:
+   case bz_eGameEndEvent:
+     logGameStartEndMessage ((bz_GameStartEndEventData_V1*)eventData, message, eventData->eventType==bz_eGameStartEvent);
+     break;
 
-   if (message.message.size())
-     messages.push_back(message);
+   case bz_eSlashCommandEvent:
+     logSlashMessage ((bz_SlashCommandEventData_V1*)eventData, message);
+     break;
+
+   case bz_ePlayerAuthEvent:
+     logAuthMessage ((bz_PlayerAuthEventData_V1*)eventData, message);
+     break;
+
+   case bz_eReportFiledEvent:
+    logReportMessage ( (bz_ReportFiledEventData_V1*)eventData, message);
+     break;
+
+   default:
+     break;
  }
+
+ if (message.message.size())
+   messages.push_back(message);
+}
+
+void LogLoop::logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &message )
+{
+  std::string player;
+  if (data->playerID >= 0)
+    player = bz_getPlayerCallsign(data->playerID);
+
+  message.message = format("Report Event: %s(%d): report %s",player.c_str(),data->playerID,data->message.c_str());
+}
+
+void LogLoop::logAuthMessage ( bz_PlayerAuthEventData_V1 *data, LogMessage &message )
+{  
+  std::string player;
+  if (data->playerID >= 0)
+    player = bz_getPlayerCallsign(data->playerID);
+
+  std::string auth;
+  if (data->password)
+    auth = "entered a password";
+  else if (data->globalAuth)
+    auth = "globally authenticated";
+  else
+    auth = "failed to authenticate";
+
+  message.message = format("Authentication Event: %s(%d) has %s",player.c_str(),data->playerID,auth.c_str());
+}
+
+void LogLoop::logSlashMessage ( bz_SlashCommandEventData_V1 *data, LogMessage &message )
+{
+  message.message = format("Slash Command: %s(%d): %s",bz_getPlayerCallsign(data->from),data->from,data->message);
+}
+
+void LogLoop::logGameStartEndMessage ( bz_GameStartEndEventData_V1 *data, LogMessage &message, bool start )
+{
+  if (start)
+    message.message = "Game Start Event: ";
+  else
+    message.message = "Game End Event: ";
+
+  message.message += format("%f",data->duration);
+}
+
+void LogLoop::logPausedMessage ( bz_PlayerPausedEventData_V1 *data, LogMessage &message )
+{
+  std::string player;
+  if (data->playerID >= 0)
+    player = bz_getPlayerCallsign(data->playerID);
+
+  message.message = format("Pause Event: %s(%d) %spaused",player.c_str(),data->playerID,data->pause ? "" : "un");
+}
 
 void LogLoop::logKillMessage ( bz_KillEventData_V1 *data, LogMessage &message )
 {
