@@ -1045,7 +1045,7 @@ bool ResetCommand::operator() (const char *message,
 bool ShutdownCommand::operator() (const char *,
 				  GameKeeper::Player *playerData)
 {
-  std::string explanation;
+  std::string explanation = "shut down";
   // If no playerData - dont perfom permission check, since it is probably the API
   if (playerData){
     int t = playerData->getIndex();
@@ -1053,10 +1053,7 @@ bool ShutdownCommand::operator() (const char *,
       sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
       return true;
     }
-    explanation = TextUtils::format("shut down by %s",
-				    playerData->player.getCallSign());
-  } else {
-    explanation = "shut down";
+    explanation += " by " + std::string(playerData->player.getCallSign());
   }
   sendMessage(ServerPlayer, AllPlayers, explanation.c_str());
   done = true;
