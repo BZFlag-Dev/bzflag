@@ -766,10 +766,12 @@ static void serverStop()
   close(wksSocket);
 #endif
 
-  // tell players to quit
+  // tell all clients to quit
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(0xff);
   msg->broadcast(MsgSuperKill);
+  MSGMGR.update();
+  TimeKeeper::sleep(0.5);	// provide some time for message delivery
 
   // clean up Kerberos
   Authentication::cleanUp();
