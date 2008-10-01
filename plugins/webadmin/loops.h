@@ -140,6 +140,7 @@ public:
   virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
   
   void getLogAsFile ( std::string &file );
+  void clearLog ( void );
 
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
@@ -154,7 +155,6 @@ protected:
 
   std::vector<LogMessage> messages;
   size_t displayLimit;
-
 
 private:
   void logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message );

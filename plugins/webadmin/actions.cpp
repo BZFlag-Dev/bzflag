@@ -90,6 +90,20 @@ bool SaveLogFile::process ( std::string &inputPage, const HTTPRequest &request, 
   return true;
 }
 
+bool ClearLogFile::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!logLoop)
+    return false;
+
+  if (!userInfo->hasPerm("viewReports") || !userInfo->hasPerm("playerList"))
+  {
+    serverError->errorMessage = "Clear Log File: Invalid Permission";
+    return false;
+  }
+
+  logLoop->clearLog();
+  return false;
+}
 
 // Local Variables: ***
 // mode: C++ ***

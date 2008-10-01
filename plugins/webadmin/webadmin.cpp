@@ -141,6 +141,7 @@ void WebAdmin::init(const char* cmdln)
   addAction(new UpdateBZDBVars());
   addAction(new SendChatMessage());
   addAction(new SaveLogFile());
+  addAction(new ClearLogFile());
 
   buildAuthPermsFromPages();
 

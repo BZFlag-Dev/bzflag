@@ -44,6 +44,13 @@ public:
   virtual const char* name ( void ){ return "savelog";}
 };
 
+class ClearLogFile : public Action
+{
+public:
+  virtual bool process ( std::string &page, const HTTPRequest &request, HTTPReply &reply );
+  virtual const char* name ( void ){ return "clearlog";}
+};
+
 #endif //_ACTIONS_H_
 
 // Local Variables: ***
