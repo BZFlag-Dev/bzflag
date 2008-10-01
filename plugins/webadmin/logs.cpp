@@ -385,11 +385,14 @@ void LogLoop::logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message )
 
 void LogLoop::logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join )
 {
-  message.message = format("Player %s(%d) ",data->record->callsign.c_str(),data->playerID);
+  message.message = format("Player %s(%d)",data->record->callsign.c_str(),data->playerID);
   if (join)
-    message.message += "joined";
+  {
+    message.message += format("[%s] ",data->record->ipAddress.c_str());
+    message.message += " joined";
+  }
   else
-    message.message += "parted";
+    message.message += " parted";
   if (data->reason.size())
   {
     message.message += " reason: ";
