@@ -13,6 +13,25 @@
 #include <vector>
 #include <string>
 
+bz_BasePlayerRecord *getPlayerFromGUID ( const std::string GUID )
+{
+  std::vector<std::string> parts = tokenize(GUID,std::string("_"),2,false);
+  if ( parts.size() < 2)
+    return NULL;
+
+  int slot = atoi(parts[0].c_str());
+
+  bz_BasePlayerRecord *rec = bz_getPlayerByIndex(slot);
+  if ( !rec )
+    return NULL;
+
+  if (rec->callsign == parts[1])
+    return rec;
+
+  bz_freePlayerRecord(rec);
+  return NULL;
+}
+
 bool UpdateBZDBVars::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
 {
   std::map<std::string, std::vector<std::string> >::const_iterator itr = request.parameters.begin();
@@ -101,7 +120,41 @@ bool ClearLogFile::process ( std::string &inputPage, const HTTPRequest &request,
     return false;
   }
 
+  if(serverError)
+    serverError->errorMessage = "Log File Cleared";
+
   logLoop->clearLog();
+  return false;
+}
+
+bool KickUser::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!userInfo->hasPerm("kick"))
+  {
+    serverError->errorMessage = "Kick: Invalid Permission";
+    return false;
+  }
+
+  std::string GUID;
+
+  if (request.getParam("guid",GUID) && GUID.size())
+  {
+    bz_BasePlayerRecord *player = getPlayerFromGUID(GUID);
+    if (!player)
+      serverError->errorMessage = "Kick: Invalid User";
+    else
+    {
+      int playerID = player->playerID;
+      bz_freePlayerRecord(player);
+      std::string reason;
+      if (!request.getParam("kickreason",reason) || !reason.size())
+	reason = "Webkicked by " + userInfo->userName;
+      bz_kickUser(playerID,reason.c_str(),true);
+
+      serverError->errorMessage = "Kick: Sucsessful";
+    }
+  }
+
   return false;
 }
 

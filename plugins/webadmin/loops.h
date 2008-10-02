@@ -46,8 +46,11 @@ class PlayerLoop : public LoopHandler
 {
 public:
   PlayerLoop(Templateiser &ts);
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  virtual bool getIF  (size_t item, const std::string &key);
 
   std::vector<int>  idList;
 };

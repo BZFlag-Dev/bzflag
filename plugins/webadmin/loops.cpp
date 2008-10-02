@@ -108,7 +108,11 @@ PlayerLoop::PlayerLoop(Templateiser &ts ) : LoopHandler()
 {
   ts.addLoop("players",this);
   ts.addKey("playerid",this);
-  ts.addKey("callsign",this);
+  ts.addKey("playerbzid",this);
+  ts.addKey("playercallsign",this);
+  ts.addKey("playerguid",this);
+  ts.addKey("playerip",this);
+  ts.addIF("playerbzid",this);
 }
 
 void PlayerLoop::getKey (size_t item, std::string &data, const std::string &key)
@@ -117,16 +121,38 @@ void PlayerLoop::getKey (size_t item, std::string &data, const std::string &key)
 
   if (player)
   {
-    if (key == "playerid")
+    if (key == "playerbzid")
       data += player->bzID.c_str();
-    else if (key == "callsign")
+    else if (key == "playerid")
+      data += player->bzID.c_str();
+    else if (key == "playercallsign")
       data += player->callsign.c_str();
+    else if (key == "playerguid")
+      data += format("%d_%s",idList[item],player->callsign.c_str());
+    else if (key == "playerip")
+      data += player->ipAddress.c_str();
 
     bz_freePlayerRecord(player);
   }
   else
     data += "invalid_player";
 }
+
+bool PlayerLoop::getIF  (size_t item, const std::string &key)
+{
+  bool ret = false;
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(idList[item]);
+  if (player)
+  {
+    if (key == "playerbzid")
+      ret = player->bzID.size() > 0;
+
+    bz_freePlayerRecord(player);
+  }
+
+  return ret;
+}
+
 
 void PlayerLoop::setSize ( void )
 {

@@ -1,5 +1,23 @@
 [#RequirePerm:kick]
 [!header.tmpl]
-  
-
+	<table class="PlayerKickList">
+  	[*START Players]
+	<tr>
+	<td>[$PlayerID]</td>
+	<td>[?IF PlayerBZID][$PlayerBZID][?ELSE PlayerBZID]&nbsp;[?END PlayerBZID]</td>
+	<td>[$PlayerCallsign]</td>
+	<td>[$PlayerIP]</td>
+	<td>
+		<form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="kickuser">
+			<input type="hidden" name="guid" value="[$PlayerGUID]">
+			<input type="text" name="kickreason">
+			<input type="submit" value="Kick">
+		</form>
+	</td>
+	</tr>
+	[*END Players]
+	  <tr><td>No Players</td></tr>
+	[*EMPTY Players]
+	</table>
 [!footer.tmpl]
