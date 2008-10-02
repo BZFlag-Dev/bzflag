@@ -180,6 +180,40 @@ private:
   void logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &message );
 };
 
+class IPBanLoop : public LoopHandler
+{
+public:
+  IPBanLoop(Templateiser &ts);
+  virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  virtual bool getIF  (size_t item, const std::string &key);
+};
+
+class HostBanLoop : public LoopHandler
+{
+public:
+  HostBanLoop(Templateiser &ts);
+  virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  virtual bool getIF  (size_t item, const std::string &key);
+};
+
+class IDBanLoop : public LoopHandler
+{
+public:
+  IDBanLoop(Templateiser &ts);
+  virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  virtual bool getIF  (size_t item, const std::string &key);
+};
+
+
 extern NavLoop *navLoop;
 extern LogLoop *logLoop;
 

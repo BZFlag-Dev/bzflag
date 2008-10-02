@@ -45,7 +45,6 @@ font-size:large;
 border-style:solid;
 border-width:thin;
 border-color:Black;
-
 }
 
 .minibox tr
@@ -80,6 +79,35 @@ border-color:Black;
 	border-width:thin;
 	border-color:Black;
 }
+
+.ipbanlist
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
+.hostbanlist
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
+.idbanlist
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
+.PlayerKickList
+{
+	border-style:solid;
+	border-width:thin;
+	border-color:Black;
+}
+
 
 #outerFrame{
 	width: 95%;

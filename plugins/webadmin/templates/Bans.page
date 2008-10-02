@@ -1,29 +1,53 @@
 [#RequirePerm:banlist]
-
 [!header.tmpl]
-  <h2>editing banlist</h2>
-  
-  <form id="banlist_edit" action="[$BaseURL][$CurrentPage]" method="post">
-    <h3>ip-banlist</h3>
-    <ul id="ipbanlist">
-[*START IPBanList]
-      <li><input type="checkbox" id="ipban_[$BannedUser]"
-                 name="delip" value="[$BannedUser]">
-        <label for="ban_[$BannedUser]">[$BannedUser]</label></li>
-[*END IPBanList]
-[*EMPTY IPBanList]
-    </ul>
-    
-    <h3>id-banlist</h3>
-    <ul id="idbanlist">
-[*START IDBanList]
-      <li><input type="checkbox" id="idban_[$BannedUser]"
-                 name="delid" value="[$BannedUser]">
-        <label for="idban_[$BannedUser]">[$BannedUser]</label></li>
-[*END IDBanList]
-[*EMPTY IDBanList]
-    </ul>
-    
-    <input type="submit" value="remove">
-  </form>
+<div>&nbsp;</div>
+<table class="titleBox"><tr><td>IP Bans</td></tr></table>
+<table class="ipbanlist">
+<tr><th>IP Mask</th><th>Reason</th><th>Durration</th><th>Source</th><th>MasterBan</th></tr>
+[*START IPBans]
+      <tr>
+      <td>[$IPBanMask]</td>
+      <td>[$IPBanReason]</td>
+      <td>[?IF IPBanIsForever]Forever[?ELSE IPBanIsForever][$IPBanDurration] seconds[?END IPBanIsForever]</td>
+      <td>[$IPBanSource]</td>
+      <td>[?IF IPBanFromMaster]Yes[?ELSE IPBanFromMaster]&nbsp;[?END IPBanFromMaster]</td>
+      </tr>
+[*END IPBans]
+	<tr><td>No IP based bans</td></tr>
+[*EMPTY IPBans]
+</table>
+
+<div>&nbsp;</div>
+<table class="titleBox"><tr><td>Host Bans</td></tr></table>
+<table class="hostbanlist">
+<tr><th>Host Mask</th><th>Reason</th><th>Durration</th><th>Source</th><th>MasterBan</th></tr>
+[*START HostBans]
+      <tr>
+      <td>[$HostBanMask]</td>
+      <td>[$HostBanReason]</td>
+      <td>[?IF HostBanIsForever]Forever[?ELSE HostBanIsForever][$HostBanDurration] seconds[?END HostBanIsForever]</td>
+      <td>[$HostBanSource]</td>
+      <td>[?IF HostBanFromMaster]Yes[?ELSE HostBanFromMaster]&nbsp;[?END HostBanFromMaster]</td>
+      </tr>
+[*END HostBans]
+	<tr><td>No host based bans</td></tr>
+[*EMPTY HostBans]
+</table>
+
+<div>&nbsp;</div>
+<table class="titleBox"><tr><td>BZID ID Bans</td></tr></table>
+<table class="idbanlist">
+<tr><th>BZID</th><th>Reason</th><th>Durration</th><th>Source</th></tr>
+[*START IDBans]
+      <tr>
+      <td>[$IDBanMask]</td>
+      <td>[$IDBanReason]</td>
+      <td>[?IF IDBanIsForever]Forever[?ELSE IDBanIsForever][$IDBanDurration] seconds[?END IDBanIsForever]</td>
+      <td>[$IDBanSource]</td>
+      </tr>
+[*END IDBans]
+	<tr><td>No ID based bans</td></tr>
+[*EMPTY IDBans]
+</table>
+
 [!footer.tmpl]
