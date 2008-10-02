@@ -2209,6 +2209,138 @@ BZF_API bool bz_IDUnbanUser ( const char* bzID )
   return true;
 }
 
+BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType )
+{
+  switch(listType)
+  {
+    default:
+    case eIPList:
+      return (unsigned int)clOptions->acl.banList.size();
+
+    case eHostList:
+      return (unsigned int)clOptions->acl.hostBanList.size();
+  
+    case eIDList:
+      return (unsigned int)clOptions->acl.idBanList.size();
+  }
+
+  return 0;
+}
+
+BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return NULL;
+
+  switch(listType)
+  {
+    default:
+    case eIPList:
+      return clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr).c_str();
+
+    case eHostList:
+      return clOptions->acl.hostBanList[item].hostpat.c_str();
+
+    case eIDList:
+      return clOptions->acl.idBanList[item].idpat.c_str();
+   }
+
+  return NULL;
+}
+
+BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return NULL;
+
+  switch(listType)
+  {
+  default:
+  case eIPList:
+    return clOptions->acl.banList[item].reason.c_str();
+
+  case eHostList:
+    return clOptions->acl.hostBanList[item].reason.c_str();
+
+  case eIDList:
+    return clOptions->acl.idBanList[item].reason.c_str();
+  }
+
+  return NULL;
+}
+
+BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return NULL;
+
+  switch(listType)
+  {
+  default:
+  case eIPList:
+    return clOptions->acl.banList[item].bannedBy.c_str();
+
+  case eHostList:
+    return clOptions->acl.hostBanList[item].bannedBy.c_str();
+
+  case eIDList:
+    return clOptions->acl.idBanList[item].bannedBy.c_str();
+  }
+
+  return NULL;
+}
+
+BZF_API double bz_getBanItemDurration ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return 0;
+
+  TimeKeeper end = TimeKeeper::getCurrent();
+
+  switch(listType)
+  {
+  default:
+  case eIPList:
+    end = clOptions->acl.banList[item].banEnd;
+    break;
+
+  case eHostList:
+    end = clOptions->acl.hostBanList[item].banEnd;
+    break;
+
+  case eIDList:
+    end = clOptions->acl.idBanList[item].banEnd;
+    break;
+  }
+
+  if (end.getSeconds() == -1)
+    return -1;
+
+  return end.getSeconds() - TimeKeeper::getCurrent().getSeconds();
+}
+
+BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return false;
+
+  switch(listType)
+  {
+  default:
+  case eIPList:
+    return clOptions->acl.banList[item].fromMaster;
+
+  case eHostList:
+    return clOptions->acl.hostBanList[item].fromMaster;
+
+  case eIDList:
+    return clOptions->acl.idBanList[item].fromMaster;
+  }
+
+  return false;
+}
+
+
 //-------------------------------------------------------------------------
 
 BZF_API bz_APIStringList *bz_getReports(void)

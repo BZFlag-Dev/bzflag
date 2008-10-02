@@ -1322,6 +1322,21 @@ BZF_API bool bz_IDBanUser(int playerIndex, const char *bzID , int duration, cons
 BZF_API bool bz_IPUnbanUser(const char* ip);
 BZF_API bool bz_IDUnbanUser(const char* bzID);
 
+// ban lists
+typedef enum
+{
+  eIPList,
+  eIDList,
+  eHostList
+}bz_eBanListType;
+
+BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType );
+BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item );
+BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int item );
+BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int item );
+BZF_API double bz_getBanItemDurration ( bz_eBanListType listType, unsigned int item );
+BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int item );
+
 // report
 BZF_API bz_APIStringList* bz_getReports(void);
 BZF_API bool bz_fileReport(const char* message);
