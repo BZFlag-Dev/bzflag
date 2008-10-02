@@ -2232,19 +2232,27 @@ BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item 
   if (item > bz_getBanListSize(listType))
     return NULL;
 
+  static std::string API_BAN_ITEM;
+
+  API_BAN_ITEM = "";
   switch(listType)
   {
     default:
     case eIPList:
-      return clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr).c_str();
+      API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr).c_str();
+      break;
 
     case eHostList:
-      return clOptions->acl.hostBanList[item].hostpat.c_str();
+      API_BAN_ITEM = clOptions->acl.hostBanList[item].hostpat.c_str();
+      break;
 
     case eIDList:
-      return clOptions->acl.idBanList[item].idpat.c_str();
+      API_BAN_ITEM = clOptions->acl.idBanList[item].idpat.c_str();
+      break;
    }
 
+  if (API_BAN_ITEM.size())
+    return API_BAN_ITEM.c_str();
   return NULL;
 }
 
@@ -2313,7 +2321,7 @@ BZF_API double bz_getBanItemDurration ( bz_eBanListType listType, unsigned int i
     break;
   }
 
-  if (end.getSeconds() == -1)
+  if (end.getSeconds() > 30000000.0) // it's basicly forever
     return -1;
 
   return end.getSeconds() - TimeKeeper::getCurrent().getSeconds();
