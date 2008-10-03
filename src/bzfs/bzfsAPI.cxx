@@ -2146,16 +2146,19 @@ BZF_API bool bz_kickUser(int playerIndex, const char *reason, bool notify)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int duration, const char *reason)
+BZF_API bool bz_IPBanUser(const char *ip, const char* source, int duration, const char *reason)
 {
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if(!player || !reason || !ip)
+  if(!reason || !ip)
     return false;
+
+  std::string banner = "server";
+  if (source)
+    banner = source;
 
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
 
-  if(clOptions->acl.ban(ip, player->player.getCallSign(), duration, reason))
+  if(clOptions->acl.ban(ip,banner.c_str(), duration, reason))
     clOptions->acl.save();
   else
     return false;
@@ -2165,18 +2168,39 @@ BZF_API bool bz_IPBanUser(int playerIndex, const char *ip, int duration, const c
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_IDBanUser(int playerIndex, const char *bzID , int duration, const char *reason)
+BZF_API bool bz_IDBanUser(const char *bzID, const char* source , int duration, const char *reason)
 {
-  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if(!player || !reason || !bzID || std::string(bzID).size() <= 0)
+  if(!reason || !bzID || std::string(bzID).size() <= 0)
     return false;
+
+  std::string banner = "server";
+  if (source)
+    banner = source;
 
   // reload the banlist in case anyone else has added
   clOptions->acl.load();
-  clOptions->acl.idBan(bzID, player->player.getCallSign(), duration, reason);
+  clOptions->acl.idBan(bzID,banner.c_str(), duration, reason);
   clOptions->acl.save();
 
   return true;
+}
+
+BZF_API bool bz_HostBanUser(const char* hostmask, const char* source, int duration, const char* reason)
+{
+  if(!reason || !hostmask)
+    return false;
+
+  std::string banner = "server";
+  if (source)
+    banner = source;
+
+ // reload the banlist in case anyone else has added
+  clOptions->acl.load();
+  clOptions->acl.hostBan(hostmask, banner.c_str(), duration, reason);
+  clOptions->acl.save();
+
+  return true;
+
 }
 
 //-------------------------------------------------------------------------
@@ -2185,6 +2209,8 @@ BZF_API bool bz_IPUnbanUser ( const char* ip )
 {
   if(!ip)
     return false;
+ 
+  clOptions->acl.load();
 
   if(clOptions->acl.unban(ip))
     clOptions->acl.save();
@@ -2200,6 +2226,8 @@ BZF_API bool bz_IDUnbanUser ( const char* bzID )
 {
   if(!bzID)
     return false;
+  
+  clOptions->acl.load();
 
   if(clOptions->acl.idUnban(bzID))
     clOptions->acl.save();
@@ -2208,6 +2236,22 @@ BZF_API bool bz_IDUnbanUser ( const char* bzID )
 
   return true;
 }
+
+BZF_API bool bz_HostUnbanUser(const char* hostmask)
+{
+  if(!hostmask)
+    return false;
+
+  clOptions->acl.load();
+  
+  if(clOptions->acl.hostUnban(hostmask))
+    clOptions->acl.save();
+  else
+    return false;
+
+  return true;
+}
+
 
 BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType )
 {
