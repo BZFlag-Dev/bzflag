@@ -52,7 +52,7 @@
 
 const char *usageString =
   "[-admsg <text>] "
-  "[-advertise <group,group...>]"
+  "[-advertise <group,group...>] "
   "[-autoTeam] "
   "[-b] "
   "[-badwords <filename>] "
@@ -80,7 +80,7 @@ const char *usageString =
   "[-groupdb <group file>] "
   "[-h] "
   "[-handicap] "
-  "[-helpdir <dir>]"
+  "[-helpdir <dir>] "
   "[-helpmsg <file> <name>] "
   "[-i interface] "
   "[-j] "
@@ -89,14 +89,14 @@ const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
-  "[-masterBanURL <URL>]"
+  "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
   "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
   "[-mps <score>] "
   "[-ms <shots>] "
   "[-mts <score>] "
-  "[-noMasterBanlist]"
-  "[-noradar]"
+  "[-noMasterBanlist] "
+  "[-noradar] "
   "[-offa] "
   "[-p <port>] "
   "[-packetlossdrop <num>] "
@@ -441,7 +441,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
   return true;
 }
 
-static char **parseConfFile( const char *file, int &ac)
+static char **parseConfFile(const char *file, int &ac)
 {
   std::vector<std::string> tokens;
   ac = 0;
