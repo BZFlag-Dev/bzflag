@@ -718,7 +718,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
 	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
-      } else logDebugMessage(3, "Loaded help message: %s");
+      } else {
+	logDebugMessage(3, "Loaded help message: %s", name.c_str());
+      }
       i++;
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
