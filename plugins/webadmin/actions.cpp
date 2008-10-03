@@ -207,6 +207,60 @@ bool RemoveBan::process ( std::string &inputPage, const HTTPRequest &request, HT
   return false;
 }
 
+bool AddBan::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!userInfo->hasPerm("ban"))
+  {
+    serverError->errorMessage = "AddBan: Invalid Permission";
+    return false;
+  }
+
+  std::string banList;
+
+  if (request.getParam("bantype",banList) && banList.size())
+  {
+    bz_eBanListType banType = eIPList;
+    if (compare_nocase(banList,std::string("ipban")) == 0)
+      banType = eIPList;
+    else if (compare_nocase(banList,std::string("idban")) == 0)
+      banType = eIDList;
+    else if (compare_nocase(banList,std::string("hostban")) == 0)
+      banType = eHostList;
+    else
+      return false;
+
+    std::string val,reason,source,len;
+
+    if (!request.getParam("banvalue",val) || !val.size())
+      return false;
+
+    request.getParam("banreason",reason);
+    request.getParam("banlen",len);
+
+    source = userInfo->userName +"(Webadmin)";
+    if (!len.size())
+      len = "-1";
+    if (!reason.size())
+      reason = "WebBan";
+
+    switch(banType)
+    {
+    case eIPList:
+      bz_IPBanUser(val.c_str(),source.c_str(),atoi(len.c_str()),reason.c_str());
+      break;
+
+    case eIDList:
+      bz_IDBanUser(val.c_str(),source.c_str(),atoi(len.c_str()),reason.c_str());
+      break;
+
+    case eHostList:
+      bz_HostBanUser(val.c_str(),source.c_str(),atoi(len.c_str()),reason.c_str());
+      break;
+    }
+  }
+  return false;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

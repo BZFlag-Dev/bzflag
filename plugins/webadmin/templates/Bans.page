@@ -25,6 +25,14 @@
 	<tr><td>No IP based bans</td></tr>
 [*EMPTY IPBans]
 </table>
+IP Ban:<form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="ban">
+			<input type="hidden" name="bantype" value="ipban">
+			IP Mask:<input type="text" name="banvalue" >
+			Reason:<input type="text" name="banreason" >
+			Durration:<input type="text" name="banlen" >
+			<input type="submit" value="Ban">
+</form>
 
 <div>&nbsp;</div>
 <table class="titleBox"><tr><td>Host Bans</td></tr></table>
@@ -50,6 +58,14 @@
 	<tr><td>No host based bans</td></tr>
 [*EMPTY HostBans]
 </table>
+Host Ban:<form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="ban">
+			<input type="hidden" name="bantype" value="hostban">
+			Hostmask:<input type="text" name="banvalue" >
+			Reason:<input type="text" name="banreason" >
+			Durration:<input type="text" name="banlen" >
+			<input type="submit" value="Ban">
+</form>
 
 <div>&nbsp;</div>
 <table class="titleBox"><tr><td>BZID ID Bans</td></tr></table>
@@ -75,5 +91,13 @@
 	<tr><td>No ID based bans</td></tr>
 [*EMPTY IDBans]
 </table>
+ID Ban:<form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="ban">
+			<input type="hidden" name="bantype" value="idban">
+			BZID:<input type="text" name="banvalue" >
+			Reason:<input type="text" name="banreason" >
+			Durration:<input type="text" name="banlen" >
+			<input type="submit" value="Ban">
+</form>
 
 [!footer.tmpl]
