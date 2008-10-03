@@ -28,6 +28,8 @@ protected:
   virtual bool increment ( void );
   virtual bool done ( void );
 
+  virtual bool inLoop ( void );
+
   virtual size_t getStart ( void ){return 0;}
   virtual size_t getNext ( size_t n ){return n+1;}
   virtual void terminate ( void ){return;}
@@ -42,17 +44,22 @@ protected:
   size_t size;
 };
 
-class PlayerLoop : public LoopHandler
+class PlayerLoop : public LoopHandler, NewPageCallback
 {
 public:
   PlayerLoop(Templateiser &ts);
+  ~PlayerLoop();
   virtual void setSize ( void );
+
+  virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
 
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual bool getIF  (size_t item, const std::string &key);
 
   std::vector<int>  idList;
+
+  int playerID;
 };
 
 class NavLoop : public LoopHandler

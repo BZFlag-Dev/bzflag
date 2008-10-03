@@ -66,6 +66,11 @@ bool LoopHandler::atStart ( void )
   return false;
 }
 
+ bool LoopHandler::inLoop ( void )
+ {
+   return size > 0 && pos != max_loop;
+ }
+
 bool LoopHandler::increment ( void )
 {
   if (pos == max_loop)
@@ -125,11 +130,31 @@ PlayerLoop::PlayerLoop(Templateiser &ts ) : LoopHandler()
   ts.addKey("playerguid",this);
   ts.addKey("playerip",this);
   ts.addIF("playerbzid",this);
+  addNewPageCallback(this);
+
+  playerID = -1;
+}
+
+PlayerLoop::~PlayerLoop()
+{
+  removeNewPageCallback(this);
+}
+
+void PlayerLoop::newPage ( const std::string &pagename, const HTTPRequest &request )
+{
+  playerID = -1;
+  std::string pID;
+  if (request.getParam("playerid",pID) && pID.size())
+    playerID = atoi(pID.c_str());
 }
 
 void PlayerLoop::getKey (size_t item, std::string &data, const std::string &key)
 {
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(idList[item]);
+  int id = playerID;
+  if (inLoop())
+    id = idList[item];
+
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(id);
 
   if (player)
   {
@@ -153,7 +178,13 @@ void PlayerLoop::getKey (size_t item, std::string &data, const std::string &key)
 bool PlayerLoop::getIF  (size_t item, const std::string &key)
 {
   bool ret = false;
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(idList[item]);
+ 
+  int id = playerID;
+  if (inLoop())
+    id = idList[item];
+
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(id);
+
   if (player)
   {
     if (key == "playerbzid")
@@ -164,7 +195,6 @@ bool PlayerLoop::getIF  (size_t item, const std::string &key)
 
   return ret;
 }
-
 
 void PlayerLoop::setSize ( void )
 {
@@ -226,7 +256,6 @@ void NavLoop::setSize ( void )
 {
   size = pages.size();
 }
-
 
 // CurrentPage dosn't use a loop, so just service it as normal
 void NavLoop::keyCallback (std::string &data, const std::string &key)
@@ -310,7 +339,6 @@ void PermsLoop::getKey (size_t item, std::string &data, const std::string &key)
 {
   data += perms[item];
 }
-
 
 //-----------ChatLoop
 ChatLoop::ChatLoop(Templateiser &ts) : LoopHandler()
