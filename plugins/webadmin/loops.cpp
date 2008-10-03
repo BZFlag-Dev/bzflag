@@ -392,7 +392,6 @@ bool ChatLoop::ifCallback (const std::string &key)
   return LoopHandler::ifCallback(key);
 }
 
-
 void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
 {
   ChatMessage &message = messages[item];
@@ -420,40 +419,40 @@ bool ChatLoop::getIF  (size_t item, const std::string &key)
   return false;
 }
 
- void ChatLoop::process(bz_EventData *eventData)
- {
-   bz_ChatEventData_V1* data = (bz_ChatEventData_V1*)eventData;
-   if (data)
-   {
-     ChatMessage message;
+void ChatLoop::process(bz_EventData *eventData)
+{
+  bz_ChatEventData_V1* data = (bz_ChatEventData_V1*)eventData;
+  if (data)
+  {
+    ChatMessage message;
 
-     bz_Time now;
+    bz_Time now;
 
-     bz_getUTCtime(&now);
-     message.time = printTime(&now);
+    bz_getUTCtime(&now);
+    message.time = printTime(&now);
 
-     message.message = data->message.c_str();
-     message.teamType = eNoTeam;
+    message.message = data->message.c_str();
+    message.teamType = eNoTeam;
 
-     if (data->from != BZ_SERVER)
-     {
-       message.from = bz_getPlayerCallsign(data->from);
-       message.teamType = bz_getPlayerTeam(data->from);
-       message.fromTeam = bzu_GetTeamName(message.teamType);
-     }
-     else
-       message.from = "server";
+    if (data->from != BZ_SERVER)
+    {
+      message.from = bz_getPlayerCallsign(data->from);
+      message.teamType = bz_getPlayerTeam(data->from);
+      message.fromTeam = bzu_GetTeamName(message.teamType);
+    }
+    else
+      message.from = "server";
 
-     if (data->to == BZ_NULLUSER)
-       message.to = bzu_GetTeamName(data->team);
-     else if ( data->to == BZ_ALLUSERS)
-       message.to = "all";
-     else
-       message.to = bz_getPlayerCallsign(data->to);
+    if (data->to == BZ_NULLUSER)
+      message.to = bzu_GetTeamName(data->team);
+    else if ( data->to == BZ_ALLUSERS)
+      message.to = "all";
+    else
+      message.to = bz_getPlayerCallsign(data->to);
 
-     messages.push_back(message);
-   }
- }
+    messages.push_back(message);
+  }	
+}
 
  void ChatLoop::setSize ( void )
  {
@@ -469,7 +468,6 @@ bool ChatLoop::getIF  (size_t item, const std::string &key)
    return messages.size() - chatLimit; // always start the limit up from the bottom
  }
 
-
 //-------------------------IPBanLoop
 
 IPBanLoop::IPBanLoop(Templateiser &ts)
@@ -479,13 +477,44 @@ IPBanLoop::IPBanLoop(Templateiser &ts)
   ts.addKey("IPBanReason",this);
   ts.addKey("IPBanSource",this);
   ts.addKey("IPBanDurration",this);
+  ts.addKey("IPBanID",this);
   ts.addIF("IPBanFromMaster",this);
   ts.addIF("IPBanIsForever",this);
+
+  filterMasterBans = false;
+}
+
+IPBanLoop::~IPBanLoop()
+{
+  removeNewPageCallback(this);
+}
+
+void IPBanLoop::newPage ( const std::string &pagename, const HTTPRequest &request )
+{
+  filterMasterBans = false;
+
+  std::string val;
+  if (request.getParam("filtermasterbans",val))
+    filterMasterBans = val != "0";
 }
 
 void IPBanLoop::setSize ( void )
 {
   size = bz_getBanListSize(eIPList);
+}
+
+size_t IPBanLoop::getNext ( size_t n )
+{
+  if (!filterMasterBans)
+    return n+1;
+  else
+  {
+    n++;
+    while (bz_getBanItemIsFromMaster(eIPList,(unsigned int)n) && n < size)
+      n++;
+  }
+
+  return n;
 }
 
 void IPBanLoop::getKey (size_t item, std::string &data, const std::string &key)
@@ -510,6 +539,8 @@ void IPBanLoop::getKey (size_t item, std::string &data, const std::string &key)
   }
   else if (key == "ipbandurration")
       temp = format("%f",bz_getBanItemDurration(eIPList,i));
+  else if (key == "ipbanid")
+    temp = format("%d",item);
 
   if (temp.size())
     data += temp;
@@ -532,7 +563,7 @@ HostBanLoop::HostBanLoop(Templateiser &ts)
   ts.addKey("HostBanReason",this);
   ts.addKey("HostBanSource",this);
   ts.addKey("HostBanDurration",this);
-  ts.addIF("HostBanFromMaster",this);
+  ts.addKey("HostBanID",this);
   ts.addIF("HostBanIsForever",this);
 }
 
@@ -563,6 +594,8 @@ void HostBanLoop::getKey (size_t item, std::string &data, const std::string &key
   }
   else if (key == "hostbandurration")
     temp = format("%f",bz_getBanItemDurration(eHostList,i));
+  else if (key == "hostbanid")
+    temp = format("%d",item);
 
   if (temp.size())
     data += temp;
@@ -570,8 +603,6 @@ void HostBanLoop::getKey (size_t item, std::string &data, const std::string &key
 
 bool HostBanLoop::getIF  (size_t item, const std::string &key)
 {
-  if (key == "hostbanfrommaster")
-    return bz_getBanItemIsFromMaster(eHostList,(unsigned int)item);
   if (key == "hostbanisforever")
     return bz_getBanItemDurration(eHostList,(unsigned int)item) < 0;
 
@@ -585,7 +616,7 @@ IDBanLoop::IDBanLoop(Templateiser &ts)
   ts.addKey("IDBanReason",this);
   ts.addKey("IDBanSource",this);
   ts.addKey("IDBanDurration",this);
-  ts.addIF("IDBanFromMaster",this);
+  ts.addKey("IDBanID",this);
   ts.addIF("IDBanIsForever",this);
 }
 
@@ -604,6 +635,11 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
     if (bz_getBanItem(eIDList,i))
       temp = bz_getBanItem(eIDList,i);
   }
+  else if (key == "idbanmask")
+  {
+    if (bz_getBanItem(eIDList,i))
+      temp = bz_getBanItem(eIDList,i);
+  }
   else if (key == "idbanreason")
   {
     if (bz_getBanItemReason(eIDList,i))
@@ -616,6 +652,8 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
   }
   else if (key == "idbandurration")
     temp = format("%f",bz_getBanItemDurration(eIDList,i));
+  else if (key == "idbanid")
+    temp = format("%d",item);
 
   if (temp.size())
     data += temp;
@@ -623,8 +661,6 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
 
 bool IDBanLoop::getIF  (size_t item, const std::string &key)
 {
-  if (key == "idbanfrommaster")
-    return bz_getBanItemIsFromMaster(eIDList,(unsigned int)item);
   if (key == "idbanisforever")
     return bz_getBanItemDurration(eHostList,(unsigned int)item) < 0;
 

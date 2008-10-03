@@ -3,14 +3,23 @@
 <div>&nbsp;</div>
 <table class="titleBox"><tr><td>IP Bans</td></tr></table>
 <table class="ipbanlist">
-<tr><th>IP Mask</th><th>Reason</th><th>Durration</th><th>Source</th><th>MasterBan</th></tr>
+<tr><th>Ban ID</th><th>IP Mask</th><th>Reason</th><th>Durration</th><th>Source</th><th>MasterBan</th><th>Remove</th></tr>
 [*START IPBans]
       <tr>
+      <td>[$IPBanID]</td>
       <td>[$IPBanMask]</td>
       <td>[$IPBanReason]</td>
       <td>[?IF IPBanIsForever]Forever[?ELSE IPBanIsForever][$IPBanDurration] seconds[?END IPBanIsForever]</td>
       <td>[$IPBanSource]</td>
       <td>[?IF IPBanFromMaster]Yes[?ELSE IPBanFromMaster]&nbsp;[?END IPBanFromMaster]</td>
+      <td>[?IF IPBanFromMaster]&nbsp;[?ELSE IPBanFromMaster]
+      <form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="removeban">
+			<input type="hidden" name="banid" value="[$IPBanID]">
+			<input type="hidden" name="bantype" value="ipban">
+			<input type="submit" value="Remove">
+		</form>
+      [?END IPBanFromMaster]</td>
       </tr>
 [*END IPBans]
 	<tr><td>No IP based bans</td></tr>
@@ -20,14 +29,22 @@
 <div>&nbsp;</div>
 <table class="titleBox"><tr><td>Host Bans</td></tr></table>
 <table class="hostbanlist">
-<tr><th>Host Mask</th><th>Reason</th><th>Durration</th><th>Source</th><th>MasterBan</th></tr>
+<tr><th>Ban ID</th><th>Host Mask</th><th>Reason</th><th>Durration</th><th>Source</th><th>Remove</th></tr>
 [*START HostBans]
       <tr>
+      <td>[$HostBanID]</td>
       <td>[$HostBanMask]</td>
       <td>[$HostBanReason]</td>
       <td>[?IF HostBanIsForever]Forever[?ELSE HostBanIsForever][$HostBanDurration] seconds[?END HostBanIsForever]</td>
       <td>[$HostBanSource]</td>
-      <td>[?IF HostBanFromMaster]Yes[?ELSE HostBanFromMaster]&nbsp;[?END HostBanFromMaster]</td>
+      <td>
+      <form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="removeban">
+			<input type="hidden" name="banid" value="[$HostBanID]">
+			<input type="hidden" name="bantype" value="hostban">
+			<input type="submit" value="Remove">
+		</form>
+      </td>
       </tr>
 [*END HostBans]
 	<tr><td>No host based bans</td></tr>
@@ -37,13 +54,22 @@
 <div>&nbsp;</div>
 <table class="titleBox"><tr><td>BZID ID Bans</td></tr></table>
 <table class="idbanlist">
-<tr><th>BZID</th><th>Reason</th><th>Durration</th><th>Source</th></tr>
+<tr><th>Ban ID</th><th>BZID</th><th>Reason</th><th>Durration</th><th>Source</th><th>Remove</th></tr>
 [*START IDBans]
       <tr>
+      <td>[$IDBanID]</td>
       <td>[$IDBanMask]</td>
       <td>[$IDBanReason]</td>
       <td>[?IF IDBanIsForever]Forever[?ELSE IDBanIsForever][$IDBanDurration] seconds[?END IDBanIsForever]</td>
       <td>[$IDBanSource]</td>
+      <td>
+      <form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="removeban">
+			<input type="hidden" name="banid" value="[$IDBanID]">
+			<input type="hidden" name="bantype" value="idban">
+			<input type="submit" value="Remove">
+		</form>
+      </td>
       </tr>
 [*END IDBans]
 	<tr><td>No ID based bans</td></tr>

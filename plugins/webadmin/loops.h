@@ -180,15 +180,21 @@ private:
   void logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &message );
 };
 
-class IPBanLoop : public LoopHandler
+class IPBanLoop : public LoopHandler, NewPageCallback
 {
 public:
   IPBanLoop(Templateiser &ts);
+  ~IPBanLoop(void);
   virtual void setSize ( void );
+  void newPage ( const std::string &pagename, const HTTPRequest &request );
 
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
   virtual bool getIF  (size_t item, const std::string &key);
+
+  virtual size_t getNext ( size_t n );
+
+  bool filterMasterBans;
 };
 
 class HostBanLoop : public LoopHandler

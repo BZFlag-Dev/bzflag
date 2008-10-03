@@ -158,6 +158,55 @@ bool KickUser::process ( std::string &inputPage, const HTTPRequest &request, HTT
   return false;
 }
 
+bool RemoveBan::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!userInfo->hasPerm("unban"))
+  {
+    serverError->errorMessage = "RemoveBan: Invalid Permission";
+    return false;
+  }
+
+  std::string banID;
+  std::string banList;
+
+  if (request.getParam("banid",banID) && banID.size() && request.getParam("bantype",banList) && banList.size())
+  {
+    bz_eBanListType banType = eIPList;
+    if (compare_nocase(banList,std::string("ipban")) == 0)
+      banType = eIPList;
+    else if (compare_nocase(banList,std::string("idban")) == 0)
+      banType = eIDList;
+    else if (compare_nocase(banList,std::string("hostban")) == 0)
+      banType = eHostList;
+    else
+      return false;
+
+    unsigned int id = (unsigned int )atoi(banID.c_str());
+    if ( id >= bz_getBanListSize(banType))
+      return false;
+
+    if (bz_getBanItemIsFromMaster(banType,id))
+      return false;
+
+    switch(banType)
+    {
+      case eIPList:
+	bz_IPUnbanUser(bz_getBanItem(banType,id));
+	break;
+
+      case eIDList:
+	bz_IDUnbanUser(bz_getBanItem(banType,id));
+	break;
+
+      case eHostList:
+	bz_HostUnbanUser(bz_getBanItem(banType,id));
+	break;
+
+    }
+  }
+  return false;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
