@@ -12,6 +12,8 @@ LogLoop *logLoop = NULL;
 IPBanLoop *ipBanLoop = NULL;
 HostBanLoop *hostBanLoop = NULL;
 IDBanLoop *idBanLoop = NULL;
+PlayerGroupLoop *playerGroupLoop = NULL;
+FlagHistoryLoop *flagHistoryLoop = NULL;
 
 size_t	max_loop = 0xFFFFFFFF;
 
@@ -26,6 +28,9 @@ void initLoops ( Templateiser &ts )
   ipBanLoop = new IPBanLoop(ts);
   hostBanLoop = new HostBanLoop(ts);
   idBanLoop = new IDBanLoop(ts);
+
+  playerGroupLoop = new PlayerGroupLoop(ts);
+  flagHistoryLoop = new FlagHistoryLoop(ts);
 }
 
 void freeLoops ( void )
@@ -38,6 +43,8 @@ void freeLoops ( void )
   delete(ipBanLoop);
   delete(hostBanLoop);
   delete(idBanLoop);
+  delete(playerGroupLoop);
+  delete(flagHistoryLoop);
 
   playerLoop = NULL;
   navLoop = NULL;
@@ -47,6 +54,8 @@ void freeLoops ( void )
   ipBanLoop =NULL;
   hostBanLoop =NULL;
   idBanLoop =NULL;
+  playerGroupLoop =NULL;
+  flagHistoryLoop =NULL;
 }
 
 //--------------LoopHandler
@@ -777,6 +786,78 @@ bool IDBanLoop::getIF  (size_t item, const std::string &key)
 
   return false;
 }
+
+PlayerGroupLoop::PlayerGroupLoop(Templateiser &ts)
+{
+  ts.addLoop("PlayerGroups",this);
+  ts.addKey("PlayerGroup",this);
+}
+
+void PlayerGroupLoop::setSize ( void )
+{
+  groups.clear();
+  if (!playerLoop)
+    size = 0;
+  else
+  {
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerLoop->getPlayerID());
+    if (!player)
+      size = 0;
+    else
+    {
+      for (unsigned int i = 0; i < player->groups.size(); i++)
+      {
+	if (player->groups.get(i).size())
+	  groups.push_back(std::string(player->groups.get(i).c_str()));
+      }
+      size = groups.size();
+      bz_freePlayerRecord(player);
+    }
+  }
+}
+
+void PlayerGroupLoop::getKey (size_t item, std::string &data, const std::string &key)
+{
+  if (key == "playergroup")
+    data += groups[item];
+}
+
+FlagHistoryLoop::FlagHistoryLoop(Templateiser &ts)
+{
+  ts.addLoop("FlagHistory",this);
+  ts.addKey("FlagHistoryItem",this);
+}
+
+void FlagHistoryLoop::setSize ( void )
+{
+  history.clear();
+  if (!playerLoop)
+    size = 0;
+  else
+  {
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerLoop->getPlayerID());
+    if (!player)
+      size = 0;
+    else
+    {
+      for (unsigned int i = 0; i < player->flagHistory.size(); i++)
+      {
+	if (player->flagHistory.get(i).size())
+	  history.push_back(std::string(player->flagHistory.get(i).c_str()));
+      }
+      size = history.size();
+      bz_freePlayerRecord(player);
+    }
+  }
+}
+
+void FlagHistoryLoop::getKey (size_t item, std::string &data, const std::string &key)
+{
+  if (key == "flaghistoryitem")
+    data += history[item];
+}
+
+
 
 
 // Local Variables: ***

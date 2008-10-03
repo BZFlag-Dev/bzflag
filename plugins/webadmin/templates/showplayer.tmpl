@@ -1,17 +1,31 @@
 [#RequirePerm:playerList]
 [!header.tmpl]
 	<div class="playerinfo>
-	<p><b>Player</b>[$PlayerCallsign]([$PlayerID])</p>
+	<p><b>Player</b>[$PlayerCallsign] ([$PlayerID])</p>
 	<p><b>IP address:</b> [$PlayerIP] 
 	[?IF PlayerBZID]BZID:[$PlayerBZID][?END PlayerBZID]
-	[?IF PlayerVerified](verified)(BZID:[$PlayerBZID])[?END PlayerVerified]</p>
+	[?IF PlayerVerified](verified)[?END PlayerVerified]</p>
 	<p><b>Version:</b> [$PlayerVersion]</p>
 	<p><b>Team:</b>  [$PlayerTeam] <b>Score:</b> [$PlayerScore] <b>Wins:</b> [$PlayerWins] <b>Losses:</b> [$PlayerLosses] <b>TeamKills:</b> [$PlayerTeamKills] <b>Rank:</b> [$PlayerRank]</p>
-	<p><b>Flag:</b> [?IF PlayerFlag] [$PlayerFlag] ([&PlayerFlagID])[?ELSE PlayerFlag] None [?END PlayerFlag]</p>
+	<p><b>Current Flag:</b> [?IF PlayerFlag] [$PlayerFlag] ([&PlayerFlagID])[?ELSE PlayerFlag] None [?END PlayerFlag]</p>
+	<p><b>Flag History:</b>
+	<ul>
+	[*START FlagHistory]
+		 <li>[$FlagHistoryItem]
+	[*END FlagHistory]
+	  <li>None
+	[*EMPTY FlagHistory]
+	</ul>	 </p>
 	<p><b>Lag:</b>  [$PlayerLag] <b>Jitter:</b> [$PlayerJitter] <b>PacketLoss:</b> [$PlayerPacketLoss]</p>
 	<p><b>Can Spawn:</b> [?IF PlayerCanSpawn] Yes [?ELSE PlayerCanSpawn] No [?END PlayerCanSpawn] <b>Is Spawned:</b> [?IF PlayerSpawned] Yes [?ELSE PlayerSpawned] No [?END PlayerSpawned]</p>
 	
-	[-do loops for flag history, perms and last chat?]
+	<p>Groups: 
+	[*START PlayerGroups]
+		[$PlayerGroup]&nbsp;
+	[*END PlayerGroups]
+	  None
+	[*EMPTY PlayerGroups]
+	</p>
 
 	</div>
 [!footer.tmpl]

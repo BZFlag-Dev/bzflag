@@ -229,6 +229,32 @@ protected:
   virtual bool getIF  (size_t item, const std::string &key);
 };
 
+class PlayerGroupLoop : public LoopHandler
+{
+public:
+  PlayerGroupLoop(Templateiser &ts);
+  virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+
+  std::vector<std::string> groups;
+};
+
+class FlagHistoryLoop : public LoopHandler
+{
+public:
+  FlagHistoryLoop(Templateiser &ts);
+  virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+
+  std::vector<std::string> history;
+};
+
+
+
 
 extern NavLoop *navLoop;
 extern LogLoop *logLoop;
