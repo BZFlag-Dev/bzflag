@@ -276,8 +276,37 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
       }
 
       // do something better here to get a valid default page if main isn't authed
-      if (!requestedPageIsAuthed)
-	pagename = "Main";
+      std::string ext = getFileExtension(pagename);
+
+      if (ext.size())
+      {
+	if (ext == "tmpl") // verify the perms on the template page
+	{
+	  TemplateMetaData meta;
+	  templateSystem.getTemplateFileMetaData(meta,pagename.c_str());
+	  if (meta.exists("RequirePerm"))
+	  {
+	    std::vector<std::string> items = meta.get("RequirePerm");
+	    bool hasPerms = items.size() > 0;
+	    for (size_t s = 0; s < items.size(); s++)
+	    {
+	      // the user must have all the perms for the page
+	      if (!getSessionPermision(request.sessionID,items[s]))
+		hasPerms = false;
+	    }
+	    if (!hasPerms)
+	    {
+	      reply.body = format("Page Not Authorized");
+	      return true;
+	    }
+	  }
+	}
+      }
+      else  // it's a no name page
+      {
+	if (!requestedPageIsAuthed)
+	  pagename = "Main";
+      }
 
       if (navLoop)
       {
@@ -288,7 +317,8 @@ bool WebAdmin::handleAuthedRequest ( int level, const HTTPRequest &request, HTTP
 
       callNewPageCallbacks(pagename,request);
 
-      pagename += ".page";
+      if (!ext.size())
+	pagename += ".page";
       // if it's regular page then go for it
       if (!templateSystem.processTemplateFile(reply.body, pagename.c_str()))
       {
