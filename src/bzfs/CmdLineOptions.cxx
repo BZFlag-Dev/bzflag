@@ -719,7 +719,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
       } else {
-	logDebugMessage(3, "Loaded help message: %s", name.c_str());
+	logDebugMessage(3, ("Loaded help message: %s\n"), argv[i]);
       }
       i++;
     } else if (strcmp(argv[i], "-i") == 0) {
