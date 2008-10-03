@@ -129,7 +129,31 @@ PlayerLoop::PlayerLoop(Templateiser &ts ) : LoopHandler()
   ts.addKey("playercallsign",this);
   ts.addKey("playerguid",this);
   ts.addKey("playerip",this);
+  ts.addKey("playerteam",this);
+  ts.addKey("playerversion",this);
+
+  ts.addKey("playerwins",this);
+  ts.addKey("playerlosses",this);
+  ts.addKey("playerscore",this);
+  ts.addKey("playerteamkills",this);
+  ts.addKey("playerrank",this);
+
   ts.addIF("playerbzid",this);
+  ts.addIF("playerverified",this);
+  ts.addIF("playeradmin",this);
+
+  ts.addIF("playercanspawn",this);
+  ts.addIF("playerspawned",this);
+
+  ts.addKey("playerlag",this);
+  ts.addKey("playerjitter",this);
+  ts.addKey("playerpacketloss",this);
+
+  ts.addKey("playerflag",this);
+  ts.addKey("playerflagid",this);
+
+  ts.addIF("playerflag",this);
+
   addNewPageCallback(this);
 
   playerID = -1;
@@ -144,30 +168,83 @@ void PlayerLoop::newPage ( const std::string &pagename, const HTTPRequest &reque
 {
   playerID = -1;
   std::string pID;
-  if (request.getParam("playerid",pID) && pID.size())
+  if (request.getParam("playerID",pID) && pID.size())
     playerID = atoi(pID.c_str());
 }
 
-void PlayerLoop::getKey (size_t item, std::string &data, const std::string &key)
+int PlayerLoop::getPlayerID ( void )
 {
   int id = playerID;
   if (inLoop())
-    id = idList[item];
+    id = idList[pos];
 
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(id);
+  return id;
+}
+
+void PlayerLoop::keyCallback (std::string &data, const std::string &key)
+{
+  if (inLoop())
+  {
+    if (!done())
+      getKey(pos,data,key);
+  }
+  else
+    getKey(0,data,key);
+}
+
+bool PlayerLoop::ifCallback (const std::string &key)
+{
+  if (inLoop())
+  {
+    if (done())
+      return false;
+
+    return getIF(pos,key);
+  }
+  else
+    return getIF(0,key);
+}
+
+void PlayerLoop::getKey (size_t /*item*/, std::string &data, const std::string &key)
+{
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(getPlayerID());
 
   if (player)
   {
     if (key == "playerbzid")
       data += player->bzID.c_str();
     else if (key == "playerid")
-      data += player->bzID.c_str();
+      data += format("%d",player->playerID);
     else if (key == "playercallsign")
       data += player->callsign.c_str();
     else if (key == "playerguid")
-      data += format("%d_%s",idList[item],player->callsign.c_str());
+      data += format("%d_%s",player->playerID,player->callsign.c_str());
     else if (key == "playerip")
       data += player->ipAddress.c_str();
+    else if (key == "playerteam")
+      data += bzu_GetTeamName(player->team);
+    else if (key == "playerversion")
+      data += player->clientVersion.c_str();
+    else if (key == "playerlag")
+      data += format("%d",player->lag);
+    else if (key == "playerjitter")
+      data += format("%d",player->jitter);
+    else if (key == "playerpacketloss")
+      data += format("%f",player->packetLoss);
+    else if (key == "playerscore")
+      data += format("%d",player->wins-player->losses-player->teamKills);
+    else if (key == "playerwins")
+      data += format("%d",player->wins);
+    else if (key == "playerlosses")
+      data += format("%d",player->losses);
+    else if (key == "playerteamkills")
+      data += format("%d",player->teamKills);
+    else if (key == "playerrank")
+      data += format("%f",player->rank);
+    else if (key == "playerflag")
+      data += player->currentFlag.c_str();
+    else if (key == "playerflagid")
+      data += format("%d",player->currentFlagID);
 
     bz_freePlayerRecord(player);
   }
@@ -175,20 +252,26 @@ void PlayerLoop::getKey (size_t item, std::string &data, const std::string &key)
     data += "invalid_player";
 }
 
-bool PlayerLoop::getIF  (size_t item, const std::string &key)
+bool PlayerLoop::getIF  (size_t /*item*/, const std::string &key)
 {
   bool ret = false;
  
-  int id = playerID;
-  if (inLoop())
-    id = idList[item];
-
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(id);
+  bz_BasePlayerRecord *player = bz_getPlayerByIndex(getPlayerID());
 
   if (player)
   {
     if (key == "playerbzid")
       ret = player->bzID.size() > 0;
+    else if (key == "playerverified")
+      ret = player->verified;
+    else if (key == "playeradmin")
+      ret = player->admin;
+    else if (key == "playercanspawn")
+      ret = player->canSpawn;
+    else if (key == "playerspawned")
+      ret = player->spawned;
+    else if (key == "playerflag")
+      ret = player->currentFlag.size() > 0;
 
     bz_freePlayerRecord(player);
   }

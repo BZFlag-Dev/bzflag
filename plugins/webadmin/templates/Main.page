@@ -6,7 +6,10 @@
 	<table class="titleBox"><tr><td>Current players</td></tr></table>
 	<table class="playerlist">
 	[*START Players]
-	<tr><td>[$PlayerID]</td><td>[$Callsign]</td></tr>
+	<tr><td>[$PlayerID]</td>
+	<td><a href="[$BaseURL]showplayer.tmpl?playerid=[$PlayerID]">[$PlayerCallsign]</a></td>
+	<td>[$PlayerTeam]</td>
+	</tr>
 	[*END Players]</td></tr>
 	<tr><td>No Players</li>
 	[*EMPTY Players]
