@@ -75,12 +75,89 @@ int			getErrno()
  * Connect a TCP socket to the requested endpoint.
  * This is a blocking operation.
  */
-SOCKET BzfNetwork::connect(Address& address)
+SOCKET BzfNetwork::connect(ServerId const& server)
 {
-  SOCKET fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (fd == INVALID_SOCKET) return fd;
+  SOCKET fd( INVALID_SOCKET );
 
-  /// TBS
+  // open connection to server.  first connect to given port.
+  // don't wait too long.
+  SOCKET query = socket(AF_INET, SOCK_STREAM, 0);
+  if (query == INVALID_SOCKET) return fd;
+
+  sockaddr_in addr(server);
+
+  //   UDEBUG("Remote %s\n", inet_ntoa(addr.sin_addr));
+
+  //   // for UDP, used later
+  //   memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
+
+  // for standard BSD sockets
+
+  // Open a connection.
+  // we are blocking at this point so we will wait till we connect, or error
+  int connectReturn = ::connect(query, (CNCTType*)&addr, sizeof(addr));
+
+  //   logDebugMessage(2,"CONNECT:non windows inital connect returned %d\n",connectReturn);
+
+  // check for a real error
+  // in progress is a holdover from when we did this as non blocking.
+  // we swaped to blockin because we changed from having
+  // the server send the first data, to having the client send it.
+  int error = 0;
+  if (connectReturn != 0) {
+    error = getErrno();
+    if (error != EINPROGRESS) {
+      // if it was a real error, log and bail
+//       logDebugMessage(1,"CONNECT:error in connect, error returned %d\n",error);
+
+      close(query);
+      return fd;
+    }
+  }
+
+  // call a select to make sure the socket is good and ready.
+  int fdMax(query);
+  fd_set write_set;
+  FD_ZERO(&write_set);
+  FD_SET(query, &write_set);
+  struct timeval timeout;
+  timeout.tv_sec = long(5);
+  timeout.tv_usec = 0;
+  int nfound = ::select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
+  error = getErrno();
+//   logDebugMessage(2,"CONNECT:non windows inital select nfound = %d error = %d\n",nfound,error);
+
+  // if no sockets are active then we are done.
+  if (nfound <= 0) {
+    close(query);
+    return fd;
+  }
+
+  // if there are any connection errors, check them and we are done
+  int       connectError;
+  socklen_t errorLen = sizeof(int);
+  if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen) < 0) {
+    close(query);
+    return fd;
+  }
+  if (connectError != 0) {
+//     logDebugMessage(2,"CONNECT:non getsockopt connectError = %d\n",connectError);
+    close(query);
+    return fd;
+  }
+
+  fd = query;
+
+
+
+
+
+
+
+
+
+
+
 
   return fd;
 }
@@ -211,6 +288,20 @@ int			getErrno()
   return WSAGetLastError();
 }
 
+}
+
+/**
+ * Connect a TCP socket to the requested endpoint.
+ * This is a blocking operation.
+ */
+SOCKET BzfNetwork::connect(Address& address)
+{
+  SOCKET fd = socket(AF_INET, SOCK_STREAM, 0);
+  if (fd == INVALID_SOCKET) return fd;
+
+  /// TBS
+
+  return fd;
 }
 
 int			BzfNetwork::setNonBlocking(int fd)

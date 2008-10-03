@@ -175,13 +175,13 @@ public:
    * @param _clientAddr address of the client
    * @param _fd bound TCP socket
    **/
-  NetHandler(const struct sockaddr_in &_clientAddr, SOCKET _fd);
+  NetHandler(sockaddr_in const& _clientAddr, SOCKET _fd);
 
   /** Constructor
    * This constructor is for clients that will connect to a server
    * @param serverAddr address of the server to connect to
    **/
-  NetHandler(const struct sockaddr_in& serverAddr);
+  NetHandler(ServerId const& serverAddr);
 
   /** Destructor
    *  free all internal resources, and close the tcp connection
@@ -309,7 +309,6 @@ private:
 #endif
   AresHandler	   ares;
 
-  /// On win32, a socket is typedef UINT_PTR SOCKET;
   static SOCKET		udpSocket;
   /// current UDP msg
   static char	        udpmsg[MaxPacketLen];

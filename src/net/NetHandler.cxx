@@ -324,7 +324,7 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
   ares.queryHostname((struct sockaddr *) &clientAddr);
 }
 
-NetHandler::NetHandler(const struct sockaddr_in &serverAddr)
+NetHandler::NetHandler(ServerId const& serverAddr)
   : uaddr(serverAddr)
   , fd(INVALID_SOCKET)
   , peer(serverAddr)
@@ -349,6 +349,7 @@ NetHandler::NetHandler(const struct sockaddr_in &serverAddr)
   // Create a socket and bind connect it to the requested server.
   // Note that this will block until the connection is made (or
   // refused) but that should be acceptable in this case.
+  fd = BzfNetwork::connect(serverAddr);
   
 #ifdef NETWORK_STATS
   // initialize the inbound/outbound counters to zero

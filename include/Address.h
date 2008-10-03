@@ -33,32 +33,30 @@
 #include "Pack.h"
 
 class Address {
-  public:
-			Address();
-			Address(const std::string&);
-			Address(const Address&);
-			Address(const in_addr&);	    // input in nbo
-			Address(const struct sockaddr_in&); // input in nbo
-			~Address();
-    Address&		operator=(const Address&);
+public:
+  Address();
+  Address(const std::string&);
+  Address(const in_addr&);	    // input in nbo
+  Address(const sockaddr_in&); // input in nbo
 
-			operator in_addr() const;
-    bool		operator==(const Address&) const;
-    bool		operator!=(const Address&) const;
-    bool		isAny() const;
-    bool		isPrivate() const;
-    std::string		getDotNotation() const;
-    uint8_t		getIPVersion() const;
+		operator in_addr() const;
+  
+  bool		operator==(const Address&) const;
+  bool		operator!=(const Address&) const;
+  bool		isAny() const;
+  bool		isPrivate() const;
+  std::string	getDotNotation() const;
+  uint8_t	getIPVersion() const;
 
-    void*		pack(void*) const;
-    void*		unpack(void*);
+  void*		pack(void*) const;
+  void*		unpack(void*);
 
-    static Address	getHostAddress(const std::string hostname = std::string(""));
-    static std::string	getHostByAddress(in_addr);
-    static const std::string getHostName(const std::string hostname = std::string(""));
+  static Address	getHostAddress(const std::string hostname = std::string(""));
+  static std::string	getHostByAddress(in_addr);
+  static const std::string getHostName(const std::string hostname = std::string(""));
 
-  private:
-    std::vector <in_addr> addr;
+private:
+  std::vector <in_addr> addr;
 };
 
 typedef uint8_t		PlayerId;
@@ -74,18 +72,22 @@ const PlayerId		UnusedSpecialPlayer2 = 251; // This id is unused at present and 
 const PlayerId		LastRealPlayer = 243;
 
 class ServerId {
-  public:
-    void*		pack(void*) const;
-    void*		unpack(void*);
+public:
+  ServerId();
+  ServerId(Address const& addr, int port, PlayerId player=NoPlayer);
 
-    bool		operator==(const ServerId&) const;
-    bool		operator!=(const ServerId&) const;
+  void*		pack(void*) const;
+  void*		unpack(void*);
 
-  public:
-    // host and port in network byte order
-    in_addr		serverHost;		// server host
-    int16_t		port;			// server port
-    int16_t		number;			// local player number
+		operator sockaddr_in() const;
+  bool		operator==(const ServerId&) const;
+  bool		operator!=(const ServerId&) const;
+
+public:
+  // host and port in network byte order
+  in_addr	serverHost;		// server host
+  int16_t	port;			// server port
+  int16_t	number;			// local player number
 };
 
 #endif // BZF_INET_ADDR_H

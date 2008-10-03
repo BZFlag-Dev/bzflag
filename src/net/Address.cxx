@@ -56,11 +56,6 @@ Address::Address(const std::string& name)
   addr.push_back(a.addr[0]);
 }
 
-Address::Address(const Address& address) : addr(address.addr)
-{
-  // do nothing
-}
-
 Address::Address(const in_addr& _addr)
 {
   addr.push_back(_addr);
@@ -69,18 +64,6 @@ Address::Address(const in_addr& _addr)
 Address::Address(const struct sockaddr_in& _addr)
 {
   addr.push_back(_addr.sin_addr);
-}
-
-Address::~Address()
-{
-  // do nothing
-}
-
-Address&		Address::operator=(const Address& address)
-{
-  addr.clear();
-  addr.push_back(address.addr[0]);
-  return *this;
 }
 
 Address::operator in_addr() const
@@ -222,6 +205,15 @@ void*			Address::unpack(void* _buf)
 //
 // ServerId
 //
+ServerId::ServerId()
+  : number(NoPlayer)
+{
+}
+
+ServerId::ServerId(Address const& addr_, int port_, PlayerId player_)
+  : serverHost(addr_), port(port_), number(player_)
+{
+}
 
 void*			ServerId::pack(void* _buf) const
 {
@@ -244,6 +236,15 @@ void*			ServerId::unpack(void* _buf)
   ::memcpy(&number, buf, sizeof(int16_t));	buf += sizeof(int16_t);
   serverHost.s_addr = u_long(hostaddr);
   return (void*)buf;
+}
+
+ServerId::operator sockaddr_in() const
+{
+  sockaddr_in result;
+  result.sin_family = AF_INET;
+  result.sin_addr = serverHost;
+  result.sin_port = htons(port);
+  return result;
 }
 
 bool			ServerId::operator==(const ServerId& id) const

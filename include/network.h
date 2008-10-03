@@ -146,18 +146,18 @@ extern "C" {
 #  define INADDR_NONE	((in_addr_t)0xffffffff)
 #endif
 
-class Address;
+class ServerId;
 
 class BzfNetwork {
 public:
-  static int		setNonBlocking(int fd);
-  static int		setBlocking(int fd);
+  static int	setNonBlocking(int fd);
+  static int	setBlocking(int fd);
   static bool	parseURL(const std::string& url,
 			 std::string& protocol,
 			 std::string& hostname,
 			 int& port,
 			 std::string& pathname);
-  static SOCKET		connect(Address& addr);
+  static SOCKET	connect(ServerId const& addr);
 };
 
 #endif // BZF_NETWORK_H
