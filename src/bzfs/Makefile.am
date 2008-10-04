@@ -120,6 +120,8 @@ bzfs_SOURCES = \
 	RecordReplay.h \
 	RejoinList.cxx \
 	RejoinList.h \
+	Reports.cxx \
+	Reports.h \
 	Score.h \
 	Score.cxx \
 	ServerCommand.cxx \

@@ -228,11 +228,7 @@ void LogLoop::process(bz_EventData *eventData)
 
 void LogLoop::logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &message )
 {
-  std::string player;
-  if (data->playerID >= 0)
-    player = bz_getPlayerCallsign(data->playerID);
-
-  message.message = format("Report Event: %s(%d): report %s",player.c_str(),data->playerID,data->message.c_str());
+  message.message = format("Report Event: %s: report %s",data->from.c_str(),data->message.c_str());
 }
 
 void LogLoop::logAuthMessage ( bz_PlayerAuthEventData_V1 *data, LogMessage &message )

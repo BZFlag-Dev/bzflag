@@ -258,7 +258,7 @@ void MatchManager::doPostgame()
 
 void MatchManager::doReportgame()
 {
-  bz_fileReport("report scores to the report channel");
+  bz_fileReport("report scores to the report channel","MatchMaker");
 }
 
 void MatchManager::disablePlayerSpawn()
@@ -312,10 +312,11 @@ void MatchManager::process (bz_EventData *eventData)
   }
 
 
-  if (eventData->eventType == bz_eReportFiledEvent) {
+  if (eventData->eventType == bz_eReportFiledEvent)
+  {
     bz_ReportFiledEventData_V1 * data = (bz_ReportFiledEventData_V1 *) eventData;
-    bz_debugMessagef(2, "DEBUG :: version => %d reporterID => %d :: message => %s :: time => %.0f", 
-		     data->version, data->playerID, data->message.c_str(), data->eventTime);
+    bz_debugMessagef(2, "DEBUG :: version => %d reporter => %s :: message => %s :: time => %.0f", 
+		     data->version, data->from.c_str(), data->message.c_str(), data->eventTime);
   }
 
 }

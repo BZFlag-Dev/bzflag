@@ -51,6 +51,7 @@
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"
+#include "Reports.h"
 
 #include "BackgroundTask.h"
 
@@ -358,6 +359,15 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class ReportCommand : private ServerCommand
+{
+public:
+  ReportCommand();
+
+  virtual bool operator() (const char *commandLine, GameKeeper::Player *playerData);
+};
+
+
 class PollCommand : public ServerCommand {
 public:
   PollCommand();
@@ -490,7 +500,7 @@ static GameStatsCommand   gameStatsCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
-ReportCommand      reportCommand;	// used by the API
+static ReportCommand      reportCommand;
 static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
 static GroupListCommand   groupListCommand;
@@ -1890,7 +1900,6 @@ bool PlayerListCommand::operator() (const char *,
 bool ReportCommand::operator() (const char *message,
 				GameKeeper::Player *playerData)
 {
- 
   int t;
   std::string callsign;
   std::string msg;
@@ -1921,53 +1930,9 @@ bool ReportCommand::operator() (const char *message,
     msg = message;
     callsign = "SERVER";
   }
-  
-  time_t now = time(NULL);
-  char* timeStr = ctime(&now);
-  std::string reportStr;
-  reportStr = reportStr + timeStr + "Reported by " + callsign + ": " + msg;
 
-  if (clOptions->reportFile.size() > 0) {
-    std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
-    ofs << reportStr << std::endl << std::endl;
-  }
-
-  if (clOptions->reportPipe.size() > 0) {
-    FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
-    if (pipeWrite != NULL) {
-      fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
-    } else {
-      logDebugMessage(1,"Couldn't write report to the pipe\n");
-    }
-    pclose(pipeWrite);
-  }
-
-  std::string temp = std::string("**\"") + callsign + "\" reports: " + msg;
-  const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
-  unsigned int cur = 0;
-  const unsigned int wordsize = words.size();
-  std::string temp2;
-
-  while (cur != wordsize) {
-    temp2.clear();
-    while (cur != wordsize &&
-	   (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
-      temp2 += words[cur] + " ";
-      ++cur;
-    }
-    sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
-  }
-
-  logDebugMessage(1,"Player %s [%d] has filed a report (time: %s).\n", callsign.c_str(), t, timeStr);
-
-  if ( playerData )
+  if(REPORTS.file(callsign,msg))
     sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
-
-  // Notify plugins of the report filed
-  bz_ReportFiledEventData_V1 reportData;
-  reportData.playerID = t;
-  reportData.message = msg;
-  worldEventManager.callEvents(bz_eReportFiledEvent, &reportData);
 
   return true;
 }
@@ -2863,16 +2828,6 @@ bool ViewReportCommand::operator() (const char* message,
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
     return true;
   }
-  if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-    sendMessage(ServerPlayer, t,
-		"The /report command is disabled on this"
-		" server or there are no reports filed.");
-  }
-  std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if (ifs.fail()) {
-    sendMessage(ServerPlayer, t, "Error reading from report file.");
-    return true;
-  }
 
   // setup the glob pattern
   std::string pattern = "*";
@@ -2888,33 +2843,11 @@ bool ViewReportCommand::operator() (const char* message,
 
   BufferedChatParams *params = new BufferedChatParams(playerData);
 
-  // assumes that empty lines separate the reports
-  std::string line;
-  std::vector<std::string> buffers;
-  bool matched = false;
-  while (std::getline(ifs, line)) {
-    buffers.push_back(line);
-    if (line.size() <= 0) {
-      // blank line
-      if (matched) {
-	for (int i = 0; i < (int)buffers.size(); i++) {
-	  params->items.push_back(buffers[i]);
-	}
-      }
-      buffers.clear();
-      matched = false;
-    } else {
-      // non-blank line
-      if (glob_match(pattern, TextUtils::toupper(line))) {
-	matched = true;
-      }
-    }
-  }
-  // in case the file doesn't end with a blank line
-  if (matched) {
-    for (int i = 0; i < (int)buffers.size(); i++) {
-      params->items.push_back(buffers[i]);
-    }
+  if(REPORTS.getLines (params->items, pattern.c_str()) == 0)
+  {
+    sendMessage(ServerPlayer, t, "The /report command is disabled on this server or there are no reports filed.");
+    delete (params);
+    return true;
   }
 
   BGTM.addTask(&bufferChat,params);

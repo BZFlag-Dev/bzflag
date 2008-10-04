@@ -45,6 +45,7 @@
 #include "version.h"
 #include "BZDBCache.h"
 #include "MotionUtils.h"
+#include "Reports.h"
 
 TimeKeeper synct=TimeKeeper::getCurrent();
 
@@ -2399,30 +2400,61 @@ BZF_API bz_APIStringList *bz_getReports(void)
 {
   bz_APIStringList *list=new bz_APIStringList;
 
-  // Are we reporting to a file?
-  if(clOptions->reportFile.size()==0)
-    return list;
+  std::vector<std::string> reports;
+  REPORTS.getLines(reports);
 
-  std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if(ifs.fail())
-    return list;
-
-  std::string line;
-
-  while(std::getline(ifs, line))
-    list->push_back(line);
+  for ( size_t s = 0; s < reports.size(); s++ )
+    list->push_back(reports[s]);
 
   return list;
 }
 
+BZF_API unsigned int bz_getReportCount(void)
+{
+  return (unsigned int)REPORTS.count();
+}
+
+BZF_API const char* bz_getReportSource(unsigned int id)
+{
+  Reports::Report report = REPORTS.get(id);
+  return report.from.c_str();
+}
+
+BZF_API const char* bz_getReportBody(unsigned int id)
+{
+  Reports::Report report = REPORTS.get(id);
+  return report.message.c_str();
+}
+
+BZF_API const char* bz_getReportTime(unsigned int id)
+{
+  Reports::Report report = REPORTS.get(id);
+  return report.time.c_str();
+}
+
+BZF_API bool bz_getClearReport(unsigned int id)
+{
+  return REPORTS.clear(id);
+}
+
+BZF_API bool bz_getClearAllReports(void)
+{
+  return REPORTS.clear();
+}
+
+
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_fileReport(const char* message)
+BZF_API bool bz_fileReport(const char* message, const char * from)
 {
   if ( !message )
- 	 return false;
+    return false;
 
-  return reportCommand(message,NULL);
+  std::string f = "server";
+  if (from)
+    f = from;
+
+  return REPORTS.file(std::string(message),from);
 }
 
 //-------------------------------------------------------------------------

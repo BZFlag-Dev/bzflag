@@ -1082,12 +1082,9 @@ public:
 class BZF_API bz_ReportFiledEventData_V1 : public bz_EventData
 {
 public:
-  bz_ReportFiledEventData_V1() : bz_EventData(bz_eReportFiledEvent)
-    , playerID(-1)
-  {
-  }
+  bz_ReportFiledEventData_V1() : bz_EventData(bz_eReportFiledEvent){};
 
-  int playerID;
+  bz_ApiString from;
   bz_ApiString message;
 };
 
@@ -1341,7 +1338,16 @@ BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int 
 
 // report
 BZF_API bz_APIStringList* bz_getReports(void);
-BZF_API bool bz_fileReport(const char* message);
+
+BZF_API unsigned int bz_getReportCount(void);
+BZF_API const char* bz_getReportSource(unsigned int id);
+BZF_API const char* bz_getReportBody(unsigned int id);
+BZF_API const char* bz_getReportTime(unsigned int id);
+
+BZF_API bool bz_getClearReport(unsigned int id);
+BZF_API bool bz_getClearAllReports(void);
+
+BZF_API bool bz_fileReport(const char* message, const char* from);
 
 // lagwarn
 BZF_API int bz_getLagWarn(void);

@@ -1218,6 +1218,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="reports"
+			>
+			<File
+				RelativePath="..\..\src\bzfs\reports.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\reports.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
