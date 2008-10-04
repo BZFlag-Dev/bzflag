@@ -250,7 +250,7 @@ void LogLoop::logAuthMessage ( bz_PlayerAuthEventData_V1 *data, LogMessage &mess
 
 void LogLoop::logSlashMessage ( bz_SlashCommandEventData_V1 *data, LogMessage &message )
 {
-  message.message = format("Slash Command: %s(%d): %s",bz_getPlayerCallsign(data->from),data->from,data->message);
+  message.message = format("Slash Command: %s(%d): %s",bz_getPlayerCallsign(data->from),data->from,data->message.c_str());
 }
 
 void LogLoop::logGameStartEndMessage ( bz_GameStartEndEventData_V1 *data, LogMessage &message, bool start )
