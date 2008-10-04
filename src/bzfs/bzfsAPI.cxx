@@ -2432,12 +2432,12 @@ BZF_API const char* bz_getReportTime(unsigned int id)
   return report.time.c_str();
 }
 
-BZF_API bool bz_getClearReport(unsigned int id)
+BZF_API bool bz_clearReport(unsigned int id)
 {
   return REPORTS.clear(id);
 }
 
-BZF_API bool bz_getClearAllReports(void)
+BZF_API bool bz_clearAllReports(void)
 {
   return REPORTS.clear();
 }

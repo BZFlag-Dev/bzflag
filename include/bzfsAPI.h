@@ -1344,8 +1344,8 @@ BZF_API const char* bz_getReportSource(unsigned int id);
 BZF_API const char* bz_getReportBody(unsigned int id);
 BZF_API const char* bz_getReportTime(unsigned int id);
 
-BZF_API bool bz_getClearReport(unsigned int id);
-BZF_API bool bz_getClearAllReports(void);
+BZF_API bool bz_clearReport(unsigned int id);
+BZF_API bool bz_clearAllReports(void);
 
 BZF_API bool bz_fileReport(const char* message, const char* from);
 
