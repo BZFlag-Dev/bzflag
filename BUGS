@@ -127,10 +127,6 @@ Rendering
 * When setting resolution to 1400x1050 the font listing the various resolutions
   overlaps one another. @ r18096 -spldart-
 
-* Not sure if this is 'game play' or 'rendering' but 'wide angle' flag causes
-  one's own flag to come into partial view in reverse. @ r18096 -spldart-
-  ... also not sure if this was intended game behaviour.
-
 * Navigating the server list jumps around.  Join->Find Server then press the
   down arrow repeatedly (for the All tab).  The highlighted server list item
   jumps around instead of going sequentially through the servers.  Hitting
@@ -152,8 +148,6 @@ Platform (Windows)
       
 * jitter on windows servers is reported as very high, but play is unaffected.
   
-* Windows BZFS will not let clients connect when 'too many' flags are specified.
-
 * Two seperate boxen, windows build with vc8, nvidia vid cards.
 
   When jumping on box "name Box - position 250 250 118 - rotation 0 - size 15 15
@@ -217,10 +211,7 @@ Gameplay
 * shooting straight shots with the Agility flag while just having accelerated
   forward (common tactic to shoot "fast shots") will miss targets that are
   rather stationary and directly in the shot's path.
-  
-* bullets now travel through the top of a block instead of reflecting off.  The
-  bullets appear to be half(or more) submerged into the block.
-  
+    
 * world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once a
   second, use _weapons BZDB var to test...)
