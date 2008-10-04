@@ -253,6 +253,16 @@ protected:
   std::vector<std::string> history;
 };
 
+class ReportsLoop : public LoopHandler
+{
+public:
+  ReportsLoop(Templateiser &ts);
+  virtual void setSize ( void );
+
+protected:
+  virtual void getKey (size_t item, std::string &data, const std::string &key);
+};
+
 
 
 

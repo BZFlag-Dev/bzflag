@@ -1,0 +1,22 @@
+[#RequirePerm:viewReports]
+[!header.tmpl]
+	<table class="reports">
+  	[*START Reports]
+	<tr>
+	<td>[$ReportID]</td>
+	<td>[$ReportTime]</td>
+	<td>[$ReportSource]</td>
+	<td>[$ReportBody]</td>
+	<td>
+		<form action="[$BaseURL][$CurrentPageTitle]" method="post">
+			<input type="hidden" name="action" value="removereport">
+			<input type="hidden" name="reportid" value="[$ReportID]">
+			<input type="submit" value="Remove">
+		</form>
+	</td>
+	</tr>
+	[*END Reports]
+	  <tr><td>No Reports</td></tr>
+	[*EMPTY Reports]
+	</table>
+[!footer.tmpl]

@@ -14,6 +14,7 @@ HostBanLoop *hostBanLoop = NULL;
 IDBanLoop *idBanLoop = NULL;
 PlayerGroupLoop *playerGroupLoop = NULL;
 FlagHistoryLoop *flagHistoryLoop = NULL;
+ReportsLoop *reportsLoop = NULL;
 
 size_t	max_loop = 0xFFFFFFFF;
 
@@ -31,6 +32,7 @@ void initLoops ( Templateiser &ts )
 
   playerGroupLoop = new PlayerGroupLoop(ts);
   flagHistoryLoop = new FlagHistoryLoop(ts);
+  reportsLoop = new ReportsLoop(ts);
 }
 
 void freeLoops ( void )
@@ -45,6 +47,7 @@ void freeLoops ( void )
   delete(idBanLoop);
   delete(playerGroupLoop);
   delete(flagHistoryLoop);
+  delete(reportsLoop);
 
   playerLoop = NULL;
   navLoop = NULL;
@@ -56,6 +59,7 @@ void freeLoops ( void )
   idBanLoop =NULL;
   playerGroupLoop =NULL;
   flagHistoryLoop =NULL;
+  reportsLoop =NULL;
 }
 
 //--------------LoopHandler
@@ -855,6 +859,33 @@ void FlagHistoryLoop::getKey (size_t item, std::string &data, const std::string 
 {
   if (key == "flaghistoryitem")
     data += history[item];
+}
+
+ReportsLoop::ReportsLoop(Templateiser &ts)
+{
+  ts.addLoop("Reports",this);
+  ts.addKey("ReportID",this);
+  ts.addKey("ReportTime",this);
+  ts.addKey("ReportSource",this);
+  ts.addKey("ReportBody",this);
+}
+
+void ReportsLoop::setSize ( void )
+{
+  size = bz_getReportCount();
+}
+
+void ReportsLoop::getKey (size_t item, std::string &data, const std::string &key)
+{
+  unsigned int i = (unsigned int)item;
+  if (key == "reportid")
+    data += format("%d",i);
+  else if (key == "reporttime")
+    data += bz_getReportTime(i);
+  else if (key == "reportsource")
+    data += bz_getReportSource(i);
+  else if (key == "reportbody")
+    data += bz_getReportBody(i);
 }
 
 
