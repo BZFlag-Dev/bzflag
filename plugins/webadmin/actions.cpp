@@ -261,6 +261,21 @@ bool AddBan::process ( std::string &inputPage, const HTTPRequest &request, HTTPR
   return false;
 }
 
+bool RemoveReport::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!userInfo->hasPerm("viewreports"))
+  {
+    serverError->errorMessage = "RemoveReport: Invalid Permission";
+    return false;
+  }
+
+  std::string reportID;
+
+  if (request.getParam("reportid",reportID) && reportID.size())
+    bz_clearReport((unsigned int)atoi(reportID.c_str()));
+  return false;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

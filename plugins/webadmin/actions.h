@@ -73,6 +73,14 @@ public:
   virtual const char* name ( void ){ return "ban";}
 };
 
+class RemoveReport : public Action
+{
+public:
+  virtual bool process ( std::string &page, const HTTPRequest &request, HTTPReply &reply );
+  virtual const char* name ( void ){ return "removereport";}
+};
+
+
 
 #endif //_ACTIONS_H_
 
