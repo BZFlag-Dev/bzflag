@@ -35,7 +35,6 @@ Reports::~Reports()
 bool Reports::file ( const std::string &user, const std::string message )
 {
   time_t now = time(NULL);
-  char* timeStr = ctime(&now);
 
   Report report(ctime(&now),user,message);
 
