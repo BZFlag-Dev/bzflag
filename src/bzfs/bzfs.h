@@ -123,7 +123,7 @@ extern void initGroups();
 extern BasesList	bases;
 extern CmdLineOptions	*clOptions;
 extern uint16_t		curMaxPlayers;
-extern bool		done;
+extern bool		serverDone;
 extern bool		gameOver;
 extern TeamInfo		team[NumTeams];
 extern int		numFlags;

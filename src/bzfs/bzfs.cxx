@@ -102,7 +102,7 @@ PingPacket pingReply;
 TeamInfo team[NumTeams];
 // num flags in flag list
 int numFlags = 0;
-bool done = false;
+bool serverDone = false;
 // true if hit time/score limit
 bool gameOver = true;
 // "real" players, i.e. do not count observers
@@ -2402,7 +2402,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	bases.clear();
 
       if (clOptions->oneGameOnly) {
-	done = true;
+	serverDone = true;
       } else {
 	// republicize ourself.  this dereferences the URL chain
 	// again so we'll notice any pointer change when any game
@@ -2555,7 +2555,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
     if (clOptions->oneGameOnly) {
       sendMessage(ServerPlayer, AllPlayers,
 		  "automatically shutting down now that the game is over");
-      done = true;
+      serverDone = true;
     }
   }
 }
@@ -2628,7 +2628,7 @@ void checkForScoreLimit ( GameKeeper::Player* killer )
     if (clOptions->oneGameOnly) {
       sendMessage(ServerPlayer, AllPlayers,
 		  "automatically shutting down now that the game is over");
-      done = true;
+      serverDone = true;
     }
   }
 }
@@ -3234,7 +3234,7 @@ static void terminateServer(int /*sig*/)
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
   sendMessage(ServerPlayer, AllPlayers, "shutting down now");
-  done = true;
+  serverDone = true;
 }
 
 static std::string cmdSet(const std::string&, const CommandManager::ArgList& args, bool *worked)
@@ -3633,7 +3633,7 @@ static bool prepareWorld(void)
   } else if (clOptions->cacheOut != "") {
     if (!saveWorldCache())
       std::cerr << "ERROR: could not save world cache file: " << clOptions->cacheOut << std::endl;
-    done = true;
+    serverDone = true;
   }
   return true;
 }
@@ -4161,7 +4161,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
       if (clOptions->oneGameOnly && timeLeft == 0.0f) {
 	sendMessage(ServerPlayer, AllPlayers,
 		    "automatically shutting down now that the game is over");
-	done = true;
+	serverDone = true;
       }
     }
   }
@@ -4554,7 +4554,7 @@ static void runMainLoop ( void )
 
   int readySetGo = -1; // match countdown timer
   int nfound;
-  while (!done) {
+  while (!serverDone) {
     doTickEvent();
     updatePlayerPositions();
     checkForWorldDeaths();

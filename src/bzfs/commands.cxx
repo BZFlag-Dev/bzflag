@@ -1067,7 +1067,7 @@ bool ShutdownCommand::operator() (const char *,
     explanation += " by " + std::string(playerData->player.getCallSign());
   }
   sendMessage(ServerPlayer, AllPlayers, explanation.c_str());
-  done = true;
+  serverDone = true;
   return true;
 }
 
