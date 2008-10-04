@@ -276,6 +276,20 @@ bool RemoveReport::process ( std::string &inputPage, const HTTPRequest &request,
   return false;
 }
 
+bool AddReport::process ( std::string &inputPage, const HTTPRequest &request, HTTPReply &reply )
+{
+  if (!userInfo->hasPerm("talk"))
+  {
+    serverError->errorMessage = "RemoveReport: Invalid Permission";
+    return false;
+  }
+
+  std::string reportBody;
+
+  if (request.getParam("reportbody",reportBody) && reportBody.size())
+    bz_fileReport(reportBody.c_str(),userInfo->userName.c_str());
+  return false;
+}
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

@@ -19,4 +19,11 @@
 	  <tr><td>No Reports</td></tr>
 	[*EMPTY Reports]
 	</table>
+	
+	<form action="[$BaseURL][$CurrentPageTitle]" method="post">
+		<input type="hidden" name="action" value="addreport">
+		Report:<input type="text" name="reportbody">
+		<input type="submit" value="Report">
+	</form>
+
 [!footer.tmpl]

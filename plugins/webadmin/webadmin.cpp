@@ -144,6 +144,8 @@ void WebAdmin::init(const char* cmdln)
   addAction(new ClearLogFile());
   addAction(new AddBan());
   addAction(new RemoveBan());
+  addAction(new RemoveReport());
+  addAction(new AddReport());
 
   buildAuthPermsFromPages();
 
