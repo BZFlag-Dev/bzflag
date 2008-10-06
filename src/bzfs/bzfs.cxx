@@ -1968,8 +1968,12 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packInt((int32_t)timeLeft);
-    msg->send(playerData->netHandler, MsgTimeUpdate);
+    // tell players about state of current countdown (paused or running)
+    if (!clOptions->countdownPaused)
+    {
+      msg->packInt((int32_t)timeLeft);
+      msg->send(playerData->netHandler, MsgTimeUpdate);
+    }
   }
 
   // if first player on team add team's flag
