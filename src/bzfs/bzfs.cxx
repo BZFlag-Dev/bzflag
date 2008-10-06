@@ -1969,7 +1969,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     NetMsg msg = MSGMGR.newMessage();
 
     msg->packInt((int32_t)timeLeft);
-    msg->send(playerData->netHandler, MsgNewRabbit);
+    msg->send(playerData->netHandler, MsgTimeUpdate);
   }
 
   // if first player on team add team's flag
