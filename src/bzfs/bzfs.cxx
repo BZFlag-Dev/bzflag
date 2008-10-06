@@ -1958,24 +1958,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
-  // send time update to new player if we're counting down
-  if (countdownActive && clOptions->timeLimit > 0.0f
-      && !playerData->player.isBot()) {
-    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
-    if (timeLeft < 0.0f)
-      // oops
-      timeLeft = 0.0f;
-
-    NetMsg msg = MSGMGR.newMessage();
-
-    // tell players about state of current countdown (paused or running)
-    if (!clOptions->countdownPaused)
-    {
-      msg->packInt((int32_t)timeLeft);
-      msg->send(playerData->netHandler, MsgTimeUpdate);
-    }
-  }
-
   // if first player on team add team's flag
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
@@ -2033,6 +2015,29 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (playerData->player.isObserver())
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
+
+  // send time update to new player if we're counting down
+  if (countdownActive && clOptions->timeLimit > 0.0f
+      && !playerData->player.isBot()) {
+    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
+    if (timeLeft < 0.0f)
+      // oops
+      timeLeft = 0.0f;
+    
+    // tell players about state of current countdown (paused or running)
+    if (!clOptions->countdownPaused) {
+      NetMsg msg = MSGMGR.newMessage();
+      msg->packInt((int32_t)timeLeft);
+      msg->send(playerData->netHandler, MsgTimeUpdate);
+    } else {
+      long int timeArray[4];
+      TimeKeeper::convertTime(timeLeft, timeArray);
+      std::string remainingTime = TimeKeeper::printTime(timeArray);
+      char reply[MessageLen] = {0};
+      snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
+      sendMessage(ServerPlayer, playerData->getIndex(), reply);
+    }
+  }
 
   playerData->accessInfo.regAtJoin = playerData->accessInfo.isRegistered();
 
