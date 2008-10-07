@@ -173,6 +173,7 @@ public:
 
     // custom scoreboard data
     std::map<std::string,std::string> customData;
+    bool hasCustomField ( const std::string & key ){return customData.find(key)!= customData.end();}
 
     // players
     PlayerInfo	      player;

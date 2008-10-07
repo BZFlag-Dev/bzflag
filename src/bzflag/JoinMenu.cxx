@@ -67,6 +67,14 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   password->setString(info->password);
   addControl(password);
 
+  motto = new HUDuiTypeIn;
+  motto->setObfuscation(true);
+  motto->setFontFace(fontFace);
+  motto->setLabel("Motto:");
+  motto->setMaxLength(CallSignLen - 1);
+  motto->setString(info->motto);
+  addControl(motto);
+
   team = new HUDuiList;
   team->setFontFace(fontFace);
   team->setLabel("Team:");
@@ -163,6 +171,10 @@ void JoinMenu::loadInfo()
     strncpy(info->password, password->getString().c_str(), PasswordLen-1);
     info->token[0] = '\0';
   }
+
+  if (info->motto != motto->getString()) 
+    info->motto = motto->getString();
+
   info->team = getTeam();
   strncpy(info->serverName, server->getString().c_str(), ServerNameLen-1);
   info->serverPort = atoi(port->getString().c_str());

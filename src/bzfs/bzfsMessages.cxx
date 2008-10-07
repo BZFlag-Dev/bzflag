@@ -1022,6 +1022,12 @@ void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std:
   msg->broadcast(MsgPlayerData);
 }
 
+void sendPlayerCustomDataPair ( int playerID, const char* key, const char* value )
+{
+  if (key && value)
+    sendPlayerCustomDataPair(playerID,std::string(key),std::string(value));
+}
+
 
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )

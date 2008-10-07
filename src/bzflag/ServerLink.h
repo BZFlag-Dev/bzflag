@@ -105,6 +105,7 @@ public:
   void		sendWhatTimeIsIt ( unsigned char tag );
 
   void		sendCustomData ( const std::string &key, const std::string &value );
+  void		sendCustomData ( const char* key, const std::string &value ){if (key) sendCustomData(std::string(key),value);}
 
   static ServerLink*	getServer(); // const
   static void		setServer(ServerLink*);

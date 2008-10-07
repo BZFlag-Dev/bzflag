@@ -151,6 +151,8 @@ typedef enum {
   bz_eAllowKillCommandEvent,
   bz_eReportFiledEvent,
   bz_eTeleportEvent,
+  bz_ePlayerSentCustomData,
+  bz_ePlayerCustomDataChanged,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1101,6 +1103,19 @@ public:
   int to;
 };
 
+class BZF_API bz_PlayerSentCustomData_V1 : public bz_EventData
+{
+public:
+  bz_PlayerSentCustomData_V1() : bz_EventData(bz_ePlayerSentCustomData)
+    , playerID(-1)
+  {
+  }
+
+  int playerID;
+  bz_ApiString key;
+  bz_ApiString data;
+};
+
 // event handler callback
 class bz_EventHandler
 {
@@ -1161,6 +1176,8 @@ BZF_API bool bz_setPlayerLimboMessage(int playerID, const char* text);
 BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
 BZF_API const char* bz_getPlayerCallsign(int playerID);
 BZF_API const char* bz_getPlayerIPAddress(int playerID);
+
+BZF_API bool bz_setPayerCustomData(int playerID, const char* key, const char* data );
 
 class BZF_API bz_BasePlayerRecord
 {

@@ -933,8 +933,17 @@ public:
     buf = nboUnpackStdString(buf, key);
     buf = nboUnpackStdString(buf, value);
 
-    if(key.size())
-      player->customData[key] = value;
+    // let the API change the value
+    bz_PlayerSentCustomData_V1 data;
+    data.playerID = player->getIndex();
+    data.key = key;
+    data.data = value;
+    worldEventManager.callEvents(data);
+
+    // if the key is still coo, go and set the change, notify all clients, and the API that it changed
+    if(data.key.size())
+     bz_setPayerCustomData(player->getIndex(), data.key.c_str(), data.data.c_str() );
+
     return true;
   }
 };

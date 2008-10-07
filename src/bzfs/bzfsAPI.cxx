@@ -1004,6 +1004,11 @@ BZF_API const char *bz_BasePlayerRecord::getCustomData ( const char* key )
 
 BZF_API bool bz_BasePlayerRecord::setCustomData ( const char* key, const char* data ) 
 {
+  return bz_setPayerCustomData(playerID,key,data);
+}
+
+BZF_API bool bz_setPayerCustomData(int playerID, const char* key, const char* data )
+{
   GameKeeper::Player* player=GameKeeper::Player::getPlayerByIndex(playerID);
   if(!player || !key)
     return false;
@@ -1019,6 +1024,16 @@ BZF_API bool bz_BasePlayerRecord::setCustomData ( const char* key, const char* d
 
   player->customData[k] = v;
   sendPlayerCustomDataPair(playerID,k,v);
+
+  // notify on the change
+  bz_PlayerSentCustomData_V1 eventData;
+  eventData.playerID = playerID;
+  eventData.key = k;
+  eventData.data = v;
+
+  eventData.eventType =bz_ePlayerCustomDataChanged;
+  worldEventManager.callEvents(eventData);
+
   return found;
 }
 

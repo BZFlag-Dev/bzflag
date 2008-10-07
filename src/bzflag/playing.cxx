@@ -5262,6 +5262,17 @@ static void joinInternetGame2()
 
   serverLink->sendCaps(myTank->getId(),true,!noSounds);
 
+  // give them our motto
+  if(myTank && startupInfo.motto.size())
+    myTank->customData["motto"] = startupInfo.motto;
+  
+  // send all our custom data pairs
+  std::map<std::string,std::string>::iterator itr = myTank->customData.begin();
+  while(itr != myTank->customData.end())
+  {
+    serverLink->sendCustomData(itr->first,itr->second);
+    itr++;
+  }
 
   ExportInformation &ei = ExportInformation::instance();
   ei.setInformation("Callsign", myTank->getCallSign(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
@@ -5274,6 +5285,7 @@ static void joinInternetGame2()
   while (stack->isActive())
     stack->pop();
   joiningGame = false;
+
 }
 
 

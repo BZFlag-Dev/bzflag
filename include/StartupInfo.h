@@ -38,6 +38,7 @@ public:
   char token[TokenLen];
   std::string listServerURL;
   int listServerPort;
+  std::string motto;
 };
 
 

@@ -644,6 +644,8 @@ void setupConfigs ( void )
 	      sizeof(startupInfo.password) - 1);
       startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
     }
+    if (BZDB.isSet("motto"))
+      startupInfo.motto = BZDB.get("motto");
 
     if (BZDB.isSet("team")) {
       std::string value = BZDB.get("team");
