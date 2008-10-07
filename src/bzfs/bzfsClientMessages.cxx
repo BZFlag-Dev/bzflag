@@ -921,6 +921,24 @@ public:
   }
 };
 
+class PlayerDataHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &code, void * buf, int len )
+  {
+    if (!player)
+      return false;
+
+    std::string key,value;
+    buf = nboUnpackStdString(buf, key);
+    buf = nboUnpackStdString(buf, value);
+
+    if(key.size())
+      player->customData[key] = value;
+    return true;
+  }
+};
+
 class PlayerFirstNoBumpHandler : public PlayerFirstHandler
 {
 public:
@@ -998,6 +1016,7 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
+  playerNetworkHandlers[MsgPlayerData] = new PlayerDataHandler;
 }
 
 void cleanupDefaultHandlers ( void )

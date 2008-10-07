@@ -96,7 +96,7 @@ ServerLink*		ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port) :
   state(SocketError),	// assume failure
-  fd(-1),			// assume failure
+  fd(-1), // assume failure
   udpLength(0),
   oldNeedForSpeed(false),
   previousFill(0)
@@ -424,7 +424,7 @@ ServerLink*		ServerLink::getServer() // const
   return server;
 }
 
-void			ServerLink::setServer(ServerLink* _server)
+void ServerLink::setServer(ServerLink* _server)
 {
   server = _server;
 }
@@ -461,8 +461,8 @@ void ServerLink::flush()
   previousFill = 0;
 }
 
-void			ServerLink::send(uint16_t code, uint16_t len,
-					 const void* msg)
+void ServerLink::send(uint16_t code, uint16_t len,
+ 		 const void* msg)
 {
   bool needForSpeed=false;
   if (state != Okay) return;
@@ -512,7 +512,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 #endif
 #endif //WIN32
 
-int			ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
+int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 {
   code = MsgNull;
   len = 0;
@@ -663,7 +663,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
   return 1;
 }
 
-int			ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
+int ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 {
   uint16_t len,code;
 
@@ -867,8 +867,8 @@ void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds )
 }
 
 void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
-			   const char* name,
-			   const char* token)
+    const char* name,
+    const char* token)
 {
   if (state != Okay) return;
   char msg[MaxPacketLen] = {0};
@@ -888,7 +888,7 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
 }
 
 bool ServerLink::readEnter (std::string& reason,
-			    uint16_t& code, uint16_t& rejcode)
+     uint16_t& code, uint16_t& rejcode)
 {
   // wait for response
   uint16_t len;
@@ -923,7 +923,7 @@ bool ServerLink::readEnter (std::string& reason,
 }
 
 #ifndef BUILDING_BZADMIN
-void			ServerLink::sendCaptureFlag(TeamColor team)
+void ServerLink::sendCaptureFlag(TeamColor team)
 {
   char msg[3];
   void* buf = msg;
@@ -932,7 +932,7 @@ void			ServerLink::sendCaptureFlag(TeamColor team)
   send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendGrabFlag(int flagIndex)
+void ServerLink::sendGrabFlag(int flagIndex)
 {
   char msg[3];
   void* buf = msg;
@@ -941,7 +941,7 @@ void			ServerLink::sendGrabFlag(int flagIndex)
   send(MsgGrabFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendDropFlag(const float* position)
+void ServerLink::sendDropFlag(const float* position)
 {
   char msg[13];
   void* buf = msg;
@@ -950,11 +950,11 @@ void			ServerLink::sendDropFlag(const float* position)
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendKilled(const PlayerId victim,
-					       const PlayerId killer,
-					       int reason, int shotId,
-					       const FlagType* flagType,
-					       int phydrv)
+void ServerLink::sendKilled(const PlayerId victim,
+ 		       const PlayerId killer,
+ 		       int reason, int shotId,
+ 		       const FlagType* flagType,
+ 		       int phydrv)
 {
   char msg[6 + FlagPackSize + 4];
   void* buf = msg;
@@ -972,7 +972,7 @@ void			ServerLink::sendKilled(const PlayerId victim,
   send(MsgKilled, (uint16_t)((char*)buf - (char*)msg), msg);
 }
 
-void			ServerLink::sendPlayerUpdate(Player* player )
+void ServerLink::sendPlayerUpdate(Player* player )
 {
   char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all
@@ -992,7 +992,7 @@ void			ServerLink::sendPlayerUpdate(Player* player )
   send(code, len, msg);
 }
 
-void			ServerLink::sendBeginShot(const FiringInfo& info)
+void ServerLink::sendBeginShot(const FiringInfo& info)
 {
   char msg[3];
   void* buf = msg;
@@ -1003,8 +1003,8 @@ void			ServerLink::sendBeginShot(const FiringInfo& info)
   send(MsgShotBegin, sizeof(msg), msg);
 }
 
-void			ServerLink::sendEndShot(const PlayerId& source,
-						int shotId, int reason)
+void ServerLink::sendEndShot(const PlayerId& source,
+  int shotId, int reason)
 {
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
@@ -1015,7 +1015,7 @@ void			ServerLink::sendEndShot(const PlayerId& source,
 }
 
 void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
-			 int shotId)
+  int shotId)
 {
   char msg[80];
   void* buf = msg;
@@ -1031,7 +1031,7 @@ void ServerLink::sendVarRequest()
   send(MsgSetVar, 0, NULL);
 }
 
-void			ServerLink::sendAlive(const PlayerId playerId)
+void ServerLink::sendAlive(const PlayerId playerId)
 {
   char msg[1];
 
@@ -1041,7 +1041,7 @@ void			ServerLink::sendAlive(const PlayerId playerId)
   send(MsgAlive, sizeof(msg), msg);
 }
 
-void			ServerLink::sendTeleport(int from, int to)
+void ServerLink::sendTeleport(int from, int to)
 {
   char msg[5];
   void* buf = msg;
@@ -1051,7 +1051,17 @@ void			ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
-void			ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
+void ServerLink::sendCustomData ( const std::string &key, const std::string &value )
+{
+  char msg[MaxPacketLen];
+  void* buf = msg;
+  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackStdString(buf, key);
+  buf = nboPackStdString(buf, value);
+  send(MsgPlayerData, sizeof(msg), msg);
+}
+
+void ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
 {
   char msg[PlayerIdPLen*2];
   void* buf = msg;
@@ -1060,7 +1070,7 @@ void			ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
   send(MsgTransferFlag, sizeof(msg), msg);
 }
 
-void			ServerLink::sendNewRabbit()
+void ServerLink::sendNewRabbit()
 {
   char msg[1];
   void* buf = msg;
@@ -1068,7 +1078,7 @@ void			ServerLink::sendNewRabbit()
   send(MsgNewRabbit, sizeof(msg), msg);
 }
 
-void			ServerLink::sendPaused(bool paused)
+void ServerLink::sendPaused(bool paused)
 {
   char msg[2];
   void* buf = msg;
@@ -1106,7 +1116,7 @@ void ServerLink::sendExit()
 }
 
 void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
-			     const float *pos)
+      const float *pos)
 {
   char msg[14];
 
@@ -1118,7 +1128,7 @@ void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
   send(MsgCollide, sizeof(msg), msg);
 }
 
-void			ServerLink::sendAutoPilot(bool autopilot)
+void ServerLink::sendAutoPilot(bool autopilot)
 {
   char msg[2];
   void* buf = msg;
@@ -1158,7 +1168,7 @@ void ServerLink::sendLagPing(char pingRequest[2])
   send(MsgLagPing, sizeof(msg), msg);
 }
 
-void			ServerLink::sendUDPlinkRequest()
+void ServerLink::sendUDPlinkRequest()
 {
   if ((server_abilities & CanDoUDP) != CanDoUDP)
     return; // server does not support udp (future list server test)
@@ -1216,14 +1226,14 @@ void			ServerLink::sendUDPlinkRequest()
 }
 
 // heard back from server that we can send udp
-void			ServerLink::enableOutboundUDP()
+void ServerLink::enableOutboundUDP()
 {
   ulinkup = true;
   if (debugLevel >= 1)
     printError("Server got our UDP, using UDP to server");
 }
 // confirm that server can send us UDP
-void			ServerLink::confirmIncomingUDP()
+void ServerLink::confirmIncomingUDP()
 {
   // This is really a hack. enableOutboundUDP will be setting this
   // but frequently the udp handshake will finish first so might as

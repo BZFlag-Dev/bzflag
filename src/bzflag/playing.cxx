@@ -3090,6 +3090,21 @@ static void handleTangUpdate(uint16_t len, void *msg)
   }
 }
 
+static void handlePlayerData(void *msg)
+{
+  PlayerId id;
+  msg = nboUnpackUByte(msg,id);
+
+  std::string key,value;
+  msg= nboUnpackStdString(msg,key);
+  msg= nboUnpackStdString(msg,value);
+
+  Player *p = lookupPlayer(id);
+  if (p && key.size())
+    p->customData[key] = value;
+}
+
+
 static void handleTangReset(void)
 {
   ClientIntangibilityManager::instance().resetTangibility();
@@ -3327,6 +3342,10 @@ case MsgAllowSpawn:
 
 case MsgLimboMessage:
   handleLimboMessage(msg);
+  break;
+
+case MsgPlayerData:
+  handlePlayerData(msg);
   break;
   }
 

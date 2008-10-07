@@ -192,6 +192,8 @@ public:
 
   void		updateShot ( FiringInfo &info, int shotID, double time );
 
+  std::map<std::string,std::string> customData;
+
 protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);

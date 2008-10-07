@@ -1012,6 +1012,17 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
     sizeof(*uaddr));   //Low level - bad - if this could be encapsulated...
 }
 
+void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std::string &value )
+{
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(playerID);
+  msg->packStdString(key);
+  msg->packStdString(value);
+  msg->broadcast(MsgPlayerData);
+}
+
+
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {

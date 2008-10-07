@@ -1184,12 +1184,14 @@ class BZF_API bz_BasePlayerRecord
   bool grantPerm(const char* perm) { return bz_grantPerm(playerID,perm); }
   bool revokePerm(const char* perm) { return bz_revokePerm(playerID,perm); }
 
+  const char *getCustomData ( const char* key);
+  bool setCustomData ( const char* key, const char* data);
+
   int version;
   int playerID;
   bz_ApiString callsign;
 
   bz_eTeamType team;
-
 
   bz_ApiString ipAddress;
 
@@ -1219,6 +1221,7 @@ class BZF_API bz_BasePlayerRecord
   int wins;
   int losses;
   int teamKills;
+
 };
 
 BZF_API bool bz_setPlayerOperator(int playerId);

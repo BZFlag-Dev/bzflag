@@ -171,6 +171,9 @@ public:
       done
     } _LSAState;
 
+    // custom scoreboard data
+    std::map<std::string,std::string> customData;
+
     // players
     PlayerInfo	      player;
     // Net Handler

@@ -74,6 +74,9 @@ void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len );
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState );
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState );
 
+// custom data
+void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std::string &value );
+
 /** class to pack a bunch of variables into one or more BufferedNetworkMessage.
  *  they are then automatically sent as they complete, or in the destructor.
  */

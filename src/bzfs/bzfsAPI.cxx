@@ -989,6 +989,39 @@ public:
  }
 };
 
+
+BZF_API const char *bz_BasePlayerRecord::getCustomData ( const char* key )
+{
+  GameKeeper::Player* player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player || !key)
+    return NULL;
+
+  if (player->customData.find(std::string(key)) == player->customData.end())
+    return NULL;
+
+  return player->customData[std::string(key)].c_str();
+}
+
+BZF_API bool bz_BasePlayerRecord::setCustomData ( const char* key, const char* data ) 
+{
+  GameKeeper::Player* player=GameKeeper::Player::getPlayerByIndex(playerID);
+  if(!player || !key)
+    return false;
+
+  std::string k,v;
+  k = key;
+  if(data)
+    v = data;
+
+  bool found = false;
+  if (player->customData.find(k) != player->customData.end())
+    return found = true;
+
+  player->customData[k] = v;
+  sendPlayerCustomDataPair(playerID,k,v);
+  return found;
+}
+
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord* playerRecord)
