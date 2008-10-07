@@ -421,6 +421,15 @@ void ScoreboardRenderer::renderScoreboard(void)
   hudColor3fv(messageColor);
 
   std::string psLabel = bdl->getLocalString(playerLabel);
+
+  if (BZDB.isSet(StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME))
+  {
+    psLabel += " (";
+    psLabel += BZDB.get(StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME);
+    psLabel += ")";
+  }
+
+
   if (sortMode != SortScore) {
     psLabel += "  ";
     psLabel += sortLabels[sortMode];
@@ -611,6 +620,17 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
   // callsign
   playerInfo += player->getCallSign();
+
+  if (BZDB.isSet(StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD))
+  {
+    std::string customRowField = BZDB.get(StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD);
+    if (customRowField.size() && player->hasCustomField(customRowField))
+    {
+      playerInfo += " (";
+      playerInfo += player->getCustomField(customRowField);
+      playerInfo += ")";
+    }
+  }
 
   // carried flag
   bool coloredFlag = false;

@@ -774,6 +774,16 @@ void Player::fireJumpJets()
   return;
 }
 
+const std::string & Player::getCustomField ( const std::string & key )const
+{
+  static std::string emptyField;
+
+  std::map<std::string,std::string>::const_iterator itr = customData.find( key);
+  if (itr != customData.end())
+      return itr->second;
+
+  return emptyField;
+}
 
 void Player::clearRemoteSounds()
 {

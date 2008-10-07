@@ -194,7 +194,8 @@ public:
 
   std::map<std::string,std::string> customData;
 
-  bool hasCustomField ( const std::string & key ){return customData.find(key)!= customData.end();}
+  bool hasCustomField ( const std::string & key )const {return customData.find(key)!= customData.end();}
+  const std::string & getCustomField ( const std::string & key ) const;
 
 protected:
   void	  clearRemoteSounds();
