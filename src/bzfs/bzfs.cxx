@@ -2024,18 +2024,20 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       // oops
       timeLeft = 0.0f;
     
-    // tell players about state of current countdown (paused or running)
-    if (!clOptions->countdownPaused) {
-      NetMsg msg = MSGMGR.newMessage();
-      msg->packInt((int32_t)timeLeft);
-      msg->send(playerData->netHandler, MsgTimeUpdate);
-    } else {
+    NetMsg msg = MSGMGR.newMessage();
+    msg->packInt((int32_t)timeLeft);
+    msg->send(playerData->netHandler, MsgTimeUpdate);
+    // players should know when the countdown is paused
+    if (clOptions->countdownPaused) {
       long int timeArray[4];
       TimeKeeper::convertTime(timeLeft, timeArray);
       std::string remainingTime = TimeKeeper::printTime(timeArray);
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
+      NetMsg msg = MSGMGR.newMessage();
+      msg->packInt(-1);
+      msg->send(playerData->netHandler, MsgTimeUpdate);
     }
   }
 
