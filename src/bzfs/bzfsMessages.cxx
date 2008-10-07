@@ -933,7 +933,7 @@ void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
   msg->send(handler,MsgWhatTimeIsIt);
 }
 
-void sendMsgTimeUpdate( int timeLimit )
+void sendMsgTimeUpdate( int32_t timeLimit )
 {
   // start client's clock
   NetMsg msg = MSGMGR.newMessage();

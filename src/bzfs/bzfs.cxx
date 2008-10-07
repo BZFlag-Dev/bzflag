@@ -4045,7 +4045,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	gameStartTime = tm;
 	clOptions->timeElapsed = 0.0f;
 
-	sendMsgTimeUpdate((int)clOptions->timeLimit);
+	sendMsgTimeUpdate((int32_t)clOptions->timeLimit);
 
 	// kill any players that are playing already
 	GameKeeper::Player *player;
@@ -4141,7 +4141,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
       countdownPauseStart = TimeKeeper::getNullTime ();
       newTimeElapsed = (float)(tm - gameStartTime);
       timeLeft = clOptions->timeLimit - newTimeElapsed;
-      sendMsgTimeUpdate((int) timeLeft);
+      sendMsgTimeUpdate((int32_t)timeLeft);
     }
 
     if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f) &&
@@ -4165,7 +4165,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	clOptions->addedTime = 0.0f; //reset
       }
 
-      sendMsgTimeUpdate((int)timeLeft);
+      sendMsgTimeUpdate((int32_t)timeLeft);
       clOptions->timeElapsed = newTimeElapsed;
       if (clOptions->oneGameOnly && timeLeft == 0.0f) {
 	sendMessage(ServerPlayer, AllPlayers,
