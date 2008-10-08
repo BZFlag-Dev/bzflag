@@ -69,7 +69,7 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
 
   motto = new HUDuiTypeIn;
   motto->setFontFace(fontFace);
-  server->setMaxLength(128);
+  motto->setMaxLength(64);
   motto->setLabel("Motto:");
   motto->setString(info->motto);
   addControl(motto);
