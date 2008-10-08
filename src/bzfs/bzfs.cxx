@@ -2019,6 +2019,10 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // send time update to new player if we're counting down
   if (countdownActive && clOptions->timeLimit > 0.0f
       && !playerData->player.isBot()) {
+    if (countdownPauseStart) {
+      gameStartTime += (TimeKeeper::getCurrent() - countdownPauseStart);
+      countdownPauseStart = TimeKeeper::getNullTime();
+    }
     float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f)
       // oops
