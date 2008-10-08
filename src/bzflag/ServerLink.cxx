@@ -1061,7 +1061,7 @@ void ServerLink::sendCustomData ( const std::string &key, const std::string &val
   buf = nboPackUByte(buf, uint8_t(getId()));
   buf = nboPackStdString(buf, key);
   buf = nboPackStdString(buf, value);
-  send(MsgPlayerData, sizeof(msg), msg);
+  send(MsgPlayerData, (uint16_t)((char*)buf - msg), msg);
 }
 
 void ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
