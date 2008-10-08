@@ -485,7 +485,7 @@ RxStatus NetHandler::tcpReceive( bool doCodes ) {
 	// read body if we don't have it yet
 	buf = nboUnpackUShort(buf, len);
 	buf = nboUnpackUShort(buf, code);
-	if (len > MaxPacketLen) {
+	if (len + 4 > MaxPacketLen) {
 		netConnections.remove(this);
 		return ReadHuge;
 	}
@@ -511,12 +511,13 @@ RxStatus NetHandler::tcpReceive( bool doCodes ) {
 
 RxStatus NetHandler::receive(size_t length) {
   RxStatus returnValue;
-  if ((int)length <= tcplen)
+
+  if (length <= tcplen)
     return ReadAll;
   int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
   if (size > 0) {
     tcplen += size;
-    if (tcplen == (int)length)
+    if (tcplen == length)
       returnValue = ReadAll;
     else
       returnValue = ReadPart;

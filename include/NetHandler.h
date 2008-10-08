@@ -203,7 +203,7 @@ private:
   /// current TCP msg
   char tcpmsg[MaxPacketLen];
   /// bytes read in current msg
-  int tcplen;
+  size_t tcplen;
   /// current UDP msg
   static char	       udpmsg[MaxPacketLen];
   static int		udpLen;
