@@ -2035,7 +2035,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
-      NetMsg msg = MSGMGR.newMessage();
+      msg = MSGMGR.newMessage();
       msg->packInt(-1);
       msg->send(playerData->netHandler, MsgTimeUpdate);
     }
