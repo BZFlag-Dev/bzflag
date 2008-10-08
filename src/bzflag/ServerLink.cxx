@@ -1053,6 +1053,9 @@ void ServerLink::sendTeleport(int from, int to)
 
 void ServerLink::sendCustomData ( const std::string &key, const std::string &value )
 {
+  if (key.size()+value.size() >= MaxPacketLen)
+    return;
+
   char msg[MaxPacketLen];
   void* buf = msg;
   buf = nboPackUByte(buf, uint8_t(getId()));

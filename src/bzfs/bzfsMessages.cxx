@@ -1014,6 +1014,8 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
 
 void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std::string &value )
 {
+  if (key.size()+value.size() >= MaxPacketLen)
+    return;
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(playerID);
