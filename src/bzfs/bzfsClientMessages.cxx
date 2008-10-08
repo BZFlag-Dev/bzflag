@@ -924,7 +924,7 @@ public:
 class PlayerDataHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &code, void * buf, int len )
+  virtual bool execute ( uint16_t & /*code*/, void * buf, int /*len*/ )
   {
     if (!player)
       return false;
