@@ -176,6 +176,7 @@ const std::string StateDatabase::BZDB_RFIREADVEL	= std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");
 const std::string StateDatabase::BZDB_RFIREADLIFE       = std::string("_rFireAdLife");
 const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME      = std::string("_scoreboardCustomRowName");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN      = std::string("_scoreboardCustomRowLen");
 const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD        = std::string("_scoreboardCustomRowField");
 const std::string StateDatabase::BZDB_SHIELDFLIGHT      = std::string("_shieldFlight");
 const std::string StateDatabase::BZDB_SHOCKADLIFE       = std::string("_shockAdLife");

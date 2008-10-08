@@ -286,9 +286,10 @@ public:
   static const std::string	BZDB_RFIREADRATE;
   static const std::string	BZDB_RFIREADLIFE;
   static const std::string	BZDB_SCOREBOARDCUSTOMROWNAME;
+  static const std::string	BZDB_SCOREBOARDCUSTOMROWLEN;
   static const std::string	BZDB_SCOREBOARDCUSTOMFIELD;
   static const std::string	BZDB_SHIELDFLIGHT;
- static const std::string	BZDB_SHOCKADLIFE;
+  static const std::string	BZDB_SHOCKADLIFE;
   static const std::string	BZDB_SHOCKINRADIUS;
   static const std::string	BZDB_SHOCKOUTRADIUS;
   static const std::string	BZDB_SHOTSPEED;

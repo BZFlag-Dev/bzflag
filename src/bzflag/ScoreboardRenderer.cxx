@@ -626,8 +626,15 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
     std::string customRowField = BZDB.get(StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD);
     if (customRowField.size() && player->hasCustomField(customRowField))
     {
+      int len = 64;
+      if (BZDB.isSet(StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN))
+      {
+	int dbLen = BZDB.evalInt(StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN);
+	if(dbLen > 1)
+	  len = dbLen;
+      }
       playerInfo += " (";
-      playerInfo += player->getCustomField(customRowField);
+      playerInfo += TextUtils::str_trunc_continued(player->getCustomField(customRowField),len);
       playerInfo += ")";
     }
   }

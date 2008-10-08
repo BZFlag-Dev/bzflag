@@ -132,6 +132,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_rFireAdRate",		"2.0",				false, StateDatabase::Locked},
   { "_rFireAdVel",		"1.5",				false, StateDatabase::Locked},
   { "_scoreboardCustomRowName", "Motto",			false, StateDatabase::Locked},
+  { "_scoreboardCustomRowLen",	"-1",			false, StateDatabase::Locked},
   { "_scoreboardCustomRowField","motto",			false, StateDatabase::Locked},
   { "_shieldFlight",		"2.7",				false, StateDatabase::Locked},
   { "_shockAdLife",		"0.2",				false, StateDatabase::Locked},
