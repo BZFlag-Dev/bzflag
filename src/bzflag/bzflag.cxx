@@ -488,6 +488,12 @@ void dumpResources()
   else
     BZDB.set("password", "");
 
+  if (BZDB.eval("saveIdentity") > 0)
+    BZDB.set("motto", startupInfo.motto.c_str());
+  else
+    BZDB.set("motto", "");
+
+
   BZDB.set("team", Team::getName(startupInfo.team));
   BZDB.set("server", startupInfo.serverName);
   if (startupInfo.serverPort != ServerPort) {
