@@ -68,7 +68,6 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   addControl(password);
 
   motto = new HUDuiTypeIn;
-  motto->setObfuscation(true);
   motto->setFontFace(fontFace);
   motto->setLabel("Motto:");
   motto->setMaxLength(CallSignLen - 1);
