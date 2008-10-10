@@ -91,7 +91,7 @@ void sendFlagUpdateMessage ( int playerID )
     for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
     {
       FlagInfo *info = FlagInfo::get(flagIndex);
-      if (info && info->exist())
+      if (info && info->exist() && info->getIndex() < 0xFFFF)
 	flagsToSend.push_back(info);
     } 
     
