@@ -60,18 +60,20 @@ void sendFlagUpdateMessage ( int playerID )
     return;
 
   std::vector<bz_FlagUpdateRecord*> flagRecordList;
-  if (playerData->playerHandler) {
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+  if (playerData->playerHandler)
+  {
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
+    {
       FlagInfo &flag = *FlagInfo::get(flagIndex);
-      if (flag.exist()) {
+      if (flag.exist()) 
+      {
 	bz_FlagUpdateRecord *flagRecord = new bz_FlagUpdateRecord;
 	flagToAPIFlag(flag, flagRecord);
 	flagRecordList.push_back(flagRecord);
       }
     }
 
-    bz_FlagUpdateRecord** flagHandle =
-      (bz_FlagUpdateRecord**) malloc(sizeof(bz_FlagUpdateRecord*) * flagRecordList.size());
+    bz_FlagUpdateRecord** flagHandle = (bz_FlagUpdateRecord**) malloc(sizeof(bz_FlagUpdateRecord*) * flagRecordList.size());
     for (unsigned int i = 0; i < flagRecordList.size(); i++)
       flagHandle[i] = flagRecordList[i];
 
@@ -80,25 +82,42 @@ void sendFlagUpdateMessage ( int playerID )
     free(flagHandle);
     for (unsigned int i = 0; i < flagRecordList.size(); i++)
       delete(flagRecordList[i]);
-  } else {
-    int totalFlags = 0;
-    NetMsg msg = MSGMGR.newMessage();
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+  }
+  else 
+  {
+    // first find all the flags we will send and get there pointers
+    std::vector<FlagInfo*> flagsToSend;
+
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
+    {
       FlagInfo *info = FlagInfo::get(flagIndex);
       if (info && info->exist())
-	totalFlags++;
-    }
-    msg->packUShort(totalFlags);
+	flagsToSend.push_back(info);
+    } 
+    
+    // now send 10 flags at at time so we dont' flood out the guys and send ALL the flags in a nice buffered message
+    size_t flagsSent = 0;
+    while (flagsSent < flagsToSend.size())
+    {
+	 // do 10 at a time
+	size_t flagsToDo = 10;
+	if ( flagsSent + flagsToDo >= flagsToSend.size())
+	  flagsToDo = flagsToSend.size()-flagsSent;
+	
+	NetMsg msg = MSGMGR.newMessage();
 
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-      FlagInfo &flag = *FlagInfo::get(flagIndex);
-      if (flag.exist()) {
-	bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-	flag.pack(msg, hide);
-      }
+	msg->packUShort((unsigned short)flagsToDo);
+
+	for ( size_t i = 0; i < flagsToDo; i++)
+	{
+	  FlagInfo &flag = *flagsToSend[flagsSent+i];
+	  bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
+	  flag.pack(msg, hide);
+	}
+	msg->send(playerData->netHandler, MsgFlagUpdate);
+
+	flagsSent += flagsToDo;
     }
-   
-    msg->send(playerData->netHandler, MsgFlagUpdate);
   }
 }
 
