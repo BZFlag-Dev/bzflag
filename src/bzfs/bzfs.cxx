@@ -175,7 +175,10 @@ public:
 
   virtual size_t send(NetHandler *handler, void *data, size_t size)
   {
-    return (size_t)bz_pwrite(handler,data,int(size));
+    if (bz_pwrite(handler,data,int(size)) == 0)
+      return size;
+    else
+      return 0;
   }
 
   virtual size_t broadcast(void *data, size_t size, int mask, int code)
