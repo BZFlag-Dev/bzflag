@@ -175,10 +175,6 @@ bzfs
   not on bases.  Also, players spawn at random spots after flag cap.
 
 * maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
-
-* Too many flags caused "drop, unresponsive with 16687 bytes queued" (+f
-  good{40} was the breaking point, linux, local bzfs server) admittedly, an
-  unreasonable number of flags
   
 * Bad BZDB: some BZDB variables are not range checked: "/set _syncTime -" goes
   boom on the client side.
