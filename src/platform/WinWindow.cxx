@@ -42,6 +42,8 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				next(NULL),
 				mouseGrab(false)
 {
+  activating = false;
+
   // make window
   hwnd = CreateWindow("BZFLAG", "bzflag",
 			WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP |
@@ -559,14 +561,20 @@ void			WinWindow::paletteChanged()
 bool			WinWindow::activate()
 {
   inactiveDueToDeactivate = false;
+  activating = true;
 
   // don't do unwindowing stuff if we don't need to
-  if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window")) {
+  if (BZDB.isTrue("Win32NoMin")) 
+  {
     // still have the window, just regrab the mouse
     if (mouseGrab)
       grabMouse();
+
+    activating = false;
     return true;
   }
+
+  // even if we are windowed, still show the window, we could be coming back from an iconify
 
   // restore window
   ShowWindow(hwnd, SW_RESTORE);
@@ -584,25 +592,34 @@ bool			WinWindow::activate()
   if (mouseGrab)
     grabMouse();
 
-  if (!hadChild && hDCChild != NULL) {
+  if (hDCChild != NULL)
+  {
     // force a redraw
     callExposeCallbacks();
 
+    activating = false;
     return true;
   }
 
+  activating = false;
   return false;
 }
 
 bool			WinWindow::deactivate()
 {
+  activating = true;
+
   // ungrab the mouse when we lose focus
   if (mouseGrab)
     ungrabMouse();
 
   // don't do unwindowing stuff if we don't need to
   if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window"))
+  {
+    activating = false;
+
     return true;
+  }
 
   // minimize window while not active.  skip if being destroyed.
   if (!inDestroy)
@@ -616,6 +633,8 @@ bool			WinWindow::deactivate()
     ungrabMouse();
 
   inactiveDueToDeactivate = true;
+  activating = false;
+
   return hadChild;
 }
 

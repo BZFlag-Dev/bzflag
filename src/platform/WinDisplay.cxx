@@ -122,13 +122,20 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
     case WM_ACTIVATE: {
       WinWindow* window = WinWindow::lookupWindow(hwnd);
       if (window) {
-	if (LOWORD(wparam) == WA_INACTIVE) {
-	  if (window->deactivate())
-	    PostMessage(hwnd, WM_APP + 1, (WPARAM)0, (LPARAM)0);
+	if (LOWORD(wparam) == WA_INACTIVE)
+	{
+	  if (!window->isActivating())
+	  {
+	    if (window->deactivate())
+	      PostMessage(hwnd, WM_APP + 1, (WPARAM)0, (LPARAM)0);
+	  }
 	}
 	else {
-	  if (window->activate())
-	    PostMessage(hwnd, WM_APP + 0, (WPARAM)0, (LPARAM)0);
+	  if (!window->isActivating())
+	  {
+	    if (window->activate())
+	      PostMessage(hwnd, WM_APP + 0, (WPARAM)0, (LPARAM)0);
+	  }
 	}
       }
       break;

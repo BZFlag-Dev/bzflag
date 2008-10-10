@@ -69,6 +69,8 @@ class WinWindow : public BzfWindow {
     static void		deactivateAll();
     static void		reactivateAll();
 
+    bool		isActivating ( void ){return activating;}
+
   private:
     BYTE		getIntensityValue(float) const;
     static float	getComponentFromIndex(int i, UINT nbits, UINT shift);
@@ -101,6 +103,7 @@ class WinWindow : public BzfWindow {
     static WinWindow*	first;
     static HPALETTE	colormap;
     bool		mouseGrab;
+    bool		activating;
 };
 
 #endif // BZF_WINWINDOW_H
