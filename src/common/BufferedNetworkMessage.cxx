@@ -338,16 +338,46 @@ void BufferedNetworkMessageManager::update ( void )
 
 void BufferedNetworkMessageManager::sendPendingMessages ( void )
 {
+  MessageDeque leftovers;
+
+  std::map<NetHandler*,int> sentHandlers;
+
   while ( outgoingQueue.size() )
   {
     MessageDeque::iterator itr = outgoingQueue.begin();
-    if (*itr)
+    if (itr != outgoingQueue.end())
     {
-      (*itr)->process();
-      delete(*itr);
+      BufferedNetworkMessage *msg = *itr;
+
+      if (msg)
+      {
+	bool send = true;
+
+	if (sentHandlers.find(msg->recipient) != sentHandlers.end())
+	{
+	  if (sentHandlers[msg->recipient] > 2) // don't spam em
+	    send = false;
+	}
+
+	if(send && msg->process())
+	{
+	  if (msg->recipient)
+	  {
+	    if (sentHandlers.find(msg->recipient) == sentHandlers.end())
+	      sentHandlers[msg->recipient] = 1;
+	    else
+	      sentHandlers[msg->recipient]++;
+	  }
+	  delete(msg);
+	}
+	else
+	  leftovers.push_back(msg);
+	
+	outgoingQueue.pop_front();
+      }
     }
-    outgoingQueue.pop_front();
   }
+  outgoingQueue = leftovers; // do the leftover next time
 }
 
 void BufferedNetworkMessageManager::queueMessage ( BufferedNetworkMessage *msg )
