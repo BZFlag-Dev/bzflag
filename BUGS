@@ -183,8 +183,6 @@ bzfs
 Gameplay
 --------
 
-* not dropping a flag grabbed just before being destroyed
-
 * the last shot fired with a shot-limited flag doesn't carry the flag type (or
   is dropped by the server?)...e.g. if I have G, limited to 5 shots, and kill
   someone with the fifth shot, only that player dies because the flag was
