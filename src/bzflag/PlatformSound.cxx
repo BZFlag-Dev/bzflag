@@ -358,11 +358,11 @@ bool PlatformSound::update ( double /*time*/ )
   return true;
 }
 
-int PlatformSound::getID ( const char* name )
+int PlatformSound::getID ( const char* _name )
 {
   int  soundCode = -1;
 
-  std::string sound = name;
+  std::string sound = _name;
   sound = TextUtils::tolower(sound);
 
   for (int i = 0; i < (int)sampleNames.size(); i++)
