@@ -675,7 +675,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
       setStatus(getStatus() ^ PlayerState::PhantomZoned);
       setStatus(getStatus() ^ PlayerState::FlagActive);
       if (gettingSound) {
-	playLocalSound(SFX_PHANTOM);
+	SOUNDSYSTEM.play(SFX_PHANTOM);
       }
     } else {
       // teleport
@@ -702,7 +702,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 	setTeleport(lastTime, source, targetTele);
 	server->sendTeleport(source, targetTele);
 	if (gettingSound) {
-	  playLocalSound(SFX_TELEPORT);
+	  SOUNDSYSTEM.play(SFX_TELEPORT);
 	}
       }
     }
@@ -744,13 +744,13 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (gettingSound) {
     const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());
     if ((phydriver != NULL) && (phydriver->getLinearVel()[2] > 0.0f)) {
-      playLocalSound(SFX_BOUNCE);
+      SOUNDSYSTEM.play(SFX_BOUNCE);
       addRemoteSound(PlayerState::BounceSound);
     } else if (justLanded && !entryDrop) {
-      playLocalSound(SFX_LAND);
+      SOUNDSYSTEM.play(SFX_LAND);
     } else if ((location == OnGround) &&
 	       (oldPosition[2] == 0.0f) && (newPos[2] < 0.f)) {
-      playLocalSound(SFX_BURROW);
+      SOUNDSYSTEM.play(SFX_BURROW);
     }
   }
 
@@ -848,14 +848,14 @@ void			LocalPlayer::doUpdateMotion(float dt)
   if (gettingSound) {
     if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
 	oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth) {
-      moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
+      SOUNDSYSTEM.setReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
 			NEAR_ZERO(dt, ZERO_TOLERANCE) ||
 			((teleporter != NULL) && (getFlag() != Flags::PhantomZone)));
     }
     if (NEAR_ZERO(dt, ZERO_TOLERANCE)) {
-      speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
+      SOUNDSYSTEM.setReceiverVec(newVelocity[0], newVelocity[1], newVelocity[2]);
     } else {
-      speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
+      SOUNDSYSTEM.setReceiverVec((newPos[0] - oldPosition[0]) / dt,
 			 (newPos[1] - oldPosition[1]) / dt,
 			 (newPos[2] - oldPosition[2]) / dt);
     }
@@ -1262,27 +1262,27 @@ bool			LocalPlayer::fireShot()
 	  switch(firingInfo.shotType)
 	  {
 		case ShockWaveShot:
-			playLocalSound(SFX_SHOCK);
+			SOUNDSYSTEM.play(SFX_SHOCK);
 			ForceFeedback::shockwaveFired();
 			break;
 
 		case LaserShot:
-			playLocalSound(SFX_LASER);
+			SOUNDSYSTEM.play(SFX_LASER);
 			ForceFeedback::laserFired();
 			break;
 
 		case GMShot:
-			playLocalSound(SFX_MISSILE);
+			SOUNDSYSTEM.play(SFX_MISSILE);
 			ForceFeedback::shotFired();
 			break;
 
 		case ThiefShot:
-			playLocalSound(SFX_THIEF);
+			SOUNDSYSTEM.play(SFX_THIEF);
 			ForceFeedback::shotFired();
 			break;
 
 		default:
-			playLocalSound(SFX_FIRE);
+			SOUNDSYSTEM.play(SFX_FIRE);
 			ForceFeedback::shotFired();
 			break;
 	  }
@@ -1405,10 +1405,10 @@ void			LocalPlayer::doJump()
   // setup the sound
   if (gettingSound) {
     if (flag == Flags::Wings) {
-      playLocalSound(SFX_FLAP);
+      SOUNDSYSTEM.play(SFX_FLAP);
       addRemoteSound(PlayerState::WingsSound);
     } else {
-      playLocalSound(SFX_JUMP);
+      SOUNDSYSTEM.play(SFX_JUMP);
       addRemoteSound(PlayerState::JumpSound);
     }
   }

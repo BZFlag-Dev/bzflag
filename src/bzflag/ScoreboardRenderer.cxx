@@ -177,7 +177,7 @@ void ScoreboardRenderer::hudColor3fv(const GLfloat* c)
 
 
 void ScoreboardRenderer::exitSelectState(void) {
-  playLocalSound(SFX_HUNT_SELECT);
+  SOUNDSYSTEM.play(SFX_HUNT_SELECT);
   if (numHunted > 0)
     setHuntState(HUNT_ENABLED);
   else
@@ -248,10 +248,10 @@ void ScoreboardRenderer::huntKeyEvent(bool isAdd)
   if (getHuntState() == HUNT_ENABLED) {
     if (isAdd) {
       setHuntState(HUNT_SELECTING);
-      playLocalSound(SFX_HUNT_SELECT);
+      SOUNDSYSTEM.play(SFX_HUNT_SELECT);
     } else {
       setHuntState(HUNT_NONE);
-      playLocalSound(SFX_HUNT);
+      SOUNDSYSTEM.play(SFX_HUNT);
     }
     huntAddMode = isAdd;
 
@@ -260,7 +260,7 @@ void ScoreboardRenderer::huntKeyEvent(bool isAdd)
 
   } else {
     setHuntState(HUNT_SELECTING);
-    playLocalSound(SFX_HUNT_SELECT);
+    SOUNDSYSTEM.play(SFX_HUNT_SELECT);
     huntAddMode = isAdd;
     if (!BZDB.isTrue("displayScore"))
       BZDB.set("displayScore", "1");
@@ -473,13 +473,13 @@ void ScoreboardRenderer::renderScoreboard(void)
 	if (huntAddMode && players[huntPosition]->isHunted()) {   // UNselect
 	  players[huntPosition]->setHunted(false);
 	  if (--numHunted != 0)
-	    playLocalSound(SFX_HUNT_SELECT);
+	    SOUNDSYSTEM.play(SFX_HUNT_SELECT);
 	} else { // else select
 	  players[huntPosition]->setHunted(true);
 	  if (++numHunted == 1)
-	    playLocalSound(SFX_HUNT);
+	    SOUNDSYSTEM.play(SFX_HUNT);
 	  else
-	    playLocalSound(SFX_HUNT_SELECT);
+	    SOUNDSYSTEM.play(SFX_HUNT_SELECT);
 	}
 	huntState = HUNT_ENABLED;
       }
@@ -509,7 +509,7 @@ void ScoreboardRenderer::renderScoreboard(void)
   if (huntState==HUNT_ENABLED && !numHunted) {
     huntState = HUNT_NONE; // last hunted player must have left the game
     huntAddMode = false;
-    playLocalSound(SFX_HUNT);
+    SOUNDSYSTEM.play(SFX_HUNT);
   }
 
   delete[] players;

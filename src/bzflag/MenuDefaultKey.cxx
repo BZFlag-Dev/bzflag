@@ -37,12 +37,12 @@ bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   switch (key.chr) {
     case 27:	// escape
-      playLocalSound(SFX_DROP_FLAG);
+      SOUNDSYSTEM.play(SFX_DROP_FLAG,NULL,false,true);
       HUDDialogStack::get()->pop();
       return true;
 
     case 13:	// return
-      playLocalSound(SFX_GRAB_FLAG);
+      SOUNDSYSTEM.play(SFX_GRAB_FLAG,NULL,false,true);
       HUDDialogStack::get()->top()->execute();
       return true;
   }

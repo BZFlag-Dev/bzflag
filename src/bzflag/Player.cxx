@@ -1288,10 +1288,10 @@ void Player::doDeadReckoning()
       // setup the sound
       if (BZDB.isTrue("remoteSounds")) {
 	if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
-	  playSound(SFX_LAND, state.pos, soundImportance, localSound);
+	  SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
 	} else  {
 	  // probably never gets played
-	  playSound(SFX_BURROW, state.pos, soundImportance, localSound);
+	  SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
 	}
       }
     }
@@ -1300,13 +1300,13 @@ void Player::doDeadReckoning()
     if (state.sounds != PlayerState::NoSounds) {
       if (BZDB.isTrue("remoteSounds")) {
 	if ((state.sounds & PlayerState::JumpSound) != 0) {
-	  playSound(SFX_JUMP, state.pos, soundImportance, localSound);
+	  SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
 	}
 	if ((state.sounds & PlayerState::WingsSound) != 0) {
-	  playSound(SFX_FLAP, state.pos, soundImportance, localSound);
+	  SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
 	}
 	if ((state.sounds & PlayerState::BounceSound) != 0) {
-	  playSound(SFX_BOUNCE, state.pos, soundImportance, localSound);
+	  SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
 	}
       }
       state.sounds = PlayerState::NoSounds;

@@ -403,7 +403,7 @@ static std::string cmdPause(const std::string&,
 
       // restore the sound
       if (savedVolume != -1) {
-	setSoundVolume(savedVolume);
+	SOUNDSYSTEM.setVolume(savedVolume*0.1f);
 	savedVolume = -1;
       }
 

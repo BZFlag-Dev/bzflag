@@ -502,8 +502,8 @@ void dumpResources()
     BZDB.unset("port");
   }
   BZDB.set("list", startupInfo.listServerURL);
-  if (isSoundOpen())
-    BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
+  if (SOUNDSYSTEM.active())
+    BZDB.set("volume", TextUtils::format("%d",(int(SOUNDSYSTEM.getVolume()*10))));
 
   if (RENDERER.getWindow().getWindow()->hasGammaControl())
     BZDB.set("gamma", TextUtils::format("%f", RENDERER.getWindow().getWindow()->getGamma()));
@@ -1251,9 +1251,9 @@ int postWindowInit ( void )
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.
   if (!noAudio) {
-    openSound("bzflag");
+    SOUNDSYSTEM.startup();
     if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
-      setSoundVolume(static_cast<int>(BZDB.eval("volume")));
+      SOUNDSYSTEM.setVolume(static_cast<int>(BZDB.eval("volume"))*0.1f);
   }
 
   // set server list URL
@@ -1304,7 +1304,7 @@ void cleanupClient ( void )
   delete joystick;
   delete window;
   delete visual;
-  closeSound();
+  SOUNDSYSTEM.shutdown();
   delete display;
   delete platformFactory;
   delete bm;

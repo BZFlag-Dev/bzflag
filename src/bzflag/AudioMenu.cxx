@@ -52,7 +52,7 @@ AudioMenu::AudioMenu()
   option->setLabel("Sound Volume:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
-  if (isSoundOpen()) {
+  if (SOUNDSYSTEM.active()) {
     options->push_back(std::string("Off"));
     option->createSlider(10);
   } else {
@@ -157,7 +157,7 @@ void			AudioMenu::resize(int _width, int _height)
 
   i = 1;
   // sound
-  ((HUDuiList*)listHUD[i++])->setIndex(getSoundVolume());
+  ((HUDuiList*)listHUD[i++])->setIndex((int)(SOUNDSYSTEM.getVolume()*10));
 #ifdef HAVE_SDL
   i++; // driver
   i++; // device
@@ -172,7 +172,7 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
   switch (((const char*)data)[0]) {
     case 's':
       BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
-      setSoundVolume(list->getIndex());
+      SOUNDSYSTEM.setVolume(list->getIndex() *0.1f);
       break;
     case 'r':
       BZDB.setBool("remoteSounds", (list->getIndex() == 0) ? false : true);

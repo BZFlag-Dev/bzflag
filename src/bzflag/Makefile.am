@@ -137,6 +137,8 @@ bzflag_SOURCES =			\
 	OptionsMenu.h			\
 	Plan.cxx			\
 	Plan.h				\
+	PlatfromSound.cxx		\
+	PlatfromSound.h			\
 	Player.cxx			\
 	Player.h			\
 	QuickKeysMenu.cxx		\

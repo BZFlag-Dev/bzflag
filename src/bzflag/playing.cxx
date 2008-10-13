@@ -952,7 +952,7 @@ static void doEvent(BzfDisplay *disply)
 
     // restore the sound
     if (savedVolume != -1) {
-      setSoundVolume(savedVolume);
+      SOUNDSYSTEM.setVolume(savedVolume*0.1f);
       savedVolume = -1;
     }
 
@@ -991,8 +991,8 @@ static void doEvent(BzfDisplay *disply)
 
     // turn off the sound
     if (savedVolume == -1) {
-      savedVolume = getSoundVolume();
-      setSoundVolume(0);
+      savedVolume = (int)(SOUNDSYSTEM.getVolume() * 10);
+      SOUNDSYSTEM.setVolume(0);
     }
 
     unmapped = true;
@@ -1734,9 +1734,9 @@ static void handleCustomSound(void *msg)
 
   if (soundType == LocalCustomSound) {
     if (CACHEMGR.isCacheFileType(soundName))
-      playLocalSound(CACHEMGR.getLocalName(soundName));
+      SOUNDSYSTEM.play(CACHEMGR.getLocalName(soundName));
     else
-      playLocalSound(soundName);
+      SOUNDSYSTEM.play(soundName);
   }
 }
 
@@ -2014,7 +2014,7 @@ static void handleAliveMessage(void *msg)
     if (tank == myTank)
       myTank->setSpawning(false);
 
-    playSound(SFX_POP, pos, true, isViewTank(tank));
+    SOUNDSYSTEM.play(SFX_POP, pos, true, isViewTank(tank));
   }
 }
 
@@ -2116,9 +2116,9 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
     const float *pos = victimPlayer->getPosition();
     const bool localView = isViewTank(victimPlayer);
     if (reason == GotRunOver)
-      playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
+      SOUNDSYSTEM.play(SFX_RUNOVER, pos, killerLocal == myTank, localView);
     else
-      playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
+      SOUNDSYSTEM.play(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
 
     float explodePos[3];
     explodePos[0] = pos[0];
@@ -2139,7 +2139,7 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
 	// teamkill
 	if (killerPlayer == myTank) {
 	  hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
-	  playLocalSound(SFX_KILL_TEAM);
+	  SOUNDSYSTEM.play(SFX_KILL_TEAM);
 	  if (myTank->isAutoPilot()) {
 	    char meaculpa[MessageLen];
 	    memset(meaculpa, 0, MessageLen);
@@ -2299,13 +2299,13 @@ static void handleGrabFlag(void *msg)
   tank->setShotType((ShotType)shot);
 
   if (tank == myTank) {
-    playLocalSound(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
+    SOUNDSYSTEM.play(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
     updateFlag(myTank->getFlag());
   } else if (isViewTank(tank)) {
-    playLocalSound(tank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
+    SOUNDSYSTEM.play(tank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
   } else if (myTank->getTeam() != RabbitTeam && tank && tank->getTeam() != myTank->getTeam() && world->getFlag(flagIndex).type->flagTeam == myTank->getTeam()) {
     hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
-    playLocalSound(SFX_ALERT);
+    SOUNDSYSTEM.play(SFX_ALERT);
   } else  {
     FlagType *fd = world->getFlag(flagIndex).type;
     if (fd->flagTeam != NoTeam
@@ -2314,7 +2314,7 @@ static void handleGrabFlag(void *msg)
       && (Team::isColorTeam(myTank->getTeam()))) {
 	hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	const float *pos = tank->getPosition();
-	playWorldSound(SFX_TEAMGRAB, pos, false);
+	SOUNDSYSTEM.play(SFX_TEAMGRAB,pos,false);
     }
   }
 
@@ -2374,7 +2374,7 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
       addMessage(capturer, message);
       if (capturer == myTank) {
 	hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
-	playLocalSound(SFX_KILL_TEAM);
+	SOUNDSYSTEM.play(SFX_KILL_TEAM);
 	if (myTank->isAutoPilot()) {
 	  char meaculpa[MessageLen];
 	  memset(meaculpa, 0, MessageLen);
@@ -2393,9 +2393,9 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
   // play sound -- if my team is same as captured flag then my team lost,
   // but if I'm on the same team as the capturer then my team won.
   if (capturedTeam == int(myTank->getTeam()))
-    playLocalSound(SFX_LOSE);
+    SOUNDSYSTEM.play(SFX_LOSE);
   else if (capturer && capturer->getTeam() == myTank->getTeam())
-    playLocalSound(SFX_CAPTURE);
+    SOUNDSYSTEM.play(SFX_CAPTURE);
 
   // no need to kill myself, the server will kill everyone involved.
 
@@ -2440,7 +2440,7 @@ static void handleNewRabbit(void *msg)
 	  else
 	    hud->setAlert(0, "You are now a rabbit.", 10.0f, false);
 
-	  playLocalSound(SFX_HUNT_SELECT);
+	  SOUNDSYSTEM.play(SFX_HUNT_SELECT);
 	}
 	scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
       } else if (myTank->getTeam() != ObserverTeam) {
@@ -2592,23 +2592,23 @@ static void handleShotBegin(bool human, void *msg)
 
       switch (firingInfo.shotType) {
 default:
-  playSound(SFX_FIRE, pos, importance, localSound);
+  SOUNDSYSTEM.play(SFX_FIRE, pos, importance, localSound);
   break;
 
 case ShockWaveShot:
-  playSound(SFX_SHOCK, pos, importance, localSound);
+  SOUNDSYSTEM.play(SFX_SHOCK, pos, importance, localSound);
   break;
 
 case LaserShot:
-  playSound(SFX_LASER, pos, importance, localSound);
+  SOUNDSYSTEM.play(SFX_LASER, pos, importance, localSound);
   break;
 
 case GMShot:
-  playSound(SFX_MISSILE, pos, importance, localSound);
+  SOUNDSYSTEM.play(SFX_MISSILE, pos, importance, localSound);
   break;
 
 case ThiefShot:
-  playSound(SFX_THIEF, pos, importance, localSound);
+  SOUNDSYSTEM.play(SFX_THIEF, pos, importance, localSound);
   break;
       }
     }
@@ -2725,7 +2725,7 @@ static void handleTeleport(void *msg)
     const Teleporter *teleporter = world->getTeleporter(int(to), face);
     const float *pos = teleporter->getPosition();
     tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-    playWorldSound(SFX_TELEPORT, pos);
+    SOUNDSYSTEM.play(SFX_TELEPORT, pos,false);
   }
 }
 
@@ -2883,7 +2883,7 @@ static void handleMessage(void *msg)
 	    if (playSound) {
 	      static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 	      if (TimeKeeper::getTick() - lastMsg > 2.0f)
-		playLocalSound(SFX_MESSAGE_PRIVATE);
+		SOUNDSYSTEM.play(SFX_MESSAGE_PRIVATE);
 	      lastMsg = TimeKeeper::getTick();
 	    }
 	  }
@@ -2896,7 +2896,7 @@ static void handleMessage(void *msg)
 	  if (playSound) {
 	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
-	      playLocalSound(SFX_MESSAGE_ADMIN);
+	      SOUNDSYSTEM.play(SFX_MESSAGE_ADMIN);
 	    lastMsg = TimeKeeper::getTick();
 	  }
 
@@ -2914,7 +2914,7 @@ static void handleMessage(void *msg)
 	  if (playSound) {
 	    static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
 	    if (TimeKeeper::getTick() - lastMsg > 2.0f)
-	      playLocalSound(SFX_MESSAGE_TEAM);
+	      SOUNDSYSTEM.play(SFX_MESSAGE_TEAM);
 	    lastMsg = TimeKeeper::getTick();
 	  }
 	}
@@ -3416,7 +3416,7 @@ case MsgGMUpdate: {
   if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
     static TimeKeeper lastLockMsg;
     if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
-      playWorldSound(SFX_LOCK, shot.pos);
+      SOUNDSYSTEM.play(SFX_LOCK, shot.pos,false);
       lastLockMsg=TimeKeeper::getTick();
       addMessage(tank, "locked on me");
     }
@@ -3579,7 +3579,7 @@ void addShotExplosion(const float *pos)
 {
   // only play explosion sound if you see an explosion
   if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f, false))
-    playWorldSound(SFX_SHOT_BOOM, pos);
+    SOUNDSYSTEM.play(SFX_SHOT_BOOM, pos,false);
 }
 
 void addShotPuff(const float *pos, float azimuth, float elevation)
@@ -3644,9 +3644,9 @@ static void handleMyTankKilled(int reason)
   // blow me up
   myTank->explodeTank();
   if (reason == GotRunOver)
-    playLocalSound(SFX_RUNOVER);
+    SOUNDSYSTEM.play(SFX_RUNOVER);
   else
-    playLocalSound(SFX_DIE);
+    SOUNDSYSTEM.play(SFX_DIE);
 }
 #endif
 
@@ -3680,10 +3680,10 @@ void handleFlagDropped(Player *tank)
       myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
 
     // update display and play sound effects
-    playLocalSound(SFX_DROP_FLAG);
+    SOUNDSYSTEM.play(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
   } else if (isViewTank(tank)) {
-    playLocalSound(SFX_DROP_FLAG);
+    SOUNDSYSTEM.play(SFX_DROP_FLAG);
   }
 
   // add message
@@ -3711,10 +3711,10 @@ static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagInde
   const float *pos = toTank->getPosition();
   if (f.type->flagTeam != ::NoTeam) {
     if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam())) {
-      playWorldSound(SFX_TEAMGRAB, pos);
+      SOUNDSYSTEM.play(SFX_TEAMGRAB, pos,false);
     } else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam())) {
       hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
-      playLocalSound(SFX_ALERT);
+      SOUNDSYSTEM.play(SFX_ALERT);
     }
   }
 
@@ -3757,7 +3757,7 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
   // restore the sound, this happens when paused tank dies
   // (genocide or team flag captured)
   if (savedVolume != -1) {
-    setSoundVolume(savedVolume);
+    SOUNDSYSTEM.setVolume(savedVolume*0.1f);
     savedVolume = -1;
   }
 
@@ -3775,19 +3775,17 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
 
     if (isViewTank(tank)) {
       if (reason == GotRunOver)
-	playLocalSound(SFX_RUNOVER);
+	SOUNDSYSTEM.play(SFX_RUNOVER);
       else
-	playLocalSound(SFX_DIE);
+	SOUNDSYSTEM.play(SFX_DIE);
 
       ForceFeedback::death();
     } else {
       const float *pos = tank->getPosition();
       if (reason == GotRunOver)
-	playWorldSound(SFX_RUNOVER, pos,
-	getLocalPlayer(killer) == myTank);
+	SOUNDSYSTEM.play(SFX_RUNOVER, pos, getLocalPlayer(killer) == myTank);
       else
-	playWorldSound(SFX_EXPLOSION, pos,
-	getLocalPlayer(killer) == myTank);
+	SOUNDSYSTEM.play(SFX_EXPLOSION, pos,getLocalPlayer(killer) == myTank);
     }
 
     if (tank != myTank) {
@@ -4305,7 +4303,7 @@ static void setHuntTarget()
       }
       if (!pulse.isOn()) {
 	const float *bestTargetPosition = bestTarget->getPosition();
-	playWorldSound(SFX_HUNT, bestTargetPosition);
+	SOUNDSYSTEM.play(SFX_HUNT, bestTargetPosition,false);
 	pulse.setClock(1.0f);
       }
   }
@@ -4539,7 +4537,7 @@ static void checkEnvironment(RobotPlayer *tank)
       serverLink->sendHit(tank->getId(), hit->getPlayer(), hit->getShotId());
 
     // play the I got shot sound
-    playLocalSound(SFX_HIT);
+    SOUNDSYSTEM.play(SFX_HIT);
 
     FlagType *killerFlag = hit->getFlag();
     bool stopShot;
@@ -4742,7 +4740,7 @@ static void enteringServer(void* buf)
 
   // restore the sound
   if (savedVolume != -1) {
-    setSoundVolume(savedVolume);
+    SOUNDSYSTEM.setVolume(savedVolume*0.1f);
     savedVolume = -1;
   }
 
@@ -5648,7 +5646,7 @@ void drawFrame(const float dt)
 	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
       }
       fov = (float)(roam->zoom * M_PI / 180.0);
-      moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+      SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
 
     // only use a close plane for drawing in the
@@ -6270,8 +6268,8 @@ static void updatePauseCountdown(float dt)
 
 	// turn off the sound
 	if (savedVolume == -1) {
-	  savedVolume = getSoundVolume();
-	  setSoundVolume(0);
+	  savedVolume = (int)(SOUNDSYSTEM.getVolume() * 10);
+	  SOUNDSYSTEM.setVolume(0);
 	}
 
 	// ungrab mouse
@@ -6847,7 +6845,7 @@ static void playingLoop()
     drawFrame(dt);
 
     // play the sounds
-    updateSound();
+    SOUNDSYSTEM.update(TimeKeeper::getCurrent().getSeconds());
 
     doNetworkStuff();
 
@@ -6868,7 +6866,7 @@ static void playingLoop()
   // wrong volume when we dump out the configuration file if the
   // app exits when the game is paused.
   if (savedVolume != -1) {
-    setSoundVolume(savedVolume);
+    SOUNDSYSTEM.setVolume(savedVolume*0.1f);
     savedVolume = -1;
   }
 
