@@ -21,10 +21,7 @@
 
 // common headers
 #include "PlatformSound.h"
-#include "BzfMedia.h"
-#include "TimeKeeper.h"
-#include "PlatformFactory.h"
-#include "BZDBCache.h"
+
 #include "TextUtils.h"
 
 template <>
