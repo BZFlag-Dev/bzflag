@@ -6,7 +6,6 @@ sounds_DATA = \
 	burrow.wav		\
 	explosion.wav		\
 	fire.wav		\
-	flag.png		\
 	flag_alert.wav		\
 	flag_drop.wav		\
 	flag_grab.wav		\
@@ -15,7 +14,7 @@ sounds_DATA = \
 	flap.wav		\
 	hunt.wav		\
 	hunt_select.wav		\
-	hit.wav				\
+	hit.wav			\
 	jump.wav		\
 	killteam.wav		\
 	land.wav		\
@@ -24,7 +23,6 @@ sounds_DATA = \
 	message_admin.wav	\
 	message_private.wav	\
 	message_team.wav	\
-	missile.png		\
 	missile.wav		\
 	phantom.wav		\
 	pop.wav			\
