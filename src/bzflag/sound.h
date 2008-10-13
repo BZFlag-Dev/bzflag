@@ -106,6 +106,10 @@ protected:
 
   std::vector<SoundSystem*> soundSystems;
   SoundSystem* currentSystem;
+
+private:
+  void addStandardSound ( const char* name );
+  std::vector<std::string> standardSounds;
 };
 
 #define SOUNDSYSTEM SoundManager::instance().getSystem()  
