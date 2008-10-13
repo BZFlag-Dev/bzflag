@@ -147,6 +147,8 @@ genericfiles =				\
 	../bzflag/MainWindow.h			\
 	../bzflag/Plan.cxx			\
 	../bzflag/Plan.h			\
+	../bzflag/PlatformSound.cxx		\
+	../bzflag/PlatformSound.h		\
 	../bzflag/Player.cxx			\
 	../bzflag/Player.h			\
 	../bzflag/RadarRenderer.cxx		\
