@@ -26,6 +26,8 @@
 #endif
 #include "MediaFile.h"
 
+#include "DirectoryNames.h"
+
 
 BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) {
 }
@@ -137,77 +139,82 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
 }
 
 float*			BzfMedia::readSound(const std::string& filename,
-				int& numFrames, int& rate) const
+				int& numFrames, int& rate, bool dataDir) const
 {
   // try mediaDir/filename
-  std::string name = makePath(mediaDir, filename);
-  float* sound = doReadSound(name, numFrames, rate);
-  if (sound) return sound;
+  std::string name;
+  std::string soundFileName = makePath("sounds", filename);
 
-  // try filename as is
-  sound = doReadSound(filename, numFrames, rate);
+  std::string dir = mediaDir;
+
+  if (!dataDir)
+    dir = getCacheDirName();
+
+  name = makePath(dir, soundFileName);
+ // try filename as is
+  float* sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
 #if defined(BZFLAG_DATA)
   // try standard-mediaDir/filename
-  name = makePath(BZFLAG_DATA, filename);
+  name = makePath(BZFLAG_DATA, soundFileName);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 #endif
 
   // try mediaDir/filename with replaced extension
-  name = replaceExtension(makePath(mediaDir, filename), getSoundExtension());
+  name = replaceExtension(makePath(dir, soundFileName), getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
   // try filename with replaced extension
-  name = replaceExtension(filename, getSoundExtension());
+  name = replaceExtension(soundFileName, getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
 #if defined(BZFLAG_DATA)
   // try mediaDir/filename with replaced extension
-  name = makePath(BZFLAG_DATA, filename);
+  name = makePath(BZFLAG_DATA, soundFileName);
   name = replaceExtension(name, getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 #endif
 
   // try mediaDir/filename
-  name = makePath(DEFAULT_MEDIA_DIR, filename);
+  name = makePath(DEFAULT_MEDIA_DIR, soundFileName);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
   // try mediaDir/filename with replaced extension
-  name = replaceExtension(makePath(DEFAULT_MEDIA_DIR, filename), getSoundExtension());
+  name = replaceExtension(makePath(DEFAULT_MEDIA_DIR, soundFileName), getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
   // try mediaDir/filename
   name = "../";
   name += DEFAULT_MEDIA_DIR;
-  name = makePath(name, filename);
+  name = makePath(name, soundFileName);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
   // try mediaDir/filename with replaced extension
   name = "../";
   name += DEFAULT_MEDIA_DIR;
-  name = replaceExtension(makePath(name, filename), getSoundExtension());
+  name = replaceExtension(makePath(name, soundFileName), getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
   // try mediaDir/filename
   name = "../../";
   name += DEFAULT_MEDIA_DIR;
-  name = makePath(name, filename);
+  name = makePath(name, soundFileName);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
   // try mediaDir/filename with replaced extension
   name = "../../";
   name += DEFAULT_MEDIA_DIR;
-  name = replaceExtension(makePath(name, filename), getSoundExtension());
+  name = replaceExtension(makePath(name, soundFileName), getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
@@ -223,7 +230,7 @@ std::string		BzfMedia::makePath(const std::string& dir,
 {
   if ((dir.length() == 0) || filename[0] == '/') return filename;
   std::string path = dir;
-  path += "/";
+  path += BZ_DIRECTORY_SEPARATOR;
   path += filename;
   return path;
 }

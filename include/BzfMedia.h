@@ -58,7 +58,7 @@ class BzfMedia {
     // pairs.  rate is in frames per second.  use delete[] to release
     // the returned memory.
     float*		readSound(const std::string& filename,
-				int& numFrames, int& rate) const;
+				int& numFrames, int& rate, bool dataDir = true) const;
 
     // sleep for given number of seconds
     virtual double	stopwatch(bool start);

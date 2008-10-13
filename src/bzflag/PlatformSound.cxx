@@ -238,7 +238,7 @@ bool PlatformSound::allocAudioSamples( void )
   {
     // read it
     int numFrames, rate;
-    float* samples = PlatformFactory::getMedia()->readSound(sampleNames[i].c_str(), numFrames, rate);
+    float* samples = PlatformFactory::getMedia()->readSound(sampleNames[i].c_str(), numFrames, rate,true);
     AudioSamples *newSample = new AudioSamples;
     if (samples && resampleAudio(samples, numFrames, rate, newSample))
     {
@@ -375,7 +375,7 @@ int PlatformSound::getID ( const char* name )
   if (itr == customSamples.end())
   {
     int numFrames, rate;
-    float* samples = PlatformFactory::getMedia()->readSound(TextUtils::tolower(sound).c_str(), numFrames, rate);
+    float* samples = PlatformFactory::getMedia()->readSound(TextUtils::tolower(sound).c_str(), numFrames, rate,false);
     AudioSamples *newSample = new AudioSamples;
     if (samples && resampleAudio(samples, numFrames, rate, newSample))
     {

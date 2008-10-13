@@ -1231,6 +1231,7 @@ AC_CONFIG_FILES([
 	data/skins/rabbit/Makefile
 	data/skins/rogue/Makefile
 	data/skins/observer/Makefile
+	data/sounds/Makefile
 	debian/Makefile
 	doc/Makefile
 	doc/faq/Makefile
