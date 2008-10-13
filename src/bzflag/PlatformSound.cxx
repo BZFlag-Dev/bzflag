@@ -422,7 +422,7 @@ void PlatformSound::setStandardSoundIDs ( void )
   SFX_HUNT = getID("hunt");
   SFX_HUNT_SELECT = getID("hunt_select");
   SFX_RUNOVER = getID("steamroller");
-  SFX_THIEF = getID("theif");
+  SFX_THIEF = getID("thief");
   SFX_BURROW = getID("burrow");
   SFX_MESSAGE_PRIVATE = getID("message_team");
   SFX_MESSAGE_TEAM = getID("message_team");
