@@ -17,6 +17,7 @@
 #include "PlatformFactory.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
+#include <cstring>
 
 static const float SpeedOfSound = 343.0f;		// meters/sec
 static const float InterAuralDistance = 0.1f;		// meters
