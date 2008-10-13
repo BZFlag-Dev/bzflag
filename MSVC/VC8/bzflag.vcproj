@@ -782,10 +782,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\sound.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\StandardTankAvatar.cxx"
 				>
 			</File>
@@ -1162,6 +1158,22 @@
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\clientConfig.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Sound"
+				>
+				<File
+					RelativePath="..\..\src\bzflag\PlatformSound.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\PlatformSound.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\sound.cxx"
 					>
 				</File>
 			</Filter>
