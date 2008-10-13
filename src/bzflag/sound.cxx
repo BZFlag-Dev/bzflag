@@ -66,8 +66,7 @@ int  SFX_HIT = 32;
 
 SoundManager::SoundManager()
 {
-  currentSystem = new PlatformSound();
-  registerSystem(currentSystem);
+  activateSoundSystem(new PlatformSound());
 
   addStandardSound("fire");
   addStandardSound("explosion");
