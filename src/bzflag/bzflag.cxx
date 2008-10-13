@@ -1250,10 +1250,16 @@ int postWindowInit ( void )
 
   // get sound files.  must do this after creating the window because
   // DirectSound is a bonehead API.
-  if (!noAudio) {
+  if (!noAudio)
+  {
+    if (BZDB.isSet("soundsystem")) // set the sound system they want
+      SoundManager::instance().activateSoundSystem(BZDB.get("soundsystem"));
+
     SOUNDSYSTEM.startup();
     if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
       SOUNDSYSTEM.setVolume(static_cast<int>(BZDB.eval("volume"))*0.1f);
+
+    BZDB.set("soundsystem",SOUNDSYSTEM.name()); // save the sound system they get
   }
 
   // set server list URL
