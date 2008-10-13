@@ -309,7 +309,7 @@ int PlatformSound::play(int soundID, const float *pos, bool important, bool loca
 
   if (repeat)
     s.cmd = SQC_FIXED_SFX;
-  else  if (localSound)
+  else if (localSound || !pos)
     s.cmd = SQC_LOCAL_SFX;
   else
     s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
