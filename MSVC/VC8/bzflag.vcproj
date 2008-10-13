@@ -1165,6 +1165,10 @@
 				Name="Sound"
 				>
 				<File
+					RelativePath="..\..\src\bzflag\FmodSound.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\PlatformSound.cxx"
 					>
 				</File>

@@ -41,7 +41,7 @@ public:
   virtual void setReceiver(float x, float y, float z, float t, int discontinuity);
   virtual void setReceiverVec(float vx, float vy, float vz);
 
-  virtual int play(int soundID, const float *pos = NULL, bool important = false, bool localSound = false, bool repeat = false);
+  virtual int play(int soundID, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false);
 
   virtual void setVolume ( float volume );
   virtual float getVolume ( void );

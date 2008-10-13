@@ -71,9 +71,9 @@ public:
   virtual void setReceiver(float x, float y, float z, float t, int discontinuity) = 0;
   virtual void setReceiverVec(float vx, float vy, float vz) = 0;
 
-  virtual int play(int soundID, const float *pos = NULL, bool important = false, bool localSound = false, bool repeat = false) = 0;
-  virtual int play(const char* _name, const float *pos = NULL, bool important = false, bool localSound = false, bool repeat = false){return play(getID(_name), pos,important,localSound,repeat);}
-  virtual int play(const std::string &_name, const float *pos = NULL, bool important = false, bool localSound = false, bool repeat = false){return play(getID(_name), pos,important,localSound,repeat);}
+  virtual int play(int soundID, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false) = 0;
+  virtual int play(const char* _name, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false){return play(getID(_name), pos,important,localSound,repeat);}
+  virtual int play(const std::string &_name, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false){return play(getID(_name), pos,important,localSound,repeat);}
 
   virtual void setVolume ( float volume ) = 0;
   virtual float getVolume ( void ) = 0;
