@@ -27,39 +27,39 @@
 template <>
 SoundManager* Singleton<SoundManager>::_instance = (SoundManager*)0;
 
-int  SFX_FIRE = 0;		
-int  SFX_EXPLOSION = 1;		
-int  SFX_RICOCHET = 2;		
-int  SFX_GRAB_FLAG = 3;		
-int  SFX_DROP_FLAG = 4;		
-int  SFX_CAPTURE = 5;		
-int  SFX_LOSE = 6;		
-int  SFX_ALERT = 7;		
-int  SFX_JUMP = 8;		
-int  SFX_LAND = 9;		
-int  SFX_TELEPORT = 10;		
-int  SFX_LASER = 11;		
-int  SFX_SHOCK = 12;		
-int  SFX_POP = 13;		
-int  SFX_DIE = 14;		
-int  SFX_GRAB_BAD = 15;		
-int  SFX_SHOT_BOOM = 16;	
-int  SFX_KILL_TEAM = 17;	
-int  SFX_PHANTOM = 18;		
-int  SFX_MISSILE = 19;		
-int  SFX_LOCK = 20;		
-int  SFX_TEAMGRAB = 21;		
-int  SFX_HUNT = 22;		
-int  SFX_HUNT_SELECT = 23;	
-int  SFX_RUNOVER = 24;; 
-int  SFX_THIEF = 25;		
-int  SFX_BURROW = 26;		
+int  SFX_FIRE = 0;
+int  SFX_EXPLOSION = 1;
+int  SFX_RICOCHET = 2;
+int  SFX_GRAB_FLAG = 3;
+int  SFX_DROP_FLAG = 4;
+int  SFX_CAPTURE = 5;
+int  SFX_LOSE = 6;
+int  SFX_ALERT = 7;
+int  SFX_JUMP = 8;
+int  SFX_LAND = 9;
+int  SFX_TELEPORT = 10;
+int  SFX_LASER = 11;
+int  SFX_SHOCK = 12;
+int  SFX_POP = 13;
+int  SFX_DIE = 14;
+int  SFX_GRAB_BAD = 15;
+int  SFX_SHOT_BOOM = 16;
+int  SFX_KILL_TEAM = 17;
+int  SFX_PHANTOM = 18;
+int  SFX_MISSILE = 19;
+int  SFX_LOCK = 20;
+int  SFX_TEAMGRAB = 21;
+int  SFX_HUNT = 22;
+int  SFX_HUNT_SELECT = 23;
+int  SFX_RUNOVER = 24;
+int  SFX_THIEF = 25;
+int  SFX_BURROW = 26;
 int  SFX_MESSAGE_PRIVATE = 27;
 int  SFX_MESSAGE_TEAM = 28;
 int  SFX_MESSAGE_ADMIN = 29;
-int  SFX_FLAP = 30;	
-int  SFX_BOUNCE = 31;	
-int  SFX_HIT = 32;	
+int  SFX_FLAP = 30;
+int  SFX_BOUNCE = 31;
+int  SFX_HIT = 32;
 
 SoundManager::SoundManager()
 {
@@ -106,10 +106,10 @@ SoundManager::~SoundManager()
   if (currentSystem)
     currentSystem->shutdown();
   for (size_t i = 0; i < soundSystems.size(); i++)
-  {
-    if (soundSystems[i])
+    {
+      if (soundSystems[i])
 	delete(soundSystems[i]);
-  }
+    }
 }
 
 void SoundManager::addStandardSound( const char* name )
@@ -128,11 +128,11 @@ SoundSystem& SoundManager::getSystem ( void )
 {
   return *currentSystem;
 }
- 
+
 void SoundManager::registerSystem ( SoundSystem *system )
-{ 
+{
   soundSystems.push_back(system);
-}  
+}
 
 std::vector<SoundSystem*> SoundManager::listSystems ( void )
 {
