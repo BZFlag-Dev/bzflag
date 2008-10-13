@@ -18,7 +18,9 @@
 #define BZF_SOUND_H
 
 #include "common.h"
-
+#include "Singleton.h"
+#include <string>
+#include <vector>
 #include <string>
 
 extern int  SFX_FIRE;		  /* shell fired */
@@ -54,46 +56,6 @@ extern int  SFX_MESSAGE_ADMIN;	  /* admin message received */
 extern int  SFX_FLAP;		  /* wings flapping sound  */
 extern int  SFX_BOUNCE;		  /* bouncing sound */
 extern int  SFX_HIT;		  /* struck by a shot but not dead yet sound */
-
-
-// /* prepare sound effects generator and shut it down */
-// void			openSound(const char* pname);
-// void			closeSound(void);
-// bool			isSoundOpen();
-// 
-// /* reposition sound receiver (no Doppler) or move it (w/Doppler effect) */
-// void			moveSoundReceiver(float x, float y, float z, float t,
-// 							int discontinuity);
-// void			speedSoundReceiver(float vx, float vy, float vz);
-// 
-// /* sound effect event at given position in world, or possible locally */
-// void			playSound(int soundCode, const float pos[3],
-// 				  bool important, bool localSound);
-// 
-// /* sound effect event at given position in world */
-// void			playWorldSound(int soundCode, const float pos[3],
-// 				       bool important = false);
-// 
-// /* sound effect positioned at receiver */
-// void			playLocalSound(int soundCode);
-// void			playLocalSound(std::string sound);
-// 
-// /* start playing a sound effect repeatedly at world position */
-// void			playFixedSound(int soundCode,
-// 					float x, float y, float z);
-// 
-// /* change volume;  0 is mute, else 1-10 (min-max) */
-// void			setSoundVolume(int newLevel);
-// 
-// /* get current volume */
-// int			getSoundVolume();
-// 
-// /* update sound stuff (only does something when running sound in same process */
-// void			updateSound(); 
-
-#include "Singleton.h"
-#include <string>
-#include <vector>
 
 class SoundSystem
 {
