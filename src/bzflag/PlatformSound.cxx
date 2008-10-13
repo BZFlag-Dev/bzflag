@@ -302,7 +302,7 @@ int PlatformSound::play(int soundID, const float *pos, bool important, bool loca
     return 0;
 
   SoundCommand s;
-  if ((int)soundSamples.size() <= soundID)
+  if (soundID < 0 ||( int)soundSamples.size() <= soundID)
     return 0;
   if (soundSamples[soundID]->length == 0)
     return 0;
