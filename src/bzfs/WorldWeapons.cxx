@@ -45,6 +45,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
   firingInfo.lifetime = lifetime;
+  firingInfo.shotType = type->flagShot;
   firingInfo.shot.player = player;
   memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
   const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
