@@ -2546,6 +2546,35 @@ static bool showShotEffects(int shooterid)
   return true;
 }
 
+static void playShotSound ( const FiringInfo &info, bool localSound )
+{
+  const float *pos = info.shot.pos;
+  const bool importance = false;
+
+  switch (info.shotType) 
+  {
+  default:
+    SOUNDSYSTEM.play(SFX_FIRE, pos, importance, localSound);
+    break;
+
+  case ShockWaveShot:
+    SOUNDSYSTEM.play(SFX_SHOCK, pos, importance, localSound);
+    break;
+
+  case LaserShot:
+    SOUNDSYSTEM.play(SFX_LASER, pos, importance, localSound);
+    break;
+
+  case GMShot:
+    SOUNDSYSTEM.play(SFX_MISSILE, pos, importance, localSound);
+    break;
+
+  case ThiefShot:
+    SOUNDSYSTEM.play(SFX_THIEF, pos, importance, localSound);
+    break;
+  }
+}
+
 static void handleShotBegin(bool human, void *msg)
 {
   PlayerId shooterid;
@@ -2562,15 +2591,20 @@ static void handleShotBegin(bool human, void *msg)
   if (shooterid >= playerSize)
     return;
 
-  if (shooterid == myTank->getId()) {
+  if (shooterid == myTank->getId())
+  {
     // the shot is ours, find the shot we made, and kill it
     // then rebuild the shot with the info from the server
     myTank->updateShot(firingInfo,id,firingInfo.timeSent);
-  } else {
+  }
+  else
+  {
     RemotePlayer *shooter = player[shooterid];
 
-    if (shooterid != ServerPlayer) {
-      if (shooter && player[shooterid]->getId() == shooterid) {
+    if (shooterid != ServerPlayer)
+    {
+      if (shooter && player[shooterid]->getId() == shooterid)
+      {
 	shooter->addShot(firingInfo);
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
@@ -2580,39 +2614,25 @@ static void handleShotBegin(bool human, void *msg)
 	  if (showShotEffects(shooterid))
 	    EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
 	}
-      } else {
+      } 
+      else 
 	return;
-      }
     }
 
-    if (human) {
-      const float *pos = firingInfo.shot.pos;
-      const bool importance = false;
-      const bool localSound = isViewTank(shooter);
-
-      switch (firingInfo.shotType) {
-default:
-  SOUNDSYSTEM.play(SFX_FIRE, pos, importance, localSound);
-  break;
-
-case ShockWaveShot:
-  SOUNDSYSTEM.play(SFX_SHOCK, pos, importance, localSound);
-  break;
-
-case LaserShot:
-  SOUNDSYSTEM.play(SFX_LASER, pos, importance, localSound);
-  break;
-
-case GMShot:
-  SOUNDSYSTEM.play(SFX_MISSILE, pos, importance, localSound);
-  break;
-
-case ThiefShot:
-  SOUNDSYSTEM.play(SFX_THIEF, pos, importance, localSound);
-  break;
-      }
-    }
+    if (human)
+      playShotSound(firingInfo, isViewTank(shooter));
   }
+}
+
+static void handleWShotBegin ( void *msg )
+{
+  FiringInfo firingInfo;
+  msg = firingInfo.unpack(msg);
+
+  WorldPlayer *worldWeapons = world->getWorldWeapons();
+
+  worldWeapons->addShot(firingInfo);
+  playShotSound(firingInfo, false);
 }
 
 static void handleShotEnd(void *msg)
@@ -3274,6 +3294,10 @@ case MsgNewRabbit:
 
 case MsgShotBegin:
   handleShotBegin(human, msg);
+  break;
+
+case MsgWShotBegin:
+  handleWShotBegin(msg);
   break;
 
 case MsgShotEnd:
