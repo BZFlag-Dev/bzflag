@@ -52,8 +52,6 @@ Crashes
 Regressions
 -----------
 
-* jumping is broken; heigth and direction of jumping affected.
-
 * GM does not seem to lock on reliably (try against a remote client, bots work
   fine)
   
@@ -204,9 +202,6 @@ Gameplay
 * world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once a
   second, use _weapons BZDB var to test...)
-
-* Make a jump once in the air. Tank will then take one jump upon landing.
-  This bug effects WG flag as well. @ r18096 -spldart-
 
 3rd party libs
 --------------
