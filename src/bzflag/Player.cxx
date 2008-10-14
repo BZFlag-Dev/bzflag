@@ -86,6 +86,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
 
+  lastLanding = TimeKeeper::getCurrent().getSeconds();
+
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';

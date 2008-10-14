@@ -78,6 +78,8 @@ public:
   const float*	getApparentVelocity() const;
   float	getLastUpdateTime() const;
 
+  inline bool hasWings () const {return getFlag() && getFlag()== Flags::Wings;}
+
 #ifndef BUILDING_BZADMIN
   inline const float*	getColor() const
   {
@@ -192,6 +194,8 @@ public:
 
   void		updateShot ( FiringInfo &info, int shotID, double time );
 
+  void		land ( void );
+
   std::map<std::string,std::string> customData;
 
   bool hasCustomField ( const std::string & key )const {return customData.find(key)!= customData.end();}
@@ -211,6 +215,7 @@ protected:
   std::vector<ShotPath*>  shots;
   float			  handicap;
   TimeKeeper		  jamTime;
+  double		  lastLanding;
 
 private:
   // return true if the shot had to be terminated or false if it
@@ -557,7 +562,15 @@ inline bool		Player::canMove() const
 
 inline bool		Player::canJump() const
 {
+  if (TimeKeeper::getCurrent().getSeconds() - lastLanding < BZDB.eval(StateDatabase::BZDB_REJUMPTIME))
+    return false;
+
   return (allow & AllowJump) != 0;
+}
+
+inline void		Player::land()
+{
+  lastLanding = TimeKeeper::getCurrent().getSeconds();
 }
 
 inline bool		Player::canTurnLeft() const

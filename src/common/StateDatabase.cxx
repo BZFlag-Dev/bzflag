@@ -172,6 +172,7 @@ const std::string StateDatabase::BZDB_PYRHEIGHT		= std::string("_pyrHeight");
 const std::string StateDatabase::BZDB_RADARLIMIT	= std::string("_radarLimit");
 const std::string StateDatabase::BZDB_REJOINTIME	= std::string("_rejoinTime");
 const std::string StateDatabase::BZDB_RELOADTIME	= std::string("_reloadTime");
+const std::string StateDatabase::BZDB_REJUMPTIME	= std::string("_rejumpTime");
 const std::string StateDatabase::BZDB_RFIREADVEL	= std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");
 const std::string StateDatabase::BZDB_RFIREADLIFE       = std::string("_rFireAdLife");

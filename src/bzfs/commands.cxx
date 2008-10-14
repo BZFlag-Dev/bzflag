@@ -1275,15 +1275,20 @@ bool FlagCommand::operator() (const char *message,
 	sendFlagUpdateMessage(flag);
       }
     }
-  } else if (strncasecmp(msg, "show", 4) == 0) {
+  }
+  else if (strncasecmp(msg, "show", 4) == 0)
+  {
     BufferedChatParams *params = new BufferedChatParams(playerData);
-    for (int i = 0; i < numFlags; i++) {
+    for (int i = 0; i < numFlags; i++) 
+    {
       char showMessage[MessageLen];
       FlagInfo::get(i)->getTextualInfo(showMessage);
       params->items.push_back(showMessage);
     }
     BGTM.addTask(&bufferChat,params);
-  } else if (strncasecmp(msg, "reset", 5) == 0) {
+  }
+  else if (strncasecmp(msg, "reset", 5) == 0)
+  {
     msg += 5;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 

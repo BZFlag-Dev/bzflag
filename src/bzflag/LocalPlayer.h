@@ -133,6 +133,8 @@ protected:
   bool	  gettingSound;
   ServerLink*	server;
 
+  inline bool		onSolidSurface(){ return (location == OnGround) || (location == OnBuilding);}
+
 private:
   void		doSlideMotion(float dt, float slideTime,
 			      float newAngVel, float* newVelocity);

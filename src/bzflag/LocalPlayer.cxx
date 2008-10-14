@@ -736,6 +736,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     ((location == OnGround) || (location == OnBuilding));
 
   if (justLanded) {
+    land();
     setLandingSpeed(oldVelocity[2]);
     if (!headless) {
       EFFECTS.addLandEffect(getColor(),newPos,getAngle());
@@ -1340,11 +1341,13 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
 void			LocalPlayer::setJump()
 {
   wantJump = jumpPressed;
+  jumpPressed = false;
 }
 
 void			LocalPlayer::setJumpPressed(bool value)
 {
-  jumpPressed = value;
+  if (onSolidSurface() || hasWings())
+    jumpPressed = value;
 }
 
 void			LocalPlayer::doJump()
@@ -1361,12 +1364,12 @@ void			LocalPlayer::doJump()
     return;
   }
 
-  if (flag == Flags::Wings) {
+  if (hasWings()) {
     if (wingsFlapCount <= 0) {
       return;
     }
     wingsFlapCount--;
-  } else if ((location != OnGround) && (location != OnBuilding)) {
+  } else if (!onSolidSurface()) {
     // can't jump without wings unless on the ground or a building
     if (flag != Flags::Wings)
       return;
@@ -1404,7 +1407,7 @@ void			LocalPlayer::doJump()
 
   // setup the sound
   if (gettingSound) {
-    if (flag == Flags::Wings) {
+    if (hasWings()) {
       SOUNDSYSTEM.play(SFX_FLAP);
       addRemoteSound(PlayerState::WingsSound);
     } else {

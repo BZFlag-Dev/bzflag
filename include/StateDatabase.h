@@ -282,6 +282,7 @@ public:
   static const std::string	BZDB_RADARLIMIT;
   static const std::string	BZDB_REJOINTIME;
   static const std::string	BZDB_RELOADTIME;
+  static const std::string	BZDB_REJUMPTIME;
   static const std::string	BZDB_RFIREADVEL;
   static const std::string	BZDB_RFIREADRATE;
   static const std::string	BZDB_RFIREADLIFE;
