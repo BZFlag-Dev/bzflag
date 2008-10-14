@@ -1,0 +1,331 @@
+# bzflag
+# Copyright (c) 1993 - 2008 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named COPYING that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+# This map puts three of each type of flag in its own zone,
+# making them easy to find for testing purposes.
+
+options
+  -ms 3
+  -sa
+  -set _maxFlagGrabs 1
+  -srvmsg "Flag names progress alphabetically clockwise from the north."
+  -srvmsg "Good flags are on the inner loop.  Bad flags are on the outer loop."
+  -srvmsg "Self-destruct may be the easiest way to drop a Bouncy flag."
+end
+
+world
+  size 120
+end
+
+zone
+  position 0 0 0
+  size 1 1 0
+  zoneflag ID 3
+  team 0
+  team 1
+  team 2
+  team 3
+  team 4
+end
+
+zone
+  position -35 40 0
+  size 1 1 0
+  zoneflag A 3
+end
+
+zone
+  position -25 40 0
+  size 1 1 0
+  zoneflag BU 3
+end
+
+zone
+  position -15 40 0
+  size 1 1 0
+  zoneflag CL 3
+end
+
+zone
+  position -5 40 0
+  size 1 1 0
+  zoneflag CS 3
+end
+
+zone
+  position 5 40 0
+  size 1 1 0
+  zoneflag F 3
+end
+
+zone
+  position 15 40 0
+  size 1 1 0
+  zoneflag G 3
+end
+
+zone
+  position 25 40 0
+  size 1 1 0
+  zoneflag GM 3
+end
+
+zone
+  position 35 40 0
+  size 1 1 0
+  zoneflag IB 3
+end
+
+
+zone
+  position 40 35 0
+  size 1 1 0
+  zoneflag JP 3
+end
+
+zone
+  position 40 25 0
+  size 1 1 0
+  zoneflag L 3
+end
+
+zone
+  position 40 15 0
+  size 1 1 0
+  zoneflag LG 3
+end
+
+zone
+  position 40 5 0
+  size 1 1 0
+  zoneflag MG 3
+end
+
+zone
+  position 40 -5 0
+  size 1 1 0
+  zoneflag MQ 3
+end
+
+zone
+  position 40 -15 0
+  size 1 1 0
+  zoneflag N 3
+end
+
+zone
+  position 40 -25 0
+  size 1 1 0
+  zoneflag OO 3
+end
+
+#zone
+#  position 40 35 0
+#  size 1 1 0
+#  zoneflag GOOD_FLAG 3
+#end
+
+
+zone
+  position 35 -40 0
+  size 1 1 0
+  zoneflag PZ 3
+end
+
+zone
+  position 25 -40 0
+  size 1 1 0
+  zoneflag QT 3
+end
+
+zone
+  position 15 -40 0
+  size 1 1 0
+  zoneflag R 3
+end
+
+zone
+  position 5 -40 0
+  size 1 1 0
+  zoneflag SB 3
+end
+
+zone
+  position -5 -40 0
+  size 1 1 0
+  zoneflag SE 3
+end
+
+zone
+  position -15 -40 0
+  size 1 1 0
+  zoneflag SH 3
+end
+
+zone
+  position -25 -40 0
+  size 1 1 0
+  zoneflag SR 3
+end
+
+#zone
+#  position -35 -40 0
+#  size 1 1 0
+#  zoneflag GOOD_FLAG 3
+#end
+
+
+zone
+  position -40 -35 0
+  size 1 1 0
+  zoneflag ST 3
+end
+
+zone
+  position -40 -25 0
+  size 1 1 0
+  zoneflag SW 3
+end
+
+zone
+  position -40 -15 0
+  size 1 1 0
+  zoneflag T 3
+end
+
+zone
+  position -40 -5 0
+  size 1 1 0
+  zoneflag TH 3
+end
+
+zone
+  position -40 5 0
+  size 1 1 0
+  zoneflag US 3
+end
+
+zone
+  position -40 15 0
+  size 1 1 0
+  zoneflag V 3
+end
+
+zone
+  position -40 25 0
+  size 1 1 0
+  zoneflag WG 3
+end
+
+#zone
+#  position -40 35 0
+#  size 1 1 0
+#  zoneflag GOOD_FLAG 3
+#end
+
+
+
+zone
+  position -35 80 0
+  size 1 1 0
+  zoneflag B 3
+end
+
+zone
+  position -25 80 0
+  size 1 1 0
+  zoneflag BY 3
+end
+
+zone
+  position -15 80 0
+  size 1 1 0
+  zoneflag CB 3
+end
+
+zone
+  position -5 80 0
+  size 1 1 0
+  zoneflag FO 3
+end
+
+zone
+  position 5 80 0
+  size 1 1 0
+  zoneflag JM 3
+end
+
+zone
+  position 15 80 0
+  size 1 1 0
+  zoneflag LT 3
+end
+
+zone
+  position 25 80 0
+  size 1 1 0
+  zoneflag M 3
+end
+
+#zone
+#  position 35 80 0
+#  size 1 1 0
+#  zoneflag BAD_FLAG 3
+#end
+
+
+zone
+  position 80 35 0
+  size 1 1 0
+  zoneflag NJ 3
+end
+
+zone
+  position 80 25 0
+  size 1 1 0
+  zoneflag O 3
+end
+
+zone
+  position 80 15 0
+  size 1 1 0
+  zoneflag RC 3
+end
+
+zone
+  position 80 5 0
+  size 1 1 0
+  zoneflag RO 3
+end
+
+zone
+  position 80 -5 0
+  size 1 1 0
+  zoneflag RT 3
+end
+
+zone
+  position 80 -15 0
+  size 1 1 0
+  zoneflag TR 3
+end
+
+zone
+  position 80 -25 0
+  size 1 1 0
+  zoneflag WA 3
+end
+
+#zone
+#  position 80 -35 0
+#  size 1 1 0
+#  zoneflag BAD_FLAG 3
+#end
