@@ -202,7 +202,7 @@ void MeshFace::finalize()
 
   // set the plane type
   planeBits = 0;
-  const float fudge = 1.0e-5f;
+  const float fudge = 1.0e-3f;
   if ((fabsf(plane[2]) + fudge) >= 1.0f) {
     planeBits |= ZPlane;
     if (plane[2] > 0.0f) {
