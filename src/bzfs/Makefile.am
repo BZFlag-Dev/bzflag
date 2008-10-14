@@ -134,6 +134,8 @@ bzfs_SOURCES = \
 	SpawnPolicyFactory.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
+	Stats.h \
+	Stats.cxx \
 	TeamBases.cxx \
 	TeamBases.h \
 	WorldFileLocation.cxx \

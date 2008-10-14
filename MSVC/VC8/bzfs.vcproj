@@ -1230,6 +1230,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Stats"
+			>
+			<File
+				RelativePath="..\..\src\bzfs\Stats.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\Stats.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

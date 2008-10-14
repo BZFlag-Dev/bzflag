@@ -64,6 +64,8 @@
 #include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
 
+#include "Stats.h"
+
 // only include this if we are going to use plugins and export the API
 #ifdef BZ_PLUGINS
 #  include "bzfsPlugins.h"
@@ -3874,6 +3876,9 @@ static bool initServer(int argc, char **argv)
   setupPermissions();
 
   setupPlugins();
+
+  // start up a stats link class, it'll take care of itself.
+  new StatsLink();
 
   if (!prepareWorld())
     return false;
