@@ -1796,8 +1796,14 @@ BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, f
   FlagType *flag=flagMap.find(std::string(flagType))->second;
 
   int realShotID=shotID;
-  if(realShotID==0)
+  if(realShotID <= 0)
     realShotID=world->getWorldWeapons().getNewWorldShotID();
+
+  if (lifetime <= 0)
+    lifetime =BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+
+  if (dt <= 0)
+    dt = 0;
 
   return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, realShotID, dt)==realShotID;
 }
