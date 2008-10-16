@@ -76,7 +76,9 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_handicapShotAd",		"1.75",				false, StateDatabase::Locked},
   { "_heightCheckTolerance",	"1.55",				false, StateDatabase::Locked},
   { "_identifyRange",		"50.0",				false, StateDatabase::Locked},
-  { "_inertiaLinear",		"50.0",				false, StateDatabase::Locked},
+  // According to http://my.bzflag.org/bb/viewtopic.php?t=9368
+  // these inertia settings are the Ducati league standard.
+  { "_inertiaLinear",		"45.0",				false, StateDatabase::Locked},
   { "_inertiaAngular",		"38.0",				false, StateDatabase::Locked},
   { "_jumpVelocity",		"19.0",				false, StateDatabase::Locked},
   { "_laserAdLife",		"0.1",				false, StateDatabase::Locked},
