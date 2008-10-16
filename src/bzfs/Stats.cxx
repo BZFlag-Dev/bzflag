@@ -113,9 +113,11 @@ void StatsLink::buildXMLPlayerList ( std::string &params )
 
 void StatsLink::process(bz_EventData *eventData)
 {
+  if (!eventData)
+    return;
   if (eventData->eventType == bz_eWorldFinalized)
     sentAdd = false;
-  else if (eventData->eventType == bz_eWorldFinalized)
+  else if (eventData->eventType == bz_eListServerUpdateEvent)
   {
     if (bz_getPublic())
     {
