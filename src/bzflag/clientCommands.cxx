@@ -373,8 +373,7 @@ static std::string cmdDestruct(const std::string&,
     } else {
       if (getMagnitude(myTank->getVelocity()) > BZDB.eval(StateDatabase::BZDB_MAXSELFDESTRUCTVEL))
       {
-	sprintf(msgBuf, "No Self Destruct while moving");
-	hud->setAlert(1, msgBuf, 1.0f, false);
+	hud->setAlert(1, "No Self Destruct while moving", 1.0f, false);
       }
       else
       {

@@ -1110,15 +1110,8 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   // must not be using the UDP link
   if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
     if (code == MsgShotBegin) {
-      char message[MessageLen];
-      sprintf(message,"Your end is not using UDP, turn on udp");
-      sendMessage(ServerPlayer, i, message);
-
-      sprintf(message,"upgrade your client http://BZFlag.org/ or");
-      sendMessage(ServerPlayer, i, message);
-
-      sprintf(message,"Try another server, Bye!");
-      sendMessage(ServerPlayer, i, message);
+      sendMessage(ServerPlayer, i, "Your end is not using UDP.");
+      sendMessage(ServerPlayer, i, "Turn on UDP or try another server.");
       removePlayer(i, "no UDP", true);
       return;
     }
@@ -3420,9 +3413,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       msg->send(playerData.netHandler, MsgLagPing);
 
       if (warn) {
-	char message[MessageLen];
-	sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
-	sendMessage(ServerPlayer, p, message);
+	sendMessage(ServerPlayer, p, "*** Server Warning: your lag is too high (failed to return ping) ***");
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;
