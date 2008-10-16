@@ -1128,6 +1128,23 @@ public:
 BZF_API bool bz_registerEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 BZF_API bool bz_removeEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 
+/**
+ * RAII class to handle registration/deregistration
+ *
+ * Add a member of this class your event handler for each event handled
+ */
+class bz_EventHelper
+{
+public:
+  bz_EventHelper(bz_eEventType eventType_, bz_EventHandler* eventHandler_)
+    : eventType(eventType_), eventHandler(eventHandler_)
+  { bz_registerEvent(eventType, eventHandler); }
+  ~bz_EventHelper() { bz_removeEvent(eventType, eventHandler); }
+private:
+  bz_eEventType eventType;
+  bz_EventHandler* eventHandler;
+};
+  
 // non player data handlers
 
 class bz_NonPlayerConnectionHandler

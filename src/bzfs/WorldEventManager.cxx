@@ -15,6 +15,7 @@
 
 /* system implementation headers */
 #include <string>
+#include <set>
 
 /* common implementation headers */
 #include "global.h"
@@ -31,6 +32,9 @@ WorldEventManager::WorldEventManager()
 
 WorldEventManager::~WorldEventManager()
 {
+  typedef std::set<bz_EventHandler*> EventHandlerSet;
+  EventHandlerSet toDelete;
+
   tmEventTypeList::iterator eventItr = eventList.begin();
   while (eventItr != eventList.end())
   {
@@ -38,12 +42,19 @@ WorldEventManager::~WorldEventManager()
     while (itr != eventItr->second.end())
     {
       if ((*itr) && (*itr)->autoDelete())
-	delete (*itr);
+	toDelete.insert(*itr);
       *itr = NULL;
 
       itr++;
     }
     eventItr++;
+  }
+
+  // Because an event handler can be registerd to handle multiple
+  // events, collect all the registered handlers in a set and delete
+  // each one exactly once.
+  for (EventHandlerSet::iterator die = toDelete.begin(); die != toDelete.end(); ++die) {
+    delete *die;
   }
 }
 
@@ -51,7 +62,7 @@ void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEv
 {
   if (!theEvent)
     return;
-
+  
   if (eventList.find(eventType) == eventList.end()) {
     tvEventList newList;
     eventList[eventType] = newList;
