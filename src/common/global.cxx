@@ -154,6 +154,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_squishFactor",		"1.0",				false, StateDatabase::Locked},
   { "_squishTime",		"1.0",				false, StateDatabase::Locked},
   { "_startingRank",		"0.5",				false, StateDatabase::Locked},
+  { "_statURL",			"http://stattrack.bzflag.bz:88",				false, StateDatabase::Locked},
   { "_syncTime",		"-1.0",				false, StateDatabase::Locked},
   { "_syncLocation",		"0",				false, StateDatabase::Locked},
   { "_tankExplosionSize",	"3.5 * _tankLength",		false, StateDatabase::Locked},
