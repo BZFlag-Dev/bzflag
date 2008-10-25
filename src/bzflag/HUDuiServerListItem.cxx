@@ -159,6 +159,9 @@ std::string HUDuiServerListItem::calculatePing()
   if (server == NULL)
     return "";
 
+  if (server->ping.pingTime == INT_MAX)
+    return "[nr]";
+
   return TextUtils::format("%d", server->ping.pingTime);
 }
 

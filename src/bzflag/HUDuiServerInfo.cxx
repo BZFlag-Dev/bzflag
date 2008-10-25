@@ -345,8 +345,11 @@ void HUDuiServerInfo::fillReadouts()
 
   if (ping.pingTime > 0) {
     std::vector<std::string> pingArgs;
-    sprintf(buf, "%dms", ping.pingTime);  // What's the matter with a strstream. Come on!
-    pingArgs.push_back(buf);              // So last decade
+    if (ping.pingTime == INT_MAX)
+      strcpy(buf, " Not responding");
+    else
+      sprintf(buf, "%dms", ping.pingTime);
+    pingArgs.push_back(buf);
     ((HUDuiLabel*)listHUD[19])->setString("Ping: {1}", &pingArgs);
   } else {
     ((HUDuiLabel*)listHUD[19])->setString("");
