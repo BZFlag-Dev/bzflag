@@ -57,6 +57,8 @@ Regressions
   
 * bullets no longer bounce off the walls in replays even when ricochets have
   been enabled
+
+* server comunication error when someone logs off and people are sill playing
   
 Documentation
 -------------
