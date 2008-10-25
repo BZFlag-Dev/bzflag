@@ -455,10 +455,8 @@ void HUDuiServerList::applyFilters()
   items.remove_if(std::bind2nd(filter(), filterOptions));
   items.remove_if(std::bind2nd(search(), filterPatterns));
 
-  refreshNavQueue();
   sortBy(sortMode);
   setSelected(0);
-  //getNav().set((size_t) 0);
 }
 
 void HUDuiServerList::toggleFilter(FilterConstants _filter)
@@ -544,8 +542,6 @@ size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
 void HUDuiServerList::refreshNavQueue()
 {
   HUDuiControl* currentFocus = getNav().get();
-  // If the focus isn't on a server list item, nothing has to happen
-  if (dynamic_cast<HUDuiServerListItem*>(currentFocus) == 0) return;
 
   bool inFocus = currentFocus->hasFocus();
   getNav().clear();
@@ -558,9 +554,12 @@ void HUDuiServerList::refreshNavQueue()
     HUDuiControl* item = *it;
     addControl(item);
   }
-  if (std::search_n(items.begin(), items.end(), 1, currentFocus, equal) == items.end()) {
-    currentFocus = getNav().at((size_t) 0);
-    inFocus = false;
+  // If the focus is on a server list item, we should try to keep the same item selected
+  if (dynamic_cast<HUDuiServerListItem*>(currentFocus) != 0) {
+    if (std::search_n(items.begin(), items.end(), 1, currentFocus, equal) == items.end()) {
+      currentFocus = getNav().at((size_t) 0);
+      inFocus = false;
+    }
   }
 
   if (inFocus)
