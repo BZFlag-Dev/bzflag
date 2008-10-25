@@ -13,7 +13,7 @@
 // interface headers
 #include "HUDuiServerListItem.h"
 #include "Protocol.h"
-
+#include "TextUtils.h"
 // common implementation headers
 #include "BundleMgr.h"
 #include "Bundle.h"
@@ -159,9 +159,7 @@ std::string HUDuiServerListItem::calculatePing()
   if (server == NULL)
     return "";
 
-  char ping[5];
-  sprintf(ping, "%d", server->ping.pingTime);
-  return ping;
+  return TextUtils::format("%d", server->ping.pingTime);
 }
 
 std::string HUDuiServerListItem::calculatePlayers()
