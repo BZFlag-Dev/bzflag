@@ -149,8 +149,6 @@ void HUDuiServerInfo::resize()
     readout->setPosition(x, y);
   }
 
-  // Was this supposed to be used somewhere?
-//   float spacer = fm.getStringWidth(getFontFace()->getFMFace(), fontSize, "X");
   x = (0.125f + 0.25f * (float)(1 / 7)) * (float)getWidth();
   y = y0;
   for (size_t i=0; i<playerLabels.size(); i++) {
