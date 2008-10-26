@@ -86,6 +86,8 @@ Controls
 Rendering
 ---------
 
+* turning off texturing screws up the menu icon
+
 * New font system renders tabs (such as those from the /ban command usage) as a
   square, and indents the line as much as 28 characters.  Example:
   http://static.bzexcess.com/bzfi1003.png
