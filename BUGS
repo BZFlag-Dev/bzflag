@@ -157,14 +157,6 @@ Platform (Windows)
   obviously be related.  @ r16889 -spldart-
 
    
-Platform (SDL)
---------------
-
-* if you start the client windowed on a multidisplay system, and then move the
-  window to a secondary monitor, you cannot control the brightness of the (SDL)
-  window since it's presently modifying the gamma of the display that started
-  it.
-
 bzfs
 ----
 
