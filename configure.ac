@@ -464,6 +464,7 @@ case $host_os in
     beos*)
 	;;
     *)
+	CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 	if test x$no_x = x; then
 	    GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
 	fi
