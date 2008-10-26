@@ -40,7 +40,7 @@ class GuidedMissileStrategy : public ShotStrategy {
 
     float		checkHit(const ShotCollider&, float[3]) const;
     void		sendUpdate(const FiringInfo&) const;
-    void		readUpdate(uint16_t, void*);
+    void		readUpdate( void*);
     void		addShot(SceneDatabase*, bool colorblind);
     void		expire();
     void		radarRender() const;

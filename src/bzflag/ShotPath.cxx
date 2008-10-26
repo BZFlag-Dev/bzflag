@@ -220,14 +220,13 @@ void			RemoteShotPath::update(float dt)
   updateShot(dt);
 }
 
-void			RemoteShotPath::update(const ShotUpdate& shot,
-				uint16_t code, void* msg)
+void			RemoteShotPath::update(const ShotUpdate& shot, void* msg)
 {
   // update shot info
   getFiringInfo().shot = shot;
 
   // let the strategy see the message
-  getStrategy()->readUpdate(code, msg);
+  getStrategy()->readUpdate(msg);
 }
 
 // Local Variables: ***

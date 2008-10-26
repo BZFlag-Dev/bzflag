@@ -150,7 +150,8 @@ PlayerId msgDestination;
 static void setHuntTarget();
 static void setTankFlags();
 static void handleMsgSetVars(void *msg);
-static void handlePlayerMessage(uint16_t, uint16_t, void*);
+static void handleGMUpdate ( void *);
+static void handleMovementUpdate(uint16_t code, void *msg);
 static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
 static void enteringServer(void *buf);
 static void joinInternetGame2();
@@ -3347,9 +3348,15 @@ case MsgNewPlayer:
   // inter-player relayed message
 case MsgPlayerUpdate:
 case MsgPlayerUpdateSmall:
+  handleMovementUpdate(code,msg);
+  break;
+
 case MsgGMUpdate:
+  handleGMUpdate ( msg );
+  break;
+
 case MsgLagPing:
-  handlePlayerMessage(code, 0, msg);
+  serverLink->sendLagPing((char *)msg);
   break;
 
 case MsgTangibilityUpdate:
@@ -3380,7 +3387,7 @@ case MsgPlayerData:
 // player message handling
 //
 
-static void handleMovementUpdate(uint16_t code, uint16_t, void *msg)
+static void handleMovementUpdate(uint16_t code, void *msg)
 {
   float timestamp;
   PlayerId id;
@@ -3416,42 +3423,31 @@ static void handleMovementUpdate(uint16_t code, uint16_t, void *msg)
   }
 }
 
-static void handlePlayerMessage(uint16_t code, uint16_t len,
-				void *msg)
+static void handleGMUpdate ( void *msg )
 {
-  switch (code) {
-case MsgPlayerUpdate:
-case MsgPlayerUpdateSmall:
-  handleMovementUpdate(code,len,msg);
-  break;
-
-case MsgGMUpdate: {
   ShotUpdate shot;
   msg = shot.unpack(msg);
   Player *tank = lookupPlayer(shot.player);
-  if (!tank || tank == myTank) break;
+  if (!tank || tank == myTank)
+    return;
+
   RemotePlayer *remoteTank = (RemotePlayer*)tank;
-  RemoteShotPath *shotPath =
-    (RemoteShotPath*)remoteTank->getShot(shot.id);
-  if (shotPath) shotPath->update(shot, code, msg);
+  RemoteShotPath *shotPath = (RemoteShotPath*)remoteTank->getShot(shot.id);
+  if (shotPath)
+    shotPath->update(shot, msg);
   PlayerId targetId;
   msg = nboUnpackUByte(msg, targetId);
-  Player *targetTank = getPlayerByIndex(targetId);
-  if (targetTank && (targetTank == myTank) && (myTank->isAlive())) {
+  Player *targetTank = getPlayerByIndex(targetId); 
+
+  if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
+  {
     static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75) {
+    if (TimeKeeper::getTick() - lastLockMsg > 0.75) 
+    {
       SOUNDSYSTEM.play(SFX_LOCK, shot.pos,false,false);
       lastLockMsg=TimeKeeper::getTick();
       addMessage(tank, "locked on me");
     }
-  }
-  break;
-		  }
-
-		  // just echo lag ping message
-case MsgLagPing:
-  serverLink->sendLagPing((char *)msg);
-  break;
   }
 }
 

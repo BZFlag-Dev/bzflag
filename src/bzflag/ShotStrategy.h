@@ -71,7 +71,7 @@ class ShotStrategy {
 
     // update shot based on message.  code is the message code.  msg
     // points to the part of the message after the ShotUpdate portion.
-    virtual void	readUpdate(uint16_t code, void* msg);
+    virtual void	readUpdate(void* msg);
 
     static const Obstacle*	getFirstBuilding(const Ray&, float min, float& t);
     static void		reflect(float* v, const float* n); // const

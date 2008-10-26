@@ -516,11 +516,8 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
-void GuidedMissileStrategy::readUpdate(uint16_t code, void* msg)
+void GuidedMissileStrategy::readUpdate( void* msg)
 {
-  // ignore non-guided missile messages (we shouldn't get them)
-  if (code != MsgGMUpdate) return;
-
   // position and velocity have been replaced by the remote system's
   // concept of the position and velocity.  this may cause a discontinuity
   // in the shot's position but it's probably better to have the shot in

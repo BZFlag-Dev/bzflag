@@ -113,7 +113,7 @@ public:
   ~RemoteShotPath();
 
   void update(float dt);
-  void update(const ShotUpdate &shot, uint16_t code, void *msg);
+  void update(const ShotUpdate &shot, void *msg);
 };
 
 //
