@@ -1,3 +1,4 @@
+//							   -*- coding: utf-8 -*-
 /* bzflag
  * Copyright (c) 1993 - 2008 Tim Riker
  *
