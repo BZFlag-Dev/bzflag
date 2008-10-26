@@ -574,7 +574,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 
     glPopMatrix();
   } else if ( displayList == moonList ) {
-    int moonSegements = (int)BZDB.eval("moonSegments");
+    int moonSegements = BZDB.evalInt("moonSegments");
    
     glPushMatrix();
     glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);

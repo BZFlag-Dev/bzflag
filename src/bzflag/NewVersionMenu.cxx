@@ -48,9 +48,9 @@ cURLManager(), byteTransferred(0)
   // prep for possible download
   setURL(url);
 #ifdef AUTOUPGRADE
-  long timeout = 15;
+  int timeout = 15;
   if (BZDB.isSet("httpTimeout")) {
-    timeout = (long)BZDB.eval("httpTimeout");
+    timeout = BZDB.evalInt("httpTimeout");
   }
   setTimeout(timeout);
 #endif

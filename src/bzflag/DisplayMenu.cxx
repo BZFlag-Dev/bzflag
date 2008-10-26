@@ -345,7 +345,7 @@ void			DisplayMenu::resize(int _width, int _height)
   i++;
 
   // energy saver
-  ((HUDuiList*)listHUD[i])->setIndex((int)BZDB.eval("saveEnergy"));
+  ((HUDuiList*)listHUD[i])->setIndex(BZDB.evalInt("saveEnergy"));
 }
 
 int DisplayMenu::gammaToIndex(float gamma)

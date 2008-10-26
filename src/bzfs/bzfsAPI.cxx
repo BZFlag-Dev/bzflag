@@ -1924,7 +1924,7 @@ BZF_API bool bz_getBZDBBool(const char *variable)
 
 BZF_API int bz_getBZDBInt(const char *variable)
 {
-  return (int)BZDB.eval(std::string(variable));
+  return BZDB.evalInt(std::string(variable));
 }
 
 //-------------------------------------------------------------------------
