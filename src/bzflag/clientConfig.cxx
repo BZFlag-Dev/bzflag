@@ -153,7 +153,7 @@ void updateConfigFile(void)
 {
   int configVersion = BZ_CONFIG_FILE_VERSION;
   if (BZDB.isSet("config_vers"))
-    configVersion = (int)BZDB.eval("config_vers");
+    configVersion = BZDB.evalInt("config_vers");
 
   switch (configVersion) {
 	case 0: // 2.1.0
