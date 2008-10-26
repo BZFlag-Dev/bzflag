@@ -383,9 +383,9 @@ void HUDuiServerList::doRender()
   for (int i=Modes; i != NoSort; i++) {
     if (sortMode == i)
       if (reverseSort)
-	columnTitle = columns[i].first + "   V";
+	columnTitle = columns[i].first + "   ▼";
       else
-	columnTitle = columns[i].first + "   ^";
+	columnTitle = columns[i].first + "   ▲";
     else
       columnTitle = columns[i].first;
 
