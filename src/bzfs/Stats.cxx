@@ -35,8 +35,7 @@ StatsLink::~StatsLink()
 
 const char* getTeamName ( TeamColor team )
 {
-    switch(team)
-    {
+    switch(team) {
       default:
 	break;
       case RogueTeam:
@@ -62,8 +61,7 @@ const char* getTeamName ( TeamColor team )
 void StatsLink::buildXMLPlayer ( std::string &params, int playerID )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-  if (player)
-  {
+  if (player) {
     params += "\t<GamePlayer>\n";
       params += TextUtils::format("\t\t<callsign>%s</callsign>\n",player->player.getCallSign());
     if (player->hasCustomField("motto") && player->customData["motto"].size())
@@ -79,14 +77,11 @@ void StatsLink::buildXMLPlayer ( std::string &params, int playerID )
 
     params += TextUtils::format("\t\t<bzID>%s</bzID>\n",BZID.c_str());
 
-    if (player->player.getTeam() == ObserverTeam)
-    {
+    if (player->player.getTeam() == ObserverTeam) {
       params += "\t\t<wins>0</wins>\n";
       params += "\t\t<losses>0</losses>\n";
       params += "\t\t<teamkills>0</teamkills>\n";
-    }
-    else
-    {
+    } else {
       params += TextUtils::format("\t\t<wins>%d</wins>\n",player->score.getWins());
       params += TextUtils::format("\t\t<losses>%d</losses>\n",player->score.getLosses());
       params += TextUtils::format("\t\t<teamkills>%d</teamkills>\n",player->score.getTKs());
@@ -99,8 +94,7 @@ void StatsLink::buildXMLPlayer ( std::string &params, int playerID )
 void StatsLink::buildXMLPlayerList ( std::string &params )
 {
   bz_APIIntList *players = bz_getPlayerIndexList();
-  if (players && players->size())
-  {
+  if (players && players->size()) {
     params += "&players=";
     params += "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
     params += "<ArrayOfGamePlayer xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n";
@@ -118,10 +112,8 @@ void StatsLink::process(bz_EventData *eventData)
     return;
   if (eventData->eventType == bz_eWorldFinalized)
     sentAdd = false;
-  else if (eventData->eventType == bz_eListServerUpdateEvent)
-  {
-    if (bz_getPublic())
-    {
+  else if (eventData->eventType == bz_eListServerUpdateEvent) {
+    if (bz_getPublic()) {
       bz_ApiString host = bz_getPublicAddr();
       int port = bz_getPublicPort();
       if (port == 0)
@@ -144,10 +136,8 @@ void StatsLink::process(bz_EventData *eventData)
       buildXMLPlayerList(params);
 
       bz_addURLJob(url.c_str(),NULL,params.c_str());
-    }
-    else if (eventData->eventType == bz_ePlayerPartEvent)
-    {
-      bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
+    } else if (eventData->eventType == bz_ePlayerPartEvent) {
+      // bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
       std::string params = "action=part&isgameserver=1&player=";
       buildXMLPlayerList(params);
       bz_addURLJob(url.c_str(),NULL,params.c_str());
