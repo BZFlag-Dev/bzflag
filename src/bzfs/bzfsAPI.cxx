@@ -4296,13 +4296,13 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint(float pos[3])
 BZF_API bz_eGameType bz_getGameType(void)
 {
   if(clOptions->gameType==ClassicCTF)
-    return ClassicCTFGame;
+    return eClassicCTFGame;
   else if(clOptions->gameType==RabbitChase)
     return eRabbitGame;
   else if(clOptions->gameType==OpenFFA)
-    return OpenFFAGame;
+    return eOpenFFAGame;
 
-  return TeamFFAGame;
+  return eTeamFFAGame;
 }
 
 BZF_API bool bz_allowJumping(void)

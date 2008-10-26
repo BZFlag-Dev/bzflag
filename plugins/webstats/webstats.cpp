@@ -344,11 +344,11 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
     data = format("%d", bz_getPlayerCount());
   } else if (key == "gametype") {
     switch(bz_getGameType()) {
-    case TeamFFAGame:
+    case eTeamFFAGame:
       data = "Team FFA";
       break;
 
-    case ClassicCTFGame:
+    case eClassicCTFGame:
       data = "Team Capture the Flag";
       break;
 
@@ -356,7 +356,7 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
       data = "Rabbit Hunt";
       break;
 
-    case OpenFFAGame:
+    case eOpenFFAGame:
       data = "Open FFA";
       break;
 
@@ -639,11 +639,11 @@ bool WebStats::ifCallback(const std::string &key)
   } else if (key == "rabbitteam") {
     return bz_getTeamCount(eRabbitTeam) > 0;
   } else if (key == "teamffa") {
-    return bz_getGameType() == TeamFFAGame;
+    return bz_getGameType() == eTeamFFAGame;
   } else if (key == "openffa") {
-    return bz_getGameType() == OpenFFAGame;
+    return bz_getGameType() == eOpenFFAGame;
   } else if (key == "ctf") {
-    return bz_getGameType() == ClassicCTFGame;
+    return bz_getGameType() == eClassicCTFGame;
   } else if (key == "rabbitchase") {
     return bz_getGameType() == eRabbitGame;
   } else if (key == "flags") {
