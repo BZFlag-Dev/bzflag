@@ -84,21 +84,14 @@ public:
   void clear();
 
   /**
-   * Rebuild all sizes of this family
-   */
-  void rebuild();
-
-  /**
-   * Dutifully moved from FontManager, although I can't see where this
-   * is actually doing anything useful (as called)
-   */
-  void preloadSize(size_t size);
-
-  /**
    * Accessor to retrieve a particular font size from this face
    */
   FTFont* getSize(size_t size)
   {
+    // Because the sizes are kept in a map, a request for a size that
+    // doesn't exist will create a new entry in the map with a
+    // default-constructed pointer (0). This isn't naive, it's
+    // sophisticated
     return sizes[size];
   }
 
@@ -108,9 +101,6 @@ public:
    */
   void setSize(size_t size, FTFont* font)
   {
-    // TODO: need to verify that there is not a memory management
-    // issue if somehow this pointer has ever been given to someone
-    // else.
     delete sizes[size];
     sizes[size] = font;
   }
@@ -158,14 +148,13 @@ namespace {
     font = fontFaces[face].loadSize(size);
 
 #if debugging
-  printf("getGLFont CREATED face:%d size:%d %p\n", face, size, (void*)font);
-  fflush(stdout);
+    std::cout << "getGLFont CREATED face:" << face 
+	      << " size:" << size << (void*)font 
+	      << std::endl;
 #endif
 
     return font;
   }
-
-
 
 }
 
@@ -174,43 +163,13 @@ void BZFontFace_impl::clear()
   for (FontSizes::iterator itr = sizes.begin(); itr != sizes.end(); ++itr) {
 #if debugging
     if (itr->second != 0) {
-      std::cout << "BZFontFace_impl::clear font:" << (void*)(itr->second)
+      std::cout << "BZFontFace_impl::clear font [" << name() << "]:" << (void*)(itr->second)
 		<< " size:" << itr->first << std::endl;
     }
 #endif
 
     setSize(itr->first, 0);
   }
-}
-
-void BZFontFace_impl::rebuild()
-{
-  for (FontSizes::iterator itr = sizes.begin(); itr != sizes.end(); ++itr) {
-    if (itr->second != 0) {
-      setSize(itr->first, 0);
-      preloadSize(itr->first);
-    }
-  }
-}
-
-void BZFontFace_impl::preloadSize(size_t size)
-{
-  // If the call to getSize() is replaced with the not-yet-written
-  // loadSize() call, this will always return a valid "preloaded"
-  // font
-  FTFont* font( getSize(size) );
-  if (! font) 
-    return;
-
-  // preload
-  std::string charset;
-  charset = "abcdefghijklmnopqrstuvwxyz";
-  charset += TextUtils::toupper(charset);
-  charset += "1234567890";
-  charset += "`;'/.,[]\\\"";
-  charset += "<>?:{}+_)(*&^%$#@!)";
-  charset += " \t";
-  font->Advance(charset.c_str());
 }
 
 FTFont* BZFontFace_impl::loadSize(size_t size)
@@ -261,8 +220,7 @@ FontManager::FontManager() : Singleton<FontManager>(),
 			     darkness(1.0f)
 {
 #if debugging
-  printf("CONSTRUCTING FONT MANAGER\n");
-  fflush(stdout);
+  std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
 #endif
 
   BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
@@ -285,8 +243,7 @@ int FontManager::load(const char* file)
   int id = -1;
 
 #if debugging
-  printf("FontManager::load entry file:%s\n", file);
-  fflush(stdout);
+  std::cout << "FontManager::load entry file: " << file << std::endl;
 #endif
 
   if (!file)
@@ -303,8 +260,7 @@ int FontManager::load(const char* file)
   }
 
 #if debugging
-  printf("FontManager::load file:%s\n", file);
-  fflush(stdout);
+  std::cout <<"FontManager::load file: " << file << std::endl;
 #endif
 
   /* not found, add it */
@@ -339,121 +295,20 @@ int FontManager::loadAll(std::string directory)
 }
 
 
-void FontManager::clear(int font, int size)
-{
-#if debugging
-  printf("FontManager::clear font:%d size:%d\n", font, size);
-  fflush(stdout);
-  abort();
-#endif
-
-  // poof if non-bitmap
-  fontFaces[font].setSize(size, 0);
-}
-
-
 void FontManager::clear(void)
 {
 #if debugging
-  printf("FontManager::clear\n");
-  fflush(stdout);
+  std::cout << "FontManager::clear" << std::endl;
 #endif
 
-  int minSize = 2;
-  if (BZDB.isSet("MinAliasedFontSize")) {
-    minSize = BZDB.evalInt("MinAliasedFontSize");
-  }
-
-#if debugging
-  printf("FontManager::clear preface loop size: %d\n", (int)fontFaces.size());
-  fflush(stdout);
-#endif
-
-  FontFamilies::iterator faceItr;
-  faceItr = fontFaces.begin();
-  while (faceItr != fontFaces.end()) {
-    (*faceItr).clear();
-
-#if debugging
-    printf("FontManager::clear preerase\n");
-    fflush(stdout);
-#endif
-
-    //    fontFaces.erase(faceItr);
-    //    faceItr = fontFaces.begin();
-    faceItr++;
-
-#if debugging
-    printf("FontManager::clear posterase\n");
-    fflush(stdout);
-#endif
-  }
+  std::for_each(fontFaces.begin(), fontFaces.end(),
+		std::mem_fun_ref(&BZFontFace_impl::clear) );
 
   return;
 }
 
 
-void FontManager::preloadSize(int font, int size)
-{
-#if debugging
-  printf("FontManager::preloadSize font:%d size:%d\n", font, size);
-  fflush(stdout);
-#endif
-
-  if (font < 0 || size < 0)
-    return;
-
-  // if the font is loaded and has a GL font, reload it
-  // if it is NOT, then go along.
-  FTFont *fnt = fontFaces[font].getSize(size);
-
-  if (!fnt)
-    return;
-
-  // preload
-  std::string charset;
-  charset = "abcdefghijklmnopqrstuvwxyz";
-  charset += TextUtils::toupper(charset);
-  charset += "1234567890";
-  charset += "`;'/.,[]\\\"";
-  charset += "<>?:{}+_)(*&^%$#@!)";
-  charset += " \t";
-  fnt->Advance(charset.c_str());
-}
-
-
-void FontManager::rebuildSize(int font, int size)
-{
-#if debugging
-  printf("FontManager::rebuildSize font:%d size:%d\n", font, size);
-  fflush(stdout);
-#endif
-
-  if (font < 0 || size < 0) {
-    return;
-  }
-
-  clear(font, size);
-
-  preloadSize(font, size);
-}
-
-
-void FontManager::rebuild()
-{
-#if debugging
-  printf("FontManager::rebuild\n");
-  fflush(stdout);
-#endif
-
-  for (unsigned int i = 0; i < fontFaces.size(); i++) {
-    fontFaces[i].rebuild();
-  }
-  loadAll(fontDirectory);
-}
-
-
-int FontManager::lookupID(const std::string name)
+int FontManager::lookupID(std::string const& name)
 {
   if (name.size() <= 0)
     return -1;
@@ -467,7 +322,7 @@ int FontManager::lookupID(const std::string name)
 }
 
 
-int FontManager::getFaceID(const std::string name)
+int FontManager::getFaceID(std::string const& name)
 {
   int id = lookupID(name);
   if (id >= 0) {
@@ -832,7 +687,8 @@ void FontManager::initContext(void*)
 void FontManager::freeContext(void* data)
 {
 #if debugging
-  std::cout << "freeContext called\n" << "clearing " << fontFaces.size() << " fonts" << std::endl;
+  std::cout << "freeContext called\n"
+	    << "clearing " << fontFaces.size() << " fonts" << std::endl;
 #endif
   FontManager* fm( static_cast<FontManager*>(data) );
   fm->clear();

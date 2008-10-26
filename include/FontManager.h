@@ -90,7 +90,7 @@ public:
    * return an index to the requested font if it's been loaded or the
    * first loaded font otherwise.
    */
-  int getFaceID(const std::string faceName);
+  int getFaceID(std::string const& faceName);
 
   /**
    * main work-horse.  render the provided text with the specified
@@ -121,7 +121,7 @@ protected:
   /**
    * lookup the font ID for a given font, or -1 on failure
    */
-  int lookupID(const std::string faceName);
+  int lookupID(std::string const& faceName);
 
   /**
    * return the pulse color
@@ -134,31 +134,9 @@ protected:
   int load(const char* file);
 
   /**
-   * clear/erase a particular font size
-   */
-  void clear(int font, int size);
-
-  /**
    * destroy all the fonts, clear all the lists
    */
   void clear();
-
-  /**
-   * ask ftgl to compute their width so that the textures are loaded,
-   * gives small performance boost by loading all glyphs at once
-   * upfront.
-   */
-  void preloadSize(int font, int size);
-
-  /**
-   * rebuild just one size of a given font
-   */
-  void rebuildSize(int font, int size);
-
-  /**
-   * rebuild all the lists
-   */
-  void rebuild(void);
 
   /**
    * returns the number of fonts loaded
