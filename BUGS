@@ -58,6 +58,9 @@ Regressions
 * bullets no longer bounce off the walls in replays even when ricochets have
   been enabled
 
+* The entire replay system needs to be tested for functionalities, some report
+  that tanks can't spawn or shoot.
+
 * server comunication error when someone logs off and people are sill playing
   
 Documentation
