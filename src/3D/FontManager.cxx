@@ -198,7 +198,7 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
 
   setSize(size, font);
 
-  font->FaceSize(size);
+  font->FaceSize((unsigned int)size);
   bool doDisplayLists( ! BZDB.isTrue("NoDisplayListsForFonts"));
   font->UseDisplayList(doDisplayLists);
 
