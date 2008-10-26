@@ -203,13 +203,12 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   font->UseDisplayList(doDisplayLists);
 
   // preload the font
-  static const std::string charset("abcdefghijklmnopqrstuvwxyz"
-				   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-				   "1234567890"
-				   "`;'/.,[]\\\""
-				   "<>?:{}+_)(*&^%$#@!)"
-				   " \t");
-  font->Advance(charset.c_str());
+  font->Advance("abcdefghijklmnopqrstuvwxyz"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"1234567890"
+		"`;'/.,[]\\\""
+		"<>?:{}+_)(*&^%$#@!)"
+		" \t");
 
   return font;
 }
