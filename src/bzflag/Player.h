@@ -311,6 +311,7 @@ private:
 
   // dead reckoning stuff
   TimeKeeper inputTime;		// time of input
+  double     updateTimeStamp;	// time of  the last update
   int	inputStatus;		// tank status
   float	inputPos[3];		// tank position
   float	inputVel[3];		// tank velocity

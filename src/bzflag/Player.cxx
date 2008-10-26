@@ -1174,7 +1174,7 @@ bool Player::isDeadReckoningWrong() const
   }
 
   // time since setdeadreckoning
-  const float dt = float(TimeKeeper::getTick() - inputTime);
+  const double dt = syncedClock.GetServerSeconds() - updateTimeStamp;
 
   // otherwise always send at least one packet per second
   if (dt >= MaxUpdateTime) {
@@ -1185,7 +1185,7 @@ bool Player::isDeadReckoningWrong() const
   float predictedPos[3];
   float predictedVel[3];
   float predictedAzimuth;
-  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
+  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, (float)dt);
 
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
@@ -1247,8 +1247,9 @@ void Player::doDeadReckoning()
   float predictedPos[3];
   float predictedVel[3];
   float predictedAzimuth;
-  float dt = float(TimeKeeper::getTick() - inputTime);
-  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
+  
+  double dt = syncedClock.GetServerSeconds() - updateTimeStamp;
+  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, (float)dt);
 
   // setup notResponding
   if (!isAlive()) {
@@ -1336,6 +1337,7 @@ void Player::setDeadReckoning(float timestamp )
   // set the current state
   inputTime = TimeKeeper::getTick();
 
+  updateTimeStamp = timestamp;
   // how long ago was the pos valid
 
   double currentServerTime = syncedClock.GetServerSeconds();
