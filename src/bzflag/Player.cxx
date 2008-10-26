@@ -1348,10 +1348,6 @@ void Player::setDeadReckoning(float timestamp )
   if ( delta < 0 )
     delta = 0;
 
-  inputPos[0] += inputVel[0] * (float)delta;
-  inputPos[1] += inputVel[1] * (float)delta;
-  inputPos[2] += inputVel[2] * (float)delta;
-
   // copy stuff for dead reckoning
   inputStatus = state.status;
   inputAzimuth = state.azimuth;
