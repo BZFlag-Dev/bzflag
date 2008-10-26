@@ -1799,7 +1799,7 @@ static void handlePlayerMessage(uint16_t code, uint16_t, void* msg)
     RemotePlayer* remoteTank = (RemotePlayer*)tank;
     RemoteShotPath* shotPath =
       (RemoteShotPath*)remoteTank->getShot(shot.id);
-    if (shotPath) shotPath->update(shot, code, msg);
+    if (shotPath) shotPath->update(shot, msg);
     break;
   }
 
