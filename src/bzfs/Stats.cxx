@@ -21,6 +21,7 @@ StatsLink::StatsLink()
   sentAdd = false;
   bz_registerEvent(bz_eWorldFinalized,this);
   bz_registerEvent(bz_eListServerUpdateEvent,this);
+  bz_registerEvent(bz_ePlayerPartEvent,this);
 
   if (BZDB.isSet("_statURL"))
     url = BZDB.get("_statURL");
@@ -142,6 +143,13 @@ void StatsLink::process(bz_EventData *eventData)
 
       buildXMLPlayerList(params);
 
+      bz_addURLJob(url.c_str(),NULL,params.c_str());
+    }
+    else if (eventData->eventType == bz_ePlayerPartEvent)
+    {
+      bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
+      std::string params = "action=part&isgameserver=1&player=";
+      buildXMLPlayerList(params);
       bz_addURLJob(url.c_str(),NULL,params.c_str());
     }
   }
