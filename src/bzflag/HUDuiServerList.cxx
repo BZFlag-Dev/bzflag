@@ -16,6 +16,7 @@
 // common implementation headers
 #include "TextUtils.h"
 #include "bzglob.h"
+#include "ErrorHandler.h"
 
 #include "FontManager.h"
 #include "LocalFontFace.h"
@@ -95,19 +96,15 @@ public:
       break;
 
     case PlayerCount:
-      return (_first->getPlayerCount().compare(_second->getPlayerCount()) < 0);
+      return (_first->getServer()->getPlayerCount() < _second->getServer()->getPlayerCount());
       break;
 
     case Ping:
-      {
-	int firstPing = atoi(_first->getServerPing().c_str());
-	int secondPing = atoi(_second->getServerPing().c_str());
-	return (firstPing < secondPing);
-	//return (_first->getServerPing()(_second->getServerPing()) < 0);
-	break;
-      }
+      return (_first->getServer()->ping.pingTime < _second->getServer()->ping.pingTime);
+      break;
 
     default:
+      printError("Unrecognized sort mode.");
       break;
     }
     return false;

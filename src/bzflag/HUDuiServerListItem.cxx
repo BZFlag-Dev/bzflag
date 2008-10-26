@@ -172,9 +172,7 @@ std::string HUDuiServerListItem::calculatePlayers()
   if (server == NULL)
     return "";
 
-  char players[20];
-  sprintf(players, "%d/%d", server->getPlayerCount(), server->ping.maxPlayers);
-  return players;
+  return TextUtils::format("%d/%d", server->getPlayerCount(), server->ping.maxPlayers);
 }
 
 void HUDuiServerListItem::setSize(float width, float height)
