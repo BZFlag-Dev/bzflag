@@ -43,7 +43,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 
   std::vector<MOTD_message> messages;
 
-  if (good) {
+  if (good && _data && length > 0) {
     std::string data(_data, length);
 
     // parse into messages
