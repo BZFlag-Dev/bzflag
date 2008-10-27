@@ -183,7 +183,7 @@ public:
   void*		pack(void*, uint16_t& code);
   void*		unpack(void*, uint16_t code);
 
-  void		setDeadReckoning(float timestamp);
+  void		setDeadReckoning(double timestamp);
 
   void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
 

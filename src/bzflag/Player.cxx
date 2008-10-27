@@ -81,7 +81,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setVelocity(zero);
   setAngularVelocity(0.0f);
   setPhysicsDriver(-1);
-  setDeadReckoning((float)syncedClock.GetServerSeconds());
+  setDeadReckoning(syncedClock.GetServerSeconds());
   setRelativeMotion();
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
@@ -1024,11 +1024,11 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
 
 void* Player::unpack(void* buf, uint16_t code)
 {
-  float timestamp;
+  double timestamp;
   PlayerId ident;
 
   buf = nboUnpackUByte(buf, ident);
-  buf = nboUnpackFloat(buf, timestamp);
+  buf = nboUnpackDouble(buf, timestamp);
   buf = state.unpack(buf, code);
 
   setDeadReckoning(timestamp);
@@ -1332,7 +1332,7 @@ void Player::doDeadReckoning()
 const int   DRStateStable      = 100;
 const float maxToleratedJitter = 1.0f;
 
-void Player::setDeadReckoning(float timestamp )
+void Player::setDeadReckoning(double timestamp )
 {
   // set the current state
   inputTime = TimeKeeper::getTick();
@@ -1343,7 +1343,7 @@ void Player::setDeadReckoning(float timestamp )
   double currentServerTime = syncedClock.GetServerSeconds();
 
   if (timestamp < 0)
-    timestamp = (float)currentServerTime;
+    timestamp = currentServerTime;
   double delta = currentServerTime - timestamp;
   if ( delta < 0 )
     delta = 0;
