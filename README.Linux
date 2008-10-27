@@ -29,7 +29,7 @@ BZFlag.  Known requirements include:
 
     libgl1-mesa-dev
     libglu1-mesa-dev
-    libsdl1.2-dev
+    libsdl1.2-dev (or x11proto-xf86vidmode-dev if you do not want SDL)
     libcurl3-dev
 
   Fedora:
