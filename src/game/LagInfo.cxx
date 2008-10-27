@@ -172,10 +172,10 @@ void LagInfo::updateLag(TimeKeeper const& timestamp, bool ooo) {
   }
   // don't calc jitter if more than 2 seconds between packets
   if (lasttimestamp && timestamp - lasttimestamp < 2.0f) {
-    const float jitter = fabs((float)(info->now - lastupdate)
-			      - (timestamp - lasttimestamp));
+    const float jitter = fabsf((float)(info->now - lastupdate)
+			     - (float)(timestamp - lasttimestamp));
     // time is smoothed exponentially using a dynamic smoothing factor
-    jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * fabs(jitter);
+    jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * jitter;
     jitteralpha = jitteralpha / (0.99f + jitteralpha);
     lostavg     = lostavg * (1 - lostalpha);
     lostalpha   = lostalpha / (0.99f + lostalpha);
