@@ -13,10 +13,7 @@
 // interface header
 #include "ShotPath.h"
 
-/* system headers */
-#include <assert.h>
-
-/* local implementation headers */
+// local implementation headers
 #include "SegmentedShotStrategy.h"
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"

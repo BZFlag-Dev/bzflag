@@ -10,8 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "Player.h"
+
+// system headers
+#include <assert.h>
 
 // common interface headers
 #include "SceneRenderer.h"
@@ -815,7 +818,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
   World *world = World::getWorld();
   if (!world) 
-    return; /* no world, shouldn't add to scene */
+    return; // no world, shouldn't add to scene
 
   if (!avatar)
     return;
@@ -1337,9 +1340,7 @@ void Player::setDeadReckoning(double timestamp)
   // set the current state
   inputTime = TimeKeeper::getTick();
 
-  double currentServerTime = syncedClock.GetServerSeconds();
-
-  assert(currentServerTime - timestamp > 0);
+  assert(syncedClock.GetServerSeconds() > timestamp);
   updateTimeStamp = timestamp;
 
   // copy stuff for dead reckoning
