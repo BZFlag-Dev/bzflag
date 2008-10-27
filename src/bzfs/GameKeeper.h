@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __GAMEKEEPER_H__
-#define __GAMEKEEPER_H__
+#ifndef GAMEKEEPER_H_
+#define GAMEKEEPER_H_
 
 // bzflag global header
 #include "common.h"
@@ -129,7 +129,7 @@ public:
     // To handle player State
     void	   setPlayerState(float pos[3], float azimuth);
     void	   getPlayerState(float pos[3], float &azimuth);
-    void	   setPlayerState(PlayerState state, float timestamp);
+    void	   setPlayerState(PlayerState state, TimeKeeper const& timestamp);
 
     void	   getPlayerCurrentPosRot(float pos[3], float &rot);
 
@@ -185,7 +185,7 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    float	      stateTimeStamp;
+    TimeKeeper	      stateTimeStamp;
 
     ShotType	      efectiveShotType;
 
@@ -194,7 +194,7 @@ public:
     int		      botID;
     std::vector<int>  childBots;
 
-    void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
+    void doPlayerDR ( TimeKeeper const& time = TimeKeeper::getCurrent() );
     float	      currentPos[3];
     float	      curentVel[3];
     float	      currentRot;
@@ -220,7 +220,7 @@ public:
     bool isParting;
 
     // logic class for server side players
-    bz_ServerSidePlayerHandler	*playerHandler;
+    bz_ServerSidePlayerHandler*	playerHandler;
 
   private:
     static Player    *playerList[PlayerSlot];

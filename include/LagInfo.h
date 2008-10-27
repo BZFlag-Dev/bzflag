@@ -14,6 +14,32 @@
 #define __LAGINFO_H__
 
 #include "PlayerInfo.h"
+/**
+ * This class needs pulling into its own header. Just put it here for now
+ */
+// class Timestamp
+// {
+// public:
+//   explicit Timestamp(double t)
+//     : timestamp(t)
+//   {
+//   }
+
+//   double getDouble() const
+//   {
+//     return timestamp;
+//   }
+//   double operator-(Timestamp const& rhs) const
+//   {
+//     return timestamp - rhs.timestamp;
+//   }
+//   bool operator>(Timestamp const& rhs) const
+//   {
+//     return timestamp > rhs.timestamp;
+//   }
+// protected:
+//   double timestamp;
+// };
 
 /** This class monitors the lag time for each client
 */
@@ -47,7 +73,7 @@ public:
   void	updatePingLag(void *buf, bool &warn, bool &kick,
 		      bool &jittwarn, bool &jittkick,
 		      bool &plosswarn, bool &plosskick);
-  void	updateLag(float timestamp, bool ooo);
+  void	updateLag(TimeKeeper const& timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
   int	getNextPingSeqno(bool &warn, bool &kick);
@@ -84,7 +110,7 @@ private:
   int	 pingseqno;
   int	 pingssent;
   // jitter measurement
-  float       lasttimestamp;
+  TimeKeeper       lasttimestamp;
 
   static float threshold;
   static float jitterthreshold;

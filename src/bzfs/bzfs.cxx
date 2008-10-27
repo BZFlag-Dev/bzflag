@@ -3096,7 +3096,7 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState )
+bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, TimeKeeper const& timeStamp, bool shortState )
 {
   // observer updates are not relayed, or checked
   if (playerData->player.isObserver()) {
@@ -3107,7 +3107,7 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, flo
 
   bz_PlayerUpdateEventData_V1 eventData;
   playerStateToAPIState(eventData.state,state);
-  eventData.stateTime = timeStamp;
+  eventData.stateTime = timeStamp.getSeconds();
   eventData.playerID = playerData->getIndex();
   worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
@@ -3522,11 +3522,10 @@ void initGroups()
 
 static void updatePlayerPositions(void)
 {
-  double now = TimeKeeper::getCurrent().getSeconds();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
     if (player)
-      player->doPlayerDR((float)now);
+      player->doPlayerDR();
   }
 }
 

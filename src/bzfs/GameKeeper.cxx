@@ -50,71 +50,93 @@ void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t proper
   msg->packUByte(properties);
 }
 
-GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
-player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
-playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-needThisHostbanChecked(false), idFlag(-1)
+GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback)
+  : _LSAState(start)
+  , player(_playerIndex)
+  , netHandler(_netHandler)
+  , lagInfo(&player)
+  , accessInfo()
+  , lastState()
+  , stateTimeStamp(0.0)
+  , efectiveShotType(StandardShot)
+  , canSpawn(true)
+  , botHost(-1)
+  , botID(-1)
+  , currentRot(0)
+  , currentAngVel(0)
+  , gameTimeRate(GameTime::startRate)
+  , gameTimeNext(TimeKeeper::getCurrent())
+  , flagHistory()
+  , score()
+  , authentication()
+  , caps()
+  , isParting(false)
+  , playerHandler(NULL)
+  , playerIndex(_playerIndex)
+  , closed(false)
+  , clientCallback(_clientCallback)
+  , bzIdentifier()
+  , needThisHostbanChecked(false)
+  , idFlag(-1)
+  , agilityTime()
 {
-  playerHandler = NULL;
   playerList[playerIndex] = this;
-  canSpawn = true;
 
   lastState.order  = 0;
-  // Timestamp 0.0 -> not yet available
-  stateTimeStamp   = 0.0f;
-  gameTimeRate = GameTime::startRate;
-  gameTimeNext = TimeKeeper::getCurrent();
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
     std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
-  _LSAState = start;
-  bzIdentifier = "";
-
-  botHost = -1;
-  botID = -1;
 
   currentPos[0] = currentPos[1] = currentPos[2] = 0;
   curentVel[0] = curentVel[1] = curentVel[2] = 0;
-  currentRot = 0;
-  currentAngVel =0;
-
-  efectiveShotType = StandardShot;
-  isParting = false;
 }
 
-GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
-player(_playerIndex), netHandler(NULL), lagInfo(&player),
-playerIndex(_playerIndex), closed(false), clientCallback(NULL),
-needThisHostbanChecked(false), idFlag(-1)
+GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
+  : _LSAState(start)
+  , player(_playerIndex)
+  , netHandler(NULL)
+  , lagInfo(&player)
+  , accessInfo()
+  , lastState()
+  , stateTimeStamp(0.0)
+  , efectiveShotType(StandardShot)
+  , canSpawn(true)
+  , botHost(-1)
+  , botID(-1)
+  , currentRot(0)
+  , currentAngVel(0)
+  , gameTimeRate(GameTime::startRate)
+  , gameTimeNext(TimeKeeper::getCurrent())
+  , flagHistory()
+  , score()
+  , authentication()
+  , caps()
+  , isParting(false)
+  , playerHandler(handler)
+  , playerIndex(_playerIndex)
+  , closed(false)
+  , clientCallback(NULL)
+  , bzIdentifier()
+  , needThisHostbanChecked(false)
+  , idFlag(-1)
+  , agilityTime()
 {
-  canSpawn = true;
-  playerHandler = handler;
   playerList[playerIndex] = this;
 
   lastState.order  = 0;
-  // Timestamp 0.0 -> not yet available
-  stateTimeStamp   = 0.0f;
-  gameTimeRate = GameTime::startRate;
-  gameTimeNext = TimeKeeper::getCurrent();
+
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
     std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
-  _LSAState = start;
-  bzIdentifier = "";
-
-  botHost = -1;
-  botID = -1;
 
   currentPos[0] = currentPos[1] = currentPos[2] = 0;
   curentVel[0] = curentVel[1] = curentVel[2] = 0;
-  currentRot = 0;
-  currentAngVel =0;
 }
 
 GameKeeper::Player::~Player()
@@ -425,9 +447,9 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
   // Set Speeds to 0 too
   memset(lastState.velocity, 0, sizeof(float) * 3);
   lastState.angVel = 0.0f;
-  stateTimeStamp   = (float)TimeKeeper::getCurrent().getSeconds();
+  stateTimeStamp   = TimeKeeper::getCurrent();
 
-  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR(stateTimeStamp);
 
   // player is alive.
   player.setAlive();
@@ -435,14 +457,14 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
   lastState.status = eAlive;
 }
 
-void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
+void GameKeeper::Player::setPlayerState(PlayerState state, TimeKeeper const& timestamp)
 {
   lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
   player.updateIdleTime();
   lastState      = state;
   stateTimeStamp = timestamp;
 
-  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR(); // or should it be timestamp?
 }
 
 void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
@@ -453,13 +475,13 @@ void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
 
 void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
 {
-  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR();
 
   memcpy(pos, currentPos, sizeof(float) * 3);
   rot = currentRot;
 }
 
-void GameKeeper::Player::doPlayerDR ( float time )
+void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
 {
   float delta = time - stateTimeStamp;
 

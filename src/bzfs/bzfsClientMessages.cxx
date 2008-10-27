@@ -915,7 +915,7 @@ public:
     buf = nboUnpackFloat(buf, timestamp);
     buf = state.unpack(buf, code);
 
-    updatePlayerState(player, state, timestamp, code == MsgPlayerUpdateSmall);
+    updatePlayerState(player, state, TimeKeeper(timestamp), code == MsgPlayerUpdateSmall);
 
     return true;
   }

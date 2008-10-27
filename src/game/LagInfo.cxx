@@ -163,7 +163,11 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
   return;
 }
 
-void LagInfo::updateLag(float timestamp, bool ooo) {
+namespace {
+  const TimeKeeper zero(0.0);
+}
+
+void LagInfo::updateLag(TimeKeeper const& timestamp, bool ooo) {
   if (!info->isPlaying())
     return;
   if (ooo) {
@@ -171,7 +175,7 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
     lostalpha = lostalpha / (0.99f + lostalpha);
   }
   // don't calc jitter if more than 2 seconds between packets
-  if (lasttimestamp > 0.0f && timestamp - lasttimestamp < 2.0f) {
+  if (lasttimestamp && timestamp - lasttimestamp < 2.0f) {
     const float jitter = fabs((float)(info->now - lastupdate)
 			      - (timestamp - lasttimestamp));
     // time is smoothed exponentially using a dynamic smoothing factor

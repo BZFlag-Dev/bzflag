@@ -805,7 +805,7 @@ void sendMessageAllow ( int playerID, unsigned char allow )
   // Please note that non-network players do not currently receive the message.
 }
 
-bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
+bool sendPlayerStateMessage( GameKeeper::Player* playerData, bool shortState )
 {
   playerData->doPlayerDR();
 
@@ -815,7 +815,7 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(playerData->getIndex());
-  msg->packFloat(playerData->stateTimeStamp);
+  msg->packFloat(playerData->stateTimeStamp.getSeconds());
   playerData->lastState.pack(msg,code,false);	// don't increment the order cus this is just a relay
 
   msg->broadcast(code);
@@ -827,7 +827,9 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler && otherData->player.isPlaying())
-      otherData->playerHandler->playerStateUpdate(playerData->getIndex(),&apiState,playerData->stateTimeStamp);
+      otherData->playerHandler->playerStateUpdate(playerData->getIndex(),
+						  &apiState,
+						  playerData->stateTimeStamp.getSeconds());
   }
   return true;
 }

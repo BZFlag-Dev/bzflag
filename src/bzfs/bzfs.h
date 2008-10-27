@@ -40,6 +40,7 @@
 
 #include "bzfsAPI.h"
 
+
 // to dump score info to stdout
 #define SERVERLOGINMSG true
 
@@ -76,7 +77,7 @@ PlayerId getNewPlayer(NetHandler *netHandler);
 PlayerId getNewBot(PlayerId hostPlayer, int botID);
 extern bool validPlayerCallsign ( int playerIndex );
 extern void addPlayer(int playerIndex, GameKeeper::Player *playerData);
-bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState );
+bool updatePlayerState ( GameKeeper::Player* playerData, PlayerState& state, TimeKeeper const& timeStamp, bool shortState );
 extern void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
 extern bool worldStateChanging ( void );
 extern void searchFlag(GameKeeper::Player &playerData);
