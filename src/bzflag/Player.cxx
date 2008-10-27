@@ -1332,21 +1332,15 @@ void Player::doDeadReckoning()
 const int   DRStateStable      = 100;
 const float maxToleratedJitter = 1.0f;
 
-void Player::setDeadReckoning(double timestamp )
+void Player::setDeadReckoning(double timestamp)
 {
   // set the current state
   inputTime = TimeKeeper::getTick();
 
-  updateTimeStamp = timestamp;
-  // how long ago was the pos valid
-
   double currentServerTime = syncedClock.GetServerSeconds();
 
-  if (timestamp < 0)
-    timestamp = currentServerTime;
-  double delta = currentServerTime - timestamp;
-  if ( delta < 0 )
-    delta = 0;
+  assert(currentServerTime - timestamp > 0);
+  updateTimeStamp = timestamp;
 
   // copy stuff for dead reckoning
   inputStatus = state.status;
