@@ -163,10 +163,6 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
   return;
 }
 
-namespace {
-  const TimeKeeper zero(0.0);
-}
-
 void LagInfo::updateLag(TimeKeeper const& timestamp, bool ooo) {
   if (!info->isPlaying())
     return;
