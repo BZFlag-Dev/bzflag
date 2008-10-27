@@ -4426,7 +4426,7 @@ void bz_ServerSidePlayerHandler::handicapUpdate(int, bz_HandicapUpdateRecord **)
 
 void bz_ServerSidePlayerHandler::playerIPUpdate(int, const char*){}
 
-void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, float){}
+void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, double){}
 
 void bz_ServerSidePlayerHandler::playerScoreUpdate(int, float, int, int, int){}
 

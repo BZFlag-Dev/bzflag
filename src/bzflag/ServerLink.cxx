@@ -977,11 +977,10 @@ void ServerLink::sendPlayerUpdate(Player* player )
   char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all
   // dead reckoning use that
-  const float timeStamp = (float)syncedClock.GetServerSeconds();
   void* buf = msg;
   uint16_t code;
   buf = nboPackUByte(buf, player->getId());
-  buf = nboPackFloat(buf, timeStamp);
+  buf = nboPackDouble(buf, syncedClock.GetServerSeconds());
 
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
   buf = player->pack(buf, code);

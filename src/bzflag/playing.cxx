@@ -3389,13 +3389,13 @@ case MsgPlayerData:
 
 static void handleMovementUpdate(uint16_t code, void *msg)
 {
-  float timestamp;
+  double timestamp;
   PlayerId id;
   int32_t order;
   void *buf = msg;
 
   buf = nboUnpackUByte(buf, id);
-  buf = nboUnpackFloat(buf, timestamp);
+  buf = nboUnpackDouble(buf, timestamp);
 
   Player *tank = lookupPlayer(id);
   if (!tank || tank == myTank)

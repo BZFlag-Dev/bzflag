@@ -1085,9 +1085,9 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   }
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall: {
-    float timestamp;
+    double timestamp;
     buf = nboUnpackUByte(buf, t);
-    buf = nboUnpackFloat(buf, timestamp);
+    buf = nboUnpackDouble(buf, timestamp);
     break;
   }
   default:

@@ -815,7 +815,7 @@ bool sendPlayerStateMessage( GameKeeper::Player* playerData, bool shortState )
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(playerData->getIndex());
-  msg->packFloat(playerData->stateTimeStamp.getSeconds());
+  msg->packDouble(playerData->stateTimeStamp.getSeconds());
   playerData->lastState.pack(msg,code,false);	// don't increment the order cus this is just a relay
 
   msg->broadcast(code);

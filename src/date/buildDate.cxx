@@ -21,7 +21,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0065"
+#  define BZ_PROTO_VERSION	"0066"
 #endif
 // ditto for bzrobots
 #ifndef BZROBOTS_PROTO_VERSION
@@ -30,7 +30,6 @@
 
 // version numbers - also update:
 //  README
-//  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
 #ifndef BZ_MAJOR_VERSION
@@ -42,7 +41,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		07
+#  define BZ_REV		8
 #endif
 
 // DEVEL | STABLE | MAINT

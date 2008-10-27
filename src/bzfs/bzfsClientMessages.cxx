@@ -909,10 +909,10 @@ public:
     else if(len < 27)
       return false;
 
-    float       timestamp;
+    double      timestamp;
     PlayerState state;
 
-    buf = nboUnpackFloat(buf, timestamp);
+    buf = nboUnpackDouble(buf, timestamp);
     buf = state.unpack(buf, code);
 
     updatePlayerState(player, state, TimeKeeper(timestamp), code == MsgPlayerUpdateSmall);

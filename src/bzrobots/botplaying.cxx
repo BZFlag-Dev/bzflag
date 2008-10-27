@@ -1761,12 +1761,12 @@ static void handlePlayerMessage(uint16_t code, uint16_t, void* msg)
   switch (code) {
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall: {
-    float timestamp; // could be used to enhance deadreckoning, but isn't for now
+    double timestamp; // could be used to enhance deadreckoning, but isn't for now
     PlayerId id;
     int32_t order;
     void *buf = msg;
     buf = nboUnpackUByte(buf, id);
-    buf = nboUnpackFloat(buf, timestamp);
+    buf = nboUnpackDouble(buf, timestamp);
     Player* tank = lookupPlayer(id);
     if (!tank || tank == observerTank) break;
     nboUnpackInt(buf, order); // peek! don't update the msg pointer

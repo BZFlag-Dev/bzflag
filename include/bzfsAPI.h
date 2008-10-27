@@ -1233,7 +1233,7 @@ class BZF_API bz_BasePlayerRecord
   bz_ApiString currentFlag;
   bz_APIStringList flagHistory;
 
-  float lastUpdateTime;
+  double lastUpdateTime;
   bz_PlayerUpdateState lastKnownState;
   bz_PlayerUpdateState currentState;
 
@@ -1889,7 +1889,7 @@ class BZF_API bz_ServerSidePlayerHandler
 			      bz_HandicapUpdateRecord **handicapList);
   virtual void playerIPUpdate(int player, const char *ipAddress);
   virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
-				 float timestamp);
+				 double timestamp);
   virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs);
   virtual void flagTransfer(int from, int to, int flagID, bz_eShotType shotType);
   virtual void nearestFlag(const char* flagName, float pos[3]);
@@ -1978,10 +1978,10 @@ public:
     double time;
 
     UpdateInfo()
+      : rot(0), rotVel(0), time(0)
     {
       for (int i = 0; i < 3; i++)
 	pos[i] = vec[0] =0;
-      time = rot = rotVel = 0;
     }
 
     UpdateInfo& operator = ( const UpdateInfo& u )
