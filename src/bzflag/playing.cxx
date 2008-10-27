@@ -3394,19 +3394,19 @@ static void handleMovementUpdate(uint16_t code, void *msg)
   int32_t order;
   void *buf = msg;
 
-  buf = nboUnpackUByte(buf, id);
-  buf = nboUnpackDouble(buf, timestamp);
+  buf = nboUnpackUByte(buf, id); // peek! don't update the msg pointer
+  buf = nboUnpackDouble(buf, timestamp); // peek
 
   Player *tank = lookupPlayer(id);
   if (!tank || tank == myTank)
     return;
 
-  nboUnpackInt(buf, order); // peek! don't update the msg pointer
+  nboUnpackInt(buf, order); // peek
   if (order <= tank->getOrder())
     return;
   short oldStatus = tank->getStatus();
 
-  tank->unpack(msg, code);
+  tank->unpack(msg, code); // now read
   short newStatus = tank->getStatus();
 
   if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
