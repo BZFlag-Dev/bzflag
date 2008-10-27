@@ -6,15 +6,15 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 webadmin_la_SOURCES = \
 		webadmin.cpp \
 		pages.cpp \
-		pages.h 	\
+		pages.h \
 		loops.cpp \
 		loops.h \
 		logs.cpp \
 		actions.cpp\
 		actions.h \
 		commonItems.cpp \
-		commonItems.h 
-		
+		commonItems.h
+
 webadmin_la_LDFLAGS = -module -avoid-version
 webadmin_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 webadmin_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
@@ -26,5 +26,5 @@ EXTRA_DIST = \
 	webadmin.sln \
 	webadmin.vcproj
 
-MAINTAINERCLEANFILES =	\
+MAINTAINERCLEANFILES = \
 	Makefile.in
