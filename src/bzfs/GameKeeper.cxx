@@ -483,7 +483,7 @@ void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
 
 void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
 {
-  float delta = time - stateTimeStamp;
+  double delta = time - stateTimeStamp;
 
   currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
   currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
