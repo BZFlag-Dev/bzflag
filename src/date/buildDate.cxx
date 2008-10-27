@@ -30,6 +30,7 @@
 
 // version numbers - also update:
 //  README
+//  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
 #ifndef BZ_MAJOR_VERSION
