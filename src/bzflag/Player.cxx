@@ -13,9 +13,6 @@
 // interface header
 #include "Player.h"
 
-// system headers
-#include <assert.h>
-
 // common interface headers
 #include "SceneRenderer.h"
 #include "BZDBCache.h"
@@ -1340,7 +1337,11 @@ void Player::setDeadReckoning(double timestamp)
   // set the current state
   inputTime = TimeKeeper::getTick();
 
-  assert(syncedClock.GetServerSeconds() > timestamp);
+#ifdef DEBUG
+  double currentServerTime = syncedClock.GetServerSeconds();
+  if (currentServerTime <= timestamp)
+    printf("Player::setDeadReckoning(): currentServerTime %11.4f ought to be greater than timestamp %11.4f\n", currentServerTime, timestamp);
+#endif
   updateTimeStamp = timestamp;
 
   // copy stuff for dead reckoning
