@@ -57,7 +57,7 @@ public:
   void addCallback(HUDNavigationCallback cb, void* data);
   void removeCallback(HUDNavigationCallback cb, void* data);
 
-  static const size_t SkipSetFocus = ~0U;
+  static const size_t SkipSetFocus = ~(size_t)0;
 
 private:
   bool internal_set(size_t index, HUDNavChangeMethod changeMethod, bool setFocus = true);
