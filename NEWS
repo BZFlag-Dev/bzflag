@@ -5,6 +5,7 @@
 BZFlag 2.99.x (development for 3.0 http://my.bzflag.org/w/BZFlag_3.0 )
 ------------
 
+* added deiconify along with fullscreen iconify support - Sean Morrison
 * Allow per-locale default and user-specified fonts - Daniel Remenak
 * Handle Unicode input and keybindings - Daniel Remenak
 * Correctly render Unicode (UTF8) localizations - Daniel Remenak, Alexander Law
