@@ -34,7 +34,9 @@ class SDLWindow : public BzfWindow {
   void  setPosition(int, int) {;};
   void  setMinSize(int, int) {;};
   void  setFullscreen(bool);
-  void  iconify(void);
+  bool  getFullscreen() const;
+  void  deiconify();
+  void  iconify();
   void  warpMouse(int x, int y);
   void  getMouse(int& x, int& y) const;
   void  grabMouse() {;};
@@ -51,9 +53,10 @@ class SDLWindow : public BzfWindow {
   void  freeContext() {;};
   bool  create(void);
  private:
-  int	  x;
-  int	  y;
-  bool	 hasGamma;
+  int  width;
+  int  height;
+  bool hasGamma;
+  bool iconified;
 };
 
 #endif // __SDLWINDOW_H__

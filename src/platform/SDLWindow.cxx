@@ -14,12 +14,13 @@
 
 /* interface header */
 #include "SDLWindow.h"
+#include <iostream>
 
 
 extern int mx, my; /* from SDLDisplay.cxx */
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), x(-1), y(-1), hasGamma(true)
+  : BzfWindow(_display), width(-1), height(-1), hasGamma(true), iconified(false)
 {
 }
 
@@ -31,8 +32,49 @@ void SDLWindow::setFullscreen(bool on) {
   ((SDLDisplay *)getDisplay())->setFullscreen(on);
 }
 
-void SDLWindow::iconify(void) {
+bool SDLWindow::getFullscreen() const {
+  return ((SDLDisplay *)getDisplay())->getFullscreen();
+}
+
+void SDLWindow::deiconify() {
+  std::cout << "deiconifying" << std::endl;
+  iconified = false;
+
+  create();
+
+  if (width != -1 && height != -1) {
+    std::cout << "setting the size to " << width << "x" << height << " with fullscreen set to " << getFullscreen() << std::endl;
+    setSize(width, height);
+    callResizeCallbacks();
+  }
+
+  callExposeCallbacks();
+}
+
+void SDLWindow::iconify() {
+  int x, y;
+  std::cout << "iconify toggle" << std::endl;
+
+  if (iconified) {
+    deiconify();
+    return;
+  }
+
+  /* get out of fullscreen so we can unmap */
+  if (getFullscreen()) {
+    setFullscreen(false);
+    callResizeCallbacks();
+  }
+
+  getSize(width, height);
+  std::cout << "got size " << width << "x" << height << " with fullscreen set to " << getFullscreen() << std::endl;
+
+  setSize(32, 32);
+  getSize(x, y);
+  std::cout << "after 32 set, got size " << x << "x" << y << " with fullscreen set to " << getFullscreen() << std::endl;
+
   SDL_WM_IconifyWindow();
+  iconified = true;
 }
 
 void SDLWindow::warpMouse(int _x, int _y) {

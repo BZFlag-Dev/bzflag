@@ -151,162 +151,163 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
   switch (event.type) {
 
-  case SDL_MOUSEMOTION:
-    _event.type	= BzfEvent::MouseMove;
-    mx		 = event.motion.x;
+    case SDL_MOUSEMOTION:
+      _event.type	= BzfEvent::MouseMove;
+      mx		 = event.motion.x;
 #ifdef __APPLE__
-    static const SDL_version *sdlver = SDL_Linked_Version();
-    /* deal with a SDL bug when in windowed mode related to
-     * Cocoa coordinate system of (0,0) in bottom-left corner.
-     */
-    if ( (fullScreen) ||
-	 (sdlver->major > 1) ||
-	 (sdlver->minor > 2) ||
-	 (sdlver->patch > 6) ) {
-      my = event.motion.y;
-    } else {
-      my = base_height - 1 - event.motion.y;
-    }
+      static const SDL_version *sdlver = SDL_Linked_Version();
+      /* deal with a SDL bug when in windowed mode related to
+       * Cocoa coordinate system of (0,0) in bottom-left corner.
+       */
+      if ( (fullScreen) ||
+	   (sdlver->major > 1) ||
+	   (sdlver->minor > 2) ||
+	   (sdlver->patch > 6) ) {
+	my = event.motion.y;
+      } else {
+	my = base_height - 1 - event.motion.y;
+      }
 #else
-    my		 = event.motion.y;
+      my = event.motion.y;
 #endif
-    _event.mouseMove.x = mx;
-    _event.mouseMove.y = my;
-    break;
-
-  case SDL_MOUSEBUTTONDOWN:
-    _event.type	  = BzfEvent::KeyDown;
-    _event.keyDown.chr = 0;
-    _event.keyDown.shift = 0;
-    if (shift)
-      _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
-    if (ctrl)
-      _event.keyDown.shift |= BzfKeyEvent::ControlKey;
-    if (alt)
-      _event.keyDown.shift |= BzfKeyEvent::AltKey;
-
-    switch (event.button.button) {
-    case SDL_BUTTON_LEFT:
-      _event.keyDown.button = BzfKeyEvent::LeftMouse;
+      _event.mouseMove.x = mx;
+      _event.mouseMove.y = my;
       break;
-    case SDL_BUTTON_MIDDLE:
-      _event.keyDown.button = BzfKeyEvent::MiddleMouse;
+      
+    case SDL_MOUSEBUTTONDOWN:
+      _event.type	  = BzfEvent::KeyDown;
+      _event.keyDown.chr = 0;
+      _event.keyDown.shift = 0;
+      if (shift)
+	_event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+      if (ctrl)
+	_event.keyDown.shift |= BzfKeyEvent::ControlKey;
+      if (alt)
+	_event.keyDown.shift |= BzfKeyEvent::AltKey;
+      
+      switch (event.button.button) {
+	case SDL_BUTTON_LEFT:
+	  _event.keyDown.button = BzfKeyEvent::LeftMouse;
+	  break;
+	case SDL_BUTTON_MIDDLE:
+	  _event.keyDown.button = BzfKeyEvent::MiddleMouse;
+	  break;
+	case SDL_BUTTON_RIGHT:
+	  _event.keyDown.button = BzfKeyEvent::RightMouse;
+	  break;
+	case SDL_BUTTON_WHEELUP:
+	  _event.keyDown.button = BzfKeyEvent::WheelUp;
+	  break;
+	case SDL_BUTTON_WHEELDOWN:
+	  _event.keyDown.button = BzfKeyEvent::WheelDown;
+	  break;
+	case 6:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton6;
+	  break;
+	case 7:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton7;
+	  break;
+	case 8:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton8;
+	  break;
+	case 9:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton9;
+	  break;
+	case 10:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton10;
+	  break;
+	default:
+	  return false;
+      }
       break;
-    case SDL_BUTTON_RIGHT:
-      _event.keyDown.button = BzfKeyEvent::RightMouse;
+      
+    case SDL_MOUSEBUTTONUP:
+      _event.type = BzfEvent::KeyUp;
+      _event.keyUp.chr = 0;
+      _event.keyUp.shift = 0;
+      if (shift)
+	_event.keyUp.shift |= BzfKeyEvent::ShiftKey;
+      if (ctrl)
+	_event.keyUp.shift |= BzfKeyEvent::ControlKey;
+      if (alt)
+	_event.keyUp.shift |= BzfKeyEvent::AltKey;
+      
+      switch (event.button.button) {
+	case SDL_BUTTON_LEFT:
+	  _event.keyDown.button = BzfKeyEvent::LeftMouse;
+	  break;
+	case SDL_BUTTON_MIDDLE:
+	  _event.keyDown.button = BzfKeyEvent::MiddleMouse;
+	  break;
+	case SDL_BUTTON_RIGHT:
+	  _event.keyDown.button = BzfKeyEvent::RightMouse;
+	  break;
+	case SDL_BUTTON_WHEELUP:
+	  _event.keyDown.button = BzfKeyEvent::WheelUp;
+	  break;
+	case SDL_BUTTON_WHEELDOWN:
+	  _event.keyDown.button = BzfKeyEvent::WheelDown;
+	  break;
+	case 6:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton6;
+	  break;
+	case 7:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton7;
+	  break;
+	case 8:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton8;
+	  break;
+	case 9:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton9;
+	  break;
+	case 10:
+	  _event.keyDown.button = BzfKeyEvent::MouseButton10;
+	  break;
+	default:
+	  return false;
+      }
       break;
-    case SDL_BUTTON_WHEELUP:
-      _event.keyDown.button = BzfKeyEvent::WheelUp;
+      
+    case SDL_KEYDOWN:
+      _event.type = BzfEvent::KeyDown;
+      if (!getKey(event, _event.keyDown))
+	return false;
       break;
-    case SDL_BUTTON_WHEELDOWN:
-      _event.keyDown.button = BzfKeyEvent::WheelDown;
+      
+    case SDL_KEYUP:
+      _event.type = BzfEvent::KeyUp;
+      if (!getKey(event, _event.keyUp))
+	return false;
       break;
-    case 6:
-      _event.keyDown.button = BzfKeyEvent::MouseButton6;
+      
+    case SDL_QUIT:
+      _event.type = BzfEvent::Quit;
       break;
-    case 7:
-      _event.keyDown.button = BzfKeyEvent::MouseButton7;
+      
+    case SDL_VIDEORESIZE:
+      _event.type = BzfEvent::Resize;
+      _event.resize.width  = event.resize.w;
+      _event.resize.height = event.resize.h;
       break;
-    case 8:
-      _event.keyDown.button = BzfKeyEvent::MouseButton8;
+      
+    case SDL_VIDEOEXPOSE:
+      _event.type = BzfEvent::Redraw;
       break;
-    case 9:
-      _event.keyDown.button = BzfKeyEvent::MouseButton9;
-      break;
-    case 10:
-      _event.keyDown.button = BzfKeyEvent::MouseButton10;
-      break;
-    default:
-      return false;
-    }
-    break;
-
-  case SDL_MOUSEBUTTONUP:
-    _event.type = BzfEvent::KeyUp;
-    _event.keyUp.chr = 0;
-    _event.keyUp.shift = 0;
-    if (shift)
-      _event.keyUp.shift |= BzfKeyEvent::ShiftKey;
-    if (ctrl)
-      _event.keyUp.shift |= BzfKeyEvent::ControlKey;
-    if (alt)
-      _event.keyUp.shift |= BzfKeyEvent::AltKey;
-
-    switch (event.button.button) {
-    case SDL_BUTTON_LEFT:
-      _event.keyDown.button = BzfKeyEvent::LeftMouse;
-      break;
-    case SDL_BUTTON_MIDDLE:
-      _event.keyDown.button = BzfKeyEvent::MiddleMouse;
-      break;
-    case SDL_BUTTON_RIGHT:
-      _event.keyDown.button = BzfKeyEvent::RightMouse;
-      break;
-    case SDL_BUTTON_WHEELUP:
-      _event.keyDown.button = BzfKeyEvent::WheelUp;
-      break;
-    case SDL_BUTTON_WHEELDOWN:
-      _event.keyDown.button = BzfKeyEvent::WheelDown;
-      break;
-    case 6:
-      _event.keyDown.button = BzfKeyEvent::MouseButton6;
-      break;
-    case 7:
-      _event.keyDown.button = BzfKeyEvent::MouseButton7;
-      break;
-    case 8:
-      _event.keyDown.button = BzfKeyEvent::MouseButton8;
-      break;
-    case 9:
-      _event.keyDown.button = BzfKeyEvent::MouseButton9;
-      break;
-    case 10:
-      _event.keyDown.button = BzfKeyEvent::MouseButton10;
-      break;
-    default:
-      return false;
-    }
-    break;
-
-  case SDL_KEYDOWN:
-    _event.type = BzfEvent::KeyDown;
-    if (!getKey(event, _event.keyDown))
-      return false;
-    break;
-
-  case SDL_KEYUP:
-    _event.type = BzfEvent::KeyUp;
-    if (!getKey(event, _event.keyUp))
-      return false;
-    break;
-
-  case SDL_QUIT:
-    _event.type = BzfEvent::Quit;
-    break;
-
-  case SDL_VIDEORESIZE:
-    _event.type = BzfEvent::Resize;
-    _event.resize.width  = event.resize.w;
-    _event.resize.height = event.resize.h;
-    break;
-
-  case SDL_VIDEOEXPOSE:
-    _event.type = BzfEvent::Redraw;
-    break;
-
-  case SDL_ACTIVEEVENT:
-    if (event.active.state & SDL_APPACTIVE)
-      if (event.active.gain == 0) {
-	_event.type = BzfEvent::Unmap;
+      
+    case SDL_ACTIVEEVENT:
+      if (event.active.state & SDL_APPACTIVE) {
+	if (event.active.gain == 0) {
+	  _event.type = BzfEvent::Unmap;
+	} else {
+	  _event.type = BzfEvent::Map;
+	}
       } else {
 	_event.type = BzfEvent::Map;
       }
-    else
+      break;
+      
+    default:
       return false;
-    break;
-
-  default:
-    return false;
   }
   return true;
 }
@@ -536,9 +537,11 @@ bool SDLDisplay::createWindow() {
   }
 
   // if they are the same, don't bother building a new window
-  if ((width == oldWidth) && (height == oldHeight)
-      && (fullScreen == oldFullScreen))
+  if ((width == oldWidth) &&
+      (height == oldHeight) &&
+      (fullScreen == oldFullScreen)) {
     return true;
+  }
 
   // save the values for the next
   oldWidth      = width;
@@ -558,16 +561,26 @@ void SDLDisplay::setFullscreen(bool on) {
   fullScreen = on;
 }
 
-void SDLDisplay::setWindowSize(int _width, int _height) {
+bool SDLDisplay::getFullscreen() const {
+  return fullScreen;
+}
+
+void SDLDisplay::setWindowSize(int _width, int _height)
+{
+  std::cout << "setting size to " << _width << "x" << _height << std::endl;
   base_width  = _width;
   base_height = _height;
 }
 
-void SDLDisplay::getWindowSize(int& width, int& height) {
+void SDLDisplay::getWindowSize(int& width, int& height)
+{
   if (fullScreen) {
+
     if (modeIndex < 0)
       modeIndex = 0;
+
     const BzfDisplay::ResInfo *resolution = getResolution(modeIndex);
+
     if (resolution != NULL) {
       width  = resolution->width;
       height = resolution->height;
@@ -576,10 +589,13 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
       width  = 640;
       height = 480;
     }
+
   } else {
     width  = base_width;
     height = base_height;
   }
+
+  std::cout << "returning window size " << width << "x" << height << " with fullscreen set to " << fullScreen << std::endl;
 
   /* sanity checks */
   if (width <= 0) {

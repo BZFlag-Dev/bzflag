@@ -948,6 +948,7 @@ static void doEvent(BzfDisplay *disply)
       if (preUnmapFormat != -1) {
 	disply->setResolution(preUnmapFormat);
 	mainWindow->warpMouse();
+	mainWindow->deiconify();
       }
     }
 
@@ -5535,192 +5536,191 @@ void drawFrame(const float dt)
 
   checkDirtyControlPanel(controlPanel);
 
-  if (!unmapped) {
-    // compute fps
-    frameCount++;
-    cumTime += float(dt);
-    if (cumTime >= 2.0) {
-      if (showFPS) hud->setFPS(float(frameCount) / cumTime);
-      cumTime = 0.00000001f;
-      frameCount = 0;
-    }
+  // compute fps
+  frameCount++;
+  cumTime += float(dt);
+  if (cumTime >= 2.0) {
+    if (showFPS) hud->setFPS(float(frameCount) / cumTime);
+    cumTime = 0.00000001f;
+    frameCount = 0;
+  }
 
-    // drift clouds
-    RENDERER.getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);
+  // drift clouds
+  RENDERER.getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);
 
-    // get tank camera info
-    float muzzleHeight;
-    if (!myTank) {
-      myTankPos = defaultPos;
-      myTankDir = defaultDir;
-      muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-      fov = BZDB.eval("defaultFOV");
-    } else {
-      myTankPos = myTank->getPosition();
-      myTankDir = myTank->getForward();
-      muzzleHeight = myTank->getMuzzleHeight();
+  // get tank camera info
+  float muzzleHeight;
+  if (!myTank) {
+    myTankPos = defaultPos;
+    myTankDir = defaultDir;
+    muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    fov = BZDB.eval("defaultFOV");
+  } else {
+    myTankPos = myTank->getPosition();
+    myTankDir = myTank->getForward();
+    muzzleHeight = myTank->getMuzzleHeight();
 
-      fov = BZDB.eval("displayFOV");
-      if (myTank->getFlag() == Flags::WideAngle)
-	fov *= 2.0f;
+    fov = BZDB.eval("displayFOV");
+    if (myTank->getFlag() == Flags::WideAngle)
+      fov *= 2.0f;
 
-      if (viewType == SceneRenderer::ThreeChannel)
-	fov *= 0.75f;
-    }
-    fov *= (float)(M_PI / 180.0);
+    if (viewType == SceneRenderer::ThreeChannel)
+      fov *= 0.75f;
+  }
+  fov *= (float)(M_PI / 180.0);
 
-    // set projection and view
-    eyePoint[0] = myTankPos[0];
-    eyePoint[1] = myTankPos[1];
-    eyePoint[2] = myTankPos[2] + muzzleHeight;
-    targetPoint[0] = eyePoint[0] + myTankDir[0];
-    targetPoint[1] = eyePoint[1] + myTankDir[1];
-    targetPoint[2] = eyePoint[2] + myTankDir[2];
+  // set projection and view
+  eyePoint[0] = myTankPos[0];
+  eyePoint[1] = myTankPos[1];
+  eyePoint[2] = myTankPos[2] + muzzleHeight;
+  targetPoint[0] = eyePoint[0] + myTankDir[0];
+  targetPoint[1] = eyePoint[1] + myTankDir[1];
+  targetPoint[2] = eyePoint[2] + myTankDir[2];
 
-    if (myTank && thirdPersonVars.b3rdPerson) {
-      targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
-      targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
-      targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
+  if (myTank && thirdPersonVars.b3rdPerson) {
+    targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
+    targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
+    targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
 
-      eyePoint[0] -= myTankDir[0] * thirdPersonVars.cameraOffsetXY;
-      eyePoint[1] -= myTankDir[1] * thirdPersonVars.cameraOffsetXY;
-      eyePoint[2] += muzzleHeight * thirdPersonVars.cameraOffsetOffsetZ;
-    }
-    else if (devDriving || ROAM.isRoaming()) {
-      hud->setAltitude(-1.0f);
-      float roamViewAngle;
-      const Roaming::RoamingCamera *roam = ROAM.getCamera();
-      if (!(ROAM.getMode() == Roaming::roamViewFree) &&
+    eyePoint[0] -= myTankDir[0] * thirdPersonVars.cameraOffsetXY;
+    eyePoint[1] -= myTankDir[1] * thirdPersonVars.cameraOffsetXY;
+    eyePoint[2] += muzzleHeight * thirdPersonVars.cameraOffsetOffsetZ;
+  }
+  else if (devDriving || ROAM.isRoaming()) {
+    hud->setAltitude(-1.0f);
+    float roamViewAngle;
+    const Roaming::RoamingCamera *roam = ROAM.getCamera();
+    if (!(ROAM.getMode() == Roaming::roamViewFree) &&
 	(ROAM.getTargetTank() || (devDriving && myTank))) {
-	  Player *target;
-	  if (!devDriving)
-	    target = ROAM.getTargetTank();
-	  else
-	    target = myTank;
+      Player *target;
+      if (!devDriving)
+	target = ROAM.getTargetTank();
+      else
+	target = myTank;
 
-	  const float *targetTankDir = target->getForward();
-	  // fixed camera tracking target
-	  if (ROAM.getMode() == Roaming::roamViewTrack) {
-	    eyePoint[0] = roam->pos[0];
-	    eyePoint[1] = roam->pos[1];
-	    eyePoint[2] = roam->pos[2];
-	    targetPoint[0] = target->getPosition()[0];
-	    targetPoint[1] = target->getPosition()[1];
-	    targetPoint[2] = target->getPosition()[2] +
-	      target->getMuzzleHeight();
-	  } else if (ROAM.getMode() == Roaming::roamViewFollow) {
-	    // camera following target
-	    if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	      eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-	      eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-	      eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-	      targetPoint[0] = target->getPosition()[0];
-	      targetPoint[1] = target->getPosition()[1];
-	      targetPoint[2] = target->getPosition()[2];
-	    }
-	  } else if (ROAM.getMode() == Roaming::roamViewFP) {
-	    // target's view
-	    if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	      eyePoint[0] = target->getPosition()[0];
-	      eyePoint[1] = target->getPosition()[1];
-	      eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
-	      targetPoint[0] = eyePoint[0] + targetTankDir[0];
-	      targetPoint[1] = eyePoint[1] + targetTankDir[1];
-	      targetPoint[2] = eyePoint[2] + targetTankDir[2];
-	      hud->setAltitude(target->getPosition()[2]);
-	    }
-	  } else if (ROAM.getMode() == Roaming::roamViewFlag) {
-	    // track team flag
-	    Flag *targetFlag = ROAM.getTargetFlag();
-	    eyePoint[0] = roam->pos[0];
-	    eyePoint[1] = roam->pos[1];
-	    eyePoint[2] = roam->pos[2];
-	    targetPoint[0] = targetFlag->position[0];
-	    targetPoint[1] = targetFlag->position[1];
-	    targetPoint[2] = targetFlag->position[2];
-	    if (targetFlag->status != FlagOnTank)
-	      targetPoint[2] += muzzleHeight;
-	    else
-	      targetPoint[2] -= (BZDBCache::tankHeight -
-	      BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
-	  }
-	  roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
-	    targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
-      } else {
-	// free Roaming
-	float dir[3];
-	dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
-	dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
-	dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+      const float *targetTankDir = target->getForward();
+      // fixed camera tracking target
+      if (ROAM.getMode() == Roaming::roamViewTrack) {
 	eyePoint[0] = roam->pos[0];
 	eyePoint[1] = roam->pos[1];
 	eyePoint[2] = roam->pos[2];
-	targetPoint[0] = eyePoint[0] + dir[0];
-	targetPoint[1] = eyePoint[1] + dir[1];
-	targetPoint[2] = eyePoint[2] + dir[2];
-	roamViewAngle = roam->theta;
+	targetPoint[0] = target->getPosition()[0];
+	targetPoint[1] = target->getPosition()[1];
+	targetPoint[2] = target->getPosition()[2] +
+	  target->getMuzzleHeight();
+      } else if (ROAM.getMode() == Roaming::roamViewFollow) {
+	// camera following target
+	if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+	  eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+	  eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+	  eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+	  targetPoint[0] = target->getPosition()[0];
+	  targetPoint[1] = target->getPosition()[1];
+	  targetPoint[2] = target->getPosition()[2];
+	}
+      } else if (ROAM.getMode() == Roaming::roamViewFP) {
+	// target's view
+	if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+	  eyePoint[0] = target->getPosition()[0];
+	  eyePoint[1] = target->getPosition()[1];
+	  eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
+	  targetPoint[0] = eyePoint[0] + targetTankDir[0];
+	  targetPoint[1] = eyePoint[1] + targetTankDir[1];
+	  targetPoint[2] = eyePoint[2] + targetTankDir[2];
+	  hud->setAltitude(target->getPosition()[2]);
+	}
+      } else if (ROAM.getMode() == Roaming::roamViewFlag) {
+	// track team flag
+	Flag *targetFlag = ROAM.getTargetFlag();
+	eyePoint[0] = roam->pos[0];
+	eyePoint[1] = roam->pos[1];
+	eyePoint[2] = roam->pos[2];
+	targetPoint[0] = targetFlag->position[0];
+	targetPoint[1] = targetFlag->position[1];
+	targetPoint[2] = targetFlag->position[2];
+	if (targetFlag->status != FlagOnTank)
+	  targetPoint[2] += muzzleHeight;
+	else
+	  targetPoint[2] -= (BZDBCache::tankHeight -
+			     BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
       }
-      if (!devDriving) {
-	float virtPos[] = {eyePoint[0], eyePoint[1], 0};
-	if (myTank)
-	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
-      }
-      fov = (float)(roam->zoom * M_PI / 180.0);
-      SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+      roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
+				     targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+    } else {
+      // free Roaming
+      float dir[3];
+      dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
+      dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
+      dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+      eyePoint[0] = roam->pos[0];
+      eyePoint[1] = roam->pos[1];
+      eyePoint[2] = roam->pos[2];
+      targetPoint[0] = eyePoint[0] + dir[0];
+      targetPoint[1] = eyePoint[1] + dir[1];
+      targetPoint[2] = eyePoint[2] + dir[2];
+      roamViewAngle = roam->theta;
     }
+    if (!devDriving) {
+      float virtPos[] = {eyePoint[0], eyePoint[1], 0};
+      if (myTank)
+	myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
+    }
+    fov = (float)(roam->zoom * M_PI / 180.0);
+    SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+  }
 
-    // only use a close plane for drawing in the
-    // cockpit, and even then only for odd sized tanks
-    setupNearPlane();
+  // only use a close plane for drawing in the
+  // cockpit, and even then only for odd sized tanks
+  setupNearPlane();
 
-    // based on fog and _cullDist
-    setupFarPlane();
+  // based on fog and _cullDist
+  setupFarPlane();
 
-    ViewFrustum &viewFrustum = RENDERER.getViewFrustum();
+  ViewFrustum &viewFrustum = RENDERER.getViewFrustum();
 
-    viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane,
-      mainWindow->getWidth(),
-      mainWindow->getHeight(),
-      mainWindow->getViewHeight());
-    viewFrustum.setFarPlaneCull(FarPlaneCull);
+  viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane,
+			    mainWindow->getWidth(),
+			    mainWindow->getHeight(),
+			    mainWindow->getViewHeight());
+  viewFrustum.setFarPlaneCull(FarPlaneCull);
 
-    viewFrustum.setView(eyePoint, targetPoint);
+  viewFrustum.setView(eyePoint, targetPoint);
 
-    // let the hud save off the view matrix so it can do view projections
-    if (hud)
-      hud->saveMatrixes(viewFrustum.getViewMatrix(),viewFrustum.getProjectionMatrix());
+  // let the hud save off the view matrix so it can do view projections
+  if (hud)
+    hud->saveMatrixes(viewFrustum.getViewMatrix(),viewFrustum.getProjectionMatrix());
 
-    // add dynamic nodes
-    SceneDatabase *scene = RENDERER.getSceneDatabase();
-    if (scene && myTank) {
+  // add dynamic nodes
+  SceneDatabase *scene = RENDERER.getSceneDatabase();
+  if (scene && myTank) {
 
-      const bool seerView = (myTank->getFlag() == Flags::Seer);
-      const bool showTreads = BZDB.isTrue("showTreads");
+    const bool seerView = (myTank->getFlag() == Flags::Seer);
+    const bool showTreads = BZDB.isTrue("showTreads");
 
-      // add my tank if required
-      const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
-      const bool showMyTreads = showTreads ||
-	(devDriving && (ROAM.getMode() != Roaming::roamViewFP));
-      myTank->addToScene(scene, myTank->getTeam(),
-	inCockpit, seerView,
-	showMyTreads, showMyTreads /*showIDL*/);
+    // add my tank if required
+    const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
+    const bool showMyTreads = showTreads ||
+      (devDriving && (ROAM.getMode() != Roaming::roamViewFP));
+    myTank->addToScene(scene, myTank->getTeam(),
+		       inCockpit, seerView,
+		       showMyTreads, showMyTreads /*showIDL*/);
 
-      // add my shells
-      myTank->addShots(scene, false);
+    // add my shells
+    myTank->addShots(scene, false);
 
-      // add server shells
-      if (world)
-	world->getWorldWeapons()->addShots(scene, false);
+    // add server shells
+    if (world)
+      world->getWorldWeapons()->addShots(scene, false);
 
-      // add antidote flag
-      myTank->addAntidote(scene);
+    // add antidote flag
+    myTank->addAntidote(scene);
 
-      // add flags
-      world->addFlags(scene, seerView);
+    // add flags
+    world->addFlags(scene, seerView);
 
 
-      // add other tanks and shells
-      for (i = 0; i < curMaxPlayers; i++) 
+    // add other tanks and shells
+    for (i = 0; i < curMaxPlayers; i++) 
       {
 	if (player[i]) {
 	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
@@ -5729,8 +5729,8 @@ void drawFrame(const float dt)
 	  TeamColor effectiveTeam = RogueTeam;
 	  if (!colorblind) {
 	    if ((player[i]->getFlag() == Flags::Masquerade)
-	      && (myTank->getFlag() != Flags::Seer)
-	      && (myTank->getTeam() != ObserverTeam))
+		&& (myTank->getFlag() != Flags::Seer)
+		&& (myTank->getTeam() != ObserverTeam))
 	      effectiveTeam = myTank->getTeam();
 	    else
 	      effectiveTeam = player[i]->getTeam();
@@ -5744,386 +5744,381 @@ void drawFrame(const float dt)
 
 	  if (myTank->getFlag() == Flags::Seer || showPlayer)// add player tank if required
 	    player[i]->addToScene(scene, effectiveTeam,
-	    inCockpt, seerView,
-	    showPlayer, showPlayer,thirdPersonVars.b3rdPerson);
+				  inCockpt, seerView,
+				  showPlayer, showPlayer,thirdPersonVars.b3rdPerson);
 	}
       }
 
-      // add explosions
-      addExplosions(scene);
+    // add explosions
+    addExplosions(scene);
 
-      // if inside a building, add some eighth dimension scene nodes.
-      const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
-      for (unsigned int n = 0; n < list.size(); n++) {
-	const Obstacle *obs = list[n];
-	const int nodeCount = obs->getInsideSceneNodeCount();
-	SceneNode **nodeList = obs->getInsideSceneNodeList();
-	for (int o = 0; o < nodeCount; o++) {
-	  scene->addDynamicNode(nodeList[o]);
-	}
+    // if inside a building, add some eighth dimension scene nodes.
+    const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
+    for (unsigned int n = 0; n < list.size(); n++) {
+      const Obstacle *obs = list[n];
+      const int nodeCount = obs->getInsideSceneNodeCount();
+      SceneNode **nodeList = obs->getInsideSceneNodeList();
+      for (int o = 0; o < nodeCount; o++) {
+	scene->addDynamicNode(nodeList[o]);
       }
     }
+  }
 
-    // turn blanking and inversion on/off as appropriate
-    RENDERER.setBlank(myTank && (myTank->isPaused() ||
-      myTank->getFlag() == Flags::Blindness));
-    RENDERER.setInvert(myTank && myTank->isPhantomZoned());
+  // turn blanking and inversion on/off as appropriate
+  RENDERER.setBlank(myTank && (myTank->isPaused() ||
+			       myTank->getFlag() == Flags::Blindness));
+  RENDERER.setInvert(myTank && myTank->isPhantomZoned());
 
-    // turn on scene dimming when showing menu, when we're dead
-    // and no longer exploding, or when we are in a building.
-    bool insideDim = false;
-    if (myTank) {
-      const float hnp = 0.5f * NearPlane; // half near plane distance
-      const float *eye = viewFrustum.getEye();
-      const float *dir = viewFrustum.getDirection();
-      float clipPos[3];
-      clipPos[0] = eye[0] + (dir[0] * hnp);
-      clipPos[1] = eye[1] + (dir[1] * hnp);
-      clipPos[2] = eye[2];
-      const Obstacle *obs;
-      obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
-      if (obs != NULL)
-	insideDim = true;
-    }
-    RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
-      ((myTank && !ROAM.isRoaming() && !devDriving) &&
-      !myTank->isAlive() && !myTank->isExploding()));
+  // turn on scene dimming when showing menu, when we're dead
+  // and no longer exploding, or when we are in a building.
+  bool insideDim = false;
+  if (myTank) {
+    const float hnp = 0.5f * NearPlane; // half near plane distance
+    const float *eye = viewFrustum.getEye();
+    const float *dir = viewFrustum.getDirection();
+    float clipPos[3];
+    clipPos[0] = eye[0] + (dir[0] * hnp);
+    clipPos[1] = eye[1] + (dir[1] * hnp);
+    clipPos[2] = eye[2];
+    const Obstacle *obs;
+    obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
+    if (obs != NULL)
+      insideDim = true;
+  }
+  RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
+		  ((myTank && !ROAM.isRoaming() && !devDriving) &&
+		   !myTank->isAlive() && !myTank->isExploding()));
 
-    // turn on panel dimming when showing the menu (both radar and chat)
-    if (HUDDialogStack::get()->isActive()) {
-      if (controlPanel)
-	controlPanel->setDimming(0.8f);
+  // turn on panel dimming when showing the menu (both radar and chat)
+  if (HUDDialogStack::get()->isActive()) {
+    if (controlPanel)
+      controlPanel->setDimming(0.8f);
 
-      if (radar)
-	radar->setDimming(0.8f);
-    } else {
-      if (controlPanel)
-	controlPanel->setDimming(0.0f);
+    if (radar)
+      radar->setDimming(0.8f);
+  } else {
+    if (controlPanel)
+      controlPanel->setDimming(0.0f);
 
-      if (radar)
-	radar->setDimming(0.0f);
-    }
+    if (radar)
+      radar->setDimming(0.0f);
+  }
 
-    // set hud state
-    hud->setDim(HUDDialogStack::get()->isActive());
-    hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
-    hud->setRoaming(ROAM.isRoaming());
-    hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
+  // set hud state
+  hud->setDim(HUDDialogStack::get()->isActive());
+  hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
+  hud->setRoaming(ROAM.isRoaming());
+  hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
 
-    // get frame start time
-    if (showDrawTime) {
+  // get frame start time
+  if (showDrawTime) {
 #if defined(DEBUG_RENDERING)
-      // get an accurate measure of frame time (at expense of frame rate)
-      if (BZDB.isTrue("glFinish"))
-	glFinish();
+    // get an accurate measure of frame time (at expense of frame rate)
+    if (BZDB.isTrue("glFinish"))
+      glFinish();
 #endif
-      media->stopwatch(true);
-    }
+    media->stopwatch(true);
+  }
 
-    // so observers can have enhanced radar
-    if (ROAM.isRoaming() && myTank && !devDriving) {
-      if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank())
-	myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
-      else
-	myTank->setZpos(ROAM.getCamera()->pos[2]);
-    }
+  // so observers can have enhanced radar
+  if (ROAM.isRoaming() && myTank && !devDriving) {
+    if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank())
+      myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
+    else
+      myTank->setZpos(ROAM.getCamera()->pos[2]);
+  }
 
-    // draw frame
-    if (viewType == SceneRenderer::ThreeChannel) {
-      // draw center channel
-      RENDERER.render(false);
-      drawUI();
+  // draw frame
+  if (viewType == SceneRenderer::ThreeChannel) {
+    // draw center channel
+    RENDERER.render(false);
+    drawUI();
 
-      // set up for drawing left channel
-      mainWindow->setQuadrant(MainWindow::LowerLeft);
-      // FIXME -- this assumes up is along +z
-      const float cFOV = cosf(fov);
-      const float sFOV = sinf(fov);
-      targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] - sFOV*myTankDir[1];
-      targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] + sFOV*myTankDir[0];
-      targetPoint[2] = eyePoint[2] + myTankDir[2];
-      viewFrustum.setView(eyePoint, targetPoint);
+    // set up for drawing left channel
+    mainWindow->setQuadrant(MainWindow::LowerLeft);
+    // FIXME -- this assumes up is along +z
+    const float cFOV = cosf(fov);
+    const float sFOV = sinf(fov);
+    targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] - sFOV*myTankDir[1];
+    targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] + sFOV*myTankDir[0];
+    targetPoint[2] = eyePoint[2] + myTankDir[2];
+    viewFrustum.setView(eyePoint, targetPoint);
 
-      // draw left channel
-      RENDERER.render(false, true, true);
+    // draw left channel
+    RENDERER.render(false, true, true);
 
-      // set up for drawing right channel
-      mainWindow->setQuadrant(MainWindow::LowerRight);
-      // FIXME -- this assumes up is along +z
-      targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] + sFOV*myTankDir[1];
-      targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] - sFOV*myTankDir[0];
-      targetPoint[2] = eyePoint[2] + myTankDir[2];
-      viewFrustum.setView(eyePoint, targetPoint);
+    // set up for drawing right channel
+    mainWindow->setQuadrant(MainWindow::LowerRight);
+    // FIXME -- this assumes up is along +z
+    targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] + sFOV*myTankDir[1];
+    targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] - sFOV*myTankDir[0];
+    targetPoint[2] = eyePoint[2] + myTankDir[2];
+    viewFrustum.setView(eyePoint, targetPoint);
 
-      // draw right channel
-      RENDERER.render(true, true, true);
+    // draw right channel
+    RENDERER.render(true, true, true);
 
 #if defined(DEBUG_RENDERING)
-      // set up for drawing rear channel
-      mainWindow->setQuadrant(MainWindow::UpperLeft);
-      // FIXME -- this assumes up is along +z
-      targetPoint[0] = eyePoint[0] - myTankDir[0];
-      targetPoint[1] = eyePoint[1] - myTankDir[1];
-      targetPoint[2] = eyePoint[2] + myTankDir[2];
-      viewFrustum.setView(eyePoint, targetPoint);
+    // set up for drawing rear channel
+    mainWindow->setQuadrant(MainWindow::UpperLeft);
+    // FIXME -- this assumes up is along +z
+    targetPoint[0] = eyePoint[0] - myTankDir[0];
+    targetPoint[1] = eyePoint[1] - myTankDir[1];
+    targetPoint[2] = eyePoint[2] + myTankDir[2];
+    viewFrustum.setView(eyePoint, targetPoint);
 
-      // draw rear channel
-      RENDERER.render(true, true, true);
+    // draw rear channel
+    RENDERER.render(true, true, true);
 #endif
-      // back to center channel
-      mainWindow->setQuadrant(MainWindow::UpperRight);
-    } else if (viewType == SceneRenderer::Stacked) {
-      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      if (BZDB.isSet("eyesep"))
-	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
-	FocalPlane = BZDB.eval("focal");
+    // back to center channel
+    mainWindow->setQuadrant(MainWindow::UpperRight);
+  } else if (viewType == SceneRenderer::Stacked) {
+    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    if (BZDB.isSet("eyesep"))
+      EyeDisplacement = BZDB.eval("eyesep");
+    if (BZDB.isSet("focal"))
+      FocalPlane = BZDB.eval("focal");
 
-      // setup view for left eye
-      viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+    // setup view for left eye
+    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
 
-      // draw left eye's view
-      RENDERER.render(false);
-      drawUI();
+    // draw left eye's view
+    RENDERER.render(false);
+    drawUI();
 
-      // set up view for right eye
-      mainWindow->setQuadrant(MainWindow::UpperHalf);
-      viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+    // set up view for right eye
+    mainWindow->setQuadrant(MainWindow::UpperHalf);
+    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
 
-      // draw right eye's view
-      RENDERER.render(true, true);
-      drawUI();
+    // draw right eye's view
+    RENDERER.render(true, true);
+    drawUI();
 
-      // draw common stuff
+    // draw common stuff
 
-      // back to left channel
-      mainWindow->setQuadrant(MainWindow::LowerHalf);
-    } else if (viewType == SceneRenderer::Stereo) {
-      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      if (BZDB.isSet("eyesep"))
-	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
-	FocalPlane = BZDB.eval("focal");
+    // back to left channel
+    mainWindow->setQuadrant(MainWindow::LowerHalf);
+  } else if (viewType == SceneRenderer::Stereo) {
+    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    if (BZDB.isSet("eyesep"))
+      EyeDisplacement = BZDB.eval("eyesep");
+    if (BZDB.isSet("focal"))
+      FocalPlane = BZDB.eval("focal");
 
-      // setup view for left eye
+    // setup view for left eye
 #ifdef USE_GL_STEREO
-      glDrawBuffer(GL_BACK_LEFT);
+    glDrawBuffer(GL_BACK_LEFT);
 #endif
-      viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
 
-      // draw left eye's view
-      RENDERER.render(false);
+    // draw left eye's view
+    RENDERER.render(false);
 #ifndef USE_GL_STEREO
-      drawUI();
+    drawUI();
 #endif
 
-      // set up view for right eye
+    // set up view for right eye
 #ifdef USE_GL_STEREO
-      glDrawBuffer(GL_BACK_RIGHT);
+    glDrawBuffer(GL_BACK_RIGHT);
 #else
-      mainWindow->setQuadrant(MainWindow::UpperLeft);
+    mainWindow->setQuadrant(MainWindow::UpperLeft);
 #endif
-      viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
 
-      // draw right eye's view
-      RENDERER.render(true, true);
+    // draw right eye's view
+    RENDERER.render(true, true);
 #ifndef USE_GL_STEREO
-      drawUI();
+    drawUI();
 #endif
 
-      // draw common stuff
+    // draw common stuff
 #ifdef USE_GL_STEREO
-      glDrawBuffer(GL_BACK);
-      drawUI();
+    glDrawBuffer(GL_BACK);
+    drawUI();
 #endif
 
 #ifndef USE_GL_STEREO
-      // back to left channel
-      mainWindow->setQuadrant(MainWindow::UpperRight);
+    // back to left channel
+    mainWindow->setQuadrant(MainWindow::UpperRight);
 #endif
-    } else if (viewType == SceneRenderer::Anaglyph) {
-      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      if (BZDB.isSet("eyesep"))
-	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
-	FocalPlane = BZDB.eval("focal");
+  } else if (viewType == SceneRenderer::Anaglyph) {
+    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    if (BZDB.isSet("eyesep"))
+      EyeDisplacement = BZDB.eval("eyesep");
+    if (BZDB.isSet("focal"))
+      FocalPlane = BZDB.eval("focal");
 
-      // setup view for left eye
-      glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
-      viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+    // setup view for left eye
+    glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
 
-      // draw left eye's view
-      RENDERER.render(false);
-      drawUI();
+    // draw left eye's view
+    RENDERER.render(false);
+    drawUI();
 
-      // set up view for right eye
-      glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
-      // for red/blue to somewhat work ...
-      //glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
-      viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+    // set up view for right eye
+    glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
+    // for red/blue to somewhat work ...
+    //glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
+    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
 
-      // draw right eye's view
-      RENDERER.render(true, true);
-      drawUI();
-    } else if (viewType == SceneRenderer::Interlaced) {
-      float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-      float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-      const int width = mainWindow->getWidth();
-      const int height = mainWindow->getHeight();
-      if (BZDB.isSet("eyesep"))
-	EyeDisplacement = BZDB.eval("eyesep");
-      if (BZDB.isSet("focal"))
-	FocalPlane = BZDB.eval("focal");
+    // draw right eye's view
+    RENDERER.render(true, true);
+    drawUI();
+  } else if (viewType == SceneRenderer::Interlaced) {
+    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    const int width = mainWindow->getWidth();
+    const int height = mainWindow->getHeight();
+    if (BZDB.isSet("eyesep"))
+      EyeDisplacement = BZDB.eval("eyesep");
+    if (BZDB.isSet("focal"))
+      FocalPlane = BZDB.eval("focal");
 
-      if (BZDBCache::stencilShadows) {
-	BZDB.set("stencilShadows", "0");
-	addMessage(NULL, "Disabled stencilShadows for interlaced mode");
-      }
-
-      OpenGLGState::resetState();
-      // enable stencil test
-      glEnable(GL_STENCIL_TEST);
-
-      // clear stencil
-      glClearStencil(0);
-      // Clear color and stencil buffer
-      glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-      // All drawing commands fail the stencil test, and are not
-      // drawn, but increment the value in the stencil buffer.
-      glStencilFunc(GL_NEVER, 0x0, 0x0);
-      glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-      glColor3f(1.0f, 1.0f, 1.0f);
-      for (int y=0;y<=height;y+=2) {
-	glBegin(GL_LINES);
-	glVertex2i(0, y);
-	glVertex2i(width, y);
-	glEnd();
-      }
-
-      // draw except where the stencil pattern is 0x1
-      // do not change the stencil buffer
-      glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-      // setup view for left eye
-      viewFrustum.setOffset(EyeDisplacement, FocalPlane);
-      // draw left eye's view
-      RENDERER.render(false);
-
-      // draw where the stencil pattern is 0x1
-      // do not change the stencil buffer
-      glStencilFunc(GL_EQUAL, 0x1, 0x1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-      // set up view for right eye
-      viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
-      // draw right eye's view
-      RENDERER.render(true, true);
-
-      glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-      drawUI();
-
-    } else {
-      const int zoomFactor = getZoomFactor();
-      if (zoomFactor != 1) {
-	// draw small out-the-window view
-	mainWindow->setQuadrant(MainWindow::ZoomRegion);
-	const int x = mainWindow->getOriginX();
-	const int y = mainWindow->getOriginY();
-	const int w = mainWindow->getWidth();
-	const int h = mainWindow->getHeight();
-	const int vh = mainWindow->getViewHeight();
-	viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane, w, h, vh);
-	RENDERER.render();
-
-	// set entire window
-	mainWindow->setQuadrant(MainWindow::FullWindow);
-	glScissor(mainWindow->getOriginX(), mainWindow->getOriginY(),
-	  mainWindow->getWidth(), mainWindow->getHeight());
-
-	// set pixel copy destination
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-0.25, (GLdouble)mainWindow->getWidth() - 0.25,
-	  -0.25, (GLdouble)mainWindow->getHeight() - 0.25, -1.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glRasterPos2i(0, 0);
-	glPopMatrix();
-
-	// zoom small image to entire window
-	glDisable(GL_DITHER);
-	glPixelZoom((float)zoomFactor, (float)zoomFactor);
-	glCopyPixels(x, y, w, h, GL_COLOR);
-	glPixelZoom(1.0f, 1.0f);
-	if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
-      } else {
-	// normal rendering
-	RENDERER.render();
-      }
-
-      // draw other stuff
-      drawUI();
+    if (BZDBCache::stencilShadows) {
+      BZDB.set("stencilShadows", "0");
+      addMessage(NULL, "Disabled stencilShadows for interlaced mode");
     }
 
+    OpenGLGState::resetState();
+    // enable stencil test
+    glEnable(GL_STENCIL_TEST);
 
-    // get frame end time
-    if (showDrawTime) {
-#if defined(DEBUG_RENDERING)
-      // get an accurate measure of frame time (at expense of frame rate)
-      if (BZDB.isTrue("glFinish"))
-	glFinish();
-#endif
-      hud->setDrawTime((float)media->stopwatch(false));
+    // clear stencil
+    glClearStencil(0);
+    // Clear color and stencil buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    // All drawing commands fail the stencil test, and are not
+    // drawn, but increment the value in the stencil buffer.
+    glStencilFunc(GL_NEVER, 0x0, 0x0);
+    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for (int y=0;y<=height;y+=2) {
+      glBegin(GL_LINES);
+      glVertex2i(0, y);
+      glVertex2i(width, y);
+      glEnd();
     }
 
-    // draw a fake cursor if requested.  this is mostly intended for
-    // pass through 3D cards that don't have cursor support.
-    if (BZDB.isTrue("fakecursor")) {
-      int mx, my;
-      const int width = mainWindow->getWidth();
-      const int height = mainWindow->getHeight();
-      const int ox = mainWindow->getOriginX();
-      const int oy = mainWindow->getOriginY();
-      mainWindow->getWindow()->getMouse(mx, my);
-      my = height - my - 1;
+    // draw except where the stencil pattern is 0x1
+    // do not change the stencil buffer
+    glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    // setup view for left eye
+    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+    // draw left eye's view
+    RENDERER.render(false);
 
-      glScissor(ox, oy, width, height);
+    // draw where the stencil pattern is 0x1
+    // do not change the stencil buffer
+    glStencilFunc(GL_EQUAL, 0x1, 0x1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    // set up view for right eye
+    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+    // draw right eye's view
+    RENDERER.render(true, true);
+
+    glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    drawUI();
+
+  } else {
+    const int zoomFactor = getZoomFactor();
+    if (zoomFactor != 1) {
+      // draw small out-the-window view
+      mainWindow->setQuadrant(MainWindow::ZoomRegion);
+      const int x = mainWindow->getOriginX();
+      const int y = mainWindow->getOriginY();
+      const int w = mainWindow->getWidth();
+      const int h = mainWindow->getHeight();
+      const int vh = mainWindow->getViewHeight();
+      viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane, w, h, vh);
+      RENDERER.render();
+
+      // set entire window
+      mainWindow->setQuadrant(MainWindow::FullWindow);
+      glScissor(mainWindow->getOriginX(), mainWindow->getOriginY(),
+		mainWindow->getWidth(), mainWindow->getHeight());
+
+      // set pixel copy destination
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
-      glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+      glOrtho(-0.25, (GLdouble)mainWindow->getWidth() - 0.25,
+	      -0.25, (GLdouble)mainWindow->getHeight() - 0.25, -1.0, 1.0);
       glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
       glLoadIdentity();
-
-      glColor3f(0.0f, 0.0f, 0.0f);
-      glRecti(mx - 8, my - 2, mx - 2, my + 2);
-      glRecti(mx + 2, my - 2, mx + 8, my + 2);
-      glRecti(mx - 2, my - 8, mx + 2, my - 2);
-      glRecti(mx - 2, my + 2, mx + 2, my + 8);
-
-      glColor3f(1.0f, 1.0f, 1.0f);
-      glRecti(mx - 7, my - 1, mx - 3, my + 1);
-      glRecti(mx + 3, my - 1, mx + 7, my + 1);
-      glRecti(mx - 1, my - 7, mx + 1, my - 3);
-      glRecti(mx - 1, my + 3, mx + 1, my + 7);
-
+      glRasterPos2i(0, 0);
       glPopMatrix();
+
+      // zoom small image to entire window
+      glDisable(GL_DITHER);
+      glPixelZoom((float)zoomFactor, (float)zoomFactor);
+      glCopyPixels(x, y, w, h, GL_COLOR);
+      glPixelZoom(1.0f, 1.0f);
+      if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+    } else {
+      // normal rendering
+      RENDERER.render();
     }
 
-    mainWindow->getWindow()->swapBuffers();
-
-    // remove dynamic nodes from this frame
-    if (scene)
-      scene->removeDynamicNodes();
-
-  } else {
-    // wait around a little to avoid spinning the CPU when iconified
-    TimeKeeper::sleep(0.05f);
+    // draw other stuff
+    drawUI();
   }
+
+
+  // get frame end time
+  if (showDrawTime) {
+#if defined(DEBUG_RENDERING)
+    // get an accurate measure of frame time (at expense of frame rate)
+    if (BZDB.isTrue("glFinish"))
+      glFinish();
+#endif
+    hud->setDrawTime((float)media->stopwatch(false));
+  }
+
+  // draw a fake cursor if requested.  this is mostly intended for
+  // pass through 3D cards that don't have cursor support.
+  if (BZDB.isTrue("fakecursor")) {
+    int mx, my;
+    const int width = mainWindow->getWidth();
+    const int height = mainWindow->getHeight();
+    const int ox = mainWindow->getOriginX();
+    const int oy = mainWindow->getOriginY();
+    mainWindow->getWindow()->getMouse(mx, my);
+    my = height - my - 1;
+
+    glScissor(ox, oy, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRecti(mx - 8, my - 2, mx - 2, my + 2);
+    glRecti(mx + 2, my - 2, mx + 8, my + 2);
+    glRecti(mx - 2, my - 8, mx + 2, my - 2);
+    glRecti(mx - 2, my + 2, mx + 2, my + 8);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRecti(mx - 7, my - 1, mx - 3, my + 1);
+    glRecti(mx + 3, my - 1, mx + 7, my + 1);
+    glRecti(mx - 1, my - 7, mx + 1, my - 3);
+    glRecti(mx - 1, my + 3, mx + 1, my + 7);
+
+    glPopMatrix();
+  }
+
+  mainWindow->getWindow()->swapBuffers();
+
+  // remove dynamic nodes from this frame
+  if (scene)
+    scene->removeDynamicNodes();
 }
 
 
@@ -6203,12 +6198,12 @@ static void prepareTheHUD()
       for (int i = 0; i < numFlags; i++) {
 	Flag &flag = world->getFlag(i);
 	if ((flag.type->flagTeam == myTank->getTeam())
-	  && ((flag.status != FlagOnTank) ||
-	  (flag.owner != myTank->getId()))) {
-	    const float *flagPos = flag.position;
-	    float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
-	    hud->addMarker(heading, myTeamColor);
-	    hud->AddEnhancedMarker(flagPos,myTeamColor,false,BZDBCache::flagPoleSize*2);
+	    && ((flag.status != FlagOnTank) ||
+		(flag.owner != myTank->getId()))) {
+	  const float *flagPos = flag.position;
+	  float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
+	  hud->addMarker(heading, myTeamColor);
+	  hud->AddEnhancedMarker(flagPos,myTeamColor,false,BZDBCache::flagPoleSize*2);
 	}
       }
     }
@@ -6216,7 +6211,7 @@ static void prepareTheHUD()
       // marker for my antidote flag
       const GLfloat *antidotePos = myTank->getAntidoteLocation();
       float heading = atan2f(antidotePos[1] - myPos[1],
-	antidotePos[0] - myPos[0]);
+			     antidotePos[0] - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
       hud->AddEnhancedMarker(antidotePos,antidoteColor,false,BZDBCache::flagPoleSize*2);
@@ -6862,7 +6857,12 @@ static void playingLoop()
     prepareTheHUD();
 
     // draw the frame
-    drawFrame(dt);
+    if (!unmapped) {
+      drawFrame(dt);
+    } else {
+      // wait around a little to avoid spinning the CPU when iconified
+      TimeKeeper::sleep(0.05f);
+    }
 
     // play the sounds
     SOUNDSYSTEM.update(TimeKeeper::getCurrent().getSeconds());

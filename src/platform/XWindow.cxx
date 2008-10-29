@@ -406,6 +406,12 @@ void			XWindow::setFullscreen(bool on)
   XSync(display->getDisplay(), false);
 }
 
+bool			XWindow::getFullscreen()
+{
+  // FIXME
+  return false;
+}
+
 void			XWindow::warpMouse(int x, int y)
 {
   XWarpPointer(display->getDisplay(), None, window, 0, 0, 0, 0, x, y);

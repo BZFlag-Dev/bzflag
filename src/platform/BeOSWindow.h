@@ -43,7 +43,8 @@ public:
   virtual void		setPosition(int x, int y);
   virtual void		setSize(int width, int height);
   virtual void		setMinSize(int width, int height);
-  virtual void		setFullscreen(bool on);
+  virtual void		setFullscreen(bool on) const;
+  virtual bool		getFullscreen();
 
   virtual void		warpMouse(int x, int y);
   virtual void		getMouse(int& x, int& y) const;

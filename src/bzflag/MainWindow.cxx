@@ -114,21 +114,21 @@ bool			MainWindow::isGrabEnabled(void)
   return grabEnabled;
 }
 
-bool			MainWindow::getFullscreen()
+bool			MainWindow::getFullscreen() const
 {
-  return isFullscreen;
+  return window->getFullscreen();
 }
 
 void			MainWindow::setFullscreen()
 {
-  isFullscreen = false;
-  toggleFullscreen();
+  window->setFullscreen(true);
+  resize();
 }
 
 void			MainWindow::toggleFullscreen()
 {
-  isFullscreen = !isFullscreen;
-  window->setFullscreen(isFullscreen);
+  isFullscreen = window->getFullscreen();
+  window->setFullscreen(!isFullscreen);
   resize();
 }
 
@@ -247,6 +247,10 @@ void			MainWindow::exposeCB(void* /*_self*/)
 void			MainWindow::iconify()
 {
   window->iconify();
+}
+void			MainWindow::deiconify()
+{
+  window->deiconify();
 }
 
 

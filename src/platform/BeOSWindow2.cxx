@@ -293,6 +293,11 @@ void					BeOSWindow::setFullscreen(bool on)
   bWindow->Unlock();
 }
 
+bool					BeOSWindow::getFullscreen() const
+{
+  return false;
+}
+
 void					BeOSWindow::warpMouse(int x, int y)
 {
   int px, py;

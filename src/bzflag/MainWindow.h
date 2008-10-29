@@ -50,7 +50,7 @@ class MainWindow {
     int			getWidth() const;
     int			getHeight() const;
     int			getViewHeight() const;
-    bool		getFullscreen();
+    bool		getFullscreen() const;
     bool		getFullView() const;
 
     void		setPosition(int x, int y);
@@ -59,7 +59,8 @@ class MainWindow {
     void		setFullView(bool);
     void		setFullscreen();
     void		toggleFullscreen();
-    void		iconify(void);
+    void		iconify();
+    void		deiconify();
     void		setNoMouseGrab();
 
     void		setZoomFactor(int);

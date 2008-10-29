@@ -220,6 +220,16 @@ void			WinWindow::setFullscreen(bool on)
   }
 }
 
+bool			WinWindow::getFullscreen()
+{
+  if (display->isFullScreenOnly())
+    return true;
+
+  // heh.
+  return false;
+}
+
+
 void			WinWindow::iconify()
 {
   ShowWindow(hwnd, SW_MINIMIZE);

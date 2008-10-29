@@ -421,7 +421,8 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
   //hideMouse();
 }
 
-MacWindow::~MacWindow() {
+MacWindow::~MacWindow()
+{
   if (window != NULL)
     DisposeWindow(window);
 
@@ -482,7 +483,8 @@ void MacWindow::setSize(int width, int height)
 
 }
 
-void MacWindow::setMinSize(int, int) {
+void MacWindow::setMinSize(int, int)
+{
 #ifndef USE_DSP
   if (window == NULL) return;
 
@@ -491,8 +493,19 @@ void MacWindow::setMinSize(int, int) {
 #endif
 }
 
-void MacWindow::setFullscreen(bool) {} // do nothing for now
-void MacWindow::warpMouse(int x, int y) {
+void MacWindow::setFullscreen(bool)
+{
+  // do nothing for now
+}
+
+bool MacWindow::getFullscreen() const
+{
+  // always fullscreen
+  return true;
+}
+
+void MacWindow::warpMouse(int x, int y)
+{
   CGDisplayErr cgErr;
   CGPoint  mp;
 

@@ -34,6 +34,7 @@ class SDLDisplay : public BzfDisplay {
   bool peekEvent(BzfEvent&) const;
   bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
   void setFullscreen(bool);
+  bool getFullscreen() const;
   void setWindowSize(int width, int height);
   void getWindowSize(int& width, int& height);
   void doSetVideoMode();

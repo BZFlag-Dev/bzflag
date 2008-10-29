@@ -417,11 +417,16 @@ void					BeOSWindow::setMinSize(int width, int height)
   bWindow->Unlock();
 }
 
-void					BeOSWindow::setFullscreen(bool on)
+void					BeOSWindow::setFullscreen(bool on) const
 {
   bWindow->Lock();
   // FIXME
   bWindow->Unlock();
+}
+
+bool					BeOSWindow::getFullscreen()
+{
+  return false;
 }
 
 void					BeOSWindow::warpMouse(int x, int y)
