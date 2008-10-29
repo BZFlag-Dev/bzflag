@@ -77,21 +77,21 @@ void SDLWindow::iconify() {
   iconified = true;
 }
 
-void SDLWindow::warpMouse(int _x, int _y) {
-  SDL_WarpMouse(_x, _y);
+void SDLWindow::warpMouse(int x, int y) {
+  SDL_WarpMouse(x, y);
 }
 
-void SDLWindow::getMouse(int& _x, int& _y) const {
-  _x = mx;
-  _y = my;
+void SDLWindow::getMouse(int& x, int& y) const {
+  x = mx;
+  y = my;
 }
 
-void SDLWindow::setSize(int width, int height) {
-  ((SDLDisplay *)getDisplay())->setWindowSize(width, height);
+void SDLWindow::setSize(int _width, int _height) {
+  ((SDLDisplay *)getDisplay())->setWindowSize(_width, _height);
 }
 
-void SDLWindow::getSize(int& width, int& height) const {
-  ((SDLDisplay *)getDisplay())->getWindowSize(width, height);
+void SDLWindow::getSize(int& _width, int& _height) const {
+  ((SDLDisplay *)getDisplay())->getWindowSize(_width, _height);
 }
 
 void SDLWindow::setGamma(float gamma) {

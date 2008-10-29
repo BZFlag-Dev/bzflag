@@ -28,8 +28,8 @@ class SDLWindow : public BzfWindow {
   bool  isValid() const {return true;};
   void  showWindow(bool) {;};
   void  getPosition(int &, int &) {;};
-  void  getSize(int& width, int& height) const;
-  void  setSize(int width, int height);
+  void  getSize(int& _width, int& _height) const;
+  void  setSize(int _width, int _height);
   void  setTitle(const char * title);
   void  setPosition(int, int) {;};
   void  setMinSize(int, int) {;};
