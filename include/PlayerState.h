@@ -17,9 +17,9 @@
 #include "Address.h"
 #include "BufferedNetworkMessage.h"
 
-// 54 bytes
+// 58 bytes
 const int PlayerUpdatePLenMax =
-			sizeof(float)		+ // timestamp
+			sizeof(double)		+ // timestamp
 			PlayerIdPLen		+ // player id
 			sizeof(int32_t)	+ // order
 			sizeof(int16_t)	+ // status
