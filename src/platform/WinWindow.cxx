@@ -220,7 +220,7 @@ void			WinWindow::setFullscreen(bool on)
   }
 }
 
-bool			WinWindow::getFullscreen()
+bool			WinWindow::getFullscreen() const
 {
   if (display->isFullScreenOnly())
     return true;
