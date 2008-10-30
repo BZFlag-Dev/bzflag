@@ -69,7 +69,6 @@ public:
     uint16_t& code, uint16_t& rejcode);
 
   void		sendCaptureFlag(TeamColor);
-  void		sendGrabFlag(int flagIndex);
   void		sendDropFlag(const float* position);
   void		sendKilled(const PlayerId victim,
     const PlayerId shooter,

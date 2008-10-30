@@ -932,15 +932,6 @@ void ServerLink::sendCaptureFlag(TeamColor team)
   send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
-void ServerLink::sendGrabFlag(int flagIndex)
-{
-  char msg[3];
-  void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  nboPackUShort(buf, uint16_t(flagIndex));
-  send(MsgGrabFlag, sizeof(msg), msg);
-}
-
 void ServerLink::sendDropFlag(const float* position)
 {
   char msg[13];
