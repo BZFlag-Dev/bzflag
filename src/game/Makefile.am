@@ -15,6 +15,7 @@ libGame_la_SOURCES =			\
 	CollisionManager.cxx		\
 	DirectoryNames.cxx		\
 	DynamicColor.cxx		\
+	Flag.cxx			\
 	Frustum.cxx			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
