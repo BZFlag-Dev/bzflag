@@ -129,9 +129,9 @@ SoundSystem& SoundManager::getSystem ( void )
   return *currentSystem;
 }
 
-void SoundManager::registerSystem ( SoundSystem *system )
+void SoundManager::registerSystem ( SoundSystem *sys )
 {
-  soundSystems.push_back(system);
+  soundSystems.push_back(sys);
 }
 
 std::vector<SoundSystem*> SoundManager::listSystems ( void )
@@ -139,29 +139,29 @@ std::vector<SoundSystem*> SoundManager::listSystems ( void )
   return soundSystems;
 }
 
-void SoundManager::activateSoundSystem ( SoundSystem* system )
+void SoundManager::activateSoundSystem ( SoundSystem* sys )
 {
-  if(!system)
+  if(!sys)
     return;
 
   SoundSystem* realSystem = NULL;
 
   for (size_t i = 0; i < soundSystems.size(); i++)
   {
-    if (soundSystems[i] == system)
+    if (soundSystems[i] == sys)
     {
-      realSystem = system;
+      realSystem = sys;
       break;
     }
   }
 
   if (!realSystem)
-    registerSystem(system);
+    registerSystem(sys);
 
   if(currentSystem)
     currentSystem->shutdown();
 
-  currentSystem = system;
+  currentSystem = sys;
   currentSystem->startup();
 }
 

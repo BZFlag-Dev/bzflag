@@ -89,11 +89,11 @@ class SoundManager  : public Singleton<SoundManager>
 {
 public:
   SoundSystem& getSystem ( void );
-  void registerSystem ( SoundSystem *system );
+  void registerSystem ( SoundSystem * );
 
   std::vector<SoundSystem*> listSystems ( void );
 
-  void activateSoundSystem ( SoundSystem* system );
+  void activateSoundSystem ( SoundSystem* sys );
   void activateSoundSystem ( const std::string &name );
   void activateSoundSystem ( const char *name ){if(name)activateSoundSystem(std::string(name));}
 
