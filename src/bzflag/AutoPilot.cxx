@@ -662,89 +662,102 @@ static bool fireAtTank()
 
   if (myTank->getFlag() == Flags::ShockWave) {
     TimeKeeper now = TimeKeeper::getTick();
+
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
-      for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding()) {
 
-	  const float *tp = player[t]->getPosition();
-	  float enemyPos[3];
-	  //toss in some lag adjustment/future prediction - 300 millis
-	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
-	  enemyPos[0] += 0.3f * tv[0];
-	  enemyPos[1] += 0.3f * tv[1];
-	  enemyPos[2] += 0.3f * tv[2];
-	  if (enemyPos[2] < 0.0f)
-	    enemyPos[2] = 0.0f;
-	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
-	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-	    if (!myTank->validTeamTarget(player[t])) {
-	      hasSWTarget = false;
-	      t = curMaxPlayers;
-	    } else {
-	      hasSWTarget = true;
-	    }
+      for (int t = 0; t < curMaxPlayers; t++) {
+	if (t == myTank->getId() ||
+	    !player[t] ||
+	    !player[t]->isAlive() ||
+	    player[t]->isPaused() ||
+	    player[t]->isNotResponding()) {
+	  continue;
+	}
+
+	const float *tp = player[t]->getPosition();
+	float enemyPos[3];
+	//toss in some lag adjustment/future prediction - 300 millis
+	memcpy(enemyPos,tp,sizeof(enemyPos));
+	const float *tv = player[t]->getVelocity();
+	enemyPos[0] += 0.3f * tv[0];
+	enemyPos[1] += 0.3f * tv[1];
+	enemyPos[2] += 0.3f * tv[2];
+	if (enemyPos[2] < 0.0f)
+	  enemyPos[2] = 0.0f;
+	float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+	if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	  if (!myTank->validTeamTarget(player[t])) {
+	    hasSWTarget = false;
+	    t = curMaxPlayers;
+	  } else {
+	    hasSWTarget = true;
 	  }
 	}
       }
+
       if (hasSWTarget) {
 	myTank->fireShot();
 	lastShot = TimeKeeper::getTick();
 	return true;
       }
     }
-  } else {
-    TimeKeeper now = TimeKeeper::getTick();
-    if (now - lastShot >= (1.0f / world->getMaxShots())) {
+    
+    return false;
+  }
 
-      float errorLimit = world->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
-      float closeErrorLimit = errorLimit * 2.0f;
+  TimeKeeper now = TimeKeeper::getTick();
+  if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
-      for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding() &&
-	    myTank->validTeamTarget(player[t])) {
+    float errorLimit = world->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+    float closeErrorLimit = errorLimit * 2.0f;
 
-	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-	      && (myTank->getFlag() != Flags::SuperBullet)
-	      && (myTank->getFlag() != Flags::ShockWave))
-	    continue;
+    for (int t = 0; t < curMaxPlayers; t++) {
 
-	  const float *tp = player[t]->getPosition();
-	  float enemyPos[3];
-	  //toss in some lag adjustment/future prediction - 300 millis
-	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
-	  enemyPos[0] += 0.3f * tv[0];
-	  enemyPos[1] += 0.3f * tv[1];
-	  enemyPos[2] += 0.3f * tv[2];
-	  if (enemyPos[2] < 0.0f)
-	    enemyPos[2] = 0.0f;
-
-	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
-
-	  if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
-
-	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
-	    if ((targetDiff < errorLimit)
-		||  ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
-	      bool isTargetObscured;
-	      if (myTank->getFlag() != Flags::SuperBullet)
-		isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
-	      else
-		isTargetObscured = false;
-
-	      if (!isTargetObscured) {
-		myTank->fireShot();
-		lastShot = now;
-		t = curMaxPlayers;
-		return true;
-	      }
-	    }
+      /* make sure it's a valid playing target */
+      if (t == myTank->getId() ||
+	  !player[t] ||
+	  !player[t]->isAlive() ||
+	  player[t]->isPaused() ||
+	  player[t]->isNotResponding() ||
+	  !myTank->validTeamTarget(player[t]))
+	continue;
+      
+      /* make sure they're worth going after */
+      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+	  && (myTank->getFlag() != Flags::SuperBullet)
+	  && (myTank->getFlag() != Flags::ShockWave))
+	continue;
+      
+      const float *tp = player[t]->getPosition();
+      float enemyPos[3];
+      
+      //toss in some lag adjustment/future prediction - 300 millis
+      memcpy(enemyPos,tp,sizeof(enemyPos));
+      const float *tv = player[t]->getVelocity();
+      enemyPos[0] += 0.3f * tv[0];
+      enemyPos[1] += 0.3f * tv[1];
+      enemyPos[2] += 0.3f * tv[2];
+      if (enemyPos[2] < 0.0f)
+	enemyPos[2] = 0.0f;
+      
+      float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+      
+      /* if I have GM or they're just really close but above/below me */
+      if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
+	
+	/* are they within range? */
+	float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
+	if ((targetDiff < errorLimit) ||
+	    ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
+	  
+	  /* shoot at them if I can see them */
+	  if ((myTank->getFlag() != Flags::SuperBullet) &&
+	      TargetingUtils::isLocationObscured( pos, enemyPos )) {
+	    myTank->fireShot();
+	    lastShot = now;
+	    t = curMaxPlayers;
+	    return true;
 	  }
 	}
       }
