@@ -150,7 +150,7 @@ PlayerId msgDestination;
 static void setHuntTarget();
 static void setTankFlags();
 static void handleMsgSetVars(void *msg);
-static void handleGMUpdate ( void *);
+static void handleGMUpdate (void *);
 static void handleMovementUpdate(uint16_t code, void *msg);
 static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
 static void enteringServer(void *buf);
@@ -441,9 +441,9 @@ void setSceneDatabase()
 
   // print debugging info
   if (BZDBCache::zbuffer) {
-    logDebugMessage(2,"ZSceneDatabase processed in %.3f seconds.\n", elapsed);
+    logDebugMessage(2, "ZSceneDatabase processed in %.3f seconds.\n", elapsed);
   } else {
-    logDebugMessage(2,"BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
+    logDebugMessage(2, "BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
   }
 
   // set the scene
@@ -1952,7 +1952,7 @@ static void handleTeamUpdate(void *msg, bool &checkScores)
   uint8_t  numTeams;
   uint16_t team;
 
-  msg = nboUnpackUByte(msg,numTeams);
+  msg = nboUnpackUByte(msg, numTeams);
   for (int i = 0; i < numTeams; i++) {
     msg = nboUnpackUShort(msg, team);
     msg = teams[int(team)].unpack(msg);
@@ -1989,7 +1989,7 @@ static void handleAliveMessage(void *msg)
     } else if (tank->getPlayerType() == ComputerPlayer) {
       for (int r = 0; r < numRobots; r++) {
 	if (robots[r] && robots[r]->getId() == playerIndex) {
-	  robots[r]->restart(pos,forward);
+	  robots[r]->restart(pos, forward);
 	  setRobotTarget(robots[r]);
 	  break;
 	}
@@ -2000,7 +2000,7 @@ static void handleAliveMessage(void *msg)
     if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
       if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) || (tank != ROAM.getTargetTank()))) || BZDB.isTrue("enableLocalSpawnEffect")) {
 	if (myTank->getFlag() != Flags::Colorblindness) {
-	  static float cbColor[4] = {1,1,1,1};
+	  static float cbColor[4] = {1, 1, 1, 1};
 	  EFFECTS.addSpawnEffect(cbColor, pos);
 	} else {
 	  EFFECTS.addSpawnEffect(tank->getColor(), pos);
@@ -2128,7 +2128,7 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
     explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
     addTankExplosion(explodePos);
 
-    EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,victimPlayer->getAngle());
+    EFFECTS.addDeathEffect(victimPlayer->getColor(), pos, victimPlayer->getAngle());
   }
 
   if (killerLocal) {
@@ -2290,7 +2290,7 @@ static void handleGrabFlag(void *msg)
   msg = nboUnpackUByte(msg, id);
   msg = nboUnpackUShort(msg, flagIndex);
   msg = world->getFlag(int(flagIndex)).unpack(msg);
-  msg = nboUnpackUByte(msg,shot);
+  msg = nboUnpackUByte(msg, shot);
 
   Player *tank = lookupPlayer(id);
   if (!tank)
@@ -2316,7 +2316,7 @@ static void handleGrabFlag(void *msg)
       && (Team::isColorTeam(myTank->getTeam()))) {
 	hud->setAlert(1, "Team Grab!!!", 3.0f, false);
 	const float *pos = tank->getPosition();
-	SOUNDSYSTEM.play(SFX_TEAMGRAB,pos,false,false);
+	SOUNDSYSTEM.play(SFX_TEAMGRAB, pos, false, false);
     }
   }
 
@@ -2536,7 +2536,7 @@ static void handleSetShotType(BufferedNetworkMessage *msg)
 // disable shot effects for that specific tank
 static bool showShotEffects(int shooterid)
 {
-  if(!BZDB.isTrue("enableLocalShotEffect"))
+  if (!BZDB.isTrue("enableLocalShotEffect"))
     return false;
 
   if (ROAM.getMode() == Roaming::roamViewFP)
@@ -2548,7 +2548,7 @@ static bool showShotEffects(int shooterid)
   return true;
 }
 
-static void playShotSound ( const FiringInfo &info, bool localSound )
+static void playShotSound (const FiringInfo &info, bool localSound)
 {
   const float *pos = info.shot.pos;
   const bool importance = false;
@@ -2597,7 +2597,7 @@ static void handleShotBegin(bool human, void *msg)
   {
     // the shot is ours, find the shot we made, and kill it
     // then rebuild the shot with the info from the server
-    myTank->updateShot(firingInfo,id,firingInfo.timeSent);
+    myTank->updateShot(firingInfo, id, firingInfo.timeSent);
   }
   else
   {
@@ -2614,7 +2614,7 @@ static void handleShotBegin(bool human, void *msg)
 	  shooter->getMuzzle(shotPos);
 
 	  if (showShotEffects(shooterid))
-	    EFFECTS.addShotEffect(shooter->getColor(),shotPos, shooter->getAngle(), shooter->getVelocity());
+	    EFFECTS.addShotEffect(shooter->getColor(), shotPos, shooter->getAngle(), shooter->getVelocity());
 	}
       } 
       else 
@@ -2626,7 +2626,7 @@ static void handleShotBegin(bool human, void *msg)
   }
 }
 
-static void handleWShotBegin ( void *msg )
+static void handleWShotBegin (void *msg)
 {
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
@@ -2673,7 +2673,7 @@ static void handleHandicap(void *msg)
       if (i >= 0)
 	sPlayer = getPlayerByIndex(i);
       else
-	logDebugMessage(1,"Received handicap update for unknown player!\n");
+	logDebugMessage(1, "Received handicap update for unknown player!\n");
     }
     if (sPlayer) {
       // a relative score of -50 points will provide maximum handicap
@@ -2718,7 +2718,7 @@ static void handleScore(void *msg)
       if (i >= 0)
 	sPlayer = getPlayerByIndex(i);
       else
-	logDebugMessage(1,"Received score update for unknown player!\n");
+	logDebugMessage(1, "Received score update for unknown player!\n");
     }
     if (sPlayer) {
       if (sPlayer == myTank) {
@@ -2747,7 +2747,7 @@ static void handleTeleport(void *msg)
     const Teleporter *teleporter = world->getTeleporter(int(to), face);
     const float *pos = teleporter->getPosition();
     tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-    SOUNDSYSTEM.play(SFX_TELEPORT, pos,false, false);
+    SOUNDSYSTEM.play(SFX_TELEPORT, pos, false, false);
   }
 }
 
@@ -2760,7 +2760,7 @@ static void handleTransferFlag(void *msg)
   msg = nboUnpackUShort(msg, flagIndex);
   msg = world->getFlag(int(flagIndex)).unpack(msg);
   unsigned char t = 0;
-  msg = nboUnpackUByte(msg,t);
+  msg = nboUnpackUByte(msg, t);
   Player *fromTank = lookupPlayer(fromId);
   Player *toTank = lookupPlayer(toId);
   handleFlagTransferred(fromTank, toTank, flagIndex, (ShotType)t);
@@ -2807,7 +2807,7 @@ static void handleMessage(void *msg)
     if (silencePlayers[i] != "*")
       msg2 += " from " + silencePlayers[i];
 
-    addMessage(NULL,msg2);
+    addMessage(NULL, msg2);
 #endif
     return;
   }
@@ -3081,7 +3081,7 @@ static void handleNewPlayer(void *msg)
     if (!robots[i])
       break;
   if (i >= MAX_ROBOTS) {
-    logDebugMessage(1,"Too many bots requested\n");
+    logDebugMessage(1, "Too many bots requested\n");
     return;
   }
   robots[i] = new RobotPlayer(id,
@@ -3104,22 +3104,22 @@ static void handleTangUpdate(uint16_t len, void *msg)
 {
   if (len >= 5) {
     unsigned int objectID = 0;
-    msg = nboUnpackUInt(msg,objectID);
+    msg = nboUnpackUInt(msg, objectID);
     unsigned char tang = 0;
-    msg = nboUnpackUByte(msg,tang);
+    msg = nboUnpackUByte(msg, tang);
 
-    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID,tang);
+    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID, tang);
   }
 }
 
 static void handlePlayerData(void *msg)
 {
   PlayerId id;
-  msg = nboUnpackUByte(msg,id);
+  msg = nboUnpackUByte(msg, id);
 
-  std::string key,value;
-  msg= nboUnpackStdString(msg,key);
-  msg= nboUnpackStdString(msg,value);
+  std::string key, value;
+  msg= nboUnpackStdString(msg, key);
+  msg= nboUnpackStdString(msg, value);
 
   Player *p = lookupPlayer(id);
   if (p && key.size())
@@ -3136,7 +3136,7 @@ static void handleAllowSpawn(uint16_t len, void *msg)
 {
   if (len >= 1) {
     unsigned char allow = 0;
-    msg = nboUnpackUByte(msg,allow);
+    msg = nboUnpackUByte(msg, allow);
 
     canSpawn = allow != 0;
   }
@@ -3144,7 +3144,7 @@ static void handleAllowSpawn(uint16_t len, void *msg)
 
 static void handleLimboMessage(void *msg)
 {
-  nboUnpackStdString(msg,customLimboMessage);
+  nboUnpackStdString(msg, customLimboMessage);
 }
 
 static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg)
@@ -3175,7 +3175,7 @@ case MsgNearFlag:
   break;
 
 case MsgSetTeam:
-  handleSetTeam(msg,len);
+  handleSetTeam(msg, len);
   break;
 
 case MsgFetchResources:
@@ -3255,7 +3255,7 @@ case MsgRemovePlayer:
   break;
 
 case MsgFlagUpdate:
-  handleFlagUpdate(msg,len);
+  handleFlagUpdate(msg, len);
   break;
 
 case MsgTeamUpdate:
@@ -3349,11 +3349,11 @@ case MsgNewPlayer:
   // inter-player relayed message
 case MsgPlayerUpdate:
 case MsgPlayerUpdateSmall:
-  handleMovementUpdate(code,msg);
+  handleMovementUpdate(code, msg);
   break;
 
 case MsgGMUpdate:
-  handleGMUpdate ( msg );
+  handleGMUpdate (msg);
   break;
 
 case MsgLagPing:
@@ -3361,7 +3361,7 @@ case MsgLagPing:
   break;
 
 case MsgTangibilityUpdate:
-  handleTangUpdate(len,msg);
+  handleTangUpdate(len, msg);
   break;
 
 case MsgTangibilityReset:
@@ -3369,7 +3369,7 @@ case MsgTangibilityReset:
   break;
 
 case MsgAllowSpawn:
-  handleAllowSpawn(len,msg);
+  handleAllowSpawn(len, msg);
   break;
 
 case MsgLimboMessage:
@@ -3424,7 +3424,7 @@ static void handleMovementUpdate(uint16_t code, void *msg)
   }
 }
 
-static void handleGMUpdate ( void *msg )
+static void handleGMUpdate (void *msg)
 {
   ShotUpdate shot;
   msg = shot.unpack(msg);
@@ -3445,7 +3445,7 @@ static void handleGMUpdate ( void *msg )
     static TimeKeeper lastLockMsg;
     if (TimeKeeper::getTick() - lastLockMsg > 0.75) 
     {
-      SOUNDSYSTEM.play(SFX_LOCK, shot.pos,false,false);
+      SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
       lastLockMsg=TimeKeeper::getTick();
       addMessage(tank, "locked on me");
     }
@@ -3487,12 +3487,12 @@ static void doMessages()
   BufferedNetworkMessageManager::MessageList messageList;
 
   MSGMGR.update();
-  MSGMGR.receiveMessages(&clientMessageCallback,messageList);
+  MSGMGR.receiveMessages(&clientMessageCallback, messageList);
 
   BufferedNetworkMessageManager::MessageList::iterator itr = messageList.begin();
 
   while (itr != messageList.end()) {
-    if (!handleServerMessage(true,*itr))
+    if (!handleServerMessage(true, *itr))
       handleServerMessage(true, (*itr)->getCode(), (uint16_t)(*itr)->size(), (*itr)->buffer());
 
     (*itr)->clear(); // blow it out so it gets cleared at the end
@@ -3600,7 +3600,7 @@ void addShotExplosion(const float *pos)
 {
   // only play explosion sound if you see an explosion
   if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f, false))
-    SOUNDSYSTEM.play(SFX_SHOT_BOOM, pos,false,false);
+    SOUNDSYSTEM.play(SFX_SHOT_BOOM, pos, false, false);
 }
 
 void addShotPuff(const float *pos, float azimuth, float elevation)
@@ -3610,7 +3610,7 @@ void addShotPuff(const float *pos, float azimuth, float elevation)
     return;
   }
 
-  float rots[2] = {azimuth,elevation};
+  float rots[2] = {azimuth, elevation};
   EFFECTS.addGMPuffEffect(pos, rots, NULL);
 }
 
@@ -3732,7 +3732,7 @@ static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagInde
   const float *pos = toTank->getPosition();
   if (f.type->flagTeam != ::NoTeam) {
     if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam())) {
-      SOUNDSYSTEM.play(SFX_TEAMGRAB, pos,false,false);
+      SOUNDSYSTEM.play(SFX_TEAMGRAB, pos, false, false);
     } else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam())) {
       hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
       SOUNDSYSTEM.play(SFX_ALERT);
@@ -3806,7 +3806,7 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
       if (reason == GotRunOver)
 	SOUNDSYSTEM.play(SFX_RUNOVER, pos, false, getLocalPlayer(killer) == myTank);
       else
-	SOUNDSYSTEM.play(SFX_EXPLOSION, pos,false, getLocalPlayer(killer) == myTank);
+	SOUNDSYSTEM.play(SFX_EXPLOSION, pos, false, getLocalPlayer(killer) == myTank);
     }
 
     if (tank != myTank) {
@@ -4087,8 +4087,8 @@ static bool isKillable(const Player *target)
 void setLookAtMarker(void)
 {
   // get info about my tank
-  const float c = cosf( - myTank->getAngle());
-  const float s = sinf( - myTank->getAngle());
+  const float c = cosf(- myTank->getAngle());
+  const float s = sinf(- myTank->getAngle());
   const float x0 = myTank->getPosition()[0];
   const float y0 = myTank->getPosition()[1];
   const float z0 = myTank->getPosition()[2];
@@ -4098,7 +4098,7 @@ void setLookAtMarker(void)
   float bestDistance = Infinity;
 
   // figure out which tank is centered in my sights
-  for(int i = 0; i < curMaxPlayers; i++) {
+  for (int i = 0; i < curMaxPlayers; i++) {
     if (!player[i] || !player[i]->isAlive())
       continue;
 
@@ -4162,7 +4162,7 @@ void setLookAtMarker(void)
     std::string flagName = bestTarget->getFlag()->flagAbbv;
     label += std::string("(") + flagName + std::string(")");
   }
-  hud->AddEnhancedNamedMarker(bestTarget->getPosition(),Team::getRadarColor(bestTarget->getTeam()),label,!isKillable(bestTarget),2.0f);
+  hud->AddEnhancedNamedMarker(bestTarget->getPosition(), Team::getRadarColor(bestTarget->getTeam()), label, !isKillable(bestTarget), 2.0f);
 }
 
 void setTarget()
@@ -4324,7 +4324,7 @@ static void setHuntTarget()
       }
       if (!pulse.isOn()) {
 	const float *bestTargetPosition = bestTarget->getPosition();
-	SOUNDSYSTEM.play(SFX_HUNT, bestTargetPosition,false,false);
+	SOUNDSYSTEM.play(SFX_HUNT, bestTargetPosition, false, false);
 	pulse.setClock(1.0f);
       }
   }
@@ -4866,7 +4866,7 @@ static void cleanWorldCache()
     }
 
     // remove the oldest file
-    logDebugMessage(1,"cleanWorldCache: removed %s\n", oldestFile);
+    logDebugMessage(1, "cleanWorldCache: removed %s\n", oldestFile);
     remove((worldPath + oldestFile).c_str());
     free(oldestFile);
     totalSize -= oldestSize;
@@ -5279,17 +5279,17 @@ static void joinInternetGame2()
   if (!(serverList.lookupServer(serverKey) == NULL))
     serverList.markAsRecent(serverList.lookupServer(serverKey));
 
-  serverLink->sendCaps(myTank->getId(),true,!noSounds);
+  serverLink->sendCaps(myTank->getId(), true, !noSounds);
 
   // give them our motto
-  if(myTank && startupInfo.motto.size())
+  if (myTank && startupInfo.motto.size())
     myTank->customData["motto"] = startupInfo.motto;
   
   // send all our custom data pairs
-  std::map<std::string,std::string>::iterator itr = myTank->customData.begin();
-  while(itr != myTank->customData.end())
+  std::map<std::string, std::string>::iterator itr = myTank->customData.begin();
+  while (itr != myTank->customData.end())
   {
-    serverLink->sendCustomData(itr->first,itr->second);
+    serverLink->sendCustomData(itr->first, itr->second);
     itr++;
   }
 
@@ -5688,7 +5688,7 @@ void drawFrame(const float dt)
 
   // let the hud save off the view matrix so it can do view projections
   if (hud)
-    hud->saveMatrixes(viewFrustum.getViewMatrix(),viewFrustum.getProjectionMatrix());
+    hud->saveMatrixes(viewFrustum.getViewMatrix(), viewFrustum.getProjectionMatrix());
 
   // add dynamic nodes
   SceneDatabase *scene = RENDERER.getSceneDatabase();
@@ -5745,7 +5745,7 @@ void drawFrame(const float dt)
 	  if (myTank->getFlag() == Flags::Seer || showPlayer)// add player tank if required
 	    player[i]->addToScene(scene, effectiveTeam,
 				  inCockpt, seerView,
-				  showPlayer, showPlayer,thirdPersonVars.b3rdPerson);
+				  showPlayer, showPlayer, thirdPersonVars.b3rdPerson);
 	}
       }
 
@@ -6201,9 +6201,9 @@ static void prepareTheHUD()
 	    && ((flag.status != FlagOnTank) ||
 		(flag.owner != myTank->getId()))) {
 	  const float *flagPos = flag.position;
-	  float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
+	  float heading = atan2f(flagPos[1] - myPos[1], flagPos[0] - myPos[0]);
 	  hud->addMarker(heading, myTeamColor);
-	  hud->AddEnhancedMarker(flagPos,myTeamColor,false,BZDBCache::flagPoleSize*2);
+	  hud->AddEnhancedMarker(flagPos, myTeamColor, false, BZDBCache::flagPoleSize*2);
 	}
       }
     }
@@ -6214,7 +6214,7 @@ static void prepareTheHUD()
 			     antidotePos[0] - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
-      hud->AddEnhancedMarker(antidotePos,antidoteColor,false,BZDBCache::flagPoleSize*2);
+      hud->AddEnhancedMarker(antidotePos, antidoteColor, false, BZDBCache::flagPoleSize*2);
     }
   }
   return;
@@ -6746,7 +6746,7 @@ void doFPSLimit(void)
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   float fpsLimit = 200;
 
-  if (BZDB.isTrue("saveEnergy") && (BZDB.eval("fpsLimit") < fpsLimit) )  // limit the fps to save battery life by minimizing cpu usage
+  if (BZDB.isTrue("saveEnergy") && (BZDB.eval("fpsLimit") < fpsLimit))  // limit the fps to save battery life by minimizing cpu usage
     fpsLimit = BZDB.eval("fpsLimit");
 
   static bool notify = false;
@@ -6902,7 +6902,7 @@ static void playingLoop()
 static float timeConfiguration(bool useZBuffer)
 {
   // prepare depth buffer if requested
-  BZDB.set("zbuffer","1");
+  BZDB.set("zbuffer", "1");
   if (useZBuffer) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -7360,20 +7360,20 @@ default:
   // print debugging info
   {
     // Application version
-    logDebugMessage(1,"BZFlag version:   %s\n", getAppVersion());
+    logDebugMessage(1, "BZFlag version:   %s\n", getAppVersion());
 
     // Protocol version
-    logDebugMessage(1,"BZFlag protocol:  %s\n", getProtocolVersion());
+    logDebugMessage(1, "BZFlag protocol:  %s\n", getProtocolVersion());
 
     // OpenGL Driver Information
-    logDebugMessage(1,"OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
-    logDebugMessage(1,"OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
-    logDebugMessage(1,"OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
+    logDebugMessage(1, "OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
+    logDebugMessage(1, "OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
+    logDebugMessage(1, "OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
 
     // Depth Buffer bitplanes
     GLint zDepth;
     glGetIntegerv(GL_DEPTH_BITS, &zDepth);
-    logDebugMessage(1,"Depth Buffer:     %i bitplanes\n", zDepth);
+    logDebugMessage(1, "Depth Buffer:     %i bitplanes\n", zDepth);
   }
 
   // windows version can be very helpful in debug logs
@@ -7383,7 +7383,7 @@ default:
     ZeroMemory(&info, sizeof(OSVERSIONINFO));
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
-    logDebugMessage(1,"Running on Windows %s%d.%d %s\n",
+    logDebugMessage(1, "Running on Windows %s%d.%d %s\n",
       (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
       info.dwMajorVersion, info.dwMinorVersion,
       info.szCSDVersion);
