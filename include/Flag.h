@@ -122,8 +122,8 @@ typedef std::set<FlagType*> FlagSet;
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
 public:
-  FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
-	    ShotType sType, FlagQuality quality, TeamColor team, const char* help,
+  FlagType( const std::string& name, const std::string& abbv, FlagEndurance _endurance,
+	    ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
 	    bool _custom = false ) :
     flagName(name),
     flagAbbv(abbv),
