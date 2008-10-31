@@ -38,14 +38,14 @@ bool Reports::file(const std::string &user, const std::string message)
 
   Report report(ctime(&now), user, message);
 
-  if(clOptions->reportFile.size()) {
+  if (clOptions->reportFile.size()) {
     std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
     ofs << report.fileLine() << std::endl;
   }
 
-  if(clOptions->reportPipe.size() > 0) {
+  if (clOptions->reportPipe.size() > 0) {
     FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
-    if(pipeWrite != NULL)
+    if (pipeWrite != NULL)
       fprintf(pipeWrite, "%s\n\n", report.fileLine().c_str());
     else
       logDebugMessage(1, "Couldn't write report to the pipe\n");
@@ -58,9 +58,9 @@ bool Reports::file(const std::string &user, const std::string message)
   const unsigned int wordsize = words.size();
   std::string temp2;
 
-  while(cur != wordsize) {
+  while (cur != wordsize) {
     temp2.clear();
-    while(cur != wordsize &&(temp2.size() + words[cur].size() + 1) <(unsigned) MessageLen) {
+    while (cur != wordsize &&(temp2.size() + words[cur].size() + 1) <(unsigned) MessageLen) {
 	temp2 += words[cur] + " ";
 	++cur;
     }
@@ -81,27 +81,27 @@ bool Reports::file(const std::string &user, const std::string message)
 size_t Reports::getLines(std::vector<std::string> &lines, const char* p)
 {
   lines.clear();
-  if(clOptions->reportFile.size() > 0) 
+  if (clOptions->reportFile.size() > 0) 
     return 0;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if(ifs.fail())
+  if (ifs.fail())
     return 0;
 
   std::string pattern = "*";
-  if(p)
+  if (p)
     pattern = p;
 
   // assumes that empty lines separate the reports
 
   bool done = false;
-  while(!done) {
+  while (!done) {
     std::string line;
     done = std::getline(ifs, line) == NULL;
-    if(line.size()) {
+    if (line.size()) {
       Report report(line);
 
-      if(report.match(pattern))
+      if (report.match(pattern))
 	lines.push_back(report.fileLine());
     }
   }
@@ -111,16 +111,16 @@ size_t Reports::getLines(std::vector<std::string> &lines, const char* p)
 size_t Reports::count(void)
 {
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if(ifs.fail())
+  if (ifs.fail())
     return 0;
 
   size_t s = 0;
 
   bool done = false;
-  while(!done) {
+  while (!done) {
     std::string line;
     done = std::getline(ifs, line) == NULL;
-    if(line.size())
+    if (line.size())
       s++;
   }
   return s;
@@ -129,7 +129,7 @@ size_t Reports::count(void)
 bool Reports::clear(void)
 {
   // just blast out the file with a single newline
-  if(!clOptions->reportFile.size()) {
+  if (!clOptions->reportFile.size()) {
     std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out);
     ofs << std::endl;
     return true;
@@ -140,26 +140,26 @@ bool Reports::clear(void)
 
 bool Reports::clear(size_t index)
 {
-  if(!clOptions->reportFile.size()) 
+  if (!clOptions->reportFile.size()) 
     return false;
 
   std::vector<Report> reports;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if(ifs.fail())
+  if (ifs.fail())
     return false;
 
   // read em all in
   bool done = false;
-  while(!done) {
+  while (!done) {
     std::string line;
     done = std::getline(ifs, line) == NULL;
-    if(line.size())
+    if (line.size())
       reports.push_back(Report(line));
   }
   ifs.close();
 
-  if(index >= reports.size())
+  if (index >= reports.size())
     return false;
 
   reports.erase(reports.begin()+index);
@@ -167,8 +167,8 @@ bool Reports::clear(size_t index)
   std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out);
 
   std::vector<Report>::iterator itr = reports.begin();
-  while(itr != reports.end())
-  for(size_t r = 0; r < reports.size(); r++)
+  while (itr != reports.end())
+  for (size_t r = 0; r < reports.size(); r++)
     ofs <<(itr++)->fileLine() << std::endl;
 
   return true;
@@ -176,23 +176,23 @@ bool Reports::clear(size_t index)
 
 Reports::Report Reports::get(size_t index)
 {
-  if(!clOptions->reportFile.size()) 
+  if (!clOptions->reportFile.size()) 
     return Report();
 
   std::list<Report> reports;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if(ifs.fail())
+  if (ifs.fail())
     return Report();
 
   size_t s = 0;
   // read em all in
   bool done = false;
-  while(!done) {
+  while (!done) {
     std::string line;
     done = std::getline(ifs, line) == NULL;
-    if(line.size()) {
-      if(s == index)
+    if (line.size()) {
+      if (s == index)
 	return Report(line);
       s++;
     }
@@ -204,7 +204,7 @@ Reports::Report Reports::get(size_t index)
 
 Reports::Report::Report(const char* t, const std::string &f, const std::string & m)
 {
-  if(t)
+  if (t)
     time = t;
 
   from = f;
@@ -214,13 +214,13 @@ Reports::Report::Report(const char* t, const std::string &f, const std::string &
 bool Reports::Report::fill(const std::string &line)
 {
   std::vector<std::string> parts = TextUtils::tokenize(line, std::string(":"), 3, false);
-  if(parts.size() >= 4) {
+  if (parts.size() >= 4) {
     time = parts[0];
     from = parts[2];
     message = parts[3];
-  }
-  else
+  } else {
     from = time = message = "";
+  }
   return time.size() > 0;
 }
 
