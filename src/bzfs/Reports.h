@@ -18,38 +18,48 @@
 
 #include "Singleton.h"
 
-class Reports :  public Singleton<Reports>
+
+#define REPORTS Reports::instance()
+
+
+/**
+ * Singleton report generator.  used for logging matches to a file.
+ */
+class Reports : public Singleton<Reports>
 {
 public:
 
-  bool file ( const std::string &user, const std::string message );
-  size_t getLines (std::vector<std::string> &lines, const char* pattern = NULL );
+  bool file(const std::string &user, const std::string message);
+  size_t getLines(std::vector<std::string> &lines, const char* pattern = NULL
+);
 
-  size_t count ( void );
-  bool clear ( void );
-  bool clear ( size_t index );
+  size_t count(void);
+  bool clear(void);
+  bool clear(size_t index);
 
   class Report
   {
   public:
-    Report(){};
-    Report(const std::string &line){fill(line);}
+    Report() {};
+    Report(const std::string &line) {
+      fill(line);
+    }
     Report(const char* t, const std::string &f, const std::string & m);
 
     std::string from;
     std::string time;
     std::string message;
 
-    bool matchName ( const std::string pattern );
-    bool matchMessage ( const std::string pattern );
-    bool match ( const std::string pattern );
+    bool matchName(const std::string pattern);
+    bool matchMessage(const std::string pattern);
+    bool match(const std::string pattern);
 
-    bool fill ( const std::string &line );
+    bool fill(const std::string &line);
 
-    std::string fileLine ( void );
+    std::string fileLine(void);
  };
 
-  Report get ( size_t index );
+  Report get(size_t index);
 
 protected:
   friend class Singleton<Reports>;
@@ -58,8 +68,6 @@ private:
   Reports();
   ~Reports();
 };
-
-#define REPORTS Reports::instance()
 
 
 #endif /* _REPORTS_H */
