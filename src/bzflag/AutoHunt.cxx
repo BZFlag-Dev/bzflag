@@ -505,11 +505,11 @@ static void printConfig()
   std::map<int, float>::const_iterator cit;
   FlagPairMap::const_iterator it;
   for (it = FlagPairs.begin(); it != FlagPairs.end(); it++) {
-    logDebugMessage(2,"  %s\n", (it->first == Flags::Null) ? "NULL" : it->first->flagAbbv);
+    logDebugMessage(2,"  %s\n", (it->first == Flags::Null) ? "NULL" : it->first->flagAbbv.c_str());
     const FlagHuntInfoMap& fhim = it->second;
     FlagHuntInfoMap::const_iterator fhim_it;
     for (fhim_it = fhim.begin(); fhim_it != fhim.end(); fhim_it++) {
-      logDebugMessage(2,"    %s\n", fhim_it->first->flagAbbv);
+      logDebugMessage(2,"    %s\n", fhim_it->first->flagAbbv.c_str());
       const HuntInfo& hi = fhim_it->second;
       for (cit = hi.coords.begin(); cit != hi.coords.end(); cit++) {
 	logDebugMessage(2,"      level: %i, dist: %f\n", cit->first, cit->second);

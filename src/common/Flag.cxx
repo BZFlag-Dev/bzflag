@@ -88,7 +88,7 @@ namespace Flags {
 
   void init()
   {
-    Null	= new FlagType( "", NullString, FlagNormal, StandardShot, FlagGood, NoTeam, NULL );
+    Null	= new FlagType( "", NullString, FlagNormal, StandardShot, FlagGood, NoTeam, "" );
 
     RedTeam	= new FlagType( "Red Team", "R*", FlagNormal, StandardShot, FlagGood, ::RedTeam,
       "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
@@ -255,9 +255,6 @@ namespace Flags {
 	  FlagType::getFlagMap().erase((*itr)->flagAbbv);
 	  nitr = itr;
 	  ++nitr;
-	  delete (*itr)->flagAbbv;
-	  delete (*itr)->flagName;
-	  delete (*itr)->flagHelp;
 	  delete (*itr);
 	  FlagType::flagSets[q].erase(itr);
 	  itr = nitr;
@@ -479,13 +476,13 @@ const std::string FlagType::label() const
 
   /* convert to lowercase so we can uppercase the abbreviation later */
   std::string caseName = "";
-  for (i = 0; i < strlen(flagName); i++) {
-    caseName += tolower(flagName[i]);
+  for (i = 0; i < flagName.size(); i++) {
+    caseName += tolower(flagName.c_str()[i]);
   }
 
   /* modify the flag name to exemplify the abbreviation */
   int charPosition;
-  for (i = 0; i < strlen(flagAbbv); i++) {
+  for (i = 0; i < flagAbbv.size(); i++) {
 
     charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
 
@@ -513,7 +510,7 @@ const std::string FlagType::label() const
     /* non-team flags */
     caseName += TextUtils::format(" (%c%s)",
       flagQuality==FlagGood?'+':'-',
-      flagAbbv);
+      flagAbbv.c_str());
   }
 
   return caseName;
@@ -524,7 +521,7 @@ const std::string FlagType::information() const
 {
   return TextUtils::format("%s: %s",
     label().c_str(),
-    flagHelp);
+    flagHelp.c_str());
 }
 
 // Local Variables: ***

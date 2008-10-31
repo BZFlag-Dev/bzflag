@@ -25,7 +25,7 @@ void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
     flagRecord->type[0] = 'P';
     flagRecord->type[1] = 'Z';
   } else {
-    strncpy(flagRecord->type,flag.flag.type->flagAbbv,2);
+    strncpy(flagRecord->type,flag.flag.type->flagAbbv.c_str(),2);
   }
 
   flagRecord->status = flag.flag.status;
@@ -480,7 +480,7 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
     return;
 
   if ( playerData->playerHandler) {
-    playerData->playerHandler->nearestFlag(type->flagName,pos);
+    playerData->playerHandler->nearestFlag(type->flagName.c_str(),pos);
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
@@ -498,7 +498,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 
   bz_AllowFlagGrabEventData_V1	allow;
   allow.flagID = flag.getIndex();
-  allow.flagType = flag.flag.type->flagAbbv;
+  allow.flagType = flag.flag.type->flagAbbv.c_str();
   allow.shotType = (bz_eShotType)flag.flag.type->flagShot;
   allow.playerID = playerIndex;
   allow.allow = true;
@@ -519,7 +519,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 
   bz_FlagGrabbedEventData_V1	data;
   data.flagID = flag.getIndex();
-  data.flagType = flag.flag.type->flagAbbv;
+  data.flagType = flag.flag.type->flagAbbv.c_str();
   data.shotType = (bz_eShotType)flag.flag.type->flagShot;
   data.playerID = playerIndex;
 
@@ -535,7 +535,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv,(bz_eShotType)playerData->efectiveShotType);
+      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv.c_str(),(bz_eShotType)playerData->efectiveShotType);
   }
 
   playerData->flagHistory.add(flag.flag.type);
@@ -853,7 +853,7 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason re
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler && otherData->player.isPlaying())
-      otherData->playerHandler->playerKilledMessage(victimIndex,killerIndex,(bz_ePlayerDeathReason)reason,shotIndex,flagType->flagAbbv,phydrv);
+      otherData->playerHandler->playerKilledMessage(victimIndex,killerIndex,(bz_ePlayerDeathReason)reason,shotIndex,flagType->flagAbbv.c_str(),phydrv);
   }
 }
 

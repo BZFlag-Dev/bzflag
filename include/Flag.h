@@ -124,13 +124,14 @@ class FlagType {
 public:
   FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
 	    ShotType sType, FlagQuality quality, TeamColor team, const char* help,
-	    bool _custom = false ) {
-    flagName = name;
-    flagAbbv = abbv;
+	    bool _custom = false ) :
+    flagName(name),
+    flagAbbv(abbv),
+    flagHelp(help)
+  {
     endurance = _endurance;
     flagShot = sType;
     flagQuality = quality;
-    flagHelp = help;
     flagTeam = team;
     custom = _custom;
 
@@ -178,10 +179,10 @@ public:
    */
   static FlagTypeMap& getFlagMap();
 
-  const char* flagName;
-  const char* flagAbbv;
+  const std::string flagName;
+  const std::string flagAbbv;
+  const std::string flagHelp;
   FlagEndurance	endurance;
-  const char* flagHelp;
   FlagQuality flagQuality;
   ShotType flagShot;
   TeamColor flagTeam;

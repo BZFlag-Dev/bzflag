@@ -1167,7 +1167,7 @@ static void updateFlag(FlagType *flag)
   } else {
     const float *color = flag->getColor();
     hud->setColor(color[0], color[1], color[2]);
-    hud->setAlert(2, flag->flagName, 3.0f, flag->endurance == FlagSticky);
+    hud->setAlert(2, flag->flagName.c_str(), 3.0f, flag->endurance == FlagSticky);
   }
 
   if (BZDB.isTrue("displayFlagHelp"))

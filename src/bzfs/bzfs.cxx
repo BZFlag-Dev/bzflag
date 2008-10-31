@@ -3011,7 +3011,7 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   bz_FlagDroppedEventData_V1 data;
   data.playerID = playerData.getIndex();
   data.flagID = flagIndex;
-  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
+  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv.c_str();
   memcpy(data.pos, dropPos, sizeof(float)*3);
 
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);

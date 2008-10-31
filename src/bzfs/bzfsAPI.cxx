@@ -1401,7 +1401,7 @@ BZF_API const char *bz_getPlayerFlag(int playerID)
   if(!flagInfo)
     return NULL;
 
-  return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv;
+  return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv.c_str();
 }
 
 //-------------------------------------------------------------------------
@@ -5219,15 +5219,15 @@ BZF_API bool bz_zapPlayer(int player ) // forces a respawn
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
-				   const char* helpString, bz_eShotType shotType, 
+				   const char* help, bz_eShotType shotType, 
 				   bz_eFlagQuality quality)
 {
   // require defined fields
-  if (!abbr || !name || !helpString)
+  if (!abbr || !name || !help)
     return false;
 
   // length limits
-  if ((strlen(abbr) > 2) || (strlen(name) > 32) || (strlen(helpString) > 128))
+  if ((strlen(abbr) > 2) || (strlen(name) > 32) || (strlen(help) > 128))
     return false;
 
   // don't register an existing flag (i.e. can't override builtins)
@@ -5241,27 +5241,22 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
     default: return false; // shouldn't happen
   }
 
-  /* copy the flag information to memory we own, so we won't crash if someone unloads
-     the plugin without purging the flags; the flags will just no longer function */
-  char* localName = new char[strlen(name)+1];
-  strcpy(localName, name);
-  char* localAbbr = new char[strlen(abbr)+1];
-  strcpy(localAbbr, abbr);
-  char* localHelpString = new char[strlen(helpString)+1];
-  strcpy(localHelpString, helpString);
+  /* let this pointer dangle.  the constructor has taken care of all
+   * the real work on the server side.
+   */
+  FlagType* tmp = new FlagType(name, abbr, e, (ShotType)shotType, (FlagQuality)quality, NoTeam, help, true);
 
-  /* let this pointer dangle.  the constructor has taken care of all the real 
-     work on the server side. */
-  FlagType* tmp = new FlagType(localName, localAbbr, e, (ShotType)shotType, (FlagQuality)quality,
-			       NoTeam, localHelpString, true);
-
-  /* default the shot limit.  note that -sl will still take effect, if this plugin is
-     loaded from the command line or config file, since it's processed in finalization */
+  /* default the shot limit.  note that -sl will still take effect, if
+   * this plugin is loaded from the command line or config file, since
+   * it's processed in finalization
+   */
   clOptions->flagLimit[tmp] = -1;
 
-  /* notify existing players (if any) about the new flag type.
-     this behavior is a bit questionable, but seems to be the Right Thing(tm) to do.
-     new clients will get the notification during flag negotiation, which is better. */
+  /* notify existing players (if any) about the new flag type.  this
+   * behavior is a bit questionable, but seems to be the Right
+   * Thing(tm) to do.  new clients will get the notification during
+   * flag negotiation, which is better.
+   */
   NetMsg msg = MSGMGR.newMessage();
   tmp->packCustom(msg);
   msg->broadcast(MsgFlagType);

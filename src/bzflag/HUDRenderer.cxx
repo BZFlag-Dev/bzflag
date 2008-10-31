@@ -424,7 +424,7 @@ void			HUDRenderer::setFlagHelp(FlagType* desc, float duration)
   flagHelpClock.setClock(duration);
 
   // Generate the formatted help for this flag
-  flagHelpText = makeHelpString(desc->flagHelp);
+  flagHelpText = makeHelpString(desc->flagHelp.c_str());
 
   // count the number of lines in the help message
   flagHelpLines = 0;

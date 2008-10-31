@@ -826,7 +826,7 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
   listPush (list, 1, "shotid: %i", shot);
 
   if (flagType != Flags::Null) {
-    listPush (list, 1, "flag:   %s", flagType->flagAbbv);
+    listPush (list, 1, "flag:   %s", flagType->flagAbbv.c_str());
   } else {
     listPush (list, 1, "flag:   Null");
   }
@@ -1044,7 +1044,7 @@ static MsgStringList handleMsgShotBegin (PacketInfo *pi)
   d = finfo.unpack (d);
   const ShotUpdate& shot = finfo.shot;
   listPush (list, 1, "player:   %s", strPlayer(shot.player).c_str());
-  listPush (list, 1, "type:     %.2s", finfo.flagType->flagAbbv); // FIXME ?
+  listPush (list, 1, "type:     %.2s", finfo.flagType->flagAbbv.c_str()); // FIXME ?
   listPush (list, 2, "id:       %i", shot.id);
   listPush (list, 2, "team:     %s", strTeam(shot.team).c_str());
   listPush (list, 2, "pos:      %s", strVector((float*)shot.pos).c_str());

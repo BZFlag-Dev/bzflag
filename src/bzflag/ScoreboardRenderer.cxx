@@ -368,7 +368,7 @@ void ScoreboardRenderer::renderCtfFlags() {
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
 	std::string playerInfo = ColorStrings[flagd->flagTeam];
-	snprintf(flagColor, 200, "%-12s", flagd->flagName);
+	snprintf(flagColor, 200, "%-12s", flagd->flagName.c_str());
 	playerInfo += flagColor;
 	playerInfo += ColorStrings[teamIndex];
 	playerInfo += player->getCallSign();
