@@ -79,7 +79,7 @@ void logDebugMessage(int level, const char* fmt, ...)
   va_list args;
 
   if (!fmt)
-    return buffer;
+    return;
 
   va_start(args, fmt);
   vsnprintf(buffer, 8192, fmt, args);
