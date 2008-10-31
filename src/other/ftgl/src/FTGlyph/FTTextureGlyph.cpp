@@ -33,11 +33,28 @@
 #include "FTInternals.h"
 #include "FTTextureGlyphImpl.h"
 
+#define FTGL_ASSERTS_SHOULD_SOFT_FAIL
+
+#ifdef FTGL_ASSERTS_SHOULD_SOFT_FAIL
+	#define FTASSERT(x) \
+		if (!(x)) \
+		{ \
+			fprintf(stderr,"ASSERTION FAILED (%s:%d)(soft): %s\n",__FILE__,__LINE__,#x); \
+		}
+#else
+	#define FTASSERT(x) \
+		if (!(x)) \
+		{ \
+			fprintf(stderr,"ASSERTION FAILED (%s:%d): %s\n",__FILE__,__LINE__,#x); \
+			int *a = (int*)0x0; \
+			*a = 0xD15EA5ED; \
+		}
+#endif
+
 
 //
 //  FTGLTextureGlyph
 //
-
 
 FTTextureGlyph::FTTextureGlyph(FT_GlyphSlot glyph, int id, int xOffset,
                                int yOffset, int width, int height) :
@@ -59,7 +76,6 @@ const FTPoint& FTTextureGlyph::Render(const FTPoint& pen, int renderMode)
 //
 //  FTGLTextureGlyphImpl
 //
-
 
 GLint FTTextureGlyphImpl::activeTextureID = 0;
 
@@ -87,15 +103,37 @@ FTTextureGlyphImpl::FTTextureGlyphImpl(FT_GlyphSlot glyph, int id, int xOffset,
 
     if(destWidth && destHeight)
     {
-        glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-        glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT); {
 
-        glBindTexture(GL_TEXTURE_2D, glTextureID);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, xOffset, yOffset, destWidth, destHeight, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap.buffer);
+            glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        glPopClientAttrib();
+	    glBindTexture(GL_TEXTURE_2D, glTextureID);
+	    GLint w,h;
+	    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&w);
+	    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_HEIGHT,&h);
+		
+	    FTASSERT(xOffset >= 0);
+	    FTASSERT(yOffset >= 0);
+	    FTASSERT(destWidth >= 0);
+	    FTASSERT(destHeight >= 0);
+	    FTASSERT(xOffset+destWidth <= w);
+	    FTASSERT(yOffset+destHeight <= h);
+	    
+	    if (yOffset+destHeight > h)
+	    {
+	        //We'll only get here if we are soft-failing our asserts. In that case,
+	        //since the data we're trying to put into our texture is too long,
+	        //we'll only copy a portion of the image.
+	        destHeight = h-yOffset;
+	    }
+	    if (destHeight >= 0)
+	    {
+	        glTexSubImage2D(GL_TEXTURE_2D, 0, xOffset, yOffset, destWidth, destHeight, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap.buffer);
+	    }
+
+	} glPopClientAttrib();
     }
 
 
