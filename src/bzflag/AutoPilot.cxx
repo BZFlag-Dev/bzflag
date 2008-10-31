@@ -32,8 +32,6 @@ static int		totalSum = 0;
 static int		totalCnt = 0;
 static bool		wantJump = false;
 
-static PlanStack planStack;
-
 void teachAutoPilot(FlagType *type, int adjust)
 {
   if (type == Flags::Null)
