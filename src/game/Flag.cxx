@@ -329,10 +329,6 @@ void* FlagType::unpackCustom(void* buf, FlagType* &type)
   std::string sName, sHelp;
   buf = nboUnpackStdString(buf, sName);
   buf = nboUnpackStdString(buf, sHelp);
-  char* name = new char[33];
-  char* help = new char[129];
-  strncpy(name, sName.c_str(), 32);
-  strncpy(help, sHelp.c_str(), 128);
 
   FlagEndurance e = FlagUnstable;
   switch((FlagQuality)quality) {
@@ -341,8 +337,9 @@ void* FlagType::unpackCustom(void* buf, FlagType* &type)
     default: assert(false); // shouldn't happen
   }
 
-  type = new FlagType(name, reinterpret_cast<const char*>(&abbv[0]),
-		      e, (ShotType)shot, (FlagQuality)quality, NoTeam, help, true);
+  type = new FlagType(sName, reinterpret_cast<const char*>(&abbv[0]),
+		      e, (ShotType)shot, (FlagQuality)quality, NoTeam, sHelp, true);
+  delete[] abbv;
   return buf;
 }
 
