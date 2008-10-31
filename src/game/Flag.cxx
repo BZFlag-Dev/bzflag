@@ -475,22 +475,24 @@ const std::string FlagType::label() const
   }
 
   /* modify the flag name to exemplify the abbreviation */
-  size_t charPosition;
+  size_t charPosition = caseName.size();
   for (i = 0; i < flagAbbv.size(); i++) {
 
-    charPosition = caseName.find_first_of(tolower(flagAbbv.c_str()[i]), 0);
+    charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
 
-    if (charPosition != std::string::npos) {
+    if (0 < charPosition && charPosition < caseName.size()) {
       /* if we can match an abbreviation on a word boundary -- prefer it */
       size_t alternateCharPosition = 1;
-      while (alternateCharPosition > 0) {
+      while (0 < alternateCharPosition && alternateCharPosition < caseName.size()) {
 	if (caseName[alternateCharPosition - 1] == ' ') {
 	  charPosition = alternateCharPosition;
 	  break;
 	}
-	alternateCharPosition = caseName.find_first_of(tolower(flagAbbv.c_str()[i]), alternateCharPosition+1);
+	alternateCharPosition = caseName.find_first_of(tolower(flagAbbv[i]), alternateCharPosition+1);
       }
+    }
 
+    if (charPosition < caseName.size()) {
       caseName[charPosition] = toupper(caseName[charPosition]);
     }
   }
