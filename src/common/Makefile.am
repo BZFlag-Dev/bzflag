@@ -13,7 +13,6 @@ libCommon_la_LIBADD =
 libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
-	BufferedNetworkMessage.cxx 	\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
 	CommandManager.cxx		\
