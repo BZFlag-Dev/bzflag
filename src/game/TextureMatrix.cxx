@@ -565,7 +565,7 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
       out << indent << "  scale " << uScaleFreq << " " << vScaleFreq << " "
 			<< uScale << " " << vScale << std::endl;
     }
-    if ((uCenter != 0.5f) || (uCenter != 0.5f)) {
+    if (uCenter != 0.5f) {
       out << indent << "  center " << uCenter << " " << vCenter << std::endl;
     }
   }
