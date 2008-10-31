@@ -1723,6 +1723,9 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char *message)
 BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char *fmt, ...)
 {
   char buffer[1024];
+
+  if (!fmt) return false;
+
   va_list args;
   va_start(args, fmt);
   vsnprintf(buffer, 1024, fmt, args);
@@ -1735,6 +1738,9 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char *fmt, ...
 BZF_API bool bz_sendTextMessagef(int from, int to, const char *fmt, ...)
 {
   char buffer[1024];
+
+  if (!fmt) return false;
+
   va_list args;
   va_start(args, fmt);
   vsnprintf(buffer, 1024, fmt, args);
@@ -2165,6 +2171,9 @@ BZF_API void bz_debugMessage(int _level, const char *message)
 BZF_API void bz_debugMessagef(int _level, const char *fmt, ...)
 {
   char buffer[4096];
+
+  if (!fmt) return;
+
   va_list args;
   va_start(args, fmt);
   vsnprintf(buffer, 4096, fmt, args);
@@ -4110,7 +4119,10 @@ BZF_API bool bz_stopRecBuf(void)
 
 BZF_API const char *bz_format(const char *fmt, ...)
 {
-  static std::string result;
+  static std::string result = "";
+
+  if (!fmt) return result.c_str();
+
   va_list args;
   va_start(args, fmt);
   result=TextUtils::vformat(fmt, args);
