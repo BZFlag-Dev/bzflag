@@ -106,8 +106,8 @@ float			roamDZoom = 0.0f;
 // We don't use this; but playing.h has an extern for it
 std::string             customLimboMessage;
 
-static MessageOfTheDay		*motd = NULL;
-DefaultCompleter	completer;
+static MessageOfTheDay	*motd = NULL;
+CommandCompleter	completer;
 
 PlayerId		msgDestination;
 
@@ -3055,7 +3055,7 @@ static void joinInternetGame2()
   playerSize = world->getPlayersSize();
 
   // reset the autocompleter
-  completer.setDefaults();
+  completer.reset();
   BZDB.iterate(addVarToAutoComplete, NULL);
 
   // prep flags
