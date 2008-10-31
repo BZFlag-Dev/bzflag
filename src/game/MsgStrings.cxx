@@ -370,6 +370,10 @@ static void listPush (MsgStringList &list, int level, const char *fmt, ...)
   MsgString mstr = { level, "", "" };
   char buffer[256];
   va_list args;
+
+  if (!fmt)
+    return;
+
   va_start(args, fmt);
   vsnprintf (buffer, 256, fmt, args);
   va_end(args);
