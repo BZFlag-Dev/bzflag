@@ -1488,7 +1488,7 @@ void DrawCmd::finalize()
 
   // check if they can be convert to unsigned shorts
   if (leaveAsUInt) {
-    delete shortArray; // don't need it
+    delete[] shortArray; // don't need it
     return; // leave them as unsigned ints
   }
 
