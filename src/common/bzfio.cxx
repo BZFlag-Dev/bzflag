@@ -74,9 +74,13 @@ static char *timestamp(char *buf, bool micros)
 
 void logDebugMessage(int level, const char* fmt, ...)
 {
-  char buffer[8192];
-  char tsbuf[26];
+  char buffer[8192] = {0};
+  char tsbuf[26] = {0};
   va_list args;
+
+  if (!fmt)
+    return buffer;
+
   va_start(args, fmt);
   vsnprintf(buffer, 8192, fmt, args);
   va_end(args);

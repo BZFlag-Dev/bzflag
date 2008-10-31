@@ -36,7 +36,11 @@ namespace TextUtils
 {
   std::string vformat(const char* fmt, va_list args) {
     const int fixedbs = 8192;
-    char buffer[fixedbs];
+    char buffer[fixedbs] = {0};
+
+    if (!fmt)
+      return buffer;
+
     const int bs = vsnprintf(buffer, fixedbs, fmt, args) + 1;
     if (bs > fixedbs) {
       char *bufp = new char[bs];

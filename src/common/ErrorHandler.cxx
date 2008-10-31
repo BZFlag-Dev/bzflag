@@ -80,6 +80,10 @@ void removeFatalErrorCallback ( FatalErrorCallback* callback )
 void			printFatalError(const char* fmt, ...)
 {
   char buffer[1024];
+
+  if (!fmt)
+    return;
+
   va_list args;
   va_start(args, fmt);
   vsnprintf(buffer, 1024, fmt, args);
