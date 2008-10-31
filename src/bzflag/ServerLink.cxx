@@ -76,8 +76,8 @@ TConnect conn;
 
 DWORD WINAPI ThreadConnect(LPVOID params)
 {
-  TConnect *conn = (TConnect*)params;
-  if(connect(conn->query, conn->addr, conn->saddr) >= 0) {
+  TConnect *_conn = (TConnect*)params;
+  if(connect(_conn->query, _conn->addr, _conn->saddr) >= 0) {
     SetEvent(hConnected); // Connect successful
   }
   ExitThread(0);
