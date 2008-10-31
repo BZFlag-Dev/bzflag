@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright(c) 1993 - 2008 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -60,44 +60,52 @@ extern int  SFX_HIT;		  /* struck by a shot but not dead yet sound */
 class SoundSystem
 {
 public:
-  virtual ~SoundSystem(){};
+  virtual ~SoundSystem() {};
 
-  virtual const char* name ( void ) = 0;
+  virtual const char* name(void) = 0;
 
-  virtual bool startup ( void ) = 0;
-  virtual void shutdown ( void ) = 0;
-  virtual bool active ( void ) = 0;
+  virtual bool startup(void) = 0;
+  virtual void shutdown(void) = 0;
+  virtual bool active(void) = 0;
 
   virtual void setReceiver(float x, float y, float z, float t, int discontinuity) = 0;
   virtual void setReceiverVec(float vx, float vy, float vz) = 0;
 
   virtual int play(int soundID, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false) = 0;
-  virtual int play(const char* _name, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false){return play(getID(_name), pos,important,localSound,repeat);}
-  virtual int play(const std::string &_name, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false){return play(getID(_name), pos,important,localSound,repeat);}
+  virtual int play(const char* _name, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false) {
+    return play(getID(_name), pos, important, localSound, repeat);
+  }
+  virtual int play(const std::string &_name, const float *pos = NULL, bool important = false, bool localSound = true, bool repeat = false) {
+    return play(getID(_name), pos, important, localSound, repeat);
+  }
 
-  virtual void setVolume ( float volume ) = 0;
-  virtual float getVolume ( void ) = 0;
+  virtual void setVolume(float volume) = 0;
+  virtual float getVolume(void) = 0;
 
-  virtual bool update ( double time ) = 0;
+  virtual bool update(double time) = 0;
 
-  virtual int getID ( const char* name ) = 0;
-  virtual int getID ( const std::string &_name ){return getID(_name.c_str());}
+  virtual int getID(const char* name) = 0;
+  virtual int getID(const std::string &_name) {
+    return getID(_name.c_str());
+  }
 
 };
 
-class SoundManager  : public Singleton<SoundManager>
+class SoundManager : public Singleton<SoundManager>
 {
 public:
-  SoundSystem& getSystem ( void );
-  void registerSystem ( SoundSystem * );
+  SoundSystem& getSystem(void);
+  void registerSystem(SoundSystem *);
 
-  std::vector<SoundSystem*> listSystems ( void );
+  std::vector<SoundSystem*> listSystems(void);
 
-  void activateSoundSystem ( SoundSystem* sys );
-  void activateSoundSystem ( const std::string &name );
-  void activateSoundSystem ( const char *name ){if(name)activateSoundSystem(std::string(name));}
+  void activateSoundSystem(SoundSystem* sys);
+  void activateSoundSystem(const std::string &name);
+  void activateSoundSystem(const char *name) {
+    if (name) activateSoundSystem(std::string(name));
+  }
 
-  std::vector<std::string> getStdSounds ( void );
+  std::vector<std::string> getStdSounds(void);
 protected:
   friend class Singleton<SoundManager>;
 
@@ -108,7 +116,7 @@ protected:
   SoundSystem* currentSystem;
 
 private:
-  void addStandardSound ( const char* name );
+  void addStandardSound(const char* name);
   std::vector<std::string> standardSounds;
 };
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright(c) 1993 - 2008 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,7 +25,7 @@
 #include "TextUtils.h"
 
 template <>
-SoundManager* Singleton<SoundManager>::_instance = (SoundManager*)0;
+SoundManager* Singleton<SoundManager>::_instance =(SoundManager*)0;
 
 int  SFX_FIRE = 0;
 int  SFX_EXPLOSION = 1;
@@ -105,14 +105,13 @@ SoundManager::~SoundManager()
 {
   if (currentSystem)
     currentSystem->shutdown();
-  for (size_t i = 0; i < soundSystems.size(); i++)
-    {
-      if (soundSystems[i])
-	delete(soundSystems[i]);
-    }
+  for (size_t i = 0; i < soundSystems.size(); i++) {
+    if (soundSystems[i])
+      delete(soundSystems[i]);
+  }
 }
 
-void SoundManager::addStandardSound( const char* name )
+void SoundManager::addStandardSound(const char* name)
 {
   if (!name)
     return;
@@ -120,36 +119,34 @@ void SoundManager::addStandardSound( const char* name )
   std::string n = name;
   n = TextUtils::tolower(n);
 
-  if (std::find(standardSounds.begin(),standardSounds.end(),n) == standardSounds.end())
+  if (std::find(standardSounds.begin(), standardSounds.end(), n) == standardSounds.end())
     standardSounds.push_back(std::string(name));
 }
 
-SoundSystem& SoundManager::getSystem ( void )
+SoundSystem& SoundManager::getSystem(void)
 {
   return *currentSystem;
 }
 
-void SoundManager::registerSystem ( SoundSystem *sys )
+void SoundManager::registerSystem(SoundSystem *sys)
 {
   soundSystems.push_back(sys);
 }
 
-std::vector<SoundSystem*> SoundManager::listSystems ( void )
+std::vector<SoundSystem*> SoundManager::listSystems(void)
 {
   return soundSystems;
 }
 
-void SoundManager::activateSoundSystem ( SoundSystem* sys )
+void SoundManager::activateSoundSystem(SoundSystem* sys)
 {
-  if(!sys)
+  if (!sys)
     return;
 
   SoundSystem* realSystem = NULL;
 
-  for (size_t i = 0; i < soundSystems.size(); i++)
-  {
-    if (soundSystems[i] == sys)
-    {
+  for (size_t i = 0; i < soundSystems.size(); i++) {
+    if (soundSystems[i] == sys) {
       realSystem = sys;
       break;
     }
@@ -158,23 +155,21 @@ void SoundManager::activateSoundSystem ( SoundSystem* sys )
   if (!realSystem)
     registerSystem(sys);
 
-  if(currentSystem)
+  if (currentSystem)
     currentSystem->shutdown();
 
   currentSystem = sys;
   currentSystem->startup();
 }
 
-void SoundManager::activateSoundSystem ( const std::string &name )
+void SoundManager::activateSoundSystem(const std::string &name)
 {
-  if(!name.size())
+  if (!name.size())
     return;
 
-  for (size_t i = 0; i < soundSystems.size(); i++)
-  {
-    if (soundSystems[i]->name() == name)
-    {
-      if(currentSystem)
+  for (size_t i = 0; i < soundSystems.size(); i++) {
+    if (soundSystems[i]->name() == name) {
+      if (currentSystem)
 	currentSystem->shutdown();
 
       currentSystem = soundSystems[i];
@@ -184,7 +179,7 @@ void SoundManager::activateSoundSystem ( const std::string &name )
   }
 }
 
-std::vector<std::string> SoundManager::getStdSounds ( void )
+std::vector<std::string> SoundManager::getStdSounds(void)
 {
   return standardSounds;
 }
