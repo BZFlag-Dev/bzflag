@@ -570,10 +570,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BufferedNetworkMessage.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\Bundle.cxx"
 				>
 			</File>
@@ -720,10 +716,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\AutoCompleter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\BufferedNetworkMessage.h"
 				>
 			</File>
 			<File

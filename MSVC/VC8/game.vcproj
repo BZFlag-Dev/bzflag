@@ -534,6 +534,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\BufferedNetworkMessage.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\BzMaterial.cxx"
 				>
 			</File>
@@ -645,6 +649,10 @@
 			>
 			<File
 				RelativePath="..\..\include\BZDBCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\BufferedNetworkMessage.h"
 				>
 			</File>
 			<File
