@@ -316,8 +316,7 @@ void* FlagType::unpack(void* buf, FlagType* &type)
 
 void* FlagType::unpackCustom(void* buf, FlagType* &type)
 {
-  uint8_t *abbv = new uint8_t[3];
-  abbv[0]=abbv[1]=abbv[2]=0;
+  unsigned char abbv[3] = {0, 0, 0};
   buf = nboUnpackUByte(buf, abbv[0]);
   buf = nboUnpackUByte(buf, abbv[1]);
 
@@ -325,7 +324,6 @@ void* FlagType::unpackCustom(void* buf, FlagType* &type)
   buf = nboUnpackUByte(buf, quality);
   buf = nboUnpackUByte(buf, shot);
 
-  // make copies to keep - note that these will need to be deleted.
   std::string sName, sHelp;
   buf = nboUnpackStdString(buf, sName);
   buf = nboUnpackStdString(buf, sHelp);
@@ -339,7 +337,6 @@ void* FlagType::unpackCustom(void* buf, FlagType* &type)
 
   type = new FlagType(sName, reinterpret_cast<const char*>(&abbv[0]),
 		      e, (ShotType)shot, (FlagQuality)quality, NoTeam, sHelp, true);
-  delete[] abbv;
   return buf;
 }
 
