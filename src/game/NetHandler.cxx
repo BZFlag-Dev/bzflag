@@ -514,7 +514,7 @@ RxStatus NetHandler::receive(size_t length) {
 
   if (length <= tcplen)
     return ReadAll;
-  int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
+  int size = recv(fd, tcpmsg + tcplen, (int)(length - tcplen), 0);
   if (size > 0) {
     tcplen += size;
     if (tcplen == length)
@@ -543,7 +543,7 @@ RxStatus NetHandler::receive(size_t length) {
     }
   }
 
-  callNetworkDataLog(false,false,(const unsigned char*)tcpmsg,tcplen);
+  callNetworkDataLog(false,false,(const unsigned char*)tcpmsg,(int)tcplen);
   return returnValue;
 }
 
@@ -551,7 +551,7 @@ void *NetHandler::getTcpBuffer() {
   return tcpmsg;
 }
 
-unsigned int NetHandler::getTcpReadSize ( void  )
+size_t NetHandler::getTcpReadSize ( void  )
 {
   return tcplen;
 }

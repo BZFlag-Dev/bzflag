@@ -120,7 +120,7 @@ public:
   */
   RxStatus    tcpReceive(bool doCodes = true);
   void       *getTcpBuffer();
-  unsigned int getTcpReadSize ( void  );
+  size_t      getTcpReadSize ( void  );
 
   /// Request if there is any buffered udp messages waiting to be sent
   static bool	anyUDPPending() {return pendingUDP;};
