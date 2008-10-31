@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2008 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // Interface header
 #include "BufferedNetworkMessage.h"
@@ -41,12 +41,12 @@ BufferedNetworkMessage::BufferedNetworkMessage()
   toAdmins = false;
 }
 
-BufferedNetworkMessage::BufferedNetworkMessage( const BufferedNetworkMessage &msg )
+BufferedNetworkMessage::BufferedNetworkMessage(const BufferedNetworkMessage &msg)
 {
   packedSize = msg.packedSize;
   dataSize = msg.dataSize;
   data = (char*)malloc(dataSize);
-  memcpy(data,msg.data,dataSize);
+  memcpy(data, msg.data, dataSize);
   code = msg.code;
   recipient = msg.recipient;
   toAdmins = msg.toAdmins;
@@ -58,7 +58,7 @@ BufferedNetworkMessage::~BufferedNetworkMessage()
     free(data);
 }
 
-void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
+void BufferedNetworkMessage::send (NetHandler *to, uint16_t messageCode)
 {
   recipient = to;
   code = messageCode;
@@ -66,7 +66,7 @@ void BufferedNetworkMessage::send ( NetHandler *to, uint16_t messageCode )
   MSGMGR.queueMessage(this);
 }
 
-void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClients )
+void BufferedNetworkMessage::broadcast (uint16_t messageCode, bool toAdminClients)
 {
   recipient = NULL;
   code = messageCode;
@@ -74,164 +74,164 @@ void BufferedNetworkMessage::broadcast ( uint16_t messageCode, bool toAdminClien
   MSGMGR.queueMessage(this);
 }
 
-void BufferedNetworkMessage::packUByte( uint8_t val )
+void BufferedNetworkMessage::packUByte(uint8_t val)
 {
   checkData(sizeof(uint8_t));
-  nboPackUByte(getWriteBuffer(),val);
+  nboPackUByte(getWriteBuffer(), val);
   packedSize += sizeof(uint8_t);
 }
 
-void BufferedNetworkMessage::packShort( int16_t val )
+void BufferedNetworkMessage::packShort(int16_t val)
 {
   checkData(sizeof(int16_t));
-  nboPackShort(getWriteBuffer(),val);
+  nboPackShort(getWriteBuffer(), val);
   packedSize += sizeof(int16_t);
 }
 
-void BufferedNetworkMessage::packInt( int32_t val )
+void BufferedNetworkMessage::packInt(int32_t val)
 {
   checkData(sizeof(int32_t));
-  nboPackInt(getWriteBuffer(),val);
+  nboPackInt(getWriteBuffer(), val);
   packedSize += sizeof(int32_t);
 }
 
-void BufferedNetworkMessage::packUShort( uint16_t val )
+void BufferedNetworkMessage::packUShort(uint16_t val)
 {
   checkData(sizeof(uint16_t));
-  nboPackUShort(getWriteBuffer(),val);
+  nboPackUShort(getWriteBuffer(), val);
   packedSize += sizeof(uint16_t);
 }
 
-void BufferedNetworkMessage::packUInt( uint32_t val )
+void BufferedNetworkMessage::packUInt(uint32_t val)
 {
   checkData(sizeof(uint32_t));
-  nboPackUInt(getWriteBuffer(),val);
+  nboPackUInt(getWriteBuffer(), val);
   packedSize += sizeof(uint32_t);
 }
 
-void BufferedNetworkMessage::packFloat( float val )
+void BufferedNetworkMessage::packFloat(float val)
 {
   checkData(sizeof(float));
-  nboPackFloat(getWriteBuffer(),val);
+  nboPackFloat(getWriteBuffer(), val);
   packedSize += sizeof(float);
 }
 
-void BufferedNetworkMessage::packDouble( double val )
+void BufferedNetworkMessage::packDouble(double val)
 {
   checkData(sizeof(double));
-  nboPackDouble(getWriteBuffer(),val);
+  nboPackDouble(getWriteBuffer(), val);
   packedSize += sizeof(double);
 }
 
-void BufferedNetworkMessage::packFloatVector( const float* val )
+void BufferedNetworkMessage::packFloatVector(const float* val)
 {
   checkData(sizeof(float)*3);
-  nboPackFloatVector(getWriteBuffer(),val);
+  nboPackFloatVector(getWriteBuffer(), val);
   packedSize += sizeof(float)*3;
 }
 
-void BufferedNetworkMessage::packString( const char* val, int len )
+void BufferedNetworkMessage::packString(const char* val, int len)
 {
   checkData(len);
-  nboPackString(getWriteBuffer(),val,len);
+  nboPackString(getWriteBuffer(), val, len);
   packedSize += len;
 }
 
-void BufferedNetworkMessage::packStdString( const std::string& str )
+void BufferedNetworkMessage::packStdString(const std::string& str)
 {
   checkData(str.size()+sizeof(uint32_t));
-  nboPackStdString(getWriteBuffer(),str);
+  nboPackStdString(getWriteBuffer(), str);
   packedSize += str.size()+sizeof(uint32_t);
 }
 
-uint8_t BufferedNetworkMessage::unpackUByte( void )
+uint8_t BufferedNetworkMessage::unpackUByte(void)
 {
   uint8_t v = 0;
   char *p = getReadBuffer();
   if (p)  
-    packedSize += (char*)(nboUnpackUByte(p,v))-p;
+    packedSize += (char*)(nboUnpackUByte(p, v))-p;
   return v;
 }
 
-int16_t BufferedNetworkMessage::unpackShort( void )
+int16_t BufferedNetworkMessage::unpackShort(void)
 {
   int16_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackShort(p,v))-p;
+    packedSize += (char*)(nboUnpackShort(p, v))-p;
   return v;
 }
 
-int32_t BufferedNetworkMessage::unpackInt( void )
+int32_t BufferedNetworkMessage::unpackInt(void)
 {
   int32_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackInt(p,v))-p;
+    packedSize += (char*)(nboUnpackInt(p, v))-p;
   return v;
 }
 
-uint16_t BufferedNetworkMessage::unpackUShort( void )
+uint16_t BufferedNetworkMessage::unpackUShort(void)
 {
   uint16_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUShort(p,v))-p;
+    packedSize += (char*)(nboUnpackUShort(p, v))-p;
   return v;
 }
 
-uint32_t BufferedNetworkMessage::unpackUInt( void )
+uint32_t BufferedNetworkMessage::unpackUInt(void)
 {
   uint32_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUInt(p,v))-p;
+    packedSize += (char*)(nboUnpackUInt(p, v))-p;
   return v;
 }
 
-float BufferedNetworkMessage::unpackFloat( void )
+float BufferedNetworkMessage::unpackFloat(void)
 {
   float v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackFloat(p,v))-p;
+    packedSize += (char*)(nboUnpackFloat(p, v))-p;
   return v;
 }
 
-double BufferedNetworkMessage::unpackDouble( void )
+double BufferedNetworkMessage::unpackDouble(void)
 {
   double v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackDouble(p,v))-p;
+    packedSize += (char*)(nboUnpackDouble(p, v))-p;
   return v;
 }
 
-float* BufferedNetworkMessage::unpackFloatVector( float* val )
+float* BufferedNetworkMessage::unpackFloatVector(float* val)
 {
-  memset(val,0,sizeof(float)*3);
+  memset(val, 0, sizeof(float)*3);
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackFloatVector(p,val))-p;
+    packedSize += (char*)(nboUnpackFloatVector(p, val))-p;
   return val;
 }
 
-const std::string& BufferedNetworkMessage::unpackStdString( std::string& str )
+const std::string& BufferedNetworkMessage::unpackStdString(std::string& str)
 {
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackStdString(p,str))-p;
+    packedSize += (char*)(nboUnpackStdString(p, str))-p;
   return str;
 }
 
-void BufferedNetworkMessage::addPackedData ( const char* d, size_t s )
+void BufferedNetworkMessage::addPackedData (const char* d, size_t s)
 {
   checkData(s);
-  memcpy(getWriteBuffer(),d,s);
+  memcpy(getWriteBuffer(), d, s);
   packedSize += s;
 }
 
-void BufferedNetworkMessage::clear ( void )
+void BufferedNetworkMessage::clear (void)
 {
   if (data)
     free(data);
@@ -244,17 +244,17 @@ void BufferedNetworkMessage::clear ( void )
   code = 0;
 }
 
-void BufferedNetworkMessage::reset ( void )
+void BufferedNetworkMessage::reset (void)
 {
   readPoint = 0;
 }
 
-size_t BufferedNetworkMessage::size ( void )
+size_t BufferedNetworkMessage::size (void)
 {
   return packedSize;
 }
 
-bool BufferedNetworkMessage::process ( void )
+bool BufferedNetworkMessage::process (void)
 {
   if (!data)
     checkData(0);
@@ -267,8 +267,7 @@ bool BufferedNetworkMessage::process ( void )
   nboPackUShort(data, uint16_t(packedSize));
   nboPackUShort(data+sizeof(uint16_t), code);
 
-  if (recipient)
-  {
+  if (recipient) {
     return transferCallback->send(recipient, data, packedSize+4) == packedSize+4;
   }
    
@@ -281,7 +280,7 @@ bool BufferedNetworkMessage::process ( void )
   return true;
 }
 
-void BufferedNetworkMessage::checkData ( size_t s )
+void BufferedNetworkMessage::checkData (size_t s)
 {
   if (!data || (packedSize + s + 4 > dataSize)) {
     dataSize = dataSize + ((int)ceil(s / 256.0f)) * 256;
@@ -293,7 +292,7 @@ void BufferedNetworkMessage::checkData ( size_t s )
   }
 }
 
-char* BufferedNetworkMessage::getWriteBuffer ( void )
+char* BufferedNetworkMessage::getWriteBuffer (void)
 {
   if (!data)
     return NULL;
@@ -301,7 +300,7 @@ char* BufferedNetworkMessage::getWriteBuffer ( void )
   return data + 4 + packedSize;
 }
 
-char* BufferedNetworkMessage::getReadBuffer ( void )
+char* BufferedNetworkMessage::getReadBuffer (void)
 {
   if (!data)
     return NULL;
@@ -315,12 +314,11 @@ char* BufferedNetworkMessage::getReadBuffer ( void )
 
 
 //BufferedNetworkMessageManager
-size_t BufferedNetworkMessageManager::receiveMessages ( NetworkMessageTransferCallback *callback,  std::list<BufferedNetworkMessage*> &incomingMessages )
+size_t BufferedNetworkMessageManager::receiveMessages (NetworkMessageTransferCallback *callback,  std::list<BufferedNetworkMessage*> &incomingMessages)
 {
   BufferedNetworkMessage * msg = new BufferedNetworkMessage;
 
-  while (callback->receive(msg))
-  {
+  while (callback->receive(msg)) {
     incomingMessages.push_back(msg);
     msg = new BufferedNetworkMessage;
   }
@@ -330,48 +328,42 @@ size_t BufferedNetworkMessageManager::receiveMessages ( NetworkMessageTransferCa
   return incomingMessages.size();
 }
 
-void BufferedNetworkMessageManager::update ( void )
+void BufferedNetworkMessageManager::update (void)
 {
   if (transferCallback)
     sendPendingMessages();
 }
 
-void BufferedNetworkMessageManager::sendPendingMessages ( void )
+void BufferedNetworkMessageManager::sendPendingMessages (void)
 {
   MessageDeque leftovers;
 
-  std::map<NetHandler*,int> sentHandlers;
+  std::map<NetHandler*, int> sentHandlers;
 
-  while ( outgoingQueue.size() )
-  {
+  while (outgoingQueue.size()) {
     MessageDeque::iterator itr = outgoingQueue.begin();
-    if (itr != outgoingQueue.end())
-    {
+    if (itr != outgoingQueue.end()) {
       BufferedNetworkMessage *msg = *itr;
 
-      if (msg)
-      {
+      if (msg) {
 	bool send = true;
 
-	if (sentHandlers.find(msg->recipient) != sentHandlers.end())
-	{
+	if (sentHandlers.find(msg->recipient) != sentHandlers.end()) {
 	  if (sentHandlers[msg->recipient] > 2) // don't spam em
 	    send = false;
 	}
 
-	if(send && msg->process())
-	{
-	  if (msg->recipient)
-	  {
+	if (send && msg->process()) {
+	  if (msg->recipient) {
 	    if (sentHandlers.find(msg->recipient) == sentHandlers.end())
 	      sentHandlers[msg->recipient] = 1;
 	    else
 	      sentHandlers[msg->recipient]++;
 	  }
 	  delete(msg);
-	}
-	else
+	} else {
 	  leftovers.push_back(msg);
+	}
 	
 	outgoingQueue.pop_front();
       }
@@ -380,58 +372,55 @@ void BufferedNetworkMessageManager::sendPendingMessages ( void )
   outgoingQueue = leftovers; // do the leftover next time
 }
 
-void BufferedNetworkMessageManager::queueMessage ( BufferedNetworkMessage *msg )
+void BufferedNetworkMessageManager::queueMessage (BufferedNetworkMessage *msg)
 {
-  MessageList::iterator itr = std::find(pendingOutgoingMessages.begin(),pendingOutgoingMessages.end(),msg);
-  if ( itr != pendingOutgoingMessages.end() )
+  MessageList::iterator itr = std::find(pendingOutgoingMessages.begin(), pendingOutgoingMessages.end(), msg);
+  if (itr != pendingOutgoingMessages.end())
     pendingOutgoingMessages.erase(itr);
 
   outgoingQueue.push_back(msg);
 }
 
-void BufferedNetworkMessageManager::purgeMessages ( NetHandler *handler )
+void BufferedNetworkMessageManager::purgeMessages (NetHandler *handler)
 {
   MessageList::iterator itr = pendingOutgoingMessages.begin();
-  while ( itr != pendingOutgoingMessages.end() )
-  {
-    if ((*itr) && (handler == (*itr)->recipient))  // just kill the message and data, it'll be pulled from the list on the next update pass
-    {
+  while (itr != pendingOutgoingMessages.end()) {
+    if ((*itr) && (handler == (*itr)->recipient)) {
+      // just kill the message and data, it'll be pulled from the list on the next update pass
       delete(*itr);
       pendingOutgoingMessages.erase(itr);
       itr = pendingOutgoingMessages.begin();
-    }
-    else
+    } else {
       itr++;
+    }
   }
 
   MessageDeque::iterator qItr = outgoingQueue.begin();
-  while (qItr != outgoingQueue.end())
-  {
-    if ((*qItr) && (handler == (*qItr)->recipient))  // just kill the message and data, it'll be pulled from the list on the next update pass
-    {
+  while (qItr != outgoingQueue.end()) {
+    if ((*qItr) && (handler == (*qItr)->recipient)) {
+      // just kill the message and data, it'll be pulled from the list on the next update pass
       delete(*qItr);
       outgoingQueue.erase(qItr);
       qItr = outgoingQueue.begin();
-    }
-    else
+    } else {
       qItr++;
+    }
   }
 }
 
-void BufferedNetworkMessageManager::flushMessages ( NetHandler *handler )
+void BufferedNetworkMessageManager::flushMessages (NetHandler *handler)
 {
   MessageDeque::iterator qItr = outgoingQueue.begin();
-  while (qItr != outgoingQueue.end())
-  {
-    if ((*qItr) && (handler == (*qItr)->recipient)) // process the message and data for that specific nethandler
-    {
+  while (qItr != outgoingQueue.end()) {
+    if ((*qItr) && (handler == (*qItr)->recipient)) {
+      // process the message and data for that specific nethandler
       (*qItr)->process();
       delete(*qItr);
       outgoingQueue.erase(qItr);
       qItr = outgoingQueue.begin();
-    }
-    else
+    } else {
       qItr++;
+    }
   }
 }
 
@@ -443,17 +432,15 @@ BufferedNetworkMessageManager::BufferedNetworkMessageManager()
 BufferedNetworkMessageManager::~BufferedNetworkMessageManager()
 {
   MessageList::iterator itr = pendingOutgoingMessages.begin();
-  while ( itr != pendingOutgoingMessages.end() )
-  {
-      delete(*itr);
-      itr++;
+  while (itr != pendingOutgoingMessages.end()) {
+    delete(*itr);
+    itr++;
   }
 
   MessageDeque::iterator qItr = outgoingQueue.begin();
-  while (qItr != outgoingQueue.end())
-  {
-      delete(*qItr);
-      qItr++;
+  while (qItr != outgoingQueue.end()) {
+    delete(*qItr);
+    qItr++;
   }
 }
 
