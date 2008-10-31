@@ -472,7 +472,7 @@ const float* FlagType::getColor() const
 
 const std::string FlagType::label() const
 {
-  unsigned int i;
+  size_t i;
 
   /* convert to lowercase so we can uppercase the abbreviation later */
   std::string caseName = "";
@@ -481,14 +481,14 @@ const std::string FlagType::label() const
   }
 
   /* modify the flag name to exemplify the abbreviation */
-  int charPosition;
+  size_t charPosition;
   for (i = 0; i < flagAbbv.size(); i++) {
 
     charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
 
     if (charPosition > 0) {
       /* if we can match an abbreviation on a word boundary -- prefer it */
-      int alternateCharPosition = 1;
+      size_t alternateCharPosition = 1;
       while (alternateCharPosition > 0) {
 	if (caseName[alternateCharPosition - 1] == ' ') {
 	  charPosition = alternateCharPosition;
