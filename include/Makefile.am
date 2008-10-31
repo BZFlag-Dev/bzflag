@@ -32,6 +32,7 @@ noinst_HEADERS =			\
 	CallbackList.h			\
 	CollisionManager.h		\
 	CommandManager.h		\
+	CommandCompleter.h		\
 	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\

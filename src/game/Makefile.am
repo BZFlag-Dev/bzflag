@@ -14,6 +14,7 @@ libGame_la_SOURCES =			\
 	BZDBCache.cxx			\
 	BzMaterial.cxx			\
 	CollisionManager.cxx		\
+	CommandCompleter.cxx		\
 	DirectoryNames.cxx		\
 	DynamicColor.cxx		\
 	Flag.cxx			\

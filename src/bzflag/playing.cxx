@@ -143,7 +143,7 @@ static bool justJoined = false;
 float roamDZoom = 0.0f;
 
 static MessageOfTheDay *motd = NULL;
-DefaultCompleter completer;
+CommandCompleter completer;
 
 PlayerId msgDestination;
 
@@ -5229,7 +5229,7 @@ static void joinInternetGame2()
   playerSize = world->getPlayersSize();
 
   // reset the autocompleter
-  completer.setDefaults();
+  completer.reset();
   BZDB.iterate(addVarToAutoComplete, NULL);
 
   // prep flags

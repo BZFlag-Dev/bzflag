@@ -13,26 +13,37 @@
 #ifndef AUTOCOMPLETER_H
 #define AUTOCOMPLETER_H
 
+#include "common.h"
+
+/* system interface header */
 #include <string>
 #include <vector>
 
 
-/** This class will try to complete strings to registered words. */
+/**
+ * This class will try to complete strings to registered words.
+ */
 class AutoCompleter {
   public:
-    /** Use this function to register a new word that strings should be
-	checked against and possibly completed to. Empty strings will not
-	be registered. */
+    /**
+     * Use this function to register a new word that strings should be
+     * checked against and possibly completed to. Empty strings will
+     * not be registered.
+     */
     void registerWord(const std::string& str, bool quoteString = false);
 
-    /** Use this function to unregister a word. If the word hasn't been
-	registered previously nothing will happen. */
+    /**
+     * Use this function to unregister a word. If the word hasn't been
+     * registered previously nothing will happen.
+     */
     void unregisterWord(const std::string& str);
 
-    /** This function will search the list of registered words and see if
-	the given string can be completed to any of those words. If the string
-	can be completed to several words, their largest common prefix will
-	be returned. */
+    /**
+     * This function will search the list of registered words and see
+     * if the given string can be completed to any of those words. If
+     * the string can be completed to several words, their largest
+     * common prefix will be returned.
+     */
     std::string complete(const std::string& str, std::string* matches = NULL);
 
   protected:
@@ -49,18 +60,6 @@ class AutoCompleter {
     std::vector<WordRecord> words;
 };
 
-
-/** This class will try to complete strings to registered words.
-    It starts with a bunch of common /-commands */
-class DefaultCompleter : public AutoCompleter {
-  public:
-    /** ctor sets default words */
-    DefaultCompleter();
-
-    /** This function sets the list of registered words to a default which
-	consists of some /-commands; possible other words are removed */
-    void setDefaults();
-};
 
 #endif
 

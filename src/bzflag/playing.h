@@ -25,7 +25,7 @@
 
 /* common headers */
 #include "StartupInfo.h"
-#include "AutoCompleter.h"
+#include "CommandCompleter.h"
 #include "Address.h"
 
 /* local headers */
@@ -105,7 +105,7 @@ extern PlayerId		msgDestination;
 extern ServerLink*	serverLink;
 extern int		numFlags;
 extern StartupInfo	startupInfo;
-extern DefaultCompleter	completer;
+extern CommandCompleter	completer;
 extern bool		gameOver;
 extern bool		canSpawn;
 extern std::string	customLimboMessage;

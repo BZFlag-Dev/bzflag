@@ -22,7 +22,7 @@
 #include <utility>
 
 #include "Address.h"
-#include "AutoCompleter.h"
+#include "CommandCompleter.h"
 #include "BZAdminUI.h"
 #include "curses_wrapper.h"
 #include "CursesMenu.h"
@@ -130,7 +130,7 @@ protected:
   PlayerIdMap additionalTargets;
   PlayerIdMap::const_iterator targetIter;
   PlayerId me;
-  DefaultCompleter comp;
+  CommandCompleter comp;
   std::vector<std::string> history;
   unsigned int maxHistory;
   unsigned int currentHistory;
