@@ -478,9 +478,9 @@ const std::string FlagType::label() const
   size_t charPosition;
   for (i = 0; i < flagAbbv.size(); i++) {
 
-    charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
+    charPosition = caseName.find_first_of(tolower(flagAbbv.c_str()[i]), 0);
 
-    if (charPosition > 0) {
+    if (charPosition != std::string::npos) {
       /* if we can match an abbreviation on a word boundary -- prefer it */
       size_t alternateCharPosition = 1;
       while (alternateCharPosition > 0) {
@@ -488,11 +488,9 @@ const std::string FlagType::label() const
 	  charPosition = alternateCharPosition;
 	  break;
 	}
-	alternateCharPosition = caseName.find_first_of(tolower(flagAbbv[i]), alternateCharPosition+1);
+	alternateCharPosition = caseName.find_first_of(tolower(flagAbbv.c_str()[i]), alternateCharPosition+1);
       }
-    }
 
-    if (charPosition >= 0) {
       caseName[charPosition] = toupper(caseName[charPosition]);
     }
   }
