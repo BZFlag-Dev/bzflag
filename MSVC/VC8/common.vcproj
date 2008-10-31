@@ -590,10 +590,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BZDBCache.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\bzfio.cxx"
 				>
 			</File>
@@ -631,10 +627,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\FileManager.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\Flag.cxx"
 				>
 			</File>
 			<File
@@ -751,10 +743,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BZDBCache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\bzfio.h"
 				>
 			</File>
@@ -804,10 +792,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\FileManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Flag.h"
 				>
 			</File>
 			<File

@@ -530,6 +530,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\common\BZDBCache.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\BzMaterial.cxx"
 				>
 			</File>
@@ -543,6 +547,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\game\DynamicColor.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\Flag.cxx"
 				>
 			</File>
 			<File
@@ -632,6 +640,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\include\BZDBCache.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\BzMaterial.h"
 				>
 			</File>
@@ -641,6 +653,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\DirectoryNames.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Flag.h"
 				>
 			</File>
 			<File
