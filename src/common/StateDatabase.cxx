@@ -41,7 +41,7 @@ void	_debugLookups(const std::string &name)
   if (!BZDB.getDebug())
     return;
 
-  typedef std::map<std::string,int> EvalCntMap;
+  typedef std::map<std::string, int> EvalCntMap;
   static const float interval = 20.0f;
 
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
@@ -56,24 +56,24 @@ void	_debugLookups(const std::string &name)
 
   TimeKeeper now = TimeKeeper::getCurrent();
   if (now - last > interval) {
-    std::multimap<int,std::string> order;
+    std::multimap<int, std::string> order;
     for (it = cnts.begin(); it != cnts.end(); it++) {
-      order.insert(std::pair<int,std::string>(-it->second, it->first));
+      order.insert(std::pair<int, std::string>(-it->second, it->first));
       it->second = 0;
     }
 
-    for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
+    for (std::multimap<int, std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
       if (-it2->first / interval < 1.0f)
 	break;
-      logDebugMessage(1,"%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
+      logDebugMessage(1, "%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
     }
     last = now;
   }
 }
 
-  #define debugLookups(name) _debugLookups(name)
+#define debugLookups(name) _debugLookups(name)
 #else
-  #define debugLookups(name)
+#define debugLookups(name)
 #endif
 
 // initialize the singleton
@@ -259,10 +259,10 @@ StateDatabase::~StateDatabase()
 
 void			StateDatabase::set(const std::string& name,
 					   const std::string& value,
-					   Permission access)
+					   Permission accessLevel)
 {
   Map::iterator index = lookup(name);
-  if (access >= index->second.permission) {
+  if (accessLevel >= index->second.permission) {
     index->second.value  = value;
     index->second.isSet  = true;
     index->second.isTrue = (index->second.value != "0" &&
@@ -274,38 +274,38 @@ void			StateDatabase::set(const std::string& name,
 			    index->second.value != "NO" &&
 			    index->second.value != "disable");
 
-	if (saveDefault)
-		index->second.defValue = value;
+    if (saveDefault)
+      index->second.defValue = value;
     notify(index);
   }
 }
 
 void		     StateDatabase::setInt(const std::string& name,
 					   const int& value,
-					   Permission access)
+					   Permission accessLevel)
 {
-  set(name,TextUtils::format("%d",value),access);
+  set(name, TextUtils::format("%d", value), accessLevel);
 }
 
 void		    StateDatabase::setBool(const std::string& name,
 					   const bool& value,
-					   Permission access)
+					   Permission accessLevel)
 {
-  set(name,value ? std::string("1") : std::string("0"),access);
+  set(name, value ? std::string("1") : std::string("0"), accessLevel);
 }
 
 void		   StateDatabase::setFloat(const std::string& name,
 					   const float& value,
-					   Permission access)
+					   Permission accessLevel)
 {
-  set(name,TextUtils::format("%f",value),access);
+  set(name, TextUtils::format("%f", value), accessLevel);
 }
 
 void			StateDatabase::unset(const std::string& name,
-					     Permission access)
+					     Permission accessLevel)
 {
   Map::iterator index = lookup(name);
-  if (access >= index->second.permission) {
+  if (accessLevel >= index->second.permission) {
     index->second.value  = "";
     index->second.isSet  = false;
     index->second.isTrue = false;
@@ -314,48 +314,48 @@ void			StateDatabase::unset(const std::string& name,
 }
 
 void			StateDatabase::touch(const std::string& name,
-					     Permission access)
+					     Permission accessLevel)
 {
   Map::iterator index = lookup(name);
-  if (access >= index->second.permission)
+  if (accessLevel >= index->second.permission)
     notify(index);
 }
 
 void			StateDatabase::setPersistent(
-					const std::string& name, bool save)
+						     const std::string& name, bool save)
 {
   Map::iterator index = lookup(name);
   index->second.save = save;
 }
 
 void			StateDatabase::setDefault(
-					const std::string& name, const std::string& value)
+						  const std::string& name, const std::string& value)
 {
   Map::iterator index = lookup(name);
   index->second.defValue = value;
 }
 
 void			StateDatabase::setPermission(
-					const std::string& name,
-					Permission permission)
+						     const std::string& name,
+						     Permission permission)
 {
   Map::iterator index = lookup(name);
   index->second.permission = permission;
 }
 
 void			StateDatabase::addCallback(
-					const std::string& name,
-					Callback callback,
-					void* userData)
+						   const std::string& name,
+						   Callback callback,
+						   void* userData)
 {
   Map::iterator index = lookup(name);
   index->second.callbacks.add(callback, userData);
 }
 
 void			StateDatabase::removeCallback(
-					const std::string& name,
-					Callback callback,
-					void* userData)
+						      const std::string& name,
+						      Callback callback,
+						      void* userData)
 {
   Map::iterator index = lookup(name);
   index->second.callbacks.remove(callback, userData);
@@ -422,7 +422,7 @@ float			StateDatabase::eval(const std::string& name)
   Expression pre, inf;
   std::string value = index->second.value;
   if (!value.size())
-	  return NaN;
+    return NaN;
   value >> inf;
   pre = infixToPrefix(inf);
   float retn = evaluate(pre);
@@ -488,7 +488,7 @@ std::string		StateDatabase::getDefault(const std::string& name) const
 }
 
 StateDatabase::Permission
-			StateDatabase::getPermission(const std::string& name) const
+StateDatabase::getPermission(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -499,7 +499,7 @@ StateDatabase::Permission
 }
 
 StateDatabase::Map::iterator
-			StateDatabase::lookup(const std::string& name)
+StateDatabase::lookup(const std::string& name)
 {
   debugLookups(name);
   Map::iterator index = items.find(name);
@@ -552,7 +552,7 @@ void		     StateDatabase::setDebug(bool print) {
 }
 
 void		     StateDatabase::setSaveDefault(bool save) {
-	saveDefault = save;
+  saveDefault = save;
 }
 
 StateDatabase::ExpressionToken::ExpressionToken()
@@ -878,15 +878,15 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
       if (i->getOperator() == ExpressionToken::lparen) {
 	operators.push(*i);
       } else if (i->getOperator() == ExpressionToken::rparen) {
-	// unstack operators until a matching ( is found
-	while((operators.size() > 0) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	// unstack operators until a matching (is found
+	while ((operators.size() > 0) && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
 	}
 	// discard (
 	if (operators.size() > 0) // handle extra-rparen case
 	  operators.pop();
       } else {
-	while((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	while ((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
 	}
 	operators.push(*i);
@@ -922,7 +922,7 @@ float StateDatabase::evaluate(Expression e) const
       case ExpressionToken::oper:
 	if ((i->getOperator() == ExpressionToken::lparen) ||
 	    (i->getOperator() == ExpressionToken::rparen)) {
-	    break;  // should not have any parens here, skip them
+	  break;  // should not have any parens here, skip them
 	}
 	if (evaluationStack.size() == 0) {
 	  // syntax error
@@ -959,16 +959,16 @@ float StateDatabase::evaluate(Expression e) const
 	    tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
 	    evaluationStack.push(tok);
 	    break;
-	default:
-	  // lparen and rparen should have been stripped out
-	  // throw something here, too
-	  break;
+	  default:
+	    // lparen and rparen should have been stripped out
+	    // throw something here, too
+	    break;
 	}
 	break;
     }
   }
   if (!evaluationStack.size())
-	  return 0; // yeah we are screwed. TODO, don't let us get this far
+    return 0; // yeah we are screwed. TODO, don't let us get this far
   return (float)evaluationStack.top().getNumber();
 }
 
