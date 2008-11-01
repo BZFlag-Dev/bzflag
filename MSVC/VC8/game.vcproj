@@ -566,7 +566,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\GameTime.cxx"
+				RelativePath="..\..\src\game\GameTime.cxx"
 				>
 			</File>
 			<File
@@ -606,7 +606,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\PlayerState.cxx"
+				RelativePath="..\..\src\game\PlayerState.cxx"
 				>
 			</File>
 			<File
@@ -634,7 +634,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\ShotUpdate.cxx"
+				RelativePath="..\..\src\game\ShotUpdate.cxx"
 				>
 			</File>
 			<File
@@ -642,7 +642,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\Team.cxx"
+				RelativePath="..\..\src\game\Team.cxx"
 				>
 			</File>
 			<File
