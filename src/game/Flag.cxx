@@ -33,14 +33,6 @@ FlagSet FlagType::customFlags;
 
 
 /**
- * The double zero is important for network communication.  When sent
- * over the wire, the double zero becomes a separator.  See the pack()
- * function below.
- */
-static const char NullString[2] = { '\0', '\0' };
-
-
-/**
  * Initialize flag description singletons in a Flags namespace.  Why
  * we do this isn't exactly clear, but it does encapsulate the names
  * so that it's obvious they're flags when used (e.g. Flags::Agility).
@@ -104,7 +96,7 @@ namespace Flags {
    */
   void init()
   {
-    Null	= new FlagType("", NullString, FlagNormal, StandardShot, FlagGood, NoTeam,
+    Null	= new FlagType("", "", FlagNormal, StandardShot, FlagGood, NoTeam,
 			       "");
     RedTeam	= new FlagType("Red Team", "R*", FlagNormal, StandardShot, FlagGood, ::RedTeam,
 			       "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!");
@@ -288,7 +280,7 @@ namespace Flags {
 
 void* FlagType::pack(void* buf) const
 {
-  if (flagAbbv.size() > 1) {
+  if (flagAbbv.size() > 0) {
     buf = nboPackUByte(buf, flagAbbv[0]);
     buf = nboPackUByte(buf, flagAbbv[1]);
   } else {
@@ -308,7 +300,7 @@ void* FlagType::fakePack(void* buf) const
 
 size_t FlagType::pack(BufferedNetworkMessage *msg) const
 {
-  if (flagAbbv.size() > 1) {
+  if (flagAbbv.size() > 0) {
     msg->packUByte(flagAbbv[0]);
     msg->packUByte(flagAbbv[1]);
   } else {
