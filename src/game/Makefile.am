@@ -37,6 +37,7 @@ libGame_la_SOURCES =			\
 	ServerPing.cxx			\
 	ShotManager.cxx			\
 	StartupInfo.cxx			\
+	Team.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx		\
 	WorldContentInfo.cxx

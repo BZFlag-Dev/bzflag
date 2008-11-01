@@ -28,7 +28,6 @@ libCommon_la_SOURCES  =			\
 	PositionTracker.cxx		\
 	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
-	Team.cxx			\
 	TextChunkManager.cxx		\
 	TextUtils.cxx			\
 	TimeBomb.cxx			\
