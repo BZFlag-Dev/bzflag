@@ -650,15 +650,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\PlayerState.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\PositionTracker.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\ShotUpdate.cxx"
 				>
 			</File>
 			<File
@@ -803,19 +795,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PlayerState.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\PositionTracker.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\SceneDatabase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ShotUpdate.h"
 				>
 			</File>
 			<File

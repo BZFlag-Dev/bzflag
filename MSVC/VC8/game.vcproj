@@ -606,6 +606,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\PlayerState.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\Ray.cxx"
 				>
 			</File>
@@ -627,6 +631,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\game\ShotManager.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\common\ShotUpdate.cxx"
 				>
 			</File>
 			<File
@@ -728,6 +736,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\PlayerState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\Ray.h"
 				>
 			</File>
@@ -749,6 +761,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\ShotManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ShotUpdate.h"
 				>
 			</File>
 			<File
