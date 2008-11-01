@@ -44,29 +44,31 @@ static float getNormalOrigRect(const float* p, float dx, float dy)
     return (float)(1.5 * M_PI);
 
   // inside box
-  if (p[0] > 0.0f)					// inside east
-    if (p[1] > 0.0f)					//  inside ne quadrant
+  if (p[0] > 0.0f) {					// inside east
+    if (p[1] > 0.0f) {					//  inside ne quadrant
       if (dy * p[0] > dx * p[1])			//   east wall
 	return 0.0f;
       else						//   north wall
 	return (float)(0.5 * M_PI);
-    else						//  inside se quadrant
+    } else {						//  inside se quadrant
       if (dy * p[0] > -dx * p[1])			//   east wall
 	return 0.0f;
       else						//   south wall
 	return (float)(1.5 * M_PI);
-
-  else							// inside west
-    if (p[1] > 0.0f)					//  inside nw quadrant
+    }
+  } else {						// inside west
+    if (p[1] > 0.0f) {					//  inside nw quadrant
       if (dy * p[0] < -dx * p[1])			//   west wall
 	return (float)M_PI;
       else						//   north wall
 	return (float)(0.5 * M_PI);
-    else						//  inside sw quadrant
+    } else {						//  inside sw quadrant
       if (dy * p[0] < dx * p[1])			//   west wall
 	return (float)M_PI;
       else						//   south wall
 	return (float)(1.5 * M_PI);
+    }
+  }
 }
 
 
@@ -99,27 +101,25 @@ bool testOrigRectCircle(float dx, float dy, const float* p, float r)
 {
   // Algorithm from Graphics Gems, pp51-53.
   const float rr = r * r, rx = -p[0], ry = -p[1];
-  if (rx + dx < 0.0)					// west of rect
+  if (rx + dx < 0.0) {					// west of rect
     if (ry + dy < 0.0)					//  sw corner
       return (rx + dx) * (rx + dx) + (ry + dy) * (ry + dy) < rr;
     else if (ry - dy > 0.0)				//  nw corner
       return (rx + dx) * (rx + dx) + (ry - dy) * (ry - dy) < rr;
     else						//  due west
       return rx + dx > -r;
-
-  else if (rx - dx > 0.0)				// east of rect
+  } else if (rx - dx > 0.0) {				// east of rect
     if (ry + dy < 0.0)					//  se corner
       return (rx - dx) * (rx - dx) + (ry + dy) * (ry + dy) < rr;
     else if (ry - dy > 0.0)				//  ne corner
       return (rx - dx) * (rx - dx) + (ry - dy) * (ry - dy) < rr;
     else						//  due east
       return rx - dx < r;
-
-  else if (ry + dy < 0.0)				// due south
+  } else if (ry + dy < 0.0) {				// due south
     return ry + dy > -r;
-
-  else if (ry - dy > 0.0)				// due north
+  } else if (ry - dy > 0.0) {				// due north
     return ry - dy < r;
+  }
 
   return true;						// circle origin in rect
 }
@@ -167,27 +167,38 @@ Ray rayMinusRay(const Ray& r1, float t1, const Ray& r2, float t2)
 float rayAtDistanceFromOrigin(const Ray& r, float radius)
 {
   const float* d = r.getDirection();
-  if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0) return 0.0f;
+
+  if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0)
+    return 0.0f;
 
   const float* p = r.getOrigin();
   const float a = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
   const float b = -(p[0] * d[0] + p[1] * d[1] + p[2] * d[2]);
   const float c = p[0] * p[0] + p[1] * p[1] + p[2] * p[2] - radius * radius;
   const float disc = b * b - a * c;
-  if (disc < 0.0f) return -1.0f;		// misses sphere
+
+  if (disc < 0.0f)
+    return -1.0f;		// misses sphere
+
   const float d1_2 = sqrtf(disc);
   const float t0 = b + d1_2;
   const float t1 = b - d1_2;
-  if (t0 < t1)
-    if (t0 < 0.0f) return t1 / a;
-    else return t0 / a;
-  else
-    if (t1 < 0.0) return t0 / a;
-    else return t1 / a;
+
+  if (t0 < t1) {
+    if (t0 < 0.0f)
+      return t1 / a;
+    else
+      return t0 / a;
+  } else {
+    if (t1 < 0.0)
+      return t0 / a;
+    else
+      return t1 / a;
+  }
 }
 
 
-// block covers interval x=[-dx,dx], y=[-dy,dy], z=[0.0,dz]
+// block covers interval x=[-dx, dx], y=[-dy, dy], z=[0.0, dz]
 static float timeRayHitsOrigBox(const float* p, const float* v,
 				float dx, float dy, float dz)
 {
@@ -198,65 +209,87 @@ static float timeRayHitsOrigBox(const float* p, const float* v,
   if (fabsf(p[0]) <= dx && fabsf(p[1]) <= dy && p[2] >= 0.0 && p[2] <= dz)
     return 0.0;						// inside
 
-  if (p[0] > dx)					// to east
-    if (v[0] >= 0.0) return -1.0f;			//  going east
-    else tx = (dx - p[0]) / v[0];			//  get east wall hit
-  else if (p[0] < -dx)					// to west
-    if (v[0] <= 0.0) return -1.0f;			//  going west
-    else tx = -(dx + p[0]) / v[0];			//  get west wall hit
-  else tx = -1.0f;					// doesn't matter
+  if (p[0] > dx) {					// to east
+    if (v[0] >= 0.0)
+      return -1.0f;					//  going east
+    else
+      tx = (dx - p[0]) / v[0];				//  get east wall hit
+  } else if (p[0] < -dx) {				// to west
+    if (v[0] <= 0.0)
+      return -1.0f;					//  going west
+    else
+      tx = -(dx + p[0]) / v[0];				//  get west wall hit
+  } else {
+    tx = -1.0f;						// doesn't matter
+  }
 
-  if (p[1] > dy)					// to north
-    if (v[1] >= 0.0) return -1.0f;			//  going north
-    else ty = (dy - p[1]) / v[1];			//  get north wall hit
-  else if (p[1] < -dy)					// to south
-    if (v[1] <= 0.0) return -1.0f;			//  going south
-    else ty = -(dy + p[1]) / v[1];			//  get north wall hit
-  else ty = -1.0f;					// doesn't matter
+  if (p[1] > dy) {					// to north
+    if (v[1] >= 0.0)
+      return -1.0f;					//  going north
+    else
+      ty = (dy - p[1]) / v[1];				//  get north wall hit
+  } else if (p[1] < -dy) {		       		// to south
+    if (v[1] <= 0.0)
+      return -1.0f;					//  going south
+    else
+      ty = -(dy + p[1]) / v[1];				//  get north wall hit
+  } else {
+    ty = -1.0f;						// doesn't matter
+  }
 
-  if (p[2] > dz)					// above
-    if (v[2] >= 0.0) return -1.0f;			//  going up
-    else tz = (dz - p[2]) / v[2];			//  get ceiling hit
-  else if (p[2] < 0.0)					// below
-    if (v[2] <= 0.0) return -1.0f;			//  going down
-    else tz = -p[2] / v[2];				//  get floor hit
-  else tz = -1.0f;					// doesn't matter
+  if (p[2] > dz) {					// above
+    if (v[2] >= 0.0)
+      return -1.0f;					//  going up
+    else
+      tz = (dz - p[2]) / v[2];				//  get ceiling hit
+  } else if (p[2] < 0.0) {				// below
+    if (v[2] <= 0.0)
+      return -1.0f;					//  going down
+    else
+      tz = -p[2] / v[2];				//  get floor hit
+  } else {
+    tz = -1.0f;						// doesn't matter
+  }
 
   // throw out solutions < 0.0 or that intersect outside box
   if (tx < 0.0 ||
-	fabsf(p[1] + tx * v[1]) > dy ||
-	p[2] + tx * v[2] < 0.0 ||
-	p[2] + tx * v[2] > dz)
+      fabsf(p[1] + tx * v[1]) > dy ||
+      p[2] + tx * v[2] < 0.0 ||
+      p[2] + tx * v[2] > dz)
     tx = -1.0f;
   if (ty < 0.0 ||
-	fabsf(p[0] + ty * v[0]) > dx ||
-	p[2] + ty * v[2] < 0.0 ||
-	p[2] + ty * v[2] > dz)
+      fabsf(p[0] + ty * v[0]) > dx ||
+      p[2] + ty * v[2] < 0.0 ||
+      p[2] + ty * v[2] > dz)
     ty = -1.0f;
   if (tz < 0.0 ||
-	fabsf(p[0] + tz * v[0]) > dx ||
-	fabsf(p[1] + tz * v[1]) > dy)
+      fabsf(p[0] + tz * v[0]) > dx ||
+      fabsf(p[1] + tz * v[1]) > dy)
     tz = -1.0f;
 
-  if (tx < 0.0 && ty < 0.0 && tz < 0.0) return -1.0f;	// no hits
+  if (tx < 0.0 && ty < 0.0 && tz < 0.0)
+    return -1.0f;	// no hits
 
   // pick closest valid solution
   if (tx < 0.0f) {
-    if (ty < 0.0f) return tz;
-    if (tz < 0.0f || ty < tz) return ty;
+    if (ty < 0.0f)
+      return tz;
+    if (tz < 0.0f || ty < tz)
+      return ty;
     return tz;
-  }
-  else if (ty < 0.0f) {
-    if (tz < 0.0 || tx < tz) return tx;
+  } else if (ty < 0.0f) {
+    if (tz < 0.0 || tx < tz)
+      return tx;
     return tz;
-  }
-  else if (tz < 0.0f) {
-    if (tx < ty) return tx;
+  } else if (tz < 0.0f) {
+    if (tx < ty)
+      return tx;
     return ty;
-  }
-  else {
-    if (tx < ty && tx < tz) return tx;
-    if (ty < tz) return ty;
+  } else {
+    if (tx < ty && tx < tz)
+      return tx;
+    if (ty < tz)
+      return ty;
     return tz;
   }
 }
@@ -467,7 +500,7 @@ float timeRayHitsPyramids(const Ray& r, const float* p1, float angle,
 }
 
 
-// rect covers interval x=[-dx,dx], y=[-dy,dy]
+// rect covers interval x=[-dx, dx], y=[-dy, dy]
 float timeAndSideRayHitsOrigRect(const float* p, const float* v,
 				 float dx, float dy, int& side)
 {
@@ -481,26 +514,41 @@ float timeAndSideRayHitsOrigRect(const float* p, const float* v,
   side = -1;
 
   float tx, ty;
-  if (p[0] > dx)					// to east
-    if (v[0] >= 0.0f) return -1.0f;			//  going east
-    else tx = (dx - p[0]) / v[0];			//  get east wall hit
-  else if (p[0] < -dx)					// to west
-    if (v[0] <= 0.0f) return -1.0f;			//  going west
-    else tx = -(dx + p[0]) / v[0];			//  get west wall hit
-  else tx = -1.0f;					// doesn't matter
+  if (p[0] > dx) {					// to east
+    if (v[0] >= 0.0f)
+      return -1.0f;					//  going east
+    else
+      tx = (dx - p[0]) / v[0];				//  get east wall hit
+  } else if (p[0] < -dx) {				// to west
+    if (v[0] <= 0.0f)
+      return -1.0f;					//  going west
+    else
+      tx = -(dx + p[0]) / v[0];				//  get west wall hit
+  } else {
+    tx = -1.0f;						// doesn't matter
+  }
 
-  if (p[1] > dy)					// to north
-    if (v[1] >= 0.0f) return -1.0f;			//  going north
-    else ty = (dy - p[1]) / v[1];			//  get north wall hit
-  else if (p[1] < -dy)					// to south
-    if (v[1] <= 0.0f) return -1.0f;			//  going south
-    else ty = -(dy + p[1]) / v[1];			//  get north wall hit
-  else ty = -1.0f;					// doesn't matter
+  if (p[1] > dy) {					// to north
+    if (v[1] >= 0.0f)
+      return -1.0f;					//  going north
+    else
+      ty = (dy - p[1]) / v[1];				//  get north wall hit
+  } else if (p[1] < -dy) {				// to south
+    if (v[1] <= 0.0f)
+	return -1.0f;					//  going south
+    else
+	ty = -(dy + p[1]) / v[1];			//  get north wall hit
+  } else {
+    ty = -1.0f;						// doesn't matter
+  }
 
   // throw out solutions < 0.0 or that intersect outside box
-  if (fabsf(p[1] + tx * v[1]) > dy) tx = -1.0f;
-  if (fabsf(p[0] + ty * v[0]) > dx) ty = -1.0f;
-  if (tx < 0.0f && ty < 0.0f) return -1.0f;		// no hits
+  if (fabsf(p[1] + tx * v[1]) > dy)
+    tx = -1.0f;
+  if (fabsf(p[0] + ty * v[0]) > dx)
+    ty = -1.0f;
+  if (tx < 0.0f && ty < 0.0f)
+    return -1.0f;		// no hits
 
   // pick closest valid solution
   if (tx < 0.0f || (ty >= 0.0f && ty < tx)) {
@@ -563,7 +611,9 @@ static bool testOrigRectRect(const float* p, float angle,
     corner1[i][1] = p[1] + s * dx1 * box[i][0] + c * dy1 * box[i][1];
     region[i][0] = corner1[i][0] < -dx2 ? -1 : (corner1[i][0] > dx2 ? 1 : 0);
     region[i][1] = corner1[i][1] < -dy2 ? -1 : (corner1[i][1] > dy2 ? 1 : 0);
-    if (!region[i][0] && !region[i][1]) return true;
+
+    if (!region[i][0] && !region[i][1])
+      return true;
   }
 
   // check each edge of rect1
@@ -589,16 +639,13 @@ static bool testOrigRectRect(const float* p, float angle,
     if (region[i][0] == 0) {
       corner2[0] = region[j][0] * dx2;
       corner2[1] = region[i][1] * dy2;
-    }
-    else if (region[j][0] == 0) {
+    } else if (region[j][0] == 0) {
       corner2[0] = region[i][0] * dx2;
       corner2[1] = region[j][1] * dy2;
-    }
-    else if (region[i][1] == 0) {
+    } else if (region[i][1] == 0) {
       corner2[0] = region[i][0] * dx2;
       corner2[1] = region[j][1] * dy2;
-    }
-    else {
+    } else {
       corner2[0] = region[j][0] * dx2;
       corner2[1] = region[i][1] * dy2;
     }
@@ -655,7 +702,8 @@ bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
   for (int i = 0; i < 4; i++) {
     const float x = pb[0] + c2 * dx2 * box[i][0] - s2 * dy2 * box[i][1];
     const float y = pb[1] + s2 * dx2 * box[i][0] + c2 * dy2 * box[i][1];
-    if (fabsf(x) > dx1 || fabsf(y) > dy1) return false;
+    if (fabsf(x) > dx1 || fabsf(y) > dy1)
+      return false;
   }
   return true;
 }
@@ -738,11 +786,11 @@ bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
     }
   }
   const float icross = (plane[0] * i[0]) +
-		       (plane[1] * i[1]) +
-		       (plane[2] * i[2]) + plane[3];
+    (plane[1] * i[1]) +
+    (plane[2] * i[2]) + plane[3];
   const float ocross = (plane[0] * o[0]) +
-		       (plane[1] * o[1]) +
-		       (plane[2] * o[2]) + plane[3];
+    (plane[1] * o[1]) +
+    (plane[2] * o[2]) + plane[3];
   if ((icross * ocross) > 0.0f) {
     // same polarity means that the plane doesn't cut the box
     return false;
@@ -908,15 +956,13 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& exts,
       }
       zone[a] = 0;
       inside = false;
-    }
-    else if (o[a] > exts.maxs[a]) {
+    } else if (o[a] > exts.maxs[a]) {
       if (v[a] >= 0.0f) {
 	return false;
       }
       zone[a] = 1;
       inside = false;
-    }
-    else {
+    } else {
       zone[a] = -1;
     }
   }
@@ -926,8 +972,7 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& exts,
 
   if (inside) {
     *inTime = 0.0f;
-  }
-  else {
+  } else {
     // calculate the hitTimes
     for (a = 0; a < 3; a++) {
       if (zone[a] < 0) {
@@ -984,11 +1029,9 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
   for (a = 0; a < 3; a++) {
     if (v[a] == 0.0f) {
       hitTime[a] = MAXFLOAT;
-    }
-    else if (v[a] < 0.0f) {
+    } else if (v[a] < 0.0f) {
       hitTime[a] = (extents.mins[a] - o[a]) / v[a];
-    }
-    else {
+    } else {
       hitTime[a] = (extents.maxs[a] - o[a]) / v[a];
     }
   }

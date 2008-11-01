@@ -17,17 +17,15 @@
 #include "WorldContentInfo.h"
 
 
-void WorldInfo::clear ( void )
+void WorldInfo::clear (void)
 {
-
 }
 
-void  WorldInfo::send ( NetHandler * /* handler */ )
+void  WorldInfo::send (NetHandler * /* handler */)
 {
-
 }
 
-void  WorldInfo::receive ( BufferedNetworkMessage * /* msg */ )
+void  WorldInfo::receive (BufferedNetworkMessage * /* msg */)
 {
 }
 

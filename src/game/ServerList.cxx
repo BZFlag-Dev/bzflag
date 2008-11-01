@@ -42,17 +42,19 @@ ServerList* Singleton<ServerList>::_instance = (ServerList*)0;
 
 
 ServerList::ServerList() :
-	phase(-1),
-	serverCache(ServerListCache::get()),
-	pingBcastSocket(-1)
+  phase(-1),
+  serverCache(ServerListCache::get()),
+  pingBcastSocket(-1)
 {
 }
 
-ServerList::~ServerList() {
+ServerList::~ServerList()
+{
   _shutDown();
 }
 
-void ServerList::startServerPings(StartupInfo *info) {
+void ServerList::startServerPings(StartupInfo *info)
+{
 
   // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
@@ -150,7 +152,7 @@ void ServerList::readServerList()
       // store info
       ServerItem serverInfo;
       serverInfo.ping.unpackHex(infoServer);
-      int dot[4] = {127,0,0,1};
+      int dot[4] = {127, 0, 0, 1};
       if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
 	if (dot[0] >= 0 && dot[0] <= 255 &&
 	    dot[1] >= 0 && dot[1] <= 255 &&
@@ -237,7 +239,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
   // non-cached, items that have more players are more, etc..
   for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
     const ServerItem& server = (*serverIterator).second;
-    if (info < server){
+    if (info < server) {
       insertPoint = i;
       break;
     }
@@ -263,7 +265,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
     serverKey += portBuf;
   }
 
-  if (insertPoint == -1){ // no spot to insert it into -- goes on back
+  if (insertPoint == -1) { // no spot to insert it into -- goes on back
     //servers.push_back(info);
     servers.insert(std::pair<std::string, ServerItem>(serverKey, constInfo));
   } else {  // found a spot to insert it into
@@ -281,7 +283,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
     ServerListCache::SRV_STR_MAP::iterator iter;
     iter = serverCache->find(serverAddress);  // find entry to allow update
-    if (iter != serverCache->end()){ // if we find it, update it
+    if (iter != serverCache->end()) { // if we find it, update it
       iter->second = info;
     } else {
       // insert into cache -- wasn't found
@@ -290,33 +292,26 @@ void ServerList::addToList(ServerItem info, bool doCache)
   }
 
   for (ServerCallbackList::iterator itr = serverCallbackList.begin();
-       itr != serverCallbackList.end(); ++itr)
-  {
+       itr != serverCallbackList.end(); ++itr) {
     (*itr).first(&info, (*itr).second);
   }
 
-  if (serverKeyCallbackList.find(info.getServerKey()) != serverKeyCallbackList.end())
-  {
-    for (size_t j=0; j<serverKeyCallbackList[info.getServerKey()].size(); j++)
-    {
+  if (serverKeyCallbackList.find(info.getServerKey()) != serverKeyCallbackList.end()) {
+    for (size_t j=0; j<serverKeyCallbackList[info.getServerKey()].size(); j++) {
       serverKeyCallbackList[info.getServerKey()][j].first(&info, serverKeyCallbackList[info.getServerKey()][j].second);
     }
   }
 
-  if (info.favorite)
-  {
+  if (info.favorite) {
     for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
-	 itr != favoritesCallbackList.end(); ++itr)
-    {
+	 itr != favoritesCallbackList.end(); ++itr) {
       (*itr).first(&info, (*itr).second);
     }
   }
 
-  if (info.recent)
-  {
+  if (info.recent) {
     for (ServerCallbackList::iterator itr = recentCallbackList.begin();
-	 itr != recentCallbackList.end(); ++itr)
-    {
+	 itr != recentCallbackList.end(); ++itr) {
       (*itr).first(&info, (*itr).second);
     }
   }
@@ -326,16 +321,16 @@ void ServerList::addToList(ServerItem info, bool doCache)
 // mark server identified by host:port string as favorite
 void		    ServerList::markFav(const std::string &serverAddress, bool fav)
 {
-  std::map<std::string, ServerItem>::iterator serverIterator;
+std::map<std::string, ServerItem>::iterator serverIterator;
 
-  //for (int i = 0; i < (int)servers.size(); i++) {
-  for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
-    ServerItem& server = (*serverIterator).second;
-    if (serverAddress == server.getAddrName()) {
-      server.favorite = fav;
-      break;
-    }
-  }
+//for (int i = 0; i < (int)servers.size(); i++) {
+for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
+ServerItem& server = (*serverIterator).second;
+if (serverAddress == server.getAddrName()) {
+server.favorite = fav;
+break;
+}
+}
 }
 */
 void ServerList::markAsRecent(ServerItem* item)
@@ -351,8 +346,7 @@ void ServerList::markAsRecent(ServerItem* item)
   item->recentTime = item->getNow();
 
   for (ServerCallbackList::iterator itr = recentCallbackList.begin();
-       itr != recentCallbackList.end(); ++itr)
-  {
+       itr != recentCallbackList.end(); ++itr) {
     (*itr).first(item, (*itr).second);
   }
 }
@@ -380,8 +374,7 @@ void ServerList::markAsFavorite(ServerItem* item)
   item->favorite = true;
 
   for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
-       itr != favoritesCallbackList.end(); ++itr)
-  {
+       itr != favoritesCallbackList.end(); ++itr) {
     (*itr).first(item, (*itr).second);
   }
 }
@@ -459,7 +452,7 @@ void			ServerList::checkEchos(StartupInfo *info)
     int fdMax = pingBcastSocket;
 
     const int nfound = select(fdMax+1, (fd_set*)&read_set,
-					(fd_set*)&write_set, 0, &timeout);
+			      (fd_set*)&write_set, 0, &timeout);
     if (nfound <= 0)
       break;
 
@@ -501,7 +494,7 @@ void			ServerList::addCacheToList()
     return;
   addedCacheToList = true;
   for (ServerListCache::SRV_STR_MAP::iterator iter = serverCache->begin();
-       iter != serverCache->end(); iter++){
+       iter != serverCache->end(); iter++) {
     addToList(iter->second);
   }
 }
@@ -526,19 +519,23 @@ void ServerList::finalization(char *, unsigned int, bool good)
   }
 }
 
-const std::map<std::string, ServerItem>& ServerList::getServers() {
+const std::map<std::string, ServerItem>& ServerList::getServers()
+{
   return servers;
 }
 
-std::map<std::string, ServerItem>::size_type ServerList::size() {
+std::map<std::string, ServerItem>::size_type ServerList::size()
+{
   return servers.size();
 }
 
-void ServerList::clear() {
+void ServerList::clear()
+{
   servers.clear();
 }
 
-int ServerList::updateFromCache() {
+int ServerList::updateFromCache()
+{
   // clear server list
   clear();
 
@@ -558,11 +555,13 @@ int ServerList::updateFromCache() {
   return numItemsAdded;
 }
 
-bool ServerList::searchActive() const {
+bool ServerList::searchActive() const
+{
   return (phase < 4) ? true : false;
 }
 
-bool ServerList::serverFound() const {
+bool ServerList::serverFound() const
+{
   return (phase >= 2) ? true : false;
 }
 
@@ -626,7 +625,8 @@ void ServerList::removeRecentServerCallback(ServerListCallback _cb, void* data)
   }
 }
 
-void ServerList::_shutDown() {
+void ServerList::_shutDown()
+{
   // close broadcast socket
   closeBroadcast(pingBcastSocket);
   pingBcastSocket = -1;

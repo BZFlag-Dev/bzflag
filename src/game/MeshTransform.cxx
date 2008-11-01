@@ -76,16 +76,14 @@ int MeshTransformManager::findTransform(const std::string& transform) const
 {
   if (transform.size() <= 0) {
     return -1;
-  }
-  else if ((transform[0] >= '0') && (transform[0] <= '9')) {
+  } else if ((transform[0] >= '0') && (transform[0] <= '9')) {
     int index = atoi (transform.c_str());
     if ((index < 0) || (index >= (int)transforms.size())) {
       return -1;
     } else {
       return index;
     }
-  }
-  else {
+  } else {
     for (int i = 0; i < (int)transforms.size(); i++) {
       if (transforms[i]->getName() == transform) {
 	return i;
@@ -155,7 +153,7 @@ static void multiply(float m[4][4], const float n[4][4])
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       t[i][j] = (m[0][j] * n[i][0]) + (m[1][j] * n[i][1]) +
-		(m[2][j] * n[i][2]) + (m[3][j] * n[i][3]);
+	(m[2][j] * n[i][2]) + (m[3][j] * n[i][3]);
     }
   }
   memcpy (m, t, sizeof(float[4][4]));
@@ -200,8 +198,8 @@ static void spin(float m[4][4], const float radians, const float normal[3])
 {
   // normalize
   const float len = (normal[0] * normal[0]) +
-		    (normal[1] * normal[1]) +
-		    (normal[2] * normal[2]);
+    (normal[1] * normal[1]) +
+    (normal[2] * normal[2]);
   if (len <= 0.0f) {
     return;
   }
@@ -303,7 +301,7 @@ MeshTransform::Tool::~Tool()
 
 
 void MeshTransform::Tool::processTransforms(
-			    const std::vector<TransformData>& transforms)
+					    const std::vector<TransformData>& transforms)
 {
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
@@ -510,12 +508,10 @@ bool MeshTransform::setName(const std::string& xformname)
   if (xformname.size() <= 0) {
     name = "";
     return false;
-  }
-  else if ((xformname[0] >= '0') && (xformname[0] <= '9')) {
+  } else if ((xformname[0] >= '0') && (xformname[0] <= '9')) {
     name = "";
     return false;
-  }
-  else {
+  } else {
     name = xformname;
   }
   return true;
@@ -693,23 +689,23 @@ void MeshTransform::printTransforms(std::ostream& out,
     switch (transform.type) {
       case ShiftTransform: {
 	out << indent << "  shift "
-		      << d[0] << " " << d[1] << " " << d[2] << std::endl;
+	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
 	break;
       }
       case ScaleTransform: {
 	out << indent << "  scale "
-		      << d[0] << " " << d[1] << " " << d[2] << std::endl;
+	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
 	break;
       }
       case ShearTransform: {
 	out << indent << "  shear "
-		      << d[0] << " " << d[1] << " " << d[2] << std::endl;
+	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
 	break;
       }
       case SpinTransform: {
 	const float degrees = (float)(d[3] * (180.0 / M_PI));
 	out << indent << "  spin " << degrees << " "
-		      << d[0] << " " << d[1] << " " << d[2] << std::endl;
+	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
 	break;
       }
       case IndexTransform: {

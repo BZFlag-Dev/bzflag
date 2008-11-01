@@ -154,26 +154,24 @@ void GameTime::update()
   std::list<TimeRecord>::iterator it;
   unsigned int count = timeRecs.size();
   if (count <= 0) {
-    const TimeRecord tr = {0,0};
+    const TimeRecord tr = {0, 0};
     resetToRecord(tr);
-  }
-  else if (count == 1) {
+  } else if (count == 1) {
     const TimeRecord& tr = *timeRecs.begin();
     resetToRecord(tr);
-  }
-  else {
+  } else {
     calcAvgRate();
     const TimeRecord& tr = *timeRecs.begin();
     const s64 diffTime = stepTime - tr.netTime;
     if ((diffTime < -maxTime) || (diffTime > +maxTime) ||
 	(avgRate < minRate) || (avgRate > maxRate)) {
-      logDebugMessage(4,"GameTime: discontinuity: usecs = %lli, rate = %f\n",
-	     diffTime, avgRate);
+      logDebugMessage(4, "GameTime: discontinuity: usecs = %lli, rate = %f\n",
+		      diffTime, avgRate);
       resetToRecord(tr);
     }
   }
 
-  logDebugMessage(4,"GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
+  logDebugMessage(4, "GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
 
   return;
 }

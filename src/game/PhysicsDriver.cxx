@@ -81,16 +81,14 @@ int PhysicsDriverManager::findDriver(const std::string& dyncol) const
 {
   if (dyncol.size() <= 0) {
     return -1;
-  }
-  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+  } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
     int index = atoi (dyncol.c_str());
     if ((index < 0) || (index >= (int)drivers.size())) {
       return -1;
     } else {
       return index;
     }
-  }
-  else {
+  } else {
     for (int i = 0; i < (int)drivers.size(); i++) {
       if (drivers[i]->getName() == dyncol) {
 	return i;
@@ -197,12 +195,10 @@ bool PhysicsDriver::setName(const std::string& drvname)
   if (drvname.size() <= 0) {
     name = "";
     return false;
-  }
-  else if ((drvname[0] >= '0') && (drvname[0] <= '9')) {
+  } else if ((drvname[0] >= '0') && (drvname[0] <= '9')) {
     name = "";
     return false;
-  }
-  else {
+  } else {
     name = drvname;
   }
   return true;
@@ -344,19 +340,19 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
   const float* v = linear;
   if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
     out << indent << "  linear "
-		  << v[0] << " " << v[1] << " " << v[2] << std::endl;
+	<< v[0] << " " << v[1] << " " << v[2] << std::endl;
   }
 
   if (angularVel != 0.0f) {
     const float* ap = angularPos;
     out << indent << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
-				  << ap[0] << " " << ap[1] << std::endl;
+	<< ap[0] << " " << ap[1] << std::endl;
   }
 
   if (radialVel != 0.0f) {
     const float* rp = radialPos;
     out << indent << "  radial "
-		  << radialVel << " " << rp[0] << " " << rp[1] << std::endl;
+	<< radialVel << " " << rp[0] << " " << rp[1] << std::endl;
   }
 
   if (slide) {

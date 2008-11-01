@@ -200,7 +200,7 @@ bool VotingArbiter::hasSuffrage(const std::string &player) const
 }
 
 bool VotingArbiter::hasVoted(const std::string &player) const{
-	return _votingBooth->hasVoted(TextUtils::tolower(player));
+  return _votingBooth->hasVoted(TextUtils::tolower(player));
 }
 
 bool VotingArbiter::voteYes(const std::string &player)
@@ -278,7 +278,7 @@ bool VotingArbiter::isPollSuccessful(void) const
   //  std::cout << "Percentage successful is " << ((double)votes * (double)100.0 / (double)_maxVotes) << " with " << votes << " votes and " << _maxVotes << "max votes required" << std::endl;
 
   // were there enough votes?
-  if (( (double)100.0 * (double)yesVotes / total) >= (double)_votePercentage) {
+  if (((double)100.0 * (double)yesVotes / total) >= (double)_votePercentage) {
     return true;
   }
 
@@ -302,7 +302,7 @@ bool VotingArbiter::isPollSureToFail(void) const
   }
 
   // were there enough no votes to ensure failure?
-  if (( (double)100.0 * (double)noVotes / total) >= (double)100.0 - (double)_votePercentage) {
+  if (((double)100.0 * (double)noVotes / total) >= (double)100.0 - (double)_votePercentage) {
     return true;
   }
 

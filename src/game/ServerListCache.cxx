@@ -48,7 +48,7 @@ ServerListCache*  ServerListCache::get()
 // insert a serverItem mapped by the serverAddress
 void ServerListCache::insert(const std::string &serverAddress, const ServerItem &info)
 {
-  serverCache.insert(SRV_STR_MAP::value_type(serverAddress,info));
+  serverCache.insert(SRV_STR_MAP::value_type(serverAddress, info));
 }
 
 
@@ -100,9 +100,9 @@ void			ServerListCache::saveCache()
   std::ostream* outFile = FILEMGR.createDataOutStream(fileName, true, true);
   int lenCpy = max_string;
 
-  if (outFile != NULL){
+  if (outFile != NULL) {
     char buffer[max_string+1];
-    for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
+    for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++) {
 
       // skip items that are more than 30 days old, but always save favorites
       if (!iter->second.favorite && iter->second.getAgeMinutes() > 60*24*30) {
@@ -132,11 +132,11 @@ void			ServerListCache::loadCache()
 
   if (inFile) {
     char buffer[max_string+1];
-    while(inFile) {
+    while (inFile) {
       std::string serverIndex;
       ServerItem info;
 
-      inFile.read(buffer,sizeof(buffer)); //read the index of the map
+      inFile.read(buffer, sizeof(buffer)); //read the index of the map
       if ((size_t)inFile.gcount() < sizeof(buffer)) break; // failed to read entire string
       serverIndex = buffer;
 
@@ -145,7 +145,7 @@ void			ServerListCache::loadCache()
       if (info.getAgeMinutes() > (time_t)30) info.ping.zeroPlayerCounts();
       if (!infoWorked) break;
 
-      serverCache.insert(SRV_STR_MAP::value_type(serverIndex,info));
+      serverCache.insert(SRV_STR_MAP::value_type(serverIndex, info));
     }
     inFile.close();
   }
@@ -154,7 +154,7 @@ void			ServerListCache::loadCache()
 
 bool			ServerListCache::clearCache()
 {
-  if (serverCache.size() > 0){
+  if (serverCache.size() > 0) {
     serverCache.clear();
     return true;
 

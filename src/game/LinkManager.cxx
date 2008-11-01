@@ -133,11 +133,11 @@ void LinkManager::doLinking()
     bool broken = false;
     if (srcNumbers.size() <= 0) {
       broken = true;
-      logDebugMessage(1,"broken link src: %s\n", link.src.c_str());
+      logDebugMessage(1, "broken link src: %s\n", link.src.c_str());
     }
     if (dstNumbers.size() <= 0) {
       broken = true;
-      logDebugMessage(1,"broken link dst: %s\n", link.dst.c_str());
+      logDebugMessage(1, "broken link dst: %s\n", link.dst.c_str());
     }
     if (broken) {
       continue;
@@ -166,19 +166,19 @@ void LinkManager::doLinking()
   if (debugLevel >= 4) {
     for (i = 0; i < teles.size(); i++) {
       Teleporter* tele = (Teleporter*) teles[i];
-      logDebugMessage(0,"TELE(%i): %s\n", i, tele->getName().c_str());
+      logDebugMessage(0, "TELE(%i): %s\n", i, tele->getName().c_str());
     }
     for (i = 0; i < linkNames.size(); i++) {
       LinkNameSet& link = linkNames[i];
-      logDebugMessage(0,"LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
+      logDebugMessage(0, "LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
     }
     for (i = 0; i < linkNumbers.size(); i++) {
-      logDebugMessage(0,"SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
+      logDebugMessage(0, "SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
       for (unsigned int j = 0; j < linkNumbers[i].dsts.size(); j++) {
 	int dst = linkNumbers[i].dsts[j];
-	logDebugMessage(0," %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
+	logDebugMessage(0, " %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
       }
-      logDebugMessage(0,"\n");
+      logDebugMessage(0, "\n");
     }
   }
 
@@ -242,12 +242,10 @@ int LinkManager::getTeleportTarget(int source) const
 
   if (dstsList.size() == 1) {
     return dstsList[0];
-  }
-  else if (dstsList.size() > 1) {
+  } else if (dstsList.size() > 1) {
     int target = rand() % int(dstsList.size());
     return dstsList[target];
-  }
-  else {
+  } else {
     assert(false);
     return 0;
   }
@@ -262,13 +260,11 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
 
   if (dstsList.size() == 1) {
     return dstsList[0];
-  }
-  else if (dstsList.size() > 1) {
+  } else if (dstsList.size() > 1) {
     seed = (seed * 1103515245 + 12345) >> 8; // from POSIX rand() example
     seed = seed % (dstsList.size());
     return dstsList[seed];
-  }
-  else {
+  } else {
     assert(false);
     return 0;
   }

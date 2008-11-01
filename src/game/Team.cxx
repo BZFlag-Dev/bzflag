@@ -14,26 +14,26 @@
 #include "Team.h"
 #include "Pack.h"
 
-float			Team::tankColor[NumTeams][3] = {
-				{ 0.0f, 0.0f, 0.0f },   // rogue
-				{ 1.0f, 0.0f, 0.0f },   // red
-				{ 0.0f, 1.0f, 0.0f },   // green
-				{ 0.2f, 0.2f, 1.0f },   // blue
-				{ 1.0f, 0.0f, 1.0f },   // purple
-				{ 0.0f, 1.0f, 1.0f },   // observer
-				{ 1.0f, 1.0f, 1.0f },   // rabbit
-				{ 1.0f, 0.5f, 0.0f }	// hunter orange
-			};
-float			Team::radarColor[NumTeams][3] = {
-				{ 1.0f, 1.0f, 0.0f },	// rogue
-				{ 1.0f, 0.15f, 0.15f }, // red
-				{ 0.2f, 0.9f, 0.2f },	// green
-				{ 0.08f, 0.25, 1.0f},	// blue
-				{ 1.0f, 0.4f, 1.0f },	// purple
-				{ 0.0f, 1.0f, 1.0f },	// observer
-				{ 1.0f, 1.0f, 1.0f },   // rabbit
-				{ 1.0f, 0.5f, 0.0f }	// hunter orange
-			};
+float Team::tankColor[NumTeams][3] = {
+  { 0.0f, 0.0f, 0.0f },   // rogue
+  { 1.0f, 0.0f, 0.0f },   // red
+  { 0.0f, 1.0f, 0.0f },   // green
+  { 0.2f, 0.2f, 1.0f },   // blue
+  { 1.0f, 0.0f, 1.0f },   // purple
+  { 0.0f, 1.0f, 1.0f },   // observer
+  { 1.0f, 1.0f, 1.0f },   // rabbit
+  { 1.0f, 0.5f, 0.0f }	// hunter orange
+};
+float Team::radarColor[NumTeams][3] = {
+  { 1.0f, 1.0f, 0.0f },	// rogue
+  { 1.0f, 0.15f, 0.15f }, // red
+  { 0.2f, 0.9f, 0.2f },	// green
+  { 0.08f, 0.25, 1.0f},	// blue
+  { 1.0f, 0.4f, 1.0f },	// purple
+  { 0.0f, 1.0f, 1.0f },	// observer
+  { 1.0f, 1.0f, 1.0f },   // rabbit
+  { 1.0f, 0.5f, 0.0f }	// hunter orange
+};
 
 Team::Team()
 {
@@ -72,46 +72,46 @@ void*			Team::unpack(void* buf)
 const std::string  Team::getImagePrefix(TeamColor team)
 {
   switch (team) {
-  case RedTeam: return BZDB.get("redTeamPrefix");
-  case GreenTeam: return BZDB.get("greenTeamPrefix");
-  case BlueTeam: return BZDB.get("blueTeamPrefix");
-  case PurpleTeam: return BZDB.get("purpleTeamPrefix");
-  case RabbitTeam: return BZDB.get("rabbitTeamPrefix");
-  case HunterTeam: return BZDB.get("hunterTeamPrefix");
-  case ObserverTeam: return BZDB.get("observerTeamPrefix");
-  default: return BZDB.get("rogueTeamPrefix");
+    case RedTeam: return BZDB.get("redTeamPrefix");
+    case GreenTeam: return BZDB.get("greenTeamPrefix");
+    case BlueTeam: return BZDB.get("blueTeamPrefix");
+    case PurpleTeam: return BZDB.get("purpleTeamPrefix");
+    case RabbitTeam: return BZDB.get("rabbitTeamPrefix");
+    case HunterTeam: return BZDB.get("hunterTeamPrefix");
+    case ObserverTeam: return BZDB.get("observerTeamPrefix");
+    default: return BZDB.get("rogueTeamPrefix");
   }
 }
 
 const char*		Team::getName(TeamColor team) // const
 {
   switch (team) {
-  case AutomaticTeam: return "Automatic";
-  case RogueTeam: return "Rogue";
-  case RedTeam: return "Red Team";
-  case GreenTeam: return "Green Team";
-  case BlueTeam: return "Blue Team";
-  case PurpleTeam: return "Purple Team";
-  case ObserverTeam: return "Observer";
-  case RabbitTeam: return "Rabbit";
-  case HunterTeam: return "Hunter";
-  case NoTeam: return "No Team??";
-  default: return "Invalid team";
+    case AutomaticTeam: return "Automatic";
+    case RogueTeam: return "Rogue";
+    case RedTeam: return "Red Team";
+    case GreenTeam: return "Green Team";
+    case BlueTeam: return "Blue Team";
+    case PurpleTeam: return "Purple Team";
+    case ObserverTeam: return "Observer";
+    case RabbitTeam: return "Rabbit";
+    case HunterTeam: return "Hunter";
+    case NoTeam: return "No Team??";
+    default: return "Invalid team";
   }
 }
 
 const char*		Team::getShortName(TeamColor team)
 {
   switch (team) {
-  case RogueTeam: return "rogue";
-  case RedTeam: return "red";
-  case GreenTeam: return "green";
-  case BlueTeam: return "blue";
-  case PurpleTeam: return "purple";
-  case ObserverTeam: return "observer";
-  case RabbitTeam: return "rabbit";
-  case HunterTeam: return "hunter";
-  default: return "none";
+    case RogueTeam: return "rogue";
+    case RedTeam: return "red";
+    case GreenTeam: return "green";
+    case BlueTeam: return "blue";
+    case PurpleTeam: return "purple";
+    case ObserverTeam: return "observer";
+    case RabbitTeam: return "rabbit";
+    case HunterTeam: return "hunter";
+    default: return "none";
   }
 }
 
@@ -150,8 +150,8 @@ bool		Team::isColorTeam(TeamColor team) // const
 }
 
 void			Team::setColors(TeamColor team,
-				const float* tank,
-				const float* radar)
+					const float* tank,
+					const float* radar)
 {
   const int teamIndex = int(team);
   // ignore bogus team color

@@ -310,8 +310,7 @@ const char * MsgStrings::strMsgCode (uint16_t code)
   }
   if (i < PacketListCount) {
     return PacketList[i].label;
-  }
-  else {
+  } else {
     static char buf[32];
     sprintf (buf, "MsgUnknown(0x%04X)", code);
     return buf;
@@ -330,8 +329,7 @@ MsgStringList MsgStrings::msgFromServer (u16 len, u16 code, const void *data)
   if (i < PacketListCount) {
     PacketInfo pi = {len, code, data};
     return PacketList[i].handler (&pi);
-  }
-  else {
+  } else {
     MsgStringList badcode;
     listPush (badcode, 0, "Unknown message code: 0x%04X\n", code);
     return badcode;
@@ -352,8 +350,7 @@ MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
     MsgStringList list = listMsgBasics (&pi);
     list[0].text += "  << client to server messages unimplemented >>";
     return list;
-  }
-  else {
+  } else {
     MsgStringList list;
     listPush (list, 0, "Unknown message code: 0x%04X\n", code);
     list[0].text += "  << client to server messages unimplemented >>";
@@ -450,8 +447,7 @@ static std::string strPlayer (u16 id)
   std::string name;
   if (it != PlayerList.end()) {
     name = (*it).second;
-  }
-  else {
+  } else {
     name = "UnTracked";
   }
   return TextUtils::format ("%s [%i]", name.c_str(), id);

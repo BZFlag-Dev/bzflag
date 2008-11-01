@@ -65,8 +65,8 @@ static float clampedValue(float input, float max)
 
 void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
 {
-	if (increment)
-		order++;
+  if (increment)
+    order++;
 
   buf = nboPackInt(buf, int32_t(order));
   buf = nboPackShort(buf, int16_t(status));
@@ -86,8 +86,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
     buf = nboPackFloatVector(buf, velocity);
     buf = nboPackFloat(buf, azimuth);
     buf = nboPackFloat(buf, angVel);
-  }
-  else {
+  } else {
 
     code = MsgPlayerUpdateSmall;
 
@@ -102,8 +101,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
     float angle = fmodf (azimuth, (float)M_PI * 2.0f);
     if (angle > M_PI) {
       angle -= (float)(M_PI * 2.0);
-    }
-    else if (angle < -M_PI) {
+    } else if (angle < -M_PI) {
       angle += (float)(M_PI * 2.0);
     }
     aziShort = (int16_t) ((angle * smallScale) / M_PI);
@@ -172,8 +170,7 @@ void	PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
     msg->packFloatVector(velocity);
     msg->packFloat(azimuth);
     msg->packFloat(angVel);
-  }
-  else {
+  } else {
 
     code = MsgPlayerUpdateSmall;
 
@@ -188,8 +185,7 @@ void	PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
     float angle = fmodf (azimuth, (float)M_PI * 2.0f);
     if (angle > M_PI) {
       angle -= (float)(M_PI * 2.0);
-    }
-    else if (angle < -M_PI) {
+    } else if (angle < -M_PI) {
       angle += (float)(M_PI * 2.0);
     }
     aziShort = (int16_t) ((angle * smallScale) / M_PI);
@@ -246,8 +242,7 @@ void*	PlayerState::unpack(void* buf, uint16_t code)
     buf = nboUnpackFloatVector(buf, velocity);
     buf = nboUnpackFloat(buf, azimuth);
     buf = nboUnpackFloat(buf, angVel);
-  }
-  else {
+  } else {
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
 
     buf = nboUnpackShort(buf, posShort[0]);

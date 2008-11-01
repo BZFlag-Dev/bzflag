@@ -76,16 +76,14 @@ int TextureMatrixManager::findMatrix(const std::string& texmat) const
 {
   if (texmat.size() <= 0) {
     return -1;
-  }
-  else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
+  } else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
     int index = atoi (texmat.c_str());
     if ((index < 0) || (index >= (int)matrices.size())) {
       return -1;
     } else {
       return index;
     }
-  }
-  else {
+  } else {
     for (int i = 0; i < (int)matrices.size(); i++) {
       if (matrices[i]->getName() == texmat) {
 	return i;
@@ -288,7 +286,7 @@ void TextureMatrix::finalize()
     const float radians = rotation * (float)(M_PI / 180.0);
 
     shift(staticMatrix, -(uFixedShift + uFixedCenter),
-			-(vFixedShift + vFixedCenter));
+	  -(vFixedShift + vFixedCenter));
     spin(staticMatrix, -radians);
     if ((uFixedScale != 0.0f) && (vFixedScale != 0.0f)) {
       scale(staticMatrix, (1.0f / uFixedScale), (1.0f / vFixedScale));
@@ -310,12 +308,10 @@ bool TextureMatrix::setName(const std::string& texmat)
   if (texmat.size() <= 0) {
     name = "";
     return false;
-  }
-  else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
+  } else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
     name = "";
     return false;
-  }
-  else {
+  } else {
     name = texmat;
   }
   return true;
@@ -379,7 +375,7 @@ void TextureMatrix::setDynamicSpin (float freq)
 
 
 void TextureMatrix::setDynamicScale (float uFreq, float vFreq,
-				    float _uScale, float _vScale)
+				     float _uScale, float _vScale)
 {
   uScaleFreq = uFreq;
   vScaleFreq = vFreq;
@@ -410,7 +406,7 @@ void TextureMatrix::update (double t)
   }
 
   // the matrix reloaded
-//  memcpy(matrix, identityMatrix, sizeof(float[4][4]));
+  //  memcpy(matrix, identityMatrix, sizeof(float[4][4]));
 
   float partial[3][2];
   memcpy(partial, partialIdentity, sizeof(float[3][2]));
@@ -563,7 +559,7 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
     if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
 	(uScale != 1.0f) || (vScale != 1.0f)) {
       out << indent << "  scale " << uScaleFreq << " " << vScaleFreq << " "
-			<< uScale << " " << vScale << std::endl;
+	  << uScale << " " << vScale << std::endl;
     }
     if (uCenter != 0.5f) {
       out << indent << "  center " << uCenter << " " << vCenter << std::endl;
