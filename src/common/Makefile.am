@@ -24,9 +24,7 @@ libCommon_la_SOURCES  =			\
 	Language.cxx			\
 	OSFile.cxx			\
 	ParseColor.cxx			\
-	PlayerState.cxx			\
 	PositionTracker.cxx		\
-	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
 	TextChunkManager.cxx		\
 	TextUtils.cxx			\

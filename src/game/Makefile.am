@@ -30,12 +30,14 @@ libGame_la_SOURCES =			\
 	NetHandler.cxx			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
+	PlayerState.cxx			\
 	Ray.cxx				\
 	ServerItem.cxx			\
 	ServerList.cxx			\
 	ServerListCache.cxx		\
 	ServerPing.cxx			\
 	ShotManager.cxx			\
+	ShotUpdate.cxx			\
 	StartupInfo.cxx			\
 	Team.cxx			\
 	TextureMatrix.cxx		\
