@@ -666,10 +666,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\Team.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\TextChunkManager.cxx"
 				>
 			</File>
@@ -824,10 +820,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\StateDatabase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Team.h"
 				>
 			</File>
 			<File
