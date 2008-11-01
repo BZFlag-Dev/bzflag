@@ -302,15 +302,12 @@ void* FlagType::fakePack(void* buf) const
 
 size_t FlagType::pack(BufferedNetworkMessage *msg) const
 {
-  if (flagAbbv.size() > 0)
-    msg->packUByte(flagAbbv[0]);
-  else
-    msg->packUByte(0);
+  char buf[sizeof(unsigned char)*2] = {0, 0};
 
-  if (flagAbbv.size() > 1)
-    msg->packUByte(flagAbbv[1]);
-  else
-    msg->packUByte(0);
+  pack((void*)buf);
+
+  msg->packUByte(buf[0]);
+  msg->packUByte(buf[1]);
 
   return 2;
 }
