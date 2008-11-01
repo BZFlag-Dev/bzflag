@@ -31,9 +31,20 @@ FlagSet *FlagType::flagSets = NULL;
 const int FlagType::packSize = FlagPackSize;
 FlagSet FlagType::customFlags;
 
+
+/**
+ * The double zero is important for network communication.  When sent
+ * over the wire, the double zero becomes a separator.  See the pack()
+ * function below.
+ */
 static const char NullString[2] = { '\0', '\0' };
 
-// Initialize flag description singletons in our Flags namespace
+
+/**
+ * Initialize flag description singletons in a Flags namespace.  Why
+ * we do this isn't exactly clear, but it does encapsulate the names
+ * so that it's obvious they're flags when used (e.g. Flags::Agility).
+ */
 namespace Flags {
   /* alphabetical order */
   FlagType *Agility;
@@ -86,6 +97,11 @@ namespace Flags {
   FlagType *Wings;
   FlagType *Null; // leave Null at the end
 
+
+  /**
+   * initialize all flags.  this is oddly called during initialization
+   * of MsgStrings instead of as part of some flag manager.
+   */
   void init()
   {
     Null	= new FlagType("", NullString, FlagNormal, StandardShot, FlagGood, NoTeam,
@@ -188,6 +204,10 @@ namespace Flags {
 			       "Tank can't stop bouncing.");
   }
 
+
+  /**
+   * release the dynamic memory for all flags allocated during init()
+   */
   void kill()
   {
     clearCustomFlags();
@@ -268,13 +288,11 @@ namespace Flags {
 
 void* FlagType::pack(void* buf) const
 {
-  if (flagAbbv.size() >1)
-  {
+  if (flagAbbv.size() > 1) {
     buf = nboPackUByte(buf, flagAbbv[0]);
     buf = nboPackUByte(buf, flagAbbv[1]);
-  }
-  else
-  {
+  } else {
+    // null flag
     buf = nboPackUByte(buf, 0);
     buf = nboPackUByte(buf, 0);
   }
@@ -290,13 +308,11 @@ void* FlagType::fakePack(void* buf) const
 
 size_t FlagType::pack(BufferedNetworkMessage *msg) const
 {
-  if (flagAbbv.size() >1)
-  {
+  if (flagAbbv.size() > 1) {
     msg->packUByte(flagAbbv[0]);
     msg->packUByte(flagAbbv[1]);
-  }
-  else
-  {
+  } else {
+    // null flag
     msg->packUByte(0);
     msg->packUByte(0);
   }
