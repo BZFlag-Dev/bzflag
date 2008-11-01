@@ -280,14 +280,16 @@ namespace Flags {
 
 void* FlagType::pack(void* buf) const
 {
-  if (flagAbbv.size() > 0) {
+  if (flagAbbv.size() > 0)
     buf = nboPackUByte(buf, flagAbbv[0]);
+  else
+    buf = nboPackUByte(buf, 0);
+
+  if (flagAbbv.size() > 1)
     buf = nboPackUByte(buf, flagAbbv[1]);
-  } else {
-    // null flag
+  else
     buf = nboPackUByte(buf, 0);
-    buf = nboPackUByte(buf, 0);
-  }
+
   return buf;
 }
 
@@ -300,14 +302,16 @@ void* FlagType::fakePack(void* buf) const
 
 size_t FlagType::pack(BufferedNetworkMessage *msg) const
 {
-  if (flagAbbv.size() > 0) {
+  if (flagAbbv.size() > 0)
     msg->packUByte(flagAbbv[0]);
+  else
+    msg->packUByte(0);
+
+  if (flagAbbv.size() > 1)
     msg->packUByte(flagAbbv[1]);
-  } else {
-    // null flag
+  else
     msg->packUByte(0);
-    msg->packUByte(0);
-  }
+
   return 2;
 }
 
