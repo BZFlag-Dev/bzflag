@@ -20,7 +20,6 @@ libCommon_la_SOURCES  =			\
 	Country.cxx			\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
-	GameTime.cxx			\
 	KeyManager.cxx			\
 	Language.cxx			\
 	OSFile.cxx			\

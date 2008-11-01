@@ -20,6 +20,7 @@ libGame_la_SOURCES =			\
 	DynamicColor.cxx		\
 	Flag.cxx			\
 	Frustum.cxx			\
+	GameTime.cxx			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
 	LinkManager.cxx			\
