@@ -566,6 +566,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\GameTime.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\Intersect.cxx"
 				>
 			</File>
@@ -677,6 +681,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Frustum.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\GameTime.h"
 				>
 			</File>
 			<File

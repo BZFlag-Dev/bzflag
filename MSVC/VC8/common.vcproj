@@ -626,10 +626,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\GameTime.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\global.cxx"
 				>
 			</File>
@@ -784,10 +780,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\FileManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\GameTime.h"
 				>
 			</File>
 			<File
