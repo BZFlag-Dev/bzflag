@@ -86,23 +86,23 @@ std::string			CommandManager::run(const std::string& cmd,bool *ret) const
   std::string result;
   const char* scan = cmd.c_str();
 
-  scan = skipWhitespace(scan);
+  scan = TextUtils::skipWhitespace(scan);
   while (scan != NULL && *scan != '\0') {
     std::string name;
     ArgList args;
 
     // parse command name
-    scan = skipWhitespace(scan);
+    scan = TextUtils::skipWhitespace(scan);
     scan = readValue(scan, &name);
     if (scan != NULL)
-      scan = skipWhitespace(scan);
+      scan = TextUtils::skipWhitespace(scan);
 
     // parse arguments
     while (scan != NULL && *scan != '\0' && *scan != ';') {
       std::string value;
       scan = readValue(scan, &value);
       if (scan != NULL) {
-	scan = skipWhitespace(scan);
+	scan = TextUtils::skipWhitespace(scan);
 	args.push_back(value);
       }
     }
@@ -119,7 +119,7 @@ std::string			CommandManager::run(const std::string& cmd,bool *ret) const
     // discard ; and empty commands
     while (scan != NULL && *scan == ';') {
       ++scan;
-      scan = skipWhitespace(scan);
+      scan = TextUtils::skipWhitespace(scan);
     }
   }
 
@@ -189,12 +189,6 @@ const char*			CommandManager::readQuoted(const char* string,
   return NULL;
 }
 
-const char*			CommandManager::skipWhitespace(const char* string)
-{
-  while (*string != '\0' && iswspace(*string))
-    ++string;
-  return string;
-}
 
 // Local Variables: ***
 // mode: C++ ***
