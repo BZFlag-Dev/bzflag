@@ -694,7 +694,7 @@ bool CmdHelp::operator() (const char *message,
 			  GameKeeper::Player *playerData)
 {
 
-  int i = TextUtils::firstNonVisible(message);
+  int i = TextUtils::firstNonvisible(message);
   
   if (i <= 0)
     return false;
