@@ -1402,7 +1402,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   // count number of arguments
   int argc = 1;
   char *scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
+  scan = TextUtils::skipWhitespace(scan);
+
   while (*scan) {
     argc++;
     // If we have a double quote (ASCII 34) then read the whole quoted string
@@ -1416,13 +1417,13 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 	scan++;
       // Move past the ending double quote
       scan++;
+    } else {
+      // Not a double quote, so just make sure we aren't hitting any spaces.
+      scan = TextUtils::skipNonWhitespace(scan);
     }
-    // Not a double quote, so just make sure we aren't hitting any spaces.
-    else
-      while (!isspace(*scan) && *scan != 0) scan++;
 
     // Skip past any spaces
-    while (isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipWhitespace(scan);
   }
 
   // get path to application.  this is ridiculously simple.
@@ -1434,7 +1435,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   argc = 0;
   argv[argc++] = appName;
   scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
+  scan = TextUtils::skipWhitespace(scan);
+
   while (*scan) {
     // If we have a double quote (ASCII 34) then read the whole quoted string
     // as one argument
@@ -1455,11 +1457,12 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
     // Not a double quote, so just make sure we aren't hitting any spaces.
     else {
       argv[argc++] = scan;
-      while (!isspace(*scan) && *scan != 0) scan++;
+      scan = TextUtils::skipNonWhitespace(scan);
+
       if (*scan) *scan++ = 0;
     }
     // Skip past spaces
-    while (isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipWhitespace(scan);
   }
 
   const int exitCode = myMain(argc, argv);

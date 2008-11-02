@@ -349,7 +349,7 @@ bool DumpCommand::operator() (const char *)
 bool HighlightCommand::operator() (const char *commandLine)
 {
   const char* c = commandLine + 10;
-  while ((*c != '\0') && isspace(*c)) c++; // skip leading white
+  c = TextUtils::skipWhitespace(c);
   BZDB.set("highlightPattern", std::string(c));
   return true;
 }
