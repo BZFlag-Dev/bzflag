@@ -357,6 +357,18 @@ namespace TextUtils {
     return input;
   }
 
+
+  /**
+   * skip non-whitespace
+   */
+  inline const char* skipNonWhitespace(const char* input)
+  {
+    while (*input != '\0' && !isWhitespace(*input))
+      ++input;
+    return input;
+  }
+
+
   /** url-encodes a string
    */
   std::string url_encode(const std::string &text);
