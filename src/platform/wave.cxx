@@ -67,7 +67,7 @@ static int		skipChunk(FILE* file, int size)
   return fseek(file, size, SEEK_CUR);
 }
 
-static int		findChunk(FILE* file, char *tag, int32_t *size)
+static int		findChunk(FILE* file, const char *tag, int32_t *size)
 {
   char curtag[4];
 
