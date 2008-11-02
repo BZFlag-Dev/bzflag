@@ -60,6 +60,8 @@ FontSizer::resize(int width, int height)
   if (_smallest > _medium) _smallest = _medium;
   if (_smallest > _large) _smallest = _large;
   if (_smallest > _kingKongKahmehameha) _smallest = _kingKongKahmehameha;
+
+  setMin(0, 10);
 }
 
 
