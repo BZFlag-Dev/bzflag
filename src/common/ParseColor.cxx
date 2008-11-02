@@ -10,14 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
+/* interface header */
 #include "ParseColor.h"
 
+/* common system headers */
 #include <ctype.h>
 #include <string.h>
 #include <string>
 #include <stdio.h>
+
+/* common implementation headers */
+#include "TextUtils.h"
+
 
 typedef struct {
   const char* name;
@@ -808,9 +812,7 @@ bool parseColorCString(const char* str, float color[4])
   memcpy (color, white, sizeof(float[4]));
 
   // strip leading space
-  while ((*str != '\0') && isspace(*str)) {
-    str++;
-  }
+  str = TextUtils::skipWhitespace(str);
 
   // no string
   if (*str == '\0') {
