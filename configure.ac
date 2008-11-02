@@ -347,7 +347,6 @@ if test "x$enable_regex_build" != "xyes" ; then
     AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]) )
 fi
 
-
 dnl **********************************
 dnl *** Check for types/structures ***
 dnl **********************************
@@ -471,9 +470,13 @@ case $host_os in
 
 	AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
-	if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
-	    AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
-	fi
+	AC_CHECK_HEADERS(X11/extensions/xf86vmode.h,
+	    [AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension,
+		[ AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
+		  GLIBS="-lXxf86vm $GLIBS"
+		],,
+	    )]
+	)
 	;;
 esac
 
@@ -671,7 +674,6 @@ AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	FLAGS="-Wall -W -Wundef -Wshadow"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
@@ -698,7 +700,6 @@ case $host_os in
 	esac;;
      cygwin)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	FLAGS="-Wall -W -mcpu=$host_cpu"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
