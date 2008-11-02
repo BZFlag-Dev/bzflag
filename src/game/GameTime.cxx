@@ -94,14 +94,14 @@ static s64 getRawTime()
 static void calcAvgRate()
 {
   // FIXME - this is weak
-  const int count = timeRecs.size();
-  if (count <= 0) {
+  const size_t count = timeRecs.size();
+  if (count == 0) {
     avgRate = 1.0;
     avgPoint.netTime = 0;
     avgPoint.localTime = 0;
     return;
   }
-  else if (timeRecs.size() == 1) {
+  else if (count == 1) {
     const TimeRecord& tr = *timeRecs.begin();
     avgRate = 1.0;
     avgPoint = tr;
@@ -152,8 +152,8 @@ static void resetToRecord(const TimeRecord& record)
 void GameTime::update()
 {
   std::list<TimeRecord>::iterator it;
-  unsigned int count = timeRecs.size();
-  if (count <= 0) {
+  const size_t count = timeRecs.size();
+  if (count == 0) {
     const TimeRecord tr = {0, 0};
     resetToRecord(tr);
   } else if (count == 1) {
