@@ -863,14 +863,10 @@ bool MsgCommand::operator() (const char *message,
   std::string recipient = std::string("");
 
   // skip any leading whitespace
-  callsignStart = 0;
-  while ((callsignStart < arguments.size()) &&
-	 (isspace(arguments[callsignStart]))) {
-    callsignStart++;
-  }
+  callsignStart = TextUtils::firstVisible(arguments);
 
   // make sure there was _some_ whitespace after /msg
-  if (callsignStart == 0) {
+  if (callsignStart <= 0) {
     sendMessage(ServerPlayer, from, "Usage: /msg \"some callsign\" some message");
     return true;
   }
@@ -2363,14 +2359,12 @@ bool VoteCommand::operator() (const char *message,
   std::string answer;
 
   /* find the start of the vote answer */
-  size_t startPosition = 0;
-  while ((startPosition < voteCmd.size()) &&
-	 (isspace(voteCmd[startPosition]))) {
-    startPosition++;
-  }
+  int startPosition = TextUtils::firstVisible(voteCmd);
+  if (startPosition < 0)
+    return true;
 
   /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
-  for (size_t i = startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
+  for (size_t i = (size_t)startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
     answer += tolower(voteCmd[i]);
   }
 
@@ -2574,16 +2568,15 @@ bool PollCommand::operator() (const char *message,
   logDebugMessage(3,"The arguments string is [%s]\n", arguments.c_str());
 
   /* find the start of the command */
-  size_t startPosition = 0;
-  while ((startPosition < arguments.size()) &&
-	 (isspace(arguments[startPosition]))) {
-    startPosition++;
+  int startPosition = TextUtils::firstVisible(arguments);
+  if (startPosition < 0) {
+    startPosition = 0;
   }
 
   logDebugMessage(3,"Start position is %d\n", (int)startPosition);
 
   /* find the end of the command */
-  size_t endPosition = startPosition + 1;
+  size_t endPosition = (size_t)startPosition + 1;
   while ((endPosition < arguments.size()) &&
 	 (!isspace(arguments[endPosition]))) {
     endPosition++;
@@ -2592,9 +2585,9 @@ bool PollCommand::operator() (const char *message,
   logDebugMessage(3,"End position is %d\n", (int)endPosition);
 
   /* stash the command ('kick', etc) in lowercase to simplify comparison */
-  if ((startPosition != arguments.size()) &&
-      (endPosition > startPosition)) {
-    for (size_t i = startPosition; i < endPosition; i++) {
+  if (((size_t)startPosition != arguments.size()) &&
+      (endPosition > (size_t)startPosition)) {
+    for (size_t i = (size_t)startPosition; i < endPosition; i++) {
       cmd += tolower(arguments[i]);
     }
   }
@@ -2618,11 +2611,11 @@ bool PollCommand::operator() (const char *message,
     logDebugMessage(3,"Command arguments are [%s]\n", arguments.c_str());
 
     /* find the start of the target (e.g. player name) */
-    startPosition = 0;
-    while ((startPosition < arguments.size()) &&
-	   (isspace(arguments[startPosition]))) {
-      startPosition++;
+    startPosition = TextUtils::firstVisible(arguments);
+    if (startPosition < 0) {
+      startPosition = 0;
     }
+
     // do not include a starting quote, if given
     if (arguments[startPosition] == '"') {
       startPosition++;
