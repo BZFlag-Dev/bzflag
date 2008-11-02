@@ -36,8 +36,8 @@ bool ServerCommand::execute(const char	 *commandLine,
 			    GameKeeper::Player *playerData)
 {
   MapOfCommands &commandMap = *getMapRef();
-  int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++) {};
+  int i = TextUtils::firstNonvisible(commandLine);
+  if (i < 0) i = 0;
   std::string commandToken(commandLine, i);
 
   MapOfCommands::iterator it

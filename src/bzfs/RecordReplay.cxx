@@ -978,9 +978,8 @@ static bool parseListOptions(const char* opts,
 
   // parse the opts
   while (opts[0] != '\0') {
-    while ((opts[0] != '\0') && isspace(opts[0])) {
-      opts++; // eat whitespace
-    }
+    opts = TextUtils::skipWhitespace(opts);
+
     if (opts[0] == '-') {
       if (opts[1] == '-') {
 	opts += 2;
@@ -999,9 +998,7 @@ static bool parseListOptions(const char* opts,
     }
   }
 
-  while ((opts[0] != '\0') && isspace(opts[0])) {
-    opts++; // eat whitespace
-  }
+  opts = TextUtils::skipWhitespace(opts);
 
   // setup the globbing pattern
   if (opts[0] != '\0') {

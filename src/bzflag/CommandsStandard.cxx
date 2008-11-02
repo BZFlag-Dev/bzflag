@@ -104,8 +104,7 @@ static std::string		cmdPrint(const std::string&,
       } else if (*scan != '{') {
 	// parse variable name
 	const char* name = scan;
-	while (*scan != '\0' && !isspace(*scan))
-	  ++scan;
+	scan = TextUtils::skipNonWhitespace(scan);
 
 	// look up variable
 	result += BZDB.get(std::string(name, scan - name));

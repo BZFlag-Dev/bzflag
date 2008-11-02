@@ -1045,17 +1045,10 @@ bool MasterBanCommand::operator() (const char	 *message,
   std::string cmd = "";
 
   // allow for arbitrary whitespace
-  size_t start = 0;
-  while ((start < argument.size()) &&
-	 (isspace(argument[start]))) {
-    start++;
-  }
-
-  size_t end = 0;
-  while ((end < argument.size()) &&
-	 (!isspace(argument[end]))) {
-    end++;
-  }
+  int start = TextUtils::firstVisible(argument);
+  int end = TextUtils::firstNonvisible(argument);
+  if (start < 0) start = 0;
+  if (end < 0) end = 0;
 
   // make sure the command is lower case for comparison
   // simplicity/insensitivity

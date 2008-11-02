@@ -264,7 +264,8 @@ static std::string makeGlobPattern(const char* str)
   if (str == NULL) {
     return "*";
   }
-  while ((*str != '\0') && isspace(*str)) str++;
+  str = TextUtils::skipWhitespace(str);
+
   if (*str == '\0') {
     return "*";
   }

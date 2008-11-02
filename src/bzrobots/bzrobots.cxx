@@ -671,11 +671,12 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   // count number of arguments
   int argc = 1;
   char* scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
+  scan = TextUtils::skipWhitespace(scan);
+
   while (*scan) {
     argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;
-    while (isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipNonWhitespace(scan);
+    scan = TextUtils::skipWhitespace(scan);
   }
 
   // get path to application.  this is ridiculously simple.
@@ -687,12 +688,14 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   argc = 0;
   argv[argc++] = appName;
   scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
+  scan = TextUtils::skipWhitespace(scan);
+
   while (*scan) {
     argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipNonWhitespace(scan);
+
     if (*scan) *scan++ = 0;
-    while (isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipWhitespace(scan);
   }
 
   const int exitCode = myMain(argc, argv);

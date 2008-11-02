@@ -694,9 +694,9 @@ bool CmdHelp::operator() (const char *message,
 			  GameKeeper::Player *playerData)
 {
 
-  int i;
-  for (i = 0; message[i] && !isspace(message[i]); i++) {};
-  if (!i)
+  int i = TextUtils::firstNonVisible(message);
+  
+  if (i <= 0)
     return false;
   i--;
   bool listOnly;
@@ -1257,7 +1257,7 @@ bool FlagCommand::operator() (const char *message,
   }
 
   const char* msg = message + 6;
-  while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+  msg = TextUtils::skipWhitespace(msg);
 
   if (strncasecmp(msg, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
@@ -1286,7 +1286,7 @@ bool FlagCommand::operator() (const char *message,
   else if (strncasecmp(msg, "reset", 5) == 0)
   {
     msg += 5;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    msg = TextUtils::skipWhitespace(msg);
 
     if (*msg == '\0') {
       flagCommandHelp(t);
@@ -1349,7 +1349,7 @@ bool FlagCommand::operator() (const char *message,
     }
 
     msg += 4;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    msg = TextUtils::skipWhitespace(msg);
 
     std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
     if (argv.size() < 1) {
@@ -1392,7 +1392,7 @@ bool FlagCommand::operator() (const char *message,
     }
 
     msg += 4;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    msg = TextUtils::skipWhitespace(msg);
 
     std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
     if (argv.size() < 2) {
@@ -2830,7 +2830,7 @@ bool ViewReportCommand::operator() (const char* message,
   // setup the glob pattern
   std::string pattern = "*";
   message += commandName.size();
-  while ((*message != '\0') && isspace(*message)) message++;
+  message = TextUtils::skipWhitespace(message);
   if (*message != '\0') {
     pattern = message;
     pattern = TextUtils::toupper(pattern);
@@ -2920,7 +2920,7 @@ bool RecordCommand::operator() (const char *message,
     sendMessage(ServerPlayer, t, "You do not have permission to run the /record command");
     return true;
   }
-  while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+  buf = TextUtils::skipWhitespace(buf);
 
   if (strncasecmp (buf, "start", 5) == 0) {
     Record::start(t);
@@ -2928,7 +2928,7 @@ bool RecordCommand::operator() (const char *message,
     Record::stop(t);
   } else if (strncasecmp (buf, "size", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf);
 
     if (*buf == '\0') {
       Record::sendHelp (t);
@@ -2938,7 +2938,7 @@ bool RecordCommand::operator() (const char *message,
     Record::setSize (t, size);
   } else if (strncasecmp (buf, "rate", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf);
 
     if (*buf == '\0') {
       Record::sendHelp (t);
@@ -2957,7 +2957,7 @@ bool RecordCommand::operator() (const char *message,
     buf = buf + 4;
     char filename[MessageLen];
 
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf);
     if (*buf == '\0') {
       Record::sendHelp (t);
       return true;
@@ -2967,8 +2967,8 @@ bool RecordCommand::operator() (const char *message,
     sscanf (buf, "%128s", filename);
 
     // FIXME - do this a little better? use quotations for strings?
-    while ((*buf != '\0') && !isspace (*buf)) buf++; // eat filename
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipNonWhitespace(buf); // eat filename
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Record::saveBuffer (t, filename, 0);
@@ -2977,7 +2977,7 @@ bool RecordCommand::operator() (const char *message,
     }
   } else if (strncasecmp (buf, "file", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Record::sendHelp (t);
@@ -3006,9 +3006,7 @@ bool ReplayCommand::operator() (const char *message,
 {
   int t = playerData->getIndex();
   const char *buf = message + 7;
-  while ((*buf != '\0') && isspace (*buf)) { // eat whitespace
-    buf++;
-  }
+  buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
   // everyone can use the replay stats command
   if (strncasecmp (buf, "stats", 5) == 0) {
@@ -3028,7 +3026,7 @@ bool ReplayCommand::operator() (const char *message,
     }
   } else if (strncasecmp (buf, "load", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Replay::sendHelp (t);
@@ -3041,7 +3039,7 @@ bool ReplayCommand::operator() (const char *message,
     Replay::loop (t);
   } else if (strncasecmp (buf, "skip", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Replay::skip (t, 0);
@@ -3075,13 +3073,10 @@ bool SayCommand::operator() (const char *message,
   std::string messageText = &message[4];
 
   // skip any leading whitespace
-  while ((messageStart < messageText.size()) &&
-	 (isspace(messageText[messageStart]))) {
-    messageStart++;
-  }
+  messageStart = TextUtils::firstVisible(messageText);
 
   // make sure there was _some_ whitespace after /say
-  if (messageStart == 0) {
+  if (messageStart <= 0) {
     sendMessage(ServerPlayer, t, "Usage: /say some message");
     return true;
   }
@@ -3099,7 +3094,7 @@ bool SayCommand::operator() (const char *message,
 bool ModCountCommand::operator() (const char	*message,
 				  GameKeeper::Player *playerData)
 {
-  size_t messageStart = 0;
+  int messageStart = 0;
   int t = playerData->getIndex();
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::modCount)) {
@@ -3112,12 +3107,9 @@ bool ModCountCommand::operator() (const char	*message,
   std::string messageText = &message[9];
 
   // skip any leading whitespace
-  while ((messageStart < messageText.size()) &&
-	 (isspace(messageText[messageStart]))) {
-    messageStart++;
-  }
+  messageStart = TextUtils::firstVisible(messageText);
 
-  if (messageStart == messageText.size()) {
+  if ((size_t)messageStart == messageText.size() || messageStart < 0) {
     sendMessage(ServerPlayer, t, "Usage: /modcount {+|-} SECONDS");
     return true;
   }

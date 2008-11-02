@@ -35,6 +35,7 @@
 #include "MeshObstacle.h"
 #include "TimeKeeper.h"
 #include "bzfio.h" // for debugging info
+#include "TextUtils.h"
 
 
 // local types
@@ -879,9 +880,7 @@ bool MeshDrawInfo::parse(std::istream& input)
     }
     else if (strcasecmp(cmd.c_str(), "option") == 0) {
       const char* c = line.c_str();
-      while ((*c != '\0') && isspace(*c)) {
-	c++;
-      }
+      c = TextUtils::skipWhitespace(c);
       lodOptions.push_back(c);
     }
     else if (strcasecmp(cmd.c_str(), "corner") == 0) {

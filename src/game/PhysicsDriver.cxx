@@ -21,6 +21,7 @@
 /* common implementation headers */
 #include "TimeKeeper.h"
 #include "Pack.h"
+#include "TextUtils.h"
 
 
 // this applies to sinusoid and clamp functions
@@ -247,12 +248,10 @@ void PhysicsDriver::setSlideTime(float _slideTime)
 void PhysicsDriver::setDeathMessage(const std::string& msg)
 {
   // strip any leading whitespace
-  int first = 0;
+  int first = TextUtils::firstVisible(msg);
+  if (first < 0) first = 0;
   const char* c = msg.c_str();
-  while ((*c != '\0') && isspace(*c)) {
-    c++;
-    first++;
-  }
+  c = TextUtils::skipWhitespace(c);
   std::string str = msg.substr(first);
 
   // limit the length
