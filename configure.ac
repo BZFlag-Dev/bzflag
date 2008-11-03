@@ -475,7 +475,7 @@ case $host_os in
 		[ AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 		  GLIBS="-lXxf86vm $GLIBS"
 		],,
-	    )]
+	    )],,[#include <X11/Xlib.h>]
 	)
 	;;
 esac
