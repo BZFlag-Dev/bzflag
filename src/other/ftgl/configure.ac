@@ -21,6 +21,14 @@ AC_SUBST(LT_MICRO)
 LT_VERSION="$LT_MAJOR:$LT_MINOR:$LT_MICRO"
 AC_SUBST(LT_VERSION)
 
+# make sure ECHO and ECHO_N got defined and substituted
+if test "x$ECHO" = "x" ; then
+    ECHO=echo
+    AC_MSG_NOTICE([ECHO was not defined by configure so defining manually])
+fi
+AC_SUBST(ECHO)
+AC_SUBST(ECHO_N)
+
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
