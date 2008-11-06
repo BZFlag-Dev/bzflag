@@ -3751,7 +3751,7 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
 			PlayerId killer,
 			const ShotPath *hit, int phydrv)
 {
-  if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
+  if (!tank || (tank->getTeam() == ObserverTeam || !tank->isAlive()))
     return false;
 
   int shotId = -1;
