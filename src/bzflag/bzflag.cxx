@@ -1402,7 +1402,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   // count number of arguments
   int argc = 1;
   char *scan = cmdLine;
-  scan = TextUtils::skipWhitespace(scan);
+  scan = const_cast<char*>(TextUtils::skipWhitespace(scan));
 
   while (*scan) {
     argc++;
@@ -1419,11 +1419,11 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
       scan++;
     } else {
       // Not a double quote, so just make sure we aren't hitting any spaces.
-      scan = TextUtils::skipNonWhitespace(scan);
+      scan = const_cast<char*>(TextUtils::skipNonWhitespace(scan));
     }
 
     // Skip past any spaces
-    scan = TextUtils::skipWhitespace(scan);
+    scan = const_cast<char*>(TextUtils::skipWhitespace(scan));
   }
 
   // get path to application.  this is ridiculously simple.
@@ -1435,7 +1435,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   argc = 0;
   argv[argc++] = appName;
   scan = cmdLine;
-  scan = TextUtils::skipWhitespace(scan);
+  scan = const_cast<char*>(TextUtils::skipWhitespace(scan));
 
   while (*scan) {
     // If we have a double quote (ASCII 34) then read the whole quoted string
@@ -1457,12 +1457,12 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
     // Not a double quote, so just make sure we aren't hitting any spaces.
     else {
       argv[argc++] = scan;
-      scan = TextUtils::skipNonWhitespace(scan);
+      scan = const_cast<char*>(TextUtils::skipNonWhitespace(scan));
 
       if (*scan) *scan++ = 0;
     }
     // Skip past spaces
-    scan = TextUtils::skipWhitespace(scan);
+    scan = const_cast<char*>(TextUtils::skipWhitespace(scan));
   }
 
   const int exitCode = myMain(argc, argv);
