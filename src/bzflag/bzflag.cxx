@@ -853,9 +853,7 @@ int initClient ( int argc, char **argv )
   // set time from BZDB
   if (BZDB.isSet("fixedTime")) {
     int hours, minutes, seconds;
-    char dbTime[256];
-    strncpy(dbTime, BZDB.get("fixedTime").c_str(), sizeof(dbTime) - 1);
-    if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
+    if (sscanf(BZDB.get("fixedTime").c_str(), "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
 	hours < 0 || hours > 23 ||
 	minutes < 0 || minutes > 59 ||
 	seconds < 0 || seconds > 59)
