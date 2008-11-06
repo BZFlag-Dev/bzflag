@@ -43,8 +43,6 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   addControl(keyMapping);
 
   HUDuiList* option = new HUDuiList;
-
-  option = new HUDuiList;
   std::vector<std::string>* options = &option->getList();
   // set joystick Device
   option->setFontFace(fontFace);
