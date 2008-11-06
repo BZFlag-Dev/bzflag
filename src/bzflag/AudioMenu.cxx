@@ -42,12 +42,10 @@ AudioMenu::AudioMenu()
   label->setString("Audio Settings");
   addControl(label, false);
 
-  HUDuiList* option = new HUDuiList;
-
   std::vector<std::string>* options;
 
   // Sound Volume
-  option = new HUDuiList;
+  HUDuiList* option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Sound Volume:");
   option->setCallback(callback, (void*)"s");
