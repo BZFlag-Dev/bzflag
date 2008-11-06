@@ -857,7 +857,7 @@ int initClient ( int argc, char **argv )
 	hours < 0 || hours > 23 ||
 	minutes < 0 || minutes > 59 ||
 	seconds < 0 || seconds > 59)
-      printFatalError("Invalid argument for fixedTime = %s", dbTime);
+      printFatalError("Invalid argument for fixedTime = %s", BZDB.get("fixedTime").c_str());
 
     userTime.tm_sec = seconds;
     userTime.tm_min = minutes;
