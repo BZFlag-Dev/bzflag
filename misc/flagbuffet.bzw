@@ -25,6 +25,11 @@ world
   size 120
 end
 
+box
+  position 80 -80 0
+  size 10 10 10
+end
+
 zone
   position 0 0 0
   size 1 1 0
