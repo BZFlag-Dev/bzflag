@@ -369,6 +369,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   state = Okay;
 #if defined(NETWORK_STATS)
+  startTime = TimeKeeper::getCurrent();
   bytesSent = 0;
   bytesReceived = 0;
   packetsSent = 0;
