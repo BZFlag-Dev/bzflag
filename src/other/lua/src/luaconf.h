@@ -507,10 +507,9 @@
 */
 
 /*BZ #define LUA_NUMBER_DOUBLE */
-#undef LUA_NUMBER_DOUBLE
-
 /*BZ #define LUA_NUMBER	double */
 #define LUA_NUMBER	float
+#undef LUA_NUMBER_DOUBLE
 
 /*
 @@ LUAI_UACNUMBER is the result of an 'usual argument conversion'

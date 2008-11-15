@@ -201,7 +201,7 @@ typedef union TString {
   struct {
     CommonHeader;
     lu_byte reserved;
-    unsigned int hash;
+    lua_Hash hash;
     size_t len;
   } tsv;
 } TString;
