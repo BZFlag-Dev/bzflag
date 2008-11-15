@@ -1,0 +1,21 @@
+
+1. Renamed Makefile to Makefile.orig
+
+2. Added Makefile.am
+
+3. Made the following adjustments in luaconf.h:
+     /* BZ#define LUA_NUMBER_DOUBLE */
+     #undef LUA_NUMBER_DOUBLE
+
+     /*BZ #define LUA_NUMBER  double */
+     #define LUA_NUMBER  float                                               
+
+     /*BZ #define LUA_NUMBER_SCAN "%lf" */
+     #define LUA_NUMBER_SCAN "%f"
+
+4. Undefined (in luaconf.h):
+       LUA_COMPAT_VARARG
+       LUA_COMPAT_MOD
+       LUA_COMPAT_LSTR
+       LUA_COMPAT_GFIND
+       LUA_COMPAT_OPENLIB
