@@ -65,6 +65,7 @@ void GroupInstance::init()
   material = NULL;
   driveThrough = 0;
   shootThrough = 0;
+  ricochet = false;
 
   return;
 }
@@ -157,6 +158,13 @@ void GroupInstance::setShootThrough()
 }
 
 
+void GroupInstance::setCanRicochet()
+{
+  ricochet = true;
+  return;
+}
+
+
 void GroupInstance::addMaterialSwap(const BzMaterial* srcMat,
 				    const BzMaterial* dstMat)
 {
@@ -180,44 +188,27 @@ const MeshTransform& GroupInstance::getTransform() const
 void* GroupInstance::pack(void* buf)
 {
   buf = nboPackStdString(buf, groupdef);
+  buf = nboPackStdString(buf, name);
 
-  if (matMap.size() <= 0) {
-    buf = nboPackStdString(buf, name);
-  } else {
-    // hack to stuff in material map data
-    std::string fakeString = name;
-    const unsigned int origSize = fakeString.size();
-    const unsigned int fakeSize =
-      (1 + sizeof(int32_t) + (matMap.size() * 2 * sizeof(int32_t)));
-    fakeString.resize(origSize + fakeSize);
-    char* buffer = new char[fakeSize];
-    void* p;
-    int count = matMap.size();
-    p = nboPackUByte(buffer, 0); // terminate
-    p = nboPackInt(p, count);
-    MaterialMap::const_iterator it;
-    for (it = matMap.begin(); it != matMap.end(); it++) {
-      int srcIndex = MATERIALMGR.getIndex(it->first);
-      int dstIndex = MATERIALMGR.getIndex(it->second);
-      p = nboPackInt(p, srcIndex);
-      p = nboPackInt(p, dstIndex);
-    }
-    for (unsigned int i = 0; i < fakeSize; i++) {
-      fakeString[origSize + i] = buffer[i];
-    }
-    delete[] buffer;
-    buf = nboPackStdString(buf, fakeString);
+  buf = nboPackInt(buf, matMap.size());
+  MaterialMap::const_iterator it;
+  for (it = matMap.begin(); it != matMap.end(); it++) {
+    const int srcIndex = MATERIALMGR.getIndex(it->first);
+    const int dstIndex = MATERIALMGR.getIndex(it->second);
+    buf = nboPackInt(buf, srcIndex);
+    buf = nboPackInt(buf, dstIndex);
   }
 
   buf = transform.pack(buf);
 
   uint8_t bits = 0;
-  if (modifyTeam)	   bits |= (1 << 0);
-  if (modifyColor)	   bits |= (1 << 1);
+  if (modifyTeam)          bits |= (1 << 0);
+  if (modifyColor)         bits |= (1 << 1);
   if (modifyPhysicsDriver) bits |= (1 << 2);
-  if (modifyMaterial)	   bits |= (1 << 3);
-  if (driveThrough)	   bits |= (1 << 4);
-  if (shootThrough)	   bits |= (1 << 5);
+  if (modifyMaterial)      bits |= (1 << 3);
+  if (driveThrough)        bits |= (1 << 4);
+  if (shootThrough)        bits |= (1 << 5);
+  if (ricochet)            bits |= (1 << 6);
   buf = nboPackUByte(buf, bits);
 
   if (modifyTeam) {
@@ -242,38 +233,30 @@ void* GroupInstance::pack(void* buf)
 void* GroupInstance::unpack(void* buf)
 {
   buf = nboUnpackStdString(buf, groupdef);
+  buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackStdStringRaw(buf, name);
-  if (strlen(name.c_str()) != name.size()) {
-    // hack to extract material map data
-    void* p = (void*)(name.c_str() + strlen(name.c_str()) + 1);
-    nboUseErrorChecking(false);
-    {
-      int32_t count;
-      p = nboUnpackInt(p, count);
-      for (int i = 0; i < count; i++) {
-	int32_t srcIndex, dstIndex;
-	p = nboUnpackInt(p, srcIndex);
-	p = nboUnpackInt(p, dstIndex);
-	const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
-	const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
-	matMap[srcMat] = dstMat;
-      }
-    }
-    nboUseErrorChecking(true);
-    name.resize(strlen(name.c_str())); // clean up the name
+  int32_t count;
+  buf = nboUnpackInt(buf, count);
+  for (int i = 0; i < count; i++) {
+    int32_t srcIndex, dstIndex;
+    buf = nboUnpackInt(buf, srcIndex);
+    buf = nboUnpackInt(buf, dstIndex);
+    const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
+    const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
+    matMap[srcMat] = dstMat;
   }
 
   buf = transform.unpack(buf);
 
   uint8_t bits;
   buf = nboUnpackUByte(buf, bits);
-  modifyTeam =		((bits & (1 << 0)) == 0) ? false : true;
-  modifyColor =		((bits & (1 << 1)) == 0) ? false : true;
+  modifyTeam          = ((bits & (1 << 0)) == 0) ? false : true;
+  modifyColor         = ((bits & (1 << 1)) == 0) ? false : true;
   modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
-  modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
-  driveThrough =	((bits & (1 << 4)) == 0) ? 0 : 0xFF;
-  shootThrough =	((bits & (1 << 5)) == 0) ? 0 : 0xFF;
+  modifyMaterial      = ((bits & (1 << 3)) == 0) ? false : true;
+  driveThrough        = ((bits & (1 << 4)) == 0) ? 0 : 0xFF;
+  shootThrough        = ((bits & (1 << 5)) == 0) ? 0 : 0xFF;
+  ricochet            = ((bits & (1 << 6)) == 0) ? false : true;
 
   if (modifyTeam) {
     uint16_t tmpTeam;
@@ -302,17 +285,17 @@ void* GroupInstance::unpack(void* buf)
 int GroupInstance::packSize()
 {
   int fullSize = 0;
-  fullSize += nboStdStringPackSize(groupdef);
 
+  fullSize += nboStdStringPackSize(groupdef);
   fullSize += nboStdStringPackSize(name);
-  if (matMap.size() > 0) {
-    fullSize += 1; // terminator
-    fullSize += sizeof(int32_t); // count;
-    fullSize += matMap.size() * 2 * sizeof(int32_t);
-  }
+
+  fullSize += sizeof(int32_t); // matMap count
+  fullSize += matMap.size() * 2 * sizeof(int32_t);
 
   fullSize += transform.packSize();
+
   fullSize += sizeof(uint8_t);
+
   if (modifyTeam) {
     fullSize += sizeof(uint16_t);
   }
@@ -325,6 +308,7 @@ int GroupInstance::packSize()
   if (modifyMaterial) {
     fullSize += sizeof(int32_t);
   }
+
   return fullSize;
 }
 
@@ -374,12 +358,9 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     }
   }
 
-  if (driveThrough) {
-    out << indent << "  driveThrough " << phydrv << std::endl;
-  }
-  if (shootThrough) {
-    out << indent << "  shootTHrough " << phydrv << std::endl;
-  }
+  if (driveThrough) { out << indent << "  driveThrough" << std::endl; }
+  if (shootThrough) { out << indent << "  shootThrough" << std::endl; }
+  if (ricochet)     { out << indent << "  ricochet"     << std::endl; }
 
   out << indent << "end" << std::endl;
 
@@ -414,71 +395,51 @@ Obstacle* GroupDefinition::newObstacle(int type)
 {
   Obstacle* obs = NULL;
 
-  if (type == wallType) {
-    obs = new WallObstacle();
-  } else if (type == boxType) {
-    obs = new BoxBuilding();
-  } else if (type == pyrType) {
-    obs = new PyramidBuilding();
-  } else if (type == baseType) {
-    obs = new BaseBuilding();
-  } else if (type == teleType) {
-    obs = new Teleporter();
-  } else if (type == meshType) {
-    obs = new MeshObstacle();
-  } else if (type == arcType) {
-    obs = new ArcObstacle();
-  } else if (type == coneType) {
-    obs = new ConeObstacle();
-  } else if (type == sphereType) {
-    obs = new SphereObstacle();
-  } else if (type == tetraType) {
-    obs = new TetraBuilding();
-  }
+       if (type == wallType)   { obs = new WallObstacle();    }
+  else if (type == boxType)    { obs = new BoxBuilding();     }
+  else if (type == pyrType)    { obs = new PyramidBuilding(); }
+  else if (type == baseType)   { obs = new BaseBuilding();    }
+  else if (type == teleType)   { obs = new Teleporter();      }
+  else if (type == meshType)   { obs = new MeshObstacle();    }
+  else if (type == arcType)    { obs = new ArcObstacle();     }
+  else if (type == coneType)   { obs = new ConeObstacle();    }
+  else if (type == sphereType) { obs = new SphereObstacle();  }
+  else if (type == tetraType)  { obs = new TetraBuilding();   }
 
   return obs;
 }
 
-int obstacleTypeNameToEnum ( const char* type )
-{
-  if (WallObstacle::getClassName() == type)
-    return wallType;
-  else if (BoxBuilding::getClassName() == type)
-    return boxType;
-  else if (BaseBuilding::getClassName() == type)
-    return baseType;
-  else if (PyramidBuilding::getClassName() == type)
-    return pyrType;
-  else if (Teleporter::getClassName() == type)
-    return teleType;
-  else if (MeshObstacle::getClassName() == type)
-    return meshType;
-  else if (ArcObstacle::getClassName() == type)
-    return arcType;
-  else if (ConeObstacle::getClassName() == type)
-    return coneType;
-  else if (SphereObstacle::getClassName() == type)
-    return sphereType;
-  else if (TetraBuilding::getClassName() == type)
-    return tetraType;
 
+static int obstacleTypeNameToEnum(const char* type)
+{
+       if (WallObstacle::getClassName()    == type) { return wallType;   }
+  else if (BoxBuilding::getClassName()     == type) { return boxType;    }
+  else if (BaseBuilding::getClassName()    == type) { return baseType;   }
+  else if (PyramidBuilding::getClassName() == type) { return pyrType;    }
+  else if (Teleporter::getClassName()      == type) { return teleType;   }
+  else if (MeshObstacle::getClassName()    == type) { return meshType;   }
+  else if (ArcObstacle::getClassName()     == type) { return arcType;    }
+  else if (ConeObstacle::getClassName()    == type) { return coneType;   }
+  else if (SphereObstacle::getClassName()  == type) { return sphereType; }
+  else if (TetraBuilding::getClassName()   == type) { return tetraType;  }
+  
   return -1;
 }
 
+
 void GroupDefinition::addObstacle(Obstacle* obstacle)
 {
-  int listID = obstacleTypeNameToEnum(obstacle->getType());
-  
-  if (listID >= 0)
-  {
-    obstacle->setListID((unsigned short)lists[listID].size());
-    lists[listID].push_back(obstacle);
- }
-  else 
-  {
-    printf ("GroupDefinition::addObstacle() ERROR: type = %s\n", obstacle->getType());
+  const int typeEnum = obstacleTypeNameToEnum(obstacle->getType());
+  if (typeEnum < 0) {
+    printf("GroupDefinition::addObstacle() ERROR: type = %s\n",
+           obstacle->getType());
     exit(1);
   }
+  // are 65536 IDs enough? (unsigned short)
+  // (this doesn't apply to individual mesh faces?)
+  const unsigned short listID = (unsigned short)lists[typeEnum].size();
+  obstacle->setListID(listID);
+  lists[typeEnum].push_back(obstacle);
   return;
 }
 
@@ -686,7 +647,7 @@ void GroupDefinition::replaceBasesWithBoxes()
       new BoxBuilding(base->getPosition(), base->getRotation(),
 		      baseSize[0], baseSize[1], baseSize[2],
 		      base->isDriveThrough(), base->isShootThrough(),
-		      false);
+		      base->canRicochet(), false);
     delete base;
     list.remove(i);
     i--;

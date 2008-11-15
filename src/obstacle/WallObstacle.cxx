@@ -14,6 +14,7 @@
 
 #include <math.h>
 
+#include "global.h"
 #include "Pack.h"
 #include "WallObstacle.h"
 #include "Intersect.h"
@@ -24,8 +25,8 @@ WallObstacle::WallObstacle()
 {
 }
 
-WallObstacle::WallObstacle(const float* p, float a, float b, float h) :
-				Obstacle(p, a, 0.0, b, h)
+WallObstacle::WallObstacle(const float* p, float a, float b, float h, bool rico)
+: Obstacle(p, a, 0.0, b, h, false, false, rico)
 {
   finalize();
 }
@@ -135,6 +136,10 @@ void* WallObstacle::pack(void* buf) const
   buf = nboPackFloat(buf, size[1]);
   buf = nboPackFloat(buf, size[2]);
 
+  unsigned char stateByte = 0;
+  stateByte |= canRicochet() ? _RICOCHET : 0;
+  buf = nboPackUByte(buf, stateByte);
+
   return buf;
 }
 
@@ -145,6 +150,10 @@ void* WallObstacle::unpack(void* buf)
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, size[1]);
   buf = nboUnpackFloat(buf, size[2]);
+
+  unsigned char stateByte;
+  buf = nboUnpackUByte(buf, stateByte);
+  ricochet = (stateByte & _RICOCHET) != 0;
 
   finalize();
 
@@ -159,6 +168,7 @@ int WallObstacle::packSize() const
   fullSize += sizeof(float);    // rotation
   fullSize += sizeof(float);	// breadth
   fullSize += sizeof(float);	// height
+  fullSize += sizeof(uint8_t);  // state bits
   return fullSize;
 }
 

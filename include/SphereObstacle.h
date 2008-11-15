@@ -45,7 +45,8 @@ public:
 		 float _rotation, const float _texsize[2],
 		 bool _useNormals, bool hemisphere,
 		 int _divisions, const BzMaterial* mats[MaterialCount],
-		 int physics, bool bounce, unsigned char drive, unsigned char shoot);
+		 int physics, bool bounce,
+		 unsigned char drive, unsigned char shoot, bool ricochet);
   ~SphereObstacle();
 
   Obstacle* copyWithTransform(const MeshTransform&) const;

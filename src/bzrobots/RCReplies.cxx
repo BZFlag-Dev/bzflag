@@ -552,7 +552,9 @@ messageParseStatus ObstacleReply::parseBox(char **arguments, int count)
     return InvalidArguments;
 
 
-  obs = new BoxBuilding(p, rot, width, breadth, height, (unsigned char)drive, (unsigned char)shoot, invisible);
+  obs = new BoxBuilding(p, rot, width, breadth, height,
+                        (unsigned char)drive, (unsigned char)shoot, false, invisible);
+                        // FIXME false is for 'ricochet'
   return ParseOk;
 }
 
@@ -583,7 +585,9 @@ messageParseStatus ObstacleReply::parsePyr(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[8], shoot))
     return InvalidArguments;
   
-  obs = new PyramidBuilding(p, rot, width, breadth, height, (unsigned char)drive, (unsigned char)shoot);
+  obs = new PyramidBuilding(p, rot, width, breadth, height,
+                            (unsigned char)drive, (unsigned char)shoot, false);
+                            // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -608,7 +612,8 @@ messageParseStatus ObstacleReply::parseWall(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[5], height))
     return InvalidArguments;
 
-  obs = new WallObstacle(p, rot, breadth, height);
+  obs = new WallObstacle(p, rot, breadth, height, false);
+                         // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -639,7 +644,8 @@ messageParseStatus ObstacleReply::parseBase(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[7], team))
     return InvalidArguments;
 
-  obs = new BaseBuilding(p, rot, s, team);
+  obs = new BaseBuilding(p, rot, s, team, false);
+                         // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -676,7 +682,9 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[10], shoot))
     return InvalidArguments;
 
-  obs = new Teleporter(p, rot, s[0], s[1], s[2], border, horiz, (unsigned char)drive, (unsigned char)shoot);
+  obs = new Teleporter(p, rot, s[0], s[1], s[2], border, horiz,
+                       (unsigned char)drive, (unsigned char)shoot, false);
+                         // FIXME false is for ricochet
   return ParseOk;
 }
 

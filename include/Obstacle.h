@@ -84,8 +84,9 @@ class Obstacle {
       @param shoot       @c true if the obstacle is shootthrough, i.e. bullets
 			 can pass through it
   */
-  Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
-	   float height, unsigned char drive = 0, unsigned char shoot = 0);
+  Obstacle(const float* pos, float rotation,
+           float hwidth, float hbreadth, float height,
+           unsigned char drive, unsigned char shoot, bool rico);
 
   /** This function makes a copy using the given transform */
   virtual Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -238,14 +239,18 @@ class Obstacle {
       this object, @c false if either can not */
   bool isPassable() const;
 
+  /** This function returns @c true if bullets will bounce off of this
+      object, @c false if they simply die on contact */
+  bool canRicochet() const;
+
   /** This function sets the "zFlip" flag of this obstacle, i.e. if it's
       upside down. */
-  void setZFlip(void);
+  void setZFlip();
 
   /** This function returns the "zFlip" flag of this obstacle.
       @see setZFlip()
   */
-  bool getZFlip(void) const;
+  bool getZFlip() const;
 
   // where did the object come from?
   enum SourceBits {
@@ -317,10 +322,11 @@ class Obstacle {
     float angle;
     unsigned char driveThrough;
     unsigned char shootThrough;
+    bool ricochet;
     bool ZFlip;
     char source;
     std::string name;
-    unsigned short  listID;
+    unsigned short listID;
 
   private:
     int insideNodeCount;
@@ -387,6 +393,11 @@ inline unsigned char Obstacle::isShootThrough() const
 inline bool Obstacle::isPassable() const
 {
   return (driveThrough && shootThrough);
+}
+
+inline bool Obstacle::canRicochet() const
+{
+  return ricochet;
 }
 
 inline void Obstacle::setSource(char _source)

@@ -124,8 +124,8 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
   }
   SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
 					      useNormals, hemisphere, divisions, mats,
-					      phydrv,
-					      smoothBounce, driveThrough, shootThrough);
+					      phydrv, smoothBounce,
+					      driveThrough, shootThrough, ricochet);
 
   sphere->setName(name.c_str());
 

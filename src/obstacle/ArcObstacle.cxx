@@ -37,7 +37,8 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
 			 float _rotation, float _sweepAngle, float _ratio,
 			 const float _texsize[4], bool _useNormals,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
-			 int physics, bool bounce, unsigned char drive, unsigned char shoot)
+			 int physics, bool bounce,
+			 unsigned char drive, unsigned char shoot, bool rico)
 {
   // common obstace parameters
   memcpy(pos, _pos, sizeof(pos));
@@ -46,6 +47,7 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
   ZFlip = false;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
 
   // arc specific parameters
   transform = xform;
@@ -78,7 +80,7 @@ Obstacle* ArcObstacle::copyWithTransform(const MeshTransform& xform) const
     new ArcObstacle(tmpXform, pos, size, angle, sweepAngle, ratio,
 		    texsize, useNormals, divisions,
 		    (const BzMaterial**)materials, phydrv,
-		    smoothBounce, driveThrough, shootThrough);
+		    smoothBounce, driveThrough, shootThrough, ricochet);
   return copy;
 }
 
@@ -316,8 +318,9 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
   }
 
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
-			  vertices, normals, texcoords, fcount,
-			  false, smoothBounce, driveThrough, shootThrough);
+	                        vertices, normals, texcoords, fcount,
+	                        false, smoothBounce,
+	                        driveThrough, shootThrough, ricochet);
 
   // now make the faces
   int vlen, nlen;
@@ -498,7 +501,8 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
 
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, fcount,
-			  false, smoothBounce, driveThrough, shootThrough);
+			  false, smoothBounce,
+			  driveThrough, shootThrough, ricochet);
 
   // now make the faces
   int vlen, nlen;
@@ -649,6 +653,7 @@ void* ArcObstacle::pack(void* buf) const
   stateByte |= isShootThrough() ? (1 << 1) : 0;
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= useNormals       ? (1 << 3) : 0;
+  stateByte |= canRicochet()    ? (1 << 4) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -687,6 +692,7 @@ void* ArcObstacle::unpack(void* buf)
   shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 2)) != 0;
   useNormals   = (stateByte & (1 << 3)) != 0;
+  ricochet     = (stateByte & (1 << 4)) != 0;
 
   finalize();
 
@@ -759,6 +765,9 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
   }
   if (shootThrough) {
     out << indent << "  shootThrough" << std::endl;
+  }
+  if (ricochet) {
+    out << indent << "  ricochet" << std::endl;
   }
   if (!useNormals) {
     out << indent << "  flatshading" << std::endl;

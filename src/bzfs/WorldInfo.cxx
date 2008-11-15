@@ -80,10 +80,11 @@ WorldInfo::~WorldInfo()
 }
 
 
-void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
+void WorldInfo::addWall(float x, float y, float z,
+                        float r, float w, float h)
 {
   const float pos[3] = {x, y, z};
-  WallObstacle* wall = new WallObstacle(pos, r, w, h);
+  WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
   OBSTACLEMGR.addWorldObstacle(wall);
 }
 
@@ -122,19 +123,22 @@ void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
 }
 
 void WorldInfo::addBox(float x, float y, float z, float r,
-		       float w, float d, float h, bool drive, bool shoot)
+		       float w, float d, float h,
+		       bool drive, bool shoot, bool rico)
 {
   const float pos[3] = {x, y, z};
-  BoxBuilding* box = new BoxBuilding(pos, r, w, d, h, drive, shoot, false);
+  BoxBuilding* box = new BoxBuilding(pos, r, w, d, h,
+                                     drive, shoot, rico, false);
   OBSTACLEMGR.addWorldObstacle(box);
 }
 
 void WorldInfo::addPyramid(float x, float y, float z, float r,
-			   float w, float d, float h,
-			   bool drive, bool shoot, bool flipZ)
+			   float w, float d, float h, bool flipZ,
+			   bool drive, bool shoot, bool rico)
 {
   const float pos[3] = {x, y, z};
-  PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot);
+  PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h,
+                                             drive, shoot, rico);
   if (flipZ) {
     pyr->setZFlip();
   }
@@ -143,18 +147,20 @@ void WorldInfo::addPyramid(float x, float y, float z, float r,
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r,
 			      float w, float d, float h, float b,
-			      bool horizontal, bool drive, bool shoot)
+			      bool horizontal,
+			      bool drive, bool shoot, bool rico)
 {
   const float pos[3] = {x, y, z};
-  Teleporter* tele = new Teleporter(pos, r, w, d, h, b, horizontal, drive, shoot);
+  Teleporter* tele = new Teleporter(pos, r, w, d, h, b,
+                                    horizontal, drive, shoot, rico);
   OBSTACLEMGR.addWorldObstacle(tele);
 }
 
 void WorldInfo::addBase(const float pos[3], float r,
 			const float _size[3], int color,
-			bool /* drive */, bool /* shoot */)
+			bool /* drive */, bool /* shoot */, bool rico)
 {
-  BaseBuilding* base = new BaseBuilding(pos, r, _size, color);
+  BaseBuilding* base = new BaseBuilding(pos, r, _size, color, rico);
   OBSTACLEMGR.addWorldObstacle(base);
 }
 

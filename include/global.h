@@ -112,9 +112,10 @@ enum GameOptions {
 };
 
 // map object flags
-#define _DRIVE_THRU	0x01
-#define _SHOOT_THRU	0x02
-#define _FLIP_Z		0x04
+#define _DRIVE_THRU  (1 << 0)
+#define _SHOOT_THRU  (1 << 1)
+#define _FLIP_Z      (1 << 2)
+#define _RICOCHET    (1 << 3)
 
 const int mapVersion = 1;
 

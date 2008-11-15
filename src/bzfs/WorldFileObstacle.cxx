@@ -24,19 +24,27 @@ WorldFileObstacle::WorldFileObstacle()
 {
   driveThrough = 0;
   shootThrough = 0;
+  ricochet = false;
 }
 
 
 bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "drivethrough") == 0)
+  if (strcasecmp(cmd, "drivethrough") == 0) {
     driveThrough = 0xFF;
-  else if (strcasecmp(cmd, "shootthrough") == 0)
+  }
+  else if (strcasecmp(cmd, "shootthrough") == 0) {
     shootThrough = 0xFF;
-  else if (strcasecmp(cmd, "passable") == 0)
+  }
+  else if (strcasecmp(cmd, "passable") == 0) {
     driveThrough = shootThrough = 0xFF;
-  else
+  }
+  else if (strcasecmp(cmd, "ricochet") == 0) {
+    ricochet = true;
+  }
+  else {
     return WorldFileLocation::read(cmd, input);
+  }
   return true;
 }
 

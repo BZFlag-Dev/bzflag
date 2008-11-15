@@ -63,6 +63,7 @@ class GroupInstance {
     void setMaterial(const BzMaterial*);
     void setDriveThrough();
     void setShootThrough();
+    void setCanRicochet();
     void addMaterialSwap(const BzMaterial* src,
 			 const BzMaterial* dst);
 
@@ -92,6 +93,7 @@ class GroupInstance {
     const BzMaterial* material;
     unsigned char driveThrough;
     unsigned char shootThrough;
+    bool          ricochet;
     MaterialMap matMap;
 };
 

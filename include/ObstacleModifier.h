@@ -49,6 +49,7 @@ class ObstacleModifier {
 
     unsigned char driveThrough;
     unsigned char shootThrough;
+    bool          ricochet;
 };
 
 

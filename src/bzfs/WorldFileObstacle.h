@@ -27,6 +27,7 @@ public:
 protected:
   unsigned char driveThrough;
   unsigned char shootThrough;
+  bool          ricochet;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */

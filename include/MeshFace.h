@@ -38,7 +38,8 @@ class MeshFace : public Obstacle {
     MeshFace(MeshObstacle* mesh, int vertexCount,
 	     float** vertices, float** normals, float** texcoords,
 	     const BzMaterial* material, int physics,
-	     bool noclusters, bool smoothBounce, unsigned char drive, unsigned char shoot);
+	     bool noclusters, bool smoothBounce,
+	     unsigned char drive, unsigned char shoot, bool ricochet);
     ~MeshFace();
 
     const char* getType() const;
@@ -135,13 +136,13 @@ class MeshFace : public Obstacle {
 
 
     enum {
-      LinkToFace      = (1 << 0),
-      LinkFromFace    = (1 << 1),
-      BaseFace	      = (1 << 2),
-      IcyFace	 = (1 << 3),
-      StickyFace      = (1 << 5),
-      DeathFace       = (1 << 6),
-      PortalFace      = (1 << 7)
+      LinkToFace   = (1 << 0),
+      LinkFromFace = (1 << 1),
+      BaseFace     = (1 << 2),
+      IcyFace      = (1 << 3),
+      StickyFace   = (1 << 5),
+      DeathFace    = (1 << 6),
+      PortalFace   = (1 << 7)
     } SpecialBits;
 
     // combining all types into one struct, because I'm lazy

@@ -26,9 +26,10 @@ class Teleporter : public Obstacle {
   public:
 			Teleporter();
 			Teleporter(const float* pos, float rotation,
-				float width, float breadth, float height,
-				float borderSize = 1.0f, bool horizontal = false,
-				unsigned char drive = 0, unsigned char shoot = 0);
+			           float width, float breadth, float height,
+			           float borderSize, bool horizontal,
+			           unsigned char drive, unsigned char shoot,
+			           bool ricochet);
 			~Teleporter();
 
     Obstacle*	copyWithTransform(const MeshTransform&) const;

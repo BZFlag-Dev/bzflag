@@ -149,7 +149,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
   if (!pyramidStyle) {
     cone = new ConeObstacle(transform, pos, size, rotation, angle,
 			    texsize, useNormals, divisions, mats, phydrv,
-			    smoothBounce, driveThrough, shootThrough);
+			    smoothBounce, driveThrough, shootThrough, ricochet);
   } else {
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
@@ -169,7 +169,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     newSize[2] = fabsf(size[2]);
     cone = new ConeObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle,
 			    texsize, useNormals, divisions, mats, phydrv,
-			    smoothBounce, driveThrough, shootThrough);
+			    smoothBounce, driveThrough, shootThrough, ricochet);
   }
 
   cone->setName(name.c_str());

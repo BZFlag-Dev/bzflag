@@ -37,7 +37,8 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
 			 float _rotation, const float _texsize[2],
 			 bool _useNormals, bool _hemisphere,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
-			 int physics, bool bounce, unsigned char drive, unsigned char shoot)
+			 int physics, bool bounce,
+			 unsigned char drive, unsigned char shoot, bool rico)
 {
   // common obstace parameters
   memcpy(pos, _pos, sizeof(pos));
@@ -46,6 +47,7 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
   ZFlip = false;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
 
   // arc specific parameters
   transform = xform;
@@ -77,7 +79,8 @@ Obstacle* SphereObstacle::copyWithTransform(const MeshTransform& xform) const
   SphereObstacle* copy =
     new SphereObstacle(tmpXform, pos, size, angle, texsize, useNormals,
 		       hemisphere, divisions, (const BzMaterial**)materials,
-		       phydrv, smoothBounce, driveThrough, shootThrough);
+		       phydrv, smoothBounce,
+		       driveThrough, shootThrough, ricochet);
   return copy;
 }
 
@@ -291,7 +294,8 @@ MeshObstacle* SphereObstacle::makeMesh()
   int faceCount = (divisions * divisions) * 8;
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, faceCount,
-			  false, smoothBounce, driveThrough, shootThrough);
+			  false, smoothBounce,
+			  driveThrough, shootThrough, ricochet);
 
   // add the faces to the mesh
   std::vector<int> vlist;
@@ -507,6 +511,7 @@ void *SphereObstacle::pack(void *buf) const
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= useNormals       ? (1 << 3) : 0;
   stateByte |= hemisphere       ? (1 << 4) : 0;
+  stateByte |= canRicochet()    ? (1 << 5) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -543,6 +548,7 @@ void *SphereObstacle::unpack(void *buf)
   smoothBounce = (stateByte & (1 << 2)) != 0;
   useNormals   = (stateByte & (1 << 3)) != 0;
   hemisphere   = (stateByte & (1 << 4)) != 0;
+  ricochet     = (stateByte & (1 << 5)) != 0;
 
   finalize();
 
@@ -613,6 +619,9 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
   }
   if (shootThrough) {
     out << indent << "  shootThrough" << std::endl;
+  }
+  if (ricochet) {
+    out << indent << "  ricochet" << std::endl;
   }
   if (!useNormals) {
     out << indent << "  flatshading" << std::endl;
