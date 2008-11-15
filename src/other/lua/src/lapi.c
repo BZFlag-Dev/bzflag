@@ -59,6 +59,7 @@ static TValue *index2adr (lua_State *L, int idx) {
   }
   else switch (idx) {  /* pseudo-indices */
     case LUA_REGISTRYINDEX: return registry(L);
+    case LUA_CALLINSINDEX:  return callins(L);
     case LUA_ENVIRONINDEX: {
       Closure *func = curr_func(L);
       sethvalue(L, &L->env, func->c.env);

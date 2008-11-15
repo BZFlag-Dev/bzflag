@@ -34,8 +34,9 @@
 ** pseudo-indices
 */
 #define LUA_REGISTRYINDEX	(-10000)
-#define LUA_ENVIRONINDEX	(-10001)
-#define LUA_GLOBALSINDEX	(-10002)
+#define LUA_CALLINSINDEX	(-10001)
+#define LUA_ENVIRONINDEX	(-10002)
+#define LUA_GLOBALSINDEX	(-10003)
 #define lua_upvalueindex(i)	(LUA_GLOBALSINDEX-(i))
 
 

@@ -73,6 +73,7 @@ static void f_luaopen (lua_State *L, void *ud) {
   stack_init(L, L);  /* init stack */
   sethvalue(L, gt(L), luaH_new(L, 0, 2));  /* table of globals */
   sethvalue(L, registry(L), luaH_new(L, 0, 2));  /* registry */
+  sethvalue(L, callins(L),  luaH_new(L, 0, 2));  /* callins  */
   luaS_resize(L, MINSTRTABSIZE);  /* initial size of string table */
   luaT_init(L);
   luaX_init(L);
@@ -164,6 +165,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   g->strt.nuse = 0;
   g->strt.hash = NULL;
   setnilvalue(registry(L));
+  setnilvalue(callins(L));
   luaZ_initbuffer(L, &g->buff);
   g->panic = NULL;
   g->gcstate = GCSpause;

@@ -19,3 +19,9 @@
        LUA_COMPAT_LSTR
        LUA_COMPAT_GFIND
        LUA_COMPAT_OPENLIB
+
+5. Applied the lua_pushhstring patch  (svn r18916)
+
+6. Applied the LUA_CALLINSINDEX patch
+
+
