@@ -215,6 +215,9 @@ inline const std::vector<const Obstacle*>& LocalPlayer::getInsideBuildings() con
 
 inline LocalPlayer::InputMethod LocalPlayer::getInputMethod() const
 {
+  if (getTeam() == ObserverTeam) {
+    return Keyboard;
+  }
   return inputMethod;
 }
 
