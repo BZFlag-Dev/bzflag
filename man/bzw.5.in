@@ -625,6 +625,8 @@ properties:
 .br 
 \fB  divisions 4\fR    # number of subdivisions
 .br 
+\fB  hemisphere\fR     # only generate to top half of the sphere
+.br 
 \fB  flatshading\fR    # flat shading  (smooth is default)
 .br 
 \fB  position\fR 0.0 0.0 10.0
