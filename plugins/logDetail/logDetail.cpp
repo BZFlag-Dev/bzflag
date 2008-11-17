@@ -87,6 +87,10 @@ void LogDetail::process(bz_EventData *eventData)
   bz_PlayerAuthEventData_V1 *authData = (bz_PlayerAuthEventData_V1 *) eventData;
   bz_MessageFilteredEventData_V1 *filteredData = (bz_MessageFilteredEventData_V1 *) eventData;
   char temp[9] = { 0 };
+  std::string bzID;
+  std::string callsign, callsign2;
+  std::string team;
+  std::string playerPrivs;
 
   if (eventData) {
     switch (eventData->eventType) {
@@ -98,42 +102,47 @@ void LogDetail::process(bz_EventData *eventData)
 
       strncpy(temp, cmdData->message.c_str(), 8);
 
+      callsign = displayCallsign(cmdData->from);
       if (strcasecmp(temp, "/REPORT ") == 0) {
 	bz_debugMessagef(0, "MSG-REPORT %s %s",
-			 displayCallsign(cmdData->from).c_str(),
+			 callsign.c_str(),
 			 cmdData->message.c_str()+8);
       } else {
 	bz_debugMessagef(0, "MSG-COMMAND %s %s",
-			 displayCallsign(cmdData->from).c_str(),
+			 callsign.c_str(),
 			 cmdData->message.c_str()+1);
       }
       break;
     case bz_eRawChatMessageEvent:
+      callsign = displayCallsign(chatData->from);
+      team = displayTeam(chatData->team);
+
       if ((chatData->to == BZ_ALLUSERS) && (chatData->team == eNoTeam)) {
 	bz_debugMessagef(0, "MSG-BROADCAST %s %s",
-			 displayCallsign(chatData->from).c_str(),
+			 callsign.c_str(),
 			 chatData->message.c_str());
       } else if (chatData->to == BZ_NULLUSER) {
 	if (chatData->team == eAdministrators) {
 	  bz_debugMessagef(0, "MSG-ADMIN %s %s",
-			   displayCallsign(chatData->from).c_str(),
+			   callsign.c_str(),
 			   chatData->message.c_str());
 	} else {
 	  bz_debugMessagef(0, "MSG-TEAM %s %s %s",
-			   displayCallsign(chatData->from).c_str(),
-			   displayTeam(chatData->team).c_str(),
+			   callsign.c_str(),
+			   team.c_str(),
 			   chatData->message.c_str());
 	}
       } else {
 	  bz_debugMessagef(0, "MSG-DIRECT %s %s %s",
-			   displayCallsign(chatData->from).c_str(),
+			   callsign.c_str(),
 			   displayCallsign(chatData->to).c_str(),
 			   chatData->message.c_str());
       }
       break;
     case bz_eMessageFilteredEvent:
+      callsign = displayCallsign(filteredData->playerID);
       bz_debugMessagef(0, "MSG-FILTERED %s %s",
-		       displayCallsign(filteredData->playerID).c_str(),
+		       callsign.c_str(),
 		       filteredData->filteredMessage.c_str());
       break;
     case bz_eServerMsgEvent:
@@ -145,42 +154,52 @@ void LogDetail::process(bz_EventData *eventData)
 	  bz_debugMessagef(0, "MSG-ADMIN 6:SERVER %s",
 			   serverMsgData->message.c_str());
 	} else {
+	  team = displayTeam(serverMsgData->team);
 	  bz_debugMessagef(0, "MSG-TEAM 6:SERVER %s %s",
-			   displayTeam(serverMsgData->team).c_str(),
+			   team.c_str(),
 			   serverMsgData->message.c_str());
 	}
       } else {
+	callsign = displayCallsign(serverMsgData->to);
 	bz_debugMessagef(0, "MSG-DIRECT 6:SERVER %s %s",
-			 displayCallsign(serverMsgData->to ).c_str(),
+			 callsign.c_str(),
 			 serverMsgData->message.c_str());
       }
       break;
     case bz_ePlayerJoinEvent:
       {
 	if (joinPartData->record) {
+	  bzID = displayBZid(joinPartData->playerID);
+	  callsign = displayCallsign(joinPartData->record->callsign);
+	  team = displayTeam(joinPartData->record->team);
+	  playerPrivs = displayPlayerPrivs(joinPartData->playerID);
 	  bz_debugMessagef(0, "PLAYER-JOIN %s #%d%s %s %s",
-			   displayCallsign(joinPartData->record->callsign).c_str(),
+			   callsign.c_str(),
 			   joinPartData->playerID,
-			   displayBZid(joinPartData->playerID).c_str(),
-			   displayTeam(joinPartData->record->team).c_str(),
-			   displayPlayerPrivs(joinPartData->playerID).c_str());
+			   bzID.c_str(),
+			   team.c_str(),
+			   playerPrivs.c_str());
 	  listPlayers(join, joinPartData);
 	}
       }
       break;
     case bz_ePlayerPartEvent:
+      callsign = displayCallsign(joinPartData->playerID);
+      bzID = displayBZid(joinPartData->playerID);
       bz_debugMessagef(0, "PLAYER-PART %s #%d%s %s",
-		       displayCallsign(joinPartData->playerID).c_str(),
+		       callsign.c_str(),
 		       joinPartData->playerID,
-		       displayBZid(joinPartData->playerID).c_str(),
+		       bzID.c_str(),
 		       joinPartData->reason.c_str());
       listPlayers(part, joinPartData);
       break;
     case bz_ePlayerAuthEvent:
+      callsign = displayCallsign(authData->playerID);
+      playerPrivs = displayPlayerPrivs(authData->playerID);
       bz_debugMessagef(0, "PLAYER-AUTH %s %s",
-		       displayCallsign(authData->playerID).c_str(),
-		       displayPlayerPrivs(authData->playerID).c_str()),
-	listPlayers(join, joinPartData);
+		       callsign.c_str(),
+		       playerPrivs.c_str());
+      listPlayers(join, joinPartData);
       break;
     default:
       break;
