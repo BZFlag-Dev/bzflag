@@ -897,7 +897,7 @@ bool ServerLink::readEnter (std::string& reason,
 
   while (true) {
     if (this->read(code, len, msg, -1) < 0) {
-      reason = "Communication error joining game [No immediate respose].";
+      reason = "Communication error joining game [No immediate response].";
       return false;
     }
 
