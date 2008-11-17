@@ -122,7 +122,7 @@ GameInfo::GameInfo(Templateiser &ts)
   ts.addKey("KBOut",this);
 
   bz_registerEvent(bz_eGetWorldEvent,this);
-  bz_registerEvent(bz_eNetDataReceveEvent,this);
+  bz_registerEvent(bz_eNetDataReceiveEvent,this);
   bz_registerEvent(bz_eNetDataSendEvent,this);
 
   startTime = bz_getCurrentTime();
@@ -135,7 +135,7 @@ GameInfo::GameInfo(Templateiser &ts)
 GameInfo::~GameInfo(void)
 {
   bz_removeEvent(bz_eGetWorldEvent,this);
-  bz_removeEvent(bz_eNetDataReceveEvent,this);
+  bz_removeEvent(bz_eNetDataReceiveEvent,this);
   bz_removeEvent(bz_eNetDataSendEvent,this);
 }
 
@@ -194,7 +194,7 @@ void GameInfo::process(bz_EventData *eventData)
       break;
     }
 
-    case bz_eNetDataReceveEvent:
+    case bz_eNetDataReceiveEvent:
       bytesIn += ((bz_NetTransferEventData_V1*)eventData)->iSize;
       break;
 

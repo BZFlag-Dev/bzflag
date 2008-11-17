@@ -212,7 +212,7 @@ public:
     if (send)
       eventData.eventType = bz_eNetDataSendEvent;
     else
-      eventData.eventType = bz_eNetDataReceveEvent;
+      eventData.eventType = bz_eNetDataReceiveEvent;
     if (!worldEventManager.getEventCount(eventData.eventType))
       return;
     eventData.send = send;

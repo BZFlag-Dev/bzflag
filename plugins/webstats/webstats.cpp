@@ -80,7 +80,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
   bz_registerEvent(bz_ePlayerDieEvent,webStats);
 
   bz_registerEvent(bz_eNetDataSendEvent,webStats);
-  bz_registerEvent(bz_eNetDataReceveEvent,webStats);
+  bz_registerEvent(bz_eNetDataReceiveEvent,webStats);
 
   return 0;
 }
@@ -92,7 +92,7 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   bz_removeEvent(bz_ePlayerDieEvent,webStats);
 
   bz_removeEvent(bz_eNetDataSendEvent,webStats);
-  bz_removeEvent(bz_eNetDataReceveEvent,webStats);
+  bz_removeEvent(bz_eNetDataReceiveEvent,webStats);
 
   if(webStats)
     delete webStats;
@@ -149,7 +149,7 @@ void WebStats::process ( bz_EventData *eventData )
       }
       break;
 
-    case bz_eNetDataReceveEvent:
+    case bz_eNetDataReceiveEvent:
       {
 	bz_NetTransferEventData_V1 *data = (bz_NetTransferEventData_V1*)eventData;
 	dataIn += data->iSize;

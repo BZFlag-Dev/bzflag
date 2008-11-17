@@ -135,7 +135,7 @@ typedef enum {
   bz_eReloadEvent,
   bz_ePlayerUpdateEvent,
   bz_eNetDataSendEvent,
-  bz_eNetDataReceveEvent,
+  bz_eNetDataReceiveEvent,
   bz_eLoggingEvent,
   bz_eFlagTransferredEvent,
   bz_eFlagGrabbedEvent,
@@ -900,7 +900,7 @@ public:
 class BZF_API bz_NetTransferEventData_V1 : public bz_EventData
 {
 public:
-  bz_NetTransferEventData_V1() : bz_EventData(bz_eNetDataReceveEvent)
+  bz_NetTransferEventData_V1() : bz_EventData(bz_eNetDataReceiveEvent)
     , send(false), udp(false), iSize(0), playerID(-1)
     , data(NULL)
   {
