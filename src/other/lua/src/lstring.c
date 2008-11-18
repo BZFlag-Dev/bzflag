@@ -72,7 +72,7 @@ static TString *newlstr (lua_State *L, const char *str, size_t l,
 }
 
 
-static inline lua_Hash calchash(const char *str, size_t l) {
+static lua_Hash calchash(const char *str, size_t l) {
   lua_Hash h = cast(unsigned int, l);  /* seed */
   size_t step = (l>>5)+1;  /* if string is too long, don't hash all its chars */
   size_t l1;
