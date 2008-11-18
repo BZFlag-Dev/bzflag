@@ -2,12 +2,12 @@
 noinst_LTLIBRARIES = liblua.la
 
 if LINUX
-AM_CFLAGS = @CONF_CFLAGS@ -DLUA_USE_LINUX
 endif
 
 if MACOS
-AM_CFLAGS = @CONF_CFLAGS@ -DLUA_USE_MACOSX
 endif
+
+AM_CFLAGS = @CONF_CFLAGS@ -fPIC
 
 liblua_la_LDFLAGS = -static
 
