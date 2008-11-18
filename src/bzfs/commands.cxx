@@ -3060,7 +3060,7 @@ bool ReplayCommand::operator() (const char *message,
 bool SayCommand::operator() (const char *message,
 			     GameKeeper::Player *playerData)
 {
-  size_t messageStart = 0;
+  int messageStart = -1;
   int t = playerData->getIndex();
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::say)) {
@@ -3076,7 +3076,7 @@ bool SayCommand::operator() (const char *message,
   messageStart = TextUtils::firstVisible(messageText);
 
   // make sure there was _some_ whitespace after /say
-  if (messageStart <= 0) {
+  if (messageStart < 0) {
     sendMessage(ServerPlayer, t, "Usage: /say some message");
     return true;
   }
@@ -3169,7 +3169,7 @@ void parseServerCommand(const char *message, int t)
 
   worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
-  // lets see if if ther is a cusom handler for the event
+  // lets see if if there is a custom handler for the event
   std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
 
   if (params.size() == 0)
