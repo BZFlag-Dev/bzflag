@@ -37,7 +37,7 @@ bool ServerCommand::execute(const char	 *commandLine,
 {
   MapOfCommands &commandMap = *getMapRef();
   int i = TextUtils::firstNonvisible(commandLine);
-  if (i < 0) i = 0;
+  if (i < 0) i = strlen(commandLine);
   std::string commandToken(commandLine, i);
 
   MapOfCommands::iterator it
