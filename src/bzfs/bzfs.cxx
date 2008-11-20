@@ -332,12 +332,16 @@ static void onGlobalChanged(const std::string& name, void*)
   // well, the /set and /reset commands are blocked.
 
   std::string value = BZDB.get(name);
+
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUShort(1);
   msg->packStdString(name);
   msg->packStdString(value);
   msg->broadcast(MsgSetVar);
+
+  bz_BZDBChangeData_V1 eventData(name, value);
+  worldEventManager.callEvents(eventData);
 }
 
 //
@@ -809,10 +813,10 @@ bool defineWorld ( void )
   if (worldDatabase)
     delete[] worldDatabase;
 
-  bz_GetWorldEventData_V1	worldData;
-  worldData.ctf = clOptions->gameType == ClassicCTF;
-  worldData.rabbit = clOptions->gameType == RabbitChase;
-  worldData.openFFA = clOptions->gameType == OpenFFA;
+  bz_GetWorldEventData_V1 worldData;
+  worldData.ctf     = (clOptions->gameType == ClassicCTF);
+  worldData.rabbit  = (clOptions->gameType == RabbitChase);
+  worldData.openFFA = (clOptions->gameType == OpenFFA);
   worldData.worldFile = clOptions->worldFile;
 
   world = new WorldInfo;

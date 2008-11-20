@@ -153,6 +153,7 @@ typedef enum {
   bz_eTeleportEvent,
   bz_ePlayerSentCustomData,
   bz_ePlayerCustomDataChanged,
+  bz_eBZDBChange,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1116,6 +1117,16 @@ public:
   bz_ApiString data;
 };
 
+class BZF_API bz_BZDBChangeData_V1 : public bz_EventData
+{
+public:
+  bz_BZDBChangeData_V1(const std::string& _key, const std::string& _value)
+  : bz_EventData(bz_eBZDBChange), key(_key), value(_value) {}
+
+  bz_ApiString key;
+  bz_ApiString value;
+};
+
 // event handler callback
 class bz_EventHandler
 {
@@ -1183,6 +1194,11 @@ BZF_API bool bz_validAdminPassword(const char* passwd);
 BZF_API const char* bz_getPlayerFlag(int playerID);
 
 BZF_API bool bz_getPlayerCurrentState(int playerID, bz_PlayerUpdateState &state);
+BZF_API bool bz_getPlayerPosition(int playerID, float pos[3]); // FIXME
+BZF_API bool bz_getPlayerVelocity(int playerID, float vel[3]); // FIXME
+BZF_API bool bz_getPlayerRotation(int playerID, float *rot); // FIXME
+BZF_API bool bz_getPlayerAngVel(int playerID, float *angvel); // FIXME
+BZF_API bool bz_getPlayerPhysicsDriver(int playerID, float *angvel); // FIXME
 
 BZF_API bool bz_isPlayerPaused(int playerID);
 
@@ -2026,4 +2042,4 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth

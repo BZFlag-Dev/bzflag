@@ -47,6 +47,7 @@
 #include "MotionUtils.h"
 #include "Reports.h"
 
+
 TimeKeeper synct=TimeKeeper::getCurrent();
 
 std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
@@ -1417,6 +1418,47 @@ BZF_API bool bz_getPlayerCurrentState(int playerID, bz_PlayerUpdateState &state)
 
   return true;
 }
+
+
+BZF_API bool bz_getPlayerPosition(int playerID, float pos[3])
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player) {
+    return false;
+  }
+  return true;
+}
+
+
+BZF_API bool bz_getPlayerVelocity(int playerID, float vel[3])
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player) {
+    return false;
+  }
+  return true;
+}
+
+
+BZF_API bool bz_getPlayerRotation(int playerID, float *rot)
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player) {
+    return false;
+  }
+  return true;
+}
+
+
+BZF_API bool bz_getPlayerAngVel(int playerID, float *angvel)
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player) {
+    return false;
+  }
+  return true;
+}
+
 
 //-------------------------------------------------------------------------
 
