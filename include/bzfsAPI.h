@@ -1336,10 +1336,11 @@ BZF_API void bz_getLocaltime(bz_Time *ts);
 BZF_API void bz_getUTCtime(bz_Time *ts);
 
 // BZDB API
-BZF_API double bz_getBZDBDouble(const char* variable);
+BZF_API double       bz_getBZDBDouble(const char* variable);
 BZF_API bz_ApiString bz_getBZDBString(const char* variable);
-BZF_API bool bz_getBZDBBool(const char* variable);
-BZF_API int bz_getBZDBInt(const char* variable);
+BZF_API bz_ApiString bz_getBZDBDefault(const char* variable);
+BZF_API bool         bz_getBZDBBool(const char* variable);
+BZF_API int          bz_getBZDBInt(const char* variable);
 
 BZF_API int bz_getBZDBItemPerms(const char* variable);
 BZF_API bool bz_getBZDBItemPersistent(const char* variable);

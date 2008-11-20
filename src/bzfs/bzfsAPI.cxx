@@ -1989,6 +1989,16 @@ BZF_API bz_ApiString bz_getBZDBString(const char *variable)
 
 //-------------------------------------------------------------------------
 
+BZF_API bz_ApiString bz_getBZDBDefault(const char *variable)
+{
+  if(!variable)
+    return bz_ApiString("");
+
+  return bz_ApiString(BZDB.getDefault(std::string(variable)));
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bool bz_getBZDBBool(const char *variable)
 {
   if(!variable)
