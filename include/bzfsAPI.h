@@ -1194,11 +1194,11 @@ BZF_API bool bz_validAdminPassword(const char* passwd);
 BZF_API const char* bz_getPlayerFlag(int playerID);
 
 BZF_API bool bz_getPlayerCurrentState(int playerID, bz_PlayerUpdateState &state);
-BZF_API bool bz_getPlayerPosition(int playerID, float pos[3]); // FIXME
-BZF_API bool bz_getPlayerVelocity(int playerID, float vel[3]); // FIXME
-BZF_API bool bz_getPlayerRotation(int playerID, float *rot); // FIXME
-BZF_API bool bz_getPlayerAngVel(int playerID, float *angvel); // FIXME
-BZF_API bool bz_getPlayerPhysicsDriver(int playerID, float *angvel); // FIXME
+BZF_API bool bz_getPlayerPosition(int playerID, float pos[3], bool extrapolate);
+BZF_API bool bz_getPlayerRotation(int playerID, float *rot, bool extrapolate);
+BZF_API bool bz_getPlayerVelocity(int playerID, float vel[3]);
+BZF_API bool bz_getPlayerAngVel(int playerID, float *angvel);
+BZF_API bool bz_getPlayerPhysicsDriver(int playerID, int* phydrv);
 
 BZF_API bool bz_isPlayerPaused(int playerID);
 

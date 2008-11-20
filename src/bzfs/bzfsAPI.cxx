@@ -1420,12 +1420,37 @@ BZF_API bool bz_getPlayerCurrentState(int playerID, bz_PlayerUpdateState &state)
 }
 
 
-BZF_API bool bz_getPlayerPosition(int playerID, float pos[3])
+BZF_API bool bz_getPlayerPosition(int playerID, float pos[3], bool extrapolate)
 {
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player) {
     return false;
   }
+  if (extrapolate) {
+    float rot;
+    player->getPlayerCurrentPosRot(pos, rot);
+  } else {
+    memcpy(pos, player->lastState.pos, sizeof(float[3]));
+  }
+  
+  return true;
+}
+
+
+BZF_API bool bz_getPlayerRotation(int playerID, float *rot, bool extrapolate)
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player) {
+    return false;
+  }
+
+  if (extrapolate) {
+    float pos[3];
+    player->getPlayerCurrentPosRot(pos, *rot);
+  } else {
+    *rot = player->lastState.azimuth;
+  }
+
   return true;
 }
 
@@ -1436,26 +1461,29 @@ BZF_API bool bz_getPlayerVelocity(int playerID, float vel[3])
   if (!player) {
     return false;
   }
+  memcpy(vel, player->lastState.velocity, sizeof(float[3]));
   return true;
 }
 
 
-BZF_API bool bz_getPlayerRotation(int playerID, float *rot)
+BZF_API bool bz_getPlayerAngVel(int playerID, float *angVel)
 {
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player) {
     return false;
   }
+  *angVel = player->lastState.angVel;
   return true;
 }
 
 
-BZF_API bool bz_getPlayerAngVel(int playerID, float *angvel)
+BZF_API bool bz_getPlayerPhysicsDriver(int playerID, int* phydrv)
 {
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player) {
     return false;
   }
+  *phydrv = player->lastState.phydrv;
   return true;
 }
 
