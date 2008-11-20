@@ -261,6 +261,7 @@ DEFINE_CALLIN(AllowPlayer);
 DEFINE_CALLIN(AllowSpawn);
 DEFINE_CALLIN(AnointRabbitEvent);
 DEFINE_CALLIN(BanEvent);
+DEFINE_CALLIN(BZDBChange);
 DEFINE_CALLIN(CaptureEvent);
 DEFINE_CALLIN(FilteredChatMessageEvent);
 DEFINE_CALLIN(FlagDroppedEvent);
@@ -511,6 +512,21 @@ bool CI_BanEvent::execute(bz_EventData* eventData)
 }
 
 
+bool CI_BZDBChange::execute(bz_EventData* eventData)
+{
+  bz_BZDBChangeData_V1* ed = (bz_BZDBChangeData_V1*)eventData;
+
+  if (!PushCallIn(4)) {
+    return false;
+  }
+
+  lua_pushstring(L, ed->key.c_str());
+  lua_pushstring(L, ed->value.c_str());
+
+  return RunCallIn(2, 0);
+}
+
+
 bool CI_CaptureEvent::execute(bz_EventData* eventData)
 {
   bz_CTFCaptureEventData_V1* ed = (bz_CTFCaptureEventData_V1*)eventData;
@@ -617,9 +633,18 @@ bool CI_FlagTransferredEvent::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->fromPlayerID);
   lua_pushinteger(L, ed->toPlayerID);
   lua_pushstring(L,  ed->flagType);
-//  lua_pushstring(L,  ed->action); // FIXME - output?
+
+  if (!RunCallIn(3, 1)) {
+    return false;
+  }
+
+  if (lua_israwnumber(L, -1)) {
+    ed->action = (bz_FlagTransferredEventData_V1::Action) lua_toint(L, -1);
+  }
+
+  lua_pop(L, 1);
   
-  return RunCallIn(3, 0);
+  return true;
 }
 
 
@@ -722,8 +747,6 @@ bool CI_GetPlayerSpawnPosEvent::execute(bz_EventData* eventData)
   lua_pushnumber(L, ed->pos[2]);
   lua_pushnumber(L, ed->rot);
 
-  //  lua_pushboolean(L, ed->handled); // FIXME -- used?
-
   if (!RunCallIn(6, 4)) {
     return false;
   }
@@ -734,10 +757,12 @@ bool CI_GetPlayerSpawnPosEvent::execute(bz_EventData* eventData)
     ed->pos[0] = lua_tofloat(L, -4);
     ed->pos[1] = lua_tofloat(L, -3);
     ed->pos[2] = lua_tofloat(L, -2);
+    ed->handled = true; // FIXME ?
   }
 
   if (lua_israwnumber(L, -1)) {
     ed->rot = lua_tofloat(L, -1);
+    ed->handled = true; // FIXME ?
   }
 
   lua_pop(L, 4);    
@@ -1046,7 +1071,7 @@ bool CI_PlayerDieEvent::execute(bz_EventData* eventData)
 {
   bz_PlayerDieEventData_V1* ed = (bz_PlayerDieEventData_V1*)eventData;
 
-  if (!PushCallIn(8)) {
+  if (!PushCallIn(12)) {
     return false;
   }
 
@@ -1056,10 +1081,13 @@ bool CI_PlayerDieEvent::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->killerTeam);
   lua_pushstring(L,  ed->flagKilledWith.c_str());
   lua_pushinteger(L, ed->shotID);
-
+  lua_pushnumber(L,  ed->state.pos[0]);
+  lua_pushnumber(L,  ed->state.pos[1]);
+  lua_pushnumber(L,  ed->state.pos[2]);
+  lua_pushnumber(L,  ed->state.rotation);
   // bz_PlayerUpdateState state; -- FIXME?
 
-  return RunCallIn(6, 0);
+  return RunCallIn(10, 0);
 }
 
 
@@ -1151,16 +1179,33 @@ bool CI_PlayerUpdateEvent::execute(bz_EventData* eventData)
 {
   bz_PlayerUpdateEventData_V1* ed = (bz_PlayerUpdateEventData_V1*)eventData;
 
-  if (!PushCallIn(3)) {
+  if (!PushCallIn(16)) {
     return false;
   }
 
+  const bz_PlayerUpdateState& state = ed->state;
+
   lua_pushinteger(L, ed->playerID);
 
-  // FIXME bz_PlayerUpdateState state;
+  lua_pushinteger(L, state.status);
+  lua_pushinteger(L, state.phydrv);
+  lua_pushboolean(L, state.falling);
+  lua_pushboolean(L, state.crossingWall);
+  lua_pushboolean(L, state.inPhantomZone);
+
+  lua_pushnumber(L, state.pos[0]);
+  lua_pushnumber(L, state.pos[1]);
+  lua_pushnumber(L, state.pos[2]);
+  lua_pushnumber(L, state.rotation);
+
+  lua_pushnumber(L, state.velocity[0]);
+  lua_pushnumber(L, state.velocity[1]);
+  lua_pushnumber(L, state.velocity[2]);
+  lua_pushnumber(L, state.angVel);
+
   // FIXME double stateTime;
   
-  return RunCallIn(1, 0);
+  return RunCallIn(14, 0);
 }
 
 

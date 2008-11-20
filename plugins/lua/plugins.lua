@@ -16,8 +16,6 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-
 --
 --  Wrap lfs.dir() to capture errors
 --
@@ -32,6 +30,8 @@ local function safe_dir(dirPath)
 end
 
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 local function SetupPlugin(fileName)
   print('loading plugin: ' .. fileName)
@@ -80,6 +80,14 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+local function GenSlashCommandFunc(funcList)
+  return function(...)
+    for i = 1, #funcList do
+      funcList[i](...)
+    end
+  end
+end
 
 
 local function GenAllFunc(funcList)
@@ -170,6 +178,7 @@ local specialCallIns = {
   UnknownSlashCommand    = GenFirstTrueFunc,   --> [bool handled]
   PlayerCollision        = GenFirstTrueFunc,   --> [bool handled]
   AnointRabbitEvent      = GenFirstNumberFunc, --> [number playerID]
+  FlagTransferredEvent   = GenFirstNumberFunc, --> [number action]
   GetAutoTeamEvent       = GenFirstNumberFunc, --> [number team]
   GetPlayerSpawnPosEvent = GenFirstValidFunc,  --> [px, py, pz] [, rot]
   GetPlayerInfoEvent     = GenFirstValidFunc,  --> [bool adm][,bool verified][,bool reg'd]

@@ -7,7 +7,7 @@ if (WantConfig) then
     desc     = 'debug plugin',
     author   = 'trepan',
     date     = 'Nov 22, 2008',
-    license  = 'LGPL 2.0',
+    license  = 'LGPL 2.1',
     enabled  = true,
     niceness = -100, -- not very nice
   }
@@ -16,53 +16,58 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function plugin.AllowCTFCaptureEvent(teamCapped, teamCapping, playerCapping,
+function CallIn.AllowCTFCaptureEvent(teamCapped, teamCapping, playerCapping,
                                      px, py, pz, rot)
   print('AllowCTFCaptureEvent',
         teamCapped, teamCapping, playerCapping, px, py, pz, rot)
 end
 
 
-function plugin.AllowFlagGrabEvent(playerID, flagID, flagType, shotType,
+function CallIn.AllowFlagGrabEvent(playerID, flagID, flagType, shotType,
                                    px, py, pz)
   print('AllowFlagGrabEvent',
         playerID, flagID, flagType, shotType, px, py, pz)
 end
 
 
-function plugin.AllowKillCommandEvent(victimID, killerID)
+function CallIn.AllowKillCommandEvent(victimID, killerID)
   print('AllowKillCommandEvent', victimID, killerID)
 end
 
 
-function plugin.AllowPlayer(playerID, callsign, ipAddress)
+function CallIn.AllowPlayer(playerID, callsign, ipAddress)
   print('AllowPlayer', playerID, callsign, ipAddress)
 end
 
 
-function plugin.AllowSpawn(playerID, teamID)
+function CallIn.AllowSpawn(playerID, teamID)
   print('AllowSpawn', playerID, teamID)
 end
 
 
-function plugin.AnointRabbitEvent(playerID)
+function CallIn.AnointRabbitEvent(playerID)
   print('AnointRabbitEvent', playerID)
 end
 
 
-function plugin.BanEvent(bannerID, duration, reason, banneeID, ipAddress)
+function CallIn.BanEvent(bannerID, duration, reason, banneeID, ipAddress)
   print('BanEvent', bannerID, duration, reason, banneeID, ipAddress)
 end
 
 
-function plugin.CaptureEvent(teamCapped, teamCapping, playerCapping,
+function CallIn.BZDBChange(key, value)
+  print('BZDBChange', key, value)
+end
+
+
+function CallIn.CaptureEvent(teamCapped, teamCapping, playerCapping,
                              px, py, pz, rot)
   print('CaptureEvent',
         teamCapped, teamCapping, playerCapping, px, py, pz, rot)
 end
 
 
-function plugin.CustomMapObject(objName, data)
+function CallIn.CustomMapObject(objName, data)
   print('CustomMapObject', objName)
   for d = 1, #data do
     print('  ' .. data[d])
@@ -70,243 +75,247 @@ function plugin.CustomMapObject(objName, data)
 end
 
 
-function plugin.FilteredChatMessageEvent(msg, from, to, team)
+function CallIn.FilteredChatMessageEvent(msg, from, to, team)
   print('FilteredChatMessageEvent', msg, from, to, team)
 end
 
 
-function plugin.FlagDroppedEvent(playerID, flagID, flagType, px, py, pz)
+function CallIn.FlagDroppedEvent(playerID, flagID, flagType, px, py, pz)
   print('FlagDroppedEvent', playerID, flagID, flagType, px, py, pz)
 end
 
 
-function plugin.FlagGrabbedEvent(playerID, flagID, flagType, shotType,
+function CallIn.FlagGrabbedEvent(playerID, flagID, flagType, shotType,
                                  px, py, pz)
   print('FlagGrabbedEvent', playerID, flagID, flagType, shotType, px, py, pz)
 end
 
 
-function plugin.FlagResetEvent(flagID, flagType, px, py, pz, teamIsEmpty)
+function CallIn.FlagResetEvent(flagID, flagType, px, py, pz, teamIsEmpty)
   print('FlagResetEvent', flagID, flagType, px, py, pz, teamIsEmpty)
 end
 
 
-function plugin.FlagTransferredEvent(srcPlayerID, dstPlayerID, flagType)
+function CallIn.FlagTransferredEvent(srcPlayerID, dstPlayerID, flagType)
   print('FlagTransferredEvent', srcPlayerID, dstPlayerID, flagType)
 end
 
 
-function plugin.GameEndEvent(duration)
+function CallIn.GameEndEvent(duration)
   print('GameEndEvent', duration)
 end
 
 
-function plugin.GameStartEvent(duration)
+function CallIn.GameStartEvent(duration)
   print('GameStartEvent', duration)
 end
 
 
-function plugin.GetAutoTeamEvent(playerID, team, callsign)
+function CallIn.GetAutoTeamEvent(playerID, team, callsign)
   print('GetAutoTeamEvent', playerID, team, callsign)
 end
 
 
-function plugin.GetPlayerInfoEvent(playerID, team, callsign, idAddress,
+function CallIn.GetPlayerInfoEvent(playerID, team, callsign, idAddress,
                                    admin, verified, registered)
   print('GetPlayerInfoEvent',
         playerID, team, callsign, idAddress, admin, verified, registered)
 end
 
 
-function plugin.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
+function CallIn.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
   print('GetPlayerSpawnPosEvent', playerID, team, px, py, pz, rot)
 end
 
 
-function plugin.GetWorldEvent(generated, ctf, rabbit, openFFA,
+function CallIn.GetWorldEvent(generated, ctf, rabbit, openFFA,
                               worldFile, worldBlob)
   print('GetWorldEvent', generated, ctf, rabbit, openFFA, worldFile)
 end
 
 
-function plugin.HostBanModifyEvent(bannerID, duration, reason, hostPattern)
+function CallIn.HostBanModifyEvent(bannerID, duration, reason, hostPattern)
   print('HostBanModifyEvent', bannerID, duration, reason, hostPattern)
 end
 
 
-function plugin.HostBanNotifyEvent(bannerID, duration, reason, hostPattern)
+function CallIn.HostBanNotifyEvent(bannerID, duration, reason, hostPattern)
   print('HostBanNotifyEvent', bannerID, duration, reason, hostPattern)
 end
 
 
-function plugin.IdBanEvent(bannerID, duration, reason, banneeID, bzID)
+function CallIn.IdBanEvent(bannerID, duration, reason, banneeID, bzID)
   print('IdBanEvent', bannerID, duration, reason, banneeID, bzID)
 end
 
 
-function plugin.IdleNewNonPlayerConnection(connID, connData)
+function CallIn.IdleNewNonPlayerConnection(connID, connData)
   print('IdleNewNonPlayerConnection', connID, #connData)
 end
 
 
-function plugin.KickEvent(kickerID, kickedID, reason)
+function CallIn.KickEvent(kickerID, kickedID, reason)
   print('KickEvent', kickerID, kickedID, reason)
 end
 
 
-function plugin.KillEvent(killerID, killedID, reason)
+function CallIn.KillEvent(killerID, killedID, reason)
   print('KillEvent', killerID, killedID, reason)
 end
 
 
-function plugin.ListServerUpdateEvent(addr, desc, groups)
+function CallIn.ListServerUpdateEvent(addr, desc, groups)
   print('ListServerUpdateEvent', addr, desc, groups)
 end
 
 
-function plugin.LoggingEvent(msg, level)
+function CallIn.LoggingEvent(msg, level)
   print('LoggingEvent', level, msg)
 end
 
 
-function plugin.MessageFilteredEvent(playerID, rawMsg, filteredMsg)
-  print('MessageFilteredEvent', playerID, rawMsg, filteredMsg))
+function CallIn.MessageFilteredEvent(playerID, rawMsg, filteredMsg)
+  print('MessageFilteredEvent', playerID, rawMsg, filteredMsg)
 end
 
 
-function plugin.NetDataReceiveEvent(playerID, udp, data)
+function CallIn.NetDataReceiveEvent(playerID, udp, data)
   print('NetDataReceiveEvent', playerID, udp, #data)
 end
 
 
-function plugin.NetDataSendEvent(playerID, udp, data)
+function CallIn.NetDataSendEvent(playerID, udp, data)
   print('NetDataSendEvent', playerID, udp, #data)
 end
 
 
-function plugin.NewNonPlayerConnection(playerID, data)
+function CallIn.NewNonPlayerConnection(playerID, data)
   print('NewNonPlayerConnection', playerID, #data)
 end
 
 
-function plugin.NewRabbitEvent(playerID)
+function CallIn.NewRabbitEvent(playerID)
   print('NewRabbitEvent', playerID)
 end
 
 
-function plugin.PlayerAuthEvent(playerID, password, globalAuth)
+function CallIn.PlayerAuthEvent(playerID, password, globalAuth)
   print('PlayerAuthEvent', playerID, password, globalAuth)
 end
 
 
-function plugin.PlayerCollision(playerID1, playerID2, px, py, pz)
+function CallIn.PlayerCollision(playerID1, playerID2, px, py, pz)
   print('PlayerCollision', playerID1, playerID2, px, py, pz)
 end
 
 
-function plugin.PlayerCustomDataChanged(playerID, key, data)
+function CallIn.PlayerCustomDataChanged(playerID, key, data)
   print('PlayerCustomDataChanged', playerID, key, #data)
 end
 
 
-function plugin.PlayerDieEvent(playerID, team, killerID, killerTeam,
-                               flagType, shotID)
+function CallIn.PlayerDieEvent(victimID, team, killerID, killerTeam,
+                               flagType, shotID, px, py, pz, rot)
   print('PlayerDieEvent',
-        playerID, team, killerID, killerTeam, flagType, shotID)
+        playerID, team, killerID, killerTeam, flagType, shotID, px, py, pz, rot)
 end
 
 
-function plugin.PlayerJoinEvent(playerID, team, callsign)
+function CallIn.PlayerJoinEvent(playerID, team, callsign)
   print('PlayerJoinEvent', playerID, team, callsign)
 end
 
 
-function plugin.PlayerPartEvent(playerID, team, callsign, reason)
+function CallIn.PlayerPartEvent(playerID, team, callsign, reason)
   print('PlayerPartEvent', playerID, team, callsign, reason)
 end
 
 
-function plugin.PlayerPausedEvent(playerID, paused)
+function CallIn.PlayerPausedEvent(playerID, paused)
   print('PlayerPausedEvent', playerID, paused)
 end
 
 
-function plugin.PlayerSentCustomData(playerID, key, data)
+function CallIn.PlayerSentCustomData(playerID, key, data)
   print('PlayerSentCustomData', playerID, key, #data)
 end
 
 
-function plugin.PlayerSpawnEvent(playerID, team)
+function CallIn.PlayerSpawnEvent(playerID, team)
   print('PlayerSpawnEvent', playerID, team)
 end
 
 
-function plugin.PlayerUpdateEvent(playerID)
-  print('PlayerUpdateEvent', playerID)
+function CallIn.PlayerUpdateEvent(playerID, status, phydrv,
+                                  falling, crossingWall, inPhantomZone,
+                                  px, py, pz, rot, vx, vy, vz, angvel)
+  print('PlayerUpdateEvent', playerID, status, phydrv,
+        falling, crossingWall, inPhantomZone,
+        px, py, pz, rot, vx, vy, vz, angvel)
 end
 
 
-function plugin.RawChatMessageEvent(msg, from, to, team)
+function CallIn.RawChatMessageEvent(msg, from, to, team)
   print('RawChatMessageEvent', msg, from, to, team)
 end
 
 
-function plugin.ReloadEvent(playerID)
+function CallIn.ReloadEvent(playerID)
   print('ReloadEvent', playerID)
 end
 
 
-function plugin.ReportFiledEvent(playerID, msg)
+function CallIn.ReportFiledEvent(playerID, msg)
   print('ReportFiledEvent', playerID, msg)
 end
 
 
-function plugin.ServerMsgEvent(to, team, msg)
+function CallIn.ServerMsgEvent(to, team, msg)
   print('ServerMsgEvent', to, team, msg)
 end
 
 
-function plugin.ShotEndedEvent(playerID, shotID)
+function CallIn.ShotEndedEvent(playerID, shotID)
   print('ShotEndedEvent', playerID, shotID)
 end
 
 
-function plugin.ShotFiredEvent(playerID, shotType, px, py, pz)
+function CallIn.ShotFiredEvent(playerID, shotType, px, py, pz)
   print('ShotFiredEvent', playerID, shotType, px, py, pz)
 end
 
 
-function plugin.SlashCommandEvent(msg, from)
+function CallIn.SlashCommandEvent(msg, from)
   print('SlashCommandEvent', msg, from)
 end
 
 
-function plugin.TeleportEvent(playerID, src, dst)
+function CallIn.TeleportEvent(playerID, src, dst)
   print('TeleportEvent', playerID, src, dst)
 end
 
 
-function plugin.TickEvent()
+function CallIn.TickEvent()
   print('TickEvent')
 end
 
 
-function plugin.UnknownSlashCommand(msg, from)
+function CallIn.UnknownSlashCommand(msg, from)
   print('UnknownSlashCommand', msg, from)
 end
 
 
-function plugin.WorldFinalized()
+function CallIn.WorldFinalized()
   print('WorldFinalized')
 end
 
 
-function plugin.ZoneEntryEvent()
+function CallIn.ZoneEntryEvent()
   print('ZoneEntryEvent')
 end
 
 
-function plugin.ZoneExitEvent()
+function CallIn.ZoneExitEvent()
   print('ZoneExitEvent')
 end
 

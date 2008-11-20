@@ -152,6 +152,13 @@ BZ.UpdateCallIn('AllowFlagGrabEvent',
 )
 
 
+BZ.UpdateCallIn('BZDBChange',
+  function(key, value)
+    print('BZDBChange: ' .. key .. ' = ' .. value)
+  end
+)
+
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 

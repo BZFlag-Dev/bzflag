@@ -6,6 +6,7 @@
 
 #include "callouts.h"
 
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <set>
@@ -164,6 +165,9 @@ static int ReloadUsers(lua_State* L);
 static int ReloadGroups(lua_State* L);
 static int ReloadHelp(lua_State* L);
 
+// lua custom call-in (uint32_t timer, 10ms resolution)
+static int GetTimer(lua_State* L);
+static int DiffTimers(lua_State* L);
 
 
 /******************************************************************************/
@@ -292,6 +296,9 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(ReloadGroups);
   REGISTER_LUA_CFUNC(ReloadHelp);
 
+  REGISTER_LUA_CFUNC(GetTimer);
+  REGISTER_LUA_CFUNC(DiffTimers);
+
   return true;
 }
 
@@ -329,7 +336,6 @@ static int GetServerPort(lua_State* L)
 
 static int GetServerAddress(lua_State* L)
 {
-  // FIXME - free bz_ApiString?
   lua_pushstring(L, bz_getPublicAddr().c_str());
   return 1;
 }
@@ -337,7 +343,6 @@ static int GetServerAddress(lua_State* L)
 
 static int GetServerDescription(lua_State* L)
 {
-  // FIXME - free bz_ApiString?
   lua_pushstring(L, bz_getPublicDescription().c_str());
   return 1;
 }
@@ -434,20 +439,20 @@ static int SetWorldURL(lua_State* L)
 
 static int SendMessage(lua_State* L)
 {
-  const int   from  = luaL_checkint(L, 1);
-  const int   to    = luaL_checkint(L, 2);
-  const char* msg   = luaL_checkstring(L, 3);
-  lua_pushboolean(L, bz_sendTextMessage(from, to, msg));
+  const int   src = luaL_checkint(L, 1);
+  const int   dst = luaL_checkint(L, 2);
+  const char* msg = luaL_checkstring(L, 3);
+  lua_pushboolean(L, bz_sendTextMessage(src, dst, msg));
   return 1;
 }
 
 
 static int SendTeamMessage(lua_State* L)
 {
-  const int          from = luaL_checkint(L, 1);
-  const bz_eTeamType to   = ParseTeam(L, 2);
-  const char*        msg  = luaL_checkstring(L, 3);
-  lua_pushboolean(L, bz_sendTextMessage(from, to, msg));
+  const int          src = luaL_checkint(L, 1);
+  const bz_eTeamType dst = ParseTeam(L, 2);
+  const char*        msg = luaL_checkstring(L, 3);
+  lua_pushboolean(L, bz_sendTextMessage(src, dst, msg));
   return 1;
 }
 
@@ -1024,6 +1029,36 @@ static int ReloadHelp(lua_State* L)
 {
   bz_reloadHelp();
   return 0;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+typedef uint32_t u32;
+
+static int GetTimer(lua_State* L)
+{
+  const double nowTime = bz_getCurrentTime();
+  const u32 millisecs = (u32)(nowTime * 1000.0);
+  lua_pushlightuserdata(L, (void*)millisecs);
+  return 1;
+}
+
+
+static int DiffTimers(lua_State* L)
+{
+  const int args = lua_gettop(L); // number of arguments
+  if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
+    luaL_error(L, "Incorrect arguments to DiffTimers()");
+  }
+  const void* p1 = lua_touserdata(L, 1);
+  const void* p2 = lua_touserdata(L, 2);
+  const u32 t1 = *((const u32*)&p1);
+  const u32 t2 = *((const u32*)&p2);
+  const u32 diffTime = (t1 - t2);
+  lua_pushnumber(L, (float)diffTime * 0.001f); // return seconds
+  return 1;
 }
 
 
