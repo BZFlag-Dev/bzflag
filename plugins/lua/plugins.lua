@@ -1,5 +1,14 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  file:    plugins.lua
+--  author:  Dave Rodgers  (aka: trepan)
+--  date:    Nov 22, 2008
+--  desc:    bzfsAPI lua plugin manager
+--  license: LGPL 2.1
+--
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 local PLUGINS_DIR = PLUGINS_DIR or './plugins/'
 
@@ -8,10 +17,16 @@ print('-----------')
 print('LUA PLUGINS')
 print('-----------')
 
-local callInList = BZ.GetCallInList()
-for k in pairs(callInList) do
-  callInList[k] = true
-end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+-- ci:  callin
+-- pi:  plugin
+--
+
+local piNames = {}  --  < piName = { name = '',
+local ciFuncs = {}  --  < ciName = { ciFunc, ciFunc, ... } >  pairs
 
 
 --------------------------------------------------------------------------------
@@ -193,7 +208,7 @@ local ciFuncs = {}
 local ciFuncLists = {}
 
 local function SetupCallIns()
-  for ciName in pairs(callInList) do
+  for ciName in pairs(BZ.GetCallInList()) do
     local genFunc = specialCallIns[ciName] or GenAllFunc
     local funcList = {}
     ciFuncLists[ciName] = funcList

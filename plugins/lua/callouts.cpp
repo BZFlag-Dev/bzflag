@@ -6,7 +6,6 @@
 
 #include "callouts.h"
 
-#include <stdint.h>
 #include <string>
 #include <vector>
 #include <set>
@@ -18,19 +17,16 @@ using std::map;
 
 
 // TODO
-// - connections (new call-in?)
-// - groups
-// - timers
-// - logging
-// - reports
-// - admin
-// - lagwarn
+// * obstacle queries, tangibility
 // - timelimit
 // - countdown
+// - lagwarn
+// - plugin management
+// - connections (new call-in?)
+// - logging
+// - reports
 // - polls
 // - help
-// * obstacle queries, tangibility
-// - plugin management
 // - more player data (global auth, etc...)
 
 /******************************************************************************/
@@ -41,7 +37,8 @@ using std::map;
 static bz_eTeamType ParseTeam(lua_State* L, int index)
 {
   if (lua_israwstring(L, index)) {
-    const string s = lua_tostring(L, index);
+    string s = lua_tostring(L, index);
+    s = makelower(s);
     if (s == "auto")     { return eAutomaticTeam;    }
     if (s == "none")     { return eNoTeam;           }
     if (s == "rogue")    { return eRogueTeam;        }
@@ -78,6 +75,11 @@ static int GetServerPort(lua_State* L);
 static int GetServerAddress(lua_State* L);
 static int GetServerDescription(lua_State* L);
 
+static int AdminShutdown(lua_State* L);
+static int AdminRestart(lua_State* L);
+static int AdminSuperKill(lua_State* L);
+static int AdminGameOver(lua_State* L);
+
 static int GetGameType(lua_State* L);
 static int GetJumpingAllowed(lua_State* L);
 
@@ -91,8 +93,7 @@ static int GetWorldCache(lua_State* L);
 
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
-
-static int PlaySound(lua_State* L); // FIXME
+static int PlaySound(lua_State* L);
 
 static int GetStandardSpawn(lua_State* L); // FIXME
 static int GetBaseAtPosition(lua_State* L); // FIXME
@@ -117,6 +118,10 @@ static int GetPlayerFalling(lua_State* L);
 static int GetPlayerCrossingWall(lua_State* L);
 static int GetPlayerZoned(lua_State* L);
 static int GetPlayerPhysicsDriver(lua_State* L);
+
+static int GetPlayerLag(lua_State* L);
+static int GetPlayerJitter(lua_State* L);
+static int GetPlayerPacketLoss(lua_State* L);
 
 static int GetPlayerWins(lua_State* L);
 static int GetPlayerLosses(lua_State* L);
@@ -143,6 +148,7 @@ static int GetFlagPlayer(lua_State* L);
 static int MoveFlag(lua_State* L);
 static int ResetFlag(lua_State* L);
 
+static int GetTeamName(lua_State* L);
 static int GetTeamLimit(lua_State* L);
 static int GetTeamCount(lua_State* L);
 static int GetTeamScore(lua_State* L);
@@ -165,9 +171,21 @@ static int ReloadUsers(lua_State* L);
 static int ReloadGroups(lua_State* L);
 static int ReloadHelp(lua_State* L);
 
-// lua custom call-in (uint32_t timer, 10ms resolution)
 static int GetTimer(lua_State* L);
 static int DiffTimers(lua_State* L);
+
+static int GetGroups(lua_State* L);
+static int GetGroupPerms(lua_State* L);
+static int GetGroupHasPerm(lua_State* L);
+static int GetStandardPerms(lua_State* L);
+
+static int KickPlayer(lua_State* L);
+static int BanByIP(lua_State* L);
+static int BanByBZID(lua_State* L);
+static int BanByHost(lua_State* L);
+static int UnbanByIP(lua_State* L);
+static int UnbanByBZID(lua_State* L);
+static int UnbanByHost(lua_State* L);
 
 
 /******************************************************************************/
@@ -187,8 +205,6 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GameOver);
   REGISTER_LUA_CFUNC(GameSuperKill);
 
-  REGISTER_LUA_CFUNC(PlaySound);
-
   REGISTER_LUA_CFUNC(SetMaxWaitTime);
   REGISTER_LUA_CFUNC(ClearMaxWaitTime);
 
@@ -207,6 +223,11 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GetServerAddress);
   REGISTER_LUA_CFUNC(GetServerDescription);
 
+  REGISTER_LUA_CFUNC(AdminShutdown);
+  REGISTER_LUA_CFUNC(AdminRestart);
+  REGISTER_LUA_CFUNC(AdminSuperKill);
+  REGISTER_LUA_CFUNC(AdminGameOver);
+
   REGISTER_LUA_CFUNC(GetGameType);
   REGISTER_LUA_CFUNC(GetJumpingAllowed);
 
@@ -220,6 +241,8 @@ bool CallOuts::PushEntries(lua_State* L)
 
   REGISTER_LUA_CFUNC(SendMessage);
   REGISTER_LUA_CFUNC(SendTeamMessage);
+
+  REGISTER_LUA_CFUNC(PlaySound);
 
   // Player
   REGISTER_LUA_CFUNC(GetPlayerCount);
@@ -240,6 +263,11 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GetPlayerCrossingWall);
   REGISTER_LUA_CFUNC(GetPlayerZoned);
   REGISTER_LUA_CFUNC(GetPlayerPhysicsDriver);
+
+  REGISTER_LUA_CFUNC(GetPlayerLag);
+  REGISTER_LUA_CFUNC(GetPlayerJitter);
+  REGISTER_LUA_CFUNC(GetPlayerPacketLoss);
+
   REGISTER_LUA_CFUNC(GetPlayerWins);
   REGISTER_LUA_CFUNC(GetPlayerLosses);
   REGISTER_LUA_CFUNC(GetPlayerTKs);
@@ -273,6 +301,7 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(ResetFlag);
 
   // Team
+  REGISTER_LUA_CFUNC(GetTeamName);
   REGISTER_LUA_CFUNC(GetTeamLimit);
   REGISTER_LUA_CFUNC(GetTeamCount);
   REGISTER_LUA_CFUNC(GetTeamScore);
@@ -298,6 +327,19 @@ bool CallOuts::PushEntries(lua_State* L)
 
   REGISTER_LUA_CFUNC(GetTimer);
   REGISTER_LUA_CFUNC(DiffTimers);
+
+  REGISTER_LUA_CFUNC(GetGroups);
+  REGISTER_LUA_CFUNC(GetGroupPerms);
+  REGISTER_LUA_CFUNC(GetGroupHasPerm);
+  REGISTER_LUA_CFUNC(GetStandardPerms);
+
+  REGISTER_LUA_CFUNC(KickPlayer);
+  REGISTER_LUA_CFUNC(BanByIP);
+  REGISTER_LUA_CFUNC(BanByBZID);
+  REGISTER_LUA_CFUNC(BanByHost);
+  REGISTER_LUA_CFUNC(UnbanByIP);
+  REGISTER_LUA_CFUNC(UnbanByBZID);
+  REGISTER_LUA_CFUNC(UnbanByHost);
 
   return true;
 }
@@ -345,6 +387,41 @@ static int GetServerDescription(lua_State* L)
 {
   lua_pushstring(L, bz_getPublicDescription().c_str());
   return 1;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int AdminShutdown(lua_State* L)
+{
+  bz_shutdown();
+  return 0;
+}
+
+
+static int AdminRestart(lua_State* L)
+{
+  lua_pushboolean(L, bz_restart());
+  return 1;
+}
+
+
+static int AdminSuperKill(lua_State* L)
+{
+  bz_superkill();
+  return 0;
+}
+
+
+static int AdminGameOver(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  bz_eTeamType team = eNoTeam;
+  if (!lua_isnone(L, 2)) {
+    team = ParseTeam(L, 2);
+  }
+  bz_gameOver(playerID, team);
+  return 0;
 }
 
 
@@ -453,6 +530,15 @@ static int SendTeamMessage(lua_State* L)
   const bz_eTeamType dst = ParseTeam(L, 2);
   const char*        msg = luaL_checkstring(L, 3);
   lua_pushboolean(L, bz_sendTextMessage(src, dst, msg));
+  return 1;
+}
+
+
+static int PlaySound(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  const char* sound  = luaL_checkstring(L, 2);
+  lua_pushboolean(L, bz_sendPlayCustomLocalSound(playerID, sound));
   return 1;
 }
 
@@ -585,7 +671,7 @@ static int GetPlayerStatus(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushinteger(L, state.status);
@@ -698,7 +784,6 @@ static int GetPlayerZoned(lua_State* L)
 static int GetPlayerPhysicsDriver(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
 
   int phydrv;
   if (!bz_getPlayerPhysicsDriver(pid, &phydrv)) {
@@ -707,6 +792,33 @@ static int GetPlayerPhysicsDriver(lua_State* L)
 
   lua_pushinteger(L, phydrv);
 
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetPlayerLag(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  lua_pushinteger(L, bz_getPlayerLag(playerID));
+  return 1;
+}
+
+
+static int GetPlayerJitter(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  lua_pushinteger(L, bz_getPlayerJitter(playerID));
+  return 1;
+}
+
+
+static int GetPlayerPacketLoss(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  lua_pushnumber(L, bz_getPlayerPacketLoss(playerID));
   return 1;
 }
 
@@ -899,6 +1011,14 @@ static int ResetFlag(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
+static int GetTeamName(lua_State* L)
+{
+  bz_eTeamType teamID = ParseTeam(L, 1);
+  lua_pushstring(L, bzu_GetTeamName(teamID));
+  return 1;
+}
+
+
 static int GetTeamLimit(lua_State* L)
 {
   bz_eTeamType teamID = ParseTeam(L, 1);
@@ -1053,12 +1173,10 @@ static int ReloadHelp(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-typedef uint32_t u32;
-
 static int GetTimer(lua_State* L)
 {
   const double nowTime = bz_getCurrentTime();
-  const u32 millisecs = (u32)(nowTime * 1000.0);
+  const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
   lua_pushlightuserdata(L, (void*)millisecs);
   return 1;
 }
@@ -1072,10 +1190,144 @@ static int DiffTimers(lua_State* L)
   }
   const void* p1 = lua_touserdata(L, 1);
   const void* p2 = lua_touserdata(L, 2);
-  const u32 t1 = *((const u32*)&p1);
-  const u32 t2 = *((const u32*)&p2);
-  const u32 diffTime = (t1 - t2);
+  const uint32_t t1 = *((const uint32_t*)&p1);
+  const uint32_t t2 = *((const uint32_t*)&p2);
+  const uint32_t diffTime = (t1 - t2);
   lua_pushnumber(L, (float)diffTime * 0.001f); // return seconds
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetGroups(lua_State* L)
+{
+  lua_newtable(L);
+  bz_APIStringList* list = bz_getGroupList();
+  if (list == NULL) {
+    return 1;
+  }
+  for (int i = 0; i < list->size(); i++) {
+    lua_pushinteger(L, i + 1);
+    lua_pushstring(L, (*list)[i].c_str());
+    lua_rawset(L, -3);
+  }
+  bz_deleteStringList(list);
+  return 1;
+}
+
+
+static int GetGroupPerms(lua_State* L)
+{
+  const char* group = luaL_checkstring(L, 1);
+  bz_APIStringList* list = bz_getGroupPerms(group);
+  if (list == NULL) {
+    return 0;
+  }
+  lua_newtable(L);
+  for (int i = 0; i < list->size(); i++) {
+    lua_pushinteger(L, i + 1);
+    lua_pushstring(L, (*list)[i].c_str());
+    lua_rawset(L, -3);
+  }
+  bz_deleteStringList(list);
+  return 1;
+}
+
+
+static int GetGroupHasPerm(lua_State* L)
+{
+  const char* group = luaL_checkstring(L, 1);
+  const char* perm  = luaL_checkstring(L, 2);
+  lua_pushboolean(L, bz_groupAllowPerm(group,  perm));
+  return 1;
+}
+
+
+static int GetStandardPerms(lua_State* L)
+{
+  lua_newtable(L);
+  bz_APIStringList* list = bz_getStandardPermList();
+  if (list == NULL) {
+    return 1;
+  }
+  for (int i = 0; i < list->size(); i++) {
+    lua_pushinteger(L, i + 1);
+    lua_pushstring(L, (*list)[i].c_str());
+    lua_rawset(L, -3);
+  }
+  bz_deleteStringList(list);
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int KickPlayer(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  const char* reason = luaL_checkstring(L, 2);
+  const bool  notify = lua_isboolean(L, 3) && lua_toboolean(L, 3);
+  lua_pushboolean(L, bz_kickUser(playerID, reason, notify));
+  return 1;
+}
+
+
+static int BanByIP(lua_State* L)
+{
+  const char* ip     = luaL_checkstring(L, 1);
+  const char* source = luaL_checkstring(L, 2);
+  const int duration = luaL_checkint(L, 3);
+  const char* reason = luaL_checkstring(L, 4);
+  lua_pushboolean(L, bz_IPBanUser(ip, source, duration, reason));
+  return 1;
+}
+
+
+static int BanByBZID(lua_State* L)
+{
+  const char* bzID   = luaL_checkstring(L, 1);
+  const char* source = luaL_checkstring(L, 2);
+  const int duration = luaL_checkint(L, 3);
+  const char* reason = luaL_checkstring(L, 4);
+  lua_pushboolean(L, bz_IPBanUser(bzID, source, duration, reason));
+  return 1;
+}
+
+
+static int BanByHost(lua_State* L)
+{
+  const char* host   = luaL_checkstring(L, 1);
+  const char* source = luaL_checkstring(L, 2);
+  const int duration = luaL_checkint(L, 3);
+  const char* reason = luaL_checkstring(L, 4);
+  lua_pushboolean(L, bz_IPBanUser(host, source, duration, reason));
+  return 1;
+}
+
+
+static int UnbanByIP(lua_State* L)
+{
+  const char* ip = luaL_checkstring(L, 1);
+  lua_pushboolean(L, bz_IPUnbanUser(ip));
+  return 1;
+}
+
+
+static int UnbanByBZID(lua_State* L)
+{
+  const char* bzID = luaL_checkstring(L, 1);
+  lua_pushboolean(L, bz_IDUnbanUser(bzID));
+  return 1;
+}
+
+
+static int UnbanByHost(lua_State* L)
+{
+  const char* host = luaL_checkstring(L, 1);
+  lua_pushboolean(L, bz_HostUnbanUser(host));
   return 1;
 }
 

@@ -58,10 +58,10 @@ static bool PushGames(lua_State* L)
   lua_pushliteral(L, "GAME");
   lua_newtable(L);
 
-  PushDualPair(L, "ffa",    eTeamFFAGame);
-  PushDualPair(L, "ctf",    eClassicCTFGame);
-  PushDualPair(L, "rabbit", eRabbitGame);
-  PushDualPair(L, "open",   eOpenFFAGame);
+  PushDualPair(L, "FFA",    eTeamFFAGame);
+  PushDualPair(L, "CTF",    eClassicCTFGame);
+  PushDualPair(L, "RABBIT", eRabbitGame);
+  PushDualPair(L, "OPEN",   eOpenFFAGame);
 
   lua_rawset(L, -3);
 
@@ -74,17 +74,17 @@ static bool PushTeams(lua_State* L)
   lua_pushliteral(L, "TEAM");
   lua_newtable(L);
 
-  PushDualPair(L, "automatic", eAutomaticTeam);
-  PushDualPair(L, "none",      eNoTeam);
-  PushDualPair(L, "rogue",     eRogueTeam);
-  PushDualPair(L, "red",       eRedTeam);
-  PushDualPair(L, "green",     eGreenTeam);
-  PushDualPair(L, "blue",      eBlueTeam);
-  PushDualPair(L, "purple",    ePurpleTeam);
-  PushDualPair(L, "rabbit",    eRabbitTeam);
-  PushDualPair(L, "hunter",    eHunterTeam);
-  PushDualPair(L, "observer",  eObservers);
-  PushDualPair(L, "admin",     eAdministrators);
+  PushDualPair(L, "AUTO",     eAutomaticTeam);
+  PushDualPair(L, "NONE",     eNoTeam);
+  PushDualPair(L, "ROGUE",    eRogueTeam);
+  PushDualPair(L, "RED",      eRedTeam);
+  PushDualPair(L, "GREEN",    eGreenTeam);
+  PushDualPair(L, "BLUE",     eBlueTeam);
+  PushDualPair(L, "PURPLE",   ePurpleTeam);
+  PushDualPair(L, "RABBIT",   eRabbitTeam);
+  PushDualPair(L, "HUNTER",   eHunterTeam);
+  PushDualPair(L, "OBSERVER", eObservers);
+  PushDualPair(L, "ADMIN",    eAdministrators);
 
   lua_rawset(L, -3);
 
@@ -97,19 +97,19 @@ static bool PushShots(lua_State* L)
   lua_pushliteral(L, "SHOT");
   lua_newtable(L);
 
-  PushDualPair(L, "no",  eNoShot);
-  PushDualPair(L, "std", eStandardShot);
-  PushDualPair(L, "gm",  eGMShot);
-  PushDualPair(L, "l",   eLaserShot);
-  PushDualPair(L, "th",  eThiefShot);
-  PushDualPair(L, "sb",  eSuperShot);
-  PushDualPair(L, "pz",  ePhantomShot);
-  PushDualPair(L, "sw",  eShockWaveShot);
-  PushDualPair(L, "r",   eRicoShot);
-  PushDualPair(L, "mg",  eMachineGunShot);
-  PushDualPair(L, "ib",  eInvisibleShot);
-  PushDualPair(L, "cl",  eCloakedShot);
-  PushDualPair(L, "r",   eRapidFireShot);
+  PushDualPair(L, "NO",  eNoShot);
+  PushDualPair(L, "STD", eStandardShot);
+  PushDualPair(L, "GM",  eGMShot);
+  PushDualPair(L, "L",   eLaserShot);
+  PushDualPair(L, "TH",  eThiefShot);
+  PushDualPair(L, "SH",  eSuperShot);
+  PushDualPair(L, "PZ",  ePhantomShot);
+  PushDualPair(L, "SW",  eShockWaveShot);
+  PushDualPair(L, "R",   eRicoShot);
+  PushDualPair(L, "MG",  eMachineGunShot);
+  PushDualPair(L, "IB",  eInvisibleShot);
+  PushDualPair(L, "CL",  eCloakedShot);
+  PushDualPair(L, "F",   eRapidFireShot);
 
   lua_rawset(L, -3);
 
@@ -122,16 +122,16 @@ static bool PushObstacles(lua_State* L)
   lua_pushliteral(L, "OBSTACLE");
   lua_newtable(L);
 
-  PushDualPair(L, "wall",    eWallObject);
-  PushDualPair(L, "box",     eBoxObject);
-  PushDualPair(L, "base",    eBaseObject);
-  PushDualPair(L, "pyramid", ePyramidObject);
-  PushDualPair(L, "mesh",    eMeshObject);
-  PushDualPair(L, "arc",     eArcObject);
-  PushDualPair(L, "cone",    eConeObject);
-  PushDualPair(L, "sphere",  eSphereObject);
-  PushDualPair(L, "tetra",   eTetraObject);
-  PushDualPair(L, "unknown", eUnknownObject);
+  PushDualPair(L, "WALL",    eWallObject);
+  PushDualPair(L, "BOX",     eBoxObject);
+  PushDualPair(L, "BASE",    eBaseObject);
+  PushDualPair(L, "PYRAMID", ePyramidObject);
+  PushDualPair(L, "MESH",    eMeshObject);
+  PushDualPair(L, "ARC",     eArcObject);
+  PushDualPair(L, "CONE",    eConeObject);
+  PushDualPair(L, "SPHERE",  eSphereObject);
+  PushDualPair(L, "TETRA",   eTetraObject);
+  PushDualPair(L, "UNKNOWN", eUnknownObject);
 
   lua_rawset(L, -3);
 
@@ -144,8 +144,8 @@ static bool PushFlagQualities(lua_State* L)
   lua_pushliteral(L, "QUALITY");
   lua_newtable(L);
 
-  PushDualPair(L, "good", eGoodFlag);
-  PushDualPair(L, "bad",  eBadFlag);
+  PushDualPair(L, "GOOD", eGoodFlag);
+  PushDualPair(L, "BAD",  eBadFlag);
 
   lua_rawset(L, -3);
 
@@ -158,12 +158,12 @@ static bool PushPlayerStates(lua_State* L)
   lua_pushliteral(L, "STATUS");
   lua_newtable(L);
 
-  PushDualPair(L, "dead",        eDead);
-  PushDualPair(L, "alive",       eAlive);
-  PushDualPair(L, "paused",      ePaused);
-  PushDualPair(L, "exploding",   eExploding);
-  PushDualPair(L, "teleporting", eTeleporting);
-  PushDualPair(L, "inbuilding",  eInBuilding);
+  PushDualPair(L, "DEAD",        eDead);
+  PushDualPair(L, "ALIVE",       eAlive);
+  PushDualPair(L, "PAUSED",      ePaused);
+  PushDualPair(L, "EXPLODING",   eExploding);
+  PushDualPair(L, "TELEPORTING", eTeleporting);
+  PushDualPair(L, "INBUILDING",  eInBuilding);
 
   lua_rawset(L, -3);
 

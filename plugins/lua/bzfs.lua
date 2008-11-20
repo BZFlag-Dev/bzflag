@@ -4,13 +4,24 @@
 --  Test code for the bzfs lua plugin
 --
 
+local function Print(...)
+  print(...)
+  local table = {...}
+  local str = ''
+  for i = 1, #table do
+    if (i ~= 1) then str = str .. '\t' end
+    str = str .. tostring(table[i])
+  end
+  BZ.SendMessage(-2, -1, str)
+end
 
-print('-- bzfs.lua --')
+
+Print('-- bzfs.lua --')
 
 
 local pluginDir = BZ.GetPluginDirectory()
 
-print('pluginDir = ' .. pluginDir)
+Print('pluginDir = ' .. pluginDir)
 
 
 --------------------------------------------------------------------------------
@@ -55,9 +66,13 @@ print()
 --
 
 
-function RawChatMessageEvent(msg, from, to, team)
-  print('bzfs.lua', msg, from, to, team)
+function RawChatMessageEvent(msg, src, dst, team)
+  print('bzfs.lua', 'RawChatMessageEvent', msg, src, dst, team)
   return msg .. ' -- lua tagged'
+end
+
+
+function FilteredChatMessageEvent(msg, src, dst, team)
 end
 
 
@@ -145,7 +160,7 @@ end
 
 BZ.UpdateCallIn('AllowFlagGrabEvent',
   function(playerID, flagID, flagType, shotType, px, py, pz)
-    if (BZ.GetPlayerTeam(playerID) == Constants.Teams.red) then
+    if (BZ.GetPlayerTeam(playerID) == BZ.TEAM.RED) then
       return false
     end
   end
@@ -199,4 +214,4 @@ for k,v in lfs.dir('.') do
 end
 
 
-require('plugins')
+-- require('plugins')

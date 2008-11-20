@@ -50,12 +50,8 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
     CallIns::PushEntries(L);
     CallOuts::PushEntries(L);
     Constants::PushEntries(L);
-    MapObject::PushEntries(L);
-
-    lua_pushliteral(L, "DB");
-    lua_newtable(L);
     BZDB::PushEntries(L);
-    lua_rawset(L, -3);
+    MapObject::PushEntries(L);
   }
   lua_setglobal(L, "BZ");
 

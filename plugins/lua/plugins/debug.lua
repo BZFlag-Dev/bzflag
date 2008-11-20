@@ -20,6 +20,7 @@ function CallIn.AllowCTFCaptureEvent(teamCapped, teamCapping, playerCapping,
                                      px, py, pz, rot)
   print('AllowCTFCaptureEvent',
         teamCapped, teamCapping, playerCapping, px, py, pz, rot)
+  -- return:  bool allow [, killTeam]
 end
 
 
@@ -27,26 +28,31 @@ function CallIn.AllowFlagGrabEvent(playerID, flagID, flagType, shotType,
                                    px, py, pz)
   print('AllowFlagGrabEvent',
         playerID, flagID, flagType, shotType, px, py, pz)
+  -- return:  bool allow
 end
 
 
 function CallIn.AllowKillCommandEvent(victimID, killerID)
   print('AllowKillCommandEvent', victimID, killerID)
+  -- return:  bool allow
 end
 
 
 function CallIn.AllowPlayer(playerID, callsign, ipAddress)
   print('AllowPlayer', playerID, callsign, ipAddress)
+  -- return:  string reason
 end
 
 
 function CallIn.AllowSpawn(playerID, teamID)
   print('AllowSpawn', playerID, teamID)
+  -- return:  bool allow
 end
 
 
 function CallIn.AnointRabbitEvent(playerID)
   print('AnointRabbitEvent', playerID)
+  -- return:  number playerID
 end
 
 
@@ -98,6 +104,7 @@ end
 
 function CallIn.FlagTransferredEvent(srcPlayerID, dstPlayerID, flagType)
   print('FlagTransferredEvent', srcPlayerID, dstPlayerID, flagType)
+  -- return:  number action  -- FIXME, need constants
 end
 
 
@@ -113,6 +120,7 @@ end
 
 function CallIn.GetAutoTeamEvent(playerID, team, callsign)
   print('GetAutoTeamEvent', playerID, team, callsign)
+  -- return:  number team
 end
 
 
@@ -120,11 +128,13 @@ function CallIn.GetPlayerInfoEvent(playerID, team, callsign, idAddress,
                                    admin, verified, registered)
   print('GetPlayerInfoEvent',
         playerID, team, callsign, idAddress, admin, verified, registered)
+  -- return:  bool adm, bool verified, bool reg'd
 end
 
 
 function CallIn.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
   print('GetPlayerSpawnPosEvent', playerID, team, px, py, pz, rot)
+  -- return:  px, py, pz, rot
 end
 
 
@@ -206,6 +216,7 @@ end
 
 function CallIn.PlayerCollision(playerID1, playerID2, px, py, pz)
   print('PlayerCollision', playerID1, playerID2, px, py, pz)
+  -- return:  bool handled
 end
 
 
@@ -257,6 +268,7 @@ end
 
 function CallIn.RawChatMessageEvent(msg, from, to, team)
   print('RawChatMessageEvent', msg, from, to, team)
+  -- return:  string newMsg
 end
 
 
@@ -302,6 +314,7 @@ end
 
 function CallIn.UnknownSlashCommand(msg, from)
   print('UnknownSlashCommand', msg, from)
+  -- return:  bool handled
 end
 
 

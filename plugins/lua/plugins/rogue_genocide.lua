@@ -40,10 +40,11 @@ function CallIn.PlayerDieEvent(victimID, team, killerID,
     if (team and (team == BZ.TEAM.rogue)) then
       if (BZ.GetPlayerSpawned(pid)) then
         BZ.KillPlayer(pid, false, killerID, 'G')
-        BZ.SendMessage(BZ_SERVER, pid, "You were a victim of Rogue Genocide")
-      end
-      if (pid == killerID) then
-        BZ.SendMessage(BZ_SERVER, pid, "You should be more careful with Genocide!")
+        BZ.SendMessage(BZ_SERVER, pid, 'You were a victim of Rogue Genocide')
+        if (pid == killerID) then
+          BZ.SendMessage(BZ_SERVER, pid,
+                         'You should be more careful with Genocide!')
+        end
       end
     end
   end

@@ -21,6 +21,7 @@ using std::set;
 static set<string> objNames;
 
 
+static int GetMap(lua_State* L);
 static int GetList(lua_State* L);
 
 static int Exists(lua_State* L);
@@ -47,23 +48,50 @@ bool BZDB::PushEntries(lua_State* L)
   lua_pushcfunction(L, x);    \
   lua_rawset(L, -3)
 
+  lua_pushliteral(L, "DB");
+  lua_newtable(L);
+
+  REGISTER_LUA_CFUNC(GetMap);
   REGISTER_LUA_CFUNC(GetList);
+
   REGISTER_LUA_CFUNC(Exists);
   REGISTER_LUA_CFUNC(IsPersistent);
+  REGISTER_LUA_CFUNC(GetDefault);
+
   REGISTER_LUA_CFUNC(GetInt);
   REGISTER_LUA_CFUNC(GetBool);
   REGISTER_LUA_CFUNC(GetFloat);
   REGISTER_LUA_CFUNC(GetString);
+
   REGISTER_LUA_CFUNC(SetInt);
   REGISTER_LUA_CFUNC(SetBool);
   REGISTER_LUA_CFUNC(SetFloat);
   REGISTER_LUA_CFUNC(SetString);
+
+  lua_rawset(L, -3);
 
   return true;
 }
 
 
 /******************************************************************************/
+
+static int GetMap(lua_State* L)
+{
+  bz_APIStringList list;
+  lua_newtable(L);
+  if (!bz_getBZDBVarList(&list)) {
+    return 1;
+  }
+  for (int i = 0; i < list.size(); i++) {
+    const char* key = list[i].c_str();
+    lua_pushstring(L, key);
+    lua_pushstring(L, bz_getBZDBString(key).c_str());
+    lua_rawset(L, -3);
+  }
+  return 1;
+}
+
 
 static int GetList(lua_State* L)
 {
@@ -81,6 +109,8 @@ static int GetList(lua_State* L)
 }
 
 
+/******************************************************************************/
+
 static int Exists(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
@@ -93,6 +123,15 @@ static int IsPersistent(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
   lua_pushboolean(L, bz_getBZDBItemPersistent(key));
+  return 1;
+}
+
+
+static int GetDefault(lua_State* L)
+{
+  const char* key = luaL_checkstring(L, 1);
+  bz_ApiString s = bz_getBZDBDefault(key);
+  lua_pushstring(L, s.c_str());
   return 1;
 }
 

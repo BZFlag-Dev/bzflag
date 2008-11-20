@@ -17,7 +17,7 @@ end
 --------------------------------------------------------------------------------
 
 
-local height = 10
+local height = 10.0
 
 local random = math.random
 
