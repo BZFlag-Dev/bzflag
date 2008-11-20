@@ -596,13 +596,17 @@ static int GetPlayerStatus(lua_State* L)
 static int GetPlayerPosition(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+  const bool extrapolate = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+
+  float pos[3];
+  if (!bz_getPlayerPosition(pid, pos, extrapolate)) {
     return 0;
   }
-  lua_pushnumber(L, state.pos[0]);
-  lua_pushnumber(L, state.pos[1]);
-  lua_pushnumber(L, state.pos[2]);
+
+  lua_pushnumber(L, pos[0]);
+  lua_pushnumber(L, pos[1]);
+  lua_pushnumber(L, pos[2]);
+
   return 3;
 }
 
@@ -610,13 +614,16 @@ static int GetPlayerPosition(lua_State* L)
 static int GetPlayerVelocity(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+
+  float vel[3];
+  if (!bz_getPlayerVelocity(pid, vel)) {
     return 0;
   }
-  lua_pushnumber(L, state.velocity[0]);
-  lua_pushnumber(L, state.velocity[1]);
-  lua_pushnumber(L, state.velocity[2]);
+
+  lua_pushnumber(L, vel[0]);
+  lua_pushnumber(L, vel[1]);
+  lua_pushnumber(L, vel[2]);
+
   return 3;
 }
 
@@ -624,11 +631,15 @@ static int GetPlayerVelocity(lua_State* L)
 static int GetPlayerRotation(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow 
+  const bool extrapolate = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+
+  float rot;
+  if (!bz_getPlayerRotation(pid, &rot, extrapolate)) {
     return 0;
   }
-  lua_pushnumber(L, state.rotation);
+
+  lua_pushnumber(L, rot);
+
   return 1;
 }
 
@@ -636,11 +647,14 @@ static int GetPlayerRotation(lua_State* L)
 static int GetPlayerAngVel(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+
+  float angVel;
+  if (!bz_getPlayerAngVel(pid, &angVel)) {
     return 0;
   }
-  lua_pushnumber(L, state.angVel);
+
+  lua_pushnumber(L, angVel);
+
   return 1;
 }
 
@@ -685,10 +699,14 @@ static int GetPlayerPhysicsDriver(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+
+  int phydrv;
+  if (!bz_getPlayerPhysicsDriver(pid, &phydrv)) {
     return 0;
   }
-  lua_pushinteger(L, state.phydrv);
+
+  lua_pushinteger(L, phydrv);
+
   return 1;
 }
 
