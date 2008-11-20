@@ -4,6 +4,7 @@
 #include "bzfsAPI.h"
 
 #include "mylua.h"
+#include "lualfs.h"
 
 #include "callins.h"
 #include "callouts.h"
@@ -42,6 +43,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 
   L = luaL_newstate();
   luaL_openlibs(L);
+  luaopen_lfs (L);
 
   lua_newtable(L);
   {

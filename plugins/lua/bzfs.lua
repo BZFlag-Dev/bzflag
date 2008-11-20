@@ -55,8 +55,8 @@ print()
 --
 
 
-function RawChatMessageEvent(from, to, team, msg)
-  print('bzfs.lua', from, to, team, msg)
+function RawChatMessageEvent(msg, from, to, team)
+  print('bzfs.lua', msg, from, to, team)
   return msg .. ' -- lua tagged'
 end
 
@@ -82,7 +82,7 @@ function TickEvent()
 end
 
 
-function UnknownSlashCommand(playerID, msg)
+function UnknownSlashCommand(msg, playerID)
   print('bzfs.lua', 'UnknownSlashCommand', playerID, msg)
   local _, _, cmd = msg:find('/run%s+(.*)')
   if (cmd) then
@@ -184,3 +184,12 @@ end
 BZ.DB.SetString('_mirror', 'black 0.5')
 BZ.DB.SetString('_skyColor', 'red')
 BZ.DB.SetFloat('_tankSpeed', '50.0')
+
+
+
+for k,v in lfs.dir('.') do
+  print(k,v)
+end
+
+
+require('plugins')

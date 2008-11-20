@@ -573,6 +573,9 @@ static int GetPlayerCustomData(lua_State* L)
 }
 
 
+/******************************************************************************/
+/******************************************************************************/
+
 static int GetPlayerStatus(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
@@ -589,7 +592,7 @@ static int GetPlayerPosition(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushnumber(L, state.pos[0]);
@@ -603,7 +606,7 @@ static int GetPlayerVelocity(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushnumber(L, state.velocity[0]);
@@ -617,7 +620,7 @@ static int GetPlayerRotation(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow 
     return 0;
   }
   lua_pushnumber(L, state.rotation);
@@ -629,7 +632,7 @@ static int GetPlayerAngVel(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushnumber(L, state.angVel);
@@ -641,7 +644,7 @@ static int GetPlayerFalling(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushboolean(L, state.falling);
@@ -653,7 +656,7 @@ static int GetPlayerCrossingWall(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushboolean(L, state.crossingWall);
@@ -665,7 +668,7 @@ static int GetPlayerZoned(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushboolean(L, state.inPhantomZone);
@@ -677,13 +680,16 @@ static int GetPlayerPhysicsDriver(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) {
+  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
     return 0;
   }
   lua_pushinteger(L, state.phydrv);
   return 1;
 }
 
+
+/******************************************************************************/
+/******************************************************************************/
 
 static int GetPlayerWins(lua_State* L)
 {
@@ -734,7 +740,6 @@ static int SetPlayerTKs(lua_State* L)
   bz_setPlayerTKs(pid, value);
   return 0;
 }
-
 
 
 /******************************************************************************/
