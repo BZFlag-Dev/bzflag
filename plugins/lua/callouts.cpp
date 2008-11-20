@@ -93,6 +93,7 @@ static int GetWorldCache(lua_State* L);
 
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
+static int SendFetchResource(lua_State* L);
 static int PlaySound(lua_State* L);
 
 static int GetStandardSpawn(lua_State* L); // FIXME
@@ -241,7 +242,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
   REGISTER_LUA_CFUNC(SendMessage);
   REGISTER_LUA_CFUNC(SendTeamMessage);
-
+  REGISTER_LUA_CFUNC(SendFetchResource);
   REGISTER_LUA_CFUNC(PlaySound);
 
   // Player
@@ -530,6 +531,15 @@ static int SendTeamMessage(lua_State* L)
   const bz_eTeamType dst = ParseTeam(L, 2);
   const char*        msg = luaL_checkstring(L, 3);
   lua_pushboolean(L, bz_sendTextMessage(src, dst, msg));
+  return 1;
+}
+
+
+static int SendFetchResource(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  const char* url    = luaL_checkstring(L, 2);
+  lua_pushboolean(L, bz_sendFetchResMessage(playerID, url));
   return 1;
 }
 
