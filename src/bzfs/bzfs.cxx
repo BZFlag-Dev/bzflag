@@ -1250,10 +1250,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (clOptions->filterChat) {
     strncpy(filtered, message, MessageLen);
 
-    if (clOptions->filterSimple)
-      clOptions->filter.filter(filtered, true);
-    else
-      clOptions->filter.filter(filtered, false);
+    clOptions->filter.filter(filtered, clOptions->filterSimple);
 
     msg = filtered;
 
@@ -1269,21 +1266,23 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     }
   }
 
-  // check that the player has the talk permission
-  GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
+  if (sendingPlayer != ServerPlayer) {
+    // check that the player has the talk permission
+    GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
 
-  if (!senderData)
-    return;
-
-  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
-
-    // if the player were sending to is an admin
-    GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
-
-    // don't care if they're real, just care if they're an admin
-    if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers)) {
-      sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
+    if (!senderData)
       return;
+
+    if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+
+      // if the player were sending to is an admin
+      GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
+
+      // don't care if they're real, just care if they're an admin
+      if ( !(recipientData && recipientData->accessInfo.isOperator()) && (recipientPlayer != AdminPlayers)) {
+        sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
+        return;
+      }
     }
   }
 
@@ -1292,28 +1291,36 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   chatData.from = sendingPlayer;
   chatData.to = BZ_NULLUSER;
 
-  if (recipientPlayer == AllPlayers)
+  if (recipientPlayer == AllPlayers) {
     chatData.to = BZ_ALLUSERS;
-  else if ( recipientPlayer == AdminPlayers )
+  } else if (recipientPlayer == AdminPlayers) {
     chatData.team = eAdministrators;
-  else if ( recipientPlayer > LastRealPlayer )
-    chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
-  else
+  } else if (recipientPlayer > LastRealPlayer) {
+    chatData.team = convertTeam((TeamColor)(250 - recipientPlayer));
+  } else {
     chatData.to = recipientPlayer;
+  }
 
   chatData.message = msg;
 
   // send any events that want to watch the chat
   if (chatData.message.size())
-    worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
+    worldEventManager.callEvents(bz_eFilteredChatMessageEvent, &chatData);
 
-  if (chatData.message.size())
+  if (chatData.message.size()) {
+    if (sendingPlayer == BZ_SERVER) {
+      sendingPlayer = ServerPlayer;
+    }
     sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
+  }
 
   // If the message was filtered report it on the admin channel
   if (msgWasFiltered && clOptions->filterAnnounce) {
-    snprintf(adminmsg, MessageLen, "Filtered Msg: %s said \"%s\"", senderData->player.getCallSign(), message);
-    sendMessage(ServerPlayer, AdminPlayers, adminmsg);
+    GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
+    if (senderData) {
+      snprintf(adminmsg, MessageLen, "Filtered Msg: %s said \"%s\"", senderData->player.getCallSign(), message);
+      sendMessage(ServerPlayer, AdminPlayers, adminmsg);
+    }
   }
 }
 
@@ -1385,10 +1392,11 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
-  sendChatMessage(srcPlayer,dstPlayer,message);
+  sendChatMessage(srcPlayer, dstPlayer, message);
 }
 
-void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *message )
+
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message)
 {
   bz_ChatEventData_V1 chatData;
   chatData.from = BZ_SERVER;
@@ -1415,6 +1423,7 @@ void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *messa
   if (chatData.message.size())
     sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
 }
+
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 {

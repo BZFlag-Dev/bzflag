@@ -1426,6 +1426,7 @@ BZF_API bool bz_getPlayerPosition(int playerID, float pos[3], bool extrapolate)
   if (!player) {
     return false;
   }
+
   if (extrapolate) {
     float rot;
     player->getPlayerCurrentPosRot(pos, rot);
