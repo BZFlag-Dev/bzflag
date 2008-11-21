@@ -232,48 +232,80 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       newObject = NULL;
     }
 
-
     // read first token but do not skip newlines
     readToken(buffer, sizeof(buffer));
-    if (buffer[0] != '\0') 
-     logDebugMessage(3,"reading worldfile token %s\n",buffer);
+    if (buffer[0] != '\0') {
+      logDebugMessage(3,"reading worldfile token %s\n",buffer);
+    }
 
-   if (buffer[0] == '\0') {
+    if (buffer[0] == '\0') {
       // ignore blank line
-    } else if (buffer[0] == '#') {
+    }
+    else if (buffer[0] == '#') {
       // ignore comment
-
-    } else if (strcasecmp(buffer, "end") == 0) {
+    }
+    else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
 	if (object != fakeObject) {
 	  if (object->usesManager()) {
 	    object->writeToManager();
 	    delete object;
-	  } else if (object->usesGroupDef()) {
+	  }
+	  else if (object->usesGroupDef()) {
 	    object->writeToGroupDef(groupDef);
 	    delete object;
-	  } else {
+	  }
+	  else {
 	    wlist.push_back(object);
 	  }
-	} else if (customObject.size())	{
+	}
+	else if (customObject.size())	{
 	  bz_CustomMapObjectInfo data;
+
 	  data.name = bz_ApiString(customObject);
-	  for (unsigned int i = 0; i < customLines.size(); i++)
+	  for (unsigned int i = 0; i < customLines.size(); i++) {
 	    data.data.push_back(customLines[i]);
-	  customObjectMap[customObject]->handle(bz_ApiString(customObject),&data);
+          }
+
+          bz_ApiString objName = bz_ApiString(customObject);
+	  customObjectMap[customObject]->handle(objName, &data);
 	  object = NULL;
+
+	  // embedded objects
+	  if (data.newData.size() > 0) {
+            logDebugMessage(1, "%s: (line %i): embedding for \"%s\"\n",
+                            location.c_str(), line, data.name.c_str());
+	    std::istringstream newData(data.newData.c_str());
+            BZWReader incStream(newData);
+            std::vector<WorldFileObject*> incWlist;
+            if (incStream.readWorldStream(incWlist, groupDef, gotWorld)) {
+              // add the included objects
+              for (unsigned int i = 0; i < incWlist.size(); i++) {
+                wlist.push_back(incWlist[i]);
+              }
+            }
+            else {
+              // empty the failed list
+              emptyWorldFileObjectList(incWlist);
+              errorHandler->fatalError(
+                TextUtils::format("embedding \"%s\"", data.name.c_str()), line);
+              return false;
+            }
+          }
 	}
 	object = NULL;
-      } else {
+      }
+      else {
 	errorHandler->fatalError(
 	  std::string("unexpected \"end\" token"), line);
 	return false;
       }
 
-    } else if (parseNormalObject(buffer, &newObject)) {
+    }
+    else if (parseNormalObject(buffer, &newObject)) {
       // newObject has already been assigned
-
-    } else if (strcasecmp(buffer, "define") == 0) {
+    }
+    else if (strcasecmp(buffer, "define") == 0) {
       if (groupDef != worldDef) {
 	errorHandler->warning(
 	  std::string("group definitions can not be nested \"") +
@@ -292,8 +324,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	    std::string("missing group definition name"), line);
 	}
       }
-
-    } else if (strcasecmp(buffer, "enddef") == 0) {
+    }
+    else if (strcasecmp(buffer, "enddef") == 0) {
       if (groupDef == worldDef) {
 	errorHandler->warning(
 	  std::string("enddef without define - skipping"), line);
@@ -301,23 +333,23 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	OBSTACLEMGR.addGroupDef(groupDef);
 	groupDef = worldDef;
       }
-
-    } else if (strcasecmp(buffer, "group") == 0) {
+    }
+    else if (strcasecmp(buffer, "group") == 0) {
       readToken(buffer, sizeof(buffer));
       if (strlen(buffer) <= 0) {
 	errorHandler->warning(
 	  std::string("missing group definition reference"), line);
       }
       newObject = new CustomGroup(buffer);
-
-    } else if (strcasecmp(buffer, "teleporter") == 0) {
+    }
+    else if (strcasecmp(buffer, "teleporter") == 0) {
       readToken(buffer, sizeof(buffer));
       newObject = new CustomGate(buffer);
-
-    } else if (strcasecmp(buffer, "options") == 0) {
+    }
+    else if (strcasecmp(buffer, "options") == 0) {
       newObject = fakeObject;
-
-    } else if (strcasecmp(buffer, "include") == 0) {
+    }
+    else if (strcasecmp(buffer, "include") == 0) {
       // NOTE: intentionally undocumented  (at the moment)
       readToken(buffer, sizeof(buffer));
       std::string incName = buffer;
@@ -347,8 +379,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  TextUtils::format("including \"%s\" within an obstacle, skipping",
 			    incName.c_str()), line);
       }
-
-    } else if (strcasecmp(buffer, "world") == 0) {
+    }
+    else if (strcasecmp(buffer, "world") == 0) {
       if (!gotWorld) {
 	newObject = new CustomWorld();
 	gotWorld = true;
@@ -356,8 +388,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	errorHandler->warning(
 	  std::string("multiple \"world\" sections found"), line);
       }
-
-    } else if (object) {
+    }
+    else if (object) {
       if (object != fakeObject) {
 	if (!object->read(buffer, *input)) {
 	  // unknown token
@@ -367,7 +399,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  // delete object;
 	  // return false;
 	}
-      } else if (customObject.size()) {
+      }
+      else if (customObject.size()) {
 	std::string thisline = buffer;
 	thisline += " ";
 
@@ -378,10 +411,11 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 
 	customLines.push_back(thisline);
       }
-
-    } else { // filling the current object
+    }
+    else { // filling the current object
       // unknown token
-      if (customObjectMap.find(TextUtils::toupper(std::string(buffer))) != customObjectMap.end()) {
+      const std::string upperToken = TextUtils::toupper(std::string(buffer));
+      if (customObjectMap.find(upperToken) != customObjectMap.end()) {
 	customObject = TextUtils::toupper(std::string(buffer));
 	object = fakeObject;
 	customLines.clear();
@@ -396,9 +430,12 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     }
 
     // discard remainder of line
-    while (input->good() && input->peek() != '\n')
+    while (input->good() && input->peek() != '\n') {
       input->get(buffer, sizeof(buffer));
+    }
+
     input->getline(buffer, sizeof(buffer));
+
     ++line;
   }
 
@@ -410,6 +447,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     }
     retval = false;
   }
+
   if (groupDef != startDef) {
     errorHandler->fatalError(std::string("missing \"enddef\" parameter"), line);
     if (startDef == worldDef) {
@@ -417,6 +455,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     }
     retval = false;
   }
+
   return retval;
 }
 
