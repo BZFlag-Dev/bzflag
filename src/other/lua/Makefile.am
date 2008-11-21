@@ -1,13 +1,8 @@
 
 noinst_LTLIBRARIES = liblua.la
 
-if LINUX
-endif
-
-if MACOS
-endif
-
-AM_CFLAGS = @CONF_CFLAGS@ -fPIC
+# works for linux and macos
+AM_CFLAGS = @CONF_CFLAGS@ -DLUA_USE_LINUX -fPIC
 
 liblua_la_LDFLAGS = -static
 
@@ -73,8 +68,8 @@ EXTRA_DIST =               \
 	HISTORY            \
 	Makefile.orig      \
 	src/Makefile.orig  \
-	src/lua.c.gz       \
-	src/luac.c.gz      \
+	src/lua.c          \
+	src/luac.c         \
 	README_BZFLAG
 
 MAINTAINERCLEANFILES = Makefile.in
