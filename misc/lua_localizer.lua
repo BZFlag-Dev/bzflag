@@ -21,12 +21,18 @@ require('table')
 --------------------------------------------------------------------------------
 
 local subTable = {
-  -- key        mixed,      all caps
-  { 'BZ.DB',   'bzdb',     'BZDB_'    },
-  { 'BZ.TEAM', 'TEAM_',    'TEAM_'    },
-  { 'BZ',      'bz',       'BZ_'      },
-  { 'gl',      'gl',       'GL_'      },
-  { 'GL',      'GL',       'GL_'      },
+  -- key          mixed,      all caps
+  { 'BZ.DB',      'bzdb',      'BZDB_'       },
+  { 'BZ.GAME',    'bzGame',    'BZ_GAME_'    },
+  { 'BZ.PERM',    'bzPerm',    'BZ_PERM_'    },
+  { 'BZ.SHOT',    'bzShot',    'BZ_SHOT_'    },
+  { 'BZ.TEAM',    'bzTeam',    'BZ_TEAM_'    },
+  { 'BZ.PLAYER',  'bzPlayer',  'BZ_PLAYER_'  },
+  { 'BZ.STATUS',  'bzStatus',  'BZ_STATUS_'  },
+  { 'BZ.QUALITY', 'bzQuality', 'BZ_QUALITY_' },
+  { 'BZ',         'bz',        'BZ_'         },
+  { 'gl',         'gl',        'GL_'         },
+  { 'GL',         'GL',        'GL_'         },
 }
 
 --------------------------------------------------------------------------------
