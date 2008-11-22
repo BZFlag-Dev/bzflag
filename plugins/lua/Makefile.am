@@ -22,7 +22,7 @@ lua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
 
 EXTRA_DIST = \
 	README.txt \
-	bzfs.lua \
+	example \
 	lua.def \
 	lua.sln \
 	lua.vcproj
