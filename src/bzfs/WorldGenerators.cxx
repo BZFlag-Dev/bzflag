@@ -21,14 +21,18 @@
 #include "WorldGenerators.h"
 
 // system headers
-#include <iostream>
 #include <math.h>
+#include <string>
+#include <vector>
+#include <iostream>
 
 // common headers
 #include "WorldInfo.h"
 #include "ObstacleMgr.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TimeKeeper.h"
+#include "version.h"
 
 // local headers
 #include "CustomZone.h"
@@ -36,11 +40,29 @@
 #include "bzfs.h"
 
 
+static void CreateMapInfo(const std::string& type,
+                          std::vector<std::string>& mapInfo)
+{
+  mapInfo.push_back(std::string("author:  ") + "bzfs <random>");
+  mapInfo.push_back(std::string("version: ") + getAppVersion());
+  mapInfo.push_back(std::string("maptype: ") + type);
+  mapInfo.push_back(std::string("date:    ") + TimeKeeper::timestamp());
+
+// NOTE: add the relevant BZDB and clOptions values?
+}
+
+
 WorldInfo *defineRandomWorld()
 {
   WorldInfo* myWorld = new WorldInfo();
-  if (!myWorld)
+  if (!myWorld) {
     return NULL;
+  }
+
+  // mapinfo
+  std::vector<std::string> mapInfo;
+  CreateMapInfo("random", mapInfo);
+  myWorld->addMapInfo(mapInfo);
 
   // make walls
   float worldSize = BZDBCache::worldSize;
@@ -146,8 +168,23 @@ WorldInfo *defineRandomWorld()
 WorldInfo *defineTeamWorld()
 {
   WorldInfo *myWorld = new WorldInfo();
-  if (!myWorld)
+  if (!myWorld) {
     return NULL;
+  }
+
+  const bool haveRed    = clOptions->maxTeam[RedTeam] > 0;
+  const bool haveBlue   = clOptions->maxTeam[BlueTeam] > 0;
+  const bool haveGreen  = clOptions->maxTeam[GreenTeam] > 0;
+  const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
+
+  // mapinfo
+  std::vector<std::string> mapInfo;
+  CreateMapInfo("team", mapInfo);
+  if (haveRed)    { mapInfo.push_back("team:    red"); }
+  if (haveBlue)   { mapInfo.push_back("team:    blue"); }
+  if (haveGreen)  { mapInfo.push_back("team:    green"); }
+  if (havePurple) { mapInfo.push_back("team:    purple"); }
+  myWorld->addMapInfo(mapInfo);
 
   const float worldSize = BZDBCache::worldSize;
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
@@ -158,11 +195,6 @@ WorldInfo *defineTeamWorld()
   int t;
   for (t = RedTeam; t <= PurpleTeam; t++)
     bases[t] = TeamBases((TeamColor)t, true);
-
-  const bool haveRed    = clOptions->maxTeam[RedTeam] > 0;
-  const bool haveGreen  = clOptions->maxTeam[GreenTeam] > 0;
-  const bool haveBlue   = clOptions->maxTeam[BlueTeam] > 0;
-  const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
 
   // make walls
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
