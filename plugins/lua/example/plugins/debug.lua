@@ -244,8 +244,8 @@ function CallIn.PlayerSentCustomData(playerID, key, data)
 end
 
 
-function CallIn.PlayerSpawnEvent(playerID, team)
-  print('PlayerSpawnEvent', playerID, team)
+function CallIn.PlayerSpawnEvent(playerID, team, px, py, pz, rot)
+  print('PlayerSpawnEvent', playerID, team, px, py, pz, rot)
 end
 
 
