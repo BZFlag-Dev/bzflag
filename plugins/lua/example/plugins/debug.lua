@@ -73,18 +73,6 @@ function CallIn.CaptureEvent(teamCapped, teamCapping, playerCapping,
 end
 
 
-function CallIn.CustomMapObject(objName, data)
-  print('CustomMapObject', objName)
-  for d = 1, #data do
-    print('  ' .. data[d])
-  end
-  -- return:  nil | string | { string, string, ... }
-  --
-  --   text or table-of-text is inserted into the world file
-  --
-end
-
-
 function CallIn.FilteredChatMessageEvent(msg, from, to, team)
   print('FilteredChatMessageEvent', msg, from, to, team)
 end
