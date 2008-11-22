@@ -20,13 +20,9 @@ extern const string& GetLuaDirectory(); // from lua.cpp
 
 // FIXME: TODO
 // * obstacle queries, tangibility
-// - timelimit
-// - countdown
-// - lagwarn
 // - plugin management
 // - connections (new call-in?)
 // - logging
-// - reports
 // - polls
 // - help
 
@@ -185,8 +181,10 @@ static int SaveRecBuf(lua_State* L);
 static int StartRecBuf(lua_State* L);
 static int StopRecBuf(lua_State* L);
 
-static int PauseCountdown(lua_State* L);
+static int GetCountdownActive(lua_State* L);
+static int GetCountdownInProgress(lua_State* L);
 static int StartCountdown(lua_State* L);
+static int PauseCountdown(lua_State* L);
 static int ResumeCountdown(lua_State* L);
 
 static int ReloadLocalBans(lua_State* L);
@@ -199,6 +197,21 @@ static int GetGroups(lua_State* L);
 static int GetGroupPerms(lua_State* L);
 static int GetGroupHasPerm(lua_State* L);
 static int GetStandardPerms(lua_State* L);
+
+static int GetReportCount(lua_State* L);
+static int GetReportInfo(lua_State* L);
+static int GetReports(lua_State* L);
+
+static int FileReport(lua_State* L);
+static int ClearReport(lua_State* L);
+static int ClearReports(lua_State* L);
+
+static int GetLagWarn(lua_State* L);
+static int SetLagWarn(lua_State* L);
+
+static int ManualTimeLimit(lua_State* L);
+static int GetTimeLimit(lua_State* L);
+static int SetTimeLimit(lua_State* L);
 
 static int KickPlayer(lua_State* L);
 static int BanByIP(lua_State* L);
@@ -351,8 +364,10 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(StartRecBuf);
   REGISTER_LUA_CFUNC(StopRecBuf);
 
-  REGISTER_LUA_CFUNC(PauseCountdown);
+  REGISTER_LUA_CFUNC(GetCountdownActive);
+  REGISTER_LUA_CFUNC(GetCountdownInProgress);
   REGISTER_LUA_CFUNC(StartCountdown);
+  REGISTER_LUA_CFUNC(PauseCountdown);
   REGISTER_LUA_CFUNC(ResumeCountdown);
 
   REGISTER_LUA_CFUNC(ReloadLocalBans);
@@ -368,6 +383,21 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GetGroupPerms);
   REGISTER_LUA_CFUNC(GetGroupHasPerm);
   REGISTER_LUA_CFUNC(GetStandardPerms);
+
+  REGISTER_LUA_CFUNC(GetReportCount);
+  REGISTER_LUA_CFUNC(GetReportInfo);
+  REGISTER_LUA_CFUNC(GetReports);
+
+  REGISTER_LUA_CFUNC(FileReport);
+  REGISTER_LUA_CFUNC(ClearReport);
+  REGISTER_LUA_CFUNC(ClearReports);
+
+  REGISTER_LUA_CFUNC(GetLagWarn);
+  REGISTER_LUA_CFUNC(SetLagWarn);
+
+  REGISTER_LUA_CFUNC(ManualTimeLimit);
+  REGISTER_LUA_CFUNC(GetTimeLimit);
+  REGISTER_LUA_CFUNC(SetTimeLimit);
 
   REGISTER_LUA_CFUNC(KickPlayer);
   REGISTER_LUA_CFUNC(BanByIP);
@@ -1426,11 +1456,17 @@ static int StopRecBuf(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-static int PauseCountdown(lua_State* L)
+static int GetCountdownActive(lua_State* L)
 {
-  const char* playerName = luaL_checkstring(L, 1);
-  bz_pauseCountdown(playerName);
-  return 0;
+  lua_pushboolean(L, bz_isCountDownActive());
+  return 1;
+}
+
+
+static int GetCountdownInProgress(lua_State* L)
+{
+  lua_pushboolean(L, bz_isCountDownInProgress());
+  return 1;
 }
 
 
@@ -1440,6 +1476,14 @@ static int StartCountdown(lua_State* L)
   const int   delay = luaL_checkint(L, 2);
   const float limit = luaL_checkfloat(L, 3);
   bz_startCountdown(delay, limit, playerName);
+  return 0;
+}
+
+
+static int PauseCountdown(lua_State* L)
+{
+  const char* playerName = luaL_checkstring(L, 1);
+  bz_pauseCountdown(playerName);
   return 0;
 }
 
@@ -1495,11 +1539,12 @@ static int ReloadHelp(lua_State* L)
 
 static int GetGroups(lua_State* L)
 {
-  lua_newtable(L);
   bz_APIStringList* list = bz_getGroupList();
   if (list == NULL) {
+    lua_createtable(L, 0, 0);
     return 1;
   }
+  lua_createtable(L, list->size(), 0);
   for (int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
@@ -1515,9 +1560,10 @@ static int GetGroupPerms(lua_State* L)
   const char* group = luaL_checkstring(L, 1);
   bz_APIStringList* list = bz_getGroupPerms(group);
   if (list == NULL) {
-    return 0;
+    lua_createtable(L, 0, 0);
+    return 1;
   }
-  lua_newtable(L);
+  lua_createtable(L, list->size(), 0);
   for (int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
@@ -1539,17 +1585,123 @@ static int GetGroupHasPerm(lua_State* L)
 
 static int GetStandardPerms(lua_State* L)
 {
-  lua_newtable(L);
   bz_APIStringList* list = bz_getStandardPermList();
   if (list == NULL) {
+    lua_createtable(L, 0, 0);
     return 1;
   }
+  lua_createtable(L, list->size(), 0);
   for (int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
     lua_rawset(L, -3);
   }
   bz_deleteStringList(list);
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetReportCount(lua_State* L)
+{
+  lua_pushinteger(L, bz_getReportCount());
+  return 1; 
+}
+
+
+static int GetReportInfo(lua_State* L)
+{
+  const unsigned int reportID = (unsigned int)luaL_checkint(L, 1);
+  lua_pushstring(L, bz_getReportSource(reportID));
+  lua_pushstring(L, bz_getReportBody(reportID));
+  lua_pushstring(L, bz_getReportTime(reportID));
+  return 3;  
+}
+
+
+static int GetReports(lua_State* L)
+{
+  bz_APIStringList* list = bz_getReports();
+  if (list == NULL) {
+    lua_createtable(L, 0, 0);
+    return 1;
+  }
+  lua_createtable(L, list->size(), 0);
+  for (unsigned int i = 0; i < list->size(); i++) {
+    lua_pushinteger(L, i + 1);    
+    lua_pushstring(L, list->get(i).c_str());
+    lua_rawset(L, -3);
+  }
+  bz_deleteStringList(list);
+  return 1;
+}
+
+
+static int FileReport(lua_State* L)
+{
+  const char* msg  = luaL_checkstring(L, 1);
+  const char* from = luaL_checkstring(L, 2);
+  lua_pushboolean(L, bz_fileReport(msg, from)); 
+  return 1;
+}
+
+
+static int ClearReport(lua_State* L)
+{
+  const unsigned int reportID = luaL_checkint(L, 1);
+  lua_pushboolean(L, bz_clearReport(reportID));
+  return 1;
+}
+
+
+static int ClearReports(lua_State* L)
+{
+  lua_pushboolean(L, bz_clearAllReports());
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetLagWarn(lua_State* L)
+{
+  lua_pushinteger(L, bz_getLagWarn());
+  return 1;
+}
+
+
+static int SetLagWarn(lua_State* L)
+{
+  const int lagWarn = luaL_checkint(L, 1);
+  lua_pushboolean(L, bz_setLagWarn(lagWarn));
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int ManualTimeLimit(lua_State* L)
+{
+  lua_pushboolean(L, bz_isTimeManualStart());
+  return 1;
+}
+
+
+static int GetTimeLimit(lua_State* L)
+{
+  lua_pushnumber(L, bz_getTimeLimit());
+  return 1;
+}
+
+
+static int SetTimeLimit(lua_State* L)
+{
+  const float timeLimit = luaL_checkfloat(L, 1);
+  lua_pushboolean(L, bz_setTimeLimit(timeLimit));
   return 1;
 }
 

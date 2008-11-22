@@ -22,14 +22,22 @@ print('-----------')
 --------------------------------------------------------------------------------
 --
 --  ci:  callin
---  pi:  plugin
+--  mo:  module
 --
 
---  piInfo = {
+--  ciInfo = {
+--    name    = string,
+--    func    = function,
+--    funcs   = { func1,   func2,   ... },
+--    modules = { moInfo1, moInfo2, ... },
+--  }
+
+--  moInfo = {
 --    name     = string,
 --    niceness = number,
+--    chunk    = function,
 --    fenv     = { fenv },
---    funcs    = { ciName1 = func1, ciName2 = func2, etc... }
+--    funcs    = { ciName1 = func1, ciName2 = func2, etc... },
 --    unsafe   = bool,
 --    enabled  = bool,
 --    filename = string,
@@ -37,32 +45,33 @@ print('-----------')
 --    author   = string,
 --    date     = string,
 --    license  = string,
---  }   
+--  }
 
-local piNames = {}  --  < piName = { piInfo } >               pairs
-local ciFuncs = {}  --  < ciName = { ciFunc, ciFunc, ... } >  pairs
+
+
+local modules = {}  --  < moName = moInfo >  pairs
+local callins = {}  --  < ciName = ciInfo >  pairs
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
---
---  Wrap lfs.dir() to capture errors
---
-local function safe_dir(dirPath)
-  local success, func, state, init = pcall(lfs.dir, dirPath)
-  if (success) then
-    return func, state, init
-  else
-    print('WARNING: ' .. func)
-    return function() end, nil, nil
+
+local function FindModules()
+  local files, dirs = BZ.DirList(PLUGINS_DIR)
+  local sources = {}
+  for _, f in ipairs(files) do
+    if (f:find('^[^.].*%.lua$')) then
+      sources[#sources + 1] = f
+    end
   end
+  return sources
 end
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function SetupPlugin(fileName)
+local function SetupModule(fileName)
   print('loading plugin: ' .. fileName)
   local chunk, err = loadfile(fileName)
   if (not chunk) then
@@ -79,9 +88,9 @@ local function SetupPlugin(fileName)
 --]]
 end
 
-for k, v in safe_dir(PLUGINS_DIR) do
-  if (k:find('%.lua$') and not k:find('^%.')) then
-    SetupPlugin(PLUGINS_DIR .. k)
+do
+  for _, f in ipairs(FindModules()) do
+    SetupModule(f)
   end
 end
 
@@ -96,23 +105,23 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function CreatePlugin(fileName)
-  
+local function CreateModule(fileName)
+    
 end
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function EnablePlugin(pluginName)
+local function EnableModule(pluginName)
 end
 
 
-local function DisablePlugin(pluginName)
+local function DisableModule(pluginName)
 end
 
 
-local function TogglePlugin(pluginName)
+local function ToggleModule(pluginName)
 end
 
 
@@ -256,6 +265,20 @@ SetupCallIns()
 
 print()
 
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+moduleHandler = {
+  ListModules   = ListModules,
+  CreateModule  = CreateModule,
+  EnableModule  = EnableModule,
+  DisableModule = DisableModule,
+  RaiseModule   = RaiseModule,
+  LowerModule   = LowerModule,
+}
+
+return moduleHandler
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

@@ -17,7 +17,6 @@ end
 --------------------------------------------------------------------------------
 
 local noSuicide = true
-local BZ_SERVER = -2
 
 function CallIn.PlayerDieEvent(victimID, team, killerID,
                                killerTeam, flagType, shotID)
@@ -40,9 +39,9 @@ function CallIn.PlayerDieEvent(victimID, team, killerID,
     if (team and (team == BZ.TEAM.ROGUE)) then
       if (BZ.GetPlayerSpawned(pid)) then
         BZ.KillPlayer(pid, false, killerID, 'G')
-        BZ.SendMessage(BZ_SERVER, pid, 'You were a victim of Rogue Genocide')
+        BZ.SendMessage(BZ.PLAYER.SERVER, pid, 'You were a victim of Rogue Genocide')
         if (pid == killerID) then
-          BZ.SendMessage(BZ_SERVER, pid,
+          BZ.SendMessage(BZ.PLAYER.SERVER, pid,
                          'You should be more careful with Genocide!')
         end
       end

@@ -21,6 +21,21 @@ do
 end
 
 
+do
+  local sendMsg = BZ.SendMessage
+  BZ.SendMessage = function(src, dst, msg)
+    if (#msg < 128) then
+      sendMsg(src, dst, msg)
+    else
+      while (#msg > 0) do
+        sendMsg(src, dst, msg:sub(1, 128))
+        msg = msg:sub(129)
+      end
+    end
+  end
+end
+
+
 function BZ.Print(...)
   print(...)
   local table = {...}

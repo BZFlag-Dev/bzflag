@@ -1209,9 +1209,15 @@ bool CI_PlayerSpawnEvent::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->team);
 
+  const bz_PlayerUpdateState& state = ed->state;
+  lua_pushnumber(L, state.pos[0]);
+  lua_pushnumber(L, state.pos[1]);
+  lua_pushnumber(L, state.pos[2]);
+  lua_pushnumber(L, state.rotation);
+
   // bz_PlayerUpdateState state; -- FIXME?
 
-  return RunCallIn(2, 0);
+  return RunCallIn(6, 0);
 }
 
 
