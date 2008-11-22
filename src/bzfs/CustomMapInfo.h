@@ -14,7 +14,7 @@
 #define __CUSTOM_MAP_INFO_H__
 
 /* interface header */
-#include "WorldFileObstacle.h"
+#include "WorldFileObject.h"
 
 /* local interface headers */
 #include "WorldInfo.h"
