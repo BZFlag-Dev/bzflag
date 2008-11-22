@@ -21,7 +21,7 @@ require('table')
 --------------------------------------------------------------------------------
 
 local subTable = {
-  -- key          mixed,      all caps
+  -- key           mixed,       all caps
   { 'BZ.DB',      'bzdb',      'BZDB_'       },
   { 'BZ.GAME',    'bzGame',    'BZ_GAME_'    },
   { 'BZ.PERM',    'bzPerm',    'BZ_PERM_'    },
