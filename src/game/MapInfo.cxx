@@ -89,10 +89,8 @@ void MapInfo::finalize()
 {
   infoMap.clear();
   for (size_t i = 0; i < infoVec.size(); i++) {
-    printf("MapInfo::finalize: %s\n", infoVec[i].c_str()); // FIXME
     string key, value;
     if (ParseKeyValue(infoVec[i], key, value)) {
-      printf("MAPINFO: key(%s) value(%s)\n", key.c_str(), value.c_str()); // FIXME
       infoMap[key].push_back(value);
     }
   }
@@ -148,11 +146,13 @@ void* MapInfo::unpack(void* buf)
 
 void MapInfo::print(std::ostream& out, const std::string& indent) const
 {
+  if (infoVec.empty()) {
+    return;
+  }
   out << indent << "mapinfo" << std::endl;
   for (unsigned i = 0; i < infoVec.size(); i++) {
     out << indent << "  " << infoVec[i] << std::endl;
   }
-  out << indent << "material" << std::endl;
   out << indent << "end" << std::endl << std::endl;
 }
 
