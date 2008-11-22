@@ -62,6 +62,7 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	LinkManager.h			\
 	ListServer.h			\
+	MapInfo.h			\
 	MathUtils.h			\
 	MediaFile.h			\
 	MeshDrawInfo.h			\
