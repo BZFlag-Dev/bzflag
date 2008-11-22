@@ -24,26 +24,27 @@
 // implementation-specific bzfs-specific headers
 #include "TeamBases.h"
 #include "WorldFileObject.h"
-#include "CustomGroup.h"
-#include "CustomBox.h"
-#include "CustomPyramid.h"
-#include "CustomGate.h"
-#include "CustomLink.h"
+#include "CustomArc.h"
 #include "CustomBase.h"
+#include "CustomBox.h"
+#include "CustomCone.h"
+#include "CustomDynamicColor.h"
+#include "CustomGate.h"
+#include "CustomGroup.h"
+#include "CustomLink.h"
+#include "CustomMapInfo.h"
+#include "CustomMaterial.h"
+#include "CustomMesh.h"
+#include "CustomMeshTransform.h"
+#include "CustomPhysicsDriver.h"
+#include "CustomPyramid.h"
+#include "CustomSphere.h"
+#include "CustomTetra.h"
+#include "CustomTextureMatrix.h"
+#include "CustomWaterLevel.h"
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
 #include "CustomZone.h"
-#include "CustomTetra.h"
-#include "CustomMesh.h"
-#include "CustomArc.h"
-#include "CustomCone.h"
-#include "CustomSphere.h"
-#include "CustomWaterLevel.h"
-#include "CustomDynamicColor.h"
-#include "CustomTextureMatrix.h"
-#include "CustomMaterial.h"
-#include "CustomPhysicsDriver.h"
-#include "CustomMeshTransform.h"
 
 // common headers
 #include "ObstacleMgr.h"
@@ -146,7 +147,9 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
 {
   WorldFileObject* tmpObj = NULL;
 
-  if (strcasecmp(token, "box") == 0) {
+  if (strcasecmp(token, "mapinfo") == 0) {
+    tmpObj = new CustomMapInfo;
+  } else if (strcasecmp(token, "box") == 0) {
     tmpObj = new CustomBox;
   } else if (strcasecmp(token, "pyramid") == 0) {
     tmpObj = new CustomPyramid();

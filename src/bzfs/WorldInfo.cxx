@@ -165,6 +165,12 @@ void WorldInfo::addBase(const float pos[3], float r,
 }
 
 
+void WorldInfo::addMapInfo(const std::vector<std::string>& lines)
+{
+  mapInfo.setLines(lines);
+}
+
+
 void WorldInfo::makeWaterMaterial()
 {
   // the texture matrix
@@ -500,6 +506,7 @@ int WorldInfo::packDatabase()
 
   // compute the database size
   databaseSize =
+    mapInfo.packSize() +
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
     MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
     TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() + links.packSize() +
@@ -513,6 +520,9 @@ int WorldInfo::packDatabase()
   // allocate the buffer
   database = new char[databaseSize];
   void *databasePtr = database;
+
+  // pack map information
+  databasePtr = mapInfo.pack(databasePtr);
 
   // pack dynamic colors
   databasePtr = DYNCOLORMGR.pack(databasePtr);

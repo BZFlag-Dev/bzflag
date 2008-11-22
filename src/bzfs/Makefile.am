@@ -62,6 +62,8 @@ bzfs_SOURCES = \
 	CustomGroup.h \
 	CustomLink.cxx \
 	CustomLink.h \
+	CustomMapInfo.h \
+	CustomMapInfo.cxx \
 	CustomMaterial.h \
 	CustomMaterial.cxx \
 	CustomMesh.cxx \

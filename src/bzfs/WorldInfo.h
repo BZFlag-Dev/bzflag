@@ -26,6 +26,7 @@
 #include "LinkManager.h"
 
 /* common implementation headers */
+#include "MapInfo.h"
 
 class BzMaterial;
 class Obstacle;
@@ -95,6 +96,8 @@ public:
                      bool drive = false, bool shoot = false, bool rico = false);
   void addBase(const float pos[3], float r, const float size[3], int color,
                bool drive = false, bool shoot = false, bool rico = false);
+
+  void addMapInfo(const std::vector<std::string>& lines);
 
   float getWaterLevel() const;
   float getMaxWorldHeight() const;
@@ -175,6 +178,8 @@ public:
   bool inRect(const float *p1, float angle, const float *size,
 			 float x, float y, float r) const;
 
+  const MapInfo& getMapInfo() const { return mapInfo; }
+
 private:
 
   float size[2];
@@ -190,6 +195,8 @@ private:
   char *database;
   int databaseSize;
   int uncompressedSize;
+
+  MapInfo mapInfo;
 };
 
 
