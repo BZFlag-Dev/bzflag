@@ -13,6 +13,7 @@ static bool PushGames(lua_State* L);
 static bool PushTeams(lua_State* L);
 static bool PushShots(lua_State* L);
 static bool PushFlagQualities(lua_State* L);
+static bool PushPlayers(lua_State* L);
 static bool PushPlayerStates(lua_State* L);
 static bool PushObstacles(lua_State* L);
 static bool PushPermissions(lua_State* L);
@@ -28,6 +29,7 @@ bool Constants::PushEntries(lua_State* L)
   PushTeams(L);
   PushShots(L);
   PushFlagQualities(L);
+  PushPlayers(L);
   PushPlayerStates(L);
   PushObstacles(L);
   PushPermissions(L);
@@ -146,6 +148,21 @@ static bool PushFlagQualities(lua_State* L)
 
   PushDualPair(L, "GOOD", eGoodFlag);
   PushDualPair(L, "BAD",  eBadFlag);
+
+  lua_rawset(L, -3);
+
+  return true;
+}
+
+
+static bool PushPlayers(lua_State* L)
+{
+  lua_pushliteral(L, "PLAYER");
+  lua_newtable(L);
+
+  PushDualPair(L, "SERVER", BZ_SERVER);
+  PushDualPair(L, "ALL",    BZ_ALLUSERS);
+  PushDualPair(L, "NULL",   BZ_NULLUSER);
 
   lua_rawset(L, -3);
 

@@ -1,6 +1,7 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
+#include "plugin_files.h"
 
 #include "mylua.h"
 
@@ -15,8 +16,9 @@ using std::vector;
 using std::set;
 using std::map;
 
+extern const string& GetLuaDirectory(); // from lua.cpp
 
-// TODO
+// FIXME: TODO
 // * obstacle queries, tangibility
 // - timelimit
 // - countdown
@@ -27,7 +29,7 @@ using std::map;
 // - reports
 // - polls
 // - help
-// - more player data (global auth, etc...)
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -66,8 +68,8 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
 /******************************************************************************/
 /******************************************************************************/
 
-// only valid during loading, otherwise empty
-static int GetPluginDirectory(lua_State* L);
+static int GetLuaDirectory(lua_State* L);
+static int GetPluginDirectory(lua_State* L); // only valid during loading
 
 static int GetAPIVersion(lua_State* L);
 static int GetServerVersion(lua_State* L);
@@ -91,13 +93,16 @@ static int GetWorldURL(lua_State* L);
 static int SetWorldURL(lua_State* L);
 static int GetWorldCache(lua_State* L);
 
+static int DebugMessage(lua_State* L);
+static int GetDebugLevel(lua_State* L);
+
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
 static int SendFetchResource(lua_State* L);
 static int PlaySound(lua_State* L);
 
-static int GetStandardSpawn(lua_State* L); // FIXME
-static int GetBaseAtPosition(lua_State* L); // FIXME
+static int GetStandardSpawn(lua_State* L);
+static int GetBaseAtPosition(lua_State* L);
 
 static int GetPlayerCount(lua_State* L);
 static int GetPlayerIDs(lua_State* L);
@@ -108,8 +113,7 @@ static int GetPlayerFlagID(lua_State* L);
 static int GetPlayerClientVersion(lua_State* L);
 static int GetPlayerBZID(lua_State* L);
 static int GetPlayerCustomData(lua_State* L);
-static int GetPlayerPaused(lua_State* L); // FIXME
-static int GetPlayerState(lua_State* L); // FIXME
+static int GetPlayerPaused(lua_State* L);
 static int GetPlayerPosition(lua_State* L);
 static int GetPlayerVelocity(lua_State* L);
 static int GetPlayerRotation(lua_State* L);
@@ -119,6 +123,16 @@ static int GetPlayerFalling(lua_State* L);
 static int GetPlayerCrossingWall(lua_State* L);
 static int GetPlayerZoned(lua_State* L);
 static int GetPlayerPhysicsDriver(lua_State* L);
+
+static int GetPlayerSpawned(lua_State* L);
+static int GetPlayerCanSpawn(lua_State* L);
+static int GetPlayerAdmin(lua_State* L);
+static int GetPlayerOperator(lua_State* L);
+static int GetPlayerGroups(lua_State* L);
+static int GetPlayerRank(lua_State* L);
+static int GetPlayerVerified(lua_State* L);
+static int GetPlayerGlobalUser(lua_State* L);
+static int GetPlayerFlagHistory(lua_State* L);
 
 static int GetPlayerLag(lua_State* L);
 static int GetPlayerJitter(lua_State* L);
@@ -139,6 +153,11 @@ static int KillPlayer(lua_State* L);
 
 static int SetRabbit(lua_State* L);
 
+static int SetPlayerShotType(lua_State* L);
+static int SetPlayerOperator(lua_State* L);
+static int SetPlayerSpawnable(lua_State* L);
+static int SetPlayerLimboMessage(lua_State* L);
+
 static int GivePlayerFlag(lua_State* L);
 
 static int GetFlagCount(lua_State* L);
@@ -158,6 +177,9 @@ static int GetTeamLosses(lua_State* L);
 static int SetTeamWins(lua_State* L);
 static int SetTeamLosses(lua_State* L);
 
+static int FireWeapon(lua_State* L);
+static int FireMissile(lua_State* L);
+
 static int SaveRecBuf(lua_State* L);
 static int StartRecBuf(lua_State* L);
 static int StopRecBuf(lua_State* L);
@@ -172,9 +194,6 @@ static int ReloadUsers(lua_State* L);
 static int ReloadGroups(lua_State* L);
 static int ReloadHelp(lua_State* L);
 
-static int GetTimer(lua_State* L);
-static int DiffTimers(lua_State* L);
-
 static int GetGroups(lua_State* L);
 static int GetGroupPerms(lua_State* L);
 static int GetGroupHasPerm(lua_State* L);
@@ -188,6 +207,16 @@ static int UnbanByIP(lua_State* L);
 static int UnbanByBZID(lua_State* L);
 static int UnbanByHost(lua_State* L);
 
+static int GetMaxWaitTime(lua_State* L);
+static int SetMaxWaitTime(lua_State* L);
+static int ClearMaxWaitTime(lua_State* L);
+
+static int GetTimer(lua_State* L);
+static int DiffTimers(lua_State* L);
+static int DirList(lua_State* L);
+static int ReadStdin(lua_State* L);
+
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -199,23 +228,7 @@ bool CallOuts::PushEntries(lua_State* L)
   lua_pushcfunction(L, x);    \
   lua_rawset(L, -3)
 
-  // FIXME - not implemented
-/*
-  REGISTER_LUA_CFUNC(GameShutdown);
-  REGISTER_LUA_CFUNC(GameRestart);
-  REGISTER_LUA_CFUNC(GameOver);
-  REGISTER_LUA_CFUNC(GameSuperKill);
-
-  REGISTER_LUA_CFUNC(SetMaxWaitTime);
-  REGISTER_LUA_CFUNC(ClearMaxWaitTime);
-
-  REGISTER_LUA_CFUNC(FireWeapon);
-  REGISTER_LUA_CFUNC(FireWeaponGM);
-
-  // BZDB
-
-  // Message
-*/
+  REGISTER_LUA_CFUNC(GetLuaDirectory);
   REGISTER_LUA_CFUNC(GetPluginDirectory);
 
   REGISTER_LUA_CFUNC(GetAPIVersion);
@@ -240,10 +253,16 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(SetWorldSize);
   REGISTER_LUA_CFUNC(SetWorldURL);
 
+  REGISTER_LUA_CFUNC(DebugMessage);
+  REGISTER_LUA_CFUNC(GetDebugLevel);
+
   REGISTER_LUA_CFUNC(SendMessage);
   REGISTER_LUA_CFUNC(SendTeamMessage);
   REGISTER_LUA_CFUNC(SendFetchResource);
   REGISTER_LUA_CFUNC(PlaySound);
+
+  REGISTER_LUA_CFUNC(GetStandardSpawn);
+  REGISTER_LUA_CFUNC(GetBaseAtPosition);
 
   // Player
   REGISTER_LUA_CFUNC(GetPlayerCount);
@@ -256,6 +275,7 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GetPlayerBZID);
   REGISTER_LUA_CFUNC(GetPlayerCustomData);
   REGISTER_LUA_CFUNC(GetPlayerStatus);
+  REGISTER_LUA_CFUNC(GetPlayerPaused);
   REGISTER_LUA_CFUNC(GetPlayerPosition);
   REGISTER_LUA_CFUNC(GetPlayerVelocity);
   REGISTER_LUA_CFUNC(GetPlayerRotation);
@@ -264,6 +284,17 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GetPlayerCrossingWall);
   REGISTER_LUA_CFUNC(GetPlayerZoned);
   REGISTER_LUA_CFUNC(GetPlayerPhysicsDriver);
+
+  REGISTER_LUA_CFUNC(GetPlayerSpawned);
+  REGISTER_LUA_CFUNC(GetPlayerCanSpawn);
+  REGISTER_LUA_CFUNC(GetPlayerAdmin);
+  REGISTER_LUA_CFUNC(GetPlayerOperator);
+  REGISTER_LUA_CFUNC(GetPlayerGroups);
+  REGISTER_LUA_CFUNC(GetPlayerVerified);
+  REGISTER_LUA_CFUNC(GetPlayerGlobalUser);
+  REGISTER_LUA_CFUNC(GetPlayerFlagHistory);
+  REGISTER_LUA_CFUNC(GetPlayerRank);
+
 
   REGISTER_LUA_CFUNC(GetPlayerLag);
   REGISTER_LUA_CFUNC(GetPlayerJitter);
@@ -284,10 +315,10 @@ bool CallOuts::PushEntries(lua_State* L)
 
   REGISTER_LUA_CFUNC(SetRabbit);
 
-/*
-  REGISTER_LUA_CFUNC(SetPlayerOperator);
   REGISTER_LUA_CFUNC(SetPlayerShotType);
-*/
+  REGISTER_LUA_CFUNC(SetPlayerOperator);
+  REGISTER_LUA_CFUNC(SetPlayerSpawnable);
+  REGISTER_LUA_CFUNC(SetPlayerLimboMessage);
 
   REGISTER_LUA_CFUNC(GivePlayerFlag);
 
@@ -311,6 +342,9 @@ bool CallOuts::PushEntries(lua_State* L)
 
   REGISTER_LUA_CFUNC(SetTeamWins);
   REGISTER_LUA_CFUNC(SetTeamLosses);
+
+  REGISTER_LUA_CFUNC(FireWeapon);
+  REGISTER_LUA_CFUNC(FireMissile);
 
   REGISTER_LUA_CFUNC(SaveRecBuf);
   REGISTER_LUA_CFUNC(StartRecBuf);
@@ -342,12 +376,28 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(UnbanByBZID);
   REGISTER_LUA_CFUNC(UnbanByHost);
 
+  REGISTER_LUA_CFUNC(GetMaxWaitTime);
+  REGISTER_LUA_CFUNC(SetMaxWaitTime);
+  REGISTER_LUA_CFUNC(ClearMaxWaitTime);
+
+  REGISTER_LUA_CFUNC(GetTimer);
+  REGISTER_LUA_CFUNC(DiffTimers);
+  REGISTER_LUA_CFUNC(DirList);
+  REGISTER_LUA_CFUNC(ReadStdin);
+
   return true;
 }
 
 
 /******************************************************************************/
 /******************************************************************************/
+
+static int GetLuaDirectory(lua_State* L)
+{
+  lua_pushstring(L, GetLuaDirectory().c_str());
+  return 1;
+}
+
 
 static int GetPluginDirectory(lua_State* L)
 {
@@ -515,6 +565,25 @@ static int SetWorldURL(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
+static int DebugMessage(lua_State* L)
+{
+  const int level = luaL_checkint(L, 1);
+  const char* msg = luaL_checkstring(L, 2);
+  bz_debugMessage(level, msg);
+  return 1;
+}
+
+
+static int GetDebugLevel(lua_State* L)
+{
+  lua_pushinteger(L, bz_getDebugLevel());
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 static int SendMessage(lua_State* L)
 {
   const int   src = luaL_checkint(L, 1);
@@ -549,6 +618,37 @@ static int PlaySound(lua_State* L)
   const int playerID = luaL_checkint(L, 1);
   const char* sound  = luaL_checkstring(L, 2);
   lua_pushboolean(L, bz_sendPlayCustomLocalSound(playerID, sound));
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetStandardSpawn(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  float pos[3];
+  float rot;
+  if (!bz_getStandardSpawn(playerID, pos, &rot)) {
+    return 0;
+  }
+  lua_pushnumber(L, pos[0]);
+  lua_pushnumber(L, pos[1]);
+  lua_pushnumber(L, pos[2]);
+  lua_pushnumber(L, rot);
+  return 4;
+}
+
+
+static int GetBaseAtPosition(lua_State* L)
+{
+  float pos[3];
+  pos[0] = luaL_checkfloat(L, 1);
+  pos[1] = luaL_checkfloat(L, 2);
+  pos[2] = luaL_checkfloat(L, 3);
+  const bz_eTeamType team = bz_checkBaseAtPoint(pos);
+  lua_pushinteger(L, team);
   return 1;
 }
 
@@ -689,6 +789,14 @@ static int GetPlayerStatus(lua_State* L)
 }
 
 
+static int GetPlayerPaused(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  lua_pushboolean(L, bz_isPlayerPaused(pid));
+  return 1;
+}
+
+
 static int GetPlayerPosition(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
@@ -802,6 +910,123 @@ static int GetPlayerPhysicsDriver(lua_State* L)
 
   lua_pushinteger(L, phydrv);
 
+  return 1;
+}
+
+
+static int GetPlayerSpawned(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_pushboolean(L, player->spawned);
+  bz_freePlayerRecord(player);
+  return 1;
+}
+
+
+static int GetPlayerCanSpawn(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  lua_pushboolean(L, bz_canPlayerSpawn(pid));
+  return 1;
+}
+
+
+static int GetPlayerAdmin(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  lua_pushboolean(L, bz_getAdmin(pid));
+  return 1;
+}
+
+
+static int GetPlayerOperator(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_pushboolean(L, player->op);
+  bz_freePlayerRecord(player);
+  return 1;
+}
+
+
+static int GetPlayerGroups(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_newtable(L);
+  for (int i = 0; i < player->groups.size(); i++) {
+    lua_pushinteger(L, i + 1);
+    lua_pushstring(L, player->groups[i].c_str());
+    lua_rawset(L, -3);
+  }
+  bz_freePlayerRecord(player);
+  return 1;
+}
+
+
+static int GetPlayerRank(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_pushnumber(L, player->rank);
+  bz_freePlayerRecord(player);
+  return 1;
+}
+
+
+static int GetPlayerVerified(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_pushboolean(L, player->verified);
+  bz_freePlayerRecord(player);
+  return 1;
+}
+
+
+static int GetPlayerGlobalUser(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_pushboolean(L, player->globalUser);
+  bz_freePlayerRecord(player);
+  return 1;
+}
+
+
+static int GetPlayerFlagHistory(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  if (player == NULL) {
+    return 0;
+  }
+  lua_newtable(L);
+  for (int i = 0; i < player->flagHistory.size(); i++) {
+    lua_pushinteger(L, i + 1);
+    lua_pushstring(L, player->flagHistory[i].c_str());
+    lua_rawset(L, -3);
+  }
+  bz_freePlayerRecord(player);
   return 1;
 }
 
@@ -929,6 +1154,43 @@ static int SetRabbit(lua_State* L)
   const bool swap = lua_isboolean(L, 2) && lua_toboolean(L, 2);
   bz_newRabbit(playerID, swap);
   return 0;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int SetPlayerShotType(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  const bz_eShotType shotType = (bz_eShotType)luaL_checkint(L, 2); // FIXME: better parsing
+  lua_pushboolean(L, bz_setPlayerShotType(playerID, shotType));
+  return 1;
+}
+
+
+static int SetPlayerOperator(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  lua_pushboolean(L, bz_setPlayerOperator(playerID));
+  return 1;
+}
+
+
+static int SetPlayerSpawnable(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  const bool spawn = !lua_isboolean(L, 2) || lua_toboolean(L, 2);
+  lua_pushboolean(L, bz_setPlayerSpawnable(playerID, spawn));
+  return 1;
+}
+
+
+static int SetPlayerLimboMessage(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  const char* text   = luaL_checkstring(L, 2);
+  lua_pushboolean(L, bz_setPlayerLimboMessage(playerID, text));
+  return 1;
 }
 
 
@@ -1090,6 +1352,45 @@ static int SetTeamLosses(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
+static int FireWeapon(lua_State* L)
+{
+  float pos[3];
+  const char* flagType = luaL_checkstring(L, 1);
+  pos[0]               = luaL_checkfloat(L, 2);
+  pos[1]               = luaL_checkfloat(L, 3);
+  pos[2]               = luaL_checkfloat(L, 4);
+  const float rot      = luaL_optfloat(L, 5, 0.0f);
+  const float tilt     = luaL_optfloat(L, 6, 0.0f);
+  const float lifeTime = luaL_optfloat(L, 7, -1.0f);
+  const float dt       = luaL_optfloat(L, 8, -1.0f);
+  const int   shotID   = luaL_optint(L, 9, -1);
+  
+  lua_pushboolean(L, bz_fireWorldWep(flagType, lifeTime,
+                                     pos, tilt, rot, shotID , dt));
+  return 1;
+}
+
+
+static int FireMissile(lua_State* L)
+{
+  float pos[3];
+  const int   targetID = luaL_checkint(L, 1);
+  pos[0]               = luaL_checkfloat(L, 2);
+  pos[1]               = luaL_checkfloat(L, 3);
+  pos[2]               = luaL_checkfloat(L, 4);
+  const float rot      = luaL_checkfloat(L, 5);
+  const float tilt     = luaL_checkfloat(L, 6);
+  const float lifeTime = luaL_checkfloat(L, 7);
+  const float dt       = luaL_checkfloat(L, 8);
+  
+  lua_pushinteger(L, bz_fireWorldGM(targetID, lifeTime, pos, tilt, rot, dt));
+  return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 static int SaveRecBuf(lua_State* L)
 {
   const char* fileName = luaL_checkstring(L, 1);
@@ -1177,34 +1478,6 @@ static int ReloadHelp(lua_State* L)
 {
   bz_reloadHelp();
   return 0;
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-static int GetTimer(lua_State* L)
-{
-  const double nowTime = bz_getCurrentTime();
-  const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
-  lua_pushlightuserdata(L, (void*)millisecs);
-  return 1;
-}
-
-
-static int DiffTimers(lua_State* L)
-{
-  const int args = lua_gettop(L); // number of arguments
-  if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
-    luaL_error(L, "Incorrect arguments to DiffTimers()");
-  }
-  const void* p1 = lua_touserdata(L, 1);
-  const void* p2 = lua_touserdata(L, 2);
-  const uint32_t t1 = *((const uint32_t*)&p1);
-  const uint32_t t2 = *((const uint32_t*)&p2);
-  const uint32_t diffTime = (t1 - t2);
-  lua_pushnumber(L, (float)diffTime * 0.001f); // return seconds
-  return 1;
 }
 
 
@@ -1340,6 +1613,131 @@ static int UnbanByHost(lua_State* L)
   lua_pushboolean(L, bz_HostUnbanUser(host));
   return 1;
 }
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetMaxWaitTime(lua_State* L)
+{
+  const char* name = luaL_checkstring(L, 1);
+  lua_pushnumber(L, bz_getMaxWaitTime(name));
+  return 1;
+}
+
+
+static int SetMaxWaitTime(lua_State* L)
+{
+  const char* name = luaL_checkstring(L, 1);
+  const float maxTime = luaL_checkfloat(L, 2);
+  bz_setMaxWaitTime(maxTime, name);
+  return 0;
+}
+
+
+static int ClearMaxWaitTime(lua_State* L)
+{
+  const char* name = luaL_checkstring(L, 1);
+  bz_clearMaxWaitTime(name);
+  return 0;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetTimer(lua_State* L)
+{
+  const double nowTime = bz_getCurrentTime();
+  const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
+  lua_pushlightuserdata(L, (void*)millisecs);
+  return 1;
+}
+
+
+static int DiffTimers(lua_State* L)
+{
+  const int args = lua_gettop(L); // number of arguments
+  if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
+    luaL_error(L, "Incorrect arguments to DiffTimers()");
+  }
+  const void* p1 = lua_touserdata(L, 1);
+  const void* p2 = lua_touserdata(L, 2);
+  const uint32_t t1 = *((const uint32_t*)&p1);
+  const uint32_t t2 = *((const uint32_t*)&p2);
+  const uint32_t diffTime = (t1 - t2);
+  lua_pushnumber(L, (float)diffTime * 0.001f); // return seconds
+  return 1;
+}
+
+
+static int DirList(lua_State* L)
+{
+  const char* path = luaL_checkstring(L, 1);
+
+  vector<string> dirs  = getDirsInDir(path);
+  set<string> dirSet;
+  for (unsigned int i = 0; i < dirs.size(); i++) {
+    dirSet.insert(dirs[i]);
+  }
+
+  vector<string> files = getFilesInDir(path, NULL, false); // not recursive
+  set<string> fileSet;
+  for (unsigned int i = 0; i < files.size(); i++) {
+    // do not include directories
+    if (dirSet.find(files[i]) == dirSet.end()) {
+      fileSet.insert(files[i]);
+    }
+  }
+
+  // files table
+  lua_createtable(L, fileSet.size(), 0);
+  set<string>::const_iterator fit;
+  int fileCount = 0;
+  for (fit = fileSet.begin(); fit != fileSet.end(); ++fit) {
+    fileCount++;
+    lua_pushinteger(L, fileCount);
+    lua_pushstring(L, (*fit).c_str());
+    lua_rawset(L, -3);
+  }
+
+  // dirs table
+  lua_createtable(L, dirSet.size(), 0);
+  set<string>::const_iterator dit;
+  int dirCount = 0;
+  for (dit = dirSet.begin(); dit != dirSet.end(); ++dit) {
+    dirCount++;
+    lua_pushinteger(L, dirCount);
+    lua_pushstring(L, (*dit + "/").c_str());
+    lua_rawset(L, -3);
+  }
+
+  return 2;
+}
+
+
+// whacky bit of dev'ing fun
+#ifndef HAVE_UNISTD_H
+  static int ReadStdin(lua_State* L)
+  {
+    return 0;
+  }
+#else
+  #include <unistd.h>
+  #include <fcntl.h>
+  static int ReadStdin(lua_State* L)
+  {
+    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);  
+    char buf[4096];
+    const int r = read(STDIN_FILENO, buf, sizeof(buf));
+    if (r <= 0) {
+      return 0;
+    }
+    lua_pushlstring(L, buf, r);
+    fcntl(STDIN_FILENO, F_SETFL, 0);  
+    return 1;
+  }
+#endif
 
 
 /******************************************************************************/

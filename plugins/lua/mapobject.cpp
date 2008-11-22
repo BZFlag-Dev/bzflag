@@ -8,16 +8,14 @@
 #include "callins.h"
 
 #include <string>
-#include <vector>
 #include <set>
 using std::string;
-using std::vector;
 using std::set;
 
 static set<string> objNames;
 
 
-static int CustomObject(lua_State* L);
+static int HandleMapObject(lua_State* L);
 
 
 /******************************************************************************/
@@ -38,8 +36,8 @@ static CustomMapObjectHandler customMapObjectHandler;
 
 bool MapObject::PushEntries(lua_State* L)
 {
-  lua_pushliteral(L, "CustomObject");
-  lua_pushcfunction(L, CustomObject);
+  lua_pushliteral(L, "HandleMapObject");
+  lua_pushcfunction(L, HandleMapObject);
   lua_rawset(L, -3);
   return true;
 }
@@ -61,15 +59,46 @@ bool MapObject::Shutdown(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-static int CustomObject(lua_State* L)
+static int HandleMapObject(lua_State* L)
 {
+  // FIXME -- remove option?
   const char* objName = luaL_checkstring(L, 1);
-  if (objNames.find(objName) != objNames.end()) {
-    return 0;
+  if (!lua_isboolean(L, 2) && !lua_isnone(L, 2)) {
+    lua_pushboolean(L, false);
+    return 1;
   }
-  objNames.insert(objName);
-  bz_registerCustomMapObject(objName, &customMapObjectHandler);
-  return 0;
+
+  const bool enable = lua_isnone(L, 2) ||
+                      (lua_isboolean(L, 2) && lua_toboolean(L, 2));
+
+  if (enable) {
+    if (objNames.find(objName) != objNames.end()) {
+      lua_pushboolean(L, false); // already registered
+    }
+    else {
+      if (bz_registerCustomMapObject(objName, &customMapObjectHandler)) {
+        objNames.insert(objName);
+        lua_pushboolean(L, true);
+      } else {
+        lua_pushboolean(L, false);
+      }
+    } 
+  }
+  else {
+    if (objNames.find(objName) == objNames.end()) {
+      lua_pushboolean(L, false); // not registered
+    }
+    else {
+      objNames.erase(objName);
+      if (bz_removeCustomMapObject(objName)) {
+        lua_pushboolean(L, true);
+      } else {
+        lua_pushboolean(L, false);
+      }
+    }
+  }
+
+  return 1;
 }
 
 

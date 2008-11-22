@@ -9,6 +9,7 @@ namespace CallIns {
   bool PushEntries(lua_State* L);
   bool Shutdown(lua_State* L);
   bool CustomMapObject(const char* objName, bz_CustomMapObjectInfo* info);
+  bool SlashCommand(const char* cmd, const char* line);
 }
 
 #endif // CALLINS_H_H

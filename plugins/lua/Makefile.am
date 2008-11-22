@@ -9,10 +9,11 @@ lua_la_SOURCES =      \
 	callouts.cpp  \
 	constants.cpp \
 	mapobject.cpp \
+	slashcmd.cpp  \
 	bzdb.cpp      \
 	lualfs.cpp
 
-lua_la_LDFLAGS = -module -avoid-version -ldl
+lua_la_LDFLAGS = -module -avoid-version
 
 lua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 

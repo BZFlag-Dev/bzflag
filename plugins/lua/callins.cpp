@@ -6,6 +6,7 @@
 
 #include "callins.h"
 
+#include <string.h>
 #include <string>
 #include <vector>
 #include <set>
@@ -69,7 +70,8 @@ class CallIn : public bz_EventHandler {
     bool RunCallIn(int inArgs, int outArgs)
     {
       if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
-        bz_debugMessagef(0, "lua error: %s\n", lua_tostring(L, -1));
+        bz_debugMessagef(0, "lua call-in error (%s): %s\n",
+                         name.c_str(), lua_tostring(L, -1));
         lua_pop(L, 1);
         return false;
       }
@@ -171,7 +173,7 @@ static int UpdateCallIn(lua_State* L)
 }
 
 
-static int GetCallInList(lua_State* L)
+static int GetCallIns(lua_State* L)
 {
   const map<string, CallIn*>& nameMap = CallIn::GetNameMap();
   
@@ -204,7 +206,7 @@ bool CallIns::PushEntries(lua_State* _L)
   lua_rawset(L, -3)
 
   REGISTER_LUA_CFUNC(UpdateCallIn);
-  REGISTER_LUA_CFUNC(GetCallInList);
+  REGISTER_LUA_CFUNC(GetCallIns);
 
   // scan for global call-ins --  FIXME -- remove? have lua do it?
   /*
@@ -428,16 +430,18 @@ bool CI_AllowPlayer::execute(bz_EventData* eventData)
   lua_pushstring(L,  ed->callsign.c_str());
   lua_pushstring(L,  ed->ipAddress.c_str());
 
-  if (!RunCallIn(3, 1)) {
+  if (!RunCallIn(3, 2)) {
     return false;
   }
 
-  if (lua_israwstring(L, -1)) {
-    ed->allow = false;
-    ed->reason = lua_tostring(L, -1);
+  if (lua_isboolean(L, -2)) {
+    if (!lua_toboolean(L, -2)) {
+      ed->allow = false;
+      ed->reason = luaL_optstring(L, -1, "lua plugin says you can not play");
+    }
   }
 
-  lua_pop(L, 1);
+  lua_pop(L, 2);
 
   return true;
 }
@@ -775,19 +779,68 @@ bool CI_GetWorldEvent::execute(bz_EventData* eventData)
 {
   bz_GetWorldEventData_V1* ed = (bz_GetWorldEventData_V1*)eventData;
 
-  if (!PushCallIn(8)) {
+  if (!PushCallIn(4)) {
     return false;
   }
 
-  // FIXME -- this is a Get() call-in
-  lua_pushboolean(L, ed->generated);
-  lua_pushboolean(L, ed->ctf);
-  lua_pushboolean(L, ed->rabbit);
-  lua_pushboolean(L, ed->openFFA);
-  lua_pushstring(L,  ed->worldFile.c_str());
-  lua_pushstring(L,  ed->worldBlob);
+  bz_eGameType gameMode = eTeamFFAGame;
+  if      (ed->ctf)     { gameMode = eClassicCTFGame; }
+  else if (ed->rabbit)  { gameMode = eRabbitGame;     }
+  else if (ed->openFFA) { gameMode = eOpenFFAGame;    }
 
-  return RunCallIn(6, 0);
+  lua_pushinteger(L, gameMode);
+  lua_pushstring(L,  ed->worldFile.c_str());
+  lua_pushboolean(L, ed->worldBlob != NULL);
+//  lua_pushboolean(L, ed->generated);
+
+  if (!RunCallIn(3, 1)) {
+    return false;
+  }
+
+  if (lua_istable(L, -1)) {
+    const int table = lua_gettop(L);
+    for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
+      if (!lua_israwstring(L, -2)) {
+        continue;
+      }
+      const string key = lua_tostring(L, -2);
+      if (key == "file") {
+        if (lua_israwstring(L, -1)) {
+          ed->worldFile = lua_tostring(L, -1);
+        }
+      }
+      else if (key == "data") {
+        if (lua_israwstring(L, -1)) {
+          size_t len = 0;
+          const char* blob = lua_tolstring(L, -1, &len);
+          char* newBlob = new char[len + 1];
+          memcpy(newBlob, blob, len);
+          newBlob[len] = 0;
+          delete[] ed->worldBlob;
+          ed->worldBlob = newBlob; // FIXME: properly deleted?
+        }
+      }
+      else if (key == "mode") {
+        if (lua_israwnumber(L, -1)) {
+          ed->openFFA = false;
+          ed->rabbit  = false;
+          ed->ctf     = false;
+          switch ((bz_eGameType)lua_toint(L, -1)) {
+            case eOpenFFAGame:    { ed->openFFA = true; break; }
+            case eRabbitGame:     { ed->rabbit  = true; break; }
+            case eClassicCTFGame: { ed->ctf     = true; break; }
+            default: {
+              break;
+            }
+          }
+        }
+      }
+    } // end for
+  } // end if lua_istable()
+
+  lua_pop(L, 1);
+
+  return true;
 }
 
 
@@ -1438,14 +1491,10 @@ bool CI_CustomMapObject::execute(bz_EventData* eventData)
     return false;
   }
 
-  int args = 1;
-
   lua_pushstring(L, ed->objName);
-
+  lua_newtable(L);
   if (ed->info != NULL) {
-    args += 1;
     bz_APIStringList& list = ed->info->data;
-    lua_createtable(L, list.size(), 0);
     for (int i = 0; i < list.size(); i++) {
       lua_pushinteger(L, i + 1);
       lua_pushstring(L, list[i].c_str());
@@ -1453,7 +1502,30 @@ bool CI_CustomMapObject::execute(bz_EventData* eventData)
     }
   }
 
-  return RunCallIn(args, 0);
+  if (!RunCallIn(2, 1)) {
+    return false;
+  }
+
+  string newData = ed->info->newData.c_str();
+
+  if (lua_israwstring(L, -1)) {
+    newData += lua_tostring(L, -1);
+  }
+  else if (lua_istable(L, -1)) {
+    const int table = lua_gettop(L);
+    for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
+      if (lua_israwstring(L, -1)) {
+        newData += lua_tostring(L, -1);
+        newData += "\n";
+      }
+    } 
+  }
+
+  ed->info->newData = newData;
+
+  lua_pop(L, 1);
+
+  return true;
 }
 
 
