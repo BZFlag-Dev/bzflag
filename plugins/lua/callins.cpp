@@ -314,19 +314,6 @@ DEFINE_CALLIN(ZoneEntryEvent);
 DEFINE_CALLIN(ZoneExitEvent);
 
 
-class CI_CustomMapObject : public CallIn {
-  public:
-    CI_CustomMapObject() : CallIn(bz_eLastEvent + 1, "CustomMapObject")
-    {
-      registered = true;
-    }
-    ~CI_CustomMapObject() {}
-    bool execute(bz_EventData* eventData);
-};
-
-static CI_CustomMapObject ciCustomMapObject;
-
-
 /******************************************************************************/
 /******************************************************************************/
 
@@ -1467,73 +1454,6 @@ bool CI_ZoneExitEvent::execute(bz_EventData* eventData)
     return false;
   }
   return RunCallIn(0, 0);
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-class bz_CustomMapObjectData : public bz_EventData {
-  public:
-    bz_CustomMapObjectData(const char* n, bz_CustomMapObjectInfo* i)
-    : objName(n), info(i)
-    {}
-    const char*             objName;
-    bz_CustomMapObjectInfo* info;
-};
-
-
-bool CI_CustomMapObject::execute(bz_EventData* eventData)
-{
-  bz_CustomMapObjectData* ed = (bz_CustomMapObjectData*)eventData;
-
-  if (!PushCallIn(5)) {
-    return false;
-  }
-
-  lua_pushstring(L, ed->objName);
-  lua_newtable(L);
-  if (ed->info != NULL) {
-    bz_APIStringList& list = ed->info->data;
-    for (int i = 0; i < list.size(); i++) {
-      lua_pushinteger(L, i + 1);
-      lua_pushstring(L, list[i].c_str());
-      lua_rawset(L, -3);
-    }
-  }
-
-  if (!RunCallIn(2, 1)) {
-    return false;
-  }
-
-  string newData = ed->info->newData.c_str();
-
-  if (lua_israwstring(L, -1)) {
-    newData += lua_tostring(L, -1);
-  }
-  else if (lua_istable(L, -1)) {
-    const int table = lua_gettop(L);
-    for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
-      if (lua_israwstring(L, -1)) {
-        newData += lua_tostring(L, -1);
-        newData += "\n";
-      }
-    } 
-  }
-
-  ed->info->newData = newData;
-
-  lua_pop(L, 1);
-
-  return true;
-}
-
-
-bool CallIns::CustomMapObject(const char* objName, bz_CustomMapObjectInfo* info)
-{
-  bz_CustomMapObjectData event(objName, info);
-  ciCustomMapObject.process(&event);
-  return true;
 }
 
 

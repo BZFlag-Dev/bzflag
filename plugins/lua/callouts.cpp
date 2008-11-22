@@ -167,6 +167,7 @@ static int GetFlagPlayer(lua_State* L);
 
 static int MoveFlag(lua_State* L);
 static int ResetFlag(lua_State* L);
+static int ResetFlags(lua_State* L);
 
 static int GetTeamName(lua_State* L);
 static int GetTeamLimit(lua_State* L);
@@ -215,7 +216,6 @@ static int GetTimer(lua_State* L);
 static int DiffTimers(lua_State* L);
 static int DirList(lua_State* L);
 static int ReadStdin(lua_State* L);
-
 
 
 /******************************************************************************/
@@ -331,6 +331,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
   REGISTER_LUA_CFUNC(MoveFlag);
   REGISTER_LUA_CFUNC(ResetFlag);
+  REGISTER_LUA_CFUNC(ResetFlags);
 
   // Team
   REGISTER_LUA_CFUNC(GetTeamName);
@@ -1162,8 +1163,8 @@ static int SetRabbit(lua_State* L)
 static int SetPlayerShotType(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  const bz_eShotType shotType = (bz_eShotType)luaL_checkint(L, 2); // FIXME: better parsing
-  lua_pushboolean(L, bz_setPlayerShotType(playerID, shotType));
+  const int shotType = luaL_checkint(L, 2);
+  lua_pushboolean(L, bz_setPlayerShotType(playerID, (bz_eShotType)shotType));
   return 1;
 }
 
@@ -1276,6 +1277,14 @@ static int ResetFlag(lua_State* L)
 {
   const int flagID = luaL_checkint(L, 1);
   bz_resetFlag(flagID);
+  return 0;
+}
+
+
+static int ResetFlags(lua_State* L)
+{
+  const bool onlyUnused = !lua_isboolean(L, 1) || lua_toboolean(L, 1);
+  bz_resetFlags(onlyUnused);
   return 0;
 }
 

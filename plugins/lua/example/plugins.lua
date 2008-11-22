@@ -10,7 +10,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local PLUGINS_DIR = PLUGINS_DIR or './plugins/'
+local PLUGINS_DIR = BZ.GetLuaDirectory() .. 'plugins/'
 
 print()
 print('-----------')
@@ -69,6 +69,7 @@ local function SetupPlugin(fileName)
     print('  error: ' .. err)
     return
   end
+
 --[[
   local plugin = {}
   plugins[plugin] = {}

@@ -47,7 +47,7 @@ function include(fileName, fenv)
   end
   setfenv(chunk, fenv or getfenv(1))
 
-  local retval = { pcall(chunk) }
+  local retval = { tracepcall(chunk) }
   if (retval[1] ~= true) then
     error(retval[2])
   end

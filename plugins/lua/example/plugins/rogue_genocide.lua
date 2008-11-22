@@ -25,7 +25,7 @@ function CallIn.PlayerDieEvent(victimID, team, killerID,
     return -- wrong flag type
   end
 
-  if (team ~= BZ.TEAM.rogue) then
+  if (team ~= BZ.TEAM.ROGUE) then
     return -- wrong team
   end
 
@@ -37,7 +37,7 @@ function CallIn.PlayerDieEvent(victimID, team, killerID,
   for i = 1, #players do
     local pid = players[i]
     local team = BZ.GetPlayerTeam(pid)
-    if (team and (team == BZ.TEAM.rogue)) then
+    if (team and (team == BZ.TEAM.ROGUE)) then
       if (BZ.GetPlayerSpawned(pid)) then
         BZ.KillPlayer(pid, false, killerID, 'G')
         BZ.SendMessage(BZ_SERVER, pid, 'You were a victim of Rogue Genocide')

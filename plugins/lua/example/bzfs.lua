@@ -203,49 +203,48 @@ BZ.UpdateCallIn('BZDBChange',
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-BZ.HandleMapObject('custom_block')
-BZ.HandleMapObject('custom_block1')
-BZ.HandleMapObject('custom_block2')
-BZ.HandleMapObject('custom_block3')
-BZ.HandleMapObject('lua_plugin')
-BZ.HandleMapObject('lua_block')
-
 
 local lua_block_env = {}
 setmetatable(lua_block_env, { __index = _G })
 
-BZ.UpdateCallIn('CustomMapObject',
-  function(name, data)
-    print('CustomMapObject:  ' .. name)
-    for d = 1, #data do
-      print('CustomMapObject:    ' .. data[d])
-    end
+local function CustomMapObject(name, data)
+  print('CustomMapObject:  ' .. name)
+  for d = 1, #data do
+    print('CustomMapObject:    ' .. data[d])
+  end
 
-    if (name == 'LUA_BLOCK') then
-      local text = ''
-      for d = 1, #data do
-        text = text .. data[d] .. '\n'
-      end
-      local chunk, err = loadstring(text, 'lua_plugin')
-      if (not chunk) then
+  if (name == 'lua_block') then
+    local text = ''
+    for d = 1, #data do
+      text = text .. data[d] .. '\n'
+    end
+    local chunk, err = loadstring(text, 'lua_block')
+    if (not chunk) then
+      print(err)
+    else
+      setfenv(chunk, lua_block_env)
+      local success, mapText = pcall(chunk)
+      if (not success) then
         print(err)
       else
-        setfenv(chunk, lua_block_env)
-        local success, mapText = pcall(chunk)
-        if (not success) then
-          print(err)
-        else
-          if (type(mapText) == 'string') then
-            print('MAPTEXT: ' .. tostring(mapText))
-          elseif (type(mapText) == 'table') then
-            print('MAPTEXT: ' .. table.concat(mapText, '\n'))
-          end
-          return mapText
+        if (type(mapText) == 'string') then
+          print('MAPTEXT: ' .. tostring(mapText))
+        elseif (type(mapText) == 'table') then
+          print('MAPTEXT: ' .. table.concat(mapText, '\n'))
         end
+        return mapText
       end
     end
   end
-)
+end
+
+
+BZ.AttachMapObject('custom_block',  CustomMapObject)
+BZ.AttachMapObject('custom_block1', CustomMapObject)
+BZ.AttachMapObject('custom_block2', CustomMapObject)
+BZ.AttachMapObject('custom_block3', CustomMapObject)
+BZ.AttachMapObject('lua_plugin',    CustomMapObject)
+BZ.AttachMapObject('lua_block',     CustomMapObject)
 
 
 --------------------------------------------------------------------------------
@@ -265,6 +264,12 @@ BZ.DB.SetString('_mirror', 'black 0.5')
 BZ.DB.SetString('_skyColor', 'red')
 BZ.DB.SetFloat('_tankSpeed', '50.0')
 
+
+
+BZ.AttachSlashCommand('luabzfs', 'bzfs lua plugin command',
+function(playerID, cmd, msg)
+  print('luabzfs command received: '..playerID..' '..cmd..' '..msg)
+end)
 
 
 include('plugins.lua')

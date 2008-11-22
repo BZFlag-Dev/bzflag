@@ -27,9 +27,9 @@ BZ_GET_PLUGIN_VERSION
 
 static lua_State* L = NULL;
 
-static const char* scriptFile = "bzfs.lua";
+static string scriptFile = "bzfs.lua";
 
-static bool CreateLuaState();
+static bool CreateLuaState(const string& script);
 static bool DestroyLuaState();
 static string EnvExpand(const string& path);
 
@@ -45,39 +45,51 @@ extern const string& GetLuaDirectory() { return directory; } // extern
 
 /******************************************************************************/
 
-BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
+BZF_PLUGIN_CALL int bz_Load(const char* cmdLine)
 {
+  bool dieHard = false;
+
   bz_debugMessage(4, "lua plugin loaded");
 
   if (L != NULL) {
-    bz_debugMessagef(0, "lua plugin is already loaded");
+    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS,
+                       "lua plugin is already loaded");
     return 1; // FAILURE
   }
 
-  string script = scriptFile;
-  if (commandLine && (commandLine[0] != 0)) {
-    script = commandLine;
+  if (cmdLine) {
+    if (strncasecmp(cmdLine, "dieHard,", 8) == 0) {
+      dieHard = true;
+      cmdLine += 8;
+    }
+    if (cmdLine[0] != 0) {
+      scriptFile = cmdLine;
+    }
   }
-  script = EnvExpand(script);
 
-  if (!fileExists(script)) {
-    script = string(bz_pluginBinPath()) + "/" + script;
+  scriptFile = EnvExpand(scriptFile);
+
+  if (!fileExists(scriptFile)) {
+    scriptFile = string(bz_pluginBinPath()) + "/" + scriptFile;
   }
-  if (!fileExists(script)) {
-    bz_debugMessagef(0, "lua plugin: could not find the script file");
+  if (!fileExists(scriptFile)) {
+    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS,
+                       "lua plugin: could not find the script file");
+    if (dieHard) {
+      exit(2);
+    }
     return 2; // FAILURE
   }
 
-  SetupLuaDirectory(script);
+  SetupLuaDirectory(scriptFile);
 
-  CreateLuaState();
-
-  if (luaL_dofile(L, script.c_str()) != 0) {
-    bz_debugMessagef(0, "lua init error: %s", lua_tostring(L, -1));
-    lua_pop(L, 1);
+  if (!CreateLuaState(scriptFile)) {
+    if (dieHard) {
+      exit(3);
+    }
     return 3; // FAILURE
   }
-  
+
   return 0;
 }
 
@@ -110,7 +122,7 @@ static bool SetupLuaDirectory(const string& fileName)
 
 /******************************************************************************/
 
-static bool CreateLuaState()
+static bool CreateLuaState(const string& script)
 {
   L = luaL_newstate();
   luaL_openlibs(L);
@@ -126,6 +138,13 @@ static bool CreateLuaState()
     SlashCmd::PushEntries(L);
   }
   lua_setglobal(L, "BZ");
+
+  if (luaL_dofile(L, script.c_str()) != 0) {
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
+                        "lua init error: %s", lua_tostring(L, -1));
+    lua_pop(L, 1);
+    return false;
+  }
 
   return true;
 }
