@@ -946,6 +946,9 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   time_t nowTime = time (NULL);
   out << "# BZFlag client: saved world on " << ctime(&nowTime) << std::endl;
 
+  // Write the Map Information
+  mapInfo.print(out, indent);
+  
   // Write the Server Options
   {
     out << indent << "options" << std::endl;

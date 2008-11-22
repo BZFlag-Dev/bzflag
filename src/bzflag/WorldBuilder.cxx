@@ -82,6 +82,10 @@ void* WorldBuilder::unpack(void* buf)
   nboSetBufferLength(uncompressedSize);
   nboClearBufferError();
 
+  // unpack the map information
+  world->mapInfo.clear();
+  buf = world->mapInfo.unpack(buf);
+
   // unpack dynamic colors
   DYNCOLORMGR.clear();
   buf = DYNCOLORMGR.unpack(buf);

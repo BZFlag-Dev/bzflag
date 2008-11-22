@@ -24,6 +24,7 @@
 #include "FlagWarpSceneNode.h"
 #include "BundleMgr.h"
 #include "LinkManager.h"
+#include "MapInfo.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
@@ -139,6 +140,8 @@ class World {
 
     void		freeInsideNodes() const;
 
+    const MapInfo&	getMapInfo() const { return mapInfo; }
+
   private:
     // disallow copy and assignment
 			World(const World&);
@@ -185,6 +188,8 @@ class World {
     // required graphics settings
     int			oldFogEffect;
     bool		oldUseDrawInfo;
+
+    MapInfo		mapInfo;
 
     static World*	playingField;
     static BundleMgr	*bundleMgr;
