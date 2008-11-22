@@ -299,7 +299,7 @@ std::string getFileDir(const char* file)
   char *p = (char*)strrchr(f.c_str(),_DirDelim);
   if (p)
     // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
+    // NUL char so we can set it to NUL again with out worry
     *(p+1) = 0;
 
   return std::string(f.c_str());
@@ -312,7 +312,7 @@ std::string getFileExtension(const char* file)
   char *p = (char*)strrchr(f.c_str(),'.');
   if (!p)
     // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
+    // NUL char so we can set it to NUL again with out worry
     return std::string();
 
   return std::string(p+1);
@@ -326,7 +326,7 @@ std::string getFileTitle(const char* file)
   const char *p = strrchr(f.c_str(),_DirDelim);
   if (p)
     // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
+    // NUL char so we can set it to NUL again with out worry
     temp = p+1;
 
   char *p2 = (char*)strrchr(temp.c_str(),'.');
