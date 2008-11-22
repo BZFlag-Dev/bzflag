@@ -63,13 +63,10 @@ end
 
 local localSubs = {}
 
-print(subTable)
 for _, subs in ipairs(subTable) do
   local key   = subs[1]
   local lower = subs[2]
   local upper = subs[3]
-
-  print(key, lower, upper)
 
   local function Substitute(text, extra)
     if (not extra) then
