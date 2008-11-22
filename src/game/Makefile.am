@@ -24,6 +24,7 @@ libGame_la_SOURCES =			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
 	LinkManager.cxx			\
+	MapInfo.cxx			\
 	MsgStrings.cxx			\
 	MeshTransform.cxx		\
 	MotionUtils.cxx			\
