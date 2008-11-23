@@ -1864,6 +1864,34 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_sendJoinServer(int playerID,
+                               const char* address, int port, int teamID)
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (player == NULL) {
+    return false;
+  }
+  if (address == NULL) {
+    return false;
+  }
+  if ((port < 0) || (port >= 65536)) {
+    return false;
+  }
+
+  NetMsg msg = MSGMGR.newMessage();
+
+  const std::string addr = address;
+  msg->packStdString(addr);
+  msg->packInt(port);
+  msg->packInt(teamID);
+
+  MSGMGR.newMessage(msg)->send(player->netHandler, MsgJoinServer);
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
 BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, float tilt, float direction, int shotID, float dt)
 {
   if(!pos || !flagType)

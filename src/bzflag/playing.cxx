@@ -576,13 +576,15 @@ static void hangup(int sig)
 static bool motionFreeze = false;
 #endif
 
-static enum {None, Left, Right, Up, Down} keyboardMovement;
+static enum { None, Left, Right, Up, Down } keyboardMovement;
 static int shiftKeyStatus;
+
 
 static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
 {
   keyboardMovement = None;
   shiftKeyStatus   = key.shift;
+
   const std::string cmd = KEYMGR.get(key, pressed);
   if (key.chr == 27) {
     if (pressed) {
@@ -606,6 +608,7 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
       return true;
     }
   }
+
   std::string cmdDrive = cmd;
   if (cmdDrive.empty()) {
     // Check for driving keys
@@ -623,32 +626,22 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
     keyboardMovement = Down;
   }
 
-  if (myTank &&
-    myTank->isAlive() &&
-    !HUDDialogStack::get()->isActive() &&
-    (myTank->getInputMethod() != LocalPlayer::Keyboard) &&
-    pressed &&
-    keyboardMovement != None &&
-    BZDB.isTrue("allowInputChange"))
+  if (myTank && myTank->isAlive() && !HUDDialogStack::get()->isActive() &&
+      (myTank->getInputMethod() != LocalPlayer::Keyboard) && pressed &&
+      (keyboardMovement != None) && BZDB.isTrue("allowInputChange")) {
     myTank->setInputMethod(LocalPlayer::Keyboard);
-
-  if (myTank && myTank->getInputMethod() == LocalPlayer::Keyboard)
-    switch (keyboardMovement) {
-    case Left:
-      myTank->setKey(BzfKeyEvent::Left, pressed);
-      break;
-    case Right:
-      myTank->setKey(BzfKeyEvent::Right, pressed);
-      break;
-    case Up:
-      myTank->setKey(BzfKeyEvent::Up, pressed);
-      break;
-    case Down:
-      myTank->setKey(BzfKeyEvent::Down, pressed);
-      break;
-    case None:
-      break;
   }
+
+  if (myTank && myTank->getInputMethod() == LocalPlayer::Keyboard) {
+    switch (keyboardMovement) {
+      case Left:  { myTank->setKey(BzfKeyEvent::Left,  pressed); break; }
+      case Right: { myTank->setKey(BzfKeyEvent::Right, pressed); break; }
+      case Up:    { myTank->setKey(BzfKeyEvent::Up,    pressed); break; }
+      case Down:  { myTank->setKey(BzfKeyEvent::Down,  pressed); break; }
+      case None:  { break; }
+    }
+  }
+
   if (!cmd.empty()) {
     if (cmd=="fire")
       fireButton = pressed;
@@ -693,7 +686,7 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
     // for testing forced recreation of OpenGL context
 #if defined(DEBUG_RENDERING)
   case 'X':
-    if (pressed && ((shiftKeyStatus &BzfKeyEvent::AltKey) != 0)) {
+    if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
       // destroy OpenGL context
       getMainWindow()->getWindow()->freeContext();
 
@@ -735,9 +728,11 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
   return false;
 }
 
+
 static void doKeyNotPlaying(const BzfKeyEvent&, bool, bool)
 {
 }
+
 
 static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
 {
@@ -782,7 +777,8 @@ static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
   }
 }
 
-static void doKey(const BzfKeyEvent &key, bool pressed) {
+static void doKey(const BzfKeyEvent &key, bool pressed)
+{
   if (myTank) {
     const std::string cmd = KEYMGR.get(key, pressed);
     if (cmd == "jump") {
@@ -791,17 +787,18 @@ static void doKey(const BzfKeyEvent &key, bool pressed) {
   }
 
   if (HUDui::getFocus()) {
-    if ((pressed && HUDui::keyPress(key)) ||
-      (!pressed && HUDui::keyRelease(key)))
+    if (( pressed && HUDui::keyPress(key)) ||
+        (!pressed && HUDui::keyRelease(key)))
       return;
   }
 
   bool haveBinding = doKeyCommon(key, pressed);
 
-  if (!myTank)
+  if (!myTank) {
     doKeyNotPlaying(key, pressed, haveBinding);
-  else
+  } else {
     doKeyPlaying(key, pressed, haveBinding);
+  }
 }
 
 static void doMotion()
@@ -1743,6 +1740,37 @@ static void handleCustomSound(void *msg)
 }
 
 
+static void handleJoinServer(void *msg)
+{
+  // FIXME: MsgJoinServer notes ...
+  //        - add a ServerAccess.txt file  (like DownloadAccess.txt)?
+  //        - add some sort of warning, confirmation? at least a notification  ;-)
+  //        - only ask for confirmation DST (and SRC?) not in ServerAccess.txt?
+
+  std::string addr;
+  int32_t port;
+  int32_t team;
+
+  msg = nboUnpackStdString(msg, addr);
+  msg = nboUnpackInt(msg, port);
+  msg = nboUnpackInt(msg, team);
+
+  if (addr.empty()) {
+    return;
+  }
+  if (port <= 0 || port > 65535) {
+    return;
+  }
+
+  StartupInfo& info = startupInfo;
+  strncpy(info.serverName, addr.c_str(), ServerNameLen - 1);
+  info.serverPort = port;
+  info.team = (TeamColor)team;
+
+  joinGame();
+}
+
+
 static void handleSuperKill(void *msg)
 {
   uint8_t id;
@@ -2203,8 +2231,11 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
       addMessage(victimPlayer, message);
     } else {
       std::string playerStr;
-      if (World::getWorld()->allowTeams() && (killerPlayer->getTeam() == victimPlayer->getTeam()) && (killerPlayer->getTeam() != RogueTeam) && (killerPlayer->getTeam() != ObserverTeam)) {
-	playerStr += "teammate ";
+      if (World::getWorld()->allowTeams() &&
+          (killerPlayer->getTeam() == victimPlayer->getTeam()) &&
+          (killerPlayer->getTeam() != RogueTeam) &&
+          (killerPlayer->getTeam() != ObserverTeam)) {
+        playerStr += "teammate ";
       }
 
       if (victimPlayer == myTank) {
@@ -3192,6 +3223,10 @@ case MsgUDPLinkEstablished:
 
 case MsgUDPLinkRequest:
   serverLink->confirmIncomingUDP();      // we got server's initial UDP packet
+  break;
+
+case MsgJoinServer:
+  handleJoinServer(msg);
   break;
 
 case MsgSuperKill:
@@ -6138,8 +6173,9 @@ static void setupRoamingCamera(float dt)
   // move roaming camera
   if (myTank) {
     bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
-    bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
-    bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
+    bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey)     != 0);
+    bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey)   != 0);
+
     if (display->hasGetKeyMode())
       display->getModState (shift, control, alt);
 
@@ -7170,18 +7206,19 @@ void startPlaying()
   // but this works on every system so far.
   int n = 3; // assume triple buffering
   switch (RENDERER.getViewType()) {
-case SceneRenderer::Stacked:
-case SceneRenderer::Stereo:
-#ifndef USE_GL_STEREO
-  // control panel drawn twice per frame
-  n *= 2;
-#endif
-  break;
-
-case SceneRenderer::ThreeChannel:
-default:
-  // only one copy of control panel visible
-  break;
+    case SceneRenderer::Stacked:
+    case SceneRenderer::Stereo: {
+    #ifndef USE_GL_STEREO
+      // control panel drawn twice per frame
+      n *= 2;
+    #endif
+      break;
+    }
+    case SceneRenderer::ThreeChannel:
+    default: {
+      // only one copy of control panel visible
+      break;
+    }
   }
   controlPanel->setNumberOfFrameBuffers(n);
 

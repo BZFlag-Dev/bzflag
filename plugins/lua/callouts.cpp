@@ -100,6 +100,7 @@ static int GetDebugLevel(lua_State* L);
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
 static int SendFetchResource(lua_State* L);
+static int SendJoinServer(lua_State* L);
 static int PlaySound(lua_State* L);
 
 static int GetStandardSpawn(lua_State* L);
@@ -282,6 +283,7 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(SendMessage);
   REGISTER_LUA_CFUNC(SendTeamMessage);
   REGISTER_LUA_CFUNC(SendFetchResource);
+  REGISTER_LUA_CFUNC(SendJoinServer);
   REGISTER_LUA_CFUNC(PlaySound);
 
   REGISTER_LUA_CFUNC(GetStandardSpawn);
@@ -703,6 +705,17 @@ static int SendFetchResource(lua_State* L)
   const int playerID = luaL_checkint(L, 1);
   const char* url    = luaL_checkstring(L, 2);
   lua_pushboolean(L, bz_sendFetchResMessage(playerID, url));
+  return 1;
+}
+
+
+static int SendJoinServer(lua_State* L)
+{
+  const int playerID  = luaL_checkint(L, 1);
+  const char* address = luaL_checkstring(L, 2);
+  const int port      = luaL_checkint(L, 3);
+  const int team      = luaL_checkint(L, 4);
+  lua_pushboolean(L, bz_sendJoinServer(playerID, address, port, team));
   return 1;
 }
 
