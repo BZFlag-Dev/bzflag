@@ -59,9 +59,11 @@ static bool ParseKeyValue(const string& line, string& key, string& value)
 {
   const char* c = line.c_str();
 
+  // find the start
   while ((*c != 0) && isspace(*c)) { c++; }
   const char* keyStart = c;
-  
+
+  // find the ':' at the end of the key  
   while ((*c != 0) && (*c != ':') && !isspace(*c)) { c++; }
   if (*c != ':') {
     return false;
@@ -71,9 +73,20 @@ static bool ParseKeyValue(const string& line, string& key, string& value)
   c++; // skip the ':'
   while ((*c != 0) && isspace(*c)) { c++; }
   const char* valueStart = c;
+  const char* valueEnd = c;
 
-  key.assign(keyStart, keyEnd - keyStart);
-  value.assign(valueStart);  
+  // discard trailing whitespace
+  while (*c != 0) {
+    if (!isspace(*c)) {
+      valueEnd = c;
+    }
+    c++;
+  }
+  valueEnd++;
+
+  // assign the strings
+  key.assign(keyStart,     keyEnd - keyStart);
+  value.assign(valueStart, valueEnd - valueStart);  
 
   if (key.empty() || value.empty()) {
     key.clear();
