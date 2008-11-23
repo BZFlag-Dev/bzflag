@@ -26,6 +26,7 @@
 #include "TextureManager.h"
 #include "DirectoryNames.h"
 #include "KeyManager.h"
+#include "MapInfo.h"
 
 // local implementation headers
 #include "LocalCommand.h"
@@ -122,6 +123,12 @@ class SaveWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class MapInfoCommand : LocalCommand {
+  public:
+    MapInfoCommand();
+    bool operator() (const char *commandLine);
+};
+
 // class instantiations
 static CommandList	  commandList;
 static BindCommand	  bindCommand;
@@ -137,6 +144,7 @@ static RoamPosCommand     RoamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
+static MapInfoCommand     mapInfoCommand;
 
 
 // class constructors
@@ -146,6 +154,7 @@ DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
 DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
 HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
 LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
+MapInfoCommand::MapInfoCommand() :	LocalCommand("/mapinfo") {}
 QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
 ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
@@ -756,6 +765,37 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 
   return true;
 }
+
+
+bool MapInfoCommand::operator() (const char* /*commandLine*/)
+{
+  World* world = World::getWorld();
+  const std::string indent = ANSI_STR_FG_GREEN "mapinfo:  " ANSI_STR_RESET;
+  const MapInfo::InfoVec& infoVec = world->getMapInfo().getVec();
+  if (infoVec.empty()) {
+    addMessage(NULL, "no map info");
+  }
+  else {
+    for (unsigned int i = 0; i < infoVec.size(); i++) {
+      addMessage(NULL, indent + infoVec[i]);
+    }
+    if (false) { // FIXME - test code
+      addMessage(NULL, "and now ... by map<>");
+      const MapInfo::InfoMap& infoMap = world->getMapInfo().getMap();
+      MapInfo::InfoMap::const_iterator it;
+      for (it = infoMap.begin(); it != infoMap.end(); ++it) {
+        addMessage(NULL, indent + it->first);
+        const std::vector<std::string>& values = it->second;
+        for (unsigned int i = 0; i < values.size(); i++) {
+          addMessage(NULL, indent + "  " + values[i]);
+        }
+      }
+    }
+  }
+
+  return true; 
+}
+
 
 // Local Variables: ***
 // mode: C++ ***
