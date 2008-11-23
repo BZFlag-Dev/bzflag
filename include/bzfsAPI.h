@@ -1209,6 +1209,7 @@ BZF_API bool bz_setPlayerLimboMessage(int playerID, const char* text);
 BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
 BZF_API const char* bz_getPlayerCallsign(int playerID);
 BZF_API const char* bz_getPlayerIPAddress(int playerID);
+BZF_API const char* bz_getPlayerReferrer(int playerID);
 
 BZF_API bool bz_setPayerCustomData(int playerID, const char* key, const char* data );
 
@@ -1253,7 +1254,7 @@ class BZF_API bz_BasePlayerRecord
   bz_PlayerUpdateState lastKnownState;
   bz_PlayerUpdateState currentState;
 
-  bz_ApiString	clientVersion;
+  bz_ApiString clientVersion;
   bool spawned;
   bool verified;
   bool globalUser;
@@ -1311,7 +1312,8 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message);
 BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...) _ATTRIBUTE34;
 BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...) _ATTRIBUTE34;
 BZF_API bool bz_sendFetchResMessage(int playerID,  const char* URL);
-BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port, int team);
+BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
+                               int team, const char* referrer);
 
 // world weapons
 BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt);

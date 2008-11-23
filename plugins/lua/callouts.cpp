@@ -111,6 +111,7 @@ static int GetPlayerIDs(lua_State* L);
 static int GetPlayerName(lua_State* L);
 static int GetPlayerTeam(lua_State* L);
 static int GetPlayerIPAddress(lua_State* L);
+static int GetPlayerReferrer(lua_State* L);
 static int GetPlayerFlagID(lua_State* L);
 static int GetPlayerClientVersion(lua_State* L);
 static int GetPlayerBZID(lua_State* L);
@@ -295,6 +296,7 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(GetPlayerName);
   REGISTER_LUA_CFUNC(GetPlayerTeam);
   REGISTER_LUA_CFUNC(GetPlayerIPAddress);
+  REGISTER_LUA_CFUNC(GetPlayerReferrer);
   REGISTER_LUA_CFUNC(GetPlayerFlagID);
   REGISTER_LUA_CFUNC(GetPlayerClientVersion);
   REGISTER_LUA_CFUNC(GetPlayerBZID);
@@ -711,11 +713,12 @@ static int SendFetchResource(lua_State* L)
 
 static int SendJoinServer(lua_State* L)
 {
-  const int playerID  = luaL_checkint(L, 1);
-  const char* address = luaL_checkstring(L, 2);
-  const int port      = luaL_checkint(L, 3);
-  const int team      = luaL_checkint(L, 4);
-  lua_pushboolean(L, bz_sendJoinServer(playerID, address, port, team));
+  const int   playerID = luaL_checkint(L, 1);
+  const char* addr     = luaL_checkstring(L, 2);
+  const int   port     = luaL_checkint(L, 3);
+  const int   team     = luaL_checkint(L, 4);
+  const char* referrer = luaL_optstring(L, 5, "");
+  lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port, team, referrer));
   return 1;
 }
 
@@ -817,6 +820,18 @@ static int GetPlayerIPAddress(lua_State* L)
     return 0;
   }
   lua_pushstring(L, addr);
+  return 1;
+}
+
+
+static int GetPlayerReferrer(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  const char* referrer = bz_getPlayerReferrer(pid);
+  if (referrer == NULL) {
+    return 0;
+  }
+  lua_pushstring(L, referrer);
   return 1;
 }
 

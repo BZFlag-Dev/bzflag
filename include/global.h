@@ -34,6 +34,7 @@ const int TokenLen = 22;		// opaque string (now int(10)) and terminating NUL
 const int VersionLen = 60;	// including terminating NUL
 const int MessageLen = 128;	// including terminating NUL
 const int ServerNameLen = 80;
+const int ReferrerLen = 256;	// including terminating NUL
 
 // types of things we can be
 enum PlayerType {
@@ -48,15 +49,15 @@ const int CtfTeams = 5;
 
 enum TeamColor {
   AutomaticTeam = -2,
-  NoTeam = -1,
-  RogueTeam = 0,
-  RedTeam = 1,
-  GreenTeam = 2,
-  BlueTeam = 3,
-  PurpleTeam = 4,
-  ObserverTeam = 5,
-  RabbitTeam = 6,
-  HunterTeam = 7
+  NoTeam        = -1,
+  RogueTeam     = 0,
+  RedTeam       = 1,
+  GreenTeam     = 2,
+  BlueTeam      = 3,
+  PurpleTeam    = 4,
+  ObserverTeam  = 5,
+  RabbitTeam    = 6,
+  HunterTeam    = 7
 };
 
 // Player allow attributes for MsgAllow

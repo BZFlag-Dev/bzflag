@@ -23,11 +23,12 @@
 #include <string>
 
 
-#define _CallSignLen		32		// including terminating NUL
-#define _PasswordLen		32		// including terminating NUL
-#define _TokenLen				22		// opaque string (now int(10)) and terminating NUL
-#define _VersionLen			60		// including terminating NUL
-#define _MessageLen			128		// including terminating NUL
+#define _CallSignLen	32	// including terminating NUL
+#define _PasswordLen	32	// including terminating NUL
+#define _TokenLen	22	// opaque string (now int(10)) and terminating NUL
+#define _VersionLen	60	// including terminating NUL
+#define _MessageLen	128	// including terminating NUL
+#define _ReferrerLen	256	// including terminating NUL
 
 class PlayerAddMessage
 {
@@ -42,7 +43,7 @@ public:
 	int type;
 	int wins;
 	int losses;
-	int	tks;
+	int tks;
 	std::string callsign;
 };
 

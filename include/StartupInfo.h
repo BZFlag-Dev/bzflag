@@ -36,6 +36,7 @@ public:
   char callsign[CallSignLen];
   char password[PasswordLen];
   char token[TokenLen];
+  char referrer[ReferrerLen];
   std::string listServerURL;
   int listServerPort;
   std::string motto;

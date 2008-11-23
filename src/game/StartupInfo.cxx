@@ -30,6 +30,7 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
   strcpy(serverName, "");
   strcpy(callsign, "");
   strcpy(password, "");
+  strcpy(referrer, "");
 }
 
 StartupInfo::~StartupInfo()

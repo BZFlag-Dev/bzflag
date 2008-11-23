@@ -346,6 +346,10 @@ public:
 		    player->player.getCallSign(),
 		    player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
 		    player->player.getToken());
+    const char* referrer = player->player.getReferrer();
+    if (referrer && referrer[0]) {
+      logDebugMessage(1,"  referred by \"%s\"\n", referrer);
+    }
 
     if (!clOptions->publicizeServer)
       player->_LSAState = GameKeeper::Player::notRequired;

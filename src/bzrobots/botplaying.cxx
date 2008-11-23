@@ -1731,7 +1731,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << std::endl;
     robots[i]->setTeam(startupInfo.team);
     serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-			  robots[i]->getCallSign(), "");
+			  robots[i]->getCallSign(), "", "");
     if (!numRobots) {
       makeObstacleList();
       RobotPlayer::setObstacleList(&obstacleList);
@@ -3070,7 +3070,7 @@ static void joinInternetGame2()
   // tell the server that the observer tank wants to join
   serverLink->sendEnter(observerTank->getId(), TankPlayer,
 			observerTank->getTeam(), observerTank->getCallSign(),
-			startupInfo.token);
+			startupInfo.token, startupInfo.referrer);
   startupInfo.token[0] = '\0';
 
   joiningGame = false;

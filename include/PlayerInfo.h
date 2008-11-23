@@ -97,8 +97,10 @@ public:
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
   const char *getToken() const;
+  const char *getReferrer() const;
   void	clearToken();
-  void       *packVirtualFlagCapture(void *buf);
+  void	clearReferrer();
+  void  *packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
   TeamColor   getTeam() const;
@@ -171,6 +173,8 @@ private:
   char token[TokenLen];
   // version information from client
   char clientVersion[VersionLen];
+  // information about the referring server
+  char referrer[ReferrerLen];
 
   // player's team
   TeamColor team;

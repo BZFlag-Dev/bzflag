@@ -41,6 +41,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
+  memset(referrer, 0, ReferrerLen);
   pauseRequestLag = 0;
   pauseRequestTime = TimeKeeper::getNullTime();
   allowChangeTime = TimeKeeper::getNullTime();
@@ -161,6 +162,7 @@ bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
   callSign[CallSignLen - 1] = '\0';
   token[TokenLen - 1] = '\0';
   clientVersion[VersionLen - 1] = '\0';
+  referrer[ReferrerLen - 1] = '\0';
 
   logDebugMessage(2, "Player %s [%d] sent version string: %s\n",
 		  callSign, playerIndex, clientVersion);
@@ -217,6 +219,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, callSign, CallSignLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
+  buf = nboUnpackString(buf, referrer, ReferrerLen);
 
   return processEnter(rejectCode, rejectMsg);
 }
@@ -293,9 +296,19 @@ const char *PlayerInfo::getToken() const
   return token;
 }
 
+const char *PlayerInfo::getReferrer() const
+{
+  return referrer;
+}
+
 void PlayerInfo::clearToken()
 {
   token[0] = '\0';
+}
+
+void PlayerInfo::clearReferrer()
+{
+  referrer[0] = '\0';
 }
 
 void *PlayerInfo::packVirtualFlagCapture(void *buf)

@@ -1504,20 +1504,24 @@ bool			LocalPlayer::checkHit(const Player* source,
     if (source == this && ((_shotType == ShockWaveShot) || (_shotType == ThiefShot))) continue;
 
     // if no team kills, shots of my team can't kill me
-    if (source != this && shot->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() && shot->getTeam() == getTeam())
+    if (source != this && (shot->getTeam() != RogueTeam) &&
+        !World::getWorld()->allowTeamKills() && (shot->getTeam() == getTeam())) {
       continue;
+    }
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
-    if (isPhantomZoned() &&
-	(_shotType != ShockWaveShot) &&
-	(_shotType != SuperShot) &&
-	(_shotType != PhantomShot))
+    if (isPhantomZoned()             &&
+	      (_shotType != SuperShot)     &&
+	      (_shotType != PhantomShot)   &&
+	      (_shotType != ShockWaveShot)) {
       continue;
+    }
 
     // laser can't hit a cloaked tank
-    if ((getFlag() == Flags::Cloaking) && (_shotType == LaserShot))
+    if ((getFlag() == Flags::Cloaking) && (_shotType == LaserShot)) {
       continue;
+    }
 
     // zoned shots only kill zoned tanks
     if ((_shotType == PhantomShot) && !isPhantomZoned()) {

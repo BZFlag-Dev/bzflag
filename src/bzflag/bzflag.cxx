@@ -153,6 +153,7 @@ static void setVisual(BzfVisual *visual)
   visual->setDepth(depthLevel);
 
   // optional
+  visual->setStencil(1);
 #if defined(DEBUG_RENDERING)
   visual->setStencil(4);
 #endif

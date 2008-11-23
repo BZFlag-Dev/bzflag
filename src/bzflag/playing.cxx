@@ -212,6 +212,7 @@ static bool downloadingInitialTexture = false;
 static AresHandler      ares;
 
 static AccessList ServerAccessList("ServerAccess.txt", NULL);
+static AccessList AutoJoinAccessList("AutoJoinAccess.txt", NULL);
 
 ThirdPersonVars thirdPersonVars;
 
@@ -1743,17 +1744,20 @@ static void handleCustomSound(void *msg)
 static void handleJoinServer(void *msg)
 {
   // FIXME: MsgJoinServer notes ...
-  //        - add a ServerAccess.txt file  (like DownloadAccess.txt)?
-  //        - add some sort of warning, confirmation? at least a notification  ;-)
-  //        - only ask for confirmation DST (and SRC?) not in ServerAccess.txt?
+  //        - fix whatever is broken
+  //        - add notifications
+  //        - add an AutoJoinAccess.txt file to decided
+  //          if confirmation queries or required
 
   std::string addr;
   int32_t port;
   int32_t team;
+  std::string referrer;
 
   msg = nboUnpackStdString(msg, addr);
   msg = nboUnpackInt(msg, port);
   msg = nboUnpackInt(msg, team);
+  msg = nboUnpackStdString(msg, referrer);
 
   if (addr.empty()) {
     return;
@@ -1763,13 +1767,21 @@ static void handleJoinServer(void *msg)
   }
 
   StartupInfo& info = startupInfo;
+
   strncpy(info.serverName, addr.c_str(), ServerNameLen - 1);
+  info.serverName[ServerNameLen - 1] = 0;
+
+  strncpy(info.referrer, referrer.c_str(), ReferrerLen - 1);
+  info.referrer[ReferrerLen - 1] = 0;
+
   info.serverPort = port;
   if (team == NoTeam) {
     // leave it alone, player can select using the menu
   } else {
     info.team = (TeamColor)team;
   }
+
+  printf("AutoJoin: %s %u %i \"%s\"\n", addr.c_str(), port, team, referrer.c_str()); // FIXME
 
   joinGame();
 }
@@ -3125,7 +3137,7 @@ static void handleNewPlayer(void *msg)
     serverLink);
   robots[i]->setTeam(AutomaticTeam);
   serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
-    robots[i]->getCallSign(), "");
+    robots[i]->getCallSign(), "", "");
   if (!numRobots) {
     makeObstacleList();
     RobotPlayer::setObstacleList(&obstacleList);
@@ -5170,57 +5182,56 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
-case ServerLink::BadVersion: {
-  static char versionError[] = "Incompatible server version XXXXXXXX";
-  strncpy(versionError + strlen(versionError) - 8,
-    serverLink->getVersion(), 8);
-  HUDDialogStack::get()->setFailedMessage(versionError);
-  break;
-			     }
+      case ServerLink::BadVersion: {
+        static char versionError[] = "Incompatible server version XXXXXXXX";
+        strncpy(versionError + strlen(versionError) - 8,
+          serverLink->getVersion(), 8);
+        HUDDialogStack::get()->setFailedMessage(versionError);
+        break;
+      }
+      case ServerLink::Refused: {
+        // you got banned
+        const std::string &rejmsg = serverLink->getRejectionMessage();
 
-case ServerLink::Refused: {
-  // you got banned
-  const std::string &rejmsg = serverLink->getRejectionMessage();
+        // add to the HUD
+        std::string msg = ColorStrings[RedColor];
+        msg += "You have been banned from this server";
+        HUDDialogStack::get()->setFailedMessage(msg.c_str());
 
-  // add to the HUD
-  std::string msg = ColorStrings[RedColor];
-  msg += "You have been banned from this server";
-  HUDDialogStack::get()->setFailedMessage(msg.c_str());
+        // add to the console
+        msg = ColorStrings[RedColor];
+        msg += "You have been banned from this server:";
+        addMessage(NULL, msg);
+        msg = ColorStrings[YellowColor];
+        msg += rejmsg;
+        addMessage(NULL, msg);
 
-  // add to the console
-  msg = ColorStrings[RedColor];
-  msg += "You have been banned from this server:";
-  addMessage(NULL, msg);
-  msg = ColorStrings[YellowColor];
-  msg += rejmsg;
-  addMessage(NULL, msg);
-
-  break;
-			  }
-
-case ServerLink::Rejected:
-  // the server is probably full or the game is over.  if not then
-  // the server is having network problems.
-  HUDDialogStack::get()->setFailedMessage
-    ("Game is full or over.  Try again later.");
-  break;
-
-case ServerLink::SocketError:
-  HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
-  break;
-
-case ServerLink::CrippledVersion:
-  // can't connect to (otherwise compatible) non-crippled server
-  HUDDialogStack::get()->setFailedMessage
-    ("Cannot connect to full version server.");
-  break;
-
-default:
-  HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format
-    ("Internal error connecting to server (error code %d).",
-    serverLink->getState()).c_str());
-  break;
+        break;
+      }
+      case ServerLink::Rejected: {
+        // the server is probably full or the game is over.  if not then
+        // the server is having network problems.
+        HUDDialogStack::get()->setFailedMessage
+          ("Game is full or over.  Try again later.");
+        break;
+      }
+      case ServerLink::SocketError: {
+        HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
+        break;
+      }
+      case ServerLink::CrippledVersion: {
+        // can't connect to (otherwise compatible) non-crippled server
+        HUDDialogStack::get()->setFailedMessage
+          ("Cannot connect to full version server.");
+        break;
+      }
+      default: {
+        HUDDialogStack::get()->setFailedMessage
+          (TextUtils::format
+          ("Internal error connecting to server (error code %d).",
+          serverLink->getState()).c_str());
+        break;
+      }
     }
     return;
   }
@@ -5296,9 +5307,11 @@ static void joinInternetGame2()
   // tell server we want to join
   bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
   serverLink->sendEnter(myTank->getId(), TankPlayer, myTank->getTeam(),
-    myTank->getCallSign(),
-    startupInfo.token);
+                        myTank->getCallSign(),
+                        startupInfo.token,
+                        startupInfo.referrer);
   startupInfo.token[0] = '\0';
+  startupInfo.referrer[0] = '\0';
 
   // Get the server's server key
   std::string serverKey = startupInfo.serverName;
@@ -7500,9 +7513,10 @@ void startPlaying()
   // enter game if we have all the info we need, otherwise
   // pop up main menu
   if (startupInfo.autoConnect &&
-    startupInfo.callsign[0] && startupInfo.serverName[0]) {
-      joinRequested    = true;
-      controlPanel->addMessage("Trying...");
+      startupInfo.callsign[0] &&
+      startupInfo.serverName[0]) {
+    joinRequested = true;
+    controlPanel->addMessage("Trying...");
   } else {
     mainMenu->createControls();
     HUDDialogStack::get()->push(mainMenu);

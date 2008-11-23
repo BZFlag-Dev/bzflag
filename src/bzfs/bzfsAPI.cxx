@@ -1363,6 +1363,16 @@ BZF_API const char* bz_getPlayerIPAddress( int playerID )
   return player->netHandler->getTargetIP();
 }
 
+BZF_API const char* bz_getPlayerReferrer( int playerID )
+{
+  GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if(!player)
+    return NULL;
+
+  return player->player.getReferrer();
+}
+
 BZF_API bool bz_setPlayerSpawnable( int playerID, bool spawn )
 {
   GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
@@ -1864,8 +1874,8 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_sendJoinServer(int playerID,
-                               const char* address, int port, int teamID)
+BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
+                               int teamID, const char* referrer)
 {
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (player == NULL) {
@@ -1877,13 +1887,19 @@ BZF_API bool bz_sendJoinServer(int playerID,
   if ((port < 0) || (port >= 65536)) {
     return false;
   }
+  if (referrer == NULL) {
+    return false;
+  }
+
+  const std::string addr = address;
+  const std::string refr = referrer;
 
   NetMsg msg = MSGMGR.newMessage();
 
-  const std::string addr = address;
   msg->packStdString(addr);
   msg->packInt(port);
   msg->packInt(teamID);
+  msg->packStdString(refr);
 
   MSGMGR.newMessage(msg)->send(player->netHandler, MsgJoinServer);
 
