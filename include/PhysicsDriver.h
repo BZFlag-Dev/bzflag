@@ -18,6 +18,7 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 
@@ -124,7 +125,9 @@ class PhysicsDriverManager {
 
   private:
     std::vector<PhysicsDriver*> drivers;
+    std::map<std::string, int>  nameMap;
 };
+
 
 inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
 {

@@ -46,6 +46,9 @@
 #include "BZDBCache.h"
 #include "MotionUtils.h"
 #include "Reports.h"
+#include "LinkManager.h"
+#include "Teleporter.h"
+#include "PhysicsDriver.h"
 
 
 TimeKeeper synct=TimeKeeper::getCurrent();
@@ -3363,6 +3366,67 @@ BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
 
   return solid;
 }
+
+
+BZF_API bool bz_getTeleLinkIDs(const char* teleName,
+                               int* frontLink, int* backLink)
+{
+  if (world == NULL) {
+    return false;
+  }
+  const int teleIndex = world->getLinkManager().getTeleportIndex(teleName);
+  if (teleIndex < 0) {
+    return false;
+  }
+  *frontLink = teleIndex * 2;
+  *backLink = *frontLink + 1;
+  return true;
+}
+
+
+BZF_API const char* bz_getLinkTeleName(int linkIndex)
+{
+  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+  const int teleCount = (int)teleporters.size();
+  if ((linkIndex < 0) || (linkIndex >= (2 * teleCount))) {
+    return NULL;
+  }
+  const Teleporter* tele = (const Teleporter*) teleporters[linkIndex / 2];
+  return tele->getName().c_str();
+}
+
+
+BZF_API unsigned int bz_getLinkID(const char* linkName)
+{
+  
+  return -1;
+}
+
+
+BZF_API const char*  bz_getLinkName(unsigned int linkID)
+{
+  return NULL;
+}
+
+
+BZF_API unsigned int bz_getPhyDrvID(const char* phyDrvName)
+{
+  if (!phyDrvName) {
+    return -1;
+  }
+  return PHYDRVMGR.findDriver(phyDrvName);
+}
+
+
+BZF_API const char*  bz_getPhyDrvName(unsigned int phyDrvID)
+{
+  const PhysicsDriver* phyDrv = PHYDRVMGR.getDriver(phyDrvID);
+  if (phyDrv == NULL) {
+    return NULL;
+  }
+  return phyDrv->getName().c_str();
+}
+
 
 BZF_API bool bz_SetWorldObjectTangibility ( int id, const bz_SolidObjectPassableAtributes &atribs )
 {

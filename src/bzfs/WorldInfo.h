@@ -178,7 +178,8 @@ public:
   bool inRect(const float *p1, float angle, const float *size,
 			 float x, float y, float r) const;
 
-  const MapInfo& getMapInfo() const { return mapInfo; }
+  const MapInfo&     getMapInfo()     const { return mapInfo; }
+  const LinkManager& getLinkManager() const { return links; }
 
 private:
 

@@ -89,6 +89,11 @@ static int GetWorldURL(lua_State* L);
 static int SetWorldURL(lua_State* L);
 static int GetWorldCache(lua_State* L);
 
+static int GetTeleLinkIDs(lua_State* L);
+static int GetLinkTeleName(lua_State* L);
+static int GetPhyDrvID(lua_State* L);
+static int GetPhyDrvName(lua_State* L);
+
 static int DebugMessage(lua_State* L);
 static int GetDebugLevel(lua_State* L);
 
@@ -265,6 +270,11 @@ bool CallOuts::PushEntries(lua_State* L)
   REGISTER_LUA_CFUNC(SetWallHeight);
   REGISTER_LUA_CFUNC(SetWorldSize);
   REGISTER_LUA_CFUNC(SetWorldURL);
+
+  REGISTER_LUA_CFUNC(GetTeleLinkIDs);
+  REGISTER_LUA_CFUNC(GetLinkTeleName);
+  REGISTER_LUA_CFUNC(GetPhyDrvID);
+  REGISTER_LUA_CFUNC(GetPhyDrvName);
 
   REGISTER_LUA_CFUNC(DebugMessage);
   REGISTER_LUA_CFUNC(GetDebugLevel);
@@ -590,6 +600,59 @@ static int SetWorldURL(lua_State* L)
   const char* url = luaL_checkstring(L, 1);
   bz_setClientWorldDownloadURL(url);
   return 0;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetTeleLinkIDs(lua_State* L)
+{
+  const char* name = luaL_checkstring(L, 1);
+  int frontLink, backLink;
+  const int id = bz_getTeleLinkIDs(name, &frontLink, &backLink);
+  if (id < 0) {
+    return 0;
+  }
+  lua_pushinteger(L, frontLink);
+  lua_pushinteger(L, backLink);
+  return 2;
+}
+
+
+static int GetLinkTeleName(lua_State* L)
+{
+  const int linkID = luaL_checkint(L, 1);
+  const char* name = bz_getLinkTeleName(linkID);
+  if (name == NULL) {
+    return 0;
+  }
+  lua_pushstring(L, name);
+  return 1;
+}
+
+
+static int GetPhyDrvID(lua_State* L)
+{
+  const char* name = luaL_checkstring(L, 1);
+  const int id = bz_getPhyDrvID(name);
+  if (id < 0) {
+    return 0;
+  }
+  lua_pushinteger(L, id);
+  return 1;
+}
+
+
+static int GetPhyDrvName(lua_State* L)
+{
+  const int id = luaL_checkint(L, 1);
+  const char* name = bz_getPhyDrvName(id);
+  if (name == NULL) {
+    return 0;
+  }
+  lua_pushstring(L, name);
+  return 1;
 }
 
 

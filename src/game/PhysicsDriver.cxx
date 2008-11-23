@@ -55,6 +55,7 @@ void PhysicsDriverManager::clear()
     delete *it;
   }
   drivers.clear();
+  nameMap.clear();
   return;
 }
 
@@ -73,27 +74,34 @@ void PhysicsDriverManager::update()
 
 int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
 {
-  drivers.push_back (driver);
+  const std::string& name = driver->getName();
+  if (!name.empty()) {
+    if (nameMap.find(name) == nameMap.end()) {
+      nameMap[name] = drivers.size();
+    }
+  }
+  drivers.push_back(driver);
   return ((int)drivers.size() - 1);
 }
 
 
-int PhysicsDriverManager::findDriver(const std::string& dyncol) const
+int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 {
-  if (dyncol.size() <= 0) {
+  if (phydrv.empty()) {
     return -1;
-  } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
-    int index = atoi (dyncol.c_str());
+  }
+  else if ((phydrv[0] >= '0') && (phydrv[0] <= '9')) {
+    int index = atoi (phydrv.c_str());
     if ((index < 0) || (index >= (int)drivers.size())) {
       return -1;
     } else {
       return index;
     }
-  } else {
-    for (int i = 0; i < (int)drivers.size(); i++) {
-      if (drivers[i]->getName() == dyncol) {
-	return i;
-      }
+  }
+  else {
+    std::map<std::string, int>::const_iterator it = nameMap.find(phydrv);
+    if (it != nameMap.end()) {
+      return it->second;
     }
     return -1;
   }

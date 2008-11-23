@@ -23,6 +23,7 @@
 // system headers
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 class LinkManager {
@@ -41,6 +42,8 @@ class LinkManager {
 
     int getTeleportTarget(int source) const;
     int getTeleportTarget(int source, unsigned int seed) const;
+
+    int getTeleportIndex(const std::string& name) const;    
 
     int packSize() const;
     void* pack(void*) const;
@@ -65,8 +68,9 @@ class LinkManager {
       std::vector<int> dsts;
     } LinkNumberSet;
 
-    std::vector<LinkNameSet>	linkNames;
-    std::vector<LinkNumberSet>	linkNumbers;
+    std::vector<LinkNameSet>   linkNames;
+    std::vector<LinkNumberSet> linkNumbers;
+    std::map<std::string, int> teleNameMap;
 };
 
 

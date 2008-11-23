@@ -50,6 +50,7 @@ void LinkManager::clear()
 {
   linkNames.clear();
   linkNumbers.clear();
+  teleNameMap.clear();
   return;
 }
 
@@ -163,6 +164,18 @@ void LinkManager::doLinking()
     }
   }
 
+  // create the teleporter name map
+  for (i = 0; i < teles.size(); i++) {
+    Teleporter* tele = (Teleporter*) teles[i];
+    const std::string& name = tele->getName();
+    if (!name.empty()) {
+      if (teleNameMap.find(name) == teleNameMap.end()) {
+        teleNameMap[name] = i;
+      }
+    }
+  }
+
+  // print some infos, yeeha
   if (debugLevel >= 4) {
     for (i = 0; i < teles.size(); i++) {
       Teleporter* tele = (Teleporter*) teles[i];
@@ -268,6 +281,16 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
     assert(false);
     return 0;
   }
+}
+
+
+int LinkManager::getTeleportIndex(const std::string& name) const
+{
+  std::map<std::string, int>::const_iterator it = teleNameMap.find(name);
+  if (it == teleNameMap.end()) {
+    return -1;
+  }
+  return it->second;
 }
 
 

@@ -1621,6 +1621,12 @@ BZF_API void bz_releaseWorldObjectList(bz_APIWorldObjectList *list);
 BZF_API unsigned int bz_findWorldObject(const char *name);
 BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID(unsigned int id);
 
+BZF_API bool         bz_getTeleLinkIDs(const char* teleName,
+                                       int* frontLink, int* backLink);
+BZF_API const char*  bz_getLinkTeleName(int linkIndex);
+BZF_API unsigned int bz_getPhyDrvID(const char* phyDrvName);
+BZF_API const char*  bz_getPhyDrvName(unsigned int phyDrvID);
+
 BZF_API bool bz_SetWorldObjectTangibility(int id, const bz_SolidObjectPassableAtributes &atribs);
 BZF_API bool bz_GetWorldObjectTangibility(int id, bz_SolidObjectPassableAtributes &atribs);
 BZF_API void bz_ResetWorldObjectTangibilities(void);
