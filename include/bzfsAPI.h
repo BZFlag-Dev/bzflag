@@ -1480,6 +1480,8 @@ public:
 };
 
 BZF_API bool bz_registerCustomMapObject(const char* object, bz_CustomMapObjectHandler *handler);
+BZF_API bool bz_registerCustomMapObject2(const char* object, const char* end,
+                                         bz_CustomMapObjectHandler *handler);
 BZF_API bool bz_removeCustomMapObject(const char* object);
 
 

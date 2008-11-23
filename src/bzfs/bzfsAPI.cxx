@@ -3053,7 +3053,16 @@ BZF_API bool bz_registerCustomMapObject(const char *object, bz_CustomMapObjectHa
   if(!object || !handler)
     return false;
 
-  return registerCustomMapObject(object, handler);
+  return registerCustomMapObject(object, NULL, handler);
+}
+
+BZF_API bool bz_registerCustomMapObject2(const char *object, const char* end,
+                                         bz_CustomMapObjectHandler *handler)
+{
+  if (!object || !handler) {
+    return false;
+  }
+  return registerCustomMapObject(object, end, handler);
 }
 
 //-------------------------------------------------------------------------

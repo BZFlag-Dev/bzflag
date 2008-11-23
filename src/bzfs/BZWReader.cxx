@@ -216,7 +216,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
   GroupDefinition* const startDef = groupDef;
 
   std::string customObject;
-  std::vector<std::string>	customLines;
+  std::string customEndToken;
+  std::vector<std::string> customLines;
 
   while (!input->eof() && !input->fail() && input->good()) {
     // watch out for starting a new object when one is already in progress
@@ -228,6 +229,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  delete object;
 	} else if (customObject.size()) {
   	  customObject = "";
+  	  customEndToken = "";
 	  customLines.clear();
 	}
       }
@@ -247,8 +249,14 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     else if (buffer[0] == '#') {
       // ignore comment
     }
-    else if (strcasecmp(buffer, "end") == 0) {
-      if (object) {
+    else if ((customEndToken.empty() && (strcasecmp(buffer, "end") == 0)) ||
+             (!customEndToken.empty() && (strcasecmp(buffer, customEndToken.c_str()) == 0))) {
+      if (!object) {
+	errorHandler->fatalError(
+	  std::string("unexpected \"end\" token"), line);
+	return false;
+      }
+      else {
 	if (object != fakeObject) {
 	  if (object->usesManager()) {
 	    object->writeToManager();
@@ -271,7 +279,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
           }
 
           bz_ApiString objName = bz_ApiString(customObject);
-	  customObjectMap[customObject]->handle(objName, &data);
+	  customObjectMap[customObject].handler->handle(objName, &data);
 	  object = NULL;
 
 	  // embedded objects
@@ -297,13 +305,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
           }
 	}
 	object = NULL;
+        customEndToken = "";
       }
-      else {
-	errorHandler->fatalError(
-	  std::string("unexpected \"end\" token"), line);
-	return false;
-      }
-
     }
     else if (parseNormalObject(buffer, &newObject)) {
       // newObject has already been assigned
@@ -418,9 +421,11 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     else { // filling the current object
       // unknown token
       const std::string upperToken = TextUtils::toupper(std::string(buffer));
-      if (customObjectMap.find(upperToken) != customObjectMap.end()) {
-	customObject = TextUtils::toupper(std::string(buffer));
+      CustomObjectMap::iterator it = customObjectMap.find(upperToken);
+      if (it != customObjectMap.end()) {
 	object = fakeObject;
+	customObject = upperToken;
+	customEndToken = it->second.endToken;
 	customLines.clear();
       }	else {
 	errorHandler->warning(
