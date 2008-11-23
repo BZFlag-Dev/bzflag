@@ -75,6 +75,7 @@ void CommandCompleter::reset()
   registerWord("file");
   registerWord("save");
   registerWord("/reload");
+  registerWord("/mapinfo");
   registerWord("/masterban"); // also uses list
   registerWord("reload");
   registerWord("flush");
