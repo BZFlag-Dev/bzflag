@@ -3440,7 +3440,7 @@ BZF_API const char* bz_getLinkTeleName(int linkIndex)
 }
 
 
-BZF_API unsigned int bz_getPhyDrvID(const char* phyDrvName)
+BZF_API int bz_getPhyDrvID(const char* phyDrvName)
 {
   if (!phyDrvName) {
     return -1;
