@@ -1765,7 +1765,11 @@ static void handleJoinServer(void *msg)
   StartupInfo& info = startupInfo;
   strncpy(info.serverName, addr.c_str(), ServerNameLen - 1);
   info.serverPort = port;
-  info.team = (TeamColor)team;
+  if (team == NoTeam) {
+    // leave it alone, player can select using the menu
+  } else {
+    info.team = (TeamColor)team;
+  }
 
   joinGame();
 }
