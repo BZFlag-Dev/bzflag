@@ -78,33 +78,37 @@ bool BZDB::PushEntries(lua_State* L)
 
 static int GetMap(lua_State* L)
 {
-  bz_APIStringList list;
+  bz_APIStringList* list = bz_newStringList();
   lua_newtable(L);
-  if (!bz_getBZDBVarList(&list)) {
+  if (!bz_getBZDBVarList(list)) {
+    bz_deleteStringList(list);    
     return 1;
   }
-  for (int i = 0; i < list.size(); i++) {
-    const char* key = list[i].c_str();
+  for (int i = 0; i < list->size(); i++) {
+    const char* key = list->get(i).c_str();
     lua_pushstring(L, key);
     lua_pushstring(L, bz_getBZDBString(key).c_str());
     lua_rawset(L, -3);
   }
+  bz_deleteStringList(list);    
   return 1;
 }
 
 
 static int GetList(lua_State* L)
 {
-  bz_APIStringList list;
+  bz_APIStringList* list = bz_newStringList();
   lua_newtable(L);
-  if (!bz_getBZDBVarList(&list)) {
+  if (!bz_getBZDBVarList(list)) {
+    bz_deleteStringList(list);    
     return 1;
   }
-  for (int i = 0; i < list.size(); i++) {
+  for (int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
-    lua_pushstring(L, list[i].c_str());
+    lua_pushstring(L, list->get(i).c_str());
     lua_rawset(L, -3);
   }
+  bz_deleteStringList(list);    
   return 1;
 }
 

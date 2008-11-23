@@ -158,11 +158,17 @@ bool MapObject::Shutdown(lua_State* _L)
 
 static int AttachMapObject(lua_State* L)
 {
+  int funcIndex = 2;
   const string objName  = makelower(luaL_checkstring(L, 1));
-  if (!lua_isfunction(L, 2)) {
+  const char* endToken = NULL;
+  if (lua_israwstring(L, 2)) {
+    funcIndex++;
+    endToken = lua_tostring(L, 2);
+  }
+  if (!lua_isfunction(L, funcIndex)) {
     luaL_error(L, "expected a function");
   }
-  lua_settop(L, 2); // function is the third param
+  lua_settop(L, funcIndex); // discard any extras
 
   if (mapHandlers.find(objName) != mapHandlers.end()) {
     lua_pushboolean(L, false);
@@ -170,7 +176,7 @@ static int AttachMapObject(lua_State* L)
   }
 
   MapHandler* handler = new MapHandler(objName);
-  if (bz_registerCustomMapObject(objName.c_str(), handler)) {
+  if (bz_registerCustomMapObject2(objName.c_str(), endToken, handler)) {
     lua_pushboolean(L, true);
   } else {
     lua_pushboolean(L, false);

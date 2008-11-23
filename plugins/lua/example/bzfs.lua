@@ -63,7 +63,7 @@ BZ.Print('pluginDir = ' .. BZ.GetPluginDirectory())
 -- print everything in the global table
 --
 
-if (false) then
+if (not false) then
   print()
   print(string.rep('-', 80))
   table.print(_G, BZ.Print)
@@ -258,8 +258,8 @@ BZ.AttachMapObject('custom_block',  CustomMapObject)
 BZ.AttachMapObject('custom_block1', CustomMapObject)
 BZ.AttachMapObject('custom_block2', CustomMapObject)
 BZ.AttachMapObject('custom_block3', CustomMapObject)
-BZ.AttachMapObject('lua_plugin',    CustomMapObject)
-BZ.AttachMapObject('lua_block',     CustomMapObject)
+BZ.AttachMapObject('lua', 'end_lua',   CustomMapObject)
+BZ.AttachMapObject('lua_plugin', 'end_lua_plugin',  CustomMapObject)
 
 
 --------------------------------------------------------------------------------

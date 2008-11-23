@@ -696,17 +696,19 @@ static int GetPlayerCount(lua_State* L)
 
 static int GetPlayerIDs(lua_State* L)
 {
-  bz_APIIntList playerList;
-  if (!bz_getPlayerIndexList(&playerList)) {
+  bz_APIIntList* playerList = bz_newIntList();
+  if (!bz_getPlayerIndexList(playerList)) {
     lua_createtable(L, 0, 0);
+    bz_deleteIntList(playerList);
     return 1;
   }
-  lua_createtable(L, 0, playerList.size());
-  for (int i = 0; i < playerList.size(); i++) {
+  lua_createtable(L, 0, playerList->size());
+  for (int i = 0; i < playerList->size(); i++) {
     lua_pushinteger(L, i + 1);
-    lua_pushinteger(L, playerList[i]);
+    lua_pushinteger(L, playerList->get(i));
     lua_rawset(L, -3);
   }
+  bz_deleteIntList(playerList);
   return 1;
 }
 
