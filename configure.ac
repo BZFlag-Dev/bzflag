@@ -50,6 +50,11 @@ AC_INIT(BZFlag, 2.99.11, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
+# When --libdir has not been used put plugins in bzflag's own directory.
+if test "x$libdir" = 'x${exec_prefix}/lib' ; then
+	libdir="$libdir/bzflag"
+fi
+
 AC_CONFIG_AUX_DIR(misc)
 
 # sed magic to get version numbers from src/date/buildDate.cxx
@@ -1198,6 +1203,8 @@ bz_configure_args="$ac_configure_args"
 
 if test x$enable_plugins != xno ; then
     AC_CONFIG_SUBDIRS(plugins)
+    # install plugins where bzfs expects them to be
+    ac_configure_args="$ac_configure_args --libdir=$libdir"
 fi
 if test "x$BUILD_FTGL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ftgl)
@@ -1392,6 +1399,8 @@ prefix=`eval "echo $prefix"`
 prefix=`eval "echo $prefix"`
 bindir=`eval "echo $bindir"`
 bindir=`eval "echo $bindir"`
+libdir=`eval "echo $libdir"`
+libdir=`eval "echo $libdir"`
 sysconfdir=`eval "echo $sysconfdir"`
 sysconfdir=`eval "echo $sysconfdir"`
 mandir=`eval "echo $mandir"`
@@ -1415,6 +1424,7 @@ BZ_UNBOLD
 AC_MSG_RESULT([])
 AC_MSG_RESULT([             Prefix: ${prefix}])
 AC_MSG_RESULT([           Binaries: ${bindir}])
+AC_MSG_RESULT([            Plugins: ${libdir}])
 AC_MSG_RESULT([Configuration files: ${sysconfdir}])
 AC_MSG_RESULT([       Manual pages: ${mandir}])
 AC_MSG_RESULT([])
