@@ -50,7 +50,7 @@ SUBDIRS = \
 	${REGEX_DIR}
 
 DIST_SUBDIRS = \
-	ftgl \
+	lua \
 	regex \
 	zlib
 
@@ -58,7 +58,8 @@ DIST_SUBDIRS = \
 EXTRA_DIST = \
 	ares \
 	curl \
-	freetype
+	freetype \
+	ftgl
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
