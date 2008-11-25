@@ -34,7 +34,7 @@ else
 FREETYPE_DIR =
 endif
 
-if BUILD_LUA
+if BUILD_PLUGINS
 LUA_DIR = lua
 else
 LUA_DIR =
@@ -51,7 +51,6 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	ftgl \
-	lua \
 	regex \
 	zlib
 
