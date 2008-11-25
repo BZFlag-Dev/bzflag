@@ -46,7 +46,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.10, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.11, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
@@ -177,6 +177,9 @@ AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Force compilation o
 # compile our own ftgl
 AC_ARG_ENABLE(ftgl_build, [  --enable-ftgl-build     Force compilation of ftgl])
 
+# compile our own lua
+AC_ARG_ENABLE(lua_build, [  --enable-lua-build     Force compilation of lua])
+
 # compile our own regex
 AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
 
@@ -192,6 +195,7 @@ if test "x$enable_all_builds" = "xyes" ; then
     enable_curl_build=yes
     enable_freetype_build=yes
     enable_ftgl_build=yes
+    enable_lua_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
 fi
@@ -310,6 +314,11 @@ AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
 AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
 AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
 
+
+dnl detect a usable system lua compression library (needs math functions in -lm)
+if test "x$enable_lua_build" != "xyes" ; then
+    AC_CHECK_LIB(lua, lua_createtable, LIBLUA="-llua", LIBLUA="")
+fi
 
 dnl *************************
 dnl *** Check for headers ***
@@ -1171,8 +1180,22 @@ if test "x$BUILD_FTGL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
 fi
 
-LIBLUA="\$(top_srcdir)/src/other/lua/liblua.la"
+
+# assume lua works if we found it.
+dnl figure out whether we need to build the included lua
+AC_MSG_CHECKING(whether to build the included lua library)
+BUILD_LUA="no (using system)"
+if test "x$LIBLUA" = "x" ; then
+    AC_DEFINE(BUILD_LUA, 1, [Build the included lua library])
+    BUILD_LUA="yes"
+    LIBLUA='${top_builddir}/src/other/lua/liblua.la'
+fi
 AC_SUBST(LIBLUA)
+AC_MSG_RESULT($BUILD_LUA)
+AM_CONDITIONAL(BUILD_LUA, test "x$BUILD_LUA" = "xyes")
+if test "x$BUILD_LUA" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/lua/src"
+fi
 
 # make sure ECHO and ECHO_N got defined and substituted
 if test "x$ECHO" = "x" ; then
@@ -1198,6 +1221,10 @@ bz_configure_args="$ac_configure_args"
 
 if test x$enable_plugins != xno ; then
     AC_CONFIG_SUBDIRS(plugins)
+    if test "x$BUILD_LUA" = "xyes" ; then
+	# have plugins use the included lua
+	ac_configure_args="$ac_configure_args --enable-lua-build"
+    fi
 fi
 if test "x$BUILD_FTGL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ftgl)
@@ -1430,6 +1457,7 @@ AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
 AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
 AC_MSG_RESULT([Build freetype2 ...: $BUILD_FREETYPE])
 AC_MSG_RESULT([Build ftgl ........: $BUILD_FTGL])
+AC_MSG_RESULT([Build lua .........: $BUILD_LUA])
 AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
 AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
 AC_MSG_RESULT([])

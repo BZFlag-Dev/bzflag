@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = lua.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
-AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
+AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 lua_la_SOURCES =      \
 	mylua.h       \
@@ -25,8 +25,7 @@ lua_la_LDFLAGS = -module -avoid-version
 
 lua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 
-lua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
-                 $(top_builddir)/../src/other/lua/liblua.la
+lua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la @LIBLUA@
 
 EXTRA_DIST = \
 	README.txt \

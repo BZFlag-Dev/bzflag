@@ -41,6 +41,8 @@ AC_INIT(BZFlag Plugins, 14, [http://BZFlag.org], bzflag-plugins)
 AC_CONFIG_SRCDIR(SAMPLE_PLUGIN/SAMPLE_PLUGIN.cpp)
 AC_REVISION($Revision$)
 
+AC_ARG_ENABLE(lua_build, [  --enable-lua-build     Use included version of lua])
+
 AC_CONFIG_AUX_DIR([.])
 
 # force locale setting to C so things like date output as expected
@@ -142,7 +144,15 @@ dnl ***************************
 dnl *** Check for libraries ***
 dnl ***************************
 
-# no library checks needed so far
+if test "x$enable_lua_build" != "xyes" ; then
+  AC_CHECK_LIB(lua, lua_createtable, LIBLUA="-llua",
+	       [AC_MSG_ERROR([The lua is required to compile the lua plugin])])
+else
+  AC_MSG_NOTICE([Using the included lua])
+  CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(abs_top_srcdir)/../src/other/lua/src"
+  LIBLUA='../${top_builddir}/src/other/lua/liblua.la'
+  AC_SUBST(LIBLUA)
+fi
 
 
 dnl *************************
