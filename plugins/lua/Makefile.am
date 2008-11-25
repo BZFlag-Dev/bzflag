@@ -4,13 +4,21 @@ AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
 AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
 
 lua_la_SOURCES =      \
+	mylua.h       \
 	lua.cpp       \
+	callins.h     \
 	callins.cpp   \
+	callouts.h    \
 	callouts.cpp  \
+	constants.h   \
 	constants.cpp \
+	mapobject.h   \
 	mapobject.cpp \
+	slashcmd.h    \
 	slashcmd.cpp  \
+	bzdb.h        \
 	bzdb.cpp      \
+	lualfs.h      \
 	lualfs.cpp
 
 lua_la_LDFLAGS = -module -avoid-version
