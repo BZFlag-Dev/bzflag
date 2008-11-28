@@ -897,7 +897,7 @@ BZDB variable), can use the following escape characters:
 .br
 \fBtext\fR
 .br
-\fB  name example_text\fR
+\fB  name\fR example_text
 .br
 \fB  data\fR my text string   # the text, or the bzdb variable name
 .br
@@ -905,7 +905,7 @@ BZDB variable), can use the following escape characters:
 .br
 \fB  font\fR myFontName       # the font name, can use URLs
 .br
-\fB  justify 0.0\fR           # horizontal justification
+\fB  justify\fR 0.0           # horizontal justification
 .br
   # 0.0 -> left   justify
 .br
@@ -913,11 +913,11 @@ BZDB variable), can use the following escape characters:
 .br
   # 1.0 -> right  justify
 .br
-\fB  fontSize 18.0\fR         # the resolution of the font
+\fB  fontSize\fR 18.0         # the resolution of the font
 .br
-\fB  lineSpace 1.1\fR         # vertical space between lines
+\fB  lineSpace\fR 1.1         # vertical space between lines
 .br
-\fB  fixedWidth 0.0\fR        # text width control
+\fB  fixedWidth\fR 0.0        # text width control
 .br
   # if > 0, the initial horizontal width (relative to a height of 1)
 .br
@@ -927,9 +927,9 @@ BZDB variable), can use the following escape characters:
 .br
 \fB  billboard\fR             # orients the text towards the screen
 .br
-\fB  polyoffset 0.0 0.0\fR    # polygon offset factor and units
+\fB  polyoffset\fR 0.0 0.0    # polygon offset factor and units
 .br
-\fB  lengthPerPixel 0.0\fR    # draw distance cutoff length
+\fB  lengthPerPixel\fR 0.0    # draw distance cutoff length
 .br
 \fBend\fR
 .br
