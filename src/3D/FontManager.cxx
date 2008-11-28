@@ -156,7 +156,7 @@ namespace {
 
 #if debugging
     std::cout << "getGLFont CREATED face:" << face 
-	      << " size:" << size << (void*)font 
+	      << " size:" << size << " " << (void*)font 
 	      << std::endl;
 #endif
 
