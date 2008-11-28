@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="geometry"
 	ProjectGUID="{7009C42E-D693-4635-95CF-23ECBA63653C}"
+	RootNamespace="geometry"
 	>
 	<Platforms>
 		<Platform
@@ -660,6 +661,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\geometry\TankSceneNode.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\geometry\TextSceneNode.cxx"
 				>
 			</File>
 			<File

@@ -714,6 +714,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\DynamicWorldText.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\EntryZone.cxx"
 				>
 			</File>
@@ -1240,6 +1244,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\Downloads.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\DynamicWorldText.h"
 				>
 			</File>
 			<File

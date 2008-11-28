@@ -824,6 +824,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzfs\CustomWorldText.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzfs\CustomZone.cxx"
 					>
 				</File>
@@ -999,6 +1003,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\CustomWorld.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\CustomWorldText.h"
 				>
 			</File>
 			<File
