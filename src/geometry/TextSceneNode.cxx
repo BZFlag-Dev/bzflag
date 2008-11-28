@@ -446,7 +446,7 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 , text(*_text)
 , xformList(INVALID_GL_LIST_ID)
 , fontID(-1)
-, fontSize(text.fontSize)
+, fontSize((int)text.fontSize)
 , fixedWidth(0.0f)
 , noRadar(text.bzMaterial->getNoRadar())
 , noShadow(text.bzMaterial->getNoShadow())
