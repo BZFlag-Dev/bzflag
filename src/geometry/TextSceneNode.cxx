@@ -694,7 +694,7 @@ void TextSceneNode::TextRenderNode::render()
 
   glNormal3f(0.0f, 0.0f, 1.0f);
 
-  glColor4fv(colorPtr);
+  myColor4fv(colorPtr);
   const float oldOpacity = fm.getOpacity();
   if (colorPtr[3] != oldOpacity) {
     fm.setOpacity(colorPtr[3]);
@@ -806,7 +806,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
 
 void TextSceneNode::TextRenderNode::drawDebug()
 {
-  glColor4fv(colorPtr);
+  myColor4fv(colorPtr);
 
   float points[5][3];
   sceneNode->getPoints(points);

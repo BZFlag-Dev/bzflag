@@ -32,6 +32,7 @@
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 #include "OSFile.h"
+#include "SceneNode.h"
 
 // local implementation headers
 #include "FTGL/ftgl.h"
@@ -498,11 +499,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  glDisable(GL_TEXTURE_2D);
 	  glEnable(GL_BLEND);
 	  if (bright && underlineColor[0] >= 0) {
-	    glColor4fv(underlineColor);
+	    myColor4fv(underlineColor);
 	  } else if (underlineColor[0] >= 0) {
-	    glColor4fv(dimUnderlineColor);
+	    myColor4fv(dimUnderlineColor);
 	  } else if (color[0] >= 0) {
-	    glColor4fv(color);
+	    myColor4fv(color);
 	  }
 
 	  glBegin(GL_LINES); {
@@ -514,7 +515,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	}
 
 	if (color[0] >= 0) {
-	  glColor4fv(color);
+	  myColor4fv(color);
 	}
 
 	theFont->Render(rendertext);
@@ -528,7 +529,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       x += width;
 
       if (color[0] >= 0) {
-	glColor4f(1, 1, 1, 1);
+	myColor4f(1, 1, 1, 1);
       }
     }
     if (!doneLastSection) {
