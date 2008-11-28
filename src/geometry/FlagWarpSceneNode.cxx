@@ -23,12 +23,11 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implementation headers
 #include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 const float		FlagWarpSize =	7.5;		// meters
 const GLfloat		FlagWarpAlpha = 0.5f;

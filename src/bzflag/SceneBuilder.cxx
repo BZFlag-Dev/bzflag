@@ -19,19 +19,20 @@
 #include "World.h"
 
 // scene node implemenation headers
-#include "MeshPolySceneNode.h"
-#include "TankSceneNode.h"
-#include "BoxSceneNodeGenerator.h"
-#include "WallSceneNodeGenerator.h"
-#include "MeshSceneNodeGenerator.h"
 #include "BaseSceneNodeGenerator.h"
-#include "PyramidSceneNodeGenerator.h"
-#include "ObstacleSceneNodeGenerator.h"
-#include "TeleporterSceneNodeGenerator.h"
-#include "EighthDimShellNode.h"
-#include "EighthDBoxSceneNode.h"
-#include "EighthDPyrSceneNode.h"
+#include "BoxSceneNodeGenerator.h"
 #include "EighthDBaseSceneNode.h"
+#include "EighthDBoxSceneNode.h"
+#include "EighthDimShellNode.h"
+#include "EighthDPyrSceneNode.h"
+#include "MeshPolySceneNode.h"
+#include "MeshSceneNodeGenerator.h"
+#include "ObstacleSceneNodeGenerator.h"
+#include "PyramidSceneNodeGenerator.h"
+#include "TankSceneNode.h"
+#include "TeleporterSceneNodeGenerator.h"
+#include "TextSceneNode.h"
+#include "WallSceneNodeGenerator.h"
 
 // common implementation headers
 #include "StateDatabase.h"
@@ -40,7 +41,10 @@
 #include "TextureManager.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
+#include "WorldText.h"
 
+// local implementation headers
+#include "DynamicWorldText.h"
 
 // uncomment for cheaper eighth dimension scene nodes
 //#define SHELL_INSIDE_NODES
@@ -248,12 +252,30 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
     addMesh (db, (MeshObstacle*) meshes[i]);
   }
 
+  // add the world text
+  addWorldTexts(db);
+
   // add the water level node
   addWaterLevel(db, world);
 
   db->finalizeStatics();
 
   return db;
+}
+
+
+void SceneDatabaseBuilder::addWorldTexts(SceneDatabase* db)
+{
+  const std::vector<WorldText*>& texts = WORLDTEXTMGR.GetTexts();
+  for (size_t i = 0; i < texts.size(); i++) {
+    const WorldText* text = texts[i];
+    if (text->useBZDB) {
+      DYNAMICWORLDTEXT.addText(text);
+    } else {
+      TextSceneNode* node = new TextSceneNode(text);
+      db->addStaticNode(node, false);
+    }
+  }
 }
 
 

@@ -23,9 +23,7 @@
 
 // common implementation header
 #include "StateDatabase.h"
-
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 EighthDimSceneNode::EighthDimSceneNode(int numPolygons) :
 				renderNode(this, numPolygons)

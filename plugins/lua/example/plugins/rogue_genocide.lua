@@ -18,8 +18,8 @@ end
 
 local noSuicide = true
 
-function CallIn.PlayerDieEvent(victimID, team, killerID,
-                               killerTeam, flagType, shotID)
+function CallIn.PlayerDied(victimID, team, killerID,
+                           killerTeam, flagType, shotID)
   if (flagType ~= 'G') then
     return -- wrong flag type
   end

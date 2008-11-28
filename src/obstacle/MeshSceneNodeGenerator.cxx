@@ -417,6 +417,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   if (dyncol != NULL) {
     dc = dyncol->getColor();
   }
+  node->setOrder(mat->getOrder());
   node->setDynamicColor(dc);
   node->setColor(mat->getDiffuse()); // redundant, see below
   node->setModulateColor(mat->getDiffuse());

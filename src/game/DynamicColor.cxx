@@ -184,11 +184,11 @@ DynamicColor::DynamicColor()
 
   varName = "";
   varUseAlpha = false;
-  varTiming = 1.0f;
+  varTime = 1.0f;
 
   const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   varInit = false;
-  varTimingTmp = varTiming;
+  varTimeTmp = varTime;
   varTransition = false;
   memcpy(varOldColor, white, sizeof(float[4]));
   memcpy(varNewColor, white, sizeof(float[4]));
@@ -298,7 +298,7 @@ void DynamicColor::setVariableName(const std::string& vName)
 
 void DynamicColor::setVariableTiming(float seconds)
 {
-  varTiming = seconds;
+  varTime = seconds;
   return;
 }
 
@@ -414,13 +414,13 @@ void DynamicColor::updateVariable()
   // parse the optional delay timing
   std::string::size_type atpos = expr.find_first_of('@');
   if (atpos == std::string::npos) {
-    varTimingTmp = varTiming;
+    varTimeTmp = varTime;
   } else {
     char* end;
     const char* start = expr.c_str() + atpos + 1;
-    varTimingTmp = (float)strtod(start, &end);
+    varTimeTmp = (float)strtod(start, &end);
     if (end == start) {
-      varTimingTmp = varTiming; // conversion failed
+      varTimeTmp = varTime; // conversion failed
     }
     expr.resize(atpos); // strip everything after '@'
   }
@@ -452,8 +452,8 @@ void DynamicColor::update (double t)
     // setup the color value
     if (varTransition) {
       const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
-      if (diffTime < varTimingTmp) {
-	const float newScale = (varTimingTmp > 0.0f) ? (diffTime / varTimingTmp) : 1.0f;
+      if (diffTime < varTimeTmp) {
+	const float newScale = (varTimeTmp > 0.0f) ? (diffTime / varTimeTmp) : 1.0f;
 	const float oldScale = 1.0f - newScale;
 	color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
 	color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
@@ -567,7 +567,7 @@ void * DynamicColor::pack(void *buf) const
 
   buf = nboPackStdString(buf, varName);
   buf = nboPackUByte(buf, varUseAlpha ? 1 : 0);
-  buf = nboPackFloat(buf, varTiming);
+  buf = nboPackFloat(buf, varTime);
 
   for (int c = 0; c < 4; c++) {
     const ChannelParams& p = channels[c];
@@ -621,7 +621,7 @@ void * DynamicColor::unpack(void *buf)
   buf = nboUnpackStdString(buf, varName);
   buf = nboUnpackUByte(buf, u8);
   varUseAlpha = (u8 != 0);
-  buf = nboUnpackFloat(buf, varTiming);
+  buf = nboUnpackFloat(buf, varTime);
 
   for (int c = 0; c < 4; c++) {
     ChannelParams& p = channels[c];
@@ -685,7 +685,7 @@ int DynamicColor::packSize() const
   fullSize += nboStdStringPackSize(name);
   fullSize += nboStdStringPackSize(varName);
   fullSize += sizeof(uint8_t); // varUseAlpha
-  fullSize += sizeof(float); // varTiming
+  fullSize += sizeof(float); // varTime
   for (int c = 0; c < 4; c++) {
     fullSize += sizeof(float) * 2; // the limits
     fullSize += sizeof(uint32_t);
@@ -720,8 +720,8 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
     if (varUseAlpha) {
       out << indent << "  varUseAlpha " << varName << std::endl;
     }
-    if (varTiming != 1.0f) {
-      out << indent << "  varTiming " << varTiming << std::endl;
+    if (varTime != 1.0f) {
+      out << indent << "  varTime " << varTime << std::endl;
     }
   }
 

@@ -50,6 +50,7 @@ public:
   void setInterface(const std::string interfaceIP);
   void setUserAgent(const std::string userAgent);
   void setDNSCachingTime(int time);
+  void setDeleteOnDone();
 
   void addFormData(const char *key, const char *value);
 
@@ -59,24 +60,27 @@ public:
   virtual void collectData(char *ptr, int len);
   virtual void finalization(char *data, unsigned int length, bool good);
 
-  static int	fdset(fd_set &read, fd_set &write);
+  void performWait();
+
   static bool	perform();
-  void		performWait();
+  static int	fdset(fd_set &read, fd_set &write);
 
 protected:
   void	       *theData;
   unsigned int  theLen;
-private:
 
+private:
   void		infoComplete(CURLcode result);
 
   static bool   inited;
   static bool   justCalled;
-  CURL	       *easyHandle;
   static int	refs;
   static CURLM *multiHandle;
   static char   errorBuffer[CURL_ERROR_SIZE];
+
+  CURL	       *easyHandle;
   bool		added;
+  bool          deleteOnDone;
   std::string   usedUrl;
   std::string   interfaceIP;
   std::string   userAgent;

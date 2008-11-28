@@ -43,6 +43,8 @@ bzflag_SOURCES =			\
 	DisplayMenu.h			\
 	Downloads.cxx			\
 	Downloads.h			\
+	DynamicWorldText.cxx		\
+	DynamicWorldText.h		\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
 	EntryZone.cxx			\

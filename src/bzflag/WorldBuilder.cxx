@@ -19,6 +19,7 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "PhysicsDriver.h"
+#include "WorldText.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
@@ -113,6 +114,10 @@ void* WorldBuilder::unpack(void* buf)
   // unpack the teleporter links
   world->links.clear();
   buf = world->links.unpack(buf);
+
+  // unpack world text
+  WORLDTEXTMGR.clear();
+  buf = WORLDTEXTMGR.unpack(buf);
 
   // unpack water level
   buf = nboUnpackFloat(buf, world->waterLevel);

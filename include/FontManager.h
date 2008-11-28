@@ -87,10 +87,25 @@ public:
   int loadAll(std::string dir);
 
   /**
+   * load a specified font
+   */
+  int load(const char* file);
+
+  /**
    * return an index to the requested font if it's been loaded or the
    * first loaded font otherwise.
    */
   int getFaceID(std::string const& faceName);
+
+  /**
+   * lookup the font ID for a given font, or -1 on failure
+   */
+  int lookupID(std::string const& faceName);
+
+  /**
+   * lookup the font ID for a given font filename, or -1 on failure
+   */
+  int lookupFileID(std::string const& fileName);
 
   /**
    * main work-horse.  render the provided text with the specified
@@ -110,28 +125,21 @@ public:
    */
   float getStringHeight(int faceID, float size);
 
-  void setDimFactor(float newDimFactor);
-  void setOpacity(float newOpacity);
-  void setDarkness(float newDimFactor);
+  float getOpacity() const { return opacity; }
+  void  setOpacity(float newOpacity);
+  void  setDarkness(float newDarkFactor);
+  void  setDimFactor(float newDimFactor);
+
+  bool freeFontFile(const std::string& fileName);
 
 protected:
 
   friend class Singleton<FontManager>;
 
   /**
-   * lookup the font ID for a given font, or -1 on failure
-   */
-  int lookupID(std::string const& faceName);
-
-  /**
    * return the pulse color
    */
   void getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
-
-  /**
-   * load a specified font
-   */
-  int load(const char* file);
 
   /**
    * destroy all the fonts, clear all the lists

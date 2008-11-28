@@ -68,6 +68,7 @@ static int GetLuaDirectory(lua_State* L);
 static int GetPluginDirectory(lua_State* L); // only valid during loading
 
 static int GetAPIVersion(lua_State* L);
+static int GetProtocolVersion(lua_State* L);
 static int GetServerVersion(lua_State* L);
 static int GetServerPort(lua_State* L);
 static int GetServerAddress(lua_State* L);
@@ -235,7 +236,10 @@ static int ClearMaxWaitTime(lua_State* L);
 static int GetTimer(lua_State* L);
 static int DiffTimers(lua_State* L);
 static int DirList(lua_State* L);
+
+#ifdef HAVE_UNISTD_H
 static int ReadStdin(lua_State* L);
+#endif
 
 
 /******************************************************************************/
@@ -243,192 +247,196 @@ static int ReadStdin(lua_State* L);
 
 bool CallOuts::PushEntries(lua_State* L)
 {
-#define REGISTER_LUA_CFUNC(x) \
-  lua_pushliteral(L, #x);     \
-  lua_pushcfunction(L, x);    \
+#define PUSH_LUA_CFUNC(x)  \
+  lua_pushliteral(L, #x);  \
+  lua_pushcfunction(L, x); \
   lua_rawset(L, -3)
 
-  REGISTER_LUA_CFUNC(GetLuaDirectory);
-  REGISTER_LUA_CFUNC(GetPluginDirectory);
+  PUSH_LUA_CFUNC(GetLuaDirectory);
+  PUSH_LUA_CFUNC(GetPluginDirectory);
 
-  REGISTER_LUA_CFUNC(GetAPIVersion);
-  REGISTER_LUA_CFUNC(GetServerVersion);
-  REGISTER_LUA_CFUNC(GetServerPort);
-  REGISTER_LUA_CFUNC(GetServerAddress);
-  REGISTER_LUA_CFUNC(GetServerDescription);
+  PUSH_LUA_CFUNC(GetAPIVersion);
+  PUSH_LUA_CFUNC(GetProtocolVersion);
+  PUSH_LUA_CFUNC(GetServerVersion);
+  PUSH_LUA_CFUNC(GetServerPort);
+  PUSH_LUA_CFUNC(GetServerAddress);
+  PUSH_LUA_CFUNC(GetServerDescription);
 
-  REGISTER_LUA_CFUNC(AdminShutdown);
-  REGISTER_LUA_CFUNC(AdminRestart);
-  REGISTER_LUA_CFUNC(AdminSuperKill);
-  REGISTER_LUA_CFUNC(AdminGameOver);
+  PUSH_LUA_CFUNC(AdminShutdown);
+  PUSH_LUA_CFUNC(AdminRestart);
+  PUSH_LUA_CFUNC(AdminSuperKill);
+  PUSH_LUA_CFUNC(AdminGameOver);
 
-  REGISTER_LUA_CFUNC(GetGameType);
-  REGISTER_LUA_CFUNC(GetJumpingAllowed);
+  PUSH_LUA_CFUNC(GetGameType);
+  PUSH_LUA_CFUNC(GetJumpingAllowed);
 
-  REGISTER_LUA_CFUNC(GetWallHeight);
-  REGISTER_LUA_CFUNC(GetWorldSize);
-  REGISTER_LUA_CFUNC(GetWorldURL);
-  REGISTER_LUA_CFUNC(GetWorldCache);
-  REGISTER_LUA_CFUNC(SetWallHeight);
-  REGISTER_LUA_CFUNC(SetWorldSize);
-  REGISTER_LUA_CFUNC(SetWorldURL);
+  PUSH_LUA_CFUNC(GetWallHeight);
+  PUSH_LUA_CFUNC(GetWorldSize);
+  PUSH_LUA_CFUNC(GetWorldURL);
+  PUSH_LUA_CFUNC(GetWorldCache);
+  PUSH_LUA_CFUNC(SetWallHeight);
+  PUSH_LUA_CFUNC(SetWorldSize);
+  PUSH_LUA_CFUNC(SetWorldURL);
 
-  REGISTER_LUA_CFUNC(GetTeleLinkIDs);
-  REGISTER_LUA_CFUNC(GetLinkTeleName);
-  REGISTER_LUA_CFUNC(GetPhyDrvID);
-  REGISTER_LUA_CFUNC(GetPhyDrvName);
+  PUSH_LUA_CFUNC(GetTeleLinkIDs);
+  PUSH_LUA_CFUNC(GetLinkTeleName);
+  PUSH_LUA_CFUNC(GetPhyDrvID);
+  PUSH_LUA_CFUNC(GetPhyDrvName);
 
-  REGISTER_LUA_CFUNC(DebugMessage);
-  REGISTER_LUA_CFUNC(GetDebugLevel);
+  PUSH_LUA_CFUNC(DebugMessage);
+  PUSH_LUA_CFUNC(GetDebugLevel);
 
-  REGISTER_LUA_CFUNC(SendMessage);
-  REGISTER_LUA_CFUNC(SendTeamMessage);
-  REGISTER_LUA_CFUNC(SendFetchResource);
-  REGISTER_LUA_CFUNC(SendJoinServer);
-  REGISTER_LUA_CFUNC(PlaySound);
+  PUSH_LUA_CFUNC(SendMessage);
+  PUSH_LUA_CFUNC(SendTeamMessage);
+  PUSH_LUA_CFUNC(SendFetchResource);
+  PUSH_LUA_CFUNC(SendJoinServer);
+  PUSH_LUA_CFUNC(PlaySound);
 
-  REGISTER_LUA_CFUNC(GetStandardSpawn);
-  REGISTER_LUA_CFUNC(GetBaseAtPosition);
+  PUSH_LUA_CFUNC(GetStandardSpawn);
+  PUSH_LUA_CFUNC(GetBaseAtPosition);
 
   // Player
-  REGISTER_LUA_CFUNC(GetPlayerCount);
-  REGISTER_LUA_CFUNC(GetPlayerIDs);
-  REGISTER_LUA_CFUNC(GetPlayerName);
-  REGISTER_LUA_CFUNC(GetPlayerTeam);
-  REGISTER_LUA_CFUNC(GetPlayerIPAddress);
-  REGISTER_LUA_CFUNC(GetPlayerReferrer);
-  REGISTER_LUA_CFUNC(GetPlayerFlagID);
-  REGISTER_LUA_CFUNC(GetPlayerClientVersion);
-  REGISTER_LUA_CFUNC(GetPlayerBZID);
-  REGISTER_LUA_CFUNC(GetPlayerCustomData);
-  REGISTER_LUA_CFUNC(GetPlayerStatus);
-  REGISTER_LUA_CFUNC(GetPlayerPaused);
-  REGISTER_LUA_CFUNC(GetPlayerPosition);
-  REGISTER_LUA_CFUNC(GetPlayerVelocity);
-  REGISTER_LUA_CFUNC(GetPlayerRotation);
-  REGISTER_LUA_CFUNC(GetPlayerAngVel);
-  REGISTER_LUA_CFUNC(GetPlayerFalling);
-  REGISTER_LUA_CFUNC(GetPlayerCrossingWall);
-  REGISTER_LUA_CFUNC(GetPlayerZoned);
-  REGISTER_LUA_CFUNC(GetPlayerPhysicsDriver);
+  PUSH_LUA_CFUNC(GetPlayerCount);
+  PUSH_LUA_CFUNC(GetPlayerIDs);
+  PUSH_LUA_CFUNC(GetPlayerName);
+  PUSH_LUA_CFUNC(GetPlayerTeam);
+  PUSH_LUA_CFUNC(GetPlayerIPAddress);
+  PUSH_LUA_CFUNC(GetPlayerReferrer);
+  PUSH_LUA_CFUNC(GetPlayerFlagID);
+  PUSH_LUA_CFUNC(GetPlayerClientVersion);
+  PUSH_LUA_CFUNC(GetPlayerBZID);
+  PUSH_LUA_CFUNC(GetPlayerCustomData);
+  PUSH_LUA_CFUNC(GetPlayerStatus);
+  PUSH_LUA_CFUNC(GetPlayerPaused);
+  PUSH_LUA_CFUNC(GetPlayerPosition);
+  PUSH_LUA_CFUNC(GetPlayerVelocity);
+  PUSH_LUA_CFUNC(GetPlayerRotation);
+  PUSH_LUA_CFUNC(GetPlayerAngVel);
+  PUSH_LUA_CFUNC(GetPlayerFalling);
+  PUSH_LUA_CFUNC(GetPlayerCrossingWall);
+  PUSH_LUA_CFUNC(GetPlayerZoned);
+  PUSH_LUA_CFUNC(GetPlayerPhysicsDriver);
 
-  REGISTER_LUA_CFUNC(GetPlayerSpawned);
-  REGISTER_LUA_CFUNC(GetPlayerCanSpawn);
-  REGISTER_LUA_CFUNC(GetPlayerAdmin);
-  REGISTER_LUA_CFUNC(GetPlayerOperator);
-  REGISTER_LUA_CFUNC(GetPlayerGroups);
-  REGISTER_LUA_CFUNC(GetPlayerVerified);
-  REGISTER_LUA_CFUNC(GetPlayerGlobalUser);
-  REGISTER_LUA_CFUNC(GetPlayerFlagHistory);
-  REGISTER_LUA_CFUNC(GetPlayerRank);
+  PUSH_LUA_CFUNC(GetPlayerSpawned);
+  PUSH_LUA_CFUNC(GetPlayerCanSpawn);
+  PUSH_LUA_CFUNC(GetPlayerAdmin);
+  PUSH_LUA_CFUNC(GetPlayerOperator);
+  PUSH_LUA_CFUNC(GetPlayerGroups);
+  PUSH_LUA_CFUNC(GetPlayerVerified);
+  PUSH_LUA_CFUNC(GetPlayerGlobalUser);
+  PUSH_LUA_CFUNC(GetPlayerFlagHistory);
+  PUSH_LUA_CFUNC(GetPlayerRank);
 
 
-  REGISTER_LUA_CFUNC(GetPlayerLag);
-  REGISTER_LUA_CFUNC(GetPlayerJitter);
-  REGISTER_LUA_CFUNC(GetPlayerPacketLoss);
+  PUSH_LUA_CFUNC(GetPlayerLag);
+  PUSH_LUA_CFUNC(GetPlayerJitter);
+  PUSH_LUA_CFUNC(GetPlayerPacketLoss);
 
-  REGISTER_LUA_CFUNC(GetPlayerWins);
-  REGISTER_LUA_CFUNC(GetPlayerLosses);
-  REGISTER_LUA_CFUNC(GetPlayerTKs);
+  PUSH_LUA_CFUNC(GetPlayerWins);
+  PUSH_LUA_CFUNC(GetPlayerLosses);
+  PUSH_LUA_CFUNC(GetPlayerTKs);
 
-  REGISTER_LUA_CFUNC(SetPlayerWins);
-  REGISTER_LUA_CFUNC(SetPlayerLosses);
-  REGISTER_LUA_CFUNC(SetPlayerTKs);
+  PUSH_LUA_CFUNC(SetPlayerWins);
+  PUSH_LUA_CFUNC(SetPlayerLosses);
+  PUSH_LUA_CFUNC(SetPlayerTKs);
 
-  REGISTER_LUA_CFUNC(ChangePlayerTeam);
+  PUSH_LUA_CFUNC(ChangePlayerTeam);
 
-  REGISTER_LUA_CFUNC(ZapPlayer);
-  REGISTER_LUA_CFUNC(KillPlayer);
+  PUSH_LUA_CFUNC(ZapPlayer);
+  PUSH_LUA_CFUNC(KillPlayer);
 
-  REGISTER_LUA_CFUNC(SetRabbit);
+  PUSH_LUA_CFUNC(SetRabbit);
 
-  REGISTER_LUA_CFUNC(SetPlayerShotType);
-  REGISTER_LUA_CFUNC(SetPlayerOperator);
-  REGISTER_LUA_CFUNC(SetPlayerSpawnable);
-  REGISTER_LUA_CFUNC(SetPlayerLimboMessage);
+  PUSH_LUA_CFUNC(SetPlayerShotType);
+  PUSH_LUA_CFUNC(SetPlayerOperator);
+  PUSH_LUA_CFUNC(SetPlayerSpawnable);
+  PUSH_LUA_CFUNC(SetPlayerLimboMessage);
 
-  REGISTER_LUA_CFUNC(GivePlayerFlag);
+  PUSH_LUA_CFUNC(GivePlayerFlag);
 
 
   // Flag
-  REGISTER_LUA_CFUNC(GetFlagCount);
-  REGISTER_LUA_CFUNC(GetFlagName);
-  REGISTER_LUA_CFUNC(GetFlagPosition);
-  REGISTER_LUA_CFUNC(GetFlagPlayer);
+  PUSH_LUA_CFUNC(GetFlagCount);
+  PUSH_LUA_CFUNC(GetFlagName);
+  PUSH_LUA_CFUNC(GetFlagPosition);
+  PUSH_LUA_CFUNC(GetFlagPlayer);
 
-  REGISTER_LUA_CFUNC(MoveFlag);
-  REGISTER_LUA_CFUNC(ResetFlag);
-  REGISTER_LUA_CFUNC(ResetFlags);
+  PUSH_LUA_CFUNC(MoveFlag);
+  PUSH_LUA_CFUNC(ResetFlag);
+  PUSH_LUA_CFUNC(ResetFlags);
 
   // Team
-  REGISTER_LUA_CFUNC(GetTeamName);
-  REGISTER_LUA_CFUNC(GetTeamLimit);
-  REGISTER_LUA_CFUNC(GetTeamCount);
-  REGISTER_LUA_CFUNC(GetTeamScore);
-  REGISTER_LUA_CFUNC(GetTeamWins);
-  REGISTER_LUA_CFUNC(GetTeamLosses);
+  PUSH_LUA_CFUNC(GetTeamName);
+  PUSH_LUA_CFUNC(GetTeamLimit);
+  PUSH_LUA_CFUNC(GetTeamCount);
+  PUSH_LUA_CFUNC(GetTeamScore);
+  PUSH_LUA_CFUNC(GetTeamWins);
+  PUSH_LUA_CFUNC(GetTeamLosses);
 
-  REGISTER_LUA_CFUNC(SetTeamWins);
-  REGISTER_LUA_CFUNC(SetTeamLosses);
+  PUSH_LUA_CFUNC(SetTeamWins);
+  PUSH_LUA_CFUNC(SetTeamLosses);
 
-  REGISTER_LUA_CFUNC(FireWeapon);
-  REGISTER_LUA_CFUNC(FireMissile);
+  PUSH_LUA_CFUNC(FireWeapon);
+  PUSH_LUA_CFUNC(FireMissile);
 
-  REGISTER_LUA_CFUNC(SaveRecBuf);
-  REGISTER_LUA_CFUNC(StartRecBuf);
-  REGISTER_LUA_CFUNC(StopRecBuf);
+  PUSH_LUA_CFUNC(SaveRecBuf);
+  PUSH_LUA_CFUNC(StartRecBuf);
+  PUSH_LUA_CFUNC(StopRecBuf);
 
-  REGISTER_LUA_CFUNC(GetCountdownActive);
-  REGISTER_LUA_CFUNC(GetCountdownInProgress);
-  REGISTER_LUA_CFUNC(StartCountdown);
-  REGISTER_LUA_CFUNC(PauseCountdown);
-  REGISTER_LUA_CFUNC(ResumeCountdown);
+  PUSH_LUA_CFUNC(GetCountdownActive);
+  PUSH_LUA_CFUNC(GetCountdownInProgress);
+  PUSH_LUA_CFUNC(StartCountdown);
+  PUSH_LUA_CFUNC(PauseCountdown);
+  PUSH_LUA_CFUNC(ResumeCountdown);
 
-  REGISTER_LUA_CFUNC(ReloadLocalBans);
-  REGISTER_LUA_CFUNC(ReloadMasterBans);
-  REGISTER_LUA_CFUNC(ReloadUsers);
-  REGISTER_LUA_CFUNC(ReloadGroups);
-  REGISTER_LUA_CFUNC(ReloadHelp);
+  PUSH_LUA_CFUNC(ReloadLocalBans);
+  PUSH_LUA_CFUNC(ReloadMasterBans);
+  PUSH_LUA_CFUNC(ReloadUsers);
+  PUSH_LUA_CFUNC(ReloadGroups);
+  PUSH_LUA_CFUNC(ReloadHelp);
 
-  REGISTER_LUA_CFUNC(GetTimer);
-  REGISTER_LUA_CFUNC(DiffTimers);
+  PUSH_LUA_CFUNC(GetTimer);
+  PUSH_LUA_CFUNC(DiffTimers);
 
-  REGISTER_LUA_CFUNC(GetGroups);
-  REGISTER_LUA_CFUNC(GetGroupPerms);
-  REGISTER_LUA_CFUNC(GetGroupHasPerm);
-  REGISTER_LUA_CFUNC(GetStandardPerms);
+  PUSH_LUA_CFUNC(GetGroups);
+  PUSH_LUA_CFUNC(GetGroupPerms);
+  PUSH_LUA_CFUNC(GetGroupHasPerm);
+  PUSH_LUA_CFUNC(GetStandardPerms);
 
-  REGISTER_LUA_CFUNC(GetReportCount);
-  REGISTER_LUA_CFUNC(GetReportInfo);
-  REGISTER_LUA_CFUNC(GetReports);
+  PUSH_LUA_CFUNC(GetReportCount);
+  PUSH_LUA_CFUNC(GetReportInfo);
+  PUSH_LUA_CFUNC(GetReports);
 
-  REGISTER_LUA_CFUNC(FileReport);
-  REGISTER_LUA_CFUNC(ClearReport);
-  REGISTER_LUA_CFUNC(ClearReports);
+  PUSH_LUA_CFUNC(FileReport);
+  PUSH_LUA_CFUNC(ClearReport);
+  PUSH_LUA_CFUNC(ClearReports);
 
-  REGISTER_LUA_CFUNC(GetLagWarn);
-  REGISTER_LUA_CFUNC(SetLagWarn);
+  PUSH_LUA_CFUNC(GetLagWarn);
+  PUSH_LUA_CFUNC(SetLagWarn);
 
-  REGISTER_LUA_CFUNC(ManualTimeLimit);
-  REGISTER_LUA_CFUNC(GetTimeLimit);
-  REGISTER_LUA_CFUNC(SetTimeLimit);
+  PUSH_LUA_CFUNC(ManualTimeLimit);
+  PUSH_LUA_CFUNC(GetTimeLimit);
+  PUSH_LUA_CFUNC(SetTimeLimit);
 
-  REGISTER_LUA_CFUNC(KickPlayer);
-  REGISTER_LUA_CFUNC(BanByIP);
-  REGISTER_LUA_CFUNC(BanByBZID);
-  REGISTER_LUA_CFUNC(BanByHost);
-  REGISTER_LUA_CFUNC(UnbanByIP);
-  REGISTER_LUA_CFUNC(UnbanByBZID);
-  REGISTER_LUA_CFUNC(UnbanByHost);
+  PUSH_LUA_CFUNC(KickPlayer);
+  PUSH_LUA_CFUNC(BanByIP);
+  PUSH_LUA_CFUNC(BanByBZID);
+  PUSH_LUA_CFUNC(BanByHost);
+  PUSH_LUA_CFUNC(UnbanByIP);
+  PUSH_LUA_CFUNC(UnbanByBZID);
+  PUSH_LUA_CFUNC(UnbanByHost);
 
-  REGISTER_LUA_CFUNC(GetMaxWaitTime);
-  REGISTER_LUA_CFUNC(SetMaxWaitTime);
-  REGISTER_LUA_CFUNC(ClearMaxWaitTime);
+  PUSH_LUA_CFUNC(GetMaxWaitTime);
+  PUSH_LUA_CFUNC(SetMaxWaitTime);
+  PUSH_LUA_CFUNC(ClearMaxWaitTime);
 
-  REGISTER_LUA_CFUNC(GetTimer);
-  REGISTER_LUA_CFUNC(DiffTimers);
-  REGISTER_LUA_CFUNC(DirList);
-  REGISTER_LUA_CFUNC(ReadStdin);
+  PUSH_LUA_CFUNC(GetTimer);
+  PUSH_LUA_CFUNC(DiffTimers);
+  PUSH_LUA_CFUNC(DirList);
+
+#ifdef HAVE_UNISTD_H
+  PUSH_LUA_CFUNC(ReadStdin);
+#endif
 
   return true;
 }
@@ -454,6 +462,13 @@ static int GetPluginDirectory(lua_State* L)
 static int GetAPIVersion(lua_State* L)
 {
   lua_pushinteger(L, bz_APIVersion());
+  return 1;
+}
+
+
+static int GetProtocolVersion(lua_State* L)
+{
+  lua_pushstring(L, bz_getProtocolVersion());
   return 1;
 }
 
@@ -716,8 +731,8 @@ static int SendJoinServer(lua_State* L)
   const int   playerID = luaL_checkint(L, 1);
   const char* addr     = luaL_checkstring(L, 2);
   const int   port     = luaL_checkint(L, 3);
-  const int   team     = luaL_checkint(L, 4);
-  const char* referrer = luaL_optstring(L, 5, "");
+  const int   team     = luaL_optint(L, 4, eNoTeam);
+  const char* referrer = luaL_optstring(L, 5, bz_getPublicAddr().c_str());
   lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port, team, referrer));
   return 1;
 }
@@ -1971,12 +1986,7 @@ static int DirList(lua_State* L)
 
 
 // whacky bit of dev'ing fun
-#ifndef HAVE_UNISTD_H
-  static int ReadStdin(lua_State* L)
-  {
-    return 0;
-  }
-#else
+#ifdef HAVE_UNISTD_H
   #include <unistd.h>
   #include <fcntl.h>
   static int ReadStdin(lua_State* L)

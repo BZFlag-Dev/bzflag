@@ -53,6 +53,7 @@ FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
 /** initialize underline to black */
 GLfloat FontManager::underlineColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
+
 /**
  * This class encapsulates implementation details that we don't want
  * exposed in the header
@@ -116,8 +117,8 @@ private:
 
   typedef std::map<size_t, FTFont*> FontSizes;
   FontSizes sizes;
-
 };
+
 
 // Note: this was originally part of the class, but it exposes more
 // implementation than we want to. Since this class is a singleton,
@@ -128,6 +129,11 @@ namespace {
   /** loaded fonts */
   typedef std::vector<BZFontFace_impl> FontFamilies;
   FontFamilies fontFaces;
+
+  /** faceName and fileName maps */
+  typedef std::map<std::string, int> IdMap;
+  IdMap name2id;
+  IdMap file2id;
 
   /**
    * return the ftgl representation for a given font of a given size
@@ -158,6 +164,7 @@ namespace {
 
 }
 
+
 void BZFontFace_impl::clear()
 {
   for (FontSizes::iterator itr = sizes.begin(); itr != sizes.end(); ++itr) {
@@ -167,10 +174,10 @@ void BZFontFace_impl::clear()
 		<< " size:" << itr->first << std::endl;
     }
 #endif
-
-    setSize(itr->first, 0);
+    setSize(itr->first, NULL); // frees all sizes
   }
 }
+
 
 FTFont* BZFontFace_impl::loadSize(size_t size)
 {
@@ -237,34 +244,44 @@ FontManager::~FontManager()
 }
 
 
-int FontManager::load(const char* file)
+int FontManager::load(const char* fileName)
 {
   int id = -1;
 
 #if debugging
-  std::cout << "FontManager::load entry file: " << file << std::endl;
+  std::cout << "FontManager::load entry file: " << fileName << std::endl;
 #endif
 
-  if (!file)
+  if (!fileName || !fileName[0]) {
     return id;
+  }
+
+  IdMap::const_iterator it = file2id.find(fileName);
+  if (it != file2id.end()) {
+    return it->second; // we've already loaded this file
+  }
 
   OSFile tempFile;
-  tempFile.osName(file);
+  tempFile.osName(fileName);
 
-  BZFontFace_impl face(tempFile.getFileName(), file);
+  BZFontFace_impl face(tempFile.getFileName(), fileName);
 
   id = lookupID(face.name());
   if (id >= 0) {
     return id;
   }
 
+  /* not found, add it */
+  id = fontFaces.size();
+  fontFaces.push_back(face);
+  name2id[face.name()] = id;
+  file2id[fileName] = id;
+
 #if debugging
-  std::cout <<"FontManager::load file: " << file << std::endl;
+  printf("FontManager::load file: %i %s %s\n",
+         id, face.name().c_str(), fileName);
 #endif
 
-  /* not found, add it */
-  fontFaces.push_back(face);
-  id = lookupID(face.name());
   return id;
 }
 
@@ -282,8 +299,7 @@ int FontManager::loadAll(std::string directory)
 
   int count = 0;
   while (dir.getNextFile(file, "*.ttf", true)) {
-
-    if (load(file.getFullOSPath().c_str()) != -1) {
+    if (load(file.getFullOSPath().c_str()) >= 0) {
       count++;
     } else {
       logDebugMessage(4,"Font Texture load failed: %s\n", file.getOSName().c_str());
@@ -303,38 +319,63 @@ void FontManager::clear(void)
   std::for_each(fontFaces.begin(), fontFaces.end(),
 		std::mem_fun_ref(&BZFontFace_impl::clear) );
 
+  // NOTE: this function doesn't clear out all of the fonts,
+  //       it frees the memory for the used face sizes
+  //
+  // name2id.clear();
+  // file2id.clear();
+  //
+
   return;
 }
 
 
-int FontManager::lookupID(std::string const& name)
+bool FontManager::freeFontFile(const std::string& fileName)
 {
-  if (name.size() <= 0)
-    return -1;
-
-  for (int i = 0; i < (int)fontFaces.size(); i++) {
-    if (name == fontFaces[i].name())
-      return i;
+  const int id = lookupFileID(fileName);
+  if (id < 0) {
+    return false;
   }
-
-  return -1;
+  fontFaces[id].clear();
+  return true;
 }
 
 
-int FontManager::getFaceID(std::string const& name)
+int FontManager::lookupID(std::string const& faceName)
 {
-  int id = lookupID(name);
+  IdMap::const_iterator it = name2id.find(faceName);
+  if (it == name2id.end()) {
+    return -1;
+  }
+  return it->second;
+}
+
+
+int FontManager::lookupFileID(std::string const& fileName)
+{
+  IdMap::const_iterator it = file2id.find(fileName);
+  if (it == file2id.end()) {
+    return -1;
+  }
+  return it->second;
+}
+
+
+int FontManager::getFaceID(std::string const& faceName)
+{
+  const int id = lookupID(faceName);
   if (id >= 0) {
     return id;
   }
 
   /* no luck finding the one requested, try anything */
   if (fontFaces.size() > 0) {
-    logDebugMessage(3,"Requested font %s not found, using %s instead\n", name.c_str(), fontFaces[0].name().c_str());
+    logDebugMessage(3, "Requested font %s not found, using %s instead\n",
+                    faceName.c_str(), fontFaces[0].name().c_str());
     return 0;
   }
 
-  logDebugMessage(2,"No fonts loaded\n");
+  logDebugMessage(2, "No fonts loaded\n");
   return -1;
 }
 
@@ -608,6 +649,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   return;
 }
 
+
 float FontManager::getStringWidth(int faceID, float size, const char *text, bool alreadyStripped)
 {
   if (!text || strlen(text) <= 0)
@@ -628,6 +670,7 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
   return theFont->Advance(stripped);
 }
 
+
 float FontManager::getStringHeight(int font, float size)
 {
   FTFont* theFont = getGLFont(font, (int)size);
@@ -637,6 +680,7 @@ float FontManager::getStringHeight(int font, float size)
 
   return theFont->LineHeight();
 }
+
 
 void FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 {
@@ -676,6 +720,7 @@ void FontManager::underlineCallback(const std::string &, void *)
   }
 }
 
+
 void FontManager::initContext(void*)
 {
 #if debugging
@@ -683,6 +728,7 @@ void FontManager::initContext(void*)
 #endif
 }
  
+
 void FontManager::freeContext(void* data)
 {
 #if debugging
@@ -692,6 +738,7 @@ void FontManager::freeContext(void* data)
   FontManager* fm( static_cast<FontManager*>(data) );
   fm->clear();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

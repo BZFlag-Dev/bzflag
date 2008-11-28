@@ -1343,8 +1343,8 @@ void			BackgroundRenderer::drawGroundGrid(
   } glEnd();
 }
 
-void			BackgroundRenderer::drawGroundShadows(
-							      SceneRenderer& renderer)
+
+void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
@@ -1368,27 +1368,23 @@ void			BackgroundRenderer::drawGroundShadows(
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  if (BZDBCache::stencilShadows) {
-    OpenGLGState::resetState();
-    const float shadowAlpha = BZDB.eval("shadowAlpha");
-    glColor4f(0.0f, 0.0f, 0.0f, shadowAlpha);
-    if (shadowAlpha < 1.0f) {
-      // use the stencil to avoid overlapping shadows
-      glClearStencil(0);
-      glClear(GL_STENCIL_BUFFER_BIT);
-      glStencilFunc(GL_NOTEQUAL, 1, 1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-      glEnable(GL_STENCIL_TEST);
-
-      // turn on blending, and kill culling
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glEnable(GL_BLEND);
-      glDisable(GL_CULL_FACE);
-    }
-  } else {
+  if (!BZDBCache::stencilShadows) {
     // use stippling to avoid overlapping shadows
     sunShadowsGState.setState();
     glColor3f(0.0f, 0.0f, 0.0f);
+  }
+  else {
+    OpenGLGState::resetState();
+    // use the stencil to avoid overlapping shadows
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glStencilFunc(GL_NOTEQUAL, 1, 1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glEnable(GL_STENCIL_TEST);
+
+    // disable color writes, and kill culling
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glDisable(GL_CULL_FACE);
   }
 
   // render those nodes
@@ -1396,6 +1392,29 @@ void			BackgroundRenderer::drawGroundShadows(
 
   // revert to OpenGLGState defaults
   if (BZDBCache::stencilShadows) {
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+    glStencilFunc(GL_EQUAL, 1, 1);
+    glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+    glDisable(GL_DEPTH_TEST);
+
+    // draw a rectangle over the entire screen
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    // revert to OpenGLGState defaults
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
     glDisable(GL_STENCIL_TEST);

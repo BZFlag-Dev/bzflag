@@ -55,6 +55,7 @@ class WallSceneNode : public SceneNode {
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
     void		setTextureMatrix(const GLfloat* texmat);
+    void		setOrder(int);
     void		setDynamicColor(const float* color);
     void		setBlending(bool);
     void		setSphereMap(bool);
@@ -95,6 +96,7 @@ class WallSceneNode : public SceneNode {
   private:
     int			numLODs;
     float*		elementAreas;
+    int			order;
     const GLfloat*	dynamicColor;
     GLfloat		color[4];
     GLfloat		modulateColor[4];

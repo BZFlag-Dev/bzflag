@@ -63,7 +63,7 @@ BZ.Print('pluginDir = ' .. BZ.GetPluginDirectory())
 -- print everything in the global table
 --
 
-if (not false) then
+if (false) then
   print()
   print(string.rep('-', 80))
   table.print(_G, BZ.Print)
@@ -78,18 +78,18 @@ end
 --
 
 
-function RawChatMessageEvent(msg, src, dst, team)
-  print('bzfs.lua', 'RawChatMessageEvent', msg, src, dst, team)
+function RawChatMessage(msg, src, dst, team)
+  print('bzfs.lua', 'RawChatMessage', msg, src, dst, team)
   return msg .. ' -- lua tagged'
 end
 
 
-function FilteredChatMessageEvent(msg, src, dst, team)
+function FilteredChatMessage(msg, src, dst, team)
 end
 
 
-function GetPlayerSpawnPosEvent(pid, team, px, py, pz, r)
-  print('GetPlayerSpawnPosEvent', pid, team, px, py, pz, r)
+function GetPlayerSpawnPos(pid, team, px, py, pz, r)
+  print('GetPlayerSpawnPos', pid, team, px, py, pz, r)
   return 0, 0, 10, 0
 end
 
@@ -109,7 +109,7 @@ local function ExecuteLine(line)
 end
 
 
-function TickEvent()
+function Tick()
 
   BZ.SetMaxWaitTime('luaTick', 0.05)
 
@@ -160,25 +160,25 @@ end
 --------------------------------------------------------------------------------
 
 -- setup the blocked event map
-local blockedEvents = {
-  'TickEvent',
-  'LoggingEvent',
-  'PlayerUpdateEvent',
-  'NetDataSendEvent',
-  'NetDataReceiveEvent',
+local blocked = {
+  'Tick',
+  'Logging',
+  'PlayerUpdate',
+  'NetDataSend',
+  'NetDataReceive',
 }
 local tmpSet = {}
-for _, name in ipairs(blockedEvents) do
+for _, name in ipairs(blocked) do
   tmpSet[name] = true
 end
-blockedEvents = tmpSet
+blocked = tmpSet
 
 
 -- update the desired call-ins
 for name, code in pairs(BZ.GetCallIns()) do
   if (type(_G[name]) == 'function') then
     BZ.UpdateCallIn(name, _G[name])
-  elseif (not blockedEvents[name]) then 
+  elseif (not blocked[name]) then 
     BZ.UpdateCallIn(name, function(...)
       print('bzfs.lua', name, ...)
     end)
@@ -186,7 +186,7 @@ for name, code in pairs(BZ.GetCallIns()) do
 end
 
 
---BZ.UpdateCallIn('TickEvent', nil) -- annoying, but leave the function defined
+--BZ.UpdateCallIn('Tick', nil) -- annoying, but leave the function defined
 
 
 -- print the current call-in map
@@ -199,7 +199,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-BZ.UpdateCallIn('AllowFlagGrabEvent',
+BZ.UpdateCallIn('AllowFlagGrab',
   function(playerID, flagID, flagType, shotType, px, py, pz)
     if (BZ.GetPlayerTeam(playerID) == BZ.TEAM.RED) then
       return false
@@ -228,7 +228,7 @@ local function CustomMapObject(name, data)
     print('CustomMapObject:    ' .. data[d])
   end
 
-  if (name == 'lua_block') then
+  if (name == 'lua') then
     local text = ''
     for d = 1, #data do
       text = text .. data[d] .. '\n'
@@ -275,8 +275,8 @@ if (false) then
   end
 end
 
-BZ.DB.SetString('_mirror', 'black 0.5')
-BZ.DB.SetString('_skyColor', 'red')
+--BZ.DB.SetString('_mirror', 'black 0.5')
+--BZ.DB.SetString('_skyColor', 'red')
 BZ.DB.SetFloat('_tankSpeed', '50.0')
 
 
@@ -290,5 +290,5 @@ end)
 include('plugins.lua')
 
 
---BZ.UpdateCallIn('GetWorldEvent',
+--BZ.UpdateCallIn('GetWorld',
 --  function(mode)

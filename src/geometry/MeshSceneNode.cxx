@@ -420,15 +420,17 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 // FIXME - deal with invisibility
 
   // get the references
-  const BzMaterial*       bzmat = mat->bzmat;
-  OpenGLGState&	  gstate = mat->gstate;
-  GLfloat*		color = mat->color;
+  const BzMaterial* bzmat  = mat->bzmat;
+  OpenGLGState&     gstate = mat->gstate;
+  GLfloat*          color  = mat->color;
 
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
 
   // cheat a little
   ((BzMaterial*)bzmat)->setReference();
+
+  builder.setOrder(bzmat->getOrder());
 
   // ways of requiring blending
   bool colorAlpha = false;

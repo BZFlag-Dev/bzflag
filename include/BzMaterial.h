@@ -53,6 +53,7 @@ class BzMaterial {
     bool setName(const std::string&);
     bool addAlias(const std::string&);
 
+    void setOrder(int);
     void setDynamicColor(int);
     void setAmbient(const float[4]);
     void setDiffuse(const float[4]);
@@ -91,6 +92,7 @@ class BzMaterial {
     const std::string& getName() const;
     const std::vector<std::string>& getAliases() const;
 
+    int getOrder() const;
     int getDynamicColor() const;
     const float* getAmbient() const;
     const float* getDiffuse() const;
@@ -140,6 +142,8 @@ class BzMaterial {
     std::vector<std::string> aliases;
 
     bool referenced;
+
+    int order;
 
     int dynamicColor;
     float ambient[4];

@@ -35,6 +35,7 @@ public:
 	static bool  animatedTreads;
 	static int   radarStyle;
 	static float radarTankPixels;
+	static float shadowAlpha;
 	static bool  leadingShotLine;
 	static bool  showShotGuide;
 	static int   linedRadarShots;

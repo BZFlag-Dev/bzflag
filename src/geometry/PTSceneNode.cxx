@@ -23,12 +23,11 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implementation headers
 #include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 const GLfloat		PhotonTorpedoSceneNode::CoreSize = 0.125f;
 const GLfloat		PhotonTorpedoSceneNode::CoronaSize = 1.0f;

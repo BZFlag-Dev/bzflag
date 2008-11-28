@@ -134,7 +134,7 @@ bool MapObject::PushEntries(lua_State* _L)
 }
 
 
-bool MapObject::Shutdown(lua_State* _L)
+bool MapObject::CleanUp(lua_State* _L)
 {
   map<string, MapHandler*>::const_iterator it, nextIT;
 

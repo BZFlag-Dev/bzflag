@@ -21,12 +21,11 @@
 
 // common implementation headers
 #include "Intersect.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implementation headers
 #include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 //
 // QuadWallSceneNode::Geometry
@@ -388,8 +387,8 @@ int		     QuadWallSceneNode::getVertexCount () const
 const GLfloat*	  QuadWallSceneNode::getVertex (int vertex) const
 {
   // re-map these to a counter-clockwise order
-  const int order[4] = {0, 1, 3, 2};
-  return nodes[0]->getVertex(order[vertex]);
+  const int remap[4] = {0, 1, 3, 2};
+  return nodes[0]->getVertex(remap[vertex]);
 }
 
 

@@ -120,7 +120,7 @@ bool SlashCmd::PushEntries(lua_State* _L)
 }
 
 
-bool SlashCmd::Shutdown(lua_State* _L)
+bool SlashCmd::CleanUp(lua_State* _L)
 {
   map<string, SlashCmdHandler*>::const_iterator it, nextIT;
 

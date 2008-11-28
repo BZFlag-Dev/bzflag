@@ -97,7 +97,7 @@ public:
   void addBase(const float pos[3], float r, const float size[3], int color,
                bool drive = false, bool shoot = false, bool rico = false);
 
-  void addMapInfo(const std::vector<std::string>& lines);
+  void setMapInfo(const std::vector<std::string>& lines);
 
   float getWaterLevel() const;
   float getMaxWorldHeight() const;

@@ -62,7 +62,10 @@ class OpenGLGStateState {
     void		setShading(GLenum);
     void		setAlphaFunc(GLenum func, GLclampf ref);
     void		setNeedsSorting(bool value);
+    void		setOrder(int order);
 
+    int			getOrder() const 
+				{ return sorted.order; }
     bool		getNeedsSorting() const
 				{ return unsorted.needsSorting; }
     bool		isBlended() const
@@ -90,6 +93,7 @@ class OpenGLGStateState {
 	bool		operator<(const Sorted&) const;
 
       public:
+        int             order;
 	bool		hasTexture;
 	bool		hasTextureMatrix;
 	bool		hasSphereMap;
@@ -141,6 +145,7 @@ class OpenGLGStateRep {
 			OpenGLGStateRep(const OpenGLGStateState&);
 			~OpenGLGStateRep();
 
+    int			getOrder() { return state.getOrder(); }
     bool		getNeedsSorting() { return state.getNeedsSorting(); }
     bool		isBlended() { return state.isBlended(); }
     bool		isTextured() { return state.isTextured(); }
@@ -176,6 +181,7 @@ class OpenGLGStateRep {
 //
 
 OpenGLGStateState::Sorted::Sorted() :
+				order(0),
 				hasTexture(false),
 				hasTextureMatrix(false),
 				hasSphereMap(false),
@@ -195,6 +201,7 @@ OpenGLGStateState::Sorted::~Sorted()
 
 void			OpenGLGStateState::Sorted::reset()
 {
+  order = 0;
   hasTexture = false;
   hasTextureMatrix = false;
   hasSphereMap = false;
@@ -208,6 +215,9 @@ void			OpenGLGStateState::Sorted::reset()
 bool			OpenGLGStateState::Sorted::operator==(
 				const Sorted& s) const
 {
+  if (order != s.order) {
+    return false;
+  }
   if (hasTexture != s.hasTexture || texture != s.texture) {
     return false;
   }
@@ -230,6 +240,10 @@ bool			OpenGLGStateState::Sorted::operator==(
 bool			OpenGLGStateState::Sorted::operator<(
 				const Sorted& s) const
 {
+  if (order != s.order) {
+    return (order < s.order);
+  }
+
   // do arbitrary sorting:
   // this < s if this has no texture and s does or texture < s.texture
   if (hasTexture != s.hasTexture) {
@@ -373,6 +387,11 @@ void			OpenGLGStateState::setMaterial(
   sorted.hasMaterial = _material.isValid();
   sorted.material = _material;
   sorted.material.setQuality(highQuality);
+}
+
+void			OpenGLGStateState::setOrder(int value)
+{
+  sorted.order = value;
 }
 
 void			OpenGLGStateState::setBlending(
@@ -1063,6 +1082,11 @@ bool			OpenGLGState::isBlended() const
   return rep->isBlended();
 }
 
+int			OpenGLGState::getOrder() const
+{
+  return rep->getOrder();
+}
+
 bool			OpenGLGState::getNeedsSorting() const
 {
   return rep->getNeedsSorting();
@@ -1327,6 +1351,11 @@ void			OpenGLGStateBuilder::init(const OpenGLGState& gstate)
 void			OpenGLGStateBuilder::reset()
 {
   state->reset();
+}
+
+void			OpenGLGStateBuilder::setOrder(int value)
+{
+  state->setOrder(value);
 }
 
 void			OpenGLGStateBuilder::enableTexture(bool on)

@@ -47,133 +47,130 @@ enum PlayerAttribute {
 const uint16_t	MsgNull = 0x0000;
 
 // server message codes
-const uint16_t	MsgAccept = 0x6163;		// 'ac'
-const uint16_t	MsgAdminInfo = 0x6169;		// 'ai'
-const uint16_t	MsgAlive = 0x616c;		// 'al'
-const uint16_t	MsgAllow = 0x696f;		// 'ao'
-const uint16_t	MsgAddPlayer = 0x6170;		// 'ap'
-const uint16_t	MsgAllowSpawn = 0x6173;		// 'as'
-const uint16_t	MsgAutoPilot = 0x6175;		// 'au'
-const uint16_t	MsgCapBits = 0x6362;		// 'cb'
-const uint16_t	MsgCaptureFlag = 0x6366;	// 'cf'
-const uint16_t	MsgCollide = 0x636f;		// 'co'
-const uint16_t	MsgCustomSound = 0x6373;	// 'cs'
-const uint16_t	MsgCacheURL = 0x6375;		// 'cu'
-const uint16_t	MsgDropFlag = 0x6466;		// 'df'
-const uint16_t	MsgEnter = 0x656e;		// 'en'
-const uint16_t	MsgExit = 0x6578;		// 'ex'
-const uint16_t	MsgFlagType = 0x6674;		// 'ft'
-const uint16_t	MsgFlagUpdate = 0x6675;		// 'fu'
-const uint16_t	MsgFetchResources = 0x6672;	// 'fr'
-const uint16_t	MsgGrabFlag = 0x6766;		// 'gf'
-const uint16_t	MsgGMUpdate = 0x676d;		// 'gm'
-const uint16_t	MsgGetWorld = 0x6777;		// 'gw'
-const uint16_t	MsgGameSettings = 0x6773;	// 'gs'
-const uint16_t	MsgGameTime = 0x6774;		// 'gt'
-const uint16_t	MsgHandicap = 0x6863;		// 'hc'
-const uint16_t	MsgHit = 0x6869;		// 'hi'
-const uint16_t	MsgJoinServer = 0x6a73;		// 'js'
-const uint16_t	MsgKilled = 0x6b6c;		// 'kl'
-const uint16_t	MsgLagState = 0x6c73;		// 'ls'
-const uint16_t	MsgLimboMessage = 0x6c6d;	// 'lm'
-const uint16_t	MsgMessage = 0x6d67;		// 'mg'
-const uint16_t	MsgNewPlayer = 0x6e70;		// 'np'
-const uint16_t	MsgNearFlag = 0x4e66;		// 'Nf'
-const uint16_t	MsgNewRabbit = 0x6e52;		// 'nR'
-const uint16_t	MsgNegotiateFlags = 0x6e66;	// 'nf'
-const uint16_t	MsgPause = 0x7061;		// 'pa'
-const uint16_t	MsgPlayerInfo = 0x7062;		// 'pb'
-const uint16_t	MsgPlayerData = 0x7064;		// 'pd'
-const uint16_t	MsgPlayerUpdate = 0x7075;	// 'pu'
-const uint16_t	MsgPlayerUpdateSmall = 0x7073;	// 'ps'
-const uint16_t	MsgQueryGame = 0x7167;		// 'qg'
-const uint16_t	MsgQueryPlayers = 0x7170;	// 'qp'
-const uint16_t	MsgReject = 0x726a;		// 'rj'
-const uint16_t	MsgRemovePlayer = 0x7270;	// 'rp'
-const uint16_t	MsgReplayReset = 0x7272;	// 'rr'
-const uint16_t	MsgShotBegin = 0x7362;		// 'sb'
-const uint16_t	MsgWShotBegin = 0x7762;		// 'wb'
-const uint16_t	MsgWhatTimeIsIt = 0x7774;	// 'wt'
-const uint16_t	MsgScore = 0x7363;		// 'sc'
-const uint16_t	MsgScoreOver = 0x736f;		// 'so'
-const uint16_t	MsgShotEnd = 0x7365;		// 'se'
-const uint16_t	MsgSuperKill = 0x736b;		// 'sk'
-const uint16_t	MsgSetShot = 0x7373;		// 'ss'
-const uint16_t	MsgSetTeam = 0x7374;		// 'st'
-const uint16_t	MsgSetVar = 0x7376;		// 'sv'
-const uint16_t	MsgTangibilityUpdate = 0x746e;	// 'tn'
-const uint16_t	MsgTangibilityReset = 0x7472;	// 'tr'
-const uint16_t	MsgTimeUpdate = 0x746f;		// 'to'
-const uint16_t	MsgTeleport = 0x7470;		// 'tp'
-const uint16_t	MsgTransferFlag = 0x7466;	// 'tf'
-const uint16_t	MsgTeamUpdate = 0x7475;		// 'tu'
-const uint16_t	MsgWantWHash = 0x7768;		// 'wh'
-const uint16_t	MsgWantSettings = 0x7773;	// 'ws'
-const uint16_t	MsgPortalAdd = 0x5061;		// 'Pa'
-const uint16_t	MsgPortalRemove = 0x5072;	// 'Pr'
-const uint16_t	MsgPortalUpdate = 0x5075;	// 'Pu'
+const uint16_t MsgAccept            = 0x6163; // 'ac'
+const uint16_t MsgAdminInfo         = 0x6169; // 'ai'
+const uint16_t MsgAlive             = 0x616c; // 'al'
+const uint16_t MsgAllow             = 0x696f; // 'ao'
+const uint16_t MsgAddPlayer         = 0x6170; // 'ap'
+const uint16_t MsgAllowSpawn        = 0x6173; // 'as'
+const uint16_t MsgAutoPilot         = 0x6175; // 'au'
+const uint16_t MsgCapBits           = 0x6362; // 'cb'
+const uint16_t MsgCaptureFlag       = 0x6366; // 'cf'
+const uint16_t MsgCollide           = 0x636f; // 'co'
+const uint16_t MsgCustomSound       = 0x6373; // 'cs'
+const uint16_t MsgCacheURL          = 0x6375; // 'cu'
+const uint16_t MsgDropFlag          = 0x6466; // 'df'
+const uint16_t MsgEnter             = 0x656e; // 'en'
+const uint16_t MsgExit              = 0x6578; // 'ex'
+const uint16_t MsgFlagType          = 0x6674; // 'ft'
+const uint16_t MsgFlagUpdate        = 0x6675; // 'fu'
+const uint16_t MsgFetchResources    = 0x6672; // 'fr'
+const uint16_t MsgGrabFlag          = 0x6766; // 'gf'
+const uint16_t MsgGMUpdate          = 0x676d; // 'gm'
+const uint16_t MsgGetWorld          = 0x6777; // 'gw'
+const uint16_t MsgGameSettings      = 0x6773; // 'gs'
+const uint16_t MsgGameTime          = 0x6774; // 'gt'
+const uint16_t MsgHandicap          = 0x6863; // 'hc'
+const uint16_t MsgHit               = 0x6869; // 'hi'
+const uint16_t MsgJoinServer        = 0x6a73; // 'js'
+const uint16_t MsgKilled            = 0x6b6c; // 'kl'
+const uint16_t MsgLagState          = 0x6c73; // 'ls'
+const uint16_t MsgLimboMessage      = 0x6c6d; // 'lm'
+const uint16_t MsgMessage           = 0x6d67; // 'mg'
+const uint16_t MsgNewPlayer         = 0x6e70; // 'np'
+const uint16_t MsgNearFlag          = 0x4e66; // 'Nf'
+const uint16_t MsgNewRabbit         = 0x6e52; // 'nR'
+const uint16_t MsgNegotiateFlags    = 0x6e66; // 'nf'
+const uint16_t MsgPause             = 0x7061; // 'pa'
+const uint16_t MsgPlayerInfo        = 0x7062; // 'pb'
+const uint16_t MsgPlayerData        = 0x7064; // 'pd'
+const uint16_t MsgPlayerUpdate      = 0x7075; // 'pu'
+const uint16_t MsgPlayerUpdateSmall = 0x7073; // 'ps'
+const uint16_t MsgQueryGame         = 0x7167; // 'qg'
+const uint16_t MsgQueryPlayers      = 0x7170; // 'qp'
+const uint16_t MsgReject            = 0x726a; // 'rj'
+const uint16_t MsgRemovePlayer      = 0x7270; // 'rp'
+const uint16_t MsgReplayReset       = 0x7272; // 'rr'
+const uint16_t MsgShotBegin         = 0x7362; // 'sb'
+const uint16_t MsgWShotBegin        = 0x7762; // 'wb'
+const uint16_t MsgWhatTimeIsIt      = 0x7774; // 'wt'
+const uint16_t MsgScore             = 0x7363; // 'sc'
+const uint16_t MsgScoreOver         = 0x736f; // 'so'
+const uint16_t MsgShotEnd           = 0x7365; // 'se'
+const uint16_t MsgSuperKill         = 0x736b; // 'sk'
+const uint16_t MsgSetShot           = 0x7373; // 'ss'
+const uint16_t MsgSetTeam           = 0x7374; // 'st'
+const uint16_t MsgSetVar            = 0x7376; // 'sv'
+const uint16_t MsgTangibilityUpdate = 0x746e; // 'tn'
+const uint16_t MsgTangibilityReset  = 0x7472; // 'tr'
+const uint16_t MsgTeleport          = 0x7470; // 'tp'
+const uint16_t MsgTimeUpdate        = 0x746f; // 'to'
+const uint16_t MsgTransferFlag      = 0x7466; // 'tf'
+const uint16_t MsgTeamUpdate        = 0x7475; // 'tu'
+const uint16_t MsgWantWHash         = 0x7768; // 'wh'
+const uint16_t MsgWantSettings      = 0x7773; // 'ws'
 
 // world database codes
-const uint16_t	WorldCodeHeader = 0x6865;		// 'he'
-const uint16_t	WorldCodeBase = 0x6261;			// 'ba'
-const uint16_t	WorldCodeBox = 0x6278;			// 'bx'
-const uint16_t	WorldCodeEnd = 0x6564;			// 'ed'
-const uint16_t	WorldCodeLink = 0x6c6e;			// 'ln'
-const uint16_t	WorldCodePyramid = 0x7079;		// 'py'
-const uint16_t	WorldCodeMesh = 0x6D65;			// 'me'
-const uint16_t	WorldCodeArc = 0x6172;			// 'ar'
-const uint16_t	WorldCodeCone = 0x636e;			// 'cn'
-const uint16_t	WorldCodeSphere = 0x7370;		// 'sp'
-const uint16_t	WorldCodeTetra = 0x7468;		// 'th'
-const uint16_t	WorldCodeTeleporter = 0x7465;		// 'te'
-const uint16_t	WorldCodeWall = 0x776c;			// 'wl'
-const uint16_t	WorldCodeWeapon = 0x7765;		// 'we'
-const uint16_t	WorldCodeZone = 0x7A6e;			// 'zn'
-const uint16_t	WorldCodeGroup = 0x6772;		// 'gr'
-const uint16_t	WorldCodeGroupDefStart = 0x6473;	// 'ds'
-const uint16_t	WorldCodeGroupDefEnd = 0x6465;		// 'de'
+const uint16_t WorldCodeHeader        = 0x6865; // 'he'
+const uint16_t WorldCodeBase          = 0x6261; // 'ba'
+const uint16_t WorldCodeBox           = 0x6278; // 'bx'
+const uint16_t WorldCodeEnd           = 0x6564; // 'ed'
+const uint16_t WorldCodeLink          = 0x6c6e; // 'ln'
+const uint16_t WorldCodePyramid       = 0x7079; // 'py'
+const uint16_t WorldCodeMesh          = 0x6D65; // 'me'
+const uint16_t WorldCodeArc           = 0x6172; // 'ar'
+const uint16_t WorldCodeCone          = 0x636e; // 'cn'
+const uint16_t WorldCodeSphere        = 0x7370; // 'sp'
+const uint16_t WorldCodeTetra         = 0x7468; // 'th'
+const uint16_t WorldCodeTeleporter    = 0x7465; // 'te'
+const uint16_t WorldCodeWall          = 0x776c; // 'wl'
+const uint16_t WorldCodeWeapon        = 0x7765; // 'we'
+const uint16_t WorldCodeZone          = 0x7A6e; // 'zn'
+const uint16_t WorldCodeGroup         = 0x6772; // 'gr'
+const uint16_t WorldCodeGroupDefStart = 0x6473; // 'ds'
+const uint16_t WorldCodeGroupDefEnd   = 0x6465; // 'de'
 
 // world database sizes
-const uint16_t	WorldSettingsSize = 18;
-const uint16_t	WorldCodeHeaderSize = 10;
-const uint16_t	WorldCodeBaseSize = 31;
-const uint16_t	WorldCodeWallSize = 24;
-const uint16_t	WorldCodeBoxSize = 29;
-const uint16_t	WorldCodeEndSize = 0;
-const uint16_t	WorldCodePyramidSize = 29;
-const uint16_t	WorldCodeMeshSize = 0xA5;  // dummy value, sizes are variable
-const uint16_t	WorldCodeArcSize = 85;
-const uint16_t	WorldCodeConeSize = 65;
-const uint16_t	WorldCodeSphereSize = 53;
-const uint16_t	WorldCodeTetraSize = 66;
-const uint16_t	WorldCodeTeleporterSize = 34;
-const uint16_t	WorldCodeLinkSize = 4;
-const uint16_t	WorldCodeWeaponSize = 24;  // basic size, not including lists
-const uint16_t	WorldCodeZoneSize = 34;    // basic size, not including lists
+const uint16_t WorldSettingsSize       =   18;
+const uint16_t WorldCodeHeaderSize     =   10;
+const uint16_t WorldCodeBaseSize       =   31;
+const uint16_t WorldCodeWallSize       =   24;
+const uint16_t WorldCodeBoxSize        =   29;
+const uint16_t WorldCodeEndSize        =    0;
+const uint16_t WorldCodePyramidSize    =   29;
+const uint16_t WorldCodeMeshSize       = 0xA5; // dummy value, sizes are variable
+const uint16_t WorldCodeArcSize        =   85;
+const uint16_t WorldCodeConeSize       =   65;
+const uint16_t WorldCodeSphereSize     =   53;
+const uint16_t WorldCodeTetraSize      =   66;
+const uint16_t WorldCodeTeleporterSize =   34;
+const uint16_t WorldCodeLinkSize       =    4;
+const uint16_t WorldCodeWeaponSize     =   24; // basic size, not including lists
+const uint16_t WorldCodeZoneSize       =   34; // basic size, not including lists
 
 // ping packet sizes, codes and structure
-const uint16_t	MsgPingCodeReply = 0x0303;
-const uint16_t	MsgPingCodeRequest = 0x0404;
+const uint16_t MsgPingCodeReply   = 0x0303;
+const uint16_t MsgPingCodeRequest = 0x0404;
 
-const uint16_t	MsgEchoRequest = 0x6572;	// 'er'
-const uint16_t	MsgEchoResponse = 0x6570;	// 'ep'
+const uint16_t MsgEchoRequest  = 0x6572; // 'er'
+const uint16_t MsgEchoResponse = 0x6570; // 'ep'
 
 // rejection codes
-const uint16_t	RejectBadRequest = 0x0000;
-const uint16_t	RejectBadTeam = 0x0001;
-const uint16_t	RejectBadType = 0x0002;
-const uint16_t	RejectUNUSED = 0x0003;
-const uint16_t	RejectTeamFull = 0x0004;
-const uint16_t	RejectServerFull = 0x0005;
-const uint16_t	RejectBadCallsign = 0x0006;
-const uint16_t	RejectRepeatCallsign = 0x0007;
-const uint16_t	RejectRejoinWaitTime = 0x0008;
-const uint16_t	RejectIPBanned = 0x0009;
-const uint16_t	RejectHostBanned = 0x000A;
-const uint16_t	RejectIDBanned = 0x000B;
+const uint16_t RejectBadRequest     = 0x0000;
+const uint16_t RejectBadTeam        = 0x0001;
+const uint16_t RejectBadType        = 0x0002;
+const uint16_t RejectUNUSED         = 0x0003;
+const uint16_t RejectTeamFull       = 0x0004;
+const uint16_t RejectServerFull     = 0x0005;
+const uint16_t RejectBadCallsign    = 0x0006;
+const uint16_t RejectRepeatCallsign = 0x0007;
+const uint16_t RejectRejoinWaitTime = 0x0008;
+const uint16_t RejectIPBanned       = 0x0009;
+const uint16_t RejectHostBanned     = 0x000A;
+const uint16_t RejectIDBanned       = 0x000B;
 
 // sound type codes
-const uint16_t	LocalCustomSound = 0x0001;
+const uint16_t LocalCustomSound = 0x0001;
 
 enum BlowedUpReason {
 	GotKilledMsg,
@@ -188,14 +185,14 @@ enum BlowedUpReason {
 };
 
 // request for additional UDP link
-const uint16_t	MsgUDPLinkRequest = 0x6f66;		// 'of'
-const uint16_t	MsgUDPLinkEstablished = 0x6f67;		// 'og'
+const uint16_t MsgUDPLinkRequest     = 0x6f66; // 'of'
+const uint16_t MsgUDPLinkEstablished = 0x6f67; // 'og'
 
 // server control message
-const uint16_t	MsgServerControl = 0x6f69;		// 'oi'
+const uint16_t MsgServerControl = 0x6f69; // 'oi'
 
 // lag ping sent by server to client and reply from client
-const uint16_t	MsgLagPing = 0x7069;			// 'pi'
+const uint16_t MsgLagPing = 0x7069; // 'pi'
 
 /* server communication protocol:
   --> incoming messages (to server)

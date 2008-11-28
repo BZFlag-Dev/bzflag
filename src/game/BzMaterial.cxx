@@ -238,6 +238,7 @@ std::string BzMaterial::nullString = "";
 
 void BzMaterial::reset()
 {
+  order = 0;
   dynamicColor = -1;
   const float defAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
   const float defDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -306,6 +307,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   name = m.name;
   aliases = m.aliases;
 
+  order = m.order;
   dynamicColor = m.dynamicColor;
   memcpy (ambient, m.ambient, sizeof(ambient));
   memcpy (diffuse, m.diffuse, sizeof(diffuse));
@@ -351,7 +353,8 @@ bool BzMaterial::operator==(const BzMaterial& m) const
 {
   int i;
 
-  if ((dynamicColor != m.dynamicColor) ||
+  if ((order != m.order) ||
+      (dynamicColor != m.dynamicColor) ||
       (memcmp (ambient, m.ambient, sizeof(float[4])) != 0) ||
       (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
       (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
@@ -427,6 +430,7 @@ void* BzMaterial::pack(void* buf) const
   if (noLighting)       modeByte |= (1 << 6);
   buf = nboPackUByte(buf, modeByte);
 
+  buf = nboPackInt(buf, order);
   buf = nboPackInt(buf, dynamicColor);
   buf = pack4Float(buf, ambient);
   buf = pack4Float(buf, diffuse);
@@ -481,8 +485,8 @@ void* BzMaterial::unpack(void* buf)
   groupAlpha    = (modeByte & (1 << 5)) != 0;
   noLighting    = (modeByte & (1 << 6)) != 0;
 
-  buf = nboUnpackInt(buf, inTmp);
-  dynamicColor = int(inTmp);
+  buf = nboUnpackInt(buf, order);
+  buf = nboUnpackInt(buf, inTmp); dynamicColor = int(inTmp);
   buf = unpack4Float(buf, ambient);
   buf = unpack4Float(buf, diffuse);
   buf = unpack4Float(buf, specular);
@@ -536,6 +540,8 @@ int BzMaterial::packSize() const
 
   const int modeSize = sizeof(uint8_t);
 
+  const int orderSize = sizeof(int32_t);
+
   const int colorSize = sizeof(int32_t) + (4 * sizeof(float[4])) +
 			sizeof(float) + sizeof(float);
 
@@ -552,7 +558,8 @@ int BzMaterial::packSize() const
     shaderSize += nboStdStringPackSize(shaders[i].name);
   }
 
-  return nboStdStringPackSize(name) + modeSize + colorSize + textureSize + shaderSize;
+  return nboStdStringPackSize(name) +
+         modeSize + orderSize + colorSize + textureSize + shaderSize;
 }
 
 
@@ -575,6 +582,10 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
+  }
+
+  if (order != defaultMaterial.order) {
+    out << indent << "  order " << order << std::endl;
   }
 
   if (dynamicColor != defaultMaterial.dynamicColor) {
@@ -736,6 +747,12 @@ bool BzMaterial::addAlias(const std::string& alias)
     aliases.push_back(alias); // only add it if it's new
   }
   return true;
+}
+
+void BzMaterial::setOrder(int value)
+{
+  order = value;
+  return;
 }
 
 void BzMaterial::setDynamicColor(int dyncol)
@@ -961,6 +978,11 @@ const std::string& BzMaterial::getName() const
 const std::vector<std::string>& BzMaterial::getAliases() const
 {
   return aliases;
+}
+
+int BzMaterial::getOrder() const
+{
+  return order;
 }
 
 int BzMaterial::getDynamicColor() const

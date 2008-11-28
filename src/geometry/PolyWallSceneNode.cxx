@@ -20,8 +20,8 @@
 #include <assert.h>
 #include <math.h>
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
+// common headers
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 //
 // PolyWallSceneNode::Geometry

@@ -46,6 +46,7 @@ class SceneDatabaseBuilder {
     void		addBase(SceneDatabase*, BaseBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
     void		addWaterLevel(SceneDatabase*, const World*);
+    void		addWorldTexts(SceneDatabase*);
 
   private:
     // disallow duplication

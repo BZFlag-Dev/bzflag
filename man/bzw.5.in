@@ -78,6 +78,8 @@ world types consists of:
 .br 
 .B world
 .br 
+.B mapinfo
+.br 
 .B options
 .br 
 .B waterLevel
@@ -120,6 +122,8 @@ world types consists of:
 .br 
 .B base
 .br 
+.B text
+.br 
 .B weapon
 .br 
 .B zone
@@ -147,6 +151,7 @@ and \-conf.
 .br 
 In the following examples, the values are the defaults.
 
+
 .B The World object
 .br 
 Header for the world.
@@ -161,6 +166,31 @@ Header for the world.
 .br 
 \fBend\fR
 .br 
+
+
+.B The MapInfo object
+.br 
+A block of text to provide information about the world.
+
+\fBmapinfo\fR
+.br 
+  author:  bob
+.br
+  name:    bob_cool.bzw
+.br
+  brief:   bob's cool BZFlag map
+.br
+  date:    Jan 01, 2010
+.br
+  email:   bob@bobland.bz
+.br
+  url:     http://bobland.bz/maps/cool/
+.br
+  license: http://creativecommons.org/licenses/by/3.0/us/
+.br 
+\fBend\fR
+.br 
+
 
 .B The Options object
 .br 
@@ -214,6 +244,8 @@ must be used to generate world objects from a group definition.
   #   physics
 .br 
   #   links
+.br 
+  #   text
 .br 
   #   weapon
 .br 
@@ -301,6 +333,20 @@ Instantiates a group, and possibly modifies subobjects
 \fB  alpha clampDown\fR 0.2 0.5 0.5  # period, offset, width
 .br 
 \fB  red sequence\fR 0.0 0.0 2 0 1 1 2 0 ... # period, offset, list of states
+.br 
+  # BZDB variables can also be used to control dynamic colors:
+.br 
+\fB  variable\fR  _varname # the BZDB variable name
+.br
+\fB  varTime\fR 1.0      # the transition time (in seconds)
+.br 
+\fB  varUseAlpha\fR        # use the alpha channel?
+.br 
+  # the BZDB variable should contain a valid color string.
+.br 
+  # it can also be suffixed with '@ <seconds>', which will
+.br 
+  # override the varTime value for that change.
 .br 
 \fBend\fR
 .br 
@@ -812,6 +858,83 @@ The oncap option will fire a world weapon of the specified type when the team fl
 .br 
 
 
+.B The Text object
+.br 
+Creates a text message in the world. Although text objects can not be grouped,
+they can still use all of the transformation keywords (shift, scale, spin, shear,
+etc...) Text objects can also use all of the material keywords, but some of them
+will not do anything (ex: texture). The 'data' value (when not being used as a
+BZDB variable), can use the following escape characters:
+.br
+  \fBshort    named\fR
+.br
+   \\\\      backslash
+   \\n      newline
+   \\e      escape
+   \\s      space
+   \\r      red
+   \\g      green
+   \\b      blue
+   \\y      yellow
+   \\p      purple
+   \\c      cyan
+   \\o      orange
+   \\w      white
+   \\d      black
+   \\+      bright
+   \\-      dim
+   \\*      blink
+   \\/      noblink
+   \\_      under
+   \\~      nounder
+   \\!      reset
+   \\#      fullreset
+.br
+  The 'short' escapes style: '\\rred \\!then \\bblue'
+.br
+  The 'named' escapes style: '\\(red)red \\(reset)then \\(blue)blue'
+
+.br
+\fBtext\fR
+.br
+\fB  name example_text\fR
+.br
+\fB  data\fR my text string   # the text, or the bzdb variable name
+.br
+\fB  bzdb\fR                  # use 'data' as a BZDB variable name
+.br
+\fB  font\fR myFontName       # the font name, can use URLs
+.br
+\fB  justify 0.0\fR           # horizontal justification
+.br
+  # 0.0 -> left   justify
+.br
+  # 0.5 -> center justify
+.br
+  # 1.0 -> right  justify
+.br
+\fB  fontSize 18.0\fR         # the resolution of the font
+.br
+\fB  lineSpace 1.1\fR         # vertical space between lines
+.br
+\fB  fixedWidth 0.0\fR        # text width control
+.br
+  # if > 0, the initial horizontal width (relative to a height of 1)
+.br
+  # if < 0, the longest of the lines  (useless for single lines)
+.br
+\fB  upright\fR               # a shortcut for 'spin 90 1 0 0'
+.br
+\fB  billboard\fR             # orients the text towards the screen
+.br
+\fB  polyoffset 0.0 0.0\fR    # polygon offset factor and units
+.br
+\fB  lengthPerPixel 0.0\fR    # draw distance cutoff length
+.br
+\fBend\fR
+.br
+
+
 .B The Weapon object
 .br 
 Creates a world weapon, or a weapon fired automatically by the world. The weapon can either be timed or be event driven.
@@ -932,6 +1055,8 @@ allObjects :=
 .br 
 	| "tetra"
 .br 
+	| "text"
+.br 
 	| "weapon"
 .br 
 	| "zone"
@@ -967,6 +1092,8 @@ worldStream :=
 	| "group" <group_name>
 .br 
 	| "teleporter" <name>?
+.br 
+	| "mapinfo"
 .br 
 	| "options"
 .br 
@@ -1209,6 +1336,12 @@ dynamicColor :=
 	| channel "clampdown" <float> <float> <float>
 .br 
 	| channel "sequence" <float> <float> ("0" "1" "2"){1..*}
+.br 
+	| variable <bzdb_varname>
+.br 
+	| varTime <float>
+.br 
+	| varUseAlpha
 .br 
 .TP 
 .B (CustomGate.cxx/CustomGate::read)
@@ -1553,6 +1686,36 @@ world :=
 	| "flagHeight" <float>
 .br 
 	| object
+.br 
+.TP 
+.B (CustomWorldText.cxx/CustomWorldText::read)
+.br 
+.TP 
+text :=
+.br 
+	  "data" <string>
+.br 
+	| "bzdb"
+.br 
+	| "font" <string>
+.br 
+	| "fontsize" <float>
+.br 
+	| "justify" <float>
+.br 
+	| "linespace" <float>
+.br 
+	| "fixedwidth" <float>
+.br 
+	| "polyoffset" <float> <float>
+.br 
+	| "billboard"
+.br 
+	| "lengthPerPixel" <float>
+.br 
+	| material
+.br 
+	| location
 .br 
 .TP 
 .B (CustomZone.cxx/CustomZone::read)

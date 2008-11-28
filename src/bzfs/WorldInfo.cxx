@@ -27,6 +27,7 @@
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
 #include "PhysicsDriver.h"
+#include "WorldText.h"
 #include "MeshTransform.h"
 #include "MeshDrawInfo.h"
 #include "TimeKeeper.h"
@@ -165,7 +166,7 @@ void WorldInfo::addBase(const float pos[3], float r,
 }
 
 
-void WorldInfo::addMapInfo(const std::vector<std::string>& lines)
+void WorldInfo::setMapInfo(const std::vector<std::string>& lines)
 {
   mapInfo.setLines(lines);
 }
@@ -510,7 +511,7 @@ int WorldInfo::packDatabase()
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
     MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
     TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() + links.packSize() +
-    worldWeapons.packSize() + entryZones.packSize();
+    WORLDTEXTMGR.packSize() + worldWeapons.packSize() + entryZones.packSize();
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
@@ -544,6 +545,9 @@ int WorldInfo::packDatabase()
 
   // pack teleporter links
   databasePtr = links.pack(databasePtr);
+
+  // pack world text
+  databasePtr = WORLDTEXTMGR.pack(databasePtr);
 
   // pack water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);

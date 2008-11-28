@@ -131,11 +131,24 @@ static int nodeCompare(const void *a, const void* b)
   const RenderNodeGStateList::Item* itemB =
     (const RenderNodeGStateList::Item*) b;
 
-  // draw from back to front
-  if (itemA->depth > itemB->depth) {
-    return -1;
-  } else {
-    return +1;
+  const float diff = (itemA->depth - itemB->depth);
+
+  // sort from back-to-from
+  if (diff > 0.0f) {
+    return -1; // a is further away, render it first
+  }
+  else if (diff < 0.0f) {
+    return +1; // b is further away, render it first
+  }
+  else {
+    // sort by ascending orders
+    const OpenGLGState* aState = itemA->gstate;
+    const OpenGLGState* bState = itemB->gstate;
+    if (aState->getOrder() < bState->getOrder()) {
+      return -1; // a order is smaller, render it first
+    } else {
+      return +1; // b order is smaller, render it first
+    }
   }
 }
 

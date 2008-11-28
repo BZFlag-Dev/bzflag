@@ -43,7 +43,8 @@ libGame_la_SOURCES =			\
 	Team.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx		\
-	WorldContentInfo.cxx
+	WorldContentInfo.cxx		\
+	WorldText.cxx
 
 
 EXTRA_DIST = \

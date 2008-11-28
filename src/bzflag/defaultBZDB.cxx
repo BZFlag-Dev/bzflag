@@ -62,6 +62,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
   { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
+  { "maxFontSize",		"128",			true,	StateDatabase::ReadWrite,	NULL },
   { "groundTexRepeat",		"0.1",			true,	StateDatabase::ReadWrite,	NULL },
   { "groundHighResTexRepeat",	"0.05",			true,	StateDatabase::ReadWrite,	NULL },
   { "boxWallTexRepeat",		"1.5",			true,	StateDatabase::ReadWrite,	NULL },

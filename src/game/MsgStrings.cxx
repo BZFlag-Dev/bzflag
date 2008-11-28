@@ -95,6 +95,7 @@ static MsgStringList handleMsgGameSettings(PacketInfo *pi);
 static MsgStringList handleMsgGameTime(PacketInfo *pi);
 static MsgStringList handleMsgHandicap(PacketInfo *pi);
 static MsgStringList handleMsgHit(PacketInfo *pi);
+static MsgStringList handleMsgJoinServer(PacketInfo *pi);
 static MsgStringList handleMsgKilled(PacketInfo *pi);
 static MsgStringList handleMsgLagState(PacketInfo *pi);
 static MsgStringList handleMsgLimboMessage(PacketInfo *pi);
@@ -130,9 +131,6 @@ static MsgStringList handleMsgTransferFlag(PacketInfo *pi);
 static MsgStringList handleMsgTeamUpdate(PacketInfo *pi);
 static MsgStringList handleMsgWantWHash(PacketInfo *pi);
 static MsgStringList handleMsgWantSettings(PacketInfo *pi);
-static MsgStringList handleMsgPortalAdd(PacketInfo *pi);
-static MsgStringList handleMsgPortalRemove(PacketInfo *pi);
-static MsgStringList handleMsgPortalUpdate(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
 static MsgStringList handleMsgServerControl(PacketInfo *pi);
@@ -178,6 +176,7 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgGameTime),
   PACKET_LIST_ENTRY (MsgHandicap),
   PACKET_LIST_ENTRY (MsgHit),
+  PACKET_LIST_ENTRY (MsgJoinServer),
   PACKET_LIST_ENTRY (MsgKilled),
   PACKET_LIST_ENTRY (MsgLagState),
   PACKET_LIST_ENTRY (MsgLimboMessage),
@@ -213,9 +212,6 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgTeamUpdate),
   PACKET_LIST_ENTRY (MsgWantWHash),
   PACKET_LIST_ENTRY (MsgWantSettings),
-  PACKET_LIST_ENTRY (MsgPortalAdd),
-  PACKET_LIST_ENTRY (MsgPortalRemove),
-  PACKET_LIST_ENTRY (MsgPortalUpdate),
   PACKET_LIST_ENTRY (MsgUDPLinkRequest),
   PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
   PACKET_LIST_ENTRY (MsgServerControl),
@@ -838,6 +834,31 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
 }
 
 
+static MsgStringList handleMsgJoinServer (PacketInfo *pi)
+{
+  MsgStringList list = listMsgBasics (pi);
+
+  void *d = (void*)pi->data;
+
+  std::string addr;
+  int32_t port;
+  int32_t team;
+  std::string referrer;
+
+  d = nboUnpackStdString(d, addr);
+  d = nboUnpackInt(d, port);
+  d = nboUnpackInt(d, team);
+  d = nboUnpackStdString(d, referrer);
+
+  listPush (list, 1, "addr: \"%s\"", addr.c_str());
+  listPush (list, 1, "port: %i", port);
+  listPush (list, 1, "team: %i", team);
+  listPush (list, 1, "referrer: \"%s\"", referrer.c_str());
+
+  return list;
+}
+
+
 static MsgStringList handleMsgLagState (PacketInfo *pi)
 {
   // not recorded
@@ -1275,30 +1296,6 @@ static MsgStringList handleMsgWantWHash (PacketInfo *pi)
 
 
 static MsgStringList handleMsgWantSettings (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgPortalAdd (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgPortalRemove (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgPortalUpdate (PacketInfo *pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics (pi);

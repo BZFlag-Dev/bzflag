@@ -33,6 +33,7 @@
 #include "FlagSceneNode.h"
 
 /* FIXME - local implementation dependancies */
+#include "DynamicWorldText.h"
 #include "BackgroundRenderer.h"
 #include "LocalPlayer.h"
 #include "daylight.h"
@@ -1334,10 +1335,13 @@ void SceneRenderer::getRenderNodes()
       orderedList.sort(frustum.getEye());
     }
 
+    DYNAMICWORLDTEXT.addRenderNodes(*this);
+
     // add the shadow rendering nodes
     if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
 	&& (!mirror || !clearZbuffer)) {
       scene->addShadowNodes(*this);
+      DYNAMICWORLDTEXT.addShadowNodes(*this);
     }
   }
   return;

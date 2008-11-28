@@ -301,7 +301,7 @@ MeshTransform::Tool::~Tool()
 
 
 void MeshTransform::Tool::processTransforms(
-					    const std::vector<TransformData>& transforms)
+                            const std::vector<TransformData>& transforms)
 {
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];

@@ -39,7 +39,7 @@ function CallIn.BZDBChange(key, value)
 end
 
 
-function CallIn.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
+function CallIn.GetPlayerSpawnPos(playerID, team, px, py, pz, rot)
   py = py + (height * random())
   return px, py, pz, rot
 end

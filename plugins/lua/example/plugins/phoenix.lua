@@ -22,7 +22,7 @@ local prevSpawns = {}  --  < playerID = { px, py, pz, rot } >  pairs
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function CallIn.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
+function CallIn.GetPlayerSpawnPos(playerID, team, px, py, pz, rot)
   local state = prevSpawns[playerID]
   if (state) then
     return unpack(state)
@@ -30,19 +30,18 @@ function CallIn.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
 end
 
 
-function CallIn.PlayerPartEvent(playerID, team, callsign, reason)
+function CallIn.PlayerParted(playerID, team, callsign, reason)
   prevSpawns[playerID] = nil
 end
 
 
-function CallIn.PlayerDieEvent(playerID, team, killerID, killerTeam,
-                               flagType, shotID, px, py, pz, rot)
+function CallIn.PlayerDied(playerID, team, killerID, killerTeam,
+                           flagType, shotID, px, py, pz, rot)
   prevSpawns[playerID] = { px, py, pz, rot }
 end
 
 
-function CallIn.CaptureEvent(teamCapped, teamCapping, playerCapping,
-                             px, py, pz, rot)
+function CallIn.Capture(teamCapped, teamCapping, playerCapping, px, py, pz, rot)
   -- clear previous spawns for capped team members
   for _, pid in ipairs(BZ.GetPlayerIDs()) do
     if (prevSpawns[pid]) then

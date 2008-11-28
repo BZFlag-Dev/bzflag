@@ -496,7 +496,7 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
   if (canRicochet()) {
     out << indent << "  ricochet" << std::endl;
   }
-  out << indent << "end" << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

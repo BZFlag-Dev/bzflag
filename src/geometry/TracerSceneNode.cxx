@@ -21,13 +21,12 @@
 
 // common implementation headers
 #include "StateDatabase.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implemenation headers
 #include "ViewFrustum.h"
 #include "ShellSceneNode.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 #define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 

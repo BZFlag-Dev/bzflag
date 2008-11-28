@@ -47,6 +47,9 @@ private:
 		       bool& gotWorld);
   void finalization(char *data, unsigned int length, bool good);
 
+  bool readRawLines(std::vector<std::string>& lines,
+                    const std::string& endToken, int& lineNum);
+
   // stream to open
   std::string location;
   std::istream *input;
@@ -61,6 +64,9 @@ private:
 
   // states if we read from a blob
   bool fromBlob;
+
+  // mapinfo text lines
+  std::vector<std::string> mapInfoLines;
 };
 
 #endif

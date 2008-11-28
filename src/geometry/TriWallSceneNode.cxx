@@ -22,9 +22,8 @@
 
 // common implementation headers
 #include "Intersect.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 //
 // TriWallSceneNode::Geometry

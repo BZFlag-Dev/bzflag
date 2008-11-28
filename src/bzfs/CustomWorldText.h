@@ -10,49 +10,31 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+#ifndef __CUSTOM_WORLD_TEXT__
+#define __CUSTOM_WORLD_TEXT__
 
 /* interface header */
-#include "CustomMapInfo.h"
+#include "WorldFileLocation.h"
 
-/* system headers */
-#include <iostream>
-#include <math.h>
-#include <sstream>
-#include <vector>
-#include <map>
+/* common headers */
+#include "WorldText.h"
+#include "BzMaterial.h"
 
-/* common implementation headers */
-#include "MapInfo.h"
+class CustomWorldText : public WorldFileLocation {
+  public:
+    CustomWorldText();
+    ~CustomWorldText();
+    virtual bool read(const char *cmd, std::istream& input);
+    virtual void writeToManager() const;
+    bool usesManager() { return true; }
 
+  private:
+    mutable WorldText* text;
+    BzMaterial material;
+    bool upright;
+};
 
-CustomMapInfo::CustomMapInfo()
-{
-  return;
-}
-
-
-CustomMapInfo::~CustomMapInfo()
-{
-  return;
-}
-
-
-bool CustomMapInfo::read(const char* cmd, std::istream& input)
-{
-  std::string line;
-  std::getline(input, line);
-  lines.push_back(cmd + line);
-  input.putback('\n');
-  return true;
-}
-
-
-void CustomMapInfo::writeToWorld(WorldInfo* world) const
-{
-  world->addMapInfo(lines);
-}
-
+#endif  /* __CUSTOM_WORLD_TEXT__ */
 
 // Local variables: ***
 // mode: C++ ***

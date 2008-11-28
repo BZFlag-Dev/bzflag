@@ -23,13 +23,12 @@
 // common implementation headers
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implementation headers
 #include "ViewFrustum.h"
 #include "StateDatabase.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
 				show(false),

@@ -362,7 +362,7 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
   if (shootThrough) { out << indent << "  shootThrough" << std::endl; }
   if (ricochet)     { out << indent << "  ricochet"     << std::endl; }
 
-  out << indent << "end" << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

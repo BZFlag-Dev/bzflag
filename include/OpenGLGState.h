@@ -37,6 +37,7 @@ class OpenGLGState {
 			~OpenGLGState();
     OpenGLGState&	operator=(const OpenGLGState& state);
     void		setState() const;
+    int			getOrder() const;
     bool		getNeedsSorting() const;
     bool		isBlended() const;
     bool		isTextured() const;
@@ -150,6 +151,7 @@ class OpenGLGStateBuilder {
     OpenGLGStateBuilder &operator=(const OpenGLGState&);
 
     void		reset();
+    void		setOrder(int);
     void		enableTexture(bool = true);
     void		enableTextureMatrix(bool = true);
     void		enableSphereMap(bool = true);

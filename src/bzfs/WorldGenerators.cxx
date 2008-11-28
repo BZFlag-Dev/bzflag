@@ -62,7 +62,7 @@ WorldInfo *defineRandomWorld()
   // mapinfo
   std::vector<std::string> mapInfo;
   CreateMapInfo("random", mapInfo);
-  myWorld->addMapInfo(mapInfo);
+  myWorld->setMapInfo(mapInfo);
 
   // make walls
   float worldSize = BZDBCache::worldSize;
@@ -184,7 +184,7 @@ WorldInfo *defineTeamWorld()
   if (haveBlue)   { mapInfo.push_back("team:    blue"); }
   if (haveGreen)  { mapInfo.push_back("team:    green"); }
   if (havePurple) { mapInfo.push_back("team:    purple"); }
-  myWorld->addMapInfo(mapInfo);
+  myWorld->setMapInfo(mapInfo);
 
   const float worldSize = BZDBCache::worldSize;
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;

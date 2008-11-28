@@ -62,8 +62,6 @@ bzfs_SOURCES = \
 	CustomGroup.h \
 	CustomLink.cxx \
 	CustomLink.h \
-	CustomMapInfo.h \
-	CustomMapInfo.cxx \
 	CustomMaterial.h \
 	CustomMaterial.cxx \
 	CustomMesh.cxx \
@@ -88,6 +86,8 @@ bzfs_SOURCES = \
 	CustomWeapon.h \
 	CustomWorld.cxx \
 	CustomWorld.h \
+	CustomWorldText.cxx \
+	CustomWorldText.h \
 	CustomZone.cxx \
 	CustomZone.h \
 	DangerousSpawnPolicy.cxx \

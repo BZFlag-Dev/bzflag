@@ -16,6 +16,7 @@ using std::string;
 #include "constants.h"
 #include "mapobject.h"
 #include "slashcmd.h"
+#include "fetchurl.h"
 #include "bzdb.h"
 
 
@@ -136,6 +137,7 @@ static bool CreateLuaState(const string& script)
     BZDB::PushEntries(L);
     MapObject::PushEntries(L);
     SlashCmd::PushEntries(L);
+    FetchURL::PushEntries(L);
   }
   lua_setglobal(L, "BZ");
 
@@ -154,9 +156,12 @@ static bool CreateLuaState(const string& script)
 
 static bool DestroyLuaState()
 {
-  CallIns::Shutdown(L);
-  MapObject::Shutdown(L);
-  SlashCmd::Shutdown(L);
+  CallIns::Shutdown(); // send the call-in
+
+  FetchURL::CleanUp(L);
+  SlashCmd::CleanUp(L);
+  MapObject::CleanUp(L);
+  CallIns::CleanUp(L);
 
   lua_close(L);
   L = NULL;

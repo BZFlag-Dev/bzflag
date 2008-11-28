@@ -22,9 +22,7 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 const GLfloat		LaserRadius = 0.1f;
 

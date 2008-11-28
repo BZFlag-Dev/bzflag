@@ -228,19 +228,19 @@ end
 --------------------------------------------------------------------------------
 
 local specialCallIns = {
-  UnknownSlashCommand    = GenUnknownSlashCmdFunc, --> [bool handled]
-  RawChatMessageEvent    = GenFirstStringFunc, --> [string newMsg]
-  PlayerCollision        = GenFirstTrueFunc,   --> [bool handled]
-  AnointRabbitEvent      = GenFirstNumberFunc, --> [number playerID]
-  FlagTransferredEvent   = GenFirstNumberFunc, --> [number action]
-  GetAutoTeamEvent       = GenFirstNumberFunc, --> [number team]
-  GetPlayerSpawnPosEvent = GenFirstValidFunc,  --> [px, py, pz][, rot]
-  GetPlayerInfoEvent     = GenFirstValidFunc,  --> [bool adm][,bool verified][,bool reg'd]
-  AllowSpawn             = GenFirstFalseFunc,  --> [bool allow]
-  AllowFlagGrabEvent     = GenFirstFalseFunc,  --> [bool allow]
-  AllowKillCommandEvent  = GenFirstFalseFunc,  --> [bool allow]
-  AllowPlayer            = GenFirstFalseFunc2, --> [bool allow][, string reason]
-  AllowCTFCaptureEvent   = GenFirstFalseFunc2, --> [bool allow][, bool killTeam]
+  UnknownSlashCommand = GenUnknownSlashCmdFunc, --> [bool handled]
+  RawChatMessage      = GenFirstStringFunc, --> [string newMsg]
+  PlayerCollision     = GenFirstTrueFunc,   --> [bool handled]
+  AnointRabbit        = GenFirstNumberFunc, --> [number playerID]
+  FlagTransferred     = GenFirstNumberFunc, --> [number action]
+  GetAutoTeam         = GenFirstNumberFunc, --> [number team]
+  GetPlayerSpawnPos   = GenFirstValidFunc,  --> [px, py, pz][, rot]
+  GetPlayerInfo       = GenFirstValidFunc,  --> [bool adm][,bool verified][,bool reg'd]
+  AllowSpawn          = GenFirstFalseFunc,  --> [bool allow]
+  AllowFlagGrab       = GenFirstFalseFunc,  --> [bool allow]
+  AllowKillCommand    = GenFirstFalseFunc,  --> [bool allow]
+  AllowPlayer         = GenFirstFalseFunc2, --> [bool allow][, string reason]
+  AllowCTFCapture     = GenFirstFalseFunc2, --> [bool allow][, bool killTeam]
 }
 
 local ciFuncs = {}

@@ -932,7 +932,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     drawInfo->print(out, indent2);
   }
 
-  out << indent << "end" << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

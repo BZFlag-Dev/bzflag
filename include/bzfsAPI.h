@@ -1717,6 +1717,7 @@ class bz_BaseURLHandler
 public:
   bz_BaseURLHandler() { version = 1; }
   virtual ~bz_BaseURLHandler() {};
+
   virtual void done(const char* URL, void * data, unsigned int size, bool complete) = 0;
   virtual void timeout(const char* /*URL*/, int /*errorCode*/) {};
   virtual void error(const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/) {};
@@ -1727,6 +1728,10 @@ protected:
 
 BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
 BZF_API bool bz_removeURLJob(const char* URL);
+BZF_API size_t bz_addURLJobForID(const char* URL,
+                                 bz_BaseURLHandler* handler = NULL,
+                                 const char* postData = NULL);
+BZF_API bool bz_removeURLJobByID(size_t id);
 BZF_API bool bz_stopAllURLJobs(void);
 
 // inter plugin communication
@@ -1809,6 +1814,7 @@ BZF_API const char* bz_MD5(const char * str);
 BZF_API const char* bz_MD5(const void * data, size_t size);
 
 BZF_API const char* bz_getServerVersion(void);
+BZF_API const char* bz_getProtocolVersion(void);
 
 // server side player API
 

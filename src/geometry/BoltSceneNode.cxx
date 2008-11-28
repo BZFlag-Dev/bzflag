@@ -24,13 +24,12 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "TextureManager.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
-#include "TextureManager.h"
 
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3])

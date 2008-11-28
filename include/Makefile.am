@@ -129,6 +129,7 @@ noinst_HEADERS =			\
 	TeleporterSceneNodeGenerator.h	\
 	TetraBuilding.h			\
 	TextChunkManager.h		\
+	TextSceneNode.h			\
 	TextUtils.h			\
 	TextureManager.h		\
 	TextureMatrix.h			\
@@ -144,6 +145,7 @@ noinst_HEADERS =			\
 	WallSceneNodeGenerator.h	\
 	WordFilter.h			\
 	WorldEventManager.h		\
+	WorldText.h			\
 	ZSceneDatabase.h		\
 	bz_Locale.h			\
 	bzares.h			\

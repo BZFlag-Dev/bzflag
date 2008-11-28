@@ -26,18 +26,18 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implementation headers
 #include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 WallSceneNode::WallSceneNode() : numLODs(0),
 				elementAreas(NULL),
 				style(0)
 {
-  noPlane      = false;
+  noPlane = false;
+  order = 0;
   dynamicColor = NULL;
   color[3] = 1.0f;
   modulateColor[3] = 1.0f;
@@ -216,6 +216,12 @@ void			WallSceneNode::setColor(
   color[3] = a;
 }
 
+void			WallSceneNode::setOrder(int value)
+{
+  order = value;
+  return;
+}
+
 void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
 {
   dynamicColor = rgba;
@@ -335,6 +341,7 @@ void			WallSceneNode::notifyStyleChange()
   float alpha;
   bool lighted = (BZDBCache::lighting && gstate.isLighted());
   OpenGLGStateBuilder builder(gstate);
+  builder.setOrder(order);
   style = 0;
   if (lighted) {
     style += 1;
@@ -388,6 +395,7 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
   useColorTexture = node->useColorTexture;
+  order = node->order;
   dynamicColor = node->dynamicColor;
   setColor(node->color);
   setModulateColor(node->modulateColor);

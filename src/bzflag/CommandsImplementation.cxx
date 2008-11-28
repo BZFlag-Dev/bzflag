@@ -770,7 +770,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 bool MapInfoCommand::operator() (const char* /*commandLine*/)
 {
   World* world = World::getWorld();
-  const std::string indent = ANSI_STR_FG_GREEN "mapinfo:  " ANSI_STR_RESET;
+  const std::string indent = ANSI_STR_FG_GREEN "mapinfo:" ANSI_STR_RESET;
   const MapInfo::InfoVec& infoVec = world->getMapInfo().getVec();
   if (infoVec.empty()) {
     addMessage(NULL, "no map info");

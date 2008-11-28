@@ -101,6 +101,8 @@ genericfiles =				\
 	../bzflag/CrackedGlass.h		\
 	../bzflag/Downloads.cxx			\
 	../bzflag/Downloads.h			\
+	../bzflag/DynamicWorldText.cxx		\
+	../bzflag/DynamicWorldText.h		\
 	../bzflag/EntryZone.cxx			\
 	../bzflag/EntryZone.h			\
 	../bzflag/FlashClock.cxx		\

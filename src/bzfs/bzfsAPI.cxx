@@ -3919,170 +3919,266 @@ BZF_API void bz_updateListServer(void)
 }
 
 //-------------------------------------------------------------------------
+//
+//  URLFetch
+//
 
-typedef struct
-{
-  std::string url;
-  bz_BaseURLHandler *handler;
-  std::string postData;
-} trURLJob;
+class URLFetch : private cURLManager {
 
-class BZ_APIURLManager: private cURLManager
-{
-public:
-  BZ_APIURLManager()
-  {
-    doingStuff=false;
-  }
+  friend class URLFetchHandler;
 
-  virtual ~BZ_APIURLManager()
-  {
-    flush();
-  }
-
-  void addJob(const char *URL, bz_BaseURLHandler *handler, const char *_postData)
-  {
-    if(!URL)
-      return ;
-
-    trURLJob job;
-    job.url=URL;
-    job.handler=handler;
-    if(_postData)
-      job.postData=_postData;
-
-    jobs.push_back(job);
-
-    if(!doingStuff)
-      doJob();
-  }
-
-  void removeJob(const char *URL)
-  {
-    if(!URL)
-      return ;
-
-    std::string url=URL;
-
-    for(unsigned int i=0; i < jobs.size(); i++)
+  public:
+    URLFetch(const char *URL, bz_BaseURLHandler *_handler,
+             const char *_postData)
+    : id(0)
+    , url("")
+    , postData("")
+    , handler(_handler)
     {
-      if(jobs[i].url==url)
-      {
-	if(i==0)
-	{
-	  removeHandle();
-	}
-	jobs.erase(jobs.begin()+i);
-	i=jobs.size()+1;
+      if (URL == NULL) {
+        return;
       }
-    }
-  }
 
-  void flush(void)
-  {
-    removeHandle();
-    jobs.clear();
-    doingStuff=false;
-  }
+      maxJobID++; // 0 is reserved as 'invalid'
+      maxJobID = (maxJobID == 0) ? 1: maxJobID;
 
-  int jobCount(void)
-  {
-    return jobs.size();
-  }
+      id = maxJobID;
+      url = URL;
+      postData = (_postData == NULL) ? "" : _postData;
 
-  virtual void finalization(char *data, unsigned int length, bool good)
-  {
-    if(!jobs.size() || !doingStuff)
-      return ;
-    // we are suposed to be done
+      setDeleteOnDone();
 
-    // this is who we are suposed to be geting
-    trURLJob job=jobs[0];
-    jobs.erase(jobs.begin());
-    if(good && job.handler)
-      job.handler->done(job.url.c_str(), data, length, good);
-    else if(job.handler)
-      job.handler->error(job.url.c_str(), 1, "badness");
+      setURL(url);
 
-    // free it
-    removeHandle();
-
-    // do the next one if we must
-    doJob();
-  }
-
-protected:
-  void doJob(void)
-  {
-    if(!jobs.size())
-      doingStuff=false;
-    else
-    {
-      trURLJob job=jobs[0];
-      doingStuff=true;
-      setURL(job.url);
-
-      if(job.postData.size())
-      {
-	setHTTPPostMode();
-	setPostMode(job.postData);
+      if (postData.empty()) {
+        setGetMode();
+      } else {
+        setHTTPPostMode();
+        setPostMode(postData);
       }
-      else
-	setGetMode();
 
       addHandle();
     }
-  }
 
-  std::vector < trURLJob > jobs;
-  bool doingStuff;
+
+    virtual ~URLFetch()
+    {
+    }
+
+
+    size_t             getID()       const { return id; }
+    const std::string& getURL()      const { return url; }
+    const std::string& getPostData() const { return postData; }
+
+
+    virtual void finalization(char *data, unsigned int length, bool good)
+    {
+      detach(); // remove this fetch from handler
+
+      if (handler != NULL) {
+        if (good) {
+          handler->done(url.c_str(), data, length, good);
+        } else {
+          handler->error(url.c_str(), 1, "badness");
+        }
+      }
+    }
+
+
+  private:
+    void detach();
+
+  private:
+    size_t id;
+    std::string url;
+    std::string postData;
+    bz_BaseURLHandler *handler;
+
+  private:
+    static size_t maxJobID;  
 };
 
-BZ_APIURLManager *bz_apiURLManager=NULL;
+
+size_t URLFetch::maxJobID = 0;
+
+//-------------------------------------------------------------------------
+//
+//  URLFetchHandler
+//
+
+class URLFetchHandler {
+
+  friend void URLFetch::detach();
+
+  private:
+    typedef std::map<size_t,     URLFetch*> IDMap;
+    typedef std::vector<URLFetch*> FetchVec;
+    typedef std::map<std::string,  FetchVec> URLMap;
+
+  public:
+    URLFetchHandler() {}
+    ~URLFetchHandler() { removeAllJobs(); }
+
+    size_t addJob(const char *URL, bz_BaseURLHandler *handler,
+                  const char *postData)
+    {
+      URLFetch* fetch = new URLFetch(URL, handler, postData);
+      const size_t id = fetch->getID();
+      if (id == 0) {
+        delete fetch;
+        return 0;
+      }
+
+      idMap[id] = fetch;
+      urlMap[URL].push_back(fetch);
+
+      return id;
+    }
+
+
+    bool removeJob(size_t id)
+    {
+      URLFetch* fetch = detachByID(id);
+      if (fetch != NULL) {
+        delete fetch;
+        return true;
+      }
+      return false;
+    }
+
+
+    bool removeJob(const char* url)
+    {
+      URLMap::iterator it = urlMap.find(url);
+      if (it == urlMap.end()) {
+        return false;
+      }
+      FetchVec& array = it->second;
+      for (size_t i = 0; i < array.size(); i++) {
+        URLFetch* fetch = array[i];
+        idMap.erase(fetch->getID());
+        delete fetch;
+      }
+      urlMap.erase(url);
+      return true;
+    }
+
+
+    bool removeAllJobs()
+    {
+      IDMap::iterator it;
+      for (it = idMap.begin(); it != idMap.end(); ++it) {
+        URLFetch* fetch = it->second;
+        delete fetch;
+      }
+      idMap.clear();
+      urlMap.clear();
+      return true;
+    }
+
+
+  private:
+    URLFetch* detachByID(size_t id)
+    {
+      IDMap::iterator iit = idMap.find(id);
+      if (iit == idMap.end()) {
+        return NULL;
+      }
+      URLFetch* fetch = iit->second;
+      
+      idMap.erase(id);
+
+      URLMap::iterator it = urlMap.find(fetch->getURL());
+      if (it != urlMap.end()) {
+        FetchVec& array = it->second;
+        for (size_t i = 0; i < array.size(); i++) {
+          URLFetch* urlFetch = array[i];
+          if (urlFetch == fetch) {
+            array.erase(array.begin() + i);
+            i--;
+          }
+        }
+        if (array.empty()) {
+          urlMap.erase(fetch->getURL());
+        }
+      }
+
+      return fetch;
+    }
+
+    void detachFetch(URLFetch* fetch)
+    {
+      detachByID(fetch->getID());
+    }
+
+  private:
+    IDMap  idMap;
+    URLMap urlMap;
+};
+
+
+static URLFetchHandler urlFetchHandler; 
+
+
+void URLFetch::detach()
+{
+  urlFetchHandler.detachFetch(this);
+}
+            
+
+//-------------------------------------------------------------------------
 
 BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const char *postData)
 {
-  if(!URL)
+  if (!URL) {
     return false;
+  }
 
-  if(!bz_apiURLManager)
-    bz_apiURLManager=new BZ_APIURLManager;
+  return (urlFetchHandler.addJob(URL, handler, postData) != 0);
+}
 
-  bz_apiURLManager->addJob(URL, handler, postData);
-  return true;
+//-------------------------------------------------------------------------
+
+BZF_API size_t bz_addURLJobForID(const char *URL,
+                                 bz_BaseURLHandler *handler,
+                                 const char *postData)
+{
+  if (!URL) {
+    return false;
+  }
+
+  return urlFetchHandler.addJob(URL, handler, postData);
 }
 
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_removeURLJob(const char *URL)
 {
-  if(!URL)
+  if (!URL) {
     return false;
-
-  if(!bz_apiURLManager)
-    return true;
-
-  bz_apiURLManager->removeJob(URL);
-  if (bz_apiURLManager->jobCount() == 0)
-  {
-    delete bz_apiURLManager;
-    bz_apiURLManager = NULL;
   }
-  return true;
+  return urlFetchHandler.removeJob(URL);
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeURLJobByID(size_t id)
+{
+  if (id == 0) {
+    return false;
+  }
+  return urlFetchHandler.removeJob(id);
 }
 
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_stopAllURLJobs(void)
 {
-  if(!bz_apiURLManager)
-    return true;
-
-  // flush is done automatically during d'tor
-  delete bz_apiURLManager;
-  bz_apiURLManager = NULL;
+  urlFetchHandler.removeAllJobs();
   return true;
 }
+
+//-------------------------------------------------------------------------
 
 // inter plugin communication
 std::map < std::string, std::string > globalPluginData;
@@ -4529,6 +4625,11 @@ BZF_API const char* bz_MD5 ( const void * data, size_t size )
 BZF_API const char* bz_getServerVersion ( void )
 {
   return getAppVersion();
+}
+
+BZF_API const char* bz_getProtocolVersion ( void )
+{
+  return getProtocolVersion();
 }
 
 // server side bot API

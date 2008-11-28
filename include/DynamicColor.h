@@ -92,11 +92,11 @@ class DynamicColor {
 
     std::string varName;
     bool varUseAlpha;
-    float varTiming;
+    float varTime;
 
     bool varInit;
     bool varTransition;
-    float varTimingTmp;
+    float varTimeTmp;
     float varOldColor[4];
     float varNewColor[4];
     TimeKeeper varLastChange;

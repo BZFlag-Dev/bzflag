@@ -24,9 +24,8 @@
 #include "Extents.h"
 #include "RenderNode.h"
 #include "StateDatabase.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 #ifndef __MINGW32__
 void			(__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);

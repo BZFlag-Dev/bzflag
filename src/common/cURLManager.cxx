@@ -34,9 +34,10 @@ cURLManager::cURLManager()
   theData   = NULL;
   theLen    = 0;
   added     = false;
-
   formPost  = NULL;
   formLast  = NULL;
+
+  deleteOnDone = false;
 
   if (!inited)
     setup();
@@ -97,6 +98,7 @@ cURLManager::~cURLManager()
   }
   free(theData);
 }
+
 
 void cURLManager::setup()
 {
@@ -275,10 +277,17 @@ void cURLManager::performWait()
   CURLcode result;
   result = curl_easy_perform(easyHandle);
   infoComplete(result);
+  if (deleteOnDone) {
+    delete this;
+  }
 }
 
 int cURLManager::fdset(fd_set &read, fd_set &write)
 {
+  if (multiHandle == NULL) {
+    return -1;
+  }
+
   fd_set    exc;
   int       max_fd = -1;
   CURLMcode result;
@@ -288,44 +297,59 @@ int cURLManager::fdset(fd_set &read, fd_set &write)
   result = curl_multi_fdset(multiHandle, &read, &write, &exc, &max_fd);
   if (result != CURLM_OK)
     logDebugMessage(1,"Error while doing multi_fdset from libcurl %d : %s\n",
-	   result, errorBuffer);
+                    result, errorBuffer);
   return max_fd;
 }
 
 bool cURLManager::perform()
 {
+  if (multiHandle == NULL) {
+    return false;
+  }
+
   if (!inited)
     setup();
 
   int activeTransfers = 0;
   CURLMcode result;
-    justCalled = false;
-    while (true) {
-      result = curl_multi_perform(multiHandle, &activeTransfers);
-      if (result != CURLM_CALL_MULTI_PERFORM)
-	break;
+  justCalled = false;
+  while (true) {
+    result = curl_multi_perform(multiHandle, &activeTransfers);
+    if (result != CURLM_CALL_MULTI_PERFORM)
+      break;
+  }
+  if (result != CURLM_OK)
+    logDebugMessage(1,"Error while doing multi_perform from libcurl %d : %s\n",
+                    result, errorBuffer);
+
+  int      msgs_in_queue;
+  CURLMsg *pendingMsg;
+  CURL    *easy;
+
+  std::vector<cURLManager*> toBeDeleted;
+
+  while (true) {
+    pendingMsg = curl_multi_info_read(multiHandle, &msgs_in_queue);
+    if (!pendingMsg)
+      break;
+
+    easy = pendingMsg->easy_handle;
+
+    if (cURLMap.count(easy)) {
+      cURLMap[easy]->infoComplete(pendingMsg->data.result);
+      if (cURLMap[easy]->deleteOnDone) {
+      	toBeDeleted.push_back(cURLMap[easy]);
+      }
     }
-    if (result != CURLM_OK)
-      logDebugMessage(1,"Error while doing multi_perform from libcurl %d : %s\n",
-	     result, errorBuffer);
 
-    int      msgs_in_queue;
-    CURLMsg *pendingMsg;
-    CURL    *easy;
+    if (msgs_in_queue <= 0)
+      break;
+  }
 
-    while (true) {
-      pendingMsg = curl_multi_info_read(multiHandle, &msgs_in_queue);
-      if (!pendingMsg)
-	break;
-
-      easy	= pendingMsg->easy_handle;
-
-      if (cURLMap.count(easy))
-	cURLMap[easy]->infoComplete(pendingMsg->data.result);
-
-      if (msgs_in_queue <= 0)
-	break;
-    }
+  for (size_t i = 0; i < toBeDeleted.size(); i++) {
+    delete toBeDeleted[i];
+  }
+  toBeDeleted.clear();
 
   return justCalled;
 }
@@ -452,6 +476,11 @@ void cURLManager::setDNSCachingTime(int time)
   if (result != CURLE_OK)
     logDebugMessage(1,"CURLOPT_SET_DNS_CACHE_TIMEOUT error %d : %s\n",
 	   result, errorBuffer);
+}
+
+void cURLManager::setDeleteOnDone()
+{
+  deleteOnDone = true;
 }
 
 //**************************ResourceGetter*************************

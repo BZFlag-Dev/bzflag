@@ -32,6 +32,11 @@ end
 --  global additions
 --
 
+function printf(fmt, ...)
+  print(fmt:format(...))
+end
+
+
 function include(fileName, fenv)
   local fn = fileName
   local file, err = io.open(fn, 'r')

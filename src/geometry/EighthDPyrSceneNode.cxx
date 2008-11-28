@@ -22,11 +22,11 @@
 
 // common implementation header
 #include "StateDatabase.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
-const int		PyrPolygons = 20;
+const int PyrPolygons = 20;
+
 
 EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
 					const float size[3], float rotation) :

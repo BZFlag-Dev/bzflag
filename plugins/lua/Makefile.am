@@ -12,6 +12,8 @@ lua_la_SOURCES =      \
 	callouts.cpp  \
 	constants.h   \
 	constants.cpp \
+	fetchurl.cpp  \
+	fetchurl.h    \
 	mapobject.h   \
 	mapobject.cpp \
 	slashcmd.h    \

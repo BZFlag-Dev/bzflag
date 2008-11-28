@@ -26,6 +26,7 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "PhysicsDriver.h"
+#include "WorldText.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
 #include "MeshDrawInfo.h"
@@ -36,6 +37,10 @@
 #include "MeshObstacle.h"
 #include "LocalPlayer.h"
 #include "ClientIntangibilityManager.h"
+
+/* local implementation headers */
+#include "DynamicWorldText.h"
+
 
 //
 // World
@@ -82,6 +87,8 @@ World::~World()
     bases[i].clear();
   }
 
+  DYNAMICWORLDTEXT.clear();
+
   // clear the managers
   links.clear();
   DYNCOLORMGR.clear();
@@ -91,6 +98,7 @@ World::~World()
   TRANSFORMMGR.clear();
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
+
 
   return;
 }
@@ -1053,6 +1061,9 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     writeOBJGround(out);
   }
   OBSTACLEMGR.print(out, indent);
+
+  // Write world text
+  WORLDTEXTMGR.print(out, indent);
 
   // Write links
   links.print(out, indent);

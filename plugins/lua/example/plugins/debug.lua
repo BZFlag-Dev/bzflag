@@ -16,24 +16,23 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function CallIn.AllowCTFCaptureEvent(teamCapped, teamCapping, playerCapping,
-                                     px, py, pz, rot)
-  print('AllowCTFCaptureEvent',
+function CallIn.AllowCTFCapture(teamCapped, teamCapping, playerCapping,
+                                px, py, pz, rot)
+  print('AllowCTFCapture',
         teamCapped, teamCapping, playerCapping, px, py, pz, rot)
   -- return:  bool allow [, bool killTeam]
 end
 
 
-function CallIn.AllowFlagGrabEvent(playerID, flagID, flagType, shotType,
-                                   px, py, pz)
-  print('AllowFlagGrabEvent',
+function CallIn.AllowFlagGrab(playerID, flagID, flagType, shotType, px, py, pz)
+  print('AllowFlagGrab',
         playerID, flagID, flagType, shotType, px, py, pz)
   -- return:  bool allow
 end
 
 
-function CallIn.AllowKillCommandEvent(victimID, killerID)
-  print('AllowKillCommandEvent', victimID, killerID)
+function CallIn.AllowKillCommand(victimID, killerID)
+  print('AllowKillCommand', victimID, killerID)
   -- return:  bool allow
 end
 
@@ -50,14 +49,14 @@ function CallIn.AllowSpawn(playerID, teamID)
 end
 
 
-function CallIn.AnointRabbitEvent(playerID)
-  print('AnointRabbitEvent', playerID)
+function CallIn.AnointRabbit(playerID)
+  print('AnointRabbit', playerID)
   -- return:  number playerID
 end
 
 
-function CallIn.BanEvent(bannerID, duration, reason, banneeID, ipAddress)
-  print('BanEvent', bannerID, duration, reason, banneeID, ipAddress)
+function CallIn.Ban(bannerID, duration, reason, banneeID, ipAddress)
+  print('Ban', bannerID, duration, reason, banneeID, ipAddress)
 end
 
 
@@ -66,88 +65,81 @@ function CallIn.BZDBChange(key, value)
 end
 
 
-function CallIn.CaptureEvent(teamCapped, teamCapping, playerCapping,
-                             px, py, pz, rot)
-  print('CaptureEvent',
+function CallIn.Capture(teamCapped, teamCapping, playerCapping,
+                        px, py, pz, rot)
+  print('Capture',
         teamCapped, teamCapping, playerCapping, px, py, pz, rot)
 end
 
 
-function CallIn.FilteredChatMessageEvent(msg, from, to, team)
-  print('FilteredChatMessageEvent', msg, from, to, team)
+function CallIn.FilteredChatMessage(msg, from, to, team)
+  print('FilteredChatMessage', msg, from, to, team)
 end
 
 
-function CallIn.FlagDroppedEvent(playerID, flagID, flagType, px, py, pz)
-  print('FlagDroppedEvent', playerID, flagID, flagType, px, py, pz)
+function CallIn.FlagDropped(playerID, flagID, flagType, px, py, pz)
+  print('FlagDropped', playerID, flagID, flagType, px, py, pz)
 end
 
 
-function CallIn.FlagGrabbedEvent(playerID, flagID, flagType, shotType,
-                                 px, py, pz)
-  print('FlagGrabbedEvent', playerID, flagID, flagType, shotType, px, py, pz)
+function CallIn.FlagGrabbed(playerID, flagID, flagType, shotType, px, py, pz)
+  print('FlagGrabbed', playerID, flagID, flagType, shotType, px, py, pz)
 end
 
 
-function CallIn.FlagResetEvent(flagID, flagType, px, py, pz, teamIsEmpty)
-  print('FlagResetEvent', flagID, flagType, px, py, pz, teamIsEmpty)
+function CallIn.FlagReset(flagID, flagType, px, py, pz, teamIsEmpty)
+  print('FlagReset', flagID, flagType, px, py, pz, teamIsEmpty)
 end
 
 
-function CallIn.FlagTransferredEvent(srcPlayerID, dstPlayerID, flagType)
-  print('FlagTransferredEvent', srcPlayerID, dstPlayerID, flagType)
+function CallIn.FlagTransferred(srcPlayerID, dstPlayerID, flagType)
+  print('FlagTransferred', srcPlayerID, dstPlayerID, flagType)
   -- return:  number action  -- FIXME, need constants
 end
 
 
-function CallIn.GameEndEvent(duration)
-  print('GameEndEvent', duration)
+function CallIn.GameEnd(duration)
+  print('GameEnd', duration)
 end
 
 
-function CallIn.GameStartEvent(duration)
-  print('GameStartEvent', duration)
+function CallIn.GameStart(duration)
+  print('GameStart', duration)
 end
 
 
-function CallIn.GetAutoTeamEvent(playerID, team, callsign)
-  print('GetAutoTeamEvent', playerID, team, callsign)
+function CallIn.GetAutoTeam(playerID, team, callsign)
+  print('GetAutoTeam', playerID, team, callsign)
   -- return:  number team
 end
 
 
-function CallIn.GetPlayerInfoEvent(playerID, team, callsign, idAddress,
-                                   admin, verified, registered)
-  print('GetPlayerInfoEvent',
+function CallIn.GetPlayerInfo(playerID, team, callsign, idAddress,
+                              admin, verified, registered)
+  print('GetPlayerInfo',
         playerID, team, callsign, idAddress, admin, verified, registered)
   -- return:  bool adm, bool verified, bool reg'd
 end
 
 
-function CallIn.GetPlayerSpawnPosEvent(playerID, team, px, py, pz, rot)
-  print('GetPlayerSpawnPosEvent', playerID, team, px, py, pz, rot)
+function CallIn.GetPlayerSpawnPos(playerID, team, px, py, pz, rot)
+  print('GetPlayerSpawnPos', playerID, team, px, py, pz, rot)
   -- return:  px, py, pz, rot
 end
 
 
-function CallIn.GetWorldEvent(generated, ctf, rabbit, openFFA,
-                              worldFile, worldBlob)
-  print('GetWorldEvent', generated, ctf, rabbit, openFFA, worldFile)
+function CallIn.GetWorld(generated, ctf, rabbit, openFFA, worldFile, worldBlob)
+  print('GetWorld', generated, ctf, rabbit, openFFA, worldFile)
 end
 
 
-function CallIn.HostBanModifyEvent(bannerID, duration, reason, hostPattern)
-  print('HostBanModifyEvent', bannerID, duration, reason, hostPattern)
+function CallIn.HostBan(bannerID, duration, reason, hostPattern)
+  print('HostBan', bannerID, duration, reason, hostPattern)
 end
 
 
-function CallIn.HostBanNotifyEvent(bannerID, duration, reason, hostPattern)
-  print('HostBanNotifyEvent', bannerID, duration, reason, hostPattern)
-end
-
-
-function CallIn.IdBanEvent(bannerID, duration, reason, banneeID, bzID)
-  print('IdBanEvent', bannerID, duration, reason, banneeID, bzID)
+function CallIn.IdBan(bannerID, duration, reason, banneeID, bzID)
+  print('IdBan', bannerID, duration, reason, banneeID, bzID)
 end
 
 
@@ -156,38 +148,38 @@ function CallIn.IdleNewNonPlayerConnection(connID, connData)
 end
 
 
-function CallIn.KickEvent(kickerID, kickedID, reason)
-  print('KickEvent', kickerID, kickedID, reason)
+function CallIn.Kick(kickerID, kickedID, reason)
+  print('Kick', kickerID, kickedID, reason)
 end
 
 
-function CallIn.KillEvent(killerID, killedID, reason)
-  print('KillEvent', killerID, killedID, reason)
+function CallIn.Kill(killerID, killedID, reason)
+  print('Kill', killerID, killedID, reason)
 end
 
 
-function CallIn.ListServerUpdateEvent(addr, desc, groups)
-  print('ListServerUpdateEvent', addr, desc, groups)
+function CallIn.ListServerUpdate(addr, desc, groups)
+  print('ListServerUpdate', addr, desc, groups)
 end
 
 
-function CallIn.LoggingEvent(msg, level)
-  print('LoggingEvent', level, msg)
+function CallIn.Logging(msg, level)
+  print('Logging', level, msg)
 end
 
 
-function CallIn.MessageFilteredEvent(playerID, rawMsg, filteredMsg)
-  print('MessageFilteredEvent', playerID, rawMsg, filteredMsg)
+function CallIn.MessageFiltered(playerID, rawMsg, filteredMsg)
+  print('MessageFiltered', playerID, rawMsg, filteredMsg)
 end
 
 
-function CallIn.NetDataReceiveEvent(playerID, udp, data)
-  print('NetDataReceiveEvent', playerID, udp, #data)
+function CallIn.NetDataReceive(playerID, udp, data)
+  print('NetDataReceive', playerID, udp, #data)
 end
 
 
-function CallIn.NetDataSendEvent(playerID, udp, data)
-  print('NetDataSendEvent', playerID, udp, #data)
+function CallIn.NetDataSend(playerID, udp, data)
+  print('NetDataSend', playerID, udp, #data)
 end
 
 
@@ -196,13 +188,13 @@ function CallIn.NewNonPlayerConnection(playerID, data)
 end
 
 
-function CallIn.NewRabbitEvent(playerID)
-  print('NewRabbitEvent', playerID)
+function CallIn.NewRabbit(playerID)
+  print('NewRabbit', playerID)
 end
 
 
-function CallIn.PlayerAuthEvent(playerID, password, globalAuth)
-  print('PlayerAuthEvent', playerID, password, globalAuth)
+function CallIn.PlayerAuth(playerID, password, globalAuth)
+  print('PlayerAuth', playerID, password, globalAuth)
 end
 
 
@@ -217,25 +209,25 @@ function CallIn.PlayerCustomDataChanged(playerID, key, data)
 end
 
 
-function CallIn.PlayerDieEvent(victimID, team, killerID, killerTeam,
-                               flagType, shotID, px, py, pz, rot)
-  print('PlayerDieEvent',
+function CallIn.PlayerDied(victimID, team, killerID, killerTeam,
+                           flagType, shotID, px, py, pz, rot)
+  print('PlayerDied',
         playerID, team, killerID, killerTeam, flagType, shotID, px, py, pz, rot)
 end
 
 
-function CallIn.PlayerJoinEvent(playerID, team, callsign)
-  print('PlayerJoinEvent', playerID, team, callsign)
+function CallIn.PlayerJoined(playerID, team, callsign)
+  print('PlayerJoined', playerID, team, callsign)
 end
 
 
-function CallIn.PlayerPartEvent(playerID, team, callsign, reason)
-  print('PlayerPartEvent', playerID, team, callsign, reason)
+function CallIn.PlayerParted(playerID, team, callsign, reason)
+  print('PlayerParted', playerID, team, callsign, reason)
 end
 
 
-function CallIn.PlayerPausedEvent(playerID, paused)
-  print('PlayerPausedEvent', playerID, paused)
+function CallIn.PlayerPaused(playerID, paused)
+  print('PlayerPaused', playerID, paused)
 end
 
 
@@ -244,63 +236,68 @@ function CallIn.PlayerSentCustomData(playerID, key, data)
 end
 
 
-function CallIn.PlayerSpawnEvent(playerID, team, px, py, pz, rot)
-  print('PlayerSpawnEvent', playerID, team, px, py, pz, rot)
+function CallIn.PlayerSpawned(playerID, team, px, py, pz, rot)
+  print('PlayerSpawned', playerID, team, px, py, pz, rot)
 end
 
 
-function CallIn.PlayerUpdateEvent(playerID, status, phydrv,
-                                  falling, crossingWall, inPhantomZone,
-                                  px, py, pz, rot, vx, vy, vz, angvel)
-  print('PlayerUpdateEvent', playerID, status, phydrv,
+function CallIn.PlayerUpdate(playerID, status, phydrv,
+                             falling, crossingWall, inPhantomZone,
+                             px, py, pz, rot, vx, vy, vz, angvel)
+  print('PlayerUpdate', playerID, status, phydrv,
         falling, crossingWall, inPhantomZone,
         px, py, pz, rot, vx, vy, vz, angvel)
 end
 
 
-function CallIn.RawChatMessageEvent(msg, from, to, team)
-  print('RawChatMessageEvent', msg, from, to, team)
+function CallIn.RawChatMessage(msg, from, to, team)
+  print('RawChatMessage', msg, from, to, team)
   -- return:  string newMsg
 end
 
 
-function CallIn.ReloadEvent(playerID)
-  print('ReloadEvent', playerID)
+function CallIn.Reload(playerID)
+  print('Reload', playerID)
 end
 
 
-function CallIn.ReportFiledEvent(playerID, msg)
-  print('ReportFiledEvent', playerID, msg)
+function CallIn.ReportFiled(playerID, msg)
+  print('ReportFiled', playerID, msg)
 end
 
 
-function CallIn.ServerMsgEvent(to, team, msg)
-  print('ServerMsgEvent', to, team, msg)
+function CallIn.ServerMsg(to, team, msg)
+  print('ServerMsg', to, team, msg)
 end
 
 
-function CallIn.ShotEndedEvent(playerID, shotID)
-  print('ShotEndedEvent', playerID, shotID)
+function CallIn.ShotEnded(playerID, shotID)
+  print('ShotEnded', playerID, shotID)
 end
 
 
-function CallIn.ShotFiredEvent(playerID, shotType, px, py, pz)
-  print('ShotFiredEvent', playerID, shotType, px, py, pz)
+function CallIn.ShotFired(playerID, shotType, px, py, pz)
+  print('ShotFired', playerID, shotType, px, py, pz)
 end
 
 
-function CallIn.SlashCommandEvent(msg, from)
-  print('SlashCommandEvent', msg, from)
+function CallIn.Shutdown()
+  print('Shutdown')
 end
 
 
-function CallIn.TeleportEvent(playerID, src, dst)
-  print('TeleportEvent', playerID, src, dst)
+function CallIn.SlashCommand(msg, from)
+  print('SlashCommand', msg, from)
 end
 
 
-function CallIn.TickEvent()
-  print('TickEvent')
+function CallIn.Teleport(playerID, src, dst)
+  print('Teleport', playerID, src, dst)
+end
+
+
+function CallIn.Tick()
+  print('Tick')
 end
 
 
@@ -315,13 +312,13 @@ function CallIn.WorldFinalized()
 end
 
 
-function CallIn.ZoneEntryEvent()
-  print('ZoneEntryEvent')
+function CallIn.ZoneEntry()
+  print('ZoneEntry')
 end
 
 
-function CallIn.ZoneExitEvent()
-  print('ZoneExitEvent')
+function CallIn.ZoneExit()
+  print('ZoneExit')
 end
 
 
