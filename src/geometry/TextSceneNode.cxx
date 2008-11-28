@@ -254,6 +254,8 @@ void TextSceneNode::notifyStyleChange()
 
   builder.setOrder(bzmat->getOrder());
 
+  builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   // alpha thresholding
   if (bzmat->getAlphaThreshold() != 0.0f) {
     builder.setAlphaFunc(GL_GEQUAL, bzmat->getAlphaThreshold());
