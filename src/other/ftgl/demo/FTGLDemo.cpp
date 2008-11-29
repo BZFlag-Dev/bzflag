@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
+#include <sstream>
 
 #if defined HAVE_GL_GLUT_H
 #   include <GL/glut.h>
@@ -79,7 +81,8 @@ const float OY = 170;
 //wchar_t myString[16] = { 0x6FB3, 0x9580};
 char myString[4096];
 
-static FTFont* fonts[7];
+static const int FTGL_NUM_FONTS = 7;
+static FTFont* fonts[FTGL_NUM_FONTS];
 static FTPixmapFont* infoFont;
 
 static float textures[][48] =
@@ -144,7 +147,7 @@ void setUpFonts(const char* file)
     fonts[FTGL_TEXTURE] = new FTTextureFont(file);
     fonts[FTGL_BUFFER] = new FTBufferFont(file);
 
-    for(int x = 0; x < 7; ++x)
+    for(int x = 0; x < FTGL_NUM_FONTS; ++x)
     {
         if(fonts[x]->Error())
         {
@@ -353,7 +356,9 @@ void renderFontInfo()
     }
 
     glRasterPos2f(20.0f , 20.0f + infoFont->LineHeight());
-    infoFont->Render(fontfile);
+    std::stringstream tmpbuf;
+    tmpbuf << fontfile << " size: " << fonts[current_font]->FaceSize();
+    infoFont->Render(tmpbuf.str().c_str());
 
     // If the current layout is a SimpleLayout, output the alignemnt mode
     if(layouts[currentLayout]
@@ -595,10 +600,10 @@ void parseSpecialKey(int key, int x, int y)
     switch (key)
     {
     case GLUT_KEY_UP:
-        current_font = (current_font + 1) % 7;
+        current_font = (current_font + 1) % FTGL_NUM_FONTS;
         break;
     case GLUT_KEY_DOWN:
-        current_font = (current_font + 6) % 7;
+        current_font = (current_font + FTGL_NUM_FONTS - 1) % FTGL_NUM_FONTS;
         break;
     case GLUT_KEY_PAGE_UP:
         currentLayout = (currentLayout + 1) % NumLayouts;
@@ -697,6 +702,23 @@ int main(int argc, char *argv[])
         fprintf(stderr, "A font file must be specified on the command line\n");
         exit(1);
     }
+
+    std::cout << "The following interactive commands are available:\n"
+	      << "\tTAB:         change the alignment of the text\n"
+	      << "\tENTER:       toggle interactive mode\n"
+	      << "\n"
+	      << "\tARROW-UP:    cycle the font type up\n"
+	      << "\tARROW-DOWN:  cycle the font type down\n"
+	      << "\tARROW-LEFT:  decrease the font size\n"
+	      << "\tARROW-RIGHT: increase the font size\n"
+	      << "\n"
+	      << "\tPAGE-UP:     cycle the layout up\n"
+	      << "\tPAGE-DOWN:   cycle the layout down\n"
+	      << "\tHOME:        decrease line length\n"
+	      << "\tEND:         increase line length\n"
+	      << "\n"
+	      << "\tESC:         quit\n"
+      ;
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE);
