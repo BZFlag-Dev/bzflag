@@ -44,6 +44,7 @@ float BZDBCache::pulseDepth;
 bool  BZDBCache::showCollisionGrid;
 bool  BZDBCache::showCullingGrid;
 int   BZDBCache::maxFlagLOD;
+int   BZDBCache::vsync;
 
 bool BZDBCache::drawCelestial;
 bool BZDBCache::drawClouds;
@@ -120,6 +121,7 @@ void BZDBCache::init()
   BZDB.addCallback("showCullingGrid", clientCallback, NULL);
   BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
   BZDB.addCallback("maxFlagLOD", clientCallback, NULL);
+  BZDB.addCallback("vsync", clientCallback, NULL);
 
   // Server-side variables
   BZDB.addCallback(StateDatabase::BZDB_DRAWCELESTIAL, serverCallback, NULL);
@@ -217,6 +219,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
   else if (name == "maxFlagLOD")
     maxFlagLOD = BZDB.evalInt("maxFlagLOD");
+  else if (name == "vsync")
+    vsync = BZDB.evalInt("vsync");
 }
 
 void BZDBCache::serverCallback(const std::string& name, void *)

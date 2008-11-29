@@ -258,8 +258,8 @@ BZ.AttachMapObject('custom_block',  CustomMapObject)
 BZ.AttachMapObject('custom_block1', CustomMapObject)
 BZ.AttachMapObject('custom_block2', CustomMapObject)
 BZ.AttachMapObject('custom_block3', CustomMapObject)
-BZ.AttachMapObject('lua', 'end_lua',   CustomMapObject)
-BZ.AttachMapObject('lua_plugin', 'end_lua_plugin',  CustomMapObject)
+BZ.AttachMapObject('lua',       'endlua',     CustomMapObject)
+BZ.AttachMapObject('luaplugin', 'endplugin',  CustomMapObject)
 
 
 --------------------------------------------------------------------------------
@@ -292,3 +292,50 @@ include('plugins.lua')
 
 --BZ.UpdateCallIn('GetWorld',
 --  function(mode)
+
+
+do
+  local timers = {}
+  setmetatable(timers, { __mode = 'kv' }) -- weak table
+
+  function AddTimer(period, func)
+    local timer = { period = period, func = func }
+    timers[timer] = BZ.GetTimer()
+  end
+
+  local function RemoveTimer(period, func)
+    for k in pairs(timers) do
+      if ((func == k.func) and (k.period == period)) then
+        timers[k] = nil
+      end
+    end
+  end
+
+  local function HandleTick()
+    print('TICK')
+    local maxTime = 1.0e30
+    local nowTime = BZ.GetTimer()
+    for timer, last in pairs(timers) do
+      print(timer, last)
+      local wait = BZ.DiffTimers(nowTime, last)
+      if (wait >= timer.period) then
+        timers[timer] = nowTime
+        local mt = 2 * timer.period - wait
+        if (mt < maxTime) then
+          maxTime = mt
+        end
+        timer.func()
+      else
+        local mt = timer.period - wait
+        if (mt < maxTime) then
+          maxTime = mt
+        end
+      end
+    end
+    BZ.SetMaxWaitTime('luaTimerTick', maxTime)
+    print('maxTime = ' .. maxTime)
+  end
+
+  BZ.UpdateCallIn('Tick', HandleTick)
+end  
+  

@@ -30,6 +30,7 @@
 #include "BzfDisplay.h"
 #include "LocalFontFace.h"
 
+
 DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {
   // add controls
@@ -223,6 +224,16 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
+  option->setLabel("Vertical Sync:");
+  option->setCallback(callback, (void*)"v");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  addControl(option);
+
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
   option->setLabel("Energy Saver:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
@@ -244,12 +255,14 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   initNavigation();
 }
 
+
 DisplayMenu::~DisplayMenu()
 {
   delete formatMenu;
 }
 
-void			DisplayMenu::execute()
+
+void DisplayMenu::execute()
 {
   HUDuiControl* _focus = getNav().get();
   if (_focus == videoFormat) {
@@ -259,7 +272,8 @@ void			DisplayMenu::execute()
   }
 }
 
-void			DisplayMenu::resize(int _width, int _height)
+
+void DisplayMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
@@ -344,14 +358,19 @@ void			DisplayMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
   i++;
 
+  // vsync
+  ((HUDuiList*)listHUD[i++])->setIndex((BZDBCache::vsync > 0) ? 1 : 0);
+
   // energy saver
   ((HUDuiList*)listHUD[i])->setIndex(BZDB.evalInt("saveEnergy"));
 }
+
 
 int DisplayMenu::gammaToIndex(float gamma)
 {
   return (int)(0.5f + 5.0f * (1.0f + logf(gamma) / logf(2.0)));
 }
+
 
 float DisplayMenu::indexToGamma(int index)
 {
@@ -359,7 +378,9 @@ float DisplayMenu::indexToGamma(int index)
   return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
 
-void			DisplayMenu::callback(HUDuiControl* w, void* data) {
+
+void DisplayMenu::callback(HUDuiControl* w, void* data)
+{
   HUDuiList* list = (HUDuiList*)w;
   switch (((const char*)data)[0]) {
   case '1':
@@ -433,6 +454,9 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
     break;
   case 'e':
     BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
+    break;
+  case 'v':
+    BZDB.setInt("vsync", (list->getIndex() == 0) ? -1 : +1);
     break;
   case 's':
     BZDB.setBool("saveEnergy", list->getIndex() != 0);

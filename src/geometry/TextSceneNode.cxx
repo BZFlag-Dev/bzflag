@@ -280,9 +280,8 @@ void TextSceneNode::notifyStyleChange()
   } else {
     builder.enableMaterial(false);
   }
-
   builder.setShading(GL_FLAT);
-  
+
   gstate = builder.getState();
 }
 
@@ -695,7 +694,7 @@ void TextSceneNode::TextRenderNode::render()
   glNormal3f(0.0f, 0.0f, 1.0f);
 
   myColor4fv(colorPtr);
-  const float oldOpacity = fm.getOpacity();
+  const float oldOpacity = fm.getOpacity(); // FIXME -- just do it once at the start
   if (colorPtr[3] != oldOpacity) {
     fm.setOpacity(colorPtr[3]);
   }

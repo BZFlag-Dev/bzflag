@@ -46,6 +46,7 @@ public:
 	static bool  showCollisionGrid;
 	static bool  showCullingGrid;
 	static int   maxFlagLOD;
+	static int   vsync;
 
 	static bool drawCelestial;
 	static bool drawClouds;

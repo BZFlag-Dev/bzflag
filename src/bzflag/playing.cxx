@@ -86,6 +86,7 @@
 #include "sound.h"
 #include "ShotStats.h"
 #include "TrackMarks.h"
+#include "VerticalSync.h"
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
@@ -211,8 +212,8 @@ static bool downloadingInitialTexture = false;
 
 static AresHandler      ares;
 
-static AccessList ServerAccessList("ServerAccess.txt", NULL);
-static AccessList AutoJoinAccessList("AutoJoinAccess.txt", NULL);
+static AccessList serverAccessList("ServerAccess.txt", NULL);
+static AccessList autoJoinAccessList("AutoJoinAccess.txt", NULL);
 
 ThirdPersonVars thirdPersonVars;
 
@@ -1763,6 +1764,22 @@ static void handleJoinServer(void *msg)
     return;
   }
   if (port <= 0 || port > 65535) {
+    return;
+  }
+
+  autoJoinAccessList.reload();
+  std::vector<std::string> nameAndIp;
+  nameAndIp.push_back(addr);
+//FIXME  nameAndIp.push_back(serverAddress.getDotNotation());
+  if (!autoJoinAccessList.authorized(nameAndIp)) {
+    HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
+    std::string warn = ColorStrings[WhiteColor];
+    warn += "NOTE: ";
+    warn += ColorStrings[GreyColor];
+    warn += "auto joining is controlled by ";
+    warn += ColorStrings[YellowColor];
+    warn += autoJoinAccessList.getFileName();
+    addMessage(NULL, warn);
     return;
   }
 
@@ -5145,18 +5162,18 @@ static void joinInternetGame(const struct in_addr *inAddress)
   }
 
   // check for a local server block
-  ServerAccessList.reload();
+  serverAccessList.reload();
   std::vector<std::string> nameAndIp;
   nameAndIp.push_back(startupInfo.serverName);
   nameAndIp.push_back(serverAddress.getDotNotation());
-  if (!ServerAccessList.authorized(nameAndIp)) {
+  if (!serverAccessList.authorized(nameAndIp)) {
     HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
     std::string msg = ColorStrings[WhiteColor];
     msg += "NOTE: ";
     msg += ColorStrings[GreyColor];
     msg += "server access is controlled by ";
     msg += ColorStrings[YellowColor];
-    msg += ServerAccessList.getFileName();
+    msg += serverAccessList.getFileName();
     addMessage(NULL, msg);
     return;
   }
@@ -6165,6 +6182,8 @@ void drawFrame(const float dt)
 
     glPopMatrix();
   }
+
+  verticalSync();
 
   mainWindow->getWindow()->swapBuffers();
 
