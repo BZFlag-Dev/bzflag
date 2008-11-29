@@ -619,7 +619,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 
   // try object, standard, then default
   //check for material, then preset textures.
-  const BzMaterial *frameMat = MATERIALMGR.findMaterial(std::string("TeleFrame"));
+  const BzMaterial *frameMat = MATERIALMGR.findMaterial(std::string("TeleMaterial"));
   if (frameMat)
     teleporterTexture = tm.getTextureID(frameMat->getTexture(0).c_str(),true);
 
