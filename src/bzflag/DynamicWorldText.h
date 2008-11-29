@@ -38,6 +38,8 @@ class DynamicWorldText {
     bool insertText(WorldText*);    // for addedTexts
     bool removeText(const std::string& name);
 
+    void notifyStyleChange();
+
   private:
     DynamicWorldText();
     ~DynamicWorldText();
@@ -49,6 +51,7 @@ class DynamicWorldText {
     WorldMap worldTexts; // came from the world file, but uses BZDB text
     AddedMap addedTexts; // added dynamically from the server
     NodeMap nodes;
+    bool needStyleChange;
   
   public:
     static DynamicWorldText bzdbWorldText;

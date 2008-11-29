@@ -6817,6 +6817,9 @@ void doFPSLimit(void)
   // always cap out at 200 fps unless a limit is set.
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
   float fpsLimit = 200;
+  if (debugLevel > 0) {
+    fpsLimit = BZDB.eval("fpsLimit");
+  }
 
   if (BZDB.isTrue("saveEnergy") && (BZDB.eval("fpsLimit") < fpsLimit))  // limit the fps to save battery life by minimizing cpu usage
     fpsLimit = BZDB.eval("fpsLimit");

@@ -709,6 +709,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       background->notifyStyleChange();
     }
     TrackMarks::notifyStyleChange();
+    DYNAMICWORLDTEXT.notifyStyleChange();
     needStyleUpdate = false;
   }
 

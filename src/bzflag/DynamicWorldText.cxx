@@ -35,6 +35,7 @@ DynamicWorldText DynamicWorldText::bzdbWorldText;
 
 
 DynamicWorldText::DynamicWorldText()
+: needStyleChange(true)
 {
 }
 
@@ -72,10 +73,20 @@ void DynamicWorldText::clear()
 void DynamicWorldText::addRenderNodes(SceneRenderer& renderer)
 {
   NodeMap::const_iterator it;
-  for (it = nodes.begin(); it != nodes.end(); ++it) {
-    TextSceneNode* node = it->second;
-    node->addRenderNodes(renderer);
+  if (!needStyleChange) {
+    for (it = nodes.begin(); it != nodes.end(); ++it) {
+      TextSceneNode* node = it->second;
+      node->addRenderNodes(renderer);
+    }
   }
+  else {
+    for (it = nodes.begin(); it != nodes.end(); ++it) {
+      TextSceneNode* node = it->second;
+      node->notifyStyleChange();
+      node->addRenderNodes(renderer);
+    }
+  }
+  needStyleChange = false;
 }
 
 
@@ -133,6 +144,12 @@ bool DynamicWorldText::removeText(const std::string& name)
   delete text;
   addedTexts.erase(textIT);
   return true;
+}
+
+
+void DynamicWorldText::notifyStyleChange()
+{
+  needStyleChange = true;
 }
 
 
