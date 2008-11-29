@@ -41,7 +41,7 @@ void verticalSync() {
   if (BZDBCache::vsync == oldVSync) {
     return;
   }
-  oldVSync = vsync;
+  oldVSync = BZDBCache::vsync;
 
   // FIXME -- needs to be updated during context switches?
   if (wglSwapIntervalEXT) {
