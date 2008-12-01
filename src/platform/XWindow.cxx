@@ -406,7 +406,7 @@ void			XWindow::setFullscreen(bool on)
   XSync(display->getDisplay(), false);
 }
 
-bool			XWindow::getFullscreen()
+bool			XWindow::getFullscreen() const
 {
   // FIXME
   return false;
