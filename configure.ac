@@ -605,7 +605,7 @@ if test x$with_SDL = xyes; then
     fi
 
     if test x$with_SDL = xno ; then
-	AM_PATH_SDL(1.2.5, with_SDL=yes, with_SDL=no)
+	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
 	if test x$with_SDL = xno; then
 	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
 	fi
