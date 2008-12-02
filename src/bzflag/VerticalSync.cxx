@@ -59,6 +59,23 @@ void verticalSync() {
 
 // NOTE: glXSwapIntervalSGI() does not let you turn off vsync
 
+static int oldVSync = -1; // -1 means "use the system setting"
+
+void verticalSync() {
+  if (BZDBCache::vsync == oldVSync) {
+    return;
+  }
+  oldVSync = BZDBCache::vsync;
+
+  // FIXME -- needs to be updated during context switches?
+  if (glXSwapIntervalSGI) {
+    glXSwapIntervalSGI(BZDBCache::vsync);
+  }  
+}
+
+
+
+/*
 void verticalSync()
 {
   if (GLXEW_SGI_video_sync) {
@@ -72,6 +89,7 @@ void verticalSync()
   }
   return;
 }
+*/
 
 
 ///////////////
