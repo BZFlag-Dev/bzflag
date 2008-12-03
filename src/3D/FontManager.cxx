@@ -273,7 +273,7 @@ int FontManager::load(const char* fileName)
   }
 
   /* not found, add it */
-  id = fontFaces.size();
+  id = (int)fontFaces.size();
   fontFaces.push_back(face);
   name2id[face.name()] = id;
   file2id[fileName] = id;
