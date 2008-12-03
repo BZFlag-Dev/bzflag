@@ -77,7 +77,7 @@ int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
   const std::string& name = driver->getName();
   if (!name.empty()) {
     if (nameMap.find(name) == nameMap.end()) {
-      nameMap[name] = drivers.size();
+      nameMap[name] = (int)(drivers.size());
     }
   }
   drivers.push_back(driver);
