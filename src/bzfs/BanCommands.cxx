@@ -328,10 +328,16 @@ bool KickCommand::operator() (const char	 *message,
     GameKeeper::Player *p
       = GameKeeper::Player::getPlayerByIndex(kickEvent.kickedID);
 
+    if (!p) {
+      snprintf(kickmessage, MessageLen, "Error: requested player does not exist.");
+      sendMessage(ServerPlayer, kickEvent.kickerID, kickmessage);
+      return true;
+    }
+
     // operators can override antiperms
     if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
-      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
+      if (p->accessInfo.hasPerm(PlayerAccessInfo::antikick)) {
 	snprintf(kickmessage, MessageLen,
 		 "%s is protected from being kicked.",
 		 p->player.getCallSign());
