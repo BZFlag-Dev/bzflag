@@ -54,6 +54,33 @@ void verticalSync() {
 #else // !WIN32
 ///////////////
 
+////////////////
+#ifdef __APPLE__
+////////////////
+
+static int oldVSync = -2; // -1 means "use the system setting", -2 is unitialized
+
+void verticalSync() {
+  if (BZDBCache::vsync == oldVSync) {
+    return;
+  }
+  oldVSync = BZDBCache::vsync;
+
+  CGLContextObj cglContext = CGLGetCurrentContext();
+  GLint newSwapInterval = BZDBCache::vsync;
+  
+  if (newSwapInterval < 0) {
+    newSwapInterval = 0;
+  }
+  // FIXME -- needs to be updated during context switches!
+  // FiXME -- this seems to cause a bit flicker at the right top
+  // in fullcreen mode (small horizontal lines)
+  CGLSetParameter(cglContext, kCGLCPSwapInterval, &newSwapInterval); 
+}
+
+///////////////////
+#else // !__APPLE__
+///////////////////
 
 #include <GL/glxew.h>
 
@@ -68,7 +95,7 @@ void verticalSync() {
   oldVSync = BZDBCache::vsync;
 
   // FIXME -- needs to be updated during context switches?
-  if (glXSwapIntervalSGI) {
+  if (GLX_SGI_video_sync) {
     glXSwapIntervalSGI(BZDBCache::vsync);
   }  
 }
@@ -90,7 +117,7 @@ void verticalSync()
   return;
 }
 */
-
+#endif // __APPLE_
 
 ///////////////
 #endif // WIN32
