@@ -445,7 +445,7 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 , text(*_text)
 , xformList(INVALID_GL_LIST_ID)
 , fontID(-1)
-, fontSize((int)text.fontSize)
+, fontSize(text.fontSize)
 , fixedWidth(0.0f)
 , noRadar(text.bzMaterial->getNoRadar())
 , noShadow(text.bzMaterial->getNoShadow())
@@ -453,7 +453,7 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 {
   FontManager &fm = FontManager::instance();
 
-  const int maxFontSize = BZDB.evalInt("maxFontSize");
+  const float maxFontSize = BZDB.eval("maxFontSize");
   if (fontSize > maxFontSize) {
     fontSize = maxFontSize;
   }

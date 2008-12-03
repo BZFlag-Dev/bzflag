@@ -90,7 +90,7 @@ class TextSceneNode : public SceneNode {
         GLuint xformList;
 
         int fontID;
-        int fontSize;
+        float fontSize;
 
         std::vector<std::string> lines;
         std::vector<float>       widths;
