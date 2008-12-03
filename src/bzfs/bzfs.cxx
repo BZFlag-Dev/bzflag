@@ -2442,7 +2442,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 void spawnPlayer ( int playerIndex )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData && !playerData->isSpawnable())
+  if (!playerData || !playerData->isSpawnable())
     return;
 
   // player is coming alive.
