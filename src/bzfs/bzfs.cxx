@@ -2493,7 +2493,7 @@ void spawnPlayer ( int playerIndex )
 void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData && !playerData->isSpawnable())
+  if (!playerData || !playerData->isSpawnable())
     return;
 
   if (!playerData->player.isPlaying()) {
@@ -2623,7 +2623,7 @@ void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer,
     sendPlayerScoreUpdate(victim);
   }
   if (killer) {
-    if (victim->getIndex() != killer->getIndex()) {
+    if (!victim || (victim->getIndex() != killer->getIndex())) {
       if (teamkill && !clOptions->teamKillerDies)
 	killer->score.killedBy();
       else if (!teamkill)
