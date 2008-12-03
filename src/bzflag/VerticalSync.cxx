@@ -20,12 +20,11 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
-
-//-----------------------------
-#ifndef HAVE_GLEW
+//---------------------------------------------------------------------------------
+#if !defined HAVE_GLEW || (!defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__)
 void verticalSync() { return; }
 #else
-//-----------------------------
+//---------------------------------------------------------------------------------
 
 
 ////////////
@@ -58,6 +57,7 @@ void verticalSync() {
 #ifdef __APPLE__
 ////////////////
 
+
 static int oldVSync = -2; // -1 means "use the system setting", -2 is unitialized
 
 void verticalSync() {
@@ -74,13 +74,13 @@ void verticalSync() {
   }
   // FIXME -- needs to be updated during context switches!
   // FiXME -- this seems to cause a bit flicker at the right top
-  // in fullcreen mode (small horizontal lines)
+  // in fullcreen mode while menu is opened (small horizontal lines)
   CGLSetParameter(cglContext, kCGLCPSwapInterval, &newSwapInterval); 
 }
 
-///////////////////
-#else // !__APPLE__
-///////////////////
+/////////////////
+#else // !__APPLE
+/////////////////
 
 #include <GL/glxew.h>
 
@@ -95,7 +95,7 @@ void verticalSync() {
   oldVSync = BZDBCache::vsync;
 
   // FIXME -- needs to be updated during context switches?
-  if (GLX_SGI_video_sync) {
+  if (glXSwapIntervalSGI) {
     glXSwapIntervalSGI(BZDBCache::vsync);
   }  
 }
@@ -117,16 +117,20 @@ void verticalSync()
   return;
 }
 */
-#endif // __APPLE_
+
+/////////////////
+#endif // !__APPLE
+/////////////////
+
 
 ///////////////
 #endif // WIN32
 ///////////////
 
 
-//-----------------
+//+++++++++++++++++
 #endif // HAVE_GLEW
-//-----------------
+//+++++++++++++++++
 
 
 // Local Variables: ***
