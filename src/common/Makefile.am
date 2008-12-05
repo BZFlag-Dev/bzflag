@@ -15,6 +15,7 @@ libCommon_la_SOURCES  =			\
 	AutoCompleter.cxx		\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
+	CacheManager.cxx		\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	Country.cxx			\
