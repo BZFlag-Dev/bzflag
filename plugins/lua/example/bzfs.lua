@@ -210,7 +210,7 @@ BZ.UpdateCallIn('AllowFlagGrab',
 
 BZ.UpdateCallIn('BZDBChange',
   function(key, value)
-    print('BZDBChange: ' .. key .. ' = ' .. value)
+--    print('BZDBChange: ' .. key .. ' = ' .. value)
   end
 )
 
@@ -312,11 +312,10 @@ do
   end
 
   local function HandleTick()
-    print('TICK')
     local maxTime = 1.0e30
     local nowTime = BZ.GetTimer()
     for timer, last in pairs(timers) do
-      print(timer, last)
+--      print(timer, last)
       local wait = BZ.DiffTimers(nowTime, last)
       if (wait >= timer.period) then
         timers[timer] = nowTime
@@ -333,7 +332,7 @@ do
       end
     end
     BZ.SetMaxWaitTime('luaTimerTick', maxTime)
-    print('maxTime = ' .. maxTime)
+--    print('maxTime = ' .. maxTime)
   end
 
   BZ.UpdateCallIn('Tick', HandleTick)

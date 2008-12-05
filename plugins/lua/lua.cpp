@@ -22,6 +22,10 @@ using std::string;
 
 BZ_GET_PLUGIN_VERSION
 
+#define WARNINGF(fmt, ...) \
+  bz_debugMessagef(0, fmt, ## __VA_ARGS__); \
+  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, fmt, ## __VA_ARGS__)
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -53,8 +57,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* cmdLine)
   bz_debugMessage(4, "lua plugin loaded");
 
   if (L != NULL) {
-    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS,
-                       "lua plugin is already loaded");
+    WARNINGF("lua plugin is already loaded");
     return 1; // FAILURE
   }
 
@@ -74,8 +77,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* cmdLine)
     scriptFile = string(bz_pluginBinPath()) + "/" + scriptFile;
   }
   if (!fileExists(scriptFile)) {
-    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS,
-                       "lua plugin: could not find the script file");
+    WARNINGF("lua plugin: could not find the script file");
     if (dieHard) {
       exit(2);
     }
@@ -142,8 +144,7 @@ static bool CreateLuaState(const string& script)
   lua_setglobal(L, "BZ");
 
   if (luaL_dofile(L, script.c_str()) != 0) {
-    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS,
-                        "lua init error: %s", lua_tostring(L, -1));
+    WARNINGF("lua init error: %s", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
