@@ -570,10 +570,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\mediafile\CacheManager.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\mediafile\ImageFile.cxx"
 				>
 			</File>

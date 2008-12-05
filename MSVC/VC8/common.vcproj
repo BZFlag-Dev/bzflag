@@ -602,6 +602,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\CacheManager.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\CommandManager.cxx"
 				>
 			</File>
