@@ -3,25 +3,27 @@ lib_LTLIBRARIES = lua.la
 AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
 AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
 
-lua_la_SOURCES =      \
-	mylua.h       \
-	lua.cpp       \
+noinst_HEADERS = \
+	bzdb.h        \
 	callins.h     \
-	callins.cpp   \
 	callouts.h    \
-	callouts.cpp  \
 	constants.h   \
+	fetchurl.h    \
+	lualfs.h      \
+	mapobject.h   \
+	mylua.h       \
+	slashcmd.h
+
+lua_la_SOURCES =      \
+	bzdb.cpp      \
+	callins.cpp   \
+	callouts.cpp  \
 	constants.cpp \
 	fetchurl.cpp  \
-	fetchurl.h    \
-	mapobject.h   \
+	lua.cpp       \
+	lualfs.cpp    \
 	mapobject.cpp \
-	slashcmd.h    \
-	slashcmd.cpp  \
-	bzdb.h        \
-	bzdb.cpp      \
-	lualfs.h      \
-	lualfs.cpp
+	slashcmd.cpp
 
 lua_la_LDFLAGS = -module -avoid-version
 
