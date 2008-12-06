@@ -34,7 +34,8 @@ void byteSwap(uint32_t *swbuf, unsigned words)
   uint8_t *p = (uint8_t *)swbuf;
 
   do {
-    *swbuf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 | ((unsigned)p[1] << 8 | p[0]);
+    *swbuf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 |
+                         ((unsigned)p[1] << 8 | p[0]);
     p += 4;
   } while (--words);
 }
@@ -45,12 +46,13 @@ void byteSwap(uint32_t *swbuf, unsigned words)
 // return hex representation of digest as string
 std::string MD5::hexdigest() const
 {
-  if (!finalized)
+  if (!finalized) {
     return "";
-
+  }
   char txbuf[33];
-  for (int i=0; i<16; i++)
+  for (int i=0; i<16; i++) {
     sprintf(txbuf+i*2, "%02x", digest[i]);
+  }
   txbuf[32]=0;
   return std::string(txbuf);
 }
@@ -59,9 +61,10 @@ std::string MD5::hexdigest() const
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
  * initialization constants.
  */
-void MD5::init()
+void MD5::reset()
 {
-  finalized=false;
+  finalized = false;
+
   buf[0] = 0x67452301;
   buf[1] = 0xefcdab89;
   buf[2] = 0x98badcfe;
@@ -93,7 +96,7 @@ void MD5::update(uint8_t const *inbuf, unsigned len)
   /* First chunk is an odd size */
   memcpy((uint8_t *)in + 64 - t, inbuf, t);
   byteSwap(in, 16);
-  MD5::transform();
+  transform();
   inbuf += t;
   len -= t;
 
@@ -101,7 +104,7 @@ void MD5::update(uint8_t const *inbuf, unsigned len)
   while (len >= 64) {
     memcpy(in, inbuf, 64);
     byteSwap(in, 16);
-    MD5::transform();
+    transform();
     inbuf += 64;
     len -= 64;
   }
@@ -130,7 +133,7 @@ void MD5::finalize()
     /* Padding forces an extra block */
     memset(p, 0, count + 8);
     byteSwap(in, 16);
-    MD5::transform();
+    transform();
     p = (uint8_t *)in;
     count = 56;
   }
@@ -140,7 +143,7 @@ void MD5::finalize()
   /* Append length in bits and transform */
   in[14] = bytes[0] << 3;
   in[15] = bytes[1] << 3 | bytes[0] >> 29;
-  MD5::transform();
+  transform();
 
   byteSwap(buf, 4);
   memcpy(digest, buf, 16);
@@ -150,7 +153,7 @@ void MD5::finalize()
 // default ctor, just initailize
 MD5::MD5()
 {
-  init();
+  reset();
 }
 
 //////////////////////////////////////////////
@@ -158,8 +161,8 @@ MD5::MD5()
 // nifty shortcut ctor, compute MD5 for string and finalize it right away
 MD5::MD5(const std::string &text)
 {
-  init();
-  MD5::update((uint8_t const *)text.c_str(), (unsigned int)text.length());
+  reset();
+  update((uint8_t const *)text.c_str(), (unsigned int)text.length());
   finalize();
 }
 

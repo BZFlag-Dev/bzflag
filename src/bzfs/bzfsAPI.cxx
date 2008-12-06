@@ -4617,8 +4617,10 @@ BZF_API const char* bz_MD5 ( const char * str )
 
 BZF_API const char* bz_MD5 ( const void * data, size_t size )
 {
-  MD5 md5;
-  md5.update((const unsigned char*)data,size);
+  static MD5 md5;
+  md5.reset();
+  md5.update((const unsigned char*)data, size);
+  md5.finalize();
   return md5.hexdigest().c_str();
 }
 

@@ -51,6 +51,7 @@ public:
   uint8_t digest[16];
   MD5();
   MD5(const std::string& text);
+  void reset();
   void update(const unsigned char *buf, uint32_t length);
   void finalize();
   std::string hexdigest() const;
@@ -61,8 +62,7 @@ private:
   uint32_t bytes[2];
   uint32_t in[16];
   bool finalized;
-  void init(void);
-  void transform(void);
+  void transform();
 };
 
 #endif
