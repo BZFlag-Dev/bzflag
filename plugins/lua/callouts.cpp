@@ -37,17 +37,19 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
   if (lua_israwstring(L, index)) {
     string s = lua_tostring(L, index);
     s = makelower(s);
-    if (s == "auto")     { return eAutomaticTeam;    }
-    if (s == "none")     { return eNoTeam;           }
-    if (s == "rogue")    { return eRogueTeam;        }
-    if (s == "red")      { return eRedTeam;          }
-    if (s == "green")    { return eGreenTeam;        }
-    if (s == "blue")     { return eBlueTeam;         }
-    if (s == "purple")   { return ePurpleTeam;       }
-    if (s == "rabbit")   { return eRabbitTeam;       }
-    if (s == "hunter")   { return eHunterTeam;       }
-    if (s == "observer") { return eObservers;        }
-    if (s == "admin")    { return eAdministrators;   }
+
+    if (s == "auto")     { return eAutomaticTeam;  }
+    if (s == "none")     { return eNoTeam;         }
+    if (s == "rogue")    { return eRogueTeam;      }
+    if (s == "red")      { return eRedTeam;        }
+    if (s == "green")    { return eGreenTeam;      }
+    if (s == "blue")     { return eBlueTeam;       }
+    if (s == "purple")   { return ePurpleTeam;     }
+    if (s == "rabbit")   { return eRabbitTeam;     }
+    if (s == "hunter")   { return eHunterTeam;     }
+    if (s == "observer") { return eObservers;      }
+    if (s == "admin")    { return eAdministrators; }
+
     luaL_error(L, "invalid team: %s", s.c_str());
   }
   else if (lua_israwnumber(L, index)) {
@@ -73,6 +75,8 @@ static int GetServerVersion(lua_State* L);
 static int GetServerPort(lua_State* L);
 static int GetServerAddress(lua_State* L);
 static int GetServerDescription(lua_State* L);
+
+static int UpdateListServer(lua_State* L);
 
 static int AdminShutdown(lua_State* L);
 static int AdminRestart(lua_State* L);
@@ -237,6 +241,8 @@ static int GetTimer(lua_State* L);
 static int DiffTimers(lua_State* L);
 static int DirList(lua_State* L);
 
+static int CalcMD5(lua_State* L);
+
 #ifdef HAVE_UNISTD_H
 static int ReadStdin(lua_State* L);
 #endif
@@ -261,6 +267,8 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(GetServerPort);
   PUSH_LUA_CFUNC(GetServerAddress);
   PUSH_LUA_CFUNC(GetServerDescription);
+
+  PUSH_LUA_CFUNC(UpdateListServer);
 
   PUSH_LUA_CFUNC(AdminShutdown);
   PUSH_LUA_CFUNC(AdminRestart);
@@ -434,6 +442,8 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(DiffTimers);
   PUSH_LUA_CFUNC(DirList);
 
+  PUSH_LUA_CFUNC(CalcMD5);
+
 #ifdef HAVE_UNISTD_H
   PUSH_LUA_CFUNC(ReadStdin);
 #endif
@@ -502,6 +512,13 @@ static int GetServerDescription(lua_State* L)
 
 /******************************************************************************/
 /******************************************************************************/
+
+static int UpdateListServer(lua_State* L)
+{
+  bz_updateListServer();
+  return 0;
+}
+
 
 static int AdminShutdown(lua_State* L)
 {
@@ -1982,6 +1999,15 @@ static int DirList(lua_State* L)
   }
 
   return 2;
+}
+
+
+static int CalcMD5(lua_State* L)
+{
+  size_t size;
+  const char* data = luaL_checklstring(L, 1, &size);
+  lua_pushstring(L, bz_MD5(data, size));
+  return 1;
 }
 
 
