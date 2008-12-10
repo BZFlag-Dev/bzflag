@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
@@ -66,7 +66,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.lib"
 				OutputFile="$(OutDir)/bzlua.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../;../plugin_utils/debug/;../../MSVC/VC8/lua_debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/debug/;../../MSVC/build/lua_debug/"
 				ModuleDefinitionFile="bzlua.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/bzlua.pdb"
@@ -146,7 +146,7 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.ib"
 				OutputFile="$(OutDir)/bzlua.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../;../plugin_utils/release/;../../MSVC/VC8/lua_release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/release/;../../MSVC/build/lua_release/"
 				ModuleDefinitionFile="bzlua.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"

@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfs", "bzfs.vcproj", "{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B2B95537-A4CE-4510-96A6-00F7B7303922} = {B2B95537-A4CE-4510-96A6-00F7B7303922}

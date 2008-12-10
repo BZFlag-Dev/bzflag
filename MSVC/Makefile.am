@@ -1,5 +1,5 @@
 SUBDIRS = \
-	VC8 
+	build 
 
 EXTRA_DIST = \
 	bzflag.ico \
