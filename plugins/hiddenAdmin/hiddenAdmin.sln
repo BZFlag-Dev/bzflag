@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hiddenAdmin", "hiddenAdmin.vcproj", "{2EAF7655-AE86-4407-8262-43496581E5B2}"
 EndProject
 Global

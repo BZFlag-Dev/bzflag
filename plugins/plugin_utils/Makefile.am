@@ -19,11 +19,11 @@ libplugin_utils_la_SOURCES = \
 
 libplugin_utils_la_LDFLAGS = -avoid-version
 
-DIST_SUBDIRS = VC8
-
 EXTRA_DIST = \
 	templates_readme.txt \
-	base64_readme.txt
+	base64_readme.txt \
+	plugin_utils.sln \
+	plugin_utils.vcproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="bzlua"
 	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
 	RootNamespace="bzlua"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -65,11 +66,13 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.lib"
 				OutputFile="$(OutDir)/bzlua.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/;../../MSVC/VC8/lua_debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/debug/;../../MSVC/VC8/lua_debug/"
 				ModuleDefinitionFile="bzlua.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/bzlua.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/bzlua.lib"
 				TargetMachine="1"
 			/>
@@ -90,9 +93,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -146,13 +146,15 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.ib"
 				OutputFile="$(OutDir)/bzlua.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/;../../MSVC/VC8/lua_release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/release/;../../MSVC/VC8/lua_release/"
 				ModuleDefinitionFile="bzlua.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/bzlua.lib"
 				TargetMachine="1"
 			/>
@@ -173,9 +175,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
