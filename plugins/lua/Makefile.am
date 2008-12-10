@@ -1,9 +1,9 @@
-lib_LTLIBRARIES = libbzlua.la
+lib_LTLIBRARIES = libbzfslua.la
 
 AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
 AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
 
-noinst_HEADERS = \
+noinst_HEADERS =      \
 	bzdb.h        \
 	callins.h     \
 	callouts.h    \
@@ -14,7 +14,7 @@ noinst_HEADERS = \
 	mylua.h       \
 	slashcmd.h
 
-libbzlua_la_SOURCES =      \
+libbzfslua_la_SOURCES = \
 	bzdb.cpp      \
 	callins.cpp   \
 	callouts.cpp  \
@@ -25,19 +25,19 @@ libbzlua_la_SOURCES =      \
 	mapobject.cpp \
 	slashcmd.cpp
 
-libbzlua_la_LDFLAGS = -module -avoid-version
+libbzfslua_la_LDFLAGS = -module -avoid-version
 
-libbzlua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
+libbzfslua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 
-libbzlua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
-                 $(top_builddir)/../src/other/lua/liblua.la
+libbzfslua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
+                        $(top_builddir)/../src/other/lua/liblua.la
 
-EXTRA_DIST = \
+EXTRA_DIST =       \
 	README.txt \
 	example \
 	bzlua.def \
 	lua.sln \
 	lua.vcproj
 
-MAINTAINERCLEANFILES =	\
+MAINTAINERCLEANFILES = \
 	Makefile.in
