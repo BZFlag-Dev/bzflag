@@ -73,6 +73,13 @@ inline int compare_nocase(const std::string& s1, const std::string &s2, int maxl
   return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
 }
 
+inline int compare_nocase( const char* s1, const char *s2, int maxlenght=4096)
+{
+  if (!s1 || !s2)
+    return -1;
+  return compare_nocase(std::string(s1),std::string(s2),maxlenght);
+}
+
 inline bool isAlphabetic(const char c)
 {
   if (( c > 64 && c < 91) ||
