@@ -1,6 +1,6 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unrealCTF", "unrealCTF.vcproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unrealCTF", "unrealCTF.vcproj", "{32C35A56-7720-45A6-8AAB-67805BB73FA7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
 	EndProjectSection
@@ -13,10 +13,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Debug|Win32.Build.0 = Debug|Win32
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release|Win32.ActiveCfg = Release|Win32
-		{1F43075E-8AF6-486F-AEDF-6B350A6CE141}.Release|Win32.Build.0 = Release|Win32
+		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Debug|Win32.Build.0 = Debug|Win32
+		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Release|Win32.ActiveCfg = Release|Win32
+		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Release|Win32.Build.0 = Release|Win32
 		{645768BE-97C8-4DE4-9100-111BD2808B35}.Debug|Win32.ActiveCfg = Debug|Win32
 		{645768BE-97C8-4DE4-9100-111BD2808B35}.Debug|Win32.Build.0 = Debug|Win32
 		{645768BE-97C8-4DE4-9100-111BD2808B35}.Release|Win32.ActiveCfg = Release|Win32
