@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="lua"
+	Name="bzlua"
 	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	RootNamespace="bzlua"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -41,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../include;../plugin_utils"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;lua_EXPORTS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;lua_EXPORTS;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -61,15 +62,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="bzfs.lib plugin_utils.lib"
-				OutputFile="$(OutDir)/lua.dll"
+				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.lib"
+				OutputFile="$(OutDir)/bzlua.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
-				ModuleDefinitionFile="lua.def"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/;../../MSVC/VC8/lua_debug/"
+				ModuleDefinitionFile="bzlua.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/lua.pdb"
+				ProgramDatabaseFile="$(OutDir)/bzlua.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/lua.lib"
+				ImportLibrary="$(OutDir)/bzlua.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -124,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../include;../plugin_utils"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;lua_EXPORTS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;lua_EXPORTS;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -142,17 +143,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="bzfs.lib plugin_utils.lib"
-				OutputFile="$(OutDir)/lua.dll"
+				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.ib"
+				OutputFile="$(OutDir)/bzlua.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/"
-				ModuleDefinitionFile="lua.def"
+				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/;../../MSVC/VC8/lua_release/"
+				ModuleDefinitionFile="bzlua.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/lua.lib"
+				ImportLibrary="$(OutDir)/bzlua.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -190,6 +191,62 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\bzdb.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\bzdb.h"
+				>
+			</File>
+			<File
+				RelativePath=".\callins.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\callins.h"
+				>
+			</File>
+			<File
+				RelativePath=".\callouts.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\callouts.h"
+				>
+			</File>
+			<File
+				RelativePath=".\constants.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\constants.h"
+				>
+			</File>
+			<File
+				RelativePath=".\fetchurl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\fetchurl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lua.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lua.def"
+				>
+			</File>
+			<File
+				RelativePath=".\lualfs.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lualfs.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Makefile"
 				>
 				<FileConfiguration
@@ -210,11 +267,23 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\lua.cpp"
+				RelativePath=".\mapobject.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\lua.def"
+				RelativePath=".\mapobject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mylua.h"
+				>
+			</File>
+			<File
+				RelativePath=".\slashcmd.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\slashcmd.h"
 				>
 			</File>
 		</Filter>

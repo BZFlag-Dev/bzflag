@@ -354,7 +354,7 @@ bool CI_AllowCTFCapture::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -2)) {
-    ed->allow = lua_toboolean(L, -2);
+    ed->allow = lua_toboolean(L, -2)!=0;
   }
 
   if (lua_isboolean(L, -1)) {
@@ -388,7 +388,7 @@ bool CI_AllowFlagGrab::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -1)) {
-    ed->allow = lua_toboolean(L, -1);
+    ed->allow = lua_toboolean(L, -1)!=0;
   }
 
   lua_pop(L, 1);
@@ -413,7 +413,7 @@ bool CI_AllowKillCommand::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -1)) {
-    ed->allow = lua_toboolean(L, -1);
+    ed->allow = lua_toboolean(L, -1)!=0;
   }
 
   lua_pop(L, 1);
@@ -467,7 +467,7 @@ bool CI_AllowSpawn::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -1)) {
-    ed->allow = lua_toboolean(L, -1);
+    ed->allow = lua_toboolean(L, -1)!=0;
     // ed->handled = true; FIXME?
   }
 
@@ -601,7 +601,7 @@ bool CI_FlagGrabbed::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
-  lua_pushnumber(L,  ed->shotType);
+  lua_pushnumber(L,  (lua_Number)ed->shotType);
   lua_pushnumber(L,  ed->pos[0]);
   lua_pushnumber(L,  ed->pos[1]);
   lua_pushnumber(L,  ed->pos[2]);
@@ -664,7 +664,7 @@ bool CI_GameEnd::execute(bz_EventData* eventData)
     return false;
   }
 
-  lua_pushnumber(L, ed->duration);
+  lua_pushnumber(L, (lua_Number)ed->duration);
   
   return RunCallIn(1, 0);
 }
@@ -678,7 +678,7 @@ bool CI_GameStart::execute(bz_EventData* eventData)
     return false;
   }
 
-  lua_pushnumber(L, ed->duration);
+  lua_pushnumber(L, (lua_Number)ed->duration);
   
   return RunCallIn(1, 0);
 }
@@ -729,9 +729,9 @@ bool CI_GetPlayerInfo::execute(bz_EventData* eventData)
     return false;
   }
 
-  if (lua_isboolean(L, -3)) { ed->admin      = lua_toboolean(L, -3); }
-  if (lua_isboolean(L, -2)) { ed->verified   = lua_toboolean(L, -2); }
-  if (lua_isboolean(L, -1)) { ed->registered = lua_toboolean(L, -1); }
+  if (lua_isboolean(L, -3)) { ed->admin      = lua_toboolean(L, -3)!=0; }
+  if (lua_isboolean(L, -2)) { ed->verified   = lua_toboolean(L, -2)!=0; }
+  if (lua_isboolean(L, -1)) { ed->registered = lua_toboolean(L, -1)!=0; }
 
   lua_pop(L, 3);
 
@@ -1110,7 +1110,7 @@ bool CI_PlayerCollision::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -1)) {
-    ed->handled = lua_toboolean(L, -1);
+    ed->handled = lua_toboolean(L, -1)!=0;
   }
 
   lua_pop(L, 1);
@@ -1452,7 +1452,7 @@ bool CI_UnknownSlashCommand::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -1)) {
-    ed->handled = lua_toboolean(L, -1);
+    ed->handled = lua_toboolean(L, -1)!=0;
   }
 
   lua_pop(L, 1);

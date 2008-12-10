@@ -18,6 +18,7 @@ using std::string;
 #include "slashcmd.h"
 #include "fetchurl.h"
 #include "bzdb.h"
+#include "plugin_utils.h"
 
 
 BZ_GET_PLUGIN_VERSION
@@ -62,7 +63,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* cmdLine)
   }
 
   if (cmdLine) {
-    if (strncasecmp(cmdLine, "dieHard,", 8) == 0) {
+    if (compare_nocase(cmdLine, "dieHard,", 8) == 0) {
       dieHard = true;
       cmdLine += 8;
     }

@@ -84,7 +84,7 @@ static int GetMap(lua_State* L)
     bz_deleteStringList(list);    
     return 1;
   }
-  for (int i = 0; i < list->size(); i++) {
+  for (unsigned int i = 0; i < list->size(); i++) {
     const char* key = list->get(i).c_str();
     lua_pushstring(L, key);
     lua_pushstring(L, bz_getBZDBString(key).c_str());
@@ -103,7 +103,7 @@ static int GetList(lua_State* L)
     bz_deleteStringList(list);    
     return 1;
   }
-  for (int i = 0; i < list->size(); i++) {
+  for (unsigned int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, list->get(i).c_str());
     lua_rawset(L, -3);
@@ -161,7 +161,7 @@ static int GetBool(lua_State* L)
 static int GetFloat(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
-  lua_pushnumber(L, bz_getBZDBDouble(key));
+  lua_pushnumber(L, (lua_Number)bz_getBZDBDouble(key));
   return 1;
 }
 
@@ -194,7 +194,7 @@ static int SetBool(lua_State* L)
   if (!lua_isboolean(L, 2)) {
     luaL_error(L, "expected boolean argument for arg 2");
   }
-  const bool value = lua_toboolean(L, 2);
+  const bool value = lua_toboolean(L, 2) != 0;
   const int  perms = luaL_optint(L, 3, 0);
   const bool persist = lua_isboolean(L, 4) && lua_toboolean(L, 4);
   lua_pushboolean(L, bz_setBZDBBool(key, value));

@@ -274,6 +274,7 @@ static bool CreateMetatble(lua_State* L)
   lua_rawset(L, -3);
 
   lua_pop(L, 1); // pop the metatable
+  return true;
 }
 
 

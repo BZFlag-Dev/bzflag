@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = lua.la
+lib_LTLIBRARIES = bzlua.la
 
 AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
 AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
@@ -35,7 +35,7 @@ lua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
 EXTRA_DIST = \
 	README.txt \
 	example \
-	lua.def \
+	bzlua.def \
 	lua.sln \
 	lua.vcproj
 

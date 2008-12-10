@@ -18,6 +18,10 @@ using std::map;
 
 extern const string& GetLuaDirectory(); // from lua.cpp
 
+#ifndef uint32_t
+#define uint32_t unsigned int 
+#endif
+
 // FIXME: TODO
 // * obstacle queries, tangibility
 // - plugin management
@@ -604,7 +608,7 @@ static int GetWorldCache(lua_State* L)
 
 static int GetWorldURL(lua_State* L)
 {
-  const char* url;
+//  const char* url;
   return 0;
 }
 
@@ -814,7 +818,7 @@ static int GetPlayerIDs(lua_State* L)
     return 1;
   }
   lua_createtable(L, 0, playerList->size());
-  for (int i = 0; i < playerList->size(); i++) {
+  for (unsigned int i = 0; i < playerList->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushinteger(L, playerList->get(i));
     lua_rawset(L, -3);
@@ -1120,7 +1124,7 @@ static int GetPlayerGroups(lua_State* L)
     return 0;
   }
   lua_newtable(L);
-  for (int i = 0; i < player->groups.size(); i++) {
+  for (unsigned int i = 0; i < player->groups.size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, player->groups[i].c_str());
     lua_rawset(L, -3);
@@ -1177,7 +1181,7 @@ static int GetPlayerFlagHistory(lua_State* L)
     return 0;
   }
   lua_newtable(L);
-  for (int i = 0; i < player->flagHistory.size(); i++) {
+  for (unsigned int i = 0; i < player->flagHistory.size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, player->flagHistory[i].c_str());
     lua_rawset(L, -3);
@@ -1291,7 +1295,7 @@ static int ZapPlayer(lua_State* L)
 static int KillPlayer(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  const bool spawnOnBase = lua_isboolean(L, 2) ? lua_toboolean(L, 2) : true;
+  const bool spawnOnBase = lua_isboolean(L, 2) ? lua_toboolean(L, 2)!=0 : true;
   const int killerID = luaL_optint(L, 3, -1);
   const char* flagID = luaL_optstring(L, 4, NULL);
   bz_killPlayer(playerID, spawnOnBase, killerID, flagID);
@@ -1422,7 +1426,7 @@ static int MoveFlag(lua_State* L)
   pos[0] = luaL_checkfloat(L, 2);
   pos[1] = luaL_checkfloat(L, 3);
   pos[2] = luaL_checkfloat(L, 4);
-  const bool reset = lua_isboolean(L, 5) ? lua_toboolean(L, 5) : true;
+  const bool reset = lua_isboolean(L, 5) ? lua_toboolean(L, 5)!=0 : true;
   bz_moveFlag(flagID, pos, reset);
   return 0;
 }
@@ -1670,7 +1674,7 @@ static int GetGroups(lua_State* L)
     return 1;
   }
   lua_createtable(L, list->size(), 0);
-  for (int i = 0; i < list->size(); i++) {
+  for (unsigned int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
     lua_rawset(L, -3);
@@ -1689,7 +1693,7 @@ static int GetGroupPerms(lua_State* L)
     return 1;
   }
   lua_createtable(L, list->size(), 0);
-  for (int i = 0; i < list->size(); i++) {
+  for (unsigned int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
     lua_rawset(L, -3);
@@ -1716,7 +1720,7 @@ static int GetStandardPerms(lua_State* L)
     return 1;
   }
   lua_createtable(L, list->size(), 0);
-  for (int i = 0; i < list->size(); i++) {
+  for (unsigned int i = 0; i < list->size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
     lua_rawset(L, -3);
@@ -1977,7 +1981,7 @@ static int DirList(lua_State* L)
   }
 
   // files table
-  lua_createtable(L, fileSet.size(), 0);
+  lua_createtable(L, (int)fileSet.size(), 0);
   set<string>::const_iterator fit;
   int fileCount = 0;
   for (fit = fileSet.begin(); fit != fileSet.end(); ++fit) {
@@ -1988,7 +1992,7 @@ static int DirList(lua_State* L)
   }
 
   // dirs table
-  lua_createtable(L, dirSet.size(), 0);
+  lua_createtable(L, (int)dirSet.size(), 0);
   set<string>::const_iterator dit;
   int dirCount = 0;
   for (dit = dirSet.begin(); dit != dirSet.end(); ++dit) {
