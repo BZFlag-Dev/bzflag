@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="bzlua"
+	Name="bzfslua"
 	ProjectGUID="{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
-	RootNamespace="bzlua"
+	RootNamespace="bzfslua"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -64,16 +64,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.lib"
-				OutputFile="$(OutDir)/bzlua.dll"
+				OutputFile="$(OutDir)/bzfslua.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../;../plugin_utils/debug/;../../MSVC/build/lua_debug/"
-				ModuleDefinitionFile="bzlua.def"
+				ModuleDefinitionFile="bzfslua.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/bzlua.pdb"
+				ProgramDatabaseFile="$(OutDir)/bzfslua.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/bzlua.lib"
+				ImportLibrary="$(OutDir)/bzfslua.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -144,10 +144,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="bzfs.lib plugin_utils.lib lua.ib"
-				OutputFile="$(OutDir)/bzlua.dll"
+				OutputFile="$(OutDir)/bzfslua.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../;../plugin_utils/release/;../../MSVC/build/lua_release/"
-				ModuleDefinitionFile="bzlua.def"
+				ModuleDefinitionFile="bzfslua.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
@@ -155,7 +155,7 @@
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/bzlua.lib"
+				ImportLibrary="$(OutDir)/bzfslua.lib"
 				TargetMachine="1"
 			/>
 			<Tool
