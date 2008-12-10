@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = bzlua.la
+lib_LTLIBRARIES = libbzlua.la
 
 AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
 AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
@@ -14,7 +14,7 @@ noinst_HEADERS = \
 	mylua.h       \
 	slashcmd.h
 
-lua_la_SOURCES =      \
+libbzlua_la_SOURCES =      \
 	bzdb.cpp      \
 	callins.cpp   \
 	callouts.cpp  \
@@ -25,11 +25,11 @@ lua_la_SOURCES =      \
 	mapobject.cpp \
 	slashcmd.cpp
 
-lua_la_LDFLAGS = -module -avoid-version
+libbzlua_la_LDFLAGS = -module -avoid-version
 
-lua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
+libbzlua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 
-lua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
+libbzlua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
                  $(top_builddir)/../src/other/lua/liblua.la
 
 EXTRA_DIST = \
