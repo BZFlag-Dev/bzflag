@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
@@ -152,27 +152,27 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\base64.cpp"
+				RelativePath="base64.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_config.cpp"
+				RelativePath="plugin_config.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_files.cpp"
+				RelativePath="plugin_files.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_groups.cpp"
+				RelativePath="plugin_groups.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_HTTP.cpp"
+				RelativePath="plugin_HTTP.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_utils.cpp"
+				RelativePath="plugin_utils.cpp"
 				>
 			</File>
 		</Filter>
@@ -182,27 +182,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\base64.h"
+				RelativePath="base64.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_config.h"
+				RelativePath="plugin_config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_files.h"
+				RelativePath="plugin_files.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_groups.h"
+				RelativePath="plugin_groups.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_HTTP.h"
+				RelativePath="plugin_HTTP.h"
 				>
 			</File>
 			<File
-				RelativePath="..\plugin_utils.h"
+				RelativePath="plugin_utils.h"
 				>
 			</File>
 		</Filter>
@@ -213,7 +213,7 @@
 			>
 		</Filter>
 		<File
-			RelativePath="..\Makefile.am"
+			RelativePath="Makefile.am"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -233,7 +233,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath="ReadMe.txt"
 			>
 		</File>
 	</Files>
