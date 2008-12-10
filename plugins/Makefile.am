@@ -46,8 +46,7 @@ SUBDIRS = \
 DIST_SUBDIRS = \
 	$(SUBDIRS) \
 	m4 \
-	serverSideBotSample \
-	MSVC
+	serverSideBotSample 
 
 EXTRA_DIST = \
 	AUTHORS \
