@@ -3,15 +3,13 @@ README for Windows (32- and 64-bit) platforms
 
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary
-releases (Visual C++ 7.1 aka ".NET 2003" was used versions 
-pre 3.0, and Visual C++ 8.0 aka ".Net 2005" is used for 
-3.0 and later). Project files are also provided for Visual C++ 
-versions ranging from 8.0 to 9.0. The VC 8.0 project files are
-usable by the free "visual C++ .net 2005 express edition"
-that is very popular.
+releases (Visual C++ 7.1 aka ".NET 2003" and Visual C++ 8.0 aka 
+".NET 2005" was used for versions pre 3.0, and Visual C++ 9.0 aka
+".Net 2008" is used for 3.0 and later). Project files are also
+provided for Visual C++ version 9.0. 
 
-Visual Studio 6.0 and 7.1 support has been discontinued, and no
-projects are provided for these versions.
+Visual Studio 6.0, 7.1 and 8.0 support has been discontinued,
+and no projects are provided for these versions.
 
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;
@@ -19,9 +17,9 @@ for details, see README.MINGW32 (for MinGW) or the main
 README (for Cygwin).
 
 The most common way to build on windows is to use VisualC++.
-The Freely available VC8 EE edition is well suited to users
+The Freely available VC9 EE edition is well suited to users
 who wish to compile the client for personal use. It can be found at
-http://www.microsoft.com/express/2005/. Please note that the
+http://www.microsoft.com/express/download/. Please note that the
 free versions of Visual C++ do not allow for the re-distribution
 of compiled applications, and link to runtime libraries that only
 exist on systems that have the same VC EE version. If you wish to 
@@ -30,8 +28,7 @@ ether use the full (retail, or student) versions of the compiler
 or use one of the other free solutions (minGW). For more info
 on compiling with minGW please see the README.MINGW32 that was
 included in this source package. The rest of this document will
-refer to the build process using Visual C++ 8.0 and 9.0
-(.net 2005 and 2008).
+refer to the build process using Visual C++ 9.0 (.net 2008).
 
 **Targets**
 There are a total of 4 build targets in the VC projects.
