@@ -1860,14 +1860,14 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
     {
       GameKeeper::Player *p=GameKeeper::Player::getPlayerByIndex(i);
       if(p && p->caps.canDownloadResources)
-	MSGMGR.newMessage(msg)->send(p->netHandler, MsgFetchResources);
+		MSGMGR.newMessage(msg)->send(p->netHandler, MsgFetchResources);
     }
   }
   else
   {
     GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
     if(player && player->caps.canDownloadResources)
-      MSGMGR.newMessage(msg)->send(player->netHandler, MsgFetchResources);
+      msg->send(player->netHandler, MsgFetchResources);
   }
   return true;
 }
@@ -1877,9 +1877,13 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
                                int teamID, const char* referrer)
 {
-  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
-  if (player == NULL) {
-    return false;
+  GameKeeper::Player* player = NULL;
+  if (playerID != BZ_ALLUSERS)
+  {
+	  player = GameKeeper::Player::getPlayerByIndex(playerID);
+	  if (player == NULL) {
+		  return false;
+	  }
   }
   if (address == NULL) {
     return false;
@@ -1901,7 +1905,10 @@ BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
   msg->packInt(teamID);
   msg->packStdString(refr);
 
-  MSGMGR.newMessage(msg)->send(player->netHandler, MsgJoinServer);
+  if (playerID != BZ_ALLUSERS)
+	msg->send(player->netHandler, MsgJoinServer);
+  else
+    msg->broadcast(MsgJoinServer);
 
   return true;
 }

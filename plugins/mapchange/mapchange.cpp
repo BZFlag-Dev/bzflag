@@ -280,6 +280,9 @@ void sendMapChangeMessage ( bool end )
   else
      message = "Please Rejoin!\n";
   bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
+
+  if (!end)
+	  bz_sendJoinServer(BZ_ALLUSERS,bz_getPublicAddr().c_str(),bz_getPublicPort(),eAutomaticTeam,"Map Change");
 }
 
 void nextMap ( void )
