@@ -56,18 +56,17 @@ void appendTime ( std::string & text, bz_Time *ts, const char* timezone = "UTC" 
 
 
 inline int compare_nocase(const std::string& s1,
-                          const std::string &s2, size_t maxlength = 4096)
+                          const std::string& s2, size_t maxlength = 4096)
 {
   // length check
   if ((s1.size() < maxlength) || (s2.size() < maxlength)) {
     if (s1.size() != s2.size()) {
       return (s1.size() < s2.size()) ? -1 : +1;
     }
-  }
-
-  // clamp the maxlength
-  if (maxlength > s1.size()) {
-    maxlength = s1.size();
+    // clamp the maxlength
+    if (maxlength > s1.size()) {
+      maxlength = s1.size();
+    }
   }
 
   // check the characters  
@@ -83,7 +82,8 @@ inline int compare_nocase(const std::string& s1,
 }
 
 
-inline int compare_nocase(const char* s1, const char* s2, size_t maxlength = 4096)
+inline int compare_nocase(const char* s1,
+                          const char* s2, size_t maxlength = 4096)
 {
   if (!s1 || !s2) {
     return -1;
