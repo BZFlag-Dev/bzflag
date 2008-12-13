@@ -54,30 +54,41 @@ std::string no_whitespace(const std::string &s);
 std::string printTime ( bz_Time *ts, const char* timezone = "UTC" );
 void appendTime ( std::string & text, bz_Time *ts, const char* timezone = "UTC" );
 
-inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
+
+inline int compare_nocase(const std::string& s1,
+                          const std::string &s2, size_t maxlength = 4096)
 {
-  std::string::const_iterator p1 = s1.begin();
-  std::string::const_iterator p2 = s2.begin();
-  int i=0;
-  while (p1 != s1.end() && p2 != s2.end()) {
-    if (i >= maxlength) {
-      return 0;
+  // length check
+  if ((s1.size() < maxlength) || (s2.size() < maxlength)) {
+    if (s1.size() != s2.size()) {
+      return (s1.size() < s2.size()) ? -1 : +1;
     }
-    if (::tolower(*p1) != ::tolower(*p2)) {
-      return (::tolower(*p1) < ::tolower(*p2)) ? -1 : 1;
-    }
-    ++p1;
-    ++p2;
-    ++i;
   }
-  return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
+
+  // clamp the maxlength
+  if (maxlength > s1.size()) {
+    maxlength = s1.size();
+  }
+
+  // check the characters  
+  for (size_t i = 0; i < maxlength; i++) {
+    const std::string::value_type lower1 = ::tolower(s1[i]);
+    const std::string::value_type lower2 = ::tolower(s2[i]);
+    if (lower1 != lower2) {
+      return (lower1 < lower2) ? -1 : +1;
+    }
+  }
+
+  return 0;
 }
 
-inline int compare_nocase( const char* s1, const char *s2, int maxlenght=4096)
+
+inline int compare_nocase(const char* s1, const char* s2, size_t maxlength = 4096)
 {
-  if (!s1 || !s2)
+  if (!s1 || !s2) {
     return -1;
-  return compare_nocase(std::string(s1),std::string(s2),maxlenght);
+  }
+  return compare_nocase(std::string(s1), std::string(s2), maxlength);
 }
 
 inline bool isAlphabetic(const char c)
