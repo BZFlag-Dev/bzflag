@@ -237,6 +237,13 @@ static int UnbanByIP(lua_State* L);
 static int UnbanByBZID(lua_State* L);
 static int UnbanByHost(lua_State* L);
 
+static int GetIPBanCount(lua_State* L);
+static int GetIPBanEntry(lua_State* L);
+static int GetBZIDBanCount(lua_State* L);
+static int GetBZIDBanEntry(lua_State* L);
+static int GetHostBanCount(lua_State* L);
+static int GetHostBanEntry(lua_State* L);
+
 static int GetMaxWaitTime(lua_State* L);
 static int SetMaxWaitTime(lua_State* L);
 static int ClearMaxWaitTime(lua_State* L);
@@ -437,6 +444,13 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(UnbanByIP);
   PUSH_LUA_CFUNC(UnbanByBZID);
   PUSH_LUA_CFUNC(UnbanByHost);
+
+  PUSH_LUA_CFUNC(GetIPBanCount);
+  PUSH_LUA_CFUNC(GetIPBanEntry);
+  PUSH_LUA_CFUNC(GetBZIDBanCount);
+  PUSH_LUA_CFUNC(GetBZIDBanEntry);
+  PUSH_LUA_CFUNC(GetHostBanCount);
+  PUSH_LUA_CFUNC(GetHostBanEntry);
 
   PUSH_LUA_CFUNC(GetMaxWaitTime);
   PUSH_LUA_CFUNC(SetMaxWaitTime);
@@ -960,7 +974,7 @@ static int GetPlayerPaused(lua_State* L)
 static int GetPlayerPosition(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  const bool extrapolate = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+  const bool extrapolate = lua_isboolean(L, 2) && lua_tobool(L, 2);
 
   float pos[3];
   if (!bz_getPlayerPosition(pid, pos, extrapolate)) {
@@ -995,7 +1009,7 @@ static int GetPlayerVelocity(lua_State* L)
 static int GetPlayerRotation(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  const bool extrapolate = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+  const bool extrapolate = lua_isboolean(L, 2) && lua_tobool(L, 2);
 
   float rot;
   if (!bz_getPlayerRotation(pid, &rot, extrapolate)) {
@@ -1295,7 +1309,7 @@ static int ZapPlayer(lua_State* L)
 static int KillPlayer(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  const bool spawnOnBase = lua_isboolean(L, 2) ? lua_toboolean(L, 2)!=0 : true;
+  const bool spawnOnBase = !lua_isboolean(L, 2) || lua_tobool(L, 2);
   const int killerID = luaL_optint(L, 3, -1);
   const char* flagID = luaL_optstring(L, 4, NULL);
   bz_killPlayer(playerID, spawnOnBase, killerID, flagID);
@@ -1311,7 +1325,7 @@ static int SetRabbit(lua_State* L)
     bz_removeRabbit(playerID);
     return 0;
   }
-  const bool swap = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+  const bool swap = lua_isboolean(L, 2) && lua_tobool(L, 2);
   bz_newRabbit(playerID, swap);
   return 0;
 }
@@ -1339,7 +1353,7 @@ static int SetPlayerOperator(lua_State* L)
 static int SetPlayerSpawnable(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  const bool spawn = !lua_isboolean(L, 2) || lua_toboolean(L, 2);
+  const bool spawn = !lua_isboolean(L, 2) || lua_tobool(L, 2);
   lua_pushboolean(L, bz_setPlayerSpawnable(playerID, spawn));
   return 1;
 }
@@ -1371,7 +1385,7 @@ static int GivePlayerFlag(lua_State* L)
     return 1;
   }
 
-  const bool force = lua_isboolean(L, 3) && lua_toboolean(L, 3);
+  const bool force = lua_isboolean(L, 3) && lua_tobool(L, 3);
   lua_pushboolean(L, bz_givePlayerFlag(playerID, flagType, force));
 
   return 1;
@@ -1426,7 +1440,7 @@ static int MoveFlag(lua_State* L)
   pos[0] = luaL_checkfloat(L, 2);
   pos[1] = luaL_checkfloat(L, 3);
   pos[2] = luaL_checkfloat(L, 4);
-  const bool reset = lua_isboolean(L, 5) ? lua_toboolean(L, 5)!=0 : true;
+  const bool reset = !lua_isboolean(L, 5) || lua_tobool(L, 5);
   bz_moveFlag(flagID, pos, reset);
   return 0;
 }
@@ -1442,7 +1456,7 @@ static int ResetFlag(lua_State* L)
 
 static int ResetFlags(lua_State* L)
 {
-  const bool onlyUnused = !lua_isboolean(L, 1) || lua_toboolean(L, 1);
+  const bool onlyUnused = !lua_isboolean(L, 1) || lua_tobool(L, 1);
   bz_resetFlags(onlyUnused);
   return 0;
 }
@@ -1842,7 +1856,7 @@ static int KickPlayer(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
   const char* reason = luaL_checkstring(L, 2);
-  const bool  notify = lua_isboolean(L, 3) && lua_toboolean(L, 3);
+  const bool  notify = lua_isboolean(L, 3) && lua_tobool(L, 3);
   lua_pushboolean(L, bz_kickUser(playerID, reason, notify));
   return 1;
 }
@@ -1903,6 +1917,51 @@ static int UnbanByHost(lua_State* L)
   lua_pushboolean(L, bz_HostUnbanUser(host));
   return 1;
 }
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetBanCount(lua_State* L, bz_eBanListType listType)
+{
+  lua_pushnumber(L, bz_getBanListSize(listType));
+  return 1;
+}
+
+
+static int GetBanEntry(lua_State* L, bz_eBanListType listType)
+{
+  const unsigned int entry = luaL_checkint(L, 1);
+  if (entry >= bz_getBanListSize(listType)) {
+    return 0;
+  }
+
+  lua_newtable(L);
+
+  lua_pushliteral(L, "data");
+  lua_pushstring(L, bz_getBanItem(listType, entry));
+  lua_rawset(L, -3);
+  lua_pushliteral(L, "reason");
+  lua_pushstring(L, bz_getBanItemReason(listType, entry));
+  lua_rawset(L, -3);
+  lua_pushliteral(L, "source");
+  lua_pushstring(L, bz_getBanItemSource(listType, entry));
+  lua_rawset(L, -3);
+  lua_pushliteral(L, "duration");
+  lua_pushnumber(L, bz_getBanItemDuration(listType, entry));
+  lua_rawset(L, -3);
+  lua_pushstring(L, "fromMaster");
+  lua_pushboolean(L, bz_getBanItemIsFromMaster(listType, entry));
+  lua_rawset(L, -3);
+
+  return 1;
+}
+
+static int GetIPBanCount(lua_State* L)   { return GetBanCount(L, eIPList);   }
+static int GetIPBanEntry(lua_State* L)   { return GetBanEntry(L, eIPList);   }
+static int GetBZIDBanCount(lua_State* L) { return GetBanCount(L, eIDList);   }
+static int GetBZIDBanEntry(lua_State* L) { return GetBanEntry(L, eIDList);   }
+static int GetHostBanCount(lua_State* L) { return GetBanCount(L, eHostList); }
+static int GetHostBanEntry(lua_State* L) { return GetBanEntry(L, eHostList); }
 
 
 /******************************************************************************/

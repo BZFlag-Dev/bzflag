@@ -85,9 +85,6 @@ FetchHandler::FetchHandler(lua_State* L, const char* url, const char* post)
   urlText = url;
   postData = (post == NULL) ? "" : post;
 
-  printf("FetchHandler: %s, %s, %p\n", urlText.c_str(), postData.c_str(), this);
-  fflush(stdout); // FIXME -- testing
-
   fetchID = bz_addURLJobForID(url, (bz_BaseURLHandler*)this, post);
 }
 

@@ -92,7 +92,7 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString command,
     return false;
   }
 
-  if (lua_isboolean(L, -1) && !lua_toboolean(L, -1)) {
+  if (lua_isboolean(L, -1) && !lua_tobool(L, -1)) {
     lua_pop(L, 1);
     return false;
   }
