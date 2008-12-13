@@ -7,6 +7,7 @@
 
 #include "callouts.h"
 
+#include <assert.h>
 #include <string>
 #include <vector>
 #include <set>
@@ -264,6 +265,8 @@ static int ReadStdin(lua_State* L);
 
 bool CallOuts::PushEntries(lua_State* L)
 {
+  assert(sizeof(void*) >= sizeof(uint32_t));
+
 #define PUSH_LUA_CFUNC(x)  \
   lua_pushliteral(L, #x);  \
   lua_pushcfunction(L, x); \
