@@ -63,10 +63,7 @@ inline int compare_nocase(const std::string& s1,
     if (s1.size() != s2.size()) {
       return (s1.size() < s2.size()) ? -1 : +1;
     }
-    // clamp the maxlength
-    if (maxlength > s1.size()) {
-      maxlength = s1.size();
-    }
+    maxlength = s1.size(); // clamp the maxlength
   }
 
   // check the characters  
