@@ -7,9 +7,16 @@ If you wish to do that task, or help on it, please contact the developer
 so that no work is duplicated.
 
 
-----------------------------------------
+--------------------------------------------------------------------------------
+--
+--  Required for release of 3.0:
+--
 
-Required for release of 3.0:
+* fix the '/set _<tab>' crash bug (look in ControlPanel.cxx)
+
+* fix the MsgPause messages
+
+* figure out why there are too many player update messages
 
 * Change countdown stuff to be "/match" functions
    When a match is over, make everyone non shoot and non move
@@ -43,7 +50,10 @@ Required for release of 3.0:
   some entirely unrelated bug elsewhere in a static)
 
 
-Should be considered for the release of 3.0:
+--------------------------------------------------------------------------------
+--
+--  Should be considered for the release of 3.0:
+-- 
 
 * send the shot limits to the client so we don't shoot the wrong shot
   and can do interactive ammo display instead of chat messages.
@@ -83,7 +93,11 @@ Should be considered for the release of 3.0:
 
 * Verify player updates with Serer State for movement and death (JeffM2501)
 
-Would be nice to have but are not critical for 3.0
+
+--------------------------------------------------------------------------------
+--
+--  Would be nice to have but are not critical for 3.0
+--
 
 * Force feedback joystick support for Mac OS X
   http://developer.apple.com/documentation/DeviceDrivers/Reference/ForceFeedback/index.html
@@ -330,7 +344,10 @@ Would be nice to have but are not critical for 3.0
   very cool, but very low priority.
 
 
-Future Development
+--------------------------------------------------------------------------------
+--
+--  Future Development
+--
 
 * flags should all be nullflags from client view until
   a) you pick one up
@@ -428,7 +445,10 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
   Provide some way to override and control it at a list server level, as well as make it so the client
   can filter out servers with ratings higher then it wants.
 
-//------------------------- BZROBOTS TODO--------------------------------
+--------------------------------------------------------------------------------
+--
+--  BZROBOTS TODO
+-- 
 
 ! Hook up the botCanSpawn boolean to prevent the bots from spawning when they can't
 ? Convert RCLink to use an STL type and not a static buffer (overflows, though handled "gracefully", shouldn't be happening).
@@ -453,3 +473,6 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
+
+
+--------------------------------------------------------------------------------

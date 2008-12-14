@@ -702,15 +702,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
-    if (scene) {
-      scene->updateNodeStyles();
-    }
-    if (background) {
-      background->notifyStyleChange();
-    }
-    TrackMarks::notifyStyleChange();
-    DYNAMICWORLDTEXT.notifyStyleChange();
-    needStyleUpdate = false;
+    updateNodeStyles();
   }
 
   if (rebuildTanks) {
@@ -1079,59 +1071,58 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
 void draw3rdPersonTarget ( SceneRenderer*  /* renderer */ )
 {
-	LocalPlayer* myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
 
-	if ( myTank && thirdPersonVars.b3rdPerson )
-	{
-		const float *myTankPos = myTank->getPosition();
-		const float *myTankDir = myTank->getForward();
-		float muzzleHeight = myTank->getMuzzleHeight();
+  if (myTank && thirdPersonVars.b3rdPerson) {
+    const float *myTankPos = myTank->getPosition();
+    const float *myTankDir = myTank->getForward();
+    float muzzleHeight = myTank->getMuzzleHeight();
 
-		float radCon = 57.295779513082320876798154814105f;
+    float radCon = 57.295779513082320876798154814105f;
 
-		glPushMatrix();
-		float distance = thirdPersonVars.nearTargetDistance;
-		glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
-		glRotatef(myTank->getAngle()*radCon,0,0,1);
+    glPushMatrix();
+    float distance = thirdPersonVars.nearTargetDistance;
+    glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
+    glRotatef(myTank->getAngle()*radCon,0,0,1);
 
-		float size = thirdPersonVars.nearTargetSize;
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_LIGHTING);
+    float size = thirdPersonVars.nearTargetSize;
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
 
-		glColor4f(1,1,1,0.5f);
-		glBegin(GL_LINES);
-		glVertex3f(0,0,1.0f*size);
-		glVertex3f(0,0,0.25f*size);
-		glVertex3f(0,0,-1.0f*size);
-		glVertex3f(0,0,-0.25f*size);
-		glVertex3f(0,1.0f*size,0);
-		glVertex3f(0,0.25f*size,0);
-		glVertex3f(0,-1.0f*size,0);
-		glVertex3f(0,-0.25f*size,0);
-		glEnd();
-		glPopMatrix();
+    glColor4f(1,1,1,0.5f);
+    glBegin(GL_LINES);
+    glVertex3f(0,0,1.0f*size);
+    glVertex3f(0,0,0.25f*size);
+    glVertex3f(0,0,-1.0f*size);
+    glVertex3f(0,0,-0.25f*size);
+    glVertex3f(0,1.0f*size,0);
+    glVertex3f(0,0.25f*size,0);
+    glVertex3f(0,-1.0f*size,0);
+    glVertex3f(0,-0.25f*size,0);
+    glEnd();
+    glPopMatrix();
 
-		glPushMatrix();
-		distance = thirdPersonVars.farTargetDistance;
-		glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
-		glRotatef(myTank->getAngle()*radCon,0,0,1);
-		size = thirdPersonVars.farTargetSize;
-		glColor4f(0.5f,0.5f,0.5f,0.25f);
-		glBegin(GL_LINES);
-		glVertex3f(0,0,1.0f*size);
-		glVertex3f(0,0,0.25f*size);
-		glVertex3f(0,0,-1.0f*size);
-		glVertex3f(0,0,-0.25f*size);
-		glVertex3f(0,1.0f*size,0);
-		glVertex3f(0,0.25f*size,0);
-		glVertex3f(0,-1.0f*size,0);
-		glVertex3f(0,-0.25f*size,0);
-		glEnd();
+    glPushMatrix();
+    distance = thirdPersonVars.farTargetDistance;
+    glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
+    glRotatef(myTank->getAngle()*radCon,0,0,1);
+    size = thirdPersonVars.farTargetSize;
+    glColor4f(0.5f,0.5f,0.5f,0.25f);
+    glBegin(GL_LINES);
+    glVertex3f(0,0,1.0f*size);
+    glVertex3f(0,0,0.25f*size);
+    glVertex3f(0,0,-1.0f*size);
+    glVertex3f(0,0,-0.25f*size);
+    glVertex3f(0,1.0f*size,0);
+    glVertex3f(0,0.25f*size,0);
+    glVertex3f(0,-1.0f*size,0);
+    glVertex3f(0,-0.25f*size,0);
+    glEnd();
 
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_LIGHTING);
-		glPopMatrix();
-	}
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
+  }
 }
 
 
@@ -1341,6 +1332,7 @@ void SceneRenderer::getRenderNodes()
     // add the shadow rendering nodes
     if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
 	&& (!mirror || !clearZbuffer)) {
+      setupShadowPlanes();
       scene->addShadowNodes(*this);
       DYNAMICWORLDTEXT.addShadowNodes(*this);
     }
@@ -1429,6 +1421,22 @@ void SceneRenderer::notifyStyleChange()
 }
 
 
+void SceneRenderer::updateNodeStyles()
+{
+  needStyleUpdate = false;
+  if (scene) {
+    scene->updateNodeStyles();
+  }
+  if (background) {
+    background->notifyStyleChange();
+  }
+  TrackMarks::notifyStyleChange();
+  DYNAMICWORLDTEXT.notifyStyleChange();
+  needStyleUpdate = false;
+  return;
+}
+
+
 const RenderNodeList& SceneRenderer::getShadowList() const
 {
   return shadowList;
@@ -1458,6 +1466,80 @@ const Extents* SceneRenderer::getVisualExtents() const
 int SceneRenderer::getFrameTriangleCount() const
 {
   return triangleCount;
+}
+
+
+int SceneRenderer::getShadowPlanes(const float (**planes)[4]) const
+{
+  if (shadowPlaneCount <= 0) {
+    *planes = NULL;
+    return 0;
+  }
+  *planes = shadowPlanes;
+  return shadowPlaneCount;
+}
+
+
+void SceneRenderer::setupShadowPlanes()
+{
+  shadowPlaneCount = 0;
+
+  const float* sunDir = getSunDirection();
+  if (sunDir == NULL) {
+    return; // no sun = no shadows, simple
+  }
+
+  // FIXME: As a first cut, we'll assume that
+  //	    the frustum top points towards Z.
+  if (frustum.getUp()[2] < 0.999f) {
+    return; // tilted views are not supported
+  }
+
+  const float* eye = frustum.getEye();
+
+  // we project the frustum onto the ground plane, and then
+  // use those lines to generate planes in the direction of
+  // the sun's light. that is the potential shadow volume.
+
+  // The frustum planes are as follows:
+  // 0: left
+  // 1: right
+  // 2: bottom
+  float (*planes)[4] = shadowPlanes;
+  
+  shadowPlaneCount = 2;
+  float edge[2];
+  // left edge
+  edge[0] = -frustum.getSide(1)[1];
+  edge[1] = +frustum.getSide(1)[0];
+  planes[0][0] =  (edge[1] * sunDir[2]);
+  planes[0][1] = -(edge[0] * sunDir[2]);
+  planes[0][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+  planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
+  // right edge
+  edge[0] = -frustum.getSide(2)[1];
+  edge[1] = +frustum.getSide(2)[0];
+  planes[1][0] =  (edge[1] * sunDir[2]);
+  planes[1][1] = -(edge[0] * sunDir[2]);
+  planes[1][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+  planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
+  // only use the bottom edge if we have some height (about one jump's worth)
+  if (eye[2] > 20.0f) {
+    // bottom edge
+    edge[0] = -frustum.getSide(3)[1];
+    edge[1] = +frustum.getSide(3)[0];
+    planes[2][0] =  (edge[1] * sunDir[2]);
+    planes[2][1] = -(edge[0] * sunDir[2]);
+    planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
+    const float hlen = sqrtf ((frustum.getSide(3)[0] * frustum.getSide(3)[0]) +
+			      (frustum.getSide(3)[1] * frustum.getSide(3)[1]));
+    const float slope = frustum.getSide(3)[2] / hlen;
+    float point[2];
+    point[0] = eye[0] + (eye[2] * frustum.getSide(3)[0] * slope);
+    point[1] = eye[1] + (eye[2] * frustum.getSide(3)[1] * slope);
+    planes[2][3] = -((planes[2][0] * point[0]) + (planes[2][1] * point[1]));
+    shadowPlaneCount++;
+  }
 }
 
 

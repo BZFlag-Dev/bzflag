@@ -1211,7 +1211,8 @@ BZF_API const char* bz_getPlayerCallsign(int playerID);
 BZF_API const char* bz_getPlayerIPAddress(int playerID);
 BZF_API const char* bz_getPlayerReferrer(int playerID);
 
-BZF_API bool bz_setPayerCustomData(int playerID, const char* key, const char* data );
+BZF_API bool bz_setPlayerCustomData(int playerID, const char* key, const char* data );
+BZF_API const char* bz_getPlayerCustomData(int playerID, const char* key);
 
 class BZF_API bz_BasePlayerRecord
 {
@@ -1313,7 +1314,7 @@ BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...) _ATTRIB
 BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...) _ATTRIBUTE34;
 BZF_API bool bz_sendFetchResMessage(int playerID,  const char* URL);
 BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
-                               int team, const char* referrer);
+                               int team, const char* referrer, const char* message);
 
 // world weapons
 BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt);
@@ -1390,7 +1391,7 @@ BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType );
 BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item );
 BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int item );
 BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int item );
-BZF_API double bz_getBanItemDurration ( bz_eBanListType listType, unsigned int item );
+BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int item );
 BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int item );
 
 // report

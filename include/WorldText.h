@@ -18,6 +18,7 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <set>
 #include <iostream>
 
 /* common interface headers */
@@ -75,6 +76,8 @@ class WorldTextManager {
     int addText(WorldText* text);
 
     const std::vector<WorldText*>& GetTexts() const { return texts; }
+
+    void getFontURLs(std::set<std::string>& fontURLs) const;
 
     int packSize() const;
     void *pack(void* buf) const;

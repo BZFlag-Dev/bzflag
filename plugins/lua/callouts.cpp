@@ -125,7 +125,6 @@ static int GetPlayerReferrer(lua_State* L);
 static int GetPlayerFlagID(lua_State* L);
 static int GetPlayerClientVersion(lua_State* L);
 static int GetPlayerBZID(lua_State* L);
-static int GetPlayerCustomData(lua_State* L);
 static int GetPlayerPaused(lua_State* L);
 static int GetPlayerPosition(lua_State* L);
 static int GetPlayerVelocity(lua_State* L);
@@ -158,6 +157,9 @@ static int GetPlayerTKs(lua_State* L);
 static int SetPlayerWins(lua_State* L);
 static int SetPlayerLosses(lua_State* L);
 static int SetPlayerTKs(lua_State* L);
+
+static int GetPlayerCustomData(lua_State* L);
+static int SetPlayerCustomData(lua_State* L);
 
 static int ChangePlayerTeam(lua_State* L);
 
@@ -327,7 +329,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(GetPlayerFlagID);
   PUSH_LUA_CFUNC(GetPlayerClientVersion);
   PUSH_LUA_CFUNC(GetPlayerBZID);
-  PUSH_LUA_CFUNC(GetPlayerCustomData);
   PUSH_LUA_CFUNC(GetPlayerStatus);
   PUSH_LUA_CFUNC(GetPlayerPaused);
   PUSH_LUA_CFUNC(GetPlayerPosition);
@@ -361,6 +362,9 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(SetPlayerWins);
   PUSH_LUA_CFUNC(SetPlayerLosses);
   PUSH_LUA_CFUNC(SetPlayerTKs);
+
+  PUSH_LUA_CFUNC(GetPlayerCustomData);
+  PUSH_LUA_CFUNC(SetPlayerCustomData);
 
   PUSH_LUA_CFUNC(ChangePlayerTeam);
 
@@ -771,7 +775,9 @@ static int SendJoinServer(lua_State* L)
   const int   port     = luaL_checkint(L, 3);
   const int   team     = luaL_optint(L, 4, eNoTeam);
   const char* referrer = luaL_optstring(L, 5, bz_getPublicAddr().c_str());
-  lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port, team, referrer));
+  const char* message  = luaL_optstring(L, 6, NULL);
+  lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port,
+                                       team, referrer, message));
   return 1;
 }
 
@@ -928,22 +934,6 @@ static int GetPlayerBZID(lua_State* L)
     return 0;
   }
   lua_pushstring(L, player->bzID.c_str());
-
-  bz_freePlayerRecord(player);
-
-  return 1;
-}
-
-
-static int GetPlayerCustomData(lua_State* L)
-{
-  const int    pid =    luaL_checkint(L, 1);
-  const string key = luaL_checkstring(L, 2);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid);
-  if (player == NULL) {
-    return 0;
-  }
-  lua_pushstring(L, player->getCustomData(key.c_str()));
 
   bz_freePlayerRecord(player);
 
@@ -1286,6 +1276,32 @@ static int SetPlayerTKs(lua_State* L)
   const int value = luaL_checkint(L, 2);
   bz_setPlayerTKs(pid, value);
   return 0;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static int GetPlayerCustomData(lua_State* L)
+{
+  const int    pid =    luaL_checkint(L, 1);
+  const string key = luaL_checkstring(L, 2);
+  const char* data = bz_getPlayerCustomData(pid, key.c_str());
+  if (data == NULL) {
+    return 0;
+  }
+  lua_pushstring(L, data);
+  return 1;
+}
+
+
+static int SetPlayerCustomData(lua_State* L)
+{
+  const int    pid  =    luaL_checkint(L, 1);
+  const string key  = luaL_checkstring(L, 2);
+  const string data = luaL_checkstring(L, 3);
+  lua_pushboolean(L, bz_setPlayerCustomData(pid, key.c_str(), data.c_str()));
+  return 1;
 }
 
 

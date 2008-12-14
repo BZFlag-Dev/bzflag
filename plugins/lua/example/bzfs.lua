@@ -6,6 +6,18 @@
 
 
 do
+  local origGetMaxWaitTime = BZ.GetMaxWaitTime
+  local origSetMaxWaitTime = BZ.SetMaxWaitTime
+  BZ.GetMaxWaitTime = function(name, ...)
+    origGetMaxWaitTime('lua' .. name, ...)
+  end
+  BZ.SetMaxWaitTime = function(name, ...)
+    origSetMaxWaitTime('lua' .. name, ...)
+  end
+end
+
+
+do
   -- replace the function to make this value permanent
   local pluginDir = BZ.GetPluginDirectory()
   BZ.GetPluginDirectory = function() return pluginDir end
@@ -113,14 +125,16 @@ function Tick()
 
   BZ.SetMaxWaitTime('luaTick', 0.05)
 
-  local data = BZ.ReadStdin()
-  if (data) then
-    for line in data:gmatch('[^\n]+') do
-      print()
-      ExecuteLine(line)
-      print()
+  if (BZ.ReadStdin) then
+    local data = BZ.ReadStdin()
+    if (data) then
+      for line in data:gmatch('[^\n]+') do
+        print()
+        ExecuteLine(line)
+        print()
+      end
     end
-  end    
+  end
 
   if (false) then
     for _, pid in ipairs(BZ.GetPlayerIDs()) do
@@ -287,7 +301,7 @@ function(playerID, cmd, msg)
 end)
 
 
-include('plugins.lua')
+include('modules.lua')
 
 
 --BZ.UpdateCallIn('GetWorld',
@@ -312,6 +326,18 @@ do
   end
 
   local function HandleTick()
+
+    if (BZ.ReadStdin) then
+      local data = BZ.ReadStdin()
+      if (data) then
+        for line in data:gmatch('[^\n]+') do
+          print()
+          ExecuteLine(line)
+          print()
+        end
+      end
+    end
+
     local maxTime = 1.0e30
     local nowTime = BZ.GetTimer()
     for timer, last in pairs(timers) do

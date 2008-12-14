@@ -156,8 +156,11 @@ public:
 			    bool sameFrame = false,
 			    bool fullWindow = false);
   void		notifyStyleChange();
+  void		updateNodeStyles();
   void		addRenderNode(RenderNode* node, const OpenGLGState*);
   void		addShadowNode(RenderNode* node);
+
+  int 		getShadowPlanes(const float (**planes)[4]) const;
 
 protected:
   friend class Singleton<SceneRenderer>;
@@ -180,6 +183,9 @@ private:
   void		renderPreDimming();
   void		renderPostDimming();
 
+  void		setupShadowPlanes();
+
+private:
   MainWindow*		window;
   bool			blank;
   bool			invert;
@@ -234,6 +240,9 @@ private:
   bool		sameFrame;
   bool		needStyleUpdate;
   bool		rebuildTanks;
+
+  float		shadowPlanes[4][4];
+  int		shadowPlaneCount;
 
   std::vector<FlareLight>	flareLightList;
   RenderNodeList		shadowList;

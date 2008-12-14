@@ -41,6 +41,7 @@ class TextSceneNode : public SceneNode {
 
     void notifyStyleChange();
 
+    bool cull(const ViewFrustum&) const;
     bool cullShadow(int pCount, const float (*planes)[4]) const;
 
     void addRenderNodes(SceneRenderer&);
@@ -114,10 +115,10 @@ class TextSceneNode : public SceneNode {
 
   protected:
     void calcPlane();
-    void calcSphere();
-    void calcExtents();
-    void getPoints(float points[5][3]) const; // corners, and the origin
+    void calcSphere(const float points[5][3]);
+    void calcExtents(const float points[5][3]);
     float getMaxDist(const float points[5][3]) const;
+    void getPoints(float points[5][3]) const; // corners, and the origin
 
   private:
     OpenGLGState   gstate;

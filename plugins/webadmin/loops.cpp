@@ -600,7 +600,7 @@ IPBanLoop::IPBanLoop(Templateiser &ts)
   ts.addKey("IPBanMask",this);
   ts.addKey("IPBanReason",this);
   ts.addKey("IPBanSource",this);
-  ts.addKey("IPBanDurration",this);
+  ts.addKey("IPBanDuration",this);
   ts.addKey("IPBanID",this);
   ts.addIF("IPBanFromMaster",this);
   ts.addIF("IPBanIsForever",this);
@@ -662,7 +662,7 @@ void IPBanLoop::getKey (size_t item, std::string &data, const std::string &key)
       temp = bz_getBanItemSource(eIPList,i);
   }
   else if (key == "ipbandurration")
-      temp = format("%f",bz_getBanItemDurration(eIPList,i));
+      temp = format("%f",bz_getBanItemDuration(eIPList,i));
   else if (key == "ipbanid")
     temp = format("%d",item);
 
@@ -675,7 +675,7 @@ bool IPBanLoop::getIF  (size_t item, const std::string &key)
   if (key == "ipbanfrommaster")
     return bz_getBanItemIsFromMaster(eIPList,(unsigned int)item);
   if (key == "ipbanisforever")
-    return bz_getBanItemDurration(eIPList,(unsigned int)item) < 0;
+    return bz_getBanItemDuration(eIPList,(unsigned int)item) < 0;
 
   return false;
 }
@@ -686,7 +686,7 @@ HostBanLoop::HostBanLoop(Templateiser &ts)
   ts.addKey("HostBanMask",this);
   ts.addKey("HostBanReason",this);
   ts.addKey("HostBanSource",this);
-  ts.addKey("HostBanDurration",this);
+  ts.addKey("HostBanDuration",this);
   ts.addKey("HostBanID",this);
   ts.addIF("HostBanIsForever",this);
 }
@@ -717,7 +717,7 @@ void HostBanLoop::getKey (size_t item, std::string &data, const std::string &key
       temp = bz_getBanItemSource(eHostList,i);
   }
   else if (key == "hostbandurration")
-    temp = format("%f",bz_getBanItemDurration(eHostList,i));
+    temp = format("%f",bz_getBanItemDuration(eHostList,i));
   else if (key == "hostbanid")
     temp = format("%d",item);
 
@@ -728,7 +728,7 @@ void HostBanLoop::getKey (size_t item, std::string &data, const std::string &key
 bool HostBanLoop::getIF  (size_t item, const std::string &key)
 {
   if (key == "hostbanisforever")
-    return bz_getBanItemDurration(eHostList,(unsigned int)item) < 0;
+    return bz_getBanItemDuration(eHostList,(unsigned int)item) < 0;
 
   return false;
 }
@@ -739,7 +739,7 @@ IDBanLoop::IDBanLoop(Templateiser &ts)
   ts.addKey("IDBanMask",this);
   ts.addKey("IDBanReason",this);
   ts.addKey("IDBanSource",this);
-  ts.addKey("IDBanDurration",this);
+  ts.addKey("IDBanDuration",this);
   ts.addKey("IDBanID",this);
   ts.addIF("IDBanIsForever",this);
 }
@@ -775,7 +775,7 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
       temp = bz_getBanItemSource(eIDList,i);
   }
   else if (key == "idbandurration")
-    temp = format("%f",bz_getBanItemDurration(eIDList,i));
+    temp = format("%f",bz_getBanItemDuration(eIDList,i));
   else if (key == "idbanid")
     temp = format("%d",item);
 
@@ -786,7 +786,7 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
 bool IDBanLoop::getIF  (size_t item, const std::string &key)
 {
   if (key == "idbanisforever")
-    return bz_getBanItemDurration(eHostList,(unsigned int)item) < 0;
+    return bz_getBanItemDuration(eHostList,(unsigned int)item) < 0;
 
   return false;
 }

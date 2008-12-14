@@ -275,14 +275,19 @@ void sendMapChangeMessage ( bool end )
   std::string message = "Map change!\n";
   bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
 
-  if (end)
+  if (end) {
     message = "Good bye!\n";
-  else
-     message = "Please Rejoin!\n";
-  bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
+  } else {
+    message = "Please Rejoin!\n";
+  }
+  
+  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
 
-  if (!end)
-	  bz_sendJoinServer(BZ_ALLUSERS,bz_getPublicAddr().c_str(),bz_getPublicPort(),eAutomaticTeam,"Map Change");
+  if (!end) {
+    bz_sendJoinServer(BZ_ALLUSERS, bz_getPublicAddr().c_str(), 
+                      bz_getPublicPort(), eNoTeam,
+                      bz_getPublicAddr().c_str(), "Map change");
+  }
 }
 
 void nextMap ( void )

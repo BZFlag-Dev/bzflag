@@ -994,37 +994,31 @@ public:
 };
 
 
-BZF_API const char *bz_BasePlayerRecord::getCustomData ( const char* key )
+BZF_API bool bz_BasePlayerRecord::setCustomData(const char* key, const char* data)
 {
-  GameKeeper::Player* player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player || !key)
-    return NULL;
-
-  if (player->customData.find(std::string(key)) == player->customData.end())
-    return NULL;
-
-  return player->customData[std::string(key)].c_str();
+  return bz_setPlayerCustomData(playerID, key, data);
 }
 
-BZF_API bool bz_BasePlayerRecord::setCustomData ( const char* key, const char* data ) 
+BZF_API const char* bz_BasePlayerRecord::getCustomData(const char* key)
 {
-  return bz_setPayerCustomData(playerID,key,data);
+  return bz_getPlayerCustomData(playerID, key);
 }
 
-BZF_API bool bz_setPayerCustomData(int playerID, const char* key, const char* data )
+
+BZF_API bool bz_setPlayerCustomData(int playerID, const char* key, const char* data)
 {
-  GameKeeper::Player* player=GameKeeper::Player::getPlayerByIndex(playerID);
-  if(!player || !key)
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player || !key) {
     return false;
+  }
 
-  std::string k,v;
-  k = key;
-  if(data)
-    v = data;
+  const std::string k = key;
+  const std::string v = (data == NULL) ? "" : data;
 
   bool found = false;
-  if (player->customData.find(k) != player->customData.end())
+  if (player->customData.find(k) != player->customData.end()) {
     return found = true;
+  }
 
   player->customData[k] = v;
   sendPlayerCustomDataPair(playerID,k,v);
@@ -1035,11 +1029,29 @@ BZF_API bool bz_setPayerCustomData(int playerID, const char* key, const char* da
   eventData.key = k;
   eventData.data = v;
 
-  eventData.eventType =bz_ePlayerCustomDataChanged;
+  eventData.eventType = bz_ePlayerCustomDataChanged;
   worldEventManager.callEvents(eventData);
 
   return found;
 }
+
+
+BZF_API const char* bz_getPlayerCustomData(int playerID, const char* key)
+{
+  GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player || !key) {
+    return NULL;
+  }
+
+  std::map<std::string, std::string>::const_iterator it;
+  it = player->customData.find(key);
+  if (it == player->customData.end()) {
+    return NULL;
+  }
+
+  return it->second.c_str();
+}
+
 
 //-------------------------------------------------------------------------
 
@@ -1874,16 +1886,16 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
-                               int teamID, const char* referrer)
+BZF_API bool bz_sendJoinServer(int playerID,
+                               const char* address, int port, int teamID,
+                               const char* referrer, const char* message)
 {
   GameKeeper::Player* player = NULL;
-  if (playerID != BZ_ALLUSERS)
-  {
-	  player = GameKeeper::Player::getPlayerByIndex(playerID);
-	  if (player == NULL) {
-		  return false;
-	  }
+  if (playerID != BZ_ALLUSERS) {
+    player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player == NULL) {
+      return false;
+    }
   }
   if (address == NULL) {
     return false;
@@ -1892,23 +1904,29 @@ BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
     return false;
   }
   if (referrer == NULL) {
-    return false;
+    referrer = "";
+  }
+  if (message == NULL) {
+    message = "";
   }
 
   const std::string addr = address;
   const std::string refr = referrer;
+  const std::string mesg = message;
 
-  NetMsg msg = MSGMGR.newMessage();
+  NetMsg netMsg = MSGMGR.newMessage();
 
-  msg->packStdString(addr);
-  msg->packInt(port);
-  msg->packInt(teamID);
-  msg->packStdString(refr);
+  netMsg->packStdString(addr);
+  netMsg->packInt(port);
+  netMsg->packInt(teamID);
+  netMsg->packStdString(refr);
+  netMsg->packStdString(mesg);
 
-  if (playerID != BZ_ALLUSERS)
-	msg->send(player->netHandler, MsgJoinServer);
-  else
-    msg->broadcast(MsgJoinServer);
+  if (player != NULL) {
+    netMsg->send(player->netHandler, MsgJoinServer);
+  } else {
+    netMsg->broadcast(MsgJoinServer);
+  }
 
   return true;
 }
@@ -2541,10 +2559,10 @@ BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int
   return NULL;
 }
 
-BZF_API double bz_getBanItemDurration ( bz_eBanListType listType, unsigned int item )
+BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int item )
 {
   if (item > bz_getBanListSize(listType))
-    return 0;
+    return 0.0;
 
   TimeKeeper end = TimeKeeper::getCurrent();
 
@@ -2565,10 +2583,11 @@ BZF_API double bz_getBanItemDurration ( bz_eBanListType listType, unsigned int i
   }
 
   if (end.getSeconds() > 30000000.0) // it's basicly forever
-    return -1;
+    return -1.0;
 
   return end.getSeconds() - TimeKeeper::getCurrent().getSeconds();
 }
+
 
 BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int item )
 {

@@ -3,14 +3,14 @@
 --
 --  file:    plugins.lua
 --  author:  Dave Rodgers  (aka: trepan)
---  date:    Nov 22, 2008
+--  date:    Dec 05, 2008
 --  desc:    bzfsAPI lua plugin manager
 --  license: LGPL 2.1
 --
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local PLUGINS_DIR = BZ.GetLuaDirectory() .. 'plugins/'
+local MODULES_DIR = BZ.GetLuaDirectory() .. 'plugins/'
 
 print()
 print('-----------')
@@ -24,40 +24,49 @@ print('-----------')
 --  ci:  callin
 --  mo:  module
 --
-
---  ciInfo = {
+--  ciData = {
 --    name    = string,
 --    func    = function,
---    funcs   = { func1,   func2,   ... },
---    modules = { moInfo1, moInfo2, ... },
+--    enabled = bool,
+--    moFunc  = { func1,   func2,   ... },
+--    moData  = { moData1, moData2, ... },
 --  }
-
---  moInfo = {
+--
+--  moData = {
 --    name     = string,
+--    source = {
+--      type = 'file' or 'world' or 'code',
+--      data = 'filename' or function chunk(),
+--    }
 --    niceness = number,
---    chunk    = function,
 --    fenv     = { fenv },
 --    funcs    = { ciName1 = func1, ciName2 = func2, etc... },
 --    unsafe   = bool,
 --    enabled  = bool,
---    filename = string,
---    desc     = string,
---    author   = string,
---    date     = string,
---    license  = string,
+--    info     = {
+--      filename = string,
+--      desc     = string,
+--      author   = string,
+--      date     = string,
+--      license  = string,
+--    }
 --  }
 
 
+local modules = {}  --  < moName = moData >  pairs
 
-local modules = {}  --  < moName = moInfo >  pairs
-local callins = {}  --  < ciName = ciInfo >  pairs
+local callins = {}  --  < ciName = ciData >  pairs
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+local function ListModules()
+end
+
 
 local function FindModules()
-  local files, dirs = BZ.DirList(PLUGINS_DIR)
+  local files, dirs = BZ.DirList(MODULES_DIR)
   local sources = {}
   for _, f in ipairs(files) do
     if (f:find('^[^.].*%.lua$')) then
@@ -98,30 +107,63 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function UpdateCallIn(plugin, ciName, ciFunc)
+local function UpdateCallIn(moName, ciName, ciFunc)
+  local moData = modules[moName]
+  if (moData == nil) then
+    return nil
+  end
+  
 end
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function CreateModule(fileName)
-    
+local function CreateModule(sourceType, sourceData)
+  if (sourceType == 'file') then
+  elseif ((sourceType == 'code') or
+          (sourceType == 'world')) then
+  end
 end
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function EnableModule(pluginName)
+local function EnableModule(name)
+  local moData = modules[moName]
+  if (moData == nil) then
+    return nil
+  end
+  if (moData.enabled) then
+    return false
+  end
+  return true
 end
 
 
-local function DisableModule(pluginName)
+local function DisableModule(name)
+  local moData = modules[moName]
+  if (moData == nil) then
+    return nil
+  end
+  if (not moData.enabled) then
+    return false
+  end
+  return true
 end
 
 
-local function ToggleModule(pluginName)
+local function ToggleModule(name)
+  local moData = modules[moName]
+  if (moData == nil) then
+    return nil
+  end
+  if (moData.enabled) then
+    return DisableModule(name)
+  else
+    return EnableModule(name)
+  end
 end
 
 
@@ -269,6 +311,7 @@ print()
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+-- setup the global variable
 moduleHandler = {
   ListModules   = ListModules,
   CreateModule  = CreateModule,

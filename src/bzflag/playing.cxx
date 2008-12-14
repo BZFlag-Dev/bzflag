@@ -42,6 +42,7 @@
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
+#include "ExplosionSceneNode.h"
 #include "FileManager.h"
 #include "FlagSceneNode.h"
 #include "GameTime.h"
@@ -213,21 +214,47 @@ static bool downloadingInitialTexture = false;
 static AresHandler      ares;
 
 static AccessList serverAccessList("ServerAccess.txt", NULL);
-static AccessList autoJoinAccessList("AutoJoinAccess.txt", NULL);
+
+static const char AutoJoinContent[] = // FIXME
+  "#\n"
+  "# This file controls the auto-join confirmation requirements.\n"
+  "# Patterns are attempted in order against both the hostname\n"
+  "# and ip. The first matching pattern sets the state. If no\n"
+  "# patterns are matched, then the server is authorized. There\n"
+  "# are four types of matches:\n"
+  "#\n"
+  "#   simple globbing (* and ?)\n"
+  "#     allow\n"
+  "#     deny\n"
+  "#\n"
+  "#   regular expressions\n"
+  "#     allow_regex\n"
+  "#     deny_regex\n"
+  "#\n"
+  "\n"
+  "#\n"
+  "# To authorize all servers, remove the last 3 lines.\n"
+  "#\n"
+  "\n"
+  "allow *.bzflag.bz\n"
+  "allow *.bzflag.org\n"
+  "deny *\n";
+static AccessList autoJoinAccessList("AutoJoinAccess.txt", AutoJoinContent);
+
 
 ThirdPersonVars thirdPersonVars;
 
 void ThirdPersonVars::load(void)
 {
-  b3rdPerson = BZDB.isTrue(std::string("3rdPersonCam"));
-  cameraOffsetXY = BZDB.eval(std::string("3rdPersonCamXYOffset"));
+  b3rdPerson          = BZDB.isTrue(std::string("3rdPersonCam"));
+  cameraOffsetXY      = BZDB.eval(std::string("3rdPersonCamXYOffset"));
   cameraOffsetOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
-  targetMultiplyer = BZDB.eval(std::string("3rdPersonCamTargetMult"));
+  targetMultiplyer    = BZDB.eval(std::string("3rdPersonCamTargetMult"));
 
   nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
-  nearTargetSize = BZDB.eval(std::string("3rdPersonNearTargetSize"));
-  farTargetDistance = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
-  farTargetSize = BZDB.eval(std::string("3rdPersonFarTargetSize"));
+  nearTargetSize     = BZDB.eval(std::string("3rdPersonNearTargetSize"));
+  farTargetDistance  = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
+  farTargetSize      = BZDB.eval(std::string("3rdPersonFarTargetSize"));
 }
 
 void ThirdPersonVars::clear(void)
@@ -1754,11 +1781,13 @@ static void handleJoinServer(void *msg)
   int32_t port;
   int32_t team;
   std::string referrer;
+  std::string message;
 
   msg = nboUnpackStdString(msg, addr);
   msg = nboUnpackInt(msg, port);
   msg = nboUnpackInt(msg, team);
   msg = nboUnpackStdString(msg, referrer);
+  msg = nboUnpackStdString(msg, message);
 
   if (addr.empty()) {
     return;
@@ -1798,7 +1827,8 @@ static void handleJoinServer(void *msg)
     info.team = (TeamColor)team;
   }
 
-  printf("AutoJoin: %s %u %i \"%s\"\n", addr.c_str(), port, team, referrer.c_str()); // FIXME
+  printf("AutoJoin: %s %u %i \"%s\" \"%s\"\n", // FIXME
+         addr.c_str(), port, team, referrer.c_str(), message.c_str());
 
   joinGame();
 }
@@ -2059,7 +2089,9 @@ static void handleAliveMessage(void *msg)
     }
 
     if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
-      if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) || (tank != ROAM.getTargetTank()))) || BZDB.isTrue("enableLocalSpawnEffect")) {
+      if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) ||
+                                (tank != ROAM.getTargetTank())))
+          || BZDB.isTrue("enableLocalSpawnEffect")) {
 	if (myTank->getFlag() != Flags::Colorblindness) {
 	  static float cbColor[4] = {1, 1, 1, 1};
 	  EFFECTS.addSpawnEffect(cbColor, pos);
@@ -3588,7 +3620,7 @@ static void updateFlags(float dt)
 }
 
 bool addExplosion(const float *_pos,
-		  float size, float duration, bool grounded)
+		  float size, float duration, bool groundLight)
 {
   // ignore if no prototypes available;
   if (prototypeExplosions.size() == 0) return false;
@@ -3618,7 +3650,7 @@ bool addExplosion(const float *_pos,
   newExplosion->setLightAttenuation(0.05f, 0.0f, 0.03f);
   newExplosion->setLightScaling(size / BZDBCache::tankLength);
   newExplosion->setLightFadeStartTime(0.7f * duration);
-  if (grounded) {
+  if (groundLight) {
     newExplosion->setGroundLight(true);
   }
 
@@ -3659,10 +3691,12 @@ bool addExplosion(const float *_pos,
   return true;
 }
 
+
 void addTankExplosion(const float *pos)
 {
   addExplosion(pos, BZDB.eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f, false);
 }
+
 
 void addShotExplosion(const float *pos)
 {
@@ -3670,6 +3704,7 @@ void addShotExplosion(const float *pos)
   if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f, false))
     SOUNDSYSTEM.play(SFX_SHOT_BOOM, pos, false, false);
 }
+
 
 void addShotPuff(const float *pos, float azimuth, float elevation)
 {
@@ -3681,6 +3716,7 @@ void addShotPuff(const float *pos, float azimuth, float elevation)
   float rots[2] = {azimuth, elevation};
   EFFECTS.addGMPuffEffect(pos, rots, NULL);
 }
+
 
 // process pending input events
 void processInputEvents(float maxProcessingTime)
@@ -3695,6 +3731,7 @@ void processInputEvents(float maxProcessingTime)
     }
   }
 }
+
 
 static void updateExplosions(float dt)
 {
@@ -3712,20 +3749,24 @@ static void updateExplosions(float dt)
       if (explosions[i]->isAtEnd()) {
 	delete explosions[i];
 	std::vector<BillboardSceneNode*>::iterator it = explosions.begin();
-	for (size_t j = 0; j < i; j++)
+	for (size_t j = 0; j < i; j++) {
 	  it++;
+        }
 	explosions.erase(it);
       }
     }
   }
 }
 
+
 static void addExplosions(SceneDatabase *scene)
 {
   const size_t count = explosions.size();
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     scene->addDynamicNode(explosions[i]);
+  }
 }
+
 
 #ifdef ROBOT
 static void handleMyTankKilled(int reason)
@@ -3877,7 +3918,8 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
 	SOUNDSYSTEM.play(SFX_EXPLOSION, pos, false, getLocalPlayer(killer) == myTank);
     }
 
-    if (tank != myTank) {
+    if ((tank != myTank) ||
+        (SceneRenderer::instance().useQuality() >= _EXPERIMENTAL_QUALITY)) {
       const float *pos = tank->getPosition();
       float explodePos[3];
       explodePos[0] = pos[0];
@@ -4799,11 +4841,21 @@ static void enteringServer(void* buf)
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
 
-  if ((myTank->getTeam() == ObserverTeam) || devDriving)
-    ROAM.setMode(Roaming::roamViewFP);
+  if ((myTank->getTeam() == ObserverTeam) || devDriving) {
+    if (!ROAM.isRoaming()) {
+      const std::string roamStr = BZDB.get("roamView");
+      
+      Roaming::RoamingView roamView = ROAM.parseView(BZDB.get("roamView"));
+      if (roamView <= Roaming::roamViewDisabled) {
+        roamView = Roaming::roamViewFP;
+      }
+      ROAM.setMode(roamView);
+    }
   //    ROAM.resetCamera();
-  else
+  }
+  else {
     ROAM.setMode(Roaming::roamViewDisabled);
+  }
 
   setTankFlags();
 
@@ -5789,34 +5841,36 @@ void drawFrame(const float dt)
 
 
     // add other tanks and shells
-    for (i = 0; i < curMaxPlayers; i++) 
-      {
-	if (player[i]) {
-	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-	  player[i]->addShots(scene, colorblind);
+    for (i = 0; i < curMaxPlayers; i++) {
+      if (player[i]) {
+        const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+        player[i]->addShots(scene, colorblind);
 
-	  TeamColor effectiveTeam = RogueTeam;
-	  if (!colorblind) {
-	    if ((player[i]->getFlag() == Flags::Masquerade)
-		&& (myTank->getFlag() != Flags::Seer)
-		&& (myTank->getTeam() != ObserverTeam))
-	      effectiveTeam = myTank->getTeam();
-	    else
-	      effectiveTeam = player[i]->getTeam();
-	  }
+        TeamColor effectiveTeam = RogueTeam;
+        if (!colorblind) {
+          if ((player[i]->getFlag() == Flags::Masquerade)
+              && (myTank->getFlag() != Flags::Seer)
+              && (myTank->getTeam() != ObserverTeam)) {
+            effectiveTeam = myTank->getTeam();
+          } else {
+            effectiveTeam = player[i]->getTeam();
+          }
+        }
 
-	  const bool inCockpt  = ROAM.isRoaming() && !devDriving &&
-	    (ROAM.getMode() == Roaming::roamViewFP) &&
-	    ROAM.getTargetTank() &&
-	    (ROAM.getTargetTank()->getId() == i);
-	  const bool showPlayer = !inCockpt || showTreads;
+        const bool inCockpt =
+          ROAM.isRoaming() && !devDriving &&
+          (ROAM.getMode() == Roaming::roamViewFP) &&
+          ROAM.getTargetTank() && (ROAM.getTargetTank()->getId() == i);
+        const bool showPlayer = !inCockpt || showTreads;
 
-	  if (myTank->getFlag() == Flags::Seer || showPlayer)// add player tank if required
-	    player[i]->addToScene(scene, effectiveTeam,
-				  inCockpt, seerView,
-				  showPlayer, showPlayer, thirdPersonVars.b3rdPerson);
-	}
+        // add player tank if required
+        if ((myTank->getFlag() == Flags::Seer) || showPlayer) {
+          player[i]->addToScene(scene, effectiveTeam, inCockpt,
+                                seerView, showPlayer, showPlayer,
+                                thirdPersonVars.b3rdPerson);
+        }
       }
+    }
 
     // add explosions
     addExplosions(scene);

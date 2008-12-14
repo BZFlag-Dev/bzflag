@@ -30,6 +30,7 @@ using std::vector;
 #include "WorldText.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "Intersect.h"
 #include "CacheManager.h"
 #include "FontManager.h"
 #include "MeshTransform.h"
@@ -81,11 +82,9 @@ void TextSceneNode::TextRenderNode::freeContext(void* data)
 TextSceneNode::TextSceneNode(const WorldText* _text)
 : renderNode(this, _text)
 {
-  // NOTE: TextRenderNode() constructor calls calcSphere()
-
   calcPlane();
 
-  calcExtents();
+  // NOTE: TextRenderNode() constructor calls calcSphere() and calcExtents()
 
   notifyStyleChange();
 }
@@ -98,8 +97,9 @@ TextSceneNode::~TextSceneNode()
 
 bool TextSceneNode::inAxisBox(const Extents& exts) const
 {
-  // FIXME: extent check could be more accurate
-  return extents.touches(exts);
+  float points[5][3];
+  getPoints(points);
+  return testPolygonInAxisBox(4, points, plane, exts) != Outside;
 }
 
 
@@ -109,11 +109,9 @@ void TextSceneNode::calcPlane()
 {
   const WorldText& text = renderNode.text;
 
-  if (text.bzMaterial->getNoCulling()) { // FIXME ? || text.billboard) {
-    return;
+  if (!text.bzMaterial->getNoCulling()) { // FIXME ? || text.billboard) {
+    noPlane = false;
   }
-  
-  noPlane = false;
 
   MeshTransform::Tool xformTool(text.xform);
   float origin[3] = { 0.0f, 0.0f, 0.0f };
@@ -130,12 +128,8 @@ void TextSceneNode::calcPlane()
 }
 
 
-void TextSceneNode::calcSphere()
+void TextSceneNode::calcSphere(const float points[5][3])
 {
-  float points[5][3];
-
-  getPoints(points);
-
   const float* orig  = points[4];
   const float radius = getMaxDist(points);
   float tmpSphere[4] = { orig[0], orig[1], orig[2], (radius * radius) };
@@ -145,18 +139,11 @@ void TextSceneNode::calcSphere()
 
 
 
-void TextSceneNode::calcExtents()
+void TextSceneNode::calcExtents(const float points[5][3])
 {
   const WorldText& text = renderNode.text;
 
   extents.reset();
-
-  if (text.useBZDB) {
-    return;
-  }
-
-  float points[5][3];
-  getPoints(points);
 
   if (!text.billboard) {
     for (int i = 0; i < 4; i++) {
@@ -168,8 +155,7 @@ void TextSceneNode::calcExtents()
     const float* orig = points[4];
     const float mins[3] = { orig[0] - dist, orig[1] - dist, orig[2] - dist };
     const float maxs[3] = { orig[0] + dist, orig[1] + dist, orig[2] + dist };
-    extents.expandToPoint(mins);
-    extents.expandToPoint(maxs);
+    extents.set(mins, maxs);
   }
 }
 
@@ -254,6 +240,7 @@ void TextSceneNode::notifyStyleChange()
 
   builder.setOrder(bzmat->getOrder());
 
+  // blending
   builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   // alpha thresholding
@@ -271,7 +258,7 @@ void TextSceneNode::notifyStyleChange()
     builder.setNeedsSorting(false);
   }
 
-  // lighting bzmat
+  // lighting
   if (BZDBCache::lighting && !bzmat->getNoLighting()) {
     OpenGLMaterial oglMaterial(bzmat->getSpecular(),
                                bzmat->getEmission(),
@@ -282,14 +269,36 @@ void TextSceneNode::notifyStyleChange()
   }
   builder.setShading(GL_FLAT);
 
+  // smoothing
+  builder.setSmoothing(BZDBCache::smooth);
+
   gstate = builder.getState();
 }
 
 
 /******************************************************************************/
 
+bool TextSceneNode::cull(const ViewFrustum& frustum) const
+{
+  const WorldText& text = renderNode.text;
+  // see if our eye is behind the plane
+  if (!text.billboard && !text.bzMaterial->getNoCulling()) {
+    const float* eye = frustum.getEye();
+    if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
+         plane[3]) <= 0.0f) {
+      return false;
+    }
+  }
+
+  // now do an extents check
+  const Frustum* frustumPtr = (const Frustum *) &frustum;
+  return (testAxisBoxInFrustum(extents, frustumPtr) == Outside);
+}
+
+
 bool TextSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
 {
+  // FIXME -- use extents?
   const float* s = getSphere();
   for (int i = 0; i < planeCount; i++) {
     const float* p = planes[i];
@@ -623,7 +632,10 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
     }
   }
 
-  sceneNode->calcSphere();
+  float points[5][3];
+  sceneNode->getPoints(points);
+  sceneNode->calcSphere(points);
+  sceneNode->calcExtents(points);
 
   countTriangles();
 
@@ -765,12 +777,16 @@ void TextSceneNode::TextRenderNode::renderRadar()
   return; // FIXME -- text does not render to radar, FIXME?  ;-)
           //       -- fast mode requires 2 textures?
           //       -- non-textured radar modes would need new code
-
   if (noRadar) {
     return;
   }
-
+  glPushAttrib(GL_ENABLE_BIT);
+  glDisable(GL_TEXTURE_GEN_S);
+  glPushMatrix();
+  glScalef(1.0f, 1.0f, 0.0f);
   render();
+  glPopMatrix();
+  glPopAttrib();
 }
 
 

@@ -23,6 +23,7 @@ using std::string;
 #include "WorldText.h"
 #include "TextSceneNode.h"
 #include "SceneRenderer.h"
+#include "CacheManager.h"
 
 /* local headers */
 #include "World.h"
@@ -72,36 +73,60 @@ void DynamicWorldText::clear()
 
 void DynamicWorldText::addRenderNodes(SceneRenderer& renderer)
 {
+  const ViewFrustum& vf = renderer.getViewFrustum();
   NodeMap::const_iterator it;
   if (!needStyleChange) {
     for (it = nodes.begin(); it != nodes.end(); ++it) {
       TextSceneNode* node = it->second;
-      node->addRenderNodes(renderer);
+      if (!node->cull(vf)) {
+        node->addRenderNodes(renderer);
+      }
     }
   }
   else {
     for (it = nodes.begin(); it != nodes.end(); ++it) {
       TextSceneNode* node = it->second;
       node->notifyStyleChange();
-      node->addRenderNodes(renderer);
+      if (!node->cull(vf)) {
+        node->addRenderNodes(renderer);
+      }
     }
+    needStyleChange = false;
   }
-  needStyleChange = false;
 }
 
 
 void DynamicWorldText::addShadowNodes(SceneRenderer& renderer)
 {
   NodeMap::const_iterator it;
-  for (it = nodes.begin(); it != nodes.end(); ++it) {
-    TextSceneNode* node = it->second;
-    node->addShadowNodes(renderer);
+
+  const float (*planes)[4] = NULL;
+  const int planeCount = renderer.getShadowPlanes(&planes);
+
+  if (planeCount <= 0) {
+    for (it = nodes.begin(); it != nodes.end(); ++it) {
+      TextSceneNode* node = it->second;
+      node->addShadowNodes(renderer);
+    }
+  }
+  else {
+    for (it = nodes.begin(); it != nodes.end(); ++it) {
+      TextSceneNode* node = it->second;
+      if (!node->cullShadow(planeCount, planes)) {
+        node->addShadowNodes(renderer);
+      }
+    }
   }
 }
 
 
 void DynamicWorldText::renderRadar()
 {
+  NodeMap::const_iterator it;
+  for (it = nodes.begin(); it != nodes.end(); ++it) {
+    TextSceneNode* node = it->second;
+    node->renderRadar();
+  }
 }
 
 
@@ -150,6 +175,18 @@ bool DynamicWorldText::removeText(const std::string& name)
 void DynamicWorldText::notifyStyleChange()
 {
   needStyleChange = true;
+}
+
+
+void DynamicWorldText::getFontURLs(std::set<std::string>& fontURLs) const
+{
+  AddedMap::const_iterator ait;
+  for (ait = addedTexts.begin(); ait != addedTexts.end(); ait++) {
+    const WorldText* text = ait->second;
+    if (CacheManager::isCacheFileType(text->font)) {
+      fontURLs.insert(text->font);
+    }
+  }
 }
 
 

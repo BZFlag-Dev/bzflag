@@ -20,16 +20,24 @@
 /* local headers */
 #include "ScoreboardRenderer.h"
 
+
+const bool devDriving = false;
+
+
 // initialize the singleton
 template <>
 Roaming* Singleton<Roaming>::_instance = (Roaming*)0;
 
-Roaming::Roaming() : view(roamViewDisabled),
-		     targetManual(-1),
-		     targetWinner(-1),
-		     targetFlag(-1) {
+
+Roaming::Roaming()
+: view(roamViewDisabled)
+, targetManual(-1)
+, targetWinner(-1)
+, targetFlag(-1)
+{
   resetCamera();
 }
+
 
 void Roaming::resetCamera(void) {
   camera.pos[0] = 0.0f;
@@ -40,9 +48,11 @@ void Roaming::resetCamera(void) {
   camera.phi = -0.0f;
 }
 
+
 void Roaming::setCamera(RoamingCamera* newCam) {
   memcpy(&camera, newCam, sizeof(RoamingCamera));
 }
+
 
 void Roaming::setMode(RoamingView newView) {
   if (!(LocalPlayer::getMyTank() || devDriving)) {
@@ -64,6 +74,7 @@ void Roaming::setMode(RoamingView newView) {
   changeTarget(next);
   changeTarget(previous);
 }
+
 
 void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
   bool found = false;
@@ -129,6 +140,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 
   buildRoamingLabel();
 }
+
 
 void Roaming::buildRoamingLabel(void) {
   std::string playerString = "";
@@ -223,6 +235,7 @@ void Roaming::buildRoamingLabel(void) {
     roamingLabel = "Roaming";
   }
 }
+
 
 void Roaming::updatePosition(RoamingCamera* dc, float dt) {
   World* world = World::getWorld();
@@ -322,6 +335,36 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.zoom = BZDB.eval("roamZoomMax");
   }
 }
+
+
+Roaming::RoamingView Roaming::parseView(const std::string& str) const
+{
+  const char* s = str.c_str();
+       if (strcasecmp(s, "disabled") == 0) { return roamViewDisabled; }
+  else if (strcasecmp(s, "free")     == 0) { return roamViewFree;     }
+  else if (strcasecmp(s, "track")    == 0) { return roamViewTrack;    }
+  else if (strcasecmp(s, "follow")   == 0) { return roamViewFollow;   }
+  else if (strcasecmp(s, "fps")      == 0) { return roamViewFP;       }
+  else if (strcasecmp(s, "flag")     == 0) { return roamViewFlag;     }
+  else if (strcasecmp(s, "count")    == 0) { return roamViewCount;    }
+  else                                       { return roamViewDisabled; }
+}
+
+
+const char* Roaming::getViewName(RoamingView roamView) const
+{
+  switch (roamView) {
+    case roamViewDisabled: { return "disabled"; }
+    case roamViewFree:     { return "free";     }
+    case roamViewTrack:    { return "track";    }
+    case roamViewFollow:   { return "follow";   }
+    case roamViewFP:       { return "fps";      }
+    case roamViewFlag:     { return "flag";     }
+    case roamViewCount:    { return "count";    }
+    default:               { return "unknown";  }
+  }
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

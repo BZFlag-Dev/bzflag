@@ -24,6 +24,7 @@
 #include "Pack.h"
 #include "BzMaterial.h"
 #include "MeshTransform.h"
+#include "CacheManager.h"
 
 
 WorldTextManager WORLDTEXTMGR;
@@ -60,6 +61,17 @@ int WorldTextManager::addText(WorldText* text)
 {
   texts.push_back(text);
   return ((int)texts.size() - 1);
+}
+
+
+void WorldTextManager::getFontURLs(std::set<std::string>& fontURLs) const
+{
+  for (size_t i = 0; i < texts.size(); i++) {
+    const WorldText* text = texts[i];
+    if (CacheManager::isCacheFileType(text->font)) {
+      fontURLs.insert(text->font);
+    }
+  }
 }
 
 
@@ -156,7 +168,6 @@ bool WorldText::isValid() const
   }
   return true;
 }
-
 
 
 int WorldText::packSize() const

@@ -945,8 +945,9 @@ public:
     worldEventManager.callEvents(data);
 
     // if the key is still coo, go and set the change, notify all clients, and the API that it changed
-    if(data.key.size())
-     bz_setPayerCustomData(player->getIndex(), data.key.c_str(), data.data.c_str() );
+    if (data.key.size()) {
+      bz_setPlayerCustomData(player->getIndex(), data.key.c_str(), data.data.c_str());
+    }
 
     return true;
   }

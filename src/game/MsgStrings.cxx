@@ -844,16 +844,19 @@ static MsgStringList handleMsgJoinServer (PacketInfo *pi)
   int32_t port;
   int32_t team;
   std::string referrer;
+  std::string message;
 
   d = nboUnpackStdString(d, addr);
   d = nboUnpackInt(d, port);
   d = nboUnpackInt(d, team);
   d = nboUnpackStdString(d, referrer);
+  d = nboUnpackStdString(d, message);
 
   listPush (list, 1, "addr: \"%s\"", addr.c_str());
   listPush (list, 1, "port: %i", port);
   listPush (list, 1, "team: %i", team);
   listPush (list, 1, "referrer: \"%s\"", referrer.c_str());
+  listPush (list, 1, "message: \"%s\"", message.c_str());
 
   return list;
 }

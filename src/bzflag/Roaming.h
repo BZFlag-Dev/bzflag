@@ -44,6 +44,9 @@ public:
   RoamingView getMode(void) const;
   void setMode(RoamingView newView);
 
+  RoamingView parseView(const std::string& view) const;
+  const char* getViewName(RoamingView) const;
+
   enum RoamingTarget {
     next = 0,
     previous,
@@ -130,7 +133,8 @@ inline const Roaming::RoamingCamera* Roaming::getCamera() const {
   return &camera;
 }
 
-const bool devDriving = false;
+extern const bool devDriving;
+
 
 // Local Variables: ***
 // mode: C++ ***

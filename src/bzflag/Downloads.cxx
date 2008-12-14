@@ -18,6 +18,7 @@
 #include "AnsiCodes.h"
 #include "TextureManager.h"
 #include "cURLManager.h"
+#include "WorldText.h"
 
 /* local implementation headers */
 #include "playing.h"
@@ -56,49 +57,56 @@ static const char DownloadContent[] =
   "allow images.bzflag.org\n"
   "deny *\n";
 
+
 template <>
-Downloads* Singleton<Downloads>::_instance = (Downloads*)0;
+Downloads* Singleton<Downloads>::_instance = (Downloads*)NULL;
+
 
 class CachedTexture : private cURLManager {
-public:
-  CachedTexture(const std::string &texUrl);
+  public:
+    CachedTexture(const std::string &texUrl);
 
-  virtual void finalization(char *data, unsigned int length, bool good);
+    virtual void finalization(char *data, unsigned int length, bool good);
 
-  static void  setParams(bool check, long timeout);
-  static int   activeTransfer();
-private:
+    static void  setParams(bool check, long timeout);
+    static int   activeTransfer();
+  private:
 
-  virtual void collectData(char* ptr, int len);
+    virtual void collectData(char* ptr, int len);
 
-  std::string	       url;
-  static bool	       checkForCache;
-  static long	       httpTimeout;
-  static int		textureCounter;
-  static int				byteTransferred;
-  bool		      timeRequest;
+    std::string url;
+    static bool checkForCache;
+    static long httpTimeout;
+    static int  textureCounter;
+    static int  byteTransferred;
+    bool        timeRequest;
 };
+
+
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
 int CachedTexture::textureCounter = 0;
 int CachedTexture::byteTransferred = 0;
+
 
 CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
 {
   CacheManager::CacheRecord oldrec;
 
   setURL(texUrl);
-  url	 = texUrl;
+  url = texUrl;
 
   // use the cache?
   bool cached = CACHEMGR.findURL(texUrl, oldrec);
   if (cached && !checkForCache) {
     // use the cached file
     MATERIALMGR.setTextureLocal(texUrl, oldrec.name);
-  } else {
+  }
+  else {
     textureCounter++;
-    if (httpTimeout > 0.0)
+    if (httpTimeout > 0.0) {
       setTimeout(httpTimeout);
+    }
     setRequestFileTime(true);
     timeRequest = cached;
     std::string msg = ColorStrings[GreyColor];
@@ -113,6 +121,7 @@ CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
   }
 }
 
+
 void CachedTexture::setParams(bool check, long timeout)
 {
   checkForCache   = check;
@@ -120,6 +129,7 @@ void CachedTexture::setParams(bool check, long timeout)
   textureCounter  = 0;
   byteTransferred = 0;
 }
+
 
 void CachedTexture::finalization(char *data, unsigned int length, bool good)
 {
@@ -142,7 +152,8 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
       }
       MATERIALMGR.setTextureLocal(url, localname);
     }
-  } else {
+  }
+  else {
     CacheManager::CacheRecord rec;
     if (CACHEMGR.findURL(url, rec)) {
       MATERIALMGR.setTextureLocal(url, rec.name);
@@ -152,17 +163,20 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
   }
 }
 
+
 int CachedTexture::activeTransfer()
 {
   return textureCounter;
 }
 
+
 void CachedTexture::collectData(char* ptr, int len)
 {
   char buffer[128];
 
-  if(runs == 0)
-	  totalTex = textureCounter;
+  if (runs == 0) {
+    totalTex = textureCounter;
+  }
 
   cURLManager::collectData(ptr, len);
   byteTransferred += len;
@@ -177,7 +191,9 @@ void CachedTexture::collectData(char* ptr, int len)
   HUDDialogStack::get()->setFailedMessage(buffer);
 }
 
+
 static std::vector<CachedTexture*> cachedTexVector;
+
 
 Downloads::Downloads()
 {
@@ -185,10 +201,12 @@ Downloads::Downloads()
   textureDownloading = false;
 }
 
+
 Downloads::~Downloads()
 {
   delete downloadAccessList;
 }
+
 
 void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 			       bool referencing)
@@ -202,9 +220,10 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 
   downloadAccessList->reload();
 
-  BzMaterialManager::TextureSet set;
+  BzMaterialManager::TextureSet texSet;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, referencing);
+  MATERIALMGR.makeTextureList(texSet, referencing);
+  WORLDTEXTMGR.getFontURLs(texSet); // get the fonts as well
 
   float timeout = 15;
   if (BZDB.isSet("httpTimeout")) {
@@ -213,31 +232,33 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
   CachedTexture::setParams(updateDownloads, (long)timeout);
 
   // check hosts' access permissions
-  bool authNotice = checkAuthorizations(set);
+  bool authNotice = checkAuthorizations(texSet);
 
   if (!referencing) {
     // Clear old cached texture
     // This is the first time is called after joining
     std::vector<CachedTexture*>::iterator itr;
-    for (itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr)
+    for (itr = cachedTexVector.begin(); itr != cachedTexVector.end(); ++itr) {
       delete (*itr);
+    }
     cachedTexVector.clear();
   }
 
-  if (doDownloads)
-    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+  if (doDownloads) {
+    for (set_it = texSet.begin(); set_it != texSet.end(); set_it++) {
       const std::string& texUrl = set_it->c_str();
       if (CACHEMGR.isCacheFileType(texUrl)) {
-	if (!referencing)
+	if (!referencing) {
 	  MATERIALMGR.setTextureLocal(texUrl, "");
+        }
 	cachedTexVector.push_back(new CachedTexture(texUrl));
       }
     }
-  else
-    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+  }
+  else {
+    for (set_it = texSet.begin(); set_it != texSet.end(); set_it++) {
       const std::string& texUrl = set_it->c_str();
       if (CACHEMGR.isCacheFileType(texUrl)) {
-
 	// use the cache?
 	CacheManager::CacheRecord oldrec;
 	if (CACHEMGR.findURL(texUrl, oldrec)) {
@@ -252,12 +273,15 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 	}
       }
     }
+  }
 
   if (authNotice) {
     printAuthNotice();
   }
+
   textureDownloading = true;
 }
+
 
 void Downloads::finalizeDownloads()
 {
@@ -271,20 +295,22 @@ void Downloads::finalizeDownloads()
   CACHEMGR.saveIndex();
 }
 
+
 bool Downloads::requestFinalized()
 {
   return textureDownloading && (CachedTexture::activeTransfer() == 0);
 }
 
+
 void Downloads::removeTextures()
 {
-  BzMaterialManager::TextureSet set;
+  BzMaterialManager::TextureSet texSet;
   BzMaterialManager::TextureSet::iterator set_it;
-  MATERIALMGR.makeTextureList(set, false /* ignore referencing */);
+  MATERIALMGR.makeTextureList(texSet, false /* ignore referencing */);
 
   TextureManager& TEXMGR = TextureManager::instance();
 
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+  for (set_it = texSet.begin(); set_it != texSet.end(); set_it++) {
     const std::string& texUrl = set_it->c_str();
     if (CACHEMGR.isCacheFileType(texUrl)) {
       const std::string& localname = CACHEMGR.getLocalName(texUrl);
@@ -339,7 +365,7 @@ bool parseHostname(const std::string& url, std::string& hostname)
 }
 
 
-bool Downloads::checkAuthorizations(BzMaterialManager::TextureSet& set)
+bool Downloads::checkAuthorizations(BzMaterialManager::TextureSet& texSet)
 {
   // avoid the DNS lookup
   if (downloadAccessList->alwaysAuthorized()) {
@@ -354,7 +380,7 @@ bool Downloads::checkAuthorizations(BzMaterialManager::TextureSet& set)
   std::map<std::string, bool>::iterator host_it;
 
   // get the list of hosts to check
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+  for (set_it = texSet.begin(); set_it != texSet.end(); set_it++) {
     const std::string& url = *set_it;
     std::string hostname;
     if (parseHostname(url, hostname)) {
@@ -369,8 +395,8 @@ bool Downloads::checkAuthorizations(BzMaterialManager::TextureSet& set)
   }
 
   // clear any unauthorized urls
-  set_it = set.begin();
-  while (set_it != set.end()) {
+  set_it = texSet.begin();
+  while (set_it != texSet.end()) {
     BzMaterialManager::TextureSet::iterator next_it = set_it;
     next_it++;
     const std::string& url = *set_it;
@@ -385,7 +411,7 @@ bool Downloads::checkAuthorizations(BzMaterialManager::TextureSet& set)
       addMessage(NULL, msg);
       // remove the url
       MATERIALMGR.setTextureLocal(url, "");
-      set.erase(set_it);
+      texSet.erase(set_it);
     }
     set_it = next_it;
   }

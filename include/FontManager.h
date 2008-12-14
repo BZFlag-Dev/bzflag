@@ -79,7 +79,12 @@ private:
 class FontManager : public Singleton<FontManager> {
 
 public:
+  enum FontState {
+    Missing = -1,
+    Invalid = -2,
+  };
 
+public:
   /**
    * load all fonts from a given directory, returns the number of
    * fonts that were loaded

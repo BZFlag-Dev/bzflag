@@ -40,6 +40,8 @@ class DynamicWorldText {
 
     void notifyStyleChange();
 
+    void getFontURLs(std::set<std::string>& fontURLs) const;
+
   private:
     DynamicWorldText();
     ~DynamicWorldText();
