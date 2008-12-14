@@ -1740,7 +1740,7 @@ static int GetGroupHasPerm(lua_State* L)
 {
   const char* group = luaL_checkstring(L, 1);
   const char* perm  = luaL_checkstring(L, 2);
-  lua_pushboolean(L, bz_groupAllowPerm(group,  perm));
+  lua_pushboolean(L, bz_groupAllowPerm(group, perm));
   return 1;
 }
 

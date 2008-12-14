@@ -12,6 +12,7 @@ noinst_HEADERS =      \
 	lualfs.h      \
 	mapobject.h   \
 	mylua.h       \
+	rawlink.h     \
 	slashcmd.h
 
 libbzfslua_la_SOURCES = \
@@ -23,6 +24,7 @@ libbzfslua_la_SOURCES = \
 	lua.cpp       \
 	lualfs.cpp    \
 	mapobject.cpp \
+	rawlink.cpp   \
 	slashcmd.cpp
 
 libbzfslua_la_LDFLAGS = -module -avoid-version

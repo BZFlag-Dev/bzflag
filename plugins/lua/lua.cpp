@@ -11,14 +11,15 @@ using std::string;
 #include "mylua.h"
 #include "lualfs.h"
 
+#include "bzdb.h"
 #include "callins.h"
 #include "callouts.h"
 #include "constants.h"
-#include "mapobject.h"
-#include "slashcmd.h"
 #include "fetchurl.h"
-#include "bzdb.h"
+#include "mapobject.h"
 #include "plugin_utils.h"
+#include "rawlink.h"
+#include "slashcmd.h"
 
 
 BZ_GET_PLUGIN_VERSION
@@ -141,6 +142,7 @@ static bool CreateLuaState(const string& script)
     MapObject::PushEntries(L);
     SlashCmd::PushEntries(L);
     FetchURL::PushEntries(L);
+    RawLink::PushEntries(L);
   }
   lua_setglobal(L, "BZ");
 
@@ -160,6 +162,7 @@ static bool DestroyLuaState()
 {
   CallIns::Shutdown(); // send the call-in
 
+  RawLink::CleanUp(L);
   FetchURL::CleanUp(L);
   SlashCmd::CleanUp(L);
   MapObject::CleanUp(L);

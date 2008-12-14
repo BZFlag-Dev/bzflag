@@ -287,7 +287,7 @@ DEFINE_CALLIN(LoggingEvent,               Logging);                // -Event
 DEFINE_CALLIN(MessageFilteredEvent,       MessageFiltered);        // -Event
 DEFINE_CALLIN(NetDataReceiveEvent,        NetDataReceive);         // -Event
 DEFINE_CALLIN(NetDataSendEvent,           NetDataSend);            // -Event
-DEFINE_CALLIN(NewNonPlayerConnection,     NewNonPlayerConnection);
+DEFINE_CALLIN(NewNonPlayerConnection,     RawLink);                //  renamed
 DEFINE_CALLIN(NewRabbitEvent,             NewRabbit);              // -Event
 DEFINE_CALLIN(PlayerAuthEvent,            PlayerAuth);             // -Event
 DEFINE_CALLIN(PlayerCollision,            PlayerCollision);
@@ -1025,7 +1025,7 @@ bool CI_NetDataSend::execute(bz_EventData* eventData)
 }
 
 
-bool CI_NewNonPlayerConnection::execute(bz_EventData* eventData)
+bool CI_RawLink::execute(bz_EventData* eventData)
 {
   bz_NewNonPlayerConnectionEventData_V1* ed = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 
