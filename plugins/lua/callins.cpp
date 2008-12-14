@@ -211,22 +211,6 @@ bool CallIns::PushEntries(lua_State* _L)
   PUSH_LUA_CFUNC(UpdateCallIn);
   PUSH_LUA_CFUNC(GetCallIns);
 
-  // scan for global call-ins --  FIXME -- remove? have lua do it?
-  /*
-  const map<int, CallIn*>& codeMap = CallIn::GetCodeMap();
-  map<int, CallIn*>::const_iterator it;
-  for (it = codeMap.begin(); it != codeMap.end(); ++it) {
-    CallIn* ci = it->second;
-    lua_getglobal(L, ci->GetName().c_str());
-    if (lua_isfunction(L, -1)) {
-      lua_rawseti(L, LUA_CALLINSINDEX, ci->GetCode());
-      ci->Register();
-    } else {
-      lua_pop(L, 1);
-    }
-  }
-  */
-
   return true;
 }
 
