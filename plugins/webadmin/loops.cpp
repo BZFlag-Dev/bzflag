@@ -661,7 +661,7 @@ void IPBanLoop::getKey (size_t item, std::string &data, const std::string &key)
     if (bz_getBanItemSource(eIPList,i))
       temp = bz_getBanItemSource(eIPList,i);
   }
-  else if (key == "ipbandurration")
+  else if (key == "ipbanduration")
       temp = format("%f",bz_getBanItemDuration(eIPList,i));
   else if (key == "ipbanid")
     temp = format("%d",item);
@@ -716,7 +716,7 @@ void HostBanLoop::getKey (size_t item, std::string &data, const std::string &key
     if (bz_getBanItemSource(eHostList,i))
       temp = bz_getBanItemSource(eHostList,i);
   }
-  else if (key == "hostbandurration")
+  else if (key == "hostbanduration")
     temp = format("%f",bz_getBanItemDuration(eHostList,i));
   else if (key == "hostbanid")
     temp = format("%d",item);
@@ -774,7 +774,7 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
     if (bz_getBanItemSource(eIDList,i))
       temp = bz_getBanItemSource(eIDList,i);
   }
-  else if (key == "idbandurration")
+  else if (key == "idbanduration")
     temp = format("%f",bz_getBanItemDuration(eIDList,i));
   else if (key == "idbanid")
     temp = format("%d",item);
