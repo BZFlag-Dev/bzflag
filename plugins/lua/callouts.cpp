@@ -629,8 +629,9 @@ static int GetWorldCache(lua_State* L)
 
 static int GetWorldURL(lua_State* L)
 {
-//  const char* url;
-  return 0;
+  const bz_ApiString url =  bz_getClientWorldDownloadURL();
+  lua_pushstring(L, url.c_str());
+  return 1;
 }
 
 

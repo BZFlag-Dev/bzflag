@@ -18,8 +18,11 @@ static lua_State* L = NULL;
 
 static int AttachRawLink(lua_State* L);
 static int DetachRawLink(lua_State* L);
-static int RawLinkWrite(lua_State* L);
-static int RawLinkDisconnect(lua_State* L);
+static int DisconnectRawLink(lua_State* L);
+static int WriteRawLink(lua_State* L);
+static int GetRawLinkIP(lua_State* L);
+static int GetRawLinkHost(lua_State* L);
+static int GetRawLinkQueued(lua_State* L);
 
 
 class Link;
@@ -59,14 +62,14 @@ Link::Link(lua_State* L, int _id)
   if (!bz_registerNonPlayerConnectionHandler(id, this)) {
     return;
   }
-  if (!lua_isfunction(L, 2)) {
-    return;
+
+  if (lua_isnil(L, 2)) {
+    funcRef = LUA_REFNIL;
   }
-
-  funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
-
-  if (lua_isfunction(L, 3)) {
+  else if (lua_isfunction(L, 2)) {
     funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
+  }
+  else {
     return;
   }
 
@@ -88,6 +91,9 @@ Link::~Link()
 void Link::pending(int id, void* data, unsigned int size)
 {
   if (L == NULL) {
+    return;
+  }
+  if (funcRef == LUA_REFNIL) {
     return;
   }
 
@@ -141,12 +147,24 @@ bool RawLink::PushEntries(lua_State* _L)
   lua_pushcfunction(L, DetachRawLink);
   lua_rawset(L, -3);
 
-  lua_pushliteral(L, "RawLinkWrite");
-  lua_pushcfunction(L, RawLinkWrite);
+  lua_pushliteral(L, "WriteRawLink");
+  lua_pushcfunction(L, WriteRawLink);
   lua_rawset(L, -3);
 
-  lua_pushliteral(L, "RawLinkDisconnect");
-  lua_pushcfunction(L, RawLinkDisconnect);
+  lua_pushliteral(L, "DisconnectRawLink");
+  lua_pushcfunction(L, DisconnectRawLink);
+  lua_rawset(L, -3);
+
+  lua_pushliteral(L, "GetRawLinkIP");
+  lua_pushcfunction(L, GetRawLinkIP);
+  lua_rawset(L, -3);
+
+  lua_pushliteral(L, "GetRawLinkHost");
+  lua_pushcfunction(L, GetRawLinkHost);
+  lua_rawset(L, -3);
+
+  lua_pushliteral(L, "GetRawLinkQueued");
+  lua_pushcfunction(L, GetRawLinkQueued);
   lua_rawset(L, -3);
 
   return true;
@@ -176,8 +194,9 @@ bool RawLink::CleanUp(lua_State* _L)
 static int AttachRawLink(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (!lua_isfunction(L, 2)) {
-    luaL_error(L, "expected a function");
+
+  if (!lua_isnoneornil(L, 2) && !lua_isfunction(L, 2)) {
+    return 0;
   }
   lua_settop(L, 2); // discard any extras
 
@@ -207,7 +226,20 @@ static int DetachRawLink(lua_State* L)
 }
 
 
-static int RawLinkDisconnect(lua_State* L)
+static int WriteRawLink(lua_State* L)
+{
+  const int linkID = luaL_checkint(L, 1);
+  if (links.find(linkID) == links.end()) {
+    return 0;
+  }
+  size_t size;
+  const char* data = luaL_checklstring(L, 2, &size);
+  lua_pushboolean(L, bz_sendNonPlayerData(linkID, data, size));
+  return 1;
+}
+
+
+static int DisconnectRawLink(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
   if (links.find(linkID) == links.end()) {
@@ -218,15 +250,35 @@ static int RawLinkDisconnect(lua_State* L)
 }
 
 
-static int RawLinkWrite(lua_State* L)
+static int GetRawLinkIP(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
   if (links.find(linkID) == links.end()) {
     return 0;
   }
-  size_t size;
-  const char* data = luaL_checklstring(L, 2, &size);
-  lua_pushboolean(L, bz_sendNonPlayerData(linkID, data, size));
+  lua_pushstring(L, bz_getNonPlayerConnectionIP(linkID));
+  return 1;
+}
+
+
+static int GetRawLinkHost(lua_State* L)
+{
+  const int linkID = luaL_checkint(L, 1);
+  if (links.find(linkID) == links.end()) {
+    return 0;
+  }
+  lua_pushstring(L, bz_getNonPlayerConnectionHost(linkID));
+  return 1;
+}
+
+
+static int GetRawLinkQueued(lua_State* L)
+{
+  const int linkID = luaL_checkint(L, 1);
+  if (links.find(linkID) == links.end()) {
+    return 0;
+  }
+  lua_pushinteger(L, bz_getNonPlayerConnectionOutboundPacketCount(linkID));
   return 1;
 }
 
