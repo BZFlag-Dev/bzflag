@@ -42,7 +42,6 @@
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
-#include "ExplosionSceneNode.h"
 #include "FileManager.h"
 #include "FlagSceneNode.h"
 #include "GameTime.h"
