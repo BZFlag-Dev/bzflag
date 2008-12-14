@@ -24,7 +24,8 @@ libPlatform_la_SOURCES =			\
 	SDLVisual.cxx				\
 	SDLVisual.h				\
 	SDLWindow.cxx				\
-	SDLWindow.h
+	SDLWindow.h				\
+	VerticalSync.cxx
 endif
 else
 if LINUX
@@ -47,6 +48,7 @@ libPlatform_la_SOURCES =			\
 	EvdevJoystick.h				\
 	USBJoystick.cxx				\
 	USBJoystick.h				\
+	VerticalSync.cxx			\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
@@ -70,6 +72,7 @@ libPlatform_la_SOURCES =			\
 	SolarisPlatformFactory.h		\
 	SolarisMedia.cxx			\
 	SolarisMedia.h				\
+	VerticalSync.cxx			\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
@@ -94,6 +97,7 @@ libPlatform_la_SOURCES =			\
 	SGIDisplay.h				\
 	SGIMedia.cxx				\
 	SGIMedia.h				\
+	VerticalSync.cxx			\
 	XDisplay.cxx				\
 	XDisplay.h				\
 	XVisual.cxx				\
@@ -125,10 +129,12 @@ libPlatform_la_SOURCES =			\
 	SDLVisual.h				\
 	SDLWindow.cxx				\
 	SDLWindow.h				\
+	VerticalSync.cxx			\
 	wave.cxx				\
 	wave.h
 else
 libPlatform_la_SOURCES =			\
+	VerticalSync.cxx			\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
 	BzfJoystick.cxx				\
@@ -137,12 +143,14 @@ libPlatform_la_SOURCES =			\
 	BzfMedia.cxx				\
 	wave.cxx				\
 	wave.h
+					
 endif
 endif
 DIST_SUBDIRS = MacOSX
 
 if BEOS
 libPlatform_la_SOURCES =			\
+	VerticalSync.cxx			\
 	PlatformFactory.cxx			\
 	BzfDisplay.cxx				\
 	BzfJoystick.cxx				\
@@ -160,7 +168,7 @@ libPlatform_la_SOURCES =			\
 	BeOSWindow.cxx				\
 	BeOSWindow.h				\
 	BeOSMedia.cxx				\
-	BeOSMedia.h
+	BeOSMedia.h				
 endif
 
 if WIN32
@@ -183,6 +191,7 @@ libPlatform_la_SOURCES =			\
 	SDLVisual.h				\
 	SDLWindow.cxx				\
 	SDLWindow.h				\
+	VerticalSync.cxx			\
 	WinDisplay.cxx				\
 	WinDisplay.h				\
 	WinJoystick.cxx				\
@@ -211,6 +220,7 @@ libPlatform_la_SOURCES =			\
 	HPUXPlatformFactory.cxx			\
 	HPUXPlatformFactory.h			\
 	PlatformFactory.cxx			\
+	VerticalSync.cxx			\
 	wave.cxx				\
 	wave.h
 endif

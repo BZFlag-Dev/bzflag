@@ -137,6 +137,7 @@ noinst_HEADERS =			\
 	TimeKeeper.h			\
 	TracerSceneNode.h		\
 	TriWallSceneNode.h		\
+	VerticalSync.h			\
 	ViewFrustum.h			\
 	VotingArbiter.h			\
 	VotingBooth.h			\
