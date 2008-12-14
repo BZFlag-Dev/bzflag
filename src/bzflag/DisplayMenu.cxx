@@ -33,7 +33,7 @@
 #ifdef HAVE_GLEW
 #ifdef WIN32
 #include <GL/wglew.h>
-#else
+#else // !WIN32
 #include <GL/glxew.h>
 #endif // WIN32
 #endif // HAVE_GLEW
@@ -236,13 +236,17 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options = &option->getList();
 #if defined HAVE_GLEW || (defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__)
 #ifdef WIN32
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  if (wglSwapIntervalEXT) {
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+  } else {
+    options->push_back(std::string("Unavailable"));
+  }
 #elif defined __APPLE__ && defined HAVE_CGLGETCURRENTCONTEXT // APPLE
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
 #else // !WIN32 && !APPLE
-  if (GLXEW_SGI_video_sync) {
+  if (glXSwapIntervalSGI) {
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
   } else {
