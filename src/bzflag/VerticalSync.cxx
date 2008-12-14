@@ -119,7 +119,7 @@ void verticalSync()
 */
 
 //////////////////
-#endif // !__APPLE
+#endif // __APPLE
 //////////////////
 
 

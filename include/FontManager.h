@@ -81,7 +81,7 @@ class FontManager : public Singleton<FontManager> {
 public:
   enum FontState {
     Missing = -1,
-    Invalid = -2,
+    Invalid = -2
   };
 
 public:
