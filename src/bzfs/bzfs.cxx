@@ -4535,16 +4535,14 @@ static void doListServerUpdate ( TimeKeeper &tm )
 
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
-  if ( !peer.pendingSendChunks.size() )
+  if (peer.pendingSendChunks.empty()) {
     return;
+  }
 
-  peer.handler->bufferedSend(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
+  const std::string& netData = peer.pendingSendChunks.front();
+  peer.handler->bufferedSend(netData.data(), netData.size());
 
-  free(peer.pendingSendChunks[0].data);
-  peer.pendingSendChunks[0].data = NULL;
-  peer.pendingSendChunks[0].size = 0;
-
-  peer.pendingSendChunks.erase(peer.pendingSendChunks.begin());
+  peer.pendingSendChunks.pop_front();
 }
 
 bool updateCurl ( void )

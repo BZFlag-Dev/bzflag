@@ -19,6 +19,8 @@
 // macro which messes up fstreams. luckily, we don't need to call the
 // close() method on any fstream.
 #include <fstream>
+#include <string>
+#include <vector>
 #include <list>
 
 // must be before windows.h
@@ -159,47 +161,6 @@ extern float maxWorldHeight;
 
 extern unsigned int maxNonPlayerDataChunk;
 
-class NonPlayerDataChunk
-{
-  public:
-  NonPlayerDataChunk()
-  {
-    data = NULL;
-    size = 0;
-  }
-
-  NonPlayerDataChunk( const char* d, unsigned int s )
-  {
-    if (s == 0)
-      data = NULL;
-   data = (char*)malloc(s);
-    memcpy(data,d,s);
-    size = s;
-  }
-
-  NonPlayerDataChunk( const NonPlayerDataChunk &t )
-  {
-    if (t.size == 0)
-      data = NULL;
-    else
-      data = (char*)malloc(t.size);
-    memcpy(data,t.data,t.size);
-    size = t.size;
-  }
-
-  ~NonPlayerDataChunk()
-  {
-    if (data && size>0)
-      free (data);
-
-    data = NULL;
-    size = 0;
-  }
-
-  char *data;
-  unsigned int size;
-};
-
 // peer list
 typedef struct {
   int socket;
@@ -207,16 +168,16 @@ typedef struct {
   NetHandler *handler;
   std::vector<bz_NonPlayerConnectionHandler*> notifyList;
 
-  std::vector<NonPlayerDataChunk> pendingSendChunks;
+  std::list<std::string> pendingSendChunks;
 
   double    startTime;
   bool	    sent;
   bool	    deleteMe;
 } NetConnectedPeer;
 
-extern std::map<int,NetConnectedPeer> netConnectedPeers;
+extern std::map<int, NetConnectedPeer> netConnectedPeers;
 
-void sendBufferedNetDataForPeer (NetConnectedPeer &peer );
+void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
 
 #endif /* __BZFS_H__ */
 
