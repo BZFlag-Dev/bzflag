@@ -18,29 +18,11 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 /* common interface headers */
 #include "TimeKeeper.h"
-
-typedef struct sequenceList {
-  float period;
-  float offset;
-  char* list;
-  unsigned int count;
-} sequenceParams;
-
-typedef struct {
-  float period;
-  float offset;
-  float weight;
-} sinusoidParams;
-
-typedef struct {
-  float period;
-  float offset;
-  float width;
-} clampParams;
 
 
 class DynamicColor {
@@ -48,26 +30,19 @@ class DynamicColor {
     DynamicColor();
     ~DynamicColor();
 
-    enum SequenceState {
-      colorMin = 0,
-      colorMid = 1,
-      colorMax = 2
-    };
-
     bool setName(const std::string& name);
 
     void setVariableName(const std::string& name);
     void setVariableTiming(float seconds);
-    void setVariableUseAlpha(bool);
+    void setVariableNoAlpha(bool);
 
-    void setLimits(int channel, float min, float max);
-    void setSequence(int channel, float period, float offset,
-		     std::vector<char>& list);
-    void addSinusoid(int channel, const float sinusoid[3]);
-    void addClampUp(int channel, const float clampUp[3]);
-    void addClampDown(int channel, const float clampDown[3]);
+    void setDelay(float delay);
+    void addState(float duration, const float color[4]);
+    void addState(float duration,
+                  float r, float g, float b, float a);
 
     void finalize();
+
     void update(double time);
 
     bool canHaveAlpha() const;
@@ -81,6 +56,9 @@ class DynamicColor {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
+    void colorByVariable(double t);
+    void colorByStates(double t);
+
     void updateVariable();
     static void bzdbCallback(const std::string& varName, void* data);
 
@@ -91,9 +69,9 @@ class DynamicColor {
     float color[4];
 
     std::string varName;
-    bool varUseAlpha;
-    float varTime;
 
+    bool varNoAlpha;
+    float varTime;
     bool varInit;
     bool varTransition;
     float varTimeTmp;
@@ -101,16 +79,28 @@ class DynamicColor {
     float varNewColor[4];
     TimeKeeper varLastChange;
 
-    typedef struct {
-      float minValue, maxValue;
-      float totalWeight; // tally of sinusoid weights
-      sequenceParams sequence;
-      std::vector<sinusoidParams> sinusoids;
-      std::vector<clampParams> clampUps;
-      std::vector<clampParams> clampDowns;
-    } ChannelParams;
-
-    ChannelParams channels[4];
+    struct ColorState {
+      ColorState() {
+        color[0] = 1.0f;
+        color[1] = 1.0f;
+        color[2] = 1.0f;
+        color[3] = 1.0f;
+        duration = 0.0f;
+      }
+      ColorState(const float c[4], float d) {
+        color[0] = c[0];
+        color[1] = c[1];
+        color[2] = c[2];
+        color[3] = c[3];
+        duration = d;
+      }
+      float color[4];
+      float duration;
+    };
+    std::vector<ColorState> colorStates;
+    std::map<float, int> colorEnds;
+    float statesDelay;
+    float statesLength;
 
     bool possibleAlpha;
 };

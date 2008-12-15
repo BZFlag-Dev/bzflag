@@ -28,7 +28,7 @@ class CustomDynamicColor : public WorldFileObject {
     bool usesManager() { return true; }
 
   private:
-    mutable DynamicColor* color;
+    mutable DynamicColor* dyncol;
 };
 
 #endif  /* __CUSTOM_DYNAMIC_COLOR_H__ */

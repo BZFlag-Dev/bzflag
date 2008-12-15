@@ -16,9 +16,14 @@
 /* system implementation headers */
 #include <math.h>
 #include <string.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string>
 #include <vector>
+#include <map>
+using std::string;
+using std::vector;
+using std::map;
+
 
 /* common implementation headers */
 #include "GameTime.h"
@@ -32,6 +37,7 @@
 const float DynamicColor::minPeriod = 0.01f;
 
 
+/******************************************************************************/
 //
 // Dynamic Color Manager
 //
@@ -54,7 +60,7 @@ DynamicColorManager::~DynamicColorManager()
 
 void DynamicColorManager::clear()
 {
-  std::vector<DynamicColor*>::iterator it;
+  vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     delete *it;
   }
@@ -66,7 +72,7 @@ void DynamicColorManager::clear()
 void DynamicColorManager::update()
 {
   const double gameTime = GameTime::getStepTime();
-  std::vector<DynamicColor*>::iterator it;
+  vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     color->update(gameTime);
@@ -77,16 +83,17 @@ void DynamicColorManager::update()
 
 int DynamicColorManager::addColor(DynamicColor* color)
 {
-  colors.push_back (color);
+  colors.push_back(color);
   return ((int)colors.size() - 1);
 }
 
 
-int DynamicColorManager::findColor(const std::string& dyncol) const
+int DynamicColorManager::findColor(const string& dyncol) const
 {
-  if (dyncol.size() <= 0) {
+  if (dyncol.empty()) {
     return -1;
-  } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+  }
+  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
     int index = atoi (dyncol.c_str());
     if ((index < 0) || (index >= (int)colors.size())) {
       return -1;
@@ -116,7 +123,7 @@ const DynamicColor* DynamicColorManager::getColor(int id) const
 
 void * DynamicColorManager::pack(void *buf) const
 {
-  std::vector<DynamicColor*>::const_iterator it;
+  vector<DynamicColor*>::const_iterator it;
   buf = nboPackUInt(buf, (int)colors.size());
   for (it = colors.begin(); it != colors.end(); it++) {
     const DynamicColor* color = *it;
@@ -143,7 +150,7 @@ void * DynamicColorManager::unpack(void *buf)
 int DynamicColorManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
-  std::vector<DynamicColor*>::const_iterator it;
+  vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     fullSize = fullSize + color->packSize();
@@ -152,9 +159,9 @@ int DynamicColorManager::packSize() const
 }
 
 
-void DynamicColorManager::print(std::ostream& out, const std::string& indent) const
+void DynamicColorManager::print(std::ostream& out, const string& indent) const
 {
-  std::vector<DynamicColor*>::const_iterator it;
+  vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     color->print(out, indent);
@@ -163,36 +170,32 @@ void DynamicColorManager::print(std::ostream& out, const std::string& indent) co
 }
 
 
+/******************************************************************************/
 //
 // Dynamic Color
 //
 
 DynamicColor::DynamicColor()
 {
-  // setup the channels
-  for (int c = 0; c < 4; c++) {
-    // the parameters are setup so that all channels
-    // are at 1.0f, and that there are no variations
-    color[c] = 1.0f;
-    channels[c].minValue = 0.0f;
-    channels[c].maxValue = 1.0f;
-    channels[c].sequence.count = 0;
-    channels[c].sequence.list = NULL;
-  }
-  possibleAlpha = false;
+  const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
   name = "";
+  possibleAlpha = false;
+
+  memcpy(color, white, sizeof(float[4]));
 
   varName = "";
-  varUseAlpha = false;
   varTime = 1.0f;
+  varNoAlpha = false;
 
-  const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   varInit = false;
   varTimeTmp = varTime;
   varTransition = false;
   memcpy(varOldColor, white, sizeof(float[4]));
   memcpy(varNewColor, white, sizeof(float[4]));
   varLastChange = TimeKeeper::getSunGenesisTime();
+
+  statesDelay = 0.0f;
 
   return;
 }
@@ -201,10 +204,6 @@ DynamicColor::DynamicColor()
 DynamicColor::~DynamicColor()
 {
   // free the sequence values
-  for (int c = 0; c < 4; c++) {
-    sequenceParams& seq = channels[c].sequence;
-    delete[] seq.list;
-  }
   if (varInit) {
     BZDB.removeCallback(varName, bzdbCallback, this);
   }
@@ -214,63 +213,42 @@ DynamicColor::~DynamicColor()
 
 void DynamicColor::finalize()
 {
+  possibleAlpha = false;
+
   // variables take priority
-  if (varName.size() > 0) {
-    possibleAlpha = varUseAlpha;
-    return; // nothing else matters
+  if (!varName.empty()) {
+    possibleAlpha = !varNoAlpha;
+    return;
   }
 
-  // sanitize the sequence value, and check for alpha middle values
-  bool noAlphaSeqMid = true;
-  for (int c = 0; c < 4; c++) {
-    sequenceParams& seq = channels[c].sequence;
-    for (unsigned int i = 0; i < seq.count; i++) {
-      if ((int)seq.list[i] < (int)colorMin) {
-	seq.list[i] = colorMin;
-      } else if ((int)seq.list[i] > (int)colorMax) {
-	seq.list[i] = colorMax;
-      } else if ((c == 3) && (seq.list[i] == colorMid)) {
-	noAlphaSeqMid = false;
+  // followed by color states
+  if (!colorStates.empty()) {
+    statesLength = 0.0f;
+    for (size_t i = 0; i < colorStates.size(); i++) {
+      const ColorState& state = colorStates[i];
+      const ColorState& next  = colorStates[(i + 1) % colorStates.size()];
+
+      statesLength += state.duration;
+      if (colorEnds.find(statesLength) == colorEnds.end()) {
+        colorEnds[statesLength] = i;
+      }
+
+      const float alpha = state.color[3];
+      if (((alpha > 0.0f) && (alpha < 1.0f)) ||
+          ((alpha != next.color[3]) && (state.duration > 0.0f))) {
+        possibleAlpha = true;
       }
     }
-  }
-
-  // check if there might be translucency
-  possibleAlpha = true;
-  const ChannelParams& p = channels[3]; // the alpha channel
-
-  if ((p.minValue == 1.0f) && (p.maxValue == 1.0f)) {
-    // opaque regardless of functions
-    possibleAlpha = false;
-  } else {
-
-    // check the a special sequence case
-    const sequenceParams& seq = p.sequence;
-    if ((seq.count > 0) &&
-	(noAlphaSeqMid && (p.minValue == 0.0f) && (p.maxValue == 1.0f))) {
-      // transparency, not translucency
-      possibleAlpha = false;
-    } else {
-      // check for the common case
-      if ((p.sinusoids.size() == 0) &&
-	  (p.clampUps.size() == 0) &&
-	  (p.clampDowns.size() == 0) &&
-	  (p.sequence.count == 0)) {
-	// not using any functions
-	if (p.maxValue == 1.0f) {
-	  possibleAlpha = false;
-	}
-      }
-    }
+    return;
   }
 
   return;
 }
 
 
-bool DynamicColor::setName(const std::string& dyncol)
+bool DynamicColor::setName(const string& dyncol)
 {
-  if (dyncol.size() <= 0) {
+  if (dyncol.empty()) {
     name = "";
     return false;
   } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
@@ -283,13 +261,13 @@ bool DynamicColor::setName(const std::string& dyncol)
 }
 
 
-const std::string& DynamicColor::getName() const
+const string& DynamicColor::getName() const
 {
   return name;
 }
 
 
-void DynamicColor::setVariableName(const std::string& vName)
+void DynamicColor::setVariableName(const string& vName)
 {
   varName = vName;
   return;
@@ -303,100 +281,43 @@ void DynamicColor::setVariableTiming(float seconds)
 }
 
 
-void DynamicColor::setVariableUseAlpha(bool value)
+void DynamicColor::setVariableNoAlpha(bool value)
 {
-  varUseAlpha = value;
+  varNoAlpha = value;
   return;
 }
 
 
-void DynamicColor::setLimits(int channel, float min, float max)
+void DynamicColor::setDelay(float delay)
 {
-  if (min < 0.0f) {
-    min = 0.0f;
-  } else if (min > 1.0f) {
-    min = 1.0f;
-  }
-
-  if (max < 0.0f) {
-    max = 0.0f;
-  } else if (max > 1.0f) {
-    max = 1.0f;
-  }
-
-  channels[channel].minValue = min;
-  channels[channel].maxValue = max;
-
+  statesDelay = delay;
   return;
 }
 
 
-void DynamicColor::setSequence(int channel,float period, float offset,
-			       std::vector<char>& list)
+void DynamicColor::addState(float duration, const float _color[4])
 {
-  sequenceParams& seq = channels[channel].sequence;
-
-  delete[] seq.list;
-  seq.list = NULL;
-  seq.count = 0;
-
-  if (period >= minPeriod) {
-    seq.period = period;
-    seq.offset = offset;
-    seq.count = (unsigned int)list.size();
-    seq.list = new char[seq.count];
-    for (unsigned int i = 0; i < seq.count; i++) {
-      seq.list[i] = list[i];
-    }
+  if (duration < 0.0f) {
+    duration = 0.0f;
   }
-
+  colorStates.push_back(ColorState(_color, duration));
   return;
 }
 
 
-void DynamicColor::addSinusoid(int channel, const float sinusoid[3])
+void DynamicColor::addState(float duration,
+                            float r, float g, float b, float a)
 {
-  sinusoidParams params;
-  // check period and weight
-  if ((sinusoid[0] >= minPeriod) && (sinusoid[2] > 0.0f)) {
-    params.period = sinusoid[0];
-    params.offset = sinusoid[1];
-    params.weight = sinusoid[2];
-    channels[channel].sinusoids.push_back(params);
+  if (duration < 0.0f) {
+    duration = 0.0f;
   }
+  const float c[4] = { r, g, b, a };
+  colorStates.push_back(ColorState(c, duration));
   return;
 }
 
 
-void DynamicColor::addClampUp(int channel, const float clampUp[3])
-{
-  clampParams params;
-  // check period and width
-  if ((clampUp[0] >= minPeriod) && (clampUp[2] > 0.0f)) {
-    params.period = clampUp[0];
-    params.offset = clampUp[1];
-    params.width = clampUp[2];
-    channels[channel].clampUps.push_back(params);
-  }
-  return;
-}
-
-
-void DynamicColor::addClampDown(int channel, const float clampDown[3])
-{
-  clampParams params;
-  // check period and width
-  if ((clampDown[0] >= minPeriod) && (clampDown[2] > 0.0f)) {
-    params.period = clampDown[0];
-    params.offset = clampDown[1];
-    params.width = clampDown[2];
-    channels[channel].clampDowns.push_back(params);
-  }
-  return;
-}
-
-
-void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data)
+void DynamicColor::bzdbCallback(const string& /*varName*/, void* data)
 {
   ((DynamicColor*)data)->updateVariable();
   return;
@@ -409,13 +330,14 @@ void DynamicColor::updateVariable()
   varTransition = true;
   varLastChange = TimeKeeper::getTick();
   memcpy(varOldColor, color, sizeof(float[4]));
-  std::string expr = BZDB.get(varName);
+  string expr = BZDB.get(varName);
 
   // parse the optional delay timing
-  std::string::size_type atpos = expr.find_first_of('@');
-  if (atpos == std::string::npos) {
+  string::size_type atpos = expr.find_first_of('@');
+  if (atpos == string::npos) {
     varTimeTmp = varTime;
-  } else {
+  }
+  else {
     char* end;
     const char* start = expr.c_str() + atpos + 1;
     varTimeTmp = (float)strtod(start, &end);
@@ -430,183 +352,118 @@ void DynamicColor::updateVariable()
 }
 
 
-void DynamicColor::update (double t)
+void DynamicColor::update(double t)
 {
   // variables take priority
-  if (varName.size() > 0) {
-    // process the variable value
-    if (!varInit) {
-      varInit = true;
-      varTransition = false;
-      std::string expr = BZDB.get(varName);
-      std::string::size_type atpos = expr.find_first_of('@');
-      if (atpos != std::string::npos) {
-	expr.resize(atpos);
-      }
-      parseColorString(expr, color);
-      memcpy(varOldColor, color, sizeof(float[4]));
-      memcpy(varNewColor, color, sizeof(float[4]));
-      BZDB.addCallback(varName, bzdbCallback, this);
-    }
-
-    // setup the color value
-    if (varTransition) {
-      const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
-      if (diffTime < varTimeTmp) {
-	const float newScale = (varTimeTmp > 0.0f) ? (diffTime / varTimeTmp) : 1.0f;
-	const float oldScale = 1.0f - newScale;
-	color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
-	color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
-	color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
-	color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
-      } else {
-	// make sure the final color is set exactly
-	varTransition = false;
-	memcpy(color, varNewColor, sizeof(float[4]));
-      }
-    }
-
-    return; // nothing else matters
+  if (!varName.empty()) {
+    colorByVariable(t);
+    return;
   }
 
-  // update by color channel
-  for (int c = 0; c < 4; c++) {
-    const ChannelParams& channel = channels[c];
-    unsigned int i;
-
-    bool clampUp = false;
-    bool clampDown = false;
-
-    // sequence rules over the clamps
-    const sequenceParams& seq = channel.sequence;
-    if (seq.count > 0) {
-      const double seqPeriod = (double)seq.period;
-      const double fullPeriod = (double)seq.count * seqPeriod;
-      double indexTime = (t - (double)seq.offset);
-      if (indexTime < 0.0) {
-	indexTime -= fullPeriod * floor(indexTime / fullPeriod);
-      }
-      indexTime = fmod (indexTime, fullPeriod);
-      const unsigned int index = (unsigned int)(indexTime / seqPeriod);
-      if (seq.list[index] == colorMin) {
-	clampDown = true;
-      } else if (seq.list[index] == colorMax) {
-	clampUp = true;
-      }
-    } else {
-      // check for active clampUp
-      for (i = 0; i < channel.clampUps.size(); i++) {
-	const clampParams& clamp = channel.clampUps[i];
-	double upTime = (t - (double)clamp.offset);
-	const double clampPeriod = (double)clamp.period;
-	if (upTime < 0.0) {
-	  upTime -= (double)clamp.period * floor(upTime / clampPeriod);
-	}
-	upTime = fmod (upTime, clampPeriod);
-	if (upTime < (double)clamp.width) {
-	  clampUp = true;
-	  break;
-	}
-      }
-
-      // check for active clampDown
-      for (i = 0; i < channel.clampDowns.size(); i++) {
-	const clampParams& clamp = channel.clampDowns[i];
-	double downTime = (t - (double)clamp.offset);
-	const double clampPeriod = (double)clamp.period;
-	if (downTime < 0.0) {
-	  downTime -= clampPeriod * floor(downTime / clampPeriod);
-	}
-	downTime = fmod (downTime, clampPeriod);
-	if (downTime < (double)clamp.width) {
-	  clampDown = true;
-	  break;
-	}
-      }
-    }
-
-    // the amount of 'max' in the resultant channel's value
-    float factor = 1.0f;
-
-    // check the clamps
-    if (clampUp && clampDown) {
-      factor = 0.5f;
-    } else if (clampUp) {
-      factor = 1.0f;
-    } else if (clampDown) {
-      factor = 0.0f;
-    } else if (channel.sinusoids.size() > 0) {
-      // no clamps, try sinusoids
-      float value = 0.0f;
-      for (i = 0; i < channel.sinusoids.size(); i++) {
-	const sinusoidParams& s = channel.sinusoids[i];
-	const double phase = ((t - (double)s.offset) / (double)s.period);
-	const double clampedPhase = fmod(phase, 1.0);
-	value += s.weight * (float)cos(clampedPhase * (M_PI * 2.0));
-      }
-      // center the factor
-      factor = 0.5f + (0.5f * value);
-      if (factor < 0.0f) {
-	factor = 0.0f;
-      } else if (factor > 1.0f) {
-	factor = 1.0f;
-      }
-    }
-
-    color[c] = (channel.minValue * (1.0f - factor)) +
-      (channel.maxValue * factor);
+  // followed by states
+  if (!colorStates.empty()) {
+    colorByStates(t);
+    return;
   }
-
-  return;
 }
 
+
+void DynamicColor::colorByVariable(double /* t */)
+{
+  // process the variable value
+  if (!varInit) {
+    varInit = true;
+    varTransition = false;
+    string expr = BZDB.get(varName);
+    string::size_type atpos = expr.find_first_of('@');
+    if (atpos != string::npos) {
+      expr.resize(atpos);
+    }
+    parseColorString(expr, color);
+    memcpy(varOldColor, color, sizeof(float[4]));
+    memcpy(varNewColor, color, sizeof(float[4]));
+    BZDB.addCallback(varName, bzdbCallback, this);
+  }
+
+  // setup the color value
+  if (varTransition) {
+    const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
+    if (diffTime < varTimeTmp) {
+      const float newScale = (varTimeTmp > 0.0f) ? (diffTime / varTimeTmp) : 1.0f;
+      const float oldScale = 1.0f - newScale;
+      color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
+      color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
+      color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
+      color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
+    } else {
+      // make sure the final color is set exactly
+      varTransition = false;
+      memcpy(color, varNewColor, sizeof(float[4]));
+    }
+    if (varNoAlpha) {
+      color[3] = (color[3] >= 0.5f) ? 1.0f : 0.0f;
+    }
+  }
+}
+
+
+void DynamicColor::colorByStates(double t)
+{
+  if ((colorStates.size() <= 1) ||
+      (statesLength <= 0.0f)) {
+    memcpy(color, colorStates[0].color, sizeof(float[4]));
+    return;
+  }
+
+  const float phase =
+    (float)fmod((t + (double)statesDelay), (double)statesLength);
+
+  int prevIndex = 0;
+  float endTime = colorStates[0].duration;
+  // finds the first element whose key is not less than the key
+  map<float, int>::const_iterator it = colorEnds.lower_bound(phase);
+  if (it != colorEnds.end()) {
+    endTime = it->first;
+    prevIndex = it->second;
+  }
+
+  const int nextIndex = (prevIndex + 1) % colorStates.size();
+
+  const ColorState& prev = colorStates[prevIndex];
+  const ColorState& next = colorStates[nextIndex];
+
+  if (prev.duration <= 0.0f) {
+    memcpy(color, next.color, sizeof(float[4]));
+    return;
+  }
+
+  const float left = endTime - phase;
+  const float pf = left / prev.duration;
+  const float nf = 1.0f - pf;
+  color[0] = (pf * prev.color[0]) + (nf * next.color[0]);
+  color[1] = (pf * prev.color[1]) + (nf * next.color[1]);
+  color[2] = (pf * prev.color[2]) + (nf * next.color[2]);
+  color[3] = (pf * prev.color[3]) + (nf * next.color[3]);
+}
+        
 
 void * DynamicColor::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
   buf = nboPackStdString(buf, varName);
-  buf = nboPackUByte(buf, varUseAlpha ? 1 : 0);
   buf = nboPackFloat(buf, varTime);
+  buf = nboPackUByte(buf, varNoAlpha ? 1 : 0);
 
-  for (int c = 0; c < 4; c++) {
-    const ChannelParams& p = channels[c];
-    unsigned int i;
-
-    buf = nboPackFloat (buf, p.minValue);
-    buf = nboPackFloat (buf, p.maxValue);
-
-    // sinusoids
-    buf = nboPackUInt (buf, (unsigned int)p.sinusoids.size());
-    for (i = 0; i < p.sinusoids.size(); i++) {
-      buf = nboPackFloat (buf, p.sinusoids[i].period);
-      buf = nboPackFloat (buf, p.sinusoids[i].offset);
-      buf = nboPackFloat (buf, p.sinusoids[i].weight);
-    }
-    // clampUps
-    buf = nboPackUInt (buf, (unsigned int)p.clampUps.size());
-    for (i = 0; i < p.clampUps.size(); i++) {
-      buf = nboPackFloat (buf, p.clampUps[i].period);
-      buf = nboPackFloat (buf, p.clampUps[i].offset);
-      buf = nboPackFloat (buf, p.clampUps[i].width);
-    }
-    // clampDowns
-    buf = nboPackUInt (buf, (unsigned int)p.clampDowns.size());
-    for (i = 0; i < p.clampDowns.size(); i++) {
-      buf = nboPackFloat (buf, p.clampDowns[i].period);
-      buf = nboPackFloat (buf, p.clampDowns[i].offset);
-      buf = nboPackFloat (buf, p.clampDowns[i].width);
-    }
-    // sequence
-    const sequenceParams& seq = p.sequence;
-    buf = nboPackUInt (buf, seq.count);
-    if (seq.count > 0) {
-      buf = nboPackFloat (buf, seq.period);
-      buf = nboPackFloat (buf, seq.offset);
-      for (i = 0; i < seq.count; i++) {
-	buf = nboPackUByte (buf, (uint8_t)seq.list[i]);
-      }
-    }
+  buf = nboPackFloat(buf, statesDelay);
+  buf = nboPackUInt(buf, (uint32_t)colorStates.size());
+  for (size_t i = 0; i < colorStates.size(); i++) {
+    const ColorState& state = colorStates[i];
+    buf = nboPackFloat(buf, state.color[0]);
+    buf = nboPackFloat(buf, state.color[1]);
+    buf = nboPackFloat(buf, state.color[2]);
+    buf = nboPackFloat(buf, state.color[3]);
+    buf = nboPackFloat(buf, state.duration);
   }
 
   return buf;
@@ -619,58 +476,21 @@ void * DynamicColor::unpack(void *buf)
 
   uint8_t u8;
   buf = nboUnpackStdString(buf, varName);
-  buf = nboUnpackUByte(buf, u8);
-  varUseAlpha = (u8 != 0);
   buf = nboUnpackFloat(buf, varTime);
+  buf = nboUnpackUByte(buf, u8);
+  varNoAlpha = (u8 != 0);
 
-  for (int c = 0; c < 4; c++) {
-    ChannelParams& p = channels[c];
-    unsigned int i;
-    uint32_t size;
-
-    buf = nboUnpackFloat (buf, p.minValue);
-    buf = nboUnpackFloat (buf, p.maxValue);
-
-    // sinusoids
-    buf = nboUnpackUInt (buf, size);
-    p.sinusoids.resize(size);
-    for (i = 0; i < size; i++) {
-      buf = nboUnpackFloat (buf, p.sinusoids[i].period);
-      buf = nboUnpackFloat (buf, p.sinusoids[i].offset);
-      buf = nboUnpackFloat (buf, p.sinusoids[i].weight);
-    }
-    // clampUps
-    buf = nboUnpackUInt (buf, size);
-    p.clampUps.resize(size);
-    for (i = 0; i < size; i++) {
-      buf = nboUnpackFloat (buf, p.clampUps[i].period);
-      buf = nboUnpackFloat (buf, p.clampUps[i].offset);
-      buf = nboUnpackFloat (buf, p.clampUps[i].width);
-    }
-    // clampDowns
-    buf = nboUnpackUInt (buf, size);
-    p.clampDowns.resize(size);
-    for (i = 0; i < size; i++) {
-      buf = nboUnpackFloat (buf, p.clampDowns[i].period);
-      buf = nboUnpackFloat (buf, p.clampDowns[i].offset);
-      buf = nboUnpackFloat (buf, p.clampDowns[i].width);
-    }
-    // sequence
-    buf = nboUnpackUInt (buf, size);
-    sequenceParams& seq = p.sequence;
-    seq.count = size;
-    if (size > 0) {
-      buf = nboUnpackFloat (buf, seq.period);
-      buf = nboUnpackFloat (buf, seq.offset);
-      seq.list = new char[size];
-      for (i = 0; i < size; i++) {
-	uint8_t value;
-	buf = nboUnpackUByte (buf, value);
-	seq.list[i] = value;
-      }
-    } else {
-      seq.list = NULL;
-    }
+  uint32_t statesCount;
+  buf = nboUnpackFloat(buf, statesDelay);
+  buf = nboUnpackUInt(buf, statesCount);
+  for (size_t i = 0; i < statesCount; i++) {
+    ColorState state;
+    buf = nboUnpackFloat(buf, state.color[0]);
+    buf = nboUnpackFloat(buf, state.color[1]);
+    buf = nboUnpackFloat(buf, state.color[2]);
+    buf = nboUnpackFloat(buf, state.color[3]);
+    buf = nboUnpackFloat(buf, state.duration);
+    colorStates.push_back(state);
   }
 
   finalize();
@@ -682,80 +502,49 @@ void * DynamicColor::unpack(void *buf)
 int DynamicColor::packSize() const
 {
   int fullSize = 0;
+
   fullSize += nboStdStringPackSize(name);
+
   fullSize += nboStdStringPackSize(varName);
-  fullSize += sizeof(uint8_t); // varUseAlpha
-  fullSize += sizeof(float); // varTime
-  for (int c = 0; c < 4; c++) {
-    fullSize += sizeof(float) * 2; // the limits
-    fullSize += sizeof(uint32_t);
-    fullSize += (int)(channels[c].sinusoids.size() * (sizeof(sinusoidParams)));
-    fullSize += sizeof(uint32_t);
-    fullSize += (int)(channels[c].clampUps.size() * (sizeof(clampParams)));
-    fullSize += sizeof(uint32_t);
-    fullSize += (int)(channels[c].clampDowns.size() * (sizeof(clampParams)));
-    fullSize += sizeof(uint32_t);
-    const sequenceParams& seq = channels[c].sequence;
-    if (seq.count > 0) {
-      fullSize += sizeof(float) * 2; // period and offset
-      fullSize += seq.count * sizeof(char);
-    }
-  }
+  fullSize += sizeof(float);   // varTime
+  fullSize += sizeof(uint8_t); // varNoAlpha
+
+  fullSize += sizeof(float);    // states delay
+  fullSize += sizeof(uint32_t); // states count
+  fullSize += sizeof(float) * 5 * colorStates.size(); // states data
+
   return fullSize;
 }
 
 
-void DynamicColor::print(std::ostream& out, const std::string& indent) const
+void DynamicColor::print(std::ostream& out, const string& indent) const
 {
-  const char *colorStrings[4] = { "red", "green", "blue", "alpha" };
-
   out << indent << "dynamicColor" << std::endl;
 
-  if (name.size() > 0) {
+  if (!name.empty()) {
     out << indent << "  name " << name << std::endl;
   }
 
-  if (varName.size() > 0) {
-    out << indent << "  variable " << varName << std::endl;
-    if (varUseAlpha) {
-      out << indent << "  varUseAlpha " << varName << std::endl;
-    }
+  if (!varName.empty()) {
+    out << indent << "  varName " << varName << std::endl;
     if (varTime != 1.0f) {
       out << indent << "  varTime " << varTime << std::endl;
     }
+    if (varNoAlpha) {
+      out << indent << "  varNoAlpha " << std::endl;
+    }
   }
 
-  for (int c = 0; c < 4; c++) {
-    const char *colorStr = colorStrings[c];
-    const ChannelParams& p = channels[c];
-    if ((p.minValue != 0.0f) || (p.maxValue != 1.0f)) {
-      out << indent << "  " << colorStr << " limits "
-	  << p.minValue << " " << p.maxValue << std::endl;
-    }
-    unsigned int i;
-    if (p.sequence.count > 0) {
-      out << indent << "  " << colorStr << " sequence " << p.sequence.period << " "
-	  << p.sequence.offset;
-      for (i = 0; i < p.sequence.count; i++) {
-	out << " " << (int)p.sequence.list[i];
-      }
-      out << std::endl;
-    }
-    for (i = 0; i < p.sinusoids.size(); i++) {
-      const sinusoidParams& f = p.sinusoids[i];
-      out << indent << "  " << colorStr << " sinusoid "
-	  << f.period << " " << f.offset << " " << f.weight << std::endl;
-    }
-    for (i = 0; i < p.clampUps.size(); i++) {
-      const clampParams& f = p.clampUps[i];
-      out << indent << "  " << colorStr << " clampup "
-	  << f.period << " " << f.offset << " " << f.width << std::endl;
-    }
-    for (i = 0; i < p.clampDowns.size(); i++) {
-      const clampParams& f = p.clampDowns[i];
-      out << indent << "  " << colorStr << " clampdown "
-	  << f.period << " " << f.offset << " " << f.width << std::endl;
-    }
+  if (statesDelay != 0.0f) {
+    out << indent << "  delay " << statesDelay << std::endl;
+  }
+  for (size_t i = 0; i < colorStates.size(); i++) {
+    const ColorState& state = colorStates[i];
+    out << indent << "  state " << state.duration << " "
+                                << state.color[0] << " "
+                                << state.color[1] << " "
+                                << state.color[2] << " "
+                                << state.color[3] << std::endl;
   }
 
   out << indent << "end" << std::endl << std::endl;

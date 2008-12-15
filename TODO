@@ -359,8 +359,6 @@ so that no work is duplicated.
 
 * server should send less frequent updates for "distant" players
 
-* remove flipz from pyr net code and replace with neg height.
-
 * ipv6 support
 
 * consider using ENet http://enet.cubik.org/ for
@@ -397,6 +395,7 @@ so that no work is duplicated.
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
+  (see MsgJoinServer)
 
 * look into doing projected textures for light glows, this would
   get rid of the 8 light limit.

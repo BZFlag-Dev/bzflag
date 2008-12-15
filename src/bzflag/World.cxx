@@ -531,7 +531,7 @@ void			World::freeInsideNodes() const
 }
 
 
-void		World::makeLinkMaterial()
+void World::makeLinkMaterial()
 {
   const std::string name = "LinkMaterial";
 
@@ -540,41 +540,32 @@ void		World::makeLinkMaterial()
     return;
   }
 
-  int dyncolId = DYNCOLORMGR.findColor(name);
-  if (dyncolId < 0) {
+  int dyncolID = DYNCOLORMGR.findColor(name);
+  if (dyncolID < 0) {
     DynamicColor* dyncol = new DynamicColor;
-    dyncol->setLimits(0, 0.0f, 0.25f); // red
-    dyncol->setLimits(1, 0.0f, 0.25f); // green
-    dyncol->setLimits(2, 0.0f, 0.25f); // blue
-    dyncol->setLimits(3, 0.75f, 0.75f); // alpha
-    // period, offset, weight
-    float params[3] = {2.0f, 0.0f, 1.0f};
-    params[1] = 0.0f * (params[0] / 3.0f); // red
-    dyncol->addSinusoid(0, params);
-    params[1] = 1.0f * (params[0] / 3.0f); // green
-    dyncol->addSinusoid(1, params);
-    params[1] = 2.0f * (params[0] / 3.0f); // blue
-    dyncol->addSinusoid(2, params);
+    dyncol->addState(0.6, 0.5f, 0.0f, 0.0f, 0.75f);
+    dyncol->addState(0.6, 0.0f, 0.3f, 0.0f, 0.75f);
+    dyncol->addState(0.6, 0.0f, 0.0f, 0.7f, 0.75f);
     dyncol->setName(name);
     dyncol->finalize();
-    dyncolId = DYNCOLORMGR.addColor (dyncol);
+    dyncolID = DYNCOLORMGR.addColor (dyncol);
   }
 
-  int texmatId = TEXMATRIXMGR.findMatrix(name);
-  if (texmatId < 0) {
+  int texmatID = TEXMATRIXMGR.findMatrix(name);
+  if (texmatID < 0) {
     TextureMatrix* texmat = new TextureMatrix;
     texmat->setDynamicShift(0.0f, -0.05f);
     texmat->setName(name);
     texmat->finalize();
-    texmatId = TEXMATRIXMGR.addMatrix (texmat);
+    texmatID = TEXMATRIXMGR.addMatrix (texmat);
   }
 
   BzMaterial mat;
   const float color[4] = {0.0f, 0.0f, 0.0f, 0.5f};
   mat.setDiffuse(color);
-  mat.setDynamicColor(dyncolId);
+  mat.setDynamicColor(dyncolID);
   mat.setTexture("telelink");
-  mat.setTextureMatrix(texmatId);
+  mat.setTextureMatrix(texmatID);
   mat.setNoLighting(true);
   mat.setName(name);
   linkMaterial = MATERIALMGR.addMaterial(&mat);

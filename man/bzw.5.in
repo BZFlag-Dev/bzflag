@@ -297,50 +297,20 @@ Instantiates a group, and possibly modifies subobjects
 \fBdynamicColor\fR
 .br 
 \fB  name\fR example_dyncol
-.br 
-  # there are 4 channels that can be modified:
-.br 
-  #   \fBred\fR, \fBgreen\fR, \fBblue\fR, \fBalpha\fR
-.br 
-  # there are 5 types of commands per channel:
-.br 
-  #   \fBlimits\fR, \fBsinusoid\fR, \fBclampUp\fR, \fBclampDown\fR, \fBsequence\fR
-.br 
-  # except for "limits" and "sequence", the commands are \fBrepeatable\fR
-.br 
-  # if a sequence is used, then clampUps and clampDowns have no effect
-.br 
-  # sequences can use three states (0, 1, 2). 
-.br 
-  #   0 \- equivalent to an active clampDown
-.br 
-  #   1 \- equivalent to no clamps
-.br 
-  #   2 \- equivalent to an active clampUp
-.br 
-  # if both clampUp and clampDown are active, the value is (min+max)/2
-.br 
-  # the sinusoid function starts at the max value
-.br 
-  # the sum of a channel's sinusoids is clamped between 0 and 1
-.br 
-\fB  red limits\fR 0 1               # min/max limits
-.br 
-\fB  green sinusoid\fR 0.1 0 0.25    # period, offset, weight
-.br 
-\fB  blue clampUp\fR 0.1 0 0.75      # period, offset, width
-.br 
-\fB  alpha clampDown\fR 0.2 0.5 0.5  # period, offset, width
-.br 
-\fB  red sequence\fR 0.0 0.0 2 0 1 1 2 0 ... # period, offset, list of states
-.br 
-  # BZDB variables can also be used to control dynamic colors:
-.br 
-\fB  variable\fR  _varname # the BZDB variable name
 .br
-\fB  varTime\fR 1.0      # the transition time (in seconds)
+  # States control
+.br
+\fB  state\fR 2.0 red 0.5  # duration, color  (\fBrepeatable\fR)
 .br 
-\fB  varUseAlpha\fR        # use the alpha channel?
+\fB  delay\fR 0.0          # delay seconds for color states
+.br
+  # BZDB variable control  (overrides states control)
+.br
+\fB  varName\fR _varname  # the BZDB variable name
+.br
+\fB  varTime\fR 1.0       # the transition time (in seconds)
+.br 
+\fB  varNoAlpha\fR        # do not use the alpha channel
 .br 
   # the BZDB variable should contain a valid color string.
 .br 
