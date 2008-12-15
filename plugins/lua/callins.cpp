@@ -203,13 +203,8 @@ bool CallIns::PushEntries(lua_State* _L)
 {
   L = _L;
 
-#define PUSH_LUA_CFUNC(x)  \
-  lua_pushliteral(L, #x);  \
-  lua_pushcfunction(L, x); \
-  lua_rawset(L, -3)
-
-  PUSH_LUA_CFUNC(UpdateCallIn);
-  PUSH_LUA_CFUNC(GetCallIns);
+  PUSH_LUA_CFUNC(L, UpdateCallIn);
+  PUSH_LUA_CFUNC(L, GetCallIns);
 
   return true;
 }

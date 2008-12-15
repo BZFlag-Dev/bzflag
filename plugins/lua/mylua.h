@@ -11,6 +11,14 @@ extern "C" {
 
 /******************************************************************************/
 
+#define PUSH_LUA_CFUNC(L, x)  \
+  lua_pushliteral(L, #x);  \
+  lua_pushcfunction(L, x); \
+  lua_rawset(L, -3)
+
+
+/******************************************************************************/
+
 inline bool lua_israwnumber(lua_State* L, int index)
 {
   return (lua_type(L, index) == LUA_TNUMBER);

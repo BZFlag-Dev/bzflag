@@ -238,9 +238,11 @@ setmetatable(lua_block_env, { __index = _G })
 
 local function CustomMapObject(name, data)
   print('CustomMapObject:  ' .. name)
+--[[
   for d = 1, #data do
     print('CustomMapObject:    ' .. data[d])
   end
+--]]
 
   if (name == 'lua') then
     local text = ''
@@ -256,10 +258,12 @@ local function CustomMapObject(name, data)
       if (not success) then
         print(err)
       else
-        if (type(mapText) == 'string') then
-          print('MAPTEXT: ' .. tostring(mapText))
-        elseif (type(mapText) == 'table') then
-          print('MAPTEXT: ' .. table.concat(mapText, '\n'))
+        if (BZ.GetDebugLevel() >= 4) then
+          if (type(mapText) == 'string') then
+            print('MAPTEXT: ' .. tostring(mapText))
+          elseif (type(mapText) == 'table') then
+            print('MAPTEXT: ' .. table.concat(mapText, '\n'))
+          end
         end
         return mapText
       end

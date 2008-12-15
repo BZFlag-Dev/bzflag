@@ -137,33 +137,13 @@ bool RawLink::PushEntries(lua_State* _L)
 {
   L = _L;
 
-  lua_pushliteral(L, "AttachRawLink");
-  lua_pushcfunction(L, AttachRawLink);
-  lua_rawset(L, -3);
-
-  lua_pushliteral(L, "DetachRawLink");
-  lua_pushcfunction(L, DetachRawLink);
-  lua_rawset(L, -3);
-
-  lua_pushliteral(L, "WriteRawLink");
-  lua_pushcfunction(L, WriteRawLink);
-  lua_rawset(L, -3);
-
-  lua_pushliteral(L, "DisconnectRawLink");
-  lua_pushcfunction(L, DisconnectRawLink);
-  lua_rawset(L, -3);
-
-  lua_pushliteral(L, "GetRawLinkIP");
-  lua_pushcfunction(L, GetRawLinkIP);
-  lua_rawset(L, -3);
-
-  lua_pushliteral(L, "GetRawLinkHost");
-  lua_pushcfunction(L, GetRawLinkHost);
-  lua_rawset(L, -3);
-
-  lua_pushliteral(L, "GetRawLinkQueued");
-  lua_pushcfunction(L, GetRawLinkQueued);
-  lua_rawset(L, -3);
+  PUSH_LUA_CFUNC(L, AttachRawLink);
+  PUSH_LUA_CFUNC(L, DetachRawLink);
+  PUSH_LUA_CFUNC(L, WriteRawLink);
+  PUSH_LUA_CFUNC(L, DisconnectRawLink);
+  PUSH_LUA_CFUNC(L, GetRawLinkIP);
+  PUSH_LUA_CFUNC(L, GetRawLinkHost);
+  PUSH_LUA_CFUNC(L, GetRawLinkQueued);
 
   return true;
 }

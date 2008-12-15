@@ -43,30 +43,25 @@ static int SetString(lua_State* L);
 
 bool BZDB::PushEntries(lua_State* L)
 {
-#define PUSH_LUA_CFUNC(x)  \
-  lua_pushliteral(L, #x);  \
-  lua_pushcfunction(L, x); \
-  lua_rawset(L, -3)
-
   lua_pushliteral(L, "DB");
   lua_newtable(L);
 
-  PUSH_LUA_CFUNC(GetMap);
-  PUSH_LUA_CFUNC(GetList);
+  PUSH_LUA_CFUNC(L, GetMap);
+  PUSH_LUA_CFUNC(L, GetList);
 
-  PUSH_LUA_CFUNC(Exists);
-  PUSH_LUA_CFUNC(IsPersistent);
-  PUSH_LUA_CFUNC(GetDefault);
+  PUSH_LUA_CFUNC(L, Exists);
+  PUSH_LUA_CFUNC(L, IsPersistent);
+  PUSH_LUA_CFUNC(L, GetDefault);
 
-  PUSH_LUA_CFUNC(GetInt);
-  PUSH_LUA_CFUNC(GetBool);
-  PUSH_LUA_CFUNC(GetFloat);
-  PUSH_LUA_CFUNC(GetString);
+  PUSH_LUA_CFUNC(L, GetInt);
+  PUSH_LUA_CFUNC(L, GetBool);
+  PUSH_LUA_CFUNC(L, GetFloat);
+  PUSH_LUA_CFUNC(L, GetString);
 
-  PUSH_LUA_CFUNC(SetInt);
-  PUSH_LUA_CFUNC(SetBool);
-  PUSH_LUA_CFUNC(SetFloat);
-  PUSH_LUA_CFUNC(SetString);
+  PUSH_LUA_CFUNC(L, SetInt);
+  PUSH_LUA_CFUNC(L, SetBool);
+  PUSH_LUA_CFUNC(L, SetFloat);
+  PUSH_LUA_CFUNC(L, SetString);
 
   lua_rawset(L, -3);
 

@@ -254,19 +254,14 @@ static bool CreateMetatble(lua_State* L)
   lua_pushcfunction(L, MetaGC);
   lua_rawset(L, -3);
 
-#define PUSH_LUA_CFUNC(x)  \
-  lua_pushliteral(L, #x);  \
-  lua_pushcfunction(L, x); \
-  lua_rawset(L, -3)
-
   lua_pushstring(L, "__index");
   lua_newtable(L);
   {
-    PUSH_LUA_CFUNC(Cancel);
-    PUSH_LUA_CFUNC(Success);
-    PUSH_LUA_CFUNC(IsActive);
-    PUSH_LUA_CFUNC(GetURL);
-    PUSH_LUA_CFUNC(GetPostData);
+    PUSH_LUA_CFUNC(L, Cancel);
+    PUSH_LUA_CFUNC(L, Success);
+    PUSH_LUA_CFUNC(L, IsActive);
+    PUSH_LUA_CFUNC(L, GetURL);
+    PUSH_LUA_CFUNC(L, GetPostData);
   }
   lua_rawset(L, -3);
 
