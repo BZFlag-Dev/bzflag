@@ -4683,7 +4683,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
 
         // ok read in all the data we may have waiting
         void* data = malloc(readSize);
-        memcpy(data,buf,readSize);
+        memcpy(data, buf, readSize);
         unsigned int totalSize = readSize;
 
         while (e == ReadAll) {
@@ -4754,14 +4754,14 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
       memcpy(data, buf, readSize);
       unsigned int totalSize = readSize;
 
-      while ( e == ReadAll ) {
+      while (e == ReadAll) {
         netHandler->flushData();
 
         e = netHandler->receive(256);
         readSize = netHandler->getTcpReadSize();
         buf = netHandler->getTcpBuffer();
 
-        unsigned char*temp = (unsigned char*)malloc(totalSize + readSize);
+        unsigned char* temp = (unsigned char*)malloc(totalSize + readSize);
         memcpy(temp, data, totalSize);
         memcpy(temp + totalSize, buf, readSize);
         free(data);
@@ -4846,12 +4846,14 @@ static void runMainLoop ( void )
     // send replay packets
     // (this check and response should follow immediately after the select() call)
     GameKeeper::Player::passTCPMutex();
-    if (Replay::playing())
+    if (Replay::playing()) {
       Replay::sendPackets ();
+    }
 
     // game time updates
-    if (!Replay::enabled())
+    if (!Replay::enabled()) {
       sendPendingGameTime();
+    }
 
     // synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
@@ -4873,8 +4875,9 @@ static void runMainLoop ( void )
     if (nfound > 0) {
       //logDebugMessage(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
-      if (FD_ISSET(wksSocket, &read_set))
+      if (FD_ISSET(wksSocket, &read_set)) {
 	acceptClient();
+      }
 
       // check if we have any UDP packets pending
       if (NetHandler::isUdpFdSet(&read_set)) {
@@ -4895,8 +4898,9 @@ static void runMainLoop ( void )
 	  getGeneralMessageInfo(&buf,code,len);
 
 	  if (code == MsgPingCodeRequest) {
-	    if (len != 2)
+	    if (len != 2) {
 	      continue;
+            }
 	    // if I'm ignoring pings
 	    // then ignore the ping.
 	    if (handlePings) {
@@ -4904,7 +4908,8 @@ static void runMainLoop ( void )
 	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
 	    }
 	    continue;
-	  } else if (code == MsgEchoRequest) {
+	  }
+	  else if (code == MsgEchoRequest) {
 	    // Handle pings of the server from a client
 	    // This could be factored into it's own function
 	    // Also, Maybe have an option to ignore pings
@@ -4981,9 +4986,6 @@ static void runMainLoop ( void )
 	}
       }
 
-      GameKeeper::Player *playerData = NULL;
-      peerItr = netConnectedPeers.begin();
-
       // process the connections
       for (peerItr  = netConnectedPeers.begin();
            peerItr != netConnectedPeers.end(); ++peerItr) {
@@ -5003,21 +5005,21 @@ static void runMainLoop ( void )
       }
     }
 
-    // go thru all the connected users, see if they need any automatic handlaking
-    std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
-
-    while (peerItr != netConnectedPeers.end()) {
+    // go thru all the connected users, see if they need any automatic handling
+    std::map<int, NetConnectedPeer>::iterator peerItr;
+    for (peerItr  = netConnectedPeers.begin();
+         peerItr != netConnectedPeers.end(); ++peerItr) {
       NetConnectedPeer& peer = peerItr->second;
-      if (!peer.sent) {
-	// check for any waiting conenctions if they are timed, then see if anyone wants them
-	// little guy hasn't sent us a thing
+      if (!peer.sent) { // little guy hasn't sent us a thing
+	// check for any waiting conenctions if they are timed,
+	// then see if anyone wants them
 	if ((now - peer.startTime) > tcpTimeout) {
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
 	  eventData.connectionID = peerItr->first;
 
-	  worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
+	  worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection, &eventData);
 	  peer.sent = true;
 
 	  // no love for our little connection, let him go.
@@ -5026,8 +5028,8 @@ static void runMainLoop ( void )
           }
 	}
       }
-      peerItr++;
     }
+
     // Fire world weapons
     world->getWorldWeapons().fire();
 
@@ -5036,8 +5038,9 @@ static void runMainLoop ( void )
     // clean any pending players and rebuild the world if necessary
     if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {
       worldWasSentToAPlayer = false;
-      if ((clOptions->worldFile == "") && !Replay::enabled())
+      if ((clOptions->worldFile == "") && !Replay::enabled()) {
 	defineWorld();
+      }
     }
 
     dontWait = dontWait || updateCurl();
