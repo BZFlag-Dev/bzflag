@@ -219,7 +219,7 @@ bool BZWReader::readRawLines(vector<string>& lines,
     lineNum++;
 
     if (!line.empty()) {
-      logDebugMessage(3, "reading worldfile raw line: %s\n", line.c_str());
+      logDebugMessage(4, "reading worldfile raw line: %s\n", line.c_str());
     }
 
     const char* start = TextUtils::skipWhitespace(line.c_str());
@@ -267,7 +267,7 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
     // read first token but do not skip newlines
     readToken(buffer, sizeof(buffer));
     if (buffer[0] != '\0') {
-      logDebugMessage(3,"reading worldfile token %s\n",buffer);
+      logDebugMessage(4, "reading worldfile token %s\n",buffer);
     }
 
     if (buffer[0] == '\0') {
