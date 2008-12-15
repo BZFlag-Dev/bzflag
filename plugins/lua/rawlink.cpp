@@ -18,16 +18,15 @@ static lua_State* L = NULL;
 
 static int AttachRawLink(lua_State* L);
 static int DetachRawLink(lua_State* L);
-static int DisconnectRawLink(lua_State* L);
 static int WriteRawLink(lua_State* L);
+static int DisconnectRawLink(lua_State* L);
 static int GetRawLinkIP(lua_State* L);
 static int GetRawLinkHost(lua_State* L);
 static int GetRawLinkQueued(lua_State* L);
 
 
-class Link;
-typedef map<int, Link*> LinkMap;
-static LinkMap links;
+typedef map<int, class Link*> LinkMap;
+static LinkMap linkMap;
 
 
 /******************************************************************************/
@@ -56,7 +55,7 @@ Link::Link(lua_State* L, int _id)
 : id(_id)
 , funcRef(LUA_NOREF)
 {
-  if (links.find(id) != links.end()) {
+  if (linkMap.find(id) != linkMap.end()) {
     return;
   }
   if (!bz_registerNonPlayerConnectionHandler(id, this)) {
@@ -73,7 +72,7 @@ Link::Link(lua_State* L, int _id)
     return;
   }
 
-  links[id] = this;
+  linkMap[id] = this;
 }
 
 
@@ -83,8 +82,7 @@ Link::~Link()
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
   }
-
-  links.erase(id);
+  linkMap.erase(id);
 }
 
 
@@ -176,13 +174,13 @@ bool RawLink::CleanUp(lua_State* _L)
   L = NULL;
 
   LinkMap::iterator it, next;
-  for (it = links.begin(); it != links.end(); /* no-op */) {
+  for (it = linkMap.begin(); it != linkMap.end(); /* no-op */) {
     next = it;
     next++;
     delete it->second;
     it = next;
   }
-  links.clear();
+  linkMap.clear();
 
   return true;
 }
@@ -200,8 +198,6 @@ static int AttachRawLink(lua_State* L)
   }
   lua_settop(L, 2); // discard any extras
 
-  // if fetch->IsActive() is true, this will push a userdata
-  //  on to the top of the stack. Otherwise, return a nil.
   Link* link = new Link(L, linkID);
   if (!link->IsValid()) {
     delete link;
@@ -215,8 +211,8 @@ static int AttachRawLink(lua_State* L)
 static int DetachRawLink(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  LinkMap::iterator it = links.find(linkID);
-  if (it == links.end()) {
+  LinkMap::iterator it = linkMap.find(linkID);
+  if (it == linkMap.end()) {
     return 0;
   }
   Link* link = it->second;
@@ -229,7 +225,7 @@ static int DetachRawLink(lua_State* L)
 static int WriteRawLink(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (links.find(linkID) == links.end()) {
+  if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
   }
   size_t size;
@@ -242,7 +238,7 @@ static int WriteRawLink(lua_State* L)
 static int DisconnectRawLink(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (links.find(linkID) == links.end()) {
+  if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
   }
   lua_pushboolean(L, bz_disconnectNonPlayerConnection(linkID));
@@ -253,7 +249,7 @@ static int DisconnectRawLink(lua_State* L)
 static int GetRawLinkIP(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (links.find(linkID) == links.end()) {
+  if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
   }
   lua_pushstring(L, bz_getNonPlayerConnectionIP(linkID));
@@ -264,7 +260,7 @@ static int GetRawLinkIP(lua_State* L)
 static int GetRawLinkHost(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (links.find(linkID) == links.end()) {
+  if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
   }
   lua_pushstring(L, bz_getNonPlayerConnectionHost(linkID));
@@ -275,7 +271,7 @@ static int GetRawLinkHost(lua_State* L)
 static int GetRawLinkQueued(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (links.find(linkID) == links.end()) {
+  if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
   }
   lua_pushinteger(L, bz_getNonPlayerConnectionOutboundPacketCount(linkID));
