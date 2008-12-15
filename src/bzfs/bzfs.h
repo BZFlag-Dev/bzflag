@@ -165,10 +165,11 @@ extern unsigned int maxNonPlayerDataChunk;
 typedef struct {
   int socket;
   int player;
-  NetHandler *handler;
-  std::vector<bz_NonPlayerConnectionHandler*> notifyList;
 
-  std::list<std::string> pendingSendChunks;
+  NetHandler*                    netHandler;
+  bz_NonPlayerConnectionHandler* apiHandler;
+
+  std::list<std::string> sendChunks;
 
   double    startTime;
   bool	    sent;

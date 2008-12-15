@@ -1217,7 +1217,8 @@ static void acceptClient()
 
   // they aren't a player yet till they send us the connection string
   NetConnectedPeer	peer;
-  peer.handler = new NetHandler(clientAddr, fd);
+  peer.netHandler = new NetHandler(clientAddr, fd);
+  peer.apiHandler = NULL;
   peer.player = -1;
   peer.socket = fd;
   peer.deleteMe = false;
@@ -4535,14 +4536,14 @@ static void doListServerUpdate ( TimeKeeper &tm )
 
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
-  if (peer.pendingSendChunks.empty()) {
+  if (peer.sendChunks.empty()) {
     return;
   }
 
-  const std::string& netData = peer.pendingSendChunks.front();
-  peer.handler->bufferedSend(netData.data(), netData.size());
+  const std::string& chunk = peer.sendChunks.front();
+  peer.netHandler->bufferedSend(chunk.data(), chunk.size());
 
-  peer.pendingSendChunks.pop_front();
+  peer.sendChunks.pop_front();
 }
 
 bool updateCurl ( void )
@@ -4563,6 +4564,222 @@ bool updateCurl ( void )
 
   return cURLManager::perform();
 }
+
+
+static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
+                                 fd_set& read_set, fd_set& write_set)
+{
+  if (peer.deleteMe) {
+    return; // skip it, it's dead to us, we'll close and purge it later
+  }
+
+  NetHandler* netHandler = peer.netHandler;
+  
+  if (peer.player != -1) {
+    peer.sent = true;
+    // it's a player now, so treat them with the respect they deserve
+    GameKeeper::Player* playerData =
+      GameKeeper::Player::getPlayerByIndex(peer.player);
+
+    if (playerData && netHandler) {
+      // send whatever we have ... if any
+      if (netHandler->pflush(&write_set) == -1) {
+        removePlayer(peer.player, "ECONNRESET/EPIPE", false);
+      } else {
+        playerData->handleTcpPacket(&read_set);
+      }
+    }
+    // check for any async data to send out
+    sendBufferedNetDataForPeer(peer);
+    return; // player connection has been handled
+  }
+
+  // it's not a player yet (but may be), check for any data to send out
+  sendBufferedNetDataForPeer(peer);
+
+  if (netHandler->pflush(&write_set) == -1) {
+    peer.deleteMe = true; // kill it later
+    return; // disconnected
+  }
+
+  if (!netHandler->isFdSet(&read_set)) {
+    // there is no data, so delete us or move along
+    // ... and it's not a player for god's sake
+    if ((peer.player == -1) && !peer.apiHandler && peer.sendChunks.empty()) {
+      if (peer.sent) {
+        // he has sent some data, but now is dead, let em go.
+        peer.deleteMe = true;
+      }
+    }
+    return;
+  }
+
+  // there is some data for us
+  if (!peer.apiHandler) {
+    // no apiHandler, we are probably new, just read in the first N bits
+    RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
+
+    if ((e != ReadAll) && (e != ReadPart)) {
+      // there was an error but we aren't a player yet
+      if (e == ReadError) {
+        nerror("error on read");
+      }
+      else {
+        if (e == ReadHuge) {
+          logDebugMessage(1,
+            "socket [%d] sent huge packet length, possible attack\n", sockFD);
+        }
+        peer.deleteMe = true;
+      }
+    }
+    else {
+      // the dude has sent SOME data
+      peer.sent = true;
+
+      unsigned int readSize = netHandler->getTcpReadSize();
+      void *buf = netHandler->getTcpBuffer();
+      int fd = sockFD;
+
+      // check for the magic header string
+      const char*  header = BZ_CONNECT_HEADER;
+      const size_t headerLen = strlen(header);
+
+      if ((e == ReadAll) && (strncmp((char*)buf, header, headerLen) == 0)) {
+        // it's a player, it sent us the magic string, get it setup
+        netHandler->flushData();
+
+        // send server version and playerid
+        char buffer[9];
+        memcpy(buffer, getServerVersion(), 8);
+
+        // send 0xff if list is full
+        buffer[8] = (char)0xff;
+
+        PlayerId playerIndex = getNewPlayer(netHandler);
+        peer.player = playerIndex;
+
+        if (playerIndex < 0xff) {
+          logDebugMessage(1,
+            "Player [%d] accept() from %s on %i\n",
+            playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
+
+          buffer[8] = (uint8_t)playerIndex;
+          send(fd, (const char*)buffer, sizeof(buffer), 0);
+        }
+        else {
+          // full? reject by closing socket
+          logDebugMessage(1,
+            "all slots occupied, rejecting accept() from %s on %i\n",
+            inet_ntoa(netHandler->getIPAddress()), fd);
+
+          // send back 0xff before closing
+          send(fd, (const char*)buffer, sizeof(buffer), 0);
+          peer.deleteMe = true; // kill/close later
+        }
+      }
+      else { // not the BZFS header
+        // it's NOT a player but it sent us data,
+        // see if anyone wants to deal with it
+
+        // ok read in all the data we may have waiting
+        void* data = malloc(readSize);
+        memcpy(data,buf,readSize);
+        unsigned int totalSize = readSize;
+
+        while (e == ReadAll) {
+          netHandler->flushData();
+
+          e = netHandler->receive(256);
+          readSize = netHandler->getTcpReadSize();
+          buf = netHandler->getTcpBuffer();
+
+          unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
+          memcpy(temp, data, totalSize);
+          memcpy(temp + totalSize, buf, readSize);
+          free(data);
+          data = temp;
+          totalSize += readSize;
+        }
+
+        // we have a copy of all the data, so we can flush now
+        netHandler->flushData();
+
+        // call an event to let people know we got a new connect
+        bz_NewNonPlayerConnectionEventData_V1 eventData;
+
+        eventData.data = data;
+        eventData.size = totalSize;
+        eventData.connectionID = sockFD;
+
+        worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
+        free(data);
+
+        if (!peer.apiHandler && peer.sendChunks.empty()) {
+          // nobody wanted it and it's got nothing to send so mark it for purge
+          peer.deleteMe = true;
+        }
+      }
+    }
+  }
+  else { // (peer.apiHandler != NULL)
+    // we have an API listener, so lets get all our data,
+    // and send it to him so he can do what he wants with it
+    RxStatus e = netHandler->receive(256);
+
+    if ((e != ReadAll) && (e != ReadPart)) {
+      // we could not read, it must have disconnected, or there was an error
+      if (peer.apiHandler) {
+        peer.apiHandler->disconnect(sockFD);
+      }
+
+      peer.deleteMe = true;
+
+      if (e == ReadError) {
+        nerror("error on read");
+      }
+
+      if (e == ReadHuge) {
+        logDebugMessage(1,
+          "socket [%d] sent huge packet length, possible attack\n", sockFD);
+      }
+    }
+    else {
+      // the dude has sent SOME data
+      peer.sent = true;
+
+      unsigned int readSize = netHandler->getTcpReadSize();
+      void* buf = netHandler->getTcpBuffer();
+
+      void* data = malloc(readSize);
+      memcpy(data, buf, readSize);
+      unsigned int totalSize = readSize;
+
+      while ( e == ReadAll ) {
+        netHandler->flushData();
+
+        e = netHandler->receive(256);
+        readSize = netHandler->getTcpReadSize();
+        buf = netHandler->getTcpBuffer();
+
+        unsigned char*temp = (unsigned char*)malloc(totalSize + readSize);
+        memcpy(temp, data, totalSize);
+        memcpy(temp + totalSize, buf, readSize);
+        free(data);
+        data = temp;
+        totalSize += readSize;
+      }
+
+      netHandler->flushData();
+
+      if (peer.apiHandler) {
+        peer.apiHandler->pending(sockFD, data, totalSize);
+      }
+
+      free(data);
+    }
+  }
+}
+
 
 static void runMainLoop ( void )
 {
@@ -4621,7 +4838,8 @@ static void runMainLoop ( void )
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+    nfound = select(maxFileDescriptor + 1,
+                    (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
     //	logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
@@ -4686,21 +4904,24 @@ static void runMainLoop ( void )
 	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
 	    }
 	    continue;
-	  } else if (code == MsgEchoRequest) {   // Handle pings of the server from a client
-	    unsigned char tag = 0;               // This could be factored into it's own function
-	    buf = nboUnpackUByte(buf, tag);      // Also, Maybe have an option to ignore pings
+	  } else if (code == MsgEchoRequest) {
+	    // Handle pings of the server from a client
+	    // This could be factored into it's own function
+	    // Also, Maybe have an option to ignore pings
+	    unsigned char tag = 0;
+	    buf = nboUnpackUByte(buf, tag);
 
 	    sendEchoResponse(&uaddr, tag);
 
 	    continue;
 	  }
 
-
 	  if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
 	    // It is a UDP Link Request ... try to match it
 	    uint8_t index;
 	    buf = nboUnpackUByte(buf, index);
-	    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(index);
+	    GameKeeper::Player *playerData =
+	      GameKeeper::Player::getPlayerByIndex(index);
 
 	    if (playerData) {
 	      netHandler = playerData->netHandler;
@@ -4713,49 +4934,49 @@ static void runMainLoop ( void )
 		logDebugMessage(2,"Inbound UDP up %s:%d\n",
 				inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 	      } else {
-		logDebugMessage(2,"Inbound UDP rejected %s:%d different IP than original\n",
-				inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+		logDebugMessage(2,
+		  "Inbound UDP rejected %s:%d different IP than original\n",
+		  inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 	      }
 	      continue;
 	    }
 	  }
+
 	  // handle the command for UDP
 	  handleCommand(ubuf, true, netHandler);
 
 	  // don't spend more than 250ms receiving udp
 	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
-	    logDebugMessage(2,"Too much UDP traffic, will hope to catch up later\n");
+	    logDebugMessage(2,
+	      "Too much UDP traffic, will hope to catch up later\n");
 	    break;
 	  }
 	}
       }
 
       // process eventual resolver requests
-
       NetHandler::checkDNS(&read_set, &write_set);
 
       // now check our connected peer list, and see if we have any data pending.
+      std::map<int,NetConnectedPeer>::iterator peerItr;
 
-      std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
-
-      // get a list of connections to purge
-      // then purge them
+      // get a list of connections to purge, then purge them
       std::vector<int> toKill;
 
-      while (peerItr != netConnectedPeers.end()) {
-	if (peerItr->second.deleteMe)
+      for (peerItr  = netConnectedPeers.begin();
+           peerItr != netConnectedPeers.end(); ++peerItr) {
+	if (peerItr->second.deleteMe) {
 	  toKill.push_back(peerItr->first);
-
-	peerItr++;
+        }
       }
 
       for (unsigned int i = 0; i < toKill.size(); i++) {
 	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end()) {
 	  NetConnectedPeer &peer = netConnectedPeers[toKill[i]];
-	  if (peer.handler)
-	    delete(peer.handler);
-
-	  peer.handler = NULL;
+	  if (peer.netHandler) {
+	    delete(peer.netHandler);
+          }
+	  peer.netHandler = NULL;
 	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
 	}
       }
@@ -4763,222 +4984,46 @@ static void runMainLoop ( void )
       GameKeeper::Player *playerData = NULL;
       peerItr = netConnectedPeers.begin();
 
-      while (peerItr != netConnectedPeers.end()) {
-	if (peerItr->second.deleteMe) {
-	  // skip it it's dead to us, well close and purge it later
-	  peerItr++;
-	  continue;
-	}
-
-	NetHandler *netHandler = peerItr->second.handler;
-	if (peerItr->second.player != -1) {
-	  peerItr->second.sent = true;
-	  // it's a player now, so treat them with the respect they deserve
-	  playerData = GameKeeper::Player::getPlayerByIndex(peerItr->second.player);
-
-	  if (playerData && peerItr->second.handler) {
-	    // send whatever we have ... if any
-	    if (netHandler->pflush(&write_set) == -1)
-	      removePlayer(peerItr->second.player, "ECONNRESET/EPIPE", false);
-	    else
-	      playerData->handleTcpPacket(&read_set);
-	  }
-	  // check for any async data to send out
-	  sendBufferedNetDataForPeer(peerItr->second);
-	} else {
-	  // it's not a player yet ( but may be )
-	  // check for any data to send out
-	  sendBufferedNetDataForPeer(peerItr->second);
-
-	  if (netHandler->pflush(&write_set) == -1)
-	    peerItr->second.deleteMe = true; // kill it later
-	  else {
-	    if (netHandler->isFdSet(&read_set)) {
-	      // there is some data for us
-	      if ( !peerItr->second.notifyList.size() ) {
-		// we have no listeners yet, so we are probably new.
-		// just read in the first N bits
-		RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
-
-		if ( e !=ReadAll && e != ReadPart ) {
-		  // there was an error but we aren't a player yet
-		  if (e == ReadError)
-		    nerror("error on read");
-		  else {
-		    if (e == ReadHuge)
-		      logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-		    peerItr->second.deleteMe = true;
-		  }
-		} else {
-		  // the dude has sent SOME data
-		  peerItr->second.sent = true;
-
-		  unsigned int readSize = netHandler->getTcpReadSize();
-		  void *buf = netHandler->getTcpBuffer();
-		  int fd = peerItr->first;
-
-		  if (e == ReadAll && strncmp((char*)buf,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER)) == 0 ) {
-		    // it's a player, it sent us the magic string, get it setup
-		    netHandler->flushData();
-
-		    // send server version and playerid
-		    char buffer[9];
-		    memcpy(buffer, getServerVersion(), 8);
-
-		    // send 0xff if list is full
-		    buffer[8] = (char)0xff;
-
-		    PlayerId playerIndex = getNewPlayer(netHandler);
-		    peerItr->second.player = playerIndex;
-
-		    if (playerIndex < 0xff) {
-		      logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
-
-		      buffer[8] = (uint8_t)playerIndex;
-		      send(fd, (const char*)buffer, sizeof(buffer), 0);
-		    } else {
-		      // full? reject by closing socket
-		      logDebugMessage(1,"all slots occupied, rejecting accept() from %s on %i\n", inet_ntoa(netHandler->getIPAddress()), fd);
-
-		      // send back 0xff before closing
-		      send(fd, (const char*)buffer, sizeof(buffer), 0);
-		      peerItr->second.deleteMe = true; // kill/close later
-		    }
-		  } else {
-		    // it's NOT a player but it sent us data, see if anyone wants to deal with it
-
-		    // ok read in all the data we may have waiting
-		    void *data = malloc(readSize);
-		    memcpy(data,buf,readSize);
-		    unsigned int totalSize = readSize;
-
-		    while (e == ReadAll) {
-		      netHandler->flushData();
-
-		      e = netHandler->receive(256);
-		      readSize = netHandler->getTcpReadSize();
-		      buf = netHandler->getTcpBuffer();
-
-		      unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
-		      memcpy(temp,data,totalSize);
-		      memcpy(temp+totalSize,buf,readSize);
-		      free(data);
-		      data = temp;
-		      totalSize += readSize;
-		    }
-
-		    // we have a copy of all the data, so we can flush now
-		    netHandler->flushData();
-
-		    // call an event to let people know we got a new connect
-		    bz_NewNonPlayerConnectionEventData_V1 eventData;
-
-		    eventData.data = data;
-		    eventData.size = totalSize;
-		    eventData.connectionID = peerItr->first;
-
-		    worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
-		    free(data);
-
-		    if ( !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-		      peerItr->second.deleteMe = true;// nobody wanted it and it's got nothing to send so mark it for purge
-		  }
-		}
-	      } else {
-		// we have a listener, so lets get all our data, and send it to him so he can do what he wants to do with us.
-		RxStatus e = netHandler->receive(256);
-
-		if (e !=ReadAll && e != ReadPart) {
-		  // we could not read, it must have disconnected
-		  // there ewas an error
-		  for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
-		    peerItr->second.notifyList[i]->disconnect(peerItr->first);
-
-		  peerItr->second.deleteMe = true;
-
-		  if (e == ReadError)
-		    nerror("error on read");
-
-		  if (e == ReadHuge)
-		    logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-		} else {
-		  // the dude has sent SOME data
-		  peerItr->second.sent = true;
-
-		  unsigned int readSize = netHandler->getTcpReadSize();
-		  void *buf = netHandler->getTcpBuffer();
-
-		  void *data = malloc(readSize);
-		  memcpy(data,buf,readSize);
-		  unsigned int totalSize = readSize;
-
-		  while ( e == ReadAll ) {
-		    netHandler->flushData();
-
-		    e = netHandler->receive(256);
-		    readSize = netHandler->getTcpReadSize();
-		    buf = netHandler->getTcpBuffer();
-
-		    unsigned char*temp = (unsigned char*)malloc(totalSize + readSize);
-		    memcpy(temp,data,totalSize);
-		    memcpy(temp+totalSize,buf,readSize);
-		    free(data);
-		    data = temp;
-		    totalSize += readSize;
-		  }
-
-		  netHandler->flushData();
-
-		  // it has dudes lets lets call them.
-		  for (unsigned int i = 0; i < peerItr->second.notifyList.size(); i++) {
-		    if (peerItr->second.notifyList[i])
-		      peerItr->second.notifyList[i]->pending(peerItr->first,data,totalSize);
-		  }
-
-		  free(data);
-		}
-	      }
-	    } else {
-	      // there is no data, so delete us or move along and it's not a player for gods sake
-	      if ( peerItr->second.player == -1 && !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() ) {
-		if (peerItr->second.sent) // he has sent some data, but now is dead, let em go.
-		  peerItr->second.deleteMe = true;
-	      }
-	    }
-	  }
-	}
-
-	peerItr++;
+      // process the connections
+      for (peerItr  = netConnectedPeers.begin();
+           peerItr != netConnectedPeers.end(); ++peerItr) {
+	processConnectedPeer(peerItr->second, peerItr->first,
+	                     read_set, write_set);
       }
-    } else if (nfound < 0) {
+    }
+    else if (nfound < 0) {
       if (getErrno() != EINTR) {
 	// test code - do not uncomment, will cause big stuttering
 	// TimeKeeper::sleep(1.0f);
       }
-    } else {
-      if (NetHandler::anyUDPPending())
+    }
+    else {
+      if (NetHandler::anyUDPPending()) {
 	NetHandler::flushAllUDP();
+      }
     }
 
     // go thru all the connected users, see if they need any automatic handlaking
     std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
 
-    while ( peerItr != netConnectedPeers.end() ) {
-      if (!peerItr->second.sent) {
+    while (peerItr != netConnectedPeers.end()) {
+      NetConnectedPeer& peer = peerItr->second;
+      if (!peer.sent) {
 	// check for any waiting conenctions if they are timed, then see if anyone wants them
 	// little guy hasn't sent us a thing
-	if (now - peerItr->second.startTime > tcpTimeout) {
+	if ((now - peer.startTime) > tcpTimeout) {
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
 	  eventData.connectionID = peerItr->first;
 
 	  worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
-	  peerItr->second.sent = true;
+	  peer.sent = true;
 
 	  // no love for our little connection, let him go.
-	  if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-	    peerItr->second.deleteMe = true;
+	  if (!peer.apiHandler && peer.sendChunks.empty()) {
+	    peer.deleteMe = true;
+          }
 	}
       }
       peerItr++;
@@ -4998,6 +5043,7 @@ static void runMainLoop ( void )
     dontWait = dontWait || updateCurl();
   }
 }
+
 
 static void cleanupServer ( void )
 {
