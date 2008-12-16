@@ -147,7 +147,7 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   // unpack the LuaWorld docket
-  BzDocket docket("LuaWorld");
+  BzDocket docket;
   buf = docket.unpack(buf);
 
   // check if the unpacking was successful

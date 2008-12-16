@@ -29,6 +29,11 @@ string BzDocket::errorMsg = "";
 
 /******************************************************************************/
 
+BzDocket::BzDocket()
+{
+}
+
+
 BzDocket::BzDocket(const string& name) : docketName(name)
 {
 }
@@ -45,6 +50,7 @@ size_t BzDocket::packSize() const
   size_t fullSize = 0;
   fullSize += strlen(magic);
   fullSize += sizeof(uint32_t); // version
+  fullSize += nboStdStringPackSize(docketName);
   fullSize += sizeof(uint32_t); // file count
   FileMap::const_iterator it;
   for (it = fileMap.begin(); it != fileMap.end(); ++ it) {
@@ -63,6 +69,7 @@ void* BzDocket::pack(void* buf) const
 {
   buf = nboPackString(buf, magic, strlen(magic));
   buf = nboPackUInt(buf, 0);              // version
+  buf = nboPackStdString(buf, docketName);
   buf = nboPackUInt(buf, fileMap.size()); // file count
   FileMap::const_iterator it;
   uint32_t offset = 0; 
@@ -95,6 +102,9 @@ void* BzDocket::unpack(void* buf)
     errorMsg = "bad version";
     return NULL;
   }
+
+  buf = nboUnpackStdString(buf, docketName);
+
   uint32_t count;
   buf = nboUnpackUInt(buf, count);
   vector<string> names;
@@ -165,7 +175,6 @@ bool BzDocket::addDir(const std::string& dirName, const std::string& mapPrefix)
 
   return true;
 }
-
 
 
 bool BzDocket::addFile(const std::string& fileName, const std::string& mapName)
