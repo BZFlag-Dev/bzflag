@@ -44,7 +44,7 @@ typedef FTBitmapFont CRAP_FONT;
  * problem in the destructor that needs to be further investigated and
  * fixed.
  */
-//#define debugging 1
+#define debugging 1
 
 
 /** initialize the singleton */
