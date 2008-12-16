@@ -65,6 +65,12 @@ void TextureMatrixManager::update()
 }
 
 
+void TextureMatrix::setMatrix(const float value[4][4])
+{
+  memcpy(matrix, value, sizeof(float[4][4]));
+}
+
+
 int TextureMatrixManager::addMatrix(TextureMatrix* texmat)
 {
   matrices.push_back (texmat);

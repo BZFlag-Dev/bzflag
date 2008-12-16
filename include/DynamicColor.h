@@ -44,6 +44,7 @@ class DynamicColor {
     void finalize();
 
     void update(double time);
+    void setColor(const float color[4]);
 
     bool canHaveAlpha() const;
     const float* getColor() const;

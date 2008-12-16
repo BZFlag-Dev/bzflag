@@ -239,10 +239,7 @@ void DynamicColor::finalize()
         possibleAlpha = true;
       }
     }
-    return;
   }
-
-  return;
 }
 
 
@@ -368,6 +365,12 @@ void DynamicColor::update(double t)
 }
 
 
+void DynamicColor::setColor(const float value[4])
+{
+  memcpy(color, value, sizeof(float[4]));
+}
+
+
 void DynamicColor::colorByVariable(double /* t */)
 {
   // process the variable value
@@ -420,7 +423,7 @@ void DynamicColor::colorByStates(double t)
 
   int prevIndex = 0;
   float endTime = colorStates[0].duration;
-  // finds the first element whose key is not less than the key
+  // finds the first element whose key is not less than the value
   map<float, int>::const_iterator it = colorEnds.lower_bound(phase);
   if (it != colorEnds.end()) {
     endTime = it->first;

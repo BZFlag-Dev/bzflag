@@ -4,7 +4,7 @@
 --  Test code for the bzfs lua plugin
 --
 
-
+-- prefix all MaxWaitTime names with 'lua'
 do
   local origGetMaxWaitTime = BZ.GetMaxWaitTime
   local origSetMaxWaitTime = BZ.SetMaxWaitTime
@@ -30,21 +30,6 @@ do
     error(err)
   end
   chunk()
-end
-
-
-do
-  local sendMsg = BZ.SendMessage
-  BZ.SendMessage = function(src, dst, msg)
-    if (#msg < 128) then
-      sendMsg(src, dst, msg)
-    else
-      while (#msg > 0) do
-        sendMsg(src, dst, msg:sub(1, 128))
-        msg = msg:sub(129)
-      end
-    end
-  end
 end
 
 

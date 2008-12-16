@@ -45,6 +45,8 @@ class TextureMatrix {
     void setDynamicCenter (float u, float v);
 
     void update(double time);
+    void setMatrix(const float matrix[4][4]);
+
     const std::string& getName() const;
 
     int packSize() const;
