@@ -20,7 +20,6 @@ class BzDocket {
     typedef std::map<std::string, std::string> FileMap;
 
   public:
-    BzDocket();
     BzDocket(const std::string& name);
     ~BzDocket();
 

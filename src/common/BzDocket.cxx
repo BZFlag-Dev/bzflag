@@ -37,11 +37,6 @@ string BzDocket::errorMsg = "";
 
 /******************************************************************************/
 
-BzDocket::BzDocket()
-{
-}
-
-
 BzDocket::BzDocket(const string& name) : docketName(name)
 {
 }
@@ -58,7 +53,7 @@ size_t BzDocket::packSize() const
   size_t fullSize = 0;
   fullSize += strlen(magic);
   fullSize += sizeof(uint32_t); // version
-  fullSize += nboStdStringPackSize(docketName);
+  fullSize += sizeof(uint32_t); // flags
   fullSize += sizeof(uint32_t); // file count
   FileMap::const_iterator it;
   for (it = fileMap.begin(); it != fileMap.end(); ++ it) {
@@ -76,8 +71,8 @@ size_t BzDocket::packSize() const
 void* BzDocket::pack(void* buf) const
 {
   buf = nboPackString(buf, magic, strlen(magic));
-  buf = nboPackUInt(buf, 0);              // version
-  buf = nboPackStdString(buf, docketName);
+  buf = nboPackUInt(buf, 0); // version
+  buf = nboPackUInt(buf, 0); // flags
   buf = nboPackUInt(buf, fileMap.size()); // file count
   FileMap::const_iterator it;
   uint32_t offset = 0; 
@@ -104,14 +99,12 @@ void* BzDocket::unpack(void* buf)
     errorMsg = "bad magic";
     return NULL;
   }
-  uint32_t version;
-  buf = nboUnpackUInt(buf, version); // version
-  if (version != 0) {
-    errorMsg = "bad version";
-    return NULL;
-  }
 
-  buf = nboUnpackStdString(buf, docketName);
+  uint32_t version;
+  buf = nboUnpackUInt(buf, version);
+
+  uint32_t flags;
+  buf = nboUnpackUInt(buf, flags);
 
   uint32_t count;
   buf = nboUnpackUInt(buf, count);
