@@ -1285,6 +1285,7 @@ AC_CONFIG_FILES([
 	src/obstacle/Makefile
 	src/ogl/Makefile
 	src/other/Makefile
+	src/other/ftgl/Makefile
 	src/other/freetype/Makefile
 	src/other/lua/Makefile
 	src/other/regex/Makefile
