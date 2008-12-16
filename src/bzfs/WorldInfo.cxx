@@ -31,6 +31,7 @@
 #include "MeshTransform.h"
 #include "MeshDrawInfo.h"
 #include "TimeKeeper.h"
+#include "BzDocket.h"
 
 /* obstacle implementation headers */
 #include "ObstacleMgr.h"
@@ -49,6 +50,7 @@
 #include "CollisionManager.h"
 
 /* local implementation headers */
+#include "bzfs.h"
 #include "FlagInfo.h"
 #include "PlayerInfo.h"
 #include "CustomZone.h"
@@ -407,12 +409,12 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
 				float* pt) const
 {
   FlagType* flagType = fi->flag.type;
-  const int team = (int)flagType->flagTeam;
-  const bool teamFlag = (team != NoTeam);
+  const int flagTeam = (int)flagType->flagTeam;
+  const bool isTeamFlag = (flagTeam != NoTeam);
 
-  if (teamFlag) {
+  if (isTeamFlag) {
     const std::string& safetyQual =
-      CustomZone::getFlagSafetyQualifier(team);
+      CustomZone::getFlagSafetyQualifier(flagTeam);
     if (entryZones.getClosePoint(safetyQual, pos, pt)) {
       return true;
     }
@@ -435,8 +437,8 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
 bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
 {
   FlagType* flagType = fi->flag.type;
-  const int team = (int)flagType->flagTeam;
-  const bool teamFlag = (team != NoTeam);
+  const int flagTeam = (int)flagType->flagTeam;
+  const bool isTeamFlag = (flagTeam != NoTeam);
 
   const std::string& idQual =
     CustomZone::getFlagIdQualifier(fi->getIndex());
@@ -444,7 +446,7 @@ bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
     return true;
   }
 
-  if (!teamFlag) {
+  if (!isTeamFlag) {
     const std::string& typeQual =
       CustomZone::getFlagTypeQualifier(flagType);
     if (entryZones.getRandomPoint(typeQual, pt)) {
@@ -498,6 +500,9 @@ int WorldInfo::packDatabase()
     uncompressedSize = 0;
   }
 
+  BzDocket luaWorld("LuaWorld");
+  luaWorld.addDir(clOptions->luaWorldDir, "");
+
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -511,7 +516,9 @@ int WorldInfo::packDatabase()
     DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
     MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
     TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() + links.packSize() +
-    WORLDTEXTMGR.packSize() + worldWeapons.packSize() + entryZones.packSize();
+    WORLDTEXTMGR.packSize() + worldWeapons.packSize() + entryZones.packSize() +
+    luaWorld.packSize();    
+    
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
@@ -561,6 +568,9 @@ int WorldInfo::packDatabase()
 
   // pack entry zones
   databasePtr = entryZones.pack(databasePtr);
+
+  // pack the LuaWorld docket
+  databasePtr = luaWorld.pack(databasePtr);
 
 
   // compress the map database

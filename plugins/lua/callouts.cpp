@@ -2046,7 +2046,7 @@ static int DirList(lua_State* L)
 {
   const char* path = luaL_checkstring(L, 1);
 
-  vector<string> dirs  = getDirsInDir(path);
+  vector<string> dirs = getDirsInDir(path);
   set<string> dirSet;
   for (unsigned int i = 0; i < dirs.size(); i++) {
     dirSet.insert(dirs[i]);

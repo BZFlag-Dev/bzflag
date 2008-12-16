@@ -23,6 +23,7 @@
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
+#include "BzDocket.h"
 
 /* compression library header */
 #include "zlib.h"
@@ -144,6 +145,10 @@ void* WorldBuilder::unpack(void* buf)
     buf = zone.unpack(buf);
     world->entryZones.push_back(zone);
   }
+
+  // unpack the LuaWorld docket
+  BzDocket docket("LuaWorld");
+  buf = docket.unpack(buf);
 
   // check if the unpacking was successful
   nboUseErrorChecking(false);
