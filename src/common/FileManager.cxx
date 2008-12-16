@@ -135,7 +135,7 @@ std::ostream*			FileManager::createDataOutStream(
       struct stat statbuf;
       if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
 	    (S_ISDIR(statbuf.st_mode)))) {
-	successMkdir = mkdir(filename.substr(0, i).c_str(), 0777);
+	successMkdir = mkdir(filename.substr(0, i).c_str(), 0755);
 	if (successMkdir != 0) {
 	  perror("Unable to make directory");
 	  return NULL;

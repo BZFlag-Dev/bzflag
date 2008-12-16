@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <iostream>
 using std::string;
 using std::vector;
 using std::map;
@@ -20,12 +22,18 @@ using std::map;
 #include "bzfio.h"
 #include "Pack.h"
 #include "OSFile.h"
+#include "FileManager.h"
 
 
 const char* BzDocket::magic = "BzDocket";
 
 string BzDocket::errorMsg = "";
 
+#ifndef _WIN32
+  static const char dirSep = '/';
+#else
+  static const char dirSep = '\\';
+#endif
 
 /******************************************************************************/
 
@@ -132,34 +140,44 @@ void* BzDocket::unpack(void* buf)
 
 /******************************************************************************/
 
-bool BzDocket::addData(const std::string& mapName, const std::string& data)
+static string getMapPath(const std::string& path)
 {
+  string p = path;
+  std::replace(p.begin(), p.end(), '\\', '/');  
+  return p;
+}
+
+
+bool BzDocket::addData(const std::string& data, const std::string& mapPath)
+{
+  if (mapPath.find('\\') != string::npos) {
+    errorMsg = "bad backslash";
+    printf("internal BzDocket error: %s\n", errorMsg.c_str());
+    return false;
+  }
+
   errorMsg = "";
-  if (fileMap.find(mapName) != fileMap.end()) {
+  if (fileMap.find(mapPath) != fileMap.end()) {
     errorMsg = "duplicate";
     return false;
   }
-  fileMap[mapName] = data;
+
+  fileMap[mapPath] = data;
+
   return true;
 }
 
 
-bool BzDocket::addDir(const std::string& dirName, const std::string& mapPrefix)
+bool BzDocket::addDir(const std::string& dirPath, const std::string& mapPrefix)
 {
-#ifndef WIN32
-  const char dirSep = '/';
-#else
-  const char dirSep = '\\';
-#endif
-  
   errorMsg = "";
 
-  if (dirName.empty()) {
+  if (dirPath.empty()) {
     errorMsg = "blank directory name";
     return false;
   }
 
-  string realDir = dirName;
+  string realDir = dirPath;
   if (realDir[realDir.size() - 1] != dirSep) {
     realDir += dirSep;
   }
@@ -168,24 +186,24 @@ bool BzDocket::addDir(const std::string& dirName, const std::string& mapPrefix)
   const size_t dirLen = dir.getStdName().size();
 
   OSFile file;
-  while (dir.getNextFile(file, true)) {
-    const string truncName = file.getStdName().substr(dirLen);
-    addFile(file.getStdName(), mapPrefix + truncName);
+  while (dir.getNextFile(file, true)) { // recursive
+    const string truncPath = file.getStdName().substr(dirLen);
+    addFile(file.getStdName(), getMapPath(mapPrefix + truncPath));
   }
 
   return true;
 }
 
 
-bool BzDocket::addFile(const std::string& fileName, const std::string& mapName)
+bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
 {
   errorMsg = "";
-  if (fileMap.find(mapName) != fileMap.end()) {
+  if (fileMap.find(mapPath) != fileMap.end()) {
     errorMsg = "duplicate";
     return false;
   }
 
-  FILE* file = fopen(fileName.c_str(), "r");
+  FILE* file = fopen(filePath.c_str(), "r");
   if (file == NULL) {
     errorMsg = strerror(errno);
     return false;
@@ -224,21 +242,66 @@ bool BzDocket::addFile(const std::string& fileName, const std::string& mapName)
   delete[] buf;
 
   logDebugMessage(3, "adding to %s: (%li) '%s' as '%s'\n", docketName.c_str(),
-                  len, fileName.c_str(), mapName.c_str());
+                  len, filePath.c_str(), mapPath.c_str());
 
-  return addData(mapName, data);
+  return addData(data, mapPath);
 }
 
 
 /******************************************************************************/
 
-bool BzDocket::findFile(const std::string& mapName, std::string& data)
+bool BzDocket::findFile(const std::string& mapPath, std::string& data)
 {
-  FileMap::const_iterator it = fileMap.find(mapName);
+  FileMap::const_iterator it = fileMap.find(mapPath);
   if (it == fileMap.end()) {
     return false;
   }
   data = it->second;  
+  return true;
+}
+
+
+/******************************************************************************/
+
+static bool createParentDirs(const string& path)
+{
+  string::size_type pos = 0;
+  for (pos = path.find('/');
+       pos != string::npos;
+       pos = path.find('/', pos + 1)) {
+    OSDir dir;
+    dir.makeOSDir(path.substr(0, pos));
+  }
+  return true;
+}
+
+
+bool BzDocket::save(const std::string& dirPath)
+{
+  if (dirPath.empty()) {
+    return false;
+  }
+
+  string realDir = dirPath;
+  if (realDir[realDir.size() - 1] != dirSep) {
+    realDir += dirSep;
+  }
+
+  FileMap::const_iterator it;
+  for (it = fileMap.begin(); it != fileMap.end(); ++it) {
+    const string fullPath = realDir + it->first;
+    if (!createParentDirs(fullPath)) {
+      continue;
+    }
+    FILE* file = fopen(fullPath.c_str(), "wb");
+    if (file == NULL) {
+      continue;
+    }
+    const string& data = it->second;
+    fwrite(data.data(), 1, data.size(), file);
+    fclose(file);
+  }
+
   return true;
 }
 

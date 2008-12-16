@@ -487,7 +487,7 @@ void OSDir::makeStdDir(const std::string &DirName)
 #ifdef _WIN32
   mkdir(info->baseOSDir.c_str());
 #else
-  mkdir(info->baseOSDir.c_str(), 0777);
+  mkdir(info->baseOSDir.c_str(), 0755);
 #endif
 }
 
@@ -497,7 +497,7 @@ void OSDir::makeOSDir(const std::string &DirName)
 #ifdef _WIN32
   mkdir(info->baseOSDir.c_str());
 #else
-  mkdir(info->baseOSDir.c_str(), 0777);
+  mkdir(info->baseOSDir.c_str(), 0755);
 #endif
 }
 

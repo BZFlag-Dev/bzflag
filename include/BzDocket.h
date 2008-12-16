@@ -24,19 +24,21 @@ class BzDocket {
     BzDocket(const std::string& name);
     ~BzDocket();
 
-    bool addData(const std::string& mapName, const std::string& data);
+    bool addData(const std::string& data, const std::string& mapPath);
 
-    bool addDir(const std::string& dirName, const std::string& mapPrefix);
+    bool addDir(const std::string& dirPath, const std::string& mapPrefix);
 
-    bool addFile(const std::string& fileName, const std::string& mapName);
+    bool addFile(const std::string& filePath, const std::string& mapPath);
 
-    bool findFile(const std::string& mapName, std::string& data);
+    bool findFile(const std::string& mapPath, std::string& data);
 
     inline const FileMap& getFileMap() const { return fileMap; }
 
     size_t packSize() const;
     void* pack(void* buf) const;
     void* unpack(void* buf);
+
+    bool save(const std::string& dirPath);
 
   private:
     FileMap fileMap;
