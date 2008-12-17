@@ -36,7 +36,7 @@
 #include <map>
 #include "TimeKeeper.h"
 
-void	_debugLookups(const std::string &name)
+void _debugLookups(const std::string &name)
 {
   if (!BZDB.getDebug())
     return;
@@ -231,12 +231,13 @@ const std::string StateDatabase::BZDB_WORLDSIZE		= std::string("_worldSize");
 // StateDatabase::Item
 //
 
-StateDatabase::Item::Item() : value(),
-			      defValue(),
-			      isSet(false),
-			      isTrue(false),
-			      save(true), // FIXME -- false by default?
-			      permission(ReadWrite)
+StateDatabase::Item::Item()
+: value()
+, defValue()
+, isSet(false)
+, isTrue(false)
+, save(true) // FIXME -- false by default?
+, permission(ReadWrite)
 {
   // do nothing
 }
@@ -252,14 +253,16 @@ StateDatabase::StateDatabase() : debug(false), saveDefault(false)
   // do nothing
 }
 
+
 StateDatabase::~StateDatabase()
 {
   // do nothing
 }
 
-void			StateDatabase::set(const std::string& name,
-					   const std::string& value,
-					   Permission accessLevel)
+
+void StateDatabase::set(const std::string& name,
+			const std::string& value,
+			Permission accessLevel)
 {
   Map::iterator index = lookup(name);
   if (accessLevel >= index->second.permission) {
@@ -280,29 +283,29 @@ void			StateDatabase::set(const std::string& name,
   }
 }
 
-void		     StateDatabase::setInt(const std::string& name,
-					   const int& value,
-					   Permission accessLevel)
+
+void StateDatabase::setInt(const std::string& name, const int& value,
+			   Permission accessLevel)
 {
   set(name, TextUtils::format("%d", value), accessLevel);
 }
 
-void		    StateDatabase::setBool(const std::string& name,
-					   const bool& value,
-					   Permission accessLevel)
+
+void StateDatabase::setBool(const std::string& name, const bool& value,
+			    Permission accessLevel)
 {
   set(name, value ? std::string("1") : std::string("0"), accessLevel);
 }
 
-void		   StateDatabase::setFloat(const std::string& name,
-					   const float& value,
-					   Permission accessLevel)
+
+void StateDatabase::setFloat(const std::string& name, const float& value,
+			     Permission accessLevel)
 {
   set(name, TextUtils::format("%f", value), accessLevel);
 }
 
-void			StateDatabase::unset(const std::string& name,
-					     Permission accessLevel)
+
+void StateDatabase::unset(const std::string& name, Permission accessLevel)
 {
   Map::iterator index = lookup(name);
   if (accessLevel >= index->second.permission) {
@@ -313,62 +316,63 @@ void			StateDatabase::unset(const std::string& name,
   }
 }
 
-void			StateDatabase::touch(const std::string& name,
-					     Permission accessLevel)
+
+void StateDatabase::touch(const std::string& name, Permission accessLevel)
 {
   Map::iterator index = lookup(name);
   if (accessLevel >= index->second.permission)
     notify(index);
 }
 
-void			StateDatabase::setPersistent(
-						     const std::string& name, bool save)
+
+void StateDatabase::setPersistent(const std::string& name, bool save)
 {
   Map::iterator index = lookup(name);
   index->second.save = save;
 }
 
-void			StateDatabase::setDefault(
-						  const std::string& name, const std::string& value)
+
+void StateDatabase::setDefault(const std::string& name,
+                               const std::string& value)
 {
   Map::iterator index = lookup(name);
   index->second.defValue = value;
 }
 
-void			StateDatabase::setPermission(
-						     const std::string& name,
-						     Permission permission)
+
+void StateDatabase::setPermission(const std::string& name,
+                                  Permission permission)
 {
   Map::iterator index = lookup(name);
   index->second.permission = permission;
 }
 
-void			StateDatabase::addCallback(
-						   const std::string& name,
-						   Callback callback,
-						   void* userData)
+
+void StateDatabase::addCallback(const std::string& name,
+				Callback callback, void* userData)
 {
   Map::iterator index = lookup(name);
   index->second.callbacks.add(callback, userData);
 }
 
-void			StateDatabase::removeCallback(
-						      const std::string& name,
-						      Callback callback,
-						      void* userData)
+
+void StateDatabase::removeCallback(const std::string& name,
+				   Callback callback, void* userData)
 {
   Map::iterator index = lookup(name);
   index->second.callbacks.remove(callback, userData);
 }
 
-bool			StateDatabase::isSet(const std::string& name) const
+
+bool StateDatabase::isSet(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
   return !(index == items.end() || !index->second.isSet);
 }
 
-std::string		StateDatabase::get(const std::string& name) const
+
+std::string StateDatabase::get(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -378,7 +382,9 @@ std::string		StateDatabase::get(const std::string& name) const
     return index->second.value;
 }
 
-int		StateDatabase::getIntClamped(const std::string& name, const int min, const int max) const
+
+int StateDatabase::getIntClamped(const std::string& name,
+                                 const int min, const int max) const
 {
   int val;
   debugLookups(name);
@@ -394,7 +400,8 @@ int		StateDatabase::getIntClamped(const std::string& name, const int min, const 
   return val;
 }
 
-float			StateDatabase::eval(const std::string& name)
+
+float StateDatabase::eval(const std::string& name)
 {
   typedef std::set<std::string> VariableSet;
   debugLookups(name);
@@ -432,12 +439,14 @@ float			StateDatabase::eval(const std::string& name)
   return retn;
 }
 
-int			StateDatabase::evalInt(const std::string& name)
+
+int StateDatabase::evalInt(const std::string& name)
 {
   return (int)eval(name);
 }
 
-bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
+
+bool StateDatabase::evalTriplet(const std::string& name, float data[4])
 {
   if (!isSet(name) || !data)
     return false;
@@ -446,7 +455,8 @@ bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
   return true;
 }
 
-bool		StateDatabase::evalPair(const std::string& name, float data[2])
+
+bool StateDatabase::evalPair(const std::string& name, float data[2])
 {
   if (!isSet(name) || !data)
     return false;
@@ -455,14 +465,16 @@ bool		StateDatabase::evalPair(const std::string& name, float data[2])
   return true;
 }
 
-bool			StateDatabase::isTrue(const std::string& name) const
+
+bool StateDatabase::isTrue(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
   return !(index == items.end() || !index->second.isTrue);
 }
 
-bool			StateDatabase::isEmpty(const std::string& name) const
+
+bool StateDatabase::isEmpty(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -470,14 +482,16 @@ bool			StateDatabase::isEmpty(const std::string& name) const
 	  index->second.value.empty());
 }
 
-bool			StateDatabase::isPersistent(const std::string& name) const
+
+bool StateDatabase::isPersistent(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
   return (index != items.end() && index->second.save);
 }
 
-std::string		StateDatabase::getDefault(const std::string& name) const
+
+std::string StateDatabase::getDefault(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -487,8 +501,9 @@ std::string		StateDatabase::getDefault(const std::string& name) const
     return "";
 }
 
+
 StateDatabase::Permission
-StateDatabase::getPermission(const std::string& name) const
+  StateDatabase::getPermission(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -498,8 +513,8 @@ StateDatabase::getPermission(const std::string& name) const
     return ReadWrite;
 }
 
-StateDatabase::Map::iterator
-StateDatabase::lookup(const std::string& name)
+
+StateDatabase::Map::iterator StateDatabase::lookup(const std::string& name)
 {
   debugLookups(name);
   Map::iterator index = items.find(name);
@@ -511,21 +526,24 @@ StateDatabase::lookup(const std::string& name)
   }
 }
 
-void			StateDatabase::notify(Map::iterator index)
+
+void StateDatabase::notify(Map::iterator index)
 {
   evalCache.erase(index->first);
-  index->second.callbacks.iterate(&onCallback, const_cast<void*>(static_cast<const void*>(&index->first)));
+  index->second.callbacks.iterate(&onCallback,
+    const_cast<void*>(static_cast<const void*>(&index->first)));
 }
 
-bool			StateDatabase::onCallback(Callback callback,
-						  void* userData,
-						  void* iterateData)
+
+bool StateDatabase::onCallback(Callback callback,
+                               void* userData, void* iterateData)
 {
   callback(*static_cast<std::string*>(iterateData), userData);
   return true;
 }
 
-void			StateDatabase::iterate(Callback callback, void* userData) const
+
+void StateDatabase::iterate(Callback callback, void* userData) const
 {
   assert(callback != NULL);
 
@@ -536,7 +554,8 @@ void			StateDatabase::iterate(Callback callback, void* userData) const
   }
 }
 
-void			StateDatabase::write(Callback callback, void* userData) const
+
+void StateDatabase::write(Callback callback, void* userData) const
 {
   assert(callback != NULL);
 
@@ -547,19 +566,23 @@ void			StateDatabase::write(Callback callback, void* userData) const
   }
 }
 
-void		     StateDatabase::setDebug(bool print) {
+
+void StateDatabase::setDebug(bool print) {
   debug = print;
 }
 
-void		     StateDatabase::setSaveDefault(bool save) {
+
+void StateDatabase::setSaveDefault(bool save) {
   saveDefault = save;
 }
+
 
 StateDatabase::ExpressionToken::ExpressionToken()
 {
   tokenType = number;
   tokenContents.number = 0;
 }
+
 
 StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
 {
@@ -576,11 +599,13 @@ StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
   }
 }
 
+
 StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType, Contents _tokenContents)
 {
   tokenType = _tokenType;
   tokenContents = _tokenContents;
 }
+
 
 void StateDatabase::ExpressionToken::setType(Type _tokenType)
 {
@@ -597,10 +622,12 @@ void StateDatabase::ExpressionToken::setType(Type _tokenType)
   }
 }
 
+
 void StateDatabase::ExpressionToken::setContents(Contents _tokenContents)
 {
   tokenContents = _tokenContents;
 }
+
 
 void StateDatabase::ExpressionToken::setNumber(double num)
 {
@@ -608,11 +635,13 @@ void StateDatabase::ExpressionToken::setNumber(double num)
   tokenContents.number = num;
 }
 
+
 void StateDatabase::ExpressionToken::setVariable(std::string var)
 {
   tokenType = variable;
   tokenContents.variable = var;
 }
+
 
 void StateDatabase::ExpressionToken::setOper(Operator op)
 {
@@ -620,15 +649,18 @@ void StateDatabase::ExpressionToken::setOper(Operator op)
   tokenContents.oper = op;
 }
 
+
 StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType() const
 {
   return tokenType;
 }
 
+
 StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents() const
 {
   return tokenContents;
 }
+
 
 double StateDatabase::ExpressionToken::getNumber() const
 {
@@ -636,17 +668,20 @@ double StateDatabase::ExpressionToken::getNumber() const
   return tokenContents.number;
 }
 
-std::string	StateDatabase::ExpressionToken::getVariable() const
+
+std::string StateDatabase::ExpressionToken::getVariable() const
 {
   // note that the necessary type check must be done first
   return tokenContents.variable;
 }
+
 
 StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator() const
 {
   // note that the necessary type check must be done first
   return tokenContents.oper;
 }
+
 
 int StateDatabase::ExpressionToken::getPrecedence() const
 {
@@ -667,6 +702,7 @@ int StateDatabase::ExpressionToken::getPrecedence() const
   }
 }
 
+
 std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst)
 {
   char temp;
@@ -683,7 +719,9 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
       temp = src.peek();
     }
     dst.setNumber(atof(tempname.c_str()));
-  } else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == '^' || temp == '(' || temp == ')') {
+  } 
+  else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' ||
+           temp == '^' || temp == '(' || temp == ')') {
     // operator
     switch(temp) {
       case '+':
@@ -723,6 +761,7 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
   }
   return src;
 }
+
 
 std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
 {
@@ -780,6 +819,7 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
   return src;
 }
 
+
 std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionToken& src)
 {
   switch (src.getTokenType()) {
@@ -820,6 +860,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionTok
   return dst;
 }
 
+
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
 {
   StateDatabase::ExpressionToken temp;
@@ -838,6 +879,7 @@ std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
   return src;
 }
 
+
 std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
 {
   StateDatabase::ExpressionToken temp;
@@ -855,6 +897,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
   return src;
 }
 
+
 std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src)
 {
   if (src.size()) {
@@ -865,6 +908,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& s
   }
   return dst;
 }
+
 
 StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
 {
@@ -901,6 +945,7 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
     prefix.push_back(*ri);
   return prefix;
 }
+
 
 float StateDatabase::evaluate(Expression e) const
 {

@@ -55,13 +55,14 @@ size_t BzDocket::packSize() const
   fullSize += sizeof(uint32_t); // version
   fullSize += sizeof(uint32_t); // flags
   fullSize += sizeof(uint32_t); // file count
-  FileMap::const_iterator it;
-  for (it = fileMap.begin(); it != fileMap.end(); ++ it) {
+  DataMap::const_iterator it;
+  for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
     fullSize += nboStdStringPackSize(it->first);
-    fullSize += sizeof(uint32_t); // offset
     fullSize += sizeof(uint32_t); // extra
+    fullSize += sizeof(uint32_t); // offset
+    fullSize += sizeof(uint32_t); // size
   }
-  for (it = fileMap.begin(); it != fileMap.end(); ++ it) {
+  for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
     fullSize += nboStdStringPackSize(it->second);
   }
   return fullSize;
@@ -73,18 +74,20 @@ void* BzDocket::pack(void* buf) const
   buf = nboPackString(buf, magic, strlen(magic));
   buf = nboPackUInt(buf, 0); // version
   buf = nboPackUInt(buf, 0); // flags
-  buf = nboPackUInt(buf, fileMap.size()); // file count
-  FileMap::const_iterator it;
+  buf = nboPackUInt(buf, dataMap.size()); // file count
+  DataMap::const_iterator it;
   uint32_t offset = 0; 
-  for (it = fileMap.begin(); it != fileMap.end(); ++ it) {
+  for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
     logDebugMessage(3, "packing into %s: (%i) '%s'\n", docketName.c_str(), 
                     (int)it->second.size(), it->first.c_str());
+    const size_t dataSize = it->second.size();
     buf = nboPackStdString(buf, it->first);
-    buf = nboPackUInt(buf, offset);
     buf = nboPackUInt(buf, 0); // extra
-    offset += it->second.size();
+    buf = nboPackUInt(buf, offset);
+    buf = nboPackUInt(buf, dataSize);
+    offset += dataSize;
   }
-  for (it = fileMap.begin(); it != fileMap.end(); ++ it) {
+  for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
     buf = nboPackStdString(buf, it->second);
   }
   return buf;
@@ -114,15 +117,16 @@ void* BzDocket::unpack(void* buf)
     buf = nboUnpackStdString(buf, name);
     names.push_back(name);
 
-    uint32_t offset, extra;
-    buf = nboUnpackUInt(buf, offset);
+    uint32_t extra, offset, dataSize;
     buf = nboUnpackUInt(buf, extra);
+    buf = nboUnpackUInt(buf, offset);
+    buf = nboUnpackUInt(buf, dataSize);
   }
 
   for (uint32_t i = 0; i < count; i++) {
     string data;
     buf = nboUnpackStdString(buf, data);
-    fileMap[names[i]] = data;
+    dataMap[names[i]] = data;
     logDebugMessage(3, "unpacked from %s: (%i) '%s'\n", docketName.c_str(),
                     (int)data.size(), names[i].c_str());
   }
@@ -143,19 +147,19 @@ static string getMapPath(const std::string& path)
 
 bool BzDocket::addData(const std::string& data, const std::string& mapPath)
 {
-  if (mapPath.find('\\') != string::npos) {
-    errorMsg = "bad backslash";
+  if (mapPath.find_first_of("\\:") != string::npos) {
+    errorMsg = "bad map path (" + mapPath + ")";
     printf("internal BzDocket error: %s\n", errorMsg.c_str());
     return false;
   }
 
   errorMsg = "";
-  if (fileMap.find(mapPath) != fileMap.end()) {
+  if (dataMap.find(mapPath) != dataMap.end()) {
     errorMsg = "duplicate";
     return false;
   }
 
-  fileMap[mapPath] = data;
+  dataMap[mapPath] = data;
 
   return true;
 }
@@ -191,7 +195,7 @@ bool BzDocket::addDir(const std::string& dirPath, const std::string& mapPrefix)
 bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
 {
   errorMsg = "";
-  if (fileMap.find(mapPath) != fileMap.end()) {
+  if (dataMap.find(mapPath) != dataMap.end()) {
     errorMsg = "duplicate";
     return false;
   }
@@ -234,8 +238,8 @@ bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
   const string data(buf, len);
   delete[] buf;
 
-  logDebugMessage(3, "adding to %s: (%li) '%s' as '%s'\n", docketName.c_str(),
-                  len, filePath.c_str(), mapPath.c_str());
+  logDebugMessage(3, "adding to %s: '%s' as '%s'  (%li)\n",
+                  docketName.c_str(), filePath.c_str(), mapPath.c_str(), len);
 
   return addData(data, mapPath);
 }
@@ -243,10 +247,20 @@ bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
 
 /******************************************************************************/
 
-bool BzDocket::findFile(const std::string& mapPath, std::string& data)
+bool BzDocket::hasData(const std::string& mapPath)
 {
-  FileMap::const_iterator it = fileMap.find(mapPath);
-  if (it == fileMap.end()) {
+  DataMap::const_iterator it = dataMap.find(mapPath);
+  if (it == dataMap.end()) {
+    return false;
+  }
+  return true;
+}
+
+
+bool BzDocket::getData(const std::string& mapPath, std::string& data)
+{
+  DataMap::const_iterator it = dataMap.find(mapPath);
+  if (it == dataMap.end()) {
     return false;
   }
   data = it->second;  
@@ -280,8 +294,8 @@ bool BzDocket::save(const std::string& dirPath)
     realDir += dirSep;
   }
 
-  FileMap::const_iterator it;
-  for (it = fileMap.begin(); it != fileMap.end(); ++it) {
+  DataMap::const_iterator it;
+  for (it = dataMap.begin(); it != dataMap.end(); ++it) {
     const string fullPath = realDir + it->first;
     if (!createParentDirs(fullPath)) {
       continue;

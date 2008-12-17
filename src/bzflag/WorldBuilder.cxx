@@ -147,8 +147,12 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   // unpack the LuaWorld docket
-  BzDocket docket("LuaWorld");
-  buf = docket.unpack(buf);
+  BzDocket* docket = new BzDocket("LuaWorld");
+  buf = docket->unpack(buf);
+  if (docket->hasData("main.lua")) {
+    printf("WE HAVE A LUA WORLD\n"); // FIXME
+  }
+  delete docket;
 
   // check if the unpacking was successful
   nboUseErrorChecking(false);

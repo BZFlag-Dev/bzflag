@@ -17,21 +17,19 @@ class BzDocket {
     static std::string errorMsg;
 
   public:
-    typedef std::map<std::string, std::string> FileMap;
+    typedef std::map<std::string, std::string> DataMap;
 
   public:
     BzDocket(const std::string& name);
     ~BzDocket();
 
     bool addData(const std::string& data, const std::string& mapPath);
-
     bool addDir(const std::string& dirPath, const std::string& mapPrefix);
-
     bool addFile(const std::string& filePath, const std::string& mapPath);
 
-    bool findFile(const std::string& mapPath, std::string& data);
-
-    inline const FileMap& getFileMap() const { return fileMap; }
+    bool hasData(const std::string& mapPath);
+    bool getData(const std::string& mapPath, std::string& data);
+    inline const DataMap& getDataMap() const { return dataMap; }
 
     size_t packSize() const;
     void* pack(void* buf) const;
@@ -40,7 +38,7 @@ class BzDocket {
     bool save(const std::string& dirPath);
 
   private:
-    FileMap fileMap;
+    DataMap dataMap;
     std::string docketName;
 };
 
