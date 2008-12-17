@@ -583,6 +583,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BzDocket.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\bzfio.cxx"
 				>
 			</File>
