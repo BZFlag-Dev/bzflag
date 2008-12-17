@@ -364,6 +364,18 @@ void StateDatabase::removeCallback(const std::string& name,
 }
 
 
+void StateDatabase::addGlobalCallback(Callback callback, void* userData)
+{
+  globalCallbacks.add(callback, userData);
+}
+
+
+void StateDatabase::removeGlobalCallback(Callback callback, void* userData)
+{
+  globalCallbacks.remove(callback, userData);
+}
+
+
 bool StateDatabase::isSet(const std::string& name) const
 {
   debugLookups(name);
@@ -530,6 +542,8 @@ StateDatabase::Map::iterator StateDatabase::lookup(const std::string& name)
 void StateDatabase::notify(Map::iterator index)
 {
   evalCache.erase(index->first);
+  globalCallbacks.iterate(&onCallback,
+    const_cast<void*>(static_cast<const void*>(&index->first)));
   index->second.callbacks.iterate(&onCallback,
     const_cast<void*>(static_cast<const void*>(&index->first)));
 }
