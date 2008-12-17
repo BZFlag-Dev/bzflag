@@ -172,7 +172,7 @@ struct CmdLineOptions
 
   AccessControlList	acl;
   TextChunkManager	textChunker;
-  
+
   std::list<OSDir> helpDirs;
 
   /* inappropriate language filter */
@@ -203,10 +203,10 @@ struct CmdLineOptions
   int			citySize;
   int			numTeamFlags[NumTeams];
 
-  std::string	   cacheURL;
-  std::string	   cacheOut;
+  std::string		cacheURL;
+  std::string		cacheOut;
 
-  std::string	   luaWorldDir;;
+  std::string		luaWorldDir;
 
   /* freezetag options */
   bool			freezeTag;
@@ -217,9 +217,9 @@ struct CmdLineOptions
   // plugins
   typedef struct
   {
-	  std::string plugin;
-	  std::string command;
-  }pluginDef;
+    std::string plugin;
+    std::string command;
+  } pluginDef;
 
   std::vector<pluginDef>	pluginList;
 };
