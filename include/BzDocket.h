@@ -24,8 +24,8 @@ class BzDocket {
     ~BzDocket();
 
     bool addData(const std::string& data, const std::string& mapPath);
-    bool addDir(const std::string& dirPath, const std::string& mapPrefix);
     bool addFile(const std::string& filePath, const std::string& mapPath);
+    bool addDir(const std::string& dirPath, const std::string& mapPrefix);
 
     bool hasData(const std::string& mapPath);
     bool getData(const std::string& mapPath, std::string& data);
@@ -36,6 +36,9 @@ class BzDocket {
     void* unpack(void* buf);
 
     bool save(const std::string& dirPath);
+
+  private:
+    int getFileSize(FILE* file);
 
   private:
     DataMap dataMap;

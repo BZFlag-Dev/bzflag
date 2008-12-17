@@ -145,6 +145,32 @@ static string getMapPath(const std::string& path)
 }
 
 
+int BzDocket::getFileSize(FILE* file)
+{
+  // NOTE: use stat() ?
+  if (fseek(file, 0, SEEK_END) != 0) {
+    errorMsg = strerror(errno);
+    fclose(file);
+    return -1;
+  }
+
+  const long len = ftell(file);
+  if (len == -1) {
+    errorMsg = strerror(errno);
+    fclose(file);
+    return -1;
+  }
+
+  if (fseek(file, 0, SEEK_SET) != 0) {
+    errorMsg = strerror(errno);
+    fclose(file);
+    return -1;
+  }
+
+  return (int)len;
+}
+
+
 bool BzDocket::addData(const std::string& data, const std::string& mapPath)
 {
   if (mapPath.find_first_of("\\:") != string::npos) {
@@ -162,6 +188,45 @@ bool BzDocket::addData(const std::string& data, const std::string& mapPath)
   dataMap[mapPath] = data;
 
   return true;
+}
+
+
+bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
+{
+  errorMsg = "";
+  if (dataMap.find(mapPath) != dataMap.end()) {
+    errorMsg = "duplicate";
+    return false;
+  }
+
+  FILE* file = fopen(filePath.c_str(), "rb");
+  if (file == NULL) {
+    errorMsg = strerror(errno);
+    return false;
+  }
+
+  const int len = getFileSize(file);
+  if (len < 0) {
+    return false;
+  }
+
+  char* buf = new char[len];
+  if (fread(buf, 1, len, file) != (size_t)len) {
+    errorMsg = strerror(errno);
+    fclose(file);
+    delete[] buf;
+    return false;
+  }
+
+  fclose(file);
+
+  const string data(buf, len);
+  delete[] buf;
+
+  logDebugMessage(3, "adding to %s: '%s' as '%s'  (%li)\n",
+                  docketName.c_str(), filePath.c_str(), mapPath.c_str(), len);
+
+  return addData(data, mapPath);
 }
 
 
@@ -189,59 +254,6 @@ bool BzDocket::addDir(const std::string& dirPath, const std::string& mapPrefix)
   }
 
   return true;
-}
-
-
-bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
-{
-  errorMsg = "";
-  if (dataMap.find(mapPath) != dataMap.end()) {
-    errorMsg = "duplicate";
-    return false;
-  }
-
-  FILE* file = fopen(filePath.c_str(), "r");
-  if (file == NULL) {
-    errorMsg = strerror(errno);
-    return false;
-  }
-
-  if (fseek(file, 0, SEEK_END) != 0) {
-    errorMsg = strerror(errno);
-    fclose(file);
-    return false;
-  }
-
-  const long len = ftell(file);
-  if (len == -1) {
-    errorMsg = strerror(errno);
-    fclose(file);
-    return false;
-  }
-
-  if (fseek(file, 0, SEEK_SET) != 0) {
-    errorMsg = strerror(errno);
-    fclose(file);
-    return false;
-  }
-
-  char* buf = new char[len];
-  if (fread(buf, 1, len, file) != (size_t)len) {
-    errorMsg = strerror(errno);
-    fclose(file);
-    delete[] buf;
-    return false;
-  }
-
-  fclose(file);
-
-  const string data(buf, len);
-  delete[] buf;
-
-  logDebugMessage(3, "adding to %s: '%s' as '%s'  (%li)\n",
-                  docketName.c_str(), filePath.c_str(), mapPath.c_str(), len);
-
-  return addData(data, mapPath);
 }
 
 
