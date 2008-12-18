@@ -13,7 +13,7 @@
 #ifndef VERTICAL_SYNC_H
 #define VERTICAL_SYNC_H
 
-
+extern bool verticalSyncAvailable();
 extern void verticalSync();
 
 

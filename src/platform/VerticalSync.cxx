@@ -20,6 +20,26 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
+bool verticalSyncAvailable() {
+#if !defined HAVE_GLEW || (!defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__)
+  return false;
+#elif defined WIN32
+  if (wglSwapIntervalEXT) {
+    return true;
+  } else {
+    return false;
+  }
+#elif defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__ // !WIN32
+  return true;
+#else // !WIN32 && !__APPLE__
+  if (glXSwapIntervalSGI) {
+    return true;
+  } else {
+    return false;
+  }
+#endif
+}
+
 //---------------------------------------------------------------------------------
 #if !defined HAVE_GLEW || (!defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__)
 void verticalSync() { return; }
@@ -79,7 +99,7 @@ void verticalSync() {
 }
 
 /////////////////
-#else // !__APPLE
+#else // !WIN32 && !__APPLE
 /////////////////
 
 #include <GL/glxew.h>
