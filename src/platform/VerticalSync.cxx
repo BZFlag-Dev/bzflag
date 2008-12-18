@@ -31,6 +31,8 @@ bool verticalSyncAvailable() {
   }
 #elif defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__ // !WIN32
   return true;
+#elif defined __APPLE__ // __APPLE__ && !HAVE_CGLGETCURRENTCONTEXT
+  return false;
 #else // !WIN32 && !__APPLE__
   if (glXSwapIntervalSGI) {
     return true;
