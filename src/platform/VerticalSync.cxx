@@ -32,7 +32,7 @@ bool verticalSyncAvailable() { return false; }
 #elif defined(_WIN32) // WIN32
 #  include <GL/wglew.h>
 bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
-#elif !defined(__APPLE__) // GLX
+#else // GLX
 #  include <GL/glxew.h>
 bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
 #endif
@@ -71,9 +71,9 @@ void verticalSync() {
 #  endif // !defined HAVE_CGLGETCURRENTCONTEXT
 
 
-////////////////////////
+/////////////////////////
 #elif !defined(HAVE_GLEW)
-////////////////////////
+/////////////////////////
 
 void verticalSync() { return; }
 
