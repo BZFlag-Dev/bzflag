@@ -20,65 +20,33 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 
-bool verticalSyncAvailable() {
-#if !defined HAVE_GLEW || (!defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__)
-  return false;
-#elif defined WIN32
-  if (wglSwapIntervalEXT) {
-    return true;
-  } else {
-    return false;
-  }
-#elif defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__ // !WIN32
-  return true;
-#elif defined __APPLE__ // __APPLE__ && !HAVE_CGLGETCURRENTCONTEXT
-  return false;
-#else // !WIN32 && !__APPLE__
-  if (glXSwapIntervalSGI) {
-    return true;
-  } else {
-    return false;
-  }
+
+#if defined __APPLE__
+#  if defined HAVE_CGLGETCURRENTCONTEXT
+bool verticalSyncAvailable() { return true; }
+#  else
+bool verticalSyncAvailable() { return false; }
+#  endif
+#elif !defined HAVE_GLEW
+bool verticalSyncAvailable() { return false; }
+#elif defined _WIN32 // WIN32
+#  include <GL/wglew.h>
+bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
+#elif !defined __APPLE__ // GLX
+#  include <GL/glxew.h>
+bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
 #endif
-}
 
-//---------------------------------------------------------------------------------
-#if !defined HAVE_GLEW || (!defined HAVE_CGLGETCURRENTCONTEXT && defined __APPLE__)
+
+/////////////////////
+#if defined __APPLE__
+/////////////////////
+
+#  if !defined HAVE_CGLGETCURRENTCONTEXT
+
 void verticalSync() { return; }
-#else
-//---------------------------------------------------------------------------------
 
-
-////////////
-#ifdef WIN32
-////////////
-
-
-#include <GL/wglew.h>
-
-static int oldVSync = -1; // -1 means "use the system setting"
-
-void verticalSync() {
-  if (BZDBCache::vsync == oldVSync) {
-    return;
-  }
-  oldVSync = BZDBCache::vsync;
-
-  // FIXME -- needs to be updated during context switches?
-  if (wglSwapIntervalEXT) {
-    wglSwapIntervalEXT(BZDBCache::vsync);
-  }  
-}
-
-
-///////////////
-#else // !WIN32
-///////////////
-
-////////////////
-#ifdef __APPLE__
-////////////////
-
+#  else
 
 static int oldVSync = -2; // -1 means "use the system setting", -2 is unitialized
 
@@ -100,11 +68,38 @@ void verticalSync() {
   CGLSetParameter(cglContext, kCGLCPSwapInterval, &newSwapInterval); 
 }
 
-/////////////////
-#else // !WIN32 && !__APPLE
-/////////////////
+#  endif // !defined HAVE_CGLGETCURRENTCONTEXT
 
-#include <GL/glxew.h>
+
+////////////////////////
+#elif !defined HAVE_GLEW
+////////////////////////
+
+void verticalSync() { return; }
+
+
+/////////////////////////////
+#elif defined _WIN32 // WIN32
+/////////////////////////////
+
+static int oldVSync = -1; // -1 means "use the system setting"
+
+void verticalSync() {
+  if (BZDBCache::vsync == oldVSync) {
+    return;
+  }
+  oldVSync = BZDBCache::vsync;
+
+  // FIXME -- needs to be updated during context switches?
+  if (wglSwapIntervalEXT) {
+    wglSwapIntervalEXT(BZDBCache::vsync);
+  }  
+}
+
+
+////////////
+#else // GLX
+////////////
 
 // NOTE: glXSwapIntervalSGI() does not let you turn off vsync
 
@@ -123,36 +118,9 @@ void verticalSync() {
 }
 
 
-
-/*
-void verticalSync()
-{
-  if (GLXEW_SGI_video_sync) {
-    const int vsync = BZDBCache::vsync;
-    if (vsync > 0) {
-      GLuint frameCount;
-      if (glXGetVideoSyncSGI(&frameCount) == 0) {
-        glXWaitVideoSyncSGI(vsync, (frameCount % vsync), &frameCount);
-      }
-    }
-  }
-  return;
-}
-*/
-
-//////////////////
-#endif // __APPLE
-//////////////////
-
-
-///////////////
-#endif // WIN32
-///////////////
-
-
-//-----------------
-#endif // HAVE_GLEW
-//-----------------
+//////
+#endif
+//////
 
 
 // Local Variables: ***
