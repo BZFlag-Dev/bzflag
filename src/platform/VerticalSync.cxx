@@ -21,28 +21,28 @@
 #include "BZDBCache.h"
 
 
-#if defined __APPLE__
-#  if defined HAVE_CGLGETCURRENTCONTEXT
+#if defined(__APPLE__)
+#  if defined(HAVE_CGLGETCURRENTCONTEXT)
 bool verticalSyncAvailable() { return true; }
 #  else
 bool verticalSyncAvailable() { return false; }
 #  endif
-#elif !defined HAVE_GLEW
+#elif !defined(HAVE_GLEW)
 bool verticalSyncAvailable() { return false; }
-#elif defined _WIN32 // WIN32
+#elif defined(_WIN32) // WIN32
 #  include <GL/wglew.h>
 bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
-#elif !defined __APPLE__ // GLX
+#elif !defined(__APPLE__) // GLX
 #  include <GL/glxew.h>
 bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
 #endif
 
 
-/////////////////////
-#if defined __APPLE__
-/////////////////////
+//////////////////////
+#if defined(__APPLE__)
+//////////////////////
 
-#  if !defined HAVE_CGLGETCURRENTCONTEXT
+#  if !defined(HAVE_CGLGETCURRENTCONTEXT)
 
 void verticalSync() { return; }
 
@@ -72,15 +72,15 @@ void verticalSync() {
 
 
 ////////////////////////
-#elif !defined HAVE_GLEW
+#elif !defined(HAVE_GLEW)
 ////////////////////////
 
 void verticalSync() { return; }
 
 
-/////////////////////////////
-#elif defined _WIN32 // WIN32
-/////////////////////////////
+//////////////////////////////
+#elif defined(_WIN32) // WIN32
+//////////////////////////////
 
 static int oldVSync = -1; // -1 means "use the system setting"
 
