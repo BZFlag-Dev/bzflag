@@ -1130,7 +1130,7 @@ bool isUDPAttackMessage ( uint16_t &code )
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState )
 {
   apiState.status = eAlive;
-  if (playerState.status & PlayerState::DeadStatus)
+  if (playerState.status == PlayerState::DeadStatus) // use == since dead is no bits
     apiState.status = eDead;
   else if (playerState.status & PlayerState::Paused)
     apiState.status = ePaused;
