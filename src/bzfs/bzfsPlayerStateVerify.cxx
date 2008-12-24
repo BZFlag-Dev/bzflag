@@ -344,7 +344,7 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
   // Don't kick players if the world param is still changing
   if (!worldStateChanging()) {
     // exploding or dead players can do unpredictable things
-    if (state.status != PlayerState::Exploding && state.status != PlayerState::DeadStatus) {
+    if (!(state.status & PlayerState::Exploding) && (state.status != PlayerState::DeadStatus)) {
       if (!doBoundsChecks(playerData,state))
 	return false;
 
