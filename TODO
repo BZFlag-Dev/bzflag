@@ -56,7 +56,7 @@ so that no work is duplicated.
 -- 
 
 * send the shot limits to the client so we don't shoot the wrong shot
-  and can do interactive ammo display instead of chat messages.
+  and can do interactive ammo display instead of chat messages. (javawizard2539)
 
 * Change the title image to not have the flag with the version in it. Add
   ether the flag, or some version number to the image at run time using GL
