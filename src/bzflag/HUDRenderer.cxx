@@ -110,6 +110,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   alertFontFace = LocalFontFace::create("sansSerifFont");
   majorFontFace = LocalFontFace::create("serifFont");
   minorFontFace = LocalFontFace::create("consoleFont");
+  shotsFontFace = LocalFontFace::create("sansSerifFont");
   headingFontFace = LocalFontFace::create("sansSerifFont");
   composeFontFace = LocalFontFace::create("consoleFont");
   labelsFontFace = LocalFontFace::create("consoleFont");
@@ -187,6 +188,7 @@ void			HUDRenderer::resize(bool firstTime)
   setHeadingFontSize(w, vh);
   setComposeFontSize(w, vh);
   setLabelsFontSize(w, vh);
+  setShotsFontSize(w, vh);
 
   // set scoreboard window size & location
   const float sby = window.getViewHeight() - majorFontHeight - alertFontHeight * 2.0f;
@@ -269,6 +271,12 @@ void			HUDRenderer::setLabelsFontSize(int width, int height)
 {
   FontSizer fs = FontSizer(width, height);
   labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "consoleFontSize");
+}
+
+void            HUDRenderer::setShotsFontSize(int width, int height)
+{
+	FontSizer fs = FontSizer(width, height);
+	shotsFontSize = fs.getFontSize(shotsFontFace->getFMFace(), "shotsFontSize");
 }
 
 void			HUDRenderer::setColor(float r, float g, float b)
@@ -1296,6 +1304,8 @@ void			HUDRenderer::renderTimes(void)
   }
 }
 
+//renders the targeting box in the hud
+
 void			HUDRenderer::renderBox(SceneRenderer&)
 {
   // get view metrics
@@ -1324,7 +1334,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   if (true /* always draw heading strip */) {
     // first clip to area
     glScissor(ox + centerx - maxMotionSize, oy + height - viewHeight + centery + maxMotionSize - 5,
-	      2 * maxMotionSize, 25 + (int)(labelsFontSize + 0.5f));
+       2 * maxMotionSize, 25 + (int)(labelsFontSize + 0.5f));
 
     // draw heading mark
     glBegin(GL_LINES);
@@ -1605,7 +1615,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   glPushMatrix();
   // cover the lower portion of the screen when burrowed
-  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
     glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
@@ -1657,6 +1667,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // draw targeting box
   renderBox(renderer);
+
 
   glPopMatrix();
 

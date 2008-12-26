@@ -29,6 +29,7 @@
 #include "Address.h"
 
 /* local headers */
+#include "LocalPlayer.h"
 #include "MainWindow.h"
 #include "ControlPanel.h"
 
@@ -92,6 +93,7 @@ int			curlProgressFunc(void* clientp,
 
 void selectNextRecipient (bool forward, bool robotIn);
 void handleFlagDropped(Player* tank);
+void dropFlag(LocalPlayer* myTank);
 void setTarget();
 bool shouldGrabMouse();
 void setRoamingLabel();

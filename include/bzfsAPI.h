@@ -414,7 +414,7 @@ typedef enum {
 
 typedef struct bz_PlayerUpdateState {
   bz_ePlayerStatus	status;			// special states
-  bool			falling;		// not driving on the ground or an obstacle
+  bool			falling;		// not driving on the ground or an obstafcle
   bool			crossingWall;		// crossing an obstacle wall
   bool			inPhantomZone;		// zoned
   float			pos[3];			// position of tank

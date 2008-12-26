@@ -313,16 +313,7 @@ static std::string cmdDrop(const std::string&,
     return "usage: drop";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
-    FlagType* flag = myTank->getFlag();
-    if ((flag != Flags::Null) && !myTank->isPaused() &&
-	(flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
-	!(flag == Flags::OscillationOverthruster &&
-	  myTank->getLocation() == LocalPlayer::InBuilding)) {
-      serverLink->sendDropFlag(myTank->getPosition());
-      // changed: on windows it may happen the MsgDropFlag
-      // never comes back to us, so we drop it right away
-      handleFlagDropped(myTank);
-    }
+    dropFlag(myTank);
   }
   return std::string();
 }

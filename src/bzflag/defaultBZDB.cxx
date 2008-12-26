@@ -153,6 +153,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "alertFontSize",		"1/64",			true,	StateDatabase::ReadWrite,	NULL },
   { "infoFontSize",		"1/96",			true,	StateDatabase::ReadWrite,	NULL },
   { "consoleFontSize",		"1/128",		true,	StateDatabase::ReadWrite,	NULL },
+  { "shotsFontSize",        "1/96",         true,   StateDatabase::ReadWrite,   NULL },
   { "scoreFontSize",		"1/128",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes

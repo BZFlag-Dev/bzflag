@@ -563,8 +563,9 @@ public:
 	      sprintf(message,"%d shots left",shotsLeft);
 	    else
 	      strcpy(message,"1 shot left");
-
-	    sendMessage(ServerPlayer, player->getIndex(), message);
+// Unused with addition of interactive ammo display in hud, should be removed along with a
+// bunch of other stuff around here
+//	    sendMessage(ServerPlayer, player->getIndex(), message);
 	  }
 	} else {
 	  // no shots left

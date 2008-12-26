@@ -1879,6 +1879,15 @@ static void handleFlagNegotiation(void *msg, uint16_t len)
   serverLink->send(MsgWantSettings, 0, NULL);
 }
 
+static void handleShotsRemaining(void *msg)
+{
+  uint16_t buf;
+  msg = nboUnpackUShort(msg, buf);
+  if(LocalPlayer::getMyTank())
+	LocalPlayer::getMyTank()->setShotsRemaining(buf);
+  LocalPlayer::getMyTank()->printShotsRemaining();
+}
+
 static void handleGameSettings(void *msg)
 {
   if (worldBuilder) {
@@ -3308,6 +3317,10 @@ case MsgNegotiateFlags:
   handleFlagNegotiation(msg, len);
   break;
 
+case MsgShotsRemaining:
+  handleShotsRemaining(msg);
+  break;
+
 case MsgFlagType:
   {
     FlagType *typ = NULL;
@@ -3793,6 +3806,20 @@ static void handleMsgSetVars(void *msg)
     BZDB.set(name, value);
     BZDB.setPersistent(name, false);
     BZDB.setPermission(name, StateDatabase::Locked);
+  }
+}
+
+void dropFlag(LocalPlayer* myTank)
+{
+  FlagType* flag = myTank->getFlag();
+  if ((flag != Flags::Null) && !myTank->isPaused() &&
+  (flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
+  !(flag == Flags::OscillationOverthruster &&
+    myTank->getLocation() == LocalPlayer::InBuilding)) {
+    serverLink->sendDropFlag(myTank->getPosition());
+    // changed: on windows it may happen the MsgDropFlag
+    // never comes back to us, so we drop it right away
+    handleFlagDropped(myTank);
   }
 }
 
