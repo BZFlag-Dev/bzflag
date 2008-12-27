@@ -453,7 +453,7 @@ bool configError(const char *msg, int linenum, int playerID, FILE *fp) {
   char send[256];
   fclose(fp);
   sprintf(send, "+++ nagware config file error (%s) at line #%d", msg, linenum);
-  bz_debugMessagef(0, send);
+  bz_debugMessage(0, send);
   if (playerID >=0)
     bz_sendTextMessage(BZ_SERVER, playerID, send);
   return true;
@@ -508,7 +508,7 @@ bool readConfig(char *filename, NagConfig *cfg, int playerID) {
 
   if (cfile == NULL) {
     sprintf(line, "+++ Error opening nagware config file (%s)", filename);
-    bz_debugMessagef(0, line);
+    bz_debugMessage(0, line);
     if (playerID >=0)
       bz_sendTextMessage(BZ_SERVER, playerID, line);
     return true;
