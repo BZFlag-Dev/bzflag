@@ -80,11 +80,6 @@ public:
   void		setJumpPressed(bool value);
   void		setTarget(const Player*);
 
-  int       getShotsRemaining() const;
-  void      decrementShotsRemaining();
-  void      setShotsRemaining(int value);
-  void      printShotsRemaining();
-
   void		setDeadStop ( void  );
 
   void		setNemesis(const Player*);
@@ -168,7 +163,6 @@ private:
   bool		inputChanged;
   bool		spawning;
   int		wingsFlapCount;
-  int       shotsRemaining;
   bool		left;
   bool		right;
   bool		up;

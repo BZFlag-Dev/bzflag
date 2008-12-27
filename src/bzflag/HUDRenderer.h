@@ -161,7 +161,6 @@ private:
   void		setHeadingFontSize(int width, int height);
   void		setComposeFontSize(int width, int height);
   void		setLabelsFontSize(int width, int height);
-  void      setShotsFontSize(int width, int height);
 
   void		resize(bool firstTime);
   static void	resizeCallback(void*);
@@ -189,8 +188,6 @@ private:
   float			majorFontSize;
   LocalFontFace*	minorFontFace;
   float			minorFontSize;
-  LocalFontFace*    shotsFontFace;
-  float         shotsFontSize;
   LocalFontFace*	headingFontFace;
   float			headingFontSize;
   LocalFontFace*	composeFontFace;

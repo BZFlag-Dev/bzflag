@@ -523,23 +523,13 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   data.shotType = (bz_eShotType)flag.flag.type->flagShot;
   data.playerID = playerIndex;
 
-  worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data); 
+  worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
 
   // pack in the shot type, it may have been modified
   msg->packUByte(data.shotType);
   playerData->efectiveShotType = (ShotType)data.shotType;
 
   msg->broadcast(MsgGrabFlag);
-
-  //We'll want to send the shot limit to the player that picked up the flag
-  int flagLimit = clOptions->flagLimit[flag.flag.type];
-  if(flagLimit > 0)
-  {
-    NetMsg limitMessage = MSGMGR.newMessage();
-    limitMessage->packUShort(flagLimit);
-	limitMessage->send(playerData->netHandler, MsgShotsRemaining);
-  }
-
 
   // now do everyone who doesn't have network
   for (int i = 0; i < curMaxPlayers; i++) {

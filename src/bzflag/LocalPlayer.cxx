@@ -33,8 +33,6 @@
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
-#include "AnsiCodes.h"
-#include "HUDRenderer.h"
 
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
@@ -59,7 +57,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   inputChanged(false),
   spawning(false),
   wingsFlapCount(0),
-  shotsRemaining(0),
   left(false),
   right(false),
   up(false),
@@ -1028,11 +1025,6 @@ float			LocalPlayer::getFlagShakingTime() const
   return flagShakingTime;
 }
 
-int             LocalPlayer::getShotsRemaining() const
-{
-  return shotsRemaining;
-}
-
 int			LocalPlayer::getFlagShakingWins() const
 {
   return flagShakingWins;
@@ -1254,12 +1246,6 @@ bool			LocalPlayer::fireShot()
   // make shot and put it in the table
   addShot(new LocalShotPath(firingInfo,syncedClock.GetServerSeconds()), firingInfo);
 
-  // Decrement shots remaining for the current flag if there are any
-  bool hadShots = shotsRemaining > 0;
-  decrementShotsRemaining();
-  if ((shotsRemaining % 5 == 0 || shotsRemaining <= 3) && shotsRemaining > 0)
-    printShotsRemaining();
-
   // Insert timestamp, useful for dead reckoning jitter fixing
   firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
 
@@ -1307,16 +1293,6 @@ bool			LocalPlayer::fireShot()
     // make sure all the shots don't go off at once
     forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
   }
-
-  if(hadShots && (getShotsRemaining() < 1)){
-    std::string message;
-    message += ColorStrings[WhiteColor];
-    message += "You are out of shots.";
-    controlPanel->addMessage(message);
-    hud->setAlert(1, message.c_str(), 2.0f);
-    dropFlag(this);
-  }
-
   return true;
 }
 
@@ -1441,37 +1417,6 @@ void			LocalPlayer::doJump()
   }
 
   wantJump = false;
-}
-
-void            LocalPlayer::printShotsRemaining()
-{
-  if(shotsRemaining < 1)
-    return;
-  if(hud && controlPanel)
-  {
-    std::string message;
-    char shotsLeftString[10];
-    snprintf(shotsLeftString, 10, "%d", shotsRemaining);
-    message += ColorStrings[WhiteColor];
-    message += shotsLeftString;
-    message += " shot";
-    if(shotsRemaining != 1)
-      message += "s";
-    message += " left";
-    controlPanel->addMessage(message);
-    hud->setAlert(1, message.c_str(), 2.0f);
-  }
-}
-
-void            LocalPlayer::setShotsRemaining(int value)
-{
-  shotsRemaining = value;
-}
-
-void            LocalPlayer::decrementShotsRemaining()
-{
-  if(shotsRemaining > 0)
-    shotsRemaining -= 1;
 }
 
 void			LocalPlayer::setTarget(const Player* _target)
@@ -1649,11 +1594,6 @@ void			LocalPlayer::setFlag(FlagType* flag)
   World *world = World::getWorld();
   if (!world) {
     return;
-  }
-
-  if(getFlag() == Flags::Null)
-  {
-	setShotsRemaining(0);
   }
 
   float worldSize = BZDBCache::worldSize;
