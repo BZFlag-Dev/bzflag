@@ -59,6 +59,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   inputChanged(false),
   spawning(false),
   wingsFlapCount(0),
+  shotsRemaining(0),
   left(false),
   right(false),
   up(false),
@@ -67,8 +68,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   wantJump(false),
   jumpPressed(false),
   deathPhyDrv(-1),
-  hitWall(false),
-  shotsRemaining(0)
+  hitWall(false)
 {
   // initialize shots array to no shots fired
   World *world = World::getWorld();
