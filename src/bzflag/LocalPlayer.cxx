@@ -1255,6 +1255,7 @@ bool			LocalPlayer::fireShot()
   addShot(new LocalShotPath(firingInfo,syncedClock.GetServerSeconds()), firingInfo);
 
   // Decrement shots remaining for the current flag if there are any
+  bool hadShots = shotsRemaining > 0;
   decrementShotsRemaining();
   if ((shotsRemaining % 5 == 0 || shotsRemaining <= 3) && shotsRemaining > 0)
     printShotsRemaining();
@@ -1307,7 +1308,12 @@ bool			LocalPlayer::fireShot()
     forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
   }
 
-  if(getShotsRemaining() < 1){
+  if(hadShots && (getShotsRemaining() < 1)){
+    std::string message;
+    message += ColorStrings[WhiteColor];
+    message += "You are out of shots.";
+    controlPanel->addMessage(message);
+    hud->setAlert(1, message.c_str(), 2.0f);
     dropFlag(this);
   }
 
