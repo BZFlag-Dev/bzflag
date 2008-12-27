@@ -17,7 +17,11 @@
 
 PythonLoader::PythonLoader() :module(NULL), ctor(NULL), robot(NULL), initialized(false)
 {
-  Py_SetProgramName("bzrobots");
+  // Py_SetProgramName() takes a non-const argument in Python 2.5, so
+  // suppress a warning about conversion from string constant to char*
+  // by putting the program name into a variable.
+  char name[] = "bzrobots";
+  Py_SetProgramName(name);
   Py_Initialize();
 }
 
