@@ -40,18 +40,21 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
   SDL_Rect **modeList
     = SDL_ListModes(NULL, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN
 		    | SDL_HWPALETTE);
-  if (!modeList)
+  if (!modeList) {
     printf("Could not Get available video modes: %s.\n", SDL_GetError());
+  }
 
   int defaultResolutionIndex = 0;
   ResInfo** _resolutions;
   int _numResolutions = 1;
   // No modes available or All resolutions available
   if ((modeList != (SDL_Rect **) 0) && (modeList != (SDL_Rect **) -1)) {
-      for (int i = 1; modeList[i]; i++)
-	if ((modeList[i - 1]->w != modeList[i]->w)
-	    || (modeList[i - 1]->h != modeList[i]->h))
-	  _numResolutions++;
+    for (int i = 1; modeList[i]; i++) {
+      if ((modeList[i - 1]->w != modeList[i]->w)
+          || (modeList[i - 1]->h != modeList[i]->h)) {
+        _numResolutions++;
+      }
+    }
   };
   _resolutions = new ResInfo*[_numResolutions];
 
@@ -71,19 +74,23 @@ SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
     for (int i = 0; modeList[i]; i++) {
       h = modeList[i]->h;
       w = modeList[i]->w;
-      if (i != 0)
-	if ((modeList[i - 1]->w == w) && (modeList[i - 1]->h == h))
+      if (i != 0) {
+	if ((modeList[i - 1]->w == w) && (modeList[i - 1]->h == h)) {
 	  continue;
+        }
+      }
       sprintf(name, "%dx%d    ", w, h);
       _resolutions[j] = new ResInfo(name, w, h, 0);
 #ifdef WIN32
       // use a safe default resolution because there are so many screwy drivers out there
-      if ((w == defaultWidth) && (h == defaultHeight))
+      if ((w == defaultWidth) && (h == defaultHeight)) {
 	defaultResolutionIndex = j;
+      }
 #endif
       j++;
     }
-  } else {
+  }
+  else {
     // if no modes then make default
     _resolutions[0] = new ResInfo ("default", 640, 480, 0);
     defaultWidth = 640;
@@ -122,9 +129,9 @@ bool SDLDisplay::isEventPending() const
 bool SDLDisplay::getEvent(BzfEvent& _event) const
 {
   SDL_Event event;
-  if (SDL_PollEvent(&event) == 0)
+  if (SDL_PollEvent(&event) == 0) {
     return false;
-
+  }
   return setupEvent(_event, event);
 }
 
@@ -135,7 +142,6 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
   if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_ALLEVENTS) <= 0) {
     return false;
   }
-
   return setupEvent(_event, event);
 }
 
@@ -180,48 +186,19 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
       if (alt)   { bzEvent.keyDown.shift |= BzfKeyEvent::AltKey;     }
       if (ctrl)  { bzEvent.keyDown.shift |= BzfKeyEvent::ControlKey; }
       if (shift) { bzEvent.keyDown.shift |= BzfKeyEvent::ShiftKey;   }
-      
+
+      int& button = bzEvent.keyDown.button;      
       switch (sdlEvent.button.button) {
-	case SDL_BUTTON_LEFT: {
-	  bzEvent.keyDown.button = BzfKeyEvent::LeftMouse;
-	  break;
-	}
-	case SDL_BUTTON_MIDDLE: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MiddleMouse;
-	  break;
-	}
-	case SDL_BUTTON_RIGHT: {
-	  bzEvent.keyDown.button = BzfKeyEvent::RightMouse;
-	  break;
-	}
-	case SDL_BUTTON_WHEELUP: {
-	  bzEvent.keyDown.button = BzfKeyEvent::WheelUp;
-	  break;
-	}
-	case SDL_BUTTON_WHEELDOWN: {
-	  bzEvent.keyDown.button = BzfKeyEvent::WheelDown;
-	  break;
-	}
-	case 6: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton6;
-	  break;
-	}
-	case 7: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton7;
-	  break;
-	}
-	case 8: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton8;
-	  break;
-	}
-	case 9: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton9;
-	  break;
-	}
-	case 10: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton10;
-	  break;
-	}
+	case SDL_BUTTON_LEFT:      { button = BzfKeyEvent::LeftMouse;     break; }
+	case SDL_BUTTON_MIDDLE:    { button = BzfKeyEvent::MiddleMouse;   break; }
+	case SDL_BUTTON_RIGHT:     { button = BzfKeyEvent::RightMouse;    break; }
+	case SDL_BUTTON_WHEELUP:   { button = BzfKeyEvent::WheelUp;       break; }
+	case SDL_BUTTON_WHEELDOWN: { button = BzfKeyEvent::WheelDown;     break; }
+	case 6:                    { button = BzfKeyEvent::MouseButton6;  break; }
+	case 7:                    { button = BzfKeyEvent::MouseButton7;  break; }
+	case 8:                    { button = BzfKeyEvent::MouseButton8;  break; }
+	case 9:                    { button = BzfKeyEvent::MouseButton9;  break; }
+	case 10:                   { button = BzfKeyEvent::MouseButton10; break; }
 	default: {
 	  return false;
         }
@@ -236,48 +213,19 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
       if (alt)   { bzEvent.keyUp.shift |= BzfKeyEvent::AltKey;     }
       if (ctrl)  { bzEvent.keyUp.shift |= BzfKeyEvent::ControlKey; }
       if (shift) { bzEvent.keyUp.shift |= BzfKeyEvent::ShiftKey;   }
-      
+
+      int& button = bzEvent.keyUp.button;      
       switch (sdlEvent.button.button) {
-	case SDL_BUTTON_LEFT: {
-	  bzEvent.keyDown.button = BzfKeyEvent::LeftMouse;
-	  break;
-	}
-	case SDL_BUTTON_MIDDLE: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MiddleMouse;
-	  break;
-	}
-	case SDL_BUTTON_RIGHT: {
-	  bzEvent.keyDown.button = BzfKeyEvent::RightMouse;
-	  break;
-	}
-	case SDL_BUTTON_WHEELUP: {
-	  bzEvent.keyDown.button = BzfKeyEvent::WheelUp;
-	  break;
-	}
-	case SDL_BUTTON_WHEELDOWN: {
-	  bzEvent.keyDown.button = BzfKeyEvent::WheelDown;
-	  break;
-	}
-	case 6: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton6;
-	  break;
-	}
-	case 7: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton7;
-	  break;
-	}
-	case 8: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton8;
-	  break;
-	}
-	case 9: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton9;
-	  break;
-	}
-	case 10: {
-	  bzEvent.keyDown.button = BzfKeyEvent::MouseButton10;
-	  break;
-	}
+	case SDL_BUTTON_LEFT:      { button = BzfKeyEvent::LeftMouse;     break; }
+	case SDL_BUTTON_MIDDLE:    { button = BzfKeyEvent::MiddleMouse;   break; }
+	case SDL_BUTTON_RIGHT:     { button = BzfKeyEvent::RightMouse;    break; }
+	case SDL_BUTTON_WHEELUP:   { button = BzfKeyEvent::WheelUp;       break; }
+	case SDL_BUTTON_WHEELDOWN: { button = BzfKeyEvent::WheelDown;     break; }
+	case 6:                    { button = BzfKeyEvent::MouseButton6;  break; }
+	case 7:                    { button = BzfKeyEvent::MouseButton7;  break; }
+	case 8:                    { button = BzfKeyEvent::MouseButton8;  break; }
+	case 9:                    { button = BzfKeyEvent::MouseButton9;  break; }
+	case 10:                   { button = BzfKeyEvent::MouseButton10; break; }
 	default: {
 	  return false;
         }
@@ -333,9 +281,9 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
 void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 {
   SDLMod mode = SDL_GetModState();
-  shift       = ((mode & KMOD_SHIFT) != 0);
-  ctrl	= ((mode & KMOD_CTRL) != 0);
-  alt	 = ((mode & KMOD_ALT) != 0);
+  alt   = ((mode & KMOD_ALT)   != 0);
+  ctrl  = ((mode & KMOD_CTRL)  != 0);
+  shift = ((mode & KMOD_SHIFT) != 0);
 }
 
 
@@ -435,9 +383,10 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 }
 
 
-bool SDLDisplay::createWindow() {
-  int    width;
-  int    height;
+bool SDLDisplay::createWindow()
+{
+  int width;
+  int height;
   Uint32 flags = SDL_OPENGL;
 
   /* anti-aliasing */
@@ -479,12 +428,14 @@ bool SDLDisplay::createWindow() {
 }
 
 
-void SDLDisplay::setFullscreen(bool on) {
+void SDLDisplay::setFullscreen(bool on)
+{
   fullScreen = on;
 }
 
 
-bool SDLDisplay::getFullscreen() const {
+bool SDLDisplay::getFullscreen() const
+{
   return fullScreen;
 }
 
@@ -536,7 +487,8 @@ void SDLDisplay::getWindowSize(int& width, int& height)
 }
 
 
-void SDLDisplay::enableGrabMouse(bool on) {
+void SDLDisplay::enableGrabMouse(bool on)
+{
   canGrabMouse = on;
   if (canGrabMouse) {
     SDL_WM_GrabInput(SDL_GRAB_ON);
