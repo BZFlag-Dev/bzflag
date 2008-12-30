@@ -52,6 +52,9 @@ class SDLWindow : public BzfWindow {
   void  makeContext() {;};
   void  freeContext() {;};
   bool  create(void);
+
+  static int mx;
+  static int my;
  private:
   int  width;
   int  height;

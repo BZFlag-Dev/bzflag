@@ -17,24 +17,30 @@
 #include <iostream>
 
 
-extern int mx, my; /* from SDLDisplay.cxx */
+int SDLWindow::mx = 0;
+int SDLWindow::my = 0;
+
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), width(-1), height(-1), hasGamma(true), iconified(false)
 {
 }
 
+
 void SDLWindow::setTitle(const char * title) {
   SDL_WM_SetCaption(title, title);
 }
+
 
 void SDLWindow::setFullscreen(bool on) {
   ((SDLDisplay *)getDisplay())->setFullscreen(on);
 }
 
+
 bool SDLWindow::getFullscreen() const {
   return ((SDLDisplay *)getDisplay())->getFullscreen();
 }
+
 
 void SDLWindow::deiconify() {
   std::cout << "deiconifying" << std::endl;
@@ -50,6 +56,7 @@ void SDLWindow::deiconify() {
 
   callExposeCallbacks();
 }
+
 
 void SDLWindow::iconify() {
   int x, y;
@@ -77,22 +84,27 @@ void SDLWindow::iconify() {
   iconified = true;
 }
 
+
 void SDLWindow::warpMouse(int x, int y) {
   SDL_WarpMouse(x, y);
 }
+
 
 void SDLWindow::getMouse(int& x, int& y) const {
   x = mx;
   y = my;
 }
 
+
 void SDLWindow::setSize(int _width, int _height) {
   ((SDLDisplay *)getDisplay())->setWindowSize(_width, _height);
 }
 
+
 void SDLWindow::getSize(int& _width, int& _height) const {
   ((SDLDisplay *)getDisplay())->getWindowSize(_width, _height);
 }
+
 
 void SDLWindow::setGamma(float gamma) {
   int result = SDL_SetGamma(gamma, gamma, gamma);
@@ -101,6 +113,7 @@ void SDLWindow::setGamma(float gamma) {
     hasGamma = false;
   }
 }
+
 
 // Code taken from SDL (not available through the headers)
 static float CalculateGammaFromRamp(Uint16 ramp[256]) {
@@ -125,6 +138,7 @@ static float CalculateGammaFromRamp(Uint16 ramp[256]) {
   return gamma;
 }
 
+
 float SDLWindow::getGamma() const {
   Uint16 redRamp[256];
   Uint16 greenRamp[256];
@@ -142,13 +156,16 @@ float SDLWindow::getGamma() const {
   return gamma;
 }
 
+
 bool SDLWindow::hasGammaControl() const {
   return hasGamma;
 }
 
+
 void SDLWindow::swapBuffers() {
   SDL_GL_SwapBuffers();
 }
+
 
 bool SDLWindow::create(void) {
   if (!((SDLDisplay *)getDisplay())->createWindow()) {
@@ -156,6 +173,7 @@ bool SDLWindow::create(void) {
   }
   return true;
 }
+
 
 void SDLWindow::enableGrabMouse(bool on) {
   ((SDLDisplay *)getDisplay())->enableGrabMouse(on);
