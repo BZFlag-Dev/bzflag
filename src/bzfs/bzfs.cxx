@@ -1215,6 +1215,10 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   const PlayerId srcPlayer = playerData->getIndex();
   std::string actionMsg = "";
 
+  // Check for spoofed /me messages
+  if ((strlen(message) >= 3) && (message[0] == '*') && (message[strlen(message)-2] == '\t') && (message[strlen(message)-1] == '*'))
+    return;
+
   // reformat any '/me' action messages
   // this is here instead of in commands.cxx to allow player-player/player-channel targetted messages
   if (strncasecmp(message, "/me", 3) == 0) {
