@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="date"
 	ProjectGUID="{93772A78-3C80-4635-AC84-983B8E0FECF3}"
+	RootNamespace="date"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -457,9 +458,9 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Debug/date.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				AssemblerListingLocation="./date_debug/"
+				ObjectFile="./date_debug/"
+				ProgramDataBaseFileName="./date_debug/"
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
