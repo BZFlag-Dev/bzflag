@@ -543,9 +543,9 @@ void World::makeLinkMaterial()
   int dyncolID = DYNCOLORMGR.findColor(name);
   if (dyncolID < 0) {
     DynamicColor* dyncol = new DynamicColor;
-    dyncol->addState(0.6, 0.5f, 0.0f, 0.0f, 0.75f);
-    dyncol->addState(0.6, 0.0f, 0.3f, 0.0f, 0.75f);
-    dyncol->addState(0.6, 0.0f, 0.0f, 0.7f, 0.75f);
+    dyncol->addState(0.6f, 0.5f, 0.0f, 0.0f, 0.75f);
+    dyncol->addState(0.6f, 0.0f, 0.3f, 0.0f, 0.75f);
+    dyncol->addState(0.6f, 0.0f, 0.0f, 0.7f, 0.75f);
     dyncol->setName(name);
     dyncol->finalize();
     dyncolID = DYNCOLORMGR.addColor (dyncol);
