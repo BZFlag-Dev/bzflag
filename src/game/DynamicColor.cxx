@@ -230,7 +230,7 @@ void DynamicColor::finalize()
 
       statesLength += state.duration;
       if (colorEnds.find(statesLength) == colorEnds.end()) {
-        colorEnds[statesLength] = i;
+        colorEnds[statesLength] = (int)i;
       }
 
       const float alpha = state.color[3];
@@ -514,7 +514,7 @@ int DynamicColor::packSize() const
 
   fullSize += sizeof(float);    // states delay
   fullSize += sizeof(uint32_t); // states count
-  fullSize += sizeof(float) * 5 * colorStates.size(); // states data
+  fullSize += sizeof(float) * 5 * (int)colorStates.size(); // states data
 
   return fullSize;
 }
