@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="man2html"
 	ProjectGUID="{23DC26A8-35C0-4775-A2D6-E2092DAB9BFA}"
+	RootNamespace="man2html"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -19,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="./man2html_debug/"
+			IntermediateDirectory="./man2html_debug/"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
