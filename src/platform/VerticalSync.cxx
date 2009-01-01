@@ -22,19 +22,17 @@
 
 
 #if defined(__APPLE__)
-#  if defined(HAVE_CGLGETCURRENTCONTEXT)
-bool verticalSyncAvailable() { return true; }
-#  else
-bool verticalSyncAvailable() { return false; }
-#  endif
-#elif !defined(HAVE_GLEW)
-bool verticalSyncAvailable() { return false; }
+	#  if defined(HAVE_CGLGETCURRENTCONTEXT)
+	bool verticalSyncAvailable() { return true; }
+	#  else
+	bool verticalSyncAvailable() { return false; }
+	#  endif
 #elif defined(_WIN32) // WIN32
-#  include <GL/wglew.h>
-bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
+	#  include <GL/wglew.h>
+	bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
 #else // GLX
-#  include <GL/glxew.h>
-bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
+	#  include <GL/glxew.h>
+	bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
 #endif
 
 
@@ -69,14 +67,6 @@ void verticalSync() {
 }
 
 #  endif // !defined HAVE_CGLGETCURRENTCONTEXT
-
-
-/////////////////////////
-#elif !defined(HAVE_GLEW)
-/////////////////////////
-
-void verticalSync() { return; }
-
 
 //////////////////////////////
 #elif defined(_WIN32) // WIN32

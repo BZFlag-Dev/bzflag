@@ -30,6 +30,7 @@
 #include "BzfDisplay.h"
 #include "LocalFontFace.h"
 #include "VerticalSync.h"
+#include "bzfgl.h"
 
 DisplayMenu::DisplayMenu() : formatMenu(NULL)
 {
@@ -106,9 +107,9 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setLabel("Anisotropic:");
   option->setCallback(callback, (void*)"A");
   options = &option->getList();
-#ifdef HAVE_GLEW
-  if (GLEW_EXT_texture_filter_anisotropic) {
-    static GLint maxAnisotropy = 1;
+ // if ( GLEW_EXT_texture_filter_anisotropic ) {
+  if ( GLEW_GET_VAR(__GLEW_EXT_texture_filter_anisotropic) ) {
+   static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
       options->push_back(std::string("Off"));
@@ -123,9 +124,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   } else {
     options->push_back(std::string("Unavailable"));
   }
-#else
-  options->push_back(std::string("Unavailable"));
-#endif
   option->update();
   addControl(option);
 
