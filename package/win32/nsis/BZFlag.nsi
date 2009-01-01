@@ -275,7 +275,9 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Add the API library and header
     SetOutPath $INSTDIR\API
     File ..\..\..\bzfs.lib
+    File ..\..\..\plugins\plugin_utils\Release\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
+    File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
 SectionGroupEnd
 
