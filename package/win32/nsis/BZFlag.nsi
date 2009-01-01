@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.99
-  !define VER_MINOR .8.20081026
+  !define VER_MINOR .14.20090101
 
 ;--------------------------------
 ;Compression options
@@ -67,7 +67,7 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nClick Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nPlease not that you must have the Visual C++ 2008 Redistributable Package to run BZFlag, it can be downloaded from Microsoft.\r\n\r\nClick Next to continue."
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
@@ -164,10 +164,9 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
-  File ..\..\..\glew32.dll
 
-  ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
-  ; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."
+
+  ; need to change this to just install the MSVC9 runtimes
   ;File ..\..\..\msvcr80.dll
   ;File ..\..\..\msvcp80.dll
 
