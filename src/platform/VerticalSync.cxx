@@ -55,7 +55,12 @@ void verticalSync() {
   oldVSync = BZDBCache::vsync;
 
   CGLContextObj cglContext = CGLGetCurrentContext();
+
+#ifdef CGL_VERSION_1_1
+  long int newSwapInterval = BZDBCache::vsync;
+#else
   GLint newSwapInterval = BZDBCache::vsync;
+#endif
   
   if (newSwapInterval < 0) {
     newSwapInterval = 0;
