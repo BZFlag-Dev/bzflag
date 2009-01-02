@@ -59,7 +59,8 @@ EXTRA_DIST = \
 	ares \
 	curl \
 	freetype \
-	ftgl
+	ftgl \
+	glew
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
