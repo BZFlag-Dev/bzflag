@@ -4,9 +4,9 @@ README for Windows (32- and 64-bit) platforms
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary
 releases (Visual C++ 7.1 aka ".NET 2003" and Visual C++ 8.0 aka 
-".NET 2005" was used for versions pre 3.0, and Visual C++ 9.0 aka
-".Net 2008" is used for 3.0 and later). Project files are also
-provided for Visual C++ version 9.0. 
+".NET 2005" were used for versions pre 3.0, and Visual C++ 9.0 aka
+".Net 2008" is used for 3.0 and later). Project files are provided
+for Visual C++ version 9.0. 
 
 Visual Studio 6.0, 7.1 and 8.0 support has been discontinued,
 and no projects are provided for these versions.
@@ -39,13 +39,11 @@ use additional libraries that are used for the final release binaries
 that the project distributes.
 
 **Required Libraries**
-If you are using one of the Visual C++ EXPRESS editions, you will need 
-to install at least 2 Microsoft SDKs (Software development kits) in
-addition to the base compiler. These libraries are the Windows Platform
-SDK, and the Direct X 9 SDK.
+As you are using Visual C++ 2008 EXPRESS edition, you will need to 
+install a Microsoft SDK (Software development kit) in addition to the
+base compiler. As of VC9 'Windows Platform SDK' is built in. Individual 
+install and linking of this particular SDK is no longer necessary.
 
-You will need the windows platform SDK
-  (download at http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB&displaylang=en)
 You will need the windows DirectX SDK (April 2007)
   (download at http://www.microsoft.com/downloads/details.aspx?DisplayLang=en&FamilyID=86cf7fa2-e953-475c-abde-f016e4f7b61a )
   
@@ -55,11 +53,12 @@ You will need the windows DirectX SDK (April 2007)
   We are working on creating a build target for newer versions of DirectX that will
   support joysticks.
   
-Once you have these SDKs, you must configure VC to include them.
+Once you have this SDK, you must configure VC to include it.
 This can be done using the Tools Menu, Options item, then opening the
-'projects' sub item, and selecting the 'vc++ directories' item. Using that
-dialog you must set the paths to the include and lib dirs of any SDKs.
-Be sure that you use the correct lib dir for your platform (x68 or x64)
+'projects and solutions' sub item, and selecting the 'vc++ directories'
+item. Using that dialog you must set the paths to the include and lib 
+dirs of any SDKs. Be sure that you use the correct lib dir for your 
+platform (x68 or x64)
 
 You may wish to also install curses and glew if you wish to do a full 
 distribution build.
