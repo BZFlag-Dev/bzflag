@@ -1180,12 +1180,13 @@ AC_SUBST(LIBLUA)
 
 # GLEW
 AC_MSG_CHECKING(whether to build the included GLEW library)
-BUILD_GLEW="no"
+BUILD_GLEW="no (using system)"
 if test "x$GLEW_LIBS" = "x" ; then
     BUILD_GLEW="yes"
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
 fi
 AC_MSG_RESULT($BUILD_GLEW)
+AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
 
 
 # make sure ECHO and ECHO_N got defined and substituted
