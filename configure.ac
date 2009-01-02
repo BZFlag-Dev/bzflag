@@ -545,9 +545,7 @@ LIBS=$GLEW_LIBS
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
 				[[glewInit()]])],
 	       [glew_check="yes"], [glew_check="no"])
-if test $glew_check = "yes"; then
-    AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
-else
+if test "x$glew_check" = "xno"; then
     GLEW_LIBS=""
 fi
 AC_MSG_RESULT([$glew_check])
@@ -1178,6 +1176,17 @@ fi
 
 LIBLUA="\$(top_srcdir)/src/other/lua/liblua.la"
 AC_SUBST(LIBLUA)
+
+
+# GLEW
+AC_MSG_CHECKING(whether to build the included GLEW library)
+BUILD_GLEW="no"
+if test "x$GLEW_LIBS" = "x" ; then
+    BUILD_GLEW="yes"
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
+fi
+AC_MSG_RESULT($BUILD_GLEW)
+
 
 # make sure ECHO and ECHO_N got defined and substituted
 if test "x$ECHO" = "x" ; then
