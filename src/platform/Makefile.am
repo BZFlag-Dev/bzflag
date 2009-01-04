@@ -1,6 +1,23 @@
 noinst_LTLIBRARIES = libPlatform.la
 
 libPlatform_la_LDFLAGS = -static
+libPlatform_la_SOURCES = \
+	$(BEOS_SOURCES) \
+	$(HPUX_SOURCES) \
+	$(IRIX_SOURCES) \
+	$(LINUX_NATIVE_SOURCES) \
+	$(LINUX_SDL_SOURCES) \
+	$(MACOSX_SDL_SOURCES) \
+	$(SOLARIS_SOURCES) \
+	$(WIN32_SOURCES) \
+	BzfDisplay.cxx				\
+	BzfJoystick.cxx				\
+	BzfMedia.cxx				\
+	BzfVisual.cxx				\
+	BzfWindow.cxx				\
+	PlatformFactory.cxx			\
+	VerticalSync.cxx			\
+	wave.cxx
 
 noinst_HEADERS = \
 	BeOSDisplay.h				\
@@ -39,207 +56,123 @@ noinst_HEADERS = \
 	XWindow.h				\
 	wave.h
 
-if HAVE_SDL
-if LINUX
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
+LINUX_SDL_FILES = \
 	EvdevJoystick.cxx			\
-	PlatformFactory.cxx			\
 	SDLDisplay.cxx				\
 	SDLJoystick.cxx				\
 	SDLMedia.cxx				\
 	SDLPlatformFactory.cxx			\
 	SDLVisual.cxx				\
-	SDLWindow.cxx				\
-	VerticalSync.cxx
-endif
-else
-if LINUX
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
+	SDLWindow.cxx
+
+LINUX_NATIVE_FILES =				\
 	EvdevJoystick.cxx			\
 	LinuxDisplay.cxx			\
 	LinuxMedia.cxx				\
 	LinuxPlatformFactory.cxx		\
-	PlatformFactory.cxx			\
 	USBJoystick.cxx				\
-	VerticalSync.cxx			\
 	XDisplay.cxx				\
 	XVisual.cxx				\
-	XWindow.cxx				\
-	wave.cxx
+	XWindow.cxx
+
+SOLARIS_FILES =					\
+	SolarisMedia.cxx			\
+	SolarisPlatformFactory.cxx		\
+	XDisplay.cxx				\
+	XVisual.cxx				\
+	XWindow.cxx
+
+IRIX_FILES =					\
+	SGIDisplay.cxx				\
+	SGIMedia.cxx				\
+	SGIPlatformFactory.cxx			\
+	XDisplay.cxx				\
+	XVisual.cxx				\
+	XWindow.cxx
+
+MACOSX_SDL_FILES =				\
+	SDLDisplay.cxx				\
+	SDLJoystick.cxx				\
+	SDLMedia.cxx				\
+	SDLPlatformFactory.cxx			\
+	SDLVisual.cxx				\
+	SDLWindow.cxx
+
+BEOS_FILES =					\
+	BeOSDisplay.cxx				\
+	BeOSMedia.cxx				\
+	BeOSPlatformFactory.cxx			\
+	BeOSVisual.cxx				\
+	BeOSWindow.cxx
+
+WIN32_FILES =					\
+	DXJoystick.cxx				\
+	SDLDisplay.cxx				\
+	SDLJoystick.cxx				\
+	SDLMedia.cxx				\
+	SDLVisual.cxx				\
+	SDLWindow.cxx				\
+	WinDisplay.cxx				\
+	WinJoystick.cxx				\
+	WinMedia.cxx				\
+	WinPlatformFactory.cxx			\
+	WinVisual.cxx				\
+	WinWindow.cxx
+
+HPUX_FILES =					\
+	HPUXMedia.cxx				\
+	HPUXPlatformFactory.cxx
+
+if HAVE_SDL
+if LINUX
+LINUX_SDL_SOURCES = $(LINUX_SDL_FILES)
+endif
+else
+if LINUX
+LINUX_NATIVE_SOURCES = $(LINUX_NATIVE_FILES)
 endif
 endif
 
 if SOLARIS
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	PlatformFactory.cxx			\
-	SolarisMedia.cxx			\
-	SolarisPlatformFactory.cxx		\
-	VerticalSync.cxx			\
-	XDisplay.cxx				\
-	XVisual.cxx				\
-	XWindow.cxx				\
-	wave.cxx
+SOLARIS_SOURCES = $(SOLARIS_FILES)
 endif
 
 if IRIX
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	PlatformFactory.cxx			\
-	SGIDisplay.cxx				\
-	SGIMedia.cxx				\
-	SGIPlatformFactory.cxx			\
-	VerticalSync.cxx			\
-	XDisplay.cxx				\
-	XVisual.cxx				\
-	XWindow.cxx				\
-	wave.cxx
+IRIX_SOURCES = $(IRIX_FILES)
 endif
 
 if MACOS
 SUBDIRS = MacOSX
 
 if HAVE_SDL
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	PlatformFactory.cxx			\
-	SDLDisplay.cxx				\
-	SDLJoystick.cxx				\
-	SDLMedia.cxx				\
-	SDLPlatformFactory.cxx			\
-	SDLVisual.cxx				\
-	SDLWindow.cxx				\
-	VerticalSync.cxx			\
-	wave.cxx
-else
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	PlatformFactory.cxx			\
-	VerticalSync.cxx			\
-	wave.cxx
+MACOSX_SDL_SOURCES = $(MACOSX_SDL_FILES)
 endif
 endif
 DIST_SUBDIRS = MacOSX
 
 if BEOS
-libPlatform_la_SOURCES =			\
-	BeOSDisplay.cxx				\
-	BeOSMedia.cxx				\
-	BeOSPlatformFactory.cxx			\
-	BeOSVisual.cxx				\
-	BeOSWindow.cxx				\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	PlatformFactory.cxx			\
-	VerticalSync.cxx			\
-	wave.cxx
+BEOS_SOURCES = $(BEOS_FILES)
 endif
 
 if WIN32
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	DXJoystick.cxx				\
-	PlatformFactory.cxx			\
-	SDLDisplay.cxx				\
-	SDLJoystick.cxx				\
-	SDLMedia.cxx				\
-	SDLVisual.cxx				\
-	SDLWindow.cxx				\
-	VerticalSync.cxx			\
-	WinDisplay.cxx				\
-	WinJoystick.cxx				\
-	WinMedia.cxx				\
-	WinPlatformFactory.cxx			\
-	WinVisual.cxx				\
-	WinWindow.cxx				\
-	wave.cxx
+WIN32_SOURCES = $(WIN32_FILES)
 endif
 
 if HPUX
-libPlatform_la_SOURCES =			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	HPUXMedia.cxx				\
-	HPUXPlatformFactory.cxx			\
-	PlatformFactory.cxx			\
-	VerticalSync.cxx			\
-	wave.cxx
+HPUX_SOURCES = $(HPUX_FILES)
 endif
 
-EXTRA_DIST =	\
-	BeOSDisplay.cxx			\
-	BeOSMedia.cxx			\
-	BeOSPlatformFactory.cxx		\
-	BeOSVisual.cxx			\
-	BeOSWindow.cxx			\
-	BeOSWindow2.cxx			\
-	DXJoystick.cxx			\
-	EvdevJoystick.cxx		\
-	HPUXMedia.cxx			\
-	HPUXPlatformFactory.cxx		\
-	LinuxDisplay.cxx		\
-	LinuxMedia.cxx			\
-	LinuxPlatformFactory.cxx	\
-	NewMedia.cxx			\
-	README				\
-	SDLDisplay.cxx			\
-	SDLJoystick.cxx			\
-	SDLMedia.cxx			\
-	SDLPlatformFactory.cxx		\
-	SDLVisual.cxx			\
-	SDLWindow.cxx			\
-	SGIDisplay.cxx			\
-	SGIMedia.cxx			\
-	SGIPlatformFactory.cxx		\
-	SolarisMedia.cxx		\
-	SolarisPlatformFactory.cxx	\
-	USBJoystick.cxx			\
-	WinDisplay.cxx			\
-	WinJoystick.cxx			\
-	WinMedia.cxx			\
-	WinPlatformFactory.cxx		\
-	WinVisual.cxx			\
-	WinWindow.cxx			\
-	XDisplay.cxx			\
-	XVisual.cxx			\
-	XWindow.cxx			\
-	wave.cxx
+EXTRA_DIST = \
+	$(BEOS_FILES) \
+	$(HPUX_FILES) \
+	$(IRIX_FILES) \
+	$(LINUX_NATIVE_FILES) \
+	$(LINUX_SDL_FILES) \
+	$(MACOSX_SDL_FILES) \
+	$(SOLARIS_FILES) \
+	$(WIN32_FILES) \
+	NewMedia.cxx \
+	README
 
 AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
