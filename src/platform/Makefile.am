@@ -2,14 +2,14 @@ noinst_LTLIBRARIES = libPlatform.la
 
 libPlatform_la_LDFLAGS = -static
 libPlatform_la_SOURCES = \
-	$(BEOS_SOURCES) \
-	$(HPUX_SOURCES) \
-	$(IRIX_SOURCES) \
-	$(LINUX_NATIVE_SOURCES) \
-	$(LINUX_SDL_SOURCES) \
-	$(MACOSX_SDL_SOURCES) \
-	$(SOLARIS_SOURCES) \
-	$(WIN32_SOURCES) \
+	$(BEOS_SOURCES)				\
+	$(HPUX_SOURCES)				\
+	$(IRIX_SOURCES)				\
+	$(LINUX_NATIVE_SOURCES)			\
+	$(LINUX_SDL_SOURCES)			\
+	$(MACOSX_SDL_SOURCES)			\
+	$(SOLARIS_SOURCES)			\
+	$(WIN32_SOURCES)			\
 	BzfDisplay.cxx				\
 	BzfJoystick.cxx				\
 	BzfMedia.cxx				\
@@ -56,47 +56,45 @@ noinst_HEADERS = \
 	XWindow.h				\
 	wave.h
 
-LINUX_SDL_FILES = \
-	EvdevJoystick.cxx			\
+SDL_FILES = \
 	SDLDisplay.cxx				\
 	SDLJoystick.cxx				\
 	SDLMedia.cxx				\
-	SDLPlatformFactory.cxx			\
 	SDLVisual.cxx				\
 	SDLWindow.cxx
 
+X11_FILES = \
+	XDisplay.cxx				\
+	XVisual.cxx				\
+	XWindow.cxx
+
+LINUX_SDL_FILES = \
+	$(SDL_FILES) 				\
+	SDLPlatformFactory.cxx			\
+	EvdevJoystick.cxx
+
 LINUX_NATIVE_FILES =				\
+	$(X11_FILES)				\
 	EvdevJoystick.cxx			\
 	LinuxDisplay.cxx			\
 	LinuxMedia.cxx				\
 	LinuxPlatformFactory.cxx		\
-	USBJoystick.cxx				\
-	XDisplay.cxx				\
-	XVisual.cxx				\
-	XWindow.cxx
+	USBJoystick.cxx
 
 SOLARIS_FILES =					\
+	$(X11_FILES)				\
 	SolarisMedia.cxx			\
-	SolarisPlatformFactory.cxx		\
-	XDisplay.cxx				\
-	XVisual.cxx				\
-	XWindow.cxx
+	SolarisPlatformFactory.cxx
 
 IRIX_FILES =					\
+	$(X11_FILES)				\
 	SGIDisplay.cxx				\
 	SGIMedia.cxx				\
-	SGIPlatformFactory.cxx			\
-	XDisplay.cxx				\
-	XVisual.cxx				\
-	XWindow.cxx
+	SGIPlatformFactory.cxx
 
 MACOSX_SDL_FILES =				\
-	SDLDisplay.cxx				\
-	SDLJoystick.cxx				\
-	SDLMedia.cxx				\
-	SDLPlatformFactory.cxx			\
-	SDLVisual.cxx				\
-	SDLWindow.cxx
+	$(SDL_FILES)				\
+	SDLPlatformFactory.cxx
 
 BEOS_FILES =					\
 	BeOSDisplay.cxx				\
@@ -106,12 +104,8 @@ BEOS_FILES =					\
 	BeOSWindow.cxx
 
 WIN32_FILES =					\
+	$(SDL_FILES)				\
 	DXJoystick.cxx				\
-	SDLDisplay.cxx				\
-	SDLJoystick.cxx				\
-	SDLMedia.cxx				\
-	SDLVisual.cxx				\
-	SDLWindow.cxx				\
 	WinDisplay.cxx				\
 	WinJoystick.cxx				\
 	WinMedia.cxx				\
@@ -127,7 +121,7 @@ if HAVE_SDL
 if LINUX
 LINUX_SDL_SOURCES = $(LINUX_SDL_FILES)
 endif
-else
+else !HAVE_SDL
 if LINUX
 LINUX_NATIVE_SOURCES = $(LINUX_NATIVE_FILES)
 endif
@@ -143,7 +137,6 @@ endif
 
 if MACOS
 SUBDIRS = MacOSX
-
 if HAVE_SDL
 MACOSX_SDL_SOURCES = $(MACOSX_SDL_FILES)
 endif
