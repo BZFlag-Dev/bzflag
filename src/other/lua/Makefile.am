@@ -67,6 +67,9 @@ EXTRA_DIST =               \
 	COPYRIGHT          \
 	HISTORY            \
 	Makefile.orig      \
+	doc                \
+	etc                \
+	test               \
 	src/Makefile.orig  \
 	src/lua.c          \
 	src/luac.c         \

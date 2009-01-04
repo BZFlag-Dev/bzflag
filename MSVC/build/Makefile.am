@@ -1,17 +1,20 @@
 EXTRA_DIST =	\
-	bzflag.sln	\
-	ares.vcproj	\
 	3D.vcproj	\
-	bzflag.vcproj	\
+	ares.vcproj	\
 	bzadmin.vcproj	\
+	bzflag.sln	\
+	bzflag.vcproj	\
+	bzfs.sln	\
 	bzfs.vcproj	\
 	common.vcproj	\
 	config.h	\
 	date.vcproj	\
+	fullbuild.sln	\
 	game.vcproj	\
 	geometry.vcproj	\
 	installer.vcproj	\
 	libcurl.vcproj	\
+	lua.vcproj	\
 	makehtml.vcproj	\
 	man2html.vcproj	\
 	mediafile.vcproj	\

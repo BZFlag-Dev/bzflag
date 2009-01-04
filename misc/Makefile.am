@@ -1,5 +1,6 @@
 EXTRA_DIST =				\
 	3ds2bzw.c			\
+	art				\
 	bzbz.pl				\
 	bzflag.desktop.in		\
 	bzfquery.php			\
@@ -25,6 +26,7 @@ EXTRA_DIST =				\
 	groups.conf			\
 	hix.bzw				\
 	libtool.m4			\
+	lua_localizer.lua		\
 	man2html.c			\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
@@ -62,7 +64,7 @@ MAINTAINERCLEANFILES =	\
 	missing \
 	mkinstalldirs
 
-Rrlog:  rrlog.cxx
+Rrlog:	rrlog.cxx
 	$(CXX) $(CXXFLAGS)		\
 	  -o rrlog rrlog.cxx		\
 	  -I../include -I../src/bzfs	\
