@@ -96,6 +96,51 @@ void SDLWindow::getMouse(int& x, int& y) const {
 }
 
 
+void SDLWindow::getPosition(int& x, int& y) {
+
+// NOTE: the ifdef pattern is taken from SDL_syswm.h
+
+#if defined(SDL_VIDEO_DRIVER_X11)
+  SDL_SysWMinfo info;
+  SDL_VERSION(&info.version);
+  if (!SDL_GetWMInfo(&info)) {
+    x = 0;
+    y = 0;
+    return;
+  }
+  info.info.x11.lock_func();
+  Display* dpy = info.info.x11.display;
+  Window   wnd = info.info.x11.window;
+  Window dummy;
+  XWindowAttributes attrs;
+  XSync(dpy, false);
+  XGetWindowAttributes(dpy, wnd, &attrs);
+  XTranslateCoordinates(dpy, wnd, attrs.root, 0, 0, &x, &y, &dummy);
+  info.info.x11.unlock_func();
+#elif defined(SDL_VIDEO_DRIVER_NANOX)
+  x = 0;
+  y = 0;
+#elif defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI)
+  SDL_SysWMinfo pInfo;
+  SDL_VERSION(&pInfo.version);
+  SDL_GetWMInfo(&pInfo);
+  RECT r;
+  GetWindowRect(pInfo.window, &r);
+  x = r.left;
+  y = r.bottom;
+#elif defined(SDL_VIDEO_DRIVER_RISCOS)
+  x = 0;
+  y = 0;
+#elif defined(SDL_VIDEO_DRIVER_PHOTON)
+  x = 0;
+  y = 0;
+#else // UNKNOWN
+  x = 0;
+  y = 0;
+#endif // video driver type
+}
+
+
 void SDLWindow::setSize(int _width, int _height) {
   ((SDLDisplay *)getDisplay())->setWindowSize(_width, _height);
 }

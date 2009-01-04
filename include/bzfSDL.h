@@ -20,10 +20,12 @@
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
 #    include <SDL/SDL_getenv.h>
+#    include <SDL/SDL_syswm.h>
 #  else // autotools adds an SDL-specific include path
 #    include "SDL.h"
 #    include "SDL_thread.h"
 #    include "SDL_getenv.h"
+#    include "SDL_syswm.h"
 #  endif //HAVE_SDL_SDL_H
 #endif //HAVE_SDL
 

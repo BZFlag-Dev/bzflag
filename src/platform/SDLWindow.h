@@ -27,7 +27,7 @@ class SDLWindow : public BzfWindow {
   SDLWindow(const SDLDisplay* _display, SDLVisual*);
   bool  isValid() const {return true;};
   void  showWindow(bool) {;};
-  void  getPosition(int &, int &) {;};
+  void  getPosition(int& x, int& y);
   void  getSize(int& _width, int& _height) const;
   void  setSize(int _width, int _height);
   void  setTitle(const char * title);
