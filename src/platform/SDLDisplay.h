@@ -43,14 +43,10 @@ class SDLDisplay : public BzfDisplay {
   void getModState(bool &shift, bool &control, bool &alt);
  private:
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
-  bool fullScreen;
   bool doSetResolution(int) {return true;};
+  bool fullScreen;
   int  base_width;
   int  base_height;
-  int  min_width;
-  int  min_height;
-  int  x;
-  int  y;
   bool canGrabMouse;
   // to avoid flashing we memorize the old values used to build the window
   bool oldFullScreen;
