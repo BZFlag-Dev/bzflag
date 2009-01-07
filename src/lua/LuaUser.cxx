@@ -124,7 +124,7 @@ LuaUser::LuaUser()
 	fsReadAll = BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	            BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
 	            BZVFS_BASIC;
-	fsWrite = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE;
+	fsWrite = BZVFS_LUA_USER_WRITE;
 
 	if (!ExecSourceCode(sourceCode)) {
 		KillLua();

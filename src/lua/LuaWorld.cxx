@@ -100,6 +100,10 @@ LuaWorld::LuaWorld()
 	fsRead = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
 	         BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	         BZVFS_BASIC;
+	fsReadAll = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
+	            BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
+	            BZVFS_BASIC;
+	fsWrite = BZVFS_LUA_WORLD_WRITE;
 
 	if (!ExecSourceCode(sourceCode)) {
 		KillLua();
