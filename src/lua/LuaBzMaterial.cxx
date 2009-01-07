@@ -46,8 +46,10 @@ bool LuaBzMaterial::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetMaterialNoCulling);
 	PUSH_LUA_CFUNC(L, GetMaterialNoSorting);
 	PUSH_LUA_CFUNC(L, GetMaterialAlphaThresh);
+
 	PUSH_LUA_CFUNC(L, GetMaterialTexture);
 	PUSH_LUA_CFUNC(L, GetMaterialTextureInfo);
+
 	PUSH_LUA_CFUNC(L, GetMaterialShader);
 
 	return true;

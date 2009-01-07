@@ -71,9 +71,12 @@ LuaHandle::LuaHandle(const string& _name, int _order,
 	}
 
 	AddBasicCalls();
+
 	lua_pushvalue(L, LUA_GLOBALSINDEX);
 	LuaExtras::PushEntries(L);
 	lua_pop(L, 1);
+
+	lua_register(L, "traceback", LuaExtras::traceback);
 
 	if (devMode) { // FIXME
 		lua_register(L, "dump",    LuaExtras::dump); 

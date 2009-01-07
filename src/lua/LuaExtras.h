@@ -24,6 +24,7 @@ class LuaExtras {
 
 		static int dump(lua_State* L); // can strip as well
 		static int listing(lua_State* L);
+		static int traceback(lua_State* L);
 };
 
 
