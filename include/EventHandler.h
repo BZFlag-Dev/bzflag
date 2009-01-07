@@ -17,13 +17,6 @@
 #include "EventClient.h"
 #include "EventClientList.h"
 
-
-class Player;
-class Flag;
-class FiringInfo;
-class ShotPath;
-
-
 class EventHandler
 {
   public:

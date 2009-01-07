@@ -603,6 +603,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BzVFS.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\CacheManager.cxx"
 				>
 			</File>

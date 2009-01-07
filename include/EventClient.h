@@ -14,11 +14,14 @@
 #include <set>
 #include <map>
 
+#include "Player.h"
+#include "ShotPath.h"
+#include "Flag.h"
 
-class Player;
-class ShotPath;
-class FiringInfo;
-class Flag;
+// class Player;
+// class ShotPath;
+// class FiringInfo;
+// class Flag;
 
 
 class EventClient

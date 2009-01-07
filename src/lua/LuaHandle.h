@@ -10,12 +10,6 @@
 #include "EventClient.h"
 #include "../other/lua/src/lua_extra.h"
 
-
-class Player;
-class Flag;
-class FiringInfo;
-class ShotPath;
-
 class LuaHandle;
 struct lua_State;
 

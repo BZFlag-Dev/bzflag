@@ -9,6 +9,8 @@
 
 #include "common.h"
 
+#include "assert.h"
+
 // implementation header
 #include "OpenGLPassState.h"
 

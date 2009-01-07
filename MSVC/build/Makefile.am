@@ -6,6 +6,7 @@ EXTRA_DIST =	\
 	bzflag.vcproj	\
 	bzfs.sln	\
 	bzfs.vcproj	\
+	clientLua.vcproj\
 	common.vcproj	\
 	config.h	\
 	date.vcproj	\

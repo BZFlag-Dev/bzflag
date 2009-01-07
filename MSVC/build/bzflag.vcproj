@@ -85,11 +85,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
-				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib Advapi32.lib user32.lib Gdi32.lib shell32.lib"
+				AdditionalDependencies="ws2_32.lib dsound.lib winmm.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib Advapi32.lib user32.lib Gdi32.lib shell32.lib lua.lib"
 				OutputFile="./bzflag_debug/bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="./3d_debug;"
+				AdditionalLibraryDirectories="./3d_debug;./lua_debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="./bzflag_debug/bzflag.pdb"
 				SubSystem="2"
@@ -711,6 +711,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\EventClient.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\EventClientList.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\EventHandler.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ExportInformation.cxx"
 				>
 			</File>
@@ -724,6 +736,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ForceFeedback.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\GfxBlock.cxx"
 				>
 			</File>
 			<File
@@ -795,7 +811,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\XfireGameClient.cpp"
+				RelativePath="..\..\src\bzflag\XfireGameClient.cxx"
 				>
 			</File>
 			<Filter

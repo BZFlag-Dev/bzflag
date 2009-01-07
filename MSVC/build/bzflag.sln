@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzflag", "bzflag.vcproj", "{5000550B-DA03-4872-9975-1AA7EE3A40AF}"
 	ProjectSection(ProjectDependencies) = postProject
+		{F9B64202-7C86-4175-92DD-E1F1E135988C} = {F9B64202-7C86-4175-92DD-E1F1E135988C}
+		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B} = {6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}
 		{7009C42E-D693-4635-95CF-23ECBA63653C} = {7009C42E-D693-4635-95CF-23ECBA63653C}
 		{1BAED535-4AEF-4041-9CB5-A7DC9C14E105} = {1BAED535-4AEF-4041-9CB5-A7DC9C14E105}
 		{B2B95537-A4CE-4510-96A6-00F7B7303922} = {B2B95537-A4CE-4510-96A6-00F7B7303922}
@@ -111,6 +113,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ftgl_static", "..\..\src\ot
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua.vcproj", "{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clientLua", "clientLua.vcproj", "{F9B64202-7C86-4175-92DD-E1F1E135988C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -435,6 +439,18 @@ Global
 		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}.Release|Win32.ActiveCfg = Release|Win32
 		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}.Release|Win32.Build.0 = Release|Win32
 		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}.Release|x64.ActiveCfg = Release|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Debug_Distribution|Win32.ActiveCfg = Debug|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Debug_Distribution|Win32.Build.0 = Debug|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Debug_Distribution|x64.ActiveCfg = Debug|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Debug|Win32.Build.0 = Debug|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Debug|x64.ActiveCfg = Debug|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Release_Distribution|Win32.ActiveCfg = Release|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Release_Distribution|Win32.Build.0 = Release|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Release_Distribution|x64.ActiveCfg = Release|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Release|Win32.ActiveCfg = Release|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Release|Win32.Build.0 = Release|Win32
+		{F9B64202-7C86-4175-92DD-E1F1E135988C}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

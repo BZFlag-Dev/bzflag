@@ -550,7 +550,7 @@ bool BzVFS::rawDirList(const string& root, const string& path, bool recursive,
 
   const string fullPath = root + path;
   struct _finddata_t fileInfo;
-  long handle = _findfirst(fullPath + "*", &fileInfo);
+  long handle = _findfirst(std::string(fullPath + "*").c_str(), &fileInfo);
   if (handle == -1L) {
     return false;
   }
