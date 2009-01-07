@@ -140,15 +140,17 @@ bool LuaWorld::SetupLuaLibs()
 	LUA_OPEN_LIB(L, luaopen_math);
 	LUA_OPEN_LIB(L, luaopen_table);
 	LUA_OPEN_LIB(L, luaopen_string);
-	LUA_OPEN_LIB(L, luaopen_io);
 	LUA_OPEN_LIB(L, luaopen_os);
-	LUA_OPEN_LIB(L, luaopen_package);
-	LUA_OPEN_LIB(L, luaopen_debug);
+	if (devMode) {
+		LUA_OPEN_LIB(L, luaopen_debug);
+	}
+//	LUA_OPEN_LIB(L, luaopen_io);
+//	LUA_OPEN_LIB(L, luaopen_package);
 
 	// remove a few dangerous calls
-	lua_getglobal(L, "io");
-	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
-	lua_pop(L, 1); // io
+//	lua_getglobal(L, "io");
+//	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
+//	lua_pop(L, 1); // io
 	lua_getglobal(L, "os");
 	lua_pushstring(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
 	lua_pushstring(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);

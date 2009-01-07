@@ -12,6 +12,7 @@ libBzLua_la_SOURCES =                       \
 	LuaClientScripts.cxx                      \
 	LuaInclude.h                              \
 	LuaEventOrder.h                           \
+	LuaHandleCallIns.cxx                      \
 	LuaHashString.h                           \
 	LuaBitOps.cxx         LuaBitOps.h         \
 	LuaBZDB.cxx           LuaBZDB.h           \
@@ -26,7 +27,6 @@ libBzLua_la_SOURCES =                       \
 	LuaExtras.cxx         LuaExtras.h         \
 	LuaFBOs.cxx           LuaFBOs.h           \
 	LuaFontTexture.cxx    LuaFontTexture.h    \
-	LuaHandleCallIns.cxx                      \
 	LuaHandle.cxx         LuaHandle.h         \
 	LuaKeySyms.cxx        LuaKeySyms.h        \
 	LuaObstacle.cxx       LuaObstacle.h       \
@@ -45,3 +45,6 @@ libBzLua_la_SOURCES =                       \
 	LuaVector.cxx         LuaVector.h         \
 	LuaVFS.cxx            LuaVFS.h            \
 	LuaWorld.cxx          LuaWorld.h
+
+EXTRA_DIST = \
+	README

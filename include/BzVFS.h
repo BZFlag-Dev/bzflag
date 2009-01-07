@@ -91,6 +91,8 @@ class BzVFS {
     bool removeFS(const std::string& name);
     bool setFSWritable(const std::string& name, bool value);
 
+    const BzDocket* getDocket(const std::string& modes) const;
+
   public:
     bool fileExists(const std::string& path, const std::string& modes);
     int  fileSize(const std::string& path, const std::string& modes);

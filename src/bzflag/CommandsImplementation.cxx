@@ -19,24 +19,26 @@
 #include <ctype.h>
 
 // common implementation headers
-#include "BZDBCache.h"
 #include "AnsiCodes.h"
-#include "TextUtils.h"
+#include "BZDBCache.h"
+#include "BzDocket.h"
+#include "BzVFS.h"
 #include "CommandsStandard.h"
-#include "TextureManager.h"
 #include "DirectoryNames.h"
 #include "KeyManager.h"
-#include "MapInfo.h"
 #include "LuaClientScripts.h"
+#include "MapInfo.h"
+#include "TextureManager.h"
+#include "TextUtils.h"
 
 // local implementation headers
-#include "LocalCommand.h"
-#include "Roster.h"
-#include "playing.h"
 #include "bzglob.h"
-#include "Roaming.h"
-#include "ServerLink.h"
+#include "playing.h"
+#include "LocalCommand.h"
 #include "LocalPlayer.h"
+#include "Roaming.h"
+#include "Roster.h"
+#include "ServerLink.h"
 
 // class definitions
 
@@ -715,18 +717,20 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
 
 static void sendSaveWorldHelp()
 {
-  addMessage(NULL, "/saveworld [-g] [-m] [-o] <filename>");
+  addMessage(NULL, "/saveworld [-g] [-m] [-o] [-d] <filename>");
   addMessage(NULL, "  -g : save ungrouped");
   addMessage(NULL, "  -m : save some primitives as meshes");
   addMessage(NULL, "  -o : save meshes into WaveFront OBJ files");
+  addMessage(NULL, "  -d : do not try to save the LuaWorld docket");
   return;
 }
 
 bool SaveWorldCommand::operator() (const char *commandLine)
 {
-  bool meshprims = false;
-  bool ungrouped = false;
-  bool wavefront = false;
+  bool meshprims  = false;
+  bool ungrouped  = false;
+  bool wavefront  = false;
+  bool skipDocket = false;
 
   std::string cmdLine = commandLine;
   std::vector<std::string> args;
@@ -749,6 +753,8 @@ bool SaveWorldCommand::operator() (const char *commandLine)
       wavefront = true;
       meshprims = true;
       ungrouped = true;
+    } else if (arg == "-d") {
+      skipDocket = true;
     } else {
       break;
     }
@@ -780,6 +786,18 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     snprintf(buffer, 256, "Error saving:  %s", fullname.c_str());
   }
   addMessage(NULL, buffer);
+
+  if (!skipDocket) {
+    const BzDocket* docket = bzVFS.getDocket(BZVFS_LUA_WORLD);
+    if (docket != NULL) {
+      const std::string docketDir = fullname + ".docket";
+      if (docket->save(docketDir)) {
+        addMessage(NULL, std::string("Docket saved: ") + docketDir);
+      } else {
+        addMessage(NULL, std::string("Docket failed: ") + docketDir);
+      }
+    }
+  }
 
   return true;
 }

@@ -2,13 +2,23 @@
 #define LUA_HANDLE_H
 
 #include "common.h"
+
+// system header files
 #include <string>
 #include <set>
 #include <map>
 
-
+// common header files
 #include "EventClient.h"
+
+// custom lua library header
 #include "../other/lua/src/lua_extra.h"
+
+
+class Player;
+class Flag;
+class ShotPath;
+struct FiringInfo;
 
 class LuaHandle;
 struct lua_State;

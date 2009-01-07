@@ -12,8 +12,6 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* remove the systm libs from lua on the client for security
-
 * fix the Z dead-reckoning issue  (ask JeffM about it)
 
 * fix the '/set _<tab>' crash bug (look in ControlPanel.cxx)

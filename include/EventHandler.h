@@ -9,13 +9,22 @@
 
 #include "common.h"
 
+// system headers
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
 
+// common headers
 #include "EventClient.h"
 #include "EventClientList.h"
+
+
+class Player;
+class ShotPath;
+class Flag;
+struct FiringInfo;
+
 
 class EventHandler
 {

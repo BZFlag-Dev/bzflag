@@ -218,6 +218,8 @@ class DocketFS : public BzFS
       return true;
     }
 
+    const BzDocket* getDocket() const { return docket; }
+
   private:
     BzDocket* docket;
 };
@@ -316,6 +318,26 @@ bool BzVFS::setFSWritable(const string& name, bool value)
   return true;
 }
 
+
+const BzDocket* BzVFS::getDocket(const std::string& modes) const
+{
+  for (size_t i = 0; i < modes.size(); i++) {
+    char str[2] = { 0, 0 };
+    str[0] = modes[i];
+    FSMap::const_iterator it = fsMap.find(str);
+    if (it != fsMap.end()) {
+      const DocketFS* docketFS = dynamic_cast<const DocketFS*>(it->second);
+      if (docketFS) {
+        return docketFS->getDocket();
+      }
+    }
+  }
+  return NULL;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
 
 bool BzVFS::safePath(const string& path)
 {

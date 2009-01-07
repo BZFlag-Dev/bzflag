@@ -372,7 +372,7 @@ static bool createParentDirs(const string& path)
 }
 
 
-bool BzDocket::save(const string& dirPath)
+bool BzDocket::save(const string& dirPath) const
 {
   if (dirPath.empty()) {
     return false;

@@ -44,7 +44,7 @@ class BzDocket {
     void* pack(void* buf) const;
     void* unpack(void* buf);
 
-    bool save(const std::string& dirPath);
+    bool save(const std::string& dirPath) const;
 
     size_t getMaxNameLen() const;
 
