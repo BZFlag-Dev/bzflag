@@ -51,11 +51,8 @@ bzflag_SOURCES =			\
 	EntryZone.cxx			\
 	EntryZone.h			\
 	EventClient.cxx			\
-	EventClient.h			\
 	EventClientList.cxx		\
-	EventClientList.h		\
 	EventHandler.cxx		\
-	EventHandler.h			\
 	ExportInformation.cxx		\
 	ExportInformation.h		\
 	FlashClock.cxx			\
