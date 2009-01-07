@@ -152,9 +152,8 @@ public:
   void		render(bool lastFrame = true,
 		       bool sameFrame = false,
 		       bool fullWindow = false);
-  void		renderScene(bool lastFrame = true,
-			    bool sameFrame = false,
-			    bool fullWindow = false);
+  void		renderScene();
+
   void		notifyStyleChange();
   void		updateNodeStyles();
   void		addRenderNode(RenderNode* node, const OpenGLGState*);
@@ -178,6 +177,7 @@ private:
   void		getLights();
   void		getRenderNodes();
 
+  void		drawMirror();
   void		doRender();
   void		renderDepthComplexity();
   void		renderPreDimming();
@@ -230,14 +230,12 @@ private:
   bool		useStencilOn;
   ViewType	viewType;
   bool		inOrder;
-  int		depthRange;
-  int		numDepthRanges;
-  double	depthRangeSize;
   bool		useDimming;
   bool		canUseHiddenLine;
   bool		exposed;
   bool		lastFrame;
   bool		sameFrame;
+  bool		fullWindow;
   bool		needStyleUpdate;
   bool		rebuildTanks;
 

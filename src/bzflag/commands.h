@@ -13,22 +13,31 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
-// common - 1st
 #include "common.h"
 
-/* common interface headers */
+/* common headers */
 #include "CommandManager.h"
 
+// system headers
+#include <vector>
 
-typedef struct CommandListItem {
+
+struct CommandListItem {
+  CommandListItem(const char* n,
+                  CommandManager::CommandFunction f,
+                  const char* h)
+  : name(n)
+  , func(f)
+  , help(h)
+  {}
   const char* name;
-  CommandManager::CommandFunction func;
+  CommandManager::CommandFunction  func;
   const char* help;
-} CmdListItem;
+};
 
-/* FIXME -- gcc is not liking array type with sizeof() without size
- * for some reason */
-extern const CmdListItem commandList[26];
+
+extern const std::vector<CommandListItem>& getCommandList();
+
 
 #endif /* __COMMANDS_H__ */
 

@@ -26,15 +26,17 @@ struct FileTextureInit
 };
 
 
-typedef  struct
+struct ImageInfo
 {
+  ImageInfo() {}
+  ImageInfo(int i, OpenGLTexture* t) : id(i), texture(t) {}
   int   id;
   int   x;
   int   y;
   bool  alpha;
   OpenGLTexture *texture;
   std::string   name;
-} ImageInfo;
+};
 
 class TextureManager;
 
@@ -75,6 +77,8 @@ public:
   void setMaxFilter ( std::string filter );
 
   float GetAspectRatio ( int id );
+
+  void clearLastBoundID() { lastBoundID = -1; }
 
   int newTexture (const char* name, int x, int y, unsigned char* data,
 		  OpenGLTexture::Filter filter, bool repeat = true, int format = 0);

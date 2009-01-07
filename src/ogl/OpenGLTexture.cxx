@@ -255,12 +255,6 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
 }
 
 
-OpenGLTexture::Filter OpenGLTexture::getFilter()
-{
-  return filter;
-}
-
-
 void OpenGLTexture::setFilter(Filter _filter)
 {
   filter = _filter;
@@ -284,6 +278,8 @@ void OpenGLTexture::setFilter(Filter _filter)
       }
     }
   }
+  realFilter = (Filter)filterIndex;
+
   GLint binding;
   glGetIntegerv (GL_TEXTURE_BINDING_2D, &binding);
   glBindTexture(GL_TEXTURE_2D, list);
@@ -297,10 +293,29 @@ void OpenGLTexture::setFilter(Filter _filter)
 }
 
 
+OpenGLTexture::Filter OpenGLTexture::getFilter()
+{
+  return filter;
+}
+
+
+GLenum OpenGLTexture::getMinFilter()
+{
+  return minifyFilter[realFilter];
+}
+
+
+GLenum OpenGLTexture::getMagFilter()
+{
+  return magnifyFilter[realFilter];
+}
+
+
 OpenGLTexture::Filter OpenGLTexture::getMaxFilter()
 {
   return maxFilter;
 }
+
 
 void OpenGLTexture::setMaxFilter(Filter _filter)
 {
@@ -308,9 +323,9 @@ void OpenGLTexture::setMaxFilter(Filter _filter)
 }
 
 
-void OpenGLTexture::execute()
+bool OpenGLTexture::execute()
 {
-  bind();
+  return bind();
 }
 
 
@@ -342,12 +357,14 @@ float OpenGLTexture::getAspectRatio() const
 }
 
 
-void OpenGLTexture::bind()
+bool OpenGLTexture::bind()
 {
   if (list != INVALID_GL_TEXTURE_ID) {
     glBindTexture(GL_TEXTURE_2D, list);
+    return true;
   } else {
-    glBindTexture(GL_TEXTURE_2D, 0); // heh, it's the same call
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return false;
   }
 }
 

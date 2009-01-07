@@ -23,48 +23,52 @@
 class ZSceneDatabase : public SceneDatabase {
   friend class ZSceneIterator;
   public:
-			ZSceneDatabase();
-			~ZSceneDatabase();
+    ZSceneDatabase();
+    ~ZSceneDatabase();
 
     // returns true if the node would have been deleted
-    bool		addStaticNode(SceneNode*, bool dontFree);
-    void		addDynamicNode(SceneNode*);
-    void		addDynamicSphere(SphereSceneNode*);
-    void		finalizeStatics();
-    void		removeDynamicNodes();
-    void		removeAllNodes();
-    bool		isOrdered();
+    bool addStaticNode(SceneNode*, bool dontFree);
+    void addDynamicNode(SceneNode*);
+    void addDynamicSphere(SphereSceneNode*);
+    void finalizeStatics();
+    void removeDynamicNodes();
+    void removeAllNodes();
+    bool isOrdered();
 
-    void		updateNodeStyles();
-    void		addLights(SceneRenderer& renderer);
-    void		addShadowNodes(SceneRenderer &renderer);
-    void		addRenderNodes(SceneRenderer& renderer);
-    void		renderRadarNodes(const ViewFrustum&);
+    void updateNodeStyles();
+    void addLights(SceneRenderer& renderer);
+    void addShadowNodes(SceneRenderer &renderer,
+                        bool staticNodes,
+                        bool dynamicNodes);
+    void addRenderNodes(SceneRenderer& renderer,
+                        bool staticNodes,
+                        bool dynamicNodes);
+    void renderRadarNodes(const ViewFrustum&);
 
-    void		drawCuller();
-    void		setOccluderManager(int);
+    void drawCuller();
+    void setOccluderManager(int);
 
-    const Extents*	getVisualExtents() const;
+    const Extents* getVisualExtents() const;
 
   private:
-    void		setupCullList();
-    void		makeCuller();
+    void setupCullList();
+    void makeCuller();
 
   private:
-    int			staticCount;
-    int			staticSize;
-    SceneNode**		staticList;
+    int staticCount;
+    int staticSize;
+    SceneNode** staticList;
 
-    int			dynamicCount;
-    int			dynamicSize;
-    SceneNode**		dynamicList;
+    int dynamicCount;
+    int dynamicSize;
+    SceneNode** dynamicList;
 
-    int			culledCount;
-    SceneNode**	 culledList;
+    int culledCount;
+    SceneNode** culledList;
 
-    class Octree*       octree;
-    int			cullDepth;
-    int			cullElements;
+    class Octree* octree;
+    int cullDepth;
+    int cullElements;
 
 };
 

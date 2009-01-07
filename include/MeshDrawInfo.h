@@ -79,6 +79,7 @@ class MeshDrawInfo {
     int getLodCount() const;
     const DrawLod* getDrawLods() const;
 
+    int getCornerCount() const;
     const fvec3* getVertices() const;
     const fvec3* getNormals() const;
     const fvec2* getTexcoords() const;
@@ -184,6 +185,10 @@ inline int MeshDrawInfo::getLodCount() const
 inline const DrawLod* MeshDrawInfo::getDrawLods() const
 {
   return lods;
+}
+inline int MeshDrawInfo::getCornerCount() const
+{
+  return cornerCount;
 }
 inline const fvec3* MeshDrawInfo::getVertices() const
 {

@@ -44,8 +44,12 @@ class BSPSceneDatabase : public SceneDatabase {
 
     void		updateNodeStyles();
     void		addLights(SceneRenderer& renderer);
-    void		addShadowNodes(SceneRenderer &renderer);
-    void		addRenderNodes(SceneRenderer& renderer);
+    void		addShadowNodes(SceneRenderer &renderer,
+                                       bool staticNodes,
+                                       bool dynamicNodes);
+    void		addRenderNodes(SceneRenderer& renderer,
+                                       bool staticNodes,
+                                       bool dynamicNodes);
     void		renderRadarNodes(const ViewFrustum&);
 
     void		drawCuller();

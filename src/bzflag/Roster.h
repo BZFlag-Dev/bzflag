@@ -37,7 +37,8 @@
 typedef std::vector<std::string> NameList;
 
 extern int curMaxPlayers;
-extern RemotePlayer** player;
+//extern RemotePlayer** player;
+extern RemotePlayer** remotePlayers;
 extern int	    playerSize;
 #ifdef ROBOT
 extern RobotPlayer* robots[MAX_ROBOTS];
@@ -55,7 +56,13 @@ BaseLocalPlayer*	getLocalPlayer(PlayerId id);
 TeamColor		PlayerIdToTeam(PlayerId id);
 PlayerId		TeamToPlayerId(TeamColor team);
 
+// if the callback returns true, stop iterating and return the Player*
+typedef bool (*RosterCallback)(Player* p, void* data);
+Player*	iteratePlayers(RosterCallback, void* data, bool includeWeapons);
+
+
 #endif /* __ROSTER_H__ */
+
 
 // Local Variables: ***
 // mode: C++ ***

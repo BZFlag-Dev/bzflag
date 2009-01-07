@@ -27,6 +27,7 @@
 #include "DirectoryNames.h"
 #include "KeyManager.h"
 #include "MapInfo.h"
+#include "LuaClientScripts.h"
 
 // local implementation headers
 #include "LocalCommand.h"
@@ -129,6 +130,19 @@ class MapInfoCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class LuaUserCommand : LocalCommand {
+  public:
+    LuaUserCommand();
+    bool operator() (const char *commandLine);
+};
+
+class LuaWorldCommand : LocalCommand {
+  public:
+    LuaWorldCommand();
+    bool operator() (const char *commandLine);
+};
+
+
 // class instantiations
 static CommandList	  commandList;
 static BindCommand	  bindCommand;
@@ -145,6 +159,8 @@ static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static MapInfoCommand     mapInfoCommand;
+static LuaUserCommand     luaUserCommand;
+static LuaWorldCommand     luaWorldCommand;
 
 
 // class constructors
@@ -155,6 +171,8 @@ DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
 HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
 LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
 MapInfoCommand::MapInfoCommand() :	LocalCommand("/mapinfo") {}
+LuaUserCommand::LuaUserCommand() :	LocalCommand("/luauser") {}
+LuaWorldCommand::LuaWorldCommand() :	LocalCommand("/luaworld") {}
 QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
 ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
@@ -794,6 +812,26 @@ bool MapInfoCommand::operator() (const char* /*commandLine*/)
   }
 
   return true; 
+}
+
+
+bool LuaUserCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaUserCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+
+
+bool LuaWorldCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaWorldCommand(cmdLine + 1); // skip the '/'
+  return true;
 }
 
 

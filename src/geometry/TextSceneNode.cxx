@@ -698,7 +698,7 @@ void TextSceneNode::TextRenderNode::render()
   }
 #endif
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   glPushAttrib(FTGL_MISSING_ATTRIBS);
   glPushMatrix();

@@ -29,6 +29,7 @@
 #include "PlayerState.h"
 #include "ShotStatistics.h"
 #include "playerAvatarManager.h"
+#include "GfxBlock.h"
 
 /* local interface headers */
 class ShotPath;
@@ -76,14 +77,15 @@ public:
   float		getReloadTime() const;
 
   const float*	getApparentVelocity() const;
-  float	getLastUpdateTime() const;
+  float		getLastUpdateTime() const;
 
-  inline bool hasWings () const {return getFlag() && getFlag()== Flags::Wings;}
+  inline bool hasWings() const {
+    return getFlag() && (getFlag() == Flags::Wings);
+  }
 
 #ifndef BUILDING_BZADMIN
-  inline const float*	getColor() const
-  {
-	  return color;
+  inline const float* getColor() const {
+    return color;
   }
 #endif
   float		getRabbitScore() const;
@@ -115,6 +117,9 @@ public:
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
   void		fireJumpJets();
+
+  GfxBlock&       getGfxBlock()       { return gfxBlock; }
+  const GfxBlock& getGfxBlock() const { return gfxBlock; }
 
   void		forceReload(float time = 0.0f);
 
@@ -185,7 +190,7 @@ public:
 
   void		setDeadReckoning(double timestamp);
 
-  void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
+  void		setUserTexture(const char *tex) { if(tex) { userTexture = tex; } }
 
   void		renderRadar() const;
 
@@ -198,8 +203,10 @@ public:
 
   std::map<std::string,std::string> customData;
 
-  bool hasCustomField ( const std::string & key )const {return customData.find(key)!= customData.end();}
-  const std::string & getCustomField ( const std::string & key ) const;
+  bool hasCustomField(const std::string & key ) const {
+    return customData.find(key)!= customData.end();
+  }
+  const std::string& getCustomField(const std::string& key) const;
 
 protected:
   void	  clearRemoteSounds();
@@ -251,6 +258,7 @@ private:
   bool			haveIpAddr;
 
   // data use for drawing
+  GfxBlock		gfxBlock;
   PlayerAvatar		*avatar;
 #ifndef BUILDING_BZADMIN
   GLfloat		color[4];
@@ -273,7 +281,7 @@ private:
   ShotType		shotType;		// the shots I fire
   float			dimensions[3];		// current tank dimensions
   float			dimensionsScale[3];	// use to scale the dimensions
-  float			dimensionsRate[3];	 // relative to scale
+  float			dimensionsRate[3];	// relative to scale
   float			dimensionsTarget[3];	// relative to scale
   bool			useDimensions;		// use the varying dimensions for gfx
   float			alpha;			// current tank translucency

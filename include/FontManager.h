@@ -100,7 +100,7 @@ public:
    * return an index to the requested font if it's been loaded or the
    * first loaded font otherwise.
    */
-  int getFaceID(std::string const& faceName);
+  int getFaceID(std::string const& faceName, bool quietly = false);
 
   /**
    * lookup the font ID for a given font, or -1 on failure

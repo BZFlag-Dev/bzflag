@@ -75,15 +75,15 @@ public:
 
 protected:
   void		hudColor3fv(const GLfloat*);
-  void		renderTeamScores (float y, float x, float dy);
-  void		renderScoreboard(void);
-  void	  renderCtfFlags (void);
+  void		renderScoreboard();
+  void		renderTeamScores();
+  void	  renderCtfFlags ();
   void		drawPlayerScore(const Player*,
 		    float x1, float x2, float x3, float xs, float y, bool huntInd);
   static const char* sortLabels[SortTypeCount + 1];
   static int  sortMode;
   static bool alwaysShowTeamScore;
-  void   stringAppendNormalized (std::string *s, float n);
+  void   stringAppendNormalized(std::string *s, float n);
 
 private:
   void		setMinorFontSize();
@@ -91,8 +91,8 @@ private:
   static int	teamScoreCompare(const void* _a, const void* _b);
   static int  sortCompareCp(const void* _a, const void* _b);
   static int  sortCompareI2(const void* _a, const void* _b);
-  static Player** newSortedList (int sortType, bool obsLast, int *_numPlayers=NULL);
-  void	  exitSelectState (void);
+  static Player** newSortedList(int sortType, bool obsLast, int *_numPlayers = NULL);
+  void	  exitSelectState();
 
 private:
   float winX;

@@ -294,6 +294,15 @@ int LinkManager::getTeleportIndex(const std::string& name) const
 }
 
 
+const LinkManager::LinkNumberSet* LinkManager::getLinkDsts(int linkID) const
+{
+  if ((linkID < 0) || (linkID >= (int)linkNumbers.size())) {
+    return NULL;
+  }
+  return &linkNumbers[linkID];
+}
+
+
 void* LinkManager::pack(void* buf) const
 {
   buf = nboPackUInt(buf, (uint32_t) linkNames.size());

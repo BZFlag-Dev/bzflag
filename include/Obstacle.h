@@ -98,8 +98,8 @@ class Obstacle {
    */
   virtual const char* getType() const = 0;
 
-  const char* getName() {return name.c_str();}
-  void setName( const char* n) {if (n) name = n; else name = "";}
+  const char* getName() const { return name.c_str(); }
+  void setName(const char* n) { if (n) name = n; else name = ""; }
 
   /** This function calculates extents from pos, size, and rotation */
   void setExtents();
@@ -148,20 +148,10 @@ class Obstacle {
 
   virtual int getTypeID() const = 0;
 
-  unsigned short getListID ( void ) const { return listID;}
-  void setListID ( unsigned short id ) {listID = id;}
+  unsigned short getListID() const { return listID;}
+  void setListID(unsigned short id) { listID = id; }
  
-  unsigned int getGUID ( void ) const
-  {
-    union {
-      unsigned short s[2];
-      unsigned int i;
-    } p;
-
-    p.s[0] = getTypeID();
-    p.s[1] = getListID();
-    return p.i;
-  }
+  unsigned int getGUID() const { return (getTypeID() << 16) | getListID(); }
 
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is
@@ -226,14 +216,14 @@ class Obstacle {
 
   /** This function returns @c true if tanks can pass through this object,
       @c false if they can't. */
-  unsigned char  isDriveThrough() const;
+  unsigned char isDriveThrough() const;
 
   /** This function returns @c true if bullets can pass through this object,
       @c false if they can't. */
-  unsigned char  isShootThrough() const;
+  unsigned char isShootThrough() const;
 
-  void setDriveThrough ( unsigned char f ) {driveThrough = f;}
-  void setShootThrough ( unsigned char f ) {shootThrough = f;}
+  void setDriveThrough(unsigned char f) { driveThrough = f; }
+  void setShootThrough(unsigned char f) { shootThrough = f; }
 
   /** This function returns @c true if tanks and bullets can pass through
       this object, @c false if either can not */

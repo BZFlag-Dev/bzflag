@@ -344,22 +344,22 @@ static void		hangup(int sig)
 }
 
 
-void		addMessage(const Player *_player, const std::string& msg,
+void		addMessage(const Player *player, const std::string& msg,
 			   int, bool highlight, const char* oldColor)
 {
   std::string fullMessage;
 
   if (BZDB.isTrue("colorful")) {
-    if (_player) {
+    if (player) {
       if (highlight) {
 	if (BZDB.get("killerhighlight") == "1")
 	  fullMessage += ColorStrings[PulsatingColor];
 	else if (BZDB.get("killerhighlight") == "2")
 	  fullMessage += ColorStrings[UnderlineColor];
       }
-      const PlayerId pid = _player->getId();
+      const PlayerId pid = player->getId();
       if (pid < 200) {
-	int color = _player->getTeam();
+	int color = player->getTeam();
 	if (color < 0 || (color > 4 && color != HunterTeam)) {
 	  // non-teamed, rabbit are white (same as observer)
 	  color = WhiteColor;
@@ -370,13 +370,13 @@ void		addMessage(const Player *_player, const std::string& msg,
       } else {
 	fullMessage += ColorStrings[CyanColor]; //replay observers
       }
-      fullMessage += _player->getCallSign();
+      fullMessage += player->getCallSign();
 
       if (highlight)
 	fullMessage += ColorStrings[ResetColor];
 #ifdef BWSUPPORT
       fullMessage += " (";
-      fullMessage += Team::getName(_player->getTeam());
+      fullMessage += Team::getName(player->getTeam());
       fullMessage += ")";
 #endif
       fullMessage += std::string(ColorStrings[DefaultColor]) + ": ";
@@ -386,12 +386,12 @@ void		addMessage(const Player *_player, const std::string& msg,
     if (oldColor != NULL)
       fullMessage = oldColor;
 
-    if (_player) {
-      fullMessage += _player->getCallSign();
+    if (player) {
+      fullMessage += player->getCallSign();
 
 #ifdef BWSUPPORT
       fullMessage += " (";
-      fullMessage += Team::getName(_player->getTeam());
+      fullMessage += Team::getName(player->getTeam());
       fullMessage += ")";
 #endif
       fullMessage += ": ";
@@ -407,8 +407,8 @@ static void		updateNumPlayers()
   for (i = 0; i < NumTeams; i++)
     numPlayers[i] = 0;
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i])
-      numPlayers[player[i]->getTeam()]++;
+    if (remotePlayers[i])
+      numPlayers[remotePlayers[i]->getTeam()]++;
 }
 
 static void		updateHighScores()
@@ -419,7 +419,7 @@ static void		updateHighScores()
   bool anyPlayers = false;
   int i;
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i]) {
+    if (remotePlayers[i]) {
       anyPlayers = true;
       break;
     }
@@ -465,7 +465,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
     return NULL;
   }
 
-  if (player[i]) {
+  if (remotePlayers[i]) {
     // we're not in synch with server -> help! not a good sign, but not fatal.
     printError ("Server error when adding player, player already added");
     std::cerr << "WARNING: player already exists at location with id "
@@ -484,9 +484,9 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
   if (PlayerType (type) == TankPlayer
       || PlayerType (type) == ComputerPlayer
       || PlayerType (type) == ChatPlayer) {
-    player[i] = new RemotePlayer (id, TeamColor (team), callsign,
+    remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign,
 				  PlayerType (type));
-    player[i]->changeScore (short (rank), short (wins), short (losses), short (tks));
+    remotePlayers[i]->changeScore (short (rank), short (wins), short (losses), short (tks));
   }
 
   if (PlayerType (type) == ComputerPlayer)
@@ -517,28 +517,28 @@ static Player*		addPlayer(PlayerId id, void* msg, int)
 	break;
       }
     }
-    if (!player[i]) {
+    if (!remotePlayers[i]) {
       std::string name (callsign);
       name += ": " + message;
       message = name;
     }
-    addMessage (player[i], message);
+    addMessage (remotePlayers[i], message);
   }
   completer.registerWord(callsign, true /* quote spaces */);
 
-  return player[i];
+  return remotePlayers[i];
 }
 
 
-static void printIpInfo (const Player *_player, const Address& addr,
+static void printIpInfo (const Player *player, const Address& addr,
 			 const std::string note)
 {
-  if (_player == NULL) {
+  if (player == NULL) {
     return;
   }
   std::string colorStr;
-  if (_player->getId() < 200) {
-    int color = _player->getTeam();
+  if (player->getId() < 200) {
+    int color = player->getTeam();
     if (color == RabbitTeam || color < 0 || color > LastColor) {
       // non-teamed, rabbit are white (same as observer)
       color = WhiteColor;
@@ -551,7 +551,7 @@ static void printIpInfo (const Player *_player, const Address& addr,
   std::string message = ColorStrings[CyanColor]; // default color
   message += "IPINFO: ";
   if (BZDBCache::colorful) message += colorStr;
-  message += _player->getCallSign();
+  message += player->getCallSign();
   if (BZDBCache::colorful) message += ColorStrings[CyanColor];
   message += "\t from: ";
   if (BZDBCache::colorful) message += colorStr;
@@ -595,12 +595,12 @@ static bool removePlayer (PlayerId id)
 
   completer.unregisterWord(p->getCallSign());
 
-  delete player[playerIndex];
-  player[playerIndex] = NULL;
+  delete remotePlayers[playerIndex];
+  remotePlayers[playerIndex] = NULL;
 
   while ((playerIndex >= 0)
 	 &&     (playerIndex+1 == curMaxPlayers)
-	 &&     (player[playerIndex] == NULL)) {
+	 &&     (remotePlayers[playerIndex] == NULL)) {
     playerIndex--;
     curMaxPlayers--;
   }
@@ -934,16 +934,16 @@ static void handleScoreOver ( void *msg, uint16_t /*len*/ )
   uint16_t team;
   msg = nboUnpackUByte(msg, id);
   msg = nboUnpackUShort(msg, team);
-  Player* _player = lookupPlayer(id);
+  Player* player = lookupPlayer(id);
 
   // make a message
   std::string msg2;
   if (team == (uint16_t)NoTeam) {
     // a player won
     if (player) {
-      msg2 = _player->getCallSign();
+      msg2 = player->getCallSign();
       msg2 += " (";
-      msg2 += Team::getName(_player->getTeam());
+      msg2 += Team::getName(player->getTeam());
       msg2 += ")";
     } else {
       msg2 = "[unknown player]";
@@ -1287,10 +1287,10 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
   if (mode == 0) {
     // we don't need to mod the hunters if we aren't swaping
     for (int i = 0; i < curMaxPlayers; i++) {
-      if (player[i])
-	player[i]->setHunted(false);
-      if (i != id && player[i] && player[i]->getTeam() != RogueTeam && player[i]->getTeam() != ObserverTeam)
-	player[i]->changeTeam(HunterTeam);
+      if (remotePlayers[i])
+	remotePlayers[i]->setHunted(false);
+      if (i != id && remotePlayers[i] && remotePlayers[i]->getTeam() != RogueTeam && remotePlayers[i]->getTeam() != ObserverTeam)
+	remotePlayers[i]->changeTeam(HunterTeam);
     }
   }
 
@@ -1485,10 +1485,10 @@ static void		handleServerMessage(bool human, uint16_t code,
     if (shooterid >= playerSize)
       break;
 
-    RemotePlayer* shooter = player[shooterid];
+    RemotePlayer* shooter = remotePlayers[shooterid];
 
     if (shooterid != ServerPlayer) {
-      if (shooter && player[shooterid]->getId() == shooterid)
+      if (shooter && remotePlayers[shooterid]->getId() == shooterid)
 	shooter->addShot(firingInfo);
     }
     break;
@@ -1684,10 +1684,10 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = addr.unpack(msg);
 
 	int playerIndex = lookupPlayerIndex(playerId);
-	Player *_player = getPlayerByIndex(playerIndex);
-	if (!_player) continue;
-	printIpInfo(_player, addr, "(join)");
-	_player->setIpAddress(addr); // save for the signoff message
+	Player *player = getPlayerByIndex(playerIndex);
+	if (!player) continue;
+	printIpInfo(player, addr, "(join)");
+	player->setIpAddress(addr); // save for the signoff message
       } // end for loop
     }
     break;
@@ -2070,27 +2070,27 @@ static void setRobotTarget(RobotPlayer* robot)
   Player* bestTarget = NULL;
   float bestPriority = 0.0f;
   for (int j = 0; j < curMaxPlayers; j++)
-    if (player[j] &&
-	player[j]->getId() != robot->getId() &&
-	player[j]->isAlive() &&
+    if (remotePlayers[j] &&
+	remotePlayers[j]->getId() != robot->getId() &&
+	remotePlayers[j]->isAlive() &&
 	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit()) ||
-	 player[j]->getTeam() != robot->getTeam())) {
+	 remotePlayers[j]->getTeam() != robot->getTeam())) {
 
-      if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())
+      if (remotePlayers[j]->isPhantomZoned() && !robot->isPhantomZoned())
 	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
-	  ((robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
-	   (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
-	   (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
-	   (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam))) {
-	bestTarget = player[j];
+	  ((robot->getTeam() == RedTeam && remotePlayers[j]->getFlag() == Flags::RedTeam) ||
+	   (robot->getTeam() == GreenTeam && remotePlayers[j]->getFlag() == Flags::GreenTeam) ||
+	   (robot->getTeam() == BlueTeam && remotePlayers[j]->getFlag() == Flags::BlueTeam) ||
+	   (robot->getTeam() == PurpleTeam && remotePlayers[j]->getFlag() == Flags::PurpleTeam))) {
+	bestTarget = remotePlayers[j];
 	break;
       }
 
-      const float priority = robot->getTargetPriority(player[j]);
+      const float priority = robot->getTargetPriority(remotePlayers[j]);
       if (priority > bestPriority) {
-	bestTarget = player[j];
+	bestTarget = remotePlayers[j];
 	bestPriority = priority;
       }
     }
@@ -2152,8 +2152,8 @@ static void		checkEnvironment(RobotPlayer* tank)
   float minTime = Infinity;
   int i;
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i]) {
-      tank->checkHit(player[i], hit, minTime);
+    if (remotePlayers[i]) {
+      tank->checkHit(remotePlayers[i], hit, minTime);
     }
   }
 
@@ -2219,19 +2219,19 @@ static void		checkEnvironment(RobotPlayer* tank)
     const float* myPos = tank->getPosition();
     const float myRadius = tank->getRadius();
     for (i = 0; !dead && i < curMaxPlayers; i++) {
-      if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) ||
-	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive() &&
-	    !player[i]->isPhantomZoned()))) {
-	const float* pos = player[i]->getPosition();
+      if (remotePlayers[i] && !remotePlayers[i]->isPaused() &&
+	  ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
+	   ((tank->getFlag() == Flags::Burrow) && remotePlayers[i]->isAlive() &&
+	    !remotePlayers[i]->isPhantomZoned()))) {
+	const float* pos = remotePlayers[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	const float radius = myRadius +
-	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
+	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius());
 	const float distSquared =
 	  hypotf(hypotf(myPos[0] - pos[0],
 			myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	if (distSquared < radius) {
-	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
+	  gotBlowedUp(tank, GotRunOver, remotePlayers[i]->getId());
 	  dead = true;
 	}
       }
@@ -2435,7 +2435,7 @@ static void		sendShotList()
   rcLink->send("begin\n");
 
   for (int i=0; i<curMaxPlayers; i++) {
-    Player* tank = player[i];
+    Player* tank = remotePlayers[i];
     if (!tank) continue;
 
     int count = tank->getMaxShots();
@@ -2538,7 +2538,7 @@ static void		sendOtherTankList()
   rcLink->send("begin\n");
 
   for (int i=0; i<curMaxPlayers; i++) {
-    tank = player[i];
+    tank = remotePlayers[i];
     if (!tank) continue;
 
     TeamColor team = tank->getTeam();
@@ -2678,8 +2678,8 @@ static void setTankFlags()
     const Flag& flag = world->getFlag(i);
     if (flag.status == FlagOnTank) {
       for (int j = 0; j < curMaxPlayers; j++) {
-	if (player[j] && player[j]->getId() == flag.owner) {
-	  player[j]->setFlag(flag.type);
+	if (remotePlayers[j] && remotePlayers[j]->getId() == flag.owner) {
+	  remotePlayers[j]->setFlag(flag.type);
 	  break;
 	}
       }
@@ -2900,7 +2900,7 @@ void leaveGame()
   teams = NULL;
   curMaxPlayers = 0;
   numFlags = 0;
-  player = NULL;
+  remotePlayers = NULL;
 
   // shut down server connection
   serverLink->sendExit();
@@ -3051,7 +3051,7 @@ static void joinInternetGame2()
 
   // prep players
   curMaxPlayers = 0;
-  player = world->getPlayers();
+  remotePlayers = world->getPlayers();
   playerSize = world->getPlayersSize();
 
   // reset the autocompleter
@@ -3165,8 +3165,8 @@ void updateShots ( const float dt )
 {
   // update other tank's shots
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i])
-      player[i]->updateShots(dt);
+    if (remotePlayers[i])
+      remotePlayers[i]->updateShots(dt);
   }
 
   // update servers shots
@@ -3179,15 +3179,15 @@ void doTankMotions ( const float /*dt*/ )
 {
   // do dead reckoning on remote players
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (player[i]) {
-      const bool wasNotResponding = player[i]->isNotResponding();
-      player[i]->doDeadReckoning();
-      const bool isNotResponding = player[i]->isNotResponding();
+    if (remotePlayers[i]) {
+      const bool wasNotResponding = remotePlayers[i]->isNotResponding();
+      remotePlayers[i]->doDeadReckoning();
+      const bool isNotResponding = remotePlayers[i]->isNotResponding();
 
       if (!wasNotResponding && isNotResponding)
-	addMessage(player[i], "not responding");
+	addMessage(remotePlayers[i], "not responding");
       else if (wasNotResponding && !isNotResponding)
-	addMessage(player[i], "okay");
+	addMessage(remotePlayers[i], "okay");
     }
   }
 }
@@ -3320,8 +3320,10 @@ static void		defaultErrorCallback(const char* msg)
 void			botStartPlaying()
 {
   // register some commands
-  for (unsigned int c = 0; c < countof(commandList); ++c)
+  const std::vector<CommandListItem>& commandList = getCommandList();
+  for (size_t c = 0; c < commandList.size(); ++c) {
     CMDMGR.add(commandList[c].name, commandList[c].func, commandList[c].help);
+  }
 
   // normal error callback
   setErrorCallback(defaultErrorCallback);

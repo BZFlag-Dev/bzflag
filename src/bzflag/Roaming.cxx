@@ -49,7 +49,7 @@ void Roaming::resetCamera(void) {
 }
 
 
-void Roaming::setCamera(RoamingCamera* newCam) {
+void Roaming::setCamera(const RoamingCamera* newCam) {
   memcpy(&camera, newCam, sizeof(RoamingCamera));
 }
 

@@ -1019,8 +1019,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     return;
   }
 
-  if (!handler)	// WTF?
+  if (!handler)	{ // WTF?
     return;
+  }
 
   // pull off the BZFS code and size that packs all BZFS fomat comunication
   uint16_t len, code;
@@ -1028,30 +1029,44 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   getGeneralMessageInfo(&buf,code,len);
 
   // make sure it's not an attack
-  if (udp && isUDPAttackMessage(code))
-    logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
+  if (udp && isUDPAttackMessage(code)) {
+    logDebugMessage(1,
+      "Received packet type (%x) via udp, possible attack from %s\n",
+      code, handler->getTargetIP());
+  }
 
   // see if we have any registered handlers for this message type
   bool handled = false;
 
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNetworkHandlers.find(code);
+  std::map<uint16_t, PlayerNetworkMessageHandler*>::iterator playerItr =
+    playerNetworkHandlers.find(code);
+
   if (playerItr != playerNetworkHandlers.end()) {
+    PlayerNetworkMessageHandler* playerHandler = playerItr->second;
     // player messages all start with the player ID first
     // so get it, and verify that the sender IS the player.
     // TODO, punish the person who owns handler, as they are up to no good
-    buf = playerItr->second->unpackPlayer(buf,len);
-    if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
-      handled = playerItr->second->execute(code,buf,len);
-  } else {
+    buf = playerHandler->unpackPlayer(buf,len);
+    if (playerHandler->getPlayer() &&
+        playerHandler->getPlayer()->netHandler == handler) {
+      handled = playerHandler->execute(code, buf, len);
+    }
+  }
+  else {
     // try a non player message
     // they don't start with a player
-    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNetworkHandlers.find(code);
-    if (clientItr != clientNetworkHandlers.end())
+    std::map<uint16_t, ClientNetworkMessageHandler*>::iterator clientItr =
+      clientNetworkHandlers.find(code);
+    if (clientItr != clientNetworkHandlers.end()) {
       handled = clientItr->second->execute(handler,code,buf,len);
+    }
   }
 
-  if (!handled)	// someone got it, don't need to do the old way
-    logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
+  if (!handled)	{ // someone got it, don't need to do the old way
+    logDebugMessage(1,
+      "Received an unknown packet type (%x), possible attack from %s\n",
+      code, handler->getTargetIP());
+  }
 }
 
 
@@ -3847,6 +3862,7 @@ static void setupPermissions(void)
     bz_registerEvent(bz_eTickEvent, new AutoAllowTimerTickHandler);
 }
 
+
 static bool initServer(int argc, char **argv)
 {
   loggingCallback = &apiLoggingCallback;
@@ -3950,12 +3966,14 @@ static bool initServer(int argc, char **argv)
   return true;
 }
 
+
 static void doTickEvent(void)
 {
   // fire off a tick event
   bz_TickEventData_V1 tickData;
   worldEventManager.callEvents(bz_eTickEvent,&tickData);
 }
+
 
 float getAPIMaxWaitTime ( void )
 {
@@ -3972,6 +3990,7 @@ float getAPIMaxWaitTime ( void )
   else
     return min;
 }
+
 
 static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
 {
@@ -4039,6 +4058,7 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
     dontWait = false;
   }
 }
+
 
 static void doCountdown(int &readySetGo, TimeKeeper &tm)
 {
@@ -4194,6 +4214,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
   }
 }
 
+
 static void doPlayerStuff(void)
 {
   requestAuthentication = false;
@@ -4209,6 +4230,7 @@ static void doPlayerStuff(void)
   if (requestAuthentication)
     listServerLink->queueMessage(ListServerLink::ADD);	// Request the listserver authentication
 }
+
 
 static void doVoteArbiter(TimeKeeper &tm)
 {
@@ -4430,6 +4452,7 @@ static void doVoteArbiter(TimeKeeper &tm)
   } // voting is allowed and an arbiter exists
 }
 
+
 static void doTextBroadcasts ( TimeKeeper &tm )
 {
   // periodic advertising broadcast
@@ -4473,6 +4496,7 @@ static void doTextBroadcasts ( TimeKeeper &tm )
   }
 }
 
+
 static void doTeamFlagTimeouts ( TimeKeeper &tm )
 {
   // check team flag timeouts
@@ -4493,6 +4517,7 @@ static void doTeamFlagTimeouts ( TimeKeeper &tm )
     }
   }
 }
+
 
 static void doSuperFlags ( TimeKeeper &tm )
 {
@@ -4516,6 +4541,7 @@ static void doSuperFlags ( TimeKeeper &tm )
   }
 }
 
+
 static void doListServerUpdate ( TimeKeeper &tm )
 {
   // occasionally add ourselves to the list again (in case we were dropped for some reason).
@@ -4534,6 +4560,7 @@ static void doListServerUpdate ( TimeKeeper &tm )
   }
 }
 
+
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
   if (peer.sendChunks.empty()) {
@@ -4545,6 +4572,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 
   peer.sendChunks.pop_front();
 }
+
 
 bool updateCurl ( void )
 {

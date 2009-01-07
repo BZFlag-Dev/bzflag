@@ -32,6 +32,7 @@
 #include "BaseLocalPlayer.h"
 #include "ShotPath.h"
 
+
 class ShotCollider
 {
 public:
@@ -49,7 +50,9 @@ public:
   bool	  testLastSegment;
 };
 
+
 class ShotPath;
+
 
 class ShotStrategy {
   public:
@@ -73,7 +76,11 @@ class ShotStrategy {
     // points to the part of the message after the ShotUpdate portion.
     virtual void	readUpdate(void* msg);
 
-    static const Obstacle*	getFirstBuilding(const Ray&, float min, float& t);
+    static bool              getGround(const Ray&, float min, float& t);
+    static const Obstacle*   getFirstBuilding(const Ray&, float min, float& t);
+    static const Teleporter* getFirstTeleporter(const Ray&, float min, float& t,
+                                                int& face);
+
     static void		reflect(float* v, const float* n); // const
 
   protected:
@@ -85,9 +92,6 @@ class ShotStrategy {
     void		setExpiring() const;
     void		setExpired() const;
 
-    const Teleporter*	getFirstTeleporter(const Ray&, float min,
-							float& t, int& f) const;
-    bool		getGround(const Ray&, float min, float &t) const;
 
   private:
     ShotPath*		path;

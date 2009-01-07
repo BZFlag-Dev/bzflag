@@ -24,6 +24,7 @@
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
 #include "BzDocket.h"
+#include "BzVFS.h"
 
 /* compression library header */
 #include "zlib.h"
@@ -149,11 +150,9 @@ void* WorldBuilder::unpack(void* buf)
   // unpack the LuaWorld docket
   BzDocket* docket = new BzDocket("LuaWorld");
   buf = docket->unpack(buf);
-  if (docket->hasData("main.lua")) {
-    printf("WE HAVE A LUA WORLD\n"); // FIXME
-  }
-  delete docket;
-
+  bzVFS.removeFS(BZVFS_LUA_WORLD);
+  bzVFS.addFS(BZVFS_LUA_WORLD, docket);
+  
   // check if the unpacking was successful
   nboUseErrorChecking(false);
   if (nboGetBufferError()) {
@@ -261,10 +260,12 @@ void WorldBuilder::preGetWorld()
 
   // prepare flags array
   world->freeFlags();
-  world->flags = new Flag[world->maxFlags];
+  world->flags = new ClientFlag[world->maxFlags];
   world->flagNodes = new FlagSceneNode*[world->maxFlags];
   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];
   for (i = 0; i < world->maxFlags; i++) {
+    world->flags[i].id = i;
+    world->flags[i].gfxBlock.init(GfxBlock::Flag, i);
     world->flags[i].type = Flags::Null;
     world->flags[i].status = FlagNoExist;
     world->flags[i].position[0] = 0.0f;
@@ -295,12 +296,12 @@ World* WorldBuilder::peekWorld()
 
 void WorldBuilder::setGameType(short gameType)
 {
-	world->gameType = gameType;
+  world->gameType = (GameType)gameType;
 }
 
 void WorldBuilder::setGameOptions(short gameOptions)
 {
-	world->gameOptions = gameOptions;
+  world->gameOptions = gameOptions;
 }
 
 void WorldBuilder::setMaxPlayers(int maxPlayers)

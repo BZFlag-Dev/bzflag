@@ -366,7 +366,9 @@ void BSPSceneDatabase::addLights(SceneRenderer& _renderer)
 }
 
 
-void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer)
+void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer,
+                                      bool /*staticNodes*/,
+                                      bool /*dynamicNodes*/)
 {
   if (root) {
     renderer = &_renderer;
@@ -376,7 +378,9 @@ void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer)
 }
 
 
-void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer)
+void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer,
+                                      bool /*staticNodes*/,
+                                      bool /*dynamicNodes*/)
 {
   if (root) {
     renderer = &_renderer;

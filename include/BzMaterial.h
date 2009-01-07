@@ -43,6 +43,9 @@ class BzMaterial {
 
     void reset();
 
+    int  getID() const { return id; }
+    void setID(int value) { id = value; }
+
     void setReference();
     bool getReference() const;
 
@@ -141,6 +144,7 @@ class BzMaterial {
     std::string name;
     std::vector<std::string> aliases;
 
+    int id;
     bool referenced;
 
     int order;

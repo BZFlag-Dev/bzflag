@@ -34,47 +34,50 @@
 #include "SyncClock.h"
 
 // for dead reckoning
-static const float	MaxUpdateTime = 1.0f;		// seconds
+static const float MaxUpdateTime = 1.0f; // seconds
 
 //
 // Player
 //
 
-int		Player::tankTexture = -1;
+
+int Player::tankTexture = -1;
+
 
 Player::Player(const PlayerId& _id, TeamColor _team,
-	       const char* name, const PlayerType _type) :
-  lastObstacle(NULL),
-  handicap(0.0f),
-  notResponding(false),
-  hunted(false),
-  autoHuntLevel(0),
-  id(_id),
-  admin(false),
-  registered(false),
-  verified(false),
-  playerList(false),
-  lastVisualTeam(NoTeam),
-  team(_team),
-  type(_type),
-  flagType(Flags::Null),
-  fromTeleporter(0),
-  toTeleporter(0),
-  teleporterProximity(0.0f),
-  rank(0.42f),			// rank is received from the server on join
-  wins(0),
-  losses(0),
-  tks(0),
-  allow(0),
-  localWins(0),
-  localLosses(0),
-  localTks(0),
-  autoPilot(false),
-  deltaTime(0.0),
-  offset(0.0),
-  deadReckoningState(0),
-  oldStatus(0),
-  oldZSpeed(0.0f)
+	       const char* name, const PlayerType _type)
+: lastObstacle(NULL)
+, handicap(0.0f)
+, notResponding(false)
+, hunted(false)
+, autoHuntLevel(0)
+, id(_id)
+, admin(false)
+, registered(false)
+, verified(false)
+, playerList(false)
+, gfxBlock(GfxBlock::Tank, id)
+, lastVisualTeam(NoTeam)
+, team(_team)
+, type(_type)
+, flagType(Flags::Null)
+, fromTeleporter(0)
+, toTeleporter(0)
+, teleporterProximity(0.0f)
+, rank(0.42f)			// rank is received from the server on join
+, wins(0)
+, losses(0)
+, tks(0)
+, allow(0)
+, localWins(0)
+, localLosses(0)
+, localTks(0)
+, autoPilot(false)
+, deltaTime(0.0)
+, offset(0.0)
+, deadReckoningState(0)
+, oldStatus(0)
+, oldZSpeed(0.0f)
 {
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
   move(zero, 0.0f);
@@ -810,15 +813,22 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 {
   const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
 
-  if (!isAlive() && !isExploding()) 
+  if (gfxBlock.blocked()) {
     return; // don't draw anything
+  }
+
+  if (!isAlive() && !isExploding()) {
+    return; // don't draw anythinge
+  }
 
   World *world = World::getWorld();
-  if (!world) 
+  if (!world) {
     return; // no world, shouldn't add to scene
+  }
 
-  if (!avatar)
+  if (!avatar) {
     return;
+  }
 
   // place the tank
   avatar->move(state.pos, forward);
@@ -889,7 +899,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 				    dimensions[0], dimensions[1],
 				    dimensions[2], plane)) {
 	// stick in interdimensional lights node
-	if (showIDL) {
+	if (showIDL && GfxBlockMgr::halos.notBlocked()) {
 	  avatar->moveIDL(plane);
 	  nodeList = avatar->getIDLSceneNodes();
 	  for ( int i = 0; i < (int)nodeList.size(); i++ ) {
@@ -1016,8 +1026,11 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
   const int count = getMaxShots();
   for (int i = 0; i < count; i++) {
     ShotPath* shot = getShot(i);
-    if (shot && !shot->isExpiring() && !shot->isExpired())
-      shot->addShot(scene, colorblind);
+    if (shot && !shot->isExpiring() && !shot->isExpired()) {
+      if (shot->getGfxBlock().notBlocked()) {
+        shot->addShot(scene, colorblind);
+      }
+    }
   }
 }
 

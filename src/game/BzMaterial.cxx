@@ -127,6 +127,7 @@ void* BzMaterialManager::pack(void* buf)
   buf = nboPackUInt(buf, (unsigned int)materials.size());
   for (unsigned int i = 0; i < materials.size(); i++) {
     buf = materials[i]->pack(buf);
+    materials[i]->setID(i);
   }
 
   return buf;
@@ -142,6 +143,7 @@ void* BzMaterialManager::unpack(void* buf)
     BzMaterial* mat = new BzMaterial;
     buf = mat->unpack(buf);
     materials.push_back(mat);
+    mat->setID(i);
   }
   return buf;
 }

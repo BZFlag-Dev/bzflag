@@ -13,9 +13,19 @@
 #ifndef _BZFS_MESSAGES_H_
 #define _BZFS_MESSAGES_H_
 
-#include "global.h"
-#include "GameKeeper.h"
+#include "common.h"
+
+// system headers
 #include "bzfs.h"
+
+// common headers
+#include "global.h"
+#include "Address.h"
+
+// local headers
+#include "bzfs.h"
+#include "GameKeeper.h"
+
 
 // general messages sent to players ( local and remove )
 void sendRemovePlayerMessage ( int playerID );
@@ -54,6 +64,9 @@ void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time );
 void sendMsgTimeUpdate ( int32_t timeLimit );
+void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+                    PlayerId dstPlayerID, int16_t dstScriptID,
+                    uint8_t status, const std::string& data);
 
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
 void sendMsgTangibilityReset ( void );

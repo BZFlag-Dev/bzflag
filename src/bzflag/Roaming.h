@@ -69,7 +69,7 @@ public:
     float phi;
     float zoom;
   };
-  void setCamera(RoamingCamera* newCam);
+  void setCamera(const RoamingCamera* newCam);
   void resetCamera(void);
   /* note that dc is a camera structure of *changes* (thus dc)
      not new values */

@@ -35,14 +35,16 @@ float Team::radarColor[NumTeams][3] = {
   { 1.0f, 0.5f, 0.0f }	// hunter orange
 };
 
+
 Team::Team()
 {
   size = 0;
-  won = 0;
+  won  = 0;
   lost = 0;
 }
 
-void*			Team::pack(void* buf) const
+
+void* Team::pack(void* buf) const
 {
   buf = nboPackUShort(buf, uint16_t(size));
   buf = nboPackUShort(buf, uint16_t(won));
@@ -50,14 +52,16 @@ void*			Team::pack(void* buf) const
   return buf;
 }
 
-void			Team::pack(BufferedNetworkMessage *msg) const
+
+void Team::pack(BufferedNetworkMessage *msg) const
 {
   msg->packUShort(uint16_t(size));
   msg->packUShort(uint16_t(won));
   msg->packUShort(uint16_t(lost));
 }
 
-void*			Team::unpack(void* buf)
+
+void* Team::unpack(void* buf)
 {
   uint16_t inSize, inWon, inLost;
   buf = nboUnpackUShort(buf, inSize);
@@ -69,7 +73,8 @@ void*			Team::unpack(void* buf)
   return buf;
 }
 
-const std::string  Team::getImagePrefix(TeamColor team)
+
+const std::string Team::getImagePrefix(TeamColor team)
 {
   switch (team) {
     case RedTeam: return BZDB.get("redTeamPrefix");
@@ -83,7 +88,8 @@ const std::string  Team::getImagePrefix(TeamColor team)
   }
 }
 
-const char*		Team::getName(TeamColor team) // const
+
+const char* Team::getName(TeamColor team) // const
 {
   switch (team) {
     case AutomaticTeam: return "Automatic";
@@ -100,7 +106,8 @@ const char*		Team::getName(TeamColor team) // const
   }
 }
 
-const char*		Team::getShortName(TeamColor team)
+
+const char* Team::getShortName(TeamColor team)
 {
   switch (team) {
     case RogueTeam: return "rogue";
@@ -115,7 +122,8 @@ const char*		Team::getShortName(TeamColor team)
   }
 }
 
-TeamColor	Team::getTeam(const std::string name) // const
+
+TeamColor Team::getTeam(const std::string name) // const
 {
   if (name == Team::getName(AutomaticTeam)) {
     return AutomaticTeam;
@@ -128,13 +136,15 @@ TeamColor	Team::getTeam(const std::string name) // const
   return NoTeam;
 }
 
-const float*		Team::getTankColor(TeamColor team) // const
+
+const float* Team::getTankColor(TeamColor team) // const
 {
   if (int(team) < 0) {
     return tankColor[0];
   }
   return tankColor[int(team)];
 }
+
 
 const float*		Team::getRadarColor(TeamColor team) // const
 {
@@ -144,14 +154,14 @@ const float*		Team::getRadarColor(TeamColor team) // const
   return radarColor[int(team)];
 }
 
+
 bool		Team::isColorTeam(TeamColor team) // const
 {
   return team >= RedTeam  && team <= PurpleTeam;
 }
 
-void			Team::setColors(TeamColor team,
-					const float* tank,
-					const float* radar)
+
+void Team::setColors(TeamColor team, const float* tank, const float* radar)
 {
   const int teamIndex = int(team);
   // ignore bogus team color
@@ -166,14 +176,16 @@ void			Team::setColors(TeamColor team,
   radarColor[teamIndex][2] = radar[2];
 }
 
+
 // are the two teams foes with the current game style?
 bool Team::areFoes(TeamColor team1, TeamColor team2, GameType style)
 {
-  if (style == OpenFFA)
+  if (style == OpenFFA) {
     return true;
-
-  return team1!=team2 || (team1==RogueTeam) || (team2==RogueTeam);
+  }
+  return (team1 != team2) || (team1 == RogueTeam) || (team2 == RogueTeam);
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

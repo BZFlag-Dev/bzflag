@@ -17,6 +17,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "Intersect.h"
+#include "EventHandler.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -355,8 +356,11 @@ bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
 
       int outFace;
       const Teleporter* outTeleporter = world->getTeleporter(teletarget, outFace);
-      teleporter->getPointWRT(*outTeleporter, face, outFace, p, NULL, tmpAzimuth, p, NULL, &tmpAzimuth);
-    } else if (building) {
+      teleporter->getPointWRT(*outTeleporter, face, outFace,
+                              p, NULL, tmpAzimuth, p, NULL, &tmpAzimuth);
+      eventHandler.ShotTeleported(getPath(), face, outFace); // FIXME
+    }
+    else if (building) {
       // expire on next update
       return false;
     }

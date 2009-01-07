@@ -261,7 +261,7 @@ static int DiffTimers(lua_State* L);
 static int DirList(lua_State* L);
 static int CalcMD5(lua_State* L);
 
-#ifdef HAVE_UNISTD_H
+#if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
 static int ReadStdin(lua_State* L);
 #endif
 
@@ -468,7 +468,7 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, DirList);
   PUSH_LUA_CFUNC(L, CalcMD5);
 
-#ifdef HAVE_UNISTD_H
+#if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
   PUSH_LUA_CFUNC(L, ReadStdin);
 #endif
 
@@ -2097,7 +2097,7 @@ static int CalcMD5(lua_State* L)
 
 
 // whacky bit of dev'ing fun
-#ifdef HAVE_UNISTD_H
+#if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
   #include <unistd.h>
   #include <fcntl.h>
   static int ReadStdin(lua_State* L)

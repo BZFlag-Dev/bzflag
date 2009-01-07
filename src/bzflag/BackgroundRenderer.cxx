@@ -24,6 +24,8 @@
 #include "TextureMatrix.h"
 #include "ParseColor.h"
 #include "BZDBCache.h"
+#include "EventHandler.h"
+#include "GfxBlock.h"
 
 // local headers
 #include "daylight.h"
@@ -61,17 +63,18 @@ const GLfloat		BackgroundRenderer::receiverColor[3] =
 const GLfloat		BackgroundRenderer::receiverColorInv[3] =
   { 0.55f, 0.3f, 0.55f };
 
-BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
-  blank(false),
-  invert(false),
-  style(0),
-  gridSpacing(60.0f),	// meters
-  gridCount(4.0f),
-  mountainsAvailable(false),
-  numMountainTextures(0),
-  mountainsGState(NULL),
-  cloudDriftU(0.0f),
-  cloudDriftV(0.0f)
+
+BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
+: blank(false)
+, invert(false)
+, style(0)
+, gridSpacing(60.0f)	// meters
+, gridCount(4.0f)
+, mountainsAvailable(false)
+, numMountainTextures(0)
+, mountainsGState(NULL)
+, cloudDriftU(0.0f)
+, cloudDriftV(0.0f)
 {
   static bool init = false;
   OpenGLGStateBuilder gstate;
@@ -230,6 +233,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   notifyStyleChange();
 }
 
+
 BackgroundRenderer::~BackgroundRenderer()
 {
   DisplayListSystem &ds = DisplayListSystem::Instance();
@@ -260,6 +264,7 @@ void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
   return;
 }
 
+
 void BackgroundRenderer::resetCloudList()
 {
   if (cloudsList > 0) {
@@ -267,6 +272,7 @@ void BackgroundRenderer::resetCloudList()
     cloudsList = DisplayListSystem::Instance().newList(this);
   }
 }
+
 
 void BackgroundRenderer::setupGroundMaterials()
 {
@@ -353,18 +359,12 @@ void BackgroundRenderer::setupGroundMaterials()
 }
 
 
-void			BackgroundRenderer::notifyStyleChange()
+void BackgroundRenderer::notifyStyleChange()
 {
   if (BZDBCache::texture) {
-    if (BZDBCache::lighting)
-      styleIndex = 3;
-    else
-      styleIndex = 2;
+    styleIndex = BZDBCache::lighting ? 3 : 2;
   } else {
-    if (BZDBCache::lighting)
-      styleIndex = 1;
-    else
-      styleIndex = 0;
+    styleIndex = BZDBCache::lighting ? 1 : 0;
   }
 
   // some stuff is drawn only for certain states
@@ -384,7 +384,8 @@ void			BackgroundRenderer::notifyStyleChange()
 }
 
 
-void		BackgroundRenderer::resize() {
+void BackgroundRenderer::resize()
+{
   resizeSky();
 }
 
@@ -406,7 +407,8 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
   return;
 }
 
-void BackgroundRenderer::buildMountan( unsigned int index )
+
+void BackgroundRenderer::buildMountain(unsigned int index)
 {
   if (numMountainTextures == 0)
     return;
@@ -453,6 +455,7 @@ void BackgroundRenderer::buildMountan( unsigned int index )
   } glEnd();
 }
 
+
 void BackgroundRenderer::setSkyColors()
 {
   // change sky colors according to the sun position
@@ -475,10 +478,12 @@ void BackgroundRenderer::setSkyColors()
   return;
 }
 
-void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
+
+void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 {
-  if (!lastRenderer)
+  if (!lastRenderer) {
     return;
+  }
 
   // compute display list for moon
   float coverage = (moonDirection[0] * sunDirection[0]) +
@@ -573,7 +578,8 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     } glEnd();
 
     glPopMatrix();
-  } else if ( displayList == moonList ) {
+  }
+  else if (displayList == moonList) {
     int moonSegements = BZDB.evalInt("moonSegments");
    
     glPushMatrix();
@@ -597,7 +603,8 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
       glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
     } glEnd();
     glPopMatrix();
-  } else if ( displayList == starXFormList ) {
+  }
+  else if (displayList == starXFormList) {
     // make pretransformed display list for stars
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
@@ -611,7 +618,8 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     } glEnd();
 
     glPopMatrix();
-  } else if ( displayList == mediumGroundList ) {
+  }
+  else if (displayList == mediumGroundList) {
     for (int i = 0; i < GROUND_DIVS; i++) {
       GLfloat yoff, ytexoff;
 
@@ -638,14 +646,16 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 	}
       } glEnd();
     }
-  } else if ( displayList == lowGroundList ) {
+  }
+  else if (displayList == lowGroundList) {
     glBegin(GL_TRIANGLE_STRIP); {
       glVertex2fv(groundPlane[0]);
       glVertex2fv(groundPlane[1]);
       glVertex2fv(groundPlane[3]);
       glVertex2fv(groundPlane[2]);
     } glEnd();
-  } else if ( displayList == cloudsList ) {
+  }
+  else if (displayList == cloudsList) {
     glNormal3f(0.0f, 0.0f, 1.0f);
     // inner clouds -- full opacity
     glBegin(GL_QUADS); {
@@ -711,16 +721,17 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 		   uvScale * cloudRepeats * squareShape[1][1]);
       glVertex3fv(cloudsInner[1]);
     } glEnd();
-  } else {
+  }
+  else {
     // check for mountans
-    for ( unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
-      if ( displayList == mountanLists[i] ) {
-	buildMountan(i);
+    for (unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
+      if (displayList == mountanLists[i]) {
+	buildMountain(i);
       }
     }
   }
-
 }
+
 
 void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 {
@@ -763,7 +774,7 @@ void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 				   bool mirror)
 {
-  if (!BZDBCache::drawSky) {
+  if (!BZDBCache::drawSky || GfxBlockMgr::sky.blocked()) {
     return;
   }
   if (renderer.useQuality() > _LOW_QUALITY) {
@@ -811,50 +822,59 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 }
 
 
-void BackgroundRenderer::renderGround(SceneRenderer& renderer,
-				      bool fullWindow)
+void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow)
 {
   if (renderer.useQuality() > _LOW_QUALITY) {
     drawGround();
-  } else {
-    // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
-    // to draw solid color sky and ground.
-    MainWindow& window = renderer.getWindow();
-    const int x = window.getOriginX();
-    const int y = window.getOriginY();
-    const int width = window.getWidth();
-    const int height = window.getHeight();
-    const int viewHeight = window.getViewHeight();
-    const SceneRenderer::ViewType viewType = renderer.getViewType();
+    return;
+  }
 
-    // draw sky
-    glDisable(GL_DITHER);
-    glPushAttrib(GL_SCISSOR_BIT);
-    glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
-    glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+  // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
+  // to draw solid color sky and ground.
+  MainWindow& window = renderer.getWindow();
+  const int x = window.getOriginX();
+  const int y = window.getOriginY();
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const SceneRenderer::ViewType viewType = renderer.getViewType();
 
-    // draw ground -- first get the color (assume it's all green)
-    GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-    if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-      glScissor(x, y, width, height >> 1);
-    else if (fullWindow && viewType == SceneRenderer::Stacked)
-      glScissor(x, y, width, height >> 1);
+  // draw sky
+  glDisable(GL_DITHER);
+  glPushAttrib(GL_SCISSOR_BIT);
+  glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
+  glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // draw ground -- first get the color (assume it's all green)
+  GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+  if (fullWindow && viewType == SceneRenderer::ThreeChannel) {
+    glScissor(x, y, width, height >> 1);
+  }
+  else if (fullWindow && viewType == SceneRenderer::Stacked) {
+    glScissor(x, y, width, height >> 1);
+  }
 #ifndef USE_GL_STEREO
-    else if (fullWindow && viewType == SceneRenderer::Stereo)
-      glScissor(x, y, width, height >> 1);
+  else if (fullWindow && viewType == SceneRenderer::Stereo) {
+    glScissor(x, y, width, height >> 1);
+  }
 #endif
-    else
-      glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-    if (invert)
-      glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
-    else
-      glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+  else {
+    glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
+  }
 
-    // back to normal
-    glPopAttrib();
-    if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+  if (invert) {
+    glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
+  } else {
+    glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
+  }
+
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // back to normal
+  glPopAttrib();
+  if (BZDB.isTrue("dither")) {
+    glEnable(GL_DITHER);
   }
 }
 
@@ -872,7 +892,10 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
   }
 
   if (!blank) {
-    if (doShadows && shadowsVisible && !drawingMirror) {
+    if (doShadows      &&
+        shadowsVisible &&
+        !drawingMirror &&
+        GfxBlockMgr::shadows.notBlocked()) {
       drawGroundShadows(renderer);
     }
 
@@ -881,7 +904,8 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
-	!drawingMirror && BZDBCache::drawGroundLights) {
+	!drawingMirror && BZDBCache::drawGroundLights &&
+	GfxBlockMgr::lights.notBlocked()) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= _HIGH_QUALITY)) {
 	//	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
 	// not really tesselation, but it is tied to the "Best" lighting,
@@ -898,12 +922,16 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // light the mountains (so that they get dark when the sun goes down).
     // don't do zbuffer test since they occlude all drawn before them and
     // are occluded by all drawn after.
-    if (mountainsVisible && BZDBCache::drawMountains) {
+    if (mountainsVisible &&
+        BZDBCache::drawMountains &&
+        GfxBlockMgr::mountains.notBlocked()) {
       drawMountains();
     }
 
     // draw clouds
-    if (cloudsVisible && BZDBCache::drawClouds) {
+    if (cloudsVisible &&
+        BZDBCache::drawClouds &&
+        GfxBlockMgr::clouds.notBlocked()) {
       cloudsGState.setState();
       glMatrixMode(GL_TEXTURE);
       glPushMatrix();
@@ -919,13 +947,22 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 
 void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 {
-  if (!blank) {
+  if (blank) {
+    return;
+  }
+  
+  if (GfxBlockMgr::weather.notBlocked()) {
     if (update) {
       weather.update();
+    }
+    weather.draw(renderer);
+  }
+
+  if (GfxBlockMgr::effects.notBlocked()) {
+    if (update) {
       EFFECTS.update();
     }
     EFFECTS.draw(renderer);
-    weather.draw(renderer);
   }
 }
 
@@ -1044,7 +1081,7 @@ void BackgroundRenderer::drawSkybox()
   glDisable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
-  if (!BZDBCache::drawGround) {
+  if (!BZDBCache::drawGround || GfxBlockMgr::ground.blocked()) {
     tm.bind(skyboxTexID[5]); // bottom
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
@@ -1192,7 +1229,9 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
-  const bool useClipPlane = (mirror && (doSkybox || BZDBCache::drawCelestial));
+  const bool drawCelestial = BZDBCache::drawCelestial &&
+                             GfxBlockMgr::stars.notBlocked();
+  const bool useClipPlane = (mirror && (doSkybox || drawCelestial));
 
   if (useClipPlane) {
     glEnable(GL_CLIP_PLANE0);
@@ -1206,7 +1245,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
   DisplayListSystem &ds = DisplayListSystem::Instance();
 
-  if (BZDBCache::drawCelestial) {
+  if (drawCelestial) {
     if (sunDirection[2] > -0.009f) {
       sunGState.setState();
       glColor3fv(renderer.getSunScaledColor());
@@ -1223,7 +1262,6 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       glColor3f(1.0f, 1.0f, 1.0f);
       ds.callList(moonList);
     }
-
   }
 
 
@@ -1238,31 +1276,36 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
 void BackgroundRenderer::drawGround()
 {
-  if (BZDBCache::drawGround) {
-    // draw ground
-    glNormal3f(0.0f, 0.0f, 1.0f);
-    if (invert) {
-      glColor4fv(groundColorInv[styleIndex]);
-      invGroundGState[styleIndex].setState();
+  if (!BZDBCache::drawGround || GfxBlockMgr::ground.blocked()) {
+    return;
+  }
+  // draw ground
+  glNormal3f(0.0f, 0.0f, 1.0f);
+  if (invert) {
+    glColor4fv(groundColorInv[styleIndex]);
+    invGroundGState[styleIndex].setState();
+  } else {
+    float color[4];
+    if (BZDB.isSet("GroundOverideColor") &&
+        parseColorString(BZDB.get("GroundOverideColor"), color)) {
+      glColor4fv(color);
     } else {
-      float color[4];
-      if (BZDB.isSet("GroundOverideColor") &&
-	  parseColorString(BZDB.get("GroundOverideColor"), color)) {
-	glColor4fv(color);
-      } else {
-	glColor4fv(groundColor[styleIndex]);
-      }
-      groundGState[styleIndex].setState();
+      glColor4fv(groundColor[styleIndex]);
     }
+    groundGState[styleIndex].setState();
+  }
 
-    if (RENDERER.useQuality() >= _HIGH_QUALITY)
-      drawGroundCentered();
-    else if (RENDERER.useQuality() == _LOW_QUALITY)
-      DisplayListSystem::Instance().callList(lowGroundList);
-    else 
-      DisplayListSystem::Instance().callList(mediumGroundList);
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
+    drawGroundCentered();
+  }
+  else if (RENDERER.useQuality() == _LOW_QUALITY) {
+    DisplayListSystem::Instance().callList(lowGroundList);
+  }
+  else {
+    DisplayListSystem::Instance().callList(mediumGroundList);
   }
 }
+
 
 void BackgroundRenderer::drawGroundCentered()
 {
@@ -1304,14 +1347,14 @@ void BackgroundRenderer::drawGroundCentered()
     }
     glTexCoord2fv(texcoords[1]);
     glVertex2fv(vertices[1]);
-  } glEnd();
+  }
+  glEnd();
 
   return;
 }
 
 
-void			BackgroundRenderer::drawGroundGrid(
-							   SceneRenderer& renderer)
+void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
 {
   const GLfloat* pos = renderer.getViewFrustum().getEye();
   const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
@@ -1332,7 +1375,7 @@ void			BackgroundRenderer::drawGroundGrid(
     }
   } glEnd();
 
-  /* z lines */
+  // z lines
   if (doShadows) glColor3f(0.5f, 0.75f, 0.0f);
   else glColor3f(0.3f, 0.4f, 0.0f);
   glBegin(GL_LINES); {
@@ -1344,22 +1387,28 @@ void			BackgroundRenderer::drawGroundGrid(
 }
 
 
+void BackgroundRenderer::multShadowMatrix() const
+{
+  // draw sun shadows -- always stippled so overlapping shadows don't
+  // accumulate darkness.  make and multiply by shadow projection matrix.
+  static GLfloat shadowProjection[16] = {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    8888, 9999, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+  shadowProjection[8] = -sunDirection[0] / sunDirection[2];
+  shadowProjection[9] = -sunDirection[1] / sunDirection[2];
+  glMultMatrixf(shadowProjection);
+}
+    
+
 void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
-  GLfloat shadowProjection[16];
-  shadowProjection[0] = shadowProjection[5] = shadowProjection[15] = 1.0f;
-  shadowProjection[8] = -sunDirection[0] / sunDirection[2];
-  shadowProjection[9] = -sunDirection[1] / sunDirection[2];
-  shadowProjection[1] = shadowProjection[2] =
-    shadowProjection[3] = shadowProjection[4] =
-    shadowProjection[6] = shadowProjection[7] =
-    shadowProjection[10] = shadowProjection[11] =
-    shadowProjection[12] = shadowProjection[13] =
-    shadowProjection[14] = 0.0f;
   glPushMatrix();
-  glMultMatrixf(shadowProjection);
+  multShadowMatrix();
 
   // disable color updates
   SceneNode::setColorOverride(true);
@@ -1389,6 +1438,7 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 
   // render those nodes
   renderer.getShadowList().render();
+//FIXME  eventHandler.DrawWorldShadow();
 
   // revert to OpenGLGState defaults
   if (BZDBCache::stencilShadows) {
@@ -1733,7 +1783,8 @@ void BackgroundRenderer::drawMountains(void)
   }
 }
 
-const GLfloat*	BackgroundRenderer::getSunDirection() const
+
+const GLfloat* BackgroundRenderer::getSunDirection() const
 {
   if (areShadowsCast(sunDirection)) {
     return sunDirection;
@@ -1741,6 +1792,7 @@ const GLfloat*	BackgroundRenderer::getSunDirection() const
     return NULL;
   }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

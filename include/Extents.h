@@ -39,6 +39,7 @@ class Extents {
 
     bool touches(const Extents& orig) const;
     bool contains(const Extents& orig) const;
+    bool contains(const float point[3]) const;
 
   private:
     // force passing by reference
@@ -164,6 +165,17 @@ inline bool Extents::contains(const Extents& test) const
   if ((mins[0] < test.mins[0]) && (maxs[0] > test.maxs[0]) &&
       (mins[1] < test.mins[1]) && (maxs[1] > test.maxs[1]) &&
       (mins[2] < test.mins[2]) && (maxs[2] > test.maxs[2])) {
+    return true;
+  }
+  return false;
+}
+
+
+inline bool Extents::contains(const float point[3]) const
+{
+  if ((mins[0] < point[0]) && (maxs[0] > point[0]) &&
+      (mins[1] < point[1]) && (maxs[1] > point[1]) &&
+      (mins[2] < point[2]) && (maxs[2] > point[2])) {
     return true;
   }
   return false;

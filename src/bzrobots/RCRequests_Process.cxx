@@ -189,17 +189,17 @@ bool GetShotsReq::process(RCRobotPlayer *)
 {
   link->send(ShotsBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!player[i])
+    if (!remotePlayers[i])
       continue;
 
-    /*TeamColor team = player[i]->getTeam();
+    /*TeamColor team = remotePlayers[i]->getTeam();
     if (team == ObserverTeam)
       continue;
     if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
       continue;*/
 
-    for (int j = 0; j < player[i]->getMaxShots(); j++) {
-      ShotPath *path = player[i]->getShot(j);
+    for (int j = 0; j < remotePlayers[i]->getMaxShots(); j++) {
+      ShotPath *path = remotePlayers[i]->getShot(j);
       if (!path || path->isExpired())
         continue;
 
@@ -283,18 +283,18 @@ bool GetPlayersReq::process(RCRobotPlayer *)
 {
   link->send(PlayersBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!player[i])
+    if (!remotePlayers[i])
       continue;
-    if (robots[0]->getId() == player[i]->getId())
+    if (robots[0]->getId() == remotePlayers[i]->getId())
       continue;
 
-    TeamColor team = player[i]->getTeam();
+    TeamColor team = remotePlayers[i]->getTeam();
     if (team == ObserverTeam)
       continue;
     if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
       continue;
 
-    link->send(PlayersReply(player[i]));
+    link->send(PlayersReply(remotePlayers[i]));
   }
 
   return true;

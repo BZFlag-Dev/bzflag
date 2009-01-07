@@ -1118,6 +1118,7 @@ bool isUDPAttackMessage ( uint16_t &code )
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall:
   case MsgGMUpdate:
+  case MsgLuaDataFast:
   case MsgUDPLinkRequest:
   case MsgUDPLinkEstablished:
   case MsgHit:
@@ -1195,6 +1196,92 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
   memcpy(playerState.pos,apiState.pos,sizeof(float)*3);
   memcpy(playerState.velocity,apiState.velocity,sizeof(float)*3);
 }
+
+
+void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+                    PlayerId dstPlayerID, int16_t dstScriptID,
+                    uint8_t status, const std::string& data)
+{
+  GameKeeper::Player* srcPlayer =
+    GameKeeper::Player::getPlayerByIndex(srcPlayerID);
+  if (srcPlayer == NULL) {
+    return;
+  }
+
+  const uint8_t knownBits = (0x80 | IsAdmin | IsVerified | IsRegistered);
+  status &= knownBits;
+
+  const PlayerAccessInfo& info = srcPlayer->accessInfo;
+  if ((status & IsAdmin) && !info.isAdmin()) {
+    status &= ~IsAdmin; // clear the bit
+  }
+  if ((status & IsVerified) && !info.isVerified()) {
+    status &= ~IsVerified; // clear the bit
+  }
+  if ((status & IsRegistered) && !info.isRegistered()) {
+    status &= ~IsRegistered; // clear the bit
+  }
+
+  bz_LuaDataEventData_V1 eventData(srcPlayerID, srcScriptID,
+                                   dstPlayerID, dstScriptID,
+                                   status, data);
+  worldEventManager.callEvents(bz_eLuaDataEvent, &eventData);
+  if (eventData.doNotSend) {
+    return;
+  }
+
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUByte(srcPlayerID);
+  msg->packShort(srcScriptID);
+  msg->packUByte(dstPlayerID);
+  msg->packShort(dstScriptID);
+  msg->packUByte(status);
+  msg->packStdString(data);
+
+  // broadcast
+  if (dstPlayerID == AllPlayers) {
+    msg->broadcast(MsgLuaData);
+    return;
+  }
+
+  // specific player
+  if (dstPlayerID <= LastRealPlayer) {
+    GameKeeper::Player* dstPlayer =
+      GameKeeper::Player::getPlayerByIndex(dstPlayerID);
+    if (dstPlayer == NULL) {
+      return;
+    }
+    msg->send(dstPlayer->netHandler, MsgLuaData);
+    return;
+  }
+
+  // admin group
+  if (dstPlayerID == AdminPlayers) {
+    std::vector<int> admins =
+      GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
+    for (size_t i = 0; i < admins.size(); ++i) {
+      GameKeeper::Player* adminPlayer =
+        GameKeeper::Player::getPlayerByIndex(admins[i]);
+      if (adminPlayer != srcPlayer) {
+        MSGMGR.newMessage(msg)->send(adminPlayer->netHandler, MsgLuaData);
+      }
+    }
+    return;
+  }
+
+  // send to a team
+  TeamColor dstTeam = TeamColor(250 - dstPlayerID);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player* dstPlayer = GameKeeper::Player::getPlayerByIndex(i);
+    if (dstPlayer &&
+        dstPlayer->player.isPlaying() &&
+        dstPlayer->player.isTeam(dstTeam)) {
+      MSGMGR.newMessage(msg)->send(dstPlayer->netHandler, MsgLuaData);
+    }
+  }
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

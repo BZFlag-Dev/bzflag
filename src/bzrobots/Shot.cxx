@@ -78,8 +78,8 @@ ShotPath *searchShot(PlayerId plr, uint16_t shotid)
     return NULL;
   }
 
-  for (int i = 0; i < player[plr]->getMaxShots(); i++) {
-    ShotPath *path = player[plr]->getShot(i);
+  for (int i = 0; i < remotePlayers[plr]->getMaxShots(); i++) {
+    ShotPath *path = remotePlayers[plr]->getShot(i);
     if (!path || path->getFiringInfo().shot.id != shotid)
       continue;
 

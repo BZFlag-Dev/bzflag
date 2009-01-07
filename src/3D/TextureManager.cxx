@@ -86,7 +86,8 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
     return it->second.id;
-  } else { // we don't have it so try and load it
+  }
+  else { // we don't have it so try and load it
 
     OSFile osFilename(name); // convert to native format
     const std::string filename = osFilename.getOSName();
@@ -284,24 +285,22 @@ float TextureManager::GetAspectRatio ( int id )
 
 const ImageInfo& TextureManager::getInfo ( int id )
 {
- static ImageInfo   crapInfo;
-  crapInfo.id = -1;
+  static ImageInfo crapInfo(-1, NULL);
   TextureIDMap::iterator it = textureIDs.find(id);
-  if (it == textureIDs.end())
+  if (it == textureIDs.end()) {
     return crapInfo;
-
+  }
   return *(it->second);
 }
+
 const ImageInfo& TextureManager::getInfo ( const char* name )
 {
-  static ImageInfo crapInfo;
-  crapInfo.id = -1;
-  std::string nameStr = name;
-
+  static ImageInfo crapInfo(-1, NULL);
+  const std::string nameStr = name;
   TextureNameMap::iterator it = textureNames.find(nameStr);
-  if (it == textureNames.end())
+  if (it == textureNames.end()) {
     return crapInfo;
-
+  }
   return it->second;
 }
 

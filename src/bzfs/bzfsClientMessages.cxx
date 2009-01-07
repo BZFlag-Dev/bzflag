@@ -17,8 +17,8 @@
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
 
-std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
-std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
+std::map<uint16_t, ClientNetworkMessageHandler*> clientNetworkHandlers;
+std::map<uint16_t, PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
 
 void packWorldSettings ( void )
@@ -63,6 +63,7 @@ public:
   }
 };
 
+
 class SetVarHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -74,6 +75,7 @@ public:
     return true;
   }
 };
+
 
 class NegotiateFlagHandler : public ClientNetworkMessageHandler
 {
@@ -124,6 +126,7 @@ public:
   }
 };
 
+
 class GetWorldHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -141,6 +144,7 @@ public:
   }
 };
 
+
 class WantSettingsHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -153,6 +157,7 @@ public:
     return true;
   }
 };
+
 
 class WantWHashHandler : public ClientNetworkMessageHandler
 {
@@ -170,6 +175,7 @@ public:
     return true;
   }
 };
+
 
 class QueryGameHandler : public ClientNetworkMessageHandler
 {
@@ -211,6 +217,7 @@ public:
   }
 };
 
+
 class QueryPlayersHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -244,6 +251,7 @@ public:
   }
 };
 
+
 class UDPLinkEstablishedHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -254,8 +262,8 @@ public:
   }
 };
 
-// messages that have players
 
+// messages that have players
 class PlayerFirstHandler : public PlayerNetworkMessageHandler
 {
 public:
@@ -274,6 +282,7 @@ public:
     return buf;
   }
 };
+
 
 class NewPlayerHandler : public PlayerFirstHandler
 {
@@ -300,6 +309,7 @@ public:
   }
 };
 
+
 class CapBitsHandler : public PlayerFirstHandler
 {
 public:
@@ -319,6 +329,7 @@ public:
     return true;
   }
 };
+
 
 class EnterHandler : public PlayerFirstHandler
 {
@@ -362,6 +373,7 @@ public:
   }
 };
 
+
 class ExitHandler : public PlayerFirstHandler
 {
 public:
@@ -373,6 +385,7 @@ public:
     return true;
   }
 };
+
 
 class AliveHandler : public PlayerFirstHandler
 {
@@ -404,6 +417,7 @@ public:
     return true;
   }
 };
+
 
 class KilledHandler : public PlayerFirstHandler
 {
@@ -449,6 +463,7 @@ public:
   }
 };
 
+
 class DropFlagHandler : public PlayerFirstHandler
 {
 public:
@@ -476,6 +491,7 @@ public:
   }
 };
 
+
 class CaptureFlagHandler : public PlayerFirstHandler
 {
 public:
@@ -492,6 +508,7 @@ public:
     return true;
   }
 };
+
 
 class CollideHandler : public PlayerFirstHandler
 {
@@ -511,6 +528,7 @@ public:
     return true;
   }
 };
+
 
 class ShotBeginHandler : public PlayerFirstHandler
 {
@@ -603,6 +621,7 @@ public:
   }
 };
 
+
 class ShotEndHandler : public PlayerFirstHandler
 {
 public:
@@ -634,6 +653,7 @@ public:
     return true;
   }
 };
+
 
 class HitHandler : public PlayerFirstHandler
 {
@@ -676,6 +696,8 @@ public:
     return true;
   }
 };
+
+
 class TeleportHandler : public PlayerFirstHandler
 {
 public:
@@ -703,6 +725,7 @@ public:
     return true;
   }
 };
+
 
 class MessageHandler : public PlayerFirstHandler
 {
@@ -745,6 +768,7 @@ public:
     return true;
   }
 };
+
 
 class TransferFlagHandler : public PlayerFirstHandler
 {
@@ -796,6 +820,7 @@ public:
   }
 };
 
+
 class NewRabbitHandler : public PlayerFirstHandler
 {
 public:
@@ -810,6 +835,7 @@ public:
     return true;
   }
 };
+
 
 class PauseHandler : public PlayerFirstHandler
 {
@@ -841,6 +867,7 @@ public:
   }
 };
 
+
 class AutoPilotHandler : public PlayerFirstHandler
 {
 public:
@@ -859,6 +886,7 @@ public:
     return true;
   }
 };
+
 
 class LagPingHandler : public PlayerFirstHandler
 {
@@ -900,6 +928,7 @@ public:
   }
 };
 
+
 class PlayerUpdateHandler : public PlayerFirstHandler
 {
 public:
@@ -924,6 +953,7 @@ public:
     return true;
   }
 };
+
 
 class PlayerDataHandler : public PlayerFirstHandler
 {
@@ -953,6 +983,7 @@ public:
   }
 };
 
+
 class PlayerFirstNoBumpHandler : public PlayerFirstHandler
 {
 public:
@@ -971,6 +1002,7 @@ public:
     return buf;
   }
 };
+
 
 class GMUpdateHandler : public PlayerFirstNoBumpHandler
 {
@@ -996,57 +1028,104 @@ public:
   }
 };
 
+
+class LuaDataHandler : public PlayerFirstNoBumpHandler
+{
+public:
+  virtual bool execute(uint16_t& /*code*/, void* buf, int len)
+  {
+    const size_t minSize =
+      sizeof(PlayerId) + // src playerID
+      sizeof(int16_t)  + // src scriptID
+      sizeof(PlayerId) + // dst playerID
+      sizeof(int16_t)  + // dst scriptID
+      sizeof(uint8_t)  + // status
+      sizeof(uint32_t);  // the data
+
+    if ((len + 1) < (int)minSize) { // +1 for the 'NoBump' srcPlayerID
+      return false;
+    }
+
+    PlayerId srcPlayerID;
+    int16_t  srcScriptID;
+    PlayerId dstPlayerID;
+    int16_t  dstScriptID;
+    uint8_t  status;
+    std::string data;
+
+    buf = nboUnpackUByte(buf, srcPlayerID);
+    buf = nboUnpackShort(buf, srcScriptID);
+    buf = nboUnpackUByte(buf, dstPlayerID);
+    buf = nboUnpackShort(buf, dstScriptID);
+    buf = nboUnpackUByte(buf, status);
+    buf = nboUnpackStdString(buf, data);
+
+    sendMsgLuaData(srcPlayerID, srcScriptID,
+                   dstPlayerID, dstScriptID,
+                   status, data);
+
+    return true;
+  }
+};
+
+
 void registerDefaultHandlers ( void )
 {
-  clientNetworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
-  clientNetworkHandlers[MsgSetVar] = new SetVarHandler;
-  clientNetworkHandlers[MsgNegotiateFlags] = new NegotiateFlagHandler;
-  clientNetworkHandlers[MsgGetWorld] = new GetWorldHandler;
-  clientNetworkHandlers[MsgWantSettings] = new WantSettingsHandler;
-  clientNetworkHandlers[MsgWantWHash] = new WantWHashHandler;
-  clientNetworkHandlers[MsgQueryGame] = new QueryGameHandler;
-  clientNetworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
+  clientNetworkHandlers[MsgWhatTimeIsIt]       = new WhatTimeIsItHandler;
+  clientNetworkHandlers[MsgSetVar]             = new SetVarHandler;
+  clientNetworkHandlers[MsgNegotiateFlags]     = new NegotiateFlagHandler;
+  clientNetworkHandlers[MsgGetWorld]           = new GetWorldHandler;
+  clientNetworkHandlers[MsgWantSettings]       = new WantSettingsHandler;
+  clientNetworkHandlers[MsgWantWHash]          = new WantWHashHandler;
+  clientNetworkHandlers[MsgQueryGame]          = new QueryGameHandler;
+  clientNetworkHandlers[MsgQueryPlayers]       = new QueryPlayersHandler;
   clientNetworkHandlers[MsgUDPLinkEstablished] = new UDPLinkEstablishedHandler;
   
-  playerNetworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
-  playerNetworkHandlers[MsgCapBits] = new CapBitsHandler;
-  playerNetworkHandlers[MsgEnter] = new EnterHandler;
-  playerNetworkHandlers[MsgExit] = new ExitHandler;
-  playerNetworkHandlers[MsgAlive] = new AliveHandler;
-  playerNetworkHandlers[MsgKilled] = new KilledHandler;
-  playerNetworkHandlers[MsgDropFlag] = new DropFlagHandler;
-  playerNetworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
-  playerNetworkHandlers[MsgCollide] = new CollideHandler;
-  playerNetworkHandlers[MsgShotBegin] = new ShotBeginHandler;
-  playerNetworkHandlers[MsgShotEnd] = new ShotEndHandler;
-  playerNetworkHandlers[MsgHit] = new HitHandler;
-  playerNetworkHandlers[MsgTeleport] = new TeleportHandler;
-  playerNetworkHandlers[MsgMessage] = new MessageHandler;
-  playerNetworkHandlers[MsgTransferFlag] = new TransferFlagHandler;
-  playerNetworkHandlers[MsgNewRabbit] = new NewRabbitHandler;
-  playerNetworkHandlers[MsgPause] = new PauseHandler;
-  playerNetworkHandlers[MsgAutoPilot] = new AutoPilotHandler;
-  playerNetworkHandlers[MsgLagPing] = new LagPingHandler;
-  playerNetworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
+  playerNetworkHandlers[MsgNewPlayer]         = new NewPlayerHandler;
+  playerNetworkHandlers[MsgCapBits]           = new CapBitsHandler;
+  playerNetworkHandlers[MsgEnter]             = new EnterHandler;
+  playerNetworkHandlers[MsgExit]              = new ExitHandler;
+  playerNetworkHandlers[MsgAlive]             = new AliveHandler;
+  playerNetworkHandlers[MsgKilled]            = new KilledHandler;
+  playerNetworkHandlers[MsgDropFlag]          = new DropFlagHandler;
+  playerNetworkHandlers[MsgCaptureFlag]       = new CaptureFlagHandler;
+  playerNetworkHandlers[MsgCollide]           = new CollideHandler;
+  playerNetworkHandlers[MsgShotBegin]         = new ShotBeginHandler;
+  playerNetworkHandlers[MsgShotEnd]           = new ShotEndHandler;
+  playerNetworkHandlers[MsgHit]               = new HitHandler;
+  playerNetworkHandlers[MsgTeleport]          = new TeleportHandler;
+  playerNetworkHandlers[MsgMessage]           = new MessageHandler;
+  playerNetworkHandlers[MsgTransferFlag]      = new TransferFlagHandler;
+  playerNetworkHandlers[MsgNewRabbit]         = new NewRabbitHandler;
+  playerNetworkHandlers[MsgPause]             = new PauseHandler;
+  playerNetworkHandlers[MsgAutoPilot]         = new AutoPilotHandler;
+  playerNetworkHandlers[MsgLagPing]           = new LagPingHandler;
+  playerNetworkHandlers[MsgPlayerUpdate]      = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
-  playerNetworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
-  playerNetworkHandlers[MsgPlayerData] = new PlayerDataHandler;
+  playerNetworkHandlers[MsgGMUpdate]          = new GMUpdateHandler;
+  playerNetworkHandlers[MsgPlayerData]        = new PlayerDataHandler;
+  playerNetworkHandlers[MsgLuaData]           = new LuaDataHandler;
+  playerNetworkHandlers[MsgLuaDataFast]       = new LuaDataHandler;
 }
+
 
 void cleanupDefaultHandlers ( void )
 {
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerIter = playerNetworkHandlers.begin();
+  std::map<uint16_t, PlayerNetworkMessageHandler*>::iterator playerIter =
+    playerNetworkHandlers.begin();
   while(playerIter != playerNetworkHandlers.end())
     delete((playerIter++)->second);
 
   playerNetworkHandlers.clear();
 
-  std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientIter = clientNetworkHandlers.begin();
+  std::map<uint16_t, ClientNetworkMessageHandler*>::iterator clientIter =
+    clientNetworkHandlers.begin();
   while(clientIter != clientNetworkHandlers.end())
     delete((clientIter++)->second);
 
   clientNetworkHandlers.clear();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -27,9 +27,17 @@
 #include <iostream>
 
 class LinkManager {
+  public:
+    typedef struct {
+      std::string src;
+      std::string dst;
+    } LinkNameSet;
+
+    typedef struct {
+      std::vector<int> dsts;
+    } LinkNumberSet;
 
   public:
-
     LinkManager();
     ~LinkManager();
 
@@ -45,6 +53,8 @@ class LinkManager {
 
     int getTeleportIndex(const std::string& name) const;    
 
+    const LinkNumberSet* getLinkDsts(int linkID) const;
+
     int packSize() const;
     void* pack(void*) const;
     void* unpack(void*);
@@ -52,22 +62,11 @@ class LinkManager {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
-
     void makeLinkName(int number, std::string& name);
     void findTelesByName(const std::string& name,
-			 std::vector<int>& list) const;
+                         std::vector<int>& list) const;
 
   private:
-
-    typedef struct {
-      std::string src;
-      std::string dst;
-    } LinkNameSet;
-
-    typedef struct {
-      std::vector<int> dsts;
-    } LinkNumberSet;
-
     std::vector<LinkNameSet>   linkNames;
     std::vector<LinkNumberSet> linkNumbers;
     std::map<std::string, int> teleNameMap;

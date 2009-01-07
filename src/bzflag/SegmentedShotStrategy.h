@@ -35,12 +35,12 @@ class SegmentedShotStrategy : public ShotStrategy {
 			SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
 			~SegmentedShotStrategy();
 
-    void		update(float dt);
-    bool                predictPosition(float dt, float p[3]) const;
-    bool                predictVelocity(float dt, float p[3]) const;
-    float		checkHit(const ShotCollider&, float[3]) const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    void  update(float dt);
+    bool  predictPosition(float dt, float p[3]) const;
+    bool  predictVelocity(float dt, float p[3]) const;
+    float checkHit(const ShotCollider&, float[3]) const;
+    void  addShot(SceneDatabase*, bool colorblind);
+    void  radarRender() const;
     TeamColor	team;
 
   protected:
@@ -49,26 +49,26 @@ class SegmentedShotStrategy : public ShotStrategy {
 			Through = 1,
 			Reflect = 2
     };
-    void		makeSegments(ObstacleEffect = Stop);
+    void  makeSegments(ObstacleEffect = Stop);
     const std::vector<ShotPathSegment>&	getSegments() const;
 
-    void		setCurrentTime(const double);
-    double		getLastTime() const;
+    void   setCurrentTime(const double);
+    double getLastTime() const;
 
-    bool		isOverlapping(const float (*bbox1)[3],
-				const float (*bbox2)[3]) const;
+    bool isOverlapping(const float (*bbox1)[3],
+		const float (*bbox2)[3]) const;
 
-    void		setCurrentSegment(int segment);
+    void setCurrentSegment(int segment);
 
   private:
-    double		prevTime;
-    double		currentTime;
-    double		lastTime;
-    int			segment, lastSegment;
+    double prevTime;
+    double currentTime;
+    double lastTime;
+    int    segment, lastSegment;
     std::vector<ShotPathSegment>	segments;
     BoltSceneNode*	boltSceneNode;
-    float		bbox[2][3];
-    int			firstSegment;
+    float  bbox[2][3];
+    int    firstSegment;
 };
 
 class NormalShotStrategy : public SegmentedShotStrategy {

@@ -244,6 +244,7 @@ public:
   float flightTime;		// flight time so far
   float flightEnd;		// total duration of flight
   float initialVelocity;	// initial launch velocity
+  int id;
 };
 
 /** Flags no longer use enumerated IDs. Over the wire, flags are all

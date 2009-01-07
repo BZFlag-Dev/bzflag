@@ -63,6 +63,9 @@ class BackgroundRenderer : public GLDisplayListCreator
 
     int			getTriangleCount() const;
     void		resetTriangleCount();
+
+    void		multShadowMatrix() const;
+
   protected:
     void		drawSky(SceneRenderer&, bool mirror);
     void		drawSkybox();
@@ -176,7 +179,7 @@ class BackgroundRenderer : public GLDisplayListCreator
 
     SceneRenderer	      *lastRenderer;
 
-    void buildMountan ( unsigned int index );
+    void buildMountain(unsigned int index);
 };
 
 //

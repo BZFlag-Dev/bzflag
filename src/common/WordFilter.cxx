@@ -23,11 +23,16 @@
 #  include "TimeKeeper.h"
 #endif
 
+// common headers
+#include "bzfio.h"
+
+
 // TODO: wordfilter is no good for multibyte strings
 
 /* private */
 
 /* protected */
+
 
 bool WordFilter::simpleFilter(char *input) const
 {
@@ -803,7 +808,7 @@ bool WordFilter::filter(char *input, bool simple) const
   }
 #ifdef DEBUG
   TimeKeeper after = TimeKeeper::getCurrent();
-  std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
+  logDebugMessage(1, "WordFilter: %f seconds\n", after - before);
 #endif
   return filtered;
 }

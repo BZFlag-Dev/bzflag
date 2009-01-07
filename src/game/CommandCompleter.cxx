@@ -29,6 +29,7 @@ void CommandCompleter::reset()
   registerWord("/countdown");
   registerWord("/clientquery");
   registerWord("/date");
+  registerWord("disable");
   registerWord("/dumpvars");
   registerWord("/flag ");
   registerWord("reset");
@@ -58,6 +59,8 @@ void CommandCompleter::reset()
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");
+  registerWord("/luauser ");
+  registerWord("/luaworld ");
   registerWord("/mute ");
   registerWord("/password ");
   registerWord("/playerlist");
@@ -67,6 +70,7 @@ void CommandCompleter::reset()
   registerWord("kill");
   registerWord("/quit");
   registerWord("/record");
+  registerWord("reload");
   registerWord("start");
   registerWord("stop");
   registerWord("size");

@@ -278,6 +278,7 @@ DEFINE_CALLIN(KickEvent,                  Kick);                   // -Event
 DEFINE_CALLIN(KillEvent,                  Kill);                   // -Event
 DEFINE_CALLIN(ListServerUpdateEvent,      ListServerUpdate);       // -Event
 DEFINE_CALLIN(LoggingEvent,               Logging);                // -Event
+DEFINE_CALLIN(LuaDataEvent,               LuaData);                // -Event
 //DEFINE_CALLIN(Shutdown,                 Shutdown);               //  custom
 DEFINE_CALLIN(MessageFilteredEvent,       MessageFiltered);        // -Event
 DEFINE_CALLIN(NetDataReceiveEvent,        NetDataReceive);         // -Event
@@ -958,6 +959,35 @@ bool CI_Logging::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->level);
 
   return RunCallIn(2, 0);
+}
+
+
+bool CI_LuaData::execute(bz_EventData* eventData)
+{
+  bz_LuaDataEventData_V1* ed = (bz_LuaDataEventData_V1*)eventData;
+
+  if (!PushCallIn(8)) {
+    return false;
+  }
+
+  lua_pushinteger(L, ed->srcPlayerID);
+  lua_pushinteger(L, ed->srcScriptID);
+  lua_pushinteger(L, ed->dstPlayerID);
+  lua_pushinteger(L, ed->dstScriptID);
+  lua_pushinteger(L, ed->status);
+  lua_pushlstring(L, ed->data, ed->dataLen);
+
+  if (!RunCallIn(6, 1)) {
+    return false;
+  }
+
+  if (lua_isboolean(L, -1)) {
+    ed->doNotSend = lua_tobool(L, -1);
+  }
+
+  lua_pop(L, 1);
+
+  return true;
 }
 
 

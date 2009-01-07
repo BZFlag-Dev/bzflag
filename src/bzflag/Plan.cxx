@@ -63,16 +63,16 @@ void Plan::execute(float &, float &)
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding()) {
+	if (t != myTank->getId() && remotePlayers[t] &&
+	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+	    !remotePlayers[t]->isNotResponding()) {
 
-	  const float *tp = player[t]->getPosition();
+	  const float *tp = remotePlayers[t]->getPosition();
 	  float enemyPos[3];
 
 	  //toss in some lag adjustment/future prediction - 300 millis
 	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
+	  const float *tv = remotePlayers[t]->getVelocity();
 	  enemyPos[0] += 0.3f * tv[0];
 	  enemyPos[1] += 0.3f * tv[1];
 	  enemyPos[2] += 0.3f * tv[2];
@@ -81,7 +81,7 @@ void Plan::execute(float &, float &)
 	    enemyPos[2] = 0.0f;
 	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
 	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-	    if (!myTank->validTeamTarget(player[t])) {
+	    if (!myTank->validTeamTarget(remotePlayers[t])) {
 	      hasSWTarget = false;
 	      t = curMaxPlayers;
 	    } else {
@@ -103,20 +103,20 @@ void Plan::execute(float &, float &)
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding() &&
-	    myTank->validTeamTarget(player[t])) {
+	if (t != myTank->getId() && remotePlayers[t] &&
+	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+	    !remotePlayers[t]->isNotResponding() &&
+	    myTank->validTeamTarget(remotePlayers[t])) {
 
-	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+	  if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
 	      && (myTank->getFlag() != Flags::SuperBullet))
 	    continue;
 
-	  const float *tp = player[t]->getPosition();
+	  const float *tp = remotePlayers[t]->getPosition();
 	  float enemyPos[3];
 	  //toss in some lag adjustment/future prediction - 300 millis
 	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
+	  const float *tv = remotePlayers[t]->getVelocity();
 	  enemyPos[0] += 0.3f * tv[0];
 	  enemyPos[1] += 0.3f * tv[1];
 	  enemyPos[2] += 0.3f * tv[2];
@@ -227,12 +227,12 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 
   minDistance = Infinity;
   for (int t = 0; t < curMaxPlayers; t++) {
-    if (t == myTank->getId() || !player[t])
+    if (t == myTank->getId() || !remotePlayers[t])
       continue;
 
-    const int maxShots = player[t]->getMaxShots();
+    const int maxShots = remotePlayers[t]->getMaxShots();
     for (int s = 0; s < maxShots; s++) {
-      ShotPath* shot = player[t]->getShot(s);
+      ShotPath* shot = remotePlayers[t]->getShot(s);
       if (!shot || shot->isExpired())
 	continue;
 
@@ -240,7 +240,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 	   shot->getShotType() == CloakedShot) &&
 	  (myTank->getFlag() != Flags::Seer))
 	continue; //Theoretically Roger could triangulate the sound
-      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+      if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 	continue;
       if ((shot->getShotType() == LaserShot) &&
 	  (myTank->getFlag() == Flags::Cloaking))

@@ -67,14 +67,18 @@ class OpenGLTexture {
 			~OpenGLTexture();
     bool		hasAlpha() const;
 
-    void		execute();
+    bool		execute();
 
     float		getAspectRatio() const;
     int			getWidth() const;
     int			getHeight() const;
 
-    Filter		getFilter();
     void		setFilter(Filter);
+    Filter		getFilter();
+    GLenum		getMinFilter();
+    GLenum		getMagFilter();
+    GLenum		getInternalFormat() const { return internalFormat; }
+    bool		getRepeat() const { return repeat; }
 
     bool		getColorAverages(float rgbaRaw[4],
 					 bool factorAlpha) const;
@@ -102,9 +106,9 @@ class OpenGLTexture {
     bool		operator==(const OpenGLTexture&) const;
     bool		operator!=(const OpenGLTexture&) const;
     bool		operator<(const OpenGLTexture&) const;
-    int			getBestFormat( int width, int height,
-					const GLvoid* pixels);
-    void		bind();
+    int			getBestFormat(int width, int height,
+                                      const GLvoid* pixels);
+    bool		bind();
     bool		setupImage(const GLubyte* pixels);
 
     void* operator new(size_t s) { return ::operator new(s);}
@@ -121,6 +125,7 @@ class OpenGLTexture {
     int		internalFormat;
     GLuint	list;
     Filter	filter;
+    Filter	realFilter;
 
     static Filter	maxFilter;
 

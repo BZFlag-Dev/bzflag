@@ -19,13 +19,12 @@ ShotPathSegment::ShotPathSegment()
   // do nothing
 }
 
-ShotPathSegment::ShotPathSegment(const double _start,
-				const double _end, const Ray& _ray,
-				Reason _reason) :
-				start(_start),
-				end(_end),
-				ray(_ray),
-				reason(_reason)
+ShotPathSegment::ShotPathSegment(const double _start, const double _end,
+                                 const Ray& _ray, Reason _reason)
+: start(_start)
+, end(_end)
+, ray(_ray)
+, reason(_reason)
 {
   // compute bounding box
   ray.getPoint(0.0f, bbox[0]);

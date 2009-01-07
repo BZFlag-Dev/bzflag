@@ -28,6 +28,7 @@ bzflag_SOURCES =			\
 	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
+	ClientFlag.h			\
 	CommandsImplementation.cxx	\
 	CommandsStandard.cxx		\
 	CommandsStandard.h		\
@@ -49,6 +50,12 @@ bzflag_SOURCES =			\
 	EffectsMenu.h			\
 	EntryZone.cxx			\
 	EntryZone.h			\
+	EventClient.cxx			\
+	EventClient.h			\
+	EventClientList.cxx		\
+	EventClientList.h		\
+	EventHandler.cxx		\
+	EventHandler.h			\
 	ExportInformation.cxx		\
 	ExportInformation.h		\
 	FlashClock.cxx			\
@@ -61,6 +68,7 @@ bzflag_SOURCES =			\
 	FormatMenu.h			\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
+	GfxBlock.cxx			\
 	GuidedMissleStrategy.cxx	\
 	GuidedMissleStrategy.h		\
 	HUDDialog.cxx			\
@@ -214,7 +222,7 @@ bzflag_SOURCES =			\
 	WorldBuilder.h			\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
-	XfireGameClient.cpp		\
+	XfireGameClient.cxx		\
 	XfireGameClient.h		\
 	bzflag.cxx			\
 	bzflag.h			\
@@ -263,9 +271,11 @@ LDADD =	\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
+	../lua/libBzLua.la		\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\
+	$(LIBLUA)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
@@ -273,6 +283,9 @@ LDADD =	\
 	$(SDL_LIBS)			\
 	$(SDL_IMAGE_LIBS)		\
 	$(GLIBS)			\
+	$(IL_LIBS)			\
+	$(ILU_LIBS)			\
+	$(ILUT_LIBS)			\
 	$(GLEW_LIBS)			\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries

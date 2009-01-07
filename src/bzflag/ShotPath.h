@@ -31,6 +31,7 @@
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "ShotUpdate.h"
+#include "GfxBlock.h"
 
 /* local interface headers */
 #include "ShotStrategy.h"
@@ -70,13 +71,17 @@ public:
 
   void radarRender() const;
   FiringInfo &getFiringInfo();
+  const FiringInfo &getFiringInfo() const;
   TeamColor getTeam() const;
 
   virtual void update(float);
 
   //This function can be used to predict the position of the shot after a given time dt. Function returns true iff. the shot is still alive.
-  bool    predictPosition(float dt, float p[3]) const;
-  bool    predictVelocity(float dt, float p[3]) const;
+  bool predictPosition(float dt, float p[3]) const;
+  bool predictVelocity(float dt, float p[3]) const;
+
+  GfxBlock&       getGfxBlock()       { return gfxBlock; }
+  const GfxBlock& getGfxBlock() const { return gfxBlock; }
 
 protected:
   void updateShot(float dt);
@@ -97,6 +102,7 @@ private:
   bool expiring; // shot has almost terminated
   bool expired; // shot has terminated
   bool local; // shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
+  GfxBlock gfxBlock;
 };
 
 class LocalShotPath : public ShotPath {
@@ -186,6 +192,11 @@ inline const float *ShotPath::getVelocity() const
 }
 
 inline FiringInfo &ShotPath::getFiringInfo()
+{
+  return firingInfo;
+}
+
+inline const FiringInfo &ShotPath::getFiringInfo() const
 {
   return firingInfo;
 }

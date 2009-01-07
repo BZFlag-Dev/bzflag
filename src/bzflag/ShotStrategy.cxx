@@ -157,7 +157,7 @@ void ShotStrategy::reflect(float* v, const float* n) // const
 }
 
 const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray, float min,
-						   float& t, int& f) const
+						   float& t, int& f)
 {
   const Teleporter* closestTeleporter = NULL;
   int face;
@@ -177,7 +177,7 @@ const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray, float min,
   return closestTeleporter;
 }
 
-bool ShotStrategy::getGround(const Ray& r, float min, float &t) const
+bool ShotStrategy::getGround(const Ray& r, float min, float &t)
 {
   if (r.getDirection()[2] >= 0.0f)
     return false;

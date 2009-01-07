@@ -31,6 +31,8 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 #include "FlagSceneNode.h"
+#include "EventHandler.h"
+#include "GfxBlock.h"
 
 /* FIXME - local implementation dependancies */
 #include "DynamicWorldText.h"
@@ -108,9 +110,6 @@ SceneRenderer::SceneRenderer() :
 				useFogHack(false),
 				viewType(Normal),
 				inOrder(false),
-				depthRange(0),
-				numDepthRanges(1),
-				depthRangeSize(1.0),
 				useDimming(false),
 				canUseHiddenLine(false),
 				exposed(true),
@@ -222,33 +221,6 @@ bool SceneRenderer::useStencil() const
 SceneRenderer::ViewType	SceneRenderer::getViewType() const
 {
   return viewType;
-}
-
-
-void SceneRenderer::setZBufferSplit(bool on)
-{
-  if (!on) {
-    if (numDepthRanges != 1) {
-      numDepthRanges = 1;
-      depthRangeSize = 1.0;
-      glDepthRange(0.0, 1.0);
-    }
-  }
-  else {
-    GLint bits;
-    glGetIntegerv(GL_DEPTH_BITS, &bits);
-    if (bits > 18) {
-      // number of independent slices to split depth buffer into
-      numDepthRanges = 1 << (bits - 18);
-
-      // size of a single range
-      depthRangeSize = 1.0 / (double)numDepthRanges;
-    }
-    else {
-      numDepthRanges = 1;
-      depthRangeSize = 1.0;
-    }
-  }
 }
 
 
@@ -386,7 +358,6 @@ void SceneRenderer::setHiddenLine(bool on)
 {
   useHiddenLineOn = on && BZDBCache::zbuffer && canUseHiddenLine;
   if (!useHiddenLineOn) {
-    depthRange = 0;
     return;
   }
   glPolygonOffset(1.0f, 2.0f);
@@ -686,11 +657,11 @@ static int sortLights (const void* a, const void* b)
 }
 
 
-void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
-			   bool fullWindow)
+void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
 {
   lastFrame = _lastFrame;
   sameFrame = _sameFrame;
+  fullWindow = _fullWindow;
 
   setWireframe(BZDB.isTrue("wireframe"));
 
@@ -737,7 +708,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   }
 
   // get the track mark sceneNodes (only for BSP)
-  if (scene) {
+  if (scene && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::addSceneNodes(scene);
   }
 
@@ -758,101 +729,17 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
-	   && BZDB.isTrue("userMirror");
+	   && BZDB.isTrue("userMirror") && GfxBlockMgr::mirror.notBlocked();
 
   clearZbuffer = true;
   drawGround = true;
 
   if (mirror) {
-    drawGround = false;
-
-    // flip for the reflection drawing
-    frustum.flipVertical();
-    glFrontFace(GL_CW);
-
-    // different occluders for the mirror
-    if (scene) {
-      scene->setOccluderManager(1);
-    }
-
-    // the reflected scene
-    renderScene(_lastFrame, _sameFrame, fullWindow);
-
-    // different occluders for the mirror
-    if (scene) {
-      scene->setOccluderManager(0);
-    }
-
-    // flip back
-    frustum.flipVertical();
-    glFrontFace(GL_CCW);
-
-    float mirrorColor[4];
-    if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
-      mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
-      mirrorColor[3] = 0.5f;
-    } else if (mirrorColor[3] == 1.0f) {
-      // probably a mistake
-      mirrorColor[3] = 0.5f;
-    }
-    if (invert) {
-      mirrorColor[0] = 1.0f - mirrorColor[0];
-      mirrorColor[2] = 1.0f - mirrorColor[2];
-      mirrorColor[3] = 0.2f;
-    }
-
-    // darken the reflection
-    if (!mapFog) {
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      // if low quality then use stipple -- it's probably much faster
-      if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glColor4fv(mirrorColor);
-	glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-	glDisable(GL_BLEND);
-      } else {
-	float stipple = mirrorColor[3];
-	glColor3fv(mirrorColor);
-	OpenGLGState::setStipple(stipple);
-	glEnable(GL_POLYGON_STIPPLE);
-	glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-	glDisable(GL_POLYGON_STIPPLE);
-      }
-    } else {
-      // need the proper matrices for fog generation
-      // if low quality then use stipple -- it's probably much faster
-      frustum.executeView();
-      frustum.executeProjection();
-      const float extent = BZDBCache::worldSize * 10.0f;
-      if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glColor4fv(mirrorColor);
-	glRectf(-extent, -extent, +extent, +extent);
-	glDisable(GL_BLEND);
-      } else {
-	float stipple = mirrorColor[3];
-	glColor3fv(mirrorColor);
-	OpenGLGState::setStipple(stipple);
-	glEnable(GL_POLYGON_STIPPLE);
-	glRectf(-extent, -extent, +extent, +extent);
-	glDisable(GL_POLYGON_STIPPLE);
-      }
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-    }
-
-    clearZbuffer = false;
+    drawMirror();
   }
 
   // the real scene
-  renderScene(_lastFrame, _sameFrame, fullWindow);
+  renderScene();
 
   // finalize dimming
   if (mapFog) {
@@ -875,8 +762,93 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 }
 
 
-void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
-				bool fullWindow)
+void SceneRenderer::drawMirror()
+{
+  drawGround = false;
+
+  // flip for the reflection drawing
+  frustum.flipVertical();
+  glFrontFace(GL_CW);
+
+  // different occluders for the mirror
+  if (scene) { scene->setOccluderManager(1); }
+
+  // the reflected scene
+  renderScene();
+
+  // different occluders for the mirror
+  if (scene) { scene->setOccluderManager(0); }
+
+  // flip back
+  frustum.flipVertical();
+  glFrontFace(GL_CCW);
+
+  float mirrorColor[4];
+  if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
+    mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
+    mirrorColor[3] = 0.5f;
+  } else if (mirrorColor[3] == 1.0f) {
+    // probably a mistake
+    mirrorColor[3] = 0.5f;
+  }
+  if (invert) {
+    mirrorColor[0] = 1.0f - mirrorColor[0];
+    mirrorColor[2] = 1.0f - mirrorColor[2];
+    mirrorColor[3] = 0.2f;
+  }
+
+  // darken the reflection
+  if (!mapFog) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    // if low quality then use stipple -- it's probably much faster
+    if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glEnable(GL_BLEND);
+      glColor4fv(mirrorColor);
+      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+      glDisable(GL_BLEND);
+    } else {
+      float stipple = mirrorColor[3];
+      glColor3fv(mirrorColor);
+      OpenGLGState::setStipple(stipple);
+      glEnable(GL_POLYGON_STIPPLE);
+      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+      glDisable(GL_POLYGON_STIPPLE);
+    }
+  } else {
+    // need the proper matrices for fog generation
+    // if low quality then use stipple -- it's probably much faster
+    frustum.executeView();
+    frustum.executeProjection();
+    const float extent = BZDBCache::worldSize * 10.0f;
+    if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glEnable(GL_BLEND);
+      glColor4fv(mirrorColor);
+      glRectf(-extent, -extent, +extent, +extent);
+      glDisable(GL_BLEND);
+    } else {
+      float stipple = mirrorColor[3];
+      glColor3fv(mirrorColor);
+      OpenGLGState::setStipple(stipple);
+      glEnable(GL_POLYGON_STIPPLE);
+      glRectf(-extent, -extent, +extent, +extent);
+      glDisable(GL_POLYGON_STIPPLE);
+    }
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+  }
+
+  clearZbuffer = false;
+}
+
+
+void SceneRenderer::renderScene()
 {
   int i;
   const bool lightLists = BZDB.isTrue("lightLists");
@@ -897,7 +869,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   // prepare transforms
   // note -- lights should not be positioned before view is set
   frustum.executeDeepProjection();
-  glPushMatrix();
+//FIXME?  glPushMatrix();
   frustum.executeView();
 
   // turn sunlight on -- the ground needs it
@@ -907,8 +879,9 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
 
   // set scissor
-  glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
-      window->getWidth(), window->getViewHeight());
+  const int windowYOffset = window->getHeight() - window->getViewHeight();
+  glScissor(window->getOriginX(), window->getOriginY() + windowYOffset,
+            window->getWidth(), window->getViewHeight());
 
   if (useDepthComplexityOn) {
     if (BZDBCache::stencilShadows) {
@@ -937,26 +910,8 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
 
   // prepare z buffer
-  if (BZDBCache::zbuffer) {
-    if (sameFrame && ++depthRange == numDepthRanges) {
-      depthRange = 0;
-    }
-    if (exposed || useHiddenLineOn || --depthRange < 0) {
-      depthRange = numDepthRanges - 1;
-      if (clearZbuffer) {
-	glClear(GL_DEPTH_BUFFER_BIT);
-      }
-      exposed = false;
-    }
-    if (!sameFrame && numDepthRanges != 1) {
-      if (useHiddenLineOn) {
-	glDepthRange(0.0, 1.0);
-      }
-      else {
-	GLclampd x_near = (GLclampd)depthRange * depthRangeSize;
-	glDepthRange(x_near, x_near + depthRangeSize);
-      }
-    }
+  if (BZDBCache::zbuffer && clearZbuffer) {
+    glClear(GL_DEPTH_BUFFER_BIT);
   }
 
   // draw start of background (no depth testing)
@@ -1059,7 +1014,12 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   if (!useHiddenLineOn && useWireframeOn) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
-  glPopMatrix();
+
+//  glPopMatrix(); // FIXME ?
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
   // do depth complexity
   if (useDepthComplexityOn) {
@@ -1131,13 +1091,15 @@ void SceneRenderer::doRender()
   const bool mirrorPass = (mirror && clearZbuffer);
 
   // render the ground tank tracks
-  if (!mirrorPass) {
+  if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::renderGroundTracks();
   }
 
   // NOTE -- this should go into a separate thread
   // now draw each render node list
   OpenGLGState::renderLists();
+
+  eventHandler.DrawWorld(); // FIXME
 
   draw3rdPersonTarget(this);
 
@@ -1153,8 +1115,10 @@ void SceneRenderer::doRender()
   orderedList.render();
   glDepthMask(GL_TRUE);
 
+  eventHandler.DrawWorldAlpha(); // FIXME
+
   // render the ground tank tracks
-  if (!mirrorPass) {
+  if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::renderObstacleTracks();
   }
 
@@ -1310,80 +1274,93 @@ void SceneRenderer::renderDepthComplexity()
 void SceneRenderer::getRenderNodes()
 {
   // get the nodes to draw
-  if (!blank) {
-    // empty the render node lists in preparation for the next frame
-    OpenGLGState::clearLists();
-    orderedList.clear();
-    shadowList.clear();
-    flareLightList.clear();
+  if (blank) {
+    return;
+  }
 
-    // make the lists of render nodes sorted in optimal rendering order
-    if (scene) {
-      scene->addRenderNodes(*this);
-    }
+  const bool drawObstacles = GfxBlockMgr::obstacles.notBlocked();
 
-    // sort ordered list in reverse depth order
-    if (!inOrder) {
-      orderedList.sort(frustum.getEye());
-    }
+  // empty the render node lists in preparation for the next frame
+  OpenGLGState::clearLists();
+  orderedList.clear();
+  shadowList.clear();
+  flareLightList.clear();
 
+  // make the lists of render nodes sorted in optimal rendering order
+  if (scene) {
+    scene->addRenderNodes(*this, drawObstacles, true);
+  }
+
+  // sort ordered list in reverse depth order
+  if (!inOrder) {
+    orderedList.sort(frustum.getEye());
+  }
+
+  if (drawObstacles) {
     DYNAMICWORLDTEXT.addRenderNodes(*this);
+  }
 
-    // add the shadow rendering nodes
-    if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
-	&& (!mirror || !clearZbuffer)) {
-      setupShadowPlanes();
-      scene->addShadowNodes(*this);
+  // add the shadow rendering nodes
+  if (scene && BZDBCache::shadows &&
+      !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS) &&
+      GfxBlockMgr::shadows.notBlocked() &&
+      (!mirror || !clearZbuffer)) {
+    setupShadowPlanes();
+    scene->addShadowNodes(*this, drawObstacles, true);
+    if (drawObstacles) {
       DYNAMICWORLDTEXT.addShadowNodes(*this);
     }
   }
+
   return;
 }
 
 
 void SceneRenderer::getLights()
 {
+  if (sameFrame) {
+    return;
+  }
+
+  lightsCount = 0;
+  dynamicLights = 0;
+
   // get the important lights in the scene
-  if (!sameFrame) {
+  if (scene && !blank && BZDBCache::lighting) {
+    // get the potential dynamic lights
+    scene->addLights(*this);
 
-    lightsCount = 0;
-    dynamicLights = 0;
+    // calculate the light importances
+    int i;
+    for (i = 0; i < lightsCount; i++) {
+      lights[i]->calculateImportance(frustum);
+    }
 
-    if (scene && !blank && BZDBCache::lighting) {
-      // get the potential dynamic lights
-      scene->addLights(*this);
+    // sort by cull state, grounded state, and importance
+    qsort(lights, lightsCount, sizeof(OpenGLLight*), sortLights);
 
-      // calculate the light importances
-      int i;
-      for (i = 0; i < lightsCount; i++) {
-	lights[i]->calculateImportance(frustum);
-      }
-
-      // sort by cull state, grounded state, and importance
-      qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
-
-      // count the unculled valid lights and potential dynamic lights
-      // (negative values indicate culled lights)
-      int unculledCount = 0;
-      for (i = 0; i < lightsCount; i++) {
-	// any value below 0.0f is culled
-	if (lights[i]->getImportance() >= 0.0f) {
-	  unculledCount++;
-	  if (!lights[i]->getOnlyGround()) {
-	    dynamicLights++;
-	  }
-	}
-      }
-
-      // set the total light count to the number of unculled lights
-      lightsCount = unculledCount;
-
-      // limit the dynamic OpenGL light count
-      if (dynamicLights > maxLights) {
-	dynamicLights = maxLights;
+    // count the unculled valid lights and potential dynamic lights
+    // (negative values indicate culled lights)
+    int unculledCount = 0;
+    for (i = 0; i < lightsCount; i++) {
+      // any value below 0.0f is culled
+      if (lights[i]->getImportance() >= 0.0f) {
+        unculledCount++;
+        if (!lights[i]->getOnlyGround()) {
+          dynamicLights++;
+        }
       }
     }
+
+    // set the total light count to the number of unculled lights
+    lightsCount = unculledCount;
+
+    // limit the dynamic OpenGL light count
+    if (dynamicLights > maxLights) {
+      dynamicLights = maxLights;
+    }
   }
+
   return;
 }
 

@@ -29,7 +29,8 @@ class cfvec2 {
       memcpy (data, values, sizeof(float[2]));
       return *this;
     }
-    inline float& operator[](int pos) { return data[pos]; }
+    inline float& operator[](int pos)       { return data[pos]; }
+    inline float  operator[](int pos) const { return data[pos]; }
     float data[2];
 };
 
@@ -43,7 +44,8 @@ class cfvec3 {
       memcpy (data, values, sizeof(float[3]));
       return *this;
     }
-    inline float& operator[](int pos) { return data[pos]; }
+    inline float& operator[](int pos)       { return data[pos]; }
+    inline float  operator[](int pos) const { return data[pos]; }
     float data[3];
 };
 
@@ -57,7 +59,8 @@ class cfvec4 {
       memcpy (data, values, sizeof(float[4]));
       return *this;
     }
-    inline float& operator[](int pos) { return data[pos]; }
+    inline float& operator[](int pos)       { return data[pos]; }
+    inline float  operator[](int pos) const { return data[pos]; }
     float data[4];
 };
 

@@ -32,6 +32,7 @@ const char* MeshFace::typeName = "MeshFace";
 MeshFace::MeshFace(MeshObstacle* _mesh)
 {
   mesh = _mesh;
+  id = -1;
   vertexCount = 0;
   vertices = NULL;
   normals = NULL;
@@ -56,6 +57,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
                    unsigned char drive, unsigned char shoot, bool rico)
 {
   mesh = _mesh;
+  id = -1;
   vertexCount = _vertexCount;
   vertices = _vertices;
   normals = _normals;

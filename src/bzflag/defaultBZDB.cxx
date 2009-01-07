@@ -103,6 +103,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "autoFlagDisplay",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "processorAffinity",	"0",			true,	StateDatabase::ReadWrite,	setProcessorAffinity },
   { "pauseOnMinimize",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "autoJoin",			"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   //ping
   { "pingLow",		        "100",			true,   StateDatabase::ReadWrite,	NULL },

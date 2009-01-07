@@ -51,10 +51,13 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return false;
   }
 
-  if (!myTank || (myTank->getInputMethod() != LocalPlayer::Keyboard)) {
+  if (!myTank ||
+      (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
+      (myTank->getTeam() == ObserverTeam)) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down))
+	(key.button == BzfKeyEvent::Down)) {
       return true;
+    }
   }
 
   if (isWordCompletion(key)) {
@@ -67,19 +70,19 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   switch (key.chr) {
-  case 3: // ^C
-  case 27: { // escape
-    sendIt = false; // finished composing -- don't send
-    break;
-  }
-  case 4: // ^D
-  case 13: { // return
-    sendIt = true;
-    break;
-  }
-  default: {
-    return false;
-  }
+    case 3: // ^C
+    case 27: { // escape
+      sendIt = false; // finished composing -- don't send
+      break;
+    }
+    case 4: // ^D
+    case 13: { // return
+      sendIt = true;
+      break;
+    }
+    default: {
+      return false;
+    }
   }
 
   if (sendIt) {
@@ -124,7 +127,9 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
+  if (!myTank ||
+      (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
+      (myTank->getTeam() == ObserverTeam)) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.size()) {
 	hud->setComposeString(messageHistory[messageHistoryIndex]);

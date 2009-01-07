@@ -53,6 +53,7 @@
 #include "FontManager.h"
 #include "GUIOptionsMenu.h"
 #include "KeyManager.h"
+#include "LuaClientScripts.h"
 #include "OSFile.h"
 #include "OpenGLGState.h"
 #include "ParseColor.h"
@@ -173,6 +174,7 @@ static void usage()
 		  " [-configdir <config dir name>]"
 		  " [-d | -debug]"
 		  " [-date mm/dd/yyyy]"
+		  " [-devlua]"
 		  " [{-dir | -directory} <data-directory>]"
 		  " [-e | -echo]"
 		  " [-ea | -echoAnsi]"
@@ -222,6 +224,8 @@ static void parse(int argc, char **argv)
     } else if ((strcmp(argv[i], "-d") == 0) ||
 	       (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
+    } else if (strcmp(argv[i], "-devlua") == 0) {
+      LuaClientScripts::SetDevMode(true);
     } else if ((strcmp(argv[i], "-dir") == 0) ||
 	       (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
@@ -1165,9 +1169,6 @@ int initDisplay ( void )
 
   // restore rendering configuration
   if (startupInfo.hasConfiguration) {
-    if (BZDB.isSet("zbuffersplit"))
-      RENDERER.setZBufferSplit(BZDB.isTrue("zbuffersplit"));
-
     if (BZDB.isSet("quality")) {
       std::string value = BZDB.get("quality");
       const int qualityLevels = (int)configQualityValues.size();

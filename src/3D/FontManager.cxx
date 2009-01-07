@@ -362,7 +362,7 @@ int FontManager::lookupFileID(std::string const& fileName)
 }
 
 
-int FontManager::getFaceID(std::string const& faceName)
+int FontManager::getFaceID(std::string const& faceName, bool quietly)
 {
   const int id = lookupID(faceName);
   if (id >= 0) {
@@ -371,8 +371,10 @@ int FontManager::getFaceID(std::string const& faceName)
 
   /* no luck finding the one requested, try anything */
   if (fontFaces.size() > 0) {
-    logDebugMessage(3, "Requested font %s not found, using %s instead\n",
-                    faceName.c_str(), fontFaces[0].name().c_str());
+    if (!quietly) {
+      logDebugMessage(3, "Requested font %s not found, using %s instead\n",
+                      faceName.c_str(), fontFaces[0].name().c_str());
+    }
     return 0;
   }
 

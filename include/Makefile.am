@@ -4,36 +4,36 @@ all-local:
 noinst_HEADERS =			\
 	AccessList.h			\
 	Address.h			\
-	AresHandler.h			\
 	AnsiCodes.h			\
 	ArcObstacle.h			\
+	AresHandler.h			\
 	AutoCompleter.h			\
-	BufferedNetworkMessage.h	\
-	BaseSceneNodeGenerator.h	\
-	BoxSceneNodeGenerator.h		\
-	BSPSceneDatabase.h		\
-	BZDBCache.h			\
 	BaseBuilding.h			\
 	BaseResources.h			\
+	BaseSceneNodeGenerator.h	\
 	BillboardSceneNode.h		\
 	BoltSceneNode.h			\
 	BoxBuilding.h			\
+	BoxSceneNodeGenerator.h		\
+	BufferedNetworkMessage.h	\
 	Bundle.h			\
 	BundleMgr.h			\
+	BSPSceneDatabase.h		\
+	BZDBCache.h			\
 	BzDocket.h			\
-	BzMaterial.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\
 	BzfJoystick.h			\
 	BzfMedia.h			\
 	BzfVisual.h			\
 	BzfWindow.h			\
-	bzfsAPI.h			\
+	BzMaterial.h			\
+	BzVFS.h				\
 	CacheManager.h			\
 	CallbackList.h			\
 	CollisionManager.h		\
-	CommandManager.h		\
 	CommandCompleter.h		\
+	CommandManager.h		\
 	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\
@@ -46,15 +46,19 @@ noinst_HEADERS =			\
 	EighthDimShellNode.h		\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
+	EventClient.h			\
+	EventClientList.h		\
+	EventHandler.h			\
 	Extents.h			\
 	Factory.h			\
 	FileManager.h			\
-	FontManager.h			\
 	Flag.h				\
 	FlagSceneNode.h			\
 	FlagWarpSceneNode.h		\
+	FontManager.h			\
 	Frustum.h			\
 	GameTime.h			\
+	GfxBlock.h			\
 	GLCollect.h			\
 	Intersect.h			\
 	KeyManager.h			\
@@ -63,6 +67,7 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	LinkManager.h			\
 	ListServer.h			\
+	LuaClientScripts.h		\
 	MapInfo.h			\
 	MathUtils.h			\
 	MediaFile.h			\
@@ -88,10 +93,10 @@ noinst_HEADERS =			\
 	OpenGLGState.h			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\
+	OpenGLPassState.h		\
 	OpenGLTexture.h			\
 	OpenGLUtils.h			\
 	OSFile.h			\
-	PTSceneNode.h			\
 	Pack.h				\
 	ParseColor.h			\
 	PhysicsDriver.h			\
@@ -102,6 +107,7 @@ noinst_HEADERS =			\
 	PolyWallSceneNode.h		\
 	PositionTracker.h		\
 	Protocol.h			\
+	PTSceneNode.h			\
 	PyramidBuilding.h		\
 	PyramidSceneNodeGenerator.h	\
 	QuadWallSceneNode.h		\
@@ -155,6 +161,7 @@ noinst_HEADERS =			\
 	bzfgl.h				\
 	bzfio.h				\
 	bzfstream.h			\
+	bzfsAPI.h			\
 	bzglob.h			\
 	bzsignal.h			\
 	bzUnicode.h			\

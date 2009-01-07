@@ -388,15 +388,18 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
 
 void MeshObstacle::finalize()
 {
-  int f;
+  // set the face IDs
+  for (int f = 0; f < faceCount; f++) {
+    faces[f]->setID(f);
+  }
 
   // cross-link the face edges - FIXME
-  for (f = 0; f < faceCount; f++) {
+  for (int f = 0; f < faceCount; f++) {
     faces[f]->edges = NULL;
   }
 
   // set the extents
-  for (f = 0; f < faceCount; f++) {
+  for (int f = 0; f < faceCount; f++) {
     const Extents& exts = faces[f]->getExtents();
     extents.expandToBox(exts);
   }

@@ -92,7 +92,7 @@ public:
   void		sendPaused(bool paused);
   void		sendNewPlayer( int botID);
   void		sendCollide(const PlayerId playerId,
-    const PlayerId otherId, const float *pos);
+                            const PlayerId otherId, const float *pos);
 
   void		sendExit();
   void		sendAutoPilot(bool autopilot);
@@ -106,10 +106,15 @@ public:
   void		sendCustomData ( const std::string &key, const std::string &value );
   void		sendCustomData ( const char* key, const std::string &value ){if (key) sendCustomData(std::string(key),value);}
 
+  bool		sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+                            PlayerId dstPlayerID, int16_t dstScriptID,
+                            uint8_t status, const std::string& data);
+
   static ServerLink*	getServer(); // const
   static void		setServer(ServerLink*);
-  void		enableOutboundUDP();
-  void		confirmIncomingUDP();
+
+  void enableOutboundUDP();
+  void confirmIncomingUDP();
 
   void flush();
 

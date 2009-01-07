@@ -462,41 +462,52 @@ void ServerLink::flush()
   previousFill = 0;
 }
 
-void ServerLink::send(uint16_t code, uint16_t len,
- 		 const void* msg)
+void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 {
-  bool needForSpeed=false;
-  if (state != Okay) return;
+  bool needForSpeed = false;
 
-  if ((urecvfd>=0) && ulinkup ) {
+  if (state != Okay) {
+    return;
+  }
+
+  if ((urecvfd >= 0) && ulinkup) {
     switch (code) {
-    case MsgShotBegin:
-    case MsgShotEnd:
-    case MsgHit:
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall:
-    case MsgGMUpdate:
-    case MsgUDPLinkRequest:
-    case MsgUDPLinkEstablished:
-    case MsgWhatTimeIsIt:
-      needForSpeed=true;
-      break;
+      case MsgShotBegin:
+      case MsgShotEnd:
+      case MsgHit:
+      case MsgPlayerUpdate:
+      case MsgPlayerUpdateSmall:
+      case MsgGMUpdate:
+      case MsgLuaDataFast:
+      case MsgUDPLinkRequest:
+      case MsgUDPLinkEstablished:
+      case MsgWhatTimeIsIt: {
+        needForSpeed = true;
+        break;
+      }
     }
   }
   // MsgUDPLinkRequest always goes udp
-  if (code == MsgUDPLinkRequest)
-    needForSpeed=true;
+  if (code == MsgUDPLinkRequest) {
+    needForSpeed = true;
+  }
+
+  if (code == MsgLuaDataFast) {
+    code = MsgLuaData;
+  }
 
   if ((needForSpeed != oldNeedForSpeed)
-      || (previousFill + len + 4 > MaxPacketLen))
+      || (previousFill + len + 4 > MaxPacketLen)) {
     flush();
+  }
   oldNeedForSpeed = needForSpeed;
 
   void* buf = txbuf + previousFill;
-  buf       = nboPackUShort(buf, len);
-  buf       = nboPackUShort(buf, code);
-  if (msg && len != 0)
+  buf = nboPackUShort(buf, len);
+  buf = nboPackUShort(buf, code);
+  if (msg && len != 0) {
     buf = nboPackString(buf, msg, len);
+  }
   previousFill += len + 4;
 }
 
@@ -1059,6 +1070,42 @@ void ServerLink::sendCustomData ( const std::string &key, const std::string &val
   buf = nboPackStdString(buf, value);
   send(MsgPlayerData, (uint16_t)((char*)buf - msg), msg);
 }
+
+
+bool ServerLink::sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+                             PlayerId dstPlayerID, int16_t dstScriptID,
+                             uint8_t status, const std::string& data)
+{
+  if (srcPlayerID != getId()) {
+    return false;
+  }
+
+  const size_t headerSize =
+    (sizeof(uint16_t) * 2) + // code and len
+    (sizeof(uint8_t)  * 2) + // player ids
+    (sizeof(int16_t)  * 2) + // script ids
+    (sizeof(uint8_t))      + // status bits
+    (sizeof(uint32_t));      // data count
+
+  if ((headerSize + data.size()) > MaxPacketLen) {
+    return false;
+  }
+
+  char msg[MaxPacketLen];
+  void* buf = msg;
+  buf = nboPackUByte(buf, srcPlayerID);
+  buf = nboPackShort(buf, srcScriptID);
+  buf = nboPackUByte(buf, dstPlayerID);
+  buf = nboPackShort(buf, dstScriptID);
+  buf = nboPackUByte(buf, status);
+  buf = nboPackStdString(buf, data);
+
+  uint16_t code = (status & 0x80) ? MsgLuaDataFast : MsgLuaData;
+  send(code, (uint16_t)((char*)buf - msg), msg);
+
+  return true;
+}
+
 
 void ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
 {

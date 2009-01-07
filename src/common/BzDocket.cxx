@@ -48,6 +48,21 @@ BzDocket::~BzDocket()
 
 /******************************************************************************/
 
+size_t BzDocket::getMaxNameLen() const
+{
+  size_t len = 0;
+  DataMap::const_iterator it;
+  for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
+    if (len < it->first.size()) {
+      len = it->first.size();
+    }
+  }
+  return len;
+}
+
+
+/******************************************************************************/
+
 size_t BzDocket::packSize() const
 {
   size_t fullSize = 0;
@@ -71,6 +86,8 @@ size_t BzDocket::packSize() const
 
 void* BzDocket::pack(void* buf) const
 {
+  const size_t maxLen = (int)getMaxNameLen();
+
   buf = nboPackString(buf, magic, strlen(magic));
   buf = nboPackUInt(buf, 0); // version
   buf = nboPackUInt(buf, 0); // flags
@@ -78,8 +95,8 @@ void* BzDocket::pack(void* buf) const
   DataMap::const_iterator it;
   uint32_t offset = 0; 
   for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
-    logDebugMessage(3, "packing into %s: (%i) '%s'\n", docketName.c_str(), 
-                    (int)it->second.size(), it->first.c_str());
+    logDebugMessage(3, "packing into %s:  %-*s  [%i]\n", docketName.c_str(),
+                    (int)maxLen, it->first.c_str(), (int)it->second.size());
     const size_t dataSize = it->second.size();
     buf = nboPackStdString(buf, it->first);
     buf = nboPackUInt(buf, 0); // extra
@@ -112,6 +129,7 @@ void* BzDocket::unpack(void* buf)
   uint32_t count;
   buf = nboUnpackUInt(buf, count);
   vector<string> names;
+  size_t maxLen = 0;
   for (uint32_t i = 0; i < count; i++) {
     string name;
     buf = nboUnpackStdString(buf, name);
@@ -121,14 +139,19 @@ void* BzDocket::unpack(void* buf)
     buf = nboUnpackUInt(buf, extra);
     buf = nboUnpackUInt(buf, offset);
     buf = nboUnpackUInt(buf, dataSize);
+
+    if (maxLen < name.size()) {
+      maxLen = name.size();
+    }
   }
 
   for (uint32_t i = 0; i < count; i++) {
     string data;
     buf = nboUnpackStdString(buf, data);
-    dataMap[names[i]] = data;
-    logDebugMessage(3, "unpacked from %s: (%i) '%s'\n", docketName.c_str(),
-                    (int)data.size(), names[i].c_str());
+    addData(data, names[i]);
+    //dataMap[names[i]] = data;
+    logDebugMessage(3, "unpacked into %s:  %-*s  [%i]\n", docketName.c_str(),
+                    (int)maxLen, names[i].c_str(), (int)data.size());
   }
   return buf;
 }
@@ -137,7 +160,7 @@ void* BzDocket::unpack(void* buf)
 
 /******************************************************************************/
 
-static string getMapPath(const std::string& path)
+static string getMapPath(const string& path)
 {
   string p = path;
   std::replace(p.begin(), p.end(), '\\', '/');  
@@ -171,7 +194,7 @@ int BzDocket::getFileSize(FILE* file)
 }
 
 
-bool BzDocket::addData(const std::string& data, const std::string& mapPath)
+bool BzDocket::addData(const string& data, const string& mapPath)
 {
   if (mapPath.find_first_of("\\:") != string::npos) {
     errorMsg = "bad map path (" + mapPath + ")";
@@ -187,11 +210,20 @@ bool BzDocket::addData(const std::string& data, const std::string& mapPath)
 
   dataMap[mapPath] = data;
 
+  const string::size_type pos = mapPath.find_last_of('/');
+  if (pos != string::npos) {
+    const string dirPath = mapPath.substr(0, pos + 1);
+    if (dirSet.find(dirPath) == dirSet.end()) {
+      printf("DIRPATH = %s\n", dirPath.c_str()); // FIXME
+    }
+    dirSet.insert(dirPath);
+  }
+
   return true;
 }
 
 
-bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
+bool BzDocket::addFile(const string& filePath, const string& mapPath)
 {
   errorMsg = "";
   if (dataMap.find(mapPath) != dataMap.end()) {
@@ -230,7 +262,7 @@ bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
 }
 
 
-bool BzDocket::addDir(const std::string& dirPath, const std::string& mapPrefix)
+bool BzDocket::addDir(const string& dirPath, const string& mapPrefix)
 {
   errorMsg = "";
 
@@ -259,7 +291,7 @@ bool BzDocket::addDir(const std::string& dirPath, const std::string& mapPrefix)
 
 /******************************************************************************/
 
-bool BzDocket::hasData(const std::string& mapPath)
+bool BzDocket::hasData(const string& mapPath)
 {
   DataMap::const_iterator it = dataMap.find(mapPath);
   if (it == dataMap.end()) {
@@ -269,7 +301,7 @@ bool BzDocket::hasData(const std::string& mapPath)
 }
 
 
-bool BzDocket::getData(const std::string& mapPath, std::string& data)
+bool BzDocket::getData(const string& mapPath, string& data)
 {
   DataMap::const_iterator it = dataMap.find(mapPath);
   if (it == dataMap.end()) {
@@ -277,6 +309,51 @@ bool BzDocket::getData(const std::string& mapPath, std::string& data)
   }
   data = it->second;  
   return true;
+}
+
+
+int BzDocket::getDataSize(const string& mapPath)
+{
+  DataMap::const_iterator it = dataMap.find(mapPath);
+  if (it == dataMap.end()) {
+    return -1;
+  }
+  return (int)it->second.size();
+}
+
+
+static int countSlashes(const string& path)
+{
+  int count = 0;
+  for (size_t i = 0; i < path.size(); i++) {
+    if (path[i] == '/') {
+      count++;
+    }
+  }
+  return count;
+}
+
+
+void BzDocket::dirList(const string& path, bool recursive,
+                       vector<string>& dirs, vector<string>& files) const
+{
+  const int pathSlashes = recursive ? countSlashes(path) : 0;
+  printf("BzDocket::dirList: '%s'\n", path.c_str()); // FIXME
+  DataMap::const_iterator it;
+  for (it = dataMap.begin(); it != dataMap.end(); ++it) {
+    printf("  checking: '%s'\n", it->first.c_str()); // FIXME
+    if (it->first.compare(0, path.size(), path) == 0) {
+      if (recursive) {
+        files.push_back(it->first);
+      } else {
+        const int slashes = countSlashes(it->first);
+        if (slashes <= (pathSlashes)) {
+          files.push_back(it->first);
+        }
+      }
+    }
+  }
+  dirs = dirs; // FIXME
 }
 
 
@@ -295,7 +372,7 @@ static bool createParentDirs(const string& path)
 }
 
 
-bool BzDocket::save(const std::string& dirPath)
+bool BzDocket::save(const string& dirPath)
 {
   if (dirPath.empty()) {
     return false;

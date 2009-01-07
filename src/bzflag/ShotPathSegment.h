@@ -20,23 +20,21 @@
 
 class ShotPathSegment {
   public:
-    enum Reason		{ Initial, Through, Ricochet, Teleport, Boundary };
+    enum Reason { Initial, Through, Ricochet, Teleport, Boundary };
 
-			ShotPathSegment();
-			ShotPathSegment(const double start,
-					const double end,
-					const Ray& r,
-					Reason = Initial);
-			ShotPathSegment(const ShotPathSegment&);
-			~ShotPathSegment();
-    ShotPathSegment&	operator=(const ShotPathSegment&);
+    ShotPathSegment();
+    ShotPathSegment(const double start, const double end,
+                                const Ray& r, Reason = Initial);
+    ShotPathSegment(const ShotPathSegment&);
+    ~ShotPathSegment();
+    ShotPathSegment& operator=(const ShotPathSegment&);
 
   public:
-    double		start;
-    double		end;
-    Ray			ray;
-    Reason		reason;
-    float		bbox[2][3];
+    double start;
+    double end;
+    Ray    ray;
+    Reason reason;
+    float  bbox[2][3];
 };
 
 

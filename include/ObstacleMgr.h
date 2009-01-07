@@ -150,7 +150,7 @@ class GroupDefinition {
     std::string name;
 
     ObstacleList lists[ObstacleTypeCount];
-    std::vector<GroupInstance*>		groups;
+    std::vector<GroupInstance*> groups;
 
     mutable bool active; // for recursion checking
 
@@ -211,7 +211,7 @@ class GroupDefinitionMgr {
     const ObstacleList& getSpheres() const;
     const ObstacleList& getTetras() const;
 
-    Obstacle* getObstacleFromID ( unsigned int id );
+    Obstacle* getObstacleFromID(unsigned int id);
 
     int packSize() const;
     void *pack(void*) const;
@@ -270,69 +270,75 @@ inline const ObstacleList& GroupDefinitionMgr::getTetras() const
   return world.getList(tetraType);
 }
 
-inline  Obstacle* GroupDefinitionMgr::getObstacleFromID ( unsigned int id )
+inline Obstacle* GroupDefinitionMgr::getObstacleFromID (unsigned int id)
 {
-  union {
-    unsigned int i;
-    unsigned short s[2];
-  } p;
+  const unsigned short type   = (id >> 16);
+  const unsigned short listID = (id & 0xffff);
 
-  p.i = id;
-
-  switch ((ObstacleTypes)p.s[0])
-  {
-    case wallType:
-      if (getWalls().size() > p.s[1] )
-	return getWalls()[p.s[1]];
+  switch (type) {
+    case wallType: {
+      if (getWalls().size() > listID) {
+	return getWalls()[listID];
+      }
       break;
-
-    case boxType:
-      if (getBoxes().size() > p.s[1] )
-	return getBoxes()[p.s[1]];
+    }
+    case boxType: {
+      if (getBoxes().size() > listID) {
+	return getBoxes()[listID];
+      }
       break;
-
-    case pyrType:
-      if (getPyrs().size() > p.s[1] )
-	return getPyrs()[p.s[1]];
+    }
+    case pyrType: {
+      if (getPyrs().size() > listID) {
+	return getPyrs()[listID];
+      }
       break;
-
-    case baseType:
-      if (getBases().size() > p.s[1] )
-	return getBases()[p.s[1]];
+    }
+    case baseType: {
+      if (getBases().size() > listID) {
+	return getBases()[listID];
+      }
       break;
-
-    case teleType:
-      if (getTeles().size() > p.s[1] )
-	return getTeles()[p.s[1]];
+    }
+    case teleType: {
+      if (getTeles().size() > listID) {
+	return getTeles()[listID];
+      }
       break;
-
-    case meshType:
-      if (getMeshes().size() > p.s[1] )
-	return getMeshes()[p.s[1]];
+    }
+    case meshType: {
+      if (getMeshes().size() > listID) {
+	return getMeshes()[listID];
+      }
       break;
-
-    case arcType:
-      if (getArcs().size() > p.s[1] )
-	return getArcs()[p.s[1]];
+    }
+    case arcType: {
+      if (getArcs().size() > listID) {
+	return getArcs()[listID];
+      }
       break;
-
-    case coneType:
-      if (getCones().size() > p.s[1] )
-	return getCones()[p.s[1]];
+    }
+    case coneType: {
+      if (getCones().size() > listID) {
+	return getCones()[listID];
+      }
       break;
-
-    case sphereType:
-      if (getSpheres().size() > p.s[1] )
-	return getSpheres()[p.s[1]];
+    }
+    case sphereType: {
+      if (getSpheres().size() > listID) {
+	return getSpheres()[listID];
+      }
       break;
-
-    case tetraType:
-      if (getTetras().size() > p.s[1] )
-	return getTetras()[p.s[1]];
+    }
+    case tetraType: {
+      if (getTetras().size() > listID) {
+	return getTetras()[listID];
+      }
       break;
-
-    case ObstacleTypeCount: // prevent unhandled enumeration value warnings
+    }
+    case ObstacleTypeCount: { // prevent unhandled enumeration value warnings
       break;
+    }
   }
 
   return NULL;

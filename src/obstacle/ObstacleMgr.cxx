@@ -429,17 +429,13 @@ static int obstacleTypeNameToEnum(const char* type)
 
 void GroupDefinition::addObstacle(Obstacle* obstacle)
 {
-  const int typeEnum = obstacleTypeNameToEnum(obstacle->getType());
-  if (typeEnum < 0) {
+  const int type = obstacleTypeNameToEnum(obstacle->getType());
+  if (type < 0) {
     printf("GroupDefinition::addObstacle() ERROR: type = %s\n",
            obstacle->getType());
     exit(1);
   }
-  // are 65536 IDs enough? (unsigned short)
-  // (this doesn't apply to individual mesh faces?)
-  const unsigned short listID = (unsigned short)lists[typeEnum].size();
-  obstacle->setListID(listID);
-  lists[typeEnum].push_back(obstacle);
+  lists[type].push_back(obstacle);
   return;
 }
 
@@ -518,22 +514,10 @@ static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
 {
   MeshObstacle* mesh = NULL;
   switch (type) {
-    case arcType: {
-      mesh = ((ArcObstacle*)obs)->makeMesh();
-      break;
-    }
-    case coneType: {
-      mesh = ((ConeObstacle*)obs)->makeMesh();
-      break;
-    }
-    case sphereType: {
-      mesh = ((SphereObstacle*)obs)->makeMesh();
-      break;
-    }
-    case tetraType: {
-      mesh = ((TetraBuilding*)obs)->makeMesh();
-      break;
-    }
+    case arcType:    { mesh =    ((ArcObstacle*)obs)->makeMesh(); break; }
+    case coneType:   { mesh =   ((ConeObstacle*)obs)->makeMesh(); break; }
+    case sphereType: { mesh = ((SphereObstacle*)obs)->makeMesh(); break; }
+    case tetraType:  { mesh =  ((TetraBuilding*)obs)->makeMesh(); break; }
   }
   return mesh;
 }
@@ -1003,6 +987,15 @@ void GroupDefinitionMgr::makeWorld()
   // sort from top to bottom for enhanced radar
   for (int type = 0; type < ObstacleTypeCount; type++) {
     world.sort(compareHeights);
+  }
+
+  // assign the listIDs
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    const ObstacleList& obsList = world.getList(type);
+    for (unsigned int i = 0; i < obsList.size(); i++) {
+      Obstacle* obs = obsList[i];
+      obs->setListID(i);
+    }
   }
 
   tighten();

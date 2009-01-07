@@ -574,7 +574,7 @@ void World::makeLinkMaterial()
 }
 
 
-void			World::initFlag(int index)
+void World::initFlag(int index)
 {
   // set the color
   const float* color = flags[index].type->getColor();
@@ -611,7 +611,8 @@ void			World::initFlag(int index)
   }
 }
 
-void			World::updateWind(float /*dt*/)
+
+void World::updateWind(float /*dt*/)
 {
   const float minWindSpeed = 0.0f; // FIXME - BZDB
   const float maxWindSpeed = 10.0f; // FIXME - BZDB
@@ -633,7 +634,8 @@ void			World::updateWind(float /*dt*/)
   wind[2] = 0.0f;
 }
 
-void			World::updateFlag(int index, float dt)
+
+void World::updateFlag(int index, float dt)
 {
   if (!flagNodes) {
     return;
@@ -794,12 +796,15 @@ void			World::updateFlag(int index, float dt)
 }
 
 
-void			World::addFlags(SceneDatabase* scene, bool seerView)
+void World::addFlags(SceneDatabase* scene, bool seerView)
 {
   if (!flagNodes) return;
   for (int i = 0; i < maxFlags; i++) {
     // if not showing flags, only allow FlagOnTank through
-    if (flags[i].status != FlagOnTank && !BZDBCache::displayMainFlags) {
+    if ((flags[i].status != FlagOnTank) && !BZDBCache::displayMainFlags) {
+      continue;
+    }
+    if (flags[i].gfxBlock.blocked()) {
       continue;
     }
 

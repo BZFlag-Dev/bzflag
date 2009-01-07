@@ -65,8 +65,8 @@ class CollisionManager {
     CollisionManager();
     ~CollisionManager();
 
-    void load ();
-    void clear ();
+    void load();
+    void clear();
 
     // some basics
     bool needReload() const;	 // octree parameter has changed
@@ -75,30 +75,30 @@ class CollisionManager {
 
 
     // test against an axis aligned bounding box
-    const ObsList* axisBoxTest (const Extents& extents);
+    const ObsList* axisBoxTest(const Extents& extents);
 
     // test against a cylinder
-    const ObsList* cylinderTest (const float *pos,
-				 float radius, float height) const;
+    const ObsList* cylinderTest(const float *pos,
+                                float radius, float height) const;
     // test against a box
-    const ObsList* boxTest (const float* pos, float angle,
-			    float dx, float dy, float dz) const;
+    const ObsList* boxTest(const float* pos, float angle,
+                           float dx, float dy, float dz) const;
     // test against a moving box
-    const ObsList* movingBoxTest (const float* oldPos, float oldAngle,
-				  const float* pos, float angle,
-				  float dx, float dy, float dz) const;
+    const ObsList* movingBoxTest(const float* oldPos, float oldAngle,
+                                 const float* pos, float angle,
+                                 float dx, float dy, float dz) const;
     // test against a Ray
-    const ObsList* rayTest (const Ray* ray, float timeLeft) const;
+    const ObsList* rayTest(const Ray* ray, float timeLeft) const;
 
     // test against a Ray (and return a list of ColDetNodes)
-    const ColDetNodeList* rayTestNodes (const Ray* ray, float timeLeft) const;
+    const ColDetNodeList* rayTestNodes(const Ray* ray, float timeLeft) const;
 
     // test against a box and return a split list
-    //const SplitObsList *boxTestSplit (const float* pos, float angle,
+    //const SplitObsList *boxTestSplit(const float* pos, float angle,
     //				  float dx, float dy, float dz) const;
 
     // drawing function
-    void draw (DrawLinesFunc drawLinesFunc);
+    void draw(DrawLinesFunc drawLinesFunc);
 
   private:
 
@@ -126,10 +126,10 @@ class ColDetNode {
     float getOutTime() const;
 
     // these fill in the FullList return list
-    void axisBoxTest (const Extents& extents) const;
-    void boxTest (const float* pos, float angle, float dx, float dy, float dz) const;
-    void rayTest (const Ray* ray, float timeLeft) const;
-    void rayTestNodes (const Ray* ray, float timeLeft) const;
+    void axisBoxTest(const Extents& extents) const;
+    void boxTest(const float* pos, float angle, float dx, float dy, float dz) const;
+    void rayTest(const Ray* ray, float timeLeft) const;
+    void rayTestNodes(const Ray* ray, float timeLeft) const;
 
     // this fills in the SplitList return list
     // (FIXME: not yet implemented, boxTestSplit might be useful for radar)
@@ -139,8 +139,8 @@ class ColDetNode {
     void draw(DrawLinesFunc drawLinesFunc);
 
   private:
-    void makeChildren ();
-    void resizeCell ();
+    void makeChildren();
+    void resizeCell();
 
     unsigned char depth;
     int count;
@@ -192,8 +192,8 @@ inline const Extents& CollisionManager::getWorldExtents() const
   return worldExtents;
 }
 
-int compareObstacles (const void* a, const void* b);
-int compareHitNormal (const void* a, const void* b);
+int compareObstacles(const void* a, const void* b);
+int compareHitNormal(const void* a, const void* b);
 inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB);
 
 

@@ -25,12 +25,15 @@
 #include "BundleMgr.h"
 #include "LinkManager.h"
 #include "MapInfo.h"
+#include "global.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
 #include "WorldPlayer.h"
 #include "Weapon.h"
 #include "EntryZone.h"
+#include "ClientFlag.h"
+
 
 class FlagSceneNode;
 class MeshDrawInfo;
@@ -42,9 +45,10 @@ class MeshDrawInfo;
 class World {
   friend class WorldBuilder;
   public:
-			World();
-			~World();
+    World();
+    ~World();
 
+    GameType		getGameType() const;
     bool		allowTeamFlags() const;
     bool		allowTeamKills() const;
     bool		allowSuperFlags() const;
@@ -79,11 +83,13 @@ class World {
     RemotePlayer*	getCurrentRabbit() const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
+    ClientFlag&		getClientFlag(int index) const;
     const float*	getBase(int, int=0) const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
     int			getTeleportTarget(int source) const;
     int			getTeleportTarget(int source, unsigned int seed) const;
+    const LinkManager&	getLinkManager() const { return links; }
 
     TeamColor		whoseBase(const float* pos) const;
     const Obstacle*	inBuilding(const float* pos, float radius,
@@ -151,7 +157,7 @@ class World {
     void		freeMeshDrawMgrs();
 
   private:
-    short		gameType;
+    GameType		gameType;
     short		gameOptions;
     int			maxPlayers;
     int			curMaxPlayers;
@@ -174,7 +180,7 @@ class World {
     RemotePlayer**	players;
     int		 playersSize;
     WorldPlayer*	worldWeapons;
-    Flag*		flags;
+    ClientFlag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
 
@@ -273,6 +279,11 @@ inline const BzMaterial*	World::getLinkMaterial() const
   return linkMaterial;
 }
 
+inline GameType		World::getGameType() const
+{
+  return gameType;
+}
+
 inline float		World::getFlagShakeTimeout() const
 {
   return shakeTimeout;
@@ -359,6 +370,11 @@ inline WorldPlayer*	World::getWorldWeapons() const
 }
 
 inline Flag&		World::getFlag(int index) const
+{
+  return flags[index];
+}
+
+inline ClientFlag&	World::getClientFlag(int index) const
 {
   return flags[index];
 }

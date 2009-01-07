@@ -46,7 +46,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.14, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.15, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
@@ -336,6 +336,7 @@ AC_CHECK_HEADERS( \
 	bstring.h \
 	dlfcn.h \
 	dsound.h \
+	fcntl.h \
 	inttypes.h \
 	linux/input.h \
 	process.h \
@@ -551,6 +552,61 @@ fi
 AC_MSG_RESULT([$glew_check])
 AC_SUBST(GLEW_LIBS)
 LIBS=$tmpLIBS
+
+
+# Check for the IL library (Image Library, aka: DevIL)
+AC_MSG_CHECKING([for IL library])
+tmpLIBS=$LIBS
+IL_LIBS="-lIL"
+LIBS=$IL_LIBS
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <IL/il.h>]],
+				[[ilInit()]])],
+	       [il_check="yes"], [il_check="no"])
+if test $il_check = "yes"; then
+    AC_DEFINE(HAVE_IL, 1, [IL library is available])
+else
+    IL_LIBS=""
+fi
+AC_MSG_RESULT([$il_check])
+AC_SUBST(IL_LIBS)
+LIBS=$tmpLIBS
+
+
+# Check for the ILU library (Image Library, aka: DevIL Utility)
+AC_MSG_CHECKING([for ILU library])
+tmpLIBS=$LIBS
+ILU_LIBS="-lILU"
+LIBS=$ILU_LIBS
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <IL/ilu.h>]],
+				[[iluInit()]])],
+	       [ilu_check="yes"], [ilu_check="no"])
+if test $ilu_check = "yes"; then
+    AC_DEFINE(HAVE_ILU, 1, [ILU library is available])
+else
+    ILU_LIBS=""
+fi
+AC_MSG_RESULT([$ilu_check])
+AC_SUBST(ILU_LIBS)
+LIBS=$tmpLIBS
+
+
+# Check for the ILUT library (Image Library, aka: DevIL Utility Toolkit)
+AC_MSG_CHECKING([for ILUT library])
+tmpLIBS=$LIBS
+ILUT_LIBS="-lILUT"
+LIBS=$ILUT_LIBS
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <IL/ilut.h>]],
+				[[ilutInit()]])],
+	       [ilut_check="yes"], [ilut_check="no"])
+if test $ilut_check = "yes"; then
+    AC_DEFINE(HAVE_ILUT, 1, [ILUT library is available])
+else
+    ILUT_LIBS=""
+fi
+AC_MSG_RESULT([$ilut_check])
+AC_SUBST(ILUT_LIBS)
+LIBS=$tmpLIBS
+
 
 case $host_os in
     mingw32*)
@@ -935,8 +991,12 @@ if test x$enable_client != xno; then
     have_gl=no
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
-	[Client build is enabled, but OpenGL does not seem to be fully available
-... disabling BZFlag client])
+	[Client build is enabled, but OpenGL does not seem to be fully available ... disabling BZFlag client])
+	AM_CONDITIONAL(CLIENT_INCLUDED, false)
+	enable_client=no
+    elif test "$glew_check" = no; then
+	AC_MSG_WARN(
+	[Client build is enabled, but GLEW does not seem to be fully available ... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
     else
@@ -1290,6 +1350,7 @@ AC_CONFIG_FILES([
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/tank/Makefile
+	src/lua/Makefile
 	src/mediafile/Makefile
 	src/net/Makefile
 	src/obstacle/Makefile

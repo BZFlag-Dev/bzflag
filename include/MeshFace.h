@@ -67,6 +67,7 @@ class MeshFace : public Obstacle {
 		      float height, float* normal) const;
 
     MeshObstacle* getMesh() const;
+    inline int  getID() const { return id; }
     int getVertexCount() const;
     bool useNormals() const;
     bool useTexcoords() const;
@@ -103,11 +104,13 @@ class MeshFace : public Obstacle {
 
   private:
     void finalize();
+    inline void setID(int value) { id = value; }
 
   private:
     static const char* typeName;
 
     class MeshObstacle* mesh;
+    int id;
     int vertexCount;
     float** vertices;
     float** normals;

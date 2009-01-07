@@ -3191,11 +3191,7 @@ bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
 
 unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle )
 {
-  unsigned short p[2];
-  p[0] = obstacle.getTypeID();
-  p[1] = obstacle.getListID();
-
-  return *force_cast<unsigned int *>(&p[0]);
+  return (obstacle.getTypeID() << 16) | obstacle.getListID();
 }
 
 const ObstacleList* obstacleListFromObstacleType ( int type )
@@ -4908,6 +4904,20 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
   ::sendChatMessage(player->getIndex(),dstPlayer,text);
 }
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_sendLuaData(int dstPlayerID, int dstScriptID,
+                            int statusBits, const char* data, int len,
+                            int srcPlayerID, int srcScriptID)
+{
+  const std::string dataStr(data, len);
+  sendMsgLuaData(srcPlayerID, srcScriptID,
+                 dstPlayerID, dstScriptID,
+                 statusBits, dataStr);
+  return true;
+}
+
 
 //-------------------------------------------------------------------------
 

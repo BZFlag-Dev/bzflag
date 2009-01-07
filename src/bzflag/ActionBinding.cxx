@@ -91,6 +91,11 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("messagepanel server"), press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"), press));
 
+  wayToBindActions.insert(std::make_pair(std::string("luauser reload"), press));
+  wayToBindActions.insert(std::make_pair(std::string("luauser disable"), press));
+  wayToBindActions.insert(std::make_pair(std::string("luaworld reload"), press));
+  wayToBindActions.insert(std::make_pair(std::string("luaworld disable"), press));
+
   /*
    * NOTE: the following keys are 'hard coded' in the playing loop and shouldn't
    * be used as part of default bindings:
@@ -190,22 +195,27 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+F2", "messagepanel chat"));
   defaultBinding.insert(BindingTable::value_type("Shift+F3", "messagepanel server"));
   defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
+
+/* FIXME -- luauser & luaworld default bindings
+  defaultBinding.insert(BindingTable::value_type("Alt+U",  "luauser reload"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
+  defaultBinding.insert(BindingTable::value_type("Alt+W",  "luaworld reload"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
+*/
 }
 
 void ActionBinding::resetBindings() {
   BindingTable::const_iterator index;
 
-  for (index = bindingTable.begin();
-       index != bindingTable.end();
-       ++index)
+  for (index = bindingTable.begin(); index != bindingTable.end(); ++index) {
     unbind(index->second, index->first);
+  }
 
   bindingTable = defaultBinding;
 
-  for (index = bindingTable.begin();
-       index != bindingTable.end();
-       ++index)
+  for (index = bindingTable.begin(); index != bindingTable.end(); ++index) {
     bind(index->second, index->first);
+  }
 }
 
 void ActionBinding::getFromBindings() {
@@ -226,7 +236,9 @@ void ActionBinding::associate(std::string key,
   if (!wayToBindActions.count(action))
     return;
   PressStatusBind newStatusBind = wayToBindActions[action];
-  for (index = bindingTable.lower_bound( key ); index != bindingTable.upper_bound( key ); index = next) {
+  for (index = bindingTable.lower_bound( key );
+       index != bindingTable.upper_bound( key );
+       index = next) {
     next = index;
     ++next;
     if (newStatusBind == both) {

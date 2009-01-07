@@ -40,8 +40,8 @@ const int		MaxAlerts = 3;
 
 class HUDMarker {
 public:
-  float		heading;
-  GLfloat		color[3];
+  float   heading;
+  GLfloat color[3];
 };
 typedef std::vector<HUDMarker> MarkerList;
 
@@ -81,28 +81,28 @@ public:
 
   virtual void buildGeometry ( GLDisplayList displayList );
 
-  int		getNoMotionSize() const;
-  int		getMaxMotionSize() const;
+  int getNoMotionSize() const;
+  int getMaxMotionSize() const;
 
-  void		setColor(float r, float g, float b);
-  void		setPlaying(bool playing);
-  void		setRoaming(bool roaming);
-  void		setPlayerHasHighScore(bool = true);
-  void		setTeamHasHighScore(bool = true);
-  void		setHeading(float angle);
-  void		setAltitude(float altitude);
-  void		setAltitudeTape(bool = true);
-  void		setCracks(bool = true);
-  void		setFPS(float fps);
-  void		setDrawTime(float drawTimeInseconds);
-  void		setFrameTriangleCount(int tpf);
-  void		setFrameRadarTriangleCount(int rtpf);
-  void		setAlert(int num, const char* string, float duration,
-			 bool warning = false);
-  void		setFlagHelp(FlagType* desc, float duration);
-  void		addMarker(float heading, const float *color);
-  void		setRestartKeyLabel(const std::string&);
-  void		setTimeLeft(uint32_t timeLeftInSeconds);
+  void setColor(float r, float g, float b);
+  void setPlaying(bool playing);
+  void setRoaming(bool roaming);
+  void setPlayerHasHighScore(bool = true);
+  void setTeamHasHighScore(bool = true);
+  void setHeading(float angle);
+  void setAltitude(float altitude);
+  void setAltitudeTape(bool = true);
+  void setCracks(bool = true);
+  void setFPS(float fps);
+  void setDrawTime(float drawTimeInseconds);
+  void setFrameTriangleCount(int tpf);
+  void setFrameRadarTriangleCount(int rtpf);
+  void setAlert(int num, const char* string, float duration,
+                bool warning = false);
+  void setFlagHelp(FlagType* desc, float duration);
+  void addMarker(float heading, const float *color);
+  void setRestartKeyLabel(const std::string&);
+  void setTimeLeft(uint32_t timeLeftInSeconds);
 
   void AddEnhancedMarker ( const float* pos, const float *color, bool friendly = false, float zShift = 0 );
   void AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, bool friendly = false, float zShift = 0 );
@@ -110,57 +110,57 @@ public:
   void AddLockOnMarker ( const float* pos, std::string name, bool friendly = false, float zShift = 0 );
 
   void saveMatrixes ( const float *mm, const float *pm );
-  void		setDim(bool);
+  void setDim(bool);
 
-  bool		getComposing() const;
-  std::string	getComposeString() const;
-  void		setComposeString(const std::string &message) const;
-  void		setComposeString(const std::string &message, bool _allowEdit) const;
+  bool getComposing() const;
+  std::string getComposeString() const;
+  void        setComposeString(const std::string &message) const;
+  void        setComposeString(const std::string &message, bool _allowEdit) const;
 
-  void		setComposing(const std::string &prompt);
-  void		setComposing(const std::string &prompt, bool _allowEdit);
+  void setComposing(const std::string &prompt);
+  void setComposing(const std::string &prompt, bool _allowEdit);
 
-  void		render(void);
+  void render(void);
   ScoreboardRenderer *getScoreboard();
 
 protected:
-  void		hudColor3f(GLfloat, GLfloat, GLfloat);
-  void		hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-  void		hudColor3fv(const GLfloat*);
-  void		hudColor3Afv( const GLfloat*, const float );
-  void		hudColor4fv(const GLfloat*);
-  void		hudSColor3fv(const GLfloat*);
-  void		renderAlerts(void);
-  void		renderStatus(void);
-  void		renderOptions(SceneRenderer&);
-  void		renderCompose(SceneRenderer&);
-  void		renderBox(SceneRenderer&);
-  void		renderTankLabels(SceneRenderer&);
-  void		renderTimes(void);
-  void		renderShots(const Player*);
+  void hudColor3f(GLfloat, GLfloat, GLfloat);
+  void hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
+  void hudColor3fv(const GLfloat*);
+  void hudColor3Afv( const GLfloat*, const float );
+  void hudColor4fv(const GLfloat*);
+  void hudSColor3fv(const GLfloat*);
+  void renderAlerts(void);
+  void renderStatus(void);
+  void renderOptions(SceneRenderer&);
+  void renderCompose(SceneRenderer&);
+  void renderBox(SceneRenderer&);
+  void renderTankLabels(SceneRenderer&);
+  void renderTimes(void);
+  void renderShots(const Player*);
 
-  void		renderPlaying(SceneRenderer&);
-  void		renderNotPlaying(SceneRenderer&);
-  void		renderRoaming(SceneRenderer&);
+  void renderPlaying(SceneRenderer&);
+  void renderNotPlaying(SceneRenderer&);
+  void renderRoaming(SceneRenderer&);
 
-  void drawLockonMarker ( float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly );
-  void drawWaypointMarker ( float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly );
+  void drawLockonMarker(float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly);
+  void drawWaypointMarker(float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly);
 
-  void drawMarkersInView ( int centerX, int centerY, const LocalPlayer* myTank );
+  void drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
   /** basic render update used by renderPlaying(), renderNotPlaying(), and renderRoaming()
    */
-  void		renderUpdate(SceneRenderer&);
+  void renderUpdate(SceneRenderer&);
 
-  std::string	makeHelpString(const char* help) const;
+  std::string makeHelpString(const char* help) const;
 
 private:
-  void		setBigFontSize(int width, int height);
-  void		setAlertFontSize(int width, int height);
-  void		setMajorFontSize(int width, int height);
-  void		setMinorFontSize(int width, int height);
-  void		setHeadingFontSize(int width, int height);
-  void		setComposeFontSize(int width, int height);
-  void		setLabelsFontSize(int width, int height);
+  void setBigFontSize(int width, int height);
+  void setAlertFontSize(int width, int height);
+  void setMajorFontSize(int width, int height);
+  void setMinorFontSize(int width, int height);
+  void setHeadingFontSize(int width, int height);
+  void setComposeFontSize(int width, int height);
+  void setLabelsFontSize(int width, int height);
 
   void		resize(bool firstTime);
   static void	resizeCallback(void*);

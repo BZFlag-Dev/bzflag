@@ -34,33 +34,37 @@ class Extents;
 
 class SceneDatabase {
   public:
-			SceneDatabase();
-    virtual		~SceneDatabase();
+    SceneDatabase();
+   virtual  ~SceneDatabase();
 
     // returns true if the node would have been deleted
-    virtual bool	addStaticNode(SceneNode*, bool dontFree) = 0;
-    virtual void	addDynamicNode(SceneNode*) = 0;
-    virtual void	addDynamicSphere(SphereSceneNode*) = 0;
-    virtual void	finalizeStatics() = 0;
-    virtual void	removeDynamicNodes() = 0;
-    virtual void	removeAllNodes() = 0;
-    virtual bool	isOrdered() = 0;
+    virtual bool addStaticNode(SceneNode*, bool dontFree) = 0;
+    virtual void addDynamicNode(SceneNode*) = 0;
+    virtual void addDynamicSphere(SphereSceneNode*) = 0;
+    virtual void finalizeStatics() = 0;
+    virtual void removeDynamicNodes() = 0;
+    virtual void removeAllNodes() = 0;
+    virtual bool isOrdered() = 0;
 
-    virtual void	updateNodeStyles() = 0;
-    virtual void	addLights(SceneRenderer& renderer) = 0;
-    virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
-    virtual void	addRenderNodes(SceneRenderer& renderer) = 0;
-    virtual void	renderRadarNodes(const ViewFrustum&) = 0;
+    virtual void updateNodeStyles() = 0;
+    virtual void addLights(SceneRenderer& renderer) = 0;
+    virtual void addShadowNodes(SceneRenderer &renderer,
+                                bool staticNodes,
+                                bool dynamicNodes) = 0;
+    virtual void addRenderNodes(SceneRenderer& renderer,
+                                bool staticNodes,
+                                bool dynamicNodes) = 0;
+    virtual void renderRadarNodes(const ViewFrustum&) = 0;
 
-    virtual void	drawCuller() = 0;
+    virtual void drawCuller() = 0;
 
-    virtual void	setOccluderManager(int);
+    virtual void setOccluderManager(int);
 
     virtual const Extents* getVisualExtents() const { return NULL; }
 
   private:
-			SceneDatabase(const SceneDatabase&);
-    SceneDatabase&	operator=(const SceneDatabase&);
+    SceneDatabase(const SceneDatabase&);
+    SceneDatabase& operator=(const SceneDatabase&);
 };
 
 
