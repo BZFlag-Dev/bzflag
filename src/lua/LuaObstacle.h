@@ -33,7 +33,7 @@ class LuaObstacle {
 		static int GetFaceTxcds(lua_State* L);
 		static int GetFacePlane(lua_State* L);
 		static int GetFacePhyDrv(lua_State* L);
-		static int GetFaceBzMaterial(lua_State* L);
+		static int GetFaceMaterial(lua_State* L);
 		static int GetFaceSmoothBounce(lua_State* L);
 
 		static int GetTeleByName(lua_State* L);

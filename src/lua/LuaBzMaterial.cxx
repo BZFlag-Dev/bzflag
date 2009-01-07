@@ -24,25 +24,31 @@ using std::string;
 
 bool LuaBzMaterial::PushEntries(lua_State* L)
 {
-	PUSH_LUA_CFUNC(L, GetBzMatName);
-	PUSH_LUA_CFUNC(L, GetBzMatOrder);
-	PUSH_LUA_CFUNC(L, GetBzMatDynCol);
-	PUSH_LUA_CFUNC(L, GetBzMatAmbient);
-	PUSH_LUA_CFUNC(L, GetBzMatDiffuse);
-	PUSH_LUA_CFUNC(L, GetBzMatSpecular);
-	PUSH_LUA_CFUNC(L, GetBzMatEmission);
-	PUSH_LUA_CFUNC(L, GetBzMatShininess);
-	PUSH_LUA_CFUNC(L, GetBzMatOccluder);
-	PUSH_LUA_CFUNC(L, GetBzMatGroupAlpha);
-	PUSH_LUA_CFUNC(L, GetBzMatNoLighting);
-	PUSH_LUA_CFUNC(L, GetBzMatNoRadar);
-	PUSH_LUA_CFUNC(L, GetBzMatNoShadow);
-	PUSH_LUA_CFUNC(L, GetBzMatNoCulling);
-	PUSH_LUA_CFUNC(L, GetBzMatNoSorting);
-	PUSH_LUA_CFUNC(L, GetBzMatAlphaThresh);
-	PUSH_LUA_CFUNC(L, GetBzMatTexture);
-	PUSH_LUA_CFUNC(L, GetBzMatTextureInfo);
-	PUSH_LUA_CFUNC(L, GetBzMatShader);
+	PUSH_LUA_CFUNC(L, FindMaterial);
+
+	PUSH_LUA_CFUNC(L, GetMaterialCount);
+
+	PUSH_LUA_CFUNC(L, GetMaterialName);
+	PUSH_LUA_CFUNC(L, GetMaterialOrder);
+
+	PUSH_LUA_CFUNC(L, GetMaterialAmbient);
+	PUSH_LUA_CFUNC(L, GetMaterialDiffuse);
+	PUSH_LUA_CFUNC(L, GetMaterialSpecular);
+	PUSH_LUA_CFUNC(L, GetMaterialEmission);
+	PUSH_LUA_CFUNC(L, GetMaterialShininess);
+
+	PUSH_LUA_CFUNC(L, GetMaterialDynCol);
+	PUSH_LUA_CFUNC(L, GetMaterialOccluder);
+	PUSH_LUA_CFUNC(L, GetMaterialGroupAlpha);
+	PUSH_LUA_CFUNC(L, GetMaterialNoLighting);
+	PUSH_LUA_CFUNC(L, GetMaterialNoRadar);
+	PUSH_LUA_CFUNC(L, GetMaterialNoShadow);
+	PUSH_LUA_CFUNC(L, GetMaterialNoCulling);
+	PUSH_LUA_CFUNC(L, GetMaterialNoSorting);
+	PUSH_LUA_CFUNC(L, GetMaterialAlphaThresh);
+	PUSH_LUA_CFUNC(L, GetMaterialTexture);
+	PUSH_LUA_CFUNC(L, GetMaterialTextureInfo);
+	PUSH_LUA_CFUNC(L, GetMaterialShader);
 
 	return true;
 }
@@ -53,7 +59,7 @@ bool LuaBzMaterial::PushEntries(lua_State* L)
 
 static const BzMaterial* ParseBzMat(lua_State* L, int index)
 {
-	const int matIndex = luaL_checkint(L, index);
+	const int matIndex = luaL_checkint(L, index) - 1;
 	return MATERIALMGR.getMaterial(matIndex);
 }
 
@@ -70,29 +76,71 @@ static void PushColor(lua_State* L, const float* color)
 /******************************************************************************/
 /******************************************************************************/
 
-int LuaBzMaterial::GetBzMatName(lua_State* L)
+int LuaBzMaterial::FindMaterial(lua_State* L)
 {
-	const BzMaterial* mat = ParseBzMat(L, 1);
+	const BzMaterial* mat = NULL;
+	if (lua_israwnumber(L, 1)) {
+		const int matID = lua_toint(L, 1) - 1;
+		mat = MATERIALMGR.getMaterial(matID);
+	}
+	else if (lua_israwstring(L, 1)) {
+		const string matName = lua_tostring(L, 1);
+		mat = MATERIALMGR.findMaterial(matName);
+	}
+	else {
+		return 0;
+	}
+
 	if (mat == NULL) {
 		return 0;
 	}
-	lua_pushstdstring(L, mat->getName());
+
+	lua_pushinteger(L, mat->getID() + 1);
+
 	return 1;
 }
 
 
-int LuaBzMaterial::GetBzMatOrder(lua_State* L)
+int LuaBzMaterial::GetMaterialCount(lua_State* L)
 {
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushinteger(L, mat->getOrder());
+	lua_pushinteger(L, MATERIALMGR.getCount());
 	return 1;
 }
 
 
-int LuaBzMaterial::GetBzMatDynCol(lua_State* L)
+/******************************************************************************/
+
+#define MAT_PARAMETER_FUNC(name, getFunc, pushFunc, count) \
+	int LuaBzMaterial::GetMaterial ## name(lua_State* L)     \
+	{                                                        \
+		const BzMaterial* mat = ParseBzMat(L, 1);              \
+		if (mat == NULL) {                                     \
+			return 0;                                            \
+		}                                                      \
+		pushFunc(L, mat->getFunc());                           \
+		return count;                                          \
+	}
+
+MAT_PARAMETER_FUNC(Name,        getName,           lua_pushstdstring, 1)
+MAT_PARAMETER_FUNC(Order,       getOrder,          lua_pushinteger,   1)
+MAT_PARAMETER_FUNC(Ambient,     getAmbient,        PushColor,         4)
+MAT_PARAMETER_FUNC(Diffuse,     getDiffuse,        PushColor,         4)
+MAT_PARAMETER_FUNC(Emission,    getEmission,       PushColor,         4)
+MAT_PARAMETER_FUNC(Specular,    getSpecular,       PushColor,         4)
+MAT_PARAMETER_FUNC(Shininess,   getShininess,      lua_pushnumber,    1)
+MAT_PARAMETER_FUNC(AlphaThresh, getAlphaThreshold, lua_pushnumber,    1)
+MAT_PARAMETER_FUNC(Occluder,    getOccluder,       lua_pushboolean,   1)
+MAT_PARAMETER_FUNC(GroupAlpha,  getGroupAlpha,     lua_pushboolean,   1)
+MAT_PARAMETER_FUNC(NoLighting,  getNoLighting,     lua_pushboolean,   1)
+MAT_PARAMETER_FUNC(NoRadar,     getNoRadar,        lua_pushboolean,   1)
+MAT_PARAMETER_FUNC(NoShadow,    getNoShadow,       lua_pushboolean,   1)
+MAT_PARAMETER_FUNC(NoCulling,   getNoCulling,      lua_pushboolean,   1)
+MAT_PARAMETER_FUNC(NoSorting,   getNoSorting,      lua_pushboolean,   1)
+
+
+/******************************************************************************/
+
+int LuaBzMaterial::GetMaterialDynCol(lua_State* L)
 {
 	const BzMaterial* mat = ParseBzMat(L, 1);
 	if (mat == NULL) {
@@ -108,150 +156,7 @@ int LuaBzMaterial::GetBzMatDynCol(lua_State* L)
 }
 
 
-int LuaBzMaterial::GetBzMatAmbient(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	PushColor(L, mat->getAmbient());
-	return 4;
-}
-
-
-int LuaBzMaterial::GetBzMatDiffuse(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	PushColor(L, mat->getDiffuse());
-	return 4;
-}
-
-
-int LuaBzMaterial::GetBzMatSpecular(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	PushColor(L, mat->getSpecular());
-	return 4;
-}
-
-
-int LuaBzMaterial::GetBzMatEmission(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	PushColor(L, mat->getEmission());
-	return 4;
-}
-
-
-int LuaBzMaterial::GetBzMatShininess(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushnumber(L, mat->getShininess());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatOccluder(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getOccluder());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatGroupAlpha(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getGroupAlpha());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatNoLighting(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getNoLighting());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatNoRadar(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getNoRadar());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatNoShadow(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getNoShadow());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatNoCulling(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getNoCulling());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatNoSorting(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushboolean(L, mat->getNoSorting());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatAlphaThresh(lua_State* L)
-{
-	const BzMaterial* mat = ParseBzMat(L, 1);
-	if (mat == NULL) {
-		return 0;
-	}
-	lua_pushnumber(L, mat->getAlphaThreshold());
-	return 1;
-}
-
-
-int LuaBzMaterial::GetBzMatTexture(lua_State* L)
+int LuaBzMaterial::GetMaterialTexture(lua_State* L)
 {
 	const BzMaterial* mat = ParseBzMat(L, 1);
 	if (mat == NULL) {
@@ -266,7 +171,7 @@ int LuaBzMaterial::GetBzMatTexture(lua_State* L)
 }
 
 
-int LuaBzMaterial::GetBzMatTextureInfo(lua_State* L)
+int LuaBzMaterial::GetMaterialTextureInfo(lua_State* L)
 {
 	const BzMaterial* mat = ParseBzMat(L, 1);
 	if (mat == NULL) {
@@ -291,7 +196,7 @@ int LuaBzMaterial::GetBzMatTextureInfo(lua_State* L)
 }
 
 
-int LuaBzMaterial::GetBzMatShader(lua_State* L)
+int LuaBzMaterial::GetMaterialShader(lua_State* L)
 {
 	const BzMaterial* mat = ParseBzMat(L, 1);
 	if (mat == NULL) {

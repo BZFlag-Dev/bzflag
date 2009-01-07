@@ -62,7 +62,7 @@ bool LuaObstacle::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetFaceTxcds);
 	PUSH_LUA_CFUNC(L, GetFacePlane);
 	PUSH_LUA_CFUNC(L, GetFacePhyDrv);
-	PUSH_LUA_CFUNC(L, GetFaceBzMaterial);
+	PUSH_LUA_CFUNC(L, GetFaceMaterial);
 	PUSH_LUA_CFUNC(L, GetFaceSmoothBounce);
 
 	PUSH_LUA_CFUNC(L, GetTeleByName);
@@ -638,13 +638,13 @@ int LuaObstacle::GetFacePhyDrv(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceBzMaterial(lua_State* L)
+int LuaObstacle::GetFaceMaterial(lua_State* L)
 {
 	const MeshFace* face = ParseMeshFace(L, 1);
 	if (face == NULL) {
 		return 0;
 	}
-	lua_pushinteger(L, face->getMaterial()->getID());
+	lua_pushinteger(L, face->getMaterial()->getID() + 1);
 	return 1;
 }
 
@@ -774,7 +774,7 @@ static void PushDrawSet(lua_State* L, const DrawSet& set)
 {
   lua_newtable(L);
 
-  HSTR_PUSH_INT(L, "material", set.material->getID());
+  HSTR_PUSH_INT(L, "material", set.material->getID() + 1);
   HSTR_PUSH_BOOL(L, "wantList", set.wantList);
 
   HSTR_PUSH(L, "sphere");
