@@ -22,7 +22,16 @@
 /*******************************************************************************/
 /*******************************************************************************/
 
+
 // missing IL/ILU, stub the routines
+
+
+// system headers
+#include <string>
+
+// local headers
+#include "LuaFontTexture.h"
+
 
 void LuaFontTexture::Reset()   { return; }
 bool LuaFontTexture::Execute() { return false; }
