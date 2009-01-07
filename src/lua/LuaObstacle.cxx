@@ -750,7 +750,7 @@ static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
 
   HSTR_PUSH_INT(L, "mode", cmd.drawMode);
 
-  HSTR_PUSH(L, "commands");
+  HSTR_PUSH(L, "indices");
   lua_createtable(L, cmd.count, 0);
   if (cmd.indexType == DrawCmd::DrawIndexUShort) {
     unsigned short* array = (unsigned short*)cmd.indices;
@@ -879,6 +879,7 @@ static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
     lua_pushnumber(L, verts[i][2]); lua_rawseti(L, -2, 3);
     lua_rawseti(L, -2, i + 1);
   }
+  lua_rawset(L, -3);
 
   HSTR_PUSH(L, "norms");
   lua_createtable(L, cornerCount, 0);
@@ -890,16 +891,18 @@ static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
     lua_pushnumber(L, norms[i][2]); lua_rawseti(L, -2, 3);
     lua_rawseti(L, -2, i + 1);
   }
+  lua_rawset(L, -3);
 
   HSTR_PUSH(L, "txcds");
   lua_createtable(L, cornerCount, 0);
   const fvec2* txcds = info.getTexcoords();
   for (int i = 0; i < cornerCount; i++) {
-    lua_createtable(L, 3, 0);
+    lua_createtable(L, 2, 0);
     lua_pushnumber(L, txcds[i][0]); lua_rawseti(L, -2, 1);
     lua_pushnumber(L, txcds[i][1]); lua_rawseti(L, -2, 2);
     lua_rawseti(L, -2, i + 1);
   }
+  lua_rawset(L, -3);
 
   HSTR_PUSH(L, "drawLods");
   const DrawLod* drawLods = info.getDrawLods();
