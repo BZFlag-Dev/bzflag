@@ -36,7 +36,7 @@ inline LuaHeader* luaBZ_toheader(lua_State* L)
 
 inline void LuaLog(const std::string& msg) // FIXME
 {
-  printf(msg.c_str());
+  printf("%s", msg.c_str());
   fflush(stdout);
 }
 
