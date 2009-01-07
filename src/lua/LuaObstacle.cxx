@@ -749,8 +749,9 @@ static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
   lua_newtable(L);
 
   HSTR_PUSH_INT(L, "mode", cmd.drawMode);
-  lua_createtable(L, cmd.count, 0);
 
+  HSTR_PUSH(L, "commands");
+  lua_createtable(L, cmd.count, 0);
   if (cmd.indexType == DrawCmd::DrawIndexUShort) {
     unsigned short* array = (unsigned short*)cmd.indices;
     for (int i = 0; i < cmd.count; i++) {
@@ -765,6 +766,7 @@ static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
       lua_rawseti(L, -2, i + 1);
     }
   }
+  lua_rawset(L, -3);
 }
 
 
@@ -834,10 +836,10 @@ static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
   HSTR_PUSH_STRING(L, "name", info.getName());
 
   const AnimationInfo* anim = info.getAnimationInfo();
-  if (anim) {
+  if (anim != NULL) {
     HSTR_PUSH_NUMBER(L, "angvel", anim->angvel);
   }
-  
+
   HSTR_PUSH(L, "sphere");
   const float* sphere = info.getSphere();
   lua_createtable(L, 0, 4);
