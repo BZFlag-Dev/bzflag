@@ -38,7 +38,7 @@ namespace LuaClientScripts {
   bool GetDevMode();
   void SetDevMode(bool value);
 
-};
+}
 
 
 #endif // LUA_CLIENT_SCRIPTS_H
