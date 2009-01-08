@@ -51,6 +51,7 @@ class BzFile { // FIXME -- not implemented
 
 class BzFS {
   public:
+    virtual ~BzFS() {}
     virtual bool fileExists(const std::string& path) = 0;
     virtual int  fileSize(const std::string& path) = 0;
     virtual bool readFile(const std::string& path, std::string& data) = 0;
