@@ -70,6 +70,11 @@ typedef ULONGLONG	uint64_t;
 
 /* stuff specific to visual studio */
 #if defined(_MSC_VER)
+// Visual Studio builds always include GLEW statically
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
+
 // turn off bogus `this used in base member initialization list'
 #  pragma warning(disable: 4786)
 #  pragma warning(disable: 4503)

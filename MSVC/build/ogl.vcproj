@@ -48,7 +48,7 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;../../src/bzflag"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;GLEW_STATIC"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile="./ogl_debug/ogl.pch"
@@ -183,7 +183,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;../../src/bzflag"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;GLEW_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -316,7 +316,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;../../src/bzflag"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_GLEW"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;GLEW_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -449,7 +449,7 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;../../src/bzflag"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;HAVE_GLEW"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;GLEW_STATIC"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile="./ogl_debug/ogl.pch"
@@ -590,6 +590,14 @@
 				RelativePath="..\..\src\ogl\RenderNode.cxx"
 				>
 			</File>
+			<Filter
+				Name="GLEW"
+				>
+				<File
+					RelativePath="..\..\src\other\glew\src\glew.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
