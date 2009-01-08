@@ -148,7 +148,7 @@ VotingArbiter *votingArbiter = NULL;
 BasesList bases;
 
 // global keeper of world Events
-WorldEventManager	worldEventManager;
+WorldEventManager worldEventManager;
 
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
@@ -236,32 +236,29 @@ public:
 
 BZFSNetLogCB netLogCB;
 
+
 // Logging to the API
-class APILoggingCallback : public LoggingCallback
+static void apiLoggingProc(int level, const std::string& msg, void* /*data*/)
 {
-public:
-  void log ( int level, const char* message )
-  {
-    bz_LoggingEventData_V1 data;
-    data.level = level;
-    data.message = message;
+  bz_LoggingEventData_V1 eventData;
+  eventData.level = level;
+  eventData.message = msg;
+  worldEventManager.callEvents(bz_eLoggingEvent, &eventData);
+}
 
-    worldEventManager.callEvents(bz_eLoggingEvent,&data);
-  }
-};
-
-APILoggingCallback apiLoggingCallback;
 
 int getCurMaxPlayers()
 {
   return curMaxPlayers;
 }
 
+
 static bool realPlayer(const PlayerId& id)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
   return playerData && playerData->player.isPlaying();
 }
+
 
 void dropHandler(NetHandler *handler, const char *reason)
 {
@@ -3865,7 +3862,7 @@ static void setupPermissions(void)
 
 static bool initServer(int argc, char **argv)
 {
-  loggingCallback = &apiLoggingCallback;
+  registerLoggingProc(apiLoggingProc, NULL);
 
   /* line buffered output to console */
   setvbuf(stdout, (char *)NULL, _IOLBF, BUFSIZE);

@@ -82,7 +82,8 @@ std::vector<std::string>& getSilenceList();
 void			updateEvents();
 void			addMessage(const Player* player,
 				   const std::string& msg,
-				   int mode = 3,
+				   ControlPanel::MessageModes mode =
+				     ControlPanel::MessageMisc,
 				   bool highlight = false,
 				   const char* oldColor = NULL);
 

@@ -53,9 +53,9 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	const bool fullRead = L2H(L)->HasFullRead();
 
 	PUSH_LUA_CFUNC(L, Print);
+	PUSH_LUA_CFUNC(L, Debug);
 	PUSH_LUA_CFUNC(L, StripAnsiCodes);
 	PUSH_LUA_CFUNC(L, LocalizeString);
-	PUSH_LUA_CFUNC(L, GetDebugLevel);
 
 	PUSH_LUA_CFUNC(L, GetGameInfo);
 
@@ -263,8 +263,18 @@ int LuaCallOuts::Print(lua_State* L)
 		return 0;
 	}
 	const char* msg = luaL_checkstring(L, 1);
-	const int mode  = luaL_optint(L, 2, ControlPanel::MessageAllTabs);
+	const ControlPanel::MessageModes mode =
+		(ControlPanel::MessageModes)luaL_optint(L, 2, ControlPanel::MessageMisc);
 	controlPanel->addMessage(msg, mode);
+	return 0;
+}
+
+
+int LuaCallOuts::Debug(lua_State* L)
+{
+	const int level = luaL_checkint(L, 1);
+	const char* msg = luaL_checkstring(L, 1);
+	logDebugMessage(level, msg);
 	return 0;
 }
 
@@ -292,13 +302,6 @@ int LuaCallOuts::StripAnsiCodes(lua_State* L)
 		return 0;
 	}
 	lua_pushstring(L, stripAnsiCodes(text));
-	return 1;
-}
-
-
-int LuaCallOuts::GetDebugLevel(lua_State* L)
-{
-	lua_pushinteger(L, debugLevel);
 	return 1;
 }
 

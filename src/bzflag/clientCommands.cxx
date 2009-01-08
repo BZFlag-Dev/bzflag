@@ -218,7 +218,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("autopilot",     &cmdAutoPilot,     "autopilot:  set/unset autopilot bot code");
   PUSHCMD("radarZoom",     &cmdRadarZoom,     "radarZoom {in/out}: change maxRadar range");
   PUSHCMD("viewZoom",      &cmdViewZoom,      "viewZoom {in/out/toggle}: change view angle");
-  PUSHCMD("messagepanel",  &cmdMessagePanel,  "messagepanel {all|chat|server|misc}:  set message tab");
+  PUSHCMD("messagepanel",  &cmdMessagePanel,  "messagepanel {all|chat|server|misc|debug}:  set message tab");
   PUSHCMD("toggleRadar",   &cmdToggleRadar,   "toggleRadar:  toggle radar visibility");
   PUSHCMD("toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility");
   PUSHCMD("toggleFlags",   &cmdToggleFlags,   "toggleFlags {main|radar}:  turn off/on field radar flags");
@@ -602,20 +602,19 @@ static std::string cmdViewZoom(const std::string&,
 static std::string cmdMessagePanel(const std::string&,
                                    const CommandManager::ArgList& args, bool*)
 {
-  if (args.size() != 1)
-    return "usage: messagepanel {all|chat|server|misc}";
+  if (args.size() != 1) {
+    return "usage: messagepanel {all|chat|server|misc|debug}";
+  }
 
-  int mode = 0;
-  if (args[0] == "all")
-    mode = 0;
-  else if (args[0] == "chat")
-    mode = 1;
-  else if (args[0] == "server")
-    mode = 2;
-  else if (args[0] == "misc")
-    mode = 3;
-  else
-    return "usage: messagepanel {all|chat|server|misc}";
+  ControlPanel::MessageModes mode = ControlPanel::MessageAll;
+       if (args[0] == "all")    { mode = ControlPanel::MessageAll;    }
+  else if (args[0] == "chat")   { mode = ControlPanel::MessageChat;   }
+  else if (args[0] == "server") { mode = ControlPanel::MessageServer; }
+  else if (args[0] == "misc")   { mode = ControlPanel::MessageMisc;   }
+  else if (args[0] == "debug")  { mode = ControlPanel::MessageDebug;  }
+  else {
+    return "usage: messagepanel {all|chat|server|misc|debug}";
+  }
 
   controlPanel->setMessagesMode(mode);
 

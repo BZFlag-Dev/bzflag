@@ -843,6 +843,10 @@ int initClient ( int argc, char **argv )
   // parse arguments
   parse(argc, argv);
 
+  // setup the debugLevel callback
+  BZDB.setInt("debugLevel", debugLevel);
+  BZDB.addCallback("debugLevel", setDebugLevel, NULL);
+
   clearWindowsStdOut();
 
   if (BZDB.isSet("directory")) {
@@ -1464,6 +1468,10 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
     // Skip past spaces
     scan = const_cast<char*>(TextUtils::skipWhitespace(scan));
   }
+
+  // stdout access on windows
+  // see: http://www.geocities.com/patchnpuki/tips/index.htm#w5
+  setbuf(stdout, NULL);
 
   const int exitCode = myMain(argc, argv);
 

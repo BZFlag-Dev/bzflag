@@ -418,11 +418,11 @@ static void parse(const std::string& cmd)
   if (errors.size() > 0) {
     std::string parseError = "AutoHunt: ";
     parseError += cmd;
-    controlPanel->addMessage(parseError, -1);
+    controlPanel->addMessage(parseError, ControlPanel::MessageCurrent);
     for (int i = 0; i < (int)errors.size(); i++) {
       std::string error = "  Bad Token: ";
       error += errors[i];
-      controlPanel->addMessage(error, -1);
+      controlPanel->addMessage(error, ControlPanel::MessageCurrent);
     }
   }
 

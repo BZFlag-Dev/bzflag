@@ -13,9 +13,9 @@ class LuaCallOuts {
   public:
     // call-outs
     static int Print(lua_State* L);
+    static int Debug(lua_State* L);
     static int StripAnsiCodes(lua_State* L);
     static int LocalizeString(lua_State* L);
-    static int GetDebugLevel(lua_State* L);
 
     static int GetGameInfo(lua_State* L);
 

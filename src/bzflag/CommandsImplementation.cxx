@@ -145,6 +145,13 @@ class LuaWorldCommand : LocalCommand {
 };
 
 
+class DebugLevelCommand : LocalCommand {
+  public:
+    DebugLevelCommand();
+    bool operator() (const char *commandLine);
+};
+
+
 // class instantiations
 static CommandList	  commandList;
 static BindCommand	  bindCommand;
@@ -162,27 +169,29 @@ static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static MapInfoCommand     mapInfoCommand;
 static LuaUserCommand     luaUserCommand;
-static LuaWorldCommand     luaWorldCommand;
+static LuaWorldCommand    luaWorldCommand;
+static DebugLevelCommand  debugLevelCommand;
 
 
 // class constructors
-BindCommand::BindCommand() :		LocalCommand("/bind") {}
-CommandList::CommandList() :		LocalCommand("/cmds") {}
-DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
-DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
-HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
-LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
-MapInfoCommand::MapInfoCommand() :	LocalCommand("/mapinfo") {}
-LuaUserCommand::LuaUserCommand() :	LocalCommand("/luauser") {}
-LuaWorldCommand::LuaWorldCommand() :	LocalCommand("/luaworld") {}
-QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
-ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
-SaveMsgsCommand::SaveMsgsCommand() :	LocalCommand("/savemsgs") {}
-SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
-SetCommand::SetCommand() :		LocalCommand("/set") {}
-SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
-UnsilenceCommand::UnsilenceCommand() :	LocalCommand("/unsilence") {}
+BindCommand::BindCommand() :			LocalCommand("/bind")      {}
+CommandList::CommandList() :			LocalCommand("/cmds")      {}
+DiffCommand::DiffCommand() :			LocalCommand("/diff")      {}
+DumpCommand::DumpCommand() :			LocalCommand("/dumpvars")  {}
+HighlightCommand::HighlightCommand() :		LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand() :		LocalCommand("/localset")  {}
+MapInfoCommand::MapInfoCommand() :		LocalCommand("/mapinfo")   {}
+LuaUserCommand::LuaUserCommand() :		LocalCommand("/luauser")   {}
+LuaWorldCommand::LuaWorldCommand() :		LocalCommand("/luaworld")  {}
+QuitCommand::QuitCommand() :			LocalCommand("/quit")      {}
+ReTextureCommand::ReTextureCommand() :		LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand() :		LocalCommand("/roampos")   {}
+SaveMsgsCommand::SaveMsgsCommand() :		LocalCommand("/savemsgs")  {}
+SaveWorldCommand::SaveWorldCommand() :		LocalCommand("/saveworld") {}
+SetCommand::SetCommand() :			LocalCommand("/set")       {}
+SilenceCommand::SilenceCommand() :		LocalCommand("/silence")   {}
+UnsilenceCommand::UnsilenceCommand() :		LocalCommand("/unsilence") {}
+DebugLevelCommand::DebugLevelCommand() :	LocalCommand("/debug")     {}
 
 
 // the meat of the matter
@@ -472,7 +481,7 @@ static void listSetVars(const std::string& name, void* varDispPtr)
       snprintf(message, MessageLen, "%s %s <%f> %s", name.c_str(), varDisp->prefix.c_str(),
 	      BZDB.eval(name), BZDB.get(name).c_str());
     }
-    addMessage(LocalPlayer::getMyTank(), message, 2);
+    addMessage(LocalPlayer::getMyTank(), message, ControlPanel::MessageServer);
   }
 }
 
@@ -491,7 +500,7 @@ bool SetCommand::operator() (const char *commandLine)
   }
 
   const std::string header = "/set " + pattern;
-  addMessage(LocalPlayer::getMyTank(), header, 2);
+  addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
   VarDispInfo varDisp(commandName);
   varDisp.server = true;
@@ -500,7 +509,8 @@ bool SetCommand::operator() (const char *commandLine)
   foundVar = false;
   BZDB.iterate(listSetVars, &varDisp);
   if (!foundVar) {
-    addMessage(LocalPlayer::getMyTank(), "no matching variables", 2);
+    addMessage(LocalPlayer::getMyTank(), "no matching variables",
+               ControlPanel::MessageServer);
   }
   return true;
 }
@@ -517,7 +527,7 @@ bool DiffCommand::operator() (const char *commandLine)
   }
 
   const std::string header = "/diff " + pattern;
-  addMessage(LocalPlayer::getMyTank(), header, 2);
+  addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
   VarDispInfo varDisp(commandName);
   varDisp.diff = true;
@@ -529,10 +539,11 @@ bool DiffCommand::operator() (const char *commandLine)
   if (!foundVar) {
     if (pattern == "_*") {
       addMessage(LocalPlayer::getMyTank(),
-	"all variables are at defaults", 2);
+	"all variables are at defaults", ControlPanel::MessageServer);
     } else {
       addMessage(LocalPlayer::getMyTank(),
-	"no differing variables with that pattern", 2);
+	"no differing variables with that pattern",
+	ControlPanel::MessageServer);
     }
   }
   return true;
@@ -551,12 +562,13 @@ bool LocalSetCommand::operator() (const char *commandLine)
 
   if (tokens.size() == 1) {
     const std::string header = "/localset " + tokens[0];
-    addMessage(LocalPlayer::getMyTank(), header, 2);
+    addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
     if (!debug &&
 	((strstr(tokens[0].c_str(), "*") != NULL) ||
 	 (strstr(tokens[0].c_str(), "?") != NULL))) {
-      addMessage(LocalPlayer::getMyTank(), "undefined client variable", 2);
+      addMessage(LocalPlayer::getMyTank(), "undefined client variable",
+                 ControlPanel::MessageServer);
       return true;
     }
 
@@ -569,10 +581,10 @@ bool LocalSetCommand::operator() (const char *commandLine)
     if (!foundVar) {
       if (debug) {
 	addMessage(LocalPlayer::getMyTank(),
-	  "no matching client variables", 2);
+	  "no matching client variables", ControlPanel::MessageServer);
       } else {
 	addMessage(LocalPlayer::getMyTank(),
-	  "undefined client variable", 2);
+	  "undefined client variable", ControlPanel::MessageServer);
       }
     }
   }
@@ -849,6 +861,25 @@ bool LuaWorldCommand::operator() (const char* cmdLine)
     return false;
   }
   LuaClientScripts::LuaWorldCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+
+
+bool DebugLevelCommand::operator() (const char* cmdLine)
+{
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(cmdLine, " ");
+  if (args.size() < 2) {
+    addMessage(NULL, "/debug <level>");
+    return false;
+  }
+
+  BZDB.setInt("debugLevel", atoi(args[1].c_str()));
+
+  char buf[128];
+  snprintf(buf, sizeof(buf), "debug level set to %i", debugLevel);
+  addMessage(NULL, buf);
+
   return true;
 }
 

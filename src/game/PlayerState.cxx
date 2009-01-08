@@ -63,7 +63,8 @@ static float clampedValue(float input, float max)
   }
 }
 
-void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
+
+void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 {
   if (increment)
     order++;
@@ -146,8 +147,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code, bool increment)
 }
 
 
-
-void	PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment)
+void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment)
 {
   if (increment)
     order++;
@@ -228,7 +228,7 @@ void	PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
 }
 
 
-void*	PlayerState::unpack(void* buf, uint16_t code)
+void* PlayerState::unpack(void* buf, uint16_t code)
 {
   int32_t inOrder;
   int16_t inStatus;

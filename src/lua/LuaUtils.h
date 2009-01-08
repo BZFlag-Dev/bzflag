@@ -21,11 +21,13 @@ class LuaUtils {
 
 		static void* TestUserData(lua_State* L, int index, const std::string& type);
 
+		static int Print(lua_State* L);
+
 		static void PrintStack(lua_State* L);
 
-		// from LuaParser.cpp / LuaUnsyncedCtrl.cpp
-		// (implementation copied from lua/src/lib/lbaselib.c)
-		static int Print(lua_State* L);
+		static bool FormatArgs(lua_State* L, bool expandTables,
+												   std::vector<std::string>& result,
+												   const char* caller);
 
 		// not implemented...		
 		static int ParseIntArray(lua_State* L, int tableIndex,

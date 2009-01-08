@@ -1160,7 +1160,8 @@ static void doEvent(BzfDisplay *disply)
 }
 
 void addMessage(const Player *player, const std::string &msg,
-		int mode, bool highlight, const char *oldColor)
+		ControlPanel::MessageModes mode, bool highlight,
+		const char *oldColor)
 {
   std::string prefix;
   const char *message;
@@ -1214,10 +1215,8 @@ void addMessage(const Player *player, const std::string &msg,
     }
     message = stripAnsiCodes(msg.c_str());
   }
-  controlPanel->addMessage(TextUtils::format("%s%s",
-    prefix.c_str(),
-    message),
-    mode);
+  const std::string msgf = TextUtils::format("%s%s", prefix.c_str(), message);
+  controlPanel->addMessage(msgf, mode);
 }
 
 static void updateNumPlayers()
@@ -1488,7 +1487,7 @@ static void printIpInfo (const Player *player, const Address &addr,
   message += note;
 
   // print into the Server Menu
-  controlPanel->addMessage(message, 2);
+  controlPanel->addMessage(message, ControlPanel::MessageServer);
 
   return;
 }
@@ -2455,7 +2454,8 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
       else
 	message += "killed by " + playerStr;
 
-      addMessage(victimPlayer, message, 3, killerPlayer==myTank);
+      addMessage(victimPlayer, message, ControlPanel::MessageMisc,
+                 (killerPlayer == myTank));
     }
   }
 
@@ -2693,9 +2693,9 @@ static void handleNewRabbit(void *msg)
       }
 
       if (mode == 0) {
-	addMessage(rabbit, "is now the rabbit", 3, true);
+	addMessage(rabbit, "is now the rabbit", ControlPanel::MessageMisc, true);
       } else {
-	addMessage(rabbit, "is now a rabbit", 3, true);
+	addMessage(rabbit, "is now a rabbit", ControlPanel::MessageMisc, true);
       }
     }
     else {
@@ -2703,7 +2703,7 @@ static void handleNewRabbit(void *msg)
       if (rabbit == myTank) {
 	hud->setAlert(0, "You are no longer a rabbit.", 10.0f, false);
       }
-      addMessage(rabbit, "is no longer a rabbit", 3, true);
+      addMessage(rabbit, "is no longer a rabbit", ControlPanel::MessageMisc, true);
     }
   }
 
@@ -2747,10 +2747,16 @@ static void handleNearFlag(void *msg)
   msg = nboUnpackStdString(msg, flagName);
 
   std::string fullMessage = "Closest Flag: " + flagName;
-  addMessage(NULL, std::string(ColorStrings[YellowColor])+fullMessage+ColorStrings[DefaultColor], 2, false, NULL);
+  std::string colorMsg;
+  colorMsg += ColorStrings[YellowColor];
+  colorMsg += fullMessage;
+  colorMsg += ColorStrings[DefaultColor];
+  
+  addMessage(NULL, colorMsg, ControlPanel::MessageServer, false, NULL);
 
-  if (myTank)
+  if (myTank) {
     hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
+  }
 }
 
 
@@ -5040,7 +5046,7 @@ static void enteringServer(void* buf)
     myTank->setTeam((TeamColor)team);
     hud->setAlert(1, teamMsg.c_str(), 8.0f,
       (TeamColor)team==ObserverTeam?true:false);
-    addMessage(NULL, teamMsg.c_str(), 3, true);
+    addMessage(NULL, teamMsg.c_str(), ControlPanel::MessageMisc, true);
   }
 
   // observer colors are actually cyan, make them black

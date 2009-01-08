@@ -19,20 +19,13 @@ void setDebugTimestamp (bool enable, bool doMicros);
 void logDebugMessage(int level, const char* fmt, ...);
 void logDebugMessage(int level, const std::string &text);
 
+// multiple logging routines can be registered
+typedef void (*LoggingProc)(int level, const std::string& msg, void* data);
+bool registerLoggingProc(LoggingProc, void* data);
+bool unregisterLoggingProc(LoggingProc, void* data);
 
 /** global debug level used by libraries and applications, provided in bzfio.cxx */
 extern int debugLevel;
-
-
-class LoggingCallback
-{
-public:
-	virtual ~LoggingCallback(){};
-
-	virtual void log ( int level, const char* message ) = 0;
-};
-
-extern LoggingCallback	*loggingCallback;
 
 #endif /* __BZFIO_H__ */
 

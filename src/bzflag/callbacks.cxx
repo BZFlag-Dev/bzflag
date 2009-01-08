@@ -18,6 +18,7 @@
 #include "HUDRenderer.h"
 #include "playing.h"
 
+
 void setFlagHelp(const std::string& name, void*)
 {
   if (LocalPlayer::getMyTank() == NULL)
@@ -28,6 +29,13 @@ void setFlagHelp(const std::string& name, void*)
   else
     hud->setFlagHelp(Flags::Null, 0.0);
 }
+
+
+void setDebugLevel(const std::string& name, void*)
+{
+  debugLevel = BZDB.evalInt(name);
+}
+
 
 void setDepthBuffer(const std::string& name, void*)
 {
@@ -45,11 +53,13 @@ void setDepthBuffer(const std::string& name, void*)
   }
 }
 
+
 void setProcessorAffinity(const std::string& name, void*)
 {
   if (BZDB.evalInt(name) >= 0)
     TimeKeeper::setProcessorAffinity(BZDB.evalInt(name));
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

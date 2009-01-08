@@ -21,6 +21,7 @@
 #include "callbacks.h"
 
 DefaultDBItem	defaultDBItems[] = {
+//  name			value			persist	permission			callback
   { "fpsLimit",			"50",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveEnergy",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveSettings",		"1",			true,	StateDatabase::ReadWrite,	NULL },
@@ -48,6 +49,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "highlightPattern",		"",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "serverCacheAge",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "debugLevel",		"0",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarFlags",	"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayMainFlags",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },

@@ -9,9 +9,9 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 libBzLua_la_LDFLAGS = -static
 
 libBzLua_la_SOURCES =                       \
-	LuaClientScripts.cxx                      \
 	LuaInclude.h                              \
 	LuaEventOrder.h                           \
+	LuaClientScripts.cxx                      \
 	LuaHandleCallIns.cxx                      \
 	LuaHashString.h                           \
 	LuaBitOps.cxx         LuaBitOps.h         \

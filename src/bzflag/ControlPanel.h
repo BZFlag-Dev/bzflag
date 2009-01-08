@@ -53,6 +53,7 @@ class ControlPanel {
       MessageChat    = 1,
       MessageServer  = 2,
       MessageMisc    = 3,
+      MessageDebug   = 4,
       MessageModeCount
     };
 
@@ -67,12 +68,12 @@ class ControlPanel {
 
     void setNumberOfFrameBuffers(int);
 
-    void addMessage(const std::string&, const int mode = 3);
+    void addMessage(const std::string&, MessageModes mode = MessageMisc);
     void setMessagesOffset(int offset, int whence, bool paged);
-    void setMessagesMode(int _messageMode);
-    int  getMessagesMode() {return messageMode;};
+    void setMessagesMode(MessageModes messageMode);
     void setStatus(const char*);
     void setRadarRenderer(RadarRenderer*);
+    MessageModes getMessagesMode() const { return messageMode; }
 
     void setDimming(float dimming);
 
@@ -87,7 +88,11 @@ class ControlPanel {
     static void resizeCallback(void*);
     static void exposeCallback(void*);
     static void bzdbCallback(const std::string& name, void* data);
+    static void loggingCallback(int level, const std::string& msg, void* data);
 
+    bool isTabVisible(MessageModes mode) const;
+
+  private:
     bool tabsOnRight;
     std::vector<const char *> *tabs;
     std::vector<float> tabTextWidth;
@@ -110,7 +115,7 @@ class ControlPanel {
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
     std::deque<ControlPanelMessage>	messages[MessageModeCount];
-    int messageMode;
+    MessageModes	messageMode;
     GLfloat		teamColor[3];
     static int		messagesOffset;
     static const int	maxScrollPages;

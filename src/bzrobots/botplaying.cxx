@@ -344,8 +344,9 @@ static void		hangup(int sig)
 }
 
 
-void		addMessage(const Player *player, const std::string& msg,
-			   int, bool highlight, const char* oldColor)
+void addMessage(const Player *player, const std::string& msg,
+		ControlPanel::MessageModes /*mode*/, bool highlight,
+		const char* oldColor)
 {
   std::string fullMessage;
 
@@ -1299,12 +1300,12 @@ static void handleNewRabbit ( void *msg, uint16_t /*len*/ )
       rabbit->changeTeam(RabbitTeam);
 
       if (mode == 0)
-	addMessage(rabbit, "is now the rabbit", 3, true);
+	addMessage(rabbit, "is now the rabbit", ControlPanel::MessageMisc, true);
       else
-	addMessage(rabbit, "is now a rabbit", 3, true);
+	addMessage(rabbit, "is now a rabbit", ControlPanel::MessageMisc, true);
     } else {
       rabbit->changeTeam(HunterTeam);
-      addMessage(rabbit, "is no longer a rabbit", 3, true);
+      addMessage(rabbit, "is no longer a rabbit", ControlPanel::MessageMisc, true);
     }
   }
 
