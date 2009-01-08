@@ -72,7 +72,7 @@ enum LuaCallInCode {
 	LUA_CI_DrawWorldShadow,
 	LUA_CI_DrawScreenStart,
 	LUA_CI_DrawScreen,
-	LUA_CI_DrawRadar,
+	LUA_CI_DrawRadar
 };
 
 
