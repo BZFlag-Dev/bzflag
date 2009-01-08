@@ -159,7 +159,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
   setControlColor();
 
   // make sure we're notified when MainWindow resizes or is exposed
-  registerLoggingProc(loggingCallback, this);
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
   BZDB.addCallback("debugLevel",   bzdbCallback, this);
@@ -196,6 +195,9 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
   }
 
   resize(); // need resize to set up font and window dimensions
+
+  // register after we're fully initialized
+  registerLoggingProc(loggingCallback, this);
 }
 
 ControlPanel::~ControlPanel()
