@@ -258,7 +258,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-inline void LuaOpenGL::CheckDrawingEnabled(lua_State* L, const char* caller)
+void LuaOpenGL::CheckDrawingEnabled(lua_State* L, const char* caller)
 {
 	if (!OpenGLPassState::IsDrawingEnabled()) {
 		luaL_error(L, "%s(): OpenGL calls can only be used in Draw() "
