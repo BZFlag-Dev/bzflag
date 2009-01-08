@@ -542,14 +542,14 @@ void LuaHandle::GLContextFree()
 		RunCallIn(LUA_CI_ ## name, 0, 0);    \
 	}
 
-DRAW_CALLIN(DrawGenesis);
-DRAW_CALLIN(DrawWorldStart);
-DRAW_CALLIN(DrawWorld);
-DRAW_CALLIN(DrawWorldAlpha);
-DRAW_CALLIN(DrawWorldShadow);
-DRAW_CALLIN(DrawScreenStart);
-DRAW_CALLIN(DrawScreen);
-DRAW_CALLIN(DrawRadar);
+DRAW_CALLIN(DrawGenesis)
+DRAW_CALLIN(DrawWorldStart)
+DRAW_CALLIN(DrawWorld)
+DRAW_CALLIN(DrawWorldAlpha)
+DRAW_CALLIN(DrawWorldShadow)
+DRAW_CALLIN(DrawScreenStart)
+DRAW_CALLIN(DrawScreen)
+DRAW_CALLIN(DrawRadar)
 
 
 /******************************************************************************/
