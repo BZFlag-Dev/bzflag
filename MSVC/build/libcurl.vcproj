@@ -76,6 +76,7 @@
 				AdditionalDependencies="ws2_32.lib winmm.lib Advapi32.lib wldap32.lib"
 				OutputFile="./libcurl_debug/$(ProjectName).dll"
 				ModuleDefinitionFile="..\..\src\other\curl\lib\libcurl.def"
+				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
