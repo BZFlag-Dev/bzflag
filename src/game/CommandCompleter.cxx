@@ -29,6 +29,7 @@ void CommandCompleter::reset()
   registerWord("/countdown");
   registerWord("/clientquery");
   registerWord("/date");
+  registerWord("/debug ");
   registerWord("disable");
   registerWord("/dumpvars");
   registerWord("/flag ");
