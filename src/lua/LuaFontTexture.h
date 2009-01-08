@@ -33,7 +33,7 @@ namespace LuaFontTexture
   bool SetPadding       (unsigned int padding);
   bool SetStuffing      (unsigned int stuffing);
   bool SetDebugLevel    (unsigned int debugLevel);
-};
+}
 
 
 #endif // LUA_FONT_TEXTURE_H
