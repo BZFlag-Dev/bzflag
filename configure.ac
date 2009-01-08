@@ -994,11 +994,6 @@ if test x$enable_client != xno; then
 	[Client build is enabled, but OpenGL does not seem to be fully available ... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
-    elif test "$glew_check" = no; then
-	AC_MSG_WARN(
-	[Client build is enabled, but GLEW does not seem to be fully available ... disabling BZFlag client])
-	AM_CONDITIONAL(CLIENT_INCLUDED, false)
-	enable_client=no
     else
 	AM_CONDITIONAL(CLIENT_INCLUDED, true)
 	have_gl=yes
