@@ -591,48 +591,54 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 	if (!ROAM.isRoaming()) {
 		return 0;
 	}
-	Roaming::RoamingCamera cam;
 	
 	const Roaming::RoamingView mode = (Roaming::RoamingView)luaL_checkint(L, 1);
-	if ((mode < Roaming::roamViewDisabled) ||
-			(mode >= Roaming::roamViewCount)) {
+	if ((mode <= Roaming::roamViewDisabled) || (mode >= Roaming::roamViewCount)) {
 		return 0;
 	}
-	cam.pos[0] = luaL_checkfloat(L, 2);
-	cam.pos[1] = luaL_checkfloat(L, 3);
-	cam.pos[2] = luaL_checkfloat(L, 4);
-	cam.theta  = luaL_checkfloat(L, 5);
-	cam.phi    = luaL_checkfloat(L, 6);
-	cam.zoom   = luaL_checkfloat(L, 7);
 
 	ROAM.setMode(mode);
-	ROAM.setCamera(&cam);
-	
+	lua_pushboolean(L, true);
+
 	switch (mode) {
 		case Roaming::roamViewTrack:
 		case Roaming::roamViewFollow:
 		case Roaming::roamViewFP: {
-			if (lua_israwnumber(L, 8)) {
+			if (lua_israwnumber(L, 2)) {
 				const Player* player = ParsePlayer(L, 8);
 				if (player != NULL) {
 					ROAM.changeTarget(Roaming::explicitSet, player->getId());
 				}
 			}
-			break;
+			return 1;
 		}
 		case Roaming::roamViewFlag: {
-			if (lua_israwnumber(L, 8)) {
+			if (lua_israwnumber(L, 2)) {
 				const ClientFlag* flag = ParseFlag(L, 8);
 				if (flag != NULL) {
 					ROAM.changeTarget(Roaming::explicitSet, flag->id);
 				}
 			}
-			break;
+			return 1;
 		}
-		default: {
-			break;
+		case Roaming::roamViewFree: {
+			Roaming::RoamingCamera cam;
+			memcpy(&cam, ROAM.getCamera(), sizeof(Roaming::RoamingCamera));
+			cam.pos[0] = luaL_optfloat(L, 2, cam.pos[0]);
+			cam.pos[1] = luaL_optfloat(L, 3, cam.pos[1]);
+			cam.pos[2] = luaL_optfloat(L, 4, cam.pos[2]);
+			cam.theta  = luaL_optfloat(L, 5, cam.theta);
+			cam.phi    = luaL_optfloat(L, 6, cam.phi);
+			cam.zoom   = luaL_optfloat(L, 7, cam.zoom);
+			ROAM.setCamera(&cam);
+			return 1;
+		}
+		case Roaming::roamViewDisabled:
+		case Roaming::roamViewCount: {
+			return 0;
 		}
 	}
+	
 	return 0;
 }
 
@@ -1263,7 +1269,7 @@ int LuaCallOuts::SetShotGfxBlock(lua_State* L)
 {
 	ShotPath* shot = const_cast<ShotPath*>(ParseShot(L, 1));
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	EventClient* ec = L2H(L);
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
@@ -1282,7 +1288,7 @@ int LuaCallOuts::GetShotGfxBlock(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	EventClient* ec = L2H(L);
 	const GfxBlock& gfxBlock = shot->getGfxBlock();
@@ -1375,7 +1381,7 @@ int LuaCallOuts::GetPlayerFlag(lua_State* L) // FIXME -- linear search
 	}
 	World* world = World::getWorld();
 	if (world == NULL) {
-		return NULL;
+		return 0;
 	}
 	const PlayerId playerID = player->getId();
 	const int maxFlags = world->getMaxFlags();
@@ -1775,7 +1781,7 @@ int LuaCallOuts::GetShotType(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	lua_pushnumber(L, shot->getShotType());
 	return 1;	
@@ -1786,7 +1792,7 @@ int LuaCallOuts::GetShotFlagType(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	lua_pushstring(L, shot->getFlag()->flagAbbv.c_str());
 	return 1;	
@@ -1797,7 +1803,7 @@ int LuaCallOuts::GetShotPlayer(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	lua_pushinteger(L, shot->getPlayer());
 	return 1;	
@@ -1808,7 +1814,7 @@ int LuaCallOuts::GetShotPosition(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	const float* pos = shot->getPosition();
 	lua_pushnumber(L, pos[0]);
@@ -1822,7 +1828,7 @@ int LuaCallOuts::GetShotVelocity(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	const float* vel = shot->getVelocity();
 	lua_pushnumber(L, vel[0]);
@@ -1836,7 +1842,7 @@ int LuaCallOuts::GetShotLifeTime(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	lua_pushnumber(L, shot->getLifetime());
 	return 1;	
@@ -1847,7 +1853,7 @@ int LuaCallOuts::GetShotLeftTime(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	lua_pushnumber(L, shot->getCurrentTime() - shot->getStartTime());
 	return 1;	
@@ -1858,7 +1864,7 @@ int LuaCallOuts::GetShotReloadTime(lua_State* L)
 {
 	const ShotPath* shot = ParseShot(L, 1);
 	if (shot == NULL) {
-		return NULL;
+		return 0;
 	}
 	lua_pushnumber(L, shot->getReloadTime());
 	return 1;	
