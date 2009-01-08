@@ -22,6 +22,7 @@ using std::string;
 #include "SphereObstacle.h"
 #include "TetraBuilding.h"
 #include "MeshDrawInfo.h"
+#include "MeshSceneNodeGenerator.h"
 
 // bzflag headers
 #include "../bzflag/World.h"
@@ -74,6 +75,51 @@ bool LuaObstacle::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetMeshDrawInfo);
 
 	return true;
+}
+
+
+static bool makeTexcoords(const float* plane, // FIXME MeshSceneNodeGenerator ?
+					                const GLfloat3Array& vertices,
+					                GLfloat2Array& texcoords)
+{
+  float x[3], y[3];
+
+  vec3sub (x, vertices[1], vertices[0]);
+  vec3cross (y, plane, x);
+
+  float len = vec3dot(x, x);
+  if (len > 0.0f) {
+    len = 1.0f / sqrtf(len);
+    x[0] = x[0] * len;
+    x[1] = x[1] * len;
+    x[2] = x[2] * len;
+  } else {
+    return false;
+  }
+
+  len = vec3dot(y, y);
+  if (len > 0.0f) {
+    len = 1.0f / sqrtf(len);
+    y[0] = y[0] * len;
+    y[1] = y[1] * len;
+    y[2] = y[2] * len;
+  } else {
+    return false;
+  }
+
+  const float uvScale = 8.0f;
+
+  texcoords[0][0] = 0.0f;
+  texcoords[0][1] = 0.0f;
+  const int count = vertices.getSize();
+  for (int i = 1; i < count; i++) {
+    float delta[3];
+    vec3sub (delta, vertices[i], vertices[0]);
+    texcoords[i][0] = vec3dot(delta, x) / uvScale;
+    texcoords[i][1] = vec3dot(delta, y) / uvScale;
+  }
+
+  return true;
 }
 
 
@@ -595,19 +641,44 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 	if (face == NULL) {
 		return 0;
 	}
-	if (!face->useTexcoords()) {
-		return 0;
+
+  // defined texcoords	
+	if (face->useTexcoords()) {
+    const int elements = face->getVertexCount();
+    lua_createtable(L, elements, 0);
+    for (int i = 0; i < elements; i++) {
+      const float* vec = face->getTexcoord(i);
+      lua_createtable(L, 2, 0);
+      lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
+      lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
+      lua_rawseti(L, -2, i + 1);
+  	}
+		return 1;
 	}
-	const int elements = face->getVertexCount();
-	lua_createtable(L, elements, 0);
-	for (int i = 0; i < elements; i++) {
-		const float* vec = face->getTexcoord(i);
-		lua_createtable(L, 2, 0);
-		lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
-		lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
-		lua_rawseti(L, -2, i + 1);
-	}
-	return 1;
+
+  // generated texcoords	
+	if (!lua_isboolean(L, 3) || lua_tobool(L, 3)) {
+    const int elements = face->getVertexCount();
+    GLfloat3Array vertArray(elements);
+    for (int i = 0; i < elements; i++) {
+      memcpy(vertArray[i], face->getVertex(i), sizeof(float[3]));
+    }
+    GLfloat2Array txcdArray(elements);
+    if (!makeTexcoords(face->getPlane(), vertArray, txcdArray)) {
+      return 0;
+    }
+    lua_createtable(L, elements, 0);
+    for (int i = 0; i < elements; i++) {
+      const float* vec = txcdArray[i];
+      lua_createtable(L, 2, 0);
+      lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
+      lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
+      lua_rawseti(L, -2, i + 1);
+  	}
+		return 1;
+  }
+
+	return 0;
 }
 
 

@@ -12,6 +12,8 @@
 
 #include "common.h"
 
+// implementation header
+#include "LuaFontTexture.h"
 
 #define PRINTF printf // FIXME ?
 
@@ -24,14 +26,6 @@
 
 
 // missing IL/ILU, stub the routines
-
-
-// system headers
-#include <string>
-
-// local headers
-#include "LuaFontTexture.h"
-
 
 void LuaFontTexture::Reset()   { return; }
 bool LuaFontTexture::Execute() { return false; }
@@ -71,9 +65,6 @@ using namespace std;
 
 #include <IL/il.h>
 #include <IL/ilu.h>
-
-// local headers
-#include "LuaFontTexture.h"
 
 
 // custom types
