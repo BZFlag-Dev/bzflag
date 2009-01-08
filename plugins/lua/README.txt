@@ -1,6 +1,6 @@
 ========================================================================
-    DYNAMIC LINK LIBRARY : lua Project Overview
+    DYNAMIC LINK LIBRARY : bzfslua Project Overview
 ========================================================================
 
-This is the lua plugin.
+This is the bzfslua plugin.
 

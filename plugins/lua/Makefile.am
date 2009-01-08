@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libbzfslua.la
+lib_LTLIBRARIES = bzfslua.la
 
 AM_CPPFLAGS = @CONF_CPPFLAGS@ -I../../src/other/lua/src
 AM_CXXFLAGS = @CONF_CXXFLAGS@ -I../../src/other/lua/src
@@ -15,7 +15,7 @@ noinst_HEADERS =      \
 	rawlink.h     \
 	slashcmd.h
 
-libbzfslua_la_SOURCES = \
+bzfslua_la_SOURCES = \
 	bzdb.cpp      \
 	callins.cpp   \
 	callouts.cpp  \
@@ -27,11 +27,11 @@ libbzfslua_la_SOURCES = \
 	rawlink.cpp   \
 	slashcmd.cpp
 
-libbzfslua_la_LDFLAGS = -module -avoid-version
+bzfslua_la_LDFLAGS = -module -avoid-version
 
-libbzfslua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
+bzfslua_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 
-libbzfslua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
+bzfslua_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la \
                         $(top_builddir)/../src/other/lua/liblua.la
 
 EXTRA_DIST =       \
