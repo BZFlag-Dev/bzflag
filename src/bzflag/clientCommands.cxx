@@ -730,9 +730,10 @@ static void* writeScreenshot(void* data)
       std::string file;
       while (FindNextFile(h, &findData)) {
         file = findData.cFileName;
-        int number = atoi((file.substr(file.length()-8, 4)).c_str());
-        if (number > snap)
+        const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
+        if (snap < number) {
           snap = number;
+        }
       }
     }
 #else
@@ -743,9 +744,10 @@ static void* writeScreenshot(void* data)
       while ((contents = readdir(directory))) {
         file = contents->d_name;
         if (glob_match(pattern, file)) {
-          int number = atoi((file.substr(file.length()-8, 4)).c_str());
-          if (number > snap)
-            number = snap;
+          const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
+          if (snap < number) {
+            snap = number;
+          }
         }
       }
       closedir(directory);
@@ -753,7 +755,8 @@ static void* writeScreenshot(void* data)
 #endif // _WIN32
   }
 
-  filename += prefix + TextUtils::format("%04d", ++snap) + ext;
+  snap++;
+  filename += prefix + TextUtils::format("%04d", snap) + ext;
 
   BZDB.setInt(std::string("lastScreenshot"),snap);
   UNLOCK_SCREENSHOT_MUTEX
