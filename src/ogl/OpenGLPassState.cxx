@@ -611,8 +611,8 @@ void OpenGLPassState::SetupScreenMatrices()
   const float halfSY = 0.5f * spsy;      // half screen pixel size y
 
   const float zplane = dist * (spsx / width);
-  const float znear  = zplane * 0.5;
-  const float zfar   = zplane * 2.0;
+  const float znear  = zplane * 0.5f;
+  const float zfar   = zplane * 2.0f;
   const float factor = (znear / zplane);
   const float left   = (wppx - halfSX) * factor;
   const float bottom = (wppy - halfSY) * factor;

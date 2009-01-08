@@ -47,8 +47,8 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 {
   list->set_reversed(reversed);
   assert(eventMap.find(eName) == eventMap.end());
-  const bool reqFullRead  = (bits & REQ_FULL_READ);
-  const bool reqInputCtrl = (bits & REQ_INPUT_CTRL);
+  const bool reqFullRead  = ((bits & REQ_FULL_READ) ? true : false);
+  const bool reqInputCtrl = ((bits & REQ_INPUT_CTRL) ? true : false);
   eventMap[eName] = EventInfo(eName, list, reqFullRead, reqInputCtrl, reversed);
 }
 
