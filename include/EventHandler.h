@@ -265,16 +265,16 @@ extern EventHandler eventHandler;
 // Inlined call-in loops, for speed
 //
 
-#define EC_LOOP_START(name)                \
+#define EC_LOOP_START(name)             \
   EventClientList& list = list ## name; \
   if (list.empty()) { return; }         \
   EventClient* ec;                      \
   size_t i = 0;                         \
   list.start(i);                        \
-  while (list.next(i, ec)) {            \
+  while (list.next(i, ec)) {
 
 #define EC_LOOP_END(name) \
-  }                    \
+  }                       \
   list.finish();
 
 
@@ -302,39 +302,39 @@ extern EventHandler eventHandler;
   }
 
 
-EC_LOOP_0_PARAM(Update);
+EC_LOOP_0_PARAM(Update)
 
-EC_LOOP_1_PARAM(BZDBChange, const std::string&);
+EC_LOOP_1_PARAM(BZDBChange, const std::string&)
 
-EC_LOOP_3_PARAM(RecvChatMsg, const std::string&, int /*srcID*/, int /*dstID*/);
+EC_LOOP_3_PARAM(RecvChatMsg, const std::string&, int /*srcID*/, int /*dstID*/)
 
-EC_LOOP_0_PARAM(ServerJoined);
-EC_LOOP_0_PARAM(ServerParted);
+EC_LOOP_0_PARAM(ServerJoined)
+EC_LOOP_0_PARAM(ServerParted)
 
-EC_LOOP_1_PARAM(PlayerAdded,       const Player&);
-EC_LOOP_1_PARAM(PlayerRemoved,     const Player&);
-EC_LOOP_1_PARAM(PlayerSpawned,     const Player&);
-EC_LOOP_1_PARAM(PlayerKilled,      const Player&);
-EC_LOOP_1_PARAM(PlayerJumped,      const Player&);
-EC_LOOP_1_PARAM(PlayerLanded,      const Player&);
-EC_LOOP_3_PARAM(PlayerTeleported,  const Player&, int /*srcLink*/, int /*dstLink*/);
-EC_LOOP_1_PARAM(PlayerTeamChange,  const Player&);
-EC_LOOP_1_PARAM(PlayerScoreChange, const Player&);
+EC_LOOP_1_PARAM(PlayerAdded,       const Player&)
+EC_LOOP_1_PARAM(PlayerRemoved,     const Player&)
+EC_LOOP_1_PARAM(PlayerSpawned,     const Player&)
+EC_LOOP_1_PARAM(PlayerKilled,      const Player&)
+EC_LOOP_1_PARAM(PlayerJumped,      const Player&)
+EC_LOOP_1_PARAM(PlayerLanded,      const Player&)
+EC_LOOP_3_PARAM(PlayerTeleported,  const Player&, int /*srcLink*/, int /*dstLink*/)
+EC_LOOP_1_PARAM(PlayerTeamChange,  const Player&)
+EC_LOOP_1_PARAM(PlayerScoreChange, const Player&)
 
-EC_LOOP_1_PARAM(FlagAdded,       const Flag&);
-EC_LOOP_1_PARAM(FlagRemoved,     const Flag&);
-EC_LOOP_2_PARAM(FlagGrabbed,     const Flag&, const Player&);
-EC_LOOP_2_PARAM(FlagDropped,     const Flag&, const Player&);
-EC_LOOP_2_PARAM(FlagCaptured,    const Flag&, const Player&);
-EC_LOOP_3_PARAM(FlagTransferred, const Flag&, const Player&, const Player&);
+EC_LOOP_1_PARAM(FlagAdded,       const Flag&)
+EC_LOOP_1_PARAM(FlagRemoved,     const Flag&)
+EC_LOOP_2_PARAM(FlagGrabbed,     const Flag&, const Player&)
+EC_LOOP_2_PARAM(FlagDropped,     const Flag&, const Player&)
+EC_LOOP_2_PARAM(FlagCaptured,    const Flag&, const Player&)
+EC_LOOP_3_PARAM(FlagTransferred, const Flag&, const Player&, const Player&)
 
-EC_LOOP_1_PARAM(ShotAdded,   const FiringInfo&);
-EC_LOOP_1_PARAM(ShotRemoved, const FiringInfo&);
-EC_LOOP_3_PARAM(ShotTeleported, const ShotPath&, int /*srcLink*/, int /*dstLink*/);
+EC_LOOP_1_PARAM(ShotAdded,   const FiringInfo&)
+EC_LOOP_1_PARAM(ShotRemoved, const FiringInfo&)
+EC_LOOP_3_PARAM(ShotTeleported, const ShotPath&, int /*srcLink*/, int /*dstLink*/)
 
-EC_LOOP_0_PARAM(ViewResize);
-EC_LOOP_0_PARAM(GLContextInit);
-EC_LOOP_0_PARAM(GLContextFree);
+EC_LOOP_0_PARAM(ViewResize)
+EC_LOOP_0_PARAM(GLContextInit)
+EC_LOOP_0_PARAM(GLContextFree)
 
 
 #undef EC_LOOP_3_PARAM

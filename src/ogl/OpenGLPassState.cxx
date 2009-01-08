@@ -279,6 +279,7 @@ inline void OpenGLPassState::EnableCommon(DrawMode mode)
 
 inline void OpenGLPassState::DisableCommon(DrawMode mode)
 {
+  mode = mode;
   assert(drawMode == mode);
   // FIXME  --  not needed by shadow or radar
   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR); // FIXME for bz???
