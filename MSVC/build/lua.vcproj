@@ -254,14 +254,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lua.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\luac.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\other\lua\src\lundump.c"
 				>
 			</File>
