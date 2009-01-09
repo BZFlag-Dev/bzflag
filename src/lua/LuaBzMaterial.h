@@ -32,9 +32,11 @@ class LuaBzMaterial {
 		static int GetMaterialNoSorting(lua_State* L);
 		static int GetMaterialAlphaThresh(lua_State* L);
 
+		static int GetMaterialTextureCount(lua_State* L);
 		static int GetMaterialTexture(lua_State* L);
 		static int GetMaterialTextureInfo(lua_State* L);
 
+		static int GetMaterialShaderCount(lua_State* L);
 		static int GetMaterialShader(lua_State* L);
 };
 

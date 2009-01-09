@@ -287,23 +287,11 @@ void SceneRenderer::setQuality(int value)
 
   // this setting helps keep those specular highlights
   // highlighting when applied to a dark textured surface.
-  // It was mainlined in OpenGL Version 1.2
-  // (there's also the GL_EXT_separate_specular_color extension)
-#ifdef GL_LIGHT_MODEL_COLOR_CONTROL
-  if (useQualityValue >= _MEDIUM_QUALITY)
+  if (useQualityValue >= _MEDIUM_QUALITY) {
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-  else
+  } else {
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
-#  else // in case someone includes <GL/glext.h> at some point
-#  ifdef GL_LIGHT_MODEL_COLOR_CONTROL_EXT
-  if (useQualityValue >= _MEDIUM_QUALITY)
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-		  GL_SEPARATE_SPECULAR_COLOR_EXT);
-  else
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-		  GL_SINGLE_COLOR_EXT);
-#  endif
-#endif
+  }
 
   BZDB.set("useQuality", TextUtils::format("%d", value));
 }
@@ -1089,6 +1077,8 @@ void draw3rdPersonTarget ( SceneRenderer*  /* renderer */ )
 void SceneRenderer::doRender()
 {
   const bool mirrorPass = (mirror && clearZbuffer);
+
+  eventHandler.DrawWorldStart(); // FIXME
 
   // render the ground tank tracks
   if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {

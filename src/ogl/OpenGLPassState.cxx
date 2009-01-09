@@ -562,16 +562,14 @@ void OpenGLPassState::ResetDrawRadar()
 
 void OpenGLPassState::SetupWorldLighting()
 {
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+//FIXME  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 //FIXME  glLightfv(GL_LIGHT1, GL_POSITION, mapInfo->light.sunDir);
-  glEnable(GL_LIGHT1);
 }
 
 
 void OpenGLPassState::RevertWorldLighting()
 {
-  glDisable(GL_LIGHT1);
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+//FIXME  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
 }
 
 

@@ -233,11 +233,13 @@ class DocketFS : public BzFS
 
 BzVFS::BzVFS()
 {
+  BZDB.addCallback("luaUserDir", bzdbCallback, this);
 }
 
 
 BzVFS::~BzVFS()
 {
+  BZDB.removeCallback("luaUserDir", bzdbCallback, this);
   clear();
 }
 
@@ -605,3 +607,22 @@ bool BzVFS::rawDirList(const string& root, const string& path, bool recursive,
 
 /******************************************************************************/
 /******************************************************************************/
+
+void BzVFS::bzdbChange(const string& name)
+{
+  if (name == "luaUserDir") {
+    removeFS(BZVFS_LUA_USER);
+    addFS(BZVFS_LUA_USER,  BZDB.get("luaUserDir"));
+  }
+}
+
+
+void BzVFS::bzdbCallback(const string& name, void* data)
+{
+  ((BzVFS*)data)->bzdbChange(name);
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+

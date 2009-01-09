@@ -78,7 +78,13 @@ bool LuaObstacle::PushEntries(lua_State* L)
 }
 
 
-static bool makeTexcoords(const float* plane, // FIXME MeshSceneNodeGenerator ?
+/******************************************************************************/
+/******************************************************************************/
+
+// FIXME -- copied from MeshSceneNodeGenerator
+//       -- doesn't want to link
+
+static bool makeTexcoords(const float* plane,
 					                const GLfloat3Array& vertices,
 					                GLfloat2Array& texcoords)
 {

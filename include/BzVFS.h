@@ -118,9 +118,13 @@ class BzVFS {
     static std::string cleanDirPath(const std::string& path);
     static std::string cleanFilePath(const std::string& path);
 
-  protected:
+  private:
     bool safePath(const std::string& path);
     void getSystems(const std::string& modes, std::vector<BzFS*>& fileSystems);
+
+  private:
+    void bzdbChange(const std::string& name);
+    static void bzdbCallback(const std::string& name, void* data);
 
   private:
     typedef std::map<std::string, BzFS*> FSMap;

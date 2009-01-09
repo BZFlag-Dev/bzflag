@@ -47,9 +47,11 @@ bool LuaBzMaterial::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetMaterialNoSorting);
 	PUSH_LUA_CFUNC(L, GetMaterialAlphaThresh);
 
+	PUSH_LUA_CFUNC(L, GetMaterialTextureCount);
 	PUSH_LUA_CFUNC(L, GetMaterialTexture);
 	PUSH_LUA_CFUNC(L, GetMaterialTextureInfo);
 
+	PUSH_LUA_CFUNC(L, GetMaterialShaderCount);
 	PUSH_LUA_CFUNC(L, GetMaterialShader);
 
 	return true;
@@ -158,6 +160,17 @@ int LuaBzMaterial::GetMaterialDynCol(lua_State* L)
 }
 
 
+int LuaBzMaterial::GetMaterialTextureCount(lua_State* L)
+{
+	const BzMaterial* mat = ParseBzMat(L, 1);
+	if (mat == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, mat->getTextureCount());
+	return 1;
+}
+
+
 int LuaBzMaterial::GetMaterialTexture(lua_State* L)
 {
 	const BzMaterial* mat = ParseBzMat(L, 1);
@@ -194,6 +207,17 @@ int LuaBzMaterial::GetMaterialTextureInfo(lua_State* L)
 	if (texmat >= 0) {
 		HSTR_PUSH_INT(L,  "texmat",    texmat);
 	}
+	return 1;
+}
+
+
+int LuaBzMaterial::GetMaterialShaderCount(lua_State* L)
+{
+	const BzMaterial* mat = ParseBzMat(L, 1);
+	if (mat == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, mat->getShaderCount());
 	return 1;
 }
 

@@ -19,6 +19,11 @@ class LuaCallOuts {
 
     static int GetGameInfo(lua_State* L);
 
+    static int GetServerAddress(lua_State* L); // FIXME -- not implemented
+    static int GetServerIP(lua_State* L);
+    static int GetServerPort(lua_State* L);
+    static int GetServerDescription(lua_State* L);
+
     static int GetWind(lua_State* L);
     static int GetLights(lua_State* L);
 
@@ -28,6 +33,14 @@ class LuaCallOuts {
     static int PlaySound(lua_State* L);
 
     static int GetViewType(lua_State* L);
+
+    static int GetKeyBindings(lua_State* L); // FIXME -- not implemented
+    static int GetKeyBindingCmd(lua_State* L);
+
+    static int GetTime(lua_State* L);
+    static int GetGameTime(lua_State* L);
+    static int GetTimer(lua_State* L);
+    static int DiffTimers(lua_State* L);
 
     static int GetRoamInfo(lua_State* L);
     static int SetRoamInfo(lua_State* L);
@@ -42,11 +55,6 @@ class LuaCallOuts {
     static int GetCameraRight(lua_State* L);
     static int GetCameraMatrix(lua_State* L);
     static int GetFrustumPlane(lua_State* L);
-
-    static int GetTime(lua_State* L);
-    static int GetGameTime(lua_State* L);
-    static int GetTimer(lua_State* L);
-    static int DiffTimers(lua_State* L);
 
     static int GetTeamList(lua_State* L);
     static int GetTeamPlayers(lua_State* L);

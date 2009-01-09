@@ -466,8 +466,11 @@ int LuaShaderMgr::CreateShader(lua_State* L)
 {
 	const int args = lua_gettop(L);
 	if ((args != 1) || !lua_istable(L, 1)) {
-		luaL_error(L, "Incorrect arguments to gl.CreateShader()");
+		errorLog = "Incorrect arguments to gl.CreateShader()";
+		luaL_error(L, errorLog.c_str());
 	}
+
+	errorLog.clear();
 
 	vector<string> vertSrcs;
 	vector<string> geomSrcs;
@@ -475,6 +478,7 @@ int LuaShaderMgr::CreateShader(lua_State* L)
 	if (!ParseSources(L, 1, "vertex",   vertSrcs) ||
 	    !ParseSources(L, 1, "geometry", geomSrcs) ||
 	    !ParseSources(L, 1, "fragment", fragSrcs)) {
+		errorLog = "No sources";
 		return 0;
 	}
 	if (vertSrcs.empty() &&

@@ -1718,13 +1718,12 @@ int LuaOpenGL::PolygonOffset(lua_State* L)
 		}
 	}
 	else if (args == 2) {
-		if (!lua_israwnumber(L, 1) || !lua_israwnumber(L, 2)) {
-			luaL_error(L, "Incorrect arguments to gl.PolygonOffset()");
-		}
+		const float factor = luaL_checkfloat(L, 1);
+		const float units  = luaL_checkfloat(L, 2);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glEnable(GL_POLYGON_OFFSET_LINE);
 		glEnable(GL_POLYGON_OFFSET_POINT);
-		glPolygonOffset((GLfloat)lua_tonumber(L, 1), (GLfloat)lua_tonumber(L, 2));
+		glPolygonOffset(factor, units);
 	}
 	else {
 		luaL_error(L, "Incorrect arguments to gl.PolygonOffset()");
@@ -2257,7 +2256,7 @@ int LuaOpenGL::Light(lua_State* L)
 		array[0] = (GLfloat)luaL_checknumber(L, 3);
 		array[1] = (GLfloat)luaL_checknumber(L, 4);
 		array[2] = (GLfloat)luaL_checknumber(L, 5);
-		array[3] = (GLfloat)luaL_checknumber(L, 5);
+		array[3] = (GLfloat)luaL_checknumber(L, 6);
 		glLightfv(light, pname, array);
 	}
 	else {
