@@ -182,6 +182,9 @@ AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Force compilation o
 # compile our own ftgl
 AC_ARG_ENABLE(ftgl_build, [  --enable-ftgl-build     Force compilation of ftgl])
 
+# compile our own glew
+AC_ARG_ENABLE(glew_build, [  --enable-glew-build     Force compilation of glew])
+
 # compile our own regex
 AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
 
@@ -197,6 +200,7 @@ if test "x$enable_all_builds" = "xyes" ; then
     enable_curl_build=yes
     enable_freetype_build=yes
     enable_ftgl_build=yes
+    enable_glew_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
 fi
@@ -539,20 +543,21 @@ if test "x$enable_threads" != "xno" ; then
 fi
 
 # Check for the GLEW library (GL Extension Wrangler)
-AC_MSG_CHECKING([for GLEW library])
-tmpLIBS=$LIBS
-GLEW_LIBS="-lGLEW"
-LIBS=$GLEW_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-				[[glewInit()]])],
-	       [glew_check="yes"], [glew_check="no"])
-if test "x$glew_check" = "xno"; then
-    GLEW_LIBS=""
+if test "x$enable_glew_build" != "xyes" ; then
+    AC_MSG_CHECKING([for GLEW library])
+    tmpLIBS=$LIBS
+    GLEW_LIBS="-lGLEW"
+    LIBS=$GLEW_LIBS
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
+				    [[glewInit()]])],
+		   [glew_check="yes"], [glew_check="no"])
+    if test "x$glew_check" = "xno"; then
+	GLEW_LIBS=""
+    fi
+    AC_MSG_RESULT([$glew_check])
+    AC_SUBST(GLEW_LIBS)
+    LIBS=$tmpLIBS
 fi
-AC_MSG_RESULT([$glew_check])
-AC_SUBST(GLEW_LIBS)
-LIBS=$tmpLIBS
-
 
 # Check for the IL library (Image Library, aka: DevIL)
 AC_MSG_CHECKING([for IL library])
@@ -1183,13 +1188,13 @@ fi
 AC_SUBST(LIBFREETYPE)
 AC_MSG_RESULT($BUILD_FREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, test "x$BUILD_FREETYPE" = "xyes")
-else # have_gl
+else # enable_client
 dnl clients are not being built
 BUILD_FREETYPE="no (clients disabled)"
 AC_MSG_NOTICE([Freetype2 is disabled because no clients are being built])
 AC_SUBST(LIBFREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, false)
-fi # have_gl
+fi # enable_client
 if test "x$BUILD_FREETYPE" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
 fi
@@ -1218,13 +1223,13 @@ fi
 AC_SUBST(LIBFTGL)
 AC_MSG_RESULT($BUILD_FTGL)
 AM_CONDITIONAL(BUILD_FTGL, test "x$BUILD_FTGL" = "xyes")
-else # have_gl
+else # enable_client
 dnl clients are not being built
 BUILD_FTGL="no (clients disabled)"
 AC_MSG_NOTICE([FTGL is disabled because no clients are being built])
 AC_SUBST(LIBFTGL)
 AM_CONDITIONAL(BUILD_FTGL, false)
-fi # have_gl
+fi # enable_client
 if test "x$BUILD_FTGL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
 fi
@@ -1506,6 +1511,7 @@ AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
 AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
 AC_MSG_RESULT([Build freetype2 ...: $BUILD_FREETYPE])
 AC_MSG_RESULT([Build ftgl ........: $BUILD_FTGL])
+AC_MSG_RESULT([Build glew ........: $BUILD_GLEW])
 AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
 AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
 AC_MSG_RESULT([])
