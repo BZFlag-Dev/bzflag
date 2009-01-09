@@ -665,7 +665,8 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
     myTank->setInputMethod(LocalPlayer::Keyboard);
   }
 
-  if (myTank && myTank->getInputMethod() == LocalPlayer::Keyboard) {
+  if (myTank &&
+      ((myTank->getInputMethod() == LocalPlayer::Keyboard) || devDriving)) {
     switch (keyboardMovement) {
       case Left:  { myTank->setKey(BzfKeyEvent::Left,  pressed); break; }
       case Right: { myTank->setKey(BzfKeyEvent::Right, pressed); break; }
@@ -5815,12 +5816,12 @@ static void setupNearPlane()
 
   const Player *tank = myTank;
   if (ROAM.isRoaming()) {
-    if (ROAM.getMode() != Roaming::roamViewFP)
+    if (ROAM.getMode() != Roaming::roamViewFP) {
       return;
-
-    if (!devDriving)
+    }
+    if (!devDriving) {
       tank = ROAM.getTargetTank();
-
+    }
   }
   if (tank == NULL)
     return;
@@ -5959,11 +5960,12 @@ void drawFrame(const float dt)
     const Roaming::RoamingCamera *roam = ROAM.getCamera();
     if (!(ROAM.getMode() == Roaming::roamViewFree) &&
 	(ROAM.getTargetTank() || (devDriving && myTank))) {
-      Player *target;
-      if (!devDriving)
+      Player* target;
+      if (!devDriving) {
 	target = ROAM.getTargetTank();
-      else
+      } else {
 	target = myTank;
+      }
 
       const float *targetTankDir = target->getForward();
       // fixed camera tracking target
@@ -5974,7 +5976,7 @@ void drawFrame(const float dt)
 	targetPoint[0] = target->getPosition()[0];
 	targetPoint[1] = target->getPosition()[1];
 	targetPoint[2] = target->getPosition()[2] +
-	  target->getMuzzleHeight();
+	                 target->getMuzzleHeight();
       } else if (ROAM.getMode() == Roaming::roamViewFollow) {
 	// camera following target
 	if (!trackPlayerShot(target, eyePoint, targetPoint)) {
@@ -6029,8 +6031,9 @@ void drawFrame(const float dt)
     }
     if (!devDriving) {
       float virtPos[] = {eyePoint[0], eyePoint[1], 0};
-      if (myTank)
+      if (myTank) {
 	myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
+      }
     }
     fov = (float)(roam->zoom * M_PI / 180.0);
     SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);

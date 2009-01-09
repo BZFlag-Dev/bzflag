@@ -59,6 +59,7 @@
 #include "ParseColor.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
+#include "Roaming.h"
 #include "ServerListCache.h"
 #include "HUDuiServerListCache.h"
 #include "StateDatabase.h"
@@ -226,6 +227,7 @@ static void parse(int argc, char **argv)
       debugLevel++;
     } else if (strcmp(argv[i], "-devlua") == 0) {
       LuaClientScripts::SetDevMode(true);
+      devDriving = true;
     } else if ((strcmp(argv[i], "-dir") == 0) ||
 	       (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);

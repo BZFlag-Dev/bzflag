@@ -602,27 +602,28 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 	}
 
 	ROAM.setMode(mode);
-	lua_pushboolean(L, true);
 
 	switch (mode) {
 		case Roaming::roamViewTrack:
 		case Roaming::roamViewFollow:
 		case Roaming::roamViewFP: {
 			if (lua_israwnumber(L, 2)) {
-				const Player* player = ParsePlayer(L, 8);
+				const Player* player = ParsePlayer(L, 2);
 				if (player != NULL) {
 					ROAM.changeTarget(Roaming::explicitSet, player->getId());
 				}
 			}
+			lua_pushboolean(L, true);
 			return 1;
 		}
 		case Roaming::roamViewFlag: {
 			if (lua_israwnumber(L, 2)) {
-				const ClientFlag* flag = ParseFlag(L, 8);
+				const ClientFlag* flag = ParseFlag(L, 2);
 				if (flag != NULL) {
 					ROAM.changeTarget(Roaming::explicitSet, flag->id);
 				}
 			}
+			lua_pushboolean(L, true);
 			return 1;
 		}
 		case Roaming::roamViewFree: {
@@ -635,6 +636,7 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 			cam.phi    = luaL_optfloat(L, 6, cam.phi);
 			cam.zoom   = luaL_optfloat(L, 7, cam.zoom);
 			ROAM.setCamera(&cam);
+			lua_pushboolean(L, true);
 			return 1;
 		}
 		case Roaming::roamViewDisabled:

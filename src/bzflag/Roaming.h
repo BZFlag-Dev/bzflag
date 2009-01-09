@@ -133,7 +133,8 @@ inline const Roaming::RoamingCamera* Roaming::getCamera() const {
   return &camera;
 }
 
-extern const bool devDriving;
+
+extern bool devDriving;
 
 
 // Local Variables: ***
