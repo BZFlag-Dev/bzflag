@@ -227,10 +227,14 @@ void LuaHandle::CheckStack()
 
 void LuaHandle::UpdateCallIn(const string& ciName, bool state)
 {
+	string realName = ciName;
+	if (ciName == "GLReload") {
+		realName = "GLContextInit";
+	}
 	if (state) {
-		eventHandler.InsertEvent(this, ciName);
+		eventHandler.InsertEvent(this, realName);
 	} else {
-		eventHandler.RemoveEvent(this, ciName);
+		eventHandler.RemoveEvent(this, realName);
 	}
 }
 
@@ -276,9 +280,13 @@ bool LuaHandle::CanUseCallIn(int code) const
 }
 
 
-bool LuaHandle::CanUseCallIn(const string& name) const
+bool LuaHandle::CanUseCallIn(const string& ciName) const
 {
-	const int code = luaCallInDB.GetCode(name);
+	string realName = ciName;
+	if (ciName == "GLContextInit") {
+		realName = "GLReload";
+	}
+	const int code = luaCallInDB.GetCode(realName);
 	if (code == 0)  {
 		return false;
 	}	

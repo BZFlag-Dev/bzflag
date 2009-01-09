@@ -91,8 +91,8 @@ class OpenGLGState {
 				void* userData);
 
     static void		initContext();
-    static bool		getExecutingFreeFuncs();
-    static bool		getExecutingInitFuncs();
+    static bool		isExecutingFreeFuncs();
+    static bool		isExecutingInitFuncs();
 
   private:
     static void		initGLState();
@@ -133,11 +133,11 @@ class OpenGLGState {
     static bool executingInitFuncs;
 };
 
-inline bool OpenGLGState::getExecutingFreeFuncs()
+inline bool OpenGLGState::isExecutingFreeFuncs()
 {
   return executingFreeFuncs;
 }
-inline bool OpenGLGState::getExecutingInitFuncs()
+inline bool OpenGLGState::isExecutingInitFuncs()
 {
   return executingInitFuncs;
 }

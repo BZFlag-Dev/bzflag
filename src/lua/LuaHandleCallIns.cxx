@@ -501,31 +501,24 @@ void LuaHandle::ViewResize()
 }
 
 
+// NOTE:  GLContextInit  vs.  GLReload
 void LuaHandle::GLContextInit()
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 2);
-	if (!PushCallIn(LUA_CI_GLContextInit)) {
+	if (!PushCallIn(LUA_CI_GLReload)) {
 		return; // the call is not defined
 	}
 
 	// call the routine
-	RunCallIn(LUA_CI_GLContextInit, 0, 0);
+	RunCallIn(LUA_CI_GLReload, 0, 0);
 	return;
 }
 
 
 void LuaHandle::GLContextFree()
 {
-	LUA_CALL_IN_CHECK(L);	
-	lua_checkstack(L, 2);
-	if (!PushCallIn(LUA_CI_GLContextFree)) {
-		return; // the call is not defined
-	}
-
-	// call the routine
-	RunCallIn(LUA_CI_GLContextFree, 0, 0);
-	return;
+	return; // do nothing, lua scripts should not need it
 }
 
 

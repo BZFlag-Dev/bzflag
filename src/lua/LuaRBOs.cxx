@@ -215,6 +215,9 @@ int LuaRBOMgr::CreateRBO(lua_State* L)
 
 int LuaRBOMgr::DeleteRBO(lua_State* L)
 {
+	if (OpenGLGState::isExecutingInitFuncs()) {
+		luaL_error(L, "gl.DeleteRBO can not be used in GLInitContext");
+	}
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}

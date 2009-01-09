@@ -8,6 +8,7 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libGLKit_la_LDFLAGS = -static
 libGLKit_la_SOURCES =		\
+	OpenGLContext.cxx	\
 	OpenGLGState.cxx	\
 	OpenGLLight.cxx		\
 	OpenGLMaterial.cxx	\

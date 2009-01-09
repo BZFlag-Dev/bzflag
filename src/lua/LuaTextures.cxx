@@ -617,6 +617,9 @@ int LuaTextureMgr::MetaIndex(lua_State* L)
 
 int LuaTextureMgr::DeleteTexture(lua_State* L)
 {
+	if (OpenGLGState::isExecutingInitFuncs()) {
+		luaL_error(L, "gl.DeleteTexture can not be used in GLInitContext");
+	}
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}

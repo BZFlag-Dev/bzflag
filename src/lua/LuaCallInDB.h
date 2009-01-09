@@ -62,8 +62,7 @@ enum LuaCallInCode {
 	LUA_CI_WordComplete,
 
 	LUA_CI_ViewResize,
-	LUA_CI_GLContextInit,
-	LUA_CI_GLContextFree,
+	LUA_CI_GLReload,
 
 	LUA_CI_DrawGenesis,
 	LUA_CI_DrawWorldStart,

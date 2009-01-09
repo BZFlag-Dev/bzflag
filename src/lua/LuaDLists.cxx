@@ -245,6 +245,9 @@ int LuaDListMgr::CallList(lua_State* L)
 
 int LuaDListMgr::DeleteList(lua_State* L)
 {
+	if (OpenGLGState::isExecutingInitFuncs()) {
+		luaL_error(L, "gl.DeleteList can not be used in GLInitContext");
+	}
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}

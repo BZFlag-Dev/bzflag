@@ -1499,149 +1499,8 @@ OpenGLGState OpenGLGStateBuilder::getState() const
 /******************************************************************************/
 /******************************************************************************/
 //
-// TODO: Move the rest of this junk into it's own file,
-//       bring the context switch stuff along for the ride
+//  OpenGLGState::haveGLContext()
 //
-
-// for hooking debuggers
-static void contextFreeError(const char* message)
-{
-  printf ("contextFreeError(): %s\n", message);
-}
-static void contextInitError(const char* message)
-{
-  printf ("contextInitError(): %s\n", message);
-}
-
-
-#undef glNewList
-void bzNewList(GLuint list, GLenum mode)
-{
-  glNewList(list, mode);
-  return;
-}
-
-#undef glGenLists
-GLuint bzGenLists(GLsizei count)
-{
-  if (OpenGLGState::getExecutingFreeFuncs()) {
-    contextFreeError ("bzGenLists() is having issues");
-  }
-  GLuint base = glGenLists(count);
-  //logDebugMessage(4,"genList = %i (%i)\n", (int)base, (int)count);
-  return base;
-}
-
-#undef glDeleteLists
-void bzDeleteLists(GLuint base, GLsizei count)
-{
-  if (OpenGLGState::getExecutingInitFuncs()) {
-    contextInitError ("bzDeleteLists() is having issues");
-  }
-  if (OpenGLGState::haveGLContext()) {
-    glDeleteLists(base, count);
-  } else {
-    logDebugMessage(4,"bzDeleteLists(), no context\n");
-  }
-  return;
-}
-
-#undef glGenTextures
-void bzGenTextures(GLsizei count, GLuint *textures)
-{
-  if (OpenGLGState::getExecutingFreeFuncs()) {
-    contextFreeError ("bzGenTextures() is having issues");
-  }
-  glGenTextures(count, textures);
-  return;
-}
-
-#undef glDeleteTextures
-void bzDeleteTextures(GLsizei count, const GLuint *textures)
-{
-  if (OpenGLGState::getExecutingInitFuncs()) {
-    contextInitError ("bzDeleteTextures() is having issues");
-  }
-  if (OpenGLGState::haveGLContext()) {
-    glDeleteTextures(count, textures);
-  } else {
-    logDebugMessage(4,"bzDeleteTextures(), no context\n");
-  }
-  return;
-}
-
-
-//
-// Test for matrix underflows (overflows are not yet tested)
-//
-#ifdef DEBUG_GL_MATRIX_STACKS
-
-static GLenum matrixMode = GL_MODELVIEW;
-static int matrixDepth[3] = {0, 0, 0};
-static const int maxMatrixDepth[3] = {32, 2, 2}; // guaranteed
-
-static inline int getMatrixSlot(GLenum mode)
-{
-  if (mode == GL_MODELVIEW) {
-    return 0;
-  } else if (mode == GL_PROJECTION) {
-    return 1;
-  } else if (mode == GL_TEXTURE) {
-    return 2;
-  } else {
-    return -1;
-  }
-}
-
-#undef glPushMatrix
-void bzPushMatrix()
-{
-  int slot = getMatrixSlot(matrixMode);
-  if (slot < 0) {
-    printf ("bzPushMatrix(): bad matrix mode: %i\n", matrixMode);
-    return;
-  }
-  matrixDepth[slot]++;
-  if (matrixDepth[slot] > maxMatrixDepth[slot]) {
-    printf ("bzPushMatrix(): overflow (mode %i, depth %i)\n",
-	    matrixMode, matrixDepth[slot]);
-    return;
-  }
-  glPushMatrix();
-}
-
-#undef glPopMatrix
-void bzPopMatrix()
-{
-  int slot = getMatrixSlot(matrixMode);
-  if (slot < 0) {
-    printf ("bzPopMatrix(): bad matrix mode: %i\n", matrixMode);
-    return;
-  }
-  matrixDepth[slot]--;
-  if (matrixDepth[slot] < 0) {
-    printf ("bzPopMatrix(): underflow (mode %i, depth %i)\n",
-	    matrixMode, matrixDepth[slot]);
-    return;
-  }
-  glPopMatrix();
-}
-
-#undef glMatrixMode
-void bzMatrixMode(GLenum mode)
-{
-  int slot = getMatrixSlot(matrixMode);
-  if (slot < 0) {
-    printf ("bzMatrixMode(): bad matrix mode: %i\n", mode);
-    return;
-  }
-  matrixMode = mode;
-  glMatrixMode(mode);
-  logDebugMessage(3,"MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
-}
-
-#endif // DEBUG_GL_MATRIX_STACKS
-
 
 #ifdef _WIN32
 #  define GET_CURRENT_CONTEXT wglGetCurrentContext
@@ -1673,6 +1532,10 @@ bool OpenGLGState::haveGLContext()
     return false;
   }
 }
+
+
+/******************************************************************************/
+/******************************************************************************/
 
 
 // Local Variables: ***

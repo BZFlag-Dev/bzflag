@@ -71,31 +71,57 @@ extern int __beginendCount;
  * are called inside of the wrong context code
  * sections (freeing and initializing).
  */
-//#define DEBUG_GL_MATRIX_STACKS
-#ifdef DEBUG
-#  define glNewList(list,mode)			bzNewList((list), (mode))
-#  define glGenLists(count)			bzGenLists((count))
-#  define glGenTextures(count, textures)	bzGenTextures((count), (textures))
-#  ifdef DEBUG_GL_MATRIX_STACKS
-#    define glPushMatrix()			bzPushMatrix()
-#    define glPopMatrix()			bzPopMatrix()
-#    define glMatrixMode(mode)			bzMatrixMode(mode)
-#  endif // DEBUG_GL_MATRIX_STACKS
-#endif
 // always swap these calls (context protection)
-#define glDeleteLists(base, count)		bzDeleteLists((base), (count))
-#define glDeleteTextures(count, textures)	bzDeleteTextures((count), (textures))
+#ifndef UNSAFE_GL_CONTEXT
+#  undef glCreateShader
+#  undef glDeleteShader
+#  undef glCreateProgram
+#  undef glDeleteProgram
+#  undef glGenFramebuffersEXT
+#  undef glDeleteFramebuffersEXT
+#  undef glGenRenderbuffersEXT
+#  undef glDeleteRenderbuffersEXT
+#  define glDeleteLists(base, count)		bzDeleteLists((base), (count))
+#  define glDeleteTextures(count, textures)	bzDeleteTextures((count), (textures))
+#  define glGenFramebuffersEXT(n, fbos)		bzGenFramebuffersEXT((n), (fbos))
+#  define glDeleteFramebuffersEXT(n, fbos)	bzDeleteFramebuffersEXT((n), (fbos))
+#  define glGenRenderbuffersEXT(n, rbos)	bzGenRenderbuffersEXT((n), (rbos))
+#  define glDeleteRenderbuffersEXT(n, rbos)	bzDeleteRenderbuffersEXT((n), (rbos))
+#  define glCreateShader(type)			bzCreateShader(type)
+#  define glDeleteShader(id)			bzDeleteShader(id)
+#  define glCreateProgram()			bzCreateProgram()
+#  define glDeleteProgram(id)			bzDeleteProgram(id)
+//#define DEBUG_GL_MATRIX_STACKS
+#  ifdef DEBUG
+#    define glNewList(list,mode)			bzNewList((list), (mode))
+#    define glGenLists(count)			bzGenLists((count))
+#    define glGenTextures(count, textures)	bzGenTextures((count), (textures))
+#    ifdef DEBUG_GL_MATRIX_STACKS
+#      define glPushMatrix()			bzPushMatrix()
+#      define glPopMatrix()			bzPopMatrix()
+#      define glMatrixMode(mode)			bzMatrixMode(mode)
+#    endif // DEBUG_GL_MATRIX_STACKS
+#  endif
 
-// these are housed at the end of OpenGLGState.cxx, for now
+// these are housed in OpenGLContext.cxx
 extern void   bzNewList(GLuint list, GLenum mode);
 extern GLuint bzGenLists(GLsizei count);
 extern void   bzGenTextures(GLsizei count, GLuint *textures);
 extern void   bzDeleteLists(GLuint base, GLsizei count);
 extern void   bzDeleteTextures(GLsizei count, const GLuint *textures);
+extern void   bzGenFramebuffersEXT(GLsizei n, GLuint* fbos);
+extern void   bzDeleteFramebuffersEXT(GLsizei n, const GLuint* fbos);
+extern void   bzGenRenderbuffersEXT(GLsizei n, GLuint* rbos);
+extern void   bzDeleteRenderbuffersEXT(GLsizei n, const GLuint* rbos);
+extern GLuint bzCreateShader(GLenum type);
+extern void   bzDeleteShader(GLuint shader);
+extern GLuint bzCreateProgram();
+extern void   bzDeleteProgram(GLuint program);
+extern void   bzMatrixMode(GLenum mode);
 extern void   bzPushMatrix();
 extern void   bzPopMatrix();
-extern void   bzMatrixMode(GLenum mode);
 
+#endif // UNSAFE_GL_CONTEXT
 
 #endif /* __BZFGL_H__ */
 

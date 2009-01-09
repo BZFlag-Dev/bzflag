@@ -505,6 +505,13 @@ int LuaShaderMgr::CreateShader(lua_State* L)
 	}
 
 	const GLuint progID = glCreateProgram();
+	if (progID == 0) {
+		glDeleteShader(vertObj);
+		glDeleteShader(fragObj);
+		glDeleteShader(geomObj);
+		return 0;
+	}
+		
 	vector<LuaShader::Object> objects;
 
 	if (vertObj != 0) {
@@ -555,6 +562,9 @@ int LuaShaderMgr::CreateShader(lua_State* L)
 
 int LuaShaderMgr::DeleteShader(lua_State* L)
 {
+	if (OpenGLGState::isExecutingInitFuncs()) {
+		luaL_error(L, "gl.DeleteShader can not be used in GLInitContext");
+	}
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}
