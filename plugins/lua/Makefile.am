@@ -38,8 +38,8 @@ EXTRA_DIST =       \
 	README.txt \
 	example \
 	bzfslua.def \
-	lua.sln \
-	lua.vcproj
+	bzfslua.sln \
+	bzfslua.vcproj
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
