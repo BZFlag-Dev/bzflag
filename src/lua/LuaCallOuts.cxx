@@ -136,7 +136,11 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 		PUSH_LUA_CFUNC(L, GetPlayerRotation);
 		PUSH_LUA_CFUNC(L, GetPlayerDirection);
 		PUSH_LUA_CFUNC(L, GetPlayerVelocity);
-		PUSH_LUA_CFUNC(L, GetPlayerRadius);
+		PUSH_LUA_CFUNC(L, GetPlayerAngVel);
+		PUSH_LUA_CFUNC(L, GetPlayerDimensions);
+		PUSH_LUA_CFUNC(L, GetPlayerPhysicsDriver);
+		PUSH_LUA_CFUNC(L, GetPlayerDesiredSpeed);
+		PUSH_LUA_CFUNC(L, GetPlayerDesiredAngVel);
 	}
 	PUSH_LUA_CFUNC(L, IsPlayerAdmin);
 	PUSH_LUA_CFUNC(L, IsPlayerVerified);
@@ -1547,10 +1551,62 @@ int LuaCallOuts::GetPlayerVelocity(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerRadius(lua_State* L) // FIXME
+int LuaCallOuts::GetPlayerAngVel(lua_State* L)
 {
-	return 0;
-	L = L;
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	lua_pushnumber(L, player->getAngularVelocity());
+	return 1;
+}
+
+
+int LuaCallOuts::GetPlayerDimensions(lua_State* L)
+{
+
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	const float* dims = player->getDimensions();
+	lua_pushnumber(L, dims[0]);
+	lua_pushnumber(L, dims[1]);
+	lua_pushnumber(L, dims[2]);
+	return 3;
+}
+
+
+int LuaCallOuts::GetPlayerPhysicsDriver(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, player->getPhysicsDriver());
+	return 1;
+}
+
+
+int LuaCallOuts::GetPlayerDesiredSpeed(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	lua_pushnumber(L, player->getUserSpeed());
+	return 1;
+}
+
+
+int LuaCallOuts::GetPlayerDesiredAngVel(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	lua_pushnumber(L, player->getUserAngVel());
+	return 1;
 }
 
 

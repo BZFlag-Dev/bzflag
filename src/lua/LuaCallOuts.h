@@ -107,7 +107,11 @@ class LuaCallOuts {
     static int GetPlayerRotation(lua_State* L);
     static int GetPlayerDirection(lua_State* L);
     static int GetPlayerVelocity(lua_State* L);
-    static int GetPlayerRadius(lua_State* L);
+    static int GetPlayerAngVel(lua_State* L);
+    static int GetPlayerDimensions(lua_State* L);
+    static int GetPlayerPhysicsDriver(lua_State* L);
+    static int GetPlayerDesiredSpeed(lua_State* L);
+    static int GetPlayerDesiredAngVel(lua_State* L);
     static int IsPlayerAdmin(lua_State* L);
     static int IsPlayerVerified(lua_State* L);
     static int IsPlayerRegistered(lua_State* L);
