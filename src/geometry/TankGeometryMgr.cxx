@@ -125,6 +125,7 @@ void TankGeometryMgr::init()
   BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
   BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
   BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
+  BZDB.addCallback ("treadStyle", bzdbCallback, NULL);
 
   // install the context initializer
   OpenGLGState::registerContextInitializer (freeContext, initContext, NULL);
@@ -143,6 +144,7 @@ void TankGeometryMgr::kill()
   BZDB.removeCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
   BZDB.removeCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
   BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
+  BZDB.removeCallback ("treadStyle", bzdbCallback, NULL);
 
   // remove the context initializer callback
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, NULL);
