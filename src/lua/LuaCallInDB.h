@@ -13,7 +13,7 @@
 /******************************************************************************/
 
 enum LuaCallInCode {
-	LUA_CI_Shutdown,
+	LUA_CI_Shutdown = 1, // 1..N numbering
 
 	LUA_CI_Update,
 

@@ -198,7 +198,7 @@ int LuaBzMaterial::GetMaterialTextureInfo(lua_State* L)
 	}
 	lua_newtable(L);
 	HSTR_PUSH_STRING(L, "name",      mat->getTexture(index));
-	HSTR_PUSH_STRING(L, "local",     mat->getTexture(index));
+	HSTR_PUSH_STRING(L, "local",     mat->getTextureLocal(index));
 	HSTR_PUSH_INT(L,    "envMode",   mat->getCombineMode(index));
 	HSTR_PUSH_BOOL(L,   "useAlpha",  mat->getUseTextureAlpha(index));
 	HSTR_PUSH_BOOL(L,   "useColor",  mat->getUseColorOnTexture(index));

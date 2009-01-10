@@ -23,6 +23,7 @@ using std::map;
 #include "Bundle.h"
 #include "BundleMgr.h"
 #include "CommandManager.h"
+#include "CacheManager.h"
 
 // bzflag headers
 #include "../bzflag/ClientFlag.h"
@@ -56,6 +57,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, Debug);
 	PUSH_LUA_CFUNC(L, StripAnsiCodes);
 	PUSH_LUA_CFUNC(L, LocalizeString);
+	PUSH_LUA_CFUNC(L, GetCacheFilePath);
 
 	PUSH_LUA_CFUNC(L, GetGameInfo);
 
@@ -295,6 +297,14 @@ int LuaCallOuts::LocalizeString(lua_State* L)
 	lua_pushstdstring(L, bundle->getLocalString(text));
 	lua_pushboolean(L, true);
 	return 2;
+}
+
+
+int LuaCallOuts::GetCacheFilePath(lua_State* L)
+{
+	const char* text = luaL_checkstring(L, 1);
+	lua_pushstdstring(L, CACHEMGR.getLocalName(text));
+	return 1;
 }
 
 
@@ -807,8 +817,7 @@ int LuaCallOuts::GetFrustumPlane(lua_State* L)
 
 int LuaCallOuts::GetTime(lua_State* L)
 {
-	TimeKeeper tk;
-	const double nowTime = tk.getSeconds();
+	const double nowTime = TimeKeeper::getCurrent().getSeconds();
 	if (!lua_israwnumber(L, 1)) {
 		lua_pushnumber(L, (float)nowTime);
 	}
@@ -817,8 +826,7 @@ int LuaCallOuts::GetTime(lua_State* L)
 		if (modulus == 0.0) {
 			return 0;
 		}
-		const double gameTime = GameTime::getStepTime();
-		lua_pushnumber(L, (float)fmod(gameTime, modulus));
+		lua_pushnumber(L, (float)fmod(nowTime, modulus));
 	}
 	return 1;
 }
@@ -841,17 +849,16 @@ int LuaCallOuts::GetGameTime(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTimer(lua_State* L) // FIXME -- doesn't seem to work
+int LuaCallOuts::GetTimer(lua_State* L)
 {
-	TimeKeeper tk;
-	const double nowTime = tk.getSeconds();
+	const double nowTime = TimeKeeper::getCurrent().getSeconds();
 	const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
 	lua_pushlightuserdata(L, (void*)millisecs);
 	return 1;
 }
 
 
-int LuaCallOuts::DiffTimers(lua_State* L) // FIXME -- doesn't seem to work
+int LuaCallOuts::DiffTimers(lua_State* L)
 {
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
