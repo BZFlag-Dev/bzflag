@@ -17,6 +17,7 @@ using std::set;
 #include "OpenGLTexture.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
+#include "CacheManager.h"
 
 // local headers
 #include "LuaInclude.h"
@@ -86,7 +87,7 @@ class LuaTextureRef : public LuaTexture
 
 	private:
 		int texNum;
-		std::string name;
+		const std::string name;
 };
 
 
@@ -94,7 +95,11 @@ class LuaTextureRef : public LuaTexture
 
 LuaTextureRef::LuaTextureRef(const std::string& _name) : name(_name)
 {
-	texNum = TEXMGR.getTextureID(name.c_str(), false);
+	string localName = name;
+	if (CacheManager::isCacheFileType(name)) {
+		localName = CACHEMGR.getLocalName(name);
+	}
+	texNum = TEXMGR.getTextureID(localName.c_str(), false);
 }
 
 
@@ -661,7 +666,10 @@ int LuaTextureMgr::Texture(lua_State* L) // FIXME -- multitex / boolean control
 		success = true;
 	}
 	else if (lua_israwstring(L, texIndex)) {
-		const string name = lua_tostring(L, texIndex);
+		string name = lua_tostring(L, texIndex);
+		if (CacheManager::isCacheFileType(name)) {
+			name = CACHEMGR.getLocalName(name);
+		}
 		const int texNum = TEXMGR.getTextureID(name.c_str(), false);
 		if (texNum >= 0) {
 			const ImageInfo& ii = TEXMGR.getInfo(texNum);
