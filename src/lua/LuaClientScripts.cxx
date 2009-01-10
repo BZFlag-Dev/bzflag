@@ -138,6 +138,13 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
   else if (cmd == "disable") {
     LuaUser::FreeHandler();
   }
+  else if (cmd == "status") {
+    if (luaUser != NULL) {
+      addMessage(NULL, "LuaUser is enabled");
+    } else {
+      addMessage(NULL, "LuaUser is disabled");
+    }
+  }
   else if (luaUser != NULL) {
     luaUser->RecvCommand(c);
   }
@@ -168,6 +175,13 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
       return false;
     }
     LuaWorld::FreeHandler();
+  }
+  else if (cmd == "status") {
+    if (luaWorld != NULL) {
+      addMessage(NULL, "LuaWorld is enabled");
+    } else {
+      addMessage(NULL, "LuaWorld is disabled");
+    }
   }
   else if (luaWorld != NULL) {
     luaWorld->RecvCommand(c);

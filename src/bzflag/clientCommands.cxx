@@ -222,8 +222,8 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("toggleRadar",   &cmdToggleRadar,   "toggleRadar:  toggle radar visibility");
   PUSHCMD("toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility");
   PUSHCMD("toggleFlags",   &cmdToggleFlags,   "toggleFlags {main|radar}:  turn off/on field radar flags");
-  PUSHCMD("luauser",       &cmdLuaUser,       "luauser {'reload | disable }: control luauser");
-  PUSHCMD("luaworld",      &cmdLuaWorld,      "luaworld {'reload | disable }: control luaworld");
+  PUSHCMD("luauser",       &cmdLuaUser,       "luauser {'reload | disable | status }: control luauser");
+  PUSHCMD("luaworld",      &cmdLuaWorld,      "luaworld {'reload | disable | status }: control luaworld");
 #undef  PUSHCMD
   return commandVector;
 }
@@ -1125,7 +1125,7 @@ static std::string cmdLuaUser(const std::string& cmd,
                               const CommandManager::ArgList& args, bool*)
 {
   if (args.size() < 1) {
-    return "usage: luauser { reload | disable }";
+    return "usage: luauser { reload | disable | status }";
   }
   LuaClientScripts::LuaUserCommand(cmd + " " + args[0]);
   return std::string();
@@ -1136,7 +1136,7 @@ static std::string cmdLuaWorld(const std::string& cmd,
                               const CommandManager::ArgList& args, bool*)
 {
   if (args.size() < 1) {
-    return "usage: luaworld { reload | disable }";
+    return "usage: luaworld { reload | disable | status }";
   }
   LuaClientScripts::LuaWorldCommand(cmd + " " + args[0]);
   return std::string();
