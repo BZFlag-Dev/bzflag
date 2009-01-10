@@ -252,15 +252,7 @@ void OpenGLPassState::ResetGLState()
 //  Common routines
 //
 
-const GLbitfield AttribBits =
-  GL_COLOR_BUFFER_BIT |
-  GL_DEPTH_BUFFER_BIT |
-  GL_ENABLE_BIT       |
-  GL_LIGHTING_BIT     |
-  GL_LINE_BIT         |
-  GL_POINT_BIT        |
-  GL_POLYGON_BIT      |
-  GL_VIEWPORT_BIT;
+const GLbitfield AttribBits = GL_ALL_ATTRIB_BITS;
 
 
 inline void OpenGLPassState::EnableCommon(DrawMode mode)

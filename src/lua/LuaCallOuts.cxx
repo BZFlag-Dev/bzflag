@@ -841,7 +841,7 @@ int LuaCallOuts::GetGameTime(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTimer(lua_State* L)
+int LuaCallOuts::GetTimer(lua_State* L) // FIXME -- doesn't seem to work
 {
 	TimeKeeper tk;
 	const double nowTime = tk.getSeconds();
@@ -851,7 +851,7 @@ int LuaCallOuts::GetTimer(lua_State* L)
 }
 
 
-int LuaCallOuts::DiffTimers(lua_State* L)
+int LuaCallOuts::DiffTimers(lua_State* L) // FIXME -- doesn't seem to work
 {
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {

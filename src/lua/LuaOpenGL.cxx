@@ -1294,8 +1294,10 @@ int LuaOpenGL::Lighting(lua_State* L)
 	}
 	if (lua_tobool(L, 1)) {
 		glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
 	} else {
 		glDisable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
 	}
 	return 0;
 }
