@@ -2484,7 +2484,7 @@ int LuaOpenGL::GetMatrixData(lua_State* L)
 
 	if (luaType == LUA_TNUMBER) {
 		const GLenum type = (GLenum)lua_tonumber(L, 1);
-		GLenum pname;
+		GLenum pname = 0; // avoid warnings
 		switch (type) {
 			case GL_PROJECTION: { pname = GL_PROJECTION_MATRIX; break; }
 			case GL_MODELVIEW:  { pname = GL_MODELVIEW_MATRIX;  break; }
