@@ -58,6 +58,7 @@ bool LuaObstacle::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, GetObstacleFaceCount);
 	PUSH_LUA_CFUNC(L, GetFaceMesh);
+	PUSH_LUA_CFUNC(L, GetFaceElementCount);
 	PUSH_LUA_CFUNC(L, GetFaceVerts);
 	PUSH_LUA_CFUNC(L, GetFaceNorms);
 	PUSH_LUA_CFUNC(L, GetFaceTxcds);
@@ -594,6 +595,18 @@ int LuaObstacle::GetFaceMesh(lua_State* L)
 		return 1;
 	}
 	lua_pushinteger(L, mesh->getGUID());
+	return 1;
+}
+
+
+int LuaObstacle::GetFaceElementCount(lua_State* L)
+{
+	const MeshFace* face = ParseMeshFace(L, 1);
+	if (face == NULL) {
+		return 0;
+	}
+	const int elements = face->getVertexCount();
+	lua_pushinteger(L, elements);
 	return 1;
 }
 

@@ -28,6 +28,7 @@ class LuaObstacle {
 
 		static int GetObstacleFaceCount(lua_State* L);
 		static int GetFaceMesh(lua_State* L);
+		static int GetFaceElementCount(lua_State* L);
 		static int GetFaceVerts(lua_State* L);
 		static int GetFaceNorms(lua_State* L);
 		static int GetFaceTxcds(lua_State* L);
