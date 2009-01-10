@@ -54,7 +54,7 @@ bool LuaObstacle::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetObstacleExtents);
 	PUSH_LUA_CFUNC(L, GetObstacleTeam);
 	PUSH_LUA_CFUNC(L, GetObstacleFlipZ);
-//FIXME	PUSH_LUA_CFUNC(L, GetObstacleInfo);
+	PUSH_LUA_CFUNC(L, GetObstacleBorder);
 
 	PUSH_LUA_CFUNC(L, GetObstacleFaceCount);
 	PUSH_LUA_CFUNC(L, GetFaceMesh);
@@ -430,135 +430,20 @@ int LuaObstacle::GetObstacleFlipZ(lua_State* L)
 }
 
 
-/******************************************************************************/
-/******************************************************************************/
-
-/* FIXME -- GetObstacleInfo()
-static void PushFloat3(lua_State* L, const char* name, const float* data)
+int LuaObstacle::GetObstacleBorder(lua_State* L)
 {
-	lua_pushstring(L, name);
-	lua_createtable(L, 3, 0);
-	lua_pushinteger(L, 1); lua_pushnumber(L, data[0]); lua_rawset(L, -3);
-	lua_pushinteger(L, 2); lua_pushnumber(L, data[1]); lua_rawset(L, -3);
-	lua_pushinteger(L, 3); lua_pushnumber(L, data[2]); lua_rawset(L, -3);
-	lua_rawset(L, -3);
-}
-
-
-static int PushWallInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const WallObstacle* o = (const WallObstacle*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushBoxInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const BoxBuilding* o = (const BoxBuilding*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushPyrInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const PyramidBuilding* o = (const PyramidBuilding*)obstacle;
-	LuaPushNamedBool(L, "flipz", o->getZFlip());
-	return 1;
-}
-
-
-static int PushBaseInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const BaseBuilding* o = (const BaseBuilding*)obstacle;
-	LuaPushNamedNumber(L, "team", (float)o->getTeam());
-	return 1;
-}
-
-
-static int PushTeleInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const Teleporter* o = (const Teleporter*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushMeshInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const MeshObstacle* o = (const MeshObstacle*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushArcInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const ArcObstacle* o = (const ArcObstacle*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushConeInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const ConeObstacle* o = (const ConeObstacle*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushSphereInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const SphereObstacle* o = (const SphereObstacle*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-static int PushTetraInfo(lua_State* L, const Obstacle* obstacle)
-{
-	const TetraBuilding* o = (const TetraBuilding*)obstacle;
-	L = L; o = o;
-	return 1;
-}
-
-
-typedef int (*PushTypeInfoFunc)(lua_State*, const Obstacle*);
-
-static PushTypeInfoFunc pushTypeInfoFuncs[ObstacleTypeCount] = {
-	PushWallInfo,
-	PushBoxInfo,
-	PushPyrInfo,
-	PushBaseInfo,
-	PushTeleInfo,
-	PushMeshInfo,
-	PushArcInfo,
-	PushConeInfo,
-	PushSphereInfo,
-	PushTetraInfo
-};
-
-
-int LuaObstacle::GetObstacleInfo(lua_State* L)
-{
-	const Obstacle* obs = ParsePrimaryObstacle(L, 1);
+	const Obstacle* obs = ParseObstacle(L, 1);
 	if (obs == NULL) {
 		return 0;
 	}
-	lua_newtable(L);
-	lua_pushstring(L, obs->getName());
-	lua_setfield(L, -2, "name");
-	lua_pushinteger(L, obs->getTypeID());
-	lua_setfield(L, -2, "type");
-	PushFloat3(L, "pos",  obs->getPosition());
-	PushFloat3(L, "size", obs->getSize());
-	lua_pushnumber(L,     obs->getRotation());
-	lua_setfield(L, -2, "rotation");
-	return pushTypeInfoFuncs[obs->getTypeID()](L, obs);	
+	if (obs->getTypeID() != teleType) {
+		return 0;
+	}
+	const Teleporter* tele = (Teleporter*)obs;	
+	lua_pushnumber(L, tele->getBorder());
+	return 1;
 }
-*/
+
 
 /******************************************************************************/
 /******************************************************************************/
