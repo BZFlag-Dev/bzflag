@@ -597,7 +597,7 @@ bool LuaHandle::KeyPress(int key, bool isRepeat)
 		return false; // the call is not defined, do not take the event
 	}
 
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 
 	bool alt, ctrl, shift;
 	dpy->getModState(shift, ctrl, alt);
@@ -639,7 +639,7 @@ bool LuaHandle::KeyRelease(int key)
 		return false; // the call is not defined, do not take the event
 	}
 
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 
 	bool alt, ctrl, shift;
 	dpy->getModState(shift, ctrl, alt);
@@ -673,9 +673,9 @@ bool LuaHandle::MousePress(int x, int y, int button)
 		return false; // the call is not defined, do not take the event
 	}
 
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
-	lua_pushnumber(L, button);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
+	lua_pushinteger(L, button);
 
 	// call the function
 	if (!RunCallIn(LUA_CI_MousePress, 3, 1)) {
@@ -700,9 +700,9 @@ bool LuaHandle::MouseRelease(int x, int y, int button)
 		return false; // the call is not defined, do not take the event
 	}
 
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
-	lua_pushnumber(L, button);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
+	lua_pushinteger(L, button);
 
 	// call the function
 	if (!RunCallIn(LUA_CI_MouseRelease, 3, 1)) {
@@ -727,8 +727,8 @@ bool LuaHandle::MouseMove(int x, int y)
 		return false; // the call is not defined, do not take the event
 	}
 
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
 
 	// call the function
 	if (!RunCallIn(LUA_CI_MouseMove, 2, 1)) {
@@ -778,8 +778,8 @@ bool LuaHandle::IsAbove(int x, int y)
 		return false; // the call is not defined
 	}
 
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
 
 	// call the function
 	if (!RunCallIn(LUA_CI_IsAbove, 2, 1)) {
@@ -804,8 +804,8 @@ string LuaHandle::GetTooltip(int x, int y)
 		return ""; // the call is not defined
 	}
 
-	lua_pushnumber(L, x);
-	lua_pushnumber(L, y);
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
 
 	// call the function
 	if (!RunCallIn(LUA_CI_GetTooltip, 2, 1)) {

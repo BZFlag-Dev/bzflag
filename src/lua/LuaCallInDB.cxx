@@ -66,12 +66,12 @@ LuaCallInDB::LuaCallInDB()
 //	const char* ONLY_LuaWorld   = "LuaWorld";
 
 #define ADD_CI(n, bits, retType, singleScript) \
-	const char* n = #n;              \
-	SetupCallIn(LUA_CI_ ## n, n);    \
-	infoMap[#n] = CallInInfo(        \
-	  LUA_CI_ ## n, n,               \
-	  (bits) & REQ_FULL_READ,        \
-	  (bits) & REQ_INPUT_CTRL,       \
+	const char* n = #n;               \
+	SetupCallIn(LUA_CI_ ## n, n);     \
+	infoMap[#n] = CallInInfo(         \
+	  LUA_CI_ ## n, n,                \
+	  ((bits) & REQ_FULL_READ)  != 0, \
+	  ((bits) & REQ_INPUT_CTRL) != 0, \
 	  strncmp(#n, "Draw", 4) == 0, singleScript, retType)
 
 	////////////////////////////////////
