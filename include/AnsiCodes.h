@@ -116,18 +116,25 @@ static const float BrightColors[9][3] = {
 // strip ANSI codes from a string
 inline const char *stripAnsiCodes(const char *text)
 {
-#define SAC_MAX 1024
-  static char str[SAC_MAX] = {0};
-  int j = 0;
+  static char* str = NULL;
+  static size_t strSize = 0;
 
-  if (!text) {
+  if (text == NULL) {
+    delete[] str;
+    strSize = 0;
+    str = NULL;
     return NULL;
   }
 
-  int length = (int)strlen(text);
-  assert(length+1 < SAC_MAX && "stripAnsiCodes string is too long");
+  const size_t length = strlen(text);
+  if ((length + 1) > strSize) {
+    delete[] str;
+    strSize = length + 1;
+    str = new char[strSize];
+  }
 
-  for (int i = 0; i < length; i++) {
+  size_t j = 0;
+  for (size_t i = 0; i < length; i++) {
     if (text[i] == ESC_CHAR) {
       i++;
       if ((i < length) && (text[i] == '[')) {

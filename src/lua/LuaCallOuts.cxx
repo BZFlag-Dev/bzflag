@@ -302,9 +302,6 @@ int LuaCallOuts::StripAnsiCodes(lua_State* L)
 {
 	size_t len;
 	const char* text = luaL_checklstring(L, 1, &len);
-	if (len >= SAC_MAX) {
-		return 0;
-	}
 	lua_pushstring(L, stripAnsiCodes(text));
 	return 1;
 }
@@ -1175,7 +1172,7 @@ int LuaCallOuts::SetGfxBlock(lua_State* L)
 	}
 	EventClient* ec = L2H(L);
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
-	const bool block = lua_toboolean(L, 2);
+	const bool block = lua_tobool(L, 2);
 	if (!block) {
 		gfxBlock->remove(ec);
 		return 0;
@@ -1211,7 +1208,7 @@ int LuaCallOuts::SetPlayerGfxBlock(lua_State* L)
 	GfxBlock& gfxBlock = player->getGfxBlock();
 
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
-	const bool block = lua_toboolean(L, 2);
+	const bool block = lua_tobool(L, 2);
 	if (!block) {
 		gfxBlock.remove(ec);
 		return 0;
@@ -1279,7 +1276,7 @@ int LuaCallOuts::SetShotGfxBlock(lua_State* L)
 	}
 	EventClient* ec = L2H(L);
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
-	const bool block = lua_toboolean(L, 2);
+	const bool block = lua_tobool(L, 2);
 	if (!block) {
 		shot->getGfxBlock().remove(ec);
 		return 0;
@@ -1841,7 +1838,7 @@ int LuaCallOuts::GetShotType(lua_State* L)
 	if (shot == NULL) {
 		return 0;
 	}
-	lua_pushnumber(L, shot->getShotType());
+	lua_pushinteger(L, shot->getShotType());
 	return 1;	
 }
 
@@ -1913,7 +1910,8 @@ int LuaCallOuts::GetShotLeftTime(lua_State* L)
 	if (shot == NULL) {
 		return 0;
 	}
-	lua_pushnumber(L, shot->getCurrentTime() - shot->getStartTime());
+	const double timeLeft = shot->getCurrentTime() - shot->getStartTime();
+	lua_pushnumber(L, (float)timeLeft);
 	return 1;	
 }
 

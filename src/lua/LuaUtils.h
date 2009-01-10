@@ -56,6 +56,15 @@ inline void LuaPushNamedBool(lua_State* L,
 }
 
 
+inline void LuaPushNamedInt(lua_State* L,
+                            const std::string& key, int value)
+{
+	lua_pushstring(L, key.c_str());
+	lua_pushinteger(L, value);
+	lua_rawset(L, -3);
+}
+
+
 inline void LuaPushNamedNumber(lua_State* L,
                                const std::string& key, lua_Number value)
 {

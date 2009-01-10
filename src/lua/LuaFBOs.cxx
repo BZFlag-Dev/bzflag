@@ -495,7 +495,7 @@ int LuaFBOMgr::IsValidFBO(lua_State* L)
 
 	const bool valid = (status == GL_FRAMEBUFFER_COMPLETE_EXT);
 	lua_pushboolean(L, valid);
-	lua_pushnumber(L, status);
+	lua_pushinteger(L, status);
 	return 2;
 }
 
@@ -575,7 +575,7 @@ int LuaFBOMgr::UnsafeSetFBO(lua_State* L)
 	if (fbo->id == 0) {
 		return 0;
 	}
-	const GLenum target = (GLenum)luaL_optnumber(L, 2, fbo->target);
+	const GLenum target = (GLenum)luaL_optint(L, 2, fbo->target);
 	glBindFramebufferEXT(target, fbo->id);
 	return 0;
 }

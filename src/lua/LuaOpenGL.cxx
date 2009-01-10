@@ -2237,8 +2237,8 @@ int LuaOpenGL::Light(lua_State* L)
 
 	const int args = lua_gettop(L); // number of arguments
 	if (args == 3) {
-		const GLenum pname = (GLenum)luaL_checknumber(L, 2);
-		const GLenum param = (GLenum)luaL_checknumber(L, 3);
+		const GLenum  pname = (GLenum)luaL_checknumber(L, 2);
+		const GLfloat param = (GLenum)luaL_checknumber(L, 3);
 		glLightf(light, pname, param);
 	}
 	else if (args == 5) {
@@ -2628,7 +2628,7 @@ static void PushPixelData(lua_State* L, int fSize, const float*& data)
 	} else {
 		lua_newtable(L);
 		for (int e = 1; e <= fSize; e++) {
-			lua_pushnumber(L, e);
+			lua_pushinteger(L, e);
 			lua_pushnumber(L, *data);
 			lua_rawset(L, -3);
 			data++;
@@ -2669,7 +2669,7 @@ int LuaOpenGL::ReadPixels(lua_State* L)
 	else if ((w == 1) && (h > 1)) {
 		lua_newtable(L);
 		for (int i = 1; i <= h; i++) {
-			lua_pushnumber(L, i);
+			lua_pushinteger(L, i);
 			PushPixelData(L, fSize, d);
 			lua_rawset(L, -3);
 		}
@@ -2678,7 +2678,7 @@ int LuaOpenGL::ReadPixels(lua_State* L)
 	else if ((w > 1) && (h == 1)) {
 		lua_newtable(L);
 		for (int i = 1; i <= w; i++) {
-			lua_pushnumber(L, i);
+			lua_pushinteger(L, i);
 			PushPixelData(L, fSize, d);
 			lua_rawset(L, -3);
 		}
@@ -2687,10 +2687,10 @@ int LuaOpenGL::ReadPixels(lua_State* L)
 	else {
 		lua_newtable(L);
 		for (int xi = 1; xi <= w; xi++) {
-			lua_pushnumber(L, xi);
+			lua_pushinteger(L, xi);
 			lua_newtable(L);
 			for (int yi = 1; yi <= h; yi++) {
-				lua_pushnumber(L, yi);
+				lua_pushinteger(L, yi);
 				PushPixelData(L, fSize, d);
 				lua_rawset(L, -3);
 			}
@@ -2838,7 +2838,7 @@ int LuaOpenGL::GetQuery(lua_State* L)
 	GLuint count;
 	glGetQueryObjectuiv(q, GL_QUERY_RESULT, &count);
 
-	lua_pushnumber(L, count);
+	lua_pushinteger(L, count);
 
 	return 1;
 }
@@ -2945,7 +2945,7 @@ int LuaOpenGL::RenderMode(lua_State* L)
 		lua_error(L);
 	}
 
-	lua_pushnumber(L, count2);
+	lua_pushinteger(L, count2);
 	return 1;
 }
 
@@ -2956,7 +2956,7 @@ int LuaOpenGL::SelectBuffer(lua_State* L)
 	GLsizei selCount = (GLsizei)luaL_optint(L, 1, SelectBuffer::defSize);
 	selCount = selectBuffer.Resize(selCount);
 	glSelectBuffer(selCount, selectBuffer.GetBuffer());
-	lua_pushnumber(L, selCount);
+	lua_pushinteger(L, selCount);
 	return 1;
 }
 
@@ -2969,7 +2969,7 @@ int LuaOpenGL::SelectBufferData(lua_State* L)
 		if (!selectBuffer.ValidIndex(index)) {
 			return 0;
 		}
-		lua_pushnumber(L, selectBuffer[index]);
+		lua_pushinteger(L, selectBuffer[index]);
 		return 1;
 	}
 
@@ -2981,7 +2981,7 @@ int LuaOpenGL::SelectBufferData(lua_State* L)
 		luaL_error(L, "could not allocate stack space");
 	}
 	for (int i = 0; i < (int)count; i++) {
-		lua_pushnumber(L, selectBuffer[index + i]);
+		lua_pushinteger(L, selectBuffer[index + i]);
 	}
 
 	return count;

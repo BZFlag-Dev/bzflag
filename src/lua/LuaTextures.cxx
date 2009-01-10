@@ -244,7 +244,7 @@ GLfloat LuaTextureRef::GetAniso() const
 	if (texNum < 0) {
 		return -1.0f;
 	}
-	return BZDB.evalInt("aniso");
+	return BZDB.eval("aniso");
 }
 
 

@@ -38,6 +38,7 @@
 
 /* common headers */
 #include "Address.h"
+#include "AnsiCodes.h"
 #include "BZDBCache.h"
 #include "BundleMgr.h"
 #include "BzfMedia.h"
@@ -1341,6 +1342,7 @@ void cleanupClient ( void )
 #ifdef _WIN32
   // clean up
   WSACleanup();
+  stripAnsiCodes(NULL); // free the stripping buffer
 #endif
 
 }

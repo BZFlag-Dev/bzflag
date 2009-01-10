@@ -516,7 +516,7 @@ int LuaHandle::ScriptGetREGISTRY(lua_State* L)
 static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo)
 {
 	lua_newtable(L);
-	LuaPushNamedNumber(L, "code",         ciInfo.code);
+	LuaPushNamedInt   (L, "code",         ciInfo.code);
 	LuaPushNamedBool  (L, "reqFullRead",  ciInfo.reqFullRead);
 	LuaPushNamedBool  (L, "reqInputCtrl", ciInfo.reqInputCtrl);
 	LuaPushNamedBool  (L, "reversed",     ciInfo.reversed);

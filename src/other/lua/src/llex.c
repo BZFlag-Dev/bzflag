@@ -386,6 +386,12 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         if (ls->current != '=') return '~';
         else { next(ls); return TK_NE; }
       }
+// FIXME
+//      case '!': {
+//        next(ls);
+//        if (ls->current != '=') return '!';
+//        else { next(ls); return TK_NE; }
+//      }
       case '"':
       case '\'': {
         read_string(ls, ls->current, seminfo);

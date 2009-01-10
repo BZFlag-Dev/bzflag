@@ -687,12 +687,12 @@ int LuaShaderMgr::GetActiveUniforms(lua_State* L)
 		GLchar name[1024];
 		glGetActiveUniform(progID, i, sizeof(name), &length, &size, &type, name);
 
-		lua_pushnumber(L, i + 1);
+		lua_pushinteger(L, i + 1);
 		lua_newtable(L); {
 			HSTR_PUSH_STRING(L, "name",   name);
 			HSTR_PUSH_STRING(L, "type",   UniformTypeString(type));
-			HSTR_PUSH_NUMBER(L, "length", length);
-			HSTR_PUSH_NUMBER(L, "size",   size);
+			HSTR_PUSH_INT(L,    "length", length);
+			HSTR_PUSH_INT(L,    "size",   size);
 		}
 		lua_rawset(L, -3);
 	}
@@ -710,7 +710,7 @@ int LuaShaderMgr::GetUniformLocation(lua_State* L)
 	const string name = luaL_checkstring(L, 2);
 	const GLuint progID = shader->GetProgID();
 	const GLint location = glGetUniformLocation(progID, name.c_str());
-	lua_pushnumber(L, location);
+	lua_pushinteger(L, location);
 	return 1;
 }
 

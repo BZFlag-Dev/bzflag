@@ -151,10 +151,10 @@ int LuaRBOMgr::meta_index(lua_State* L)
 	if (key == "valid") {
 		lua_pushboolean(L, glIsRenderbufferEXT(rbo->id));
 	}
-	else if (key == "target") { lua_pushnumber(L, rbo->target); }
-	else if (key == "format") { lua_pushnumber(L, rbo->format); }
-	else if (key == "xsize")  { lua_pushnumber(L, rbo->xsize);  }
-	else if (key == "ysize")  { lua_pushnumber(L, rbo->ysize);  }
+	else if (key == "target") { lua_pushinteger(L, rbo->target); }
+	else if (key == "format") { lua_pushinteger(L, rbo->format); }
+	else if (key == "xsize")  { lua_pushinteger(L, rbo->xsize);  }
+	else if (key == "ysize")  { lua_pushinteger(L, rbo->ysize);  }
 	else {
 		return 0;
 	}
