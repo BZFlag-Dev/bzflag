@@ -420,9 +420,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, ReloadGroups);
   PUSH_LUA_CFUNC(L, ReloadHelp);
 
-  PUSH_LUA_CFUNC(L, GetTimer);
-  PUSH_LUA_CFUNC(L, DiffTimers);
-
   PUSH_LUA_CFUNC(L, GetGroups);
   PUSH_LUA_CFUNC(L, GetGroupPerms);
   PUSH_LUA_CFUNC(L, GetGroupHasPerm);
