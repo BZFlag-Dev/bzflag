@@ -86,7 +86,6 @@ public:
 
   void		setSmoothing(bool on);
   void		setZBuffer(bool on);
-  void		setZBufferSplit(bool on);
   void		setQuality(int value);
   void		setDepthComplexity(bool on);
   void		setWireframe(bool on);
