@@ -44,14 +44,12 @@ install a Microsoft SDK (Software development kit) in addition to the
 base compiler. As of VC9 'Windows Platform SDK' is built in. Individual 
 install and linking of this particular SDK is no longer necessary.
 
-You will need the windows DirectX SDK (April 2007)
-  (download at http://www.microsoft.com/downloads/details.aspx?DisplayLang=en&FamilyID=86cf7fa2-e953-475c-abde-f016e4f7b61a )
+You will need the windows DirectX SDK 
+  (download at http://msdn.microsoft.com/en-us/directx/aa937788.aspx )
   
   *note*
-  If you get a direct X SDK that is newer then April 2007, you will not 
-  have the dinput.h file that bzflag needs and will not be able to build with joystick support.
-  We are working on creating a build target for newer versions of DirectX that will
-  support joysticks.
+  If you get a direct X SDK that is older then April 2007, you will not 
+  have the dinput8.h file that bzflag needs and will not be able to build with joystick support.
   
 Once you have this SDK, you must configure VC to include it.
 This can be done using the Tools Menu, Options item, then opening the
