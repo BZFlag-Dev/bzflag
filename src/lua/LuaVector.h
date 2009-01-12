@@ -12,16 +12,6 @@ class LuaVector {
 		static bool PushEntries(lua_State* L);
 
 	public:
-		static int tobool(lua_State* L);
-		static int isnil(lua_State* L);
-		static int isbool(lua_State* L);
-		static int isnumber(lua_State* L);
-		static int isstring(lua_State* L);
-		static int istable(lua_State* L);
-		static int isthread(lua_State* L);
-		static int isfunction(lua_State* L);
-		static int isuserdata(lua_State* L);
-
 		static int dot(lua_State* L);
 		static int cross(lua_State* L);
 		static int normdot(lua_State* L);
@@ -29,9 +19,6 @@ class LuaVector {
 		static int normdotrads(lua_State* L);
 		static int length(lua_State* L);
 		static int normalize(lua_State* L);
-
-		static int dump(lua_State* L); // can strip as well
-		static int listing(lua_State* L);
 };
 
 
