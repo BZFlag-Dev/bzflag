@@ -4,9 +4,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-// for the old ctype.h define
+// remove non-standard conflicting ctype.h defines
 #include <ctype.h> // make sure it's been loaded
-#undef isnumbere   // kill the deprecated macro
+#undef isnumber    // kill the deprecated macro
+
 
 struct lua_State;
 
