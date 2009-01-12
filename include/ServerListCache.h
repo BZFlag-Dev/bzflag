@@ -24,7 +24,7 @@
 
 
 /** The ServerListCache is a simple aging container of server entries.
- * The class can load from and safe to file.  Entries are culled based
+ * The class can load from and save to file.  Entries are culled based
  * on a specified cache age.
  */
 class ServerListCache {
