@@ -4,7 +4,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#undef isnumber // for the old ctype.h define
+// for the old ctype.h define
+#include <ctype.h> // make sure it's been loaded
+#undef isnumbere   // kill the deprecated macro
 
 struct lua_State;
 
