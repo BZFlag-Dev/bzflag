@@ -197,10 +197,10 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
   defaultBinding.insert(BindingTable::value_type("Shift+F5", "messagepanel debug"));
 
-/* FIXME -- luauser & luaworld default bindings
   defaultBinding.insert(BindingTable::value_type("Alt+U",  "luauser reload"));
-  defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
   defaultBinding.insert(BindingTable::value_type("Alt+W",  "luaworld reload"));
+/* FIXME -- luauser & luaworld default bindings
+  defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
   defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
 */
 }
