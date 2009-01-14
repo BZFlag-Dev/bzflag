@@ -549,8 +549,9 @@ if test "x$enable_glew_build" != "xyes" ; then
     GLEW_LIBS="-lGLEW"
     LIBS=$GLEW_LIBS
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-				    [[glewInit()]])],
-		   [glew_check="yes"], [glew_check="no"])
+				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
+		   [glew_check="yes"],
+		   [glew_check="no  (missing, or older than version 1.5.1)"])
     if test "x$glew_check" = "xno"; then
 	GLEW_LIBS=""
     fi
