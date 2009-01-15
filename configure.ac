@@ -552,7 +552,7 @@ if test "x$enable_glew_build" != "xyes" ; then
 				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
 		   [glew_check="yes"],
 		   [glew_check="no  (missing, or older than version 1.5.1)"])
-    if test "x$glew_check" = "xno"; then
+    if test "x$glew_check" != "xyes"; then
 	GLEW_LIBS=""
     fi
     AC_MSG_RESULT([$glew_check])
