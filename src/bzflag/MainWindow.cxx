@@ -17,6 +17,7 @@
 /* common implementation headers */
 #include "global.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 //
 // MainWindow
@@ -248,7 +249,9 @@ void MainWindow::resize()
   if (!window->create()) {
     faulting = true;
   }
-  OpenGLGState::initContext(); // FIXME -- not required for linux?
+  if (!BZDB.isTrue("blockResizeRecontext")) {
+    OpenGLGState::initContext();
+  }
   setQuadrant(quadrant);
 }
 
@@ -262,7 +265,9 @@ void MainWindow::resizeCB(void* _self)
 
 void MainWindow::exposeCB(void* /*_self*/)
 {
-  OpenGLGState::initContext(); // FIXME -- not required for linux
+  if (!BZDB.isTrue("blockExposeRecontext")) {
+    OpenGLGState::initContext();
+  }
 }
 
 
