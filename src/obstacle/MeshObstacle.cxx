@@ -781,7 +781,7 @@ void *MeshObstacle::unpack(void *buf)
     vertexCount--;
   }
 
-  // unpack hidden drawInfo data as from extra texture coordinates
+  // unpack hidden drawInfo data from the extra texture coordinates
   if (drawInfoOwner &&  (texcoordCount >= 2)) {
     nboUseErrorChecking(false);
     {
