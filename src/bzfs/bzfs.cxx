@@ -54,6 +54,7 @@
 #include "bzfsPlayerStateVerify.h"
 #include "AutoAllowTimer.h"
 #include "ServerIntangibilityManager.h"
+#include "lua/LuaBZFS.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -3892,6 +3893,8 @@ static bool initServer(int argc, char **argv)
 
   setupPermissions();
 
+  LuaBZFS::init(clOptions->luaBZFS);
+
   setupPlugins();
 
   // start up a stats link class, it'll take care of itself.
@@ -5078,6 +5081,8 @@ static void cleanupServer ( void )
 #ifdef BZ_PLUGINS
   unloadPlugins();
 #endif
+
+  LuaBZFS::kill();
 
   // print uptime
   logDebugMessage(1,"Shutting down server: uptime %s\n", TimeKeeper::printTime(TimeKeeper::getCurrent() - TimeKeeper::getStartTime()).c_str());

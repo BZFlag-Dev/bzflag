@@ -1,18 +1,24 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "MapObject.h"
 
-#include "mapobject.h"
-
+// system headers
 #include <string>
 #include <map>
 using std::string;
 using std::map;
 
+// common headers
+#include "bzfsAPI.h"
+#include "TextUtils.h"
 
-static lua_State* L = NULL;
+// local headers
+#include "LuaHeader.h"
+
+
+static lua_State* topL = NULL;
 
 static map<string, class MapHandler*> mapHandlers;
 
@@ -40,6 +46,8 @@ MapHandler::MapHandler(const string& name)
 : objName(name)
 , luaRef(LUA_NOREF)
 {
+  lua_State* L = topL;
+
   mapHandlers[objName] = this;
   if (L == NULL) {
     return;
@@ -53,6 +61,8 @@ MapHandler::MapHandler(const string& name)
 
 MapHandler::~MapHandler()
 {
+  lua_State* L = topL;
+
   mapHandlers.erase(objName);
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, luaRef);
@@ -60,8 +70,10 @@ MapHandler::~MapHandler()
 }
 
 
-bool MapHandler::handle(bz_ApiString objName, bz_CustomMapObjectInfo *info)
+bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 {
+  lua_State* L = topL;
+
   if (L == NULL) {
     return false;
   }
@@ -75,11 +87,11 @@ bool MapHandler::handle(bz_ApiString objName, bz_CustomMapObjectInfo *info)
     return false;
   }
 
-  lua_pushstring(L, makelower(objName.c_str()).c_str());
+  lua_pushstring(L, TextUtils::tolower(objToken.c_str()).c_str());
 
   lua_newtable(L);
   bz_APIStringList& list = info->data;
-  for (int i = 0; i < list.size(); i++) {
+  for (size_t i = 0; i < list.size(); i++) {
     lua_pushinteger(L, i + 1);
     lua_pushstring(L, list[i].c_str());
     lua_rawset(L, -3);
@@ -87,7 +99,7 @@ bool MapHandler::handle(bz_ApiString objName, bz_CustomMapObjectInfo *info)
 
   if (lua_pcall(L, 2, 1, 0) != 0) {
     bz_debugMessagef(0, "lua call-in mapobject error (%s): %s\n",
-                     objName.c_str(), lua_tostring(L, -1));
+                     objToken.c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
@@ -118,9 +130,9 @@ bool MapHandler::handle(bz_ApiString objName, bz_CustomMapObjectInfo *info)
 /******************************************************************************/
 /******************************************************************************/
 
-bool MapObject::PushEntries(lua_State* _L)
+bool MapObject::PushEntries(lua_State* L)
 {
-  L = _L;
+  topL = L;
 
   lua_pushliteral(L, "AttachMapObject");
   lua_pushcfunction(L, AttachMapObject);
@@ -134,7 +146,7 @@ bool MapObject::PushEntries(lua_State* _L)
 }
 
 
-bool MapObject::CleanUp(lua_State* _L)
+bool MapObject::CleanUp(lua_State* /*L*/)
 {
   map<string, MapHandler*>::const_iterator it, nextIT;
 
@@ -147,7 +159,7 @@ bool MapObject::CleanUp(lua_State* _L)
 
   mapHandlers.clear();
 
-  L = NULL;
+  topL = NULL;
 
   return true; // do nothing
 }
@@ -159,7 +171,7 @@ bool MapObject::CleanUp(lua_State* _L)
 static int AttachMapObject(lua_State* L)
 {
   int funcIndex = 2;
-  const string objName  = makelower(luaL_checkstring(L, 1));
+  const string objName  = TextUtils::tolower(luaL_checkstring(L, 1));
   const char* endToken = NULL;
   if (lua_israwstring(L, 2)) {
     funcIndex++;
@@ -189,7 +201,7 @@ static int AttachMapObject(lua_State* L)
 
 static int DetachMapObject(lua_State* L)
 {
-  const string objName = makelower(luaL_checkstring(L, 1));
+  const string objName = TextUtils::tolower(luaL_checkstring(L, 1));
 
   map<string, MapHandler*>::iterator it = mapHandlers.find(objName);
   if (it == mapHandlers.end()) {

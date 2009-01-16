@@ -1,18 +1,24 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "SlashCmd.h"
 
-#include "slashcmd.h"
-
+// system headers
 #include <string>
 #include <map>
 using std::string;
 using std::map;
 
+// common headers
+#include "bzfsAPI.h"
+#include "TextUtils.h"
 
-static lua_State* L = NULL;
+// local headers
+#include "LuaHeader.h"
+
+
+static lua_State* topL = NULL;
 
 static map<string, class SlashCmdHandler*> slashHandlers;
 
@@ -45,6 +51,8 @@ SlashCmdHandler::SlashCmdHandler(const string& c, const string& h)
 , helpTxt(h)
 , luaRef(LUA_NOREF)
 {
+  lua_State* L = topL;
+
   slashHandlers[cmd] = this;
   if (L == NULL) {
     return;
@@ -58,6 +66,8 @@ SlashCmdHandler::SlashCmdHandler(const string& c, const string& h)
 
 SlashCmdHandler::~SlashCmdHandler()
 {
+  lua_State* L = topL;
+
   slashHandlers.erase(cmd);
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, luaRef);
@@ -65,9 +75,11 @@ SlashCmdHandler::~SlashCmdHandler()
 }
 
 
-bool SlashCmdHandler::handle(int playerID, bz_ApiString command,
-                             bz_ApiString message, bz_APIStringList* params)
+bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
+                             bz_ApiString message, bz_APIStringList* /*params*/)
 {
+  lua_State* L = topL;
+
   if (L == NULL) {
     return false;
   }
@@ -82,7 +94,7 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString command,
   }
 
   lua_pushinteger(L, playerID);
-  lua_pushstring(L, makelower(cmd).c_str());
+  lua_pushstring(L, TextUtils::tolower(cmd).c_str());
   lua_pushstring(L, message.c_str());
 
   if (lua_pcall(L, 3, 1, 0) != 0) {
@@ -104,9 +116,9 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString command,
 /******************************************************************************/
 /******************************************************************************/
 
-bool SlashCmd::PushEntries(lua_State* _L)
+bool SlashCmd::PushEntries(lua_State* L)
 {
-  L = _L;
+  topL = L;
 
   lua_pushliteral(L, "AttachSlashCommand");
   lua_pushcfunction(L, AttachSlashCommand);
@@ -120,7 +132,7 @@ bool SlashCmd::PushEntries(lua_State* _L)
 }
 
 
-bool SlashCmd::CleanUp(lua_State* _L)
+bool SlashCmd::CleanUp(lua_State* /*_L*/)
 {
   map<string, SlashCmdHandler*>::const_iterator it, nextIT;
 
@@ -133,7 +145,7 @@ bool SlashCmd::CleanUp(lua_State* _L)
 
   slashHandlers.clear();
 
-  L = NULL;
+  topL = NULL;
 
   return true; // do nothing
 }
@@ -144,7 +156,7 @@ bool SlashCmd::CleanUp(lua_State* _L)
 
 static int AttachSlashCommand(lua_State* L)
 {
-  const string cmd = makelower(luaL_checkstring(L, 1));
+  const string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
   const char* help = luaL_checkstring(L, 2);
   if (!lua_isfunction(L, 3)) {
     luaL_error(L, "expected a function");
@@ -173,7 +185,7 @@ static int AttachSlashCommand(lua_State* L)
 
 static int DetachSlashCommand(lua_State* L)
 {
-  const string cmd = makelower(luaL_checkstring(L, 1));
+  const string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
 
   map<string, SlashCmdHandler*>::iterator it = slashHandlers.find(cmd);
   if (it == slashHandlers.end()) {

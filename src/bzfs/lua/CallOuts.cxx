@@ -1,12 +1,10 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
-#include "plugin_files.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "CallOuts.h"
 
-#include "callouts.h"
-
+// system headers
 #include <assert.h>
 #include <string>
 #include <vector>
@@ -16,6 +14,18 @@ using std::string;
 using std::vector;
 using std::set;
 using std::map;
+
+// common headers
+#include "bzfsAPI.h"
+#include "TextUtils.h"
+#include "PlayerState.h"
+
+// bzfs headers
+#include "../GameKeeper.h"
+
+// local headers
+#include "LuaHeader.h"
+
 
 extern const string& GetLuaDirectory(); // from lua.cpp
 
@@ -29,6 +39,15 @@ extern const string& GetLuaDirectory(); // from lua.cpp
 // - logging
 // - polls
 // - help
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static inline GameKeeper::Player* getPlayerByIndex(int playerID)
+{
+  return GameKeeper::Player::getPlayerByIndex(playerID);
+}
 
 
 /******************************************************************************/
@@ -54,7 +73,7 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
       nameMap["admin"]    = eAdministrators;
     }
     string s = lua_tostring(L, index);
-    s = makelower(s);
+    s = TextUtils::tolower(s);
     map<string, bz_eTeamType>::const_iterator it = nameMap.find(s);
     if (it != nameMap.end()) {
       return it->second;
@@ -478,7 +497,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
 static int GetLuaDirectory(lua_State* L)
 {
-  lua_pushstring(L, GetLuaDirectory().c_str());
+  lua_pushstring(L, GetLuaDirectory().c_str()); // FIXME -- ew, see func name
   return 1;
 }
 
@@ -531,17 +550,18 @@ static int GetServerDescription(lua_State* L)
   return 1;
 }
 
+
 /******************************************************************************/
 /******************************************************************************/
 
-static int UpdateListServer(lua_State* L)
+static int UpdateListServer(lua_State* /*L*/)
 {
   bz_updateListServer();
   return 0;
 }
 
 
-static int AdminShutdown(lua_State* L)
+static int AdminShutdown(lua_State* /*L*/)
 {
   bz_shutdown();
   return 0;
@@ -555,7 +575,7 @@ static int AdminRestart(lua_State* L)
 }
 
 
-static int AdminSuperKill(lua_State* L)
+static int AdminSuperKill(lua_State* /*L*/)
 {
   bz_superkill();
   return 0;
@@ -944,11 +964,20 @@ static int GetPlayerBZID(lua_State* L)
 static int GetPlayerStatus(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
-  lua_pushinteger(L, state.status);
+
+  const bool useLastState = lua_tobool(L, 2);
+  short status;;
+  if (useLastState) {
+    status = player->lastState.status;
+  } else {
+    status = player->getCurrentStateAsState().status;
+  }
+
+  lua_pushinteger(L, status);
   return 1;
 }
 
@@ -964,17 +993,24 @@ static int GetPlayerPaused(lua_State* L)
 static int GetPlayerPosition(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  const bool extrapolate = lua_isboolean(L, 2) && lua_tobool(L, 2);
-
-  float pos[3];
-  if (!bz_getPlayerPosition(pid, pos, extrapolate)) {
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
+  }
+
+  const bool useLastState = lua_tobool(L, 2);
+  float pos[3];
+  const float* posPtr = pos;
+  if (useLastState) {
+    posPtr = player->lastState.pos;
+  } else {
+    float rotation;
+    player->getPlayerCurrentPosRot(pos, rotation);
   }
 
   lua_pushnumber(L, pos[0]);
   lua_pushnumber(L, pos[1]);
   lua_pushnumber(L, pos[2]);
-
   return 3;
 }
 
@@ -982,16 +1018,24 @@ static int GetPlayerPosition(lua_State* L)
 static int GetPlayerVelocity(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-
-  float vel[3];
-  if (!bz_getPlayerVelocity(pid, vel)) {
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
 
+  const bool useLastState = lua_tobool(L, 2);
+  PlayerState state;
+  const PlayerState* statePtr = &state;
+  if (useLastState) {
+    statePtr = &player->lastState;
+  } else {
+    state = player->getCurrentStateAsState();
+  }
+
+  const float* vel = statePtr->velocity;
   lua_pushnumber(L, vel[0]);
   lua_pushnumber(L, vel[1]);
   lua_pushnumber(L, vel[2]);
-
   return 3;
 }
 
@@ -999,15 +1043,21 @@ static int GetPlayerVelocity(lua_State* L)
 static int GetPlayerRotation(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  const bool extrapolate = lua_isboolean(L, 2) && lua_tobool(L, 2);
-
-  float rot;
-  if (!bz_getPlayerRotation(pid, &rot, extrapolate)) {
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
 
-  lua_pushnumber(L, rot);
+  const bool useLastState = lua_tobool(L, 2);
+  float rotation = 0.0f;
+  if (useLastState) {
+    rotation = player->lastState.azimuth;
+  } else {
+    float pos[3];
+    player->getPlayerCurrentPosRot(pos, rotation);
+  }
 
+  lua_pushnumber(L, rotation);
   return 1;
 }
 
@@ -1015,14 +1065,21 @@ static int GetPlayerRotation(lua_State* L)
 static int GetPlayerAngVel(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-
-  float angVel;
-  if (!bz_getPlayerAngVel(pid, &angVel)) {
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
 
-  lua_pushnumber(L, angVel);
+  const bool useLastState = lua_tobool(L, 2);
+  PlayerState state;
+  const PlayerState* statePtr = &state;
+  if (useLastState) {
+    statePtr = &player->lastState;
+  } else {
+    state = player->getCurrentStateAsState();
+  }
 
+  lua_pushnumber(L, statePtr->angVel);
   return 1;
 }
 
@@ -1030,11 +1087,20 @@ static int GetPlayerAngVel(lua_State* L)
 static int GetPlayerFalling(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, state.falling);
+
+  const bool useLastState = lua_tobool(L, 2);
+  short status;;
+  if (useLastState) {
+    status = player->lastState.status;
+  } else {
+    status = player->getCurrentStateAsState().status;
+  }
+
+  lua_pushboolean(L, (status & PlayerState::Falling) != 0);
   return 1;
 }
 
@@ -1042,11 +1108,20 @@ static int GetPlayerFalling(lua_State* L)
 static int GetPlayerCrossingWall(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, state.crossingWall);
+
+  const bool useLastState = lua_tobool(L, 2);
+  short status;;
+  if (useLastState) {
+    status = player->lastState.status;
+  } else {
+    status = player->getCurrentStateAsState().status;
+  }
+
+  lua_pushboolean(L, (status & PlayerState::CrossingWall) != 0);
   return 1;
 }
 
@@ -1054,11 +1129,20 @@ static int GetPlayerCrossingWall(lua_State* L)
 static int GetPlayerZoned(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_PlayerUpdateState state;
-  if (!bz_getPlayerCurrentState(pid, state)) { // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, state.inPhantomZone);
+
+  const bool useLastState = lua_tobool(L, 2);
+  short status;;
+  if (useLastState) {
+    status = player->lastState.status;
+  } else {
+    status = player->getCurrentStateAsState().status;
+  }
+
+  lua_pushboolean(L, (status & PlayerState::PhantomZoned) != 0);
   return 1;
 }
 
@@ -1066,14 +1150,25 @@ static int GetPlayerZoned(lua_State* L)
 static int GetPlayerPhysicsDriver(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-
-  int phydrv;
-  if (!bz_getPlayerPhysicsDriver(pid, &phydrv)) {
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
     return 0;
   }
 
-  lua_pushinteger(L, phydrv);
+  const bool useLastState = lua_tobool(L, 2);
+  PlayerState state;
+  const PlayerState* statePtr = &state;
+  if (useLastState) {
+    statePtr = &player->lastState;
+  } else {
+    state = player->getCurrentStateAsState();
+  }
 
+  if (statePtr->phydrv < 0) {
+    lua_pushboolean(L, false);
+  } else {
+    lua_pushinteger(L, statePtr->phydrv);
+  }
   return 1;
 }
 
@@ -1081,12 +1176,11 @@ static int GetPlayerPhysicsDriver(lua_State* L)
 static int GetPlayerSpawned(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, player->spawned);
-  bz_freePlayerRecord(player);
+  lua_pushboolean(L, player->player.isAlive());
   return 1;
 }
 
@@ -1110,12 +1204,11 @@ static int GetPlayerAdmin(lua_State* L)
 static int GetPlayerOperator(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, player->op);
-  bz_freePlayerRecord(player);
+  lua_pushboolean(L, player->accessInfo.isOperator());
   return 1;
 }
 
@@ -1123,17 +1216,17 @@ static int GetPlayerOperator(lua_State* L)
 static int GetPlayerGroups(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
   lua_newtable(L);
-  for (unsigned int i = 0; i < player->groups.size(); i++) {
+  const vector<string>& groups = player->accessInfo.groups;
+  for (unsigned int i = 0; i < groups.size(); i++) {
     lua_pushinteger(L, i + 1);
-    lua_pushstring(L, player->groups[i].c_str());
+    lua_pushstring(L, groups[i].c_str());
     lua_rawset(L, -3);
   }
-  bz_freePlayerRecord(player);
   return 1;
 }
 
@@ -1141,12 +1234,11 @@ static int GetPlayerGroups(lua_State* L)
 static int GetPlayerRank(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushnumber(L, player->rank);
-  bz_freePlayerRecord(player);
+  lua_pushnumber(L, player->score.ranking());
   return 1;
 }
 
@@ -1154,12 +1246,11 @@ static int GetPlayerRank(lua_State* L)
 static int GetPlayerVerified(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, player->verified);
-  bz_freePlayerRecord(player);
+  lua_pushboolean(L, player->accessInfo.isVerified());
   return 1;
 }
 
@@ -1167,12 +1258,11 @@ static int GetPlayerVerified(lua_State* L)
 static int GetPlayerGlobalUser(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushboolean(L, player->globalUser);
-  bz_freePlayerRecord(player);
+  lua_pushboolean(L, player->authentication.isGlobal());
   return 1;
 }
 
@@ -1180,17 +1270,17 @@ static int GetPlayerGlobalUser(lua_State* L)
 static int GetPlayerFlagHistory(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid); // FIXME -- slow
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
+  const vector<FlagType*>& flagHistory = player->flagHistory.get();
   lua_newtable(L);
-  for (unsigned int i = 0; i < player->flagHistory.size(); i++) {
+  for (size_t i = 0; i < flagHistory.size(); i++) {
     lua_pushinteger(L, i + 1);
-    lua_pushstring(L, player->flagHistory[i].c_str());
+    lua_pushstring(L, flagHistory[i]->flagAbbv.c_str());
     lua_rawset(L, -3);
   }
-  bz_freePlayerRecord(player);
   return 1;
 }
 
@@ -1443,7 +1533,7 @@ static int GetFlagPosition(lua_State* L)
 static int GetFlagPlayer(lua_State* L)
 {
   const int flagID = luaL_checkint(L, 1);
-  float pos[3] = { 0.0f, 0.0f, 0.0f };
+//FIXME  float pos[3] = { 0.0f, 0.0f, 0.0f };
   lua_pushinteger(L, bz_flagPlayer(flagID));
   return 1;
 }
@@ -1484,7 +1574,7 @@ static int ResetFlags(lua_State* L)
 static int GetTeamName(lua_State* L)
 {
   bz_eTeamType teamID = ParseTeam(L, 1);
-  lua_pushstring(L, bzu_GetTeamName(teamID));
+  lua_pushstring(L, "FIXME"); teamID = teamID; // FIXME bzu_GetTeamName(teamID));
   return 1;
 }
 
@@ -1658,35 +1748,35 @@ static int ResumeCountdown(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-static int ReloadLocalBans(lua_State* L)
+static int ReloadLocalBans(lua_State* /*L*/)
 {
   bz_reloadLocalBans();
   return 0;
 }
 
 
-static int ReloadMasterBans(lua_State* L)
+static int ReloadMasterBans(lua_State* /*L*/)
 {
   bz_reloadMasterBans();
   return 0;
 }
 
 
-static int ReloadUsers(lua_State* L)
+static int ReloadUsers(lua_State* /*L*/)
 {
   bz_reloadUsers();
   return 0;
 }
 
 
-static int ReloadGroups(lua_State* L)
+static int ReloadGroups(lua_State* /*L*/)
 {
   bz_reloadGroups();
   return 0;
 }
 
 
-static int ReloadHelp(lua_State* L)
+static int ReloadHelp(lua_State* /*L*/)
 {
   bz_reloadHelp();
   return 0;
@@ -2041,15 +2131,15 @@ static int DiffTimers(lua_State* L)
 
 static int DirList(lua_State* L)
 {
-  const char* path = luaL_checkstring(L, 1);
+//FIXME  const char* path = luaL_checkstring(L, 1);
 
-  vector<string> dirs = getDirsInDir(path);
+  vector<string> dirs;//FIXME = getDirsInDir(path);
   set<string> dirSet;
   for (unsigned int i = 0; i < dirs.size(); i++) {
     dirSet.insert(dirs[i]);
   }
 
-  vector<string> files = getFilesInDir(path, NULL, false); // not recursive
+  vector<string> files;//FIXME = getFilesInDir(path, NULL, false); // not recursive
   set<string> fileSet;
   for (unsigned int i = 0; i < files.size(); i++) {
     // do not include directories

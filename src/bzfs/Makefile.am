@@ -18,6 +18,7 @@ else
 plugin_files =
 endif
 
+SUBDIRS = lua
 
 bzfs_LDFLAGS = -export-dynamic -static
 bzfs_SOURCES = \
@@ -158,12 +159,13 @@ bzfs_SOURCES = \
 	bzfs.cxx \
 	bzfs.h
 
-
 LDADD = \
 	../obstacle/libObstacle.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
 	../common/libCommon.la		\
+	lua/libLuaBZFS.la		\
+	$(LIBLUA)			\
 	$(LIBCURL)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\

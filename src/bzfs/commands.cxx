@@ -52,6 +52,7 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 #include "Reports.h"
+#include "lua/LuaBZFS.h"
 
 #include "BackgroundTask.h"
 
@@ -475,6 +476,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class LuaBZFSCommand : public ServerCommand {
+public:
+  LuaBZFSCommand();
+
+  virtual bool operator() (const char *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand	  partCommand;
@@ -490,6 +499,7 @@ static CountdownCommand   countdownCommand;
 static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagDropCommand     lagDropCommand;
+static LuaBZFSCommand     luaBZFSCommand;
 static JitterWarnCommand  jitterWarnCommand;
 static JitterDropCommand  jitterDropCommand;
 static PacketLossWarnCommand  packetLossWarnCommand;
@@ -613,8 +623,9 @@ ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
 							 "[ list [-t|-n] | load <filename|#index> | loop | play | skip [+/-seconds] | stats ] - interact with recorded files") {}
 SayCommand::SayCommand()		 : ServerCommand("/say",
 							 "[message] - generate a public message sent by the server") {}
-ModCountCommand::ModCountCommand()		 : ServerCommand("/modcount",
+ModCountCommand::ModCountCommand()	 : ServerCommand("/modcount",
 								 "[+-seconds] - adjust countdown (if any)") {}
+LuaBZFSCommand::LuaBZFSCommand()	 : ServerCommand("/luabzfs") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
 
@@ -3091,7 +3102,17 @@ bool SayCommand::operator() (const char *message,
   return true;
 }
 
-bool ModCountCommand::operator() (const char	*message,
+
+bool LuaBZFSCommand::operator() (const char *message,
+			     GameKeeper::Player *playerData)
+{
+  printf("LuaBZFSCommand::operator() %s\n", message); // FIXME
+  LuaBZFS::recvCommand(message, playerData->getIndex());
+  return true;
+}
+
+
+bool ModCountCommand::operator() (const char *message,
 				  GameKeeper::Player *playerData)
 {
   int messageStart = 0;

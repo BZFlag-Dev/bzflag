@@ -1,17 +1,22 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "BZDB.h"
 
-#include "bzdb.h"
-
+// system headers
 #include <string>
 #include <vector>
 #include <set>
 using std::string;
 using std::vector;
 using std::set;
+
+// common headers
+#include "bzfsAPI.h"
+
+// local headers
+#include "LuaHeader.h"
 
 
 // FIXME -- permissions, persistence, etc...
@@ -41,7 +46,7 @@ static int SetString(lua_State* L);
 
 /******************************************************************************/
 
-bool BZDB::PushEntries(lua_State* L)
+bool LuaBZDB::PushEntries(lua_State* L)
 {
   lua_pushliteral(L, "DB");
   lua_newtable(L);
@@ -176,8 +181,8 @@ static int SetInt(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
   const int value = luaL_checkint(L, 2);
-  const int perms = luaL_optint(L, 3, 0);
-  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
+//FIXME  const int perms = luaL_optint(L, 3, 0);
+//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
   lua_pushboolean(L, bz_setBZDBInt(key, value));
   return 1;
 }
@@ -190,8 +195,8 @@ static int SetBool(lua_State* L)
     luaL_error(L, "expected boolean argument for arg 2");
   }
   const bool value = lua_tobool(L, 2);
-  const int  perms = luaL_optint(L, 3, 0);
-  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
+//FIXME  const int  perms = luaL_optint(L, 3, 0);
+//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
   lua_pushboolean(L, bz_setBZDBBool(key, value));
   return 1;
 }
@@ -201,8 +206,8 @@ static int SetFloat(lua_State* L)
 {
   const char* key    = luaL_checkstring(L, 1);
   const float value = luaL_checkfloat(L, 2);
-  const int   perms  = luaL_optint(L, 3, 0);
-  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
+//FIXME  const int   perms  = luaL_optint(L, 3, 0);
+//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
   lua_pushboolean(L, bz_setBZDBDouble(key, value));
   return 1;
 }
@@ -212,8 +217,8 @@ static int SetString(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
   const char* value = luaL_checkstring(L, 2);
-  const int perms = luaL_optint(L, 3, 0);
-  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
+//FIXME  const int perms = luaL_optint(L, 3, 0);
+//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
   lua_pushboolean(L, bz_setBZDBString(key, value));
   return 1;
 }

@@ -1,11 +1,10 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "FetchURL.h"
 
-#include "fetchurl.h"
-
+// system headers
 #include <string>
 #include <set>
 #include <map>
@@ -13,10 +12,16 @@ using std::string;
 using std::set;
 using std::map;
 
+// common headers
+#include "bzfsAPI.h"
+
+// local headers
+#include "LuaHeader.h"
+
 
 static const char* MetaTag = "FetchURL";
 
-static lua_State* L = NULL;
+static lua_State* topL = NULL;
 
 static int FetchURL_func(lua_State* L);
 
@@ -91,6 +96,8 @@ FetchHandler::FetchHandler(lua_State* L, const char* url, const char* post)
 
 FetchHandler::~FetchHandler()
 {
+  lua_State* L = topL;
+
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
     luaL_unref(L, LUA_REGISTRYINDEX, userdataRef);
@@ -103,7 +110,7 @@ FetchHandler::~FetchHandler()
 
 
 void FetchHandler::done(const char* URL, void* data, unsigned int size,
-                        bool complete)
+                        bool /*complete*/)
 {
   success = true;
   Handle(URL, data, size, NULL, 0, NULL);
@@ -122,10 +129,12 @@ void FetchHandler::error(const char* URL, int errorCode, const char* errorString
 }
 
 
-bool FetchHandler::Handle(const char* URL, void* data, unsigned int size,
+bool FetchHandler::Handle(const char* /*URL*/, void* data, unsigned int size,
                           const char* failType,
                           int errorCode, const char* errorString)
 {
+  lua_State* L = topL;
+
   fetchID = 0;
 
   if (L == NULL) {
@@ -181,20 +190,20 @@ bool FetchHandler::Cancel()
     return false;
   }
 
-  const bool success = bz_removeURLJobByID(fetchID);
+  const bool retval = bz_removeURLJobByID(fetchID);
 
   fetchID = 0;
 
-  return success;
+  return retval;
 }
 
 
 /******************************************************************************/
 /******************************************************************************/
 
-bool FetchURL::PushEntries(lua_State* _L)
+bool FetchURL::PushEntries(lua_State* L)
 {
-  L = _L;
+  topL = L;
 
   CreateMetatble(L);
 
@@ -206,11 +215,11 @@ bool FetchURL::PushEntries(lua_State* _L)
 }
 
 
-bool FetchURL::CleanUp(lua_State* _L)
+bool FetchURL::CleanUp(lua_State* /*L*/)
 {
   // let the lua __gc() calls do all the work
 
-  L = NULL;
+  topL = NULL;
 
   return true; // do nothing
 }

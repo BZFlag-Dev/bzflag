@@ -354,7 +354,6 @@ AC_CONFIG_FILES([
 	killall/Makefile
 	koth/Makefile
 	logDetail/Makefile
-	lua/Makefile
 	m4/Makefile
 	mapchange/Makefile
 	nagware/Makefile

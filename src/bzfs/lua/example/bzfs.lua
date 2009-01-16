@@ -176,16 +176,16 @@ blocked = tmpSet
 -- update the desired call-ins
 for name, code in pairs(BZ.GetCallIns()) do
   if (type(_G[name]) == 'function') then
-    BZ.UpdateCallIn(name, _G[name])
+    BZ.SetCallIn(name, _G[name])
   elseif (not blocked[name]) then 
-    BZ.UpdateCallIn(name, function(...)
+    BZ.SetCallIn(name, function(...)
       print('bzfs.lua', name, ...)
     end)
   end
 end
 
 
---BZ.UpdateCallIn('Tick', nil) -- annoying, but leave the function defined
+--BZ.SetCallIn('Tick', nil) -- annoying, but leave the function defined
 
 
 -- print the current call-in map
@@ -198,7 +198,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-BZ.UpdateCallIn('AllowFlagGrab',
+BZ.SetCallIn('AllowFlagGrab',
   function(playerID, flagID, flagType, shotType, px, py, pz)
     if (BZ.GetPlayerTeam(playerID) == BZ.TEAM.RED) then
       return false
@@ -207,7 +207,7 @@ BZ.UpdateCallIn('AllowFlagGrab',
 )
 
 
-BZ.UpdateCallIn('BZDBChange',
+BZ.SetCallIn('BZDBChange',
   function(key, value)
 --    print('BZDBChange: ' .. key .. ' = ' .. value)
   end
@@ -283,17 +283,17 @@ end
 BZ.DB.SetFloat('_tankSpeed', '50.0')
 
 
-
-BZ.AttachSlashCommand('luabzfs', 'bzfs lua plugin command',
-function(playerID, cmd, msg)
-  print('luabzfs command received: '..playerID..' '..cmd..' '..msg)
-end)
+-- this can override the default, shame
+--BZ.AttachSlashCommand('luabzfs', 'bzfs lua plugin command',
+--function(playerID, cmd, msg)
+--  print('luabzfs command received: '..playerID..' '..cmd..' '..msg)
+--end)
 
 
 include('modules.lua')
 
 
---BZ.UpdateCallIn('GetWorld',
+--BZ.SetCallIn('GetWorld',
 --  function(mode)
 
 
@@ -350,6 +350,6 @@ do
 --    print('maxTime = ' .. maxTime)
   end
 
-  BZ.UpdateCallIn('Tick', HandleTick)
+  BZ.SetCallIn('Tick', HandleTick)
 end  
   

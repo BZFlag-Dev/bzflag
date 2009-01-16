@@ -89,6 +89,7 @@ const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
+  "[-luabzfs <dirpath>] "
   "[-luaworld <dirpath>] "
   "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
@@ -192,6 +193,7 @@ const char *extraUsageString =
   "\t-jitterdrop: drop player after this many jitter warnings\n"
   "\t-jitterwarn: jitter warning threshhold time [ms]\n"
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
+  "\t-luabzfs: path to the LuaWorld sources directory\n"
   "\t-luaworld: path to the LuaWorld sources directory\n"
   "\t\tstring\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
@@ -619,6 +621,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-cacheout") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheOut = argv[i];
+    } else if (strcmp(argv[i], "-luabzfs") == 0) {
+      checkArgc(1, i, argc, argv[i]);
+      options.luaBZFS = argv[i];
     } else if (strcmp(argv[i], "-luaworld") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.luaWorldDir = argv[i];

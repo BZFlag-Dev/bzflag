@@ -19,8 +19,16 @@
 ** $Id: lfs.c,v 1.53 2008/05/07 19:06:37 carregal Exp $
 */
 
-#define _LARGEFILE64_SOURCE
+#include "common.h"
 
+#ifndef _LARGEFILE64_SOURCE
+#  define _LARGEFILE64_SOURCE
+#endif
+
+// implementation header
+#include "LuaLFS.h"
+
+// system headers
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -42,8 +50,8 @@
 #include <utime.h>
 #endif
 
-#include "mylua.h"
-#include "lualfs.h"
+// local headers
+#include "LuaHeader.h"
 
 /* Define 'strerror' for systems that do not implement it */
 #ifdef NO_STRERROR

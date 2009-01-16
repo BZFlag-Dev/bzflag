@@ -21,7 +21,6 @@ SUBDIRS = \
 	killall \
 	koth \
 	logDetail \
-	lua \
 	mapchange \
 	nagware \
 	playHistoryTracker \

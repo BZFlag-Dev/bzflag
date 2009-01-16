@@ -3,9 +3,9 @@
 
 
 extern "C" {
-  #include "../../src/other/lua/src/lua.h"
-  #include "../../src/other/lua/src/lualib.h"
-  #include "../../src/other/lua/src/lauxlib.h"
+  #include "../../other/lua/src/lua.h"
+  #include "../../other/lua/src/lualib.h"
+  #include "../../other/lua/src/lauxlib.h"
 }
 
 

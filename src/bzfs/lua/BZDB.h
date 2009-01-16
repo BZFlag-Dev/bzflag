@@ -3,7 +3,7 @@
 
 struct lua_State;
 
-namespace BZDB {
+namespace LuaBZDB {
   bool PushEntries(lua_State* L);
 }
 

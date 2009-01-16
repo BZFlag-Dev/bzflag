@@ -1,12 +1,17 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "Constants.h"
 
-#include "constants.h"
-
+// system headers
 #include <string>
+
+// common headers
+#include "bzfsAPI.h"
+
+// local headers
+#include "LuaHeader.h"
 
 
 static bool PushGames(lua_State* L);

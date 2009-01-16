@@ -1,11 +1,10 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "CallIns.h"
 
-#include "callins.h"
-
+// system headers
 #include <string.h>
 #include <string>
 #include <vector>
@@ -16,6 +15,12 @@ using std::vector;
 using std::set;
 using std::map;
 
+// common headers
+#include "bzfsAPI.h"
+
+// local headers
+#include "LuaHeader.h"
+
 
 static const bz_eEventType bz_eShutdown = (bz_eEventType)(bz_eLastEvent + 1);
 
@@ -23,17 +28,11 @@ static const bz_eEventType bz_eShutdown = (bz_eEventType)(bz_eLastEvent + 1);
 /******************************************************************************/
 /******************************************************************************/
 
-static lua_State* L = NULL;
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-
 class CallIn : public bz_EventHandler {
+  public:
+    static void SetL(lua_State* _L) { L = _L; }
 
   public:
-
     CallIn(int _code, const string& _name)
     : code(_code)
     , name(_name)
@@ -52,7 +51,7 @@ class CallIn : public bz_EventHandler {
     void process(bz_EventData* eventData) { execute(eventData); }
 
     const string& GetName() const { return name; }
-    const int     GetCode() const { return code; }
+    int           GetCode() const { return code; }
 
     bool PushCallIn(int maxSlots)
     {
@@ -115,6 +114,9 @@ class CallIn : public bz_EventHandler {
 
     bool registered;
 
+  protected:
+    static lua_State* L;
+
   public:
     static CallIn* Find(const string& name)
     {
@@ -130,6 +132,8 @@ class CallIn : public bz_EventHandler {
 };
 
 
+lua_State* CallIn::L = NULL;
+
 map<int,    CallIn*> CallIn::codeMap;
 map<string, CallIn*> CallIn::nameMap;
 
@@ -137,7 +141,7 @@ map<string, CallIn*> CallIn::nameMap;
 /******************************************************************************/
 /******************************************************************************/
 
-static int UpdateCallIn(lua_State* L)
+static int SetCallIn(lua_State* L)
 {
   const string name = luaL_checkstring(L, 1);
 
@@ -199,27 +203,27 @@ static int GetCallIns(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-bool CallIns::PushEntries(lua_State* _L)
+bool CallIns::PushEntries(lua_State* L)
 {
-  L = _L;
+  CallIn::SetL(L);
 
-  PUSH_LUA_CFUNC(L, UpdateCallIn);
+  PUSH_LUA_CFUNC(L, SetCallIn);
   PUSH_LUA_CFUNC(L, GetCallIns);
 
   return true;
 }
 
 
-bool CallIns::CleanUp(lua_State* _L)
+bool CallIns::CleanUp(lua_State* /*L*/)
 {
-  L = NULL;
-
   const map<int, CallIn*>& codeMap = CallIn::GetCodeMap();
   map<int, CallIn*>::const_iterator it;
   for (it = codeMap.begin(); it != codeMap.end(); ++it) {
     CallIn* ci = it->second;
     ci->Unregister();
   }
+
+  CallIn::SetL(NULL);
 
   return true;
 }
@@ -991,7 +995,7 @@ bool CI_LuaData::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Shutdown::execute(bz_EventData* eventData)
+bool CI_Shutdown::execute(bz_EventData* /*eventData*/)
 {
   if (!PushCallIn(2)) {
     return false;
@@ -1433,6 +1437,7 @@ bool CI_Teleport::execute(bz_EventData* eventData)
 bool CI_Tick::execute(bz_EventData* eventData)
 {
   bz_TickEventData_V1* ed = (bz_TickEventData_V1*)eventData;
+  ed = ed; // FIXME?
 
   if (!PushCallIn(2)) {
     return false;
@@ -1470,7 +1475,7 @@ bool CI_UnknownSlashCommand::execute(bz_EventData* eventData)
 }
 
 
-bool CI_WorldFinalized::execute(bz_EventData* eventData)
+bool CI_WorldFinalized::execute(bz_EventData* /*eventData*/)
 {
   // NOTE: plain bz_EventData type, no extra data
   if (!PushCallIn(2)) {
@@ -1480,7 +1485,7 @@ bool CI_WorldFinalized::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ZoneEntry::execute(bz_EventData* eventData)
+bool CI_ZoneEntry::execute(bz_EventData* /*eventData*/)
 {
   // FIXME -- not implemented ?
   if (!PushCallIn(2)) {
@@ -1490,7 +1495,7 @@ bool CI_ZoneEntry::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ZoneExit::execute(bz_EventData* eventData)
+bool CI_ZoneExit::execute(bz_EventData* /*eventData*/)
 {
   // FIXME -- not implemented ?
   if (!PushCallIn(2)) {

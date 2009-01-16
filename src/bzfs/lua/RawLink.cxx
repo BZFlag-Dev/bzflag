@@ -1,11 +1,10 @@
 
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
+#include "common.h"
 
-#include "mylua.h"
+// implementation header
+#include "RawLink.h"
 
-#include "rawlink.h"
-
+// system headers
 #include <string>
 #include <set>
 #include <map>
@@ -13,8 +12,13 @@ using std::string;
 using std::set;
 using std::map;
 
+// common headers
+#include "bzfsAPI.h"
 
-static lua_State* L = NULL;
+// local headers
+#include "LuaHeader.h"
+
+static lua_State* topL = NULL;
 
 static int AttachRawLink(lua_State* L);
 static int DetachRawLink(lua_State* L);
@@ -78,6 +82,8 @@ Link::Link(lua_State* L, int _id)
 
 Link::~Link()
 {
+  lua_State* L = topL;
+
   bz_removeNonPlayerConnectionHandler(id, this);
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
@@ -86,8 +92,10 @@ Link::~Link()
 }
 
 
-void Link::pending(int id, void* data, unsigned int size)
+void Link::pending(int /*id*/, void* data, unsigned int size)
 {
+  lua_State* L = topL;
+
   if (L == NULL) {
     return;
   }
@@ -123,7 +131,7 @@ void Link::pending(int id, void* data, unsigned int size)
 }
 
 
-void Link::disconnect(int id)
+void Link::disconnect(int /*id*/)
 {
   pending(id, NULL, 0);
   delete this;
@@ -133,9 +141,9 @@ void Link::disconnect(int id)
 /******************************************************************************/
 /******************************************************************************/
 
-bool RawLink::PushEntries(lua_State* _L)
+bool RawLink::PushEntries(lua_State* L)
 {
-  L = _L;
+  topL = L;
 
   PUSH_LUA_CFUNC(L, AttachRawLink);
   PUSH_LUA_CFUNC(L, DetachRawLink);
@@ -149,10 +157,8 @@ bool RawLink::PushEntries(lua_State* _L)
 }
 
 
-bool RawLink::CleanUp(lua_State* _L)
+bool RawLink::CleanUp(lua_State* /*L*/)
 {
-  L = NULL;
-
   LinkMap::iterator it, next;
   for (it = linkMap.begin(); it != linkMap.end(); /* no-op */) {
     next = it;
@@ -161,6 +167,8 @@ bool RawLink::CleanUp(lua_State* _L)
     it = next;
   }
   linkMap.clear();
+
+  topL = NULL;
 
   return true;
 }

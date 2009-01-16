@@ -107,7 +107,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function UpdateCallIn(moName, ciName, ciFunc)
+local function SetCallIn(moName, ciName, ciFunc)
   local moData = modules[moName]
   if (moData == nil) then
     return nil
