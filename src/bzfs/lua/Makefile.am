@@ -16,7 +16,6 @@ noinst_HEADERS =      \
 	FetchURL.h    \
 	LuaBZFS.h     \
 	LuaHeader.h   \
-	LuaLFS.h      \
 	MapObject.h   \
 	RawLink.h     \
 	SlashCmd.h
@@ -28,7 +27,6 @@ libLuaBZFS_la_SOURCES = \
 	Constants.cxx \
 	FetchURL.cxx  \
 	LuaBZFS.cxx   \
-	LuaLFS.cxx    \
 	MapObject.cxx \
 	RawLink.cxx   \
 	SlashCmd.cxx

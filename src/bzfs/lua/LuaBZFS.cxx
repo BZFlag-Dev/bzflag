@@ -22,7 +22,6 @@ using std::vector;
 
 //local headers
 #include "LuaHeader.h"
-#include "LuaLFS.h"
 #include "BZDB.h"
 #include "CallIns.h"
 #include "CallOuts.h"
@@ -248,7 +247,6 @@ static bool CreateLuaState(const string& script)
 
   L = luaL_newstate();
   luaL_openlibs(L);
-  luaopen_lfs (L);
 
   lua_newtable(L);
   {

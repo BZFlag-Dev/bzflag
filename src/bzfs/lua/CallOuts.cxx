@@ -1423,9 +1423,8 @@ static int KillPlayer(lua_State* L)
 }
 
 
-static int SetRabbit(lua_State* L)
+static int SetRabbit(lua_State* L) // FIXME ? 
 {
-  // FIXME ?
   const int playerID = luaL_checkint(L, 1);
   if (lua_isnil(L, 2)) {
     bz_removeRabbit(playerID);
@@ -1533,7 +1532,6 @@ static int GetFlagPosition(lua_State* L)
 static int GetFlagPlayer(lua_State* L)
 {
   const int flagID = luaL_checkint(L, 1);
-//FIXME  float pos[3] = { 0.0f, 0.0f, 0.0f };
   lua_pushinteger(L, bz_flagPlayer(flagID));
   return 1;
 }
