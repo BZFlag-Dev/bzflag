@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -201,7 +201,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -355,7 +355,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -506,7 +506,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,..\..\src\other\zlib,.\,..\..\src\other\curl\include"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;..\..\src\other\zlib;.\;..\..\src\other\curl\include;..\..\src\bzfs\lua"
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -1240,6 +1240,86 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Stats.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="lua"
+			>
+			<File
+				RelativePath="..\..\src\bzfs\lua\BZDB.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\BZDB.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\CallIns.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\CallIns.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\CallOuts.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\CallOuts.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\Constants.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\Constants.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\FetchURL.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\FetchURL.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\LuaBZFS.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\LuaBZFS.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\LuaHeader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\MapObject.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\MapObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\RawLink.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\RawLink.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\SlashCmd.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\SlashCmd.h"
 				>
 			</File>
 		</Filter>
