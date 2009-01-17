@@ -96,7 +96,6 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
 /******************************************************************************/
 
 static int GetLuaDirectory(lua_State* L);
-static int GetPluginDirectory(lua_State* L); // only valid during loading
 
 static int GetAPIVersion(lua_State* L);
 static int GetProtocolVersion(lua_State* L);
@@ -294,7 +293,6 @@ bool CallOuts::PushEntries(lua_State* L)
   assert(sizeof(void*) >= sizeof(uint32_t));
 
   PUSH_LUA_CFUNC(L, GetLuaDirectory);
-  PUSH_LUA_CFUNC(L, GetPluginDirectory);
 
   PUSH_LUA_CFUNC(L, GetAPIVersion);
   PUSH_LUA_CFUNC(L, GetProtocolVersion);
@@ -499,13 +497,6 @@ bool CallOuts::PushEntries(lua_State* L)
 static int GetLuaDirectory(lua_State* L)
 {
   lua_pushstring(L, GetLuaDirectory().c_str()); // FIXME -- ew, see func name
-  return 1;
-}
-
-
-static int GetPluginDirectory(lua_State* L)
-{
-  lua_pushstring(L, bz_pluginBinPath());
   return 1;
 }
 

@@ -18,13 +18,6 @@ end
 
 
 do
-  -- replace the function to make this value permanent
-  local pluginDir = bz.GetPluginDirectory()
-  bz.GetPluginDirectory = function() return pluginDir end
-end
-
-
-do
   local chunk, err = loadfile(bz.GetLuaDirectory() .. 'utils.lua')
   if (not chunk) then
     error(err)
@@ -48,10 +41,7 @@ end
 bz.Print('-- bzfs.lua --')
 
 
-local pluginDir = bz.GetPluginDirectory()
-
 bz.Print('luaDir    = ' .. bz.GetLuaDirectory())
-bz.Print('pluginDir = ' .. bz.GetPluginDirectory())
 
 
 --------------------------------------------------------------------------------

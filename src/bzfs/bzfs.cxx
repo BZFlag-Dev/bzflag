@@ -3597,7 +3597,7 @@ static bool initNet(void)
 #endif /* defined(_WIN32) */
 }
 
-static void initStartupPrams(int argc, char **argv)
+static void initStartupParameters(int argc, char **argv)
 {
   Flags::init();
 
@@ -3889,11 +3889,9 @@ static bool initServer(int argc, char **argv)
 
   bzfsrand((unsigned int)time(0));
 
-  initStartupPrams(argc,argv);
+  initStartupParameters(argc, argv);
 
   setupPermissions();
-
-  LuaBZFS::init(clOptions->luaBZFS);
 
   setupPlugins();
 

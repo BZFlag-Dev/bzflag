@@ -48,6 +48,7 @@
 #include "Permissions.h"
 #include "EntryZones.h"
 #include "SpawnPolicyFactory.h"
+#include "lua/LuaBZFS.h"
 
 
 const char *usageString =
@@ -622,7 +623,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.cacheOut = argv[i];
     } else if (strcmp(argv[i], "-luabzfs") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.luaBZFS = argv[i];
+      if (LuaBZFS::isActive()) {
+        std::cerr << "WARNING: ignoring extra '-luabzfs "
+                  << argv[i] << "' argument" << std::endl;
+      } else {
+        options.luaBZFS = argv[i];
+        LuaBZFS::init(options.luaBZFS);
+      }
     } else if (strcmp(argv[i], "-luaworld") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.luaWorldDir = argv[i];
