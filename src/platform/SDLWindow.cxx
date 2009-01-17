@@ -99,8 +99,13 @@ void SDLWindow::getMouse(int& x, int& y) const {
 void SDLWindow::getPosition(int& x, int& y) {
 
 // NOTE: the ifdef pattern is taken from SDL_syswm.h
+// Mac OS X supports several ways of hardware accelerated rendering, including X11 and Quartz (default)
 
-#if defined(SDL_VIDEO_DRIVER_X11)
+// FIXME: It is probably better to define what renderer should be used at configure time than to guess at compile time
+#if defined(SDL_VIDEO_DRIVER_QUARTZ)
+  x = 0;
+  y = 0;
+#elif defined(SDL_VIDEO_DRIVER_X11)
   SDL_SysWMinfo info;
   SDL_VERSION(&info.version);
   if (!SDL_GetWMInfo(&info)) {
