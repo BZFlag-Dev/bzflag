@@ -195,7 +195,6 @@ const char *extraUsageString =
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
   "\t-luabzfs: path to the LuaBZFS entry source file\n"
   "\t-luaworld: path to the LuaWorld sources directory\n"
-  "\t\tstring\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
   "\t-mp: maximum players total or per team\n"
