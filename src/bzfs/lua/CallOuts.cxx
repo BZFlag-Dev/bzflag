@@ -2136,7 +2136,12 @@ static int DirList(lua_State* L)
   vector<string> dirs;
   vector<string> files;
 
-  if (!BzVFS::rawDirList("", path, recursize, dirs, files)) {
+  if (path[0] == 0) {
+    path = "./";
+  }
+
+  const string cleanPath = BzVFS::cleanDirPath(path);
+  if (!BzVFS::rawDirList("", cleanPath, recursize, dirs, files)) {
     return 0;
   }  
   
@@ -2172,7 +2177,7 @@ static int DirList(lua_State* L)
   for (dit = dirSet.begin(); dit != dirSet.end(); ++dit) {
     dirCount++;
     lua_pushinteger(L, dirCount);
-    lua_pushstring(L, (*dit + "/").c_str());
+    lua_pushstring(L, (*dit).c_str());
     lua_rawset(L, -3);
   }
 
