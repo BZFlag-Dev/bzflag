@@ -15,6 +15,7 @@ using std::vector;
 // common headers
 #include "bzfsAPI.h"
 #include "TextUtils.h"
+#include "bzfio.h"
 
 // bzfs headers
 #include "../bzfs.h"
@@ -30,14 +31,6 @@ using std::vector;
 #include "MapObject.h"
 #include "RawLink.h"
 #include "SlashCmd.h"
-
-
-BZ_GET_PLUGIN_VERSION
-
-#define WARNINGF(fmt, ...) \
-  bz_debugMessagef(0, fmt, ## __VA_ARGS__); \
-  bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, fmt, ## __VA_ARGS__)
-
 
 
 /******************************************************************************/
@@ -87,7 +80,7 @@ bool LuaBZFS::init(const string& cmdLine)
   bz_debugMessage(4, "luaBZFS loaded");
 
   if (L != NULL) {
-    WARNINGF("luaBZFS is already loaded");
+    logDebugMessage(1, "luaBZFS is already loaded");
     return false;
   }
 
@@ -106,7 +99,7 @@ bool LuaBZFS::init(const string& cmdLine)
     scriptFile = string(bz_pluginBinPath()) + "/" + scriptFile;
   }
   if (!fileExists(scriptFile)) {
-    WARNINGF("luaBZFS: could not find the script file");
+    logDebugMessage(1, "luaBZFS: could not find the script file");
     if (dieHard) {
       exit(2);
     }
@@ -200,7 +193,7 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
   if (args[1] == "disable") {
     if (isActive()) {
       kill();
-      WARNINGF("LuaBZFS has been disabled");
+      sendMessage(ServerPlayer, playerIndex, "LuaBZFS has been disabled");
     } else {
       sendMessage(ServerPlayer, playerIndex, "LuaBZFS is not loaded");
     }
@@ -262,7 +255,7 @@ static bool CreateLuaState(const string& script)
   lua_setglobal(L, "BZ");
 
   if (luaL_dofile(L, script.c_str()) != 0) {
-    WARNINGF("lua init error: %s", lua_tostring(L, -1));
+    logDebugMessage(1, "lua init error: %s", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
