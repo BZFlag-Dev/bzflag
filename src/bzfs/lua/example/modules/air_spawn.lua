@@ -25,7 +25,7 @@ local random = math.random
 --------------------------------------------------------------------------------
 
 local function SetHeight()
-  height = BZ.DB.GetFloat('_airSpawnHeight')
+  height = bz.DB.GetFloat('_airSpawnHeight')
   if (height < 0.001) then
     height = 10.0
   end

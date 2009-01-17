@@ -10,7 +10,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local MODULES_DIR = BZ.GetLuaDirectory() .. 'plugins/'
+local MODULES_DIR = bz.GetLuaDirectory() .. 'plugins/'
 
 print()
 print('-----------')
@@ -66,7 +66,7 @@ end
 
 
 local function FindModules()
-  local files, dirs = BZ.DirList(MODULES_DIR)
+  local files, dirs = bz.DirList(MODULES_DIR)
   local sources = {}
   for _, f in ipairs(files) do
     if (f:find('^[^.].*%.lua$')) then
@@ -253,7 +253,7 @@ end
 local function GenUnknownSlashCmdFunc(funcList)
   return function(msg, src, dst, team)
     if (msg:find('/lph')) then  -- Lua Plugin Handler
-      BZ.Print('Lua Plugin Handler')      
+      bz.Print('Lua Plugin Handler')      
       return true
     else
       for i = 1, #funcList do
@@ -292,7 +292,7 @@ local permanentCallIns = {
 }
 
 local function SetupCallIns()
-  for ciName in pairs(BZ.GetCallIns()) do
+  for ciName in pairs(bz.GetCallIns()) do
     local genFunc = specialCallIns[ciName] or GenAllFunc
     local funcList = {}
     ciFuncLists[ciName] = funcList

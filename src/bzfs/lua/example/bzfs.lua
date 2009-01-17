@@ -6,12 +6,12 @@
 
 -- prefix all MaxWaitTime names with 'lua'
 do
-  local origGetMaxWaitTime = BZ.GetMaxWaitTime
-  local origSetMaxWaitTime = BZ.SetMaxWaitTime
-  BZ.GetMaxWaitTime = function(name, ...)
+  local origGetMaxWaitTime = bz.GetMaxWaitTime
+  local origSetMaxWaitTime = bz.SetMaxWaitTime
+  bz.GetMaxWaitTime = function(name, ...)
     origGetMaxWaitTime('lua' .. name, ...)
   end
-  BZ.SetMaxWaitTime = function(name, ...)
+  bz.SetMaxWaitTime = function(name, ...)
     origSetMaxWaitTime('lua' .. name, ...)
   end
 end
@@ -19,13 +19,13 @@ end
 
 do
   -- replace the function to make this value permanent
-  local pluginDir = BZ.GetPluginDirectory()
-  BZ.GetPluginDirectory = function() return pluginDir end
+  local pluginDir = bz.GetPluginDirectory()
+  bz.GetPluginDirectory = function() return pluginDir end
 end
 
 
 do
-  local chunk, err = loadfile(BZ.GetLuaDirectory() .. 'utils.lua')
+  local chunk, err = loadfile(bz.GetLuaDirectory() .. 'utils.lua')
   if (not chunk) then
     error(err)
   end
@@ -33,7 +33,7 @@ do
 end
 
 
-function BZ.Print(...)
+function bz.Print(...)
   print(...)
   local table = {...}
   local msg = ''
@@ -41,17 +41,17 @@ function BZ.Print(...)
     if (i ~= 1) then msg = msg .. '\t' end
     msg = msg .. tostring(table[i])
   end
-  BZ.SendMessage(BZ.PLAYER.SERVER, BZ.PLAYER.ALL, msg)
+  bz.SendMessage(bz.PLAYER.SERVER, bz.PLAYER.ALL, msg)
 end
 
 
-BZ.Print('-- bzfs.lua --')
+bz.Print('-- bzfs.lua --')
 
 
-local pluginDir = BZ.GetPluginDirectory()
+local pluginDir = bz.GetPluginDirectory()
 
-BZ.Print('luaDir    = ' .. BZ.GetLuaDirectory())
-BZ.Print('pluginDir = ' .. BZ.GetPluginDirectory())
+bz.Print('luaDir    = ' .. bz.GetLuaDirectory())
+bz.Print('pluginDir = ' .. bz.GetPluginDirectory())
 
 
 --------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ BZ.Print('pluginDir = ' .. BZ.GetPluginDirectory())
 if (false) then
   print()
   print(string.rep('-', 80))
-  table.print(_G, BZ.Print)
+  table.print(_G, bz.Print)
   print(string.rep('-', 80))
   print()
 end
@@ -108,10 +108,10 @@ end
 
 function Tick()
 
-  BZ.SetMaxWaitTime('luaTick', 0.05)
+  bz.SetMaxWaitTime('luaTick', 0.05)
 
-  if (BZ.ReadStdin) then
-    local data = BZ.ReadStdin()
+  if (bz.ReadStdin) then
+    local data = bz.ReadStdin()
     if (data) then
       for line in data:gmatch('[^\n]+') do
         print()
@@ -122,14 +122,14 @@ function Tick()
   end
 
   if (false) then
-    for _, pid in ipairs(BZ.GetPlayerIDs()) do
+    for _, pid in ipairs(bz.GetPlayerIDs()) do
       print(pid)
-      print(BZ.GetPlayerName(pid))
-      print(BZ.GetPlayerStatus(pid))
-      print(BZ.GetPlayerPosition(pid))
-      print(BZ.GetPlayerVelocity(pid))
-      print(BZ.GetPlayerRotation(pid))
-      print(BZ.GetPlayerAngVel(pid))
+      print(bz.GetPlayerName(pid))
+      print(bz.GetPlayerStatus(pid))
+      print(bz.GetPlayerPosition(pid))
+      print(bz.GetPlayerVelocity(pid))
+      print(bz.GetPlayerRotation(pid))
+      print(bz.GetPlayerAngVel(pid))
       print()
     end
   end
@@ -174,23 +174,23 @@ blocked = tmpSet
 
 
 -- update the desired call-ins
-for name, code in pairs(BZ.GetCallIns()) do
+for name, code in pairs(bz.GetCallIns()) do
   if (type(_G[name]) == 'function') then
-    BZ.SetCallIn(name, _G[name])
+    bz.SetCallIn(name, _G[name])
   elseif (not blocked[name]) then 
-    BZ.SetCallIn(name, function(...)
+    bz.SetCallIn(name, function(...)
       print('bzfs.lua', name, ...)
     end)
   end
 end
 
 
---BZ.SetCallIn('Tick', nil) -- annoying, but leave the function defined
+--bz.SetCallIn('Tick', nil) -- annoying, but leave the function defined
 
 
 -- print the current call-in map
 if (false) then
-  for name, state in pairs(BZ.GetCallIns()) do
+  for name, state in pairs(bz.GetCallIns()) do
     print(name, state)
   end
 end
@@ -198,16 +198,16 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-BZ.SetCallIn('AllowFlagGrab',
+bz.SetCallIn('AllowFlagGrab',
   function(playerID, flagID, flagType, shotType, px, py, pz)
-    if (BZ.GetPlayerTeam(playerID) == BZ.TEAM.RED) then
+    if (bz.GetPlayerTeam(playerID) == bz.TEAM.RED) then
       return false
     end
   end
 )
 
 
-BZ.SetCallIn('BZDBChange',
+bz.SetCallIn('BZDBChange',
   function(key, value)
 --    print('BZDBChange: ' .. key .. ' = ' .. value)
   end
@@ -243,7 +243,7 @@ local function CustomMapObject(name, data)
       if (not success) then
         print(err)
       else
-        if (BZ.GetDebugLevel() >= 4) then
+        if (bz.GetDebugLevel() >= 4) then
           if (type(mapText) == 'string') then
             print('MAPTEXT: ' .. tostring(mapText))
           elseif (type(mapText) == 'table') then
@@ -257,34 +257,34 @@ local function CustomMapObject(name, data)
 end
 
 
-BZ.AttachMapObject('custom_block',  CustomMapObject)
-BZ.AttachMapObject('custom_block1', CustomMapObject)
-BZ.AttachMapObject('custom_block2', CustomMapObject)
-BZ.AttachMapObject('custom_block3', CustomMapObject)
-BZ.AttachMapObject('lua',       'endlua',     CustomMapObject)
-BZ.AttachMapObject('luaplugin', 'endplugin',  CustomMapObject)
+bz.AttachMapObject('custom_block',  CustomMapObject)
+bz.AttachMapObject('custom_block1', CustomMapObject)
+bz.AttachMapObject('custom_block2', CustomMapObject)
+bz.AttachMapObject('custom_block3', CustomMapObject)
+bz.AttachMapObject('lua',       'endlua',     CustomMapObject)
+bz.AttachMapObject('luaplugin', 'endplugin',  CustomMapObject)
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 if (false) then
-  for _, name in pairs(BZ.DB.GetList()) do
+  for _, name in pairs(bz.DB.GetList()) do
     print(name, 
-          BZ.DB.GetInt(name),
-          BZ.DB.GetBool(name),
-          BZ.DB.GetFloat(name),
-          BZ.DB.GetString(name))
+          bz.DB.GetInt(name),
+          bz.DB.GetBool(name),
+          bz.DB.GetFloat(name),
+          bz.DB.GetString(name))
   end
 end
 
---BZ.DB.SetString('_mirror', 'black 0.5')
---BZ.DB.SetString('_skyColor', 'red')
-BZ.DB.SetFloat('_tankSpeed', '50.0')
+--bz.DB.SetString('_mirror', 'black 0.5')
+--bz.DB.SetString('_skyColor', 'red')
+bz.DB.SetFloat('_tankSpeed', '50.0')
 
 
 -- this can override the default, shame
---BZ.AttachSlashCommand('luabzfs', 'bzfs lua plugin command',
+--bz.AttachSlashCommand('luabzfs', 'bzfs lua plugin command',
 --function(playerID, cmd, msg)
 --  print('luabzfs command received: '..playerID..' '..cmd..' '..msg)
 --end)
@@ -293,7 +293,7 @@ BZ.DB.SetFloat('_tankSpeed', '50.0')
 include('modules.lua')
 
 
---BZ.SetCallIn('GetWorld',
+--bz.SetCallIn('GetWorld',
 --  function(mode)
 
 
@@ -303,7 +303,7 @@ do
 
   function AddTimer(period, func)
     local timer = { period = period, func = func }
-    timers[timer] = BZ.GetTimer()
+    timers[timer] = bz.GetTimer()
   end
 
   local function RemoveTimer(period, func)
@@ -316,8 +316,8 @@ do
 
   local function HandleTick()
 
-    if (BZ.ReadStdin) then
-      local data = BZ.ReadStdin()
+    if (bz.ReadStdin) then
+      local data = bz.ReadStdin()
       if (data) then
         for line in data:gmatch('[^\n]+') do
           print()
@@ -328,10 +328,10 @@ do
     end
 
     local maxTime = 1.0e30
-    local nowTime = BZ.GetTimer()
+    local nowTime = bz.GetTimer()
     for timer, last in pairs(timers) do
 --      print(timer, last)
-      local wait = BZ.DiffTimers(nowTime, last)
+      local wait = bz.DiffTimers(nowTime, last)
       if (wait >= timer.period) then
         timers[timer] = nowTime
         local mt = 2 * timer.period - wait
@@ -346,10 +346,10 @@ do
         end
       end
     end
-    BZ.SetMaxWaitTime('luaTimerTick', maxTime)
+    bz.SetMaxWaitTime('luaTimerTick', maxTime)
 --    print('maxTime = ' .. maxTime)
   end
 
-  BZ.SetCallIn('Tick', HandleTick)
+  bz.SetCallIn('Tick', HandleTick)
 end  
   

@@ -43,9 +43,9 @@ end
 
 function CallIn.Capture(teamCapped, teamCapping, playerCapping, px, py, pz, rot)
   -- clear previous spawns for capped team members
-  for _, pid in ipairs(BZ.GetPlayerIDs()) do
+  for _, pid in ipairs(bz.GetPlayerIDs()) do
     if (prevSpawns[pid]) then
-      local team = BZ.GetPlayerTeam(pid)
+      local team = bz.GetPlayerTeam(pid)
       if (team and (team == teamCapped)) then
         prevSpawns[pid] = nil
       end

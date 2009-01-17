@@ -252,7 +252,7 @@ static bool CreateLuaState(const string& script)
     FetchURL::PushEntries(L);
     RawLink::PushEntries(L);
   }
-  lua_setglobal(L, "BZ");
+  lua_setglobal(L, "bz");
 
   if (luaL_dofile(L, script.c_str()) != 0) {
     logDebugMessage(1, "lua init error: %s", lua_tostring(L, -1));

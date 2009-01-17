@@ -41,7 +41,7 @@ function include(fileName, fenv)
   local fn = fileName
   local file, err = io.open(fn, 'r')
   if (not file) then
-    fn = BZ.GetLuaDirectory() .. fileName
+    fn = bz.GetLuaDirectory() .. fileName
     file, err = io.open(fn, 'r')
   end
   if (not file) then
