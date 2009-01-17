@@ -35,7 +35,4 @@ libLuaBZFS_la_SOURCES = \
 
 EXTRA_DIST =       \
 	README.txt \
-	example \
-	luabzfs.def \
-	luabzfs.sln \
-	luabzfs.vcproj
+	example
