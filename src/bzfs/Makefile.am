@@ -160,10 +160,10 @@ bzfs_SOURCES = \
 	bzfs.h
 
 LDADD = \
+	lua/libLuaBZFS.la		\
 	../obstacle/libObstacle.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
-	lua/libLuaBZFS.la		\
 	../common/libCommon.la		\
 	$(LIBLUA)			\
 	$(LIBCURL)			\
