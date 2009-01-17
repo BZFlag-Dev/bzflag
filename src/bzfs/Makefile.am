@@ -163,8 +163,8 @@ LDADD = \
 	../obstacle/libObstacle.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
-	../common/libCommon.la		\
 	lua/libLuaBZFS.la		\
+	../common/libCommon.la		\
 	$(LIBLUA)			\
 	$(LIBCURL)			\
 	$(LIBCARES)			\
