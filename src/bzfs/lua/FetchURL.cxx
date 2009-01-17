@@ -19,7 +19,7 @@ using std::map;
 #include "LuaHeader.h"
 
 
-static const char* MetaTag = "FetchURL";
+static const char* metaName = "FetchURL";
 
 static lua_State* topL = NULL;
 
@@ -82,7 +82,7 @@ FetchHandler::FetchHandler(lua_State* L, const char* url, const char* post)
   FetchHandler** fetchPtr =
     (FetchHandler**)lua_newuserdata(L, sizeof(FetchHandler*));
   *fetchPtr = this;
-  luaL_getmetatable(L, MetaTag);
+  luaL_getmetatable(L, metaName);
   lua_setmetatable(L, -2);
   lua_pushvalue(L, -1); // make a copy
   userdataRef = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -257,7 +257,7 @@ static int FetchURL_func(lua_State* L)
 
 static bool CreateMetatble(lua_State* L)
 {
-  luaL_newmetatable(L, MetaTag);
+  luaL_newmetatable(L, metaName);
 
   lua_pushstring(L, "__gc"); // garbage collection
   lua_pushcfunction(L, MetaGC);
@@ -282,7 +282,7 @@ static bool CreateMetatble(lua_State* L)
 static inline FetchHandler* GetHandler(lua_State* L, int index)
 {
   FetchHandler** fetchPtr =
-    (FetchHandler**)luaL_checkudata(L, index, MetaTag);
+    (FetchHandler**)luaL_checkudata(L, index, metaName);
   if (fetchPtr == NULL) {
     luaL_error(L, "internal FetchHandler error");
     return NULL;

@@ -202,10 +202,16 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
 
   if (args[1] == "reload") {
     kill();
+    bool success = false;
     if (args.size() > 2) {
-      init(args[2]);
+      success = init(args[2]);
     } else {
-      init(clOptions->luaBZFS);
+      success = init(clOptions->luaBZFS);
+    }
+    if (success) {
+      sendMessage(ServerPlayer, playerIndex, "LuaBZFS reload succeeded");
+    } else {
+      sendMessage(ServerPlayer, playerIndex, "LuaBZFS reload failed");
     }
     return;
   }
