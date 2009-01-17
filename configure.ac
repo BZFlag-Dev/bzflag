@@ -1344,6 +1344,7 @@ AC_CONFIG_FILES([
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
 	src/bzfs/Makefile
+	src/bzfs/lua/Makefile
 	src/bzrobots/Makefile
 	src/common/Makefile
 	src/date/Makefile
