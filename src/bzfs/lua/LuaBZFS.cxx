@@ -77,7 +77,7 @@ bool LuaBZFS::init(const string& cmdLine)
 
   bool dieHard = false;
 
-  bz_debugMessage(4, "luaBZFS loaded");
+  logDebugMessage(1, "loading luaBZFS");
 
   if (L != NULL) {
     logDebugMessage(1, "luaBZFS is already loaded");

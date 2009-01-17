@@ -17,6 +17,7 @@ using std::map;
 
 // common headers
 #include "bzfsAPI.h"
+#include "BzVFS.h"
 #include "TextUtils.h"
 #include "PlayerState.h"
 
@@ -2129,15 +2130,22 @@ static int DiffTimers(lua_State* L)
 
 static int DirList(lua_State* L)
 {
-//FIXME  const char* path = luaL_checkstring(L, 1);
+  const char* path = luaL_checkstring(L, 1);
+  const bool recursize = lua_tobool(L, 2);
 
-  vector<string> dirs;//FIXME = getDirsInDir(path);
+  vector<string> dirs;
+  vector<string> files;
+
+  if (!BzVFS::rawDirList("", path, recursize, dirs, files)) {
+    return 0;
+  }  
+  
+
   set<string> dirSet;
   for (unsigned int i = 0; i < dirs.size(); i++) {
     dirSet.insert(dirs[i]);
   }
 
-  vector<string> files;//FIXME = getFilesInDir(path, NULL, false); // not recursive
   set<string> fileSet;
   for (unsigned int i = 0; i < files.size(); i++) {
     // do not include directories
