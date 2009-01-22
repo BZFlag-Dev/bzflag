@@ -45,7 +45,7 @@ HelpCreditsMenu::HelpCreditsMenu() : HelpMenu("Credits")
   addControl(createLabel("", ""), false);
   addControl(createLabel("http://BZFlag.org/", "BZFlag Home Page:"), false);
   addControl(createLabel("", ""), false);
-  addControl(createLabel("Tim Riker", "Copyright (c) 1993 - 2008"), false);
+  addControl(createLabel("Tim Riker", "Copyright (c) 1993 - 2009"), false);
 }
 
 float HelpCreditsMenu::getLeftSide(int _width, int _height)
