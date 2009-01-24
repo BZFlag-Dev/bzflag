@@ -85,13 +85,13 @@ void LuaParser::SetupEnv()
 
 int LuaParser::DontMessWithMyCase(lua_State* L)
 {
-  if (currentParser == NULL) {
-  	luaL_error(L, "invalid call to DontMessWithMyCase() after execution");
+	if (currentParser == NULL) {
+		luaL_error(L, "invalid call to DontMessWithMyCase() after execution");
 	}
 	currentParser->SetLowerKeys(lua_tobool(L, 1));
 	return 0;  
 }
-            
+
 
 /******************************************************************************/
 
@@ -251,13 +251,13 @@ void LuaParser::GetTable(int index, bool overwrite)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
 
-	lua_pushnumber(L, index); 
+	lua_pushinteger(L, index); 
 
 	if (overwrite) {
 		lua_newtable(L);
 	}
 	else {
-		lua_pushnumber(L, index);
+		lua_pushinteger(L, index);
 		lua_gettable(L, (initDepth == 0) ? LUA_GLOBALSINDEX : -3);
 		if (!lua_istable(L, -1)) {
 			lua_pop(L, 1);
@@ -294,7 +294,7 @@ void LuaParser::AddInt(const string& key, int value)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
 	lua_pushstring(L, key.c_str());
-	lua_pushnumber(L, value);
+	lua_pushinteger(L, value);
 	PushParam();
 }
 
@@ -332,7 +332,7 @@ void LuaParser::AddFunc(int key, int (*func)(lua_State*))
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
 	if (func == NULL) { return; }
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_pushcfunction(L, func);
 	PushParam();
 }
@@ -341,7 +341,7 @@ void LuaParser::AddFunc(int key, int (*func)(lua_State*))
 void LuaParser::AddInt(int key, int value)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_pushnumber(L, value);
 	PushParam();
 }
@@ -350,7 +350,7 @@ void LuaParser::AddInt(int key, int value)
 void LuaParser::AddBool(int key, bool value)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_pushboolean(L, value);
 	PushParam();
 }
@@ -359,7 +359,7 @@ void LuaParser::AddBool(int key, bool value)
 void LuaParser::AddFloat(int key, float value)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_pushnumber(L, value);
 	PushParam();
 }
@@ -368,7 +368,7 @@ void LuaParser::AddFloat(int key, float value)
 void LuaParser::AddString(int key, const string& value)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_pushstring(L, value.c_str());
 	PushParam();
 }
@@ -397,7 +397,7 @@ LuaTable::LuaTable(LuaParser* _parser)
 	isValid = _parser->IsValid();
 	path    = "ROOT";
 	parser  = _parser;
-  L       = parser->L;
+	L       = parser->L;
 	refnum  = parser->rootRef;
 	
 	if (PushTable()) {
@@ -479,7 +479,7 @@ LuaTable LuaTable::SubTable(int key) const
 		return subTable;
 	}
 
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_gettable(L, -2);
 	if (!lua_istable(L, -1)) {
 		lua_pop(L, 1);
@@ -540,18 +540,18 @@ LuaTable LuaTable::SubTableExpr(const string& expr) const
 	LuaTable nextTable;
 
 	if (expr[0] == '[') { // numeric key
-    endPos = expr.find(']');
-    if (endPos == string::npos) {
-      return LuaTable(); // missing brace
-    }
-    const char* startPtr = expr.c_str() + 1; // skip the '['
-    char* endPtr;
-    const int index = strtol(startPtr, &endPtr, 10);
-    if (endPtr == startPtr) {
-      return LuaTable(); // invalid index
-    }
-    endPos++; // eat the ']'
-    nextTable = SubTable(index);
+		endPos = expr.find(']');
+		if (endPos == string::npos) {
+			return LuaTable(); // missing brace
+		}
+		const char* startPtr = expr.c_str() + 1; // skip the '['
+		char* endPtr;
+		const int index = strtol(startPtr, &endPtr, 10);
+		if (endPtr == startPtr) {
+			return LuaTable(); // invalid index
+		}
+		endPos++; // eat the ']'
+		nextTable = SubTable(index);
 	}
 	else { // string key
 		endPos = expr.find_first_of(".[");
@@ -622,7 +622,7 @@ bool LuaTable::PushValue(int key) const
 	if (!PushTable()) {
 		return false;
 	}
-	lua_pushnumber(L, key);
+	lua_pushinteger(L, key);
 	lua_gettable(L, -2);
 	if (lua_isnoneornil(L, -1)) {
 		lua_pop(L, 1);
