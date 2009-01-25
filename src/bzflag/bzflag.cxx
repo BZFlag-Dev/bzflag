@@ -199,7 +199,6 @@ static void usage()
 		  " [-v | -version | --version]"
 		  " [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
 		  " [-window [<geometry-spec>]]"
-		  " [-zoom <zoom-factor>]"
 		  " [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
     delete display;
@@ -403,15 +402,6 @@ static void parse(int argc, char **argv)
       checkArgc(i, argc, argv[i]);
       BZDB.set("view", argv[i]);
     }
-    else if (strcmp(argv[i], "-zoom") == 0) {
-      checkArgc(i, argc, argv[i]);
-      const int zoom = atoi(argv[i]);
-      if (zoom < 1 || zoom > 8) {
-	printFatalError("Invalid argument for %s.", argv[i-1]);
-	usage();
-      }
-      BZDB.set("displayZoom", argv[i]);
-    }
     else if (strcmp(argv[i], "-zbuffer") == 0) {
       checkArgc(i, argc, argv[i]);
       if (strcmp(argv[i], "on") == 0) {
@@ -494,15 +484,21 @@ static void parse(int argc, char **argv)
     }
     // has to be the last option that starts with -d
     else if (strncmp(argv[i], "-d", 2) == 0) {
-      const char* c = argv[i] + 2;
-      while (*c != '\0') {
-        if (*c != 'd') {
-          printFatalError("Unknown option %s.", argv[i]);
-          usage();
-        }
-        c++;
+      const char num = argv[i][2];
+      if ((num >= '0') && (num <= '9') && (argv[i][3] == 0)) {
+        debugLevel = num - '0';
       }
-      debugLevel += ((c - argv[i]) - 1);
+      else {
+        const char* c = argv[i] + 2;
+        while (*c != 0) {
+          if (*c != 'd') {
+            printFatalError("Unknown option %s.", argv[i]);
+            usage();
+          }
+          c++;
+        }
+        debugLevel += ((c - argv[i]) - 1);
+      }
     }
     else {
       printFatalError("Unknown option %s.", argv[i]);

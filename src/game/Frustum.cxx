@@ -178,12 +178,14 @@ void Frustum::setFarPlaneCull(bool useCulling)
 
 
 void Frustum::setProjection(float fov,
-			    float _m_near, float _m_far, float m_deep_far,
+			    float _m_near, float _m_far, float _m_deep_far,
 			    int width, int height, int viewHeight)
 {
   // do easy stuff
-  m_near = _m_near;
-  m_far = _m_far;
+  m_near     = _m_near;
+  m_far      = _m_far;
+  m_deep_far = _m_deep_far;
+
   fovx = fov;
 
   // clear the far plane culling here

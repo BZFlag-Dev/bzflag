@@ -296,7 +296,8 @@ void PlatformSound::setReceiverVec(float vx, float vy, float vz)
   sendSound(&s);
 }
 
-int PlatformSound::play(int soundID, const float *pos, bool important, bool localSound, bool repeat)
+int PlatformSound::play(int soundID, const float *pos,
+                        bool important, bool localSound, bool repeat)
 {
   if (soundLevel <= 0)
     return 0;

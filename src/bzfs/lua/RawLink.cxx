@@ -17,8 +17,8 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
+#include "LuaBZFS.h"
 
-static lua_State* topL = NULL;
 
 static int AttachRawLink(lua_State* L);
 static int DetachRawLink(lua_State* L);
@@ -82,20 +82,19 @@ Link::Link(lua_State* L, int _id)
 
 Link::~Link()
 {
-  lua_State* L = topL;
-
   bz_removeNonPlayerConnectionHandler(id, this);
+  linkMap.erase(id);
+
+  lua_State* L = LuaBZFS::GetL();
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
   }
-  linkMap.erase(id);
 }
 
 
 void Link::pending(int /*id*/, void* data, unsigned int size)
 {
-  lua_State* L = topL;
-
+  lua_State* L = LuaBZFS::GetL();
   if (L == NULL) {
     return;
   }
@@ -143,8 +142,6 @@ void Link::disconnect(int /*id*/)
 
 bool RawLink::PushEntries(lua_State* L)
 {
-  topL = L;
-
   PUSH_LUA_CFUNC(L, AttachRawLink);
   PUSH_LUA_CFUNC(L, DetachRawLink);
   PUSH_LUA_CFUNC(L, WriteRawLink);
@@ -167,8 +164,6 @@ bool RawLink::CleanUp(lua_State* /*L*/)
     it = next;
   }
   linkMap.clear();
-
-  topL = NULL;
 
   return true;
 }

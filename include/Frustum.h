@@ -38,6 +38,7 @@ class Frustum {
     float		getRotation() const; // degrees
     float		getNear() const;
     float		getFar() const;
+    float		getDeepFar() const;
     const float*	getViewMatrix() const;
     float		getFOVx() const;
     float		getFOVy() const;
@@ -72,7 +73,7 @@ class Frustum {
     float		rotation;
     float		viewMatrix[16];
     float		billboardMatrix[16];
-    float		m_near, m_far;
+    float		m_near, m_far, m_deep_far;
     float		fovx, fovy;
     float		areaFactor;
     float		projectionMatrix[16];
@@ -136,6 +137,11 @@ inline float		Frustum::getNear() const
 inline float		Frustum::getFar() const
 {
   return m_far;
+}
+
+inline float		Frustum::getDeepFar() const
+{
+  return m_deep_far;
 }
 
 inline float		Frustum::getFOVx() const

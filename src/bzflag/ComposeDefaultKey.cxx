@@ -13,9 +13,14 @@
 /* interface header */
 #include "ComposeDefaultKey.h"
 
+/* system headers */
+#include <string>
+#include <set>
+
 /* common implementation headers */
 #include "BzfEvent.h"
 #include "KeyManager.h"
+#include "EventHandler.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -62,9 +67,36 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (isWordCompletion(key)) {
     std::string matches;
-    hud->setComposeString(completer.complete(hud->getComposeString(), &matches));
+    const std::string oldStr = hud->getComposeString();
+    const std::string newStr = completer.complete(oldStr, &matches);
+    hud->setComposeString(newStr);
     if (matches.size() > 0) {
       controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
+    }
+    else if (oldStr == newStr) {
+      // no default word completion, try the eventHandler
+      // FIXME -- change the default AutoCompleter structure?
+      std::set<std::string> partials;
+      eventHandler.WordComplete(newStr, partials);
+      if (!partials.empty()) {
+        // find the longest common string
+        const std::string first = *(partials.begin());
+        const std::string last = *(partials.rbegin());
+        size_t i;
+        size_t maxLen = std::max(first.size(), last.size());
+        for (i = 0; i < maxLen; i++) {
+          if (first[i] != last[i]) {
+            break;
+          }
+        }
+        hud->setComposeString(newStr + first.substr(0, i));
+        std::set<std::string>::const_iterator it;
+        for (it = partials.begin(); it != partials.end(); ++it) {
+          matches += "  ";
+          matches += *it;
+        }
+        controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
+      }
     }
     return true;
   }

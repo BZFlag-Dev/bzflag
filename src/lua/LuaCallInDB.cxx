@@ -2,6 +2,7 @@
 #include "common.h"
 
 // system headers
+#include <assert.h>
 #include <string.h>
 #include <string>
 #include <map>
@@ -20,21 +21,42 @@ LuaCallInDB luaCallInDB;
 /******************************************************************************/
 /******************************************************************************/
 
+const string& LuaCallInDB::GetEventName(const string& callInName) const
+{
+	static const string GLContextInitStr = "GLContextInit";
+	if (callInName == "GLReload") {
+		return GLContextInitStr;
+	}
+	return callInName;
+}
+
+
+const string& LuaCallInDB::GetCallInName(const string& eventName) const
+{
+	static const string GLReloadStr = "GLReload";
+	if (eventName == "GLContextInit") {
+		return GLReloadStr;
+	}
+	return eventName;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 bool LuaCallInDB::SetupCallIn(int code, const string& name)
 {
 	map<int, string>::const_iterator codeIt = codeToName.find(code);
 	if (codeIt != codeToName.end()) {
-//FIXME		throw std::runtime_error("duplicated lua call-in code: "
-//		                         + IntToString(code) + 
-//		                         + "  (" + name + " vs. " + codeIt->second + ")");
+		printf("call-in code: %i\n", codeIt->first);
+		assert(false && "duplictated lua call-in code in LuaCallInDB.cxx");
 		return false;
 	}
 
 	map<string, int>::const_iterator nameIt = nameToCode.find(name);
 	if (nameIt != nameToCode.end()) {
-//FIXME		throw std::runtime_error("duplicate lua call-in name: " + name + "  ("
-//		                         + IntToString(code) + " vs. "
-//		                         + IntToString(code) + ")");
+		printf("call-in name: %s\n", nameIt->first.c_str());
+		assert(false && "duplictated lua call-in name in LuaCallInDB.cxx");
 		return false;
 	}
 	
@@ -105,7 +127,7 @@ LuaCallInDB::LuaCallInDB()
 	ADD_CI(ShotRemoved,    NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(ShotTeleported, NO_REQS, BASIC, ANY_SCRIPT);
 
- 	ADD_CI(FlagAdded,       NO_REQS, BASIC, ANY_SCRIPT);
+	ADD_CI(FlagAdded,       NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(FlagRemoved,     NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(FlagGrabbed,     NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(FlagDropped,     NO_REQS, BASIC, ANY_SCRIPT);
@@ -135,6 +157,7 @@ LuaCallInDB::LuaCallInDB()
 	ADD_CI(MouseWheel,   REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
 	ADD_CI(IsAbove,      REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
 	ADD_CI(GetTooltip,   REQ_INPUT_CTRL, FIRST_STRING, ANY_SCRIPT);
+	ADD_CI(WordComplete, REQ_INPUT_CTRL, SPECIAL,      ANY_SCRIPT);
 }
 
 

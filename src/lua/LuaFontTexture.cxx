@@ -15,7 +15,8 @@
 // implementation header
 #include "LuaFontTexture.h"
 
-#define PRINTF printf // FIXME ?
+// common headers
+#include "bzfio.h"
 
 
 /*******************************************************************************/
@@ -98,7 +99,7 @@ static u32 outlineMode = 0;
 static u32 outlineRadius = 1;
 static u32 outlineWeight = 100;
 
-static u32 debugLevel = 0;
+static u32 dbgLevel = 0;
 
 static vector<class Glyph*> glyphs;
 
@@ -224,9 +225,9 @@ bool LuaFontTexture::SetStuffing(unsigned int _stuffing)
 }
 
 
-bool LuaFontTexture::SetDebugLevel(unsigned int _debugLevel)
+bool LuaFontTexture::SetDebugLevel(unsigned int _dbgLevel)
 {
-	debugLevel = _debugLevel;
+	dbgLevel = _dbgLevel;
 	return true;
 }
 
@@ -246,7 +247,7 @@ void LuaFontTexture::Reset()
 	outlineMode   = 0;
 	outlineRadius = 1;
 	outlineWeight = 100;
-	debugLevel = 0;
+	dbgLevel = 0;
 }
 
 
@@ -258,12 +259,12 @@ bool LuaFontTexture::Execute()
 
 	ilDisable(IL_ORIGIN_SET);
 
-	if (debugLevel >= 1) {
-		PRINTF("fontfile      = %s\n", inputFile.c_str());
-		PRINTF("height        = %i\n", height);
-		PRINTF("outlineMode   = %i\n", outlineMode);
-		PRINTF("outlineRadius = %i\n", outlineRadius);
-		PRINTF("outlineWeight = %i\n", outlineWeight);
+	if (dbgLevel >= 1) {
+		logDebugMessage(0, "fontfile      = %s\n", inputFile.c_str());
+		logDebugMessage(0, "height        = %i\n", height);
+		logDebugMessage(0, "outlineMode   = %i\n", outlineMode);
+		logDebugMessage(0, "outlineRadius = %i\n", outlineRadius);
+		logDebugMessage(0, "outlineWeight = %i\n", outlineWeight);
 	}
 
 	int error;
@@ -272,7 +273,7 @@ bool LuaFontTexture::Execute()
 
 	error = FT_Init_FreeType(&library);
 	if (error) {
-		PRINTF("freetype library init failed: %i\n", error);
+		logDebugMessage(0, "freetype library init failed: %i\n", error);
 		return false;
 	}
 
@@ -286,12 +287,12 @@ bool LuaFontTexture::Execute()
 	}
 
 	if (error == FT_Err_Unknown_File_Format) {
-		PRINTF("bad font file type\n");
+		logDebugMessage(0, "bad font file type\n");
 		FT_Done_FreeType(library);
 		return false;
 	}
 	else if (error) {
-		PRINTF("unknown font file error: %i\n", error);
+		logDebugMessage(0, "unknown font file error: %i\n", error);
 		FT_Done_FreeType(library);
 		return false;
 	}
@@ -299,7 +300,7 @@ bool LuaFontTexture::Execute()
 	if (face->num_fixed_sizes <= 0) {
 		error = FT_Set_Pixel_Sizes(face, 0, height);
 		if (error) {
-			PRINTF("FT_Set_Pixel_Sizes() error: %i\n", error);
+			logDebugMessage(0, "FT_Set_Pixel_Sizes() error: %i\n", error);
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
 			return false;
@@ -338,8 +339,8 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		const string::size_type lastOf = filename.find_last_of('.');
 		if (lastOf != string::npos) {
 			basename = filename.substr(0, lastOf);
-			if (debugLevel >= 1) {
-				PRINTF("basename = %s\n", basename.c_str());
+			if (dbgLevel >= 1) {
+				logDebugMessage(0, "basename = %s\n", basename.c_str());
 			}
 		}
 		char heightText[64];
@@ -350,8 +351,8 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		specsName = basename + heightText + ".lua";
 	}
 
-	PRINTF("Processing %s @ %i\n", filename.c_str(), fontHeight);
-	if (debugLevel >= 1) {
+	logDebugMessage(0, "Processing %s @ %i\n", filename.c_str(), fontHeight);
+	if (dbgLevel >= 1) {
 		PrintFaceInfo(face);
 	}
 
@@ -368,7 +369,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		if (outlineRadius> 0) {
 			glyph->Outline(outlineRadius);
 		}
-		if (debugLevel >= 2) {
+		if (dbgLevel >= 2) {
 			PrintGlyphInfo(face->glyph, g);
 		}
 		if (maxPixelXsize < glyph->xsize) {
@@ -391,18 +392,18 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	}
 	yTexSize = binSize;
 
-	if (debugLevel >= 1) {
-		PRINTF("xTexSize = %i\n", xTexSize);
-		PRINTF("yTexSize = %i\n", yTexSize);
-		PRINTF("xdivs = %i\n", xdivs);
-		PRINTF("ydivs = %i\n", ydivs);
-		PRINTF("maxPixelXsize = %i\n", maxPixelXsize);
-		PRINTF("maxPixelYsize = %i\n", maxPixelYsize);
+	if (dbgLevel >= 1) {
+		logDebugMessage(0, "xTexSize = %i\n", xTexSize);
+		logDebugMessage(0, "yTexSize = %i\n", yTexSize);
+		logDebugMessage(0, "xdivs = %i\n", xdivs);
+		logDebugMessage(0, "ydivs = %i\n", ydivs);
+		logDebugMessage(0, "maxPixelXsize = %i\n", maxPixelXsize);
+		logDebugMessage(0, "maxPixelYsize = %i\n", maxPixelYsize);
 	}
 
 	FILE* specFile = fopen(specsName.c_str(), "wt");
 	if (specFile == NULL) {
-		PRINTF("%s: %s\n", specsName.c_str(), strerror(errno));
+		logDebugMessage(0, "%s: %s\n", specsName.c_str(), strerror(errno));
 		return false;
 	}
 
@@ -412,7 +413,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	} else {
 		yStep = (face->height / 64);
 		if (yStep == 0) {
-      // some fonts do not provide a face->height, so make one up
+			// some fonts do not provide a face->height, so make one up
 			yStep = (5 * fontHeight) / 4;
 		}
 	}
@@ -436,7 +437,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	ILuint img;
 	ilGenImages(1, &img);
 	if (img == 0) {
-		PRINTF("ERROR: ilGenImages() == 0\n");
+		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
 		return false;
 	}
 	ilBindImage(img);
@@ -462,7 +463,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		glyph->typ += tyOffset;
 		glyph->SaveSpecs(specFile);
 
-		if (debugLevel >= 2) {
+		if (dbgLevel >= 2) {
 			PrintGlyphInfo(face->glyph, g);
 		}
 
@@ -480,7 +481,8 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	fprintf(specFile, "\n");
 
 	fclose(specFile);
-	PRINTF("Saved: %s\n", specsName.c_str());
+
+	logDebugMessage(0, "Saved: %s\n", specsName.c_str());
 
 	ilEnable(IL_FILE_OVERWRITE);
 	ilHint(IL_COMPRESSION_HINT, IL_USE_COMPRESSION);
@@ -491,7 +493,8 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 							(outlineRadius> 0) ? "outlined" : "plain");
 	ilSaveImage((char*)imageName.c_str());
 	ilDisable(IL_FILE_OVERWRITE);
-	PRINTF("Saved: %s\n", imageName.c_str());
+
+	logDebugMessage(0, "Saved: %s\n", imageName.c_str());
 
 	ilDeleteImages(1, &img);
 
@@ -506,7 +509,7 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 {
 	int error = FT_Load_Char(face, num, FT_LOAD_RENDER);
 	if (error) {
-		PRINTF("FT_Load_Char(%i '%c') error: %i\n", num, num, error);
+		logDebugMessage(0, "FT_Load_Char(%i '%c') error: %i\n", num, num, error);
 		return;
 	}
 	FT_GlyphSlot glyph = face->glyph;
@@ -530,13 +533,13 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 
 	advance = glyph->advance.x / 64;
 
-  // offsets
+	// offsets
 	oxn = face->glyph->bitmap_left - stuffing;
 	oyp = face->glyph->bitmap_top  + stuffing;
 	oxp = oxn + xsize + (2 * stuffing);
 	oyn = oyp - ysize - (2 * stuffing);
 
-  // texture coordinates
+	// texture coordinates
 	txn = -(s32)stuffing;
 	tyn = -(s32)stuffing;
 	txp = xsize + stuffing;
@@ -544,7 +547,7 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 
 	ilGenImages(1, &img);
 	if (img == 0) {
-		PRINTF("ERROR: ilGenImages() == 0\n");
+		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
 		return;
 	}
 	ilBindImage(img);
@@ -619,27 +622,24 @@ bool Glyph::Outline(u32 radius)
 	ILuint newImg;
 	ilGenImages(1, &newImg);
 	if (img == 0) {
-		PRINTF("ERROR: ilGenImages() == 0\n");
+		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
 	}
 	ilBindImage(newImg);
 
-  // copy the original image, centered
+	// copy the original image, centered
 	ilTexImage(xSizeTmp, ySizeTmp, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, NULL);
 	ilClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 	ilClearImage();
-	ilSetPixels(
-							tmpRad, tmpRad, 0,
-			 xsize, ysize, 1,
-		IL_RGBA, IL_UNSIGNED_BYTE, pixels
-						 );
+	ilSetPixels(tmpRad, tmpRad, 0, xsize, ysize, 1,
+	            IL_RGBA, IL_UNSIGNED_BYTE, pixels);
 
-  // make it black
+	// make it black
 	iluScaleColours(0.0f, 0.0f, 0.0f);
 
-  // blur the black
+	// blur the black
 	iluBlurGaussian(radius);
 
-  // tweak the outline alpha values
+	// tweak the outline alpha values
 	u8* tmpPixels = ilGetData();
 	for (u32 i = 0; i < (xSizeTmp * ySizeTmp); i++) {
 		const u32 index = (i * 4) + 3;
@@ -647,8 +647,8 @@ bool Glyph::Outline(u32 radius)
 		tmpPixels[index] = (u8)min((u32)0xFF, (3 * outlineWeight * alpha) / 100);
 	}
 
-  // overlay the original white text
-  // (could use ilOverlayImage(), but it requires flipping, less flexible)
+	// overlay the original white text
+	// (could use ilOverlayImage(), but it requires flipping, less flexible)
 	for (u32 x = 0; x < xsize; x++) {
 		for (u32 y = 0; y < ysize; y++) {
 			u32 x2 = x + tmpRad;
@@ -665,12 +665,12 @@ bool Glyph::Outline(u32 radius)
 		}
 	}
 
-  // crop the radius padding
+	// crop the radius padding
 	const u32 xSizeNew = xsize + (2 * radius);
 	const u32 ySizeNew = ysize + (2 * radius);
 	iluCrop(radPad, radPad, 0, xSizeNew, ySizeNew, 1);
 
-  // adjust the parameters
+	// adjust the parameters
 	xsize = xSizeNew;
 	ysize = ySizeNew;
 	oxn -= radius;
@@ -681,7 +681,7 @@ bool Glyph::Outline(u32 radius)
 	typ += (2 * radius);
 	pixels = ilGetData();
 
-  // NOTE: advance is not adjusted
+	// NOTE: advance is not adjusted
 
 	ilDeleteImages(1, &img);
 	img = newImg;
@@ -698,48 +698,48 @@ bool Glyph::Outline(u32 radius)
 
 static void PrintFaceInfo(FT_Face& face)
 {
-	PRINTF("family name = %s\n", face->family_name);
-	PRINTF("style  name = %s\n", face->style_name);
-	PRINTF("num_faces   = %i\n", (int)face->num_faces);
+	logDebugMessage(0, "family name = %s\n", face->family_name);
+	logDebugMessage(0, "style  name = %s\n", face->style_name);
+	logDebugMessage(0, "num_faces   = %i\n", (int)face->num_faces);
 
-	PRINTF("numglyphs    = %i\n", (int)face->num_glyphs);
-	PRINTF("fixed sizes  = %i\n", (int)face->num_fixed_sizes);
-	PRINTF("units_per_EM = %i\n", (int)face->units_per_EM);
+	logDebugMessage(0, "numglyphs    = %i\n", (int)face->num_glyphs);
+	logDebugMessage(0, "fixed sizes  = %i\n", (int)face->num_fixed_sizes);
+	logDebugMessage(0, "units_per_EM = %i\n", (int)face->units_per_EM);
 	for (int i = 0; i < face->num_fixed_sizes; i++) {
-		PRINTF("  size[%i]\n", i);
+		logDebugMessage(0, "  size[%i]\n", i);
 		FT_Bitmap_Size bs = face->available_sizes[i];
-		PRINTF("    height = %i\n", (int)bs.height);
-		PRINTF("    width  = %i\n", (int)bs.width);
-		PRINTF("    size   = %i\n", (int)bs.size);
-		PRINTF("    x_ppem = %i\n", (int)bs.x_ppem);
-		PRINTF("    y_ppem = %i\n", (int)bs.y_ppem);
+		logDebugMessage(0, "    height = %i\n", (int)bs.height);
+		logDebugMessage(0, "    width  = %i\n", (int)bs.width);
+		logDebugMessage(0, "    size   = %i\n", (int)bs.size);
+		logDebugMessage(0, "    x_ppem = %i\n", (int)bs.x_ppem);
+		logDebugMessage(0, "    y_ppem = %i\n", (int)bs.y_ppem);
 	}
-	PRINTF("face height        = %i\n", (int)face->height);
-	PRINTF("max_advance_width  = %i\n", (int)face->max_advance_width);
-	PRINTF("max_advance_height = %i\n", (int)face->max_advance_height);
+	logDebugMessage(0, "face height        = %i\n", (int)face->height);
+	logDebugMessage(0, "max_advance_width  = %i\n", (int)face->max_advance_width);
+	logDebugMessage(0, "max_advance_height = %i\n", (int)face->max_advance_height);
 }
 
 
 static void PrintGlyphInfo(FT_GlyphSlot& glyph, int g)
 {
-	PRINTF("Glyph: %i  '%c'\n", g, g);
-	PRINTF("  bitmap.width         = %i\n", (int)glyph->bitmap.width);
-	PRINTF("  bitmap.rows          = %i\n", (int)glyph->bitmap.rows);
-	PRINTF("  bitmap.pitch         = %i\n", (int)glyph->bitmap.pitch);
-	PRINTF("  bitmap.pixel_mode    = %i\n", (int)glyph->bitmap.pixel_mode);
-	PRINTF("  bitmap.palette_mode  = %i\n", (int)glyph->bitmap.palette_mode);
-	PRINTF("  bitmap_left          = %i\n", (int)glyph->bitmap_left);
-	PRINTF("  bitmap_top           = %i\n", (int)glyph->bitmap_top);
-	PRINTF("  advance.x            = %i\n", (int)glyph->advance.x);
-	PRINTF("  advance.y            = %i\n", (int)glyph->advance.y);
+	logDebugMessage(0, "Glyph: %i  '%c'\n", g, g);
+	logDebugMessage(0, "  bitmap.width         = %i\n", (int)glyph->bitmap.width);
+	logDebugMessage(0, "  bitmap.rows          = %i\n", (int)glyph->bitmap.rows);
+	logDebugMessage(0, "  bitmap.pitch         = %i\n", (int)glyph->bitmap.pitch);
+	logDebugMessage(0, "  bitmap.pixel_mode    = %i\n", (int)glyph->bitmap.pixel_mode);
+	logDebugMessage(0, "  bitmap.palette_mode  = %i\n", (int)glyph->bitmap.palette_mode);
+	logDebugMessage(0, "  bitmap_left          = %i\n", (int)glyph->bitmap_left);
+	logDebugMessage(0, "  bitmap_top           = %i\n", (int)glyph->bitmap_top);
+	logDebugMessage(0, "  advance.x            = %i\n", (int)glyph->advance.x);
+	logDebugMessage(0, "  advance.y            = %i\n", (int)glyph->advance.y);
 	FT_Glyph_Metrics metrics = glyph->metrics;
-	PRINTF("  metrics.width        = %i\n", (int)metrics.width);
-	PRINTF("  metrics.height       = %i\n", (int)metrics.height);
-	PRINTF("  metrics.horiBearingX = %i\n", (int)metrics.horiBearingX);
-	PRINTF("  metrics.horiBearingY = %i\n", (int)metrics.horiBearingY);
-	PRINTF("  metrics.horiAdvance  = %i\n", (int)metrics.horiAdvance);
-	PRINTF("  metrics.vertBearingX = %i\n", (int)metrics.vertBearingX);
-	PRINTF("  metrics.vertBearingY = %i\n", (int)metrics.vertBearingY);
+	logDebugMessage(0, "  metrics.width        = %i\n", (int)metrics.width);
+	logDebugMessage(0, "  metrics.height       = %i\n", (int)metrics.height);
+	logDebugMessage(0, "  metrics.horiBearingX = %i\n", (int)metrics.horiBearingX);
+	logDebugMessage(0, "  metrics.horiBearingY = %i\n", (int)metrics.horiBearingY);
+	logDebugMessage(0, "  metrics.horiAdvance  = %i\n", (int)metrics.horiAdvance);
+	logDebugMessage(0, "  metrics.vertBearingX = %i\n", (int)metrics.vertBearingX);
+	logDebugMessage(0, "  metrics.vertBearingY = %i\n", (int)metrics.vertBearingY);
 }
 
 

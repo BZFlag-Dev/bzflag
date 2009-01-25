@@ -77,6 +77,8 @@ extern int __beginendCount;
 #  undef glDeleteShader
 #  undef glCreateProgram
 #  undef glDeleteProgram
+#  undef glGenQueries
+#  undef glDeleteQueries
 #  undef glGenFramebuffersEXT
 #  undef glDeleteFramebuffersEXT
 #  undef glGenRenderbuffersEXT
@@ -91,9 +93,11 @@ extern int __beginendCount;
 #  define glDeleteShader(id)			bzDeleteShader(id)
 #  define glCreateProgram()			bzCreateProgram()
 #  define glDeleteProgram(id)			bzDeleteProgram(id)
+#  define glGenQueries(n, queries)		bzGenQueries((n), (queries))
+#  define glDeleteQueries(n, queries)		bzDeleteQueries((n), (queries))
 //#define DEBUG_GL_MATRIX_STACKS
 #  ifdef DEBUG
-#    define glNewList(list,mode)			bzNewList((list), (mode))
+#    define glNewList(list,mode)		bzNewList((list), (mode))
 #    define glGenLists(count)			bzGenLists((count))
 #    define glGenTextures(count, textures)	bzGenTextures((count), (textures))
 #    ifdef DEBUG_GL_MATRIX_STACKS
@@ -117,6 +121,8 @@ extern GLuint bzCreateShader(GLenum type);
 extern void   bzDeleteShader(GLuint shader);
 extern GLuint bzCreateProgram();
 extern void   bzDeleteProgram(GLuint program);
+extern void   bzGenQueries(GLsizei n, GLuint* queries);
+extern void   bzDeleteQueries(GLsizei n, const GLuint* queries);
 extern void   bzMatrixMode(GLenum mode);
 extern void   bzPushMatrix();
 extern void   bzPopMatrix();

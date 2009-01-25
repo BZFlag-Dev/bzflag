@@ -21,6 +21,7 @@ using std::set;
 #include "LuaUtils.h"
 #include "LuaCallInDB.h"
 #include "LuaCallInCheck.h"
+#include "LuaGLPointers.h"
 
 // bzflag headers
 #include "../bzflag/playing.h"
@@ -35,10 +36,14 @@ void LuaHandle::Shutdown()
 {
 	LUA_CALL_IN_CHECK(L);
 	lua_checkstack(L, 2);
-	if (!PushCallIn(LUA_CI_Shutdown)) {
-		return; // the call is not defined
-	}
 
+	// NOTE: we don't use PushCallIn() here because Shutdown() is not managed by
+	//       EventHandler, and so no warning should be given if it is not found
+	lua_rawgeti(L, LUA_CALLINSINDEX, LUA_CI_Shutdown);
+	if (!lua_isfunction(L, -1)) {
+		return;
+	}
+	
 	// call the routine
 	RunCallIn(LUA_CI_Shutdown, 0, 0);
 	return;
@@ -532,7 +537,9 @@ void LuaHandle::GLContextFree()
 		if (!PushCallIn(LUA_CI_ ## name )) { \
 			return;                            \
 		}                                    \
+		LuaGLPointers::Enable(L);            \
 		RunCallIn(LUA_CI_ ## name, 0, 0);    \
+		LuaGLPointers::Reset(L);             \
 	}
 
 DRAW_CALLIN(DrawGenesis)
@@ -838,7 +845,7 @@ void LuaHandle::WordComplete(const string& line,
 		return;
 	}
 
-	const int table = 1;
+	const int table = lua_gettop(L);
 	if (lua_istable(L, table)) {
 		for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
 			if (lua_israwstring(L, -1)) {

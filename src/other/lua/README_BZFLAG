@@ -24,4 +24,6 @@
 
 6. Applied the LUA_CALLINSINDEX patch
 
+7. Added lua_setuserdataextra() and lua_getuserdataextra() for
+   faster userdata type checking
 

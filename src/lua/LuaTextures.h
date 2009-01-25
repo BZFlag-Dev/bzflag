@@ -5,7 +5,6 @@
 
 // system headers
 #include <string>
-#include <set>
 
 // common headers
 #include "bzfgl.h"
@@ -17,7 +16,7 @@
 struct lua_State;
 
 
-static const int MAX_TEXTURE_UNITS = 32;
+static const int MAX_LUA_TEXTURE_UNITS = 32;
 
 
 /******************************************************************************/
@@ -29,6 +28,8 @@ class LuaTexture
 		virtual ~LuaTexture();
 
 		virtual GLuint GetTexID() const = 0;
+
+		virtual bool Delete() = 0;
 
 		virtual bool Bind() const = 0;
 		virtual bool IsValid() const = 0;
@@ -58,17 +59,16 @@ class LuaTexture
 
 class LuaTextureMgr {
 	public:
-		bool InsertTexture(LuaTexture*);
-		bool RemoveTexture(LuaTexture*);
-
-	private:
-		std::set<LuaTexture*> textures;
-
-	public:
 		static bool PushEntries(lua_State* L);
 
-		static void Init();
-		static void Free();
+		static const LuaTexture* TestLuaTexture(lua_State* L, int index);
+		static const LuaTexture* CheckLuaTexture(lua_State* L, int index);
+
+		static GLenum GetActiveTexture() { return activeTexture; }
+		static GLvoid SetActiveTexture(GLenum t) { activeTexture = t; }
+
+		// returns -1 for unknown combinations
+		static int GetPixelSize(GLenum format, GLenum type);
 
 	public:
 		static const char* metaName;
@@ -78,22 +78,34 @@ class LuaTextureMgr {
 		static int MetaGC(lua_State* L);
 		static int MetaIndex(lua_State* L);
 
-		static LuaTexture*& CheckLuaTexture(lua_State* L, int index);
+		static LuaTexture* GetLuaTexture(lua_State* L, int index);
 
 	private: // call-outs
 		static int RefTexture(lua_State* L);
 		static int CreateTexture(lua_State* L);
 		static int DeleteTexture(lua_State* L);
+
 		static int Texture(lua_State* L);
+		static int TexEnv(lua_State* L);
+		static int TexGen(lua_State* L);
 		static int TexParameter(lua_State* L);
-		static int GenerateMipMap(lua_State* L);
+
+		static int ActiveTexture(lua_State* L);
+		static int MultiTexture(lua_State* L);
+		static int MultiTexEnv(lua_State* L);
+		static int MultiTexGen(lua_State* L);
+
 		static int CopyToTexture(lua_State* L);
 
+		static int GenerateMipMap(lua_State* L);
+
+		static int TexBuffer(lua_State* L);
+
 	private:
-		void InitContext();
-		void FreeContext();
-		static void StaticInitContext(void* data);
-		static void StaticFreeContext(void* data);
+		static bool ParseTexture(lua_State* L, int index);
+
+	private:
+		static GLenum activeTexture;
 };
 
 

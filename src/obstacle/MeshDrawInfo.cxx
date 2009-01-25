@@ -388,6 +388,9 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 	  if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
 	    unsigned short* array = (unsigned short*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
+	      if (array[idx] >= vCount) {
+	        printf("array[idx] = %i, vCount = %i\n", array[idx], vCount);
+              }
 	      assert(array[idx] < vCount && "ERROR: UShort Vertex out of bounds");
 	      const float* v = verts[array[idx]];
 	      exts.expandToPoint(v);

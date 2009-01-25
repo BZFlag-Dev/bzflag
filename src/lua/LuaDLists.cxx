@@ -6,9 +6,7 @@
 
 // system headers
 #include <string>
-#include <set>
 using std::string;
-using std::set;
 
 // common headers
 #include "bzfgl.h"
@@ -31,23 +29,26 @@ const char* LuaDListMgr::metaName = "DList";
 //  LuaDList
 //
 
-LuaDList::LuaDList(GLuint list)
-: listID(list)
+LuaDList::LuaDList(GLuint id)
+: listID(id)
+, maxAttribDepth(0)
+, minAttribDepth(0)
+, exitAttribDepth(0)
 {
 	OpenGLGState::registerContextInitializer(StaticFreeContext,
-	                                         StaticInitContext, this);
+																					 StaticInitContext, this);
 }
 
 
 LuaDList::~LuaDList()
 {
-	glDeleteLists(listID, 1);
+	FreeContext();
 	OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-	                                           StaticInitContext, this);
+																						 StaticInitContext, this);
 }
 
 
-bool LuaDList::Call()
+bool LuaDList::Call() const
 {
 	if (listID == INVALID_GL_LIST_ID) {
 		return false;
@@ -63,13 +64,12 @@ bool LuaDList::IsValid() const
 }
 
 
-bool LuaDList::Free()
+bool LuaDList::Delete()
 {
 	if (listID == INVALID_GL_LIST_ID) {
 		return false;
 	}
-	glDeleteLists(listID, 1);
-	listID = INVALID_GL_LIST_ID;
+	FreeContext();
 	return true;
 }
 
@@ -81,6 +81,9 @@ void LuaDList::InitContext()
 
 void LuaDList::FreeContext()
 {
+	if (listID == INVALID_GL_LIST_ID) {
+		return;
+	}
 	glDeleteLists(listID, 1);
 	listID = INVALID_GL_LIST_ID;
 }
@@ -116,27 +119,33 @@ bool LuaDListMgr::PushEntries(lua_State* L)
 }
 
 
-void LuaDListMgr::Init()
-{
-	OpenGLGState::registerContextInitializer(StaticFreeContext,
-	                                         StaticInitContext, NULL);
-}
-
-
-void LuaDListMgr::Free()
-{
-	OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-	                                           StaticInitContext, NULL);
-}
-
-
-
 /******************************************************************************/
 /******************************************************************************/
 
-inline LuaDList*& LuaDListMgr::CheckLuaDList(lua_State* L, int index)
+const LuaDList* LuaDListMgr::TestLuaDList(lua_State* L, int index)
 {
-	return *((LuaDList**)luaL_checkudata(L, index, metaName));
+	if (lua_getuserdataextra(L, index) != metaName) {
+		return NULL;
+	}
+	return (LuaDList*)lua_touserdata(L, index);
+}
+
+
+const LuaDList* LuaDListMgr::CheckLuaDList(lua_State* L, int index)
+{
+	if (lua_getuserdataextra(L, index) != metaName) {
+		luaL_argerror(L, index, "expected DList");
+	}
+	return (LuaDList*)lua_touserdata(L, index);
+}
+
+
+LuaDList* LuaDListMgr::GetLuaDList(lua_State* L, int index)
+{
+	if (lua_getuserdataextra(L, index) != metaName) {
+		luaL_argerror(L, index, "expected DList");
+	}
+	return (LuaDList*)lua_touserdata(L, index);
 }
 
 
@@ -145,26 +154,26 @@ inline LuaDList*& LuaDListMgr::CheckLuaDList(lua_State* L, int index)
 
 bool LuaDListMgr::CreateMetatable(lua_State* L)
 {
-  luaL_newmetatable(L, metaName);
-  HSTR_PUSH_CFUNC(L, "__gc",    MetaGC);
-  HSTR_PUSH_CFUNC(L, "__index", MetaIndex);
-  lua_pop(L, 1);  
-  return true;
+	luaL_newmetatable(L, metaName);
+	HSTR_PUSH_CFUNC(L,  "__gc",    MetaGC);
+	HSTR_PUSH_CFUNC(L,  "__index", MetaIndex);
+	HSTR_PUSH_STRING(L, "__metatable", "no access");
+	lua_pop(L, 1);  
+	return true;
 }
 
 
 int LuaDListMgr::MetaGC(lua_State* L)
 {
-	LuaDList*& list = CheckLuaDList(L, 1);
-	delete list;
-	list = NULL;
+	LuaDList* list = GetLuaDList(L, 1);
+	list->~LuaDList();
 	return 0;
 }
 
 
 int LuaDListMgr::MetaIndex(lua_State* L)
 {
-	LuaDList* list = CheckLuaDList(L, 1);
+	const LuaDList* list = CheckLuaDList(L, 1);
 	if (list == NULL) {
 		return 0;
 	}
@@ -190,19 +199,20 @@ int LuaDListMgr::CreateList(lua_State* L)
 {
 	const int args = lua_gettop(L); // number of arguments
 	if ((args < 1) || !lua_isfunction(L, 1)) {
-		luaL_error(L,
-			"Incorrect arguments to gl.CreateList(func [, arg1, arg2, etc ...])");
+		luaL_error(L, "Incorrect arguments to gl.CreateList(func, ...)");
+	}
+
+	// notify and check with OpenGLPassState
+	if (!OpenGLPassState::NewList()) {
+		luaL_error(L, "gl.CreateList() recursion");
 	}
 
 	// generate the list id
 	const GLuint listID = glGenLists(1);
 	if (listID == 0) {
+		OpenGLPassState::EndList();
 		return 0;
 	}
-
-	// save the current state
-	const bool origDrawingEnabled = OpenGLPassState::IsDrawingEnabled();
-	OpenGLPassState::SetDrawingEnabled(true);
 
 	// build the list with the specified lua call/args
 	glNewList(listID, GL_COMPILE);
@@ -211,20 +221,19 @@ int LuaDListMgr::CreateList(lua_State* L)
 
 	if (error != 0) {
 		glDeleteLists(listID, 1);
-		LuaLog("gl.CreateList: error(%i) = %s", error, lua_tostring(L, -1));
+		LuaLog(1, "gl.CreateList: error(%i) = %s", error, lua_tostring(L, -1));
 		lua_pushnil(L);
 	}
 	else {
-		LuaDList** listPtr =
-			(LuaDList**)lua_newuserdata(L, sizeof(LuaDList*));
+		void* udData = lua_newuserdata(L, sizeof(LuaDList));
+		new(udData) LuaDList(listID);
+		lua_setuserdataextra(L, -1, (void*)metaName);
 		luaL_getmetatable(L, metaName);
 		lua_setmetatable(L, -2);
-
-		*listPtr = new LuaDList(listID);
 	}
 
 	// restore the state
-	OpenGLPassState::SetDrawingEnabled(origDrawingEnabled);
+	OpenGLPassState::EndList();
 
 	return 1;
 }
@@ -232,7 +241,7 @@ int LuaDListMgr::CreateList(lua_State* L)
 
 int LuaDListMgr::CallList(lua_State* L)
 {
-	LuaDList* list = CheckLuaDList(L, 1);
+	const LuaDList* list = CheckLuaDList(L, 1);
 	if (list == NULL) {
 		return 0;
 	}
@@ -246,61 +255,14 @@ int LuaDListMgr::CallList(lua_State* L)
 int LuaDListMgr::DeleteList(lua_State* L)
 {
 	if (OpenGLGState::isExecutingInitFuncs()) {
-		luaL_error(L, "gl.DeleteList can not be used in GLInitContext");
+		luaL_error(L, "gl.DeleteList can not be used in GLReload");
 	}
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}
-	LuaDList*& list = CheckLuaDList(L, 1);
-	delete list;
-	list = NULL;
+	LuaDList* list = GetLuaDList(L, 1);
+	list->Delete();
 	return 0;
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-bool LuaDListMgr::InsertList(LuaDList* list)
-{
-	if (lists.find(list) != lists.end()) {
-		return false;
-	}
-	lists.insert(list);
-	return true;
-}
-
-
-bool LuaDListMgr::RemoveList(LuaDList* list)
-{
-	set<LuaDList*>::iterator it = lists.find(list);
-	if (it == lists.end()) {
-		return false;
-	}
-	lists.erase(it);
-	return true;
-}
-
-
-void LuaDListMgr::InitContext()
-{
-}
-
-
-void LuaDListMgr::FreeContext()
-{
-}
-
-
-void LuaDListMgr::StaticInitContext(void* data)
-{
-	((LuaDListMgr*)data)->InitContext();
-}
-
-
-void LuaDListMgr::StaticFreeContext(void* data)
-{
-	((LuaDListMgr*)data)->FreeContext();
 }
 
 

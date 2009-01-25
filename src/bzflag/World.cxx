@@ -1021,7 +1021,8 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   // Write materials
   if (!saveAsOBJ) {
     MATERIALMGR.print(out, indent);
-  } else {
+  }
+  else {
     const std::string mtlname = filename + ".mtl";
     const std::string mtlfile = getWorldDirName() + mtlname;
     std::ostream* mtlStream = FILEMGR.createDataOutStream(mtlfile.c_str());

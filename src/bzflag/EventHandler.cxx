@@ -21,9 +21,8 @@
 
 // common headers
 #include "bzfio.h"
-#include "OpenGLGState.h"
-#include "OpenGLPassState.h"
 #include "GfxBlock.h"
+#include "OpenGLPassState.h"
 
 using std::string;
 using std::vector;
@@ -106,12 +105,6 @@ EventHandler::EventHandler()
   SETUP_EVENT(DrawScreenStart, 0, true);
   SETUP_EVENT(DrawScreen,      0, true);
   SETUP_EVENT(DrawRadar,       0, true);
-
-  SETUP_EVENT(RenderPlayer);
-  SETUP_EVENT(RenderPlayerExplosion);
-  SETUP_EVENT(RenderShot);
-  SETUP_EVENT(RenderShotExplosion);
-  SETUP_EVENT(RenderFlag);
 
   SETUP_EVENT(KeyPress,     REQ_INPUT_CTRL);
   SETUP_EVENT(KeyRelease,   REQ_INPUT_CTRL);

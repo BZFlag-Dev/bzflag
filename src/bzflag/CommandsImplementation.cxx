@@ -787,7 +787,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     return true;
   }
 
-  char buffer[256] = {0};
+  char buffer[256] = { 0 };
   std::string fullname;
   if (world->writeWorld(filename, fullname)) {
     snprintf(buffer, 256, "World saved:  %s %s%s%s", fullname.c_str(),
@@ -803,6 +803,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     const BzDocket* docket = bzVFS.getDocket(BZVFS_LUA_WORLD);
     if (docket != NULL) {
       const std::string docketDir = fullname + ".docket";
+      // FIXME - should move directory if already exists
       if (docket->save(docketDir)) {
         addMessage(NULL, std::string("Docket saved: ") + docketDir);
       } else {

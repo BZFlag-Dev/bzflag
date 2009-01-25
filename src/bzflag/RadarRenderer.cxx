@@ -20,8 +20,8 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
-
 #include "TimeKeeper.h"
+#include "EventHandler.h"
 
 // local implementation headers
 #include "ObstacleMgr.h"
@@ -390,18 +390,20 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
   float outlineOpacity = RENDERER.getPanelOpacity();
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
-  if ( outlineOpacity < 1.0f )
+  if ( outlineOpacity < 1.0f ) {
     outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+  }
 
-  if (BZDBCache::blend)
+  if (BZDBCache::blend) {
     glEnable(GL_BLEND);
-
+  }
   glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
   glOutlineBoxHV(10,left,top,right,bottom);
-  if (BZDBCache::blend)
+  if (BZDBCache::blend) {
     glDisable(GL_BLEND);
+  }
 
-  glColor4f(teamColor[0],teamColor[1],teamColor[2],1.0f);
+  glColor4f(teamColor[0], teamColor[1], teamColor[2], 1.0f);
 
   const float opacity = renderer.getPanelOpacity();
   if ((opacity < 1.0f) && (opacity > 0.0f)) {
@@ -453,6 +455,131 @@ static bool checkDrawFlags()
 }
 
 
+bool RadarRenderer::executeScissor()
+{
+  const MainWindow& window = RENDERER.getWindow();
+  const int ox = window.getOriginX();
+  const int oy = window.getOriginY();
+  glScissor(ox + x, oy + y, w, h);
+  return true;
+}
+
+
+bool RadarRenderer::executeTransform(bool localView)
+{
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!world || !myTank) {
+    return false;
+  }
+
+  SceneRenderer& renderer = RENDERER;
+
+  // prepare projection matrix
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  const MainWindow& window = renderer.getWindow();
+  const int xSize = window.getWidth();
+  const int ySize = window.getHeight();
+  const double xCenter = double(x) + 0.5 * double(w);
+  const double yCenter = double(y) + 0.5 * double(h);
+  const double xUnit = 2.0 * range / double(w);
+  const double yUnit = 2.0 * range / double(h);
+  // NOTE: the visual extents include passable objects
+  double maxHeight = 0.0;
+  const Extents* visExts = renderer.getVisualExtents();
+  if (visExts) {
+    maxHeight = (double)visExts->maxs[2];
+  }
+  glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
+	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
+	  -(maxHeight + 10.0), (maxHeight + 10.0));
+
+  // prepare modelview matrix
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  if (localView) {
+    const float* myPos = myTank->getPosition();
+    const float myAngle = myTank->getAngle();
+
+    // transform to the observer's viewpoint
+    glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glTranslatef(-myPos[0], -myPos[1], 0.0f);
+  }
+
+  return true;
+}
+
+
+void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
+{
+  TextureManager &tm = TextureManager::instance();
+  int noiseTexture = tm.getTextureID( "noise" );
+
+  glColor3f(1.0f, 1.0f, 1.0f);
+
+  if ((noiseTexture >= 0) && (renderer.useQuality() > _LOW_QUALITY)) {
+
+    const int sequences = 10;
+
+    static float np[] =
+      { 0, 0, 1, 1,
+        1, 1, 0, 0,
+        0.5f, 0.5f, 1.5f, 1.5f,
+        1.5f, 1.5f, 0.5f, 0.5f,
+        0.25f, 0.25f, 1.25f, 1.25f,
+        1.25f, 1.25f, 0.25f, 0.25f,
+        0, 0.5f, 1, 1.5f,
+        1, 1.5f, 0, 0.5f,
+        0.5f, 0, 1.5f, 1,
+        1.4f, 1, 0.5f, 0,
+        0.75f, 0.75f, 1.75f, 1.75f,
+        1.75f, 1.75f, 0.75f, 0.75f,
+      };
+
+    int noisePattern = 4 * int(floor(sequences * bzfrand()));
+
+    glEnable(GL_TEXTURE_2D);
+    tm.bind(noiseTexture);
+
+    glBegin(GL_QUADS); {
+      glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
+      glVertex2f(-radarRange,-radarRange);
+      glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
+      glVertex2f( radarRange,-radarRange);
+      glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
+      glVertex2f( radarRange, radarRange);
+      glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
+      glVertex2f(-radarRange, radarRange);
+    } glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+  }
+  else if ((noiseTexture >= 0) && BZDBCache::texture &&
+           (renderer.useQuality() == _LOW_QUALITY)) {
+    glEnable(GL_TEXTURE_2D);
+    tm.bind(noiseTexture);
+
+    glBegin(GL_QUADS); {
+      glTexCoord2f(0,0);
+      glVertex2f(-radarRange,-radarRange);
+      glTexCoord2f(1,0);
+      glVertex2f( radarRange,-radarRange);
+      glTexCoord2f(1,1);
+      glVertex2f( radarRange, radarRange);
+      glTexCoord2f(0,1);
+      glVertex2f(-radarRange, radarRange);
+    } glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+  }
+
+  if (decay > 0.015f) {
+    decay *= 0.5f;
+  }
+}
+
+
 void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 {
   RenderNode::resetTriangleCount();
@@ -496,395 +623,330 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       BZDB.set("displayRadarRange", "1.0");
     }
   }
+  range = radarRange;
 
-  // prepare projection matrix
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  const MainWindow& window = renderer.getWindow();
-  const int xSize = window.getWidth();
-  const int ySize = window.getHeight();
-  const double xCenter = double(x) + 0.5 * double(w);
-  const double yCenter = double(y) + 0.5 * double(h);
-  const double xUnit = 2.0 * radarRange / double(w);
-  const double yUnit = 2.0 * radarRange / double(h);
-  // NOTE: the visual extents include passable objects
-  double maxHeight = 0.0;
-  const Extents* visExts = renderer.getVisualExtents();
-  if (visExts) {
-    maxHeight = (double)visExts->maxs[2];
-  }
-  glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
-	  -(maxHeight + 10.0), (maxHeight + 10.0));
-
-  // prepare modelview matrix
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
+  glPushMatrix(); // depth = 1
+  executeTransform(false); // setup ortho space with radar's range
 
   OpenGLGState::resetState();
 
-
   // if jammed then draw white noise.  occasionally draw a good frame.
   if (jammed && (bzfrand() > decay)) {
-
-    TextureManager &tm = TextureManager::instance();
-    int noiseTexture = tm.getTextureID( "noise" );
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-
-    if ((noiseTexture >= 0) && (renderer.useQuality() > _LOW_QUALITY)) {
-
-      const int sequences = 10;
-
-      static float np[] =
-	{ 0, 0, 1, 1,
-	  1, 1, 0, 0,
-	  0.5f, 0.5f, 1.5f, 1.5f,
-	  1.5f, 1.5f, 0.5f, 0.5f,
-	  0.25f, 0.25f, 1.25f, 1.25f,
-	  1.25f, 1.25f, 0.25f, 0.25f,
-	  0, 0.5f, 1, 1.5f,
-	  1, 1.5f, 0, 0.5f,
-	  0.5f, 0, 1.5f, 1,
-	  1.4f, 1, 0.5f, 0,
-	  0.75f, 0.75f, 1.75f, 1.75f,
-	  1.75f, 1.75f, 0.75f, 0.75f,
-	};
-
-      int noisePattern = 4 * int(floor(sequences * bzfrand()));
-
-      glEnable(GL_TEXTURE_2D);
-      tm.bind(noiseTexture);
-
-      glBegin(GL_QUADS); {
-	glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
-	glVertex2f(-radarRange,-radarRange);
-	glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
-	glVertex2f( radarRange,-radarRange);
-	glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
-	glVertex2f( radarRange, radarRange);
-	glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
-	glVertex2f(-radarRange, radarRange);
-      } glEnd();
-
-      glDisable(GL_TEXTURE_2D);
-    } else if ((noiseTexture >= 0) && BZDBCache::texture &&
-	       (renderer.useQuality() == _LOW_QUALITY)) {
-      glEnable(GL_TEXTURE_2D);
-      tm.bind(noiseTexture);
-
-      glBegin(GL_QUADS); {
-	glTexCoord2f(0,0);
-	glVertex2f(-radarRange,-radarRange);
-	glTexCoord2f(1,0);
-	glVertex2f( radarRange,-radarRange);
-	glTexCoord2f(1,1);
-	glVertex2f( radarRange, radarRange);
-	glTexCoord2f(0,1);
-	glVertex2f(-radarRange, radarRange);
-      } glEnd();
-
-      glDisable(GL_TEXTURE_2D);
-    }
-    if (decay > 0.015f) decay *= 0.5f;
-
+    drawNoise(renderer, radarRange);
+    glPopMatrix(); // depth = 0
+    return; // BAIL OUT
   }
 
   // only draw if there's a local player and a world
-  else if (myTank && world) {
-
-    colorblind = (myTank->getFlag() == Flags::Colorblindness);
-
-    // if decay is sufficiently small then boost it so it's more
-    // likely a jammed radar will get a few good frames closely
-    // spaced in time.  value of 1 guarantees at least two good
-    // frames in a row.
-    if (decay <= 0.015f) decay = 1.0f;
-    else decay *= 0.5f;
+  if (!myTank || !world) {
+    glPopMatrix(); // depth = 0
+    return; // BAIL OUT
+  }
 
 
-    // get size of pixel in model space (assumes radar is square)
-    ps = 2.0f * (radarRange / GLfloat(w));
-    MeshSceneNode::setRadarLodScale(ps);
+  colorblind = (myTank->getFlag() == Flags::Colorblindness);
 
-    float tankWidth = BZDBCache::tankWidth;
-    float tankLength = BZDBCache::tankLength;
-    const float testMin = 8.0f * ps;
-    // maintain the aspect ratio if it isn't square
-    if ((tankWidth > testMin) &&  (tankLength > testMin)) {
-      useTankDimensions = true;
-    } else {
-      useTankDimensions = false;
+  // if decay is sufficiently small then boost it so it's more
+  // likely a jammed radar will get a few good frames closely
+  // spaced in time.  value of 1 guarantees at least two good
+  // frames in a row.
+  if (decay <= 0.015f) {
+    decay = 1.0f;
+  } else {
+    decay *= 0.5f;
+  }
+
+  // get size of pixel in model space (assumes radar is square)
+  ps = 2.0f * (radarRange / GLfloat(w));
+  MeshSceneNode::setRadarLodScale(ps);
+
+  float tankWidth = BZDBCache::tankWidth;
+  float tankLength = BZDBCache::tankLength;
+  const float testMin = 8.0f * ps;
+  // maintain the aspect ratio if it isn't square
+  if ((tankWidth > testMin) &&  (tankLength > testMin)) {
+    useTankDimensions = true;
+  } else {
+    useTankDimensions = false;
+  }
+  if (useTankDimensions && (renderer.useQuality() >= _HIGH_QUALITY)) {
+    useTankModels = true;
+  } else {
+    useTankModels = false;
+  }
+
+  // relative to my tank
+  const float* myPos = myTank->getPosition();
+  const float myAngle = myTank->getAngle();
+
+  // draw the view angle below stuff
+  // view frustum edges
+  if (!BZDB.isTrue("hideRadarViewLines")) {
+    glColor3f(1.0f, 0.625f, 0.125f);
+    const float fovx = renderer.getViewFrustum().getFOVx();
+    const float viewWidth = radarRange * tanf(0.5f * fovx);
+    if (BZDB.isTrue("showShotGuide")) {
+      glBegin(GL_LINES);
+      glVertex2f(-viewWidth, radarRange);
+      glVertex2f(0.0f, 0.0f);
+      glVertex2f(viewWidth, radarRange);
+      glVertex2f(0.0f, 0.0f);
+      glColor3f(0.5f, 0.3125f, 0.0625f);
+      glVertex2f(0.0f, radarRange);
+      glVertex2f(0.0f, 0.0f);
+    }	else {
+      glBegin(GL_LINE_STRIP);
+      glVertex2f(-viewWidth, radarRange);
+      glVertex2f(0.0f, 0.0f);
+      glVertex2f(viewWidth, radarRange);
     }
-    if (useTankDimensions && (renderer.useQuality() >= _HIGH_QUALITY)) {
-      useTankModels = true;
-    } else {
-      useTankModels = false;
+    glEnd();
+  }
+
+  // transform to the observer's viewpoint
+  glPushMatrix(); // depth = 2
+  glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+  glPushMatrix(); // depth = 3
+  glTranslatef(-myPos[0], -myPos[1], 0.0f);
+
+  if (useTankModels) {
+    // new modelview transform requires repositioning
+    renderer.setupSun();
+  }
+
+  // setup the blending function
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // draw the buildings
+  renderObstacles(fastRadar, radarRange);
+
+  // antialiasing on for lines and points unless we're multisampling,
+  // in which case it's automatic and smoothing makes them look worse.
+  if (smooth) {
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+  }
+
+  // draw my shots
+  int maxShots = world->getMaxShots();
+  int i;
+  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  for (i = 0; i < maxShots; i++) {
+    const ShotPath* shot = myTank->getShot(i);
+    if (shot) {
+      const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
+      glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+      shot->radarRender();
+    }
+  }
+
+  //draw world weapon shots
+  WorldPlayer *worldWeapons = world->getWorldWeapons();
+  maxShots = worldWeapons->getMaxShots();
+  for (i = 0; i < maxShots; i++) {
+    const ShotPath* shot = worldWeapons->getShot(i);
+    if (shot) {
+      const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
+      glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+      shot->radarRender();
+    }
+  }
+
+  // used for blinking tanks
+  const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
+
+  // draw other tanks (and any flags on them)
+  // note about flag drawing.  each line segment is drawn twice
+  // (once in each direction);  this degrades the antialiasing
+  // but on systems that don't do correct filtering of endpoints
+  // not doing it makes (half) the endpoints jump wildly.
+  const int curMaxPlayers = world->getCurMaxPlayers();
+  for (i = 0; i < curMaxPlayers; i++) {
+    RemotePlayer* player = world->getPlayer(i);
+    if (!player) {
+      continue;
+    }
+    if (!player->isAlive() &&
+        (!useTankModels || !observer || !player->isExploding())) {
+      continue;
+    }
+    if ((player->getFlag() == Flags::Stealth) &&
+        (myTank->getFlag() != Flags::Seer)) {
+      continue;
     }
 
-    // relative to my tank
-    const float* myPos = myTank->getPosition();
-    const float myAngle = myTank->getAngle();
+    const float* position = player->getPosition();
 
-    // draw the view angle below stuff
-    // view frustum edges
-    if (!BZDB.isTrue("hideRadarViewLines")) {
-      glColor3f(1.0f, 0.625f, 0.125f);
-      const float fovx = renderer.getViewFrustum().getFOVx();
-      const float viewWidth = radarRange * tanf(0.5f * fovx);
-      if (BZDB.isTrue("showShotGuide")) {
-	glBegin(GL_LINES);
-	glVertex2f(-viewWidth, radarRange);
-	glVertex2f(0.0f, 0.0f);
-	glVertex2f(viewWidth, radarRange);
-	glVertex2f(0.0f, 0.0f);
-	glColor3f(0.5f, 0.3125f, 0.0625f);
-	glVertex2f(0.0f, radarRange);
-	glVertex2f(0.0f, 0.0f);
-      }	else {
-	glBegin(GL_LINE_STRIP);
-	glVertex2f(-viewWidth, radarRange);
-	glVertex2f(0.0f, 0.0f);
-	glVertex2f(viewWidth, radarRange);
+    if (player->getFlag() != Flags::Null) {
+      glColor3fv(player->getFlag()->getColor());
+      drawFlagOnTank(position);
+    }
+
+    if (player->isPaused() || player->isNotResponding()) {
+      const float dimfactor = 0.4f;
+
+      const float *color;
+      if (colorblind) {
+        color = Team::getRadarColor(RogueTeam);
+      } else {
+        color = Team::getRadarColor(player->getTeam());
       }
-      glEnd();
+
+      float dimmedcolor[3];
+      dimmedcolor[0] = color[0] * dimfactor;
+      dimmedcolor[1] = color[1] * dimfactor;
+      dimmedcolor[2] = color[2] * dimfactor;
+      glColor3fv(dimmedcolor);
+    } else {
+      const TeamColor team = colorblind ? RogueTeam : player->getTeam();
+      glColor3fv(Team::getRadarColor(team));
     }
 
-    // transform to the observer's viewpoint
-    glPushMatrix();
+    // If this tank is hunted flash it on the radar
+    int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();
+    if ((huntLevel > 0) && !colorblind) {
+      float period = 0.40f;
+      float thresh = 0.25f;
+      if (!player->isHunted()) {
+        period = AutoHunt::getBlinkPeriod(huntLevel);
+        thresh = AutoHunt::getInnerBlinkThreshold(huntLevel);
+      }
+      const bool blink = fmodf((float)diffTime, period) < (period * thresh);
+      if (blink) {
+        const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f};
+        const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};
+        if (player->getTeam() == GreenTeam) {
+          glColor3fv(greenBlinkColor);
+        } else {
+          glColor3fv(normalBlinkColor);
+        }
+      } else {
+        glColor3fv(Team::getRadarColor(player->getTeam()));
+      }
+    }
+
+    drawTank(player, observer);
+  }
+
+  bool coloredShot = BZDB.isTrue("coloredradarshots");
+  // draw other tanks' shells
+  bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
+  maxShots = world->getMaxShots();
+  for (i = 0; i < curMaxPlayers; i++) {
+    RemotePlayer* player = world->getPlayer(i);
+    if (!player) continue;
+    for (int j = 0; j < maxShots; j++) {
+      const ShotPath* shot = player->getShot(j);
+      if (shot && (shot->getShotType() != InvisibleShot || iSeeAll)) {
+        const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
+        const float *shotcolor;
+        if (coloredShot) {
+          if (colorblind) {
+            shotcolor = Team::getRadarColor(RogueTeam);
+          } else {
+            shotcolor = Team::getRadarColor(player->getTeam());
+          }
+          glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+        } else {
+          glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+        }
+        shot->radarRender();
+      }
+    }
+  }
+
+  // draw flags not on tanks.
+  // draw them in reverse order so that the team flags
+  // (which come first), are drawn on top of the normal flags.
+  const int maxFlags = world->getMaxFlags();
+  const bool drawNormalFlags = checkDrawFlags();
+  for (i = (maxFlags - 1); i >= 0; i--) {
+    const Flag& flag = world->getFlag(i);
+    // don't draw flags that don't exist or are on a tank
+    if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+      continue;
+    // don't draw normal flags if we aren't supposed to
+    if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
+      continue;
+    // Flags change color by height
+    const float cs = colorScale(flag.position[2], muzzleHeight);
+    const float *flagcolor = flag.type->getColor();
+    glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
+    drawFlag(flag.position);
+  }
+  // draw antidote flag
+  const float* antidotePos =
+    LocalPlayer::getMyTank()->getAntidoteLocation();
+  if (antidotePos) {
+    glColor3f(1.0f, 1.0f, 0.0f);
+    drawFlag(antidotePos);
+  }
+
+  // draw these markers above all others always centered
+  glPopMatrix(); // depth = 2
+
+  // north marker
+  GLfloat ns = 0.05f * radarRange, ny = 0.9f * radarRange;
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(-ns, ny - ns);
+  glVertex2f(-ns, ny + ns);
+  glVertex2f(ns, ny - ns);
+  glVertex2f(ns, ny + ns);
+  glEnd();
+
+  // always up
+  glPopMatrix(); // depth = 1
+
+  // forward tick
+  glBegin(GL_LINES);
+  glVertex2f(0.0f, radarRange - ps);
+  glVertex2f(0.0f, radarRange - 4.0f * ps);
+  glEnd();
+
+
+  if (!observer) {
+    glPushMatrix(); // depth = 2
+
+    // revert to the centered transformation
     glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    glPushMatrix();
     glTranslatef(-myPos[0], -myPos[1], 0.0f);
 
-    if (useTankModels) {
-      // new modelview transform requires repositioning
-      renderer.setupSun();
+    // my flag
+    if (myTank->getFlag() != Flags::Null) {
+      glColor3fv(myTank->getFlag()->getColor());
+      drawFlagOnTank(myPos);
     }
 
-    // setup the blending function
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    // draw the buildings
-    renderObstacles(fastRadar, radarRange);
-
-    // antialiasing on for lines and points unless we're multisampling,
-    // in which case it's automatic and smoothing makes them look worse.
-    if (smooth) {
-      glEnable(GL_BLEND);
-      glEnable(GL_LINE_SMOOTH);
-      glEnable(GL_POINT_SMOOTH);
-    }
-
-    // draw my shots
-    int maxShots = world->getMaxShots();
-    int i;
-    float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-    for (i = 0; i < maxShots; i++) {
-      const ShotPath* shot = myTank->getShot(i);
-      if (shot) {
-	const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-	shot->radarRender();
-      }
-    }
-
-    //draw world weapon shots
-    WorldPlayer *worldWeapons = world->getWorldWeapons();
-    maxShots = worldWeapons->getMaxShots();
-    for (i = 0; i < maxShots; i++) {
-      const ShotPath* shot = worldWeapons->getShot(i);
-      if (shot) {
-	const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-	glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-	shot->radarRender();
-      }
-    }
-
-    // used for blinking tanks
-    const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
-
-    // draw other tanks (and any flags on them)
-    // note about flag drawing.  each line segment is drawn twice
-    // (once in each direction);  this degrades the antialiasing
-    // but on systems that don't do correct filtering of endpoints
-    // not doing it makes (half) the endpoints jump wildly.
-    const int curMaxPlayers = world->getCurMaxPlayers();
-    for (i = 0; i < curMaxPlayers; i++) {
-      RemotePlayer* player = world->getPlayer(i);
-      if (!player) {
-	continue;
-      }
-      if (!player->isAlive() &&
-	  (!useTankModels || !observer || !player->isExploding())) {
-	continue;
-      }
-      if ((player->getFlag() == Flags::Stealth) &&
-	  (myTank->getFlag() != Flags::Seer)) {
-	continue;
-      }
-
-      const float* position = player->getPosition();
-
-      if (player->getFlag() != Flags::Null) {
-	glColor3fv(player->getFlag()->getColor());
-	drawFlagOnTank(position);
-      }
-
-      if (player->isPaused() || player->isNotResponding()) {
-	const float dimfactor = 0.4f;
-
-	const float *color;
-	if (colorblind) {
-	  color = Team::getRadarColor(RogueTeam);
-	} else {
-	  color = Team::getRadarColor(player->getTeam());
-	}
-
-	float dimmedcolor[3];
-	dimmedcolor[0] = color[0] * dimfactor;
-	dimmedcolor[1] = color[1] * dimfactor;
-	dimmedcolor[2] = color[2] * dimfactor;
-	glColor3fv(dimmedcolor);
-      } else {
-	const TeamColor team = colorblind ? RogueTeam : player->getTeam();
-	glColor3fv(Team::getRadarColor(team));
-      }
-
-      // If this tank is hunted flash it on the radar
-      int huntLevel = player->isHunted() ? 9 : player->getAutoHuntLevel();
-      if ((huntLevel > 0) && !colorblind) {
-	float period = 0.40f;
-	float thresh = 0.25f;
-	if (!player->isHunted()) {
-	  period = AutoHunt::getBlinkPeriod(huntLevel);
-	  thresh = AutoHunt::getInnerBlinkThreshold(huntLevel);
-	}
-	const bool blink = fmodf((float)diffTime, period) < (period * thresh);
-	if (blink) {
-	  const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f};
-	  const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};
-	  if (player->getTeam() == GreenTeam) {
-	    glColor3fv(greenBlinkColor);
-	  } else {
-	    glColor3fv(normalBlinkColor);
-	  }
-	} else {
-	  glColor3fv(Team::getRadarColor(player->getTeam()));
-	}
-      }
-
-      drawTank(player, observer);
-    }
-
-    bool coloredShot = BZDB.isTrue("coloredradarshots");
-    // draw other tanks' shells
-    bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
-    maxShots = world->getMaxShots();
-    for (i = 0; i < curMaxPlayers; i++) {
-      RemotePlayer* player = world->getPlayer(i);
-      if (!player) continue;
-      for (int j = 0; j < maxShots; j++) {
-	const ShotPath* shot = player->getShot(j);
-	if (shot && (shot->getShotType() != InvisibleShot || iSeeAll)) {
-	  const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-	  const float *shotcolor;
-	  if (coloredShot) {
-	    if (colorblind) {
-	      shotcolor = Team::getRadarColor(RogueTeam);
-	    } else {
-	      shotcolor = Team::getRadarColor(player->getTeam());
-	    }
-	    glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
-	  } else {
-	    glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
-	  }
-	  shot->radarRender();
-	}
-      }
-    }
-
-    // draw flags not on tanks.
-    // draw them in reverse order so that the team flags
-    // (which come first), are drawn on top of the normal flags.
-    const int maxFlags = world->getMaxFlags();
-    const bool drawNormalFlags = checkDrawFlags();
-    for (i = (maxFlags - 1); i >= 0; i--) {
-      const Flag& flag = world->getFlag(i);
-      // don't draw flags that don't exist or are on a tank
-      if (flag.status == FlagNoExist || flag.status == FlagOnTank)
-	continue;
-      // don't draw normal flags if we aren't supposed to
-      if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
-	continue;
-      // Flags change color by height
-      const float cs = colorScale(flag.position[2], muzzleHeight);
-      const float *flagcolor = flag.type->getColor();
-      glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
-      drawFlag(flag.position);
-    }
-    // draw antidote flag
-    const float* antidotePos =
-      LocalPlayer::getMyTank()->getAntidoteLocation();
-    if (antidotePos) {
-      glColor3f(1.0f, 1.0f, 0.0f);
-      drawFlag(antidotePos);
-    }
-
-    // draw these markers above all others always centered
-    glPopMatrix();
-
-    // north marker
-    GLfloat ns = 0.05f * radarRange, ny = 0.9f * radarRange;
+    // my tank
     glColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-ns, ny - ns);
-    glVertex2f(-ns, ny + ns);
-    glVertex2f(ns, ny - ns);
-    glVertex2f(ns, ny + ns);
-    glEnd();
+    drawTank(myTank, true);
 
-    // always up
-    glPopMatrix();
+    glPopMatrix(); // depth = 1
+  }
 
-    // forward tick
-    glBegin(GL_LINES);
-    glVertex2f(0.0f, radarRange - ps);
-    glVertex2f(0.0f, radarRange - 4.0f * ps);
-    glEnd();
+  glPopMatrix(); // depth = 0
 
-    if (!observer) {
-      // revert to the centered transformation
-      glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-      glTranslatef(-myPos[0], -myPos[1], 0.0f);
+  eventHandler.DrawRadar();
 
-      // my flag
-      if (myTank->getFlag() != Flags::Null) {
-	glColor3fv(myTank->getFlag()->getColor());
-	drawFlagOnTank(myPos);
-      }
-
-      // my tank
-      glColor3f(1.0f, 1.0f, 1.0f);
-      drawTank(myTank, true);
+  if (dimming > 0.0f) {
+    glPushMatrix(); // depth = 1
+    executeTransform(false);
+    if (!smooth) {
+      glEnable(GL_BLEND);
     }
-
-    if (dimming > 0.0f) {
-      if (!smooth) {
-	glEnable(GL_BLEND);
-      }
-      // darken the entire radar if we're dimmed
-      // we're drawing positively, so dimming is actually an opacity
-      glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
-      glRectf(-radarRange, -radarRange, +radarRange, +radarRange);
-    }
-    glDisable(GL_BLEND);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_POINT_SMOOTH);
+    // darken the entire radar if we're dimmed
+    // we're drawing positively, so dimming is actually an opacity
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
+    glRectf(-radarRange, -radarRange, +radarRange, +radarRange);
+    glPopMatrix(); // depth = 0
   }
 
   // restore GL state
-  glPopMatrix();
+  glDisable(GL_BLEND);
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_POINT_SMOOTH);
 
   triangleCount = RenderNode::getTriangleCount();
 }

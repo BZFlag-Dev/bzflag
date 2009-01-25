@@ -16,10 +16,10 @@ class LuaUtils {
 
 		static void PushCurrentFuncEnv(lua_State* L, const char* caller);
 
+		static void* TestUserData(lua_State* L, int index, const std::string& type);
+
 		// lower case all keys in the table, with recursion
 		static bool LowerKeys(lua_State* L, int tableIndex);
-
-		static void* TestUserData(lua_State* L, int index, const std::string& type);
 
 		static int Print(lua_State* L);
 
@@ -43,7 +43,6 @@ class LuaUtils {
 		                            std::vector<float>& vec);
 		static int ParseStringVector(lua_State* L, int tableIndex,
 		                             std::vector<std::string>& vec);
-
 };
 
 

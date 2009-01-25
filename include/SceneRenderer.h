@@ -71,7 +71,6 @@ public:
   void		setWindow(MainWindow* _window);
   MainWindow&	getWindow() const;
 
-  bool		useABGR() const;
   bool		useStencil() const;
   int		useQuality() const;
   bool		useDepthComplexity() const;
@@ -148,6 +147,8 @@ public:
 
   const RenderNodeList& getShadowList() const;
 
+  bool		setupMapFog();
+
   void		render(bool lastFrame = true,
 		       bool sameFrame = false,
 		       bool fullWindow = false);
@@ -179,7 +180,6 @@ private:
   void		drawMirror();
   void		doRender();
   void		renderDepthComplexity();
-  void		renderPreDimming();
   void		renderPostDimming();
 
   void		setupShadowPlanes();
@@ -191,6 +191,7 @@ private:
   bool			mirror;
   bool			drawGround;
   bool			clearZbuffer;
+  bool			mapFog;
   ViewFrustum		frustum;
   float			lengthPerPixel;
   GLint			maxLights;
@@ -217,7 +218,6 @@ private:
   static const GLfloat blindnessColor[4];
   float teleporterProximity;
 
-  bool		abgr;
   int		useQualityValue;
   bool		useDepthComplexityOn;
   bool		useWireframeOn;
@@ -225,7 +225,6 @@ private:
   float		panelOpacity;
   int		radarSize;
   int		maxMotionFactor;
-  bool		useFogHack;
   bool		useStencilOn;
   ViewType	viewType;
   bool		inOrder;

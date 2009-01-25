@@ -775,7 +775,7 @@ static int str_format (lua_State *L) {
           sprintf(buff, form, (int)luaL_checknumber(L, arg));
           break;
         }
-        case 'd':  case 'i': {
+        case 'd': case 'i': {
           addintlen(form);
           sprintf(buff, form, (LUA_INTFRM_T)luaL_checknumber(L, arg));
           break;

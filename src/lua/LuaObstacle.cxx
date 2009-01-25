@@ -22,7 +22,7 @@ using std::string;
 #include "SphereObstacle.h"
 #include "TetraBuilding.h"
 #include "MeshDrawInfo.h"
-#include "MeshSceneNodeGenerator.h"
+#include "MeshSceneNodeGenerator.h" // FIXME -- not being used, code was copied
 
 // bzflag headers
 #include "../bzflag/World.h"
@@ -89,44 +89,44 @@ static bool makeTexcoords(const float* plane,
 					                const GLfloat3Array& vertices,
 					                GLfloat2Array& texcoords)
 {
-  float x[3], y[3];
+	float x[3], y[3];
 
-  vec3sub (x, vertices[1], vertices[0]);
-  vec3cross (y, plane, x);
+	vec3sub (x, vertices[1], vertices[0]);
+	vec3cross (y, plane, x);
 
-  float len = vec3dot(x, x);
-  if (len > 0.0f) {
-    len = 1.0f / sqrtf(len);
-    x[0] = x[0] * len;
-    x[1] = x[1] * len;
-    x[2] = x[2] * len;
-  } else {
-    return false;
-  }
+	float len = vec3dot(x, x);
+	if (len > 0.0f) {
+		len = 1.0f / sqrtf(len);
+		x[0] = x[0] * len;
+		x[1] = x[1] * len;
+		x[2] = x[2] * len;
+	} else {
+		return false;
+	}
 
-  len = vec3dot(y, y);
-  if (len > 0.0f) {
-    len = 1.0f / sqrtf(len);
-    y[0] = y[0] * len;
-    y[1] = y[1] * len;
-    y[2] = y[2] * len;
-  } else {
-    return false;
-  }
+	len = vec3dot(y, y);
+	if (len > 0.0f) {
+		len = 1.0f / sqrtf(len);
+		y[0] = y[0] * len;
+		y[1] = y[1] * len;
+		y[2] = y[2] * len;
+	} else {
+		return false;
+	}
 
-  const float uvScale = 8.0f;
+	const float uvScale = 8.0f;
 
-  texcoords[0][0] = 0.0f;
-  texcoords[0][1] = 0.0f;
-  const int count = vertices.getSize();
-  for (int i = 1; i < count; i++) {
-    float delta[3];
-    vec3sub (delta, vertices[i], vertices[0]);
-    texcoords[i][0] = vec3dot(delta, x) / uvScale;
-    texcoords[i][1] = vec3dot(delta, y) / uvScale;
-  }
+	texcoords[0][0] = 0.0f;
+	texcoords[0][1] = 0.0f;
+	const int count = vertices.getSize();
+	for (int i = 1; i < count; i++) {
+		float delta[3];
+		vec3sub (delta, vertices[i], vertices[0]);
+		texcoords[i][0] = vec3dot(delta, x) / uvScale;
+		texcoords[i][1] = vec3dot(delta, y) / uvScale;
+	}
 
-  return true;
+	return true;
 }
 
 
@@ -546,41 +546,41 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 		return 0;
 	}
 
-  // defined texcoords	
+	// defined texcoords	
 	if (face->useTexcoords()) {
-    const int elements = face->getVertexCount();
-    lua_createtable(L, elements, 0);
-    for (int i = 0; i < elements; i++) {
-      const float* vec = face->getTexcoord(i);
-      lua_createtable(L, 2, 0);
-      lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
-      lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
-      lua_rawseti(L, -2, i + 1);
-  	}
+		const int elements = face->getVertexCount();
+		lua_createtable(L, elements, 0);
+		for (int i = 0; i < elements; i++) {
+			const float* vec = face->getTexcoord(i);
+			lua_createtable(L, 2, 0);
+			lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
+			lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
+			lua_rawseti(L, -2, i + 1);
+		}
 		return 1;
 	}
 
-  // generated texcoords	
+	// generated texcoords	
 	if (!lua_isboolean(L, 3) || lua_tobool(L, 3)) {
-    const int elements = face->getVertexCount();
-    GLfloat3Array vertArray(elements);
-    for (int i = 0; i < elements; i++) {
-      memcpy(vertArray[i], face->getVertex(i), sizeof(float[3]));
-    }
-    GLfloat2Array txcdArray(elements);
-    if (!makeTexcoords(face->getPlane(), vertArray, txcdArray)) {
-      return 0;
-    }
-    lua_createtable(L, elements, 0);
-    for (int i = 0; i < elements; i++) {
-      const float* vec = txcdArray[i];
-      lua_createtable(L, 2, 0);
-      lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
-      lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
-      lua_rawseti(L, -2, i + 1);
-  	}
+		const int elements = face->getVertexCount();
+		GLfloat3Array vertArray(elements);
+		for (int i = 0; i < elements; i++) {
+			memcpy(vertArray[i], face->getVertex(i), sizeof(float[3]));
+		}
+		GLfloat2Array txcdArray(elements);
+		if (!makeTexcoords(face->getPlane(), vertArray, txcdArray)) {
+			return 0;
+		}
+		lua_createtable(L, elements, 0);
+		for (int i = 0; i < elements; i++) {
+			const float* vec = txcdArray[i];
+			lua_createtable(L, 2, 0);
+			lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
+			lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
+			lua_rawseti(L, -2, i + 1);
+		}
 		return 1;
-  }
+	}
 
 	return 0;
 }
@@ -721,216 +721,216 @@ int LuaObstacle::GetLinkDestinations(lua_State* L)
 
 static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
 {
-  lua_newtable(L);
+	lua_newtable(L);
 
-  HSTR_PUSH_INT(L, "mode", cmd.drawMode);
+	HSTR_PUSH_INT(L, "mode", cmd.drawMode);
 
-  HSTR_PUSH(L, "indices");
-  lua_createtable(L, cmd.count, 0);
-  if (cmd.indexType == DrawCmd::DrawIndexUShort) {
-    unsigned short* array = (unsigned short*)cmd.indices;
-    for (int i = 0; i < cmd.count; i++) {
-      lua_pushinteger(L, array[i]);
-      lua_rawseti(L, -2, i + 1);
-    }
-  }
-  else if (cmd.indexType == DrawCmd::DrawIndexUInt) {
-    unsigned int* array = (unsigned int*)cmd.indices;
-    for (int i = 0; i < cmd.count; i++) {
-      lua_pushinteger(L, array[i]);
-      lua_rawseti(L, -2, i + 1);
-    }
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "indices");
+	lua_createtable(L, cmd.count, 0);
+	if (cmd.indexType == DrawCmd::DrawIndexUShort) {
+		unsigned short* array = (unsigned short*)cmd.indices;
+		for (int i = 0; i < cmd.count; i++) {
+			lua_pushinteger(L, array[i]);
+			lua_rawseti(L, -2, i + 1);
+		}
+	}
+	else if (cmd.indexType == DrawCmd::DrawIndexUInt) {
+		unsigned int* array = (unsigned int*)cmd.indices;
+		for (int i = 0; i < cmd.count; i++) {
+			lua_pushinteger(L, array[i]);
+			lua_rawseti(L, -2, i + 1);
+		}
+	}
+	lua_rawset(L, -3);
 }
 
 
 static void PushDrawSet(lua_State* L, const DrawSet& set)
 {
-  lua_newtable(L);
+	lua_newtable(L);
 
-  HSTR_PUSH_INT(L, "material", set.material->getID() + 1);
-  HSTR_PUSH_BOOL(L, "wantList", set.wantList);
+	HSTR_PUSH_INT(L, "material", set.material->getID() + 1);
+	HSTR_PUSH_BOOL(L, "wantList", set.wantList);
 
-  HSTR_PUSH(L, "sphere");
-  lua_createtable(L, 0, 4);
-  HSTR_PUSH_NUMBER(L, "x", set.sphere[0]);
-  HSTR_PUSH_NUMBER(L, "y", set.sphere[1]);
-  HSTR_PUSH_NUMBER(L, "z", set.sphere[2]);
-  HSTR_PUSH_NUMBER(L, "r", set.sphere[3]);
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "sphere");
+	lua_createtable(L, 0, 4);
+	HSTR_PUSH_NUMBER(L, "x", set.sphere[0]);
+	HSTR_PUSH_NUMBER(L, "y", set.sphere[1]);
+	HSTR_PUSH_NUMBER(L, "z", set.sphere[2]);
+	HSTR_PUSH_NUMBER(L, "r", set.sphere[3]);
+	lua_rawset(L, -3);
 
-  HSTR_PUSH(L, "commands");
-  lua_createtable(L, set.count, 0);
-  for (int i = 0; i < set.count; i++) {
-    PushDrawCmd(L, set.cmds[i]);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "commands");
+	lua_createtable(L, set.count, 0);
+	for (int i = 0; i < set.count; i++) {
+		PushDrawCmd(L, set.cmds[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 }
 
 
 static void PushDrawLod(lua_State* L, const DrawLod& lod)
 {
-  lua_newtable(L);
+	lua_newtable(L);
 
-  HSTR_PUSH_NUMBER(L, "lengthPerPixel", lod.lengthPerPixel);
+	HSTR_PUSH_NUMBER(L, "lengthPerPixel", lod.lengthPerPixel);
 
-  HSTR_PUSH(L, "lods");
-  lua_createtable(L, lod.count, 0);
-  for (int i = 0; i < lod.count; i++) {
-    PushDrawSet(L, lod.sets[i]);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "lods");
+	lua_createtable(L, lod.count, 0);
+	for (int i = 0; i < lod.count; i++) {
+		PushDrawSet(L, lod.sets[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 }
 
 
 static void PushTransform(lua_State* L, const MeshTransform::Tool& tool)
 {
-  lua_newtable(L);
+	lua_newtable(L);
 
-  HSTR_PUSH_BOOL(L, "inverted", tool.isInverted());
-  HSTR_PUSH_BOOL(L, "skewed",   tool.isSkewed());
+	HSTR_PUSH_BOOL(L, "inverted", tool.isInverted());
+	HSTR_PUSH_BOOL(L, "skewed",   tool.isSkewed());
 
-  HSTR_PUSH(L, "matrix");
-  const float* matrix = tool.getMatrix();
-  lua_createtable(L, 16, 0);
-  for (int i = 0; i < 16; i++) {
-    lua_pushnumber(L, matrix[i]);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "matrix");
+	const float* matrix = tool.getMatrix();
+	lua_createtable(L, 16, 0);
+	for (int i = 0; i < 16; i++) {
+		lua_pushnumber(L, matrix[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 }
 
 
 static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
 {
-  lua_newtable(L);
+	lua_newtable(L);
 
-  HSTR_PUSH_STRING(L, "name", info.getName());
+	HSTR_PUSH_STRING(L, "name", info.getName());
 
-  const AnimationInfo* anim = info.getAnimationInfo();
-  if (anim != NULL) {
-    HSTR_PUSH_NUMBER(L, "angvel", anim->angvel);
-  }
+	const AnimationInfo* anim = info.getAnimationInfo();
+	if (anim != NULL) {
+		HSTR_PUSH_NUMBER(L, "angvel", anim->angvel);
+	}
 
-  HSTR_PUSH(L, "sphere");
-  const float* sphere = info.getSphere();
-  lua_createtable(L, 0, 4);
-  HSTR_PUSH_NUMBER(L, "x", sphere[0]);
-  HSTR_PUSH_NUMBER(L, "y", sphere[1]);
-  HSTR_PUSH_NUMBER(L, "z", sphere[2]);
-  HSTR_PUSH_NUMBER(L, "r", sphere[3]);
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "sphere");
+	const float* sphere = info.getSphere();
+	lua_createtable(L, 0, 4);
+	HSTR_PUSH_NUMBER(L, "x", sphere[0]);
+	HSTR_PUSH_NUMBER(L, "y", sphere[1]);
+	HSTR_PUSH_NUMBER(L, "z", sphere[2]);
+	HSTR_PUSH_NUMBER(L, "r", sphere[3]);
+	lua_rawset(L, -3);
 
-  HSTR_PUSH(L, "extents");
+	HSTR_PUSH(L, "extents");
 	const Extents& exts = info.getExtents();
-  lua_createtable(L, 0, 6);
-  HSTR_PUSH_NUMBER(L, "minx", exts.mins[0]);
-  HSTR_PUSH_NUMBER(L, "miny", exts.mins[1]);
-  HSTR_PUSH_NUMBER(L, "minz", exts.mins[2]);
-  HSTR_PUSH_NUMBER(L, "maxx", exts.maxs[0]);
-  HSTR_PUSH_NUMBER(L, "maxy", exts.maxs[1]);
-  HSTR_PUSH_NUMBER(L, "maxz", exts.maxs[2]);
-  lua_rawset(L, -3);
+	lua_createtable(L, 0, 6);
+	HSTR_PUSH_NUMBER(L, "minx", exts.mins[0]);
+	HSTR_PUSH_NUMBER(L, "miny", exts.mins[1]);
+	HSTR_PUSH_NUMBER(L, "minz", exts.mins[2]);
+	HSTR_PUSH_NUMBER(L, "maxx", exts.maxs[0]);
+	HSTR_PUSH_NUMBER(L, "maxy", exts.maxs[1]);
+	HSTR_PUSH_NUMBER(L, "maxz", exts.maxs[2]);
+	lua_rawset(L, -3);
 
-  const MeshTransform::Tool* tool = info.getTransformTool();
-  if (tool != NULL) {
-    HSTR_PUSH(L, "transform");
-    PushTransform(L, *tool);
-    lua_rawset(L, -3);
-  }
+	const MeshTransform::Tool* tool = info.getTransformTool();
+	if (tool != NULL) {
+		HSTR_PUSH(L, "transform");
+		PushTransform(L, *tool);
+		lua_rawset(L, -3);
+	}
 
-  const int cornerCount = info.getCornerCount();;
+	const int cornerCount = info.getCornerCount();;
 
-  HSTR_PUSH(L, "verts");
-  lua_createtable(L, cornerCount, 0);
-  const fvec3* verts = info.getVertices();
-  for (int i = 0; i < cornerCount; i++) {
-    lua_createtable(L, 3, 0);
-    lua_pushnumber(L, verts[i][0]); lua_rawseti(L, -2, 1);
-    lua_pushnumber(L, verts[i][1]); lua_rawseti(L, -2, 2);
-    lua_pushnumber(L, verts[i][2]); lua_rawseti(L, -2, 3);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "verts");
+	lua_createtable(L, cornerCount, 0);
+	const fvec3* verts = info.getVertices();
+	for (int i = 0; i < cornerCount; i++) {
+		lua_createtable(L, 3, 0);
+		lua_pushnumber(L, verts[i][0]); lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, verts[i][1]); lua_rawseti(L, -2, 2);
+		lua_pushnumber(L, verts[i][2]); lua_rawseti(L, -2, 3);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 
-  HSTR_PUSH(L, "norms");
-  lua_createtable(L, cornerCount, 0);
-  const fvec3* norms = info.getNormals();
-  for (int i = 0; i < cornerCount; i++) {
-    lua_createtable(L, 3, 0);
-    lua_pushnumber(L, norms[i][0]); lua_rawseti(L, -2, 1);
-    lua_pushnumber(L, norms[i][1]); lua_rawseti(L, -2, 2);
-    lua_pushnumber(L, norms[i][2]); lua_rawseti(L, -2, 3);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "norms");
+	lua_createtable(L, cornerCount, 0);
+	const fvec3* norms = info.getNormals();
+	for (int i = 0; i < cornerCount; i++) {
+		lua_createtable(L, 3, 0);
+		lua_pushnumber(L, norms[i][0]); lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, norms[i][1]); lua_rawseti(L, -2, 2);
+		lua_pushnumber(L, norms[i][2]); lua_rawseti(L, -2, 3);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 
-  HSTR_PUSH(L, "txcds");
-  lua_createtable(L, cornerCount, 0);
-  const fvec2* txcds = info.getTexcoords();
-  for (int i = 0; i < cornerCount; i++) {
-    lua_createtable(L, 2, 0);
-    lua_pushnumber(L, txcds[i][0]); lua_rawseti(L, -2, 1);
-    lua_pushnumber(L, txcds[i][1]); lua_rawseti(L, -2, 2);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "txcds");
+	lua_createtable(L, cornerCount, 0);
+	const fvec2* txcds = info.getTexcoords();
+	for (int i = 0; i < cornerCount; i++) {
+		lua_createtable(L, 2, 0);
+		lua_pushnumber(L, txcds[i][0]); lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, txcds[i][1]); lua_rawseti(L, -2, 2);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 
-  HSTR_PUSH(L, "drawLods");
-  const DrawLod* drawLods = info.getDrawLods();
-  lua_createtable(L, info.getLodCount(), 0);
-  for (int i = 0; i < info.getLodCount(); i++) {
-    PushDrawLod(L, drawLods[i]);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "drawLods");
+	const DrawLod* drawLods = info.getDrawLods();
+	lua_createtable(L, info.getLodCount(), 0);
+	for (int i = 0; i < info.getLodCount(); i++) {
+		PushDrawLod(L, drawLods[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 
-  HSTR_PUSH(L, "radarLods");
-  const DrawLod* radarLods = info.getRadarLods();
-  lua_createtable(L, info.getRadarCount(), 0);
-  for (int i = 0; i < info.getRadarCount(); i++) {
-    PushDrawLod(L, radarLods[i]);
-    lua_rawseti(L, -2, i + 1);
-  }
-  lua_rawset(L, -3);
+	HSTR_PUSH(L, "radarLods");
+	const DrawLod* radarLods = info.getRadarLods();
+	lua_createtable(L, info.getRadarCount(), 0);
+	for (int i = 0; i < info.getRadarCount(); i++) {
+		PushDrawLod(L, radarLods[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	lua_rawset(L, -3);
 }
 
 
-int LuaObstacle::HasMeshDrawInfo(lua_State* L)  // FIXME
+int LuaObstacle::HasMeshDrawInfo(lua_State* L)
 {
 	const Obstacle* obs = ParsePrimaryObstacle(L, 1);
 	if (obs == NULL) {
 		return 0;
 	}
 	if (obs->getTypeID() != meshType) {
-	  return 0;
-  }
-  const MeshObstacle* mesh = (const MeshObstacle*)obs;
-  const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
-  lua_pushboolean(L, (drawInfo != NULL) && drawInfo->isValid());
-  return 1;
+		return 0;
+	}
+	const MeshObstacle* mesh = (const MeshObstacle*)obs;
+	const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
+	lua_pushboolean(L, (drawInfo != NULL) && drawInfo->isValid());
+	return 1;
 }
 
 
-int LuaObstacle::GetMeshDrawInfo(lua_State* L)  // FIXME
+int LuaObstacle::GetMeshDrawInfo(lua_State* L)
 {
 	const Obstacle* obs = ParsePrimaryObstacle(L, 1);
 	if (obs == NULL) {
 		return 0;
 	}
 	if (obs->getTypeID() != meshType) {
-	  return 0;
-  }
-  const MeshObstacle* mesh = (const MeshObstacle*)obs;
-  const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
-  if ((drawInfo == NULL) || !drawInfo->isValid()) {
-    return 0;
-  }
-  PushDrawInfo(L, *drawInfo);
-  return 1;
+		return 0;
+	}
+	const MeshObstacle* mesh = (const MeshObstacle*)obs;
+	const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
+	if ((drawInfo == NULL) || !drawInfo->isValid()) {
+		return 0;
+	}
+	PushDrawInfo(L, *drawInfo);
+	return 1;
 }
 
 

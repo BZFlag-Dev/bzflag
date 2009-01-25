@@ -5,25 +5,29 @@
 #include "LuaCallOuts.h"
 
 // system headers
+#include <string.h>
 #include <string>
 #include <map>
 using std::string;
 using std::map;
 
 // common headers
-#include "BzfDisplay.h"
-#include "BzfWindow.h"
-#include "TimeKeeper.h"
-#include "GameTime.h"
-#include "Team.h"
 #include "AnsiCodes.h"
-#include "SceneRenderer.h"
-#include "OpenGLLight.h"
-#include "GfxBlock.h"
 #include "Bundle.h"
 #include "BundleMgr.h"
-#include "CommandManager.h"
+#include "BzfDisplay.h"
+#include "BzfWindow.h"
 #include "CacheManager.h"
+#include "CollisionManager.h"
+#include "CommandManager.h"
+#include "GameTime.h"
+#include "GfxBlock.h"
+#include "OpenGLLight.h"
+#include "SceneRenderer.h"
+#include "Team.h"
+#include "TimeKeeper.h"
+#include "bzfio.h"
+#include "version.h"
 
 // bzflag headers
 #include "../bzflag/ClientFlag.h"
@@ -31,13 +35,14 @@ using std::map;
 #include "../bzflag/LocalCommand.h"
 #include "../bzflag/LocalPlayer.h"
 #include "../bzflag/MainWindow.h"
+#include "../bzflag/RadarRenderer.h"
 #include "../bzflag/Roaming.h"
 #include "../bzflag/Roster.h"
 #include "../bzflag/ScoreboardRenderer.h"
 #include "../bzflag/ServerLink.h"
 #include "../bzflag/World.h"
-#include "../bzflag/sound.h"
 #include "../bzflag/playing.h"
+#include "../bzflag/sound.h"
 
 // local headers
 #include "LuaInclude.h"
@@ -53,16 +58,24 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 {
 	const bool fullRead = L2H(L)->HasFullRead();
 
+	PUSH_LUA_CFUNC(L, GetBzLuaVersion);
+	PUSH_LUA_CFUNC(L, GetClientVersion);
+	PUSH_LUA_CFUNC(L, GetProtocolVersion);
+
 	PUSH_LUA_CFUNC(L, Print);
 	PUSH_LUA_CFUNC(L, Debug);
+	PUSH_LUA_CFUNC(L, GetDebugLevel);
 	PUSH_LUA_CFUNC(L, StripAnsiCodes);
 	PUSH_LUA_CFUNC(L, LocalizeString);
 	PUSH_LUA_CFUNC(L, GetCacheFilePath);
 
 	PUSH_LUA_CFUNC(L, GetGameInfo);
+	PUSH_LUA_CFUNC(L, GetGameInfo);
 
 	PUSH_LUA_CFUNC(L, GetWind);
 	PUSH_LUA_CFUNC(L, GetLights);
+
+	PUSH_LUA_CFUNC(L, GetWorldHash);
 
 	PUSH_LUA_CFUNC(L, SendLuaData);
 
@@ -78,13 +91,22 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetScreenGeometry);
 	PUSH_LUA_CFUNC(L, GetWindowGeometry);
 	PUSH_LUA_CFUNC(L, GetViewGeometry);
+	PUSH_LUA_CFUNC(L, GetRadarGeometry);
+	PUSH_LUA_CFUNC(L, GetRadarRange);
 
+	PUSH_LUA_CFUNC(L, GetVisualExtents);
+	PUSH_LUA_CFUNC(L, GetLengthPerPixel);
+
+	PUSH_LUA_CFUNC(L, SetCameraView);
+	PUSH_LUA_CFUNC(L, SetCameraProjection);
 	PUSH_LUA_CFUNC(L, GetCameraPosition);
 	PUSH_LUA_CFUNC(L, GetCameraDirection);
 	PUSH_LUA_CFUNC(L, GetCameraUp);
 	PUSH_LUA_CFUNC(L, GetCameraRight);
 	PUSH_LUA_CFUNC(L, GetCameraMatrix);
 	PUSH_LUA_CFUNC(L, GetFrustumPlane);
+
+	PUSH_LUA_CFUNC(L, GetSun);
 
 	PUSH_LUA_CFUNC(L, GetTime);
 	PUSH_LUA_CFUNC(L, GetGameTime);
@@ -167,6 +189,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 		PUSH_LUA_CFUNC(L, GetShotType);
 		PUSH_LUA_CFUNC(L, GetShotFlagType);
 		PUSH_LUA_CFUNC(L, GetShotPlayer);
+		PUSH_LUA_CFUNC(L, GetShotTeam);
 		PUSH_LUA_CFUNC(L, GetShotPosition);
 		PUSH_LUA_CFUNC(L, GetShotVelocity);
 		PUSH_LUA_CFUNC(L, GetShotLeftTime);
@@ -217,7 +240,12 @@ static inline const ShotPath* ParseShot(lua_State* L, int index)
 		return NULL;
 	}
 
-	return player->getShot(shotID);
+	const ShotPath* shot = player->getShot(shotID);
+	if ((shot == NULL) || shot->isExpired()) {
+		return NULL;
+	}
+
+	return shot;
 }
 
 
@@ -263,6 +291,27 @@ static inline int PushShot(lua_State* L, const ShotPath* shot, int count)
 /******************************************************************************/
 /******************************************************************************/
 
+int LuaCallOuts::GetBzLuaVersion(lua_State* L)
+{
+	lua_pushliteral(L, "0.1");
+	return 1;
+}
+
+
+int LuaCallOuts::GetClientVersion(lua_State* L)
+{
+	lua_pushstring(L, getAppVersion());
+	return 1;
+}
+
+
+int LuaCallOuts::GetProtocolVersion(lua_State* L)
+{
+	lua_pushstring(L, getProtocolVersion());
+	return 1;
+}
+
+
 int LuaCallOuts::Print(lua_State* L)
 {
 	if (controlPanel == NULL) {
@@ -282,6 +331,13 @@ int LuaCallOuts::Debug(lua_State* L)
 	const char* msg = luaL_checkstring(L, 1);
 	logDebugMessage(level, msg);
 	return 0;
+}
+
+
+int LuaCallOuts::GetDebugLevel(lua_State* L)
+{
+	lua_pushinteger(L, debugLevel);
+	return 1;
 }
 
 
@@ -414,6 +470,17 @@ int LuaCallOuts::GetLights(lua_State* L)
 		lua_rawseti(L, -2, li + 1);
 	}
 
+	return 1;
+}
+
+
+int LuaCallOuts::GetWorldHash(lua_State* L)
+{
+	World* world = World::getWorld();
+	if (world == NULL) {
+		return 0;
+	}
+	lua_pushstdstring(L, world->getMapHash());
 	return 1;
 }
 
@@ -717,7 +784,177 @@ int LuaCallOuts::GetViewGeometry(lua_State* L)
 }
 
 
+int LuaCallOuts::GetRadarGeometry(lua_State* L)
+{
+	const RadarRenderer* radar = getRadarRenderer();
+	if (radar == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, radar->getWidth());
+	lua_pushinteger(L, radar->getHeight());
+	lua_pushinteger(L, radar->getX());
+	lua_pushinteger(L, radar->getY());
+	return 4;
+}
+
+
+int LuaCallOuts::GetRadarRange(lua_State* L)
+{
+	World* world = World::getWorld();
+	const RadarRenderer* radar = getRadarRenderer();
+	const LocalPlayer* myTank = LocalPlayer::getMyTank();
+	if ((world == NULL) || (radar == NULL) || (myTank == NULL)) {
+		return 0;
+	}
+	lua_pushnumber(L, radar->getRange());
+	return 1;
+}
+
+
 /******************************************************************************/
+
+int LuaCallOuts::GetWorldExtents(lua_State* L)
+{
+	World* world = World::getWorld();
+	if (world == NULL) {
+		return 0;
+	}
+	const Extents& exts = COLLISIONMGR.getWorldExtents();
+	lua_pushnumber(L, exts.mins[0]);
+	lua_pushnumber(L, exts.mins[1]);
+	lua_pushnumber(L, exts.mins[2]);
+	lua_pushnumber(L, exts.maxs[0]);
+	lua_pushnumber(L, exts.maxs[1]);
+	lua_pushnumber(L, exts.maxs[2]);
+	return 6;
+}
+
+
+int LuaCallOuts::GetVisualExtents(lua_State* L)
+{
+	const Extents* exts = RENDERER.getVisualExtents();
+	if (exts == NULL) {
+		return 0;
+	}
+	lua_pushnumber(L, exts->mins[0]);
+	lua_pushnumber(L, exts->mins[1]);
+	lua_pushnumber(L, exts->mins[2]);
+	lua_pushnumber(L, exts->maxs[0]);
+	lua_pushnumber(L, exts->maxs[1]);
+	lua_pushnumber(L, exts->maxs[2]);
+	return 6;
+}
+
+
+int LuaCallOuts::GetLengthPerPixel(lua_State* L)
+{
+	lua_pushnumber(L, RENDERER.getLengthPerPixel());
+	return 1;
+}
+
+
+/******************************************************************************/
+
+int LuaCallOuts::SetCameraView(lua_State* L)
+{
+	if (!L2H(L)->HasFullRead()) {
+		return 0;
+	}
+
+	// get the defaults
+	ViewFrustum& vf = RENDERER.getViewFrustum();
+	const float* currPos = vf.getEye();
+	const float* currDir = vf.getDirection();
+	float pos[3] = { currPos[0], currPos[1], currPos[2] };
+	float dir[3] = { currDir[0], currDir[1], currDir[2] };
+
+	const int table = 1;
+	if (!lua_istable(L, table)) {
+		pos[0] = luaL_optfloat(L, 1, pos[0]);
+		pos[1] = luaL_optfloat(L, 2, pos[1]);
+		pos[2] = luaL_optfloat(L, 3, pos[2]);
+		dir[0] = luaL_optfloat(L, 4, dir[0]);
+		dir[1] = luaL_optfloat(L, 5, dir[1]);
+		dir[2] = luaL_optfloat(L, 6, dir[2]);
+	}
+	else {
+		for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
+			if (lua_israwstring(L, -2) && // key
+			    lua_israwnumber(L, -1)) { // value
+				const string key = lua_tostring(L, -2);
+				     if (key == "px") { pos[0] = lua_tofloat(L, -1); }
+				else if (key == "py") { pos[1] = lua_tofloat(L, -1); }
+				else if (key == "pz") { pos[2] = lua_tofloat(L, -1); }
+				else if (key == "dx") { pos[0] = lua_tofloat(L, -1); }
+				else if (key == "dy") { pos[1] = lua_tofloat(L, -1); }
+				else if (key == "dz") { pos[2] = lua_tofloat(L, -1); }
+			}
+		}
+	}
+
+	float target[3];
+	target[0] = pos[0] + dir[0];
+	target[1] = pos[1] + dir[1];
+	target[2] = pos[2] + dir[2];
+
+	vf.setView(pos, target);
+
+	return 0;
+}
+
+
+int LuaCallOuts::SetCameraProjection(lua_State* L)
+{
+	if (!L2H(L)->HasFullRead()) {
+		return 0;
+	}
+
+	MainWindow* window = getMainWindow();	
+	if (window == NULL) {
+		return 0;
+	}
+
+	// get the defaults
+	ViewFrustum& vf = RENDERER.getViewFrustum();
+	float fov      = vf.getFOVy();
+	float nearZ    = vf.getNear();
+	float farZ     = vf.getFar();
+	float deepFarZ = vf.getDeepFar();
+	int ww  = window->getWidth();
+	int wh  = window->getHeight();
+	int wvh = window->getViewHeight();
+
+	const int table = 1;
+	if (!lua_istable(L, table)) {
+		fov      = luaL_optfloat(L, 1,  fov);
+		nearZ    = luaL_optfloat(L, 2,  nearZ);
+		farZ     = luaL_optfloat(L, 3,  farZ);
+		deepFarZ = luaL_optfloat(L, 4, deepFarZ);
+		ww       = luaL_optint(L, 5, ww);
+		wh       = luaL_optint(L, 6, wh);
+		wvh      = luaL_optint(L, 7, wvh);
+	}
+	else {
+		for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
+			if (lua_israwstring(L, -2) && // key
+			    lua_israwnumber(L, -1)) { // value
+				const string key = lua_tostring(L, -2);
+				     if (key == "fov")        { fov      = lua_tofloat(L, -1); }
+				else if (key == "nearZ")      { nearZ    = lua_tofloat(L, -1); }
+				else if (key == "farZ")       { farZ     = lua_tofloat(L, -1); }
+				else if (key == "deepFarZ")   { deepFarZ = lua_tofloat(L, -1); }
+				else if (key == "width")      { ww  = lua_toint(L, -1); }
+				else if (key == "height")     { wh  = lua_toint(L, -1); }
+				else if (key == "viewHeight") { wvh = lua_toint(L, -1); }
+			}
+		}
+	}
+
+	vf.setProjection(fov, nearZ, farZ, deepFarZ, ww, wh, wvh);
+
+	return 0;
+}
+
 
 int LuaCallOuts::GetCameraPosition(lua_State* L)
 {
@@ -810,6 +1047,42 @@ int LuaCallOuts::GetFrustumPlane(lua_State* L)
 	lua_pushnumber(L, p[3]);
 
 	return 4;
+}
+
+
+/******************************************************************************/
+
+int LuaCallOuts::GetSun(lua_State* L)
+{
+	const string param = luaL_checkstring(L, 1);
+
+	const float* data = NULL;
+
+	if (param == "brightness") {
+		lua_pushnumber(L, RENDERER.getSunBrightness());
+		return 1;
+	}
+	else if (param == "dir") {
+		data = RENDERER.getSunDirection();
+	}
+	else if (param == "ambient") {
+		data = RENDERER.getAmbientColor();
+	}
+	else if (param == "diffuse") {
+		data = RENDERER.getSunColor();
+	}
+	else if (param == "specular") {
+		data = RENDERER.getSunColor();
+	}
+
+	if (data != NULL) {
+		lua_pushnumber(L, data[0]);
+		lua_pushnumber(L, data[1]);
+		lua_pushnumber(L, data[2]);
+		return 3;
+	}
+
+	return 0;
 }
 
 
@@ -1124,27 +1397,41 @@ int LuaCallOuts::GetLocalPlayer(lua_State* L)
 
 int LuaCallOuts::GetRabbitPlayer(lua_State* L)
 {
-	World* world = World::getWorld();
-	if (world == NULL) {
-		return 0;
+	// FIXME -- is this valid?
+	const LocalPlayer* myTank = LocalPlayer::getMyTank();
+	if (myTank != NULL) {
+		if (myTank->getTeam() == RabbitTeam) {
+			lua_pushinteger(L, myTank->getId());
+			return 1;
+		}
 	}
-
-	const RemotePlayer* rabbit = world->getCurrentRabbit(); // FIXME
-	if (rabbit != NULL) {
-		lua_pushinteger(L, rabbit->getId());
-		return 1;
+	
+	World* world = World::getWorld();
+	if (world != NULL) {
+		const RemotePlayer* rabbit = world->getCurrentRabbit();
+		if (rabbit != NULL) {
+			lua_pushinteger(L, rabbit->getId());
+			return 1;
+		}
 	}
 
 	return 0;
 }
 
 
-int LuaCallOuts::GetAntidotePosition(lua_State* L) // FIXME
+int LuaCallOuts::GetAntidotePosition(lua_State* L)
 {
-	return 0;
-	lua_pushnumber(L, 0.0f);
-	lua_pushnumber(L, 0.0f);
-	lua_pushnumber(L, 0.0f);
+	const LocalPlayer* myTank = LocalPlayer::getMyTank();
+	if (myTank == NULL) {
+		return 0;
+	}
+	const float* pos = myTank->getAntidoteLocation();
+	if (pos == NULL) {
+		return 0;
+	}
+	lua_pushnumber(L, pos[0]);
+	lua_pushnumber(L, pos[1]);
+	lua_pushnumber(L, pos[2]);
 	return 3;
 }
 
@@ -1323,7 +1610,7 @@ int LuaCallOuts::GetPlayerList(lua_State* L)
 		lua_rawset(L, -3);
 	}
 
-/*FIXME?#ifdef ROBOT
+#ifdef ROBOT
 	for (int i = 0; i < numRobots; i++) {
 		if (robots[i] != NULL) {
 			count++;
@@ -1332,7 +1619,7 @@ int LuaCallOuts::GetPlayerList(lua_State* L)
 			lua_rawset(L, -3);
 		}
 	}
-#endif*/
+#endif
 
 	for (int i = 0; i < curMaxPlayers; i++) {
 		if (remotePlayers[i] != NULL) {
@@ -1380,7 +1667,7 @@ int LuaCallOuts::GetPlayerTeam(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerFlag(lua_State* L) // FIXME -- linear search
+int LuaCallOuts::GetPlayerFlag(lua_State* L) // FIXME -- linear search, ew
 {
 	const Player* player = ParsePlayer(L, 1);
 	if (player == NULL) {
@@ -1475,7 +1762,7 @@ int LuaCallOuts::GetPlayerShots(lua_State* L)
 	int count = 0;
 	for (int i = 0; i < maxShots; i++) {
 		const ShotPath* shot = player->getShot(i);
-		if (shot != NULL) {
+		if ((shot != NULL) && !shot->isExpired()) {
 			count = PushShot(L, shot, count);
 		}
 	}
@@ -1501,6 +1788,17 @@ int LuaCallOuts::GetPlayerState(lua_State* L)
 	if (player->isExploding())    { HSTR_PUSH_BOOL(L, "exploding",    true); }
 	
 	return 1;
+}
+
+
+int LuaCallOuts::GetPlayerStateBits(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+  lua_pushinteger(L, player->getStatus());
+  return 1;
 }
 
 
@@ -1810,6 +2108,21 @@ int LuaCallOuts::GetShotList(lua_State* L)
 		}
 	}
 
+	// robot player shots
+#ifdef ROBOT
+	for (int i = 0; i < numRobots; i++) {
+		const RobotPlayer* player = robots[i];
+		if (player != NULL) {
+			for (int j = 0; j < maxShots; j++) {
+				const ShotPath* shot = player->getShot(i);
+				if ((shot != NULL) && !shot->isExpired()) {
+					count = PushShot(L, shot, count);
+				}
+			}
+		}
+	}
+#endif
+
 	// remote player shots
 	for (int i = 0; i < curMaxPlayers; i++) {
 		const RemotePlayer* player = world->getPlayer(i);
@@ -1822,14 +2135,14 @@ int LuaCallOuts::GetShotList(lua_State* L)
 			}
 		}
 	}
-		
+
 	// world weapon shots
 	const WorldPlayer* worldWeapons = world->getWorldWeapons();
 	if (worldWeapons != NULL) {
 		const int wwMaxShots = worldWeapons->getMaxShots();
 		for (int i = 0; i < wwMaxShots; i++) {
 			const ShotPath* shot = worldWeapons->getShot(i);
- 			if ((shot != NULL) && !shot->isExpired()) {
+			if ((shot != NULL) && !shot->isExpired()) {
 				count = PushShot(L, shot, count);
 			}
 		}
@@ -1868,6 +2181,17 @@ int LuaCallOuts::GetShotPlayer(lua_State* L)
 		return 0;
 	}
 	lua_pushinteger(L, shot->getPlayer());
+	return 1;	
+}
+
+
+int LuaCallOuts::GetShotTeam(lua_State* L)
+{
+	const ShotPath* shot = ParseShot(L, 1);
+	if (shot == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, shot->getTeam());
 	return 1;	
 }
 

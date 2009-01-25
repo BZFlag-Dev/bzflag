@@ -16,12 +16,12 @@
 
 static void PushDualPair(lua_State* L, const char* name, int code)
 {
-  lua_pushstring(L, name);
-  lua_pushinteger(L, code);
-  lua_rawset(L, -3);
-  lua_pushinteger(L, code);
-  lua_pushstring(L, name);
-  lua_rawset(L, -3);
+	lua_pushstring(L, name);
+	lua_pushinteger(L, code);
+	lua_rawset(L, -3);
+	lua_pushinteger(L, code);
+	lua_pushstring(L, name);
+	lua_rawset(L, -3);
 }
 
 

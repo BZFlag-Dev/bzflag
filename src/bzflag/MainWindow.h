@@ -34,7 +34,6 @@ class MainWindow {
 			UpperRight,
 			LowerLeft,
 			LowerRight,
-			ZoomRegion,
 			UpperHalf,
 			LowerHalf
     };

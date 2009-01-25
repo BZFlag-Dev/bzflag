@@ -51,24 +51,7 @@ LuaHandle::LuaHandle(const string& _name, int _order,
 
 	L2HH(L)->handle = this;
 
-	printf("FULLREAD  %s:  %s\n", GetName().c_str(), HasFullRead() ? "true" : "false");
-	printf("INPUTCTRL %s:  %s\n", GetName().c_str(), HasInputCtrl() ? "true" : "false");
-
-	// setup the validCallIns set
-	const LuaCallInDB::InfoMap& ciInfoMap = luaCallInDB.GetInfoMap();
-	LuaCallInDB::InfoMap::const_iterator it;
-	for (it = ciInfoMap.begin(); it != ciInfoMap.end(); ++it) {
-		const LuaCallInDB::CallInInfo& ciInfo = it->second;
-		if (!ciInfo.singleScript.empty() &&
-				(ciInfo.singleScript != GetName())) {
-			continue;
-		}
-		if ((ciInfo.reqFullRead  && !HasFullRead()) ||
-				(ciInfo.reqInputCtrl && !HasInputCtrl())) {
-			continue;
-		}
-		validCallIns.insert(luaCallInDB.GetCode(ciInfo.name));
-	}
+	SetupValidCallIns();
 
 	AddBasicCalls();
 
@@ -78,7 +61,7 @@ LuaHandle::LuaHandle(const string& _name, int _order,
 
 	lua_register(L, "traceback", LuaExtras::traceback);
 
-	if (devMode) { // FIXME
+	if (devMode) {
 		lua_register(L, "dump",    LuaExtras::dump); 
 		lua_register(L, "listing", LuaExtras::listing);
 	}
@@ -101,7 +84,7 @@ LuaHandle::~LuaHandle()
 	if (!requestMessage.empty()) {
 		msg += ": " + requestMessage;
 	}
-	LuaLog("Disabled %s", msg.c_str());
+	LuaLog(1, "Disabled %s", msg.c_str());
 */
 }
 
@@ -118,18 +101,40 @@ void LuaHandle::KillLua()
 }
 
 
+void LuaHandle::SetupValidCallIns()
+{
+	validCallIns.clear();
+
+	// setup the validCallIns set
+	const LuaCallInDB::InfoMap& ciInfoMap = luaCallInDB.GetInfoMap();
+	LuaCallInDB::InfoMap::const_iterator it;
+	for (it = ciInfoMap.begin(); it != ciInfoMap.end(); ++it) {
+		const LuaCallInDB::CallInInfo& ciInfo = it->second;
+		if (!ciInfo.singleScript.empty() &&
+		    (ciInfo.singleScript != GetName())) {
+			continue;
+		}
+		if ((ciInfo.reqFullRead  && !HasFullRead()) ||
+		    (ciInfo.reqInputCtrl && !HasInputCtrl())) {
+			continue;
+		}
+		validCallIns.insert(luaCallInDB.GetCode(ciInfo.name));
+	}
+}
+
+
 /******************************************************************************/
 /******************************************************************************/
 
 static void CheckEqualStack(const LuaHandle* lh, lua_State* L, int top,
                             const char* tableName)
 {
-  if (top != lua_gettop(L)) {
-    string msg = __FUNCTION__;
-    msg += " : " + lh->GetName() + " : ";
-    msg += tableName;
+	if (top != lua_gettop(L)) {
+		string msg = __FUNCTION__;
+		msg += " : " + lh->GetName() + " : ";
+		msg += tableName;
 //FIXME    throw std::runtime_error(msg);
-  }
+	}
 }
 
 
@@ -143,8 +148,8 @@ bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*))
 		SetActiveHandle();
 		const bool success = entriesFunc(L);
 		SetActiveHandle(origHandle);
-  	lua_pop(L, 1);
-  	CheckEqualStack(this, L, top, name);
+		lua_pop(L, 1);
+		CheckEqualStack(this, L, top, name);
 		return success;
 	}
 	lua_pop(L, 1);
@@ -157,7 +162,7 @@ bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*))
 	const bool success = entriesFunc(L);
 	SetActiveHandle(origHandle);
 	if (!success) {
-  	lua_pop(L, 2);
+		lua_pop(L, 2);
 		CheckEqualStack(this, L, top, name);
 		return false;
 	}
@@ -172,10 +177,10 @@ string LuaHandle::LoadSourceCode(const string& sourceFile,
 {
 	string code;
 	string modes = !devMode ? sourceModes
-	                        : string(BZVFS_LUA_USER) + sourceModes;
+													: string(BZVFS_LUA_USER) + sourceModes;
 	if (!bzVFS.readFile(sourceFile, modes, code)) {
-		printf("FAILED to load  '%s'  with  '%s'\n",
-		       sourceFile.c_str(), sourceModes.c_str());//FIXME
+		LuaLog(0, "FAILED to load  '%s'  with  '%s'\n",
+		       sourceFile.c_str(), sourceModes.c_str());
 		return "";
 	}
 	return code;
@@ -187,7 +192,7 @@ bool LuaHandle::ExecSourceCode(const string& code)
 	int error = luaL_loadbuffer(L, code.c_str(), code.size(), GetName().c_str());
 
 	if (error != 0) {
-		LuaLog("Lua LoadCode loadbuffer error = %i, %s, %s\n",
+		LuaLog(0, "Lua LoadCode loadbuffer error = %i, %s, %s\n",
 		       error, GetName().c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);
 		return false;
@@ -199,7 +204,7 @@ bool LuaHandle::ExecSourceCode(const string& code)
 	SetActiveHandle(orig);
 
 	if (error != 0) {
-		LuaLog("Lua LoadCode pcall error = %i, %s, %s\n",
+		LuaLog(0, "Lua LoadCode pcall error = %i, %s, %s\n",
 		       error, GetName().c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);
 		return false;
@@ -216,7 +221,7 @@ void LuaHandle::CheckStack()
 {
 	const int top = lua_gettop(L);
 	if (top != 0) {
-		LuaLog("WARNING: %s stack check: top = %i\n", GetName().c_str(), top);
+		LuaLog(0, "WARNING: %s stack check: top = %i\n", GetName().c_str(), top);
 		lua_settop(L, 0);
 	}
 }
@@ -227,14 +232,10 @@ void LuaHandle::CheckStack()
 
 void LuaHandle::UpdateCallIn(const string& ciName, bool state)
 {
-	string realName = ciName;
-	if (ciName == "GLReload") {
-		realName = "GLContextInit";
-	}
 	if (state) {
-		eventHandler.InsertEvent(this, realName);
+		eventHandler.InsertEvent(this, luaCallInDB.GetEventName(ciName));
 	} else {
-		eventHandler.RemoveEvent(this, realName);
+		eventHandler.RemoveEvent(this, luaCallInDB.GetEventName(ciName));
 	}
 }
 
@@ -266,7 +267,7 @@ bool LuaHandle::GlobalCallInCheck(const string& ciName)
 
 	lua_pushstring(L, ciName.c_str());
 	lua_insert(L, -2); // move the function below the string
-  lua_rawset(L, LUA_CALLINSINDEX);
+	lua_rawset(L, LUA_CALLINSINDEX);
 
 	UpdateCallIn(ciName, true);
 
@@ -282,11 +283,7 @@ bool LuaHandle::CanUseCallIn(int code) const
 
 bool LuaHandle::CanUseCallIn(const string& ciName) const
 {
-	string realName = ciName;
-	if (ciName == "GLContextInit") {
-		realName = "GLReload";
-	}
-	const int code = luaCallInDB.GetCode(realName);
+	const int code = luaCallInDB.GetCode(luaCallInDB.GetCallInName(ciName));
 	if (code == 0)  {
 		return false;
 	}	
@@ -305,10 +302,10 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
 	SetActiveHandle(orig);
 
 	if (error != 0) {
-	  const string* ciName = luaCallInDB.GetName(ciCode);
-	  const char* ciNameStr = ciName ? ciName->c_str() : "UNKNOWN";
-		LuaLog("%s::RunCallIn: error = %i, %s, %s\n", GetName().c_str(),
-		                error, ciNameStr, lua_tostring(L, -1));
+		const string* ciName = luaCallInDB.GetName(ciCode);
+		const char* ciNameStr = ciName ? ciName->c_str() : "UNKNOWN";
+		LuaLog(0, "%s::RunCallIn: error = %i, %s, %s\n",
+		       GetName().c_str(), error, ciNameStr, lua_tostring(L, -1));
 		lua_pop(L, 1);
 		return false;
 	}
@@ -320,14 +317,14 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
 
 bool LuaHandle::PushCallIn(int ciCode)
 {
-  lua_rawgeti(L, LUA_CALLINSINDEX, ciCode);
-  if (lua_isfunction(L, -1)) {
-    return true;
-  }
-  const string* name = luaCallInDB.GetName(ciCode);
-  printf("Failed to get: %i %s\n", ciCode, name ? name->c_str() : "UNKNOWN");
-  lua_pop(L, 1);
-  return false;
+	lua_rawgeti(L, LUA_CALLINSINDEX, ciCode);
+	if (lua_isfunction(L, -1)) {
+		return true;
+	}
+	const string* name = luaCallInDB.GetName(ciCode);
+	printf("Failed to get: %i %s\n", ciCode, name ? name->c_str() : "UNKNOWN");
+	lua_pop(L, 1);
+	return false;
 }
 
 
@@ -336,51 +333,6 @@ bool LuaHandle::PushCallIn(int ciCode)
 //
 //  Call-ins
 //
-
-/******************************************************************************/
-
-void LuaHandle::HandleLuaMsg(int playerID, int script, int mode,
-                              const string& msg)
-{
-	playerID = script + mode + msg.size();
-/* FIXME -- HandleLuaMsg
-	if (script == ORDER_LUA_USER) {
-		if (luaUser) {
-			bool sendMsg = false;
-			if (mode == 0) {
-				sendMsg = true;
-			}
-			else if (mode == 's') {
-				sendMsg = gu->spectating;
-			}
-			else if (mode == 'a') {
-				const CPlayer* player = gs->players[playerID];
-				if (player == NULL) {
-					return;
-				}
-				if (gu->spectatingFullView) {
-					sendMsg = true;
-				}
-				else if (player->spectator) {
-					sendMsg = gu->spectating;
-				} else {
-					const int msgAllyTeam = gs->AllyTeam(player->team);
-					sendMsg = gs->Ally(msgAllyTeam, gu->myAllyTeam);
-				}
-			}
-			if (sendMsg) {
-				luaUI->RecvLuaMsg(msg, playerID);
-			}
-		}
-	}
-	else if (script == ORDER_LUA_WORLD) {
-		if (luaWorld) {
-			luaWorld->RecvLuaMsg(msg, playerID);
-		}
-	}
-*/
-}
-
 
 /******************************************************************************/
 /******************************************************************************/
@@ -446,14 +398,14 @@ int LuaHandle::ScriptReload(lua_State* L)
 int LuaHandle::ScriptPrintPointer(lua_State* L)
 {
 	const string prefix = luaL_optstring(L, 2, "PrintPointer: ");
-	LuaLog("%s%p\n", prefix.c_str(), lua_topointer(L, 1));
+	LuaLog(0, "%s%p\n", prefix.c_str(), lua_topointer(L, 1));
 	return 0;
 }
 
 
 int LuaHandle::ScriptPrintGCInfo(lua_State* L)
 {
-	LuaLog("GCInfo: %.3f MBytes\n", (float)lua_getgccount(L) / 1024.0f);
+	LuaLog(0, "GCInfo: %.3f MBytes\n", (float)lua_getgccount(L) / 1024.0f);
 	return 0;
 }
 
@@ -580,10 +532,10 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 	}
 	const int ciCode = luaCallInDB.GetCode(ciName);
 	if (ciCode == 0) {
-    if (devMode) {
-      LuaLog("Request to update an Unknown call-in (%s)\n",
-             ciName.c_str());
-    }
+		if (devMode) {
+			LuaLog(1, "Request to update an Unknown call-in (%s)\n",
+			       ciName.c_str());
+		}
 		return 0;
 	}
 
@@ -595,9 +547,9 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 	lua_pushvalue(L, 2); // make a copy
 	lua_rawseti(L, LUA_CALLINSINDEX, ciCode);
 
-  lua_pushstring(L, ciName.c_str());
-  lua_pushvalue(L, 2); // make a copy
-  lua_rawset(L, LUA_CALLINSINDEX);
+	lua_pushstring(L, ciName.c_str());
+	lua_pushvalue(L, 2); // make a copy
+	lua_rawset(L, LUA_CALLINSINDEX);
 
 	activeHandle->UpdateCallIn(ciName, haveFunc);
 

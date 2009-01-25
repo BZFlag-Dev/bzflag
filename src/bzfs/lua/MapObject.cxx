@@ -16,9 +16,8 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
+#include "LuaBZFS.h"
 
-
-static lua_State* topL = NULL;
 
 static map<string, class MapHandler*> mapHandlers;
 
@@ -46,9 +45,9 @@ MapHandler::MapHandler(const string& name)
 : objName(name)
 , luaRef(LUA_NOREF)
 {
-  lua_State* L = topL;
-
   mapHandlers[objName] = this;
+
+  lua_State* L = LuaBZFS::GetL();
   if (L == NULL) {
     return;
   }
@@ -61,19 +60,19 @@ MapHandler::MapHandler(const string& name)
 
 MapHandler::~MapHandler()
 {
-  lua_State* L = topL;
-
   mapHandlers.erase(objName);
-  if (L != NULL) {
-    luaL_unref(L, LUA_REGISTRYINDEX, luaRef);
+
+  lua_State* L = LuaBZFS::GetL();
+  if (L == NULL) {
+    return;
   }
+  luaL_unref(L, LUA_REGISTRYINDEX, luaRef);
 }
 
 
 bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 {
-  lua_State* L = topL;
-
+  lua_State* L = LuaBZFS::GetL();
   if (L == NULL) {
     return false;
   }
@@ -132,8 +131,6 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 
 bool MapObject::PushEntries(lua_State* L)
 {
-  topL = L;
-
   lua_pushliteral(L, "AttachMapObject");
   lua_pushcfunction(L, AttachMapObject);
   lua_rawset(L, -3);
@@ -158,8 +155,6 @@ bool MapObject::CleanUp(lua_State* /*L*/)
   }
 
   mapHandlers.clear();
-
-  topL = NULL;
 
   return true; // do nothing
 }

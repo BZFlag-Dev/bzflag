@@ -47,17 +47,18 @@ struct PlayingCallbackItem {
 };
 
 class BzfDisplay;
-class MainWindow;
-class SceneRenderer;
-class Player;
-class ServerLink;
 class HUDRenderer;
+class MainWindow;
+class Player;
+class RadarRenderer;
+class SceneRenderer;
+class ServerLink;
 class WordFilter;
 
 void			initPlaying();
 BzfDisplay*		getDisplay();
 MainWindow*		getMainWindow();
-SceneRenderer*		getSceneRenderer();
+RadarRenderer*		getRadarRenderer();
 void			setSceneDatabase();
 StartupInfo*		getStartupInfo();
 void			notifyBzfKeyMapChanged();
@@ -132,7 +133,7 @@ typedef struct _ThirdPersonVars
 {
 	bool b3rdPerson;
 	float cameraOffsetXY;
-	float cameraOffsetOffsetZ;
+	float cameraOffsetZ;
 	float targetMultiplyer;
 	float nearTargetDistance;
 	float nearTargetSize;

@@ -5,10 +5,9 @@
 #include "LuaRBOs.h"
 
 // system headers
+#include <new>
 #include <string>
-#include <set>
 using std::string;
-using std::set;
 
 // common headers
 #include "bzfgl.h"
@@ -29,6 +28,59 @@ LuaRBOMgr luaRBOMgr;
 /******************************************************************************/
 /******************************************************************************/
 
+LuaRBO::LuaRBO(const LuaRBOData& rboData)
+: LuaRBOData(rboData)
+{
+	OpenGLGState::registerContextInitializer(StaticFreeContext,
+	                                         StaticInitContext, this);
+}
+
+
+LuaRBO::~LuaRBO()
+{
+	FreeContext();
+	OpenGLGState::unregisterContextInitializer(StaticFreeContext,
+	                                           StaticInitContext, this);
+}
+	
+
+
+void LuaRBO::Delete()
+{
+	FreeContext();
+}
+
+
+void LuaRBO::InitContext()
+{
+}
+
+
+void LuaRBO::FreeContext()
+{
+	if (id == 0) {
+		return;
+	}
+	glDeleteRenderbuffers(1, &id);
+	id = 0;
+}
+
+
+void LuaRBO::StaticInitContext(void* data)
+{
+	((LuaRBO*)data)->InitContext();
+}
+
+
+void LuaRBO::StaticFreeContext(void* data)
+{
+	((LuaRBO*)data)->FreeContext();
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 LuaRBOMgr::LuaRBOMgr()
 {
 }
@@ -36,11 +88,6 @@ LuaRBOMgr::LuaRBOMgr()
 
 LuaRBOMgr::~LuaRBOMgr()
 {
-	set<LuaRBO*>::const_iterator it;
-	for (it = rbos.begin(); it != rbos.end(); ++it) {
-		const LuaRBO* rbo = *it;
-		glDeleteRenderbuffersEXT(1, &rbo->id);
-	}
 }
 
 
@@ -61,9 +108,10 @@ bool LuaRBOMgr::PushEntries(lua_State* L)
 bool LuaRBOMgr::CreateMetatable(lua_State* L)
 {
 	luaL_newmetatable(L, metaName);
-	HSTR_PUSH_CFUNC(L, "__gc",        meta_gc);
-	HSTR_PUSH_CFUNC(L, "__index",     meta_index);
-	HSTR_PUSH_CFUNC(L, "__newindex",  meta_newindex);
+	HSTR_PUSH_CFUNC(L,  "__gc",        MetaGC);
+	HSTR_PUSH_CFUNC(L,  "__index",     MetaIndex);
+	HSTR_PUSH_CFUNC(L,  "__newindex",  MetaNewindex);
+	HSTR_PUSH_STRING(L, "__metatable", "no access");
 	lua_pop(L, 1);
 	return true;
 }
@@ -72,84 +120,53 @@ bool LuaRBOMgr::CreateMetatable(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-const LuaRBO* LuaRBOMgr::GetLuaRBO(lua_State* L, int index)
+const LuaRBO* LuaRBOMgr::TestLuaRBO(lua_State* L, int index)
 {
-	return (LuaRBO*)LuaUtils::TestUserData(L, index, metaName);
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-void LuaRBO::Init()
-{
-	id     = 0;
-	target = GL_RENDERBUFFER_EXT;
-	format = GL_RGBA;
-	xsize  = 0;
-	ysize  = 0;
-
-	OpenGLGState::registerContextInitializer(StaticFreeContext,
-	                                         StaticInitContext, this);
-}
-
-
-void LuaRBO::Free()
-{
-	OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-	                                           StaticInitContext, this);
-	if (id == 0) {
-		return;
+	if (lua_getuserdataextra(L, index) != metaName) {
+		return NULL;
 	}
-
-	glDeleteRenderbuffersEXT(1, &id);
-	id = 0;
+	return (LuaRBO*)lua_touserdata(L, 1);
 }
 
 
-void LuaRBO::InitContext()
+const LuaRBO* LuaRBOMgr::CheckLuaRBO(lua_State* L, int index)
 {
-}
-
-
-void LuaRBO::FreeContext()
-{
-	if (id != 0) {
-		glDeleteRenderbuffersEXT(1, &id);
-		id = 0;
+	if (lua_getuserdataextra(L, index) != metaName) {
+		luaL_argerror(L, index, "expected RBO");
 	}
+	return (LuaRBO*)lua_touserdata(L, 1);
 }
 
 
-void LuaRBO::StaticInitContext(void* data)
+LuaRBO* LuaRBOMgr::GetLuaRBO(lua_State* L, int index)
 {
-	((LuaRBO*)data)->InitContext();
-}
-
-
-void LuaRBO::StaticFreeContext(void* data)
-{
-	((LuaRBO*)data)->FreeContext();
+	if (lua_getuserdataextra(L, index) != metaName) {
+		luaL_argerror(L, index, "expected RBO");
+	}
+	return (LuaRBO*)lua_touserdata(L, 1);
 }
 
 
 /******************************************************************************/
 /******************************************************************************/
 
-int LuaRBOMgr::meta_gc(lua_State* L)
+int LuaRBOMgr::MetaGC(lua_State* L)
 {
-	LuaRBO* rbo = (LuaRBO*)luaL_checkudata(L, 1, metaName);
-	rbo->Free();
+	LuaRBO* rbo = GetLuaRBO(L, 1);
+	rbo->~LuaRBO();
 	return 0;
 }
 
 
-int LuaRBOMgr::meta_index(lua_State* L)
+int LuaRBOMgr::MetaIndex(lua_State* L)
 {
-	const LuaRBO* rbo = (LuaRBO*)luaL_checkudata(L, 1, metaName);
+	const LuaRBO* rbo = CheckLuaRBO(L, 1);
+	if (!lua_israwstring(L, 2)) {
+		return 0;
+	}
 	const string key = luaL_checkstring(L, 2);
 	if (key == "valid") {
-		lua_pushboolean(L, glIsRenderbufferEXT(rbo->id));
+		lua_pushboolean(L, glIsRenderbuffer(rbo->id));
 	}
 	else if (key == "target") { lua_pushinteger(L, rbo->target); }
 	else if (key == "format") { lua_pushinteger(L, rbo->format); }
@@ -162,7 +179,7 @@ int LuaRBOMgr::meta_index(lua_State* L)
 }
 
 
-int LuaRBOMgr::meta_newindex(lua_State* /*L*/)
+int LuaRBOMgr::MetaNewindex(lua_State* /*L*/)
 {
 	return 0;
 }
@@ -173,39 +190,40 @@ int LuaRBOMgr::meta_newindex(lua_State* /*L*/)
 
 int LuaRBOMgr::CreateRBO(lua_State* L)
 {
-	LuaRBO rbo;
-	rbo.Init();
+	LuaRBOData rboData;
 
-	rbo.xsize = (GLsizei)luaL_checknumber(L, 1);
-	rbo.ysize = (GLsizei)luaL_checknumber(L, 2);
-	rbo.target = GL_RENDERBUFFER_EXT;
-	rbo.format = GL_RGBA;
+	rboData.xsize = (GLsizei)luaL_checknumber(L, 1);
+	rboData.ysize = (GLsizei)luaL_checknumber(L, 2);
+	rboData.target = GL_RENDERBUFFER;
+	rboData.format = GL_RGBA;
 
 	const int table = 3;
 	if (lua_istable(L, table)) {
 		lua_getfield(L, table, "target");
 		if (lua_israwnumber(L, -1)) {
-			rbo.target = (GLenum)lua_toint(L, -1);
+			rboData.target = (GLenum)lua_toint(L, -1);
 		}
 		lua_pop(L, 1);
 		lua_getfield(L, table, "format");
 		if (lua_israwnumber(L, -1)) {
-			rbo.format = (GLenum)lua_toint(L, -1);
+			rboData.format = (GLenum)lua_toint(L, -1);
 		}
 		lua_pop(L, 1);
 	}
 
-	glGenRenderbuffersEXT(1, &rbo.id);
-	glBindRenderbufferEXT(rbo.target, rbo.id);
+	glGenRenderbuffers(1, &rboData.id);
+	glBindRenderbuffer(rboData.target, rboData.id);
 
 	// allocate the memory
-	glRenderbufferStorageEXT(rbo.target, rbo.format, rbo.xsize, rbo.ysize);
+	glRenderbufferStorage(rboData.target, rboData.format,
+	                      rboData.xsize,  rboData.ysize);
 	
-	glBindRenderbufferEXT(rbo.target, 0);
+	glBindRenderbuffer(rboData.target, 0);
 
-	LuaRBO* rboPtr = (LuaRBO*)lua_newuserdata(L, sizeof(LuaRBO));
-	*rboPtr = rbo;
-
+	void* udData = lua_newuserdata(L, sizeof(LuaRBO));
+	new(udData) LuaRBO(rboData);
+	
+	lua_setuserdataextra(L, -1, (void*)metaName);
 	luaL_getmetatable(L, metaName);
 	lua_setmetatable(L, -2);
 
@@ -216,13 +234,13 @@ int LuaRBOMgr::CreateRBO(lua_State* L)
 int LuaRBOMgr::DeleteRBO(lua_State* L)
 {
 	if (OpenGLGState::isExecutingInitFuncs()) {
-		luaL_error(L, "gl.DeleteRBO can not be used in GLInitContext");
+		luaL_error(L, "gl.DeleteRBO can not be used in GLReload");
 	}
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}
-	LuaRBO* rbo = (LuaRBO*)luaL_checkudata(L, 1, metaName);
-	rbo->Free();
+	LuaRBO* rbo = GetLuaRBO(L, 1);
+	rbo->Delete();
 	return 0;
 }
 

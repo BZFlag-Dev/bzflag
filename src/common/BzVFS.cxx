@@ -126,6 +126,7 @@ class RawFS : public BzFS
       if (!isWritable()) {
         return false;
       }
+      // FIXME -- create directories ...
       const string fullPath = root + path;
       FILE* file = fopen(fullPath.c_str(), "wb");
       if (file == NULL) {
@@ -140,6 +141,7 @@ class RawFS : public BzFS
       if (!isWritable()) {
         return false;
       }
+      // FIXME -- create directories ...
       const string fullPath = root + path;
       FILE* file = fopen(fullPath.c_str(), "ab");
       if (file == NULL) {
@@ -527,7 +529,7 @@ bool BzVFS::dirList(const string& path, const string& modes, bool recursive,
   getSystems(modes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
-    printf("  scanning: %p\n", systems[i]);
+    printf("  scanning: %p\n", systems[i]); // FIXME
     systems[i]->dirList(cleanPath, recursive, dirs, files);
   }
   return true;
@@ -586,13 +588,13 @@ bool BzVFS::rawDirList(const string& root, const string& path, bool recursive,
     const string filePath = path + name;
     if ((fileInfo.attrib & _A_SUBDIR) == 0) {
       files.push_back(filePath);
-    } else {
+    }
+    else {
       const string dirPath = filePath + "/";
       dirs.push_back(dirPath);
       if (recursive) {
         rawDirList(root, dirPath, recursive, dirs, files);
       }
-      dirs.push_back(path + name + "/");
     }
   }
   while (_findnext(handle, &fileInfo) == 0);

@@ -16,9 +16,8 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
+#include "LuaBZFS.h"
 
-
-static lua_State* topL = NULL;
 
 static map<string, class SlashCmdHandler*> slashHandlers;
 
@@ -51,9 +50,9 @@ SlashCmdHandler::SlashCmdHandler(const string& c, const string& h)
 , helpTxt(h)
 , luaRef(LUA_NOREF)
 {
-  lua_State* L = topL;
-
   slashHandlers[cmd] = this;
+
+  lua_State* L = LuaBZFS::GetL();
   if (L == NULL) {
     return;
   }
@@ -66,20 +65,20 @@ SlashCmdHandler::SlashCmdHandler(const string& c, const string& h)
 
 SlashCmdHandler::~SlashCmdHandler()
 {
-  lua_State* L = topL;
-
   slashHandlers.erase(cmd);
-  if (L != NULL) {
-    luaL_unref(L, LUA_REGISTRYINDEX, luaRef);
+
+  lua_State* L = LuaBZFS::GetL();
+  if (L == NULL) {
+    return;
   }
+  luaL_unref(L, LUA_REGISTRYINDEX, luaRef);
 }
 
 
 bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
                              bz_ApiString message, bz_APIStringList* /*params*/)
 {
-  lua_State* L = topL;
-
+  lua_State* L = LuaBZFS::GetL();
   if (L == NULL) {
     return false;
   }
@@ -118,8 +117,6 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
 
 bool SlashCmd::PushEntries(lua_State* L)
 {
-  topL = L;
-
   lua_pushliteral(L, "AttachSlashCommand");
   lua_pushcfunction(L, AttachSlashCommand);
   lua_rawset(L, -3);
@@ -144,8 +141,6 @@ bool SlashCmd::CleanUp(lua_State* /*_L*/)
   }
 
   slashHandlers.clear();
-
-  topL = NULL;
 
   return true; // do nothing
 }

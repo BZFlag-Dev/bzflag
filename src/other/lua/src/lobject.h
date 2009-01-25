@@ -219,6 +219,7 @@ typedef union Udata {
     struct Table *metatable;
     struct Table *env;
     size_t len;
+    void* extra;
   } uv;
 } Udata;
 

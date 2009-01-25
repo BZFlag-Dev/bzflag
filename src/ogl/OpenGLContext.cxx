@@ -163,6 +163,34 @@ void bzDeleteProgram(GLuint program)
 /******************************************************************************/
 /******************************************************************************/
 //
+//  Occlusion Queries
+//
+
+void bzGenQueries(GLsizei n, GLuint* queries)
+{
+  if (OpenGLGState::isExecutingFreeFuncs()) {
+    contextFreeError("bzGenQueries() is having issues");
+  }
+  glGenQueries(n, queries);
+}
+
+
+void bzDeleteQueries(GLsizei n, const GLuint* queries)
+{
+  if (OpenGLGState::isExecutingInitFuncs()) {
+    contextInitError("bzDeleteProgram() is having issues");
+  }
+  if (OpenGLGState::haveGLContext()) {
+    glDeleteQueries(n, queries);
+  } else {
+    logDebugMessage(4,"bzDeleteQueries(), no context\n");
+  }
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+//
 //  Frame Buffers
 //
 

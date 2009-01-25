@@ -1102,7 +1102,7 @@ OpenGLGState::~OpenGLGState()
   rep->unref();
 }
 
-OpenGLGState&		OpenGLGState::operator=(const OpenGLGState& state)
+OpenGLGState& OpenGLGState::operator=(const OpenGLGState& state)
 {
   state.rep->ref();
   rep->unref();
@@ -1167,6 +1167,11 @@ void OpenGLGState::setStipple(GLfloat alpha)
 
 void OpenGLGState::setStippleIndex(int index)
 {
+  if (index < 0) {
+    index = 0;
+  } else if (index >= NumStipples) {
+    index = NumStipples - 1;
+  }
   glCallList(stipples + index);
 }
 
@@ -1256,8 +1261,18 @@ void OpenGLGState::registerContextInitializer(
 		     OpenGLContextFunction initCallback,
 		     void* userData)
 {
+  if (executingFreeFuncs) {
+    logDebugMessage(0,
+      "WARNING: registerContextInitializer() while executingFreeFuncs\n");
+    return;
+  }
+  if (executingInitFuncs) {
+    logDebugMessage(0,
+      "WARNING: registerContextInitializer() while executingInitFuncs\n");
+    return;
+  }
   if ((freeCallback == NULL) || (initCallback == NULL)) {
-    logDebugMessage(3,"registerContextInitializer() error\n");
+    logDebugMessage(0, "WARNING: registerContextInitializer() error\n");
     return;
   }
   new ContextInitializer(freeCallback, initCallback, userData);
@@ -1269,11 +1284,24 @@ void OpenGLGState::unregisterContextInitializer(
 		     OpenGLContextFunction initCallback,
 		     void* userData)
 {
-  ContextInitializer* ci =
-    ContextInitializer::find(freeCallback, initCallback, userData);
-  if (ci == NULL) {
-    logDebugMessage(3,"unregisterContextInitializer() error\n");
+  if (executingFreeFuncs) {
+    logDebugMessage(0,
+      "WARNING: unregisterContextInitializer() while executingFreeFuncs\n");
+    return;
   }
+  if (executingInitFuncs) {
+    logDebugMessage(0,
+      "WARNING: unregisterContextInitializer() while executingInitFuncs\n");
+    return;
+  }
+
+  ContextInitializer* ci = ContextInitializer::find(freeCallback,
+                                                    initCallback, userData);
+
+  if (ci == NULL) {
+    logDebugMessage(0, "WARNING: unregisterContextInitializer() error\n");
+  }
+
   delete ci;
 }
 
@@ -1290,8 +1318,8 @@ void OpenGLGState::initContext()
     logDebugMessage(0,"GLEW initialization failed");
 
   // call all of the freeing functions first
-  logDebugMessage(3,"ContextInitializer::executeFreeFuncs() start\n");
   eventHandler.GLContextFree(); // before default resources
+  logDebugMessage(3,"ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
   logDebugMessage(3,"ContextInitializer::executeFreeFuncs() end\n");
 
@@ -1304,11 +1332,10 @@ void OpenGLGState::initContext()
   // call all initializers
   logDebugMessage(3,"ContextInitializer::executeInitFuncs() start\n");
   ContextInitializer::executeInitFuncs();
-  eventHandler.GLContextInit(); // after default resources
   logDebugMessage(3,"ContextInitializer::executeInitFuncs() end\n");
+  eventHandler.GLContextInit(); // after default resources
 
-  // initialize the GL state again in case one of the initializers
-  // messed it up.
+  // initialize the GL state again in case one of the initializers messed it up
   initGLState();
 
   // and some more state

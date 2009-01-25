@@ -5,9 +5,11 @@
 #include "LuaUser.h"
 
 // system headers
-#include <string>
-#include <set>
 #include <cctype>
+#include <string>
+#include <vector>
+#include <set>
+using std::vector;
 using std::string;
 using std::set;
 
@@ -15,6 +17,8 @@ using std::set;
 #include "BzVFS.h"
 #include "EventHandler.h"
 #include "StateDatabase.h"
+#include "TextUtils.h"
+#include "bzfio.h"
 
 // local headers
 #include "LuaEventOrder.h"
@@ -52,28 +56,8 @@ static const char* sourceFile = "bzUser.lua";
 /******************************************************************************/
 /******************************************************************************/
 
-#include "BzVFS.h"
-
-static void bzdbCallback(const std::string& name, void* /*data*/)
-{
-	bzVFS.removeFS(BZVFS_LUA_USER);
-	bzVFS.addFS(BZVFS_LUA_USER, BZDB.get(name));
-	LuaUser::FreeHandler();
-	LuaUser::LoadHandler();
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
 void LuaUser::LoadHandler()
 {
-	static bool needCallback = true;
-	if (needCallback) {
-		needCallback = false;
-		BZDB.addCallback("LuaUserDir", bzdbCallback, NULL);
-	}
-
 	if (luaUser) {
 		return;
 	}
@@ -96,7 +80,7 @@ void LuaUser::FreeHandler()
 /******************************************************************************/
 
 LuaUser::LuaUser()
-: LuaHandle("LuaUser", ORDER_LUA_USER, false, true)
+: LuaHandle("LuaUser", ORDER_LUA_USER, devMode, true)
 {
 	luaUser = this;
 
@@ -124,7 +108,8 @@ LuaUser::LuaUser()
 	fsReadAll = BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	            BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
 	            BZVFS_BASIC;
-	fsWrite = BZVFS_LUA_USER_WRITE;
+	fsWrite    = BZVFS_LUA_USER_WRITE;
+	fsWriteAll = BZVFS_LUA_USER_WRITE;
 
 	if (!ExecSourceCode(sourceCode)) {
 		KillLua();
@@ -149,6 +134,29 @@ LuaUser::~LuaUser()
 /******************************************************************************/
 /******************************************************************************/
 
+void LuaUser::ForbidCallIns()
+{
+	const string forbidden = BZDB.get("_forbidLuaUser");
+	const vector<string> callIns = TextUtils::tokenize(forbidden, ", ");
+	for (size_t i = 0; i < callIns.size(); i++) {
+		const string& ciName = callIns[i];
+		const int ciCode = luaCallInDB.GetCode(ciName);
+		if (validCallIns.find(ciCode) != validCallIns.end()) {
+			validCallIns.erase(ciCode);
+			string realName = ciName;
+			if (ciName == "GLReload") {
+				realName = "GLContextInit";
+			}
+			eventHandler.RemoveEvent(this, realName);
+			logDebugMessage(0, "LuaUser: %s is forbidden\n", ciName.c_str());
+		}
+	}
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 #define LUA_OPEN_LIB(L, lib)   \
   lua_pushcfunction((L), lib); \
   lua_pcall((L), 0, 0, 0); 
@@ -165,13 +173,14 @@ bool LuaUser::SetupLuaLibs()
 	if (devMode) {
 		LUA_OPEN_LIB(L, luaopen_debug);
 	}
-//	LUA_OPEN_LIB(L, luaopen_package);
 //	LUA_OPEN_LIB(L, luaopen_io);
+//	LUA_OPEN_LIB(L, luaopen_package);
 
 	// remove a few dangerous calls
 //	lua_getglobal(L, "io");
 //	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
 //	lua_pop(L, 1); // io
+
 	lua_getglobal(L, "os");
 	lua_pushstring(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
 	lua_pushstring(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
@@ -190,7 +199,7 @@ bool LuaUser::SetupLuaLibs()
 	    !PushLib("math",   LuaVector::PushEntries)     ||
 	    !PushLib("VFS",    LuaVFS::PushEntries)        ||
 	    !PushLib("BZDB",   LuaBZDB::PushEntries)       ||
-	    !PushLib("pack",   LuaPack::PushEntries)       ||
+	    !PushLib("bz",     LuaPack::PushEntries)       ||
 	    !PushLib("Script", LuaScream::PushEntries)     ||
 	    !PushLib("gl",     LuaOpenGL::PushEntries)     ||
 	    !PushLib("GL",     LuaConstGL::PushEntries)    ||

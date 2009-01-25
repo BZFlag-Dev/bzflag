@@ -14,6 +14,25 @@ using std::set;
 
 // common headers
 #include "TextUtils.h"
+#include "bzfio.h"
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+void LuaLog(int level, const std::string& msg) // FIXME
+{
+	logDebugMessage(level, msg);
+}
+
+
+void LuaLog(int level, const char* fmt, ...) // FIXME
+{
+	va_list ap;
+	va_start(ap, fmt);
+	logDebugMessage(level, fmt, ap);
+	va_end(ap);
+}
 
 
 /******************************************************************************/
@@ -171,6 +190,27 @@ bool LuaUtils::FormatArgs(lua_State* L, bool expandTables,
 
 /******************************************************************************/
 /******************************************************************************/
+
+// copied from lua/src/lauxlib.cpp:luaL_checkudata()
+void* LuaUtils::TestUserData(lua_State* L, int index, const string& type)
+{
+	const char* tname = type.c_str();
+	void *p = lua_touserdata(L, index);
+	if (p != NULL) {                               // value is a userdata?
+		if (lua_getmetatable(L, index)) {            // does it have a metatable?
+			lua_getfield(L, LUA_REGISTRYINDEX, tname); // get correct metatable
+			if (lua_rawequal(L, -1, -2)) {             // the correct mt?
+				lua_pop(L, 2);                           // remove both metatables
+				return p;
+			}
+		}
+	}
+	return NULL;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
 //
 //  LowerKeys()
 //
@@ -270,27 +310,6 @@ bool LuaUtils::LowerKeys(lua_State* L, int table)
 /******************************************************************************/
 /******************************************************************************/
 
-// copied from lua/src/lauxlib.cpp:luaL_checkudata()
-void* LuaUtils::TestUserData(lua_State* L, int index, const string& type)
-{
-	const char* tname = type.c_str();
-	void *p = lua_touserdata(L, index);
-	if (p != NULL) {                               // value is a userdata?
-		if (lua_getmetatable(L, index)) {            // does it have a metatable?
-			lua_getfield(L, LUA_REGISTRYINDEX, tname); // get correct metatable
-			if (lua_rawequal(L, -1, -2)) {             // the correct mt?
-				lua_pop(L, 2);                           // remove both metatables
-				return p;
-			}
-		}
-	}
-	return NULL;
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
 void LuaUtils::PrintStack(lua_State* L)
 {
 	const int top = lua_gettop(L);
@@ -336,7 +355,7 @@ int LuaUtils::Print(lua_State* L)
 		msg += s;
 		lua_pop(L, 1);            // pop result
 	}
-	LuaLog(msg);
+	LuaLog(0, msg);
 
 	if ((args != 1) || !lua_istable(L, 1)) {
 		return 0;
@@ -364,7 +383,7 @@ int LuaUtils::Print(lua_State* L)
 			lua_pop(L, 1);            // pop result
 		}
 	}
-	LuaLog(msg);
+	LuaLog(0, msg);
 
 	return 0;
 }

@@ -46,46 +46,51 @@ public:
 
   void		setControlColor(const GLfloat *color = NULL);
 
-  int		getX() const;
-  int		getY() const;
-  int		getWidth() const;
-  int		getHeight() const;
+  int getX() const;
+  int getY() const;
+  int getWidth() const;
+  int getHeight() const;
+  float getRange() const;
 
-  void		setShape(int x, int y, int w, int h);
-  void		setJammed(bool = true);
+  void setShape(int x, int y, int w, int h);
+  void setJammed(bool = true);
 
-  void		setDimming(float newDimming);
+  void setDimming(float newDimming);
 
-  void		render(SceneRenderer&, bool blank, bool observer);
+  void render(SceneRenderer&, bool blank, bool observer);
 
-  void		renderFrame(SceneRenderer&);
+  void renderFrame(SceneRenderer&);
 
-  void		renderObstacles(bool fastRadar, float range);
-  void		renderWalls();
-  void		renderBoxPyrMesh();
-  void		renderBoxPyrMeshFast(float range);
-  void		renderBasesAndTeles();
+  void renderObstacles(bool fastRadar, float range);
+  void renderWalls();
+  void renderBoxPyrMesh();
+  void renderBoxPyrMeshFast(float range);
+  void renderBasesAndTeles();
 
-  int		getFrameTriangleCount() const;
+  int getFrameTriangleCount() const;
 
   virtual void	buildGeometry ( GLDisplayList displayList );
-  void		clearRadarObjects ( void );
+  void clearRadarObjects ( void );
+
+  bool executeScissor();
+  bool executeTransform(bool localView);
 
 private:
   // no copying
   RadarRenderer(const RadarRenderer&);
   RadarRenderer& operator=(const RadarRenderer&);
 
-  void		drawShot(const ShotPath*);
-  void		drawTank(const Player* player, bool allowFancy);
-  void		drawFancyTank(const Player* player);
-  void		drawHuntLevel(const Player* player,
+  void drawNoise(SceneRenderer& renderer, float radarRange);
+  void drawShot(const ShotPath*);
+  void drawTank(const Player* player, bool allowFancy);
+  void drawFancyTank(const Player* player);
+  void drawHuntLevel(const Player* player,
 			      float tankSize, float heightBoxSize);
-  void		drawFlag(const float pos[3]);
-  void		drawFlagOnTank(const float pos[3]);
+  void drawFlag(const float pos[3]);
+  void drawFlagOnTank(const float pos[3]);
 
-  static float	colorScale(const float z, const float h);
-  static float	transScale(const float z, const float h);
+  static float colorScale(const float z, const float h);
+  static float transScale(const float z, const float h);
 
 private:
   World*	world;
@@ -132,24 +137,29 @@ private:
 // RadarRenderer
 //
 
-inline int		RadarRenderer::getX() const
+inline int RadarRenderer::getX() const
 {
   return x;
 }
 
-inline int		RadarRenderer::getY() const
+inline int RadarRenderer::getY() const
 {
   return y;
 }
 
-inline int		RadarRenderer::getWidth() const
+inline int RadarRenderer::getWidth() const
 {
   return w;
 }
 
-inline int		RadarRenderer::getHeight() const
+inline int RadarRenderer::getHeight() const
 {
   return h;
+}
+
+inline float RadarRenderer::getRange() const
+{
+  return range;
 }
 
 #endif // BZF_RADAR_RENDERER_H

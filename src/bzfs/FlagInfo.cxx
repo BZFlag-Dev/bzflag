@@ -74,10 +74,13 @@ void FlagInfo::setSize(int _numFlags)
   numFlags = _numFlags;
   delete[] flagList;
   flagList = NULL;
-  if (numFlags)
+  if (numFlags) {
     flagList = new FlagInfo[numFlags];
-  for (int i = 0; i < numFlags; i++)
+  }
+  for (int i = 0; i < numFlags; i++) {
+    flagList[i].flag.id = i;
     flagList[i].flagIndex = i;
+  }
 }
 
 void FlagInfo::setAllowed(std::vector<FlagType*> allowed)

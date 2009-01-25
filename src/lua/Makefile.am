@@ -27,6 +27,9 @@ libBzLua_la_SOURCES =                       \
 	LuaExtras.cxx         LuaExtras.h         \
 	LuaFBOs.cxx           LuaFBOs.h           \
 	LuaFontTexture.cxx    LuaFontTexture.h    \
+	LuaGLBuffers.cxx      LuaGLBuffers.h      \
+	LuaGLPointers.cxx     LuaGLPointers.h     \
+	LuaGLQueries.cxx      LuaGLQueries.h      \
 	LuaHandle.cxx         LuaHandle.h         \
 	LuaKeySyms.cxx        LuaKeySyms.h        \
 	LuaObstacle.cxx       LuaObstacle.h       \
@@ -45,6 +48,10 @@ libBzLua_la_SOURCES =                       \
 	LuaVector.cxx         LuaVector.h         \
 	LuaVFS.cxx            LuaVFS.h            \
 	LuaWorld.cxx          LuaWorld.h
+
+#	LuaServerList.cxx     LuaServerList.h     \#
+#	LuaArrays.cxx         LuaArrays.h         \#
+#	LuaLink.cxx           LuaLink.h           \#
 
 EXTRA_DIST = \
 	README

@@ -224,18 +224,6 @@ void MainWindow::setQuadrant(Quadrant _quadrant)
       xOrigin = 0;
       yOrigin = 0;
       break;
-    case ZoomRegion:
-      width = inWidth;
-      height = inHeight;
-      viewHeight = height;
-      xOrigin = 0;
-      yOrigin = 0;
-      break;
-  }
-
-  if (quadrant == ZoomRegion) {
-    width = inWidth / zoomFactor + 1;
-    height = inHeight / zoomFactor + 1;
   }
 
   glViewport(xOrigin, yOrigin, width, height);

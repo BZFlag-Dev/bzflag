@@ -147,6 +147,8 @@ class World {
     void		freeInsideNodes() const;
 
     const MapInfo&	getMapInfo() const { return mapInfo; }
+    const std::string&	getMapHash() const { return mapHash; }
+    void		setMapHash(const std::string& hash) { mapHash = hash; }
 
   private:
     // disallow copy and assignment
@@ -178,7 +180,7 @@ class World {
     std::vector<EntryZone> entryZones;
 
     RemotePlayer**	players;
-    int		 playersSize;
+    int			playersSize;
     WorldPlayer*	worldWeapons;
     ClientFlag*		flags;
     FlagSceneNode**	flagNodes;
@@ -196,6 +198,7 @@ class World {
     bool		oldUseDrawInfo;
 
     MapInfo		mapInfo;
+    std::string		mapHash;
 
     static World*	playingField;
     static BundleMgr	*bundleMgr;
@@ -208,7 +211,7 @@ class World {
 // World
 //
 
-inline	bool	World::allowTeams() const
+inline bool	World::allowTeams() const
 {
 	return gameType != OpenFFA;
 }

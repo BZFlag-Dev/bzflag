@@ -59,6 +59,7 @@ class LuaHandle : public EventClient
 
 	public:
 		void CheckStack();
+		void SetupValidCallIns();
 		
 	public:
 		bool               RequestReload()  const { return requestReload;  }
@@ -83,35 +84,35 @@ class LuaHandle : public EventClient
 
 		virtual void BZDBChange(const std::string&);
 
-    virtual void RecvCommand(const std::string& msg); // custom to LuaHandle
-    virtual void RecvChatMsg(const std::string& msg, int srcID, int dstID);
-    virtual void RecvLuaData(int srcPlayerID, int srcScriptID,
-														 int dstPlayerID, int dstScriptID,
-                             int status, const std::string& data);
+		virtual void RecvCommand(const std::string& msg); // custom to LuaHandle
+		virtual void RecvChatMsg(const std::string& msg, int srcID, int dstID);
+		virtual void RecvLuaData(int srcPlayerID, int srcScriptID,
+		                         int dstPlayerID, int dstScriptID,
+		                         int status, const std::string& data);
 
 		virtual void ServerJoined();
 		virtual void ServerParted();
 
-    virtual void PlayerAdded(const Player&);
-    virtual void PlayerRemoved(const Player&);
-    virtual void PlayerSpawned(const Player&);
-    virtual void PlayerKilled(const Player&);
-    virtual void PlayerJumped(const Player&);
-    virtual void PlayerLanded(const Player&);
-    virtual void PlayerTeleported(const Player&, int srcLink, int dstLink);
-    virtual void PlayerTeamChange(const Player&);
-    virtual void PlayerScoreChange(const Player&);
+		virtual void PlayerAdded(const Player&);
+		virtual void PlayerRemoved(const Player&);
+		virtual void PlayerSpawned(const Player&);
+		virtual void PlayerKilled(const Player&);
+		virtual void PlayerJumped(const Player&);
+		virtual void PlayerLanded(const Player&);
+		virtual void PlayerTeleported(const Player&, int srcLink, int dstLink);
+		virtual void PlayerTeamChange(const Player&);
+		virtual void PlayerScoreChange(const Player&);
 
-    virtual void ShotAdded(const FiringInfo&);
-    virtual void ShotRemoved(const FiringInfo&);
-    virtual void ShotTeleported(const ShotPath&, int srcLink, int dstLink);
+		virtual void ShotAdded(const FiringInfo&);
+		virtual void ShotRemoved(const FiringInfo&);
+		virtual void ShotTeleported(const ShotPath&, int srcLink, int dstLink);
 
-    virtual void FlagAdded(const Flag&);
-    virtual void FlagRemoved(const Flag&);
-    virtual void FlagGrabbed(const Flag&,  const Player&);
-    virtual void FlagDropped(const Flag&,  const Player&);
-    virtual void FlagCaptured(const Flag&, const Player&);
-    virtual void FlagTransferred(const Flag&, const Player& src, const Player& dst);
+		virtual void FlagAdded(const Flag&);
+		virtual void FlagRemoved(const Flag&);
+		virtual void FlagGrabbed(const Flag&,  const Player&);
+		virtual void FlagDropped(const Flag&,  const Player&);
+		virtual void FlagCaptured(const Flag&, const Player&);
+		virtual void FlagTransferred(const Flag&, const Player& src, const Player& dst);
 
 		virtual void ViewResize();
 		virtual void GLContextInit();
@@ -126,8 +127,8 @@ class LuaHandle : public EventClient
 		virtual void DrawScreen();
 		virtual void DrawRadar();
 
-    virtual void GotGfxBlock(int /*type*/, int /*id*/);
-    virtual void LostGfxBlock(int /*type*/, int /*id*/);
+		virtual void GotGfxBlock(int /*type*/, int /*id*/);
+		virtual void LostGfxBlock(int /*type*/, int /*id*/);
 
 		virtual bool KeyPress(int /*key*/, bool /*isRepeat*/);
 		virtual bool KeyRelease(int /*key*/);
@@ -138,7 +139,8 @@ class LuaHandle : public EventClient
 		virtual bool IsAbove(int /*x*/, int /*y*/);
 		virtual std::string GetTooltip(int /*x*/, int /*y*/);
 
-		virtual void WordComplete(const std::string& /*l*/, std::set<std::string>& /*p*/);
+		virtual void WordComplete(const std::string& /*line*/,
+		                          std::set<std::string>& /*partials*/);
 
 	protected:
 		LuaHandle(const std::string& name, int order, bool fullRead, bool inputCtrl);
@@ -162,7 +164,7 @@ class LuaHandle : public EventClient
 
 		virtual bool        ExecSourceCode(const std::string& sourceCode);
 		virtual std::string LoadSourceCode(const std::string& sourceFile,
-		                              const std::string& sourceModes);
+		                                   const std::string& sourceModes);
 
 		bool AddBasicCalls();
 		bool PushLib(const char* name, bool (*entriesFunc)(lua_State*));
@@ -201,9 +203,6 @@ class LuaHandle : public EventClient
 		static int ScriptCanUseCallIn(lua_State* L);
 		static int ScriptSetCallIn(lua_State* L);
 
-		static int ScriptAddTextFallback(lua_State* L);    // FIXME
-		static int ScriptRemoveTextFallback(lua_State* L);
-
 		static int ScriptGetGLOBALS(lua_State* L);
 		static int ScriptGetCALLINS(lua_State* L);
 		static int ScriptGetREGISTRY(lua_State* L);
@@ -220,9 +219,6 @@ class LuaHandle : public EventClient
 
 		static void SetDevMode(bool value) { devMode = value; }
 		static bool GetDevMode() { return devMode; }
-
-		static void HandleLuaMsg(int playerID, int script, int mode,
-		                         const std::string& msg);
 
 	protected: // static
 		static LuaHandle* activeHandle;

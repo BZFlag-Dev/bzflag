@@ -54,7 +54,7 @@ bool LuaSpatial::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, IsOBBInView);
 	PUSH_LUA_CFUNC(L, IsLSSInView);
 
- 	PUSH_LUA_CFUNC(L, IsPointInRadar);
+	PUSH_LUA_CFUNC(L, IsPointInRadar);
 	PUSH_LUA_CFUNC(L, IsSphereInRadar);
 	PUSH_LUA_CFUNC(L, IsAABBInRadar);
 	PUSH_LUA_CFUNC(L, IsOBBInRadar);
@@ -149,28 +149,28 @@ static bool GetRadarBox(BoxData& box)
 	mins[2] = -1.0e30f;
 	maxs[2] = +1.0e30f;
 
-  // setup the radar range
-  const float radarLimit = BZDBCache::radarLimit;
-  if (!BZDB.isTrue("displayRadar") || (radarLimit <= 0.0f)) {
-  	return false;
+	// setup the radar range
+	const float radarLimit = BZDBCache::radarLimit;
+	if (!BZDB.isTrue("displayRadar") || (radarLimit <= 0.0f)) {
+		return false;
 	}
-  float maxRange = radarLimit;
-  float radarRange = BZDB.eval("displayRadarRange") * radarLimit;
-  // when burrowed, limit radar range
+	float maxRange = radarLimit;
+	float radarRange = BZDB.eval("displayRadarRange") * radarLimit;
+	// when burrowed, limit radar range
 	const LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && (myTank->getFlag() == Flags::Burrow) &&
-      (myTank->getPosition()[2] < 0.0f)) {
-    maxRange = radarLimit / 4.0f;
-  }
-  if (radarRange > maxRange) {
-    radarRange = maxRange;
-  }
+	if (myTank && (myTank->getFlag() == Flags::Burrow) &&
+			(myTank->getPosition()[2] < 0.0f)) {
+		maxRange = radarLimit / 4.0f;
+	}
+	if (radarRange > maxRange) {
+		radarRange = maxRange;
+	}
 
-  mins[0] = 0.0f; // FIXME -- and move the radarRange query into RadarRenderer
-  mins[1] = 0.0f;
-  maxs[0] = 0.0f;
-  maxs[1] = 0.0f;
-  box.extents.set(mins, maxs);
+	mins[0] = 0.0f; // FIXME -- and move the radarRange query into RadarRenderer
+	mins[1] = 0.0f;
+	maxs[0] = 0.0f;
+	maxs[1] = 0.0f;
+	box.extents.set(mins, maxs);
 
 	return false;
 }
@@ -570,14 +570,14 @@ static void CheckPlayers(PlayerCheckFunc checkFunc, const QueryData& data,
 		hits.push_back(player);
 	}
 
-/*FIXME?#ifdef ROBOT
+#ifdef ROBOT
 	for (int i = 0; i < numRobots; i++) {
 		player = robots[i];
 		if (player && checkFunc(player, data)) {
 			hits.push_back(player);
 		}
 	}
-#endif*/
+#endif
 
 	for (int i = 0; i < curMaxPlayers; i++) {
 		player = remotePlayers[i];
@@ -913,6 +913,23 @@ static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
 			}
 		}
 	}
+
+	// check robot tanks' shots
+#ifdef ROBOT
+	for (int i = 0; i < numRobots; i++) {
+		const RobotPlayer* player = robots[i];
+		if (player != NULL) {
+			for (int j = 0; j < maxShots; j++) {
+				const ShotPath* shot = player->getShot(j);
+				if (shot && !shot->isExpired()) {
+					if (checkFunc(shot, data)) {
+						hits.push_back(shot);
+					}
+				}
+			}
+		}
+	}
+#endif
 
 	// check other tanks' shots
 	for (int i = 0; i < curMaxPlayers; i++) {

@@ -207,6 +207,7 @@ static bool entered = false;
 static bool joiningGame = false;
 static WorldBuilder *worldBuilder = NULL;
 static std::string worldUrl;
+static std::string worldHash;
 static std::string worldCachePath;
 static std::string md5Digest;
 static uint32_t worldPtr = 0;
@@ -252,7 +253,7 @@ void ThirdPersonVars::load(void)
 {
   b3rdPerson          = BZDB.isTrue(std::string("3rdPersonCam"));
   cameraOffsetXY      = BZDB.eval(std::string("3rdPersonCamXYOffset"));
-  cameraOffsetOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
+  cameraOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
   targetMultiplyer    = BZDB.eval(std::string("3rdPersonCamTargetMult"));
 
   nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
@@ -325,6 +326,7 @@ bool shouldGrabMouse()
     (myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot()));
 }
 
+
 //
 // some simple global functions
 //
@@ -350,6 +352,7 @@ void warnAboutMainFlags()
   }
 }
 
+
 void warnAboutRadarFlags()
 {
   if (!BZDB.isTrue("displayRadarFlags")) {
@@ -371,6 +374,7 @@ void warnAboutRadarFlags()
   }
 }
 
+
 void warnAboutRadar()
 {
   if (!BZDB.isTrue("displayRadar")) {
@@ -390,6 +394,7 @@ void warnAboutRadar()
     }
   }
 }
+
 
 void warnAboutConsole()
 {
@@ -456,10 +461,18 @@ BzfDisplay *getDisplay()
   return display;
 }
 
+
 MainWindow *getMainWindow()
 {
   return mainWindow;
 }
+
+
+RadarRenderer *getRadarRenderer()
+{
+  return radar;
+}
+
 
 void setSceneDatabase()
 {
@@ -483,10 +496,12 @@ void setSceneDatabase()
   RENDERER.setSceneDatabase(scene);
 }
 
+
 StartupInfo *getStartupInfo()
 {
   return &startupInfo;
 }
+
 
 bool setVideoFormat(int index, bool test)
 {
@@ -517,6 +532,7 @@ bool setVideoFormat(int index, bool test)
   return true;
 }
 
+
 void addPlayingCallback(PlayingCallback cb, void *data)
 {
   PlayingCallbackItem item;
@@ -524,6 +540,7 @@ void addPlayingCallback(PlayingCallback cb, void *data)
   item.data = data;
   playingCallbacks.push_back(item);
 }
+
 
 void removePlayingCallback(PlayingCallback _cb, void *data)
 {
@@ -537,6 +554,7 @@ void removePlayingCallback(PlayingCallback _cb, void *data)
   }
 }
 
+
 static void callPlayingCallbacks()
 {
   const size_t count = playingCallbacks.size();
@@ -545,6 +563,7 @@ static void callPlayingCallbacks()
     (*cb.cb)(cb.data);
   }
 }
+
 
 void joinGame()
 {
@@ -565,32 +584,33 @@ void joinGame()
   thirdPersonVars.load();
 }
 
+
 //
 // handle signals that should kill me quickly
 //
-
 static void dying(int sig)
 {
   bzSignal(sig, SIG_DFL);
-  if (display)
+  if (display) {
     display->setDefaultResolution();
+  }
   raise(sig);
 }
+
 
 //
 // handle signals that should kill me nicely
 //
-
 static void suicide(int sig)
 {
   bzSignal(sig, SIG_PF(suicide));
   CommandsStandard::quit();
 }
 
+
 //
 // handle signals that should disconnect me from the server
 //
-
 static void hangup(int sig)
 {
   bzSignal(sig, SIG_PF(hangup));
@@ -677,7 +697,7 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
   }
 
   if (!cmd.empty()) {
-    if (cmd=="fire") {
+    if (cmd == "fire") {
       fireButton = pressed;
     }
     roamButton = pressed;
@@ -813,6 +833,7 @@ static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
   }
 }
 
+
 static void doKey(const BzfKeyEvent &key, bool pressed)
 {
   if (myTank) {
@@ -836,6 +857,7 @@ static void doKey(const BzfKeyEvent &key, bool pressed)
     doKeyPlaying(key, pressed, haveBinding);
   }
 }
+
 
 static void doMotion()
 {
@@ -1160,6 +1182,7 @@ static void doEvent(BzfDisplay *disply)
   }    
 }
 
+
 void addMessage(const Player *player, const std::string &msg,
 		ControlPanel::MessageModes mode, bool highlight,
 		const char *oldColor)
@@ -1220,6 +1243,7 @@ void addMessage(const Player *player, const std::string &msg,
   controlPanel->addMessage(msgf, mode);
 }
 
+
 static void updateNumPlayers()
 {
   int i, numPlayers[NumTeams];
@@ -1231,6 +1255,7 @@ static void updateNumPlayers()
   if (myTank)
     numPlayers[myTank->getTeam()]++;
 }
+
 
 static void updateHighScores()
 {
@@ -1316,6 +1341,7 @@ static void updateFlag(FlagType *flag)
   radar->setJammed(flag == Flags::Jamming);
   hud->setAltitudeTape(myTank->canJump());
 }
+
 
 void notifyBzfKeyMapChanged()
 {
@@ -1454,36 +1480,40 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 }
 
 
-static void printIpInfo (const Player *player, const Address &addr,
-			 const std::string note)
+static void printIpInfo(const Player *player,
+                        const Address &addr,
+                        const std::string note)
 {
-  if (player == NULL)
+  if (player == NULL) {
     return;
+  }
 
   std::string colorStr;
-  if (player->getId() < 200) {
+  if (player->getId() >= 200) {
+    colorStr = ColorStrings[CyanColor]; // replay observers
+  }
+  else {
     int color = player->getTeam();
     if (color == RabbitTeam || color < 0 || color > LastColor)
       // non-teamed, rabbit are white (same as observer)
       color = WhiteColor;
 
     colorStr = ColorStrings[color];
-  } else {
-    colorStr = ColorStrings[CyanColor]; // replay observers
   }
   const std::string addrStr = addr.getDotNotation();
   std::string message = ColorStrings[CyanColor]; // default color
   message += "IPINFO: ";
-  if (BZDBCache::colorful) message += colorStr;
+  if (BZDBCache::colorful) { message += colorStr; }
   message += player->getCallSign();
-  if (BZDBCache::colorful) message += ColorStrings[CyanColor];
+  if (BZDBCache::colorful) { message += ColorStrings[CyanColor]; }
   message += "\t from: ";
-  if (BZDBCache::colorful) message += colorStr;
+  if (BZDBCache::colorful) { message += colorStr; }
   message += addrStr;
 
   message += ColorStrings[WhiteColor];
-  for (int i = 0; i < (17 - (int)addrStr.size()); i++)
+  for (int i = 0; i < (17 - (int)addrStr.size()); i++) {
     message += " ";
+  }
 
   message += note;
 
@@ -1549,6 +1579,7 @@ static bool isCached(char *hexDigest)
 {
   std::istream *cachedWorld;
   bool cached    = false;
+  worldHash = hexDigest;
   worldCachePath = getCacheDirName();
   worldCachePath += hexDigest;
   worldCachePath += ".bwc";
@@ -1604,6 +1635,7 @@ int curlProgressFunc(void * /*clientp*/,
 
   return 0;
 }
+
 
 static void loadCachedWorld()
 {
@@ -1684,6 +1716,7 @@ static void loadCachedWorld()
   // return world
   if (worldBuilder) {
     world = worldBuilder->getWorld();
+    world->setMapHash(worldHash);
     delete worldBuilder;
     worldBuilder = NULL;
   }
@@ -1696,13 +1729,16 @@ static void loadCachedWorld()
   downloadingInitialTexture  = true;
 }
 
+
 class WorldDownLoader : private cURLManager {
-public:
-  void start(char *hexDigest);
-private:
-  void askToBZFS();
-  virtual void finalization(char *data, unsigned int length, bool good);
+  public:
+    void start(char *hexDigest);
+
+  private:
+    void askToBZFS();
+    virtual void finalization(char *data, unsigned int length, bool good);
 };
+
 
 void WorldDownLoader::start(char *hexDigest)
 {
@@ -1719,6 +1755,7 @@ void WorldDownLoader::start(char *hexDigest)
     askToBZFS();
   }
 }
+
 
 void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
 {
@@ -1749,6 +1786,7 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
   }
 }
 
+
 void WorldDownLoader::askToBZFS()
 {
   HUDDialogStack::get()->setFailedMessage("Downloading World...");
@@ -1762,7 +1800,9 @@ void WorldDownLoader::askToBZFS()
   cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
 }
 
-static WorldDownLoader *worldDownLoader;
+
+static WorldDownLoader* worldDownLoader = NULL;
+
 
 static void dumpMissingFlag(char *buf, uint16_t len)
 {
@@ -1787,6 +1827,7 @@ static void dumpMissingFlag(char *buf, uint16_t len)
     flags.c_str()).c_str());
 }
 
+
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
 {
   int totalSize = worldPtr + len + bytesLeft;
@@ -1800,10 +1841,12 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   return bytesLeft == 0;
 }
 
+
 #ifdef ROBOT
 static void makeObstacleList();
 static std::vector<BzfRegion*> obstacleList;  // for robots
 #endif
+
 
 static void handleResourceFetch (void *msg)
 {
@@ -1975,6 +2018,7 @@ static void handleSuperKill(void *msg)
   }
 }
 
+
 static void handleRejectMessage(void *msg)
 {
   void *buf;
@@ -1989,6 +2033,7 @@ static void handleRejectMessage(void *msg)
   printError(reason);
 }
 
+
 static void handleFlagNegotiation(void *msg, uint16_t len)
 {
   if (len > 0) {
@@ -1997,6 +2042,7 @@ static void handleFlagNegotiation(void *msg, uint16_t len)
   }
   serverLink->send(MsgWantSettings, 0, NULL);
 }
+
 
 static void handleGameSettings(void *msg)
 {
@@ -2010,6 +2056,7 @@ static void handleGameSettings(void *msg)
   HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
 }
 
+
 static void handleCacheURL(void *msg, uint16_t len)
 {
   char *cacheURL = new char[len];
@@ -2017,6 +2064,7 @@ static void handleCacheURL(void *msg, uint16_t len)
   worldUrl = cacheURL;
   delete [] cacheURL;
 }
+
 
 static void handleWantHash(void *msg, uint16_t len)
 {
@@ -2028,6 +2076,7 @@ static void handleWantHash(void *msg, uint16_t len)
   worldDownLoader->start(hexDigest);
   delete [] hexDigest;
 }
+
 
 static void handleGetWorld(void *msg, uint16_t len)
 {
@@ -2052,6 +2101,7 @@ static void handleGetWorld(void *msg, uint16_t len)
     markOld(worldCachePath);
 }
 
+
 static void handleTimeUpdate(void *msg)
 {
   int32_t timeLeft;
@@ -2071,6 +2121,7 @@ static void handleTimeUpdate(void *msg)
     hud->setAlert(0, "Game Paused", 10.0f, true);
   }
 }
+
 
 static void handleScoreOver(void *msg)
 {
@@ -2110,6 +2161,7 @@ static void handleScoreOver(void *msg)
 #endif
 }
 
+
 static void handleAddPlayer(void* msg, bool& checkScores)
 {
   PlayerId id;
@@ -2131,6 +2183,7 @@ static void handleAddPlayer(void* msg, bool& checkScores)
   }
 }
 
+
 static void handleRemovePlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
@@ -2139,6 +2192,7 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
   if (removePlayer (id))
     checkScores = true;
 }
+
 
 static void handleFlagUpdate(void *msg, size_t len)
 {
@@ -2157,6 +2211,7 @@ static void handleFlagUpdate(void *msg, size_t len)
     }
 }
 
+
 static void handleTeamUpdate(void *msg, bool &checkScores)
 {
   uint8_t  numTeams;
@@ -2170,6 +2225,7 @@ static void handleTeamUpdate(void *msg, bool &checkScores)
   updateNumPlayers();
   checkScores = true;
 }
+
 
 static void handleAliveMessage(void *msg)
 {
@@ -2232,6 +2288,7 @@ static void handleAliveMessage(void *msg)
   }
 }
 
+
 static void handleAutoPilot(void *msg)
 {
   PlayerId id;
@@ -2247,6 +2304,7 @@ static void handleAutoPilot(void *msg)
   tank->setAutoPilot(autopilot != 0);
   addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
 }
+
 
 static void handleAllow(void *msg)
 {
@@ -2285,11 +2343,17 @@ static void handleAllow(void *msg)
     }
   }
 
+  // FIXME - this is currently too noisy
   tank->setAllow(allow);
   addMessage(tank, allow & AllowShoot ? "Shooting allowed" : "Shooting forbidden");
-  addMessage(tank, allow & (AllowMoveForward | AllowMoveBackward | AllowTurnLeft | AllowTurnRight) ? "Movement allowed" : "Movement restricted");
+  addMessage(tank, allow & (AllowMoveForward  |
+                            AllowMoveBackward |
+                            AllowTurnLeft     |
+                            AllowTurnRight) ? "Movement allowed"
+                                            : "Movement restricted");
   addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
 }
+
 
 static void handleKilledMessage(void *msg, bool human, bool &checkScores)
 {
@@ -2497,6 +2561,7 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   checkScores = true;
 }
 
+
 static void handleGrabFlag(void *msg)
 {
   PlayerId id;
@@ -2554,6 +2619,7 @@ static void handleGrabFlag(void *msg)
   eventHandler.FlagGrabbed(flag, *tank);
 }
 
+
 static void handleDropFlag(void *msg)
 {
   PlayerId id;
@@ -2576,6 +2642,7 @@ static void handleDropFlag(void *msg)
   eventHandler.FlagDropped(flag, *tank);
 }
 
+
 static void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
@@ -2594,6 +2661,10 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
     return;
 
   int capturedTeam = capturedFlag.type->flagTeam;
+
+  if (capturer) { // FIXME ?
+    eventHandler.FlagCaptured(capturedFlag, *capturer);
+  }
 
   // player no longer has flag
   if (capturer) {
@@ -2636,6 +2707,7 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
 
   checkScores = true;
 }
+
 
 static void handleNewRabbit(void *msg)
 {
@@ -2801,6 +2873,7 @@ static bool showShotEffects(int shooterid)
   return true;
 }
 
+
 static void playShotSound (const FiringInfo &info, bool localSound)
 {
   const float *pos = info.shot.pos;
@@ -2956,6 +3029,7 @@ static void handleHandicap(void *msg)
   }
 }
 
+
 static void handleScore(void *msg)
 {
   uint8_t numScores;
@@ -2995,6 +3069,7 @@ static void handleScore(void *msg)
   }
 }
 
+
 static void handleTeleport(void *msg)
 {
   PlayerId id;
@@ -3015,6 +3090,7 @@ static void handleTeleport(void *msg)
   }
 }
 
+
 static void handleTransferFlag(void *msg)
 {
   PlayerId fromId, toId;
@@ -3029,6 +3105,7 @@ static void handleTransferFlag(void *msg)
   Player *toTank = lookupPlayer(toId);
   handleFlagTransferred(fromTank, toTank, flagIndex, (ShotType)t);
 }
+
 
 static void handleMessage(void *msg)
 {
@@ -3248,6 +3325,7 @@ static void handleMessage(void *msg)
   }
 }
 
+
 static void handleReplayReset(void *msg, bool &checkScores)
 {
   int i;
@@ -3256,18 +3334,19 @@ static void handleReplayReset(void *msg, bool &checkScores)
 
   // remove players up to 'lastPlayer'
   // any PlayerId above lastPlayer is a replay observers
-  for (i=0 ; i<lastPlayer ; i++)
+  for (i = 0 ; i < lastPlayer ; i++)
     if (removePlayer (i))
       checkScores = true;
 
   // remove all of the flags
-  for (i=0 ; i<numFlags; i++) {
+  for (i = 0 ; i < numFlags; i++) {
     Flag &flag = world->getFlag(i);
     flag.owner = (PlayerId) -1;
     flag.status = FlagNoExist;
     world->initFlag(i);
   }
 }
+
 
 static void handleAdminInfo(void *msg)
 {
@@ -3334,6 +3413,7 @@ default:
   }
 }
 
+
 static void handlePlayerInfo(void *msg)
 {
   uint8_t numPlayers;
@@ -3353,6 +3433,7 @@ static void handlePlayerInfo(void *msg)
     p->setVerified((info & IsVerified) != 0);
   }
 }
+
 
 static void handleNewPlayer(void *msg)
 {
@@ -3402,8 +3483,8 @@ static void handlePlayerData(void *msg)
   msg = nboUnpackUByte(msg, id);
 
   std::string key, value;
-  msg= nboUnpackStdString(msg, key);
-  msg= nboUnpackStdString(msg, value);
+  msg = nboUnpackStdString(msg, key);
+  msg = nboUnpackStdString(msg, value);
 
   Player *p = lookupPlayer(id);
   if (p && key.size())
@@ -3438,6 +3519,7 @@ static void handleTangReset(void)
   ClientIntangibilityManager::instance().resetTangibility();
 }
 
+
 static void handleAllowSpawn(uint16_t len, void *msg)
 {
   if (len >= 1) {
@@ -3448,10 +3530,12 @@ static void handleAllowSpawn(uint16_t len, void *msg)
   }
 }
 
+
 static void handleLimboMessage(void *msg)
 {
   nboUnpackStdString(msg, customLimboMessage);
 }
+
 
 static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg)
 {
@@ -3465,6 +3549,7 @@ case MsgSetShot:
   }
   return true;
 }
+
 
 static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
 {
@@ -3700,6 +3785,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
   }
 }
 
+
 //
 // player message handling
 //
@@ -3740,6 +3826,7 @@ static void handleMovementUpdate(uint16_t code, void *msg)
   }
 }
 
+
 static void handleGMUpdate (void *msg)
 {
   ShotUpdate shot;
@@ -3762,39 +3849,43 @@ static void handleGMUpdate (void *msg)
     if (TimeKeeper::getTick() - lastLockMsg > 0.75) 
     {
       SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
-      lastLockMsg=TimeKeeper::getTick();
+      lastLockMsg = TimeKeeper::getTick();
       addMessage(tank, "locked on me");
     }
   }
 }
+
 
 //
 // message handling
 //
 class ClientReceiveCallback : public NetworkMessageTransferCallback
 {
-public:
-  virtual size_t receive(BufferedNetworkMessage *message)
-  {
-    if (!serverLink || serverError)
-      return 0;
+  public:
+    virtual size_t receive(BufferedNetworkMessage *message)
+    {
+      if (!serverLink || serverError) {
+        return 0;
+      }
 
-    int e = 0;
+      int e = 0;
 
-    e = serverLink->read(message, 0);
+      e = serverLink->read(message, 0);
 
-    if (e == -2) {
-      printError("Server communication error");
-      serverError = true;
+      if (e == -2) {
+        printError("Server communication error");
+        serverError = true;
+        return 0;
+      }
+
+      if (e == 1) {
+        return message->size() + 4;
+      }
+
       return 0;
     }
-
-    if (e == 1)
-      return message->size() + 4;
-
-    return 0;
-  }
 };
+
 
 static void doMessages()
 {
@@ -3816,6 +3907,7 @@ static void doMessages()
   }
 }
 
+
 static void updateFlags(float dt)
 {
   for (int i = 0; i < numFlags; i++) {
@@ -3834,6 +3926,7 @@ static void updateFlags(float dt)
   }
   FlagSceneNode::setTimeStep(dt);
 }
+
 
 bool addExplosion(const float *_pos,
 		  float size, float duration, bool groundLight)
@@ -3999,6 +4092,7 @@ static void handleMyTankKilled(int reason)
 }
 #endif
 
+
 static void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
@@ -4015,6 +4109,7 @@ static void handleMsgSetVars(void *msg)
     BZDB.setPermission(name, StateDatabase::Locked);
   }
 }
+
 
 void handleFlagDropped(Player *tank)
 {
@@ -4045,9 +4140,10 @@ void handleFlagDropped(Player *tank)
   tank->setFlag(Flags::Null);
 }
 
+
 static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType)
 {
-  Flag f = world->getFlag(flagIndex);
+  Flag& f = world->getFlag(flagIndex);
 
   fromTank->setShotType(StandardShot);
   fromTank->setFlag(Flags::Null);
@@ -4067,12 +4163,15 @@ static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagInde
     }
   }
 
+  eventHandler.FlagTransferred(f, *fromTank, *toTank);
+
   std::string message(toTank->getCallSign());
   message += " stole ";
   message += fromTank->getCallSign();
   message += "'s flag";
   addMessage(toTank, message);
 }
+
 
 static bool gotBlowedUp(BaseLocalPlayer *tank,
 			BlowedUpReason reason,
@@ -4215,6 +4314,7 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
   return (reason == GotShot && flag == Flags::Shield && shotId != -1);
 }
 
+
 static bool canSquishMe(int id)
 {
   // I must be playing
@@ -4239,6 +4339,7 @@ static bool canSquishMe(int id)
 
   return false;
 }
+
 
 static void checkEnvironment()
 {
@@ -4272,7 +4373,7 @@ static void checkEnvironment()
 	const float *fpos = world->getFlag(i).position;
 	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
 	  serverLink->sendPlayerUpdate(myTank);
-	  lastGrabSent=TimeKeeper::getTick();
+	  lastGrabSent = TimeKeeper::getTick();
 	}
       }
     }
@@ -4374,6 +4475,7 @@ static inline bool tankHasShotType(const Player *tank, const FlagType *ft)
   return false;
 }
 
+
 bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *player)
 {
   if (player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth)
@@ -4387,6 +4489,7 @@ bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *
 
   return true;
 }
+
 
 bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *player)
 {
@@ -4403,6 +4506,7 @@ bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *
   return true;
 }
 
+
 static bool isKillable(const Player *target)
 {
   if (target == myTank)
@@ -4414,6 +4518,7 @@ static bool isKillable(const Player *target)
 
   return false;
 }
+
 
 void setLookAtMarker(void)
 {
@@ -4495,6 +4600,7 @@ void setLookAtMarker(void)
   }
   hud->AddEnhancedNamedMarker(bestTarget->getPosition(), Team::getRadarColor(bestTarget->getTeam()), label, !isKillable(bestTarget), 2.0f);
 }
+
 
 void setTarget()
 {
@@ -4588,6 +4694,7 @@ void setTarget()
   }
 }
 
+
 static void setHuntTarget()
 {
   // get info about my tank
@@ -4661,6 +4768,7 @@ static void setHuntTarget()
   }
 }
 
+
 static void updateDaylight(double offset)
 {
   static const double SecondsInDay = 86400.0;
@@ -4669,7 +4777,9 @@ static void updateDaylight(double offset)
   RENDERER.setTimeOfDay(unixEpoch + offset / SecondsInDay);
 }
 
+
 #ifdef ROBOT
+
 
 //
 // some robot stuff
@@ -4732,6 +4842,7 @@ static void addObstacle(std::vector<BzfRegion*> &rgnList, const Obstacle &obstac
   }
 }
 
+
 static void makeObstacleList()
 {
   const float tankRadius = BZDBCache::tankRadius;
@@ -4786,6 +4897,7 @@ static void makeObstacleList()
   }
 }
 
+
 static void setRobotTarget(RobotPlayer *robot)
 {
   Player *bestTarget = NULL;
@@ -4823,6 +4935,7 @@ static void setRobotTarget(RobotPlayer *robot)
     }
     robot->setTarget(bestTarget);
 }
+
 
 static void updateRobots(float dt)
 {
@@ -4956,6 +5069,7 @@ static void checkEnvironment(RobotPlayer *tank)
   }
 }
 
+
 static void checkEnvironmentForRobots()
 {
   for (int i = 0; i < numRobots; i++)
@@ -4963,12 +5077,14 @@ static void checkEnvironmentForRobots()
       checkEnvironment(robots[i]);
 }
 
+
 static void sendRobotUpdates()
 {
   for (int i = 0; i < numRobots; i++)
     if (robots[i] && robots[i]->isDeadReckoningWrong())
       serverLink->sendPlayerUpdate(robots[i]);
 }
+
 
 static void addRobots()
 {
@@ -5020,33 +5136,36 @@ static void enteringServer(void* buf)
 
   myTank->changeScore(rank, wins, losses, tks);
 
+  const TeamColor teamColor = (TeamColor)team;
+  const char* teamName = Team::getName(teamColor);
+
   // if server assigns us a different team, display a message
   std::string teamMsg;
   if (myTank->getTeam() != AutomaticTeam) {
     teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
-      Team::getName(myTank->getTeam()));
-    if ((TeamColor)team == ObserverTeam) {
+                                Team::getName(myTank->getTeam()));
+    if (teamColor == ObserverTeam) {
       teamMsg += "as an Observer";
     } else {
-      teamMsg += TextUtils::format("to the %s",
-	Team::getName((TeamColor)team));
-    }
-  } else {
-    if ((TeamColor)team == ObserverTeam) {
-      teamMsg = "You were joined as an observer";
-    } else {
-      if (team != RogueTeam)
-	teamMsg = TextUtils::format("You joined the %s",
-	Team::getName((TeamColor)team));
-      else
-	teamMsg = TextUtils::format("You joined as a %s",
-	Team::getName((TeamColor)team));
+      teamMsg += TextUtils::format("to the %s", teamName);
     }
   }
-  if (myTank->getTeam() != (TeamColor)team) {
-    myTank->setTeam((TeamColor)team);
-    hud->setAlert(1, teamMsg.c_str(), 8.0f,
-      (TeamColor)team==ObserverTeam?true:false);
+  else {
+    if (teamColor == ObserverTeam) {
+      teamMsg = "You were joined as an observer";
+    }
+    else {
+      if (team != RogueTeam) {
+	teamMsg = TextUtils::format("You joined the %s", teamName);
+      } else {
+	teamMsg = TextUtils::format("You joined as a %s", teamName);
+      }
+    }
+  }
+
+  if (myTank->getTeam() != teamColor) {
+    myTank->setTeam(teamColor);
+    hud->setAlert(1, teamMsg.c_str(), 8.0f, teamColor == ObserverTeam);
     addMessage(NULL, teamMsg.c_str(), ControlPanel::MessageMisc, true);
   }
 
@@ -5062,7 +5181,10 @@ static void enteringServer(void* buf)
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
 
-  if ((myTank->getTeam() == ObserverTeam) || devDriving) {
+  if ((myTank->getTeam() != ObserverTeam) && !devDriving) {
+    ROAM.setMode(Roaming::roamViewDisabled);
+  }
+  else {
     if (!ROAM.isRoaming()) {
       const std::string roamStr = BZDB.get("roamView");
       
@@ -5072,10 +5194,6 @@ static void enteringServer(void* buf)
       }
       ROAM.setMode(roamView);
     }
-  //    ROAM.resetCamera();
-  }
-  else {
-    ROAM.setMode(Roaming::roamViewDisabled);
   }
 
   setTankFlags();
@@ -5123,6 +5241,7 @@ static void enteringServer(void* buf)
 
   entered = true;
 }
+
 
 static void cleanWorldCache()
 {
@@ -5298,6 +5417,7 @@ static void saveRobotInfo(Playerid id, void *msg)
 }
 #endif
 
+
 static void resetServerVar(const std::string &name, void*)
 {
   // reset server-side variables
@@ -5306,6 +5426,7 @@ static void resetServerVar(const std::string &name, void*)
     BZDB.set(name, defval);
   }
 }
+
 
 void leaveGame()
 {
@@ -5316,9 +5437,11 @@ void leaveGame()
   entered = false;
   joiningGame = false;
 
+  // -- don't know enough to remove this code, but
+  // -- the 'radar' pointer points to '_radar' in startPlaying()
+  //
   // no more radar
   //  radar->setWorld(NULL);
-
   //  controlPanel->setRadarRenderer(NULL);
   /*
   delete radar;
@@ -5336,9 +5459,10 @@ void leaveGame()
   }
   numRobots = 0;
 
-  for (std::vector<BzfRegion*>::iterator itr = obstacleList.begin();
-    itr != obstacleList.end(); ++itr)
+  std::vector<BzfRegion*>::iterator itr;
+  for (itr = obstacleList.begin(); itr != obstacleList.end(); ++itr) {
     delete (*itr);
+  }
   obstacleList.clear();
 #endif
 
@@ -5351,20 +5475,23 @@ void leaveGame()
   // reset the daylight time
   const bool syncTime = (BZDB.eval(StateDatabase::BZDB_SYNCTIME) >= 0.0f);
   const bool fixedTime = BZDB.isSet("fixedTime");
-  if (syncTime)
+  if (syncTime) {
     // return to the desired user time
     epochOffset = userTimeEpochOffset;
-  else if (fixedTime)
+  }
+  else if (fixedTime) {
     // save the current user time
     userTimeEpochOffset = epochOffset;
-  else
+  }
+  else {
     // revert back to when the client was started?
     epochOffset = userTimeEpochOffset;
+  }
 
   updateDaylight(epochOffset);
   lastEpochOffset = epochOffset;
   BZDB.set(StateDatabase::BZDB_SYNCTIME,
-    BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
+           BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
 
   // flush downloaded textures (before the BzMaterials are nuked)
   Downloads::instance().removeTextures();
@@ -5424,7 +5551,7 @@ void leaveGame()
   // purge any custom flags we may have accumulated
   Flags::clearCustomFlags();
 
-  // reload luaUser in case it was forbidden
+  // reload LuaUser in case it was forbidden
   if (!LuaClientScripts::LuaUserIsActive()) {
     LuaClientScripts::LuaUserLoadHandler();
   }
@@ -5557,6 +5684,7 @@ static void addVarToAutoComplete(const std::string &name, void* /*userData*/)
   return;
 }
 
+
 static void joinInternetGame2()
 {
   justJoined = true;
@@ -5655,13 +5783,7 @@ static void joinInternetGame2()
     stack->pop();
   joiningGame = false;
 
-  if (BZDB.isTrue(StateDatabase::BZDB_FORBIDLUAUSER)) {
-    if (LuaClientScripts::LuaUserIsActive()) {
-      addMessage(NULL, "This server forbids LuaUser scripts");
-    }
-    LuaClientScripts::LuaUserFreeHandler();
-  }
-
+  LuaClientScripts::LuaUserUpdateForbidden();
   LuaClientScripts::LuaWorldLoadHandler();
   eventHandler.ServerJoined();
 }
@@ -5690,22 +5812,15 @@ static void renderDialog()
   }
 }
 
+
 static void checkDirtyControlPanel(ControlPanel *cp)
 {
   if (cp) {
-    if (HUDDialogStack::get()->isActive())
+    if (HUDDialogStack::get()->isActive()) {
       cp->invalidate();
+    }
   }
   return;
-}
-
-static int getZoomFactor()
-{
-  if (!BZDB.isSet("displayZoom")) return 1;
-  const int zoom = atoi(BZDB.get("displayZoom").c_str());
-  if (zoom < 1) return 1;
-  if (zoom > 8) return 8;
-  return zoom;
 }
 
 
@@ -5806,6 +5921,7 @@ static bool trackPlayerShot(Player *target,
   return false;
 }
 
+
 static void setupNearPlane()
 {
   NearPlane = NearPlaneNormal;
@@ -5851,25 +5967,30 @@ static void setupFarPlane()
       const std::string &fogMode = BZDB.get("_fogMode");
       if (fogMode == "linear") {
 	farDist = fogMargin * BZDB.eval("_fogEnd");
-      } else {
+      }
+      else {
 	const float density = BZDB.eval("_fogDensity");
 	if (density > 0.0f) {
 	  const float fogFactor = 0.01f;
-	  if (fogMode == "exp2")
+	  if (fogMode == "exp2") {
 	    farDist = fogMargin * sqrtf(-logf(fogFactor)) / density;
-	  else // default to 'exp'
+	  } else { // default to 'exp'
 	    farDist = fogMargin * -logf(fogFactor) / density;
+          }
 	} else {
 	  // default far plane
 	}
       }
-    } else {
+    }
+    else {
       // default far plane
     }
-  } else {
+  }
+  else {
     const float dist = BZDB.eval("_cullDist");
-    if (dist > 0.0f)
+    if (dist > 0.0f) {
       farDist = dist;
+    }
     /* else */
     // default far plane
   }
@@ -5883,24 +6004,510 @@ static void setupFarPlane()
 }
 
 
+/******************************************************************************/
+
+static void drawThreeChannel(float fov, const float myTankDir[3],
+                             float eyePoint[3], float targetPoint[3])
+{
+  ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
+
+  // draw center channel
+  RENDERER.render(false);
+  drawUI();
+
+  // set up for drawing left channel
+  mainWindow->setQuadrant(MainWindow::LowerLeft);
+  // FIXME -- this assumes up is along +z
+  const float cFOV = cosf(fov);
+  const float sFOV = sinf(fov);
+  targetPoint[0] = eyePoint[0] + (cFOV * myTankDir[0]) - (sFOV * myTankDir[1]);
+  targetPoint[1] = eyePoint[1] + (cFOV * myTankDir[1]) + (sFOV * myTankDir[0]);
+  targetPoint[2] = eyePoint[2] + myTankDir[2];
+  viewFrustum.setView(eyePoint, targetPoint);
+
+  // draw left channel
+  RENDERER.render(false, true, true);
+
+  // set up for drawing right channel
+  mainWindow->setQuadrant(MainWindow::LowerRight);
+  // FIXME -- this assumes up is along +z
+  targetPoint[0] = eyePoint[0] + (cFOV * myTankDir[0]) + (sFOV * myTankDir[1]);
+  targetPoint[1] = eyePoint[1] + (cFOV * myTankDir[1]) - (sFOV * myTankDir[0]);
+  targetPoint[2] = eyePoint[2] + myTankDir[2];
+  viewFrustum.setView(eyePoint, targetPoint);
+
+  // draw right channel
+  RENDERER.render(true, true, true);
+
+#if defined(DEBUG_RENDERING)
+  // set up for drawing rear channel
+  mainWindow->setQuadrant(MainWindow::UpperLeft);
+  // FIXME -- this assumes up is along +z
+  targetPoint[0] = eyePoint[0] - myTankDir[0];
+  targetPoint[1] = eyePoint[1] - myTankDir[1];
+  targetPoint[2] = eyePoint[2] + myTankDir[2];
+  viewFrustum.setView(eyePoint, targetPoint);
+
+  // draw rear channel
+  RENDERER.render(true, true, true);
+#endif
+  // back to center channel
+  mainWindow->setQuadrant(MainWindow::UpperRight);
+}
+
+
+/******************************************************************************/
+
+static void drawStacked()
+{
+  ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
+
+  float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  if (BZDB.isSet("eyesep")) {
+    EyeDisplacement = BZDB.eval("eyesep");
+  }
+  if (BZDB.isSet("focal")) {
+    FocalPlane = BZDB.eval("focal");
+  }
+
+  // setup view for left eye
+  viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+
+  // draw left eye's view
+  RENDERER.render(false);
+  drawUI();
+
+  // set up view for right eye
+  mainWindow->setQuadrant(MainWindow::UpperHalf);
+  viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+
+  // draw right eye's view
+  RENDERER.render(true, true);
+  drawUI();
+
+  // draw common stuff
+
+  // back to left channel
+  mainWindow->setQuadrant(MainWindow::LowerHalf);
+}
+
+
+/******************************************************************************/
+
+static void drawStereo()
+{
+  ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
+
+  float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  if (BZDB.isSet("eyesep"))
+    EyeDisplacement = BZDB.eval("eyesep");
+  if (BZDB.isSet("focal"))
+    FocalPlane = BZDB.eval("focal");
+
+  // setup view for left eye
+#ifdef USE_GL_STEREO
+  glDrawBuffer(GL_BACK_LEFT);
+#endif
+  viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+
+  // draw left eye's view
+  RENDERER.render(false);
+#ifndef USE_GL_STEREO
+  drawUI();
+#endif
+
+  // set up view for right eye
+#ifdef USE_GL_STEREO
+  glDrawBuffer(GL_BACK_RIGHT);
+#else
+  mainWindow->setQuadrant(MainWindow::UpperLeft);
+#endif
+  viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+
+  // draw right eye's view
+  RENDERER.render(true, true);
+#ifndef USE_GL_STEREO
+  drawUI();
+#endif
+
+  // draw common stuff
+#ifdef USE_GL_STEREO
+  glDrawBuffer(GL_BACK);
+  drawUI();
+#endif
+
+#ifndef USE_GL_STEREO
+  // back to left channel
+  mainWindow->setQuadrant(MainWindow::UpperRight);
+#endif
+}
+
+
+/******************************************************************************/
+
+static void drawAnaglyph()
+{
+  ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
+
+  float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  if (BZDB.isSet("eyesep"))
+    EyeDisplacement = BZDB.eval("eyesep");
+  if (BZDB.isSet("focal"))
+    FocalPlane = BZDB.eval("focal");
+
+  // setup view for left eye
+  glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+  viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+
+  // draw left eye's view
+  RENDERER.render(false);
+  drawUI();
+
+  // set up view for right eye
+  glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
+  // for red/blue to somewhat work ...
+  //glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
+  viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+
+  // draw right eye's view
+  RENDERER.render(true, true);
+  drawUI();
+}
+
+
+/******************************************************************************/
+
+static void drawInterlaced()
+{
+  ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
+
+  float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
+  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  const int width = mainWindow->getWidth();
+  const int height = mainWindow->getHeight();
+  if (BZDB.isSet("eyesep"))
+    EyeDisplacement = BZDB.eval("eyesep");
+  if (BZDB.isSet("focal"))
+    FocalPlane = BZDB.eval("focal");
+
+  if (BZDBCache::stencilShadows) {
+    BZDB.set("stencilShadows", "0");
+    addMessage(NULL, "Disabled stencilShadows for interlaced mode");
+  }
+
+  OpenGLGState::resetState();
+  // enable stencil test
+  glEnable(GL_STENCIL_TEST);
+
+  // clear stencil
+  glClearStencil(0);
+  // Clear color and stencil buffer
+  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  // All drawing commands fail the stencil test, and are not
+  // drawn, but increment the value in the stencil buffer.
+  glStencilFunc(GL_NEVER, 0x0, 0x0);
+  glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  for (int y = 0; y <= height; y += 2) {
+    glBegin(GL_LINES);
+    glVertex2i(0, y);
+    glVertex2i(width, y);
+    glEnd();
+  }
+
+  // draw except where the stencil pattern is 0x1
+  // do not change the stencil buffer
+  glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  // setup view for left eye
+  viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+  // draw left eye's view
+  RENDERER.render(false);
+
+  // draw where the stencil pattern is 0x1
+  // do not change the stencil buffer
+  glStencilFunc(GL_EQUAL, 0x1, 0x1);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  // set up view for right eye
+  viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+  // draw right eye's view
+  RENDERER.render(true, true);
+
+  glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  drawUI();
+}
+
+
+/******************************************************************************/
+
+static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
+                            float muzzleHeight,
+                            float eyePoint[3], float targetPoint[3], float& fov)
+{
+  // default setup
+  eyePoint[0] = myTankPos[0];
+  eyePoint[1] = myTankPos[1];
+  eyePoint[2] = myTankPos[2] + muzzleHeight;
+  targetPoint[0] = eyePoint[0] + myTankDir[0];
+  targetPoint[1] = eyePoint[1] + myTankDir[1];
+  targetPoint[2] = eyePoint[2] + myTankDir[2];
+
+  // 3rd person camera
+  if (myTank && thirdPersonVars.b3rdPerson) {
+    const float distScale = thirdPersonVars.targetMultiplyer;
+    targetPoint[0] = eyePoint[0] + (myTankDir[0] * distScale);
+    targetPoint[1] = eyePoint[1] + (myTankDir[1] * distScale);
+    targetPoint[2] = eyePoint[2] + (myTankDir[2] * distScale);
+    const float offsetXY = thirdPersonVars.cameraOffsetXY;
+    const float offsetZ  = thirdPersonVars.cameraOffsetZ;
+    eyePoint[0] -= (myTankDir[0] * offsetXY);
+    eyePoint[1] -= (myTankDir[1] * offsetXY);
+    eyePoint[2] += (muzzleHeight * offsetZ);
+    return;
+  }
+
+  // normal mode, use the default setup
+  if (!devDriving && !ROAM.isRoaming()) {
+    return;
+  }
+
+  // roaming mode
+  hud->setAltitude(-1.0f);
+  float roamViewAngle;
+  const Roaming::RoamingCamera *roam = ROAM.getCamera();
+  if (!(ROAM.getMode() == Roaming::roamViewFree) &&
+      (ROAM.getTargetTank() || (devDriving && myTank))) {
+    Player* target;
+    if (!devDriving) {
+      target = ROAM.getTargetTank();
+    } else {
+      target = myTank;
+    }
+
+    const float *targetTankDir = target->getForward();
+    // fixed camera tracking target
+    if (ROAM.getMode() == Roaming::roamViewTrack) {
+      eyePoint[0] = roam->pos[0];
+      eyePoint[1] = roam->pos[1];
+      eyePoint[2] = roam->pos[2];
+      targetPoint[0] = target->getPosition()[0];
+      targetPoint[1] = target->getPosition()[1];
+      targetPoint[2] = target->getPosition()[2] +
+                       target->getMuzzleHeight();
+    }
+    else if (ROAM.getMode() == Roaming::roamViewFollow) {
+      // camera following target
+      if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+        eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+        eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+        eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+        targetPoint[0] = target->getPosition()[0];
+        targetPoint[1] = target->getPosition()[1];
+        targetPoint[2] = target->getPosition()[2];
+      }
+    }
+    else if (ROAM.getMode() == Roaming::roamViewFP) {
+      // target's view
+      if (!trackPlayerShot(target, eyePoint, targetPoint)) {
+        eyePoint[0] = target->getPosition()[0];
+        eyePoint[1] = target->getPosition()[1];
+        eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
+        targetPoint[0] = eyePoint[0] + targetTankDir[0];
+        targetPoint[1] = eyePoint[1] + targetTankDir[1];
+        targetPoint[2] = eyePoint[2] + targetTankDir[2];
+        hud->setAltitude(target->getPosition()[2]);
+      }
+    }
+    else if (ROAM.getMode() == Roaming::roamViewFlag) {
+      // track team flag
+      Flag *targetFlag = ROAM.getTargetFlag();
+      eyePoint[0] = roam->pos[0];
+      eyePoint[1] = roam->pos[1];
+      eyePoint[2] = roam->pos[2];
+      targetPoint[0] = targetFlag->position[0];
+      targetPoint[1] = targetFlag->position[1];
+      targetPoint[2] = targetFlag->position[2];
+      if (targetFlag->status != FlagOnTank) {
+        targetPoint[2] += muzzleHeight;
+      } else {
+        targetPoint[2] -= (BZDBCache::tankHeight -
+                           BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+      }
+    }
+    roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
+                                   targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+  }
+  else {
+    // free Roaming
+    float dir[3];
+    dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
+    dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
+    dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+    eyePoint[0] = roam->pos[0];
+    eyePoint[1] = roam->pos[1];
+    eyePoint[2] = roam->pos[2];
+    targetPoint[0] = eyePoint[0] + dir[0];
+    targetPoint[1] = eyePoint[1] + dir[1];
+    targetPoint[2] = eyePoint[2] + dir[2];
+    roamViewAngle = roam->theta;
+  }
+
+  if (!devDriving) {
+    float virtPos[] = { eyePoint[0], eyePoint[1], 0 };
+    if (myTank) {
+      myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
+    }
+  }
+
+  fov = (float)(roam->zoom * M_PI / 180.0);
+
+  SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+}
+
+
+/******************************************************************************/
+
+
+static void addDynamicSceneNodes()
+{
+  SceneDatabase* scene = RENDERER.getSceneDatabase();
+  if (!scene || !myTank) {
+    return;
+  }
+
+  const bool seerView = (myTank->getFlag() == Flags::Seer);
+  const bool showTreads = BZDB.isTrue("showTreads");
+
+  // add my tank if required
+  const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
+  const bool showMyTreads = showTreads ||
+    (devDriving && (ROAM.getMode() != Roaming::roamViewFP));
+
+  myTank->addToScene(scene, myTank->getTeam(),
+                     inCockpit, seerView,
+                     showMyTreads, showMyTreads /*showIDL*/);
+
+  // add my shells
+  myTank->addShots(scene, false);
+
+  // add server shells
+  if (world) {
+    world->getWorldWeapons()->addShots(scene, false);
+  }
+
+  // add antidote flag
+  myTank->addAntidote(scene);
+
+  // add flags
+  world->addFlags(scene, seerView);
+
+  // add other tanks and shells
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (remotePlayers[i]) {
+      const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+      remotePlayers[i]->addShots(scene, colorblind);
+
+      TeamColor effectiveTeam = RogueTeam;
+      if (!colorblind) {
+        if ((remotePlayers[i]->getFlag() == Flags::Masquerade)
+            && (myTank->getFlag() != Flags::Seer)
+            && (myTank->getTeam() != ObserverTeam)) {
+          effectiveTeam = myTank->getTeam();
+        } else {
+          effectiveTeam = remotePlayers[i]->getTeam();
+        }
+      }
+
+      const bool inCockpit2 =
+        ROAM.isRoaming() && !devDriving &&
+        (ROAM.getMode() == Roaming::roamViewFP) &&
+        ROAM.getTargetTank() && (ROAM.getTargetTank()->getId() == i);
+      const bool showPlayer = !inCockpit2 || showTreads;
+
+      // add player tank if required
+      if ((myTank->getFlag() == Flags::Seer) || showPlayer) {
+        remotePlayers[i]->addToScene(scene, effectiveTeam, inCockpit2,
+                                     seerView, showPlayer, showPlayer,
+                                     thirdPersonVars.b3rdPerson);
+      }
+    }
+  }
+
+  // add explosions
+  addExplosions(scene);
+
+  // if inside a building, add some eighth dimension scene nodes.
+  if (GfxBlockMgr::insides.notBlocked()) {
+    const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
+    for (unsigned int n = 0; n < list.size(); n++) {
+      const Obstacle *obs = list[n];
+      const int nodeCount = obs->getInsideSceneNodeCount();
+      SceneNode **nodeList = obs->getInsideSceneNodeList();
+      for (int o = 0; o < nodeCount; o++) {
+        scene->addDynamicNode(nodeList[o]);
+      }
+    }
+  }
+}
+
+
+/******************************************************************************/
+
+static void drawFakeCursor()
+{
+  int mx, my;
+  const int width = mainWindow->getWidth();
+  const int height = mainWindow->getHeight();
+  const int ox = mainWindow->getOriginX();
+  const int oy = mainWindow->getOriginY();
+  mainWindow->getWindow()->getMouse(mx, my);
+  my = height - my - 1;
+
+  glScissor(ox, oy, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glColor3f(0.0f, 0.0f, 0.0f);
+  glRecti(mx - 8, my - 2, mx - 2, my + 2);
+  glRecti(mx + 2, my - 2, mx + 8, my + 2);
+  glRecti(mx - 2, my - 8, mx + 2, my - 2);
+  glRecti(mx - 2, my + 2, mx + 2, my + 8);
+
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glRecti(mx - 7, my - 1, mx - 3, my + 1);
+  glRecti(mx + 3, my - 1, mx + 7, my + 1);
+  glRecti(mx - 1, my - 7, mx + 1, my - 3);
+  glRecti(mx - 1, my + 3, mx + 1, my + 7);
+
+  glPopMatrix();
+}
+
+
+/******************************************************************************/
+
 void drawFrame(const float dt)
 {
-  // get view type (constant for entire game)
   static SceneRenderer::ViewType viewType = RENDERER.getViewType();
-  // get media object
-  static BzfMedia *media = PlatformFactory::getMedia();
+  static BzfMedia* media = PlatformFactory::getMedia();
 
   static const float defaultPos[3] = { 0.0f, 0.0f, 0.0f };
   static const float defaultDir[3] = { 1.0f, 0.0f, 0.0f };
-  static int frameCount = 0;
+  static int   frameCount = 0;
   static float cumTime = 0.0f;
 
-  const float *myTankPos;
-  const float *myTankDir;
+  const float* myTankPos;
+  const float* myTankDir;
   GLfloat fov;
   GLfloat eyePoint[3];
   GLfloat targetPoint[3];
-  int i;
 
   checkDirtyControlPanel(controlPanel);
 
@@ -5908,7 +6515,9 @@ void drawFrame(const float dt)
   frameCount++;
   cumTime += float(dt);
   if (cumTime >= 2.0) {
-    if (showFPS) hud->setFPS(float(frameCount) / cumTime);
+    if (showFPS) {
+      hud->setFPS(float(frameCount) / cumTime);
+    }
     cumTime = 0.00000001f;
     frameCount = 0;
   }
@@ -5923,121 +6532,24 @@ void drawFrame(const float dt)
     myTankDir = defaultDir;
     muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
     fov = BZDB.eval("defaultFOV");
-  } else {
+  }
+  else {
     myTankPos = myTank->getPosition();
     myTankDir = myTank->getForward();
     muzzleHeight = myTank->getMuzzleHeight();
 
     fov = BZDB.eval("displayFOV");
-    if (myTank->getFlag() == Flags::WideAngle)
+    if (myTank->getFlag() == Flags::WideAngle) {
       fov *= 2.0f;
-
-    if (viewType == SceneRenderer::ThreeChannel)
+    }
+    if (viewType == SceneRenderer::ThreeChannel) {
       fov *= 0.75f;
+    }
   }
   fov *= (float)(M_PI / 180.0);
 
-  // set projection and view
-  eyePoint[0] = myTankPos[0];
-  eyePoint[1] = myTankPos[1];
-  eyePoint[2] = myTankPos[2] + muzzleHeight;
-  targetPoint[0] = eyePoint[0] + myTankDir[0];
-  targetPoint[1] = eyePoint[1] + myTankDir[1];
-  targetPoint[2] = eyePoint[2] + myTankDir[2];
-
-  if (myTank && thirdPersonVars.b3rdPerson) {
-    targetPoint[0] = eyePoint[0] + myTankDir[0]*thirdPersonVars.targetMultiplyer;
-    targetPoint[1] = eyePoint[1] + myTankDir[1]*thirdPersonVars.targetMultiplyer;
-    targetPoint[2] = eyePoint[2] + myTankDir[2]*thirdPersonVars.targetMultiplyer;
-
-    eyePoint[0] -= myTankDir[0] * thirdPersonVars.cameraOffsetXY;
-    eyePoint[1] -= myTankDir[1] * thirdPersonVars.cameraOffsetXY;
-    eyePoint[2] += muzzleHeight * thirdPersonVars.cameraOffsetOffsetZ;
-  }
-  else if (devDriving || ROAM.isRoaming()) {
-    hud->setAltitude(-1.0f);
-    float roamViewAngle;
-    const Roaming::RoamingCamera *roam = ROAM.getCamera();
-    if (!(ROAM.getMode() == Roaming::roamViewFree) &&
-	(ROAM.getTargetTank() || (devDriving && myTank))) {
-      Player* target;
-      if (!devDriving) {
-	target = ROAM.getTargetTank();
-      } else {
-	target = myTank;
-      }
-
-      const float *targetTankDir = target->getForward();
-      // fixed camera tracking target
-      if (ROAM.getMode() == Roaming::roamViewTrack) {
-	eyePoint[0] = roam->pos[0];
-	eyePoint[1] = roam->pos[1];
-	eyePoint[2] = roam->pos[2];
-	targetPoint[0] = target->getPosition()[0];
-	targetPoint[1] = target->getPosition()[1];
-	targetPoint[2] = target->getPosition()[2] +
-	                 target->getMuzzleHeight();
-      } else if (ROAM.getMode() == Roaming::roamViewFollow) {
-	// camera following target
-	if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	  eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-	  eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-	  eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-	  targetPoint[0] = target->getPosition()[0];
-	  targetPoint[1] = target->getPosition()[1];
-	  targetPoint[2] = target->getPosition()[2];
-	}
-      } else if (ROAM.getMode() == Roaming::roamViewFP) {
-	// target's view
-	if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	  eyePoint[0] = target->getPosition()[0];
-	  eyePoint[1] = target->getPosition()[1];
-	  eyePoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
-	  targetPoint[0] = eyePoint[0] + targetTankDir[0];
-	  targetPoint[1] = eyePoint[1] + targetTankDir[1];
-	  targetPoint[2] = eyePoint[2] + targetTankDir[2];
-	  hud->setAltitude(target->getPosition()[2]);
-	}
-      } else if (ROAM.getMode() == Roaming::roamViewFlag) {
-	// track team flag
-	Flag *targetFlag = ROAM.getTargetFlag();
-	eyePoint[0] = roam->pos[0];
-	eyePoint[1] = roam->pos[1];
-	eyePoint[2] = roam->pos[2];
-	targetPoint[0] = targetFlag->position[0];
-	targetPoint[1] = targetFlag->position[1];
-	targetPoint[2] = targetFlag->position[2];
-	if (targetFlag->status != FlagOnTank)
-	  targetPoint[2] += muzzleHeight;
-	else
-	  targetPoint[2] -= (BZDBCache::tankHeight -
-			     BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
-      }
-      roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
-				     targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
-    } else {
-      // free Roaming
-      float dir[3];
-      dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
-      dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
-      dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
-      eyePoint[0] = roam->pos[0];
-      eyePoint[1] = roam->pos[1];
-      eyePoint[2] = roam->pos[2];
-      targetPoint[0] = eyePoint[0] + dir[0];
-      targetPoint[1] = eyePoint[1] + dir[1];
-      targetPoint[2] = eyePoint[2] + dir[2];
-      roamViewAngle = roam->theta;
-    }
-    if (!devDriving) {
-      float virtPos[] = {eyePoint[0], eyePoint[1], 0};
-      if (myTank) {
-	myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
-      }
-    }
-    fov = (float)(roam->zoom * M_PI / 180.0);
-    SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
-  }
+  setupCameraView(myTankPos, myTankDir, muzzleHeight, // const
+                  eyePoint, targetPoint, fov);        // modified
 
   // only use a close plane for drawing in the
   // cockpit, and even then only for odd sized tanks
@@ -6046,14 +6558,13 @@ void drawFrame(const float dt)
   // based on fog and _cullDist
   setupFarPlane();
 
-  ViewFrustum &viewFrustum = RENDERER.getViewFrustum();
+  ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
+  viewFrustum.setFarPlaneCull(FarPlaneCull);
   viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane,
 			    mainWindow->getWidth(),
 			    mainWindow->getHeight(),
 			    mainWindow->getViewHeight());
-  viewFrustum.setFarPlaneCull(FarPlaneCull);
-
   viewFrustum.setView(eyePoint, targetPoint);
 
   // let the hud save off the view matrix so it can do view projections
@@ -6063,86 +6574,11 @@ void drawFrame(const float dt)
   }
 
   // add dynamic nodes
-  SceneDatabase *scene = RENDERER.getSceneDatabase();
-
-  if (scene && myTank) {
-    const bool seerView = (myTank->getFlag() == Flags::Seer);
-    const bool showTreads = BZDB.isTrue("showTreads");
-
-    // add my tank if required
-    const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
-    const bool showMyTreads = showTreads ||
-      (devDriving && (ROAM.getMode() != Roaming::roamViewFP));
-    myTank->addToScene(scene, myTank->getTeam(),
-                       inCockpit, seerView,
-                       showMyTreads, showMyTreads /*showIDL*/);
-
-    // add my shells
-    myTank->addShots(scene, false);
-
-    // add server shells
-    if (world) {
-      world->getWorldWeapons()->addShots(scene, false);
-    }
-
-    // add antidote flag
-    myTank->addAntidote(scene);
-
-    // add flags
-    world->addFlags(scene, seerView);
-
-    // add other tanks and shells
-    for (i = 0; i < curMaxPlayers; i++) {
-      if (remotePlayers[i]) {
-        const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-        remotePlayers[i]->addShots(scene, colorblind);
-
-        TeamColor effectiveTeam = RogueTeam;
-        if (!colorblind) {
-          if ((remotePlayers[i]->getFlag() == Flags::Masquerade)
-              && (myTank->getFlag() != Flags::Seer)
-              && (myTank->getTeam() != ObserverTeam)) {
-            effectiveTeam = myTank->getTeam();
-          } else {
-            effectiveTeam = remotePlayers[i]->getTeam();
-          }
-        }
-
-        const bool inCockpt =
-          ROAM.isRoaming() && !devDriving &&
-          (ROAM.getMode() == Roaming::roamViewFP) &&
-          ROAM.getTargetTank() && (ROAM.getTargetTank()->getId() == i);
-        const bool showPlayer = !inCockpt || showTreads;
-
-        // add player tank if required
-        if ((myTank->getFlag() == Flags::Seer) || showPlayer) {
-          remotePlayers[i]->addToScene(scene, effectiveTeam, inCockpt,
-                                       seerView, showPlayer, showPlayer,
-                                       thirdPersonVars.b3rdPerson);
-        }
-      }
-    }
-
-    // add explosions
-    addExplosions(scene);
-
-    // if inside a building, add some eighth dimension scene nodes.
-    if (GfxBlockMgr::insides.notBlocked()) {
-      const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
-      for (unsigned int n = 0; n < list.size(); n++) {
-        const Obstacle *obs = list[n];
-        const int nodeCount = obs->getInsideSceneNodeCount();
-        SceneNode **nodeList = obs->getInsideSceneNodeList();
-        for (int o = 0; o < nodeCount; o++) {
-          scene->addDynamicNode(nodeList[o]);
-        }
-      }
-    }
-  }
+  addDynamicSceneNodes();
 
   // turn blanking and inversion on/off as appropriate
   RENDERER.setBlank(myTank && (myTank->isPaused() ||
-			       myTank->getFlag() == Flags::Blindness));
+			       (myTank->getFlag() == Flags::Blindness)));
   RENDERER.setInvert(myTank && myTank->isPhantomZoned());
 
   // turn on scene dimming when showing menu, when we're dead
@@ -6158,29 +6594,21 @@ void drawFrame(const float dt)
     clipPos[2] = eye[2];
     const Obstacle *obs;
     obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
-    if (obs != NULL)
+    if (obs != NULL) {
       insideDim = true;
+    }
   }
   RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
 		  ((myTank && !ROAM.isRoaming() && !devDriving) &&
 		   !myTank->isAlive() && !myTank->isExploding()));
 
   // turn on panel dimming when showing the menu (both radar and chat)
-  if (HUDDialogStack::get()->isActive()) {
-    if (controlPanel) {
-      controlPanel->setDimming(0.8f);
-    }
-    if (radar) {
-      radar->setDimming(0.8f);
-    }
+  const float dimFactor = HUDDialogStack::get()->isActive() ? 0.8f : 0.0f;
+  if (radar) {
+    radar->setDimming(dimFactor);
   }
-  else {
-    if (controlPanel) {
-      controlPanel->setDimming(0.0f);
-    }
-    if (radar) {
-      radar->setDimming(0.0f);
-    }
+  if (controlPanel) {
+    controlPanel->setDimming(dimFactor);
   }
 
   // set hud state
@@ -6212,262 +6640,30 @@ void drawFrame(const float dt)
   eventHandler.DrawGenesis();
 
   // draw frame
-  if (viewType == SceneRenderer::ThreeChannel) {
-    // draw center channel
-    RENDERER.render(false);
-    drawUI();
-
-    // set up for drawing left channel
-    mainWindow->setQuadrant(MainWindow::LowerLeft);
-    // FIXME -- this assumes up is along +z
-    const float cFOV = cosf(fov);
-    const float sFOV = sinf(fov);
-    targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] - sFOV*myTankDir[1];
-    targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] + sFOV*myTankDir[0];
-    targetPoint[2] = eyePoint[2] + myTankDir[2];
-    viewFrustum.setView(eyePoint, targetPoint);
-
-    // draw left channel
-    RENDERER.render(false, true, true);
-
-    // set up for drawing right channel
-    mainWindow->setQuadrant(MainWindow::LowerRight);
-    // FIXME -- this assumes up is along +z
-    targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] + sFOV*myTankDir[1];
-    targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] - sFOV*myTankDir[0];
-    targetPoint[2] = eyePoint[2] + myTankDir[2];
-    viewFrustum.setView(eyePoint, targetPoint);
-
-    // draw right channel
-    RENDERER.render(true, true, true);
-
-#if defined(DEBUG_RENDERING)
-    // set up for drawing rear channel
-    mainWindow->setQuadrant(MainWindow::UpperLeft);
-    // FIXME -- this assumes up is along +z
-    targetPoint[0] = eyePoint[0] - myTankDir[0];
-    targetPoint[1] = eyePoint[1] - myTankDir[1];
-    targetPoint[2] = eyePoint[2] + myTankDir[2];
-    viewFrustum.setView(eyePoint, targetPoint);
-
-    // draw rear channel
-    RENDERER.render(true, true, true);
-#endif
-    // back to center channel
-    mainWindow->setQuadrant(MainWindow::UpperRight);
-  }
-  else if (viewType == SceneRenderer::Stacked) {
-    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    if (BZDB.isSet("eyesep")) {
-      EyeDisplacement = BZDB.eval("eyesep");
+  switch (viewType) {
+    case SceneRenderer::ThreeChannel: {
+      drawThreeChannel(fov, myTankDir, eyePoint, targetPoint);
+      break;
     }
-    if (BZDB.isSet("focal")) {
-      FocalPlane = BZDB.eval("focal");
-    }
-
-    // setup view for left eye
-    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
-
-    // draw left eye's view
-    RENDERER.render(false);
-    drawUI();
-
-    // set up view for right eye
-    mainWindow->setQuadrant(MainWindow::UpperHalf);
-    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
-
-    // draw right eye's view
-    RENDERER.render(true, true);
-    drawUI();
-
-    // draw common stuff
-
-    // back to left channel
-    mainWindow->setQuadrant(MainWindow::LowerHalf);
-  }
-  else if (viewType == SceneRenderer::Stereo) {
-    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    if (BZDB.isSet("eyesep"))
-      EyeDisplacement = BZDB.eval("eyesep");
-    if (BZDB.isSet("focal"))
-      FocalPlane = BZDB.eval("focal");
-
-    // setup view for left eye
-#ifdef USE_GL_STEREO
-    glDrawBuffer(GL_BACK_LEFT);
-#endif
-    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
-
-    // draw left eye's view
-    RENDERER.render(false);
-#ifndef USE_GL_STEREO
-    drawUI();
-#endif
-
-    // set up view for right eye
-#ifdef USE_GL_STEREO
-    glDrawBuffer(GL_BACK_RIGHT);
-#else
-    mainWindow->setQuadrant(MainWindow::UpperLeft);
-#endif
-    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
-
-    // draw right eye's view
-    RENDERER.render(true, true);
-#ifndef USE_GL_STEREO
-    drawUI();
-#endif
-
-    // draw common stuff
-#ifdef USE_GL_STEREO
-    glDrawBuffer(GL_BACK);
-    drawUI();
-#endif
-
-#ifndef USE_GL_STEREO
-    // back to left channel
-    mainWindow->setQuadrant(MainWindow::UpperRight);
-#endif
-  }
-  else if (viewType == SceneRenderer::Anaglyph) {
-    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    if (BZDB.isSet("eyesep"))
-      EyeDisplacement = BZDB.eval("eyesep");
-    if (BZDB.isSet("focal"))
-      FocalPlane = BZDB.eval("focal");
-
-    // setup view for left eye
-    glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
-    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
-
-    // draw left eye's view
-    RENDERER.render(false);
-    drawUI();
-
-    // set up view for right eye
-    glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
-    // for red/blue to somewhat work ...
-    //glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
-    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
-
-    // draw right eye's view
-    RENDERER.render(true, true);
-    drawUI();
-  }
-  else if (viewType == SceneRenderer::Interlaced) {
-    float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-    float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    const int width = mainWindow->getWidth();
-    const int height = mainWindow->getHeight();
-    if (BZDB.isSet("eyesep"))
-      EyeDisplacement = BZDB.eval("eyesep");
-    if (BZDB.isSet("focal"))
-      FocalPlane = BZDB.eval("focal");
-
-    if (BZDBCache::stencilShadows) {
-      BZDB.set("stencilShadows", "0");
-      addMessage(NULL, "Disabled stencilShadows for interlaced mode");
-    }
-
-    OpenGLGState::resetState();
-    // enable stencil test
-    glEnable(GL_STENCIL_TEST);
-
-    // clear stencil
-    glClearStencil(0);
-    // Clear color and stencil buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    // All drawing commands fail the stencil test, and are not
-    // drawn, but increment the value in the stencil buffer.
-    glStencilFunc(GL_NEVER, 0x0, 0x0);
-    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-    glColor3f(1.0f, 1.0f, 1.0f);
-    for (int y=0;y<=height;y+=2) {
-      glBegin(GL_LINES);
-      glVertex2i(0, y);
-      glVertex2i(width, y);
-      glEnd();
-    }
-
-    // draw except where the stencil pattern is 0x1
-    // do not change the stencil buffer
-    glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    // setup view for left eye
-    viewFrustum.setOffset(EyeDisplacement, FocalPlane);
-    // draw left eye's view
-    RENDERER.render(false);
-
-    // draw where the stencil pattern is 0x1
-    // do not change the stencil buffer
-    glStencilFunc(GL_EQUAL, 0x1, 0x1);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    // set up view for right eye
-    viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
-    // draw right eye's view
-    RENDERER.render(true, true);
-
-    glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    drawUI();
-
-  }
-  else {
-    const int zoomFactor = getZoomFactor();
-    if (zoomFactor == 1) {
-      // normal rendering
+    case SceneRenderer::Stacked:    { drawStacked();    break; }
+    case SceneRenderer::Stereo:     { drawStereo();     break; }
+    case SceneRenderer::Anaglyph:   { drawAnaglyph();   break; }
+    case SceneRenderer::Interlaced: { drawInterlaced(); break; }
+    default: { // normal rendering
       RENDERER.render();
+      eventHandler.DrawScreenStart();
+      drawUI();
+      break;
     }
-    else { // zoom rendering
-      // draw small out-the-window view
-      mainWindow->setQuadrant(MainWindow::ZoomRegion);
-      const int x = mainWindow->getOriginX();
-      const int y = mainWindow->getOriginY();
-      const int w = mainWindow->getWidth();
-      const int h = mainWindow->getHeight();
-      const int vh = mainWindow->getViewHeight();
-      viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane, w, h, vh);
-      RENDERER.render();
-
-      // set entire window
-      mainWindow->setQuadrant(MainWindow::FullWindow);
-      glScissor(mainWindow->getOriginX(), mainWindow->getOriginY(),
-		mainWindow->getWidth(), mainWindow->getHeight());
-
-      // set pixel copy destination
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(-0.25, (GLdouble)mainWindow->getWidth() - 0.25,
-	      -0.25, (GLdouble)mainWindow->getHeight() - 0.25, -1.0, 1.0);
-      glMatrixMode(GL_MODELVIEW);
-      glPushMatrix();
-      glLoadIdentity();
-      glRasterPos2i(0, 0);
-      glPopMatrix();
-
-      // zoom small image to entire window
-      glDisable(GL_DITHER);
-      glPixelZoom((float)zoomFactor, (float)zoomFactor);
-      glCopyPixels(x, y, w, h, GL_COLOR);
-      glPixelZoom(1.0f, 1.0f);
-      if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
-    }
-
-    eventHandler.DrawScreenStart();
-
-    // draw other stuff
-    drawUI();
   }
 
   // get frame end time
   if (showDrawTime) {
 #if defined(DEBUG_RENDERING)
     // get an accurate measure of frame time (at expense of frame rate)
-    if (BZDB.isTrue("glFinish"))
+    if (BZDB.isTrue("glFinish")) {
       glFinish();
+    }
 #endif
     hud->setDrawTime((float)media->stopwatch(false));
   }
@@ -6475,46 +6671,20 @@ void drawFrame(const float dt)
   // draw a fake cursor if requested.  this is mostly intended for
   // pass through 3D cards that don't have cursor support.
   if (BZDB.isTrue("fakecursor")) {
-    int mx, my;
-    const int width = mainWindow->getWidth();
-    const int height = mainWindow->getHeight();
-    const int ox = mainWindow->getOriginX();
-    const int oy = mainWindow->getOriginY();
-    mainWindow->getWindow()->getMouse(mx, my);
-    my = height - my - 1;
-
-    glScissor(ox, oy, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glRecti(mx - 8, my - 2, mx - 2, my + 2);
-    glRecti(mx + 2, my - 2, mx + 8, my + 2);
-    glRecti(mx - 2, my - 8, mx + 2, my - 2);
-    glRecti(mx - 2, my + 2, mx + 2, my + 8);
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glRecti(mx - 7, my - 1, mx - 3, my + 1);
-    glRecti(mx + 3, my - 1, mx + 7, my + 1);
-    glRecti(mx - 1, my - 7, mx + 1, my - 3);
-    glRecti(mx - 1, my + 3, mx + 1, my + 7);
-
-    glPopMatrix();
+    drawFakeCursor();
   }
 
-  eventHandler.DrawScreen(); // FIXME ?
+  eventHandler.DrawScreen();
 
   verticalSync();
 
   mainWindow->getWindow()->swapBuffers();
 
   // remove dynamic nodes from this frame
-  if (scene)
+  SceneDatabase* scene = RENDERER.getSceneDatabase();
+  if (scene) {
     scene->removeDynamicNodes();
+  }
 }
 
 
@@ -6726,6 +6896,7 @@ static void updateDestructCountdown(float dt)
   return;
 }
 
+
 void getAFastToken(void)
 {
   // get token if we need to (have a password but no token)
@@ -6748,6 +6919,7 @@ void getAFastToken(void)
   if (strcmp(startupInfo.token, "badtoken") == 0)
     startupInfo.token[0] = '\0';
 }
+
 
 void handlePendingJoins(void)
 {
@@ -6781,6 +6953,7 @@ void handlePendingJoins(void)
   joinRequested = false;
 }
 
+
 bool dnsLookupDone(struct in_addr &inAddress)
 {
   if (!waitingDNS)
@@ -6807,6 +6980,7 @@ bool dnsLookupDone(struct in_addr &inAddress)
   }
   return false;
 }
+
 
 void handleJoyStick(void)
 {
@@ -6900,6 +7074,7 @@ void handleJoyStick(void)
     }
 }
 
+
 void updateTimeOfDay(const float dt)
 {
   // update time of day -- update sun and sky every few seconds
@@ -6919,6 +7094,7 @@ void updateTimeOfDay(const float dt)
   }
 }
 
+
 void checkForServerBail(void)
 {
   // if server died then leave the game (note that this may cause
@@ -6933,6 +7109,7 @@ void checkForServerBail(void)
   }
 }
 
+
 void updateVideoFormatTimer(const float dt)
 {
   // update test video format timer
@@ -6944,6 +7121,7 @@ void updateVideoFormatTimer(const float dt)
     }
   }
 }
+
 
 void updateShots(const float dt)
 {
@@ -6959,6 +7137,7 @@ void updateShots(const float dt)
     _world->getWorldWeapons()->updateShots(dt);
 }
 
+
 void moveRoamingCamera(const float dt)
 {
   // move roaming camera
@@ -6968,6 +7147,7 @@ void moveRoamingCamera(const float dt)
   setupRoamingCamera(dt);
   ROAM.buildRoamingLabel();
 }
+
 
 void doTankMotions(const float /*dt*/)
 {
@@ -7013,6 +7193,7 @@ void doTankMotions(const float /*dt*/)
   }
 }
 
+
 void updateTimes(const float dt)
 {
   updateTimeOfDay(dt);
@@ -7022,6 +7203,7 @@ void updateTimes(const float dt)
   updatePauseCountdown(dt);
   updateDestructCountdown(dt);
 }
+
 
 void updatePostions(const float dt)
 {
@@ -7044,6 +7226,7 @@ void updatePostions(const float dt)
 #endif
 }
 
+
 void checkEnvironment(const float dt)
 {
   // update the wind
@@ -7060,6 +7243,7 @@ void checkEnvironment(const float dt)
 
 }
 
+
 void updateTanks(const float dt)
 {
   // adjust properties based on flags (dimensions, cloaking, etc...)
@@ -7071,6 +7255,7 @@ void updateTanks(const float dt)
       remotePlayers[i]->updateTank(dt, false);
   }
 }
+
 
 void updateWorldEffects(const float dt)
 {
@@ -7084,6 +7269,7 @@ void updateWorldEffects(const float dt)
   if (world)
     world->updateAnimations(dt);
 }
+
 
 void doUpdates(const float dt)
 {
@@ -7115,6 +7301,7 @@ void doUpdates(const float dt)
   AutoHunt::update();
 }
 
+
 void doNetworkStuff(void)
 {
   // send my data
@@ -7129,6 +7316,7 @@ void doNetworkStuff(void)
 
   cURLManager::perform();
 }
+
 
 bool checkForCompleteDownloads(void)
 {
@@ -7147,6 +7335,7 @@ bool checkForCompleteDownloads(void)
 
   return false;
 }
+
 
 void doFPSLimit(void)
 {
@@ -7197,13 +7386,13 @@ void doFPSLimit(void)
   lastTime = TimeKeeper::getCurrent();
 }
 
+
 //
 // main playing loop
 //
 
 static void playingLoop()
 {
-  mainWindow->setZoomFactor(getZoomFactor());
   if (BZDB.isTrue("fakecursor"))
     mainWindow->getWindow()->hideMouse();
 
@@ -7277,9 +7466,12 @@ static void playingLoop()
     // draw the frame
     if (!unmapped) {
       drawFrame(dt);
+      // NOTE: eventHandler.DrawGenesis() is called in drawFrame(),
+      //       after it has setup a number of parameters
     }
     else {
-      eventHandler.DrawGenesis();
+      eventHandler.DrawGenesis(); // called every frame
+
       // wait around a little to avoid spinning the CPU when iconified
       TimeKeeper::sleep(0.05f);
     }
@@ -7342,6 +7534,7 @@ static float timeConfiguration(bool useZBuffer)
   return float(endTime - startTime);
 }
 
+
 static void timeConfigurations()
 {
   static const float MaxFrameTime = 0.050f; // seconds
@@ -7368,32 +7561,32 @@ static void timeConfigurations()
   BZDB.set("blend", "1");
   const float timeBlendNoZ   = timeConfiguration(false);
   const float timeBlendZ     = timeConfiguration(true);
-  if (timeNoBlendNoZ > MaxFrameTime &&
-    timeNoBlendZ   > MaxFrameTime &&
-    timeBlendNoZ   > MaxFrameTime &&
-    timeBlendZ     > MaxFrameTime) {
-      if (timeNoBlendNoZ < timeNoBlendZ &&
-	timeNoBlendNoZ < timeBlendNoZ &&
-	timeNoBlendNoZ < timeBlendZ) {
-	  // no depth, no blending definitely fastest
-	  BZDB.set("zbuffer", "1");
-	  BZDB.set("blend", "1");
-      }
-      if (timeNoBlendZ < timeBlendNoZ &&
-	timeNoBlendZ < timeBlendZ) {
-	  // no blending faster than blending
-	  BZDB.set("zbuffer", "1");
-	  BZDB.set("blend", "1");
-      }
-      if (timeBlendNoZ < timeBlendZ) {
-	// blending faster than depth
-	BZDB.set("zbuffer", "1");
-	BZDB.set("blend", "1");
-      }
-      // blending and depth faster than without either
+  if ((timeNoBlendNoZ > MaxFrameTime) &&
+      (timeNoBlendZ   > MaxFrameTime) &&
+      (timeBlendNoZ   > MaxFrameTime) &&
+      (timeBlendZ     > MaxFrameTime)) {
+    if ((timeNoBlendNoZ < timeNoBlendZ) &&
+        (timeNoBlendNoZ < timeBlendNoZ) &&
+        (timeNoBlendNoZ < timeBlendZ)) {
+          // no depth, no blending definitely fastest
       BZDB.set("zbuffer", "1");
       BZDB.set("blend", "1");
-      return;
+    }
+    if ((timeNoBlendZ < timeBlendNoZ) &&
+        (timeNoBlendZ < timeBlendZ)) {
+        // no blending faster than blending
+      BZDB.set("zbuffer", "1");
+      BZDB.set("blend", "1");
+    }
+    if (timeBlendNoZ < timeBlendZ) {
+      // blending faster than depth
+      BZDB.set("zbuffer", "1");
+      BZDB.set("blend", "1");
+    }
+    // blending and depth faster than without either
+    BZDB.set("zbuffer", "1");
+    BZDB.set("blend", "1");
+    return;
   }
 
   // leave blending on if blending clearly faster than stippling
@@ -7409,12 +7602,12 @@ static void timeConfigurations()
   BZDB.set("texture", tm.getMaxFilterName());
   RENDERER.setQuality(1);
   printError("  lowest quality with texture");
-  if (timeConfiguration(false) > MaxFrameTime ||
-    timeConfiguration(true) > MaxFrameTime) {
-      BZDB.set("texture", "0");
-      tm.setMaxFilter(OpenGLTexture::Off);
-      RENDERER.setQuality(0);
-      return;
+  if ((timeConfiguration(false) > MaxFrameTime) ||
+      (timeConfiguration(true) > MaxFrameTime)) {
+    BZDB.set("texture", "0");
+    tm.setMaxFilter(OpenGLTexture::Off);
+    RENDERER.setQuality(0);
+    return;
   }
 
   // everything
@@ -7428,61 +7621,62 @@ static void timeConfigurations()
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
   BZDB.set("radarStyle", "3");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // try it without shadows -- some platforms stipple very slowly
   BZDB.set("shadows", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // no high quality
   printError("  medium quality");
   RENDERER.setQuality(1);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
   printError("  low quality");
   RENDERER.setQuality(0);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // lower quality texturing
   printError("  nearest texturing");
   tm.setMaxFilter(OpenGLTexture::Nearest);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // no texturing
   printError("  no texturing");
   BZDB.set("texture", "0");
   tm.setMaxFilter(OpenGLTexture::Off);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // no blending
   printError("  no blending");
   BZDB.set("blend", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // no smoothing.  shouldn't really affect fill rate too much.
   printError("  no smoothing");
   BZDB.set("smooth", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // no lighting.  shouldn't really affect fill rate, either.
   printError("  no lighting");
   BZDB.set("lighting", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 
   // no dithering
   printError("  no dithering");
   BZDB.set("dither", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
+  if (timeConfiguration(true)  < MaxFrameTime) { return; }
+  if (timeConfiguration(false) < MaxFrameTime) { return; }
 }
+
 
 static void findFastConfiguration()
 {
@@ -7537,12 +7731,14 @@ static void findFastConfiguration()
   RENDERER.setSceneDatabase(NULL);
 }
 
+
 static void defaultErrorCallback(const char *msg)
 {
   std::string message = ColorStrings[RedColor];
   message += msg;
   controlPanel->addMessage(message);
 }
+
 
 static void startupErrorCallback(const char *msg)
 {
@@ -7656,7 +7852,7 @@ void startPlaying()
 
   // catch kill signals before changing video mode so we can
   // put it back even if we die.  ignore a few signals.
-  bzSignal(SIGILL, SIG_PF(dying));
+  bzSignal(SIGILL,  SIG_PF(dying));
   bzSignal(SIGABRT, SIG_PF(dying));
   bzSignal(SIGSEGV, SIG_PF(dying));
   bzSignal(SIGTERM, SIG_PF(suicide));
@@ -7944,6 +8140,7 @@ void startPlaying()
   mainWindow = NULL;
   cleanWorldCache();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -25,6 +25,7 @@ namespace LuaClientScripts {
   void LuaUserUpdate();
   bool LuaUserIsActive();
   bool LuaUserCommand(const std::string& cmd);
+  void LuaUserUpdateForbidden(); // special
 
   void LuaWorldFreeHandler();
   void LuaWorldLoadHandler();

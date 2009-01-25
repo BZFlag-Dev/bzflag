@@ -4,9 +4,6 @@
 
 #include "common.h"
 
-// system headers
-#include <set>
-
 // common headers
 #include "bzfgl.h"
 
@@ -19,12 +16,21 @@ class LuaDList {
 		LuaDList(GLuint listID);
 		~LuaDList();
 
-		bool Call();
-		bool Free();
+		bool Delete();
+
+		bool Call() const;
 		bool IsValid() const;
+
+		inline int GetMaxAttribDepth()  const { return maxAttribDepth;  }
+		inline int GetMinAttribDepth()  const { return minAttribDepth;  }
+		inline int GetExitAttribDepth() const { return exitAttribDepth; }
 
 	private:
 		GLuint listID;
+
+		int maxAttribDepth;  // maximum GL attribute stack depth during execution
+		int minAttribDepth;  // minimum GL attribute stack depth during execution
+		int exitAttribDepth; // GL attribute stack depth change on exit
 
 	private:
 		void InitContext();
@@ -38,14 +44,12 @@ class LuaDList {
 
 class LuaDListMgr {
 	public:
-		static void Init();
-		static void Free();
-
 		static bool PushEntries(lua_State* L);
 
-		bool InsertList(LuaDList* list);
-		bool RemoveList(LuaDList* list);
-
+		static const LuaDList* TestLuaDList(lua_State* L, int index);
+		static const LuaDList* CheckLuaDList(lua_State* L, int index);
+	
+	public:
 		static const char* metaName;
 
 	private:
@@ -53,23 +57,12 @@ class LuaDListMgr {
 		static int MetaGC(lua_State* L);
 		static int MetaIndex(lua_State* L);
 
-		static LuaDList*& CheckLuaDList(lua_State* L, int index);
-	
+		static LuaDList* GetLuaDList(lua_State* L, int index);
+
 	private: // call-outs
 		static int CreateList(lua_State* L);
 		static int CallList(lua_State* L);
 		static int DeleteList(lua_State* L);
-
-	private:
-		std::set<LuaDList*> lists;
-
-	private:
-		void InitContext();
-		void FreeContext();
-
-	private:
-		static void StaticInitContext(void* data);
-		static void StaticFreeContext(void* data);
 };
 
 

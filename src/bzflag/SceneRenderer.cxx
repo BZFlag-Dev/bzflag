@@ -43,22 +43,6 @@
 #include "TrackMarks.h"
 #include "playing.h"
 
-static bool mapFog;
-static bool setupMapFog();
-
-
-#ifdef GL_ABGR_EXT
-static int		strrncmp(const char* s1, const char* s2, int num)
-{
-  int len1 = (int)strlen(s1) - 1;
-  int len2 = (int)strlen(s2) - 1;
-  for (; len1 >= 0 && len2 >= 0 && num > 0; len1--, len2--, num--) {
-    const int d = s1[len1] - s2[len2];
-    if (d != 0) return d;
-  }
-  return 0;
-}
-#endif
 
 //
 // FlareLight
@@ -92,31 +76,32 @@ const GLfloat SceneRenderer::blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 template <>
 SceneRenderer* Singleton<SceneRenderer>::_instance = (SceneRenderer*)0;
 
-SceneRenderer::SceneRenderer() :
-				window(NULL),
-				blank(false),
-				invert(false),
-				sunBrightness(1.0f),
-				scene(NULL),
-				background(NULL),
-				abgr(false),
-				useQualityValue(_HIGH_QUALITY),
-				useDepthComplexityOn(false),
-				useWireframeOn(false),
-				useHiddenLineOn(false),
-				panelOpacity(0.3f),
-				radarSize(4),
-				maxMotionFactor(5),
-				useFogHack(false),
-				viewType(Normal),
-				inOrder(false),
-				useDimming(false),
-				canUseHiddenLine(false),
-				exposed(true),
-				lastFrame(true),
-				sameFrame(false),
-				needStyleUpdate(true),
-				rebuildTanks(true)
+
+SceneRenderer::SceneRenderer()
+: window(NULL)
+, blank(false)
+, invert(false)
+, mirror(false)
+, mapFog(false)
+, sunBrightness(1.0f)
+, scene(NULL)
+, background(NULL)
+, useQualityValue(_HIGH_QUALITY)
+, useDepthComplexityOn(false)
+, useWireframeOn(false)
+, useHiddenLineOn(false)
+, panelOpacity(0.3f)
+, radarSize(4)
+, maxMotionFactor(5)
+, viewType(Normal)
+, inOrder(false)
+, useDimming(false)
+, canUseHiddenLine(false)
+, exposed(true)
+, lastFrame(true)
+, sameFrame(false)
+, needStyleUpdate(true)
+, rebuildTanks(true)
 {
   lightsSize = 4;
   lights = new OpenGLLight*[lightsSize];
@@ -143,41 +128,8 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
 
-  // see if abgr extention is available and system is known to be
-  // faster with abgr.
-  const char* vendor = (const char*)glGetString(GL_VENDOR);
-  const char* renderer = (const char*)glGetString(GL_RENDERER);
-  const char* version = (const char*)glGetString(GL_VERSION);
-  const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-  (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
-#ifdef GL_ABGR_EXT
-  if ((extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL) &&
-      (vendor != NULL && strcmp(vendor, "SGI") == 0)) {
-    // old hardware is faster with ABGR.  new hardware isn't.
-    if ((renderer != NULL) &&
-	(strncmp(renderer, "GR1", 3) == 0 ||
-	 strncmp(renderer, "VGX", 3) == 0 ||
-	 strncmp(renderer, "LIGHT", 5) == 0 ||
-	 strrncmp(renderer, "-XS", 3) == 0 ||
-	 strrncmp(renderer, "-XSM", 4) == 0 ||
-	 strrncmp(renderer, "-XS24", 5) == 0 ||
-	 strrncmp(renderer, "-XS24-Z", 7) == 0 ||
-	 strrncmp(renderer, "-XZ", 3) == 0 ||
-	 strrncmp(renderer, "-Elan", 5) == 0 ||
-	 strrncmp(renderer, "-Extreme", 8) == 0))
-      abgr = true;
-  }
-#endif
-
   // can only do hidden line if polygon offset is available
   canUseHiddenLine = true;
-
-  // check if we're running OpenGL 1.1.  if so we'll use the fog hack
-  // to fade the screen;  otherwise fall back on a full screen blended
-  // polygon.
-  if (version != NULL && strncmp(version, "1.1", 3) == 0) {
-    useFogHack = true;
-  }
 
   // prepare context with stuff that'll never change
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
@@ -203,12 +155,6 @@ SceneRenderer::~SceneRenderer()
 
   // kill the track manager
   TrackMarks::kill();
-}
-
-
-bool SceneRenderer::useABGR() const
-{
-  return abgr;
 }
 
 
@@ -360,11 +306,11 @@ bool SceneRenderer::useHiddenLine() const
 
 void SceneRenderer::setPanelOpacity(float opacity)
 {
-  bool needtoresize = opacity == 1.0f || panelOpacity == 1.0f;
+  bool needToResize = opacity == 1.0f || panelOpacity == 1.0f;
 
   panelOpacity = opacity;
   notifyStyleChange();
-  if (needtoresize) {
+  if (needToResize) {
     if (window) {
       window->setFullView(panelOpacity < 1.0f);
       window->getWindow()->callResizeCallbacks();
@@ -397,8 +343,9 @@ int SceneRenderer::getRadarSize() const
 
 void SceneRenderer::setMaxMotionFactor(int factor)
 {
-  if (factor < -11)
+  if (factor < -11) {
     factor = -11;
+  }
   maxMotionFactor = factor;
   notifyStyleChange();
   if (window) {
@@ -492,7 +439,7 @@ void SceneRenderer::enableLight(int index, bool on)
 void SceneRenderer::enableSun(bool on)
 {
   if (BZDBCache::lighting && sunOrMoonUp) {
-    theSun.enableLight(SunLight, on);
+    OpenGLLight::enableLight(SunLight, on);
   }
 }
 
@@ -555,11 +502,11 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   float latitude, longitude;
   if (!BZDB.isTrue(StateDatabase::BZDB_SYNCLOCATION)) {
     // use local (client) settings
-    latitude = BZDB.eval("latitude");
+    latitude  = BZDB.eval("latitude");
     longitude = BZDB.eval("longitude");
   } else {
     // server settings
-    latitude = BZDB.eval(StateDatabase::BZDB_LATITUDE);
+    latitude  = BZDB.eval(StateDatabase::BZDB_LATITUDE);
     longitude = BZDB.eval(StateDatabase::BZDB_LONGITUDE);
   }
 
@@ -709,12 +656,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
 
   // fog setup
   mapFog = setupMapFog();
-  const bool reallyUseFogHack = !mapFog && useFogHack &&
-				(useQualityValue >= _MEDIUM_QUALITY);
-  if (reallyUseFogHack) {
-    renderPreDimming();
-  }
-
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror") && GfxBlockMgr::mirror.notBlocked();
@@ -729,17 +670,11 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   // the real scene
   renderScene();
 
-  // finalize dimming
+  // finalize
   if (mapFog) {
     glDisable(GL_FOG);
   }
-  if (reallyUseFogHack) {
-    if ((teleporterProximity > 0.0f) || useDimming) {
-      glDisable(GL_FOG);
-    }
-  } else {
-    renderPostDimming();
-  }
+  renderPostDimming();
 
   triangleCount = RenderNode::getTriangleCount();
   if (background) {
@@ -857,13 +792,12 @@ void SceneRenderer::renderScene()
   // prepare transforms
   // note -- lights should not be positioned before view is set
   frustum.executeDeepProjection();
-//FIXME?  glPushMatrix();
   frustum.executeView();
 
   // turn sunlight on -- the ground needs it
   if (BZDBCache::lighting && sunOrMoonUp) {
     theSun.execute(SunLight, lightLists);
-    theSun.enableLight(SunLight, true);
+    OpenGLLight::enableLight(SunLight, true);
   }
 
   // set scissor
@@ -981,7 +915,7 @@ void SceneRenderer::renderScene()
 
     // shut off lights
     if (BZDBCache::lighting) {
-      theSun.enableLight(SunLight, false);
+      OpenGLLight::enableLight(SunLight, false);
       for (i = 0; i < dynamicLights; i++) {
 	OpenGLLight::enableLight(i + reservedLights, false);
       }
@@ -1003,7 +937,6 @@ void SceneRenderer::renderScene()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
-//  glPopMatrix(); // FIXME ?
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
@@ -1078,7 +1011,7 @@ void SceneRenderer::doRender()
 {
   const bool mirrorPass = (mirror && clearZbuffer);
 
-  eventHandler.DrawWorldStart(); // FIXME
+  eventHandler.DrawWorldStart();
 
   // render the ground tank tracks
   if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
@@ -1089,7 +1022,7 @@ void SceneRenderer::doRender()
   // now draw each render node list
   OpenGLGState::renderLists();
 
-  eventHandler.DrawWorld(); // FIXME
+  eventHandler.DrawWorld();
 
   draw3rdPersonTarget(this);
 
@@ -1105,63 +1038,33 @@ void SceneRenderer::doRender()
   orderedList.render();
   glDepthMask(GL_TRUE);
 
-  eventHandler.DrawWorldAlpha(); // FIXME
-
-  // render the ground tank tracks
+  // render the obstacle tank tracks
   if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::renderObstacleTracks();
   }
 
-  return;
-}
-
-
-void SceneRenderer::renderPreDimming()
-{
-  float worldSize = BZDBCache::worldSize;
-
-  if (useDimming) {
-    const float density = dimDensity;
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-    glFogfv(GL_FOG_COLOR, dimnessColor);
-    glEnable(GL_FOG);
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
-  else if (teleporterProximity > 0.0f) {
-    const float density = (teleporterProximity > 0.75f) ? 1.0f
-			  : (teleporterProximity / 0.75f);
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-    glFogfv(GL_FOG_COLOR, blindnessColor);
-    glEnable(GL_FOG);
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
+  eventHandler.DrawWorldAlpha();
 
   return;
 }
 
 
-static bool setupMapFog()
+bool SceneRenderer::setupMapFog()
 {
-  std::string fogModeStr;
-  if (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none") 
-  {
+  const std::string modeStr = BZDB.get("_fogMode");
+  if (modeStr.empty() || (modeStr == "none")) {
     glDisable(GL_FOG);
     glHint(GL_FOG_HINT, GL_FASTEST);
     return false;
   }
 
-  GLenum fogMode = GL_EXP;
-  GLfloat fogDensity = 0.001f;
-  GLfloat fogStart = 0.5f * BZDBCache::worldSize;
-  GLfloat fogEnd = BZDBCache::worldSize;
-  GLfloat fogColor[4] = {0.25f, 0.25f, 0.25f, 0.25f};
+  GLenum  fogMode     = GL_EXP;
+  GLfloat fogDensity  = 0.001f;
+  GLfloat fogStart    = BZDBCache::worldSize * 0.5f;
+  GLfloat fogEnd      = BZDBCache::worldSize;
+  GLfloat fogColor[4] = { 0.25f, 0.25f, 0.25f, 0.25f };
 
   // parse the values;
-  const std::string modeStr = BZDB.get("_fogMode");
   if (modeStr == "linear") {
     fogMode = GL_LINEAR;
   } else if (modeStr == "exp") {
@@ -1171,9 +1074,10 @@ static bool setupMapFog()
   } else {
     fogMode = GL_EXP;
   }
+
   fogDensity = BZDB.eval(StateDatabase::BZDB_FOGDENSITY);
-  fogStart = BZDB.eval(StateDatabase::BZDB_FOGSTART);
-  fogEnd = BZDB.eval(StateDatabase::BZDB_FOGEND);
+  fogStart   = BZDB.eval(StateDatabase::BZDB_FOGSTART);
+  fogEnd     = BZDB.eval(StateDatabase::BZDB_FOGEND);
   if (!parseColorString(BZDB.get(StateDatabase::BZDB_FOGCOLOR), fogColor)) {
     fogColor[0] = fogColor[1] = fogColor[2] = 0.1f;
     fogColor[3] = 0.0f; // has no effect
@@ -1185,11 +1089,11 @@ static bool setupMapFog()
   }
 
   // setup GL fog
-  glFogi(GL_FOG_MODE, fogMode);
+  glFogi(GL_FOG_MODE,    fogMode);
   glFogf(GL_FOG_DENSITY, fogDensity);
-  glFogf(GL_FOG_START, fogStart);
-  glFogf(GL_FOG_END, fogEnd);
-  glFogfv(GL_FOG_COLOR, fogColor);
+  glFogf(GL_FOG_START,   fogStart);
+  glFogf(GL_FOG_END,     fogEnd);
+  glFogfv(GL_FOG_COLOR,  fogColor);
   glEnable(GL_FOG);
 
   return true;
@@ -1364,7 +1268,7 @@ void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
     if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
 	(pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
 	(pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
-      lights[i]->enableLight(i + reservedLights, false);
+      OpenGLLight::enableLight(i + reservedLights, false);
     }
   }
   return;
@@ -1375,7 +1279,7 @@ void SceneRenderer::reenableLights()
 {
   // reenable the disabled lights
   for (int i = 0; i < dynamicLights; i++) {
-    lights[i]->enableLight(i + reservedLights, true);
+    OpenGLLight::enableLight(i + reservedLights, true);
   }
   return;
 }

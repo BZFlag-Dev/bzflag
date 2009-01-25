@@ -12,6 +12,7 @@ class LuaUser : public LuaHandle
 
 	protected:
 		bool SetupLuaLibs();
+		void ForbidCallIns();
 
 	private:
 		LuaUser();

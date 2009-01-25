@@ -523,7 +523,7 @@ int TextSceneNode::TextRenderNode::getFontID() const
     // try the URL cache
     const string localName = CACHEMGR.getLocalName(text.font);
     id = fm.lookupFileID(localName);
-    if (fontID < 0) {
+    if (id < 0) {
       id = fm.load(localName.c_str());
     }
   }

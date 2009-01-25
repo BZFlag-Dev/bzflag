@@ -3,29 +3,45 @@
 
 #include "common.h"
 
-#include <set>
-
+// common headers
 #include "bzfgl.h"
 
 
 struct lua_State;
 
 
-struct LuaRBO {
-	LuaRBO() : id(0), target(0), format(0), xsize(0), ysize(0) {}
-	void Init();
-	void Free();
+class LuaRBOData {
+	public:
+		LuaRBOData()
+		: id(0)
+		, target(GL_RENDERBUFFER)
+		, format(GL_RGBA)
+		, xsize(0)
+		, ysize(0)
+		{}
+		virtual ~LuaRBOData() {};
 
-	void InitContext();
-	void FreeContext();
-	static void StaticInitContext(void* data);
-	static void StaticFreeContext(void* data);
+	public:
+		GLuint id;
+		GLenum target;
+		GLenum format;
+		GLsizei xsize;
+		GLsizei ysize;
+};
 
-	GLuint id;
-	GLenum target;
-	GLenum format;
-	GLsizei xsize;
-	GLsizei ysize;
+
+class LuaRBO : public LuaRBOData {
+	public:
+		LuaRBO(const LuaRBOData& rboData);
+		~LuaRBO();
+
+		void Delete();
+
+	private:
+		void InitContext();
+		void FreeContext();
+		static void StaticInitContext(void* data);
+		static void StaticFreeContext(void* data);
 };
 
 
@@ -36,20 +52,18 @@ class LuaRBOMgr {
 
 		static bool PushEntries(lua_State* L);
 
-		static const LuaRBO* GetLuaRBO(lua_State* L, int index);
+		static const LuaRBO* TestLuaRBO(lua_State* L, int index);
+		static const LuaRBO* CheckLuaRBO(lua_State* L, int index);
 
 		static const char* metaName;
 
-	private:
-		std::set<LuaRBO*> rbos;
-
-	private: // helpers
-		static bool CreateMetatable(lua_State* L);
-
 	private: // metatable methods
-		static int meta_gc(lua_State* L);
-		static int meta_index(lua_State* L);
-		static int meta_newindex(lua_State* L);
+		static bool CreateMetatable(lua_State* L);
+		static int MetaGC(lua_State* L);
+		static int MetaIndex(lua_State* L);
+		static int MetaNewindex(lua_State* L);
+
+		static LuaRBO* GetLuaRBO(lua_State* L, int index);
 
 	private:
 		static int CreateRBO(lua_State* L);

@@ -177,6 +177,11 @@ MainWindow*		getMainWindow()
   return NULL;
 }
 
+RadarRenderer*		getRadarRenderer()
+{
+  return NULL;
+}
+
 SceneRenderer*		getSceneRenderer()
 {
   return NULL;

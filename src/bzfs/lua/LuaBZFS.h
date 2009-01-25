@@ -4,6 +4,8 @@
 
 #include <string>
 
+struct lua_State;
+
 
 class LuaBZFS {
   public:
@@ -11,6 +13,8 @@ class LuaBZFS {
     static bool kill();
     static bool isActive();
     static void recvCommand(const std::string& command, int player);
+
+    static lua_State* GetL(); // for local lua libraries
 };
 
 

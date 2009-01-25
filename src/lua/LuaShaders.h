@@ -5,7 +5,6 @@
 
 #include <string>
 #include <vector>
-#include <set>
 
 #include "bzfgl.h"
 
@@ -25,6 +24,8 @@ class LuaShader {
 		LuaShader(GLuint progID, const std::vector<Object>& objects);
 		~LuaShader();
 
+		bool Delete();
+
 		inline bool IsValid() const { return (progID != 0); }
 		inline GLuint GetProgID() const { return progID; }
 
@@ -42,30 +43,30 @@ class LuaShader {
 
 class LuaShaderMgr {
 	public:
-		bool InsertShader(LuaShader*);
-		bool RemoveShader(LuaShader*);
-
-	private:
-		std::set<LuaShader*> shaders;
-
-	public:
 		static bool PushEntries(lua_State* L);
 
-		static void Init();
-		static void Free();
+		static const LuaShader* TestLuaShader(lua_State* L, int index);
+		static const LuaShader* CheckLuaShader(lua_State* L, int index);
 
 	public:
 		static const char* metaName;
 
 	private:
 		static int activeShaderDepth;
+		static std::string shaderLog;
 
 	private:
 		static bool CreateMetatable(lua_State* L);
 		static int MetaGC(lua_State* L);
 		static int MetaIndex(lua_State* L);
 
-		static LuaShader*& CheckLuaShader(lua_State* L, int index);
+		static LuaShader* GetLuaShader(lua_State* L, int index);
+
+	private:
+		static GLuint CompileObject(const std::vector<std::string>& sources,
+		                            GLenum type, bool& success);
+		static bool ParseSources(lua_State* L, int table,
+                             const char* type, std::vector<std::string>& srcs);
 
 	private: // call-outs
 		static int CreateShader(lua_State* L);
@@ -78,16 +79,11 @@ class LuaShaderMgr {
 		static int Uniform(lua_State* L);
 		static int UniformInt(lua_State* L);
 		static int UniformMatrix(lua_State* L);
+		static int UniformBuffer(lua_State* L);
 
 		static int SetShaderParameter(lua_State* );
 
 		static int GetShaderLog(lua_State* L);
-
-	private:
-		void InitContext();
-		void FreeContext();
-		static void StaticInitContext(void* data);
-		static void StaticFreeContext(void* data);
 };
 
 #endif // LUA_SHADERS_H

@@ -26,26 +26,26 @@ enum LuaCallInCode {
 	LUA_CI_ServerJoined,
 	LUA_CI_ServerParted,
 
-  LUA_CI_PlayerAdded,
-  LUA_CI_PlayerRemoved,
-  LUA_CI_PlayerSpawned,
-  LUA_CI_PlayerKilled,
-  LUA_CI_PlayerJumped,
-  LUA_CI_PlayerLanded,
-  LUA_CI_PlayerTeleported,
-  LUA_CI_PlayerTeamChange,
-  LUA_CI_PlayerScoreChange,
+	LUA_CI_PlayerAdded,
+	LUA_CI_PlayerRemoved,
+	LUA_CI_PlayerSpawned,
+	LUA_CI_PlayerKilled,
+	LUA_CI_PlayerJumped,
+	LUA_CI_PlayerLanded,
+	LUA_CI_PlayerTeleported,
+	LUA_CI_PlayerTeamChange,
+	LUA_CI_PlayerScoreChange,
 
-  LUA_CI_ShotAdded,
-  LUA_CI_ShotRemoved,
-  LUA_CI_ShotTeleported,
+	LUA_CI_ShotAdded,
+	LUA_CI_ShotRemoved,
+	LUA_CI_ShotTeleported,
 
-  LUA_CI_FlagAdded,
-  LUA_CI_FlagRemoved,
-  LUA_CI_FlagGrabbed,
-  LUA_CI_FlagDropped,
-  LUA_CI_FlagCaptured,
-  LUA_CI_FlagTransferred,
+	LUA_CI_FlagAdded,
+	LUA_CI_FlagRemoved,
+	LUA_CI_FlagGrabbed,
+	LUA_CI_FlagDropped,
+	LUA_CI_FlagCaptured,
+	LUA_CI_FlagTransferred,
 
 	LUA_CI_GotGfxBlock,
 	LUA_CI_LostGfxBlock,
@@ -62,7 +62,7 @@ enum LuaCallInCode {
 	LUA_CI_WordComplete,
 
 	LUA_CI_ViewResize,
-	LUA_CI_GLReload,
+	LUA_CI_GLReload, // EventHandler's GLInitContext
 
 	LUA_CI_DrawGenesis,
 	LUA_CI_DrawWorldStart,
@@ -82,6 +82,9 @@ class LuaCallInDB {
 	public:
 		LuaCallInDB();
 		~LuaCallInDB();
+
+		const string& GetEventName(const string& callIn) const;
+		const string& GetCallInName(const string& event) const;
 
 	public:
 		struct CallInInfo {

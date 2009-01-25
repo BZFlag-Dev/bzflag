@@ -144,6 +144,18 @@ Player*	iteratePlayers(RosterCallback callback, void* data, bool incWeapons)
     }
   }
 
+  // robots (if available)
+#ifdef ROBOT
+  for (int i = 0; i < numRobots; i++) {
+    player = robots[i];
+    if (player != NULL) {
+      if (callback(player, data)) {
+        return player;
+      }
+    }
+  }
+#endif
+
   // remotePlayers
   if (remotePlayers != NULL) {
     for (int i = 0; i < curMaxPlayers; i++) {

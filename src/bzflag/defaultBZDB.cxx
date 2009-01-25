@@ -53,7 +53,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "displayRadarFlags",	"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayMainFlags",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayScore",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "displayZoom",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayFlagHelp",		"1",			true,	StateDatabase::ReadWrite,	setFlagHelp },
   { "displayConsole",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayReloadTimer",	"1",			true,	StateDatabase::ReadWrite,	NULL },

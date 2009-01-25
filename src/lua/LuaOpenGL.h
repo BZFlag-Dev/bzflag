@@ -1,7 +1,6 @@
 #ifndef LUA_OPENGL_H
 #define LUA_OPENGL_H
 
-#include <string>
 #include <set>
 
 
@@ -18,16 +17,17 @@ class LuaOpenGL {
 		static void CheckDrawingEnabled(lua_State* L, const char* caller);
 
 	private:
-		static std::set<unsigned int> occlusionQueries;
+		static void StaticInitContext(void* data);
+		static void StaticFreeContext(void* data);
 
 	private:
-		static bool haveGL20;
 		static bool canUseShaders;
 
 	private:
 		static int HasExtension(lua_State* L);
 		static int GetNumber(lua_State* L);
 		static int GetString(lua_State* L);
+		static int GetError(lua_State* L);
 	
 		static int ConfigScreen(lua_State* L);
 
@@ -36,6 +36,7 @@ class LuaOpenGL {
 		static int Clear(lua_State* L);
 
 		static int Lighting(lua_State* L);
+		static int LightModel(lua_State* L);
 		static int ShadeModel(lua_State* L);
 		static int Scissor(lua_State* L);
 		static int Viewport(lua_State* L);
@@ -44,11 +45,14 @@ class LuaOpenGL {
 		static int DepthTest(lua_State* L);
 		static int DepthClamp(lua_State* L);
 		static int Culling(lua_State* L);
+		static int FrontFace(lua_State* L);
 		static int LogicOp(lua_State* L);
 		static int Fog(lua_State* L);
 		static int Smoothing(lua_State* L);
 		static int AlphaTest(lua_State* L);
 		static int LineStipple(lua_State* L);
+		static int PolygonStipple(lua_State* L);
+		static int Normalize(lua_State* L);
 
 		static int Blending(lua_State* L);
 		static int BlendEquation(lua_State* L);
@@ -79,12 +83,6 @@ class LuaOpenGL {
 		static int PointSize(lua_State* L);
 		static int PointSprite(lua_State* L);
 		static int PointParameter(lua_State* L);
-
-		static int ActiveTexture(lua_State* L);
-		static int TexEnv(lua_State* L);
-		static int TexGen(lua_State* L);
-		static int MultiTexEnv(lua_State* L);
-		static int MultiTexGen(lua_State* L);
 
 		static int BeginEnd(lua_State* L);
 		static int Vertex(lua_State* L);
@@ -142,13 +140,6 @@ class LuaOpenGL {
 
 		static int ReadPixels(lua_State* L);
 		static int SaveImage(lua_State* L);
-
-		static int CreateQuery(lua_State* L);
-		static int DeleteQuery(lua_State* L);
-		static int RunQuery(lua_State* L);
-		static int GetQuery(lua_State* L);
-		
-		static int GetSun(lua_State* L);
 
 		static int RenderMode(lua_State* L);
 		static int SelectBuffer(lua_State* L);

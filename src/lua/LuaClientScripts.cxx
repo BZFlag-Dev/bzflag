@@ -1,14 +1,3 @@
-/* bzflag
- * Copyright (c) 1993 - 2009 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
 
 #include "common.h"
 
@@ -47,8 +36,8 @@ void LuaClientScripts::LuaWorldLoadHandler() { LuaWorld::LoadHandler(); }
 bool LuaClientScripts::LuaUserIsActive()  { return (luaUser != NULL);  }
 bool LuaClientScripts::LuaWorldIsActive() { return (luaWorld != NULL); }
 
-bool LuaClientScripts::GetDevMode()         { return LuaHandle::GetDevMode(); }
-void LuaClientScripts::SetDevMode(bool val) { LuaHandle::SetDevMode(val);     }
+bool LuaClientScripts::GetDevMode() { return LuaHandle::GetDevMode(); }
+void LuaClientScripts::SetDevMode(bool value) { LuaHandle::SetDevMode(value); }
 
 
 /******************************************************************************/
@@ -56,59 +45,59 @@ void LuaClientScripts::SetDevMode(bool val) { LuaHandle::SetDevMode(val);     }
 
 void LuaClientScripts::LuaUserUpdate()
 {
-  if (luaUser == NULL) {
-    return;
-  }
-  else if (luaUser->RequestReload()) {
-    string reason = luaUser->RequestMessage();
-    if (!reason.empty()) { reason = ": " + reason; }
+	if (luaUser == NULL) {
+		return;
+	}
+	else if (luaUser->RequestReload()) {
+		string reason = luaUser->RequestMessage();
+		if (!reason.empty()) { reason = ": " + reason; }
 
-    LuaUser::FreeHandler();
-    LuaUser::LoadHandler();
+		LuaUser::FreeHandler();
+		LuaUser::LoadHandler();
 
-    if (luaUser != NULL) {
-      addMessage(NULL, "LuaUser reloaded" + reason);
-    } else {
-      addMessage(NULL, "LuaUser reload failed" + reason);
-    }
-  }
-  else if (luaUser->RequestDisable()) {
-    string reason = luaUser->RequestMessage();
-    if (!reason.empty()) { reason = ": " + reason; }
+		if (luaUser != NULL) {
+			addMessage(NULL, "LuaUser reloaded" + reason);
+		} else {
+			addMessage(NULL, "LuaUser reload failed" + reason);
+		}
+	}
+	else if (luaUser->RequestDisable()) {
+		string reason = luaUser->RequestMessage();
+		if (!reason.empty()) { reason = ": " + reason; }
 
-    LuaUser::FreeHandler();
+		LuaUser::FreeHandler();
 
-    addMessage(NULL, "LuaUser disabled" + reason);
-  }
+		addMessage(NULL, "LuaUser disabled" + reason);
+	}
 }
 
 
 void LuaClientScripts::LuaWorldUpdate()
 {
-  if (luaWorld == NULL) {
-    return;
-  }
-  else if (luaWorld->RequestReload()) {
-    string reason = luaWorld->RequestMessage();
-    if (!reason.empty()) { reason = ": " + reason; }
+	if (luaWorld == NULL) {
+		return;
+	}
+	else if (luaWorld->RequestReload()) {
+		string reason = luaWorld->RequestMessage();
+		if (!reason.empty()) { reason = ": " + reason; }
 
-    LuaWorld::FreeHandler();
-    LuaWorld::LoadHandler();
+		LuaWorld::FreeHandler();
+		LuaWorld::LoadHandler();
 
-    if (luaWorld != NULL) {
-      addMessage(NULL, "LuaWorld reloaded" + reason);
-    } else {
-      addMessage(NULL, "LuaWorld reload failed" + reason);
-    }
-  }
-  else if (luaWorld->RequestDisable()) {
-    string reason = luaWorld->RequestMessage();
-    if (!reason.empty()) { reason = ": " + reason; }
+		if (luaWorld != NULL) {
+			addMessage(NULL, "LuaWorld reloaded" + reason);
+		} else {
+			addMessage(NULL, "LuaWorld reload failed" + reason);
+		}
+	}
+	else if (luaWorld->RequestDisable()) {
+		string reason = luaWorld->RequestMessage();
+		if (!reason.empty()) { reason = ": " + reason; }
 
-    LuaWorld::FreeHandler();
+		LuaWorld::FreeHandler();
 
-    addMessage(NULL, "LuaWorld disabled" + reason);
-  }
+		addMessage(NULL, "LuaWorld disabled" + reason);
+	}
 }
 
 
@@ -117,90 +106,109 @@ void LuaClientScripts::LuaWorldUpdate()
 
 bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
 {
-  const string prefix = "luauser";
-  const char* c = cmdLine.c_str();
-  if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
-    return false;
-  }
-  c = TextUtils::skipWhitespace(c + prefix.size());
+	const string prefix = "luauser";
+	const char* c = cmdLine.c_str();
+	if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
+		return false;
+	}
+	c = TextUtils::skipWhitespace(c + prefix.size());
 
-  const string cmd = c;
-  if (cmd == "reload") {
-    LuaUser::FreeHandler();
-    if (BZDB.isTrue(StateDatabase::BZDB_FORBIDLUAUSER)) {
-      addMessage(NULL, "This server forbids LuaUser scripts");
-      return false;
-    } else {
-      LuaUser::LoadHandler();
-    }
-    LuaUser::LoadHandler();
-  }
-  else if (cmd == "disable") {
-    LuaUser::FreeHandler();
-  }
-  else if (cmd == "status") {
-    if (luaUser != NULL) {
-      addMessage(NULL, "LuaUser is enabled");
-    } else {
-      addMessage(NULL, "LuaUser is disabled");
-    }
-  }
-  else if (luaUser != NULL) {
-    luaUser->RecvCommand(c);
-  }
-  else {
-    return false;
-  }
+	const string cmd = c;
+	if (cmd == "reload") {
+		LuaUser::FreeHandler();
+		const string forbid = TextUtils::tolower(BZDB.get("_forbidLuaUser"));
+		if ((forbid == "1") || (forbid == "true")) {
+			addMessage(NULL, "This server forbids LuaUser scripts");
+			return false;
+		} else {
+			LuaUser::LoadHandler();
+		}
+		LuaUser::LoadHandler();
+	}
+	else if (cmd == "disable") {
+		LuaUser::FreeHandler();
+	}
+	else if (cmd == "status") {
+		if (luaUser != NULL) {
+			addMessage(NULL, "LuaUser is enabled");
+		} else {
+			addMessage(NULL, "LuaUser is disabled");
+		}
+	}
+	else if (cmd == "") {
+		addMessage(NULL,
+		           "/luauser < status | reload | disable | custom_command ... >");
+	}
+	else if (luaUser != NULL) {
+		luaUser->RecvCommand(c);
+	}
+	else {
+		return false;
+	}
 
-  return true;
+	return true;
 }
 
 
 bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 {
-  const string prefix = "luaworld";
-  const char* c = cmdLine.c_str();
-  if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
-    return false;
-  }
-  c = TextUtils::skipWhitespace(c + prefix.size());
+	const string prefix = "luaworld";
+	const char* c = cmdLine.c_str();
+	if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
+		return false;
+	}
+	c = TextUtils::skipWhitespace(c + prefix.size());
 
-  const string cmd = c;
-  if (cmd == "reload") {
-    LuaWorld::FreeHandler();
-    LuaWorld::LoadHandler();
-  }
-  else if (cmd == "disable") {
-    if (BZDB.isTrue("_forceLuaWorld")) {
-      return false;
-    }
-    LuaWorld::FreeHandler();
-  }
-  else if (cmd == "status") {
-    if (luaWorld != NULL) {
-      addMessage(NULL, "LuaWorld is enabled");
-    } else {
-      addMessage(NULL, "LuaWorld is disabled");
-    }
-  }
-  else if (luaWorld != NULL) {
-    luaWorld->RecvCommand(c);
-  }
-  else {
-    return false;
-  }
+	const string cmd = c;
+	if (cmd == "reload") {
+		LuaWorld::FreeHandler();
+		LuaWorld::LoadHandler();
+	}
+	else if (cmd == "disable") {
+		if (BZDB.isTrue("_forceLuaWorld")) {
+			return false;
+		}
+		LuaWorld::FreeHandler();
+	}
+	else if (cmd == "status") {
+		if (luaWorld != NULL) {
+			addMessage(NULL, "LuaWorld is enabled");
+		} else {
+			addMessage(NULL, "LuaWorld is disabled");
+		}
+	}
+	else if (cmd == "") {
+		addMessage(NULL,
+		           "/luaworld < status | reload | disable | custom_command ... >");
+	}
+	else if (luaWorld != NULL) {
+		luaWorld->RecvCommand(c);
+	}
+	else {
+		return false;
+	}
 
-  return true; 
+	return true; 
 }
 
+
 /******************************************************************************/
 /******************************************************************************/
 
+void LuaClientScripts::LuaUserUpdateForbidden()
+{
+	if (luaUser == NULL) {
+		return;
+	}
+	const string forbid = TextUtils::tolower(BZDB.get("_forbidLuaUser"));
+	if ((forbid == "1") || (forbid == "true")) {
+		LuaUser::FreeHandler();
+		addMessage(NULL, "This server forbids LuaUser scripts");
+		return;
+	}
+	// FIXME -- add/remove permitted/allowed call-ins  
+}
 
-// Local Variables: ***
-// mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
-// End: ***
-// ex: shiftwidth=2 tabstop=8
+
+/******************************************************************************/
+/******************************************************************************/

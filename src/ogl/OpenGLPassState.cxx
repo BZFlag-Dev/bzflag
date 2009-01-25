@@ -9,12 +9,12 @@
 
 #include "common.h"
 
-#include "assert.h"
 
 // implementation header
 #include "OpenGLPassState.h"
 
 // system headers
+#include <assert.h>
 #include <string.h>
 #include <string>
 #include <vector>
@@ -26,17 +26,25 @@ using std::set;
 
 // common headers
 #include "StateDatabase.h"
+#include "BZDBCache.h"
 #include "SceneRenderer.h"
 #include "BzfDisplay.h"
 #include "BzfWindow.h"
 #include "TextureManager.h"
+#include "OpenGLGState.h"
+#include "bzfio.h"
 
 // bzflag headers
 #include "../bzflag/playing.h"
 #include "../bzflag/MainWindow.h"
+#include "../bzflag/RadarRenderer.h"
+#include "../bzflag/BackgroundRenderer.h"
 
 
-#define LuaLog printf // FIXME
+#define TEXMGR (TextureManager::instance())
+
+
+const GLbitfield AttribBits = GL_ALL_ATTRIB_BITS;
 
 
 /******************************************************************************/
@@ -44,17 +52,175 @@ using std::set;
 
 void (*OpenGLPassState::resetMatrixFunc)(void) = NULL;
 
-unsigned int OpenGLPassState::resetStateList = 0;
-set<unsigned int> OpenGLPassState::occlusionQueries;
-
-OpenGLPassState::DrawMode OpenGLPassState::drawMode = OpenGLPassState::DRAW_NONE;
-OpenGLPassState::DrawMode OpenGLPassState::prevDrawMode = OpenGLPassState::DRAW_NONE;
+OpenGLPassState::DrawMode
+  OpenGLPassState::drawMode = OpenGLPassState::DRAW_NONE;
 
 bool  OpenGLPassState::drawingEnabled = false;
-float OpenGLPassState::screenWidth = 0.36f;
+float OpenGLPassState::screenWidth    = 0.36f;
 float OpenGLPassState::screenDistance = 0.60f;
 
-static bool haveGL20 = false;
+int OpenGLPassState::attribStackDepth    = 0;
+int OpenGLPassState::minAttribStackDepth = 0;
+int OpenGLPassState::maxAttribStackDepth = 16; // 16 are guaranteed
+
+bool OpenGLPassState::creatingList = false;
+
+GLuint OpenGLPassState::stateLists[DRAW_MODE_COUNT] = { INVALID_GL_LIST_ID };
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+const char* OpenGLPassState::GetDrawModeName(DrawMode mode)
+{
+  switch (mode) {
+    case DRAW_GENESIS:      { return "DrawGenesis";     }
+    case DRAW_WORLD_START:  { return "DrawWorldStart";  }
+    case DRAW_WORLD:        { return "DrawWorld";       }
+    case DRAW_WORLD_ALPHA:  { return "DrawWorldAlpha";  }
+    case DRAW_WORLD_SHADOW: { return "DrawWorldShadow"; }
+    case DRAW_SCREEN_START: { return "DrawScreenStart"; }
+    case DRAW_SCREEN:       { return "DrawScreen";      }
+    case DRAW_RADAR:        { return "DrawRadar";       }
+    case DRAW_NONE:         { return "none";            }
+    default:                { return "unknown";         }
+  }
+  return "unknown";
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+//
+//  Attribute Stack management
+//
+
+bool OpenGLPassState::TryAttribStackChange(int change)
+{
+  const int result = attribStackDepth + change;
+  if ((result < minAttribStackDepth) ||
+      (result > maxAttribStackDepth)) {
+    return false;
+  }
+  attribStackDepth = result;
+  return true;
+}
+
+
+bool OpenGLPassState::TryAttribStackPush()
+{
+  return TryAttribStackChange(+1);
+}
+
+
+bool OpenGLPassState::TryAttribStackPop()
+{
+  return TryAttribStackChange(-1);
+}
+
+
+bool OpenGLPassState::PushAttrib(GLbitfield bits)
+{
+  if (!TryAttribStackPush()) {
+    return false;
+  }
+  glPushAttrib(bits);
+  return true;
+}
+
+
+bool OpenGLPassState::PopAttrib()
+{
+  if (!TryAttribStackPop()) {
+    return false;
+  }
+  glPopAttrib();
+  return true;
+}
+
+
+bool OpenGLPassState::TryAttribStackRangeChange(int endChange,
+                                                int minChange,
+                                                int maxChange)
+{
+  const int minDepth = attribStackDepth + minChange;
+  const int maxDepth = attribStackDepth + maxChange;
+  if ((minDepth < minAttribStackDepth) ||
+      (maxDepth > maxAttribStackDepth)) {
+    return false;
+  }
+  return TryAttribStackChange(endChange);
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+//
+//  Display List management
+//
+
+static bool oldDrawingEnabled = false;
+
+
+bool OpenGLPassState::NewList()
+{
+  if (creatingList) {
+    return false;
+  }
+  oldDrawingEnabled = drawingEnabled;
+  drawingEnabled = true;
+  creatingList = true;
+  return true;
+}
+
+
+bool OpenGLPassState::EndList()
+{
+  if (!creatingList) {
+    return false;
+  }
+  drawingEnabled = oldDrawingEnabled;
+  creatingList = false;
+  return true;
+}
+
+
+bool OpenGLPassState::CreatingList()
+{
+  return creatingList;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+void OpenGLPassState::InitContext(void* /*data*/)
+{
+  for (int mode = 0; mode < (int)DRAW_MODE_COUNT; mode++) {
+    stateLists[mode] = glGenLists(1);
+    glNewList(stateLists[mode], GL_COMPILE);
+    {
+      ResetModeState((DrawMode)mode);
+    }
+    glEndList();
+  }
+}
+
+
+void OpenGLPassState::FreeContext(void* /*data*/)
+{
+  for (int mode = 0; mode < (int)DRAW_MODE_COUNT; mode++) {
+    glDeleteLists(stateLists[mode], 1);
+    stateLists[mode] = INVALID_GL_LIST_ID;
+  }
+}
+
+
+void OpenGLPassState::BZDBCallback(const string& /*name*/, void* /*data*/)
+{
+  FreeContext(NULL);
+  InitContext(NULL);
+}
 
 
 /******************************************************************************/
@@ -62,28 +228,33 @@ static bool haveGL20 = false;
 
 void OpenGLPassState::Init()
 {
-  resetStateList = glGenLists(1);
-  glNewList(resetStateList, GL_COMPILE); {
-    ResetGLState();
-  }
-  glEndList();
-
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
-  haveGL20 = !!GLEW_VERSION_2_0;
+  InitContext(NULL);
+  OpenGLGState::registerContextInitializer(FreeContext, InitContext, NULL);
+
+  BZDB.addCallback("shadowAlpha",    BZDBCallback, NULL);
+  BZDB.addCallback("stencilShadows", BZDBCallback, NULL);
+  BZDB.addCallback("_fogMode",       BZDBCallback, NULL);
+  BZDB.addCallback("_fogStart",      BZDBCallback, NULL);
+  BZDB.addCallback("_fogEnd",        BZDBCallback, NULL);
+  BZDB.addCallback("_fogDensity",    BZDBCallback, NULL);
+  BZDB.addCallback("_fogColor",      BZDBCallback, NULL);
 }
 
 
 void OpenGLPassState::Free()
 {
-  glDeleteLists(resetStateList, 1);
+  BZDB.removeCallback("shadowAlpha",    BZDBCallback, NULL);
+  BZDB.removeCallback("stencilShadows", BZDBCallback, NULL);
+  BZDB.removeCallback("_fogMode",       BZDBCallback, NULL);
+  BZDB.removeCallback("_fogStart",      BZDBCallback, NULL);
+  BZDB.removeCallback("_fogEnd",        BZDBCallback, NULL);
+  BZDB.removeCallback("_fogDensity",    BZDBCallback, NULL);
+  BZDB.removeCallback("_fogColor",      BZDBCallback, NULL);
 
-  if (haveGL20) {
-    set<unsigned int>::const_iterator it;
-    for (it = occlusionQueries.begin(); it != occlusionQueries.end(); ++it) {
-      glDeleteQueries(1, &(*it));
-    }
-  }
+  OpenGLGState::registerContextInitializer(FreeContext, InitContext, NULL);
+  FreeContext(NULL);
 }
 
 
@@ -99,13 +270,21 @@ void OpenGLPassState::ConfigScreen(float width, float dist)
 
 void OpenGLPassState::ResetState()
 {
-  glCallList(resetStateList);
+  ExecuteAttribStack(0);
+  glPushAttrib(AttribBits);
+  attribStackDepth = 1;
+  if ((drawMode >= DRAW_GENESIS) &&
+      (drawMode <  DRAW_MODE_COUNT)) {
+    glCallList(stateLists[drawMode]);
+  }
 }
 
 
 void OpenGLPassState::ResetMatrices()
 {
-  resetMatrixFunc();
+  if (resetMatrixFunc != NULL) {
+    resetMatrixFunc();
+  }
 }
 
 
@@ -114,10 +293,20 @@ void OpenGLPassState::ResetMatrices()
 
 void OpenGLPassState::ClearMatrixStack(int stackDepthEnum)
 {
-  GLint depth = 0;
-  glGetIntegerv(stackDepthEnum, &depth);
-  for (int i = 0; i < depth - 1; i++) {
+  GLint currDepth = 0;
+  glGetIntegerv(stackDepthEnum, &currDepth);
+  for (/*no-op*/; currDepth > 1; currDepth--) {
     glPopMatrix();
+  }
+}
+
+
+void OpenGLPassState::ExecuteAttribStack(int targetDepth)
+{
+  GLint currDepth = 0;
+  glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &currDepth);
+  for (/*no-op*/; currDepth > targetDepth; currDepth--) {
+    glPopAttrib();
   }
 }
 
@@ -128,28 +317,28 @@ static bool CheckMatrixDepths(const char* name = "unknown")
 
   glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &depth);
   if (depth != 1) {
-    LuaLog("GL_MODELVIEW_STACK_DEPTH for %s at %i\n", name, depth);
+    logDebugMessage(1, "GL_MODELVIEW_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
   glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &depth);
   if (depth != 1) {
-    LuaLog("GL_PROJECTION_STACK_DEPTH for %s at %i\n", name, depth);
+    logDebugMessage(1, "GL_PROJECTION_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
   glGetIntegerv(GL_TEXTURE_STACK_DEPTH, &depth);
   if (depth != 1) {
-    LuaLog("GL_TEXTURE_STACK_DEPTH for %s at %i\n", name, depth);
+    logDebugMessage(1, "GL_TEXTURE_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
 
   glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &depth);
   if (depth != 0) {
-    LuaLog("GL_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
+    logDebugMessage(1, "GL_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
   glGetIntegerv(GL_CLIENT_ATTRIB_STACK_DEPTH, &depth);
   if (depth != 0) {
-    LuaLog("GL_CLIENT_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
+    logDebugMessage(1, "GL_CLIENT_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
 
@@ -157,48 +346,160 @@ static bool CheckMatrixDepths(const char* name = "unknown")
 }
 
 
-void OpenGLPassState::ResetGLState()
+/******************************************************************************/
+/******************************************************************************/
+
+void OpenGLPassState::ResetModeState(DrawMode mode)
 {
-  glDisable(GL_DEPTH_TEST);
+  // depth test
+  switch (mode) {
+    case DRAW_WORLD_START:
+    case DRAW_WORLD:
+    case DRAW_WORLD_ALPHA:
+    case DRAW_WORLD_SHADOW: {
+      glEnable(GL_DEPTH_TEST);
+      break;
+    }
+    default: {
+      glDisable(GL_DEPTH_TEST);
+      break;
+    }
+  }
+
+  // depth mask
+  switch (mode) {
+    case DRAW_WORLD_START:
+    case DRAW_WORLD: {
+      glDepthMask(GL_TRUE);
+      break;
+    }
+    default: {
+      glDepthMask(GL_FALSE);
+      break;
+    }
+  }
+
+  // depth function
   glDepthFunc(GL_LEQUAL);
-  glDepthMask(GL_FALSE);
   if (GLEW_NV_depth_clamp) {
     glDisable(GL_DEPTH_CLAMP_NV);
   }
-  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-  glEnable(GL_BLEND);
+  // color mask
+  if (mode != DRAW_WORLD_SHADOW) {
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  }
+  else {
+    if (BZDBCache::stencilShadows) {
+      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    } else {
+      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    }
+  }
+
+  // blending
+  switch (mode) {
+    case DRAW_WORLD_START:
+    case DRAW_WORLD:
+    case DRAW_WORLD_SHADOW: {
+      glDisable(GL_BLEND);
+      break;
+    }
+    default: {
+      glEnable(GL_BLEND);
+      break;
+    }
+  }
   if (glBlendEquation != NULL) {
     glBlendEquation(GL_FUNC_ADD);
   }
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+  // culling
+  switch (mode) {
+    case DRAW_WORLD_START:
+    case DRAW_WORLD:
+    case DRAW_WORLD_ALPHA: {
+      glEnable(GL_CULL_FACE);
+      break;
+    }
+    default: {
+      glDisable(GL_CULL_FACE);
+      break;
+    }
+  }
+  glCullFace(GL_BACK);
+
+  // lighting
+  switch (mode) {
+    case DRAW_WORLD_START:
+    case DRAW_WORLD:
+    case DRAW_WORLD_ALPHA: {
+      glEnable(GL_LIGHTING);
+      break;
+    }
+    default: {
+      glDisable(GL_LIGHTING);
+      break;
+    }
+  }
+  glDisable(GL_COLOR_MATERIAL);
+
+  // fog -- FIXME ...
+  switch (mode) {
+    case DRAW_WORLD_START:
+    case DRAW_WORLD:
+    case DRAW_WORLD_ALPHA: {
+      RENDERER.setupMapFog();
+      break;
+    }
+    case DRAW_WORLD_SHADOW: {
+      if (!BZDBCache::stencilShadows) {
+        RENDERER.setupMapFog(); // stipple shadows can use fog
+      } else {
+        glDisable(GL_FOG);
+      }
+      break;
+    }
+    default: {
+      glDisable(GL_FOG);
+      break;
+    }
+  }
+
+  // lighting config
+  glShadeModel(GL_SMOOTH);
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,      GL_FALSE);
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,  GL_TRUE);
+  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+  
+  glEnable(GL_NORMALIZE);
 
   glDisable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0.5f);
 
-  glDisable(GL_LIGHTING);
-
-  glShadeModel(GL_SMOOTH);
+  glEnable(GL_SCISSOR_TEST);
 
   glDisable(GL_COLOR_LOGIC_OP);
   glLogicOp(GL_INVERT);
 
-  // FIXME glViewport(gl); depends on the mode
-
-  // FIXME -- depends on the mode       glDisable(GL_FOG);
-
-  glDisable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
-  glDisable(GL_SCISSOR_TEST);
-
-  glDisable(GL_STENCIL_TEST);
+  // stencil
+  if (mode != DRAW_WORLD_SHADOW) {
+    glDisable(GL_STENCIL_TEST);
+  }
+  else {
+    if (BZDBCache::stencilShadows) {
+      glEnable(GL_STENCIL_TEST);
+    } else {
+      glDisable(GL_STENCIL_TEST);
+    }
+  }
   glStencilMask(~0);
   if (GLEW_EXT_stencil_two_side) {
     glDisable(GL_STENCIL_TEST_TWO_SIDE_EXT);
   }
 
-  // FIXME -- multitexturing
+  // FIXME -- multi-texturing
   glDisable(GL_TEXTURE_2D);
   glDisable(GL_TEXTURE_GEN_S);
   glDisable(GL_TEXTURE_GEN_T);
@@ -206,31 +507,43 @@ void OpenGLPassState::ResetGLState()
   glDisable(GL_TEXTURE_GEN_Q);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+  // polygon mode and offset
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDisable(GL_POLYGON_OFFSET_FILL);
   glDisable(GL_POLYGON_OFFSET_LINE);
   glDisable(GL_POLYGON_OFFSET_POINT);
 
+  // line stipple
   glDisable(GL_LINE_STIPPLE);
 
-  glDisable(GL_CLIP_PLANE4);
-  glDisable(GL_CLIP_PLANE5);
+  // polygon stipple
+  if (mode != DRAW_WORLD_SHADOW) {
+    glDisable(GL_POLYGON_STIPPLE);
+  }
+  else {
+    if (BZDBCache::stencilShadows) {
+      glDisable(GL_POLYGON_STIPPLE);
+    } else {
+      glEnable(GL_POLYGON_STIPPLE);
+    }
+  }
 
   glLineWidth(1.0f);
   glPointSize(1.0f);
 
-  if (haveGL20) {
-    glDisable(GL_POINT_SPRITE);
+  // color
+  if (mode != DRAW_WORLD_SHADOW) {
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
   }
-  if (haveGL20) {
-    GLfloat atten[3] = { 1.0f, 0.0f, 0.0f };
-    glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, atten);
-    glPointParameterf(GL_POINT_SIZE_MIN, 0.0f);
-    glPointParameterf(GL_POINT_SIZE_MAX, 1.0e9f); // FIXME?
-    glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, 1.0f);
+  else {
+    if (BZDBCache::stencilShadows) {
+      glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);    
+    } else {
+      glColor3f(0.0f, 0.0f, 0.0f);
+    }
   }
 
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  // material
   const float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
   const float diffuse[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
   const float black[4]   = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -238,7 +551,16 @@ void OpenGLPassState::ResetGLState()
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, black);
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0f);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 0.0f);
+
+  if (GLEW_VERSION_2_0) {
+    glDisable(GL_POINT_SPRITE);
+    GLfloat atten[3] = { 1.0f, 0.0f, 0.0f };
+    glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, atten);
+    glPointParameterf(GL_POINT_SIZE_MIN, 0.0f);
+    glPointParameterf(GL_POINT_SIZE_MAX, 1.0f);
+    glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, 1.0f);
+  }
 
   if (glUseProgram) {
     glUseProgram(0);
@@ -252,35 +574,65 @@ void OpenGLPassState::ResetGLState()
 //  Common routines
 //
 
-const GLbitfield AttribBits = GL_ALL_ATTRIB_BITS;
+inline void SetMainScissor()
+{
+  MainWindow* window = getMainWindow();	
+  if (window != NULL) {
+    const int wh = window->getHeight();
+    const int vh = window->getViewHeight();
+    const int yOffset = (wh - vh);
+
+    const int w = window->getWidth();
+    const int h = window->getViewHeight();
+    const int x = window->getOriginX();
+    const int y = window->getOriginY() + yOffset;
+
+    glScissor(x, y, w, h);
+  }
+}
 
 
 inline void OpenGLPassState::EnableCommon(DrawMode mode)
 {
-  CheckMatrixDepths();
+  CheckMatrixDepths(GetDrawModeName(mode));
+
   assert(drawMode == DRAW_NONE);
+
   drawMode = mode;
   drawingEnabled = true;
+
+  if (mode != DRAW_RADAR) {
+    SetMainScissor();
+  }
+
+  assert(attribStackDepth == 0);
   glPushAttrib(AttribBits);
-  glCallList(resetStateList);
-  // FIXME  --  not needed by shadow or radar   (use a WorldCommon ? )
-  glEnable(GL_NORMALIZE);
-  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+  attribStackDepth = 1;
+
+  glCallList(stateLists[mode]);
 }
 
 
 inline void OpenGLPassState::DisableCommon(DrawMode mode)
 {
-  mode = mode;
   assert(drawMode == mode);
+  mode = mode; // avoid warnings
+
   // FIXME  --  not needed by shadow or radar
-  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR); // FIXME for bz???
   drawMode = DRAW_NONE;
   drawingEnabled = false;
-  glPopAttrib();
+
+  ExecuteAttribStack(0);
+  attribStackDepth = 0;
+
+  if (GLEW_VERSION_2_0) {
+    glDisable(GL_POINT_SPRITE);
+  }
   if (glUseProgram) {
     glUseProgram(0);
   }
+ 
+  TEXMGR.clearLastBoundID(); // FIXME - not needed? glPopAttrib() restores it?
 }
 
 
@@ -291,25 +643,24 @@ inline void OpenGLPassState::DisableCommon(DrawMode mode)
 
 void OpenGLPassState::EnableDrawGenesis()
 {
-  EnableCommon(DRAW_WORLD_START);
-  resetMatrixFunc = ResetWorldMatrices;
+  EnableCommon(DRAW_GENESIS);
+  resetMatrixFunc = ResetIdentityMatrices;
   ResetWorldMatrices();
-  SetupWorldLighting();
-}
-
-
-void OpenGLPassState::DisableDrawGenesis()
-{
-  ResetWorldMatrices();
-  RevertWorldLighting();
-  DisableCommon(DRAW_WORLD_START);
 }
 
 
 void OpenGLPassState::ResetDrawGenesis()
 {
   ResetWorldMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  SetMainScissor(); // FIXME
+}
+
+
+void OpenGLPassState::DisableDrawGenesis()
+{
+  ResetWorldMatrices();
+  DisableCommon(DRAW_GENESIS);
 }
 
 
@@ -323,22 +674,21 @@ void OpenGLPassState::EnableDrawWorldStart()
   EnableCommon(DRAW_WORLD_START);
   resetMatrixFunc = ResetWorldMatrices;
   ResetWorldMatrices();
-  SetupWorldLighting();
-}
-
-
-void OpenGLPassState::DisableDrawWorldStart()
-{
-  ResetWorldMatrices();
-  RevertWorldLighting();
-  DisableCommon(DRAW_WORLD_START);
 }
 
 
 void OpenGLPassState::ResetDrawWorldStart()
 {
   ResetWorldMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  SetMainScissor();
+}
+
+
+void OpenGLPassState::DisableDrawWorldStart()
+{
+  ResetWorldMatrices();
+  DisableCommon(DRAW_WORLD_START);
 }
 
 
@@ -351,50 +701,48 @@ void OpenGLPassState::EnableDrawWorld()
 {
   EnableCommon(DRAW_WORLD);
   resetMatrixFunc = ResetWorldMatrices;
-  SetupWorldLighting();
-}
-
-
-void OpenGLPassState::DisableDrawWorld()
-{
-  ResetWorldMatrices();
-  RevertWorldLighting();
-  DisableCommon(DRAW_WORLD);
 }
 
 
 void OpenGLPassState::ResetDrawWorld()
 {
   ResetWorldMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  SetMainScissor();
+}
+
+
+void OpenGLPassState::DisableDrawWorld()
+{
+  ResetWorldMatrices();
+  DisableCommon(DRAW_WORLD);
 }
 
 
 /******************************************************************************/
 //
-//  WorldAlpha -- the same as World
+//  WorldAlpha
 //
 
 void OpenGLPassState::EnableDrawWorldAlpha()
 {
-  EnableCommon(DRAW_WORLD);
+  EnableCommon(DRAW_WORLD_ALPHA);
   resetMatrixFunc = ResetWorldMatrices;
-  SetupWorldLighting();
-}
-
-
-void OpenGLPassState::DisableDrawWorldAlpha()
-{
-  ResetWorldMatrices();
-  RevertWorldLighting();
-  DisableCommon(DRAW_WORLD);
 }
 
 
 void OpenGLPassState::ResetDrawWorldAlpha()
 {
   ResetWorldMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  SetMainScissor();
+}
+
+
+void OpenGLPassState::DisableDrawWorldAlpha()
+{
+  ResetWorldMatrices();
+  DisableCommon(DRAW_WORLD_ALPHA);
 }
 
 
@@ -407,30 +755,21 @@ void OpenGLPassState::EnableDrawWorldShadow()
 {
   EnableCommon(DRAW_WORLD_SHADOW);
   resetMatrixFunc = ResetWorldShadowMatrices;
-  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  glPolygonOffset(1.0f, 1.0f);
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glEnable(GL_VERTEX_PROGRAM_ARB);
-//FIXME  glBindProgramARB(GL_VERTEX_PROGRAM_ARB, unitDrawer->unitShadowGenVP);
-}
-
-
-void OpenGLPassState::DisableDrawWorldShadow()
-{
-  glDisable(GL_VERTEX_PROGRAM_ARB);
-  glDisable(GL_POLYGON_OFFSET_FILL);
-  ResetWorldShadowMatrices();
-  DisableCommon(DRAW_WORLD_SHADOW);
 }
 
 
 void OpenGLPassState::ResetDrawWorldShadow()
 {
   ResetWorldShadowMatrices();
-  glCallList(resetStateList);
-  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  glPolygonOffset(1.0f, 1.0f);
-  glEnable(GL_POLYGON_OFFSET_FILL);
+  ResetState();
+  SetMainScissor();
+}
+
+
+void OpenGLPassState::DisableDrawWorldShadow()
+{
+  ResetWorldShadowMatrices();
+  DisableCommon(DRAW_WORLD_SHADOW);
 }
 
 
@@ -441,29 +780,28 @@ void OpenGLPassState::ResetDrawWorldShadow()
 
 void OpenGLPassState::EnableDrawScreenStart()
 {
-  EnableCommon(DRAW_SCREEN);
+  EnableCommon(DRAW_SCREEN_START);
   resetMatrixFunc = ResetScreenMatrices;
 
   SetupScreenMatrices();
   SetupScreenLighting();
-  glCallList(resetStateList);
-  glEnable(GL_NORMALIZE);
-}
-
-
-void OpenGLPassState::DisableDrawScreenStart()
-{
-  RevertScreenLighting();
-  RevertScreenMatrices();
-  DisableCommon(DRAW_SCREEN);
-  glEnable(GL_SCISSOR_TEST); // FIXME ?
 }
 
 
 void OpenGLPassState::ResetDrawScreenStart()
 {
   ResetScreenMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  SetupScreenLighting();
+  SetMainScissor();
+}
+
+
+void OpenGLPassState::DisableDrawScreenStart()
+{
+//FIXME  RevertScreenLighting();
+  RevertScreenMatrices();
+  DisableCommon(DRAW_SCREEN_START);
 }
 
 
@@ -479,24 +817,23 @@ void OpenGLPassState::EnableDrawScreen()
 
   SetupScreenMatrices();
   SetupScreenLighting();
-  glCallList(resetStateList);
-  glEnable(GL_NORMALIZE);
-}
-
-
-void OpenGLPassState::DisableDrawScreen()
-{
-  RevertScreenLighting();
-  RevertScreenMatrices();
-  DisableCommon(DRAW_SCREEN);
-  glEnable(GL_SCISSOR_TEST); // FIXME ?
 }
 
 
 void OpenGLPassState::ResetDrawScreen()
 {
   ResetScreenMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  SetupScreenLighting();
+  SetMainScissor();
+}
+
+
+void OpenGLPassState::DisableDrawScreen()
+{
+//FIXME  RevertScreenLighting();
+  RevertScreenMatrices();
+  DisableCommon(DRAW_SCREEN);
 }
 
 
@@ -507,37 +844,19 @@ void OpenGLPassState::ResetDrawScreen()
 
 void OpenGLPassState::EnableDrawRadar()
 {
-  if (drawMode == DRAW_SCREEN) {
-    prevDrawMode = DRAW_SCREEN;
-    drawMode = DRAW_NONE;
-  }
   EnableCommon(DRAW_RADAR);
   resetMatrixFunc = ResetRadarMatrices;
-  // CMiniMap::DrawForReal() does not setup the texture matrix
   glMatrixMode(GL_TEXTURE); {
     ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
     glLoadIdentity();
   }
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-//FIXME  if (minimap) {
-//FIXME    glScalef(1.0f / (float)minimap->GetSizeX(),
-//FIXME             1.0f / (float)minimap->GetSizeY(), 1.0f);
-//FIXME  }
-}
 
-
-void OpenGLPassState::DisableDrawRadar()
-{
-  if (prevDrawMode != DRAW_SCREEN) {
-    DisableCommon(DRAW_RADAR);
-  }
-  else {
-    glPopAttrib();
-    resetMatrixFunc = ResetScreenMatrices;
-    ResetScreenMatrices();
-    prevDrawMode = DRAW_NONE;
-    drawMode = DRAW_SCREEN;
+  RadarRenderer* radar = getRadarRenderer();
+  if (radar) {
+    radar->executeScissor();
+    radar->executeTransform(true);
   }
 }
 
@@ -545,25 +864,24 @@ void OpenGLPassState::DisableDrawRadar()
 void OpenGLPassState::ResetDrawRadar()
 {
   ResetRadarMatrices();
-  glCallList(resetStateList);
+  ResetState();
+  RadarRenderer* radar = getRadarRenderer();
+  if (radar) {
+    radar->executeScissor();
+  }
+}
+
+
+void OpenGLPassState::DisableDrawRadar()
+{
+  resetMatrixFunc = ResetScreenMatrices;
+  ResetScreenMatrices();
+  DisableCommon(DRAW_RADAR);
 }
 
 
 /******************************************************************************/
 /******************************************************************************/
-
-void OpenGLPassState::SetupWorldLighting()
-{
-//FIXME  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-//FIXME  glLightfv(GL_LIGHT1, GL_POSITION, mapInfo->light.sunDir);
-}
-
-
-void OpenGLPassState::RevertWorldLighting()
-{
-//FIXME  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
-}
-
 
 void OpenGLPassState::SetupScreenMatrices()
 {
@@ -574,7 +892,6 @@ void OpenGLPassState::SetupScreenMatrices()
     return;
   }
 
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
@@ -668,24 +985,27 @@ void OpenGLPassState::SetupScreenLighting()
   const float* la = ambient;
   const float* ld = diffuse;
 
-  const float sunLightAmbt[4] = { la[0]*sf, la[1]*sf, la[2]*sf, la[3]*sf };
-  const float sunLightDiff[4] = { ld[0]*sf, ld[1]*sf, ld[2]*sf, ld[3]*sf };
-  const float sunLightSpec[4] = { la[0]*sf, la[1]*sf, la[2]*sf, la[3]*sf };
+  const float sunLightAmbt[4] = {
+    la[0] * sf, la[1] * sf, la[2] * sf, la[3] * sf
+  };
+  const float sunLightDiff[4] = {
+    ld[0] * sf, ld[1] * sf, ld[2] * sf, ld[3] * sf
+  };
+  const float sunLightSpec[4] = {
+    la[0] * sf, la[1] * sf, la[2] * sf, la[3] * sf
+  };
   glLightfv(GL_LIGHT1, GL_AMBIENT,  sunLightAmbt);
   glLightfv(GL_LIGHT1, GL_DIFFUSE,  sunLightDiff);
   glLightfv(GL_LIGHT1, GL_SPECULAR, sunLightSpec);
-  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
 
   // Enable the GL lights
   glEnable(GL_LIGHT0);
   glEnable(GL_LIGHT1);
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 }
 
 
 void OpenGLPassState::RevertScreenLighting()
 {
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
   glDisable(GL_LIGHT1);
   glDisable(GL_LIGHT0);
 }
@@ -694,7 +1014,7 @@ void OpenGLPassState::RevertScreenLighting()
 /******************************************************************************/
 /******************************************************************************/
 
-void OpenGLPassState::ResetWorldMatrices()
+void OpenGLPassState::ResetIdentityMatrices()
 {
   glMatrixMode(GL_TEXTURE); {
     ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
@@ -702,75 +1022,59 @@ void OpenGLPassState::ResetWorldMatrices()
   }
   glMatrixMode(GL_PROJECTION); {
     ClearMatrixStack(GL_PROJECTION_STACK_DEPTH);
-//FIXME    glLoadMatrixd(camera->GetProjection());
+    glLoadIdentity();
   }
   glMatrixMode(GL_MODELVIEW); {
     ClearMatrixStack(GL_MODELVIEW_STACK_DEPTH);
-//FIXME    glLoadMatrixd(camera->GetModelview());
+    glLoadIdentity();
+  }
+}
+
+
+void OpenGLPassState::ResetWorldMatrices()
+{
+  ViewFrustum& vf = RENDERER.getViewFrustum();
+
+  glMatrixMode(GL_TEXTURE); {
+    ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
+    glLoadIdentity();
+  }
+  glMatrixMode(GL_PROJECTION); {
+    ClearMatrixStack(GL_PROJECTION_STACK_DEPTH);
+    glLoadIdentity();
+    vf.executeProjection();
+  }
+  glMatrixMode(GL_MODELVIEW); {
+    ClearMatrixStack(GL_MODELVIEW_STACK_DEPTH);
+    glLoadIdentity();
+    vf.executeView();
   }
 }
 
 
 void OpenGLPassState::ResetWorldShadowMatrices()
 {
-  glMatrixMode(GL_TEXTURE); {
-    ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
-    glLoadIdentity();
-  }
-  glMatrixMode(GL_PROJECTION); {
-    ClearMatrixStack(GL_PROJECTION_STACK_DEPTH);
-    glLoadIdentity();
-    glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, -1.0);
-  }
-  glMatrixMode(GL_MODELVIEW); {
-    ClearMatrixStack(GL_MODELVIEW_STACK_DEPTH);
-//FIXME    glLoadMatrixf(shadowHandler->shadowMatrix.m);
-  }
+  ResetWorldMatrices();
+  RENDERER.getBackground()->multShadowMatrix();
 }
 
 
 void OpenGLPassState::ResetScreenMatrices()
 {
-  glMatrixMode(GL_TEXTURE); {
-    ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
-    glLoadIdentity();
-  }
-  glMatrixMode(GL_PROJECTION); {
-    ClearMatrixStack(GL_PROJECTION_STACK_DEPTH);
-    glLoadIdentity();
-  }
-  glMatrixMode(GL_MODELVIEW); {
-    ClearMatrixStack(GL_MODELVIEW_STACK_DEPTH);
-    glLoadIdentity();
-  }
+  ResetIdentityMatrices();
   SetupScreenMatrices();
 }
 
 
 void OpenGLPassState::ResetRadarMatrices()
 {
-  glMatrixMode(GL_TEXTURE); {
-    ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
-    glLoadIdentity();
-  }
-  glMatrixMode(GL_PROJECTION); {
-    ClearMatrixStack(GL_PROJECTION_STACK_DEPTH);
-    glLoadIdentity();
-    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0e6, +1.0e6);
-  }
-  glMatrixMode(GL_MODELVIEW); {
-    ClearMatrixStack(GL_MODELVIEW_STACK_DEPTH);
-    glLoadIdentity();
-//FIXME    if (minimap) {
-//FIXME      glScalef(1.0f / (float)minimap->GetSizeX(),
-//FIXME               1.0f / (float)minimap->GetSizeY(), 1.0f);
-//FIXME    }
+  ResetIdentityMatrices();
+  RadarRenderer* radar = getRadarRenderer();
+  if (radar) {
+    radar->executeTransform(true);
   }
 }
 
-
-/******************************************************************************/
-/******************************************************************************/
 
 /******************************************************************************/
 /******************************************************************************/

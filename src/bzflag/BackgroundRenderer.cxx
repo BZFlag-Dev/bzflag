@@ -817,7 +817,9 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 
     // back to normal
     glPopAttrib();
-    if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+    if (BZDB.isTrue("dither")) {
+      glEnable(GL_DITHER);
+    }
   }
 }
 
@@ -1407,7 +1409,6 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
-  glPushMatrix();
   multShadowMatrix();
 
   // disable color updates
@@ -1438,7 +1439,7 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 
   // render those nodes
   renderer.getShadowList().render();
-//FIXME  eventHandler.DrawWorldShadow();
+  eventHandler.DrawWorldShadow();
 
   // revert to OpenGLGState defaults
   if (BZDBCache::stencilShadows) {
@@ -1451,17 +1452,11 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
     glDisable(GL_DEPTH_TEST);
 
     // draw a rectangle over the entire screen
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);  glPushMatrix(); glLoadIdentity();
     glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
+    glMatrixMode(GL_PROJECTION); glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);  glPopMatrix();
 
     // revert to OpenGLGState defaults
     glEnable(GL_DEPTH_TEST);
@@ -1480,7 +1475,8 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glPopMatrix();
+  glLoadIdentity();
+  renderer.getViewFrustum().executeView();
 }
 
 

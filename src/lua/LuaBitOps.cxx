@@ -17,8 +17,8 @@ const int mask = 0x00FFFFFF; // 2^24
 
 bool LuaBitOps::PushEntries(lua_State* L)
 {
-  lua_pushliteral(L, "bit");
-  lua_newtable(L);
+	lua_pushliteral(L, "bit");
+	lua_newtable(L);
 
 	LuaPushNamedCFunc(L, "bit_or",   bit_or);
 	LuaPushNamedCFunc(L, "bit_and",  bit_and);

@@ -42,6 +42,10 @@ static bool doTimestamp = false;
 
 static int callProcDepth = 0;
 
+
+/******************************************************************************/
+/******************************************************************************/
+
 struct LoggingProcPair {
   LoggingProcPair(LoggingProc p, void* d)
   : proc(p)
@@ -55,16 +59,6 @@ struct LoggingProcPair {
 };
 typedef std::vector<LoggingProcPair> LoggingProcVec;
 static LoggingProcVec loggingProcs;
-
-
-void setDebugTimestamp(bool enable, bool micros)
-{
-#ifdef _WIN32
-  micros = false;
-#endif
-  doTimestamp = enable;
-  doMicros = micros;
-}
 
 
 bool registerLoggingProc(LoggingProc proc, void* data)
@@ -111,6 +105,19 @@ static void callProcs(int level, const std::string& msg)
 }
 
 
+/******************************************************************************/
+/******************************************************************************/
+
+void setDebugTimestamp(bool enable, bool micros)
+{
+#ifdef _WIN32
+  micros = false;
+#endif
+  doTimestamp = enable;
+  doMicros = micros;
+}
+
+
 static const int tsBufferSize = 26;
 
 static char *timestamp(char *buf, bool micros)
@@ -137,27 +144,30 @@ static char *timestamp(char *buf, bool micros)
 }
 
 
-void logDebugMessage(int level, const char* fmt, ...)
+/******************************************************************************/
+/******************************************************************************/
+
+void logDebugMessage(int level, const char* fmt, va_list ap)
 {
   char buffer[8192] = { 0 };
   char tsbuf[tsBufferSize] = { 0 };
-  va_list args;
 
-  if (!fmt)
+  if (!fmt) {
     return;
+  }
 
-  va_start(args, fmt);
-  vsnprintf(buffer, sizeof(buffer), fmt, args);
-  va_end(args);
+  vsnprintf(buffer, sizeof(buffer), fmt, ap);
 
-  if (debugLevel >= level || level == 0) {
+  if ((debugLevel >= level) || (level == 0)) {
 #if defined(_MSC_VER)
-    if (doTimestamp)
+    if (doTimestamp) {
       W32_DEBUG_TRACE(timestamp (tsbuf, false));
+    }
     W32_DEBUG_TRACE(buffer);
 #else
-    if (doTimestamp)
+    if (doTimestamp) {
       std::cout << timestamp (tsbuf, doMicros);
+    }
     std::cout << buffer;
     fflush(stdout);
 #endif
@@ -167,20 +177,31 @@ void logDebugMessage(int level, const char* fmt, ...)
 }
 
 
+void logDebugMessage(int level, const char* fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  logDebugMessage(level, fmt, ap);
+  va_end(ap);
+}
+
+
 void logDebugMessage(int level, const std::string &text)
 {
   if (!text.size())
     return;
 
-  if (debugLevel >= level || level == 0) {
+  if ((debugLevel >= level) || (level == 0)) {
     char tsbuf[26];
 #if defined(_MSC_VER)
-    if (doTimestamp)
+    if (doTimestamp) {
       W32_DEBUG_TRACE(timestamp(tsbuf, false));
+    }
     W32_DEBUG_TRACE(text.c_str());
 #else
-    if (doTimestamp)
+    if (doTimestamp) {
       std::cout << timestamp(tsbuf, doMicros);
+    }
     std::cout << text;
     fflush(stdout);
 #endif
@@ -188,3 +209,7 @@ void logDebugMessage(int level, const std::string &text)
 
   callProcs(level, text);
 }
+
+
+/******************************************************************************/
+/******************************************************************************/

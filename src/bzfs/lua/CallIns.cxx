@@ -1,4 +1,6 @@
 
+// FIXME -- rework all of the constants
+
 #include "common.h"
 
 // implementation header

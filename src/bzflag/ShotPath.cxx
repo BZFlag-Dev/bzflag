@@ -13,7 +13,10 @@
 // interface header
 #include "ShotPath.h"
 
-// local implementation headers
+// common headers
+#include "EventHandler.h"
+
+// local  headers
 #include "SegmentedShotStrategy.h"
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"
@@ -150,6 +153,7 @@ void			ShotPath::setExpired()
   expiring = true;
   expired = true;
   getStrategy()->expire();
+  eventHandler.ShotRemoved(firingInfo);
 }
 
 void			ShotPath::boostReloadTime(float dt)

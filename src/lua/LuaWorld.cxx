@@ -103,7 +103,8 @@ LuaWorld::LuaWorld()
 	fsReadAll = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
 	            BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	            BZVFS_BASIC;
-	fsWrite = BZVFS_LUA_WORLD_WRITE;
+	fsWrite    = BZVFS_LUA_WORLD_WRITE;
+	fsWriteAll = BZVFS_LUA_WORLD_WRITE;
 
 	if (!ExecSourceCode(sourceCode)) {
 		KillLua();
@@ -151,6 +152,7 @@ bool LuaWorld::SetupLuaLibs()
 //	lua_getglobal(L, "io");
 //	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
 //	lua_pop(L, 1); // io
+
 	lua_getglobal(L, "os");
 	lua_pushstring(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
 	lua_pushstring(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
@@ -169,7 +171,7 @@ bool LuaWorld::SetupLuaLibs()
 	    !PushLib("math",   LuaVector::PushEntries)     ||
 	    !PushLib("VFS",    LuaVFS::PushEntries)        ||
 	    !PushLib("BZDB",   LuaBZDB::PushEntries)       ||
-	    !PushLib("pack",   LuaPack::PushEntries)       ||
+	    !PushLib("bz",     LuaPack::PushEntries)       ||
 	    !PushLib("Script", LuaScream::PushEntries)     ||
 	    !PushLib("gl",     LuaOpenGL::PushEntries)     ||
 	    !PushLib("GL",     LuaConstGL::PushEntries)    ||

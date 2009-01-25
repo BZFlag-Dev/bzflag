@@ -110,13 +110,6 @@ class EventHandler
     void DrawScreen();
     void DrawRadar();
 
-    // FIXME -- right approach ?
-    bool RenderPlayer(const Player&);
-    bool RenderPlayerExplosion(const Player&);
-    bool RenderShot(const ShotPath&);
-    bool RenderShotExplosion(const ShotPath&);
-    bool RenderFlag(const Flag&);
-    
     bool KeyPress(int key, bool isRepeat);
     bool KeyRelease(int key);
     bool MouseMove(int x, int y);
@@ -126,8 +119,7 @@ class EventHandler
     bool IsAbove(int x, int y);
     std::string GetTooltip(int x, int y);
 
-    void WordComplete(const std::string& line,
-                      std::set<std::string>& partials);
+    void WordComplete(const std::string& line, std::set<std::string>& partials);
 
     /**************************************************************************/
 
