@@ -10,16 +10,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
 #include "common.h"
+
+/* interface header */
 #include "bzfio.h"
 
 /* system implementation headers */
 #include <iostream>
 #include <vector>
+#include <string>
 #include <stdarg.h>
 #include <time.h>
-#include <string>
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
@@ -147,10 +148,32 @@ static char *timestamp(char *buf, bool micros)
 /******************************************************************************/
 /******************************************************************************/
 
+static void realLogDebugMessage(int level, const char* text)
+{
+  if ((debugLevel >= level) || (level == 0)) {
+#if defined(_MSC_VER)
+    if (doTimestamp) {
+      char tsbuf[tsBufferSize] = { 0 };
+      W32_DEBUG_TRACE(timestamp(tsbuf, false));
+    }
+    W32_DEBUG_TRACE(text);
+#else
+    if (doTimestamp) {
+      char tsbuf[tsBufferSize] = { 0 };
+      std::cout << timestamp(tsbuf, doMicros);
+    }
+    std::cout << text;
+    fflush(stdout);
+#endif
+  }
+
+  callProcs(level, text);
+}
+
+
 void logDebugMessage(int level, const char* fmt, va_list ap)
 {
   char buffer[8192] = { 0 };
-  char tsbuf[tsBufferSize] = { 0 };
 
   if (!fmt) {
     return;
@@ -158,22 +181,7 @@ void logDebugMessage(int level, const char* fmt, va_list ap)
 
   vsnprintf(buffer, sizeof(buffer), fmt, ap);
 
-  if ((debugLevel >= level) || (level == 0)) {
-#if defined(_MSC_VER)
-    if (doTimestamp) {
-      W32_DEBUG_TRACE(timestamp (tsbuf, false));
-    }
-    W32_DEBUG_TRACE(buffer);
-#else
-    if (doTimestamp) {
-      std::cout << timestamp (tsbuf, doMicros);
-    }
-    std::cout << buffer;
-    fflush(stdout);
-#endif
-  }
-
-  callProcs(level, buffer);
+  realLogDebugMessage(level, buffer);
 }
 
 
@@ -188,26 +196,10 @@ void logDebugMessage(int level, const char* fmt, ...)
 
 void logDebugMessage(int level, const std::string &text)
 {
-  if (!text.size())
+  if (text.empty()) {
     return;
-
-  if ((debugLevel >= level) || (level == 0)) {
-    char tsbuf[26];
-#if defined(_MSC_VER)
-    if (doTimestamp) {
-      W32_DEBUG_TRACE(timestamp(tsbuf, false));
-    }
-    W32_DEBUG_TRACE(text.c_str());
-#else
-    if (doTimestamp) {
-      std::cout << timestamp(tsbuf, doMicros);
-    }
-    std::cout << text;
-    fflush(stdout);
-#endif
   }
-
-  callProcs(level, text);
+  realLogDebugMessage(level, text.c_str());
 }
 
 

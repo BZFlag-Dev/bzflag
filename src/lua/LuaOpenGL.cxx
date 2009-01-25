@@ -2297,6 +2297,7 @@ static bool CalculateInverse4x4(const float m[4][4], float inv[4][4])
 	return true;
 }
 
+
 static const float* GetNamedMatrix(const string& name)
 {
 	if (name == "camera") {
