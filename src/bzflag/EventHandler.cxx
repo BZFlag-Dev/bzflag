@@ -52,8 +52,8 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 }
 
 
-#define SETUP_EVENT(name, ...) \
-  SetupEvent(#name, &list ## name, ## __VA_ARGS__)
+#define SETUP_EVENT(name, bits, reversed) \
+  SetupEvent(#name, &list ## name, bits, reversed)
 
 
 /******************************************************************************/
@@ -63,39 +63,39 @@ EventHandler::EventHandler()
 {
   mouseOwner = NULL;
 
-  SETUP_EVENT(Update);
+  SETUP_EVENT(Update, 0, false);
 
-  SETUP_EVENT(BZDBChange);
+  SETUP_EVENT(BZDBChange, 0, false);
 
-  SETUP_EVENT(RecvChatMsg);
-  SETUP_EVENT(RecvLuaData);
+  SETUP_EVENT(RecvChatMsg, 0, false);
+  SETUP_EVENT(RecvLuaData, 0, false);
 
-  SETUP_EVENT(ServerJoined);
-  SETUP_EVENT(ServerParted);
+  SETUP_EVENT(ServerJoined, 0, false);
+  SETUP_EVENT(ServerParted, 0, false);
 
-  SETUP_EVENT(PlayerAdded);
-  SETUP_EVENT(PlayerRemoved);
-  SETUP_EVENT(PlayerSpawned);
-  SETUP_EVENT(PlayerKilled);
-  SETUP_EVENT(PlayerJumped);
-  SETUP_EVENT(PlayerLanded);
-  SETUP_EVENT(PlayerTeleported);
-  SETUP_EVENT(PlayerTeamChange);
-  SETUP_EVENT(PlayerScoreChange);
+  SETUP_EVENT(PlayerAdded,       0, false);
+  SETUP_EVENT(PlayerRemoved,     0, false);
+  SETUP_EVENT(PlayerSpawned,     0, false);
+  SETUP_EVENT(PlayerKilled,      0, false);
+  SETUP_EVENT(PlayerJumped,      0, false);
+  SETUP_EVENT(PlayerLanded,      0, false);
+  SETUP_EVENT(PlayerTeleported,  0, false);
+  SETUP_EVENT(PlayerTeamChange,  0, false);
+  SETUP_EVENT(PlayerScoreChange, 0, false);
 
-  SETUP_EVENT(ShotAdded);
-  SETUP_EVENT(ShotRemoved);
+  SETUP_EVENT(ShotAdded,   0, false);
+  SETUP_EVENT(ShotRemoved, 0, false);
 
-  SETUP_EVENT(FlagAdded);
-  SETUP_EVENT(FlagRemoved);
-  SETUP_EVENT(FlagGrabbed);
-  SETUP_EVENT(FlagDropped);
-  SETUP_EVENT(FlagCaptured);
-  SETUP_EVENT(FlagTransferred);
+  SETUP_EVENT(FlagAdded,       0, false);
+  SETUP_EVENT(FlagRemoved,     0, false);
+  SETUP_EVENT(FlagGrabbed,     0, false);
+  SETUP_EVENT(FlagDropped,     0, false);
+  SETUP_EVENT(FlagCaptured,    0, false);
+  SETUP_EVENT(FlagTransferred, 0, false);
 
-  SETUP_EVENT(ViewResize);
-  SETUP_EVENT(GLContextInit);
-  SETUP_EVENT(GLContextFree);
+  SETUP_EVENT(ViewResize,    0, false);
+  SETUP_EVENT(GLContextInit, 0, false);
+  SETUP_EVENT(GLContextFree, 0, false);
 
   SETUP_EVENT(DrawGenesis,     0, true);
   SETUP_EVENT(DrawWorldStart,  0, true);
@@ -106,16 +106,16 @@ EventHandler::EventHandler()
   SETUP_EVENT(DrawScreen,      0, true);
   SETUP_EVENT(DrawRadar,       0, true);
 
-  SETUP_EVENT(KeyPress,     REQ_INPUT_CTRL);
-  SETUP_EVENT(KeyRelease,   REQ_INPUT_CTRL);
-  SETUP_EVENT(MousePress,   REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseMove,    REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseRelease, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseWheel,   REQ_INPUT_CTRL);
-  SETUP_EVENT(IsAbove,      REQ_INPUT_CTRL);
-  SETUP_EVENT(GetTooltip,   REQ_INPUT_CTRL);
+  SETUP_EVENT(KeyPress,     REQ_INPUT_CTRL, false);
+  SETUP_EVENT(KeyRelease,   REQ_INPUT_CTRL, false);
+  SETUP_EVENT(MousePress,   REQ_INPUT_CTRL, false);
+  SETUP_EVENT(MouseMove,    REQ_INPUT_CTRL, false);
+  SETUP_EVENT(MouseRelease, REQ_INPUT_CTRL, false);
+  SETUP_EVENT(MouseWheel,   REQ_INPUT_CTRL, false);
+  SETUP_EVENT(IsAbove,      REQ_INPUT_CTRL, false);
+  SETUP_EVENT(GetTooltip,   REQ_INPUT_CTRL, false);
 
-  SETUP_EVENT(WordComplete, REQ_INPUT_CTRL);
+  SETUP_EVENT(WordComplete, REQ_INPUT_CTRL, false);
 }
 
 
