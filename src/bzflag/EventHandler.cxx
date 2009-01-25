@@ -300,21 +300,21 @@ void EventHandler::RecvLuaData(int srcPlayerID, int srcScriptID,
     EventClientList& list = list ## name; \
     if (list.empty()) { return; }         \
                                           \
-    OpenGLPassState::Enable ## name ();         \
+    OpenGLPassState::Enable ## name ();   \
                                           \
-    EventClient* ec;                      \
+    EventClient* ec = NULL;               \
     size_t i = 0;                         \
     list.start(i);                        \
     list.next(i, ec);                     \
     ec-> name ();                         \
                                           \
     while (list.next(i, ec)) {            \
-      OpenGLPassState::Reset ## name ();        \
+      OpenGLPassState::Reset ## name ();  \
       ec-> name ();                       \
     }                                     \
     list.finish();                        \
                                           \
-    OpenGLPassState::Disable ## name ();        \
+    OpenGLPassState::Disable ## name ();  \
   }
 
 DRAW_CALLIN(DrawGenesis)
