@@ -28,7 +28,7 @@ class OpenGLPassState {
       DRAW_SCREEN_START = 5,
       DRAW_SCREEN       = 6,
       DRAW_RADAR        = 7,
-      DRAW_MODE_COUNT   = 8,
+      DRAW_MODE_COUNT   = 8
     };
 
   public:
