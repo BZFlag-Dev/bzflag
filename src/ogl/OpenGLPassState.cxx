@@ -9,7 +9,6 @@
 
 #include "common.h"
 
-
 // implementation header
 #include "OpenGLPassState.h"
 
@@ -445,7 +444,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
   }
   glDisable(GL_COLOR_MATERIAL);
 
-  // fog -- FIXME ...
+  // fog
   switch (mode) {
     case DRAW_WORLD_START:
     case DRAW_WORLD:
@@ -618,7 +617,6 @@ inline void OpenGLPassState::DisableCommon(DrawMode mode)
   assert(drawMode == mode);
   mode = mode; // avoid warnings
 
-  // FIXME  --  not needed by shadow or radar
   drawMode = DRAW_NONE;
   drawingEnabled = false;
 
