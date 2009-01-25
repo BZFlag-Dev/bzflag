@@ -16,7 +16,7 @@ class LuaGLPointers {
 		static bool Enable(lua_State* L);
 		static bool Reset(lua_State* L);
 
-	private: // call-outs
+	private:
 		static void CheckActiveState(lua_State* L, const char* funcName);
 
 	private: // call-outs

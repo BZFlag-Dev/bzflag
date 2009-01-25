@@ -22,7 +22,6 @@ using std::string;
 // local headers
 #include "LuaInclude.h"
 #include "LuaUtils.h"
-#include "LuaUserData.h"
 #include "LuaHashString.h"
 #include "LuaGLBuffers.h"
 
