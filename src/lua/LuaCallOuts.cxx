@@ -69,6 +69,8 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, LocalizeString);
 	PUSH_LUA_CFUNC(L, GetCacheFilePath);
 
+	PUSH_LUA_CFUNC(L, GetConsoleMessages);
+
 	PUSH_LUA_CFUNC(L, GetGameInfo);
 	PUSH_LUA_CFUNC(L, GetGameInfo);
 
@@ -360,6 +362,42 @@ int LuaCallOuts::GetCacheFilePath(lua_State* L)
 {
 	const char* text = luaL_checkstring(L, 1);
 	lua_pushstdstring(L, CACHEMGR.getLocalName(text));
+	return 1;
+}
+
+
+int LuaCallOuts::GetConsoleMessages(lua_State* L)
+{
+	if (controlPanel == NULL) {
+		return 0;
+	}
+
+	const ControlPanel::MessageModes mode =
+		(ControlPanel::MessageModes)luaL_checkint(L, 1);
+
+	const std::deque<ControlPanelMessage>* messages =
+		controlPanel->getModeMessages(mode);
+	if (messages == NULL) {
+		return 0;
+	}
+
+	const size_t msgSize = messages->size();
+	size_t count = (size_t)luaL_optint(L, 2, (int)msgSize);
+	if (count > msgSize) {
+		count = msgSize;
+	}
+
+	const size_t start = msgSize - count;
+
+	lua_createtable(L, count, 0);
+	int index = 0;
+	for (size_t m = start; m < msgSize; m++) {
+		index++;
+		const ControlPanelMessage& msg = (*messages)[m];
+		lua_pushlstring(L, msg.string.data(), msg.string.size());
+		lua_rawseti(L, -2, index);
+	}
+
 	return 1;
 }
 

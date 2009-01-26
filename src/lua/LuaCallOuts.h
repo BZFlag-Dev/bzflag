@@ -23,6 +23,8 @@ class LuaCallOuts {
 		static int LocalizeString(lua_State* L);
 		static int GetCacheFilePath(lua_State* L);
 
+		static int GetConsoleMessages(lua_State* L);
+
 		static int GetGameInfo(lua_State* L);
 
 		static int GetDataDir(lua_State* L); // FIXME -- not implemented

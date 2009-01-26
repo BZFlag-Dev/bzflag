@@ -15,6 +15,7 @@
 
 // bzflag headers
 #include "../bzflag/Roaming.h"
+#include "../bzflag/ControlPanel.h"
 
 // local headers
 #include "LuaInclude.h"
@@ -34,6 +35,7 @@ static bool PushAnsiCodes(lua_State* L);
 static bool PushObstacleTypes(lua_State* L);
 static bool PushGfxBlockTypes(lua_State* L);
 static bool PushRoamModes(lua_State* L);
+static bool PushConsoleTypes(lua_State* L);
 //static bool PushFlagQualities(lua_State* L);
 //static bool PushPlayers(lua_State* L);
 //static bool PushPermissions(lua_State* L);
@@ -54,7 +56,8 @@ bool LuaConstGame::PushEntries(lua_State* L)
 		PushAnsiCodes(L)       &&
 		PushObstacleTypes(L)   &&
 		PushGfxBlockTypes(L)   &&
-		PushRoamModes(L);
+		PushRoamModes(L)       &&
+		PushConsoleTypes(L);
 }
 
 
@@ -318,6 +321,26 @@ static bool PushRoamModes(lua_State* L)
 	PushDualPair(L, "FOLLOW", Roaming::roamViewFollow);
 	PushDualPair(L, "FPS",    Roaming::roamViewFP);
 	PushDualPair(L, "FLAG",   Roaming::roamViewFlag);
+
+	lua_rawset(L, -3);
+
+	return true;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool PushConsoleTypes(lua_State* L)
+{
+	lua_pushliteral(L, "CONSOLE");
+	lua_newtable(L);
+
+	PushDualPair(L, "ALL",    ControlPanel::MessageAll);
+	PushDualPair(L, "CHAT",   ControlPanel::MessageChat);
+	PushDualPair(L, "SERVER", ControlPanel::MessageServer);
+	PushDualPair(L, "MISC",   ControlPanel::MessageMisc);
+	PushDualPair(L, "DEBUG",  ControlPanel::MessageDebug);
 
 	lua_rawset(L, -3);
 

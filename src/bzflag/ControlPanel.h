@@ -35,14 +35,16 @@ class RadarRenderer;
 class SceneRenderer;
 class LocalFontFace;
 
-struct ControlPanelMessage {
-    ControlPanelMessage(const std::string&);
-    void breakLines(float maxLength, int fontFace, float fontSize);
 
-    std::string string;
-    std::vector<std::string> lines;
-    int numlines;
+struct ControlPanelMessage {
+  ControlPanelMessage(const std::string&);
+  void breakLines(float maxLength, int fontFace, float fontSize);
+
+  std::string string;
+  std::vector<std::string> lines;
+  int numlines;
 };
+
 
 class ControlPanel {
   public:
@@ -80,6 +82,8 @@ class ControlPanel {
     void saveMessages(const std::string& filename,
 				     bool stripAnsi) const;
 
+    const std::deque<ControlPanelMessage>* getModeMessages(MessageModes mode);
+
   private:
     // no copying!
     ControlPanel(const ControlPanel&);
@@ -97,7 +101,6 @@ class ControlPanel {
     std::vector<const char *> *tabs;
     std::vector<float> tabTextWidth;
     long totalTabWidth;
-
 
     MainWindow&		window;
     bool		resized;

@@ -115,7 +115,8 @@ void RadarRenderer::setJammed(bool _jammed)
 
 void RadarRenderer::setDimming(float newDimming)
 {
-  dimming = (1.0f - newDimming > 1.0f) ? 1.0f : (1.0f - newDimming < 0.0f) ? 0.0f : 1.0f - newDimming;
+  dimming = (1.0f - newDimming > 1.0f) ? 1.0f :
+            (1.0f - newDimming < 0.0f) ? 0.0f : 1.0f - newDimming;
 }
 
 

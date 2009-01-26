@@ -46,6 +46,7 @@ ControlPanelMessage::ControlPanelMessage(const std::string& _string) :
 {
 }
 
+
 void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
 {
   FontManager &fm = FontManager::instance();
@@ -132,6 +133,16 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     lastTab -= n;
 
   }
+}
+
+
+const std::deque<ControlPanelMessage>*
+  ControlPanel::getModeMessages(MessageModes mode)
+{
+  if ((mode < 0) || (mode >= MessageModeCount)) {
+    return NULL;
+  }
+  return &(messages[mode]);
 }
 
 
