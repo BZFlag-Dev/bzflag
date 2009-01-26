@@ -6,6 +6,7 @@
 #include "BzDocket.h"
 #include "DirectoryNames.h"
 #include "StateDatabase.h"
+#include "bzfio.h"
 
 // system headers
 #ifndef WIN32
@@ -518,18 +519,19 @@ bool BzVFS::dirList(const string& path, const string& modes, bool recursive,
     return false;
   }
 
-  // FIXME
-  printf("BzVFS::dirList: '%s' '%s'\n", cleanPath.c_str(), modes.c_str());
+  logDebugMessage(4, "BzVFS::dirList: '%s' '%s'\n",
+                  cleanPath.c_str(), modes.c_str());
+
   FSMap::const_iterator it;
   for (it = fsMap.begin(); it != fsMap.end(); ++it) {
-    printf("BZVFS: %s = %p\n", it->first.c_str(), it->second);
+    logDebugMessage(4, "  BZVFS: %s = %p\n", it->first.c_str(), it->second);
   }
 
   vector<BzFS*> systems;
   getSystems(modes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
-    printf("  scanning: %p\n", systems[i]); // FIXME
+    logDebugMessage(4, "    scanning: %p\n", systems[i]); // FIXME
     systems[i]->dirList(cleanPath, recursive, dirs, files);
   }
   return true;

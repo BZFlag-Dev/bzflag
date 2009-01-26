@@ -15,6 +15,10 @@
 // implementation header
 #include "EventClientList.h"
 
+// system headers
+#include <string>
+using std::string;
+
 // common headers
 #include "EventClient.h"
 
@@ -49,11 +53,15 @@ inline bool EventClientList::lessThan(const EventClient* a,
 {
   const int aOrder = a->GetOrder();
   const int bOrder = b->GetOrder();
-  if ((aOrder < bOrder) ||
-      ((aOrder == bOrder) && (a->GetName() < b->GetName()))) {
-    return !reversed;
-  }
-  return reversed;
+  if (aOrder < bOrder) { return !reversed; }
+  if (aOrder > bOrder) { return  reversed; }
+
+  const string& aName = a->GetName();
+  const string& bName = b->GetName();
+  if (aName < bName) { return !reversed; }
+  if (aName > bName) { return  reversed; }
+
+  return (a < b) ? !reversed : reversed;
 }
 
 

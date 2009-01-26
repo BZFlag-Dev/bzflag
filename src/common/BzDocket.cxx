@@ -1,10 +1,10 @@
 
 #include "common.h"
 
-// interface
+// interface header
 #include "BzDocket.h"
 
-// system
+// system headers
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -18,7 +18,7 @@ using std::string;
 using std::vector;
 using std::map;
 
-// common
+// common headers
 #include "bzfio.h"
 #include "Pack.h"
 #include "OSFile.h"
@@ -198,7 +198,7 @@ bool BzDocket::addData(const string& data, const string& mapPath)
 {
   if (mapPath.find_first_of("\\:") != string::npos) {
     errorMsg = "bad map path (" + mapPath + ")";
-    printf("internal BzDocket error: %s\n", errorMsg.c_str());
+    logDebugMessage(4, "internal BzDocket error: %s\n", errorMsg.c_str());
     return false;
   }
 
@@ -214,7 +214,7 @@ bool BzDocket::addData(const string& data, const string& mapPath)
   if (pos != string::npos) {
     const string dirPath = mapPath.substr(0, pos + 1);
     if (dirSet.find(dirPath) == dirSet.end()) {
-      printf("DIRPATH = %s\n", dirPath.c_str()); // FIXME
+      logDebugMessage(4, "DIRPATH = %s\n", dirPath.c_str());
     }
     dirSet.insert(dirPath);
   }
@@ -337,11 +337,12 @@ static int countSlashes(const string& path)
 void BzDocket::dirList(const string& path, bool recursive,
                        vector<string>& dirs, vector<string>& files) const
 {
+  dirs = dirs; // FIXME
   const int pathSlashes = recursive ? countSlashes(path) : 0;
-  printf("BzDocket::dirList: '%s'\n", path.c_str()); // FIXME
+  logDebugMessage(4, "BzDocket::dirList: '%s'\n", path.c_str());
   DataMap::const_iterator it;
   for (it = dataMap.begin(); it != dataMap.end(); ++it) {
-    printf("  checking: '%s'\n", it->first.c_str()); // FIXME
+    logDebugMessage(4, "  checking: '%s'\n", it->first.c_str());
     if (it->first.compare(0, path.size(), path) == 0) {
       if (recursive) {
         files.push_back(it->first);
@@ -353,7 +354,6 @@ void BzDocket::dirList(const string& path, bool recursive,
       }
     }
   }
-  dirs = dirs; // FIXME
 }
 
 

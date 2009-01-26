@@ -1,18 +1,23 @@
 
 #include "common.h"
 
+// implementation header
 #include "LuaVFS.h"
 
+// system headers
 #include <string>
 #include <vector>
 #include <map>
-
 using namespace std;
 
+// common headers
+#include "BzVFS.h"
+
+// local headers
 #include "LuaInclude.h"
 #include "LuaHandle.h"
 #include "LuaUtils.h"
-#include "BzVFS.h"
+#include "LuaHashString.h"
 
 
 /******************************************************************************/
@@ -27,6 +32,21 @@ bool LuaVFS::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, AppendFile);
 	PUSH_LUA_CFUNC(L, Include);
 	PUSH_LUA_CFUNC(L, DirList);
+
+	lua_pushliteral(L, "MODES");
+	lua_newtable(L);
+	{
+		HSTR_PUSH_STRING(L, "CONFIG",          BZVFS_CONFIG);
+		HSTR_PUSH_STRING(L, "DATA",            BZVFS_DATA);
+		HSTR_PUSH_STRING(L, "FTP",             BZVFS_FTP);
+		HSTR_PUSH_STRING(L, "HTTP",            BZVFS_HTTP);
+		HSTR_PUSH_STRING(L, "LUA_USER",        BZVFS_LUA_USER);
+		HSTR_PUSH_STRING(L, "LUA_WORLD",       BZVFS_LUA_WORLD);
+		HSTR_PUSH_STRING(L, "LUA_USER_WRITE",  BZVFS_LUA_USER_WRITE);
+		HSTR_PUSH_STRING(L, "LUA_WORLD_WRITE", BZVFS_LUA_WORLD_WRITE);
+	}
+	lua_rawset(L, -3);
+
 	return true;
 }
 

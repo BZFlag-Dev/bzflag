@@ -57,9 +57,17 @@ static void pushEntry(int id, const string& name)
 
 static bool isBetterClient(EventClient* a, EventClient* b)
 {
-  if (a->GetOrder() < b->GetOrder()) { return true; }
-  if (a->GetOrder() > b->GetOrder()) { return false; }
-  return (a->GetName() < b->GetName());
+  const int aOrder = a->GetOrder();
+  const int bOrder = b->GetOrder();
+  if (aOrder < bOrder) { return true;  }
+  if (aOrder > bOrder) { return false; }
+
+  const string& aName = a->GetName();
+  const string& bName = b->GetName();
+  if (aName < bName) { return true;  }
+  if (aName > bName) { return false; }
+
+  return (a < b);
 }
 
 
