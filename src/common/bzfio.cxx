@@ -171,7 +171,7 @@ static void realLogDebugMessage(int level, const char* text)
 }
 
 
-void logDebugMessage(int level, const char* fmt, va_list ap)
+void logDebugMessageArgs(int level, const char* fmt, va_list ap)
 {
   char buffer[8192] = { 0 };
 
@@ -189,7 +189,7 @@ void logDebugMessage(int level, const char* fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
-  logDebugMessage(level, fmt, ap);
+  logDebugMessageArgs(level, fmt, ap);
   va_end(ap);
 }
 

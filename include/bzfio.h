@@ -23,8 +23,8 @@
 extern int debugLevel;
 
 void logDebugMessage(int level, const char* fmt, ...);
-void logDebugMessage(int level, const char* fmt, va_list ap);
 void logDebugMessage(int level, const std::string &text);
+void logDebugMessageArgs(int level, const char* fmt, va_list ap);
 
 void setDebugTimestamp (bool enable, bool doMicros);
 

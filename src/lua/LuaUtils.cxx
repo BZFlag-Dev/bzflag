@@ -30,7 +30,7 @@ void LuaLog(int level, const char* fmt, ...) // FIXME
 {
 	va_list ap;
 	va_start(ap, fmt);
-	logDebugMessage(level, fmt, ap);
+	logDebugMessageArgs(level, fmt, ap);
 	va_end(ap);
 }
 
