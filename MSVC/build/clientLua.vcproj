@@ -207,6 +207,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lua\LuaGLBuffers.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaGLPointers.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaGLQueries.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lua\LuaHandle.cxx"
 				>
 			</File>
@@ -342,6 +354,18 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lua\LuaFontTexture.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaGLBuffers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaGLPointers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaGLQueries.h"
 				>
 			</File>
 			<File
