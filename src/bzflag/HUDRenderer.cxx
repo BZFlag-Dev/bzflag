@@ -1861,7 +1861,9 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
   }
 
   // draw shot reload status
-  if ((ROAM.getMode() == Roaming::roamViewFP) && BZDB.isTrue("displayReloadTimer")) {
+  if ((ROAM.getMode() == Roaming::roamViewFP) &&
+       BZDB.isTrue("displayReloadTimer") &&
+       GfxBlockMgr::shotStatus.notBlocked()) {
     renderShots(ROAM.getTargetTank());
   }
 
@@ -1869,7 +1871,8 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderUpdate(renderer);
 
   // show tank labels
-  if (BZDB.isTrue("displayLabels")) {
+  if (BZDB.isTrue("displayLabels") &&
+      GfxBlockMgr::labels.notBlocked()) {
     renderTankLabels(renderer);
   }
 
