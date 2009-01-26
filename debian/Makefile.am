@@ -2,7 +2,7 @@
 EXTRA_DIST =	\
 	buildsnap	\
 	bzflag.docs	\
-	bzflag.menu	\
+	bzflag-data.menu	\
 	bzflag-server.docs	\
 	changelog.in	\
 	control	\
