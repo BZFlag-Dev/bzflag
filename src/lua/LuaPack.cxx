@@ -133,7 +133,7 @@ int UnpackType(lua_State* L)
 	// return a single value
 	if (!lua_israwnumber(L, 3)) {
 		const T value = *((T*)str);
-		lua_pushnumber(L, value);
+		lua_pushnumber(L, static_cast<lua_Number>(value));
 		return 1;
 	}
 
