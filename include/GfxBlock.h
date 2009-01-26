@@ -91,6 +91,7 @@ class GfxBlockMgr {
       Effects,
 
       // UI items
+      Cursor,
       Console,
       Radar,
       TeamScores,
@@ -127,6 +128,7 @@ class GfxBlockMgr {
     static GfxBlock weather;
     static GfxBlock effects;
 
+    static GfxBlock cursor;
     static GfxBlock console;
     static GfxBlock radar;
     static GfxBlock teamScores;

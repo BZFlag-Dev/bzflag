@@ -219,6 +219,7 @@ GLOBAL_GFX_BLOCK(Weather,      weather);
 GLOBAL_GFX_BLOCK(Effects,      effects);
 
 // UI items
+GLOBAL_GFX_BLOCK(Cursor,       cursor);
 GLOBAL_GFX_BLOCK(Console,      console);
 GLOBAL_GFX_BLOCK(Radar,        radar);
 GLOBAL_GFX_BLOCK(TeamScores,   teamScores);

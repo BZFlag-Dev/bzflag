@@ -465,8 +465,9 @@ void			XWindow::hideMouse()
       // note we're going to leak the cursor
     }
   }
-  if (cursor != None)
+  if (cursor != None) {
     XDefineCursor(display->getDisplay(), window, cursor);
+  }
 }
 
 void			XWindow::setGamma(float newGamma)

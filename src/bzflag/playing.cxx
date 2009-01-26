@@ -6491,6 +6491,31 @@ static void drawFakeCursor()
 }
 
 
+static void handleMouseDrawing()
+{
+  static bool cursorIsHidden = false;
+
+  const bool fakeCursor = BZDB.isTrue("fakecursor");
+  const bool gfxBlocked = GfxBlockMgr::cursor.blocked();
+  
+  if (fakeCursor || gfxBlocked) {
+    if (!cursorIsHidden) {
+      cursorIsHidden = true;
+      mainWindow->getWindow()->hideMouse();
+    }
+    if (fakeCursor && !gfxBlocked) {
+      drawFakeCursor();
+    }
+  }
+  else {
+    if (cursorIsHidden) {
+      cursorIsHidden = false;
+      mainWindow->getWindow()->showMouse();
+    }
+  }
+}
+
+
 /******************************************************************************/
 
 void drawFrame(const float dt)
@@ -6668,11 +6693,7 @@ void drawFrame(const float dt)
     hud->setDrawTime((float)media->stopwatch(false));
   }
 
-  // draw a fake cursor if requested.  this is mostly intended for
-  // pass through 3D cards that don't have cursor support.
-  if (BZDB.isTrue("fakecursor")) {
-    drawFakeCursor();
-  }
+  handleMouseDrawing();
 
   eventHandler.DrawScreen();
 
@@ -7393,9 +7414,6 @@ void doFPSLimit(void)
 
 static void playingLoop()
 {
-  if (BZDB.isTrue("fakecursor"))
-    mainWindow->getWindow()->hideMouse();
-
   // start timing
   TimeKeeper::setTick();
   updateDaylight(epochOffset);
@@ -7471,7 +7489,6 @@ static void playingLoop()
     }
     else {
       eventHandler.DrawGenesis(); // called every frame
-
       // wait around a little to avoid spinning the CPU when iconified
       TimeKeeper::sleep(0.05f);
     }

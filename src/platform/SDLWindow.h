@@ -42,8 +42,8 @@ class SDLWindow : public BzfWindow {
   void  grabMouse() {;};
   void  ungrabMouse() {;};
   void  enableGrabMouse(bool);
-  void  showMouse() {;};
-  void  hideMouse() {;};
+  void  showMouse();
+  void  hideMouse();
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;

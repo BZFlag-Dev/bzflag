@@ -292,12 +292,12 @@ void			WinWindow::enableGrabMouse(bool on)
 
 void			WinWindow::showMouse()
 {
-  // FIXME
+  ShowCursor(TRUE);
 }
 
 void			WinWindow::hideMouse()
 {
-  // FIXME
+  ShowCursor(FALSE);
 }
 
 void			WinWindow::setGamma(float newGamma)

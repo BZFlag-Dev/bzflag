@@ -156,6 +156,16 @@ void SDLWindow::getSize(int& _width, int& _height) const {
 }
 
 
+void SDLWindow::showMouse() {
+  SDL_ShowCursor(1);
+}
+
+
+void SDLWindow::hideMouse() {
+  SDL_ShowCursor(0);
+}
+
+
 void SDLWindow::setGamma(float gamma) {
   int result = SDL_SetGamma(gamma, gamma, gamma);
   if (result == -1) {
