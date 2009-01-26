@@ -146,6 +146,15 @@ const std::deque<ControlPanelMessage>*
 }
 
 
+int ControlPanel::getModeMessageCount(MessageModes mode)
+{
+  if ((mode < 0) || (mode >= MessageModeCount)) {
+    return -1;
+  }
+  return messageCounts[mode];
+}
+
+
 //
 // ControlPanel
 //
@@ -187,6 +196,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
   messageAreaPixels[3] = 0;
   for (int i = 0; i < MessageModeCount; i++) {
     messages[i].clear();
+    messageCounts[i] = 0;
     unRead[i] = false;
   }
   teamColor[0] = teamColor[1] = teamColor[2] = (GLfloat)0.0f;
@@ -665,6 +675,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   fm.setOpacity(1.0f);
 }
 
+
 void ControlPanel::resize()
 {
   float radarSpace, radarSize;
@@ -741,15 +752,18 @@ void ControlPanel::resize()
   invalidate();
 }
 
+
 void ControlPanel::resizeCallback(void* self)
 {
   ((ControlPanel*)self)->resize();
 }
 
+
 void ControlPanel::setNumberOfFrameBuffers(int n)
 {
   numBuffers = n;
 }
+
 
 void ControlPanel::invalidate()
 {
@@ -760,10 +774,12 @@ void ControlPanel::invalidate()
   }
 }
 
+
 void ControlPanel::exposeCallback(void* self)
 {
   ((ControlPanel*)self)->invalidate();
 }
+
 
 void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
 {
@@ -810,6 +826,7 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
   invalidate();
 }
 
+
 void ControlPanel::setMessagesMode(MessageModes mode)
 {
   if ((mode == MessageDebug) && (debugLevel <= 0)) {
@@ -826,6 +843,7 @@ void ControlPanel::setMessagesMode(MessageModes mode)
   }
   invalidate();
 }
+
 
 void ControlPanel::addMessage(const std::string& line,
 			      MessageModes realmode)
@@ -861,6 +879,7 @@ void ControlPanel::addMessage(const std::string& line,
 	messages[tab].pop_front();
 	messages[tab].push_back(item);
       }
+      messageCounts[tab]++;
 
       // visible changes, force a console refresh
       if (messageMode == tab) {

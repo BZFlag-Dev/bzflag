@@ -82,6 +82,7 @@ class ControlPanel {
     void saveMessages(const std::string& filename,
 				     bool stripAnsi) const;
 
+    int getModeMessageCount(MessageModes mode);
     const std::deque<ControlPanelMessage>* getModeMessages(MessageModes mode);
 
   private:
@@ -126,8 +127,9 @@ class ControlPanel {
     float		margin;
     float		lineHeight;
     bool		unRead[MessageModeCount];
-
+    int			messageCounts[MessageModeCount];
 };
+
 
 inline void ControlPanel::setDimming(float newDimming)
 {

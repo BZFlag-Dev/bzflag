@@ -24,6 +24,7 @@ class LuaCallOuts {
 		static int GetCacheFilePath(lua_State* L);
 
 		static int GetConsoleMessages(lua_State* L);
+		static int GetConsoleMessageCount(lua_State* L);
 
 		static int GetGameInfo(lua_State* L);
 

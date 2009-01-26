@@ -70,6 +70,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetCacheFilePath);
 
 	PUSH_LUA_CFUNC(L, GetConsoleMessages);
+	PUSH_LUA_CFUNC(L, GetConsoleMessageCount);
 
 	PUSH_LUA_CFUNC(L, GetGameInfo);
 	PUSH_LUA_CFUNC(L, GetGameInfo);
@@ -398,6 +399,26 @@ int LuaCallOuts::GetConsoleMessages(lua_State* L)
 		lua_rawseti(L, -2, index);
 	}
 
+	return 1;
+}
+
+
+int LuaCallOuts::GetConsoleMessageCount(lua_State* L)
+{
+	if (controlPanel == NULL) {
+		return 0;
+	}
+
+	const ControlPanel::MessageModes mode =
+		(ControlPanel::MessageModes)luaL_checkint(L, 1);
+
+	const std::deque<ControlPanelMessage>* messages =
+		controlPanel->getModeMessages(mode);
+	if (messages == NULL) {
+		return 0;
+	}
+
+	lua_pushinteger(L, controlPanel->getModeMessageCount(mode));
 	return 1;
 }
 
