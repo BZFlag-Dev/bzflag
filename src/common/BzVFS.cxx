@@ -531,7 +531,7 @@ bool BzVFS::dirList(const string& path, const string& modes, bool recursive,
   getSystems(modes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
-    logDebugMessage(4, "    scanning: %p\n", systems[i]); // FIXME
+    logDebugMessage(4, "    scanning: %p\n", systems[i]);
     systems[i]->dirList(cleanPath, recursive, dirs, files);
   }
   return true;

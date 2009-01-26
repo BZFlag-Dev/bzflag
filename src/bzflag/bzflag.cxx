@@ -497,7 +497,7 @@ static void parse(int argc, char **argv)
           }
           c++;
         }
-        debugLevel += ((c - argv[i]) - 1);
+        debugLevel += (int)((c - argv[i]) - 1);
       }
     }
     else {

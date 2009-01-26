@@ -2021,7 +2021,7 @@ static int UnbanByHost(lua_State* L)
 
 static int GetBanCount(lua_State* L, bz_eBanListType listType)
 {
-  lua_pushnumber(L, bz_getBanListSize(listType));
+  lua_pushinteger(L, bz_getBanListSize(listType));
   return 1;
 }
 
@@ -2045,7 +2045,7 @@ static int GetBanEntry(lua_State* L, bz_eBanListType listType)
   lua_pushstring(L, bz_getBanItemSource(listType, entry));
   lua_rawset(L, -3);
   lua_pushliteral(L, "duration");
-  lua_pushnumber(L, bz_getBanItemDuration(listType, entry));
+  lua_pushnumber(L, (float)bz_getBanItemDuration(listType, entry));
   lua_rawset(L, -3);
   lua_pushstring(L, "fromMaster");
   lua_pushboolean(L, bz_getBanItemIsFromMaster(listType, entry));

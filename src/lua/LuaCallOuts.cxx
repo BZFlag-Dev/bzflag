@@ -1596,7 +1596,7 @@ int LuaCallOuts::SetFlagGfxBlock(lua_State* L)
 	GfxBlock& gfxBlock = flag->gfxBlock;
 
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
-	const bool block = lua_toboolean(L, 2);
+	const bool block = lua_tobool(L, 2);
 	if (!block) {
 		gfxBlock.remove(ec);
 		return 0;

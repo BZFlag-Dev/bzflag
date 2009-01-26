@@ -47,7 +47,7 @@ int LuaBitOps::bit_or(lua_State* L)
 	for (int i = 1; !lua_isnone(L, i); i++) {
 		result = result | luaL_checkuint(L, i);
 	}
-	lua_pushnumber(L, result & mask);
+	lua_pushinteger(L, result & mask);
 	return 1;
 }
 
@@ -58,7 +58,7 @@ int LuaBitOps::bit_and(lua_State* L)
 	for (int i = 1; !lua_isnone(L, i); i++) {
 		result = result & luaL_checkuint(L, i);
 	}
-	lua_pushnumber(L, result & mask);
+	lua_pushinteger(L, result & mask);
 	return 1;
 }
 
@@ -69,7 +69,7 @@ int LuaBitOps::bit_xor(lua_State* L)
 	for (int i = 1; !lua_isnone(L, i); i++) {
 		result = result ^ luaL_checkuint(L, i);
 	}
-	lua_pushnumber(L, result & mask);
+	lua_pushinteger(L, result & mask);
 	return 1;
 }
 
@@ -77,7 +77,7 @@ int LuaBitOps::bit_xor(lua_State* L)
 int LuaBitOps::bit_inv(lua_State* L)
 {
 	const unsigned int result = ~luaL_checkuint(L, 1);
-	lua_pushnumber(L, result & mask);
+	lua_pushinteger(L, result & mask);
 	return 1;
 }
 
@@ -89,7 +89,7 @@ int LuaBitOps::bit_bits(lua_State* L)
 		const int bit = (unsigned int)luaL_checkint(L, i);
 		result = result | (1 << bit);
 	}
-	lua_pushnumber(L, result & mask);
+	lua_pushinteger(L, result & mask);
 	return 1;
 }
 

@@ -50,7 +50,7 @@ inline int lua_toint(lua_State* L, int idx)
 
 inline bool lua_tobool(lua_State* L, int index)
 {
-  return (bool)lua_toboolean(L, index);
+  return lua_toboolean(L, index) != 0;
 }
 
 
