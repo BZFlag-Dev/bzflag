@@ -1501,6 +1501,8 @@ BZF_API unsigned int bz_getWorldCacheData(unsigned char *data);
 
 typedef struct bz_CustomMapObjectInfo
 {
+  bz_ApiString     fileName;
+  int              lineNum;
   bz_ApiString     name;
   bz_APIStringList data;
   bz_ApiString     newData;

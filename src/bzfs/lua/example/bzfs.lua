@@ -211,8 +211,8 @@ bz.SetCallIn('BZDBChange',
 local lua_block_env = {}
 setmetatable(lua_block_env, { __index = _G })
 
-local function CustomMapObject(name, data)
-  print('CustomMapObject:  ' .. name)
+local function CustomMapObject(name, data, file, line)
+  print('CustomMapObject:  "' .. name .. '"  (' .. file .. ':' .. line .. ')')
 --[[
   for d = 1, #data do
     print('CustomMapObject:    ' .. data[d])

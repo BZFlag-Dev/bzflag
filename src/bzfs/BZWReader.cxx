@@ -424,6 +424,8 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
         else {
 	  bz_CustomMapObjectInfo data;
 
+	  data.fileName = location;
+	  data.lineNum = lineNum;
 	  data.name = bz_ApiString(upperToken);
 	  for (unsigned int i = 0; i < customLines.size(); i++) {
 	    data.data.push_back(customLines[i]);
