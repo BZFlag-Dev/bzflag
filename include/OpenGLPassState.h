@@ -10,6 +10,7 @@
 #include "common.h"
 
 // system headers
+#include <string>
 #include <set>
 
 // common headers
