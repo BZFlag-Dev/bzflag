@@ -43,7 +43,7 @@ void LuaHandle::Shutdown()
 	if (!lua_isfunction(L, -1)) {
 		return;
 	}
-	
+
 	// call the routine
 	RunCallIn(LUA_CI_Shutdown, 0, 0);
 	return;
@@ -115,6 +115,14 @@ void LuaHandle::RecvCommand(const std::string& msg)
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 3);
+
+	// NOTE: we don't use PushCallIn() here because RecvCommand() is not managed
+	//       by EventHandler, and so no warning should be given if it is not found
+	lua_rawgeti(L, LUA_CALLINSINDEX, LUA_CI_RecvCommand);
+	if (!lua_isfunction(L, -1)) {
+		return;
+	}
+
 	if (!PushCallIn(LUA_CI_RecvCommand)) {
 		return; // the call is not defined
 	}

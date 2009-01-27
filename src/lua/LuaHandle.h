@@ -78,7 +78,7 @@ class LuaHandle : public EventClient
 			return GlobalCallInCheck(eName);
 		}
 
-		virtual void Shutdown();
+		virtual void Shutdown(); // custom to LuaHandle
 
 		virtual void Update();
 
@@ -169,8 +169,6 @@ class LuaHandle : public EventClient
 		bool AddBasicCalls();
 		bool PushLib(const char* name, bool (*entriesFunc)(lua_State*));
 
-//		bool PushCallIn(const std::string& name);
-
 		bool PushCallIn(int ciCode);
 		bool RunCallIn(int ciCode, int inArgs, int outArgs);
 
@@ -182,7 +180,6 @@ class LuaHandle : public EventClient
 		std::string requestMessage;
 
 		std::set<int> validCallIns;
-		std::string   actionPrefix;
 
 		std::string fsRead;
 		std::string fsReadAll;

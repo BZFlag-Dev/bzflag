@@ -8139,16 +8139,19 @@ void startPlaying()
   // clean up
   TankGeometryMgr::kill();
   SphereLodSceneNode::kill();
-  if (resourceDownloader)
+  if (resourceDownloader) {
     delete resourceDownloader;
+  }
   delete motd;
-  for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++)
+  for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++) {
     delete prototypeExplosions[ext];
+  }
   prototypeExplosions.clear();
   leaveGame();
   setErrorCallback(NULL);
-  while (HUDDialogStack::get()->isActive())
+  while (HUDDialogStack::get()->isActive()) {
     HUDDialogStack::get()->pop();
+  }
   delete mainMenu;
   delete sceneBuilder;
   RENDERER.setBackground(NULL);

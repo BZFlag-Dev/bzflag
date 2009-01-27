@@ -122,6 +122,8 @@ class OpenGLPassState {
     static void ResetScreenMatrices();
     static void ResetRadarMatrices();
 
+    static void RevertShadowMatrices();
+
     static void SetupScreenMatrices();
     static void SetupScreenLighting();
     static void RevertScreenMatrices();

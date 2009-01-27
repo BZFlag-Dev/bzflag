@@ -35,6 +35,7 @@ class LuaOpenGL {
 		static int ResetMatrices(lua_State* L);
 		static int Clear(lua_State* L);
 
+		static int Hint(lua_State* L);
 		static int Lighting(lua_State* L);
 		static int LightModel(lua_State* L);
 		static int ShadeModel(lua_State* L);

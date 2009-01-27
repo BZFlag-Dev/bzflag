@@ -324,8 +324,8 @@ int LuaCallOuts::Print(lua_State* L)
 	}
 	ControlPanel::MessageModes mode = ControlPanel::MessageMisc;
 	int msgArg = 1;
-	if (lua_israwnumber(L, 1)) {
-		mode = (ControlPanel::MessageModes)lua_toint(L, 1);
+	if (lua_israwnumber(L, msgArg)) {
+		mode = (ControlPanel::MessageModes)lua_toint(L, msgArg);
 		msgArg++;
 	}
 	const char* msg = luaL_checkstring(L, msgArg);
@@ -338,8 +338,8 @@ int LuaCallOuts::Debug(lua_State* L)
 {
 	int level = 0;
 	int msgArg = 1;
-	if (lua_israwnumber(L, 1)) {
-		level = lua_toint(L, 1);
+	if (lua_israwnumber(L, msgArg)) {
+		level = lua_toint(L, msgArg);
 		msgArg++;
 	}
 	const char* msg = luaL_checkstring(L, msgArg);

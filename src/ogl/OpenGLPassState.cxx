@@ -557,7 +557,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
     GLfloat atten[3] = { 1.0f, 0.0f, 0.0f };
     glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, atten);
     glPointParameterf(GL_POINT_SIZE_MIN, 0.0f);
-    glPointParameterf(GL_POINT_SIZE_MAX, 1.0f);
+    glPointParameterf(GL_POINT_SIZE_MAX, 1.0e9f);
     glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, 1.0f);
   }
 
@@ -766,7 +766,7 @@ void OpenGLPassState::ResetDrawWorldShadow()
 
 void OpenGLPassState::DisableDrawWorldShadow()
 {
-  ResetWorldShadowMatrices();
+  RevertShadowMatrices();
   DisableCommon(DRAW_WORLD_SHADOW);
 }
 
@@ -1070,6 +1070,26 @@ void OpenGLPassState::ResetRadarMatrices()
   RadarRenderer* radar = getRadarRenderer();
   if (radar) {
     radar->executeTransform(true);
+  }
+}
+
+
+void OpenGLPassState::RevertShadowMatrices()
+{
+  ViewFrustum& vf = RENDERER.getViewFrustum();
+
+  glMatrixMode(GL_TEXTURE); {
+    ClearMatrixStack(GL_TEXTURE_STACK_DEPTH);
+    glLoadIdentity();
+  }
+  glMatrixMode(GL_PROJECTION); {
+    ClearMatrixStack(GL_PROJECTION_STACK_DEPTH);
+    glLoadIdentity();
+    vf.executeDeepProjection();
+  }
+  glMatrixMode(GL_MODELVIEW); {
+    ClearMatrixStack(GL_MODELVIEW_STACK_DEPTH);
+    // the code in BackgroundRenderer use glLoadIdentity()
   }
 }
 

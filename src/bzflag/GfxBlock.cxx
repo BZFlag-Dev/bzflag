@@ -321,17 +321,11 @@ void GfxBlockMgr::check()
 }
 
 
-class SillyCheck {
-  public:
-    SillyCheck() { GfxBlockMgr::check(); }
-};
-static SillyCheck sillyCheck;
+struct InitCheck { InitCheck() { GfxBlockMgr::check(); } } initCheck;
 
 
 /******************************************************************************/
 /******************************************************************************/
-
-
 
 
 // Local Variables: ***

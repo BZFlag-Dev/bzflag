@@ -86,7 +86,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, ResetMatrices);
 	PUSH_LUA_CFUNC(L, Clear);
 
-
+	PUSH_LUA_CFUNC(L, Hint);
 	PUSH_LUA_CFUNC(L, Lighting);
 	PUSH_LUA_CFUNC(L, LightModel);
 	PUSH_LUA_CFUNC(L, ShadeModel);
@@ -2055,6 +2055,18 @@ int LuaOpenGL::Clear(lua_State* L)
 
 	glClear(bits);
 
+	return 0;
+}
+
+
+/******************************************************************************/
+
+int LuaOpenGL::Hint(lua_State* L)
+{
+	CheckDrawingEnabled(L, __FUNCTION__);
+	const GLenum target = (GLenum)luaL_checkint(L, 1);
+	const GLenum mode   = (GLenum)luaL_checkint(L, 2);
+	glHint(target, mode);
 	return 0;
 }
 
