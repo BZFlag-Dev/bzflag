@@ -8155,6 +8155,7 @@ void startPlaying()
   RENDERER.setSceneDatabase(NULL);
   World::done();
   mainWindow = NULL;
+  controlPanel = NULL;
   cleanWorldCache();
 }
 
