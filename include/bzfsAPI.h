@@ -619,7 +619,10 @@ class BZF_API bz_GetWorldEventData_V1 : public bz_EventData
   bool openFFA;
 
   bz_ApiString worldFile;
-  char* worldBlob;
+  char* worldBlob; // if assigned, the world will be read from this NUL
+                   // terminated string. BZFS does not free this memory,
+                   // so the plugin must do so (this can be done in the
+                   // WorldFinalize event)
 };
 
 class BZF_API bz_GetPlayerInfoEventData_V1 : public bz_EventData

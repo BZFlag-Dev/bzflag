@@ -26,6 +26,26 @@ using std::string;
 /******************************************************************************/
 /******************************************************************************/
 
+inline bool EventClientList::lessThan(const EventClient* a,
+                                      const EventClient* b)
+{
+  const int aOrder = a->GetOrder();
+  const int bOrder = b->GetOrder();
+  if (aOrder < bOrder) { return !reversed; }
+  if (aOrder > bOrder) { return  reversed; }
+
+  const string& aName = a->GetName();
+  const string& bName = b->GetName();
+  if (aName < bName) { return !reversed; }
+  if (aName > bName) { return  reversed; }
+
+  return (a < b) ? !reversed : reversed;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 inline void EventClientList::inc_ptrs(size_t index)
 {
   for (size_t p = 0; p < ptrs.size(); p++) {
@@ -45,23 +65,6 @@ inline void EventClientList::dec_ptrs(size_t index)
       nextIndex--;
     }
   }
-}
-
-
-inline bool EventClientList::lessThan(const EventClient* a,
-                                      const EventClient* b)
-{
-  const int aOrder = a->GetOrder();
-  const int bOrder = b->GetOrder();
-  if (aOrder < bOrder) { return !reversed; }
-  if (aOrder > bOrder) { return  reversed; }
-
-  const string& aName = a->GetName();
-  const string& bName = b->GetName();
-  if (aName < bName) { return !reversed; }
-  if (aName > bName) { return  reversed; }
-
-  return (a < b) ? !reversed : reversed;
 }
 
 

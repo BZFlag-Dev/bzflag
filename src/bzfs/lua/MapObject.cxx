@@ -96,7 +96,7 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
     lua_rawset(L, -3);
   }
 
-  lua_pushlstring(L, info->fileName.c_str(), info->fileName.size());
+  lua_pushstring(L, info->fileName.c_str());
   lua_pushinteger(L, info->lineNum);
 
   if (lua_pcall(L, 4, 1, 0) != 0) {

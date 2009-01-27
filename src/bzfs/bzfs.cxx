@@ -842,15 +842,17 @@ bool defineWorld ( void )
     world = reader->defineWorldFromFile();
     delete reader;
 
-    if (!allBasesDefined()) return false;
-  } else if (clOptions->worldFile.size()) {
+    if (!allBasesDefined()) { return false; }
+  }
+  else if (clOptions->worldFile.size()) {
     logDebugMessage(1,"reading worldfile %s\n",clOptions->worldFile.c_str());
     BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
 
-    if (!allBasesDefined()) return false;
-  } else {
+    if (!allBasesDefined()) { return false; }
+  }
+  else {
     // check and see if anyone wants to define the world from an event
     if (!worldData.generated) {
       logDebugMessage(1,"building random map\n");
@@ -859,7 +861,8 @@ bool defineWorld ( void )
 	world = defineTeamWorld();
       else
 	world = defineRandomWorld();
-    } else {
+    }
+    else {
       logDebugMessage(1,"loading plug-in map\n");
       float worldSize = BZDBCache::worldSize;
       if (pluginWorldSize > 0)
@@ -883,8 +886,9 @@ bool defineWorld ( void )
     }
   }
 
-  if (world == NULL)
+  if (world == NULL) {
     return false;
+  }
 
   maxWorldHeight = world->getMaxWorldHeight();
 

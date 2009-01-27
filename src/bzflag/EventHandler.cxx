@@ -400,13 +400,10 @@ bool EventHandler::MouseMove(int x, int y)
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    if (ec->MouseMove(x, y) && (ec == mouseOwner)) {
-      list.finish();
-      return true;
-    }
+    ec->MouseMove(x, y); // ignoring the return values
   }
   list.finish();
-  return false;
+  return true;
 }
 
 

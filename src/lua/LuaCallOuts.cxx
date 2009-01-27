@@ -315,14 +315,20 @@ int LuaCallOuts::GetProtocolVersion(lua_State* L)
 }
 
 
+/******************************************************************************/
+
 int LuaCallOuts::Print(lua_State* L)
 {
 	if (controlPanel == NULL) {
 		return 0;
 	}
-	const char* msg = luaL_checkstring(L, 1);
-	const ControlPanel::MessageModes mode =
-		(ControlPanel::MessageModes)luaL_optint(L, 2, ControlPanel::MessageMisc);
+	ControlPanel::MessageModes mode = ControlPanel::MessageMisc;
+	int msgArg = 1;
+	if (lua_israwnumber(L, 1)) {
+		mode = (ControlPanel::MessageModes)lua_toint(L, 1);
+		msgArg++;
+	}
+	const char* msg = luaL_checkstring(L, msgArg);
 	controlPanel->addMessage(msg, mode);
 	return 0;
 }
@@ -330,8 +336,13 @@ int LuaCallOuts::Print(lua_State* L)
 
 int LuaCallOuts::Debug(lua_State* L)
 {
-	const int level = luaL_checkint(L, 1);
-	const char* msg = luaL_checkstring(L, 1);
+	int level = 0;
+	int msgArg = 1;
+	if (lua_israwnumber(L, 1)) {
+		level = lua_toint(L, 1);
+		msgArg++;
+	}
+	const char* msg = luaL_checkstring(L, msgArg);
 	logDebugMessage(level, msg);
 	return 0;
 }
@@ -347,7 +358,7 @@ int LuaCallOuts::GetDebugLevel(lua_State* L)
 int LuaCallOuts::LocalizeString(lua_State* L)
 {
 	const char* text = luaL_checkstring(L, 1);
-	Bundle *bundle = BundleMgr::getCurrentBundle();
+	Bundle* bundle = BundleMgr::getCurrentBundle();
 	if (bundle == NULL) {
 		lua_settop(L, 1);
 		lua_pushboolean(L, false);
@@ -359,6 +370,15 @@ int LuaCallOuts::LocalizeString(lua_State* L)
 }
 
 
+int LuaCallOuts::StripAnsiCodes(lua_State* L)
+{
+	size_t len;
+	const char* text = luaL_checklstring(L, 1, &len);
+	lua_pushstring(L, stripAnsiCodes(text));
+	return 1;
+}
+
+
 int LuaCallOuts::GetCacheFilePath(lua_State* L)
 {
 	const char* text = luaL_checkstring(L, 1);
@@ -366,6 +386,8 @@ int LuaCallOuts::GetCacheFilePath(lua_State* L)
 	return 1;
 }
 
+
+/******************************************************************************/
 
 int LuaCallOuts::GetConsoleMessages(lua_State* L)
 {
@@ -423,14 +445,7 @@ int LuaCallOuts::GetConsoleMessageCount(lua_State* L)
 }
 
 
-int LuaCallOuts::StripAnsiCodes(lua_State* L)
-{
-	size_t len;
-	const char* text = luaL_checklstring(L, 1, &len);
-	lua_pushstring(L, stripAnsiCodes(text));
-	return 1;
-}
-
+/******************************************************************************/
 
 int LuaCallOuts::GetGameInfo(lua_State* L)
 {
@@ -543,6 +558,8 @@ int LuaCallOuts::GetWorldHash(lua_State* L)
 	return 1;
 }
 
+
+/******************************************************************************/
 
 int LuaCallOuts::SendLuaData(lua_State* L)
 {

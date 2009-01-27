@@ -26,6 +26,9 @@ using std::map;
 
 static const bz_eEventType bz_eShutdown = (bz_eEventType)(bz_eLastEvent + 1);
 
+static char* worldBlob = NULL; // FIXME -- free() in WorldFinalize? ...
+                               // (would require that it always be registered)
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -226,6 +229,9 @@ bool CallIns::CleanUp(lua_State* /*L*/)
   }
 
   CallIn::SetL(NULL);
+
+  free(worldBlob);
+  worldBlob = NULL;
 
   return true;
 }
@@ -769,7 +775,7 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
 {
   bz_GetWorldEventData_V1* ed = (bz_GetWorldEventData_V1*)eventData;
 
-  if (!PushCallIn(4)) {
+  if (!PushCallIn(6)) {
     return false;
   }
 
@@ -779,11 +785,11 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
   else if (ed->openFFA) { gameMode = eOpenFFAGame;    }
 
   lua_pushinteger(L, gameMode);
-  lua_pushstring(L,  ed->worldFile.c_str());
-  lua_pushboolean(L, ed->worldBlob != NULL);
-//  lua_pushboolean(L, ed->generated);
+  lua_pushstring( L, ed->worldFile.c_str());
+  lua_pushstring( L, ed->worldBlob);
+  lua_pushboolean(L, ed->generated);
 
-  if (!RunCallIn(3, 1)) {
+  if (!RunCallIn(4, 1)) {
     return false;
   }
 
@@ -801,13 +807,9 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
       }
       else if (key == "data") {
         if (lua_israwstring(L, -1)) {
-          size_t len = 0;
-          const char* blob = lua_tolstring(L, -1, &len);
-          char* newBlob = new char[len + 1];
-          memcpy(newBlob, blob, len);
-          newBlob[len] = 0;
-          delete[] ed->worldBlob;
-          ed->worldBlob = newBlob; // FIXME: properly deleted?
+          free(worldBlob);
+          worldBlob = strdup(lua_tostring(L, -1));
+          ed->worldBlob = worldBlob;
         }
       }
       else if (key == "mode") {
@@ -823,6 +825,11 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
               break;
             }
           }
+        }
+      }
+      else if (key == "generated") {
+        if (lua_isboolean(L, -1)) {
+          ed->generated = ed->generated || lua_tobool(L, -1);
         }
       }
     } // end for
