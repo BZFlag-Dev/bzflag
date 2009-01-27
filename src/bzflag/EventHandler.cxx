@@ -403,7 +403,7 @@ bool EventHandler::MouseMove(int x, int y)
     ec->MouseMove(x, y); // ignoring the return values
   }
   list.finish();
-  return true;
+  return false;
 }
 
 
