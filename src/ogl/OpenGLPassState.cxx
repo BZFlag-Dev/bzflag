@@ -657,7 +657,7 @@ void OpenGLPassState::ResetDrawGenesis()
 
 void OpenGLPassState::DisableDrawGenesis()
 {
-  ResetWorldMatrices();
+  ResetIdentityMatrices();
   DisableCommon(DRAW_GENESIS);
 }
 
