@@ -77,10 +77,10 @@ bool LuaBZFS::init(const string& cmdLine)
 
   bool dieHard = false;
 
-  logDebugMessage(1, "loading luaBZFS");
+  logDebugMessage(1, "loading luaBZFS\n");
 
   if (L != NULL) {
-    logDebugMessage(1, "luaBZFS is already loaded");
+    logDebugMessage(1, "luaBZFS is already loaded\n");
     return false;
   }
 
@@ -99,7 +99,7 @@ bool LuaBZFS::init(const string& cmdLine)
     scriptFile = string(bz_pluginBinPath()) + "/" + scriptFile;
   }
   if (!fileExists(scriptFile)) {
-    logDebugMessage(1, "luaBZFS: could not find the script file");
+    logDebugMessage(1, "luaBZFS: could not find the script file\n");
     if (dieHard) {
       exit(2);
     }
@@ -270,7 +270,7 @@ static bool CreateLuaState(const string& script)
   lua_setglobal(L, "bz");
 
   if (luaL_dofile(L, script.c_str()) != 0) {
-    logDebugMessage(1, "lua init error: %s", lua_tostring(L, -1));
+    logDebugMessage(1, "lua init error: %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
