@@ -1,6 +1,15 @@
 
 noinst_LTLIBRARIES = liblua.la
 
+if BUILD_LUA_EXECS
+bin_PROGRAMS = bzlua bzluac
+bzlua_LDFLAGS  = -static
+bzluac_LDFLAGS = -static
+bzlua_SOURCES  = src/lua.c
+bzluac_SOURCES = src/luac.c
+LDADD = $(LIBLUA) -lreadline
+endif
+
 # works for linux and macos
 AM_CFLAGS = @CONF_CFLAGS@ -DLUA_USE_LINUX -fPIC
 

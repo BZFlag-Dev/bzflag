@@ -121,11 +121,14 @@ if test x$with_SDL != xno; then
 fi
 
 # check whether plugins are desired
-AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
+AC_ARG_ENABLE(plugins,  [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
     AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
+
+AC_ARG_ENABLE(luaexecs, [  --enable-luaexecs         build the bzlua and bzluac executables])
+AM_CONDITIONAL(BUILD_LUA_EXECS, test "x$enable_luaexecs" = "xyes")
 
 # check whether threads are desired
 AC_ARG_ENABLE(threads, [  --disable-threads        build without threading])
@@ -1465,6 +1468,13 @@ else
     fi
 fi
 
+if test "x$enable_luaexecs" = "xyes"; then
+    build_luaexecs="yes"
+else
+    build_luaexecs="no"
+fi
+
+
 dnl
 dnl Expand the variables for summary reporting
 dnl
@@ -1521,6 +1531,7 @@ AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
 AC_MSG_RESULT([BZAdmin client ....: $build_bzadmin])
 AC_MSG_RESULT([BZRobots client ...: $build_bzrobots])
+AC_MSG_RESULT([bzlua & bzluac ....: $build_luaexecs])
 AC_MSG_RESULT([])
 if test "x$time_elapsed" != "xunknown" ; then
 AC_MSG_RESULT([Elapsed configuration time: $time_elapsed])
