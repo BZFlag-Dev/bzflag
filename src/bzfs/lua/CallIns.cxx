@@ -38,9 +38,10 @@ class CallIn : public bz_EventHandler {
     static void SetL(lua_State* _L) { L = _L; }
 
   public:
-    CallIn(int _code, const string& _name)
+    CallIn(int _code, const string& _name, const string& _loopType = "BASIC")
     : code(_code)
     , name(_name)
+    , loopType(_loopType)
     , registered(false)
     {
       codeMap[code] = this;
@@ -55,8 +56,9 @@ class CallIn : public bz_EventHandler {
     virtual bool execute(bz_EventData* eventData) = 0;
     void process(bz_EventData* eventData) { execute(eventData); }
 
-    const string& GetName() const { return name; }
-    int           GetCode() const { return code; }
+    int           GetCode()     const { return code; }
+    const string& GetName()     const { return name; }
+    const string& GetLoopType() const { return loopType; }
 
     bool PushCallIn(int maxSlots)
     {
@@ -116,6 +118,7 @@ class CallIn : public bz_EventHandler {
   protected:
     const int    code;
     const string name;
+    const string loopType;
 
     bool registered;
 
@@ -145,6 +148,30 @@ map<string, CallIn*> CallIn::nameMap;
 
 /******************************************************************************/
 /******************************************************************************/
+//
+//  'Script' call-outs
+//
+
+static int GetName(lua_State* L)
+{
+  lua_pushliteral(L, "LuaBZFS");
+  return 1;
+}
+
+
+static int Disable(lua_State* L) // FIXME
+{
+  L = L;
+  return 0;
+}
+
+
+static int Reload(lua_State* L) // FIXME
+{
+  L = L;
+  return 0;
+}
+
 
 static int SetCallIn(lua_State* L)
 {
@@ -185,7 +212,7 @@ static int SetCallIn(lua_State* L)
 }
 
 
-static int GetCallIns(lua_State* L)
+static int GetCallInInfo(lua_State* L)
 {
   const map<string, CallIn*>& nameMap = CallIn::GetNameMap();
   
@@ -194,10 +221,18 @@ static int GetCallIns(lua_State* L)
   for (it = nameMap.begin(); it != nameMap.end(); ++it) {
     const CallIn* ci = it->second;
     lua_pushstring(L, ci->GetName().c_str());
-    lua_rawgeti(L, LUA_CALLINSINDEX, ci->GetCode());
-    if (!lua_isfunction(L, -1)) {
-      lua_pop(L, 1);
-      lua_pushboolean(L, true);
+    lua_newtable(L); {
+      lua_pushliteral(L, "func");
+      lua_rawgeti(L, LUA_CALLINSINDEX, ci->GetCode());
+      if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 1);
+        lua_pushboolean(L, false);
+      }
+      lua_rawset(L, -3);
+
+      lua_pushliteral(L, "loopType");
+      lua_pushstring(L, ci->GetLoopType().c_str());
+      lua_rawset(L, -3);
     }
     lua_rawset(L, -3);
   }
@@ -212,8 +247,14 @@ bool CallIns::PushEntries(lua_State* L)
 {
   CallIn::SetL(L);
 
-  PUSH_LUA_CFUNC(L, SetCallIn);
-  PUSH_LUA_CFUNC(L, GetCallIns);
+  lua_newtable(L); {
+    PUSH_LUA_CFUNC(L, GetName);
+    PUSH_LUA_CFUNC(L, Disable);
+    PUSH_LUA_CFUNC(L, Reload);
+    PUSH_LUA_CFUNC(L, SetCallIn);
+    PUSH_LUA_CFUNC(L, GetCallInInfo);
+  }
+  lua_setglobal(L, "Script");
 
   return true;
 }
@@ -259,6 +300,8 @@ static CI_Shutdown ciShutdown;
   };                                               \
   static CI_ ## lua  ci ## lua
 
+
+// FIXME -- setup the loopTypes
 
 //        bz_e <C++ enum name>            lua call-in name         difference
 //        --------------------            ----------------         ----------

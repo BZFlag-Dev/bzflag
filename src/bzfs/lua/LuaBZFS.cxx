@@ -256,9 +256,9 @@ static bool CreateLuaState(const string& script)
   L = luaL_newstate();
   luaL_openlibs(L);
 
-  lua_newtable(L);
-  {
-    CallIns::PushEntries(L);
+  CallIns::PushEntries(L);
+
+  lua_newtable(L); {
     CallOuts::PushEntries(L);
     Constants::PushEntries(L);
     LuaBZDB::PushEntries(L);

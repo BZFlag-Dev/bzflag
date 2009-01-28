@@ -68,9 +68,11 @@ end
 local function FindModules()
   local files, dirs = bz.DirList(MODULES_DIR)
   local sources = {}
-  for _, f in ipairs(files) do
-    if (f:find('^[^.].*%.lua$')) then
-      sources[#sources + 1] = f
+  if (files) then
+    for _, f in ipairs(files) do
+      if (f:find('^[^.].*%.lua$')) then
+        sources[#sources + 1] = f
+      end
     end
   end
   return sources
@@ -292,7 +294,7 @@ local permanentCallIns = {
 }
 
 local function SetupCallIns()
-  for ciName in pairs(bz.GetCallIns()) do
+  for ciName in pairs(Script.GetCallInInfo()) do
     local genFunc = specialCallIns[ciName] or GenAllFunc
     local funcList = {}
     ciFuncLists[ciName] = funcList
