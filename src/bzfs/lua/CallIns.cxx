@@ -426,18 +426,19 @@ bool CI_AllowPlayer::execute(bz_EventData* eventData)
   lua_pushstring(L,  ed->callsign.c_str());
   lua_pushstring(L,  ed->ipAddress.c_str());
 
-  if (!RunCallIn(3, 2)) {
+  if (!RunCallIn(3, 1)) {
     return false;
   }
 
-  if (lua_isboolean(L, -2)) {
-    if (!lua_tobool(L, -2)) {
+  if (lua_israwstring(L, -1)) {
+    const string reason = lua_tostring(L, -1);
+    if (!reason.empty()) {
       ed->allow = false;
-      ed->reason = luaL_optstring(L, -1, "lua plugin says you can not play");
+      ed->reason = reason;
     }
   }
 
-  lua_pop(L, 2);
+  lua_pop(L, 1);
 
   return true;
 }
