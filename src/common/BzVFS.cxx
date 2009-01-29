@@ -111,15 +111,28 @@ class RawFS : public BzFS
 
     bool readFile(const string& path, string& data) {
       const string fullPath = root + path;
+
+      const int size = getFileSize(fullPath);
+      if (size < 0) {
+        return false;
+      }
+
       FILE* file = fopen(fullPath.c_str(), "rb");
       if (file == NULL) {
         return false;
       }
-      char buf[4096];
-      while (fgets(buf, sizeof(buf), file) != NULL) {
-        data += buf;
-      }
+
+      char* mem = new char[size];
+      size_t readSize = fread(mem, 1, size, file);
       fclose(file);
+
+      if (size != (int)readSize) {
+        delete[] mem;
+        return false;
+      }
+      
+      data.append(mem, size);
+      delete[] mem;
       return true;
     }
 
