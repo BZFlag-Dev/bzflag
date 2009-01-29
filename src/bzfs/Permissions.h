@@ -69,6 +69,7 @@ public:
     lagwarn,
     listPlugins,
     listPerms,
+    luaBZFS,
     masterBan,
     modCount,
     mute,

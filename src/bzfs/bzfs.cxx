@@ -3539,8 +3539,9 @@ void initGroups()
   //  LOCAL.ADMIN
   info.explicitAllows.reset();
   info.groupState.reset();
-  for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+  for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
     info.explicitAllows[i] = true;
+  }
   info.groupState[PlayerAccessInfo::isGroup] = true;
   info.groupState[PlayerAccessInfo::isDefault] = true;
   info.explicitAllows[PlayerAccessInfo::hideAdmin] = false;

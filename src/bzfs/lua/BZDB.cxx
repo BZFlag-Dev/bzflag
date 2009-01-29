@@ -19,8 +19,6 @@ using std::set;
 #include "LuaHeader.h"
 
 
-// FIXME -- permissions, persistence, etc...
-
 /******************************************************************************/
 
 static set<string> objNames;
@@ -31,7 +29,7 @@ static int GetList(lua_State* L);
 
 static int Exists(lua_State* L);
 static int IsPersistent(lua_State* L);
-static int GetDefault(lua_State* L); // FIXME -- add to bzfsAPI.h ?
+static int GetDefault(lua_State* L);
 
 static int GetInt(lua_State* L);
 static int GetBool(lua_State* L);
@@ -181,9 +179,16 @@ static int SetInt(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
   const int value = luaL_checkint(L, 2);
-//FIXME  const int perms = luaL_optint(L, 3, 0);
-//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
-  lua_pushboolean(L, bz_setBZDBInt(key, value));
+  if (lua_gettop(L) == 2) {
+    lua_pushboolean(L, bz_updateBZDBInt(key, value));
+    return 1;
+  }
+
+  const int  perms = luaL_optint(L, 3, bz_getBZDBItemPerms(key));
+  const bool persist = lua_isboolean(L, 4) ? lua_tobool(L, 4)
+                                           : bz_getBZDBItemPersistent(key);
+
+  lua_pushboolean(L, bz_setBZDBInt(key, value, perms, persist));
   return 1;
 }
 
@@ -191,13 +196,14 @@ static int SetInt(lua_State* L)
 static int SetBool(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
-  if (!lua_isboolean(L, 2)) {
-    luaL_error(L, "expected boolean argument for arg 2");
-  }
+  luaL_checktype(L, 2, LUA_TBOOLEAN);
   const bool value = lua_tobool(L, 2);
-//FIXME  const int  perms = luaL_optint(L, 3, 0);
-//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
-  lua_pushboolean(L, bz_setBZDBBool(key, value));
+
+  const int  perms = luaL_optint(L, 3, bz_getBZDBItemPerms(key));
+  const bool persist = lua_isboolean(L, 4) ? lua_tobool(L, 4)
+                                           : bz_getBZDBItemPersistent(key);
+
+  lua_pushboolean(L, bz_setBZDBBool(key, value, perms, persist));
   return 1;
 }
 
@@ -206,9 +212,12 @@ static int SetFloat(lua_State* L)
 {
   const char* key    = luaL_checkstring(L, 1);
   const float value = luaL_checkfloat(L, 2);
-//FIXME  const int   perms  = luaL_optint(L, 3, 0);
-//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
-  lua_pushboolean(L, bz_setBZDBDouble(key, value));
+
+  const int  perms = luaL_optint(L, 3, bz_getBZDBItemPerms(key));
+  const bool persist = lua_isboolean(L, 4) ? lua_tobool(L, 4)
+                                           : bz_getBZDBItemPersistent(key);
+
+  lua_pushboolean(L, bz_setBZDBDouble(key, value, perms, persist));
   return 1;
 }
 
@@ -217,9 +226,12 @@ static int SetString(lua_State* L)
 {
   const char* key = luaL_checkstring(L, 1);
   const char* value = luaL_checkstring(L, 2);
-//FIXME  const int perms = luaL_optint(L, 3, 0);
-//FIXME  const bool persist = lua_isboolean(L, 4) && lua_tobool(L, 4);
-  lua_pushboolean(L, bz_setBZDBString(key, value));
+
+  const int  perms = luaL_optint(L, 3, bz_getBZDBItemPerms(key));
+  const bool persist = lua_isboolean(L, 4) ? lua_tobool(L, 4)
+                                           : bz_getBZDBItemPersistent(key);
+
+  lua_pushboolean(L, bz_setBZDBString(key, value, perms, persist));
   return 1;
 }
 

@@ -162,14 +162,12 @@ bool FetchHandler::Handle(const char* /*URL*/, void* data, unsigned int size,
   lua_rawgeti(L, LUA_REGISTRYINDEX, funcRef);
   if (!lua_isfunction(L, -1)) {
     lua_pop(L, 1);
-    delete this; // FIXME - safe?
     return false;
   }
 
   lua_rawgeti(L, LUA_REGISTRYINDEX, selfRef);
   if (lua_getuserdataextra(L, -1) != metaName) {
     lua_pop(L, 2); 
-    delete this; // FIXME - safe?
     return false;
   }
 

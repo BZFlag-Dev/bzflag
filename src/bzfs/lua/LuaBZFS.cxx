@@ -192,8 +192,7 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
     return;
   }
 
-  // permission check -- FIXME add a luabzfs permission, or use the "PLUGINS" permission?
-  if (!p->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
+  if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaBZFS)) {
     sendMessage(ServerPlayer, playerIndex,
                 "You do not have permission to control LuaBZFS");
     return;
