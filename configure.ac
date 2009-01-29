@@ -1209,11 +1209,12 @@ if test "x$enable_client" != "xno" ; then
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
 if test "x$enable_ftgl_build" != "xyes" ; then
-dnl test for required feature first present in FTGL 2.1.3
+dnl test for required feature first present in FTGL 2.2.0
     AC_TRY_COMPILE(
 	[#include <FTGL/ftgl.h>],
 	[FTFont* xyz = new FTTextureFont("xyz.ttf");
 	 double d = xyz->Advance("xyz");
+	 xyz->ControlBlending(true);
 	 xyz->Render("xyz");],
 	LIBFTGL=-lftgl
 	)

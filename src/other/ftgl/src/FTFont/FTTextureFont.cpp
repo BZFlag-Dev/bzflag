@@ -234,8 +234,10 @@ inline FTPoint FTTextureFontImpl::RenderI(const T* string, const int len,
     // Protect GL_TEXTURE_2D, GL_BLEND and blending functions
     glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
+    if (controlBlending) {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
+    }
 
     glEnable(GL_TEXTURE_2D);
 

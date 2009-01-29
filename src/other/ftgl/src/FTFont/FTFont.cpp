@@ -144,6 +144,12 @@ void FTFont::UseDisplayList(bool useList)
 }
 
 
+void FTFont::ControlBlending(bool control)
+{
+    return impl->ControlBlending(control);
+}
+
+
 float FTFont::Ascender() const
 {
     return impl->Ascender();
@@ -216,6 +222,7 @@ FT_Error FTFont::Error() const
 FTFontImpl::FTFontImpl(FTFont *ftFont, char const *fontFilePath) :
     face(fontFilePath),
     useDisplayLists(true),
+    controlBlending(true),
     load_flags(FT_LOAD_DEFAULT),
     intf(ftFont),
     glyphList(0)
@@ -354,6 +361,12 @@ FT_Encoding* FTFontImpl::CharMapList()
 void FTFontImpl::UseDisplayList(bool useList)
 {
     useDisplayLists = useList;
+}
+
+
+void FTFontImpl::ControlBlending(bool control)
+{
+    controlBlending = control;
 }
 
 

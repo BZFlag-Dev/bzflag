@@ -61,6 +61,8 @@ class FTFontImpl
 
         virtual void UseDisplayList(bool useList);
 
+        virtual void ControlBlending(bool control);
+
         virtual float Ascender() const;
 
         virtual float Descender() const;
@@ -108,6 +110,13 @@ class FTFontImpl
          * <code>false</code> turns OFF display lists.
          */
         bool useDisplayLists;
+
+        /**
+         * Flag to enable or disable the use of glBlendFunc inside FTGL
+         * <code>true</code> enables glBlendFunc in FTGL
+         * <code>false</code> disables glBlendFunc in FTGL
+         */
+        bool controlBlending;
 
         /**
          * The default glyph loading flags.
