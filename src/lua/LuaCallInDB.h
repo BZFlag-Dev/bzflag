@@ -19,6 +19,8 @@ enum LuaCallInCode {
 
 	LUA_CI_BZDBChange,
 
+	LUA_CI_CommandFallback,
+
 	LUA_CI_RecvCommand,
 	LUA_CI_RecvChatMsg,
 	LUA_CI_RecvLuaData,

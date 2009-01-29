@@ -24,6 +24,9 @@ class Player;
 class ShotPath;
 class Flag;
 struct FiringInfo;
+/* FIXME -- command registration
+class LocalCommand;
+*/
 
 
 class EventHandler
@@ -43,6 +46,14 @@ class EventHandler
     class EventInfo;
     const EventInfo* GetEventInfo(const std::string& eventName) const;
 
+/* FIXME -- command registration
+    bool RecvCommand(const std::string& command, const std::string& line);
+    bool InsertCommand(EventClient*,
+                       const std::string& command,
+                       const std::string& helpText);
+    bool RemoveCommand(EventClient*, const std::string& command);
+*/
+
     // event properties
     bool IsKnown(const std::string& eventName) const;
     bool IsManaged(const std::string& eventName) const;
@@ -55,6 +66,8 @@ class EventHandler
     void Update();
 
     void BZDBChange(const std::string& name);
+
+    bool CommandFallback(const std::string& cmd);
 
     void RecvChatMsg(const std::string& msg, int srcID, int dstID);
     void RecvLuaData(int srcPlayerID, int srcScriptID,
@@ -182,12 +195,24 @@ class EventHandler
     EventMap eventMap;
     EventClient* mouseOwner;
 
+/* FIXME -- command registration
+  private:
+    struct CommandInfo {
+      EventClient*  client;
+      std::string   command;
+      LocalCommand* localCommand;
+    };
+    std::map<std::string, CommandInfo> commands;
+*/
+
   private:
     EventClientList clients;
 
     EventClientList listUpdate;
 
     EventClientList listBZDBChange;
+
+    EventClientList listCommandFallback;
 
     EventClientList listRecvChatMsg;
     EventClientList listRecvLuaData;

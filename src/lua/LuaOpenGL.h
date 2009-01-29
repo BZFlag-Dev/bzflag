@@ -134,6 +134,7 @@ class LuaOpenGL {
 
 		static int PushAttrib(lua_State* L);
 		static int PopAttrib(lua_State* L);
+		static int PushPopAttrib(lua_State* L);
 		static int UnsafeState(lua_State* L);
 
 		static int Flush(lua_State* L);
@@ -149,6 +150,7 @@ class LuaOpenGL {
 		static int LoadName(lua_State* L);
 		static int PushName(lua_State* L);
 		static int PopName(lua_State* L);
+		static int PushPopName(lua_State* L);
 };
 
 

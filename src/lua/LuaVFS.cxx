@@ -150,7 +150,7 @@ int LuaVFS::WriteFile(lua_State* L)
 
 	string data;
 	if (!ParseWriteData(L, 3, data)) {
-		luaL_error(L, "%s: bad data");
+		luaL_error(L, "bad data");
 	}
 
 	if (!bzVFS.writeFile(path, modes, data)) {

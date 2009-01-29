@@ -67,6 +67,8 @@ EventHandler::EventHandler()
 
   SETUP_EVENT(BZDBChange, 0, false);
 
+  SETUP_EVENT(CommandFallback, 0, false);
+
   SETUP_EVENT(RecvChatMsg, 0, false);
   SETUP_EVENT(RecvLuaData, 0, false);
 
@@ -329,6 +331,23 @@ DRAW_CALLIN(DrawRadar)
 
 /******************************************************************************/
 /******************************************************************************/
+
+bool EventHandler::CommandFallback(const std::string& cmd)
+{
+  EventClientList& list = listCommandFallback;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    if (ec->CommandFallback(cmd)) {
+      list.finish();
+      return true;
+    }
+  }
+  list.finish();
+  return false;
+}
+
 
 bool EventHandler::KeyPress(int key, bool isRepeat)
 {

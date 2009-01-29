@@ -192,6 +192,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, PushAttrib);
 	PUSH_LUA_CFUNC(L, PopAttrib);
+	PUSH_LUA_CFUNC(L, PushPopAttrib);
 	PUSH_LUA_CFUNC(L, UnsafeState);
 
 	PUSH_LUA_CFUNC(L, Flush);
@@ -203,6 +204,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, InitNames);
 	PUSH_LUA_CFUNC(L, PushName);
 	PUSH_LUA_CFUNC(L, PopName);
+	PUSH_LUA_CFUNC(L, PushPopName);
 	PUSH_LUA_CFUNC(L, LoadName);
 
 	PUSH_LUA_CFUNC(L, ReadPixels);
@@ -332,23 +334,23 @@ int LuaOpenGL::Text(lua_State* L)
 	const float x    = luaL_optfloat(L, 4, 0.0f);
 	const float y    = luaL_optfloat(L, 5, 0.0f);
 
-  int faceID = -1;
+	int faceID = -1;
 	FontManager& FM = FontManager::instance();
-  if (!CacheManager::isCacheFileType(face)) {
-    faceID = FM.getFaceID(face);
-  }
-  else {
-    // try the URL cache
-    const string localName = CACHEMGR.getLocalName(face);
-    faceID = FM.lookupFileID(localName);
-    if (faceID < 0) {
-      faceID = FM.load(localName.c_str());
-    }
-  }
-  // backup plan
-  if (faceID < 0) {
-    faceID = FM.getFaceID("junkName"); // get the default face
-  }
+	if (!CacheManager::isCacheFileType(face)) {
+		faceID = FM.getFaceID(face);
+	}
+	else {
+		// try the URL cache
+		const string localName = CACHEMGR.getLocalName(face);
+		faceID = FM.lookupFileID(localName);
+		if (faceID < 0) {
+			faceID = FM.load(localName.c_str());
+		}
+	}
+	// backup plan
+	if (faceID < 0) {
+		faceID = FM.getFaceID("junkName"); // get the default face
+	}
 
 	bool right = false;
 	bool center = false;
@@ -2550,6 +2552,35 @@ int LuaOpenGL::PopAttrib(lua_State* L)
 }
 
 
+int LuaOpenGL::PushPopAttrib(lua_State* L)
+{
+	CheckDrawingEnabled(L, __FUNCTION__);
+
+	const GLenum bits = (GLbitfield)luaL_checkint(L, 1);
+	if (!lua_isfunction(L, 2)) {
+		luaL_error(L, "argument 2 should be a function");
+	}
+
+	if (!OpenGLPassState::PushAttrib(bits)) {
+		luaL_error(L, "attrib stack overflow");
+	}
+
+	const int args = lua_gettop(L); // number of arguments
+	const int error = lua_pcall(L, (args - 2), 0, 0);
+
+	if (!OpenGLPassState::PopAttrib()) {
+		luaL_error(L, "attrib stack overflow");
+	}
+
+	if (error != 0) {
+		LuaLog(1, "gl.PushPopAttrib: error(%i) = %s", error, lua_tostring(L, -1));
+		lua_error(L);
+	}
+
+	return 0;
+}
+
+
 int LuaOpenGL::UnsafeState(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
@@ -2564,9 +2595,21 @@ int LuaOpenGL::UnsafeState(lua_State* L)
 		luaL_error(L, "expecting a function");
 	}
 
+	bool revert = reverse;
+	GLboolean currVal;
+	glGetError();
+	glGetBooleanv(state, &currVal);
+	const GLenum errgl = glGetError();
+	if (errgl == GL_INVALID_OPERATION) {
+		luaL_error(L, "can not be executed in a glBegin/glEnd pair");
+	}
+	else if (glGetError() == GL_NO_ERROR) {
+		revert = (currVal != GL_FALSE);
+	}
+
 	reverse ? glDisable(state) : glEnable(state);
 	const int error = lua_pcall(L, lua_gettop(L) - funcLoc, 0, 0);
-	reverse ? glEnable(state) : glDisable(state);
+	revert  ? glEnable(state) : glDisable(state);
 
 	if (error != 0) {
 		LuaLog(1, "gl.UnsafeState: error(%i) = %s", error, lua_tostring(L, -1));
@@ -2912,7 +2955,7 @@ int LuaOpenGL::LoadName(lua_State* L)
 int LuaOpenGL::PushName(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
-	const GLuint name = (GLenum)luaL_checkint(L, 1);
+	const GLuint name = (GLuint)luaL_checkint(L, 1);
 	glPushName(name);
 	return 0;
 }
@@ -2922,6 +2965,31 @@ int LuaOpenGL::PopName(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
 	glPopName();
+	return 0;
+}
+
+
+int LuaOpenGL::PushPopName(lua_State* L)
+{
+	CheckDrawingEnabled(L, __FUNCTION__);
+
+	const GLuint name = (GLuint)luaL_checkint(L, 1);
+	if (!lua_isfunction(L, 2)) {
+		luaL_error(L, "argument 2 should be a function");
+	}
+
+	glPushName(name);
+
+	const int args = lua_gettop(L); // number of arguments
+	const int error = lua_pcall(L, (args - 2), 0, 0);
+
+	glPopName();
+
+	if (error != 0) {
+		LuaLog(1, "gl.PushPopName: error(%i) = %s", error, lua_tostring(L, -1));
+		lua_error(L);
+	}
+
 	return 0;
 }
 

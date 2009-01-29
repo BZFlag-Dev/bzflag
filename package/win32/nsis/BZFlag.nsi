@@ -155,6 +155,10 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\data\skins\rogue
   File ..\..\..\data\skins\rogue\*.*
 
+  ; make the LuaUser dir 
+  ;SetOutPath $INSTDIR\data\LuaUser
+  ;File ..\..\..\data\LuaUser\*.*
+
   ; make the doc dir
   SetOutPath $INSTDIR\doc
   File ..\ReadMe.win32.html

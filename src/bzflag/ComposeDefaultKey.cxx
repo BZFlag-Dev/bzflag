@@ -56,9 +56,9 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return false;
   }
 
-  if (!myTank ||
-      (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
-      (myTank->getTeam() == ObserverTeam)) {
+  if (myTank &&
+      ((myTank->getInputMethod() != LocalPlayer::Keyboard) ||
+       (myTank->getTeam() == ObserverTeam))) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down)) {
       return true;
@@ -93,7 +93,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
         std::set<std::string>::const_iterator it;
         for (it = partials.begin(); it != partials.end(); ++it) {
           matches += "  ";
-          matches += *it;
+          matches += it->substr(i);
         }
         controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
       }
@@ -121,13 +121,17 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     std::string message = hud->getComposeString();
     if (message.length() > 0) {
       const char* cmd = message.c_str();
-      if (LocalCommand::execute(cmd)) {
-	;
-      } else if (serverLink) {
-	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
-	serverLink->sendMessage(msgDestination, messageBuffer);
+      if (!LocalCommand::execute(cmd)) {
+        if (!myTank) {
+          std::string msg = std::string("unknown local command: ") + cmd;
+          controlPanel->addMessage(msg, ControlPanel::MessageCurrent);
+        }
+        else if (serverLink) {
+          char messageBuffer[MessageLen];
+          memset(messageBuffer, 0, MessageLen);
+          strncpy(messageBuffer, message.c_str(), MessageLen);
+          serverLink->sendMessage(msgDestination, messageBuffer);
+        }
       }
 
       // record message in history
@@ -146,7 +150,6 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	}
 	messageHistory.push_front(message);
       }
-
     }
   }
 
@@ -156,9 +159,10 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
+
 bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank ||
       (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
       (myTank->getTeam() == ObserverTeam)) {

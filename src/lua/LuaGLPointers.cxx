@@ -265,8 +265,8 @@ int LuaGLPointers::VertexPointer(lua_State* L)
 		return 0;
 	}
 		
-  glVertexPointer(width, type, stride, ptr);
-  glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(width, type, stride, ptr);
+	glEnableClientState(GL_VERTEX_ARRAY);
 	if (useVBO) {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -297,8 +297,8 @@ int LuaGLPointers::NormalPointer(lua_State* L)
 		return 0;
 	}
 
-  glNormalPointer(type, stride, ptr);
-  glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(type, stride, ptr);
+	glEnableClientState(GL_NORMAL_ARRAY);
 	if (useVBO) {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -331,8 +331,8 @@ static int HandleTexCoordPointer(lua_State* L, int index, GLenum texUnit)
 		return 0;
 	}
 		
-  glTexCoordPointer(width, type, stride, ptr);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(width, type, stride, ptr);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	if (useVBO) {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
@@ -354,7 +354,7 @@ int LuaGLPointers::MultiTexCoordPointer(lua_State* L)
 {
 	CheckActiveState(L, __FUNCTION__);
 
-  const int texNum = luaL_checkint(L, 1);
+	const int texNum = luaL_checkint(L, 1);
 	if ((texNum < 0) || (texNum >= MAX_LUA_TEXTURE_UNITS)) {
 		luaL_error(L, "Bad texture unit passed to gl.MultiTexCoord()");
 	}

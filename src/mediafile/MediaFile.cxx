@@ -55,7 +55,8 @@ static void ConvertPath(std::string &path)
 #  include <unistd.h>
 #endif
 
-static bool fileExists (const std::string& name)
+
+static bool fileExists(const std::string& name)
 {
   struct stat buf;
 #ifndef _WIN32
@@ -227,70 +228,81 @@ MediaFile::MediaFile(std::istream* _stream) : stream(_stream)
   // do nothing
 }
 
+
 MediaFile::~MediaFile()
 {
   // do nothing
 }
 
-bool		MediaFile::isOkay() const
+
+bool MediaFile::isOkay() const
 {
   return (stream != NULL && stream->good());
 }
 
-void		MediaFile::readRaw(void* vbuffer, uint32_t bytes)
+
+void MediaFile::readRaw(void* vbuffer, uint32_t bytes)
 {
   char* buffer = reinterpret_cast<char*>(vbuffer);
   stream->read(buffer, bytes);
 }
 
-void		MediaFile::skip(uint32_t bytes)
+
+void MediaFile::skip(uint32_t bytes)
 {
   stream->ignore(bytes);
 }
 
-uint16_t	MediaFile::read16LE()
+
+uint16_t MediaFile::read16LE()
 {
   uint16_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap16LE(&b);
 }
 
-uint16_t	MediaFile::read16BE()
+
+uint16_t MediaFile::read16BE()
 {
   uint16_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap16BE(&b);
 }
 
-uint32_t	MediaFile::read32LE()
+
+uint32_t MediaFile::read32LE()
 {
   uint32_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap32LE(&b);
 }
 
-uint32_t	MediaFile::read32BE()
+
+uint32_t MediaFile::read32BE()
 {
   uint32_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap32BE(&b);
 }
 
-uint16_t	MediaFile::swap16LE(uint16_t* d)
+
+uint16_t MediaFile::swap16LE(uint16_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint16_t>(b[0]) + (static_cast<uint16_t>(b[1]) << 8);
   return *d;
 }
 
-uint16_t	MediaFile::swap16BE(uint16_t* d)
+
+uint16_t MediaFile::swap16BE(uint16_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint16_t>(b[1]) + (static_cast<uint16_t>(b[0]) << 8);
   return *d;
 }
 
-uint32_t	MediaFile::swap32LE(uint32_t* d)
+
+uint32_t MediaFile::swap32LE(uint32_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint32_t>(b[0]) + (static_cast<uint32_t>(b[1]) << 8) +
@@ -299,7 +311,8 @@ uint32_t	MediaFile::swap32LE(uint32_t* d)
   return *d;
 }
 
-uint32_t	MediaFile::swap32BE(uint32_t* d)
+
+uint32_t MediaFile::swap32BE(uint32_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint32_t>(b[3]) + (static_cast<uint32_t>(b[2]) << 8) +
@@ -307,6 +320,7 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
        (static_cast<uint32_t>(b[0]) << 24);
   return *d;
 }
+
 
 //
 // utility methods to read various media files in any supported format
@@ -316,6 +330,7 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
 #include "SGIImageFile.h"
 #include "PNGImageFile.h"
 #include "WaveAudioFile.h"
+
 
 #define OPENMEDIA(_T)					\
 do {							\
@@ -333,8 +348,9 @@ do {							\
   }							\
 } while (0)
 
-unsigned char*		MediaFile::readImage(std::string filename,
-					     int* width, int* height)
+
+unsigned char* MediaFile::readImage(std::string filename,
+                                    int* width, int* height)
 {
   // get the absolute filename for cache textures
   if (CacheManager::isCacheFileType(filename)) {
@@ -432,9 +448,8 @@ unsigned char*		MediaFile::readImage(std::string filename,
 
 
 /*
-float*		MediaFile::readSound(
-			const std::string& filename,
-			int* _numFrames, int* rate)
+float* MediaFile::readSound(const std::string& filename,
+			    int* _numFrames, int* rate)
 {
   // try opening as an audio file
   std::istream* stream;

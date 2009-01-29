@@ -123,7 +123,7 @@ class RawFS : public BzFS
       }
 
       char* mem = new char[size];
-      size_t readSize = fread(mem, 1, size, file);
+      const size_t readSize = fread(mem, 1, size, file);
       fclose(file);
 
       if (size != (int)readSize) {

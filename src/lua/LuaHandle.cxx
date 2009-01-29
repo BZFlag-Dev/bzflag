@@ -340,7 +340,6 @@ bool LuaHandle::PushCallIn(int ciCode)
 bool LuaHandle::AddBasicCalls()
 {
 	lua_newtable(L); {
-
 		HSTR_PUSH_CFUNC(L, "Reload",             ScriptReload);
 		HSTR_PUSH_CFUNC(L, "Disable",            ScriptDisable);
 
@@ -473,6 +472,15 @@ static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo)
 	LuaPushNamedBool  (L, "reqInputCtrl", ciInfo.reqInputCtrl);
 	LuaPushNamedBool  (L, "reversed",     ciInfo.reversed);
 	LuaPushNamedString(L, "loopType",     ciInfo.loopType);
+	if (LuaHandle::GetDevMode()) {
+		lua_pushliteral(L, "func");
+		lua_rawgeti(L, LUA_CALLINSINDEX, ciInfo.code);
+		if (!lua_isfunction(L, -1)) {
+			lua_pop(L, 1);
+			lua_pushboolean(L, false);
+		}
+		lua_rawset(L, -3);
+	}
 }
 
 

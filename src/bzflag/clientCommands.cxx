@@ -630,16 +630,23 @@ static std::string cmdSend(const std::string&,
                            const CommandManager::ArgList& args, bool*)
 {
   static ComposeDefaultKey composeKeyHandler;
-  if (args.size() != 1)
+  if (args.size() != 1) {
     return "usage: send {all|team|nemesis|recipient|admin}";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (!myTank)
-    return "use send only when connected";
+  }
+
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+
   std::string composePrompt;
-  if (args[0] == "all") {
+
+  if (!myTank) {
+    msgDestination = AllPlayers;
+    composePrompt = "Local command: ";
+  }
+  else if (args[0] == "all") {
     msgDestination = AllPlayers;
     composePrompt = "Send to all: ";
-  } else if (args[0] == "team") {
+  }
+  else if (args[0] == "team") {
     if (World::getWorld() && World::getWorld()->allowTeams()) {
       msgDestination = TeamToPlayerId(myTank->getTeam());
       composePrompt = "Send to teammates: ";
@@ -647,7 +654,8 @@ static std::string cmdSend(const std::string&,
       msgDestination = AllPlayers;
       composePrompt = "Send to all: ";
     }
-  } else if (args[0] == "nemesis") {
+  }
+  else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
     if (!nemesis)
       return std::string();
@@ -655,7 +663,8 @@ static std::string cmdSend(const std::string&,
     composePrompt = "Send to ";
     composePrompt += nemesis->getCallSign();
     composePrompt += ": ";
-  } else if (args[0] == "recipient") {
+  }
+  else if (args[0] == "recipient") {
     const Player* recipient = myTank->getRecipient();
     if (!recipient) {
       for (int i = 0; i < curMaxPlayers; i++) {
@@ -672,15 +681,19 @@ static std::string cmdSend(const std::string&,
       composePrompt += recipient->getCallSign();
       composePrompt += ": ";
     }
-  } else if (args[0] == "admin") {
+  }
+  else if (args[0] == "admin") {
     msgDestination = AdminPlayers;
     composePrompt = "Send to Admin : ";
-  } else {
+  }
+  else {
     return "usage: send {all|team|nemesis|recipient|admin}";
   }
+
   messageHistoryIndex = 0;
   hud->setComposing(composePrompt);
   HUDui::setDefaultKey(&composeKeyHandler);
+
   return std::string();
 }
 

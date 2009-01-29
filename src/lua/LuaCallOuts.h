@@ -31,7 +31,7 @@ class LuaCallOuts {
 		static int GetDataDir(lua_State* L); // FIXME -- not implemented
 		static int GetConfigDir(lua_State* L);
 
-		static int GetServerAddress(lua_State* L); // FIXME -- not implemented
+		static int GetServerAddress(lua_State* L);
 		static int GetServerIP(lua_State* L);
 		static int GetServerPort(lua_State* L);
 		static int GetServerDescription(lua_State* L);
@@ -46,10 +46,12 @@ class LuaCallOuts {
 
 		static int PlaySound(lua_State* L);
 
+		static int ReadImage(lua_State* L);
+
 		static int GetViewType(lua_State* L);
 
-		static int GetKeyBindings(lua_State* L); // FIXME -- not implemented
-		static int GetKeyBindingCmd(lua_State* L);
+		static int GetKeyToCmds(lua_State* L);
+		static int GetCmdToKeys(lua_State* L);
 
 		static int GetTime(lua_State* L);
 		static int GetGameTime(lua_State* L);

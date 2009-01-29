@@ -7,8 +7,10 @@
 // system headers
 #include <string.h>
 #include <string>
+#include <vector>
 #include <map>
 using std::string;
+using std::vector;
 using std::map;
 
 // common headers
@@ -22,6 +24,8 @@ using std::map;
 #include "CommandManager.h"
 #include "GameTime.h"
 #include "GfxBlock.h"
+#include "KeyManager.h"
+#include "MediaFile.h"
 #include "OpenGLLight.h"
 #include "SceneRenderer.h"
 #include "Team.h"
@@ -73,7 +77,11 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetConsoleMessageCount);
 
 	PUSH_LUA_CFUNC(L, GetGameInfo);
-	PUSH_LUA_CFUNC(L, GetGameInfo);
+
+	PUSH_LUA_CFUNC(L, GetServerAddress);
+	PUSH_LUA_CFUNC(L, GetServerIP);
+	PUSH_LUA_CFUNC(L, GetServerPort);
+	PUSH_LUA_CFUNC(L, GetServerDescription);
 
 	PUSH_LUA_CFUNC(L, GetWind);
 	PUSH_LUA_CFUNC(L, GetLights);
@@ -86,7 +94,12 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, PlaySound);
 
+	PUSH_LUA_CFUNC(L, ReadImage);
+
 	PUSH_LUA_CFUNC(L, GetViewType);
+
+	PUSH_LUA_CFUNC(L, GetKeyToCmds);
+	PUSH_LUA_CFUNC(L, GetCmdToKeys);
 
 	PUSH_LUA_CFUNC(L, GetRoamInfo);
 	PUSH_LUA_CFUNC(L, SetRoamInfo);
@@ -159,6 +172,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	if (fullRead) {
 		PUSH_LUA_CFUNC(L, GetPlayerShots);
 		PUSH_LUA_CFUNC(L, GetPlayerState);
+		PUSH_LUA_CFUNC(L, GetPlayerStateBits);
 		PUSH_LUA_CFUNC(L, GetPlayerPosition);
 		PUSH_LUA_CFUNC(L, GetPlayerRotation);
 		PUSH_LUA_CFUNC(L, GetPlayerDirection);
@@ -478,6 +492,32 @@ int LuaCallOuts::GetGameInfo(lua_State* L)
 }
 
 
+int LuaCallOuts::GetServerAddress(lua_State* /*L*/) // FIXME 
+{
+	return 0;
+}
+
+
+int LuaCallOuts::GetServerIP(lua_State* /*L*/) // FIXME
+{
+	return 0;
+}
+
+
+int LuaCallOuts::GetServerPort(lua_State* /*L*/) // FIXME
+{
+	return 0;
+}
+
+
+int LuaCallOuts::GetServerDescription(lua_State* /*L*/) // FIXME
+{
+	return 0;
+}
+
+
+/******************************************************************************/
+
 int LuaCallOuts::GetWind(lua_State* L)
 {
 	World* world = World::getWorld();
@@ -662,10 +702,9 @@ int LuaCallOuts::PlaySound(lua_State* L)
 		repeated = lua_isboolean(L, -1) && lua_tobool(L, -1);
 		lua_pop(L, 1);
 
-		char posChars[3] = { 'x', 'y', 'z' };
+		const char* posNames[3] = { "px", "py", "pz" };
 		for (int a = 0; a < 3; a++) {
-			const string posName = string("p") + posChars[a];
-			lua_getfield(L, 2, posName.c_str());
+			lua_getfield(L, 2, posNames[a]);
 			if (lua_israwnumber(L, -1)) {
 				pos[a] = lua_tonumber(L, -1);
 				local = false;
@@ -677,6 +716,28 @@ int LuaCallOuts::PlaySound(lua_State* L)
 	SOUNDSYSTEM.play(soundID, local ? NULL : pos, important, local, repeated);
 
 	return 0;
+}
+
+
+int LuaCallOuts::ReadImage(lua_State* L) // FIXME -- setup for BzVFS
+{
+	const char* source = luaL_checkstring(L, 1);
+
+	int width;
+	int height;
+	const char* imgData = (char*)MediaFile::readImage(source, &width, &height);
+
+	if (imgData == NULL) {
+		return 0;
+	}
+
+	lua_pushlstring(L, imgData, width * height * 4); // rgba
+	lua_pushinteger(L, width);
+	lua_pushinteger(L, height);
+
+	delete[] imgData;
+
+	return 3;
 }
 
 
@@ -692,6 +753,34 @@ int LuaCallOuts::GetViewType(lua_State* L)
 		default: {
 			HSTR_PUSH(L, "unknown");
 		}
+	}
+	return 1;
+}
+
+
+int LuaCallOuts::GetKeyToCmds(lua_State* L)
+{
+	const string keyString = luaL_checkstring(L, 1);
+	BzfKeyEvent keyEvent;
+	if (!KEYMGR.stringToKeyEvent(keyString, keyEvent)) {
+		return 0;
+	}
+	const bool press = !lua_isboolean(L, 2) || lua_tobool(L, 2);
+	const string command = KEYMGR.get(keyEvent, press);
+	lua_pushstdstring(L, command);
+	return 1;
+}
+
+
+int LuaCallOuts::GetCmdToKeys(lua_State* L)
+{
+	const string command = luaL_checkstring(L, 1);
+	const bool press = !lua_isboolean(L, 2) || lua_tobool(L, 2);
+	const vector<string> keys = KEYMGR.getKeysFromCommand(command, press);
+	lua_createtable(L, keys.size(), 0);
+	for (size_t i = 0; i < keys.size(); i++) {
+		lua_pushstdstring(L, keys[i]);
+		lua_rawseti(L, -2, i + 1);
 	}
 	return 1;
 }
@@ -1873,8 +1962,8 @@ int LuaCallOuts::GetPlayerStateBits(lua_State* L)
 	if (player == NULL) {
 		return 0;
 	}
-  lua_pushinteger(L, player->getStatus());
-  return 1;
+	lua_pushinteger(L, player->getStatus());
+	return 1;
 }
 
 

@@ -234,6 +234,7 @@ void* GameTime::pack(void *buf, float lag)
   return buf;
 }
 
+
 void GameTime::pack(BufferedNetworkMessage *msg, float lag)
 {
   double halfLag;
@@ -247,7 +248,6 @@ void GameTime::pack(BufferedNetworkMessage *msg, float lag)
   msg->packUInt((u32)(nowTime >> 32));		// msb's
   msg->packUInt((u32)(nowTime & 0xFFFFFFFF));	// lsb's
 }
-
 
 
 void* GameTime::unpack(void *buf)

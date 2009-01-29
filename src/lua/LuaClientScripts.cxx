@@ -140,7 +140,7 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
 		           "/luauser < status | reload | disable | custom_command ... >");
 	}
 	else if (luaUser != NULL) {
-		luaUser->RecvCommand(c);
+		return luaUser->RecvCommand(c);
 	}
 	else {
 		return false;
@@ -182,7 +182,7 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 		           "/luaworld < status | reload | disable | custom_command ... >");
 	}
 	else if (luaWorld != NULL) {
-		luaWorld->RecvCommand(c);
+		return luaWorld->RecvCommand(c);
 	}
 	else {
 		return false;

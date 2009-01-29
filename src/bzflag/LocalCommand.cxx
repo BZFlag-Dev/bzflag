@@ -17,12 +17,28 @@
 #include <ctype.h>
 #include <wctype.h>
 
+// common headers
+#include "EventHandler.h"
+
 // local implementation headers
 #include "bzUnicode.h"
 
 
-LocalCommand::MapOfCommands *LocalCommand::mapOfCommands = NULL;
+LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;
 
+
+/******************************************************************************/
+
+static bool fallbackCommand(const char* cmd)
+{
+  return eventHandler.CommandFallback(cmd);
+}
+
+
+bool (*LocalCommand::fallback)(const char*) = fallbackCommand;
+
+
+/******************************************************************************/
 
 LocalCommand::LocalCommand(std::string _commandName)
   : commandName(_commandName)
@@ -45,15 +61,20 @@ bool LocalCommand::execute(const char *commandLine)
     return false;
 
   UTF8StringItr ustr(commandLine);
-  while ((*ustr) && !iswspace(*ustr))
+  while ((*ustr) && !iswspace(*ustr)) {
     ++ustr;
+  }
 
   std::string commandToken(commandLine, ustr.getBufferFromHere());
 
-  std::map<std::string, LocalCommand *>::iterator it
-    = (*mapOfCommands).find(commandToken);
-  if (it == (*mapOfCommands).end())
+  std::map<std::string, LocalCommand *>::iterator it;
+  it = (*mapOfCommands).find(commandToken);
+  if (it == (*mapOfCommands).end()) {
+    if (fallback && fallback(commandLine)) {
+      return true;
+    }
     return false;
+  }
   return (*(it->second))(commandLine);
 }
 
@@ -62,6 +83,9 @@ bool LocalCommand::operator() (const char *)
 {
   return true;
 }
+
+
+/******************************************************************************/
 
 
 // Local Variables: ***

@@ -84,7 +84,9 @@ class LuaHandle : public EventClient
 
 		virtual void BZDBChange(const std::string&);
 
-		virtual void RecvCommand(const std::string& msg); // custom to LuaHandle
+		virtual bool CommandFallback(const std::string& cmd);
+
+		virtual bool RecvCommand(const std::string& msg); // custom to LuaHandle
 		virtual void RecvChatMsg(const std::string& msg, int srcID, int dstID);
 		virtual void RecvLuaData(int srcPlayerID, int srcScriptID,
 		                         int dstPlayerID, int dstScriptID,

@@ -401,15 +401,22 @@ void Player::setStatus(short _status)
 
 void Player::setExplode(const TimeKeeper& t)
 {
-  if (!isAlive()) return;
+  if (!isAlive()) {
+    return;
+  }
+
   explodeTime = t;
-  setStatus((getStatus() | short(PlayerState::Exploding) | short(PlayerState::Falling)) &
-	    ~(short(PlayerState::Alive) | short(PlayerState::Paused)));
-  if (avatar)
-    {
-      avatar->explode();
-      updateFlagEffect(Flags::Null);    // setup the flag effect to revert to normal
-    }
+
+  const short setBits = short(PlayerState::Exploding)
+                      | short(PlayerState::Falling);
+  const short clearBits = short(PlayerState::Alive)
+                        | short(PlayerState::Paused);
+  setStatus((getStatus() | setBits) & ~clearBits);
+
+  if (avatar) {
+    avatar->explode();
+    updateFlagEffect(Flags::Null);    // setup the flag effect to revert to normal
+  }
 }
 
 

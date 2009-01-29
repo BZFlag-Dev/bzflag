@@ -41,6 +41,7 @@ void LuaHandle::Shutdown()
 	//       EventHandler, and so no warning should be given if it is not found
 	lua_rawgeti(L, LUA_CALLINSINDEX, LUA_CI_Shutdown);
 	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 1);
 		return;
 	}
 
@@ -111,7 +112,32 @@ void LuaHandle::ServerParted()
 /******************************************************************************/
 /******************************************************************************/
 
-void LuaHandle::RecvCommand(const std::string& msg)
+bool LuaHandle::CommandFallback(const std::string& cmd)
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 3);
+	if (!PushCallIn(LUA_CI_CommandFallback)) {
+		return false; // the call is not defined
+	}
+
+	lua_pushlstring(L, cmd.data(), cmd.size());
+	
+	// call the routine
+	if (!RunCallIn(LUA_CI_CommandFallback, 1, 1)) {
+		return false;
+	}
+
+	if (!lua_isboolean(L, -1)) {
+		lua_pop(L, 1);
+		return false;
+	}
+	const bool retval = lua_tobool(L, -1);
+	lua_pop(L, 1);
+	return retval;
+}
+
+
+bool LuaHandle::RecvCommand(const std::string& cmd)
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 3);
@@ -120,18 +146,24 @@ void LuaHandle::RecvCommand(const std::string& msg)
 	//       by EventHandler, and so no warning should be given if it is not found
 	lua_rawgeti(L, LUA_CALLINSINDEX, LUA_CI_RecvCommand);
 	if (!lua_isfunction(L, -1)) {
-		return;
+		lua_pop(L, 1);
+		return false;
 	}
 
-	if (!PushCallIn(LUA_CI_RecvCommand)) {
-		return; // the call is not defined
-	}
-
-	lua_pushlstring(L, msg.data(), msg.size());
+	lua_pushlstring(L, cmd.data(), cmd.size());
 	
 	// call the routine
-	RunCallIn(LUA_CI_RecvCommand, 1, 0);
-	return;
+	if (!RunCallIn(LUA_CI_RecvCommand, 1, 1)) {
+		return false;
+	}
+
+	if (!lua_isboolean(L, -1)) {
+		lua_pop(L, 1);
+		return false;
+	}
+	const bool retval = lua_tobool(L, -1);
+	lua_pop(L, 1);
+	return retval;
 }
 
 

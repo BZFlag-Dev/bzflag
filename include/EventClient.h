@@ -75,6 +75,8 @@ class EventClient
     virtual void ShotRemoved(const FiringInfo&) { return; }
     virtual void ShotTeleported(const ShotPath&, int /*srcLink*/, int /*dstLink*/) { return; }
 
+    virtual bool CommandFallback(const std::string& /*cmd*/) { return false; }
+
     virtual void RecvChatMsg(const std::string& /*msg*/, int /*srcID*/, int /*dstID*/) { return; }
     virtual void RecvLuaData(int /*srcPlayerID*/, int /*srcScriptID*/,
                              int /*dstPlayerID*/, int /*dstScriptID*/,
