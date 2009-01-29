@@ -1,5 +1,6 @@
 
-1. Renamed Makefile to Makefile.orig
+1. Renamed Makefile to Makefile.orig, and
+   src/Makefile to src/Makefile.org
 
 2. Added Makefile.am
 
@@ -26,4 +27,6 @@
 
 7. Added lua_setuserdataextra() and lua_getuserdataextra() for
    faster userdata type checking
+
+8. Renamed the source files from .c to .cxx for g++ compilation
 

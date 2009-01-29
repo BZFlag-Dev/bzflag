@@ -5,8 +5,8 @@ if BUILD_LUA_EXECS
 bin_PROGRAMS = bzlua bzluac
 bzlua_LDFLAGS  = -static
 bzluac_LDFLAGS = -static
-bzlua_SOURCES  = src/lua.c
-bzluac_SOURCES = src/luac.c
+bzlua_SOURCES  = src/lua.cxx
+bzluac_SOURCES = src/luac.cxx
 LDADD = $(LIBLUA) -lreadline
 endif
 
@@ -15,37 +15,37 @@ AM_CFLAGS = @CONF_CFLAGS@ -DLUA_USE_LINUX -fPIC
 
 liblua_la_LDFLAGS = -static
 
-liblua_la_SOURCES =    \
-	src/lapi.c     \
-	src/lauxlib.c  \
-	src/lbaselib.c \
-	src/lcode.c    \
-	src/ldblib.c   \
-	src/ldebug.c   \
-	src/ldo.c      \
-	src/ldump.c    \
-	src/lfunc.c    \
-	src/lgc.c      \
-	src/linit.c    \
-	src/liolib.c   \
-	src/llex.c     \
-	src/lmathlib.c \
-	src/lmem.c     \
-	src/loadlib.c  \
-	src/lobject.c  \
-	src/lopcodes.c \
-	src/loslib.c   \
-	src/lparser.c  \
-	src/lstate.c   \
-	src/lstring.c  \
-	src/lstrlib.c  \
-	src/ltable.c   \
-	src/ltablib.c  \
-	src/ltm.c      \
-	src/lundump.c  \
-	src/lvm.c      \
-	src/lzio.c     \
-	src/print.c
+liblua_la_SOURCES =      \
+	src/lapi.cxx     \
+	src/lauxlib.cxx  \
+	src/lbaselib.cxx \
+	src/lcode.cxx    \
+	src/ldblib.cxx   \
+	src/ldebug.cxx   \
+	src/ldo.cxx      \
+	src/ldump.cxx    \
+	src/lfunc.cxx    \
+	src/lgc.cxx      \
+	src/linit.cxx    \
+	src/liolib.cxx   \
+	src/llex.cxx     \
+	src/lmathlib.cxx \
+	src/lmem.cxx     \
+	src/loadlib.cxx  \
+	src/lobject.cxx  \
+	src/lopcodes.cxx \
+	src/loslib.cxx   \
+	src/lparser.cxx  \
+	src/lstate.cxx   \
+	src/lstring.cxx  \
+	src/lstrlib.cxx  \
+	src/ltable.cxx   \
+	src/ltablib.cxx  \
+	src/ltm.cxx      \
+	src/lundump.cxx  \
+	src/lvm.cxx      \
+	src/lzio.cxx     \
+	src/print.cxx
 
 noinst_HEADERS =       \
 	src/lapi.h     \
@@ -81,8 +81,8 @@ EXTRA_DIST =               \
 	etc                \
 	test               \
 	src/Makefile.orig  \
-	src/lua.c          \
-	src/luac.c         \
+	src/lua.cxx        \
+	src/luac.cxx       \
 	README_BZFLAG
 
 MAINTAINERCLEANFILES = Makefile.in
