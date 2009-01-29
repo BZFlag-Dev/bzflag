@@ -11,7 +11,7 @@ LDADD = $(LIBLUA) -lreadline
 endif
 
 # works for linux and macos
-AM_CFLAGS = @CONF_CFLAGS@ -DLUA_USE_LINUX -fPIC
+AM_CXXFLAGS = @CONF_CXXFLAGS@ -DLUA_USE_LINUX
 
 liblua_la_LDFLAGS = -static
 
