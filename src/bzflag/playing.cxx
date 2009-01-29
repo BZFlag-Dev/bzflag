@@ -8071,7 +8071,7 @@ void startPlaying()
   // print audio driver
   std::string audioStr;
   PlatformFactory::getMedia()->audioDriver(audioStr);
-  if (tmpString != "") {
+  if (tmpString != "" && audioStr != "") {
     tmpString = ColorStrings[BlueColor];
     tmpString += "Audio Driver: " + audioStr;
     controlPanel->addMessage(tmpString);
