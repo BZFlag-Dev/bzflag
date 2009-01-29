@@ -69,7 +69,7 @@ public:
 		  const char *text,
 		  const float* resetColor = NULL, fontJustification align = AlignLeft);
 private:
-  BZFontFace_impl*      impl;
+  BZFontFace_impl* impl;
 };
 
 /**
@@ -134,6 +134,7 @@ public:
   void  setOpacity(float newOpacity);
   void  setDarkness(float newDarkFactor);
   void  setDimFactor(float newDimFactor);
+  void  setRawBlending(bool value) { rawBlending = value; }
 
   bool freeFontFile(const std::string& fileName);
 
@@ -177,11 +178,13 @@ private:
   /** location of fonts */
   std::string	fontDirectory;
   /** font opacity */
-  float		opacity;
+  float opacity;
   /** ANSI code dimming */
-  float		dimFactor; 
+  float dimFactor; 
   /** darkening of all colors */
-  float		darkness;
+  float darkness;
+  /** do not mess with GL blending */
+  bool rawBlending;
   /** precompute colors on dim/darkness changes */
   GLfloat dimUnderlineColor[4];
 

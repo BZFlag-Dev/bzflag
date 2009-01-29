@@ -221,10 +221,12 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   return font;
 }
 
-FontManager::FontManager() : Singleton<FontManager>(),
-			     opacity(1.0f),
-			     dimFactor(0.2f),
-			     darkness(1.0f)
+FontManager::FontManager()
+: Singleton<FontManager>()
+, opacity(1.0f)
+, dimFactor(0.2f)
+, darkness(1.0f)
+, rawBlending(false)
 {
 #if debugging
   std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
@@ -520,7 +522,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  myColor4fv(color);
 	}
 
-	theFont->Render(rendertext);
+	if (!rawBlending) {
+	  theFont->Render(rendertext);
+        } else {
+	  theFont->ControlBlending(false);
+	  theFont->Render(rendertext);
+	  theFont->ControlBlending(true);
+        }
 
 	// restore
 	buffer[endSend] = savechar;
