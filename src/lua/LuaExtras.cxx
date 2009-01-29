@@ -203,12 +203,10 @@ int LuaExtras::traceback(lua_State *L)  // db_errorfb() function
 //  dump()  &  listing()
 //
 
-extern "C" {
 #include "../other/lua/src/lstate.h"
 #include "../other/lua/src/llimits.h"
 #define luac_c // for luaU_print()
 #include "../other/lua/src/lundump.h"
-}
 
 
 #define api_checknelems(L, n)	api_check(L, (n) <= (L->top - L->base))

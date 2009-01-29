@@ -7,11 +7,9 @@
 #include <string>
 
 // liblua headers
-extern "C" {
-	#include "../other/lua/src/lua.h"
-	#include "../other/lua/src/lualib.h"
-	#include "../other/lua/src/lauxlib.h"
-}
+#include "../other/lua/src/lua.h"
+#include "../other/lua/src/lualib.h"
+#include "../other/lua/src/lauxlib.h"
 
 
 /******************************************************************************/
