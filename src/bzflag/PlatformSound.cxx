@@ -136,6 +136,8 @@ bool PlatformSound::startup ( void )
   if (!media->openAudio())
     return false;
 
+  soundStarted = true;
+
   // open audio data files
   if (!allocAudioSamples())
   {
@@ -188,7 +190,6 @@ bool PlatformSound::startup ( void )
 
   setVolume(1.0f);
 
-  soundStarted = true;
 
   setStandardSoundIDs();
 
