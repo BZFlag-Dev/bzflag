@@ -43,6 +43,8 @@ class WinMedia : public BzfMedia {
     void		writeAudioFrames(const float* samples, int numFrames);
     void		audioSleep(bool checkLowWater, double maxTime);
 
+	virtual void	audioDriver(std::string& driverName);
+
   private:
     static DWORD WINAPI	audioThreadInit(void*);
 

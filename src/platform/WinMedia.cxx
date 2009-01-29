@@ -44,6 +44,11 @@ WinMedia::~WinMedia()
 {
 }
 
+void	WinMedia::audioDriver(std::string& driverName)
+{
+	driverName = "Direct Sound";
+}
+
 bool			WinMedia::openAudio()
 {
   // don't re-initialize
