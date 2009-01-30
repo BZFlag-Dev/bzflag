@@ -43,7 +43,7 @@ static const int HEADER_SIZE_STUFFING = 0;
 #  include <direct.h>
 typedef __int64 s64;
 #  ifndef S_ISDIR
-#    define S_ISDIR(m) ((m) & _S_IFDIR)
+#    define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
 #  endif
 #else
 #include <sys/time.h>

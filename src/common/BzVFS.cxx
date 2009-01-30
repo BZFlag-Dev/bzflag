@@ -60,10 +60,10 @@ BzVFS bzVFS;
 #else // WIN32
 
 #  ifndef S_ISDIR
-#    define S_ISDIR(m) ((m) & _S_IFDIR)
+#    define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
 #  endif
 #  ifndef S_ISREG
-#    define S_ISREG(m) ((m) & _S_IFREG)
+#    define S_ISREG(m) (((m) & _S_IFREG) != 0)
 #  endif
 
   static int bzMkdir(const string& path)
