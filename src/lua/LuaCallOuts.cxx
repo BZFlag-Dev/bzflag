@@ -688,7 +688,7 @@ int LuaCallOuts::PlaySound(lua_State* L)
 	float pos[3] = { 0.0f, 0.0f, 0.0f };
 
 	if (lua_istable(L, 2)) {
-		lua_getfield(L, 2, "volume");
+		lua_getfield(L, 2, "volume"); // NOTE -- not used
 		if (lua_israwnumber(L, -1)) {
 			volume = lua_tonumber(L, -1);
 		}
