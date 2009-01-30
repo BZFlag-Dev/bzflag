@@ -63,7 +63,7 @@ enum LuaCallInCode {
 
 	LUA_CI_WordComplete,
 
-	LUA_CI_ViewResize,
+	LUA_CI_GLResize,
 	LUA_CI_GLReload, // EventHandler's GLInitContext
 	LUA_CI_GLUnmapped,
 

@@ -110,7 +110,7 @@ class EventHandler
     void ShotRemoved(const FiringInfo&);
     void ShotTeleported(const ShotPath&, int srcLink, int dstLink); // FIXME -- use pos + dirs?
 
-    void ViewResize();
+    void GLResize();
     void GLContextInit();
     void GLContextFree();
     void GLUnmapped();
@@ -242,7 +242,7 @@ class EventHandler
     EventClientList listFlagCaptured;
     EventClientList listFlagTransferred;
 
-    EventClientList listViewResize;
+    EventClientList listGLResize;
     EventClientList listGLContextInit;
     EventClientList listGLContextFree;
     EventClientList listGLUnmapped;
@@ -351,7 +351,7 @@ EC_LOOP_1_PARAM(ShotAdded,   const FiringInfo&)
 EC_LOOP_1_PARAM(ShotRemoved, const FiringInfo&)
 EC_LOOP_3_PARAM(ShotTeleported, const ShotPath&, int /*srcLink*/, int /*dstLink*/)
 
-EC_LOOP_0_PARAM(ViewResize)
+EC_LOOP_0_PARAM(GLResize)
 EC_LOOP_0_PARAM(GLContextInit)
 EC_LOOP_0_PARAM(GLContextFree)
 EC_LOOP_0_PARAM(GLUnmapped)

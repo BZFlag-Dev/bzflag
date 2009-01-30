@@ -1082,7 +1082,7 @@ static void doEvent(BzfDisplay *disply)
           (mainWindow->getHeight() != event.resize.height)) {
         mainWindow->getWindow()->setSize(event.resize.width, event.resize.height);
         mainWindow->getWindow()->callResizeCallbacks();
-        eventHandler.ViewResize();
+        eventHandler.GLResize();
       }
       break;
     }

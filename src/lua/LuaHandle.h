@@ -116,7 +116,7 @@ class LuaHandle : public EventClient
 		virtual void FlagCaptured(const Flag&, const Player&);
 		virtual void FlagTransferred(const Flag&, const Player& src, const Player& dst);
 
-		virtual void ViewResize();
+		virtual void GLResize();
 		virtual void GLContextInit();
 		virtual void GLContextFree();
 		virtual void GLUnmapped();

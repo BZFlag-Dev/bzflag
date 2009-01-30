@@ -82,7 +82,7 @@ class EventClient
                              int /*dstPlayerID*/, int /*dstScriptID*/,
                              int /*status*/, const std::string& /*data*/) { return; }
 
-    virtual void ViewResize()    { return; }
+    virtual void GLResize()      { return; }
     virtual void GLContextInit() { return; }
     virtual void GLContextFree() { return; }
     virtual void GLUnmapped()    { return; }

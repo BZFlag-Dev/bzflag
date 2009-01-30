@@ -95,7 +95,7 @@ EventHandler::EventHandler()
   SETUP_EVENT(FlagCaptured,    0, false);
   SETUP_EVENT(FlagTransferred, 0, false);
 
-  SETUP_EVENT(ViewResize,    0, false);
+  SETUP_EVENT(GLResize,      0, false);
   SETUP_EVENT(GLContextInit, 0, false);
   SETUP_EVENT(GLContextFree, 0, false);
   SETUP_EVENT(GLUnmapped,    0, false);

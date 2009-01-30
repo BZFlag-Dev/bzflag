@@ -505,15 +505,15 @@ void LuaHandle::FlagTransferred(const Flag& flag,
 /******************************************************************************/
 /******************************************************************************/
 
-void LuaHandle::ViewResize()
+void LuaHandle::GLResize()
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 2);
-	if (!PushCallIn(LUA_CI_ViewResize)) {
+	if (!PushCallIn(LUA_CI_GLResize)) {
 		return; // the call is not defined
 	}
 
-	RunCallIn(LUA_CI_ViewResize, 0, 0);
+	RunCallIn(LUA_CI_GLResize, 0, 0);
 	return;
 }
 
