@@ -11,8 +11,6 @@
 // system headers
 #ifndef WIN32
 #  include <dirent.h>
-#  include <sys/stat.h>
-#  include <sys/types.h>
 #else
 #  ifdef _MSC_VER
 #    pragma warning(disable : 4786)  // disable warning message
@@ -22,6 +20,8 @@
 #  include <io.h>
 #  include <direct.h>
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <algorithm>
 #include <algorithm>
 #include <string>
