@@ -98,6 +98,7 @@ EventHandler::EventHandler()
   SETUP_EVENT(ViewResize,    0, false);
   SETUP_EVENT(GLContextInit, 0, false);
   SETUP_EVENT(GLContextFree, 0, false);
+  SETUP_EVENT(GLUnmapped,    0, false);
 
   SETUP_EVENT(DrawGenesis,     0, true);
   SETUP_EVENT(DrawWorldStart,  0, true);

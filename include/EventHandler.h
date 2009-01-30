@@ -113,6 +113,7 @@ class EventHandler
     void ViewResize();
     void GLContextInit();
     void GLContextFree();
+    void GLUnmapped();
 
     void DrawGenesis();
     void DrawWorldStart();
@@ -244,6 +245,7 @@ class EventHandler
     EventClientList listViewResize;
     EventClientList listGLContextInit;
     EventClientList listGLContextFree;
+    EventClientList listGLUnmapped;
 
     EventClientList listDrawGenesis;
     EventClientList listDrawWorldStart;
@@ -352,6 +354,7 @@ EC_LOOP_3_PARAM(ShotTeleported, const ShotPath&, int /*srcLink*/, int /*dstLink*
 EC_LOOP_0_PARAM(ViewResize)
 EC_LOOP_0_PARAM(GLContextInit)
 EC_LOOP_0_PARAM(GLContextFree)
+EC_LOOP_0_PARAM(GLUnmapped)
 
 
 #undef EC_LOOP_3_PARAM

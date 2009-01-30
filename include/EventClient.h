@@ -85,6 +85,7 @@ class EventClient
     virtual void ViewResize()    { return; }
     virtual void GLContextInit() { return; }
     virtual void GLContextFree() { return; }
+    virtual void GLUnmapped()    { return; }
 
     virtual void DrawGenesis()     { return; }
     virtual void DrawWorldStart()  { return; }

@@ -1157,6 +1157,7 @@ static void doEvent(BzfDisplay *disply)
 
       unmapped = true;
       mainWindow->ungrabMouse();
+      eventHandler.GLUnmapped();
       break;
     }
     case BzfEvent::KeyUp: {

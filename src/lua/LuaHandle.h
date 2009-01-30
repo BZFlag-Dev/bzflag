@@ -119,6 +119,7 @@ class LuaHandle : public EventClient
 		virtual void ViewResize();
 		virtual void GLContextInit();
 		virtual void GLContextFree();
+		virtual void GLUnmapped();
 
 		virtual void DrawGenesis();
 		virtual void DrawWorldStart();

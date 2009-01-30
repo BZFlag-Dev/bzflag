@@ -65,6 +65,7 @@ enum LuaCallInCode {
 
 	LUA_CI_ViewResize,
 	LUA_CI_GLReload, // EventHandler's GLInitContext
+	LUA_CI_GLUnmapped,
 
 	LUA_CI_DrawGenesis,
 	LUA_CI_DrawWorldStart,
