@@ -957,7 +957,8 @@ void HUDRenderer::render(void)
        (triangleCount > 0) ||
        (radarTriangleCount > 0)
       );
-    const bool showTankLabels = BZDB.isTrue("displayLabels") &&
+    const bool showTankLabels = roaming &&
+                                BZDB.isTrue("displayLabels") &&
                                 GfxBlockMgr::labels.notBlocked();
 
     const bool showCompose2 = showCompose && GfxBlockMgr::compose.notBlocked();
