@@ -157,6 +157,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, Text);
 	PUSH_LUA_CFUNC(L, GetTextWidth);
+	PUSH_LUA_CFUNC(L, GetTextHeight);
 
 	PUSH_LUA_CFUNC(L, Map1);
 	PUSH_LUA_CFUNC(L, Map2);
@@ -356,6 +357,7 @@ int LuaOpenGL::Text(lua_State* L)
 	bool center = false;
 	bool outline = false;
 	bool colorCodes = true;
+	bool rawBlending = false;
 	bool lightOut;
 
 	if (lua_israwstring(L, 6)) {
@@ -365,6 +367,7 @@ int LuaOpenGL::Text(lua_State* L)
 	  	  case 'c': { center = true;                    break; }
 	  	  case 'r': { right = true;                     break; }
 			  case 'n': { colorCodes = false;               break; }
+			  case '*': { rawBlending = true;               break; }
 			  case 'o': { outline = true; lightOut = false; break; }
 			  case 'O': { outline = true; lightOut = true;  break; }
 			}
@@ -389,7 +392,13 @@ int LuaOpenGL::Text(lua_State* L)
 
 	glPushMatrix();
 	glTranslatef(xj, y, 0.0f);
-	FM.drawString(0.0f, 0.0f, 0.0f, faceID, size, text);
+	if (!rawBlending) {
+		FM.drawString(0.0f, 0.0f, 0.0f, faceID, size, text);
+	} else {
+		FM.setRawBlending(true);
+		FM.drawString(0.0f, 0.0f, 0.0f, faceID, size, text);
+		FM.setRawBlending(false);
+	}
 	glPopMatrix();
 
 	if (!OpenGLPassState::TryAttribStackChange(-ftglAttribDepth)) {
@@ -409,6 +418,20 @@ int LuaOpenGL::GetTextWidth(lua_State* L)
 	FontManager& FM = FontManager::instance();
 	const int faceID = FM.getFaceID(face);
 	lua_pushnumber(L, FM.getStringWidth(faceID, size, text, false));
+
+	return 1;
+}
+
+
+int LuaOpenGL::GetTextHeight(lua_State* L)
+{
+/*	const char* text = luaL_checkstring(L, 1); unused ... */
+	const char* face = luaL_checkstring(L, 2);
+	const float size = luaL_optfloat(L, 3, 12.0f);
+
+	FontManager& FM = FontManager::instance();
+	const int faceID = FM.getFaceID(face);
+	lua_pushnumber(L, FM.getStringHeight(faceID, size));
 
 	return 1;
 }

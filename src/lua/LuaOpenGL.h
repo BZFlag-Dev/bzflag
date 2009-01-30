@@ -99,6 +99,7 @@ class LuaOpenGL {
 
 		static int Text(lua_State* L);
 		static int GetTextWidth(lua_State* L);
+		static int GetTextHeight(lua_State* L);
 
 		static int Map1(lua_State* L);
 		static int Map2(lua_State* L);

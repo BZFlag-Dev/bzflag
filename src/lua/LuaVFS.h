@@ -20,6 +20,7 @@ class LuaVFS {
 		static int WriteFile(lua_State* L);
 		static int AppendFile(lua_State* L);
 		static int Include(lua_State* L);
+		static int CreateDir(lua_State* L);
 		static int DirList(lua_State* L);
 };
 

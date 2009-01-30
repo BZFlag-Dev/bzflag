@@ -15,9 +15,9 @@
 #  include <sys/types.h>
 #else
 #  ifdef _MSC_VER
-#    pragma warning(disable : 4786)  // Disable warning message
+#    pragma warning(disable : 4786)  // disable warning message
 #  endif
-#  define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
+#  define WIN32_LEAN_AND_MEAN  // exclude rarely-used stuff
 #  include <windows.h>
 #  include <io.h>
 #  include <direct.h>
@@ -39,6 +39,56 @@ BzVFS bzVFS;
 
 /******************************************************************************/
 /******************************************************************************/
+//
+//  More OS ifdef'ing
+//
+
+#ifndef WIN32
+
+  static int bzMkdir(const string& path)
+  {
+    return mkdir(path.c_str(), 0755);
+  }
+
+  typedef struct stat bzstat_t;
+
+  static int bzStat(const string& path, bzstat_t* buf)
+  {
+    return stat(path.c_str(), buf);
+  }
+
+#else // WIN32
+
+#  ifndef S_ISDIR
+#    define S_ISDIR(m) ((m) & _S_IFDIR)
+#  endif
+#  ifndef S_ISREG
+#    define S_ISREG(m) ((m) & _S_IFREG)
+#  endif
+
+  static int bzMkdir(const string& path)
+  {
+    return mkdir(path.c_str());
+  }
+
+  typedef struct _stat bzstat_t;
+
+  static int bzStat(const string& path, bzstat_t* buf)
+  {
+    // Windows sucks yet again, if there is a trailing  "/"
+    // at the end of the filename, _stat will return -1.   
+    std::string p = path;
+    while (p.find_last_of('/') == (p.size() - 1)) {
+      p.resize(p.size() - 1);
+    }
+    return _stat(p.c_str(), buf);
+  }
+
+#endif // WIN32
+
+
+/******************************************************************************/
+/******************************************************************************/
 
 static string backToFront(const string& path)
 {
@@ -53,31 +103,36 @@ static string backToFront(const string& path)
 
 static int getFileSize(const string& path)
 {
-  FILE* file = fopen(path.c_str(), "r");
-  if (file == NULL) {
+  bzstat_t statbuf;
+  if (bzStat(path, &statbuf) != 0) {
     return -1;
   }
+  return (int)statbuf.st_size;
+}
 
-  // NOTE: use stat() ?
-  if (fseek(file, 0, SEEK_END) != 0) {
-    fclose(file);
-    return -1;   
-  }
-   
-  const long len = ftell(file);
-  if (len == -1) {
-    fclose(file);
-    return -1;   
-  }
-   
-  if (fseek(file, 0, SEEK_SET) != 0) {
-    fclose(file);
-    return -1;   
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool createPathDirs(const std::string& root, const std::string& path)
+{
+  if (path.empty()) {
+    return false;
   }
 
-  fclose(file);
-   
-  return (int)len;
+  // create the directories
+  string::size_type p;
+  for (p = path.find('/'); p != string::npos; p = path.find('/', p + 1)) {
+    bzMkdir(root + path.substr(0, p));    
+  }
+
+  // check that the end result is a directory
+  bzstat_t statbuf;
+  if ((bzStat(root + path, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -95,13 +150,11 @@ class RawFS : public BzFS
   
   public:
     bool fileExists(const string& path) {
-      const string fullPath = root + path;
-      FILE* file = fopen(fullPath.c_str(), "r");
-      const bool exists = (file != NULL);
-      if (file != NULL) {
-        fclose(file);
+      bzstat_t statbuf;
+      if (bzStat(root + path, &statbuf) != 0) {
+        return false;
       }
-      return exists;
+      return S_ISREG(statbuf.st_mode);
     }
 
     int fileSize(const string& path) {
@@ -140,7 +193,6 @@ class RawFS : public BzFS
       if (!isWritable()) {
         return false;
       }
-      // FIXME -- create directories ...
       const string fullPath = root + path;
       FILE* file = fopen(fullPath.c_str(), "wb");
       if (file == NULL) {
@@ -155,7 +207,6 @@ class RawFS : public BzFS
       if (!isWritable()) {
         return false;
       }
-      // FIXME -- create directories ...
       const string fullPath = root + path;
       FILE* file = fopen(fullPath.c_str(), "ab");
       if (file == NULL) {
@@ -169,6 +220,13 @@ class RawFS : public BzFS
     BzFile* openFile(const string& path, string* errMsg = NULL) {
       size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
       return NULL;
+    }
+
+    bool createDir(const std::string& path) {
+      if (!isWritable()) {
+        return false;
+      }
+      return createPathDirs(root, path);
     }
 
     bool dirList(const string& path, bool recursive,
@@ -228,6 +286,14 @@ class DocketFS : public BzFS
       return NULL;
     }
 
+    bool createDir(const std::string& path) {
+      if (!isWritable()) {
+        return false;
+      }
+      size_t FIXME = path.size(); FIXME = FIXME;
+      return false;
+    }
+
     bool dirList(const string& path, bool recursive,
                  vector<string>& dirs, vector<string>& files) {
       docket->dirList(path, recursive, dirs, files);
@@ -276,15 +342,25 @@ void BzVFS::clear()
 void BzVFS::reset()
 {
   clear();
+
   const string configDir = getConfigDirName();
-  addFS(BZVFS_CONFIG, configDir);
-  addFS(BZVFS_DATA, BZDB.get("directory"));
-  addFS(BZVFS_LUA_USER,  BZDB.get("luaUserDir"));
-  addFS(BZVFS_LUA_WORLD, new BzDocket("luaWorld"));
-  addFS(BZVFS_LUA_USER_WRITE,  configDir + "luaUser");
-  addFS(BZVFS_LUA_WORLD_WRITE, configDir + "luaWorld");
-  setFSWritable(BZVFS_LUA_USER_WRITE, true);
+
+  // add the filesystems
+  addFS(BZVFS_CONFIG,          configDir);
+  addFS(BZVFS_DATA,            BZDB.get("directory"));
+  addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));
+  addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
+  addFS(BZVFS_LUA_USER_WRITE,  configDir + "LuaUser");
+  addFS(BZVFS_LUA_WORLD_WRITE, configDir + "LuaWorld");
+
+  // setup the writable directories
+  setFSWritable(BZVFS_CONFIG,          true);
+  setFSWritable(BZVFS_LUA_USER_WRITE,  true);
   setFSWritable(BZVFS_LUA_WORLD_WRITE, true);
+
+  // create the writable lua directories
+  createPathDirs("", cleanDirPath(configDir + "LuaUser"));
+  createPathDirs("", cleanDirPath(configDir + "LuaWorld"));
 }
 
 
@@ -524,6 +600,25 @@ bool BzVFS::appendFile(const string& path, const string& modes,
 }
 
 
+bool BzVFS::createDir(const string& path, const string& modes)
+{
+  const string cleanPath = cleanDirPath(path);
+  if (!safePath(cleanPath)) {
+    return false;
+  }
+
+  vector<BzFS*> systems;
+  getSystems(modes, systems);
+
+  for (size_t i = 0; i < systems.size(); i++) {
+    if (systems[i]->createDir(cleanPath)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 bool BzVFS::dirList(const string& path, const string& modes, bool recursive,
                     vector<string>& dirs, vector<string>& files)
 {
@@ -584,7 +679,12 @@ bool BzVFS::rawDirList(const string& root, const string& path, bool recursive,
       }
     }
   }
+
   closedir(dir);
+
+  std::sort(dirs.begin(),  dirs.end());
+  std::sort(files.begin(), files.end());
+
   return true;
 
 #else // WIN32
@@ -615,6 +715,9 @@ bool BzVFS::rawDirList(const string& root, const string& path, bool recursive,
   while (_findnext(handle, &fileInfo) == 0);
 
   _findclose(handle);
+
+  std::sort(dirs.begin(),  dirs.end());
+  std::sort(files.begin(), files.end());
 
   return true;
 

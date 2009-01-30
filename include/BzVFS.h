@@ -18,7 +18,7 @@
 #define BZVFS_LUA_WORLD        "w"
 #define BZVFS_LUA_USER_WRITE   "U"
 #define BZVFS_LUA_WORLD_WRITE  "W"
-#define BZVFS_BASIC BZVFS_CONFIG BZVFS_DATA BZVFS_FTP BZVFS_HTTP
+#define BZVFS_BASIC BZVFS_CONFIG BZVFS_DATA BZVFS_HTTP BZVFS_FTP
 
 
 class BzDocket;
@@ -58,6 +58,7 @@ class BzFS {
     virtual bool writeFile(const std::string& path, const std::string& data) = 0;
     virtual bool appendFile(const std::string& path, const std::string& data) = 0;
     virtual BzFile* openFile(const std::string& path, std::string* errMsg = NULL) = 0;
+    virtual bool createDir(const std::string& path) = 0;
 
     // '/' is used as the directory separator character
     // files paths are full paths
@@ -97,12 +98,17 @@ class BzVFS {
   public:
     bool fileExists(const std::string& path, const std::string& modes);
     int  fileSize(const std::string& path, const std::string& modes);
+
     bool readFile(const std::string& path,
                   const std::string& modes, std::string& data);
+
     bool writeFile(const std::string& path,
                    const std::string& modes, const std::string& data);
     bool appendFile(const std::string& path,
                     const std::string& modes, const std::string& data);
+
+    bool createDir(const std::string& path, const std::string& modes);
+
     bool dirList(const std::string& path, const std::string& modes,
                  bool recursive,
                  std::vector<std::string>& dirs,

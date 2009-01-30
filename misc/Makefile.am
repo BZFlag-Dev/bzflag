@@ -64,14 +64,14 @@ MAINTAINERCLEANFILES =	\
 	missing \
 	mkinstalldirs
 
-Rrlog:	rrlog.cxx
-	$(CXX) $(CXXFLAGS)		\
+rrlog:	rrlog.cxx
+	$(LIBTOOL) --tag=CXX --mode=link $(CXX) $(CXXFLAGS) \
 	  -o rrlog rrlog.cxx		\
 	  -I../include -I../src/bzfs	\
-	  ../src/date/libDate.a		\
-	  ../src/game/libGame.a		\
-	  ../src/net/libNet.a		\
-	  ../src/common/libCommon.a
+	  ../src/date/libDate.la	\
+	  ../src/game/libGame.la	\
+	  ../src/net/libNet.la		\
+	  ../src/common/libCommon.la
 
 3ds2bzw:	3ds2bzw.c
 	$(CC) $(CFLAGS) -o 3ds2bzw 3ds2bzw.c -l3ds -lm

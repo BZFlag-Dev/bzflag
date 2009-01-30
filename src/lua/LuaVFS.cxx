@@ -31,6 +31,7 @@ bool LuaVFS::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, WriteFile);
 	PUSH_LUA_CFUNC(L, AppendFile);
 	PUSH_LUA_CFUNC(L, Include);
+	PUSH_LUA_CFUNC(L, CreateDir);
 	PUSH_LUA_CFUNC(L, DirList);
 
 	lua_pushliteral(L, "MODES");
@@ -68,6 +69,9 @@ int LuaVFS::FileExists(lua_State* L)
 }
 
 
+/******************************************************************************/
+/******************************************************************************/
+
 int LuaVFS::FileSize(lua_State* L)
 {
 	const LuaHandle* lh = LuaHandle::GetActiveHandle();
@@ -87,6 +91,9 @@ int LuaVFS::FileSize(lua_State* L)
 }
 
 
+/******************************************************************************/
+/******************************************************************************/
+
 int LuaVFS::ReadFile(lua_State* L)
 {
 	const LuaHandle* lh = LuaHandle::GetActiveHandle();
@@ -104,6 +111,9 @@ int LuaVFS::ReadFile(lua_State* L)
 }
 
 
+/******************************************************************************/
+/******************************************************************************/
+
 static bool ParseWriteData(lua_State* L, int index, string& data)
 {
 	data.clear();
@@ -115,6 +125,7 @@ static bool ParseWriteData(lua_State* L, int index, string& data)
 		return true;
 	}
 	else if (lua_istable(L, index)) { // a table of strings
+		const string suffix = luaL_optstring(L, index + 1, ""); // optional suffix
 		const int table = (index > 0) ? index : (lua_gettop(L) + index + 1); 
 		vector<string> dataVec;
 		size_t total = 0;
@@ -122,7 +133,7 @@ static bool ParseWriteData(lua_State* L, int index, string& data)
 			if (lua_israwstring(L, -1)) {
 				size_t len;
 				const char* c = lua_tolstring(L, -1, &len);
-				dataVec.push_back(string(c, len));
+				dataVec.push_back(string(c, len) + suffix);
 				total += len;
 			}
 		}
@@ -139,6 +150,9 @@ static bool ParseWriteData(lua_State* L, int index, string& data)
 	return false;
 }
 
+
+/******************************************************************************/
+/******************************************************************************/
 
 int LuaVFS::WriteFile(lua_State* L)
 {
@@ -161,6 +175,9 @@ int LuaVFS::WriteFile(lua_State* L)
 }
 
 
+/******************************************************************************/
+/******************************************************************************/
+
 int LuaVFS::AppendFile(lua_State* L)
 {
 	const LuaHandle* lh = LuaHandle::GetActiveHandle();
@@ -181,6 +198,9 @@ int LuaVFS::AppendFile(lua_State* L)
 	return 1;
 }
 
+
+/******************************************************************************/
+/******************************************************************************/
 
 int LuaVFS::Include(lua_State* L)
 {
@@ -228,6 +248,28 @@ int LuaVFS::Include(lua_State* L)
 	return lua_gettop(L) - paramTop;
 }
 
+
+/******************************************************************************/
+/******************************************************************************/
+
+int LuaVFS::CreateDir(lua_State* L)
+{
+	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+
+	const char* path = luaL_checkstring(L, 1);
+	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
+	modes = BzVFS::filterModes(modes, lh->GetFSWriteAll().c_str());
+
+	if (!bzVFS.createDir(path, modes)) {
+		return 0;
+	}
+	lua_pushboolean(L, true);
+	return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
 
 int LuaVFS::DirList(lua_State* L)
 {
