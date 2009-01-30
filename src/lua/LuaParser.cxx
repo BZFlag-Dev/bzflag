@@ -342,7 +342,7 @@ void LuaParser::AddInt(int key, int value)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
 	lua_pushinteger(L, key);
-	lua_pushnumber(L, value);
+	lua_pushinteger(L, value);
 	PushParam();
 }
 

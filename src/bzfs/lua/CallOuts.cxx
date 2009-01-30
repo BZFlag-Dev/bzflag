@@ -2045,7 +2045,7 @@ static int GetBanEntry(lua_State* L, bz_eBanListType listType)
   lua_pushstring(L, bz_getBanItemSource(listType, entry));
   lua_rawset(L, -3);
   lua_pushliteral(L, "duration");
-  lua_pushnumber(L, (float)bz_getBanItemDuration(listType, entry));
+  lua_pushnumber(L, (lua_Number)bz_getBanItemDuration(listType, entry));
   lua_rawset(L, -3);
   lua_pushstring(L, "fromMaster");
   lua_pushboolean(L, bz_getBanItemIsFromMaster(listType, entry));
@@ -2112,8 +2112,9 @@ static int DiffTimers(lua_State* L)
   const void* p2 = lua_touserdata(L, 2);
   const uint32_t t1 = *((const uint32_t*)&p1);
   const uint32_t t2 = *((const uint32_t*)&p2);
-  const uint32_t diffTime = (t1 - t2);
-  lua_pushnumber(L, (float)diffTime * 0.001f); // return seconds
+  const uint32_t milliSecs = (t1 - t2);
+  const float seconds = (float)milliSecs * 0.001f;
+  lua_pushnumber(L, (lua_Number)seconds);
   return 1;
 }
 

@@ -118,7 +118,7 @@ int LuaVector::normdotdegs(lua_State* L)
 		return 0;
 	}
 	lua_checkstack(L, 1);
-	lua_pushnumber(L, acos(cosval) * (180.0 / M_PI));
+	lua_pushnumber(L, (lua_Number)(acos(cosval) * (180.0 / M_PI)));
 	return 1;
 }
 

@@ -1257,14 +1257,14 @@ int LuaCallOuts::GetTime(lua_State* L)
 {
 	const double nowTime = TimeKeeper::getCurrent().getSeconds();
 	if (!lua_israwnumber(L, 1)) {
-		lua_pushnumber(L, (float)nowTime);
+		lua_pushnumber(L, (lua_Number)nowTime);
 	}
 	else {
 		const double modulus = (double)lua_tonumber(L, 1);
 		if (modulus == 0.0) {
 			return 0;
 		}
-		lua_pushnumber(L, (float)fmod(nowTime, modulus));
+		lua_pushnumber(L, (lua_Number)fmod(nowTime, modulus));
 	}
 	return 1;
 }
@@ -1273,7 +1273,7 @@ int LuaCallOuts::GetTime(lua_State* L)
 int LuaCallOuts::GetGameTime(lua_State* L)
 {
 	if (!lua_israwnumber(L, 1)) {
-		lua_pushnumber(L, (float)GameTime::getStepTime());
+		lua_pushnumber(L, (lua_Number)GameTime::getStepTime());
 	}
 	else {
 		const double modulus = (double)lua_tonumber(L, 1);
@@ -1281,7 +1281,7 @@ int LuaCallOuts::GetGameTime(lua_State* L)
 			return 0;
 		}
 		const double gameTime = GameTime::getStepTime();
-		lua_pushnumber(L, (float)fmod(gameTime, modulus));
+		lua_pushnumber(L, (lua_Number)fmod(gameTime, modulus));
 	}
 	return 1;
 }
@@ -1307,7 +1307,7 @@ int LuaCallOuts::DiffTimers(lua_State* L)
 	const uint32_t t1 = *((const uint32_t*)&p1);
 	const uint32_t t2 = *((const uint32_t*)&p2);
 	const uint32_t diffTime = (t1 - t2);
-	lua_pushnumber(L, (float)diffTime * 0.001f); // return seconds
+	lua_pushnumber(L, (lua_Number)diffTime * 0.001f); // return seconds
 	return 1;
 }
 
@@ -2407,7 +2407,7 @@ int LuaCallOuts::GetShotLeftTime(lua_State* L)
 		return 0;
 	}
 	const double timeLeft = shot->getCurrentTime() - shot->getStartTime();
-	lua_pushnumber(L, (float)timeLeft);
+	lua_pushnumber(L, (lua_Number)timeLeft);
 	return 1;	
 }
 
