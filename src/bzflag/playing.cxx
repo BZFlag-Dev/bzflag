@@ -7227,7 +7227,7 @@ void updateTimes(const float dt)
 }
 
 
-void updatePostions(const float dt)
+void updatePositions(const float dt)
 {
   // notify if input changed
   if ((myTank != NULL) && (myTank->queryInputChange() == true))
@@ -7306,7 +7306,7 @@ void doUpdates(const float dt)
 
   while (doneDT > 0) {
     updateTimes(realDT);
-    updatePostions(realDT);
+    updatePositions(realDT);
     checkEnvironment(realDT);
     updateTanks(realDT);
     updateWorldEffects(realDT);
