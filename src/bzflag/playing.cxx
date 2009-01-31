@@ -969,9 +969,6 @@ static bool handleEvent(const BzfEvent& event)
   // would be better to have raw keysyms (SDL?) as well as unicode values
   switch (event.type) {
     case BzfEvent::KeyUp: {
-      if (HUDui::getFocus()) {
-        return false;
-      }
       const BzfKeyEvent& ev = event.keyUp;
       switch (ev.button) {
         case BzfKeyEvent::F12: {
@@ -998,15 +995,15 @@ static bool handleEvent(const BzfEvent& event)
           return eventHandler.MouseRelease(mx, my, button);
         }
         default: {
+          if (HUDui::getFocus()) {
+            return false;
+          }
           return eventHandler.KeyRelease(ev.chr ? ev.chr : -ev.button);
         }
       }
       break;
     }
     case BzfEvent::KeyDown: {
-      if (HUDui::getFocus()) {
-        return false;
-      }
       const BzfKeyEvent& ev = event.keyDown;
       switch (ev.button) {
         case BzfKeyEvent::F12: {
@@ -1033,6 +1030,9 @@ static bool handleEvent(const BzfEvent& event)
           return eventHandler.MousePress(mx, my, button);
         }
         default: {
+          if (HUDui::getFocus()) {
+            return false;
+          }
           return eventHandler.KeyPress(ev.chr ? ev.chr : -ev.button, false);
         }
       }
