@@ -954,6 +954,18 @@ void OpenGLPassState::RevertScreenMatrices()
 
 void OpenGLPassState::SetupScreenLighting()
 {
+  // back light
+  const float backLightPos[4]  = { 1.0f, 2.0f, 2.0f, 0.0f };
+  const float backLightAmbt[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+  const float backLightDiff[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+  const float backLightSpec[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  glLightfv(GL_LIGHT0, GL_POSITION, backLightPos);
+  glLightfv(GL_LIGHT0, GL_AMBIENT,  backLightAmbt);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE,  backLightDiff);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, backLightSpec);
+  glEnable(GL_LIGHT0);
+
+  // sunlight
   const float* diffuse = RENDERER.getSunColor();
   const float* ambient = RENDERER.getAmbientColor();
   const float* sunDir  = RENDERER.getSunDirection();
@@ -961,25 +973,15 @@ void OpenGLPassState::SetupScreenLighting()
     return;
   }
 
-  // back light
-  const float backLightPos[4]  = { 1.0f, 2.0f, 2.0f, 0.0f };
-  const float backLightAmbt[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  const float backLightDiff[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
-  const float backLightSpec[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  glLightfv(GL_LIGHT0, GL_POSITION, backLightPos);
-  glLightfv(GL_LIGHT0, GL_AMBIENT,  backLightAmbt);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE,  backLightDiff);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, backLightSpec);
-
-  // sun light -- needs the camera transformation
+  // need the camera transformation for world placement
   glPushMatrix();
   glLoadIdentity();
   RENDERER.getViewFrustum().executeView();
-  glLightfv(GL_LIGHT1, GL_POSITION, sunDir);
+  const float sunPos[4] = { sunDir[0], sunDir[1], sunDir[2], 0.0f };
+  glLightfv(GL_LIGHT1, GL_POSITION, sunPos);
   glPopMatrix();
 
-  const float sunFactor = 1.0f;
-  const float sf = sunFactor;
+  const float  sf = 1.0f; // sunFactor;
   const float* la = ambient;
   const float* ld = diffuse;
 
@@ -995,9 +997,6 @@ void OpenGLPassState::SetupScreenLighting()
   glLightfv(GL_LIGHT1, GL_AMBIENT,  sunLightAmbt);
   glLightfv(GL_LIGHT1, GL_DIFFUSE,  sunLightDiff);
   glLightfv(GL_LIGHT1, GL_SPECULAR, sunLightSpec);
-
-  // Enable the GL lights
-  glEnable(GL_LIGHT0);
   glEnable(GL_LIGHT1);
 }
 

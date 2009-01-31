@@ -302,11 +302,14 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
 	SetActiveHandle(orig);
 
 	if (error != 0) {
+		// log the error
 		const string* ciName = luaCallInDB.GetName(ciCode);
 		const char* ciNameStr = ciName ? ciName->c_str() : "UNKNOWN";
 		LuaLog(0, "%s::RunCallIn: error = %i, %s, %s\n",
 		       GetName().c_str(), error, ciNameStr, lua_tostring(L, -1));
-		lua_pop(L, 1);
+		// move the error string into _G.CALLIN_ERROR
+		lua_checkstack(L, 2);
+		lua_setglobal(L, "CALLIN_ERROR");
 		return false;
 	}
 	return true;
