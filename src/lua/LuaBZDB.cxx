@@ -212,12 +212,26 @@ int LuaBZDB::GetString(lua_State* L)
 //  SET call-outs
 //
 
+static inline bool CheckPermission(const char* name)
+{
+	return (BZDB.getPermission(name) == StateDatabase::ReadWrite);
+}
+
+
 int LuaBZDB::SetInt(lua_State* L)
 {
 	const char* key = luaL_checkstring(L, 1);
 	const int value = luaL_checkint(L, 2);
+
+	if (!CheckPermission(key)) {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
 	BZDB.setInt(key, value);
-	return 0;
+
+	lua_pushboolean(L, true);
+	return 1;
 }
 
 
@@ -228,8 +242,16 @@ int LuaBZDB::SetBool(lua_State* L)
 		luaL_error(L, "expected boolean argument for arg 2");
 	}
 	const bool value = lua_tobool(L, 2);
+
+	if (!CheckPermission(key)) {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
 	BZDB.setBool(key, value);
-	return 0;
+
+	lua_pushboolean(L, true);
+	return 1;
 }
 
 
@@ -237,8 +259,16 @@ int LuaBZDB::SetFloat(lua_State* L)
 {
 	const char* key   = luaL_checkstring(L, 1);
 	const float value = luaL_checkfloat(L, 2);
+
+	if (!CheckPermission(key)) {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
 	BZDB.setFloat(key, value);
-	return 0;
+
+	lua_pushboolean(L, true);
+	return 1;
 }
 
 
@@ -246,8 +276,16 @@ int LuaBZDB::SetString(lua_State* L)
 {
 	const char* key   = luaL_checkstring(L, 1);
 	const char* value = luaL_checkstring(L, 2);
+
+	if (!CheckPermission(key)) {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
 	BZDB.set(key, value);
-	return 0;
+
+	lua_pushboolean(L, true);
+	return 1;
 }
 
 
