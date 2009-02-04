@@ -49,7 +49,8 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
 				useDimensions(false), useOverride(false),
 				onlyShadows(false), clip(false),
-				inTheCockpit(false), tankRenderNode(this),treadsRenderNode(this),
+				inTheCockpit(false),
+				tankRenderNode(this), treadsRenderNode(this),
 				shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
 {
@@ -501,13 +502,20 @@ void TankSceneNode::renderRadar()
   setCenter(tankPos);
   azimuth = 0.0f;
 
-  gstate.setState();
-
   float oldAlpha = color[3];
   if (color[3] < 0.15f) {
     color[3] = 0.15f;
   }
 
+  if (BZDBCache::animatedTreads) {
+    treadState.setState();
+    treadsRenderNode.setRadar(true);
+    treadsRenderNode.sortOrder(true /* above */, false, false);
+    treadsRenderNode.render();
+    treadsRenderNode.setRadar(false);
+  }
+
+  gstate.setState();
   tankRenderNode.setRadar(true);
   tankRenderNode.sortOrder(true /* above */, false, false);
   tankRenderNode.render();
@@ -934,13 +942,12 @@ void TankSceneNode::TankRenderNode::render()
   }
 
   if (isRadar && !isExploding) {
-   if (BZDBCache::animatedTreads) {
-    renderPart(LeftTread);
-     renderPart(RightTread);
-    } else {
-      renderPart(LeftCasing);
-      renderPart(RightCasing);
+    if (BZDBCache::animatedTreads) {
+      renderPart(LeftTread);
+      renderPart(RightTread);
     }
+    renderPart(LeftCasing);
+    renderPart(RightCasing);
     renderPart(Body);
     renderPart(Turret);
     renderPart(Barrel);
@@ -977,7 +984,7 @@ void TankSceneNode::TankRenderNode::render()
     renderPart(Barrel);
     renderPart(LeftCasing);
     renderPart(RightCasing);
-    if ( BZDBCache::animatedTreads) {
+    if (BZDBCache::animatedTreads) {
       for (int i = 0; i < 4; i++) {
 	if (isShadow && ((i == 1) || (i == 2)) && !isExploding) {
 	  continue;

@@ -185,10 +185,10 @@ void TankGeometryMgr::buildLists()
 
   // setup the quality level
   const int divisionLevels[4][2] = { // wheel divs, tread divs
-    {4, 4},   // low
-    {8, 16},  // med
-    {12, 24}, // high
-    {16, 32}  // experimental
+    {  4,  4 }, // low
+    {  8, 16 }, // med
+    { 12, 24 }, // high
+    { 16, 32 }  // experimental
   };
   int quality = RENDERER.useQuality();
   if (quality < _LOW_QUALITY) {
@@ -228,7 +228,8 @@ void TankGeometryMgr::buildLists()
 	  if ((part <= Turret)  || (!animated)) {
 	    // the basic parts
 	    count = partFunctions[lod][part]();
-	  } else if (lod == HighTankLOD){
+	  }
+	  else if (lod == HighTankLOD){
 	    // the animated parts
 	    if (part == LeftCasing) {
 	      count = buildHighLCasingAnim();
@@ -236,8 +237,7 @@ void TankGeometryMgr::buildLists()
 	    else if (part == RightCasing) {
 	      count = buildHighRCasingAnim();
 	    }
-	    else 
-	    if (part == LeftTread) {
+	    else if (part == LeftTread) {
 	      count = buildHighLTread(treadDivs);
 	    }
 	    else if (part == RightTread) {
