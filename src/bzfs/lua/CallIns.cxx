@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "CallIns.h"
 
 // system headers
@@ -1061,7 +1061,7 @@ bool CI_LuaData::execute(bz_EventData* eventData)
   }
 
   if (lua_isboolean(L, -1)) {
-    ed->doNotSend = lua_tobool(L, -1);
+    ed->doNotSend = ed->doNotSend || lua_tobool(L, -1);
   }
 
   lua_pop(L, 1);

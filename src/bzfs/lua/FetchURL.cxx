@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "FetchURL.h"
 
 // system headers

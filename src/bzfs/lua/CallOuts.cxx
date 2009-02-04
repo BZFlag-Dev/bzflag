@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "CallOuts.h"
 
 // system headers

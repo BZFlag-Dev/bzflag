@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaBZFS.h"
 
 // system headers
@@ -84,13 +84,18 @@ bool LuaBZFS::init(const string& cmdLine)
     return false;
   }
 
+  // dieHard check
   string scriptFile = cmdLine.c_str();
-  
   if (scriptFile.size() > 8) {
     if (scriptFile.substr(0, 8) == "dieHard,") {
       dieHard = true;
       scriptFile = scriptFile.substr(8);
     }
+  }
+
+  // leading tilde => $HOME substitution
+  if (!scriptFile.empty() && (scriptFile[0] == '~')) {
+    scriptFile = "$HOME" + scriptFile.substr(1);
   }
 
   scriptFile = EnvExpand(scriptFile);
@@ -283,6 +288,7 @@ static bool CreateLuaState(const string& script)
 
 static string EnvExpand(const string& path)
 {
+  
   string::size_type pos = path.find('$');
   if (pos == string::npos) {
     return path;
@@ -294,7 +300,7 @@ static string EnvExpand(const string& path)
 
   const char* b = path.c_str(); // beginning of string
   const char* s = b + pos + 1;  // start of the key name
-  const char* e = s;            //  end  of the key Name
+  const char* e = s;            // end   of the key Name
   while ((*e != 0) && (isalnum(*e) || (*e == '_'))) {
     e++;
   }
