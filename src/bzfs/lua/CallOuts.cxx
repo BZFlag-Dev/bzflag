@@ -25,6 +25,7 @@ using std::map;
 
 // bzfs headers
 #include "../GameKeeper.h"
+#include "../bzfsMessages.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -134,6 +135,7 @@ static int GetDebugLevel(lua_State* L);
 
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
+static int SendLuaData(lua_State* L);
 static int SendFetchResource(lua_State* L);
 static int SendJoinServer(lua_State* L);
 static int PlaySound(lua_State* L);
@@ -331,6 +333,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, SendMessage);
   PUSH_LUA_CFUNC(L, SendTeamMessage);
+  PUSH_LUA_CFUNC(L, SendLuaData);
   PUSH_LUA_CFUNC(L, SendFetchResource);
   PUSH_LUA_CFUNC(L, SendJoinServer);
   PUSH_LUA_CFUNC(L, PlaySound);
@@ -579,11 +582,11 @@ static int AdminSuperKill(lua_State* /*L*/)
 static int AdminGameOver(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  bz_eTeamType team = eNoTeam;
+  bz_eTeamType teamID = eNoTeam;
   if (!lua_isnone(L, 2)) {
-    team = ParseTeam(L, 2);
+    teamID = ParseTeam(L, 2);
   }
-  bz_gameOver(playerID, team);
+  bz_gameOver(playerID, teamID);
   return 0;
 }
 
@@ -770,6 +773,25 @@ static int SendTeamMessage(lua_State* L)
 }
 
 
+static int SendLuaData(lua_State* L)
+{
+  const int myOrder = 0; // the server
+
+  size_t len;
+  const char* ptr = luaL_checklstring(L, 1, &len);
+  const string data(ptr, len);
+
+  const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
+  const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
+  const uint8_t  statusBits  =   (int8_t)luaL_optint(L, 4, 0);
+
+  sendMsgLuaData(ServerPlayer, myOrder,
+                 dstPlayerID, dstScriptID,
+                 statusBits, data);
+  return 0;
+}
+
+
 static int SendFetchResource(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
@@ -784,11 +806,11 @@ static int SendJoinServer(lua_State* L)
   const int   playerID = luaL_checkint(L, 1);
   const char* addr     = luaL_checkstring(L, 2);
   const int   port     = luaL_checkint(L, 3);
-  const int   team     = luaL_optint(L, 4, eNoTeam);
+  const int   teamID   = luaL_optint(L, 4, eNoTeam);
   const char* referrer = luaL_optstring(L, 5, bz_getPublicAddr().c_str());
   const char* message  = luaL_optstring(L, 6, NULL);
   lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port,
-                                       team, referrer, message));
+                                       teamID, referrer, message));
   return 1;
 }
 
@@ -827,8 +849,8 @@ static int GetBaseAtPosition(lua_State* L)
   pos[0] = luaL_checkfloat(L, 1);
   pos[1] = luaL_checkfloat(L, 2);
   pos[2] = luaL_checkfloat(L, 3);
-  const bz_eTeamType team = bz_checkBaseAtPoint(pos);
-  lua_pushinteger(L, team);
+  const bz_eTeamType teamID = bz_checkBaseAtPoint(pos);
+  lua_pushinteger(L, teamID);
   return 1;
 }
 
