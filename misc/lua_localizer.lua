@@ -36,6 +36,17 @@ local subTable = {
   { 'GL',         'GL',        'GL_'         },
 }
 
+
+local baseFuncs = {
+  'print', 'assert', 'pcall', 'xpcall', 'traceback',
+  'next', 'pairs', 'ipairs', 'select', 'unpack',
+  'rawget', 'rawset', 'rawequal',
+  'type', 'tostring', 'tonumber', 'tobool',
+  'isnil', 'isbool', 'isnumber', 'isstring',
+  'istable', 'isfunction', 'isuserdata', 'isthread',
+}
+
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -86,6 +97,13 @@ for _, subs in ipairs(subTable) do
   end
 
   text = string.gsub(text, '(' .. key .. '%.%a[%a%d_]*)(.)', Substitute)
+end
+
+
+for _, word in ipairs(baseFuncs) do
+  if (text:find('[^%a%d_]'..word..'%(')) then
+    localSubs[word] = word
+  end
 end
   
 
