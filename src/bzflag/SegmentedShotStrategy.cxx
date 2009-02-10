@@ -165,10 +165,8 @@ void SegmentedShotStrategy::update(float dt)
       /* NOTE -- comment out to not explode when shot expires */
       addShotExplosion(pos);
     }
-  }
-
-  // otherwise update position and velocity
-  else {
+  } else {
+    // otherwise update position and velocity
     float p[3];
     segments[segment].ray.getPoint(float(currentTime - segments[segment].start), p);
     setPosition(p);
@@ -269,8 +267,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
   const int numSegments = (const int)segments.size();
-  for (int i = lastSegment; i <= segment && i < numSegments; i++)
-  {
+  for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
     if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
       continue;
@@ -291,15 +288,13 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
 
     // get hit time
     float t;
-    if (tank.test2D)
-    {
+    if (tank.test2D) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
       t = timeRayHitsBlock(relativeRay, tankBase, tank.angle,
 			0.5f * tank.length, shotRadius, tankHeight);
-    }
-    else {
+    } else {
       // find time when shot hits sphere around tank
       t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
     }
