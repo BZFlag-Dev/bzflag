@@ -209,7 +209,7 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
   } else if (hasLG) {
     lgMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
     lgMaxHeight *= lgMaxHeight;
-    lgMaxHeight /= (-lgGravity * 2.0f);;
+    lgMaxHeight /= (-lgGravity * 2.0f);
   } else {
     normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
     normalMaxHeight *= normalMaxHeight;

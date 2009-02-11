@@ -842,7 +842,7 @@ static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
 		lua_rawset(L, -3);
 	}
 
-	const int cornerCount = info.getCornerCount();;
+	const int cornerCount = info.getCornerCount();
 
 	HSTR_PUSH(L, "verts");
 	lua_createtable(L, cornerCount, 0);

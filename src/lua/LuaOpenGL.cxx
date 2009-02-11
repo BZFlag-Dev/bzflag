@@ -1196,7 +1196,7 @@ int LuaOpenGL::Material(lua_State* L)
 	for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
 		if (!lua_israwstring(L, -2)) { // the key
 			LuaLog(1, "gl.Material: bad state type");
-			return 0;;
+			return 0;
 		}
 		const string key = lua_tostring(L, -2);
 

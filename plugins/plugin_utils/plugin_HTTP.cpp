@@ -1107,7 +1107,7 @@ void Templateiser::keyCallback ( std::string &data, const std::string &key )
   } else if (key == "hostname") {
     data = bz_getPublicAddr().c_str();
     if (!data.size())
-      data = format("localhost:%d",bz_getPublicPort());;
+      data = format("localhost:%d",bz_getPublicPort());
   } else if (key == "pagetime") {
     data = format("%.3f",bz_getCurrentTime()-startTime);
   } else if (key == "baseurl") {

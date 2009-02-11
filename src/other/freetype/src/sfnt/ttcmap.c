@@ -2053,7 +2053,7 @@
 
         if ( gindex )
         {
-          cmap->cur_charcode = char_code;;
+          cmap->cur_charcode = char_code;
           cmap->cur_gindex   = gindex;
           cmap->cur_group    = n;
 

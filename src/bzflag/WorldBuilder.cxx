@@ -76,7 +76,7 @@ void* WorldBuilder::unpack(void* buf)
     logDebugMessage(1,"WorldBuilder::unpack() could not decompress\n");
     return NULL;
   }
-  char* uncompressedEnd = uncompressedWorld + uncompressedSize;;
+  char* uncompressedEnd = uncompressedWorld + uncompressedSize;
 
   buf = uncompressedWorld;
 

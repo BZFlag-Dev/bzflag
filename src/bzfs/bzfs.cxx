@@ -2826,7 +2826,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
 
   // if weTKed, and we didn't suicide, and we are killing TKers, then kill that bastard
   if (teamkill &&  (victimIndex != killerIndex) && clOptions->teamKillerDies)
-    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);;
+    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
 
   if (!respawnOnBase) {
     updateScoresForKill(victimData,killerData,teamkill);

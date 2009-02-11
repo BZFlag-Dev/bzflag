@@ -455,7 +455,7 @@ int LuaGLBufferMgr::DeleteBuffer(lua_State* L)
 	if (lua_isnil(L, 1)) {
 		return 0;
 	}
-	LuaGLBuffer* buf = GetLuaGLBuffer(L, 1);;
+	LuaGLBuffer* buf = GetLuaGLBuffer(L, 1);
 	buf->Delete();
 	return 0;
 }

@@ -986,7 +986,7 @@ static int GetPlayerStatus(lua_State* L)
   }
 
   const bool useLastState = lua_tobool(L, 2);
-  short status;;
+  short status;
   if (useLastState) {
     status = player->lastState.status;
   } else {
@@ -1109,7 +1109,7 @@ static int GetPlayerFalling(lua_State* L)
   }
 
   const bool useLastState = lua_tobool(L, 2);
-  short status;;
+  short status;
   if (useLastState) {
     status = player->lastState.status;
   } else {
@@ -1130,7 +1130,7 @@ static int GetPlayerCrossingWall(lua_State* L)
   }
 
   const bool useLastState = lua_tobool(L, 2);
-  short status;;
+  short status;
   if (useLastState) {
     status = player->lastState.status;
   } else {
@@ -1151,7 +1151,7 @@ static int GetPlayerZoned(lua_State* L)
   }
 
   const bool useLastState = lua_tobool(L, 2);
-  short status;;
+  short status;
   if (useLastState) {
     status = player->lastState.status;
   } else {
