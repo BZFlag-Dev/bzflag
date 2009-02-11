@@ -175,6 +175,7 @@ typedef ushort_t	uint16_t;
 typedef signed int	int32_t;
 typedef uint_t		uint32_t;
 #  endif
+typedef signed char	int8_t;
 typedef unsigned char	uint8_t;
 #endif
 
