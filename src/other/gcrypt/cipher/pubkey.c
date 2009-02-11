@@ -69,7 +69,7 @@ static struct pubkey_table_entry
 static gcry_module_t pubkeys_registered;
 
 /* This is the lock protecting PUBKEYS_REGISTERED.  */
-static ath_mutex_t pubkeys_registered_lock = ATH_MUTEX_INITIALIZER;;
+static ath_mutex_t pubkeys_registered_lock = ATH_MUTEX_INITIALIZER;
 
 /* Flag to check wether the default pubkeys have already been
    registered.  */
