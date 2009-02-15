@@ -1,5 +1,7 @@
-#ifndef CALLINS_H_H
-#define CALLINS_H_H
+#ifndef CALLINS_H
+#define CALLINS_H
+
+#include <string>
 
 struct lua_State;
 
@@ -9,7 +11,9 @@ namespace CallIns {
   bool PushEntries(lua_State* L);
   bool CleanUp(lua_State* L);
 
-  bool Shutdown(); // lua plugin custom call-in
+  // lua plugin custom call-ins
+  bool Shutdown();
+  bool RecvCommand(const std::string& cmd);
 }
 
-#endif // CALLINS_H_H
+#endif // CALLINS_H

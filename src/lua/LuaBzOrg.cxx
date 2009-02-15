@@ -2,7 +2,7 @@
 #include "common.h"
 
 // interface header
-#include "LuaUser.h"
+#include "LuaBzOrg.h"
 
 // system headers
 #include <cctype>
@@ -17,6 +17,7 @@ using std::set;
 #include "BzVFS.h"
 #include "EventHandler.h"
 #include "StateDatabase.h"
+#include "cURLManager.h"
 #include "TextUtils.h"
 #include "bzfio.h"
 
@@ -53,64 +54,100 @@ using std::set;
 #include "LuaPhyDrv.h"
 
 
-LuaUser* luaUser = NULL;
+LuaBzOrg* luaBzOrg = NULL;
 
-static const char* sourceFile = "bzUser.lua";
+static const char* sourceFile = "http://trepan.bzflag.bz/LuaBzOrg.lua"; // FIXME
 
 
 /******************************************************************************/
 /******************************************************************************/
 
-void LuaUser::LoadHandler()
+static class CodeFetch* codeFetch = NULL;
+
+
+class CodeFetch : private cURLManager {
+	public:
+		CodeFetch() {
+			setURL(sourceFile);
+			setGetMode();
+			setDeleteOnDone();
+			addHandle();
+			codeFetch = this;
+			logDebugMessage(1, "LuaBzOrg code fetch started: %s\n", sourceFile);
+		}
+
+		~CodeFetch() {
+			codeFetch = NULL;
+		}
+
+		void finalization(char *data, unsigned int length, bool good) {
+			if (luaBzOrg) {
+				return;
+			}
+			if (!good) {
+				logDebugMessage(0, "LuaBzOrg code fetch failed: %s\n", sourceFile);
+				return;
+			}
+			luaBzOrg = new LuaBzOrg(data, length);
+			if (luaBzOrg->L == NULL) {
+				delete luaBzOrg;
+			}
+		}
+};
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+void LuaBzOrg::LoadHandler()
 {
-	if (luaUser) {
+	if (!BZDB.isTrue("luaBzOrg")) {
 		return;
 	}
 
-	const string& dir = BZDB.get("luaUserDir");
-	if (dir.empty() || (dir[0] == '!')) {
+	if (luaBzOrg || codeFetch) {
 		return;
 	}
 
-	new LuaUser();
-
-	if (luaUser->L == NULL) {
-		delete luaUser;
-	}
+	codeFetch = new CodeFetch();
 }
 
 
-void LuaUser::FreeHandler()
+void LuaBzOrg::FreeHandler()
 {
-	delete luaUser;
+	delete codeFetch;
+	delete luaBzOrg;
+}
+
+
+bool LuaBzOrg::IsActive()
+{
+	return ((luaBzOrg != NULL) || (codeFetch != NULL));
 }
 
 
 /******************************************************************************/
 /******************************************************************************/
 
-LuaUser::LuaUser()
-: LuaHandle("LuaUser", ORDER_LUA_USER, devMode, true)
+LuaBzOrg::LuaBzOrg(const char* code, int length)
+: LuaHandle("LuaBzOrg", ORDER_LUA_BZ_ORG, true, true)
 {
-	luaUser = this;
+	luaBzOrg = this;
 
 	if (L == NULL) {
 		return;
 	}
 
 	// setup the handle pointer
-	L2HH(L)->handlePtr = (LuaHandle**)&luaUser;
+	L2HH(L)->handlePtr = (LuaHandle**)&luaBzOrg;
 
 	if (!SetupEnvironment()) {
 		KillLua();
 		return;
 	}
 
-	const string sourceCode = LoadSourceCode(sourceFile, BZVFS_LUA_USER);
-	if (sourceCode.empty()) {
-		KillLua();
-		return;
-	}
+	// FIXME -- source from:  http://lua.bzflag.org/bzOrg.lua
+	const string sourceCode(code, length);
 
 	fsRead = BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	         BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
@@ -122,6 +159,7 @@ LuaUser::LuaUser()
 	fsWriteAll = BZVFS_LUA_USER_WRITE;
 
 	if (!ExecSourceCode(sourceCode)) {
+		logDebugMessage(1, "LuaBzOrg code:\n%s\n", sourceCode.c_str());
 		KillLua();
 		return;
 	}
@@ -131,22 +169,22 @@ LuaUser::LuaUser()
 }
 
 
-LuaUser::~LuaUser()
+LuaBzOrg::~LuaBzOrg()
 {
 	if (L != NULL) {
 		Shutdown();
 		KillLua();
 	}
-	luaUser = NULL;
+	luaBzOrg = NULL;
 }
 
 
 /******************************************************************************/
 /******************************************************************************/
 
-void LuaUser::ForbidCallIns()
+void LuaBzOrg::ForbidCallIns()
 {
-	const string forbidden = BZDB.get("_forbidLuaUser");
+	const string forbidden = BZDB.get("_forbidLuaBzOrg");
 	const vector<string> callIns = TextUtils::tokenize(forbidden, ", ");
 	for (size_t i = 0; i < callIns.size(); i++) {
 		const string& ciName = callIns[i];
@@ -158,7 +196,7 @@ void LuaUser::ForbidCallIns()
 				realName = "GLContextInit";
 			}
 			eventHandler.RemoveEvent(this, realName);
-			logDebugMessage(0, "LuaUser: %s is forbidden\n", ciName.c_str());
+			logDebugMessage(0, "LuaBzOrg: %s is forbidden\n", ciName.c_str());
 		}
 	}
 }

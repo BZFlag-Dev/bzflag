@@ -31,6 +31,7 @@ using std::vector;
 #include "MapObject.h"
 #include "RawLink.h"
 #include "SlashCmd.h"
+#include "Double.h"
 
 
 /******************************************************************************/
@@ -197,13 +198,12 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
     return;
   }
 
-  if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaBZFS)) {
-    sendMessage(ServerPlayer, playerIndex,
-                "You do not have permission to control LuaBZFS");
-    return;
-  }
-
   if (args[1] == "disable") {
+    if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaBZFS)) {
+      sendMessage(ServerPlayer, playerIndex,
+                  "You do not have permission to control LuaBZFS");
+      return;
+    }
     if (isActive()) {
       kill();
       sendMessage(ServerPlayer, playerIndex, "LuaBZFS has been disabled");
@@ -214,6 +214,11 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
   }
 
   if (args[1] == "reload") {
+    if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaBZFS)) {
+      sendMessage(ServerPlayer, playerIndex,
+                  "You do not have permission to control LuaBZFS");
+      return;
+    }
     kill();
     bool success = false;
     if (args.size() > 2) {
@@ -227,6 +232,10 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
       sendMessage(ServerPlayer, playerIndex, "LuaBZFS reload failed");
     }
     return;
+  }
+
+  if (L != NULL) {
+    CallIns::RecvCommand(cmdLine);
   }
     
   return;
@@ -262,16 +271,25 @@ static bool CreateLuaState(const string& script)
 
   CallIns::PushEntries(L);
 
+  lua_getglobal(L, "math");
+  LuaDouble::PushEntries(L);
+  lua_pop(L, 1);
+
+  lua_pushliteral(L, "bz");
   lua_newtable(L); {
     CallOuts::PushEntries(L);
-    Constants::PushEntries(L);
     LuaBZDB::PushEntries(L);
     MapObject::PushEntries(L);
     SlashCmd::PushEntries(L);
     FetchURL::PushEntries(L);
     RawLink::PushEntries(L);
   }
-  lua_setglobal(L, "bz");
+  lua_rawset(L, LUA_GLOBALSINDEX);
+  lua_pushliteral(L, "BZ");
+  lua_newtable(L); {
+    Constants::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
 
   if (luaL_dofile(L, script.c_str()) != 0) {
     logDebugMessage(1, "lua init error: %s\n", lua_tostring(L, -1));

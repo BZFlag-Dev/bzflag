@@ -11,6 +11,7 @@ class LuaBZFS {
   public:
     static bool init(const std::string& scriptFile);
     static bool kill();
+
     static bool isActive();
 
     static void recvCommand(const std::string& command, int player);

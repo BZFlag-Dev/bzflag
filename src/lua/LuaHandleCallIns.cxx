@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaHandle.h"
 
 // system headers
@@ -585,8 +585,13 @@ void LuaHandle::GotGfxBlock(int type, int id)
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 4);
-	if (!PushCallIn(LUA_CI_GotGfxBlock)) {
-		return; // the call is not defined
+
+	// NOTE: we don't use PushCallIn() here because this is not managed by
+	//       EventHandler, and so no warning should be given if it is not found
+	lua_rawgeti(L, LUA_CALLINSINDEX, LUA_CI_GotGfxBlock);
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 1);
+		return;
 	}
 
 	lua_pushinteger(L, type);
@@ -600,8 +605,13 @@ void LuaHandle::LostGfxBlock(int type, int id)
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 4);
-	if (!PushCallIn(LUA_CI_LostGfxBlock)) {
-		return; // the call is not defined
+
+	// NOTE: we don't use PushCallIn() here because this is not managed by
+	//       EventHandler, and so no warning should be given if it is not found
+	lua_rawgeti(L, LUA_CALLINSINDEX, LUA_CI_LostGfxBlock);
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 1);
+		return;
 	}
 
 	lua_pushinteger(L, type);
@@ -614,7 +624,7 @@ void LuaHandle::LostGfxBlock(int type, int id)
 /******************************************************************************/
 /******************************************************************************/
 
-bool LuaHandle::KeyPress(int key, bool isRepeat)
+bool LuaHandle::KeyPress(bool taken, int key, bool isRepeat)
 {
 	BzfDisplay* dpy = getDisplay();
 	if (dpy == NULL) {
@@ -627,20 +637,21 @@ bool LuaHandle::KeyPress(int key, bool isRepeat)
 		return false; // the call is not defined, do not take the event
 	}
 
+	lua_pushboolean(L, taken);
+
 	lua_pushinteger(L, key);
 
 	bool alt, ctrl, shift;
 	dpy->getModState(shift, ctrl, alt);
 
-	int mods = 0;
-	if (alt)   { mods |= (1 << 0); }
-	if (ctrl)  { mods |= (1 << 1); }
-	if (shift) { mods |= (1 << 2); }
-	lua_pushinteger(L, mods);
+	lua_newtable(L);
+	if (alt)   { HSTR_PUSH_BOOL(L, "alt",   true); }
+	if (ctrl)  { HSTR_PUSH_BOOL(L, "ctrl",  true); }
+	if (shift) { HSTR_PUSH_BOOL(L, "shift", true); }
 
 	lua_pushboolean(L, isRepeat);
 
-	if (!RunCallIn(LUA_CI_KeyPress, 3, 1)) {
+	if (!RunCallIn(LUA_CI_KeyPress, 4, 1)) {
 		return false;
 	}
 
@@ -655,7 +666,7 @@ bool LuaHandle::KeyPress(int key, bool isRepeat)
 }
 
 
-bool LuaHandle::KeyRelease(int key)
+bool LuaHandle::KeyRelease(bool taken, int key)
 {
 	BzfDisplay* dpy = getDisplay();
 	if (dpy == NULL) {
@@ -668,18 +679,19 @@ bool LuaHandle::KeyRelease(int key)
 		return false; // the call is not defined, do not take the event
 	}
 
+	lua_pushboolean(L, taken);
+
 	lua_pushinteger(L, key);
 
 	bool alt, ctrl, shift;
 	dpy->getModState(shift, ctrl, alt);
 
-	int mods = 0;
-	if (alt)   { mods |= (1 << 0); }
-	if (ctrl)  { mods |= (1 << 1); }
-	if (shift) { mods |= (1 << 2); }
-	lua_pushinteger(L, mods);
+	lua_newtable(L);
+	if (alt)   { HSTR_PUSH_BOOL(L, "alt",   true); }
+	if (ctrl)  { HSTR_PUSH_BOOL(L, "ctrl",  true); }
+	if (shift) { HSTR_PUSH_BOOL(L, "shift", true); }
 
-	if (!RunCallIn(LUA_CI_KeyRelease, 2, 1)) {
+	if (!RunCallIn(LUA_CI_KeyRelease, 3, 1)) {
 		return false;
 	}
 
@@ -693,19 +705,20 @@ bool LuaHandle::KeyRelease(int key)
 }
 
 
-bool LuaHandle::MousePress(int x, int y, int button)
+bool LuaHandle::MousePress(bool taken, int x, int y, int button)
 {
 	LUA_CALL_IN_CHECK(L);
-	lua_checkstack(L, 5);
+	lua_checkstack(L, 6);
 	if (!PushCallIn(LUA_CI_MousePress)) {
 		return false; // the call is not defined, do not take the event
 	}
 
+	lua_pushboolean(L, taken);
 	lua_pushinteger(L, x);
 	lua_pushinteger(L, y);
 	lua_pushinteger(L, button);
 
-	if (!RunCallIn(LUA_CI_MousePress, 3, 1)) {
+	if (!RunCallIn(LUA_CI_MousePress, 4, 1)) {
 		return false;
 	}
 
@@ -719,19 +732,20 @@ bool LuaHandle::MousePress(int x, int y, int button)
 }
 
 
-bool LuaHandle::MouseRelease(int x, int y, int button)
+bool LuaHandle::MouseRelease(bool taken, int x, int y, int button)
 {
 	LUA_CALL_IN_CHECK(L);
-	lua_checkstack(L, 5);
+	lua_checkstack(L, 6);
 	if (!PushCallIn(LUA_CI_MouseRelease)) {
 		return false; // the call is not defined, do not take the event
 	}
 
+	lua_pushboolean(L, taken);
 	lua_pushinteger(L, x);
 	lua_pushinteger(L, y);
 	lua_pushinteger(L, button);
 
-	if (!RunCallIn(LUA_CI_MouseRelease, 3, 1)) {
+	if (!RunCallIn(LUA_CI_MouseRelease, 4, 1)) {
 		return false;
 	}
 
@@ -745,18 +759,19 @@ bool LuaHandle::MouseRelease(int x, int y, int button)
 }
 
 
-bool LuaHandle::MouseMove(int x, int y)
+bool LuaHandle::MouseMove(bool taken, int x, int y)
 {
 	LUA_CALL_IN_CHECK(L);
-	lua_checkstack(L, 4);
+	lua_checkstack(L, 5);
 	if (!PushCallIn(LUA_CI_MouseMove)) {
 		return false; // the call is not defined, do not take the event
 	}
 
+	lua_pushboolean(L, taken);
 	lua_pushinteger(L, x);
 	lua_pushinteger(L, y);
 
-	if (!RunCallIn(LUA_CI_MouseMove, 2, 1)) {
+	if (!RunCallIn(LUA_CI_MouseMove, 3, 1)) {
 		return false;
 	}
 
@@ -770,7 +785,7 @@ bool LuaHandle::MouseMove(int x, int y)
 }
 
 
-bool LuaHandle::MouseWheel(float value)
+bool LuaHandle::MouseWheel(bool taken, float value)
 {
 	LUA_CALL_IN_CHECK(L);
 	lua_checkstack(L, 4);
@@ -778,9 +793,10 @@ bool LuaHandle::MouseWheel(float value)
 		return false; // the call is not defined, do not take the event
 	}
 
+	lua_pushboolean(L, taken);
 	lua_pushnumber(L, value);
 
-	if (!RunCallIn(LUA_CI_MouseWheel, 1, 1)) {
+	if (!RunCallIn(LUA_CI_MouseWheel, 2, 1)) {
 		return false;
 	}
 

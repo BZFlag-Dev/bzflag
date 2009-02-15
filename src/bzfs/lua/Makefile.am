@@ -13,6 +13,7 @@ noinst_HEADERS =      \
 	CallIns.h     \
 	CallOuts.h    \
 	Constants.h   \
+	Double.h      \
 	FetchURL.h    \
 	LuaBZFS.h     \
 	LuaHeader.h   \
@@ -25,6 +26,7 @@ libLuaBZFS_la_SOURCES = \
 	CallIns.cxx   \
 	CallOuts.cxx  \
 	Constants.cxx \
+	Double.cxx    \
 	FetchURL.cxx  \
 	LuaBZFS.cxx   \
 	MapObject.cxx \

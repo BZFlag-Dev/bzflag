@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaObstacle.h"
 
 // system headers
@@ -233,9 +233,8 @@ static bool PushObstacleList(lua_State* L, int type, int& index)
 	const size_t count = obsList.size();
 	for (size_t i = 0; i < count; i++) {
 		index++;
-		lua_pushinteger(L, index);
 		lua_pushinteger(L, obsList[i]->getGUID());
-		lua_rawset(L, -3);
+		lua_rawseti(L, -2, index);
 	}
 
 	return true;

@@ -187,6 +187,10 @@ SceneRenderer*		getSceneRenderer()
   return NULL;
 }
 
+void			blockControls()
+{
+}
+
 bool			setVideoFormat(int, bool)
 {
   return false;

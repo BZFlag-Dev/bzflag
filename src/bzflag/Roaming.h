@@ -134,9 +134,6 @@ inline const Roaming::RoamingCamera* Roaming::getCamera() const {
 }
 
 
-extern bool devDriving;
-
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

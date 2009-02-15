@@ -23,7 +23,6 @@ static bool PushPlayerStates(lua_State* L);
 static bool PushObstacles(lua_State* L);
 static bool PushPermissions(lua_State* L);
 
-// FIXME -- use userdata/metatables to make these values truly constant
 
 /******************************************************************************/
 /******************************************************************************/

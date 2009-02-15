@@ -4,6 +4,7 @@
 // common headers
 #include "BzVFS.h"
 #include "BzDocket.h"
+#include "CacheManager.h"
 #include "DirectoryNames.h"
 #include "StateDatabase.h"
 #include "bzfio.h"
@@ -90,7 +91,7 @@ BzVFS bzVFS;
 /******************************************************************************/
 /******************************************************************************/
 
-static string backToFront(const string& path)
+static string backSlashToFrontSlash(const string& path)
 {
   string p = path;
   std::replace(p.begin(), p.end(), '\\', '/');
@@ -234,8 +235,113 @@ class RawFS : public BzFS
       return BzVFS::rawDirList(root, path, recursive, dirs, files);
     }
 
-  private:
+  protected:
     const string root;
+};
+
+
+/******************************************************************************/
+/******************************************************************************/
+//
+//  UrlFS  --  FIXME -- not finished
+//
+
+class UrlFS : public RawFS
+{
+  public:
+    UrlFS(const string& _prefix)
+    : RawFS(BzVFS::cleanDirPath(getCacheDirName() + _prefix))
+    , prefix(_prefix)
+    {}
+    ~UrlFS() {}
+
+  private:
+    string getDirCacheURL(const string& path);
+    string getFileCacheURL(const string& path);
+    string getCacheDirPath(const string& url);
+    string getCacheFilePath(const string& url);
+
+  public:
+    bool fileExists(const string& url) {
+      const string path = CACHEMGR.getLocalName(url);
+      bzstat_t statbuf;
+      if (bzStat(root + path, &statbuf) != 0) {
+        return false;
+      }
+      return S_ISREG(statbuf.st_mode);
+    }
+
+    int fileSize(const string& url) {
+      const string path = CACHEMGR.getLocalName(url);
+      const string fullPath = root + path;
+      return getFileSize(fullPath);
+    }
+
+    bool readFile(const string& url, string& data) {
+      const string path = CACHEMGR.getLocalName(url);
+
+      const string fullPath = root + path;
+
+      const int size = getFileSize(fullPath);
+      if (size < 0) {
+        return false;
+      }
+
+      FILE* file = fopen(fullPath.c_str(), "rb");
+      if (file == NULL) {
+        return false;
+      }
+
+      char* mem = new char[size];
+      const size_t readSize = fread(mem, 1, size, file);
+      fclose(file);
+
+      if (size != (int)readSize) {
+        delete[] mem;
+        return false;
+      }
+      
+      data.append(mem, size);
+      delete[] mem;
+      return true;
+    }
+
+    bool writeFile(const string& /*path*/, const string& /*data*/) {
+      return false;
+    };
+
+    bool appendFile(const string& /*path*/, const string& /*data*/) {
+      return false;
+    };
+
+    BzFile* openFile(const string& path, string* errMsg = NULL) {
+      size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
+      return NULL;
+    }
+
+    bool createDir(const std::string& /*path*/) {
+      return false;
+    }
+
+    bool dirList(const string& url, bool recursive,
+                 vector<string>& dirs, vector<string>& files) {
+      const string path = CACHEMGR.getLocalName(url);
+
+      if (!BzVFS::rawDirList(root, path, recursive, dirs, files)) {
+        return false;
+      }
+      // convert the paths to URLs
+      for (size_t i = 0; i < dirs.size(); i++) {
+        dirs[i] = getDirCacheURL(dirs[i]);
+      }
+      for (size_t i = 0; i < files.size(); i++) {
+        files[i] = getFileCacheURL(files[i]);
+      }
+      return true;
+    }
+
+  private:
+    const string prefix;
 };
 
 
@@ -471,7 +577,7 @@ string BzVFS::cleanDirPath(const string& path)
   if (path.empty()) {
     return path;
   }
-  string p = backToFront(path);
+  string p = backSlashToFrontSlash(path);
   if (p[p.size() - 1] != '/') {
     p += '/';
   }
@@ -481,7 +587,7 @@ string BzVFS::cleanDirPath(const string& path)
 
 string BzVFS::cleanFilePath(const string& path)
 {
-  return backToFront(path);
+  return backSlashToFrontSlash(path);
 }
 
 

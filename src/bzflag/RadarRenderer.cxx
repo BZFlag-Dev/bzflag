@@ -1373,7 +1373,7 @@ void RadarRenderer::renderBasesAndTeles()
   // draw team bases
   if(world->allowTeamFlags()) {
     for(i = 1; i < NumTeams; i++) {
-      for (int j = 0;;j++) {
+      for (int j = 0; /* no-op */;j++) {
 	const float *base = world->getBase(i, j);
 	if (base == NULL)
 	  break;

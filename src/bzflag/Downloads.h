@@ -30,6 +30,8 @@ public:
   bool requestFinalized();
   bool authorizedServer(const std::string& hostname);
 
+  AccessList* getAccessList() const { return downloadAccessList; }
+
 protected:
   friend class Singleton<Downloads>;
 

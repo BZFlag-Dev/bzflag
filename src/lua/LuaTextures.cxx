@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaTextures.h"
 
 // system headers
@@ -281,7 +281,7 @@ class LuaTextureObj : public LuaTexture
 {
 	public:
 		LuaTextureObj(GLenum target, GLenum format,
-		              GLsizei xsize, GLsizei ysize, GLint border,
+		              GLsizei xsize, GLsizei ysize, GLsizei zsize, GLint border,
 		              GLenum min_filter, GLenum mag_filter,
 		              GLenum wrap_s, GLenum wrap_t, GLenum wrap_r,
 		              GLfloat aniso);
@@ -300,7 +300,7 @@ class LuaTextureObj : public LuaTexture
 
 		GLsizei GetSizeX() const { return xsize; }
 		GLsizei GetSizeY() const { return ysize; }
-		GLsizei GetSizeZ() const { return 1; }
+		GLsizei GetSizeZ() const { return zsize; }
 
 		GLint GetBorder() const { return border; }
 
@@ -329,6 +329,7 @@ class LuaTextureObj : public LuaTexture
 
 		GLsizei xsize;
 		GLsizei ysize;
+		GLsizei zsize;
 		GLint border;
 
 		GLenum min_filter;
@@ -415,7 +416,8 @@ int LuaTextureMgr::GetPixelSize(GLenum format, GLenum type)
 
 
 LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
-		                         GLsizei _xsize, GLsizei _ysize, GLint _border,
+		                         GLsizei _xsize, GLsizei _ysize, GLsizei _zsize,
+		                         GLint _border,
 		                         GLenum _min_filter, GLenum _mag_filter,
 		                         GLenum _wrap_s, GLenum _wrap_t, GLenum _wrap_r,
 		                         GLfloat _aniso)
@@ -424,6 +426,7 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 , format(_format)
 , xsize(_xsize)
 , ysize(_ysize)
+, zsize(_zsize)
 , border(_border)
 , min_filter(_min_filter)
 , mag_filter(_mag_filter)
@@ -440,6 +443,18 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 		glGenTextures(1, &texID);
 		return;		
 	}
+
+/*
+	if (data != NULL) {
+		const int pixelSize = GetPixelSize(dataFormat, dataType);
+		if (pixelSize < 0) {
+			luaL_error(L, "unknown data format / type");
+		}
+		if (dataSize < (pixelSize * xsize * ysize * zsize)) {
+			luaL_error(L, "not enough data");
+		}
+	}
+*/
 		
 	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
 		return; // exceeded the attrib stack depth
@@ -458,6 +473,7 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 		dataFormat = GL_DEPTH_COMPONENT;
 		dataType = GL_FLOAT;
 	}
+
 
 	glGetError(); // clear current error
 	glTexImage2D(target, 0, format, 
@@ -622,29 +638,6 @@ LuaTexture* LuaTextureMgr::GetLuaTexture(lua_State* L, int index)
 /******************************************************************************/
 /******************************************************************************/
 
-/*
-static GLenum GetTexTargetBindingEnum(GLenum target) -- FIXME  glPushAttribl()?
-{
-	switch (target) {
-		case GL_TEXTURE_1D:            { return GL_TEXTURE_BINDING_1D;            }
-		case GL_TEXTURE_2D:            { return GL_TEXTURE_BINDING_2D;            }
-		case GL_TEXTURE_3D:            { return GL_TEXTURE_BINDING_3D;            }
-		case GL_TEXTURE_CUBE_MAP:      { return GL_TEXTURE_BINDING_CUBE_MAP;      }
-		case GL_TEXTURE_RECTANGLE_ARB: { return GL_TEXTURE_BINDING_RECTANGLE_ARB; }
-		case GL_TEXTURE_1D_ARRAY_EXT:  { return GL_TEXTURE_BINDING_1D_ARRAY_EXT;  }
-		case GL_TEXTURE_2D_ARRAY_EXT:  { return GL_TEXTURE_BINDING_2D_ARRAY_EXT;  }
-		case GL_TEXTURE_BUFFER_EXT:    { return GL_TEXTURE_BINDING_BUFFER_EXT;    }
-		default: {
-			return -1;
-		}
-	}
-}
-*/
-
-
-/******************************************************************************/
-/******************************************************************************/
-
 int LuaTextureMgr::RefTexture(lua_State* L)
 {
 	const char* name = luaL_checkstring(L, 1);
@@ -664,6 +657,7 @@ int LuaTextureMgr::CreateTexture(lua_State* L)
 {
 	const GLsizei xsize = (GLsizei)luaL_checknumber(L, 1);
 	const GLsizei ysize = (GLsizei)luaL_checknumber(L, 2);
+	const GLsizei zsize = 1;
 
 	GLint   border = 0;
 	GLenum  target = GL_TEXTURE_2D;
@@ -710,7 +704,7 @@ int LuaTextureMgr::CreateTexture(lua_State* L)
 
 	void* udData = lua_newuserdata(L, sizeof(LuaTextureObj));
 	LuaTextureObj* texObj = new(udData) LuaTextureObj(target, format,
-	                                                xsize, ysize, border,
+	                                                xsize, ysize, zsize, border,
 	                                                min_filter, mag_filter,
 	                                                wrap_s, wrap_t, wrap_r,
 	                                                aniso);

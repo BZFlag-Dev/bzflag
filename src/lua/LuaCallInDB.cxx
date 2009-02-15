@@ -74,13 +74,14 @@ LuaCallInDB::LuaCallInDB()
 	const int REQ_INPUT_CTRL = (1 << 1);
 
 	// loopType
-	const char* BASIC        = "BASIC";
-	const char* FIRST_TRUE   = "FIRST_TRUE";
+	const char* BASIC          = "BASIC";
+	const char* FIRST_TRUE     = "FIRST_TRUE";
+	const char* TAKEN_CONTINUE = "TAKEN_CONTINUE";
 //	const char* FIRST_FALSE  = "FIRST_FALSE";
 //	const char* FIRST_NUMBER = "FIRST_NUMBER";
-	const char* FIRST_STRING = "FIRST_STRING";
+	const char* FIRST_STRING   = "FIRST_STRING";
 //	const char* BOOLEAN_OR   = "BOOLEAN_OR";
-	const char* SPECIAL      = "SPECIAL";
+	const char* SPECIAL        = "SPECIAL";
 
 	// singleScript	
 	const char* ANY_SCRIPT      = "";
@@ -115,19 +116,19 @@ LuaCallInDB::LuaCallInDB()
 	ADD_CI(ServerJoined, NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(ServerParted, NO_REQS, BASIC, ANY_SCRIPT);
 
-	ADD_CI(PlayerAdded,       NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerRemoved,     NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerSpawned,     NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerKilled,      NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerJumped,      NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerLanded,      NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerTeleported,  NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerTeamChange,  NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(PlayerScoreChange, NO_REQS, BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerAdded,       NO_REQS,       BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerRemoved,     NO_REQS,       BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerSpawned,     NO_REQS,       BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerKilled,      NO_REQS,       BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerJumped,      REQ_FULL_READ, BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerLanded,      REQ_FULL_READ, BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerTeleported,  REQ_FULL_READ, BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerTeamChange,  NO_REQS,       BASIC, ANY_SCRIPT);
+	ADD_CI(PlayerScoreChange, NO_REQS,       BASIC, ANY_SCRIPT);
 
-	ADD_CI(ShotAdded,      NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(ShotRemoved,    NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(ShotTeleported, NO_REQS, BASIC, ANY_SCRIPT);
+	ADD_CI(ShotAdded,      REQ_FULL_READ, BASIC, ANY_SCRIPT);
+	ADD_CI(ShotRemoved,    REQ_FULL_READ, BASIC, ANY_SCRIPT);
+	ADD_CI(ShotTeleported, REQ_FULL_READ, BASIC, ANY_SCRIPT);
 
 	ADD_CI(FlagAdded,       NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(FlagRemoved,     NO_REQS, BASIC, ANY_SCRIPT);
@@ -152,12 +153,12 @@ LuaCallInDB::LuaCallInDB()
 	ADD_CI(GotGfxBlock,  NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(LostGfxBlock, NO_REQS, BASIC, ANY_SCRIPT);
 
-	ADD_CI(KeyPress,     REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
-	ADD_CI(KeyRelease,   REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
-	ADD_CI(MousePress,   REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
-	ADD_CI(MouseMove,    REQ_INPUT_CTRL, BASIC,        ANY_SCRIPT);
-	ADD_CI(MouseRelease, REQ_INPUT_CTRL, SPECIAL,      ANY_SCRIPT);
-	ADD_CI(MouseWheel,   REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
+	ADD_CI(KeyPress,     REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
+	ADD_CI(KeyRelease,   REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
+	ADD_CI(MousePress,   REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
+	ADD_CI(MouseMove,    REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
+	ADD_CI(MouseRelease, REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
+	ADD_CI(MouseWheel,   REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
 	ADD_CI(IsAbove,      REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
 	ADD_CI(GetTooltip,   REQ_INPUT_CTRL, FIRST_STRING, ANY_SCRIPT);
 	ADD_CI(WordComplete, REQ_INPUT_CTRL, SPECIAL,      ANY_SCRIPT);

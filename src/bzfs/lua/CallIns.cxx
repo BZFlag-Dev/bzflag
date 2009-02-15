@@ -24,7 +24,8 @@ using std::map;
 #include "LuaHeader.h"
 
 
-static const bz_eEventType bz_eShutdown = (bz_eEventType)(bz_eLastEvent + 1);
+static const bz_eEventType bz_eShutdown    = (bz_eEventType)(bz_eLastEvent + 1);
+static const bz_eEventType bz_eRecvCommand = (bz_eEventType)(bz_eLastEvent + 2);
 
 static char* worldBlob = NULL; // FIXME -- free() in WorldFinalize? ...
                                // (would require that it always be registered)
@@ -291,6 +292,16 @@ class CI_Shutdown : public CallIn {
 static CI_Shutdown ciShutdown;
 
 
+// lua plugin custom call-in
+class CI_RecvCommand : public CallIn {
+  public:
+    CI_RecvCommand() : CallIn(bz_eRecvCommand, "RecvCommand", "FIRST_TRUE") {}
+    ~CI_RecvCommand() {}
+    bool execute(bz_EventData* eventData);
+};
+static CI_RecvCommand ciRecvCommand;
+
+
 #define CALLIN(cpp, lua, loopType)           \
   class CI_ ## lua : public CallIn {         \
     public:                                  \
@@ -352,6 +363,7 @@ CALLIN(PlayerSentCustomData,       PlayerSentCustomData,       "BASIC");
 CALLIN(PlayerSpawnEvent,           PlayerSpawned,              "BASIC");        // -Event+ed
 CALLIN(PlayerUpdateEvent,          PlayerUpdate,               "BASIC");        // -Event
 CALLIN(RawChatMessageEvent,        RawChatMessage,             "SPECIAL");      // -Event
+//CALLIN(RecvCommand,              RecvCommand,                "FIRST_TRUE");   //  custom
 CALLIN(ReloadEvent,                Reload,                     "BASIC");        // -Event
 CALLIN(ReportFiledEvent,           ReportFiled,                "BASIC");        // -Event
 CALLIN(ServerMsgEvent,             ServerMsg,                  "BASIC");        // -Event
@@ -1388,6 +1400,20 @@ bool CI_RawChatMessage::execute(bz_EventData* eventData)
 }
 
 
+bool CI_RecvCommand::execute(bz_EventData* eventData)
+{
+  const string* cmd = (string*)eventData;
+  printf("CI_RecvCommand: %s\n", cmd->c_str());
+  if (!PushCallIn(3)) {
+    return false;
+  }
+
+  lua_pushstdstring(L, *cmd);
+
+  return RunCallIn(1, 0);
+}
+
+
 bool CI_Reload::execute(bz_EventData* eventData)
 {
   bz_ReloadEventData_V1* ed = (bz_ReloadEventData_V1*)eventData;
@@ -1587,6 +1613,16 @@ bool CallIns::Shutdown()
 {
   bz_EventData eventData(bz_eShutdown);
   return ciShutdown.execute(&eventData);
+}
+
+
+bool CallIns::RecvCommand(const string& cmdLine)
+{
+  if (cmdLine.substr(0, 9) != "/luabzfs ") {
+    return false;
+  }
+  const string cmd = cmdLine.substr(9);
+  return ciRecvCommand.execute((bz_EventData*)&cmd);
 }
 
 

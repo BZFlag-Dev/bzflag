@@ -1113,17 +1113,18 @@ void PackVars::sendPackVars(const std::string &key)
 bool isUDPAttackMessage ( uint16_t &code )
 {
   switch (code) {
-  case MsgShotBegin:
-  case MsgShotEnd:
-  case MsgPlayerUpdate:
-  case MsgPlayerUpdateSmall:
-  case MsgGMUpdate:
-  case MsgLuaDataFast:
-  case MsgUDPLinkRequest:
-  case MsgUDPLinkEstablished:
-  case MsgHit:
-  case MsgWhatTimeIsIt:
-    return false;
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
+    case MsgGMUpdate:
+    case MsgLuaDataFast:
+    case MsgUDPLinkRequest:
+    case MsgUDPLinkEstablished:
+    case MsgHit:
+    case MsgWhatTimeIsIt: {
+      return false;
+    }
   }
   return true;
 }
@@ -1198,28 +1199,31 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
 }
 
 
-void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
                     PlayerId dstPlayerID, int16_t dstScriptID,
                     uint8_t status, const std::string& data)
 {
-  GameKeeper::Player* srcPlayer =
-    GameKeeper::Player::getPlayerByIndex(srcPlayerID);
-  if (srcPlayer == NULL) {
-    return;
-  }
+  if (srcPlayerID != ServerPlayer) {
+    GameKeeper::Player* srcPlayer =
+      GameKeeper::Player::getPlayerByIndex(srcPlayerID);
+    if (srcPlayer == NULL) {
+      return false;
+    }
 
-  const uint8_t knownBits = (0x80 | IsAdmin | IsVerified | IsRegistered);
-  status &= knownBits;
+    // FIXME -- 0x80 is the UDP bit
+    const uint8_t knownBits = (0x80 | IsAdmin | IsVerified | IsRegistered);
+    status &= knownBits;
 
-  const PlayerAccessInfo& info = srcPlayer->accessInfo;
-  if ((status & IsAdmin) && !info.isAdmin()) {
-    status &= ~IsAdmin; // clear the bit
-  }
-  if ((status & IsVerified) && !info.isVerified()) {
-    status &= ~IsVerified; // clear the bit
-  }
-  if ((status & IsRegistered) && !info.isRegistered()) {
-    status &= ~IsRegistered; // clear the bit
+    const PlayerAccessInfo& info = srcPlayer->accessInfo;
+    if ((status & IsAdmin) && !info.isAdmin()) {
+      status &= ~IsAdmin; // clear the bit
+    }
+    if ((status & IsVerified) && !info.isVerified()) {
+      status &= ~IsVerified; // clear the bit
+    }
+    if ((status & IsRegistered) && !info.isRegistered()) {
+      status &= ~IsRegistered; // clear the bit
+    }
   }
 
   bz_LuaDataEventData_V1 eventData(srcPlayerID, srcScriptID,
@@ -1227,7 +1231,7 @@ void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
                                    status, data);
   worldEventManager.callEvents(bz_eLuaDataEvent, &eventData);
   if (eventData.doNotSend) {
-    return;
+    return false;
   }
 
   NetMsg msg = MSGMGR.newMessage();
@@ -1242,7 +1246,7 @@ void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
   // broadcast
   if (dstPlayerID == AllPlayers) {
     msg->broadcast(MsgLuaData);
-    return;
+    return true;
   }
 
   // specific player
@@ -1250,10 +1254,10 @@ void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     GameKeeper::Player* dstPlayer =
       GameKeeper::Player::getPlayerByIndex(dstPlayerID);
     if (dstPlayer == NULL) {
-      return;
+      return false;
     }
     msg->send(dstPlayer->netHandler, MsgLuaData);
-    return;
+    return true;
   }
 
   // admin group
@@ -1263,11 +1267,9 @@ void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     for (size_t i = 0; i < admins.size(); ++i) {
       GameKeeper::Player* adminPlayer =
         GameKeeper::Player::getPlayerByIndex(admins[i]);
-      if (adminPlayer != srcPlayer) {
-        MSGMGR.newMessage(msg)->send(adminPlayer->netHandler, MsgLuaData);
-      }
+      MSGMGR.newMessage(msg)->send(adminPlayer->netHandler, MsgLuaData);
     }
-    return;
+    return true;
   }
 
   // send to a team
@@ -1280,6 +1282,7 @@ void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
       MSGMGR.newMessage(msg)->send(dstPlayer->netHandler, MsgLuaData);
     }
   }
+  return true;
 }
 
 

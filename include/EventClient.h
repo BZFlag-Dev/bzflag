@@ -99,14 +99,14 @@ class EventClient
     virtual void GotGfxBlock(int /*type*/, int /*id*/)  { return; }
     virtual void LostGfxBlock(int /*type*/, int /*id*/) { return; }
 
-    virtual bool KeyPress(int /*key*/, bool /*isRepeat*/)      { return false; }
-    virtual bool KeyRelease(int /*key*/)                       { return false; }
-    virtual bool MouseMove(int /*x*/, int /*y*/)               { return false; }
-    virtual bool MousePress(int /*x*/, int /*y*/, int /*b*/)   { return false; }
-    virtual bool MouseRelease(int /*x*/, int /*y*/, int /*b*/) { return false; }
-    virtual bool MouseWheel(float /*value*/)                   { return false; }
-    virtual bool IsAbove(int /*x*/, int /*y*/)                 { return false; }
-    virtual std::string GetTooltip(int /*x*/, int /*y*/)       { return "";    }
+    virtual bool KeyPress(bool /*taken*/, int /*key*/, bool /*isRepeat*/)      { return false; }
+    virtual bool KeyRelease(bool /*taken*/, int /*key*/)                       { return false; }
+    virtual bool MouseMove(bool /*taken*/, int /*x*/, int /*y*/)               { return false; }
+    virtual bool MousePress(bool /*taken*/, int /*x*/, int /*y*/, int /*b*/)   { return false; }
+    virtual bool MouseRelease(bool /*taken*/, int /*x*/, int /*y*/, int /*b*/) { return false; }
+    virtual bool MouseWheel(bool /*taken*/, float /*value*/)                   { return false; }
+    virtual bool IsAbove(int /*x*/, int /*y*/)           { return false; }
+    virtual std::string GetTooltip(int /*x*/, int /*y*/) { return "";    }
 
     virtual void WordComplete(const std::string& /*line*/,
                               std::set<std::string>& /*partials*/) { return; }

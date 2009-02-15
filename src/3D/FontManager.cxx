@@ -274,7 +274,7 @@ int FontManager::load(const char* fileName)
     return id;
   }
 
-  /* not found, add it */
+  // not found, add it
   id = (int)fontFaces.size();
   fontFaces.push_back(face);
   name2id[face.name()] = id;
@@ -307,7 +307,7 @@ int FontManager::loadAll(std::string directory)
     } else {
       logDebugMessage(4,"Font Texture load failed: %s\n", file.getOSName().c_str());
     }
-  } /* end while iteration over ttf files */
+  } // end while iteration over ttf files
 
   return count;
 }
@@ -371,7 +371,7 @@ int FontManager::getFaceID(std::string const& faceName, bool quietly)
     return id;
   }
 
-  /* no luck finding the one requested, try anything */
+  // no luck finding the one requested, try anything
   if (fontFaces.size() > 0) {
     if (!quietly) {
       logDebugMessage(3, "Requested font %s not found, using %s instead\n",
@@ -423,10 +423,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   glEnable(GL_TEXTURE_2D);
 
-  /*
-   * Colorize text based on ANSI codes embedded in it.  Break the text
-   * every time an ANSI code is encountered.
-   */
+  // Colorize text based on ANSI codes embedded in it.
+  // Break the text every time an ANSI code is encountered.
 
   // sane defaults
   bool bright = true;
@@ -445,10 +443,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     resetColor = BrightColors[WhiteColor];
   }
 
-  /*
-   * ANSI code interpretation is somewhat limited, we only accept values
-   * which have been defined in AnsiCodes.h
-   */
+  // ANSI code interpretation is somewhat limited,
+  // we only accept values which have been defined in AnsiCodes.h
   bool doneLastSection = false;
   int startSend = 0;
 
@@ -483,7 +479,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     // render text
     if (endSend - startSend > 0) {
       char savechar = buffer[endSend];
-      buffer[endSend] = '\0'; /* need terminator */
+      buffer[endSend] = '\0'; // need terminator
       const char* rendertext = &buffer[startSend];
 
       // get substr width, we may need it a couple times
@@ -555,9 +551,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       assert(startSend > 0 && "drawString found an ansi sequence that didn't terminate?");
     }
 
-    /* we stopped sending text at an ANSI code, find out what it is
-     * and do something about it.
-     */
+    // we stopped sending text at an ANSI code,
+    // find out what it is and do something about it.
     if (endSend < textlen) {
 
       // int pos = text.find('m', endSend);
@@ -571,7 +566,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
       // std::string tmpText = text.substr(endSend, pos - endSend + 1);
       char savechar = buffer[pos + 1];
-      buffer[pos + 1] = '\0'; /* need terminator */
+      buffer[pos + 1] = '\0'; // need terminator
       const char* tmpText = &buffer[endSend];
 
       const float darkDim = dimFactor * darkness;

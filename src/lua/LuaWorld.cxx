@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaWorld.h"
 
 // system headers
@@ -15,8 +15,11 @@ using std::set;
 #include "BzVFS.h"
 #include "EventHandler.h"
 
+// bzflag headers
+#include "../bzflag/Downloads.h"
+
 // local headers
-#include "LuaEventOrder.h"
+#include "LuaClientOrder.h"
 #include "LuaInclude.h"
 #include "LuaUtils.h"
 
@@ -25,6 +28,7 @@ using std::set;
 #include "LuaCallOuts.h"
 #include "LuaUtils.h"
 #include "LuaBitOps.h"
+#include "LuaDouble.h"
 #include "LuaOpenGL.h"
 #include "LuaConstGL.h"
 #include "LuaConstGame.h"
@@ -32,6 +36,7 @@ using std::set;
 #include "LuaSpatial.h"
 #include "LuaObstacle.h"
 #include "LuaScream.h"
+#include "LuaURL.h"
 #include "LuaVFS.h"
 #include "LuaBZDB.h"
 #include "LuaPack.h"
@@ -86,7 +91,7 @@ LuaWorld::LuaWorld()
 	// setup the handle pointer
 	L2HH(L)->handlePtr = (LuaHandle**)&luaWorld;
 
-	if (!SetupLuaLibs()) {
+	if (!SetupEnvironment()) {
 		KillLua();
 		return;
 	}
@@ -123,72 +128,6 @@ LuaWorld::~LuaWorld()
 		KillLua();
 	}
 	luaWorld = NULL;
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-#define LUA_OPEN_LIB(L, lib)   \
-  lua_pushcfunction((L), lib); \
-  lua_pcall((L), 0, 0, 0); 
-
-
-bool LuaWorld::SetupLuaLibs()
-{
-	// load the standard libraries
-	LUA_OPEN_LIB(L, luaopen_base);
-	LUA_OPEN_LIB(L, luaopen_math);
-	LUA_OPEN_LIB(L, luaopen_table);
-	LUA_OPEN_LIB(L, luaopen_string);
-	LUA_OPEN_LIB(L, luaopen_os);
-	if (devMode) {
-		LUA_OPEN_LIB(L, luaopen_debug);
-	}
-//	LUA_OPEN_LIB(L, luaopen_io);
-//	LUA_OPEN_LIB(L, luaopen_package);
-
-	// remove a few dangerous calls
-//	lua_getglobal(L, "io");
-//	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
-//	lua_pop(L, 1); // io
-
-	lua_getglobal(L, "os");
-	lua_pushstring(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushstring(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushstring(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
-	lua_pop(L, 1); // os
-
-	lua_pushvalue(L, LUA_GLOBALSINDEX);
-	if (!LuaExtras::PushEntries(L)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	lua_pop(L, 1);
-
-	lua_pushvalue(L, LUA_GLOBALSINDEX);
-	if (!PushLib("math",   LuaBitOps::PushEntries)     ||
-	    !PushLib("math",   LuaVector::PushEntries)     ||
-	    !PushLib("VFS",    LuaVFS::PushEntries)        ||
-	    !PushLib("BZDB",   LuaBZDB::PushEntries)       ||
-	    !PushLib("bz",     LuaPack::PushEntries)       ||
-	    !PushLib("Script", LuaScream::PushEntries)     ||
-	    !PushLib("gl",     LuaOpenGL::PushEntries)     ||
-	    !PushLib("GL",     LuaConstGL::PushEntries)    ||
-	    !PushLib("bz",     LuaBzMaterial::PushEntries) ||
-	    !PushLib("bz",     LuaDynCol::PushEntries)     ||
-	    !PushLib("bz",     LuaTexMat::PushEntries)     ||
-	    !PushLib("bz",     LuaPhyDrv::PushEntries)     ||
-	    !PushLib("bz",     LuaCallOuts::PushEntries)   ||
-	    !PushLib("bz",     LuaSpatial::PushEntries)    ||
-	    !PushLib("bz",     LuaObstacle::PushEntries)   ||
-	    !PushLib("BZ",     LuaKeySyms::PushEntries)    ||
-	    !PushLib("BZ",     LuaConstGame::PushEntries)) {
-		KillLua();
-	}
-	lua_pop(L, 1); // LUA_GLOBALSINDEX
-
-	return true;
 }
 
 

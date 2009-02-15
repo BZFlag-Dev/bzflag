@@ -64,7 +64,7 @@ void sendMsgAutoPilot ( int player, unsigned char autopilot );
 void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target );
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time );
 void sendMsgTimeUpdate ( int32_t timeLimit );
-void sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
                     PlayerId dstPlayerID, int16_t dstScriptID,
                     uint8_t status, const std::string& data);
 

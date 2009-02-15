@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaCallOuts.h"
 
 // system headers
@@ -31,6 +31,7 @@ using std::map;
 #include "Team.h"
 #include "TimeKeeper.h"
 #include "bzfio.h"
+#include "bz_md5.h"
 #include "version.h"
 
 // bzflag headers
@@ -53,6 +54,7 @@ using std::map;
 #include "LuaHandle.h"
 #include "LuaHashString.h"
 #include "LuaFontTexture.h"
+#include "LuaZip.h"
 
 
 /******************************************************************************/
@@ -69,6 +71,8 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, Print);
 	PUSH_LUA_CFUNC(L, Debug);
 	PUSH_LUA_CFUNC(L, GetDebugLevel);
+
+	PUSH_LUA_CFUNC(L, CalcMD5);
 	PUSH_LUA_CFUNC(L, StripAnsiCodes);
 	PUSH_LUA_CFUNC(L, LocalizeString);
 	PUSH_LUA_CFUNC(L, GetCacheFilePath);
@@ -93,6 +97,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, SendCommand);
 
 	PUSH_LUA_CFUNC(L, PlaySound);
+	PUSH_LUA_CFUNC(L, BlockControls);
 
 	PUSH_LUA_CFUNC(L, ReadImage);
 
@@ -149,6 +154,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, MakeFont);
 
 	PUSH_LUA_CFUNC(L, GetLocalPlayer);
+	PUSH_LUA_CFUNC(L, GetLocalTeam);
 	PUSH_LUA_CFUNC(L, GetRabbitPlayer);
 	PUSH_LUA_CFUNC(L, GetAntidotePosition);
 
@@ -165,11 +171,12 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetPlayerName);
 	PUSH_LUA_CFUNC(L, GetPlayerType);
 	PUSH_LUA_CFUNC(L, GetPlayerTeam);
-	PUSH_LUA_CFUNC(L, GetPlayerFlag);
 	PUSH_LUA_CFUNC(L, GetPlayerFlagType);
 	PUSH_LUA_CFUNC(L, GetPlayerScore);
-	PUSH_LUA_CFUNC(L, GetPlayerCustomData);
+	PUSH_LUA_CFUNC(L, GetPlayerMotto);
 	if (fullRead) {
+		PUSH_LUA_CFUNC(L, GetPlayerCustomData);
+		PUSH_LUA_CFUNC(L, GetPlayerFlag);
 		PUSH_LUA_CFUNC(L, GetPlayerShots);
 		PUSH_LUA_CFUNC(L, GetPlayerState);
 		PUSH_LUA_CFUNC(L, GetPlayerStateBits);
@@ -213,6 +220,8 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 		PUSH_LUA_CFUNC(L, GetShotLifeTime);
 		PUSH_LUA_CFUNC(L, GetShotReloadTime);
 	}
+
+	LuaZip::PushEntries(L);
 
 #ifdef HAVE_UNISTD_H
 	PUSH_LUA_CFUNC(L, ReadStdin);
@@ -381,6 +390,22 @@ int LuaCallOuts::LocalizeString(lua_State* L)
 	lua_pushstdstring(L, bundle->getLocalString(text));
 	lua_pushboolean(L, true);
 	return 2;
+}
+
+
+/******************************************************************************/
+
+int LuaCallOuts::CalcMD5(lua_State* L)
+{
+	MD5 md5;
+	for (int arg = 1; lua_israwstring(L, arg); arg++) {
+		size_t len;
+		const char* text = luaL_checklstring(L, arg, &len);
+		md5.update((const unsigned char*)text, len);
+	}
+	md5.finalize();
+	lua_pushstdstring(L, md5.hexdigest());
+	return 1;
 }
 
 
@@ -612,36 +637,13 @@ int LuaCallOuts::SendLuaData(lua_State* L)
 		return 0;
 	}
 
-	PlayerId dstPlayerID = AllPlayers;
-	int16_t  dstScriptID = 0;
-	uint8_t  statusBits  = 0;
-
-	int index = 1;
-
-	if (lua_israwnumber(L, index)) {
-		dstPlayerID = lua_toint(L, index);
-		index++;
-	} else if (lua_isnil(L, index)) {
-		index++;
-	}
-
-	if (lua_israwnumber(L, index)) {
-		dstScriptID = lua_toint(L, index);
-		index++;
-	} else if (lua_isnil(L, index)) {
-		index++;
-	}
-
-	if (lua_israwnumber(L, index)) {
-		statusBits = lua_toint(L, index);
-		index++;
-	} else if (lua_isnil(L, index)) {
-		index++;
-	}
-
 	size_t len;
-	const char* ptr = luaL_checklstring(L, index, &len);
+	const char* ptr = luaL_checklstring(L, 1, &len);
 	const string data(ptr, len);
+
+	const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
+	const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
+	const uint8_t  statusBits  =  (uint8_t)luaL_optint(L, 4, 0);
 
 	lua_pushboolean(L, serverLink->sendLuaData(myTank->getId(), myOrder,
 	                                           dstPlayerID, dstScriptID,
@@ -715,6 +717,16 @@ int LuaCallOuts::PlaySound(lua_State* L)
 
 	SOUNDSYSTEM.play(soundID, local ? NULL : pos, important, local, repeated);
 
+	return 0;
+}
+
+
+int LuaCallOuts::BlockControls(lua_State* L)
+{
+	if (!L2H(L)->HasInputCtrl()) {
+		luaL_error(L, "this script can not block controls");
+	}
+	blockControls();
 	return 0;
 }
 
@@ -846,20 +858,42 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 		case Roaming::roamViewTrack:
 		case Roaming::roamViewFollow:
 		case Roaming::roamViewFP: {
-			if (lua_israwnumber(L, 2)) {
+			const int type = lua_type(L, 2);
+			if ((type == LUA_TNUMBER) || (type == LUA_TBOOLEAN)) {
 				const Player* player = ParsePlayer(L, 2);
-				if (player != NULL) {
+				if (player == NULL) {
+					lua_pushboolean(L, false);
+					return 1;
+				}
+
+				if (type == LUA_TNUMBER) {
 					ROAM.changeTarget(Roaming::explicitSet, player->getId());
+				}
+				else {
+					const Roaming::RoamingTarget target =
+						lua_tobool(L, 2) ? Roaming::next : Roaming::previous;
+					ROAM.changeTarget(target, 0);
 				}
 			}
 			lua_pushboolean(L, true);
 			return 1;
 		}
 		case Roaming::roamViewFlag: {
-			if (lua_israwnumber(L, 2)) {
+			const int type = lua_type(L, 2);
+			if ((type == LUA_TNUMBER) || (type == LUA_TBOOLEAN)) {
 				const ClientFlag* flag = ParseFlag(L, 2);
-				if (flag != NULL) {
+				if (flag == NULL) {
+					lua_pushboolean(L, false);
+					return 1;
+				}
+
+				if (type == LUA_TNUMBER) {
 					ROAM.changeTarget(Roaming::explicitSet, flag->id);
+				}
+				else {
+					const Roaming::RoamingTarget target =
+						lua_tobool(L, 2) ? Roaming::next : Roaming::previous;
+					ROAM.changeTarget(target, 0);
 				}
 			}
 			lua_pushboolean(L, true);
@@ -1529,8 +1563,11 @@ int LuaCallOuts::GetKeyModifiers(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-int LuaCallOuts::WarpMouse(lua_State* L) // FIXME -- check status?
+int LuaCallOuts::WarpMouse(lua_State* L)
 {
+	if (!L2H(L)->HasInputCtrl()) {
+		return 0;
+	}
 	const int mx = luaL_checkint(L, 1);
 	const int my = luaL_checkint(L, 2);
 
@@ -1556,6 +1593,17 @@ int LuaCallOuts::GetLocalPlayer(lua_State* L)
 		return 0;
 	}
 	lua_pushinteger(L, myTank->getId());
+	return 1;
+}
+
+
+int LuaCallOuts::GetLocalTeam(lua_State* L)
+{
+	const LocalPlayer* myTank = LocalPlayer::getMyTank();
+	if (myTank == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, myTank->getTeam());
 	return 1;
 }
 
@@ -1770,18 +1818,16 @@ int LuaCallOuts::GetPlayerList(lua_State* L)
 	const LocalPlayer* myTank = LocalPlayer::getMyTank();
 	if (myTank != NULL) {
 		count++;
-		lua_pushinteger(L, count);
 		lua_pushinteger(L, myTank->getId());
-		lua_rawset(L, -3);
+		lua_rawseti(L, -2, count);
 	}
 
 #ifdef ROBOT
 	for (int i = 0; i < numRobots; i++) {
 		if (robots[i] != NULL) {
 			count++;
-			lua_pushinteger(L, count);
 			lua_pushinteger(L, robots[i]->getId());
-			lua_rawset(L, -3);
+			lua_rawseti(L, -2, count);
 		}
 	}
 #endif
@@ -1789,9 +1835,8 @@ int LuaCallOuts::GetPlayerList(lua_State* L)
 	for (int i = 0; i < curMaxPlayers; i++) {
 		if (remotePlayers[i] != NULL) {
 			count++;
-			lua_pushinteger(L, count);
 			lua_pushinteger(L, remotePlayers[i]->getId());
-			lua_rawset(L, -3);
+			lua_rawseti(L, -2, count);
 		}
 	}
 
@@ -1886,6 +1931,21 @@ int LuaCallOuts::GetPlayerScore(lua_State* L)
 }
 
 
+int LuaCallOuts::GetPlayerMotto(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	map<string, string>::const_iterator it = player->customData.find("motto");
+	if (it == player->customData.end()) {
+		return 0;
+	}
+	lua_pushstdstring(L, it->second);
+	return 1;
+}
+
+
 int LuaCallOuts::GetPlayerCustomData(lua_State* L)
 {
 	const Player* player = ParsePlayer(L, 1);
@@ -1897,7 +1957,7 @@ int LuaCallOuts::GetPlayerCustomData(lua_State* L)
 	if (it == player->customData.end()) {
 		return 0;
 	}
-	lua_pushlstring(L, it->second.data(), it->second.size());
+	lua_pushstdstring(L, it->second);
 	return 1;
 }
 
@@ -2135,9 +2195,8 @@ int LuaCallOuts::GetFlagList(lua_State* L)
 	}
 
 	for (int i = 0; i < world->getMaxFlags(); i++) {
-		lua_pushinteger(L, i + 1);
 		lua_pushinteger(L, i);
-		lua_rawset(L, -3);
+		lua_rawseti(L, -2, i + 1);
 	}
 	return 1;
 }

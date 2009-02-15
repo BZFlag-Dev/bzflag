@@ -1058,7 +1058,11 @@ public:
     buf = nboUnpackUByte(buf, dstPlayerID);
     buf = nboUnpackShort(buf, dstScriptID);
     buf = nboUnpackUByte(buf, status);
-    buf = nboUnpackStdString(buf, data);
+    buf = nboUnpackStdStringRaw(buf, data);
+
+    if (GameKeeper::Player::getPlayerByIndex(srcPlayerID) == NULL) {
+      return false;
+    }
 
     sendMsgLuaData(srcPlayerID, srcScriptID,
                    dstPlayerID, dstScriptID,

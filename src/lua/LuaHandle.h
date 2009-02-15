@@ -24,6 +24,8 @@ class LuaHandle;
 struct lua_State;
 
 
+/******************************************************************************/
+
 // prepended to the beginning of lua_State's
 struct LuaHandleHeader {
 	LuaHandle*  handle;
@@ -49,6 +51,8 @@ static inline LuaHandle** L2HP(lua_State* L)
 }
 
 
+/******************************************************************************/
+
 class LuaHandle : public EventClient
 {
 	public:
@@ -66,8 +70,10 @@ class LuaHandle : public EventClient
 		bool               RequestDisable() const { return requestDisable; }
 		const std::string& RequestMessage() const { return requestMessage; }
 
-	public: // call-ins
+	public:
+		bool RunFunction(const std::string& funcName, int inArgs, int outArgs);
 
+	public: // call-ins
 		virtual bool CanUseCallIn(int code) const;
 		virtual bool CanUseCallIn(const std::string& name) const;
 
@@ -133,12 +139,12 @@ class LuaHandle : public EventClient
 		virtual void GotGfxBlock(int /*type*/, int /*id*/);
 		virtual void LostGfxBlock(int /*type*/, int /*id*/);
 
-		virtual bool KeyPress(int /*key*/, bool /*isRepeat*/);
-		virtual bool KeyRelease(int /*key*/);
-		virtual bool MouseMove(int /*x*/, int /*y*/);
-		virtual bool MousePress(int /*x*/, int /*y*/, int /*b*/);
-		virtual bool MouseRelease(int /*x*/, int /*y*/, int /*button*/);
-		virtual bool MouseWheel(float /*value*/);
+		virtual bool KeyPress(bool /*taken*/, int /*key*/, bool /*isRepeat*/);
+		virtual bool KeyRelease(bool /*taken*/, int /*key*/);
+		virtual bool MouseMove(bool /*taken*/, int /*x*/, int /*y*/);
+		virtual bool MousePress(bool /*taken*/, int /*x*/, int /*y*/, int /*b*/);
+		virtual bool MouseRelease(bool /*taken*/, int /*x*/, int /*y*/, int /*button*/);
+		virtual bool MouseWheel(bool /*taken*/, float /*value*/);
 		virtual bool IsAbove(int /*x*/, int /*y*/);
 		virtual std::string GetTooltip(int /*x*/, int /*y*/);
 
@@ -150,6 +156,8 @@ class LuaHandle : public EventClient
 		virtual ~LuaHandle();
 
 		void KillLua();
+
+		bool SetupEnvironment();
 
 		inline void SetActiveHandle() {
 			activeHandle    = this;
@@ -203,6 +211,7 @@ class LuaHandle : public EventClient
 		static int ScriptCanUseCallIn(lua_State* L);
 		static int ScriptSetCallIn(lua_State* L);
 
+		static int ScriptGetDevMode(lua_State* L);
 		static int ScriptGetGLOBALS(lua_State* L);
 		static int ScriptGetCALLINS(lua_State* L);
 		static int ScriptGetREGISTRY(lua_State* L);
@@ -227,6 +236,8 @@ class LuaHandle : public EventClient
 
 		static bool devMode;   // allows real file access
 };
+
+/******************************************************************************/
 
 
 #endif // LUA_HANDLE_H

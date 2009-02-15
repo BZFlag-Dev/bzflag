@@ -19,6 +19,8 @@ class LuaCallOuts {
 		static int Print(lua_State* L);
 		static int Debug(lua_State* L);
 		static int GetDebugLevel(lua_State* L);
+
+		static int CalcMD5(lua_State* L);
 		static int StripAnsiCodes(lua_State* L);
 		static int LocalizeString(lua_State* L);
 		static int GetCacheFilePath(lua_State* L);
@@ -45,6 +47,7 @@ class LuaCallOuts {
 		static int SendCommand(lua_State* L);
 
 		static int PlaySound(lua_State* L);
+		static int BlockControls(lua_State* L);
 
 		static int ReadImage(lua_State* L);
 
@@ -102,6 +105,7 @@ class LuaCallOuts {
 		static int MakeFont(lua_State* L);
 
 		static int GetLocalPlayer(lua_State* L);
+		static int GetLocalTeam(lua_State* L);
 		static int GetRabbitPlayer(lua_State* L);
 		static int GetAntidotePosition(lua_State* L);
 
@@ -125,6 +129,7 @@ class LuaCallOuts {
 		static int GetPlayerFlag(lua_State* L);
 		static int GetPlayerFlagType(lua_State* L);
 		static int GetPlayerScore(lua_State* L);
+		static int GetPlayerMotto(lua_State* L);
 		static int GetPlayerCustomData(lua_State* L);
 		static int GetPlayerShots(lua_State* L);
 		static int GetPlayerState(lua_State* L);

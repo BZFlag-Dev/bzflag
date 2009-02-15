@@ -9,7 +9,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "OpenGLPassState.h"
 
 // system headers

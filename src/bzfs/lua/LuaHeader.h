@@ -2,6 +2,8 @@
 #define LUA_INCLUDE_H
 
 
+#include <string>
+
 #include "../../other/lua/src/lua.h"
 #include "../../other/lua/src/lualib.h"
 #include "../../other/lua/src/lauxlib.h"
@@ -79,6 +81,12 @@ inline void lua_pushfloat(lua_State* L, float value)
 inline void lua_pushdouble(lua_State* L, double value)
 {
   lua_pushnumber(L, (lua_Number)value);
+}
+
+
+inline void lua_pushstdstring(lua_State* L, const std::string& value)
+{
+  lua_pushlstring(L, value.data(), value.size());
 }
 
 

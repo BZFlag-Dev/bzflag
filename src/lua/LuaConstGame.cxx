@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaConstGame.h"
 
 // common headers
@@ -36,6 +36,7 @@ static bool PushObstacleTypes(lua_State* L);
 static bool PushGfxBlockTypes(lua_State* L);
 static bool PushRoamModes(lua_State* L);
 static bool PushConsoleTypes(lua_State* L);
+static bool PushMouseButtons(lua_State* L);
 //static bool PushFlagQualities(lua_State* L);
 //static bool PushPlayers(lua_State* L);
 //static bool PushPermissions(lua_State* L);
@@ -57,7 +58,8 @@ bool LuaConstGame::PushEntries(lua_State* L)
 		PushObstacleTypes(L)   &&
 		PushGfxBlockTypes(L)   &&
 		PushRoamModes(L)       &&
-		PushConsoleTypes(L);
+		PushConsoleTypes(L)    &&
+		PushMouseButtons(L);
 }
 
 
@@ -133,6 +135,7 @@ static bool PushChatTeams(lua_State* L)
 	PushDualPair(L, "ADMIN",    AdminPlayers);
 
 	const int topTeam = 250;
+	PushDualPair(L, "TOP", topTeam);
 
 	PushDualPair(L, "ROGUE",    topTeam - RogueTeam);
 	PushDualPair(L, "RED",      topTeam - RedTeam);
@@ -341,6 +344,24 @@ static bool PushConsoleTypes(lua_State* L)
 	PushDualPair(L, "SERVER", ControlPanel::MessageServer);
 	PushDualPair(L, "MISC",   ControlPanel::MessageMisc);
 	PushDualPair(L, "DEBUG",  ControlPanel::MessageDebug);
+
+	lua_rawset(L, -3);
+
+	return true;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool PushMouseButtons(lua_State* L)
+{
+	lua_pushliteral(L, "MOUSE");
+	lua_newtable(L);
+
+	PushDualPair(L, "LEFT",   0);
+	PushDualPair(L, "MIDDLE", 1);
+	PushDualPair(L, "RIGHT",  2);
 
 	lua_rawset(L, -3);
 

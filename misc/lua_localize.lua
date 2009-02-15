@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
---  file:    lua_localizer.lua
+--  file:    lua_localize.lua
 --  brief:   localizes some lua table entries for BZFlag scripts
 --  author:  Dave Rodgers  (aka: trepan)
 --
@@ -16,6 +16,13 @@
 require('io')
 require('string')
 require('table')
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+local ipairs = ipairs
+local pairs  = pairs
+local print  = print
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -101,7 +108,7 @@ end
 
 
 for _, word in ipairs(baseFuncs) do
-  if (text:find('[^%a%d_]'..word..'%(')) then
+  if (text:find('[%s,)]'..word..'[ \t]*%(')) then
     localSubs[word] = word
   end
 end
@@ -111,7 +118,7 @@ end
 local maxLen = 0
 local sorted = {}
 for lText, oText in pairs(localSubs) do
-  table.insert(sorted, { lText, oText })
+  sorted[#sorted + 1] = { lText, oText }
   maxLen = (maxLen > #lText) and maxLen or #lText
 end
 table.sort(sorted, function(a,b) return a[1] < b[1] end)

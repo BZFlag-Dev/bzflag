@@ -124,12 +124,12 @@ class EventHandler
     void DrawScreen();
     void DrawRadar();
 
-    bool KeyPress(int key, bool isRepeat);
-    bool KeyRelease(int key);
-    bool MouseMove(int x, int y);
-    bool MousePress(int x, int y, int button);
-    bool MouseRelease(int x, int y, int button);
-    bool MouseWheel(float value); // positive is up
+    bool KeyPress(bool taken, int key, bool isRepeat);
+    bool KeyRelease(bool taken, int key);
+    bool MouseMove(bool taken, int x, int y);
+    bool MousePress(bool taken, int x, int y, int button);
+    bool MouseRelease(bool taken, int x, int y, int button);
+    bool MouseWheel(bool taken, float value); // positive is up
     bool IsAbove(int x, int y);
     std::string GetTooltip(int x, int y);
 
@@ -194,7 +194,6 @@ class EventHandler
 
   private:
     EventMap eventMap;
-    EventClient* mouseOwner;
 
 /* FIXME -- command registration
   private:

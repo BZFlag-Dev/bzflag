@@ -138,6 +138,12 @@ class LuaUserCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class LuaBzOrgCommand : LocalCommand {
+  public:
+    LuaBzOrgCommand();
+    bool operator() (const char *commandLine);
+};
+
 class LuaWorldCommand : LocalCommand {
   public:
     LuaWorldCommand();
@@ -169,6 +175,7 @@ static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static MapInfoCommand     mapInfoCommand;
 static LuaUserCommand     luaUserCommand;
+static LuaBzOrgCommand    luaBzOrgCommand;
 static LuaWorldCommand    luaWorldCommand;
 static DebugLevelCommand  debugLevelCommand;
 
@@ -182,6 +189,7 @@ HighlightCommand::HighlightCommand() :		LocalCommand("/highlight") {}
 LocalSetCommand::LocalSetCommand() :		LocalCommand("/localset")  {}
 MapInfoCommand::MapInfoCommand() :		LocalCommand("/mapinfo")   {}
 LuaUserCommand::LuaUserCommand() :		LocalCommand("/luauser")   {}
+LuaBzOrgCommand::LuaBzOrgCommand() :		LocalCommand("/luabzorg")  {}
 LuaWorldCommand::LuaWorldCommand() :		LocalCommand("/luaworld")  {}
 QuitCommand::QuitCommand() :			LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand() :		LocalCommand("/retexture") {}
@@ -852,6 +860,16 @@ bool LuaUserCommand::operator() (const char* cmdLine)
     return false;
   }
   LuaClientScripts::LuaUserCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+
+
+bool LuaBzOrgCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaBzOrgCommand(cmdLine + 1); // skip the '/'
   return true;
 }
 

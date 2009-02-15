@@ -34,6 +34,7 @@
  * format strings
  */
 namespace TextUtils {
+
   std::string vformat(const char* fmt, va_list args);
   std::string format(const char* fmt, ...) BZ_ATTR_12;
 
@@ -46,8 +47,9 @@ namespace TextUtils {
   {
     std::string trans = s;
 
-    for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
+    for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i) {
       *i = ::tolower(*i);
+    }
     return trans;
   }
 
@@ -56,14 +58,17 @@ namespace TextUtils {
   inline std::string toupper(const std::string& s)
   {
     std::string trans = s;
-    for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i)
+    for (std::string::iterator i=trans.begin(), end=trans.end(); i!=end; ++i) {
       *i = ::toupper(*i);
+    }
     return trans;
   }
 
   /** replace all of in in replaceMe with withMe
    */
-  std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
+  std::string replace_all(const std::string& in,
+                          const std::string& replaceMe,
+                          const std::string& withMe);
 
   /** return copy of string with all whitespace stripped
    */
@@ -71,18 +76,21 @@ namespace TextUtils {
 
   /**
    * Get a vector of strings from a string, using all of chars of thedelims
-   * string as separators. If maxTokens > 0, then the last 'token' maycontain delimiters
-   * as it just returns the rest of the line
-   * if you specify use quotes then tokens can be grouped in quotes and delimeters
-   * inside quotes are ignored.
-   * Hence /ban "Mr Blahblah" isajerk parses to "/ban", "Mr Blahlah" and "isajerk"
-   * but so does "Mr Blahblah" "isajerk", so if you want 3 tokens and a delimeter
-   * is in one of the tokens, by puting quotes around it you can get the correct
-   * parsing. When use quotes is enabled, \'s and "'s should\can be escaped with \
-   * escaping is not currently done for any other character.
-   * Should not have " as a delimeter if you want to use quotes
+   * string as separators. If maxTokens > 0, then the last 'token' maycontain
+   * delimiters as it just returns the rest of the line if you specify use
+   * quotes then tokens can be grouped in quotes and delimeters inside quotes
+   * are ignored. Hence /ban "Mr Blahblah" isajerk parses to "/ban",
+   * "Mr Blahlah" and "isajerk" but so does "Mr Blahblah" "isajerk", so if you
+   * want 3 tokens and a delimeter is in one of the tokens, by puting quotes
+   * around it you can get the correct parsing. When use quotes is enabled,
+   * \'s and "'s should\can be escaped with \ escaping is not currently done
+   * for any other character. Should not have " as a delimeter if you want to
+   * use quotes
    */
-  std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0, const bool useQuotes = false);
+  std::vector<std::string> tokenize(const std::string& in,
+                                    const std::string &delims,
+                                    const int maxTokens = 0,
+                                    const bool useQuotes = false);
 
   /** convert a string representation of some duration into minutes
    *  example: "1d2h16m" -> 1500
@@ -97,7 +105,8 @@ namespace TextUtils {
    * It compares two strings and returns 0 if equal, <0 if s1 is less than
    * s2, and >0 if s1 is greater than s2.
    */
-  inline int compare_nocase(const std::string& s1, const std::string &s2, int maxlength=4096)
+  inline int compare_nocase(const std::string& s1,
+                            const std::string &s2, int maxlength = 4096)
   {
     std::string::const_iterator p1 = s1.begin();
     std::string::const_iterator p2 = s2.begin();
@@ -113,7 +122,8 @@ namespace TextUtils {
       ++p2;
       ++i;
     }
-    return (s2.size() == s1.size()) ? 0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
+    return (s2.size() == s1.size()) ?
+           0 : (s1.size() < s2.size()) ? -1 : 1; // size is unsigned
   }
 
 
@@ -217,16 +227,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first alphanumeric character from a string
    */
-  inline int firstAlphanumeric(const std::string &input, unsigned short int max=4096)
+  inline int firstAlphanumeric(const std::string &input,
+                               unsigned short int max = 4096)
   {
-
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (isAlphanumeric(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (isAlphanumeric(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -234,16 +245,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first non-alphanumeric character from a string
    */
-  inline int firstNonalphanumeric(const std::string &input, unsigned short int max=4096)
+  inline int firstNonalphanumeric(const std::string &input,
+                                  unsigned short int max = 4096)
   {
-
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (!isAlphanumeric(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (!isAlphanumeric(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -251,16 +263,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first printable character from a string
    */
-  inline int firstPrintable(const std::string &input, unsigned short int max=4096)
+  inline int firstPrintable(const std::string &input,
+                            unsigned short int max = 4096)
   {
-
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (isPrintable(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (isPrintable(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -268,15 +281,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first non-printable character from a string
    */
-  inline int firstNonprintable(const std::string &input, unsigned short int max=4096)
+  inline int firstNonprintable(const std::string &input,
+                               unsigned short int max = 4096)
   {
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (!isPrintable(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (!isPrintable(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -284,16 +299,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first visible character from a string
    */
-  inline int firstVisible(const std::string &input, unsigned short int max=4096)
+  inline int firstVisible(const std::string &input,
+                          unsigned short int max = 4096)
   {
-
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (isVisible(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (isVisible(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -302,15 +318,17 @@ namespace TextUtils {
    * first non visible character from a string (control
    * codes or whitespace
    */
-  inline int firstNonvisible(const std::string &input, unsigned short int max=4096)
+  inline int firstNonvisible(const std::string &input,
+                             unsigned short int max = 4096)
   {
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (!isVisible(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (!isVisible(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
  }
 
@@ -318,15 +336,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first alphabetic character from a string
    */
-  inline int firstAlphabetic(const std::string &input, unsigned short int max=4096)
+  inline int firstAlphabetic(const std::string &input,
+                             unsigned short int max = 4096)
   {
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (isAlphabetic(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (isAlphabetic(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -334,15 +354,17 @@ namespace TextUtils {
   /** utility method that returns the position of the
    * first printable character from a string
    */
-  inline int firstNonalphabetic(const std::string &input, unsigned short int max=4096)
+  inline int firstNonalphabetic(const std::string &input,
+                                unsigned short int max = 4096)
   {
-    if (max > input.length())
+    if (max > input.length()) {
       max = (unsigned short)input.length();
-
-    for (unsigned short i = 0; i < max; i++)
-      if (!isAlphabetic(input[i]))
+    }
+    for (unsigned short i = 0; i < max; i++) {
+      if (!isAlphabetic(input[i])) {
 	return i;
-
+      }
+    }
     return -1;
   }
 
@@ -352,8 +374,9 @@ namespace TextUtils {
    */
   inline const char* skipWhitespace(const char* input)
   {
-    while (*input != '\0' && isWhitespace(*input))
+    while (*input != '\0' && isWhitespace(*input)) {
       ++input;
+    }
     return input;
   }
 
@@ -363,11 +386,21 @@ namespace TextUtils {
    */
   inline const char* skipNonWhitespace(const char* input)
   {
-    while (*input != '\0' && !isWhitespace(*input))
+    while (*input != '\0' && !isWhitespace(*input)) {
       ++input;
+    }
     return input;
   }
 
+
+  /** integer to string
+   */
+  inline std::string itoa(int value, const char* fmt = "%i")
+  {
+    char buf[64];
+    snprintf(buf, sizeof(buf), fmt, value);
+    return std::string(buf);
+  }
 
   /** url-encodes a string
    */

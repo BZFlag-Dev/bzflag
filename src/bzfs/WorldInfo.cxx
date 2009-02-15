@@ -575,7 +575,7 @@ int WorldInfo::packDatabase()
 
   // compress the map database
   TimeKeeper startTime = TimeKeeper::getCurrent();
-  uLongf gzDBlen = databaseSize + (databaseSize/512) + 12;
+  uLong gzDBlen = compressBound(databaseSize);
 
   char* gzDB = new char[gzDBlen];
   int code = compress2 ((Bytef*)gzDB, &gzDBlen, (Bytef*)database, databaseSize, 9);

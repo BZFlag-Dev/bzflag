@@ -27,6 +27,13 @@ namespace LuaClientScripts {
   bool LuaUserCommand(const std::string& cmd);
   void LuaUserUpdateForbidden(); // special
 
+  void LuaBzOrgFreeHandler();
+  void LuaBzOrgLoadHandler();
+  void LuaBzOrgUpdate();
+  bool LuaBzOrgIsActive();
+  bool LuaBzOrgCommand(const std::string& cmd);
+  void LuaBzOrgUpdateForbidden(); // special
+
   void LuaWorldFreeHandler();
   void LuaWorldLoadHandler();
   void LuaWorldUpdate();

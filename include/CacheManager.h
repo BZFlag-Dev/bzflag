@@ -42,7 +42,8 @@ class CacheManager : public Singleton<CacheManager> {
   static bool isCacheFileType(const std::string name);
 
   void setCacheDirectory(const std::string dir);
-  std::string getLocalName(const std::string name) const;
+  std::string getLocalName(const std::string url) const;
+  std::string getPathURL(const std::string path) const;
 
   bool loadIndex();
   bool saveIndex();

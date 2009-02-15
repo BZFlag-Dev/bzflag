@@ -492,7 +492,7 @@ void HUDRenderer::addMarker(float _heading, const float *_color )
 
 void HUDRenderer::AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, bool friendly,  float zShift )
 {
-  EnhancedHUDMarker	newMarker(pos,color);
+  EnhancedHUDMarker newMarker(pos,color);
   newMarker.pos[2] += zShift;
   newMarker.name = name;
   newMarker.friendly = friendly;
@@ -1647,9 +1647,6 @@ void HUDRenderer::renderUpdate(SceneRenderer& renderer)
 
 void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
 {
-  if (GfxBlockMgr::markers.blocked()) {
-    return;
-  }
 
   if (myTank) {
     glPushMatrix();
@@ -1727,13 +1724,17 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // update the display
   renderUpdate(renderer);
 
-  bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
+  // draw the markers, if we should
+  if (GfxBlockMgr::markers.notBlocked() && !BZDB.isTrue("_forbidMarkers")) {
+    bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
+    glDisable(GL_TEXTURE_2D);
 
-  glDisable(GL_TEXTURE_2D);
-  drawMarkersInView(centerx,centery,myTank);
+    drawMarkersInView(centerx,centery,myTank);
 
-  if (enableTex)
-    glEnable(GL_TEXTURE_2D);
+    if (enableTex) {
+      glEnable(GL_TEXTURE_2D);
+    }
+  }
 
   // draw flag help
   if (flagHelpClock.isOn() && GfxBlockMgr::flagHelp.notBlocked()) {

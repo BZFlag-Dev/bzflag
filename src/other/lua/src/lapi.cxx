@@ -1097,8 +1097,7 @@ LUA_API const char *lua_setupvalue (lua_State *L, int funcindex, int n) {
 }
 
 
-LUA_API int lua_setuserdataextra (lua_State* L, int idx, void* extra)
-{
+LUA_API int lua_setuserdataextra (lua_State* L, int idx, void* extra) {
   StkId o = index2adr(L, idx);
   if (ttype(o) != LUA_TUSERDATA) {
     return 0;
@@ -1108,8 +1107,7 @@ LUA_API int lua_setuserdataextra (lua_State* L, int idx, void* extra)
 }
 
 
-LUA_API void* lua_getuserdataextra (lua_State* L, int idx)
-{
+LUA_API void* lua_getuserdataextra (lua_State* L, int idx) {
   StkId o = index2adr(L, idx);
   if (ttype(o) != LUA_TUSERDATA) {
     return NULL;

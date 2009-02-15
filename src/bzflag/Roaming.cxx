@@ -21,9 +21,6 @@
 #include "ScoreboardRenderer.h"
 
 
-bool devDriving = false;
-
-
 // initialize the singleton
 template <>
 Roaming* Singleton<Roaming>::_instance = (Roaming*)0;
@@ -55,14 +52,15 @@ void Roaming::setCamera(const RoamingCamera* newCam) {
 
 
 void Roaming::setMode(RoamingView newView) {
-  if (!LocalPlayer::getMyTank() || devDriving) {
+  if (!LocalPlayer::getMyTank()) {
     view = newView;
   }
   else if (LocalPlayer::getMyTank()->getTeam() == ObserverTeam) {
-    // disallow disabling roaming in observer mode
-    if ((newView == roamViewDisabled) && !devDriving) {
+    // force roaming for observers
+    if ((newView <= roamViewDisabled) || (newView >= roamViewCount)) {
       view = (RoamingView)(roamViewDisabled + 1);
-    } else {
+    }
+    else {
       view = newView;
     }
   }
@@ -87,14 +85,16 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     return;
   }
 
-  if (view == roamViewFree || view == roamViewDisabled) {
+  if ((view == roamViewFree) || (view == roamViewDisabled)) {
     // do nothing
     found = true;
-  } else if (view == roamViewFlag) {
+  }
+  else if (view == roamViewFlag) {
     if (target == explicitSet) {
       targetFlag = explicitIndex;
       found = true;
-    } else {
+    }
+    else {
       int i = 1;
       int j = 1;
       const int maxFlags = world->getMaxFlags();
@@ -114,14 +114,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     }
   }
   else {
-    if (devDriving) {
-      Player* myTank = LocalPlayer::getMyTank();
-      if (myTank) {
-        targetManual = targetWinner = myTank->getId();
-        found = true;
-      }
-    }
-    else if (target == explicitSet) {
+    if (target == explicitSet) {
       targetManual = targetWinner = explicitIndex;
       found = true;
     }
@@ -180,16 +173,14 @@ void Roaming::buildRoamingLabel(void) {
   }
 
   Player* tracked = NULL;
-  if (devDriving) {
-    tracked = LocalPlayer::getMyTank();
-  }
-  else {
-    if (world) {
-      tracked = world->getPlayer(targetWinner);
-    }
+  if (world) {
+    tracked = world->getPlayer(targetWinner);
   }
 
-  if (world && tracked) {
+  if (!world || !tracked) {
+    roamingLabel = "Roaming";
+  }
+  else {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
       if (color == RabbitTeam || color < 0 || color > LastColor) {
@@ -242,8 +233,6 @@ void Roaming::buildRoamingLabel(void) {
 	break;
       }
     }
-  } else {
-    roamingLabel = "Roaming";
   }
 }
 
@@ -256,15 +245,10 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
   const float* trackPos;
   if (view == roamViewTrack) {
     Player *target;
-    if (devDriving) {
-      target = LocalPlayer::getMyTank();
-    }
-    else {
-      if (world && (targetWinner < world->getCurMaxPlayers())) {
-	target = world->getPlayer(targetWinner);
-      } else {
-	target = NULL;
-      }
+    if (world && (targetWinner < world->getCurMaxPlayers())) {
+      target = world->getPlayer(targetWinner);
+    } else {
+      target = NULL;
     }
     if (target != NULL) {
       trackPos = target->getPosition();

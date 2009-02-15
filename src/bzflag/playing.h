@@ -64,7 +64,8 @@ StartupInfo*		getStartupInfo();
 void			notifyBzfKeyMapChanged();
 bool			setVideoFormat(int, bool test = false);
 Player*			lookupPlayer(PlayerId id);
-void			startPlaying(void);
+void			startPlaying();
+void			blockControls();
 
 bool			addExplosion(const float* pos, float size, float duration);
 void			addTankExplosion(const float* pos);

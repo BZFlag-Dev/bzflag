@@ -464,11 +464,11 @@ void ServerLink::flush()
 
 void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 {
-  bool needForSpeed = false;
-
   if (state != Okay) {
     return;
   }
+
+  bool needForSpeed = false;
 
   if ((urecvfd >= 0) && ulinkup) {
     switch (code) {
@@ -492,12 +492,8 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
     needForSpeed = true;
   }
 
-  if (code == MsgLuaDataFast) {
-    code = MsgLuaData;
-  }
-
-  if ((needForSpeed != oldNeedForSpeed)
-      || (previousFill + len + 4 > MaxPacketLen)) {
+  if ((needForSpeed != oldNeedForSpeed) ||
+      ((previousFill + len + 4) > MaxPacketLen)) {
     flush();
   }
   oldNeedForSpeed = needForSpeed;

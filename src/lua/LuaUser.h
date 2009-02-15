@@ -11,7 +11,6 @@ class LuaUser : public LuaHandle
 		static void FreeHandler();
 
 	protected:
-		bool SetupLuaLibs();
 		void ForbidCallIns();
 
 	private:

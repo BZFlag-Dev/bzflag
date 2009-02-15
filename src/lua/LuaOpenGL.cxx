@@ -9,7 +9,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaOpenGL.h"
 
 // system headers
@@ -388,7 +388,7 @@ int LuaOpenGL::Text(lua_State* L)
 		luaL_error(L, "attrib stack overflow");
 	}
 
-	// FIXME -- setOpacity for fonts
+	// FIXME -- setOpacity for ansi colored string ?
 
 	glPushMatrix();
 	glTranslatef(xj, y, 0.0f);

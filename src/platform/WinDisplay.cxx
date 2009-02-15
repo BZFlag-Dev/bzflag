@@ -395,8 +395,10 @@ bool			WinDisplay::getKey(const MSG& msg,
       GetMessage(&cmsg, NULL, 0, 0);
       // charCode is in UTF-16, so convert it to a codepoint
       charCode = cmsg.wParam;
-      if (UNICODE_IS_HIGH_SURROGATE(charCode >> 16) && UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF))
+      if (UNICODE_IS_HIGH_SURROGATE(charCode >> 16) &&
+          UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF)) {
 	charCode = UNICODE_SURROGATE_TO_UTF32(charCode >> 16, charCode & 0xFFFF);
+      }
     }
     else {
       charCode = 0;

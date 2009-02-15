@@ -40,6 +40,7 @@ static bool fileExists(const std::string& name);
 static void removeDirs(unsigned int minLen, const std::string& path);
 static void removeNewlines(char* c);
 static std::string partialEncoding(const std::string& string);
+static std::string partialDecoding(const std::string& path);
 static bool compareUsedDate(const CacheManager::CacheRecord& a, const CacheManager::CacheRecord& b);
 
 
@@ -59,8 +60,8 @@ CacheManager::~CacheManager()
 {
 }
 
-bool
-CacheManager::isCacheFileType(const std::string name)
+
+bool CacheManager::isCacheFileType(const std::string name)
 {
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
     return true;
@@ -72,14 +73,13 @@ CacheManager::isCacheFileType(const std::string name)
 }
 
 
-void
-CacheManager::setCacheDirectory(const std::string dir)
+void CacheManager::setCacheDirectory(const std::string dir)
 {
   cacheDir = dir;
 }
 
-std::string
-CacheManager::getLocalName(const std::string name) const
+
+std::string CacheManager::getLocalName(const std::string name) const
 {
   std::string local = "";
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
@@ -99,8 +99,23 @@ CacheManager::getLocalName(const std::string name) const
 }
 
 
-bool
-CacheManager::findURL(const std::string& url, CacheRecord& record)
+std::string CacheManager::getPathURL(const std::string path) const
+{
+  if (path.find(cacheDir) != 0) {
+    return std::string("");
+  }
+  std::string url = path.substr(cacheDir.size());
+  if (url.find("ftp/") == 0) {
+    return std::string("ftp://") + url.substr(4);
+  }
+  else if (url.find("http/") == 0) {
+    return std::string("http://") + url.substr(5);
+  }
+  return std::string("");
+}
+
+
+bool CacheManager::findURL(const std::string& url, CacheRecord& record)
 {
   int pos = findRecord(url);
   if (pos >= 0) {
@@ -113,8 +128,7 @@ CacheManager::findURL(const std::string& url, CacheRecord& record)
 }
 
 
-bool
-CacheManager::addFile(CacheRecord& record, const void* data)
+bool CacheManager::addFile(CacheRecord& record, const void* data)
 {
   if (((data == NULL) && (record.size != 0)) || (record.url.size() <= 0)) {
     return false;
@@ -154,8 +168,7 @@ CacheManager::addFile(CacheRecord& record, const void* data)
 }
 
 
-int
-CacheManager::findRecord(const std::string& url)
+int CacheManager::findRecord(const std::string& url)
 {
   for (unsigned int i = 0; i < records.size(); i++) {
     CacheRecord* rec = &(records[i]);
@@ -167,8 +180,7 @@ CacheManager::findRecord(const std::string& url)
 }
 
 
-bool
-CacheManager::loadIndex()
+bool CacheManager::loadIndex()
 {
   records.clear();
 
@@ -215,8 +227,7 @@ CacheManager::loadIndex()
 }
 
 
-bool
-CacheManager::saveIndex()
+bool CacheManager::saveIndex()
 {
   std::sort(records.begin(), records.end(), compareUsedDate);
 
@@ -253,8 +264,7 @@ CacheManager::saveIndex()
 }
 
 
-void
-CacheManager::limitCacheSize()
+void CacheManager::limitCacheSize()
 {
   int maxSize = BZDB.evalInt("maxCacheMB") * 1024 * 1024;
   if (maxSize < 0) {
@@ -280,15 +290,13 @@ CacheManager::limitCacheSize()
 }
 
 
-std::vector<CacheManager::CacheRecord>
-CacheManager::getCacheList() const
+std::vector<CacheManager::CacheRecord> CacheManager::getCacheList() const
 {
   return records;
 }
 
 
-static bool
-fileExists (const std::string& name)
+static bool fileExists (const std::string& name)
 {
   struct stat buf;
 #ifndef _WIN32
@@ -305,8 +313,7 @@ fileExists (const std::string& name)
 }
 
 
-static void
-removeDirs(unsigned int minLen, const std::string& path)
+static void removeDirs(unsigned int minLen, const std::string& path)
 {
   std::string tmp = path;
   while (tmp.size() > minLen) {
@@ -320,8 +327,7 @@ removeDirs(unsigned int minLen, const std::string& path)
 }
 
 
-static void
-removeNewlines(char* c)
+static void removeNewlines(char* c)
 {
   while (*c != '\0') {
     if ((*c == '\n') || (*c == '\r')) {
@@ -333,8 +339,7 @@ removeNewlines(char* c)
 }
 
 
-static std::string
-partialEncoding(const std::string& string)
+static std::string partialEncoding(const std::string& string)
 {
   // URL encoding removes the '/' and '.', which is
   // not acceptable. It is nice to have the directory
@@ -361,8 +366,45 @@ partialEncoding(const std::string& string)
 }
 
 
-static bool
-compareUsedDate(const CacheManager::CacheRecord& a, const CacheManager::CacheRecord& b)
+static int toHexNumber(char c)
+{
+  if ((c >= '0') && (c <= '9')) {
+    return (c - '0');
+  }
+  c = tolower(c);
+  if ((c >= 'a') && (c <= 'f')) {
+    return (c - 'a' + 0x0a);
+  }
+  return -1;
+}
+
+
+static std::string partialDecoding(const std::string& path)
+{
+  std::string url = "";
+  for (size_t i = 0; i < path.size(); i++) {
+    if (path[i] != '%') {
+      url += path[i];
+    }
+    else {
+      if (i > (path.size() - 2)) {
+        return "";
+      }
+      const int msb = toHexNumber(i + 1);
+      const int lsb = toHexNumber(i + 2);
+      if ((msb < 0) or (lsb < 0)) {
+        return "";
+      }      
+      const char c = (msb << 4) + lsb;
+      url += c;
+    }
+  }
+  return url;
+}
+
+
+static bool compareUsedDate(const CacheManager::CacheRecord& a,
+                            const CacheManager::CacheRecord& b)
 {
   // oldest last
   return (a.usedDate > b.usedDate);

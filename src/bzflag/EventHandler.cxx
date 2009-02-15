@@ -61,8 +61,6 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 
 EventHandler::EventHandler()
 {
-  mouseOwner = NULL;
-
   SETUP_EVENT(Update, 0, false);
 
   SETUP_EVENT(BZDBChange, 0, false);
@@ -155,10 +153,6 @@ void EventHandler::AddClient(EventClient* ec)
 
 void EventHandler::RemoveClient(EventClient* ec)
 {
-  if (mouseOwner == ec) {
-    mouseOwner = NULL;
-  }
-
   clients.remove(ec);
 
   EventMap::const_iterator it;
@@ -350,97 +344,87 @@ bool EventHandler::CommandFallback(const std::string& cmd)
 }
 
 
-bool EventHandler::KeyPress(int key, bool isRepeat)
+bool EventHandler::KeyPress(bool taken, int key, bool isRepeat)
 {
   EventClientList& list = listKeyPress;
   if (list.empty()) { return false; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    if (ec->KeyPress(key, isRepeat)) {
-      list.finish();
-      return true;
-    }
+    taken = ec->KeyPress(taken, key, isRepeat) || taken;
   }
   list.finish();
-  return false;
+  return taken;
 }
 
 
-bool EventHandler::KeyRelease(int key)
+bool EventHandler::KeyRelease(bool taken, int key)
 {
   EventClientList& list = listKeyRelease;
   if (list.empty()) { return false; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    if (ec->KeyRelease(key)) {
-      list.finish();
-      return true;
-    }
+    taken = ec->KeyRelease(taken, key) || taken;
   }
   list.finish();
-  return false;
+  return taken;
 }
 
 
-bool EventHandler::MousePress(int x, int y, int button)
+bool EventHandler::MousePress(bool taken, int x, int y, int button)
 {
   EventClientList& list = listMousePress;
   if (list.empty()) { return false; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    if (ec->MousePress(x, y, button)) {
-      mouseOwner = ec;
-      list.finish();
-      return true;
-    }
+    taken = ec->MousePress(taken, x, y, button) || taken;
   }
   list.finish();
-  return false;
+  return taken;
 }
 
 
-bool EventHandler::MouseRelease(int x, int y, int button)
+bool EventHandler::MouseRelease(bool taken, int x, int y, int button)
 {
-  if (mouseOwner == NULL) {
-    return false;
+  EventClientList& list = listMouseRelease;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    taken = ec->MouseRelease(taken, x, y, button) || taken;
   }
-  const bool retval = mouseOwner->MouseRelease(x, y, button);
-  mouseOwner = NULL;
-  return retval;
+  list.finish();
+  return taken;
 }
 
 
-bool EventHandler::MouseMove(int x, int y)
+bool EventHandler::MouseMove(bool taken, int x, int y)
 {
   EventClientList& list = listMouseMove;
   if (list.empty()) { return false; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    ec->MouseMove(x, y); // ignoring the return values
+    taken = ec->MouseMove(taken, x, y) || taken;
   }
   list.finish();
-  return false;
+  return taken;
 }
 
 
-bool EventHandler::MouseWheel(float value)
+bool EventHandler::MouseWheel(bool taken, float value)
 {
   EventClientList& list = listMouseWheel;
   if (list.empty()) { return false; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    if (ec->MouseWheel(value)) {
-      list.finish();
-      return true;
-    }
+    taken = ec->MouseWheel(taken, value) || taken;
   }
   list.finish();
-  return false;
+  return taken;
 }
 
 

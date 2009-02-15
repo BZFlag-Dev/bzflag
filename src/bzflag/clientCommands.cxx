@@ -181,6 +181,12 @@ static std::string cmdLuaUser(const std::string&,
 			      const CommandManager::ArgList& args, bool*);
 
 
+/** luaBzOrg control
+ */
+static std::string cmdLuaBzOrg(const std::string&,
+			      const CommandManager::ArgList& args, bool*);
+
+
 /** luaWorld control
  */
 static std::string cmdLuaWorld(const std::string&,
@@ -223,6 +229,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility");
   PUSHCMD("toggleFlags",   &cmdToggleFlags,   "toggleFlags {main|radar}:  turn off/on field radar flags");
   PUSHCMD("luauser",       &cmdLuaUser,       "luauser {'reload | disable | status }: control luauser");
+  PUSHCMD("luabzorg",      &cmdLuaBzOrg,      "luabzorg {'reload | disable | status }: control luabzorg");
   PUSHCMD("luaworld",      &cmdLuaWorld,      "luaworld {'reload | disable | status }: control luaworld");
 #undef  PUSHCMD
   return commandVector;
@@ -700,16 +707,16 @@ static std::string cmdSend(const std::string&,
 
 // yeah, we reuse the mutex for different crit sections.  so shoot me.
 #if defined(HAVE_PTHREADS)
-static pthread_mutex_t screenshot_mutex;
-#define LOCK_SCREENSHOT_MUTEX pthread_mutex_lock(&screenshot_mutex);
-#define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
+  static pthread_mutex_t screenshot_mutex;
+# define LOCK_SCREENSHOT_MUTEX pthread_mutex_lock(&screenshot_mutex);
+# define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
 #elif defined(_WIN32)
-static CRITICAL_SECTION screenshot_critical;
-#define LOCK_SCREENSHOT_MUTEX EnterCriticalSection(&screenshot_critical);
-#define UNLOCK_SCREENSHOT_MUTEX LeaveCriticalSection(&screenshot_critical);
+  static CRITICAL_SECTION screenshot_critical;
+# define LOCK_SCREENSHOT_MUTEX EnterCriticalSection(&screenshot_critical);
+# define UNLOCK_SCREENSHOT_MUTEX LeaveCriticalSection(&screenshot_critical);
 #else
-#define LOCK_SCREENSHOT_MUTEX
-#define UNLOCK_SCREENSHOT_MUTEX
+# define LOCK_SCREENSHOT_MUTEX
+# define UNLOCK_SCREENSHOT_MUTEX
 #endif
 
 struct ScreenshotData
@@ -726,53 +733,48 @@ static void* writeScreenshot(void* data)
 {
   ScreenshotData* ssdata = (ScreenshotData*)data;
 
-  LOCK_SCREENSHOT_MUTEX // prevent simultaneous access to BZDB var
-  int snap = atoi(BZDB.get(std::string("lastScreenshot")).c_str());
-
   std::string filename = getScreenShotDirName();
   const std::string prefix = "bzfi";
   const std::string ext = ".png";
-  // if this is the first shot we've taken, scan the directory
-  // and start numbering with the first available
-  if (snap == 0) {
-    std::string pattern = filename + prefix + "*" + ext;
+
+  // scan the directory and start numbering with the filename
+  // that follows the existing filename with the highest snap number
+  std::string pattern = filename + prefix + "*" + ext;
+  int snap = 0;
+
 #ifdef _WIN32
-    WIN32_FIND_DATA findData;
-    HANDLE h = FindFirstFile(pattern.c_str(), &findData);
-    if (h != INVALID_HANDLE_VALUE) {
-      std::string file;
-      while (FindNextFile(h, &findData)) {
-        file = findData.cFileName;
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    std::string file;
+    while (FindNextFile(h, &findData)) {
+      file = findData.cFileName;
+      const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
+      if (snap < number) {
+        snap = number;
+      }
+    }
+  }
+#else
+  DIR *directory = opendir(filename.c_str());
+  if (directory) {
+    struct dirent* contents;
+    std::string file, suffix;
+    while ((contents = readdir(directory))) {
+      file = contents->d_name;
+      if (glob_match(pattern, file)) {
         const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
         if (snap < number) {
           snap = number;
         }
       }
     }
-#else
-    DIR *directory = opendir(filename.c_str());
-    if (directory) {
-      struct dirent* contents;
-      std::string file, suffix;
-      while ((contents = readdir(directory))) {
-        file = contents->d_name;
-        if (glob_match(pattern, file)) {
-          const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
-          if (snap < number) {
-            snap = number;
-          }
-        }
-      }
-      closedir(directory);
-    }
-#endif // _WIN32
+    closedir(directory);
   }
+#endif // _WIN32
 
   snap++;
   filename += prefix + TextUtils::format("%04d", snap) + ext;
-
-  BZDB.setInt(std::string("lastScreenshot"),snap);
-  UNLOCK_SCREENSHOT_MUTEX
 
   std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
 
@@ -930,8 +932,9 @@ static void* writeScreenshot(void* data)
 static std::string cmdScreenshot(const std::string&,
                                  const CommandManager::ArgList& args, bool*)
 {
-  if (args.size() != 0)
+  if (args.size() != 0) {
     return "usage: screenshot";
+  }
 
   ScreenshotData* ssdata = new ScreenshotData;
   int w = mainWindow->getWidth(), h = mainWindow->getHeight();
@@ -1141,6 +1144,17 @@ static std::string cmdLuaUser(const std::string& cmd,
     return "usage: luauser { reload | disable | status }";
   }
   LuaClientScripts::LuaUserCommand(cmd + " " + args[0]);
+  return std::string();
+}
+
+
+static std::string cmdLuaBzOrg(const std::string& cmd,
+                              const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: luabzorg { reload | disable | status }";
+  }
+  LuaClientScripts::LuaBzOrgCommand(cmd + " " + args[0]);
   return std::string();
 }
 

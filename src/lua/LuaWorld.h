@@ -10,9 +10,6 @@ class LuaWorld : public LuaHandle
 		static void LoadHandler();
 		static void FreeHandler();
 
-	protected:
-		bool SetupLuaLibs();
-
 	private:
 		LuaWorld();
 		~LuaWorld();

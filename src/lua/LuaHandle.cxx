@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaHandle.h"
 
 // system headers
@@ -16,15 +16,40 @@ using std::vector;
 #include "BzVFS.h"
 #include "EventHandler.h"
 
+// bzflag headers
+#include "../bzflag/Downloads.h"
+
 // local headers
 #include "LuaInclude.h"
 
-#include "LuaEventOrder.h"
+#include "LuaClientOrder.h"
 #include "LuaCallInCheck.h"
 #include "LuaCallInDB.h"
 #include "LuaHashString.h"
 #include "LuaUtils.h"
 #include "LuaExtras.h"
+
+// local lua library headers
+#include "LuaCallOuts.h"
+#include "LuaBitOps.h"
+#include "LuaDouble.h"
+#include "LuaOpenGL.h"
+#include "LuaConstGL.h"
+#include "LuaConstGame.h"
+#include "LuaKeySyms.h"
+#include "LuaSpatial.h"
+#include "LuaObstacle.h"
+#include "LuaScream.h"
+#include "LuaURL.h"
+#include "LuaVFS.h"
+#include "LuaBZDB.h"
+#include "LuaPack.h"
+#include "LuaExtras.h"
+#include "LuaVector.h"
+#include "LuaBzMaterial.h"
+#include "LuaDynCol.h"
+#include "LuaTexMat.h"
+#include "LuaPhyDrv.h"
 
 
 LuaHandle* LuaHandle::activeHandle = NULL;
@@ -133,7 +158,7 @@ static void CheckEqualStack(const LuaHandle* lh, lua_State* L, int top,
 		string msg = __FUNCTION__;
 		msg += " : " + lh->GetName() + " : ";
 		msg += tableName;
-//FIXME    throw std::runtime_error(msg);
+		LuaLog(0, "ERROR: %s has an unequal stack\n", msg.c_str());
 	}
 }
 
@@ -175,9 +200,11 @@ bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*))
 string LuaHandle::LoadSourceCode(const string& sourceFile,
                                  const string& sourceModes)
 {
+	string modes = sourceModes;
+	if (devMode) {
+		modes = string(BZVFS_LUA_USER) + modes;
+	}
 	string code;
-	string modes = !devMode ? sourceModes
-													: string(BZVFS_LUA_USER) + sourceModes;
 	if (!bzVFS.readFile(sourceFile, modes, code)) {
 		LuaLog(0, "FAILED to load  '%s'  with  '%s'\n",
 		       sourceFile.c_str(), sourceModes.c_str());
@@ -204,7 +231,7 @@ bool LuaHandle::ExecSourceCode(const string& code)
 	SetActiveHandle(orig);
 
 	if (error != 0) {
-		LuaLog(0, "Lua LoadCode pcall error = %i, %s, %s\n",
+		LuaLog(0, "Lua LoadCode pcall error(%i), %s, %s\n",
 		       error, GetName().c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);
 		return false;
@@ -294,6 +321,39 @@ bool LuaHandle::CanUseCallIn(const string& ciName) const
 /******************************************************************************/
 /******************************************************************************/
 
+static void AddCallInError(lua_State* L, const string& funcName)
+{
+	// error string is on the top of the stack 
+	lua_checkstack(L, 4);
+
+	lua_getglobal(L, "ERRORS");
+	if (!lua_istable(L, -1)) {
+		lua_pop(L, 1);
+		lua_createtable(L, 0, 0);
+		lua_pushvalue(L, -1); // make a copy
+		lua_setglobal(L, "ERRORS");
+	}
+
+	const size_t len = lua_objlen(L, -1);
+	if (len >= 1024) {
+		lua_pop(L, 2);
+		return;
+	}
+
+	lua_createtable(L, 2, 0); {
+		lua_pushliteral(L, "func");
+		lua_pushstdstring(L, funcName);
+		lua_rawset(L, -3);
+		lua_pushliteral(L, "error");
+		lua_pushvalue(L, -4);
+		lua_rawset(L, -3);
+	}
+	lua_rawseti(L, -2, len + 1);
+
+	lua_pop(L, 2); // also pop the message
+}
+
+
 bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
 {
 	LuaHandle* orig = activeHandle;
@@ -307,9 +367,27 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
 		const char* ciNameStr = ciName ? ciName->c_str() : "UNKNOWN";
 		LuaLog(0, "%s::RunCallIn: error = %i, %s, %s\n",
 		       GetName().c_str(), error, ciNameStr, lua_tostring(L, -1));
-		// move the error string into _G.CALLIN_ERROR
-		lua_checkstack(L, 2);
-		lua_setglobal(L, "CALLIN_ERROR");
+		// move the error string into CALLIN_ERRORS
+		AddCallInError(L, ciNameStr);
+		return false;
+	}
+	return true;
+}
+
+
+bool LuaHandle::RunFunction(const string& funcName, int inArgs, int outArgs)
+{
+	LuaHandle* orig = activeHandle;
+	SetActiveHandle();
+	const int error = lua_pcall(L, inArgs, outArgs, 0);
+	SetActiveHandle(orig);
+
+	if (error != 0) {
+		// log the error
+		LuaLog(0, "%s::RunFunction: error = %i, %s, %s\n",
+		       GetName().c_str(), error, funcName.c_str(), lua_tostring(L, -1));
+		// move the error string into CALLIN_ERRORS
+		AddCallInError(L, funcName);
 		return false;
 	}
 	return true;
@@ -354,6 +432,7 @@ bool LuaHandle::AddBasicCalls()
 		HSTR_PUSH_CFUNC(L, "CanUseCallIn",       ScriptCanUseCallIn);
 		HSTR_PUSH_CFUNC(L, "SetCallIn",          ScriptSetCallIn);
 
+		HSTR_PUSH_CFUNC(L, "GetDevMode",         ScriptGetDevMode);
 		HSTR_PUSH_CFUNC(L, "GetGLOBALS",         ScriptGetGLOBALS);
 		HSTR_PUSH_CFUNC(L, "GetCALLINS",         ScriptGetCALLINS);
 		HSTR_PUSH_CFUNC(L, "GetREGISTRY",        ScriptGetREGISTRY);
@@ -434,6 +513,14 @@ int LuaHandle::ScriptGetInputCtrl(lua_State* L)
 	lua_pushboolean(L, activeHandle->HasInputCtrl());
 	return 1;
 }
+
+
+int LuaHandle::ScriptGetDevMode(lua_State* L)
+{
+	lua_pushboolean(L, devMode);
+	return 1;
+}
+
 
 int LuaHandle::ScriptGetGLOBALS(lua_State* L)
 {
@@ -566,6 +653,80 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 
 	lua_pushboolean(L, true);
 	return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+#define LUA_OPEN_LIB(L, lib) \
+  lua_pushcfunction((L), (lib)); \
+  lua_pcall((L), 0, 0, 0); 
+
+
+bool LuaHandle::SetupEnvironment()
+{
+	// FIXME -- hack
+	LuaURLMgr::SetAccessList(Downloads::instance().getAccessList());
+
+	// load the standard libraries
+	LUA_OPEN_LIB(L, luaopen_base);
+	LUA_OPEN_LIB(L, luaopen_math);
+	LUA_OPEN_LIB(L, luaopen_table);
+	LUA_OPEN_LIB(L, luaopen_string);
+	LUA_OPEN_LIB(L, luaopen_os);
+	if (devMode) {
+		LUA_OPEN_LIB(L, luaopen_debug);
+	}
+
+//	LUA_OPEN_LIB(L, luaopen_io);
+//	LUA_OPEN_LIB(L, luaopen_package);
+// remove a few dangerous calls
+//	lua_getglobal(L, "io");
+//	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
+//	lua_pop(L, 1); // io
+
+	lua_getglobal(L, "os");
+	lua_pushstring(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushstring(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushstring(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
+	lua_pop(L, 1); // os
+
+	lua_pushvalue(L, LUA_GLOBALSINDEX); {
+		if (!LuaExtras::PushEntries(L)) {
+			lua_pop(L, 1);
+			return false;
+		}
+		if (!PushLib("math",   LuaBitOps::PushEntries)     ||
+				!PushLib("math",   LuaDouble::PushEntries)     ||
+				!PushLib("math",   LuaVector::PushEntries)     ||
+				!PushLib("URL",    LuaURLMgr::PushEntries)     ||
+				!PushLib("VFS",    LuaVFS::PushEntries)        ||
+				!PushLib("BZDB",   LuaBZDB::PushEntries)       ||
+				!PushLib("Script", LuaScream::PushEntries)     ||
+				!PushLib("gl",     LuaOpenGL::PushEntries)     ||
+				!PushLib("GL",     LuaConstGL::PushEntries)    ||
+				!PushLib("bz",     LuaPack::PushEntries)       ||
+				!PushLib("bz",     LuaCallOuts::PushEntries)   ||
+				!PushLib("BZ",     LuaKeySyms::PushEntries)    ||
+				!PushLib("BZ",     LuaConstGame::PushEntries)) {
+			lua_pop(L, 1);
+			return false;
+		}
+		if (HasFullRead()) {
+			if (!PushLib("bz", LuaBzMaterial::PushEntries) ||
+					!PushLib("bz", LuaDynCol::PushEntries)     ||
+					!PushLib("bz", LuaTexMat::PushEntries)     ||
+					!PushLib("bz", LuaPhyDrv::PushEntries)     ||
+					!PushLib("bz", LuaSpatial::PushEntries)    ||
+					!PushLib("bz", LuaObstacle::PushEntries)) {
+				lua_pop(L, 1);
+				return false;
+			}
+		}
+	}
+	lua_pop(L, 1); // LUA_GLOBALSINDEX
+	return true;
 }
 
 

@@ -224,9 +224,9 @@ typedef enum {
   eGreenTeam,
   eBlueTeam,
   ePurpleTeam,
+  eObservers,
   eRabbitTeam,
   eHunterTeam,
-  eObservers,
   eAdministrators
 } bz_eTeamType;
 
@@ -1345,9 +1345,9 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...
 BZF_API bool bz_sendFetchResMessage(int playerID,  const char* URL);
 BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
                                int team, const char* referrer, const char* message);
-BZF_API bool bz_sendLuaData(int dstPlayerID, int dstScriptID,
-                            int statusBits, const char* data, int len,
-                            int srcPlayerID = 0, int srcScriptID = 0);
+BZF_API bool bz_sendLuaData(int srcPlayerID, int srcScriptID,
+                            int dstPlayerID, int dstScriptID,
+                            int statusBits, const char* data, int len);
 
 // world weapons
 BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt);

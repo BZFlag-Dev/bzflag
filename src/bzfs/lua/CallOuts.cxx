@@ -33,10 +33,6 @@ using std::map;
 
 extern const string& GetLuaDirectory(); // from lua.cpp
 
-#ifndef uint32_t
-#define uint32_t unsigned int 
-#endif
-
 // FIXME: TODO
 // * obstacle queries, tangibility
 // - plugin management  (not part of the plan...)
@@ -501,7 +497,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
 static int GetLuaDirectory(lua_State* L)
 {
-  lua_pushstring(L, GetLuaDirectory().c_str()); // FIXME -- ew, see func name
+  lua_pushstdstring(L, GetLuaDirectory()); // FIXME -- ew, see func name
   return 1;
 }
 
@@ -783,12 +779,12 @@ static int SendLuaData(lua_State* L)
 
   const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
   const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
-  const uint8_t  statusBits  =   (int8_t)luaL_optint(L, 4, 0);
+  const uint8_t  statusBits  =  (uint8_t)luaL_optint(L, 4, 0);
 
-  sendMsgLuaData(ServerPlayer, myOrder,
-                 dstPlayerID, dstScriptID,
-                 statusBits, data);
-  return 0;
+  lua_pushboolean(L, sendMsgLuaData(ServerPlayer, myOrder,
+                                    dstPlayerID, dstScriptID,
+                                    statusBits, data));
+  return 1;
 }
 
 
@@ -875,9 +871,8 @@ static int GetPlayerIDs(lua_State* L)
   }
   lua_createtable(L, 0, playerList->size());
   for (unsigned int i = 0; i < playerList->size(); i++) {
-    lua_pushinteger(L, i + 1);
     lua_pushinteger(L, playerList->get(i));
-    lua_rawset(L, -3);
+    lua_rawseti(L, -2, i + 1);
   }
   bz_deleteIntList(playerList);
   return 1;
@@ -931,15 +926,20 @@ static int GetPlayerReferrer(lua_State* L)
 static int GetPlayerFlagID(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushinteger(L, player->currentFlagID);
-  lua_pushstring(L,  player->currentFlag.c_str());
 
-  bz_freePlayerRecord(player);
+  const int flagID = player->player.getFlag();
+  const FlagInfo* flagInfo = FlagInfo::get(flagID);
 
+  lua_pushinteger(L, flagID);
+  if (flagInfo && flagInfo->flag.type) {
+    lua_pushstdstring(L, flagInfo->flag.type->label());
+  } else {
+    lua_pushliteral(L, "");
+  }
   return 2;
 }
 
@@ -947,14 +947,12 @@ static int GetPlayerFlagID(lua_State* L)
 static int GetPlayerClientVersion(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushstring(L, player->clientVersion.c_str());
 
-  bz_freePlayerRecord(player);
-
+  lua_pushstring(L, player->player.getClientVersion());
   return 1;
 }
 
@@ -962,14 +960,12 @@ static int GetPlayerClientVersion(lua_State* L)
 static int GetPlayerBZID(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
-  bz_BasePlayerRecord* player = bz_getPlayerByIndex(pid);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
     return 0;
   }
-  lua_pushstring(L, player->bzID.c_str());
 
-  bz_freePlayerRecord(player);
-
+  lua_pushstdstring(L, player->getBzIdentifier());
   return 1;
 }
 
@@ -1239,9 +1235,8 @@ static int GetPlayerGroups(lua_State* L)
   lua_newtable(L);
   const vector<string>& groups = player->accessInfo.groups;
   for (unsigned int i = 0; i < groups.size(); i++) {
-    lua_pushinteger(L, i + 1);
-    lua_pushstring(L, groups[i].c_str());
-    lua_rawset(L, -3);
+    lua_pushstdstring(L, groups[i]);
+    lua_rawseti(L, -2, i + 1);
   }
   return 1;
 }
@@ -1293,9 +1288,8 @@ static int GetPlayerFlagHistory(lua_State* L)
   const vector<FlagType*>& flagHistory = player->flagHistory.get();
   lua_newtable(L);
   for (size_t i = 0; i < flagHistory.size(); i++) {
-    lua_pushinteger(L, i + 1);
-    lua_pushstring(L, flagHistory[i]->flagAbbv.c_str());
-    lua_rawset(L, -3);
+    lua_pushstdstring(L, flagHistory[i]->flagAbbv);
+    lua_rawseti(L, -2, i + 1);
   }
   return 1;
 }
@@ -1809,9 +1803,8 @@ static int GetGroups(lua_State* L)
   }
   lua_createtable(L, list->size(), 0);
   for (unsigned int i = 0; i < list->size(); i++) {
-    lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
-    lua_rawset(L, -3);
+    lua_rawseti(L, -2, i + 1);
   }
   bz_deleteStringList(list);
   return 1;
@@ -1828,9 +1821,8 @@ static int GetGroupPerms(lua_State* L)
   }
   lua_createtable(L, list->size(), 0);
   for (unsigned int i = 0; i < list->size(); i++) {
-    lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
-    lua_rawset(L, -3);
+    lua_rawseti(L, -2, i + 1);
   }
   bz_deleteStringList(list);
   return 1;
@@ -1855,9 +1847,8 @@ static int GetStandardPerms(lua_State* L)
   }
   lua_createtable(L, list->size(), 0);
   for (unsigned int i = 0; i < list->size(); i++) {
-    lua_pushinteger(L, i + 1);
     lua_pushstring(L, (*list)[i].c_str());
-    lua_rawset(L, -3);
+    lua_rawseti(L, -2, i + 1);
   }
   bz_deleteStringList(list);
   return 1;
@@ -1893,9 +1884,8 @@ static int GetReports(lua_State* L)
   }
   lua_createtable(L, list->size(), 0);
   for (unsigned int i = 0; i < list->size(); i++) {
-    lua_pushinteger(L, i + 1);    
     lua_pushstring(L, list->get(i).c_str());
-    lua_rawset(L, -3);
+    lua_rawseti(L, -2, i + 1);
   }
   bz_deleteStringList(list);
   return 1;
@@ -2181,9 +2171,8 @@ static int DirList(lua_State* L)
   int fileCount = 0;
   for (fit = fileSet.begin(); fit != fileSet.end(); ++fit) {
     fileCount++;
-    lua_pushinteger(L, fileCount);
-    lua_pushstring(L, (*fit).c_str());
-    lua_rawset(L, -3);
+    lua_pushstdstring(L, *fit);
+    lua_rawseti(L, -2, fileCount);
   }
 
   // dirs table
@@ -2192,9 +2181,8 @@ static int DirList(lua_State* L)
   int dirCount = 0;
   for (dit = dirSet.begin(); dit != dirSet.end(); ++dit) {
     dirCount++;
-    lua_pushinteger(L, dirCount);
-    lua_pushstring(L, (*dit).c_str());
-    lua_rawset(L, -3);
+    lua_pushstdstring(L, *dit);
+    lua_rawseti(L, -2, dirCount);
   }
 
   return 2;

@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaExtras.h"
 
 // local headers
@@ -33,7 +33,7 @@ int LuaExtras::tobool(lua_State* L)
 {
 	switch (lua_type(L, 1)) {
 		case LUA_TBOOLEAN: {
-			lua_pushvalue(L, 1);
+			lua_settop(L, 1);
 			break;
 		}
 		case LUA_TNUMBER: {

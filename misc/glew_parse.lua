@@ -13,7 +13,7 @@
 
 if (({['-h']=true,['-help']=true,['--help']=true})[arg[1]] ~= nil) then
   print()
-  print('usage:  ['..arg[-1]..'] '..arg[0]..' '..'<path to glew.h>')
+  print('usage:  ['..arg[-1]..'] '..arg[0]..' '..'[path to glew.h]')
   print()
   os.exit(1)
 end

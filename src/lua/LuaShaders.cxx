@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaShaders.h"
 
 // system headers
@@ -411,8 +411,8 @@ GLuint LuaShaderMgr::CompileObject(const vector<string>& sources,
 		shaderLog = log;
 		if (shaderLog.empty()) {
 			shaderLog = "Empty error message:  code = "
-			           + IntToString(result) + " (0x"
-			           + IntToString(result, "%04X") + ")";
+			           + TextUtils::itoa(result)
+			           + TextUtils::itoa(result, " (0x%04x)");
 		}
 		
 		glDeleteShader(obj);

@@ -158,21 +158,21 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
     case SDL_MOUSEMOTION: {
       bzEvent.type = BzfEvent::MouseMove;
       SDLWindow::mx = sdlEvent.motion.x;
-#ifdef __APPLE__
+#ifndef __APPLE__
+      SDLWindow::my = sdlEvent.motion.y;
+#else
       static const SDL_version *sdlver = SDL_Linked_Version();
       /* deal with a SDL bug when in windowed mode related to
        * Cocoa coordinate system of (0,0) in bottom-left corner.
        */
-      if ( (fullScreen) ||
-	   (sdlver->major > 1) ||
-	   (sdlver->minor > 2) ||
-	   (sdlver->patch > 6) ) {
+      if ((fullScreen) ||
+	  (sdlver->major > 1) ||
+	  (sdlver->minor > 2) ||
+	  (sdlver->patch > 6)) {
 	SDLWindow::my = sdlEvent.motion.y;
       } else {
 	SDLWindow::my = base_height - 1 - sdlEvent.motion.y;
       }
-#else
-      SDLWindow::my = sdlEvent.motion.y;
 #endif
       bzEvent.mouseMove.x = SDLWindow::mx;
       bzEvent.mouseMove.y = SDLWindow::my;

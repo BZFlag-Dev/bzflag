@@ -88,7 +88,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "showCullingGrid",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showCoordinates",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "showVelocities",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-  { "maxCacheMB",		"32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "maxCacheMB",		"96",			true,	StateDatabase::ReadWrite,	NULL },
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
@@ -105,6 +105,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "processorAffinity",	"0",			true,	StateDatabase::ReadWrite,	setProcessorAffinity },
   { "pauseOnMinimize",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "autoJoin",			"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "luaBzOrg",			"1",			true,	StateDatabase::ReadWrite,	NULL },
 
   //ping
   { "pingLow",		        "100",			true,   StateDatabase::ReadWrite,	NULL },
@@ -225,9 +226,6 @@ DefaultDBItem	defaultDBItems[] = {
   // seconds between pulses to textOutput (0 is disabled)
   { "statsOutputFrequency",		"0",		true,	StateDatabase::ReadWrite,	NULL },
   { "statsOutputFilename",		"",		true,	StateDatabase::ReadWrite,	NULL },
-
-  // last screenshot
-  { "lastScreenshot",			"0",		true,	StateDatabase::ReadWrite,	NULL },
 
   // debugging (none should be persistent)
   { "debugNewAngVel",			"0",		false,	StateDatabase::ReadWrite,	NULL }

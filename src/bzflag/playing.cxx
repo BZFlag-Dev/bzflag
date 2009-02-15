@@ -145,6 +145,7 @@ int savedVolume = -1;
 static FlashClock pulse;
 static bool wasRabbit = false;
 static bool justJoined = false;
+static bool blockControlsValue = false;
 
 float roamDZoom = 0.0f;
 
@@ -474,6 +475,12 @@ RadarRenderer *getRadarRenderer()
 }
 
 
+void blockControls()
+{
+  blockControlsValue = true;
+}
+
+
 void setSceneDatabase()
 {
   // FIXME - test the zbuffer here
@@ -685,8 +692,7 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
     myTank->setInputMethod(LocalPlayer::Keyboard);
   }
 
-  if (myTank &&
-      ((myTank->getInputMethod() == LocalPlayer::Keyboard) || devDriving)) {
+  if (myTank && (myTank->getInputMethod() == LocalPlayer::Keyboard)) {
     switch (keyboardMovement) {
       case Left:  { myTank->setKey(BzfKeyEvent::Left,  pressed); break; }
       case Right: { myTank->setKey(BzfKeyEvent::Right, pressed); break; }
@@ -910,7 +916,7 @@ static void doMotion()
     }
 
     // calculate desired rotation
-    if (keyboardRotation && !devDriving) {
+    if (keyboardRotation) {
       rotation = float(keyboardRotation);
     } else if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize - noMotionSize);
@@ -923,7 +929,7 @@ static void doMotion()
     }
 
     // calculate desired speed
-    if (keyboardSpeed && !devDriving) {
+    if (keyboardSpeed) {
       speed = float(keyboardSpeed);
       if (speed < 0.0f) {
 	speed *= 0.5f;
@@ -958,6 +964,10 @@ static void doMotion()
     speed = -speed;
   }
 
+  if (blockControlsValue) {
+    speed = rotation = 0.0f;
+  }
+
   myTank->setDesiredAngVel(rotation);
   myTank->setDesiredSpeed(speed);
 }
@@ -975,10 +985,10 @@ static bool handleEvent(const BzfEvent& event)
           return false;
         }
         case BzfKeyEvent::WheelUp: {
-          return eventHandler.MouseWheel(+1.0f);
+          return eventHandler.MouseWheel(false, +1.0f);
         }
         case BzfKeyEvent::WheelDown: {
-          return eventHandler.MouseWheel(-1.0f);
+          return eventHandler.MouseWheel(false, -1.0f);
         }
         case BzfKeyEvent::LeftMouse:
         case BzfKeyEvent::MiddleMouse:
@@ -991,14 +1001,18 @@ static bool handleEvent(const BzfEvent& event)
           int mx, my;
           mainWindow->getWindow()->getMouse(mx, my);
           my = mainWindow->getHeight() - my - 1;
-          int button = ev.button - BzfKeyEvent::LeftMouse;
-          return eventHandler.MouseRelease(mx, my, button);
+          const int button = ev.button - BzfKeyEvent::LeftMouse;
+          return eventHandler.MouseRelease(false, mx, my, button);
         }
         default: {
-          if (HUDui::getFocus()) {
+          const int keyCode = ev.chr ? ev.chr : -ev.button;
+          if (!HUDui::getFocus()) {
+            return eventHandler.KeyRelease(false, keyCode);
+          } else {
+            // the HUDui already owns the event, so taken = true
+            eventHandler.KeyRelease(true, keyCode); // ignored return value
             return false;
           }
-          return eventHandler.KeyRelease(ev.chr ? ev.chr : -ev.button);
         }
       }
       break;
@@ -1010,10 +1024,10 @@ static bool handleEvent(const BzfEvent& event)
           return false;
         }
         case BzfKeyEvent::WheelUp: {
-          return eventHandler.MouseWheel(+1.0f);
+          return eventHandler.MouseWheel(false, +1.0f);
         }
         case BzfKeyEvent::WheelDown: {
-          return eventHandler.MouseWheel(-1.0f);
+          return eventHandler.MouseWheel(false, -1.0f);
         }
         case BzfKeyEvent::LeftMouse:
         case BzfKeyEvent::MiddleMouse:
@@ -1026,21 +1040,26 @@ static bool handleEvent(const BzfEvent& event)
           int mx, my;
           mainWindow->getWindow()->getMouse(mx, my);
           my = mainWindow->getHeight() - my - 1;
-          int button = ev.button - BzfKeyEvent::LeftMouse;
-          return eventHandler.MousePress(mx, my, button);
+          const int button = ev.button - BzfKeyEvent::LeftMouse;
+          return eventHandler.MousePress(false, mx, my, button);
         }
         default: {
-          if (HUDui::getFocus()) {
+          const int keyCode = ev.chr ? ev.chr : -ev.button;
+          if (!HUDui::getFocus()) {
+            return eventHandler.KeyPress(false, keyCode, false);
+          } else {
+            // the HUDui already owns the event, so taken = true
+            eventHandler.KeyPress(true, keyCode, false); // ignored return value
             return false;
           }
-          return eventHandler.KeyPress(ev.chr ? ev.chr : -ev.button, false);
         }
       }
       break;
     }
     case BzfEvent::MouseMove: {
       const BzfMotionEvent& ev = event.mouseMove;
-      return eventHandler.MouseMove(ev.x, mainWindow->getHeight() - ev.y - 1);
+      const int yCoord = mainWindow->getHeight() - ev.y - 1;
+      return eventHandler.MouseMove(false, ev.x, yCoord);
       break;
     }
     case BzfEvent::Unset:
@@ -1899,8 +1918,9 @@ static void handleResourceFetch (void *msg)
 static void handleCustomSound(void *msg)
 {
   // bail out if we don't want to do remote sounds
-  if (BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds"))
+  if (BZDB.isTrue("_noRemoteSounds")) {
     return;
+  }
 
   void *buf;
   char buffer[MessageLen];
@@ -1916,10 +1936,11 @@ static void handleCustomSound(void *msg)
   soundName = buffer;
 
   if (soundType == LocalCustomSound) {
-    if (CACHEMGR.isCacheFileType(soundName))
+    if (CACHEMGR.isCacheFileType(soundName)) {
       SOUNDSYSTEM.play(CACHEMGR.getLocalName(soundName));
-    else
+    } else {
       SOUNDSYSTEM.play(soundName);
+    }
   }
 }
 
@@ -3507,7 +3528,7 @@ static void handleLuaData(void *msg)
   msg = nboUnpackUByte(msg, dstPlayerID);
   msg = nboUnpackShort(msg, dstScriptID);
   msg = nboUnpackUByte(msg, statusBits);
-  msg = nboUnpackStdString(msg, data);
+  msg = nboUnpackStdStringRaw(msg, data);
 
   eventHandler.RecvLuaData(srcPlayerID, srcScriptID,
                            dstPlayerID, dstScriptID,
@@ -3775,7 +3796,8 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       handlePlayerData(msg);
       break;
     }
-    case MsgLuaData: {
+    case MsgLuaData:
+    case MsgLuaDataFast: {
       handleLuaData(msg);
       break;
     }
@@ -4653,32 +4675,43 @@ void setTarget()
   if (!lockedOn)
     myTank->setTarget(NULL);
 
-  if (!bestTarget)
+  if (!bestTarget) {
     return;
+  }
+
+  const bool forbidIdentify = BZDB.isTrue("_forbidIdentify");
 
   if (lockedOn) {
     myTank->setTarget(bestTarget);
     myTank->setNemesis(bestTarget);
 
-    std::string msg("Locked on ");
-    msg += bestTarget->getCallSign();
-    msg += " (";
-    msg += Team::getName(bestTarget->getTeam());
-    if (bestTarget->getFlag() != Flags::Null) {
-      msg += ") with ";
-      msg += bestTarget->getFlag()->flagName;
-    } else {
-      msg += ")";
+    std::string msg("Locked on");
+    if (!forbidIdentify) {
+      msg += " ";
+      msg += bestTarget->getCallSign();
+      msg += " (";
+      msg += Team::getName(bestTarget->getTeam());
+      if (bestTarget->getFlag() != Flags::Null) {
+        msg += ") with ";
+        msg += bestTarget->getFlag()->flagName;
+      } else {
+        msg += ")";
+      }
     }
     hud->setAlert(1, msg.c_str(), 2.0f, 1);
     msg = ColorStrings[DefaultColor] + msg;
     addMessage(NULL, msg);
-  } else if (myTank->getFlag() == Flags::Colorblindness) {
+  }
+  else if (forbidIdentify) {
+    // do nothing
+  }
+  else if (myTank->getFlag() == Flags::Colorblindness) {
     std::string msg("Looking at a tank");
     hud->setAlert(1, msg.c_str(), 2.0f, 0);
     msg = ColorStrings[DefaultColor] + msg;
     addMessage(NULL, msg);
-  } else {
+  }
+  else {
     std::string msg("Looking at ");
     msg += bestTarget->getCallSign();
     msg += " (";
@@ -4698,11 +4731,16 @@ void setTarget()
 
 static void setHuntTarget()
 {
+  if (BZDB.isTrue("_forbidHunting")) {
+    return;
+  }
   // get info about my tank
-  const float c = cosf(-myTank->getAngle());
-  const float s = sinf(-myTank->getAngle());
-  const float x0 = myTank->getPosition()[0];
-  const float y0 = myTank->getPosition()[1];
+  const float  degrees = myTank->getAngle();
+  const float* myPos = myTank->getPosition();
+  const float c = cosf(-degrees);
+  const float s = sinf(-degrees);
+  const float x0 = myPos[0];
+  const float y0 = myPos[1];
 
   // initialize best target
   Player *bestTarget = NULL;
@@ -4745,27 +4783,28 @@ static void setHuntTarget()
   }
   if (!bestTarget) return;
 
-  if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness &&
-    myTank->getFlag() != Flags::Colorblindness &&
-    bestTarget->getFlag() != Flags::Stealth) {
-      if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
-	std::string msg("SPOTTED: ");
-	msg += bestTarget->getCallSign();
-	msg += " (";
-	msg += Team::getName(bestTarget->getTeam());
-	if (bestTarget->getFlag() != Flags::Null) {
-	  msg += ") with ";
-	  msg += bestTarget->getFlag()->flagName;
-	} else {
-	  msg += ")";
-	}
-	hud->setAlert(1, msg.c_str(), 2.0f, 0);
+  if (bestTarget->isHunted() &&
+      (myTank->getFlag() != Flags::Blindness) &&
+      (myTank->getFlag() != Flags::Colorblindness) &&
+      (bestTarget->getFlag() != Flags::Stealth)) {
+    if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
+      std::string msg("SPOTTED: ");
+      msg += bestTarget->getCallSign();
+      msg += " (";
+      msg += Team::getName(bestTarget->getTeam());
+      if (bestTarget->getFlag() != Flags::Null) {
+        msg += ") with ";
+        msg += bestTarget->getFlag()->flagName;
+      } else {
+        msg += ")";
       }
-      if (!pulse.isOn()) {
-	const float *bestTargetPosition = bestTarget->getPosition();
-	SOUNDSYSTEM.play(SFX_HUNT, bestTargetPosition, false, false);
-	pulse.setClock(1.0f);
-      }
+      hud->setAlert(1, msg.c_str(), 2.0f, 0);
+    }
+    if (!pulse.isOn()) {
+      const float *bestTargetPosition = bestTarget->getPosition();
+      SOUNDSYSTEM.play(SFX_HUNT, bestTargetPosition, false, false);
+      pulse.setClock(1.0f);
+    }
   }
 }
 
@@ -5182,7 +5221,7 @@ static void enteringServer(void* buf)
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
 
-  if ((myTank->getTeam() != ObserverTeam) && !devDriving) {
+  if (myTank->getTeam() != ObserverTeam) {
     ROAM.setMode(Roaming::roamViewDisabled);
   }
   else {
@@ -5553,7 +5592,8 @@ void leaveGame()
   Flags::clearCustomFlags();
 
   // reload LuaUser in case it was forbidden
-  if (!LuaClientScripts::LuaUserIsActive()) {
+  if (!CommandsStandard::isQuit() &&
+      !LuaClientScripts::LuaUserIsActive()) {
     LuaClientScripts::LuaUserLoadHandler();
   }
 
@@ -5784,6 +5824,7 @@ static void joinInternetGame2()
     stack->pop();
   joiningGame = false;
 
+  LuaClientScripts::LuaBzOrgUpdateForbidden();
   LuaClientScripts::LuaUserUpdateForbidden();
   LuaClientScripts::LuaWorldLoadHandler();
   eventHandler.ServerJoined();
@@ -5936,9 +5977,7 @@ static void setupNearPlane()
     if (ROAM.getMode() != Roaming::roamViewFP) {
       return;
     }
-    if (!devDriving) {
-      tank = ROAM.getTargetTank();
-    }
+    tank = ROAM.getTargetTank();
   }
   if (tank == NULL)
     return;
@@ -6272,7 +6311,7 @@ static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
   }
 
   // normal mode, use the default setup
-  if (!devDriving && !ROAM.isRoaming()) {
+  if (!ROAM.isRoaming()) {
     return;
   }
 
@@ -6280,14 +6319,8 @@ static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
   hud->setAltitude(-1.0f);
   float roamViewAngle;
   const Roaming::RoamingCamera *roam = ROAM.getCamera();
-  if (!(ROAM.getMode() == Roaming::roamViewFree) &&
-      (ROAM.getTargetTank() || (devDriving && myTank))) {
-    Player* target;
-    if (!devDriving) {
-      target = ROAM.getTargetTank();
-    } else {
-      target = myTank;
-    }
+  if (!(ROAM.getMode() == Roaming::roamViewFree) && ROAM.getTargetTank()) {
+    Player* target = ROAM.getTargetTank();
 
     const float *targetTankDir = target->getForward();
     // fixed camera tracking target
@@ -6357,11 +6390,9 @@ static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
     roamViewAngle = roam->theta;
   }
 
-  if (!devDriving) {
-    float virtPos[] = { eyePoint[0], eyePoint[1], 0 };
-    if (myTank) {
-      myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
-    }
+  float virtPos[] = { eyePoint[0], eyePoint[1], 0 };
+  if (myTank) {
+    myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
   }
 
   fov = (float)(roam->zoom * M_PI / 180.0);
@@ -6384,12 +6415,11 @@ static void addDynamicSceneNodes()
   const bool showTreads = BZDB.isTrue("showTreads");
 
   // add my tank if required
-  const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
-  const bool showMyTreads = showTreads ||
-    (devDriving && (ROAM.getMode() != Roaming::roamViewFP));
+  const bool inMyCockpit = true;
+  const bool showMyTreads = showTreads;
 
   myTank->addToScene(scene, myTank->getTeam(),
-                     inCockpit, seerView,
+                     inMyCockpit, seerView,
                      showMyTreads, showMyTreads /*showIDL*/);
 
   // add my shells
@@ -6423,15 +6453,14 @@ static void addDynamicSceneNodes()
         }
       }
 
-      const bool inCockpit2 =
-        ROAM.isRoaming() && !devDriving &&
-        (ROAM.getMode() == Roaming::roamViewFP) &&
+      const bool inCockpit =
+        ROAM.isRoaming() && (ROAM.getMode() == Roaming::roamViewFP) &&
         ROAM.getTargetTank() && (ROAM.getTargetTank()->getId() == i);
-      const bool showPlayer = !inCockpit2 || showTreads;
+      const bool showPlayer = !inCockpit || showTreads;
 
       // add player tank if required
       if ((myTank->getFlag() == Flags::Seer) || showPlayer) {
-        remotePlayers[i]->addToScene(scene, effectiveTeam, inCockpit2,
+        remotePlayers[i]->addToScene(scene, effectiveTeam, inCockpit,
                                      seerView, showPlayer, showPlayer,
                                      thirdPersonVars.b3rdPerson);
       }
@@ -6593,12 +6622,6 @@ void drawFrame(const float dt)
 			    mainWindow->getViewHeight());
   viewFrustum.setView(eyePoint, targetPoint);
 
-  // let the hud save off the view matrix so it can do view projections
-  if (hud) {
-    hud->saveMatrixes(viewFrustum.getViewMatrix(),
-                      viewFrustum.getProjectionMatrix());
-  }
-
   // add dynamic nodes
   addDynamicSceneNodes();
 
@@ -6625,7 +6648,7 @@ void drawFrame(const float dt)
     }
   }
   RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||
-		  ((myTank && !ROAM.isRoaming() && !devDriving) &&
+		  ((myTank && !ROAM.isRoaming()) &&
 		   !myTank->isAlive() && !myTank->isExploding()));
 
   // turn on panel dimming when showing the menu (both radar and chat)
@@ -6655,7 +6678,7 @@ void drawFrame(const float dt)
   }
 
   // so observers can have enhanced radar
-  if (ROAM.isRoaming() && myTank && !devDriving) {
+  if (ROAM.isRoaming() && myTank) {
     if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank()) {
       myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
     } else {
@@ -6664,6 +6687,12 @@ void drawFrame(const float dt)
   }
 
   eventHandler.DrawGenesis();
+
+  // let the hud save off the view matrix so it can do view projections
+  if (hud) {
+    hud->saveMatrixes(viewFrustum.getViewMatrix(),
+                      viewFrustum.getProjectionMatrix());
+  }
 
   // draw frame
   switch (viewType) {
@@ -6956,7 +6985,7 @@ void handlePendingJoins(void)
     strcpy(startupInfo.callsign, "devlua");
     if (strcmp(startupInfo.serverName, "127.0.0.1") != 0) {
       addMessage(NULL,
-        "ABORTING!!!  -- you can only join '127.0.0.1' when using '-devmap'");
+        "ABORTING!!!  -- you can only join '127.0.0.1' when using '-devlua'");
       joinRequested = false;
       return;
     }
@@ -7321,6 +7350,8 @@ void doUpdates(const float dt)
 
   // update AutoHunt
   AutoHunt::update();
+
+  blockControlsValue = false;
 }
 
 
@@ -7475,6 +7506,7 @@ static void playingLoop()
     doUpdates(dt);
 
     LuaClientScripts::LuaUserUpdate();
+    LuaClientScripts::LuaBzOrgUpdate();
     LuaClientScripts::LuaWorldUpdate();
 
     eventHandler.Update(); // FIXME ?
@@ -8123,6 +8155,7 @@ void startPlaying()
   OpenGLPassState::Init();
   LuaClientScripts::LuaOpenGLInit();
   LuaClientScripts::LuaUserLoadHandler();
+  LuaClientScripts::LuaBzOrgLoadHandler();
 
     //////////
    ////////////
@@ -8132,6 +8165,7 @@ void startPlaying()
    ////////////
     //////////
 
+  LuaClientScripts::LuaBzOrgFreeHandler();
   LuaClientScripts::LuaUserFreeHandler();
   LuaClientScripts::LuaOpenGLFree();
   OpenGLPassState::Free();

@@ -178,6 +178,7 @@ static int AttachSlashCommand(lua_State* L)
   return 1;
 }
 
+
 static int DetachSlashCommand(lua_State* L)
 {
   const string cmd = TextUtils::tolower(luaL_checkstring(L, 1));

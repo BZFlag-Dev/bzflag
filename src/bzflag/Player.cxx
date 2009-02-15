@@ -1396,11 +1396,12 @@ void Player::setDeadReckoning(double timestamp)
 
 void Player::renderRadar() const
 {
-  if (!isAlive() && !isExploding())
+  if (!isAlive() && !isExploding()) {
     return; // don't draw anything
- 
-  if (avatar)
+  }
+  if (avatar) {
     avatar->renderRadar();
+  }
 }
 
 

@@ -91,9 +91,8 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
   lua_newtable(L);
   bz_APIStringList& list = info->data;
   for (size_t i = 0; i < list.size(); i++) {
-    lua_pushinteger(L, i + 1);
     lua_pushstring(L, list[i].c_str());
-    lua_rawset(L, -3);
+    lua_rawseti(L, -2, i + 1);
   }
 
   lua_pushstring(L, info->fileName.c_str());

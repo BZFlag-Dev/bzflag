@@ -40,6 +40,7 @@ public:
 
   void setTimeout(long timeout);
   void setNoBody();
+  void setFailOnError();
   void setGetMode();
   void setHTTPPostMode();
   void setPostMode(std::string postData);
@@ -56,9 +57,10 @@ public:
 
   bool getFileTime(time_t &t);
   bool getFileSize(double &size);
+  bool getHttpCode(long   &code);
 
   virtual void collectData(char *ptr, int len);
-  virtual void finalization(char *data, unsigned int length, bool good);
+  virtual void finalization(char *data, unsigned int length, bool good) = 0;
 
   void performWait();
 
@@ -72,12 +74,7 @@ protected:
 private:
   void		infoComplete(CURLcode result);
 
-  static bool   inited;
-  static bool   justCalled;
-  static int	refs;
-  static CURLM *multiHandle;
-  static char   errorBuffer[CURL_ERROR_SIZE];
-
+private:
   CURL	       *easyHandle;
   bool		added;
   bool          deleteOnDone;
@@ -89,52 +86,61 @@ private:
   struct curl_httppost* formPost;
   struct curl_httppost* formLast;
 
+private:
   static void   setup();
 
   static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
 			      void *stream);
 
+  static bool   inited;
+  static bool   justCalled;
+  static int	refs;
+  static CURLM *multiHandle;
+  static char   errorBuffer[CURL_ERROR_SIZE];
+
   static std::map<CURL*, cURLManager*> cURLMap;
 };
 
 
-typedef enum
-{
-	eImage,
-	eSound,
-	eFont,
-	eFile,
-	eUnknown
-}teResourceType;
+typedef enum {
+  eImage,
+  eSound,
+  eFont,
+  eFile,
+  eUnknown
+} teResourceType;
 
-typedef struct
-{
-	teResourceType	resType;
-	std::string		URL;
-	std::string		filePath;
-	std::string		fileName;
-}trResourceItem;
+
+typedef struct {
+  teResourceType resType;
+  std::string URL;
+  std::string filePath;
+  std::string fileName;
+} trResourceItem;
+
 
 class ResourceGetter :  private cURLManager
 {
 public:
-	ResourceGetter();
-	virtual ~ResourceGetter();
+  ResourceGetter();
+  virtual ~ResourceGetter();
 
-	void addResource ( trResourceItem &item );
-	void flush ( void );
+  void addResource ( trResourceItem &item );
+  void flush ( void );
 
-	virtual void finalization(char *data, unsigned int length, bool good);
+  virtual void finalization(char *data, unsigned int length, bool good);
 
 protected:
-	bool itemExists ( trResourceItem &item );
-	void getResource ( void );
+  bool itemExists ( trResourceItem &item );
+  void getResource ( void );
 
-	std::vector<trResourceItem>	resources;
-	bool doingStuff;
+  std::vector<trResourceItem> resources;
+  bool doingStuff;
 };
 
+
 #endif // CURL_MANAGER_H
+
 
 // Local Variables: ***
 // mode: C++ ***

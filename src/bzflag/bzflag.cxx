@@ -124,21 +124,26 @@ int bail ( int returnCode )
   return returnCode;
 }
 
+
 static void setTeamColor(TeamColor team, const std::string &str)
 {
   float color[4];
-  parseColorString(str, color);
-  // don't worry about alpha, Team::setColors() doesn't use it
-  Team::setColors(team, color, Team::getRadarColor(team));
+  if (parseColorString(str, color)) {
+    color[3] = 1.0f;
+    Team::setColors(team, color, Team::getRadarColor(team));
+  }
 }
+
 
 static void setRadarColor(TeamColor team, const std::string &str)
 {
   float color[4];
-  parseColorString(str, color);
-  // don't worry about alpha, Team::setColors() doesn't use it
-  Team::setColors(team, Team::getTankColor(team), color);
+  if (parseColorString(str, color)) {
+    color[3] = 1.0f;
+    Team::setColors(team, Team::getTankColor(team), color);
+  }
 }
+
 
 static void setVisual(BzfVisual *visual)
 {
@@ -171,6 +176,7 @@ static void setVisual(BzfVisual *visual)
   }
 #endif
 }
+
 
 static void usage()
 {
@@ -230,7 +236,6 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-devlua") == 0) {
       LuaClientScripts::SetDevMode(true);
-      devDriving = true;
     }
     else if ((strcmp(argv[i], "-dir") == 0) ||
 	       (strcmp(argv[i], "-directory") == 0)) {
@@ -507,6 +512,7 @@ static void parse(int argc, char **argv)
   }
 }
 
+
 static void parseConfigName(int argc, char **argv)
 {
   for (int i = 1; i < argc; i++) {
@@ -517,6 +523,7 @@ static void parseConfigName(int argc, char **argv)
     }
   }
 }
+
 
 //
 // resource database dumping.  used during initial startup to save
@@ -596,6 +603,7 @@ void dumpResources()
   (HUDuiServerListCache::instance()).saveCache();
 }
 
+
 static bool needsFullscreen()
 {
   // fullscreen if not in a window
@@ -613,6 +621,7 @@ static bool needsFullscreen()
   // bogus view, default to normal so no fullscreen
   return false;
 }
+
 
 static void createCacheSignature ()
 {
@@ -637,6 +646,7 @@ static void createCacheSignature ()
   return;
 }
 
+
 bool checkTimeBomb ( void )
 {
   // check time bomb
@@ -649,6 +659,7 @@ bool checkTimeBomb ( void )
   }
   return false;
 }
+
 
 void setupBZDB ( void )
 {
@@ -665,6 +676,7 @@ void setupBZDB ( void )
 
   BZDBCache::init();
 }
+
 
 void setupConfigs ( void )
 {
@@ -751,6 +763,7 @@ void setupConfigs ( void )
   }
 }
 
+
 void setupXFire(void)
 {
 #if defined(_WIN32)
@@ -781,6 +794,7 @@ void setupXFire(void)
 #endif
 }
 
+
 void checkStartupEnvirons()
 {
   if (getenv("BZFLAGID")) {
@@ -796,6 +810,7 @@ void checkStartupEnvirons()
   }
 }
 
+
 void clearWindowsStdOut()
 {
 #ifdef _WIN32
@@ -810,6 +825,7 @@ void clearWindowsStdOut()
   }
 #endif
 }
+
 
 int initWinsoc ( void )
 {
@@ -833,6 +849,7 @@ int initWinsoc ( void )
 #endif
   return 0;
 }
+
 
 int initClient ( int argc, char **argv )
 {
@@ -955,6 +972,7 @@ int initClient ( int argc, char **argv )
   return 0;
 }
 
+
 void initAudio ( void )
 {
   // Change audio driver if requested
@@ -1002,6 +1020,7 @@ void initAudio ( void )
   }
 }
 
+
 // globals
 BzfVisual *visual = NULL;
 BzfWindow *window = NULL;
@@ -1009,6 +1028,7 @@ BzfJoystick *joystick = NULL;
 MainWindow *pmainWindow = NULL;
 PlatformFactory *platformFactory = NULL;
 BundleMgr *bm = NULL;
+
 
 int initDisplay ( void )
 {
@@ -1291,6 +1311,7 @@ int initDisplay ( void )
   return 0;
 }
 
+
 int postWindowInit ( void )
 {
   // initialize locale system
@@ -1352,6 +1373,7 @@ int postWindowInit ( void )
 
   return 0;
 }
+
 
 void cleanupClient ( void )
 {
@@ -1440,6 +1462,7 @@ int myMain(int argc, char **argv)
 }
 //
 #if defined(_WIN32) && !defined(HAVE_SDL)
+
 
 //
 // WinMain()
@@ -1532,6 +1555,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   free(cmdLine);
   return exitCode;
 }
+
 
 #endif /* defined(_WIN32) */
 

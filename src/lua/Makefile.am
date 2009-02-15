@@ -17,11 +17,13 @@ libBzLua_la_SOURCES =                       \
 	LuaBitOps.cxx         LuaBitOps.h         \
 	LuaBZDB.cxx           LuaBZDB.h           \
 	LuaBzMaterial.cxx     LuaBzMaterial.h     \
+	LuaBzOrg.cxx          LuaBzOrg.h          \
 	LuaCallInCheck.cxx    LuaCallInCheck.h    \
 	LuaCallInDB.cxx       LuaCallInDB.h       \
 	LuaCallOuts.cxx       LuaCallOuts.h       \
 	LuaConstGame.cxx      LuaConstGame.h      \
 	LuaConstGL.cxx        LuaConstGL.h        \
+	LuaDouble.cxx         LuaDouble.h         \
 	LuaDLists.cxx         LuaDLists.h         \
 	LuaDynCol.cxx         LuaDynCol.h         \
 	LuaExtras.cxx         LuaExtras.h         \
@@ -45,13 +47,15 @@ libBzLua_la_SOURCES =                       \
 	LuaTextures.cxx       LuaTextures.h       \
 	LuaUser.cxx           LuaUser.h           \
 	LuaUtils.cxx          LuaUtils.h          \
+	LuaURL.cxx            LuaURL.h            \
 	LuaVector.cxx         LuaVector.h         \
 	LuaVFS.cxx            LuaVFS.h            \
-	LuaWorld.cxx          LuaWorld.h
+	LuaWorld.cxx          LuaWorld.h          \
+	LuaZip.cxx            LuaZip.h
 
+#	LuaLink.cxx           LuaLink.h           \#
 #	LuaServerList.cxx     LuaServerList.h     \#
 #	LuaArrays.cxx         LuaArrays.h         \#
-#	LuaLink.cxx           LuaLink.h           \#
 
 EXTRA_DIST = \
 	README

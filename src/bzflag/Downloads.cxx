@@ -50,11 +50,21 @@ static const char DownloadContent[] =
   "#\n"
   "\n"
   "#\n"
-  "# To authorize all servers, remove the last 3 lines.\n"
+  "# To authorize all servers, remove the following lines:\n"
   "#\n"
   "\n"
+  "allow   images.bzflag.org\n"
   "allow *.images.bzflag.org\n"
-  "allow images.bzflag.org\n"
+  "\n"
+  "allow   data.bzflag.org\n"
+  "allow *.data.bzflag.org\n"
+  "\n"
+  "allow   safe.bzflag.org\n"
+  "allow *.safe.bzflag.org\n"
+  "\n"
+  "allow   moderated.bzflag.org\n"
+  "allow *.moderated.bzflag.org\n"
+  "\n"
   "deny *\n";
 
 

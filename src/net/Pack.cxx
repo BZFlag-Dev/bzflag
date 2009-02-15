@@ -43,25 +43,35 @@ static bool Error = false;
 static bool ErrorChecking = false;
 static unsigned int Length = 0;
 
+
+/******************************************************************************/
+//
+// Checkers
+//
+
 void nboUseErrorChecking(bool checking)
 {
   ErrorChecking = checking;
 }
+
 
 bool nboGetBufferError()
 {
   return Error;
 }
 
+
 void nboClearBufferError()
 {
   Error = false;
 }
 
+
 void nboSetBufferLength(unsigned int length)
 {
   Length = length;
 }
+
 
 unsigned int nboGetBufferLength()
 {
@@ -69,45 +79,51 @@ unsigned int nboGetBufferLength()
 }
 
 
+/******************************************************************************/
 //
 // Packers
 //
 
-void*			nboPackUByte(void* b, uint8_t v)
+void* nboPackUByte(void* b, uint8_t v)
 {
   ::memcpy(b, &v, sizeof(uint8_t));
   return ADV(b, uint8_t);
 }
 
-void*			nboPackShort(void* b, int16_t v)
+
+void* nboPackShort(void* b, int16_t v)
 {
   const int16_t x = (int16_t)htons(v);
   ::memcpy(b, &x, sizeof(int16_t));
   return ADV(b, int16_t);
 }
 
-void*			nboPackInt(void* b, int32_t v)
+
+void* nboPackInt(void* b, int32_t v)
 {
   const int32_t x = (int32_t)htonl(v);
   ::memcpy(b, &x, sizeof(int32_t));
   return ADV(b, int32_t);
 }
 
-void*			nboPackUShort(void* b, uint16_t v)
+
+void* nboPackUShort(void* b, uint16_t v)
 {
   const uint16_t x = (uint16_t)htons(v);
   ::memcpy(b, &x, sizeof(uint16_t));
   return ADV(b, uint16_t);
 }
 
-void*			nboPackUInt(void* b, uint32_t v)
+
+void* nboPackUInt(void* b, uint32_t v)
 {
   const uint32_t x = (uint32_t)htonl(v);
   ::memcpy(b, &x, sizeof(uint32_t));
   return ADV(b, uint32_t);
 }
 
-void*			nboPackFloat(void* b, float v)
+
+void* nboPackFloat(void* b, float v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
@@ -118,14 +134,16 @@ void*			nboPackFloat(void* b, float v)
   return ADV(b, uint32_t);
 }
 
-void*			nboPackDouble(void* b, double v)
+
+void* nboPackDouble(void* b, double v)
 {
   // hope the double is 8-byte IEEE 754 standard encoding
   htond((unsigned char*)b, (const unsigned char *)&v, 1);
   return ADV(b, uint64_t);
 }
 
-void*			nboPackFloatVector(void* b, const float* v)
+
+void* nboPackFloatVector(void* b, const float* v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
@@ -140,34 +158,38 @@ void*			nboPackFloatVector(void* b, const float* v)
   return (void*) (((char*)b)+3*sizeof(uint32_t));
 }
 
+
 #if 0
-void*			nboPackDoubleVector(void* b, const double* v)
+void* nboPackDoubleVector(void* b, const double* v)
 {
   // hope that double is 8-byte IEEE 754 standard encoding
 }
 #endif
 
-void*			nboPackString(void* b, const void* m, int len)
+
+void* nboPackString(void* b, const void* m, int len)
 {
   if (!m || len == 0) return b;
   ::memcpy(b, m, len);
   return (void*)((char*)b + len);
 }
 
-void*			nboPackStdString(void* b, const std::string& str)
+
+void* nboPackStdString(void* b, const std::string& str)
 {
   uint32_t strSize = (uint32_t)str.size();
   b = nboPackUInt(b, strSize);
-  b = nboPackString(b, str.c_str(), strSize);
+  b = nboPackString(b, str.data(), strSize);
   return b;
 }
 
 
+/******************************************************************************/
 //
 // UnPackers
 //
 
-void*			nboUnpackUByte(void* b, uint8_t& v)
+void* nboUnpackUByte(void* b, uint8_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint8_t)) {
@@ -182,7 +204,8 @@ void*			nboUnpackUByte(void* b, uint8_t& v)
   return ADV(b, uint8_t);
 }
 
-void*			nboUnpackShort(void* b, int16_t& v)
+
+void* nboUnpackShort(void* b, int16_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int16_t)) {
@@ -199,7 +222,8 @@ void*			nboUnpackShort(void* b, int16_t& v)
   return ADV(b, int16_t);
 }
 
-void*			nboUnpackInt(void* b, int32_t& v)
+
+void* nboUnpackInt(void* b, int32_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int32_t)) {
@@ -216,7 +240,8 @@ void*			nboUnpackInt(void* b, int32_t& v)
   return ADV(b, uint32_t);
 }
 
-void*			nboUnpackUShort(void* b, uint16_t& v)
+
+void* nboUnpackUShort(void* b, uint16_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint16_t)) {
@@ -233,7 +258,8 @@ void*			nboUnpackUShort(void* b, uint16_t& v)
   return ADV(b, uint16_t);
 }
 
-void*			nboUnpackUInt(void* b, uint32_t& v)
+
+void* nboUnpackUInt(void* b, uint32_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint32_t)) {
@@ -250,7 +276,8 @@ void*			nboUnpackUInt(void* b, uint32_t& v)
   return ADV(b, uint32_t);
 }
 
-void*			nboUnpackFloat(void* b, float& v)
+
+void* nboUnpackFloat(void* b, float& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float)) {
@@ -271,7 +298,8 @@ void*			nboUnpackFloat(void* b, float& v)
   return ADV(b, uint32_t);
 }
 
-void*			nboUnpackDouble(void* b, double& v)
+
+void* nboUnpackDouble(void* b, double& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(double)) {
@@ -288,7 +316,8 @@ void*			nboUnpackDouble(void* b, double& v)
   return ADV(b, uint64_t);
 }
 
-void*			nboUnpackFloatVector(void* b, float* v)
+
+void* nboUnpackFloatVector(void* b, float* v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[3])) {
@@ -313,14 +342,16 @@ void*			nboUnpackFloatVector(void* b, float* v)
   return (void *) (((char*)b) + 3*sizeof(float));
 }
 
+
 #if 0
-void*			nboUnpackDoubleVector(void* b, double* v)
+void* nboUnpackDoubleVector(void* b, double* v)
 {
   // hope that double is 8-byte IEEE 754 standard encoding
 }
 #endif
 
-void*			nboUnpackString(void* b, void* m, int len)
+
+void* nboUnpackString(void* b, void* m, int len)
 {
   if (!m || len == 0) return b;
   if (ErrorChecking) {
@@ -336,7 +367,8 @@ void*			nboUnpackString(void* b, void* m, int len)
   return (void*)((char*)b + len);
 }
 
-void*			nboUnpackStdString(void* b, std::string& str)
+
+void* nboUnpackStdString(void* b, std::string& str)
 {
   uint32_t strSize;
   b = nboUnpackUInt(b, strSize);
@@ -352,17 +384,15 @@ void*			nboUnpackStdString(void* b, std::string& str)
   return b;
 }
 
-void*			nboUnpackStdStringRaw(void* b, std::string& str)
+
+void* nboUnpackStdStringRaw(void* b, std::string& str)
 {
   uint32_t strSize;
   b = nboUnpackUInt(b, strSize);
   char* buffer = new char[strSize + 1];
   b = nboUnpackString(b, buffer, strSize);
   buffer[strSize] = 0;
-  str.resize(strSize);
-  for (uint32_t i = 0; i < strSize; i++) {
-    str[i] = buffer[i];
-  }
+  str.assign(buffer, strSize);
   delete[] buffer;
   if (ErrorChecking && Error) {
     str = "";
@@ -372,6 +402,7 @@ void*			nboUnpackStdStringRaw(void* b, std::string& str)
 }
 
 
+/******************************************************************************/
 //
 // Utilities
 //

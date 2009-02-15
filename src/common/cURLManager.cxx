@@ -27,6 +27,7 @@ std::map<CURL*,
 char		    cURLManager::errorBuffer[CURL_ERROR_SIZE];
 int		    cURLManager::refs = 0;
 
+
 cURLManager::cURLManager()
 {
   CURLcode result;
@@ -84,6 +85,7 @@ cURLManager::cURLManager()
   cURLMap[easyHandle] = this;
 }
 
+
 cURLManager::~cURLManager()
 {
   if (added)
@@ -115,6 +117,7 @@ void cURLManager::setup()
   inited = true;
 }
 
+
 size_t cURLManager::writeFunction(void *ptr, size_t size, size_t nmemb,
 				  void *stream)
 {
@@ -123,6 +126,7 @@ size_t cURLManager::writeFunction(void *ptr, size_t size, size_t nmemb,
   justCalled = true;
   return len;
 }
+
 
 void cURLManager::setTimeout(long timeout)
 {
@@ -143,6 +147,7 @@ void cURLManager::setTimeout(long timeout)
   }
 }
 
+
 void cURLManager::setNoBody()
 {
   CURLcode result;
@@ -154,6 +159,18 @@ void cURLManager::setNoBody()
   }
 }
 
+
+void cURLManager::setFailOnError()
+{
+  CURLcode result;
+  long fail = 1;
+  result = curl_easy_setopt(easyHandle, CURLOPT_FAILONERROR, fail);
+  if (result != CURLE_OK) {
+    logDebugMessage(1,"CURLOPT_GET error %d : %s\n", result, errorBuffer);
+  }
+}
+
+
 void cURLManager::setGetMode()
 {
   CURLcode result;
@@ -164,6 +181,7 @@ void cURLManager::setGetMode()
     logDebugMessage(1,"CURLOPT_GET error %d : %s\n", result, errorBuffer);
   }
 }
+
 
 void cURLManager::setPostMode(std::string _postData)
 {
@@ -182,6 +200,7 @@ void cURLManager::setPostMode(std::string _postData)
     logDebugMessage(1,"CURLOPT_POST error %d : %s\n", result, errorBuffer);
 }
 
+
 void cURLManager::setHTTPPostMode()
 {
   CURLcode result;
@@ -190,6 +209,7 @@ void cURLManager::setHTTPPostMode()
   if (result != CURLE_OK)
     logDebugMessage(1,"CURLOPT_HTTPPOST error %d : %s\n", result, errorBuffer);
 }
+
 
 void cURLManager::setURL(const std::string url)
 {
@@ -209,6 +229,7 @@ void cURLManager::setURL(const std::string url)
   }
 }
 
+
 void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
 {
   CURLcode result;
@@ -226,6 +247,7 @@ void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
   }
 }
 
+
 void cURLManager::setRequestFileTime(bool request)
 {
   CURLcode result;
@@ -236,6 +258,7 @@ void cURLManager::setRequestFileTime(bool request)
   }
 }
 
+
 void cURLManager::addHandle()
 {
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
@@ -244,6 +267,7 @@ void cURLManager::addHandle()
 	   result, errorBuffer);
   added = true;
 }
+
 
 void cURLManager::removeHandle()
 {
@@ -256,9 +280,6 @@ void cURLManager::removeHandle()
   added = false;
 }
 
-void cURLManager::finalization(char *, unsigned int, bool)
-{
-}
 
 void cURLManager::collectData(char* ptr, int len)
 {
@@ -272,6 +293,7 @@ void cURLManager::collectData(char* ptr, int len)
   }
 }
 
+
 void cURLManager::performWait()
 {
   CURLcode result;
@@ -281,6 +303,7 @@ void cURLManager::performWait()
     delete this;
   }
 }
+
 
 int cURLManager::fdset(fd_set &read, fd_set &write)
 {
@@ -300,6 +323,7 @@ int cURLManager::fdset(fd_set &read, fd_set &write)
                     result, errorBuffer);
   return max_fd;
 }
+
 
 bool cURLManager::perform()
 {
@@ -354,6 +378,7 @@ bool cURLManager::perform()
   return justCalled;
 }
 
+
 void cURLManager::infoComplete(CURLcode result)
 {
   if (result != CURLE_OK)
@@ -372,6 +397,7 @@ void cURLManager::infoComplete(CURLcode result)
   theLen  = 0;
 }
 
+
 bool cURLManager::getFileTime(time_t &t)
 {
   long filetime;
@@ -385,6 +411,7 @@ bool cURLManager::getFileTime(time_t &t)
   return true;
 }
 
+
 bool cURLManager::getFileSize(double &size)
 {
   CURLcode result;
@@ -395,6 +422,19 @@ bool cURLManager::getFileSize(double &size)
   }
   return true;
 }
+
+
+bool cURLManager::getHttpCode(long &code)
+{
+  CURLcode result;
+  result = curl_easy_getinfo(easyHandle, CURLINFO_RESPONSE_CODE, &code);
+  if (result) {
+    logDebugMessage(1,"CURLINFO_RESPONSE_CODE error %d : %s\n", result, errorBuffer);
+    return false;
+  }
+  return true;
+}
+
 
 void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 {
@@ -428,6 +468,7 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
   }
 }
 
+
 void cURLManager::setInterface(const std::string _interfaceIP)
 {
   interfaceIP = _interfaceIP;
@@ -440,6 +481,7 @@ void cURLManager::setInterface(const std::string _interfaceIP)
   if (result != CURLE_OK)
     logDebugMessage(1,"CURLOPT_SET_INTERFACE error %d : %s\n", result, errorBuffer);
 }
+
 
 void cURLManager::setUserAgent(const std::string _userAgent)
 {
@@ -454,6 +496,7 @@ void cURLManager::setUserAgent(const std::string _userAgent)
     logDebugMessage(1,"CURLOPT_SET_USERAGENT error %d : %s\n", result, errorBuffer);
 }
 
+
 void cURLManager::addFormData(const char *key, const char *value)
 {
   CURLFORMcode result;
@@ -465,6 +508,7 @@ void cURLManager::addFormData(const char *key, const char *value)
   if (result != CURL_FORMADD_OK)
     logDebugMessage(1,"addFormData error %d : %s\n", result, errorBuffer);
 }
+
 
 void cURLManager::setDNSCachingTime(int time)
 {
@@ -478,10 +522,12 @@ void cURLManager::setDNSCachingTime(int time)
 	   result, errorBuffer);
 }
 
+
 void cURLManager::setDeleteOnDone()
 {
   deleteOnDone = true;
 }
+
 
 //**************************ResourceGetter*************************
 
@@ -490,10 +536,12 @@ ResourceGetter::ResourceGetter() : cURLManager()
 	doingStuff = false;
 }
 
+
 ResourceGetter::~ResourceGetter()
 {
 
 }
+
 
 void ResourceGetter::addResource ( trResourceItem &item )
 {
@@ -503,11 +551,13 @@ void ResourceGetter::addResource ( trResourceItem &item )
 		getResource();
 }
 
+
 void ResourceGetter::flush ( void )
 {
 	resources.clear();
 	doingStuff = false;
 }
+
 
 void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 {
@@ -534,6 +584,7 @@ void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 	getResource();
 }
 
+
 bool ResourceGetter::itemExists ( trResourceItem &item )
 {
 	// save the thing
@@ -545,6 +596,7 @@ bool ResourceGetter::itemExists ( trResourceItem &item )
 	}
 	return false;
 }
+
 
 void ResourceGetter::getResource ( void )
 {

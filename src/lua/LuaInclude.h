@@ -89,15 +89,4 @@ inline void lua_pushstdstring(lua_State* L, const std::string& s)
 
 /******************************************************************************/
 
-// FIXME -- IntToString(), move it
-static inline std::string IntToString(int i, const std::string& format = "%i")
-{
-	char buf[64];
-	snprintf(buf, sizeof(buf), format.c_str(), i);
-	return std::string(buf);  
-}
-
-
-/******************************************************************************/
-
 #endif // LUA_INCLUDE_H

@@ -1,7 +1,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaRBOs.h"
 
 // system headers
@@ -125,7 +125,7 @@ const LuaRBO* LuaRBOMgr::TestLuaRBO(lua_State* L, int index)
 	if (lua_getuserdataextra(L, index) != metaName) {
 		return NULL;
 	}
-	return (LuaRBO*)lua_touserdata(L, 1);
+	return (LuaRBO*)lua_touserdata(L, index);
 }
 
 
@@ -134,7 +134,7 @@ const LuaRBO* LuaRBOMgr::CheckLuaRBO(lua_State* L, int index)
 	if (lua_getuserdataextra(L, index) != metaName) {
 		luaL_argerror(L, index, "expected RBO");
 	}
-	return (LuaRBO*)lua_touserdata(L, 1);
+	return (LuaRBO*)lua_touserdata(L, index);
 }
 
 
@@ -143,7 +143,7 @@ LuaRBO* LuaRBOMgr::GetLuaRBO(lua_State* L, int index)
 	if (lua_getuserdataextra(L, index) != metaName) {
 		luaL_argerror(L, index, "expected RBO");
 	}
-	return (LuaRBO*)lua_touserdata(L, 1);
+	return (LuaRBO*)lua_touserdata(L, index);
 }
 
 

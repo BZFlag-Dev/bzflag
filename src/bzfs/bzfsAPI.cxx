@@ -130,62 +130,47 @@ MasterBanURLHandler masterBanHandler;
 
 bz_eTeamType convertTeam(TeamColor _team)
 {
-  switch(_team)
-  {
-    default:
+  switch(_team) {
+    case RogueTeam:     { return eRogueTeam;     }
+    case RedTeam:       { return eRedTeam;       }
+    case GreenTeam:     { return eGreenTeam;     }
+    case BlueTeam:      { return eBlueTeam;      }
+    case PurpleTeam:    { return ePurpleTeam;    }
+    case ObserverTeam:  { return eObservers;     }
+    case RabbitTeam:    { return eRabbitTeam;    }
+    case HunterTeam:    { return eHunterTeam;    }
+    case AutomaticTeam: { return eAutomaticTeam; }
+    default: {
       return eNoTeam;
-    case RogueTeam:
-      return eRogueTeam;
-    case RedTeam:
-      return eRedTeam;
-    case GreenTeam:
-      return eGreenTeam;
-    case BlueTeam:
-      return eBlueTeam;
-    case PurpleTeam:
-      return ePurpleTeam;
-    case ObserverTeam:
-      return eObservers;
-    case RabbitTeam:
-      return eRabbitTeam;
-    case HunterTeam:
-      return eHunterTeam;
-    case AutomaticTeam:
-      return eAutomaticTeam;
+    }
   }
+
+  return eNoTeam;
 }
 
 //-------------------------------------------------------------------------
 
 TeamColor convertTeam(bz_eTeamType _team)
 {
-  if(_team > eObservers)
+  if (_team > eObservers) {
     return NoTeam;
-
-  switch(_team)
-  {
-    default:
-      return NoTeam;
-    case eRogueTeam:
-      return RogueTeam;
-    case eRedTeam:
-      return RedTeam;
-    case eGreenTeam:
-      return GreenTeam;
-    case eBlueTeam:
-      return BlueTeam;
-    case ePurpleTeam:
-      return PurpleTeam;
-    case eObservers:
-      return ObserverTeam;
-    case eRabbitTeam:
-      return RabbitTeam;
-    case eHunterTeam:
-      return HunterTeam;
-    case eAutomaticTeam:
-      return AutomaticTeam;
   }
-  return (TeamColor)_team;
+
+  switch(_team) {
+    case eRogueTeam:     { return RogueTeam;     }
+    case eRedTeam:       { return RedTeam;       }
+    case eGreenTeam:     { return GreenTeam;     }
+    case eBlueTeam:      { return BlueTeam;      }
+    case ePurpleTeam:    { return PurpleTeam;    }
+    case eObservers:     { return ObserverTeam;  }
+    case eRabbitTeam:    { return RabbitTeam;    }
+    case eHunterTeam:    { return HunterTeam;    }
+    case eAutomaticTeam: { return AutomaticTeam; }
+    default: {
+      return NoTeam;
+    }
+  }
+  return NoTeam;
 }
 
 //-------------------------------------------------------------------------
@@ -4907,9 +4892,9 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_sendLuaData(int dstPlayerID, int dstScriptID,
-                            int statusBits, const char* data, int len,
-                            int srcPlayerID, int srcScriptID)
+BZF_API bool bz_sendLuaData(int srcPlayerID, int srcScriptID,
+                            int dstPlayerID, int dstScriptID,
+                            int statusBits, const char* data, int len)
 {
   const std::string dataStr(data, len);
   sendMsgLuaData(srcPlayerID, srcScriptID,

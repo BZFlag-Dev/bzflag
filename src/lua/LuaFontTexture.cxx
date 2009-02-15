@@ -12,7 +12,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "LuaFontTexture.h"
 
 // common headers
@@ -56,6 +56,7 @@ bool LuaFontTexture::SetDebugLevel    (unsigned int) { return false; }
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include <string>
 #include <vector>
@@ -67,6 +68,8 @@ using namespace std;
 #include <IL/il.h>
 #include <IL/ilu.h>
 
+// common headers
+#include "BzVFS.h"
 
 // custom types
 typedef int8_t   s8;
@@ -116,12 +119,94 @@ static void PrintGlyphInfo(FT_GlyphSlot& glyph, int g);
 
 
 /*******************************************************************************/
+/*******************************************************************************/
+
+static void Pushf(vector<string>& vs, const char* fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	char buf[4096];
+	vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+	vs.push_back(buf);
+}
+
+
+static string ConcatVecStr(const vector<string>& vs)
+{
+	size_t total = 0;
+	for (size_t i = 0; i < vs.size(); i++) {
+		total += vs[i].size();
+	}
+	string s;
+	s.resize(total);
+	size_t pos = 0;
+	for (size_t i = 0; i < vs.size(); i++) {
+		s.insert(pos, vs[i]);
+		pos += vs[i].size();
+	}
+	return s;
+}
+
+
+/*******************************************************************************/
+/*******************************************************************************/
+/* FIXME
+static ILvoid fCloseWProc(ILHANDLE h)
+{
+	if (h == NULL) {
+		return;
+	}
+}
+
+
+static ILHANDLE fOpenWProc(const ILstring name)
+{
+	return NULL;
+}
+
+
+static ILint fPutcProc(ILubyte c, ILHANDLE h)
+{
+	if (h == NULL) {
+		return;
+	}
+}
+
+
+static ILint fSeekWProc(ILHANDLE h, ILint offset, ILint whence)
+{
+	if (h == NULL) {
+		return -1;
+	}
+}
+
+
+static ILint fTellWProc(ILHANDLE h)
+{
+	if (h == NULL) {
+		return -1;
+	}
+}
+
+
+static ILint fWriteProc(const void* data,
+                        ILuint size, ILuint nmemb, ILHANDLE h)
+{
+	if (h == NULL) {
+		return -1;
+	}
+}
+
+*/
+/*******************************************************************************/
+/*******************************************************************************/
 
 class Glyph {
 	public:
 		Glyph(FT_Face& face, int num);
 		~Glyph();
-		bool SaveSpecs(FILE* f);
+		bool SaveSpecs(vector<string>& specVec);
 		bool Outline(u32 radius);
 	public:
 		u32 num;
@@ -231,6 +316,9 @@ bool LuaFontTexture::SetDebugLevel(unsigned int _dbgLevel)
 	return true;
 }
 
+
+/*******************************************************************************/
+/*******************************************************************************/
 
 void LuaFontTexture::Reset()
 {
@@ -401,6 +489,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		logDebugMessage(0, "maxPixelYsize = %i\n", maxPixelYsize);
 	}
 
+	vector<string> specVec;
 	FILE* specFile = fopen(specsName.c_str(), "wt");
 	if (specFile == NULL) {
 		logDebugMessage(0, "%s: %s\n", specsName.c_str(), strerror(errno));
@@ -418,21 +507,21 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		}
 	}
 
-	fprintf(specFile, "\n");
-	fprintf(specFile, "local fontSpecs = {\n");
-	fprintf(specFile, "  srcFile  = [[%s]],\n", filename.c_str());
-	fprintf(specFile, "  family   = [[%s]],\n", face->family_name);
-	fprintf(specFile, "  style    = [[%s]],\n", face->style_name);
-	fprintf(specFile, "  yStep    = %i,\n", yStep);
-	fprintf(specFile, "  height   = %i,\n", fontHeight);
-	fprintf(specFile, "  xTexSize = %i,\n", xTexSize);
-	fprintf(specFile, "  yTexSize = %i,\n", yTexSize);
-	fprintf(specFile, "  outlineRadius = %i,\n", outlineRadius);
-	fprintf(specFile, "  outlineWeight = %i,\n", outlineWeight);
-	fprintf(specFile, "}\n");
-	fprintf(specFile, "\n");
-	fprintf(specFile, "local glyphs = {}\n");
-	fprintf(specFile, "\n");
+	Pushf(specVec, "\n");
+	Pushf(specVec, "local fontSpecs = {\n");
+	Pushf(specVec, "  srcFile  = [[%s]],\n", filename.c_str());
+	Pushf(specVec, "  family   = [[%s]],\n", face->family_name);
+	Pushf(specVec, "  style    = [[%s]],\n", face->style_name);
+	Pushf(specVec, "  yStep    = %i,\n", yStep);
+	Pushf(specVec, "  height   = %i,\n", fontHeight);
+	Pushf(specVec, "  xTexSize = %i,\n", xTexSize);
+	Pushf(specVec, "  yTexSize = %i,\n", yTexSize);
+	Pushf(specVec, "  outlineRadius = %i,\n", outlineRadius);
+	Pushf(specVec, "  outlineWeight = %i,\n", outlineWeight);
+	Pushf(specVec, "}\n");
+	Pushf(specVec, "\n");
+	Pushf(specVec, "local glyphs = {}\n");
+	Pushf(specVec, "\n");
 
 	ILuint img;
 	ilGenImages(1, &img);
@@ -461,7 +550,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		glyph->tyn += tyOffset;
 		glyph->txp += txOffset;
 		glyph->typ += tyOffset;
-		glyph->SaveSpecs(specFile);
+		glyph->SaveSpecs(specVec);
 
 		if (dbgLevel >= 2) {
 			PrintGlyphInfo(face->glyph, g);
@@ -474,13 +563,14 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		}
 	}
 
-	fprintf(specFile, "\n");
-	fprintf(specFile, "fontSpecs.glyphs = glyphs\n");
-	fprintf(specFile, "\n");
-	fprintf(specFile, "return fontSpecs\n");
-	fprintf(specFile, "\n");
+	Pushf(specVec, "\n");
+	Pushf(specVec, "fontSpecs.glyphs = glyphs\n");
+	Pushf(specVec, "\n");
+	Pushf(specVec, "return fontSpecs\n");
+	Pushf(specVec, "\n");
 
-	fclose(specFile);
+	const string specData = ConcatVecStr(specVec);
+	bzVFS.writeFile(specData, BZVFS_LUA_USER_WRITE, specData); // FIXME -- diff mode?
 
 	logDebugMessage(0, "Saved: %s\n", specsName.c_str());
 
@@ -590,20 +680,20 @@ Glyph::~Glyph()
 }
 
 
-bool Glyph::SaveSpecs(FILE* f)
+bool Glyph::SaveSpecs(vector<string>& specVec)
 {
 	if ((num >= ' ') && (num <= 255)) {
-		fprintf(f, "glyphs[%i] = { --'%c'--\n", num, num);
+		Pushf(specVec, "glyphs[%i] = { --'%c'--\n", num, num);
 	} else {
-		fprintf(f, "glyphs[%i] = {\n", num);
+		Pushf(specVec, "glyphs[%i] = {\n", num);
 	}
-	fprintf(f, "  num = %i,\n", num);
-	fprintf(f, "  adv = %i,\n", advance);
-	fprintf(f, "  oxn = %4i, oyn = %4i, oxp = %4i, oyp = %4i,\n",
-					oxn, oyn, oxp, oyp);
-	fprintf(f, "  txn = %4i, tyn = %4i, txp = %4i, typ = %4i,\n",
-					txn, tyn, txp, typ);
-	fprintf(f, "}\n");
+	Pushf(specVec, "  num = %i,\n", num);
+	Pushf(specVec, "  adv = %i,\n", advance);
+	Pushf(specVec, "  oxn = %4i, oyn = %4i, oxp = %4i, oyp = %4i,\n",
+				oxn, oyn, oxp, oyp);
+	Pushf(specVec, "  txn = %4i, tyn = %4i, txp = %4i, typ = %4i,\n",
+				txn, tyn, txp, typ);
+	Pushf(specVec, "}\n");
 	return true;
 }
 

@@ -62,6 +62,7 @@ void CommandCompleter::reset()
   registerWord("/localset ");
   registerWord("/luabzfs ");
   registerWord("/luauser ");
+  registerWord("/luabzorg ");
   registerWord("/luaworld ");
   registerWord("/mute ");
   registerWord("/password ");
