@@ -1,6 +1,6 @@
 
 documentationdir = $(datadir)/doc/ftgl
-documentation_DATA = projects_using_ftgl.txt
+noinst_DATA = projects_using_ftgl.txt
 
 if HAVE_DOXYGEN
 htmldocdir = $(documentationdir)/html
@@ -59,7 +59,7 @@ endif
 
 EXTRA_DIST = \
 	$(PNGS) \
-	$(documentation_DATA) \
+	$(noinst_DATA) \
 	FTGL_1_3.gif \
 	doxygen.cfg.in \
 	ftgl.dox \

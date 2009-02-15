@@ -5,7 +5,7 @@ SUBDIRS = src test demo docs
 DIST_SUBDIRS = $(SUBDIRS) msvc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = ftgl.pc
+noinst_DATA = ftgl.pc
 
 DISTCLEANFILES = ftgl.pc
 
