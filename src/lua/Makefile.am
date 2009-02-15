@@ -10,7 +10,7 @@ libBzLua_la_LDFLAGS = -static
 
 libBzLua_la_SOURCES =                       \
 	LuaInclude.h                              \
-	LuaEventOrder.h                           \
+	LuaClientOrder.h                          \
 	LuaClientScripts.cxx                      \
 	LuaHandleCallIns.cxx                      \
 	LuaHashString.h                           \
