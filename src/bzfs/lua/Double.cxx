@@ -224,6 +224,13 @@ bool LuaDouble::CreateMetatable(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
+int LuaDouble::IsDouble(lua_State* L)
+{
+	lua_pushboolean(L, lua_getuserdataextra(L, 1) == metaName);
+	return 1;
+}
+
+
 int LuaDouble::CreateDouble(lua_State* L)
 {
 	double value = 0.0f;
@@ -272,6 +279,7 @@ bool LuaDouble::PushEntries(lua_State* L)
 	CreateMetatable(L);
 
 	PushNamedFunction(L, "double", CreateDouble);
+	PushNamedFunction(L, "isdouble", IsDouble);
 
 	return true;
 }

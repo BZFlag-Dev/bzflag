@@ -19,8 +19,6 @@ class LuaDouble {
 	public:
 		static const char* metaName;
 
-	// FIXME -- tonumber() ?  double(1234)() ? return  number, numberDiff ?
-
 	private:
 		static bool CreateMetatable(lua_State* L);
 		static int CreateDouble(lua_State* L);

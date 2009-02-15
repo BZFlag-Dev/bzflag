@@ -22,8 +22,9 @@ class LuaDouble {
 	private:
 		static bool CreateMetatable(lua_State* L);
 		static int CreateDouble(lua_State* L);
-		static int MetaToString(lua_State* L);
+		static int IsDouble(lua_State* L);
 		static int MetaIndex(lua_State* L);
+		static int MetaToString(lua_State* L);
 		static int MetaADD(lua_State* L);
 		static int MetaSUB(lua_State* L);
 		static int MetaMUL(lua_State* L);
