@@ -309,9 +309,12 @@ bzrobot_pyext_la_SOURCES = \
 	MessageUtilities.cxx \
 	MessageUtilities.h \
 	Tank.cxx \
-	Tank.h \
-	bzrobot_python_wrap.cxx \
-	bzrobot_python_wrap.h
+	Tank.h
+
+# FIXME -- these files seem to be missing,
+#       -- commented to make the 'make dist' top level target work
+#	bzrobot_python_wrap.cxx \
+#	bzrobot_python_wrap.h
 
 bzrobot_pyext_la_LIBADD = ../date/libDate.la
 
