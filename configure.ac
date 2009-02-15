@@ -274,7 +274,7 @@ BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 
 dnl detect a usable system zlib compression library
 if test "x$enable_zlib_build" != "xyes" ; then
-    AC_CHECK_LIB(z, compress, LIBZ="-lz", LIBZ="")
+    AC_CHECK_LIB(z, compressBound, LIBZ="-lz", LIBZ="")
 fi
 
 dnl detect a usable system c-ares lookup library
