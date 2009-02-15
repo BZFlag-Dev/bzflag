@@ -271,7 +271,7 @@ static bool CreateLuaState(const string& script)
 
   CallIns::PushEntries(L);
 
-  lua_getglobal(L, "math");
+  lua_pushvalue(L, LUA_GLOBALSINDEX);
   LuaDouble::PushEntries(L);
   lua_pop(L, 1);
 

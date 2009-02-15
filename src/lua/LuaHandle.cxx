@@ -693,12 +693,12 @@ bool LuaHandle::SetupEnvironment()
 	lua_pop(L, 1); // os
 
 	lua_pushvalue(L, LUA_GLOBALSINDEX); {
-		if (!LuaExtras::PushEntries(L)) {
+		if (!LuaExtras::PushEntries(L) ||
+		    !LuaDouble::PushEntries(L)) {
 			lua_pop(L, 1);
 			return false;
 		}
 		if (!PushLib("math",   LuaBitOps::PushEntries)     ||
-				!PushLib("math",   LuaDouble::PushEntries)     ||
 				!PushLib("math",   LuaVector::PushEntries)     ||
 				!PushLib("URL",    LuaURLMgr::PushEntries)     ||
 				!PushLib("VFS",    LuaVFS::PushEntries)        ||

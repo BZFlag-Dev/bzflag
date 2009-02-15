@@ -29,6 +29,7 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
+#include "Double.h"
 
 
 extern const string& GetLuaDirectory(); // from lua.cpp
@@ -274,6 +275,7 @@ static int GetMaxWaitTime(lua_State* L);
 static int SetMaxWaitTime(lua_State* L);
 static int ClearMaxWaitTime(lua_State* L);
 
+static int GetTime(lua_State* L);
 static int GetTimer(lua_State* L);
 static int DiffTimers(lua_State* L);
 
@@ -478,6 +480,7 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetMaxWaitTime);
   PUSH_LUA_CFUNC(L, ClearMaxWaitTime);
 
+  PUSH_LUA_CFUNC(L, GetTime);
   PUSH_LUA_CFUNC(L, GetTimer);
   PUSH_LUA_CFUNC(L, DiffTimers);
 
@@ -2104,6 +2107,14 @@ static int ClearMaxWaitTime(lua_State* L)
 
 /******************************************************************************/
 /******************************************************************************/
+
+static int GetTime(lua_State* L)
+{
+  const double nowTime = bz_getCurrentTime();
+  LuaDouble::PushDouble(L, nowTime);
+  return 1;
+}
+
 
 static int GetTimer(lua_State* L)
 {

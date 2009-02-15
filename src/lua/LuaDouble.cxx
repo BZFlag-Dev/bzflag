@@ -131,7 +131,7 @@ int LuaDouble::MetaADD(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
 	const double d2 = CheckNumber(L, 2);
-	CreateDouble(L, d1 + d2);
+	PushDouble(L, d1 + d2);
 	return 1;
 }
 
@@ -140,7 +140,7 @@ int LuaDouble::MetaSUB(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
 	const double d2 = CheckNumber(L, 2);
-	CreateDouble(L, d1 - d2);
+	PushDouble(L, d1 - d2);
 	return 1;
 }
 
@@ -149,7 +149,7 @@ int LuaDouble::MetaMUL(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
 	const double d2 = CheckNumber(L, 2);
-	CreateDouble(L, d1 * d2);
+	PushDouble(L, d1 * d2);
 	return 1;
 }
 
@@ -158,7 +158,7 @@ int LuaDouble::MetaDIV(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
 	const double d2 = CheckNumber(L, 2);
-	CreateDouble(L, d1 / d2);
+	PushDouble(L, d1 / d2);
 	return 1;
 }
 
@@ -167,7 +167,7 @@ int LuaDouble::MetaMOD(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
 	const double d2 = CheckNumber(L, 2);
-	CreateDouble(L, fmod(d1, d2));
+	PushDouble(L, fmod(d1, d2));
 	return 1;
 }
 
@@ -176,7 +176,7 @@ int LuaDouble::MetaPOW(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
 	const double d2 = CheckNumber(L, 2);
-	CreateDouble(L, pow(d1, d2));
+	PushDouble(L, pow(d1, d2));
 	return 1;
 }
 
@@ -184,7 +184,7 @@ int LuaDouble::MetaPOW(lua_State* L)
 int LuaDouble::MetaUNM(lua_State* L)
 {
 	const double d1 = CheckNumber(L, 1);
-	CreateDouble(L, -d1);
+	PushDouble(L, -d1);
 	return 1;
 }
 
@@ -281,7 +281,7 @@ int LuaDouble::CreateDouble(lua_State* L)
 }
 
 
-int LuaDouble::CreateDouble(lua_State* L, double value)
+void LuaDouble::PushDouble(lua_State* L, double value)
 {
 	double* doublePtr = (double*)lua_newuserdata(L, sizeof(double));
 	*doublePtr = value;
@@ -289,8 +289,6 @@ int LuaDouble::CreateDouble(lua_State* L, double value)
 	lua_setuserdataextra(L, -1, (void*)metaName);
 	luaL_getmetatable(L, metaName);
 	lua_setmetatable(L, -2);
-
-	return 1;
 }
 
 

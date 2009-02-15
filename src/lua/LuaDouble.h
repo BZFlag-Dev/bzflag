@@ -14,6 +14,8 @@ class LuaDouble {
 		static double CheckDouble(lua_State* L, int index);
 		static double CheckNumber(lua_State* L, int index);
 
+		static void PushDouble(lua_State* L, double value);
+
 	public:
 		static const char* metaName;
 
@@ -21,7 +23,6 @@ class LuaDouble {
 
 	private:
 		static bool CreateMetatable(lua_State* L);
-		static int CreateDouble(lua_State* L, double value);
 		static int CreateDouble(lua_State* L);
 		static int IsDouble(lua_State* L);
 		static int MetaIndex(lua_State* L);

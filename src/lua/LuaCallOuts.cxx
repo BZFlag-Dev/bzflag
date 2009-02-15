@@ -50,6 +50,7 @@ using std::map;
 #include "../bzflag/sound.h"
 
 // local headers
+#include "LuaDouble.h"
 #include "LuaInclude.h"
 #include "LuaHandle.h"
 #include "LuaHashString.h"
@@ -1290,33 +1291,15 @@ int LuaCallOuts::GetSun(lua_State* L)
 int LuaCallOuts::GetTime(lua_State* L)
 {
 	const double nowTime = TimeKeeper::getCurrent().getSeconds();
-	if (!lua_israwnumber(L, 1)) {
-		lua_pushnumber(L, (lua_Number)nowTime);
-	}
-	else {
-		const double modulus = (double)lua_tonumber(L, 1);
-		if (modulus == 0.0) {
-			return 0;
-		}
-		lua_pushnumber(L, (lua_Number)fmod(nowTime, modulus));
-	}
+	LuaDouble::PushDouble(L, nowTime);
 	return 1;
 }
 
 
 int LuaCallOuts::GetGameTime(lua_State* L)
 {
-	if (!lua_israwnumber(L, 1)) {
-		lua_pushnumber(L, (lua_Number)GameTime::getStepTime());
-	}
-	else {
-		const double modulus = (double)lua_tonumber(L, 1);
-		if (modulus == 0.0) {
-			return 0;
-		}
-		const double gameTime = GameTime::getStepTime();
-		lua_pushnumber(L, (lua_Number)fmod(gameTime, modulus));
-	}
+	const double gameTime = GameTime::getStepTime();
+	LuaDouble::PushDouble(L, gameTime);
 	return 1;
 }
 
