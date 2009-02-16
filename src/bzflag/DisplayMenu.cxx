@@ -385,7 +385,7 @@ void DisplayMenu::resize(int _width, int _height)
     HUDuiList* hudUI = (HUDuiList*)listHUD[specialModeIndex];
     std::vector<std::string>& hudList = hudUI->getList();
     hudList.clear();
-    hudList.push_back(std::string("Only for Observers"));
+    hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
     hudUI->setIndex(0);
     hudUI->update();
   }
