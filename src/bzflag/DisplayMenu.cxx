@@ -51,10 +51,7 @@ DisplayMenu::DisplayMenu()
   addControl(label, false);
 
   // setup a darkened string for unavailable entries
-  std::string unavailable;
-  unavailable = ANSI_STR_DIM;
-  unavailable += ANSI_STR_FG_BLACK;
-  unavailable += "Unavailable";
+  const std::string unavailable = ANSI_STR_FG_BLACK "Unavailable";
 
   // Quality
   option = new HUDuiList;
