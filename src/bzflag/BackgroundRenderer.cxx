@@ -1421,10 +1421,7 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
     sunShadowsGState.setState();
     glColor3f(0.0f, 0.0f, 0.0f);
   }
-  else {
-    // use the stencil to avoid overlapping shadows
-    glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
+  else { // use the stencil to avoid overlapping shadows
     // setup blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1441,6 +1438,8 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
     glStencilFunc(GL_NOTEQUAL, 1, 1);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glEnable(GL_STENCIL_TEST);
+
+    // setup culling
     glDisable(GL_CULL_FACE);
   }
 
@@ -1450,7 +1449,10 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 
   // revert to OpenGLGState defaults
   if (BZDBCache::stencilShadows) {
-    glPopAttrib();
+    glBlendFunc(GL_ONE, GL_ZERO);
+    glDisable(GL_BLEND);
+    glDisable(GL_STENCIL_TEST);
+    glEnable(GL_CULL_FACE);
   }
 
   // enable color updates
