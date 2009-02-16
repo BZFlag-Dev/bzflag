@@ -156,15 +156,17 @@ static void setVisual(BzfVisual *visual)
   // GL's PFD will return a lower depth
   // if the max is unsuported.
   int depthLevel = 32;
-  if (BZDB.isSet("forceDepthBits"))
+  if (BZDB.isSet("forceDepthBits")) {
     depthLevel = BZDB.evalInt("forceDepthBits");
+  }
   visual->setDepth(depthLevel);
 
-#if !defined(DEBUG_RENDERING)
-  visual->setStencil(1);
-#else
-  visual->setStencil(4);
-#endif
+  // always ask for at least 1 stencil bit
+  int stencilBits = 1;
+  if (BZDB.isSet("stencilBits")) {
+    stencilBits = BZDB.evalInt("stencilBits");
+  }
+  visual->setStencil(stencilBits);
 
   if (BZDB.isTrue("multisample")) {
     visual->setMultisample(4);

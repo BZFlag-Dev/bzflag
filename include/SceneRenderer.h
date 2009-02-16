@@ -68,14 +68,21 @@ public:
     Interlaced		// right/left interlaced stereo
   };
 
+  enum SpecialMode {
+    NoSpecial,
+    WireFrame,
+    HiddenLine,
+    DepthComplexity,
+    SpecialModeCount
+  };
+                                      
   void		setWindow(MainWindow* _window);
   MainWindow&	getWindow() const;
 
+  SpecialMode	getSpecialMode() const;
+
   bool		useStencil() const;
   int		useQuality() const;
-  bool		useDepthComplexity() const;
-  bool		useWireframe() const;
-  bool		useHiddenLine() const;
   float		getPanelOpacity() const;
   int		getRadarSize() const;
   int		getMaxMotionFactor() const;
@@ -83,12 +90,11 @@ public:
   bool		isSameFrame() const;
   ViewType	getViewType() const;
 
+  void		setQuality(int value);
+  void		setSpecialMode(SpecialMode mode);
+
   void		setSmoothing(bool on);
   void		setZBuffer(bool on);
-  void		setQuality(int value);
-  void		setDepthComplexity(bool on);
-  void		setWireframe(bool on);
-  void		setHiddenLine(bool on);
   void		setPanelOpacity(float opacity);
   void		setRadarSize(int size);
   void		setMaxMotionFactor(int size);
@@ -186,6 +192,7 @@ private:
 
 private:
   MainWindow*		window;
+  SpecialMode		specialMode;
   bool			blank;
   bool			invert;
   bool			mirror;
@@ -219,9 +226,6 @@ private:
   float teleporterProximity;
 
   int		useQualityValue;
-  bool		useDepthComplexityOn;
-  bool		useWireframeOn;
-  bool		useHiddenLineOn;
   float		panelOpacity;
   int		radarSize;
   int		maxMotionFactor;

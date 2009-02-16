@@ -39,6 +39,7 @@ public:
 private:
   FormatMenu*	formatMenu;
   HUDuiControl*	videoFormat;
+  bool gridOptions;
   static int	gammaToIndex(float);
   static float	indexToGamma(int);
 };

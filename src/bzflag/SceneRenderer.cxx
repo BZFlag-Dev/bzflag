@@ -35,12 +35,13 @@
 #include "GfxBlock.h"
 
 /* FIXME - local implementation dependancies */
-#include "DynamicWorldText.h"
 #include "BackgroundRenderer.h"
+#include "DynamicWorldText.h"
 #include "LocalPlayer.h"
-#include "daylight.h"
-#include "World.h"
+#include "Roaming.h"
 #include "TrackMarks.h"
+#include "World.h"
+#include "daylight.h"
 #include "playing.h"
 
 
@@ -79,6 +80,7 @@ SceneRenderer* Singleton<SceneRenderer>::_instance = (SceneRenderer*)0;
 
 SceneRenderer::SceneRenderer()
 : window(NULL)
+, specialMode(NoSpecial)
 , blank(false)
 , invert(false)
 , mirror(false)
@@ -87,9 +89,6 @@ SceneRenderer::SceneRenderer()
 , scene(NULL)
 , background(NULL)
 , useQualityValue(_HIGH_QUALITY)
-, useDepthComplexityOn(false)
-, useWireframeOn(false)
-, useHiddenLineOn(false)
 , panelOpacity(0.3f)
 , radarSize(4)
 , maxMotionFactor(5)
@@ -243,20 +242,46 @@ void SceneRenderer::setQuality(int value)
 }
 
 
-bool SceneRenderer::useDepthComplexity() const
+void SceneRenderer::setSpecialMode(SpecialMode mode)
 {
-  return useDepthComplexityOn;
+  specialMode = NoSpecial;
+
+  // avoid built-in visibility cheats
+  if (ROAM.isRoaming()) {
+    switch (mode) {
+      case WireFrame: {
+        specialMode = mode;
+        break;
+      }
+      case HiddenLine: {
+        if (BZDBCache::zbuffer) {
+          specialMode = mode;
+        }
+        break;
+      }
+      case DepthComplexity: {
+        GLint bits;
+        glGetIntegerv(GL_STENCIL_BITS, &bits);
+        if (bits >= 3) {
+          specialMode = mode;
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  
+  BZDB.setInt("specialMode", specialMode);
+  
+  return;
 }
 
 
-void SceneRenderer::setDepthComplexity(bool on)
+SceneRenderer::SpecialMode SceneRenderer::getSpecialMode() const
 {
-  if (on) {
-    GLint bits;
-    glGetIntegerv(GL_STENCIL_BITS, &bits);
-    if (bits < 3) return;
-  }
-  useDepthComplexityOn = on;
+  return specialMode;
 }
 
 
@@ -273,34 +298,6 @@ void SceneRenderer::setupBackgroundMaterials()
     background->setupGroundMaterials();
   }
   return;
-}
-
-
-void SceneRenderer::setWireframe(bool on)
-{
-  useWireframeOn = on;
-}
-
-
-bool SceneRenderer::useWireframe() const
-{
-  return useWireframeOn;
-}
-
-
-void SceneRenderer::setHiddenLine(bool on)
-{
-  useHiddenLineOn = on && BZDBCache::zbuffer && canUseHiddenLine;
-  if (!useHiddenLineOn) {
-    return;
-  }
-  glPolygonOffset(1.0f, 2.0f);
-}
-
-
-bool SceneRenderer::useHiddenLine() const
-{
-  return useHiddenLineOn;
 }
 
 
@@ -598,7 +595,12 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   sameFrame = _sameFrame;
   fullWindow = _fullWindow;
 
-  setWireframe(BZDB.isTrue("wireframe"));
+  // set the special mode
+  if (ROAM.isRoaming()) {
+    setSpecialMode((SpecialMode)BZDB.evalInt("specialMode"));
+  } else {
+    setSpecialMode(NoSpecial);
+  }
 
   triangleCount = 0;
   RenderNode::resetTriangleCount();
@@ -805,30 +807,39 @@ void SceneRenderer::renderScene()
   glScissor(window->getOriginX(), window->getOriginY() + windowYOffset,
             window->getWidth(), window->getViewHeight());
 
-  if (useDepthComplexityOn) {
-    if (BZDBCache::stencilShadows) {
-      BZDB.set("stencilShadows", "0");
+  switch (specialMode) {
+    case DepthComplexity: {
+      if (BZDBCache::stencilShadows) {
+        BZDB.set("stencilShadows", "0");
+      }
+      glEnable(GL_STENCIL_TEST);
+      if (!mirror || (clearZbuffer)) {
+        glClear(GL_STENCIL_BUFFER_BIT);
+      }
+      glStencilFunc(GL_ALWAYS, 0, 0xf);
+      glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
+      break;
     }
-    glEnable(GL_STENCIL_TEST);
-    if (!mirror || (clearZbuffer)) {
-      glClear(GL_STENCIL_BUFFER_BIT);
+    case HiddenLine: {
+      if (!mirror || (clearZbuffer)) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+      }
+      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+      break;
     }
-    glStencilFunc(GL_ALWAYS, 0, 0xf);
-    glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
-  }
-  if (useHiddenLineOn) {
-    if (!mirror || (clearZbuffer)) {
-      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+    case WireFrame: {
+      if (!mirror || (clearZbuffer)) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+      }
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      break;
     }
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  }
-  else if (useWireframeOn) {
-    if (!mirror || (clearZbuffer)) {
-      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+    default: {
+      // do nothing
+      break;
     }
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   }
 
   // prepare z buffer
@@ -884,7 +895,7 @@ void SceneRenderer::renderScene()
       glEnable(GL_DEPTH_TEST);
     }
 
-    if (useHiddenLineOn) {
+    if (specialMode == HiddenLine) {
       glEnable(GL_POLYGON_OFFSET_FILL);
     }
 
@@ -903,7 +914,7 @@ void SceneRenderer::renderScene()
     doRender();
 
 
-    if (useHiddenLineOn) {
+    if (specialMode == HiddenLine) {
       glDisable(GL_POLYGON_OFFSET_FILL);
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -933,7 +944,7 @@ void SceneRenderer::renderScene()
   }
 
   // back to original state
-  if (!useHiddenLineOn && useWireframeOn) {
+  if (specialMode == WireFrame) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
@@ -943,7 +954,7 @@ void SceneRenderer::renderScene()
   glLoadIdentity();
 
   // do depth complexity
-  if (useDepthComplexityOn) {
+  if (specialMode == DepthComplexity) {
     renderDepthComplexity();
   }
 

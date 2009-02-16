@@ -16,23 +16,27 @@
 #include "DisplayMenu.h"
 
 /* common implementation headers */
-#include "FontManager.h"
 #include "BZDBCache.h"
+#include "FontManager.h"
 #include "TextureManager.h"
-
-/* local implementation headers */
-#include "FontSizer.h"
-#include "MainMenu.h"
-#include "HUDDialogStack.h"
-#include "HUDuiList.h"
-#include "playing.h"
-#include "SceneRenderer.h"
-#include "BzfDisplay.h"
-#include "LocalFontFace.h"
-#include "VerticalSync.h"
 #include "bzfgl.h"
 
-DisplayMenu::DisplayMenu() : formatMenu(NULL)
+/* local implementation headers */
+#include "BzfDisplay.h"
+#include "FontSizer.h"
+#include "HUDDialogStack.h"
+#include "HUDuiList.h"
+#include "LocalFontFace.h"
+#include "MainMenu.h"
+#include "Roaming.h"
+#include "SceneRenderer.h"
+#include "VerticalSync.h"
+#include "playing.h"
+
+
+DisplayMenu::DisplayMenu()
+: formatMenu(NULL)
+, gridOptions(debugLevel > 0)
 {
   // add controls
   std::vector<std::string>* options;
@@ -46,51 +50,30 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   label->setString("Display Settings");
   addControl(label, false);
 
+  // setup a darkened string for unavailable entries
+  std::string unavailable;
+  unavailable = ANSI_STR_DIM;
+  unavailable += ANSI_STR_FG_BLACK;
+  unavailable += "Unavailable";
+
+  // Quality
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Dithering:");
-  option->setCallback(callback, (void*)"1");
+  option->setLabel("Quality:");
+  option->setCallback(callback, (void*)"Q");
   options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("Low"));
+  options->push_back(std::string("Medium"));
+  options->push_back(std::string("High"));
+  options->push_back(std::string("Experimental"));
   option->update();
   addControl(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Blending:");
-  option->setCallback(callback, (void*)"2");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  addControl(option);
-
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Smoothing:");
-  option->setCallback(callback, (void*)"3");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  addControl(option);
-
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Lighting:");
-  option->setCallback(callback, (void*)"4");
-  options = &option->getList();
-  options->push_back(std::string("None"));
-  options->push_back(std::string("Fast"));
-  options->push_back(std::string("Best"));
-  option->update();
-  addControl(option);
-
+  // Texturing
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Texturing:");
-  option->setCallback(callback, (void*)"5");
+  option->setCallback(callback, (void*)"T");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Nearest"));
@@ -102,14 +85,14 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   addControl(option);
 
+  // Texture Anisotropy
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Anisotropic:");
   option->setCallback(callback, (void*)"A");
   options = &option->getList();
- // if ( GLEW_EXT_texture_filter_anisotropic ) {
-  if ( GLEW_GET_VAR(__GLEW_EXT_texture_filter_anisotropic) ) {
-   static GLint maxAnisotropy = 1;
+  if (GLEW_EXT_texture_filter_anisotropic) {
+    static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
       options->push_back(std::string("Off"));
@@ -119,30 +102,31 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 	options->push_back(std::string(buffer));
       }
     } else {
-      options->push_back(std::string("Unavailable"));
+      options->push_back(unavailable);
     }
   } else {
-    options->push_back(std::string("Unavailable"));
+    options->push_back(unavailable);
   }
   option->update();
   addControl(option);
 
+  // Lighting
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Quality:");
-  option->setCallback(callback, (void*)"6");
+  option->setLabel("Lighting:");
+  option->setCallback(callback, (void*)"L");
   options = &option->getList();
-  options->push_back(std::string("Low"));
-  options->push_back(std::string("Medium"));
-  options->push_back(std::string("High"));
-  options->push_back(std::string("Experimental"));
+  options->push_back(std::string("None"));
+  options->push_back(std::string("Fast"));
+  options->push_back(std::string("Best"));
   option->update();
   addControl(option);
 
+  // Shadows
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Shadows:");
-  option->setCallback(callback, (void*)"7");
+  option->setCallback(callback, (void*)"S");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Stipple"));
@@ -150,67 +134,45 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   addControl(option);
 
-#if !defined(DEBUG_RENDERING)
-  if (debugLevel > 0) {
-#endif
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Hidden Line:");
-    option->setCallback(callback, (void*)"a");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    addControl(option);
+  // Blending
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Blending:");
+  option->setCallback(callback, (void*)"B");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  addControl(option);
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Wireframe:");
-    option->setCallback(callback, (void*)"b");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    addControl(option);
+  // Smoothing
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Smoothing:");
+  option->setCallback(callback, (void*)"s");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  addControl(option);
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Depth Complexity:");
-    option->setCallback(callback, (void*)"c");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    addControl(option);
+  // Dithering
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Dithering:");
+  option->setCallback(callback, (void*)"D");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  addControl(option);
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Culling Tree:");
-    option->setCallback(callback, (void*)"d");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    addControl(option);
-
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Collision Tree:");
-    option->setCallback(callback, (void*)"e");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    addControl(option);
-#if !defined(DEBUG_RENDERING)
-  }
-#endif
-
+  // Brightness
   BzfWindow* window = getMainWindow()->getWindow();
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Brightness:");
-  option->setCallback(callback, (void*)"g");
+  option->setCallback(callback, (void*)"b");
   if (window->hasGammaControl()) {
     option->createSlider(15);
   } else {
@@ -220,30 +182,70 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   addControl(option);
 
+  // Vertical Sync
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Vertical Sync:");
-  option->setCallback(callback, (void*)"v");
+  option->setCallback(callback, (void*)"V");
   options = &option->getList();
-  if (verticalSyncAvailable()) {
+  if (!verticalSyncAvailable()) {
+    options->push_back(std::string("Unavailable"));
+  } else {
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
-  } else {
-    options->push_back(std::string("Unavailable"));
   }
   option->update();
   addControl(option);
 
+  // Energy Saver
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Energy Saver:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, (void*)"E");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
   option->update();
   addControl(option);
 
+  // Special Mode, only available to Observers
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Special Mode:");
+  option->setCallback(callback, (void*)"M");
+  options = &option->getList();
+  options->push_back(std::string("None"));
+  options->push_back(std::string("WireFrame"));
+  options->push_back(std::string("HiddenLine"));
+  options->push_back(std::string("DepthComplexity"));
+  option->update();
+  addControl(option);
+
+  if (gridOptions) {
+    // Culling Grid
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Culling Tree:");
+    option->setCallback(callback, (void*)"G");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    addControl(option);
+
+    // Collision Grid
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Collision Tree:");
+    option->setCallback(callback, (void*)"g");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    addControl(option);
+  }
+  
+  // Video Format
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {
     videoFormat = NULL;
@@ -312,59 +314,89 @@ void DisplayMenu::resize(int _width, int _height)
     y -= 1.0f * h;
   }
 
+  TextureManager& tm = TextureManager::instance();
+
   i = 1;
   // load current settings
-  TextureManager& tm = TextureManager::instance();
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
-  if (BZDBCache::lighting) {
-    if (BZDB.isTrue("tesselation")) {
-      ((HUDuiList*)listHUD[i++])->setIndex(2);
-    } else {
-      ((HUDuiList*)listHUD[i++])->setIndex(1);
-    }
-  } else {
-    ((HUDuiList*)listHUD[i++])->setIndex(0);
-  }
+
+  // Quality
+  ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useQuality());
+
+  // Texturing
   ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
+
+  // Anisotropy
   int aniso = BZDB.evalInt("aniso");
   aniso = (aniso < 1) ? 1 : aniso;
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
-  ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useQuality());
+
+  // Lighting
+  int lighting = 0;
+  if (BZDBCache::lighting) {
+    lighting = BZDB.isTrue("tesselation") ? 2 : 1;
+  }
+  ((HUDuiList*)listHUD[i++])->setIndex(lighting);
+
+  // Shadows
   int shadowVal = 0;
   if (BZDBCache::shadows) {
-    shadowVal++;
-    if (BZDBCache::stencilShadows) {
-      shadowVal++;
-    }
+    shadowVal = BZDBCache::stencilShadows ? 2 : 1;
   }
   ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
-#if !defined(DEBUG_RENDERING)
-  if (debugLevel > 0) {
-#endif
-    ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useHiddenLine() ? 1 : 0);
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
-    ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.useDepthComplexity() ? 1
-      : 0);
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
-      : 0);
-#if !defined(DEBUG_RENDERING)
-  }
-#endif
 
-  // brightness
+  // Blending
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
+
+  // Smoothing
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
+
+  // Dithering
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
+
+  // Brightness
   BzfWindow* window = getMainWindow()->getWindow();
-  if (window->hasGammaControl())
+  if (window->hasGammaControl()) {
     ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
+  }
   i++;
 
-  // vsync
+  // Vertical Sync
   ((HUDuiList*)listHUD[i++])->setIndex((BZDBCache::vsync > 0) ? 1 : 0);
 
-  // energy saver
-  ((HUDuiList*)listHUD[i])->setIndex(BZDB.evalInt("saveEnergy"));
+  // Energy Saver
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
+
+  // Special Mode
+  ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.getSpecialMode());
+  // change the 'Special Mode' setting depending on observer status
+  const int specialModeIndex = 12;
+  if (ROAM.isRoaming()) {
+    HUDuiList* hudUI = (HUDuiList*)listHUD[specialModeIndex];
+    std::vector<std::string>& hudList = hudUI->getList();
+    hudList.clear();
+    hudList.push_back(std::string("None"));
+    hudList.push_back(std::string("WireFrame"));
+    hudList.push_back(std::string("HiddenLine"));
+    hudList.push_back(std::string("DepthComplexity"));
+    hudUI->setIndex(RENDERER.getSpecialMode());
+    hudUI->update();
+  }
+  else {
+    HUDuiList* hudUI = (HUDuiList*)listHUD[specialModeIndex];
+    std::vector<std::string>& hudList = hudUI->getList();
+    hudList.clear();
+    hudList.push_back(std::string("Only for Observers"));
+    hudUI->setIndex(0);
+    hudUI->update();
+  }
+
+  if (gridOptions) {
+    // Culling Grid
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ?   1 : 0);
+
+    // Collision Grid
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
+  }
 }
 
 
@@ -385,89 +417,94 @@ void DisplayMenu::callback(HUDuiControl* w, void* data)
 {
   HUDuiList* list = (HUDuiList*)w;
   switch (((const char*)data)[0]) {
-  case '1':
-    BZDB.set("dither", list->getIndex() ? "1" : "0");
-    RENDERER.notifyStyleChange();
-    break;
-  case '2':
-    BZDB.set("blend", list->getIndex() ? "1" : "0");
-    RENDERER.notifyStyleChange();
-    break;
-  case '3':
-    BZDB.set("smooth", list->getIndex() ? "1" : "0");
-    RENDERER.notifyStyleChange();
-    break;
-  case '4': {
-    bool oldLighting = BZDBCache::lighting;
-    BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
-    BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
-    if (oldLighting != BZDBCache::lighting) {
+    case 'Q': {
+      RENDERER.setQuality(list->getIndex());
+      if (list->getIndex() > 3) {
+        BZDB.set("zbuffer","1");
+        setSceneDatabase();
+      }
       BZDB.set("texturereplace", (!BZDBCache::lighting &&
-				   RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+                                   RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
       BZDB.setPersistent("texturereplace", false);
       RENDERER.notifyStyleChange();
+      break;
     }
-    break;
-  }
-  case '5': {
-    TextureManager& tm = TextureManager::instance();
-    tm.setMaxFilter((OpenGLTexture::Filter)list->getIndex());
-    BZDB.set("texture", tm.getMaxFilterName());
-    RENDERER.notifyStyleChange();
-    break;
-  }
-  case 'A': {
-    int aniso = list->getIndex() + 1;
-    BZDB.setInt("aniso", aniso);
-    TextureManager& tm = TextureManager::instance();
-    tm.setMaxFilter(tm.getMaxFilter());
-    RENDERER.notifyStyleChange();
-    break;
-  }
-  case '6':
-    RENDERER.setQuality(list->getIndex());
-    if (list->getIndex() > 3) {
-      BZDB.set("zbuffer","1");
-      setSceneDatabase();
+    case 'T': {
+      TextureManager& tm = TextureManager::instance();
+      tm.setMaxFilter((OpenGLTexture::Filter)list->getIndex());
+      BZDB.set("texture", tm.getMaxFilterName());
+      RENDERER.notifyStyleChange();
+      break;
     }
-    BZDB.set("texturereplace", (!BZDBCache::lighting &&
-				 RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
-    BZDB.setPersistent("texturereplace", false);
-    RENDERER.notifyStyleChange();
-    break;
-  case '7': {
-    const int shadowVal = list->getIndex();
-    BZDB.set("shadows", shadowVal > 0 ? "1" : "0");
-    BZDB.set("stencilShadows", shadowVal > 1 ? "1" : "0");
-    RENDERER.notifyStyleChange();
-    break;
-  }
-  case 'a':
-    RENDERER.setHiddenLine(list->getIndex() != 0);
-    break;
-  case 'b':
-    BZDB.setBool("wireframe", (list->getIndex() != 0));
-    break;
-  case 'c':
-    RENDERER.setDepthComplexity(list->getIndex() != 0);
-    break;
-  case 'd':
-    BZDB.setBool("showCullingGrid", list->getIndex() != 0);
-    break;
-  case 'e':
-    BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
-    break;
-  case 'v':
-    BZDB.setInt("vsync", (list->getIndex() == 0) ? -1 : +1);
-    break;
-  case 's':
-    BZDB.setBool("saveEnergy", list->getIndex() != 0);
-    break;
-  case 'g':
-    BzfWindow* window = getMainWindow()->getWindow();
-    if (window->hasGammaControl())
-      window->setGamma(indexToGamma(list->getIndex()));
-    break;
+    case 'A': {
+      int aniso = list->getIndex() + 1;
+      BZDB.setInt("aniso", aniso);
+      TextureManager& tm = TextureManager::instance();
+      tm.setMaxFilter(tm.getMaxFilter());
+      RENDERER.notifyStyleChange();
+      break;
+    }
+    case 'L': {
+      bool oldLighting = BZDBCache::lighting;
+      BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
+      BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
+      if (oldLighting != BZDBCache::lighting) {
+        BZDB.set("texturereplace", (!BZDBCache::lighting &&
+                                     RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+        BZDB.setPersistent("texturereplace", false);
+        RENDERER.notifyStyleChange();
+      }
+      break;
+    }
+    case 'S': {
+      const int shadowVal = list->getIndex();
+      BZDB.set("shadows", shadowVal > 0 ? "1" : "0");
+      BZDB.set("stencilShadows", shadowVal > 1 ? "1" : "0");
+      RENDERER.notifyStyleChange();
+      break;
+    }
+    case 'B': {
+      BZDB.set("blend", list->getIndex() ? "1" : "0");
+      RENDERER.notifyStyleChange();
+      break;
+    }
+    case 's': {
+      BZDB.set("smooth", list->getIndex() ? "1" : "0");
+      RENDERER.notifyStyleChange();
+      break;
+    }
+    case 'D': {
+      BZDB.set("dither", list->getIndex() ? "1" : "0");
+      RENDERER.notifyStyleChange();
+      break;
+    }
+    case 'b': {
+      BzfWindow* window = getMainWindow()->getWindow();
+      if (window->hasGammaControl()) {
+        window->setGamma(indexToGamma(list->getIndex()));
+      }
+      break;
+    }
+    case 'V': {
+      BZDB.setInt("vsync", (list->getIndex() == 0) ? -1 : +1);
+      break;
+    }
+    case 'E': {
+      BZDB.setBool("saveEnergy", list->getIndex() != 0);
+      break;
+    }
+    case 'M': {
+      RENDERER.setSpecialMode((SceneRenderer::SpecialMode)list->getIndex());
+      break;
+    }
+    case 'G': {
+      BZDB.setBool("showCullingGrid", list->getIndex() != 0);
+      break;
+    }
+    case 'g': {
+      BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
+      break;
+    }
   }
 }
 
