@@ -174,7 +174,7 @@ DisplayMenu::DisplayMenu()
     option->createSlider(15);
   } else {
     options = &option->getList();
-    options->push_back(std::string("Unavailable"));
+    options->push_back(unavailable);
   }
   option->update();
   addControl(option);
@@ -186,7 +186,7 @@ DisplayMenu::DisplayMenu()
   option->setCallback(callback, (void*)"V");
   options = &option->getList();
   if (!verticalSyncAvailable()) {
-    options->push_back(std::string("Unavailable"));
+    options->push_back(unavailable);
   } else {
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
