@@ -366,6 +366,7 @@ static std::string partialEncoding(const std::string& string)
 }
 
 
+/* FIXME
 static int toHexNumber(char c)
 {
   if ((c >= '0') && (c <= '9')) {
@@ -379,7 +380,7 @@ static int toHexNumber(char c)
 }
 
 
-/* FIXME static std::string partialDecoding(const std::string& path)
+static std::string partialDecoding(const std::string& path)
 {
   std::string url = "";
   for (size_t i = 0; i < path.size(); i++) {
