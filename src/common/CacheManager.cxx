@@ -40,7 +40,7 @@ static bool fileExists(const std::string& name);
 static void removeDirs(unsigned int minLen, const std::string& path);
 static void removeNewlines(char* c);
 static std::string partialEncoding(const std::string& string);
-static std::string partialDecoding(const std::string& path);
+//FIXME-static std::string partialDecoding(const std::string& path);
 static bool compareUsedDate(const CacheManager::CacheRecord& a, const CacheManager::CacheRecord& b);
 
 
@@ -379,7 +379,7 @@ static int toHexNumber(char c)
 }
 
 
-static std::string partialDecoding(const std::string& path)
+/* FIXME static std::string partialDecoding(const std::string& path)
 {
   std::string url = "";
   for (size_t i = 0; i < path.size(); i++) {
@@ -401,6 +401,7 @@ static std::string partialDecoding(const std::string& path)
   }
   return url;
 }
+*/
 
 
 static bool compareUsedDate(const CacheManager::CacheRecord& a,
