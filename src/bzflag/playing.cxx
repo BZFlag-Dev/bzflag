@@ -8153,7 +8153,7 @@ void startPlaying()
   bzVFS.reset();
   BZDB.addGlobalCallback(BZDBGlobalCallback, NULL);
   OpenGLPassState::Init();
-  LuaClientScripts::LuaOpenGLInit();
+  LuaClientScripts::Init();
   LuaClientScripts::LuaUserLoadHandler();
   LuaClientScripts::LuaBzOrgLoadHandler();
 
@@ -8167,7 +8167,7 @@ void startPlaying()
 
   LuaClientScripts::LuaBzOrgFreeHandler();
   LuaClientScripts::LuaUserFreeHandler();
-  LuaClientScripts::LuaOpenGLFree();
+  LuaClientScripts::Free();
   OpenGLPassState::Free();
   BZDB.removeGlobalCallback(BZDBGlobalCallback, NULL);
 

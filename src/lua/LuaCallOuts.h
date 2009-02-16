@@ -30,9 +30,6 @@ class LuaCallOuts {
 
 		static int GetGameInfo(lua_State* L);
 
-		static int GetDataDir(lua_State* L); // FIXME -- not implemented
-		static int GetConfigDir(lua_State* L);
-
 		static int GetServerAddress(lua_State* L);
 		static int GetServerIP(lua_State* L);
 		static int GetServerPort(lua_State* L);

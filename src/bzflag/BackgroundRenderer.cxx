@@ -894,9 +894,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
   }
 
   if (!blank) {
-    if (doShadows      &&
-        shadowsVisible &&
-        !drawingMirror &&
+    if (doShadows && shadowsVisible && !drawingMirror &&
         GfxBlockMgr::shadows.notBlocked()) {
       drawGroundShadows(renderer);
     }
@@ -1424,16 +1422,25 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
     glColor3f(0.0f, 0.0f, 0.0f);
   }
   else {
-    OpenGLGState::resetState();
     // use the stencil to avoid overlapping shadows
+    glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    // setup blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
+    if (GLEW_ARB_imaging) {
+      // better for alpha-thresh input fragments
+      glBlendColor(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
+      glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+    }
+
+    // setup the stencil
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
     glStencilFunc(GL_NOTEQUAL, 1, 1);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glEnable(GL_STENCIL_TEST);
-
-    // disable color writes, and kill culling
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glDisable(GL_CULL_FACE);
   }
 
@@ -1443,27 +1450,7 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 
   // revert to OpenGLGState defaults
   if (BZDBCache::stencilShadows) {
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
-    glStencilFunc(GL_EQUAL, 1, 1);
-    glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
-    glDisable(GL_DEPTH_TEST);
-
-    // draw a rectangle over the entire screen
-    glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);  glPushMatrix(); glLoadIdentity();
-    glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-    glMatrixMode(GL_PROJECTION); glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);  glPopMatrix();
-
-    // revert to OpenGLGState defaults
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glDisable(GL_BLEND);
-    glDisable(GL_STENCIL_TEST);
-    glBlendFunc(GL_ONE, GL_ZERO);
+    glPopAttrib();
   }
 
   // enable color updates

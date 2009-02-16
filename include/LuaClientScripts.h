@@ -20,6 +20,9 @@
 
 namespace LuaClientScripts {
 
+  void Init();
+  void Free();
+
   void LuaUserFreeHandler();
   void LuaUserLoadHandler();
   void LuaUserUpdate();
@@ -39,9 +42,6 @@ namespace LuaClientScripts {
   void LuaWorldUpdate();
   bool LuaWorldIsActive();
   bool LuaWorldCommand(const std::string& cmd);
-
-  void LuaOpenGLInit();
-  void LuaOpenGLFree();
 
   bool GetDevMode();
   void SetDevMode(bool value);

@@ -385,16 +385,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
   }
 
   // color mask
-  if (mode != DRAW_WORLD_SHADOW) {
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-  }
-  else {
-    if (BZDBCache::stencilShadows) {
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    } else {
-      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    }
-  }
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
   // blending
   switch (mode) {
@@ -448,16 +439,9 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
   switch (mode) {
     case DRAW_WORLD_START:
     case DRAW_WORLD:
-    case DRAW_WORLD_ALPHA: {
-      RENDERER.setupMapFog();
-      break;
-    }
+    case DRAW_WORLD_ALPHA:
     case DRAW_WORLD_SHADOW: {
-      if (!BZDBCache::stencilShadows) {
-        RENDERER.setupMapFog(); // stipple shadows can use fog
-      } else {
-        glDisable(GL_FOG);
-      }
+      RENDERER.setupMapFog();
       break;
     }
     default: {

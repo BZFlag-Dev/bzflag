@@ -94,7 +94,10 @@ class TextSceneNode : public SceneNode {
         float fontSize;
 
         std::vector<std::string> lines;
+        std::vector<std::string> stripped;
         std::vector<float>       widths;
+
+        std::vector<std::string>* linesPtr;
 
         float fixedWidth;
 

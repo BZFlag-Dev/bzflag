@@ -462,6 +462,8 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 {
   FontManager &fm = FontManager::instance();
 
+  linesPtr = &lines;
+
   const float maxFontSize = BZDB.eval("maxFontSize");
   if (fontSize > maxFontSize) {
     fontSize = maxFontSize;
@@ -612,6 +614,11 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
 {
   breakLines(expandEscapes(rawText), lines);
 
+  stripped.clear();
+  for (size_t i = 0; i < lines.size(); i++) {
+    stripped.push_back(stripAnsiCodes(lines[i].c_str()));
+  }
+  
   widths.clear();
   FontManager &fm = FontManager::instance();
   for (size_t i = 0; i < lines.size(); i++) {
@@ -647,10 +654,10 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
 void TextSceneNode::TextRenderNode::countTriangles()
 {
   triangles = 0;
-  for (size_t i = 0; i < lines.size(); i++) {
-    const string stripped = stripAnsiCodes(lines[i].c_str());
-    for (size_t c = 0; c < stripped.size(); c++) {
-      if (!isspace(stripped[c])) {
+  for (size_t i = 0; i < stripped.size(); i++) {
+    const string& line = stripped[i];
+    for (size_t c = 0; c < line.size(); c++) {
+      if (!isspace(line[c])) {
         triangles += 2;
       }
     }
@@ -722,16 +729,18 @@ void TextSceneNode::TextRenderNode::render()
     glPolygonOffset(text.poFactor, text.poUnits);
   }
 
-  if (lines.size() == 1) {
+  const vector<string>& currLines = *linesPtr;
+
+  if (currLines.size() == 1) {
     // all transformations are compiled into xformList
     if (text.billboard) {
       singleLineXForm();
     }
     fm.drawString(0.0f, 0.0f, 0.0f, fontID, fontSize,
-                  lines[0].c_str(), colorPtr, AlignLeft);
+                  currLines[0].c_str(), colorPtr, AlignLeft);
   }
   else {
-    for (size_t i = 0; i < lines.size(); i++) {
+    for (size_t i = 0; i < currLines.size(); i++) {
       const float width = widths[i];
       if (fixedWidth > 0.0f) {
         if (width == 0.0f) {
@@ -744,7 +753,7 @@ void TextSceneNode::TextRenderNode::render()
         glPushMatrix();
         glScalef(fixedWidth / width, 1.0f, 1.0f);
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      lines[i].c_str(), colorPtr, AlignLeft);
+                      currLines[i].c_str(), colorPtr, AlignLeft);
         glPopMatrix();
       }
       else {
@@ -753,7 +762,7 @@ void TextSceneNode::TextRenderNode::render()
           offx = -text.justify * width;
         }
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      lines[i].c_str(), colorPtr, AlignLeft);
+                      currLines[i].c_str(), colorPtr, AlignLeft);
       }
       glTranslatef(0.0f, lineStep, 0.0f);
     }
@@ -795,17 +804,23 @@ void TextSceneNode::TextRenderNode::renderShadow()
   if (noShadow) {
     return;
   }
+  FontManager &fm = FontManager::instance();
 
   wantCheckDist = false;
+
+  fm.setRawBlending(true);
 
   static float shadowColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
   const float* oldColor = colorPtr;
   colorPtr = shadowColor;
+
+  linesPtr = &stripped;
   
   if (!BZDBCache::stencilShadows) {
     shadowColor[3] = 1.0f;
     render();
-  } else {
+  }
+  else {
     shadowColor[3] = BZDBCache::shadowAlpha;
     glAlphaFunc(GL_GEQUAL, 0.1f);
     glEnable(GL_ALPHA_TEST);
@@ -813,7 +828,11 @@ void TextSceneNode::TextRenderNode::renderShadow()
     glDisable(GL_ALPHA_TEST);
   }
 
+  linesPtr = &lines;
+
   colorPtr = oldColor;
+
+  fm.setRawBlending(false);
 
   wantCheckDist = true;
 }

@@ -16,9 +16,6 @@ using std::vector;
 #include "BzVFS.h"
 #include "EventHandler.h"
 
-// bzflag headers
-#include "../bzflag/Downloads.h"
-
 // local headers
 #include "LuaInclude.h"
 
@@ -666,9 +663,6 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 
 bool LuaHandle::SetupEnvironment()
 {
-	// FIXME -- hack
-	LuaURLMgr::SetAccessList(Downloads::instance().getAccessList());
-
 	// load the standard libraries
 	LUA_OPEN_LIB(L, luaopen_base);
 	LUA_OPEN_LIB(L, luaopen_math);

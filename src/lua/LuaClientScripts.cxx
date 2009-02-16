@@ -15,18 +15,35 @@ using std::string;
 
 // bzflag headers
 #include "../bzflag/playing.h"
+#include "../bzflag/Downloads.h"
 
 // local headers
 #include "LuaUser.h"
 #include "LuaBzOrg.h"
 #include "LuaWorld.h"
+
 #include "LuaOpenGL.h"
+#include "LuaURL.h"
+
 
 /******************************************************************************/
 /******************************************************************************/
 
-void LuaClientScripts::LuaOpenGLInit() { LuaOpenGL::Init(); }
-void LuaClientScripts::LuaOpenGLFree() { LuaOpenGL::Free(); }
+void LuaClientScripts::Init()
+{
+	LuaOpenGL::Init();
+	LuaURLMgr::SetAccessList(Downloads::instance().getAccessList());
+}
+
+
+void LuaClientScripts::Free()
+{
+	LuaOpenGL::Free();
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
 
 void LuaClientScripts::LuaUserFreeHandler()  { LuaUser::FreeHandler();  }
 void LuaClientScripts::LuaBzOrgFreeHandler() { LuaBzOrg::FreeHandler(); }
