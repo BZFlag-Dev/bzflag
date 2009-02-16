@@ -16,10 +16,14 @@
 // system headers
 #include <string>
 
-void setFlagHelp(const std::string& name, void*);
-void setDebugLevel(const std::string& name, void*);
-void setDepthBuffer(const std::string& name, void*);
-void setProcessorAffinity(const std::string& name, void*);
+
+namespace Callbacks
+{
+  void setFlagHelp(const std::string& name, void*);
+  void setDebugLevel(const std::string& name, void*);
+  void setDepthBuffer(const std::string& name, void*);
+  void setProcessorAffinity(const std::string& name, void*);
+}
 
 
 // Local Variables: ***

@@ -16,8 +16,8 @@
 // common header
 #include "common.h"
 
-namespace RoofTops {
-
+namespace RoofTops
+{
   void load();
   void clear();
 

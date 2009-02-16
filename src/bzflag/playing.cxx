@@ -487,6 +487,10 @@ void setSceneDatabase()
   // delete the old database
   RENDERER.setSceneDatabase(NULL);
 
+  if (world == NULL) {
+    return;
+  }
+
   // make the scene, and record the processing time
   TimeKeeper startTime = TimeKeeper::getCurrent();
   SceneDatabase *scene = sceneBuilder->make(world);

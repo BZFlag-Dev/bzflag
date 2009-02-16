@@ -17,14 +17,13 @@
  * effect if we have a FF-enabled joystick connected and the user
  * has enabled force feedback.
  */
-namespace ForceFeedback {
-
+namespace ForceFeedback
+{
   void death();
   void shotFired();
   void laserFired();
   void shockwaveFired();
   void solidMatterFriction();
-
 }
 
 #endif /* __FORCE_FEEDBACK_H__ */

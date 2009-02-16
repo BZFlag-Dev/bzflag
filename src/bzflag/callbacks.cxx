@@ -19,25 +19,27 @@
 #include "playing.h"
 
 
-void setFlagHelp(const std::string& name, void*)
+void Callbacks::setFlagHelp(const std::string& name, void*)
 {
-  if (LocalPlayer::getMyTank() == NULL)
+  if (LocalPlayer::getMyTank() == NULL) {
     return;
+  }
   static const float FlagHelpDuration = 60.0f;
-  if (BZDB.isTrue(name))
+  if (BZDB.isTrue(name)) {
     hud->setFlagHelp(LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration);
-  else
+  } else {
     hud->setFlagHelp(Flags::Null, 0.0);
+  }
 }
 
 
-void setDebugLevel(const std::string& name, void*)
+void Callbacks::setDebugLevel(const std::string& name, void*)
 {
   debugLevel = BZDB.evalInt(name);
 }
 
 
-void setDepthBuffer(const std::string& name, void*)
+void Callbacks::setDepthBuffer(const std::string& name, void*)
 {
   /* if zbuffer was set and not available, unset it */
   if (BZDB.isTrue(name)) {
@@ -47,17 +49,18 @@ void setDepthBuffer(const std::string& name, void*)
       // temporarily remove ourself
       BZDB.removeCallback(name, setDepthBuffer, NULL);
       BZDB.set(name, "0");
-      // add it again
-      BZDB.addCallback(name, setDepthBuffer, NULL);
+      BZDB.addCallback(name, setDepthBuffer, NULL); // add it again
     }
   }
+  setSceneDatabase();
 }
 
 
-void setProcessorAffinity(const std::string& name, void*)
+void Callbacks::setProcessorAffinity(const std::string& name, void*)
 {
-  if (BZDB.evalInt(name) >= 0)
+  if (BZDB.evalInt(name) >= 0) {
     TimeKeeper::setProcessorAffinity(BZDB.evalInt(name));
+  }
 }
 
 

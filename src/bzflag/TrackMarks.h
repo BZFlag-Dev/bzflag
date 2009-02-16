@@ -18,8 +18,9 @@
 
 class SceneDatabase;
 
-namespace TrackMarks {
 
+namespace TrackMarks
+{
   void init();
   void kill();
   void clear();

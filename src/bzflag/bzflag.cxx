@@ -908,9 +908,8 @@ int initClient ( int argc, char **argv )
   // parse arguments
   parse(argc, argv);
 
-  // setup the debugLevel callback
+  // set the debug level
   BZDB.setInt("debugLevel", debugLevel);
-  BZDB.addCallback("debugLevel", setDebugLevel, NULL);
 
   clearWindowsStdOut();
 
@@ -1232,7 +1231,7 @@ int initDisplay ( void )
   OpenGLGState::init();
 
   // add the zbuffer callback here, after the OpenGL context is initialized
-  BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
+  BZDB.addCallback("zbuffer", Callbacks::setDepthBuffer, NULL);
 
   // set gamma if set in resources and we have gamma control
   if (BZDB.isSet("gamma")) {

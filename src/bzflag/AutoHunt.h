@@ -19,8 +19,8 @@
 #include <string>
 
 
-namespace AutoHunt {
-
+namespace AutoHunt
+{
   void update();
 
   const char* getColorString(int level);
