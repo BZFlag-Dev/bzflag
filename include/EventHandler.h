@@ -137,15 +137,6 @@ class EventHandler
 
     /**************************************************************************/
 
-  private:
-    typedef std::map<std::string, EventInfo> EventMap;
-
-    struct LessThanEventClient {
-      bool operator()(const EventClient* a, const EventClient* b) const {
-        return a < b;
-      };
-    };
-
   public:
     class EventInfo {
 
@@ -188,6 +179,9 @@ class EventHandler
     };
 
   private:
+    typedef std::map<std::string, EventInfo> EventMap;
+
+  private:
     void SetupEvent(const std::string& ciName, EventClientList* list,
                     int propertyBits = 0, bool reversed = false);
     bool CanUseEvent(EventClient* ec, const EventInfo& eInfo) const;
@@ -195,17 +189,6 @@ class EventHandler
   private:
     EventMap eventMap;
 
-/* FIXME -- command registration
-  private:
-    struct CommandInfo {
-      EventClient*  client;
-      std::string   command;
-      LocalCommand* localCommand;
-    };
-    std::map<std::string, CommandInfo> commands;
-*/
-
-  private:
     EventClientList clients;
 
     EventClientList listUpdate;
