@@ -111,6 +111,8 @@ public:
 
     void	  setPlayerAddMessage ( PlayerAddMessage &msg );
 
+	void		setAutopilot ( bool autopilot );
+
     void	   signingOn(bool ctf);
     void	   close();
     static bool    clean();

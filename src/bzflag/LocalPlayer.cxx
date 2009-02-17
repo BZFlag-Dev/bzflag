@@ -88,6 +88,8 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   }
 
   stuckStartTime = TimeKeeper::getNullTime();
+
+  requestedAutopilot = false;
 }
 
 LocalPlayer::~LocalPlayer()
@@ -1202,16 +1204,10 @@ void			LocalPlayer::setPause(bool pause)
   }
 }
 
-void			LocalPlayer::activateAutoPilot(bool autopilot)
+void			LocalPlayer::requestAutoPilot(bool autopilot)
 {
-  if (autopilot && !isAutoPilot()) {
-    setAutoPilot();
-    server->sendAutoPilot(true);
-  }
-  else if (!autopilot && isAutoPilot()) {
-    setAutoPilot(false);
-    server->sendAutoPilot(false);
-  }
+	requestedAutopilot = autopilot;
+	server->sendAutoPilot(autopilot);
 }
 
 bool			LocalPlayer::fireShot()

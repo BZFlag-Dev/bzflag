@@ -2328,9 +2328,35 @@ static void handleAutoPilot(void *msg)
     return;
 
   tank->setAutoPilot(autopilot != 0);
-  addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
-}
+  if (myTank == tank)
+  {
+	  if (autopilot == 0)
+	  {
+		  if (myTank->requestedAutopilot)
+			hud->setAlert(0, "autopilot disabled", 1.0f, true);
+		  else
+			  hud->setAlert(0, "manual drive enabled", 1.0f, true);
 
+		  // grab mouse
+		  if (shouldGrabMouse())
+			  mainWindow->grabMouse();
+
+		  myTank->requestedAutopilot = false;
+	  }
+	  else
+	  {
+		  if (myTank->requestedAutopilot)
+			  hud->setAlert(0, "autopilot enabled", 1.0f, true);
+		  else
+			  hud->setAlert(0, "manual drive disabled", 1.0f, true);
+	 
+		  // ungrab mouse
+		  mainWindow->ungrabMouse();
+	  }
+  }
+  else
+	addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
+}
 
 static void handleAllow(void *msg)
 {

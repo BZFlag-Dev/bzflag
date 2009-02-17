@@ -879,9 +879,14 @@ public:
     uint8_t autopilot;
     nboUnpackUByte(buf, autopilot);
 
-    player->player.setAutoPilot(autopilot != 0);
+	bool allow = !BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS);
 
-    sendMsgAutoPilot(player->getIndex(),autopilot);
+	bz_AutoPilotChangeData_V1 evnt(autopilot != 0, allow,player->getIndex());
+
+	worldEventManager.callEvents(bz_eAllowAutoPilotChangeEvent,&evnt);
+
+	if (evnt.allow)
+		player->setAutopilot(autopilot != 0);
 
     return true;
   }

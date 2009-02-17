@@ -71,7 +71,7 @@ public:
   void		setDesiredSpeed(float fracOfMaxSpeed);
   void		setDesiredAngVel(float fracOfMaxAngVel);
   void		setPause(bool = true);
-  void		activateAutoPilot(bool = true);
+  void		requestAutoPilot(bool = true);
   bool		fireShot();
   void		explodeTank();
   bool		canJump() const;
@@ -122,6 +122,8 @@ public:
 			     const float* pos1, float azimuth1,
 			     const float* pos2, float azimuth2,
 			     float* normal) const;
+
+  bool		requestedAutopilot;
 
 protected:
   bool		doEndShot(int index, bool isHit, float* pos);

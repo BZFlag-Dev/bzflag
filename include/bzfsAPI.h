@@ -155,6 +155,8 @@ typedef enum {
   bz_ePlayerCustomDataChanged,
   bz_eBZDBChange,
   bz_eLuaDataEvent,
+  bz_eAutoPilotChangeEvent,
+  bz_eAllowAutoPilotChangeEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1131,6 +1133,17 @@ public:
   bz_ApiString value;
 };
 
+class BZF_API bz_AutoPilotChangeData_V1 : public bz_EventData
+{
+public:
+	bz_AutoPilotChangeData_V1(bool _autopilot, bool _allow , int pID)
+		: bz_EventData(bz_eAutoPilotChangeEvent),allow(_allow), autopilot(_autopilot), playerID(pID) {}
+
+	bool allow;
+	bool autopilot;
+	int playerID;
+};
+
 class BZF_API bz_LuaDataEventData_V1 : public bz_EventData
 {
 public:
@@ -1330,6 +1343,11 @@ BZF_API bool bz_setPlayerShotType(int playerId, bz_eShotType shotType);
 BZF_API int bz_getPlayerLag(int playerId);
 BZF_API int bz_getPlayerJitter(int playerId);
 BZF_API float bz_getPlayerPacketLoss(int playerId);
+
+// player autopilot
+BZF_API bool bz_setPlayerAutopilot(int playerId, bool autopilot);
+BZF_API bool bz_getPlayerAutopilot(int playerId);
+
 
 // groups API
 BZF_API bz_APIStringList* bz_getGroupList(void);

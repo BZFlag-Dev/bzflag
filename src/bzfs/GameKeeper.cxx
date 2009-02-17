@@ -22,6 +22,7 @@
 #include "GameTime.h"
 #include "FlagInfo.h"
 #include "StateDatabase.h"
+#include "bzfsMessages.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -517,6 +518,14 @@ void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool incr
   return getCurrentStateAsState().pack(buf,code,increment);
 }
 
+void GameKeeper::Player::setAutopilot( bool autopilot )
+{
+	player.setAutoPilot(autopilot);
+	sendMsgAutoPilot(getIndex(),autopilot);
+
+	bz_AutoPilotChangeData_V1 evnt(autopilot, true,getIndex());
+	worldEventManager.callEvents(bz_eAutoPilotChangeEvent,&evnt);
+}
 
 int GameKeeper::Player::maxShots = 0;
 void GameKeeper::Player::setMaxShots(int _maxShots)

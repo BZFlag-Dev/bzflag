@@ -1613,6 +1613,27 @@ BZF_API bool bz_setPlayerOperator(int playerId)
   player->accessInfo.setOperator();
   return true;
 }
+BZF_API bool bz_setPlayerAutopilot(int playerId, bool autopilot)
+{
+	GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if(!player)
+		return false;
+
+	player->setAutopilot(autopilot);
+	return true;
+}
+
+BZF_API bool bz_getPlayerAutopilot(int playerId)
+{
+	GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if(!player)
+		return false;
+
+	return player->player.isAutoPilot();
+}
+
 
 //-------------------------------------------------------------------------
 

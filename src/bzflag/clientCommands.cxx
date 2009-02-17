@@ -496,39 +496,34 @@ static std::string cmdAutoPilot(const std::string&,
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && !myTank->isAutoPilot()) {
+  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && !myTank->isAutoPilot())
+  {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
     return std::string();
   }
 
-  if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
-    if (myTank->isAutoPilot()) {
-
-      myTank->activateAutoPilot(false);
-      hud->setAlert(0, "autopilot disabled", 1.0f, true);
-
-      // grab mouse
-      if (shouldGrabMouse()) mainWindow->grabMouse();
-
-    } else {
-
+  if (myTank != NULL && myTank->getTeam() != ObserverTeam)
+  {
+    // if I am an auto pilot and I requested it to be turned on in the first place, send the request to disable it.
+    if (myTank->isAutoPilot() && myTank->requestedAutopilot)
+      myTank->requestAutoPilot(false);
+	else if (!myTank->isAutoPilot()) // can't ask for autopilot if I'm allraedy autopilot
+	{
       // don't enable the AutoPilot if you have within the last 5 secs
       static TimeKeeper LastAutoPilotEnable = TimeKeeper::getSunGenesisTime();
-      if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5) {
+      if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5)
+	  {
         // reset timer
         LastAutoPilotEnable = TimeKeeper::getCurrent();
 
         // enable autopilot
-        myTank->activateAutoPilot();
-        hud->setAlert(0, "autopilot enabled", 1.0f, true);
-
-        // ungrab mouse
-        mainWindow->ungrabMouse();
-      } else {
-        controlPanel->addMessage("You may not enable the Autopilot more than once every five seconds.");
+        myTank->requestAutoPilot();
+      }
+	  else 
+	  {
+        controlPanel->addMessage("You may not request the Autopilot more than once every five seconds.");
         return std::string();
       }
-
     }
   }
 
