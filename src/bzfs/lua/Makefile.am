@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libLuaBZFS.la
+noinst_LTLIBRARIES = libLuaServer.la
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = \
 AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
-libLuaBZFS_la_LDFLAGS = -static
+libLuaServer_la_LDFLAGS = -static
 
 noinst_HEADERS =      \
 	BZDB.h        \
@@ -21,7 +21,7 @@ noinst_HEADERS =      \
 	RawLink.h     \
 	SlashCmd.h
 
-libLuaBZFS_la_SOURCES = \
+libLuaServer_la_SOURCES = \
 	BZDB.cxx      \
 	CallIns.cxx   \
 	CallOuts.cxx  \
