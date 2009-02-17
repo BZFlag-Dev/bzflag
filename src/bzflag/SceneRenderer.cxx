@@ -126,6 +126,9 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   }
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
+  if (!useStencilOn) {
+    BZDB.setBool("stencilShadows", false);
+  }
 
   // can only do hidden line if polygon offset is available
   canUseHiddenLine = true;
@@ -811,7 +814,7 @@ void SceneRenderer::renderScene()
   switch (specialMode) {
     case DepthComplexity: {
       if (BZDBCache::stencilShadows) {
-        BZDB.set("stencilShadows", "0");
+        BZDB.setBool("stencilShadows", false);
       }
       glEnable(GL_STENCIL_TEST);
       if (!mirror || (clearZbuffer)) {

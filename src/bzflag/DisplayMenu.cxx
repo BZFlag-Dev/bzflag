@@ -17,20 +17,20 @@
 
 /* common implementation headers */
 #include "BZDBCache.h"
+#include "BzfDisplay.h"
 #include "FontManager.h"
+#include "SceneRenderer.h"
 #include "TextureManager.h"
+#include "VerticalSync.h"
 #include "bzfgl.h"
 
 /* local implementation headers */
-#include "BzfDisplay.h"
 #include "FontSizer.h"
 #include "HUDDialogStack.h"
 #include "HUDuiList.h"
 #include "LocalFontFace.h"
 #include "MainMenu.h"
 #include "Roaming.h"
-#include "SceneRenderer.h"
-#include "VerticalSync.h"
 #include "playing.h"
 
 
@@ -127,7 +127,9 @@ DisplayMenu::DisplayMenu()
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Stipple"));
-  options->push_back(std::string("Stencil"));
+  if (RENDERER.useStencil()) {
+    options->push_back(std::string("Stencil"));
+  }
   option->update();
   addControl(option);
 
@@ -337,7 +339,10 @@ void DisplayMenu::resize(int _width, int _height)
   // Shadows
   int shadowVal = 0;
   if (BZDBCache::shadows) {
-    shadowVal = BZDBCache::stencilShadows ? 2 : 1;
+    shadowVal = 1;
+    if (RENDERER.useStencil() && BZDBCache::stencilShadows) {
+      shadowVal = 2;
+    }
   }
   ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
 
