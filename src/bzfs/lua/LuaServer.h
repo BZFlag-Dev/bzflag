@@ -1,5 +1,5 @@
-#ifndef LUA_BZFS_H
-#define LUA_BZFS_H
+#ifndef LUA_SERVER_H
+#define LUA_SERVER_H
 
 
 #include <string>
@@ -20,4 +20,4 @@ class LuaServer {
 };
 
 
-#endif // LUA_BZFS_H
+#endif // LUA_SERVER_H
