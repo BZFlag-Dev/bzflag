@@ -1620,7 +1620,7 @@ BZF_API bool bz_setPlayerAutopilot(int playerId, bool autopilot)
 	if(!player)
 		return false;
 
-	player->setAutopilot(autopilot);
+	player->setAutoPilot(autopilot);
 	return true;
 }
 

@@ -1331,8 +1331,8 @@ int LuaCallOuts::DiffTimers(lua_State* L)
 	}
 	const void* p1 = lua_touserdata(L, 1);
 	const void* p2 = lua_touserdata(L, 2);
-	const uint32_t t1 = *((const uint32_t*)&p1);
-	const uint32_t t2 = *((const uint32_t*)&p2);
+	const uint32_t t1 = *((const uint32_t*)(const void*)&p1);
+	const uint32_t t2 = *((const uint32_t*)(const void*)&p2);
 	const uint32_t diffTime = (t1 - t2);
 	lua_pushnumber(L, (lua_Number)diffTime * 0.001f); // return seconds
 	return 1;

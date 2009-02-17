@@ -206,8 +206,8 @@ void GameKeeper::Player::dumpScore()
 
 int GameKeeper::Player::anointRabbit(int oldRabbit)
 {
-  float topRatio    = -100000.0f;
-  int   rabbitIndex = NoPlayer;
+  float topRatio = -100000.0f;
+  int   newIndex = NoPlayer;
 
   Player *playerData;
   int     i;
@@ -234,10 +234,10 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 	}
 	if (select) {
 	  topRatio = ratio;
-	  rabbitIndex = i;
+	  newIndex = i;
 	}
     }
-    return rabbitIndex;
+    return newIndex;
 }
 
 void GameKeeper::Player::updateNextGameTime()
@@ -518,13 +518,13 @@ void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool incr
   return getCurrentStateAsState().pack(buf,code,increment);
 }
 
-void GameKeeper::Player::setAutopilot( bool autopilot )
+void GameKeeper::Player::setAutoPilot( bool autopilot )
 {
-	player.setAutoPilot(autopilot);
-	sendMsgAutoPilot(getIndex(),autopilot);
+  player.setAutoPilot(autopilot);
+  sendMsgAutoPilot(getIndex(),autopilot);
 
-	bz_AutoPilotChangeData_V1 evnt(autopilot, true,getIndex());
-	worldEventManager.callEvents(bz_eAutoPilotChangeEvent,&evnt);
+  bz_AutoPilotChangeData_V1 evnt(autopilot, true,getIndex());
+  worldEventManager.callEvents(bz_eAutoPilotChangeEvent,&evnt);
 }
 
 int GameKeeper::Player::maxShots = 0;

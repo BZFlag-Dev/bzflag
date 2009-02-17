@@ -318,12 +318,14 @@ static CI_RecvCommand ciRecvCommand;
 
 //     bz_e <C++ enum name>        lua call-in name            loop type        difference
 //     --------------------        ----------------            ---------        ----------
+CALLIN(AllowAutoPilotChangeEvent,  AllowAutoPilotChange,       "FIRST_FALSE");  // -Event
 CALLIN(AllowCTFCaptureEvent,       AllowCTFCapture,            "SPECIAL");      // -Event
 CALLIN(AllowFlagGrabEvent,         AllowFlagGrab,              "FIRST_FALSE");  // -Event
 CALLIN(AllowKillCommandEvent,      AllowKillCommand,           "FIRST_FALSE");  // -Event
 CALLIN(AllowPlayer,                AllowPlayer,                "FIRST_STRING");
 CALLIN(AllowSpawn,                 AllowSpawn,                 "FIRST_FALSE");
 CALLIN(AnointRabbitEvent,          AnointRabbit,               "BASIC");        // -Event
+CALLIN(AutoPilotChangeEvent,       AutoPilotChange,            "BASIC")  ;      // -Event
 CALLIN(BanEvent,                   Ban,                        "BASIC");        // -Event
 CALLIN(BZDBChange,                 BZDBChange,                 "BASIC");
 CALLIN(CaptureEvent,               Capture,                    "BASIC");        // -Event
@@ -381,6 +383,35 @@ CALLIN(ZoneExitEvent,              ZoneExit,                   "BASIC");        
 
 /******************************************************************************/
 /******************************************************************************/
+
+bool CI_AllowAutoPilotChange::execute(bz_EventData* eventData)
+{
+  bz_AutoPilotChangeData_V1* ed = (bz_AutoPilotChangeData_V1*)eventData;
+
+  if (!ed->allow) {
+    return false; // already disallowed
+  }
+
+  if (!PushCallIn(4)) {
+    return false;
+  }
+
+  lua_pushinteger(L, ed->playerID);
+  lua_pushboolean(L, ed->autopilot);
+
+  if (!RunCallIn(2, 1)) {
+    return false;
+  }
+
+  if (lua_isboolean(L, -1)) {
+    ed->allow = lua_tobool(L, -1);
+  }
+
+  lua_pop(L, 1);
+
+  return true;
+}
+
 
 bool CI_AllowCTFCapture::execute(bz_EventData* eventData)
 {
@@ -569,6 +600,21 @@ bool CI_AnointRabbit::execute(bz_EventData* eventData)
   lua_pop(L, 1);
 
   return true;
+}
+
+
+bool CI_AutoPilotChange::execute(bz_EventData* eventData)
+{
+  bz_AutoPilotChangeData_V1* ed = (bz_AutoPilotChangeData_V1*)eventData;
+
+  if (!PushCallIn(4)) {
+    return false;
+  }
+
+  lua_pushinteger(L, ed->playerID);
+  lua_pushboolean(L, ed->autopilot);
+
+  return RunCallIn(2, 0);
 }
 
 

@@ -77,14 +77,14 @@ void* Team::unpack(void* buf)
 const std::string Team::getImagePrefix(TeamColor team)
 {
   switch (team) {
-    case RedTeam: return BZDB.get("redTeamPrefix");
-    case GreenTeam: return BZDB.get("greenTeamPrefix");
-    case BlueTeam: return BZDB.get("blueTeamPrefix");
-    case PurpleTeam: return BZDB.get("purpleTeamPrefix");
-    case RabbitTeam: return BZDB.get("rabbitTeamPrefix");
-    case HunterTeam: return BZDB.get("hunterTeamPrefix");
-    case ObserverTeam: return BZDB.get("observerTeamPrefix");
-    default: return BZDB.get("rogueTeamPrefix");
+    case RedTeam:      { return BZDB.get("redTeamPrefix");      }
+    case GreenTeam:    { return BZDB.get("greenTeamPrefix");    }
+    case BlueTeam:     { return BZDB.get("blueTeamPrefix");     }
+    case PurpleTeam:   { return BZDB.get("purpleTeamPrefix");   }
+    case RabbitTeam:   { return BZDB.get("rabbitTeamPrefix");   }
+    case HunterTeam:   { return BZDB.get("hunterTeamPrefix");   }
+    case ObserverTeam: { return BZDB.get("observerTeamPrefix"); }
+    default:           { return BZDB.get("rogueTeamPrefix");    }
   }
 }
 
@@ -92,17 +92,17 @@ const std::string Team::getImagePrefix(TeamColor team)
 const char* Team::getName(TeamColor team) // const
 {
   switch (team) {
-    case AutomaticTeam: return "Automatic";
-    case RogueTeam: return "Rogue";
-    case RedTeam: return "Red Team";
-    case GreenTeam: return "Green Team";
-    case BlueTeam: return "Blue Team";
-    case PurpleTeam: return "Purple Team";
-    case ObserverTeam: return "Observer";
-    case RabbitTeam: return "Rabbit";
-    case HunterTeam: return "Hunter";
-    case NoTeam: return "No Team??";
-    default: return "Invalid team";
+    case AutomaticTeam: { return "Automatic";    }
+    case RogueTeam:     { return "Rogue";        }
+    case RedTeam:       { return "Red Team";     }
+    case GreenTeam:     { return "Green Team";   }
+    case BlueTeam:      { return "Blue Team";    }
+    case PurpleTeam:    { return "Purple Team";  }
+    case ObserverTeam:  { return "Observer";     }
+    case RabbitTeam:    { return "Rabbit";       }
+    case HunterTeam:    { return "Hunter";       }
+    case NoTeam:        { return "No Team??";    }
+    default:            { return "Invalid team"; }
   }
 }
 
@@ -110,15 +110,15 @@ const char* Team::getName(TeamColor team) // const
 const char* Team::getShortName(TeamColor team)
 {
   switch (team) {
-    case RogueTeam: return "rogue";
-    case RedTeam: return "red";
-    case GreenTeam: return "green";
-    case BlueTeam: return "blue";
-    case PurpleTeam: return "purple";
-    case ObserverTeam: return "observer";
-    case RabbitTeam: return "rabbit";
-    case HunterTeam: return "hunter";
-    default: return "none";
+    case RogueTeam:    { return "rogue";    }
+    case RedTeam:      { return "red";      }
+    case GreenTeam:    { return "green";    }
+    case BlueTeam:     { return "blue";     }
+    case PurpleTeam:   { return "purple";   }
+    case ObserverTeam: { return "observer"; }
+    case RabbitTeam:   { return "rabbit";   }
+    case HunterTeam:   { return "hunter";   }
+    default:           { return "none";     }
   }
 }
 

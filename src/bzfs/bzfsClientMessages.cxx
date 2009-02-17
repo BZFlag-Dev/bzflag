@@ -886,7 +886,7 @@ public:
 	worldEventManager.callEvents(bz_eAllowAutoPilotChangeEvent,&evnt);
 
 	if (evnt.allow)
-		player->setAutopilot(autopilot != 0);
+		player->setAutoPilot(autopilot != 0);
 
     return true;
   }

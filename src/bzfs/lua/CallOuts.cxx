@@ -185,6 +185,9 @@ static int SetPlayerTKs(lua_State* L);
 static int GetPlayerCustomData(lua_State* L);
 static int SetPlayerCustomData(lua_State* L);
 
+static int GetPlayerAutoPilot(lua_State* L);
+static int SetPlayerAutoPilot(lua_State* L);
+
 static int ChangePlayerTeam(lua_State* L);
 
 static int ZapPlayer(lua_State* L);
@@ -386,6 +389,9 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetPlayerCustomData);
   PUSH_LUA_CFUNC(L, SetPlayerCustomData);
 
+  PUSH_LUA_CFUNC(L, GetPlayerAutoPilot);
+  PUSH_LUA_CFUNC(L, SetPlayerAutoPilot);
+
   PUSH_LUA_CFUNC(L, ChangePlayerTeam);
 
   PUSH_LUA_CFUNC(L, ZapPlayer);
@@ -399,7 +405,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetPlayerLimboMessage);
 
   PUSH_LUA_CFUNC(L, GivePlayerFlag);
-
 
   // Flag
   PUSH_LUA_CFUNC(L, GetFlagCount);
@@ -1408,6 +1413,31 @@ static int SetPlayerCustomData(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
+static int GetPlayerAutoPilot(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    return 0;
+  }
+  lua_pushboolean(L, player->player.isAutoPilot());
+  return 1;
+}
+
+
+static int SetPlayerAutoPilot(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  luaL_checktype(L, 2, LUA_TBOOLEAN);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  player->setAutoPilot(lua_tobool(L, 2));
+  return 0;  
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
 static int ChangePlayerTeam(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
@@ -2133,8 +2163,8 @@ static int DiffTimers(lua_State* L)
   }
   const void* p1 = lua_touserdata(L, 1);
   const void* p2 = lua_touserdata(L, 2);
-  const uint32_t t1 = *((const uint32_t*)&p1);
-  const uint32_t t2 = *((const uint32_t*)&p2);
+  const uint32_t t1 = *((const uint32_t*)(const void*)&p1);
+  const uint32_t t2 = *((const uint32_t*)(const void*)&p2);
   const uint32_t milliSecs = (t1 - t2);
   const float seconds = (float)milliSecs * 0.001f;
   lua_pushnumber(L, (lua_Number)seconds);
