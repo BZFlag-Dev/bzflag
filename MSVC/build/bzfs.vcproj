@@ -1279,6 +1279,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\lua\Double.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\lua\FetchURL.cxx"
 				>
 			</File>
