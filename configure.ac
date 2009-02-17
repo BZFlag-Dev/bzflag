@@ -46,7 +46,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.17, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.18, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
@@ -545,24 +545,6 @@ if test "x$enable_threads" != "xno" ; then
     AC_MSG_RESULT([$pthread_check])
 fi
 
-# Check for the GLEW library (GL Extension Wrangler)
-if test "x$enable_glew_build" != "xyes" ; then
-    AC_MSG_CHECKING([for GLEW library])
-    tmpLIBS=$LIBS
-    GLEW_LIBS="-lGLEW"
-    LIBS=$GLEW_LIBS
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
-		   [glew_check="yes"],
-		   [glew_check="no  (missing, or older than version 1.5.1)"])
-    if test "x$glew_check" != "xyes"; then
-	GLEW_LIBS=""
-    fi
-    AC_MSG_RESULT([$glew_check])
-    AC_SUBST(GLEW_LIBS)
-    LIBS=$tmpLIBS
-fi
-
 # Check for the IL library (Image Library, aka: DevIL)
 AC_MSG_CHECKING([for IL library])
 tmpLIBS=$LIBS
@@ -1025,8 +1007,7 @@ if test x$enable_bzrobots = xno; then
 else
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
-	[BZRobots build is enabled, but OpenGL does not seem to be fully available
-... disabling BZRobots client])
+	[BZRobots build is enabled, but OpenGL does not seem to be fully available ... disabling BZRobots client])
 	AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
 	enable_bzrobots=no
 	AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
@@ -1244,6 +1225,24 @@ AC_SUBST(LIBLUA)
 
 
 # GLEW
+if test "x$enable_client" != "xno" ; then
+# Check for the GLEW library (GL Extension Wrangler)
+if test "x$enable_glew_build" != "xyes" ; then
+    AC_MSG_CHECKING([for GLEW library])
+    tmpLIBS=$LIBS
+    GLEW_LIBS="-lGLEW"
+    LIBS=$GLEW_LIBS
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
+				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
+		   [glew_check="yes"],
+		   [glew_check="no  (missing, or older than version 1.5.1)"])
+    if test "x$glew_check" != "xyes"; then
+	GLEW_LIBS=""
+    fi
+    AC_MSG_RESULT([$glew_check])
+    AC_SUBST(GLEW_LIBS)
+    LIBS=$tmpLIBS
+fi
 AC_MSG_CHECKING(whether to build the included GLEW library)
 BUILD_GLEW="no (using system)"
 if test "x$GLEW_LIBS" = "x" ; then
@@ -1251,6 +1250,10 @@ if test "x$GLEW_LIBS" = "x" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
 fi
 AC_MSG_RESULT($BUILD_GLEW)
+else # enable_client
+BUILD_GLEW="no (clients disabled)"
+AC_MSG_NOTICE([GLEW is disabled because no clients are being built])
+fi # enable_client
 AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
 
 
