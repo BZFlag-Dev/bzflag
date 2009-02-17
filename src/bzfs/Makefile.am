@@ -160,7 +160,7 @@ bzfs_SOURCES = \
 	bzfs.h
 
 LDADD = \
-	lua/libLuaBZFS.la		\
+	lua/libLuaServer.la		\
 	../obstacle/libObstacle.la	\
 	../game/libGame.la		\
 	../net/libNet.la		\
