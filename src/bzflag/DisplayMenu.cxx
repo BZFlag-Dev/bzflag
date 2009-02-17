@@ -364,9 +364,7 @@ void DisplayMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
 
   // Special Mode
-  ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.getSpecialMode());
-  // change the 'Special Mode' setting depending on observer status
-  const int specialModeIndex = 12;
+  const int specialModeIndex = i++;
   if (ROAM.isRoaming()) {
     HUDuiList* hudUI = (HUDuiList*)listHUD[specialModeIndex];
     std::vector<std::string>& hudList = hudUI->getList();
@@ -388,11 +386,45 @@ void DisplayMenu::resize(int _width, int _height)
   }
 
   if (gridOptions) {
-    // Culling Grid
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ?   1 : 0);
+    const int cullingGridIndex = i++;
+    { // cullingGrid
+      if (ROAM.isRoaming()) {
+        HUDuiList* hudUI = (HUDuiList*)listHUD[cullingGridIndex];
+        std::vector<std::string>& hudList = hudUI->getList();
+        hudList.clear();
+        hudList.push_back(std::string("Off"));
+        hudList.push_back(std::string("On"));
+        hudUI->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
+        hudUI->update();
+      } else {
+        HUDuiList* hudUI = (HUDuiList*)listHUD[cullingGridIndex];
+        std::vector<std::string>& hudList = hudUI->getList();
+        hudList.clear();
+        hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
+        hudUI->setIndex(0);
+        hudUI->update();
+      }
+    }
 
-    // Collision Grid
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
+    const int collisionGridIndex = i++;
+    { // collisionGrid
+      if (ROAM.isRoaming()) {
+        HUDuiList* hudUI = (HUDuiList*)listHUD[collisionGridIndex];
+        std::vector<std::string>& hudList = hudUI->getList();
+        hudList.clear();
+        hudList.push_back(std::string("Off"));
+        hudList.push_back(std::string("On"));
+        hudUI->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
+        hudUI->update();
+      } else {
+        HUDuiList* hudUI = (HUDuiList*)listHUD[collisionGridIndex];
+        std::vector<std::string>& hudList = hudUI->getList();
+        hudList.clear();
+        hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
+        hudUI->setIndex(0);
+        hudUI->update();
+      }
+    }
   }
 }
 

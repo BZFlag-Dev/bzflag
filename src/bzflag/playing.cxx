@@ -7435,9 +7435,9 @@ void doFPSLimit(void)
   if (elapsed > 0.0f) {
     const float period = (1.0f / fpsLimit);
     const float remaining = (period - elapsed);
-
-    if (remaining > 0.0f)
+    if (remaining > 0.0f) {
       TimeKeeper::sleep(remaining);
+    }
   }
 
   lastTime = TimeKeeper::getCurrent();

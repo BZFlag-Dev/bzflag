@@ -343,7 +343,7 @@ Roaming::RoamingView Roaming::parseView(const std::string& str) const
   else if (strcasecmp(s, "fps")      == 0) { return roamViewFP;       }
   else if (strcasecmp(s, "flag")     == 0) { return roamViewFlag;     }
   else if (strcasecmp(s, "count")    == 0) { return roamViewCount;    }
-  else                                       { return roamViewDisabled; }
+  else                                     { return roamViewDisabled; }
 }
 
 

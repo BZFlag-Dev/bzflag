@@ -899,14 +899,15 @@ void SceneRenderer::renderScene()
       glEnable(GL_POLYGON_OFFSET_FILL);
     }
 
-    if (scene && BZDBCache::showCullingGrid) {
-      scene->drawCuller();
+    if (ROAM.isRoaming()) {
+      if (scene && BZDBCache::showCullingGrid) {
+        scene->drawCuller();
+      }
+      const World* world = World::getWorld();
+      if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
+        world->drawCollisionGrid();
+      }
     }
-    const World* world = World::getWorld();
-    if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
-      world->drawCollisionGrid();
-    }
-
 
     ///////////////////////
     // THE BIG RENDERING //

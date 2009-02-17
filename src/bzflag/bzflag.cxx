@@ -920,8 +920,9 @@ int initClient ( int argc, char **argv )
     BZDB.set("directory", directory);
   }
 
-  if (debugLevel >= 4)
+  if (debugLevel >= 4) {
     BZDB.setDebug(true);
+  }
 
   // set time from BZDB
   if (BZDB.isSet("fixedTime")) {
