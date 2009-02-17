@@ -365,41 +365,39 @@ void DisplayMenu::resize(int _width, int _height)
 
   // Special Mode
   const int specialModeIndex = i++;
-  if (ROAM.isRoaming()) {
+  {
     HUDuiList* hudUI = (HUDuiList*)listHUD[specialModeIndex];
     std::vector<std::string>& hudList = hudUI->getList();
     hudList.clear();
-    hudList.push_back(std::string("None"));
-    hudList.push_back(std::string("WireFrame"));
-    hudList.push_back(std::string("HiddenLine"));
-    hudList.push_back(std::string("DepthComplexity"));
-    hudUI->setIndex(RENDERER.getSpecialMode());
-    hudUI->update();
-  }
-  else {
-    HUDuiList* hudUI = (HUDuiList*)listHUD[specialModeIndex];
-    std::vector<std::string>& hudList = hudUI->getList();
-    hudList.clear();
-    hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
-    hudUI->setIndex(0);
-    hudUI->update();
+    if (ROAM.isRoaming()) {
+      hudList.push_back(std::string("None"));
+      hudList.push_back(std::string("WireFrame"));
+      hudList.push_back(std::string("HiddenLine"));
+      hudList.push_back(std::string("DepthComplexity"));
+      hudUI->setIndex(RENDERER.getSpecialMode());
+      hudUI->update();
+    }
+    else {
+      hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
+      hudUI->setIndex(0);
+      hudUI->update();
+    }
   }
 
+  // Culling Grid and Collision Grid
   if (gridOptions) {
     const int cullingGridIndex = i++;
-    { // cullingGrid
+    {
+      HUDuiList* hudUI = (HUDuiList*)listHUD[cullingGridIndex];
+      std::vector<std::string>& hudList = hudUI->getList();
+      hudList.clear();
       if (ROAM.isRoaming()) {
-        HUDuiList* hudUI = (HUDuiList*)listHUD[cullingGridIndex];
-        std::vector<std::string>& hudList = hudUI->getList();
-        hudList.clear();
         hudList.push_back(std::string("Off"));
         hudList.push_back(std::string("On"));
         hudUI->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
         hudUI->update();
-      } else {
-        HUDuiList* hudUI = (HUDuiList*)listHUD[cullingGridIndex];
-        std::vector<std::string>& hudList = hudUI->getList();
-        hudList.clear();
+      }
+      else {
         hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
         hudUI->setIndex(0);
         hudUI->update();
@@ -407,19 +405,17 @@ void DisplayMenu::resize(int _width, int _height)
     }
 
     const int collisionGridIndex = i++;
-    { // collisionGrid
+    {
+      HUDuiList* hudUI = (HUDuiList*)listHUD[collisionGridIndex];
+      std::vector<std::string>& hudList = hudUI->getList();
+      hudList.clear();
       if (ROAM.isRoaming()) {
-        HUDuiList* hudUI = (HUDuiList*)listHUD[collisionGridIndex];
-        std::vector<std::string>& hudList = hudUI->getList();
-        hudList.clear();
         hudList.push_back(std::string("Off"));
         hudList.push_back(std::string("On"));
         hudUI->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
         hudUI->update();
-      } else {
-        HUDuiList* hudUI = (HUDuiList*)listHUD[collisionGridIndex];
-        std::vector<std::string>& hudList = hudUI->getList();
-        hudList.clear();
+      }
+      else {
         hudList.push_back(std::string(ANSI_STR_FG_BLACK "Only for Observers"));
         hudUI->setIndex(0);
         hudUI->update();
