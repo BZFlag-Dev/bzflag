@@ -6,7 +6,7 @@
 
 #define ORDER_LUA_USER   10
 
-#define ORDER_LUA_BZ_ORG 20
+#define ORDER_LUA_BZORG  20
 
 #define ORDER_LUA_WORLD  30
 

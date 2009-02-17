@@ -130,7 +130,7 @@ bool LuaBzOrg::IsActive()
 /******************************************************************************/
 
 LuaBzOrg::LuaBzOrg(const char* code, int length)
-: LuaHandle("LuaBzOrg", ORDER_LUA_BZ_ORG, true, true)
+: LuaHandle("LuaBzOrg", ORDER_LUA_BZORG, true, true)
 {
 	luaBzOrg = this;
 

@@ -1,5 +1,5 @@
-#ifndef LUA_BZ_ORG__H
-#define LUA_BZ_ORG__H
+#ifndef LUA_BZORG_H
+#define LUA_BZORG_H
 
 #include "LuaHandle.h"
 
@@ -26,4 +26,4 @@ class LuaBzOrg : public LuaHandle
 extern LuaBzOrg* luaBzOrg;
 
 
-#endif // LUA_BZ_ORG__H
+#endif // LUA_BZORG_H

@@ -330,7 +330,7 @@ void DisplayMenu::resize(int _width, int _height)
   // Lighting
   int lighting = 0;
   if (BZDBCache::lighting) {
-    lighting = BZDB.isTrue("tesselation") ? 2 : 1;
+    lighting = BZDBCache::tesselation ? 2 : 1;
   }
   ((HUDuiList*)listHUD[i++])->setIndex(lighting);
 
