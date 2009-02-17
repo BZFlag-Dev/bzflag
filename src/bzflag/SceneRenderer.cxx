@@ -807,6 +807,7 @@ void SceneRenderer::renderScene()
   glScissor(window->getOriginX(), window->getOriginY() + windowYOffset,
             window->getWidth(), window->getViewHeight());
 
+  const bool origStencilShadows = BZDBCache::stencilShadows;
   switch (specialMode) {
     case DepthComplexity: {
       if (BZDBCache::stencilShadows) {
@@ -957,6 +958,7 @@ void SceneRenderer::renderScene()
   // do depth complexity
   if (specialMode == DepthComplexity) {
     renderDepthComplexity();
+    BZDB.setBool("stencilShadows", origStencilShadows);
   }
 
   return;

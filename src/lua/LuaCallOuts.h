@@ -80,6 +80,8 @@ class LuaCallOuts {
 		static int GetCameraMatrix(lua_State* L);
 		static int GetFrustumPlane(lua_State* L);
 
+		static int NotifyStyleChange(lua_State* L);
+
 		static int GetSun(lua_State* L);
 
 		static int GetTeamList(lua_State* L);

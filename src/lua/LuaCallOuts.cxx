@@ -128,6 +128,8 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetCameraMatrix);
 	PUSH_LUA_CFUNC(L, GetFrustumPlane);
 
+	PUSH_LUA_CFUNC(L, NotifyStyleChange);
+
 	PUSH_LUA_CFUNC(L, GetSun);
 
 	PUSH_LUA_CFUNC(L, GetTime);
@@ -1252,6 +1254,14 @@ int LuaCallOuts::GetFrustumPlane(lua_State* L)
 
 /******************************************************************************/
 
+int LuaCallOuts::NotifyStyleChange(lua_State* /*L*/)
+{
+	RENDERER.notifyStyleChange();
+	return 0;
+}
+
+
+/******************************************************************************/
 int LuaCallOuts::GetSun(lua_State* L)
 {
 	const string param = luaL_checkstring(L, 1);
