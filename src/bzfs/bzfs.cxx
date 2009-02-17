@@ -54,7 +54,7 @@
 #include "bzfsPlayerStateVerify.h"
 #include "AutoAllowTimer.h"
 #include "ServerIntangibilityManager.h"
-#include "lua/LuaBZFS.h"
+#include "lua/LuaServer.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -5085,7 +5085,7 @@ static void cleanupServer ( void )
   unloadPlugins();
 #endif
 
-  LuaBZFS::kill();
+  LuaServer::kill();
 
   // print uptime
   logDebugMessage(1,"Shutting down server: uptime %s\n", TimeKeeper::printTime(TimeKeeper::getCurrent() - TimeKeeper::getStartTime()).c_str());

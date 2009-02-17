@@ -214,30 +214,31 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
   bool    goodRabbitSelected = false;
 
   for (i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) && !playerData->closed
-      && playerData->player.canBeRabbit(true)) {
-	bool  goodRabbit = i != oldRabbit && playerData->player.isAlive();
-	float ratio      = playerData->score.ranking();
-	bool  select     = false;
-	if (goodRabbitSelected) {
-	  if (goodRabbit && (ratio > topRatio)) {
-	    select = true;
-	  }
-	} else {
-	  if (goodRabbit) {
-	    select	     = true;
-	    goodRabbitSelected = true;
-	  } else {
-	    if (ratio > topRatio)
-	      select = true;
-	  }
-	}
-	if (select) {
-	  topRatio = ratio;
-	  newIndex = i;
-	}
-    }
-    return newIndex;
+    if ((playerData = playerList[i]) && !playerData->closed &&
+        playerData->player.canBeRabbit(true)) {
+      bool  goodRabbit = (i != oldRabbit) && playerData->player.isAlive();
+      float ratio      = playerData->score.ranking();
+      bool  select     = false;
+      if (goodRabbitSelected) {
+        if (goodRabbit && (ratio > topRatio)) {
+          select = true;
+        }
+      } else {
+        if (goodRabbit) {
+          select	     = true;
+          goodRabbitSelected = true;
+        } else {
+          if (ratio > topRatio) {
+            select = true;
+          }
+        }
+      }
+      if (select) {
+        topRatio = ratio;
+        newIndex = i;
+      }
+  }
+  return newIndex;
 }
 
 void GameKeeper::Player::updateNextGameTime()

@@ -7,7 +7,7 @@
 struct lua_State;
 
 
-class LuaBZFS {
+class LuaServer {
   public:
     static bool init(const std::string& scriptFile);
     static bool kill();

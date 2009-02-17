@@ -16,7 +16,7 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
-#include "LuaBZFS.h"
+#include "LuaServer.h"
 
 
 static map<string, class SlashCmdHandler*> slashHandlers;
@@ -52,7 +52,7 @@ SlashCmdHandler::SlashCmdHandler(const string& c, const string& h)
 {
   slashHandlers[cmd] = this;
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return;
   }
@@ -67,7 +67,7 @@ SlashCmdHandler::~SlashCmdHandler()
 {
   slashHandlers.erase(cmd);
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return;
   }
@@ -78,7 +78,7 @@ SlashCmdHandler::~SlashCmdHandler()
 bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
                              bz_ApiString message, bz_APIStringList* /*params*/)
 {
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return false;
   }

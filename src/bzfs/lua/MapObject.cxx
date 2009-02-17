@@ -16,7 +16,7 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
-#include "LuaBZFS.h"
+#include "LuaServer.h"
 
 
 static map<string, class MapHandler*> mapHandlers;
@@ -47,7 +47,7 @@ MapHandler::MapHandler(const string& name)
 {
   mapHandlers[objName] = this;
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return;
   }
@@ -62,7 +62,7 @@ MapHandler::~MapHandler()
 {
   mapHandlers.erase(objName);
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return;
   }
@@ -72,7 +72,7 @@ MapHandler::~MapHandler()
 
 bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 {
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return false;
   }

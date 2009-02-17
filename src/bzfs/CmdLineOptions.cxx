@@ -48,7 +48,7 @@
 #include "Permissions.h"
 #include "EntryZones.h"
 #include "SpawnPolicyFactory.h"
-#include "lua/LuaBZFS.h"
+#include "lua/LuaServer.h"
 
 
 const char *usageString =
@@ -90,7 +90,7 @@ const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
-  "[-luabzfs <filepath>] "
+  "[-luaserver <filepath>] "
   "[-luaworld <dirpath>] "
   "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
@@ -194,7 +194,7 @@ const char *extraUsageString =
   "\t-jitterdrop: drop player after this many jitter warnings\n"
   "\t-jitterwarn: jitter warning threshhold time [ms]\n"
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
-  "\t-luabzfs: path to the LuaBZFS entry source file\n"
+  "\t-luaserver: path to the LuaServer entry source file\n"
   "\t-luaworld: path to the LuaWorld sources directory\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
@@ -621,14 +621,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-cacheout") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheOut = argv[i];
-    } else if (strcmp(argv[i], "-luabzfs") == 0) {
+    } else if (strcmp(argv[i], "-luaserver") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      if (LuaBZFS::isActive()) {
-        std::cerr << "WARNING: ignoring extra '-luabzfs "
+      if (LuaServer::isActive()) {
+        std::cerr << "WARNING: ignoring extra '-luaserver "
                   << argv[i] << "' argument" << std::endl;
       } else {
-        options.luaBZFS = argv[i];
-        LuaBZFS::init(options.luaBZFS);
+        options.luaServer = argv[i];
+        LuaServer::init(options.luaServer);
       }
     } else if (strcmp(argv[i], "-luaworld") == 0) {
       checkArgc(1, i, argc, argv[i]);

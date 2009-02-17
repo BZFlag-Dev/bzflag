@@ -326,7 +326,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::lagwarn: return "lagwarn";
     case PlayerAccessInfo::listPlugins: return "listPlugins";
     case PlayerAccessInfo::listPerms: return "listPerms";
-    case PlayerAccessInfo::luaBZFS: return "luaBZFS";
+    case PlayerAccessInfo::luaServer: return "luaServer";
     case PlayerAccessInfo::masterBan: return "masterban";
     case PlayerAccessInfo::modCount: return "modCount";
     case PlayerAccessInfo::mute: return "mute";
@@ -381,7 +381,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "DATE") return PlayerAccessInfo::date;
   if (name == "ENDGAME") return PlayerAccessInfo::endGame;
   if (name == "FLAGHISTORY") return PlayerAccessInfo::flagHistory;
-  if (name == "LUABZFS") return PlayerAccessInfo::luaBZFS;
+  if (name == "LUASERVER") return PlayerAccessInfo::luaServer;
   if (name == "FLAGMASTER") return PlayerAccessInfo::flagMaster;
   if (name == "FLAGMOD") return PlayerAccessInfo::flagMod;
   if (name == "HIDEADMIN") return PlayerAccessInfo::hideAdmin;

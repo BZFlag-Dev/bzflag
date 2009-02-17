@@ -60,7 +60,7 @@ void CommandCompleter::reset()
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");
-  registerWord("/luabzfs ");
+  registerWord("/luaserver ");
   registerWord("/luauser ");
   registerWord("/luabzorg ");
   registerWord("/luaworld ");

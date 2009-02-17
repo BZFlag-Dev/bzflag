@@ -2,7 +2,7 @@
 #include "common.h"
 
 // interface header
-#include "LuaBZFS.h"
+#include "LuaServer.h"
 
 // system headers
 #include <stdio.h>
@@ -70,7 +70,7 @@ static bool fileExists(const string& file)
 /******************************************************************************/
 /******************************************************************************/
 
-bool LuaBZFS::init(const string& cmdLine)
+bool LuaServer::init(const string& cmdLine)
 {
   if (cmdLine.empty()) {
     return false;
@@ -78,10 +78,10 @@ bool LuaBZFS::init(const string& cmdLine)
 
   bool dieHard = false;
 
-  logDebugMessage(1, "loading luaBZFS\n");
+  logDebugMessage(1, "loading LuaServer\n");
 
   if (L != NULL) {
-    logDebugMessage(1, "luaBZFS is already loaded\n");
+    logDebugMessage(1, "LuaServer is already loaded\n");
     return false;
   }
 
@@ -105,7 +105,7 @@ bool LuaBZFS::init(const string& cmdLine)
     scriptFile = string(bz_pluginBinPath()) + "/" + scriptFile;
   }
   if (!fileExists(scriptFile)) {
-    logDebugMessage(1, "luaBZFS: could not find the script file\n");
+    logDebugMessage(1, "LuaServer: could not find the script file\n");
     if (dieHard) {
       exit(2);
     }
@@ -128,7 +128,7 @@ bool LuaBZFS::init(const string& cmdLine)
 /******************************************************************************/
 /******************************************************************************/
 
-bool LuaBZFS::kill()
+bool LuaServer::kill()
 {
   if (L == NULL) {
     return false;
@@ -152,7 +152,7 @@ bool LuaBZFS::kill()
 /******************************************************************************/
 /******************************************************************************/
 
-bool LuaBZFS::isActive()
+bool LuaServer::isActive()
 {
   return (L != NULL);
 }
@@ -161,7 +161,7 @@ bool LuaBZFS::isActive()
 /******************************************************************************/
 /******************************************************************************/
 
-lua_State* LuaBZFS::GetL()
+lua_State* LuaServer::GetL()
 {
   return L;
 }
@@ -170,7 +170,7 @@ lua_State* LuaBZFS::GetL()
 /******************************************************************************/
 /******************************************************************************/
 
-void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
+void LuaServer::recvCommand(const string& cmdLine, int playerIndex)
 {
   vector<string> args = TextUtils::tokenize(cmdLine, " \t", 3);
 
@@ -179,44 +179,44 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
     return;
   }
 
-  if (args[0] != "/luabzfs") {
+  if (args[0] != "/luaserver") {
     return; // something is amiss, bail
   }
 
   if (args.size() < 2) {
     sendMessage(ServerPlayer, playerIndex,
-                "/luabzfs < status | disable | reload >");
+                "/luaserver < status | disable | reload >");
     return;
   }
 
   if (args[1] == "status") {
     if (isActive()) {
-      sendMessage(ServerPlayer, playerIndex, "LuaBZFS is enabled");
+      sendMessage(ServerPlayer, playerIndex, "LuaServer is enabled");
     } else {
-      sendMessage(ServerPlayer, playerIndex, "LuaBZFS is disabled");
+      sendMessage(ServerPlayer, playerIndex, "LuaServer is disabled");
     }
     return;
   }
 
   if (args[1] == "disable") {
-    if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaBZFS)) {
+    if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaServer)) {
       sendMessage(ServerPlayer, playerIndex,
-                  "You do not have permission to control LuaBZFS");
+                  "You do not have permission to control LuaServer");
       return;
     }
     if (isActive()) {
       kill();
-      sendMessage(ServerPlayer, playerIndex, "LuaBZFS has been disabled");
+      sendMessage(ServerPlayer, playerIndex, "LuaServer has been disabled");
     } else {
-      sendMessage(ServerPlayer, playerIndex, "LuaBZFS is not loaded");
+      sendMessage(ServerPlayer, playerIndex, "LuaServer is not loaded");
     }
     return;
   }
 
   if (args[1] == "reload") {
-    if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaBZFS)) {
+    if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaServer)) {
       sendMessage(ServerPlayer, playerIndex,
-                  "You do not have permission to control LuaBZFS");
+                  "You do not have permission to control LuaServer");
       return;
     }
     kill();
@@ -224,12 +224,12 @@ void LuaBZFS::recvCommand(const string& cmdLine, int playerIndex)
     if (args.size() > 2) {
       success = init(args[2]);
     } else {
-      success = init(clOptions->luaBZFS);
+      success = init(clOptions->luaServer);
     }
     if (success) {
-      sendMessage(ServerPlayer, playerIndex, "LuaBZFS reload succeeded");
+      sendMessage(ServerPlayer, playerIndex, "LuaServer reload succeeded");
     } else {
-      sendMessage(ServerPlayer, playerIndex, "LuaBZFS reload failed");
+      sendMessage(ServerPlayer, playerIndex, "LuaServer reload failed");
     }
     return;
   }

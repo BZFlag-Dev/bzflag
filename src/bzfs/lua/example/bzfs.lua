@@ -274,9 +274,9 @@ bz.DB.SetFloat('_tankSpeed', '50.0')
 
 
 -- this can override the default, shame
---bz.AttachSlashCommand('luabzfs', 'bzfs lua plugin command',
+--bz.AttachSlashCommand('luaserver', 'bzfs lua plugin command',
 --function(playerID, cmd, msg)
---  print('luabzfs command received: '..playerID..' '..cmd..' '..msg)
+--  print('luaserver command received: '..playerID..' '..cmd..' '..msg)
 --end)
 
 

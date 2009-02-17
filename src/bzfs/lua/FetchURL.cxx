@@ -19,7 +19,7 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
-#include "LuaBZFS.h"
+#include "LuaServer.h"
 
 
 static const char* metaName = "FetchURL";
@@ -98,7 +98,7 @@ FetchHandler::~FetchHandler()
     fetchID = 0;
   }
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L != NULL) {
     if (funcRef != LUA_NOREF) {
       luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
@@ -152,7 +152,7 @@ bool FetchHandler::Handle(const char* /*URL*/, void* data, unsigned int size,
 {
   fetchID = 0;
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return false;
   }
@@ -209,7 +209,7 @@ bool FetchHandler::Cancel()
     fetchID = 0;
   }
 
-  ClearRefs(LuaBZFS::GetL()); // clear the references
+  ClearRefs(LuaServer::GetL()); // clear the references
 
   return retval;
 }

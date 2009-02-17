@@ -17,7 +17,7 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
-#include "LuaBZFS.h"
+#include "LuaServer.h"
 
 
 static int AttachRawLink(lua_State* L);
@@ -85,7 +85,7 @@ Link::~Link()
   bz_removeNonPlayerConnectionHandler(id, this);
   linkMap.erase(id);
 
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L != NULL) {
     luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
   }
@@ -94,7 +94,7 @@ Link::~Link()
 
 void Link::pending(int /*id*/, void* data, unsigned int size)
 {
-  lua_State* L = LuaBZFS::GetL();
+  lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return;
   }

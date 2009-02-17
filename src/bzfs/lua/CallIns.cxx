@@ -155,7 +155,7 @@ map<string, CallIn*> CallIn::nameMap;
 
 static int GetName(lua_State* L)
 {
-  lua_pushliteral(L, "LuaBZFS");
+  lua_pushliteral(L, "LuaServer");
   return 1;
 }
 
@@ -1664,10 +1664,10 @@ bool CallIns::Shutdown()
 
 bool CallIns::RecvCommand(const string& cmdLine)
 {
-  if (cmdLine.substr(0, 9) != "/luabzfs ") {
+  if (cmdLine.substr(0, 11) != "/luaserver ") {
     return false;
   }
-  const string cmd = cmdLine.substr(9);
+  const string cmd = cmdLine.substr(11);
   return ciRecvCommand.execute((bz_EventData*)&cmd);
 }
 
