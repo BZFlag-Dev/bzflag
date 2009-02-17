@@ -8080,9 +8080,14 @@ void startPlaying()
     logDebugMessage(1, "OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
 
     // Depth Buffer bitplanes
-    GLint zDepth;
-    glGetIntegerv(GL_DEPTH_BITS, &zDepth);
-    logDebugMessage(1, "Depth Buffer:     %i bitplanes\n", zDepth);
+    GLint depthBits;
+    glGetIntegerv(GL_DEPTH_BITS, &depthBits);
+    logDebugMessage(1, "Depth Buffer:     %i bitplanes\n", depthBits);
+
+    // Stencil Buffer bitplanes
+    GLint stencilBits;
+    glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
+    logDebugMessage(1, "Stencil Buffer:   %i bitplanes\n", stencilBits);
   }
 
   // windows version can be very helpful in debug logs
