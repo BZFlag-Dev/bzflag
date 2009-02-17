@@ -22,6 +22,7 @@
 
 /* common implementation headers */
 #include "StateDatabase.h"
+#include "bzfio.h"
 
 /* local implementation headers */
 #include "SDLVisual.h"
@@ -442,7 +443,7 @@ bool SDLDisplay::getFullscreen() const
 
 void SDLDisplay::setWindowSize(int _width, int _height)
 {
-  std::cout << "setting size to " << _width << "x" << _height << std::endl;
+  logDebugMessage(1, "setting size to %ix%i\n", _width, _height);
   base_width  = _width;
   base_height = _height;
 }
@@ -471,7 +472,8 @@ void SDLDisplay::getWindowSize(int& width, int& height)
     height = base_height;
   }
 
-  std::cout << "returning window size " << width << "x" << height << " with fullscreen set to " << fullScreen << std::endl;
+  logDebugMessage(1, "returning window size %ix%i with fullscreen set to %c\n", 
+                  width, height, fullScreen ? '1' : '0');
 
   /* sanity checks */
   if (width <= 0) {
