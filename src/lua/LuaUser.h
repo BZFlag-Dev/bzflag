@@ -10,9 +10,6 @@ class LuaUser : public LuaHandle
 		static void LoadHandler();
 		static void FreeHandler();
 
-	protected:
-		void ForbidCallIns();
-
 	private:
 		LuaUser();
 		~LuaUser();

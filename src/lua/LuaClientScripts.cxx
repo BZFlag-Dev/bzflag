@@ -166,14 +166,12 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
 	const string cmd = c;
 	if (cmd == "reload") {
 		LuaUser::FreeHandler();
-		const string forbid = TextUtils::tolower(BZDB.get("_forbidLuaUser"));
-		if ((forbid == "1") || (forbid == "true")) {
+		if (BZDB.isTrue("_forbidLuaUser")) {
 			addMessage(NULL, "This server forbids LuaUser scripts");
 			return false;
 		} else {
 			LuaUser::LoadHandler();
 		}
-		LuaUser::LoadHandler();
 	}
 	else if (cmd == "disable") {
 		const bool active = (luaUser != NULL);
@@ -216,14 +214,12 @@ bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine)
 	const string cmd = c;
 	if (cmd == "reload") {
 		LuaBzOrg::FreeHandler();
-		const string forbid = TextUtils::tolower(BZDB.get("_forbidLuaBzOrg"));
-		if ((forbid == "1") || (forbid == "true")) {
+		if (BZDB.isTrue("_forbidLuaBzOrg")) {
 			addMessage(NULL, "This server forbids LuaBzOrg scripts");
 			return false;
 		} else {
 			LuaBzOrg::LoadHandler();
 		}
-		LuaBzOrg::LoadHandler();
 	}
 	else if (cmd == "disable") {
 		const bool active = LuaBzOrg::IsActive();
@@ -312,13 +308,11 @@ void LuaClientScripts::LuaUserUpdateForbidden()
 	if (luaUser == NULL) {
 		return;
 	}
-	const string forbid = TextUtils::tolower(BZDB.get("_forbidLuaUser"));
-	if ((forbid == "1") || (forbid == "true")) {
+	if (BZDB.isTrue("_forbidLuaUser")) {
 		LuaUser::FreeHandler();
 		addMessage(NULL, "This server forbids LuaUser scripts");
 		return;
 	}
-	// FIXME -- add/remove permitted/allowed call-ins  
 }
 
 
@@ -327,13 +321,11 @@ void LuaClientScripts::LuaBzOrgUpdateForbidden()
 	if (!LuaBzOrg::IsActive()) {
 		return;
 	}
-	const string forbid = TextUtils::tolower(BZDB.get("_forbidLuaBzOrg"));
-	if ((forbid == "1") || (forbid == "true")) {
+	if (BZDB.isTrue("_forbidLuaBzOrg")) {
 		LuaBzOrg::FreeHandler();
 		addMessage(NULL, "This server forbids LuaBzOrg scripts");
 		return;
 	}
-	// FIXME -- add/remove permitted/allowed call-ins  
 }
 
 

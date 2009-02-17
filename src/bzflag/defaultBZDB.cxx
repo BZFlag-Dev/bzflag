@@ -110,7 +110,9 @@ DefaultDBItem	defaultDBItems[] = {
   { "processorAffinity",	"0",			true,  DefPerm, Callbacks::setProcessorAffinity },
   { "pauseOnMinimize",		"1",			true,  DefPerm, NULL },
   { "autoJoin",			"1",			true,  DefPerm, NULL },
+  { "luaUser",			"1",			true,  DefPerm, NULL },
   { "luaBzOrg",			"1",			true,  DefPerm, NULL },
+  { "luaWorld",			"1",			true,  DefPerm, NULL },
 
   //ping
   { "pingLow",		        "100",			true,  DefPerm, NULL },

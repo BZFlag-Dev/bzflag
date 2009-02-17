@@ -7,9 +7,7 @@
 // system headers
 #include <cctype>
 #include <string>
-#include <vector>
 #include <set>
-using std::vector;
 using std::string;
 using std::set;
 
@@ -17,9 +15,8 @@ using std::set;
 #include "BzVFS.h"
 #include "EventHandler.h"
 #include "StateDatabase.h"
-#include "cURLManager.h"
-#include "TextUtils.h"
 #include "bzfio.h"
+#include "cURLManager.h"
 
 // bzflag headers
 #include "../bzflag/Downloads.h"
@@ -28,30 +25,6 @@ using std::set;
 #include "LuaClientOrder.h"
 #include "LuaInclude.h"
 #include "LuaUtils.h"
-
-#include "LuaCallInCheck.h"
-#include "LuaCallInDB.h"
-#include "LuaCallOuts.h"
-#include "LuaUtils.h"
-#include "LuaBitOps.h"
-#include "LuaDouble.h"
-#include "LuaOpenGL.h"
-#include "LuaConstGL.h"
-#include "LuaConstGame.h"
-#include "LuaKeySyms.h"
-#include "LuaSpatial.h"
-#include "LuaObstacle.h"
-#include "LuaScream.h"
-#include "LuaURL.h"
-#include "LuaVFS.h"
-#include "LuaBZDB.h"
-#include "LuaPack.h"
-#include "LuaExtras.h"
-#include "LuaVector.h"
-#include "LuaBzMaterial.h"
-#include "LuaDynCol.h"
-#include "LuaTexMat.h"
-#include "LuaPhyDrv.h"
 
 
 LuaBzOrg* luaBzOrg = NULL;
@@ -176,29 +149,6 @@ LuaBzOrg::~LuaBzOrg()
 		KillLua();
 	}
 	luaBzOrg = NULL;
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-void LuaBzOrg::ForbidCallIns()
-{
-	const string forbidden = BZDB.get("_forbidLuaBzOrg");
-	const vector<string> callIns = TextUtils::tokenize(forbidden, ", ");
-	for (size_t i = 0; i < callIns.size(); i++) {
-		const string& ciName = callIns[i];
-		const int ciCode = luaCallInDB.GetCode(ciName);
-		if (validCallIns.find(ciCode) != validCallIns.end()) {
-			validCallIns.erase(ciCode);
-			string realName = ciName;
-			if (ciName == "GLReload") {
-				realName = "GLContextInit";
-			}
-			eventHandler.RemoveEvent(this, realName);
-			logDebugMessage(0, "LuaBzOrg: %s is forbidden\n", ciName.c_str());
-		}
-	}
 }
 
 

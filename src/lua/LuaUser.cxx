@@ -7,9 +7,7 @@
 // system headers
 #include <cctype>
 #include <string>
-#include <vector>
 #include <set>
-using std::vector;
 using std::string;
 using std::set;
 
@@ -17,8 +15,6 @@ using std::set;
 #include "BzVFS.h"
 #include "EventHandler.h"
 #include "StateDatabase.h"
-#include "TextUtils.h"
-#include "bzfio.h"
 
 // bzflag headers
 #include "../bzflag/Downloads.h"
@@ -27,30 +23,6 @@ using std::set;
 #include "LuaClientOrder.h"
 #include "LuaInclude.h"
 #include "LuaUtils.h"
-
-#include "LuaCallInCheck.h"
-#include "LuaCallInDB.h"
-#include "LuaCallOuts.h"
-#include "LuaUtils.h"
-#include "LuaBitOps.h"
-#include "LuaDouble.h"
-#include "LuaOpenGL.h"
-#include "LuaConstGL.h"
-#include "LuaConstGame.h"
-#include "LuaKeySyms.h"
-#include "LuaSpatial.h"
-#include "LuaObstacle.h"
-#include "LuaScream.h"
-#include "LuaURL.h"
-#include "LuaVFS.h"
-#include "LuaBZDB.h"
-#include "LuaPack.h"
-#include "LuaExtras.h"
-#include "LuaVector.h"
-#include "LuaBzMaterial.h"
-#include "LuaDynCol.h"
-#include "LuaTexMat.h"
-#include "LuaPhyDrv.h"
 
 
 LuaUser* luaUser = NULL;
@@ -64,6 +36,10 @@ static const char* sourceFile = "bzUser.lua";
 void LuaUser::LoadHandler()
 {
 	if (luaUser) {
+		return;
+	}
+
+	if (!BZDB.isTrue("luaUser")) {
 		return;
 	}
 
@@ -138,29 +114,6 @@ LuaUser::~LuaUser()
 		KillLua();
 	}
 	luaUser = NULL;
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-void LuaUser::ForbidCallIns()
-{
-	const string forbidden = BZDB.get("_forbidLuaUser");
-	const vector<string> callIns = TextUtils::tokenize(forbidden, ", ");
-	for (size_t i = 0; i < callIns.size(); i++) {
-		const string& ciName = callIns[i];
-		const int ciCode = luaCallInDB.GetCode(ciName);
-		if (validCallIns.find(ciCode) != validCallIns.end()) {
-			validCallIns.erase(ciCode);
-			string realName = ciName;
-			if (ciName == "GLReload") {
-				realName = "GLContextInit";
-			}
-			eventHandler.RemoveEvent(this, realName);
-			logDebugMessage(0, "LuaUser: %s is forbidden\n", ciName.c_str());
-		}
-	}
 }
 
 

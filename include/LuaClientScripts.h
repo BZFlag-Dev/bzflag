@@ -18,8 +18,8 @@
 #include <string>
 
 
-namespace LuaClientScripts {
-
+namespace LuaClientScripts
+{
   void Init();
   void Free();
 
@@ -28,14 +28,12 @@ namespace LuaClientScripts {
   void LuaUserUpdate();
   bool LuaUserIsActive();
   bool LuaUserCommand(const std::string& cmd);
-  void LuaUserUpdateForbidden(); // special
 
   void LuaBzOrgFreeHandler();
   void LuaBzOrgLoadHandler();
   void LuaBzOrgUpdate();
   bool LuaBzOrgIsActive();
   bool LuaBzOrgCommand(const std::string& cmd);
-  void LuaBzOrgUpdateForbidden(); // special
 
   void LuaWorldFreeHandler();
   void LuaWorldLoadHandler();
@@ -43,9 +41,11 @@ namespace LuaClientScripts {
   bool LuaWorldIsActive();
   bool LuaWorldCommand(const std::string& cmd);
 
+  void LuaUserUpdateForbidden();  // special
+  void LuaBzOrgUpdateForbidden(); // special
+
   bool GetDevMode();
   void SetDevMode(bool value);
-
 }
 
 

@@ -1664,10 +1664,12 @@ bool CallIns::Shutdown()
 
 bool CallIns::RecvCommand(const string& cmdLine)
 {
-  if (cmdLine.substr(0, 11) != "/luaserver ") {
+  const string prefix = "/luaserver ";
+  if ((cmdLine.size() < prefix.size()) ||
+      (cmdLine.substr(0, prefix.size()) != prefix)) {
     return false;
   }
-  const string cmd = cmdLine.substr(11);
+  const string cmd = cmdLine.substr(prefix.size());
   return ciRecvCommand.execute((bz_EventData*)&cmd);
 }
 

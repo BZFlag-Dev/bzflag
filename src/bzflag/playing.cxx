@@ -5621,10 +5621,14 @@ void leaveGame()
   // purge any custom flags we may have accumulated
   Flags::clearCustomFlags();
 
-  // reload LuaUser in case it was forbidden
-  if (!CommandsStandard::isQuit() &&
-      !LuaClientScripts::LuaUserIsActive()) {
-    LuaClientScripts::LuaUserLoadHandler();
+  // reload LuaUser and LuaBzOrg in case they were forbidden
+  if (!CommandsStandard::isQuit()) {
+    if (!LuaClientScripts::LuaUserIsActive()) {
+      LuaClientScripts::LuaUserLoadHandler();
+    }
+    if (!LuaClientScripts::LuaBzOrgIsActive()) {
+      LuaClientScripts::LuaBzOrgLoadHandler();
+    }
   }
 
   return;

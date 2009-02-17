@@ -14,9 +14,6 @@ class LuaBzOrg : public LuaHandle
 
 		static bool IsActive();
 
-	protected:
-		void ForbidCallIns();
-
 	private:
 		LuaBzOrg(const char* code, int length);
 		~LuaBzOrg();

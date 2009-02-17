@@ -14,6 +14,7 @@ using std::set;
 // common headers
 #include "BzVFS.h"
 #include "EventHandler.h"
+#include "StateDatabase.h"
 
 // bzflag headers
 #include "../bzflag/Downloads.h"
@@ -22,30 +23,6 @@ using std::set;
 #include "LuaClientOrder.h"
 #include "LuaInclude.h"
 #include "LuaUtils.h"
-
-#include "LuaCallInCheck.h"
-#include "LuaCallInDB.h"
-#include "LuaCallOuts.h"
-#include "LuaUtils.h"
-#include "LuaBitOps.h"
-#include "LuaDouble.h"
-#include "LuaOpenGL.h"
-#include "LuaConstGL.h"
-#include "LuaConstGame.h"
-#include "LuaKeySyms.h"
-#include "LuaSpatial.h"
-#include "LuaObstacle.h"
-#include "LuaScream.h"
-#include "LuaURL.h"
-#include "LuaVFS.h"
-#include "LuaBZDB.h"
-#include "LuaPack.h"
-#include "LuaExtras.h"
-#include "LuaVector.h"
-#include "LuaBzMaterial.h"
-#include "LuaDynCol.h"
-#include "LuaTexMat.h"
-#include "LuaPhyDrv.h"
 
 
 LuaWorld* luaWorld = NULL;
@@ -59,6 +36,10 @@ static const char* sourceFile = "bzWorld.lua";
 void LuaWorld::LoadHandler()
 {
 	if (luaWorld) {
+		return;
+	}
+
+	if (!BZDB.isTrue("luaWorld") && !BZDB.isTrue("_forceLuaWorld")) {
 		return;
 	}
 
