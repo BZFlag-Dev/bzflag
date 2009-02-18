@@ -9,15 +9,15 @@ simple_SOURCES = \
     simple.cpp \
     $(NULL)
 simple_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
-simple_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS)
-simple_LDADD = ../src/libftgl.la
+simple_LDFLAGS = $(GLUT_LIBS)
+simple_LDADD = ../src/libftgl.la $(FT2_LIBS)
 
 c_demo_SOURCES = \
     c-demo.c \
     $(NULL)
 c_demo_CFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
-c_demo_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS)
-c_demo_LDADD = ../src/libftgl.la
+c_demo_LDFLAGS = $(GLUT_LIBS)
+c_demo_LDADD = ../src/libftgl.la $(FT2_LIBS)
 
 FTGLDemo_SOURCES = \
 	FTGLDemo.cpp \
@@ -27,8 +27,8 @@ FTGLDemo_SOURCES = \
 	trackball.h \
 	$(NULL)
 FTGLDemo_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
-FTGLDemo_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS)
-FTGLDemo_LDADD = ../src/libftgl.la
+FTGLDemo_LDFLAGS = $(GLUT_LIBS)
+FTGLDemo_LDADD = ../src/libftgl.la $(FT2_LIBS)
 
 FTGLMFontDemo_SOURCES = \
 	FTGLMFontDemo.cpp \
@@ -38,7 +38,7 @@ FTGLMFontDemo_SOURCES = \
 	trackball.h \
 	$(NULL)
 FTGLMFontDemo_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
-FTGLMFontDemo_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS)
-FTGLMFontDemo_LDADD = ../src/libftgl.la
+FTGLMFontDemo_LDFLAGS = $(GLUT_LIBS)
+FTGLMFontDemo_LDADD = ../src/libftgl.la $(FT2_LIBS)
 
 NULL =
