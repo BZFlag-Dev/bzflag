@@ -11,8 +11,6 @@ class LuaZip {
 	private: // metatable methods
 		static int Zip(lua_State* L);
 		static int Unzip(lua_State* L);
-		static int Gzip(lua_State* L);
-		static int Gunzip(lua_State* L);
 };
 
 

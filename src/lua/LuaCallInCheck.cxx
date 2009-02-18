@@ -4,6 +4,9 @@
 // interface header
 #include "LuaCallInCheck.h"
 
+// common headers
+#include "bzfio.h"
+
 // local headers
 #include "LuaInclude.h"
 
@@ -23,8 +26,10 @@ LuaCallInCheck::~LuaCallInCheck()
 {
 	const int endTop = lua_gettop(L);
 	if (startTop != endTop) {
-		printf("LuaCallInCheck mismatch for %s():  start = %i,  end = %i",
-		       funcName, startTop, endTop);
+		logDebugMessage(0,
+			"LuaCallInCheck mismatch for %s():  start = %i,  end = %i\n",
+			funcName, startTop, endTop
+                );
 	}
 }
 
