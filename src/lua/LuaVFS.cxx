@@ -162,11 +162,10 @@ int LuaVFS::WriteFile(lua_State* L)
 	const LuaHandle* lh = LuaHandle::GetActiveHandle();
 
 	const char* path = luaL_checkstring(L, 1);
-	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
-	modes = BzVFS::allowModes(modes, lh->GetFSWriteAll().c_str());
+	const string modes = lh->GetFSWriteAll();
 
 	string data;
-	if (!ParseWriteData(L, 3, data)) {
+	if (!ParseWriteData(L, 2, data)) {
 		luaL_error(L, "bad data");
 	}
 
@@ -186,11 +185,10 @@ int LuaVFS::AppendFile(lua_State* L)
 	const LuaHandle* lh = LuaHandle::GetActiveHandle();
 
 	const char* path = luaL_checkstring(L, 1);
-	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
-	modes = BzVFS::allowModes(modes, lh->GetFSWriteAll().c_str());
+	const string modes = lh->GetFSWriteAll();
 
 	string data;
-	if (!ParseWriteData(L, 3, data)) {
+	if (!ParseWriteData(L, 2, data)) {
 		luaL_error(L, "%s: bad data");
 	}
 
