@@ -67,13 +67,13 @@ LuaURL::LuaURL(lua_State* _L, const std::string& _url)
 				}
 				else if (key == "head") {
 					luaL_checktype(L, -1, LUA_TBOOLEAN);
-					if (lua_toboolean(L, -1)) {
+					if (lua_tobool(L, -1)) {
 					  setNoBody();
 					}
 				}
 				else if (key == "failOnError") {
 					luaL_checktype(L, -1, LUA_TBOOLEAN);
-					if (lua_toboolean(L, -1)) {
+					if (lua_tobool(L, -1)) {
 					  setFailOnError();
 					}
 				}

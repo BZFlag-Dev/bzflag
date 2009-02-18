@@ -53,7 +53,7 @@ double* LuaDouble::TestNumber(lua_State* L, int index)
 
 double LuaDouble::CheckDouble(lua_State* L, int index)
 {
-	if (lua_getuserdataextra(L, index) != LuaDouble::metaName) {
+	if (lua_getuserdataextra(L, index) != metaName) {
 		luaL_argerror(L, index, "expected a Double");
 	}
 	const double* doublePtr = (double*)lua_touserdata(L, index);
@@ -83,6 +83,10 @@ int LuaDouble::MetaIndex(lua_State* L)
 	}
 	else if (key == "string") {
 		return MetaToString(L);
+	}
+	else if (key == "packed") {
+		lua_pushlstring(L, (char*)&d1, sizeof(double));
+		return 1;
 	}
 /* FIXME -- require _ISOC99_SOURCE
 	else if (key == "class") {
@@ -261,11 +265,25 @@ int LuaDouble::CreateDouble(lua_State* L)
 		value = (double)lua_tonumber(L, 1);
 	}
 	else if (lua_israwstring(L, 1)) {
-		const char* start = lua_tostring(L, 1);
-		char* end;
-		value = strtod(start, &end);
-		if (start == end) {
-			luaL_argerror(L, 1, "invalid numeric string");
+		if (!lua_israwnumber(L, 2)) {
+			// parse the string
+			const char* start = lua_tostring(L, 1);
+			char* end;
+			value = strtod(start, &end);
+			if (start == end) {
+				luaL_argerror(L, 1, "invalid numeric string");
+			}
+		}
+		else {
+			// unpack the string
+			const size_t offset = lua_toint(L, 2) - 1;
+			size_t len;
+			const char* data = lua_tolstring(L, 1, &len);
+			if ((offset > len) || ((len - offset) < sizeof(double))) {
+				luaL_error(L, "invalid double unpacking offset");
+			}
+			data += offset;
+			value = *((const double*)data);
 		}
 	}
 	else {

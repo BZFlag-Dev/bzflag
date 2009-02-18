@@ -77,15 +77,15 @@ static char* ConcatVector(const vector<string>& vs, size_t total)
 }
 
 
-static void SetupZStream(z_stream& s, const char* inData, size_t inLen)
+static void SetupZStream(z_stream& zs, const char* inData, size_t inLen)
 {
-	s.next_in = (Bytef*)inData;
-	s.avail_in = inLen;
-	s.total_in = inLen;
-	s.total_out = 0;
-	s.zalloc = (alloc_func)Z_NULL;
-	s.zfree  =  (free_func)Z_NULL;
-	s.opaque =     (voidpf)Z_NULL;
+	zs.next_in = (Bytef*)inData;
+	zs.avail_in = inLen;
+	zs.total_in = inLen;
+	zs.total_out = 0;
+	zs.zalloc = (alloc_func)Z_NULL;
+	zs.zfree  =  (free_func)Z_NULL;
+	zs.opaque =     (voidpf)Z_NULL;
 }
 
 
@@ -95,7 +95,7 @@ CompressMode ParseCompressMode(lua_State* L, int index, const char* def)
 	if (modeStr == "raw")  { return CompressRaw;  }
 	if (modeStr == "gzip") { return CompressGzip; }
 	if (modeStr == "zlib") { return CompressZlib; }
-	luaL_error(L, "invalid zip mode");
+	luaL_error(L, "invalid zip mode (%s)", modeStr.c_str());
 	return CompressRaw;
 }
 
@@ -107,8 +107,8 @@ static int CompressString(const char* inData, size_t inLen,
                           char*& outData, size_t& outLen,
                           CompressMode mode)
 {
-	z_stream s;
-	SetupZStream(s, inData, inLen);
+	z_stream zs;
+	SetupZStream(zs, inData, inLen);
 
 	int windowBits;
 	switch (mode) {
@@ -117,7 +117,7 @@ static int CompressString(const char* inData, size_t inLen,
 		case CompressZlib: { windowBits = +MAX_WBITS;      break; }
 	}
 
-	const int initCode = deflateInit2(&s, 9, Z_DEFLATED, windowBits,
+	const int initCode = deflateInit2(&zs, 9, Z_DEFLATED, windowBits,
 	                                  MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
 	if (initCode != Z_OK) {
 		return initCode;
@@ -129,30 +129,30 @@ static int CompressString(const char* inData, size_t inLen,
 
 	int flushMode = Z_NO_FLUSH;
 	while (true) {
-		s.next_out = (Bytef*)bufData;
-		s.avail_out = bufSize;
-		const int retcode = deflate(&s, flushMode);
+		zs.next_out = (Bytef*)bufData;
+		zs.avail_out = bufSize;
+		const int retcode = deflate(&zs, flushMode);
 		if (retcode == Z_STREAM_END) {
-			const size_t outSize = (bufSize - s.avail_out);
+			const size_t outSize = (bufSize - zs.avail_out);
 			outLen += outSize;
 			outVec.push_back(string(bufData, outSize));
 			break;
 		}
 		else if (retcode == Z_OK) {
 			flushMode = Z_FINISH;
-			const size_t outSize = (bufSize - s.avail_out);
+			const size_t outSize = (bufSize - zs.avail_out);
 			outLen += outSize;
 			outVec.push_back(string(bufData, outSize));
 		}
 		else {
-			deflateEnd(&s);
+			deflateEnd(&zs);
 			outLen = 0;
 			outData = NULL;
 			return retcode;
 		}
 	}
 
-	deflateEnd(&s);
+	deflateEnd(&zs);
 
 	outData = ConcatVector(outVec, outLen);
 
@@ -164,8 +164,8 @@ static int DecompressString(const char* inData, size_t inLen,
                             char*& outData, size_t& outLen,
                             CompressMode mode)
 {
-	z_stream s;
-	SetupZStream(s, inData, inLen);
+	z_stream zs;
+	SetupZStream(zs, inData, inLen);
 
 	int windowBits;
 	switch (mode) {
@@ -174,7 +174,7 @@ static int DecompressString(const char* inData, size_t inLen,
 		case CompressZlib: { windowBits = +MAX_WBITS + 32; break; } // zlib or gzip
 	}
 
-	const int initCode = inflateInit2(&s, windowBits);
+	const int initCode = inflateInit2(&zs, windowBits);
 	if (initCode != Z_OK) {
 		return initCode;
 	}
@@ -184,29 +184,29 @@ static int DecompressString(const char* inData, size_t inLen,
 	char bufData[bufSize];
 
 	while (true) {
-		s.next_out = (Bytef*)bufData;
-		s.avail_out = bufSize;
-		const int retcode = inflate(&s, Z_NO_FLUSH);
+		zs.next_out = (Bytef*)bufData;
+		zs.avail_out = bufSize;
+		const int retcode = inflate(&zs, Z_NO_FLUSH);
 		if (retcode == Z_STREAM_END) {
-			const size_t outSize = (bufSize - s.avail_out);
+			const size_t outSize = (bufSize - zs.avail_out);
 			outLen += outSize;
 			outVec.push_back(string(bufData, outSize));
 			break;
 		}
 		else if (retcode == Z_OK) {
-			const size_t outSize = (bufSize - s.avail_out);
+			const size_t outSize = (bufSize - zs.avail_out);
 			outLen += outSize;
 			outVec.push_back(string(bufData, outSize));
 		}
 		else {
-			inflateEnd(&s);
+			inflateEnd(&zs);
 			outLen = 0;
 			outData = NULL;
 			return retcode;
 		}
 	}
 
-	inflateEnd(&s);
+	inflateEnd(&zs);
 
 	outData = ConcatVector(outVec, outLen);
 
@@ -221,6 +221,7 @@ int LuaZip::Zip(lua_State* L)
 {
 	size_t inLen;
 	const char* inData = luaL_checklstring(L, 1, &inLen);
+
 	CompressMode mode = ParseCompressMode(L, 2, "gzip");
 	
 	char* outData = NULL;
@@ -243,6 +244,7 @@ int LuaZip::Unzip(lua_State* L)
 {
 	size_t inLen;
 	const char* inData = luaL_checklstring(L, 1, &inLen);
+
 	CompressMode mode = ParseCompressMode(L, 2, "zlib"); // zlib or gzip
 
 	char* outData = NULL;
