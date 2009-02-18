@@ -599,9 +599,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   fullWindow = _fullWindow;
 
   // set the special mode
-  if (ROAM.isRoaming()) {
-    setSpecialMode((SpecialMode)BZDB.evalInt("specialMode"));
-  } else {
+  if (!ROAM.isRoaming() && (specialMode != NoSpecial)) {
     setSpecialMode(NoSpecial);
   }
 
