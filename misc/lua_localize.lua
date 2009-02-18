@@ -30,7 +30,7 @@ local print  = print
 local subTable = {
   -- key           mixed,       all caps
   { 'bz',         'bz',        'BZ_'         },
-  { 'BZ.DB',      'bzdb',      'BZDB_'       },
+  { 'bzdb',       'bzdb',      'BZDB_'       },
   { 'BZ.GAME',    'bzGame',    'BZ_GAME_'    },
   { 'BZ.PERM',    'bzPerm',    'BZ_PERM_'    },
   { 'BZ.SHOT',    'bzShot',    'BZ_SHOT_'    },
@@ -51,6 +51,7 @@ local baseFuncs = {
   'type', 'tostring', 'tonumber', 'tobool',
   'isnil', 'isbool', 'isnumber', 'isstring',
   'istable', 'isfunction', 'isuserdata', 'isthread',
+  'double', 'isdouble'
 }
 
 
@@ -63,8 +64,8 @@ local fileName = arg[1]
 
 if (type(fileName) ~= 'string') then
   print('Usage: ' .. execName .. ' <filename>')
+  return
 end
-
 
 local f, err = io.open(fileName, 'r')
 if (f == nil) then
