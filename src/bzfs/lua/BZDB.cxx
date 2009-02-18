@@ -46,9 +46,6 @@ static int SetString(lua_State* L);
 
 bool LuaBZDB::PushEntries(lua_State* L)
 {
-  lua_pushliteral(L, "DB");
-  lua_newtable(L);
-
   PUSH_LUA_CFUNC(L, GetMap);
   PUSH_LUA_CFUNC(L, GetList);
 
@@ -65,8 +62,6 @@ bool LuaBZDB::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetBool);
   PUSH_LUA_CFUNC(L, SetFloat);
   PUSH_LUA_CFUNC(L, SetString);
-
-  lua_rawset(L, -3);
 
   return true;
 }

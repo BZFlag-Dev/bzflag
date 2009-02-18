@@ -437,7 +437,7 @@ bool LuaHandle::AddBasicCalls()
 		HSTR_PUSH_CFUNC(L, "PrintPointer",       ScriptPrintPointer);
 		HSTR_PUSH_CFUNC(L, "PrintGCInfo",        ScriptPrintGCInfo);
 	}
-	lua_setglobal(L, "Script");
+	lua_setglobal(L, "script");
 
 	return true;
 }
@@ -694,10 +694,10 @@ bool LuaHandle::SetupEnvironment()
 		}
 		if (!PushLib("math",   LuaBitOps::PushEntries)     ||
 				!PushLib("math",   LuaVector::PushEntries)     ||
-				!PushLib("URL",    LuaURLMgr::PushEntries)     ||
-				!PushLib("VFS",    LuaVFS::PushEntries)        ||
-				!PushLib("BZDB",   LuaBZDB::PushEntries)       ||
-				!PushLib("Script", LuaScream::PushEntries)     ||
+				!PushLib("url",    LuaURLMgr::PushEntries)     ||
+				!PushLib("vfs",    LuaVFS::PushEntries)        ||
+				!PushLib("bzdb",   LuaBZDB::PushEntries)       ||
+				!PushLib("script", LuaScream::PushEntries)     ||
 				!PushLib("gl",     LuaOpenGL::PushEntries)     ||
 				!PushLib("GL",     LuaConstGL::PushEntries)    ||
 				!PushLib("bz",     LuaPack::PushEntries)       ||

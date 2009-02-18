@@ -216,6 +216,10 @@ bool LuaDouble::CreateMetatable(lua_State* L)
 	PushNamedFunction(L, "__lt",   MetaLT);
 	PushNamedFunction(L, "__le",   MetaLE);
 
+	lua_pushliteral(L, "__metatable");
+	lua_pushliteral(L, "no access");
+	lua_rawset(L, -3);
+
 	lua_pop(L, 1);
 
 	return true;

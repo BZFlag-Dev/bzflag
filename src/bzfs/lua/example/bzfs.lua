@@ -164,23 +164,23 @@ blocked = tmpSet
 
 
 -- update the desired call-ins
-for name, code in pairs(Script.GetCallInInfo()) do
+for name, code in pairs(script.GetCallInInfo()) do
   if (type(_G[name]) == 'function') then
-    Script.SetCallIn(name, _G[name])
+    script.SetCallIn(name, _G[name])
   elseif (not blocked[name]) then 
-    Script.SetCallIn(name, function(...)
+    script.SetCallIn(name, function(...)
       print('bzfs.lua', name, ...)
     end)
   end
 end
 
 
---Script.SetCallIn('Tick', nil) -- annoying, but leave the function defined
+--script.SetCallIn('Tick', nil) -- annoying, but leave the function defined
 
 
 -- print the current call-in map
 if (true or false) then
-  for name, state in pairs(Script.GetCallInInfo()) do
+  for name, state in pairs(script.GetCallInInfo()) do
     print(name, state.loopType, state.func)
   end
 end
@@ -188,7 +188,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-Script.SetCallIn('AllowFlagGrab',
+script.SetCallIn('AllowFlagGrab',
   function(playerID, flagID, flagType, shotType, px, py, pz)
     if (bz.GetPlayerTeam(playerID) == bz.TEAM.RED) then
       return false
@@ -197,7 +197,7 @@ Script.SetCallIn('AllowFlagGrab',
 )
 
 
-Script.SetCallIn('BZDBChange',
+script.SetCallIn('BZDBChange',
   function(key, value)
 --    print('BZDBChange: ' .. key .. ' = ' .. value)
   end
@@ -283,7 +283,7 @@ bz.DB.SetFloat('_tankSpeed', '50.0')
 include('modules.lua')
 
 
---Script.SetCallIn('GetWorld',
+--script.SetCallIn('GetWorld',
 --  function(mode)
 
 
@@ -340,6 +340,6 @@ do
 --    print('maxTime = ' .. maxTime)
   end
 
-  Script.SetCallIn('Tick', HandleTick)
+  script.SetCallIn('Tick', HandleTick)
 end  
   

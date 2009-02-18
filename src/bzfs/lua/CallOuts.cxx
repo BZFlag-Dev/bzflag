@@ -18,14 +18,17 @@ using std::set;
 using std::map;
 
 // common headers
-#include "bzfsAPI.h"
 #include "BzVFS.h"
 #include "TextUtils.h"
 #include "PlayerState.h"
+#include "bzfsAPI.h"
+#include "version.h"
 
 // bzfs headers
 #include "../GameKeeper.h"
+#include "../CmdLineOptions.h"
 #include "../bzfsMessages.h"
+#include "../commands.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -97,7 +100,6 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
 
 static int GetLuaDirectory(lua_State* L);
 
-static int GetAPIVersion(lua_State* L);
 static int GetProtocolVersion(lua_State* L);
 static int GetServerVersion(lua_State* L);
 static int GetServerPort(lua_State* L);
@@ -299,7 +301,6 @@ bool CallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, GetLuaDirectory);
 
-  PUSH_LUA_CFUNC(L, GetAPIVersion);
   PUSH_LUA_CFUNC(L, GetProtocolVersion);
   PUSH_LUA_CFUNC(L, GetServerVersion);
   PUSH_LUA_CFUNC(L, GetServerPort);
@@ -510,44 +511,47 @@ static int GetLuaDirectory(lua_State* L)
 }
 
 
-static int GetAPIVersion(lua_State* L)
-{
-  lua_pushinteger(L, bz_APIVersion());
-  return 1;
-}
-
-
 static int GetProtocolVersion(lua_State* L)
 {
-  lua_pushstring(L, bz_getProtocolVersion());
+  lua_pushstring(L, getProtocolVersion());
   return 1;
 }
 
 
 static int GetServerVersion(lua_State* L)
 {
-  lua_pushstring(L, bz_getServerVersion());
+  lua_pushstring(L, getAppVersion());
   return 1;
 }
 
 
 static int GetServerPort(lua_State* L)
 {
-  lua_pushinteger(L, bz_getPublicPort());
+  if (!clOptions->useGivenPort) {
+    lua_pushinteger(L, ServerPort);
+  } else {
+    lua_pushinteger(L, clOptions->wksPort);
+  }
   return 1;
 }
 
 
 static int GetServerAddress(lua_State* L)
 {
-  lua_pushstring(L, bz_getPublicAddr().c_str());
+  if (!clOptions->publicizeServer) {
+    return 0;
+  }
+  lua_pushstdstring(L, clOptions->publicizedAddress);
   return 1;
 }
 
 
 static int GetServerDescription(lua_State* L)
 {
-  lua_pushstring(L, bz_getPublicDescription().c_str());
+  if (!clOptions->publicizeServer) {
+    return 0;
+  }
+  lua_pushstdstring(L, clOptions->publicizedTitle);
   return 1;
 }
 
@@ -557,14 +561,14 @@ static int GetServerDescription(lua_State* L)
 
 static int UpdateListServer(lua_State* /*L*/)
 {
-  bz_updateListServer();
+  publicize();
   return 0;
 }
 
 
 static int AdminShutdown(lua_State* /*L*/)
 {
-  bz_shutdown();
+  shutdownCommand(NULL, NULL);
   return 0;
 }
 
@@ -578,7 +582,7 @@ static int AdminRestart(lua_State* L)
 
 static int AdminSuperKill(lua_State* /*L*/)
 {
-  bz_superkill();
+  superkillCommand(NULL, NULL);
   return 0;
 }
 
@@ -676,8 +680,7 @@ static int SetWorldSize(lua_State* L)
 
 static int SetWorldURL(lua_State* L)
 {
-  const char* url = luaL_checkstring(L, 1);
-  bz_setClientWorldDownloadURL(url);
+  clOptions->cacheURL = luaL_checkstring(L, 1);
   return 0;
 }
 

@@ -150,7 +150,7 @@ map<string, CallIn*> CallIn::nameMap;
 /******************************************************************************/
 /******************************************************************************/
 //
-//  'Script' call-outs
+//  'script' call-outs
 //
 
 static int GetName(lua_State* L)
@@ -255,7 +255,7 @@ bool CallIns::PushEntries(lua_State* L)
     PUSH_LUA_CFUNC(L, SetCallIn);
     PUSH_LUA_CFUNC(L, GetCallInInfo);
   }
-  lua_setglobal(L, "Script");
+  lua_setglobal(L, "script");
 
   return true;
 }

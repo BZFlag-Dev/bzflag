@@ -237,6 +237,8 @@ bool LuaDouble::CreateMetatable(lua_State* L)
 	HSTR_PUSH_CFUNC(L, "__lt",   MetaLT);
 	HSTR_PUSH_CFUNC(L, "__le",   MetaLE);
 
+	HSTR_PUSH_STRING(L, "__metatable", "no access");
+
 	lua_pop(L, 1);
 
 	return true;

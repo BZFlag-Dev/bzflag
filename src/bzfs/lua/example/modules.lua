@@ -294,7 +294,7 @@ local permanentCallIns = {
 }
 
 local function SetupCallIns()
-  for ciName in pairs(Script.GetCallInInfo()) do
+  for ciName in pairs(script.GetCallInInfo()) do
     local genFunc = specialCallIns[ciName] or GenAllFunc
     local funcList = {}
     ciFuncLists[ciName] = funcList

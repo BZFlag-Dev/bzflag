@@ -278,16 +278,22 @@ static bool CreateLuaState(const string& script)
   lua_pushliteral(L, "bz");
   lua_newtable(L); {
     CallOuts::PushEntries(L);
-    LuaBZDB::PushEntries(L);
     MapObject::PushEntries(L);
     SlashCmd::PushEntries(L);
     FetchURL::PushEntries(L);
     RawLink::PushEntries(L);
   }
   lua_rawset(L, LUA_GLOBALSINDEX);
+
   lua_pushliteral(L, "BZ");
   lua_newtable(L); {
     Constants::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
+
+  lua_pushliteral(L, "bzdb");
+  lua_newtable(L); {
+    LuaBZDB::PushEntries(L);
   }
   lua_rawset(L, LUA_GLOBALSINDEX);
 
