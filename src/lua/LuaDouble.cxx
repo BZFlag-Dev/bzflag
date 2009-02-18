@@ -40,7 +40,7 @@ double* LuaDouble::TestNumber(lua_State* L, int index)
 {
 	static double value = 0.0f;
 	if (lua_israwnumber(L, index)) {
-		value = (double)lua_tonumber(L, 1);
+		value = (double)lua_tonumber(L, index);
 		return &value;
 	}
 	if (lua_getuserdataextra(L, index) != metaName) {

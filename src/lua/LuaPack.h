@@ -16,6 +16,7 @@ class LuaPack {
 		static int PackS16(lua_State* L);
 		static int PackS32(lua_State* L);
 		static int PackF32(lua_State* L);
+		static int PackF64(lua_State* L);
 
 		static int UnpackU8(lua_State* L);
 		static int UnpackU16(lua_State* L);
@@ -24,6 +25,7 @@ class LuaPack {
 		static int UnpackS16(lua_State* L);
 		static int UnpackS32(lua_State* L);
 		static int UnpackF32(lua_State* L);
+		static int UnpackF64(lua_State* L);
 
 		static int SwapBy2(lua_State* L);
 		static int SwapBy4(lua_State* L);
