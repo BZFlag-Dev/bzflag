@@ -39,12 +39,15 @@ bool LuaVFS::PushEntries(lua_State* L)
 	{
 		HSTR_PUSH_STRING(L, "CONFIG",          BZVFS_CONFIG);
 		HSTR_PUSH_STRING(L, "DATA",            BZVFS_DATA);
+		HSTR_PUSH_STRING(L, "DATA_DEFAULT",    BZVFS_DATA_DEFAULT);
 		HSTR_PUSH_STRING(L, "FTP",             BZVFS_FTP);
 		HSTR_PUSH_STRING(L, "HTTP",            BZVFS_HTTP);
+		HSTR_PUSH_STRING(L, "BASIC",           BZVFS_BASIC);
 		HSTR_PUSH_STRING(L, "LUA_USER",        BZVFS_LUA_USER);
 		HSTR_PUSH_STRING(L, "LUA_WORLD",       BZVFS_LUA_WORLD);
 		HSTR_PUSH_STRING(L, "LUA_USER_WRITE",  BZVFS_LUA_USER_WRITE);
 		HSTR_PUSH_STRING(L, "LUA_WORLD_WRITE", BZVFS_LUA_WORLD_WRITE);
+		HSTR_PUSH_STRING(L, "LUA_BZORG_WRITE", BZVFS_LUA_BZORG_WRITE);
 	}
 	lua_rawset(L, -3);
 
@@ -61,7 +64,7 @@ int LuaVFS::FileExists(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSReadAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
 
 	lua_pushboolean(L, bzVFS.fileExists(path, modes));
 
@@ -78,7 +81,7 @@ int LuaVFS::FileSize(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSReadAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
 
 	const int size = bzVFS.fileSize(path, modes);
 	if (size < 0) {
@@ -100,7 +103,7 @@ int LuaVFS::ReadFile(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSReadAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
 
 	string data;
 	if (!bzVFS.readFile(path, modes, data)) {
@@ -160,7 +163,7 @@ int LuaVFS::WriteFile(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSWriteAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSWriteAll().c_str());
 
 	string data;
 	if (!ParseWriteData(L, 3, data)) {
@@ -184,7 +187,7 @@ int LuaVFS::AppendFile(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSWriteAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSWriteAll().c_str());
 
 	string data;
 	if (!ParseWriteData(L, 3, data)) {
@@ -209,7 +212,7 @@ int LuaVFS::Include(lua_State* L)
 	lua_settop(L, 3);
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSReadAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
 
 	string code;
 	if (!bzVFS.readFile(path, modes, code)) {
@@ -258,7 +261,7 @@ int LuaVFS::CreateDir(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSWriteAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSWriteAll().c_str());
 
 	if (!bzVFS.createDir(path, modes)) {
 		return 0;
@@ -277,7 +280,7 @@ int LuaVFS::DirList(lua_State* L)
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
-	modes = BzVFS::filterModes(modes, lh->GetFSReadAll().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
 	const bool recursive = lua_isboolean(L, 3) && lua_tobool(L, 3);
 
 	vector<string> files;

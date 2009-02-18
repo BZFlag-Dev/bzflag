@@ -454,19 +454,25 @@ void BzVFS::reset()
   // add the filesystems
   addFS(BZVFS_CONFIG,          configDir);
   addFS(BZVFS_DATA,            BZDB.get("directory"));
+#if defined(BZFLAG_DATA)
+  addFS(BZVFS_DATA_DEFAULT,    BZFLAG_DATA);
+#endif
   addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));
   addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
   addFS(BZVFS_LUA_USER_WRITE,  configDir + "LuaUser");
   addFS(BZVFS_LUA_WORLD_WRITE, configDir + "LuaWorld");
+  addFS(BZVFS_LUA_BZORG_WRITE, configDir + "LuaBzOrg");
 
   // setup the writable directories
   setFSWritable(BZVFS_CONFIG,          true);
   setFSWritable(BZVFS_LUA_USER_WRITE,  true);
   setFSWritable(BZVFS_LUA_WORLD_WRITE, true);
+  setFSWritable(BZVFS_LUA_BZORG_WRITE, true);
 
   // create the writable lua directories
   createPathDirs("", cleanDirPath(configDir + "LuaUser"));
   createPathDirs("", cleanDirPath(configDir + "LuaWorld"));
+  createPathDirs("", cleanDirPath(configDir + "LuaBzOrg"));
 }
 
 
@@ -591,15 +597,49 @@ string BzVFS::cleanFilePath(const string& path)
 }
 
 
-string BzVFS::filterModes(const string& modes, const string& allowed)
+/******************************************************************************/
+/******************************************************************************/
+
+string BzVFS::allowModes(const string& wanted, const string& allowed)
 {
-  string filtered;
-  for (size_t i = 0; i < modes.size(); i++) {
-    if (allowed.find_first_of(modes[i]) != string::npos) {
-      filtered += modes[i];
+  string modes;
+  for (size_t i = 0; i < wanted.size(); i++) {
+    if (allowed.find(wanted[i]) != string::npos) {
+      modes += wanted[i];
     }
   }
-  return filtered;
+  return modes;
+}
+
+
+string BzVFS::forbidModes(const string& wanted, const string& forbidden)
+{
+  string modes;
+  for (size_t i = 0; i < wanted.size(); i++) {
+    if (forbidden.find(wanted[i]) == string::npos) {
+      modes += wanted[i];
+    }
+  }
+  return modes;
+}
+
+
+bool BzVFS::parseModes(const string& inPath,  string& outPath,
+                       const string& inModes, string& outModes)
+{
+  if (inPath.empty() || (inPath[0] != ':')) {
+    outPath  = inPath;
+    outModes = inModes;
+    return true;
+  }
+  const string::size_type endPos = inPath.find_first_of(':', 1);
+  if (endPos == string::npos) {
+    return false;
+  }
+  outPath  = inPath.substr(endPos + 1);
+  outModes = inPath.substr(1, endPos - 1);
+  outModes = allowModes(outModes, inModes);
+  return true;
 }
 
 
@@ -608,13 +648,18 @@ string BzVFS::filterModes(const string& modes, const string& allowed)
 
 bool BzVFS::fileExists(const string& path, const string& modes)
 {
-  const string cleanPath = cleanFilePath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
   if (!safePath(cleanPath)) {
     return false;
   }
   
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
     if (systems[i]->fileExists(cleanPath)) {
@@ -627,13 +672,18 @@ bool BzVFS::fileExists(const string& path, const string& modes)
 
 int BzVFS::fileSize(const string& path, const string& modes)
 {
-  const string cleanPath = cleanFilePath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return -1;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
   if (!safePath(cleanPath)) {
-    return false;
+    return -1;
   }
 
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
     int size = systems[i]->fileSize(cleanPath);
@@ -648,13 +698,18 @@ int BzVFS::fileSize(const string& path, const string& modes)
 bool BzVFS::readFile(const string& path, const string& modes,
                      string& data)
 {
-  const string cleanPath = cleanFilePath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
   if (!safePath(cleanPath)) {
     return false;
   }
 
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   data.clear();
   for (size_t i = 0; i < systems.size(); i++) {
@@ -669,13 +724,18 @@ bool BzVFS::readFile(const string& path, const string& modes,
 bool BzVFS::writeFile(const string& path, const string& modes,
                       const string& data)
 {
-  const string cleanPath = cleanFilePath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
   if (!safePath(cleanPath)) {
     return false;
   }
 
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
     if (systems[i]->writeFile(cleanPath, data)) {
@@ -689,13 +749,18 @@ bool BzVFS::writeFile(const string& path, const string& modes,
 bool BzVFS::appendFile(const string& path, const string& modes,
                        const string& data)
 {
-  const string cleanPath = cleanFilePath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
   if (!safePath(cleanPath)) {
     return false;
   }
 
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
     if (systems[i]->appendFile(cleanPath, data)) {
@@ -708,13 +773,18 @@ bool BzVFS::appendFile(const string& path, const string& modes,
 
 bool BzVFS::createDir(const string& path, const string& modes)
 {
-  const string cleanPath = cleanDirPath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanDirPath(outPath);
   if (!safePath(cleanPath)) {
     return false;
   }
 
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
     if (systems[i]->createDir(cleanPath)) {
@@ -728,13 +798,18 @@ bool BzVFS::createDir(const string& path, const string& modes)
 bool BzVFS::dirList(const string& path, const string& modes, bool recursive,
                     vector<string>& dirs, vector<string>& files)
 {
-  const string cleanPath = cleanDirPath(path);
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanDirPath(outPath);
   if (!safePath(cleanPath)) {
     return false;
   }
 
   logDebugMessage(4, "BzVFS::dirList: '%s' '%s'\n",
-                  cleanPath.c_str(), modes.c_str());
+                  cleanPath.c_str(), outModes.c_str());
 
   FSMap::const_iterator it;
   for (it = fsMap.begin(); it != fsMap.end(); ++it) {
@@ -742,7 +817,7 @@ bool BzVFS::dirList(const string& path, const string& modes, bool recursive,
   }
 
   vector<BzFS*> systems;
-  getSystems(modes, systems);
+  getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
     logDebugMessage(4, "    scanning: %p\n", systems[i]);

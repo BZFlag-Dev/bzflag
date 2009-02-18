@@ -128,8 +128,8 @@ LuaBzOrg::LuaBzOrg(const char* code, int length)
 	fsReadAll = BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	            BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
 	            BZVFS_BASIC;
-	fsWrite    = BZVFS_LUA_USER_WRITE;
-	fsWriteAll = BZVFS_LUA_USER_WRITE;
+	fsWrite    = BZVFS_LUA_BZORG_WRITE;
+	fsWriteAll = BZVFS_LUA_BZORG_WRITE;
 
 	if (!ExecSourceCode(sourceCode)) {
 		logDebugMessage(1, "LuaBzOrg code:\n%s\n", sourceCode.c_str());

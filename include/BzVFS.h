@@ -12,13 +12,21 @@
 
 #define BZVFS_CONFIG           "c"
 #define BZVFS_DATA             "d"
+#define BZVFS_DATA_DEFAULT     "D"
 #define BZVFS_FTP              "f"
 #define BZVFS_HTTP             "h"
 #define BZVFS_LUA_USER         "u"
 #define BZVFS_LUA_WORLD        "w"
 #define BZVFS_LUA_USER_WRITE   "U"
 #define BZVFS_LUA_WORLD_WRITE  "W"
-#define BZVFS_BASIC BZVFS_CONFIG BZVFS_DATA BZVFS_HTTP BZVFS_FTP
+#define BZVFS_LUA_BZORG_WRITE  "B"
+
+#define BZVFS_BASIC  \
+  BZVFS_CONFIG       \
+  BZVFS_DATA         \
+  BZVFS_DATA_DEFAULT \
+  BZVFS_HTTP         \
+  BZVFS_FTP
 
 
 class BzDocket;
@@ -79,9 +87,6 @@ class BzFS {
 
 class BzVFS {
   public:
-    static std::string filterModes(const std::string& modes,
-                                   const std::string& allowed);
-  public:
     BzVFS();
     ~BzVFS();
 
@@ -124,9 +129,16 @@ class BzVFS {
     static std::string cleanDirPath(const std::string& path);
     static std::string cleanFilePath(const std::string& path);
 
+    static std::string allowModes(const std::string& wanted,
+                                  const std::string& allowed);
+    static std::string forbidModes(const std::string& wanted,
+                                   const std::string& forbidden);
+
   private:
     bool safePath(const std::string& path);
     void getSystems(const std::string& modes, std::vector<BzFS*>& fileSystems);
+    bool parseModes(const std::string& inPath,  std::string& outPath,
+                    const std::string& inModes, std::string& outModes);
 
   private:
     void bzdbChange(const std::string& name);
