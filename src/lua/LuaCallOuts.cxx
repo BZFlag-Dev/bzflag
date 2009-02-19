@@ -179,6 +179,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetPlayerFlagType);
 	PUSH_LUA_CFUNC(L, GetPlayerScore);
 	PUSH_LUA_CFUNC(L, GetPlayerMotto);
+	PUSH_LUA_CFUNC(L, GetPlayerAutoPilot);
 	if (fullRead) {
 		PUSH_LUA_CFUNC(L, GetPlayerCustomData);
 		PUSH_LUA_CFUNC(L, GetPlayerFlag);
@@ -1956,6 +1957,17 @@ int LuaCallOuts::GetPlayerMotto(lua_State* L)
 		return 0;
 	}
 	lua_pushstdstring(L, it->second);
+	return 1;
+}
+
+
+int LuaCallOuts::GetPlayerAutoPilot(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	lua_pushboolean(L, player->isAutoPilot());
 	return 1;
 }
 

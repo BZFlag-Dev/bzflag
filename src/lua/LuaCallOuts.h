@@ -131,6 +131,7 @@ class LuaCallOuts {
 		static int GetPlayerFlagType(lua_State* L);
 		static int GetPlayerScore(lua_State* L);
 		static int GetPlayerMotto(lua_State* L);
+		static int GetPlayerAutoPilot(lua_State* L);
 		static int GetPlayerCustomData(lua_State* L);
 		static int GetPlayerShots(lua_State* L);
 		static int GetPlayerState(lua_State* L);
