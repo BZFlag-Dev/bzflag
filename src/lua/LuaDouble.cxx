@@ -98,13 +98,16 @@ int LuaDouble::MetaIndex(lua_State* L)
 	else if (key == "acos")  { PushDouble(L, acos(d1));  return 1; }
 	else if (key == "asin")  { PushDouble(L, asin(d1));  return 1; }
 	else if (key == "atan")  { PushDouble(L, atan(d1));  return 1; }
-	else if (key == "cosh")  { PushDouble(L, cosh(d1));  return 1; }
-	else if (key == "sinh")  { PushDouble(L, sinh(d1));  return 1; }
-	else if (key == "tanh")  { PushDouble(L, tanh(d1));  return 1; }
 	else if (key == "exp")   { PushDouble(L, exp(d1));   return 1; }
 	else if (key == "log")   { PushDouble(L, log(d1));   return 1; }
 	else if (key == "log2")  { PushDouble(L, log2(d1));  return 1; }
 	else if (key == "log10") { PushDouble(L, log10(d1)); return 1; }
+	else if (key == "cosh")  { PushDouble(L, cosh(d1));  return 1; }
+	else if (key == "sinh")  { PushDouble(L, sinh(d1));  return 1; }
+	else if (key == "tanh")  { PushDouble(L, tanh(d1));  return 1; }
+	else if (key == "acosh") { PushDouble(L, acosh(d1)); return 1; }
+	else if (key == "asinh") { PushDouble(L, asinh(d1)); return 1; }
+	else if (key == "atanh") { PushDouble(L, atanh(d1)); return 1; }
 /* FIXME -- require _ISOC99_SOURCE
 	else if (key == "class") {
 		switch (fpclassify(d1)) {

@@ -43,8 +43,9 @@ class LuaCallOuts {
 		static int SendLuaData(lua_State* L);
 		static int SendCommand(lua_State* L);
 
-		static int PlaySound(lua_State* L);
 		static int BlockControls(lua_State* L);
+
+		static int PlaySound(lua_State* L);
 
 		static int ReadImage(lua_State* L);
 
@@ -104,6 +105,7 @@ class LuaCallOuts {
 		static int MakeFont(lua_State* L);
 
 		static int GetLocalPlayer(lua_State* L);
+		static int GetLocalPlayerTarget(lua_State* L);
 		static int GetLocalTeam(lua_State* L);
 		static int GetRabbitPlayer(lua_State* L);
 		static int GetAntidotePosition(lua_State* L);

@@ -145,7 +145,10 @@ int savedVolume = -1;
 static FlashClock pulse;
 static bool wasRabbit = false;
 static bool justJoined = false;
-static bool blockControlsValue = false;
+
+static bool forcedControls = false;
+static float forcedSpeed  = 0.0f;
+static float forcedAngVel = 0.0f;
 
 float roamDZoom = 0.0f;
 
@@ -475,9 +478,18 @@ RadarRenderer *getRadarRenderer()
 }
 
 
-void blockControls()
+void forceControls(bool enabled, float speed, float angVel)
 {
-  blockControlsValue = true;
+  forcedControls = enabled;
+  if (enabled) {
+    forcedSpeed  = speed;
+    forcedAngVel = angVel;
+    // clamps
+    if (forcedSpeed  < -1.0f) { forcedSpeed  = -1.0f; }
+    if (forcedSpeed  > +1.0f) { forcedSpeed  = +1.0f; }
+    if (forcedAngVel < -1.0f) { forcedAngVel = -1.0f; }
+    if (forcedAngVel > +1.0f) { forcedAngVel = +1.0f; }
+  }
 }
 
 
@@ -900,19 +912,26 @@ static void doMotion()
   }
 
 #if defined(FREEZING)
-  if (motionFreeze) return;
+  if (motionFreeze) {
+    return;
+  }
 #endif
 
-  if (myTank->isAutoPilot()) {
+  if (forcedControls) {
+    speed = forcedSpeed;
+    rotation = forcedAngVel;
+  }
+  else if (myTank->isAutoPilot()) {
     doAutoPilot(rotation, speed);
-  } else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
-
+  }
+  else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
     rotation = (float)keyboardRotation;
     speed    = (float)keyboardSpeed;
-    if (speed < 0.0f)
+    if (speed < 0.0f) {
       speed *= 0.5f;
-
-  } else { // both mouse and joystick
+    }
+  }
+  else { // both mouse and joystick
 
     if (myTank->getInputMethod() == LocalPlayer::Joystick) {
       noMotionSize = 0; // joystick deadzone is specified at platform level
@@ -951,25 +970,22 @@ static void doMotion()
     }
   }
 
-  /* FOV modifier */
-  if (BZDB.isTrue("slowBinoculars"))
-    rotation *= BZDB.eval("displayFOV") / 60.0f;
-
-  /* slow motion modifier */
+  // slow motion modifier
   warnAboutSlowMotion();
   if (BZDB.isTrue("slowMotion")) {
     rotation *= 0.5f;
     speed *= 0.5f;
   }
 
+  // FOV modifier
+  if (BZDB.isTrue("slowBinoculars")) {
+    rotation *= BZDB.eval("displayFOV") / 60.0f;
+  }
+
   /* see if controls are reversed */
   if (myTank->getFlag() == Flags::ReverseControls) {
     rotation = -rotation;
     speed = -speed;
-  }
-
-  if (blockControlsValue) {
-    speed = rotation = 0.0f;
   }
 
   myTank->setDesiredAngVel(rotation);
@@ -7385,7 +7401,7 @@ void doUpdates(const float dt)
   // update AutoHunt
   AutoHunt::update();
 
-  blockControlsValue = false;
+  forcedControls = false;
 }
 
 

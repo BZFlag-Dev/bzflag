@@ -23,6 +23,7 @@ libBzLua_la_SOURCES =                       \
 	LuaCallOuts.cxx       LuaCallOuts.h       \
 	LuaConstGame.cxx      LuaConstGame.h      \
 	LuaConstGL.cxx        LuaConstGL.h        \
+	LuaControl.cxx        LuaControl.h        \
 	LuaDouble.cxx         LuaDouble.h         \
 	LuaDLists.cxx         LuaDLists.h         \
 	LuaDynCol.cxx         LuaDynCol.h         \

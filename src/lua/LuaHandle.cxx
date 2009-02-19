@@ -27,26 +27,27 @@ using std::vector;
 #include "LuaExtras.h"
 
 // local lua library headers
-#include "LuaCallOuts.h"
 #include "LuaBitOps.h"
-#include "LuaDouble.h"
-#include "LuaOpenGL.h"
-#include "LuaConstGL.h"
-#include "LuaConstGame.h"
-#include "LuaKeySyms.h"
-#include "LuaSpatial.h"
-#include "LuaObstacle.h"
-#include "LuaScream.h"
-#include "LuaURL.h"
-#include "LuaVFS.h"
 #include "LuaBZDB.h"
-#include "LuaPack.h"
-#include "LuaExtras.h"
-#include "LuaVector.h"
 #include "LuaBzMaterial.h"
+#include "LuaCallOuts.h"
+#include "LuaConstGame.h"
+#include "LuaConstGL.h"
+#include "LuaControl.h"
+#include "LuaDouble.h"
 #include "LuaDynCol.h"
-#include "LuaTexMat.h"
+#include "LuaExtras.h"
+#include "LuaKeySyms.h"
+#include "LuaObstacle.h"
+#include "LuaOpenGL.h"
+#include "LuaPack.h"
 #include "LuaPhyDrv.h"
+#include "LuaScream.h"
+#include "LuaSpatial.h"
+#include "LuaTexMat.h"
+#include "LuaURL.h"
+#include "LuaVector.h"
+#include "LuaVFS.h"
 
 
 LuaHandle* LuaHandle::activeHandle = NULL;
@@ -713,7 +714,8 @@ bool LuaHandle::SetupEnvironment()
 					!PushLib("bz", LuaTexMat::PushEntries)     ||
 					!PushLib("bz", LuaPhyDrv::PushEntries)     ||
 					!PushLib("bz", LuaSpatial::PushEntries)    ||
-					!PushLib("bz", LuaObstacle::PushEntries)) {
+					!PushLib("bz", LuaObstacle::PushEntries)   ||
+					!PushLib("control", LuaControl::PushEntries)) {
 				lua_pop(L, 1);
 				return false;
 			}

@@ -187,7 +187,7 @@ SceneRenderer*		getSceneRenderer()
   return NULL;
 }
 
-void			blockControls()
+void			forceControls(bool, float, float)
 {
 }
 

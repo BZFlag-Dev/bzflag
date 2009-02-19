@@ -412,7 +412,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   char buffer[1024];
   int textlen = (int)strlen(text);
 
-  assert(textlen < 1024 && "drawString text is way bigger than ever expected");
+  assert(textlen < 1024 && "drawString text is way bigger than ever expected"); // FIXME
   memcpy(buffer, text, textlen);
 
   FTFont* theFont = getGLFont(faceID ,(int)size);
@@ -548,7 +548,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	}
       }
       startSend++;
-      assert(startSend > 0 && "drawString found an ansi sequence that didn't terminate?");
+      assert(startSend > 0 && "drawString found an ansi sequence that didn't terminate?"); // FIXME
     }
 
     // we stopped sending text at an ANSI code,

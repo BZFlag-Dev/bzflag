@@ -97,8 +97,9 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, SendCommand);
 
-	PUSH_LUA_CFUNC(L, PlaySound);
 	PUSH_LUA_CFUNC(L, BlockControls);
+
+	PUSH_LUA_CFUNC(L, PlaySound);
 
 	PUSH_LUA_CFUNC(L, ReadImage);
 
@@ -157,6 +158,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, MakeFont);
 
 	PUSH_LUA_CFUNC(L, GetLocalPlayer);
+	PUSH_LUA_CFUNC(L, GetLocalPlayerTarget);
 	PUSH_LUA_CFUNC(L, GetLocalTeam);
 	PUSH_LUA_CFUNC(L, GetRabbitPlayer);
 	PUSH_LUA_CFUNC(L, GetAntidotePosition);
@@ -672,6 +674,20 @@ int LuaCallOuts::SendCommand(lua_State* L) // FIXME -- removed for safety
 }
 
 
+/******************************************************************************/
+
+int LuaCallOuts::BlockControls(lua_State* L)
+{
+	if (!L2H(L)->HasInputCtrl()) {
+		luaL_error(L, "this script can not block controls");
+	}
+	forceControls(true, 0.0f, 0.0f);
+	return 0;
+}
+
+
+/******************************************************************************/
+
 int LuaCallOuts::PlaySound(lua_State* L)
 {
 	int soundID = -1;
@@ -720,16 +736,6 @@ int LuaCallOuts::PlaySound(lua_State* L)
 
 	SOUNDSYSTEM.play(soundID, local ? NULL : pos, important, local, repeated);
 
-	return 0;
-}
-
-
-int LuaCallOuts::BlockControls(lua_State* L)
-{
-	if (!L2H(L)->HasInputCtrl()) {
-		luaL_error(L, "this script can not block controls");
-	}
-	blockControls();
 	return 0;
 }
 
@@ -1586,6 +1592,21 @@ int LuaCallOuts::GetLocalPlayer(lua_State* L)
 		return 0;
 	}
 	lua_pushinteger(L, myTank->getId());
+	return 1;
+}
+
+
+int LuaCallOuts::GetLocalPlayerTarget(lua_State* L)
+{
+	const LocalPlayer* myTank = LocalPlayer::getMyTank();
+	if (myTank == NULL) {
+		return 0;
+	}
+	const Player* target = myTank->getTarget();
+	if (target == NULL) {
+		return 0;
+	}
+	lua_pushinteger(L, target->getId());
 	return 1;
 }
 
