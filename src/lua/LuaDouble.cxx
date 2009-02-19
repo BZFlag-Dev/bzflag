@@ -88,6 +88,23 @@ int LuaDouble::MetaIndex(lua_State* L)
 		lua_pushlstring(L, (char*)&d1, sizeof(double));
 		return 1;
 	}
+	else if (key == "floor") { PushDouble(L, floor(d1)); return 1; }
+	else if (key == "ceil")  { PushDouble(L, ceil(d1));  return 1; }
+	else if (key == "sqrt")  { PushDouble(L, sqrt(d1));  return 1; }
+	else if (key == "abs")   { PushDouble(L, fabs(d1));  return 1; }
+	else if (key == "cos")   { PushDouble(L, cos(d1));   return 1; }
+	else if (key == "sin")   { PushDouble(L, sin(d1));   return 1; }
+	else if (key == "tan")   { PushDouble(L, tan(d1));   return 1; }
+	else if (key == "acos")  { PushDouble(L, acos(d1));  return 1; }
+	else if (key == "asin")  { PushDouble(L, asin(d1));  return 1; }
+	else if (key == "atan")  { PushDouble(L, atan(d1));  return 1; }
+	else if (key == "cosh")  { PushDouble(L, cosh(d1));  return 1; }
+	else if (key == "sinh")  { PushDouble(L, sinh(d1));  return 1; }
+	else if (key == "tanh")  { PushDouble(L, tanh(d1));  return 1; }
+	else if (key == "exp")   { PushDouble(L, exp(d1));   return 1; }
+	else if (key == "log")   { PushDouble(L, log(d1));   return 1; }
+	else if (key == "log2")  { PushDouble(L, log2(d1));  return 1; }
+	else if (key == "log10") { PushDouble(L, log10(d1)); return 1; }
 /* FIXME -- require _ISOC99_SOURCE
 	else if (key == "class") {
 		switch (fpclassify(d1)) {
@@ -260,11 +277,12 @@ int LuaDouble::IsDouble(lua_State* L)
 
 int LuaDouble::CreateDouble(lua_State* L)
 {
-	double value = 0.0f;
-	if (lua_israwnumber(L, 1)) {
-		value = (double)lua_tonumber(L, 1);
+	double value = 0.0;
+
+	if (!lua_israwstring(L, 1)) {
+		value = CheckNumber(L, 1);
 	}
-	else if (lua_israwstring(L, 1)) {
+	else {
 		if (!lua_israwnumber(L, 2)) {
 			// parse the string
 			const char* start = lua_tostring(L, 1);
@@ -285,9 +303,6 @@ int LuaDouble::CreateDouble(lua_State* L)
 			data += offset;
 			value = *((const double*)data);
 		}
-	}
-	else {
-		value = CheckDouble(L, 1);
 	}
 
 	double* doublePtr = (double*)lua_newuserdata(L, sizeof(double));

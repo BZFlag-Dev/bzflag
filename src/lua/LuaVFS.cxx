@@ -224,6 +224,7 @@ int LuaVFS::Include(lua_State* L)
 		lua_error(L);
 	}
 
+	// setup the function's environment
 	if (lua_istable(L, 3)) {
 		lua_pushvalue(L, 3);
 	}
