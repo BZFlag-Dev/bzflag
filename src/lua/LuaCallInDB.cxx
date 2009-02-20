@@ -128,6 +128,7 @@ LuaCallInDB::LuaCallInDB()
 
 	ADD_CI(ShotAdded,      REQ_FULL_READ, BASIC, ANY_SCRIPT);
 	ADD_CI(ShotRemoved,    REQ_FULL_READ, BASIC, ANY_SCRIPT);
+	ADD_CI(ShotRicochet,   REQ_FULL_READ, BASIC, ANY_SCRIPT);
 	ADD_CI(ShotTeleported, REQ_FULL_READ, BASIC, ANY_SCRIPT);
 
 	ADD_CI(FlagAdded,       NO_REQS, BASIC, ANY_SCRIPT);

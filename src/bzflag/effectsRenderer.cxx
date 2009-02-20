@@ -288,8 +288,9 @@ std::vector<std::string> EffectsRenderer::getLandEffectTypes(void)
   return ret;
 }
 
-void EffectsRenderer::addRicoEffect(const float* pos, float rot[2],
-				    const float* vel)
+void EffectsRenderer::addRicoEffect(const float* pos,
+                                    const float* normal,
+                                    const float* vel)
 {
   if (!BZDB.isTrue("useFancyEffects"))
     return;
@@ -306,9 +307,12 @@ void EffectsRenderer::addRicoEffect(const float* pos, float rot[2],
   }
 
   if (effect) {
-    float rots[3] = {0};
-    rots[2] = rot[0];
-    rots[1] = rot[1];
+    const float horiz = sqrtf((normal[0] * normal[0]) +
+                              (normal[1] * normal[1]));
+    float rots[3];
+    rots[0] = 0.0f;
+    rots[1] = atan2f(normal[2], horiz);
+    rots[2] = atan2f(normal[1], normal[0]);
 
     effect->setPos(pos, rots);
     effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());

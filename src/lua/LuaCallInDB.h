@@ -40,6 +40,7 @@ enum LuaCallInCode {
 
 	LUA_CI_ShotAdded,
 	LUA_CI_ShotRemoved,
+	LUA_CI_ShotRicochet,
 	LUA_CI_ShotTeleported,
 
 	LUA_CI_FlagAdded,

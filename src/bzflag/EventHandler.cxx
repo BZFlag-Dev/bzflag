@@ -83,8 +83,10 @@ EventHandler::EventHandler()
   SETUP_EVENT(PlayerTeamChange,  0, false);
   SETUP_EVENT(PlayerScoreChange, 0, false);
 
-  SETUP_EVENT(ShotAdded,   0, false);
-  SETUP_EVENT(ShotRemoved, 0, false);
+  SETUP_EVENT(ShotAdded,      0, false);
+  SETUP_EVENT(ShotRemoved,    0, false);
+  SETUP_EVENT(ShotRicochet,   0, false);
+  SETUP_EVENT(ShotTeleported, 0, false);
 
   SETUP_EVENT(FlagAdded,       0, false);
   SETUP_EVENT(FlagRemoved,     0, false);

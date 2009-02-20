@@ -235,7 +235,9 @@ public:
   std::vector<std::string> getLandEffectTypes(void);
 
   // rico effect
-  void addRicoEffect(const float* pos, float rot[2], const float* vel = NULL);
+  void addRicoEffect(const float* pos,
+                     const float* normal,
+                     const float* vel = NULL);
   std::vector<std::string> getRicoEffectTypes(void);
 
   // shot teleport effect

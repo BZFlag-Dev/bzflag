@@ -383,6 +383,33 @@ void LuaHandle::ShotRemoved(const FiringInfo& info)
 }
 
 
+void LuaHandle::ShotRicochet(const ShotPath& path,
+                             const float* pos, const float* normal)
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 9);
+	if (!PushCallIn(LUA_CI_ShotRicochet)) {
+		return; // the call is not defined
+	}
+
+	const FiringInfo& info = path.getFiringInfo();
+	const uint8_t playerID = (uint8_t)info.shot.player;
+	const uint16_t infoID = info.shot.id;
+	const uint32_t shotID = (playerID << 16) | infoID;
+
+	lua_pushinteger(L, shotID);
+	lua_pushnumber(L, pos[0]);
+	lua_pushnumber(L, pos[1]);
+	lua_pushnumber(L, pos[2]);
+	lua_pushnumber(L, normal[0]);
+	lua_pushnumber(L, normal[1]);
+	lua_pushnumber(L, normal[2]);
+
+	RunCallIn(LUA_CI_ShotRicochet, 7, 0);
+	return;
+}
+
+
 void LuaHandle::ShotTeleported(const ShotPath& path, int srcLink, int dstLink)
 {
 	LUA_CALL_IN_CHECK(L);	

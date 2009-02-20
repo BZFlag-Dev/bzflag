@@ -73,6 +73,7 @@ class EventClient
 
     virtual void ShotAdded(const FiringInfo&) { return; }
     virtual void ShotRemoved(const FiringInfo&) { return; }
+    virtual void ShotRicochet(const ShotPath&, const float* /*pos*/, const float* /*normal*/) { return; }
     virtual void ShotTeleported(const ShotPath&, int /*srcLink*/, int /*dstLink*/) { return; }
 
     virtual bool CommandFallback(const std::string& /*cmd*/) { return false; }

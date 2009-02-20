@@ -113,6 +113,7 @@ class LuaHandle : public EventClient
 
 		virtual void ShotAdded(const FiringInfo&);
 		virtual void ShotRemoved(const FiringInfo&);
+		virtual void ShotRicochet(const ShotPath&, const float* pos, const float* normal);
 		virtual void ShotTeleported(const ShotPath&, int srcLink, int dstLink);
 
 		virtual void FlagAdded(const Flag&);

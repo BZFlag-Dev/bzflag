@@ -110,22 +110,29 @@ void SegmentedShotStrategy::update(float dt)
             const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
             const bool important = (getPath().getPlayer() == myTankId);
             const float* pos = segments[segment].ray.getOrigin();
-            SOUNDSYSTEM.play(SFX_RICOCHET,pos,important,false);
+            SOUNDSYSTEM.play(SFX_RICOCHET, pos, important, false);
 
             // this is fugly but it's what we do
-            float dir[3];
             const float* newDir = segments[segment].ray.getDirection();
             const float* oldDir = segments[segment - 1].ray.getDirection();
-            dir[0] = newDir[0] - oldDir[0];
-            dir[1] = newDir[1] - oldDir[1];
-            dir[2] = newDir[2] - oldDir[2];
 
-            float rots[2];
-            const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
-            rots[0] = atan2f(dir[1], dir[0]);
-            rots[1] = atan2f(dir[2], horiz);
+            const float nx = newDir[0] - oldDir[0];
+            const float ny = newDir[1] - oldDir[1];
+            const float nz = newDir[2] - oldDir[2];
+            const float length = sqrtf((nx * nx) + (ny * ny) + (nz * nz));
 
-            EFFECTS.addRicoEffect( pos, rots);
+            float normal[3];
+            if (length <= 0.0f) {
+              normal[0] = normal[1] = normal[2] = 0.0f;
+            } else {
+              const float scale = 1.0f / length;
+              normal[0] = nx * scale;
+              normal[1] = ny * scale;
+              normal[2] = nz * scale;
+            }
+            eventHandler.ShotRicochet(getPath(), pos, normal);
+
+            EFFECTS.addRicoEffect(pos, normal);
             break;
           }
 	  case ShotPathSegment::Boundary: {

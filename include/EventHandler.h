@@ -108,6 +108,7 @@ class EventHandler
 
     void ShotAdded(const FiringInfo&);
     void ShotRemoved(const FiringInfo&);
+    void ShotRicochet(const ShotPath&, const float* pos, const float* normal);
     void ShotTeleported(const ShotPath&, int srcLink, int dstLink); // FIXME -- use pos + dirs?
 
     void GLResize();
@@ -215,6 +216,7 @@ class EventHandler
 
     EventClientList listShotAdded;
     EventClientList listShotRemoved;
+    EventClientList listShotRicochet;
     EventClientList listShotTeleported;
 
     EventClientList listFlagAdded;
@@ -331,6 +333,7 @@ EC_LOOP_3_PARAM(FlagTransferred, const Flag&, const Player&, const Player&)
 
 EC_LOOP_1_PARAM(ShotAdded,   const FiringInfo&)
 EC_LOOP_1_PARAM(ShotRemoved, const FiringInfo&)
+EC_LOOP_3_PARAM(ShotRicochet, const ShotPath&, const float* /*pos*/, const float* /*normal*/)
 EC_LOOP_3_PARAM(ShotTeleported, const ShotPath&, int /*srcLink*/, int /*dstLink*/)
 
 EC_LOOP_0_PARAM(GLResize)
