@@ -37,7 +37,9 @@ static bool PushGfxBlockTypes(lua_State* L);
 static bool PushRoamModes(lua_State* L);
 static bool PushConsoleTypes(lua_State* L);
 static bool PushMouseButtons(lua_State* L);
-//static bool PushFlagQualities(lua_State* L);
+static bool PushFlagStates(lua_State* L);
+static bool PushFlagQualities(lua_State* L);
+static bool PushFlagEndurance(lua_State* L);
 //static bool PushPlayers(lua_State* L);
 //static bool PushPermissions(lua_State* L);
 
@@ -59,7 +61,10 @@ bool LuaConstGame::PushEntries(lua_State* L)
 		PushGfxBlockTypes(L)   &&
 		PushRoamModes(L)       &&
 		PushConsoleTypes(L)    &&
-		PushMouseButtons(L);
+		PushMouseButtons(L)    &&
+		PushFlagStates(L)      &&
+		PushFlagQualities(L)   &&
+		PushFlagEndurance(L);
 }
 
 
@@ -362,6 +367,62 @@ static bool PushMouseButtons(lua_State* L)
 	PushDualPair(L, "LEFT",   0);
 	PushDualPair(L, "MIDDLE", 1);
 	PushDualPair(L, "RIGHT",  2);
+
+	lua_rawset(L, -3);
+
+	return true;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool PushFlagStates(lua_State* L)
+{
+	lua_pushliteral(L, "FLAGSTATE");
+	lua_newtable(L);
+
+	PushDualPair(L, "NONE",   FlagNoExist);
+	PushDualPair(L, "GROUND", FlagOnGround);
+	PushDualPair(L, "TANK",   FlagOnTank);
+	PushDualPair(L, "AIR",    FlagInAir);
+	PushDualPair(L, "COMING", FlagComing);
+	PushDualPair(L, "GOING",  FlagGoing);
+
+	lua_rawset(L, -3);
+
+	return true;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool PushFlagQualities(lua_State* L)
+{
+	lua_pushliteral(L, "FLAGQUALITY");
+	lua_newtable(L);
+
+	PushDualPair(L, "GOOD", FlagGood);
+	PushDualPair(L, "BAD",  FlagBad);
+
+	lua_rawset(L, -3);
+
+	return true;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool PushFlagEndurance(lua_State* L)
+{
+	lua_pushliteral(L, "FLAGENDURANCE");
+	lua_newtable(L);
+
+	PushDualPair(L, "NORMAL",   FlagNormal);
+	PushDualPair(L, "UNSTABLE", FlagUnstable);
+	PushDualPair(L, "STICKY",   FlagSticky);
 
 	lua_rawset(L, -3);
 

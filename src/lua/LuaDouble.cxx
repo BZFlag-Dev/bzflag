@@ -104,7 +104,7 @@ int LuaDouble::MetaIndex(lua_State* L)
 	else if (key == "cosh")  { PushDouble(L, cosh(d1));  return 1; }
 	else if (key == "sinh")  { PushDouble(L, sinh(d1));  return 1; }
 	else if (key == "tanh")  { PushDouble(L, tanh(d1));  return 1; }
-/* FIXME -- require _ISOC99_SOURCE
+/* NOTE -- require _ISOC99_SOURCE
 	else if (key == "log2")  { PushDouble(L, log2(d1));  return 1; }
 	else if (key == "acosh") { PushDouble(L, acosh(d1)); return 1; }
 	else if (key == "asinh") { PushDouble(L, asinh(d1)); return 1; }
