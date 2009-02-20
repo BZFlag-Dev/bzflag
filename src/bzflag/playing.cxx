@@ -1573,6 +1573,8 @@ static bool removePlayer (PlayerId id)
 
   Player *p = getPlayerByIndex(playerIndex);
 
+  eventHandler.PlayerRemoved(*p);
+
   Address addr;
   std::string msg = "signing off";
   if (!p->getIpAddress(addr)) {
@@ -1598,14 +1600,15 @@ static bool removePlayer (PlayerId id)
   remotePlayers[playerIndex] = NULL;
 
   while ((playerIndex >= 0) &&
-    (playerIndex+1 == curMaxPlayers) &&
-    (remotePlayers[playerIndex] == NULL)) {
-      playerIndex--;
-      curMaxPlayers--;
+         (playerIndex+1 == curMaxPlayers) &&
+         (remotePlayers[playerIndex] == NULL)) {
+    playerIndex--;
+    curMaxPlayers--;
   }
   World *_world = World::getWorld();
-  if (!_world)
+  if (!_world) {
     return false;
+  };
 
   _world->setCurMaxPlayers(curMaxPlayers);
 
@@ -2215,13 +2218,23 @@ static void handleAddPlayer(void* msg, bool& checkScores)
 
   if (id == myTank->getId()) {
     enteringServer(msg); // it's me!  should be the end of updates
-  } else {
+  }
+  else {
     addPlayer(id, msg, entered);
     updateNumPlayers();
     checkScores = true;
 
-    if (myTank->getId() >= 200)
+    if (myTank->getId() >= 200) {
       setTankFlags(); // update the tank flags when in replay mode.
+    }
+  }
+
+  const int index = lookupPlayerIndex(id);
+  if ((index >= 0) || (index == -2)) {
+    const Player* player = getPlayerByIndex(index);
+    if (player) {
+      eventHandler.PlayerAdded(*player);
+    }
   }
 }
 
@@ -2231,8 +2244,9 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
   PlayerId id;
   msg = nboUnpackUByte(msg, id);
 
-  if (removePlayer (id))
+  if (removePlayer(id)) {
     checkScores = true;
+  }
 }
 
 
@@ -2279,55 +2293,65 @@ static void handleAliveMessage(void *msg)
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 
-  if ((playerIndex >= 0) || (playerIndex == -2)) {
-    static const float zero[3] = { 0.0f, 0.0f, 0.0f };
-    Player *tank = getPlayerByIndex(playerIndex);
-    if (tank == myTank) {
-      wasRabbit = tank->getTeam() == RabbitTeam;
-      myTank->restart(pos, forward);
-      myTank->setShotType(StandardShot);
-      firstLife = false;
-      justJoined = false;
-
-      if (!myTank->isAutoPilot())
-	mainWindow->warpMouse();
-
-      hud->setAltitudeTape(myTank->canJump());
-#ifdef ROBOT
-    } else if (tank->getPlayerType() == ComputerPlayer) {
-      for (int r = 0; r < numRobots; r++) {
-	if (robots[r] && robots[r]->getId() == playerIndex) {
-	  robots[r]->restart(pos, forward);
-	  setRobotTarget(robots[r]);
-	  break;
-	}
-      }
-#endif
-    }
-
-    if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
-      if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) ||
-                                (tank != ROAM.getTargetTank())))
-          || BZDB.isTrue("enableLocalSpawnEffect")) {
-	if (myTank->getFlag() != Flags::Colorblindness) {
-	  static float cbColor[4] = {1, 1, 1, 1};
-	  EFFECTS.addSpawnEffect(cbColor, pos);
-	} else {
-	  EFFECTS.addSpawnEffect(tank->getColor(), pos);
-	}
-      }
-    }
-    tank->setStatus(tank->getStatus() | PlayerState::Alive);
-    tank->move(pos, forward);
-    tank->setVelocity(zero);
-    tank->setAngularVelocity(0.0f);
-    tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
-    tank->spawnEffect();
-    if (tank == myTank)
-      myTank->setSpawning(false);
-
-    SOUNDSYSTEM.play(SFX_POP, pos, true, isViewTank(tank));
+  if ((playerIndex < 0) && (playerIndex != -2)) {
+    return;
   }
+  Player *tank = getPlayerByIndex(playerIndex);
+  if (tank == NULL) {
+    return;
+  }
+
+  if (tank == myTank) {
+    wasRabbit = tank->getTeam() == RabbitTeam;
+    myTank->restart(pos, forward);
+    myTank->setShotType(StandardShot);
+    firstLife = false;
+    justJoined = false;
+
+    if (!myTank->isAutoPilot())
+      mainWindow->warpMouse();
+
+    hud->setAltitudeTape(myTank->canJump());
+  }
+#ifdef ROBOT
+  else if (tank->getPlayerType() == ComputerPlayer) {
+    for (int r = 0; r < numRobots; r++) {
+      if (robots[r] && robots[r]->getId() == playerIndex) {
+        robots[r]->restart(pos, forward);
+        setRobotTarget(robots[r]);
+        break;
+      }
+    }
+  }
+#endif
+
+  if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
+    if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) ||
+                              (tank != ROAM.getTargetTank())))
+        || BZDB.isTrue("enableLocalSpawnEffect")) {
+      if (myTank->getFlag() != Flags::Colorblindness) {
+        static float cbColor[4] = {1, 1, 1, 1};
+        EFFECTS.addSpawnEffect(cbColor, pos);
+      } else {
+        EFFECTS.addSpawnEffect(tank->getColor(), pos);
+      }
+    }
+  }
+
+  static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+  tank->setStatus(tank->getStatus() | PlayerState::Alive);
+  tank->move(pos, forward);
+  tank->setVelocity(zero);
+  tank->setAngularVelocity(0.0f);
+  tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
+  tank->spawnEffect();
+  if (tank == myTank) {
+    myTank->setSpawning(false);
+  }
+
+  eventHandler.PlayerSpawned(*tank);
+
+  SOUNDSYSTEM.play(SFX_POP, pos, true, isViewTank(tank));
 }
 
 
@@ -2443,6 +2467,10 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   BaseLocalPlayer *killerLocal = getLocalPlayer(killer);
   Player *victimPlayer = lookupPlayer(victim);
   Player *killerPlayer = lookupPlayer(killer);
+
+  if (victimPlayer != NULL) {
+    eventHandler.PlayerKilled(*victimPlayer); // FIXME -- need more info
+  }
 
   if (victimPlayer == myTank) {
     // uh oh, i'm dead

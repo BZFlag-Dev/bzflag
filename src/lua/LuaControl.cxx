@@ -15,6 +15,7 @@
 #include "LuaHandle.h"
 #include "LuaInclude.h"
 #include "LuaHashString.h"
+#include "LuaBzOrg.h"
 
 
 /******************************************************************************/
@@ -39,7 +40,7 @@ bool LuaControl::PushEntries(lua_State* L)
 
 static inline bool ValidScript(lua_State* L)
 {
-	return ((L2H(L)->GetName() == "LuaBzOrg") || LuaHandle::GetDevMode());
+	return ((L2H(L) == luaBzOrg) || LuaHandle::GetDevMode());
 }
 
 

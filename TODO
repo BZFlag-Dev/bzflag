@@ -101,6 +101,11 @@ so that no work is duplicated.
 --  Would be nice to have but are not critical for 3.0
 --
 
+* Reference counting for external resources (textures, sounds, fonts, etc...)
+  Optional features might be deletion holdoff time, not deleting until some
+  sort of resource manager related limit is reached (number of resources, amount
+  of memory consumed by resources, etc...)
+
 * Force feedback joystick support for Mac OS X
   http://developer.apple.com/documentation/DeviceDrivers/Reference/ForceFeedback/index.html
 

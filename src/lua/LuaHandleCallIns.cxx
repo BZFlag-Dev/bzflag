@@ -309,7 +309,7 @@ void LuaHandle::PlayerTeleported(const Player& player, int srcLink, int dstLink)
 }
 
 
-void LuaHandle::PlayerTeamChange(const Player& player)
+void LuaHandle::PlayerTeamChange(const Player& player, int oldTeam)
 {
 	LUA_CALL_IN_CHECK(L);	
 	lua_checkstack(L, 3);
@@ -318,8 +318,9 @@ void LuaHandle::PlayerTeamChange(const Player& player)
 	}
 
 	lua_pushnumber(L, player.getId());
+	lua_pushnumber(L, oldTeam);
 
-	RunCallIn(LUA_CI_PlayerTeamChange, 1, 0);
+	RunCallIn(LUA_CI_PlayerTeamChange, 2, 0);
 	return;
 }
 

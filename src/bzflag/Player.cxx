@@ -23,6 +23,7 @@
 #include "WallObstacle.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
+#include "EventHandler.h"
 
 // local implementation headers
 #include "playing.h"
@@ -383,12 +384,18 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
 
 void Player::changeTeam(TeamColor _team)
 {
+  const TeamColor oldTeam = team;
+
   // set team
   team = _team;
 
   // set the scene node
   if (!headless) {
     setVisualTeam(team);
+  }
+
+  if (team != oldTeam) {
+    eventHandler.PlayerTeamChange(*this, (int)oldTeam);
   }
 }
 
@@ -682,6 +689,8 @@ void Player::changeScore(float newRank,
   wins   = newWins;
   losses = newLosses;
   tks    = newTeamKills;
+
+  eventHandler.PlayerScoreChange(*this);
 }
 
 

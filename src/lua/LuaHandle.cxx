@@ -693,17 +693,17 @@ bool LuaHandle::SetupEnvironment()
 			lua_pop(L, 1);
 			return false;
 		}
-		if (!PushLib("math",   LuaBitOps::PushEntries)     ||
-				!PushLib("math",   LuaVector::PushEntries)     ||
-				!PushLib("url",    LuaURLMgr::PushEntries)     ||
-				!PushLib("vfs",    LuaVFS::PushEntries)        ||
-				!PushLib("bzdb",   LuaBZDB::PushEntries)       ||
-				!PushLib("script", LuaScream::PushEntries)     ||
-				!PushLib("gl",     LuaOpenGL::PushEntries)     ||
-				!PushLib("GL",     LuaConstGL::PushEntries)    ||
-				!PushLib("bz",     LuaPack::PushEntries)       ||
-				!PushLib("bz",     LuaCallOuts::PushEntries)   ||
-				!PushLib("BZ",     LuaKeySyms::PushEntries)    ||
+		if (!PushLib("math",   LuaBitOps::PushEntries)   ||
+				!PushLib("math",   LuaVector::PushEntries)   ||
+				!PushLib("url",    LuaURLMgr::PushEntries)   ||
+				!PushLib("vfs",    LuaVFS::PushEntries)      ||
+				!PushLib("bzdb",   LuaBZDB::PushEntries)     ||
+				!PushLib("script", LuaScream::PushEntries)   ||
+				!PushLib("gl",     LuaOpenGL::PushEntries)   ||
+				!PushLib("GL",     LuaConstGL::PushEntries)  ||
+				!PushLib("bz",     LuaPack::PushEntries)     ||
+				!PushLib("bz",     LuaCallOuts::PushEntries) ||
+				!PushLib("BZ",     LuaKeySyms::PushEntries)  ||
 				!PushLib("BZ",     LuaConstGame::PushEntries)) {
 			lua_pop(L, 1);
 			return false;
