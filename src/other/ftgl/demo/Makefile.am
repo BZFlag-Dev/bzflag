@@ -18,6 +18,8 @@ c_demo_SOURCES = \
 c_demo_CFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 c_demo_LDFLAGS = $(GLUT_LIBS)
 c_demo_LDADD = ../src/libftgl.la $(FT2_LIBS)
+# avoid __Unwind_Resume undefined symbol on MacOS with Xcode 2.5
+CCLD = $(CXX)
 
 FTGLDemo_SOURCES = \
 	FTGLDemo.cpp \
