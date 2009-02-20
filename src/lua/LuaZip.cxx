@@ -228,7 +228,7 @@ int LuaZip::Zip(lua_State* L)
 	size_t inLen;
 	const char* inData = luaL_checklstring(L, 1, &inLen);
 
-	CompressMode mode = ParseCompressMode(L, 2, "gzip");
+	const CompressMode mode = ParseCompressMode(L, 2, "gzip");
 	
 	char* outData = NULL;
 	size_t outLen;
@@ -251,7 +251,7 @@ int LuaZip::Unzip(lua_State* L)
 	size_t inLen;
 	const char* inData = luaL_checklstring(L, 1, &inLen);
 
-	CompressMode mode = ParseCompressMode(L, 2, "zlib"); // zlib or gzip
+	const CompressMode mode = ParseCompressMode(L, 2, "zlib"); // zlib or gzip
 
 	char* outData = NULL;
 	size_t outLen;
