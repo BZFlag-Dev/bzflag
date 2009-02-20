@@ -3,8 +3,8 @@ noinst_LTLIBRARIES = liblua.la
 
 if BUILD_LUA_EXECS
 bin_PROGRAMS = bzlua bzluac
-bzlua:	liblua.la
-bzluac:	liblua.la
+bzlua_DEPENDENCIES = liblua.la
+bzluac_DEPENDENCIES = liblua.la
 bzlua_LDFLAGS  = -static
 bzluac_LDFLAGS = -static
 bzlua_SOURCES  = src/lua.cxx
