@@ -368,11 +368,11 @@ namespace TextUtils
     if (key == "bright")      { outLine += ANSI_STR_BRIGHT;       return len; }
     if (key == "dim")         { outLine += ANSI_STR_DIM;          return len; }
     if (key == "blink")       { outLine += ANSI_STR_PULSATING;    return len; }
-    if (key == "noblink")     { outLine += ANSI_STR_NO_PULSATE;   return len; }
+    if (key == "blinkOff")    { outLine += ANSI_STR_NO_PULSATE;   return len; }
     if (key == "under")       { outLine += ANSI_STR_UNDERLINE;    return len; }
-    if (key == "nounder")     { outLine += ANSI_STR_NO_UNDERLINE; return len; }
+    if (key == "underOff")    { outLine += ANSI_STR_NO_UNDERLINE; return len; }
     if (key == "reset")       { outLine += ANSI_STR_RESET_FINAL;  return len; }
-    if (key == "resetbright") { outLine += ANSI_STR_RESET;        return len; }
+    if (key == "resetBright") { outLine += ANSI_STR_RESET;        return len; }
 
     outLine.push_back('\\');
       

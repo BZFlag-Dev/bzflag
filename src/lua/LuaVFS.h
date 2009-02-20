@@ -19,6 +19,8 @@ class LuaVFS {
 		static int ReadFile(lua_State* L);
 		static int WriteFile(lua_State* L);
 		static int AppendFile(lua_State* L);
+		static int RemoveFile(lua_State* L);
+		static int RenameFile(lua_State* L);
 		static int Include(lua_State* L);
 		static int CreateDir(lua_State* L);
 		static int DirList(lua_State* L);

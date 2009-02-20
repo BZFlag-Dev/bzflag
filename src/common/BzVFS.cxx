@@ -218,6 +218,23 @@ class RawFS : public BzFS
       return success;
     };
 
+    bool removeFile(const string& path) {
+      if (!isWritable()) {
+        return false;
+      }
+      const string fullPath = root + path;
+      return remove(fullPath.c_str()) == 0;
+    };
+
+    bool renameFile(const string& oldpath, const string& newpath) {
+      if (!isWritable()) {
+        return false;
+      }
+      const string fullOldPath = root + oldpath;
+      const string fullNewPath = root + newpath;
+      return rename(fullOldPath.c_str(), fullNewPath.c_str()) == 0;
+    };
+
     BzFile* openFile(const string& path, string* errMsg = NULL) {
       size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
       return NULL;
@@ -314,6 +331,20 @@ class UrlFS : public RawFS
       return false;
     };
 
+    bool removeFile(const string& /*path*/) {
+      if (!isWritable()) {
+        return false;
+      }
+      return false;
+    };
+
+    bool renameFile(const string& /*oldpath*/, const string& /*newpath*/) {
+      if (!isWritable()) {
+        return false;
+      }
+      return false;
+    };
+
     BzFile* openFile(const string& path, string* errMsg = NULL) {
       size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
       return NULL;
@@ -384,6 +415,20 @@ class DocketFS : public BzFS
         return false;
       }
       size_t FIXME = path.size() + data.size(); FIXME = FIXME;
+      return false;
+    };
+
+    bool removeFile(const string& /*path*/) {
+      if (!isWritable()) {
+        return false;
+      }
+      return false;
+    };
+
+    bool renameFile(const string& /*oldpath*/, const string& /*newpath*/) {
+      if (!isWritable()) {
+        return false;
+      }
       return false;
     };
 
@@ -764,6 +809,60 @@ bool BzVFS::appendFile(const string& path, const string& modes,
 
   for (size_t i = 0; i < systems.size(); i++) {
     if (systems[i]->appendFile(cleanPath, data)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool BzVFS::removeFile(const string& path, const string& modes)
+{
+  string outPath, outModes;
+  if (!parseModes(path, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
+  if (!safePath(cleanPath)) {
+    return false;
+  }
+
+  vector<BzFS*> systems;
+  getSystems(outModes, systems);
+
+  for (size_t i = 0; i < systems.size(); i++) {
+    if (systems[i]->removeFile(cleanPath)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool BzVFS::renameFile(const string& oldpath, const string& modes,
+                       const string& newpath)
+{
+  string outPath, outModes;
+  if (!parseModes(oldpath, outPath, modes, outModes)) {
+    return false;
+  }
+
+  const string cleanPath = cleanFilePath(outPath);
+  if (!safePath(cleanPath)) {
+    return false;
+  }
+
+  const string newPath = cleanFilePath(newpath);
+  if (!safePath(newPath)) {
+    return false;
+  }
+
+  vector<BzFS*> systems;
+  getSystems(outModes, systems);
+
+  for (size_t i = 0; i < systems.size(); i++) {
+    if (systems[i]->renameFile(cleanPath, newPath)) {
       return true;
     }
   }

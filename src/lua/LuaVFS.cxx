@@ -30,6 +30,8 @@ bool LuaVFS::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, ReadFile);
 	PUSH_LUA_CFUNC(L, WriteFile);
 	PUSH_LUA_CFUNC(L, AppendFile);
+	PUSH_LUA_CFUNC(L, RemoveFile);
+	PUSH_LUA_CFUNC(L, RenameFile);
 	PUSH_LUA_CFUNC(L, Include);
 	PUSH_LUA_CFUNC(L, CreateDir);
 	PUSH_LUA_CFUNC(L, DirList);
@@ -193,6 +195,43 @@ int LuaVFS::AppendFile(lua_State* L)
 	}
 
 	if (!bzVFS.appendFile(path, modes, data)) {
+		return 0;
+	}
+	lua_pushboolean(L, true);
+	return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+int LuaVFS::RemoveFile(lua_State* L)
+{
+	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+
+	const char* path = luaL_checkstring(L, 1);
+	const string modes = lh->GetFSWriteAll();
+
+	if (!bzVFS.removeFile(path, modes)) {
+		return 0;
+	}
+	lua_pushboolean(L, true);
+	return 1;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+int LuaVFS::RenameFile(lua_State* L)
+{
+	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+
+	const char* oldPath = luaL_checkstring(L, 1);
+	const char* newPath = luaL_checkstring(L, 2);
+	const string modes = lh->GetFSWriteAll();
+
+	if (!bzVFS.renameFile(oldPath, modes, newPath)) {
 		return 0;
 	}
 	lua_pushboolean(L, true);

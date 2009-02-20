@@ -65,6 +65,9 @@ class BzFS {
     virtual bool readFile(const std::string& path, std::string& data) = 0;
     virtual bool writeFile(const std::string& path, const std::string& data) = 0;
     virtual bool appendFile(const std::string& path, const std::string& data) = 0;
+    virtual bool removeFile(const std::string& path) = 0;
+    virtual bool renameFile(const std::string& oldpath,
+                            const std::string& newpath) = 0;
     virtual BzFile* openFile(const std::string& path, std::string* errMsg = NULL) = 0;
     virtual bool createDir(const std::string& path) = 0;
 
@@ -104,13 +107,15 @@ class BzVFS {
     bool fileExists(const std::string& path, const std::string& modes);
     int  fileSize(const std::string& path, const std::string& modes);
 
-    bool readFile(const std::string& path,
-                  const std::string& modes, std::string& data);
-
-    bool writeFile(const std::string& path,
-                   const std::string& modes, const std::string& data);
-    bool appendFile(const std::string& path,
-                    const std::string& modes, const std::string& data);
+    bool readFile(const std::string& path, const std::string& modes,
+                  std::string& data);
+    bool writeFile(const std::string& path, const std::string& modes,
+                   const std::string& data);
+    bool appendFile(const std::string& path, const std::string& modes,
+                    const std::string& data);
+    bool removeFile(const std::string& path, const std::string& modes);
+    bool renameFile(const std::string& oldPath, const std::string& modes,
+                    const std::string& newPath);
 
     bool createDir(const std::string& path, const std::string& modes);
 
