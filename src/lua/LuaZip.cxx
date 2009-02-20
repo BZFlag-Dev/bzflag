@@ -107,15 +107,18 @@ static int CompressString(const char* inData, size_t inLen,
                           char*& outData, size_t& outLen,
                           CompressMode mode)
 {
-	z_stream zs;
-	SetupZStream(zs, inData, inLen);
-
 	int windowBits;
 	switch (mode) {
 		case CompressRaw:  { windowBits = -MAX_WBITS;      break; }
 		case CompressGzip: { windowBits = +MAX_WBITS + 16; break; }
 		case CompressZlib: { windowBits = +MAX_WBITS;      break; }
+		default: {
+			return Z_VERSION_ERROR;
+		}
 	}
+
+	z_stream zs;
+	SetupZStream(zs, inData, inLen);
 
 	const int initCode = deflateInit2(&zs, 9, Z_DEFLATED, windowBits,
 	                                  MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
@@ -164,15 +167,18 @@ static int DecompressString(const char* inData, size_t inLen,
                             char*& outData, size_t& outLen,
                             CompressMode mode)
 {
-	z_stream zs;
-	SetupZStream(zs, inData, inLen);
-
 	int windowBits;
 	switch (mode) {
 		case CompressRaw:  { windowBits = -MAX_WBITS;      break; }
 		case CompressGzip: { windowBits = +MAX_WBITS + 16; break; }
 		case CompressZlib: { windowBits = +MAX_WBITS + 32; break; } // zlib or gzip
+		default: {
+			return Z_VERSION_ERROR;
+		}
 	}
+
+	z_stream zs;
+	SetupZStream(zs, inData, inLen);
 
 	const int initCode = inflateInit2(&zs, windowBits);
 	if (initCode != Z_OK) {
