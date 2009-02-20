@@ -681,10 +681,17 @@ bool LuaHandle::SetupEnvironment()
 //	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
 //	lua_pop(L, 1); // io
 
+  lua_pushnil(L); lua_setglobal(L, "dofile");
+  lua_pushnil(L); lua_setglobal(L, "loadfile");
+
 	lua_getglobal(L, "os");
-	lua_pushstring(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushstring(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushstring(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "remove");    lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "rename");    lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "tmpname");   lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "getenv");    lua_pushnil(L); lua_rawset(L, -3);
+	lua_pushliteral(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
 	lua_pop(L, 1); // os
 
 	lua_pushvalue(L, LUA_GLOBALSINDEX); {

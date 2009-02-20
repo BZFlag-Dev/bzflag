@@ -297,14 +297,14 @@ static bool PushObstacleTypes(lua_State* L)
 
 static bool PushGfxBlockTypes(lua_State* L) // FIXME -- uppercase?
 {
-	lua_pushliteral(L, "GFXBLOCKTYPE");
+	lua_pushliteral(L, "GFXBLOCK_TYPE");
 	lua_newtable(L);
 	for (int i = 0; i < GfxBlock::BlockTypeCount; i++) {
 		PushDualPair(L, GfxBlock::getTypeString(i), i);
 	}
 	lua_rawset(L, -3);
 
-	lua_pushliteral(L, "GFXBLOCKID");
+	lua_pushliteral(L, "GFXBLOCK_ID");
 	lua_newtable(L);
 	for (int i = 0; i < GfxBlockMgr::BlockIDCount; i++) {
 		PushDualPair(L, GfxBlockMgr::getIDString(i), i);
@@ -379,7 +379,7 @@ static bool PushMouseButtons(lua_State* L)
 
 static bool PushFlagStates(lua_State* L)
 {
-	lua_pushliteral(L, "FLAGSTATE");
+	lua_pushliteral(L, "FLAG_STATE");
 	lua_newtable(L);
 
 	PushDualPair(L, "NONE",   FlagNoExist);
@@ -400,7 +400,7 @@ static bool PushFlagStates(lua_State* L)
 
 static bool PushFlagQualities(lua_State* L)
 {
-	lua_pushliteral(L, "FLAGQUALITY");
+	lua_pushliteral(L, "FLAG_QUALITY");
 	lua_newtable(L);
 
 	PushDualPair(L, "GOOD", FlagGood);
@@ -417,7 +417,7 @@ static bool PushFlagQualities(lua_State* L)
 
 static bool PushFlagEndurance(lua_State* L)
 {
-	lua_pushliteral(L, "FLAGENDURANCE");
+	lua_pushliteral(L, "FLAG_ENDURANCE");
 	lua_newtable(L);
 
 	PushDualPair(L, "NORMAL",   FlagNormal);
