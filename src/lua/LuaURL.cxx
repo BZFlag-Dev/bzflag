@@ -35,7 +35,7 @@ LuaURL::LuaURL(lua_State* _L, const std::string& _url)
 : L(_L)
 , active(false)
 , success(false)
-, wantCache(false)
+, wantCache(false) // FIXME -- use it?
 , headOnly(false)
 , fileSize(-1.0)
 , fileTime(0)

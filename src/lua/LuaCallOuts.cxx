@@ -281,23 +281,37 @@ static inline const ShotPath* ParseShot(lua_State* L, int index)
 }
 
 
+static const map<string, TeamColor>& GetTeamNameMap()
+{
+	static map<string, TeamColor> teamNames;
+	if (teamNames.empty()) {
+		teamNames["automatic"] = AutomaticTeam;
+		teamNames["rogue"]     = RogueTeam;
+		teamNames["red"]       = RedTeam;
+		teamNames["green"]     = GreenTeam;
+		teamNames["blue"]      = BlueTeam;
+		teamNames["purple"]    = PurpleTeam;
+		teamNames["observer"]  = ObserverTeam;
+		teamNames["rabbit"]    = RabbitTeam;
+		teamNames["hunter"]    = HunterTeam;
+	}
+	return teamNames;
+}
+
+
 static inline TeamColor ParseTeam(lua_State* L, int index)
 {
 	if (lua_israwstring(L, index)) {
 		const string teamName = lua_tostring(L, index);
-		if (teamName == "automatic") { return  AutomaticTeam; }
-		if (teamName == "rogue")     { return  RogueTeam;     }
-		if (teamName == "red")       { return  RedTeam;       }
-		if (teamName == "green")     { return  GreenTeam;     }
-		if (teamName == "blue")      { return  BlueTeam;      }
-		if (teamName == "purple")    { return  PurpleTeam;    }
-		if (teamName == "observer")  { return  ObserverTeam;  }
-		if (teamName == "rabbit")    { return  RabbitTeam;    }
-		if (teamName == "hunter")    { return  HunterTeam;    }
-		return NoTeam;
+		const map<string, TeamColor>& teamNames = GetTeamNameMap();
+		map<string, TeamColor>::const_iterator it = teamNames.find(teamName);
+		if (it == teamNames.end()) {
+			return NoTeam;
+		}
+		return it->second;
 	}
 
-	TeamColor teamNum = (TeamColor)lua_toint(L, index);
+	TeamColor teamNum = (TeamColor)luaL_checkint(L, index);
 	if ((teamNum < AutomaticTeam) || (teamNum >= NumTeams)) {
 		return NoTeam;
 	}
