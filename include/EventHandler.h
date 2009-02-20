@@ -94,7 +94,7 @@ class EventHandler
     void PlayerSpawned(const Player&);
     void PlayerKilled(const Player&);
     void PlayerJumped(const Player&);
-    void PlayerLanded(const Player&);
+    void PlayerLanded(const Player&, float vel);
     void PlayerTeleported(const Player&, int srcLink, int dstLink);
     void PlayerTeamChange(const Player&, int oldTeam);
     void PlayerScoreChange(const Player&);
@@ -319,7 +319,7 @@ EC_LOOP_1_PARAM(PlayerRemoved,     const Player&)
 EC_LOOP_1_PARAM(PlayerSpawned,     const Player&)
 EC_LOOP_1_PARAM(PlayerKilled,      const Player&)
 EC_LOOP_1_PARAM(PlayerJumped,      const Player&)
-EC_LOOP_1_PARAM(PlayerLanded,      const Player&)
+EC_LOOP_2_PARAM(PlayerLanded,      const Player&, float /*vel*/)
 EC_LOOP_3_PARAM(PlayerTeleported,  const Player&, int /*srcLink*/, int /*dstLink*/)
 EC_LOOP_2_PARAM(PlayerTeamChange,  const Player&, int /*oldTeam*/)
 EC_LOOP_1_PARAM(PlayerScoreChange, const Player&)

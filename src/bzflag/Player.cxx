@@ -977,6 +977,8 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 void Player::setLandingSpeed(float velocity)
 {
+  eventHandler.PlayerLanded(*this, velocity);
+
   float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness < 0.001f) {
     return;

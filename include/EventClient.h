@@ -57,7 +57,7 @@ class EventClient
     virtual void PlayerSpawned(const Player&) { return; }
     virtual void PlayerKilled (const Player&) { return; }
     virtual void PlayerJumped (const Player&) { return; }
-    virtual void PlayerLanded (const Player&) { return; }
+    virtual void PlayerLanded (const Player&, float /*vel*/) { return; }
     virtual void PlayerTeleported(const Player&, int /*srcLink*/, int /*dstLink*/) { return; }
     virtual void PlayerTeamChange(const Player&, int /*oldTeam*/) { return; }
     virtual void PlayerScoreChange(const Player&) { return; }

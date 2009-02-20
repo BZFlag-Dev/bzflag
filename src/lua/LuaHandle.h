@@ -106,7 +106,7 @@ class LuaHandle : public EventClient
 		virtual void PlayerSpawned(const Player&);
 		virtual void PlayerKilled(const Player&);
 		virtual void PlayerJumped(const Player&);
-		virtual void PlayerLanded(const Player&);
+		virtual void PlayerLanded(const Player&, float vel);
 		virtual void PlayerTeleported(const Player&, int srcLink, int dstLink);
 		virtual void PlayerTeamChange(const Player&, int oldTeam);
 		virtual void PlayerScoreChange(const Player&);

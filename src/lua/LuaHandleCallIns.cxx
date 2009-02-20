@@ -210,7 +210,7 @@ void LuaHandle::PlayerAdded(const Player& player)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 
 	RunCallIn(LUA_CI_PlayerAdded, 1, 0);
 	return;
@@ -225,7 +225,7 @@ void LuaHandle::PlayerRemoved(const Player& player)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 
 	RunCallIn(LUA_CI_PlayerRemoved, 1, 0);
 	return;
@@ -240,7 +240,7 @@ void LuaHandle::PlayerSpawned(const Player& player)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 
 	RunCallIn(LUA_CI_PlayerSpawned, 1, 0);
 	return;
@@ -255,7 +255,7 @@ void LuaHandle::PlayerKilled(const Player& player)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 
 	RunCallIn(LUA_CI_PlayerKilled, 1, 0);
 	return;
@@ -270,24 +270,25 @@ void LuaHandle::PlayerJumped(const Player& player)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 
 	RunCallIn(LUA_CI_PlayerJumped, 1, 0);
 	return;
 }
 
 
-void LuaHandle::PlayerLanded(const Player& player)
+void LuaHandle::PlayerLanded(const Player& player, float vel)
 {
 	LUA_CALL_IN_CHECK(L);	
-	lua_checkstack(L, 3);
+	lua_checkstack(L, 4);
 	if (!PushCallIn(LUA_CI_PlayerLanded)) {
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
+	lua_pushnumber(L, vel);
 
-	RunCallIn(LUA_CI_PlayerLanded, 1, 0);
+	RunCallIn(LUA_CI_PlayerLanded, 2, 0);
 	return;
 }
 
@@ -300,7 +301,7 @@ void LuaHandle::PlayerTeleported(const Player& player, int srcLink, int dstLink)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 	lua_pushinteger(L, srcLink);
 	lua_pushinteger(L, dstLink);
 
@@ -317,8 +318,8 @@ void LuaHandle::PlayerTeamChange(const Player& player, int oldTeam)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
-	lua_pushnumber(L, oldTeam);
+	lua_pushinteger(L, player.getId());
+	lua_pushinteger(L, oldTeam);
 
 	RunCallIn(LUA_CI_PlayerTeamChange, 2, 0);
 	return;
@@ -333,7 +334,7 @@ void LuaHandle::PlayerScoreChange(const Player& player)
 		return; // the call is not defined
 	}
 
-	lua_pushnumber(L, player.getId());
+	lua_pushinteger(L, player.getId());
 
 	RunCallIn(LUA_CI_PlayerScoreChange, 1, 0);
 	return;
