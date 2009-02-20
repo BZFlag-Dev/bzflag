@@ -30,6 +30,7 @@
 #ifndef _TEXT_UTIL_NO_REGEX_
 // common headers
 #include "bzregex.h"
+#include "AnsiCodes.h"
 #endif //_TEXT_UTIL_NO_REGEX_
 
 namespace TextUtils
@@ -340,6 +341,89 @@ namespace TextUtils
 	i++;
     }
     return position;
+  }
+
+  static int expandEscName(const char* source, std::string& outLine)
+  {
+    const char* c = source;
+    while ((*c != 0) && (*c != ')')) { c++; }
+    if (*c != ')') {
+      return 0;
+    }
+    const std::string key(source, c - source);
+    const int len = key.size() + 2; // 2 for the () chars
+    if (key == "backslash")   { outLine.push_back('\\');   return len; }
+    if (key == "newline")     { outLine.push_back('\n');   return len; }
+    if (key == "escape")      { outLine.push_back('\033'); return len; }
+    if (key == "space")       { outLine.push_back(' ');    return len; }
+    if (key == "red")         { outLine += ANSI_STR_FG_RED;       return len; }
+    if (key == "green")       { outLine += ANSI_STR_FG_GREEN;     return len; }
+    if (key == "blue")        { outLine += ANSI_STR_FG_BLUE;      return len; }
+    if (key == "yellow")      { outLine += ANSI_STR_FG_YELLOW;    return len; }
+    if (key == "purple")      { outLine += ANSI_STR_FG_MAGENTA;   return len; }
+    if (key == "cyan")        { outLine += ANSI_STR_FG_CYAN;      return len; }
+    if (key == "orange")      { outLine += ANSI_STR_FG_ORANGE;    return len; }
+    if (key == "white")       { outLine += ANSI_STR_FG_WHITE;     return len; }
+    if (key == "black")       { outLine += ANSI_STR_FG_BLACK;     return len; }
+    if (key == "bright")      { outLine += ANSI_STR_BRIGHT;       return len; }
+    if (key == "dim")         { outLine += ANSI_STR_DIM;          return len; }
+    if (key == "blink")       { outLine += ANSI_STR_PULSATING;    return len; }
+    if (key == "noblink")     { outLine += ANSI_STR_NO_PULSATE;   return len; }
+    if (key == "under")       { outLine += ANSI_STR_UNDERLINE;    return len; }
+    if (key == "nounder")     { outLine += ANSI_STR_NO_UNDERLINE; return len; }
+    if (key == "reset")       { outLine += ANSI_STR_RESET_FINAL;  return len; }
+    if (key == "resetbright") { outLine += ANSI_STR_RESET;        return len; }
+
+    outLine.push_back('\\');
+      
+    return 0;  
+  }
+
+  std::string unescape_colors(const std::string& source)
+  {
+    // looking for:
+    //  \\ - backslash
+    //  \n - newline
+    //  \e - escape character
+    std::string out;
+    for (const char* c = source.c_str(); *c != 0; c++) {
+      if (*c != '\\') {
+        out.push_back(*c);
+      }
+      else {
+        switch (*(c + 1)) {
+          case '\\': { out.push_back('\\');   c++; break; }
+          case 'n':  { out.push_back('\n');   c++; break; }
+          case 'e':  { out.push_back('\033'); c++; break; }
+          case 's':  { out.push_back(' ');    c++; break; }
+          case 'r':  { out += ANSI_STR_FG_RED;       c++; break; } // not carriage return
+          case 'g':  { out += ANSI_STR_FG_GREEN;     c++; break; }
+          case 'b':  { out += ANSI_STR_FG_BLUE;      c++; break; } // not backspace
+          case 'y':  { out += ANSI_STR_FG_YELLOW;    c++; break; }
+          case 'p':  { out += ANSI_STR_FG_MAGENTA;   c++; break; }
+          case 'c':  { out += ANSI_STR_FG_CYAN;      c++; break; }
+          case 'o':  { out += ANSI_STR_FG_ORANGE;    c++; break; }
+          case 'w':  { out += ANSI_STR_FG_WHITE;     c++; break; }
+          case 'd':  { out += ANSI_STR_FG_BLACK;     c++; break; }
+          case '+':  { out += ANSI_STR_BRIGHT;       c++; break; }
+          case '-':  { out += ANSI_STR_DIM;          c++; break; }
+          case '*':  { out += ANSI_STR_PULSATING;    c++; break; }
+          case '/':  { out += ANSI_STR_NO_PULSATE;   c++; break; }
+          case '_':  { out += ANSI_STR_UNDERLINE;    c++; break; }
+          case '~':  { out += ANSI_STR_NO_UNDERLINE; c++; break; }
+          case '!':  { out += ANSI_STR_RESET_FINAL;  c++; break; }
+          case '#':  { out += ANSI_STR_RESET;        c++; break; }
+          case '(':  {
+            c += expandEscName(c + 2, out);
+            break;
+          }
+          default: {
+            out.push_back('\\');
+          }
+        }
+      }
+    }
+    return out;
   }
 
   // return a copy of a string, truncated to specified length,

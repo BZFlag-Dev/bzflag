@@ -418,6 +418,10 @@ namespace TextUtils {
    */
   int unescape_lookup(const std::string &text, char escaper, char sep);
 
+  /** un-escape color coded string  (backslash escape sequences)
+   */
+  std::string unescape_colors(const std::string &text);
+
   /** return a copy of a string, truncated to specified length,
    *  make last char a '~' if truncation took place
    */

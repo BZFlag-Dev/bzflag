@@ -49,7 +49,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "colorful",			"1",			true,  DefPerm, NULL },
   { "tkwarnratio",		"0.0",			true,  DefPerm, NULL },
   { "showtabs",			"2",			true,  DefPerm, NULL },
-  { "underlineColor",		"cyan",			true,  DefPerm, NULL },
+  { "underlineColor",		"Cyan",			true,  DefPerm, NULL },
   { "zbuffer",			"1",			true,  DefPerm, NULL },
   { "highlightPattern",		"",			true,  DefPerm, NULL },
   { "killerhighlight",		"1",			true,  DefPerm, NULL },

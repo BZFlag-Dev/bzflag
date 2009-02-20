@@ -246,8 +246,8 @@ static bool PushAnsiCodes(lua_State* L)
 	LuaPushNamedString(L, "DIM",          ANSI_STR_DIM);
 	LuaPushNamedString(L, "UNDERLINE",    ANSI_STR_UNDERLINE);
 	LuaPushNamedString(L, "NO_UNDERLINE", ANSI_STR_NO_UNDERLINE);
-	LuaPushNamedString(L, "PULSATING",    ANSI_STR_PULSATING);
-	LuaPushNamedString(L, "NO_PULSATE",   ANSI_STR_NO_PULSATE);
+	LuaPushNamedString(L, "BLINK",        ANSI_STR_PULSATING);
+	LuaPushNamedString(L, "NO_BLINK",     ANSI_STR_NO_PULSATE);
 	LuaPushNamedString(L, "REVERSE",      ANSI_STR_REVERSE);
 	LuaPushNamedString(L, "NO_REVERSE",   ANSI_STR_NO_REVERSE);
 

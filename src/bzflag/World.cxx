@@ -40,6 +40,7 @@
 
 /* local implementation headers */
 #include "DynamicWorldText.h"
+#include "Roster.h"
 
 
 //
@@ -758,25 +759,19 @@ void World::updateFlag(int index, float dt)
   if (flag.status != FlagOnTank) {
     flagNode->setWind(wind, dt);
     flagNode->setFlat(false);
-  } else {
-    const Player* flagPlayer = NULL;
-    const Player* myTank = (const Player*) LocalPlayer::getMyTank();
-    if (myTank && (myTank->getId() == flag.owner)) {
-      flagPlayer = myTank;
-    } else {
-      for (int i = 0; i < curMaxPlayers; i++) {
-	const Player* p = players[i];
-	if (p && p->getId() == flag.owner) {
-	  flagPlayer = p;
-	  break;
-	}
-      }
+  }
+  else {
+    const Player* flagPlayer = lookupPlayer(flag.owner);
+    if (flagPlayer == NULL) {
+      flagNode->setWind(wind, dt);
+      flagNode->setFlat(false);
     }
-    if (flagPlayer != NULL) {
+    else {
       if (flag.type == Flags::Narrow) {
 	flagNode->setAngle(flagPlayer->getAngle());
 	flagNode->setFlat(true);
-      } else {
+      }
+      else {
 	float myWind[3];
 	getWind(myWind, flagPlayer->getPosition());
 	const float* vel = flagPlayer->getVelocity();
@@ -788,9 +783,6 @@ void World::updateFlag(int index, float dt)
 	flagNode->setWind(myWind, dt);
 	flagNode->setFlat(false);
       }
-    } else {
-      flagNode->setWind(wind, dt); // assumes homogeneous wind
-      flagNode->setFlat(false);
     }
   }
 }
@@ -816,12 +808,16 @@ void World::addFlags(SceneDatabase* scene, bool seerView)
 	continue;
       }
       int j;
-      for (j = 0; j < curMaxPlayers; j++)
-	if (players[j] && players[j]->getId() == flags[i].owner)
+      for (j = 0; j < curMaxPlayers; j++) {
+	if (players[j] && players[j]->getId() == flags[i].owner) {
 	  break;
+        }
+      }
 
-      if (j < curMaxPlayers && !(players[j]->getStatus() & PlayerState::Alive))
+      if ((j < curMaxPlayers) &&
+          !(players[j]->getStatus() & PlayerState::Alive)) {
 	continue;
+      }
     }
 
     scene->addDynamicNode(flagNodes[i]);

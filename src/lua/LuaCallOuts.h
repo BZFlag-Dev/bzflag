@@ -22,6 +22,7 @@ class LuaCallOuts {
 
 		static int CalcMD5(lua_State* L);
 		static int StripAnsiCodes(lua_State* L);
+		static int ExpandColorString(lua_State* L);
 		static int LocalizeString(lua_State* L);
 		static int GetCacheFilePath(lua_State* L);
 

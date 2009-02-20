@@ -27,18 +27,19 @@ using std::string;
 using std::vector;
 
 // common implementation headers
-#include "WorldText.h"
-#include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "Intersect.h"
-#include "CacheManager.h"
-#include "FontManager.h"
-#include "MeshTransform.h"
 #include "BzMaterial.h"
+#include "CacheManager.h"
 #include "DynamicColor.h"
+#include "FontManager.h"
+#include "Intersect.h"
+#include "MeshTransform.h"
 #include "OpenGLMaterial.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "StateDatabase.h"
 #include "TextureManager.h"
+#include "TextUtils.h"
+#include "WorldText.h"
 #include "bzfio.h" // for debugLevel
 
 // local implementation headers
@@ -337,91 +338,6 @@ void TextSceneNode::renderRadar()
 //  static text routines
 //
 
-static int expandEscName(const char* source, string& outLine)
-{
-  const char* c = source;
-  while ((*c != 0) && (*c != ')')) { c++; }
-  if (*c != ')') {
-    return 0;
-  }
-  const string key(source, c - source);
-  const int retLen = key.size() + 2; // 2 for the () chars
-  if (key == "backslash") { outLine.push_back('\\');   return retLen; }
-  if (key == "newline")   { outLine.push_back('\n');   return retLen; }
-  if (key == "escape")    { outLine.push_back('\033'); return retLen; }
-  if (key == "space")     { outLine.push_back(' ');    return retLen; }
-  if (key == "red")       { outLine += ANSI_STR_FG_RED;       return retLen; }
-  if (key == "green")     { outLine += ANSI_STR_FG_GREEN;     return retLen; }
-  if (key == "blue")      { outLine += ANSI_STR_FG_BLUE;      return retLen; }
-  if (key == "yellow")    { outLine += ANSI_STR_FG_YELLOW;    return retLen; }
-  if (key == "purple")    { outLine += ANSI_STR_FG_MAGENTA;   return retLen; }
-  if (key == "cyan")      { outLine += ANSI_STR_FG_CYAN;      return retLen; }
-  if (key == "orange")    { outLine += ANSI_STR_FG_ORANGE;    return retLen; }
-  if (key == "white")     { outLine += ANSI_STR_FG_WHITE;     return retLen; }
-  if (key == "black")     { outLine += ANSI_STR_FG_BLACK;     return retLen; }
-  if (key == "bright")    { outLine += ANSI_STR_BRIGHT;       return retLen; }
-  if (key == "dim")       { outLine += ANSI_STR_DIM;          return retLen; }
-  if (key == "blink")     { outLine += ANSI_STR_PULSATING;    return retLen; }
-  if (key == "noblink")   { outLine += ANSI_STR_NO_PULSATE;   return retLen; }
-  if (key == "under")     { outLine += ANSI_STR_UNDERLINE;    return retLen; }
-  if (key == "nounder")   { outLine += ANSI_STR_NO_UNDERLINE; return retLen; }
-  if (key == "reset")     { outLine += ANSI_STR_RESET;        return retLen; }
-  if (key == "fullreset") { outLine += ANSI_STR_RESET_FINAL;  return retLen; }
-
-  outLine.push_back('\\');
-    
-  return 0;  
-}
-
-
-static string expandEscapes(const string& source)
-{
-  // looking for:
-  //  \\ - backslash
-  //  \n - newline
-  //  \e - escape character
-  string out;
-  for (const char* c = source.c_str(); *c != 0; c++) {
-    if (*c != '\\') {
-      out.push_back(*c);
-    }
-    else {
-      switch (*(c + 1)) {
-        case '\\': { out.push_back('\\');   c++; break; }
-        case 'n':  { out.push_back('\n');   c++; break; }
-        case 'e':  { out.push_back('\033'); c++; break; }
-        case 's':  { out.push_back(' ');    c++; break; }
-        case 'r':  { out += ANSI_STR_FG_RED;       c++; break; }
-        case 'g':  { out += ANSI_STR_FG_GREEN;     c++; break; }
-        case 'b':  { out += ANSI_STR_FG_BLUE;      c++; break; }
-        case 'y':  { out += ANSI_STR_FG_YELLOW;    c++; break; }
-        case 'p':  { out += ANSI_STR_FG_MAGENTA;   c++; break; }
-        case 'c':  { out += ANSI_STR_FG_CYAN;      c++; break; }
-        case 'o':  { out += ANSI_STR_FG_ORANGE;    c++; break; }
-        case 'w':  { out += ANSI_STR_FG_WHITE;     c++; break; }
-        case 'd':  { out += ANSI_STR_FG_BLACK;     c++; break; }
-        case '+':  { out += ANSI_STR_BRIGHT;       c++; break; }
-        case '-':  { out += ANSI_STR_DIM;          c++; break; }
-        case '*':  { out += ANSI_STR_PULSATING;    c++; break; }
-        case '/':  { out += ANSI_STR_NO_PULSATE;   c++; break; }
-        case '_':  { out += ANSI_STR_UNDERLINE;    c++; break; }
-        case '~':  { out += ANSI_STR_NO_UNDERLINE; c++; break; }
-        case '!':  { out += ANSI_STR_RESET;        c++; break; }
-        case '#':  { out += ANSI_STR_RESET_FINAL;  c++; break; }
-        case '(':  {
-          c += expandEscName(c + 2, out);
-          break;
-        }
-        default: {
-          out.push_back('\\');
-        }
-      }
-    }
-  }
-  return out;
-}
-
-
 static void breakLines(const string& source, vector<string>& lines)
 {
   lines.clear();
@@ -612,7 +528,7 @@ void TextSceneNode::TextRenderNode::freeXFormList()
 
 void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
 {
-  breakLines(expandEscapes(rawText), lines);
+  breakLines(TextUtils::unescape_colors(rawText), lines);
 
   stripped.clear();
   for (size_t i = 0; i < lines.size(); i++) {

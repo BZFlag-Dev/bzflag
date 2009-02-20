@@ -149,8 +149,6 @@ static int CompressString(const char* inData, size_t inLen,
 		}
 		else {
 			deflateEnd(&zs);
-			outLen = 0;
-			outData = NULL;
 			return retcode;
 		}
 	}
@@ -206,8 +204,6 @@ static int DecompressString(const char* inData, size_t inLen,
 		}
 		else {
 			inflateEnd(&zs);
-			outLen = 0;
-			outData = NULL;
 			return retcode;
 		}
 	}

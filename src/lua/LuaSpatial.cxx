@@ -32,6 +32,7 @@ using std::vector;
 #include "../bzflag/LocalPlayer.h"
 #include "../bzflag/ShotPath.h"
 #include "../bzflag/ShotStrategy.h"
+#include "../bzflag/RadarRenderer.h"
 
 // local headers
 #include "LuaInclude.h"
@@ -125,6 +126,17 @@ struct BoxData : public QueryData {
 };
 
 
+struct AlignedBoxData : public QueryData { // AABB (axis-aligned bounding box)
+	Extents extents;
+};
+
+
+struct OrientedBoxData : public QueryData { // OBB (oriented bounding box)
+	float radians;
+	Extents extents;
+};
+
+
 /******************************************************************************/
 /******************************************************************************/
 
@@ -141,6 +153,11 @@ static bool GetViewPlanes(PlanesData& planes)
 
 static bool GetRadarBox(BoxData& box)
 {
+	const RadarRenderer* radar = getRadarRenderer();
+	if (radar == NULL) {
+		return false;
+	}
+
 	float mins[3], maxs[3];
 	mins[0] = +1.0e30f;
 	maxs[0] = -1.0e30f;
@@ -149,22 +166,7 @@ static bool GetRadarBox(BoxData& box)
 	mins[2] = -1.0e30f;
 	maxs[2] = +1.0e30f;
 
-	// setup the radar range
-	const float radarLimit = BZDBCache::radarLimit;
-	if (!BZDB.isTrue("displayRadar") || (radarLimit <= 0.0f)) {
-		return false;
-	}
-	float maxRange = radarLimit;
-	float radarRange = BZDB.eval("displayRadarRange") * radarLimit;
-	// when burrowed, limit radar range
-	const LocalPlayer *myTank = LocalPlayer::getMyTank();
-	if (myTank && (myTank->getFlag() == Flags::Burrow) &&
-			(myTank->getPosition()[2] < 0.0f)) {
-		maxRange = radarLimit / 4.0f;
-	}
-	if (radarRange > maxRange) {
-		radarRange = maxRange;
-	}
+//FIXME	const float radarRange = radar->getRange();
 
 	mins[0] = 0.0f; // FIXME -- and move the radarRange query into RadarRenderer
 	mins[1] = 0.0f;
@@ -1058,43 +1060,43 @@ int LuaSpatial::GetRadarShots(lua_State* L)
 
 int LuaSpatial::GetObstaclesInPlanes(lua_State* L) // FIXME
 {
-	return 0;
 	L = L;
+	return 0;
 }
 
 
 int LuaSpatial::GetObstaclesInSphere(lua_State* L) // FIXME
 {
-	return 0;
 	L = L;
+	return 0;
 }
 
 
 int LuaSpatial::GetObstaclesInCylinder(lua_State* L) // FIXME
 {
-	return 0;
 	L = L;
+	return 0;
 }
 
 
 int LuaSpatial::GetObstaclesInBox(lua_State* L) // FIXME
 {
-	return 0;
 	L = L;
+	return 0;
 }
 
 
 int LuaSpatial::GetVisibleObstacles(lua_State* L) // FIXME
 {
-	return 0;
 	L = L;
+	return 0;
 }
 
 
 int LuaSpatial::GetRadarObstacles(lua_State* L) // FIXME
 {
-	return 0;
 	L = L;
+	return 0;
 }
 
 

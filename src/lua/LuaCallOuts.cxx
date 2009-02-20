@@ -29,6 +29,7 @@ using std::map;
 #include "OpenGLLight.h"
 #include "SceneRenderer.h"
 #include "Team.h"
+#include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "bzfio.h"
 #include "bz_md5.h"
@@ -75,6 +76,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, CalcMD5);
 	PUSH_LUA_CFUNC(L, StripAnsiCodes);
+	PUSH_LUA_CFUNC(L, ExpandColorString);
 	PUSH_LUA_CFUNC(L, LocalizeString);
 	PUSH_LUA_CFUNC(L, GetCacheFilePath);
 
@@ -434,6 +436,15 @@ int LuaCallOuts::StripAnsiCodes(lua_State* L)
 	size_t len;
 	const char* text = luaL_checklstring(L, 1, &len);
 	lua_pushstring(L, stripAnsiCodes(text));
+	return 1;
+}
+
+
+int LuaCallOuts::ExpandColorString(lua_State* L)
+{
+	size_t len;
+	const char* text = luaL_checklstring(L, 1, &len);
+	lua_pushstdstring(L, TextUtils::unescape_colors(text));
 	return 1;
 }
 
