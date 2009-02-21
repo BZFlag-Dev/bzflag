@@ -791,10 +791,10 @@ static int PushImageData(lua_State* L, PNGImageFile& image)
 		return 0;
 	}
 
-	lua_pushlstring(L, buf, bufSize);
 	lua_pushinteger(L, width);
 	lua_pushinteger(L, height);
 	lua_pushinteger(L, channels);
+	lua_pushlstring(L, buf, bufSize);
 
 	delete[] buf;
 
