@@ -2469,7 +2469,8 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   Player *killerPlayer = lookupPlayer(killer);
 
   if (victimPlayer != NULL) {
-    eventHandler.PlayerKilled(*victimPlayer); // FIXME -- need more info
+    eventHandler.PlayerKilled(*victimPlayer, killerPlayer,
+                              reason, flagType, phydrv);
   }
 
   if (victimPlayer == myTank) {

@@ -18,6 +18,7 @@
 class Player;
 class ShotPath;
 class Flag;
+class FlagType;
 struct FiringInfo;
 
 
@@ -55,7 +56,9 @@ class EventClient
     virtual void PlayerAdded  (const Player&) { return; }
     virtual void PlayerRemoved(const Player&) { return; }
     virtual void PlayerSpawned(const Player&) { return; }
-    virtual void PlayerKilled (const Player&) { return; }
+    virtual void PlayerKilled(const Player& /*victim*/, const Player* /*killer*/,
+                              int /*reason*/, const FlagType* /*flagType*/,
+                              int /*phyDrv*/) { return; }
     virtual void PlayerJumped (const Player&) { return; }
     virtual void PlayerLanded (const Player&, float /*vel*/) { return; }
     virtual void PlayerTeleported(const Player&, int /*srcLink*/, int /*dstLink*/) { return; }

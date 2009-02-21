@@ -66,14 +66,14 @@ class BzFS {
     virtual bool writeFile(const std::string& path, const std::string& data) = 0;
     virtual bool appendFile(const std::string& path, const std::string& data) = 0;
     virtual bool removeFile(const std::string& path) = 0;
-    virtual bool renameFile(const std::string& oldpath,
-                            const std::string& newpath) = 0;
+    virtual bool renameFile(const std::string& oldPath,
+                            const std::string& newPath) = 0;
     virtual BzFile* openFile(const std::string& path, std::string* errMsg = NULL) = 0;
     virtual bool createDir(const std::string& path) = 0;
 
     // '/' is used as the directory separator character
-    // files paths are full paths
-    // dir paths are full paths, and are terminated with '/'
+    // files paths are full relative paths
+    // dir paths are full relative paths, and are terminated with '/'
     virtual bool dirList(const std::string& path, bool recursive,
                          std::vector<std::string>& dirs,
                          std::vector<std::string>& files) = 0;
@@ -97,7 +97,7 @@ class BzVFS {
     void reset();
 
     bool addFS(const std::string& name, BzDocket* docket);
-    bool addFS(const std::string& name, const std::string& root);
+    bool addFS(const std::string& name, const std::string& rawFSRoot);
     bool removeFS(const std::string& name);
     bool setFSWritable(const std::string& name, bool value);
 

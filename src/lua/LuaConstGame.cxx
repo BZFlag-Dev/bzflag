@@ -12,6 +12,7 @@
 #include "Obstacle.h"
 #include "GfxBlock.h"
 #include "PlayerState.h"
+#include "Protocol.h"
 
 // bzflag headers
 #include "../bzflag/Roaming.h"
@@ -40,6 +41,7 @@ static bool PushMouseButtons(lua_State* L);
 static bool PushFlagStates(lua_State* L);
 static bool PushFlagQualities(lua_State* L);
 static bool PushFlagEndurance(lua_State* L);
+static bool PushKilledReasons(lua_State* L);
 //static bool PushPlayers(lua_State* L);
 //static bool PushPermissions(lua_State* L);
 
@@ -64,7 +66,8 @@ bool LuaConstGame::PushEntries(lua_State* L)
 		PushMouseButtons(L)    &&
 		PushFlagStates(L)      &&
 		PushFlagQualities(L)   &&
-		PushFlagEndurance(L);
+		PushFlagEndurance(L)   &&
+		PushKilledReasons(L);
 }
 
 
@@ -423,6 +426,28 @@ static bool PushFlagEndurance(lua_State* L)
 	PushDualPair(L, "NORMAL",   FlagNormal);
 	PushDualPair(L, "UNSTABLE", FlagUnstable);
 	PushDualPair(L, "STICKY",   FlagSticky);
+
+	lua_rawset(L, -3);
+
+	return true;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+
+static bool PushKilledReasons(lua_State* L)
+{
+	lua_pushliteral(L, "KILL_REASON");
+	lua_newtable(L);
+
+	PushDualPair(L, "KILLMSG",       GotKilledMsg);
+	PushDualPair(L, "SHOT",          GotShot);
+	PushDualPair(L, "RUN_OVER",      GotRunOver);
+	PushDualPair(L, "CAPTURED",      GotCaptured);
+	PushDualPair(L, "GENOCIDE",      GenocideEffect);
+	PushDualPair(L, "SELF_DESTRUCT", SelfDestruct);
+	PushDualPair(L, "WATER",         WaterDeath);
 
 	lua_rawset(L, -3);
 

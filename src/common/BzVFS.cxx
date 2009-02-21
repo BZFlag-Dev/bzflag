@@ -226,17 +226,19 @@ class RawFS : public BzFS
       return remove(fullPath.c_str()) == 0;
     };
 
-    bool renameFile(const string& oldpath, const string& newpath) {
+    bool renameFile(const string& oldPath, const string& newPath) {
       if (!isWritable()) {
         return false;
       }
-      const string fullOldPath = root + oldpath;
-      const string fullNewPath = root + newpath;
+      if (fileExists(newPath)) {
+        return false; // force windows rename() policy for consistency
+      }
+      const string fullOldPath = root + oldPath;
+      const string fullNewPath = root + newPath;
       return rename(fullOldPath.c_str(), fullNewPath.c_str()) == 0;
     };
 
-    BzFile* openFile(const string& path, string* errMsg = NULL) {
-      size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
+    BzFile* openFile(const string& /*path*/, string* /*errMsg*/) {
       return NULL;
     }
 
@@ -332,21 +334,14 @@ class UrlFS : public RawFS
     };
 
     bool removeFile(const string& /*path*/) {
-      if (!isWritable()) {
-        return false;
-      }
       return false;
     };
 
-    bool renameFile(const string& /*oldpath*/, const string& /*newpath*/) {
-      if (!isWritable()) {
-        return false;
-      }
+    bool renameFile(const string& /*oldPath*/, const string& /*newPath*/) {
       return false;
     };
 
-    BzFile* openFile(const string& path, string* errMsg = NULL) {
-      size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
+    BzFile* openFile(const string& /*path*/, string* /*errMsg*/) {
       return NULL;
     }
 
@@ -402,46 +397,27 @@ class DocketFS : public BzFS
       return docket->getData(path, data);
     }
 
-    bool writeFile(const string& path, const string& data) {
-      if (!isWritable()) {
-        return false;
-      }
-      size_t FIXME = path.size() + data.size(); FIXME = FIXME;
+    bool writeFile(const string& /*path*/, const string& /*data*/) {
       return false;
     };
 
-    bool appendFile(const string& path, const string& data) {
-      if (!isWritable()) {
-        return false;
-      }
-      size_t FIXME = path.size() + data.size(); FIXME = FIXME;
+    bool appendFile(const string& /*path*/, const string& /*data*/) {
       return false;
     };
 
     bool removeFile(const string& /*path*/) {
-      if (!isWritable()) {
-        return false;
-      }
       return false;
     };
 
-    bool renameFile(const string& /*oldpath*/, const string& /*newpath*/) {
-      if (!isWritable()) {
-        return false;
-      }
+    bool renameFile(const string& /*oldPath*/, const string& /*newPath*/) {
       return false;
     };
 
-    BzFile* openFile(const string& path, string* errMsg = NULL) {
-      size_t FIXME = path.size() + (size_t)errMsg; FIXME = FIXME;
+    BzFile* openFile(const string& /*path*/, string* /*errMsg*/) {
       return NULL;
     }
 
-    bool createDir(const std::string& path) {
-      if (!isWritable()) {
-        return false;
-      }
-      size_t FIXME = path.size(); FIXME = FIXME;
+    bool createDir(const std::string& /*path*/) {
       return false;
     }
 

@@ -247,17 +247,30 @@ void LuaHandle::PlayerSpawned(const Player& player)
 }
 
 
-void LuaHandle::PlayerKilled(const Player& player)
+void LuaHandle::PlayerKilled(const Player& victim, const Player* killer,
+                             int reason, const FlagType* flagType, int phyDrv)
 {
 	LUA_CALL_IN_CHECK(L);	
-	lua_checkstack(L, 3);
+	lua_checkstack(L, 7);
 	if (!PushCallIn(LUA_CI_PlayerKilled)) {
 		return; // the call is not defined
 	}
 
-	lua_pushinteger(L, player.getId());
+	lua_pushinteger(L, victim.getId()); // 1
+	if (killer) {
+  	lua_pushinteger(L, killer->getId()); // 2
+  } else {
+    lua_pushnil(L); // 2
+  }
+  lua_pushinteger(L, reason); // 3
+  if (flagType) {
+    lua_pushstring(L, flagType->flagAbbv.c_str()); // 4
+  } else {
+    lua_pushnil(L); // 4
+  }
+  lua_pushinteger(L, phyDrv); // 5
 
-	RunCallIn(LUA_CI_PlayerKilled, 1, 0);
+	RunCallIn(LUA_CI_PlayerKilled, 5, 0);
 	return;
 }
 

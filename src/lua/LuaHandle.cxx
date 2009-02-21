@@ -681,17 +681,18 @@ bool LuaHandle::SetupEnvironment()
 //	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
 //	lua_pop(L, 1); // io
 
-  lua_pushnil(L); lua_setglobal(L, "dofile");
-  lua_pushnil(L); lua_setglobal(L, "loadfile");
+	lua_pushnil(L); lua_setglobal(L, "dofile");
+	lua_pushnil(L); lua_setglobal(L, "loadfile");
 
-	lua_getglobal(L, "os");
-	lua_pushliteral(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushliteral(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushliteral(L, "remove");    lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushliteral(L, "rename");    lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushliteral(L, "tmpname");   lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushliteral(L, "getenv");    lua_pushnil(L); lua_rawset(L, -3);
-	lua_pushliteral(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
+	lua_getglobal(L, "os"); {
+		lua_pushliteral(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
+		lua_pushliteral(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
+		lua_pushliteral(L, "remove");    lua_pushnil(L); lua_rawset(L, -3);
+		lua_pushliteral(L, "rename");    lua_pushnil(L); lua_rawset(L, -3);
+		lua_pushliteral(L, "tmpname");   lua_pushnil(L); lua_rawset(L, -3);
+		lua_pushliteral(L, "getenv");    lua_pushnil(L); lua_rawset(L, -3);
+		lua_pushliteral(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
+	}
 	lua_pop(L, 1); // os
 
 	lua_pushvalue(L, LUA_GLOBALSINDEX); {
@@ -701,28 +702,28 @@ bool LuaHandle::SetupEnvironment()
 			return false;
 		}
 		if (!PushLib("math",   LuaBitOps::PushEntries)   ||
-				!PushLib("math",   LuaVector::PushEntries)   ||
-				!PushLib("url",    LuaURLMgr::PushEntries)   ||
-				!PushLib("vfs",    LuaVFS::PushEntries)      ||
-				!PushLib("bzdb",   LuaBZDB::PushEntries)     ||
-				!PushLib("script", LuaScream::PushEntries)   ||
-				!PushLib("gl",     LuaOpenGL::PushEntries)   ||
-				!PushLib("GL",     LuaConstGL::PushEntries)  ||
-				!PushLib("bz",     LuaPack::PushEntries)     ||
-				!PushLib("bz",     LuaCallOuts::PushEntries) ||
-				!PushLib("BZ",     LuaKeySyms::PushEntries)  ||
-				!PushLib("BZ",     LuaConstGame::PushEntries)) {
+		    !PushLib("math",   LuaVector::PushEntries)   ||
+		    !PushLib("url",    LuaURLMgr::PushEntries)   ||
+		    !PushLib("vfs",    LuaVFS::PushEntries)      ||
+		    !PushLib("bzdb",   LuaBZDB::PushEntries)     ||
+		    !PushLib("script", LuaScream::PushEntries)   ||
+		    !PushLib("gl",     LuaOpenGL::PushEntries)   ||
+		    !PushLib("GL",     LuaConstGL::PushEntries)  ||
+		    !PushLib("bz",     LuaPack::PushEntries)     ||
+		    !PushLib("bz",     LuaCallOuts::PushEntries) ||
+		    !PushLib("BZ",     LuaKeySyms::PushEntries)  ||
+		    !PushLib("BZ",     LuaConstGame::PushEntries)) {
 			lua_pop(L, 1);
 			return false;
 		}
 		if (HasFullRead()) {
 			if (!PushLib("bz", LuaBzMaterial::PushEntries) ||
-					!PushLib("bz", LuaDynCol::PushEntries)     ||
-					!PushLib("bz", LuaTexMat::PushEntries)     ||
-					!PushLib("bz", LuaPhyDrv::PushEntries)     ||
-					!PushLib("bz", LuaSpatial::PushEntries)    ||
-					!PushLib("bz", LuaObstacle::PushEntries)   ||
-					!PushLib("control", LuaControl::PushEntries)) {
+			    !PushLib("bz", LuaDynCol::PushEntries)     ||
+			    !PushLib("bz", LuaTexMat::PushEntries)     ||
+			    !PushLib("bz", LuaPhyDrv::PushEntries)     ||
+			    !PushLib("bz", LuaSpatial::PushEntries)    ||
+			    !PushLib("bz", LuaObstacle::PushEntries)   ||
+			    !PushLib("control", LuaControl::PushEntries)) {
 				lua_pop(L, 1);
 				return false;
 			}

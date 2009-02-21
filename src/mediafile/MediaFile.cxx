@@ -376,7 +376,7 @@ unsigned char* MediaFile::readImage(std::string filename,
     // get the image size
     int dx = *width  = file->getWidth();
     int dy = *height = file->getHeight();
-    int dz =	   file->getNumChannels();
+    int dz = file->getNumChannels();
 
     // make buffer for final image
     image = new unsigned char[dx * dy * 4];

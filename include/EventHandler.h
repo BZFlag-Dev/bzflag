@@ -23,6 +23,7 @@
 class Player;
 class ShotPath;
 class Flag;
+class FlagType;
 struct FiringInfo;
 /* FIXME -- command registration
 class LocalCommand;
@@ -92,7 +93,8 @@ class EventHandler
     void PlayerAdded(const Player&);
     void PlayerRemoved(const Player&);
     void PlayerSpawned(const Player&);
-    void PlayerKilled(const Player&);
+    void PlayerKilled(const Player& victim, const Player* killer,
+                      int reason, const FlagType* flagType, int phyDrv);
     void PlayerJumped(const Player&);
     void PlayerLanded(const Player&, float vel);
     void PlayerTeleported(const Player&, int srcLink, int dstLink);
@@ -297,6 +299,14 @@ extern EventHandler eventHandler;
   inline void EventHandler:: name (t1 p1, t2 p2, t3 p3) \
   { EC_LOOP_START(name) ec-> name (p1, p2, p3); EC_LOOP_END(name) }
 
+#define EC_LOOP_4_PARAM(name, t1, t2, t3, t4) \
+  inline void EventHandler:: name (t1 p1, t2 p2, t3 p3, t4 p4) \
+  { EC_LOOP_START(name) ec-> name (p1, p2, p3, p4); EC_LOOP_END(name) }
+
+#define EC_LOOP_5_PARAM(name, t1, t2, t3, t4, t5) \
+  inline void EventHandler:: name (t1 p1, t2 p2, t3 p3, t4 p4, t5 p5) \
+  { EC_LOOP_START(name) ec-> name (p1, p2, p3, p4, p5); EC_LOOP_END(name) }
+
 #define EC_LOOPBOOL_0_PARAM(name) \
   inline void EventHandler:: name () { \
     EC_LOOP_START(name) \
@@ -317,7 +327,7 @@ EC_LOOP_0_PARAM(ServerParted)
 EC_LOOP_1_PARAM(PlayerAdded,       const Player&)
 EC_LOOP_1_PARAM(PlayerRemoved,     const Player&)
 EC_LOOP_1_PARAM(PlayerSpawned,     const Player&)
-EC_LOOP_1_PARAM(PlayerKilled,      const Player&)
+EC_LOOP_5_PARAM(PlayerKilled,      const Player&, const Player*, int, const FlagType*, int)
 EC_LOOP_1_PARAM(PlayerJumped,      const Player&)
 EC_LOOP_2_PARAM(PlayerLanded,      const Player&, float /*vel*/)
 EC_LOOP_3_PARAM(PlayerTeleported,  const Player&, int /*srcLink*/, int /*dstLink*/)

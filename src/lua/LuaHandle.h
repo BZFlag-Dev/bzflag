@@ -104,7 +104,8 @@ class LuaHandle : public EventClient
 		virtual void PlayerAdded(const Player&);
 		virtual void PlayerRemoved(const Player&);
 		virtual void PlayerSpawned(const Player&);
-		virtual void PlayerKilled(const Player&);
+		virtual void PlayerKilled(const Player& victim, const Player* killer,
+                              int reason, const FlagType* flagType, int phyDrv);
 		virtual void PlayerJumped(const Player&);
 		virtual void PlayerLanded(const Player&, float vel);
 		virtual void PlayerTeleported(const Player&, int srcLink, int dstLink);

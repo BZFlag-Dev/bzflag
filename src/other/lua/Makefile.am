@@ -3,13 +3,14 @@ noinst_LTLIBRARIES = liblua.la
 
 if BUILD_LUA_EXECS
 bin_PROGRAMS = bzlua bzluac
-bzlua_DEPENDENCIES = liblua.la
+bzlua_DEPENDENCIES  = liblua.la
 bzluac_DEPENDENCIES = liblua.la
 bzlua_LDFLAGS  = -static
 bzluac_LDFLAGS = -static
 bzlua_SOURCES  = src/lua.cxx
 bzluac_SOURCES = src/luac.cxx
-LDADD = $(LIBLUA) -lreadline
+bzlua_LDADD  = $(LIBLUA) -lreadline
+bzluac_LDADD = $(LIBLUA) -lreadline
 endif
 
 # works for linux and macos

@@ -5,6 +5,7 @@
 #include "LuaCallOuts.h"
 
 // system headers
+#include <sstream> // for ReadImage
 #include <string.h>
 #include <string>
 #include <vector>
@@ -17,6 +18,7 @@ using std::map;
 #include "AnsiCodes.h"
 #include "Bundle.h"
 #include "BundleMgr.h"
+#include "BzVFS.h"
 #include "BzfDisplay.h"
 #include "BzfWindow.h"
 #include "CacheManager.h"
@@ -49,6 +51,9 @@ using std::map;
 #include "../bzflag/World.h"
 #include "../bzflag/playing.h"
 #include "../bzflag/sound.h"
+
+// mediafile headers
+#include "../mediafile/PNGImageFile.h"
 
 // local headers
 #include "LuaDouble.h"
@@ -103,7 +108,8 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, PlaySound);
 
-	PUSH_LUA_CFUNC(L, ReadImage);
+	PUSH_LUA_CFUNC(L, ReadImageData);
+	PUSH_LUA_CFUNC(L, ReadImageFile);
 
 	PUSH_LUA_CFUNC(L, GetViewType);
 
@@ -766,27 +772,78 @@ int LuaCallOuts::PlaySound(lua_State* L)
 }
 
 
-int LuaCallOuts::ReadImage(lua_State* L) // FIXME -- setup for BzVFS
+/******************************************************************************/
+
+int LuaCallOuts::ReadImageData(lua_State* L)
 {
-	const char* source = luaL_checkstring(L, 1);
+	size_t inLen;
+	const char* inData = luaL_checklstring(L, 1, &inLen);
 
-	int width;
-	int height;
-	const char* imgData = (char*)MediaFile::readImage(source, &width, &height);
+	std::istringstream iss(string(inData, inLen));
+	PNGImageFile image(&iss);
 
-	if (imgData == NULL) {
+	if (!image.isOpen()) {
 		return 0;
 	}
 
-	lua_pushlstring(L, imgData, width * height * 4); // rgba
+	const int width = image.getWidth();
+	const int height = image.getHeight();
+	const int channels = image.getNumChannels();
+	const int bufSize = width * height * channels;
+	char* buf = new char[bufSize];
+	if (!image.read(buf)) {
+		delete[] buf;
+		return 0;
+	}
+	lua_pushlstring(L, buf, bufSize);
 	lua_pushinteger(L, width);
 	lua_pushinteger(L, height);
+	lua_pushinteger(L, channels);
+	delete[] buf;
 
-	delete[] imgData;
-
-	return 3;
+	return 4;
 }
 
+
+int LuaCallOuts::ReadImageFile(lua_State* L)
+{
+	const LuaHandle* lh = L2H(L);
+	const char* path = luaL_checkstring(L, 1);
+	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
+	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
+
+	string data;
+	if (!bzVFS.readFile(path, modes, data)) {
+		return 0;
+	}
+
+	std::istringstream iss(data);
+	PNGImageFile image(&iss);
+
+	if (!image.isOpen()) {
+		return 0;
+	}
+
+	const int width = image.getWidth();
+	const int height = image.getHeight();
+	const int channels = image.getNumChannels();
+	const int bufSize = width * height * channels;
+	char* buf = new char[bufSize];
+	if (!image.read(buf)) {
+		delete[] buf;
+		return 0;
+	}
+	lua_pushlstring(L, buf, bufSize);
+	lua_pushinteger(L, width);
+	lua_pushinteger(L, height);
+	lua_pushinteger(L, channels);
+	delete[] buf;
+
+	return 4;
+}
+
+
+/******************************************************************************/
 
 int LuaCallOuts::GetViewType(lua_State* L)
 {

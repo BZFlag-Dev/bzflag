@@ -48,7 +48,8 @@ class LuaCallOuts {
 
 		static int PlaySound(lua_State* L);
 
-		static int ReadImage(lua_State* L);
+		static int ReadImageData(lua_State* L);
+		static int ReadImageFile(lua_State* L);
 
 		static int GetViewType(lua_State* L);
 
