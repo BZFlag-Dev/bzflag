@@ -441,7 +441,7 @@ static bool PushKilledReasons(lua_State* L)
 	lua_pushliteral(L, "KILL_REASON");
 	lua_newtable(L);
 
-	PushDualPair(L, "KILLMSG",       GotKilledMsg);
+	PushDualPair(L, "MESSAGE",       GotKilledMsg);
 	PushDualPair(L, "SHOT",          GotShot);
 	PushDualPair(L, "RUN_OVER",      GotRunOver);
 	PushDualPair(L, "CAPTURED",      GotCaptured);

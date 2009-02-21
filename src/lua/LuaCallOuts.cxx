@@ -774,14 +774,8 @@ int LuaCallOuts::PlaySound(lua_State* L)
 
 /******************************************************************************/
 
-int LuaCallOuts::ReadImageData(lua_State* L)
+static int PushImageData(lua_State* L, PNGImageFile& image)
 {
-	size_t inLen;
-	const char* inData = luaL_checklstring(L, 1, &inLen);
-
-	std::istringstream iss(string(inData, inLen));
-	PNGImageFile image(&iss);
-
 	if (!image.isOpen()) {
 		return 0;
 	}
@@ -789,28 +783,74 @@ int LuaCallOuts::ReadImageData(lua_State* L)
 	const int width = image.getWidth();
 	const int height = image.getHeight();
 	const int channels = image.getNumChannels();
+
 	const int bufSize = width * height * channels;
 	char* buf = new char[bufSize];
 	if (!image.read(buf)) {
 		delete[] buf;
 		return 0;
 	}
+
 	lua_pushlstring(L, buf, bufSize);
 	lua_pushinteger(L, width);
 	lua_pushinteger(L, height);
 	lua_pushinteger(L, channels);
+
 	delete[] buf;
 
 	return 4;
 }
 
 
+static int PushImageInfo(lua_State* L, PNGImageFile& image)
+{
+	if (!image.isOpen()) {
+		return 0;
+	}
+
+	const int width = image.getWidth();
+	const int height = image.getHeight();
+	const int channels = image.getNumChannels();
+
+	lua_pushinteger(L, width);
+	lua_pushinteger(L, height);
+	lua_pushinteger(L, channels);
+
+	return 3;
+}
+
+
+int LuaCallOuts::ReadImageData(lua_State* L)
+{
+	size_t inLen;
+	const char* inData = luaL_checklstring(L, 1, &inLen);
+	const bool infoOnly = lua_isboolean(L, 2) && lua_tobool(L, 2);
+
+	std::istringstream iss(string(inData, inLen));
+	PNGImageFile image(&iss);
+
+	if (infoOnly) {
+		return PushImageInfo(L, image);
+	}
+	return PushImageData(L, image);
+}
+
+
 int LuaCallOuts::ReadImageFile(lua_State* L)
 {
-	const LuaHandle* lh = L2H(L);
 	const char* path = luaL_checkstring(L, 1);
-	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
-	modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
+
+	const LuaHandle* lh = L2H(L);
+	string modes = lh->GetFSRead();
+	bool infoOnly = false;
+	if (!lua_israwstring(L, 2)) {
+		infoOnly = lua_isboolean(L, 2) && lua_tobool(L, 2);
+	}
+	else {
+		modes = lua_tostring(L, 2); // wanted
+		modes = BzVFS::allowModes(modes, lh->GetFSReadAll().c_str());
+		infoOnly = lua_isboolean(L, 3) && lua_tobool(L, 3);
+	}
 
 	string data;
 	if (!bzVFS.readFile(path, modes, data)) {
@@ -820,26 +860,10 @@ int LuaCallOuts::ReadImageFile(lua_State* L)
 	std::istringstream iss(data);
 	PNGImageFile image(&iss);
 
-	if (!image.isOpen()) {
-		return 0;
+	if (infoOnly) {
+		return PushImageInfo(L, image);
 	}
-
-	const int width = image.getWidth();
-	const int height = image.getHeight();
-	const int channels = image.getNumChannels();
-	const int bufSize = width * height * channels;
-	char* buf = new char[bufSize];
-	if (!image.read(buf)) {
-		delete[] buf;
-		return 0;
-	}
-	lua_pushlstring(L, buf, bufSize);
-	lua_pushinteger(L, width);
-	lua_pushinteger(L, height);
-	lua_pushinteger(L, channels);
-	delete[] buf;
-
-	return 4;
+	return PushImageData(L, image);
 }
 
 

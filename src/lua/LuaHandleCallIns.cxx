@@ -258,17 +258,17 @@ void LuaHandle::PlayerKilled(const Player& victim, const Player* killer,
 
 	lua_pushinteger(L, victim.getId()); // 1
 	if (killer) {
-  	lua_pushinteger(L, killer->getId()); // 2
-  } else {
-    lua_pushnil(L); // 2
-  }
-  lua_pushinteger(L, reason); // 3
-  if (flagType) {
-    lua_pushstring(L, flagType->flagAbbv.c_str()); // 4
-  } else {
-    lua_pushnil(L); // 4
-  }
-  lua_pushinteger(L, phyDrv); // 5
+		lua_pushinteger(L, killer->getId()); // 2
+	} else {
+		lua_pushnil(L); // 2
+	}
+	lua_pushinteger(L, reason); // 3
+	if (flagType) {
+		lua_pushstring(L, flagType->flagAbbv.c_str()); // 4
+	} else {
+		lua_pushnil(L); // 4
+	}
+	lua_pushinteger(L, phyDrv); // 5
 
 	RunCallIn(LUA_CI_PlayerKilled, 5, 0);
 	return;
