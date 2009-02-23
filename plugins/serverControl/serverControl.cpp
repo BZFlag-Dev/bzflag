@@ -60,6 +60,7 @@ private:
   int numObservers;
   bool serverActive;
   bool ignoreObservers;
+  double lastTime;
 };
 
 ServerControl serverControlHandler;
@@ -209,28 +210,34 @@ void ServerControl::process(bz_EventData * eventData)
 {
   ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
+  double now;
 
   if (eventData) {
     switch (eventData->eventType) {
-    case bz_eTickEvent:
-      checkShutdown();
-      if (banFilename != "")
-	checkBanChanges();
-      if (masterBanFilename != "")
-	checkMasterBanChanges();
-      break;
-    case bz_ePlayerJoinEvent:
-      if (data->record->team >= eRogueTeam && data->record->team <= eHunterTeam && data->record->callsign != "") {
-	serverActive = true;
-      }
-      countPlayers(join, data);
-      break;
-    case bz_ePlayerPartEvent:
-      countPlayers(part, data);
-      checkShutdown();
-      break;
-    default:
-      break;
+      case bz_eTickEvent:
+	now = bz_getCurrentTime();
+	if ((now - lastTime) < 3.0f) return;
+	lastTime = now;
+	checkShutdown();
+	if (banFilename != "" )
+	  checkBanChanges();
+	if (masterBanFilename != "")
+	  checkMasterBanChanges();
+	break;
+      case bz_ePlayerJoinEvent:
+	if (data->record->team >= eRogueTeam &&
+	    data->record->team <= eHunterTeam &&
+	    data->record->callsign != "")  {
+	  serverActive = true;
+	}
+	countPlayers( join , data );
+	break;
+      case bz_ePlayerPartEvent:
+	countPlayers( part , data );
+	checkShutdown();
+	break;
+      default :
+	break;
     }
   }
 }
