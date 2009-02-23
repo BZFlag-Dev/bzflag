@@ -889,8 +889,10 @@ bool DebugLevelCommand::operator() (const char* cmdLine)
   std::vector<std::string> args;
   args = TextUtils::tokenize(cmdLine, " ");
   if (args.size() < 2) {
-    addMessage(NULL, "/debug <level>");
-    return false;
+    std::string msg = "debug level is ";
+    msg += TextUtils::itoa(debugLevel);
+    addMessage(NULL, msg);
+    return true;
   }
 
   BZDB.setInt("debugLevel", atoi(args[1].c_str()));
