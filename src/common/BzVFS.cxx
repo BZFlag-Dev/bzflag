@@ -471,6 +471,7 @@ void BzVFS::reset()
   clear();
 
   const string configDir = getConfigDirName();
+  const string cacheDir  = getCacheDirName();
 
   // add the filesystems
   addFS(BZVFS_CONFIG,          configDir);
@@ -480,9 +481,9 @@ void BzVFS::reset()
 #endif
   addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));
   addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
-  addFS(BZVFS_LUA_USER_WRITE,  configDir + "LuaUser");
-  addFS(BZVFS_LUA_WORLD_WRITE, configDir + "LuaWorld");
-  addFS(BZVFS_LUA_BZORG_WRITE, configDir + "LuaBzOrg");
+  addFS(BZVFS_LUA_USER_WRITE,  cacheDir + "LuaUser");
+  addFS(BZVFS_LUA_WORLD_WRITE, cacheDir + "LuaWorld");
+  addFS(BZVFS_LUA_BZORG_WRITE, cacheDir + "LuaBzOrg");
 
   // setup the writable directories
   setFSWritable(BZVFS_CONFIG,          true);
@@ -491,9 +492,9 @@ void BzVFS::reset()
   setFSWritable(BZVFS_LUA_BZORG_WRITE, true);
 
   // create the writable lua directories
-  createPathDirs("", cleanDirPath(configDir + "LuaUser"));
-  createPathDirs("", cleanDirPath(configDir + "LuaWorld"));
-  createPathDirs("", cleanDirPath(configDir + "LuaBzOrg"));
+  createPathDirs("", cleanDirPath(cacheDir + "LuaUser"));
+  createPathDirs("", cleanDirPath(cacheDir + "LuaWorld"));
+  createPathDirs("", cleanDirPath(cacheDir + "LuaBzOrg"));
 }
 
 

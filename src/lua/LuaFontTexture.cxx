@@ -455,7 +455,7 @@ bool LuaFontTexture::Execute()
 		height = face->available_sizes[0].height;
 	}
 
-	ProcessFace(face, inputFile, height);
+	const bool success = ProcessFace(face, inputFile, height);
 
 	for (int g = 0; g < (int)glyphs.size(); g++) {
 		delete glyphs[g];
@@ -465,7 +465,7 @@ bool LuaFontTexture::Execute()
 	FT_Done_Face(face);
 	FT_Done_FreeType(library);
 
-	return true;
+	return success;
 }
 
 
@@ -575,7 +575,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	Pushf(specVec, "local glyphs = {}\n");
 	Pushf(specVec, "\n");
 
-	ILuint img;
+	ILuint img = 0;
 	ilGenImages(1, &img);
 	if (img == 0) {
 		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
@@ -593,11 +593,9 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		Glyph* glyph = glyphs[g];
 		const u32 txOffset = (xcell * xskip) + (padding + stuffing);
 		const u32 tyOffset = (ycell * yskip) + (padding + stuffing);
-		ilSetPixels(
-								txOffset, tyOffset, 0,
-				glyph->xsize, glyph->ysize, 1,
-		IL_RGBA, IL_UNSIGNED_BYTE, glyph->pixels
-							 );
+		ilSetPixels(txOffset, tyOffset, 0,
+		            glyph->xsize, glyph->ysize, 1,
+		            IL_RGBA, IL_UNSIGNED_BYTE, glyph->pixels);
 		glyph->txn += txOffset;
 		glyph->tyn += tyOffset;
 		glyph->txp += txOffset;
@@ -621,11 +619,15 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	Pushf(specVec, "return fontSpecs\n");
 	Pushf(specVec, "\n");
 
+	// save the specification file (lua)
 	const string specData = ConcatVecStr(specVec);
-	bzVFS.writeFile(specsName, inputModes, specData);
-
+	if (!bzVFS.writeFile(specsName, inputModes, specData)) {
+		ilDeleteImages(1, &img);
+		return false;
+	}
 	logDebugMessage(0, "Saved: %s\n", specsName.c_str());
 
+	// save the texture atlas (png)
 	ilEnable(IL_FILE_OVERWRITE);
 	ilHint(IL_COMPRESSION_HINT, IL_USE_COMPRESSION);
 	ilSetInteger(IL_PNG_INTERLACE, 0);
@@ -634,15 +636,18 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	ilSetString(IL_PNG_DESCRIPTION_STRING,
 							(outlineRadius> 0) ? "outlined" : "plain");
 	ilSetWrite(OpenWProc, CloseWProc, PutcProc, SeekWProc, TellWProc, WriteProc);
-	ilSaveImage((char*)imageName.c_str());
+	const bool success = ilSaveImage((char*)imageName.c_str()) != 0;
 	ilResetWrite();
 	ilDisable(IL_FILE_OVERWRITE);
 
-	logDebugMessage(0, "Saved: %s\n", imageName.c_str());
-
+	// delete the IL image
 	ilDeleteImages(1, &img);
 
-	return true;
+	if (success) {
+		logDebugMessage(0, "Saved: %s\n", imageName.c_str());
+	}
+
+	return success;
 }
 
 
@@ -712,7 +717,8 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 				}
 			}
 		}
-	} else {
+	}
+	else {
 		rgbaPixels[0] = 0xFF;
 		rgbaPixels[1] = 0xFF;
 		rgbaPixels[2] = 0xFF;
