@@ -31,7 +31,7 @@ BZ_GET_PLUGIN_VERSION
 using namespace std;
 
 enum action
-{ join, part };
+{join, part};
 
 class ServerControl:public bz_EventHandler
 {
@@ -41,10 +41,10 @@ public:
   virtual void process(bz_EventData * eventData);
   int loadConfig(const char *cmdLine);
 private:
-  void countPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
-  void checkShutdown( void );
-  void checkBanChanges( void );
-  void checkMasterBanChanges( void );
+  void countPlayers(action act, bz_PlayerJoinPartEventData_V1 *data);
+  void checkShutdown(void);
+  void checkBanChanges(void);
+  void checkMasterBanChanges(void);
   void fileAccessTime(const std::string filename, time_t *mtime, bool *error);
   string banFilename;
   string masterBanFilename;
