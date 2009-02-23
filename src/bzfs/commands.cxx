@@ -484,6 +484,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class DebugCommand : ServerCommand {
+public:
+  DebugCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand	  partCommand;
@@ -533,6 +541,7 @@ static ReplayCommand      replayCommand;
 static SayCommand	  sayCommand;
 static CmdList		  cmdList;
 static CmdHelp		  cmdHelp;
+static DebugCommand       debugCommand;
 
 CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
 CmdList::CmdList()			 : ServerCommand("/?",
@@ -628,6 +637,8 @@ ModCountCommand::ModCountCommand()	 : ServerCommand("/modcount",
 LuaServerCommand::LuaServerCommand()	 : ServerCommand("/luaserver") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
+DebugCommand::DebugCommand()		 : ServerCommand("/debug",
+  "[value] - set debug level or display the current setting") {}
 
 class NoDigit {
 public:
@@ -3257,6 +3268,33 @@ void removeCustomSlashCommand(std::string command)
     customCommands.erase(itr);
 }
 
+bool DebugCommand::operator() (const char *message,
+			       GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the debug command");
+    logDebugMessage(3,"debug failed by %s\n",playerData->player.getCallSign());
+    return true;
+  }
+  std::string arguments = &message[6]; /* skip "/debug" */
+
+  if (arguments.find_first_not_of(" ") == std::string::npos) {
+    /* No arguments */
+    sendMessage(ServerPlayer, t,
+		TextUtils::format("Debug Level is %d", debugLevel).c_str());
+  } else {
+    int newDebugLevel = atoi(arguments.c_str());
+
+    sendMessage(ServerPlayer, AdminPlayers,
+		TextUtils::format("Debug Level changed from %d to %d by %s",
+				  debugLevel, newDebugLevel,
+				  playerData->player.getCallSign()).c_str());
+    debugLevel = newDebugLevel;
+  }
+
+  return true;
+}
 
 // Local Variables: ***
 // mode: C++ ***
