@@ -41,11 +41,11 @@ public:
   virtual void process(bz_EventData * eventData);
   int loadConfig(const char *cmdLine);
 private:
-  void countPlayers(action act, bz_PlayerJoinPartEventData_V1 * data);
-  void checkShutdown(void);
-  void checkBanChanges(void);
-  void checkMasterBanChanges(void);
-  void fileAccessTime(const std::string filename, time_t * mtime);
+  void countPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
+  void checkShutdown( void );
+  void checkBanChanges( void );
+  void checkMasterBanChanges( void );
+  void fileAccessTime(const std::string filename, time_t *mtime, bool *error);
   string banFilename;
   string masterBanFilename;
   string resetServerOnceFilename;
@@ -53,7 +53,9 @@ private:
   string banReloadMessage;
   string masterBanReloadMessage;
   time_t banFileAccessTime;
+  bool banFileErrorLogged;
   time_t masterBanFileAccessTime;
+  bool masterBanErrorLogged;
   int numPlayers;
   int numObservers;
   bool serverActive;
@@ -146,23 +148,30 @@ int ServerControl::loadConfig(const char *cmdLine)
     bz_debugMessage(1, "ServerControl - Server must be empty for server restarts");
 
   /* Set the initial ban file access times */
+  masterBanErrorLogged = false;
+  banFileErrorLogged = false;
   if (masterBanFilename != "")
-    fileAccessTime(masterBanFilename, &masterBanFileAccessTime);
+    fileAccessTime(masterBanFilename, &masterBanFileAccessTime, &masterBanErrorLogged);
   if (banFilename != "")
-    fileAccessTime(banFilename, &banFileAccessTime);
+    fileAccessTime(banFilename, &banFileAccessTime, &banFileErrorLogged);
 
   return 0;
 }
 
-void ServerControl::fileAccessTime(const std::string filename, time_t * mtime)
+void ServerControl::fileAccessTime(const std::string filename, time_t *mtime, bool *error)
 {
   struct stat buf;
 
   if (stat(filename.c_str(), &buf) == 0) {
     *mtime = buf.st_mtime;
+    *error = false;
   } else {
     *mtime = 0;
-    bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s", filename.c_str());
+    if (!*error) {
+      bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s",
+		       filename.c_str());
+      *error = true;
+    }
   }
 }
 
@@ -260,7 +269,7 @@ void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 * dat
 void ServerControl::checkBanChanges(void)
 {
   time_t mtime;
-  fileAccessTime(banFilename, &mtime);
+  fileAccessTime(banFilename, &mtime, &banFileErrorLogged);
 
   if (mtime != banFileAccessTime) {
     banFileAccessTime = mtime;
@@ -273,7 +282,7 @@ void ServerControl::checkBanChanges(void)
 void ServerControl::checkMasterBanChanges(void)
 {
   time_t mtime;
-  fileAccessTime(masterBanFilename, &mtime);
+  fileAccessTime(masterBanFilename, &mtime, &masterBanErrorLogged);
   if (mtime != masterBanFileAccessTime) {
     masterBanFileAccessTime = mtime;
     bz_debugMessagef(1, "serverControl: master ban file changed - reloading...");
