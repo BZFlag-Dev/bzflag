@@ -637,8 +637,8 @@ ModCountCommand::ModCountCommand()	 : ServerCommand("/modcount",
 LuaServerCommand::LuaServerCommand()	 : ServerCommand("/luaserver") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
-DebugCommand::DebugCommand()		 : ServerCommand("/debug",
-  "[value] - set debug level or display the current setting") {}
+DebugCommand::DebugCommand()		 : ServerCommand("/serverdebug",
+							 "[value] - set debug level for the server or display the current setting") {}
 
 class NoDigit {
 public:
@@ -3277,7 +3277,7 @@ bool DebugCommand::operator() (const char *message,
     logDebugMessage(3,"debug failed by %s\n",playerData->player.getCallSign());
     return true;
   }
-  std::string arguments = &message[6]; /* skip "/debug" */
+  std::string arguments = &message[12]; /* skip "/serverdebug" */
 
   if (arguments.find_first_not_of(" ") == std::string::npos) {
     /* No arguments */
