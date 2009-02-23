@@ -191,6 +191,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lua\LuaControl.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lua\LuaDLists.cxx"
 				>
 			</File>
@@ -346,6 +350,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lua\LuaConstGL.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaControl.h"
 				>
 			</File>
 			<File
