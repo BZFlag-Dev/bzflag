@@ -2345,6 +2345,15 @@ BZF_API int bz_getDebugLevel(void)
   return debugLevel;
 }
 
+BZF_API int bz_setDebugLevel(int debug)
+{
+  if (debug >= 0  && debug <= 9)
+    debugLevel = debug;
+
+  return debugLevel;
+}
+
+//-------------------------------------------------------------------------
 // admin
 BZF_API bool bz_kickUser(int playerIndex, const char *reason, bool notify)
 {

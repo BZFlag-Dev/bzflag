@@ -1420,6 +1420,7 @@ BZF_API void bz_resetALLBZDBVars(void);
 BZF_API void bz_debugMessage(int level, const char* message);
 BZF_API void bz_debugMessagef(int level, const char* fmt, ...) _ATTRIBUTE23;
 BZF_API int bz_getDebugLevel(void);
+BZF_API int bz_setDebugLevel(int debugLevel);
 
 // admin
 BZF_API bool bz_kickUser(int playerIndex, const char* reason, bool notify);
