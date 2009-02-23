@@ -199,9 +199,11 @@ ActionBinding::ActionBinding() {
 
   defaultBinding.insert(BindingTable::value_type("Alt+U",  "luauser reload"));
   defaultBinding.insert(BindingTable::value_type("Alt+W",  "luaworld reload"));
+  defaultBinding.insert(BindingTable::value_type("Alt+B",  "luabzorg reload"));
 /* FIXME -- luauser & luaworld default bindings
   defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
   defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+B", "luabzorg disable"));
 */
 }
 

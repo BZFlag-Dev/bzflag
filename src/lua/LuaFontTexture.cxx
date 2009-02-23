@@ -482,17 +482,15 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	}
 	else {
 		string basename = filename;
-		const string::size_type lastOf = filename.find_last_of('.');
-		if (lastOf != string::npos) {
-			basename = filename.substr(0, lastOf);
+		const string::size_type lastDot = filename.find_last_of('.');
+		if (lastDot != string::npos) {
+			basename = filename.substr(0, lastDot);
 			if (dbgLevel >= 1) {
 				logDebugMessage(0, "basename = %s\n", basename.c_str());
 			}
 		}
 		char heightText[64];
-		char outlineText[64];
 		sprintf(heightText, "_%i", fontHeight);
-		sprintf(outlineText, "_%i", outlineRadius); // FIXME -- unused
 		imageName = basename + heightText + ".png";
 		specsName = basename + heightText + ".lua";
 	}

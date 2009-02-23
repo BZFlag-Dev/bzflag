@@ -9,20 +9,21 @@
 using std::string;
 
 // common headers
+#include "ArcObstacle.h"
+#include "BaseBuilding.h"
+#include "BoxBuilding.h"
+#include "ConeObstacle.h"
+#include "MeshDrawInfo.h"
+#include "MeshObstacle.h"
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
-#include "WallObstacle.h"
-#include "BoxBuilding.h"
 #include "PyramidBuilding.h"
-#include "BaseBuilding.h"
-#include "Teleporter.h"
-#include "MeshObstacle.h"
-#include "ArcObstacle.h"
-#include "ConeObstacle.h"
 #include "SphereObstacle.h"
+#include "Teleporter.h"
 #include "TetraBuilding.h"
-#include "MeshDrawInfo.h"
-#include "MeshSceneNodeGenerator.h" // FIXME -- not being used, code was copied
+#include "WallObstacle.h"
+
+#include "SceneNode.h" // for the GLfloat arrays
 
 // bzflag headers
 #include "../bzflag/World.h"
@@ -81,9 +82,9 @@ bool LuaObstacle::PushEntries(lua_State* L)
 
 /******************************************************************************/
 /******************************************************************************/
-
-// FIXME -- copied from MeshSceneNodeGenerator
-//       -- doesn't want to link
+//
+// -- copied from MeshSceneNodeGenerator
+//
 
 static bool makeTexcoords(const float* plane,
 					                const GLfloat3Array& vertices,

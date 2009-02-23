@@ -76,7 +76,7 @@ void EffectsRenderer::update(void)
 
 void EffectsRenderer::draw(const SceneRenderer& sr)
 {
-  // FIXME: really should check here for only the things that are VISIBILE!!!
+  // FIXME: really should check here for only the things that are VISIBLE!!!
   for (unsigned int i = 0; i < effectsList.size(); i++)
     effectsList[i]->draw(sr);
 }

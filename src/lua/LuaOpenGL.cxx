@@ -334,6 +334,13 @@ int LuaOpenGL::Text(lua_State* L)
 	const float size = luaL_optfloat(L, 3, 12.0f);
 	const float x    = luaL_optfloat(L, 4, 0.0f);
 	const float y    = luaL_optfloat(L, 5, 0.0f);
+	const char* opts = luaL_optstring(L, 6, "");
+	float alpha = 1.0f;
+	bool useAlpha = false;
+	if (lua_israwnumber(L, 7)) {
+		useAlpha = true;
+		alpha = lua_tonumber(L, 7);
+	}
 
 	int faceID = -1;
 	FontManager& FM = FontManager::instance();
@@ -360,8 +367,8 @@ int LuaOpenGL::Text(lua_State* L)
 	bool rawBlending = false;
 	bool lightOut;
 
-	if (lua_israwstring(L, 6)) {
-	  const char* c = lua_tostring(L, 6);
+	if (opts != NULL) {
+	  const char* c = opts;
 	  while (*c != 0) {
 	  	switch (*c) {
 	  	  case 'c': { center = true;                    break; }
@@ -388,7 +395,11 @@ int LuaOpenGL::Text(lua_State* L)
 		luaL_error(L, "attrib stack overflow");
 	}
 
-	// FIXME -- setOpacity for ansi colored string ?
+	float oldAlpha;
+	if (useAlpha) {
+		oldAlpha = FM.getOpacity();
+		FM.setOpacity(alpha);
+	}
 
 	glPushMatrix();
 	glTranslatef(xj, y, 0.0f);
@@ -400,6 +411,10 @@ int LuaOpenGL::Text(lua_State* L)
 		FM.setRawBlending(false);
 	}
 	glPopMatrix();
+
+	if (useAlpha) {
+		FM.setOpacity(oldAlpha);
+	}
 
 	if (!OpenGLPassState::TryAttribStackChange(-ftglAttribDepth)) {
 		luaL_error(L, "attrib stack underflow");
@@ -1942,7 +1957,7 @@ int LuaOpenGL::PolygonStipple(lua_State* L)
 
 	const float alpha = luaL_checkfloat(L, 1);
 	const int numStipples = OpenGLGState::getOpaqueStippleIndex() + 1;
-	const int stipple = (int)(alpha * numStipples); // FIXME -- offset
+	const int stipple = (int)(alpha * numStipples);
 	
 	OpenGLGState::setStippleIndex(stipple);
 
@@ -2351,11 +2366,10 @@ static const float* GetNamedMatrix(const string& name)
 		CalculateInverse4x4((const float (*)[4])vf.getViewMatrix(), invMatrix);
 		return (const float*)invMatrix;
 	}
-/* FIXME -- GetNamedMatrix()
 	else if (name == "billboard") {
-		return camera->GetBillboard();
+		const ViewFrustum& vf = RENDERER.getViewFrustum();
+		return vf.getBillboardMatrix();
 	}
-*/
 	return NULL;
 }
 

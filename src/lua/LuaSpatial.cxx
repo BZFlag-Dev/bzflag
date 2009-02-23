@@ -895,8 +895,6 @@ static bool ShotInBox(const ShotPath* shot, const QueryData& data)
 static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
 											 vector<const ShotPath*> hits)
 {
-	// FIXME - check expiration, robots ?
-
 	const World* world = World::getWorld();
 	if (world == NULL) {
 		return;

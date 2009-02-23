@@ -45,6 +45,7 @@ class Frustum {
     const float*	getProjectionMatrix() const;
     float		getEyeDepth(const float*) const;
     float		getAreaFactor() const;
+    const float*	getBillboardMatrix() const;
 
     void		setView(const float* eye, const float* target);
     void		setProjection(float fov,
@@ -167,6 +168,11 @@ inline const float*	Frustum::getProjectionMatrix() const
 inline float		Frustum::getAreaFactor() const
 {
   return areaFactor;
+}
+
+inline const float*	Frustum::getBillboardMatrix() const
+{
+  return billboardMatrix;
 }
 
 #endif // BZF_FRUSTUM_H
