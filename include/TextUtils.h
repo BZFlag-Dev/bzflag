@@ -85,12 +85,14 @@ namespace TextUtils {
    * around it you can get the correct parsing. When use quotes is enabled,
    * \'s and "'s should\can be escaped with \ escaping is not currently done
    * for any other character. Should not have " as a delimeter if you want to
-   * use quotes
+   * use quotes. You can also use "\ " to escape spaces within a token when
+   * useEscapes is true (note that this requires that useQuotes also be true).
    */
   std::vector<std::string> tokenize(const std::string& in,
                                     const std::string &delims,
                                     const int maxTokens = 0,
-                                    const bool useQuotes = false);
+                                    const bool useQuotes = false,
+                                    const bool useEscapes = true);
 
   /** convert a string representation of some duration into minutes
    *  example: "1d2h16m" -> 1500

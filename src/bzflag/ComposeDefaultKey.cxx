@@ -66,34 +66,34 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   if (isWordCompletion(key)) {
-    std::string matches;
-    const std::string oldStr = hud->getComposeString();
-    const std::string newStr = completer.complete(oldStr, &matches);
-    hud->setComposeString(newStr);
-    if (matches.size() > 0) {
-      controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
+    const std::string line = hud->getComposeString();
+    std::set<std::string> partials;
+    if (!BZDB.isTrue("noDefaultWordComplete")) {
+      completer.complete(line, partials);
     }
-    else if (oldStr == newStr) {
-      // no default word completion, try the eventHandler
-      // FIXME -- change the default AutoCompleter structure?
-      std::set<std::string> partials;
-      eventHandler.WordComplete(newStr, partials);
-      if (!partials.empty()) {
-        // find the longest common string
-        const std::string first = *(partials.begin());
-        const std::string last = *(partials.rbegin());
-        size_t i;
-        size_t maxLen = std::max(first.size(), last.size());
-        for (i = 0; i < maxLen; i++) {
-          if (first[i] != last[i]) {
-            break;
-          }
+    eventHandler.WordComplete(line, partials);
+    if (!partials.empty()) {    
+      // find the longest common string
+      const std::string first = *(partials.begin());
+      const std::string last = *(partials.rbegin());
+      size_t i;
+      size_t maxLen = std::max(first.size(), last.size());
+      for (i = 0; i < maxLen; i++) {
+        if (first[i] != last[i]) {
+          break;
         }
-        hud->setComposeString(newStr + first.substr(0, i));
+      }
+      hud->setComposeString(line + first.substr(0, i));
+
+      if (partials.size() >= 2) {
+        const int lastSpace = line.find_last_of(" \t");
+        const std::string lastWord = line.substr(lastSpace + 1);
+                  
+        std::string matches;
         std::set<std::string>::const_iterator it;
         for (it = partials.begin(); it != partials.end(); ++it) {
           matches += "  ";
-          matches += it->substr(i);
+          matches += lastWord + it->substr(i);
         }
         controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
       }

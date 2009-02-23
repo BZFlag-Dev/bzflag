@@ -130,7 +130,12 @@ namespace TextUtils
   }
 
 
-  std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes){
+  std::vector<std::string> tokenize(const std::string& in,
+                                    const std::string &delims,
+                                    const int maxTokens,
+                                    const bool useQuotes,
+                                    const bool useEscapes)
+  {
     std::vector<std::string> tokens;
     int numTokens = 0;
     bool inQuote = false;
@@ -154,17 +159,27 @@ namespace TextUtils
 
 	tokenDone = false;
 
-	if (delims.find(currentChar) != std::string::npos && !inQuote) { // currentChar is a delim
-	  pos ++;
-	  break; // breaks out of inner while loop
-	}
+        if (delims.find(currentChar) != std::string::npos) {
+          // currentChar is a delim
+          if (foundSlash && useEscapes) {
+            currentToken << char(currentChar);
+            foundSlash = false;
+            pos++;
+            currentChar = (pos < len) ? in[pos] : -1;
+            continue;
+          }
+          else if (!inQuote) {
+            pos++;
+            break; // breaks out of inner while loop
+          }
+        }
 
 	if (!useQuotes){
 	  currentToken << char(currentChar);
-	} else {
-
+	}
+	else {
 	  switch (currentChar){
-	    case '\\' : // found a backslash
+	    case '\\': { // found a backslash
 	      if (foundSlash){
 		currentToken << char(currentChar);
 		foundSlash = false;
@@ -172,11 +187,13 @@ namespace TextUtils
 		foundSlash = true;
 	      }
 	      break;
-	    case '\"' : // found a quote
+            }
+	    case '\"': { // found a quote
 	      if (foundSlash){ // found \"
 		currentToken << char(currentChar);
 		foundSlash = false;
-	      } else { // found unescaped "
+	      }
+	      else { // found unescaped "
 		if (inQuote){ // exiting a quote
 		  // finish off current token
 		  tokenDone = true;
@@ -186,21 +203,25 @@ namespace TextUtils
 		      delims.find(in[pos+1]) != std::string::npos) {
 		    pos++;
 		  }
-
-		} else { // entering a quote
+		}
+		else { // entering a quote
 		  // finish off current token
 		  tokenDone = true;
 		  inQuote = true;
 		}
 	      }
 	      break;
-	    default:
-	      if (foundSlash){ // don't care about slashes except for above cases
-		currentToken << '\\';
+            }
+	    default: {
+	      if (foundSlash) {
+	        if (!useEscapes) {
+	          currentToken << '\\';
+                }
 		foundSlash = false;
 	      }
 	      currentToken << char(currentChar);
 	      break;
+            }
 	  }
 	}
 
@@ -423,6 +444,7 @@ namespace TextUtils
         }
       }
     }
+
     return out;
   }
 

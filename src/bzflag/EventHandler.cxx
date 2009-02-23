@@ -476,10 +476,7 @@ void EventHandler::WordComplete(const string& line, set<string>& partials)
     ec->WordComplete(line, safePartials);
     set<string>::const_iterator it;
     for (it = safePartials.begin(); it != safePartials.end(); ++it) {
-      const string& partial = *it;
-      if (!partial.empty()) {
-        partials.insert(partial);
-      }
+      partials.insert(*it); // NOTE: empty strings are valid
     }
   }
   list.finish();

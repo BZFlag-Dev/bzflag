@@ -9,20 +9,7 @@
 
 // local headers
 #include "LuaInclude.h"
-
-
-/******************************************************************************/
-/******************************************************************************/
-
-static void PushDualPair(lua_State* L, const char* name, int code)
-{
-	lua_pushstring(L, name);
-	lua_pushinteger(L, code);
-	lua_rawset(L, -3);
-	lua_pushinteger(L, code);
-	lua_pushstring(L, name);
-	lua_rawset(L, -3);
-}
+#include "LuaUtils.h"
 
 
 /******************************************************************************/
@@ -33,7 +20,7 @@ bool LuaKeySyms::PushEntries(lua_State* L)
 	lua_pushliteral(L, "KEYSYMS");
 	lua_newtable(L);
 
-#define PUSH_KEYSYM(X) PushDualPair(L, #X, -BzfKeyEvent::X)
+#define PUSH_KEYSYM(X) LuaPushDualPair(L, #X, -BzfKeyEvent::X)
 
 	PUSH_KEYSYM(Pause);
 	PUSH_KEYSYM(Home);
@@ -95,7 +82,7 @@ bool LuaKeySyms::PushEntries(lua_State* L)
 	PUSH_KEYSYM(MouseButton9);
 	PUSH_KEYSYM(MouseButton10);
 
-#define PUSH_BZKEYSYM(X) PushDualPair(L, #X, -BzfKeyEvent::BZ_ ## X)
+#define PUSH_BZKEYSYM(X) LuaPushDualPair(L, #X, -BzfKeyEvent::BZ_ ## X)
 
 	PUSH_BZKEYSYM(Button_1);
 	PUSH_BZKEYSYM(Button_2);

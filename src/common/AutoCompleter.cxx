@@ -18,6 +18,9 @@
 // system headers
 #include <ctype.h>
 #include <string.h>
+#include <string>
+#include <vector>
+#include <set>
 #include <algorithm>
 
 
@@ -141,6 +144,57 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
     return (head + quoted);
   } else {
     return (head + first->word.substr(0, i));
+  }
+}
+
+
+void AutoCompleter::complete(const std::string& line,
+                             std::set<std::string>& matches)
+{
+  if (line.size() == 0) {
+    return;
+  }
+
+  // from the last space
+  const int lastSpace = line.find_last_of(" \t");
+  const std::string tail = line.substr(lastSpace + 1);
+  if (tail.size() == 0) {
+    return;
+  }
+  const std::string head = line.substr(0, lastSpace + 1);
+
+  // find the first and last word with the prefix str
+  std::vector<WordRecord>::iterator first, last;
+  WordRecord rec(tail, false);
+  first = std::lower_bound(words.begin(), words.end(), rec);
+  if ((first == words.end()) ||
+      (first->word.substr(0, tail.size()) != tail)) {
+    return; // no match
+  }
+  std::string tmp = tail;
+  tmp[tmp.size() - 1]++;
+  last = std::lower_bound(first, words.end(), WordRecord(tmp, false)) - 1;
+
+  // get a list of partial matches
+  std::vector<WordRecord>::iterator it = first;
+  for (it = first; it != (last + 1); it++) {
+    std::string tmp2 = it->word;
+    if (tmp2.size() >= tail.size()) {
+      if (!it->quoteString) {
+        matches.insert(tmp2.substr(tail.size()));
+      }
+      else { // escape the spaces
+        std::string escaped;
+        for (size_t i = 0; i < tmp2.size(); i++) {
+          if (tmp2[i] != ' ') {
+            escaped += tmp2[i];
+          } else {
+            escaped += "\\ ";
+          }
+        }
+        matches.insert(escaped.substr(tail.size()));
+      }
+    }
   }
 }
 

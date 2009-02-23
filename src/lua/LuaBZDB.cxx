@@ -18,6 +18,7 @@ using std::map;
 
 // local headers
 #include "LuaInclude.h"
+#include "LuaUtils.h"
 
 
 /******************************************************************************/
@@ -42,6 +43,13 @@ bool LuaBZDB::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, SetBool);
 	PUSH_LUA_CFUNC(L, SetFloat);
 	PUSH_LUA_CFUNC(L, SetString);
+
+	lua_pushliteral(L, "ACCESS");
+	lua_newtable(L);
+	LuaPushDualPair(L, "USER",   StateDatabase::User);
+	LuaPushDualPair(L, "CLIENT", StateDatabase::Client);
+	LuaPushDualPair(L, "SERVER", StateDatabase::Server);
+	lua_rawset(L, -3);
 
 	return true;
 }

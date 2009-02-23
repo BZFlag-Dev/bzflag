@@ -74,29 +74,15 @@ bool LuaConstGame::PushEntries(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-static void PushDualPair(lua_State* L, const char* name, int code)
-{
-	lua_pushstring(L, name);
-	lua_pushinteger(L, code);
-	lua_rawset(L, -3);
-	lua_pushinteger(L, code);
-	lua_pushstring(L, name);
-	lua_rawset(L, -3);
-}
-
-
-/******************************************************************************/
-/******************************************************************************/
-
 static bool PushGameTypes(lua_State* L)
 {
 	lua_pushliteral(L, "GAME");
 	lua_newtable(L);
 
-	PushDualPair(L, "FFA",     TeamFFA);
-	PushDualPair(L, "CTF",     ClassicCTF);
-	PushDualPair(L, "OPENFFA", OpenFFA);
-	PushDualPair(L, "RABBIT",  RabbitChase);
+	LuaPushDualPair(L, "FFA",     TeamFFA);
+	LuaPushDualPair(L, "CTF",     ClassicCTF);
+	LuaPushDualPair(L, "OPENFFA", OpenFFA);
+	LuaPushDualPair(L, "RABBIT",  RabbitChase);
 
 	lua_rawset(L, -3);
 
@@ -112,16 +98,16 @@ static bool PushTeams(lua_State* L)
 	lua_pushliteral(L, "TEAM");
 	lua_newtable(L);
 
-	PushDualPair(L, "AUTO",     AutomaticTeam);
-	PushDualPair(L, "NONE",     NoTeam);
-	PushDualPair(L, "ROGUE",    RogueTeam);
-	PushDualPair(L, "RED",      RedTeam);
-	PushDualPair(L, "GREEN",    GreenTeam);
-	PushDualPair(L, "BLUE",     BlueTeam);
-	PushDualPair(L, "PURPLE",   PurpleTeam);
-	PushDualPair(L, "RABBIT",   RabbitTeam);
-	PushDualPair(L, "HUNTER",   HunterTeam);
-	PushDualPair(L, "OBSERVER", ObserverTeam);
+	LuaPushDualPair(L, "AUTO",     AutomaticTeam);
+	LuaPushDualPair(L, "NONE",     NoTeam);
+	LuaPushDualPair(L, "ROGUE",    RogueTeam);
+	LuaPushDualPair(L, "RED",      RedTeam);
+	LuaPushDualPair(L, "GREEN",    GreenTeam);
+	LuaPushDualPair(L, "BLUE",     BlueTeam);
+	LuaPushDualPair(L, "PURPLE",   PurpleTeam);
+	LuaPushDualPair(L, "RABBIT",   RabbitTeam);
+	LuaPushDualPair(L, "HUNTER",   HunterTeam);
+	LuaPushDualPair(L, "OBSERVER", ObserverTeam);
 
 	lua_rawset(L, -3);
 
@@ -137,22 +123,22 @@ static bool PushChatTeams(lua_State* L)
 	lua_pushliteral(L, "CHAT_TEAM");
 	lua_newtable(L);
 
-	PushDualPair(L, "NONE",     NoPlayer);
-	PushDualPair(L, "ALL",      AllPlayers);
-	PushDualPair(L, "SERVER",   ServerPlayer);
-	PushDualPair(L, "ADMIN",    AdminPlayers);
+	LuaPushDualPair(L, "NONE",     NoPlayer);
+	LuaPushDualPair(L, "ALL",      AllPlayers);
+	LuaPushDualPair(L, "SERVER",   ServerPlayer);
+	LuaPushDualPair(L, "ADMIN",    AdminPlayers);
 
 	const int topTeam = 250;
-	PushDualPair(L, "TOP", topTeam);
+	LuaPushDualPair(L, "TOP", topTeam);
 
-	PushDualPair(L, "ROGUE",    topTeam - RogueTeam);
-	PushDualPair(L, "RED",      topTeam - RedTeam);
-	PushDualPair(L, "GREEN",    topTeam - GreenTeam);
-	PushDualPair(L, "BLUE",     topTeam - BlueTeam);
-	PushDualPair(L, "PURPLE",   topTeam - PurpleTeam);
-	PushDualPair(L, "RABBIT",   topTeam - RabbitTeam);
-	PushDualPair(L, "HUNTER",   topTeam - HunterTeam);
-	PushDualPair(L, "OBSERVER", topTeam - ObserverTeam);
+	LuaPushDualPair(L, "ROGUE",    topTeam - RogueTeam);
+	LuaPushDualPair(L, "RED",      topTeam - RedTeam);
+	LuaPushDualPair(L, "GREEN",    topTeam - GreenTeam);
+	LuaPushDualPair(L, "BLUE",     topTeam - BlueTeam);
+	LuaPushDualPair(L, "PURPLE",   topTeam - PurpleTeam);
+	LuaPushDualPair(L, "RABBIT",   topTeam - RabbitTeam);
+	LuaPushDualPair(L, "HUNTER",   topTeam - HunterTeam);
+	LuaPushDualPair(L, "OBSERVER", topTeam - ObserverTeam);
 
 	lua_rawset(L, -3);
 
@@ -168,19 +154,19 @@ static bool PushShotTypes(lua_State* L)
 	lua_pushliteral(L, "SHOT");
 	lua_newtable(L);
 
-	PushDualPair(L, "NONE",       NoShot);
-	PushDualPair(L, "STANDARD",   StandardShot);
-	PushDualPair(L, "GM",         GMShot);
-	PushDualPair(L, "LASER",      LaserShot);
-	PushDualPair(L, "THIEF",      ThiefShot);
-	PushDualPair(L, "SUPER",      SuperShot);
-	PushDualPair(L, "PHANTOM",    PhantomShot);
-	PushDualPair(L, "SHOCKWAVE",  ShockWaveShot);
-	PushDualPair(L, "RICO",       RicoShot);
-	PushDualPair(L, "MACHINEGUN", MachineGunShot);
-	PushDualPair(L, "INVISIBLE",  InvisibleShot);
-	PushDualPair(L, "CLOAKED",    CloakedShot);
-	PushDualPair(L, "RAPIDFIRE",  RapidFireShot);
+	LuaPushDualPair(L, "NONE",       NoShot);
+	LuaPushDualPair(L, "STANDARD",   StandardShot);
+	LuaPushDualPair(L, "GM",         GMShot);
+	LuaPushDualPair(L, "LASER",      LaserShot);
+	LuaPushDualPair(L, "THIEF",      ThiefShot);
+	LuaPushDualPair(L, "SUPER",      SuperShot);
+	LuaPushDualPair(L, "PHANTOM",    PhantomShot);
+	LuaPushDualPair(L, "SHOCKWAVE",  ShockWaveShot);
+	LuaPushDualPair(L, "RICO",       RicoShot);
+	LuaPushDualPair(L, "MACHINEGUN", MachineGunShot);
+	LuaPushDualPair(L, "INVISIBLE",  InvisibleShot);
+	LuaPushDualPair(L, "CLOAKED",    CloakedShot);
+	LuaPushDualPair(L, "RAPIDFIRE",  RapidFireShot);
 
 	lua_rawset(L, -3);
 
@@ -196,9 +182,9 @@ static bool PushPlayerTypes(lua_State* L)
 	lua_pushliteral(L, "PLAYER_TYPE");
 	lua_newtable(L);
 
-	PushDualPair(L, "TANK",     TankPlayer);
-	PushDualPair(L, "COMPUTER", ComputerPlayer);
-	PushDualPair(L, "CHAT",     ChatPlayer);
+	LuaPushDualPair(L, "TANK",     TankPlayer);
+	LuaPushDualPair(L, "COMPUTER", ComputerPlayer);
+	LuaPushDualPair(L, "CHAT",     ChatPlayer);
 
 	lua_rawset(L, -3);
 
@@ -214,20 +200,20 @@ static bool PushPlayerStateBits(lua_State* L)
 	lua_pushliteral(L, "PLAYER_BIT");
 	lua_newtable(L);
 
-	PushDualPair(L, "ALIVE",         PlayerState::Alive);
-	PushDualPair(L, "PAUSED",        PlayerState::Paused);
-	PushDualPair(L, "EXPLODING",     PlayerState::Exploding);
-	PushDualPair(L, "TELEPORTING",   PlayerState::Teleporting);
-	PushDualPair(L, "FLAG_ACTIVE",   PlayerState::FlagActive);
-	PushDualPair(L, "CROSSING_WALL", PlayerState::CrossingWall);
-	PushDualPair(L, "FALLING",       PlayerState::Falling);
-	PushDualPair(L, "ON_DRIVER",     PlayerState::OnDriver);
-	PushDualPair(L, "USER_INPUTS",   PlayerState::UserInputs);
-	PushDualPair(L, "JUMP_JETS",     PlayerState::JumpJets);
-	PushDualPair(L, "PLAY_SOUND",    PlayerState::PlaySound);
-	PushDualPair(L, "ZONED",         PlayerState::PhantomZoned);
-	PushDualPair(L, "IN_BUILDING",   PlayerState::InBuilding);
-	PushDualPair(L, "BACKED_OFF",    PlayerState::BackedOff);
+	LuaPushDualPair(L, "ALIVE",         PlayerState::Alive);
+	LuaPushDualPair(L, "PAUSED",        PlayerState::Paused);
+	LuaPushDualPair(L, "EXPLODING",     PlayerState::Exploding);
+	LuaPushDualPair(L, "TELEPORTING",   PlayerState::Teleporting);
+	LuaPushDualPair(L, "FLAG_ACTIVE",   PlayerState::FlagActive);
+	LuaPushDualPair(L, "CROSSING_WALL", PlayerState::CrossingWall);
+	LuaPushDualPair(L, "FALLING",       PlayerState::Falling);
+	LuaPushDualPair(L, "ON_DRIVER",     PlayerState::OnDriver);
+	LuaPushDualPair(L, "USER_INPUTS",   PlayerState::UserInputs);
+	LuaPushDualPair(L, "JUMP_JETS",     PlayerState::JumpJets);
+	LuaPushDualPair(L, "PLAY_SOUND",    PlayerState::PlaySound);
+	LuaPushDualPair(L, "ZONED",         PlayerState::PhantomZoned);
+	LuaPushDualPair(L, "IN_BUILDING",   PlayerState::InBuilding);
+	LuaPushDualPair(L, "BACKED_OFF",    PlayerState::BackedOff);
 
 	lua_rawset(L, -3);
 
@@ -278,16 +264,16 @@ static bool PushObstacleTypes(lua_State* L)
 	lua_pushliteral(L, "OBSTACLE");
 	lua_newtable(L);
 
-	PushDualPair(L, "WALL",   wallType);
-	PushDualPair(L, "BOX",    boxType);
-	PushDualPair(L, "PYR",    pyrType);
-	PushDualPair(L, "BASE",   baseType);
-	PushDualPair(L, "TELE",   teleType);
-	PushDualPair(L, "MESH",   meshType);
-	PushDualPair(L, "ARC",    arcType);
-	PushDualPair(L, "CONE",   coneType);
-	PushDualPair(L, "SPHERE", sphereType);
-	PushDualPair(L, "TETRA",  tetraType);
+	LuaPushDualPair(L, "WALL",   wallType);
+	LuaPushDualPair(L, "BOX",    boxType);
+	LuaPushDualPair(L, "PYR",    pyrType);
+	LuaPushDualPair(L, "BASE",   baseType);
+	LuaPushDualPair(L, "TELE",   teleType);
+	LuaPushDualPair(L, "MESH",   meshType);
+	LuaPushDualPair(L, "ARC",    arcType);
+	LuaPushDualPair(L, "CONE",   coneType);
+	LuaPushDualPair(L, "SPHERE", sphereType);
+	LuaPushDualPair(L, "TETRA",  tetraType);
 
 	lua_rawset(L, -3);
 
@@ -303,14 +289,14 @@ static bool PushGfxBlockTypes(lua_State* L) // FIXME -- uppercase?
 	lua_pushliteral(L, "GFXBLOCK_TYPE");
 	lua_newtable(L);
 	for (int i = 0; i < GfxBlock::BlockTypeCount; i++) {
-		PushDualPair(L, GfxBlock::getTypeString(i), i);
+		LuaPushDualPair(L, GfxBlock::getTypeString(i), i);
 	}
 	lua_rawset(L, -3);
 
 	lua_pushliteral(L, "GFXBLOCK_ID");
 	lua_newtable(L);
 	for (int i = 0; i < GfxBlockMgr::BlockIDCount; i++) {
-		PushDualPair(L, GfxBlockMgr::getIDString(i), i);
+		LuaPushDualPair(L, GfxBlockMgr::getIDString(i), i);
 	}
 	lua_rawset(L, -3);
 
@@ -326,12 +312,12 @@ static bool PushRoamModes(lua_State* L)
 	lua_pushliteral(L, "ROAM");
 	lua_newtable(L);
 
-	PushDualPair(L, "NONE",   Roaming::roamViewDisabled);
-	PushDualPair(L, "FREE",   Roaming::roamViewFree);
-	PushDualPair(L, "TRACK",  Roaming::roamViewTrack);
-	PushDualPair(L, "FOLLOW", Roaming::roamViewFollow);
-	PushDualPair(L, "FPS",    Roaming::roamViewFP);
-	PushDualPair(L, "FLAG",   Roaming::roamViewFlag);
+	LuaPushDualPair(L, "NONE",   Roaming::roamViewDisabled);
+	LuaPushDualPair(L, "FREE",   Roaming::roamViewFree);
+	LuaPushDualPair(L, "TRACK",  Roaming::roamViewTrack);
+	LuaPushDualPair(L, "FOLLOW", Roaming::roamViewFollow);
+	LuaPushDualPair(L, "FPS",    Roaming::roamViewFP);
+	LuaPushDualPair(L, "FLAG",   Roaming::roamViewFlag);
 
 	lua_rawset(L, -3);
 
@@ -347,11 +333,11 @@ static bool PushConsoleTypes(lua_State* L)
 	lua_pushliteral(L, "CONSOLE");
 	lua_newtable(L);
 
-	PushDualPair(L, "ALL",    ControlPanel::MessageAll);
-	PushDualPair(L, "CHAT",   ControlPanel::MessageChat);
-	PushDualPair(L, "SERVER", ControlPanel::MessageServer);
-	PushDualPair(L, "MISC",   ControlPanel::MessageMisc);
-	PushDualPair(L, "DEBUG",  ControlPanel::MessageDebug);
+	LuaPushDualPair(L, "ALL",    ControlPanel::MessageAll);
+	LuaPushDualPair(L, "CHAT",   ControlPanel::MessageChat);
+	LuaPushDualPair(L, "SERVER", ControlPanel::MessageServer);
+	LuaPushDualPair(L, "MISC",   ControlPanel::MessageMisc);
+	LuaPushDualPair(L, "DEBUG",  ControlPanel::MessageDebug);
 
 	lua_rawset(L, -3);
 
@@ -367,9 +353,9 @@ static bool PushMouseButtons(lua_State* L)
 	lua_pushliteral(L, "MOUSE");
 	lua_newtable(L);
 
-	PushDualPair(L, "LEFT",   0);
-	PushDualPair(L, "MIDDLE", 1);
-	PushDualPair(L, "RIGHT",  2);
+	LuaPushDualPair(L, "LEFT",   0);
+	LuaPushDualPair(L, "MIDDLE", 1);
+	LuaPushDualPair(L, "RIGHT",  2);
 
 	lua_rawset(L, -3);
 
@@ -385,12 +371,12 @@ static bool PushFlagStates(lua_State* L)
 	lua_pushliteral(L, "FLAG_STATE");
 	lua_newtable(L);
 
-	PushDualPair(L, "NONE",   FlagNoExist);
-	PushDualPair(L, "GROUND", FlagOnGround);
-	PushDualPair(L, "TANK",   FlagOnTank);
-	PushDualPair(L, "AIR",    FlagInAir);
-	PushDualPair(L, "COMING", FlagComing);
-	PushDualPair(L, "GOING",  FlagGoing);
+	LuaPushDualPair(L, "NONE",   FlagNoExist);
+	LuaPushDualPair(L, "GROUND", FlagOnGround);
+	LuaPushDualPair(L, "TANK",   FlagOnTank);
+	LuaPushDualPair(L, "AIR",    FlagInAir);
+	LuaPushDualPair(L, "COMING", FlagComing);
+	LuaPushDualPair(L, "GOING",  FlagGoing);
 
 	lua_rawset(L, -3);
 
@@ -406,8 +392,8 @@ static bool PushFlagQualities(lua_State* L)
 	lua_pushliteral(L, "FLAG_QUALITY");
 	lua_newtable(L);
 
-	PushDualPair(L, "GOOD", FlagGood);
-	PushDualPair(L, "BAD",  FlagBad);
+	LuaPushDualPair(L, "GOOD", FlagGood);
+	LuaPushDualPair(L, "BAD",  FlagBad);
 
 	lua_rawset(L, -3);
 
@@ -423,9 +409,9 @@ static bool PushFlagEndurance(lua_State* L)
 	lua_pushliteral(L, "FLAG_ENDURANCE");
 	lua_newtable(L);
 
-	PushDualPair(L, "NORMAL",   FlagNormal);
-	PushDualPair(L, "UNSTABLE", FlagUnstable);
-	PushDualPair(L, "STICKY",   FlagSticky);
+	LuaPushDualPair(L, "NORMAL",   FlagNormal);
+	LuaPushDualPair(L, "UNSTABLE", FlagUnstable);
+	LuaPushDualPair(L, "STICKY",   FlagSticky);
 
 	lua_rawset(L, -3);
 
@@ -441,13 +427,13 @@ static bool PushKilledReasons(lua_State* L)
 	lua_pushliteral(L, "KILL_REASON");
 	lua_newtable(L);
 
-	PushDualPair(L, "MESSAGE",       GotKilledMsg);
-	PushDualPair(L, "SHOT",          GotShot);
-	PushDualPair(L, "RUN_OVER",      GotRunOver);
-	PushDualPair(L, "CAPTURED",      GotCaptured);
-	PushDualPair(L, "GENOCIDE",      GenocideEffect);
-	PushDualPair(L, "SELF_DESTRUCT", SelfDestruct);
-	PushDualPair(L, "WATER",         WaterDeath);
+	LuaPushDualPair(L, "MESSAGE",       GotKilledMsg);
+	LuaPushDualPair(L, "SHOT",          GotShot);
+	LuaPushDualPair(L, "RUN_OVER",      GotRunOver);
+	LuaPushDualPair(L, "CAPTURED",      GotCaptured);
+	LuaPushDualPair(L, "GENOCIDE",      GenocideEffect);
+	LuaPushDualPair(L, "SELF_DESTRUCT", SelfDestruct);
+	LuaPushDualPair(L, "WATER",         WaterDeath);
 
 	lua_rawset(L, -3);
 

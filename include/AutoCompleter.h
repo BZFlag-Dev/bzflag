@@ -18,6 +18,7 @@
 /* system interface header */
 #include <string>
 #include <vector>
+#include <set>
 
 
 /**
@@ -45,6 +46,14 @@ class AutoCompleter {
      * common prefix will be returned.
      */
     std::string complete(const std::string& str, std::string* matches = NULL);
+
+    /**
+     * This function will search the list of registered words for ones that
+     * match the last word in the given "line". The trailing part of the
+     * matching words are inserted into the "partials" variable (such that
+     * "line + partials[i]" would make for a complete line).
+     */
+    void complete(const std::string& line, std::set<std::string>& partials);
 
   protected:
     class WordRecord {
