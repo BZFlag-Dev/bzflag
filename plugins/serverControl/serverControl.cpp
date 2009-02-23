@@ -55,7 +55,9 @@ private:
   time_t banFileAccessTime;
   time_t masterBanFileAccessTime;
   int numPlayers;
+  int numObservers;
   bool serverActive;
+  bool ignoreObservers;
 };
 
 ServerControl serverControlHandler;
@@ -101,6 +103,7 @@ int ServerControl::loadConfig(const char *cmdLine)
   resetServerAlwaysFilename = config.item(section, "ResetServerAlwaysFile");
   banReloadMessage = config.item(section, "BanReloadMessage");
   masterBanReloadMessage = config.item(section, "MasterBanReloadMessage");
+  ignoreObservers = (config.item(section, "IgnoreObservers") != "");
 
   /*
    * Report settings
@@ -136,6 +139,12 @@ int ServerControl::loadConfig(const char *cmdLine)
   else
     bz_debugMessagef(1, "ServerControl - Using ResetServerAlwaysFile: %s", resetServerAlwaysFilename.c_str());
 
+  // Ignore Observers
+  if (ignoreObservers)
+    bz_debugMessage(1, "ServerControl - Ignoring Observers for server restarts");
+  else
+    bz_debugMessage(1, "ServerControl - Server must be empty for server restarts");
+
   /* Set the initial ban file access times */
   if (masterBanFilename != "")
     fileAccessTime(masterBanFilename, &masterBanFileAccessTime);
@@ -166,18 +175,20 @@ void ServerControl::checkShutdown(void)
   //     the reset server once file exists OR
   //     the reset server always file exists and someone was on the server
   //
-  if (numPlayers <= 0) {	// No players
+  if ((numPlayers <= 0) || (ignoreObservers && (numPlayers - numObservers) <= 0)) { // No players
     if (resetServerOnceFilename != "") {
       std::ifstream resetOnce(resetServerOnceFilename.c_str());
       if (resetOnce) {		// Reset server once exists
 	resetOnce.close();
-	remove(resetServerOnceFilename.c_str());
+	remove( resetServerOnceFilename.c_str() );
+	bz_debugMessagef(2, "ServerControl - Reset Server Once - SHUTDOWN");
 	bz_shutdown();
       } else if (resetServerAlwaysFilename != "" && serverActive) {
 	// Server was active - some non-observer player connected
 	std::ifstream resetAlways(resetServerAlwaysFilename.c_str());
 	if (resetAlways) {	// Reset server always exists
 	  resetAlways.close();
+	  bz_debugMessagef(2, "ServerControl - Reset Server Always - SHUTDOWN");
 	  bz_shutdown();
 	}
       }
@@ -222,21 +233,27 @@ void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 * dat
   ostringstream msg;
   string str;
   int numLines = 0;
+  int numObs = 0;
 
   bz_getPlayerIndexList(playerList);
 
   for (unsigned int i = 0; i < playerList->size(); i++) {
     player = bz_getPlayerByIndex(playerList->get(i));
     if (player) {
-      if (act == join || (data && (player->playerID != data->playerID) && (player->callsign != ""))) {
-	if (player->callsign != "")
+      if (act == join || (data && (player->playerID != data->playerID) &&
+			  (player->callsign != ""))) {
+	if (player->callsign != "") {
+	  if (player->team == eObservers)
+	    numObs++;
 	  numLines++;
+	}
       }
       bz_freePlayerRecord(player);
     }
   }
   numPlayers = numLines;
-
+  numObservers = numObs;
+  bz_debugMessagef(2, "serverControl - %d total players, %d observers", numPlayers, numObservers);
   bz_deleteIntList(playerList);
 }
 
