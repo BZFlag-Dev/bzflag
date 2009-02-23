@@ -28,6 +28,14 @@
   BZVFS_HTTP         \
   BZVFS_FTP
 
+#define BZVFS_ALL BZVFS_BASIC \
+  BZVFS_LUA_USER        \
+  BZVFS_LUA_WORLD       \
+  BZVFS_LUA_USER_WRITE  \
+  BZVFS_LUA_WORLD_WRITE \
+  BZVFS_LUA_BZORG_WRITE
+
+ 
 
 class BzDocket;
 
@@ -138,12 +146,12 @@ class BzVFS {
                                   const std::string& allowed);
     static std::string forbidModes(const std::string& wanted,
                                    const std::string& forbidden);
+    bool parseModes(const std::string& inPath,  std::string& outPath,
+                    const std::string& inModes, std::string& outModes);
 
   private:
     bool safePath(const std::string& path);
     void getSystems(const std::string& modes, std::vector<BzFS*>& fileSystems);
-    bool parseModes(const std::string& inPath,  std::string& outPath,
-                    const std::string& inModes, std::string& outModes);
 
   private:
     void bzdbChange(const std::string& name);

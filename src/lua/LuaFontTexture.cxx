@@ -25,14 +25,15 @@
 /*******************************************************************************/
 /*******************************************************************************/
 
-
 // missing IL/ILU, stub the routines
 
 void LuaFontTexture::Reset()   { return; }
 bool LuaFontTexture::Execute() { return false; }
 bool LuaFontTexture::SetInData        (const std::string&) { return false; }
 bool LuaFontTexture::SetInFileName    (const std::string&) { return false; }
+bool LuaFontTexture::SetInVFSModes    (const std::string&) { return false; }
 bool LuaFontTexture::SetOutBaseName   (const std::string&) { return false; }
+bool LuaFontTexture::SetOutVFSModes   (const std::string&) { return false; }
 bool LuaFontTexture::SetFontHeight    (unsigned int) { return false; }
 bool LuaFontTexture::SetTextureWidth  (unsigned int) { return false; }
 bool LuaFontTexture::SetMinChar       (unsigned int) { return false; }
@@ -57,7 +58,7 @@ bool LuaFontTexture::SetDebugLevel    (unsigned int) { return false; }
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-
+#include <sstream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -85,7 +86,9 @@ typedef uint32_t u32;
 
 static string inputData = "";
 static string inputFile = "";
+static string inputModes = "";
 static string outputFileName = "";
+static string outputModes = "";
 
 static u32 minChar = 32;
 static u32 maxChar = 255;
@@ -120,6 +123,9 @@ static void PrintGlyphInfo(FT_GlyphSlot& glyph, int g);
 
 /*******************************************************************************/
 /*******************************************************************************/
+//
+//  Functions for creating the specs file in a vector<string>
+//
 
 static void Pushf(vector<string>& vs, const char* fmt, ...)
 {
@@ -142,7 +148,7 @@ static string ConcatVecStr(const vector<string>& vs)
 	s.resize(total);
 	size_t pos = 0;
 	for (size_t i = 0; i < vs.size(); i++) {
-		s.insert(pos, vs[i]);
+		s.replace(pos, vs[i].size(), vs[i].data());
 		pos += vs[i].size();
 	}
 	return s;
@@ -151,54 +157,88 @@ static string ConcatVecStr(const vector<string>& vs)
 
 /*******************************************************************************/
 /*******************************************************************************/
-/* FIXME
-static ILvoid fCloseWProc(ILHANDLE h)
+//
+//  Light wrappers for ilSetWrite()
+//
+
+static string writeFileName;
+
+
+ILHANDLE OpenWProc(ILconst_string name)
+{
+	if ((name == NULL) || !writeFileName.empty()) {
+		return NULL;
+	}
+
+	FILE* tmpFile = tmpfile();
+	if (tmpFile == NULL) {
+		writeFileName = "";
+		return NULL;
+	}
+	writeFileName = name;
+
+	return (ILHANDLE)tmpFile;
+}
+
+
+void CloseWProc(ILHANDLE h)
 {
 	if (h == NULL) {
+		writeFileName = "";
 		return;
 	}
-}
 
-
-static ILHANDLE fOpenWProc(const ILstring name)
-{
-	return NULL;
-}
-
-
-static ILint fPutcProc(ILubyte c, ILHANDLE h)
-{
-	if (h == NULL) {
+	FILE* f = (FILE*)h;
+	if (writeFileName.empty()) {
+		fclose(f);
 		return;
 	}
-}
 
+	// get the file size
+	fseek(f, 0, SEEK_END);
+	const size_t size = ftell(f);
+	fseek(f, 0, SEEK_SET);
 
-static ILint fSeekWProc(ILHANDLE h, ILint offset, ILint whence)
-{
-	if (h == NULL) {
-		return -1;
+	// write into bzVFS
+	char* buf = new char[size];
+	if (fread(buf, size, 1, f) == 1) {
+		bzVFS.writeFile(writeFileName, outputModes, string(buf, size));
 	}
+	delete[] buf;
+
+	fclose(f);
+	writeFileName = "";
 }
 
 
-static ILint fTellWProc(ILHANDLE h)
+ILint PutcProc(ILubyte c, ILHANDLE h)
 {
-	if (h == NULL) {
-		return -1;
-	}
+	if (h == NULL) { return -1; }
+	return (ILint)fputc((int)c, (FILE*)h);
 }
 
 
-static ILint fWriteProc(const void* data,
-                        ILuint size, ILuint nmemb, ILHANDLE h)
+ILint SeekWProc(ILHANDLE h, ILint offset, ILint whence)
 {
-	if (h == NULL) {
-		return -1;
-	}
+	if (h == NULL) { return -1; }
+	return (ILint)fseek((FILE*)h, (long)offset, (int)whence);
 }
 
-*/
+
+ILint TellWProc(ILHANDLE h)
+{
+	if (h == NULL) { return -1; }
+	return (ILint)ftell((FILE*)h);
+}
+
+
+ILint WriteProc(const void* ptr, ILuint size, ILuint nmemb, ILHANDLE h)
+{
+	if (h == NULL) { return -1; }
+	return (ILint)fwrite(ptr, (size_t)size, (size_t)nmemb, (FILE*)h);
+}
+
+
 /*******************************************************************************/
 /*******************************************************************************/
 
@@ -233,16 +273,28 @@ bool LuaFontTexture::SetInData(const std::string& inData)
 
 bool LuaFontTexture::SetInFileName(const std::string& inFile)
 {
-	// FIXME -- sanitize for bzflag
 	inputFile = inFile;
+	return true;
+}
+
+
+bool LuaFontTexture::SetInVFSModes(const std::string& inModes)
+{
+	inputModes = inModes;
 	return true;
 }
 
 
 bool LuaFontTexture::SetOutBaseName(const std::string& baseName)
 {
-	// FIXME -- sanitize for bzflag
 	outputFileName = baseName;
+	return true;
+}
+
+
+bool LuaFontTexture::SetOutVFSModes(const std::string& outModes)
+{
+	outputModes = outModes;
 	return true;
 }
 
@@ -324,7 +376,9 @@ void LuaFontTexture::Reset()
 {
 	inputData = "";
 	inputFile = "";
+	inputModes = "";
 	outputFileName = "";
+	outputModes = "";
 	minChar = 32;
 	maxChar = 255;
 	height = 16;
@@ -341,7 +395,8 @@ void LuaFontTexture::Reset()
 
 bool LuaFontTexture::Execute()
 {
-	if (inputFile.empty()) {
+	if (inputFile.empty() &&
+	    (inputData.empty() || outputFileName.empty())) {
 		return false;
 	}
 
@@ -349,6 +404,7 @@ bool LuaFontTexture::Execute()
 
 	if (dbgLevel >= 1) {
 		logDebugMessage(0, "fontfile      = %s\n", inputFile.c_str());
+		logDebugMessage(0, "fontdata      = %i\n", (int)inputData.size());
 		logDebugMessage(0, "height        = %i\n", height);
 		logDebugMessage(0, "outlineMode   = %i\n", outlineMode);
 		logDebugMessage(0, "outlineRadius = %i\n", outlineRadius);
@@ -366,13 +422,15 @@ bool LuaFontTexture::Execute()
 	}
 
 	if (inputData.empty()) {
-		error = FT_New_Face(library, inputFile.c_str(), 0, &face);
+		if (!bzVFS.readFile(inputFile, inputModes, inputData)) {
+			logDebugMessage(0, "could not read: %s\n", inputFile.c_str());
+			return false;
+		}
 	}
-	else {
-		error = FT_New_Memory_Face(library,
-			(const FT_Byte*)inputData.c_str(),
-			inputData.size(), 0, &face);
-	}
+
+	error = FT_New_Memory_Face(library,
+		                         (const FT_Byte*)inputData.data(),
+		                         inputData.size(), 0, &face);
 
 	if (error == FT_Err_Unknown_File_Format) {
 		logDebugMessage(0, "bad font file type\n");
@@ -432,9 +490,9 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 			}
 		}
 		char heightText[64];
-		sprintf(heightText, "_%i", fontHeight);
 		char outlineText[64];
-		sprintf(outlineText, "_%i", outlineRadius);
+		sprintf(heightText, "_%i", fontHeight);
+		sprintf(outlineText, "_%i", outlineRadius); // FIXME -- unused
 		imageName = basename + heightText + ".png";
 		specsName = basename + heightText + ".lua";
 	}
@@ -489,13 +547,6 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		logDebugMessage(0, "maxPixelYsize = %i\n", maxPixelYsize);
 	}
 
-	vector<string> specVec;
-	FILE* specFile = fopen(specsName.c_str(), "wt");
-	if (specFile == NULL) {
-		logDebugMessage(0, "%s: %s\n", specsName.c_str(), strerror(errno));
-		return false;
-	}
-
 	u32 yStep;
 	if (FT_IS_SCALABLE(face)) {
 		yStep = (fontHeight * face->height) / face->units_per_EM;
@@ -507,6 +558,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		}
 	}
 
+	vector<string> specVec;
 	Pushf(specVec, "\n");
 	Pushf(specVec, "local fontSpecs = {\n");
 	Pushf(specVec, "  srcFile  = [[%s]],\n", filename.c_str());
@@ -570,7 +622,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	Pushf(specVec, "\n");
 
 	const string specData = ConcatVecStr(specVec);
-	bzVFS.writeFile(specData, BZVFS_LUA_USER_WRITE, specData); // FIXME -- diff mode?
+	bzVFS.writeFile(specsName, inputModes, specData);
 
 	logDebugMessage(0, "Saved: %s\n", specsName.c_str());
 
@@ -581,7 +633,9 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	ilSetString(IL_PNG_AUTHNAME_STRING, "LuaFontTexture");
 	ilSetString(IL_PNG_DESCRIPTION_STRING,
 							(outlineRadius> 0) ? "outlined" : "plain");
+	ilSetWrite(OpenWProc, CloseWProc, PutcProc, SeekWProc, TellWProc, WriteProc);
 	ilSaveImage((char*)imageName.c_str());
+	ilResetWrite();
 	ilDisable(IL_FILE_OVERWRITE);
 
 	logDebugMessage(0, "Saved: %s\n", imageName.c_str());

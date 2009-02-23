@@ -774,6 +774,20 @@ int LuaCallOuts::PlaySound(lua_State* L)
 
 /******************************************************************************/
 
+static int PushImageInfo(lua_State* L, PNGImageFile& image)
+{
+	if (!image.isOpen()) {
+		return 0;
+	}
+
+	lua_pushinteger(L, image.getWidth());
+	lua_pushinteger(L, image.getHeight());
+	lua_pushinteger(L, image.getNumChannels());
+
+	return 3;
+}
+
+
 static int PushImageData(lua_State* L, PNGImageFile& image)
 {
 	if (!image.isOpen()) {
@@ -799,24 +813,6 @@ static int PushImageData(lua_State* L, PNGImageFile& image)
 	delete[] buf;
 
 	return 4;
-}
-
-
-static int PushImageInfo(lua_State* L, PNGImageFile& image)
-{
-	if (!image.isOpen()) {
-		return 0;
-	}
-
-	const int width = image.getWidth();
-	const int height = image.getHeight();
-	const int channels = image.getNumChannels();
-
-	lua_pushinteger(L, width);
-	lua_pushinteger(L, height);
-	lua_pushinteger(L, channels);
-
-	return 3;
 }
 
 
@@ -2619,28 +2615,30 @@ int LuaCallOuts::GetShotReloadTime(lua_State* L)
 
 int LuaCallOuts::MakeFont(lua_State* L)
 {
+	LuaFontTexture::Reset();
+
 	int tableIndex = 1;
-	string inputFile;
-	string inputData;
 	if (lua_israwstring(L, 1)) {
-		inputFile = lua_tostring(L, 1);
+		LuaFontTexture::SetInFileName(lua_tostring(L, 1));
 		tableIndex++;
 	}
 
-	LuaFontTexture::Reset();
+	LuaHandle* lh = L2H(L);
+	LuaFontTexture::SetInVFSModes(lh->GetFSReadAll());
+	LuaFontTexture::SetOutVFSModes(lh->GetFSWriteAll());
+
 	if (lua_istable(L, tableIndex)) {
 		for (lua_pushnil(L); lua_next(L, tableIndex) != 0; lua_pop(L, 1)) {
 			if (lua_israwstring(L, -2)) {
 				const string key = lua_tostring(L, -2);
 				if (lua_israwstring(L, -1)) {
 					if (key == "outName") {
-					  // FIXME -- force LuaUser/LuaWorld cache dirs?
 						LuaFontTexture::SetOutBaseName(lua_tostring(L, -1));
 					}
 					else if (key == "inData") {
 						size_t len = 0;
 						const char* ptr = lua_tolstring(L, -1, &len);
-						inputData.assign(ptr, len);
+						string inputData(ptr, len);
 						LuaFontTexture::SetInData(inputData);
 					}
 				}
@@ -2672,12 +2670,8 @@ int LuaCallOuts::MakeFont(lua_State* L)
 		}
 	}
 
-	if (!inputFile.empty()) {
-		// inputData has the override
-		LuaFontTexture::SetInFileName(inputFile);
-	}
-
 	lua_pushboolean(L, LuaFontTexture::Execute());
+
 	return 1;
 }
 

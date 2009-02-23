@@ -22,7 +22,9 @@ namespace LuaFontTexture
 
 	bool SetInData        (const std::string& data);
 	bool SetInFileName    (const std::string& inFile);
+	bool SetInVFSModes    (const std::string& inModes);
 	bool SetOutBaseName   (const std::string& baseName);
+	bool SetOutVFSModes   (const std::string& outModes);
 	bool SetFontHeight    (unsigned int height);
 	bool SetTextureWidth  (unsigned int width);
 	bool SetMinChar       (unsigned int minChar);
