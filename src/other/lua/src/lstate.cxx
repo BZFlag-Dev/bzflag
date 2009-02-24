@@ -6,6 +6,7 @@
 
 
 #include <stddef.h>
+#include <string.h>
 
 #define lstate_c
 #define LUA_CORE
@@ -119,6 +120,7 @@ static void close_state (lua_State *L) {
 
 lua_State *luaE_newthread (lua_State *L) {
   lua_State *L1 = tostate(luaM_malloc(L, state_size(lua_State)));
+  memcpy(fromstate(L1), fromstate(L), LUAI_EXTRASPACE);
   luaC_link(L, obj2gco(L1), LUA_TTHREAD);
   preinit_state(L1, G(L));
   stack_init(L1, L);  /* init stack */
@@ -147,6 +149,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   global_State *g;
   void *l = (*f)(ud, NULL, 0, state_size(LG));
   if (l == NULL) return NULL;
+  memset(l, 0, LUAI_EXTRASPACE);
   L = tostate(l);
   g = &((LG *)L)->g;
   L->next = NULL;
