@@ -484,11 +484,6 @@ void forceControls(bool enabled, float speed, float angVel)
   if (enabled) {
     forcedSpeed  = speed;
     forcedAngVel = angVel;
-    // clamps
-    if (forcedSpeed  < -1.0f) { forcedSpeed  = -1.0f; }
-    if (forcedSpeed  > +1.0f) { forcedSpeed  = +1.0f; }
-    if (forcedAngVel < -1.0f) { forcedAngVel = -1.0f; }
-    if (forcedAngVel > +1.0f) { forcedAngVel = +1.0f; }
   }
 }
 
@@ -883,12 +878,11 @@ static void doKey(const BzfKeyEvent &key, bool pressed)
 
 static void doMotion()
 {
-  float rotation = 0.0f, speed = 0.0f;
-  int noMotionSize = hud->getNoMotionSize();
-  int maxMotionSize = hud->getMaxMotionSize();
+  float speed = 0.0f;
+  float rotation = 0.0f;
 
-  int keyboardRotation = myTank->getRotation();
   int keyboardSpeed    = myTank->getSpeed();
+  int keyboardRotation = myTank->getRotation();
 
   // mouse is default steering method; query mouse pos always, not doing so
   // can lead to stuttering movement with X and software rendering (uncertain why)
@@ -918,7 +912,7 @@ static void doMotion()
 #endif
 
   if (forcedControls) {
-    speed = forcedSpeed;
+    speed    = forcedSpeed;
     rotation = forcedAngVel;
   }
   else if (myTank->isAutoPilot()) {
@@ -932,6 +926,8 @@ static void doMotion()
     }
   }
   else { // both mouse and joystick
+    int noMotionSize  = hud->getNoMotionSize();
+    int maxMotionSize = hud->getMaxMotionSize();
 
     if (myTank->getInputMethod() == LocalPlayer::Joystick) {
       noMotionSize = 0; // joystick deadzone is specified at platform level
@@ -943,12 +939,8 @@ static void doMotion()
       rotation = float(keyboardRotation);
     } else if (mx < -noMotionSize) {
       rotation = float(-mx - noMotionSize) / float(maxMotionSize - noMotionSize);
-      if (rotation > 1.0f)
-	rotation = 1.0f;
     } else if (mx > noMotionSize) {
       rotation = -float(mx - noMotionSize) / float(maxMotionSize - noMotionSize);
-      if (rotation < -1.0f)
-	rotation = -1.0f;
     }
 
     // calculate desired speed
@@ -959,15 +951,24 @@ static void doMotion()
       }
     } else if (my < -noMotionSize) {
       speed = float(-my - noMotionSize) / float(maxMotionSize - noMotionSize);
-      if (speed > 1.0f)
-	speed = 1.0f;
     } else if (my > noMotionSize) {
       speed = -float(my - noMotionSize) / float(maxMotionSize - noMotionSize);
-      if (speed < -0.5f)
-	speed = -0.5f;
     } else {
       speed = 0.0f;
     }
+  }
+
+  // speed clamp
+  if (speed < -0.5f) {
+    speed = -0.5f;
+  } else if (speed > +1.0f) {
+    speed = +1.0f;
+  }
+  // rotation clamp
+  if (rotation < -1.0f) {
+    rotation = -1.0f;
+  } else if (rotation > +1.0f) {
+    rotation = +1.0f;
   }
 
   // slow motion modifier
@@ -988,8 +989,8 @@ static void doMotion()
     speed = -speed;
   }
 
-  myTank->setDesiredAngVel(rotation);
   myTank->setDesiredSpeed(speed);
+  myTank->setDesiredAngVel(rotation);
 }
 
 
