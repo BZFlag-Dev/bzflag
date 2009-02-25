@@ -233,21 +233,8 @@ static int luaB_next (lua_State *L) {
 }
 
 
-/* the same as luaB_next, except for their first lines */
-static int pairs_next (lua_State *L) {
-  luaL_checktype(L, 1, LUA_TTABLE);
-  lua_settop(L, 2);  /* create a 2nd argument if there isn't one */
-  if (lua_next(L, 1))
-    return 2;
-  else {
-    lua_pushnil(L);
-    return 1;
-  }
-}
-
-
 static int luaB_pairs (lua_State *L) {
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "g");
   lua_pushvalue(L, lua_upvalueindex(1));  /* return generator, */
   lua_pushvalue(L, 1);  /* state, */
   lua_pushnil(L);  /* and initial value */
@@ -644,7 +631,7 @@ static void base_open (lua_State *L) {
   lua_setglobal(L, "_VERSION");  /* set global _VERSION */
   /* `ipairs' and `pairs' need auxliliary functions as upvalues */
   auxopen(L, "ipairs", luaB_ipairs, ipairsaux);
-  auxopen(L, "pairs", luaB_pairs, pairs_next);
+  auxopen(L, "pairs", luaB_pairs, luaB_next);
   /* `newproxy' needs a weaktable as upvalue */
   lua_createtable(L, 0, 1);  /* new table `w' */
   lua_pushvalue(L, -1);  /* `w' will be its own metatable */
