@@ -20,8 +20,6 @@
 #include "lualib.h"
 
 
-
-
 /*
 ** If your system does not support `stdout', you can just remove this function.
 ** If you need, you can define your own `print' function, following this
@@ -167,7 +165,7 @@ static int luaB_rawequal (lua_State *L) {
 
 
 static int luaB_rawget (lua_State *L) {
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "g");
   luaL_checkany(L, 2);
   lua_settop(L, 2);
   lua_rawget(L, 1);
@@ -175,7 +173,7 @@ static int luaB_rawget (lua_State *L) {
 }
 
 static int luaB_rawset (lua_State *L) {
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "s");
   luaL_checkany(L, 2);
   luaL_checkany(L, 3);
   lua_settop(L, 3);
@@ -224,7 +222,7 @@ static int luaB_type (lua_State *L) {
 
 
 static int luaB_next (lua_State *L) {
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "g");
   lua_settop(L, 2);  /* create a 2nd argument if there isn't one */
   if (lua_next(L, 1))
     return 2;
@@ -255,7 +253,7 @@ static int ipairsaux (lua_State *L) {
 
 
 static int luaB_ipairs (lua_State *L) {
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "g");
   lua_pushvalue(L, lua_upvalueindex(1));  /* return generator, */
   lua_pushvalue(L, 1);  /* state, */
   lua_pushinteger(L, 0);  /* and initial value */
@@ -341,7 +339,7 @@ static int luaB_assert (lua_State *L) {
 
 static int luaB_unpack (lua_State *L) {
   int i, e, n;
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "g");
   i = luaL_optint(L, 2, 1);
   e = luaL_opt(L, luaL_checkint, 3, luaL_getn(L, 1));
   if (i > e) return 0;  /* empty range */

@@ -18,6 +18,8 @@
 typedef enum {
   TM_INDEX,
   TM_NEWINDEX,
+  TM_USEDINDEX,
+  TM_RAWBLOCK,
   TM_GC,
   TM_MODE,
   TM_EQ,  /* last tag method with `fast' access */

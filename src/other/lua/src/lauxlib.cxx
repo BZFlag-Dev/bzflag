@@ -149,6 +149,21 @@ LUALIB_API void luaL_checktype (lua_State *L, int narg, int t) {
 }
 
 
+LUALIB_API void luaL_checkrawtable(lua_State *L, int t, const char* modes)
+{
+  const int retcode = lua_rawblock(L, t, modes);
+  if (retcode == 0) {
+    return;
+  }
+  else if (retcode == 1) {
+    tag_error(L, t, LUA_TTABLE);
+  }
+  else {
+    luaL_argerror(L, t, "raw table access blocked");
+  }
+}
+
+
 LUALIB_API void luaL_checkany (lua_State *L, int narg) {
   if (lua_type(L, narg) == LUA_TNONE)
     luaL_argerror(L, narg, "value expected");
