@@ -145,6 +145,9 @@ static AresHandler      ares;
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
 ThirdPersonVars thirdPersonVars;
+ThirdPersonVars::ThirdPersonVars() {}
+ThirdPersonVars::~ThirdPersonVars() {}
+void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* /*data*/) {}
 
 static void makeObstacleList();
 static std::vector<BzfRegion*>	obstacleList;  // for robots
