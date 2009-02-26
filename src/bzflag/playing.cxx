@@ -6089,7 +6089,8 @@ static void setupNearPlane()
 {
   NearPlane = NearPlaneNormal;
 
-  const bool showTreads = BZDB.isTrue("showTreads");
+  const bool showTreads = BZDB.isTrue("showTreads") ||
+                          thirdPersonVars.b3rdPerson;
   if (!showTreads || !myTank)
     return;
 
@@ -6533,7 +6534,8 @@ static void addDynamicSceneNodes()
   }
 
   const bool seerView = (myTank->getFlag() == Flags::Seer);
-  const bool showTreads = BZDB.isTrue("showTreads");
+  const bool showTreads = BZDB.isTrue("showTreads") ||
+                          thirdPersonVars.b3rdPerson;
 
   // add my tank if required
   const bool inMyCockpit = true;
