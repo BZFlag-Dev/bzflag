@@ -251,25 +251,66 @@ static const char AutoJoinContent[] = // FIXME
 static AccessList autoJoinAccessList("AutoJoinAccess.txt", AutoJoinContent);
 
 
-ThirdPersonVars thirdPersonVars;
+ThirdPersonVars::ThirdPersonVars()
+: b3rdPerson(false)
+{
+  BZDB.addCallback("_forbid3rdPersonCam",         bzdbCallback, this);
+  BZDB.addCallback("3rdPersonCam",                bzdbCallback, this);
+  BZDB.addCallback("3rdPersonCamXYOffset",        bzdbCallback, this);
+  BZDB.addCallback("3rdPersonCamZOffset",         bzdbCallback, this);
+  BZDB.addCallback("3rdPersonCamTargetMult",      bzdbCallback, this);
+  BZDB.addCallback("3rdPersonNearTargetDistance", bzdbCallback, this);
+  BZDB.addCallback("3rdPersonNearTargetSize",     bzdbCallback, this);
+  BZDB.addCallback("3rdPersonFarTargetDistance",  bzdbCallback, this);
+  BZDB.addCallback("3rdPersonFarTargetSize",      bzdbCallback, this);
+}
+
+
+ThirdPersonVars::~ThirdPersonVars()
+{
+  BZDB.removeCallback("_forbid3rdPersonCam",         bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonCam",                bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonCamXYOffset",        bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonCamZOffset",         bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonCamTargetMult",      bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonNearTargetDistance", bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonNearTargetSize",     bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonFarTargetDistance",  bzdbCallback, this);
+  BZDB.removeCallback("3rdPersonFarTargetSize",      bzdbCallback, this);
+}
+
 
 void ThirdPersonVars::load(void)
 {
-  b3rdPerson          = BZDB.isTrue(std::string("3rdPersonCam"));
-  cameraOffsetXY      = BZDB.eval(std::string("3rdPersonCamXYOffset"));
-  cameraOffsetZ = BZDB.eval(std::string("3rdPersonCamZOffset"));
-  targetMultiplyer    = BZDB.eval(std::string("3rdPersonCamTargetMult"));
+  b3rdPerson = !BZDB.isTrue(std::string("_forbid3rdPersonCam")) &&
+                BZDB.isTrue(std::string("3rdPersonCam"));
 
-  nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
-  nearTargetSize     = BZDB.eval(std::string("3rdPersonNearTargetSize"));
-  farTargetDistance  = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
-  farTargetSize      = BZDB.eval(std::string("3rdPersonFarTargetSize"));
+  if (b3rdPerson) {
+    cameraOffsetXY   = BZDB.eval(std::string("3rdPersonCamXYOffset"));
+    cameraOffsetZ    = BZDB.eval(std::string("3rdPersonCamZOffset"));
+    targetMultiplier = BZDB.eval(std::string("3rdPersonCamTargetMult"));
+
+    nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
+    nearTargetSize     = BZDB.eval(std::string("3rdPersonNearTargetSize"));
+    farTargetDistance  = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
+    farTargetSize      = BZDB.eval(std::string("3rdPersonFarTargetSize"));
+  }
 }
+
 
 void ThirdPersonVars::clear(void)
 {
   b3rdPerson = false;
 }
+
+
+void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data)
+{
+  ((ThirdPersonVars*)data)->load();
+}
+
+
+ThirdPersonVars thirdPersonVars;
 
 
 // access silencePlayers from bzflag.cxx
@@ -974,8 +1015,8 @@ static void doMotion()
   // slow motion modifier
   warnAboutSlowMotion();
   if (BZDB.isTrue("slowMotion")) {
+    speed    *= 0.5f;
     rotation *= 0.5f;
-    speed *= 0.5f;
   }
 
   // FOV modifier
@@ -985,8 +1026,8 @@ static void doMotion()
 
   /* see if controls are reversed */
   if (myTank->getFlag() == Flags::ReverseControls) {
+    speed    = -speed;
     rotation = -rotation;
-    speed = -speed;
   }
 
   myTank->setDesiredSpeed(speed);
@@ -6378,7 +6419,7 @@ static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
 
   // 3rd person camera
   if (myTank && thirdPersonVars.b3rdPerson) {
-    const float distScale = thirdPersonVars.targetMultiplyer;
+    const float distScale = thirdPersonVars.targetMultiplier;
     targetPoint[0] = eyePoint[0] + (myTankDir[0] * distScale);
     targetPoint[1] = eyePoint[1] + (myTankDir[1] * distScale);
     targetPoint[2] = eyePoint[2] + (myTankDir[2] * distScale);

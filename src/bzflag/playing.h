@@ -130,22 +130,29 @@ extern WordFilter*	wordFilter;
  */
 extern bool		headless;
 
-typedef struct _ThirdPersonVars
-{
-	bool b3rdPerson;
-	float cameraOffsetXY;
-	float cameraOffsetZ;
-	float targetMultiplyer;
-	float nearTargetDistance;
-	float nearTargetSize;
-	float farTargetDistance;
-	float farTargetSize;
 
-	void load ( void );
-	void clear ( void );
-} ThirdPersonVars;
+struct ThirdPersonVars
+{
+  ThirdPersonVars();
+  ~ThirdPersonVars();
+
+  void load();
+  void clear();
+
+  static void bzdbCallback(const std::string& name, void* data);
+
+  bool b3rdPerson;
+  float cameraOffsetXY;
+  float cameraOffsetZ;
+  float targetMultiplier;
+  float nearTargetDistance;
+  float nearTargetSize;
+  float farTargetDistance;
+  float farTargetSize;
+};
 
 extern ThirdPersonVars thirdPersonVars;
+
 
 #endif // BZF_PLAYING_H
 

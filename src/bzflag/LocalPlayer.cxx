@@ -505,8 +505,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
 						    phased, expel);
       if (!bumpObstacle) {
 	move(newPos, getAngle());
-	newPos[0] += newVelocity[0] * (dt * 0.5f);
-	newPos[1] += newVelocity[1] * (dt * 0.5f);
+	const float speedFactor = BZDB.eval("_bumpSpeedFactor");
+	newPos[0] += newVelocity[0] * (dt * speedFactor);
+	newPos[1] += newVelocity[1] * (dt * speedFactor);
 	break;
       }
     }
@@ -864,6 +865,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     }
   }
 }
+
 
 bool LocalPlayer::canJump() const
 {
