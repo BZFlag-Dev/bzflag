@@ -155,7 +155,7 @@ LUALIB_API void luaL_checkrawtable(lua_State *L, int t, const char* modes)
   if (retcode == 0) {
     return;
   }
-  else if (retcode == 1) {
+  else if (retcode < 0) {
     tag_error(L, t, LUA_TTABLE);
   }
   else {

@@ -244,7 +244,7 @@ static int luaB_pairs (lua_State *L) {
 
 static int ipairsaux (lua_State *L) {
   int i = luaL_checkint(L, 2);
-  luaL_checktype(L, 1, LUA_TTABLE);
+  luaL_checkrawtable(L, 1, "g");
   i++;  /* next value */
   lua_pushinteger(L, i);
   lua_rawgeti(L, 1, i);

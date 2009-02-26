@@ -1121,17 +1121,31 @@ LUA_API int lua_rawblock(lua_State* L, int idx, const char* modes) {
   Table* t;
   StkId o = index2adr(L, idx);
   if (!ttistable(o)) {
-    return 1; /* not a table, always blocked */
+    return -1; /* not a table, always blocked */
   }
   t = hvalue(o);
   const TValue* tm = fasttm(L, t->metatable, TM_RAWBLOCK);
-  if ((tm != NULL) && ttisstring(tm)) {
-    TString* str = rawtsvalue(tm);
-    const char* s = getstr(str);
-    if (strpbrk(s, modes) != NULL) {
-      return 2; /* explicitly blocked */
+  if (tm == NULL) {
+    return 0; /* not blocked */
+  }
+
+  switch (ttype(tm)) {
+    case LUA_TBOOLEAN: {
+      if (bvalue(tm)) {
+        return +1;/* blocked if 'true' */
+      }
+      break;
+    }
+    case LUA_TSTRING: {
+      TString* str = rawtsvalue(tm);
+      const char* s = getstr(str);
+      if (strpbrk(s, modes) != NULL) {
+        return +1; /* blocked by access type (get/set) */
+      }
+      break;
     }
   }
+
   return 0; /* not blocked */
 }
 
