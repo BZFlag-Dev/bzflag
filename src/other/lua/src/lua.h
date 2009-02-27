@@ -256,8 +256,6 @@ LUA_API lua_Hash (lua_calchash) (const char *s, size_t l);
 LUA_API int   (lua_setuserdataextra) (lua_State* L, int idx, void* extra);
 LUA_API void* (lua_getuserdataextra) (lua_State* L, int idx);
 
-LUA_API int   (lua_rawblock) (lua_State* L, int idx, const char* modes);
-
 
 /* 
 ** ===============================================================

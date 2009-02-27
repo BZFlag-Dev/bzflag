@@ -138,24 +138,21 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
     if (ttistable(t)) {  /* `t' is a table? */
       Table *h = hvalue(t);
       TValue *oldval = luaH_set(L, h, key); /* do a primitive set */
-      /* oldval is nil=> look for newindex, oldval is not nil => look for usedindex */
-      tm = ttisnil(oldval) ? fasttm(L, h->metatable, TM_NEWINDEX)
-                           : fasttm(L, h->metatable, TM_USEDINDEX);
-      if (tm == NULL) { /* no tag method, set the value */
+      if (!ttisnil(oldval) ||  /* result is no nil? */
+          (tm = fasttm(L, h->metatable, TM_NEWINDEX)) == NULL) { /* or no TM? */
         setobj2t(L, oldval, val);
         luaC_barriert(L, h, val);
         return;
       }
       /* else will try the tag method */
     }
-    else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_NEWINDEX))) {
+    else if (ttisnil(tm = luaT_gettmbyobj(L, t, TM_NEWINDEX)))
       luaG_typeerror(L, t, "index");
-    }
     if (ttisfunction(tm)) {
       callTM(L, tm, t, key, val);
       return;
     }
-    t = tm; /* else repeat with `tm' */
+    t = tm;  /* else repeat with `tm' */ 
   }
   luaG_runerror(L, "loop in settable");
 }

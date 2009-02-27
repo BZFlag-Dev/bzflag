@@ -22,7 +22,6 @@
 static int foreachi (lua_State *L) {
   int i;
   int n = aux_getn(L, 1);
-  luaL_checkrawtable(L, 1, "g");
   luaL_checktype(L, 2, LUA_TFUNCTION);
   for (i=1; i <= n; i++) {
     lua_pushvalue(L, 2);  /* function */
@@ -38,7 +37,7 @@ static int foreachi (lua_State *L) {
 
 
 static int foreach (lua_State *L) {
-  luaL_checkrawtable(L, 1, "g");
+  luaL_checktype(L, 1, LUA_TTABLE);
   luaL_checktype(L, 2, LUA_TFUNCTION);
   lua_pushnil(L);  /* first key */
   while (lua_next(L, 1)) {
@@ -56,7 +55,7 @@ static int foreach (lua_State *L) {
 
 static int maxn (lua_State *L) {
   lua_Number max = 0;
-  luaL_checkrawtable(L, 1, "g");
+  luaL_checktype(L, 1, LUA_TTABLE);
   lua_pushnil(L);  /* first key */
   while (lua_next(L, 1)) {
     lua_pop(L, 1);  /* remove value */
@@ -71,14 +70,13 @@ static int maxn (lua_State *L) {
 
 
 static int getn (lua_State *L) {
-  luaL_checkrawtable(L, 1, "g");
   lua_pushinteger(L, aux_getn(L, 1));
   return 1;
 }
 
 
 static int setn (lua_State *L) {
-  luaL_checkrawtable(L, 1, "gs");
+  luaL_checktype(L, 1, LUA_TTABLE);
 #ifndef luaL_setn
   luaL_setn(L, 1, luaL_checkint(L, 2));
 #else
@@ -92,7 +90,6 @@ static int setn (lua_State *L) {
 static int tinsert (lua_State *L) {
   int e = aux_getn(L, 1) + 1;  /* first empty element */
   int pos;  /* where to insert new element */
-  luaL_checkrawtable(L, 1, "gs");
   switch (lua_gettop(L)) {
     case 2: {  /* called with only 2 arguments */
       pos = e;  /* insert new element at the end */
@@ -121,7 +118,6 @@ static int tinsert (lua_State *L) {
 static int tremove (lua_State *L) {
   int e = aux_getn(L, 1);
   int pos = luaL_optint(L, 2, e);
-  luaL_checkrawtable(L, 1, "gs");
   if (!(1 <= pos && pos <= e))  /* position is outside bounds? */
    return 0;  /* nothing to remove */
   luaL_setn(L, 1, e - 1);  /* t.n = n-1 */
@@ -150,7 +146,7 @@ static int tconcat (lua_State *L) {
   size_t lsep;
   int i, last;
   const char *sep = luaL_optlstring(L, 2, "", &lsep);
-  luaL_checkrawtable(L, 1, "g");
+  luaL_checktype(L, 1, LUA_TTABLE);
   i = luaL_optint(L, 3, 1);
   last = luaL_opt(L, luaL_checkint, 4, luaL_getn(L, 1));
   luaL_buffinit(L, &b);
@@ -259,7 +255,6 @@ static void auxsort (lua_State *L, int l, int u) {
 
 static int sort (lua_State *L) {
   int n = aux_getn(L, 1);
-  luaL_checkrawtable(L, 1, "gs");
   luaL_checkstack(L, 40, "");  /* assume array is smaller than 2^40 */
   if (!lua_isnoneornil(L, 2))  /* is there a 2nd argument? */
     luaL_checktype(L, 2, LUA_TFUNCTION);

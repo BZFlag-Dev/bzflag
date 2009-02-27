@@ -29,7 +29,7 @@ const char *const luaT_typenames[] = {
 
 void luaT_init (lua_State *L) {
   static const char *const luaT_eventname[] = {  /* ORDER TM */
-    "__index", "__newindex", "__usedindex", "__rawblock",
+    "__index", "__newindex",
     "__gc", "__mode", "__eq",
     "__add", "__sub", "__mul", "__div", "__mod",
     "__pow", "__unm", "__len", "__lt", "__le",
