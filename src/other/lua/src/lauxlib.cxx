@@ -137,6 +137,26 @@ LUALIB_API void *luaL_checkudata (lua_State *L, int ud, const char *tname) {
 }
 
 
+LUALIB_API void luaL_checkrawset (lua_State *L, int tbl) {
+  if (luaL_getmetafield(L, tbl, "__rawset")) {
+    const int type = lua_type(L, -1);
+    switch (type) {
+      case LUA_TSTRING: {
+        luaL_error(L, "__rawset: %s", lua_tostring(L, -1));
+        break;
+      }
+      case LUA_TBOOLEAN: {
+        if (!lua_toboolean(L, -1)) {
+          luaL_error(L, "blocked by (__rawset == false)");
+        }
+        break;
+      }
+    }
+    lua_pop(L, 1);
+  }
+}
+
+
 LUALIB_API void luaL_checkstack (lua_State *L, int space, const char *mes) {
   if (!lua_checkstack(L, space))
     luaL_error(L, "stack overflow (%s)", mes);
