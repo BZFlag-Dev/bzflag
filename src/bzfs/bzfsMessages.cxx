@@ -234,7 +234,7 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
 
   if (teamIndex1 == -1) {
     teamCount = CtfTeams;
-    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*CtfTeams);
+    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
     for (int t = 0; t < CtfTeams; t++) {
       teams[t] = new bz_TeamInfoRecord;
 
@@ -245,16 +245,16 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
     }
   } else if (teamIndex2 == -1) {
     teamCount = 1;
-    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*));
+    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
 
     teams[0] = new bz_TeamInfoRecord;
 
-    teams[0]->id = teamIndex2;
-    teams[0]->size = team[teamIndex2].team.size;
-    teams[0]->wins = team[teamIndex2].team.won;
+    teams[0]->id = teamIndex1;
+    teams[0]->size = team[teamIndex1].team.size;
+    teams[0]->wins = team[teamIndex1].team.won;
   } else {
     teamCount = 2;
-    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*2);
+    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
 
     teams[0] = new bz_TeamInfoRecord;
 
@@ -267,7 +267,6 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
     teams[1]->id = teamIndex2;
     teams[1]->size = team[teamIndex2].team.size;
     teams[1]->wins = team[teamIndex2].team.won;
-
   }
 
   // now do everyone who dosn't have network
