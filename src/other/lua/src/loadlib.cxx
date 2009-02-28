@@ -59,6 +59,8 @@ static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym);
 */
 
 #include <dlfcn.h>
+#include <string.h> // for the dlsym pointer problem
+#include <assert.h> // for the dlsym pointer problem
 
 static void ll_unloadlib (void *lib) {
   dlclose(lib);
@@ -72,10 +74,23 @@ static void *ll_load (lua_State *L, const char *path) {
 }
 
 
+/*
+ * ISO C++ 98 doesn't allow casts between
+ * pointer-to-object and pointer-to-function
+ */
+typedef union {
+  void* pointer;
+  lua_CFunction func;
+} FuncPointerUnion;
+
 static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym) {
-  lua_CFunction f = (lua_CFunction)dlsym(lib, sym);
-  if (f == NULL) lua_pushstring(L, dlerror());
-  return f;
+  assert(sizeof(void*) == sizeof(lua_CFunction));
+  FuncPointerUnion fpu;
+  fpu.pointer = dlsym(lib, sym);
+  if (fpu.func == NULL) {
+    lua_pushstring(L, dlerror());
+  }
+  return fpu.func;
 }
 
 /* }====================================================== */

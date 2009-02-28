@@ -63,6 +63,9 @@ using std::map;
 #include "LuaFontTexture.h"
 #include "LuaZip.h"
 
+// LuaHandle headers
+#include "LuaUser.h"
+
 
 /******************************************************************************/
 /******************************************************************************/
@@ -203,6 +206,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 		PUSH_LUA_CFUNC(L, GetPlayerPhysicsDriver);
 		PUSH_LUA_CFUNC(L, GetPlayerDesiredSpeed);
 		PUSH_LUA_CFUNC(L, GetPlayerDesiredAngVel);
+		PUSH_LUA_CFUNC(L, GetPlayerExplodeTime);
 	}
 	PUSH_LUA_CFUNC(L, IsPlayerAdmin);
 	PUSH_LUA_CFUNC(L, IsPlayerVerified);
@@ -1769,7 +1773,7 @@ int LuaCallOuts::GetAntidotePosition(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 
-static int ParseGfxBlockID(lua_State* L, int index)
+static GfxBlock* ParseGfxBlock(lua_State* L, int index)
 {
 	int id = -1;
 
@@ -1783,24 +1787,35 @@ static int ParseGfxBlockID(lua_State* L, int index)
 		luaL_error(L, "invalid GfxBlock id");
 	}
 
-	return id;
+	GfxBlock* gfxBlock = GfxBlockMgr::get(id);
+	if (gfxBlock == NULL) {
+		return NULL;
+	}
+
+	return gfxBlock;
 }
 
 
 int LuaCallOuts::SetGfxBlock(lua_State* L)
 {
-	const int id = ParseGfxBlockID(L, 1);
-	GfxBlock* gfxBlock = GfxBlockMgr::get(id);
+	GfxBlock* gfxBlock = ParseGfxBlock(L, 1);
 	if (gfxBlock == NULL) {
 		return 0;
 	}
-	EventClient* ec = L2H(L);
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
 	const bool block = lua_tobool(L, 2);
+
+	EventClient* ec = L2H(L);
+	// block LuaUser from setting world graphics blocks
+	if ((ec == luaUser) && gfxBlock->worldBlock()) {
+		return NULL;
+	}
+
 	if (!block) {
 		gfxBlock->remove(ec);
 		return 0;
 	}
+
 	const bool queue = lua_isboolean(L, 2) && lua_tobool(L, 2);
 	lua_pushboolean(L, gfxBlock->set(ec, queue));
 	return 1;
@@ -1809,8 +1824,7 @@ int LuaCallOuts::SetGfxBlock(lua_State* L)
 
 int LuaCallOuts::GetGfxBlock(lua_State* L)
 {
-	const int id = ParseGfxBlockID(L, 1);
-	GfxBlock* gfxBlock = GfxBlockMgr::get(id);
+	const GfxBlock* gfxBlock = ParseGfxBlock(L, 1);
 	if (gfxBlock == NULL) {
 		return 0;
 	}
@@ -2263,6 +2277,26 @@ int LuaCallOuts::GetPlayerDesiredAngVel(lua_State* L)
 		return 0;
 	}
 	lua_pushnumber(L, player->getUserAngVel());
+	return 1;
+}
+
+
+int LuaCallOuts::GetPlayerExplodeTime(lua_State* L)
+{
+	const Player* player = ParsePlayer(L, 1);
+	if (player == NULL) {
+		return 0;
+	}
+	if (!player->isExploding()) {
+		return 0;
+	}
+	const TimeKeeper current = TimeKeeper::getTick();
+	const TimeKeeper explode = player->getExplodeTime();
+	const float explodeTime = (float)(current - explode);
+	if (explodeTime < 0.0f) {
+		return 0; // should not happen
+	}
+	lua_pushnumber(L, explodeTime);
 	return 1;
 }
 

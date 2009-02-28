@@ -322,6 +322,22 @@ AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
 AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
 AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
 
+AC_MSG_CHECKING([for numeric type sizes])
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(short int)
+AC_CHECK_SIZEOF(long int)
+AC_CHECK_SIZEOF(long long int)
+AC_CHECK_SIZEOF(float)
+AC_CHECK_SIZEOF(double)
+AC_CHECK_SIZEOF(long double)
+AC_DEFINE_UNQUOTED(SIZEOF_INT,           $ac_cv_sizeof_int,           [sizeof int])
+AC_DEFINE_UNQUOTED(SIZEOF_SHORT_INT,     $ac_cv_sizeof_short_int,     [sizeof short int])
+AC_DEFINE_UNQUOTED(SIZEOF_LONG_INT,      $ac_cv_sizeof_long_int,      [sizeof long int])
+AC_DEFINE_UNQUOTED(SIZEOF_LONG_LONG_INT, $ac_cv_sizeof_long_long_int, [sizeof long long int])
+AC_DEFINE_UNQUOTED(SIZEOF_FLOAT,         $ac_cv_sizeof_float,         [sizeof float])
+AC_DEFINE_UNQUOTED(SIZEOF_DOUBLE,        $ac_cv_sizeof_double,        [sizeof double])
+AC_DEFINE_UNQUOTED(SIZEOF_LONG_DOUBLE,   $ac_cv_sizeof_long_double,   [sizeof long double])
+
 
 dnl *************************
 dnl *** Check for headers ***
@@ -725,7 +741,8 @@ case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
-	FLAGS="-Wall -W -Wundef -Wshadow"
+	# time to use -Wextra instead of -W ? (gcc 3.4+)
+	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in

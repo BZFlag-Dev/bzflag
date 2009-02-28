@@ -95,9 +95,9 @@ class EventHandler
     void PlayerSpawned(const Player&);
     void PlayerKilled(const Player& victim, const Player* killer,
                       int reason, const FlagType* flagType, int phyDrv);
-    void PlayerJumped(const Player&);
+    void PlayerJumped(const Player&); // FIXME - not implemented
     void PlayerLanded(const Player&, float vel);
-    void PlayerTeleported(const Player&, int srcLink, int dstLink);
+    void PlayerTeleported(const Player&, int srcLink, int dstLink);  // FIXME - half implemented
     void PlayerTeamChange(const Player&, int oldTeam);
     void PlayerScoreChange(const Player&);
 

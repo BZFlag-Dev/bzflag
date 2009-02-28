@@ -147,6 +147,7 @@ class LuaCallOuts {
 		static int GetPlayerPhysicsDriver(lua_State* L);
 		static int GetPlayerDesiredSpeed(lua_State* L);
 		static int GetPlayerDesiredAngVel(lua_State* L);
+		static int GetPlayerExplodeTime(lua_State* L);
 		static int IsPlayerAdmin(lua_State* L);
 		static int IsPlayerVerified(lua_State* L);
 		static int IsPlayerRegistered(lua_State* L);

@@ -36,10 +36,11 @@ class GfxBlock {
 
   public:
     GfxBlock();
-    GfxBlock(int type, int id);
-    GfxBlock(int id, const char* name); // for global GfxBlocks
+    GfxBlock(int type, int id, bool world);
+    GfxBlock(int id, const char* name, bool world); // for global GfxBlocks
     ~GfxBlock();
-    void init(int _type, int _id) { type = _type; id = _id; }
+
+    void init(int _type, int _id, bool _world);
 
     void clear();
     bool set(EventClient* ec, bool queue);
@@ -51,8 +52,9 @@ class GfxBlock {
       return !clients.empty() && (clients[0] == ec);
     }
 
-    inline int getType() const { return type; }
-    inline int getID()   const { return id;   }
+    inline int  getType()    const { return type; }
+    inline int  getID()      const { return id;   }
+    inline bool worldBlock() const { return world; }
 
     static const char* getTypeString(int type);
     static int getStringType(const char* name);
@@ -60,6 +62,7 @@ class GfxBlock {
   private:
     int type;
     int id;
+    bool world;
     std::vector<EventClient*> clients;
 };
 

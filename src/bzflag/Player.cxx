@@ -57,7 +57,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , registered(false)
 , verified(false)
 , playerList(false)
-, gfxBlock(GfxBlock::Tank, id)
+, gfxBlock(GfxBlock::Tank, id, true)
 , lastVisualTeam(NoTeam)
 , team(_team)
 , type(_type)

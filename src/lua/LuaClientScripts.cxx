@@ -18,12 +18,13 @@ using std::string;
 #include "../bzflag/Downloads.h"
 
 // local headers
+#include "LuaOpenGL.h"
+#include "LuaURL.h"
+
+// LuaHandle headers
 #include "LuaUser.h"
 #include "LuaBzOrg.h"
 #include "LuaWorld.h"
-
-#include "LuaOpenGL.h"
-#include "LuaURL.h"
 
 
 /******************************************************************************/

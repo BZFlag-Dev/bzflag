@@ -38,6 +38,7 @@ using std::vector;
 #include "LuaDynCol.h"
 #include "LuaExtras.h"
 #include "LuaKeySyms.h"
+//FIXME #include "LuaLink.h"
 #include "LuaObstacle.h"
 #include "LuaOpenGL.h"
 #include "LuaPack.h"
@@ -82,8 +83,6 @@ LuaHandle::LuaHandle(const string& _name, int _order,
 	LuaExtras::PushEntries(L);
 	lua_pop(L, 1);
 
-	lua_register(L, "traceback", LuaExtras::traceback);
-
 	if (devMode) {
 		lua_register(L, "dump",    LuaExtras::dump); 
 		lua_register(L, "listing", LuaExtras::listing);
@@ -93,6 +92,8 @@ LuaHandle::LuaHandle(const string& _name, int _order,
 
 LuaHandle::~LuaHandle()
 {
+//FIXME	LuaLinkMgr::RemoveEntries(L);
+
 	eventHandler.RemoveClient(this);
 
 	// free the lua state
@@ -707,6 +708,7 @@ bool LuaHandle::SetupEnvironment()
 		    !PushLib("vfs",    LuaVFS::PushEntries)      ||
 		    !PushLib("bzdb",   LuaBZDB::PushEntries)     ||
 		    !PushLib("script", LuaScream::PushEntries)   ||
+//FIXME		    !PushLib("link",   LuaLinkMgr::PushEntries)  ||
 		    !PushLib("gl",     LuaOpenGL::PushEntries)   ||
 		    !PushLib("GL",     LuaConstGL::PushEntries)  ||
 		    !PushLib("bz",     LuaPack::PushEntries)     ||

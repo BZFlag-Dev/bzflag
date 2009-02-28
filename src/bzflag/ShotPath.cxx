@@ -25,13 +25,12 @@
 // ShotPath
 //
 
-ShotPath::ShotPath(const FiringInfo& info, double now) :
-				firingInfo(info),
-				reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME)),
-				expiring(false),
-				expired(false),
-				gfxBlock(GfxBlock::Shot,
-				         (info.shot.player << 16) | info.shot.id)
+ShotPath::ShotPath(const FiringInfo& info, double now)
+: firingInfo(info)
+, reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME))
+, expiring(false)
+, expired(false)
+, gfxBlock(GfxBlock::Shot, (info.shot.player << 16) | info.shot.id, true)
 {
   startTime = info.timeSent;
   currentTime = now;

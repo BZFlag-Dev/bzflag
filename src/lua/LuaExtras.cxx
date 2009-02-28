@@ -4,6 +4,10 @@
 // interface header
 #include "LuaExtras.h"
 
+// system headers
+#include <string>
+using std::string;
+
 // local headers
 #include "LuaInclude.h"
 
@@ -22,6 +26,11 @@ bool LuaExtras::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, isthread);
 	PUSH_LUA_CFUNC(L, isfunction);
 	PUSH_LUA_CFUNC(L, isuserdata);
+
+	PUSH_LUA_CFUNC(L, flush);
+	PUSH_LUA_CFUNC(L, stderr_write);
+
+	PUSH_LUA_CFUNC(L, traceback);
 
 	return true;
 }
@@ -123,6 +132,48 @@ int LuaExtras::isuserdata(lua_State* L)
 /******************************************************************************/
 /******************************************************************************/
 //
+//  flush()
+//
+
+int LuaExtras::flush(lua_State* L)
+{
+	if (!lua_israwstring(L, 1)) {
+		fflush(stdout);
+	}
+	else {
+		const string key = lua_tostring(L, 1);
+		     if (key == "stdout") { fflush(stdout); }
+		else if (key == "stderr") { fflush(stderr); }
+		else if (key == "stdin")  { fflush(stdin);  }
+		else {
+			luaL_error(L, "flush() unknown stream type: %s\n", key.c_str());
+		}
+	}
+	return 0;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+//
+//  stderr_write()
+//
+
+int LuaExtras::stderr_write(lua_State* L)
+{
+	luaL_checkstring(L, 1);
+	if (!lua_isboolean(L, 1) || !lua_tobool(L, 1)) {
+		fprintf(stderr, lua_tostring(L, 1));
+	} else {
+		fprintf(stderr, lua_tostring(L, 1));
+	}
+	return 0;
+}
+
+
+/******************************************************************************/
+/******************************************************************************/
+//
 //  traceback()
 //
 //  - copied directly from src/other/lua/src/ldblib.c
@@ -140,13 +191,13 @@ static lua_State *getthread (lua_State *L, int *arg) {
 }
 
 
-#define LEVELS1	12	/* size of the first part of the stack */
-#define LEVELS2	10	/* size of the second part of the stack */
+#define LEVELS1	12	// size of the first part of the stack
+#define LEVELS2	10	// size of the second part of the stack
 
 int LuaExtras::traceback(lua_State *L)  // db_errorfb() function
 {
 	int level;
-	int firstpart = 1;  /* still before eventual `...' */
+	int firstpart = 1;  // still before eventual `...'
 	int arg;
 	lua_State *L1 = getthread(L, &arg);
 	lua_Debug ar;
@@ -155,20 +206,20 @@ int LuaExtras::traceback(lua_State *L)  // db_errorfb() function
 		lua_pop(L, 1);
 	}
 	else
-		level = (L == L1) ? 1 : 0;  /* level 0 may be this own function */
+		level = (L == L1) ? 1 : 0;  // level 0 may be this own function
 	if (lua_gettop(L) == arg)
 		lua_pushliteral(L, "");
-	else if (!lua_isstring(L, arg+1)) return 1;  /* message is not a string */
+	else if (!lua_isstring(L, arg+1)) return 1;  // message is not a string
 	else lua_pushliteral(L, "\n");
 	lua_pushliteral(L, "stack traceback:");
 	while (lua_getstack(L1, level++, &ar)) {
 		if (level > LEVELS1 && firstpart) {
-			/* no more than `LEVELS2' more levels? */
+			// no more than `LEVELS2' more levels?
 			if (!lua_getstack(L1, level+LEVELS2, &ar))
-				level--;  /* keep going */
+				level--;  // keep going
 			else {
-				lua_pushliteral(L, "\n\t...");  /* too many levels */
-				while (lua_getstack(L1, level+LEVELS2, &ar))  /* find last levels */
+				lua_pushliteral(L, "\n\t...");  // too many levels
+				while (lua_getstack(L1, level+LEVELS2, &ar))  // find last levels
 					level++;
 			}
 			firstpart = 0;
@@ -179,13 +230,13 @@ int LuaExtras::traceback(lua_State *L)  // db_errorfb() function
 		lua_pushfstring(L, "%s:", ar.short_src);
 		if (ar.currentline > 0)
 			lua_pushfstring(L, "%d:", ar.currentline);
-		if (*ar.namewhat != '\0')  /* is there a name? */
+		if (*ar.namewhat != '\0')  // is there a name?
 				lua_pushfstring(L, " in function " LUA_QS, ar.name);
 		else {
-			if (*ar.what == 'm')  /* main? */
+			if (*ar.what == 'm')  // main?
 				lua_pushfstring(L, " in main chunk");
 			else if (*ar.what == 'C' || *ar.what == 't')
-				lua_pushliteral(L, " ?");  /* C function or tail call */
+				lua_pushliteral(L, " ?");  // C function or tail call
 			else
 				lua_pushfstring(L, " in function <%s:%d>",
 													 ar.short_src, ar.linedefined);

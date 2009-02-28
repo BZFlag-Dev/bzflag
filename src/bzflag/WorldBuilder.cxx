@@ -265,7 +265,7 @@ void WorldBuilder::preGetWorld()
   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];
   for (i = 0; i < world->maxFlags; i++) {
     world->flags[i].id = i;
-    world->flags[i].gfxBlock.init(GfxBlock::Flag, i);
+    world->flags[i].gfxBlock.init(GfxBlock::Flag, i, true);
     world->flags[i].type = Flags::Null;
     world->flags[i].status = FlagNoExist;
     world->flags[i].position[0] = 0.0f;

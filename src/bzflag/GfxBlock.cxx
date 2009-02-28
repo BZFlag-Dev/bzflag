@@ -80,20 +80,23 @@ static bool isBetterClient(EventClient* a, EventClient* b)
 GfxBlock::GfxBlock()
 : type(-1)
 , id(-1)
+, world(false)
 {
 }
 
 
-GfxBlock::GfxBlock(int _type, int _id)
+GfxBlock::GfxBlock(int _type, int _id, bool _world)
 : type(_type)
 , id(_id)
+, world(_world)
 {
 }
 
 
-GfxBlock::GfxBlock(int _id, const char* name)
+GfxBlock::GfxBlock(int _id, const char* name, bool _world)
 : type(Global)
 , id(_id)
+, world(_world)
 {
   pushEntry(id, name);
   GfxBlockMgr::blocks[id] = this;
@@ -103,6 +106,14 @@ GfxBlock::GfxBlock(int _id, const char* name)
 GfxBlock::~GfxBlock()
 {
   clear();
+}
+
+
+void GfxBlock::init(int _type, int _id, bool _world)
+{
+  id    = _id;
+  type  = _type;
+  world = _world;
 }
 
 
@@ -207,43 +218,44 @@ GfxBlock* GfxBlockMgr::blocks[BlockIDCount];
 
 
 #undef  GLOBAL_GFX_BLOCK
-#define GLOBAL_GFX_BLOCK(Enum, Name) GfxBlock GfxBlockMgr::Name (Enum, #Name)
+#define GLOBAL_GFX_BLOCK(Enum, Name, World) \
+  GfxBlock GfxBlockMgr::Name (Enum, #Name, World)
 
 // world items
-GLOBAL_GFX_BLOCK(Obstacles,    obstacles);
-GLOBAL_GFX_BLOCK(Sky,          sky);
-GLOBAL_GFX_BLOCK(Stars,        stars);
-GLOBAL_GFX_BLOCK(Clouds,       clouds);
-GLOBAL_GFX_BLOCK(Ground,       ground);
-GLOBAL_GFX_BLOCK(Lights,       lights);
-GLOBAL_GFX_BLOCK(Mirror,       mirror);
-GLOBAL_GFX_BLOCK(Shadows,      shadows);
-GLOBAL_GFX_BLOCK(Mountains,    mountains);
-GLOBAL_GFX_BLOCK(Explosions,   explosions);
-GLOBAL_GFX_BLOCK(Insides,      insides);
-GLOBAL_GFX_BLOCK(Halos,        halos);
-GLOBAL_GFX_BLOCK(TrackMarks,   trackMarks);
-GLOBAL_GFX_BLOCK(Weather,      weather);
-GLOBAL_GFX_BLOCK(Effects,      effects);
+GLOBAL_GFX_BLOCK(Obstacles,    obstacles,  true);
+GLOBAL_GFX_BLOCK(Sky,          sky,        true);
+GLOBAL_GFX_BLOCK(Stars,        stars,      true);
+GLOBAL_GFX_BLOCK(Clouds,       clouds,     true);
+GLOBAL_GFX_BLOCK(Ground,       ground,     true);
+GLOBAL_GFX_BLOCK(Lights,       lights,     true);
+GLOBAL_GFX_BLOCK(Mirror,       mirror,     true);
+GLOBAL_GFX_BLOCK(Shadows,      shadows,    true);
+GLOBAL_GFX_BLOCK(Mountains,    mountains,  true);
+GLOBAL_GFX_BLOCK(Explosions,   explosions, true);
+GLOBAL_GFX_BLOCK(Insides,      insides,    true);
+GLOBAL_GFX_BLOCK(Halos,        halos,      true);
+GLOBAL_GFX_BLOCK(TrackMarks,   trackMarks, true);
+GLOBAL_GFX_BLOCK(Weather,      weather,    true);
+GLOBAL_GFX_BLOCK(Effects,      effects,    true);
 
-// UI items
-GLOBAL_GFX_BLOCK(Cursor,       cursor);
-GLOBAL_GFX_BLOCK(Console,      console);
-GLOBAL_GFX_BLOCK(Radar,        radar);
-GLOBAL_GFX_BLOCK(TeamScores,   teamScores);
-GLOBAL_GFX_BLOCK(PlayerScores, playerScores);
-GLOBAL_GFX_BLOCK(Menu,         menu);
-GLOBAL_GFX_BLOCK(Compose,      compose);
-GLOBAL_GFX_BLOCK(TargetBox,    targetBox);
-GLOBAL_GFX_BLOCK(ShotStatus,   shotStatus);
-GLOBAL_GFX_BLOCK(Markers,      markers);
-GLOBAL_GFX_BLOCK(Times,        times);
-GLOBAL_GFX_BLOCK(Labels,       labels);
-GLOBAL_GFX_BLOCK(Cracks,       cracks);
-GLOBAL_GFX_BLOCK(Status,       status);
-GLOBAL_GFX_BLOCK(Clock,        clock);
-GLOBAL_GFX_BLOCK(FlagHelp,     flagHelp);
-GLOBAL_GFX_BLOCK(Alerts,       alerts);
+// Screen items
+GLOBAL_GFX_BLOCK(Cursor,       cursor,       false);
+GLOBAL_GFX_BLOCK(Console,      console,      false);
+GLOBAL_GFX_BLOCK(Radar,        radar,        false);
+GLOBAL_GFX_BLOCK(TeamScores,   teamScores,   false);
+GLOBAL_GFX_BLOCK(PlayerScores, playerScores, false);
+GLOBAL_GFX_BLOCK(Menu,         menu,         false);
+GLOBAL_GFX_BLOCK(Compose,      compose,      false);
+GLOBAL_GFX_BLOCK(TargetBox,    targetBox,    false);
+GLOBAL_GFX_BLOCK(ShotStatus,   shotStatus,   false);
+GLOBAL_GFX_BLOCK(Markers,      markers,      false);
+GLOBAL_GFX_BLOCK(Times,        times,        false);
+GLOBAL_GFX_BLOCK(Labels,       labels,       false);
+GLOBAL_GFX_BLOCK(Cracks,       cracks,       false);
+GLOBAL_GFX_BLOCK(Status,       status,       false);
+GLOBAL_GFX_BLOCK(Clock,        clock,        false);
+GLOBAL_GFX_BLOCK(FlagHelp,     flagHelp,     false);
+GLOBAL_GFX_BLOCK(Alerts,       alerts,       false);
 
 #undef GLOBAL_GFX_BLOCK
 

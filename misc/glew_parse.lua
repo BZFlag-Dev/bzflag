@@ -44,7 +44,7 @@ local headers = true
 
 output:write('--[[\n\n')
 for line in input:lines() do
-  if (headers and not line:find('^#')) then
+  if (headers and not line:match('^#')) then
     output:write(line..'\n')
   else
     if (headers) then
@@ -52,7 +52,7 @@ for line in input:lines() do
       headers = false
     end
     -- this excludes the extension presence definitions
-    local s, e, k, v = line:find('^#define%s*GL_([A-Z0-9_]*)%s*(%S*)\r?$')
+    local k, v = line:match('^#define%s*GL_([A-Z0-9_]*)%s*(%S*)\r?$')
     if (k and v) then
       GL[k] = tonumber(v)
     end
@@ -89,7 +89,7 @@ for i = 1, count do
   local key   = def[1]
   local value = def[2]
   local space = ''
-  if (key:find('^[0-9]')) then
+  if (key:match('^[0-9]')) then
     name = '["'..key..'"]'
   else
     name = '.'..key

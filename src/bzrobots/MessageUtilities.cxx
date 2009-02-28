@@ -57,9 +57,14 @@ bool MessageUtilities::parse(const char *str, float &dest)
 template <>
 bool MessageUtilities::parse(const char *str, uint64_t &dest)
 {
-  if (sscanf(str,"%jd",(intmax_t *)&dest) != 1)
-    return false;
-  return true;
+#if   (SIZEOF_LONG_INT == 8)
+  static const char* fmt = "%lu";
+#elif (SIZEOF_LONG_LONG_INT == 8)
+  static const char* fmt = "%Lu";
+#else
+#  error uint64_t sscanf format was not found
+#endif
+  return (sscanf(str, fmt, &dest) == 1);
 }
 
 template<>

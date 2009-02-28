@@ -162,7 +162,8 @@ static bool isValidClearance(const float pos[3], float radius,
       if (obs->inCylinder(pos, radius, height)) {
 	return false;
       }
-    } else {
+    }
+    else {
       // do not check coplanars unless they are fatal
       if (isDeathLanding(obs) || isOpposingTeam(obs, team)) {
 	const float fudge = 0.001f; // dig in a little to make sure
@@ -279,7 +280,8 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
 	return true;
       }
     }
-  } else {
+  }
+  else {
     // sort from lowest to highest
     qsort(rayList.list, rayList.count, sizeof(Obstacle*), compareAscending);
     // we're blocked, try climbing
