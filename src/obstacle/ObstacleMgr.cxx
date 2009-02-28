@@ -22,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <assert.h>
 
 // common headers
 #include "Pack.h"
@@ -965,11 +966,18 @@ static int compareHeights(const void* a, const void* b)
   const Extents& eA = obsA->getExtents();
   const Extents& eB = obsB->getExtents();
 
-  if (eA.maxs[2] > eB.maxs[2]) {
-    return -1;
-  } else {
-    return +1;
-  }
+  const float zMaxA = eA.maxs[2];
+  const float zMaxB = eB.maxs[2];
+  if (zMaxA > zMaxB) { return -1; }
+  if (zMaxA < zMaxB) { return +1; }
+  
+  const int listIDA = obsA->getListID();
+  const int listIDB = obsB->getListID();
+  if (listIDA < listIDB) { return -1; }
+  if (listIDA > listIDB) { return +1; }
+
+  assert(false && "this should not happen");
+  return 0;
 }
 
 
@@ -984,11 +992,6 @@ void GroupDefinitionMgr::makeWorld()
 
   world.deleteInvalidObstacles();
 
-  // sort from top to bottom for enhanced radar
-  for (int type = 0; type < ObstacleTypeCount; type++) {
-    world.sort(compareHeights);
-  }
-
   // assign the listIDs
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& obsList = world.getList(type);
@@ -996,6 +999,11 @@ void GroupDefinitionMgr::makeWorld()
       Obstacle* obs = obsList[i];
       obs->setListID(i);
     }
+  }
+
+  // sort from top to bottom for enhanced radar
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    world.sort(compareHeights);
   }
 
   tighten();
