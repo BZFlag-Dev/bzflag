@@ -395,7 +395,7 @@ int LuaOpenGL::Text(lua_State* L)
 		luaL_error(L, "attrib stack overflow");
 	}
 
-	float oldAlpha;
+	float oldAlpha = 1.0f;
 	if (useAlpha) {
 		oldAlpha = FM.getOpacity();
 		FM.setOpacity(alpha);
