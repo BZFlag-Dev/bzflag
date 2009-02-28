@@ -181,11 +181,11 @@ void MeshFace::finalize()
   }
 
   // setup fake obstacle parameters
-  pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
-  pos[1] = (extents.maxs[1] + extents.mins[1]) / 2.0f;
+  pos[0] = (extents.maxs[0] + extents.mins[0]) * 0.5f;
+  pos[1] = (extents.maxs[1] + extents.mins[1]) * 0.5f;
   pos[2] = extents.mins[2];
-  size[0] = (extents.maxs[0] - extents.mins[0]) / 2.0f;
-  size[1] = (extents.maxs[1] - extents.mins[1]) / 2.0f;
+  size[0] = (extents.maxs[0] - extents.mins[0]) * 0.5f;
+  size[1] = (extents.maxs[1] - extents.mins[1]) * 0.5f;
   size[2] = (extents.maxs[2] - extents.mins[2]);
   angle = 0.0f;
   ZFlip = false;
@@ -446,13 +446,13 @@ bool MeshFace::inBox(const float* p, float _angle,
   int i;
 
   // Z axis separation test
-  if ((extents.mins[2] > (p[2] + height)) || (extents.maxs[2] < p[2])) {
+  if ((extents.mins[2] > (p[2] + height)) || (extents.maxs[2] <= p[2])) {
     return false;
   }
 
   // translate the face so that the box is an origin box
   // centered at 0,0,0  (this assumes that it is cheaper
-  // to move the polygon then the box, tris and quads will
+  // to move the polygon than the box, tris and quads will
   // probably be the dominant polygon types).
 
   float pln[4]; // translated plane
