@@ -331,7 +331,7 @@ int LuaOpenGL::Text(lua_State* L)
 
 	const char* text = luaL_checkstring(L, 1);
 	const char* face = luaL_checkstring(L, 2);
-	const float size = luaL_optfloat(L, 3, 12.0f);
+	const float size = luaL_optfloat(L, 3, defaultTextSize);
 	const float x    = luaL_optfloat(L, 4, 0.0f);
 	const float y    = luaL_optfloat(L, 5, 0.0f);
 	const char* opts = luaL_optstring(L, 6, "");
@@ -428,7 +428,7 @@ int LuaOpenGL::GetTextWidth(lua_State* L)
 {
 	const char* text = luaL_checkstring(L, 1);
 	const char* face = luaL_checkstring(L, 2);
-	const float size = luaL_optfloat(L, 3, 12.0f);
+	const float size = luaL_optfloat(L, 3, defaultTextSize);
 
 	FontManager& FM = FontManager::instance();
 	const int faceID = FM.getFaceID(face);
@@ -440,9 +440,9 @@ int LuaOpenGL::GetTextWidth(lua_State* L)
 
 int LuaOpenGL::GetTextHeight(lua_State* L)
 {
-/*	const char* text = luaL_checkstring(L, 1); unused ... */
+//	const char* text = luaL_checkstring(L, 1); unused ...
 	const char* face = luaL_checkstring(L, 2);
-	const float size = luaL_optfloat(L, 3, 12.0f);
+	const float size = luaL_optfloat(L, 3, defaultTextSize);
 
 	FontManager& FM = FontManager::instance();
 	const int faceID = FM.getFaceID(face);

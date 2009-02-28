@@ -9,6 +9,9 @@ struct lua_State;
 
 class LuaOpenGL {
 	public:
+		static const float defaultTextSize = 12.0f;
+
+	public:
 		static void Init();
 		static void Free();
 
