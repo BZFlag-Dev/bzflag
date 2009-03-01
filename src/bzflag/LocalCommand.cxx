@@ -27,7 +27,7 @@
 LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;
 
 
-/******************************************************************************/
+//============================================================================//
 
 static bool fallbackCommand(const char* cmd)
 {
@@ -38,7 +38,7 @@ static bool fallbackCommand(const char* cmd)
 bool (*LocalCommand::fallback)(const char*) = fallbackCommand;
 
 
-/******************************************************************************/
+//============================================================================//
 
 LocalCommand::LocalCommand(std::string _commandName)
   : commandName(_commandName)
@@ -85,7 +85,7 @@ bool LocalCommand::operator() (const char *)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 
 // Local Variables: ***

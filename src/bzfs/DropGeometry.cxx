@@ -61,7 +61,7 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
 		   float radius, float height, int team);
 
 
-/******************************************************************************/
+//============================================================================//
 
 bool DropGeometry::dropPlayer(float pos[3], float minZ, float maxZ)
 {
@@ -93,7 +93,7 @@ bool DropGeometry::dropTeamFlag(float pos[3], float minZ, float maxZ,
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static inline bool isDeathLanding(const Obstacle* obs)
 {
@@ -211,7 +211,7 @@ static int compareDescending(const void* a, const void* b)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static bool dropIt(float pos[3], float minZ, float maxZ,
 		   float radius, float height, int team)
@@ -309,7 +309,7 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 HoldingList::HoldingList()
 {

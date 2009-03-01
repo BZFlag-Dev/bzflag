@@ -225,7 +225,7 @@ static PacketListEntry PacketList[] = {
 static const int PacketListCount = sizeof (PacketList) / sizeof (PacketList[0]);
 
 
-/******************************************************************************/
+//============================================================================//
 
 void MsgStrings::init ()
 {
@@ -355,7 +355,7 @@ MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void listPush (MsgStringList &list, int level, const char *fmt, ...)
 {
@@ -484,7 +484,7 @@ static std::string strKillReason (int16_t reason)
   }
 }
 
-/******************************************************************************/
+//============================================================================//
 
 static MsgStringList handleMsgNull (PacketInfo *pi)
 {
@@ -1367,7 +1367,7 @@ static MsgStringList handleMsgEchoResponse(PacketInfo *pi)
 
 
 
-/******************************************************************************/
+//============================================================================//
 
 // Local Variables: ***
 // mode: C++ ***

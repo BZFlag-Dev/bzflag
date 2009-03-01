@@ -17,7 +17,7 @@
 #include <stdarg.h>
 
 
-/******************************************************************************/
+//============================================================================//
 
 /** global debug level used by libraries and applications, provided in bzfio.cxx */
 extern int debugLevel;
@@ -34,7 +34,7 @@ bool registerLoggingProc(LoggingProc, void* data);
 bool unregisterLoggingProc(LoggingProc, void* data);
 
 
-/******************************************************************************/
+//============================================================================//
 
 
 #endif /* __BZFIO_H__ */

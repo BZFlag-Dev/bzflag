@@ -27,14 +27,14 @@ static const char MATCH_MULTI  = '*'; // matches any number of characters
 static const char MATCH_SINGLE = '?'; // matches a single character
 
 
-/******************************************************************************/
+//============================================================================//
 
 bool glob_match (const std::string& pattern, const std::string& string)
 {
   return glob_match (pattern.c_str(), string.c_str());
 }
 
-/******************************************************************************/
+//============================================================================//
 
 bool glob_match (const char *pattern, const char *string)
 {
@@ -80,7 +80,7 @@ bool glob_match (const char *pattern, const char *string)
   }
 }
 
-/******************************************************************************/
+//============================================================================//
 
 static int match_multi (const char **pattern, const char **string)
 {

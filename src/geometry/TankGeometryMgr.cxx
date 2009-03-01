@@ -99,7 +99,7 @@ static void initContext(void *data);
 static void bzdbCallback(const std::string& str, void *data);
 
 
-/****************************************************************************/
+//============================================================================//
 
 // TankGeometryMgr Functions
 // -------------------------
@@ -314,7 +314,7 @@ bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
   return count > 0;
 }
 
-/****************************************************************************/
+//============================================================================//
 
 // Local Functions
 // ---------------
