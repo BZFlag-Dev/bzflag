@@ -1844,7 +1844,7 @@ int LuaCallOuts::SetGfxBlock(lua_State* L)
 	EventClient* ec = L2H(L);
 	// block LuaUser from setting world graphics blocks
 	if ((ec == luaUser) && gfxBlock->worldBlock()) {
-		return NULL;
+		return 0;
 	}
 
 	if (!block) {
