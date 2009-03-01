@@ -27,6 +27,7 @@ using std::map;
 #include "GameTime.h"
 #include "GfxBlock.h"
 #include "KeyManager.h"
+#include "MapInfo.h"
 #include "MediaFile.h"
 #include "OpenGLLight.h"
 #include "SceneRenderer.h"
@@ -92,6 +93,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetConsoleMessageCount);
 
 	PUSH_LUA_CFUNC(L, GetGameInfo);
+	PUSH_LUA_CFUNC(L, GetWorldInfo);
 
 	PUSH_LUA_CFUNC(L, GetServerAddress);
 	PUSH_LUA_CFUNC(L, GetServerIP);
@@ -554,6 +556,40 @@ int LuaCallOuts::GetGameInfo(lua_State* L)
 	HSTR_PUSH_INT(L, "maxFlags",       world->getMaxFlags());
 	HSTR_PUSH_INT(L, "maxShots",       world->getMaxShots());
 	HSTR_PUSH_INT(L, "maxPlayers",     world->getMaxPlayers());
+	return 1;
+}
+
+
+int LuaCallOuts::GetWorldInfo(lua_State* L)
+{
+	World* world = World::getWorld();
+	if (world == NULL) {
+		return 0;
+	}
+	const vector<string>* entries = NULL;
+	
+	if (!lua_israwstring(L, 1)) {
+		entries = &world->getMapInfo().getVec();
+	}
+	else {
+		const char* key = lua_tostring(L, 1);
+		const MapInfo::InfoMap& infoMap = world->getMapInfo().getMap();
+		MapInfo::InfoMap::const_iterator it = infoMap.find(key);
+		if (it != infoMap.end()) {
+			entries = &it->second;
+		}
+	}
+
+	if (entries == NULL) {
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	lua_createtable(L, entries->size(), 0);
+	for (size_t i = 0; i < entries->size(); i++) {
+		lua_pushstdstring(L, (*entries)[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
 	return 1;
 }
 

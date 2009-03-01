@@ -30,6 +30,7 @@ class LuaCallOuts {
 		static int GetConsoleMessageCount(lua_State* L);
 
 		static int GetGameInfo(lua_State* L);
+		static int GetWorldInfo(lua_State* L);
 
 		static int GetServerAddress(lua_State* L);
 		static int GetServerIP(lua_State* L);

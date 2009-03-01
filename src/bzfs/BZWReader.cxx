@@ -388,9 +388,9 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
         return false;
       }
     }
-    else if (strcasecmp(buffer, "mapinfo") == 0) {
+    else if (strcasecmp(buffer, "info") == 0) {
       if (!readRawLines(mapInfoLines, "end", lineNum)) {
-        errorHandler->fatalError("missing \"end\" for \"mapinfo\"", lineNum);
+        errorHandler->fatalError("missing \"end\" for \"info\"", lineNum);
         return false;
       }
     }

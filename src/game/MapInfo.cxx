@@ -162,9 +162,9 @@ void MapInfo::print(std::ostream& out, const std::string& indent) const
   if (infoVec.empty()) {
     return;
   }
-  out << indent << "mapinfo" << std::endl;
+  out << indent << "info" << std::endl;
   for (unsigned i = 0; i < infoVec.size(); i++) {
-    out << indent << "  " << infoVec[i] << std::endl;
+    out << indent << infoVec[i] << std::endl;
   }
   out << indent << "end" << std::endl << std::endl;
 }
