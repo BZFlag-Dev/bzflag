@@ -101,6 +101,15 @@
 	#endif // WIN64
 #endif //BZ_BUILD_OS
 
+#error set these up for windows builds (32bit vs. 64bit?)
+#define SIZEOF_SHORT_INT     2
+#define SIZEOF_INT           4
+#define SIZEOF_LONG_INT      4
+#define SIZEOF_LONG_LONG_INT 8
+#define SIZEOF_FLOAT         4
+#define SIZEOF_DOUBLE        8
+#define SIZEOF_LONG_DOUBLE   12
+
 /* Define to 1 if you have the `WaitForSingleObject' function. */
 #define HAVE_WAITFORSINGLEOBJECT 1
 
