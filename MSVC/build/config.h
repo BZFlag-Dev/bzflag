@@ -108,7 +108,7 @@
 #define SIZEOF_LONG_LONG_INT 8
 #define SIZEOF_FLOAT         4
 #define SIZEOF_DOUBLE        8
-#define SIZEOF_LONG_DOUBLE   12
+#define SIZEOF_LONG_DOUBLE   8
 
 /* Define to 1 if you have the `WaitForSingleObject' function. */
 #define HAVE_WAITFORSINGLEOBJECT 1
