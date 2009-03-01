@@ -126,9 +126,9 @@ class SaveWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
-class MapInfoCommand : LocalCommand {
+class WorldInfoCommand : LocalCommand {
   public:
-    MapInfoCommand();
+    WorldInfoCommand();
     bool operator() (const char *commandLine);
 };
 
@@ -159,37 +159,37 @@ class DebugLevelCommand : LocalCommand {
 
 
 // class instantiations
-static CommandList	  commandList;
-static BindCommand	  bindCommand;
+static BindCommand        bindCommand;
+static CommandList        commandList;
+static DebugLevelCommand  debugLevelCommand;
+static DiffCommand        diffCommand;
+static DumpCommand        dumpCommand;
+static HighlightCommand   highlightCommand;
+static LocalSetCommand    localSetCommand;
+static LuaBzOrgCommand    luaBzOrgCommand;
+static LuaUserCommand     luaUserCommand;
+static LuaWorldCommand    luaWorldCommand;
+static QuitCommand        quitCommand;
+static ReTextureCommand   reTextureCommand;
+static RoamPosCommand     RoamPosCommand;
+static SaveMsgsCommand    saveMsgsCommand;
+static SaveWorldCommand   saveWorldCommand;
+static SetCommand         setCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
-static DumpCommand	  dumpCommand;
-static HighlightCommand   highlightCommand;
-static SetCommand	  setCommand;
-static DiffCommand	  diffCommand;
-static LocalSetCommand    localSetCommand;
-static QuitCommand	  quitCommand;
-static RoamPosCommand     RoamPosCommand;
-static ReTextureCommand   reTextureCommand;
-static SaveMsgsCommand	  saveMsgsCommand;
-static SaveWorldCommand   saveWorldCommand;
-static MapInfoCommand     mapInfoCommand;
-static LuaUserCommand     luaUserCommand;
-static LuaBzOrgCommand    luaBzOrgCommand;
-static LuaWorldCommand    luaWorldCommand;
-static DebugLevelCommand  debugLevelCommand;
+static WorldInfoCommand   worldInfoCommand;
 
 
 // class constructors
 BindCommand::BindCommand() :			LocalCommand("/bind")      {}
 CommandList::CommandList() :			LocalCommand("/cmds")      {}
+DebugLevelCommand::DebugLevelCommand() :	LocalCommand("/debug")     {}
 DiffCommand::DiffCommand() :			LocalCommand("/diff")      {}
 DumpCommand::DumpCommand() :			LocalCommand("/dumpvars")  {}
 HighlightCommand::HighlightCommand() :		LocalCommand("/highlight") {}
 LocalSetCommand::LocalSetCommand() :		LocalCommand("/localset")  {}
-MapInfoCommand::MapInfoCommand() :		LocalCommand("/mapinfo")   {}
-LuaUserCommand::LuaUserCommand() :		LocalCommand("/luauser")   {}
 LuaBzOrgCommand::LuaBzOrgCommand() :		LocalCommand("/luabzorg")  {}
+LuaUserCommand::LuaUserCommand() :		LocalCommand("/luauser")   {}
 LuaWorldCommand::LuaWorldCommand() :		LocalCommand("/luaworld")  {}
 QuitCommand::QuitCommand() :			LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand() :		LocalCommand("/retexture") {}
@@ -199,7 +199,7 @@ SaveWorldCommand::SaveWorldCommand() :		LocalCommand("/saveworld") {}
 SetCommand::SetCommand() :			LocalCommand("/set")       {}
 SilenceCommand::SilenceCommand() :		LocalCommand("/silence")   {}
 UnsilenceCommand::UnsilenceCommand() :		LocalCommand("/unsilence") {}
-DebugLevelCommand::DebugLevelCommand() :	LocalCommand("/debug")     {}
+WorldInfoCommand::WorldInfoCommand() :		LocalCommand("/worldinfo")   {}
 
 
 // the meat of the matter
@@ -824,7 +824,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 }
 
 
-bool MapInfoCommand::operator() (const char* /*commandLine*/)
+bool WorldInfoCommand::operator() (const char* /*commandLine*/)
 {
   World* world = World::getWorld();
   const std::string indent = ANSI_STR_FG_GREEN "[info]" ANSI_STR_RESET;

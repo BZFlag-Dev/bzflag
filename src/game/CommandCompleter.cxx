@@ -82,7 +82,6 @@ void CommandCompleter::reset()
   registerWord("file");
   registerWord("save");
   registerWord("/reload");
-  registerWord("/mapinfo");
   registerWord("/masterban"); // also uses list
   registerWord("reload");
   registerWord("flush");
@@ -113,6 +112,7 @@ void CommandCompleter::reset()
   registerWord("/veto");
   registerWord("/viewreports");
   registerWord("/vote");
+  registerWord("/worldinfo");
   registerWord("/loadplugin");
   registerWord("/listplugins");
   registerWord("/unloadplugin");
