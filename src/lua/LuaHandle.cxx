@@ -674,34 +674,47 @@ bool LuaHandle::SetupEnvironment()
 	if (devMode) {
 		LUA_OPEN_LIB(L, luaopen_debug);
 	}
+	//
+	// disabled libraries  {io} and {package}
+	// NOTE: if {io} is added, disable io.popen()
+	//                                 ^^^^^^^^^^
+	//LUA_OPEN_LIB(L, luaopen_io);
+	//LUA_OPEN_LIB(L, luaopen_package);
 
-//	LUA_OPEN_LIB(L, luaopen_io);
-//	LUA_OPEN_LIB(L, luaopen_package);
-// remove a few dangerous calls
-//	lua_getglobal(L, "io");
-//	lua_pushstring(L, "popen"); lua_pushnil(L); lua_rawset(L, -3);
-//	lua_pop(L, 1); // io
-
+	// disable some global functions
+	// (these use stdio calls to access file data)
 	lua_pushnil(L); lua_setglobal(L, "dofile");
 	lua_pushnil(L); lua_setglobal(L, "loadfile");
 
+	// only allow safe {os} functions  (excluding execute(), exit(), etc ...)
+	const char* osFuncs[] = {
+		"clock",
+		"date",
+		"time",
+		"difftime"
+	};
+	const int osCount = sizeof(osFuncs) / sizeof(osFuncs[0]);
+	lua_newtable(L); // new {os} table
+	const int newOS = lua_gettop(L);
+	// copy the desired entries
 	lua_getglobal(L, "os"); {
-		lua_pushliteral(L, "exit");      lua_pushnil(L); lua_rawset(L, -3);
-		lua_pushliteral(L, "execute");   lua_pushnil(L); lua_rawset(L, -3);
-		lua_pushliteral(L, "remove");    lua_pushnil(L); lua_rawset(L, -3);
-		lua_pushliteral(L, "rename");    lua_pushnil(L); lua_rawset(L, -3);
-		lua_pushliteral(L, "tmpname");   lua_pushnil(L); lua_rawset(L, -3);
-		lua_pushliteral(L, "getenv");    lua_pushnil(L); lua_rawset(L, -3);
-		lua_pushliteral(L, "setlocale"); lua_pushnil(L); lua_rawset(L, -3);
+		for (int i = 0; i < osCount; i++) {
+			lua_getfield(L,    -1, osFuncs[i]);
+			lua_setfield(L, newOS, osFuncs[i]);
+		}
 	}
-	lua_pop(L, 1); // os
+	lua_pop(L, 1);          // old {os}
+	lua_setglobal(L, "os"); // new {os}
 
+	// push the bzflag additions
 	lua_pushvalue(L, LUA_GLOBALSINDEX); {
+		// into the global table
 		if (!LuaExtras::PushEntries(L) ||
 		    !LuaDouble::PushEntries(L)) {
 			lua_pop(L, 1);
 			return false;
 		}
+		// into sub-tables (using PushLib())
 		if (!PushLib("math",   LuaBitOps::PushEntries)   ||
 		    !PushLib("math",   LuaVector::PushEntries)   ||
 		    !PushLib("url",    LuaURLMgr::PushEntries)   ||

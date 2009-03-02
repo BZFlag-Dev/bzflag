@@ -47,7 +47,7 @@ bool LuaScream::PushEntries(lua_State* L)
 
 bool LuaScream::CreateMetatable(lua_State* L)
 {
-	luaL_newmetatable(L, "Scream");
+	luaL_newmetatable(L, metaName);
 	HSTR_PUSH_CFUNC(L,  "__gc",       MetaGC);
 	HSTR_PUSH_CFUNC(L,  "__index",    MetaIndex);
 	HSTR_PUSH_CFUNC(L,  "__newindex", MetaNewindex);

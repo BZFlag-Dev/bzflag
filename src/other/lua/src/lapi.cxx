@@ -359,6 +359,27 @@ LUA_API const char *lua_tolstring (lua_State *L, int idx, size_t *len) {
 }
 
 
+LUA_API const char *lua_tohstring (lua_State *L,
+                                   int idx, size_t *len, lua_Hash *hash) {
+  StkId o = index2adr(L, idx);
+  if (!ttisstring(o)) {
+    lua_lock(L);  /* `luaV_tostring' may create a new string */
+    if (!luaV_tostring(L, o)) {  /* conversion failed? */
+      if (len  != NULL) *len = 0;
+      if (hash != NULL) *hash = 0;
+      lua_unlock(L);
+      return NULL;
+    }
+    luaC_checkGC(L);
+    o = index2adr(L, idx);  /* previous call may reallocate the stack */
+    lua_unlock(L);
+  }
+  if (len  != NULL) *len  = tsvalue(o)->len;
+  if (hash != NULL) *hash = tsvalue(o)->hash;
+  return svalue(o);
+}
+
+
 LUA_API size_t lua_objlen (lua_State *L, int idx) {
   StkId o = index2adr(L, idx);
   switch (ttype(o)) {
