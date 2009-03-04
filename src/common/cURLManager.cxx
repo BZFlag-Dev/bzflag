@@ -68,6 +68,12 @@ cURLManager::cURLManager()
     logDebugMessage(1,"CURLOPT_FORBID_REUSE error: %d\n", result);
   }
 
+  // temporarily? mitigate the danger from CVE-2009-0037
+  result = curl_easy_setopt(easyHandle, CURLOPT_FOLLOWLOCATION, 0L);
+  if (result != CURLE_OK) {
+    logDebugMessage(1,"CURLOPT_FOLLOWLOCATION error: %d\n", result);
+  }
+
   result = curl_easy_setopt(easyHandle, CURLOPT_NOSIGNAL, true);
   if (result != CURLE_OK) {
     logDebugMessage(1,"CURLOPT_NOSIGNAL error %d : %s\n", result, errorBuffer);
