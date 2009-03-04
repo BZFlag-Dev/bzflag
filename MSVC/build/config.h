@@ -101,7 +101,6 @@
 	#endif // WIN64
 #endif //BZ_BUILD_OS
 
-#error set these up for windows builds (32bit vs. 64bit?)
 #define SIZEOF_SHORT_INT     2
 #define SIZEOF_INT           4
 #define SIZEOF_LONG_INT      4
