@@ -64,22 +64,36 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
   else if (strcasecmp("delay", cmd) == 0) {
     float delay;
     if (!(input >> delay)) {
-      std::cout << "bad dyncol state delay" << std::endl;
+      std::cout << "bad dyncol delay" << std::endl;
     }
     dyncol->setDelay(delay);
   }
-  else if (strcasecmp("state", cmd) == 0) {
+  else if (strcasecmp("ramp", cmd) == 0) {
     float duration;
     if (!(input >> duration)) {
-      std::cout << "bad dyncol state duration" << std::endl;
+      std::cout << "bad dyncol ramp duration" << std::endl;
       return false;
     }
     float color[4];
     if (!parseColorStream(input, color)) {
-      std::cout << "bad dyncol state color" << std::endl;
+      std::cout << "bad dyncol ramp color" << std::endl;
       return false;
     }
     dyncol->addState(duration, color);
+  }
+  else if (strcasecmp("level", cmd) == 0) {
+    float duration;
+    if (!(input >> duration)) {
+      std::cout << "bad dyncol level duration" << std::endl;
+      return false;
+    }
+    float color[4];
+    if (!parseColorStream(input, color)) {
+      std::cout << "bad dyncol level color" << std::endl;
+      return false;
+    }
+    dyncol->addState(duration, color);
+    dyncol->addState(0.0f,     color); 
   }
   else {
     // NOTE: we don't use a WorldFileObstacle

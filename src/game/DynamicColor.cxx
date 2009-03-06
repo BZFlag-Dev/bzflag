@@ -15,8 +15,8 @@
 
 /* system implementation headers */
 #include <math.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -450,7 +450,7 @@ void DynamicColor::colorByStates(double t)
 }
         
 
-void * DynamicColor::pack(void *buf) const
+void* DynamicColor::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
@@ -473,7 +473,7 @@ void * DynamicColor::pack(void *buf) const
 }
 
 
-void * DynamicColor::unpack(void *buf)
+void* DynamicColor::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
@@ -542,12 +542,22 @@ void DynamicColor::print(std::ostream& out, const string& indent) const
     out << indent << "  delay " << statesDelay << std::endl;
   }
   for (size_t i = 0; i < colorStates.size(); i++) {
+    const char* keyword = "  ramp ";
     const ColorState& state = colorStates[i];
-    out << indent << "  state " << state.duration << " "
-                                << state.color[0] << " "
-                                << state.color[1] << " "
-                                << state.color[2] << " "
-                                << state.color[3] << std::endl;
+    if ((i + 1) < colorStates.size()) {
+      const ColorState& nextState = colorStates[i + 1];
+      if ((nextState.duration <= 0.0f) &&
+          (memcmp(state.color, nextState.color, sizeof(float[4])) == 0)) {
+        keyword = "  level ";
+        i++;
+      }
+    }
+    out << indent << keyword
+                  << state.duration << " "
+                  << state.color[0] << " "
+                  << state.color[1] << " "
+                  << state.color[2] << " "
+                  << state.color[3] << std::endl;
   }
 
   out << indent << "end" << std::endl << std::endl;
