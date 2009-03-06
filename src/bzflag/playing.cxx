@@ -6406,45 +6406,18 @@ static void drawInterlaced()
 
 //============================================================================//
 
-static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
-                            float muzzleHeight,
-                            float eyePoint[3], float targetPoint[3], float& fov)
+static void setupRoamingCamera(float muzzleHeight,
+                               float eyePoint[3], float targetPoint[3],
+                               float& fov)
 {
-  // default setup
-  eyePoint[0] = myTankPos[0];
-  eyePoint[1] = myTankPos[1];
-  eyePoint[2] = myTankPos[2] + muzzleHeight;
-  targetPoint[0] = eyePoint[0] + myTankDir[0];
-  targetPoint[1] = eyePoint[1] + myTankDir[1];
-  targetPoint[2] = eyePoint[2] + myTankDir[2];
-
-  // 3rd person camera
-  if (myTank && thirdPersonVars.b3rdPerson) {
-    const float distScale = thirdPersonVars.targetMultiplier;
-    targetPoint[0] = eyePoint[0] + (myTankDir[0] * distScale);
-    targetPoint[1] = eyePoint[1] + (myTankDir[1] * distScale);
-    targetPoint[2] = eyePoint[2] + (myTankDir[2] * distScale);
-    const float offsetXY = thirdPersonVars.cameraOffsetXY;
-    const float offsetZ  = thirdPersonVars.cameraOffsetZ;
-    eyePoint[0] -= (myTankDir[0] * offsetXY);
-    eyePoint[1] -= (myTankDir[1] * offsetXY);
-    eyePoint[2] += (muzzleHeight * offsetZ);
-    return;
-  }
-
-  // normal mode, use the default setup
-  if (!ROAM.isRoaming()) {
-    return;
-  }
-
-  // roaming mode
   hud->setAltitude(-1.0f);
+
   float roamViewAngle;
   const Roaming::RoamingCamera *roam = ROAM.getCamera();
   if (!(ROAM.getMode() == Roaming::roamViewFree) && ROAM.getTargetTank()) {
     Player* target = ROAM.getTargetTank();
 
-    const float *targetTankDir = target->getForward();
+    const float* targetTankDir = target->getForward();
     // fixed camera tracking target
     if (ROAM.getMode() == Roaming::roamViewTrack) {
       eyePoint[0] = roam->pos[0];
@@ -6500,9 +6473,11 @@ static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
   else {
     // free Roaming
     float dir[3];
-    dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
-    dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
-    dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+    const float phiRadians   = (float)(roam->phi   * M_PI / 180.0);
+    const float thetaRadians = (float)(roam->theta * M_PI / 180.0);
+    dir[0] = cosf(phiRadians) * cosf(thetaRadians);
+    dir[1] = cosf(phiRadians) * sinf(thetaRadians);
+    dir[2] = sinf(phiRadians);
     eyePoint[0] = roam->pos[0];
     eyePoint[1] = roam->pos[1];
     eyePoint[2] = roam->pos[2];
@@ -6518,6 +6493,38 @@ static void setupCameraView(const float myTankPos[3], const float myTankDir[3],
   }
 
   fov = (float)(roam->zoom * M_PI / 180.0);
+}
+
+
+static void setupCamera(const float myTankPos[3], const float myTankDir[3],
+                        float muzzleHeight,
+                        float eyePoint[3], float targetPoint[3], float& fov)
+{
+  if (ROAM.isRoaming()) {
+    setupRoamingCamera(muzzleHeight, eyePoint, targetPoint, fov);
+  }
+  else {
+    // default setup
+    eyePoint[0] = myTankPos[0];
+    eyePoint[1] = myTankPos[1];
+    eyePoint[2] = myTankPos[2] + muzzleHeight;
+    targetPoint[0] = eyePoint[0] + myTankDir[0];
+    targetPoint[1] = eyePoint[1] + myTankDir[1];
+    targetPoint[2] = eyePoint[2] + myTankDir[2];
+
+    if (myTank && thirdPersonVars.b3rdPerson) {
+      // 3rd person camera
+      const float distScale = thirdPersonVars.targetMultiplier;
+      targetPoint[0] = eyePoint[0] + (myTankDir[0] * distScale);
+      targetPoint[1] = eyePoint[1] + (myTankDir[1] * distScale);
+      targetPoint[2] = eyePoint[2] + (myTankDir[2] * distScale);
+      const float offsetXY = thirdPersonVars.cameraOffsetXY;
+      const float offsetZ  = thirdPersonVars.cameraOffsetZ;
+      eyePoint[0] -= (myTankDir[0] * offsetXY);
+      eyePoint[1] -= (myTankDir[1] * offsetXY);
+      eyePoint[2] += (muzzleHeight * offsetZ);
+    }
+  }
 
   SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
 }
@@ -6726,8 +6733,8 @@ void drawFrame(const float dt)
   }
   fov *= (float)(M_PI / 180.0);
 
-  setupCameraView(myTankPos, myTankDir, muzzleHeight, // const
-                  eyePoint, targetPoint, fov);        // modified
+  setupCamera(myTankPos, myTankDir, muzzleHeight, // const
+              eyePoint, targetPoint, fov);        // modified
 
   // only use a close plane for drawing in the
   // cockpit, and even then only for odd sized tanks
@@ -6862,7 +6869,7 @@ void drawFrame(const float dt)
 }
 
 
-static void setupRoamingCamera(float dt)
+static void updateRoamingCamera(float dt)
 {
   static Roaming::RoamingCamera prevDeltaCamera;
   static bool inited = false;
@@ -7314,11 +7321,10 @@ void updateShots(const float dt)
 
 void moveRoamingCamera(const float dt)
 {
-  // move roaming camera
-  if (!ROAM.isRoaming())
+  if (!ROAM.isRoaming()) {
     return;
-
-  setupRoamingCamera(dt);
+  }
+  updateRoamingCamera(dt);
   ROAM.buildRoamingLabel();
 }
 
