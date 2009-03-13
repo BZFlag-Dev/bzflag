@@ -109,7 +109,7 @@ std::string HUDuiServerListItem::calculateModes()
     else if (server->ping.pingTime >= BZDB.eval("pingHigh") && server->ping.pingTime < INT_MAX)
       modesText += ANSI_STR_BRIGHT ANSI_STR_FG_RED "L";
     else if (server->ping.pingTime >= BZDB.eval("pingHigh"))
-      modesText += ANSI_STR_PULSATING ANSI_STR_REVERSE ANSI_STR_FG_RED "L";
+      modesText += ANSI_STR_PULSATING ANSI_STR_FG_RED "L";
     else
       // shouldn't reach here
       modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
