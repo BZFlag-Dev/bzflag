@@ -728,16 +728,16 @@ static void* writeScreenshot(void* data)
 {
   ScreenshotData* ssdata = (ScreenshotData*)data;
 
-  std::string filename = getScreenShotDirName();
-  const std::string prefix = "bzfi";
-  const std::string ext = ".png";
+  const std::string dirname = getScreenShotDirName();
+  const std::string prefix  = "bzfi";
+  const std::string ext     = ".png";
 
   // scan the directory and start numbering with the filename
   // that follows the existing filename with the highest snap number
-  std::string pattern = filename + prefix + "*" + ext;
   int snap = 0;
 
 #ifdef _WIN32
+  const std::string pattern = dirname + prefix + "*" + ext;
   WIN32_FIND_DATA findData;
   HANDLE h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
@@ -751,10 +751,11 @@ static void* writeScreenshot(void* data)
     }
   }
 #else
-  DIR *directory = opendir(filename.c_str());
+  const std::string pattern = prefix + "*" + ext;
+  DIR* directory = opendir(dirname.c_str());
   if (directory) {
     struct dirent* contents;
-    std::string file, suffix;
+    std::string file;
     while ((contents = readdir(directory))) {
       file = contents->d_name;
       if (glob_match(pattern, file)) {
@@ -769,9 +770,9 @@ static void* writeScreenshot(void* data)
 #endif // _WIN32
 
   snap++;
-  filename += prefix + TextUtils::format("%04d", snap) + ext;
+  std::string filename = dirname + prefix + TextUtils::format("%04d", snap) + ext;
 
-  std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
+  std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
   if (f != NULL) {
     int w = mainWindow->getWidth(), h = mainWindow->getHeight();
