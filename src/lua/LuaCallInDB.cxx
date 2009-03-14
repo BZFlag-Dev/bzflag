@@ -107,9 +107,9 @@ LuaCallInDB::LuaCallInDB()
 	  (strncmp(#n, "Draw", 4) == 0),  \
 	  singleScript, retType)
 
-	////////////////////////////////////
-	// CEventHandler managed call-ins //
-	////////////////////////////////////
+	///////////////////////////////////
+	// EventHandler managed call-ins //
+	///////////////////////////////////
 
 	ADD_CI(Shutdown, NO_REQS, BASIC, ANY_SCRIPT);
 	
