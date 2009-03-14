@@ -392,6 +392,8 @@ namespace TextUtils
     if (key == "blinkOff")    { outLine += ANSI_STR_NO_PULSATE;   return len; }
     if (key == "under")       { outLine += ANSI_STR_UNDERLINE;    return len; }
     if (key == "underOff")    { outLine += ANSI_STR_NO_UNDERLINE; return len; }
+    if (key == "reverse")     { outLine += ANSI_STR_REVERSE;      return len; }
+    if (key == "reverseOff")  { outLine += ANSI_STR_NO_REVERSE;   return len; }
     if (key == "reset")       { outLine += ANSI_STR_RESET_FINAL;  return len; }
     if (key == "resetBright") { outLine += ANSI_STR_RESET;        return len; }
 
