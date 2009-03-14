@@ -1133,7 +1133,7 @@ static Instruction *fix_l (lua_State *L, int t) {
   }
   lua_pushvalue(L, base + 2);  /* get initial rule */
   lua_gettable(L, base + 1);  /* get its position in postions table */
-  i = lua_tonumber(L, -1);  /* convert to number */
+  i = (int)lua_tonumber(L, -1);  /* convert to number */
   lua_pop(L, 1);
   if (i == 0)  /* is it defined? */
     luaL_error(L, "initial rule not defined in given grammar");
