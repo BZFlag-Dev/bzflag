@@ -724,7 +724,7 @@ int LuaOpenGL::BeginEnd(lua_State* L)
 	if ((args < 2) || !lua_israwnumber(L, 1) || !lua_isfunction(L, 2)) {
 		luaL_error(L, "Incorrect arguments to gl.BeginEnd(type, func, ...)");
 	}
-	const GLuint primMode = (GLuint)lua_tonumber(L, 1);
+	const GLuint primMode = (GLuint)lua_tointeger(L, 1);
 
 	// call the function
 	glBegin(primMode);
@@ -1403,7 +1403,7 @@ int LuaOpenGL::ShadeModel(lua_State* L)
 		luaL_error(L, "Incorrect arguments to gl.ShadeModel()");
 	}
 
-	glShadeModel((GLenum)lua_tonumber(L, 1));
+	glShadeModel((GLenum)lua_tointeger(L, 1));
 
 	return 0;
 }
@@ -1518,7 +1518,7 @@ int LuaOpenGL::DepthTest(lua_State* L)
 	}
 	else if (lua_israwnumber(L, 1)) {
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc((GLenum)lua_tonumber(L, 1));
+		glDepthFunc((GLenum)lua_tointeger(L, 1));
 	}
 	else {
 		luaL_error(L, "Incorrect arguments to gl.DepthTest()");
@@ -1558,7 +1558,7 @@ int LuaOpenGL::Culling(lua_State* L)
 	}
 	else if (lua_israwnumber(L, 1)) {
 		glEnable(GL_CULL_FACE);
-		glCullFace((GLenum)lua_tonumber(L, 1));
+		glCullFace((GLenum)lua_tointeger(L, 1));
 	}
 	else {
 		luaL_error(L, "Incorrect arguments to gl.Culling()");
@@ -1596,7 +1596,7 @@ int LuaOpenGL::LogicOp(lua_State* L)
 	}
 	else if (lua_israwnumber(L, 1)) {
 		glEnable(GL_COLOR_LOGIC_OP);
-		glLogicOp((GLenum)lua_tonumber(L, 1));
+		glLogicOp((GLenum)lua_tointeger(L, 1));
 	}
 	else {
 		luaL_error(L, "Incorrect arguments to gl.LogicOp()");
@@ -1749,7 +1749,7 @@ int LuaOpenGL::Smoothing(lua_State* L)
 			}
 		}
 		else if (type == LUA_TNUMBER) {
-			const GLenum hint = (GLenum)lua_tonumber(L, luaIndex);
+			const GLenum hint = (GLenum)lua_tointeger(L, luaIndex);
 			if ((hint == GL_FASTEST) || (hint == GL_NICEST) || (hint == GL_DONT_CARE)) {
 				glHint(hintEnum, hint);
 				glEnable(enableEnum);
@@ -1782,7 +1782,7 @@ int LuaOpenGL::AlphaTest(lua_State* L)
 			luaL_error(L, "Incorrect arguments to gl.AlphaTest()");
 		}
 		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc((GLenum)lua_tonumber(L, 1), (GLfloat)lua_tonumber(L, 2));
+		glAlphaFunc((GLenum)lua_tointeger(L, 1), (GLfloat)lua_tonumber(L, 2));
 	}
 	else {
 		luaL_error(L, "Incorrect arguments to gl.AlphaTest()");
@@ -2069,7 +2069,7 @@ int LuaOpenGL::Clear(lua_State* L)
 		luaL_error(L, "Incorrect arguments to gl.Clear()");
 	}
 
-	const GLbitfield bits = (GLbitfield)lua_tonumber(L, 1);
+	const GLbitfield bits = (GLbitfield)lua_tointeger(L, 1);
 	if (args == 5) {
 		if (!lua_israwnumber(L, 2) || !lua_israwnumber(L, 3) ||
 		    !lua_israwnumber(L, 4) || !lua_israwnumber(L, 5)) {
@@ -2092,7 +2092,7 @@ int LuaOpenGL::Clear(lua_State* L)
 			glClearDepth((GLfloat)lua_tonumber(L, 2));
 		}
 		else if (bits == GL_STENCIL_BUFFER_BIT) {
-			glClearStencil((GLint)lua_tonumber(L, 2));
+			glClearStencil((GLint)lua_tointeger(L, 2));
 		}
 	}
 
@@ -2519,7 +2519,7 @@ int LuaOpenGL::GetMatrixData(lua_State* L)
 	const int luaType = lua_type(L, 1);
 
 	if (luaType == LUA_TNUMBER) {
-		const GLenum type = (GLenum)lua_tonumber(L, 1);
+		const GLenum type = (GLenum)lua_tointeger(L, 1);
 		GLenum pname = 0; // avoid warnings
 		switch (type) {
 			case GL_PROJECTION: { pname = GL_PROJECTION_MATRIX; break; }

@@ -2713,7 +2713,7 @@ int LuaCallOuts::MakeFont(lua_State* L)
 					}
 				}
 				else if (lua_israwnumber(L, -1)) {
-					const unsigned int value = (unsigned int)lua_tonumber(L, -1);
+					const unsigned int value = (unsigned int)lua_tointeger(L, -1);
 					if (key == "height") {
 						LuaFontTexture::SetFontHeight(value);
 					} else if (key == "texWidth") {

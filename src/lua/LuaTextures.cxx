@@ -676,19 +676,19 @@ int LuaTextureMgr::CreateTexture(lua_State* L)
 				const string key = lua_tostring(L, -2);
 				if (lua_israwnumber(L, -1)) {
 					if (key == "target") {
-						target = (GLenum)lua_tonumber(L, -1);
+						target = (GLenum)lua_tointeger(L, -1);
 					} else if (key == "format") {
-						format = (GLint)lua_tonumber(L, -1);
+						format = (GLint)lua_tointeger(L, -1);
 					} else if (key == "min_filter") {
-						min_filter = (GLenum)lua_tonumber(L, -1);
+						min_filter = (GLenum)lua_tointeger(L, -1);
 					} else if (key == "mag_filter") {
-						mag_filter = (GLenum)lua_tonumber(L, -1);
+						mag_filter = (GLenum)lua_tointeger(L, -1);
 					} else if (key == "wrap_s") {
-						wrap_s = (GLenum)lua_tonumber(L, -1);
+						wrap_s = (GLenum)lua_tointeger(L, -1);
 					} else if (key == "wrap_t") {
-						wrap_t = (GLenum)lua_tonumber(L, -1);
+						wrap_t = (GLenum)lua_tointeger(L, -1);
 					} else if (key == "wrap_r") {
-						wrap_r = (GLenum)lua_tonumber(L, -1);
+						wrap_r = (GLenum)lua_tointeger(L, -1);
 					} else if (key == "aniso") {
 						aniso = (GLfloat)lua_tonumber(L, -1);
 					}
