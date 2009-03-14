@@ -64,7 +64,7 @@ bool LuaHandle::devMode = false;
 
 LuaHandle::LuaHandle(const string& _name, int _order,
                      bool _fullRead, bool _inputCtrl)
-: EventClient(_name, _order, _fullRead, _inputCtrl)
+: EventClient(_name, _order, _fullRead, devMode, _inputCtrl) // FIXME gameCtrl == devMode?
 , requestReload  (false)
 , requestDisable (false)
 {
@@ -256,51 +256,6 @@ void LuaHandle::CheckStack()
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::UpdateCallIn(const string& ciName, bool state)
-{
-	if (state) {
-		eventHandler.InsertEvent(this, luaCallInDB.GetEventName(ciName));
-	} else {
-		eventHandler.RemoveEvent(this, luaCallInDB.GetEventName(ciName));
-	}
-}
-
-
-bool LuaHandle::GlobalCallInCheck(const string& ciName)
-{
-	if (L == NULL) {
-		return false;
-	}
-
-	if (!CanUseCallIn(ciName)) {
-		return false;
-	}
-
-	const int ciCode = luaCallInDB.GetCode(ciName);
-	if (ciCode == 0) {
-		return false;
-	}
-
-	lua_checkstack(L, 4);
-	lua_getglobal(L, ciName.c_str());
-	if (!lua_isfunction(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-
-	lua_pushvalue(L, -1); // make a copy
-	lua_rawseti(L, LUA_CALLINSINDEX, ciCode);
-
-	lua_pushstring(L, ciName.c_str());
-	lua_insert(L, -2); // move the function below the string
-	lua_rawset(L, LUA_CALLINSINDEX);
-
-	UpdateCallIn(ciName, true);
-
-	return true;
-}
-
-
 bool LuaHandle::CanUseCallIn(int code) const
 {
 	return (validCallIns.find(code) != validCallIns.end());
@@ -314,6 +269,17 @@ bool LuaHandle::CanUseCallIn(const string& ciName) const
 		return false;
 	}	
 	return (validCallIns.find(code) != validCallIns.end());
+}
+
+
+bool LuaHandle::UpdateCallIn(const string& ciName, bool state)
+{
+	const string& eventName = luaCallInDB.GetEventName(ciName);
+	if (state) {
+		return eventHandler.InsertEvent(this, eventName);
+	} else {
+		return eventHandler.RemoveEvent(this, eventName);
+	}
 }
 
 
@@ -581,12 +547,10 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
 	const LuaCallInDB::InfoMap& ciInfoMap = luaCallInDB.GetInfoMap();
 	LuaCallInDB::InfoMap::const_iterator it;
 	
-	const LuaHandle* lh = GetActiveHandle();
-
 	if (lua_israwstring(L, 1)) {
 		const string ciName = lua_tostring(L, 1);
 		const bool wantAll = lua_isboolean(L, 2) && lua_tobool(L, 2);
-		if (wantAll || lh->CanUseCallIn(ciName)) {
+		if (wantAll || activeHandle->CanUseCallIn(ciName)) {
 			it = ciInfoMap.find(ciName);
 			if (it != ciInfoMap.end()) {
 				PushCallInInfo(L, it->second);
@@ -600,7 +564,7 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
 		lua_createtable(L, 0, ciInfoMap.size());
 		for (it = ciInfoMap.begin(); it != ciInfoMap.end(); ++it) {
 			const LuaCallInDB::CallInInfo& ciInfo = it->second;
-			if (wantAll || lh->CanUseCallIn(ciInfo.name)) {
+			if (wantAll || activeHandle->CanUseCallIn(ciInfo.name)) {
 				lua_pushstring(L, ciInfo.name.c_str());
 				PushCallInInfo(L, ciInfo);
 				lua_rawset(L, -3);
@@ -615,7 +579,7 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
 int LuaHandle::ScriptCanUseCallIn(lua_State* L)
 {
 	const string ciName = lua_tostring(L, 1);
-	lua_pushboolean(L, GetActiveHandle()->CanUseCallIn(ciName));
+	lua_pushboolean(L, activeHandle->CanUseCallIn(ciName));
 	return 1;
 }
 
@@ -624,15 +588,15 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 {
 	const string ciName = luaL_checkstring(L, 1);
 
-	if (!GetActiveHandle()->CanUseCallIn(ciName)) {
-		return 0;
-	}
 	const int ciCode = luaCallInDB.GetCode(ciName);
 	if (ciCode == 0) {
 		if (devMode) {
-			LuaLog(1, "Request to update an Unknown call-in (%s)\n",
-			       ciName.c_str());
+			LuaLog(1, "Request to update an Unknown call-in (%s)\n", ciName.c_str());
 		}
+		return 0;
+	}
+
+	if (!activeHandle->CanUseCallIn(ciName)) {
 		return 0;
 	}
 
@@ -648,9 +612,13 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 	lua_pushvalue(L, 2); // make a copy
 	lua_rawset(L, LUA_CALLINSINDEX);
 
-	activeHandle->UpdateCallIn(ciName, haveFunc);
+	const string& eventName = luaCallInDB.GetEventName(ciName);
+	if (eventHandler.IsManaged(eventName)) {
+		lua_pushboolean(L, activeHandle->UpdateCallIn(ciName, haveFunc));
+	} else {
+		lua_pushboolean(L, true);
+	}
 
-	lua_pushboolean(L, true);
 	return 1;
 }
 

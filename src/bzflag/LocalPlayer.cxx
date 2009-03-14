@@ -14,15 +14,16 @@
 #include "LocalPlayer.h"
 
 /* common implementation headers */
-#include "CommandManager.h"
 #include "BZDBCache.h"
-#include "FlagSceneNode.h"
-#include "CollisionManager.h"
-#include "PhysicsDriver.h"
 #include "BzfEvent.h"
-#include "WallObstacle.h"
+#include "CollisionManager.h"
+#include "CommandManager.h"
+#include "EventHandler.h"
+#include "FlagSceneNode.h"
 #include "MeshObstacle.h"
+#include "PhysicsDriver.h"
 #include "TextUtils.h"
+#include "WallObstacle.h"
 
 /* local implementation headers */
 #include "World.h"
@@ -34,38 +35,40 @@
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
 
-LocalPlayer*		LocalPlayer::mainPlayer = NULL;
+
+LocalPlayer* LocalPlayer::mainPlayer = NULL;
+
 
 LocalPlayer::LocalPlayer(const PlayerId& _id,
 			 const char* name,
-			 const PlayerType _type) :
-  BaseLocalPlayer(_id, name, _type),
-  gettingSound(true),
-  server(ServerLink::getServer()),
-  location(Dead),
-  firingStatus(Deceased),
-  flagShakingTime(0.0f),
-  flagShakingWins(0),
-  antidoteFlag(NULL),
-  desiredSpeed(0.0f),
-  desiredAngVel(0.0f),
-  lastSpeed(0.0f),
-  anyShotActive(false),
-  target(NULL),
-  nemesis(NULL),
-  recipient(NULL),
-  inputChanged(false),
-  spawning(false),
-  wingsFlapCount(0),
-  left(false),
-  right(false),
-  up(false),
-  down(false),
-  entryDrop(true),
-  wantJump(false),
-  jumpPressed(false),
-  deathPhyDrv(-1),
-  hitWall(false)
+			 const PlayerType _type)
+: BaseLocalPlayer(_id, name, _type)
+, gettingSound(true)
+, server(ServerLink::getServer())
+, location(Dead)
+, firingStatus(Deceased)
+, flagShakingTime(0.0f)
+, flagShakingWins(0)
+, antidoteFlag(NULL)
+, desiredSpeed(0.0f)
+, desiredAngVel(0.0f)
+, lastSpeed(0.0f)
+, anyShotActive(false)
+, target(NULL)
+, nemesis(NULL)
+, recipient(NULL)
+, inputChanged(false)
+, spawning(false)
+, wingsFlapCount(0)
+, left(false)
+, right(false)
+, up(false)
+, down(false)
+, entryDrop(true)
+, wantJump(false)
+, jumpPressed(false)
+, deathPhyDrv(-1)
+, hitWall(false)
 {
   // initialize shots array to no shots fired
   World *world = World::getWorld();
@@ -92,18 +95,21 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   requestedAutopilot = false;
 }
 
+
 LocalPlayer::~LocalPlayer()
 {
   // free antidote flag
   delete antidoteFlag;
 }
 
-void			LocalPlayer::setMyTank(LocalPlayer* player)
+
+void LocalPlayer::setMyTank(LocalPlayer* player)
 {
   mainPlayer = player;
 }
 
-void			LocalPlayer::doUpdate(float dt)
+
+void LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
   const int numShots = getMaxShots();
@@ -214,7 +220,7 @@ float LocalPlayer::getNewAngVel(float old, float desired, float dt)
 }
 
 
-void			LocalPlayer::doUpdateMotion(float dt)
+void LocalPlayer::doUpdateMotion(float dt)
 {
   static const float MinSearchStep = 0.0001f;
   static const int MaxSearchSteps = 7;
@@ -1024,22 +1030,26 @@ void LocalPlayer::collectInsideBuildings()
   return;
 }
 
-float			LocalPlayer::getFlagShakingTime() const
+
+float LocalPlayer::getFlagShakingTime() const
 {
   return flagShakingTime;
 }
 
-int			LocalPlayer::getFlagShakingWins() const
+
+int LocalPlayer::getFlagShakingWins() const
 {
   return flagShakingWins;
 }
 
-const GLfloat*		LocalPlayer::getAntidoteLocation() const
+
+const GLfloat* LocalPlayer::getAntidoteLocation() const
 {
   return (const GLfloat*)(antidoteFlag ? antidoteFlag->getSphere() : NULL);
 }
 
-void			LocalPlayer::restart(const float* pos, float _azimuth)
+
+void LocalPlayer::restart(const float* pos, float _azimuth)
 {
   // put me in limbo
   setStatus(short(PlayerState::DeadStatus));
@@ -1085,12 +1095,14 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   setStatus(getStatus() | short(PlayerState::Alive));
 }
 
-void			LocalPlayer::setTeam(TeamColor _team)
+
+void LocalPlayer::setTeam(TeamColor _team)
 {
   changeTeam(_team);
 }
 
-void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
+
+void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
 
@@ -1152,7 +1164,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 }
 
 
-void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
+void LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
   FlagType* flag = getFlag();
 
@@ -1183,7 +1195,8 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
   return;
 }
 
-void		LocalPlayer::setDeadStop ( void  )
+
+void LocalPlayer::setDeadStop ( void  )
 {
 	float allStop[3] = {0,0,0};
 
@@ -1192,7 +1205,7 @@ void		LocalPlayer::setDeadStop ( void  )
 }
 
 
-void			LocalPlayer::setPause(bool pause)
+void LocalPlayer::setPause(bool pause)
 {
   if (isAlive()) {
     if (pause && !isPaused()) {
@@ -1206,19 +1219,25 @@ void			LocalPlayer::setPause(bool pause)
   }
 }
 
-void			LocalPlayer::requestAutoPilot(bool autopilot)
+
+void LocalPlayer::requestAutoPilot(bool autopilot)
 {
-	requestedAutopilot = autopilot;
-	server->sendAutoPilot(autopilot);
+  requestedAutopilot = autopilot;
+  server->sendAutoPilot(autopilot);
 }
 
-bool			LocalPlayer::fireShot()
+
+bool LocalPlayer::fireShot()
 {
   if (! (firingStatus == Ready || firingStatus == Zoned))
     return false;
 
   if (!canShoot())
     return false;
+
+  if (eventHandler.ForbidShot()) {
+    return false;
+  }
 
   // find an empty slot
   const int numShots = getMaxShots();
@@ -1256,35 +1275,34 @@ bool			LocalPlayer::fireShot()
   if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
     EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
 
-  if (gettingSound)
-  {
-	  switch(firingInfo.shotType)
-	  {
-		case ShockWaveShot:
-			SOUNDSYSTEM.play(SFX_SHOCK);
-			ForceFeedback::shockwaveFired();
-			break;
-
-		case LaserShot:
-			SOUNDSYSTEM.play(SFX_LASER);
-			ForceFeedback::laserFired();
-			break;
-
-		case GMShot:
-			SOUNDSYSTEM.play(SFX_MISSILE);
-			ForceFeedback::shotFired();
-			break;
-
-		case ThiefShot:
-			SOUNDSYSTEM.play(SFX_THIEF);
-			ForceFeedback::shotFired();
-			break;
-
-		default:
-			SOUNDSYSTEM.play(SFX_FIRE);
-			ForceFeedback::shotFired();
-			break;
-	  }
+  if (gettingSound) {
+    switch (firingInfo.shotType) {
+      case ShockWaveShot: {
+        SOUNDSYSTEM.play(SFX_SHOCK);
+        ForceFeedback::shockwaveFired();
+        break;
+      }
+      case LaserShot: {
+        SOUNDSYSTEM.play(SFX_LASER);
+        ForceFeedback::laserFired();
+        break;
+      }
+      case GMShot: {
+        SOUNDSYSTEM.play(SFX_MISSILE);
+        ForceFeedback::shotFired();
+        break;
+      }
+      case ThiefShot: {
+        SOUNDSYSTEM.play(SFX_THIEF);
+        ForceFeedback::shotFired();
+        break;
+      }
+      default: {
+        SOUNDSYSTEM.play(SFX_FIRE);
+        ForceFeedback::shotFired();
+        break;
+      }
+    }
   }
 
   if (getFlag() == Flags::TriggerHappy) {
@@ -1336,19 +1354,22 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
   return true;
 }
 
-void			LocalPlayer::setJump()
+
+void LocalPlayer::setJump()
 {
   wantJump = jumpPressed;
   jumpPressed = false;
 }
 
-void			LocalPlayer::setJumpPressed(bool value)
+
+void LocalPlayer::setJumpPressed(bool value)
 {
   if (onSolidSurface() || hasWings())
     jumpPressed = value;
 }
 
-void			LocalPlayer::doJump()
+
+void LocalPlayer::doJump()
 {
   FlagType* flag = getFlag();
   World *world = World::getWorld();
@@ -1359,6 +1380,10 @@ void			LocalPlayer::doJump()
   // check to see if it's possible for us to jump
   // i.e. appropriate flags, world settings, permissions
   if (!canJump()) {
+    return;
+  }
+
+  if (eventHandler.ForbidJump()) {
     return;
   }
 
@@ -1417,24 +1442,31 @@ void			LocalPlayer::doJump()
   wantJump = false;
 }
 
-void			LocalPlayer::setTarget(const Player* _target)
+
+void LocalPlayer::setTarget(const Player* _target)
 {
+  if (_target && eventHandler.ForbidShotLock(*_target)) {
+    return;
+  }
   target = _target;
 }
 
-void			LocalPlayer::setNemesis(const Player* _nemesis)
+
+void LocalPlayer::setNemesis(const Player* _nemesis)
 {
   if ((_nemesis == NULL) || _nemesis->getPlayerType() == TankPlayer)
     nemesis = _nemesis;
 }
 
-void			LocalPlayer::setRecipient(const Player* _recipient)
+
+void LocalPlayer::setRecipient(const Player* _recipient)
 {
   if ((_recipient == NULL) || (_recipient->getId() <= LastRealPlayer))
     recipient = _recipient;
 }
 
-void			LocalPlayer::explodeTank()
+
+void LocalPlayer::explodeTank()
 {
   if (location == Dead || location == Exploding) return;
   float gravity      = BZDBCache::gravity;
@@ -1464,27 +1496,29 @@ void			LocalPlayer::explodeTank()
   target = NULL;		// lose lock when dead
 }
 
+
 void LocalPlayer::doMomentum(float dt,float& speed, float& angVel)
 {
   computeMomentum(dt, getFlag(), speed,angVel,lastSpeed,getAngularVelocity());
 }
+
 
 void LocalPlayer::doFriction(float dt, const float *oldVelocity, float *newVelocity)
 {
   computeFriction(dt,getFlag(),oldVelocity,newVelocity);
 }
 
-void			LocalPlayer::doForces(float /*dt*/,
-					      float* /*velocity*/,
-					      float& /*angVel*/)
+
+void LocalPlayer::doForces(float /*dt*/, float* /*velocity*/, float& /*angVel*/)
 {
   // apply external forces
   // do nothing -- no external forces right now
 }
 
+
 // NOTE -- minTime should be initialized to Infinity by the caller
-bool			LocalPlayer::checkHit(const Player* source,
-					      const ShotPath*& hit, float& minTime) const
+bool LocalPlayer::checkHit(const Player* source,
+                           const ShotPath*& hit, float& minTime) const
 {
   bool goodHit = false;
 
@@ -1559,7 +1593,8 @@ bool			LocalPlayer::checkHit(const Player* source,
   return goodHit;
 }
 
-bool		LocalPlayer::checkCollision(const Player* otherTank)
+
+bool LocalPlayer::checkCollision(const Player* otherTank)
 {
   if (!otherTank) return false;
 
@@ -1586,7 +1621,8 @@ bool		LocalPlayer::checkCollision(const Player* otherTank)
   }
 }
 
-void			LocalPlayer::setFlag(FlagType* flag)
+
+void LocalPlayer::setFlag(FlagType* flag)
 {
   Player::setFlag(flag);
   World *world = World::getWorld();
@@ -1628,10 +1664,9 @@ void			LocalPlayer::setFlag(FlagType* flag)
   }
 }
 
-void			LocalPlayer::changeScore(float newRank,
-						 short newWins,
-						 short newLosses,
-						 short newTks)
+
+void LocalPlayer::changeScore(float newRank,
+                              short newWins, short newLosses, short newTks)
 {
   Player::changeScore(newRank, newWins, newLosses, newTks);
   World *world = World::getWorld();
@@ -1649,13 +1684,15 @@ void			LocalPlayer::changeScore(float newRank,
   }
 }
 
-void			LocalPlayer::addAntidote(SceneDatabase* scene)
+
+void LocalPlayer::addAntidote(SceneDatabase* scene)
 {
   if (antidoteFlag)
     scene->addDynamicNode(antidoteFlag);
 }
 
-std::string		LocalPlayer::getInputMethodName(InputMethod whatInput)
+
+std::string LocalPlayer::getInputMethodName(InputMethod whatInput)
 {
   switch (whatInput) {
     case Keyboard:
@@ -1671,6 +1708,7 @@ std::string		LocalPlayer::getInputMethodName(InputMethod whatInput)
       return std::string("Unnamed Device");
   }
 }
+
 
 void LocalPlayer::setKey(int button, bool pressed) {
   switch (button) {
@@ -1688,6 +1726,7 @@ void LocalPlayer::setKey(int button, bool pressed) {
     break;
   }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

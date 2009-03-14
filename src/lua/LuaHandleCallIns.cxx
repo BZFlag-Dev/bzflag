@@ -29,6 +29,22 @@ using std::set;
 #include "../bzflag/Player.h"
 #include "../bzflag/ShotPath.h"
 
+
+//============================================================================//
+//============================================================================//
+
+static bool PopBool(lua_State* L, bool def)
+{
+	if (!lua_isboolean(L, -1)) {
+		lua_pop(L, 1);
+		return def;
+	}
+	const bool retval = lua_tobool(L, -1);
+	lua_pop(L, 1);
+	return retval;
+}
+
+
 //============================================================================//
 //============================================================================//
 
@@ -697,14 +713,7 @@ bool LuaHandle::KeyPress(bool taken, int key, bool isRepeat)
 		return false;
 	}
 
-	// const int args = lua_gettop(L); unused
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -737,13 +746,7 @@ bool LuaHandle::KeyRelease(bool taken, int key)
 		return false;
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -764,13 +767,7 @@ bool LuaHandle::MousePress(bool taken, int x, int y, int button)
 		return false;
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -791,13 +788,7 @@ bool LuaHandle::MouseRelease(bool taken, int x, int y, int button)
 		return false;
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -817,13 +808,7 @@ bool LuaHandle::MouseMove(bool taken, int x, int y)
 		return false;
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -842,13 +827,7 @@ bool LuaHandle::MouseWheel(bool taken, float value)
 		return false;
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -867,13 +846,7 @@ bool LuaHandle::IsAbove(int x, int y)
 		return false;
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = lua_tobool(L, -1);
-	lua_pop(L, 1);
-	return retval;
+	return PopBool(L, false);
 }
 
 
@@ -928,6 +901,91 @@ void LuaHandle::WordComplete(const string& line,
 	lua_pop(L, 1);
 
 	return;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+bool LuaHandle::ForbidSpawn()
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 2);
+	if (!PushCallIn(LUA_CI_ForbidSpawn)) {
+		return false;
+	}
+
+	if (!RunCallIn(LUA_CI_ForbidSpawn, 0, 1)) {
+		return false;
+	}
+
+	return PopBool(L, false);
+}
+
+
+bool LuaHandle::ForbidJump()
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 2);
+	if (!PushCallIn(LUA_CI_ForbidJump)) {
+		return false;
+	}
+
+	if (!RunCallIn(LUA_CI_ForbidJump, 0, 1)) {
+		return false;
+	}
+
+	return PopBool(L, false);
+}
+
+
+bool LuaHandle::ForbidShot()
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 2);
+	if (!PushCallIn(LUA_CI_ForbidShot)) {
+		return false;
+	}
+
+	if (!RunCallIn(LUA_CI_ForbidShot, 0, 1)) {
+		return false;
+	}
+
+	return PopBool(L, false);
+}
+
+
+bool LuaHandle::ForbidShotLock(const Player& player)
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 3);
+	if (!PushCallIn(LUA_CI_ForbidShotLock)) {
+		return false;
+	}
+
+	lua_pushinteger(L, player.getId());
+
+	if (!RunCallIn(LUA_CI_ForbidShotLock, 1, 1)) {
+		return false;
+	}
+
+	return PopBool(L, false);
+}
+
+
+bool LuaHandle::ForbidFlagDrop()
+{
+	LUA_CALL_IN_CHECK(L);	
+	lua_checkstack(L, 3);
+	if (!PushCallIn(LUA_CI_ForbidFlagDrop)) {
+		return false;
+	}
+
+	if (!RunCallIn(LUA_CI_ForbidFlagDrop, 0, 1)) {
+		return false;
+	}
+
+	return PopBool(L, false);
 }
 
 

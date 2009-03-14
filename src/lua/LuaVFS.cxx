@@ -62,7 +62,7 @@ bool LuaVFS::PushEntries(lua_State* L)
 
 int LuaVFS::FileExists(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
@@ -79,7 +79,7 @@ int LuaVFS::FileExists(lua_State* L)
 
 int LuaVFS::FileSize(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
@@ -101,7 +101,7 @@ int LuaVFS::FileSize(lua_State* L)
 
 int LuaVFS::ReadFile(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());
@@ -161,7 +161,7 @@ static bool ParseWriteData(lua_State* L, int index, string& data)
 
 int LuaVFS::WriteFile(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	const string modes = lh->GetFSWriteAll();
@@ -184,7 +184,7 @@ int LuaVFS::WriteFile(lua_State* L)
 
 int LuaVFS::AppendFile(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	const string modes = lh->GetFSWriteAll();
@@ -207,7 +207,7 @@ int LuaVFS::AppendFile(lua_State* L)
 
 int LuaVFS::RemoveFile(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	const string modes = lh->GetFSWriteAll();
@@ -225,7 +225,7 @@ int LuaVFS::RemoveFile(lua_State* L)
 
 int LuaVFS::RenameFile(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* oldPath = luaL_checkstring(L, 1);
 	const char* newPath = luaL_checkstring(L, 2);
@@ -244,7 +244,7 @@ int LuaVFS::RenameFile(lua_State* L)
 
 int LuaVFS::Include(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	lua_settop(L, 3);
 	const char* path = luaL_checkstring(L, 1);
@@ -295,7 +295,7 @@ int LuaVFS::Include(lua_State* L)
 
 int LuaVFS::CreateDir(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSWrite().c_str());
@@ -314,7 +314,7 @@ int LuaVFS::CreateDir(lua_State* L)
 
 int LuaVFS::DirList(lua_State* L)
 {
-	const LuaHandle* lh = LuaHandle::GetActiveHandle();
+	const LuaHandle* lh = L2H(L);
 
 	const char* path = luaL_checkstring(L, 1);
 	string modes = luaL_optstring(L, 2, lh->GetFSRead().c_str());

@@ -53,17 +53,6 @@ enum LuaCallInCode {
 	LUA_CI_GotGfxBlock,
 	LUA_CI_LostGfxBlock,
 
-	LUA_CI_KeyPress,
-	LUA_CI_KeyRelease,
-	LUA_CI_MousePress,
-	LUA_CI_MouseMove,
-	LUA_CI_MouseRelease,
-	LUA_CI_MouseWheel,
-	LUA_CI_IsAbove,
-	LUA_CI_GetTooltip,
-
-	LUA_CI_WordComplete,
-
 	LUA_CI_GLResize,
 	LUA_CI_GLReload, // EventHandler's GLInitContext
 	LUA_CI_GLUnmapped,
@@ -75,7 +64,24 @@ enum LuaCallInCode {
 	LUA_CI_DrawWorldShadow,
 	LUA_CI_DrawScreenStart,
 	LUA_CI_DrawScreen,
-	LUA_CI_DrawRadar
+	LUA_CI_DrawRadar,
+
+	LUA_CI_KeyPress,
+	LUA_CI_KeyRelease,
+	LUA_CI_MousePress,
+	LUA_CI_MouseMove,
+	LUA_CI_MouseRelease,
+	LUA_CI_MouseWheel,
+	LUA_CI_IsAbove,
+	LUA_CI_GetTooltip,
+
+	LUA_CI_WordComplete,
+
+	LUA_CI_ForbidSpawn,
+	LUA_CI_ForbidJump,
+	LUA_CI_ForbidShot,
+	LUA_CI_ForbidShotLock,
+	LUA_CI_ForbidFlagDrop
 };
 
 
@@ -94,15 +100,18 @@ class LuaCallInDB {
 		struct CallInInfo {
 			CallInInfo() {}
 			CallInInfo(int c, const char* n,
-			           bool fullRead, bool inputCtrl,
+			           bool fullRead, bool gameCtrl, bool inputCtrl,
 			           bool rev, const char* ss, const char* lt)
 			: code(c), name(n)
-			, reqFullRead(fullRead), reqInputCtrl(inputCtrl)
+			, reqFullRead(fullRead)
+			, reqGameCtrl(gameCtrl)
+			, reqInputCtrl(inputCtrl)
 			, reversed(rev), loopType(lt), singleScript(ss)
 			{}
 			int code;
 			std::string name;
 			bool reqFullRead;
+			bool reqGameCtrl;
 			bool reqInputCtrl;
 			bool reversed;
 			std::string loopType;     // suggested control loop for lua handlers
@@ -146,6 +155,7 @@ class LuaCallInDB {
 
 	protected:
 		bool SetupCallIn(int code, const std::string& name);
+		void CheckCallIn(int code, const std::string& name);
 
 	protected:
 		InfoMap infoMap;	

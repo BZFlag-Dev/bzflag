@@ -76,13 +76,7 @@ class LuaHandle : public EventClient
 	public: // call-ins
 		virtual bool CanUseCallIn(int code) const;
 		virtual bool CanUseCallIn(const std::string& name) const;
-
-		virtual void UpdateCallIn(const std::string& name, bool state);
-
-		virtual bool GlobalCallInCheck(const std::string& name);
-		bool WantsEvent(const std::string& eName) { // for EventHandler
-			return GlobalCallInCheck(eName);
-		}
+		virtual bool UpdateCallIn(const std::string& name, bool state);
 
 		virtual void Shutdown(); // custom to LuaHandle
 
@@ -152,6 +146,12 @@ class LuaHandle : public EventClient
 
 		virtual void WordComplete(const std::string& /*line*/,
 		                          std::set<std::string>& /*partials*/);
+
+    virtual bool ForbidSpawn();
+    virtual bool ForbidJump();
+    virtual bool ForbidShot();
+    virtual bool ForbidShotLock(const Player&);
+    virtual bool ForbidFlagDrop();
 
 	protected:
 		LuaHandle(const std::string& name, int order, bool fullRead, bool inputCtrl);

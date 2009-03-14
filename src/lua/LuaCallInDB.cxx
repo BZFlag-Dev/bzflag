@@ -10,6 +10,9 @@
 using std::string;
 using std::map;
 
+// common headers
+#include "EventHandler.h"
+
 // local headers
 #include "LuaCallInDB.h"
 #include "LuaInclude.h"
@@ -62,22 +65,27 @@ bool LuaCallInDB::SetupCallIn(int code, const string& name)
 	
 	codeToName[code] = name;
 	nameToCode[name] = code;
+
 	return true;
 }
 
+
+//============================================================================//
+//============================================================================//
 
 LuaCallInDB::LuaCallInDB()
 {
 	// NOTE: less chance of typos doing it this way
 	const int NO_REQS        = 0;
 	const int REQ_FULL_READ  = (1 << 0);
-	const int REQ_INPUT_CTRL = (1 << 1);
+	const int REQ_GAME_CTRL  = (1 << 1);
+	const int REQ_INPUT_CTRL = (1 << 2);
 
 	// loopType
 	const char* BASIC          = "BASIC";
 	const char* FIRST_TRUE     = "FIRST_TRUE";
 	const char* TAKEN_CONTINUE = "TAKEN_CONTINUE";
-//	const char* FIRST_FALSE  = "FIRST_FALSE";
+	const char* FIRST_FALSE    = "FIRST_FALSE";
 //	const char* FIRST_NUMBER = "FIRST_NUMBER";
 	const char* FIRST_STRING   = "FIRST_STRING";
 //	const char* BOOLEAN_OR   = "BOOLEAN_OR";
@@ -94,8 +102,10 @@ LuaCallInDB::LuaCallInDB()
 	infoMap[#n] = CallInInfo(         \
 	  LUA_CI_ ## n, n,                \
 	  ((bits) & REQ_FULL_READ)  != 0, \
+	  ((bits) & REQ_GAME_CTRL)  != 0, \
 	  ((bits) & REQ_INPUT_CTRL) != 0, \
-	  strncmp(#n, "Draw", 4) == 0, singleScript, retType)
+	  (strncmp(#n, "Draw", 4) == 0),  \
+	  singleScript, retType)
 
 	////////////////////////////////////
 	// CEventHandler managed call-ins //
@@ -163,6 +173,12 @@ LuaCallInDB::LuaCallInDB()
 	ADD_CI(IsAbove,      REQ_INPUT_CTRL, FIRST_TRUE,   ANY_SCRIPT);
 	ADD_CI(GetTooltip,   REQ_INPUT_CTRL, FIRST_STRING, ANY_SCRIPT);
 	ADD_CI(WordComplete, REQ_INPUT_CTRL, SPECIAL,      ANY_SCRIPT);
+
+	ADD_CI(ForbidSpawn,    REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
+	ADD_CI(ForbidJump,     REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
+	ADD_CI(ForbidShot,     REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
+	ADD_CI(ForbidShotLock, REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
+	ADD_CI(ForbidFlagDrop, REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
 }
 
 

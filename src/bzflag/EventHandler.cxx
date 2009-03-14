@@ -38,7 +38,8 @@ EventHandler eventHandler;
 
 // it's easier to read with named booleans
 static const int REQ_FULL_READ  = (1 << 0);
-static const int REQ_INPUT_CTRL = (1 << 1);
+static const int REQ_GAME_CTRL  = (1 << 1);
+static const int REQ_INPUT_CTRL = (1 << 2);
 
 
 void EventHandler::SetupEvent(const string& eName, EventClientList* list,
@@ -46,9 +47,12 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 {
   list->set_reversed(reversed);
   assert(eventMap.find(eName) == eventMap.end());
-  const bool reqFullRead  = ((bits & REQ_FULL_READ) ? true : false);
+  const bool reqFullRead  = ((bits & REQ_FULL_READ)  ? true : false);
+  const bool reqGameCtrl  = ((bits & REQ_GAME_CTRL)  ? true : false);
   const bool reqInputCtrl = ((bits & REQ_INPUT_CTRL) ? true : false);
-  eventMap[eName] = EventInfo(eName, list, reqFullRead, reqInputCtrl, reversed);
+  eventMap[eName] = EventInfo(eName, list,
+                              reqFullRead, reqGameCtrl, reqInputCtrl,
+                              reversed);
 }
 
 
@@ -73,20 +77,20 @@ EventHandler::EventHandler()
   SETUP_EVENT(ServerJoined, 0, false);
   SETUP_EVENT(ServerParted, 0, false);
 
-  SETUP_EVENT(PlayerAdded,       0, false);
-  SETUP_EVENT(PlayerRemoved,     0, false);
-  SETUP_EVENT(PlayerSpawned,     0, false);
-  SETUP_EVENT(PlayerKilled,      0, false);
-  SETUP_EVENT(PlayerJumped,      0, false);
-  SETUP_EVENT(PlayerLanded,      0, false);
-  SETUP_EVENT(PlayerTeleported,  0, false);
-  SETUP_EVENT(PlayerTeamChange,  0, false);
-  SETUP_EVENT(PlayerScoreChange, 0, false);
+  SETUP_EVENT(PlayerAdded,       0,             false);
+  SETUP_EVENT(PlayerRemoved,     0,             false);
+  SETUP_EVENT(PlayerSpawned,     0,             false);
+  SETUP_EVENT(PlayerKilled,      0,             false);
+  SETUP_EVENT(PlayerJumped,      REQ_FULL_READ, false);
+  SETUP_EVENT(PlayerLanded,      REQ_FULL_READ, false);
+  SETUP_EVENT(PlayerTeleported,  REQ_FULL_READ, false);
+  SETUP_EVENT(PlayerTeamChange,  0,             false);
+  SETUP_EVENT(PlayerScoreChange, 0,             false);
 
-  SETUP_EVENT(ShotAdded,      0, false);
-  SETUP_EVENT(ShotRemoved,    0, false);
-  SETUP_EVENT(ShotRicochet,   0, false);
-  SETUP_EVENT(ShotTeleported, 0, false);
+  SETUP_EVENT(ShotAdded,      REQ_FULL_READ, false);
+  SETUP_EVENT(ShotRemoved,    REQ_FULL_READ, false);
+  SETUP_EVENT(ShotRicochet,   REQ_FULL_READ, false);
+  SETUP_EVENT(ShotTeleported, REQ_FULL_READ, false);
 
   SETUP_EVENT(FlagAdded,       0, false);
   SETUP_EVENT(FlagRemoved,     0, false);
@@ -119,6 +123,12 @@ EventHandler::EventHandler()
   SETUP_EVENT(GetTooltip,   REQ_INPUT_CTRL, false);
 
   SETUP_EVENT(WordComplete, REQ_INPUT_CTRL, false);
+
+  SETUP_EVENT(ForbidSpawn,    REQ_GAME_CTRL, false);
+  SETUP_EVENT(ForbidJump,     REQ_GAME_CTRL, false);
+  SETUP_EVENT(ForbidShot,     REQ_GAME_CTRL, false);
+  SETUP_EVENT(ForbidShotLock, REQ_GAME_CTRL, false);
+  SETUP_EVENT(ForbidFlagDrop, REQ_GAME_CTRL, false);
 }
 
 
@@ -142,15 +152,6 @@ void EventHandler::AddClient(EventClient* ec)
     return;
   }
   clientSet.insert(ec);
-
-  // add events that the clients wants (and is allowed to use)
-  EventMap::const_iterator it;
-  for (it = eventMap.begin(); it != eventMap.end(); ++it) {
-    const EventInfo& ei = it->second;
-    if (ei.IsManaged() && CanUseEvent(ec, ei) && ec->WantsEvent(ei.name)) {
-      ei.GetList()->insert(ec);
-    }
-  }
 }
 
 
@@ -222,6 +223,13 @@ bool EventHandler::ReqFullRead(const std::string& eName) const
 }
 
 
+bool EventHandler::ReqGameCtrl(const std::string& eName) const
+{
+  const EventInfo* ei = GetEventInfo(eName);
+  return (ei != NULL) && ei->ReqGameCtrl();
+}
+
+
 bool EventHandler::ReqInputCtrl(const std::string& eName) const
 {
   const EventInfo* ei = GetEventInfo(eName);
@@ -235,6 +243,7 @@ bool EventHandler::ReqInputCtrl(const std::string& eName) const
 bool EventHandler::CanUseEvent(EventClient* ec, const EventInfo& ei) const
 {
   if ((ei.ReqFullRead()  && !ec->HasFullRead()) ||
+      (ei.ReqGameCtrl()  && !ec->HasGameCtrl()) ||
       (ei.ReqInputCtrl() && !ec->HasInputCtrl())) {
     return false;
   }
@@ -488,6 +497,94 @@ void EventHandler::WordComplete(const string& line, set<string>& partials)
     }
   }
   list.finish();
+}
+
+
+//============================================================================//
+//============================================================================//
+
+bool EventHandler::ForbidSpawn()
+{
+  EventClientList& list = listForbidSpawn;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    if (ec->ForbidSpawn()) {
+      list.finish();
+      return true;
+    }
+  }
+  list.finish();
+  return false;
+}
+
+
+bool EventHandler::ForbidJump()
+{
+  EventClientList& list = listForbidJump;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    if (ec->ForbidJump()) {
+      list.finish();
+      return true;
+    }
+  }
+  list.finish();
+  return false;
+}
+
+
+bool EventHandler::ForbidShot()
+{
+  EventClientList& list = listForbidShot;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    if (ec->ForbidShot()) {
+      list.finish();
+      return true;
+    }
+  }
+  list.finish();
+  return false;
+}
+
+
+bool EventHandler::ForbidShotLock(const Player& player)
+{
+  EventClientList& list = listForbidShotLock;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    if (ec->ForbidShotLock(player)) {
+      list.finish();
+      return true;
+    }
+  }
+  list.finish();
+  return false;
+}
+
+
+bool EventHandler::ForbidFlagDrop()
+{
+  EventClientList& list = listForbidFlagDrop;
+  if (list.empty()) { return false; }
+  size_t i = 0;
+  EventClient* ec;
+  for (list.start(i); list.next(i, ec); /* no-op */) {
+    if (ec->ForbidFlagDrop()) {
+      list.finish();
+      return true;
+    }
+  }
+  list.finish();
+  return false;
 }
 
 

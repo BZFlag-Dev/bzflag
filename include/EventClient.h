@@ -25,24 +25,22 @@ struct FiringInfo;
 class EventClient
 {
   public:
-    inline const std::string& GetName()    const { return clientName;  }
-    inline int                GetOrder()   const { return clientOrder; }
+    inline const std::string& GetName()  const { return clientName;  }
+    inline int                GetOrder() const { return clientOrder; }
     inline bool HasFullRead()  const { return fullRead;  }
+    inline bool HasGameCtrl()  const { return gameCtrl;  }
     inline bool HasInputCtrl() const { return inputCtrl; }
-
-    // used by the eventHandler to register
-    // call-ins when an EventClient is being added
-    virtual bool WantsEvent(const std::string& /*eventName*/) { return false; }
 
   protected:
     const std::string clientName;
     const int clientOrder;
     bool fullRead;
+    bool gameCtrl;
     bool inputCtrl;
 
   protected:
     EventClient(const std::string& name, int order,
-                bool fullRead, bool inputCtrl);
+                bool fullRead, bool gameCtrl, bool inputCtrl);
     virtual ~EventClient();
 
   public:
@@ -114,6 +112,12 @@ class EventClient
 
     virtual void WordComplete(const std::string& /*line*/,
                               std::set<std::string>& /*partials*/) { return; }
+
+    virtual bool ForbidSpawn()                 { return false; }
+    virtual bool ForbidJump()                  { return false; }
+    virtual bool ForbidShot()                  { return false; }
+    virtual bool ForbidShotLock(const Player&) { return false; }
+    virtual bool ForbidFlagDrop()              { return false; }
 };
 
 

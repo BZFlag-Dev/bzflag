@@ -12,7 +12,6 @@
 
 /* interface header */
 #include "commands.h"
-#include "MotionUtils.h"
 
 /* system implementation headers */
 #include "zlib.h"
@@ -26,23 +25,25 @@
 
 /* common implementation headers */
 #include "BZDBCache.h"
-#include "TextUtils.h"
-#include "FileManager.h"
 #include "DirectoryNames.h"
+#include "EventHandler.h"
+#include "FileManager.h"
 #include "LuaClientScripts.h"
-#include "version.h"
+#include "MotionUtils.h"
+#include "TextUtils.h"
 #include "bzglob.h"
+#include "version.h"
 
 /* local implementation headers */
-#include "LocalPlayer.h"
-#include "sound.h"
 #include "ComposeDefaultKey.h"
-#include "SilenceDefaultKey.h"
-#include "ServerCommandKey.h"
-#include "Roaming.h"
-#include "playing.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
+#include "LocalPlayer.h"
+#include "Roaming.h"
+#include "ServerCommandKey.h"
+#include "SilenceDefaultKey.h"
+#include "sound.h"
+#include "playing.h"
 
 /** jump
  */
@@ -357,10 +358,12 @@ static std::string cmdDrop(const std::string&,
         (flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
         !(flag == Flags::OscillationOverthruster &&
           myTank->getLocation() == LocalPlayer::InBuilding)) {
-      serverLink->sendDropFlag(myTank->getPosition());
-      // changed: on windows it may happen the MsgDropFlag
-      // never comes back to us, so we drop it right away
-      handleFlagDropped(myTank);
+      if (!eventHandler.ForbidFlagDrop()) {
+        serverLink->sendDropFlag(myTank->getPosition());
+        // changed: on windows it may happen the MsgDropFlag
+        // never comes back to us, so we drop it right away
+        handleFlagDropped(myTank);
+      }
     }
   }
   return std::string();
@@ -386,16 +389,18 @@ static std::string cmdRestart(const std::string&,
   if (args.size() != 0)
     return "usage: restart";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank != NULL && canSpawn)
+  if (myTank != NULL && canSpawn) {
     if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
-      serverLink->sendAlive(myTank->getId());
-      myTank->setSpawning(true);
-      CommandManager::ArgList zoomArgs;
-      std::string resetArg = "reset";
-      zoomArgs.push_back(resetArg);
-      cmdViewZoom("", zoomArgs,NULL);
+      if (!eventHandler.ForbidSpawn()) {
+        serverLink->sendAlive(myTank->getId());
+        myTank->setSpawning(true);
+        CommandManager::ArgList zoomArgs;
+        std::string resetArg = "reset";
+        zoomArgs.push_back(resetArg);
+        cmdViewZoom("", zoomArgs,NULL);
+      }
     }
-
+  }
   return std::string();
 }
 

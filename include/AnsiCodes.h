@@ -31,8 +31,8 @@
 #define ANSI_STR_NO_UNDERLINE	"\033[24m"
 #define ANSI_STR_PULSATING	"\033[5m"
 #define ANSI_STR_NO_PULSATE	"\033[25m"
-#define ANSI_STR_REVERSE	"\033[7m"	// unimplemented
-#define ANSI_STR_NO_REVERSE	"\033[27m"	// unimplemented
+#define ANSI_STR_REVERSE	"\033[7m"
+#define ANSI_STR_NO_REVERSE	"\033[27m"
 
 #define ANSI_STR_FG_BLACK	"\033[30m"	// grey
 #define ANSI_STR_FG_RED		"\033[31m"

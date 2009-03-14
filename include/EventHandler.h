@@ -60,6 +60,7 @@ class EventHandler
     bool IsManaged(const std::string& eventName) const;
     bool IsReversed(const std::string& eventName) const;
     bool ReqFullRead(const std::string& eventName) const;
+    bool ReqGameCtrl(const std::string& eventName) const;
     bool ReqInputCtrl(const std::string& eventName) const;
 
     /**************************************************************************/
@@ -138,6 +139,12 @@ class EventHandler
 
     void WordComplete(const std::string& line, std::set<std::string>& partials);
 
+    bool ForbidSpawn();
+    bool ForbidJump();
+    bool ForbidShot();
+    bool ForbidShotLock(const Player&);
+    bool ForbidFlagDrop();
+
     /**************************************************************************/
 
   public:
@@ -148,15 +155,18 @@ class EventHandler
       public:
         EventInfo()
         : reqFullRead (false)
+        , reqGameCtrl (false)
         , reqInputCtrl(false)
         , reversed    (false)
         , list        (NULL)
         {}
 
         EventInfo(const std::string& _name, EventClientList* _list,
-                  bool _reqFullRead, bool _reqInputCtrl, bool _reversed)
+                  bool _reqFullRead, bool _reqGameCtrl, bool _reqInputCtrl,
+                  bool _reversed)
         : name        (_name)
         , reqFullRead (_reqFullRead)
+        , reqGameCtrl (_reqGameCtrl)
         , reqInputCtrl(_reqInputCtrl)
         , reversed    (_reversed)
         , list        (_list)
@@ -166,6 +176,7 @@ class EventHandler
 
         inline const std::string& GetName() const { return name; }
         inline bool ReqFullRead()  const { return reqFullRead;    }
+        inline bool ReqGameCtrl()  const { return reqGameCtrl;    }
         inline bool ReqInputCtrl() const { return reqInputCtrl;   }
         inline bool IsManaged()    const { return (list != NULL); }
         inline bool IsReversed()   const { return reversed;       }
@@ -176,6 +187,7 @@ class EventHandler
       private:
         std::string name;
         bool reqFullRead;
+        bool reqGameCtrl;
         bool reqInputCtrl;
         bool reversed;
         EventClientList* list;
@@ -206,6 +218,12 @@ class EventHandler
 
     EventClientList listServerJoined;
     EventClientList listServerParted;
+
+    EventClientList listForbidSpawn;
+    EventClientList listForbidJump;
+    EventClientList listForbidShot;
+    EventClientList listForbidShotLock;
+    EventClientList listForbidFlagDrop;
 
     EventClientList listPlayerAdded;
     EventClientList listPlayerRemoved;
@@ -307,13 +325,6 @@ extern EventHandler eventHandler;
 #define EC_LOOP_5_PARAM(name, t1, t2, t3, t4, t5) \
   inline void EventHandler:: name (t1 p1, t2 p2, t3 p3, t4 p4, t5 p5) \
   { EC_LOOP_START(name) ec-> name (p1, p2, p3, p4, p5); EC_LOOP_END(name) }
-
-#define EC_LOOPBOOL_0_PARAM(name) \
-  inline void EventHandler:: name () { \
-    EC_LOOP_START(name) \
-    if (ec-> name ()) { list.finish(i); return true; } \
-    EC_LOOP_END(name) \
-  }
 
 
 EC_LOOP_0_PARAM(Update)

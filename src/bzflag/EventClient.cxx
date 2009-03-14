@@ -16,12 +16,16 @@
 #include "EventClient.h"
 
 
+//============================================================================//
+//============================================================================//
+
 EventClient::EventClient(const std::string& _name, int _order,
-                         bool _fullRead, bool _inputCtrl)
-: clientName(_name)
+                         bool _fullRead, bool _gameCtrl, bool _inputCtrl)
+: clientName (_name)
 , clientOrder(_order)
-, fullRead(_fullRead)
-, inputCtrl(_inputCtrl)
+, fullRead   (_fullRead)
+, gameCtrl   (_gameCtrl)
+, inputCtrl  (_inputCtrl)
 {
 }
 
@@ -30,3 +34,6 @@ EventClient::~EventClient()
 {
 }
 
+
+//============================================================================//
+//============================================================================//
