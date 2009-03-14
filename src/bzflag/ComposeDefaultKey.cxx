@@ -77,8 +77,8 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       const std::string first = *(partials.begin());
       const std::string last = *(partials.rbegin());
       size_t i;
-      size_t maxLen = std::max(first.size(), last.size());
-      for (i = 0; i < maxLen; i++) {
+      const size_t minLen = std::min(first.size(), last.size());
+      for (i = 0; i < minLen; i++) {
         if (first[i] != last[i]) {
           break;
         }
