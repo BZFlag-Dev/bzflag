@@ -432,6 +432,8 @@ namespace TextUtils
           case '/':  { out += ANSI_STR_NO_PULSATE;   c++; break; }
           case '_':  { out += ANSI_STR_UNDERLINE;    c++; break; }
           case '~':  { out += ANSI_STR_NO_UNDERLINE; c++; break; }
+          case '[':  { out += ANSI_STR_REVERSE;      c++; break; }
+          case ']':  { out += ANSI_STR_NO_REVERSE;   c++; break; }
           case '!':  { out += ANSI_STR_RESET_FINAL;  c++; break; }
           case '#':  { out += ANSI_STR_RESET;        c++; break; }
           case '(':  {

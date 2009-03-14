@@ -137,10 +137,11 @@ void EventHandler::AddClient(EventClient* ec)
     return;
   }
 
-  if (!clients.insert(ec)) {
+  if (!clientList.insert(ec)) {
     logDebugMessage(0, "Duplicate EventClient name: %s\n");
     return;
   }
+  clientSet.insert(ec);
 
   // add events that the clients wants (and is allowed to use)
   EventMap::const_iterator it;
@@ -155,7 +156,8 @@ void EventHandler::AddClient(EventClient* ec)
 
 void EventHandler::RemoveClient(EventClient* ec)
 {
-  clients.remove(ec);
+  clientList.remove(ec);
+  clientSet.erase(ec);
 
   EventMap::const_iterator it;
   for (it = eventMap.begin(); it != eventMap.end(); ++it) {
@@ -242,6 +244,9 @@ bool EventHandler::CanUseEvent(EventClient* ec, const EventInfo& ei) const
 
 bool EventHandler::InsertEvent(EventClient* ec, const string& ciName)
 {
+  if (clientSet.find(ec) == clientSet.end()) {
+    return false;
+  }
   EventMap::iterator it = eventMap.find(ciName);
   if (it == eventMap.end()) {
     return false;
@@ -260,6 +265,9 @@ bool EventHandler::InsertEvent(EventClient* ec, const string& ciName)
 
 bool EventHandler::RemoveEvent(EventClient* ec, const string& ciName)
 {
+  if (clientSet.find(ec) == clientSet.end()) {
+    return false;
+  }
   EventMap::iterator it = eventMap.find(ciName);
   if ((it == eventMap.end()) || (it->second.GetList() == NULL)) {
     return false;

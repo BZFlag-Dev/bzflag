@@ -409,11 +409,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     return;
   }
 
-  char buffer[1024];
+  const int bufSize = 1024;
+  char buffer[bufSize];
   int textlen = (int)strlen(text);
 
-  assert(textlen < 1024 && "drawString text is way bigger than ever expected"); // FIXME
-  memcpy(buffer, text, textlen);
+  if (textlen >= bufSize) {
+    logDebugMessage(1, "drawString text is too long: %i\n", textlen);
+    textlen = (bufSize - 1);
+  }
+  memcpy(buffer, text, textlen + 1);
+  buffer[bufSize - 1] = 0;
 
   FTFont* theFont = getGLFont(faceID ,(int)size);
   if ((faceID < 0) || !theFont) {
@@ -430,6 +435,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool bright = true;
   bool pulsating = false;
   bool underline = false;
+  bool reverse = false;
   // negatives are invalid, we use them to signal "no change"
   GLfloat color[4];
   if (resetColor != (float*)NULL) {
@@ -519,7 +525,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	}
 
 	if (!rawBlending) {
-	  theFont->Render(rendertext);
+	  if (!reverse) {
+	    theFont->Render(rendertext);
+	  } else {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+            theFont->ControlBlending(false);
+            theFont->Render(rendertext);
+            theFont->ControlBlending(true);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	  }
         } else {
 	  theFont->ControlBlending(false);
 	  theFont->Render(rendertext);
@@ -596,6 +611,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = true;
 	  pulsating = false;
 	  underline = false;
+	  reverse = false;
 	  color[0] = resetColor[0] * darkness;
 	  color[1] = resetColor[1] * darkness;
 	  color[2] = resetColor[2] * darkness;
@@ -603,6 +619,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = false;
 	  pulsating = false;
 	  underline = false;
+	  reverse = false;
 	  color[0] = resetColor[0] * darkDim;
 	  color[1] = resetColor[1] * darkDim;
 	  color[2] = resetColor[2] * darkDim;
@@ -612,12 +629,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = false;
 	} else if (strcasecmp(tmpText, ANSI_STR_UNDERLINE) == 0) {
 	  underline = true;
-	} else if (strcasecmp(tmpText, ANSI_STR_PULSATING) == 0) {
-	  pulsating = true;
 	} else if (strcasecmp(tmpText, ANSI_STR_NO_UNDERLINE) == 0) {
 	  underline = false;
+	} else if (strcasecmp(tmpText, ANSI_STR_PULSATING) == 0) {
+	  pulsating = true;
 	} else if (strcasecmp(tmpText, ANSI_STR_NO_PULSATE) == 0) {
 	  pulsating = false;
+	} else if (strcasecmp(tmpText, ANSI_STR_REVERSE) == 0) {
+	  reverse = true;
+	} else if (strcasecmp(tmpText, ANSI_STR_NO_REVERSE) == 0) {
+	  reverse = false;
 	} else {
 	  // print out the code nicely so that it matches the C string
 	  logDebugMessage(2,"ANSI Code [");

@@ -671,6 +671,7 @@ bool LuaHandle::SetupEnvironment()
 	LUA_OPEN_LIB(L, luaopen_table);
 	LUA_OPEN_LIB(L, luaopen_string);
 	LUA_OPEN_LIB(L, luaopen_os);
+	LUA_OPEN_LIB(L, luaopen_lpeg);
 	if (devMode) {
 		LUA_OPEN_LIB(L, luaopen_debug);
 	}

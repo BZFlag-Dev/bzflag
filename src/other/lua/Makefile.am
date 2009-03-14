@@ -39,6 +39,7 @@ liblua_la_SOURCES =      \
 	src/lopcodes.cxx \
 	src/loslib.cxx   \
 	src/lparser.cxx  \
+	src/lpeg.cxx     \
 	src/lstate.cxx   \
 	src/lstring.cxx  \
 	src/lstrlib.cxx  \

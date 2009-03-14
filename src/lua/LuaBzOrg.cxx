@@ -29,6 +29,7 @@ using std::set;
 
 LuaBzOrg* luaBzOrg = NULL;
 
+
 static const char* sourceFile = "http://trepan.bzflag.bz/LuaBzOrg.lua"; // FIXME
 
 
@@ -46,7 +47,7 @@ class CodeFetch : private cURLManager {
 			setDeleteOnDone();
 			addHandle();
 			codeFetch = this;
-			logDebugMessage(1, "LuaBzOrg code fetch started: %s\n", sourceFile);
+			LuaLog(1, "LuaBzOrg code fetch started: %s\n", sourceFile);
 		}
 
 		~CodeFetch() {
@@ -58,7 +59,7 @@ class CodeFetch : private cURLManager {
 				return;
 			}
 			if (!good) {
-				logDebugMessage(0, "LuaBzOrg code fetch failed: %s\n", sourceFile);
+				LuaLog(0, "LuaBzOrg code fetch failed: %s\n", sourceFile);
 				return;
 			}
 			luaBzOrg = new LuaBzOrg(data, length);
@@ -119,9 +120,6 @@ LuaBzOrg::LuaBzOrg(const char* code, int length)
 		return;
 	}
 
-	// FIXME -- source from:  http://lua.bzflag.org/bzOrg.lua
-	const string sourceCode(code, length);
-
 	fsRead = BZVFS_LUA_USER  BZVFS_LUA_USER_WRITE
 	         BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
 	         BZVFS_BASIC;
@@ -131,14 +129,14 @@ LuaBzOrg::LuaBzOrg(const char* code, int length)
 	fsWrite    = BZVFS_LUA_BZORG_WRITE;
 	fsWriteAll = BZVFS_LUA_BZORG_WRITE;
 
+	// register for call-ins
+	eventHandler.AddClient(this);
+
+	const string sourceCode(code, length);
 	if (!ExecSourceCode(sourceCode)) {
-		logDebugMessage(1, "LuaBzOrg code:\n%s\n", sourceCode.c_str());
 		KillLua();
 		return;
 	}
-
-	// register for call-ins
-	eventHandler.AddClient(this);
 }
 
 

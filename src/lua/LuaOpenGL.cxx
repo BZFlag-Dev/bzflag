@@ -2815,7 +2815,7 @@ int LuaOpenGL::ReadPixels(lua_State* L)
 
 int LuaOpenGL::SaveImage(lua_State* L)
 {
-	luaL_error(L, "FIXME: SaveImage is not currently implemented");
+	luaL_error(L, "FIXME: SaveImage is not implemented");
 	/*
 	const string filename = luaL_checkstring(L, 1);
 

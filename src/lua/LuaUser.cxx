@@ -97,13 +97,13 @@ LuaUser::LuaUser()
 	fsWrite    = BZVFS_LUA_USER_WRITE;
 	fsWriteAll = BZVFS_LUA_USER_WRITE;
 
+	// register for call-ins
+	eventHandler.AddClient(this);
+
 	if (!ExecSourceCode(sourceCode)) {
 		KillLua();
 		return;
 	}
-
-	// register for call-ins
-	eventHandler.AddClient(this);
 }
 
 

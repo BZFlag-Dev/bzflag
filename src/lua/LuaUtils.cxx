@@ -20,13 +20,13 @@ using std::set;
 //============================================================================//
 //============================================================================//
 
-void LuaLog(int level, const std::string& msg) // FIXME
+void LuaLog(int level, const std::string& msg)
 {
 	logDebugMessage(level, msg);
 }
 
 
-void LuaLog(int level, const char* fmt, ...) // FIXME
+void LuaLog(int level, const char* fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -180,7 +180,7 @@ void LuaUtils::PushCurrentFuncEnv(lua_State* L, const char* caller)
 //  FormatArgs()
 //
 
-/* FIXME
+/* FIXME -- FormatArgs
 bool LuaUtils::FormatArgs(lua_State* L, bool expandTables,
 												  std::vector<std::string>& result, const char* caller)
 {

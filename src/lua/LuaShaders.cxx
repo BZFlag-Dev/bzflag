@@ -55,7 +55,7 @@ LuaShader::~LuaShader()
 	FreeContext();
 	OpenGLGState::unregisterContextInitializer(StaticFreeContext,
 	                                           StaticInitContext, this);
-	logDebugMessage(7, "deleting LuaShader\n");
+	LuaLog(7, "deleting LuaShader\n");
 }
 
 

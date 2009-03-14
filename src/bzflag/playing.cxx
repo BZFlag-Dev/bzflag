@@ -6413,27 +6413,27 @@ static void setupRoamingCamera(float muzzleHeight,
   hud->setAltitude(-1.0f);
 
   float roamViewAngle;
-  const Roaming::RoamingCamera *roam = ROAM.getCamera();
-  if (!(ROAM.getMode() == Roaming::roamViewFree) && ROAM.getTargetTank()) {
-    Player* target = ROAM.getTargetTank();
+  const Roaming::RoamingCamera* roam = ROAM.getCamera();
 
+  if ((ROAM.getMode() != Roaming::roamViewFree) && ROAM.getTargetTank()) {
+    Player* target = ROAM.getTargetTank();
     const float* targetTankDir = target->getForward();
-    // fixed camera tracking target
+
     if (ROAM.getMode() == Roaming::roamViewTrack) {
+      // fixed camera tracking target
       eyePoint[0] = roam->pos[0];
       eyePoint[1] = roam->pos[1];
       eyePoint[2] = roam->pos[2];
       targetPoint[0] = target->getPosition()[0];
       targetPoint[1] = target->getPosition()[1];
-      targetPoint[2] = target->getPosition()[2] +
-                       target->getMuzzleHeight();
+      targetPoint[2] = target->getPosition()[2] + target->getMuzzleHeight();
     }
     else if (ROAM.getMode() == Roaming::roamViewFollow) {
       // camera following target
       if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-        eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-        eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-        eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+        eyePoint[0] = target->getPosition()[0] - (targetTankDir[0] * 40.0f);
+        eyePoint[1] = target->getPosition()[1] - (targetTankDir[1] * 40.0f);
+        eyePoint[2] = target->getPosition()[2] + (muzzleHeight * 6.0f);
         targetPoint[0] = target->getPosition()[0];
         targetPoint[1] = target->getPosition()[1];
         targetPoint[2] = target->getPosition()[2];
@@ -6487,9 +6487,9 @@ static void setupRoamingCamera(float muzzleHeight,
     roamViewAngle = roam->theta;
   }
 
-  float virtPos[] = { eyePoint[0], eyePoint[1], 0 };
+  const float virtPos[] = { eyePoint[0], eyePoint[1], 0.0f };
   if (myTank) {
-    myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
+    myTank->move(virtPos, (float)(roamViewAngle * (M_PI / 180.0)));
   }
 
   fov = (float)(roam->zoom * M_PI / 180.0);

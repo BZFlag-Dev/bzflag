@@ -17,7 +17,9 @@
 
 // system headers
 #include <string>
+#include <vector>
 using std::string;
+using std::vector;
 
 // common headers
 #include "EventClient.h"
@@ -74,7 +76,7 @@ inline void EventClientList::dec_ptrs(size_t index)
 bool EventClientList::insert(EventClient* ec)
 {
   size_t index = 0;
-  std::vector<EventClient*>::iterator it;
+  vector<EventClient*>::iterator it;
 
   // forbid duplicates
   for (it = data.begin(); it != data.end(); ++it) {
@@ -102,7 +104,7 @@ bool EventClientList::insert(EventClient* ec)
 
 bool EventClientList::remove(const EventClient* ec)
 {
-  std::vector<EventClient*>::iterator it;
+  vector<EventClient*>::iterator it;
   size_t index = 0;
   for (it = data.begin(); it != data.end(); ++it) {
     if (*it == ec) {

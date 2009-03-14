@@ -109,7 +109,7 @@ LuaURL::LuaURL(lua_State* _L, const std::string& _url)
 
 LuaURL::~LuaURL()
 {
-	LuaLog(4, "LuaURL: deleting %s userdata\n", url.c_str()); // FIXME?
+	LuaLog(6, "LuaURL: deleting %s userdata\n", url.c_str());
 	if (active) {
 		removeHandle();
 	}

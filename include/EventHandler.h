@@ -192,7 +192,8 @@ class EventHandler
   private:
     EventMap eventMap;
 
-    EventClientList clients;
+    std::set<EventClient*> clientSet;
+    EventClientList        clientList;
 
     EventClientList listUpdate;
 

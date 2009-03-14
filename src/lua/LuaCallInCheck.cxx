@@ -26,10 +26,10 @@ LuaCallInCheck::~LuaCallInCheck()
 {
 	const int endTop = lua_gettop(L);
 	if (startTop != endTop) {
-		logDebugMessage(0,
+		LuaLog(0,
 			"LuaCallInCheck mismatch for %s():  start = %i,  end = %i\n",
 			funcName, startTop, endTop
-                );
+		);
 	}
 }
 

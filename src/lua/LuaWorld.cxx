@@ -92,13 +92,13 @@ LuaWorld::LuaWorld()
 	fsWrite    = BZVFS_LUA_WORLD_WRITE;
 	fsWriteAll = BZVFS_LUA_WORLD_WRITE;
 
+	// register for call-ins
+	eventHandler.AddClient(this);
+
 	if (!ExecSourceCode(sourceCode)) {
 		KillLua();
 		return;
 	}
-
-	// register for call-ins
-	eventHandler.AddClient(this);
 }
 
 

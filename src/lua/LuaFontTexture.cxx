@@ -72,6 +72,9 @@ using namespace std;
 // common headers
 #include "BzVFS.h"
 
+// local headers
+#include "LuaUtils.h"
+
 // custom types
 typedef int8_t   s8;
 typedef uint8_t  u8;
@@ -403,12 +406,12 @@ bool LuaFontTexture::Execute()
 	ilDisable(IL_ORIGIN_SET);
 
 	if (dbgLevel >= 1) {
-		logDebugMessage(0, "fontfile      = %s\n", inputFile.c_str());
-		logDebugMessage(0, "fontdata      = %i\n", (int)inputData.size());
-		logDebugMessage(0, "height        = %i\n", height);
-		logDebugMessage(0, "outlineMode   = %i\n", outlineMode);
-		logDebugMessage(0, "outlineRadius = %i\n", outlineRadius);
-		logDebugMessage(0, "outlineWeight = %i\n", outlineWeight);
+		LuaLog(0, "fontfile      = %s\n", inputFile.c_str());
+		LuaLog(0, "fontdata      = %i\n", (int)inputData.size());
+		LuaLog(0, "height        = %i\n", height);
+		LuaLog(0, "outlineMode   = %i\n", outlineMode);
+		LuaLog(0, "outlineRadius = %i\n", outlineRadius);
+		LuaLog(0, "outlineWeight = %i\n", outlineWeight);
 	}
 
 	int error;
@@ -417,13 +420,13 @@ bool LuaFontTexture::Execute()
 
 	error = FT_Init_FreeType(&library);
 	if (error) {
-		logDebugMessage(0, "freetype library init failed: %i\n", error);
+		LuaLog(0, "freetype library init failed: %i\n", error);
 		return false;
 	}
 
 	if (inputData.empty()) {
 		if (!bzVFS.readFile(inputFile, inputModes, inputData)) {
-			logDebugMessage(0, "could not read: %s\n", inputFile.c_str());
+			LuaLog(0, "could not read: %s\n", inputFile.c_str());
 			return false;
 		}
 	}
@@ -433,12 +436,12 @@ bool LuaFontTexture::Execute()
 		                         inputData.size(), 0, &face);
 
 	if (error == FT_Err_Unknown_File_Format) {
-		logDebugMessage(0, "bad font file type\n");
+		LuaLog(0, "bad font file type\n");
 		FT_Done_FreeType(library);
 		return false;
 	}
 	else if (error) {
-		logDebugMessage(0, "unknown font file error: %i\n", error);
+		LuaLog(0, "unknown font file error: %i\n", error);
 		FT_Done_FreeType(library);
 		return false;
 	}
@@ -446,7 +449,7 @@ bool LuaFontTexture::Execute()
 	if (face->num_fixed_sizes <= 0) {
 		error = FT_Set_Pixel_Sizes(face, 0, height);
 		if (error) {
-			logDebugMessage(0, "FT_Set_Pixel_Sizes() error: %i\n", error);
+			LuaLog(0, "FT_Set_Pixel_Sizes() error: %i\n", error);
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
 			return false;
@@ -486,7 +489,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		if (lastDot != string::npos) {
 			basename = filename.substr(0, lastDot);
 			if (dbgLevel >= 1) {
-				logDebugMessage(0, "basename = %s\n", basename.c_str());
+				LuaLog(0, "basename = %s\n", basename.c_str());
 			}
 		}
 		char heightText[64];
@@ -495,7 +498,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		specsName = basename + heightText + ".lua";
 	}
 
-	logDebugMessage(0, "Processing %s @ %i\n", filename.c_str(), fontHeight);
+	LuaLog(0, "Processing %s @ %i\n", filename.c_str(), fontHeight);
 	if (dbgLevel >= 1) {
 		PrintFaceInfo(face);
 	}
@@ -537,12 +540,12 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	yTexSize = binSize;
 
 	if (dbgLevel >= 1) {
-		logDebugMessage(0, "xTexSize = %i\n", xTexSize);
-		logDebugMessage(0, "yTexSize = %i\n", yTexSize);
-		logDebugMessage(0, "xdivs = %i\n", xdivs);
-		logDebugMessage(0, "ydivs = %i\n", ydivs);
-		logDebugMessage(0, "maxPixelXsize = %i\n", maxPixelXsize);
-		logDebugMessage(0, "maxPixelYsize = %i\n", maxPixelYsize);
+		LuaLog(0, "xTexSize = %i\n", xTexSize);
+		LuaLog(0, "yTexSize = %i\n", yTexSize);
+		LuaLog(0, "xdivs = %i\n", xdivs);
+		LuaLog(0, "ydivs = %i\n", ydivs);
+		LuaLog(0, "maxPixelXsize = %i\n", maxPixelXsize);
+		LuaLog(0, "maxPixelYsize = %i\n", maxPixelYsize);
 	}
 
 	u32 yStep;
@@ -576,7 +579,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	ILuint img = 0;
 	ilGenImages(1, &img);
 	if (img == 0) {
-		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
+		LuaLog(0, "ERROR: ilGenImages() == 0\n");
 		return false;
 	}
 	ilBindImage(img);
@@ -623,7 +626,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 		ilDeleteImages(1, &img);
 		return false;
 	}
-	logDebugMessage(0, "Saved: %s\n", specsName.c_str());
+	LuaLog(0, "Saved: %s\n", specsName.c_str());
 
 	// save the texture atlas (png)
 	ilEnable(IL_FILE_OVERWRITE);
@@ -642,7 +645,7 @@ static bool ProcessFace(FT_Face& face, const string& filename, u32 fontHeight)
 	ilDeleteImages(1, &img);
 
 	if (success) {
-		logDebugMessage(0, "Saved: %s\n", imageName.c_str());
+		LuaLog(0, "Saved: %s\n", imageName.c_str());
 	}
 
 	return success;
@@ -656,7 +659,7 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 {
 	int error = FT_Load_Char(face, num, FT_LOAD_RENDER);
 	if (error) {
-		logDebugMessage(0, "FT_Load_Char(%i '%c') error: %i\n", num, num, error);
+		LuaLog(0, "FT_Load_Char(%i '%c') error: %i\n", num, num, error);
 		return;
 	}
 	FT_GlyphSlot glyph = face->glyph;
@@ -694,7 +697,7 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 
 	ilGenImages(1, &img);
 	if (img == 0) {
-		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
+		LuaLog(0, "ERROR: ilGenImages() == 0\n");
 		return;
 	}
 	ilBindImage(img);
@@ -770,7 +773,7 @@ bool Glyph::Outline(u32 radius)
 	ILuint newImg;
 	ilGenImages(1, &newImg);
 	if (img == 0) {
-		logDebugMessage(0, "ERROR: ilGenImages() == 0\n");
+		LuaLog(0, "ERROR: ilGenImages() == 0\n");
 	}
 	ilBindImage(newImg);
 
@@ -846,48 +849,48 @@ bool Glyph::Outline(u32 radius)
 
 static void PrintFaceInfo(FT_Face& face)
 {
-	logDebugMessage(0, "family name = %s\n", face->family_name);
-	logDebugMessage(0, "style  name = %s\n", face->style_name);
-	logDebugMessage(0, "num_faces   = %i\n", (int)face->num_faces);
+	LuaLog(0, "family name = %s\n", face->family_name);
+	LuaLog(0, "style  name = %s\n", face->style_name);
+	LuaLog(0, "num_faces   = %i\n", (int)face->num_faces);
 
-	logDebugMessage(0, "numglyphs    = %i\n", (int)face->num_glyphs);
-	logDebugMessage(0, "fixed sizes  = %i\n", (int)face->num_fixed_sizes);
-	logDebugMessage(0, "units_per_EM = %i\n", (int)face->units_per_EM);
+	LuaLog(0, "numglyphs    = %i\n", (int)face->num_glyphs);
+	LuaLog(0, "fixed sizes  = %i\n", (int)face->num_fixed_sizes);
+	LuaLog(0, "units_per_EM = %i\n", (int)face->units_per_EM);
 	for (int i = 0; i < face->num_fixed_sizes; i++) {
-		logDebugMessage(0, "  size[%i]\n", i);
+		LuaLog(0, "  size[%i]\n", i);
 		FT_Bitmap_Size bs = face->available_sizes[i];
-		logDebugMessage(0, "    height = %i\n", (int)bs.height);
-		logDebugMessage(0, "    width  = %i\n", (int)bs.width);
-		logDebugMessage(0, "    size   = %i\n", (int)bs.size);
-		logDebugMessage(0, "    x_ppem = %i\n", (int)bs.x_ppem);
-		logDebugMessage(0, "    y_ppem = %i\n", (int)bs.y_ppem);
+		LuaLog(0, "    height = %i\n", (int)bs.height);
+		LuaLog(0, "    width  = %i\n", (int)bs.width);
+		LuaLog(0, "    size   = %i\n", (int)bs.size);
+		LuaLog(0, "    x_ppem = %i\n", (int)bs.x_ppem);
+		LuaLog(0, "    y_ppem = %i\n", (int)bs.y_ppem);
 	}
-	logDebugMessage(0, "face height        = %i\n", (int)face->height);
-	logDebugMessage(0, "max_advance_width  = %i\n", (int)face->max_advance_width);
-	logDebugMessage(0, "max_advance_height = %i\n", (int)face->max_advance_height);
+	LuaLog(0, "face height        = %i\n", (int)face->height);
+	LuaLog(0, "max_advance_width  = %i\n", (int)face->max_advance_width);
+	LuaLog(0, "max_advance_height = %i\n", (int)face->max_advance_height);
 }
 
 
 static void PrintGlyphInfo(FT_GlyphSlot& glyph, int g)
 {
-	logDebugMessage(0, "Glyph: %i  '%c'\n", g, g);
-	logDebugMessage(0, "  bitmap.width         = %i\n", (int)glyph->bitmap.width);
-	logDebugMessage(0, "  bitmap.rows          = %i\n", (int)glyph->bitmap.rows);
-	logDebugMessage(0, "  bitmap.pitch         = %i\n", (int)glyph->bitmap.pitch);
-	logDebugMessage(0, "  bitmap.pixel_mode    = %i\n", (int)glyph->bitmap.pixel_mode);
-	logDebugMessage(0, "  bitmap.palette_mode  = %i\n", (int)glyph->bitmap.palette_mode);
-	logDebugMessage(0, "  bitmap_left          = %i\n", (int)glyph->bitmap_left);
-	logDebugMessage(0, "  bitmap_top           = %i\n", (int)glyph->bitmap_top);
-	logDebugMessage(0, "  advance.x            = %i\n", (int)glyph->advance.x);
-	logDebugMessage(0, "  advance.y            = %i\n", (int)glyph->advance.y);
+	LuaLog(0, "Glyph: %i  '%c'\n", g, g);
+	LuaLog(0, "  bitmap.width         = %i\n", (int)glyph->bitmap.width);
+	LuaLog(0, "  bitmap.rows          = %i\n", (int)glyph->bitmap.rows);
+	LuaLog(0, "  bitmap.pitch         = %i\n", (int)glyph->bitmap.pitch);
+	LuaLog(0, "  bitmap.pixel_mode    = %i\n", (int)glyph->bitmap.pixel_mode);
+	LuaLog(0, "  bitmap.palette_mode  = %i\n", (int)glyph->bitmap.palette_mode);
+	LuaLog(0, "  bitmap_left          = %i\n", (int)glyph->bitmap_left);
+	LuaLog(0, "  bitmap_top           = %i\n", (int)glyph->bitmap_top);
+	LuaLog(0, "  advance.x            = %i\n", (int)glyph->advance.x);
+	LuaLog(0, "  advance.y            = %i\n", (int)glyph->advance.y);
 	FT_Glyph_Metrics metrics = glyph->metrics;
-	logDebugMessage(0, "  metrics.width        = %i\n", (int)metrics.width);
-	logDebugMessage(0, "  metrics.height       = %i\n", (int)metrics.height);
-	logDebugMessage(0, "  metrics.horiBearingX = %i\n", (int)metrics.horiBearingX);
-	logDebugMessage(0, "  metrics.horiBearingY = %i\n", (int)metrics.horiBearingY);
-	logDebugMessage(0, "  metrics.horiAdvance  = %i\n", (int)metrics.horiAdvance);
-	logDebugMessage(0, "  metrics.vertBearingX = %i\n", (int)metrics.vertBearingX);
-	logDebugMessage(0, "  metrics.vertBearingY = %i\n", (int)metrics.vertBearingY);
+	LuaLog(0, "  metrics.width        = %i\n", (int)metrics.width);
+	LuaLog(0, "  metrics.height       = %i\n", (int)metrics.height);
+	LuaLog(0, "  metrics.horiBearingX = %i\n", (int)metrics.horiBearingX);
+	LuaLog(0, "  metrics.horiBearingY = %i\n", (int)metrics.horiBearingY);
+	LuaLog(0, "  metrics.horiAdvance  = %i\n", (int)metrics.horiAdvance);
+	LuaLog(0, "  metrics.vertBearingX = %i\n", (int)metrics.vertBearingX);
+	LuaLog(0, "  metrics.vertBearingY = %i\n", (int)metrics.vertBearingY);
 }
 
 
