@@ -87,8 +87,8 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
       if (partials.size() >= 2) {
         const size_t lastSpace = line.find_last_of(" \t");
-        const std::string lastWord = line.substr(lastSpace + 1);
-
+        const std::string lastWord = (lastSpace == std::string::npos) ?
+                                     line : line.substr(lastSpace + 1);
         std::string matches;
         std::set<std::string>::const_iterator it;
         for (it = partials.begin(); it != partials.end(); ++it) {
