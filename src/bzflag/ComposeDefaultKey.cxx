@@ -86,9 +86,9 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       hud->setComposeString(line + first.substr(0, i));
 
       if (partials.size() >= 2) {
-        const int lastSpace = line.find_last_of(" \t");
+        const size_t lastSpace = line.find_last_of(" \t");
         const std::string lastWord = line.substr(lastSpace + 1);
-                  
+
         std::string matches;
         std::set<std::string>::const_iterator it;
         for (it = partials.begin(); it != partials.end(); ++it) {
