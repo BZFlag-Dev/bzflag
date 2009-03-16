@@ -129,7 +129,7 @@ bool HTTPRequest::getParam ( const char* param, std::string &val ) const
     if (itr->second.size())
       val = itr->second[itr->second.size()-1];
     return true;
-  } 
+  }
   return false;
 }
 
@@ -146,7 +146,7 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
     if (itr->second.size())
       val = itr->second[itr->second.size()-1];
     return true;
-  } 
+  }
   return false;
 }
 
@@ -164,7 +164,7 @@ bool HTTPRequest::getParam ( const char* param, std::vector<std::string> &val ) 
   {
     val = itr->second;
     return true;
-  } 
+  }
   return false;
 }
 
@@ -180,7 +180,7 @@ bool HTTPRequest::getParam ( const std::string &param, std::vector<std::string> 
   {
     val = itr->second;
     return true;
-  } 
+  }
   return false;
 }
 
@@ -626,7 +626,7 @@ int BZFSHTTPAuth::getLevelFromGroups (const std::vector<std::string> &groups )
 
       // check the input groups, and see if any of the them are in the groups with this perm
       for (size_t i = 1; i < groups.size(); i++ )
-      {  
+      {
 	if (stringInList(groups[i],groupsWithPerm))
 	  return itr->first;
       }
@@ -933,7 +933,7 @@ bool Templateiser::callIF ( const std::string &key, const std::string &param )
 
   ClassMap::iterator itr = ifClassCallbacks.find(lowerKey);
   if (itr != ifClassCallbacks.end())
-  { 
+  {
     itr->second->templateParam = param;
     return itr->second->ifCallback(key);
   }

@@ -51,7 +51,7 @@ public:
 
     return pointer;
   }
-  
+
   static void initialize();
 
 protected:

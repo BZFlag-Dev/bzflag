@@ -48,7 +48,7 @@ class MapInfo {
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
-    
+
   private:
     InfoVec infoVec;
     InfoMap infoMap;

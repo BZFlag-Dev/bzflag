@@ -66,7 +66,7 @@ inline int compare_nocase(const std::string& s1,
     maxlength = s1.size(); // clamp the maxlength
   }
 
-  // check the characters  
+  // check the characters
   for (size_t i = 0; i < maxlength; i++) {
     const std::string::value_type lower1 = ::tolower(s1[i]);
     const std::string::value_type lower2 = ::tolower(s2[i]);

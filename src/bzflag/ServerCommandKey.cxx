@@ -55,7 +55,7 @@ namespace {
       dest += source;
     }
   }
-// 
+//
   const ServerCommandKey::Mode nonAdminModes [] = {ServerCommandKey::LagStats,
 						   ServerCommandKey::IdleStats,
 						   ServerCommandKey::FlagHistory,

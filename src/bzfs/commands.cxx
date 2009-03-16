@@ -717,7 +717,7 @@ bool CmdHelp::operator() (const char *message,
 {
 
   int i = TextUtils::firstNonvisible(message);
-  
+
   if (i <= 0)
     return false;
   i--;
@@ -1297,7 +1297,7 @@ bool FlagCommand::operator() (const char *message,
   else if (strncasecmp(msg, "show", 4) == 0)
   {
     BufferedChatParams *params = new BufferedChatParams(playerData);
-    for (int i = 0; i < numFlags; i++) 
+    for (int i = 0; i < numFlags; i++)
     {
       char showMessage[MessageLen];
       FlagInfo::get(i)->getTextualInfo(showMessage);
@@ -1930,17 +1930,17 @@ bool ReportCommand::operator() (const char *message,
   // If no playerData - dont perfom real player checks, since it is probably the API
   if ( playerData ) {
     t = playerData->getIndex();
-    
+
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
       sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
       return true;
     }
-    
+
     if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
       sendMessage(ServerPlayer, t, "The report command is disabled on this server");
       return true;
     }
-    
+
     if (strlen(message + 1) < 8) {
       sendMessage(ServerPlayer, t, "Nothing reported");
       return true;
@@ -1948,7 +1948,7 @@ bool ReportCommand::operator() (const char *message,
 
     msg = (message + 8);
     callsign = playerData->player.getCallSign();
-  } else { 
+  } else {
     t = ServerPlayer;
     msg = message;
     callsign = "SERVER";

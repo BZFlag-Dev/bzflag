@@ -140,7 +140,7 @@ function UnknownSlashCommand(msg, playerID)
       end
     end
     return true
-  end    
+  end
   return false
 end
 
@@ -167,7 +167,7 @@ blocked = tmpSet
 for name, code in pairs(script.GetCallInInfo()) do
   if (type(_G[name]) == 'function') then
     script.SetCallIn(name, _G[name])
-  elseif (not blocked[name]) then 
+  elseif (not blocked[name]) then
     script.SetCallIn(name, function(...)
       print('bzfs.lua', name, ...)
     end)
@@ -260,7 +260,7 @@ bz.AttachMapObject('luaplugin', 'endplugin',  CustomMapObject)
 
 if (false) then
   for _, name in pairs(bz.DB.GetList()) do
-    print(name, 
+    print(name,
           bz.DB.GetInt(name),
           bz.DB.GetBool(name),
           bz.DB.GetFloat(name),
@@ -341,5 +341,4 @@ do
   end
 
   script.SetCallIn('Tick', HandleTick)
-end  
-  
+end

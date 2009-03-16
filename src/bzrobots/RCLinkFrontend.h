@@ -35,7 +35,7 @@ class RCLinkFrontend : public RCLink
 private:
   RCReply *replies;
   bool hasReply(const std::string command) const;
-  
+
 public:
   RCLinkFrontend() : RCLink(FrontendLogger::pInstance()), replies(NULL) { isFrontEnd = true; }
   bool update();

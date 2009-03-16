@@ -53,7 +53,7 @@ class LuaGLQueryMgr {
 		static int MetaIndex(lua_State* L);
 
 		static LuaGLQuery* GetLuaGLQuery(lua_State* L, int index);
-	
+
 	private: // call-outs
 		static int CreateQuery(lua_State* L);
 		static int DeleteQuery(lua_State* L);

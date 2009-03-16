@@ -150,7 +150,7 @@ class Obstacle {
 
   unsigned short getListID() const { return listID;}
   void setListID(unsigned short id) { listID = id; }
- 
+
   unsigned int getGUID() const { return (getTypeID() << 16) | getListID(); }
 
   /** This function returns the time of intersection between the obstacle

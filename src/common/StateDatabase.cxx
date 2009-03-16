@@ -733,7 +733,7 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
       temp = src.peek();
     }
     dst.setNumber(atof(tempname.c_str()));
-  } 
+  }
   else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' ||
            temp == '^' || temp == '(' || temp == ')') {
     // operator

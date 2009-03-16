@@ -245,7 +245,7 @@ int Application::run ( void )
       glColor4f(0,0,1,1);
       drawObjectNormals(lTread);
       glColor4f(0,1,0,1);
-      drawObjectNormals(lTread);  
+      drawObjectNormals(lTread);
     }
 
 

@@ -19,7 +19,7 @@ bool LuaVector::PushEntries(lua_State* L)
 {
 	lua_pushliteral(L, "vector");
 	lua_newtable(L);
-	
+
 	PUSH_LUA_CFUNC(L, dot);
 	PUSH_LUA_CFUNC(L, cross);
 	PUSH_LUA_CFUNC(L, normdot);

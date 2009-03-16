@@ -40,7 +40,7 @@ std::string PluginConfig::item(const std::string &section, const std::string &ke
   std::string s = section,k = key;
   makelower(s);
   makelower(k);
-  
+
   return sections[s][k];
 }
 

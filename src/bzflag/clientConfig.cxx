@@ -163,7 +163,7 @@ void updateConfigFile(void)
 
 	case 2: // 2.1.13
 	  BZDB.set("stencilShadows", "1");
-	  break; 
+	  break;
 
 	case 3: // 2.99.1 current
 	  break;

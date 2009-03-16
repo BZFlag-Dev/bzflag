@@ -880,7 +880,7 @@ bool LocalPlayer::canJump() const
   if (!world) {
     return false;
   }
-  
+
   // are we allowed by the server to jump?
   if (!Player::canJump()) {
     return false;
@@ -899,7 +899,7 @@ bool LocalPlayer::canJump() const
       return true;
   } else {
     // otherwise, you may not jump unless you hold J, WG, B, or LG
-    if ((getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings) 
+    if ((getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings)
         || (getFlag() == Flags::Bouncy) || (getFlag() == Flags::LowGravity))
       return true;
     else

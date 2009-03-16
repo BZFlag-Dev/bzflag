@@ -74,7 +74,7 @@ static int GetMap(lua_State* L)
   bz_APIStringList* list = bz_newStringList();
   lua_newtable(L);
   if (!bz_getBZDBVarList(list)) {
-    bz_deleteStringList(list);    
+    bz_deleteStringList(list);
     return 1;
   }
   for (unsigned int i = 0; i < list->size(); i++) {
@@ -83,7 +83,7 @@ static int GetMap(lua_State* L)
     lua_pushstring(L, bz_getBZDBString(key).c_str());
     lua_rawset(L, -3);
   }
-  bz_deleteStringList(list);    
+  bz_deleteStringList(list);
   return 1;
 }
 
@@ -93,7 +93,7 @@ static int GetList(lua_State* L)
   bz_APIStringList* list = bz_newStringList();
   lua_newtable(L);
   if (!bz_getBZDBVarList(list)) {
-    bz_deleteStringList(list);    
+    bz_deleteStringList(list);
     return 1;
   }
   for (unsigned int i = 0; i < list->size(); i++) {
@@ -101,7 +101,7 @@ static int GetList(lua_State* L)
     lua_pushstring(L, list->get(i).c_str());
     lua_rawset(L, -3);
   }
-  bz_deleteStringList(list);    
+  bz_deleteStringList(list);
   return 1;
 }
 

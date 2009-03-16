@@ -152,7 +152,7 @@ void* WorldBuilder::unpack(void* buf)
   buf = docket->unpack(buf);
   bzVFS.removeFS(BZVFS_LUA_WORLD);
   bzVFS.addFS(BZVFS_LUA_WORLD, docket);
-  
+
   // check if the unpacking was successful
   nboUseErrorChecking(false);
   if (nboGetBufferError()) {

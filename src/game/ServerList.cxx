@@ -218,7 +218,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
   for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
     const ServerItem& server = (*serverIterator).second;
-    if ((server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr) && 
+    if ((server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr) &&
 	(server.ping.serverId.port == info.ping.serverId.port)) {
       // retain age so it can stay sorted same agewise
       info.setAge(server.getAgeMinutes(), server.getAgeSeconds());
@@ -401,7 +401,7 @@ ServerItem* ServerList::lookupServer(std::string key)
 ServerItem* ServerList::getServerAt(size_t index)
 {
   std::map<std::string, ServerItem>::iterator serverIterator;
-  
+
   serverIterator = servers.begin();
   std::advance(serverIterator, index);
 

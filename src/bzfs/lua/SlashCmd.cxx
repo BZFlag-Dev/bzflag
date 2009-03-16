@@ -35,7 +35,7 @@ class SlashCmdHandler : public bz_CustomSlashCommandHandler {
 
     bool handle(int playerID, bz_ApiString command,
                 bz_ApiString message, bz_APIStringList* params);
-      
+
     const char* help(bz_ApiString /* command */) { return helpTxt.c_str(); }
 
   private:
@@ -108,7 +108,7 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
     return false;
   }
 
-  return true;    
+  return true;
 }
 
 
@@ -161,7 +161,7 @@ static int AttachSlashCommand(lua_State* L)
   if (help[0] == 0) {
     luaL_error(L, "empty slash command help");
   }
-    
+
   if (slashHandlers.find(cmd) != slashHandlers.end()) {
     lua_pushboolean(L, false);
     return 1;
@@ -190,7 +190,7 @@ static int DetachSlashCommand(lua_State* L)
   }
 
   delete it->second;
-  
+
   if (bz_removeCustomSlashCommand(cmd.c_str())) {
     lua_pushboolean(L, true);
   } else {

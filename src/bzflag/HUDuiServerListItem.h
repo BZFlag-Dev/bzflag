@@ -34,13 +34,13 @@ class HUDuiServerListItem : public HUDuiControl {
       HUDuiServerListItem(ServerItem* item);
       HUDuiServerListItem(std::string key);
       ~HUDuiServerListItem();
-	
+
     void setSize(float width, float height);
     void setFontSize(float size);
     void setFontFace(const LocalFontFace *face);
 
     void setColumnSizes(float modes_percent, float domain, float server, float player, float ping);
-	
+
     std::string getDomainName() { return domainName; }
     std::string getServerName() { return serverName; }
     std::string getPlayerCount() { return playerCount; }

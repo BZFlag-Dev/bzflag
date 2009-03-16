@@ -61,7 +61,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   NetMsg msg = MSGMGR.newMessage();
   firingInfo.pack(msg);
 
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
+  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
     msg->broadcast(MsgWShotBegin);
 
   return shotID;
@@ -90,7 +90,7 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
     NetMsg msg = MSGMGR.newMessage();
     firingInfo.pack(msg);
 
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) 
+    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
 	msg->broadcast(MsgShotBegin);
 
     // Target the gm.

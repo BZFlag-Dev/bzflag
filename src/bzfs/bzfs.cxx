@@ -2056,7 +2056,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     if (timeLeft < 0.0f)
       // oops
       timeLeft = 0.0f;
-    
+
     NetMsg msg = MSGMGR.newMessage();
     msg->packInt((int32_t)timeLeft);
     msg->send(playerData->netHandler, MsgTimeUpdate);
@@ -4605,7 +4605,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
   }
 
   NetHandler* netHandler = peer.netHandler;
-  
+
   if (peer.player != -1) {
     peer.sent = true;
     // it's a player now, so treat them with the respect they deserve

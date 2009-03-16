@@ -31,7 +31,7 @@ class LuaOpenGL {
 		static int GetNumber(lua_State* L);
 		static int GetString(lua_State* L);
 		static int GetError(lua_State* L);
-	
+
 		static int ConfigScreen(lua_State* L);
 
 		static int ResetState(lua_State* L);
@@ -96,7 +96,7 @@ class LuaOpenGL {
 		static int SecondaryColor(lua_State* L);
 		static int FogCoord(lua_State* L);
 		static int EdgeFlag(lua_State* L);
-		
+
 		static int Rect(lua_State* L);
 		static int TexRect(lua_State* L);
 

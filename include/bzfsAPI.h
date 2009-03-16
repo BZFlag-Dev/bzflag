@@ -1198,7 +1198,7 @@ private:
   bz_eEventType eventType;
   bz_EventHandler* eventHandler;
 };
-  
+
 // non player data handlers
 
 class bz_NonPlayerConnectionHandler
@@ -2001,7 +2001,7 @@ class BZF_API bz_ServerSidePlayerHandler
 
   virtual void spawned(void); // the bot has spawned
   virtual void died ( int killer ); // the bot has died from gameplay
-  virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner 
+  virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner
   virtual void jumped ( void ){}; // the bot has left the ground
   virtual void landed ( void ){}; // the bot has landed
   virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){}; // the bot ran into an object
@@ -2022,7 +2022,7 @@ class BZF_API bz_ServerSidePlayerHandler
   void joinGame(void);
   void respawn(void);
   void getCurrentState(bz_PlayerUpdateState *state);
-  
+
   void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS);
   void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
 

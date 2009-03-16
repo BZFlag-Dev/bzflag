@@ -51,10 +51,10 @@ float computeAngleVelocity(float old, float desired, float dt)
 
     // if reached desired, clamp it
     if (desired > 0) {
-      if (newAngVel > desired) 
+      if (newAngVel > desired)
 	newAngVel = desired;
     } else {
-      if (newAngVel < desired) 
+      if (newAngVel < desired)
 	newAngVel = desired;
     }
   }

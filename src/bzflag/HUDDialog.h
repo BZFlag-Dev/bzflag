@@ -46,9 +46,9 @@ class HUDDialog {
     virtual void		dismiss() { }
     virtual void		resize(int _width, int _height);
     virtual void		setFailedMessage(const char *) {;};
-    
+
     HUDuiControl*		getFocus() const { return navList.get(); }
-	
+
     void reFocus() { navList.set(navList.getIndex()); }
 
   protected:

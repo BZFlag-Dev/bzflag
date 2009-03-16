@@ -101,7 +101,7 @@ MainMenu::~MainMenu()
   delete quitMenu;
   HelpMenu::done();
   /* release font
-   * note that it is NOT valid to call getFontFace if there is not an active 
+   * note that it is NOT valid to call getFontFace if there is not an active
    * instance of MainMenu, even though it's static. */
   LocalFontFace::release(fontFace);
 }

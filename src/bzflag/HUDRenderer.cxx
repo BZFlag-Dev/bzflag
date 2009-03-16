@@ -51,17 +51,17 @@ std::string   HUDRenderer::gameOverLabel("GAME OVER");
 
 HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 			 const SceneRenderer& renderer)
-: display(_display) 
-, window(renderer.getWindow()) 
-, firstRender(true) 
-, playing(false) 
-, roaming(false) 
-, dim(false) 
-, numPlayers(0) 
-, timeLeft(~0u) 
-, playerHasHighScore(false) 
-, teamHasHighScore(false) 
-, heading(0.0) 
+: display(_display)
+, window(renderer.getWindow())
+, firstRender(true)
+, playing(false)
+, roaming(false)
+, dim(false)
+, numPlayers(0)
+, timeLeft(~0u)
+, playerHasHighScore(false)
+, teamHasHighScore(false)
+, heading(0.0)
 , altitude(0.0)
 , altitudeTape(false)
 , fps(-1.0)
@@ -446,7 +446,7 @@ void HUDRenderer::setComposing(const std::string &prompt,
       FontManager &fm = FontManager::instance();
       float fontHeight = fm.getStringHeight(cFontFace->getFMFace(), cFontSize);
       const float x =
-	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, composeTypeIn->getLabel().c_str()) + 
+	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, composeTypeIn->getLabel().c_str()) +
 	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, "__");
       const float y = fontHeight * 0.5f;
       composeTypeIn->setLabelWidth(x);
@@ -757,7 +757,7 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
   glVertex3f(-triangleSize,triangleSize,0.01f);
   glEnd();
 
-  if (friendly) 
+  if (friendly)
     DisplayListSystem::Instance().callList(friendlyMarkerList);
 
   glPopMatrix();
@@ -999,7 +999,7 @@ void HUDRenderer::renderAlerts(void)
   if (GfxBlockMgr::alerts.blocked()) {
     return;
   }
-  
+
   const float centerx = 0.5f * (float)window.getWidth();
 
   FontManager &fm = FontManager::instance();
@@ -1103,46 +1103,46 @@ void HUDRenderer::renderStatus(void)
     if (target) {
       float vel[3] = {0};
       memcpy(vel,target->getVelocity(),sizeof(float)*3);
-  
+
       float apparentVel[3] = {0};
       memcpy(apparentVel,target->getApparentVelocity(),sizeof(float)*3);
-  
+
       float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
       float vertSpeed = vel[2];
       float rotSpeed = fabs(target->getAngularVelocity());
       float apparentLinSpeed = sqrt(apparentVel[0]*apparentVel[0]+apparentVel[1]*apparentVel[1]);
-  
+
       float smallZHeight = fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize)*1.125f;
       float drawY = y-smallZHeight;
       // draw header
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "Target Info");
       fm.drawString(x, drawY, 0, minorFontFace->getFMFace(), minorFontSize, "Target Info");
-  
+
       sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
         sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,apparentLinSpeed);
-  
+
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
       fm.drawString(x,drawY-smallZHeight, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
-  
+
       sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
         sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
-  
+
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
       fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
-  
+
       sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
       fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
-  
+
       float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
       float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
-  
+
       sprintf(buffer,"Last Shot Info Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
       fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
-  
+
       scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
     } else {
       scoreboard->setTeamScoreY(0);
@@ -1323,7 +1323,7 @@ void HUDRenderer::renderTimes(void)
   if (GfxBlockMgr::times.blocked()) {
     return;
   }
-  
+
   const int centerx = window.getWidth() >> 1;
   const int centery = window.getViewHeight() >> 1;
   FontManager &fm = FontManager::instance();
@@ -1812,10 +1812,10 @@ void HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
       else {
 	if (customLimboMessage.size()) {
 	  hudColor3fv(messageColor);
-	  fm.drawString(0.5f * ((float)width - 
+	  fm.drawString(0.5f * ((float)width -
 			fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, customLimboMessage.c_str())), y, 0,
 			bigFontFace->getFMFace(), bigFontSize, customLimboMessage.c_str());
-	}	
+	}
       }
     }
     else if (myTank->isPaused()) {

@@ -35,7 +35,7 @@ public:
   int addLocalShot ( FiringInfo * info );
   int addShot ( int GUID, FiringInfo * info );
   int updateShot( int GUID, int param, FiringInfo * info );
-  
+
   bool removeShot ( int GUID );
 
   void updateAllShots ( float dt );

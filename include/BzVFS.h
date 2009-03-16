@@ -35,7 +35,7 @@
   BZVFS_LUA_WORLD_WRITE \
   BZVFS_LUA_BZORG_WRITE
 
- 
+
 
 class BzDocket;
 

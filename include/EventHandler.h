@@ -181,7 +181,7 @@ class EventHandler
         inline bool IsManaged()    const { return (list != NULL); }
         inline bool IsReversed()   const { return reversed;       }
 
-      protected:        
+      protected:
         inline EventClientList* GetList() const { return list; }
 
       private:

@@ -65,7 +65,7 @@ void HUDuiScrollList::setSelected(size_t _index)
     visiblePosition = _index - ((newPage - 1)*numVisibleItems);
   } else {
     // The new index falls within the portion of the list already on screen
-    if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) { 
+    if ((_index >= index - visiblePosition)&&(_index < (index + (numVisibleItems - visiblePosition)))) {
       visiblePosition = visiblePosition + (_index - index);
     // Moving one down outside of list range
     } else if (_index == (index + (numVisibleItems - visiblePosition))) {
@@ -97,8 +97,8 @@ HUDuiControl* HUDuiScrollList::get(size_t _index)
 void HUDuiScrollList::addItem(HUDuiControl* item)
 {
   item->setFontFace(getFontFace());
-  item->setFontSize(getFontSize());  
-  item->setSize(getWidth(), 10);  
+  item->setFontSize(getFontSize());
+  item->setSize(getWidth(), 10);
 
   items.push_back(item);
   addControl(item);
@@ -134,7 +134,7 @@ size_t HUDuiScrollList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
 {
   // Don't scroll up any further once you've hit the top of the list
   if ((oldFocus == 0)&&(changeMethod == hnPrev)) proposedFocus = oldFocus;
-  
+
   // Don't scroll past the bottom of the list
   if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 

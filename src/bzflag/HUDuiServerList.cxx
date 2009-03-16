@@ -210,7 +210,7 @@ void HUDuiServerList::addItem(ServerItem* item)
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
   newItem->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
-  newItem->setFontSize(getFontSize());  
+  newItem->setFontSize(getFontSize());
   newItem->setSize(getWidth(), 10);
 
   // Don't add duplicates to the list
@@ -218,7 +218,7 @@ void HUDuiServerList::addItem(ServerItem* item)
     delete newItem;
     return;
   }
-     
+
   // Apply filters now before adding
   if (std::bind2nd(filter(), filterOptions)(newItem)) {
     delete newItem;
@@ -238,7 +238,7 @@ void HUDuiServerList::addItem(std::string key)
   HUDuiServerListItem* newItem = new HUDuiServerListItem(key);
   newItem->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
-  newItem->setFontSize(getFontSize());  
+  newItem->setFontSize(getFontSize());
   newItem->setSize(getWidth(), 10);
 
   // Don't add duplicates to the list
@@ -255,7 +255,7 @@ void HUDuiServerList::addItem(std::string key)
 
     addControl(newItem);
   }
-     
+
   // Apply filters now before adding
   if (std::bind2nd(filter(), filterOptions)(newItem)) {
     delete newItem;
@@ -285,7 +285,7 @@ void HUDuiServerList::removeItem(ServerItem* item)
   HUDuiServerListItem* oldItem = new HUDuiServerListItem(item);
   std::list<HUDuiControl*>::iterator it = std::search_n(originalItems.begin(), originalItems.end(), 1, oldItem, equal);
   std::list<HUDuiControl*>::iterator sec_it = std::search_n(items.begin(), items.end(), 1, oldItem, equal);
-  
+
   HUDuiControl* oneBeforeItem;
   if ((sec_it == --items.end())&&(items.size() > (size_t) 1)) {
     --sec_it;
@@ -523,7 +523,7 @@ size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, H
 {
   // Don't scroll up any further once you've hit the top of the list
   if ((oldFocus == 0)&&(changeMethod == hnPrev)) proposedFocus = oldFocus;
-  
+
   // Don't scroll past the bottom of the list
   if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 
@@ -618,7 +618,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 
       default:
 	break;
-      } 
+      }
     }
   } else if (key.chr == '+') {
     if (hasFocus()) {

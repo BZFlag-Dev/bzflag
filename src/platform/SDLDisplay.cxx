@@ -188,7 +188,7 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
       if (ctrl)  { bzEvent.keyDown.shift |= BzfKeyEvent::ControlKey; }
       if (shift) { bzEvent.keyDown.shift |= BzfKeyEvent::ShiftKey;   }
 
-      int& button = bzEvent.keyDown.button;      
+      int& button = bzEvent.keyDown.button;
       switch (sdlEvent.button.button) {
 	case SDL_BUTTON_LEFT:      { button = BzfKeyEvent::LeftMouse;     break; }
 	case SDL_BUTTON_MIDDLE:    { button = BzfKeyEvent::MiddleMouse;   break; }
@@ -215,7 +215,7 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
       if (ctrl)  { bzEvent.keyUp.shift |= BzfKeyEvent::ControlKey; }
       if (shift) { bzEvent.keyUp.shift |= BzfKeyEvent::ShiftKey;   }
 
-      int& button = bzEvent.keyUp.button;      
+      int& button = bzEvent.keyUp.button;
       switch (sdlEvent.button.button) {
 	case SDL_BUTTON_LEFT:      { button = BzfKeyEvent::LeftMouse;     break; }
 	case SDL_BUTTON_MIDDLE:    { button = BzfKeyEvent::MiddleMouse;   break; }
@@ -472,7 +472,7 @@ void SDLDisplay::getWindowSize(int& width, int& height)
     height = base_height;
   }
 
-  logDebugMessage(1, "returning window size %ix%i with fullscreen set to %c\n", 
+  logDebugMessage(1, "returning window size %ix%i with fullscreen set to %c\n",
                   width, height, fullScreen ? '1' : '0');
 
   /* sanity checks */

@@ -12,7 +12,7 @@ public:
   virtual void process ( bz_EventData *eventData );
 };
 
-typedef struct 
+typedef struct
 {
   int id;
   int caried;
@@ -105,7 +105,7 @@ void checkFlags ( void )
     return;
 
   bz_setBZDBBool("_grabOwnFlag",true);
- 
+
   int flagCount = bz_getNumFlags();
   for ( int i = 0; i < flagCount; i++ )
   {
@@ -212,7 +212,7 @@ void UnrealCTFEventHandler::process ( bz_EventData *eventData )
 	bz_AllowCTFCaptureEventData_V1* CTFCap = (bz_AllowCTFCaptureEventData_V1*)eventData;
 
 	CTFCap->killTeam = false;
-	
+
 	// only let them cap if there flag is not caried
 	CTFCap->allow = getTeamFlagCarier(CTFCap->teamCapping) == -1;
       }

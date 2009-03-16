@@ -232,7 +232,7 @@ void LogLoop::logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &m
 }
 
 void LogLoop::logAuthMessage ( bz_PlayerAuthEventData_V1 *data, LogMessage &message )
-{  
+{
   std::string player;
   if (data->playerID >= 0)
     player = bz_getPlayerCallsign(data->playerID);

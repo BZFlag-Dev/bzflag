@@ -1,13 +1,13 @@
 /* ------------------------------------------------------------------------- */
 
-/* 
+/*
  * Search for name in the extensions string. Use of strstr()
  * is not sufficient because extension names can be prefixes of
  * other extension names. Could use strtok() but the constant
  * string returned by glGetString might be in read-only memory.
  */
 GLboolean glewGetExtension (const char* name)
-{    
+{
   GLubyte* p;
   GLubyte* end;
   GLuint len = _glewStrLen((const GLubyte*)name);

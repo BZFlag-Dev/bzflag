@@ -108,7 +108,7 @@ protected:
     int     flags;          /* state info */
     float   x, y, z;        /* event location */
     double  time;           /* time of event */
-    float   lastLeftAtten; 
+    float   lastLeftAtten;
     float   lastRightAtten;
     float   dx, dy, dz;     /* last relative position */
     float   d;              /* last relative distance */

@@ -20,7 +20,7 @@
 #ifdef HAVE_SYS_SOCKET_H
 #  include <sys/socket.h>
 #  include <arpa/inet.h>
-#endif 
+#endif
 
 /* common implementation headers */
 #include "NetHandler.h"
@@ -401,7 +401,7 @@ int RCLink::updateRead()
     int nread = read(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount);
     if (nread == 0) {
       SPECIFICLOGGER << "RCLink: Remote host closed connection." << std::endl;
-      status = getDisconnectedState(); 
+      status = getDisconnectedState();
       return -1;
     } else if (nread == -1 && errno != EAGAIN) {
       SPECIFICLOGGER << "RCLink: Read failed. Error: " << strerror(errno) << std::endl;

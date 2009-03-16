@@ -158,7 +158,7 @@ namespace TankGeometryUtils {
 // TankGeometryUtils Functions
 // ---------------------------
 
-inline 
+inline
 void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
 {
   const float* scale = currentScaleFactor;

@@ -259,7 +259,7 @@ LUA_API int   (lua_setuserdataextra) (lua_State* L, int idx, void* extra);
 LUA_API void* (lua_getuserdataextra) (lua_State* L, int idx);
 
 
-/* 
+/*
 ** ===============================================================
 ** some useful macros
 ** ===============================================================

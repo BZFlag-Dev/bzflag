@@ -297,7 +297,7 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 		return false;
 	}
 
-	return true; 
+	return true;
 }
 
 

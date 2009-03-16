@@ -246,7 +246,7 @@ int LuaGLPointers::VertexPointer(lua_State* L)
 	if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
 	  glDisableClientState(GL_VERTEX_ARRAY);
 		maxElements.erase(GL_VERTEX_ARRAY);
-		FreeLuaRef(L, GL_VERTEX_ARRAY);		
+		FreeLuaRef(L, GL_VERTEX_ARRAY);
 		return 0;
 	}
 
@@ -264,7 +264,7 @@ int LuaGLPointers::VertexPointer(lua_State* L)
 	if (maxElem <= 0) {
 		return 0;
 	}
-		
+
 	glVertexPointer(width, type, stride, ptr);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	if (useVBO) {
@@ -282,7 +282,7 @@ int LuaGLPointers::NormalPointer(lua_State* L)
 	if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
 	  glDisableClientState(GL_NORMAL_ARRAY);
 		maxElements.erase(GL_NORMAL_ARRAY);
-		FreeLuaRef(L, GL_NORMAL_ARRAY);		
+		FreeLuaRef(L, GL_NORMAL_ARRAY);
 		return 0;
 	}
 
@@ -330,7 +330,7 @@ static int HandleTexCoordPointer(lua_State* L, int index, GLenum texUnit)
 	if (maxElem <= 0) {
 		return 0;
 	}
-		
+
 	glTexCoordPointer(width, type, stride, ptr);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	if (useVBO) {
@@ -393,7 +393,7 @@ int LuaGLPointers::ColorPointer(lua_State* L)
 	if (maxElem <= 0) {
 		return 0;
 	}
-		
+
 	glColorPointer(width, type, stride, ptr);
 	glEnableClientState(GL_COLOR_ARRAY);
 	if (useVBO) {
@@ -424,7 +424,7 @@ int LuaGLPointers::EdgeFlagPointer(lua_State* L)
 	if (maxElem <= 0) {
 		return 0;
 	}
-		
+
 	glEdgeFlagPointer(stride, ptr);
 	glEnableClientState(GL_EDGE_FLAG_ARRAY);
 	if (useVBO) {
@@ -481,7 +481,7 @@ static const void* ParseIndices(lua_State* L, int index, size_t count,
 	if (typeSize < 0) {
 		luaL_error(L, "unknown index type: 0x%0x", type);
 	}
-	
+
 	size_t size;
 	const char* data = luaL_checklstring(L, index + 1, &size);
 	const size_t offset = luaL_optint(L, index + 2, 0);
@@ -503,7 +503,7 @@ static const void* ParseIndices(lua_State* L, int index, size_t count,
 		luaL_error(L, "error parsing index data");
 	}
 
-	return data;		
+	return data;
 }
 
 
@@ -575,7 +575,7 @@ int LuaGLPointers::DrawElements(lua_State* L)
 	if (useVBO) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
-	
+
 	return 0;
 }
 
@@ -621,7 +621,7 @@ int LuaGLPointers::DrawArraysInstanced(lua_State* L)
 	const GLuint  first = (GLuint) luaL_optint(L, 4, 0);
 
 	CheckMaxElement(L, count + first - 1);
-	
+
 	glDrawArraysInstancedARB(mode, first, count, prims);
 
 	return 0;

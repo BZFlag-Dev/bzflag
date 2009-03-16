@@ -72,12 +72,12 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       completer.complete(line, partials);
     }
     eventHandler.WordComplete(line, partials);
-    if (!partials.empty()) {    
+    if (!partials.empty()) {
       // find the longest common string
       const std::string first = *(partials.begin());
       const std::string last = *(partials.rbegin());
-      size_t i;
       const size_t minLen = std::min(first.size(), last.size());
+      size_t i;
       for (i = 0; i < minLen; i++) {
         if (first[i] != last[i]) {
           break;

@@ -60,14 +60,14 @@ private:
   bz_ServerSidePlayerHandler &bot;
 };
 
-class SimpleBotHandler : public bz_ServerSidePlayerHandler 
+class SimpleBotHandler : public bz_ServerSidePlayerHandler
 {
 public:
   SimpleBotHandler();
   virtual void added ( int playerIndex );
   virtual void removed ( void );
 
-  virtual bool think(void); 
+  virtual bool think(void);
 
   virtual void playerSpawned ( int player, float pos[3], float rot );
 

@@ -146,7 +146,7 @@ char *getpass_r(const char *prompt, char *buffer, size_t buflen)
     if (buffer[i-1] == '\b') {
       /* remove this letter and if this is not the first key,
          remove the previous one as well */
-      if (i > 1) {   
+      if (i > 1) {
         printf("\b \b");
         i = i - 2;
       } else {

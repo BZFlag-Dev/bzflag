@@ -230,7 +230,7 @@ static bool PushAnsiCodes(lua_State* L)
 	lua_newtable(L);
 
 	LuaPushNamedString(L, "RESET",        ANSI_STR_RESET_FINAL);
-	LuaPushNamedString(L, "RESET_BRIGHT", ANSI_STR_RESET);            
+	LuaPushNamedString(L, "RESET_BRIGHT", ANSI_STR_RESET);
 	LuaPushNamedString(L, "BRIGHT",       ANSI_STR_BRIGHT);
 	LuaPushNamedString(L, "DIM",          ANSI_STR_DIM);
 	LuaPushNamedString(L, "UNDERLINE",    ANSI_STR_UNDERLINE);

@@ -93,7 +93,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
       return false;
     }
     dyncol->addState(duration, color);
-    dyncol->addState(0.0f,     color); 
+    dyncol->addState(0.0f,     color);
   }
   else {
     // NOTE: we don't use a WorldFileObstacle

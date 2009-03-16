@@ -186,7 +186,7 @@ bool LuaUtils::FormatArgs(lua_State* L, bool expandTables,
 {
 }
 */
-																						
+
 
 //============================================================================//
 //============================================================================//
@@ -277,7 +277,7 @@ static bool LowerKeysReal(lua_State* L, int depth)
 	for (lua_pushnil(L); lua_next(L, changed) != 0; lua_pop(L, 1)) {
 		lua_pushvalue(L, -2); // copy the key to the top
 		lua_pushvalue(L, -2); // copy the value to the top
-		lua_rawset(L, table);		
+		lua_rawset(L, table);
 	}
 
 	lua_pop(L, 1); // pop the changed table

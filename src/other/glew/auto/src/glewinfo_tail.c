@@ -70,10 +70,10 @@ int main (void)
 #if defined(_WIN32)
   fprintf(f, "Reporting capabilities of pixelformat %d\n", visual);
 #elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-  fprintf(f, "Reporting capabilities of display %s, visual 0x%x\n", 
+  fprintf(f, "Reporting capabilities of display %s, visual 0x%x\n",
     display == NULL ? getenv("DISPLAY") : display, visual);
 #endif
-  fprintf(f, "Running on a %s from %s\n", 
+  fprintf(f, "Running on a %s from %s\n",
 	  glGetString(GL_RENDERER), glGetString(GL_VENDOR));
   fprintf(f, "OpenGL version %s is supported\n", glGetString(GL_VERSION));
   glewInfo();
@@ -142,7 +142,7 @@ GLboolean glewCreateContext (int* pixelformat)
   wc.lpszClassName = "GLEW";
   if (0 == RegisterClass(&wc)) return GL_TRUE;
   /* create window */
-  wnd = CreateWindow("GLEW", "GLEW", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+  wnd = CreateWindow("GLEW", "GLEW", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
                      CW_USEDEFAULT, NULL, NULL, GetModuleHandle(NULL), NULL);
   if (NULL == wnd) return GL_TRUE;
   /* get the device context */
@@ -256,8 +256,8 @@ GLboolean glewCreateContext (const char* display, int* visual)
   cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen), vi->visual, AllocNone);
   swa.border_pixel = 0;
   swa.colormap = cmap;
-  wnd = XCreateWindow(dpy, RootWindow(dpy, vi->screen), 
-                      0, 0, 1, 1, 0, vi->depth, InputOutput, vi->visual, 
+  wnd = XCreateWindow(dpy, RootWindow(dpy, vi->screen),
+                      0, 0, 1, 1, 0, vi->depth, InputOutput, vi->visual,
                       CWBorderPixel | CWColormap, &swa);
   /* make context current */
   if (!glXMakeCurrent(dpy, wnd, ctx)) return GL_TRUE;

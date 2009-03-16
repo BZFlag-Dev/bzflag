@@ -268,7 +268,7 @@ void PlayerLoop::getKey (size_t /*item*/, std::string &data, const std::string &
 bool PlayerLoop::getIF  (size_t /*item*/, const std::string &key)
 {
   bool ret = false;
- 
+
   bz_BasePlayerRecord *player = bz_getPlayerByIndex(getPlayerID());
 
   if (player)
@@ -323,7 +323,7 @@ NavLoop::NavLoop(Templateiser &ts ) : LoopHandler()
 
 void NavLoop::computePageList ( void )
 {
-  // scan the dirs for files with title 
+  // scan the dirs for files with title
 
   bool haveMain = false;
   for ( size_t f = 0; f < pages.size(); f++ )
@@ -575,7 +575,7 @@ void ChatLoop::process(bz_EventData *eventData)
       message.to = bz_getPlayerCallsign(data->to);
 
     messages.push_back(message);
-  }	
+  }
 }
 
  void ChatLoop::setSize ( void )

@@ -51,7 +51,7 @@ class LinkManager {
     int getTeleportTarget(int source) const;
     int getTeleportTarget(int source, unsigned int seed) const;
 
-    int getTeleportIndex(const std::string& name) const;    
+    int getTeleportIndex(const std::string& name) const;
 
     const LinkNumberSet* getLinkDsts(int linkID) const;
 

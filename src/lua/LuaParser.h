@@ -120,7 +120,7 @@ class LuaParser {
 		}
 
 		const string& GetErrorLog() const { return errorLog; }
-	
+
 		const set<string>& GetAccessedFiles() const { return accessedFiles; }
 
 		void CallFunction(int (*func)(lua_State*));
@@ -167,7 +167,7 @@ class LuaParser {
 
 		bool lowerKeys; // convert all returned keys to lower case
 
-		string errorLog;	
+		string errorLog;
 		set<string> accessedFiles;
 
 	private:

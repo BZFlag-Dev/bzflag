@@ -48,7 +48,7 @@ messageParseStatus IdentifyBackend::parse(char **arguments, int count)
 void IdentifyBackend::getParameters(std::ostream &stream) const
 {
   stream << version;
-} 
+}
 
 
 messageParseStatus EventReply::parse(char **arguments, int count)
@@ -584,7 +584,7 @@ messageParseStatus ObstacleReply::parsePyr(char **arguments, int count)
     return InvalidArguments;
   if (!MessageUtilities::parse(arguments[8], shoot))
     return InvalidArguments;
-  
+
   obs = new PyramidBuilding(p, rot, width, breadth, height,
                             (unsigned char)drive, (unsigned char)shoot, false);
                             // FIXME false is for ricochet
@@ -752,7 +752,7 @@ void ShotPositionReply::getParameters(std::ostream &stream) const
 bool ShotPositionReply::updateBot(const BZAdvancedRobot *robot) const
 {
   const FrontendShot *shot = robot->getShot(id);
-  
+
   if(!shot)
     return false;
 
@@ -788,7 +788,7 @@ void ShotVelocityReply::getParameters(std::ostream &stream) const
 bool ShotVelocityReply::updateBot(const BZAdvancedRobot *robot) const
 {
   const FrontendShot *shot = robot->getShot(id);
-  
+
   if(!shot)
     return false;
 

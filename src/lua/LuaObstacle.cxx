@@ -413,7 +413,7 @@ int LuaObstacle::GetObstacleTeam(lua_State* L)
 	if (obs->getTypeID() != baseType) {
 		return 0;
 	}
-	const BaseBuilding* base = (BaseBuilding*)obs;	
+	const BaseBuilding* base = (BaseBuilding*)obs;
 	lua_pushinteger(L, base->getTeam());
 	return 1;
 }
@@ -439,7 +439,7 @@ int LuaObstacle::GetObstacleBorder(lua_State* L)
 	if (obs->getTypeID() != teleType) {
 		return 0;
 	}
-	const Teleporter* tele = (Teleporter*)obs;	
+	const Teleporter* tele = (Teleporter*)obs;
 	lua_pushnumber(L, tele->getBorder());
 	return 1;
 }
@@ -462,7 +462,7 @@ int LuaObstacle::GetObstacleFaceCount(lua_State* L)
 	}
 
 	const MeshObstacle* mesh = (const MeshObstacle*)obs;
-	lua_pushinteger(L, mesh->getFaceCount());		
+	lua_pushinteger(L, mesh->getFaceCount());
 
 	return 1;
 }
@@ -546,7 +546,7 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 		return 0;
 	}
 
-	// defined texcoords	
+	// defined texcoords
 	if (face->useTexcoords()) {
 		const int elements = face->getVertexCount();
 		lua_createtable(L, elements, 0);
@@ -560,7 +560,7 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 		return 1;
 	}
 
-	// generated texcoords	
+	// generated texcoords
 	if (!lua_isboolean(L, 3) || lua_tobool(L, 3)) {
 		const int elements = face->getVertexCount();
 		GLfloat3Array vertArray(elements);
@@ -661,7 +661,7 @@ int LuaObstacle::GetTeleByName(lua_State* L)
 	if (tele == NULL) {
 		return 0;
 	}
-	lua_pushinteger(L, tele->getGUID());  
+	lua_pushinteger(L, tele->getGUID());
 	return 1;
 }
 

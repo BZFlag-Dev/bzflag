@@ -237,7 +237,7 @@ void LuaServer::recvCommand(const string& cmdLine, int playerIndex)
   if (L != NULL) {
     CallIns::RecvCommand(cmdLine);
   }
-    
+
   return;
 }
 
@@ -312,7 +312,7 @@ static bool CreateLuaState(const string& script)
 
 static string EnvExpand(const string& path)
 {
-  
+
   string::size_type pos = path.find('$');
   if (pos == string::npos) {
     return path;

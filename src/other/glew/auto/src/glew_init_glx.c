@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------------ */
 
 GLboolean glxewGetExtension (const char* name)
-{    
+{
   GLubyte* p;
   GLubyte* end;
   GLuint len = _glewStrLen((const GLubyte*)name);

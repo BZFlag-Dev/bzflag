@@ -84,7 +84,7 @@ LuaHandle::LuaHandle(const string& _name, int _order,
 	lua_pop(L, 1);
 
 	if (devMode) {
-		lua_register(L, "dump",    LuaExtras::dump); 
+		lua_register(L, "dump",    LuaExtras::dump);
 		lua_register(L, "listing", LuaExtras::listing);
 	}
 }
@@ -267,7 +267,7 @@ bool LuaHandle::CanUseCallIn(const string& ciName) const
 	const int code = luaCallInDB.GetCode(luaCallInDB.GetCallInName(ciName));
 	if (code == 0)  {
 		return false;
-	}	
+	}
 	return (validCallIns.find(code) != validCallIns.end());
 }
 
@@ -288,7 +288,7 @@ bool LuaHandle::UpdateCallIn(const string& ciName, bool state)
 
 static void AddCallInError(lua_State* L, const string& funcName)
 {
-	// error string is on the top of the stack 
+	// error string is on the top of the stack
 	lua_checkstack(L, 4);
 
 	lua_getglobal(L, "ERRORS");
@@ -546,7 +546,7 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
 
 	const LuaCallInDB::InfoMap& ciInfoMap = luaCallInDB.GetInfoMap();
 	LuaCallInDB::InfoMap::const_iterator it;
-	
+
 	if (lua_israwstring(L, 1)) {
 		const string ciName = lua_tostring(L, 1);
 		const bool wantAll = lua_isboolean(L, 2) && lua_tobool(L, 2);
@@ -628,7 +628,7 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
 
 #define LUA_OPEN_LIB(L, lib) \
   lua_pushcfunction((L), (lib)); \
-  lua_pcall((L), 0, 0, 0); 
+  lua_pcall((L), 0, 0, 0);
 
 
 bool LuaHandle::SetupEnvironment()

@@ -62,7 +62,7 @@ using std::vector;
 
 BZWReader::BZWReader(const string &filename) : cURLManager(),
 					     location(filename),
-					     input(NULL), 
+					     input(NULL),
 					     fromBlob(false)
 {
   static const string httpProtocol("http://");

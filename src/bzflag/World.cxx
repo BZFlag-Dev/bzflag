@@ -289,14 +289,14 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     const char* type = obs->getType();
     if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
       break;
-    
+
     bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
-   
+
     if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
       return obs;
   }
 
-  if (i == olist->count) 
+  if (i == olist->count)
     return NULL; // no more obstacles, we are done
 
   // do some prep work for mesh faces
@@ -326,7 +326,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
       const float facePos2 = face->getPosition()[2];
       if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
 	continue;
-      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) 
+      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
 	continue;
       else {
 	// add the face to the hitlist
@@ -948,7 +948,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 
   // Write the Map Information
   mapInfo.print(out, indent);
-  
+
   // Write the Server Options
   {
     out << indent << "options" << std::endl;
@@ -996,9 +996,9 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
     {
       out << indent << "world" << std::endl;
-      if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) 
+      if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
 	out << indent << "  size " << worldSize / 2.0f << std::endl;
-      if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())) 
+      if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str()))
 	out << indent << "  flagHeight " << flagHeight << std::endl;
 
       if (!OBSTACLEMGR.getWalls().size())

@@ -64,7 +64,7 @@ class LuaHandle : public EventClient
 	public:
 		void CheckStack();
 		void SetupValidCallIns();
-		
+
 	public:
 		bool               RequestReload()  const { return requestReload;  }
 		bool               RequestDisable() const { return requestDisable; }

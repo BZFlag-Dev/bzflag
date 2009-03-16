@@ -1796,7 +1796,7 @@ CURL_EXTERN CURLcode curl_easy_pause(CURL *handle, int bitmask);
     !defined(__cplusplus)
 #include "typecheck-gcc.h"
 #else
-#if defined(__STDC__) && (__STDC__ >= 1) 
+#if defined(__STDC__) && (__STDC__ >= 1)
 /* This preprocessor magic that replaces a call with the exact same call is
    only done to make sure application authors pass exactly three arguments
    to these functions. */

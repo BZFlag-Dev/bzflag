@@ -38,8 +38,8 @@ class OpenGLPassState {
     static inline int GetAttribStackDepth()    { return attribStackDepth;    }
     static inline int GetMinAttribStackDepth() { return minAttribStackDepth; }
     static inline int GetMaxAttribStackDepth() { return maxAttribStackDepth; }
-    static bool TryAttribStackChange(int change); 
-    static bool TestAttribStackChange(int change); 
+    static bool TryAttribStackChange(int change);
+    static bool TestAttribStackChange(int change);
     static bool PushAttrib(GLbitfield bits); // GLbitfield
     static bool PopAttrib();
     static bool TryAttribStackPush();

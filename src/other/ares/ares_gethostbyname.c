@@ -223,8 +223,8 @@ static int fake_hostent(const char *name, int family, ares_host_callback callbac
             numdots++;
           }
         }
-    
-      /* if we don't have 3 dots, it is illegal 
+
+      /* if we don't have 3 dots, it is illegal
        * (although inet_addr doesn't think so).
        */
       if (numdots != 3)

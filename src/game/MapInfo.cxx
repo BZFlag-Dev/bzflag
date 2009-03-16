@@ -42,8 +42,8 @@ MapInfo::~MapInfo()
 
 void MapInfo::clear()
 {
-  infoVec.clear();  
-  infoMap.clear();  
+  infoVec.clear();
+  infoMap.clear();
 }
 
 
@@ -63,7 +63,7 @@ static bool ParseKeyValue(const string& line, string& key, string& value)
   while ((*c != 0) && isspace(*c)) { c++; }
   const char* keyStart = c;
 
-  // find the ':' at the end of the key  
+  // find the ':' at the end of the key
   while ((*c != 0) && (*c != ':') && !isspace(*c)) { c++; }
   if (*c != ':') {
     return false;
@@ -86,13 +86,13 @@ static bool ParseKeyValue(const string& line, string& key, string& value)
 
   // assign the strings
   key.assign(keyStart,     keyEnd - keyStart);
-  value.assign(valueStart, valueEnd - valueStart);  
+  value.assign(valueStart, valueEnd - valueStart);
 
   if (key.empty() || value.empty()) {
     key.clear();
     value.clear();
     return false;
-  }  
+  }
 
   return true;
 }

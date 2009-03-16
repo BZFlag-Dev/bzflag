@@ -124,7 +124,7 @@ void			HUDuiControl::renderFocus()
   const float x = getX();
   const float y = getY();
 
-  if (gstate->isTextured()) { 
+  if (gstate->isTextured()) {
     /* draw a fancy textured/image cursor */
 
     float imageSize = (float)info.y;
@@ -204,7 +204,7 @@ bool			HUDuiControl::doKeyPress(const BzfKeyEvent& key)
       case BzfKeyEvent::Up:
 	navList->prev();
 	return true;
-	
+
       case BzfKeyEvent::Down:
 	navList->next();
 	return true;

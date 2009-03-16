@@ -42,7 +42,7 @@ LuaRBO::~LuaRBO()
 	OpenGLGState::unregisterContextInitializer(StaticFreeContext,
 	                                           StaticInitContext, this);
 }
-	
+
 
 
 void LuaRBO::Delete()
@@ -217,12 +217,12 @@ int LuaRBOMgr::CreateRBO(lua_State* L)
 	// allocate the memory
 	glRenderbufferStorage(rboData.target, rboData.format,
 	                      rboData.xsize,  rboData.ysize);
-	
+
 	glBindRenderbuffer(rboData.target, 0);
 
 	void* udData = lua_newuserdata(L, sizeof(LuaRBO));
 	new(udData) LuaRBO(rboData);
-	
+
 	lua_setuserdataextra(L, -1, (void*)metaName);
 	luaL_getmetatable(L, metaName);
 	lua_setmetatable(L, -2);

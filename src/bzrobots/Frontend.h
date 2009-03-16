@@ -35,10 +35,10 @@ class Frontend
   std::string error;
   ScriptLoader *scriptLoader;
   BZAdvancedRobot *robot;
-  
+
 public:
-  static bool run(std::string filename, const char *host, int port); 
-  
+  static bool run(std::string filename, const char *host, int port);
+
   bool connect(const char *host, int port);
   void start(std::string filename);
   const std::string &getError() const { return error; }

@@ -171,7 +171,7 @@ void JoinMenu::loadInfo()
     info->token[0] = '\0';
   }
 
-  if (info->motto != motto->getString()) 
+  if (info->motto != motto->getString())
     info->motto = motto->getString();
 
   info->team = getTeam();

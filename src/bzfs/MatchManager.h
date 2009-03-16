@@ -43,7 +43,7 @@ private:
   double _currentTime;
   double _previousTime;
   int _startCount, _counter;
-  
+
 };
 
 
@@ -97,23 +97,23 @@ private:
   double _matchDuration;
   double _matchEndCountdown;
   double _matchResetTime;
-  
+
   bool _matchDisallowJoins;
   bool _matchResetScoreOnEnd;
   bool _matchReportMatches;
   // end future BZDB vars
- 
+
   // methods
-  void start ( int playerID, bz_APIStringList *params );	
-  void end ( int playerID, bz_APIStringList *params );	
-  void pause ( int playerID, bz_APIStringList *params );	
-  void substitute ( int playerID, bz_APIStringList *params );	
-  
+  void start ( int playerID, bz_APIStringList *params );
+  void end ( int playerID, bz_APIStringList *params );
+  void pause ( int playerID, bz_APIStringList *params );
+  void substitute ( int playerID, bz_APIStringList *params );
+
   void doPregame();
   void doOngame();
   void doPostgame();
   void doReportgame();
-  
+
   void disablePlayerSpawn();
   void resetTeamScores();
   void resetPlayerScores();

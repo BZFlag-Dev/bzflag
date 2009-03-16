@@ -97,7 +97,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   callSign[CallSignLen-1] = '\0';
 
   // only get an avtar if it can be drawn
-  if (id != ServerPlayer && !headless) 
+  if (id != ServerPlayer && !headless)
     avatar = getPlayerAvatar(id,state.pos,forward);
   else
     avatar = NULL;
@@ -168,7 +168,7 @@ float Player::getReloadTime() const
     return 0.0f;
 
   const int numShots = world->getMaxShots();
-  if (numShots <= 0) 
+  if (numShots <= 0)
     return 0.0f;
 
   float time = float(jamTime - TimeKeeper::getCurrent());
@@ -221,9 +221,9 @@ float Player::getMaxSpeed ( void ) const
   // BURROW and AGILITY will not be taken into account
   const FlagType* flag = getFlag();
   float maxSpeed = BZDBCache::tankSpeed;
-  if (flag == Flags::Velocity) 
+  if (flag == Flags::Velocity)
     maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-  else if (flag == Flags::Thief) 
+  else if (flag == Flags::Thief)
     maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
   return maxSpeed;
 }
@@ -236,14 +236,14 @@ void Player::getMuzzle(float* m) const
   //       0.1f value listed in global.cxx is added on to the
   //       scaled version of tankRadius.
   float front = (dimensionsScale[0] * BZDBCache::tankRadius);
-  if (dimensionsRate[0] > 0.0f) 
+  if (dimensionsRate[0] > 0.0f)
     front = front + (dimensionsRate[0] * 0.1f);
 
   front = front + 0.1f;
 
   m[0] = state.pos[0] + (front * forward[0]);
   m[1] = state.pos[1] + (front * forward[1]);
-  
+
   const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   m[2] = state.pos[2] + (height * dimensionsScale[2]);
   return;
@@ -286,7 +286,7 @@ void Player::move(const float* _pos, float _azimuth)
   forward[2] = 0.0f;
 
   // compute teleporter proximity
-  if (World::getWorld()) 
+  if (World::getWorld())
     teleporterProximity = World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
 }
 
@@ -310,7 +310,7 @@ void Player::setPhysicsDriver(int driver)
   state.phydrv = driver;
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
-  if (phydrv != NULL) 
+  if (phydrv != NULL)
     state.status |= PlayerState::OnDriver;
   else
     state.status &= ~PlayerState::OnDriver;
@@ -322,7 +322,7 @@ void Player::setPhysicsDriver(int driver)
 void Player::setRelativeMotion()
 {
   bool falling = (state.status & short(PlayerState::Falling)) != 0;
-  if (falling && (getFlag() != Flags::Wings)) 
+  if (falling && (getFlag() != Flags::Wings))
     return;    // no adjustments while falling
 
   // set 'relativeSpeed' and 'relativeAngVel'
@@ -817,7 +817,7 @@ void Player::clearRemoteSounds()
 void Player::addRemoteSound(int sound)
 {
   state.sounds |= sound;
-  if (state.sounds != PlayerState::NoSounds) 
+  if (state.sounds != PlayerState::NoSounds)
     state.status |= PlayerState::PlaySound;
   return;
 }
@@ -856,7 +856,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     avatar->setScale(dimensionsScale);
   else {
     teAvatarScaleModes mode = eNormal;	// TODO, have the server set a player scale for these things, so it's not up to the client
-   
+
     if (flagType == Flags::Obesity)
       mode = eFat;
     else if (flagType == Flags::Tiny)
@@ -875,7 +875,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   if (thirdPerson)
     cloaked = (flagType == Flags::Stealth);
 
-  if (cloaked && !seerView) 
+  if (cloaked && !seerView)
     return; // don't draw anything
 
   avatar->setVisualMode(inCockpit,showTreads);
@@ -1278,7 +1278,7 @@ void Player::doDeadReckoning()
   float predictedPos[3];
   float predictedVel[3];
   float predictedAzimuth;
-  
+
   double dt = syncedClock.GetServerSeconds() - updateTimeStamp;
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, (float)dt);
 

@@ -106,7 +106,7 @@ void *PlayerInfo::packUpdate(void *buf)
   return buf;
 }
 
-void PlayerInfo::packUpdate(BufferedNetworkMessage *msg) 
+void PlayerInfo::packUpdate(BufferedNetworkMessage *msg)
 {
   msg->packUShort(uint16_t(type));
   msg->packUShort(uint16_t(team));

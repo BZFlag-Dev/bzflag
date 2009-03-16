@@ -124,8 +124,8 @@ void TextSceneNode::calcPlane()
   plane[1] = normal[1];
   plane[2] = normal[2];
   plane[3] = -((normal[0] * origin[0]) +
-               (normal[1] * origin[1]) + 
-               (normal[2] * origin[2])); 
+               (normal[1] * origin[1]) +
+               (normal[2] * origin[2]));
 }
 
 
@@ -234,7 +234,7 @@ float TextSceneNode::getMaxDist(const float points[5][3]) const
 void TextSceneNode::notifyStyleChange()
 {
   const WorldText& text = renderNode.text;
-  
+
   OpenGLGStateBuilder builder;
 
   const BzMaterial* bzmat = text.bzMaterial;
@@ -248,7 +248,7 @@ void TextSceneNode::notifyStyleChange()
   if (bzmat->getAlphaThreshold() != 0.0f) {
     builder.setAlphaFunc(GL_GEQUAL, bzmat->getAlphaThreshold());
   }
-  
+
   // culling
   if (bzmat->getNoCulling()) {
     builder.setCulling(GL_NONE);
@@ -418,7 +418,7 @@ TextSceneNode::TextRenderNode::~TextRenderNode()
     const string localName = CACHEMGR.getLocalName(text.font);
     fm.freeFontFile(localName);
   }
-    
+
   if (text.useBZDB) {
     BZDB.removeCallback(text.data, bzdbCallback, this);
   }
@@ -495,7 +495,7 @@ void TextSceneNode::TextRenderNode::initXFormList()
       matrix[(i*4)+j] = xformTool.getMatrix()[(j*4)+i];
     }
   }
-  
+
   xformList = glGenLists(1);
   glNewList(xformList, GL_COMPILE);
   {
@@ -534,7 +534,7 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
   for (size_t i = 0; i < lines.size(); i++) {
     stripped.push_back(stripAnsiCodes(lines[i].c_str()));
   }
-  
+
   widths.clear();
   FontManager &fm = FontManager::instance();
   for (size_t i = 0; i < lines.size(); i++) {
@@ -563,7 +563,7 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
   countTriangles();
 
   freeXFormList();
-  initXFormList();  
+  initXFormList();
 }
 
 
@@ -614,7 +614,7 @@ void TextSceneNode::TextRenderNode::render()
   if (wantCheckDist && !checkDist()) {
     return;
   }
-      
+
 #ifdef DEBUG_RENDERING
   if (debugLevel > 0) {
     drawDebug();
@@ -731,7 +731,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
   colorPtr = shadowColor;
 
   linesPtr = &stripped;
-  
+
   if (!BZDBCache::stencilShadows) {
     shadowColor[3] = 1.0f;
     render();

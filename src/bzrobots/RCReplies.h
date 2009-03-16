@@ -39,7 +39,7 @@ class EventReply : public RCReply
 public:
   EventReply(RCEvent *_notification) : notification(_notification) {}
   EventReply() : notification(NULL) {}
-  
+
   std::string getType() const { return "Event"; }
 
   messageParseStatus parse(char **arguments, int count);
@@ -107,7 +107,7 @@ public:
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
-  
+
 private:
   double distance;
 };
@@ -124,7 +124,7 @@ public:
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
   bool updateBot(const BZAdvancedRobot *robot) const;
-  
+
 private:
   double turn;
 };
@@ -137,7 +137,7 @@ public:
 
   messageParseStatus parse(char **arguments, int count);
   void getParameters(std::ostream &stream) const;
-  
+
 private:
   double duration;
 };
@@ -338,7 +338,7 @@ class ObstacleReply : public RCReply
 public:
   ObstacleReply() {}
   ObstacleReply(Obstacle *_obs, enum ObstacleTypes _type) : obs(_obs), type(_type) {}
-  
+
   std::string getType() const { return "Obstacle"; }
 
   messageParseStatus parse(char **arguments, int count);
@@ -373,7 +373,7 @@ class ShotReply : public RCReply
 public:
   ShotReply() {}
   ShotReply(Shot _shot) : shot(_shot) {}
-  
+
   std::string getType() const { return "Shot"; }
 
   messageParseStatus parse(char **arguments, int count);

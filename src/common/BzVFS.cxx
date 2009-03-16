@@ -77,7 +77,7 @@ BzVFS bzVFS;
   static int bzStat(const string& path, bzstat_t* buf)
   {
     // Windows sucks yet again, if there is a trailing  "/"
-    // at the end of the filename, _stat will return -1.   
+    // at the end of the filename, _stat will return -1.
     std::string p = path;
     while (p.find_last_of('/') == (p.size() - 1)) {
       p.resize(p.size() - 1);
@@ -124,7 +124,7 @@ static bool createPathDirs(const std::string& root, const std::string& path)
   // create the directories
   string::size_type p;
   for (p = path.find('/'); p != string::npos; p = path.find('/', p + 1)) {
-    bzMkdir(root + path.substr(0, p));    
+    bzMkdir(root + path.substr(0, p));
   }
 
   // check that the end result is a directory
@@ -148,7 +148,7 @@ class RawFS : public BzFS
   public:
     RawFS(const string& r) : root(BzVFS::cleanDirPath(r)) {}
     ~RawFS() {}
-  
+
   public:
     bool fileExists(const string& path) {
       bzstat_t statbuf;
@@ -184,7 +184,7 @@ class RawFS : public BzFS
         delete[] mem;
         return false;
       }
-      
+
       data.append(mem, size);
       delete[] mem;
       return true;
@@ -319,7 +319,7 @@ class UrlFS : public RawFS
         delete[] mem;
         return false;
       }
-      
+
       data.append(mem, size);
       delete[] mem;
       return true;
@@ -383,7 +383,7 @@ class DocketFS : public BzFS
   public:
     DocketFS(BzDocket* d) : docket(d) {}
     ~DocketFS() { delete docket; }
-  
+
   public:
     bool fileExists(const string& path) {
       return docket->hasData(path);
@@ -505,7 +505,7 @@ bool BzVFS::addFS(const string& name, BzDocket* docket)
   }
   if (fsMap.find(name) != fsMap.end()) {
     return false;
-  } 
+  }
   fsMap[name] = new DocketFS(docket);
   return true;
 }
@@ -518,7 +518,7 @@ bool BzVFS::addFS(const string& name, const string& root)
   }
   if (fsMap.find(name) != fsMap.end()) {
     return false;
-  } 
+  }
   fsMap[name] = new RawFS(root);
   return true;
 }
@@ -679,7 +679,7 @@ bool BzVFS::fileExists(const string& path, const string& modes)
   if (!safePath(cleanPath)) {
     return false;
   }
-  
+
   vector<BzFS*> systems;
   getSystems(outModes, systems);
 
@@ -915,7 +915,7 @@ bool BzVFS::rawDirList(const string& root, const string& path, bool recursive,
   DIR* dir = opendir(fullPath.c_str());
   if (dir == NULL) {
     return false;
-  }    
+  }
   for (dirent* de = readdir(dir); de != NULL; de = readdir(dir)) {
     const string name = de->d_name;
     if (name.empty() || (name == ".") || (name == "..")) {

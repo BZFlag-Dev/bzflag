@@ -89,7 +89,7 @@ int LuaParser::DontMessWithMyCase(lua_State* L)
 		luaL_error(L, "invalid call to DontMessWithMyCase() after execution");
 	}
 	currentParser->SetLowerKeys(lua_tobool(L, 1));
-	return 0;  
+	return 0;
 }
 
 
@@ -251,7 +251,7 @@ void LuaParser::GetTable(int index, bool overwrite)
 {
 	if ((L == NULL) || (initDepth < 0)) { return; }
 
-	lua_pushinteger(L, index); 
+	lua_pushinteger(L, index);
 
 	if (overwrite) {
 		lua_newtable(L);
@@ -399,7 +399,7 @@ LuaTable::LuaTable(LuaParser* _parser)
 	parser  = _parser;
 	L       = parser->L;
 	refnum  = parser->rootRef;
-	
+
 	if (PushTable()) {
 		lua_pushvalue(L, -1); // copy
 		refnum = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -423,7 +423,7 @@ LuaTable::LuaTable(const LuaTable& tbl)
 		refnum = luaL_ref(L, LUA_REGISTRYINDEX);
 	} else {
 		refnum = LUA_NOREF;
-	}	
+	}
 	isValid = (refnum != LUA_NOREF);
 
 	if (parser) {
@@ -454,13 +454,13 @@ LuaTable& LuaTable::operator=(const LuaTable& tbl)
 
 	L    = tbl.L;
 	path = tbl.path;
-	
+
 	if (tbl.PushTable()) {
 		lua_pushvalue(L, -1); // copy
 		refnum = luaL_ref(L, LUA_REGISTRYINDEX);
 	} else {
 		refnum = LUA_NOREF;
-	}	
+	}
 
 	isValid = (refnum != LUA_NOREF);
 
@@ -499,7 +499,7 @@ LuaTable LuaTable::SubTable(int key) const
 
 LuaTable LuaTable::SubTable(const string& mixedKey) const
 {
-	
+
 	const string key = !lowerCppKeys ? mixedKey : StringToLower(mixedKey);
 
 	LuaTable subTable;
@@ -628,7 +628,7 @@ bool LuaTable::PushValue(int key) const
 		lua_pop(L, 1);
 		return false;
 	}
-	return true;	
+	return true;
 }
 
 
@@ -644,7 +644,7 @@ bool LuaTable::PushValue(const string& mixedKey) const
 		lua_pop(L, 1);
 		return false;
 	}
-	return true;	
+	return true;
 }
 
 
@@ -1099,7 +1099,7 @@ static bool LowerKeysReal(lua_State* L, int depth)
 	for (lua_pushnil(L); lua_next(L, changed) != 0; lua_pop(L, 1)) {
 		lua_pushvalue(L, -2); // copy the key to the top
 		lua_pushvalue(L, -2); // copy the value to the top
-		lua_rawset(L, table);		
+		lua_rawset(L, table);
 	}
 
 	lua_pop(L, 1); // pop the changed table

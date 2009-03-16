@@ -30,7 +30,7 @@ public:
   virtual bool read(const char *cmd, std::istream&);
   virtual void writeToWorld(WorldInfo*) const;
   virtual bool usesGroupDef() { return false; }
-  
+
 protected:
   bool createWalls;
   double _size;

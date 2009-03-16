@@ -64,7 +64,7 @@ bool LuaBZDB::PushEntries(lua_State* L)
 static void mapCallback(const std::string& name, void* data)
 {
 	map<string, string>& bzdbMap = *((map<string, string>*)data);
-	bzdbMap[name] = BZDB.get(name);  
+	bzdbMap[name] = BZDB.get(name);
 }
 
 

@@ -34,7 +34,7 @@ public:
   virtual messageParseStatus parse(char **arguments, int count) = 0;
   virtual std::string getType() const = 0;
   virtual void getParameters(std::ostream &stream) const = 0;
-  
+
   static void initializeLookup(void);
 };
 

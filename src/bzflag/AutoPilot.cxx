@@ -702,7 +702,7 @@ static bool fireAtTank()
 	return true;
       }
     }
-    
+
     return false;
   }
 
@@ -722,16 +722,16 @@ static bool fireAtTank()
 	  remotePlayers[t]->isNotResponding() ||
 	  !myTank->validTeamTarget(remotePlayers[t]))
 	continue;
-      
+
       /* make sure they're worth going after */
       if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
 	  && (myTank->getFlag() != Flags::SuperBullet)
 	  && (myTank->getFlag() != Flags::ShockWave))
 	continue;
-      
+
       const float *tp = remotePlayers[t]->getPosition();
       float enemyPos[3];
-      
+
       //toss in some lag adjustment/future prediction - 300 millis
       memcpy(enemyPos,tp,sizeof(enemyPos));
       const float *tv = remotePlayers[t]->getVelocity();
@@ -740,17 +740,17 @@ static bool fireAtTank()
       enemyPos[2] += 0.3f * tv[2];
       if (enemyPos[2] < 0.0f)
 	enemyPos[2] = 0.0f;
-      
+
       float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
-      
+
       /* if I have GM or they're just really close but above/below me */
       if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
-	
+
 	/* are they within range? */
 	float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
 	if ((targetDiff < errorLimit) ||
 	    ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
-	  
+
 	  /* shoot at them if I can see them */
 	  if ((myTank->getFlag() != Flags::SuperBullet) &&
 	      TargetingUtils::isLocationObscured( pos, enemyPos )) {

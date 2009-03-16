@@ -524,7 +524,7 @@ static std::string cmdAutoPilot(const std::string&,
         // enable autopilot
         myTank->requestAutoPilot();
       }
-	  else 
+	  else
 	  {
         controlPanel->addMessage("You may not request the Autopilot more than once every five seconds.");
         return std::string();

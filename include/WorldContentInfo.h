@@ -26,7 +26,7 @@
 class WorldInfo
 {
 public:
-  
+
   class WorldInfoItem
   {
   public:

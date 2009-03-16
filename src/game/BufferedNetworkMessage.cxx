@@ -148,7 +148,7 @@ uint8_t BufferedNetworkMessage::unpackUByte(void)
 {
   uint8_t v = 0;
   char *p = getReadBuffer();
-  if (p)  
+  if (p)
     packedSize += (char*)(nboUnpackUByte(p, v))-p;
   return v;
 }
@@ -270,7 +270,7 @@ bool BufferedNetworkMessage::process (void)
   if (recipient) {
     return transferCallback->send(recipient, data, packedSize+4) == packedSize+4;
   }
-   
+
   // send message to everyone
   int mask = NetHandler::clientBZFlag;
   if (toAdmins)
@@ -364,7 +364,7 @@ void BufferedNetworkMessageManager::sendPendingMessages (void)
 	} else {
 	  leftovers.push_back(msg);
 	}
-	
+
 	outgoingQueue.pop_front();
       }
     }

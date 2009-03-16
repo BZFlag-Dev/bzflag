@@ -45,7 +45,7 @@ void TestRobot::update()
       setFire();
     execute();
   } while (getDistanceRemaining() > 0);
-  
+
   setTurnLeft(90);
   do {
     execute();

@@ -412,7 +412,7 @@ void BackgroundRenderer::buildMountain(unsigned int index)
 {
   if (numMountainTextures == 0)
     return;
-  
+
   float worldSize = BZDBCache::worldSize;
 
   // prepare display lists.  need at least NumMountainFaces, but
@@ -442,10 +442,10 @@ void BackgroundRenderer::buildMountain(unsigned int index)
     for (i = 0; i <= numFacesPerTexture; i++) {
       const float angle = (float)(M_PI + angleScale * (double)(i + n));
       float frac = (float)i / (float)numFacesPerTexture;
-      
+
       if (numMountainTextures != 1)
 	frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
-    
+
       glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
       glTexCoord2f(frac, 0.02f);
       glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle),  0.0f);
@@ -567,7 +567,7 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
     glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
 	      0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    
+
     glBegin(GL_TRIANGLE_FAN); {
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (int i = 0; i < 20; i++) {
@@ -581,7 +581,7 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
   }
   else if (displayList == moonList) {
     int moonSegements = BZDB.evalInt("moonSegments");
-   
+
     glPushMatrix();
     glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     glRotatef((GLfloat)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
@@ -595,7 +595,7 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 	float cosAngle = cosf(angle);
 	// glTexCoord2f(coverage*cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
-	  
+
 	// glTexCoord2f(cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
       }
@@ -635,10 +635,10 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 
 	for (int j = 0; j < GROUND_DIVS; j++) {
 	  GLfloat xoff, xtexoff;
-	  
+
 	  xoff = xmin + xdist * (GLfloat)(j + 1);
 	  xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
-	  
+
 	  glTexCoord2f(xtexoff, ytexoff + ytexdist);
 	  glVertex2f(xoff, yoff + ydist);
 	  glTexCoord2f(xtexoff, ytexoff);
@@ -693,7 +693,7 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
       glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
 		   uvScale * cloudRepeats * squareShape[2][1]);
       glVertex3fv(cloudsInner[2]);
-      
+
       glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
       glTexCoord2f(cloudRepeats * squareShape[3][0],
 		   cloudRepeats * squareShape[3][1]);
@@ -711,7 +711,7 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
       glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
 		   uvScale * cloudRepeats * squareShape[0][1]);
       glVertex3fv(cloudsInner[0]);
-      
+
       glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
       glTexCoord2f(cloudRepeats * squareShape[1][0],
 		   cloudRepeats * squareShape[1][1]);
@@ -746,7 +746,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 
   // make pretransformed display list for sun
   DisplayListSystem &ds = DisplayListSystem::Instance();
-  
+
   ds.freeList(sunXFormList);
   sunXFormList = ds.newList(this);
 
@@ -950,7 +950,7 @@ void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
   if (blank) {
     return;
   }
-  
+
   if (GfxBlockMgr::weather.notBlocked()) {
     if (update) {
       weather.update();
@@ -1401,7 +1401,7 @@ void BackgroundRenderer::multShadowMatrix() const
   shadowProjection[9] = -sunDirection[1] / sunDirection[2];
   glMultMatrixf(shadowProjection);
 }
-    
+
 
 void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 {

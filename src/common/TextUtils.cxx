@@ -398,8 +398,8 @@ namespace TextUtils
     if (key == "resetBright") { outLine += ANSI_STR_RESET;        return len; }
 
     outLine.push_back('\\');
-      
-    return 0;  
+
+    return 0;
   }
 
   std::string unescape_colors(const std::string& source)

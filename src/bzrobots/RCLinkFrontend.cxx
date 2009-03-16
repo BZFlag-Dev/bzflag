@@ -17,7 +17,7 @@
 #ifdef HAVE_SYS_SOCKET_H
 #  include <sys/socket.h>
 #  include <arpa/inet.h>
-#endif 
+#endif
 #include <errno.h>
 #include <stdarg.h>
 

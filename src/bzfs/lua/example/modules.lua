@@ -93,7 +93,7 @@ local function SetupModule(fileName)
 --[[
   local plugin = {}
   plugins[plugin] = {}
-  plugins[plugin] = 
+  plugins[plugin] =
   piChunks[plugin] = chunk
   setfenv(chunk, plugin)
 --]]
@@ -114,7 +114,7 @@ local function SetCallIn(moName, ciName, ciFunc)
   if (moData == nil) then
     return nil
   end
-  
+
 end
 
 
@@ -255,7 +255,7 @@ end
 local function GenUnknownSlashCmdFunc(funcList)
   return function(msg, src, dst, team)
     if (msg:find('/lph')) then  -- Lua Plugin Handler
-      bz.Print('Lua Plugin Handler')      
+      bz.Print('Lua Plugin Handler')
       return true
     else
       for i = 1, #funcList do

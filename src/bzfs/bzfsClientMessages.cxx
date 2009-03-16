@@ -117,7 +117,7 @@ public:
 	  flagMsg->send(handler, MsgFlagType);
 	} else {
 	  // they should already know about this one, dump it back to them
-	  (*m_it)->pack(msg); 
+	  (*m_it)->pack(msg);
 	}
       }
     }
@@ -1089,7 +1089,7 @@ void registerDefaultHandlers ( void )
   clientNetworkHandlers[MsgQueryGame]          = new QueryGameHandler;
   clientNetworkHandlers[MsgQueryPlayers]       = new QueryPlayersHandler;
   clientNetworkHandlers[MsgUDPLinkEstablished] = new UDPLinkEstablishedHandler;
-  
+
   playerNetworkHandlers[MsgNewPlayer]         = new NewPlayerHandler;
   playerNetworkHandlers[MsgCapBits]           = new CapBitsHandler;
   playerNetworkHandlers[MsgEnter]             = new EnterHandler;

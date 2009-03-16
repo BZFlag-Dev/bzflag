@@ -41,7 +41,7 @@ bool PythonLoader::initialize()
 
   /* TODO:
    * I assume we should make it load (using PyImport_Import) the various
-   * SWIGified APIs, so that they'll be "easily" accessible from the 
+   * SWIGified APIs, so that they'll be "easily" accessible from the
    * loaded modules, whopee. :-) */
 
   initialized = true;
@@ -66,7 +66,7 @@ bool PythonLoader::addSysPath(std::string new_path)
 
   path = PyObject_GetAttrString(sys, "path");
   if (!path) {
-    Py_XDECREF(sys); 
+    Py_XDECREF(sys);
     error = "Could not get 'sys.path'.";
     return false;
   }
@@ -75,7 +75,7 @@ bool PythonLoader::addSysPath(std::string new_path)
   PyList_Append(path, dotString);
   Py_XDECREF(dotString);
 
-  Py_XDECREF(path); Py_XDECREF(sys); 
+  Py_XDECREF(path); Py_XDECREF(sys);
 
   return true;
 }
@@ -91,7 +91,7 @@ bool PythonLoader::load(std::string filepath)
   std::string filename;
 
   /* We check if the passed filepath contains a /, if so we add the
-   * part of the filepath up to the / to sys.path, so that our import 
+   * part of the filepath up to the / to sys.path, so that our import
    * will find the module ("the bot"). */
   std::string::size_type separator_pos = filepath.find_last_of("/");
   if (separator_pos != std::string::npos && separator_pos <= filepath.length()) {
@@ -118,7 +118,7 @@ bool PythonLoader::load(std::string filepath)
   module = PyImport_Import(file);
 
   if (!module) {
-    /* TODO: Do the same as PyErr_Print(), just into a string? 
+    /* TODO: Do the same as PyErr_Print(), just into a string?
      * See PyErr_Fetch()
      * (prints a traceback of the error-stack when Something Bad (tm)
      * happens.) */

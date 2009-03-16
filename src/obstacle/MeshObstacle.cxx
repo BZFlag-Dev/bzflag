@@ -770,7 +770,7 @@ void *MeshObstacle::unpack(void *buf)
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough  = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
-  shootThrough  = (stateByte & (1 << 1)) != 0 ? 0xFF : 0; 
+  shootThrough  = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce  = (stateByte & (1 << 2)) != 0;
   noclusters    = (stateByte & (1 << 3)) != 0;
   drawInfoOwner = (stateByte & (1 << 4)) != 0;

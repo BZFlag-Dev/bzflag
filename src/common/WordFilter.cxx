@@ -80,7 +80,7 @@ bool WordFilter::simpleFilter(char *input) const
 bool WordFilter::aggressiveFilter(char *input) const
 {
 #if defined(DEBUG) && defined(_MSC_VER)
-  // FIXME: disable in debug build on windows to avoid assertions 
+  // FIXME: disable in debug build on windows to avoid assertions
   // thrown by MSVCRT when unicode input goes through regex
   return false;
 #endif

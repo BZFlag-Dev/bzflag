@@ -167,7 +167,7 @@ bool FetchHandler::Handle(const char* /*URL*/, void* data, unsigned int size,
 
   lua_rawgeti(L, LUA_REGISTRYINDEX, selfRef);
   if (lua_getuserdataextra(L, -1) != metaName) {
-    lua_pop(L, 2); 
+    lua_pop(L, 2);
     return false;
   }
 
@@ -331,7 +331,7 @@ static int Success(lua_State* L)
 {
   FetchHandler* fetch = CheckHandler(L, 1);
   lua_pushboolean(L, fetch->Success());
-  return 1;  
+  return 1;
 }
 
 
@@ -339,7 +339,7 @@ static int IsActive(lua_State* L)
 {
   FetchHandler* fetch = CheckHandler(L, 1);
   lua_pushboolean(L, fetch->IsActive());
-  return 1;  
+  return 1;
 }
 
 
@@ -347,7 +347,7 @@ static int GetURL(lua_State* L)
 {
   FetchHandler* fetch = CheckHandler(L, 1);
   lua_pushstring(L, fetch->GetURL().c_str());
-  return 1;  
+  return 1;
 }
 
 
@@ -359,7 +359,7 @@ static int GetPostData(lua_State* L)
     return 0;
   }
   lua_pushstring(L, postData.c_str());
-  return 1;  
+  return 1;
 }
 
 

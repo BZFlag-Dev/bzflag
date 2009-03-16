@@ -62,7 +62,7 @@ void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEv
 {
   if (!theEvent)
     return;
-  
+
   if (eventList.find(eventType) == eventList.end()) {
     tvEventList newList;
     eventList[eventType] = newList;

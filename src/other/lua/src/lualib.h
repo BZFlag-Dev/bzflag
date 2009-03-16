@@ -44,7 +44,7 @@ LUALIB_API int (luaopen_lpeg) (lua_State *L);
 
 
 /* open all previous libraries */
-LUALIB_API void (luaL_openlibs) (lua_State *L); 
+LUALIB_API void (luaL_openlibs) (lua_State *L);
 
 
 

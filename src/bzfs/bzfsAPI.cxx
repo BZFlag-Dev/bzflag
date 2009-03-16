@@ -1441,7 +1441,7 @@ BZF_API bool bz_getPlayerPosition(int playerID, float pos[3], bool extrapolate)
   } else {
     memcpy(pos, player->lastState.pos, sizeof(float[3]));
   }
-  
+
   return true;
 }
 
@@ -2222,7 +2222,7 @@ BZF_API bool bz_updateBZDBDouble(const char *variable, double val)
 
   if (!BZDB.isSet(std::string(variable)))
     return false;
- 
+
   BZDB.set(std::string(variable), TextUtils::format("%f", val));
 
   return true;
@@ -2439,7 +2439,7 @@ BZF_API bool bz_IPUnbanUser ( const char* ip )
 {
   if(!ip)
     return false;
- 
+
   clOptions->acl.load();
 
   if(clOptions->acl.unban(ip))
@@ -2456,7 +2456,7 @@ BZF_API bool bz_IDUnbanUser ( const char* bzID )
 {
   if(!bzID)
     return false;
-  
+
   clOptions->acl.load();
 
   if(clOptions->acl.idUnban(bzID))
@@ -2473,7 +2473,7 @@ BZF_API bool bz_HostUnbanUser(const char* hostmask)
     return false;
 
   clOptions->acl.load();
-  
+
   if(clOptions->acl.hostUnban(hostmask))
     clOptions->acl.save();
   else
@@ -2493,7 +2493,7 @@ BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType )
 
     case eHostList:
       return (unsigned int)clOptions->acl.hostBanList.size();
-  
+
     case eIDList:
       return (unsigned int)clOptions->acl.idBanList.size();
   }
@@ -3509,7 +3509,7 @@ BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtribu
     return false;
 
   readTangibilityMask(val,atribs);
-  
+
   return true;
 }
 
@@ -4030,7 +4030,7 @@ class URLFetch : private cURLManager {
     bz_BaseURLHandler *handler;
 
   private:
-    static size_t maxJobID;  
+    static size_t maxJobID;
 };
 
 
@@ -4120,7 +4120,7 @@ class URLFetchHandler {
         return NULL;
       }
       URLFetch* fetch = iit->second;
-      
+
       idMap.erase(id);
 
       URLMap::iterator it = urlMap.find(fetch->getURL());
@@ -4152,14 +4152,14 @@ class URLFetchHandler {
 };
 
 
-static URLFetchHandler urlFetchHandler; 
+static URLFetchHandler urlFetchHandler;
 
 
 void URLFetch::detach()
 {
   urlFetchHandler.detachFetch(this);
 }
-            
+
 
 //-------------------------------------------------------------------------
 
@@ -4362,7 +4362,7 @@ BZF_API bool bz_removeclipFieldNotifier ( const char *name, bz_ClipFiledNotifier
 
   if (clipFieldMap.find(name) == clipFieldMap.end())
     return false;
- 
+
   std::vector<bz_ClipFiledNotifier*> &vec = clipFieldMap[name];
   for ( unsigned int i = 0; i < (unsigned int)vec.size(); i++ )
   {
@@ -4582,11 +4582,11 @@ BZF_API void bz_reloadHelp()
   // reload the text chunks
   logDebugMessage(3, "Reloading helpfiles\n");
   clOptions->textChunker.reload();
-  
+
   // check for new files in helpdirs
   std::list<OSDir>::iterator i, end = clOptions->helpDirs.end();
   OSFile f;
-  
+
   for (i = clOptions->helpDirs.begin(); i != end; i++)
     while (i->getNextFile(f, "*.txt", false))
       if(clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen))
@@ -5096,7 +5096,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
     int flagID = player->player.getFlag();
     FlagType *flag = NULL;
     bool hasOO = false;
-    
+
     if (player->player.haveFlag())
     {
       flag = FlagInfo::get(flagID)->flag.type;
@@ -5152,7 +5152,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	  // get our facing and apply it to our vector so we keep the components that are along our facing.
 	  float facing[3];
 	  vecFromAngle2d(newState.rot,facing);
-  	
+
 	  currentState.vec[0] *= facing[0];
 	  currentState.vec[1] *= facing[1];
 
@@ -5179,7 +5179,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       }
     }
 
-    // we are driving, so apply the input 
+    // we are driving, so apply the input
     if (!falling() && canMove())
     {
       // see what the input wants us to do
@@ -5194,7 +5194,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       float lastSpeed = getMagnitude(newState.vec);
       if (lastSpeed < 0.001)
 	lastSpeed = 0;
-      
+
       computeMomentum(delta, flag, currentSpeed, newState.rotVel, getMagnitude(newState.vec), currentState.rotVel );
 
       // compute our new rotation;
@@ -5561,8 +5561,8 @@ BZF_API bool bz_zapPlayer(int player ) // forces a respawn
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
-				   const char* help, bz_eShotType shotType, 
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
+				   const char* help, bz_eShotType shotType,
 				   bz_eFlagQuality quality)
 {
   // require defined fields

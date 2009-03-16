@@ -1261,7 +1261,7 @@ static void doEvent(BzfDisplay *disply)
       /* unset */
       break;
     }
-  }    
+  }
 }
 
 
@@ -2431,7 +2431,7 @@ static void handleAutoPilot(void *msg)
 			  hud->setAlert(0, "autopilot enabled", 1.0f, true);
 		  else
 			  hud->setAlert(0, "manual drive disabled", 1.0f, true);
-	 
+
 		  // ungrab mouse
 		  mainWindow->ungrabMouse();
 	  }
@@ -2963,7 +2963,7 @@ static void handleNearFlag(void *msg)
   colorMsg += ColorStrings[YellowColor];
   colorMsg += fullMessage;
   colorMsg += ColorStrings[DefaultColor];
-  
+
   addMessage(NULL, colorMsg, ControlPanel::MessageServer, false, NULL);
 
   if (myTank) {
@@ -3018,7 +3018,7 @@ static void playShotSound (const FiringInfo &info, bool localSound)
   const float *pos = info.shot.pos;
   const bool importance = false;
 
-  switch (info.shotType) 
+  switch (info.shotType)
   {
   default:
     SOUNDSYSTEM.play(SFX_FIRE, pos, importance, localSound);
@@ -3083,7 +3083,7 @@ static void handleShotBegin(bool human, void *msg)
 	                          shooter->getAngle(), shooter->getVelocity());
           }
 	}
-      } 
+      }
       else {
 	return;
       }
@@ -3918,6 +3918,10 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       handleLuaData(msg);
       break;
     }
+    case MsgPause: {
+      printf("MsgPause\n"); // FIXME
+      break;
+    }
   }
 
   if (checkScores) {
@@ -3981,12 +3985,12 @@ static void handleGMUpdate (void *msg)
     shotPath->update(shot, msg);
   PlayerId targetId;
   msg = nboUnpackUByte(msg, targetId);
-  Player *targetTank = getPlayerByIndex(targetId); 
+  Player *targetTank = getPlayerByIndex(targetId);
 
   if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
   {
     static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75) 
+    if (TimeKeeper::getTick() - lastLockMsg > 0.75)
     {
       SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
       lastLockMsg = TimeKeeper::getTick();
@@ -5344,7 +5348,7 @@ static void enteringServer(void* buf)
   else {
     if (!ROAM.isRoaming()) {
       const std::string roamStr = BZDB.get("roamView");
-      
+
       Roaming::RoamingView roamView = ROAM.parseView(BZDB.get("roamView"));
       if (roamView <= Roaming::roamViewDisabled) {
         roamView = Roaming::roamViewFP;
@@ -5924,7 +5928,7 @@ static void joinInternetGame2()
   // give them our motto
   if (myTank && startupInfo.motto.size())
     myTank->customData["motto"] = startupInfo.motto;
-  
+
   // send all our custom data pairs
   std::map<std::string, std::string>::iterator itr = myTank->customData.begin();
   while (itr != myTank->customData.end())
@@ -6657,7 +6661,7 @@ static void handleMouseDrawing()
 
   const bool fakeCursor = BZDB.isTrue("fakecursor");
   const bool gfxBlocked = GfxBlockMgr::cursor.blocked();
-  
+
   if (fakeCursor || gfxBlocked) {
     if (!cursorIsHidden) {
       cursorIsHidden = true;

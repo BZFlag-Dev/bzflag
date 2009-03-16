@@ -109,7 +109,7 @@ extern OM_uint32 Curl_gss_init_sec_context_a(OM_uint32 * minor_status,
                                              gss_flags_t req_flags,
                                              OM_uint32 time_req,
                                              gss_channel_bindings_t
-                                             input_chan_bindings,  
+                                             input_chan_bindings,
                                              gss_buffer_t input_token,
                                              gss_OID * actual_mech_type,
                                              gss_buffer_t output_token,

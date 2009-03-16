@@ -628,7 +628,7 @@ void BoltSceneNode::BoltRenderNode::render()
           alpha -= alphaStep;
           size  -= sizeStep;
           glColor4f(1.0f, 1.0f, 1.0f, alpha);
-          glPopMatrix();            
+          glPopMatrix();
           glPushMatrix();
 
           const float s = size * (0.65f + (1.0f * (float)bzfrand()));

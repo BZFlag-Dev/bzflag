@@ -155,8 +155,8 @@ namespace {
     font = fontFaces[face].loadSize(size);
 
 #if debugging
-    std::cout << "getGLFont CREATED face:" << face 
-	      << " size:" << size << " " << (void*)font 
+    std::cout << "getGLFont CREATED face:" << face
+	      << " size:" << size << " " << (void*)font
 	      << std::endl;
 #endif
 
@@ -754,7 +754,7 @@ void FontManager::initContext(void*)
   std::cout << "initContext called\n" << fontFaces.size() << " faces loaded" << std::endl;
 #endif
 }
- 
+
 
 void FontManager::freeContext(void* data)
 {

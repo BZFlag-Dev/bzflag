@@ -49,12 +49,12 @@ bool UpdateBZDBVars::process ( std::string &inputPage, const HTTPRequest &reques
   {
     const std::string &key = itr->first;
     if ( itr->second.size())
-    { 
+    {
       // vars only use the first param with the name.
       const std::string val = url_decode(itr->second[0]);
       if (strncmp(key.c_str(),"var",3) == 0)
       {
-	// it's a var, 
+	// it's a var,
 	if ( varChanged(key.c_str()+3,val.c_str()))
 	  bz_updateBZDBString(key.c_str()+3,val.c_str());
       }

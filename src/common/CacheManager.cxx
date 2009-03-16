@@ -395,7 +395,7 @@ static std::string partialDecoding(const std::string& path)
       const int lsb = toHexNumber(i + 2);
       if ((msb < 0) or (lsb < 0)) {
         return "";
-      }      
+      }
       const char c = (msb << 4) + lsb;
       url += c;
     }

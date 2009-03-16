@@ -295,7 +295,7 @@ void HUDuiServerListCache::applySort(int index, int _sort, bool reverse)
   }
   cachedLists[index].first->setReverseSort(reverse);
 }
-  
+
 void HUDuiServerListCache::addNewList(HUDuiServerList* newList, std::string tabName)
 {
   cachedLists.push_back(std::pair<HUDuiServerList*, std::string>(newList, tabName));

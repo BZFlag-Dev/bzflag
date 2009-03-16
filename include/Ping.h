@@ -78,7 +78,7 @@ class PingPacket {
     uint8_t		purpleMax;
     uint8_t		observerCount;
     uint8_t		observerMax;
-    
+
     int                 pingTime; //ms - is not set when packet is read
     bool		pinging;
 

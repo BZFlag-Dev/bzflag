@@ -517,8 +517,8 @@ int WorldInfo::packDatabase()
     MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
     TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() + links.packSize() +
     WORLDTEXTMGR.packSize() + worldWeapons.packSize() + entryZones.packSize() +
-    luaWorld.packSize();    
-    
+    luaWorld.packSize();
+
   // add water level size
   databaseSize += sizeof(float);
   if (waterLevel >= 0.0f) {
@@ -653,7 +653,7 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
       return obs;
   }
 
-  if (i == olist->count) 
+  if (i == olist->count)
     return NULL; // no more obstacles, we are done
 
   // do some prep work for mesh faces
@@ -683,7 +683,7 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
       const float facePos2 = face->getPosition()[2];
       if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
 	continue;
-      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) 
+      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
 	continue;
       else {
 	// add the face to the hitlist

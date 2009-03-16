@@ -102,7 +102,7 @@ public:
   /* These are related to the internal state/setup of the bot. */
   bool getCompatability() const;
   void setCompatability(bool newState);
-    
+
   void setLink(RCLinkFrontend *_link);
   RCLinkFrontend *getLink(void) const;
 
@@ -117,7 +117,7 @@ public:
 
   /* This returns the shot by given id */
   const FrontendShot *getShot(uint64_t id) const;
- 
+
   mutable double gunHeat, distanceRemaining, turnRemaining;
   mutable double battleFieldSize;
   mutable double yPosition, xPosition, zPosition;

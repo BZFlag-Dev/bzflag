@@ -77,7 +77,7 @@ bool registerLoggingProc(LoggingProc proc, void* data)
   return true;
 }
 
-  
+
 bool unregisterLoggingProc(LoggingProc proc, void* data)
 {
   if (callProcDepth != 0) {

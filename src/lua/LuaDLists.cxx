@@ -58,7 +58,7 @@ bool LuaDList::Call() const
 }
 
 
-bool LuaDList::IsValid() const 
+bool LuaDList::IsValid() const
 {
 	return (listID != INVALID_GL_LIST_ID);
 }
@@ -158,7 +158,7 @@ bool LuaDListMgr::CreateMetatable(lua_State* L)
 	HSTR_PUSH_CFUNC(L,  "__gc",    MetaGC);
 	HSTR_PUSH_CFUNC(L,  "__index", MetaIndex);
 	HSTR_PUSH_STRING(L, "__metatable", "no access");
-	lua_pop(L, 1);  
+	lua_pop(L, 1);
 	return true;
 }
 

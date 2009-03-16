@@ -266,7 +266,7 @@ GLenum LuaFBOMgr::ParseAttachment(const string& name)
 {
 	static map<string, GLenum> attachMap;
 	if (attachMap.empty()) {
-		attachMap["depth"]   = GL_DEPTH_ATTACHMENT; 
+		attachMap["depth"]   = GL_DEPTH_ATTACHMENT;
 		attachMap["stencil"] = GL_STENCIL_ATTACHMENT;
 		attachMap["color0"]  = GL_COLOR_ATTACHMENT0;
 		attachMap["color1"]  = GL_COLOR_ATTACHMENT1;
@@ -314,7 +314,7 @@ bool LuaFBOMgr::AttachObject(lua_State* L, int index,
 		}
 		if (attachTarget == 0) {
 			attachTarget = tex->GetTarget();
-		} 
+		}
 		glFramebufferTexture2D(fbo->target, attachID, attachTarget,
 		                       tex->GetTexID(), attachLevel);
 		fbo->xsize = tex->GetSizeX();
@@ -326,7 +326,7 @@ bool LuaFBOMgr::AttachObject(lua_State* L, int index,
 	if (rbo != NULL) {
 		if (attachTarget == 0) {
 			attachTarget = rbo->target;
-		} 
+		}
 		glFramebufferRenderbuffer(fbo->target, attachID, attachTarget, rbo->id);
 		fbo->xsize = rbo->xsize;
 		fbo->ysize = rbo->ysize;
@@ -438,7 +438,7 @@ int LuaFBOMgr::CreateFBO(lua_State* L)
 
 	void* udData = lua_newuserdata(L, sizeof(LuaFBO));
 	LuaFBO* fbo = new(udData) LuaFBO(fboData);
-	
+
 	lua_setuserdataextra(L, -1, (void*)metaName);
 	luaL_getmetatable(L, metaName);
 	lua_setmetatable(L, -2);
@@ -515,7 +515,7 @@ int LuaFBOMgr::IsValidFBO(lua_State* L)
 int LuaFBOMgr::ActiveFBO(lua_State* L)
 {
 	LuaOpenGL::CheckDrawingEnabled(L, __FUNCTION__);
-	
+
 	const LuaFBO* fbo = CheckLuaFBO(L, 1);
 	if (fbo->id == 0) {
 		return 0;
@@ -534,7 +534,7 @@ int LuaFBOMgr::ActiveFBO(lua_State* L)
 		identities = lua_tobool(L, funcIndex);
 		funcIndex++;
 	}
-		
+
 	if (!lua_isfunction(L, funcIndex)) {
 		luaL_error(L, "Incorrect arguments to gl.ActiveFBO()");
 	}
@@ -588,7 +588,7 @@ int LuaFBOMgr::UnsafeSetFBO(lua_State* L)
 		glBindFramebuffer(target, 0);
 		return 0;
 	}
-		
+
 	const LuaFBO* fbo = CheckLuaFBO(L, 1);
 	if (fbo->id == 0) {
 		return 0;
@@ -641,7 +641,7 @@ int LuaFBOMgr::BlitFBO(lua_State* L)
 
 		GLint currentFBO;
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFBO);
-		
+
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, fboSrc->id);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst->id);
 

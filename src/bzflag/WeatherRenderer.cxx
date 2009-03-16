@@ -792,7 +792,7 @@ void WeatherRenderer::drawDrop(rain& drop, const SceneRenderer& sr)
       glRotatef(lastRainTime * 10.0f * rainSpeed, 0, 0, 1);
 
     DisplayListSystem::Instance().callList(dropList);
-   
+
     glPopMatrix();
   }
 }

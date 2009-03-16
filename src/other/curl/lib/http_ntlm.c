@@ -358,7 +358,7 @@ static void lm_resp(unsigned char *keys,
  * Set up lanmanager hashed password
  */
 static void mk_lm_hash(struct SessionHandle *data,
-                       char *password, 
+                       char *password,
                        unsigned char *lmbuffer /* 21 bytes */)
 {
   unsigned char pw[14];
@@ -1064,7 +1064,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 
 #ifdef CURL_DOES_CONVERSIONS
     /* convert domain, user, and host to ASCII but leave the rest as-is */
-    if(CURLE_OK != Curl_convert_to_network(conn->data, 
+    if(CURLE_OK != Curl_convert_to_network(conn->data,
                                            (char *)&ntlmbuf[domoff],
                                            size-domoff)) {
       return CURLE_CONV_FAILED;

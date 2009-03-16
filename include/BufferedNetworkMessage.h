@@ -55,7 +55,7 @@ public:
   float unpackFloat(void);
   double unpackDouble(void);
   float* unpackFloatVector(float* val);
-  const std::string& unpackStdString(std::string& str); 
+  const std::string& unpackStdString(std::string& str);
 
   void clear(void);
   void reset(void);
@@ -153,7 +153,7 @@ protected:
 private:
   BufferedNetworkMessageManager();
   ~BufferedNetworkMessageManager();
-};  
+};
 
 template <class T>
 inline T* BufferedNetworkMessageManager::newMessage(T* msgToCopy)

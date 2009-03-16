@@ -850,7 +850,7 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
     }
   }
 
-  return true; 
+  return true;
 }
 
 

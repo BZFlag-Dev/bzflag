@@ -69,7 +69,7 @@ static char* ConcatVector(const vector<string>& vs, size_t total)
 	char* data = new char[total];
 	char* pos = data;
 	for (size_t i = 0; i < vs.size(); i++) {
-		const string& str = vs[i]; 
+		const string& str = vs[i];
 		memcpy(pos, str.data(), str.size());
 		pos += str.size();
 	}
@@ -225,7 +225,7 @@ int LuaZip::Zip(lua_State* L)
 	const char* inData = luaL_checklstring(L, 1, &inLen);
 
 	const CompressMode mode = ParseCompressMode(L, 2, "gzip");
-	
+
 	char* outData = NULL;
 	size_t outLen;
 	const int zCode = CompressString(inData, inLen, outData, outLen, mode);

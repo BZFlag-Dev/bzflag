@@ -148,7 +148,7 @@ class GfxBlockMgr {
     static GfxBlock clock;
     static GfxBlock flagHelp;
     static GfxBlock alerts;
-    
+
     static inline GfxBlock* get(int id) {
       if ((id < 0) || (id >= BlockIDCount)) {
         return NULL;

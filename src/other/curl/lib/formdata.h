@@ -27,7 +27,7 @@
 enum formtype {
   FORM_DATA,    /* form metadata (convert to network encoding if necessary) */
   FORM_CONTENT, /* form content  (never convert) */
-  FORM_FILE     /* 'line' points to a file name we should read from 
+  FORM_FILE     /* 'line' points to a file name we should read from
                     to create the form data (never convert) */
 };
 

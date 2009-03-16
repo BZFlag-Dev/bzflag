@@ -135,7 +135,7 @@ typedef short ResourceIndex;
   {
 #if defined( MAC_OS_X_VERSION_10_5 ) && \
     ( MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5 )
- 
+
     OSStatus  err;
 
     err = ATSFontGetFileReference( ats_font_id, ats_font_ref );

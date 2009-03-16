@@ -247,7 +247,7 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
 void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer,
                                     bool staticNodes,
                                     bool dynamicNodes)
-                                    
+
 {
   int i;
 

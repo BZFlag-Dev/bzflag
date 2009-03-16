@@ -117,7 +117,7 @@ public:
    * font size, optionally justifying to a particular alignment.
    */
   void drawString(float x, float y, float z, int faceID, float size,
-		  const char *text, 
+		  const char *text,
 		  const float* resetColor = NULL, fontJustification align = AlignLeft);
 
   /**
@@ -180,7 +180,7 @@ private:
   /** font opacity */
   float opacity;
   /** ANSI code dimming */
-  float dimFactor; 
+  float dimFactor;
   /** darkening of all colors */
   float darkness;
   /** do not mess with GL blending */
@@ -208,7 +208,7 @@ inline void FontManager::setDimFactor(float newDimFactor)
 {
   const float darkDim = newDimFactor * darkness;
   dimFactor = newDimFactor;
-  dimUnderlineColor[0] = underlineColor[0] * darkDim;  
+  dimUnderlineColor[0] = underlineColor[0] * darkDim;
   dimUnderlineColor[1] = underlineColor[1] * darkDim;
   dimUnderlineColor[2] = underlineColor[2] * darkDim;
   dimUnderlineColor[3] = opacity;
@@ -224,7 +224,7 @@ inline void FontManager::setDarkness(float newDarkness)
 {
   darkness = newDarkness;
   const float darkDim = dimFactor * darkness;
-  dimUnderlineColor[0] = underlineColor[0] * darkDim;  
+  dimUnderlineColor[0] = underlineColor[0] * darkDim;
   dimUnderlineColor[1] = underlineColor[1] * darkDim;
   dimUnderlineColor[2] = underlineColor[2] * darkDim;
   dimUnderlineColor[3] = opacity;

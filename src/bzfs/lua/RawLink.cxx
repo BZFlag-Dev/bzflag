@@ -201,7 +201,7 @@ static int DetachRawLink(lua_State* L)
   Link* link = it->second;
   delete link;
   lua_pushboolean(L, true);
-  return 1;  
+  return 1;
 }
 
 

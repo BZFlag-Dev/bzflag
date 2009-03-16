@@ -171,7 +171,7 @@ OpenGLMaterial::OpenGLMaterial(const OpenGLMaterial& m)
     rep->highQuality = false;
     rep->ref();
   }
-  
+
 }
 
 OpenGLMaterial::~OpenGLMaterial()

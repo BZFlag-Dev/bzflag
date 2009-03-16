@@ -88,7 +88,7 @@ class VarsLoop : public LoopHandler
 public:
   VarsLoop(Templateiser &ts);
   virtual void setSize ( void );
- 
+
 protected:
   virtual void getKey (size_t item, std::string &data, const std::string &key);
 
@@ -127,7 +127,7 @@ protected:
 
   virtual size_t getStart ( void );
 
-  typedef struct  
+  typedef struct
   {
     std::string time;
     std::string from;
@@ -151,7 +151,7 @@ public:
 
   virtual void process(bz_EventData *eventData);
   virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
-  
+
   void getLogAsFile ( std::string &file );
   void clearLog ( void );
 
@@ -160,7 +160,7 @@ protected:
 
   virtual size_t getStart ( void );
 
-  typedef struct  
+  typedef struct
   {
     std::string time;
     std::string message;

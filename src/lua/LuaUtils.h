@@ -29,7 +29,7 @@ class LuaUtils {
 												   std::vector<std::string>& result,
 												   const char* caller);
 
-		// not implemented...		
+		// not implemented...
 		static int ParseIntArray(lua_State* L, int tableIndex,
 		                         int* array, int arraySize);
 		static int ParseFloatArray(lua_State* L, int tableIndex,

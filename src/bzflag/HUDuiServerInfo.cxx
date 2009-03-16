@@ -96,21 +96,21 @@ void HUDuiServerInfo::setServerItem(ServerItem* item)
 
 void HUDuiServerInfo::setSize(float width, float height)
 {
-  HUDuiControl::setSize(width, height); 
+  HUDuiControl::setSize(width, height);
 
   resize();
 }
 
 void HUDuiServerInfo::setFontSize(float size)
 {
-  HUDuiControl::setFontSize(size); 
+  HUDuiControl::setFontSize(size);
 
   resize();
 }
 
 void HUDuiServerInfo::setFontFace(const LocalFontFace* face)
 {
-  HUDuiControl::setFontFace(face); 
+  HUDuiControl::setFontFace(face);
 
   resize();
 }
@@ -131,7 +131,7 @@ void HUDuiServerInfo::resize()
   float fontSize = fs.getFontSize(getFontFace()->getFMFace(), "alertFontSize");
   float itemHeight = fm.getStringHeight(getFontFace()->getFMFace(), fontSize);
   const float y0 = getY() + getHeight() - itemHeight - itemHeight/2;
-  
+
   float y = y0;
 
   float x = getX() + itemHeight;

@@ -583,7 +583,7 @@ int LuaOpenGL::Map1(lua_State* L)
 	const int fullSize = (order * dataSize);
 	float* points = new float[fullSize];
 	if (ParseFloatArray(L, points, fullSize) == fullSize) {
-		glMap1f(target, u1, u2, stride, order, points);	
+		glMap1f(target, u1, u2, stride, order, points);
 	}
 	delete[] points;
 	return 0;
@@ -617,9 +617,9 @@ int LuaOpenGL::Map2(lua_State* L)
 	}
 	const int fullSize = (uorder * vorder * dataSize);
 	float* points = new float[fullSize];
-	if (ParseFloatArray(L, points, fullSize) == fullSize) {			
+	if (ParseFloatArray(L, points, fullSize) == fullSize) {
 		glMap2f(target, u1, u2, ustride, uorder,
-										v1, v2, vstride, vorder, points);	
+										v1, v2, vstride, vorder, points);
 	}
 	delete[] points;
 	return 0;
@@ -1377,7 +1377,7 @@ int LuaOpenGL::LightModel(lua_State* L)
 	CheckDrawingEnabled(L, __FUNCTION__);
 
 	const GLenum pname = (GLenum)luaL_checkint(L, 1);
-	
+
 	const int args = lua_gettop(L);
 	if (args > 17) {
 		luaL_error(L, "too many parameters");
@@ -1961,7 +1961,7 @@ int LuaOpenGL::PolygonStipple(lua_State* L)
 	const float alpha = luaL_checkfloat(L, 1);
 	const int numStipples = OpenGLGState::getOpaqueStippleIndex() + 1;
 	const int stipple = (int)(alpha * numStipples);
-	
+
 	OpenGLGState::setStippleIndex(stipple);
 
 	glEnable(GL_POLYGON_STIPPLE);
@@ -2308,7 +2308,7 @@ static float Calculate4x4Cofactor(const float m[4][4], int ei, int ej)
 	    (m[ai][aj] * ((m[bi][bj] * m[ci][cj]) - (m[ci][bj] * m[bi][cj])))
 		- (m[ai][bj] * ((m[bi][aj] * m[ci][cj]) - (m[ci][aj] * m[bi][cj])))
 		+ (m[ai][cj] * ((m[bi][aj] * m[ci][bj]) - (m[ci][aj] * m[bi][bj])));
-	
+
 	if (((ei + ej) % 2) == 0) {
 		return +val;
 	} else {
@@ -2845,7 +2845,7 @@ int LuaOpenGL::SaveImage(lua_State* L)
 	if ((xsize <= 0) || (ysize <= 0)) {
 		return 0;
 	}
-	const int memsize = xsize * ysize * 4;	
+	const int memsize = xsize * ysize * 4;
 
 	unsigned char* img = new unsigned char[memsize];
 	memset(img, 0, memsize);

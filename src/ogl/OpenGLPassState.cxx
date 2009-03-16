@@ -404,7 +404,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
     glBlendEquation(GL_FUNC_ADD);
   }
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
   // culling
   switch (mode) {
     case DRAW_WORLD_START:
@@ -455,7 +455,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,      GL_FALSE);
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,  GL_TRUE);
   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-  
+
   glEnable(GL_NORMALIZE);
 
   glDisable(GL_ALPHA_TEST);
@@ -520,7 +520,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
   }
   else {
     if (BZDBCache::stencilShadows) {
-      glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);    
+      glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
     } else {
       glColor3f(0.0f, 0.0f, 0.0f);
     }
@@ -559,7 +559,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
 
 inline void SetMainScissor()
 {
-  MainWindow* window = getMainWindow();	
+  MainWindow* window = getMainWindow();
   if (window != NULL) {
     const int wh = window->getHeight();
     const int vh = window->getViewHeight();
@@ -613,7 +613,7 @@ inline void OpenGLPassState::DisableCommon(DrawMode mode)
   if (glUseProgram) {
     glUseProgram(0);
   }
- 
+
   TEXMGR.clearLastBoundID(); // FIXME - not needed? glPopAttrib() restores it?
 }
 

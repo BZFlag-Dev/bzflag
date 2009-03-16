@@ -915,7 +915,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
 
   forceClose = true;
 
-  switch(r.returnCode) 
+  switch(r.returnCode)
   {
   case HTTPReply::e200OK:
     pageBuffer += " 200 OK\n";
@@ -923,7 +923,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     break;
 
   case HTTPReply::e301Redirect:
-    if (r.redirectLoc.size()) 
+    if (r.redirectLoc.size())
     {
       pageBuffer += " 301 Moved Permanently\n";
       pageBuffer += "Location: " + r.redirectLoc + "\n";
@@ -935,7 +935,7 @@ void HTTPConnection::HTTPTask::generateBody (HTTPReply& r, bool noBody)
     break;
 
   case HTTPReply::e302Found:
-    if (r.redirectLoc.size()) 
+    if (r.redirectLoc.size())
     {
       pageBuffer += " 302 Found\n";
       pageBuffer += "Location: " + r.redirectLoc + "\n";

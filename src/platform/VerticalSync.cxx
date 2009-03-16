@@ -61,14 +61,14 @@ void verticalSync() {
 #else
   long int newSwapInterval( BZDBCache::vsync );
 #endif
-  
+
   if (newSwapInterval < 0) {
     newSwapInterval = 0;
   }
   // FIXME -- needs to be updated during context switches!
   // FiXME -- this seems to cause a bit flicker at the right top
   // in fullcreen mode while menu is opened (small horizontal lines)
-  CGLSetParameter(cglContext, kCGLCPSwapInterval, &newSwapInterval); 
+  CGLSetParameter(cglContext, kCGLCPSwapInterval, &newSwapInterval);
 }
 
 #  endif // !defined HAVE_CGLGETCURRENTCONTEXT
@@ -88,7 +88,7 @@ void verticalSync() {
   // FIXME -- needs to be updated during context switches?
   if (wglSwapIntervalEXT) {
     wglSwapIntervalEXT(BZDBCache::vsync);
-  }  
+  }
 }
 
 
@@ -109,7 +109,7 @@ void verticalSync() {
   // FIXME -- needs to be updated during context switches?
   if (glXSwapIntervalSGI) {
     glXSwapIntervalSGI(BZDBCache::vsync);
-  }  
+  }
 }
 
 

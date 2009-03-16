@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 #ifndef _REPORTS_H
-#define _REPORTS_H 
+#define _REPORTS_H
 
 #include "common.h"
 #include <string>

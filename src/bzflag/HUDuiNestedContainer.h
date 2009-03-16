@@ -39,7 +39,7 @@ class HUDuiNestedContainer : public HUDuiControl {
     void addControl(HUDuiControl* control);
 
     void setNavQueue(HUDNavigationQueue*);
-	
+
     static size_t gotFocus(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data);
 
     static HUDuiControl* recursiveFocus(HUDuiControl* control);

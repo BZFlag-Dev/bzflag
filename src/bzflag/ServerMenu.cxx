@@ -323,7 +323,7 @@ void ServerMenu::updateStatus()
 void ServerMenu::playingCB(void* _self)
 {
   ServerList &list = ServerList::instance();
-  for (PingsMap::iterator i = ServerMenu::activePings.begin(); 
+  for (PingsMap::iterator i = ServerMenu::activePings.begin();
        i != ServerMenu::activePings.end();) {
     i->second.first->doPings();
     if (i->second.first->done()) {

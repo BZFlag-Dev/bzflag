@@ -83,7 +83,7 @@ bz_byteorder()
 #endif
     if (b.c[1])
         return BZ_PDP_ENDIAN;
-    
+
     return (bz_endian_t)0;
 }
 

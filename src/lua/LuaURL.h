@@ -21,7 +21,7 @@ class LuaURL : private cURLManager {
 
 		// virtuals from cURLManager
     void finalization(char* data, unsigned int length, bool good);
-    
+
 		bool Cancel();
 
 		bool GetActive()  const { return active; }

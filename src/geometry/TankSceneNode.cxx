@@ -991,7 +991,7 @@ void TankSceneNode::TankRenderNode::render()
 	}
 	renderPart((TankPart)(LeftWheel0 + i));
 	renderPart((TankPart)(RightWheel0 + i));
-      } 
+      }
       renderPart(LeftTread);
       renderPart(RightTread);
     }

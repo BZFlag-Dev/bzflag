@@ -95,7 +95,7 @@ void HUDuiTabbedControl::removeTab(size_t tabIndex)
 void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
 {
   std::vector<std::pair<std::string, HUDuiControl*> >::iterator it = std::find(tabs.begin(), tabs.end(), std::pair<std::string, HUDuiControl*>(tabName, control));
-  
+
   if (it != tabs.end())
     tabs.erase(it);
 
@@ -173,7 +173,7 @@ void HUDuiTabbedControl::drawTabs()
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text, activeColor);
     else
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text);
-		
+
     x = x + fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), text) + sideSpacer;
 
     glOutlineBoxHV(1.0f, getX(), y - tabsHeight/2, x + 1, getY() + getHeight() + 1, -0.5f);

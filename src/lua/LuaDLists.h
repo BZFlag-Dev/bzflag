@@ -48,7 +48,7 @@ class LuaDListMgr {
 
 		static const LuaDList* TestLuaDList(lua_State* L, int index);
 		static const LuaDList* CheckLuaDList(lua_State* L, int index);
-	
+
 	public:
 		static const char* metaName;
 

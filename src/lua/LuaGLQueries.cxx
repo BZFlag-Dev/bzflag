@@ -147,7 +147,7 @@ bool LuaGLQueryMgr::CreateMetatable(lua_State* L)
 	HSTR_PUSH_CFUNC(L,  "__gc",    MetaGC);
 	HSTR_PUSH_CFUNC(L,  "__index", MetaIndex);
 	HSTR_PUSH_STRING(L, "__metatable", "no access");
-	lua_pop(L, 1);  
+	lua_pop(L, 1);
 	return true;
 }
 

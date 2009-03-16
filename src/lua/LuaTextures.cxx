@@ -441,7 +441,7 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 	if (target == GL_TEXTURE_BUFFER_ARB) {
 		// just generate a texture ID
 		glGenTextures(1, &texID);
-		return;		
+		return;
 	}
 
 /*
@@ -455,7 +455,7 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 		}
 	}
 */
-		
+
 	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
 		return; // exceeded the attrib stack depth
 	}
@@ -476,7 +476,7 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 
 
 	glGetError(); // clear current error
-	glTexImage2D(target, 0, format, 
+	glTexImage2D(target, 0, format,
 	             xsize, ysize, border,
 	             dataFormat, dataType, NULL);
 	const GLenum err = glGetError();
@@ -729,7 +729,7 @@ bool LuaTextureMgr::CreateMetatable(lua_State* L)
 	HSTR_PUSH_CFUNC(L,  "__gc",    MetaGC);
 	HSTR_PUSH_CFUNC(L,  "__index", MetaIndex);
 	HSTR_PUSH_STRING(L, "__metatable", "no access");
-	lua_pop(L, 1);  
+	lua_pop(L, 1);
 	return true;
 }
 

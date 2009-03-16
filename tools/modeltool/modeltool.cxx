@@ -133,12 +133,12 @@ std::string writeMaterial ( CMaterial &material, const std::string &name )
     std::string texName = texdir + material.texture;
     // change the extension to png
     const char *p = strrchr(texName.c_str(), '.');
-    if (p) 
+    if (p)
     {
       texName.resize(p - texName.c_str());
       texName += ".png";
     }
-    else 
+    else
       texName += ".png";
     out += TextUtils::format("  texture %s\n", texName.c_str());
   }
@@ -270,7 +270,7 @@ static void writeBZW  ( CModel &model, std::string file )
 	fprintf (fp,"\n");
       }
 
-      if (useMaterials && (face.material.size() > 0)) 
+      if (useMaterials && (face.material.size() > 0))
 	fprintf (fp, "    matref %s\n", face.material.c_str());
 
       fprintf (fp,"  endface\n");
@@ -279,7 +279,7 @@ static void writeBZW  ( CModel &model, std::string file )
     meshItr++;
   }
 
-  if (groupName.size() > 0) 
+  if (groupName.size() > 0)
     fprintf (fp, "enddef # %s\n", groupName.c_str());
 
   // do the custom objects.
@@ -346,9 +346,9 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
   if (p)
     extenstion = p+1;
 
-  if (!p) 
+  if (!p)
     output = input + ".bzw";
-  else 
+  else
   {
     *p = '\0'; // clip the old extension
     output = argv[1] + std::string(".bzw");
@@ -368,43 +368,43 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
 	i++;
 	groupName = argv[i];
       }
-      else 
+      else
 	printf ("missing -g argument\n");
     }
-    else if (command == "-tx") 
+    else if (command == "-tx")
     {
       if ((i + 1) < argc)
       {
 	i++;
 	texdir = argv[i];
 
-	if (texdir[texdir.size()] != '/') 
+	if (texdir[texdir.size()] != '/')
 	  texdir += '/';
       }
-      else 
+      else
 	printf ("missing -tx argument\n");
     }
-    else if (command == "-sm") 
+    else if (command == "-sm")
       useSmoothBounce = true;
-    else if (command == "-n") 
+    else if (command == "-n")
       useNormals = false;
     else if (command == "-t")
       useTexcoords = false;
     else if (command == "-m")
       useMaterials = false;
-    else if (command == "-a") 
+    else if (command == "-a")
       useAmbient = false;
-    else if (command == "-d") 
+    else if (command == "-d")
       useDiffuse = false;
     else if (command == "-s")
       useSpecular = false;
-    else if (command == "-sh") 
-      useShininess = false;  
-    else if (command == "-bounds") 
-      outputBounds = true;  
-    else if (command == "-nomats") 
-      supressMats = true;  
-    else if (command == "-comments") 
+    else if (command == "-sh")
+      useShininess = false;
+    else if (command == "-bounds")
+      outputBounds = true;
+    else if (command == "-nomats")
+      supressMats = true;
+    else if (command == "-comments")
       outputComments = true;     else if (command == "-sf")
     {
       if ((i + 1) < argc)
@@ -415,7 +415,7 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
       else
 	printf ("missing -sf argument\n");
     }
-      else if (command == "-e") 
+      else if (command == "-e")
 	useEmission = false;
       else if (command == "-gx")
       {
@@ -434,12 +434,12 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
 	  i++;
 	  globalShift[0] = (float)atof(argv[i]);
 	}
-	else 
+	else
 	  printf ("missing -gsx argument\n");
       }
       else if (command == "-gsy")
       {
-	if ((i + 1) < argc) 
+	if ((i + 1) < argc)
 	{
 	  i++;
 	  globalShift[1] = (float)atof(argv[i]);
@@ -466,7 +466,7 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
 	}
 	else
 	  printf ("missing -striplimit argument\n");
-      }  
+      }
       else if (command == "-bspskip")
       {
 	if ((i + 1) < argc)
@@ -517,7 +517,7 @@ int main(int argc, char* argv[])
       printf("no valid meshes written from %s\n", input.c_str());
     else
       printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
-    return 0; 
+    return 0;
   }
   else
   {
@@ -532,10 +532,10 @@ int main(int argc, char* argv[])
     writeBZW(model,output);
     printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
   }
-  else 
+  else
     printf("no valid meshes written from %s\n", input.c_str());
 
-  return 0; 
+  return 0;
 }
 
 static int getNewIndex ( const CVertex &vert, tvVertList &vertList )
@@ -683,7 +683,7 @@ void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &dra
   drawInfoMeshes.animComands = config.animComands;
 }
 
-typedef struct 
+typedef struct
 {
   float cpx,cpy,cpz;
   float rad;
@@ -713,7 +713,7 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
 	extents.maxy = extents.miny;
 	extents.maxz = extents.minz;
       }
-  
+
       for ( int v = 0; v < (int)face.verts.size(); v++ )
       {
 	CVertex &vert = subMesh.verts[face.verts[v]];
@@ -732,7 +732,7 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
 	  extents.maxz = vert.z;
       }
     }
-  
+
     for (int s = 0; s < (int)subMesh.strips.size();s++)
     {
       didOne = true;
@@ -949,7 +949,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   if (!drawInfoMeshes.valid())
     return;
 
-// the idea here is to go and output each of the mesh sections into 
+// the idea here is to go and output each of the mesh sections into
   // seperate buffers, bulding up the actual used vert and index lists.
   // then dump out those lists to a buffer, and composite the entire
   // thing into one bzw.
@@ -1054,7 +1054,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
  if (drawInfoMeshes.lodMeshes.size() && drawInfoMeshes.lodMeshes[0].meshes.size() )
   {
     // use the bounds of the first LOD for the bounds of the draw info
-    
+
     std::string cornerSection;
     std::vector<std::string> lodSections;
 
@@ -1083,7 +1083,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	    section += "lengthPerPixel 0\n";
 	  else
 	    section += TextUtils::format("lengthPerPixel %f\n",drawInfoMeshes.lodPixelDistances[l]);
-	  
+
 	  for ( int m = 0; m < (int)lodModel.meshes.size(); m++ )
 	  {
 	    CMesh &mesh = lodModel.meshes[m];
@@ -1158,13 +1158,13 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		    else
 		      triangleCount++;
 		  }
-      
+
 		  lastTriangles = trianglesThisTime;
 		}
 	      }
 	      section += "\nend #matref\n"; // this ends the material!
 	    }
-	  
+
 	    // now do any tristrips we happen to have
 	    if ( mesh.strips.size())
 	    {
@@ -1242,7 +1242,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      section += "\nend #matref\n"; // this ends the material!
 
 	    }
-	 
+
 	    // now do any fans we happen to have
 	    if ( mesh.fans.size())
 	    {
@@ -1277,16 +1277,16 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
 	    }
 
-	    
+
 	  }
 	  section += TextUtils::format("end #lod %d\n",l );
 
 	  lodSections.push_back(section);
 	}
       }
-    
+
       // build up the corners
-      
+
       for ( int c = 0; c < (int)corners.size(); c++ )
       {
 	cornerSection += TextUtils::format("corner %d %d %d",(int)corners[c].x, (int)corners[c].y, (int)corners[c].z);
@@ -1296,7 +1296,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	cornerSection += "\n";
 
       }
-    
+
       drawInfoSection += "\n";
       if (outputComments)
 	drawInfoSection += "#corners\n";
@@ -1361,7 +1361,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     materialsSection += writeMaterial(matItr->second,matItr->first) + "\n";
     matItr++;
   }
-  
+
   for ( int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
   {
     matItr = drawInfoMeshes.lodMeshes[l].materials.begin();
@@ -1400,7 +1400,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
   fprintf (fp,"end # mesh\n");
 
-  if (groupName.size() > 0) 
+  if (groupName.size() > 0)
     fprintf (fp, "enddef # %s\n", groupName.c_str());
 
   // do the custom objects.
@@ -1426,7 +1426,7 @@ void CMesh::draw ( void )
   for ( int f =0; f < (int)faces.size(); f++)
   {
     CFace &face = faces[f];
-      
+
     glBegin(GL_POLYGON);
     for (int v = 0; v < (int)face.verts.size(); v++ )
     {
@@ -1622,7 +1622,7 @@ bool ModelToolApp::drawOverlay ( void )
 void ModelToolApp::inputEvent ( int id, float value )
 {
   // do stuff here
- 
+
 }
 
 void ModelToolApp::drawZZeroGrid ( void )

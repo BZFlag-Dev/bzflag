@@ -11,17 +11,17 @@ void Mainpage::process ( const std::string &pagename, const HTTPRequest &request
 //   std::string s1, s2, error;
 //   if (request.request != ePost)
 //     return;
-// 
+//
 //   std::vector<std::string> v;
-// 
+//
 //   // kick/ban players
 //   if (request.getParam("players", v))
 //   {
 //     bool notify = request.getParam("notify", s1);
-// 
+//
 //     request.getParam("reason", s2);
 //     std::vector<std::string>::iterator i;
-// 
+//
 //     if (request.getParam("kick", s1))
 //     {
 //       for (i = v.begin(); i != v.end(); i++)
@@ -31,14 +31,14 @@ void Mainpage::process ( const std::string &pagename, const HTTPRequest &request
 //     {
 //       request.getParam("duration", s1);
 //       int duration = atoi(s1.c_str());
-//       for (i = v.begin(); i != v.end(); i++) 
+//       for (i = v.begin(); i != v.end(); i++)
 //       {
 // 	int playerID = atoi(i->c_str());
 // 	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
 // 	const char *playerIP = bz_getPlayerIPAddress(playerID);
 // 	bz_IPBanUser(playerID, playerIP, duration, s2.c_str());
 //       }
-//     } 
+//     }
 //     else if (request.getParam("idban", v))
 //     {
 //       request.getParam("duration", s1);
@@ -62,9 +62,9 @@ void Mainpage::process ( const std::string &pagename, const HTTPRequest &request
 //     if (request.getParam(s1, s2))
 //       bz_setBZDBString((*stringList)[loopPos].c_str(), s2.c_str());
 //   }
-// 
+//
 //   bz_deleteStringList(stringList);
-// 
+//
 //   if (!error.empty())
 //     templateVars["error"] = error;
 }

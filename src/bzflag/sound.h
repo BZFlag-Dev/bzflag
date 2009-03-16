@@ -87,7 +87,7 @@ public:
 
   virtual int play(const std::string &_name,
                    const float *pos = NULL,
-                   bool important = false, 
+                   bool important = false,
                    bool localSound = true,
                    bool repeat = false) {
     return play(getID(_name), pos, important, localSound, repeat);
@@ -134,7 +134,7 @@ private:
   std::vector<std::string> standardSounds;
 };
 
-#define SOUNDSYSTEM SoundManager::instance().getSystem()  
+#define SOUNDSYSTEM SoundManager::instance().getSystem()
 
 #endif // BZF_SOUND_H
 

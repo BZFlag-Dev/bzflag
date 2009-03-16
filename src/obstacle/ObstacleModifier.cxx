@@ -136,7 +136,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
 
   driveThrough = grpinst.driveThrough | obsMod.driveThrough;
   shootThrough = grpinst.shootThrough | obsMod.shootThrough;
-  ricochet     = grpinst.ricochet    || obsMod.ricochet; 
+  ricochet     = grpinst.ricochet    || obsMod.ricochet;
 
   return;
 }

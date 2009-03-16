@@ -103,7 +103,7 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
       addrs = NULL;
       aliases = NULL;
     }
-  
+
   naddrs = 0;
   naliases = 0;
 

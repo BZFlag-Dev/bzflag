@@ -184,7 +184,7 @@ static lua_State *getthread (lua_State *L, int *arg) {
 		*arg = 1;
 		return lua_tothread(L, 1);
 	}
-	else {   
+	else {
 		*arg = 0;
 		return L;
 	}

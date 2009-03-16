@@ -54,7 +54,7 @@ class DynamicWorldText {
     AddedMap addedTexts; // added dynamically from the server
     NodeMap nodes;
     bool needStyleChange;
-  
+
   public:
     static DynamicWorldText bzdbWorldText;
 };

@@ -38,7 +38,7 @@ public:
   void	clearCache();
 
   std::vector<std::pair<HUDuiServerList*, std::string> > readCachedLists() { return cachedLists; }
-  
+
   void addNewList(HUDuiServerList* newList, std::string tabName);
   void removeList(HUDuiServerList* list, std::string tabName);
 

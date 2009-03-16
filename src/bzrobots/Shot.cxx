@@ -85,7 +85,7 @@ ShotPath *searchShot(PlayerId plr, uint16_t shotid)
 
     return path;
   }
-  
+
   return NULL;
 }
 
@@ -122,7 +122,7 @@ void Shot::getPosition(double &x, double &y, double &z, double dt) const
 void Shot::getVelocity(double &x, double &y, double &z, double dt) const
 {
   ShotPath *path = searchShot(getPlayerId(), getShotId());
-  
+
   if(path) {
     /*
      * We found the shot.

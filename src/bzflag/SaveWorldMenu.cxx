@@ -78,7 +78,7 @@ void SaveWorldMenu::execute()
     }
   }
   FontManager &fm = FontManager::instance();
-  const float statusWidth = fm.getStringWidth(status->getFontFace()->getFMFace(), 
+  const float statusWidth = fm.getStringWidth(status->getFontFace()->getFMFace(),
     status->getFontSize(), status->getString().c_str());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }

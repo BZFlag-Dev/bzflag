@@ -1314,7 +1314,7 @@ void OpenGLGState::initContext()
   }
 
   // setup the GLEW library
-  if (glewInit() != GLEW_OK) 
+  if (glewInit() != GLEW_OK)
     logDebugMessage(0,"GLEW initialization failed");
 
   // call all of the freeing functions first

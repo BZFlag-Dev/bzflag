@@ -196,7 +196,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   if (len == 2 && code == MsgPingCodeRequest)
     // Ping code request
     return 0;
-  
+
   if (len == 1 && code == MsgEchoRequest) //Same sorta thing
     return 0;
 
@@ -230,7 +230,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 #endif
 
   callNetworkDataLog(false, true, (unsigned char*)buf, len, (*netHandler));
- 
+
   if (code == MsgUDPLinkEstablished) {
     (*netHandler)->udpout = true;
   }
@@ -850,7 +850,7 @@ bool NetListener::listen ( Address serverAddress, unsigned short port)
     return false;
 
 
-  if (::listen(listenSocket, 5) == -1) 
+  if (::listen(listenSocket, 5) == -1)
     {
       close(listenSocket);
       return false;

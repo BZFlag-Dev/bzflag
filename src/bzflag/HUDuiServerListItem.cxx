@@ -264,7 +264,7 @@ void HUDuiServerListItem::doRender()
     displayPing = serverPing = calculatePing();
     resize();
   }
-  
+
   float modesX = getX() + spacerWidth;
   float domainX = getX() + modes_percentage*getWidth() + spacerWidth;
   float serverX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + spacerWidth;

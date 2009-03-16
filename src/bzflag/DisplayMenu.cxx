@@ -243,7 +243,7 @@ DisplayMenu::DisplayMenu()
     option->update();
     addControl(option);
   }
-  
+
   // Video Format
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {

@@ -9,13 +9,13 @@ struct lua_State;
 class LuaCallOuts {
 	public:
 		static bool PushEntries(lua_State* L);
-	
+
 	public:
 		// call-outs
 		static int GetBzLuaVersion(lua_State* L);
 		static int GetClientVersion(lua_State* L);
 		static int GetProtocolVersion(lua_State* L);
-		
+
 		static int Print(lua_State* L);
 		static int Debug(lua_State* L);
 		static int GetDebugLevel(lua_State* L);

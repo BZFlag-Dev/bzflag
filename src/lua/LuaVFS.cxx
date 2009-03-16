@@ -89,7 +89,7 @@ int LuaVFS::FileSize(lua_State* L)
 	if (size < 0) {
 		return 0;
 	}
-		
+
 	lua_pushinteger(L, size);
 
 	return 1;
@@ -131,7 +131,7 @@ static bool ParseWriteData(lua_State* L, int index, string& data)
 	}
 	else if (lua_istable(L, index)) { // a table of strings
 		const string suffix = luaL_optstring(L, index + 1, ""); // optional suffix
-		const int table = (index > 0) ? index : (lua_gettop(L) + index + 1); 
+		const int table = (index > 0) ? index : (lua_gettop(L) + index + 1);
 		vector<string> dataVec;
 		size_t total = 0;
 		for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {

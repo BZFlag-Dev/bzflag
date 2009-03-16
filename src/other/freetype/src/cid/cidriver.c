@@ -101,13 +101,13 @@
 
     if ( registry )
       *registry = cid->registry;
-      
+
     if ( ordering )
       *ordering = cid->ordering;
 
     if ( supplement )
       *supplement = cid->supplement;
-      
+
     return CID_Err_Ok;
   }
 

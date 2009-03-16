@@ -188,9 +188,9 @@ int WorldText::packSize() const
   fullSize += xform.packSize();
 
   fullSize += sizeof(int32_t); // bzMaterial
-  
+
   fullSize += sizeof(uint8_t);   // status
-  
+
   return fullSize;
 }
 

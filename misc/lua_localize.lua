@@ -113,7 +113,7 @@ for _, word in ipairs(baseFuncs) do
     localSubs[word] = word
   end
 end
-  
+
 
 -- sort the entries for printing, and find the max string length
 local maxLen = 0

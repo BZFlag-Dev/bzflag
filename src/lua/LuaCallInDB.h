@@ -158,7 +158,7 @@ class LuaCallInDB {
 		void CheckCallIn(int code, const std::string& name);
 
 	protected:
-		InfoMap infoMap;	
+		InfoMap infoMap;
 		std::map<int, std::string> codeToName;
 		std::map<std::string, int> nameToCode;
 };

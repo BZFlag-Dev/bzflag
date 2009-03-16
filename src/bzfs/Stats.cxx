@@ -122,7 +122,7 @@ void StatsLink::process(bz_EventData *eventData)
       bz_ApiString desc = bz_getPublicDescription();
 
       std::string params = "action=add&isgameserver=1";
-      
+
       params+= "&host=";
       if (host.size())
 	params += host.c_str();

@@ -43,7 +43,7 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   if (rrp->pendingUpdates[RCRobotPlayer::distanceUpdate]) {
     if (rrp->nextDistance < 0.0f)
       rrp->distanceForward = false;
-    else 
+    else
       rrp->distanceForward = true;
     rrp->distanceRemaining = (rrp->distanceForward ? 1 : -1) * rrp->nextDistance;
   }

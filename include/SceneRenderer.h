@@ -75,7 +75,7 @@ public:
     DepthComplexity,
     SpecialModeCount
   };
-                                      
+
   void		setWindow(MainWindow* _window);
   MainWindow&	getWindow() const;
 

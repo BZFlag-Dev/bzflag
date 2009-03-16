@@ -412,7 +412,7 @@ bool KillCommand::operator() (const char	 *message,
     // operators can override antiperms
     if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
-      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) 
+      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill)))
 	allow.allow = false;
     }
 
@@ -795,7 +795,7 @@ bool HostbanCommand::operator() (const char* message,
 
   worldEventManager.callEvents(bz_eHostBanModifyEvent,&hostBanEvent);
 
-  if ( t != hostBanEvent.bannerID ) { 
+  if ( t != hostBanEvent.bannerID ) {
     playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
     if (!playerData)
       return true;
@@ -888,7 +888,7 @@ bool IdBanCommand::operator() (const char* message,
 
   // check if victim has antiban perms, if so cancel idban
 
-  if ( victimPlayer && victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban )) {  
+  if ( victimPlayer && victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban )) {
     char buffer[MessageLen];
 	snprintf(buffer, MessageLen, "%s is protected from being banned (skipped).",
 	victimPlayer->player.getCallSign());

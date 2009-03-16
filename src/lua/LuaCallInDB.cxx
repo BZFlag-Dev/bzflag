@@ -62,7 +62,7 @@ bool LuaCallInDB::SetupCallIn(int code, const string& name)
 		assert(false && "duplictated lua call-in name in LuaCallInDB.cxx");
 		return false;
 	}
-	
+
 	codeToName[code] = name;
 	nameToCode[name] = code;
 
@@ -91,7 +91,7 @@ LuaCallInDB::LuaCallInDB()
 //	const char* BOOLEAN_OR   = "BOOLEAN_OR";
 	const char* SPECIAL        = "SPECIAL";
 
-	// singleScript	
+	// singleScript
 	const char* ANY_SCRIPT      = "";
 //	const char* ONLY_LuaUser    = "LuaUser";
 //	const char* ONLY_LuaWorld   = "LuaWorld";
@@ -112,7 +112,7 @@ LuaCallInDB::LuaCallInDB()
 	///////////////////////////////////
 
 	ADD_CI(Shutdown, NO_REQS, BASIC, ANY_SCRIPT);
-	
+
 	ADD_CI(Update, NO_REQS, BASIC, ANY_SCRIPT);
 
 	ADD_CI(BZDBChange, NO_REQS, BASIC, ANY_SCRIPT);

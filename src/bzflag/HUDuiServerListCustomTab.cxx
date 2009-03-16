@@ -152,7 +152,7 @@ size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus,
       ((HUDuiNestedContainer*)((HUDuiServerListCustomTab*)data)->getNavList()->get())->getNav().set(((HUDuiServerListCustomTab*)data)->getNavList()->get());
     return HUDNavigationQueue::SkipSetFocus;
   }
-  
+
   if ((oldFocus == ((HUDuiServerListCustomTab*)data)->getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
 
   return proposedFocus;
@@ -160,21 +160,21 @@ size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus,
 
 void HUDuiServerListCustomTab::setSize(float width, float height)
 {
-  HUDuiControl::setSize(width, height); 
+  HUDuiControl::setSize(width, height);
 
   resize();
 }
 
 void HUDuiServerListCustomTab::setFontSize(float size)
 {
-  HUDuiControl::setFontSize(size); 
+  HUDuiControl::setFontSize(size);
 
   resize();
 }
 
 void HUDuiServerListCustomTab::setFontFace(const LocalFontFace* face)
 {
-  HUDuiControl::setFontFace(face); 
+  HUDuiControl::setFontFace(face);
 
   resize();
 }

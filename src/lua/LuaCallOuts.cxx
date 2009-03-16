@@ -567,7 +567,7 @@ int LuaCallOuts::GetWorldInfo(lua_State* L)
 		return 0;
 	}
 	const vector<string>* entries = NULL;
-	
+
 	if (!lua_israwstring(L, 1)) {
 		entries = &world->getMapInfo().getVec();
 	}
@@ -594,7 +594,7 @@ int LuaCallOuts::GetWorldInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerAddress(lua_State* /*L*/) // FIXME 
+int LuaCallOuts::GetServerAddress(lua_State* /*L*/) // FIXME
 {
 	return 0;
 }
@@ -988,7 +988,7 @@ int LuaCallOuts::GetRoamInfo(lua_State* L)
 		}
 	}
 
-	lua_settop(L, 8);  
+	lua_settop(L, 8);
 	return 8;
 }
 
@@ -998,7 +998,7 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 	if (!ROAM.isRoaming()) {
 		return 0;
 	}
-	
+
 	const Roaming::RoamingView mode = (Roaming::RoamingView)luaL_checkint(L, 1);
 	if ((mode <= Roaming::roamViewDisabled) || (mode >= Roaming::roamViewCount)) {
 		return 0;
@@ -1069,7 +1069,7 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 			return 0;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -1092,7 +1092,7 @@ int LuaCallOuts::GetScreenGeometry(lua_State* L)
 
 int LuaCallOuts::GetWindowGeometry(lua_State* L)
 {
-	MainWindow* window = getMainWindow();	
+	MainWindow* window = getMainWindow();
 	if (window == NULL) {
 		return 0;
 	}
@@ -1106,7 +1106,7 @@ int LuaCallOuts::GetWindowGeometry(lua_State* L)
 
 	int wpx, wpy;
 	BzfWindow* bzWindow = window->getWindow();
-	bzWindow->getPosition(wpx, wpy);	
+	bzWindow->getPosition(wpx, wpy);
 	wpy = (dpy->getHeight() - (wpy + wsy));
 
 	lua_pushinteger(L, wsx);
@@ -1119,7 +1119,7 @@ int LuaCallOuts::GetWindowGeometry(lua_State* L)
 
 int LuaCallOuts::GetViewGeometry(lua_State* L)
 {
-	MainWindow* window = getMainWindow();	
+	MainWindow* window = getMainWindow();
 	if (window == NULL) {
 		return 0;
 	}
@@ -1260,7 +1260,7 @@ int LuaCallOuts::SetCameraProjection(lua_State* L)
 		return 0;
 	}
 
-	MainWindow* window = getMainWindow();	
+	MainWindow* window = getMainWindow();
 	if (window == NULL) {
 		return 0;
 	}
@@ -1775,7 +1775,7 @@ int LuaCallOuts::GetRabbitPlayer(lua_State* L)
 			return 1;
 		}
 	}
-	
+
 	World* world = World::getWorld();
 	if (world != NULL) {
 		const RemotePlayer* rabbit = world->getCurrentRabbit();
@@ -2146,7 +2146,7 @@ int LuaCallOuts::GetPlayerShots(lua_State* L)
 	if (player == NULL) {
 		return 0;
 	}
-	
+
 	lua_newtable(L);
 
 	World* world = World::getWorld();
@@ -2189,7 +2189,7 @@ int LuaCallOuts::GetPlayerState(lua_State* L)
 	if (player->isTeleporting())  { HSTR_PUSH_BOOL(L, "teleporting",  true); }
 	if (player->isCrossingWall()) { HSTR_PUSH_BOOL(L, "crossingWall", true); }
 	if (player->isExploding())    { HSTR_PUSH_BOOL(L, "exploding",    true); }
-	
+
 	return 1;
 }
 
@@ -2581,7 +2581,7 @@ int LuaCallOuts::GetShotType(lua_State* L)
 		return 0;
 	}
 	lua_pushinteger(L, shot->getShotType());
-	return 1;	
+	return 1;
 }
 
 
@@ -2592,7 +2592,7 @@ int LuaCallOuts::GetShotFlagType(lua_State* L)
 		return 0;
 	}
 	lua_pushstring(L, shot->getFlag()->flagAbbv.c_str());
-	return 1;	
+	return 1;
 }
 
 
@@ -2603,7 +2603,7 @@ int LuaCallOuts::GetShotPlayer(lua_State* L)
 		return 0;
 	}
 	lua_pushinteger(L, shot->getPlayer());
-	return 1;	
+	return 1;
 }
 
 
@@ -2614,7 +2614,7 @@ int LuaCallOuts::GetShotTeam(lua_State* L)
 		return 0;
 	}
 	lua_pushinteger(L, shot->getTeam());
-	return 1;	
+	return 1;
 }
 
 
@@ -2628,7 +2628,7 @@ int LuaCallOuts::GetShotPosition(lua_State* L)
 	lua_pushnumber(L, pos[0]);
 	lua_pushnumber(L, pos[1]);
 	lua_pushnumber(L, pos[2]);
-	return 3;	
+	return 3;
 }
 
 
@@ -2642,7 +2642,7 @@ int LuaCallOuts::GetShotVelocity(lua_State* L)
 	lua_pushnumber(L, vel[0]);
 	lua_pushnumber(L, vel[1]);
 	lua_pushnumber(L, vel[2]);
-	return 3;	
+	return 3;
 }
 
 
@@ -2653,7 +2653,7 @@ int LuaCallOuts::GetShotLifeTime(lua_State* L)
 		return 0;
 	}
 	lua_pushnumber(L, shot->getLifetime());
-	return 1;	
+	return 1;
 }
 
 
@@ -2665,7 +2665,7 @@ int LuaCallOuts::GetShotLeftTime(lua_State* L)
 	}
 	const double timeLeft = shot->getCurrentTime() - shot->getStartTime();
 	lua_pushnumber(L, (lua_Number)timeLeft);
-	return 1;	
+	return 1;
 }
 
 
@@ -2676,7 +2676,7 @@ int LuaCallOuts::GetShotReloadTime(lua_State* L)
 		return 0;
 	}
 	lua_pushnumber(L, shot->getReloadTime());
-	return 1;	
+	return 1;
 }
 
 
@@ -2755,14 +2755,14 @@ int LuaCallOuts::MakeFont(lua_State* L)
 	#include <fcntl.h>
 	int LuaCallOuts::ReadStdin(lua_State* L)
 	{
-		fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);  
+		fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 		char buf[4096];
 		const int r = read(STDIN_FILENO, buf, sizeof(buf));
 		if (r <= 0) {
 			return 0;
 		}
 		lua_pushlstring(L, buf, r);
-		fcntl(STDIN_FILENO, F_SETFL, 0);  
+		fcntl(STDIN_FILENO, F_SETFL, 0);
 		return 1;
 	}
 #endif

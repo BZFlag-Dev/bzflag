@@ -25,7 +25,7 @@
 
 ServerPing::ServerPing() : fd(-1), recieved(0), samples(4), timeout(1), interval(1)
 {
-  
+
 }
 
 ServerPing::ServerPing(const Address& addr, int port, size_t _samples, double _interval, double tms) :
@@ -42,7 +42,7 @@ ServerPing::~ServerPing()
 }
 
 void ServerPing::start()
-{ 
+{
   closeSocket();
   activepings.clear();
   openSocket();
@@ -69,7 +69,7 @@ int ServerPing::calcLag()
   }
 
   return 0;
-} 
+}
 
 bool ServerPing::done()
 {
@@ -94,18 +94,18 @@ void ServerPing::setInterval(double _interval)
 }
 
 void ServerPing::doPings()
-{ 
+{
   if (activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval)) {
     pingdesc pd;
     pd.senttime = TimeKeeper::getCurrent();
     sendPing((unsigned char)activepings.size());
     activepings.push_back(pd);
   }
-  
+
   if (recieved < samples) {
     timeval timeo = { 0, 0 }; //is this what I want to do?
     fd_set readset;
-    
+
     FD_ZERO(&readset);
     FD_SET(fd, &readset);
     if (select(fd+1, (fd_set*)&readset, NULL, NULL, &timeo) > 0) {
@@ -114,13 +114,13 @@ void ServerPing::doPings()
       char buffer[1 + 4];
       void *buf = buffer;
       int n = recvfrom(fd, buffer, 1 + 4, 0, 0, 0);
-      
+
       if (n < 4)
         return;
-      
+
       buf = nboUnpackUShort(buf, len);
       buf = nboUnpackUShort(buf, code);
-      
+
       if (code == MsgEchoResponse && len == 1) {
         buf = nboUnpackUByte(buf, tag);
         activepings.at(tag).recvtime = TimeKeeper::getCurrent();
@@ -140,7 +140,7 @@ void ServerPing::sendPing(unsigned char tag)
   buf = nboPackUShort(buf, MsgEchoRequest);
   buf = nboPackUByte(buf, tag);
   sendto(fd, buffer, 1 + 4, 0, (struct sockaddr*)&saddr, sizeof(saddr));
-} 
+}
 
 void ServerPing::openSocket()
 {

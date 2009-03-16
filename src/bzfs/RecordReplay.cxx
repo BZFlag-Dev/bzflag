@@ -1765,7 +1765,7 @@ static bool resetStates()
 
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gkPlayer == NULL) 
+    if (gkPlayer == NULL)
       continue;
 
     if (gkPlayer->player.isPlaying())
@@ -1997,7 +1997,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     return false;
   }
 
-  // player callsign 
+  // player callsign
   const char* callsign = "SERVER";
   if (p != ServerPlayer) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(p);

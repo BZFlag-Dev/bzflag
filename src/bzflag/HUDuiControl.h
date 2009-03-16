@@ -47,12 +47,12 @@ class HUDuiControl : public HUDuiElement {
     void		setCallback(HUDuiCallback, void*);
     HUDuiCallback	getCallback() const;
     void*		getUserData() const;
-	
+
     bool isNested() { return nested; }
     void isNested(bool _nested);
 
     virtual bool isContainer() { return false; }
-	
+
     HUDuiControl* getParent() { return parent; }
     void setParent(HUDuiControl* parentControl);
 

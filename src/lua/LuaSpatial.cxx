@@ -82,14 +82,14 @@ bool LuaSpatial::PushEntries(lua_State* L)
 		PUSH_LUA_CFUNC(L, GetShotsInBox);
 		PUSH_LUA_CFUNC(L, GetVisibleShots);
 		PUSH_LUA_CFUNC(L, GetRadarShots);
-	}
 
-	PUSH_LUA_CFUNC(L, GetObstaclesInPlanes);
-	PUSH_LUA_CFUNC(L, GetObstaclesInSphere);
-	PUSH_LUA_CFUNC(L, GetObstaclesInCylinder);
-	PUSH_LUA_CFUNC(L, GetObstaclesInBox);
-	PUSH_LUA_CFUNC(L, GetVisibleObstacles);
-	PUSH_LUA_CFUNC(L, GetRadarObstacles);
+		PUSH_LUA_CFUNC(L, GetObstaclesInPlanes);
+		PUSH_LUA_CFUNC(L, GetObstaclesInSphere);
+		PUSH_LUA_CFUNC(L, GetObstaclesInCylinder);
+		PUSH_LUA_CFUNC(L, GetObstaclesInBox);
+		PUSH_LUA_CFUNC(L, GetVisibleObstacles);
+		PUSH_LUA_CFUNC(L, GetRadarObstacles);
+	}
 
 	return true;
 }
@@ -123,17 +123,7 @@ struct CylinderData : public QueryData {
 
 struct BoxData : public QueryData {
 	Extents extents;
-};
-
-
-struct AlignedBoxData : public QueryData { // AABB (axis-aligned bounding box)
-	Extents extents;
-};
-
-
-struct OrientedBoxData : public QueryData { // OBB (oriented bounding box)
 	float radians;
-	Extents extents;
 };
 
 
@@ -238,6 +228,7 @@ static inline int ParseBox(lua_State* L, BoxData& box)
 	maxs[1] = luaL_checkfloat(L, 5);
 	maxs[2] = luaL_checkfloat(L, 6);
 	box.extents.set(mins, maxs);
+	box.radians = luaL_optfloat(L, 7, 0.0f);
 	return 6;
 }
 
@@ -265,7 +256,7 @@ static int PushReflect(lua_State* L, const Obstacle* obs,
 	lua_pushnumber(L, dir[0]);
 	lua_pushnumber(L, dir[1]);
 	lua_pushnumber(L, dir[2]);
-	
+
 	return 3;
 }
 
@@ -359,7 +350,7 @@ int LuaSpatial::RayTrace(lua_State* L)
 		}
 		return args;
 	}
-	
+
 	return 0;
 }
 
@@ -566,7 +557,7 @@ static void CheckPlayers(PlayerCheckFunc checkFunc, const QueryData& data,
 	// FIXME - check state
 
 	const Player* player = NULL;
-	
+
 	player = (const Player*)LocalPlayer::getMyTank();
 	if (player && checkFunc(player, data)) {
 		hits.push_back(player);
@@ -652,12 +643,11 @@ int LuaSpatial::GetVisiblePlayers(lua_State* L)
 	PlanesData planes;
 	if (!GetViewPlanes(planes)) {
 		lua_newtable(L);
+		return 1;
 	}
-	else {
-		vector<const Player*> hits;
-		CheckPlayers(PlayerInPlanes, planes, hits);
-		PushPlayers(L, hits);
-	}
+	vector<const Player*> hits;
+	CheckPlayers(PlayerInPlanes, planes, hits);
+	PushPlayers(L, hits);
 	return 1;
 }
 
@@ -667,12 +657,11 @@ int LuaSpatial::GetRadarPlayers(lua_State* L)
 	BoxData box;
 	if (!GetRadarBox(box)) {
 		lua_newtable(L);
+		return 1;
 	}
-	else {
-		vector<const Player*> hits;
-		CheckPlayers(PlayerInBox, box, hits);
-		PushPlayers(L, hits);
-	}
+	vector<const Player*> hits;
+	CheckPlayers(PlayerInBox, box, hits);
+	PushPlayers(L, hits);
 	return 1;
 }
 
@@ -812,12 +801,11 @@ int LuaSpatial::GetVisibleFlags(lua_State* L)
 	PlanesData planes;
 	if (!GetViewPlanes(planes)) {
 		lua_newtable(L);
+		return 1;
 	}
-	else {
-		vector<const Flag*> hits;
-		CheckFlags(FlagInPlanes, planes, hits);
-		PushFlags(L, hits);
-	}
+	vector<const Flag*> hits;
+	CheckFlags(FlagInPlanes, planes, hits);
+	PushFlags(L, hits);
 	return 1;
 }
 
@@ -827,12 +815,11 @@ int LuaSpatial::GetRadarFlags(lua_State* L)
 	BoxData box;
 	if (!GetRadarBox(box)) {
 		lua_newtable(L);
+		return 1;
 	}
-	else {
-		vector<const Flag*> hits;
-		CheckFlags(FlagInBox, box, hits);
-		PushFlags(L, hits);
-	}
+	vector<const Flag*> hits;
+	CheckFlags(FlagInBox, box, hits);
+	PushFlags(L, hits);
 	return 1;
 }
 
@@ -1025,12 +1012,11 @@ int LuaSpatial::GetVisibleShots(lua_State* L)
 	PlanesData planes;
 	if (!GetViewPlanes(planes)) {
 		lua_newtable(L);
+		return 1;
 	}
-	else {
-		vector<const ShotPath*> hits;
-		CheckShots(ShotInPlanes, planes, hits);
-		PushShots(L, hits);
-	}
+	vector<const ShotPath*> hits;
+	CheckShots(ShotInPlanes, planes, hits);
+	PushShots(L, hits);
 	return 1;
 }
 
@@ -1040,12 +1026,11 @@ int LuaSpatial::GetRadarShots(lua_State* L)
 	BoxData box;
 	if (!GetRadarBox(box)) {
 		lua_newtable(L);
+		return 1;
 	}
-	else {
-		vector<const ShotPath*> hits;
-		CheckShots(ShotInBox, box, hits);
-		PushShots(L, hits);
-	}
+	vector<const ShotPath*> hits;
+	CheckShots(ShotInBox, box, hits);
+	PushShots(L, hits);
 	return 1;
 }
 

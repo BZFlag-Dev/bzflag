@@ -448,7 +448,7 @@ void DynamicColor::colorByStates(double t)
   color[2] = (pf * prev.color[2]) + (nf * next.color[2]);
   color[3] = (pf * prev.color[3]) + (nf * next.color[3]);
 }
-        
+
 
 void* DynamicColor::pack(void *buf) const
 {

@@ -93,7 +93,7 @@ void* BzDocket::pack(void* buf) const
   buf = nboPackUInt(buf, 0); // flags
   buf = nboPackUInt(buf, dataMap.size()); // file count
   DataMap::const_iterator it;
-  uint32_t offset = 0; 
+  uint32_t offset = 0;
   for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
     logDebugMessage(3, "packing into %s:  %-*s  [%i]\n", docketName.c_str(),
                     (int)maxLen, it->first.c_str(), (int)it->second.size());
@@ -163,7 +163,7 @@ void* BzDocket::unpack(void* buf)
 static string getMapPath(const string& path)
 {
   string p = path;
-  std::replace(p.begin(), p.end(), '\\', '/');  
+  std::replace(p.begin(), p.end(), '\\', '/');
   return p;
 }
 
@@ -307,7 +307,7 @@ bool BzDocket::getData(const string& mapPath, string& data)
   if (it == dataMap.end()) {
     return false;
   }
-  data = it->second;  
+  data = it->second;
   return true;
 }
 

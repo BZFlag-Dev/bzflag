@@ -50,7 +50,7 @@ public:
       reply.body += format("Your sessionID is %d<br>\n",request.sessionID);
       reply.body += "<a href=\"" + request.baseURL + "link1\">Link1</a><br>";
       reply.body += "<a href=\"" + request.baseURL + "link2\">Link2</a>";
-   
+
       if (request.authType.size() && request.authCredentials.size())
       {
 	reply.body +="<br>You authenticated, using the type: " + request.authType + "<br>";

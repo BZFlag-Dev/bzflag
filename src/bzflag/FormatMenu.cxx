@@ -79,7 +79,7 @@ size_t FormatMenu::navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChan
       // we have wrapped
       fm->setPage(fm->page + 1);
     } else if (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "") {
-      // there was an odd number of items on the last page, and 
+      // there was an odd number of items on the last page, and
       // we have run off the end of the list...wrap early
       fm->setPage(0);
       proposedFocus = 0;

@@ -61,7 +61,7 @@ RCLinkBackend::pushEvent(RCEvent *event)
     {
       if (ev->asString() == event->asString())
         return;
-    } 
+    }
 
     events->append(event);
   }

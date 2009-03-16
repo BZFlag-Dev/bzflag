@@ -25,7 +25,7 @@ float Score::tkKickRatio( 3.0 );
 int   Score::score( 999 );
 bool  Score::randomRanking( false );
 
-Score::Score(): wins(0), losses(0), tks(0) 
+Score::Score(): wins(0), losses(0), tks(0)
 {
 }
 

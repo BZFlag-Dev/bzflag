@@ -355,7 +355,7 @@ void GUIOptionsMenu::resize(int _width, int _height)
   }
 
   // load current settings
- 
+
   int i = 1;
   ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
   ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());

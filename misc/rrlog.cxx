@@ -5,15 +5,15 @@
  * accompanied this file. THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE. 
+ * PURPOSE.
  */
 
 
 // RRLOG
-// 
+//
 // This program can be used by server admins to
 // examine their record/replay files in detail.
-// 
+//
 
 #include "common.h"
 

@@ -456,7 +456,7 @@
                                                     psnames );
         *registry = cff->registry;
       }
-      
+
       if ( ordering )
       {
         if ( cff->ordering == NULL )
@@ -469,7 +469,7 @@
       if ( supplement )
         *supplement = dict->cid_supplement;
     }
-      
+
   Fail:
     return error;
   }

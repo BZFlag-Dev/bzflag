@@ -65,7 +65,7 @@ void sendFlagUpdateMessage ( int playerID )
     for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
     {
       FlagInfo &flag = *FlagInfo::get(flagIndex);
-      if (flag.exist()) 
+      if (flag.exist())
       {
 	bz_FlagUpdateRecord *flagRecord = new bz_FlagUpdateRecord;
 	flagToAPIFlag(flag, flagRecord);
@@ -83,7 +83,7 @@ void sendFlagUpdateMessage ( int playerID )
     for (unsigned int i = 0; i < flagRecordList.size(); i++)
       delete(flagRecordList[i]);
   }
-  else 
+  else
   {
     // first find all the flags we will send and get there pointers
     std::vector<FlagInfo*> flagsToSend;
@@ -93,8 +93,8 @@ void sendFlagUpdateMessage ( int playerID )
       FlagInfo *info = FlagInfo::get(flagIndex);
       if (info && info->exist() && info->getIndex() < 0xFFFF)
 	flagsToSend.push_back(info);
-    } 
-    
+    }
+
     // now send 10 flags at at time so we dont' flood out the guys and send ALL the flags in a nice buffered message
     size_t flagsSent = 0;
     while (flagsSent < flagsToSend.size())
@@ -103,7 +103,7 @@ void sendFlagUpdateMessage ( int playerID )
 	size_t flagsToDo = 10;
 	if ( flagsSent + flagsToDo >= flagsToSend.size())
 	  flagsToDo = flagsToSend.size()-flagsSent;
-	
+
 	NetMsg msg = MSGMGR.newMessage();
 
 	msg->packUShort((unsigned short)flagsToDo);
@@ -727,12 +727,12 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
       if (!broadcast && !toGroup) {
         if (srcPlayerData && (sourcePlayer != destPlayer))
           MSGMGR.newMessage(msg)->send(srcPlayerData->netHandler,MsgMessage);
-  
+
 	msg->send(destPlayerData->netHandler,MsgMessage);
       } else {
         if (broadcast) {
           msg->broadcast(MsgMessage);
- 
+
 	  // now do everyone who isn't a net player
           for (int i = 0; i < curMaxPlayers; i++) {
             GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
@@ -789,7 +789,7 @@ void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
   NetMsg msg = MSGMGR.newMessage();
   msg->packUByte(playerID);
   msg->packUByte(allow);
-  
+
   GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(recipID);
   if(otherData)
     msg->send(otherData->netHandler, MsgAllow);
@@ -958,7 +958,7 @@ void sendMsgTimeUpdate( int32_t timeLimit )
   // start client's clock
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packInt(timeLimit); 
+  msg->packInt(timeLimit);
   msg->broadcast(MsgTimeUpdate);
 }
 
@@ -1086,7 +1086,7 @@ void PackVars::startMessage()
 
 void PackVars::endMessage()
 {
-  // repack the placeholder short at the beginning of 
+  // repack the placeholder short at the beginning of
   // the buffer with the total count
   nboPackUShort(msg->buffer(), count);
   // send the message
@@ -1171,7 +1171,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
     case eTeleporting:
       playerState.status |= PlayerState::Teleporting;
       break;
-      
+
     case eInBuilding:
       playerState.status |= PlayerState::InBuilding;
       break;

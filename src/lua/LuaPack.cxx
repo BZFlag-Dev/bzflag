@@ -92,7 +92,7 @@ int PackType(lua_State* L)
 	}
 	lua_pushlstring(L, buf, bufSize);
 	delete[] buf;
-	
+
 	return 1;
 }
 
@@ -143,7 +143,7 @@ int LuaPack::PackF64(lua_State* L)
 	}
 	lua_pushlstring(L, buf, bufSize);
 	delete[] buf;
-	
+
 	return 1;
 }
 
@@ -169,7 +169,7 @@ int UnpackType(lua_State* L)
 		str += offset;
 		len -= offset;
 	}
-	
+
 	const size_t eSize = sizeof(T);
 	if (len < eSize) {
 		return 0;
@@ -225,7 +225,7 @@ int LuaPack::UnpackF64(lua_State* L)
 		str += offset;
 		len -= offset;
 	}
-	
+
 	const size_t eSize = sizeof(double);
 	if (len < eSize) {
 		return 0;
@@ -261,7 +261,7 @@ int LuaPack::UnpackF64(lua_State* L)
 int LuaPack::SwapBy2(lua_State* L)
 {
 	size_t size;
-	const char* data = lua_tolstring(L, 1, &size);	
+	const char* data = lua_tolstring(L, 1, &size);
 	if ((size % 2) != 0) {
 		return 0;
 	}
@@ -279,7 +279,7 @@ int LuaPack::SwapBy2(lua_State* L)
 int LuaPack::SwapBy4(lua_State* L)
 {
 	size_t size;
-	const char* data = lua_tolstring(L, 1, &size);	
+	const char* data = lua_tolstring(L, 1, &size);
 	if ((size % 4) != 0) {
 		return 0;
 	}
@@ -300,7 +300,7 @@ int LuaPack::SwapBy4(lua_State* L)
 int LuaPack::SwapBy8(lua_State* L)
 {
 	size_t size;
-	const char* data = lua_tolstring(L, 1, &size);	
+	const char* data = lua_tolstring(L, 1, &size);
 	if ((size % 8) != 0) {
 		return 0;
 	}

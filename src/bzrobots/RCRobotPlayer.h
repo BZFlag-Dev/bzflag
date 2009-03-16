@@ -46,28 +46,28 @@ public:
     turnUpdate,
     updateCount
   } variableUpdates;
-  
+
   void            restart(const double* pos, double azimuth);
   void            explodeTank();
-  
+
   bool            isSteadyState();
-  
+
   bool            pendingUpdates[updateCount];
-  
+
   double          lastTickAt;
   double          tickDuration;
   double           speed, nextSpeed;
   double           turnRate, nextTurnRate;
   bool            shoot;
-  
+
   double          distanceRemaining, nextDistance;
   bool            distanceForward, turnLeft;
   double          turnRemaining, nextTurn;
-  
+
   bool            hasStopped;
   double          stoppedDistance, stoppedTurn;
   bool            stoppedForward, stoppedLeft;
-  
+
 private:
   void            doUpdate(float dt);
   void            doUpdateMotion(float dt);

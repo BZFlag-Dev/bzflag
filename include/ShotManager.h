@@ -80,14 +80,14 @@ public:
 
     double lifetime;
     double range;
-    
+
     float pos[3];
     float vec[3];
   };
 
 protected:
   friend class Singleton<ShotManager>;
- 
+
 private:
   ShotManager();
   ~ShotManager();

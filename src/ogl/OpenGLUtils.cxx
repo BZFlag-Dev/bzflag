@@ -118,7 +118,7 @@ void glOutlineBoxCP ( float thickness, float centerX, float centerY, float width
 
 	if (thickness <= 0)
 		thickness = 1.0f;
-	
+
 	// ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
 
 	glNormal3f(0,0,1);
@@ -313,7 +313,7 @@ void DisplayListSystem::callList (GLDisplayList displayList)
 		itr->second.creator->buildGeometry(displayList);
 		glEndList();
 	}
-	
+
 	glCallList(itr->second.glList);
 }
 

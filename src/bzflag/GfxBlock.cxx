@@ -186,10 +186,10 @@ bool GfxBlock::remove(EventClient* ec)
 const char* GfxBlock::getTypeString(int type)
 {
   switch ((BlockType)type) {
-    case Global: { return "global"; }    
-    case Tank:   { return "tank";   }    
-    case Shot:   { return "shot";   }    
-    case Flag:   { return "flag";   }    
+    case Global: { return "global"; }
+    case Tank:   { return "tank";   }
+    case Shot:   { return "shot";   }
+    case Flag:   { return "flag";   }
     default: {
       return "unknown";
     }
@@ -206,7 +206,7 @@ int GfxBlock::getStringType(const char* name)
   else if (key == "flag")   { return Flag;   }
   return -1;
 }
-        
+
 
 //============================================================================//
 //============================================================================//

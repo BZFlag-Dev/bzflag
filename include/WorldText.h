@@ -52,7 +52,7 @@ class WorldText {
     float lineSpace;
     float fixedWidth;
     float lengthPerPixel;
-    
+
     bool useBZDB;   // 'data' refers to a bzdb variable
     bool billboard;
 
@@ -84,7 +84,7 @@ class WorldTextManager {
     void *unpack(void* buf);
 
     void print(std::ostream& out, const std::string& indent) const;
-    
+
   private:
     std::vector<WorldText*> texts;
 };

@@ -275,7 +275,7 @@ public:
 
 protected:
   virtual bool generatePage(const HTTPRequest &/*request*/, HTTPReply &/*reply*/){return true;}
-  
+
   std::string getBaseURL(void);
 
   void addMimeType ( const std::string &extension, const std::string &type );

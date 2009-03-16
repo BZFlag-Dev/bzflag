@@ -48,18 +48,18 @@ void BZAdvancedRobot::run()
   }
 }
 
-void BZAdvancedRobot::execute() 
+void BZAdvancedRobot::execute()
 {
   link->sendAndProcess(ExecuteReq(), this);
 }
 
-double BZAdvancedRobot::getDistanceRemaining() const 
+double BZAdvancedRobot::getDistanceRemaining() const
 {
   link->sendAndProcess(GetDistanceRemainingReq(), this);
   return distanceRemaining;
 }
 
-double BZAdvancedRobot::getTurnRemaining() const 
+double BZAdvancedRobot::getTurnRemaining() const
 {
   link->sendAndProcess(GetTurnRemainingReq(), this);
   return turnRemaining;
@@ -110,7 +110,7 @@ void BZAdvancedRobot::setTickDuration(double duration)
   link->sendAndProcess(SetTickDurationReq(duration), this);
 }
 
-double BZAdvancedRobot::getBattleFieldSize() const 
+double BZAdvancedRobot::getBattleFieldSize() const
 {
   link->sendAndProcess(GetBattleFieldSizeReq(), this);
   return battleFieldSize;
@@ -118,37 +118,37 @@ double BZAdvancedRobot::getBattleFieldSize() const
 
 // These are normally in Robot and not AdvancedRobot, but due to
 // the upside-down hierarchy we have - they're here instead ;-)
-double BZAdvancedRobot::getGunHeat() const 
+double BZAdvancedRobot::getGunHeat() const
 {
   link->sendAndProcess(GetGunHeatReq(), this);
   return gunHeat;
 }
 
-double BZAdvancedRobot::getHeading() const 
+double BZAdvancedRobot::getHeading() const
 {
   link->sendAndProcess(GetHeadingReq(), this);
   return heading;
 }
 
-double BZAdvancedRobot::getHeight() const 
+double BZAdvancedRobot::getHeight() const
 {
   link->sendAndProcess(GetHeightReq(), this);
   return tankHeight;
 }
 
-double BZAdvancedRobot::getWidth() const 
+double BZAdvancedRobot::getWidth() const
 {
   link->sendAndProcess(GetWidthReq(), this);
   return tankWidth;
 }
 
-double BZAdvancedRobot::getLength() const 
+double BZAdvancedRobot::getLength() const
 {
   link->sendAndProcess(GetLengthReq(), this);
   return tankLength;
 }
 
-void BZAdvancedRobot::getPlayers() const 
+void BZAdvancedRobot::getPlayers() const
 {
   link->sendAndProcess(GetPlayersReq(), this);
 }
@@ -163,31 +163,31 @@ void BZAdvancedRobot::getShots() const
   link->sendAndProcess(GetShotsReq(), this);
 }
 
-long BZAdvancedRobot::getTime() const 
+long BZAdvancedRobot::getTime() const
 {
   /* TODO: Implement this. */
   return 0;
 }
 
-double BZAdvancedRobot::getVelocity() const 
+double BZAdvancedRobot::getVelocity() const
 {
   /* TODO: Implement this. */
   return 0.0;
 }
 
-double BZAdvancedRobot::getX() const 
+double BZAdvancedRobot::getX() const
 {
   link->sendAndProcess(GetXReq(), this);
   return xPosition;
 }
 
-double BZAdvancedRobot::getY() const 
+double BZAdvancedRobot::getY() const
 {
   link->sendAndProcess(GetYReq(), this);
   return yPosition;
 }
 
-double BZAdvancedRobot::getZ() const 
+double BZAdvancedRobot::getZ() const
 {
   link->sendAndProcess(GetZReq(), this);
   return zPosition;

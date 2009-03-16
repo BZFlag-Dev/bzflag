@@ -30,7 +30,7 @@ class TestRobot(bzrobot.BZAdvancedRobot):
                 self.execute()
                 if self.getTurnRemaining() <= 0:
                     break
-        
+
         except Exception, e:
             print e
 

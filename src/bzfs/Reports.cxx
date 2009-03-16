@@ -81,7 +81,7 @@ bool Reports::file(const std::string &user, const std::string message)
 size_t Reports::getLines(std::vector<std::string> &lines, const char* p)
 {
   lines.clear();
-  if (clOptions->reportFile.size() > 0) 
+  if (clOptions->reportFile.size() > 0)
     return 0;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
@@ -140,7 +140,7 @@ bool Reports::clear(void)
 
 bool Reports::clear(size_t index)
 {
-  if (!clOptions->reportFile.size()) 
+  if (!clOptions->reportFile.size())
     return false;
 
   std::vector<Report> reports;
@@ -176,7 +176,7 @@ bool Reports::clear(size_t index)
 
 Reports::Report Reports::get(size_t index)
 {
-  if (!clOptions->reportFile.size()) 
+  if (!clOptions->reportFile.size())
     return Report();
 
   std::list<Report> reports;

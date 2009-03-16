@@ -136,9 +136,9 @@ static void readMTL ( CModel &model, std::string file )
 	    float shine = (float)atof(lineParts[1].c_str());
 	    // convert MTL "Ns" to OpenGL shininess  [0 - 100] => [0 - 128]
 	    shine = shine / 100.0f;
-	    if (shine < 0.0f) 
+	    if (shine < 0.0f)
 	      shine = 0.0f;
-	    else if (shine > 1.0f) 
+	    else if (shine > 1.0f)
 	      shine = 1.0f;
 
 	    model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
@@ -186,20 +186,20 @@ void parseOBJVertSection ( const std::string &section, int &vert, int& norm, int
 
   if (pos1 == npos)
     vertPart = section;
-  else 
+  else
   {
     vertPart = section.substr(0, pos1);
 
     if (pos2 == npos)
       uvPart = section.substr(pos1 + 1, npos);
-    else 
+    else
     {
       uvPart = section.substr(pos1 + 1, pos2 - pos1 - 1);
       normPart = section.substr(pos2 + 1, npos);
     }
   }
 
-  if (vertPart.size() > 0) 
+  if (vertPart.size() > 0)
   {
     int index = atoi(vertPart.c_str());
 
@@ -213,13 +213,13 @@ void parseOBJVertSection ( const std::string &section, int &vert, int& norm, int
   {
     int index = atoi(uvPart.c_str());
 
-    if (index < 0) 
+    if (index < 0)
       index = (tCount + 1) + index;
 
     uv = index - 1;
   }
 
-  if (normPart.size() > 0) 
+  if (normPart.size() > 0)
   {
     int index = atoi(normPart.c_str());
 
@@ -288,7 +288,7 @@ void readOBJ ( CModel &model, std::string file )
   std::string currentMaterial = "";
 
   std::vector<std::string>::iterator lineItr = lines.begin();
-  
+
   while ( lineItr != lines.end() )
   {
     // do a trim here
@@ -315,7 +315,7 @@ void readOBJ ( CModel &model, std::string file )
 	    vert.y = (float)atof(lineParts[2].c_str())*globalScale+globalShift[1];
 	    vert.z = (float)atof(lineParts[3].c_str())*globalScale+globalShift[2];
 	  }
-	  
+
 	  temp_verts.push_back(vert);
 	  vCount++;
 	}
@@ -324,7 +324,7 @@ void readOBJ ( CModel &model, std::string file )
 	  CTexCoord uv;
 	  uv.u = (float)atof(lineParts[1].c_str());
 	  uv.v = (float)atof(lineParts[2].c_str());
-	 
+
 	  temp_texCoords.push_back(uv);
 	  tCount++;
 	}
@@ -332,7 +332,7 @@ void readOBJ ( CModel &model, std::string file )
 	{
 	  CVertex vert;
 	  vert.x = (float)atof(lineParts[1].c_str());
-	  
+
 	  if (flipYZ)
 	  {
 	    vert.y = -1.0f* (float)atof(lineParts[3].c_str());
@@ -370,7 +370,7 @@ void readOBJ ( CModel &model, std::string file )
 	  face.material = currentMaterial;
 
 	  int partCount = (int)lineParts.size();
-	  
+
 	  for ( int i = 1; i < partCount; i++ )
 	  {
 	    int invalidValue = -2000000000;
@@ -383,7 +383,7 @@ void readOBJ ( CModel &model, std::string file )
 
 	    if (u != invalidValue)
 	      face.texCoords.push_back(u);
-	    
+
 	    if (n != invalidValue)
 	      face.normals.push_back(n);
 	  }

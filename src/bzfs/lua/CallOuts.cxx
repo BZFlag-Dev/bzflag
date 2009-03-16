@@ -1434,7 +1434,7 @@ static int SetPlayerAutoPilot(lua_State* L)
   luaL_checktype(L, 2, LUA_TBOOLEAN);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   player->setAutoPilot(lua_tobool(L, 2));
-  return 0;  
+  return 0;
 }
 
 
@@ -1446,7 +1446,7 @@ static int ChangePlayerTeam(lua_State* L)
   const int playerID = luaL_checkint(L, 1);
   const bz_eTeamType newTeamID = ParseTeam(L, 2);
   bz_changeTeam(playerID, newTeamID);
-  return 0;  
+  return 0;
 }
 
 
@@ -1454,7 +1454,7 @@ static int ZapPlayer(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
   bz_zapPlayer(playerID);
-  return 0;  
+  return 0;
 }
 
 
@@ -1465,11 +1465,11 @@ static int KillPlayer(lua_State* L)
   const int killerID = luaL_optint(L, 3, -1);
   const char* flagID = luaL_optstring(L, 4, NULL);
   bz_killPlayer(playerID, spawnOnBase, killerID, flagID);
-  return 0;  
+  return 0;
 }
 
 
-static int SetRabbit(lua_State* L) // FIXME ? 
+static int SetRabbit(lua_State* L) // FIXME ?
 {
   const int playerID = luaL_checkint(L, 1);
   if (lua_isnil(L, 2)) {
@@ -1696,7 +1696,7 @@ static int FireWeapon(lua_State* L)
   const float lifeTime = luaL_optfloat(L, 7, -1.0f);
   const float dt       = luaL_optfloat(L, 8, -1.0f);
   const int   shotID   = luaL_optint(L, 9, -1);
-  
+
   lua_pushboolean(L, bz_fireWorldWep(flagType, lifeTime,
                                      pos, tilt, rot, shotID , dt));
   return 1;
@@ -1714,7 +1714,7 @@ static int FireMissile(lua_State* L)
   const float tilt     = luaL_checkfloat(L, 6);
   const float lifeTime = luaL_checkfloat(L, 7);
   const float dt       = luaL_checkfloat(L, 8);
-  
+
   lua_pushinteger(L, bz_fireWorldGM(targetID, lifeTime, pos, tilt, rot, dt));
   return 1;
 }
@@ -1897,7 +1897,7 @@ static int GetStandardPerms(lua_State* L)
 static int GetReportCount(lua_State* L)
 {
   lua_pushinteger(L, bz_getReportCount());
-  return 1; 
+  return 1;
 }
 
 
@@ -1907,7 +1907,7 @@ static int GetReportInfo(lua_State* L)
   lua_pushstring(L, bz_getReportSource(reportID));
   lua_pushstring(L, bz_getReportBody(reportID));
   lua_pushstring(L, bz_getReportTime(reportID));
-  return 3;  
+  return 3;
 }
 
 
@@ -1932,7 +1932,7 @@ static int FileReport(lua_State* L)
 {
   const char* msg  = luaL_checkstring(L, 1);
   const char* from = luaL_checkstring(L, 2);
-  lua_pushboolean(L, bz_fileReport(msg, from)); 
+  lua_pushboolean(L, bz_fileReport(msg, from));
   return 1;
 }
 
@@ -2193,8 +2193,8 @@ static int DirList(lua_State* L)
   const string cleanPath = BzVFS::cleanDirPath(path);
   if (!BzVFS::rawDirList("", cleanPath, recursize, dirs, files)) {
     return 0;
-  }  
-  
+  }
+
 
   set<string> dirSet;
   for (unsigned int i = 0; i < dirs.size(); i++) {
@@ -2248,14 +2248,14 @@ static int CalcMD5(lua_State* L)
   #include <fcntl.h>
   static int ReadStdin(lua_State* L)
   {
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);  
+    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
     char buf[4096];
     const int r = read(STDIN_FILENO, buf, sizeof(buf));
     if (r <= 0) {
       return 0;
     }
     lua_pushlstring(L, buf, r);
-    fcntl(STDIN_FILENO, F_SETFL, 0);  
+    fcntl(STDIN_FILENO, F_SETFL, 0);
     return 1;
   }
 #endif

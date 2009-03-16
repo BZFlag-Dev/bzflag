@@ -9,7 +9,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 #ifndef	__SERVERPING_H__
 #define	__SERVERPING_H__
 
@@ -47,24 +47,24 @@ private:
   void closeSocket();
   void sendPing(unsigned char tag);
   struct sockaddr_in saddr;
-  
+
   struct pingdesc
   {
     TimeKeeper senttime;
     TimeKeeper recvtime;
   };
-  
+
   std::vector<pingdesc> activepings;
-  
+
   int fd;
-  
+
   size_t recieved;
-  
+
   const size_t samples;
-  
+
   double timeout;
   double interval;
-  
+
   TimeKeeper starttime;
 };
 

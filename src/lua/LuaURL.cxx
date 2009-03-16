@@ -389,7 +389,7 @@ int LuaURLMgr::Length(lua_State* L)
 {
 	const LuaURL* fetch = CheckURL(L, 1);
 	lua_pushinteger(L, fetch->GetLength());
-	return 1;  
+	return 1;
 }
 
 
@@ -397,7 +397,7 @@ int LuaURLMgr::Success(lua_State* L)
 {
 	const LuaURL* fetch = CheckURL(L, 1);
 	lua_pushboolean(L, fetch->GetSuccess());
-	return 1;  
+	return 1;
 }
 
 
@@ -405,7 +405,7 @@ int LuaURLMgr::IsActive(lua_State* L)
 {
 	const LuaURL* fetch = CheckURL(L, 1);
 	lua_pushboolean(L, fetch->GetActive());
-	return 1;  
+	return 1;
 }
 
 
@@ -413,7 +413,7 @@ int LuaURLMgr::GetURL(lua_State* L)
 {
 	const LuaURL* fetch = CheckURL(L, 1);
 	lua_pushstdstring(L, fetch->GetURL());
-	return 1;  
+	return 1;
 }
 
 
@@ -425,7 +425,7 @@ int LuaURLMgr::GetPostData(lua_State* L)
 		return 0;
 	}
 	lua_pushstdstring(L, postData);
-	return 1;  
+	return 1;
 }
 
 

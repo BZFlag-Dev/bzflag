@@ -259,7 +259,7 @@ inline int FlagPhase::render(int lod) const
 
   if (GLEW_EXT_draw_range_elements)
     glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-  else 
+  else
     glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
 
   return count;
@@ -277,7 +277,7 @@ inline int FlagPhase::renderShadow(int lod) const
 
   if (GLEW_EXT_draw_range_elements)
     glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-  else 
+  else
     glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
 
   return count;

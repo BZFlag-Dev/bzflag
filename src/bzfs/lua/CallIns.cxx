@@ -188,7 +188,7 @@ static int SetCallIn(lua_State* L)
     lua_pushboolean(L, false);
     return 1;
   }
-    
+
   if (lua_isfunction(L, 2)) {
     // register
     lua_pushvalue(L, 2);
@@ -216,7 +216,7 @@ static int SetCallIn(lua_State* L)
 static int GetCallInInfo(lua_State* L)
 {
   const map<string, CallIn*>& nameMap = CallIn::GetNameMap();
-  
+
   lua_newtable(L);
   map<string, CallIn*>::const_iterator it;
   for (it = nameMap.begin(); it != nameMap.end(); ++it) {
@@ -470,7 +470,7 @@ bool CI_AllowFlagGrab::execute(bz_EventData* eventData)
   lua_pushnumber(L,  ed->pos[0]);
   lua_pushnumber(L,  ed->pos[1]);
   lua_pushnumber(L,  ed->pos[2]);
-  
+
   if (!RunCallIn(7, 1)) {
     return false;
   }
@@ -492,7 +492,7 @@ bool CI_AllowKillCommand::execute(bz_EventData* eventData)
   if (!ed->allow) {
     return false; // already disallowed
   }
-  
+
   if (!PushCallIn(4)) {
     return false;
   }
@@ -551,7 +551,7 @@ bool CI_AllowPlayer::execute(bz_EventData* eventData)
 bool CI_AllowSpawn::execute(bz_EventData* eventData)
 {
   bz_AllowSpawnData_V1* ed = (bz_AllowSpawnData_V1*)eventData;
-  
+
   if (!ed->allow) {
     return false; // already disallowed
   }
@@ -767,7 +767,7 @@ bool CI_FlagTransfer::execute(bz_EventData* eventData)
   }
 
   lua_pop(L, 1);
-  
+
   return true;
 }
 
@@ -781,7 +781,7 @@ bool CI_GameEnd::execute(bz_EventData* eventData)
   }
 
   lua_pushdouble(L, ed->duration);
-  
+
   return RunCallIn(1, 0);
 }
 
@@ -795,7 +795,7 @@ bool CI_GameStart::execute(bz_EventData* eventData)
   }
 
   lua_pushdouble(L, ed->duration);
-  
+
   return RunCallIn(1, 0);
 }
 
@@ -851,7 +851,7 @@ bool CI_GetPlayerInfo::execute(bz_EventData* eventData)
 
   lua_pop(L, 3);
 
-  return true;    
+  return true;
 }
 
 
@@ -889,7 +889,7 @@ bool CI_GetPlayerSpawnPos::execute(bz_EventData* eventData)
     ed->handled = true; // FIXME ?
   }
 
-  lua_pop(L, 4);    
+  lua_pop(L, 4);
 
   return true;
 }
@@ -1041,7 +1041,7 @@ bool CI_Kick::execute(bz_EventData* eventData)
   if (!PushCallIn(5)) {
     return false;
   }
-  
+
   lua_pushinteger(L, ed->kickerID);
   lua_pushinteger(L, ed->kickedID);
   lua_pushstring(L,  ed->reason.c_str());
@@ -1139,7 +1139,7 @@ bool CI_MessageFiltered::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushstring(L,  ed->rawMessage.c_str());
   lua_pushstring(L,  ed->filteredMessage.c_str());
-  
+
   return RunCallIn(3, 0);
 }
 
@@ -1219,7 +1219,7 @@ bool CI_PlayerAuth::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushboolean(L, ed->password);
   lua_pushboolean(L, ed->globalAuth);
-  
+
   return RunCallIn(3, 0);
 }
 
@@ -1267,7 +1267,7 @@ bool CI_PlayerCustomDataChanged::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushstring(L, ed->key.c_str());
   lua_pushstring(L, ed->data.c_str());
-  
+
   return RunCallIn(3, 0);
 }
 
@@ -1317,7 +1317,7 @@ bool CI_PlayerJoined::execute(bz_EventData* eventData)
 bool CI_PlayerParted::execute(bz_EventData* eventData)
 {
   bz_PlayerJoinPartEventData_V1* ed = (bz_PlayerJoinPartEventData_V1*)eventData;
-  
+
   if (!PushCallIn(6)) {
     return false;
   }
@@ -1358,7 +1358,7 @@ bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushstring(L, ed->key.c_str());
   lua_pushstring(L, ed->data.c_str());
-  
+
   return RunCallIn(3, 0);
 }
 
@@ -1415,7 +1415,7 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
   lua_pushnumber(L, state.angVel);
 
   // FIXME double stateTime;
-  
+
   return RunCallIn(14, 0);
 }
 
@@ -1484,7 +1484,7 @@ bool CI_ReportFiled::execute(bz_EventData* eventData)
 
   lua_pushstring(L, ed->from.c_str());
   lua_pushstring(L, ed->message.c_str());
-  
+
   return RunCallIn(2, 0);
 }
 
@@ -1500,7 +1500,7 @@ bool CI_ServerMsg::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->to);
   lua_pushinteger(L, ed->team);
   lua_pushstring(L,  ed->message.c_str());
-  
+
   return RunCallIn(3, 0);
 }
 
@@ -1516,7 +1516,7 @@ bool CI_ShotEnded::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
 //  lua_pushboolean(L, ed->explode); // FIXME?
-  
+
   return RunCallIn(2, 0);
 }
 
@@ -1536,7 +1536,7 @@ bool CI_ShotFired::execute(bz_EventData* eventData)
   lua_pushnumber(L,  ed->pos[2]);
 
   //lua_pushboolean(L, ed->changed); // FIXME - output? used?
-  
+
   return RunCallIn(5, 0);
 }
 
@@ -1576,7 +1576,7 @@ bool CI_Teleport::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->from);
   lua_pushinteger(L, ed->to);
-  
+
   return RunCallIn(3, 0);
 }
 
@@ -1601,7 +1601,7 @@ bool CI_UnknownSlashCommand::execute(bz_EventData* eventData)
   if (ed->handled) {
     return true;
   }
-  
+
   if (!PushCallIn(4)) {
     return false;
   }

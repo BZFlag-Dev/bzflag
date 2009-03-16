@@ -574,7 +574,7 @@ bool			WinWindow::activate()
   activating = true;
 
   // don't do unwindowing stuff if we don't need to
-  if (BZDB.isTrue("Win32NoMin")) 
+  if (BZDB.isTrue("Win32NoMin"))
   {
     // still have the window, just regrab the mouse
     if (mouseGrab)

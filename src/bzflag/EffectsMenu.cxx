@@ -85,7 +85,7 @@ EffectsMenu::EffectsMenu()
   options = &option->getList();
   options->push_back(std::string("Off"));
   option->createSlider(10);
-  option->update();          
+  option->update();
   addControl(option);
 
   // Display Treads
@@ -374,11 +374,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.setFloat("userRainScale", float(scale) / 10.0f);
       break;
     }
-    case 'm': 
+    case 'm':
       BZDB.set("userMirror", list->getIndex() ? "1" : "0");
       break;
 
-    case 'F': 
+    case 'F':
 	BZDB.setInt("fogEffect", list->getIndex());
       break;
 

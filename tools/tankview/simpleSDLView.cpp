@@ -92,7 +92,7 @@ void SimpleDisplayCamera::removeOrtho ( void )
   glMatrixMode (GL_PROJECTION);
 }
 
-void SimpleDisplayCamera::moveLoc (float x, float y, float z, float distance ) 
+void SimpleDisplayCamera::moveLoc (float x, float y, float z, float distance )
 {
   float dx=x*matrix[0] + y*matrix[4] + z*matrix[8];
   float dy=x*matrix[1] + y*matrix[5] + z*matrix[9];
@@ -120,7 +120,7 @@ void SimpleDisplayCamera::rotateLoc ( float deg, float x, float y, float z )
 }
 
 
-void SimpleDisplayCamera::rotateGlob ( float deg, float x, float y, float z ) 
+void SimpleDisplayCamera::rotateGlob ( float deg, float x, float y, float z )
 {
   float dx=x*matrix[0] + y*matrix[1] + z*matrix[2];
   float dy=x*matrix[4] + y*matrix[5] + z*matrix[6];
@@ -299,7 +299,7 @@ void  SimpleDisplay::bindImage ( unsigned int imageID )
     SDL_FreeSurface(surface);
 
     // bail if the conversion failed
-    if (rgba == NULL) 
+    if (rgba == NULL)
       return;
 
     int width = rgba->w;
@@ -325,7 +325,7 @@ void  SimpleDisplay::bindImage ( unsigned int imageID )
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); 
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
     gluBuild2DMipmaps(GL_TEXTURE_2D,4,rgba->w,rgba->h,GL_RGBA,GL_UNSIGNED_BYTE,image);
     free(image);
@@ -355,7 +355,7 @@ void SimpleDisplay::flip ( void )
   glPopMatrix();
 #ifdef _FORCE_FLUSH_ON_FLIP
   glFlush();
-#endif 
+#endif
   SDL_GL_SwapBuffers();
 }
 
@@ -416,7 +416,7 @@ void SimpleDisplay::initGL ( void )
   glHint(GL_PERSPECTIVE_CORRECTION_HINT ,GL_NICEST);
 
   glEnable (GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);		
+  glDepthFunc(GL_LEQUAL);
 
   glEnable (GL_CULL_FACE);
   glCullFace(GL_BACK);
@@ -426,17 +426,17 @@ void SimpleDisplay::initGL ( void )
   glPolygonMode (GL_FRONT, GL_FILL);
 
   glEnable (GL_LIGHTING);
-  glEnable (GL_LIGHT0); 
+  glEnable (GL_LIGHT0);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-  glEnable (GL_COLOR_MATERIAL); 
+  glEnable (GL_COLOR_MATERIAL);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
 
-  glDrawBuffer(GL_FRONT); 
+  glDrawBuffer(GL_FRONT);
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawBuffer(GL_BACK);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -452,8 +452,8 @@ void SimpleDisplay::setViewport ( void )
   // this stuff don't work in SDL
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective (fov,aspect,nearZ,farZ);			
-  glViewport (0, 0, (int)size[0], (int)size[1]); 
+  gluPerspective (fov,aspect,nearZ,farZ);
+  glViewport (0, 0, (int)size[0], (int)size[1]);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -475,7 +475,7 @@ bool SimpleDisplay::update ( void )
     return false;
 
   SDL_Event event;
-  while (SDL_PollEvent(&event)) 
+  while (SDL_PollEvent(&event))
   {
     switch(event.type)
     {
@@ -506,7 +506,7 @@ bool SimpleDisplay::update ( void )
       }
       else if ( event.active.state == SDL_APPINPUTFOCUS )
 	focus(event.active.gain == 0);
-      break; 
+      break;
 
     case SDL_VIDEORESIZE:
       resize((size_t)event.resize.h,(size_t)event.resize.w);

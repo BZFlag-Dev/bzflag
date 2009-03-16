@@ -275,9 +275,9 @@ void SceneRenderer::setSpecialMode(SpecialMode mode)
       }
     }
   }
-  
+
   BZDB.setInt("specialMode", specialMode);
-  
+
   return;
 }
 
@@ -1400,7 +1400,7 @@ void SceneRenderer::setupShadowPlanes()
   // 1: right
   // 2: bottom
   float (*planes)[4] = shadowPlanes;
-  
+
   shadowPlaneCount = 2;
   float edge[2];
   // left edge

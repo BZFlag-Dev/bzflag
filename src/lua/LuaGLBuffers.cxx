@@ -354,8 +354,8 @@ const void* LuaGLBufferMgr::ParseTable(lua_State* L, int index,
 			}
 		}
 	}
-  
-	bufData.size = size;	
+
+	bufData.size = size;
 
 	IndexCheck(L, bufData, data);
 
@@ -378,7 +378,7 @@ void LuaGLBufferMgr::IndexCheck(lua_State* L,
 		bufData.indexType = 0;
 		return;
 	}
-		
+
 	const int typeSize = GetIndexTypeSize(bufData.indexType);
 	if (typeSize < 0) {
 		luaL_error(L, "unknown index buffer data type");

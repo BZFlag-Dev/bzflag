@@ -423,7 +423,7 @@ static int obstacleTypeNameToEnum(const char* type)
   else if (ConeObstacle::getClassName()    == type) { return coneType;   }
   else if (SphereObstacle::getClassName()  == type) { return sphereType; }
   else if (TetraBuilding::getClassName()   == type) { return tetraType;  }
-  
+
   return -1;
 }
 
@@ -970,7 +970,7 @@ static int compareHeights(const void* a, const void* b)
   const float zMaxB = eB.maxs[2];
   if (zMaxA > zMaxB) { return -1; }
   if (zMaxA < zMaxB) { return +1; }
-  
+
   const int listIDA = obsA->getListID();
   const int listIDB = obsB->getListID();
   if (listIDA < listIDB) { return -1; }

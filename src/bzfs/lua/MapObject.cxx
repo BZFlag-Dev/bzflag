@@ -117,7 +117,7 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
         newData += lua_tostring(L, -1);
         newData += "\n";
       }
-    } 
+    }
   }
 
   info->newData = newData;
@@ -207,7 +207,7 @@ static int DetachMapObject(lua_State* L)
   }
 
   delete it->second;
-  
+
   if (bz_removeCustomMapObject(objName.c_str())) {
     lua_pushboolean(L, true);
   } else {

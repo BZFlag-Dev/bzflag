@@ -26,7 +26,7 @@ class EventClientList {
     inline bool start(size_t& ptr) {
       ptrs.push_back(&ptr);
       return true;
-    }   
+    }
 
     inline bool finish() {
       if (ptrs.empty()) {
