@@ -88,7 +88,7 @@ int visual = -1;
 FILE* file = 0;
 GLContext ctx;
 
-int
+int 
 main (int argc, char** argv)
 {
   GLenum err;
@@ -145,7 +145,7 @@ main (int argc, char** argv)
   /* ---------------------------------------------------------------------- */
   /* open file */
 #if defined(_WIN32)
-  if (!displaystdout)
+  if (!displaystdout) 
     file = fopen("visualinfo.txt", "w");
   if (file == NULL)
     file = stdout;
@@ -173,16 +173,16 @@ main (int argc, char** argv)
   if (WGLEW_ARB_extensions_string || WGLEW_EXT_extensions_string)
   {
     fprintf(file, "WGL extensions (WGL_): \n");
-    PrintExtensions(wglGetExtensionsStringARB ?
+    PrintExtensions(wglGetExtensionsStringARB ? 
                     (char*)wglGetExtensionsStringARB(ctx.dc) :
 		    (char*)wglGetExtensionsStringEXT());
   }
 #elif defined(__APPLE__) && !defined(GLEW_APPLE_GLX)
-
+  
 #else
   /* GLX extensions */
   fprintf(file, "GLX extensions (GLX_): \n");
-  PrintExtensions(glXQueryExtensionsString(glXGetCurrentDisplay(),
+  PrintExtensions(glXQueryExtensionsString(glXGetCurrentDisplay(), 
                                            DefaultScreen(glXGetCurrentDisplay())));
 #endif
 
@@ -306,7 +306,7 @@ VisualInfoARB (GLContext* ctx)
     n_float = n_attrib;
     n_attrib++;
   }
-
+  
   if (!verbose)
   {
     /* print table header */
@@ -340,7 +340,7 @@ VisualInfoARB (GLContext* ctx)
 	else if (WGLEW_ARB_pbuffer && value[n_pbuffer]) fprintf(file, "pb ");
       }
       /* acceleration */
-      fprintf(file, "%s ", value[3] == WGL_FULL_ACCELERATION_ARB ? "fu" :
+      fprintf(file, "%s ", value[3] == WGL_FULL_ACCELERATION_ARB ? "fu" : 
 	      value[3] == WGL_GENERIC_ACCELERATION_ARB ? "ge" :
 	      value[3] == WGL_NO_ACCELERATION_ARB ? "no" : ". ");
       /* gdi support */
@@ -368,16 +368,16 @@ VisualInfoARB (GLContext* ctx)
       if (value[8]) fprintf(file, "%3d ", value[8]);
       else fprintf(file, "  . ");
       /* red */
-      if (value[9]) fprintf(file, "%2d ", value[9]);
+      if (value[9]) fprintf(file, "%2d ", value[9]); 
       else fprintf(file, " . ");
       /* green */
-      if (value[10]) fprintf(file, "%2d ", value[10]);
+      if (value[10]) fprintf(file, "%2d ", value[10]); 
       else fprintf(file, " . ");
       /* blue */
       if (value[11]) fprintf(file, "%2d ", value[11]);
       else fprintf(file, " . ");
       /* alpha */
-      if (value[12]) fprintf(file, "%2d | ", value[12]);
+      if (value[12]) fprintf(file, "%2d | ", value[12]); 
       else fprintf(file, " . | ");
       /* aux buffers */
       if (value[20]) fprintf(file, "%2d ", value[20]);
@@ -426,12 +426,12 @@ VisualInfoARB (GLContext* ctx)
     fprintf(file, "\n");
     /* loop through all the pixel formats */
     for(i = 1; i <= maxpf; i++)
-    {
+    {	    
       DescribePixelFormat(ctx->dc, i, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
       /* only describe this format if it supports OpenGL */
       if(!(pfd.dwFlags & PFD_SUPPORT_OPENGL)
 	 || (drawableonly && !(pfd.dwFlags & PFD_DRAW_TO_WINDOW))) continue;
-      fprintf(file, "Visual ID: %2d  depth=%d  class=%s\n", i, pfd.cDepthBits,
+      fprintf(file, "Visual ID: %2d  depth=%d  class=%s\n", i, pfd.cDepthBits, 
 	     pfd.cColorBits <= 8 ? "PseudoColor" : "TrueColor");
       fprintf(file, "    bufferSize=%d level=%d renderType=%s doubleBuffer=%d stereo=%d\n", pfd.cColorBits, pfd.bReserved, pfd.iPixelType == PFD_TYPE_RGBA ? "rgba" : "ci", pfd.dwFlags & PFD_DOUBLEBUFFER, pfd.dwFlags & PFD_STEREO);
       fprintf(file, "    generic=%d generic accelerated=%d\n", (pfd.dwFlags & PFD_GENERIC_FORMAT) == PFD_GENERIC_FORMAT, (pfd.dwFlags & PFD_GENERIC_ACCELERATED) == PFD_GENERIC_ACCELERATED);
@@ -471,7 +471,7 @@ VisualInfoGDI (GLContext* ctx)
 	 || (drawableonly && (pfd.dwFlags & PFD_DRAW_TO_BITMAP))) continue;
       /* other criteria could be tested here for actual pixel format
 	 choosing in an application:
-
+	   
 	 for (...each pixel format...) {
 	 if (pfd.dwFlags & PFD_SUPPORT_OPENGL &&
 	 pfd.dwFlags & PFD_DOUBLEBUFFER &&
@@ -492,27 +492,27 @@ VisualInfoGDI (GLContext* ctx)
       else if(pfd.dwFlags & PFD_DRAW_TO_BITMAP) fprintf(file, "bm ");
       else fprintf(file, "pb ");
       /* should find transparent pixel from LAYERPLANEDESCRIPTOR */
-      fprintf(file, " . ");
+      fprintf(file, " . "); 
       fprintf(file, "%3d ", pfd.cColorBits);
       /* bReserved field indicates number of over/underlays */
       if(pfd.bReserved) fprintf(file, " %d ", pfd.bReserved);
-      else fprintf(file, " . ");
+      else fprintf(file, " . "); 
       fprintf(file, " %c ", pfd.iPixelType == PFD_TYPE_RGBA ? 'r' : 'c');
       fprintf(file, "%c ", pfd.dwFlags & PFD_DOUBLEBUFFER ? 'y' : '.');
       fprintf(file, " %c ", pfd.dwFlags & PFD_STEREO ? 'y' : '.');
       /* added: */
       fprintf(file, " %c ", pfd.dwFlags & PFD_GENERIC_FORMAT ? 'y' : '.');
       fprintf(file, " %c ", pfd.dwFlags & PFD_GENERIC_ACCELERATED ? 'y' : '.');
-      if(pfd.cRedBits && pfd.iPixelType == PFD_TYPE_RGBA)
+      if(pfd.cRedBits && pfd.iPixelType == PFD_TYPE_RGBA) 
 	fprintf(file, "%2d ", pfd.cRedBits);
       else fprintf(file, " . ");
-      if(pfd.cGreenBits && pfd.iPixelType == PFD_TYPE_RGBA)
+      if(pfd.cGreenBits && pfd.iPixelType == PFD_TYPE_RGBA) 
 	fprintf(file, "%2d ", pfd.cGreenBits);
       else fprintf(file, " . ");
-      if(pfd.cBlueBits && pfd.iPixelType == PFD_TYPE_RGBA)
+      if(pfd.cBlueBits && pfd.iPixelType == PFD_TYPE_RGBA) 
 	fprintf(file, "%2d ", pfd.cBlueBits);
       else fprintf(file, " . ");
-      if(pfd.cAlphaBits && pfd.iPixelType == PFD_TYPE_RGBA)
+      if(pfd.cAlphaBits && pfd.iPixelType == PFD_TYPE_RGBA) 
 	fprintf(file, "%2d ", pfd.cAlphaBits);
       else fprintf(file, " . ");
       if(pfd.cAuxBuffers)     fprintf(file, "%2d ", pfd.cAuxBuffers);
@@ -545,12 +545,12 @@ VisualInfoGDI (GLContext* ctx)
     fprintf(file, "\n");
     /* loop through all the pixel formats */
     for(i = 1; i <= maxpf; i++)
-    {
+    {	    
       DescribePixelFormat(ctx->dc, i, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
       /* only describe this format if it supports OpenGL */
       if(!(pfd.dwFlags & PFD_SUPPORT_OPENGL)
 	 || (drawableonly && !(pfd.dwFlags & PFD_DRAW_TO_WINDOW))) continue;
-      fprintf(file, "Visual ID: %2d  depth=%d  class=%s\n", i, pfd.cDepthBits,
+      fprintf(file, "Visual ID: %2d  depth=%d  class=%s\n", i, pfd.cDepthBits, 
 	     pfd.cColorBits <= 8 ? "PseudoColor" : "TrueColor");
       fprintf(file, "    bufferSize=%d level=%d renderType=%s doubleBuffer=%ld stereo=%ld\n", pfd.cColorBits, pfd.bReserved, pfd.iPixelType == PFD_TYPE_RGBA ? "rgba" : "ci", pfd.dwFlags & PFD_DOUBLEBUFFER, pfd.dwFlags & PFD_STEREO);
       fprintf(file, "    generic=%d generic accelerated=%d\n", (pfd.dwFlags & PFD_GENERIC_FORMAT) == PFD_GENERIC_FORMAT, (pfd.dwFlags & PFD_GENERIC_ACCELERATED) == PFD_GENERIC_ACCELERATED);
@@ -993,8 +993,8 @@ GLboolean CreateContext (GLContext* ctx)
   wc.lpszClassName = "GLEW";
   if (0 == RegisterClass(&wc)) return GL_TRUE;
   /* create window */
-  ctx->wnd = CreateWindow("GLEW", "GLEW", 0, CW_USEDEFAULT, CW_USEDEFAULT,
-                          CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL,
+  ctx->wnd = CreateWindow("GLEW", "GLEW", 0, CW_USEDEFAULT, CW_USEDEFAULT, 
+                          CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, 
                           GetModuleHandle(NULL), NULL);
   if (NULL == ctx->wnd) return GL_TRUE;
   /* get the device context */
@@ -1104,8 +1104,8 @@ GLboolean CreateContext (GLContext* ctx)
                               ctx->vi->visual, AllocNone);
   swa.border_pixel = 0;
   swa.colormap = ctx->cmap;
-  ctx->wnd = XCreateWindow(ctx->dpy, RootWindow(ctx->dpy, ctx->vi->screen),
-                           0, 0, 1, 1, 0, ctx->vi->depth, InputOutput, ctx->vi->visual,
+  ctx->wnd = XCreateWindow(ctx->dpy, RootWindow(ctx->dpy, ctx->vi->screen), 
+                           0, 0, 1, 1, 0, ctx->vi->depth, InputOutput, ctx->vi->visual, 
                            CWBorderPixel | CWColormap, &swa);
   /* make context current */
   if (!glXMakeCurrent(ctx->dpy, ctx->wnd, ctx->ctx)) return GL_TRUE;

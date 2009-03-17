@@ -1,12 +1,12 @@
 // ---------------------------------------------------------------------------------------------------------------------------------
-//
-//
-//  _ __ ___  _ __ ___   __ _ _ __      ___ _ __  _ __
-// | '_ ` _ \| '_ ` _ \ / _` | '__|    / __| '_ \| '_ \
+//                                                      
+//                                                      
+//  _ __ ___  _ __ ___   __ _ _ __      ___ _ __  _ __  
+// | '_ ` _ \| '_ ` _ \ / _` | '__|    / __| '_ \| '_ \ 
 // | | | | | | | | | | | (_| | |    _ | (__| |_) | |_) |
-// |_| |_| |_|_| |_| |_|\__, |_|   (_) \___| .__/| .__/
-//                       __/ |             | |   | |
-//                      |___/              |_|   |_|
+// |_| |_| |_|_| |_| |_|\__, |_|   (_) \___| .__/| .__/ 
+//                       __/ |             | |   | |    
+//                      |___/              |_|   |_|    
 //
 // Memory manager & tracking software
 //
@@ -56,7 +56,7 @@
 // 4. With MFC applications, you will need to comment out any occurance of "#define new DEBUG_NEW" from all source files.
 //
 // 5. Include file dependencies are _very_important_ for getting the MMGR to integrate nicely into your application. Be careful if
-//    you're including standard includes from within your own project inclues; that will break this very specific dependency order.
+//    you're including standard includes from within your own project inclues; that will break this very specific dependency order. 
 //    It should look like this:
 //
 //		#include <stdio.h>   // Standard includes MUST come first
@@ -95,7 +95,7 @@
 //
 // Whether this software causes your application to crash, or if it reports errors, you need to be able to TRUST this software. To
 // this end, you are given some very simple debugging tools.
-//
+// 
 // The quickest way to locate problems is to enable the STRESS_TEST macro (below.) This should catch 95% of the crashes before they
 // occur by validating every allocation each time this memory manager performs an allocation function. If that doesn't work, keep
 // reading...
@@ -785,7 +785,7 @@ void	*operator new(size_t reportedSize)
 
 		// There isn't a way to determine the new handler, except through setting it. So we'll just set it to NULL, then
 		// set it back again.
-
+		
 		std::new_handler	nh = std::set_new_handler(0);
 		std::set_new_handler(nh);
 
@@ -1670,7 +1670,7 @@ void	m_dumpMemoryReport(const char *filename, const bool overwrite)
 	// Open the report file
 
 	FILE	*fp = NULL;
-
+	
 	if (overwrite)	fp = fopen(filename, "w+b");
 	else		fp = fopen(filename, "ab");
 

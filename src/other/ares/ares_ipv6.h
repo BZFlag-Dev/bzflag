@@ -43,7 +43,7 @@ struct sockaddr_in6
 #endif
 
 #ifndef HAVE_STRUCT_ADDRINFO
-struct addrinfo
+struct addrinfo 
 {
   int              ai_flags;
   int              ai_family;

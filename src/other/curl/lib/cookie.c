@@ -437,10 +437,10 @@ Curl_cookie_add(struct SessionHandle *data,
     char *tok_buf;
     int fields;
 
-    /* IE introduced HTTP-only cookies to prevent XSS attacks. Cookies
-       marked with httpOnly after the domain name are not accessible
-       from javascripts, but since curl does not operate at javascript
-       level, we include them anyway. In Firefox's cookie files, these
+    /* IE introduced HTTP-only cookies to prevent XSS attacks. Cookies 
+       marked with httpOnly after the domain name are not accessible  
+       from javascripts, but since curl does not operate at javascript  
+       level, we include them anyway. In Firefox's cookie files, these 
        lines are preceeded with #HttpOnly_ and then everything is
        as usual, so we skip 10 characters of the line..
     */

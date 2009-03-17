@@ -118,14 +118,14 @@ FTTextureGlyphImpl::FTTextureGlyphImpl(FT_GlyphSlot glyph, int id, int xOffset,
 	    GLint w,h;
 	    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&w);
 	    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_HEIGHT,&h);
-
+		
 	    FTASSERT(xOffset >= 0);
 	    FTASSERT(yOffset >= 0);
 	    FTASSERT(destWidth >= 0);
 	    FTASSERT(destHeight >= 0);
 	    FTASSERT(xOffset+destWidth <= w);
 	    FTASSERT(yOffset+destHeight <= h);
-
+	    
 	    if (yOffset+destHeight > h)
 	    {
 	        //We'll only get here if we are soft-failing our asserts. In that case,

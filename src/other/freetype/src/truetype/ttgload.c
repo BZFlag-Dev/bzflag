@@ -1986,7 +1986,7 @@
             break;
           }
         }
-        else
+        else 
           glyph->outline.flags |= FT_OUTLINE_IGNORE_DROPOUTS;
       }
 

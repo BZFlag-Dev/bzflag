@@ -241,7 +241,7 @@ CURLcode Curl_output_digest(struct connectdata *conn,
 #ifdef CURL_DOES_CONVERSIONS
   CURLcode rc;
 /* The CURL_OUTPUT_DIGEST_CONV macro below is for non-ASCII machines.
-   It converts digest text to ASCII so the MD5 will be correct for
+   It converts digest text to ASCII so the MD5 will be correct for 
    what ultimately goes over the network.
 */
 #define CURL_OUTPUT_DIGEST_CONV(a, b) \

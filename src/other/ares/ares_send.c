@@ -107,7 +107,7 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
   ares__init_list_node(&(query->queries_by_timeout), query);
   ares__init_list_node(&(query->queries_to_server),  query);
   ares__init_list_node(&(query->all_queries),        query);
-
+       
   /* Chain the query into the list of all queries. */
   ares__insert_in_list(&(query->all_queries), &(channel->all_queries));
   /* Keep track of queries bucketed by qid, so we can process DNS

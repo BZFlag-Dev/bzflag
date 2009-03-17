@@ -4,24 +4,24 @@
 ** Copyright (C) 2002-2008, Marcelo E. Magallon <mmagallo[]debian org>
 ** Copyright (C) 2002, Lev Povalahev
 ** All rights reserved.
-**
-** Redistribution and use in source and binary forms, with or without
+** 
+** Redistribution and use in source and binary forms, with or without 
 ** modification, are permitted provided that the following conditions are met:
-**
-** * Redistributions of source code must retain the above copyright notice,
+** 
+** * Redistributions of source code must retain the above copyright notice, 
 **   this list of conditions and the following disclaimer.
-** * Redistributions in binary form must reproduce the above copyright notice,
-**   this list of conditions and the following disclaimer in the documentation
+** * Redistributions in binary form must reproduce the above copyright notice, 
+**   this list of conditions and the following disclaimer in the documentation 
 **   and/or other materials provided with the distribution.
-** * The name of the author may be used to endorse or promote products
+** * The name of the author may be used to endorse or promote products 
 **   derived from this software without specific prior written permission.
 **
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
 ** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 ** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 ** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -6971,10 +6971,10 @@ int main (void)
 #if defined(_WIN32)
   fprintf(f, "Reporting capabilities of pixelformat %d\n", visual);
 #elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-  fprintf(f, "Reporting capabilities of display %s, visual 0x%x\n",
+  fprintf(f, "Reporting capabilities of display %s, visual 0x%x\n", 
     display == NULL ? getenv("DISPLAY") : display, visual);
 #endif
-  fprintf(f, "Running on a %s from %s\n",
+  fprintf(f, "Running on a %s from %s\n", 
 	  glGetString(GL_RENDERER), glGetString(GL_VENDOR));
   fprintf(f, "OpenGL version %s is supported\n", glGetString(GL_VERSION));
   glewInfo();
@@ -7043,7 +7043,7 @@ GLboolean glewCreateContext (int* pixelformat)
   wc.lpszClassName = "GLEW";
   if (0 == RegisterClass(&wc)) return GL_TRUE;
   /* create window */
-  wnd = CreateWindow("GLEW", "GLEW", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+  wnd = CreateWindow("GLEW", "GLEW", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
                      CW_USEDEFAULT, NULL, NULL, GetModuleHandle(NULL), NULL);
   if (NULL == wnd) return GL_TRUE;
   /* get the device context */
@@ -7157,8 +7157,8 @@ GLboolean glewCreateContext (const char* display, int* visual)
   cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen), vi->visual, AllocNone);
   swa.border_pixel = 0;
   swa.colormap = cmap;
-  wnd = XCreateWindow(dpy, RootWindow(dpy, vi->screen),
-                      0, 0, 1, 1, 0, vi->depth, InputOutput, vi->visual,
+  wnd = XCreateWindow(dpy, RootWindow(dpy, vi->screen), 
+                      0, 0, 1, 1, 0, vi->depth, InputOutput, vi->visual, 
                       CWBorderPixel | CWColormap, &swa);
   /* make context current */
   if (!glXMakeCurrent(dpy, wnd, ctx)) return GL_TRUE;
