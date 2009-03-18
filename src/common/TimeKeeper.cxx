@@ -400,7 +400,7 @@ void TimeKeeper::setProcessorAffinity(int processor)
 #elif defined(WIN32)
   /* windowsy fix for time travel */
   HANDLE hThread = GetCurrentThread();
-  DWORD dwMask = 1 << processor;
+  DWORD_PTR dwMask = 1 << processor;
   DWORD_PTR dwProcs = 0;
   GetProcessAffinityMask(NULL, NULL, &dwProcs);
   if (dwMask < dwProcs) {
