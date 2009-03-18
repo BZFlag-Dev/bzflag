@@ -401,7 +401,7 @@ void TimeKeeper::setProcessorAffinity(int processor)
   /* windowsy fix for time travel */
   HANDLE hThread = GetCurrentThread();
   DWORD dwMask = 1 << processor;
-  DWORD dwProcs = 0;
+  DWORD_PTR dwProcs = 0;
   GetProcessAffinityMask(NULL, NULL, &dwProcs);
   if (dwMask < dwProcs) {
     logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).\n");
