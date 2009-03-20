@@ -94,8 +94,6 @@
 
 
 const char* argv0;
-static bool anonymous = false;
-static std::string anonymousName("anonymous");
 std::string alternateConfig;
 static bool noAudio = false;
 struct tm userTime;
@@ -182,32 +180,36 @@ static void setVisual(BzfVisual *visual)
 
 static void usage()
 {
-  printFatalError("usage: %s"
-		  " [-anonymous]"
-		  " [-badwords <filterfile>]"
-		  " [-configdir <config dir name>]"
-		  " [-d | -debug]"
-		  " [-date mm/dd/yyyy]"
-		  " [-devlua]"
-		  " [{-dir | -directory} <data-directory>]"
-		  " [-e | -echo]"
-		  " [-ea | -echoAnsi]"
-		  " [-h | -help | --help]"
-		  " [-latitude <latitude>] [-longitude <longitude>]"
-		  " [-list <list-server-url>] [-nolist]"
-		  " [-locale <locale>]"
-		  " [-m | -mute]"
-		  " [-motd <motd-url>] [-nomotd]"
-		  " [-multisample]"
+  printFatalError("usage: %s [options] [callsign[:password]@]server[:port]\n"
+		  "  -badwords <filterfile>\n"
+		  "  -configdir <config dir name>\n"
+		  "  -d | -debug\n"
+		  "  -date <mm/dd/yyyy>\n"
+		  "  -devlua\n"
+		  "  {-dir | -directory} <data-directory>\n"
+		  "  -e | -echo\n"
+		  "  -ea | -echoAnsi\n"
+		  "  -h | -help | --help\n"
+		  "  -latitude <latitude>\n"
+		  "  -longitude <longitude>\n"
+		  "  -list <list-server-url>\n"
+		  "  -nolist\n"
+		  "  -locale <locale>\n"
+		  "  -m | -mute\n"
+		  "  -motd <motd-url>\n"
+		  "  -nomotd\n"
+		  "  -multisample\n"
 #ifdef ROBOT
-		  " [-solo <num-robots>]"
+		  "  -solo <num-robots>\n"
 #endif
-		  " [-team {red|green|blue|purple|rogue|observer}]"
-		  " [-time hh:mm:ss] [-notime]"
-		  " [-v | -version | --version]"
-		  " [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
-		  " [-window [<geometry-spec>]]"
-		  " [callsign[:password]@]server[:port]\n\nExiting.", argv0);
+		  "  -team <red|green|blue|purple|rogue|observer>\n"
+		  "  -time <hh:mm:ss>\n"
+		  "  -notime\n"
+		  "  -v | -version | --version\n"
+		  "  -view <normal|stereo|stacked|three|anaglyph|interlaced>\n"
+		  "  -window <geometry-spec>\n"
+		  "\n"
+		  "Exiting.", argv0);
   if (display != NULL) {
     delete display;
     display=NULL;
@@ -228,11 +230,7 @@ static void parse(int argc, char **argv)
 {
   // = 9;
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-a") == 0 ||
-	strcmp(argv[i], "-anonymous") == 0) {
-      anonymous = true;
-    }
-    else if (strcmp(argv[i], "-configdir") == 0) {
+    if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
     }

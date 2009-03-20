@@ -2385,7 +2385,7 @@ static void handleAliveMessage(void *msg)
   tank->move(pos, forward);
   tank->setVelocity(zero);
   tank->setAngularVelocity(0.0f);
-  tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
+  tank->setDeadReckoning(syncedClock.GetServerSeconds());
   tank->spawnEffect();
   if (tank == myTank) {
     myTank->setSpawning(false);
@@ -3919,7 +3919,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       break;
     }
     case MsgPause: {
-      printf("MsgPause\n"); // FIXME
+      printf("MsgPause(FIXME) %s:%i\n", __FILE__, __LINE__);
       break;
     }
   }

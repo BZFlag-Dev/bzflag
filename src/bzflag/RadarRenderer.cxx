@@ -607,13 +607,19 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-  // setup the radar range
-  float radarRange = BZDB.eval("displayRadarRange") * radarLimit;
+  // setup the desired range
+  float radarRange = BZDB.eval("displayRadarRange");
+  if (radarRange >= 0.0f) {
+    radarRange *= radarLimit; // relative
+  } else {
+    radarRange = -radarRange; // absolute
+  }
+  
   float maxRange = radarLimit;
-  // when burrowed, limit radar range
+  // when burrowed, limit radar range to (1/4)
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&
       (myTank->getPosition()[2] < 0.0f)) {
-    maxRange = radarLimit / 4.0f;
+    maxRange = radarLimit * 0.25f;
   }
   if (radarRange > maxRange) {
     radarRange = maxRange;
