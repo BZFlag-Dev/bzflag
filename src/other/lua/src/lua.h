@@ -34,7 +34,7 @@
 ** pseudo-indices
 */
 #define LUA_REGISTRYINDEX	(-10000)
-#define LUA_CALLINSINDEX	(-10001)
+#define LUA_CALLINSINDEX	(-10001) /*BZ*/
 #define LUA_ENVIRONINDEX	(-10002)
 #define LUA_GLOBALSINDEX	(-10003)
 #define lua_upvalueindex(i)	(LUA_GLOBALSINDEX-(i))
@@ -172,7 +172,7 @@ LUA_API void  (lua_pushstring) (lua_State *L, const char *s);
 LUA_API const char *(lua_pushvfstring) (lua_State *L, const char *fmt,
                                                       va_list argp);
 LUA_API const char *(lua_pushfstring) (lua_State *L, const char *fmt, ...);
-LUA_API void  (lua_pushhstring) (lua_State *L,
+LUA_API void  (lua_pushhstring) (lua_State *L, /*BZ*/
                                  lua_Hash h, const char *s, size_t l);
 LUA_API void  (lua_pushcclosure) (lua_State *L, lua_CFunction fn, int n);
 LUA_API void  (lua_pushboolean) (lua_State *L, int b);
@@ -253,10 +253,10 @@ LUA_API lua_Alloc (lua_getallocf) (lua_State *L, void **ud);
 LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 
 /* for lua_pushhstring() */
-LUA_API lua_Hash (lua_calchash) (const char *s, size_t l);
+LUA_API lua_Hash (lua_calchash) (const char *s, size_t l); /*BZ*/
 
-LUA_API int   (lua_setuserdataextra) (lua_State* L, int idx, void* extra);
-LUA_API void* (lua_getuserdataextra) (lua_State* L, int idx);
+LUA_API int   (lua_setuserdataextra) (lua_State* L, int idx, void* extra); /*BZ*/
+LUA_API void* (lua_getuserdataextra) (lua_State* L, int idx);              /*BZ*/
 
 
 /*
