@@ -67,6 +67,8 @@
 
 #include "Stats.h"
 
+StatsLink statsLink;
+
 // only include this if we are going to use plugins and export the API
 #ifdef BZ_PLUGINS
 #  include "bzfsPlugins.h"
@@ -76,6 +78,7 @@
 #  define BUFSIZE 2048
 #endif
 
+AutoAllowTimerTickHandler autoAllowTimerTickHandler;
 
 // pass through the SELECT loop
 bool dontWait = true;
@@ -3862,7 +3865,7 @@ static void setupPermissions(void)
   // if requested, make it so AllowMovement and AllowShooting eventually
   // get reenabled automatically
   if (BZDB.eval(StateDatabase::BZDB_AUTOALLOWTIME) > 0)
-    bz_registerEvent(bz_eTickEvent, new AutoAllowTimerTickHandler);
+    bz_registerEvent(bz_eTickEvent, &autoAllowTimerTickHandler);
 }
 
 
@@ -3901,7 +3904,7 @@ static bool initServer(int argc, char **argv)
   setupPlugins();
 
   // start up a stats link class, it'll take care of itself.
-  new StatsLink();
+  statsLink.init();
 
   if (!prepareWorld())
     return false;

@@ -57,11 +57,6 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
   }
 }
 
-bool AutoAllowTimerTickHandler::autoDelete()
-{
-  return true;
-}
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

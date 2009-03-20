@@ -32,23 +32,7 @@ WorldEventManager::WorldEventManager()
 
 WorldEventManager::~WorldEventManager()
 {
-  typedef std::set<bz_EventHandler*> EventHandlerSet;
-  EventHandlerSet toDelete;
-
-  tmEventTypeList::iterator eventItr = eventList.begin();
-  while (eventItr != eventList.end())
-  {
-    tvEventList::iterator itr = eventItr->second.begin();
-    while (itr != eventItr->second.end())
-    {
-      if ((*itr) && (*itr)->autoDelete())
-	toDelete.insert(*itr);
-      *itr = NULL;
-
-      itr++;
-    }
-    eventItr++;
-  }
+}
 
   // Because an event handler can be registerd to handle multiple
   // events, collect all the registered handlers in a set and delete

@@ -56,8 +56,6 @@ public:
   // custom slash
   virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params );
 
-  virtual bool autoDelete ( void ) { return true; }
-
   void init();
 
 protected:

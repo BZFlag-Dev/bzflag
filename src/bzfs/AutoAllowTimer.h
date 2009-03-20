@@ -31,7 +31,6 @@ public:
   virtual ~AutoAllowTimerTickHandler();
 
   virtual void process(bz_EventData *eventData);
-  virtual bool autoDelete(void);
 
 };
 

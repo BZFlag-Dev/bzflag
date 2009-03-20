@@ -23,6 +23,8 @@ public:
    StatsLink();
    virtual ~StatsLink();
 
+   void init (void);
+
    virtual void process(bz_EventData *eventData);
    virtual bool autoDelete(void) { return true; }
 

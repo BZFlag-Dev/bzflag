@@ -18,15 +18,19 @@
 
 StatsLink::StatsLink()
 {
-  sentAdd = false;
-  bz_registerEvent(bz_eWorldFinalized,this);
-  bz_registerEvent(bz_eListServerUpdateEvent,this);
-  bz_registerEvent(bz_ePlayerPartEvent,this);
+}
 
-  if (BZDB.isSet("_statURL"))
-    url = BZDB.get("_statURL");
-  if (!url.size())
-    url = "http://stattrack.bzflag.bz:88";
+void StatsLink::init( void )
+{
+	sentAdd = false;
+	bz_registerEvent(bz_eWorldFinalized,this);
+	bz_registerEvent(bz_eListServerUpdateEvent,this);
+	bz_registerEvent(bz_ePlayerPartEvent,this);
+
+	if (BZDB.isSet("_statURL"))
+		url = BZDB.get("_statURL");
+	if (!url.size())
+		url = "http://stattrack.bzflag.bz:88";
 }
 
 StatsLink::~StatsLink()
