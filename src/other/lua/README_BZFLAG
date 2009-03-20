@@ -38,9 +38,13 @@ made to the lua-5.1.4 sources for BZFlag.
 
 8. Renamed the source files from .c to .cxx for g++ compilation  (svn r19274)
 
-9. Added the lpeg library  (svn r19430)
+9. Applied the __usedindex metamethod patch  (svn r19401)
 
-10. Disabled precompiled chunks in luaU_undump()  (svn r19459)
+10. Added the __rawset metamethod  (svn r19402)
+
+11. Added the lpeg library  (svn r19430)
+
+12. Disabled precompiled chunks in luaU_undump()  (svn r19459)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
