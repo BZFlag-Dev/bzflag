@@ -1,7 +1,7 @@
 #!/bin/sh
 #                        a u t o g e n . s h
 #
-# Copyright (c) 2005-2008 United States Government as represented by
+# Copyright (c) 2005-2009 United States Government as represented by
 # the U.S. Army Research Laboratory.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -79,7 +79,7 @@
 
 # set to minimum acceptible version of autoconf
 if [ "x$AUTOCONF_VERSION" = "x" ] ; then
-    AUTOCONF_VERSION=2.58
+    AUTOCONF_VERSION=2.52
 fi
 # set to minimum acceptible version of automake
 if [ "x$AUTOMAKE_VERSION" = "x" ] ; then
@@ -985,15 +985,50 @@ initialize ( ) {
 	fi
     done
 
-    ##########################################
-    # make sure certain required files exist #
-    ##########################################
-    for file in AUTHORS COPYING ChangeLog INSTALL NEWS README ; do
-	if test ! -f $file ; then
-	    $VERBOSE_ECHO "Touching ${file} since it does not exist"
-	    touch $file
+    ###########################################################
+    # make sure certain required files exist for GNU projects #
+    ###########################################################
+    _marker_found=""
+    _marker_found_message_intro='Detected non-GNU marker "'
+    _marker_found_message_mid='" in '
+    for marker in foreign cygnus ; do
+	_marker_found_message=${_marker_found_message_intro}${marker}${_marker_found_message_mid}
+	_marker_found="`grep 'AM_INIT_AUTOMAKE.*'${marker} $CONFIGURE`"
+	if [ ! "x$_marker_found" = "x" ] ; then
+	    $VERBOSE_ECHO "${_marker_found_message}`basename \"$CONFIGURE\"`"
+	    break
+	fi
+	if test -f "`dirname \"$CONFIGURE\"/Makefile.am`" ; then
+	    _marker_found="`grep 'AUTOMAKE_OPTIONS.*'${marker} Makefile.am`"
+	    if [ ! "x$_marker_found" = "x" ] ; then
+		$VERBOSE_ECHO "${_marker_found_message}Makefile.am"
+		break
+	    fi
 	fi
     done
+    if [ "x${_marker_found}" = "x" ] ; then
+	_suggest_foreign=no
+	for file in AUTHORS COPYING ChangeLog INSTALL NEWS README ; do
+	    if [ ! -f $file ] ; then
+		$VERBOSE_ECHO "Touching ${file} since it does not exist"
+		_suggest_foreign=yes
+		touch $file
+	    fi
+	done
+
+	if [ "x${_suggest_foreign}" = "xyes" ] ; then
+	    $ECHO
+	    $ECHO "Warning: Several files expected of projects that conform to the GNU"
+	    $ECHO "coding standards were not found.  The files were automatically added"
+	    $ECHO "for you since you do not have a 'foreign' declaration specified."
+	    $ECHO
+	    $ECHO "Considered adding 'foreign' to AM_INIT_AUTOMAKE in `basename \"$CONFIGURE\"`"
+	    if test -f "`dirname \"$CONFIGURE\"/Makefile.am`" ; then
+		$ECHO "or to AUTOMAKE_OPTIONS in your top-level Makefile.am file."
+	    fi
+	    $ECHO
+	fi
+    fi
 
     ##################################################
     # make sure certain generated files do not exist #
@@ -1067,7 +1102,7 @@ download_gnulib_config_guess () {
     ret=1
     for __cmd in wget curl fetch ; do
 	$VERBOSE_ECHO "Checking for command ${__cmd}"
-	${__cmd} --version &>/dev/null
+	${__cmd} --version > /dev/null 2>&1
 	ret=$?
 	if [ ! $ret = 0 ] ; then
 	    continue
@@ -1110,7 +1145,7 @@ download_gnulib_config_guess () {
 ##############################
 libtoolize_needed () {
     ret=1 # means no, don't need libtoolize
-    for feature in AC_PROG_LIBTOOL LT_INIT ; do
+    for feature in AC_PROG_LIBTOOL AM_PROG_LIBTOOL LT_INIT ; do
 	$VERBOSE_ECHO "Searching for $feature in $CONFIGURE"
 	found="`grep \"^$feature.*\" $CONFIGURE`"
 	if [ ! "x$found" = "x" ] ; then
@@ -1345,7 +1380,7 @@ manual_autogen ( ) {
 	    $ECHO
 	    $ECHO "Warning:  Unsupported macros were found in $CONFIGURE"
 	    $ECHO
-	    $ECHO "The `echo $CONFIGURE | basename` file was scanned in order to determine if any"
+	    $ECHO "The `basename \"$CONFIGURE\"` file was scanned in order to determine if any"
 	    $ECHO "unsupported macros are used that exceed the minimum version"
 	    $ECHO "settings specified within this file.  As such, the following macros"
 	    $ECHO "should be removed from configure.ac or the version numbers in this"
@@ -1389,7 +1424,7 @@ EOF
 		$ECHO "	$AUTOGEN_SH --verbose"
 	    else
 		$ECHO "reviewing the minimum GNU Autotools version settings contained in"
-		$ECHO "this script along with the macros being used in your `echo $CONFIGURE | basename` file."
+		$ECHO "this script along with the macros being used in your `basename \"$CONFIGURE\"` file."
 	    fi
 	    $ECHO
 	    $ECHO $ECHO_N "Continuing build preparation ... $ECHO_C"
