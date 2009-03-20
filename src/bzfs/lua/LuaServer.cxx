@@ -269,6 +269,13 @@ static bool CreateLuaState(const string& script)
   L = luaL_newstate();
   luaL_openlibs(L);
 
+  const string path  = directory + "?.lua";
+  const string cpath = directory + "?.so;" + directory + "?.dll";
+  lua_getglobal(L, "package");
+  lua_pushstdstring(L, path);  lua_setfield(L, -2, "path");
+  lua_pushstdstring(L, cpath); lua_setfield(L, -2, "cpath");
+  lua_pop(L, 1);
+
   CallIns::PushEntries(L);
 
   lua_pushvalue(L, LUA_GLOBALSINDEX);
