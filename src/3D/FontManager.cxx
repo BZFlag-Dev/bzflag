@@ -473,10 +473,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   float height = getStringHeight(faceID, size);
 
-  int renderBits = FTGL::RENDER_ALL;
-  if (rawBlending) {
-    renderBits |= FTGL::RENDER_NOBLEND;
-  }
+  const int renderBits = rawBlending ? (FTGL::RENDER_ALL | FTGL::RENDER_NOBLEND)
+                                     :  FTGL::RENDER_ALL;
 
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
