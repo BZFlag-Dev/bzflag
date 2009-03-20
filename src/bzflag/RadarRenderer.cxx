@@ -608,7 +608,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
   // setup the desired range
-  float radarRange = BZDB.eval("displayRadarRange");
+  static BZDB_float displayRadarRange("displayRadarRange");
+  float radarRange = displayRadarRange;
   if (radarRange >= 0.0f) {
     radarRange *= radarLimit; // relative
   } else {
@@ -626,7 +627,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     // only clamp the user's desired range if it's actually
     // greater then 1. otherwise, we may be resetting it due
     // to burrow radar limiting.
-    if (BZDB.eval("displayRadarRange") > 1.0f) {
+    if (displayRadarRange > 1.0f) {
       BZDB.set("displayRadarRange", "1.0");
     }
   }

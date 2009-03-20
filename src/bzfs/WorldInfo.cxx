@@ -502,6 +502,11 @@ int WorldInfo::packDatabase()
 
   BzDocket luaWorld("LuaWorld");
   luaWorld.addDir(clOptions->luaWorldDir, "");
+  if (luaWorld.hasData("bzWorld.lua")) {
+    clOptions->gameOptions |= LuaWorldAvailable;
+  } else {
+    clOptions->gameOptions &= ~LuaWorldAvailable;
+  }
 
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before

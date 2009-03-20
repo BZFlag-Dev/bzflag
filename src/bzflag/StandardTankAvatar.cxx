@@ -18,6 +18,7 @@
 #include "Team.h"
 #include "OpenGLMaterial.h"
 
+
 StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const float pos[3], const float forward[3] )
 {
   tankNode = new TankSceneNode(pos,forward);
@@ -34,69 +35,63 @@ StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const float pos[3],
   tankTexture = -1;
 }
 
+
 StandardTankAvatar::~StandardTankAvatar ( void )
 {
-  if (IDLNode)
-    delete(IDLNode);
-
-  if (tankNode)
-    delete(tankNode);
-
-  if (pausedSphere)
-    delete(pausedSphere);
+  delete IDLNode;
+  delete tankNode;
+  delete pausedSphere;
 }
+
+
 
 void StandardTankAvatar::move ( const float pos[3], const float forward[3] )
 {
   tankNode->move(pos,forward);
 }
 
+
 void StandardTankAvatar::moveIDL ( const float plane[4] )
 {
   IDLNode->move(plane);
 }
+
 
 void StandardTankAvatar::movePause ( const float pos[3], float rad )
 {
   pausedSphere->move(pos,rad);
 }
 
+
 void StandardTankAvatar::setTurnOffsets ( const float left, const float right )
 {
   tankNode->addTreadOffsets(left,right);
 }
+
 
 void StandardTankAvatar::setScale ( const float scale[3])
 {
   tankNode->setDimensions(scale);
 }
 
+
 void StandardTankAvatar::setScale ( teAvatarScaleModes mode )
 {
-  switch (mode)
-  {
-    case eNormal:
-      tankNode->setNormal();
-      break;
-    case eFat:
-      tankNode->setObese();
-      break;
-    case eTiny:
-      tankNode->setTiny();
-      break;
-    case eThin:
-      tankNode->setNarrow();
-      break;
-    case eThief:
-      tankNode->setThief();
-      break;
+  switch (mode) {
+    case eNormal: { tankNode->setNormal(); break; }
+    case eFat:    { tankNode->setObese();  break; }
+    case eTiny:   { tankNode->setTiny();   break; }
+    case eThin:   { tankNode->setNarrow(); break; }
+    case eThief:  { tankNode->setThief();  break; }
   }
 }
+
 
 void StandardTankAvatar::explode ( void )
 {
   tankNode->rebuildExplosion();
 }
+
 
 void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[4] )
 {
@@ -140,10 +135,12 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[
   tankNode->setJumpJetsTexture(jumpJetsTexture);
 }
 
+
 void StandardTankAvatar::setColor ( const float color[4] )
 {
   tankNode->setColor(color);
 }
+
 
 void StandardTankAvatar::setVisualMode ( bool inCockpit, bool showTreads )
 {
@@ -161,16 +158,19 @@ void StandardTankAvatar::setVisualMode ( bool inCockpit, bool showTreads )
   tankNode->setJumpJets(0.0f);
 }
 
+
 void StandardTankAvatar::setAnimationValues ( float explodeParam, float jumpParam )
 {
   tankNode->setExplodeFraction(explodeParam);
   tankNode->setJumpJets(jumpParam);
 }
 
+
 void StandardTankAvatar::setClippingPlane (  const float plane[4] )
 {
   tankNode->setClipPlane(plane);
 }
+
 
 std::vector<SceneNode*> StandardTankAvatar::getSceneNodes ( void )
 {
@@ -179,12 +179,14 @@ std::vector<SceneNode*> StandardTankAvatar::getSceneNodes ( void )
   return l;
 }
 
+
 std::vector<SceneNode*> StandardTankAvatar::getIDLSceneNodes ( void )
 {
   std::vector<SceneNode*> l;
   l.push_back(IDLNode);
   return l;
 }
+
 
 std::vector<SceneNode*> StandardTankAvatar::getPauseSceneNodes ( void )
 {
@@ -193,10 +195,12 @@ std::vector<SceneNode*> StandardTankAvatar::getPauseSceneNodes ( void )
   return l;
 }
 
+
 void StandardTankAvatar::renderRadar ( void )
 {
   tankNode->renderRadar();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

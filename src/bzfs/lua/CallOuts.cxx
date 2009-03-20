@@ -209,6 +209,7 @@ static int GetFlagName(lua_State* L);
 static int GetFlagPosition(lua_State* L);
 static int GetFlagPlayer(lua_State* L);
 
+static int ZapFlag(lua_State* L);
 static int MoveFlag(lua_State* L);
 static int ResetFlag(lua_State* L);
 static int ResetFlags(lua_State* L);
@@ -413,6 +414,7 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetFlagPosition);
   PUSH_LUA_CFUNC(L, GetFlagPlayer);
 
+  PUSH_LUA_CFUNC(L, ZapFlag);
   PUSH_LUA_CFUNC(L, MoveFlag);
   PUSH_LUA_CFUNC(L, ResetFlag);
   PUSH_LUA_CFUNC(L, ResetFlags);
@@ -1579,6 +1581,19 @@ static int GetFlagPlayer(lua_State* L)
 {
   const int flagID = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_flagPlayer(flagID));
+  return 1;
+}
+
+
+static int ZapFlag(lua_State* L)
+{
+  const int flagID = luaL_checkint(L, 1);
+  FlagInfo* flag = FlagInfo::get(flagID);
+  if (flag == NULL) {
+    return 0;
+  }
+  zapFlag(*flag);
+  lua_pushboolean(L, true);
   return 1;
 }
 

@@ -1209,7 +1209,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
       return false;
     }
 
-    // FIXME -- 0x80 is the UDP bit
+    // FIXME -- 0x80 is the UDP bit, define it somewhere
     const uint8_t knownBits = (0x80 | IsAdmin | IsVerified | IsRegistered);
     status &= knownBits;
 
@@ -1230,8 +1230,10 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
                                    status, data);
   worldEventManager.callEvents(bz_eLuaDataEvent, &eventData);
   if (eventData.doNotSend) {
-    return false;
+    return false; // blocked by the event system
   }
+
+  uint16_t netCode = (status & 0x80) ? MsgLuaDataFast : MsgLuaData;
 
   NetMsg msg = MSGMGR.newMessage();
 
@@ -1244,7 +1246,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
 
   // broadcast
   if (dstPlayerID == AllPlayers) {
-    msg->broadcast(MsgLuaData);
+    msg->broadcast(netCode);
     return true;
   }
 
@@ -1255,7 +1257,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     if (dstPlayer == NULL) {
       return false;
     }
-    msg->send(dstPlayer->netHandler, MsgLuaData);
+    msg->send(dstPlayer->netHandler, netCode);
     return true;
   }
 
@@ -1266,7 +1268,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     for (size_t i = 0; i < admins.size(); ++i) {
       GameKeeper::Player* adminPlayer =
         GameKeeper::Player::getPlayerByIndex(admins[i]);
-      MSGMGR.newMessage(msg)->send(adminPlayer->netHandler, MsgLuaData);
+      MSGMGR.newMessage(msg)->send(adminPlayer->netHandler, netCode);
     }
     return true;
   }
@@ -1278,7 +1280,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     if (dstPlayer &&
         dstPlayer->player.isPlaying() &&
         dstPlayer->player.isTeam(dstTeam)) {
-      MSGMGR.newMessage(msg)->send(dstPlayer->netHandler, MsgLuaData);
+      MSGMGR.newMessage(msg)->send(dstPlayer->netHandler, netCode);
     }
   }
   return true;

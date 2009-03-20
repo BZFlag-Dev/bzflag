@@ -98,6 +98,18 @@ std::string HUDuiServerListItem::calculateModes()
     else
       modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "R ";
 
+    // LuaWorld -- S = scripted
+    if (server->ping.gameOptions & LuaWorldAvailable) {
+      if (server->ping.gameOptions & LuaWorldRequired) {
+        modesText += ANSI_STR_BRIGHT ANSI_STR_FG_RED "S ";
+      } else {
+        modesText += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "S ";
+      }
+    } else {
+      modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "S ";
+    }
+
+    // lag?
     if (server->ping.pingTime <= 0)
       modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
     else if (server->ping.pingTime < BZDB.eval("pingLow"))

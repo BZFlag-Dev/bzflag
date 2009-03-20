@@ -1180,10 +1180,7 @@ BZF_API bool bz_flushEvents(bz_EventHandler* eventHandler);
 class bz_EventHandler
 {
 public:
-	virtual ~bz_EventHandler()
-	{
-		bz_flushEvents(this);
-	}
+  virtual ~bz_EventHandler() { bz_flushEvents(this); }
   virtual void process(bz_EventData *eventData) = 0;
 };
 
