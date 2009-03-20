@@ -277,6 +277,7 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 	}
 	else if (cmd == "disable") {
 		if (world->luaWorldRequired()) {
+			addMessage(NULL, "LuaWorld is required on this server");
 			return false;
 		}
 		const bool active = (luaWorld != NULL);
