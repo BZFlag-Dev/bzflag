@@ -89,6 +89,29 @@ void WorldEventManager::removeEvent(bz_eEventType eventType, bz_EventHandler* th
   }
 }
 
+bool WorldEventManager::removeHandler(bz_EventHandler* theEvent )
+{
+	bool foundOne = false;
+
+	tmEventTypeList::iterator eventTypeItr = eventList.begin();
+	while (eventTypeItr != eventList.end())
+	{
+		tvEventList::iterator itr = eventTypeItr->second.begin();
+		while (itr != eventTypeItr->second.end())
+		{
+			if (*itr == theEvent)
+			{
+				itr = eventTypeItr->second.erase(itr);
+				foundOne = true;
+			}
+			else
+				itr++;
+		}
+		eventTypeItr++;
+	}
+	return foundOne;
+}
+
 tvEventList WorldEventManager::getEventList (bz_eEventType eventType)
 {
   tvEventList	eList;

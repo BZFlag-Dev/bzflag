@@ -1174,13 +1174,15 @@ public:
 class bz_EventHandler
 {
 public:
-  virtual ~bz_EventHandler() {};
+  virtual ~bz_EventHandler() {bz_flushEvents(this);}
   virtual void process(bz_EventData *eventData) = 0;
   virtual bool autoDelete(void) { return false; } // only set this to true if you are internal to the bzfs module ( on windows )
 };
 
 BZF_API bool bz_registerEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 BZF_API bool bz_removeEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
+BZF_API bool bz_flushEvents(bz_EventHandler* eventHandler);
+
 
 /**
  * RAII class to handle registration/deregistration

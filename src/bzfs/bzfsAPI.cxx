@@ -829,6 +829,14 @@ BZF_API bool bz_removeEvent(bz_eEventType eventType, bz_EventHandler *eventHandl
   return true;
 }
 
+BZF_API bool bz_flushEvents(bz_EventHandler* eventHandler)
+{
+	if(!eventHandler)
+		return false;
+
+	return worldEventManager.removeHandler(eventHandler);
+}
+
 //-------------------------------------------------------------------------
 //
 // utility

@@ -43,6 +43,7 @@ public:
 
 	void addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
 	void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
+	bool removeHandler(bz_EventHandler* theEvent );
 	tvEventList getEventList ( bz_eEventType eventType);
 	void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
 	void callEvents ( bz_EventData	&eventData ) {callEvents(eventData.eventType,&eventData);}
