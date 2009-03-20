@@ -93,6 +93,29 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
   // tell BZDB to shut up, we can't have debug data printed to stdout
   BZDB.setDebug(false);
 
+  // initialise the msg type map
+  // FIXME MsgPlayerInfo
+  msgTypeMap["bzdb"] = MsgSetVar;
+  msgTypeMap["chat"] = MsgMessage;
+  msgTypeMap["admin"] = MsgAdminInfo;
+  msgTypeMap["join"] = MsgAddPlayer;
+  msgTypeMap["kill"] = MsgKilled;
+  msgTypeMap["leave"] = MsgRemovePlayer;
+  msgTypeMap["pause"] = MsgPause;
+  msgTypeMap["ping"] = MsgLagPing;
+  msgTypeMap["rabbit"] = MsgNewRabbit;
+  msgTypeMap["score"] = MsgScore;
+  msgTypeMap["spawn"] = MsgAlive;
+  msgTypeMap["time"] = MsgTimeUpdate;
+  msgTypeMap["over"] = MsgScoreOver;
+
+  // Initialize our message mask
+  for (std::map<std::string, uint16_t>::const_iterator msgType = msgTypeMap.begin();
+	msgType != msgTypeMap.end();
+	msgType++) {
+	  ignoreMessageType(msgType->second);
+  }
+
   // set a default message mask
   showMessageType(MsgAddPlayer);
   showMessageType(MsgAdminInfo);
@@ -111,22 +134,6 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
   colorMap[BlueTeam] = Blue;
   colorMap[PurpleTeam] = Purple;
   colorMap[ObserverTeam] = Cyan;
-
-  // initialise the msg type map
-  // FIXME MsgPlayerInfo
-  msgTypeMap["bzdb"] = MsgSetVar;
-  msgTypeMap["chat"] = MsgMessage;
-  msgTypeMap["admin"] = MsgAdminInfo;
-  msgTypeMap["join"] = MsgAddPlayer;
-  msgTypeMap["kill"] = MsgKilled;
-  msgTypeMap["leave"] = MsgRemovePlayer;
-  msgTypeMap["pause"] = MsgPause;
-  msgTypeMap["ping"] = MsgLagPing;
-  msgTypeMap["rabbit"] = MsgNewRabbit;
-  msgTypeMap["score"] = MsgScore;
-  msgTypeMap["spawn"] = MsgAlive;
-  msgTypeMap["time"] = MsgTimeUpdate;
-  msgTypeMap["over"] = MsgScoreOver;
 }
 
 
