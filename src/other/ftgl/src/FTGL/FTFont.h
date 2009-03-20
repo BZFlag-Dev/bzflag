@@ -330,16 +330,16 @@ class FTGL_EXPORT FTFont
          * @param spacing  A displacement vector to add after each character
          *                 has been displayed (optional).
          * @param renderMode  Render mode to use for display (optional).
-	 *	              gives the application the ability to
-	 *	              control whether to render the font's
-	 *	              front and back faces via
-	 *	              FTGL::RENDER_FRONT and FTGL::RENDER_BACK
-	 *	              respectively, or font sides via
-	 *	              FTGL::RENDER_SIDE for extruded glyph
-	 *	              fonts.  If FTGL::RENDER_NOBLEND is
-	 *	              specified, blending will not be
-	 *	              performed allowing an application to
-	 *	              perform its own blending.
+         *                    gives the application the ability to
+         *                    control whether to render the font's
+         *                    front and back faces via
+         *                    FTGL::RENDER_FRONT and FTGL::RENDER_BACK
+         *                    respectively, or font sides via
+         *                    FTGL::RENDER_SIDE for extruded glyph
+         *                    fonts.  If FTGL::RENDER_NOBLEND is
+         *                    specified, blending will not be
+         *                    performed allowing an application to
+         *                    perform its own blending.
          * @return  The new pen position after the last character was output.
          */
         virtual FTPoint Render(const char* string, const int len = -1,
@@ -358,6 +358,16 @@ class FTGL_EXPORT FTFont
          * @param spacing  A displacement vector to add after each character
          *                 has been displayed (optional).
          * @param renderMode  Render mode to use for display (optional).
+         *                    gives the application the ability to
+         *                    control whether to render the font's
+         *                    front and back faces via
+         *                    FTGL::RENDER_FRONT and FTGL::RENDER_BACK
+         *                    respectively, or font sides via
+         *                    FTGL::RENDER_SIDE for extruded glyph
+         *                    fonts.  If FTGL::RENDER_NOBLEND is
+         *                    specified, blending will not be
+         *                    performed allowing an application to
+         *                    perform its own blending.
          * @return  The new pen position after the last character was output.
          */
         virtual FTPoint Render(const wchar_t *string, const int len = -1,
