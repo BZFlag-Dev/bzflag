@@ -34,19 +34,13 @@ else
 FREETYPE_DIR =
 endif
 
-if BUILD_PLUGINS
-LUA_DIR = lua
-else
-LUA_DIR =
-endif
-
 SUBDIRS = \
+	lua \
 	${ZLIB_DIR} \
 	${ARES_DIR} \
 	${CURL_DIR} \
 	${FREETYPE_DIR} \
 	${FTGL_DIR} \
-	${LUA_DIR} \
 	${REGEX_DIR}
 
 DIST_SUBDIRS = \
