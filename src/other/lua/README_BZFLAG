@@ -1,10 +1,18 @@
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-1. Renamed Makefile to Makefile.orig, and
+The following is a list of the major customizations
+made to the lua-5.1.4 sources for BZFlag.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+1. Renamed Makefile to Makefile.orig, and  (svn r18913)
    src/Makefile to src/Makefile.org
 
-2. Added Makefile.am
+2. Added Makefile.am  (svn r18913)
 
-3. Made the following adjustments in luaconf.h:
+3. Made the following adjustments in luaconf.h:  (svn r18915)
      /* BZ#define LUA_NUMBER_DOUBLE */
      #undef LUA_NUMBER_DOUBLE
 
@@ -14,7 +22,7 @@
      /*BZ #define LUA_NUMBER_SCAN "%lf" */
      #define LUA_NUMBER_SCAN "%f"
 
-4. Undefined (in luaconf.h):
+4. Undefined (in luaconf.h):  (svn r18915)
        LUA_COMPAT_VARARG
        LUA_COMPAT_MOD
        LUA_COMPAT_LSTR
@@ -23,11 +31,16 @@
 
 5. Applied the lua_pushhstring patch  (svn r18916)
 
-6. Applied the LUA_CALLINSINDEX patch
+6. Applied the LUA_CALLINSINDEX patch  (svn r18917)
 
 7. Added lua_setuserdataextra() and lua_getuserdataextra() for
-   faster userdata type checking
+   faster userdata type checking  (svn r19238)
 
-8. Renamed the source files from .c to .cxx for g++ compilation
+8. Renamed the source files from .c to .cxx for g++ compilation  (svn r19274)
 
-9. Disabled precompiled chunks in luaU_undump()
+9. Added the lpeg library  (svn r19430)
+
+10. Disabled precompiled chunks in luaU_undump()  (svn r19459)
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
