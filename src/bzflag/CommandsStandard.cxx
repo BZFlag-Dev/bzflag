@@ -363,7 +363,6 @@ const struct CommandsItem commands[] = {
   { "bind",	&cmdBind,	"bind <button-name> {up|down} <command> <args>...: bind a key" },
   { "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key" }
 };
-// FIXME -- may want a cmd to cycle through a list
 
 
 //
