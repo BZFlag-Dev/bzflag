@@ -1170,23 +1170,22 @@ public:
   bool doNotSend;
 };
 
-// event handler callback
-class bz_EventHandler
-{
-public:
-  virtual ~bz_EventHandler();
-  virtual void process(bz_EventData *eventData) = 0;
-};
+class bz_EventHandler;
 
 BZF_API bool bz_registerEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 BZF_API bool bz_removeEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 BZF_API bool bz_flushEvents(bz_EventHandler* eventHandler);
 
-bz_EventHandler::~bz_EventHandler()
+// event handler callback
+class bz_EventHandler
 {
-	bz_flushEvents(this);
-}
-
+public:
+	virtual ~bz_EventHandler()
+	{
+		bz_flushEvents(this);
+	}
+  virtual void process(bz_EventData *eventData) = 0;
+};
 
 /**
  * RAII class to handle registration/deregistration
