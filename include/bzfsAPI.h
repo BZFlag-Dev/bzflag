@@ -1174,13 +1174,18 @@ public:
 class bz_EventHandler
 {
 public:
-  virtual ~bz_EventHandler() {bz_flushEvents(this);}
+  virtual ~bz_EventHandler();
   virtual void process(bz_EventData *eventData) = 0;
 };
 
 BZF_API bool bz_registerEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 BZF_API bool bz_removeEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
 BZF_API bool bz_flushEvents(bz_EventHandler* eventHandler);
+
+bz_EventHandler::~bz_EventHandler()
+{
+	bz_flushEvents(this);
+}
 
 
 /**
