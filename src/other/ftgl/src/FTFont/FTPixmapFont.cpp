@@ -91,7 +91,7 @@ inline FTPoint FTPixmapFontImpl::RenderI(const T* string, const int len,
     // Protect glPixelStorei() calls (made by FTPixmapGlyphImpl::RenderImpl).
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
-    if (controlBlending) {
+    if ((renderMode & FTGL::RENDER_NOBLEND) == 0) {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }

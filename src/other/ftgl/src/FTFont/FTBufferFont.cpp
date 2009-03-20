@@ -237,7 +237,7 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
     glEnable(GL_TEXTURE_2D);
-    if (controlBlending) {
+    if ((renderMode & FTGL::RENDER_NOBLEND) == 0) {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
     }

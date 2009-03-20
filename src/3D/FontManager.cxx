@@ -473,6 +473,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   float height = getStringHeight(faceID, size);
 
+  int renderBits = FTGL::RENDER_ALL;
+  if (rawBlending) {
+    renderBits |= FTGL::RENDER_NOBLEND;
+  }
+
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
   while (endSend >= 0) {
@@ -524,21 +529,15 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  myColor4fv(color);
 	}
 
-	if (!rawBlending) {
-	  if (!reverse) {
-	    theFont->Render(rendertext);
-	  } else {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-            theFont->ControlBlending(false);
-            theFont->Render(rendertext);
-            theFont->ControlBlending(true);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	  }
-        } else {
-	  theFont->ControlBlending(false);
-	  theFont->Render(rendertext);
-	  theFont->ControlBlending(true);
+        if (!reverse) {
+          theFont->Render(rendertext, -1, FTPoint(), FTPoint(), renderBits);
+        }
+        else {
+          glEnable(GL_BLEND);
+          glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+          theFont->Render(rendertext, -1, FTPoint(), FTPoint(),
+                          renderBits | FTGL::RENDER_NOBLEND);
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
 
 	// restore

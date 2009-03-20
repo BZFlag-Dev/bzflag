@@ -100,7 +100,7 @@ inline FTPoint FTOutlineFontImpl::RenderI(const T* string, const int len,
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-    if (controlBlending) {
+    if ((renderMode & FTGL::RENDER_NOBLEND) == 0) {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
     }

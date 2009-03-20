@@ -201,14 +201,6 @@ class FTGL_EXPORT FTFont
         virtual void UseDisplayList(bool useList);
 
         /**
-         * Enable or disable the use of glBlendFunc inside FTGL
-         *
-         * @param  control <code>true</code> enables glBlendFunc in FTGL
-         *                 <code>false</code> disables glBlendFunc in FTGL
-         */
-        virtual void ControlBlending(bool control);
-
-        /**
          * Get the global ascender height for the face.
          *
          * @return  Ascender height
