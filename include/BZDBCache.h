@@ -86,7 +86,49 @@ private:
 	static void serverCallback(const std::string &name, void *);
 };
 
+
+//
+// these classes should be used as static variables,
+// and only when the bzdb variable is not being used
+// in several different files.
+//
+
+#define BZDB_VALUE_CLASS(className, type, evalFunc)                  \
+  class className {                                                  \
+    public:                                                          \
+      className(const std::string& _name) : name(_name) {            \
+        update();                                                    \
+        BZDB.addCallback(name, callback, this);                      \
+      }                                                              \
+      ~className() {                                                 \
+        BZDB.removeCallback(name, callback, this);                   \
+      }                                                              \
+      operator       const type&() const { return data; }            \
+      const type&        getData() const { return data; }            \
+      const std::string& getName() const { return name; }            \
+    private: /* no copying */                                        \
+      className(const className&);                                   \
+      className& operator=(const className&);                        \
+    private:                                                         \
+      void update() {                                                \
+        data = BZDB.evalFunc(name);                                  \
+      }                                                              \
+      static void callback(const std::string& /*name*/, void* ptr) { \
+        ((className*)ptr)->update();                                 \
+      }                                                              \
+    private:                                                         \
+      std::string name;                                              \
+      type data;                                                     \
+  };
+
+BZDB_VALUE_CLASS(BZDB_int,    int,         evalInt)
+BZDB_VALUE_CLASS(BZDB_bool,   bool,        isTrue)
+BZDB_VALUE_CLASS(BZDB_float,  float,       eval)
+BZDB_VALUE_CLASS(BZDB_string, std::string, get)
+
+
 #endif
+
 
 // Local Variables: ***
 // mode: C++ ***
