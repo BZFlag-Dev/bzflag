@@ -34,14 +34,6 @@ WorldEventManager::~WorldEventManager()
 {
 }
 
-  // Because an event handler can be registerd to handle multiple
-  // events, collect all the registered handlers in a set and delete
-  // each one exactly once.
-  for (EventHandlerSet::iterator die = toDelete.begin(); die != toDelete.end(); ++die) {
-    delete *die;
-  }
-}
-
 void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEvent)
 {
   if (!theEvent)
