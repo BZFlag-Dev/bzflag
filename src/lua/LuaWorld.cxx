@@ -18,6 +18,7 @@ using std::set;
 
 // bzflag headers
 #include "../bzflag/Downloads.h"
+#include "../bzflag/World.h"
 
 // local headers
 #include "LuaClientOrder.h"
@@ -39,7 +40,12 @@ void LuaWorld::LoadHandler()
 		return;
 	}
 
-	if (!BZDB.isTrue("luaWorld") && !BZDB.isTrue("_forceLuaWorld")) {
+	const World* world = World::getWorld();
+	if (world == NULL) {
+		return;
+	}
+
+	if (!BZDB.isTrue("luaWorld") && !world->luaWorldRequired()) {
 		return;
 	}
 

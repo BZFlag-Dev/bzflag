@@ -60,6 +60,8 @@ class World {
     bool		allowRabbit() const;
     bool		allowHandicap() const;
     bool		allowTeams() const;
+    bool		luaWorldAvailable() const;
+    bool		luaWorldRequired() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
     const BzMaterial*	getLinkMaterial() const;
@@ -265,6 +267,17 @@ inline bool		World::allowRabbit() const
 inline bool		World::allowHandicap() const
 {
   return (gameOptions & short(HandicapGameStyle)) != 0;
+}
+
+inline bool		World::luaWorldAvailable() const
+{
+  return (gameOptions & short(LuaWorldAvailable)) != 0;
+}
+
+inline bool		World::luaWorldRequired() const
+{
+  return ((gameOptions & short(LuaWorldAvailable)) != 0) &&
+         ((gameOptions & short(LuaWorldRequired)) != 0);
 }
 
 inline float		World::getWaterLevel() const

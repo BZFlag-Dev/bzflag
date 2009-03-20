@@ -16,6 +16,7 @@ using std::string;
 // bzflag headers
 #include "../bzflag/playing.h"
 #include "../bzflag/Downloads.h"
+#include "../bzflag/World.h"
 
 // local headers
 #include "LuaOpenGL.h"
@@ -257,6 +258,11 @@ bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine)
 
 bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 {
+	const World* world = World::getWorld();
+	if (world == NULL) {
+		return false;
+	}
+
 	const string prefix = "luaworld";
 	const char* c = cmdLine.c_str();
 	if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
@@ -270,7 +276,7 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 		LuaWorld::LoadHandler();
 	}
 	else if (cmd == "disable") {
-		if (BZDB.isTrue("_forceLuaWorld")) {
+		if (world->luaWorldRequired()) {
 			return false;
 		}
 		const bool active = (luaWorld != NULL);

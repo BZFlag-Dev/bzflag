@@ -70,7 +70,6 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_forbidLuaUser",		"0",				false, StateDatabase::Locked },
   { "_forbidLuaBzOrg",		"0",				false, StateDatabase::Locked },
   { "_forbidMarkers",		"1",				false, StateDatabase::Locked },
-  { "_forceLuaWorld",		"0",				false, StateDatabase::Locked },
   { "_freezeTagRadius",		"_tankRadius",			false, StateDatabase::Locked },
   { "_friction",		"0",				false, StateDatabase::Locked },
   { "_grabOwnFlag",		"1",				false, StateDatabase::Locked },
