@@ -30,3 +30,4 @@
 
 8. Renamed the source files from .c to .cxx for g++ compilation
 
+9. Disabled precompiled chunks in luaU_undump()
