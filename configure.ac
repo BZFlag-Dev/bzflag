@@ -1212,8 +1212,8 @@ dnl test for required feature first present in FTGL 2.2.0
 	[#include <FTGL/ftgl.h>],
 	[FTFont* xyz = new FTTextureFont("xyz.ttf");
 	 double d = xyz->Advance("xyz");
-	 xyz->ControlBlending(true);
-	 xyz->Render("xyz");],
+	 // make sure we have the new'ish FTGL::RENDER_NOBLEND value
+	 xyz->Render("xyz", -1, FTPoint(), FTPoint(), FTGL::RENDER_NOBLEND);],
 	LIBFTGL=-lftgl
 	)
 fi
