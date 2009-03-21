@@ -22,6 +22,8 @@
 #ifdef HAVE_PTHREADS
 #  include <pthread.h>
 #endif
+#include <string>
+using std::string;
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -45,156 +47,43 @@
 #include "sound.h"
 #include "playing.h"
 
-/** jump
- */
-static std::string cmdJump(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
 
-/** fire weapon
- */
-static std::string cmdFire(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
-
-/** drop a flag
- */
-static std::string cmdDrop(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
-
-/** toggle radar visibility
- */
-static std::string cmdToggleRadar(const std::string&,
-				  const CommandManager::ArgList& args, bool*);
-
-/** toggle console visibility
- */
-static std::string cmdToggleConsole(const std::string&,
-				    const CommandManager::ArgList& args, bool*);
-
-/** toggle flags
- */
-static std::string cmdToggleFlags(const std::string&,
-				  const CommandManager::ArgList& args, bool*);
-
-/** identify to a server
- */
-static std::string cmdIdentify(const std::string&,
-			       const CommandManager::ArgList& args, bool*);
-
-/** restart/respawn
- */
-static std::string cmdRestart(const std::string&,
-			      const CommandManager::ArgList& args, bool*);
-
-/** self-destruct
- */
-static std::string cmdDestruct(const std::string&,
-			       const CommandManager::ArgList& args, bool*);
-
-/** pause
- */
-static std::string cmdPause(const std::string&,
-			    const CommandManager::ArgList& args, bool*);
-
-/** select tabbed message
- */
-static std::string cmdMessagePanel(const std::string&,
-				   const CommandManager::ArgList& args, bool*);
-
-/** toggle auto-pilot
- */
-static std::string cmdAutoPilot(const std::string&,
-				const CommandManager::ArgList& args, bool*);
-
-/** change radar scale
- */
-static std::string cmdRadarZoom(const std::string&,
-				const CommandManager::ArgList& args, bool*);
-
-/** change view angle
- */
-static std::string cmdViewZoom(const std::string&,
-			       const CommandManager::ArgList& args, bool*);
-
-/** send
- */
-static std::string cmdSend(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
-
-/** capture a screenshot
- */
-static std::string cmdScreenshot(const std::string&,
-				 const CommandManager::ArgList& args, bool*);
-
-/** time
- */
-static std::string cmdTime(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
-
-/** roam
- */
-static std::string cmdRoam(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
-
-/** silence another player
- */
-static std::string cmdSilence(const std::string&,
-			      const CommandManager::ArgList& args, bool*);
-
-/** perform a server command
- */
-static std::string cmdServerCommand(const std::string&,
-				    const CommandManager::ArgList& args,
-				    bool*);
-
-/** scroll the chat panel
- */
-static std::string cmdScrollPanel(const std::string&,
-				  const CommandManager::ArgList& args, bool*);
-
-/** hunt a player
- */
-static std::string cmdHunt(const std::string&,
-			   const CommandManager::ArgList& args, bool*);
-
-/** hunt another player
- */
-static std::string cmdAddHunt(const std::string&,
-			      const CommandManager::ArgList& args, bool*);
-
-/** iconify window
- */
-static std::string cmdIconify(const std::string&,
-			      const CommandManager::ArgList& args, bool*);
-
-/** toggle mouse capture
- */
-static std::string cmdMouseGrab(const std::string&,
-				const CommandManager::ArgList& args, bool*);
-
-/** toggle Full Screen
- */
-static std::string cmdToggleFS(const std::string&,
-			       const CommandManager::ArgList& args, bool*);
-
-/** luaUser control
- */
-static std::string cmdLuaUser(const std::string&,
-			      const CommandManager::ArgList& args, bool*);
+typedef CommandManager::ArgList CmdArgList;
 
 
-/** luaBzOrg control
- */
-static std::string cmdLuaBzOrg(const std::string&,
-			      const CommandManager::ArgList& args, bool*);
-
-
-/** luaWorld control
- */
-static std::string cmdLuaWorld(const std::string&,
-			       const CommandManager::ArgList& args, bool*);
+static string cmdAddHunt       (const string&, const CmdArgList& args, bool*);
+static string cmdAutoPilot     (const string&, const CmdArgList& args, bool*);
+static string cmdDestruct      (const string&, const CmdArgList& args, bool*);
+static string cmdDrop          (const string&, const CmdArgList& args, bool*);
+static string cmdFire          (const string&, const CmdArgList& args, bool*);
+static string cmdHunt          (const string&, const CmdArgList& args, bool*);
+static string cmdIconify       (const string&, const CmdArgList& args, bool*);
+static string cmdIdentify      (const string&, const CmdArgList& args, bool*);
+static string cmdJump          (const string&, const CmdArgList& args, bool*);
+static string cmdLuaBzOrg      (const string&, const CmdArgList& args, bool*);
+static string cmdLuaUser       (const string&, const CmdArgList& args, bool*);
+static string cmdLuaWorld      (const string&, const CmdArgList& args, bool*);
+static string cmdMessagePanel  (const string&, const CmdArgList& args, bool*);
+static string cmdMouseGrab     (const string&, const CmdArgList& args, bool*);
+static string cmdPause         (const string&, const CmdArgList& args, bool*);
+static string cmdRadarZoom     (const string&, const CmdArgList& args, bool*);
+static string cmdRestart       (const string&, const CmdArgList& args, bool*);
+static string cmdRoam          (const string&, const CmdArgList& args, bool*);
+static string cmdScreenshot    (const string&, const CmdArgList& args, bool*);
+static string cmdScrollPanel   (const string&, const CmdArgList& args, bool*);
+static string cmdSend          (const string&, const CmdArgList& args, bool*);
+static string cmdServerCommand (const string&, const CmdArgList& args, bool*);
+static string cmdSilence       (const string&, const CmdArgList& args, bool*);
+static string cmdTime          (const string&, const CmdArgList& args, bool*);
+static string cmdToggleConsole (const string&, const CmdArgList& args, bool*);
+static string cmdToggleFlags   (const string&, const CmdArgList& args, bool*);
+static string cmdToggleFS      (const string&, const CmdArgList& args, bool*);
+static string cmdToggleRadar   (const string&, const CmdArgList& args, bool*);
+static string cmdViewZoom      (const string&, const CmdArgList& args, bool*);
 
 
 static std::vector<CommandListItem> commandVector;
+
 
 const std::vector<CommandListItem>& getCommandList()
 {
@@ -237,55 +126,50 @@ const std::vector<CommandListItem>& getCommandList()
 }
 
 
-
-static std::string cmdToggleFS(const std::string&,
-                               const CommandManager::ArgList& args, bool*)
+static string cmdToggleFS(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: fullscreen";
   mainWindow->toggleFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdMouseGrab(const std::string&,
-                                const CommandManager::ArgList& args, bool*)
+static string cmdMouseGrab(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: mousegrab";
   const bool grabbing = !(BZDB.isTrue("mousegrab"));
   BZDB.set("mousegrab", grabbing ? "true" : "false");
   mainWindow->enableGrabMouse(grabbing);
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdIconify(const std::string&,
-                              const CommandManager::ArgList& args, bool*)
+static string cmdIconify(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: iconify";
   if (!BZDB.isTrue("Win32NoMin"))
     mainWindow->iconify();
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdJump(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdJump(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: jump";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL)
     myTank->setJump();
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdToggleFlags(const std::string&, const
-                                  CommandManager::ArgList& args, bool*)
+static string cmdToggleFlags(const string&, const
+                                  CmdArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: main|radar";
@@ -299,12 +183,11 @@ static std::string cmdToggleFlags(const std::string&, const
     return "usage: main|radar";
   }
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdToggleRadar(const std::string&,
-                                  const CommandManager::ArgList& args, bool*)
+static string cmdToggleRadar(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0) {
     return "usage: toggleRadar";
@@ -314,12 +197,11 @@ static std::string cmdToggleRadar(const std::string&,
 
   warnAboutRadar();
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdToggleConsole(const std::string&,
-                                    const CommandManager::ArgList& args, bool*)
+static string cmdToggleConsole(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0) {
     return "usage: toggleConsole";
@@ -329,12 +211,11 @@ static std::string cmdToggleConsole(const std::string&,
 
   warnAboutConsole();
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdFire(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdFire(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: fire";
@@ -342,12 +223,11 @@ static std::string cmdFire(const std::string&,
   if (fireButton && myTank != NULL && myTank->isAlive()
       && myTank->getTeam() != ObserverTeam)
     myTank->fireShot();
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdDrop(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdDrop(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: drop";
@@ -366,12 +246,11 @@ static std::string cmdDrop(const std::string&,
       }
     }
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdIdentify(const std::string&,
-                               const CommandManager::ArgList& args, bool*)
+static string cmdIdentify(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: identify";
@@ -379,12 +258,11 @@ static std::string cmdIdentify(const std::string&,
   if (myTank != NULL)
     if (myTank->isAlive() && !myTank->isPaused())
       setTarget();
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdRestart(const std::string&,
-                              const CommandManager::ArgList& args, bool*)
+static string cmdRestart(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: restart";
@@ -394,19 +272,18 @@ static std::string cmdRestart(const std::string&,
       if (!eventHandler.ForbidSpawn()) {
         serverLink->sendAlive(myTank->getId());
         myTank->setSpawning(true);
-        CommandManager::ArgList zoomArgs;
-        std::string resetArg = "reset";
+        CmdArgList zoomArgs;
+        string resetArg = "reset";
         zoomArgs.push_back(resetArg);
         cmdViewZoom("", zoomArgs,NULL);
       }
     }
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdDestruct(const std::string&,
-                               const CommandManager::ArgList& args, bool*)
+static string cmdDestruct(const string&, const CmdArgList& args, bool*)
 {
   char msgBuf[40];
 
@@ -430,12 +307,11 @@ static std::string cmdDestruct(const std::string&,
       }
     }
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdPause(const std::string&,
-                            const CommandManager::ArgList& args, bool*)
+static string cmdPause(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: pause";
@@ -455,9 +331,9 @@ static std::string cmdPause(const std::string&,
       }
 
       // grab mouse
-      if (shouldGrabMouse())
+      if (shouldGrabMouse()) {
         mainWindow->grabMouse();
-
+      }
 
     } else if (pauseCountdown > 0.0f) {
       // player aborted pause
@@ -489,55 +365,51 @@ static std::string cmdPause(const std::string&,
       hud->setAlert(1, msgBuf, 1.0f, false);
     }
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdAutoPilot(const std::string&,
-                                const CommandManager::ArgList& args, bool*)
+static string cmdAutoPilot(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: autopilot";
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && !myTank->isAutoPilot())
-  {
+  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && !myTank->isAutoPilot()) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
-    return std::string();
+    return string();
   }
 
-  if (myTank != NULL && myTank->getTeam() != ObserverTeam)
-  {
-    // if I am an auto pilot and I requested it to be turned on in the first place, send the request to disable it.
-    if (myTank->isAutoPilot() && myTank->requestedAutopilot)
+  if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
+    // if I am an auto pilot and I requested it to be turned on
+    // in the first place, send the request to disable it.
+    if (myTank->isAutoPilot() && myTank->requestedAutopilot) {
       myTank->requestAutoPilot(false);
-	else if (!myTank->isAutoPilot()) // can't ask for autopilot if I'm allraedy autopilot
-	{
+    }
+    else if (!myTank->isAutoPilot()) {// can't ask for autopilot if I'm allraedy autopilot
       // don't enable the AutoPilot if you have within the last 5 secs
       static TimeKeeper LastAutoPilotEnable = TimeKeeper::getSunGenesisTime();
-      if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5)
-	  {
+      if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5) {
         // reset timer
         LastAutoPilotEnable = TimeKeeper::getCurrent();
 
         // enable autopilot
         myTank->requestAutoPilot();
       }
-	  else
-	  {
-        controlPanel->addMessage("You may not request the Autopilot more than once every five seconds.");
-        return std::string();
+      else {
+        controlPanel->addMessage(
+          "You may not request the Autopilot more than once every five seconds.");
+        return string();
       }
     }
   }
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdRadarZoom(const std::string&,
-                                const CommandManager::ArgList& args, bool*)
+static string cmdRadarZoom(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: radarZoom {in|out}";
@@ -558,12 +430,11 @@ static std::string cmdRadarZoom(const std::string&,
     return "usage: radarZoom {in|out}";
   }
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdViewZoom(const std::string&,
-                               const CommandManager::ArgList& args, bool*)
+static string cmdViewZoom(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: viewZoom {in|out|toggle}";
@@ -602,12 +473,11 @@ static std::string cmdViewZoom(const std::string&,
     return "usage: viewZoom {in|out|toggle|reset}";
   }
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdMessagePanel(const std::string&,
-                                   const CommandManager::ArgList& args, bool*)
+static string cmdMessagePanel(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 1) {
     return "usage: messagepanel {all|chat|server|misc|debug}";
@@ -629,12 +499,11 @@ static std::string cmdMessagePanel(const std::string&,
     BZDB.setBool("displayConsole", true);
   }
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdSend(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdSend(const string&, const CmdArgList& args, bool*)
 {
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1) {
@@ -643,7 +512,7 @@ static std::string cmdSend(const std::string&,
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
 
-  std::string composePrompt;
+  string composePrompt;
 
   if (!myTank) {
     msgDestination = AllPlayers;
@@ -665,7 +534,7 @@ static std::string cmdSend(const std::string&,
   else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
     if (!nemesis)
-      return std::string();
+      return string();
     msgDestination = nemesis->getId();
     composePrompt = "Send to ";
     composePrompt += nemesis->getCallSign();
@@ -701,7 +570,7 @@ static std::string cmdSend(const std::string&,
   hud->setComposing(composePrompt);
   HUDui::setDefaultKey(&composeKeyHandler);
 
-  return std::string();
+  return string();
 }
 
 
@@ -722,7 +591,7 @@ static std::string cmdSend(const std::string&,
 struct ScreenshotData
 {
   unsigned char* rawPixels;
-  std::string renderer;
+  string renderer;
 };
 
 #ifdef _WIN32
@@ -733,20 +602,20 @@ static void* writeScreenshot(void* data)
 {
   ScreenshotData* ssdata = (ScreenshotData*)data;
 
-  const std::string dirname = getScreenShotDirName();
-  const std::string prefix  = "bzfi";
-  const std::string ext     = ".png";
+  const string dirname = getScreenShotDirName();
+  const string prefix  = "bzfi";
+  const string ext     = ".png";
 
   // scan the directory and start numbering with the filename
   // that follows the existing filename with the highest snap number
   int snap = 0;
 
 #ifdef _WIN32
-  const std::string pattern = dirname + prefix + "*" + ext;
+  const string pattern = dirname + prefix + "*" + ext;
   WIN32_FIND_DATA findData;
   HANDLE h = FindFirstFile(pattern.c_str(), &findData);
   if (h != INVALID_HANDLE_VALUE) {
-    std::string file;
+    string file;
     while (FindNextFile(h, &findData)) {
       file = findData.cFileName;
       const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
@@ -756,11 +625,11 @@ static void* writeScreenshot(void* data)
     }
   }
 #else
-  const std::string pattern = prefix + "*" + ext;
+  const string pattern = prefix + "*" + ext;
   DIR* directory = opendir(dirname.c_str());
   if (directory) {
     struct dirent* contents;
-    std::string file;
+    string file;
     while ((contents = readdir(directory))) {
       file = contents->d_name;
       if (glob_match(pattern, file)) {
@@ -775,7 +644,7 @@ static void* writeScreenshot(void* data)
 #endif // _WIN32
 
   snap++;
-  std::string filename = dirname + prefix + TextUtils::format("%04d", snap) + ext;
+  string filename = dirname + prefix + TextUtils::format("%04d", snap) + ext;
 
   std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
@@ -870,7 +739,7 @@ static void* writeScreenshot(void* data)
     f->write((char*) &crc, 4);                       //(crc) write crc
 
     // tEXt chunk containing bzflag build/version
-    std::string version = "BZFlag "; version += getAppVersion();
+    string version = "BZFlag "; version += getAppVersion();
     temp = htonl(9 + (int)version.size()); //(length) tEXt is strlen("Software") + 1 + version.size()
     f->write((char*) &temp, 4);
     temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
@@ -930,8 +799,7 @@ static void* writeScreenshot(void* data)
 }
 
 
-static std::string cmdScreenshot(const std::string&,
-                                 const CommandManager::ArgList& args, bool*)
+static string cmdScreenshot(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0) {
     return "usage: screenshot";
@@ -975,12 +843,11 @@ static std::string cmdScreenshot(const std::string&,
   writeScreenshot(&ssdata);
 #endif
 
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdTime(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdTime(const string&, const CmdArgList& args, bool*)
 {
   // FIXME - time should be moved into BZDB
   if (args.size() != 1)
@@ -999,17 +866,16 @@ static std::string cmdTime(const std::string&,
       return "usage: time {forward|backward|<seconds>}";
     }
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdRoam(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdRoam(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() == 0)
     return "usage: roam {zoom|cycle} <args>";
   if (!ROAM.isRoaming())
-    return std::string();
+    return string();
   if (args[0] == "zoom") {
     if (args.size() != 2)
       return "usage: roam zoom {in|out|normal|stop}";
@@ -1051,12 +917,11 @@ static std::string cmdRoam(const std::string&,
   } else {
     return "usage: roam {zoom|cycle} <args>";
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdSilence(const std::string&,
-                              const CommandManager::ArgList& args, bool*)
+static string cmdSilence(const string&, const CmdArgList& args, bool*)
 {
   static SilenceDefaultKey silenceKeyHandler;
   if (args.size() != 0)
@@ -1064,12 +929,11 @@ static std::string cmdSilence(const std::string&,
   messageHistoryIndex = 0;
   hud->setComposing("[Un]Silence: ");
   HUDui::setDefaultKey(&silenceKeyHandler);
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdServerCommand(const std::string&,
-                                    const CommandManager::ArgList& args, bool*)
+static string cmdServerCommand(const string&, const CmdArgList& args, bool*)
 {
   static ServerCommandKey serverCommandKeyHandler;
   if (args.size() != 0)
@@ -1085,12 +949,11 @@ static std::string cmdServerCommand(const std::string&,
   messageHistoryIndex = 0;
   serverCommandKeyHandler.init();
   HUDui::setDefaultKey(&serverCommandKeyHandler);
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdScrollPanel(const std::string&,
-                                  const CommandManager::ArgList& args, bool*)
+static string cmdScrollPanel(const string&, const CmdArgList& args, bool*)
 {
   if ((args.size() < 1) || (args.size() > 2)) {
     return "usage: scrollpanel {up|up_page|down|down_page|top|bottom} [count]\n";
@@ -1115,59 +978,68 @@ static std::string cmdScrollPanel(const std::string&,
   } else if (args[0] == "bottom") {
     controlPanel->setMessagesOffset(0, 0 /* set */, false);
   }
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdHunt(const std::string&,
-                           const CommandManager::ArgList& args, bool*)
+static string cmdHunt(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: hunt";
   hud->getScoreboard()->huntKeyEvent (false);
-  return std::string();
+  return string();
 }
 
-static std::string cmdAddHunt(const std::string&,
-                              const CommandManager::ArgList& args, bool*)
+static string cmdAddHunt(const string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: addhunt";
   hud->getScoreboard()->huntKeyEvent (true);
-  return std::string();
+  return string();
 }
 
 
-static std::string cmdLuaUser(const std::string& cmd,
-                              const CommandManager::ArgList& args, bool*)
+static string concatArgs(const CmdArgList& args)
+{
+  string line;
+  for (size_t i = 0; i < args.size(); i++) {
+    if (i == 0) {
+      line = args[i];
+    } else {
+      line += " " + args[i];
+    }
+  }
+  return line;
+}
+
+
+static string cmdLuaUser(const string& cmd, const CmdArgList& args, bool*)
 {
   if (args.size() < 1) {
     return "usage: luauser { reload | disable | status }";
   }
-  LuaClientScripts::LuaUserCommand(cmd + " " + args[0]);
-  return std::string();
+  LuaClientScripts::LuaUserCommand(cmd + " " + concatArgs(args));
+  return string();
 }
 
 
-static std::string cmdLuaBzOrg(const std::string& cmd,
-                              const CommandManager::ArgList& args, bool*)
+static string cmdLuaBzOrg(const string& cmd, const CmdArgList& args, bool*)
 {
   if (args.size() < 1) {
     return "usage: luabzorg { reload | disable | status }";
   }
-  LuaClientScripts::LuaBzOrgCommand(cmd + " " + args[0]);
-  return std::string();
+  LuaClientScripts::LuaBzOrgCommand(cmd + " " + concatArgs(args));
+  return string();
 }
 
 
-static std::string cmdLuaWorld(const std::string& cmd,
-                              const CommandManager::ArgList& args, bool*)
+static string cmdLuaWorld(const string& cmd, const CmdArgList& args, bool*)
 {
   if (args.size() < 1) {
     return "usage: luaworld { reload | disable | status }";
   }
-  LuaClientScripts::LuaWorldCommand(cmd + " " + args[0]);
-  return std::string();
+  LuaClientScripts::LuaWorldCommand(cmd + " " + concatArgs(args));
+  return string();
 }
 
 
