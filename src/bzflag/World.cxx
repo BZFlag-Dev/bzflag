@@ -993,8 +993,8 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   {
     float worldSize = BZDBCache::worldSize;
     float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
-    if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) ||  (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str())))
-    {
+    if ((worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str())) ||
+        (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str()))) {
       out << indent << "world" << std::endl;
       if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
 	out << indent << "  size " << worldSize / 2.0f << std::endl;

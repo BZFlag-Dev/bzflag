@@ -167,6 +167,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetKeyModifiers);
 
 	PUSH_LUA_CFUNC(L, WarpMouse);
+	PUSH_LUA_CFUNC(L, SetMouseBox);
 
 	PUSH_LUA_CFUNC(L, MakeFont);
 
@@ -1720,6 +1721,19 @@ int LuaCallOuts::WarpMouse(lua_State* L)
 
 	BzfWindow* bzWnd = wnd->getWindow();
 	bzWnd->warpMouse(mx, wnd->getHeight() - my - 1);
+
+	return 0;
+}
+
+
+int LuaCallOuts::SetMouseBox(lua_State* L)
+{
+	if (!L2H(L)->HasInputCtrl()) {
+		return 0;
+	}
+
+	const int size = luaL_checkint(L, 1);
+	RENDERER.setMaxMotionFactor(size);
 
 	return 0;
 }

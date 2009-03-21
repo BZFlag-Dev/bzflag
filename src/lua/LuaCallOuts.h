@@ -104,6 +104,7 @@ class LuaCallOuts {
 		static int GetKeyModifiers(lua_State* L);
 
 		static int WarpMouse(lua_State* L);
+		static int SetMouseBox(lua_State* L);
 
 		static int MakeFont(lua_State* L);
 

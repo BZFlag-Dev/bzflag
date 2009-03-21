@@ -180,8 +180,8 @@ void ZSceneDatabase::setOccluderManager(int occl)
 
 void ZSceneDatabase::setupCullList()
 {
-  const int currentDepth = BZDB.evalInt(StateDatabase::BZDB_CULLDEPTH);
-  const int currentElements = BZDB.evalInt(StateDatabase::BZDB_CULLELEMENTS);
+  static BZDB_int currentDepth(StateDatabase::BZDB_CULLDEPTH);
+  static BZDB_int currentElements(StateDatabase::BZDB_CULLELEMENTS);
 
   if ((culledList == NULL) ||
       (currentDepth != cullDepth) || (currentElements != cullElements)) {

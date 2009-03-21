@@ -57,6 +57,7 @@ libBzLua_la_SOURCES =                       \
 #	LuaLink.cxx           LuaLink.h           \#
 #	LuaServerList.cxx     LuaServerList.h     \#
 #	LuaArrays.cxx         LuaArrays.h         \#
+#	LuaMap.cxx            LuaMap.h            \#
 
 EXTRA_DIST = \
 	README

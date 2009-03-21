@@ -83,7 +83,7 @@ bool EventClientList::insert(EventClient* ec)
     EventClient* ec2 = *it;
     if ((ec->GetName()  == ec2->GetName()) &&
         (ec->GetOrder() == ec2->GetOrder())) {
-      return false;
+      return true;
     }
   }
 
