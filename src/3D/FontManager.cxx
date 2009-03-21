@@ -184,11 +184,12 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
 {
   FTFont* font(0);
 
-  bool useBitmapFont( BZDB.isTrue("UseBitmapFonts") );
-  if (BZDB.isSet("MinAliasedFontSize")) {
-    size_t minSize( BZDB.evalInt("MinAliasedFontSize") );
-    if (size <= minSize)
+  bool useBitmapFont = BZDB.isTrue("useBitmapFonts");
+  if (BZDB.isSet("minAliasedFontSize")) {
+    size_t minSize = BZDB.evalInt("minAliasedFontSize");
+    if (size <= minSize) {
       useBitmapFont = true;
+    }
   }
 
   if(useBitmapFont)
@@ -207,7 +208,7 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   setSize(size, font);
 
   font->FaceSize((unsigned int)size);
-  bool doDisplayLists( ! BZDB.isTrue("NoDisplayListsForFonts"));
+  const bool doDisplayLists = !BZDB.isTrue("noDisplayListsForFonts");
   font->UseDisplayList(doDisplayLists);
 
   // preload the font

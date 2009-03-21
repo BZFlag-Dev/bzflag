@@ -268,7 +268,9 @@ static string cmdRestart(const string&, const CmdArgList& args, bool*)
     return "usage: restart";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL && canSpawn) {
-    if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding()) {
+    if (!gameOver && !myTank->isSpawning() &&
+        (myTank->getTeam() != ObserverTeam) &&
+        !myTank->isAlive() && !myTank->isExploding()) {
       if (!eventHandler.ForbidSpawn()) {
         serverLink->sendAlive(myTank->getId());
         myTank->setSpawning(true);
@@ -295,12 +297,11 @@ static string cmdDestruct(const string&, const CmdArgList& args, bool*)
       destructCountdown = 0.0f;
       hud->setAlert(1, "Self Destruct canceled", 1.5f, true);
     } else {
-      if (getMagnitude(myTank->getVelocity()) > BZDB.eval(StateDatabase::BZDB_MAXSELFDESTRUCTVEL))
-      {
+      static BZDB_float maxVelocity(StateDatabase::BZDB_MAXSELFDESTRUCTVEL);
+      if (getMagnitude(myTank->getVelocity()) > maxVelocity) {
         hud->setAlert(1, "No Self Destruct while moving", 1.0f, false);
       }
-      else
-      {
+      else {
         destructCountdown = 5.0f;
         sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
         hud->setAlert(1, msgBuf, 1.0f, false);
@@ -387,7 +388,7 @@ static string cmdAutoPilot(const string&, const CmdArgList& args, bool*)
     if (myTank->isAutoPilot() && myTank->requestedAutopilot) {
       myTank->requestAutoPilot(false);
     }
-    else if (!myTank->isAutoPilot()) {// can't ask for autopilot if I'm allraedy autopilot
+    else if (!myTank->isAutoPilot()) { // can't ask for autopilot if I'm already autopilot
       // don't enable the AutoPilot if you have within the last 5 secs
       static TimeKeeper LastAutoPilotEnable = TimeKeeper::getSunGenesisTime();
       if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5) {
