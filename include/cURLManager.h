@@ -98,7 +98,7 @@ private:
   static CURLM *multiHandle;
   static char   errorBuffer[CURL_ERROR_SIZE];
 
-  static std::map<CURL*, cURLManager*> cURLMap;
+  static std::map<CURL*, cURLManager*> *pcURLMap;
 };
 
 

@@ -23,9 +23,11 @@ bool		    cURLManager::inited      = false;
 bool		    cURLManager::justCalled;
 CURLM		  *cURLManager::multiHandle = NULL;
 std::map<CURL*,
-	 cURLManager*>  cURLManager::cURLMap;
+	 cURLManager*>  *cURLManager::pcURLMap = NULL;
 char		    cURLManager::errorBuffer[CURL_ERROR_SIZE];
 int		    cURLManager::refs = 0;
+
+#define cURLMap (*pcURLMap)
 
 
 cURLManager::cURLManager()
@@ -39,6 +41,9 @@ cURLManager::cURLManager()
   formLast  = NULL;
 
   deleteOnDone = false;
+
+  if(refs == 0)
+      pcURLMap = new std::map<CURL*, cURLManager*>;
 
   if (!inited)
     setup();
@@ -104,6 +109,8 @@ cURLManager::~cURLManager()
     multiHandle = NULL;
     inited = false;
   }
+  if(refs == 0)
+    delete pcURLMap;
   free(theData);
 }
 
