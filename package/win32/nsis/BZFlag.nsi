@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.99
-  !define VER_MINOR .15.20090122
+  !define VER_MINOR .19.20090321
 
 ;--------------------------------
 ;Compression options
@@ -121,39 +121,45 @@ Section "!BZFlag (Required)" BZFlag
   
   ; make the data dir
   SetOutPath $INSTDIR\data
-  File ..\..\..\data\*.*
+  File ..\..\..\data\*.png
 
   ; make the fonts dir
   SetOutPath $INSTDIR\data\fonts
-  File ..\..\..\data\fonts\*.*
+  File ..\..\..\data\fonts\*.ttf
+  File ..\..\..\data\fonts\README
 
   ; make the l10n dir
   SetOutPath $INSTDIR\data\l10n
-  File ..\..\..\data\l10n\*.*
+  File ..\..\..\data\l10n\*.po
+  File ..\..\..\data\l10n\*.txt
 
   SetOutPath $INSTDIR\data\skins\blue
-  File ..\..\..\data\skins\blue\*.*
+  File ..\..\..\data\skins\blue\*.png
 
   SetOutPath $INSTDIR\data\skins\red
-  File ..\..\..\data\skins\red\*.*
+  File ..\..\..\data\skins\red\*.png
 
   SetOutPath $INSTDIR\data\skins\green
-  File ..\..\..\data\skins\green\*.*
+  File ..\..\..\data\skins\green\*.png
 
   SetOutPath $INSTDIR\data\skins\purple
-  File ..\..\..\data\skins\purple\*.*
+  File ..\..\..\data\skins\purple\*.png
 
   SetOutPath $INSTDIR\data\skins\hunter
-  File ..\..\..\data\skins\hunter\*.*
+  File ..\..\..\data\skins\hunter\*.png
 
   SetOutPath $INSTDIR\data\skins\observer
-  File ..\..\..\data\skins\observer\*.*
+  File ..\..\..\data\skins\observer\*.png
 
   SetOutPath $INSTDIR\data\skins\rabbit
-  File ..\..\..\data\skins\rabbit\*.*
+  File ..\..\..\data\skins\rabbit\*.png
 
   SetOutPath $INSTDIR\data\skins\rogue
-  File ..\..\..\data\skins\rogue\*.*
+  File ..\..\..\data\skins\rogue\*.png
+
+  ; make the sounds dir
+  SetOutPath $INSTDIR\data\sounds
+  File ..\..\..\data\sounds\*.wav
 
   ; make the LuaUser dir 
   ;SetOutPath $INSTDIR\data\LuaUser
