@@ -10,17 +10,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "ParseColor.h"
 
-/* common system headers */
+// system headers
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <string>
 #include <map>
 
-/* common implementation headers */
+// common headers
 #include "TextUtils.h"
 
 
@@ -65,8 +65,6 @@ static int parseHexChar(char c)
 
 static bool parseHexFormat(const char* str, float color[4])
 {
-  str++; // skip the '#'
-
   int bytes[8];
   int index;
   for (index = 0; index < 8; index++) {
@@ -185,20 +183,25 @@ bool parseColorCString(const char* str, float color[4])
   str = TextUtils::skipWhitespace(str);
 
   // no string
-  if (*str == 0) {
+  if (str[0] == 0) {
     return false;
   }
 
   // hexadecimal format (#rgb, #rgba, #rrggbb #rrggbbaa)
-  if (*str == '#') {
-    return parseHexFormat(str, color);
+  if (str[0] == '#') {
+    return parseHexFormat(str + 1, color);
+  }
+
+  // hexadecimal format (0xRGB, 0xRGBA, 0xRRGGBB 0xRRGGBBAA)
+  if ((str[0] == '0') && (str[1] == 'x')) {
+    return parseHexFormat(str + 2, color);
   }
 
   // numeric format (either 3 or 4 floating point values)
-  if (((*str >= '0') && (*str <= '9'))
-      || (*str == '.')
-      || (*str == '+')
-      || (*str == '-')) {
+  if (((str[0] >= '0') && (str[0] <= '9'))
+      || (str[0] == '.')
+      || (str[0] == '+')
+      || (str[0] == '-')) {
     return parseFloatFormat(str, color);
   }
 
