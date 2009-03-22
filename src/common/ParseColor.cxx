@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 // interface header
 #include "ParseColor.h"
 
@@ -240,6 +242,7 @@ struct ColorArrayData {
 static const ColorMap& getColorMap()
 {
   static ColorMap colorMap;
+
   if (!colorMap.empty()) {
     return colorMap;
   }
@@ -1000,7 +1003,7 @@ static const ColorMap& getColorMap()
     { "LightGreen",             0.564706f, 0.933333f, 0.564706f }
   };
 
-  const size_t colorCount = sizeof(colorArray) / sizeof(ColorArrayData);
+  const size_t colorCount = countof(colorArray);
 
   for (size_t i = 0; i < colorCount; i++) {
     const ColorArrayData& data = colorArray[i];
