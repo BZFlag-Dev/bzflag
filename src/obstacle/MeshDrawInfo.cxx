@@ -39,10 +39,10 @@
 
 
 // local types
-typedef struct  {
+struct DrawCmdLabel  {
   const char* name;
   DrawCmd::DrawModes code;
-} DrawCmdLabel;
+};
 
 
 // local data

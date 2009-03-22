@@ -101,7 +101,9 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetServerDescription);
 
 	PUSH_LUA_CFUNC(L, GetWind);
-	PUSH_LUA_CFUNC(L, GetLights);
+	if (fullRead) {
+		PUSH_LUA_CFUNC(L, GetLights);
+	}
 
 	PUSH_LUA_CFUNC(L, GetWorldHash);
 

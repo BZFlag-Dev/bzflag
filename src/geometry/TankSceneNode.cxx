@@ -1413,10 +1413,10 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
     return;
   }
 
-  typedef struct {
+  struct jetVertex {
     GLfloat vertex[3];
     GLfloat texcoord[2];
-  } jetVertex;
+  };
   static const jetVertex jet[3] = {
     {{+0.3f,  0.0f, 0.0f}, {0.0f, 1.0f}},
     {{-0.3f,  0.0f, 0.0f}, {1.0f, 1.0f}},

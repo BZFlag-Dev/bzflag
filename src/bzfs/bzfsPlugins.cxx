@@ -46,7 +46,7 @@ tmCustomPluginMap customPluginMap;
 
 std::vector<std::string> validDirs;
 
-typedef struct {
+struct trPluginRecord {
   std::string foundPath;
   std::string plugin;
 
@@ -55,7 +55,7 @@ typedef struct {
 #else
   void*		handle;
 #endif
-} trPluginRecord;
+};
 
 std::vector<trPluginRecord>	vPluginList;
 

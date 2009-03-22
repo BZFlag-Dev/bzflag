@@ -26,12 +26,12 @@ namespace GameTime {
   void reset();
   void update();
 
-  void setStepTime();
+  void   setStepTime();
   double getStepTime();
 
-  int packSize();
+  int   packSize();
   void* pack(void *, float lag);
-  void pack(BufferedNetworkMessage *msg, float lag);
+  void  pack(BufferedNetworkMessage *msg, float lag);
   void* unpack(void *);
 
   const float startRate = 1.0f;

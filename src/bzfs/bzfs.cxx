@@ -207,18 +207,23 @@ public:
   BZFSNetLogCB() { addNetworkLogCallback(this); }
   virtual ~BZFSNetLogCB() { removeNetworkLogCallback(this); }
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void* param = NULL )
+  virtual void networkDataLog(bool send, bool udp, const unsigned char* data,
+                              unsigned int size, void* param = NULL)
   {
-    NetHandler *h = (NetHandler*)param;
+    NetHandler* h = (NetHandler*)param;
 
     // let any listeners know we got net data
     bz_NetTransferEventData_V1 eventData;
-    if (send)
+    if (send) {
       eventData.eventType = bz_eNetDataSendEvent;
-    else
+    } else {
       eventData.eventType = bz_eNetDataReceiveEvent;
-    if (!worldEventManager.getEventCount(eventData.eventType))
+    }
+
+    if (!worldEventManager.getEventCount(eventData.eventType)) {
       return;
+    }
+
     eventData.send = send;
     eventData.udp = udp;
     eventData.iSize = size;
@@ -227,7 +232,7 @@ public:
         GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
 	if(playerData && playerData->netHandler == h ) {
 	  eventData.playerID = i;
-	  i = curMaxPlayers+1;
+	  i = curMaxPlayers + 1;
 	}
       }
     }
@@ -383,8 +388,9 @@ static float nextGameTime()
     if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && gkPlayer->netHandler) {
       const TimeKeeper& pTime = gkPlayer->getNextGameTime();
       const float pNextTime = (float)(pTime - nowTime);
-      if (pNextTime < nextTime)
+      if (pNextTime < nextTime) {
 	nextTime = pNextTime;
+      }
     }
   }
   return nextTime;
@@ -392,17 +398,17 @@ static float nextGameTime()
 
 static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
-  if (Replay::enabled() || gkPlayer->playerHandler)
+  if (Replay::enabled() || (gkPlayer == NULL) || gkPlayer->playerHandler) {
     return;
-
-  if (gkPlayer != NULL) {
-    NetMsg msg = MSGMGR.newMessage();
-
-    GameTime::pack(msg, gkPlayer->lagInfo.getLagAvg());
-    msg->send(gkPlayer->netHandler, MsgGameTime);
-
-    gkPlayer->updateNextGameTime();
   }
+
+  NetMsg msg = MSGMGR.newMessage();
+
+  GameTime::pack(msg, gkPlayer->lagInfo.getLagAvg());
+  msg->send(gkPlayer->netHandler, MsgGameTime);
+
+  gkPlayer->updateNextGameTime();
+
   return;
 }
 
@@ -411,8 +417,10 @@ static void sendPendingGameTime()
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && (gkPlayer->getNextGameTime() - nowTime) < 0.0f)
+    if ((gkPlayer != NULL) && gkPlayer->player.isHuman() &&
+        ((gkPlayer->getNextGameTime() - nowTime) < 0.0f)) {
       sendGameTime(gkPlayer);
+    }
   }
   return;
 }

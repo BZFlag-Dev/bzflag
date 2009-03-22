@@ -76,11 +76,11 @@ using namespace std;
 #include "LuaUtils.h"
 
 // custom types
-typedef int8_t   s8;
+typedef int8_t   i8;
 typedef uint8_t  u8;
-typedef int16_t  s16;
+typedef int16_t  i16;
 typedef uint16_t u16;
-typedef int32_t  s32;
+typedef int32_t  i32;
 typedef uint32_t u32;
 
 
@@ -257,8 +257,8 @@ class Glyph {
 		u32 xsize;
 		u32 ysize;
 		u8* pixels;
-		s32 oxn, oyn, oxp, oyp; // offsets
-		s32 txn, tyn, txp, typ; // texcoords
+		i32 oxn, oyn, oxp, oyp; // offsets
+		i32 txn, tyn, txp, typ; // texcoords
 		u32 advance;
 		bool valid;
 };
@@ -690,8 +690,8 @@ Glyph::Glyph(FT_Face& face, int _num) : num(_num), valid(false)
 	oyn = oyp - ysize - (2 * stuffing);
 
 	// texture coordinates
-	txn = -(s32)stuffing;
-	tyn = -(s32)stuffing;
+	txn = -(i32)stuffing;
+	tyn = -(i32)stuffing;
 	txp = xsize + stuffing;
 	typ = ysize + stuffing;
 

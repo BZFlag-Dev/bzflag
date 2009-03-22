@@ -27,9 +27,9 @@
 #ifndef _WIN32
 #  include <sys/time.h>
 #  include <unistd.h>
-typedef int64_t s64;
+typedef int64_t i64;
 #else
-typedef __int64 s64;
+typedef __int64 i64;
 #endif
 
 // common headers
@@ -51,7 +51,7 @@ typedef __int64 s64;
 
 typedef uint16_t u16;
 typedef uint32_t u32;
-typedef s64 RRtime;
+typedef i64 RRtime;
 
 typedef struct RRpacket {
   struct RRpacket *next;

@@ -24,10 +24,10 @@
 #include "GameKeeper.h"
 
 // it's loathsome to expose private structure in a header
-typedef struct RejoinNode {
+struct RejoinNode {
   char callsign[CallSignLen];
   TimeKeeper joinTime;
-} RejoinNode;
+};
 
 
 RejoinList::RejoinList()

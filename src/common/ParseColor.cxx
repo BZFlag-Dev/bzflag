@@ -231,14 +231,6 @@ bool parseColorStream(std::istream& input, float color[4])
 //============================================================================//
 //============================================================================//
 
-struct ColorArrayData {
-  const char* name;
-  float r;
-  float g;
-  float b;
-};
-
-
 static const ColorMap& getColorMap()
 {
   static ColorMap colorMap;
@@ -247,7 +239,14 @@ static const ColorMap& getColorMap()
     return colorMap;
   }
 
-  // the name/color pairs were generated using the X11 rgb.txt file
+  struct ColorArrayData {
+    const char* name;
+    float r;
+    float g;
+    float b;
+  };
+
+  // these name/color pairs were generated using the X11 rgb.txt file
   static const ColorArrayData colorArray[] = {
     { "snow",                   1.000000f, 0.980392f, 0.980392f },
     { "ghost_white",            0.972549f, 0.972549f, 1.000000f },
@@ -1003,9 +1002,7 @@ static const ColorMap& getColorMap()
     { "LightGreen",             0.564706f, 0.933333f, 0.564706f }
   };
 
-  const size_t colorCount = countof(colorArray);
-
-  for (size_t i = 0; i < colorCount; i++) {
+  for (size_t i = 0; i < countof(colorArray); i++) {
     const ColorArrayData& data = colorArray[i];
     const std::string lower = TextUtils::tolower(data.name);
     colorMap[lower] = ColorMapData(data.r, data.g, data.b);

@@ -41,13 +41,13 @@ static const int HEADER_SIZE_STUFFING = 0;
 
 #ifdef _WIN32
 #  include <direct.h>
-typedef __int64 s64;
+typedef __int64 i64;
 #  ifndef S_ISDIR
 #    define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
 #  endif
 #else
 #include <sys/time.h>
-typedef int64_t s64;
+typedef int64_t i64;
 #endif
 
 // common headers
@@ -71,14 +71,14 @@ typedef int64_t s64;
 
 typedef uint16_t u16;
 typedef uint32_t u32;
-typedef s64 RRtime; // should last a while
+typedef i64 RRtime; // should last a while
 
 enum RecordType {
   StraightToFile  = 0,
   BufferedRecord = 1
 };
 
-typedef struct RRpacket {
+struct RRpacket {
   struct RRpacket *next;
   struct RRpacket *prev;
   u16 mode;
@@ -88,22 +88,22 @@ typedef struct RRpacket {
   u32 prevFilePos;
   RRtime timestamp;
   char *data;
-} RRpacket;
+};
 //static const unsigned int RRpacketHdrSize =
 //  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
 static const unsigned int RRpacketHdrSize =
   PACKET_SIZE_STUFFING +
   (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
 
-typedef struct {
+struct RRbuffer {
   u32 byteCount;
   u32 packetCount;
   // into the head, out of the tail
   RRpacket *head; // last packet in
   RRpacket *tail; // first packet in
-} RRbuffer;
+};
 
-typedef struct {
+struct ReplayHeader {
   u32 magic;		    // record file type identifier
   u32 version;		  // record file version
   u32 offset;		   // length of the full header
@@ -118,7 +118,7 @@ typedef struct {
   char worldSettings[WorldSettingsSize]; // the game settings
   char *flags;		  // a list of the flags types
   char *world;		  // the world
-} ReplayHeader;
+};
 //static const unsigned int ReplayHeaderSize =
 //  sizeof(ReplayHeader) - (2 * sizeof(char*));
 static const unsigned int ReplayHeaderSize =
@@ -126,11 +126,11 @@ static const unsigned int ReplayHeaderSize =
   (sizeof(u32) * 6) + sizeof(RRtime) +
   CallSignLen + 8 + MessageLen + 64 + WorldSettingsSize;
 
-typedef struct {
+struct FileEntry {
   std::string file;
   float time;
   int entryNum;
-} FileEntry;
+};
 
 
 // Local Variables
@@ -1682,12 +1682,12 @@ static bool savePlayersState()
 }
 
 
-typedef struct {
+struct packVarData {
   void *bufStart;
   void *buf;
   int len;
   int count;
-} packVarData;
+};
 
 static void packVars(const std::string& key, void *data)
 {
