@@ -224,7 +224,8 @@ public:
     eventData.iSize = size;
     if (h) {
       for(int i=0; i < curMaxPlayers; i++) {
-	if(GameKeeper::Player::getPlayerByIndex(i)->netHandler == h ) {
+        GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+	if(playerData && playerData->netHandler == h ) {
 	  eventData.playerID = i;
 	  i = curMaxPlayers+1;
 	}
