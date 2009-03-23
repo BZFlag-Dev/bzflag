@@ -98,6 +98,8 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_maxFlagGrabs",		"4.0",				false, StateDatabase::Locked },
   { "_maxLOD",			"32767.0",			false, StateDatabase::Locked },
   { "_maxSelfDestructVel",	"0.01",				false, StateDatabase::Locked },
+  { "_maxWindSpeed",		"10.0",				false, StateDatabase::Locked },
+  { "_minWindSpeed",		"0.0",				false, StateDatabase::Locked },
   { "_mirror",			"none",				false, StateDatabase::Locked },
   { "_momentumAngAcc",		"1.0",				false, StateDatabase::Locked },
   { "_momentumLinAcc",		"1.0",				false, StateDatabase::Locked },

@@ -615,8 +615,8 @@ void World::initFlag(int index)
 
 void World::updateWind(float /*dt*/)
 {
-  const float minWindSpeed = 0.0f; // FIXME - BZDB
-  const float maxWindSpeed = 10.0f; // FIXME - BZDB
+  static BZDB_float maxWindSpeed("_maxWindSpeed");
+  static BZDB_float minWindSpeed("_minWindSpeed");
 
   // pretty cheezy, should be fields and such
   const double gt = GameTime::getStepTime();
