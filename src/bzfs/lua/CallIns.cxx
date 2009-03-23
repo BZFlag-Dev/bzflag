@@ -348,7 +348,7 @@ CALLIN(KickEvent,                  Kick,                       "BASIC");        
 CALLIN(KillEvent,                  Kill,                       "BASIC");        // -Event
 CALLIN(ListServerUpdateEvent,      ListServerUpdate,           "BASIC");        // -Event
 CALLIN(LoggingEvent,               Logging,                    "BASIC");        // -Event
-CALLIN(LuaDataEvent,               LuaData,                    "SPECIAL");      // -Event
+CALLIN(LuaDataEvent,               RecvLuaData,                "SPECIAL");      // -Event+Recv
 CALLIN(MessageFilteredEvent,       MessageFiltered,            "BASIC");        // -Event
 CALLIN(NetDataReceiveEvent,        NetDataReceive,             "BASIC");        // -Event
 CALLIN(NetDataSendEvent,           NetDataSend,                "BASIC");        // -Event
@@ -1099,7 +1099,7 @@ bool CI_Logging::execute(bz_EventData* eventData)
 }
 
 
-bool CI_LuaData::execute(bz_EventData* eventData)
+bool CI_RecvLuaData::execute(bz_EventData* eventData)
 {
   bz_LuaDataEventData_V1* ed = (bz_LuaDataEventData_V1*)eventData;
 
