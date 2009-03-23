@@ -30,12 +30,16 @@
 
 /* common interface headers */
 #include "bzfsAPI.h"
+#include "Singleton.h"
 
 
-typedef std::vector<bz_EventHandler*> tvEventList;
+#define worldEventManager (WorldEventManager::instance())
+
+
+typedef std::vector<bz_EventHandler*>        tvEventList;
 typedef std::map<bz_eEventType, tvEventList> tmEventTypeList;
 
-class WorldEventManager
+class WorldEventManager : public Singleton<WorldEventManager>
 {
 public:
 	WorldEventManager();
@@ -54,7 +58,6 @@ protected:
 
 };
 
-extern WorldEventManager	worldEventManager;
 
 #endif // WORLD_EVENT_MANAGER_H
 

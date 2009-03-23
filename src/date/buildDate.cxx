@@ -70,7 +70,7 @@ const char *bzfcopyright = "Copyright (c) 1993 - 2009 Tim Riker";
 
 #ifndef BZ_BUILD_DATE
 /* to get the version in the right format YYYYMMDD */
-/* yes this is horible but it needs to be done to get it right */
+/* yes this is horrible but it needs to be done to get it right */
 /* windows should pull from a resouce */
 /* *nix gets this from the passed from my the Makefile */
 static const char buildDate[] = {__DATE__};

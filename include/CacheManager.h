@@ -30,14 +30,14 @@
 class CacheManager : public Singleton<CacheManager> {
  public:
 
-  typedef struct {
+  struct CacheRecord {
     std::string url;
     time_t usedDate;
     std::string name;
     int size;
     time_t date;
     std::string key;
-  } CacheRecord;
+  };
 
   static bool isCacheFileType(const std::string name);
 

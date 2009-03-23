@@ -151,9 +151,6 @@ VotingArbiter *votingArbiter = NULL;
 
 BasesList bases;
 
-// global keeper of world Events
-WorldEventManager worldEventManager;
-
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
 // Client does not check for rabbit to be 255, but it still works

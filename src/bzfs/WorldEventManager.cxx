@@ -22,6 +22,11 @@
 #include "bzfsAPI.h"
 
 
+// initialize the singleton
+template <>   
+WorldEventManager* Singleton<WorldEventManager>::_instance = (WorldEventManager*)NULL;
+
+
 extern bz_eTeamType convertTeam(TeamColor team);
 extern TeamColor convertTeam(bz_eTeamType team);
 
@@ -65,32 +70,29 @@ void WorldEventManager::removeEvent(bz_eEventType eventType, bz_EventHandler* th
   }
 }
 
-bool WorldEventManager::removeHandler(bz_EventHandler* theEvent )
+bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
 {
-	bool foundOne = false;
+  bool foundOne = false;
 
-	tmEventTypeList::iterator eventTypeItr = eventList.begin();
-	while (eventTypeItr != eventList.end())
-	{
-		tvEventList::iterator itr = eventTypeItr->second.begin();
-		while (itr != eventTypeItr->second.end())
-		{
-			if (*itr == theEvent)
-			{
-				itr = eventTypeItr->second.erase(itr);
-				foundOne = true;
-			}
-			else
-				itr++;
-		}
-		eventTypeItr++;
-	}
-	return foundOne;
+  tmEventTypeList::iterator typeIt;
+  for (typeIt = eventList.begin(); typeIt != eventList.end(); ++typeIt) {
+    tvEventList& evList = typeIt->second;
+    tvEventList::iterator listIt = evList.begin();
+    while (listIt != evList.end()) {
+      if (*listIt == theEvent) {
+        listIt = evList.erase(listIt);
+        foundOne = true;
+      }
+      listIt++;
+    }
+  }
+
+  return foundOne;
 }
 
 tvEventList WorldEventManager::getEventList (bz_eEventType eventType)
 {
-  tvEventList	eList;
+  tvEventList eList;
 
   tmEventTypeList::iterator itr = eventList.find(eventType);
   if (itr == eventList.end())

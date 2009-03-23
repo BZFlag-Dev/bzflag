@@ -12,16 +12,22 @@
 
 #include "common.h"
 
+// interface header
 #include "MapInfo.h"
 
+// system headers
 #include <ctype.h>
 #include <string>
 #include <vector>
 using std::string;
 using std::string;
 
+// common headers
 #include "Pack.h"
 
+
+//============================================================================//
+//============================================================================//
 
 MapInfo::MapInfo()
 {
@@ -120,6 +126,9 @@ const std::vector<std::string>* MapInfo::getValue(const std::string& key) const
 }
 
 
+//============================================================================//
+//============================================================================//
+
 int MapInfo::packSize() const
 {
   int fullSize = 0;
@@ -168,6 +177,10 @@ void MapInfo::print(std::ostream& out, const std::string& indent) const
   }
   out << indent << "end" << std::endl << std::endl;
 }
+
+
+//============================================================================//
+//============================================================================//
 
 
 // Local Variables: ***
