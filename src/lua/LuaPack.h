@@ -12,18 +12,22 @@ class LuaPack {
 		static int PackU8(lua_State* L);
 		static int PackU16(lua_State* L);
 		static int PackU32(lua_State* L);
-		static int PackS8(lua_State* L);
-		static int PackS16(lua_State* L);
-		static int PackS32(lua_State* L);
+		static int PackU64(lua_State* L);
+		static int PackI8(lua_State* L);
+		static int PackI16(lua_State* L);
+		static int PackI32(lua_State* L);
+		static int PackI64(lua_State* L);
 		static int PackF32(lua_State* L);
 		static int PackF64(lua_State* L);
 
 		static int UnpackU8(lua_State* L);
 		static int UnpackU16(lua_State* L);
 		static int UnpackU32(lua_State* L);
-		static int UnpackS8(lua_State* L);
-		static int UnpackS16(lua_State* L);
-		static int UnpackS32(lua_State* L);
+		static int UnpackU64(lua_State* L);
+		static int UnpackI8(lua_State* L);
+		static int UnpackI16(lua_State* L);
+		static int UnpackI32(lua_State* L);
+		static int UnpackI64(lua_State* L);
 		static int UnpackF32(lua_State* L);
 		static int UnpackF64(lua_State* L);
 

@@ -28,18 +28,22 @@ bool LuaPack::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, PackU8);
 	PUSH_LUA_CFUNC(L, PackU16);
 	PUSH_LUA_CFUNC(L, PackU32);
-	PUSH_LUA_CFUNC(L, PackS8);
-	PUSH_LUA_CFUNC(L, PackS16);
-	PUSH_LUA_CFUNC(L, PackS32);
+	PUSH_LUA_CFUNC(L, PackU64);
+	PUSH_LUA_CFUNC(L, PackI8);
+	PUSH_LUA_CFUNC(L, PackI16);
+	PUSH_LUA_CFUNC(L, PackI32);
+	PUSH_LUA_CFUNC(L, PackI64);
 	PUSH_LUA_CFUNC(L, PackF32);
 	PUSH_LUA_CFUNC(L, PackF64); // LuaDouble
 
 	PUSH_LUA_CFUNC(L, UnpackU8);
 	PUSH_LUA_CFUNC(L, UnpackU16);
 	PUSH_LUA_CFUNC(L, UnpackU32);
-	PUSH_LUA_CFUNC(L, UnpackS8);
-	PUSH_LUA_CFUNC(L, UnpackS16);
-	PUSH_LUA_CFUNC(L, UnpackS32);
+	PUSH_LUA_CFUNC(L, UnpackU64);
+	PUSH_LUA_CFUNC(L, UnpackI8);
+	PUSH_LUA_CFUNC(L, UnpackI16);
+	PUSH_LUA_CFUNC(L, UnpackI32);
+	PUSH_LUA_CFUNC(L, UnpackI64);
 	PUSH_LUA_CFUNC(L, UnpackF32);
 	PUSH_LUA_CFUNC(L, UnpackF64); // LuaDouble
 
@@ -64,19 +68,33 @@ int PackType(lua_State* L)
 	// collect the values
 	if (lua_istable(L, 1)) {
 		for (int i = 1; lua_checkgeti(L, 1, i); lua_pop(L, 1), i++) {
-			if (!lua_israwnumber(L, -1)) {
-				break;
+			if (lua_israwnumber(L, -1)) {
+				vals.push_back((T)lua_tonumber(L, -1));
 			}
-			vals.push_back((T)lua_tonumber(L, -1));
+			else {
+				const double* dptr = LuaDouble::TestDouble(L, -1);
+				if (dptr != NULL) {
+					vals.push_back((T)(*dptr));
+				} else {
+					break; // not a lua_Number or a LuaDouble
+				}
+			}
 		}
 	}
 	else {
 		const int args = lua_gettop(L);
 		for (int i = 1; i <= args; i++) {
-			if (!lua_israwnumber(L, i)) {
-				break;
+			if (lua_israwnumber(L, i)) {
+				vals.push_back((T)lua_tonumber(L, i));
 			}
-			vals.push_back((T)lua_tonumber(L, i));
+			else {
+				const double* dptr = LuaDouble::TestDouble(L, i);
+				if (dptr != NULL) {
+					vals.push_back((T)(*dptr));
+				} else {
+					break; // not a lua_Number or a LuaDouble
+				}
+			}
 		}
 	}
 
@@ -97,72 +115,40 @@ int PackType(lua_State* L)
 }
 
 
-int LuaPack::PackU8(lua_State*  L) { return PackType<uint8_t>(L);  }
+int LuaPack::PackU8(lua_State*  L) { return PackType<uint8_t> (L); }
 int LuaPack::PackU16(lua_State* L) { return PackType<uint16_t>(L); }
 int LuaPack::PackU32(lua_State* L) { return PackType<uint32_t>(L); }
-int LuaPack::PackS8(lua_State*  L) { return PackType<int8_t>(L);   }
-int LuaPack::PackS16(lua_State* L) { return PackType<int16_t>(L);  }
-int LuaPack::PackS32(lua_State* L) { return PackType<int32_t>(L);  }
-int LuaPack::PackF32(lua_State* L) { return PackType<float>(L);    }
-
-
-int LuaPack::PackF64(lua_State* L)
-{
-	vector<double> vals;
-
-	// collect the values
-	if (lua_istable(L, 1)) {
-		for (int i = 1; lua_checkgeti(L, 1, i); lua_pop(L, 1), i++) {
-			const double* val = LuaDouble::TestNumber(L, -1);
-			if (val == NULL) {
-				break;
-			}
-			vals.push_back(*val);
-		}
-	}
-	else {
-		const int args = lua_gettop(L);
-		for (int i = 1; i <= args; i++) {
-			const double* val = LuaDouble::TestNumber(L, i);
-			if (val == NULL) {
-				break;
-			}
-			vals.push_back(*val);
-		}
-	}
-
-	if (vals.empty()) {
-		return 0;
-	}
-
-	// push the result
-	const int bufSize = sizeof(double) * vals.size();
-	char* buf = new char[bufSize];
-	for (int i = 0; i < (int)vals.size(); i++) {
-		memcpy(buf + (i * sizeof(double)), &vals[i], sizeof(double));
-	}
-	lua_pushlstring(L, buf, bufSize);
-	delete[] buf;
-
-	return 1;
-}
+int LuaPack::PackU64(lua_State* L) { return PackType<uint64_t>(L); }
+int LuaPack::PackI8(lua_State*  L) { return PackType<int8_t>  (L); }
+int LuaPack::PackI16(lua_State* L) { return PackType<int16_t> (L); }
+int LuaPack::PackI32(lua_State* L) { return PackType<int32_t> (L); }
+int LuaPack::PackI64(lua_State* L) { return PackType<int64_t> (L); }
+int LuaPack::PackF32(lua_State* L) { return PackType<float>   (L); }
+int LuaPack::PackF64(lua_State* L) { return PackType<double>  (L); }
 
 
 //============================================================================//
 //============================================================================//
 
 template <typename T>
-int UnpackType(lua_State* L)
+int UnpackType(lua_State* L, bool defaultToDoubles = false)
 {
-	if (!lua_israwstring(L, 1)) {
+	int index = 1;
+	bool pushDoubles = defaultToDoubles;
+	if (lua_isboolean(L, index)) {
+		pushDoubles = lua_tobool(L, index);
+		index++;
+	}
+
+	if (!lua_israwstring(L, index)) {
 		return 0;
 	}
 	size_t len;
-	const char* str = lua_tolstring(L, 1, &len);
+	const char* str = lua_tolstring(L, index, &len);
 
 	// apply the offset
-	if (lua_israwnumber(L, 2)) {
-		const size_t offset = lua_toint(L, 2) - 1;
+	if (lua_israwnumber(L, index + 1)) {
+		const size_t offset = lua_toint(L, index + 1) - 1;
 		if (offset >= len) {
 			return 0;
 		}
@@ -176,65 +162,13 @@ int UnpackType(lua_State* L)
 	}
 
 	// return a single value
-	if (!lua_israwnumber(L, 3)) {
+	if (!lua_israwnumber(L, index + 2)) {
 		const T value = *((T*)str);
-		lua_pushnumber(L, static_cast<lua_Number>(value));
-		return 1;
-	}
-
-	// return a table
-	const int maxCount = (len / eSize);
-	int tableCount = lua_toint(L, 3);
-	if (tableCount < 0) {
-		tableCount = maxCount;
-	}
-	tableCount = min(maxCount, tableCount);
-	lua_newtable(L);
-	for (int i = 0; i < tableCount; i++) {
-		const T value = *(((T*)str) + i);
-		lua_pushnumber(L, static_cast<lua_Number>(value));
-		lua_rawseti(L, -2, (i + 1));
-	}
-	return 1;
-}
-
-
-int LuaPack::UnpackU8(lua_State*  L) { return UnpackType<uint8_t>(L);  }
-int LuaPack::UnpackU16(lua_State* L) { return UnpackType<uint16_t>(L); }
-int LuaPack::UnpackU32(lua_State* L) { return UnpackType<uint32_t>(L); }
-int LuaPack::UnpackS8(lua_State*  L) { return UnpackType<int8_t>(L);   }
-int LuaPack::UnpackS16(lua_State* L) { return UnpackType<int16_t>(L);  }
-int LuaPack::UnpackS32(lua_State* L) { return UnpackType<int32_t>(L);  }
-int LuaPack::UnpackF32(lua_State* L) { return UnpackType<float>(L);    }
-
-
-int LuaPack::UnpackF64(lua_State* L)
-{
-	if (!lua_israwstring(L, 1)) {
-		return 0;
-	}
-	size_t len;
-	const char* str = lua_tolstring(L, 1, &len);
-
-	// apply the offset
-	if (lua_israwnumber(L, 2)) {
-		const size_t offset = lua_toint(L, 2) - 1;
-		if (offset >= len) {
-			return 0;
+		if (pushDoubles) {
+			LuaDouble::PushDouble(L, (double)(static_cast<lua_Number>(value)));
+		} else {
+			lua_pushnumber(L, static_cast<lua_Number>(value));
 		}
-		str += offset;
-		len -= offset;
-	}
-
-	const size_t eSize = sizeof(double);
-	if (len < eSize) {
-		return 0;
-	}
-
-	// return a single value
-	if (!lua_israwnumber(L, 3)) {
-		const double value = *((double*)str);
-		LuaDouble::PushDouble(L, value);
 		return 1;
 	}
 
@@ -246,13 +180,33 @@ int LuaPack::UnpackF64(lua_State* L)
 	}
 	tableCount = min(maxCount, tableCount);
 	lua_newtable(L);
-	for (int i = 0; i < tableCount; i++) {
-		const double value = *(((double*)str) + i);
-		LuaDouble::PushDouble(L, value);
-		lua_rawseti(L, -2, (i + 1));
+	if (pushDoubles) {
+		for (int i = 0; i < tableCount; i++) {
+			const T value = *(((T*)str) + i);
+			LuaDouble::PushDouble(L, (double)(static_cast<lua_Number>(value)));
+			lua_rawseti(L, -2, (i + 1));
+		}
+	} else {
+		for (int i = 0; i < tableCount; i++) {
+			const T value = *(((T*)str) + i);
+			lua_pushnumber(L, static_cast<lua_Number>(value));
+			lua_rawseti(L, -2, (i + 1));
+		}
 	}
 	return 1;
 }
+
+
+int LuaPack::UnpackU8(lua_State*  L) { return UnpackType<uint8_t> (L, false); }
+int LuaPack::UnpackU16(lua_State* L) { return UnpackType<uint16_t>(L, false); }
+int LuaPack::UnpackU32(lua_State* L) { return UnpackType<uint32_t>(L, true);  }
+int LuaPack::UnpackU64(lua_State* L) { return UnpackType<uint64_t>(L, true);  }
+int LuaPack::UnpackI8(lua_State*  L) { return UnpackType<int8_t>  (L, false); }
+int LuaPack::UnpackI16(lua_State* L) { return UnpackType<int16_t> (L, false); }
+int LuaPack::UnpackI32(lua_State* L) { return UnpackType<int32_t> (L, true);  }
+int LuaPack::UnpackI64(lua_State* L) { return UnpackType<int64_t> (L, true);  }
+int LuaPack::UnpackF32(lua_State* L) { return UnpackType<float>   (L, false); }
+int LuaPack::UnpackF64(lua_State* L) { return UnpackType<double>  (L, true);  }
 
 
 //============================================================================//
