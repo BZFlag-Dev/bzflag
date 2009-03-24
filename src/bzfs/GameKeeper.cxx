@@ -490,17 +490,21 @@ void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
   currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
   currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
   currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
-  if ( currentPos[2] < 0 )
-    currentPos[2] = 0;	// burrow depth maybe?
+  if (currentPos[2] < 0.0f) {
+    currentPos[2] = 0.0f; // burrow depth maybe?
+  }
 
   currentRot = lastState.azimuth + (lastState.angVel * delta);
 
-  // clamp us to +- 180, makes math easy
-  while (currentRot > 180.0)
-    currentRot -= 180.0;
-
-  while (currentRot < -180.0)
-    currentRot += 180.0;
+  // clamp azimuth to [ -M_PI, +M_PI ]
+  const float m_pi   = (float)(M_PI);
+  const float m_pi_2 = (float)(M_PI * 2.0);
+  currentRot = fmodf(currentRot, m_pi_2);
+  if (currentRot < -m_pi) {
+    currentRot += m_pi_2;
+  } else if (currentRot > +m_pi) {
+    currentRot -= m_pi_2;
+  }
 }
 
 PlayerState GameKeeper::Player::getCurrentStateAsState ( void )
