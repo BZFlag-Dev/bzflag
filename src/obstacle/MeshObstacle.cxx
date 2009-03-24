@@ -647,17 +647,17 @@ void *MeshObstacle::pack(void *buf) const
   buf = nboPackInt(buf, checkCount);
   for (i = 0; i < checkCount; i++) {
     buf = nboPackUByte(buf, checkTypes[i]);
-    buf = nboPackFloatVector(buf, checkPoints[i]);
+    buf = nboPackFloatVec3(buf, checkPoints[i]);
   }
 
   buf = nboPackInt(buf, vertexCount);
   for (i = 0; i < vertexCount; i++) {
-    buf = nboPackFloatVector(buf, vertices[i]);
+    buf = nboPackFloatVec3(buf, vertices[i]);
   }
 
   buf = nboPackInt(buf, normalCount);
   for (i = 0; i < normalCount; i++) {
-    buf = nboPackFloatVector(buf, normals[i]);
+    buf = nboPackFloatVec3(buf, normals[i]);
   }
 
   void* txcdStart = buf;
@@ -725,21 +725,21 @@ void *MeshObstacle::unpack(void *buf)
     unsigned char tmp;
     buf = nboUnpackUByte(buf, tmp);
     checkTypes[i] = tmp;
-    buf = nboUnpackFloatVector(buf, checkPoints[i]);
+    buf = nboUnpackFloatVec3(buf, checkPoints[i]);
   }
 
   buf = nboUnpackInt(buf, inTmp);
   vertexCount = int(inTmp);
   vertices = new fvec3[vertexCount];
   for (i = 0; i < vertexCount; i++) {
-    buf = nboUnpackFloatVector(buf, vertices[i]);
+    buf = nboUnpackFloatVec3(buf, vertices[i]);
   }
 
   buf = nboUnpackInt(buf, inTmp);
   normalCount = int(inTmp);
   normals = new fvec3[normalCount];
   for (i = 0; i < normalCount; i++) {
-    buf = nboUnpackFloatVector(buf, normals[i]);
+    buf = nboUnpackFloatVec3(buf, normals[i]);
   }
 
   buf = nboUnpackInt(buf, inTmp);

@@ -34,20 +34,19 @@ static const int HEADER_SIZE_STUFFING = 0;
 #include <sys/types.h>
 #include <time.h>
 #include <vector>
+
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #  include <dirent.h>
 #endif
 
-#ifdef _WIN32
+#ifndef _WIN32
+#  include <sys/time.h>
+#else
 #  include <direct.h>
-typedef __int64 i64;
 #  ifndef S_ISDIR
 #    define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
 #  endif
-#else
-#include <sys/time.h>
-typedef int64_t i64;
 #endif
 
 // common headers
@@ -71,7 +70,7 @@ typedef int64_t i64;
 
 typedef uint16_t u16;
 typedef uint32_t u32;
-typedef i64 RRtime; // should last a while
+typedef int64_t  RRtime; // should last a while
 
 enum RecordType {
   StraightToFile  = 0,
@@ -1671,7 +1670,7 @@ static bool savePlayersState()
       float pos[3] = {0.0f, 0.0f, 0.0f};
       // Complete MsgAlive
       buf = nboPackUByte(bufStart, i);
-      buf = nboPackFloatVector(buf, pos);
+      buf = nboPackFloatVec3(buf, pos);
       buf = nboPackFloat(buf, pos[0]); // azimuth
       routePacket(MsgAlive,
 		   (char*)buf - (char*)bufStart, bufStart, StatePacket);

@@ -115,8 +115,8 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
 
 void * WorldFileLocation::pack(void *buf) const
 {
-  buf = nboPackFloatVector (buf, pos);
-  buf = nboPackFloatVector (buf, size);
+  buf = nboPackFloatVec3 (buf, pos);
+  buf = nboPackFloatVec3 (buf, size);
   buf = nboPackFloat (buf, rotation);
   return buf;
 }

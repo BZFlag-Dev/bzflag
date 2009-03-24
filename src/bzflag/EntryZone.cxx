@@ -29,8 +29,8 @@ void* EntryZone::unpack(void* buf)
 {
   uint16_t flagCount, teamCount, safetyCount;
 
-  buf = nboUnpackFloatVector(buf, pos);
-  buf = nboUnpackFloatVector(buf, size);
+  buf = nboUnpackFloatVec3(buf, pos);
+  buf = nboUnpackFloatVec3(buf, size);
   buf = nboUnpackFloat(buf, rot);
   buf = nboUnpackUShort(buf, flagCount);
   buf = nboUnpackUShort(buf, teamCount);

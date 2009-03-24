@@ -37,11 +37,7 @@
 // type definitions
 typedef uint16_t u16;
 typedef uint32_t u32;
-#ifndef WIN32
-typedef int64_t i64;
-#else
-typedef __int64 i64;
-#endif
+typedef int64_t  i64;
 
 struct TimeRecord {
   i64 netTime;

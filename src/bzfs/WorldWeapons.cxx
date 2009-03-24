@@ -203,7 +203,7 @@ void * WorldWeapons::pack(void *buf) const
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
     buf = w->type->pack (buf);
-    buf = nboPackFloatVector(buf, w->origin);
+    buf = nboPackFloatVec3(buf, w->origin);
     buf = nboPackFloat(buf, w->direction);
     buf = nboPackFloat(buf, w->initDelay);
     buf = nboPackUShort(buf, w->delay.size());

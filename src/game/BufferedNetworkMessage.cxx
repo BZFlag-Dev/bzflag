@@ -123,10 +123,10 @@ void BufferedNetworkMessage::packDouble(double val)
   packedSize += sizeof(double);
 }
 
-void BufferedNetworkMessage::packFloatVector(const float* val)
+void BufferedNetworkMessage::packFloatVec3(const float* val)
 {
   checkData(sizeof(float)*3);
-  nboPackFloatVector(getWriteBuffer(), val);
+  nboPackFloatVec3(getWriteBuffer(), val);
   packedSize += sizeof(float)*3;
 }
 
@@ -207,12 +207,12 @@ double BufferedNetworkMessage::unpackDouble(void)
   return v;
 }
 
-float* BufferedNetworkMessage::unpackFloatVector(float* val)
+float* BufferedNetworkMessage::unpackFloatVec3(float* val)
 {
   memset(val, 0, sizeof(float)*3);
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackFloatVector(p, val))-p;
+    packedSize += (char*)(nboUnpackFloatVec3(p, val))-p;
   return val;
 }
 

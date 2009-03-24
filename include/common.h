@@ -165,6 +165,11 @@
 #ifdef HAVE_STDINT_H
 #  include <stdint.h>
 #else
+typedef signed char	int8_t;
+typedef unsigned char	uint8_t;
+#  ifdef WIN32
+typedef __int64		int64_t;
+#  endif
 #  if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
@@ -175,8 +180,6 @@ typedef ushort_t	uint16_t;
 typedef signed int	int32_t;
 typedef uint_t		uint32_t;
 #  endif
-typedef signed char	int8_t;
-typedef unsigned char	uint8_t;
 #endif
 
 /* missing constants */

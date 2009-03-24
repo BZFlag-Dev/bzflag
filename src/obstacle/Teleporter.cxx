@@ -526,9 +526,9 @@ void* Teleporter::pack(void* buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackFloatVector(buf, pos);
+  buf = nboPackFloatVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackFloatVector(buf, origSize);
+  buf = nboPackFloatVec3(buf, origSize);
   buf = nboPackFloat(buf, border);
 
   unsigned char horizontalByte = horizontal ? 1 : 0;
@@ -548,9 +548,9 @@ void* Teleporter::unpack(void* buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackFloatVector(buf, pos);
+  buf = nboUnpackFloatVec3(buf, pos);
   buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackFloatVector(buf, size);
+  buf = nboUnpackFloatVec3(buf, size);
   buf = nboUnpackFloat(buf, border);
 
   unsigned char horizontalByte;

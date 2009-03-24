@@ -123,6 +123,22 @@ void* nboPackUInt(void* b, uint32_t v)
 }
 
 
+void* nboPackI64(void* b, int64_t v)
+{
+  // not really htond(), but they are the same size
+  htond((unsigned char*)b, (const unsigned char *)&v, 1);
+  return ADV(b, int64_t);
+}
+
+
+void* nboPackU64(void* b, uint64_t v)
+{
+  // not really htond(), but they are the same size
+  htond((unsigned char*)b, (const unsigned char *)&v, 1);
+  return ADV(b, uint64_t);
+}
+
+
 void* nboPackFloat(void* b, float v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
@@ -143,19 +159,19 @@ void* nboPackDouble(void* b, double v)
 }
 
 
-void* nboPackFloatVector(void* b, const float* v)
+void* nboPackFloatVec3(void* b, const float* v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
   uint32_t data[3];
 
-  for (int i=0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     u.floatval = v[i];
     data[i] = (uint32_t)htonl(u.intval);
   }
 
-  ::memcpy( b, data, 3*sizeof(uint32_t));
-  return (void*) (((char*)b)+3*sizeof(uint32_t));
+  ::memcpy(b, data, 3 * sizeof(uint32_t));
+  return (void*) (((char*)b) + (3 * sizeof(uint32_t)));
 }
 
 
@@ -277,6 +293,42 @@ void* nboUnpackUInt(void* b, uint32_t& v)
 }
 
 
+void* nboUnpackI64(void* b, int64_t& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(int64_t)) {
+      Error = true;
+      v = 0.0f;
+      return b;
+    } else {
+      Length -= sizeof(int64_t);
+    }
+  }
+
+  // not really ntohd(), but they are the same size
+  ntohd((unsigned char *)&v, (unsigned char *)b, 1);
+  return ADV(b, int64_t);
+}
+
+
+void* nboUnpackU64(void* b, uint64_t& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(uint64_t)) {
+      Error = true;
+      v = 0.0f;
+      return b;
+    } else {
+      Length -= sizeof(uint64_t);
+    }
+  }
+
+  // not really ntohd(), but they are the same size
+  ntohd((unsigned char *)&v, (unsigned char *)b, 1);
+  return ADV(b, uint64_t);
+}
+
+
 void* nboUnpackFloat(void* b, float& v)
 {
   if (ErrorChecking) {
@@ -317,7 +369,7 @@ void* nboUnpackDouble(void* b, double& v)
 }
 
 
-void* nboUnpackFloatVector(void* b, float* v)
+void* nboUnpackFloatVec3(void* b, float* v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[3])) {
@@ -334,12 +386,12 @@ void* nboUnpackFloatVector(void* b, float* v)
   floatintuni u;
   ::memcpy( data, b, 3*sizeof(uint32_t));
 
-  for (int i=0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     u.intval = (uint32_t)ntohl(data[i]);
     v[i] = u.floatval;
   }
 
-  return (void *) (((char*)b) + 3*sizeof(float));
+  return (void *) (((char*)b) + (3 * sizeof(float)));
 }
 
 

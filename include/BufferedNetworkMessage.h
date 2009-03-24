@@ -43,7 +43,7 @@ public:
   void packUInt(uint32_t val);
   void packFloat(float val);
   void packDouble(double val);
-  void packFloatVector(const float* val);
+  void packFloatVec3(const float* val);
   void packString(const char* val, int len);
   void packStdString(const std::string& str);
 
@@ -54,7 +54,7 @@ public:
   uint32_t unpackUInt(void);
   float unpackFloat(void);
   double unpackDouble(void);
-  float* unpackFloatVector(float* val);
+  float* unpackFloatVec3(float* val);
   const std::string& unpackStdString(std::string& str);
 
   void clear(void);

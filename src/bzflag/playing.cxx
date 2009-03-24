@@ -2354,7 +2354,7 @@ static void handleAliveMessage(void *msg)
   float pos[3], forward;
 
   msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackFloatVector(msg, pos);
+  msg = nboUnpackFloatVec3(msg, pos);
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 
@@ -2978,7 +2978,7 @@ static void handleNearFlag(void *msg)
 {
   float pos[3];
   std::string flagName;
-  msg = nboUnpackFloatVector(msg, pos);
+  msg = nboUnpackFloatVec3(msg, pos);
   msg = nboUnpackStdString(msg, flagName);
 
   std::string fullMessage = "Closest Flag: " + flagName;

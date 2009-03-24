@@ -83,8 +83,8 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 
     code = MsgPlayerUpdate;
 
-    buf = nboPackFloatVector(buf, pos);
-    buf = nboPackFloatVector(buf, velocity);
+    buf = nboPackFloatVec3(buf, pos);
+    buf = nboPackFloatVec3(buf, velocity);
     buf = nboPackFloat(buf, azimuth);
     buf = nboPackFloat(buf, angVel);
   } else {
@@ -166,8 +166,8 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
 
     code = MsgPlayerUpdate;
 
-    msg->packFloatVector(pos);
-    msg->packFloatVector(velocity);
+    msg->packFloatVec3(pos);
+    msg->packFloatVec3(velocity);
     msg->packFloat(azimuth);
     msg->packFloat(angVel);
   } else {
@@ -238,8 +238,8 @@ void* PlayerState::unpack(void* buf, uint16_t code)
   status = short(inStatus);
 
   if (code == MsgPlayerUpdate) {
-    buf = nboUnpackFloatVector(buf, pos);
-    buf = nboUnpackFloatVector(buf, velocity);
+    buf = nboUnpackFloatVec3(buf, pos);
+    buf = nboUnpackFloatVec3(buf, velocity);
     buf = nboUnpackFloat(buf, azimuth);
     buf = nboUnpackFloat(buf, angVel);
   } else {
