@@ -2222,17 +2222,12 @@ AC_HELP_STRING([--disable-ares],[Disable c-ares for name lookups]),
        dnl and the includes are in $val/include. This is the default setup for
        dnl ares so it should not be a problem.
        if test "x$enableval" = "xyes" ; then
-         if test -d "$srcdir/ares"; then
+         if test -d "$srcdir/../ares"; then
             aresembedded="yes"
             AC_CONFIG_SUBDIRS(ares)
-            aresinc=`cd $srcdir/ares && pwd`
+            aresinc=`cd $srcdir/../ares && pwd`
             CPPFLAGS="$CPPFLAGS -I$aresinc"
-
-            dnl the pwd= below cannot 'cd' into the ares dir to get the full
-            dnl path to it, since it may not exist yet if we build outside of
-            dnl the source tree
-            pwd=`pwd`
-            LDFLAGS="$LDFLAGS -L$pwd/ares"
+            LDFLAGS="$LDFLAGS -L$aresinc"
          fi
        else
          CPPFLAGS="$CPPFLAGS -I$enableval/include"
@@ -2533,25 +2528,6 @@ AC_CONFIG_FILES([Makefile \
            include/curl/Makefile \
            src/Makefile \
            lib/Makefile \
-           tests/Makefile \
-           tests/data/Makefile \
-           tests/server/Makefile \
-           tests/libtest/Makefile \
-           packages/Makefile \
-           packages/Win32/Makefile \
-           packages/Win32/cygwin/Makefile \
-           packages/Linux/Makefile \
-           packages/Linux/RPM/Makefile \
-           packages/Linux/RPM/curl.spec \
-           packages/Linux/RPM/curl-ssl.spec \
-           packages/Solaris/Makefile \
-           packages/DOS/Makefile \
-           packages/EPM/curl.list \
-           packages/EPM/Makefile \
-           packages/vms/Makefile \
-           packages/AIX/Makefile \
-           packages/AIX/RPM/Makefile \
-           packages/AIX/RPM/curl.spec \
            curl-config \
            libcurl.pc
 ])
