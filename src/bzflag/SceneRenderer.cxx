@@ -642,7 +642,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
     const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
     const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;
     const float lpp = (lppx < lppy) ? lppx : lppy;
-    lengthPerPixel = lpp * BZDB.eval("lodScale");
+    static BZDB_float lodScale("lodScale");
+    lengthPerPixel = lpp * lodScale;
   }
 
   // get the track mark sceneNodes (only for BSP)
@@ -790,7 +791,16 @@ void SceneRenderer::renderScene()
 
   // update the required flag phases
   // (after the sceneNodes have been added, before the rendering)
-  FlagSceneNode::waveFlags();
+  float waveSpeed = 1.0f;
+  const World* world = World::getWorld();
+  if (world) {
+    static const float pos[3] = { 0.0f, 0.0f, 0.0f };
+    float wind[3];
+    world->getWind(wind, pos);
+    const float speed = sqrtf((wind[0] * wind[0]) + (wind[1] * wind[1]));
+    waveSpeed = 1.0f + (speed * 0.1f);
+  }
+  FlagSceneNode::waveFlags(waveSpeed);
 
   // prepare transforms
   // note -- lights should not be positioned before view is set
@@ -905,7 +915,6 @@ void SceneRenderer::renderScene()
       if (scene && BZDBCache::showCullingGrid) {
         scene->drawCuller();
       }
-      const World* world = World::getWorld();
       if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
         world->drawCollisionGrid();
       }

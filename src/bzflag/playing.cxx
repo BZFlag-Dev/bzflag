@@ -466,7 +466,7 @@ void warnAboutConsole()
 static void warnAboutSlowMotion()
 {
   static bool notified = false;
-  bool slow =  BZDB.isTrue("slowMotion");
+  const bool slow = BZDB.isTrue("slowMotion");
 
   /* if it's not slow, then nothing to warn */
   if (!slow) {
@@ -997,6 +997,24 @@ static void doMotion()
     } else {
       speed = 0.0f;
     }
+
+    // parabolic control
+    static BZDB_float s1("parabolicSlope");
+    if (!isnan((float)s1)) {
+      const float s2 = (1.0f - s1);
+      if (speed >= 0.0f) {
+        speed *= ((s2 * speed) + s1);
+      } else {
+        speed *= -2.0f; // scale to (0.0f,1.0f]   (note the -0.5f clamp)
+        speed *= ((s2 * speed) + s1);
+        speed *= -0.5f;
+      }
+      if (rotation >= 0.0f) {
+        rotation *= ((+s2 * rotation) + s1);
+      } else {
+        rotation *= ((-s2 * rotation) + s1);
+      }
+    }
   }
 
   // speed clamp
@@ -1005,6 +1023,7 @@ static void doMotion()
   } else if (speed > +1.0f) {
     speed = +1.0f;
   }
+
   // rotation clamp
   if (rotation < -1.0f) {
     rotation = -1.0f;

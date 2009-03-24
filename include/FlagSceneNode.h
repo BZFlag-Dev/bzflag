@@ -35,7 +35,7 @@ class FlagSceneNode : public SceneNode {
     FlagSceneNode(const GLfloat pos[3]);
     ~FlagSceneNode();
 
-    static void waveFlags();
+    static void waveFlags(float waveSpeed);
     static void setTimeStep(float dt);
 
     void move(const GLfloat pos[3]);

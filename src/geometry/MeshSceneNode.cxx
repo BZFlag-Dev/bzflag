@@ -650,7 +650,8 @@ void MeshSceneNode::setLodScale(int pixelsX, float fovx,
   const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
   const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;
   const float lpp = (lppx < lppy) ? lppx : lppy;
-  LodScale = lpp * BZDB.eval("lodScale");
+  static BZDB_float lodScale("lodScale");
+  LodScale = lpp * lodScale;
   return;
 }
 

@@ -64,7 +64,7 @@ class FlagPhase {
 
     static FlagPhase*	getPhase();
     static void		setTimeStep(float dt);
-    static void		updatePhases();
+    static void		updatePhases(float waveSpeed);
 
     // return the triangle count
     int render(int lod) const;
@@ -135,7 +135,7 @@ FlagPhase* FlagPhase::getPhase()
 }
 
 
-void FlagPhase::updatePhases()
+void FlagPhase::updatePhases(float waveSpeed)
 {
   // not really required
   if (BZDBCache::maxFlagLOD < 0) {
@@ -145,7 +145,7 @@ void FlagPhase::updatePhases()
   }
 
   for (int i = 0; i < maxFlagPhases; i++) {
-    phases[i].update(timeStep);
+    phases[i].update(timeStep * waveSpeed);
   }
   return;
 }
@@ -473,12 +473,12 @@ void FlagSceneNode::setTimeStep(float dt)
 }
 
 
-void FlagSceneNode::waveFlags()
+void FlagSceneNode::waveFlags(float waveSpeed)
 {
   // This should be done after the flags
   // have passed through addRenderNodes(),
   // but before they are rendered.
-  FlagPhase::updatePhases();
+  FlagPhase::updatePhases(waveSpeed);
   return;
 }
 
