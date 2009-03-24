@@ -174,7 +174,7 @@ int UnpackType(lua_State* L, bool defaultToDoubles = false)
 
 	// return a table
 	const int maxCount = (len / eSize);
-	int tableCount = lua_toint(L, 3);
+	int tableCount = lua_toint(L, index + 2);
 	if (tableCount < 0) {
 		tableCount = maxCount;
 	}
