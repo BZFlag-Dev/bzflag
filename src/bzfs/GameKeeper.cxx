@@ -496,7 +496,7 @@ void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
 
   currentRot = lastState.azimuth + (lastState.angVel * delta);
 
-  // clamp azimuth to [ -M_PI, +M_PI ]
+  // clamp currentRot to [ -M_PI, +M_PI ]
   const float m_pi   = (float)(M_PI);
   const float m_pi_2 = (float)(M_PI * 2.0);
   currentRot = fmodf(currentRot, m_pi_2);
