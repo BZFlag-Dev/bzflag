@@ -1203,7 +1203,7 @@ fi
 AC_SUBST(lt_ECHO)
 ])
 _LT_DECL([], [SHELL], [1], [Shell to use when invoking shell scripts])
-_LT_DECL([], [ECHO], [1],
+_LT_DECL([echo], [ECHO], [1],
     [An echo program that does not interpret backslashes])
 ])# _LT_PROG_ECHO_BACKSLASH
 
