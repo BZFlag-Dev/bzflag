@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: htmltitle.cc,v 1.3 2005/02/09 15:15:01 giva Exp $
+ * $Id: htmltitle.cc,v 1.4 2008-05-22 21:20:09 danf Exp $
  */
 
 // Get a web page, parse it with libxml.
@@ -100,7 +100,7 @@ static bool init(CURL *&conn, char *url)
     return false;
   }
 
-  code = curl_easy_setopt(conn, CURLOPT_FOLLOWLOCATION, 1);
+  code = curl_easy_setopt(conn, CURLOPT_FOLLOWLOCATION, 1L);
   if (code != CURLE_OK)
   {
     fprintf(stderr, "Failed to set redirect option [%s]\n", errorBuffer);

@@ -18,12 +18,12 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_negotiate.c,v 1.25 2008-03-01 22:32:03 bagder Exp $
+ * $Id: http_negotiate.c,v 1.33 2008-10-23 11:49:19 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
 #ifdef HAVE_GSSAPI
-#ifdef HAVE_GSSMIT
+#ifdef HAVE_OLD_GSSMIT
 #define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #endif
 
@@ -37,10 +37,23 @@
 
 #include "urldata.h"
 #include "sendf.h"
-#include "strequal.h"
-#include "base64.h"
+#include "rawstr.h"
+#include "curl_base64.h"
 #include "http_negotiate.h"
 #include "memory.h"
+
+#ifdef HAVE_SPNEGO
+#  include <spnegohelp.h>
+#  ifdef USE_SSLEAY
+#    ifdef USE_OPENSSL
+#      include <openssl/objects.h>
+#    else
+#      include <objects.h>
+#    endif
+#  else
+#    error "Can't compile SPNEGO support without OpenSSL."
+#  endif
+#endif
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -88,7 +101,7 @@ get_gss_name(struct connectdata *conn, bool proxy, gss_name_t *server)
 }
 
 static void
-log_gss_error(struct connectdata *conn, OM_uint32 error_status, char *prefix)
+log_gss_error(struct connectdata *conn, OM_uint32 error_status, const char *prefix)
 {
   OM_uint32 maj_stat, min_stat;
   OM_uint32 msg_ctx = 0;
@@ -116,6 +129,8 @@ log_gss_error(struct connectdata *conn, OM_uint32 error_status, char *prefix)
   infof(conn->data, "%s", buf);
 }
 
+/* returning zero (0) means success, everything else is treated as "failure"
+   with no care exactly what the failure was */
 int Curl_input_negotiate(struct connectdata *conn, bool proxy,
                          const char *header)
 {
@@ -185,9 +200,13 @@ int Curl_input_negotiate(struct connectdata *conn, bool proxy,
         unsigned char * mechToken         = NULL;
         size_t          mechTokenLength   = 0;
 
-        spnegoToken = malloc(input_token.length);
         if(input_token.value == NULL)
-          return ENOMEM;
+          return CURLE_OUT_OF_MEMORY;
+
+        spnegoToken = malloc(input_token.length);
+        if(spnegoToken == NULL)
+          return CURLE_OUT_OF_MEMORY;
+
         spnegoTokenLength = input_token.length;
 
         object = OBJ_txt2obj ("1.2.840.113554.1.2.2", 1);
@@ -205,8 +224,10 @@ int Curl_input_negotiate(struct connectdata *conn, bool proxy,
         }
         else {
           free(input_token.value);
-          input_token.value = NULL;
           input_token.value = malloc(mechTokenLength);
+          if (input_token.value == NULL)
+            return CURLE_OUT_OF_MEMORY;
+
           memcpy(input_token.value, mechToken,mechTokenLength);
           input_token.length = mechTokenLength;
           free(mechToken);
@@ -236,7 +257,7 @@ int Curl_input_negotiate(struct connectdata *conn, bool proxy,
   if(GSS_ERROR(major_status)) {
     /* Curl_cleanup_negotiate(conn->data) ??? */
     log_gss_error(conn, minor_status,
-                  (char *)"gss_init_sec_context() failed: ");
+                  "gss_init_sec_context() failed: ");
     return -1;
   }
 

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: multi-post.c,v 1.5 2007-07-12 21:11:10 danf Exp $
+ * $Id: multi-post.c,v 1.6 2008-05-22 21:20:09 danf Exp $
  *
  * This is an example application source code using the multi interface
  * to do a multipart formpost without "blocking".
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     /* what URL that receives this POST */
     curl_easy_setopt(curl, CURLOPT_URL,
                      "http://www.fillinyoururl.com/upload.cgi");
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
     curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);

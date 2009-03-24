@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: persistant.c,v 1.3 2004/11/24 16:11:35 bagder Exp $
+ * $Id: persistant.c,v 1.4 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
@@ -21,8 +21,8 @@ int main(int argc, char **argv)
 
   curl = curl_easy_init();
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
-    curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
 
     /* get the first document */
     curl_easy_setopt(curl, CURLOPT_URL, "http://curl.haxx.se/");

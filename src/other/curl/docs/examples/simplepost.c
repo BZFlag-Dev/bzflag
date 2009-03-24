@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: simplepost.c,v 1.3 2007-07-12 21:11:10 danf Exp $
+ * $Id: simplepost.c,v 1.4 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
@@ -26,7 +26,7 @@ int main(void)
 
     /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by
        itself */
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(postthis));
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(postthis));
 
     res = curl_easy_perform(curl);
 

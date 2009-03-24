@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: ftpget.c,v 1.7 2008-02-27 09:06:15 bagder Exp $
+ * $Id: ftpget.c,v 1.8 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
@@ -65,7 +65,7 @@ int main(void)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftpfile);
 
     /* Switch on full protocol/debug output */
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
     res = curl_easy_perform(curl);
 

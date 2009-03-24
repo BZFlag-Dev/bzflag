@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: select.h,v 1.15 2008-01-22 14:52:54 yangtse Exp $
+ * $Id: select.h,v 1.16 2008-07-10 18:01:45 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -37,14 +37,16 @@
 
 #if defined(USE_WINSOCK) && (USE_WINSOCK > 1) && \
     defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
-#undef  HAVE_POLL
-#define HAVE_POLL 1
-#undef  HAVE_POLL_FINE
-#define HAVE_POLL_FINE 1
-#define poll(x,y,z) WSAPoll((x),(y),(z))
-#if defined(_MSC_VER) && defined(POLLRDNORM)
-#define HAVE_STRUCT_POLLFD 1
-#endif
+#  undef  HAVE_POLL
+#  define HAVE_POLL 1
+#  undef  HAVE_POLL_FINE
+#  define HAVE_POLL_FINE 1
+#  define poll(x,y,z) WSAPoll((x),(y),(z))
+#  if defined(_MSC_VER) && defined(POLLRDNORM)
+#    undef  POLLPRI
+#    define POLLPRI POLLRDBAND
+#    define HAVE_STRUCT_POLLFD 1
+#  endif
 #endif
 
 /*

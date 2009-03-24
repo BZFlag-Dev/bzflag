@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: version.c,v 1.56 2007-11-07 09:21:36 bagder Exp $
+ * $Id: version.c,v 1.59 2008-08-26 01:40:19 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -190,7 +190,8 @@ static curl_version_info_data version_info = {
 #ifdef HAVE_SPNEGO
   | CURL_VERSION_SPNEGO
 #endif
-#if defined(ENABLE_64BIT) && (SIZEOF_CURL_OFF_T > 4)
+#if (CURL_SIZEOF_CURL_OFF_T > 4) && \
+    ( (SIZEOF_OFF_T > 4) || defined(USE_WIN32_LARGE_FILES) )
   | CURL_VERSION_LARGEFILE
 #endif
 #if defined(CURL_DOES_CONVERSIONS)

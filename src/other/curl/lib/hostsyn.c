@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostsyn.c,v 1.12 2007-04-03 18:25:18 yangtse Exp $
+ * $Id: hostsyn.c,v 1.14 2008-09-29 21:44:50 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -52,10 +52,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -70,10 +66,6 @@
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
-
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
 
 #include "memory.h"
 /* The last #include file should be: */

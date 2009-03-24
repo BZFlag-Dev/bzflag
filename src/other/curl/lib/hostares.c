@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostares.c,v 1.36 2007-11-07 09:21:35 bagder Exp $
+ * $Id: hostares.c,v 1.46 2009-01-31 20:25:56 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -52,10 +52,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -73,18 +69,14 @@
 #include "strerror.h"
 #include "url.h"
 #include "multiif.h"
+#include "inet_pton.h"
 #include "connect.h"
 #include "select.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
-
 #include "memory.h"
-
 /* The last #include file should be: */
 #include "memdebug.h"
 
@@ -143,30 +135,27 @@ static int ares_waitperform(struct connectdata *conn, int timeout_ms)
   int bitmask;
   int socks[ARES_GETSOCK_MAXNUM];
   struct pollfd pfd[ARES_GETSOCK_MAXNUM];
-  int m;
   int i;
-  int num;
+  int num = 0;
 
   bitmask = ares_getsock(data->state.areschannel, socks, ARES_GETSOCK_MAXNUM);
 
   for(i=0; i < ARES_GETSOCK_MAXNUM; i++) {
     pfd[i].events = 0;
-    m=0;
+    pfd[i].revents = 0;
     if(ARES_GETSOCK_READABLE(bitmask, i)) {
       pfd[i].fd = socks[i];
       pfd[i].events |= POLLRDNORM|POLLIN;
-      m=1;
     }
     if(ARES_GETSOCK_WRITABLE(bitmask, i)) {
       pfd[i].fd = socks[i];
       pfd[i].events |= POLLWRNORM|POLLOUT;
-      m=1;
     }
-    pfd[i].revents=0;
-    if(!m)
+    if(pfd[i].events != 0)
+      num++;
+    else
       break;
   }
-  num = i;
 
   if(num)
     nfds = Curl_poll(pfd, num, timeout_ms);
@@ -233,6 +222,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
   CURLcode rc=CURLE_OK;
   struct SessionHandle *data = conn->data;
   long timeout;
+  struct timeval now = Curl_tvnow();
 
   /* now, see if there's a connect timeout or a regular timeout to
      use instead of the default one */
@@ -246,11 +236,13 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
   /* Wait for the name resolve query to complete. */
   while(1) {
     struct timeval *tvp, tv, store;
-    struct timeval now = Curl_tvnow();
     long timediff;
+    int itimeout;
 
-    store.tv_sec = (int)timeout/1000;
-    store.tv_usec = (timeout%1000)*1000;
+    itimeout = (timeout > (long)INT_MAX) ? INT_MAX : (int)timeout;
+
+    store.tv_sec = itimeout/1000;
+    store.tv_usec = (itimeout%1000)*1000;
 
     tvp = ares_timeout(data->state.areschannel, &store, &tv);
 
@@ -297,6 +289,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
   return rc;
 }
 
+
 /*
  * Curl_getaddrinfo() - when using ares
  *
@@ -312,14 +305,42 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 {
   char *bufp;
   struct SessionHandle *data = conn->data;
-  in_addr_t in = inet_addr(hostname);
-
+  struct in_addr in;
+  int family = PF_INET;
+#ifdef ENABLE_IPV6 /* CURLRES_IPV6 */
+  struct in6_addr in6;
+#endif /* CURLRES_IPV6 */
   *waitp = FALSE;
 
-  if(in != CURL_INADDR_NONE) {
+  /* First check if this is an IPv4 address string */
+  if(Curl_inet_pton(AF_INET, hostname, &in) > 0) {
     /* This is a dotted IP address 123.123.123.123-style */
-    return Curl_ip2addr(in, hostname, port);
+    return Curl_ip2addr(AF_INET, &in, hostname, port);
   }
+
+#ifdef ENABLE_IPV6 /* CURLRES_IPV6 */
+  /* Otherwise, check if this is an IPv6 address string */
+  if (Curl_inet_pton (AF_INET6, hostname, &in6) > 0) {
+    /* This must be an IPv6 address literal.  */
+    return Curl_ip2addr(AF_INET6, &in6, hostname, port);
+  }
+
+  switch(data->set.ip_version) {
+  default:
+#if ARES_VERSION >= 0x010601
+    family = PF_UNSPEC; /* supported by c-ares since 1.6.1, so for older
+                           c-ares versions this just falls through and defaults
+                           to PF_INET */
+    break;
+#endif
+  case CURL_IPRESOLVE_V4:
+    family = PF_INET;
+    break;
+  case CURL_IPRESOLVE_V6:
+    family = PF_INET6;
+    break;
+  }
+#endif /* CURLRES_IPV6 */
 
   bufp = strdup(hostname);
 
@@ -332,7 +353,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
     conn->async.dns = NULL;   /* clear */
 
     /* areschannel is already setup in the Curl_open() function */
-    ares_gethostbyname(data->state.areschannel, hostname, PF_INET,
+    ares_gethostbyname(data->state.areschannel, hostname, family,
                        (ares_host_callback)Curl_addrinfo4_callback, conn);
 
     *waitp = TRUE; /* please wait for the response */

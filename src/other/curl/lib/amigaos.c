@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: amigaos.c,v 1.7 2007-02-28 14:45:48 yangtse Exp $
+ * $Id: amigaos.c,v 1.8 2009-02-27 08:53:10 bagder Exp $
  ***************************************************************************/
 
 #ifdef __AMIGA__ /* Any AmigaOS flavour */
@@ -33,42 +33,39 @@ extern int errno, h_errno;
 #include <stabs.h>
 void __request(const char *msg);
 #else
-# define __request( msg )	Printf( msg "\n\a")
+# define __request( msg )       Printf( msg "\n\a")
 #endif
 
 void amiga_cleanup()
 {
-	if(SocketBase) {
-		CloseLibrary(SocketBase);
-		SocketBase = NULL;
-	}
+  if(SocketBase) {
+    CloseLibrary(SocketBase);
+    SocketBase = NULL;
+  }
 }
 
 BOOL amiga_init()
 {
-	if(!SocketBase)
-		SocketBase = OpenLibrary("bsdsocket.library", 4);
-	
-	if(!SocketBase) {
-		__request("No TCP/IP Stack running!");
-		return FALSE;
-	}
-	
-	if(SocketBaseTags(
-		SBTM_SETVAL(SBTC_ERRNOPTR(sizeof(errno))), (ULONG) &errno,
-//		SBTM_SETVAL(SBTC_HERRNOLONGPTR),	   (ULONG) &h_errno,
-		SBTM_SETVAL(SBTC_LOGTAGPTR),		   (ULONG) "cURL",
-	TAG_DONE)) {
-		
-		__request("SocketBaseTags ERROR");
-		return FALSE;
-	}
-	
+  if(!SocketBase)
+    SocketBase = OpenLibrary("bsdsocket.library", 4);
+
+  if(!SocketBase) {
+    __request("No TCP/IP Stack running!");
+    return FALSE;
+  }
+
+  if(SocketBaseTags(SBTM_SETVAL(SBTC_ERRNOPTR(sizeof(errno))), (ULONG) &errno,
+                    SBTM_SETVAL(SBTC_LOGTAGPTR), (ULONG) "cURL",
+                    TAG_DONE)) {
+    __request("SocketBaseTags ERROR");
+    return FALSE;
+  }
+
 #ifndef __libnix__
-	atexit(amiga_cleanup);
+  atexit(amiga_cleanup);
 #endif
-	
-	return TRUE;
+
+  return TRUE;
 }
 
 #ifdef __libnix__

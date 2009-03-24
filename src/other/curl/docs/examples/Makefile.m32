@@ -1,5 +1,5 @@
 #########################################################################
-# $Id: Makefile.m32,v 1.1 2008-02-18 15:43:23 gknauf Exp $
+# $Id: Makefile.m32,v 1.4 2008-05-09 16:31:51 yangtse Exp $
 #
 ## Makefile for building curl examples with MingW32
 ## and optionally OpenSSL (0.9.8), libssh2 (0.18), zlib (1.2.3)
@@ -51,7 +51,6 @@ CP = copy
 INCLUDES = -I. -I$(PROOT) -I$(PROOT)/include -I$(PROOT)/lib
 LINK = $(CC) $(LDFLAGS) -o $@
 
-curl_PROGRAMS = curl.exe
 ifdef DYN
   curl_DEPENDENCIES = $(PROOT)/lib/libcurldll.a $(PROOT)/lib/libcurl.dll
   curl_LDADD = -L$(PROOT)/lib -lcurldll
@@ -107,13 +106,13 @@ ifndef USE_LDAP_OPENLDAP
 curl_LDADD += -lwldap32
 endif
 endif
-curl_LDADD += -lws2_32 -lwinmm
+curl_LDADD += -lws2_32
 COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 
-# Makefile.inc provides the noinst_PROGRAMS and COMPLICATED_EXAMPLES defines
+# Makefile.inc provides the check_PROGRAMS and COMPLICATED_EXAMPLES defines
 include Makefile.inc
 
-example_PROGRAMS := $(patsubst %,%.exe,$(strip $(noinst_PROGRAMS)))
+example_PROGRAMS := $(patsubst %,%.exe,$(strip $(check_PROGRAMS)))
 
 .SUFFIXES: .rc .res .o .exe
 

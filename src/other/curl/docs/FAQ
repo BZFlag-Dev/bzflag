@@ -1,4 +1,4 @@
-Updated: Feb 18, 2008 (http://curl.haxx.se/docs/faq.html)
+Updated: Feb 23, 2009 (http://curl.haxx.se/docs/faq.html)
                                   _   _ ____  _
                               ___| | | |  _ \| |
                              / __| | | | |_) | |
@@ -26,7 +26,7 @@ FAQ
    2.1.2 only the libssl lib is missing
   2.2 Does curl work/build with other SSL libraries?
   2.3 Where can I find a copy of LIBEAY32.DLL?
-  2.4 Does curl support Socks (RFC 1928) ?
+  2.4 Does curl support SOCKS (RFC 1928) ?
 
  3. Usage Problems
   3.1 curl: (1) SSL is disabled, https: not supported
@@ -42,7 +42,7 @@ FAQ
   3.11 How do I POST with a different Content-Type?
   3.12 Why do FTP specific features over HTTP proxy fail?
   3.13 Why does my single/double quotes fail?
-  3.14 Does curl support javascript or pac (automated proxy config)?
+  3.14 Does curl support Javascript or PAC (automated proxy config)?
   3.15 Can I do recursive fetches with curl?
   3.16 What certificates do I need when I use SSL?
   3.17 How do I list the root dir of an FTP server?
@@ -70,6 +70,8 @@ FAQ
   4.13 Why is curl -R on Windows one hour off?
   4.14 Redirects work in browser but not with curl!
   4.15 FTPS doesn't work
+  4.16 My HTTP POST or PUT requests are slow!
+  4.17 Non-functional connect timeouts on Windows
 
  5. libcurl Issues
   5.1 Is libcurl thread-safe?
@@ -85,6 +87,7 @@ FAQ
   5.11 How do I make libcurl not receive the whole HTTP response?
   5.12 Can I make libcurl fake or hide my real IP address?
   5.13 How do I stop an ongoing transfer?
+  5.14 Using C++ non-static functions for callbacks?
 
  6. License Issues
   6.1 I have a GPL program, can I use the libcurl library?
@@ -93,7 +96,7 @@ FAQ
   6.4 I have a program that uses LGPL libraries, can I use libcurl?
   6.5 Can I modify curl/libcurl for my program and keep the changes secret?
   6.6 Can you please change the curl/libcurl license to XXXX?
-  6.7 What are my obligations when using libcurl in my commerical apps?
+  6.7 What are my obligations when using libcurl in my commercial apps?
 
  7. PHP/CURL Issues
   7.1 What is PHP/CURL?
@@ -117,10 +120,10 @@ FAQ
   libcurl
 
     A free and easy-to-use client-side URL transfer library, supporting FTP,
-    FTPS, HTTP, HTTPS, SCP, SFTP, TFTP, TELNET, DICT, FILE and LDAP.  libcurl
-    supports HTTPS certificates, HTTP POST, HTTP PUT, FTP uploading, kerberos,
-    HTTP form based upload, proxies, cookies, user+password authentication,
-    file transfer resume, http proxy tunneling and more!
+    FTPS, HTTP, HTTPS, SCP, SFTP, TFTP, TELNET, DICT, FILE, LDAP and LDAPS.
+    libcurl supports HTTPS certificates, HTTP POST, HTTP PUT, FTP uploading,
+    kerberos, HTTP form based upload, proxies, cookies, user+password
+    authentication, file transfer resume, http proxy tunneling and more!
 
     libcurl is highly portable, it builds and works identically on numerous
     platforms, including Solaris, NetBSD, FreeBSD, OpenBSD, Darwin, HPUX,
@@ -135,8 +138,8 @@ FAQ
     A command line tool for getting or sending files using URL syntax.
 
     Since curl uses libcurl, it supports a range of common Internet protocols,
-    currently including HTTP, HTTPS, FTP, FTPS, SCP, SFTP, TFTP, LDAP, DICT,
-    TELNET and FILE.
+    currently including HTTP, HTTPS, FTP, FTPS, SCP, SFTP, TFTP, LDAP, LDAPS,
+    DICT, TELNET and FILE.
 
   We pronounce curl and cURL with an initial k sound: [kurl].
 
@@ -225,11 +228,11 @@ FAQ
   Project cURL is entirely free and open. No person gets paid for developing
   (lib)curl. We do this voluntarily on our spare time.
 
-  We get some help from companies. Contactor Data hosts the curl web site,
-  Haxx owns the curl web site's domain and sourceforge.net hosts project
-  services we take advantage from, like the bug tracker. Also, some companies
-  have sponsored certain parts of the development in the past and I hope some
-  will continue to do so in the future.
+  We get some help from companies. CAG Contactor hosts the curl web site, Haxx
+  owns the curl web site's domain and sourceforge.net hosts project services
+  we take advantage from, like the bug tracker. Also, some companies have
+  sponsored certain parts of the development in the past and I hope some will
+  continue to do so in the future.
 
   If you want to support our project, consider a donation or a banner-program
   or even better: by helping us coding, documenting, testing etc.
@@ -297,7 +300,7 @@ FAQ
   as used by numerous applications that include libcurl binaries in their
   distribution packages (like Adobe Acrobat Reader and Google Earth).
 
-  More than 80 known named companies use curl in commercial environments and
+  More than 90 known named companies use curl in commercial environments and
   products. More than 100 known named open source projects depend on
   (lib)curl.
 
@@ -397,7 +400,7 @@ FAQ
   accurate and up-to-date pointers to recent OpenSSL DLLs and other binary
   packages.
 
-  2.4 Does curl support Socks (RFC 1928) ?
+  2.4 Does curl support SOCKS (RFC 1928) ?
 
   Yes, SOCKS 4 and 5 are supported.
 
@@ -555,27 +558,27 @@ FAQ
   Remember that curl works and runs on more operating systems than most single
   individuals have ever tried.
 
-  3.14 Does curl support javascript or pac (automated proxy config)?
+  3.14 Does curl support Javascript or PAC (automated proxy config)?
 
-  Many web pages do magic stuff using embedded javascript. Curl and libcurl
+  Many web pages do magic stuff using embedded Javascript. Curl and libcurl
   have no built-in support for that, so it will be treated just like any other
   contents.
 
   .pac files are a netscape invention and are sometimes used by organizations
   to allow them to differentiate which proxies to use. The .pac contents is
-  just a javascript program that gets invoked by the browser and that returns
-  the name of the proxy to connect to. Since curl doesn't support javascript,
+  just a Javascript program that gets invoked by the browser and that returns
+  the name of the proxy to connect to. Since curl doesn't support Javascript,
   it can't support .pac proxy configuration either.
 
-  Some work-arounds usually suggested to overcome this javascript dependency:
+  Some work-arounds usually suggested to overcome this Javascript dependency:
 
-  - Depending on the javascript complexity, write up a script that
+  - Depending on the Javascript complexity, write up a script that
     translates it to another language and execute that.
 
-  - Read the javascript code and rewrite the same logic in another language.
+  - Read the Javascript code and rewrite the same logic in another language.
 
-  - Implement a javascript interpreter, people have successfully used the
-    Mozilla javascript engine in the past.
+  - Implement a Javascript interpreter, people have successfully used the
+    Mozilla Javascript engine in the past.
 
   - Ask your admins to stop this, for a static proxy setup or similar.
 
@@ -656,21 +659,22 @@ FAQ
 
   4.2 Why do I get problems when I use & or % in the URL?
 
-  In general unix shells, the & letter is treated special and when used, it
+  In general unix shells, the & symbol is treated specially and when used, it
   runs the specified command in the background. To safely send the & as a part
   of a URL, you should quote the entire URL by using single (') or double (")
-  quotes around it.
+  quotes around it. Similar problems can also occur on some shells with other
+  characters, including ?*!$~(){}<>\|;`.  When in doubt, quote the URL.
 
-  An example that would invoke a remote CGI that uses &-letters could be:
+  An example that would invoke a remote CGI that uses &-symbols could be:
 
      curl 'http://www.altavista.com/cgi-bin/query?text=yes&q=curl'
 
-  In Windows, the standard DOS shell treats the %-letter specially and you
-  need to use TWO %-letters for each single one you want to use in the URL.
+  In Windows, the standard DOS shell treats the %-symbol specially and you
+  need to use TWO %-symbols for each single one you want to use in the URL.
 
-  Also note that if you want the literal %-letter to be part of the data you
+  Also note that if you want the literal %-symbol to be part of the data you
   pass in a POST using -d/--data you must encode it as '%25' (which then also
-  needs the %-letter doubled on Windows machines).
+  needs the %-symbol doubled on Windows machines).
 
   4.3 How can I use {, }, [ or ] to specify multiple URLs?
 
@@ -785,7 +789,7 @@ FAQ
 
   This is supported in curl 7.10.6 or later. No earlier curl version knows
   of this magic. Later versions require the OpenSSL or Microsoft Windows 
-  libraries to provide this functionality. Using GnuTLS or NSS libraries will 
+  libraries to provide this functionality. Using the NSS library will 
   not provide NTLM authentication functionality in curl.
 
   NTLM is a Microsoft proprietary protocol. Proprietary formats are evil. You
@@ -846,7 +850,7 @@ FAQ
   - Meta tags. You can write a HTML tag that will cause the browser to
     redirect to another given URL after a certain time.
 
-  - Javascript. You can write a javascript program embeded in a HTML page
+  - Javascript. You can write a Javascript program embedded in a HTML page
     that redirects the browser to another given URL.
 
   There is no way to make curl follow these redirects. You must either
@@ -867,6 +871,37 @@ FAQ
   mandated by RFC4217. This kind of connection then of course uses the
   standard FTP port 21 by default.
 
+  4.16 My HTTP POST or PUT requests are slow!
+
+  libcurl makes all POST and PUT requests (except for POST requests with a
+  very tiny request body) use the "Expect: 100-continue" header. This header
+  allows the server to deny the operation early so that libcurl can bail out
+  already before having to send any data. This is useful in authentication
+  cases and others.
+
+  However, many servers don't implement the Expect: stuff properly and if the
+  server doesn't respond (positively) within 1 second libcurl will continue
+  and send off the data anyway.
+
+  You can disable libcurl's use of the Expect: header the same way you disable
+  any header, using -H / CURLOPT_HTTPHEADER, or by forcing it to use HTTP 1.0.
+
+  4.17 Non-functional connect timeouts
+
+  In most Windows setups having a timeout longer than 21 seconds make no
+  difference, as it will only send 3 TCP SYN packets and no more. The second
+  packet sent three seconds after the first and the third six seconds after
+  the second.  No more than three packets are sent, no matter how long the
+  timeout is set.
+
+  See option TcpMaxConnectRetransmissions on this page:
+  http://support.microsoft.com/?scid=kb%3Ben-us%3B175523&x=6&y=7
+
+  Also, even on non-Windows systems there may run a firewall or anti-virus
+  software or similar that accepts the connection but does not actually do
+  anything else. This will make (lib)curl to consider the connection connected
+  and thus the connect timeout won't trigger.
+
 
 5. libcurl Issues
 
@@ -881,7 +916,7 @@ FAQ
   If you use a OpenSSL-powered libcurl in a multi-threaded environment, you
   need to provide one or two locking functions:
 
-    http://www.openssl.org/docs/crypto/threads.html#DESCRIPTION
+    http://www.openssl.org/docs/crypto/threads.html
 
   If you use a GnuTLS-powered libcurl in a multi-threaded environment, you
   need to provide locking function(s) for libgcrypt (which is used by GnuTLS
@@ -1070,6 +1105,24 @@ FAQ
   If you're using the multi interface, you also stop a transfer by removing
   the particular easy handle from the multi stack.
 
+  5.14 Using C++ non-static functions for callbacks?
+
+  libcurl is a C library, it doesn't know anything about C++ member functions.
+
+  You can overcome this "limitation" with a relative ease using a static
+  member function that is passed a pointer to the class:
+
+     // f is the pointer to your object.
+     static YourClass::staticFunction(void *buffer, size_t sz, size_t n, void *f)
+     {
+       // Call non-static member function.
+       static_cast<YourClass*>(f)->nonStaticFunction();
+     }
+
+     // This is how you pass pointer to the static function:
+     curl_easy_setopt(hcurl, CURLOPT_WRITEFUNCTION, YourClass:staticFunction);
+     curl_easy_setopt(hcurl, CURLOPT_WRITEDATA, this);
+
 6. License Issues
 
   Curl and libcurl are released under a MIT/X derivate license. The license is
@@ -1124,7 +1177,7 @@ FAQ
   libraries that use it. It should be possible for everyone to use libcurl or
   curl in their projects, no matter what license they already have in use.
 
-  6.7 What are my obligations when using libcurl in my commerical apps?
+  6.7 What are my obligations when using libcurl in my commercial apps?
 
   Next to none. All you need to adhere to is the MIT-style license (stated in
   the COPYING file) which basically says you have to include the copyright
@@ -1140,7 +1193,7 @@ FAQ
   your app.
 
   As can be seen here: http://curl.haxx.se/docs/companies.html and
-  elsewhere, more and more companies are dicovering the power
+  elsewhere, more and more companies are discovering the power
   of libcurl and take advantage of it even in commercial environments.
 
 

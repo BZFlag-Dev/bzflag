@@ -32,7 +32,7 @@ C
 C++
 
   Written by Jean-Philippe Barrette-LaPierre
-  http://rrette.com/textpattern/index.php?s=cURLpp
+  http://curlpp.org/
 
 Ch
 
@@ -54,21 +54,33 @@ Dylan
   Written by Chris Double
   http://dylanlibs.sourceforge.net/
 
+Eiffel
+  Written by Eiffel Software
+  http://curl.haxx.se/libcurl/eiffel/
+
 Euphoria
 
   Written by Ray Smith
   http://rays-web.com/eulibcurl.htm
 
 Ferite
+
   Written by Paul Querna
   http://www.ferite.org/
 
 Gambas
+
   http://gambas.sourceforge.net
 
 glib/GTK+
+
   Written by Richard Atterer
   http://atterer.net/glibcurl/
+
+Haskell
+
+  Written by Galois, Inc
+  http://hackage.haskell.org/cgi-bin/hackage-scripts/package/curl
 
 Java
 
@@ -173,6 +185,7 @@ Smalltalk
   http://www.squeaksource.com/CurlPlugin/
 
 SP-Forth
+
   SP-Forth binding by ygrek
   http://www.forth.org.ru/~ac/lib/lin/curl/
 
@@ -190,6 +203,11 @@ Visual Basic
 
   libcurl-vb by Jeffrey Phillips
   http://sourceforge.net/projects/libcurl-vb/
+
+Visual Foxpro
+
+  by Carlos Alloatti
+  http://www.ctl32.com.ar/libcurl.asp
 
 Q
   The libcurl module is part of the default install

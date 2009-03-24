@@ -1,4 +1,4 @@
-#  $Id: makefile.dj,v 1.8 2007-09-13 20:36:52 danf Exp $
+#  $Id: makefile.dj,v 1.10 2008-08-17 16:20:23 giva Exp $
 #
 #  Adapted for djgpp / Watt-32 / DOS by
 #  Gisle Vanem <giva@bgnett.no>
@@ -16,16 +16,15 @@ ifeq ($(USE_SSL),1)
   LIBS += $(OPENSSL_ROOT)/lib/libssl.a $(OPENSSL_ROOT)/lib/libcrypt.a
 endif
 
+ifeq ($(USE_IDNA),1)
+  LIBS += $(LIBIDN_ROOT)/lib/dj_obj/libidn.a -liconv
+endif
+
 LIBS += $(WATT32_ROOT)/lib/libwatt.a $(ZLIB_ROOT)/libz.a
 
-CSOURCES = fopen.c ftpget.c ftpgetresp.c ftpupload.c getinmemory.c  \
-           http-post.c httpput.c https.c multi-app.c multi-double.c \
-           multi-post.c multi-single.c persistant.c post-callback.c \
-           postit2.c sepheaders.c simple.c simplepost.c simplessl.c \
-           multi-debugcallback.c fileupload.c getinfo.c anyauthput.c \
-           10-at-a-time.c # ftpuploadresume.c cookie_interface.c
+include Makefile.inc
 
-PROGRAMS = $(CSOURCES:.c=.exe)
+PROGRAMS = $(patsubst %,%.exe,$(check_PROGRAMS))
 
 all: $(PROGRAMS)
 	@echo Welcome to libcurl example program

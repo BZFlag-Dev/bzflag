@@ -37,7 +37,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: krb4.c,v 1.47 2008-01-15 23:19:02 bagder Exp $
+ * $Id: krb4.c,v 1.51 2008-11-16 12:26:50 bagder Exp $
  */
 
 #include "setup.h"
@@ -58,15 +58,12 @@
 #endif
 
 #include "urldata.h"
-#include "base64.h"
+#include "curl_base64.h"
 #include "ftp.h"
 #include "sendf.h"
 #include "krb4.h"
+#include "inet_ntop.h"
 #include "memory.h"
-
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
 
 /* The last #include file should be: */
 #include "memdebug.h"
@@ -151,17 +148,22 @@ krb4_overhead(void *app_data, int level, int len)
 }
 
 static int
-krb4_encode(void *app_data, void *from, int length, int level, void **to,
+krb4_encode(void *app_data, const void *from, int length, int level, void **to,
             struct connectdata *conn)
 {
   struct krb4_data *d = app_data;
   *to = malloc(length + 31);
+  if(!*to)
+    return -1;
   if(level == prot_safe)
-    return krb_mk_safe(from, *to, length, &d->key,
+    /* NOTE that the void* cast is safe, krb_mk_safe/priv don't modify the
+     * input buffer
+     */
+    return krb_mk_safe((void*)from, *to, length, &d->key,
                        (struct sockaddr_in *)LOCAL_ADDR,
                        (struct sockaddr_in *)REMOTE_ADDR);
   else if(level == prot_private)
-    return krb_mk_priv(from, *to, length, d->schedule, &d->key,
+    return krb_mk_priv((void*)from, *to, length, d->schedule, &d->key,
                        (struct sockaddr_in *)LOCAL_ADDR,
                        (struct sockaddr_in *)REMOTE_ADDR);
   else
@@ -239,13 +241,9 @@ krb4_auth(void *app_data, struct connectdata *conn)
                  krb_realmofhost(host));
     else {
       if(natAddr.s_addr != localaddr->sin_addr.s_addr) {
-#ifdef HAVE_INET_NTOA_R
-        char ntoa_buf[64];
-        char *ip = (char *)inet_ntoa_r(natAddr, ntoa_buf, sizeof(ntoa_buf));
-#else
-        char *ip = (char *)inet_ntoa(natAddr);
-#endif
-        infof(data, "Using NAT IP address (%s) for kerberos 4\n", ip);
+        char addr_buf[128];
+        if(Curl_inet_ntop(AF_INET, natAddr, addr_buf, sizeof(addr_buf)))
+          infof(data, "Using NAT IP address (%s) for kerberos 4\n", addr_buf);
         localaddr->sin_addr = natAddr;
       }
     }

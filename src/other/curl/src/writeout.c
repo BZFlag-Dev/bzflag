@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2006, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: writeout.c,v 1.30 2006-03-21 22:30:03 bagder Exp $
+ * $Id: writeout.c,v 1.34 2008-07-30 21:24:19 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -45,6 +45,7 @@ typedef enum {
   VAR_TOTAL_TIME,
   VAR_NAMELOOKUP_TIME,
   VAR_CONNECT_TIME,
+  VAR_APPCONNECT_TIME,
   VAR_PRETRANSFER_TIME,
   VAR_STARTTRANSFER_TIME,
   VAR_SIZE_DOWNLOAD,
@@ -61,6 +62,8 @@ typedef enum {
   VAR_REDIRECT_TIME,
   VAR_REDIRECT_COUNT,
   VAR_FTP_ENTRY_PATH,
+  VAR_REDIRECT_URL,
+  VAR_SSL_VERIFY_RESULT,
   VAR_NUM_OF_VARS /* must be the last */
 } replaceid;
 
@@ -73,10 +76,12 @@ struct variable {
 static const struct variable replacements[]={
   {"url_effective", VAR_EFFECTIVE_URL},
   {"http_code", VAR_HTTP_CODE},
+  {"response_code", VAR_HTTP_CODE},
   {"http_connect", VAR_HTTP_CODE_PROXY},
   {"time_total", VAR_TOTAL_TIME},
   {"time_namelookup", VAR_NAMELOOKUP_TIME},
   {"time_connect", VAR_CONNECT_TIME},
+  {"time_appconnect", VAR_APPCONNECT_TIME},
   {"time_pretransfer", VAR_PRETRANSFER_TIME},
   {"time_starttransfer", VAR_STARTTRANSFER_TIME},
   {"size_header", VAR_HEADER_SIZE},
@@ -90,13 +95,15 @@ static const struct variable replacements[]={
   {"time_redirect", VAR_REDIRECT_TIME},
   {"num_redirects", VAR_REDIRECT_COUNT},
   {"ftp_entry_path", VAR_FTP_ENTRY_PATH},
+  {"redirect_url", VAR_REDIRECT_URL},
+  {"ssl_verify_result", VAR_SSL_VERIFY_RESULT},
   {NULL, VAR_NONE}
 };
 
-void ourWriteOut(CURL *curl, char *writeinfo)
+void ourWriteOut(CURL *curl, const char *writeinfo)
 {
   FILE *stream = stdout;
-  char *ptr=writeinfo;
+  const char *ptr=writeinfo;
   char *stringp;
   long longinfo;
   double doubleinfo;
@@ -180,14 +187,22 @@ void ourWriteOut(CURL *curl, char *writeinfo)
                    curl_easy_getinfo(curl, CURLINFO_CONNECT_TIME, &doubleinfo))
                   fprintf(stream, "%.3f", doubleinfo);
                 break;
+              case VAR_APPCONNECT_TIME:
+                if(CURLE_OK ==
+                   curl_easy_getinfo(curl, CURLINFO_APPCONNECT_TIME,
+                                     &doubleinfo))
+                  fprintf(stream, "%.3f", doubleinfo);
+                break;
               case VAR_PRETRANSFER_TIME:
                 if(CURLE_OK ==
-                   curl_easy_getinfo(curl, CURLINFO_PRETRANSFER_TIME, &doubleinfo))
+                   curl_easy_getinfo(curl, CURLINFO_PRETRANSFER_TIME,
+                                     &doubleinfo))
                   fprintf(stream, "%.3f", doubleinfo);
                 break;
               case VAR_STARTTRANSFER_TIME:
                 if(CURLE_OK ==
-                   curl_easy_getinfo(curl, CURLINFO_STARTTRANSFER_TIME, &doubleinfo))
+                   curl_easy_getinfo(curl, CURLINFO_STARTTRANSFER_TIME,
+                                     &doubleinfo))
                   fprintf(stream, "%.3f", doubleinfo);
                 break;
               case VAR_SIZE_UPLOAD:
@@ -221,6 +236,17 @@ void ourWriteOut(CURL *curl, char *writeinfo)
                     curl_easy_getinfo(curl, CURLINFO_FTP_ENTRY_PATH, &stringp))
                    && stringp)
                   fputs(stringp, stream);
+                break;
+              case VAR_REDIRECT_URL:
+                if((CURLE_OK ==
+                    curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &stringp))
+                   && stringp)
+                  fputs(stringp, stream);
+                break;
+              case VAR_SSL_VERIFY_RESULT:
+                if(CURLE_OK ==
+                   curl_easy_getinfo(curl, CURLINFO_SSL_VERIFYRESULT, &longinfo))
+                  fprintf(stream, "%ld", longinfo);
                 break;
               default:
                 break;

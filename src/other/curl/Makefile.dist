@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.dist,v 1.37 2007-04-12 20:41:24 bagder Exp $
+# $Id: Makefile.dist,v 1.48 2009-01-13 23:29:56 bagder Exp $
 ###########################################################################
 
 VC=vc6
@@ -68,18 +68,22 @@ watcom-clean:
 	wmake -f Makefile.Watcom clean
 
 mingw32:
+	$(MAKE) -C lib -f Makefile.m32
+	$(MAKE) -C src -f Makefile.m32
+
+mingw32-zlib:
 	$(MAKE) -C lib -f Makefile.m32 ZLIB=1
 	$(MAKE) -C src -f Makefile.m32 ZLIB=1
 
-mingw32-ssl:
+mingw32-ssl-zlib:
 	$(MAKE) -C lib -f Makefile.m32 SSL=1 ZLIB=1
 	$(MAKE) -C src -f Makefile.m32 SSL=1 ZLIB=1
 
-mingw32-ssh2-ssl:
+mingw32-ssh2-ssl-zlib:
 	$(MAKE) -C lib -f Makefile.m32 SSH2=1 SSL=1 ZLIB=1
 	$(MAKE) -C src -f Makefile.m32 SSH2=1 SSL=1 ZLIB=1
 
-mingw32-ssh2-ssl-sspi:
+mingw32-ssh2-ssl-sspi-zlib:
 	$(MAKE) -C lib -f Makefile.m32 SSH2=1 SSL=1 SSPI=1 ZLIB=1
 	$(MAKE) -C src -f Makefile.m32 SSH2=1 SSL=1 SSPI=1 ZLIB=1
 
@@ -123,6 +127,12 @@ vc:
 	nmake /f Makefile.$(VC) cfg=release
 	cd ..\src
 	nmake /f Makefile.$(VC)
+
+vc-x64:
+	cd lib
+	MACHINE=x64 nmake /f Makefile.$(VC) cfg=release
+	cd ..\src
+	MACHINE=x64 nmake /f Makefile.$(VC)
 
 vc-zlib:
 	cd lib
@@ -234,6 +244,10 @@ netware-clean:
 	$(MAKE) -C lib -f Makefile.netware clean
 	$(MAKE) -C src -f Makefile.netware clean
 
+netware-install:
+	$(MAKE) -C lib -f Makefile.netware install
+	$(MAKE) -C src -f Makefile.netware install
+
 unix: all
 
 unix-ssl: ssl
@@ -242,7 +256,22 @@ linux: all
 
 linux-ssl: ssl
 
+
 vc8:
-	echo "generate VC8 makefiles"
-	sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e 's#/GZ#/RTC1#' -e 's/wsock32.lib/wsock32.lib bufferoverflowu.lib/g' -e 's/VC6/VC8/g' lib/Makefile.vc6 > lib/Makefile.vc8
-	sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e 's#/GZ#/RTC1#' -e 's/wsock32.lib/wsock32.lib bufferoverflowu.lib/g' -e 's/VC6/VC8/g' src/Makefile.vc6 > src/Makefile.vc8
+	@echo "generate VC8 makefiles"
+	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/wsock32.lib bufferoverflowu.lib/g" -e "s/VC6/VC8/g" lib/Makefile.vc6 > lib/Makefile.vc8
+	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/wsock32.lib bufferoverflowu.lib/g" -e "s/VC6/VC8/g" src/Makefile.vc6 > src/Makefile.vc8
+
+# VC9 makefiles are for use with VS2008
+vc9:
+	@echo "generate VC9 makefiles"
+	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/ws2_32.lib/g" -e "s/vc6/vc9/g" -e "s/VC6/VC9/g" lib/Makefile.vc6 > lib/Makefile.vc9
+	@sed -e "s#/GX /DWIN32 /YX#/EHsc /DWIN32#" -e "s#/GZ#/RTC1#" -e "s/wsock32.lib/ws2_32.lib/g" -e "s/vc6/vc9/g" -e "s/VC6/VC9/g" src/Makefile.vc6 > src/Makefile.vc9
+
+ca-bundle: lib/mk-ca-bundle.pl
+	@echo "generate a fresh ca-bundle.crt"
+	@perl $< -b -l -u lib/ca-bundle.crt
+
+ca-firefox: lib/firefox-db2pem.sh
+	@echo "generate a fresh ca-bundle.crt"
+	./lib/firefox-db2pem.sh lib/ca-bundle.crt

@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: config-amigaos.h,v 1.12 2007-02-28 14:45:49 yangtse Exp $
+ * $Id: config-amigaos.h,v 1.17 2008-11-13 18:56:56 yangtse Exp $
  ***************************************************************************/
 
 #ifdef __AMIGA__ /* Any AmigaOS flavour */
@@ -28,9 +28,9 @@
 #define HAVE_ARPA_INET_H 1
 #define HAVE_GETHOSTBYADDR 1
 #define HAVE_INET_ADDR 1
-#define HAVE_INET_NTOA 1
 #define HAVE_INTTYPES_H 1
-#define HAVE_IOCTLSOCKET_CASE 1
+#define HAVE_IOCTLSOCKET_CAMEL 1
+#define HAVE_IOCTLSOCKET_CAMEL_FIONBIO 1
 #define HAVE_LIBCRYPTO 1
 #define HAVE_LIBSSL 1
 #define HAVE_LIBZ 1
@@ -103,7 +103,6 @@
 #define SELECT_TYPE_ARG1 int
 #define SELECT_TYPE_ARG234 (fd_set *)
 #define SELECT_TYPE_ARG5 (struct timeval *)
-#define SIZEOF_CURL_OFF_T 4
 
 #define STDC_HEADERS 1
 #define TIME_WITH_SYS_TIME 1
@@ -130,6 +129,15 @@
 #define RECV_TYPE_ARG3 long
 #define RECV_TYPE_ARG4 long
 #define RECV_TYPE_RETV long
+
+#define HAVE_RECVFROM 1
+#define RECVFROM_TYPE_ARG1 long
+#define RECVFROM_TYPE_ARG2 char
+#define RECVFROM_TYPE_ARG3 long
+#define RECVFROM_TYPE_ARG4 long
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+#define RECVFROM_TYPE_ARG6 long
+#define RECVFROM_TYPE_RETV long
 
 #define HAVE_SEND 1
 #define SEND_TYPE_ARG1 int

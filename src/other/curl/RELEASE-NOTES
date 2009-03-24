@@ -1,79 +1,70 @@
-Curl and libcurl 7.18.1
+Curl and libcurl 7.19.4
 
- Public curl releases:         104
- Command line options:         126
- curl_easy_setopt() options:   150
- Public functions in libcurl:  56
- Public web site mirrors:      39
- Known libcurl bindings:       36
- Contributors:                 621
+ Public curl releases:         110
+ Command line options:         132
+ curl_easy_setopt() options:   163
+ Public functions in libcurl:  58
+ Known libcurl bindings:       38
+ Contributors:                 700
+
+This release includes the following security-related fix:
+
+ o CVE-2009-0037 with the curl advisory here:
+   http://curl.haxx.se/docs/adv_20090303.html
 
 This release includes the following changes:
- 
- o added support for HttpOnly cookies
- o 'make ca-bundle' downloads and generates an updated ca bundle file
- o we no longer distribute or install a ca cert bundle
- o SSLv2 is now disabled by default for SSL operations
- o the test509-style setting URL in callback is officially no longer supported
- o support a full chain of certificates in a given PKCS12 certificate
- o resumed transfers work with SFTP
- o added type checking macros for curl_easy_setopt() and curl_easy_getinfo(),
-   watch out for new warnings in code using libcurl (needs gcc-4.3 and
-   currently only works in C mode)
- o curl_easy_setopt(), curl_easy_getinfo(), curl_share_setopt() and
-   curl_multi_setopt() uses are now checked to use exactly three arguments
- o --with-ca-path=DIR configure option allows to set an openSSL CApath instead
-   of a default ca bundle.
+
+ o Added CURLOPT_NOPROXY and the corresponding --noproxy
+ o the OpenSSL-specific code disables TICKET (rfc5077) which is enabled by
+   default in openssl 0.9.8j
+ o Added CURLOPT_TFTP_BLKSIZE
+ o Added CURLOPT_SOCKS5_GSSAPI_SERVICE and CURLOPT_SOCKS5_GSSAPI_NEC - with
+   the corresponding curl options --socks5-gssapi-service and
+   --socks5-gssapi-nec
+ o Improved IPv6 support when built with with c-ares >= 1.6.1
+ o Added CURLPROXY_HTTP_1_0 and --proxy1.0
+ o Added docs/libcurl/symbols-in-versions
+ o Added CURLINFO_CONDITION_UNMET
+ o Added support for Digest and NTLM authentication using GnuTLS
+ o CURLOPT_FTP_CREATE_MISSING_DIRS can now be set to 2 to retry the CWD even
+   when MKD fails
+ o GnuTLS initing moved to curl_global_init()
+ o Added CURLOPT_REDIR_PROTOCOLS and CURLOPT_PROTOCOLS
 
 This release includes the following bugfixes:
 
- o improved pipelining
- o improved strdup replacement
- o GnuTLS-built libcurl failed when doing global cleanup and reinit
- o error message problem when unable to resolve a host on Windows
- o Accept: header replacing
- o not verifying server certs with GnuTLS still failed if gnutls had
-   problems with the cert
- o when using the multi interface and a handle is removed while still having
-   a transfer going on, the connection is now closed by force
- o bad re-use of SSL connections in non-complete state
- o test case 405 failures with GnuTLS builds
- o crash when connection cache size is 1 and Curl_do() failed
- o GnuTLS-built libcurl can now be forced to prefer SSLv3
- o crash when doing Negotiate again on a re-used connection
- o select/poll regression
- o better MIT kerberos configure check
- o curl_easy_reset() + SFTP re-used connection download crash
- o SFTP non-existing file + SFTP existing file error
- o sharing DNS cache between easy handles running in multiple threads could
-   lead to crash
- o SFTP upload with CURLOPT_FTP_CREATE_MISSING_DIRS on re-used connection
- o SFTP infinite loop when given an invalid quote command
- o curl-config erroneously reported LDAPS support with missing LDAP libraries
- o SCP infinite loop when downloading a zero byte file
- o setting the CURLOPT_SSL_CTX_FUNCTION with libcurl built without OpenSSL
-   now makes curl_easy_setopt() properly return failure
- o configure --with-libssh2 (with no given path)
+ o missing ssh.obj in VS makefiles
+ o FTP ;type=i URLs now work with CURLOPT_PROXY_TRANSFER_MODE in Turkish
+   locale 
+ o realms with quoted quotation marks in HTTP Digest headers
+ o VC9 makefiles are now really included
+ o multi interface memory leak with CURLMOPT_MAXCONNECTS set
+ o CURLINFO_CONTENT_LENGTH_DOWNLOAD size from file:// "transfers" with
+   CURLOPT_NOBODY set true
+ o memory leak on some libz errors for content encodings
+ o NSS-enabled build is repaired
+ o superfluous wait in SFTP downloads removed
+ o FTP with the multi interface no longer kills the control connection as
+   easily on transfer failures
+ o compilation halting when using VS2008 to build a Windows 2000 target
+ o ease creation of libcurl Mac OS X Framework
+ o CURLINFO_CONTENT_LENGTH_DOWNLOAD and CURLINFO_CONTENT_LENGTH_UPLOAD are -1
+   if unknown
+ o Negotiate proxy authentication
+ o CURLOPT_INTERFACE and CURLOPT_LOCALPORT used together
 
 This release includes the following known bugs:
 
  o see docs/KNOWN_BUGS (http://curl.haxx.se/docs/knownbugs.html)
 
-Other curl-related news:
-
- o 
-
-New curl mirrors:
-
- o http://curl.cuendet.com/ is a new mirror in Atlanta, USA
-
 This release would not have looked like this without help, code, reports and
 advice from friends like these:
 
- Michal Marek, Dmitry Kurochkin, Niklas Angebrand, Günter Knauf, Yang Tse,
- Dan Fandrich, Mike Hommey, Pooyan McSporran, Jerome Muffat-Meridol,
- Kaspar Brand, Gautam Kachroo, Zmey Petroff, Georg Lippitsch, Sam Listopad,
- Anatoli Tubman, Mike Protts, Michael Calmer, Brian Ulm, Dmitry Popov,
- Jes Badwal, Dan Petitt, Stephen Collyer
+ Lisa Xu, Daniel Fandrich, Craig A West, Alexey Borzov, Sharad Gupta,
+ Peter Sylvester, Chad Monroe, Markus Moeller, Yang Tse, Scott Cantor,
+ Patrick Scott, Hidemoto Nakada, Jocelyn Jaubert, Andre Guibert de Bruet,
+ Kamil Dudka, Patrik Thunstrom, Linus Nielsen Feltzing, Mark Incley,
+ Daniel Johnson, James Cheng, Brian J. Murrell, Senthil Raja Velu,
+ Markus Koetter, David Kierznowski, Michal Marek
 
         Thanks! (and sorry if I forgot to mention someone)

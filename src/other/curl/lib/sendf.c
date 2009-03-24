@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.c,v 1.141 2008-02-20 09:56:26 bagder Exp $
+ * $Id: sendf.c,v 1.155 2009-01-07 19:39:35 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -47,7 +47,8 @@
 #define _MPRINTF_REPLACE /* use the internal *printf() functions */
 #include <curl/mprintf.h>
 
-#if defined(HAVE_KRB4) || defined(HAVE_GSSAPI)
+/* the krb4 functions only exists for FTP and if krb4 or gssapi is defined */
+#if !defined(CURL_DISABLE_FTP) && (defined(HAVE_KRB4) || defined(HAVE_GSSAPI))
 #include "krb4.h"
 #else
 #define Curl_sec_send(a,b,c,d) -1
@@ -91,7 +92,7 @@ struct curl_slist *curl_slist_append(struct curl_slist *list,
   struct curl_slist     *last;
   struct curl_slist     *new_item;
 
-  new_item = (struct curl_slist *) malloc(sizeof(struct curl_slist));
+  new_item = malloc(sizeof(struct curl_slist));
   if(new_item) {
     char *dupdata = strdup(data);
     if(dupdata) {
@@ -227,9 +228,9 @@ void Curl_infof(struct SessionHandle *data, const char *fmt, ...)
   if(data && data->set.verbose) {
     va_list ap;
     size_t len;
-    char print_buffer[1024 + 1];
+    char print_buffer[2048 + 1];
     va_start(ap, fmt);
-    vsnprintf(print_buffer, 1024, fmt, ap);
+    vsnprintf(print_buffer, sizeof(print_buffer), fmt, ap);
     va_end(ap);
     len = strlen(print_buffer);
     Curl_debug(data, CURLINFO_TEXT, print_buffer, len, NULL);
@@ -312,7 +313,7 @@ CURLcode Curl_sendf(curl_socket_t sockfd, struct connectdata *conn,
 
 static ssize_t send_plain(struct connectdata *conn,
                           int num,
-                          void *mem,
+                          const void *mem,
                           size_t len)
 {
   curl_socket_t sockfd = conn->sock[num];
@@ -347,7 +348,7 @@ static ssize_t send_plain(struct connectdata *conn,
  */
 CURLcode Curl_write(struct connectdata *conn,
                     curl_socket_t sockfd,
-                    void *mem,
+                    const void *mem,
                     size_t len,
                     ssize_t *written)
 {
@@ -356,16 +357,12 @@ CURLcode Curl_write(struct connectdata *conn,
   int num = (sockfd == conn->sock[SECONDARYSOCKET]);
 
   if(conn->ssl[num].state == ssl_connection_complete)
-    /* only TRUE if SSL enabled */
     bytes_written = Curl_ssl_send(conn, num, mem, len);
-#ifdef USE_LIBSSH2
-  else if(conn->protocol & PROT_SCP)
+  else if(Curl_ssh_enabled(conn, PROT_SCP))
     bytes_written = Curl_scp_send(conn, num, mem, len);
-  else if(conn->protocol & PROT_SFTP)
+  else if(Curl_ssh_enabled(conn, PROT_SFTP))
     bytes_written = Curl_sftp_send(conn, num, mem, len);
-#endif /* !USE_LIBSSH2 */
   else if(conn->sec_complete)
-    /* only TRUE if krb enabled */
     bytes_written = Curl_sec_send(conn, num, mem, len);
   else
     bytes_written = send_plain(conn, num, mem, len);
@@ -376,9 +373,32 @@ CURLcode Curl_write(struct connectdata *conn,
   return retcode;
 }
 
+/*
+ * Curl_write_plain() is an internal write function that sends data to the
+ * server using plain sockets only. Otherwise meant to have the exact same
+ * proto as Curl_write()
+ */
+CURLcode Curl_write_plain(struct connectdata *conn,
+                          curl_socket_t sockfd,
+                          const void *mem,
+                          size_t len,
+                          ssize_t *written)
+{
+  ssize_t bytes_written;
+  CURLcode retcode;
+  int num = (sockfd == conn->sock[SECONDARYSOCKET]);
+
+  bytes_written = send_plain(conn, num, mem, len);
+
+  *written = bytes_written;
+  retcode = (-1 != bytes_written)?CURLE_OK:CURLE_SEND_ERROR;
+
+  return retcode;
+}
+
 static CURLcode pausewrite(struct SessionHandle *data,
                            int type, /* what type of data */
-                           char *ptr,
+                           const char *ptr,
                            size_t len)
 {
   /* signalled to pause sending on this connection, but since we have data
@@ -406,10 +426,14 @@ static CURLcode pausewrite(struct SessionHandle *data,
 }
 
 
-/* client_write() sends data to the write callback(s)
+/* Curl_client_write() sends data to the write callback(s)
 
    The bit pattern defines to what "streams" to write to. Body and/or header.
    The defines are in sendf.h of course.
+
+   If CURL_DO_LINEEND_CONV is enabled, data is converted IN PLACE to the
+   local character encoding.  This is a problem and should be changed in
+   the future to leave the original data alone.
  */
 CURLcode Curl_client_write(struct connectdata *conn,
                            int type,
@@ -418,6 +442,9 @@ CURLcode Curl_client_write(struct connectdata *conn,
 {
   struct SessionHandle *data = conn->data;
   size_t wrote;
+
+  if(0 == len)
+    len = strlen(ptr);
 
   /* If reading is actually paused, we're forced to append this chunk of data
      to the already held data, but only if it is the same type as otherwise it
@@ -429,27 +456,22 @@ CURLcode Curl_client_write(struct connectdata *conn,
       /* major internal confusion */
       return CURLE_RECV_ERROR;
 
+    DEBUGASSERT(data->state.tempwrite);
+
     /* figure out the new size of the data to save */
     newlen = len + data->state.tempwritesize;
     /* allocate the new memory area */
-    newptr = malloc(newlen);
+    newptr = realloc(data->state.tempwrite, newlen);
     if(!newptr)
       return CURLE_OUT_OF_MEMORY;
-    /* copy the previously held data to the new area */
-    memcpy(newptr, data->state.tempwrite, data->state.tempwritesize);
     /* copy the new data to the end of the new area */
     memcpy(newptr + data->state.tempwritesize, ptr, len);
-    /* free the old data */
-    free(data->state.tempwrite);
     /* update the pointer and the size */
     data->state.tempwrite = newptr;
     data->state.tempwritesize = newlen;
 
     return CURLE_OK;
   }
-
-  if(0 == len)
-    len = strlen(ptr);
 
   if(type & CLIENTWRITE_BODY) {
     if((conn->protocol&PROT_FTP) && conn->proto.ftpc.transfertype == 'A') {
@@ -513,9 +535,29 @@ CURLcode Curl_client_write(struct connectdata *conn,
   return CURLE_OK;
 }
 
-#ifndef MIN
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
+int Curl_read_plain(curl_socket_t sockfd,
+                         char *buf,
+                         size_t bytesfromsocket,
+                         ssize_t *n)
+{
+  ssize_t nread = sread(sockfd, buf, bytesfromsocket);
+
+  if(-1 == nread) {
+    int err = SOCKERRNO;
+#ifdef USE_WINSOCK
+    if(WSAEWOULDBLOCK == err)
+#else
+    if((EWOULDBLOCK == err) || (EAGAIN == err) || (EINTR == err))
 #endif
+      return -1;
+    else
+      return CURLE_RECV_ERROR;
+  }
+
+  /* we only return number of bytes read when we return OK */
+  *n = nread;
+  return CURLE_OK;
+}
 
 /*
  * Internal read-from-socket function. This is meant to deal with plain
@@ -545,7 +587,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
 
   /* If session can pipeline, check connection buffer  */
   if(pipelining) {
-    size_t bytestocopy = MIN(conn->buf_len - conn->read_pos, sizerequested);
+    size_t bytestocopy = CURLMIN(conn->buf_len - conn->read_pos, sizerequested);
 
     /* Copy from our master buffer first if we have some unread data there*/
     if(bytestocopy > 0) {
@@ -558,11 +600,11 @@ int Curl_read(struct connectdata *conn, /* connection data */
     }
     /* If we come here, it means that there is no data to read from the buffer,
      * so we read from the socket */
-    bytesfromsocket = MIN(sizerequested, BUFSIZE * sizeof (char));
+    bytesfromsocket = CURLMIN(sizerequested, BUFSIZE * sizeof (char));
     buffertofill = conn->master_buffer;
   }
   else {
-    bytesfromsocket = MIN((long)sizerequested, conn->data->set.buffer_size ?
+    bytesfromsocket = CURLMIN((long)sizerequested, conn->data->set.buffer_size ?
                           conn->data->set.buffer_size : BUFSIZE);
     buffertofill = buf;
   }
@@ -574,8 +616,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
       return -1; /* -1 from Curl_ssl_recv() means EWOULDBLOCK */
     }
   }
-#ifdef USE_LIBSSH2
-  else if(conn->protocol & (PROT_SCP|PROT_SFTP)) {
+  else if(Curl_ssh_enabled(conn, (PROT_SCP|PROT_SFTP))) {
     if(conn->protocol & PROT_SCP)
       nread = Curl_scp_recv(conn, num, buffertofill, bytesfromsocket);
     else if(conn->protocol & PROT_SFTP)
@@ -586,28 +627,23 @@ int Curl_read(struct connectdata *conn, /* connection data */
       return -1;
 #endif
     if(nread < 0)
-      /* since it is negative and not EGAIN, it was a protocol-layer error */
+      /* since it is negative and not EAGAIN, it was a protocol-layer error */
       return CURLE_RECV_ERROR;
   }
-#endif /* !USE_LIBSSH2 */
   else {
     if(conn->sec_complete)
       nread = Curl_sec_read(conn, sockfd, buffertofill,
                             bytesfromsocket);
-    else
-      nread = sread(sockfd, buffertofill, bytesfromsocket);
-
-    if(-1 == nread) {
-      int err = SOCKERRNO;
-#ifdef USE_WINSOCK
-      if(WSAEWOULDBLOCK == err)
-#else
-      if((EWOULDBLOCK == err) || (EAGAIN == err) || (EINTR == err))
-#endif
-        return -1;
+    /* TODO: Need to handle EAGAIN here somehow, similar to how it
+     * is done in Curl_read_plain, either right here or in Curl_sec_read
+     * itself. */
+    else {
+      int ret = Curl_read_plain(sockfd, buffertofill, bytesfromsocket,
+                                     &nread);
+      if(ret)
+        return ret;
     }
   }
-
   if(nread >= 0) {
     if(pipelining) {
       memcpy(buf, conn->master_buffer, nread);
@@ -625,7 +661,7 @@ int Curl_read(struct connectdata *conn, /* connection data */
 static int showit(struct SessionHandle *data, curl_infotype type,
                   char *ptr, size_t size)
 {
-  static const char * const s_infotype[CURLINFO_END] = {
+  static const char s_infotype[CURLINFO_END][3] = {
     "* ", "< ", "> ", "{ ", "} ", "{ ", "} " };
 
 #ifdef CURL_DOES_CONVERSIONS

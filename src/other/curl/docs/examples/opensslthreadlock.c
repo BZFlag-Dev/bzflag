@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: opensslthreadlock.c,v 1.2 2007-07-12 21:11:10 danf Exp $
+ * $Id: opensslthreadlock.c,v 1.3 2008-09-06 05:29:05 yangtse Exp $
  *
  * Example source code to show one way to set the necessary OpenSSL locking
  * callbacks if you want to do multi-threaded transfers with HTTPS/FTPS with
@@ -56,7 +56,7 @@ int thread_setup(void)
 {
   int i;
 
-  mutex_buf = (MUTEX_TYPE *)malloc(CRYPTO_num_locks(  ) * sizeof(MUTEX_TYPE));
+  mutex_buf = malloc(CRYPTO_num_locks(  ) * sizeof(MUTEX_TYPE));
   if (!mutex_buf)
     return 0;
   for (i = 0;  i < CRYPTO_num_locks(  );  i++)

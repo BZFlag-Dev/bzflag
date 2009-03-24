@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: simple.c,v 1.6 2004/08/23 14:22:52 bagder Exp $
+ * $Id: simple.c,v 1.6 2004-08-23 14:22:52 bagder Exp $
  */
 
 #include <stdio.h>

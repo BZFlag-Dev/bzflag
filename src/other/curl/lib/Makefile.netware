@@ -1,5 +1,5 @@
 #################################################################
-# $Id: Makefile.netware,v 1.81 2008-02-27 01:36:01 gknauf Exp $
+# $Id: Makefile.netware,v 1.118 2008-12-30 08:16:24 gknauf Exp $
 #
 ## Makefile for building libcurl.nlm (NetWare version - gnu make)
 ## Use: make -f Makefile.netware
@@ -20,12 +20,17 @@ endif
 
 # Edit the path below to point to the base of your OpenSSL package.
 ifndef OPENSSL_PATH
-OPENSSL_PATH = ../../openssl-0.9.8g
+OPENSSL_PATH = ../../openssl-0.9.8i
 endif
 
 # Edit the path below to point to the base of your LibSSH2 package.
 ifndef LIBSSH2_PATH
 LIBSSH2_PATH = ../../libssh2-0.18
+endif
+
+# Edit the path below to point to the base of your libidn package.
+ifndef LIBIDN_PATH
+LIBIDN_PATH = ../../libidn-1.11
 endif
 
 ifndef INSTDIR
@@ -94,7 +99,7 @@ LIBARCH_L = $(shell $(AWK) 'BEGIN {print tolower(ARGV[1])}' $(LIBARCH))
 -include $(OBJDIR)/version.inc
 
 # Global flags for all compilers
-CFLAGS	= $(OPT) -D$(DB) -DNETWARE -DHAVE_CONFIG_H -nostdinc
+CFLAGS	+= $(OPT) -D$(DB) -DNETWARE -DHAVE_CONFIG_H -nostdinc
 
 ifeq ($(CC),mwccnlm)
 LD	= mwldnlm
@@ -168,7 +173,7 @@ else
 endif
 endif
 ifdef WITH_SSL
-	INCLUDES += -I$(OPENSSL_PATH)/outinc_nw_$(LIBARCH_L) -I$(OPENSSL_PATH)/outinc_nw_$(LIBARCH_L)/openssl
+	INCLUDES += -I$(OPENSSL_PATH)/outinc_nw_$(LIBARCH_L)
 	LDLIBS += $(OPENSSL_PATH)/out_nw_$(LIBARCH_L)/ssl.$(LIBEXT)
 	LDLIBS += $(OPENSSL_PATH)/out_nw_$(LIBARCH_L)/crypto.$(LIBEXT)
 	IMPORTS += GetProcessSwitchCount RunningProcess
@@ -182,6 +187,10 @@ else
 	MODULES += libz.nlm
 	IMPORTS += @$(ZLIB_PATH)/nw/$(LIBARCH)/libz.imp
 endif
+endif
+ifdef WITH_IDN
+	INCLUDES += -I$(LIBIDN_PATH)/include
+	LDLIBS += $(LIBIDN_PATH)/lib/libidn.$(LIBEXT)
 endif
 
 ifeq ($(LIBARCH),LIBC)
@@ -212,9 +221,11 @@ endif
 ifeq ($(findstring linux,$(OSTYPE)),linux)
 DL	= '
 DS	= /
+PCT	= %
 #-include $(NDKBASE)/nlmconv/ncpfs.inc
 else
 DS	= \\
+PCT	= %%
 endif
 
 # Makefile.inc provides the CSOURCES and HHEADERS defines
@@ -230,7 +241,7 @@ nlm: prebuild $(TARGET).nlm
 
 lib: prebuild $(TARGET).$(LIBEXT)
 
-prebuild: $(OBJDIR) $(OBJDIR)/version.inc config.h ca-bundle.h
+prebuild: $(OBJDIR) $(CURL_INC)/curl/curlbuild.h $(OBJDIR)/version.inc config.h
 
 $(OBJDIR)/%.o: %.c
 #	@echo Compiling $<
@@ -252,7 +263,7 @@ ifdef WITH_SSL
 endif
 
 clean:
-	-$(RM) config.h ca-bundle.h
+	-$(RM) config.h
 	-$(RM) -r $(OBJDIR)
 
 distclean: clean
@@ -377,11 +388,19 @@ ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)#define OS "i586-pc-clib-NetWare"$(DL) >> $@
 	@echo $(DL)#define NETDB_USE_INTERNET 1$(DL) >> $@
 	@echo $(DL)#define HAVE_STRICMP 1$(DL) >> $@
+	@echo $(DL)#define HAVE_STRNICMP 1$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_ARG1 int$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_ARG2 char *$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_ARG3 int$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_ARG4 int$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_RETV int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG1 int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG2 char$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG3 int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG4 int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG5 struct sockaddr$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG6 int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_RETV int$(DL) >> $@
 	@echo $(DL)#define SEND_QUAL_ARG2$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_ARG1 int$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_ARG2 char *$(DL) >> $@
@@ -389,11 +408,11 @@ ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)#define SEND_TYPE_ARG4 int$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_RETV int$(DL) >> $@
 	@echo $(DL)#define socklen_t int$(DL) >> $@
+	@echo $(DL)#define pressanykey PressAnyKeyToContinue$(DL) >> $@
 else
 	@echo $(DL)#define OS "i586-pc-libc-NetWare"$(DL) >> $@
 	@echo $(DL)#define HAVE_FTRUNCATE 1$(DL) >> $@
 	@echo $(DL)#define HAVE_GETTIMEOFDAY 1$(DL) >> $@
-	@echo $(DL)#define HAVE_INET_PTON 1$(DL) >> $@
 	@echo $(DL)#define HAVE_INTTYPES_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_LIMITS_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_LONGLONG 1$(DL) >> $@
@@ -407,6 +426,9 @@ else
 	@echo $(DL)#define HAVE_TERMIOS_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_AF_INET6 1$(DL) >> $@
 	@echo $(DL)#define HAVE_PF_INET6 1$(DL) >> $@
+	@echo $(DL)#define HAVE_FREEADDRINFO 1$(DL) >> $@
+	@echo $(DL)#define HAVE_GETADDRINFO 1$(DL) >> $@
+	@echo $(DL)#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1$(DL) >> $@
 	@echo $(DL)#define HAVE_STRUCT_IN6_ADDR 1$(DL) >> $@
 	@echo $(DL)#define HAVE_STRUCT_SOCKADDR_IN6 1$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_ARG1 int$(DL) >> $@
@@ -414,6 +436,14 @@ else
 	@echo $(DL)#define RECV_TYPE_ARG3 size_t$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_ARG4 int$(DL) >> $@
 	@echo $(DL)#define RECV_TYPE_RETV ssize_t$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG1 int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG2 void$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG3 size_t$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG4 int$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG5 struct sockaddr$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG6 size_t$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_RETV ssize_t$(DL) >> $@
+	@echo $(DL)#define RECVFROM_TYPE_ARG2_IS_VOID 1$(DL) >> $@
 	@echo $(DL)#define SEND_QUAL_ARG2$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_ARG1 int$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_ARG2 void *$(DL) >> $@
@@ -421,29 +451,35 @@ else
 	@echo $(DL)#define SEND_TYPE_ARG4 int$(DL) >> $@
 	@echo $(DL)#define SEND_TYPE_RETV ssize_t$(DL) >> $@
 	@echo $(DL)#define SIZEOF_STRUCT_IN6_ADDR 16$(DL) >> $@
+	@echo $(DL)#define SIZEOF_OFF_T 8$(DL) >> $@
+	@echo $(DL)#define _LARGEFILE 1$(DL) >> $@
 ifdef ENABLE_IPV6
 	@echo $(DL)#define ENABLE_IPV6 1$(DL) >> $@
 endif
 endif
+	@echo $(DL)#define USE_MANUAL 1$(DL) >> $@
 	@echo $(DL)#define HAVE_ARPA_INET_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_ASSERT_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_ERR_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_FCNTL_H 1$(DL) >> $@
-	@echo $(DL)#define HAVE_FIONBIO 1$(DL) >> $@
 	@echo $(DL)#define HAVE_GETHOSTBYADDR 1$(DL) >> $@
 	@echo $(DL)#define HAVE_GETHOSTBYNAME 1$(DL) >> $@
 	@echo $(DL)#define HAVE_GETPROTOBYNAME 1$(DL) >> $@
 	@echo $(DL)#define HAVE_GMTIME_R 1$(DL) >> $@
 	@echo $(DL)#define HAVE_INET_ADDR 1$(DL) >> $@
-	@echo $(DL)#define HAVE_INET_NTOA 1$(DL) >> $@
+	@echo $(DL)#define HAVE_IOCTL 1$(DL) >> $@
+	@echo $(DL)#define HAVE_IOCTL_FIONBIO 1$(DL) >> $@
 	@echo $(DL)#define HAVE_LL 1$(DL) >> $@
+	@echo $(DL)#define HAVE_LOCALE_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_LOCALTIME_R 1$(DL) >> $@
 	@echo $(DL)#define HAVE_MALLOC_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_NETINET_IN_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_RECV 1$(DL) >> $@
+	@echo $(DL)#define HAVE_RECVFROM 1$(DL) >> $@
 	@echo $(DL)#define HAVE_SELECT 1$(DL) >> $@
 	@echo $(DL)#define HAVE_SEND 1$(DL) >> $@
 	@echo $(DL)#define HAVE_SETJMP_H 1$(DL) >> $@
+	@echo $(DL)#define HAVE_SETLOCALE 1$(DL) >> $@
 	@echo $(DL)#define HAVE_SIGNAL 1$(DL) >> $@
 	@echo $(DL)#define HAVE_SIGNAL_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_SIG_ATOMIC_T 1$(DL) >> $@
@@ -463,8 +499,8 @@ endif
 	@echo $(DL)#define HAVE_UNISTD_H 1$(DL) >> $@
 	@echo $(DL)#define HAVE_UTIME 1$(DL) >> $@
 	@echo $(DL)#define HAVE_UTIME_H 1$(DL) >> $@
+	@echo $(DL)#define HAVE_WRITEV 1$(DL) >> $@
 	@echo $(DL)#define RETSIGTYPE void$(DL) >> $@
-	@echo $(DL)#define SIZEOF_CURL_OFF_T 4$(DL) >> $@
 	@echo $(DL)#define SIZEOF_STRUCT_IN_ADDR 4$(DL) >> $@
 	@echo $(DL)#define STDC_HEADERS 1$(DL) >> $@
 	@echo $(DL)#define TIME_WITH_SYS_TIME 1$(DL) >> $@
@@ -512,6 +548,10 @@ ifdef WITH_SSH2
 	@echo $(DL)#define USE_LIBSSH2 1$(DL) >> $@
 	@echo $(DL)#define HAVE_LIBSSH2_H 1$(DL) >> $@
 endif
+ifdef WITH_IDN
+	@echo $(DL)#define HAVE_LIBIDN 1$(DL) >> $@
+	@echo $(DL)#define HAVE_TLD_H 1$(DL) >> $@
+endif
 	@echo $(DL)#ifdef __GNUC__$(DL) >> $@
 	@echo $(DL)#define HAVE_VARIADIC_MACROS_GCC 1$(DL) >> $@
 	@echo $(DL)#else$(DL) >> $@
@@ -520,19 +560,13 @@ endif
 ifdef OLD_NOVELLSDK
 	@echo $(DL)#define socklen_t int$(DL) >> $@
 endif
-
-FORCE: ;
-
-ca-bundle.h: FORCE Makefile.netware
-	@echo Creating $@
-	@echo $(DL)/* Do not edit this file - it is created by make!$(DL) > $@
-	@echo $(DL)** All your changes will be lost!!$(DL) >> $@
-	@echo $(DL)*/$(DL) >> $@
 ifdef CABUNDLE
 	@echo $(DL)#define CURL_CA_BUNDLE "$(CABUNDLE)"$(DL) >> $@
 else
 	@echo $(DL)#define CURL_CA_BUNDLE getenv("CURL_CA_BUNDLE")$(DL) >> $@
 endif
+
+FORCE: ;
 
 info: $(OBJDIR)/version.inc
 	@echo Configured to build $(TARGET) with these options:
@@ -575,4 +609,33 @@ ca-bundle.crt: mk-ca-bundle.pl
 	@echo Creating $@
 	@-$(PERL) $< -b -n $@
 
+$(CURL_INC)/curl/curlbuild.h: Makefile.netware FORCE
+	@echo Creating $@
+	@echo $(DL)/* $@ intended for NetWare target.$(DL) > $@
+	@echo $(DL)** Do not edit this file - it is created by make!$(DL) >> $@
+	@echo $(DL)** All your changes will be lost!!$(DL) >> $@
+	@echo $(DL)*/$(DL) >> $@
+	@echo $(DL)#ifndef __CURL_CURLBUILD_H$(DL) >> $@
+	@echo $(DL)#define __CURL_CURLBUILD_H$(DL) >> $@
+ifeq ($(LIBARCH),LIBC)
+	@echo $(DL)#define CURL_SIZEOF_LONG 4$(DL) >> $@
+	@echo $(DL)#define CURL_TYPEOF_CURL_OFF_T long long$(DL) >> $@
+	@echo $(DL)#define CURL_FORMAT_CURL_OFF_T "lld"$(DL) >> $@
+	@echo $(DL)#define CURL_FORMAT_CURL_OFF_TU "llu"$(DL) >> $@
+	@echo $(DL)#define CURL_FORMAT_OFF_T "$(PCT)lld"$(DL) >> $@
+	@echo $(DL)#define CURL_SIZEOF_CURL_OFF_T 8$(DL) >> $@
+	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_T LL$(DL) >> $@
+	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_TU ULL$(DL) >> $@
+else
+	@echo $(DL)#define CURL_SIZEOF_LONG 4$(DL) >> $@
+	@echo $(DL)#define CURL_TYPEOF_CURL_OFF_T long$(DL) >> $@
+	@echo $(DL)#define CURL_FORMAT_CURL_OFF_T "ld"$(DL) >> $@
+	@echo $(DL)#define CURL_FORMAT_CURL_OFF_TU "lu"$(DL) >> $@
+	@echo $(DL)#define CURL_FORMAT_OFF_T "$(PCT)ld"$(DL) >> $@
+	@echo $(DL)#define CURL_SIZEOF_CURL_OFF_T 4$(DL) >> $@
+	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_T L$(DL) >> $@
+	@echo $(DL)#define CURL_SUFFIX_CURL_OFF_TU UL$(DL) >> $@
+endif
+	@echo $(DL)typedef CURL_TYPEOF_CURL_OFF_T curl_off_t;$(DL) >> $@
+	@echo $(DL)#endif /* __CURL_CURLBUILD_H */$(DL) >> $@
 

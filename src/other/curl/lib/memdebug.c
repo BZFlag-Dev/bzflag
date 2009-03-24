@@ -1,4 +1,3 @@
-#ifdef CURLDEBUG
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -6,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -19,11 +18,12 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: memdebug.c,v 1.55 2007-11-07 09:21:35 bagder Exp $
+ * $Id: memdebug.c,v 1.60 2008-10-23 08:05:40 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
+#ifdef CURLDEBUG
 #include <curl/curl.h>
 
 #ifdef HAVE_SYS_SOCKET_H
@@ -167,7 +167,7 @@ void *curl_docalloc(size_t wanted_elements, size_t wanted_size,
   }
 
   if(logfile && source)
-    fprintf(logfile, "MEM %s:%d calloc(%u,%u) = %p\n",
+    fprintf(logfile, "MEM %s:%d calloc(%zu,%zu) = %p\n",
             source, line, wanted_elements, wanted_size, mem ? mem->mem : 0);
   return (mem ? mem->mem : NULL);
 }
@@ -189,7 +189,7 @@ char *curl_dostrdup(const char *str, int line, const char *source)
     memcpy(mem, str, len);
 
   if(logfile)
-    fprintf(logfile, "MEM %s:%d strdup(%p) (%zd) = %p\n",
+    fprintf(logfile, "MEM %s:%d strdup(%p) (%zu) = %p\n",
             source, line, str, len, mem);
 
   return mem;
@@ -212,7 +212,7 @@ void *curl_dorealloc(void *ptr, size_t wantedsize,
 
   mem=(struct memdebug *)(Curl_crealloc)(mem, size);
   if(logfile)
-    fprintf(logfile, "MEM %s:%d realloc(%p, %zd) = %p\n",
+    fprintf(logfile, "MEM %s:%d realloc(%p, %zu) = %p\n",
             source, line, ptr, wantedsize, mem?mem->mem:NULL);
 
   if(mem) {
@@ -244,7 +244,7 @@ void curl_dofree(void *ptr, int line, const char *source)
 int curl_socket(int domain, int type, int protocol, int line,
                 const char *source)
 {
-  int sockfd=(socket)(domain, type, protocol);
+  int sockfd=socket(domain, type, protocol);
   if(logfile && (sockfd!=-1))
     fprintf(logfile, "FD %s:%d socket() = %d\n",
             source, line, sockfd);
@@ -256,7 +256,7 @@ int curl_accept(int s, void *saddr, void *saddrlen,
 {
   struct sockaddr *addr = (struct sockaddr *)saddr;
   socklen_t *addrlen = (socklen_t *)saddrlen;
-  int sockfd=(accept)(s, addr, addrlen);
+  int sockfd=accept(s, addr, addrlen);
   if(logfile)
     fprintf(logfile, "FD %s:%d accept() = %d\n",
             source, line, sockfd);
@@ -276,22 +276,24 @@ int curl_sclose(int sockfd, int line, const char *source)
 FILE *curl_fopen(const char *file, const char *mode,
                  int line, const char *source)
 {
-  FILE *res=(fopen)(file, mode);
+  FILE *res=fopen(file, mode);
   if(logfile)
     fprintf(logfile, "FILE %s:%d fopen(\"%s\",\"%s\") = %p\n",
             source, line, file, mode, res);
   return res;
 }
 
+#ifdef HAVE_FDOPEN
 FILE *curl_fdopen(int filedes, const char *mode,
                   int line, const char *source)
 {
-  FILE *res=(fdopen)(filedes, mode);
+  FILE *res=fdopen(filedes, mode);
   if(logfile)
     fprintf(logfile, "FILE %s:%d fdopen(\"%d\",\"%s\") = %p\n",
             source, line, filedes, mode, res);
   return res;
 }
+#endif
 
 int curl_fclose(FILE *file, int line, const char *source)
 {
@@ -299,17 +301,10 @@ int curl_fclose(FILE *file, int line, const char *source)
 
   DEBUGASSERT(file != NULL);
 
-  res=(fclose)(file);
+  res=fclose(file);
   if(logfile)
     fprintf(logfile, "FILE %s:%d fclose(%p)\n",
             source, line, file);
   return res;
 }
-#else
-#ifdef VMS
-int VOID_VAR_MEMDEBUG;
-#else
-/* we provide a fake do-nothing function here to avoid compiler warnings */
-void curl_memdebug(void) {}
-#endif /* VMS */
 #endif /* CURLDEBUG */

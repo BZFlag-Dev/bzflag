@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: qssl.c,v 1.11 2008-02-20 09:56:26 bagder Exp $
+ * $Id: qssl.c,v 1.13 2008-05-20 10:21:50 patrickm Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -90,7 +90,7 @@ static CURLcode Curl_qsossl_init_session(struct SessionHandle * data)
   memset((char *) &initappstr, 0, sizeof initappstr);
   initappstr.applicationID = certname;
   initappstr.applicationIDLen = strlen(certname);
-  initappstr.protocol = TLSV1_SSLV3;
+  initappstr.protocol = SSL_VERSION_CURRENT;    /* TLSV1 compat. SSLV[23]. */
   initappstr.sessionType = SSL_REGISTERED_AS_CLIENT;
   rc = SSL_Init_Application(&initappstr);
 
@@ -190,7 +190,7 @@ static CURLcode Curl_qsossl_handshake(struct connectdata * conn, int sockindex)
 
   default:
   case CURL_SSLVERSION_DEFAULT:
-    h->protocol = TLSV1_SSLV3;
+    h->protocol = SSL_VERSION_CURRENT;          /* TLSV1 compat. SSLV[23]. */
     break;
 
   case CURL_SSLVERSION_TLSv1:
@@ -228,11 +228,11 @@ static CURLcode Curl_qsossl_handshake(struct connectdata * conn, int sockindex)
     return CURLE_SSL_CERTPROBLEM;
 
   case SSL_ERROR_IO:
-    failf(data, "SSL_Handshake(): %s", SSL_Strerror(rc, NULL));
+    failf(data, "SSL_Handshake() I/O error: %s", strerror(errno));
     return CURLE_SSL_CONNECT_ERROR;
 
   default:
-    failf(data, "SSL_Init(): %s", SSL_Strerror(rc, NULL));
+    failf(data, "SSL_Handshake(): %s", SSL_Strerror(rc, NULL));
     return CURLE_SSL_CONNECT_ERROR;
   }
 
@@ -372,15 +372,15 @@ int Curl_qsossl_shutdown(struct connectdata * conn, int sockindex)
 }
 
 
-ssize_t Curl_qsossl_send(struct connectdata * conn, int sockindex, void * mem,
-                         size_t len)
+ssize_t Curl_qsossl_send(struct connectdata * conn, int sockindex,
+                         const void * mem, size_t len)
 
 {
   /* SSL_Write() is said to return 'int' while write() and send() returns
      'size_t' */
   int rc;
 
-  rc = SSL_Write(conn->ssl[sockindex].handle, mem, (int) len);
+  rc = SSL_Write(conn->ssl[sockindex].handle, (void *) mem, (int) len);
 
   if(rc < 0) {
     switch(rc) {

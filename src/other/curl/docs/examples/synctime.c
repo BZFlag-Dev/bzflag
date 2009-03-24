@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: synctime.c,v 1.4 2007-07-12 21:11:10 danf Exp $
+ * $Id: synctime.c,v 1.5 2008-05-22 21:20:09 danf Exp $
  *
  * This example code only builds as-is on Windows.
  *
@@ -189,7 +189,7 @@ int SyncTime_CURL_Fetch(CURL *curl, char *URL_Str, char *OutFileName,
 
   outfile = NULL;
   if (HttpGetBody == HTTP_COMMAND_HEAD)
-    curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
   else {
     outfile = fopen(OutFileName, "wb");
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile);

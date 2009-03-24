@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: htmltidy.c,v 1.1 2005/02/02 19:25:37 bagder Exp $
+ * $Id: htmltidy.c,v 1.2 2008-05-22 21:20:09 danf Exp $
  *
  * Download a document and use libtidy to parse the HTML.
  * Written by Jeff Pohlmeyer
@@ -75,8 +75,8 @@ int main(int argc, char **argv )
     curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
     curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errbuf);
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, no);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, yes);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_cb);
 
     tdoc = tidyCreate();

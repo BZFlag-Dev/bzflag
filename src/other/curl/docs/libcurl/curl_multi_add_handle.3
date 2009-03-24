@@ -1,4 +1,4 @@
-.\" $Id: curl_multi_add_handle.3,v 1.5 2006-07-07 23:08:03 bagder Exp $
+.\" $Id: curl_multi_add_handle.3,v 1.6 2008-05-24 19:19:49 bagder Exp $
 .\"
 .TH curl_multi_add_handle 3 "4 March 2002" "libcurl 7.9.5" "libcurl Manual"
 .SH NAME
@@ -11,6 +11,8 @@ CURLMcode curl_multi_add_handle(CURLM *multi_handle, CURL *easy_handle);
 .SH DESCRIPTION
 Adds a standard easy handle to the multi stack. This function call will make
 this \fImulti_handle\fP control the specified \fIeasy_handle\fP.
+Furthermore, libcurl now initiates the connection associated with the
+specified \fIeasy_handle\fP.
 
 When an easy handle has been added to a multi stack, you can not and you must
 not use \fIcurl_easy_perform(3)\fP on that handle!

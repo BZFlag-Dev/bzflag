@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostasyn.c,v 1.19 2007-09-28 21:48:28 bagder Exp $
+ * $Id: hostasyn.c,v 1.22 2008-10-30 13:45:25 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -52,10 +52,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -70,10 +66,6 @@
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
-
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
 
 #include "memory.h"
 /* The last #include file should be: */
@@ -168,7 +160,7 @@ CURLcode Curl_addrinfo6_callback(void *arg, /* "struct connectdata *" */
 #ifdef HAVE_CARES_CALLBACK_TIMEOUTS
                                  int timeouts,
 #endif
-                                 struct addrinfo *ai)
+                                 Curl_addrinfo *ai)
 {
  /* NOTE: for CURLRES_ARES, the 'ai' argument is really a
   * 'struct hostent' pointer.

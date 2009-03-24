@@ -1,5 +1,5 @@
-#ifndef __INET_NTOA_R_H
-#define __INET_NTOA_R_H
+#ifndef __RAWSTR_H
+#define __RAWSTR_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,25 +20,26 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: inet_ntoa_r.h,v 1.3 2005/05/26 20:56:25 bagder Exp $
+ * $Id: rawstr.h,v 1.3 2009-02-07 22:53:37 bagder Exp $
  ***************************************************************************/
 
-#include "setup.h"
+#include <curl/curl.h>
 
-#ifdef HAVE_INET_NTOA_R_2_ARGS
 /*
- * uClibc 0.9.26 (at least) doesn't define this prototype. The buffer
- * must be at least 16 characters long.
+ * Curl_raw_equal() is for doing "raw" case insensitive strings. This is meant
+ * to be locale independent and only compare strings we know are safe for
+ * this.
+ *
+ * The function is capable of comparing a-z case insensitively even for non-ascii.
  */
-char *inet_ntoa_r(const struct in_addr in, char buffer[]);
+int Curl_raw_equal(const char *first, const char *second);
+int Curl_raw_nequal(const char *first, const char *second, size_t max);
 
-#else
-/*
- * My solaris 5.6 system running gcc 2.8.1 does *not* have this prototype
- * in any system include file! Isn't that weird?
- */
-char *inet_ntoa_r(const struct in_addr in, char *buffer, int buflen);
+char Curl_raw_toupper(char in);
+
+/* checkprefix() is a shorter version of the above, used when the first
+   argument is zero-byte terminated */
+#define checkprefix(a,b)    Curl_raw_nequal(a,b,strlen(a))
 
 #endif
-
-#endif
+void Curl_strntoupper(char *dest, const char *src, size_t n);

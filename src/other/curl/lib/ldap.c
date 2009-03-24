@@ -5,7 +5,7 @@
  *                | (__| |_| |  _ <| |___
  *                 \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ldap.c,v 1.90 2007-11-24 23:18:21 bagder Exp $
+ * $Id: ldap.c,v 1.95 2008-12-19 21:14:52 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -74,7 +74,8 @@
 #include "strtok.h"
 #include "curl_ldap.h"
 #include "memory.h"
-#include "base64.h"
+#include "curl_base64.h"
+#include "rawstr.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -135,6 +136,7 @@ const struct Curl_handler Curl_handler_ldap = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_LDAP,                            /* defport */
   PROT_LDAP                             /* protocol */
@@ -156,6 +158,7 @@ const struct Curl_handler Curl_handler_ldaps = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_LDAPS,                           /* defport */
   PROT_LDAP | PROT_SSL                  /* protocol */
@@ -198,7 +201,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   }
 
   /* Get the URL scheme ( either ldap or ldaps ) */
-  if(strequal(conn->protostr, "LDAPS"))
+  if(Curl_raw_equal(conn->protostr, "LDAPS"))
     ldap_ssl = 1;
   infof(data, "LDAP local: trying to establish %s connection\n",
           ldap_ssl ? "encrypted" : "cleartext");
@@ -228,7 +231,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
       /* Novell SDK supports DER or BASE64 files. */
       int cert_type = LDAPSSL_CERT_FILETYPE_B64;
       if((data->set.str[STRING_CERT_TYPE]) &&
-              (strequal(data->set.str[STRING_CERT_TYPE], "DER")))
+         (Curl_raw_equal(data->set.str[STRING_CERT_TYPE], "DER")))
         cert_type = LDAPSSL_CERT_FILETYPE_DER;
       if(!ldap_ca) {
         failf(data, "LDAP local: ERROR %s CA cert not set!",
@@ -269,7 +272,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
     if(data->set.ssl.verifypeer) {
       /* OpenLDAP SDK supports BASE64 files. */
       if((data->set.str[STRING_CERT_TYPE]) &&
-              (!strequal(data->set.str[STRING_CERT_TYPE], "PEM"))) {
+         (!Curl_raw_equal(data->set.str[STRING_CERT_TYPE], "PEM"))) {
         failf(data, "LDAP local: ERROR OpenLDAP does only support PEM cert-type!");
         status = CURLE_SSL_CERTPROBLEM;
         goto quit;
