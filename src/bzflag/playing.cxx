@@ -919,11 +919,11 @@ static void doKey(const BzfKeyEvent &key, bool pressed)
 
 static void doMotion()
 {
-  float speed = 0.0f;
-  float rotation = 0.0f;
+  float speed  = 0.0f;
+  float angVel = 0.0f;
 
-  int keyboardSpeed    = myTank->getSpeed();
-  int keyboardRotation = myTank->getRotation();
+  int keyboardSpeed  = myTank->getSpeed();
+  int keyboardAngVel = myTank->getRotation();
 
   // mouse is default steering method; query mouse pos always, not doing so
   // can lead to stuttering movement with X and software rendering (uncertain why)
@@ -941,8 +941,9 @@ static void doMotion()
       mx = jx; my = jy;
     } else if (BZDB.isTrue("allowInputChange")) {
       // if we aren't using the joystick, but it's moving, start using it
-      if ((jx < -100) || (jx > 100) || (jy < -100) || (jy > 100))
+      if ((jx < -100) || (jx > 100) || (jy < -100) || (jy > 100)) {
 	myTank->setInputMethod(LocalPlayer::Joystick);
+      }
     }
   }
 
@@ -953,15 +954,15 @@ static void doMotion()
 #endif
 
   if (forcedControls) {
-    speed    = forcedSpeed;
-    rotation = forcedAngVel;
+    speed  = forcedSpeed;
+    angVel = forcedAngVel;
   }
   else if (myTank->isAutoPilot()) {
-    doAutoPilot(rotation, speed);
+    doAutoPilot(angVel, speed);
   }
   else if (myTank->getInputMethod() == LocalPlayer::Keyboard) {
-    rotation = (float)keyboardRotation;
-    speed    = (float)keyboardSpeed;
+    angVel = (float)keyboardAngVel;
+    speed  = (float)keyboardSpeed;
     if (speed < 0.0f) {
       speed *= 0.5f;
     }
@@ -975,13 +976,13 @@ static void doMotion()
       maxMotionSize = 1000; // joysticks read 0 - 1000
     }
 
-    // calculate desired rotation
-    if (keyboardRotation) {
-      rotation = float(keyboardRotation);
+    // calculate desired angular velocity
+    if (keyboardAngVel) {
+      angVel = float(keyboardAngVel);
     } else if (mx < -noMotionSize) {
-      rotation = float(-mx - noMotionSize) / float(maxMotionSize - noMotionSize);
+      angVel = float(-mx - noMotionSize) / float(maxMotionSize - noMotionSize);
     } else if (mx > noMotionSize) {
-      rotation = -float(mx - noMotionSize) / float(maxMotionSize - noMotionSize);
+      angVel = -float(mx - noMotionSize) / float(maxMotionSize - noMotionSize);
     }
 
     // calculate desired speed
@@ -999,22 +1000,37 @@ static void doMotion()
     }
 
     // parabolic control
-    static BZDB_float s1("parabolicSlope");
-    if (!isnan((float)s1)) {
+    static BZDB_float parabolicSlope("parabolicSlope");
+    if (!isnan((float)parabolicSlope)) {
+      float s1 = parabolicSlope;
+           if (s1 > +1.0e6f) { s1 = +1.0e6f; }
+      else if (s1 < -1.0e6f) { s1 = -1.0e6f; }
       const float s2 = (1.0f - s1);
       if (speed >= 0.0f) {
         speed *= ((s2 * speed) + s1);
       } else {
-        speed *= -2.0f; // scale to (0.0f,1.0f]   (note the -0.5f clamp)
+        speed *= -2.0f; // scale to (0.0f,1.0f]  (for the -0.5f clamping)
         speed *= ((s2 * speed) + s1);
         speed *= -0.5f;
       }
-      if (rotation >= 0.0f) {
-        rotation *= ((+s2 * rotation) + s1);
+      if (angVel >= 0.0f) {
+        angVel *= ((+s2 * angVel) + s1);
       } else {
-        rotation *= ((-s2 * rotation) + s1);
+        angVel *= ((-s2 * angVel) + s1);
       }
     }
+  }
+
+  // slow motion modifier
+  warnAboutSlowMotion();
+  if (BZDB.isTrue("slowMotion")) {
+    speed  *= 0.5f;
+    angVel *= 0.5f;
+  }
+
+  // FOV modifier
+  if (BZDB.isTrue("slowBinoculars")) {
+    angVel *= BZDB.eval("displayFOV") / 60.0f;
   }
 
   // speed clamp
@@ -1024,33 +1040,21 @@ static void doMotion()
     speed = +1.0f;
   }
 
-  // rotation clamp
-  if (rotation < -1.0f) {
-    rotation = -1.0f;
-  } else if (rotation > +1.0f) {
-    rotation = +1.0f;
-  }
-
-  // slow motion modifier
-  warnAboutSlowMotion();
-  if (BZDB.isTrue("slowMotion")) {
-    speed    *= 0.5f;
-    rotation *= 0.5f;
-  }
-
-  // FOV modifier
-  if (BZDB.isTrue("slowBinoculars")) {
-    rotation *= BZDB.eval("displayFOV") / 60.0f;
+  // angVel clamp
+  if (angVel < -1.0f) {
+    angVel = -1.0f;
+  } else if (angVel > +1.0f) {
+    angVel = +1.0f;
   }
 
   /* see if controls are reversed */
   if (myTank->getFlag() == Flags::ReverseControls) {
-    speed    = -speed;
-    rotation = -rotation;
+    speed  = -speed;
+    angVel = -angVel;
   }
 
   myTank->setDesiredSpeed(speed);
-  myTank->setDesiredAngVel(rotation);
+  myTank->setDesiredAngVel(angVel);
 }
 
 
