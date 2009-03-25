@@ -23,7 +23,20 @@
  * $Id: version.h,v 1.94 2008-01-24 14:15:49 gknauf Exp $
  ***************************************************************************/
 
+#ifndef _WIN32
 #include <curl/curlver.h>
+#else
+	#define LIBCURL_COPYRIGHT "WHATEVER!"
+	#define LIBCURL_VERSION_MAJOR 7
+	#define LIBCURL_VERSION_MINOR 19
+	#define LIBCURL_VERSION_PATCH 4
+	#ifndef _WIN64
+	#define OS "Windows(32bit)"
+	#else
+	#define OS "Windows(64bit)"
+	#endif
+
+#endif
 
 #define CURL_NAME "curl"
 #define CURL_COPYRIGHT LIBCURL_COPYRIGHT

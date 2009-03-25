@@ -103,8 +103,11 @@
  * and might also include required system header files to define them.
  */
 
-#include <curl/curlbuild.h>
-
+#ifdef _WIN32
+#include "curl/curlbuildWin32.h"  /* libcurl build definitions */
+#else
+#include "curl/curlbuild.h"  /* libcurl build definitions */
+#endif
 /*
  * Compile time sanity checks must also be done when building the library.
  */
