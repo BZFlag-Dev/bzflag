@@ -205,13 +205,10 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
 }
 
 
-bool BZWReader::readRawLines(vector<string>& lines,
+bool BZWReader::readRawLines(string& args, vector<string>& lines,
                              const string& endToken, int& lineNum)
 {
-  // eat the tag's newline
-  if (input->peek() == '\n') {
-    input->ignore(1);
-  }
+  std::getline(*input, args);
 
   while (!input->eof() && !input->fail() && input->good()) {
     string line;
@@ -382,14 +379,16 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
       }
     }
     else if (strcasecmp(buffer, "options") == 0) {
+      string args;
       vector<string> optionLines;
-      if (!readRawLines(optionLines, "end", lineNum)) {
+      if (!readRawLines(args, optionLines, "end", lineNum)) {
         errorHandler->fatalError("missing \"end\" for \"options\"", lineNum);
         return false;
       }
     }
     else if (strcasecmp(buffer, "info") == 0) {
-      if (!readRawLines(mapInfoLines, "end", lineNum)) {
+      string args;
+      if (!readRawLines(args, mapInfoLines, "end", lineNum)) {
         errorHandler->fatalError("missing \"end\" for \"info\"", lineNum);
         return false;
       }
@@ -413,8 +412,9 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 	if (endToken.empty()) {
 	  endToken = "end";
         }
+        string args;
         vector<string> customLines;
-        if (!readRawLines(customLines, endToken, lineNum)) {
+        if (!readRawLines(args, customLines, endToken, lineNum)) {
           string msg;
           msg += "missing \"" + TextUtils::tolower(endToken) + "\"";
           msg += " for \"" + TextUtils::tolower(upperToken) + "\"";
@@ -427,6 +427,7 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 	  data.fileName = location;
 	  data.lineNum = lineNum;
 	  data.name = bz_ApiString(upperToken);
+	  data.args = bz_ApiString(args);
 	  for (unsigned int i = 0; i < customLines.size(); i++) {
 	    data.data.push_back(customLines[i]);
           }

@@ -1528,6 +1528,7 @@ typedef struct bz_CustomMapObjectInfo
   bz_ApiString     fileName;
   int              lineNum;
   bz_ApiString     name;
+  bz_ApiString     args;
   bz_APIStringList data;
   bz_ApiString     newData;
 } bz_CustomMapObjectInfo;

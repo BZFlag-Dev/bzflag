@@ -88,6 +88,8 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 
   lua_pushstring(L, TextUtils::tolower(objToken.c_str()).c_str());
 
+  lua_pushstring(L, info->args.c_str());
+
   lua_newtable(L);
   bz_APIStringList& list = info->data;
   for (size_t i = 0; i < list.size(); i++) {
@@ -96,9 +98,10 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
   }
 
   lua_pushstring(L, info->fileName.c_str());
+
   lua_pushinteger(L, info->lineNum);
 
-  if (lua_pcall(L, 4, 1, 0) != 0) {
+  if (lua_pcall(L, 5, 1, 0) != 0) {
     bz_debugMessagef(0, "lua call-in mapobject error (%s): %s\n",
                      objToken.c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);

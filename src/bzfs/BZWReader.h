@@ -47,7 +47,7 @@ private:
 		       bool& gotWorld);
   void finalization(char *data, unsigned int length, bool good);
 
-  bool readRawLines(std::vector<std::string>& lines,
+  bool readRawLines(std::string& args, std::vector<std::string>& lines,
                     const std::string& endToken, int& lineNum);
 
   // stream to open
