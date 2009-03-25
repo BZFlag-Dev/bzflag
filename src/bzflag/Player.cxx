@@ -1295,7 +1295,7 @@ void Player::doDeadReckoning()
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
   }
   // the velocity check is for when a Burrow flag is dropped
-  if ((predictedPos[2] < groundLimit) && (predictedVel[2] <= 0.0f)) {
+  if ((predictedPos[2] <= groundLimit) && (predictedVel[2] <= 0.0f)) {
     predictedPos[2] = groundLimit;
     predictedVel[2] = 0.0f;
     inputStatus &= ~PlayerState::Falling;
