@@ -298,7 +298,7 @@ void* nboUnpackI64(void* b, int64_t& v)
   if (ErrorChecking) {
     if (Length < sizeof(int64_t)) {
       Error = true;
-      v = 0.0f;
+      v = (int64_t) 0.0f;
       return b;
     } else {
       Length -= sizeof(int64_t);
@@ -316,7 +316,7 @@ void* nboUnpackU64(void* b, uint64_t& v)
   if (ErrorChecking) {
     if (Length < sizeof(uint64_t)) {
       Error = true;
-      v = 0.0f;
+      v = (uint64_t) 0.0f;
       return b;
     } else {
       Length -= sizeof(uint64_t);
