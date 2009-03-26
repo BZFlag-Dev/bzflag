@@ -47,6 +47,10 @@ private:
 		       bool& gotWorld);
   void finalization(char *data, unsigned int length, bool good);
 
+  bool parseNormalObject(const char* token, WorldFileObject** object);
+  bool parseCustomObject(const char* token, bool& error, int& lineNum,
+                         std::vector<WorldFileObject*>& wlist,
+                         GroupDefinition* groupDef, bool& gotWorld);
   bool readRawLines(std::string& args, std::vector<std::string>& lines,
                     const std::string& endToken, int& lineNum);
 

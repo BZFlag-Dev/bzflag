@@ -22,12 +22,12 @@
 class BZWError {
 
 public:
-  BZWError(std::string _location);
+  BZWError(const std::string& _location);
   ~BZWError();
 
   /* return false if error reporting failed, true otherwise */
-  bool fatalError(std::string errorMsg, int line);
-  bool warning(std::string warningMsg, int line);
+  bool fatalError(const std::string& errorMsg, int line);
+  bool warning(const std::string& warningMsg, int line);
 
   /* status */
   bool hasHadError() {return hadError;};

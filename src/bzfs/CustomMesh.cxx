@@ -90,8 +90,8 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       std::cout << "discarding incomplete mesh face" << std::endl;
       delete face;
     }
-    face = new CustomMeshFace (material, phydrv, noclusters,
-			       smoothBounce, driveThrough, shootThrough);
+    face = new CustomMeshFace(material, phydrv, noclusters,
+			      smoothBounce, driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     cfvec3 inside;

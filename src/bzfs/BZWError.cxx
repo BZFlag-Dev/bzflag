@@ -17,53 +17,68 @@
 #include <string>
 #include <iostream>
 
-BZWError::BZWError(std::string _location) :
-	  hadError(false), hadWarning(false), location(_location)
+
+BZWError::BZWError(const std::string& _location)
+: hadError(false)
+, hadWarning(false)
+, location(_location)
 {
 }
+
 
 BZWError::~BZWError()
 {
 }
 
-bool BZWError::fatalError(std::string errorMsg, int line)
+
+bool BZWError::fatalError(const std::string& msg, int line)
 {
-  // toggle flag
+  // set flag
   hadError = true;
 
   // sanity
-  if (line < 0)
+  if (line < 0) {
     return false;
-  if (errorMsg == "")
+  }
+  std::string errorMsg = msg;
+  if (errorMsg == "") {
     errorMsg = "unspecified error";
+  }
 
   // report error
   std::cout << location << ": error";
-  if (line != 0)
-    std::cout << " (line " << line << ")" ;
+  if (line != 0) {
+    std::cout << " (line " << line << ")";
+  }
   std::cout << ": " << errorMsg << std::endl << std::flush;
   return true;
 }
 
-bool BZWError::warning(std::string warningMsg, int line)
+
+bool BZWError::warning(const std::string& msg, int line)
 {
-  // toggle flag
+  // set flag
   hadWarning = true;
 
   // sanity
-  if (line < 0)
+  if (line < 0) {
     return false;
-  if (warningMsg == "")
+  }
+  std::string warningMsg = msg;
+  if (warningMsg == "") {
     warningMsg = "unspecified warning";
+  }
 
   // report warning
   std::cout << location << ": warning";
-  if (line != 0)
-    std::cout << " (line " << line << ")" ;
+  if (line != 0) {
+    std::cout << " (line " << line << ")";
+  }
   std::cout << ": " << warningMsg << std::endl << std::flush;
 
   return true;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

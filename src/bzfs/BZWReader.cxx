@@ -85,12 +85,12 @@ BZWReader::BZWReader(const string &filename) : cURLManager(),
   if ((filename.length() < 4) ||
       (strcasecmp(filename.substr(filename.length() - 4, 4).c_str(),
 		  ".bzw") != 0)) {
-    errorHandler->warning(string(
-      "world file extension is not .bzw, trying to load anyway"), 0);
+    errorHandler->warning(
+      "world file extension is not .bzw, trying to load anyway", 0);
   }
 
   if (input->peek() == EOF) {
-    errorHandler->fatalError(string("could not find bzflag world file"), 0);
+    errorHandler->fatalError("could not find bzflag world file", 0);
   }
 }
 
@@ -103,7 +103,7 @@ BZWReader::BZWReader(std::istream &in)
 {
   errorHandler = new BZWError(location);
   if (input->peek() == EOF) {
-    errorHandler->fatalError(string("could not find bzflag world file"), 0);
+    errorHandler->fatalError("could not find bzflag world file", 0);
   }
 }
 
@@ -150,58 +150,110 @@ void BZWReader::readToken(char *buffer, int n)
 }
 
 
-static bool parseNormalObject(const char* token, WorldFileObject** object)
+bool BZWReader::parseNormalObject(const char* token, WorldFileObject** object)
 {
-  WorldFileObject* tmpObj = NULL;
+  const string lower = TextUtils::tolower(token);
 
-  if (strcasecmp(token, "box") == 0) {
-    tmpObj = new CustomBox;
-  } else if (strcasecmp(token, "pyramid") == 0) {
-    tmpObj = new CustomPyramid();
-  } else if (strcasecmp(token, "base") == 0) {
-    tmpObj = new CustomBase;
-  } else if (strcasecmp(token, "link") == 0) {
-    tmpObj = new CustomLink();
-  } else if (strcasecmp(token, "mesh") == 0) {
-    tmpObj = new CustomMesh;
-  } else if (strcasecmp(token, "arc") == 0) {
-    tmpObj = new CustomArc(false);
-  } else if (strcasecmp(token, "meshbox") == 0) {
-    tmpObj = new CustomArc(true);
-  } else if (strcasecmp(token, "cone") == 0) {
-    tmpObj = new CustomCone(false);
-  } else if (strcasecmp(token, "meshpyr") == 0) {
-    tmpObj = new CustomCone(true);
-  } else if (strcasecmp(token, "sphere") == 0) {
-    tmpObj = new CustomSphere;
-  } else if (strcasecmp(token, "tetra") == 0) {
-    tmpObj = new CustomTetra();
-  } else if (strcasecmp(token, "weapon") == 0) {
-    tmpObj = new CustomWeapon;
-  } else if (strcasecmp(token, "zone") == 0) {
-    tmpObj = new CustomZone;
-  } else if (strcasecmp(token, "waterLevel") == 0) {
-    tmpObj = new CustomWaterLevel;
-  } else if (strcasecmp(token, "dynamicColor") == 0) {
-    tmpObj = new CustomDynamicColor;
-  } else if (strcasecmp(token, "textureMatrix") == 0) {
-    tmpObj = new CustomTextureMatrix;
-  } else if (strcasecmp(token, "material") == 0) {
-    tmpObj = new CustomMaterial;
-  } else if (strcasecmp(token, "physics") == 0) {
-    tmpObj = new CustomPhysicsDriver;
-  } else if (strcasecmp(token, "transform") == 0) {
-    tmpObj = new CustomMeshTransform;
-  } else if (strcasecmp(token, "text") == 0) {
-    tmpObj = new CustomWorldText;
+  WorldFileObject*& obj = *object;
+
+       if (lower == "box")           { obj = new CustomBox;           }
+  else if (lower == "pyramid")       { obj = new CustomPyramid();     }
+  else if (lower == "base")          { obj = new CustomBase;          }
+  else if (lower == "link")          { obj = new CustomLink();        }
+  else if (lower == "mesh")          { obj = new CustomMesh;          }
+  else if (lower == "arc")           { obj = new CustomArc(false);    }
+  else if (lower == "meshbox")       { obj = new CustomArc(true);     }
+  else if (lower == "cone")          { obj = new CustomCone(false);   }
+  else if (lower == "meshpyr")       { obj = new CustomCone(true);    }
+  else if (lower == "sphere")        { obj = new CustomSphere;        }
+  else if (lower == "tetra")         { obj = new CustomTetra();       }
+  else if (lower == "weapon")        { obj = new CustomWeapon;        }
+  else if (lower == "zone")          { obj = new CustomZone;          }
+  else if (lower == "waterlevel")    { obj = new CustomWaterLevel;    }
+  else if (lower == "dynamiccolor")  { obj = new CustomDynamicColor;  }
+  else if (lower == "texturematrix") { obj = new CustomTextureMatrix; }
+  else if (lower == "material")      { obj = new CustomMaterial;      }
+  else if (lower == "physics")       { obj = new CustomPhysicsDriver; }
+  else if (lower == "transform")     { obj = new CustomMeshTransform; }
+  else if (lower == "text")          { obj = new CustomWorldText;     }
+  else {
+    return false; // no match found
   }
 
-  if (tmpObj != NULL) {
-    *object = tmpObj;
-    return true;
-  } else {
+  return true;
+}
+
+
+bool BZWReader::parseCustomObject(const char* token, bool& error, int& lineNum,
+                                  vector<WorldFileObject*>& wlist,
+                                  GroupDefinition* groupDef, bool& gotWorld)
+{
+  static int depth = 0;
+  depth++;
+  
+  const string upperToken = TextUtils::toupper(token);
+  CustomObjectMap::iterator it = customObjectMap.find(upperToken);
+  if (it == customObjectMap.end()) {
+    depth--;
     return false;
   }
+
+  string endToken = it->second.endToken;
+  if (endToken.empty()) {
+    endToken = "end";
+  }
+  string args;
+  vector<string> customLines;
+  if (!readRawLines(args, customLines, endToken, lineNum)) {
+    string msg;
+    msg += "missing \"" + TextUtils::tolower(endToken) + "\"";
+    msg += " for \"" + TextUtils::tolower(upperToken) + "\"";
+    errorHandler->fatalError(msg, lineNum);
+    error = true;
+    depth--;
+  }
+  else {
+    bz_CustomMapObjectInfo data;
+
+    data.fileName = location;
+    data.lineNum = lineNum;
+    data.name = bz_ApiString(upperToken);
+    data.args = bz_ApiString(args);
+    for (unsigned int i = 0; i < customLines.size(); i++) {
+      data.data.push_back(customLines[i]);
+    }
+
+    bz_ApiString objName = bz_ApiString(upperToken);
+    customObjectMap[upperToken].handler->handle(objName, &data);
+
+    // embedded objects
+    if (data.newData.size() > 0) {
+      logDebugMessage(1, "%s: (line %i): embedding for \"%s\"\n",
+                      location.c_str(), lineNum, data.name.c_str());
+      std::istringstream newData(data.newData.c_str());
+      BZWReader incStream(newData);
+      vector<WorldFileObject*> incWlist;
+      if (incStream.readWorldStream(incWlist, groupDef, gotWorld)) {
+        // add the included objects
+        for (unsigned int i = 0; i < incWlist.size(); i++) {
+          wlist.push_back(incWlist[i]);
+        }
+      }
+      else {
+        // empty the failed list
+        emptyWorldFileObjectList(incWlist);
+        string msg = "embedding \"";
+        msg += data.name.c_str();
+        msg += "\"";
+        errorHandler->fatalError(msg, lineNum);
+        error = true;
+        depth--;
+      }
+    }
+  }
+
+  depth--;
+  return true;
 }
 
 
@@ -239,7 +291,7 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 {
   // make sure input is valid
   if (input->peek() == EOF) {
-    errorHandler->fatalError(string("unexpected EOF"), 0);
+    errorHandler->fatalError("unexpected EOF", 0);
     return false;
   }
 
@@ -249,13 +301,13 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
   WorldFileObject* newObject = NULL;
   GroupDefinition* const worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
   GroupDefinition* const startDef = groupDef;
+  bool error = false;
 
   while (!input->eof() && !input->fail() && input->good()) {
     // watch out for starting a new object when one is already in progress
     if (newObject) {
       if (object) {
-	errorHandler->warning(
-	  string("discarding incomplete object"), lineNum);
+	errorHandler->warning("discarding incomplete object", lineNum);
       }
       object = newObject;
       newObject = NULL;
@@ -275,8 +327,7 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
     }
     else if (strcasecmp(buffer, "end") == 0) {
       if (!object) {
-	errorHandler->fatalError(
-	  string("unexpected \"end\" token"), lineNum);
+	errorHandler->fatalError("unexpected \"end\" token", lineNum);
 	return false;
       }
       else {
@@ -294,8 +345,28 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 	object = NULL;
       }
     }
+    else if (object) { // filling the current object
+      if (!object->read(buffer, *input)) {
+        // unknown token
+        errorHandler->warning(
+          string("unknown object parameter \"") +
+          string(buffer) + string("\" - skipping"), lineNum);
+        // delete object;
+        // return false;
+      }
+    }
+    else if (parseCustomObject(buffer, error, lineNum,
+                               wlist, groupDef, gotWorld)) {
+      if (error) {
+       return false;
+      }
+    }
     else if (parseNormalObject(buffer, &newObject)) {
-      // newObject has already been assigned
+      // newObject has been assigned
+    }
+    else if (strcasecmp(buffer, "teleporter") == 0) {
+      readToken(buffer, sizeof(buffer));
+      newObject = new CustomGate(buffer);
     }
     else if (strcasecmp(buffer, "define") == 0) {
       if (groupDef != worldDef) {
@@ -312,15 +383,13 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 	  }
 	  groupDef = new GroupDefinition(buffer);
 	} else {
-	  errorHandler->warning(
-	    string("missing group definition name"), lineNum);
+	  errorHandler->warning("missing group definition name", lineNum);
 	}
       }
     }
     else if (strcasecmp(buffer, "enddef") == 0) {
       if (groupDef == worldDef) {
-	errorHandler->warning(
-	  string("enddef without define - skipping"), lineNum);
+	errorHandler->warning("enddef without define - skipping", lineNum);
       } else {
 	OBSTACLEMGR.addGroupDef(groupDef);
 	groupDef = worldDef;
@@ -329,14 +398,32 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
     else if (strcasecmp(buffer, "group") == 0) {
       readToken(buffer, sizeof(buffer));
       if (strlen(buffer) <= 0) {
-	errorHandler->warning(
-	  string("missing group definition reference"), lineNum);
+	errorHandler->warning("missing group definition reference", lineNum);
       }
       newObject = new CustomGroup(buffer);
     }
-    else if (strcasecmp(buffer, "teleporter") == 0) {
-      readToken(buffer, sizeof(buffer));
-      newObject = new CustomGate(buffer);
+    else if (strcasecmp(buffer, "world") == 0) {
+      if (!gotWorld) {
+	newObject = new CustomWorld();
+	gotWorld = true;
+      } else {
+	errorHandler->warning("multiple \"world\" sections found", lineNum);
+      }
+    }
+    else if (strcasecmp(buffer, "options") == 0) {
+      string args;
+      vector<string> optionLines;
+      if (!readRawLines(args, optionLines, "end", lineNum)) {
+        errorHandler->fatalError("missing \"end\" for \"options\"", lineNum);
+        return false;
+      }
+    }
+    else if (strcasecmp(buffer, "info") == 0) {
+      string args;
+      if (!readRawLines(args, mapInfoLines, "end", lineNum)) {
+        errorHandler->fatalError("missing \"end\" for \"info\"", lineNum);
+        return false;
+      }
     }
     else if (strcasecmp(buffer, "include") == 0) {
       // NOTE: intentionally undocumented  (at the moment)
@@ -347,7 +434,7 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 	//       - better filename handling ("", spaces, and / vs. \\)
 	//       - make relative names work from the base file location
 	logDebugMessage(1,"%s: (line %i): including \"%s\"\n",
-		location.c_str(), lineNum, incName.c_str());
+	                location.c_str(), lineNum, incName.c_str());
 	BZWReader incFile(incName);
 	vector<WorldFileObject*> incWlist;
 	if (incFile.readWorldStream(incWlist, groupDef, gotWorld)) {
@@ -369,102 +456,6 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 			    incName.c_str()), lineNum);
       }
     }
-    else if (strcasecmp(buffer, "world") == 0) {
-      if (!gotWorld) {
-	newObject = new CustomWorld();
-	gotWorld = true;
-      } else {
-	errorHandler->warning(
-	  string("multiple \"world\" sections found"), lineNum);
-      }
-    }
-    else if (strcasecmp(buffer, "options") == 0) {
-      string args;
-      vector<string> optionLines;
-      if (!readRawLines(args, optionLines, "end", lineNum)) {
-        errorHandler->fatalError("missing \"end\" for \"options\"", lineNum);
-        return false;
-      }
-    }
-    else if (strcasecmp(buffer, "info") == 0) {
-      string args;
-      if (!readRawLines(args, mapInfoLines, "end", lineNum)) {
-        errorHandler->fatalError("missing \"end\" for \"info\"", lineNum);
-        return false;
-      }
-    }
-    else if (object) { // filling the current object
-      if (!object->read(buffer, *input)) {
-        // unknown token
-        errorHandler->warning(
-          string("unknown object parameter \"") +
-          string(buffer) + string("\" - skipping"), lineNum);
-        // delete object;
-        // return false;
-      }
-    }
-    else {
-      // handle custom objects
-      const string upperToken = TextUtils::toupper(string(buffer));
-      CustomObjectMap::iterator it = customObjectMap.find(upperToken);
-      if (it != customObjectMap.end()) {
-	string endToken = it->second.endToken;
-	if (endToken.empty()) {
-	  endToken = "end";
-        }
-        string args;
-        vector<string> customLines;
-        if (!readRawLines(args, customLines, endToken, lineNum)) {
-          string msg;
-          msg += "missing \"" + TextUtils::tolower(endToken) + "\"";
-          msg += " for \"" + TextUtils::tolower(upperToken) + "\"";
-          errorHandler->fatalError(msg, lineNum);
-          return false;
-        }
-        else {
-	  bz_CustomMapObjectInfo data;
-
-	  data.fileName = location;
-	  data.lineNum = lineNum;
-	  data.name = bz_ApiString(upperToken);
-	  data.args = bz_ApiString(args);
-	  for (unsigned int i = 0; i < customLines.size(); i++) {
-	    data.data.push_back(customLines[i]);
-          }
-
-          bz_ApiString objName = bz_ApiString(upperToken);
-	  customObjectMap[upperToken].handler->handle(objName, &data);
-
-	  // embedded objects
-	  if (data.newData.size() > 0) {
-            logDebugMessage(1, "%s: (line %i): embedding for \"%s\"\n",
-                            location.c_str(), lineNum, data.name.c_str());
-	    std::istringstream newData(data.newData.c_str());
-            BZWReader incStream(newData);
-            vector<WorldFileObject*> incWlist;
-            if (incStream.readWorldStream(incWlist, groupDef, gotWorld)) {
-              // add the included objects
-              for (unsigned int i = 0; i < incWlist.size(); i++) {
-                wlist.push_back(incWlist[i]);
-              }
-            }
-            else {
-              // empty the failed list
-              emptyWorldFileObjectList(incWlist);
-              errorHandler->fatalError(
-                TextUtils::format("embedding \"%s\"", data.name.c_str()), lineNum);
-              return false;
-            }
-          }
-	}
-      }
-      else {
-        errorHandler->warning(
-          string("invalid object type \"") +
-          string(buffer) + string("\" - skipping"), lineNum);
-        // return false;
-      }
-    }
 
     // discard remainder of line
     while (input->good() && input->peek() != '\n') {
@@ -478,13 +469,13 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
 
   bool retval = true;
   if (object) {
-    errorHandler->fatalError(string("missing \"end\" parameter"), lineNum);
+    errorHandler->fatalError("missing \"end\" parameter", lineNum);
     delete object;
     retval = false;
   }
 
   if (groupDef != startDef) {
-    errorHandler->fatalError(string("missing \"enddef\" parameter"), lineNum);
+    errorHandler->fatalError("missing \"enddef\" parameter", lineNum);
     if (startDef == worldDef) {
       delete groupDef;
     }
@@ -500,7 +491,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
   // create world object
   WorldInfo *myWorld = new WorldInfo;
   if (!myWorld) {
-    errorHandler->fatalError(string("WorldInfo failed to initialize"), 0);
+    errorHandler->fatalError("WorldInfo failed to initialize", 0);
     return NULL;
   }
 
@@ -510,7 +501,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
   GroupDefinition* worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
   if (!readWorldStream(list, worldDef, gotWorld)) {
     emptyWorldFileObjectList(list);
-    errorHandler->fatalError(string("world file failed to load."), 0);
+    errorHandler->fatalError("world file failed to load.", 0);
     delete myWorld;
     return NULL;
   }

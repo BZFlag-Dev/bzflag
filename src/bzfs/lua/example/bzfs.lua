@@ -4,6 +4,10 @@
 --  Test code for the bzfs lua plugin
 --
 
+local function printf(fmt, ...)
+  print(fmt:format(...))
+end
+
 -- prefix all MaxWaitTime names with 'lua'
 do
   local origGetMaxWaitTime = bz.GetMaxWaitTime
@@ -34,7 +38,7 @@ function bz.Print(...)
     if (i ~= 1) then msg = msg .. '\t' end
     msg = msg .. tostring(table[i])
   end
-  bz.SendMessage(bz.PLAYER.SERVER, bz.PLAYER.ALL, msg)
+  bz.SendMessage(BZ.PLAYER.SERVER, BZ.PLAYER.ALL, msg)
 end
 
 
@@ -211,8 +215,9 @@ script.SetCallIn('BZDBChange',
 local lua_block_env = {}
 setmetatable(lua_block_env, { __index = _G })
 
-local function CustomMapObject(name, data, file, line)
-  print('CustomMapObject:  "' .. name .. '"  (' .. file .. ':' .. line .. ')')
+local function CustomMapObject(name, args, data, file, line)
+  printf('CustomMapObject:  (%s:%i)  type:"%s"  args:"%s"  ',
+         file, line, name, args)
 --[[
   for d = 1, #data do
     print('CustomMapObject:    ' .. data[d])
