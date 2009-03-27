@@ -61,7 +61,9 @@ bool LuaFontTexture::SetDebugLevel    (unsigned int) { return false; }
 #include <sstream>
 #include <string>
 #include <vector>
-using namespace std;
+using std::string;
+using std::vector;
+using std::min;
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
