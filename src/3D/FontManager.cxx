@@ -243,8 +243,8 @@ FontManager::FontManager()
 FontManager::~FontManager()
 {
   // FIXME:  boom, this is still problematic
-   clear();
-   //   OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
+  clear();
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
 }
 
 
