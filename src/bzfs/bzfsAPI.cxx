@@ -1791,12 +1791,14 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char *message)
   if (to != BZ_ALLUSERS)
     dstPlayer = (PlayerId)to;
 
-  if (from == BZ_SERVER)
+  if (from == BZ_SERVER) {
     playerIndex = ServerPlayer;
-  else
+    sendMessage(playerIndex, dstPlayer, message);
+  } else {
     playerIndex = from;
+    sendChatMessage(playerIndex, dstPlayer, message);
+  }
 
-  sendChatMessage(playerIndex, dstPlayer, message);
   return true;
 }
 
