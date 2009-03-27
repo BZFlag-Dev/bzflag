@@ -108,9 +108,9 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				// add in the verts and normals and UVs
 				for ( int j = 0; j < mFaces[i].vert_count; j++ )
 				{
-					CVertex	vert;
-					CVertex	norm;
-					CTexCoord	coord;
+					CVector3	vert;
+					CVector3	norm;
+					CVector2	coord;
 
 					int index = mFaces[i].vert_start + j;
 					if ( index > 0 && index < mNumVertices)
@@ -246,9 +246,9 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					// add in the verts and normals and UVs
 					for ( int j = mFaces[i].vert_count-1; j >= 0; j-- )
 					{
-						CVertex	vert;
-						CVertex	norm;
-						CTexCoord	coord;
+						CVector3	vert;
+						CVector3	norm;
+						CVector2	coord;
 
 						int index = mFaces[i].vert_start + j;
 						if ( index > 0 && index < mNumVertices)

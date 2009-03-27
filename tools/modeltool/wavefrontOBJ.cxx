@@ -1,14 +1,15 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 //
 // wavefrontOBJ.cpp : reader for the OBJ files
 //
@@ -16,16 +17,17 @@
 
 #include "common.h"
 
-/* system headers */
+// system headers
 #include <stdio.h>
 #include <string.h>
 #include <string>
 #include <vector>
 #include <map>
 
-/* common headers */
+// common headers
 #include "TextUtils.h"
 #include "wavefrontOBJ.h"
+
 
 static void underscoreBeforeNumbers(std::string& name)
 {
@@ -37,6 +39,7 @@ static void underscoreBeforeNumbers(std::string& name)
   }
   return;
 }
+
 
 static void readMTL ( CModel &model, std::string file )
 {
@@ -76,7 +79,7 @@ static void readMTL ( CModel &model, std::string file )
   material.clear();
 
   std::vector<std::string>::iterator lineItr = lines.begin();
-  while ( lineItr != lines.end() )
+  while (lineItr != lines.end())
   {
   // do a trim here
 
@@ -171,7 +174,10 @@ static void readMTL ( CModel &model, std::string file )
   }
 }
 
-void parseOBJVertSection ( const std::string &section, int &vert, int& norm, int &uv, int &vCount, int &tCount, int &nCount )
+
+void parseOBJVertSection(const std::string &section,
+                         int &vert, int& norm, int& txcd,
+                         int vCount, int nCount, int tCount)
 {
   // TextUtils::tokenize() does not make 3
   // strings from "1//2", so do it the hard way
@@ -216,7 +222,7 @@ void parseOBJVertSection ( const std::string &section, int &vert, int& norm, int
     if (index < 0)
       index = (tCount + 1) + index;
 
-    uv = index - 1;
+    txcd = index - 1;
   }
 
   if (normPart.size() > 0)
@@ -229,6 +235,20 @@ void parseOBJVertSection ( const std::string &section, int &vert, int& norm, int
     norm = index - 1;
   }
 }
+
+
+static bool checkArgCount(int reqCount, int count,
+                          const std::string& type, int lineNum)
+{
+  if (count < (reqCount + 1)) {
+    // FIXME -- lineNum is wrong because of the way the file is parsed
+    printf("ERROR: not enough parameters for \"%s\" at line %i\n",
+           type.c_str(), lineNum + 1);
+    return false;
+  }
+  return true; 
+}
+
 
 void readOBJ ( CModel &model, std::string file )
 {
@@ -276,233 +296,223 @@ void readOBJ ( CModel &model, std::string file )
   if ( lines.size() < 2 )
     return;
 
-  CMesh			mesh;
-  tvVertList		temp_verts;
-  tvVertList		temp_normals;
-  tvTexCoordList	temp_texCoords;
-
-  int vCount = 0;
-  int nCount = 0;
-  int tCount = 0;
+  CMesh	     mesh;
+  tvVec3List temp_verts;
+  tvVec3List temp_normals;
+  tvVec2List temp_texCoords;
 
   std::string currentMaterial = "";
 
-  std::vector<std::string>::iterator lineItr = lines.begin();
+  for (size_t lineNum = 0; lineNum < lines.size(); lineNum++) {
 
-  while ( lineItr != lines.end() )
-  {
-    // do a trim here
-    std::vector<std::string> lineParts = TextUtils::tokenize(*lineItr,std::string(" "));
+    const std::vector<std::string> lineParts =
+      TextUtils::tokenize(lines[lineNum], std::string(" "));
 
-    if (lineParts.size() > 1)
-    {
-      if (lineParts[0] != "#")
-      {
-	if (TextUtils::tolower(lineParts[0]) == "mtllib" && lineParts.size()>1)
-	  readMTL(model,baseFilePath+lineParts[1]);
-	else if (TextUtils::tolower(lineParts[0]) == "v" && lineParts.size()>3)
-	{
-	  CVertex vert;
-	  vert.x = (float)atof(lineParts[1].c_str())*globalScale+globalShift[0];
+    if (lineParts.size() <= 0) {
+      continue;
+    }
+    if (lineParts[0] == "#") {
+      continue;
+    }
 
-	  if (flipYZ)
-	  {
-	    vert.y = -1.0f*(float)atof(lineParts[3].c_str())*globalScale+globalShift[1];
-	    vert.z = (float)atof(lineParts[2].c_str())*globalScale+globalShift[2];
-	  }
-	  else
-	  {
-	    vert.y = (float)atof(lineParts[2].c_str())*globalScale+globalShift[1];
-	    vert.z = (float)atof(lineParts[3].c_str())*globalScale+globalShift[2];
-	  }
+    const std::string element = TextUtils::tolower(lineParts[0]);
 
-	  temp_verts.push_back(vert);
-	  vCount++;
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "vt" && lineParts.size()>2)
-	{
-	  CTexCoord uv;
-	  uv.u = (float)atof(lineParts[1].c_str());
-	  uv.v = (float)atof(lineParts[2].c_str());
+    if (element == "mtllib") {
+      if (!checkArgCount(1, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      readMTL(model,baseFilePath+lineParts[1]);
+    }
+    else if (element == "v") {
+      if (!checkArgCount(3, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      CVector3 vert;
+      vert.x = (float)atof(lineParts[1].c_str())*globalScale+globalShift[0];
 
-	  temp_texCoords.push_back(uv);
-	  tCount++;
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "vn" && lineParts.size()>3)
-	{
-	  CVertex vert;
-	  vert.x = (float)atof(lineParts[1].c_str());
+      if (flipYZ) {
+        vert.y = -1.0f*(float)atof(lineParts[3].c_str())*globalScale+globalShift[1];
+        vert.z = (float)atof(lineParts[2].c_str())*globalScale+globalShift[2];
+      }
+      else {
+        vert.y = (float)atof(lineParts[2].c_str())*globalScale+globalShift[1];
+        vert.z = (float)atof(lineParts[3].c_str())*globalScale+globalShift[2];
+      }
 
-	  if (flipYZ)
-	  {
-	    vert.y = -1.0f* (float)atof(lineParts[3].c_str());
-	    vert.z = (float)atof(lineParts[2].c_str());
-	  }
-	  else
-	  {
-	    vert.y = (float)atof(lineParts[2].c_str());
-	    vert.z = (float)atof(lineParts[3].c_str());
-	  }
-	  temp_normals.push_back(vert);
-	  nCount++;
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "g" && lineParts.size()>1)
-	{
-	  if ( mesh.valid())
-	  {
-	    mesh.verts = temp_verts;
-	    mesh.normals = temp_normals;
-	    mesh.texCoords = temp_texCoords;
-	    //	mesh.reindex();
-	    model.meshes.push_back(mesh);
-	  }
-	  mesh.clear();
-	  mesh.name = lineParts[1];
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "usemtl" && lineParts.size()>1)
-	{
-	  currentMaterial = lineParts[1];
-	  underscoreBeforeNumbers(currentMaterial);
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "f" && lineParts.size()>3)
-	{
-	  CFace face;
-	  face.material = currentMaterial;
+      temp_verts.push_back(vert);
+    }
+    else if (element == "vt") {
+      if (!checkArgCount(2, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      CVector2 uv;
+      uv.u = (float)atof(lineParts[1].c_str());
+      uv.v = (float)atof(lineParts[2].c_str());
 
-	  int partCount = (int)lineParts.size();
+      temp_texCoords.push_back(uv);
+    }
+    else if (element == "vn") {
+      if (!checkArgCount(3, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      CVector3 norm;
+      norm.x = (float)atof(lineParts[1].c_str());
 
-	  for ( int i = 1; i < partCount; i++ )
-	  {
-	    int invalidValue = -2000000000;
-	    int v,n,u;
-	    v = n = u = invalidValue;
-	    parseOBJVertSection(lineParts[i],v,n,u,vCount,tCount,nCount);
-
-	    if (v != invalidValue)
-	      face.verts.push_back(v);
-
-	    if (u != invalidValue)
-	      face.texCoords.push_back(u);
-
-	    if (n != invalidValue)
-	      face.normals.push_back(n);
-	  }
-
-	  bool valid = true;
-	  const int vSize = (int)face.verts.size();
-	  const int nSize = (int)face.normals.size();
-	  const int tSize = (int)face.texCoords.size();
-
-	  if ((nSize != 0) && (nSize != vSize))
-	  {
-	    printf ("vertex/normal count mismatch\n");
-	    valid = false;
-	  }
-	  if ((tSize != 0) && (tSize != vSize))
-	  {
-	    printf ("vertex/texcoord count mismatch\n");
-	    valid = false;
-	  }
-	  if (valid)
-	    mesh.faces.push_back(face);
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "t" && lineParts.size()>1)
-	{
-	  CTriStrip strip;
-	  strip.material = currentMaterial;
-
-	  int partCount = (int)lineParts.size();
-
-	  for ( int i = 1; i < partCount; i++ )
-	  {
-	    int invalidValue = -2000000000;
-	      int v,n,u;
-	    v = n = u = invalidValue;
-	    parseOBJVertSection(lineParts[i],v,n,u,vCount,tCount,nCount);
-
-	    if (v != invalidValue)
-	      strip.verts.push_back(v);
-
-	    if (u != invalidValue)
-	      strip.texCoords.push_back(u);
-
-	    if (n != invalidValue)
-	      strip.normals.push_back(n);
-	  }
-
-	  bool valid = true;
-	  const int vSize = (int)strip.verts.size();
-	  const int nSize = (int)strip.normals.size();
-	  const int tSize = (int)strip.texCoords.size();
-
-	  if ((nSize != 0) && (nSize != vSize))
-	  {
-	    printf ("vertex/normal count mismatch\n");
-	    valid = false;
-	  }
-	  if ((tSize != 0) && (tSize != vSize))
-	  {
-	    printf ("vertex/texcoord count mismatch\n");
-	    valid = false;
-	  }
-	  if (valid)
-	    mesh.strips.push_back(strip);
-	}
-	else if (TextUtils::tolower(lineParts[0]) == "q" && lineParts.size()>1)
-	{
-	  if (mesh.strips.size()) // there has to be a last strip
-	  {
-	    CTriStrip &strip = mesh.strips[mesh.strips.size()-1];
-
-	    int partCount = (int)lineParts.size();
-
-	    for ( int i = 1; i < partCount; i++ )
-	    {
-	      int invalidValue = -2000000000;
-		int v,n,u;
-	      v = n = u = invalidValue;
-	      parseOBJVertSection(lineParts[i],v,n,u,vCount,tCount,nCount);
-
-	      if (v != invalidValue)
-		strip.verts.push_back(v);
-
-	      if (u != invalidValue)
-		strip.texCoords.push_back(u);
-
-	      if (n != invalidValue)
-		strip.normals.push_back(n);
-	    }
-
-	    bool valid = true;
-	    const int vSize = (int)strip.verts.size();
-	    const int nSize = (int)strip.normals.size();
-	    const int tSize = (int)strip.texCoords.size();
-
-	    if ((nSize != 0) && (nSize != vSize))
-	    {
-	      printf ("vertex/normal count mismatch\n");
-	      valid = false;
-	    }
-	    if ((tSize != 0) && (tSize != vSize))
-	    {
-	      printf ("vertex/texcoord count mismatch\n");
-	      valid = false;
-	    }
-	  }
-	}
+      if (flipYZ) {
+        norm.y = -1.0f* (float)atof(lineParts[3].c_str());
+        norm.z = (float)atof(lineParts[2].c_str());
+      }
+      else {
+        norm.y = (float)atof(lineParts[2].c_str());
+        norm.z = (float)atof(lineParts[3].c_str());
+      }
+      temp_normals.push_back(norm);
+    }
+    else if ((element == "g") || (element == "o")) {
+      if (!checkArgCount(1, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      if (useGrouping) {
+        if (mesh.assignData(temp_verts, temp_normals, temp_texCoords)) {
+          model.meshes.push_back(mesh);
+        }
+        mesh.clear();
+        mesh.name = lineParts[1];
       }
     }
-    lineItr++;
+    else if (element == "usemtl") {
+      if (!checkArgCount(1, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      currentMaterial = lineParts[1];
+      underscoreBeforeNumbers(currentMaterial);
+    }
+    else if (element == "f") {
+      if (!checkArgCount(3, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      CFace face;
+      face.material = currentMaterial;
+
+      int partCount = (int)lineParts.size();
+
+      for (int i = 1; i < partCount; i++) {
+        int invalidValue = -2000000000;
+        int v, n, t;
+        v = n = t = invalidValue;
+        parseOBJVertSection(lineParts[i], v, n, t,
+                            temp_verts.size(),
+                            temp_normals.size(),
+                            temp_texCoords.size());
+
+        if (v != invalidValue) { face.verts.push_back(v); }
+        if (n != invalidValue) { face.normals.push_back(n); }
+        if (t != invalidValue) { face.texCoords.push_back(t); }
+      }
+
+      bool valid = true;
+      const int vSize = (int)face.verts.size();
+      const int nSize = (int)face.normals.size();
+      const int tSize = (int)face.texCoords.size();
+
+      if ((nSize != 0) && (nSize != vSize)) {
+        printf ("vertex/normal count mismatch\n");
+        valid = false;
+      }
+      if ((tSize != 0) && (tSize != vSize)) {
+        printf ("vertex/texcoord count mismatch\n");
+        valid = false;
+      }
+      if (valid) {
+        mesh.faces.push_back(face);
+      }
+    }
+    else if (element == "t") {
+      if (!checkArgCount(1, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      CTriStrip strip;
+      strip.material = currentMaterial;
+
+      int partCount = (int)lineParts.size();
+
+      for (int i = 1; i < partCount; i++) {
+        int invalidValue = -2000000000;
+        int v, n, t;
+        v = n = t = invalidValue;
+        parseOBJVertSection(lineParts[i], v, n, t,
+                            temp_verts.size(),
+                            temp_normals.size(),
+                            temp_texCoords.size());
+
+        if (v != invalidValue) { strip.verts.push_back(v); }
+        if (n != invalidValue) { strip.normals.push_back(n); }
+        if (t != invalidValue) { strip.texCoords.push_back(t); }
+      }
+
+      bool valid = true;
+      const int vSize = (int)strip.verts.size();
+      const int nSize = (int)strip.normals.size();
+      const int tSize = (int)strip.texCoords.size();
+
+      if ((nSize != 0) && (nSize != vSize)) {
+        printf ("vertex/normal count mismatch\n");
+        valid = false;
+      }
+      if ((tSize != 0) && (tSize != vSize)) {
+        printf ("vertex/texcoord count mismatch\n");
+        valid = false;
+      }
+      if (valid) {
+        mesh.strips.push_back(strip);
+      }
+    }
+    else if (element == "q") {
+      if (!checkArgCount(1, lineParts.size(), element, lineNum)) {
+        continue;
+      }
+      if (mesh.strips.size()) { // there has to be a last strip
+        CTriStrip &strip = mesh.strips[mesh.strips.size()-1];
+
+        int partCount = (int)lineParts.size();
+
+        for (int i = 1; i < partCount; i++) {
+          int invalidValue = -2000000000;
+          int v, n, t;
+          v = n = t = invalidValue;
+          parseOBJVertSection(lineParts[i], v, n, t,
+                              temp_verts.size(),
+                              temp_normals.size(),
+                              temp_texCoords.size());
+
+          if (v != invalidValue) { strip.verts.push_back(v); }
+          if (n != invalidValue) { strip.normals.push_back(n); }
+          if (t != invalidValue) { strip.texCoords.push_back(t); }
+        }
+
+        bool valid = true;
+        const int vSize = (int)strip.verts.size();
+        const int nSize = (int)strip.normals.size();
+        const int tSize = (int)strip.texCoords.size();
+
+        if ((nSize != 0) && (nSize != vSize)) {
+          printf ("vertex/normal count mismatch\n");
+          valid = false;
+        }
+        if ((tSize != 0) && (tSize != vSize)) {
+          printf ("vertex/texcoord count mismatch\n");
+          valid = false;
+        }
+      }
+    }
   }
 
-  if (mesh.valid())
-  {
-    mesh.verts = temp_verts;
-    mesh.normals = temp_normals;
-    mesh.texCoords = temp_texCoords;
+  if (mesh.assignData(temp_verts, temp_normals, temp_texCoords)) {
     model.meshes.push_back(mesh);
   }
 }
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

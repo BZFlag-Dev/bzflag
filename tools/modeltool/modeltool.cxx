@@ -1,14 +1,15 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 //
 // modeltool.cpp : Defines the entry point for the console application.
 //
@@ -21,14 +22,15 @@
 
 #include "common.h"
 
-/* system headers */
+// system headers
 #include <stdio.h>
 #include <string.h>
 #include <string>
 #include <vector>
 #include <map>
+using std::string;
 
-/* common headers */
+// common headers
 #include "TextUtils.h"
 
 #include "model.h"
@@ -38,29 +40,36 @@
 #ifdef _MODEL_TOOL_GFX
 #include "graphicApplication.h"
 #include "camera.h"
-
 int GFXMain(int argc, char* argv[]);
 #endif
 
-// globals/
+
+//============================================================================//
+
+// globals
 const char VersionString[] = "ModelTool v1.8.4.2 (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
-std::string texdir = "";
-std::string groupName = "";
-bool useMaterials = true;
-bool useAmbient = true;
-bool useDiffuse = true;
-bool useSpecular = true;
-bool useShininess = true;
-bool useEmission = true;
-bool useNormals = true;
-bool useTexcoords = true;
-bool flipYZ = false;
+string texdir = "";
+string groupName = "";
+string floatFormat = "%g";
+bool useMaterials    = true;
+bool useAmbient      = true;
+bool useDiffuse      = true;
+bool useSpecular     = true;
+bool useShininess    = true;
+bool useEmission     = true;
+bool useNormals      = true;
+bool useTexcoords    = true;
+bool useGrouping     = true;
+bool useGroundShift  = true;
 bool useSmoothBounce = false;
+bool flipYZ          = false;
+bool reportReindex   = false;
+bool supressMats     = false;
+float fudgeFactor = 0.0f;
 float shineFactor = 1.0f;
-bool  supressMats = false;
 
-size_t   triStripLimit = 16;
+size_t triStripLimit = 16;
 
 bool outputBounds = false;
 bool outputComments = false;
@@ -69,26 +78,26 @@ float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
 float globalScale = 1.0f;
 float globalShift[3] = {0,0,0};
-std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
+std::vector<string> bspMaterialSkips; // materials to skip in a bsp map
 
-typedef struct
-{
-  std::string staticFile;
-  std::string boundingFile;
-  std::vector<std::string> lodFiles;
+
+struct DrawInfoConfig {
+  string staticFile;
+  string boundingFile;
+  std::vector<string> lodFiles;
   std::vector<float> lodPixelDistances;
-  std::vector<std::string>  animComands;
-}DrawInfoConfig;
+  std::vector<string>  animComands;
+};
 
-typedef struct
-{
+
+struct DrawInfoMeshes {
   CModel staticMesh;
   CModel boundingMesh;
   std::vector<CModel> lodMeshes;
   std::vector<float>  lodPixelDistances;
-  std::vector<std::string>  animComands;
+  std::vector<string>  animComands;
 
-  bool valid ( void  )
+  bool valid()
   {
     if (staticMesh.meshes.size())
       return true;
@@ -99,14 +108,42 @@ typedef struct
 
     return false;
   }
-}DrawInfoMeshes;
+};
 
-void progressLog ( int value, int total, const std::string &text )
+
+//============================================================================//
+
+static string ftoa(float v)
+{
+  char buf[64];
+  snprintf(buf, sizeof(buf), floatFormat.c_str(), v);
+  return buf;
+}
+
+
+static string ftoa(const float* va, int count)
+{
+  char buf[64];
+  string s;
+  for (int i = 0; i < count; i++) {
+    if (i != 0) {
+      s += ' ';
+    }
+    snprintf(buf, sizeof(buf), floatFormat.c_str(), va[i]);
+    s += buf;
+  }
+  return s;
+}
+
+
+//============================================================================//
+
+void progressLog ( int value, int total, const string &text )
 {
   printf("Working %d/%d(%f): %s\n",value,total,(float)value/(float)total,text.c_str());
 }
 
-void progressLog ( const std::string &text )
+void progressLog ( const string &text )
 {
   printf("Working: %s\n",text.c_str());
 }
@@ -117,20 +154,20 @@ void progressLog ( const  char* text )
 }
 
 
-void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file );
+void parseDrawInfoConfig ( DrawInfoConfig &config, string file );
 void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &drawInfoMeshes );
-void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file );
+void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file );
 
-std::string writeMaterial ( CMaterial &material, const std::string &name )
+string writeMaterial ( CMaterial &material, const string &name )
 {
-  std::string out;
+  string out;
 
   if (supressMats)
     return out;
   out += TextUtils::format("material\n  name %s\n",name.c_str());
   if ( material.texture.size())
   {
-    std::string texName = texdir + material.texture;
+    string texName = texdir + material.texture;
     // change the extension to png
     const char *p = strrchr(texName.c_str(), '.');
     if (p)
@@ -145,27 +182,24 @@ std::string writeMaterial ( CMaterial &material, const std::string &name )
   else
     out += TextUtils::format("  notextures\n");
 
-  if (useAmbient)
-    out += TextUtils::format("  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
-  if (useDiffuse)
-    out += TextUtils::format("  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
-  if (useSpecular)
-    out += TextUtils::format("  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
-  if (useShininess)
-    out += TextUtils::format("  shininess %f\n", material.shine);
-  if (useEmission)
-    out += TextUtils::format("  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3]);
+  if (useAmbient)   { out += "  ambient "   + ftoa(material.ambient, 4) + "\n";  }
+  if (useDiffuse)   { out += "  diffuse "   + ftoa(material.diffuse, 4) + "\n";  }
+  if (useEmission)  { out += "  emission "  + ftoa(material.emission, 4) + "\n"; }
+  if (useSpecular)  { out += "  specular "  + ftoa(material.specular, 4) + "\n"; }
+  if (useShininess) { out += "  shininess " + ftoa(material.shine) + "\n";       }
 
-  out += TextUtils::format("end\n\n");
+  out += "end\n\n";
+
   return out;
 }
 
-static void writeBZW  ( CModel &model, std::string file )
+
+static void writeBZW  ( CModel &model, string file )
 {
   if (model.meshes.size() < 1 )
     return;
 
-  FILE *fp = fopen (file.c_str(),"wt");
+  FILE *fp = fopen (file.c_str(), "wt");
   if (!fp)
     return;
 
@@ -174,121 +208,141 @@ static void writeBZW  ( CModel &model, std::string file )
     tmMaterialMap::iterator materialItr = model.materials.begin();
     while ( materialItr != model.materials.end() )
     {
-      fprintf (fp,"%s",writeMaterial(materialItr->second,materialItr->first).c_str());
+      fprintf(fp,"%s",writeMaterial(materialItr->second,materialItr->first).c_str());
       materialItr++;
     }
-    fprintf (fp,"\n");
+    fprintf(fp,"\n");
   }
 
   if (groupName.size() > 0)
-    fprintf (fp, "define %s\n", groupName.c_str());
+    fprintf(fp, "define %s\n", groupName.c_str());
 
   tvMeshList::iterator	meshItr = model.meshes.begin();
-
-  while ( meshItr != model.meshes.end() )
+  for (meshItr = model.meshes.begin(); meshItr != model.meshes.end(); ++meshItr)
   {
-    CMesh	&mesh = *meshItr;
+    CMesh& mesh = *meshItr;
 
     mesh.reindex();
 
-    fprintf (fp,"mesh # %s\n", mesh.name.c_str());
+    fprintf(fp,"mesh # %s\n", mesh.name.c_str());
 
     if (outputComments)
     {
-      fprintf (fp,"# vertices: %d\n", (int)mesh.verts.size());
-      fprintf (fp,"# normals: %d\n", (int)mesh.normals.size());
-      fprintf (fp,"# texcoords: %d\n", (int)mesh.texCoords.size());
-      fprintf (fp,"# faces: %d\n\n", (int) mesh.faces.size());
+      fprintf(fp,"# vertices:  %d\n",   (int)mesh.verts.size());
+      fprintf(fp,"# normals:   %d\n",   (int)mesh.normals.size());
+      fprintf(fp,"# texcoords: %d\n",   (int)mesh.texCoords.size());
+      fprintf(fp,"# faces:     %d\n\n", (int)mesh.faces.size());
     }
 
     if (useSmoothBounce)
-      fprintf (fp,"  smoothbounce\n");
+      fprintf(fp,"  smoothbounce\n");
 
-    for ( int v = 0; v < (int)mesh.verts.size();v++)
+    for (int v = 0; v < (int)mesh.verts.size();v++)
     {
-      CVertex *vert = &mesh.verts[v];
-      fprintf (fp,"  vertex %f %f %f", vert->x,vert->y,vert->z);
+      const CVector3* vert = &mesh.verts[v];
+      const string msg = "  vertex " + ftoa(vert->x) + " "
+                                     + ftoa(vert->y) + " "
+                                     + ftoa(vert->z);
+      fprintf(fp, msg.c_str());
       if (outputComments)
 	fprintf(fp,"\t# %d",v);
       fprintf(fp,"\n");
     }
 
-    for ( int n = 0; n < (int)mesh.normals.size();n++)
+    for (int n = 0; n < (int)mesh.normals.size();n++)
     {
-      CVertex *norm = &mesh.normals[n];
+      CVector3* norm = &mesh.normals[n];
 
       // normalise all normals before writing them
-      float dist = sqrt(norm->x*norm->x+norm->y*norm->y+norm->z*norm->z);
-      fprintf (fp,"  normal %f %f %f", norm->x/dist,norm->y/dist,norm->z/dist);
-      if (outputComments)
-	fprintf(fp,"\t# %d",n);
+      const float dist = sqrtf((norm->x * norm->x) +
+                               (norm->y * norm->y) +
+                               (norm->z * norm->z));
+      if (dist == 0.0f) {
+        const string nums = ftoa(norm->x) + " "
+                          + ftoa(norm->y) + " "
+                          + ftoa(norm->z);
+        fprintf(stderr, "BAD NORMAL: %s\n", nums.c_str());
+        fprintf(fp,"  normal 0 0 1\t# %d  BAD NORMAL %s", n, nums.c_str());
+      } else {
+        const float scale = (1.0f / dist);
+        const string msg = "  normal " + ftoa(norm->x * scale) + " "
+                                       + ftoa(norm->y * scale) + " "
+                                       + ftoa(norm->z * scale);
+        fprintf(fp, msg.c_str());
+        if (outputComments)
+        {
+          fprintf(fp, "\t# %d", n);
+        }
+      }
       fprintf(fp,"\n");
     }
 
-    for ( int t = 0; t < (int)mesh.texCoords.size(); t++)
+    for (int t = 0; t < (int)mesh.texCoords.size(); t++)
     {
-      CTexCoord *coord = &mesh.texCoords[t];
-      fprintf (fp,"  texcoord %f %f", coord->u,coord->v);
+      const CVector2* coord = &mesh.texCoords[t];
+      const string msg = "  texcoord " + ftoa(coord->u) + " " + ftoa(coord->v);
+      fprintf(fp, msg.c_str());
       if (outputComments)
-	fprintf(fp,"\t# %d",t);
+      {
+	fprintf(fp, "\t# %d", t);
+      }
       fprintf(fp,"\n");
     }
 
     tvFaceList::iterator	faceItr = mesh.faces.begin();
-    for ( int f = 0; f < (int)mesh.faces.size(); f++)
+    for (int f = 0; f < (int)mesh.faces.size(); f++)
     {
       CFace	&face = mesh.faces[f];
 
-      fprintf (fp,"  face");
+      fprintf(fp,"  face");
       if (outputComments)
 	fprintf(fp,"\t# %d",f);
       fprintf(fp,"\n");
 
       tvIndexList::iterator	indexItr = face.verts.begin();
-      fprintf (fp,"    vertices");
+      fprintf(fp,"    vertices");
       while ( indexItr != face.verts.end() )
 	fprintf(fp," %d",*indexItr++);
 
-      fprintf (fp,"\n");
+      fprintf(fp,"\n");
 
       if (useNormals && (face.normals.size() > 0))
       {
 	indexItr = face.normals.begin();
-	fprintf (fp,"    normals");
+	fprintf(fp,"    normals");
 	while ( indexItr != face.normals.end() )
 	fprintf(fp," %d",*indexItr++);
-	fprintf (fp,"\n");
+	fprintf(fp,"\n");
       }
 
       if (useTexcoords && (face.texCoords.size() > 0))
       {
 	indexItr = face.texCoords.begin();
-	fprintf (fp,"    texcoords");
+	fprintf(fp,"    texcoords");
 	while ( indexItr != face.texCoords.end() )
 	  fprintf(fp," %d",*indexItr++);
 
-	fprintf (fp,"\n");
+	fprintf(fp,"\n");
       }
 
       if (useMaterials && (face.material.size() > 0))
-	fprintf (fp, "    matref %s\n", face.material.c_str());
+	fprintf(fp, "    matref %s\n", face.material.c_str());
 
-      fprintf (fp,"  endface\n");
+      fprintf(fp,"  endface\n");
     }
-    fprintf (fp,"end\n\n");
-    meshItr++;
+    fprintf(fp,"end\n\n");
   }
 
   if (groupName.size() > 0)
-    fprintf (fp, "enddef # %s\n", groupName.c_str());
+    fprintf(fp, "enddef # %s\n", groupName.c_str());
 
   // do the custom objects.
-  for ( unsigned int i = 0; i < model.customObjects.size(); i++ )
+  for (unsigned int i = 0; i < model.customObjects.size(); i++ )
   {
-    fprintf (fp, "%s\n", model.customObjects[i].name.c_str());
+    fprintf(fp, "%s\n", model.customObjects[i].name.c_str());
     for (unsigned int j = 0; j < model.customObjects[i].params.size(); j++ )
-      fprintf (fp, "  %s\n", model.customObjects[i].params[j].c_str());
-    fprintf (fp, "end\n\n");
+      fprintf(fp, "  %s\n", model.customObjects[i].params[j].c_str());
+    fprintf(fp, "end\n\n");
   }
 
   fclose(fp);
@@ -299,31 +353,41 @@ static int  dumpUsage ( char *exeName, const char* reason )
   printf("\n%s\n\n", VersionString);
   printf("error: %s\n\n",reason);
   printf("usage: %s <input_file_name> [options]\n\n", exeName);
-  printf("       -g <name>  : use group definition\n");
-  printf("       -tx <dir>  : set texture prefix\n");
-  printf("       -sm	: use the smoothbounce property\n");
-  printf("       -yz	: flip y and z coordinates\n");
-  printf("       -n	 : disable normals\n");
-  printf("       -t	 : disable texture coordinates\n");
-  printf("       -m	 : disable materials\n");
-  printf("       -a	 : disable ambient coloring\n");
-  printf("       -d	 : disable diffuse coloring\n");
-  printf("       -s	 : disable specular coloring\n");
-  printf("       -sh	: disable shininess\n");
-  printf("       -sf <val>  : shine multiplier\n");
-  printf("       -e	 : disable emission coloring\n\n");
-  printf("       -gx <val>  : scale the model by this factor\n\n");
-  printf("       -gsx <val> : shift the map by this value in X\n\n");
-  printf("       -gsy <val> : shift the map by this value in Y\n\n");
-  printf("       -gsz <val> : shift the map by this value in Z\n\n");
-  printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
-  printf("       -bounds : compute the bounds and sphere for draw info meshes and write them to the map\n\n");
-  printf("       -comments: add comments to the resulting bzw file (will make it a lot larger )\n\n");
-  printf("       -striplimit <val>: the longest triangle strip to use for LODs )\n\n");
+  printf("       -g <name>         : use group definition\n");
+  printf("\n");
+  printf("       -tx <dir>         : set texture prefix\n");
+  printf("\n");
+  printf("       -sm               : use the smoothbounce property\n");
+  printf("\n");
+  printf("       -yz               : flip y and z coordinates\n");
+  printf("       -nogroup          : disable object grouping\n");
+  printf("       -noground         : disable model ground clamp\n");
+  printf("       -n                : disable normals\n");
+  printf("       -t                : disable texture coordinates\n");
+  printf("       -m                : disable materials\n");
+  printf("       -a                : disable ambient coloring\n");
+  printf("       -d                : disable diffuse coloring\n");
+  printf("       -e                : disable emission coloring\n");
+  printf("       -s                : disable specular coloring\n");
+  printf("       -sh               : disable shininess\n");
+  printf("       -sf <val>         : shine multiplier\n");
+  printf("\n");
+  printf("       -gx <val>         : scale the model by this factor\n");
+  printf("       -gsx <val>        : shift the map by this value in X\n");
+  printf("       -gsy <val>        : shift the map by this value in Y\n");
+  printf("       -gsz <val>        : shift the map by this value in Z\n");
+  printf("\n");
+  printf("       -bspskip <val>    : skip faces with this material when importing a bsp\n");
+  printf("\n");
+  printf("       -bounds           : compute the bounds and sphere for draw info meshes and write them to the map\n");
+  printf("\n");
+  printf("       -comments         : add comments to the resulting bzw file (will make it a lot larger)\n");
+  printf("\n");
+  printf("       -striplimit <val> : the longest triangle strip to use for LODs )\n\n");
  return 1;
 }
 
-bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenstion, std::string &output )
+bool setupArgs (int argc, char* argv[], string &input, string &extenstion, string &output )
 {
   // make sure we have all the right stuff
   if ( argc < 2)
@@ -351,16 +415,22 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
   else
   {
     *p = '\0'; // clip the old extension
-    output = argv[1] + std::string(".bzw");
+    output = argv[1] + string(".bzw");
   }
 
-  for ( int i = 2; i < argc; i++)
+  for (int i = 2; i < argc; i++)
   {
-    std::string command = argv[i];
+    string command = argv[i];
     command = TextUtils::tolower(command);
 
     if (command == "-yz")
+    {
       flipYZ = true;
+    }
+    else if (command == "-noground")
+    {
+      useGroundShift = false;
+    }
     else if (command == "-g")
     {
       if ((i + 1) < argc)
@@ -405,7 +475,22 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
     else if (command == "-nomats")
       supressMats = true;
     else if (command == "-comments")
-      outputComments = true;     else if (command == "-sf")
+      outputComments = true;
+    else if (command == "-rr")
+      reportReindex = true;
+    else if (command == "-nogroup")
+      useGrouping = false;
+    else if (command == "-ff")
+    {
+      if ((i + 1) < argc)
+      {
+	i++;
+	fudgeFactor = (float)atof(argv[i]);
+      }
+      else
+	printf ("missing -ff argument\n");
+    }
+    else if (command == "-sf")
     {
       if ((i + 1) < argc)
       {
@@ -472,7 +557,7 @@ bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenst
 	if ((i + 1) < argc)
 	{
 	  i++;
-	  bspMaterialSkips.push_back(std::string(argv[i]));
+	  bspMaterialSkips.push_back(string(argv[i]));
 	}
 	else
 	  printf ("missing -bspskip argument\n");
@@ -487,9 +572,9 @@ int main(int argc, char* argv[])
   return GFXMain(argc,argv);
 #endif
 
-  std::string input;
-  std::string extenstion = "OBJ";
-  std::string output;
+  string input;
+  string extenstion = "OBJ";
+  string output;
 
   if (!setupArgs(argc, argv, input,extenstion,output))
     return 1;
@@ -525,7 +610,9 @@ int main(int argc, char* argv[])
     return 2;
   }
 
-  model.pushAboveAxis(eZAxis);
+  if (useGroundShift) {
+    model.pushAboveAxis(eZAxis);
+  }
 
   if (model.meshes.size() > 0)
   {
@@ -538,9 +625,9 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-static int getNewIndex ( const CVertex &vert, tvVertList &vertList )
+static int getNewIndex ( const CVector3 &vert, tvVec3List &vertList )
 {
-  tvVertList::iterator itr = vertList.begin();
+  tvVec3List::iterator itr = vertList.begin();
 
   int count = 0;
   while ( itr != vertList.end() )
@@ -554,9 +641,9 @@ static int getNewIndex ( const CVertex &vert, tvVertList &vertList )
   return count;
 }
 
-static int getNewIndex ( const CTexCoord &vert, tvTexCoordList &vertList )
+static int getNewIndex ( const CVector2 &vert, tvVec2List &vertList )
 {
-  tvTexCoordList::iterator itr = vertList.begin();
+  tvVec2List::iterator itr = vertList.begin();
 
   int count = 0;
   while ( itr != vertList.end() )
@@ -570,43 +657,162 @@ static int getNewIndex ( const CTexCoord &vert, tvTexCoordList &vertList )
   return count;
 }
 
-void CMesh::reindex ( void )
+
+//============================================================================//
+
+void CMesh::getUsedIndices(std::set<int>& vertIndexSet,
+                           std::set<int>& normIndexSet,
+                           std::set<int>& txcdIndexSet)
 {
-  tvVertList		temp_verts;
-  tvVertList		temp_normals;
-  tvTexCoordList	temp_texCoords;
-
-  tvFaceList::iterator	faceItr = faces.begin();
-  while ( faceItr != faces.end() )
-  {
-    CFace	&face = *faceItr;
-    CFace	newFace;
-
-    newFace.material = face.material;
-
-    tvIndexList::iterator indexItr = face.verts.begin();
-    while ( indexItr != face.verts.end() )
-      newFace.verts.push_back(getNewIndex(verts[*indexItr++],temp_verts));
-
-    indexItr = face.normals.begin();
-    while ( indexItr != face.normals.end() )
-      newFace.normals.push_back(getNewIndex(normals[*indexItr++],temp_normals));
-
-    indexItr = face.texCoords.begin();
-    while ( indexItr != face.texCoords.end() )
-      newFace.texCoords.push_back(getNewIndex(texCoords[*indexItr++],temp_texCoords));
-
-    *faceItr = newFace;
-    faceItr++;
+  for (size_t f = 0; f < faces.size(); f++) {
+    const CFace& face = faces[f];
+    for (size_t i = 0; i < face.verts.size(); i++) {
+      vertIndexSet.insert(face.verts[i]);
+    }
+    for (size_t i = 0; i < face.normals.size(); i++) {
+      normIndexSet.insert(face.normals[i]);
+    }
+    for (size_t i = 0; i < face.texCoords.size(); i++) {
+      txcdIndexSet.insert(face.texCoords[i]);
+    }
   }
-  verts = temp_verts;
-  normals = temp_normals;
-  texCoords = temp_texCoords;
 }
 
-void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
+
+void CMesh::mapVec2List(const tsIndexSet& indices,
+                        const tvVec2List& input,
+                        tvVec2List& output,
+                        std::map<int, int>& indexMap)
 {
-  std::string text;
+  output.clear();
+  indexMap.clear();
+
+  std::map<CVector2, int> dataMap;
+  std::map<CVector2, int>::const_iterator dataIt;
+
+  tsIndexSet::const_iterator it;
+  for (it = indices.begin(); it != indices.end(); ++it) {
+    const int index = *it;
+    const CVector2& data = input[index];
+    dataIt = dataMap.find(data);
+    if (dataIt != dataMap.end()) {
+      indexMap[index] = dataIt->second;
+    }
+    else {
+      indexMap[index] = output.size();
+      dataMap[data] = output.size();
+      output.push_back(data);
+    }
+  }
+}
+
+
+void CMesh::mapVec3List(const tsIndexSet& indices,
+                        const tvVec3List& input,
+                        tvVec3List& output,
+                        std::map<int, int>& indexMap)
+{
+  output.clear();
+  indexMap.clear();
+
+  std::map<CVector3, int> dataMap;
+  std::map<CVector3, int>::const_iterator dataIt;
+
+  tsIndexSet::const_iterator it;
+  for (it = indices.begin(); it != indices.end(); ++it) {
+    const int index = *it;
+    const CVector3& data = input[index];
+    dataIt = dataMap.find(data);
+    if (dataIt != dataMap.end()) {
+      indexMap[index] = dataIt->second;
+    }
+    else {
+      indexMap[index] = output.size();
+      dataMap[data] = output.size();
+      output.push_back(data);
+    }
+  }
+}
+
+
+void CMesh::reindex()
+{
+  if (!needReindex) {
+    return;
+  }
+  assignData(verts, normals, texCoords);
+}
+
+
+bool CMesh::assignData(const tvVec3List& vertInData,
+                       const tvVec3List& normInData,
+                       const tvVec2List& txcdInData)
+{
+  if (!valid() || vertInData.empty()) {
+    return false;
+  }
+
+  tsIndexSet vertIndexSet;
+  tsIndexSet normIndexSet;
+  tsIndexSet txcdIndexSet;
+  getUsedIndices(vertIndexSet, normIndexSet, txcdIndexSet);
+  
+  tvVec3List vertOutData;
+  tvVec3List normOutData;
+  tvVec2List txcdOutData;
+  std::map<int, int> vertRemap;
+  std::map<int, int> normRemap;
+  std::map<int, int> txcdRemap;
+  CMesh::mapVec3List(vertIndexSet, vertInData, vertOutData, vertRemap);
+  CMesh::mapVec3List(normIndexSet, normInData, normOutData, normRemap);
+  CMesh::mapVec2List(txcdIndexSet, txcdInData, txcdOutData, txcdRemap);
+
+  for (size_t f = 0; f < faces.size(); f++) {
+    CFace& face = faces[f];
+    CFace  tmpFace;
+
+    tmpFace.material = face.material;
+
+    tmpFace.verts.resize(face.verts.size());
+    for (size_t i = 0; i < face.verts.size(); i++) {
+      tmpFace.verts[i] = vertRemap[face.verts[i]];
+    }
+
+    tmpFace.normals.resize(face.normals.size());
+    for (size_t i = 0; i < face.normals.size(); i++) {
+      tmpFace.normals[i] = normRemap[face.normals[i]];
+    }
+
+    tmpFace.texCoords.resize(face.texCoords.size());
+    for (size_t i = 0; i < face.texCoords.size(); i++) {
+      tmpFace.texCoords[i] = txcdRemap[face.texCoords[i]];
+    }
+
+    faces[f] = tmpFace;
+  }
+
+  verts = vertOutData;
+  normals = normOutData;
+  texCoords = txcdOutData;
+
+  needReindex = false;
+
+  if (reportReindex) {
+    printf("reindexing \"%s\"  (%i faces):\n", name.c_str(), (int)faces.size());
+    printf("  oldVerts = %i, newVerts = %i\n", (int)vertInData.size(), (int)vertOutData.size());
+    printf("  oldNorms = %i, newNorms = %i\n", (int)normInData.size(), (int)normOutData.size());
+    printf("  oldTxcds = %i, newTxcds = %i\n", (int)txcdInData.size(), (int)txcdOutData.size());
+  }
+
+  return true;
+}
+
+
+//============================================================================//
+
+void parseDrawInfoConfig ( DrawInfoConfig &config, string file )
+{
+  string text;
   FILE	*fp = fopen(file.c_str(),"rb");
   if (!fp)
     return;
@@ -628,23 +834,23 @@ void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
   if (!size)
     return;
 
-  text = TextUtils::replace_all(text,std::string("\r"),std::string(""));
-  std::vector<std::string> lines = TextUtils::tokenize(text,std::string("\n"));
+  text = TextUtils::replace_all(text,string("\r"),string(""));
+  std::vector<string> lines = TextUtils::tokenize(text,string("\n"));
   if (!lines.size())
     return;
 
   int numLines = (int)lines.size();
-  for ( int i = 0; i < numLines; i++ )
+  for (int i = 0; i < numLines; i++ )
   {
-    std::string &line = lines[i];
+    string &line = lines[i];
     if (!line.size())
       continue;
 
-    std::vector<std::string> chunks = TextUtils::tokenize(line,std::string(" "),0,true);
+    std::vector<string> chunks = TextUtils::tokenize(line,string(" "),0,true);
     if (!chunks.size())
       continue;
 
-    std::string key = TextUtils::tolower(chunks[0]);
+    string key = TextUtils::tolower(chunks[0]);
     if (key == "static")
       config.staticFile = chunks[1];
     else if (key == "bounding")
@@ -670,7 +876,7 @@ void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &dra
   if (config.boundingFile.size())
     readOBJ(drawInfoMeshes.boundingMesh,config.boundingFile);
 
-  for ( int i = 0; i < (int)config.lodFiles.size(); i++ )
+  for (int i = 0; i < (int)config.lodFiles.size(); i++ )
   {
     CModel  model;
     readOBJ(model,config.lodFiles[i]);
@@ -694,7 +900,7 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
 {
   bool didOne = false;
 
-  for ( int m = 0; m < (int)model.meshes.size(); m++ )
+  for (int m = 0; m < (int)model.meshes.size(); m++ )
   {
     CMesh &subMesh = model.meshes[m];
     bool extentsSet = false;
@@ -714,9 +920,9 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
 	extents.maxz = extents.minz;
       }
 
-      for ( int v = 0; v < (int)face.verts.size(); v++ )
+      for (int v = 0; v < (int)face.verts.size(); v++ )
       {
-	CVertex &vert = subMesh.verts[face.verts[v]];
+	CVector3 &vert = subMesh.verts[face.verts[v]];
 	if ( vert.x < extents.minx )
 	  extents.minx = vert.x;
 	if ( vert.y < extents.miny )
@@ -749,9 +955,9 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
 	extents.maxz = extents.minz;
       }
 
-      for ( int v = 0; v < (int)strip.verts.size(); v++ )
+      for (int v = 0; v < (int)strip.verts.size(); v++ )
       {
-	CVertex &vert = subMesh.verts[strip.verts[v]];
+	CVector3 &vert = subMesh.verts[strip.verts[v]];
 	if ( vert.x < extents.minx )
 	  extents.minx = vert.x;
 	if ( vert.y < extents.miny )
@@ -784,9 +990,9 @@ bool computeExtents ( CModel &model, MeshExtents &extents )
 	extents.maxz = extents.minz;
       }
 
-      for ( int v = 0; v < (int)fan.verts.size(); v++ )
+      for (int v = 0; v < (int)fan.verts.size(); v++ )
       {
-	CVertex &vert = subMesh.verts[fan.verts[v]];
+	CVector3 &vert = subMesh.verts[fan.verts[v]];
 	if ( vert.x < extents.minx )
 	  extents.minx = vert.x;
 	if ( vert.y < extents.miny )
@@ -836,9 +1042,9 @@ bool computeExtents ( CModel &/*model*/, CMesh &subMesh, MeshExtents &extents )
       extents.maxz = extents.minz;
     }
 
-    for ( int v = 0; v < (int)face.verts.size(); v++ )
+    for (int v = 0; v < (int)face.verts.size(); v++ )
     {
-      CVertex &vert = subMesh.verts[face.verts[v]];
+      CVector3 &vert = subMesh.verts[face.verts[v]];
       if ( vert.x < extents.minx )
 	extents.minx = vert.x;
       if ( vert.y < extents.miny )
@@ -870,17 +1076,17 @@ bool computeExtents ( CModel &/*model*/, CMesh &subMesh, MeshExtents &extents )
 }
 
 
-int computeCorner ( const CMesh &mesh, const CFace &face, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+int computeCorner ( const CMesh &mesh, const CFace &face, int index, tvVec3List &v, tvVec3List &n, tvVec2List &u, tvVec3List &c )
 {
   int vertIndex = getNewIndex(mesh.verts[face.verts[index]],v);
   int normalIndex = getNewIndex(mesh.normals[face.normals[index]],n);
   int uvIndex;
   if (!face.texCoords.size())
-    uvIndex = getNewIndex(CTexCoord(0,0),u);
+    uvIndex = getNewIndex(CVector2(0,0),u);
   else
     uvIndex = getNewIndex(mesh.texCoords[face.texCoords[index]],u);
 
-  CVertex vert;
+  CVector3 vert;
   vert.x = (float)vertIndex;
   vert.y = (float)normalIndex;
   vert.z = (float)uvIndex;
@@ -888,7 +1094,7 @@ int computeCorner ( const CMesh &mesh, const CFace &face, int index, tvVertList 
   return getNewIndex(vert,c);
 }
 
-int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVec3List &v, tvVec3List &n, tvVec2List &u, tvVec3List &c )
 {
   // it's highly likely that the strip will use
   // the vert index for both the normal and UV, so try those
@@ -901,7 +1107,7 @@ int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVert
     if (mesh.normals.size() && (strip.verts[index] < (int)mesh.normals.size()) )
       normalIndex = getNewIndex(mesh.normals[strip.verts[index]],n);
     else
-      normalIndex = getNewIndex(CVertex(0,0,1),n);
+      normalIndex = getNewIndex(CVector3(0,0,1),n);
   }
   else
     normalIndex = getNewIndex(mesh.normals[strip.normals[index]],n);
@@ -912,12 +1118,12 @@ int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVert
     if (mesh.normals.size() && (strip.verts[index] < (int)mesh.texCoords.size()) )
       uvIndex = getNewIndex(mesh.texCoords[strip.verts[index]],u);
     else
-      uvIndex = getNewIndex(CTexCoord(0,0),u);
+      uvIndex = getNewIndex(CVector2(0,0),u);
   }
   else
     uvIndex = getNewIndex(mesh.texCoords[strip.texCoords[index]],u);
 
-  CVertex vert;
+  CVector3 vert;
   vert.x = (float)vertIndex;
   vert.y = (float)normalIndex;
   vert.z = (float)uvIndex;
@@ -926,17 +1132,17 @@ int computeCorner ( const CMesh &mesh, const CTriStrip &strip, int index, tvVert
 }
 
 
-int computeCorner ( const CMesh &mesh, const CTriFan &fan, int index, tvVertList &v, tvVertList &n, tvTexCoordList &u, tvVertList &c )
+int computeCorner ( const CMesh &mesh, const CTriFan &fan, int index, tvVec3List &v, tvVec3List &n, tvVec2List &u, tvVec3List &c )
 {
   int vertIndex = getNewIndex(mesh.verts[fan.verts[index]],v);
   int normalIndex = getNewIndex(mesh.normals[fan.normals[index]],n);
   int uvIndex;
   if (!fan.texCoords.size())
-    uvIndex = getNewIndex(CTexCoord(0,0),u);
+    uvIndex = getNewIndex(CVector2(0,0),u);
   else
     uvIndex = getNewIndex(mesh.texCoords[fan.texCoords[index]],u);
 
-  CVertex vert;
+  CVector3 vert;
   vert.x = (float)vertIndex;
   vert.y = (float)normalIndex;
   vert.z = (float)uvIndex;
@@ -944,34 +1150,34 @@ int computeCorner ( const CMesh &mesh, const CTriFan &fan, int index, tvVertList
   return getNewIndex(vert,c);
 }
 
-void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
+void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
 {
   if (!drawInfoMeshes.valid())
     return;
 
-// the idea here is to go and output each of the mesh sections into
+  // the idea here is to go and output each of the mesh sections into
   // seperate buffers, bulding up the actual used vert and index lists.
   // then dump out those lists to a buffer, and composite the entire
   // thing into one bzw.
   // This way we can do things in any order and not worry about
   // duplicating indexes.
-  std::string materialsSection;
-  std::string inxexesSection;
-  std::string staticGeoSection;
-  std::string boundingGeoSection;
-  std::string drawInfoSection;
+  string materialsSection;
+  string inxexesSection;
+  string staticGeoSection;
+  string boundingGeoSection;
+  string drawInfoSection;
 
-  std::string invisibleMatName = "bounding.invisible";
+  string invisibleMatName = "bounding.invisible";
 
   // the 3 major lists
-  tvVertList  verts;
-  tvVertList  norms;
-  tvTexCoordList  uvs;
+  tvVec3List  verts;
+  tvVec3List  norms;
+  tvVec2List  uvs;
 
   // this is cheap, each corner is unique instance of a vert, normal, and uv coordinate.
   // even tho they are ints we can store them like a vert, and just cast them to ints.
   // to leverage the existing functions for sorting indexes.
-  tvVertList  corners;
+  tvVec3List  corners;
 
   progressLog("starting drawInfo Mesh");
 
@@ -979,7 +1185,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   if ( drawInfoMeshes.staticMesh.meshes.size())
   {
     CModel &staticModel = drawInfoMeshes.staticMesh;
-    for ( int m = 0; m < (int)staticModel.meshes.size(); m++ )
+    for (int m = 0; m < (int)staticModel.meshes.size(); m++ )
     {
       CMesh &subMesh = staticModel.meshes[m];
       progressLog(TextUtils::format("static model sub mesh%d",m));
@@ -993,11 +1199,11 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	  staticGeoSection += TextUtils::format("\t#%d",f);
 	staticGeoSection += "\n";
 
-	std::string vert = "vertices";
-	std::string norm = "normals";
-	std::string uv = "texcoords";
+	string vert = "vertices";
+	string norm = "normals";
+	string uv = "texcoords";
 
-	for ( int v = 0; v < (int)face.verts.size(); v++ )
+	for (int v = 0; v < (int)face.verts.size(); v++ )
 	{
 	  vert += TextUtils::format(" %d",getNewIndex(subMesh.verts[face.verts[v]],verts));
 	  norm += TextUtils::format(" %d",getNewIndex(subMesh.normals[face.normals[v]],norms));
@@ -1019,7 +1225,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   if ( drawInfoMeshes.boundingMesh.meshes.size() )
   {
     CModel &boundingMesh = drawInfoMeshes.boundingMesh;
-    for ( int m = 0; m < (int)boundingMesh.meshes.size(); m++ )
+    for (int m = 0; m < (int)boundingMesh.meshes.size(); m++ )
     {
       CMesh &subMesh = boundingMesh.meshes[m];
       progressLog(TextUtils::format("bounding model sub mesh%d",m));
@@ -1033,10 +1239,10 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	  boundingGeoSection += TextUtils::format("\t#%d",f);
 	staticGeoSection += "\n";
 
-	std::string vert = "vertices";
-	std::string norm = "normals";
+	string vert = "vertices";
+	string norm = "normals";
 
-	for ( int v = 0; v < (int)face.verts.size(); v++ )
+	for (int v = 0; v < (int)face.verts.size(); v++ )
 	{
 	  vert += TextUtils::format(" %d",getNewIndex(subMesh.verts[face.verts[v]],verts));
 	  norm += TextUtils::format(" %d",getNewIndex(subMesh.normals[face.normals[v]],norms));
@@ -1055,8 +1261,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   {
     // use the bounds of the first LOD for the bounds of the draw info
 
-    std::string cornerSection;
-    std::vector<std::string> lodSections;
+    string cornerSection;
+    std::vector<string> lodSections;
 
     MeshExtents	lod0Extents;
     if (computeExtents(drawInfoMeshes.lodMeshes[0],lod0Extents))
@@ -1068,14 +1274,14 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	drawInfoSection += TextUtils::format("sphere %f %f %f %f\n",lod0Extents.cpx,lod0Extents.cpy,lod0Extents.cpz,lod0Extents.rad);
       }
 
-      for ( int a = 0; a < (int)drawInfoMeshes.animComands.size(); a++ )
+      for (int a = 0; a < (int)drawInfoMeshes.animComands.size(); a++ )
 	drawInfoSection += drawInfoMeshes.animComands[a] + "\n";
 
       // compute the LOD sections
-      for ( int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
+      for (int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
       {
 	CModel &lodModel = drawInfoMeshes.lodMeshes[l];
-	std::string section;
+	string section;
 	if ( lodModel.meshes.size() )
 	{
 	  section += TextUtils::format("lod #%d\n",l );
@@ -1084,7 +1290,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	  else
 	    section += TextUtils::format("lengthPerPixel %f\n",drawInfoMeshes.lodPixelDistances[l]);
 
-	  for ( int m = 0; m < (int)lodModel.meshes.size(); m++ )
+	  for (int m = 0; m < (int)lodModel.meshes.size(); m++ )
 	  {
 	    CMesh &mesh = lodModel.meshes[m];
 	    progressLog(TextUtils::format("LOD %d model sub mesh%d",l,m));
@@ -1112,7 +1318,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 	      bool lastTriangles = false;
 	      int   maxTrianglesOnALine = 15;
 	      int   triangleCount = 0;
-	      for ( int f = 0; f < (int)mesh.faces.size(); f++ )
+	      for (int f = 0; f < (int)mesh.faces.size(); f++ )
 	      {
 		CFace &face = mesh.faces[f];
 		if ( f == 0 )
@@ -1124,7 +1330,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		  else
 		    section += "polygon";
 
-		  for ( int v = 0; v < (int)face.verts.size(); v++ )
+		  for (int v = 0; v < (int)face.verts.size(); v++ )
 		    section += TextUtils::format(" %d",computeCorner(mesh,face,v,verts,norms,uvs,corners));
 
 		  if (!lastTriangles)
@@ -1143,7 +1349,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		  else if ( (!lastTriangles && trianglesThisTime) || (trianglesThisTime && triangleCount > maxTrianglesOnALine) )
 		    section += "tris";
 
-		  for ( int v = 0; v < (int)face.verts.size(); v++ )
+		  for (int v = 0; v < (int)face.verts.size(); v++ )
 		    section += TextUtils::format(" %d",computeCorner(mesh,face,v,verts,norms,uvs,corners));
 
 		  if (!trianglesThisTime)
@@ -1186,7 +1392,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
 	      }
 
-	      for ( int s = 0; s < (int)mesh.strips.size(); s++ )
+	      for (int s = 0; s < (int)mesh.strips.size(); s++ )
 	      {
 		CTriStrip &strip = mesh.strips[s];
 
@@ -1194,7 +1400,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		{
 		  section += "tristrip";
 
-		  for ( int v = 0; v < (int)strip.verts.size(); v++ )
+		  for (int v = 0; v < (int)strip.verts.size(); v++ )
 		    section += TextUtils::format(" %d",computeCorner(mesh,strip,v,verts,norms,uvs,corners));
 		  section += "\n";
 		}
@@ -1205,18 +1411,18 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		  size_t listSise = strip.verts.size();
 		  while ( pos < strip.verts.size() )
 		  {
-		    if ( pos + triStripLimit < listSise-3 ) // see if there is at least a full iteration, leaving 3 verts at the end ( min strip size)
+		    if ( pos + triStripLimit < listSise-3) // see if there is at least a full iteration, leaving 3 verts at the end ( min strip size)
 		    {
 		      section += "tristrip";
-		      for ( size_t v = pos; v < pos + triStripLimit; v++ )
+		      for (size_t v = pos; v < pos + triStripLimit; v++ )
 			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos += triStripLimit;
 		    }
-		    else if ( listSise - pos <= triStripLimit ) // there are less then a limit left, just dump them
+		    else if ( listSise - pos <= triStripLimit) // there are less then a limit left, just dump them
 		    {
 		      section += "tristrip";
-		      for ( size_t v = pos; v < listSise; v++ )
+		      for (size_t v = pos; v < listSise; v++ )
 			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos = listSise;
@@ -1224,13 +1430,13 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		    else // there is more then the limit left but there weould be less then 3 left
 		    {
 		      section += "tristrip";
-		      for ( size_t v = pos; v < listSise-3; v++ )
+		      for (size_t v = pos; v < listSise-3; v++ )
 			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos = listSise-3;
 
 		      section += "tristrip";
-		      for ( size_t v = pos; v < listSise; v++ )
+		      for (size_t v = pos; v < listSise; v++ )
 			section += TextUtils::format(" %d",computeCorner(mesh,strip,(int)v,verts,norms,uvs,corners));
 		      section += "\n";
 		      pos = listSise;
@@ -1264,12 +1470,12 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 		section += TextUtils::format("sphere %f %f %f %f\n",subMeshExtents.cpx,subMeshExtents.cpy,subMeshExtents.cpz,subMeshExtents.rad);
 	      }
 
-	      for ( int f = 0; f < (int)mesh.fans.size(); f++ )
+	      for (int f = 0; f < (int)mesh.fans.size(); f++ )
 	      {
 		CTriFan &fan = mesh.fans[f];
 		section += "trifan";
 
-		for ( int v = 0; v < (int)fan.verts.size(); v++ )
+		for (int v = 0; v < (int)fan.verts.size(); v++ )
 		  section += TextUtils::format(" %d",computeCorner(mesh,fan,v,verts,norms,uvs,corners));
 		section += "\n";
 	      }
@@ -1287,7 +1493,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 
       // build up the corners
 
-      for ( int c = 0; c < (int)corners.size(); c++ )
+      for (int c = 0; c < (int)corners.size(); c++ )
       {
 	cornerSection += TextUtils::format("corner %d %d %d",(int)corners[c].x, (int)corners[c].y, (int)corners[c].z);
 
@@ -1306,7 +1512,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
       if (lodSections.size() && outputComments)
 	drawInfoSection += "#lods\n";
 
-      for ( int l = 0; l < (int)lodSections.size(); l++ )
+      for (int l = 0; l < (int)lodSections.size(); l++ )
       {
 	drawInfoSection += "\n";
 	drawInfoSection += lodSections[l];
@@ -1323,7 +1529,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
   if (outputComments)
     inxexesSection += TextUtils::format("#indexes: %d\n",(int)verts.size());
 
-  for ( int v = 0; v < (int)verts.size(); v++ )
+  for (int v = 0; v < (int)verts.size(); v++ )
   {
     inxexesSection += TextUtils::format("vertex %f %f %f",verts[v].x,verts[v].y,verts[v].z);
 
@@ -1332,7 +1538,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     inxexesSection += "\n";
   }
 
-  for ( int n = 0; n < (int)norms.size(); n++ )
+  for (int n = 0; n < (int)norms.size(); n++ )
   {
     inxexesSection += TextUtils::format("normal %f %f %f",norms[n].x,norms[n].y,norms[n].z);
 
@@ -1341,7 +1547,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     inxexesSection += "\n";
   }
 
-  for ( int u = 0; u < (int)uvs.size(); u++ )
+  for (int u = 0; u < (int)uvs.size(); u++ )
   {
     inxexesSection += TextUtils::format("texcoord %f %f",uvs[u].u,uvs[u].v);
 
@@ -1362,7 +1568,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     matItr++;
   }
 
-  for ( int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
+  for (int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
   {
     matItr = drawInfoMeshes.lodMeshes[l].materials.begin();
     while (matItr != drawInfoMeshes.lodMeshes[l].materials.end())
@@ -1382,34 +1588,36 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
     fprintf(fp,"%s",materialsSection.c_str());
 
   if (groupName.size() > 0)
-    fprintf (fp, "define %s\n", groupName.c_str());
+    fprintf(fp, "define %s\n", groupName.c_str());
 
-  fprintf (fp,"mesh\n");
+  fprintf(fp,"mesh\n");
 
-  fprintf (fp,"# vertices: %d\n", (int)verts.size());
-  fprintf (fp,"# normals: %d\n", (int)norms.size());
-  fprintf (fp,"# texcoords: %d\n", (int)uvs.size());
+  fprintf(fp,"# vertices: %d\n", (int)verts.size());
+  fprintf(fp,"# normals: %d\n", (int)norms.size());
+  fprintf(fp,"# texcoords: %d\n", (int)uvs.size());
 
   if (useSmoothBounce)
-    fprintf (fp,"  smoothbounce\n");
+    fprintf(fp,"  smoothbounce\n");
 
   fprintf(fp,"%s",inxexesSection.c_str());
   fprintf(fp,"%s",staticGeoSection.c_str());
   fprintf(fp,"%s",boundingGeoSection.c_str());
   fprintf(fp,"%s",drawInfoSection.c_str());
 
-  fprintf (fp,"end # mesh\n");
+  fprintf(fp,"end # mesh\n");
 
   if (groupName.size() > 0)
-    fprintf (fp, "enddef # %s\n", groupName.c_str());
+    fprintf(fp, "enddef # %s\n", groupName.c_str());
 
   // do the custom objects.
-  for ( unsigned int i = 0; i < drawInfoMeshes.staticMesh.customObjects.size(); i++ )
+  for (unsigned int i = 0; i < drawInfoMeshes.staticMesh.customObjects.size(); i++ )
   {
-    fprintf (fp, "%s\n", drawInfoMeshes.staticMesh.customObjects[i].name.c_str());
-    for (unsigned int j = 0; j < drawInfoMeshes.staticMesh.customObjects[i].params.size(); j++ )
-      fprintf (fp, "  %s\n", drawInfoMeshes.staticMesh.customObjects[i].params[j].c_str());
-    fprintf (fp, "end #custom\n\n");
+    
+    fprintf(fp, "%s\n", drawInfoMeshes.staticMesh.customObjects[i].name.c_str());
+    for (unsigned int j = 0; j < drawInfoMeshes.staticMesh.customObjects[i].params.size(); j++) {
+      fprintf(fp, "  %s\n", drawInfoMeshes.staticMesh.customObjects[i].params[j].c_str());
+    }
+    fprintf(fp, "end #custom\n\n");
   }
 
   fclose(fp);
@@ -1418,12 +1626,12 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 // all the stuff for a the graphic display
 #ifdef _MODEL_TOOL_GFX
 
-void CMesh::draw ( void )
+void CMesh::draw()
 {
   // do the material here
   glColor4f(1,1,1,1);
 
-  for ( int f =0; f < (int)faces.size(); f++)
+  for (int f =0; f < (int)faces.size(); f++)
   {
     CFace &face = faces[f];
 
@@ -1437,9 +1645,9 @@ void CMesh::draw ( void )
   }
 }
 
-void CModel::draw ( void )
+void CModel::draw()
 {
-  for ( int i =0; i < (int)meshes.size(); i++)
+  for (int i =0; i < (int)meshes.size(); i++)
     meshes[i].draw();
 }
 
@@ -1447,12 +1655,12 @@ class ModelToolApp : public GraphicApplication
 {
 public:
   void init ( int argc, char* argv[] );
-  virtual void setupDisplay ( void );
-  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title, bool &resizeable );
-  virtual bool drawView ( void );
-  virtual bool drawOverlay ( void );
+  virtual void setupDisplay();
+  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, string &title, bool &resizeable );
+  virtual bool drawView();
+  virtual bool drawOverlay();
 
-  virtual void preFrameUpdate ( void );
+  virtual void preFrameUpdate();
 
   virtual void contextInvalidated ( bool release ){};
 
@@ -1466,7 +1674,7 @@ protected:
 
   Camera	camera;
 
-  void drawZZeroGrid ( void );
+  void drawZZeroGrid();
 
   bool buttonStates[3];
   float dragPos[2];
@@ -1501,9 +1709,9 @@ void ModelToolApp::init ( int argc, char* argv[] )
   gridSpacing = 1.0f;
   gridExtents = 15.0f;
 
-  std::string input;
-  std::string extenstion = "OBJ";
-  std::string output;
+  string input;
+  string extenstion = "OBJ";
+  string output;
 
   if (!setupArgs(argc, argv, input,extenstion,output))
   {
@@ -1511,11 +1719,11 @@ void ModelToolApp::init ( int argc, char* argv[] )
     return;
   }
 
-  if ( TextUtils::tolower(extenstion) == "obj" )
+  if (TextUtils::tolower(extenstion) == "obj")
     readOBJ(model,input);
 }
 
-bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title, bool &resizeable )
+bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, string &title, bool &resizeable )
 {
   x = 640;
   y = 480;
@@ -1529,12 +1737,12 @@ bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::strin
   return true;
 }
 
-void ModelToolApp::setupDisplay ( void )
+void ModelToolApp::setupDisplay()
 {
   GraphicApplication::setupDisplay();
 }
 
-void ModelToolApp::preFrameUpdate ( void )
+void ModelToolApp::preFrameUpdate()
 {
   // do animation stuff here
 }
@@ -1581,7 +1789,7 @@ void ModelToolApp::mouseButtonEvent ( int button, bool down )
 }
 
 
-bool ModelToolApp::drawView ( void )
+bool ModelToolApp::drawView()
 {
   glPushMatrix();
 
@@ -1604,7 +1812,7 @@ bool ModelToolApp::drawView ( void )
   return true;
 }
 
-bool ModelToolApp::drawOverlay ( void )
+bool ModelToolApp::drawOverlay()
 {
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
@@ -1625,7 +1833,7 @@ void ModelToolApp::inputEvent ( int id, float value )
 
 }
 
-void ModelToolApp::drawZZeroGrid ( void )
+void ModelToolApp::drawZZeroGrid()
 {
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
