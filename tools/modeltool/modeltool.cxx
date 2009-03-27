@@ -47,7 +47,7 @@ int GFXMain(int argc, char* argv[]);
 //============================================================================//
 
 // globals
-const char VersionString[] = "ModelTool v1.8.4.2 (WaveFront OBJ/BZW to BZFlag BZW converter)";
+const char VersionString[] = "ModelTool v1.9.9 (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
 string texdir = "";
 string groupName = "";
