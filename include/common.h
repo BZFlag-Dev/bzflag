@@ -253,7 +253,7 @@ typedef uint_t		uint32_t;
 #    ifdef max
 #      undef max
 #    endif
-#    define max(a,b) a < b ? b : a
+#    define max(a, b) ((a) < (b)) ? (b) : (a)
 #  endif /* __cplusplus */
 #endif /* HAVE_STD__MAX */
 
@@ -274,7 +274,7 @@ typedef uint_t		uint32_t;
 #    ifdef min
 #      undef min
 #    endif
-#    define min(a,b) b < a ? b : a
+#    define min(a, b) ((b) < (a)) ? (b) : (a)
 #  endif /* __cplusplus */
 #endif /* HAVE_STD_MIN */
 
