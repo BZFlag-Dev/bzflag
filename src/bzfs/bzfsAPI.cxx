@@ -1787,16 +1787,16 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char *message)
     return false;
 
   int playerIndex;
-  PlayerId dstPlayer=AllPlayers;
-  if(to!=BZ_ALLUSERS)
-    dstPlayer=(PlayerId)to;
+  PlayerId dstPlayer = AllPlayers;
+  if (to != BZ_ALLUSERS)
+    dstPlayer = (PlayerId)to;
 
-  if(from==BZ_SERVER)
-    playerIndex=ServerPlayer;
+  if (from == BZ_SERVER)
+    playerIndex = ServerPlayer;
   else
-    playerIndex=from;
+    playerIndex = from;
 
-  sendChatMessage(playerIndex,dstPlayer,message);
+  sendChatMessage(playerIndex, dstPlayer, message);
   return true;
 }
 
