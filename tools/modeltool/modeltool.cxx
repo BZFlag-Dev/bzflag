@@ -224,7 +224,10 @@ static void writeBZW  ( CModel &model, string file )
 
     mesh.reindex();
 
-    fprintf(fp,"mesh # %s\n", mesh.name.c_str());
+    fprintf(fp, "mesh\n");
+    if (!mesh.name.empty()) {
+      fprintf(fp, "  name %s\n", mesh.name.c_str());
+    }
 
     if (outputComments)
     {
