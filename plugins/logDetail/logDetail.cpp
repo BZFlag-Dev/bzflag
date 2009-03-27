@@ -252,13 +252,18 @@ std::string LogDetail::displayCallsign(const bz_ApiString &callsign)
 std::string LogDetail::displayCallsign(const int playerID)
 {
   std::ostringstream callsign;
-  bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-  if (player) {
-    callsign << (unsigned int)strlen(player->callsign.c_str()) << ":";
-    callsign << player->callsign.c_str();
-    bz_freePlayerRecord(player);
+
+  if (playerID == BZ_SERVER) {
+    callsign << "6:SERVER";
   } else {
-    callsign << "7:UNKNOWN";
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
+    if (player) {
+      callsign << (unsigned int)strlen(player->callsign.c_str()) << ":";
+      callsign << player->callsign.c_str();
+      bz_freePlayerRecord(player);
+    } else {
+      callsign << "7:UNKNOWN";
+    }
   }
   return callsign.str();
 }
