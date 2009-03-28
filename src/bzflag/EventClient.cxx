@@ -19,7 +19,7 @@
 //============================================================================//
 //============================================================================//
 
-EventClient::EventClient(const std::string& _name, int _scriptID,
+EventClient::EventClient(const std::string& _name, int16_t _scriptID,
                          int gameState, int drawWorld, int drawScreen,
                          bool _fullRead, bool _gameCtrl, bool _inputCtrl)
 : clientName      (_name)

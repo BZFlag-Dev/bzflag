@@ -154,7 +154,7 @@ class LuaHandle : public EventClient
     virtual bool ForbidFlagDrop();
 
 	protected:
-		LuaHandle(const std::string& name, int scriptID,
+		LuaHandle(const std::string& name, int16_t scriptID,
 		          int gameStateOrder, int drawWorldOrder, int drawScreenOrder,
 		          bool fullRead, bool gameCtrl, bool inputCtrl);
 		virtual ~LuaHandle();

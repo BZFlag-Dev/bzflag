@@ -36,7 +36,7 @@ class EventClient
   public:
     inline const std::string& GetName()  const { return clientName;  }
 
-    inline int GetScriptID() const { return scriptID; }
+    inline int16_t GetScriptID() const { return scriptID; }
 
     inline int GetGameStateOrder()  const { return gameStateOrder;  }
     inline int GetDrawWorldOrder()  const { return drawWorldOrder;  }
@@ -44,7 +44,7 @@ class EventClient
 
     inline int GetOrder(int type) const {
       switch (type) {
-        case ScriptIDOrder:   { return scriptID;        }
+        case ScriptIDOrder:   { return (int)scriptID;   }
         case GameStateOrder:  { return gameStateOrder;  }
         case DrawWorldOrder:  { return drawWorldOrder;  }
         case DrawScreenOrder: { return drawScreenOrder; }
@@ -63,7 +63,7 @@ class EventClient
   protected:
     const std::string clientName;
 
-    const int scriptID; // unique identifier (0 is reserved for the server)
+    const int16_t scriptID; // unique identifier (0 is reserved for the server)
 
     const int gameStateOrder;  // game event update order
     const int drawWorldOrder;  // world  drawing  (drawn in reverse)
@@ -74,7 +74,7 @@ class EventClient
     bool inputCtrl; // can control inputs (mouse, keyboard, etc...)
 
   protected:
-    EventClient(const std::string& name, int scriptID,
+    EventClient(const std::string& name, int16_t scriptID,
                 int gameStateOrder, int drawWorldOrder, int drawScreenOrder,
                 bool fullRead, bool gameCtrl, bool inputCtrl);
     virtual ~EventClient();
