@@ -1270,9 +1270,8 @@ bool Player::isDeadReckoningWrong() const
 
 void Player::doDeadReckoning()
 {
-  if (!isAlive() && !isExploding()) {
+  if (!isAlive() && !isExploding())
     return;
-  }
 
   // get predicted state
   float predictedPos[3];
@@ -1283,68 +1282,76 @@ void Player::doDeadReckoning()
   getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, (float)dt);
 
   // setup notResponding
-  if (!isAlive()) {
+  if (!isAlive())
     notResponding = false;
-  } else {
+  else
     notResponding = (dt > BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
+
+  bool ZHit = false;
+  // if the tanks hits something in Z then update input state (we don't want to fall anymore)
+  float zLimit = 0.0f;
+  if (getFlag() == Flags::Burrow)
+    zLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+
+  // check to see if we will fall on anything, if so THAT is our z limit
+  World *world = World::getWorld();
+  if (world){
+	  const Obstacle* obstacle = world->hitBuilding(inputPos, inputAzimuth, 
+		  predictedPos, predictedAzimuth, dimensions[0], dimensions[1], 
+		  dimensions[2], isSolid());
+
+	  // did they hit something?
+	  if (obstacle && isSolid()){
+		  // we know they hit something just move them to the top of it
+		  const Extents& exts = obstacle->getExtents();
+		  zLimit = exts.maxs[2];
+	  }
   }
 
-  // if hit ground then update input state (we don't want to fall anymore)
-  float groundLimit = 0.0f;
-  if (getFlag() == Flags::Burrow) {
-    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
-  }
   // the velocity check is for when a Burrow flag is dropped
-  if ((predictedPos[2] <= groundLimit) && (predictedVel[2] <= 0.0f)) {
-    predictedPos[2] = groundLimit;
+  if ((predictedPos[2] <= zLimit) && (predictedVel[2] <= 0.0f)) {
+    predictedPos[2] = zLimit;
     predictedVel[2] = 0.0f;
     inputStatus &= ~PlayerState::Falling;
     inputVel[2] = 0.0f;
+	ZHit = true;
   }
 
   // setup remote players' landing sounds and graphics, and jumping sounds
-  if (isAlive() && !headless) {
+  if (isAlive() && !headless) 
+  {
     // the importance level of the remote sounds
     const bool soundImportance = false;
-    const bool localSound = (ROAM.isRoaming()
-			     && (ROAM.getMode() == Roaming::roamViewFP)
-			     && (ROAM.getTargetTank() == this));
+    const bool localSound = (ROAM.isRoaming() && (ROAM.getMode() == Roaming::roamViewFP) && (ROAM.getTargetTank() == this));
 
     // check for a landing
-    if (((oldStatus & PlayerState::Falling) != 0) &&
-	((inputStatus & PlayerState::Falling) == 0)) {
-      // setup the squish effect
-      setLandingSpeed(oldZSpeed);
+    if (((oldStatus & PlayerState::Falling) != 0) && ((inputStatus & PlayerState::Falling) == 0))
+	{
+		setLandingSpeed(oldZSpeed);		// setup the squish effect
 
-      // make it "land"
-      EFFECTS.addLandEffect(getColor(),state.pos,state.azimuth);
+		EFFECTS.addLandEffect(getColor(),predictedPos,state.azimuth);		// make it "land"
 
-      // setup the sound
-      if (BZDB.isTrue("remoteSounds")) {
-	if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f)) {
-	  SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
-	} else  {
-	  // probably never gets played
-	  SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
-	}
-      }
-    }
+		// setup the sound
+		if (BZDB.isTrue("remoteSounds")){
+			if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f))
+				SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
+			else	  // probably never gets played
+				SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
+		}
 
-    // play jumping type sounds, and then clear them
-    if (state.sounds != PlayerState::NoSounds) {
-      if (BZDB.isTrue("remoteSounds")) {
-	if ((state.sounds & PlayerState::JumpSound) != 0) {
-	  SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
+		// play jumping type sounds, and then clear them
+		if (state.sounds != PlayerState::NoSounds){
+			if (BZDB.isTrue("remoteSounds")) {
+				if ((state.sounds & PlayerState::JumpSound) != 0)
+					SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
+				if ((state.sounds & PlayerState::WingsSound) != 0)
+					SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
+				if ((state.sounds & PlayerState::BounceSound) != 0)
+					SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
+			}
+			state.sounds = PlayerState::NoSounds;
+		}
 	}
-	if ((state.sounds & PlayerState::WingsSound) != 0) {
-	  SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
-	}
-	if ((state.sounds & PlayerState::BounceSound) != 0) {
-	  SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
-	}
-      }
-      state.sounds = PlayerState::NoSounds;
-    }
   }
 
   // copy some old state
@@ -1355,8 +1362,11 @@ void Player::doDeadReckoning()
   setVelocity(predictedVel);
   setRelativeMotion();
 
+  if (ZHit) // if we hit something, then we want to DR from here now, instead of from the starting point
+	  setDeadReckoning(syncedClock.GetServerSeconds());
+
   return;
-}
+	}
 
 
 // How long does the filter takes to be considered "initialized"

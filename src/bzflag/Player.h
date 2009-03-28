@@ -346,6 +346,8 @@ private:
 
   int			oldStatus;		// old tank status bits
   float			oldZSpeed;		// old tank vertical speed
+
+  bool isSolid ();
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.
@@ -353,6 +355,11 @@ private:
 //
 // Player
 //
+
+inline bool Player::isSolid()
+{
+	return getFlag() != Flags::OscillationOverthruster;
+}
 
 inline PlayerId		Player::getId() const
 {
