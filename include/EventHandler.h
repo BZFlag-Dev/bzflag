@@ -198,7 +198,7 @@ class EventHandler
 
   private:
     void SetupEvent(const std::string& ciName, EventClientList* list,
-                    int propertyBits = 0, bool reversed = false);
+                    int orderType, bool reversed, int propertyBits);
     bool CanUseEvent(EventClient* ec, const EventInfo& eInfo) const;
 
   private:

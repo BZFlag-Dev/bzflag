@@ -62,9 +62,12 @@ bool LuaHandle::devMode = false;
 //============================================================================//
 //============================================================================//
 
-LuaHandle::LuaHandle(const string& _name, int _order,
-                     bool _fullRead, bool _inputCtrl)
-: EventClient(_name, _order, _fullRead, devMode, _inputCtrl) // FIXME gameCtrl == devMode?
+LuaHandle::LuaHandle(const string& _name, int _scriptID,
+		                 int gameState, int drawWorld, int drawScreen,
+                     bool _fullRead, bool _gameCtrl, bool _inputCtrl)
+: EventClient(_name, _scriptID,
+              gameState, drawWorld, drawScreen,
+              _fullRead, _gameCtrl, _inputCtrl)
 , requestReload  (false)
 , requestDisable (false)
 {

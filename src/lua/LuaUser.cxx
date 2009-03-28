@@ -66,7 +66,11 @@ void LuaUser::FreeHandler()
 //============================================================================//
 
 LuaUser::LuaUser()
-: LuaHandle("LuaUser", ORDER_LUA_USER, devMode, true)
+: LuaHandle("LuaUser", LUA_USER_SCRIPT_ID,
+            LUA_USER_GAME_ORDER,
+            LUA_USER_DRAW_WORLD_ORDER,
+            LUA_USER_DRAW_SCREEN_ORDER,
+            devMode, false, true)
 {
 	luaUser = this;
 

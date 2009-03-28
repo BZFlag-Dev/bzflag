@@ -12,8 +12,17 @@ class EventClient;
 
 class EventClientList {
   public:
-    EventClientList(bool r = false) : reversed(r) {}
+    EventClientList() : orderType(-1), reversed(false) {}
+    EventClientList(int _orderType, bool _reversed)
+    : orderType(_orderType)
+    , reversed(_reversed)
+    {}
+
     ~EventClientList() {}
+
+    void set_order_type(int value) {
+      orderType = value;
+    }
 
     void set_reversed(bool value) {
       reversed = value;
@@ -64,6 +73,8 @@ class EventClientList {
   private:
     std::vector<EventClient*> data;
     std::vector<size_t*>      ptrs;
+
+    int orderType;
     bool reversed;
 };
 

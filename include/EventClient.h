@@ -25,21 +25,57 @@ struct FiringInfo;
 class EventClient
 {
   public:
+    enum OrderType {
+      ScriptIDOrder   = 0,
+      GameStateOrder  = 1,
+      DrawWorldOrder  = 2,
+      DrawScreenOrder = 3,
+      OrderTypeCount
+    };
+
+  public:
     inline const std::string& GetName()  const { return clientName;  }
-    inline int                GetOrder() const { return clientOrder; }
-    inline bool HasFullRead()  const { return fullRead;  }
-    inline bool HasGameCtrl()  const { return gameCtrl;  }
-    inline bool HasInputCtrl() const { return inputCtrl; }
+
+    inline int GetScriptID() const { return scriptID; }
+
+    inline int GetGameStateOrder()  const { return gameStateOrder;  }
+    inline int GetDrawWorldOrder()  const { return drawWorldOrder;  }
+    inline int GetDrawScreenOrder() const { return drawScreenOrder; }
+
+    inline int GetOrder(int type) const {
+      switch (type) {
+        case ScriptIDOrder:   { return scriptID;        }
+        case GameStateOrder:  { return gameStateOrder;  }
+        case DrawWorldOrder:  { return drawWorldOrder;  }
+        case DrawScreenOrder: { return drawScreenOrder; }
+        default: {
+          return -1;
+        }
+      }
+      return -1;
+    }
+
+    inline bool HasFullRead()   const { return fullRead;    }
+    inline bool HasGameCtrl()   const { return gameCtrl;    }
+    inline bool HasInputCtrl()  const { return inputCtrl;   }
+
 
   protected:
     const std::string clientName;
-    const int clientOrder;
-    bool fullRead;
-    bool gameCtrl;
-    bool inputCtrl;
+
+    const int scriptID; // unique identifier (0 is reserved for the server)
+
+    const int gameStateOrder;  // game event update order
+    const int drawWorldOrder;  // world  drawing  (drawn in reverse)
+    const int drawScreenOrder; // screen drawing  (also used for input events)
+
+    bool fullRead;  // can query all game state
+    bool gameCtrl;  // can control game state
+    bool inputCtrl; // can control inputs (mouse, keyboard, etc...)
 
   protected:
-    EventClient(const std::string& name, int order,
+    EventClient(const std::string& name, int scriptID,
+                int gameStateOrder, int drawWorldOrder, int drawScreenOrder,
                 bool fullRead, bool gameCtrl, bool inputCtrl);
     virtual ~EventClient();
 

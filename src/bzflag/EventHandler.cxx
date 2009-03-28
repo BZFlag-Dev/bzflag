@@ -43,9 +43,11 @@ static const int REQ_INPUT_CTRL = (1 << 2);
 
 
 void EventHandler::SetupEvent(const string& eName, EventClientList* list,
-                              int bits, bool reversed)
+                              int orderType, bool reversed, int bits)
 {
+  list->set_order_type(orderType);
   list->set_reversed(reversed);
+
   assert(eventMap.find(eName) == eventMap.end());
   const bool reqFullRead  = ((bits & REQ_FULL_READ)  ? true : false);
   const bool reqGameCtrl  = ((bits & REQ_GAME_CTRL)  ? true : false);
@@ -56,8 +58,8 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 }
 
 
-#define SETUP_EVENT(name, bits, reversed) \
-  SetupEvent(#name, &list ## name, bits, reversed)
+#define SETUP_EVENT(name, orderType, reversed, bits) \
+  SetupEvent(#name, &list ## name, orderType, reversed, bits)
 
 
 //============================================================================//
@@ -65,70 +67,75 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 
 EventHandler::EventHandler()
 {
-  SETUP_EVENT(Update, 0, false);
+  const int ScriptIDOrder   = EventClient::ScriptIDOrder;
+  const int GameStateOrder  = EventClient::GameStateOrder;
+  const int DrawWorldOrder  = EventClient::DrawWorldOrder;
+  const int DrawScreenOrder = EventClient::DrawScreenOrder;
+  
+  SETUP_EVENT(Update, ScriptIDOrder, false, 0);
 
-  SETUP_EVENT(BZDBChange, 0, false);
+  SETUP_EVENT(BZDBChange, GameStateOrder, false, 0);
 
-  SETUP_EVENT(CommandFallback, 0, false);
+  SETUP_EVENT(CommandFallback, DrawScreenOrder,false, 0);
 
-  SETUP_EVENT(RecvChatMsg, 0, false);
-  SETUP_EVENT(RecvLuaData, 0, false);
+  SETUP_EVENT(RecvChatMsg, ScriptIDOrder, false, 0);
+  SETUP_EVENT(RecvLuaData, ScriptIDOrder, false, 0);
 
-  SETUP_EVENT(ServerJoined, 0, false);
-  SETUP_EVENT(ServerParted, 0, false);
+  SETUP_EVENT(ServerJoined, GameStateOrder, false, 0);
+  SETUP_EVENT(ServerParted, GameStateOrder, false, 0);
 
-  SETUP_EVENT(PlayerAdded,       0,             false);
-  SETUP_EVENT(PlayerRemoved,     0,             false);
-  SETUP_EVENT(PlayerSpawned,     0,             false);
-  SETUP_EVENT(PlayerKilled,      0,             false);
-  SETUP_EVENT(PlayerJumped,      REQ_FULL_READ, false);
-  SETUP_EVENT(PlayerLanded,      REQ_FULL_READ, false);
-  SETUP_EVENT(PlayerTeleported,  REQ_FULL_READ, false);
-  SETUP_EVENT(PlayerTeamChange,  0,             false);
-  SETUP_EVENT(PlayerScoreChange, 0,             false);
+  SETUP_EVENT(PlayerAdded,       GameStateOrder, false, 0);
+  SETUP_EVENT(PlayerRemoved,     GameStateOrder, false, 0);
+  SETUP_EVENT(PlayerSpawned,     GameStateOrder, false, 0);
+  SETUP_EVENT(PlayerKilled,      GameStateOrder, false, 0);
+  SETUP_EVENT(PlayerJumped,      GameStateOrder, false, REQ_FULL_READ);
+  SETUP_EVENT(PlayerLanded,      GameStateOrder, false, REQ_FULL_READ);
+  SETUP_EVENT(PlayerTeleported,  GameStateOrder, false, REQ_FULL_READ);
+  SETUP_EVENT(PlayerTeamChange,  GameStateOrder, false, 0);
+  SETUP_EVENT(PlayerScoreChange, GameStateOrder, false, 0);
 
-  SETUP_EVENT(ShotAdded,      REQ_FULL_READ, false);
-  SETUP_EVENT(ShotRemoved,    REQ_FULL_READ, false);
-  SETUP_EVENT(ShotRicochet,   REQ_FULL_READ, false);
-  SETUP_EVENT(ShotTeleported, REQ_FULL_READ, false);
+  SETUP_EVENT(ShotAdded,      GameStateOrder, false, REQ_FULL_READ);
+  SETUP_EVENT(ShotRemoved,    GameStateOrder, false, REQ_FULL_READ);
+  SETUP_EVENT(ShotRicochet,   GameStateOrder, false, REQ_FULL_READ);
+  SETUP_EVENT(ShotTeleported, GameStateOrder, false, REQ_FULL_READ);
 
-  SETUP_EVENT(FlagAdded,       0, false);
-  SETUP_EVENT(FlagRemoved,     0, false);
-  SETUP_EVENT(FlagGrabbed,     0, false);
-  SETUP_EVENT(FlagDropped,     0, false);
-  SETUP_EVENT(FlagCaptured,    0, false);
-  SETUP_EVENT(FlagTransferred, 0, false);
+  SETUP_EVENT(FlagAdded,       GameStateOrder, false, 0);
+  SETUP_EVENT(FlagRemoved,     GameStateOrder, false, 0);
+  SETUP_EVENT(FlagGrabbed,     GameStateOrder, false, 0);
+  SETUP_EVENT(FlagDropped,     GameStateOrder, false, 0);
+  SETUP_EVENT(FlagCaptured,    GameStateOrder, false, 0);
+  SETUP_EVENT(FlagTransferred, GameStateOrder, false, 0);
 
-  SETUP_EVENT(GLResize,      0, false);
-  SETUP_EVENT(GLContextInit, 0, false);
-  SETUP_EVENT(GLContextFree, 0, false);
-  SETUP_EVENT(GLUnmapped,    0, false);
+  SETUP_EVENT(GLResize,      DrawScreenOrder, false, 0);
+  SETUP_EVENT(GLContextInit, DrawScreenOrder, false, 0);
+  SETUP_EVENT(GLContextFree, DrawScreenOrder, false, 0);
+  SETUP_EVENT(GLUnmapped,    DrawScreenOrder, false, 0);
 
-  SETUP_EVENT(DrawGenesis,     0, true);
-  SETUP_EVENT(DrawWorldStart,  0, true);
-  SETUP_EVENT(DrawWorld,       0, true);
-  SETUP_EVENT(DrawWorldAlpha,  0, true);
-  SETUP_EVENT(DrawWorldShadow, 0, true);
-  SETUP_EVENT(DrawScreenStart, 0, true);
-  SETUP_EVENT(DrawScreen,      0, true);
-  SETUP_EVENT(DrawRadar,       0, true);
+  SETUP_EVENT(DrawGenesis,     DrawScreenOrder, true, 0);
+  SETUP_EVENT(DrawWorldStart,  DrawWorldOrder,  true, 0);
+  SETUP_EVENT(DrawWorld,       DrawWorldOrder,  true, 0);
+  SETUP_EVENT(DrawWorldAlpha,  DrawWorldOrder,  true, 0);
+  SETUP_EVENT(DrawWorldShadow, DrawWorldOrder,  true, 0);
+  SETUP_EVENT(DrawScreenStart, DrawScreenOrder, true, 0);
+  SETUP_EVENT(DrawScreen,      DrawScreenOrder, true, 0);
+  SETUP_EVENT(DrawRadar,       DrawScreenOrder, true, 0);
 
-  SETUP_EVENT(KeyPress,     REQ_INPUT_CTRL, false);
-  SETUP_EVENT(KeyRelease,   REQ_INPUT_CTRL, false);
-  SETUP_EVENT(MousePress,   REQ_INPUT_CTRL, false);
-  SETUP_EVENT(MouseMove,    REQ_INPUT_CTRL, false);
-  SETUP_EVENT(MouseRelease, REQ_INPUT_CTRL, false);
-  SETUP_EVENT(MouseWheel,   REQ_INPUT_CTRL, false);
-  SETUP_EVENT(IsAbove,      REQ_INPUT_CTRL, false);
-  SETUP_EVENT(GetTooltip,   REQ_INPUT_CTRL, false);
+  SETUP_EVENT(KeyPress,     DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(KeyRelease,   DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(MousePress,   DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseMove,    DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseRelease, DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseWheel,   DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(IsAbove,      DrawScreenOrder, false, REQ_INPUT_CTRL);
+  SETUP_EVENT(GetTooltip,   DrawScreenOrder, false, REQ_INPUT_CTRL);
 
-  SETUP_EVENT(WordComplete, REQ_INPUT_CTRL, false);
+  SETUP_EVENT(WordComplete, DrawScreenOrder, false, REQ_INPUT_CTRL);
 
-  SETUP_EVENT(ForbidSpawn,    REQ_GAME_CTRL, false);
-  SETUP_EVENT(ForbidJump,     REQ_GAME_CTRL, false);
-  SETUP_EVENT(ForbidShot,     REQ_GAME_CTRL, false);
-  SETUP_EVENT(ForbidShotLock, REQ_GAME_CTRL, false);
-  SETUP_EVENT(ForbidFlagDrop, REQ_GAME_CTRL, false);
+  SETUP_EVENT(ForbidSpawn,    GameStateOrder, false, REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidJump,     GameStateOrder, false, REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidShot,     GameStateOrder, false, REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidShotLock, GameStateOrder, false, REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidFlagDrop, GameStateOrder, false, REQ_GAME_CTRL);
 }
 
 
@@ -297,7 +304,7 @@ void EventHandler::RecvLuaData(int srcPlayerID, int srcScriptID,
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    if ((dstScriptID == 0) || (dstScriptID == ec->GetOrder())) {
+    if ((dstScriptID == 0) || (dstScriptID == ec->GetScriptID())) {
       ec->RecvLuaData(srcPlayerID, srcScriptID,
                       dstPlayerID, dstScriptID,
                       status, data);

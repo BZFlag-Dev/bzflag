@@ -104,7 +104,11 @@ bool LuaBzOrg::IsActive()
 //============================================================================//
 
 LuaBzOrg::LuaBzOrg(const char* code, int length)
-: LuaHandle("LuaBzOrg", ORDER_LUA_BZORG, true, true)
+: LuaHandle("LuaBzOrg", LUA_BZORG_SCRIPT_ID,
+            LUA_BZORG_GAME_ORDER,
+            LUA_BZORG_DRAW_WORLD_ORDER,
+            LUA_BZORG_DRAW_SCREEN_ORDER,
+            true, false, true)
 {
 	luaBzOrg = this;
 

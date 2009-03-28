@@ -67,7 +67,11 @@ void LuaWorld::FreeHandler()
 //============================================================================//
 
 LuaWorld::LuaWorld()
-: LuaHandle("LuaWorld", ORDER_LUA_WORLD, true, true)
+: LuaHandle("LuaWorld", LUA_WORLD_SCRIPT_ID,
+            LUA_WORLD_GAME_ORDER,
+            LUA_WORLD_DRAW_WORLD_ORDER,
+            LUA_WORLD_DRAW_SCREEN_ORDER,
+            true, false, true)
 {
 	luaWorld = this;
 

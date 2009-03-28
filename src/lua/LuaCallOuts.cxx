@@ -708,7 +708,6 @@ int LuaCallOuts::GetWorldHash(lua_State* L)
 
 int LuaCallOuts::SendLuaData(lua_State* L)
 {
-	const int myOrder = L2H(L)->GetOrder();
 	const LocalPlayer* myTank = LocalPlayer::getMyTank();
 	if (myTank == NULL) {
 		return 0;
@@ -725,7 +724,8 @@ int LuaCallOuts::SendLuaData(lua_State* L)
 	const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
 	const uint8_t  statusBits  =  (uint8_t)luaL_optint(L, 4, 0);
 
-	lua_pushboolean(L, serverLink->sendLuaData(myTank->getId(), myOrder,
+	lua_pushboolean(L, serverLink->sendLuaData(myTank->getId(),
+	                                           L2H(L)->GetScriptID(),
 	                                           dstPlayerID, dstScriptID,
 	                                           statusBits, data));
 	return 1;

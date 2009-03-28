@@ -19,13 +19,17 @@
 //============================================================================//
 //============================================================================//
 
-EventClient::EventClient(const std::string& _name, int _order,
+EventClient::EventClient(const std::string& _name, int _scriptID,
+                         int gameState, int drawWorld, int drawScreen,
                          bool _fullRead, bool _gameCtrl, bool _inputCtrl)
-: clientName (_name)
-, clientOrder(_order)
-, fullRead   (_fullRead)
-, gameCtrl   (_gameCtrl)
-, inputCtrl  (_inputCtrl)
+: clientName      (_name)
+, scriptID        (_scriptID)
+, gameStateOrder  (gameState)
+, drawWorldOrder  (drawWorld)
+, drawScreenOrder (drawScreen)
+, fullRead        (_fullRead)
+, gameCtrl        (_gameCtrl)
+, inputCtrl       (_inputCtrl)
 {
 }
 

@@ -55,10 +55,10 @@ static void pushEntry(int id, const string& name)
 //============================================================================//
 
 
-static bool isBetterClient(EventClient* a, EventClient* b)
+static bool isBetterClient(EventClient* a, EventClient* b, int orderType)
 {
-  const int aOrder = a->GetOrder();
-  const int bOrder = b->GetOrder();
+  const int aOrder = a->GetOrder(orderType);
+  const int bOrder = b->GetOrder(orderType);
   if (aOrder < bOrder) { return true;  }
   if (aOrder > bOrder) { return false; }
 
@@ -144,7 +144,9 @@ bool GfxBlock::set(EventClient* ec, bool queue)
     if (clients[i] == ec) {
       return false;
     }
-    if (isBetterClient(ec, clients[i])) {
+    const int orderType = world ? EventClient::DrawWorldOrder
+                                : EventClient::DrawScreenOrder;
+    if (isBetterClient(ec, clients[i], orderType)) {
       clients.insert(clients.begin() + i, ec);
       if (i == 0) {
         clients[1]->LostGfxBlock(type, id); // notify the old owner

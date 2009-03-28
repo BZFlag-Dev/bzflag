@@ -31,8 +31,8 @@ using std::vector;
 inline bool EventClientList::lessThan(const EventClient* a,
                                       const EventClient* b)
 {
-  const int aOrder = a->GetOrder();
-  const int bOrder = b->GetOrder();
+  const int aOrder = a->GetOrder(orderType);
+  const int bOrder = b->GetOrder(orderType);
   if (aOrder < bOrder) { return !reversed; }
   if (aOrder > bOrder) { return  reversed; }
 
@@ -81,8 +81,8 @@ bool EventClientList::insert(EventClient* ec)
   // forbid duplicates
   for (it = data.begin(); it != data.end(); ++it) {
     EventClient* ec2 = *it;
-    if ((ec->GetName()  == ec2->GetName()) &&
-        (ec->GetOrder() == ec2->GetOrder())) {
+    if ((ec->GetName() == ec2->GetName()) &&
+        (ec->GetOrder(orderType) == ec2->GetOrder(orderType))) {
       return true;
     }
   }
