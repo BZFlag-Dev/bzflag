@@ -44,14 +44,6 @@ FTLibrary::~FTLibrary()
         delete library;
         library= 0;
     }
-
-//  if(manager != 0)
-//  {
-//      FTC_Manager_Done(manager);
-//
-//      delete manager;
-//      manager= 0;
-//  }
 }
 
 
@@ -77,15 +69,6 @@ bool FTLibrary::Initialise()
         library = 0;
         return false;
     }
-
-//  FTC_Manager* manager;
-//
-//  if(FTC_Manager_New(lib, 0, 0, 0, my_face_requester, 0, manager)
-//  {
-//      delete manager;
-//      manager= 0;
-//      return false;
-//  }
 
     return true;
 }
