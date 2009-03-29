@@ -242,7 +242,6 @@ FontManager::FontManager()
 
 FontManager::~FontManager()
 {
-  // FIXME:  boom, this is still problematic
   clear();
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
 }
@@ -322,13 +321,6 @@ void FontManager::clear(void)
 
   std::for_each(fontFaces.begin(), fontFaces.end(),
 		std::mem_fun_ref(&BZFontFace_impl::clear) );
-
-  // NOTE: this function doesn't clear out all of the fonts,
-  //       it frees the memory for the used face sizes
-  //
-  // name2id.clear();
-  // file2id.clear();
-  //
 
   return;
 }

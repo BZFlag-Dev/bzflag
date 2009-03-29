@@ -138,6 +138,11 @@ public:
 
   bool freeFontFile(const std::string& fileName);
 
+  /**
+   * destroy all the fonts, clear all the lists
+   */
+  void clear();
+
 protected:
 
   friend class Singleton<FontManager>;
@@ -146,11 +151,6 @@ protected:
    * return the pulse color
    */
   void getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
-
-  /**
-   * destroy all the fonts, clear all the lists
-   */
-  void clear();
 
   /**
    * returns the number of fonts loaded

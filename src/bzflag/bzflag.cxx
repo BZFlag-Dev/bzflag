@@ -1392,6 +1392,7 @@ void cleanupClient ( void )
   delete platformFactory;
   delete bm;
   Flags::kill();
+  FontManager::instance().clear();
 
 #if defined(_WIN32)
   {
