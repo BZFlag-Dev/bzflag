@@ -124,8 +124,9 @@ Rendering
   
 * Flaghelp falls into the radar area when radar is 'bigger'
 
-* When setting resolution to 1400x1050 the font listing the various resolutions
-  overlaps one another. @ r18096 -spldart-
+* When setting resolution to 1400x1050 ~ 1920x1080 the font listing the various
+  resolutions overlaps one another. @ r18096 -spldart-  
+  -confirmed- @ r19553
 
 * Navigating the server list jumps around.  Join->Find Server then press the
   down arrow repeatedly (for the All tab).  The highlighted server list item
