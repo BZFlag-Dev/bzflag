@@ -93,6 +93,8 @@ class LuaCallInDB {
 		LuaCallInDB();
 		~LuaCallInDB();
 
+		bool Init();
+
 		const string& GetEventName(const string& callIn) const;
 		const string& GetCallInName(const string& event) const;
 
@@ -101,12 +103,15 @@ class LuaCallInDB {
 			CallInInfo() {}
 			CallInInfo(int c, const char* n,
 			           bool fullRead, bool gameCtrl, bool inputCtrl,
-			           bool rev, const char* ss, const char* lt)
+			           bool rev, bool rec, const char* ss, const char* lt)
 			: code(c), name(n)
 			, reqFullRead(fullRead)
 			, reqGameCtrl(gameCtrl)
 			, reqInputCtrl(inputCtrl)
-			, reversed(rev), loopType(lt), singleScript(ss)
+			, reversed(rev)
+			, reentrant(rec)
+			, loopType(lt)
+			, singleScript(ss)
 			{}
 			int code;
 			std::string name;
@@ -114,6 +119,7 @@ class LuaCallInDB {
 			bool reqGameCtrl;
 			bool reqInputCtrl;
 			bool reversed;
+			bool reentrant;
 			std::string loopType;     // suggested control loop for lua handlers
 			std::string singleScript; // can only be used by this script
 		};

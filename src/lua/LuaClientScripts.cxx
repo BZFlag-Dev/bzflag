@@ -19,6 +19,7 @@ using std::string;
 #include "../bzflag/World.h"
 
 // local headers
+#include "LuaCallInDB.h"
 #include "LuaOpenGL.h"
 #include "LuaURL.h"
 
@@ -33,6 +34,8 @@ using std::string;
 
 void LuaClientScripts::Init()
 {
+	luaCallInDB.Init();
+
 	LuaOpenGL::Init();
 	LuaURLMgr::SetAccessList(Downloads::instance().getAccessList());
 }

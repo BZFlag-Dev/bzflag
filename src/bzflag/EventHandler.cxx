@@ -43,7 +43,8 @@ static const int REQ_INPUT_CTRL = (1 << 2);
 
 
 void EventHandler::SetupEvent(const string& eName, EventClientList* list,
-                              int orderType, bool reversed, int bits)
+                              int orderType, bool reversed, bool reentrant,
+                              int bits)
 {
   list->set_order_type(orderType);
   list->set_reversed(reversed);
@@ -54,12 +55,12 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
   const bool reqInputCtrl = ((bits & REQ_INPUT_CTRL) ? true : false);
   eventMap[eName] = EventInfo(eName, list,
                               reqFullRead, reqGameCtrl, reqInputCtrl,
-                              reversed);
+                              reversed, reentrant);
 }
 
 
 #define SETUP_EVENT(name, orderType, reversed, bits) \
-  SetupEvent(#name, &list ## name, orderType, reversed, bits)
+  SetupEvent(#name, &list ## name, orderType, reversed, false, bits)
 
 
 //============================================================================//
@@ -220,6 +221,13 @@ bool EventHandler::IsReversed(const std::string& eName) const
 {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && ei->IsReversed();
+}
+
+
+bool EventHandler::IsReentrant(const std::string& eName) const
+{
+  const EventInfo* ei = GetEventInfo(eName);
+  return (ei != NULL) && ei->IsReentrant();
 }
 
 

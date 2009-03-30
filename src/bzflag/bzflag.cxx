@@ -1157,7 +1157,7 @@ int initDisplay ( void )
 
   // sanity check - make sure OpenGL is actually available or
   // there's no sense in continuing.
-  const char * const glRenderer = (const char*)glGetString(GL_RENDERER);
+  const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
   if (!glRenderer) {
     // bad code, no donut for you
 
@@ -1199,11 +1199,10 @@ int initDisplay ( void )
     printFatalError("ERROR: Unable to initialize an OpenGL renderer");
     if (display != NULL) {
       delete display;
-      display=NULL;
+      display = NULL;
     }
     bail(1);
     exit(1);
-
   }
 
   // initialize OpenGL state
@@ -1228,6 +1227,18 @@ int initDisplay ( void )
     exit(1);
   }
   OpenGLGState::init();
+
+  // run-time GL version check
+  if (!GLEW_VERSION_1_1) {
+    // DIE
+    printFatalError("ERROR: OpenGL version 1.1 or later is required");
+    if (display != NULL) {
+      delete display;
+      display = NULL;
+    }
+    bail(1);
+    exit(1);
+  }
 
   // add the zbuffer callback here, after the OpenGL context is initialized
   BZDB.addCallback("zbuffer", Callbacks::setDepthBuffer, NULL);

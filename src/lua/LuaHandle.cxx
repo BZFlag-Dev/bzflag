@@ -529,6 +529,7 @@ static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo)
 	LuaPushNamedBool  (L, "reqFullRead",  ciInfo.reqFullRead);
 	LuaPushNamedBool  (L, "reqInputCtrl", ciInfo.reqInputCtrl);
 	LuaPushNamedBool  (L, "reversed",     ciInfo.reversed);
+	LuaPushNamedBool  (L, "reentrant",    ciInfo.reentrant);
 	LuaPushNamedString(L, "loopType",     ciInfo.loopType);
 	if (LuaHandle::GetDevMode()) {
 		lua_pushliteral(L, "func");

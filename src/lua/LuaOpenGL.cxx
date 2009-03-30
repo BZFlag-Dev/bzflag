@@ -28,6 +28,7 @@ using std::set;
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "CacheManager.h"
+#include "TextUtils.h"
 
 // local headers
 #include "LuaInclude.h"
@@ -53,18 +54,8 @@ const float LuaOpenGL::defaultTextSize = 12.0f;
 //============================================================================//
 //============================================================================//
 
-
-bool LuaOpenGL::canUseShaders = false;
-
-
-//============================================================================//
-//============================================================================//
-
 void LuaOpenGL::Init()
 {
-	if (GLEW_VERSION_2_0 && !BZDB.isTrue("forbidLuaShaders")) {
-		canUseShaders = true;
-	}
 }
 
 
@@ -76,8 +67,62 @@ void LuaOpenGL::Free()
 //============================================================================//
 //============================================================================//
 
+static set<string> forbidden;
+
+
+static void ParseForbidden()
+{
+	static set<string> knownExts;
+	if (knownExts.empty()) {
+		knownExts.insert("FBO");
+		knownExts.insert("Buffer");
+		knownExts.insert("Query");
+		knownExts.insert("Shader");
+		knownExts.insert("DepthClamp");
+		knownExts.insert("PointSprite");
+		knownExts.insert("SeparateBlend");
+		knownExts.insert("SeparateStencil");
+	}
+
+	forbidden.clear();
+
+	const string extList = BZDB.get("forbidLuaGL");
+
+	if (extList == "*") {
+		forbidden = knownExts;
+	}
+	else {
+		const vector<string> args = TextUtils::tokenize(extList, ",");
+		for (size_t i = 0; i < args.size(); i++) {
+			const string& ext = args[i];
+			if (knownExts.find(ext) != knownExts.end()) {
+				forbidden.insert(ext);
+			} else {
+				LuaLog(1, "LuaGL: unknown extension \"%s\"\n", ext.c_str());
+			}
+		}
+	}
+
+	set<string>::const_iterator it;
+	for (it = forbidden.begin(); it != forbidden.end(); ++it) {
+		LuaLog(1, "LuaGL: forbidding extension \"%s\"\n", (*it).c_str());
+	}
+}
+
+
+static bool IsAllowed(const string& ext)
+{
+	return (forbidden.find(ext) == forbidden.end());
+}
+
+
+//============================================================================//
+//============================================================================//
+
 bool LuaOpenGL::PushEntries(lua_State* L)
 {
+	ParseForbidden();
+
 	PUSH_LUA_CFUNC(L, HasExtension);
 	PUSH_LUA_CFUNC(L, GetNumber);
 	PUSH_LUA_CFUNC(L, GetString);
@@ -98,7 +143,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, ColorMask);
 	PUSH_LUA_CFUNC(L, DepthMask);
 	PUSH_LUA_CFUNC(L, DepthTest);
-	if (GLEW_NV_depth_clamp) {
+	if (GLEW_NV_depth_clamp && IsAllowed("DepthClamp")) {
 		PUSH_LUA_CFUNC(L, DepthClamp);
 	}
 	PUSH_LUA_CFUNC(L, Culling);
@@ -113,7 +158,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, Blending);
 	PUSH_LUA_CFUNC(L, BlendEquation);
 	PUSH_LUA_CFUNC(L, BlendFunc);
-	if (GLEW_VERSION_2_0) {
+	if (GLEW_VERSION_2_0 && IsAllowed("SeparateBlend")) {
 		PUSH_LUA_CFUNC(L, BlendEquationSeparate);
 		PUSH_LUA_CFUNC(L, BlendFuncSeparate);
 	}
@@ -133,7 +178,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, StencilMask);
 	PUSH_LUA_CFUNC(L, StencilFunc);
 	PUSH_LUA_CFUNC(L, StencilOp);
-	if (GLEW_VERSION_2_0) {
+	if (GLEW_VERSION_2_0 && IsAllowed("SeparateStencil")) {
 		PUSH_LUA_CFUNC(L, StencilMaskSeparate);
 		PUSH_LUA_CFUNC(L, StencilFuncSeparate);
 		PUSH_LUA_CFUNC(L, StencilOpSeparate);
@@ -141,7 +186,7 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 
 	PUSH_LUA_CFUNC(L, LineWidth);
 	PUSH_LUA_CFUNC(L, PointSize);
-	if (GLEW_VERSION_2_0) {
+	if (GLEW_VERSION_2_0 && IsAllowed("PointSprite")) {
 		PUSH_LUA_CFUNC(L, PointSprite);
 		PUSH_LUA_CFUNC(L, PointParameter);
 	}
@@ -214,28 +259,29 @@ bool LuaOpenGL::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, ReadPixels);
 	PUSH_LUA_CFUNC(L, SaveImage);
 
-	if (GLEW_VERSION_2_0) {
+	if (GLEW_VERSION_2_0 && IsAllowed("Query")) {
 		LuaGLQueryMgr::PushEntries(L);
 	}
 
 	LuaDListMgr::PushEntries(L);
 	LuaTextureMgr::PushEntries(L);
 
-	if (canUseShaders) {
+	if (IsAllowed("Shader")) {
 		LuaShaderMgr::PushEntries(L);
 	}
 
 	// should be GL_ARB_framebuffer_object, but glew 1.5.1 has
 	// a typo from the following:  glFramebufferTextureLayer
 	// (it should be fixed in the next version of glew)
-	if (GLEW_VERSION_2_0 && glGenFramebuffers && glGenRenderbuffers) {
+	if (GLEW_VERSION_2_0 && glGenFramebuffers && glGenRenderbuffers &&
+	    IsAllowed("FBO")) {
 	 	LuaFBOMgr::PushEntries(L);
 	 	LuaRBOMgr::PushEntries(L);
 	}
 
 	LuaGLPointers::PushEntries(L);
 
-	if (GLEW_VERSION_1_5) {
+	if (GLEW_VERSION_1_5 && IsAllowed("Buffer")) {
 		LuaGLBufferMgr::PushEntries(L);
 	}
 

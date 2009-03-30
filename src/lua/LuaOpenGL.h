@@ -1,8 +1,6 @@
 #ifndef LUA_OPENGL_H
 #define LUA_OPENGL_H
 
-#include <set>
-
 
 struct lua_State;
 
@@ -22,9 +20,6 @@ class LuaOpenGL {
 	private:
 		static void StaticInitContext(void* data);
 		static void StaticFreeContext(void* data);
-
-	private:
-		static bool canUseShaders;
 
 	private:
 		static int HasExtension(lua_State* L);

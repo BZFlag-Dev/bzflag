@@ -75,6 +75,16 @@ bool LuaCallInDB::SetupCallIn(int code, const string& name)
 
 LuaCallInDB::LuaCallInDB()
 {
+}
+
+
+LuaCallInDB::~LuaCallInDB()
+{
+}
+
+
+bool LuaCallInDB::Init()
+{
 	// NOTE: less chance of typos doing it this way
 	const int NO_REQS        = 0;
 	const int REQ_FULL_READ  = (1 << 0);
@@ -105,6 +115,7 @@ LuaCallInDB::LuaCallInDB()
 	  ((bits) & REQ_GAME_CTRL)  != 0, \
 	  ((bits) & REQ_INPUT_CTRL) != 0, \
 	  (strncmp(#n, "Draw", 4) == 0),  \
+	  false,                          \
 	  singleScript, retType)
 
 	///////////////////////////////////
@@ -179,11 +190,8 @@ LuaCallInDB::LuaCallInDB()
 	ADD_CI(ForbidShot,     REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
 	ADD_CI(ForbidShotLock, REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
 	ADD_CI(ForbidFlagDrop, REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
-}
 
-
-LuaCallInDB::~LuaCallInDB()
-{
+	return true;
 }
 
 

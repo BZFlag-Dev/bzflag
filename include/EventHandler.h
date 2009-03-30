@@ -59,6 +59,7 @@ class EventHandler
     bool IsKnown(const std::string& eventName) const;
     bool IsManaged(const std::string& eventName) const;
     bool IsReversed(const std::string& eventName) const;
+    bool IsReentrant(const std::string& eventName) const;
     bool ReqFullRead(const std::string& eventName) const;
     bool ReqGameCtrl(const std::string& eventName) const;
     bool ReqInputCtrl(const std::string& eventName) const;
@@ -158,17 +159,19 @@ class EventHandler
         , reqGameCtrl (false)
         , reqInputCtrl(false)
         , reversed    (false)
+        , reentrant   (false)
         , list        (NULL)
         {}
 
         EventInfo(const std::string& _name, EventClientList* _list,
                   bool _reqFullRead, bool _reqGameCtrl, bool _reqInputCtrl,
-                  bool _reversed)
+                  bool _reversed, bool _reentrant)
         : name        (_name)
         , reqFullRead (_reqFullRead)
         , reqGameCtrl (_reqGameCtrl)
         , reqInputCtrl(_reqInputCtrl)
         , reversed    (_reversed)
+        , reentrant   (_reentrant)
         , list        (_list)
         {}
 
@@ -180,6 +183,7 @@ class EventHandler
         inline bool ReqInputCtrl() const { return reqInputCtrl;   }
         inline bool IsManaged()    const { return (list != NULL); }
         inline bool IsReversed()   const { return reversed;       }
+        inline bool IsReentrant()  const { return reentrant;      }
 
       protected:
         inline EventClientList* GetList() const { return list; }
@@ -190,6 +194,7 @@ class EventHandler
         bool reqGameCtrl;
         bool reqInputCtrl;
         bool reversed;
+        bool reentrant;
         EventClientList* list;
     };
 
@@ -198,7 +203,8 @@ class EventHandler
 
   private:
     void SetupEvent(const std::string& ciName, EventClientList* list,
-                    int orderType, bool reversed, int propertyBits);
+                    int orderType, bool reversed, bool reentrant,
+                    int propertyBits);
     bool CanUseEvent(EventClient* ec, const EventInfo& eInfo) const;
 
   private:
