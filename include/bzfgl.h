@@ -18,7 +18,6 @@
 #include "common.h"
 
 // glew.h needs to come before gl.h, etc...
-
 #include <GL/glew.h>
 
 #ifdef __APPLE__
@@ -28,10 +27,6 @@
 #else
 #  include <GL/gl.h>
 #  include <GL/glu.h>
-#endif
-
-#ifndef GL_VERSION_1_1
-# error OpenGL version 1.1 functionality is required
 #endif
 
 /* These will track glBegin/End pairs to make sure that they match */
