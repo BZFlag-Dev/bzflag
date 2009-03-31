@@ -152,7 +152,7 @@ Platform (Windows)
    
 * jitter on windows servers is reported as very high, but play is unaffected.
   
-* Two seperate boxen, windows build with vc8, nvidia vid cards.
+* Two seperate boxen, windows build with vc8 (VC9), nvidia vid cards. (ATI) 
 
   When jumping on box "name Box - position 250 250 118 - rotation 0 - size 15 15
   0.1 - end" on my WarTowers map, the one with the transporter on it, tanks
@@ -163,7 +163,7 @@ Platform (Windows)
   PS: This differs from the latter "teleporting is blocking" bug in misc
   directory further down this list in that the sky teleport is on regular box,
   not mesh, and it localized the bug to windows builds currently. But could
-  obviously be related.  @ r16889 -spldart-
+  obviously be related.  @ r16889 -spldart- (r19553) ()<- recent retest.
 
    
 bzfs
