@@ -845,7 +845,7 @@ void *MeshObstacle::unpack(void *buf)
 static void outputFloat(std::ostream& out, float value)
 {
   char buffer[32];
-  snprintf(buffer, 30, " %.8f", value);
+  snprintf(buffer, 30, " %.8g", value);
   out << buffer;
   return;
 }
