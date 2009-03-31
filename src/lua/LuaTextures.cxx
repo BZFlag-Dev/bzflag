@@ -1118,10 +1118,17 @@ int LuaTextureMgr::TexSubImage(lua_State* L)
 	glTexSubImage2D(target, level, x, y,
 	                texData.xsize, texData.ysize,
 	                texData.format, texData.type, texData.data);
-	lua_pushboolean(L, glGetError() == GL_NO_ERROR);
 
+	const GLenum errgl = glGetError();
 	OpenGLPassState::PopAttrib();
 
+	if (errgl != GL_NO_ERROR) {
+		lua_pushboolean(L, false);
+		lua_pushinteger(L, errgl);
+		return 2;
+	}
+
+	lua_pushboolean(L, true);
 	return 1;
 }
 
@@ -1157,10 +1164,17 @@ int LuaTextureMgr::CopyToTexture(lua_State* L)
 
 	glGetError(); // clear the error
 	glCopyTexSubImage2D(target, level, xoff, yoff, x, y, w, h);
-	lua_pushboolean(L, glGetError() == GL_NO_ERROR);
 
+	const GLenum errgl = glGetError();
 	OpenGLPassState::PopAttrib();
 
+	if (errgl != GL_NO_ERROR) {
+		lua_pushboolean(L, false);
+		lua_pushinteger(L, errgl);
+		return 2;
+	}
+
+	lua_pushboolean(L, true);
 	return 1;
 }
 
@@ -1436,17 +1450,17 @@ int LuaTextureMgr::TexBuffer(lua_State* L)
 
 	glGetError();
 	glTexBufferARB(tex->GetTarget(), format, buf->id);
+
 	const GLenum errgl = glGetError();
+	OpenGLPassState::PopAttrib();
 
 	if (errgl != GL_NO_ERROR) {
 		lua_pushboolean(L, false);
 		lua_pushinteger(L, errgl);
-		OpenGLPassState::PopAttrib();
 		return 2;
 	}
 
 	lua_pushboolean(L, true);
-	OpenGLPassState::PopAttrib();
 	return 1;
 }
 
