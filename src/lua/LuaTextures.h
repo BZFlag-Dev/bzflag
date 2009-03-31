@@ -95,9 +95,9 @@ class LuaTextureMgr {
 		static int MultiTexEnv(lua_State* L);
 		static int MultiTexGen(lua_State* L);
 
-		static int CopyToTexture(lua_State* L);
+		static int TexSubImage(lua_State* L);
 
-		static int TexSubImage2D(lua_State* L);
+		static int CopyToTexture(lua_State* L);
 
 		static int GenerateMipMap(lua_State* L);
 

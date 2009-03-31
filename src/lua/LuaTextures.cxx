@@ -7,21 +7,27 @@
 // system headers
 #include <new>
 #include <string.h>
+#include <sstream>
 #include <string>
 using std::string;
 
 // common headers
 #include "bzfgl.h"
 #include "bzfio.h"
+#include "BzVFS.h"
 #include "OpenGLGState.h"
 #include "OpenGLTexture.h"
 #include "OpenGLPassState.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
 
+// mediafile headers
+#include "../mediafile/PNGImageFile.h"
+
 // local headers
 #include "LuaInclude.h"
 #include "LuaUtils.h"
+#include "LuaHandle.h"
 #include "LuaHashString.h"
 #include "LuaGLBuffers.h"
 
@@ -35,6 +41,164 @@ GLenum LuaTextureMgr::activeTexture = GL_TEXTURE0;
 
 
 #define TEXMGR (TextureManager::instance())
+
+
+//============================================================================//
+//============================================================================//
+//
+//  TextureData helper class
+//
+
+class TextureData {
+	public:
+		TextureData()
+		: xsize(0)
+		, ysize(0)
+		, format(GL_RGBA)
+		, type(GL_UNSIGNED_BYTE)
+		, data(NULL)
+		, ownData(false)
+		{}
+
+		~TextureData() {
+			if (ownData) {
+				delete[] data;
+			}
+		}
+
+		bool Parse(lua_State* L, int index) {
+			const int table = (index > 0) ? index : lua_gettop(L) + index + 1;
+			if (!lua_istable(L, table)) {
+				return false;
+			}
+
+			// image data source
+			if (GetString(L, table, "image")) {
+				size_t inLen;
+				const char* inData = lua_tolstring(L, -1, &inLen);
+				lua_pop(L, 1);
+				const string imageData(inData, inLen);
+
+				return ReadPNGData(imageData);
+			}
+
+			// fileName data source
+			if (GetString(L, table, "file")) {
+				const string fileName = lua_tostring(L, -1);
+				lua_pop(L, 1);
+
+				const LuaHandle* lh = L2H(L);
+				const string modes = lh->GetFSRead();
+
+				string imageData;
+				if (!bzVFS.readFile(fileName, modes, imageData)) {
+					return false;
+				}
+
+				return ReadPNGData(imageData);
+			}
+
+			// fallback to raw binary data
+			if (!GetString(L, table, "data")) {
+				return false;
+			}
+			size_t len;
+			data = (char*)(lua_tolstring(L, -1, &len));
+			lua_pop(L, 1);
+
+			if (GetNumber(L, table, "xsize")) {
+				xsize = (GLint)lua_toint(L, -1); lua_pop(L, 1);
+			}
+			if (GetNumber(L, table, "ysize")) {
+				ysize = (GLint)lua_toint(L, -1); lua_pop(L, 1);
+			}
+			if (GetNumber(L, table, "format")) {
+				format = (GLenum)lua_toint(L, -1); lua_pop(L, 1);
+			}
+			if (GetNumber(L, table, "type")) {
+				type = (GLenum)lua_toint(L, -1); lua_pop(L, 1);
+			}
+
+			// check the dimensions
+			if ((xsize <= 0) || (ysize <= 0)) {
+				return false;
+			}
+
+			const int pixelSize = LuaTextureMgr::GetPixelSize(format, type);
+			const int bytes = (pixelSize * xsize * ysize);
+			if (len != (size_t)bytes) {
+				return false;
+			}
+
+			return true;
+		}
+
+	private:
+		bool GetNumber(lua_State* L, int index, const char* name) {
+			lua_getfield(L, index, name);
+			if (!lua_israwnumber(L, -1)) {
+				lua_pop(L, 1);
+				return false;
+			}
+			return true;
+		}
+
+		bool GetString(lua_State* L, int index, const char* name) {
+			lua_getfield(L, index, name);
+			if (!lua_israwstring(L, -1)) {
+				lua_pop(L, 1);
+				return false;
+			}
+			return true;
+		}
+
+	private:
+		bool ReadPNGData(const string& pngData) {
+			std::istringstream iss(pngData);
+			PNGImageFile image(&iss);
+			if (!image.isOpen()) {
+				return false;
+			}
+
+			type = GL_UNSIGNED_BYTE;
+			xsize = (GLint)image.getWidth();
+			ysize = (GLint)image.getHeight();
+
+			// set the data format based on the number of channels
+			const int channels = image.getNumChannels();
+			switch (channels) {
+				case 1: { format = GL_LUMINANCE;       break; }
+				case 2: { format = GL_LUMINANCE_ALPHA; break; }
+				case 3: { format = GL_RGB;             break; }
+				case 4: { format = GL_RGBA;            break; }
+				default: { 
+					return false;
+				}
+			}
+
+			const int bufSize = (xsize * ysize * channels);
+			data = new char[bufSize];
+			if (!image.read(data)) {
+				delete[] data;
+				data = NULL;
+				return false;
+			}
+
+			ownData = true;
+
+			return true;
+		}
+
+	public:
+		GLsizei xsize;
+		GLsizei ysize;
+		GLenum format;
+		GLenum type;
+		char* data;
+
+	private:
+		bool ownData;
+};
 
 
 //============================================================================//
@@ -591,6 +755,7 @@ bool LuaTextureMgr::PushEntries(lua_State* L)
 		PUSH_LUA_CFUNC(L, MultiTexGen);
 	}
 
+	PUSH_LUA_CFUNC(L, TexSubImage);
 	PUSH_LUA_CFUNC(L, CopyToTexture);
 
 	if (glGenerateMipmapEXT) {
@@ -905,45 +1070,59 @@ int LuaTextureMgr::TexParameter(lua_State* L)
 		array[i] = luaL_checkfloat(L, i + 4);
 	}
 
-	const GLenum texTarget = texture->GetTarget();
-
-	GLuint oldTexID;
-	glGetIntegerv(texTarget, (GLint*)&oldTexID);
+	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
+		return 0; // exceeded the attrib stack depth
+	}
 
 	if (!texture->Bind()) {
+		OpenGLPassState::PopAttrib();
 		return 0;
 	}
 
 	glTexParameterfv(target, pname, array);
 
-	glBindTexture(texTarget, oldTexID);
+	OpenGLPassState::PopAttrib();
 
 	return 0;
 }
 
 
-int LuaTextureMgr::GenerateMipMap(lua_State* L)
+int LuaTextureMgr::TexSubImage(lua_State* L)
 {
-	//LuaOpenGL::CheckDrawingEnabled(L, __FUNCTION__);
-
 	const LuaTexture* texture = CheckLuaTexture(L, 1);
 	if (!texture->IsWritable()) {
 		return 0;
 	}
-	const GLenum texTarget = texture->GetTarget();
 
-	GLuint oldTexID;
-	glGetIntegerv(texTarget, (GLint*)&oldTexID);
-
-	if (!texture->Bind()) {
+	TextureData texData;
+	if (!texData.Parse(L, 2)) {
 		return 0;
 	}
 
-	glGenerateMipmapEXT(texTarget);
+	const GLenum target = (GLenum)luaL_optint(L, 3, texture->GetTarget());
+	const GLint  level  = (GLint) luaL_optint(L, 4, 0);
+	const GLint  x      = (GLint) luaL_optint(L, 5, 0);
+	const GLint  y      = (GLint) luaL_optint(L, 6, 0);
 
-	glBindTexture(texTarget, oldTexID);
+	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
+		return 0; // exceeded the attrib stack depth
+	}
 
-	return 0;
+	if (!texture->Bind()) {
+		OpenGLPassState::PopAttrib();
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	glGetError(); // clear the error
+	glTexSubImage2D(target, level, x, y,
+	                texData.xsize, texData.ysize,
+	                texData.format, texData.type, texData.data);
+	lua_pushboolean(L, glGetError() == GL_NO_ERROR);
+
+	OpenGLPassState::PopAttrib();
+
+	return 1;
 }
 
 
@@ -957,10 +1136,12 @@ int LuaTextureMgr::CopyToTexture(lua_State* L)
 	}
 	const GLenum texTarget = texture->GetTarget();
 
-	GLuint oldTexID;
-	glGetIntegerv(texTarget, (GLint*)&oldTexID);
+	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
+		return 0; // exceeded the attrib stack depth
+	}
 
 	if (!texture->Bind()) {
+		OpenGLPassState::PopAttrib();
 		lua_pushboolean(L, false);
 		return 1;
 	}
@@ -978,8 +1159,38 @@ int LuaTextureMgr::CopyToTexture(lua_State* L)
 	glCopyTexSubImage2D(target, level, xoff, yoff, x, y, w, h);
 	lua_pushboolean(L, glGetError() == GL_NO_ERROR);
 
-	glBindTexture(target, oldTexID);
+	OpenGLPassState::PopAttrib();
 
+	return 1;
+}
+
+
+int LuaTextureMgr::GenerateMipMap(lua_State* L)
+{
+	//LuaOpenGL::CheckDrawingEnabled(L, __FUNCTION__);
+
+	const LuaTexture* texture = CheckLuaTexture(L, 1);
+	if (!texture->IsWritable()) {
+		return 0;
+	}
+
+	const GLenum texTarget = (GLenum)luaL_optint(L, 2, texture->GetTarget());
+
+	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
+		return 0; // exceeded the attrib stack depth
+	}
+
+	if (!texture->Bind()) {
+		OpenGLPassState::PopAttrib();
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	glGenerateMipmapEXT(texTarget);
+
+	OpenGLPassState::PopAttrib();
+
+	lua_pushboolean(L, true);
 	return 1;
 }
 
