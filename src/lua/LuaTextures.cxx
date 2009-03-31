@@ -171,7 +171,7 @@ class TextureData {
 				case 2: { format = GL_LUMINANCE_ALPHA; break; }
 				case 3: { format = GL_RGB;             break; }
 				case 4: { format = GL_RGBA;            break; }
-				default: { 
+				default: {
 					return false;
 				}
 			}

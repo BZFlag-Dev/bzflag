@@ -1296,8 +1296,8 @@ void Player::doDeadReckoning()
   // check to see if we will fall on anything, if so THAT is our z limit
   World *world = World::getWorld();
   if (world) {
-    const Obstacle* obstacle = world->hitBuilding(inputPos, inputAzimuth, 
-      predictedPos, predictedAzimuth, dimensions[0], dimensions[1], 
+    const Obstacle* obstacle = world->hitBuilding(inputPos, inputAzimuth,
+      predictedPos, predictedAzimuth, dimensions[0], dimensions[1],
       dimensions[2], isSolid());
 
     // did they hit something?

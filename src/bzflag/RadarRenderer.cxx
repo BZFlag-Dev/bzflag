@@ -615,7 +615,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   } else {
     radarRange = -radarRange; // absolute
   }
-  
+
   float maxRange = radarLimit;
   // when burrowed, limit radar range to (1/4)
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&

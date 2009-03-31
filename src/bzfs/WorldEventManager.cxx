@@ -23,7 +23,7 @@
 
 
 // initialize the singleton
-template <>   
+template <>
 WorldEventManager* Singleton<WorldEventManager>::_instance = (WorldEventManager*)NULL;
 
 

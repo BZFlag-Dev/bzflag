@@ -358,7 +358,7 @@ static string cmdCycle(const string&, const CmdArgList& args, bool*)
     index = 0; // start at the first value when there are no matches
   }
   index = (index % (args.size() - 1)) + 1;
-  
+
   BZDB.set(key, args[index]);
 
   return string();

@@ -190,7 +190,7 @@ bool BZWReader::parseCustomObject(const char* token, bool& error, int& lineNum,
 {
   static int depth = 0;
   depth++;
-  
+
   const string upperToken = TextUtils::toupper(token);
   CustomObjectMap::iterator it = customObjectMap.find(upperToken);
   if (it == customObjectMap.end()) {

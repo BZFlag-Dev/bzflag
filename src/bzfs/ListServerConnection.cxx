@@ -155,7 +155,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  for (int i = 0; i < curMaxPlayers; i++) {
 	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((gkp != NULL) &&
-		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) && 
+		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) &&
 		(gkp->_LSAState == GameKeeper::Player::verified)) {
 	      gkp->setBzIdentifier(bzId);
 	      logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n",

@@ -32,7 +32,7 @@
 struct ColorMapData {
   ColorMapData()
   {
-    data[0] = data[1] = data[2] = data[3] = 1.0f; 
+    data[0] = data[1] = data[2] = data[3] = 1.0f;
   }
   ColorMapData(float r, float g, float b, float a = 1.0f)
   {
@@ -161,7 +161,7 @@ static bool parseNamedFormat(const char* str, float color[4])
   if (*str == 0) {
     return true;
   }
-    
+
   float alpha;
   if (sscanf(str, "%f", &alpha) > 0) {
     color[3] = alpha;
