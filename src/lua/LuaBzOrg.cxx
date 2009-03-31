@@ -30,7 +30,8 @@ using std::set;
 LuaBzOrg* luaBzOrg = NULL;
 
 
-static const char* sourceFile = "http://trepan.bzflag.bz/LuaBzOrg.lua"; // FIXME
+static const char* sourceFile =
+	"http://my.bzflag.org/resources/scripts/LuaBzOrg.lua";
 
 
 //============================================================================//
