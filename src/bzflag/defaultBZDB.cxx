@@ -122,7 +122,7 @@ DefaultDBItem	defaultDBItems[] = {
   // input
   { "allowInputChange",		"1",			true,  DefPerm, NULL },
   { "jumpTyping",		"1",			true,  DefPerm, NULL },
-  { "parabolicSlope",		"none",			true,  DefPerm, NULL },
+  { "parabolicSlope",		"",			true,  DefPerm, NULL },
   { "slowBinoculars",		"1",			true,  DefPerm, NULL },
   { "slowMotion",		"0",			false, DefPerm, NULL },
 
