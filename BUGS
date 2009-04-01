@@ -52,10 +52,6 @@ Crashes
 Regressions
 -----------
 
-* Mouse inputs are reversed when the pointer is inside the mousebox.  This bug
-  was added somewhere between r19427 (which behaves correctly) and r19520.  The
-  ReverseControls flag negates this effect.
-
 * GM does not seem to lock on reliably (try against a remote client, bots work
   fine)
   
