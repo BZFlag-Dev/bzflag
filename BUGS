@@ -52,6 +52,10 @@ Crashes
 Regressions
 -----------
 
+* Mouse inputs are reversed when the pointer is inside the mousebox.  This bug
+  was added somewhere between r19427 (which behaves correctly) and r19520.  The
+  ReverseControls flag negates this effect.
+
 * GM does not seem to lock on reliably (try against a remote client, bots work
   fine)
   
@@ -61,7 +65,7 @@ Regressions
 * The entire replay system needs to be tested for functionalities, some report
   that tanks can't spawn or shoot.
 
-* server comunication error when someone logs off and people are still playing
+* server communication error when someone logs off and people are still playing
   
 Documentation
 -------------
@@ -152,7 +156,7 @@ Platform (Windows)
    
 * jitter on windows servers is reported as very high, but play is unaffected.
   
-* Two seperate boxen, windows build with vc8 (VC9), nvidia vid cards. (ATI) 
+* Two separate boxen, windows build with vc8 (VC9), nvidia vid cards. (ATI) 
 
   When jumping on box "name Box - position 250 250 118 - rotation 0 - size 15 15
   0.1 - end" on my WarTowers map, the one with the transporter on it, tanks
