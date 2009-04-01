@@ -419,17 +419,20 @@ float StateDatabase::eval(const std::string& name)
   debugLookups(name);
 
   EvalMap::const_iterator cit = evalCache.find(name);
-  if (cit != evalCache.end())
+  if (cit != evalCache.end()) {
     return cit->second;
+  }
 
   //this is to catch recursive definitions
   static VariableSet variables;
+
   // ugly hack, since gcc 2.95 doesn't have <limits>
   float NaN;
   memset(&NaN, 0xff, sizeof(float));
 
-  if (variables.find(name) != variables.end())
+  if (variables.find(name) != variables.end()) {
     return NaN;
+  }
 
   VariableSet::iterator ins_it = variables.insert(name).first;
 
@@ -438,16 +441,21 @@ float StateDatabase::eval(const std::string& name)
     variables.erase(ins_it);
     return NaN;
   }
+
   Expression pre, inf;
   std::string value = index->second.value;
-  if (!value.size())
+  if (!value.size()) {
+    variables.erase(ins_it);
     return NaN;
+  }
+
   value >> inf;
   pre = infixToPrefix(inf);
   float retn = evaluate(pre);
+  evalCache[name] = retn;
+
   variables.erase(ins_it);
 
-  evalCache[name] = retn;
   return retn;
 }
 
