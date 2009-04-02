@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 #include <time.h>
+#include <stdio.h>
 #include <sstream>
 
 // implementation-specific bzflag headers
@@ -55,6 +56,8 @@
 #include "AutoAllowTimer.h"
 #include "ServerIntangibilityManager.h"
 #include "lua/LuaServer.h"
+
+#include "DirectoryNames.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -5121,6 +5124,20 @@ static void cleanupServer ( void )
 #endif /* defined(_WIN32) */
 }
 
+void saveStartupInfo ( void )
+{
+	std::string conf = getConfigDirName();
+	conf += "bzfs.dir";
+	FILE *fp = fopen(conf.c_str(),"wt");
+	if (fp)
+	{
+		std::string exepath = getModuleDir();
+		exepath += "n";
+		fwrite(exepath.c_str(),exepath.size(),1,fp);
+		fclose(fp);
+	}
+}
+
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
  * running and should be ready to process connections and activity.
@@ -5132,6 +5149,8 @@ int main(int argc, char **argv)
     return 1;
 
   registerDefaultHandlers();
+
+  saveStartupInfo();
 
   // start the server
   if (!serverStart()) {
