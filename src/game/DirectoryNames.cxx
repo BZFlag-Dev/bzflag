@@ -54,7 +54,7 @@ void			setCustomConfigDir(const char *str)
 }
 
 
-extern std::string getModuleDir ( void )
+std::string getModuleDir ( void )
 {
 #ifdef _WIN32
 	char exePath[MAX_PATH];
@@ -63,6 +63,17 @@ extern std::string getModuleDir ( void )
 	if (last+1)
 		*last = '\0';
 
+	return std::string(exePath);
+#else
+	return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
+#endif
+}
+
+std::string getModuleName ( void )
+{
+#ifdef _WIN32
+	char exePath[MAX_PATH];
+	GetModuleFileName(NULL,exePath,MAX_PATH);
 	return std::string(exePath);
 #else
 	return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
