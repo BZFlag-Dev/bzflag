@@ -5132,7 +5132,7 @@ void saveStartupInfo ( void )
 	if (fp)
 	{
 		std::string exepath = getModuleName();
-		exepath += "n";
+		exepath += "\n";
 		fwrite(exepath.c_str(),exepath.size(),1,fp);
 		fclose(fp);
 	}

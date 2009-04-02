@@ -1436,6 +1436,22 @@ void saveSettings ( void )
   }
 }
 
+void saveStartupInfo ( void )
+{
+	std::string conf = getConfigDirName();
+	conf += "bzflag.dir";
+	FILE *fp = fopen(conf.c_str(),"wt");
+	if (fp)
+	{
+		std::string exepath = getModuleDir();
+		exepath += "\n";
+		fwrite(exepath.c_str(),exepath.size(),1,fp);
+		exepath = getModuleName();
+		exepath += "\n";
+		fwrite(exepath.c_str(),exepath.size(),1,fp);
+		fclose(fp);
+	}
+}
 
 //
 // main()
@@ -1449,6 +1465,8 @@ int myMain(int argc, char **argv)
 #endif /* defined(_WIN32) */
 {
   argv0 = argv[0];
+
+  saveStartupInfo();
 
   if (initClient(argc,argv)!= 0)
     return -1;
