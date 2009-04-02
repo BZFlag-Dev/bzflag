@@ -5131,7 +5131,7 @@ void saveStartupInfo ( void )
 	FILE *fp = fopen(conf.c_str(),"wt");
 	if (fp)
 	{
-		std::string exepath = getModuleDir();
+		std::string exepath = getModuleName();
 		exepath += "n";
 		fwrite(exepath.c_str(),exepath.size(),1,fp);
 		fclose(fp);
