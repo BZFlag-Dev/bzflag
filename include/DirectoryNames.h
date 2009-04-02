@@ -29,6 +29,8 @@ extern std::string getWorldDirName();
 
 extern void setCustomConfigDir(const char* dir);
 
+extern std::string getModuleDir ( void );
+
 
 #endif  // __DIRECTORY_NAMES_H__
 
