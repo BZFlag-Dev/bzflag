@@ -1001,7 +1001,8 @@ static void doMotion()
 
     // parabolic control
     static BZDB_float parabolicSlope("parabolicSlope");
-    if (!isnan((float)parabolicSlope)) {
+    if (!isnan((float)parabolicSlope) && (parabolicSlope != 1.0f)) {
+      logDebugMessage(1, "parabolicSlope active: %f\n", (float)parabolicSlope);
       float s1 = parabolicSlope;
            if (s1 > +1.0e6f) { s1 = +1.0e6f; }
       else if (s1 < -1.0e6f) { s1 = -1.0e6f; }
