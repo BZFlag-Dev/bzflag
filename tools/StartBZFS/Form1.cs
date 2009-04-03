@@ -34,10 +34,37 @@ namespace StartBZFS
             CTFMode.Checked = config.mode == GameMode.CTF;
             RabbitMode.Checked = config.mode == GameMode.Rabbit;
 
-            PublicServer.Checked = config.publicServer;
             ServerAddress.Text = config.serverAddress;
             ServerPort.Text = config.port.ToString();
             checkAddressItem();
+            checkServerStartButton();
+        }
+
+        private void setConfigFromForm (ServerConfig config)
+        {
+            if(FFAMode.Checked)
+                config.mode = GameMode.FFA;
+            else if(OFFAMode.Checked)
+                config.mode = GameMode.OpenFFA;
+            else if (CTFMode.Checked)
+                config.mode = GameMode.CTF;
+            else if(RabbitMode.Checked)
+                config.mode = GameMode.Rabbit;
+
+            config.publicServer = PublicServer.Checked;
+            if (config.publicServer)
+            {
+                config.serverAddress = ServerAddress.Text;
+
+                if (ServerPort.Text == string.Empty)
+                    config.port = 5154;
+                else
+                {
+                    config.port = int.Parse(ServerPort.Text);
+                    if (config.port < 1)
+                        config.port = 5154;
+                }
+            }
         }
 
         private void checkAddressItem()
@@ -94,15 +121,6 @@ namespace StartBZFS
                 sr.Close();
                 fs.Close();
             }
-
-            if (prefs.ClientPath == string.Empty || !new FileInfo(prefs.ClientPath).Exists)
-            {
-                FileInfo client = Prefrences.FindClient(confDir);
-                if (client.Exists)
-                    prefs.ClientPath = client.FullName;
-                else
-                    prefs.ClientPath = string.Empty;
-            }
             
             // check for the server dir
             if (prefs.ServerPath == string.Empty || !new FileInfo(prefs.ServerPath).Exists)
@@ -124,14 +142,30 @@ namespace StartBZFS
                     prefs.WorldPath = string.Empty;
             }
             
-            if (prefs.ClientPath == string.Empty || prefs.ServerPath == string.Empty || prefs.WorldPath == string.Empty)
+            if (prefs.ServerPath == string.Empty || prefs.WorldPath == string.Empty)
                 MessageBox.Show("One or more of the paths to the BZFlag program files could not be found, please set them manualy");
+        }
+
+        private void checkServerStartButton ()
+        {
+            bool enable = true;
+            Status.Text = "Status:";
+
+            if (prefs.ServerPath == string.Empty || !new FileInfo(prefs.ServerPath).Exists)
+            {
+                Status.Text += "No server path defined ";
+                enable = false;
+            }
+            
+            Start.Enabled = enable;
         }
 
         private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (new Paths(confDir, prefs).ShowDialog() == DialogResult.OK)
                 savePrefs();
+
+            checkServerStartButton();
         }
 
         private void PublicServer_CheckedChanged(object sender, EventArgs e)
@@ -144,6 +178,12 @@ namespace StartBZFS
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             savePrefs();
+        }
+
+        private void Start_Click(object sender, EventArgs e)
+        {
+            setConfigFromForm(serverConfig);
+            serverConfig.run(RunInBackground.Checked,prefs.ServerPath);
         }
     }
 }

@@ -32,7 +32,7 @@
             this.fIleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.RabbitMode = new System.Windows.Forms.RadioButton();
@@ -46,6 +46,9 @@
             this.PublicServer = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ServerPort = new System.Windows.Forms.TextBox();
+            this.Teams = new System.Windows.Forms.Button();
+            this.Start = new System.Windows.Forms.Button();
+            this.RunInBackground = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -81,21 +84,22 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
+            this.Status});
             this.statusStrip1.Location = new System.Drawing.Point(0, 309);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(422, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // Status
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            this.Status.Name = "Status";
+            this.Status.Size = new System.Drawing.Size(42, 17);
+            this.Status.Text = "Status:";
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.Teams);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(12, 27);
@@ -228,11 +232,42 @@
             this.ServerPort.TabIndex = 2;
             this.ServerPort.Text = "5154";
             // 
+            // Teams
+            // 
+            this.Teams.Location = new System.Drawing.Point(3, 196);
+            this.Teams.Name = "Teams";
+            this.Teams.Size = new System.Drawing.Size(75, 23);
+            this.Teams.TabIndex = 5;
+            this.Teams.Text = "Teams";
+            this.Teams.UseVisualStyleBackColor = true;
+            // 
+            // Start
+            // 
+            this.Start.Location = new System.Drawing.Point(335, 268);
+            this.Start.Name = "Start";
+            this.Start.Size = new System.Drawing.Size(75, 23);
+            this.Start.TabIndex = 3;
+            this.Start.Text = "Start";
+            this.Start.UseVisualStyleBackColor = true;
+            this.Start.Click += new System.EventHandler(this.Start_Click);
+            // 
+            // RunInBackground
+            // 
+            this.RunInBackground.AutoSize = true;
+            this.RunInBackground.Location = new System.Drawing.Point(207, 274);
+            this.RunInBackground.Name = "RunInBackground";
+            this.RunInBackground.Size = new System.Drawing.Size(117, 17);
+            this.RunInBackground.TabIndex = 4;
+            this.RunInBackground.Text = "Run in background";
+            this.RunInBackground.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(422, 331);
+            this.Controls.Add(this.RunInBackground);
+            this.Controls.Add(this.Start);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -260,7 +295,7 @@
         private System.Windows.Forms.ToolStripMenuItem fIleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pathsToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel Status;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox ServerPort;
         private System.Windows.Forms.Label label1;
@@ -274,6 +309,9 @@
         private System.Windows.Forms.RadioButton CTFMode;
         private System.Windows.Forms.RadioButton OFFAMode;
         private System.Windows.Forms.RadioButton FFAMode;
+        private System.Windows.Forms.Button Teams;
+        private System.Windows.Forms.Button Start;
+        private System.Windows.Forms.CheckBox RunInBackground;
     }
 }
 
