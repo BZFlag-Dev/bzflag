@@ -39,6 +39,10 @@ namespace StartBZFS
         public int shakeWins = 0;
         public bool andidote = true;
 
+        public string worldfile = string.Empty;
+        public bool teleporters = true;
+        public bool spawnOnBoxes = false;
+
         [System.Xml.Serialization.XmlIgnoreAttribute]
         List<ServerLoger> logers = new List<ServerLoger>();
 
@@ -54,6 +58,17 @@ namespace StartBZFS
         public void buildConfig(FileStream stream)
         {
             StreamWriter sw = new StreamWriter(stream);
+
+            if (worldfile != string.Empty)
+                sw.WriteLine("-world \"" + worldfile + "\"");
+            else if (teleporters)
+                sw.WriteLine("-t");
+
+            if (jumping)
+                sw.WriteLine("-j");
+
+            if (spawnOnBoxes)
+                sw.WriteLine("-sb");
 
             switch(mode)
             {

@@ -19,12 +19,41 @@ namespace StartBZFS
 
         ServerConfig serverConfig = new ServerConfig();
 
+        List<FileInfo> maps = new List<FileInfo>();
+
+        bool settingMaps = false;
+
+        int findMapIndex(string name)
+        {
+            int index = 0;
+            foreach (FileInfo f in maps)
+            {
+                if (f.FullName == name)
+                    return index;
+                index++;
+            }
+            return -1;
+        }
+
         public Form1()
         {
             InitializeComponent();
             loadPrefs();
+            scanMaps();
 
             loadFormFromConfig(serverConfig);
+        }
+
+        private void scanMaps()
+        {
+            maps.Clear();
+
+            DirectoryInfo mapDir = new DirectoryInfo(prefs.WorldPath);
+            if (!mapDir.Exists)
+                return;
+
+            foreach (FileInfo f in mapDir.GetFiles("*.bzw"))
+                maps.Add(f);
         }
 
         private void loadFormFromConfig (ServerConfig config)
@@ -52,6 +81,28 @@ namespace StartBZFS
                 ShakeWins.Text = config.shakeWins.ToString();
             if (config.shakeTime > 0)
                 ShakeTime.Text = config.shakeTime.ToString();
+
+            int index = 0;
+            if (config.worldfile != string.Empty)
+            {
+                FileInfo f = new FileInfo(config.worldfile);
+                if (!f.Exists)
+                    config.worldfile = string.Empty;
+                else
+                {
+                    index = findMapIndex(config.worldfile);
+                    if (index < 0)
+                    {
+                        index = maps.Count;
+                        maps.Add(f);
+                    }
+                }
+            }
+            buildWorldsList(index);
+
+            Teleporters.Enabled = config.worldfile == string.Empty;
+            Teleporters.Checked = config.teleporters;
+            SpawnOnBoxes.Checked = config.spawnOnBoxes;
 
             checkAddressItem();
             checkServerStartButton();
@@ -96,6 +147,14 @@ namespace StartBZFS
                 else
                     config.shakeTime = 0;
             }
+
+            config.teleporters = Teleporters.Checked;
+            config.spawnOnBoxes = SpawnOnBoxes.Checked;
+
+            if (WorldsList.SelectedIndex == 0)
+                config.worldfile = string.Empty;
+            else
+                config.worldfile = maps[WorldsList.SelectedIndex - 1].FullName;
 
             config.publicServer = PublicServer.Checked;
             if (config.publicServer)
@@ -208,10 +267,25 @@ namespace StartBZFS
             Start.Enabled = enable;
         }
 
+        private void buildWorldsList ( int index )
+        {
+            WorldsList.Items.Clear();
+            WorldsList.Items.Add("Random");
+            foreach(FileInfo i in maps)
+                WorldsList.Items.Add(Path.GetFileNameWithoutExtension(i.FullName));
+
+           WorldsList.Items.Add("Custom...");
+           WorldsList.SelectedIndex = index;
+        }
+
         private void pathsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (new Paths(confDir, prefs).ShowDialog() == DialogResult.OK)
+            {
                 savePrefs();
+                scanMaps();
+                buildWorldsList(0);
+            }
 
             checkServerStartButton();
         }
@@ -250,6 +324,35 @@ namespace StartBZFS
         {
             if (!FlagsOnBuildings.Checked)
                 FlagsOnBuildings.Checked = CTFMode.Checked;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (settingMaps)
+                return;
+
+            if (WorldsList.SelectedIndex == 0)
+                Teleporters.Enabled = true;
+            else
+                Teleporters.Enabled = false;
+
+            if (WorldsList.SelectedIndex > maps.Count)
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.CheckFileExists = true;
+                ofd.Multiselect = false;
+                ofd.FileName = "*bzw";
+                ofd.InitialDirectory = prefs.WorldPath;
+                ofd.Filter = "BZFlag Map files (*.bzw)|*.bzw|All files (*.*)|*.*";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    settingMaps = true;
+                    maps.Add(new FileInfo(ofd.FileName));
+                    buildWorldsList(WorldsList.Items.Count-1);
+                    settingMaps = false;
+                }
+            }
         }
     }
 }

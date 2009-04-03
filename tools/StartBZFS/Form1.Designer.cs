@@ -34,6 +34,11 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.World = new System.Windows.Forms.GroupBox();
+            this.SpawnOnBoxes = new System.Windows.Forms.CheckBox();
+            this.Teleporters = new System.Windows.Forms.CheckBox();
+            this.WorldsList = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.LogLevel = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.Antidote = new System.Windows.Forms.CheckBox();
@@ -66,6 +71,7 @@
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.World.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -77,7 +83,7 @@
             this.fIleToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(561, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(552, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -103,7 +109,7 @@
             this.statusStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Status});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 237);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 329);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(59, 22);
             this.statusStrip1.TabIndex = 1;
@@ -120,6 +126,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.World);
             this.panel1.Controls.Add(this.LogLevel);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.label4);
@@ -127,8 +134,61 @@
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(537, 171);
+            this.panel1.Size = new System.Drawing.Size(528, 263);
             this.panel1.TabIndex = 2;
+            // 
+            // World
+            // 
+            this.World.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.World.Controls.Add(this.SpawnOnBoxes);
+            this.World.Controls.Add(this.Teleporters);
+            this.World.Controls.Add(this.WorldsList);
+            this.World.Controls.Add(this.label5);
+            this.World.Location = new System.Drawing.Point(3, 153);
+            this.World.Name = "World";
+            this.World.Size = new System.Drawing.Size(203, 100);
+            this.World.TabIndex = 7;
+            this.World.TabStop = false;
+            this.World.Text = "World";
+            // 
+            // SpawnOnBoxes
+            // 
+            this.SpawnOnBoxes.AutoSize = true;
+            this.SpawnOnBoxes.Location = new System.Drawing.Point(10, 67);
+            this.SpawnOnBoxes.Name = "SpawnOnBoxes";
+            this.SpawnOnBoxes.Size = new System.Drawing.Size(108, 17);
+            this.SpawnOnBoxes.TabIndex = 3;
+            this.SpawnOnBoxes.Text = "Spawn On Boxes";
+            this.SpawnOnBoxes.UseVisualStyleBackColor = true;
+            // 
+            // Teleporters
+            // 
+            this.Teleporters.AutoSize = true;
+            this.Teleporters.Location = new System.Drawing.Point(10, 44);
+            this.Teleporters.Name = "Teleporters";
+            this.Teleporters.Size = new System.Drawing.Size(79, 17);
+            this.Teleporters.TabIndex = 2;
+            this.Teleporters.Text = "Teleporters";
+            this.Teleporters.UseVisualStyleBackColor = true;
+            // 
+            // WorldsList
+            // 
+            this.WorldsList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.WorldsList.FormattingEnabled = true;
+            this.WorldsList.Location = new System.Drawing.Point(48, 17);
+            this.WorldsList.Name = "WorldsList";
+            this.WorldsList.Size = new System.Drawing.Size(139, 21);
+            this.WorldsList.TabIndex = 1;
+            this.WorldsList.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 20);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "World";
             // 
             // LogLevel
             // 
@@ -141,7 +201,7 @@
             "2",
             "3",
             "4"});
-            this.LogLevel.Location = new System.Drawing.Point(490, 145);
+            this.LogLevel.Location = new System.Drawing.Point(481, 237);
             this.LogLevel.Name = "LogLevel";
             this.LogLevel.Size = new System.Drawing.Size(44, 21);
             this.LogLevel.TabIndex = 3;
@@ -159,7 +219,7 @@
             this.groupBox3.Controls.Add(this.GoodFlags);
             this.groupBox3.Controls.Add(this.NumShots);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Location = new System.Drawing.Point(100, 9);
+            this.groupBox3.Location = new System.Drawing.Point(96, 4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(228, 116);
             this.groupBox3.TabIndex = 6;
@@ -291,7 +351,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(410, 148);
+            this.label4.Location = new System.Drawing.Point(401, 240);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(74, 13);
             this.label4.TabIndex = 2;
@@ -375,7 +435,7 @@
             this.groupBox1.Controls.Add(this.PublicServer);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.ServerPort);
-            this.groupBox1.Location = new System.Drawing.Point(334, 3);
+            this.groupBox1.Location = new System.Drawing.Point(326, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 128);
             this.groupBox1.TabIndex = 3;
@@ -391,6 +451,7 @@
             // 
             // ServerTest
             // 
+            this.ServerTest.Enabled = false;
             this.ServerTest.Location = new System.Drawing.Point(119, 99);
             this.ServerTest.Name = "ServerTest";
             this.ServerTest.Size = new System.Drawing.Size(75, 23);
@@ -438,7 +499,7 @@
             // Start
             // 
             this.Start.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Start.Location = new System.Drawing.Point(474, 204);
+            this.Start.Location = new System.Drawing.Point(465, 296);
             this.Start.Name = "Start";
             this.Start.Size = new System.Drawing.Size(75, 23);
             this.Start.TabIndex = 3;
@@ -450,7 +511,10 @@
             // 
             this.RunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.RunInBackground.AutoSize = true;
-            this.RunInBackground.Location = new System.Drawing.Point(346, 210);
+            this.RunInBackground.Checked = true;
+            this.RunInBackground.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.RunInBackground.Enabled = false;
+            this.RunInBackground.Location = new System.Drawing.Point(337, 302);
             this.RunInBackground.Name = "RunInBackground";
             this.RunInBackground.Size = new System.Drawing.Size(117, 17);
             this.RunInBackground.TabIndex = 4;
@@ -461,7 +525,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 259);
+            this.ClientSize = new System.Drawing.Size(552, 351);
             this.Controls.Add(this.RunInBackground);
             this.Controls.Add(this.Start);
             this.Controls.Add(this.panel1);
@@ -478,6 +542,8 @@
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.World.ResumeLayout(false);
+            this.World.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -526,6 +592,11 @@
         private System.Windows.Forms.CheckBox Ricochet;
         private System.Windows.Forms.CheckBox Jumping;
         private System.Windows.Forms.CheckBox Antidote;
+        private System.Windows.Forms.GroupBox World;
+        private System.Windows.Forms.CheckBox SpawnOnBoxes;
+        private System.Windows.Forms.CheckBox Teleporters;
+        private System.Windows.Forms.ComboBox WorldsList;
+        private System.Windows.Forms.Label label5;
     }
 }
 
