@@ -202,7 +202,9 @@ namespace StartBZFS
                 Status.Text += "No server path defined ";
                 enable = false;
             }
-            
+
+            if (enable)
+                Status.Text += "OK";
             Start.Enabled = enable;
         }
 
