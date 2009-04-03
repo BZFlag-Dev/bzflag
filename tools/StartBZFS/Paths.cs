@@ -21,31 +21,8 @@ namespace StartBZFS
             prefs = _prefs;
             InitializeComponent();
 
-            ClientPath.Text = prefs.ClientPath;
             ServerPath.Text = prefs.ServerPath;
             WorldPath.Text = prefs.WorldPath;
-        }
-
-        private void AutoFindClient_Click(object sender, EventArgs e)
-        {
-            FileInfo client = Prefrences.FindClient(configDir);
-            if (!client.Exists)
-            {
-                AutoFindClient.Enabled = false;
-                MessageBox.Show("The client could not be automatically found");
-            }
-            else
-                ClientPath.Text = client.FullName;
-        }
-
-        private void BrowseClient_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.CheckFileExists = true;
-            ofd.Multiselect = false;
-            ofd.FileName = Prefrences.FindClient(configDir).FullName;
-            if (ofd.ShowDialog() == DialogResult.OK)
-                ClientPath.Text = ofd.FileName;
         }
 
         private void AutoFindServer_Click(object sender, EventArgs e)
@@ -96,7 +73,6 @@ namespace StartBZFS
 
         private void OK_Click(object sender, EventArgs e)
         {
-            prefs.ClientPath = ClientPath.Text;
             prefs.ServerPath = ServerPath.Text;
             prefs.WorldPath = WorldPath.Text;
         }
