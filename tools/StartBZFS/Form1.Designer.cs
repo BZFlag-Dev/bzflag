@@ -34,16 +34,22 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.RabbitMode = new System.Windows.Forms.RadioButton();
+            this.CTFMode = new System.Windows.Forms.RadioButton();
+            this.OFFAMode = new System.Windows.Forms.RadioButton();
+            this.FFAMode = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ServerAddress = new System.Windows.Forms.TextBox();
             this.ServerTest = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.PublicServer = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ServerPort = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.PublicServer = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.ServerAddress = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,11 +96,91 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(398, 222);
             this.panel1.TabIndex = 2;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.RabbitMode);
+            this.groupBox2.Controls.Add(this.CTFMode);
+            this.groupBox2.Controls.Add(this.OFFAMode);
+            this.groupBox2.Controls.Add(this.FFAMode);
+            this.groupBox2.Location = new System.Drawing.Point(3, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(91, 128);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Game Mode";
+            // 
+            // RabbitMode
+            // 
+            this.RabbitMode.AutoSize = true;
+            this.RabbitMode.Location = new System.Drawing.Point(6, 89);
+            this.RabbitMode.Name = "RabbitMode";
+            this.RabbitMode.Size = new System.Drawing.Size(56, 17);
+            this.RabbitMode.TabIndex = 3;
+            this.RabbitMode.TabStop = true;
+            this.RabbitMode.Text = "Rabbit";
+            this.RabbitMode.UseVisualStyleBackColor = true;
+            // 
+            // CTFMode
+            // 
+            this.CTFMode.AutoSize = true;
+            this.CTFMode.Location = new System.Drawing.Point(6, 66);
+            this.CTFMode.Name = "CTFMode";
+            this.CTFMode.Size = new System.Drawing.Size(45, 17);
+            this.CTFMode.TabIndex = 2;
+            this.CTFMode.TabStop = true;
+            this.CTFMode.Text = "CTF";
+            this.CTFMode.UseVisualStyleBackColor = true;
+            // 
+            // OFFAMode
+            // 
+            this.OFFAMode.AutoSize = true;
+            this.OFFAMode.Location = new System.Drawing.Point(6, 43);
+            this.OFFAMode.Name = "OFFAMode";
+            this.OFFAMode.Size = new System.Drawing.Size(73, 17);
+            this.OFFAMode.TabIndex = 1;
+            this.OFFAMode.TabStop = true;
+            this.OFFAMode.Text = "Open FFA";
+            this.OFFAMode.UseVisualStyleBackColor = true;
+            // 
+            // FFAMode
+            // 
+            this.FFAMode.AutoSize = true;
+            this.FFAMode.Location = new System.Drawing.Point(6, 20);
+            this.FFAMode.Name = "FFAMode";
+            this.FFAMode.Size = new System.Drawing.Size(44, 17);
+            this.FFAMode.TabIndex = 0;
+            this.FFAMode.TabStop = true;
+            this.FFAMode.Text = "FFA";
+            this.FFAMode.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.ServerAddress);
+            this.groupBox1.Controls.Add(this.ServerTest);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.PublicServer);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.ServerPort);
+            this.groupBox1.Location = new System.Drawing.Point(195, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(200, 128);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Address";
+            // 
+            // ServerAddress
+            // 
+            this.ServerAddress.Location = new System.Drawing.Point(59, 44);
+            this.ServerAddress.Name = "ServerAddress";
+            this.ServerAddress.Size = new System.Drawing.Size(135, 20);
+            this.ServerAddress.TabIndex = 5;
             // 
             // ServerTest
             // 
@@ -104,6 +190,26 @@
             this.ServerTest.TabIndex = 0;
             this.ServerTest.Text = "Test";
             this.ServerTest.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Address";
+            // 
+            // PublicServer
+            // 
+            this.PublicServer.AutoSize = true;
+            this.PublicServer.Location = new System.Drawing.Point(7, 20);
+            this.PublicServer.Name = "PublicServer";
+            this.PublicServer.Size = new System.Drawing.Size(55, 17);
+            this.PublicServer.TabIndex = 3;
+            this.PublicServer.Text = "Public";
+            this.PublicServer.UseVisualStyleBackColor = true;
+            this.PublicServer.CheckedChanged += new System.EventHandler(this.PublicServer_CheckedChanged);
             // 
             // label1
             // 
@@ -122,48 +228,6 @@
             this.ServerPort.TabIndex = 2;
             this.ServerPort.Text = "5154";
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.ServerAddress);
-            this.groupBox1.Controls.Add(this.ServerTest);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.PublicServer);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.ServerPort);
-            this.groupBox1.Location = new System.Drawing.Point(195, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 128);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Address";
-            // 
-            // PublicServer
-            // 
-            this.PublicServer.AutoSize = true;
-            this.PublicServer.Location = new System.Drawing.Point(7, 20);
-            this.PublicServer.Name = "PublicServer";
-            this.PublicServer.Size = new System.Drawing.Size(55, 17);
-            this.PublicServer.TabIndex = 3;
-            this.PublicServer.Text = "Public";
-            this.PublicServer.UseVisualStyleBackColor = true;
-            this.PublicServer.CheckedChanged += new System.EventHandler(this.PublicServer_CheckedChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Address";
-            // 
-            // ServerAddress
-            // 
-            this.ServerAddress.Location = new System.Drawing.Point(59, 44);
-            this.ServerAddress.Name = "ServerAddress";
-            this.ServerAddress.Size = new System.Drawing.Size(135, 20);
-            this.ServerAddress.TabIndex = 5;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -175,11 +239,14 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "StartBZFS";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -202,6 +269,11 @@
         private System.Windows.Forms.TextBox ServerAddress;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox PublicServer;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton RabbitMode;
+        private System.Windows.Forms.RadioButton CTFMode;
+        private System.Windows.Forms.RadioButton OFFAMode;
+        private System.Windows.Forms.RadioButton FFAMode;
     }
 }
 

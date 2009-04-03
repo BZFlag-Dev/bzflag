@@ -17,10 +17,34 @@ namespace StartBZFS
         Prefrences prefs;
         DirectoryInfo confDir;
 
+        ServerConfig serverConfig = new ServerConfig();
+
         public Form1()
         {
             InitializeComponent();
             loadPrefs();
+
+            loadFormFromConfig(serverConfig);
+        }
+
+        private void loadFormFromConfig (ServerConfig config)
+        {
+            FFAMode.Checked = config.mode == GameMode.FFA;
+            OFFAMode.Checked = config.mode == GameMode.OpenFFA;
+            CTFMode.Checked = config.mode == GameMode.CTF;
+            RabbitMode.Checked = config.mode == GameMode.Rabbit;
+
+            PublicServer.Checked = config.publicServer;
+            ServerAddress.Text = config.serverAddress;
+            ServerPort.Text = config.port.ToString();
+            checkAddressItem();
+        }
+
+        private void checkAddressItem()
+        {
+            ServerAddress.Enabled = PublicServer.Checked;
+            ServerPort.Enabled = PublicServer.Checked;
+            ServerTest.Enabled = PublicServer.Checked;
         }
 
         private void defaultPrefs ()
@@ -115,6 +139,11 @@ namespace StartBZFS
             ServerAddress.Enabled = PublicServer.Checked;
             ServerPort.Enabled = PublicServer.Checked;
             ServerTest.Enabled = PublicServer.Checked;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            savePrefs();
         }
     }
 }
