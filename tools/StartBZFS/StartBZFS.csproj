@@ -92,6 +92,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ServerConfig.cs" />
+    <Compile Include="ServerLoger.cs" />
     <Compile Include="ServerLogWindow.cs">
       <SubType>Form</SubType>
     </Compile>

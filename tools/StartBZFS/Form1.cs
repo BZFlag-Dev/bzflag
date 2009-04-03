@@ -36,6 +36,23 @@ namespace StartBZFS
 
             ServerAddress.Text = config.serverAddress;
             ServerPort.Text = config.port.ToString();
+
+            NumShots.SelectedIndex = config.shots - 1;
+            LogLevel.SelectedIndex = config.debugLevel;
+
+            Ricochet.Checked = config.rico;
+            Jumping.Checked = config.jumping;
+
+            GoodFlags.Checked = config.goodFlags;
+            BadFlags.Checked = config.badFlags;
+            Antidote.Checked = config.andidote;
+            FlagsOnBuildings.Checked = config.flagsOnBuildings;
+
+            if (config.shakeWins > 0)
+                ShakeWins.Text = config.shakeWins.ToString();
+            if (config.shakeTime > 0)
+                ShakeTime.Text = config.shakeTime.ToString();
+
             checkAddressItem();
             checkServerStartButton();
         }
@@ -50,6 +67,35 @@ namespace StartBZFS
                 config.mode = GameMode.CTF;
             else if(RabbitMode.Checked)
                 config.mode = GameMode.Rabbit;
+
+            config.shots = NumShots.SelectedIndex + 1;
+            config.debugLevel = LogLevel.SelectedIndex;
+
+            config.rico = Ricochet.Checked;
+            config.jumping = Jumping.Checked;
+
+            config.andidote = Antidote.Checked;
+            config.flagsOnBuildings = FlagsOnBuildings.Checked;
+
+            config.goodFlags = GoodFlags.Checked;
+            config.badFlags = BadFlags.Checked;
+            if (ShakeWins.Text != string.Empty)
+            {
+                int i = int.Parse(ShakeWins.Text);
+                if ( i > 0)
+                    config.shakeWins = i;
+                else
+                    config.shakeWins = 0;
+            }
+
+            if (ShakeTime.Text != string.Empty)
+            {
+                int i = int.Parse(ShakeWins.Text);
+                if ( i > 0)
+                    config.shakeTime = i;
+                else
+                    config.shakeTime = 0;
+            }
 
             config.publicServer = PublicServer.Checked;
             if (config.publicServer)
@@ -184,6 +230,24 @@ namespace StartBZFS
         {
             setConfigFromForm(serverConfig);
             serverConfig.run(RunInBackground.Checked,prefs.ServerPath);
+        }
+
+        private void BadFlags_CheckedChanged(object sender, EventArgs e)
+        {
+            if (BadFlags.Checked)
+            {
+                if (ShakeTime.Text == string.Empty)
+                    ShakeTime.Text = "30";
+                if (ShakeWins.Text == string.Empty)
+                    ShakeWins.Text = "1";
+                Antidote.Checked = true;
+            }
+        }
+
+        private void CTFMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!FlagsOnBuildings.Checked)
+                FlagsOnBuildings.Checked = CTFMode.Checked;
         }
     }
 }

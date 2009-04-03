@@ -17,114 +17,6 @@ namespace StartBZFS
         Rabbit
     }
 
-    public class LogScaner
-    {
-        public StreamReader reader;
-
-        List<string> lines = new List<string>();
-
-        object nugget = new object();
-
-        public string popLine ()
-        {
-            lock(nugget)
-            {
-                if (lines.Count > 0)
-                {
-                    string line = lines[0];
-                    lines.RemoveAt(0);
-                    return line;
-                }
-            }
-            return string.Empty;
-        }
-
-        public LogScaner(StreamReader r)
-        {
-            reader = r;
-        }
-
-        public void read ()
-        {
-            while(!reader.EndOfStream)
-            {
- //               int read = reader.Read();
-                string line = reader.ReadLine();
-                lock(nugget)
-                {
-                    lines.Add(line);
-                }
-            }
-        }
-    }
-
-    public class ServerLoger
-    {
-        public Process serverProc = new Process();
-
-        ServerConfig config;
-
-        ServerLogWindow logWindow;
-
-        public ServerLoger(ServerConfig cfg)
-        {
-            config = cfg;
-        }
-
-        public void run ( string command, string args, string tempLogiFile )
-        {
-            logWindow = new ServerLogWindow();
-            logWindow.Show();
-
-            serverProc.StartInfo.Arguments = args;// +redirectCommand(tempLogiFile);
-            serverProc.StartInfo.FileName = command;
-            serverProc.StartInfo.WorkingDirectory = Path.GetDirectoryName(command);
-
-            serverProc.StartInfo.RedirectStandardError = true;
-            serverProc.StartInfo.RedirectStandardOutput = true;
-            serverProc.StartInfo.UseShellExecute = false;
-            serverProc.StartInfo.CreateNoWindow = true;
-            serverProc.Start();
-
-            LogScaner logWriterStd = new LogScaner(serverProc.StandardOutput);
-            LogScaner logWriterErr = new LogScaner(serverProc.StandardError);
-
-            logWindow.addText("Server Started");
-           // logWindow.addText("Loging dosn't work yet, so deal");
-
-            Thread stdOutThread = new Thread(new ThreadStart(logWriterStd.read));
-            Thread stdErrThread = new Thread(new ThreadStart(logWriterErr.read));
-
-            stdOutThread.Start();
-            stdErrThread.Start();
-
-            while (!serverProc.HasExited)
-            {
-                if (logWindow.stop)
-                    serverProc.Kill();
-                else
-                    Thread.Sleep(100);
-
-                string line = logWriterStd.popLine();
-                if (line != string.Empty)
-                    logWindow.addText(line);
-
-                line = logWriterErr.popLine();
-                if (line != string.Empty)
-                    logWindow.addText("Error: " + line);
-                
-                // just so we can do this single threaded for debugin
-                Application.DoEvents();
-            }
-            stdOutThread.Abort();
-            stdErrThread.Abort();
-            //  logWindow.addText("Server Died man.. sorry);
-
-            logWindow.Dispose();
-            config.ServerTerminate(this);
-        }
-    }
-
     public class ServerConfig
     {
         public GameMode mode = GameMode.FFA;
@@ -133,7 +25,24 @@ namespace StartBZFS
         public string serverAddress = "localhost";
         public int port = 5154;
 
+        public int shots = 1;
+        public int debugLevel = 3;
+
+        public bool goodFlags = false;
+        public bool badFlags = false;
+        public bool flagsOnBuildings = false;
+
+        public bool jumping = true;
+        public bool rico = true;
+
+        public int shakeTime = 0;
+        public int shakeWins = 0;
+        public bool andidote = true;
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
         List<ServerLoger> logers = new List<ServerLoger>();
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
         bool killing = false;
 
         public void ServerTerminate ( ServerLoger loger )
@@ -153,17 +62,40 @@ namespace StartBZFS
                     break;
 
                 case GameMode.OpenFFA:
-                    sw.Write("-offa");
+                    sw.WriteLine("-offa");
                     break;
 
                 case GameMode.Rabbit:
-                    sw.Write("-rabbit");
+                    sw.WriteLine("-rabbit");
                     break;
             }
 
-            sw.WriteLine("-d");
-            sw.WriteLine("-d");
-            sw.WriteLine("-d");
+            if (goodFlags)
+                sw.WriteLine("+f good");
+
+            if (badFlags)
+                sw.WriteLine("+f bad");
+
+            if (shakeWins > 0)
+                sw.WriteLine("-sw " + shakeWins.ToString());
+
+            if (shakeTime > 0)
+                sw.WriteLine("-st " + shakeTime.ToString());
+
+            if (shots > 1)
+                sw.WriteLine("-ms " + shots.ToString());
+
+            if (flagsOnBuildings)
+                sw.WriteLine("-fb");
+
+            if (andidote)
+                sw.WriteLine("-sa");
+
+            if (debugLevel > 0)
+            {
+                for(int i = 0; i < debugLevel; i++)
+                    sw.WriteLine("-d");
+            }
             sw.Close();
         }
 
