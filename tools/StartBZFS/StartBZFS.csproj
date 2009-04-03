@@ -74,6 +74,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ServerLogWindow.resx">
+      <DependentUpon>ServerLogWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -89,6 +92,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ServerConfig.cs" />
+    <Compile Include="ServerLogWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerLogWindow.Designer.cs">
+      <DependentUpon>ServerLogWindow.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
