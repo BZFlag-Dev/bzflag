@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFStart", "BZFStart.csproj", "{B3F1421E-6338-48A7-AC6A-446487115915}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartBZFS", "StartBZFS.csproj", "{B3F1421E-6338-48A7-AC6A-446487115915}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

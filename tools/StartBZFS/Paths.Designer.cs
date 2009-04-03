@@ -1,4 +1,4 @@
-﻿namespace BZFStart
+﻿namespace StartBZFS
 {
     partial class Paths
     {

@@ -10,7 +10,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace BZFStart
+namespace StartBZFS
 {
     public partial class Form1 : Form
     {
@@ -35,7 +35,7 @@ namespace BZFStart
             if (!confDir.Exists)
                 confDir.Create();
            
-            FileInfo confFile = new FileInfo(Path.Combine(confDir.FullName, "bzfstart.xml"));
+            FileInfo confFile = new FileInfo(Path.Combine(confDir.FullName, "StartBZFS.xml"));
 
             FileStream fs = confFile.OpenWrite();
             if (fs == null)
@@ -58,7 +58,7 @@ namespace BZFStart
                 return;
             }
 
-            FileInfo confFile = new FileInfo(Path.Combine(confDir.FullName, "bzfstart.xml"));
+            FileInfo confFile = new FileInfo(Path.Combine(confDir.FullName, "StartBZFS.xml"));
             if (!confFile.Exists)
                 prefs = new Prefrences();
             else
@@ -108,6 +108,13 @@ namespace BZFStart
         {
             if (new Paths(confDir, prefs).ShowDialog() == DialogResult.OK)
                 savePrefs();
+        }
+
+        private void PublicServer_CheckedChanged(object sender, EventArgs e)
+        {
+            ServerAddress.Enabled = PublicServer.Checked;
+            ServerPort.Enabled = PublicServer.Checked;
+            ServerTest.Enabled = PublicServer.Checked;
         }
     }
 }

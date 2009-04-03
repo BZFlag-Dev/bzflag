@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace BZFStart
+namespace StartBZFS
 {
     public class Prefrences
     {
