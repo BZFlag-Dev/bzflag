@@ -34,13 +34,21 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.AutoTeam = new System.Windows.Forms.CheckBox();
+            this.Handicap = new System.Windows.Forms.CheckBox();
+            this.MaxPlayers = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.World = new System.Windows.Forms.GroupBox();
+            this.RandomHeight = new System.Windows.Forms.CheckBox();
+            this.RandomRot = new System.Windows.Forms.CheckBox();
             this.SpawnOnBoxes = new System.Windows.Forms.CheckBox();
             this.Teleporters = new System.Windows.Forms.CheckBox();
             this.WorldsList = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.LogLevel = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.MaxSuperFlags = new System.Windows.Forms.ComboBox();
             this.Antidote = new System.Windows.Forms.CheckBox();
             this.FlagsOnBuildings = new System.Windows.Forms.CheckBox();
             this.Ricochet = new System.Windows.Forms.CheckBox();
@@ -52,45 +60,37 @@
             this.GoodFlags = new System.Windows.Forms.CheckBox();
             this.NumShots = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.ResetOnQuit = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.GameEnds = new System.Windows.Forms.ComboBox();
+            this.RabbitModeType = new System.Windows.Forms.ComboBox();
             this.Jumping = new System.Windows.Forms.CheckBox();
             this.RabbitModeItem = new System.Windows.Forms.RadioButton();
             this.CTFMode = new System.Windows.Forms.RadioButton();
             this.OFFAMode = new System.Windows.Forms.RadioButton();
             this.FFAMode = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.PublicDescription = new System.Windows.Forms.TextBox();
             this.ServerAddress = new System.Windows.Forms.TextBox();
             this.ServerTest = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.PublicServer = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ServerPort = new System.Windows.Forms.TextBox();
+            this.LogLevel = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.Start = new System.Windows.Forms.Button();
             this.RunInBackground = new System.Windows.Forms.CheckBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.MaxPlayers = new System.Windows.Forms.TextBox();
-            this.Handicap = new System.Windows.Forms.CheckBox();
-            this.RabbitModeType = new System.Windows.Forms.ComboBox();
-            this.MaxSuperFlags = new System.Windows.Forms.ComboBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.GameEnds = new System.Windows.Forms.ComboBox();
-            this.ResetOnQuit = new System.Windows.Forms.CheckBox();
-            this.AutoTeam = new System.Windows.Forms.CheckBox();
-            this.RandomRot = new System.Windows.Forms.CheckBox();
-            this.RandomHeight = new System.Windows.Forms.CheckBox();
-            this.PublicDescription = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.World.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -152,6 +152,56 @@
             this.panel1.Size = new System.Drawing.Size(541, 297);
             this.panel1.TabIndex = 2;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.AutoTeam);
+            this.groupBox4.Controls.Add(this.Handicap);
+            this.groupBox4.Controls.Add(this.MaxPlayers);
+            this.groupBox4.Controls.Add(this.label8);
+            this.groupBox4.Location = new System.Drawing.Point(209, 150);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(112, 139);
+            this.groupBox4.TabIndex = 8;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Players";
+            // 
+            // AutoTeam
+            // 
+            this.AutoTeam.AutoSize = true;
+            this.AutoTeam.Location = new System.Drawing.Point(12, 71);
+            this.AutoTeam.Name = "AutoTeam";
+            this.AutoTeam.Size = new System.Drawing.Size(83, 17);
+            this.AutoTeam.TabIndex = 3;
+            this.AutoTeam.Text = "Auto Teams";
+            this.AutoTeam.UseVisualStyleBackColor = true;
+            // 
+            // Handicap
+            // 
+            this.Handicap.AutoSize = true;
+            this.Handicap.Location = new System.Drawing.Point(12, 48);
+            this.Handicap.Name = "Handicap";
+            this.Handicap.Size = new System.Drawing.Size(72, 17);
+            this.Handicap.TabIndex = 2;
+            this.Handicap.Text = "Handicap";
+            this.Handicap.UseVisualStyleBackColor = true;
+            // 
+            // MaxPlayers
+            // 
+            this.MaxPlayers.Location = new System.Drawing.Point(77, 22);
+            this.MaxPlayers.Name = "MaxPlayers";
+            this.MaxPlayers.Size = new System.Drawing.Size(29, 20);
+            this.MaxPlayers.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 25);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(67, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Max. Players";
+            // 
             // World
             // 
             this.World.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -167,6 +217,26 @@
             this.World.TabIndex = 7;
             this.World.TabStop = false;
             this.World.Text = "World";
+            // 
+            // RandomHeight
+            // 
+            this.RandomHeight.AutoSize = true;
+            this.RandomHeight.Location = new System.Drawing.Point(10, 91);
+            this.RandomHeight.Name = "RandomHeight";
+            this.RandomHeight.Size = new System.Drawing.Size(105, 17);
+            this.RandomHeight.TabIndex = 5;
+            this.RandomHeight.Text = "Random Heights";
+            this.RandomHeight.UseVisualStyleBackColor = true;
+            // 
+            // RandomRot
+            // 
+            this.RandomRot.AutoSize = true;
+            this.RandomRot.Location = new System.Drawing.Point(10, 67);
+            this.RandomRot.Name = "RandomRot";
+            this.RandomRot.Size = new System.Drawing.Size(114, 17);
+            this.RandomRot.TabIndex = 4;
+            this.RandomRot.Text = "Random Rotations";
+            this.RandomRot.UseVisualStyleBackColor = true;
             // 
             // SpawnOnBoxes
             // 
@@ -207,22 +277,6 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Map";
             // 
-            // LogLevel
-            // 
-            this.LogLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.LogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.LogLevel.FormattingEnabled = true;
-            this.LogLevel.Items.AddRange(new object[] {
-            "None",
-            "1",
-            "2",
-            "3",
-            "4"});
-            this.LogLevel.Location = new System.Drawing.Point(298, 330);
-            this.LogLevel.Name = "LogLevel";
-            this.LogLevel.Size = new System.Drawing.Size(44, 21);
-            this.LogLevel.TabIndex = 3;
-            // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -245,6 +299,34 @@
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Shots and Flags";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 74);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 13);
+            this.label9.TabIndex = 14;
+            this.label9.Text = "Max Superflags";
+            // 
+            // MaxSuperFlags
+            // 
+            this.MaxSuperFlags.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MaxSuperFlags.FormattingEnabled = true;
+            this.MaxSuperFlags.Items.AddRange(new object[] {
+            "N",
+            "5",
+            "10",
+            "15",
+            "20",
+            "25",
+            "30",
+            "35",
+            "40"});
+            this.MaxSuperFlags.Location = new System.Drawing.Point(92, 71);
+            this.MaxSuperFlags.Name = "MaxSuperFlags";
+            this.MaxSuperFlags.Size = new System.Drawing.Size(32, 21);
+            this.MaxSuperFlags.TabIndex = 13;
             // 
             // Antidote
             // 
@@ -367,16 +449,6 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "Shots";
             // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(218, 335);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(74, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Logging Level";
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.ResetOnQuit);
@@ -394,6 +466,60 @@
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Game Mode";
+            // 
+            // ResetOnQuit
+            // 
+            this.ResetOnQuit.AutoSize = true;
+            this.ResetOnQuit.Location = new System.Drawing.Point(148, 44);
+            this.ResetOnQuit.Name = "ResetOnQuit";
+            this.ResetOnQuit.Size = new System.Drawing.Size(102, 17);
+            this.ResetOnQuit.TabIndex = 17;
+            this.ResetOnQuit.Text = "Reset On Game";
+            this.ResetOnQuit.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(82, 20);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(62, 13);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "Game Ends";
+            // 
+            // GameEnds
+            // 
+            this.GameEnds.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GameEnds.FormattingEnabled = true;
+            this.GameEnds.Items.AddRange(new object[] {
+            "Never",
+            "5 min.",
+            "15 min.",
+            "1 hour",
+            "3 hours",
+            "Player Score =3",
+            "Player Score =10",
+            "PlayerScore =25",
+            "TeamScore=3",
+            "TeamScore=10",
+            "TeamScore=25",
+            "TeamScore=100"});
+            this.GameEnds.Location = new System.Drawing.Point(148, 17);
+            this.GameEnds.Name = "GameEnds";
+            this.GameEnds.Size = new System.Drawing.Size(109, 21);
+            this.GameEnds.TabIndex = 15;
+            // 
+            // RabbitModeType
+            // 
+            this.RabbitModeType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RabbitModeType.FormattingEnabled = true;
+            this.RabbitModeType.Items.AddRange(new object[] {
+            "Score",
+            "Killer",
+            "Random"});
+            this.RabbitModeType.Location = new System.Drawing.Point(68, 88);
+            this.RabbitModeType.Name = "RabbitModeType";
+            this.RabbitModeType.Size = new System.Drawing.Size(76, 21);
+            this.RabbitModeType.TabIndex = 5;
             // 
             // Jumping
             // 
@@ -469,6 +595,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Address";
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(7, 61);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(60, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Description";
+            // 
+            // PublicDescription
+            // 
+            this.PublicDescription.Location = new System.Drawing.Point(10, 77);
+            this.PublicDescription.Name = "PublicDescription";
+            this.PublicDescription.Size = new System.Drawing.Size(196, 20);
+            this.PublicDescription.TabIndex = 6;
+            // 
             // ServerAddress
             // 
             this.ServerAddress.Location = new System.Drawing.Point(105, 19);
@@ -523,6 +665,32 @@
             this.ServerPort.TabIndex = 2;
             this.ServerPort.Text = "5154";
             // 
+            // LogLevel
+            // 
+            this.LogLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.LogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.LogLevel.FormattingEnabled = true;
+            this.LogLevel.Items.AddRange(new object[] {
+            "None",
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.LogLevel.Location = new System.Drawing.Point(298, 330);
+            this.LogLevel.Name = "LogLevel";
+            this.LogLevel.Size = new System.Drawing.Size(44, 21);
+            this.LogLevel.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(218, 335);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(74, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Logging Level";
+            // 
             // Start
             // 
             this.Start.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -548,174 +716,6 @@
             this.RunInBackground.Text = "Run in background";
             this.RunInBackground.UseVisualStyleBackColor = true;
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox4.Controls.Add(this.AutoTeam);
-            this.groupBox4.Controls.Add(this.Handicap);
-            this.groupBox4.Controls.Add(this.MaxPlayers);
-            this.groupBox4.Controls.Add(this.label8);
-            this.groupBox4.Location = new System.Drawing.Point(209, 150);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(112, 139);
-            this.groupBox4.TabIndex = 8;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Players";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 25);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(67, 13);
-            this.label8.TabIndex = 0;
-            this.label8.Text = "Max. Players";
-            // 
-            // MaxPlayers
-            // 
-            this.MaxPlayers.Location = new System.Drawing.Point(77, 22);
-            this.MaxPlayers.Name = "MaxPlayers";
-            this.MaxPlayers.Size = new System.Drawing.Size(29, 20);
-            this.MaxPlayers.TabIndex = 1;
-            // 
-            // Handicap
-            // 
-            this.Handicap.AutoSize = true;
-            this.Handicap.Location = new System.Drawing.Point(12, 48);
-            this.Handicap.Name = "Handicap";
-            this.Handicap.Size = new System.Drawing.Size(72, 17);
-            this.Handicap.TabIndex = 2;
-            this.Handicap.Text = "Handicap";
-            this.Handicap.UseVisualStyleBackColor = true;
-            // 
-            // RabbitModeType
-            // 
-            this.RabbitModeType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RabbitModeType.FormattingEnabled = true;
-            this.RabbitModeType.Items.AddRange(new object[] {
-            "Score",
-            "Killer",
-            "Random"});
-            this.RabbitModeType.Location = new System.Drawing.Point(68, 88);
-            this.RabbitModeType.Name = "RabbitModeType";
-            this.RabbitModeType.Size = new System.Drawing.Size(76, 21);
-            this.RabbitModeType.TabIndex = 5;
-            // 
-            // MaxSuperFlags
-            // 
-            this.MaxSuperFlags.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.MaxSuperFlags.FormattingEnabled = true;
-            this.MaxSuperFlags.Items.AddRange(new object[] {
-            "N",
-            "5",
-            "10",
-            "15",
-            "20",
-            "25",
-            "30",
-            "35",
-            "40"});
-            this.MaxSuperFlags.Location = new System.Drawing.Point(92, 71);
-            this.MaxSuperFlags.Name = "MaxSuperFlags";
-            this.MaxSuperFlags.Size = new System.Drawing.Size(32, 21);
-            this.MaxSuperFlags.TabIndex = 13;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 74);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(80, 13);
-            this.label9.TabIndex = 14;
-            this.label9.Text = "Max Superflags";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(82, 20);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(62, 13);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "Game Ends";
-            // 
-            // GameEnds
-            // 
-            this.GameEnds.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.GameEnds.FormattingEnabled = true;
-            this.GameEnds.Items.AddRange(new object[] {
-            "Never",
-            "5 min.",
-            "15 min.",
-            "1 hour",
-            "3 hours",
-            "Player Score =3",
-            "Player Score =10",
-            "PlayerScore =25",
-            "TeamScore=3",
-            "TeamScore=10",
-            "TeamScore=25",
-            "TeamScore=100"});
-            this.GameEnds.Location = new System.Drawing.Point(148, 17);
-            this.GameEnds.Name = "GameEnds";
-            this.GameEnds.Size = new System.Drawing.Size(109, 21);
-            this.GameEnds.TabIndex = 15;
-            // 
-            // ResetOnQuit
-            // 
-            this.ResetOnQuit.AutoSize = true;
-            this.ResetOnQuit.Location = new System.Drawing.Point(148, 44);
-            this.ResetOnQuit.Name = "ResetOnQuit";
-            this.ResetOnQuit.Size = new System.Drawing.Size(102, 17);
-            this.ResetOnQuit.TabIndex = 17;
-            this.ResetOnQuit.Text = "Reset On Game";
-            this.ResetOnQuit.UseVisualStyleBackColor = true;
-            // 
-            // AutoTeam
-            // 
-            this.AutoTeam.AutoSize = true;
-            this.AutoTeam.Location = new System.Drawing.Point(12, 71);
-            this.AutoTeam.Name = "AutoTeam";
-            this.AutoTeam.Size = new System.Drawing.Size(83, 17);
-            this.AutoTeam.TabIndex = 3;
-            this.AutoTeam.Text = "Auto Teams";
-            this.AutoTeam.UseVisualStyleBackColor = true;
-            // 
-            // RandomRot
-            // 
-            this.RandomRot.AutoSize = true;
-            this.RandomRot.Location = new System.Drawing.Point(10, 67);
-            this.RandomRot.Name = "RandomRot";
-            this.RandomRot.Size = new System.Drawing.Size(114, 17);
-            this.RandomRot.TabIndex = 4;
-            this.RandomRot.Text = "Random Rotations";
-            this.RandomRot.UseVisualStyleBackColor = true;
-            // 
-            // RandomHeight
-            // 
-            this.RandomHeight.AutoSize = true;
-            this.RandomHeight.Location = new System.Drawing.Point(10, 91);
-            this.RandomHeight.Name = "RandomHeight";
-            this.RandomHeight.Size = new System.Drawing.Size(105, 17);
-            this.RandomHeight.TabIndex = 5;
-            this.RandomHeight.Text = "Random Heights";
-            this.RandomHeight.UseVisualStyleBackColor = true;
-            // 
-            // PublicDescription
-            // 
-            this.PublicDescription.Location = new System.Drawing.Point(10, 77);
-            this.PublicDescription.Name = "PublicDescription";
-            this.PublicDescription.Size = new System.Drawing.Size(196, 20);
-            this.PublicDescription.TabIndex = 6;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(7, 61);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(60, 13);
-            this.label11.TabIndex = 7;
-            this.label11.Text = "Description";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -731,13 +731,15 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "StartBZFS";
+            this.Text = "StartBZFS v0.0.1a";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.World.ResumeLayout(false);
             this.World.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -746,8 +748,6 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
