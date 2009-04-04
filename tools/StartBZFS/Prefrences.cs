@@ -8,18 +8,92 @@ namespace StartBZFS
 {
     public class Prefrences
     {
+        private static bool IsWinddows()
+        {
+            return (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX);
+        }
+        private static bool IsUnix()
+        {
+            return Environment.OSVersion.Platform == PlatformID.Unix;
+        }
+
+        private static bool IsOSX()
+        {
+            return Environment.OSVersion.Platform == PlatformID.MacOSX;
+        }
+
         public static DirectoryInfo GetConfigDir()
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            if (IsUnix())
                 return new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),".bzf"));
-            else if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+            else if (IsOSX())
                 return new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BZFlag"));
             else// windows
                 return new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My BZFlag Files"));
         }
 
+        private static DirectoryInfo FindWindowsInstallDir()
+        {
+            // ok so this is lame, BUT, check the program files dirs for stuff on the root drive.
+            // if we had a registrty key then we'd be cool, but it clears itself after we exit
+            DirectoryInfo programFiles = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+
+            foreach( DirectoryInfo d in programFiles.GetDirectories("BZFlag*",SearchOption.TopDirectoryOnly))
+            {
+                return d;
+            }
+
+            DirectoryInfo programFiles32 = new DirectoryInfo(programFiles.FullName + " (x86)");
+            if (programFiles32.Exists)
+            {
+                foreach (DirectoryInfo d in programFiles32.GetDirectories("BZFlag*", SearchOption.TopDirectoryOnly))
+                {
+                    return d;
+                }
+            }
+
+            return null;
+        }
+
+        private static FileInfo FindWindowsClient()
+        {
+            DirectoryInfo installDir = FindWindowsInstallDir();
+            if (installDir == null || !installDir.Exists)
+                return null;
+
+            return new FileInfo(Path.Combine(installDir.FullName, "bzflag.exe"));
+        }
+
+
+        private static FileInfo FindWindowsServer()
+        {
+            DirectoryInfo installDir = FindWindowsInstallDir();
+            if (installDir == null || !installDir.Exists)
+                return null;
+
+            return new FileInfo(Path.Combine(installDir.FullName, "bzfs.exe"));
+        }
+
         public static FileInfo FindClient(DirectoryInfo confDir)
         {
+            // try some tricky stuff to find windows
+            if (IsWinddows())
+            {
+                FileInfo windowsClient = FindWindowsClient();
+                if (windowsClient != null && windowsClient.Exists)
+                    return windowsClient;
+            }
+            else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                // path stuff?
+            }
+            else if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+            {
+                // checking the application dir?
+            }
+
+            // ok, it can't be found by just common sense searching, see if it's a new verson that wrote out it's dir files
+
             FileInfo client = new FileInfo("\\");
 
             FileInfo clientDirFile = new FileInfo(Path.Combine(confDir.FullName, "bzflag.dir"));
@@ -36,6 +110,22 @@ namespace StartBZFS
 
         public static FileInfo FindServer (DirectoryInfo confDir)
         {
+            // try some tricky stuff to find windows
+            if (IsWinddows())
+            {
+                FileInfo windowsServer = FindWindowsServer();
+                if (windowsServer != null && windowsServer.Exists)
+                    return windowsServer;
+            }
+            else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                // path stuff?
+            }
+            else if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+            {
+                // checking the application dir?
+            } 
+            
             FileInfo server = new FileInfo("\\");
 
             FileInfo serverDirFile = new FileInfo(Path.Combine(confDir.FullName, "bzfs.dir"));
