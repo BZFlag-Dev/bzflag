@@ -55,7 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.Jumping = new System.Windows.Forms.CheckBox();
-            this.RabbitMode = new System.Windows.Forms.RadioButton();
+            this.RabbitModeItem = new System.Windows.Forms.RadioButton();
             this.CTFMode = new System.Windows.Forms.RadioButton();
             this.OFFAMode = new System.Windows.Forms.RadioButton();
             this.FFAMode = new System.Windows.Forms.RadioButton();
@@ -68,6 +68,21 @@
             this.ServerPort = new System.Windows.Forms.TextBox();
             this.Start = new System.Windows.Forms.Button();
             this.RunInBackground = new System.Windows.Forms.CheckBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.MaxPlayers = new System.Windows.Forms.TextBox();
+            this.Handicap = new System.Windows.Forms.CheckBox();
+            this.RabbitModeType = new System.Windows.Forms.ComboBox();
+            this.MaxSuperFlags = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.GameEnds = new System.Windows.Forms.ComboBox();
+            this.ResetOnQuit = new System.Windows.Forms.CheckBox();
+            this.AutoTeam = new System.Windows.Forms.CheckBox();
+            this.RandomRot = new System.Windows.Forms.CheckBox();
+            this.RandomHeight = new System.Windows.Forms.CheckBox();
+            this.PublicDescription = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -75,6 +90,7 @@
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -83,7 +99,7 @@
             this.fIleToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(552, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(565, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -109,7 +125,7 @@
             this.statusStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Status});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 329);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 334);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(59, 22);
             this.statusStrip1.TabIndex = 1;
@@ -126,27 +142,28 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.World);
-            this.panel1.Controls.Add(this.LogLevel);
             this.panel1.Controls.Add(this.groupBox3);
-            this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(528, 263);
+            this.panel1.Size = new System.Drawing.Size(541, 297);
             this.panel1.TabIndex = 2;
             // 
             // World
             // 
             this.World.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.World.Controls.Add(this.RandomHeight);
+            this.World.Controls.Add(this.RandomRot);
             this.World.Controls.Add(this.SpawnOnBoxes);
             this.World.Controls.Add(this.Teleporters);
             this.World.Controls.Add(this.WorldsList);
             this.World.Controls.Add(this.label5);
-            this.World.Location = new System.Drawing.Point(3, 153);
+            this.World.Location = new System.Drawing.Point(3, 150);
             this.World.Name = "World";
-            this.World.Size = new System.Drawing.Size(203, 100);
+            this.World.Size = new System.Drawing.Size(203, 139);
             this.World.TabIndex = 7;
             this.World.TabStop = false;
             this.World.Text = "World";
@@ -154,7 +171,7 @@
             // SpawnOnBoxes
             // 
             this.SpawnOnBoxes.AutoSize = true;
-            this.SpawnOnBoxes.Location = new System.Drawing.Point(10, 67);
+            this.SpawnOnBoxes.Location = new System.Drawing.Point(10, 116);
             this.SpawnOnBoxes.Name = "SpawnOnBoxes";
             this.SpawnOnBoxes.Size = new System.Drawing.Size(108, 17);
             this.SpawnOnBoxes.TabIndex = 3;
@@ -186,9 +203,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(7, 20);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.Size = new System.Drawing.Size(28, 13);
             this.label5.TabIndex = 0;
-            this.label5.Text = "World";
+            this.label5.Text = "Map";
             // 
             // LogLevel
             // 
@@ -201,13 +218,16 @@
             "2",
             "3",
             "4"});
-            this.LogLevel.Location = new System.Drawing.Point(481, 237);
+            this.LogLevel.Location = new System.Drawing.Point(298, 330);
             this.LogLevel.Name = "LogLevel";
             this.LogLevel.Size = new System.Drawing.Size(44, 21);
             this.LogLevel.TabIndex = 3;
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.MaxSuperFlags);
             this.groupBox3.Controls.Add(this.Antidote);
             this.groupBox3.Controls.Add(this.FlagsOnBuildings);
             this.groupBox3.Controls.Add(this.Ricochet);
@@ -219,9 +239,9 @@
             this.groupBox3.Controls.Add(this.GoodFlags);
             this.groupBox3.Controls.Add(this.NumShots);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Location = new System.Drawing.Point(96, 4);
+            this.groupBox3.Location = new System.Drawing.Point(275, 4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(228, 116);
+            this.groupBox3.Size = new System.Drawing.Size(263, 141);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Shots and Flags";
@@ -229,7 +249,7 @@
             // Antidote
             // 
             this.Antidote.AutoSize = true;
-            this.Antidote.Location = new System.Drawing.Point(126, 91);
+            this.Antidote.Location = new System.Drawing.Point(138, 116);
             this.Antidote.Name = "Antidote";
             this.Antidote.Size = new System.Drawing.Size(70, 17);
             this.Antidote.TabIndex = 12;
@@ -239,7 +259,7 @@
             // FlagsOnBuildings
             // 
             this.FlagsOnBuildings.AutoSize = true;
-            this.FlagsOnBuildings.Location = new System.Drawing.Point(9, 91);
+            this.FlagsOnBuildings.Location = new System.Drawing.Point(9, 112);
             this.FlagsOnBuildings.Name = "FlagsOnBuildings";
             this.FlagsOnBuildings.Size = new System.Drawing.Size(111, 17);
             this.FlagsOnBuildings.TabIndex = 11;
@@ -249,7 +269,7 @@
             // Ricochet
             // 
             this.Ricochet.AutoSize = true;
-            this.Ricochet.Location = new System.Drawing.Point(98, 19);
+            this.Ricochet.Location = new System.Drawing.Point(96, 19);
             this.Ricochet.Name = "Ricochet";
             this.Ricochet.Size = new System.Drawing.Size(69, 17);
             this.Ricochet.TabIndex = 10;
@@ -258,7 +278,7 @@
             // 
             // ShakeTime
             // 
-            this.ShakeTime.Location = new System.Drawing.Point(166, 66);
+            this.ShakeTime.Location = new System.Drawing.Point(206, 94);
             this.ShakeTime.Name = "ShakeTime";
             this.ShakeTime.Size = new System.Drawing.Size(49, 20);
             this.ShakeTime.TabIndex = 9;
@@ -266,7 +286,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(95, 69);
+            this.label7.Location = new System.Drawing.Point(135, 97);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(64, 13);
             this.label7.TabIndex = 8;
@@ -274,7 +294,7 @@
             // 
             // ShakeWins
             // 
-            this.ShakeWins.Location = new System.Drawing.Point(166, 43);
+            this.ShakeWins.Location = new System.Drawing.Point(206, 71);
             this.ShakeWins.Name = "ShakeWins";
             this.ShakeWins.Size = new System.Drawing.Size(49, 20);
             this.ShakeWins.TabIndex = 7;
@@ -282,7 +302,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(95, 46);
+            this.label6.Location = new System.Drawing.Point(135, 74);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 13);
             this.label6.TabIndex = 6;
@@ -291,7 +311,7 @@
             // BadFlags
             // 
             this.BadFlags.AutoSize = true;
-            this.BadFlags.Location = new System.Drawing.Point(9, 68);
+            this.BadFlags.Location = new System.Drawing.Point(138, 51);
             this.BadFlags.Name = "BadFlags";
             this.BadFlags.Size = new System.Drawing.Size(73, 17);
             this.BadFlags.TabIndex = 3;
@@ -302,7 +322,7 @@
             // GoodFlags
             // 
             this.GoodFlags.AutoSize = true;
-            this.GoodFlags.Location = new System.Drawing.Point(9, 45);
+            this.GoodFlags.Location = new System.Drawing.Point(9, 51);
             this.GoodFlags.Name = "GoodFlags";
             this.GoodFlags.Size = new System.Drawing.Size(80, 17);
             this.GoodFlags.TabIndex = 2;
@@ -351,7 +371,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(401, 240);
+            this.label4.Location = new System.Drawing.Point(218, 335);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(74, 13);
             this.label4.TabIndex = 2;
@@ -359,14 +379,18 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.ResetOnQuit);
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.GameEnds);
+            this.groupBox2.Controls.Add(this.RabbitModeType);
             this.groupBox2.Controls.Add(this.Jumping);
-            this.groupBox2.Controls.Add(this.RabbitMode);
+            this.groupBox2.Controls.Add(this.RabbitModeItem);
             this.groupBox2.Controls.Add(this.CTFMode);
             this.groupBox2.Controls.Add(this.OFFAMode);
             this.groupBox2.Controls.Add(this.FFAMode);
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(91, 142);
+            this.groupBox2.Size = new System.Drawing.Size(265, 142);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Game Mode";
@@ -381,16 +405,17 @@
             this.Jumping.Text = "Jumping";
             this.Jumping.UseVisualStyleBackColor = true;
             // 
-            // RabbitMode
+            // RabbitModeItem
             // 
-            this.RabbitMode.AutoSize = true;
-            this.RabbitMode.Location = new System.Drawing.Point(6, 89);
-            this.RabbitMode.Name = "RabbitMode";
-            this.RabbitMode.Size = new System.Drawing.Size(56, 17);
-            this.RabbitMode.TabIndex = 3;
-            this.RabbitMode.TabStop = true;
-            this.RabbitMode.Text = "Rabbit";
-            this.RabbitMode.UseVisualStyleBackColor = true;
+            this.RabbitModeItem.AutoSize = true;
+            this.RabbitModeItem.Location = new System.Drawing.Point(6, 89);
+            this.RabbitModeItem.Name = "RabbitModeItem";
+            this.RabbitModeItem.Size = new System.Drawing.Size(56, 17);
+            this.RabbitModeItem.TabIndex = 3;
+            this.RabbitModeItem.TabStop = true;
+            this.RabbitModeItem.Text = "Rabbit";
+            this.RabbitModeItem.UseVisualStyleBackColor = true;
+            this.RabbitModeItem.CheckedChanged += new System.EventHandler(this.RabbitMode_CheckedChanged);
             // 
             // CTFMode
             // 
@@ -428,31 +453,33 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.PublicDescription);
             this.groupBox1.Controls.Add(this.ServerAddress);
             this.groupBox1.Controls.Add(this.ServerTest);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.PublicServer);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.ServerPort);
-            this.groupBox1.Location = new System.Drawing.Point(326, 4);
+            this.groupBox1.Location = new System.Drawing.Point(324, 150);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 128);
+            this.groupBox1.Size = new System.Drawing.Size(214, 133);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Address";
             // 
             // ServerAddress
             // 
-            this.ServerAddress.Location = new System.Drawing.Point(59, 44);
+            this.ServerAddress.Location = new System.Drawing.Point(105, 19);
             this.ServerAddress.Name = "ServerAddress";
-            this.ServerAddress.Size = new System.Drawing.Size(135, 20);
+            this.ServerAddress.Size = new System.Drawing.Size(87, 20);
             this.ServerAddress.TabIndex = 5;
             // 
             // ServerTest
             // 
             this.ServerTest.Enabled = false;
-            this.ServerTest.Location = new System.Drawing.Point(119, 99);
+            this.ServerTest.Location = new System.Drawing.Point(131, 104);
             this.ServerTest.Name = "ServerTest";
             this.ServerTest.Size = new System.Drawing.Size(75, 23);
             this.ServerTest.TabIndex = 0;
@@ -462,7 +489,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 47);
+            this.label2.Location = new System.Drawing.Point(58, 21);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 4;
@@ -482,7 +509,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(29, 71);
+            this.label1.Location = new System.Drawing.Point(105, 47);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(26, 13);
             this.label1.TabIndex = 1;
@@ -490,7 +517,7 @@
             // 
             // ServerPort
             // 
-            this.ServerPort.Location = new System.Drawing.Point(61, 68);
+            this.ServerPort.Location = new System.Drawing.Point(137, 44);
             this.ServerPort.Name = "ServerPort";
             this.ServerPort.Size = new System.Drawing.Size(46, 20);
             this.ServerPort.TabIndex = 2;
@@ -499,7 +526,7 @@
             // Start
             // 
             this.Start.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Start.Location = new System.Drawing.Point(465, 296);
+            this.Start.Location = new System.Drawing.Point(478, 335);
             this.Start.Name = "Start";
             this.Start.Size = new System.Drawing.Size(75, 23);
             this.Start.TabIndex = 3;
@@ -514,23 +541,193 @@
             this.RunInBackground.Checked = true;
             this.RunInBackground.CheckState = System.Windows.Forms.CheckState.Checked;
             this.RunInBackground.Enabled = false;
-            this.RunInBackground.Location = new System.Drawing.Point(337, 302);
+            this.RunInBackground.Location = new System.Drawing.Point(355, 334);
             this.RunInBackground.Name = "RunInBackground";
             this.RunInBackground.Size = new System.Drawing.Size(117, 17);
             this.RunInBackground.TabIndex = 4;
             this.RunInBackground.Text = "Run in background";
             this.RunInBackground.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.AutoTeam);
+            this.groupBox4.Controls.Add(this.Handicap);
+            this.groupBox4.Controls.Add(this.MaxPlayers);
+            this.groupBox4.Controls.Add(this.label8);
+            this.groupBox4.Location = new System.Drawing.Point(209, 150);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(112, 139);
+            this.groupBox4.TabIndex = 8;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Players";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 25);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(67, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Max. Players";
+            // 
+            // MaxPlayers
+            // 
+            this.MaxPlayers.Location = new System.Drawing.Point(77, 22);
+            this.MaxPlayers.Name = "MaxPlayers";
+            this.MaxPlayers.Size = new System.Drawing.Size(29, 20);
+            this.MaxPlayers.TabIndex = 1;
+            // 
+            // Handicap
+            // 
+            this.Handicap.AutoSize = true;
+            this.Handicap.Location = new System.Drawing.Point(12, 48);
+            this.Handicap.Name = "Handicap";
+            this.Handicap.Size = new System.Drawing.Size(72, 17);
+            this.Handicap.TabIndex = 2;
+            this.Handicap.Text = "Handicap";
+            this.Handicap.UseVisualStyleBackColor = true;
+            // 
+            // RabbitModeType
+            // 
+            this.RabbitModeType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RabbitModeType.FormattingEnabled = true;
+            this.RabbitModeType.Items.AddRange(new object[] {
+            "Score",
+            "Killer",
+            "Random"});
+            this.RabbitModeType.Location = new System.Drawing.Point(68, 88);
+            this.RabbitModeType.Name = "RabbitModeType";
+            this.RabbitModeType.Size = new System.Drawing.Size(76, 21);
+            this.RabbitModeType.TabIndex = 5;
+            // 
+            // MaxSuperFlags
+            // 
+            this.MaxSuperFlags.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MaxSuperFlags.FormattingEnabled = true;
+            this.MaxSuperFlags.Items.AddRange(new object[] {
+            "N",
+            "5",
+            "10",
+            "15",
+            "20",
+            "25",
+            "30",
+            "35",
+            "40"});
+            this.MaxSuperFlags.Location = new System.Drawing.Point(92, 71);
+            this.MaxSuperFlags.Name = "MaxSuperFlags";
+            this.MaxSuperFlags.Size = new System.Drawing.Size(32, 21);
+            this.MaxSuperFlags.TabIndex = 13;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 74);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 13);
+            this.label9.TabIndex = 14;
+            this.label9.Text = "Max Superflags";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(82, 20);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(62, 13);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "Game Ends";
+            // 
+            // GameEnds
+            // 
+            this.GameEnds.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GameEnds.FormattingEnabled = true;
+            this.GameEnds.Items.AddRange(new object[] {
+            "Never",
+            "5 min.",
+            "15 min.",
+            "1 hour",
+            "3 hours",
+            "Player Score =3",
+            "Player Score =10",
+            "PlayerScore =25",
+            "TeamScore=3",
+            "TeamScore=10",
+            "TeamScore=25",
+            "TeamScore=100"});
+            this.GameEnds.Location = new System.Drawing.Point(148, 17);
+            this.GameEnds.Name = "GameEnds";
+            this.GameEnds.Size = new System.Drawing.Size(109, 21);
+            this.GameEnds.TabIndex = 15;
+            // 
+            // ResetOnQuit
+            // 
+            this.ResetOnQuit.AutoSize = true;
+            this.ResetOnQuit.Location = new System.Drawing.Point(148, 44);
+            this.ResetOnQuit.Name = "ResetOnQuit";
+            this.ResetOnQuit.Size = new System.Drawing.Size(102, 17);
+            this.ResetOnQuit.TabIndex = 17;
+            this.ResetOnQuit.Text = "Reset On Game";
+            this.ResetOnQuit.UseVisualStyleBackColor = true;
+            // 
+            // AutoTeam
+            // 
+            this.AutoTeam.AutoSize = true;
+            this.AutoTeam.Location = new System.Drawing.Point(12, 71);
+            this.AutoTeam.Name = "AutoTeam";
+            this.AutoTeam.Size = new System.Drawing.Size(83, 17);
+            this.AutoTeam.TabIndex = 3;
+            this.AutoTeam.Text = "Auto Teams";
+            this.AutoTeam.UseVisualStyleBackColor = true;
+            // 
+            // RandomRot
+            // 
+            this.RandomRot.AutoSize = true;
+            this.RandomRot.Location = new System.Drawing.Point(10, 67);
+            this.RandomRot.Name = "RandomRot";
+            this.RandomRot.Size = new System.Drawing.Size(114, 17);
+            this.RandomRot.TabIndex = 4;
+            this.RandomRot.Text = "Random Rotations";
+            this.RandomRot.UseVisualStyleBackColor = true;
+            // 
+            // RandomHeight
+            // 
+            this.RandomHeight.AutoSize = true;
+            this.RandomHeight.Location = new System.Drawing.Point(10, 91);
+            this.RandomHeight.Name = "RandomHeight";
+            this.RandomHeight.Size = new System.Drawing.Size(105, 17);
+            this.RandomHeight.TabIndex = 5;
+            this.RandomHeight.Text = "Random Heights";
+            this.RandomHeight.UseVisualStyleBackColor = true;
+            // 
+            // PublicDescription
+            // 
+            this.PublicDescription.Location = new System.Drawing.Point(10, 77);
+            this.PublicDescription.Name = "PublicDescription";
+            this.PublicDescription.Size = new System.Drawing.Size(196, 20);
+            this.PublicDescription.TabIndex = 6;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(7, 61);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(60, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Description";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(552, 351);
+            this.ClientSize = new System.Drawing.Size(565, 370);
             this.Controls.Add(this.RunInBackground);
             this.Controls.Add(this.Start);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.LogLevel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.label4);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -541,7 +738,6 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.World.ResumeLayout(false);
             this.World.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -550,6 +746,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -571,7 +769,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox PublicServer;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.RadioButton RabbitMode;
+        private System.Windows.Forms.RadioButton RabbitModeItem;
         private System.Windows.Forms.RadioButton CTFMode;
         private System.Windows.Forms.RadioButton OFFAMode;
         private System.Windows.Forms.RadioButton FFAMode;
@@ -597,6 +795,21 @@
         private System.Windows.Forms.CheckBox Teleporters;
         private System.Windows.Forms.ComboBox WorldsList;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox Handicap;
+        private System.Windows.Forms.TextBox MaxPlayers;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox MaxSuperFlags;
+        private System.Windows.Forms.ComboBox RabbitModeType;
+        private System.Windows.Forms.CheckBox ResetOnQuit;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ComboBox GameEnds;
+        private System.Windows.Forms.CheckBox AutoTeam;
+        private System.Windows.Forms.CheckBox RandomRot;
+        private System.Windows.Forms.CheckBox RandomHeight;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox PublicDescription;
     }
 }
 

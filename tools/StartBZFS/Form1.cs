@@ -61,7 +61,20 @@ namespace StartBZFS
             FFAMode.Checked = config.mode == GameMode.FFA;
             OFFAMode.Checked = config.mode == GameMode.OpenFFA;
             CTFMode.Checked = config.mode == GameMode.CTF;
-            RabbitMode.Checked = config.mode == GameMode.Rabbit;
+            RabbitModeItem.Checked = config.mode == GameMode.Rabbit;
+            switch(config.rabbitMode)
+            {
+                case RabbitMode.ScoreBased:
+                    RabbitModeType.SelectedIndex = 0;
+                    break;
+                case RabbitMode.KillerBased:
+                    RabbitModeType.SelectedIndex = 1;
+                    break;
+                case RabbitMode.Random:
+                    RabbitModeType.SelectedIndex = 2;
+                    break;
+            }
+            RabbitModeType.Enabled = config.mode == GameMode.Rabbit;
 
             ServerAddress.Text = config.serverAddress;
             ServerPort.Text = config.port.ToString();
@@ -72,10 +85,39 @@ namespace StartBZFS
             Ricochet.Checked = config.rico;
             Jumping.Checked = config.jumping;
 
+            RandomHeight.Checked = config.randHeight;
+            RandomRot.Checked = config.randRot;
+
             GoodFlags.Checked = config.goodFlags;
             BadFlags.Checked = config.badFlags;
             Antidote.Checked = config.andidote;
             FlagsOnBuildings.Checked = config.flagsOnBuildings;
+
+            Handicap.Checked = config.handicap;
+
+            if (config.maxPlayers > 0)
+                MaxPlayers.Text = config.maxPlayers.ToString();
+
+            if (config.maxSuperflags <= 0)
+                MaxSuperFlags.SelectedIndex = 0;
+            else
+            {
+                MaxSuperFlags.SelectedIndex = 1; // 5
+                if (config.maxSuperflags <= 10)    
+                    MaxSuperFlags.SelectedIndex = 2; // 10
+                if (config.maxSuperflags <= 15)
+                    MaxSuperFlags.SelectedIndex = 3; // 15
+                if (config.maxSuperflags <= 20)
+                    MaxSuperFlags.SelectedIndex = 4; // 20
+                if (config.maxSuperflags <= 25)
+                    MaxSuperFlags.SelectedIndex = 5; // 25
+                if (config.maxSuperflags <= 30)
+                    MaxSuperFlags.SelectedIndex = 6; // 30
+                if (config.maxSuperflags <= 35)
+                    MaxSuperFlags.SelectedIndex = 7; // 35
+                if (config.maxSuperflags <= 40)
+                    MaxSuperFlags.SelectedIndex = 8; // 40
+            }
 
             if (config.shakeWins > 0)
                 ShakeWins.Text = config.shakeWins.ToString();
@@ -104,6 +146,41 @@ namespace StartBZFS
             Teleporters.Checked = config.teleporters;
             SpawnOnBoxes.Checked = config.spawnOnBoxes;
 
+            ResetOnQuit.Checked = !config.quitOngame;
+
+            AutoTeam.Checked = config.autoTeam;
+
+            if (config.endType == GameEndType.Never)
+                GameEnds.SelectedIndex = 0;
+            else if (config.endType == GameEndType.TimeLimit && config.endValue > 0)
+            {
+                GameEnds.SelectedIndex = 1; // 5 min
+                if (config.endValue >= 15)
+                     GameEnds.SelectedIndex = 2; // 15 min
+                if (config.endValue >= 60)
+                     GameEnds.SelectedIndex = 3; // 60 min
+                if (config.endValue >= 180)
+                     GameEnds.SelectedIndex = 4; // 3 hours
+            }
+            else if (config.endType == GameEndType.PlayerScoreLimit && config.endValue > 0)
+            {
+                GameEnds.SelectedIndex = 5; // 3 pts
+                if (config.endValue >= 10)
+                    GameEnds.SelectedIndex = 6; // 10 pts
+                if (config.endValue >= 25)
+                    GameEnds.SelectedIndex = 7; // 25 pts
+            }
+            else if (config.endType == GameEndType.TeamScoreLimit && config.endValue > 0)
+            {
+                GameEnds.SelectedIndex = 8; // 3 pts
+                if (config.endValue >= 10)
+                    GameEnds.SelectedIndex = 9; // 10 pts
+                if (config.endValue >= 25)
+                    GameEnds.SelectedIndex = 10; // 25 pts
+                if (config.endValue >= 100)
+                    GameEnds.SelectedIndex = 11; // 100 pts
+            }
+            PublicServer_CheckedChanged(this, EventArgs.Empty);
             checkAddressItem();
             checkServerStartButton();
         }
@@ -116,8 +193,11 @@ namespace StartBZFS
                 config.mode = GameMode.OpenFFA;
             else if (CTFMode.Checked)
                 config.mode = GameMode.CTF;
-            else if(RabbitMode.Checked)
+            else if (RabbitModeItem.Checked)
+            {
                 config.mode = GameMode.Rabbit;
+                config.rabbitMode = (RabbitMode)RabbitModeType.SelectedIndex;
+            }
 
             config.shots = NumShots.SelectedIndex + 1;
             config.debugLevel = LogLevel.SelectedIndex;
@@ -125,8 +205,16 @@ namespace StartBZFS
             config.rico = Ricochet.Checked;
             config.jumping = Jumping.Checked;
 
+            config.randHeight = RandomHeight.Checked;
+            config.randRot = RandomRot.Checked;
+
             config.andidote = Antidote.Checked;
             config.flagsOnBuildings = FlagsOnBuildings.Checked;
+
+            config.handicap = Handicap.Checked;
+
+            if (MaxPlayers.Text != string.Empty)
+                config.maxPlayers = int.Parse(MaxPlayers.Text);
 
             config.goodFlags = GoodFlags.Checked;
             config.badFlags = BadFlags.Checked;
@@ -169,6 +257,48 @@ namespace StartBZFS
                     if (config.port < 1)
                         config.port = 5154;
                 }
+                config.publicDescription = PublicDescription.Text;
+            }
+
+            config.maxSuperflags = MaxSuperFlags.SelectedIndex * 5;
+
+            config.quitOngame = !ResetOnQuit.Checked;
+            config.autoTeam = AutoTeam.Checked;
+
+            config.endType = GameEndType.Never;
+            if (GameEnds.SelectedIndex >= 1 && GameEnds.SelectedIndex <= 4)
+            {
+                config.endType = GameEndType.TimeLimit;
+                if (GameEnds.SelectedIndex == 1)
+                    config.endValue = 5;
+                if (GameEnds.SelectedIndex == 2)
+                    config.endValue = 10;
+                if (GameEnds.SelectedIndex == 3)
+                    config.endValue = 60;
+                if (GameEnds.SelectedIndex == 4)
+                    config.endValue = 180;
+            }
+            else if (GameEnds.SelectedIndex >= 5 && GameEnds.SelectedIndex <= 7)
+            {
+                config.endType = GameEndType.PlayerScoreLimit;
+                if (GameEnds.SelectedIndex == 5)
+                    config.endValue = 3;
+                if (GameEnds.SelectedIndex == 6)
+                    config.endValue = 10;
+                if (GameEnds.SelectedIndex == 7)
+                    config.endValue = 25;
+            }
+            else if (GameEnds.SelectedIndex >= 8 && GameEnds.SelectedIndex <= 11)
+            {
+                config.endType = GameEndType.PlayerScoreLimit;
+                if (GameEnds.SelectedIndex == 8)
+                    config.endValue = 3;
+                if (GameEnds.SelectedIndex == 9)
+                    config.endValue = 10;
+                if (GameEnds.SelectedIndex == 10)
+                    config.endValue = 25;
+                if (GameEnds.SelectedIndex == 11)
+                    config.endValue = 100;
             }
         }
 
@@ -294,7 +424,8 @@ namespace StartBZFS
         {
             ServerAddress.Enabled = PublicServer.Checked;
             ServerPort.Enabled = PublicServer.Checked;
-            ServerTest.Enabled = PublicServer.Checked;
+            ServerTest.Enabled = false;// PublicServer.Checked;
+            PublicDescription.Enabled = PublicServer.Checked;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -323,7 +454,7 @@ namespace StartBZFS
         private void CTFMode_CheckedChanged(object sender, EventArgs e)
         {
             if (!FlagsOnBuildings.Checked)
-                FlagsOnBuildings.Checked = CTFMode.Checked;
+                FlagsOnBuildings.Checked = CTFMode.Checked && Jumping.Checked;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -331,10 +462,9 @@ namespace StartBZFS
             if (settingMaps)
                 return;
 
-            if (WorldsList.SelectedIndex == 0)
-                Teleporters.Enabled = true;
-            else
-                Teleporters.Enabled = false;
+            Teleporters.Enabled = WorldsList.SelectedIndex == 0;
+            RandomRot.Enabled = WorldsList.SelectedIndex == 0;
+            RandomHeight.Enabled = WorldsList.SelectedIndex == 0;
 
             if (WorldsList.SelectedIndex > maps.Count)
             {
@@ -353,6 +483,11 @@ namespace StartBZFS
                     settingMaps = false;
                 }
             }
+        }
+
+        private void RabbitMode_CheckedChanged(object sender, EventArgs e)
+        {
+            RabbitModeType.Enabled = RabbitModeItem.Checked;
         }
     }
 }

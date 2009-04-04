@@ -44,10 +44,10 @@ namespace StartBZFS
 
         public void read()
         {
-            while (!reader.EndOfStream)
+            string line;
+            line = reader.ReadLine();
+            while ((line = reader.ReadLine()) != null)
             {
-                //               int read = reader.Read();
-                string line = reader.ReadLine();
                 lock (nugget)
                 {
                     lines.Add(line);

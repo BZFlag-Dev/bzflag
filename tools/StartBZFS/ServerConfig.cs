@@ -17,10 +17,38 @@ namespace StartBZFS
         Rabbit
     }
 
+    public enum RabbitMode
+    {
+        ScoreBased = 0,
+        KillerBased = 1,
+        Random = 2
+    }
+
+    public enum GameEndType
+    {
+        Never,
+        TimeLimit,
+        PlayerScoreLimit,
+        TeamScoreLimit
+    }
+
     public class ServerConfig
     {
         public GameMode mode = GameMode.FFA;
+        public RabbitMode rabbitMode = RabbitMode.ScoreBased;
+
+        public GameEndType endType = GameEndType.Never;
+        public int endValue = -1;
+
+        public bool handicap = false;
+
+        public int maxPlayers = -1;
+
+        public int maxSuperflags = -1;
+
         public bool publicServer = false;
+
+        public string publicDescription = string.Empty;
 
         public string serverAddress = "localhost";
         public int port = 5154;
@@ -41,7 +69,13 @@ namespace StartBZFS
 
         public string worldfile = string.Empty;
         public bool teleporters = true;
+        public bool randHeight = true;
+        public bool randRot = true;
         public bool spawnOnBoxes = false;
+
+        public bool quitOngame = false;
+
+        public bool autoTeam = true;
 
         [System.Xml.Serialization.XmlIgnoreAttribute]
         List<ServerLoger> logers = new List<ServerLoger>();
@@ -61,8 +95,20 @@ namespace StartBZFS
 
             if (worldfile != string.Empty)
                 sw.WriteLine("-world \"" + worldfile + "\"");
-            else if (teleporters)
-                sw.WriteLine("-t");
+            else
+            {
+                if (teleporters)
+                    sw.WriteLine("-t");
+
+                if(randHeight)
+                    sw.WriteLine("-h");
+
+                if (randRot)
+                    sw.WriteLine("-b");
+            }
+
+            if (autoTeam)
+                sw.WriteLine("-autoTeam");
 
             if (jumping)
                 sw.WriteLine("-j");
@@ -70,10 +116,22 @@ namespace StartBZFS
             if (spawnOnBoxes)
                 sw.WriteLine("-sb");
 
+            if (maxSuperflags > 0)
+                sw.WriteLine("+s " + maxSuperflags.ToString());
+
+            if (handicap)
+                sw.WriteLine("-h");
+
+            if (maxPlayers > 0)
+                sw.WriteLine("-mp " + maxPlayers.ToString());
+
             switch(mode)
             {
                 case GameMode.CTF:
-                    sw.WriteLine("-c");
+                    if (worldfile != string.Empty)
+                        sw.WriteLine("-c");
+                    else
+                        sw.WriteLine("-cr");
                     break;
 
                 case GameMode.OpenFFA:
@@ -81,7 +139,19 @@ namespace StartBZFS
                     break;
 
                 case GameMode.Rabbit:
-                    sw.WriteLine("-rabbit");
+                    sw.Write("-rabbit ");
+                    switch(rabbitMode)
+                    {
+                        case RabbitMode.ScoreBased:
+                            sw.WriteLine("score");
+                            break;
+                        case RabbitMode.KillerBased:
+                            sw.WriteLine("killer");
+                            break;
+                        case RabbitMode.Random:
+                            sw.WriteLine("random");
+                            break;
+                  }
                     break;
             }
 
@@ -105,6 +175,39 @@ namespace StartBZFS
 
             if (andidote)
                 sw.WriteLine("-sa");
+
+            if (quitOngame)
+                sw.WriteLine("-g");
+
+            if (endType != GameEndType.Never)
+            {
+                if (endType == GameEndType.PlayerScoreLimit)
+                    sw.WriteLine("-mps " + endValue.ToString());
+                else if (endType == GameEndType.TeamScoreLimit)
+                    sw.WriteLine("-mts " + endValue.ToString());
+                else if (endType == GameEndType.TimeLimit)
+                    sw.WriteLine("-time " + (endValue*60).ToString());
+            }
+
+            if (publicServer)
+            {
+                sw.Write("-public");
+                if (publicDescription != string.Empty)
+                {
+                    sw.WriteLine(" \"" + publicDescription.Replace('\"',' ') + "\"");
+
+                    if (port > 0 && port != 5154)
+                        sw.WriteLine("-p " + port.ToString());
+
+                    if (serverAddress != string.Empty)
+                    {
+                        sw.Write("-publicaddr " + serverAddress);
+                         if (port > 0 && port != 5154)
+                              sw.Write(":" + port.ToString());
+                         sw.WriteLine("");
+                    }
+                }
+            }
 
             if (debugLevel > 0)
             {
