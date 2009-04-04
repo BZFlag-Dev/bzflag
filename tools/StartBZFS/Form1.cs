@@ -47,7 +47,7 @@ namespace StartBZFS
         private void scanMaps()
         {
             maps.Clear();
-			if (prefs.WorldPath == string.Empty)
+			if (prefs.WorldPath == string.Empty || prefs.WorldPath.Length == 0)
 				return;
 
             DirectoryInfo mapDir = new DirectoryInfo(prefs.WorldPath);
