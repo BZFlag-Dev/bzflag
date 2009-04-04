@@ -10,7 +10,7 @@ namespace StartBZFS
     {
         private static bool IsWinddows()
         {
-            return (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.MacOSX);
+            return Environment.OSVersion.Platform == PlatformID.Win32Windows;
         }
         private static bool IsUnix()
         {
@@ -19,7 +19,7 @@ namespace StartBZFS
 
         private static bool IsOSX()
         {
-            return Environment.OSVersion.Platform == PlatformID.MacOSX;
+            return Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.Win32Windows;
         }
 
         public static DirectoryInfo GetConfigDir()
@@ -83,11 +83,11 @@ namespace StartBZFS
                 if (windowsClient != null && windowsClient.Exists)
                     return windowsClient;
             }
-            else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            else if (IsUnix())
             {
                 // path stuff?
             }
-            else if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+            else if (IsOSX())
             {
                 // checking the application dir?
             }
@@ -100,7 +100,7 @@ namespace StartBZFS
             if (clientDirFile.Exists)
             {
                 StreamReader sr = clientDirFile.OpenText();
-                string exePath = sr.ReadLine();
+                sr.ReadLine();
                 client = new FileInfo(sr.ReadLine());
                 sr.Close();
             }
@@ -117,11 +117,11 @@ namespace StartBZFS
                 if (windowsServer != null && windowsServer.Exists)
                     return windowsServer;
             }
-            else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            else if (IsUnix())
             {
                 // path stuff?
             }
-            else if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+            else if (IsOSX())
             {
                 // checking the application dir?
             } 

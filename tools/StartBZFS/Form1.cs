@@ -47,6 +47,8 @@ namespace StartBZFS
         private void scanMaps()
         {
             maps.Clear();
+			if (prefs.WorldPath == string.Empty)
+				return;
 
             DirectoryInfo mapDir = new DirectoryInfo(prefs.WorldPath);
             if (!mapDir.Exists)
@@ -312,7 +314,7 @@ namespace StartBZFS
         private void defaultPrefs ()
         {
             prefs = new Prefrences();
-            MessageBox.Show("No BZFlag configuration has been found, please be sure to set your directory paths manualy");
+        //    MessageBox.Show("No BZFlag configuration has been found, please be sure to set your directory paths manualy");
         }
 
         private void savePrefs ()
@@ -376,9 +378,6 @@ namespace StartBZFS
                 else
                     prefs.WorldPath = string.Empty;
             }
-            
-            if (prefs.ServerPath == string.Empty || prefs.WorldPath == string.Empty)
-                MessageBox.Show("One or more of the paths to the BZFlag program files could not be found, please set them manualy");
         }
 
         private void checkServerStartButton ()
