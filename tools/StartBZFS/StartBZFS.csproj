@@ -75,6 +75,9 @@
     <EmbeddedResource Include="ServerLogWindow.resx">
       <DependentUpon>ServerLogWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ServerTest.resx">
+      <DependentUpon>ServerTest.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
@@ -91,6 +94,12 @@
     </Compile>
     <Compile Include="ServerLogWindow.Designer.cs">
       <DependentUpon>ServerLogWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ServerTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerTest.Designer.cs">
+      <DependentUpon>ServerTest.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

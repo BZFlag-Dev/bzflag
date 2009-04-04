@@ -423,7 +423,7 @@ namespace StartBZFS
         {
             ServerAddress.Enabled = PublicServer.Checked;
             ServerPort.Enabled = PublicServer.Checked;
-            ServerTest.Enabled = false;// PublicServer.Checked;
+            ServerTest.Enabled = PublicServer.Checked;
             PublicDescription.Enabled = PublicServer.Checked;
         }
 
@@ -487,6 +487,17 @@ namespace StartBZFS
         private void RabbitMode_CheckedChanged(object sender, EventArgs e)
         {
             RabbitModeType.Enabled = RabbitModeItem.Checked;
+        }
+
+        private void ServerTest_Click(object sender, EventArgs e)
+        {
+            ServerTest test = new ServerTest();
+
+            test.address = ServerAddress.Text;
+            if (ServerPort.Text != string.Empty)
+                test.port = int.Parse(ServerPort.Text);
+
+            test.ShowDialog();
         }
     }
 }

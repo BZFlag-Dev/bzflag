@@ -620,13 +620,13 @@
             // 
             // ServerTest
             // 
-            this.ServerTest.Enabled = false;
             this.ServerTest.Location = new System.Drawing.Point(131, 104);
             this.ServerTest.Name = "ServerTest";
             this.ServerTest.Size = new System.Drawing.Size(75, 23);
             this.ServerTest.TabIndex = 0;
             this.ServerTest.Text = "Test";
             this.ServerTest.UseVisualStyleBackColor = true;
+            this.ServerTest.Click += new System.EventHandler(this.ServerTest_Click);
             // 
             // label2
             // 
