@@ -15,43 +15,6 @@ using System.Threading;
 
 namespace StartBZFS
 {
-    public class SocketListener
-    {
-        TcpListener tcpListener;
-
-        byte[] buffer = new byte[4];
-
-        public SocketListener (int port)
-        {
-            tcpListener = new TcpListener(IPAddress.Any, port);
-
-            tcpListener.Start(32);
-        }
-
-        public void close ()
-        {
-            tcpListener.Stop();
-        }
-
-        public bool isCool ()
-        {
-            return buffer[0] == '1';
-        }
-
-        public void run ()
-        {
-            TcpClient client = tcpListener.AcceptTcpClient();
-
-            NetworkStream stream = client.GetStream();
-            stream.Read(buffer, 0, 4);
-
-            if (tcpListener.Pending())
-            {
-
-            }
-        }
-    }
-
     public partial class ServerTest : Form
     {
         public string address = string.Empty;
@@ -87,7 +50,6 @@ namespace StartBZFS
             LogLine("Contacting");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
 
-
             SocketListener listener = new SocketListener(port);
 
             Thread socketThread = new Thread(new ThreadStart(listener.run));
@@ -118,6 +80,43 @@ namespace StartBZFS
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("http://www.portforward.com");
+        }
+    }
+
+    public class SocketListener
+    {
+        TcpListener tcpListener;
+
+        byte[] buffer = new byte[4];
+
+        public SocketListener(int port)
+        {
+            tcpListener = new TcpListener(IPAddress.Any, port);
+
+            tcpListener.Start(32);
+        }
+
+        public void close()
+        {
+            tcpListener.Stop();
+        }
+
+        public bool isCool()
+        {
+            return buffer[0] == '1';
+        }
+
+        public void run()
+        {
+            TcpClient client = tcpListener.AcceptTcpClient();
+
+            NetworkStream stream = client.GetStream();
+            stream.Read(buffer, 0, 4);
+
+            if (tcpListener.Pending())
+            {
+
+            }
         }
     }
 }

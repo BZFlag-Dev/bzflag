@@ -60,6 +60,8 @@ namespace StartBZFS
 
         private void loadFormFromConfig (ServerConfig config)
         {
+            Password.Text = string.Empty;
+
             FFAMode.Checked = config.mode == GameMode.FFA;
             OFFAMode.Checked = config.mode == GameMode.OpenFFA;
             CTFMode.Checked = config.mode == GameMode.CTF;
@@ -189,6 +191,8 @@ namespace StartBZFS
 
         private void setConfigFromForm (ServerConfig config)
         {
+            config.password = Password.Text;
+
             if(FFAMode.Checked)
                 config.mode = GameMode.FFA;
             else if(OFFAMode.Checked)
@@ -498,6 +502,12 @@ namespace StartBZFS
                 test.port = int.Parse(ServerPort.Text);
 
             test.ShowDialog();
+        }
+
+        private void RunInBackground_CheckedChanged(object sender, EventArgs e)
+        {
+            if (RunInBackground.Checked && !Prefrences.IsWinddows())
+                MessageBox.Show("Servers run in background mode must be manual killed on your system");
         }
     }
 }

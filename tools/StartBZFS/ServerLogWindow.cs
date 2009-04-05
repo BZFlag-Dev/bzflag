@@ -22,7 +22,8 @@ namespace StartBZFS
         public void addText ( string line )
         {
             ServerLog.Text += line + "\r\n";
-            ServerLog.Select(ServerLog.Text.Length, 1);
+            ServerLog.Select(ServerLog.Text.Length-1, 1);
+            ServerLog.ScrollToCaret();
         }
 
         private void ServerLogWindow_FormClosing(object sender, FormClosingEventArgs e)

@@ -40,14 +40,15 @@
             this.ServerLog.Location = new System.Drawing.Point(0, 1);
             this.ServerLog.Multiline = true;
             this.ServerLog.Name = "ServerLog";
+            this.ServerLog.ReadOnly = true;
             this.ServerLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ServerLog.Size = new System.Drawing.Size(272, 245);
+            this.ServerLog.Size = new System.Drawing.Size(312, 275);
             this.ServerLog.TabIndex = 0;
             // 
             // Stop
             // 
             this.Stop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Stop.Location = new System.Drawing.Point(190, 252);
+            this.Stop.Location = new System.Drawing.Point(237, 282);
             this.Stop.Name = "Stop";
             this.Stop.Size = new System.Drawing.Size(75, 23);
             this.Stop.TabIndex = 1;
@@ -59,7 +60,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(277, 282);
+            this.ClientSize = new System.Drawing.Size(324, 312);
             this.Controls.Add(this.Stop);
             this.Controls.Add(this.ServerLog);
             this.Name = "ServerLogWindow";

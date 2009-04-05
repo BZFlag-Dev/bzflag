@@ -37,6 +37,8 @@ namespace StartBZFS
         public GameMode mode = GameMode.FFA;
         public RabbitMode rabbitMode = RabbitMode.ScoreBased;
 
+        public string password = string.Empty;
+
         public GameEndType endType = GameEndType.Never;
         public int endValue = -1;
 
@@ -54,7 +56,7 @@ namespace StartBZFS
         public int port = 5154;
 
         public int shots = 1;
-        public int debugLevel = 3;
+        public int debugLevel = 0;
 
         public bool goodFlags = false;
         public bool badFlags = false;
@@ -92,6 +94,9 @@ namespace StartBZFS
         public void buildConfig(FileStream stream)
         {
             StreamWriter sw = new StreamWriter(stream);
+
+            if (password != string.Empty)
+                sw.WriteLine("-password " + password);
 
             if (worldfile != string.Empty)
                 sw.WriteLine("-world \"" + worldfile + "\"");

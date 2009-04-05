@@ -88,7 +88,6 @@ namespace StartBZFS
             LogScaner logWriterErr = new LogScaner(serverProc.StandardError);
 
             logWindow.addText("Server Started");
-            // logWindow.addText("Loging dosn't work yet, so deal");
 
             Thread stdOutThread = new Thread(new ThreadStart(logWriterStd.read));
             Thread stdErrThread = new Thread(new ThreadStart(logWriterErr.read));

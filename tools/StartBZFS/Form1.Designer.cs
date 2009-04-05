@@ -83,6 +83,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.Start = new System.Windows.Forms.Button();
             this.RunInBackground = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.Password = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -676,7 +678,7 @@
             "2",
             "3",
             "4"});
-            this.LogLevel.Location = new System.Drawing.Point(298, 330);
+            this.LogLevel.Location = new System.Drawing.Point(331, 335);
             this.LogLevel.Name = "LogLevel";
             this.LogLevel.Size = new System.Drawing.Size(44, 21);
             this.LogLevel.TabIndex = 3;
@@ -685,7 +687,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(218, 335);
+            this.label4.Location = new System.Drawing.Point(251, 340);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(74, 13);
             this.label4.TabIndex = 2;
@@ -706,22 +708,39 @@
             // 
             this.RunInBackground.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.RunInBackground.AutoSize = true;
-            this.RunInBackground.Checked = true;
-            this.RunInBackground.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.RunInBackground.Enabled = false;
-            this.RunInBackground.Location = new System.Drawing.Point(355, 334);
+            this.RunInBackground.Location = new System.Drawing.Point(388, 338);
             this.RunInBackground.Name = "RunInBackground";
-            this.RunInBackground.Size = new System.Drawing.Size(117, 17);
+            this.RunInBackground.Size = new System.Drawing.Size(84, 17);
             this.RunInBackground.TabIndex = 4;
-            this.RunInBackground.Text = "Run in background";
+            this.RunInBackground.Text = "Background";
             this.RunInBackground.UseVisualStyleBackColor = true;
+            this.RunInBackground.CheckedChanged += new System.EventHandler(this.RunInBackground_CheckedChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(91, 338);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(48, 13);
+            this.label12.TabIndex = 5;
+            this.label12.Text = "Pasword";
+            // 
+            // Password
+            // 
+            this.Password.Location = new System.Drawing.Point(145, 337);
+            this.Password.Name = "Password";
+            this.Password.PasswordChar = '*';
+            this.Password.Size = new System.Drawing.Size(100, 20);
+            this.Password.TabIndex = 6;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(565, 370);
+            this.Controls.Add(this.Password);
             this.Controls.Add(this.RunInBackground);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.Start);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.LogLevel);
@@ -731,7 +750,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "StartBZFS v0.0.2";
+            this.Text = "StartBZFS v0.0.3";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -810,6 +829,8 @@
         private System.Windows.Forms.CheckBox RandomHeight;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox PublicDescription;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox Password;
     }
 }
 
