@@ -42,7 +42,9 @@ namespace StartBZFS
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.CheckFileExists = true;
             ofd.Multiselect = false;
-            ofd.FileName = Prefrences.FindServer(configDir).FullName;
+            if (ServerPath.Text != string.Empty)
+                ofd.InitialDirectory = Path.GetDirectoryName(ServerPath.Text);
+            ofd.FileName = "bzfs";
             if (ofd.ShowDialog() == DialogResult.OK)
                 ServerPath.Text = ofd.FileName;
         }
@@ -57,7 +59,6 @@ namespace StartBZFS
             }
             else
                 WorldPath.Text = worldDir.FullName;
-
         }
 
         private void BrowseWorld_Click(object sender, EventArgs e)
@@ -66,9 +67,11 @@ namespace StartBZFS
             ofd.Multiselect = false;
             ofd.CheckFileExists = true;
             ofd.Filter = "BZFlag Map files (*.bzw)|*.bzw|All files (*.*)|*.*";
-            ofd.FileName = Path.Combine(Prefrences.FindServer(configDir).FullName,"*.bzw");
+            if (WorldPath.Text != string.Empty)
+                ofd.InitialDirectory = Path.GetDirectoryName(WorldPath.Text);
+            ofd.FileName = "*.bzw";
             if (ofd.ShowDialog() == DialogResult.OK)
-                ServerPath.Text = Path.GetDirectoryName(ofd.FileName);
+                WorldPath.Text = Path.GetDirectoryName(ofd.FileName);
         }
 
         private void OK_Click(object sender, EventArgs e)
