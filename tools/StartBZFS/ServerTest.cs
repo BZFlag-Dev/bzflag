@@ -11,9 +11,42 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 namespace StartBZFS
 {
+    public class SocketListener
+    {
+        TcpListener tcpListener;
+
+        byte[] buffer = new byte[4];
+
+        public SocketListener (int port)
+        {
+            tcpListener = new TcpListener(IPAddress.Any, port);
+
+            tcpListener.Start(32);
+        }
+
+        public bool isCool ()
+        {
+            return buffer[0] == '1';
+        }
+
+        public void run ()
+        {
+            TcpClient client = tcpListener.AcceptTcpClient();
+
+            NetworkStream stream = client.GetStream();
+            stream.Read(buffer, 0, 4);
+
+            if (tcpListener.Pending())
+            {
+
+            }
+        }
+    }
+
     public partial class ServerTest : Form
     {
         public string address = string.Empty;
@@ -45,10 +78,17 @@ namespace StartBZFS
             else
                 port = 5154;
 
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 
             LogLine("Contacting");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+
+
+            SocketListener listener = new SocketListener(port);
+
+            Thread socketThread = new Thread(new ThreadStart(listener.run));
+            socketThread.Start();
+
+
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             LogLine("Contacted");
 
@@ -61,6 +101,10 @@ namespace StartBZFS
                 LogLine(line);
                 Application.DoEvents();
             }
+
+            socketThread.Abort();
+            if (!listener.isCool())
+                LogLine("Listener received no data");
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
