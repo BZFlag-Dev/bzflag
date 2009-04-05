@@ -71,7 +71,7 @@ LuaWorld::LuaWorld()
             LUA_WORLD_GAME_ORDER,
             LUA_WORLD_DRAW_WORLD_ORDER,
             LUA_WORLD_DRAW_SCREEN_ORDER,
-            true, false, true)
+            true, World::getWorld()->luaWorldRequired(), true)
 {
 	luaWorld = this;
 

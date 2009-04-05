@@ -1628,6 +1628,9 @@ bool CI_WorldFinalized::execute(bz_EventData* /*eventData*/)
   if (!PushCallIn(2)) {
     return false;
   }
+  // FIXME -- make sure this call-in is registered if worldBlob is used
+  free(worldBlob);
+  worldBlob = NULL;
   return RunCallIn(0, 0);
 }
 

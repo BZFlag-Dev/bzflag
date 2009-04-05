@@ -31,6 +31,7 @@
 #include "ErrorHandler.h"
 #include "TextUtils.h"
 
+
 #if defined(DEBUG) || defined(_DEBUG)
 // headers needed only for _debugLookups()
 #include <map>
@@ -71,10 +72,11 @@ void _debugLookups(const std::string &name)
   }
 }
 
-#define debugLookups(name) _debugLookups(name)
+#  define debugLookups(name) _debugLookups(name)
 #else
-#define debugLookups(name)
-#endif
+#  define debugLookups(name)
+#endif // defined(DEBUG) || defined(_DEBUG)
+
 
 // initialize the singleton
 template <>
@@ -176,9 +178,9 @@ const std::string StateDatabase::BZDB_REJUMPTIME	= std::string("_rejumpTime");
 const std::string StateDatabase::BZDB_RFIREADVEL	= std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");
 const std::string StateDatabase::BZDB_RFIREADLIFE       = std::string("_rFireAdLife");
-const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME      = std::string("_scoreboardCustomRowName");
-const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN      = std::string("_scoreboardCustomRowLen");
-const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD        = std::string("_scoreboardCustomRowField");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME = std::string("_scoreboardCustomRowName");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN  = std::string("_scoreboardCustomRowLen");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD   = std::string("_scoreboardCustomRowField");
 const std::string StateDatabase::BZDB_SHIELDFLIGHT      = std::string("_shieldFlight");
 const std::string StateDatabase::BZDB_SHOCKADLIFE       = std::string("_shockAdLife");
 const std::string StateDatabase::BZDB_SHOCKINRADIUS     = std::string("_shockInRadius");
@@ -413,9 +415,21 @@ int StateDatabase::getIntClamped(const std::string& name,
 }
 
 
+static float getNaN()
+{
+  // ugly hack, since gcc 2.95 doesn't have <limits>
+  float NaN;
+  memset(&NaN, 0xff, sizeof(float));
+  return NaN;
+}
+
+
 float StateDatabase::eval(const std::string& name)
 {
+  // this is to catch recursive definitions
   typedef std::set<std::string> VariableSet;
+  static VariableSet variables;
+
   debugLookups(name);
 
   EvalMap::const_iterator cit = evalCache.find(name);
@@ -423,40 +437,29 @@ float StateDatabase::eval(const std::string& name)
     return cit->second;
   }
 
-  //this is to catch recursive definitions
-  static VariableSet variables;
-
-  // ugly hack, since gcc 2.95 doesn't have <limits>
-  float NaN;
-  memset(&NaN, 0xff, sizeof(float));
-
   if (variables.find(name) != variables.end()) {
-    return NaN;
+    return getNaN();
   }
 
   VariableSet::iterator ins_it = variables.insert(name).first;
 
   Map::const_iterator index = items.find(name);
-  if (index == items.end() || !index->second.isSet || index->second.value.empty()) {
+  if ((index == items.end()) ||
+      !index->second.isSet || index->second.value.empty()) {
     variables.erase(ins_it);
-    return NaN;
+    return getNaN();
   }
 
-  Expression pre, inf;
-  std::string value = index->second.value;
-  if (!value.size()) {
-    variables.erase(ins_it);
-    return NaN;
-  }
+  Expression infix;
+  std::string input = index->second.value;
+  input >> infix;
 
-  value >> inf;
-  pre = infixToPrefix(inf);
-  float retn = evaluate(pre);
-  evalCache[name] = retn;
+  Expression prefix = infixToPrefix(infix);
+  const float value = evaluate(prefix);
+  evalCache[name] = value;
 
   variables.erase(ins_it);
-
-  return retn;
+  return value;
 }
 
 

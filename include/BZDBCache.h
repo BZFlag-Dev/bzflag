@@ -16,74 +16,144 @@
 // implementation headers
 #include "StateDatabase.h"
 
+#include <string>
+
+
+namespace BZDB_Eval {
+  template <typename T> inline T eval(const std::string&);
+  template <> inline int         eval(const std::string& n) { return BZDB.evalInt(n); }
+  template <> inline bool        eval(const std::string& n) { return BZDB.isTrue(n);  }
+  template <> inline float       eval(const std::string& n) { return BZDB.eval(n);    }
+  template <> inline std::string eval(const std::string& n) { return BZDB.get(n);     }
+}
+
+
 class BZDBCache
 {
-public:
-	static void init();
+  public:
+    static void init();
 
-	static bool  displayMainFlags;
-	static bool  blend;
-	static bool  texture;
-	static bool  shadows;
-	static bool  stencilShadows;
-	static bool  zbuffer;
-	static bool  tesselation;
-	static bool  lighting;
-	static bool  smooth;
-	static bool  colorful;
-	static int   flagChunks;
-	static bool  animatedTreads;
-	static int   radarStyle;
-	static float radarTankPixels;
-	static float shadowAlpha;
-	static bool  leadingShotLine;
-	static bool  showShotGuide;
-	static int   linedRadarShots;
-	static int   sizedRadarShots;
-	static float shotLength;
-	static float pulseRate;
-	static float pulseDepth;
-	static bool  showCollisionGrid;
-	static bool  showCullingGrid;
-	static int   maxFlagLOD;
-	static int   vsync;
+    /** public method to update cached variable
+        has to be called at best opportunity
+        (e.g. at beginnig of main loop)
+     */
+    static void update();
 
-	static bool drawCelestial;
-	static bool drawClouds;
-	static bool drawGround;
-	static bool drawGroundLights;
-	static bool drawMountains;
-	static bool drawSky;
+  public:
+    // prohibit external write access
+    template <class T>
+    class ReadOnly {
+      friend class BZDBCache;
+      public:
+        inline operator const T&() const { return data; }
+      private:
+        ReadOnly() {}
+        ReadOnly& operator=(const T& value) { data = value; return *this; }
+      private:
+        ReadOnly(const ReadOnly&);
+        ReadOnly& operator=(const ReadOnly&);
+      private:
+        T data;
+    };
 
-	static float maxLOD;
-	static float worldSize;
-	static float radarLimit;
-	static float gravity;
-	static float tankWidth;
-	static float tankLength;
-	static float tankHeight;
-	static float tankSpeed;
-	static float tankRadius;
-	static float flagRadius;
-	static float flagPoleSize;
-	static float flagPoleWidth;
+    // the basics types
+    typedef ReadOnly<int>         Int;
+    typedef ReadOnly<bool>        Bool;
+    typedef ReadOnly<float>       Float;
+    typedef ReadOnly<std::string> String;
 
-	static float freezeTagRadius;
-	static float collisionLimit;
-	static float dmzWidth;
+  public:
+    static Bool  displayMainFlags;
+    static Bool  blend;
+    static Bool  texture;
+    static Bool  shadows;
+    static Bool  stencilShadows;
+    static Bool  zbuffer;
+    static Bool  tesselation;
+    static Bool  lighting;
+    static Bool  smooth;
+    static Bool  colorful;
+    static Int   flagChunks;
+    static Bool  animatedTreads;
+    static Int   radarStyle;
+    static Float radarTankPixels;
+    static Float shadowAlpha;
+    static Bool  leadingShotLine;
+    static Bool  showShotGuide;
+    static Int   linedRadarShots;
+    static Int   sizedRadarShots;
+    static Float shotLength;
+    static Float pulseRate;
+    static Float pulseDepth;
+    static Bool  showCollisionGrid;
+    static Bool  showCullingGrid;
+    static Int   maxFlagLOD;
+    static Int   vsync;
 
-	static float hudGUIBorderOpacityFactor;
+    static Bool  drawCelestial;
+    static Bool  drawClouds;
+    static Bool  drawGround;
+    static Bool  drawGroundLights;
+    static Bool  drawMountains;
+    static Bool  drawSky;
 
-public:
-  /** public method to update cached variable
-      has to be called at best opportunity
-      (e.g. at beginnig of main loop)
-   */
-  static void update();
+    static Float maxLOD;
+    static Float worldSize;
+    static Float radarLimit;
+    static Float gravity;
+    static Float tankWidth;
+    static Float tankLength;
+    static Float tankHeight;
+    static Float tankSpeed;
+    static Float tankRadius;
+    static Float flagRadius;
+    static Float flagPoleSize;
+    static Float flagPoleWidth;
 
-private:
-	static void clientCallback(const std::string &name, void *);
-	static void serverCallback(const std::string &name, void *);
+    static Float freezeTagRadius;
+    static Float collisionLimit;
+    static Float dmzWidth;
+
+    static Float hudGUIBorderOpacityFactor;
+
+  private:
+    static void clientCallback(const std::string &name, void *);
+    static void serverCallback(const std::string &name, void *);
+
+  public:
+    template <typename T>
+    class static_hook {
+      public:
+        static_hook(const std::string& _name) : name(_name) {
+          update();
+          BZDB.addCallback(name, callback, this);
+        }
+
+        ~static_hook() {
+          BZDB.removeCallback(name, callback, this);
+        }
+
+        operator const T&() const { return data; }
+        const T& getData()  const { return data; }
+
+        const std::string& getName() const { return name; }
+
+      private: /* no copying */
+        static_hook(const static_hook&);
+        static_hook& operator=(const static_hook&);
+
+      private:
+        void update() {
+          data = BZDB_Eval::eval<T>(name);
+        }
+        static void callback(const std::string& /*name*/, void* ptr) {
+          ((static_hook*)ptr)->update();
+        }
+
+      private:
+        const std::string name;
+        T data;
+    };
 };
 
 
@@ -92,39 +162,11 @@ private:
 // and only when the bzdb variable is not being used
 // in several different files.
 //
+typedef BZDBCache::static_hook<int>         BZDB_int;
+typedef BZDBCache::static_hook<bool>        BZDB_bool;
+typedef BZDBCache::static_hook<float>       BZDB_float;
+typedef BZDBCache::static_hook<std::string> BZDB_string;
 
-#define BZDB_VALUE_CLASS(className, type, evalFunc)                  \
-  class className {                                                  \
-    public:                                                          \
-      className(const std::string& _name) : name(_name) {            \
-        update();                                                    \
-        BZDB.addCallback(name, callback, this);                      \
-      }                                                              \
-      ~className() {                                                 \
-        BZDB.removeCallback(name, callback, this);                   \
-      }                                                              \
-      operator       const type&() const { return data; }            \
-      const type&        getData() const { return data; }            \
-      const std::string& getName() const { return name; }            \
-    private: /* no copying */                                        \
-      className(const className&);                                   \
-      className& operator=(const className&);                        \
-    private:                                                         \
-      void update() {                                                \
-        data = BZDB.evalFunc(name);                                  \
-      }                                                              \
-      static void callback(const std::string& /*name*/, void* ptr) { \
-        ((className*)ptr)->update();                                 \
-      }                                                              \
-    private:                                                         \
-      std::string name;                                              \
-      type data;                                                     \
-  };
-
-BZDB_VALUE_CLASS(BZDB_int,    int,         evalInt)
-BZDB_VALUE_CLASS(BZDB_bool,   bool,        isTrue)
-BZDB_VALUE_CLASS(BZDB_float,  float,       eval)
-BZDB_VALUE_CLASS(BZDB_string, std::string, get)
 
 
 #endif

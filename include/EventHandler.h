@@ -203,8 +203,7 @@ class EventHandler
 
   private:
     void SetupEvent(const std::string& ciName, EventClientList* list,
-                    int orderType, bool reversed, bool reentrant,
-                    int propertyBits);
+                    int orderType, int propertyBits);
     bool CanUseEvent(EventClient* ec, const EventInfo& eInfo) const;
 
   private:
@@ -370,6 +369,8 @@ EC_LOOP_0_PARAM(GLContextFree)
 EC_LOOP_0_PARAM(GLUnmapped)
 
 
+#undef EC_LOOP_5_PARAM
+#undef EC_LOOP_4_PARAM
 #undef EC_LOOP_3_PARAM
 #undef EC_LOOP_2_PARAM
 #undef EC_LOOP_1_PARAM
