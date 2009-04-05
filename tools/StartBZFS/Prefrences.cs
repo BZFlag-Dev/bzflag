@@ -8,16 +8,16 @@ namespace StartBZFS
 {
     public class Prefrences
     {
-        private static bool IsWinddows()
+        public static bool IsWinddows()
         {
-            return Environment.OSVersion.Platform == PlatformID.Win32Windows;
+            return Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT;
         }
-        private static bool IsUnix()
+        public static bool IsUnix()
         {
             return Environment.OSVersion.Platform == PlatformID.Unix;
         }
 
-        private static bool IsOSX()
+        public static bool IsOSX()
         {
             return Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform != PlatformID.Win32Windows;
         }
