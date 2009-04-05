@@ -28,6 +28,11 @@ namespace StartBZFS
             tcpListener.Start(32);
         }
 
+        public void close ()
+        {
+            tcpListener.Stop();
+        }
+
         public bool isCool ()
         {
             return buffer[0] == '1';
@@ -103,8 +108,11 @@ namespace StartBZFS
             }
 
             socketThread.Abort();
+            listener.close();
             if (!listener.isCool())
                 LogLine("Listener received no data");
+
+
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
