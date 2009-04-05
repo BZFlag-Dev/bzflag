@@ -1,0 +1,4 @@
+; GDFExampleBinary.def
+;
+LIBRARY    "BZFlagGDF"
+EXPORTS
