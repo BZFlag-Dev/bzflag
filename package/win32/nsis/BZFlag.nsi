@@ -23,6 +23,11 @@
 ;Include Modern UI
 
   !include "MUI.nsh"
+  
+;--------------------------------
+;Include OS version detection
+
+  !include "WinVer.nsh"
 
 ;--------------------------------
 ;Include Game Explorer script (for Vista integration)
@@ -322,23 +327,12 @@ SectionEnd
 
 Function .onInit
   ;Disable the Games Explorer option if not supported by this OS.
-  
-  ; Check if we have Vista or later
-  ClearErrors
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-  IfErrors Unknown
-  StrCpy $0 $0 1
-  IntCmp 6 $0 VistaOrHigher VistaOrHigher
-  
-  ;Unable to determine OS version. Disable just in case.
-  Unknown:
-  SectionGetFlags ${GameExplorer} $0
-  IntOp $0 $0 & ${SECTION_OFF}
-  IntOp $0 $0 | ${SF_RO}
-  SectionSetFlags ${GameExplorer} $0
-  
-  VistaOrHigher:
-  
+  ${IfNot} ${AtLeastWinVista}
+    SectionGetFlags ${GameExplorer} $0
+    IntOp $0 $0 & ${SECTION_OFF}
+    IntOp $0 $0 | ${SF_RO}
+    SectionSetFlags ${GameExplorer} $0
+  ${EndIf}
 FunctionEnd
 
 
