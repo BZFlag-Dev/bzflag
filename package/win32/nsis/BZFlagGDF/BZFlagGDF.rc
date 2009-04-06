@@ -14,11 +14,11 @@
 
 // This stuff doesn't seem to be necessary, and this header isn't available
 // with the Express Edition of Visual C++.
-//#define APSTUDIO_READONLY_SYMBOLS
+#define APSTUDIO_READONLY_SYMBOLS
 
-//#include <afxres.h>
+#include <afxres.h>
 
-//#undef APSTUDIO_READONLY_SYMBOLS
+#undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
 // Neutral Resources
