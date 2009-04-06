@@ -95,6 +95,9 @@ namespace StartBZFS
         {
             StreamWriter sw = new StreamWriter(stream);
 
+            if (rico)
+                sw.WriteLine("+r");
+
             if (password != string.Empty)
                 sw.WriteLine("-password " + password);
 
