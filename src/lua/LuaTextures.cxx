@@ -608,18 +608,6 @@ LuaTextureObj::LuaTextureObj(GLenum _target, GLenum _format,
 		return;
 	}
 
-/*
-	if (data != NULL) {
-		const int pixelSize = GetPixelSize(dataFormat, dataType);
-		if (pixelSize < 0) {
-			luaL_error(L, "unknown data format / type");
-		}
-		if (dataSize < (pixelSize * xsize * ysize * zsize)) {
-			luaL_error(L, "not enough data");
-		}
-	}
-*/
-
 	if (!OpenGLPassState::PushAttrib(GL_TEXTURE_BIT)) {
 		return; // exceeded the attrib stack depth
 	}

@@ -389,24 +389,25 @@ bool LuaHandle::PushCallIn(int ciCode)
 bool LuaHandle::AddBasicCalls()
 {
 	lua_newtable(L); {
-		HSTR_PUSH_CFUNC(L, "Reload",             ScriptReload);
-		HSTR_PUSH_CFUNC(L, "Disable",            ScriptDisable);
+		HSTR_PUSH_CFUNC(L, "Reload",        ScriptReload);
+		HSTR_PUSH_CFUNC(L, "Disable",       ScriptDisable);
 
-		HSTR_PUSH_CFUNC(L, "GetName",            ScriptGetName);
-		HSTR_PUSH_CFUNC(L, "GetFullRead",        ScriptGetFullRead);
-		HSTR_PUSH_CFUNC(L, "GetInputCtrl",       ScriptGetInputCtrl);
+		HSTR_PUSH_CFUNC(L, "GetID",         ScriptGetID);
+		HSTR_PUSH_CFUNC(L, "GetName",       ScriptGetName);
+		HSTR_PUSH_CFUNC(L, "GetFullRead",   ScriptGetFullRead);
+		HSTR_PUSH_CFUNC(L, "GetInputCtrl",  ScriptGetInputCtrl);
 
-		HSTR_PUSH_CFUNC(L, "GetCallInInfo",      ScriptGetCallInInfo);
-		HSTR_PUSH_CFUNC(L, "CanUseCallIn",       ScriptCanUseCallIn);
-		HSTR_PUSH_CFUNC(L, "SetCallIn",          ScriptSetCallIn);
+		HSTR_PUSH_CFUNC(L, "GetCallInInfo", ScriptGetCallInInfo);
+		HSTR_PUSH_CFUNC(L, "CanUseCallIn",  ScriptCanUseCallIn);
+		HSTR_PUSH_CFUNC(L, "SetCallIn",     ScriptSetCallIn);
 
-		HSTR_PUSH_CFUNC(L, "GetDevMode",         ScriptGetDevMode);
-		HSTR_PUSH_CFUNC(L, "GetGLOBALS",         ScriptGetGLOBALS);
-		HSTR_PUSH_CFUNC(L, "GetCALLINS",         ScriptGetCALLINS);
-		HSTR_PUSH_CFUNC(L, "GetREGISTRY",        ScriptGetREGISTRY);
+		HSTR_PUSH_CFUNC(L, "GetDevMode",    ScriptGetDevMode);
+		HSTR_PUSH_CFUNC(L, "GetGLOBALS",    ScriptGetGLOBALS);
+		HSTR_PUSH_CFUNC(L, "GetCALLINS",    ScriptGetCALLINS);
+		HSTR_PUSH_CFUNC(L, "GetREGISTRY",   ScriptGetREGISTRY);
 
-		HSTR_PUSH_CFUNC(L, "PrintPointer",       ScriptPrintPointer);
-		HSTR_PUSH_CFUNC(L, "PrintGCInfo",        ScriptPrintGCInfo);
+		HSTR_PUSH_CFUNC(L, "PrintPointer",  ScriptPrintPointer);
+		HSTR_PUSH_CFUNC(L, "PrintGCInfo",   ScriptPrintGCInfo);
 	}
 	lua_setglobal(L, "script");
 
@@ -460,6 +461,34 @@ int LuaHandle::ScriptPrintGCInfo(lua_State* L)
 
 
 //============================================================================//
+
+int LuaHandle::ScriptGetID(lua_State* L)
+{
+	if (lua_gettop(L) == 0) {
+		lua_pushinteger(L, activeHandle->GetScriptID());
+	}		
+	else if (lua_israwstring(L, 1)) {
+		const string key = lua_tostring(L, 1);
+		if (key == "LuaUser") {
+			lua_pushinteger(L, LUA_USER_SCRIPT_ID);
+		}
+		else if (key == "LuaBzOrg") {
+			lua_pushinteger(L, LUA_BZORG_SCRIPT_ID);
+		}
+		else if (key == "LuaWorld") {
+			lua_pushinteger(L, LUA_WORLD_SCRIPT_ID);
+		}
+		else {
+			return 0;
+		}
+	}
+	else {
+		luaL_error(L, "invalid argument");
+	}
+	return 1;
+}
+
+
 
 int LuaHandle::ScriptGetName(lua_State* L)
 {

@@ -207,6 +207,7 @@ class LuaHandle : public EventClient
 		static int ScriptReload(lua_State* L);
 		static int ScriptDisable(lua_State* L);
 
+		static int ScriptGetID(lua_State* L);
 		static int ScriptGetName(lua_State* L);
 		static int ScriptGetFullRead(lua_State* L);
 		static int ScriptGetInputCtrl(lua_State* L);

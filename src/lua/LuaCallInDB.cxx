@@ -104,6 +104,7 @@ bool LuaCallInDB::Init()
 	// singleScript
 	const char* ANY_SCRIPT      = "";
 //	const char* ONLY_LuaUser    = "LuaUser";
+//	const char* ONLY_LuaBzOrg   = "LuaBzOrg";
 //	const char* ONLY_LuaWorld   = "LuaWorld";
 
 #define ADD_CI(n, bits, retType, singleScript) \
@@ -122,7 +123,7 @@ bool LuaCallInDB::Init()
 	// EventHandler managed call-ins //
 	///////////////////////////////////
 
-	ADD_CI(Shutdown, NO_REQS, BASIC, ANY_SCRIPT);
+	ADD_CI(Shutdown, NO_REQS, BASIC, ANY_SCRIPT); /* custom call-in */
 
 	ADD_CI(Update, NO_REQS, BASIC, ANY_SCRIPT);
 
@@ -130,7 +131,7 @@ bool LuaCallInDB::Init()
 
 	ADD_CI(CommandFallback, NO_REQS, FIRST_TRUE, ANY_SCRIPT);
 
-	ADD_CI(RecvCommand, NO_REQS, FIRST_TRUE, ANY_SCRIPT);
+	ADD_CI(RecvCommand, NO_REQS, FIRST_TRUE, ANY_SCRIPT); /* custom call-in */
 	ADD_CI(RecvChatMsg, NO_REQS, FIRST_TRUE, ANY_SCRIPT);
 	ADD_CI(RecvLuaData, NO_REQS, FIRST_TRUE, ANY_SCRIPT);
 
@@ -160,7 +161,7 @@ bool LuaCallInDB::Init()
 	ADD_CI(FlagTransferred, NO_REQS, BASIC, ANY_SCRIPT);
 
 	ADD_CI(GLResize,   NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(GLReload,   NO_REQS, BASIC, ANY_SCRIPT);
+	ADD_CI(GLReload,   NO_REQS, BASIC, ANY_SCRIPT);  /* custom rename */
 	ADD_CI(GLUnmapped, NO_REQS, BASIC, ANY_SCRIPT);
 
 	ADD_CI(DrawGenesis,     NO_REQS, BASIC, ANY_SCRIPT);
@@ -172,8 +173,8 @@ bool LuaCallInDB::Init()
 	ADD_CI(DrawScreen,      NO_REQS, BASIC, ANY_SCRIPT);
 	ADD_CI(DrawRadar,       NO_REQS, BASIC, ANY_SCRIPT);
 
-	ADD_CI(GotGfxBlock,  NO_REQS, BASIC, ANY_SCRIPT);
-	ADD_CI(LostGfxBlock, NO_REQS, BASIC, ANY_SCRIPT);
+	ADD_CI(GotGfxBlock,  NO_REQS, BASIC, ANY_SCRIPT); /* custom call-in */
+	ADD_CI(LostGfxBlock, NO_REQS, BASIC, ANY_SCRIPT); /* custom call-in */
 
 	ADD_CI(KeyPress,     REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
 	ADD_CI(KeyRelease,   REQ_INPUT_CTRL, TAKEN_CONTINUE, ANY_SCRIPT);
