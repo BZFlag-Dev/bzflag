@@ -76,7 +76,10 @@ namespace StartBZFS
 
             serverProc.StartInfo.Arguments = args;// +redirectCommand(tempLogiFile);
             serverProc.StartInfo.FileName = command;
-            serverProc.StartInfo.WorkingDirectory = Path.GetDirectoryName(command);
+            if (!Prefrences.IsOSX())
+                serverProc.StartInfo.WorkingDirectory = Path.GetDirectoryName(command);
+        //    else
+          //      serverProc.StartInfo.WorkingDirectory = Path.GetDirectoryName(command);
 
             serverProc.StartInfo.RedirectStandardError = true;
             serverProc.StartInfo.RedirectStandardOutput = true;

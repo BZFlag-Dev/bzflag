@@ -41,6 +41,7 @@ namespace StartBZFS
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.CheckFileExists = true;
+            ofd.AutoUpgradeEnabled = true;
             ofd.Multiselect = false;
             if (ServerPath.Text != string.Empty)
                 ofd.InitialDirectory = Path.GetDirectoryName(ServerPath.Text);

@@ -592,7 +592,7 @@
             this.groupBox1.Controls.Add(this.ServerPort);
             this.groupBox1.Location = new System.Drawing.Point(324, 150);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(214, 133);
+            this.groupBox1.Size = new System.Drawing.Size(214, 139);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Address";
@@ -718,6 +718,7 @@
             // 
             // label12
             // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(91, 338);
             this.label12.Name = "label12";
@@ -727,6 +728,8 @@
             // 
             // Password
             // 
+            this.Password.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.Password.Location = new System.Drawing.Point(145, 337);
             this.Password.Name = "Password";
             this.Password.PasswordChar = '*';
@@ -750,7 +753,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "StartBZFS v0.0.3";
+            this.Text = "StartBZFS v0.0.4";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
