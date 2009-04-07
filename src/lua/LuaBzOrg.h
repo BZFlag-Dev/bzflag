@@ -3,6 +3,8 @@
 
 #include "LuaHandle.h"
 
+#include <string>
+
 
 class LuaBzOrg : public LuaHandle
 {
@@ -15,8 +17,10 @@ class LuaBzOrg : public LuaHandle
 		static bool IsActive();
 
 	private:
-		LuaBzOrg(const char* code, int length);
+		LuaBzOrg(const std::string& code, const std::string& url);
 		~LuaBzOrg();
+
+	private:
 };
 
 

@@ -177,9 +177,10 @@ class LuaHandle : public EventClient
 			}
 		}
 
-		virtual bool        ExecSourceCode(const std::string& sourceCode);
 		virtual std::string LoadSourceCode(const std::string& sourceFile,
 		                                   const std::string& sourceModes);
+		virtual bool ExecSourceCode(const std::string& sourceCode,
+		                            const std::string& sourceLabel);
 
 		bool AddBasicCalls();
 		bool PushLib(const char* name, bool (*entriesFunc)(lua_State*));

@@ -43,12 +43,18 @@ static class CodeFetch* codeFetch = NULL;
 class CodeFetch : private cURLManager {
 	public:
 		CodeFetch() {
-			setURL(sourceFile);
+			if (!LuaHandle::GetDevMode()) {
+				url = sourceFile;
+			} else {
+				const string bzOrgURL = BZDB.get("luaBzOrgURL");
+				url = bzOrgURL.empty() ? string(sourceFile) : bzOrgURL;
+			}
+			setURL(url);
 			setGetMode();
 			setDeleteOnDone();
 			addHandle();
 			codeFetch = this;
-			LuaLog(1, "LuaBzOrg code fetch started: %s\n", sourceFile);
+			LuaLog(1, "LuaBzOrg code fetch started: %s\n", url.c_str());
 		}
 
 		~CodeFetch() {
@@ -60,14 +66,17 @@ class CodeFetch : private cURLManager {
 				return;
 			}
 			if (!good) {
-				LuaLog(0, "LuaBzOrg code fetch failed: %s\n", sourceFile);
+				LuaLog(0, "LuaBzOrg code fetch failed: %s\n", url.c_str());
 				return;
 			}
-			luaBzOrg = new LuaBzOrg(data, length);
+			luaBzOrg = new LuaBzOrg(string(data, length), url);
 			if (luaBzOrg->L == NULL) {
 				delete luaBzOrg;
 			}
 		}
+
+	private:
+		string url;
 };
 
 
@@ -104,8 +113,9 @@ bool LuaBzOrg::IsActive()
 //============================================================================//
 //============================================================================//
 
-LuaBzOrg::LuaBzOrg(const char* code, int length)
-: LuaHandle("LuaBzOrg", LUA_BZORG_SCRIPT_ID,
+LuaBzOrg::LuaBzOrg(const string& sourceCode, const string& sourceURL)
+: LuaHandle("LuaBzOrg",
+            LUA_BZORG_SCRIPT_ID,
             LUA_BZORG_GAME_ORDER,
             LUA_BZORG_DRAW_WORLD_ORDER,
             LUA_BZORG_DRAW_SCREEN_ORDER,
@@ -137,8 +147,7 @@ LuaBzOrg::LuaBzOrg(const char* code, int length)
 	// register for call-ins
 	eventHandler.AddClient(this);
 
-	const string sourceCode(code, length);
-	if (!ExecSourceCode(sourceCode)) {
+	if (!ExecSourceCode(sourceCode, sourceURL)) {
 		KillLua();
 		return;
 	}

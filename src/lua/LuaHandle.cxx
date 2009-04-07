@@ -209,16 +209,16 @@ string LuaHandle::LoadSourceCode(const string& sourceFile,
 	string code;
 	if (!bzVFS.readFile(sourceFile, modes, code)) {
 		LuaLog(0, "FAILED to load  '%s'  with  '%s'\n",
-		       sourceFile.c_str(), sourceModes.c_str());
+		       sourceFile.c_str(), modes.c_str());
 		return "";
 	}
 	return code;
 }
 
 
-bool LuaHandle::ExecSourceCode(const string& code)
+bool LuaHandle::ExecSourceCode(const string& code, const string& label)
 {
-	int error = luaL_loadbuffer(L, code.c_str(), code.size(), GetName().c_str());
+	int error = luaL_loadbuffer(L, code.c_str(), code.size(), label.c_str());
 
 	if (error != 0) {
 		LuaLog(0, "Lua LoadCode loadbuffer error = %i, %s, %s\n",
@@ -408,6 +408,14 @@ bool LuaHandle::AddBasicCalls()
 
 		HSTR_PUSH_CFUNC(L, "PrintPointer",  ScriptPrintPointer);
 		HSTR_PUSH_CFUNC(L, "PrintGCInfo",   ScriptPrintGCInfo);
+
+		lua_pushliteral(L, "ID");
+		lua_newtable(L); {
+			LuaPushDualPair(L, "LuaUser",  LUA_USER_SCRIPT_ID);
+			LuaPushDualPair(L, "LuaBzOrg", LUA_BZORG_SCRIPT_ID);
+			LuaPushDualPair(L, "LuaWorld", LUA_WORLD_SCRIPT_ID);
+		}
+		lua_rawset(L, -3);
 	}
 	lua_setglobal(L, "script");
 

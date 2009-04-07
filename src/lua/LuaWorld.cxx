@@ -67,7 +67,8 @@ void LuaWorld::FreeHandler()
 //============================================================================//
 
 LuaWorld::LuaWorld()
-: LuaHandle("LuaWorld", LUA_WORLD_SCRIPT_ID,
+: LuaHandle("LuaWorld",
+            LUA_WORLD_SCRIPT_ID,
             LUA_WORLD_GAME_ORDER,
             LUA_WORLD_DRAW_WORLD_ORDER,
             LUA_WORLD_DRAW_SCREEN_ORDER,
@@ -105,7 +106,7 @@ LuaWorld::LuaWorld()
 	// register for call-ins
 	eventHandler.AddClient(this);
 
-	if (!ExecSourceCode(sourceCode)) {
+	if (!ExecSourceCode(sourceCode, sourceFile)) {
 		KillLua();
 		return;
 	}

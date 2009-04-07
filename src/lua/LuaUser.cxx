@@ -66,7 +66,8 @@ void LuaUser::FreeHandler()
 //============================================================================//
 
 LuaUser::LuaUser()
-: LuaHandle("LuaUser", LUA_USER_SCRIPT_ID,
+: LuaHandle("LuaUser",
+            LUA_USER_SCRIPT_ID,
             LUA_USER_GAME_ORDER,
             LUA_USER_DRAW_WORLD_ORDER,
             LUA_USER_DRAW_SCREEN_ORDER,
@@ -104,7 +105,7 @@ LuaUser::LuaUser()
 	// register for call-ins
 	eventHandler.AddClient(this);
 
-	if (!ExecSourceCode(sourceCode)) {
+	if (!ExecSourceCode(sourceCode, sourceFile)) {
 		KillLua();
 		return;
 	}
