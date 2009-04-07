@@ -45,7 +45,7 @@ static const int REENTRANT      = (1 << 4);
 
 
 void EventHandler::SetupEvent(const string& eName, EventClientList* list,
-                              int orderType, int bits)
+                              int orderType, LoopType loopType, int bits)
 {
   assert(eventMap.find(eName) == eventMap.end());
   const bool reqFullRead  = ((bits & REQ_FULL_READ)  ? true : false);
@@ -59,12 +59,12 @@ void EventHandler::SetupEvent(const string& eName, EventClientList* list,
 
   eventMap[eName] = EventInfo(eName, list,
                               reqFullRead, reqGameCtrl, reqInputCtrl,
-                              reversed, reentrant);
+                              reversed, reentrant, loopType);
 }
 
 
-#define SETUP_EVENT(name, orderType, bits) \
-  SetupEvent(#name, &list ## name, orderType, bits)
+#define SETUP_EVENT(name, orderType, loopType, bits) \
+  SetupEvent(#name, &list ## name, orderType, loopType, bits)
 
 
 //============================================================================//
@@ -77,70 +77,70 @@ EventHandler::EventHandler()
   const int DrawWorldOrder  = EventClient::DrawWorldOrder;
   const int DrawScreenOrder = EventClient::DrawScreenOrder;
 
-  SETUP_EVENT(Update,            ScriptIDOrder,   0);
-
-  SETUP_EVENT(BZDBChange,        GameStateOrder,  REENTRANT);
-
-  SETUP_EVENT(CommandFallback,   DrawScreenOrder, 0);
-
-  SETUP_EVENT(RecvChatMsg,       ScriptIDOrder,   0);
-  SETUP_EVENT(RecvLuaData,       ScriptIDOrder,   0);
-
-  SETUP_EVENT(ServerJoined,      GameStateOrder,  0);
-  SETUP_EVENT(ServerParted,      GameStateOrder,  0);
-
-  SETUP_EVENT(PlayerAdded,       GameStateOrder,  0);
-  SETUP_EVENT(PlayerRemoved,     GameStateOrder,  0);
-  SETUP_EVENT(PlayerSpawned,     GameStateOrder,  0);
-  SETUP_EVENT(PlayerKilled,      GameStateOrder,  0);
-  SETUP_EVENT(PlayerJumped,      GameStateOrder,  REQ_FULL_READ);
-  SETUP_EVENT(PlayerLanded,      GameStateOrder,  REQ_FULL_READ);
-  SETUP_EVENT(PlayerTeleported,  GameStateOrder,  REQ_FULL_READ);
-  SETUP_EVENT(PlayerTeamChange,  GameStateOrder,  0);
-  SETUP_EVENT(PlayerScoreChange, GameStateOrder,  0);
-
-  SETUP_EVENT(ShotAdded,         GameStateOrder,  REQ_FULL_READ);
-  SETUP_EVENT(ShotRemoved,       GameStateOrder,  REQ_FULL_READ);
-  SETUP_EVENT(ShotRicochet,      GameStateOrder,  REQ_FULL_READ);
-  SETUP_EVENT(ShotTeleported,    GameStateOrder,  REQ_FULL_READ);
-
-  SETUP_EVENT(FlagAdded,         GameStateOrder,  0);
-  SETUP_EVENT(FlagRemoved,       GameStateOrder,  0);
-  SETUP_EVENT(FlagGrabbed,       GameStateOrder,  0);
-  SETUP_EVENT(FlagDropped,       GameStateOrder,  0);
-  SETUP_EVENT(FlagCaptured,      GameStateOrder,  0);
-  SETUP_EVENT(FlagTransferred,   GameStateOrder,  0);
-
-  SETUP_EVENT(GLResize,          DrawScreenOrder, 0);
-  SETUP_EVENT(GLContextInit,     DrawScreenOrder, 0);
-  SETUP_EVENT(GLContextFree,     DrawScreenOrder, 0);
-  SETUP_EVENT(GLUnmapped,        DrawScreenOrder, 0);
-
-  SETUP_EVENT(DrawGenesis,       DrawScreenOrder, REVERSED);
-  SETUP_EVENT(DrawWorldStart,    DrawWorldOrder,  REVERSED);
-  SETUP_EVENT(DrawWorld,         DrawWorldOrder,  REVERSED);
-  SETUP_EVENT(DrawWorldAlpha,    DrawWorldOrder,  REVERSED);
-  SETUP_EVENT(DrawWorldShadow,   DrawWorldOrder,  REVERSED);
-  SETUP_EVENT(DrawScreenStart,   DrawScreenOrder, REVERSED);
-  SETUP_EVENT(DrawScreen,        DrawScreenOrder, REVERSED);
-  SETUP_EVENT(DrawRadar,         DrawScreenOrder, REVERSED);
-
-  SETUP_EVENT(KeyPress,          DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(KeyRelease,        DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(MousePress,        DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseMove,         DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseRelease,      DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseWheel,        DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(IsAbove,           DrawScreenOrder, REQ_INPUT_CTRL);
-  SETUP_EVENT(GetTooltip,        DrawScreenOrder, REQ_INPUT_CTRL);
-
-  SETUP_EVENT(WordComplete,      DrawScreenOrder, REQ_INPUT_CTRL);
-
-  SETUP_EVENT(ForbidSpawn,       GameStateOrder,  REQ_GAME_CTRL);
-  SETUP_EVENT(ForbidJump,        GameStateOrder,  REQ_GAME_CTRL);
-  SETUP_EVENT(ForbidShot,        GameStateOrder,  REQ_GAME_CTRL);
-  SETUP_EVENT(ForbidShotLock,    GameStateOrder,  REQ_GAME_CTRL);
-  SETUP_EVENT(ForbidFlagDrop,    GameStateOrder,  REQ_GAME_CTRL);
+  SETUP_EVENT(Update,            ScriptIDOrder,   Basic,      0);                                   
+                                                                    
+  SETUP_EVENT(BZDBChange,        GameStateOrder,  Basic,     REENTRANT);
+                                                                    
+  SETUP_EVENT(CommandFallback,   DrawScreenOrder, FirstTrue,    0);
+                                                                    
+  SETUP_EVENT(RecvChatMsg,       ScriptIDOrder,   FirstTrue,      0);
+  SETUP_EVENT(RecvLuaData,       ScriptIDOrder,   FirstTrue,      0);
+                                                                    
+  SETUP_EVENT(ServerJoined,      GameStateOrder,  Basic,     0);
+  SETUP_EVENT(ServerParted,      GameStateOrder,  Basic,     0);
+                                                                    
+  SETUP_EVENT(PlayerAdded,       GameStateOrder,  Basic,     0);
+  SETUP_EVENT(PlayerRemoved,     GameStateOrder,  Basic,     0);
+  SETUP_EVENT(PlayerSpawned,     GameStateOrder,  Basic,     0);
+  SETUP_EVENT(PlayerKilled,      GameStateOrder,  Basic,     0);
+  SETUP_EVENT(PlayerJumped,      GameStateOrder,  Basic,     REQ_FULL_READ);
+  SETUP_EVENT(PlayerLanded,      GameStateOrder,  Basic,     REQ_FULL_READ);
+  SETUP_EVENT(PlayerTeleported,  GameStateOrder,  Basic,     REQ_FULL_READ);
+  SETUP_EVENT(PlayerTeamChange,  GameStateOrder,  Basic,     0);
+  SETUP_EVENT(PlayerScoreChange, GameStateOrder,  Basic,     0);
+                                                                    
+  SETUP_EVENT(ShotAdded,         GameStateOrder,  Basic,     REQ_FULL_READ);
+  SETUP_EVENT(ShotRemoved,       GameStateOrder,  Basic,     REQ_FULL_READ);
+  SETUP_EVENT(ShotRicochet,      GameStateOrder,  Basic,     REQ_FULL_READ);
+  SETUP_EVENT(ShotTeleported,    GameStateOrder,  Basic,     REQ_FULL_READ);
+                                                                    
+  SETUP_EVENT(FlagAdded,         GameStateOrder,  Basic,     0);
+  SETUP_EVENT(FlagRemoved,       GameStateOrder,  Basic,     0);
+  SETUP_EVENT(FlagGrabbed,       GameStateOrder,  Basic,     0);
+  SETUP_EVENT(FlagDropped,       GameStateOrder,  Basic,     0);
+  SETUP_EVENT(FlagCaptured,      GameStateOrder,  Basic,     0);
+  SETUP_EVENT(FlagTransferred,   GameStateOrder,  Basic,     0);
+                                                                    
+  SETUP_EVENT(GLResize,          DrawScreenOrder, Basic,    0);
+  SETUP_EVENT(GLContextInit,     DrawScreenOrder, Basic,    0);
+  SETUP_EVENT(GLContextFree,     DrawScreenOrder, Basic,    0);
+  SETUP_EVENT(GLUnmapped,        DrawScreenOrder, Basic,    0);
+                                                                    
+  SETUP_EVENT(DrawGenesis,       DrawScreenOrder, Basic, REVERSED);
+  SETUP_EVENT(DrawWorldStart,    DrawWorldOrder,  Basic, REVERSED);
+  SETUP_EVENT(DrawWorld,         DrawWorldOrder,  Basic, REVERSED);
+  SETUP_EVENT(DrawWorldAlpha,    DrawWorldOrder,  Basic, REVERSED);
+  SETUP_EVENT(DrawWorldShadow,   DrawWorldOrder,  Basic, REVERSED);
+  SETUP_EVENT(DrawScreenStart,   DrawScreenOrder, Basic, REVERSED);
+  SETUP_EVENT(DrawScreen,        DrawScreenOrder, Basic, REVERSED);
+  SETUP_EVENT(DrawRadar,         DrawScreenOrder, Basic, REVERSED);
+                                                                    
+  SETUP_EVENT(KeyPress,          DrawScreenOrder, TakenContinue, REQ_INPUT_CTRL);
+  SETUP_EVENT(KeyRelease,        DrawScreenOrder, TakenContinue, REQ_INPUT_CTRL);
+  SETUP_EVENT(MousePress,        DrawScreenOrder, TakenContinue, REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseMove,         DrawScreenOrder, TakenContinue, REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseRelease,      DrawScreenOrder, TakenContinue, REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseWheel,        DrawScreenOrder, TakenContinue, REQ_INPUT_CTRL);
+  SETUP_EVENT(IsAbove,           DrawScreenOrder, FirstTrue,     REQ_INPUT_CTRL);
+  SETUP_EVENT(GetTooltip,        DrawScreenOrder, FirstString,   REQ_INPUT_CTRL);
+                                                                    
+  SETUP_EVENT(WordComplete,      DrawScreenOrder, Special,        REQ_INPUT_CTRL);
+                                                                    
+  SETUP_EVENT(ForbidSpawn,       GameStateOrder,  FirstTrue,    REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidJump,        GameStateOrder,  FirstTrue,    REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidShot,        GameStateOrder,  FirstTrue,    REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidShotLock,    GameStateOrder,  FirstTrue,    REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidFlagDrop,    GameStateOrder,  FirstTrue,    REQ_GAME_CTRL);
 }
 
 
@@ -301,6 +301,25 @@ bool EventHandler::RemoveEvent(EventClient* ec, const string& ciName)
     return false;
   }
   return it->second.GetList()->remove(ec);
+}
+
+
+//============================================================================//
+//============================================================================//
+
+const char* EventHandler::GetLoopTypeName(LoopType type) const
+{
+  switch (type) {
+    case Basic:         { return "BASIC";          }
+    case Special:       { return "SPECIAL";        }
+    case FirstTrue:     { return "FIRST_TRUE";     }
+    case FirstFalse:    { return "FIRST_FALSE";    }
+    case FirstNumber:   { return "FIRST_NUMBER";   }
+    case FirstString:   { return "FIRST_STRING";   }
+    case BooleanOR:     { return "BOOLEAN_OR";     }
+    case TakenContinue: { return "TAKEN_CONTINUE"; }
+  }
+  return NULL;
 }
 
 

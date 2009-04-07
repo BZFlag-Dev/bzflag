@@ -33,6 +33,18 @@ class LocalCommand;
 class EventHandler
 {
   public:
+    enum LoopType {
+      Basic,
+      Special,
+      FirstTrue,
+      FirstFalse,
+      FirstNumber,
+      FirstString,
+      BooleanOR,
+      TakenContinue
+    };
+
+  public:
     EventHandler();
     ~EventHandler();
 
@@ -63,6 +75,9 @@ class EventHandler
     bool ReqFullRead(const std::string& eventName) const;
     bool ReqGameCtrl(const std::string& eventName) const;
     bool ReqInputCtrl(const std::string& eventName) const;
+
+    LoopType    GetLoopType(const std::string& eventName) const;
+    const char* GetLoopTypeName(LoopType type) const;
 
     /**************************************************************************/
 
@@ -165,13 +180,14 @@ class EventHandler
 
         EventInfo(const std::string& _name, EventClientList* _list,
                   bool _reqFullRead, bool _reqGameCtrl, bool _reqInputCtrl,
-                  bool _reversed, bool _reentrant)
+                  bool _reversed, bool _reentrant, LoopType _loopType)
         : name        (_name)
         , reqFullRead (_reqFullRead)
         , reqGameCtrl (_reqGameCtrl)
         , reqInputCtrl(_reqInputCtrl)
         , reversed    (_reversed)
         , reentrant   (_reentrant)
+        , loopType    (_loopType)
         , list        (_list)
         {}
 
@@ -195,6 +211,7 @@ class EventHandler
         bool reqInputCtrl;
         bool reversed;
         bool reentrant;
+        LoopType loopType;
         EventClientList* list;
     };
 
@@ -203,7 +220,7 @@ class EventHandler
 
   private:
     void SetupEvent(const std::string& ciName, EventClientList* list,
-                    int orderType, int propertyBits);
+                    int orderType, LoopType loopType, int propertyBits);
     bool CanUseEvent(EventClient* ec, const EventInfo& eInfo) const;
 
   private:

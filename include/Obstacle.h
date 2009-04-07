@@ -125,7 +125,7 @@ class Obstacle {
   /** This function prints the obstacle in Alias Wavefront format to the stream */
   virtual void printOBJ(std::ostream&, const std::string&) const { return; }
 
-  /** This function returns the position of this obstacle. */
+  /** This function returns the extents of this obstacle. */
   const Extents& getExtents() const;
 
   /** This function returns the position of this obstacle. */

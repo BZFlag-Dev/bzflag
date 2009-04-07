@@ -95,7 +95,7 @@ bool LuaCallInDB::Init()
 	const char* BASIC          = "BASIC";
 	const char* FIRST_TRUE     = "FIRST_TRUE";
 	const char* TAKEN_CONTINUE = "TAKEN_CONTINUE";
-	const char* FIRST_FALSE    = "FIRST_FALSE";
+//	const char* FIRST_FALSE    = "FIRST_FALSE";
 //	const char* FIRST_NUMBER = "FIRST_NUMBER";
 	const char* FIRST_STRING   = "FIRST_STRING";
 //	const char* BOOLEAN_OR   = "BOOLEAN_OR";
@@ -186,11 +186,11 @@ bool LuaCallInDB::Init()
 	ADD_CI(GetTooltip,   REQ_INPUT_CTRL, FIRST_STRING, ANY_SCRIPT);
 	ADD_CI(WordComplete, REQ_INPUT_CTRL, SPECIAL,      ANY_SCRIPT);
 
-	ADD_CI(ForbidSpawn,    REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
-	ADD_CI(ForbidJump,     REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
-	ADD_CI(ForbidShot,     REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
-	ADD_CI(ForbidShotLock, REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
-	ADD_CI(ForbidFlagDrop, REQ_GAME_CTRL, FIRST_FALSE, ANY_SCRIPT);
+	ADD_CI(ForbidSpawn,    REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
+	ADD_CI(ForbidJump,     REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
+	ADD_CI(ForbidShot,     REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
+	ADD_CI(ForbidShotLock, REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
+	ADD_CI(ForbidFlagDrop, REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
 
 	return true;
 }
