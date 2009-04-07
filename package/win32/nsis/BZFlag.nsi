@@ -15,7 +15,7 @@
   ;out while testing, it speeds
   ;up the installer compile time
   ;Uncomment to reduce installer
-  ;size slightly (around 10%)
+  ;size by ~35%
   SetCompress auto
   SetCompressor /SOLID lzma
 
@@ -23,23 +23,6 @@
 ;Include Modern UI
 
   !include "MUI.nsh"
-  
-;--------------------------------
-;Include OS version detection
-
-  !include "WinVer.nsh"
-
-;--------------------------------
-;Include Game Explorer script (for Vista integration)
-;This is provided with our source tree
-
-  !include "GameExplorer.nsh"
-
-;--------------------------------
-;Include Sections script
-;This is to include the SF_* macros for section manipulation
-
-  !include "Sections.nsh"
 
 ;--------------------------------
 ;Configuration
@@ -73,7 +56,7 @@
 
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP "header.bmp"
-  !define MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
+  !define MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\simple-round2.bmp"
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
 
@@ -320,22 +303,6 @@ Section "Desktop Icon" Desktop
   CreateShortCut "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
 SectionEnd
 
-Section "Game Explorer integration (Vista or later)" GameExplorer
-  ;icon in the Vista Game Explorer
-  SetOutPath $INSTDIR
-SectionEnd
-
-Function .onInit
-  ;Disable the Games Explorer option if not supported by this OS.
-  ${IfNot} ${AtLeastWinVista}
-    SectionGetFlags ${GameExplorer} $0
-    IntOp $0 $0 & ${SECTION_OFF}
-    IntOp $0 $0 | ${SF_RO}
-    SectionSetFlags ${GameExplorer} $0
-  ${EndIf}
-FunctionEnd
-
-
 ;--------------------------------
 ;Descriptions
 
@@ -348,7 +315,6 @@ FunctionEnd
   LangString DESC_BZFlagServer_PluginAPI ${LANG_ENGLISH} "The plugin API is used to compile plugins, and is only need for plugin developers."
   LangString DESC_QuickLaunch ${LANG_ENGLISH} "Adds a shortcut in the Quick Launch toolbar."
   LangString DESC_Desktop ${LANG_ENGLISH} "Adds a shortcut on the desktop."
-  LangString DESC_GameExplorer ${LANG_ENGLISH} "Adds an icon in the Game Explorer (Vista or later)."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -360,7 +326,6 @@ FunctionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_PluginAPI} $(DESC_BZFlagServer_PluginAPI)
     !insertmacro MUI_DESCRIPTION_TEXT ${QuickLaunch} $(DESC_QuickLaunch)
     !insertmacro MUI_DESCRIPTION_TEXT ${Desktop} $(DESC_Desktop)
-    !insertmacro MUI_DESCRIPTION_TEXT ${GameExplorer} $(DESC_GameExplorer)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
