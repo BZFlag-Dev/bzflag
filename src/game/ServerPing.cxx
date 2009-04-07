@@ -23,13 +23,13 @@
 #include "Protocol.h"
 
 
-ServerPing::ServerPing() : fd(-1), recieved(0), samples(4), timeout(1), interval(1)
+ServerPing::ServerPing() : fd(-1), received(0), samples(4), timeout(1), interval(1)
 {
 
 }
 
 ServerPing::ServerPing(const Address& addr, int port, size_t _samples, double _interval, double tms) :
-  fd(-1), recieved(0), samples(_samples), timeout(tms), interval(_interval)
+  fd(-1), received(0), samples(_samples), timeout(tms), interval(_interval)
 {
   saddr.sin_family = AF_INET;
   saddr.sin_port = htons(port);
@@ -73,7 +73,7 @@ int ServerPing::calcLag()
 
 bool ServerPing::done()
 {
-  return (recieved == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
+  return (received == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
 }
 
 void ServerPing::setAddress(const Address& addr, int port)
@@ -102,7 +102,7 @@ void ServerPing::doPings()
     activepings.push_back(pd);
   }
 
-  if (recieved < samples) {
+  if (received < samples) {
     timeval timeo = { 0, 0 }; //is this what I want to do?
     fd_set readset;
 
@@ -124,7 +124,7 @@ void ServerPing::doPings()
       if (code == MsgEchoResponse && len == 1) {
         buf = nboUnpackUByte(buf, tag);
         activepings.at(tag).recvtime = TimeKeeper::getCurrent();
-        ++recieved;
+        ++received;
       }
     }
   } else {

@@ -413,7 +413,7 @@ ServerLink::~ServerLink()
   logDebugMessage(1,"  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
   if (packetsSent != 0)
     logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-  logDebugMessage(1,"  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+  logDebugMessage(1,"  bytes received  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
   logDebugMessage(1,"  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
   if (packetsReceived != 0)
     logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);

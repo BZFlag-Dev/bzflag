@@ -58,7 +58,7 @@ private:
 
   int fd;
 
-  size_t recieved;
+  size_t received;
 
   const size_t samples;
 
