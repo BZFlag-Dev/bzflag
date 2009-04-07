@@ -7139,10 +7139,10 @@ void handlePendingJoins(void)
   }
 
   if (LuaClientScripts::GetDevMode()) {
-    strcpy(startupInfo.callsign, "devlua");
+    strcpy(startupInfo.callsign, "devmode");
     if (strcmp(startupInfo.serverName, "127.0.0.1") != 0) {
       addMessage(NULL,
-        "ABORTING!!!  -- you can only join '127.0.0.1' when using '-devlua'");
+        "ABORTING!!!  -- you can only join '127.0.0.1' when using '-devmode'");
       joinRequested = false;
       return;
     }

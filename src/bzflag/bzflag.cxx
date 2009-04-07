@@ -185,7 +185,7 @@ static void usage()
 		  "  -configdir <config dir name>\n"
 		  "  -d | -debug\n"
 		  "  -date <mm/dd/yyyy>\n"
-		  "  -devlua\n"
+		  "  -devmode\n"
 		  "  {-dir | -directory} <data-directory>\n"
 		  "  -e | -echo\n"
 		  "  -ea | -echoAnsi\n"
@@ -234,7 +234,7 @@ static void parse(int argc, char **argv)
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
     }
-    else if (strcmp(argv[i], "-devlua") == 0) {
+    else if (strcmp(argv[i], "-devmode") == 0) {
       LuaClientScripts::SetDevMode(true);
     }
     else if ((strcmp(argv[i], "-dir") == 0) ||
