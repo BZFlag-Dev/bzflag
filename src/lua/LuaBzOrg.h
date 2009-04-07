@@ -19,8 +19,6 @@ class LuaBzOrg : public LuaHandle
 	private:
 		LuaBzOrg(const std::string& code, const std::string& url);
 		~LuaBzOrg();
-
-	private:
 };
 
 
