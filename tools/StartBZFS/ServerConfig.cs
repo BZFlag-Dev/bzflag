@@ -101,20 +101,6 @@ namespace StartBZFS
             if (password != string.Empty)
                 sw.WriteLine("-password " + password);
 
-            if (worldfile != string.Empty)
-                sw.WriteLine("-world \"" + worldfile + "\"");
-            else
-            {
-                if (teleporters)
-                    sw.WriteLine("-t");
-
-                if(randHeight)
-                    sw.WriteLine("-h");
-
-                if (randRot)
-                    sw.WriteLine("-b");
-            }
-
             if (autoTeam)
                 sw.WriteLine("-autoTeam");
 
@@ -221,6 +207,21 @@ namespace StartBZFS
             {
                 for(int i = 0; i < debugLevel; i++)
                     sw.WriteLine("-d");
+            }
+
+            // write the world last so its' config options overide this
+            if (worldfile != string.Empty)
+                sw.WriteLine("-world \"" + worldfile + "\"");
+            else
+            {
+                if (teleporters)
+                    sw.WriteLine("-t");
+
+                if (randHeight)
+                    sw.WriteLine("-h");
+
+                if (randRot)
+                    sw.WriteLine("-b");
             }
             sw.Close();
         }
