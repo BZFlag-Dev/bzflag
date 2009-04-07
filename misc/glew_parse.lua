@@ -20,6 +20,8 @@ local sortNumeric = false
 
 local desired = {}
 
+local scanDir = '.'
+
 local glew_h = '/usr/include/GL/glew.h'
 
 local outputName
@@ -36,6 +38,7 @@ local function PrintHelp()
   print('  -h         : this help')
   print('  -g <path>  : the path to glew.h')
   print('  -o <path>  : the output filename')
+  print('  -d <path>  : the scan directory')
   print('  -a         : extract all header definitions')
   print('  -s         : align the output text using spaces')
   print('  -n         : numeric sort')
@@ -61,6 +64,17 @@ while (i <= #arg) do
     i = i + 1
     if (arg[i]) then
       outputName = arg[i]
+    else
+      print('missing ' .. a .. ' parameter')
+      os.exit(1)
+    end
+  elseif (a == '-d') then
+    i = i + 1
+    if (arg[i]) then
+      scanDir = arg[i]
+      if (not scanDir:match('/$')) then
+        scanDir = scanDir .. '/'
+      end
     else
       print('missing ' .. a .. ' parameter')
       os.exit(1)
@@ -129,7 +143,11 @@ if (not wantAll) then
     end
   end
 
-  DesiredDir('./')
+  if (not scanDir:match('/$')) then
+    scanDir = scanDir .. '/'
+  end
+
+  DesiredDir(scanDir)
 end
 
 
@@ -179,7 +197,7 @@ for line in input:lines() do
       headers = false
     end
     -- this excludes the extension presence definitions
-    local k, v = line:match('^#define%s*GL_([A-Z0-9_]*)%s*(%S*)\r?$')
+    local k, v = line:match('^#define%s+GL_([%u%d_]*)%s+(%S+)\r?$')
     if (k and v and (wantAll or desired[k])) then
       GL[k] = tonumber(v)
     end
