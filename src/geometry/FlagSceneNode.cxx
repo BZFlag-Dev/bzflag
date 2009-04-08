@@ -47,8 +47,8 @@ static const GLfloat Unit = 0.8f;
 static const GLfloat Width = 1.5f * Unit;
 static const GLfloat Height = Unit;
 
-static const GLfloat specular[4] = {0.3f, 0.3f, 0.3f, 1.0f};
-static const GLfloat emission[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+static const fvec4 specular(0.3f, 0.3f, 0.3f, 1.0f);
+static const fvec4 emission(0.0f, 0.0f, 0.0f, 1.0f);
 
 
 //============================================================================//
@@ -675,10 +675,10 @@ inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 {
   const float* s = getSphere();
   const float* e = renderer.getViewFrustum().getEye();
-  const float* d = renderer.getSunDirection();
+  const fvec3* d = renderer.getSunDirection();
   fvec3 gap, cross;
   vec3sub(gap, s, e);
-  vec3cross(cross, gap, d);
+  vec3cross(cross, gap, *d);
   const float dist = sqrtf(vec3dot(cross, cross));
 
   const float lpp = dist * renderer.getLengthPerPixel();

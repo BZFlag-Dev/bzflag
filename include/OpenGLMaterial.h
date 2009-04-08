@@ -32,15 +32,16 @@
 
 #include "common.h"
 #include "bzfgl.h"
+#include "vectors.h"
 
 class OpenGLMaterial {
   public:
-			OpenGLMaterial();
-			OpenGLMaterial(const GLfloat* specularRGB,
-					const GLfloat* emissiveRGB,
-					GLfloat shininess = 0.0f);
-			OpenGLMaterial(const OpenGLMaterial&);
-			~OpenGLMaterial();
+    OpenGLMaterial();
+    OpenGLMaterial(const fvec4& specularRGB,
+                   const fvec4& emissiveRGB,
+                   GLfloat shininess = 0.0f);
+    OpenGLMaterial(const OpenGLMaterial&);
+    ~OpenGLMaterial();
     OpenGLMaterial&	operator=(const OpenGLMaterial&);
 
     bool		operator==(const OpenGLMaterial&) const;
@@ -63,13 +64,13 @@ class OpenGLMaterial {
 	void		ref();
 	void		unref();
 	void		execute();
-	static Rep*	getRep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
+	static Rep*	getRep(const fvec4& specular,
+	                       const fvec4& emissive,
+	                       GLfloat shininess);
       private:
-			Rep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
+        Rep(const fvec4& specular,
+            const fvec4& emissive,
+            GLfloat shininess);
 	static void	freeContext(void*);
 	static void	initContext(void*);
       public:
@@ -77,8 +78,8 @@ class OpenGLMaterial {
 	Rep*		prev;
 	Rep*		next;
 	GLuint		list;
-	GLfloat		specular[4];
-	GLfloat		emissive[4];
+	fvec4		specular;
+	fvec4		emissive;
 	GLfloat		shininess;
 	static Rep*	head;
         bool		highQuality;

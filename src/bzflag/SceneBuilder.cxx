@@ -54,117 +54,118 @@
 // SceneDatabaseBuilder
 //
 
+const fvec4 SceneDatabaseBuilder::wallColors[4] = {
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
+  fvec4(0.4f, 0.4f, 0.4f, 1.0f),
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
+  fvec4(0.6f, 0.6f, 0.6f, 1.0f)
+};
+const fvec4 SceneDatabaseBuilder::wallModulateColors[4] = {
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
+  fvec4(0.4f, 0.4f, 0.4f, 1.0f),
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
+  fvec4(0.6f, 0.6f, 0.6f, 1.0f)
+};
+const fvec4 SceneDatabaseBuilder::wallLightedColors[1] = {
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f)
+};
+const fvec4 SceneDatabaseBuilder::wallLightedModulateColors[1] = {
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f)
+};
+
+const fvec4 SceneDatabaseBuilder::boxColors[6] = {
+  fvec4(0.75f,  0.25f,  0.25f,  1.0f),
+  fvec4(0.63f,  0.25f,  0.25f,  1.0f),
+  fvec4(0.75f,  0.25f,  0.25f,  1.0f),
+  fvec4(0.75f,  0.375f, 0.375f, 1.0f),
+  fvec4(0.875f, 0.5f,   0.5f,   1.0f),
+  fvec4(0.275f, 0.2f,   0.2f,   1.0f)
+};
+const fvec4 SceneDatabaseBuilder::boxModulateColors[6] = {
+  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
+  fvec4(0.63f,  0.63f,  0.63f,  1.0f),
+  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
+  fvec4(0.69f,  0.69f,  0.69f,  1.0f),
+  fvec4(0.875f, 0.875f, 0.875f, 1.0f),
+  fvec4(0.375f, 0.375f, 0.375f, 1.0f)
+};
+const fvec4 SceneDatabaseBuilder::boxLightedColors[6] = {
+  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
+  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
+  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
+  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
+  fvec4(0.875f, 0.5f,  0.5f,  1.0f),
+  fvec4(0.875f, 0.5f,  0.5f,  1.0f)
+};
+const fvec4 SceneDatabaseBuilder::boxLightedModulateColors[6] = {
+  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
+  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
+  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
+  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
+  fvec4(0.875f, 0.875f, 0.875f, 1.0f),
+  fvec4(0.875f, 0.875f, 0.875f, 1.0f)
+};
+
+const fvec4 SceneDatabaseBuilder::pyramidColors[5] = {
+  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
+  fvec4(0.13f,  0.13f,  0.51f, 1.0f),
+  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
+  fvec4(0.375f, 0.375f, 0.75f, 1.0f),
+  fvec4(0.175f, 0.175f, 0.35f, 1.0f)
+};
+
+const fvec4 SceneDatabaseBuilder::pyramidModulateColors[5] = {
+  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
+  fvec4(0.13f,  0.13f,  0.51f, 1.0f),
+  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
+  fvec4(0.375f, 0.375f, 0.75f, 1.0f),
+  fvec4(0.175f, 0.175f, 0.35f, 1.0f)
+};
+const fvec4 SceneDatabaseBuilder::pyramidLightedColors[5] = {
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f)
+};
+const fvec4 SceneDatabaseBuilder::pyramidLightedModulateColors[5] = {
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
+  fvec4(0.25f, 0.25f, 0.63f, 1.0f)
+};
+
+const fvec4 SceneDatabaseBuilder::teleporterColors[3] = {
+  fvec4(1.0f, 0.875f, 0.0f, 1.0f),
+  fvec4(0.9f, 0.8f,   0.0f, 1.0f),
+  fvec4(0.0f, 0.0f,   0.0f, 0.5f)
+};
+const fvec4 SceneDatabaseBuilder::teleporterModulateColors[3] = {
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f),
+  fvec4(0.9f, 0.9f, 0.9f, 1.0f),
+  fvec4(0.0f, 0.0f, 0.0f, 0.5f)
+};
+const fvec4 SceneDatabaseBuilder::teleporterLightedColors[3] = {
+  fvec4(1.0f, 0.875f, 0.0f, 1.0f),
+  fvec4(1.0f, 0.875f, 0.0f, 1.0f),
+  fvec4(0.0f, 0.0f,   0.0f, 0.5f)
+};
+const fvec4 SceneDatabaseBuilder::teleporterLightedModulateColors[3] = {
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f),
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f),
+  fvec4(0.0f, 0.0f, 0.0f, 0.5f)
+};
+
+
 static const GLfloat black[3] = { 0.0f, 0.0f, 0.0f };
 
-const GLfloat SceneDatabaseBuilder::wallColors[4][4] = {
-  { 0.5f, 0.5f, 0.5f, 1.0f },
-  { 0.4f, 0.4f, 0.4f, 1.0f },
-  { 0.5f, 0.5f, 0.5f, 1.0f },
-  { 0.6f, 0.6f, 0.6f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::wallModulateColors[4][4] = {
-  { 0.5f, 0.5f, 0.5f, 1.0f },
-  { 0.4f, 0.4f, 0.4f, 1.0f },
-  { 0.5f, 0.5f, 0.5f, 1.0f },
-  { 0.6f, 0.6f, 0.6f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::wallLightedColors[1][4] = {
-  { 0.5f, 0.5f, 0.5f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::wallLightedModulateColors[1][4] = {
-  { 0.5f, 0.5f, 0.5f, 1.0f }
-};
 
-const GLfloat SceneDatabaseBuilder::boxColors[6][4] = {
-  { 0.75f, 0.25f, 0.25f, 1.0f },
-  { 0.63f, 0.25f, 0.25f, 1.0f },
-  { 0.75f, 0.25f, 0.25f, 1.0f },
-  { 0.75f, 0.375f, 0.375f, 1.0f },
-  { 0.875f, 0.5f, 0.5f, 1.0f },
-  { 0.275f, 0.2f, 0.2f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::boxModulateColors[6][4] = {
-  { 0.75f, 0.75f, 0.75f, 1.0f },
-  { 0.63f, 0.63f, 0.63f, 1.0f },
-  { 0.75f, 0.75f, 0.75f, 1.0f },
-  { 0.69f, 0.69f, 0.69f, 1.0f },
-  { 0.875f, 0.875f, 0.875f, 1.0f },
-  { 0.375f, 0.375f, 0.375f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::boxLightedColors[6][4] = {
-  { 0.75f, 0.25f, 0.25f, 1.0f },
-  { 0.75f, 0.25f, 0.25f, 1.0f },
-  { 0.75f, 0.25f, 0.25f, 1.0f },
-  { 0.75f, 0.25f, 0.25f, 1.0f },
-  { 0.875f, 0.5f, 0.5f, 1.0f },
-  { 0.875f, 0.5f, 0.5f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::boxLightedModulateColors[6][4] = {
-  { 0.75f, 0.75f, 0.75f, 1.0f },
-  { 0.75f, 0.75f, 0.75f, 1.0f },
-  { 0.75f, 0.75f, 0.75f, 1.0f },
-  { 0.75f, 0.75f, 0.75f, 1.0f },
-  { 0.875f, 0.875f, 0.875f, 1.0f },
-  { 0.875f, 0.875f, 0.875f, 1.0f }
-};
-
-const GLfloat SceneDatabaseBuilder::pyramidColors[5][4] = {
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.13f, 0.13f, 0.51f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.375f, 0.375f, 0.75f, 1.0f },
-  { 0.175f, 0.175f, 0.35f, 1.0f }
-};
-
-const GLfloat SceneDatabaseBuilder::pyramidModulateColors[5][4] = {
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.13f, 0.13f, 0.51f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.375f, 0.375f, 0.75f, 1.0f },
-  { 0.175f, 0.175f, 0.35f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::pyramidLightedColors[5][4] = {
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f }
-};
-const GLfloat SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] = {
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f },
-  { 0.25f, 0.25f, 0.63f, 1.0f }
-};
-
-const GLfloat SceneDatabaseBuilder::teleporterColors[3][4] = {
-  { 1.0f, 0.875f, 0.0f, 1.0f },
-  { 0.9f, 0.8f, 0.0f, 1.0f },
-  { 0.0f, 0.0f, 0.0f, 0.5f }
-};
-const GLfloat SceneDatabaseBuilder::teleporterModulateColors[3][4] = {
-  { 1.0f, 1.0f, 1.0f, 1.0f },
-  { 0.9f, 0.9f, 0.9f, 1.0f },
-  { 0.0f, 0.0f, 0.0f, 0.5f }
-};
-const GLfloat SceneDatabaseBuilder::teleporterLightedColors[3][4] = {
-  { 1.0f, 0.875f, 0.0f, 1.0f },
-  { 1.0f, 0.875f, 0.0f, 1.0f },
-  { 0.0f, 0.0f, 0.0f, 0.5f }
-};
-const GLfloat SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
-  { 1.0f, 1.0f, 1.0f, 1.0f },
-  { 1.0f, 1.0f, 1.0f, 1.0f },
-  { 0.0f, 0.0f, 0.0f, 0.5f }
-};
-
-
-SceneDatabaseBuilder::SceneDatabaseBuilder() :
-  wallMaterial(black, black, 0.0f),
-  boxMaterial(black, black, 0.0f),
-  pyramidMaterial(black, black, 0.0f),
-  teleporterMaterial(black, black, 0.0f)
+SceneDatabaseBuilder::SceneDatabaseBuilder()
+: wallMaterial(black, black, 0.0f)
+, boxMaterial(black, black, 0.0f)
+, pyramidMaterial(black, black, 0.0f)
+, teleporterMaterial(black, black, 0.0f)
 {
   // FIXME -- should get texture heights from resources
 

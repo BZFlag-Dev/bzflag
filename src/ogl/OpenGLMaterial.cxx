@@ -18,11 +18,11 @@
 // OpenGLMaterial::Rep
 //
 
-OpenGLMaterial::Rep*	OpenGLMaterial::Rep::head = NULL;
+OpenGLMaterial::Rep* OpenGLMaterial::Rep::head = NULL;
 
-OpenGLMaterial::Rep*	OpenGLMaterial::Rep::getRep(
-				const GLfloat* specular,
-				const GLfloat* emissive,
+OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
+				const fvec4& specular,
+				const fvec4& emissive,
 				GLfloat shininess)
 {
   // see if we've already got an identical material
@@ -48,10 +48,11 @@ OpenGLMaterial::Rep*	OpenGLMaterial::Rep::getRep(
   return new Rep(specular, emissive, shininess);
 }
 
-OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
-			 const GLfloat* _emissive,
+OpenGLMaterial::Rep::Rep(const fvec4& _specular,
+			 const fvec4& _emissive,
 			 GLfloat _shininess)
-			 : refCount(1), shininess(_shininess)
+: refCount(1)
+, shininess(_shininess)
 {
   list = INVALID_GL_LIST_ID;
 
@@ -157,9 +158,9 @@ OpenGLMaterial::OpenGLMaterial()
   rep = NULL;
 }
 
-OpenGLMaterial::OpenGLMaterial(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess)
+OpenGLMaterial::OpenGLMaterial(const fvec4& specular,
+                               const fvec4& emissive,
+                               GLfloat shininess)
 {
   rep = Rep::getRep(specular, emissive, shininess);
 }
