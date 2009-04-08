@@ -6,6 +6,9 @@
 // system headers
 #include <string>
 
+// common headers
+#include "vectors.h"
+
 // liblua headers
 #include "../other/lua/src/lua.h"
 #include "../other/lua/src/lualib.h"
@@ -78,6 +81,57 @@ inline float luaL_checkfloat(lua_State* L, int idx)
 inline float luaL_optfloat(lua_State* L, int idx, float def)
 {
 	return (float)luaL_optnumber(L, idx, def);
+}
+
+
+inline fvec3 luaL_checkfvec3(lua_State* L, int idx)
+{
+	return fvec3((float)luaL_checknumber(L, idx + 0),
+	             (float)luaL_checknumber(L, idx + 1),
+	             (float)luaL_checknumber(L, idx + 2));
+}
+
+
+inline fvec4 luaL_checkfvec4(lua_State* L, int idx)
+{
+	return fvec4((float)luaL_checknumber(L, idx + 0),
+	             (float)luaL_checknumber(L, idx + 1),
+	             (float)luaL_checknumber(L, idx + 2),
+	             (float)luaL_checknumber(L, idx + 3));
+}
+
+
+inline fvec3 luaL_optfvec3(lua_State* L, int idx, const fvec3& def)
+{
+	return fvec3((float)luaL_optnumber(L, idx + 0, def.x),
+	             (float)luaL_optnumber(L, idx + 1, def.y),
+	             (float)luaL_optnumber(L, idx + 2, def.z));
+}
+
+
+inline fvec4 luaL_optfvec4(lua_State* L, int idx, const fvec4& def)
+{
+	return fvec4((float)luaL_optnumber(L, idx + 0, def.x),
+	             (float)luaL_optnumber(L, idx + 1, def.y),
+	             (float)luaL_optnumber(L, idx + 2, def.z),
+	             (float)luaL_optnumber(L, idx + 3, def.w));
+}
+
+
+inline void lua_pushfvec3(lua_State* L, const fvec3& v)
+{
+	lua_pushnumber(L, v.x);
+	lua_pushnumber(L, v.y);
+	lua_pushnumber(L, v.z);
+}
+
+
+inline void lua_pushfvec4(lua_State* L, const fvec4& v)
+{
+	lua_pushnumber(L, v.x);
+	lua_pushnumber(L, v.y);
+	lua_pushnumber(L, v.z);
+	lua_pushnumber(L, v.w);
 }
 
 

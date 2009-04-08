@@ -85,7 +85,7 @@ class BSPSceneDatabase : public SceneDatabase {
     Node*		root;
     int			depth;
     // the following members avoid passing parameters around
-    GLfloat		eye[3];
+    fvec3		eye;
     SceneRenderer*	renderer;
     const ViewFrustum*	frustum;
 

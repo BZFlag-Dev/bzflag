@@ -25,6 +25,7 @@
 #include <vector>
 
 /* common headers */
+#include "vectors.h"
 #include "SceneNode.h"
 #include "WorldText.h"
 #include "MeshTransform.h"
@@ -63,7 +64,7 @@ class TextSceneNode : public SceneNode {
 	void renderRadar();
 	void renderShadow();
 
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+	const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
         int  getFontID() const;
@@ -118,10 +119,10 @@ class TextSceneNode : public SceneNode {
 
   protected:
     void calcPlane();
-    void calcSphere(const float points[5][3]);
-    void calcExtents(const float points[5][3]);
-    float getMaxDist(const float points[5][3]) const;
-    void getPoints(float points[5][3]) const; // corners, and the origin
+    void calcSphere(const fvec3 points[5]);
+    void calcExtents(const fvec3 points[5]);
+    float getMaxDist(const fvec3 points[5]) const;
+    void getPoints(fvec3 points[5]) const; // corners, and the origin
 
   private:
     OpenGLGState   gstate;

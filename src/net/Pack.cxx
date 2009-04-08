@@ -159,7 +159,23 @@ void* nboPackDouble(void* b, double v)
 }
 
 
-void* nboPackFloatVec3(void* b, const float* v)
+void* nboPackFloatVec2(void* b, const fvec2& v)
+{
+  // hope that float is 4-byte IEEE 754 standard encoding
+  floatintuni u;
+  uint32_t data[2];
+
+  for (int i = 0; i < 2; i++) {
+    u.floatval = v[i];
+    data[i] = (uint32_t)htonl(u.intval);
+  }
+
+  ::memcpy(b, data, 2 * sizeof(uint32_t));
+  return (void*) (((char*)b) + (2 * sizeof(uint32_t)));
+}
+
+
+void* nboPackFloatVec3(void* b, const fvec3& v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
@@ -172,6 +188,22 @@ void* nboPackFloatVec3(void* b, const float* v)
 
   ::memcpy(b, data, 3 * sizeof(uint32_t));
   return (void*) (((char*)b) + (3 * sizeof(uint32_t)));
+}
+
+
+void* nboPackFloatVec4(void* b, const fvec4& v)
+{
+  // hope that float is 4-byte IEEE 754 standard encoding
+  floatintuni u;
+  uint32_t data[4];
+
+  for (int i = 0; i < 4; i++) {
+    u.floatval = v[i];
+    data[i] = (uint32_t)htonl(u.intval);
+  }
+
+  ::memcpy(b, data, 4 * sizeof(uint32_t));
+  return (void*) (((char*)b) + (4 * sizeof(uint32_t)));
 }
 
 
@@ -369,12 +401,39 @@ void* nboUnpackDouble(void* b, double& v)
 }
 
 
-void* nboUnpackFloatVec3(void* b, float* v)
+void* nboUnpackFloatVec2(void* b, fvec2& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(float[2])) {
+      Error = true;
+      memset(&v, 0, sizeof(fvec2));
+      v[0] = v[1] = 0.0f;
+      return b;
+    } else {
+      Length -= sizeof(float[2]);
+    }
+  }
+
+  // hope that float is 4-byte IEEE 754 standard encoding
+  uint32_t data[2];
+  floatintuni u;
+  ::memcpy( data, b, 2 * sizeof(uint32_t));
+
+  for (int i = 0; i < 2; i++) {
+    u.intval = (uint32_t)ntohl(data[i]);
+    v[i] = u.floatval;
+  }
+
+  return (void *) (((char*)b) + (2 * sizeof(float)));
+}
+
+
+void* nboUnpackFloatVec3(void* b, fvec3& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[3])) {
       Error = true;
-      v[0] = v[1] = v[2] = 0.0f;
+      memset(&v, 0, sizeof(fvec3));
       return b;
     } else {
       Length -= sizeof(float[3]);
@@ -384,7 +443,7 @@ void* nboUnpackFloatVec3(void* b, float* v)
   // hope that float is 4-byte IEEE 754 standard encoding
   uint32_t data[3];
   floatintuni u;
-  ::memcpy( data, b, 3*sizeof(uint32_t));
+  ::memcpy( data, b, 3 * sizeof(uint32_t));
 
   for (int i = 0; i < 3; i++) {
     u.intval = (uint32_t)ntohl(data[i]);
@@ -392,6 +451,32 @@ void* nboUnpackFloatVec3(void* b, float* v)
   }
 
   return (void *) (((char*)b) + (3 * sizeof(float)));
+}
+
+
+void* nboUnpackFloatVec4(void* b, fvec4& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(float[4])) {
+      Error = true;
+      memset(&v, 0, sizeof(fvec4));
+      return b;
+    } else {
+      Length -= sizeof(float[4]);
+    }
+  }
+
+  // hope that float is 4-byte IEEE 754 standard encoding
+  uint32_t data[4];
+  floatintuni u;
+  ::memcpy( data, b, 4 * sizeof(uint32_t));
+
+  for (int i = 0; i < 4; i++) {
+    u.intval = (uint32_t)ntohl(data[i]);
+    v[i] = u.floatval;
+  }
+
+  return (void *) (((char*)b) + (4 * sizeof(float)));
 }
 
 

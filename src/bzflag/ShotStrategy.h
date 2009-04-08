@@ -24,9 +24,11 @@
 
 /* common interface headers */
 #include "Ray.h"
+#include "Extents.h"
 #include "Obstacle.h"
 #include "Teleporter.h"
 #include "SceneDatabase.h"
+#include "vectors.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"
@@ -36,16 +38,16 @@
 class ShotCollider
 {
 public:
-  float	  position[3];
+  fvec3	  position;
   Ray	  motion;
   float	  radius;
-  float	  size[3];
+  fvec3	  size;
 
   bool	  test2D;
   float	  angle;
   float	  length;
 
-  float	  bbox[2][3];
+  Extents bbox;
 
   bool	  testLastSegment;
 };
@@ -59,22 +61,22 @@ class ShotStrategy {
 			ShotStrategy(ShotPath*);
     virtual		~ShotStrategy();
 
-    virtual void	update(float dt) = 0;
-    virtual bool        predictPosition(float dt, float p[3]) const = 0;
-    virtual bool        predictVelocity(float dt, float p[3]) const = 0;
-    virtual float	checkHit(const ShotCollider&, float[3])const = 0;
-    virtual bool	isStoppedByHit() const;
-    virtual void	addShot(SceneDatabase*, bool colorblind) = 0;
-    virtual void	expire();
-    virtual void	radarRender() const = 0;
+    virtual void  update(float dt) = 0;
+    virtual bool  predictPosition(float dt, fvec3& p) const = 0;
+    virtual bool  predictVelocity(float dt, fvec3& p) const = 0;
+    virtual float checkHit(const ShotCollider&, fvec3&)const = 0;
+    virtual bool  isStoppedByHit() const;
+    virtual void  addShot(SceneDatabase*, bool colorblind) = 0;
+    virtual void  expire();
+    virtual void  radarRender() const = 0;
 
     // first part of message must be the
     // ShotUpdate portion of FiringInfo.
-    virtual void	sendUpdate(const FiringInfo&) const;
+    virtual void sendUpdate(const FiringInfo&) const;
 
     // update shot based on message.  code is the message code.  msg
     // points to the part of the message after the ShotUpdate portion.
-    virtual void	readUpdate(void* msg);
+    virtual void readUpdate(void* msg);
 
     static bool              getGround(const Ray&, float min, float& t);
     static const Obstacle*   getFirstBuilding(const Ray&, float min, float& t);
@@ -94,7 +96,7 @@ class ShotStrategy {
 
 
   private:
-    ShotPath*		path;
+    ShotPath* path;
 };
 
 inline const ShotPath&	ShotStrategy::getPath() const

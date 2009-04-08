@@ -19,6 +19,8 @@
 #include "Intersect.h"
 #include "StateDatabase.h"
 
+using namespace Intersect;
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -285,10 +287,10 @@ Occluder::Occluder(const SceneNode* node)
     vertexCount = 0; // used to flag a bad occluder
     return;
   }
-  vertices = new float[vertexCount][3];
+  vertices = new fvec3[vertexCount];
 
   planeCount = vertexCount + 1; // the occluder's plane normal
-  planes = new float[planeCount][4];
+  planes = new fvec4[planeCount];
 
   // counter-clockwise order as viewed from the front face
   for (int i = 0; i < vertexCount; i++) {
@@ -357,20 +359,17 @@ static bool makePlane(const float* p1, const float* p2, const float* pc,
 bool Occluder::makePlanes(const Frustum* frustum)
 {
   // occluders can't have their back towards the camera
-  const float* eye = frustum->getEye();
-  const float* p = sceneNode->getPlane();
-  float tmp = (p[0] * eye[0]) + (p[1] * eye[1]) + (p[2] * eye[2]) + p[3];
+  const fvec3& eye = frustum->getEye();
+  const fvec4* p = sceneNode->getPlane();
+  float tmp = fvec3::dot(eye, *((fvec3*)p)) + p->w;
   if (tmp < +0.1f) {
     return false;
   }
   // FIXME - store/flag this so we don't have to do it again?
 
   // make the occluder's normal plane
-  const float* plane = sceneNode->getPlane();
-  planes[0][0] = -plane[0];
-  planes[0][1] = -plane[1];
-  planes[0][2] = -plane[2];
-  planes[0][3] = -plane[3];
+  const fvec4& plane = *sceneNode->getPlane();
+  planes[0] = -plane;
 
   // make the edges planes
   for (int i = 0; i < vertexCount; i++) {

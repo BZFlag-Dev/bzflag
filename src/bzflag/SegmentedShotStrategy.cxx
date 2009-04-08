@@ -167,14 +167,14 @@ void SegmentedShotStrategy::update(float dt)
       ShotPathSegment &segm = segments[numSegments - 1];
       const float     *dir  = segm.ray.getDirection();
       const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
-      float pos[3];
+      fvec3 pos;
       segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
       /* NOTE -- comment out to not explode when shot expires */
       addShotExplosion(pos);
     }
   } else {
     // otherwise update position and velocity
-    float p[3];
+    fvec3 p;
     segments[segment].ray.getPoint(float(currentTime - segments[segment].start), p);
     setPosition(p);
     setVelocity(segments[segment].ray.getDirection());
@@ -182,7 +182,7 @@ void SegmentedShotStrategy::update(float dt)
 }
 
 
-bool SegmentedShotStrategy::predictPosition(float dt, float p[3]) const
+bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const
 {
   float ctime = (float)currentTime + dt;
   int cur=0;
@@ -191,13 +191,13 @@ bool SegmentedShotStrategy::predictPosition(float dt, float p[3]) const
   while (cur < numSegments && segments[cur].end < ctime) cur++;
   if (cur >= numSegments) return false;
 
-  segments[segment].ray.getPoint(float(ctime - segments[segment].start), p);
+  segments[segment].ray.getPoint(float(ctime - segments[segment].start), (fvec3&)p);
 
   return true;
 }
 
 
-bool SegmentedShotStrategy::predictVelocity(float dt, float p[3]) const
+bool SegmentedShotStrategy::predictVelocity(float dt, fvec3& p) const
 {
   float ctime = (float)currentTime + dt;
   int cur=0;
@@ -227,19 +227,6 @@ double	SegmentedShotStrategy::getLastTime() const
 }
 
 
-bool SegmentedShotStrategy::isOverlapping(const float (*bbox1)[3],
-                                          const float (*bbox2)[3]) const
-{
-  if (bbox1[1][0] < bbox2[0][0]) return false;
-  if (bbox1[0][0] > bbox2[1][0]) return false;
-  if (bbox1[1][1] < bbox2[0][1]) return false;
-  if (bbox1[0][1] > bbox2[1][1]) return false;
-  if (bbox1[1][2] < bbox2[0][2]) return false;
-  if (bbox1[0][2] > bbox2[1][2]) return false;
-  return true;
-}
-
-
 void SegmentedShotStrategy::setCurrentSegment(int _segment)
 {
   segment = _segment;
@@ -247,7 +234,7 @@ void SegmentedShotStrategy::setCurrentSegment(int _segment)
 
 
 float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
-                                      float position[3]) const
+                                      fvec3& position) const
 {
   float minTime = Infinity;
   // expired shot can't hit anything
@@ -266,8 +253,8 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
-  const float (*tankBBox)[3] = tank.bbox;
-  if (!isOverlapping(bbox, tankBBox)) return minTime;
+  const Extents& tankBBox = tank.bbox;
+  if (!bbox.touches(tankBBox)) { return minTime; }
 
   float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
 
@@ -287,11 +274,13 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
 
     // if shot segment and tank bboxes don't overlap then no hit, or if it's a shot that is out of the world boundry
     const ShotPathSegment& s = segments[i];
-    if (!isOverlapping(s.bbox, tankBBox) || s.reason == ShotPathSegment::Boundary) continue;
+    if (!s.bbox.touches(tankBBox) || (s.reason == ShotPathSegment::Boundary)) {
+      continue;
+    }
 
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
+    Ray relativeRay(Intersect::rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
 
     // get hit time
     float t;
@@ -299,11 +288,11 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
-      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle,
+      t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
 			0.5f * tank.length, shotRadius, tankHeight);
     } else {
       // find time when shot hits sphere around tank
-      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
+      t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
     }
 
     // short circuit if time is greater then smallest time so far
@@ -314,22 +303,18 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     if (t > s.end - prevTime) continue;
 
     // check if shot hits tank -- get position at time t, see if in radius
-    float closestPos[3];
+    fvec3 closestPos;
     relativeRay.getPoint(t, closestPos);
-    if (closestPos[0] * closestPos[0] +
-	closestPos[1] * closestPos[1] +
-	closestPos[2] * closestPos[2] < radius2) {
+    if (closestPos.lenSqr() < radius2) {
       // save best time so far
       minTime = t;
 
       // compute location of tank at time of hit
-      float tankPos[3];
+      fvec3 tankPos;
       tank.motion.getPoint(t, tankPos);
 
       // compute position of intersection
-      position[0] = tankPos[0] + closestPos[0];
-      position[1] = tankPos[1] + closestPos[1];
-      position[2] = tankPos[2] + closestPos[2];
+      position = tankPos + closestPos;
       //printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
     }
   }
@@ -418,7 +403,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
   const ShotPath &shotPath = getPath();
-  const float    *v        = shotPath.getVelocity();
+  const fvec3&   v        = shotPath.getVelocity();
   double         startTime = shotPath.getStartTime();
   float          timeLeft  = shotPath.getLifetime();
   float          minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) /
@@ -435,13 +420,9 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   }
 
   // prepare first segment
-  float o[3], d[3];
-  d[0] = v[0];
-  d[1] = v[1];
-  d[2] = v[2];		// use v[2] to have jumping affect shot velocity
-  o[0] = shotPath.getPosition()[0];
-  o[1] = shotPath.getPosition()[1];
-  o[2] = shotPath.getPosition()[2];
+  fvec3 o, d;
+  d = v; // use v[2] to have jumping affect shot velocity
+  o = shotPath.getPosition();
 
   segments.clear();
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
@@ -450,16 +431,13 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float worldSize = BZDBCache::worldSize / 2.0f - 0.01f;
   for (i = 0; (i < maxSegment) && (timeLeft > Epsilon); i++) {
     // construct ray and find the first building, teleporter, or outer wall
-    float o2[3];
-    o2[0] = o[0] - minTime * d[0];
-    o2[1] = o[1] - minTime * d[1];
-    o2[2] = o[2] - minTime * d[2];
+    fvec3 o2 = o - (minTime * d);
 
     // Sometime shot start outside world
-    if (o2[0] <= -worldSize) { o2[0] = -worldSize; }
-    if (o2[0] >= +worldSize) { o2[0] = +worldSize; }
-    if (o2[1] <= -worldSize) { o2[1] = -worldSize; }
-    if (o2[1] >= +worldSize) { o2[1] = +worldSize; }
+    if (o2.x <= -worldSize) { o2.x = -worldSize; }
+    if (o2.x >= +worldSize) { o2.x = +worldSize; }
+    if (o2.y <= -worldSize) { o2.y = -worldSize; }
+    if (o2.y >= +worldSize) { o2.y = +worldSize; }
 
     Ray r(o2, d);
     Ray rs(o, d);
@@ -506,9 +484,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     if (ignoreHit) {
       // uh...ignore this.  usually used if you shoot over the boundary wall.
       // just move the point of origin and build the next segment
-      o[0] += t * d[0];
-      o[1] += t * d[1];
-      o[2] += t * d[2];
+      o += (t * d);
       reason = ShotPathSegment::Boundary;
     }
     else if (teleporter) {
@@ -519,11 +495,9 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
       int outFace;
       const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
-      o[0] += t * d[0];
-      o[1] += t * d[1];
-      o[2] += t * d[2];
+      o += (t * d);
       teleporter->getPointWRT(*outTeleporter, face, outFace,
-                              o, d, 0.0f, o, d, NULL);
+                              o, &d, 0.0f, o, &d, NULL);
       reason = ShotPathSegment::Teleport;
     }
     else if (building) {
@@ -539,12 +513,10 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
         case Reflect: {
           // move origin to point of reflection
-          o[0] += t * d[0];
-          o[1] += t * d[1];
-          o[2] += t * d[2];
+          o += (t * d);
 
           // reflect direction about normal to building
-          float normal[3];
+          fvec3 normal;
           building->get3DNormal(o, normal);
           reflect(d, normal);
           reason = ShotPathSegment::Ricochet;
@@ -565,15 +537,10 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
 	case Reflect: {
 	  // move origin to point of reflection
-	  o[0] += t * d[0];
-	  o[1] += t * d[1];
-	  o[2] += t * d[2];
+          o += (t * d);
 
 	  // reflect direction about normal to ground
-	  float normal[3];
-	  normal[0] = 0.0f;
-	  normal[1] = 0.0f;
-	  normal[2] = 1.0f;
+	  fvec3 normal(0.0f, 0.0f, 0.0f);
 	  reflect(d, normal);
 	  reason = ShotPathSegment::Ricochet;
 	  break;
@@ -587,25 +554,13 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   const size_t numSegments = segments.size();
   if (numSegments > 0) {
     const ShotPathSegment& firstSeg = segments[0];
-    bbox[0][0] = firstSeg.bbox[0][0];
-    bbox[0][1] = firstSeg.bbox[0][1];
-    bbox[0][2] = firstSeg.bbox[0][2];
-    bbox[1][0] = firstSeg.bbox[1][0];
-    bbox[1][1] = firstSeg.bbox[1][1];
-    bbox[1][2] = firstSeg.bbox[1][2];
+    bbox = firstSeg.bbox;
     for (size_t j = 1; j < numSegments; ++j) {
       const ShotPathSegment& segm = segments[j];
-      if (bbox[0][0] > segm.bbox[0][0]) { bbox[0][0] = segm.bbox[0][0]; }
-      if (bbox[1][0] < segm.bbox[1][0]) { bbox[1][0] = segm.bbox[1][0]; }
-      if (bbox[0][1] > segm.bbox[0][1]) { bbox[0][1] = segm.bbox[0][1]; }
-      if (bbox[1][1] < segm.bbox[1][1]) { bbox[1][1] = segm.bbox[1][1]; }
-      if (bbox[0][2] > segm.bbox[0][2]) { bbox[0][2] = segm.bbox[0][2]; }
-      if (bbox[1][2] < segm.bbox[1][2]) { bbox[1][2] = segm.bbox[1][2]; }
+      bbox.expandToBox(segm.bbox);
     }
   } else {
-    bbox[0][0] = bbox[1][0] = 0.0f;
-    bbox[0][1] = bbox[1][1] = 0.0f;
-    bbox[0][2] = bbox[1][2] = 0.0f;
+    bbox.reset();
   }
 }
 

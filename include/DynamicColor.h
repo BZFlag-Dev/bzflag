@@ -23,6 +23,7 @@
 
 /* common interface headers */
 #include "TimeKeeper.h"
+#include "vectors.h"
 
 
 class DynamicColor {
@@ -37,14 +38,14 @@ class DynamicColor {
     void setVariableNoAlpha(bool);
 
     void setDelay(float delay);
-    void addState(float duration, const float color[4]);
+    void addState(float duration, const fvec4& color);
     void addState(float duration,
                   float r, float g, float b, float a);
 
     void finalize();
 
     void update(double time);
-    void setColor(const float color[4]);
+    void setColor(const fvec4& color);
 
     bool canHaveAlpha() const;
     const float* getColor() const;
@@ -67,7 +68,7 @@ class DynamicColor {
     static const float minPeriod;
 
     std::string name;
-    float color[4];
+    fvec4 color;
 
     std::string varName;
 
@@ -76,26 +77,20 @@ class DynamicColor {
     bool varInit;
     bool varTransition;
     float varTimeTmp;
-    float varOldColor[4];
-    float varNewColor[4];
+    fvec4 varOldColor;
+    fvec4 varNewColor;
     TimeKeeper varLastChange;
 
     struct ColorState {
       ColorState() {
-        color[0] = 1.0f;
-        color[1] = 1.0f;
-        color[2] = 1.0f;
-        color[3] = 1.0f;
+        color = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
         duration = 0.0f;
       }
-      ColorState(const float c[4], float d) {
-        color[0] = c[0];
-        color[1] = c[1];
-        color[2] = c[2];
-        color[3] = c[3];
+      ColorState(const fvec4& c, float d) {
+        color = c;
         duration = d;
       }
-      float color[4];
+      fvec4 color;
       float duration;
     };
     std::vector<ColorState> colorStates;

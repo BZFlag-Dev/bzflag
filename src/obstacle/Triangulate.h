@@ -13,16 +13,20 @@
 #ifndef __TRIANGULATE_H__
 #define __TRIANGULATE_H__
 
+#include "common.h"
 
-/* system interface headers */
+/* system headers */
 #include <vector>
+
+// common headers
+#include "vectors.h"
 
 
 typedef struct {
   int indices[3];
 } TriIndices;
 
-extern void triangulateFace(int count, const float* const* verts,
+extern void triangulateFace(int count, const fvec3** verts,
 			    std::vector<TriIndices>& tris);
 
 

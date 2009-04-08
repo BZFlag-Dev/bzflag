@@ -33,7 +33,7 @@ ConeObstacle::ConeObstacle()
 
 
 ConeObstacle::ConeObstacle(const MeshTransform& xform,
-			   const float* _pos, const float* _size,
+			   const fvec3& _pos, const fvec3& _size,
 			   float _rotation, float _sweepAngle,
 			   const float _texsize[2], bool _useNormals,
 			   int _divisions, const BzMaterial* mats[MaterialCount],
@@ -170,12 +170,12 @@ MeshObstacle* ConeObstacle::makeMesh()
 
   // setup the coordinates
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> vertices;
-  std::vector<cfvec3> normals;
-  std::vector<cfvec2> texcoords;
-  cfvec3 v, n;
-  cfvec2 t;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> vertices;
+  std::vector<fvec3> normals;
+  std::vector<fvec2> texcoords;
+  fvec3 v, n;
+  fvec2 t;
 
   // add the checkpoint (one is sufficient)
   if (isCircle) {
@@ -354,47 +354,47 @@ float ConeObstacle::intersect(const Ray&) const
   return -1.0f;
 }
 
-void ConeObstacle::get3DNormal(const float*, float*) const
+void ConeObstacle::get3DNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
-void ConeObstacle::getNormal(const float*, float*) const
+void ConeObstacle::getNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
-bool ConeObstacle::getHitNormal(const float*, float, const float*, float,
-				float, float, float, float*) const
+bool ConeObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
+				float, float, float, fvec3&) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::inCylinder(const float*,float, float) const
+bool ConeObstacle::inCylinder(const fvec3&,float, float) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::inBox(const float*, float, float, float, float) const
+bool ConeObstacle::inBox(const fvec3&, float, float, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::inMovingBox(const float*, float, const float*, float,
+bool ConeObstacle::inMovingBox(const fvec3&, float, const fvec3&, float,
 			       float, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::isCrossing(const float* /*p*/, float /*angle*/,
+bool ConeObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 			      float /*dx*/, float /*dy*/, float /*height*/,
-			      float* /*_plane*/) const
+			      fvec4* /*_plane*/) const
 {
   assert(false);
   return false;

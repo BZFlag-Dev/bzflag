@@ -66,6 +66,7 @@
 #include "WordFilter.h"
 #include "ZSceneDatabase.h"
 #include "bz_md5.h"
+#include "vectors.h"
 
 // local implementation headers
 #include "AutoPilot.h"
@@ -2351,7 +2352,8 @@ static void handleTeamUpdate(void *msg, bool &checkScores)
 static void handleAliveMessage(void *msg)
 {
   PlayerId id;
-  float pos[3], forward;
+  fvec3 pos;
+  float forward;
 
   msg = nboUnpackUByte(msg, id);
   msg = nboUnpackFloatVec3(msg, pos);
@@ -2433,34 +2435,36 @@ static void handleAutoPilot(void *msg)
     return;
 
   tank->setAutoPilot(autopilot != 0);
-  if (myTank == tank)
-  {
-	  if (autopilot == 0)
-	  {
-		  if (myTank->requestedAutopilot)
-			hud->setAlert(0, "autopilot disabled", 1.0f, true);
-		  else
-			  hud->setAlert(0, "manual drive enabled", 1.0f, true);
 
-		  // grab mouse
-		  if (shouldGrabMouse())
-			  mainWindow->grabMouse();
-
-		  myTank->requestedAutopilot = false;
-	  }
-	  else
-	  {
-		  if (myTank->requestedAutopilot)
-			  hud->setAlert(0, "autopilot enabled", 1.0f, true);
-		  else
-			  hud->setAlert(0, "manual drive disabled", 1.0f, true);
-
-		  // ungrab mouse
-		  mainWindow->ungrabMouse();
-	  }
+  if (tank != myTank) {
+    addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
   }
-  else
-	addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
+  else {
+    if (autopilot == 0) {
+      if (myTank->requestedAutopilot) {
+        hud->setAlert(0, "autopilot disabled", 1.0f, true);
+      } else {
+        hud->setAlert(0, "manual drive enabled", 1.0f, true);
+      }
+
+      // grab mouse
+      if (shouldGrabMouse()) {
+        mainWindow->grabMouse();
+      }
+
+      myTank->requestedAutopilot = false;
+    }
+    else {
+      if (myTank->requestedAutopilot) {
+        hud->setAlert(0, "autopilot enabled", 1.0f, true);
+      } else {
+        hud->setAlert(0, "manual drive disabled", 1.0f, true);
+      }
+
+      // ungrab mouse
+      mainWindow->ungrabMouse();
+    }
+  }
 }
 
 static void handleAllow(void *msg)
@@ -2976,7 +2980,7 @@ static void handleSetTeam(void *msg, uint16_t len)
 
 static void handleNearFlag(void *msg)
 {
-  float pos[3];
+  fvec3 pos;
   std::string flagName;
   msg = nboUnpackFloatVec3(msg, pos);
   msg = nboUnpackStdString(msg, flagName);
@@ -3038,7 +3042,7 @@ static bool showShotEffects(int shooterid)
 
 static void playShotSound (const FiringInfo &info, bool localSound)
 {
-  const float *pos = info.shot.pos;
+  const float* pos = info.shot.pos;
   const bool importance = false;
 
   switch (info.shotType)
@@ -6984,12 +6988,12 @@ static void prepareTheHUD()
     }
     if (myTank->getAntidoteLocation()) {
       // marker for my antidote flag
-      const GLfloat *antidotePos = myTank->getAntidoteLocation();
-      float heading = atan2f(antidotePos[1] - myPos[1],
-			     antidotePos[0] - myPos[0]);
+      const fvec3* antidotePos = myTank->getAntidoteLocation();
+      float heading = atan2f(antidotePos->y - myPos[1],
+			     antidotePos->x - myPos[0]);
       const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
       hud->addMarker(heading, antidoteColor);
-      hud->AddEnhancedMarker(antidotePos, antidoteColor, false, BZDBCache::flagPoleSize*2);
+      hud->AddEnhancedMarker(*antidotePos, antidoteColor, false, BZDBCache::flagPoleSize*2);
     }
   }
   return;

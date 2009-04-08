@@ -884,11 +884,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     drawFlag(flag.position);
   }
   // draw antidote flag
-  const float* antidotePos =
-    LocalPlayer::getMyTank()->getAntidoteLocation();
+  const fvec3* antidotePos = LocalPlayer::getMyTank()->getAntidoteLocation();
   if (antidotePos) {
     glColor3f(1.0f, 1.0f, 0.0f);
-    drawFlag(antidotePos);
+    drawFlag(*antidotePos);
   }
 
   // draw these markers above all others always centered
@@ -1381,21 +1380,25 @@ void RadarRenderer::renderBasesAndTeles()
   if(world->allowTeamFlags()) {
     for(i = 1; i < NumTeams; i++) {
       for (int j = 0; /* no-op */;j++) {
-	const float *base = world->getBase(i, j);
-	if (base == NULL)
+	const World::BaseParams* bp = world->getBase(i, j);
+	if (bp == NULL) {
 	  break;
+        }
 	glColor3fv(Team::getRadarColor(TeamColor(i)));
 	glBegin(GL_LINE_LOOP);
-	const float beta = atan2f(base[5], base[4]);
-	const float r = hypotf(base[4], base[5]);
-	glVertex2f(base[0] + r * cosf(base[3] + beta),
-		   base[1] + r * sinf(base[3] + beta));
-	glVertex2f(base[0] + r * cosf((float)(base[3] - beta + M_PI)),
-		   base[1] + r * sinf((float)(base[3] - beta + M_PI)));
-	glVertex2f(base[0] + r * cosf((float)(base[3] + beta + M_PI)),
-		   base[1] + r * sinf((float)(base[3] + beta + M_PI)));
-	glVertex2f(base[0] + r * cosf(base[3] - beta),
-		   base[1] + r * sinf(base[3] - beta));
+	const fvec3& pos  = bp->pos;
+	const fvec3& size = bp->size;
+	const float& rot  = bp->rot;
+	const float beta  = atan2f(size.y, size.x);
+	const float r     = hypotf(size.x, size.y);
+	glVertex2f(pos.x + r * cosf(rot + beta),
+		   pos.y + r * sinf(rot + beta));
+	glVertex2f(pos.x + r * cosf((float)(rot - beta + M_PI)),
+		   pos.y + r * sinf((float)(rot - beta + M_PI)));
+	glVertex2f(pos.x + r * cosf((float)(rot + beta + M_PI)),
+		   pos.y + r * sinf((float)(rot + beta + M_PI)));
+	glVertex2f(pos.x + r * cosf(rot - beta),
+		   pos.y + r * sinf(rot - beta));
 	glEnd();
       }
     }

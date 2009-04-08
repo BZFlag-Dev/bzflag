@@ -105,24 +105,27 @@ World::~World()
 }
 
 
-void			World::init()
+void World::init()
 {
   TextureManager &tm = TextureManager::instance();
   flagTexture = tm.getTextureID( "flag" );
 }
 
-void			World::done()
+
+void World::done()
 {
   flagTexture = 0;
 }
 
-void		    World::loadCollisionManager()
+
+void World::loadCollisionManager()
 {
   COLLISIONMGR.load();
   return;
 }
 
-void		    World::checkCollisionManager()
+
+void World::checkCollisionManager()
 {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
@@ -131,12 +134,14 @@ void		    World::checkCollisionManager()
   return;
 }
 
-void			World::setFlagTexture(FlagSceneNode* flag)
+
+void World::setFlagTexture(FlagSceneNode* flag)
 {
   flag->setTexture(flagTexture);
 }
 
-void			World::setWorld(World* _playingField)
+
+void World::setWorld(World* _playingField)
 {
   playingField = _playingField;
 }
@@ -179,22 +184,22 @@ const Teleporter* World::getTeleporter(int source, int& face) const
 }
 
 
-TeamColor		World::whoseBase(const float* pos) const
+TeamColor World::whoseBase(const fvec3& pos) const
 {
   if (gameType != ClassicCTF)
     return NoTeam;
 
   for (int i = 1; i < NumTeams; i++) {
     for (TeamBases::const_iterator it = bases[i].begin(); it != bases[i].end(); ++it) {
-      float nx = pos[0] - it->p[0];
-      float ny = pos[1] - it->p[1];
-      float rx = (float) (cosf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
-      float ry = (float) (sinf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
-      if(fabsf(rx) < it->p[4] &&
-	 fabsf(ry) < it->p[5]) {
-	float nz = it->p[2] + it->p[6];
-	float rz = pos[2] - nz;
-	if(fabsf(rz) < 0.1) { // epsilon kludge
+      float nx = pos.x - it->pos.x;
+      float ny = pos.y - it->pos.y;
+      float rx = (float) (cosf(atanf(ny / nx) - it->rot) * sqrt((ny * ny) + (nx * nx)));
+      float ry = (float) (sinf(atanf(ny / nx) - it->rot) * sqrt((ny * ny) + (nx * nx)));
+      if ((fabsf(rx) < it->size.x) &&
+	  (fabsf(ry) < it->size.y)) {
+	float nz = it->pos.z + it->size.z;
+	float rz = pos.z - nz;
+	if (fabsf(rz) < 0.1) { // epsilon kludge
 	  return TeamColor(i);
 	}
       }
@@ -204,8 +209,9 @@ TeamColor		World::whoseBase(const float* pos) const
   return NoTeam;
 }
 
-const Obstacle*		World::inBuilding(const float* pos,
-					  float radius, float height) const
+
+const Obstacle* World::inBuilding(const fvec3& pos,
+                                  float radius, float height) const
 {
   // check everything but walls
   const ObsList* olist = COLLISIONMGR.cylinderTest (pos, radius, height);
@@ -219,8 +225,9 @@ const Obstacle*		World::inBuilding(const float* pos,
   return NULL;
 }
 
-const Obstacle*		World::inBuilding(const float* pos, float angle,
-					   float dx, float dy, float dz) const
+
+const Obstacle* World::inBuilding(const fvec3& pos, float angle,
+                                  float dx, float dy, float dz) const
 {
   // check everything but the walls
   const ObsList* olist = COLLISIONMGR.boxTest (pos, angle, dx, dy, dz);
@@ -236,8 +243,8 @@ const Obstacle*		World::inBuilding(const float* pos, float angle,
 }
 
 
-const Obstacle*		World::hitBuilding(const float* pos, float angle,
-					   float dx, float dy, float dz) const
+const Obstacle* World::hitBuilding(const fvec3& pos, float angle,
+                                   float dx, float dy, float dz) const
 {
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
@@ -262,8 +269,8 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
 }
 
 
-const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
-				   const float* pos, float angle,
+const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
+				   const fvec3& pos, float angle,
 				   float dx, float dy, float dz,
 				   bool directional) const
 {
@@ -367,9 +374,9 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 }
 
 
-bool			World::crossingTeleporter(const float* pos,
-					float angle, float dx, float dy, float dz,
-					float* plane) const
+bool World::crossingTeleporter(const fvec3& pos,
+                               float angle, float dx, float dy, float dz,
+                               fvec4* plane) const
 {
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   for (unsigned int i = 0; i < teleporters.size(); i++) {
@@ -381,9 +388,9 @@ bool			World::crossingTeleporter(const float* pos,
   return false;
 }
 
-const Teleporter*	World::crossesTeleporter(const float* oldPos,
-						const float* newPos,
-						int& face) const
+const Teleporter* World::crossesTeleporter(const fvec3& oldPos,
+                                           const fvec3& newPos,
+                                           int& face) const
 {
   // check teleporters
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
@@ -398,7 +405,8 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
   return NULL;
 }
 
-const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
+
+const Teleporter* World::crossesTeleporter(const Ray& r, int& face) const
 {
   // check teleporters
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
@@ -413,7 +421,8 @@ const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
   return NULL;
 }
 
-float			World::getProximity(const float* p, float r) const
+
+float World::getProximity(const fvec3& p, float r) const
 {
   // get maximum over all teleporters
   float bestProximity = 0.0;
@@ -428,7 +437,8 @@ float			World::getProximity(const float* p, float r) const
   return bestProximity;
 }
 
-void			World::freeFlags()
+
+void World::freeFlags()
 {
   int i;
   if (flagNodes)
@@ -445,7 +455,8 @@ void			World::freeFlags()
   flagWarpNodes = NULL;
 }
 
-void			World::makeMeshDrawMgrs()
+
+void World::makeMeshDrawMgrs()
 {
   // make the display list managers for source meshes
   std::vector<MeshObstacle*> sourceMeshes;
@@ -466,7 +477,7 @@ void			World::makeMeshDrawMgrs()
 }
 
 
-void			World::freeMeshDrawMgrs()
+void World::freeMeshDrawMgrs()
 {
   for (int i = 0; i < drawInfoCount; i++) {
     MeshDrawInfo* di = drawInfoArray[i];
@@ -481,7 +492,7 @@ void			World::freeMeshDrawMgrs()
 }
 
 
-void			World::updateAnimations(float /*dt*/)
+void World::updateAnimations(float /*dt*/)
 {
   const double gameTime = GameTime::getStepTime();
   for (int i = 0; i < drawInfoCount; i++) {
@@ -492,7 +503,7 @@ void			World::updateAnimations(float /*dt*/)
 }
 
 
-void			World::freeInsideNodes() const
+void World::freeInsideNodes() const
 {
   unsigned int i;
   int j;
@@ -1126,6 +1137,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   return true;
 }
 
+
 static void drawLines (int count, float (*vertices)[3], int color)
 {
   const float colors[][4] = {
@@ -1152,6 +1164,7 @@ static void drawLines (int count, float (*vertices)[3], int color)
   return;
 }
 
+
 void World::drawCollisionGrid() const
 {
   GLboolean usingTextures;
@@ -1168,6 +1181,7 @@ void World::drawCollisionGrid() const
   return;
 }
 
+
 RemotePlayer* World::getCurrentRabbit() const
 {
   if (players == NULL) {
@@ -1182,6 +1196,7 @@ RemotePlayer* World::getCurrentRabbit() const
   return NULL;
 }
 
+
 void World::setPlayersSize(int _playersSize)
 {
   playersSize = _playersSize;
@@ -1189,6 +1204,7 @@ void World::setPlayersSize(int _playersSize)
   for (int i = 0; i < maxPlayers; i++)
     players[i] = NULL;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

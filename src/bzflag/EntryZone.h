@@ -22,6 +22,7 @@
 // common headers
 #include "Flag.h"
 #include "global.h"
+#include "vectors.h"
 
 class EntryZone {
   public:
@@ -29,8 +30,8 @@ class EntryZone {
     void* unpack(void*);
 
   public:
-    float pos[3];
-    float size[3];
+    fvec3 pos;
+    fvec3 size;
     float rot;
     std::vector<FlagType*> flags;
     std::vector<TeamColor> teams;

@@ -42,7 +42,7 @@ class EighthDimSceneNode : public SceneNode {
 			~EighthDimRenderNode();
 	void		render();
 	void		setPolygon(int index, const GLfloat[3][3]);
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const EighthDimSceneNode* sceneNode;
 	int		numPolygons;

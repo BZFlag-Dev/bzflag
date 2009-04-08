@@ -14,13 +14,14 @@
 #include "Frustum.h"
 #include "Intersect.h"
 #include "Extents.h"
+#include "vectors.h"
 
 class Occluder {
   public:
     Occluder(const SceneNode *node);
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
-    IntersectLevel doCullAxisBox(const Extents& exts);
+    Intersect::IntersectLevel doCullAxisBox(const Extents& exts);
     bool doCullSceneNode(SceneNode* node);
     void addScore(unsigned int score);
     void divScore();
@@ -35,8 +36,8 @@ class Occluder {
     unsigned int cullScore;
     int planeCount;  // one more then the vertex count
     int vertexCount; // vertex count of the occluding plane
-    float (*planes)[4];
-    float (*vertices)[3];
+    fvec4* planes;
+    fvec3* vertices;
     static const bool DrawEdges;
     static const bool DrawNormals;
     static const bool DrawVertices;
@@ -54,7 +55,7 @@ class OccluderManager {
     void update(const Frustum* frustum);
     void select(const SceneNode* const* list, int listCount);
 
-    IntersectLevel occlude(const Extents& exts, unsigned int score);
+    Intersect::IntersectLevel occlude(const Extents& exts, unsigned int score);
     bool occludePeek(const Extents& exts);
 
     int getOccluderCount() const;

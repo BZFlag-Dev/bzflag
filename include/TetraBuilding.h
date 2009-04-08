@@ -29,8 +29,8 @@ class TetraBuilding : public Obstacle {
 
     TetraBuilding();
     TetraBuilding(const MeshTransform& transform,
-		  const float vertices[4][3], const float normals[4][3][3],
-		  const float texCoords[4][3][2], const bool useNormals[4],
+		  const fvec3 vertices[4], const fvec3 normals[4][3],
+		  const fvec2 texCoords[4][3], const bool useNormals[4],
 		  const bool useTexCoords[4], const BzMaterial* materials[4],
 		  unsigned char drive, unsigned char shoot, bool ricochet);
     ~TetraBuilding();
@@ -46,27 +46,27 @@ class TetraBuilding : public Obstacle {
     bool		isValid() const;
 
     float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
-    void		get3DNormal(const float* p, float* n) const;
+    void		getNormal(const fvec3& p, fvec3& n) const;
+    void		get3DNormal(const fvec3& p, fvec3& n) const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
+    bool		inCylinder(const fvec3& p, float radius, float height) const;
+    bool		inBox(const fvec3& p, float angle,
 			      float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
+    bool		inMovingBox(const fvec3& oldP, float oldAngle,
+				    const fvec3& newP, float newAngle,
 				    float halfWidth, float halfBreadth, float height) const;
-    bool		isCrossing(const float* p, float angle,
+    bool		isCrossing(const fvec3& p, float angle,
 				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+				   fvec4* plane) const;
 
     bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
+				const fvec3& pos1, float azimuth1,
+				const fvec3& pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
 				float height,
-				float* normal) const;
+				fvec3& normal) const;
 
-    void		getCorner(int index, float* pos) const;
+    void		getCorner(int index, fvec3& pos) const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -82,9 +82,9 @@ class TetraBuilding : public Obstacle {
     static const char*	typeName;
 
     MeshTransform transform;
-    float vertices[4][3];
-    float normals[4][3][3];
-    float texcoords[4][3][2];
+    fvec3 vertices[4];
+    fvec3 normals[4][3];
+    fvec2 texcoords[4][3];
     bool useNormals[4];
     bool useTexcoords[4];
     const BzMaterial* materials[4];

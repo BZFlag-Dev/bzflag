@@ -62,7 +62,7 @@ class MeshFragSceneNode : public WallSceneNode {
 	void render();
 	void renderRadar();
 	void renderShadow();
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+	const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
 	inline void drawV() const; // draw with just vertices

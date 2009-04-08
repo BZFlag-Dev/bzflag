@@ -604,21 +604,21 @@ static bool navigate(float &rotation, float &speed)
     }
 
     // FIXME: team flag handling does not account for Z distance
-    const float *base = world->getBase(myTank->getTeam());
+    const World::BaseParams* base = world->getBase(myTank->getTeam());
     if (base == NULL) {
       // I don't have a team base (rogue maybe) - don't want the flag
       serverLink->sendDropFlag(myTank->getPosition());
       handleFlagDropped(myTank);
     } else {
-      if ((fabs(base[0] - pos[0]) < baseEpsilon) &&
-	  (fabs(base[1] - pos[1]) < baseEpsilon) &&
+      if ((fabs(base->pos.x - pos[0]) < baseEpsilon) &&
+	  (fabs(base->pos.y - pos[1]) < baseEpsilon) &&
 	  (myTank->getFlag()->flagTeam == myTank->getTeam())) {
 	// I am near the center of my team base, drop the flag
 	serverLink->sendDropFlag(myTank->getPosition());
 	handleFlagDropped(myTank);
       } else {
 	// Move towards my base
-	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, base);
+	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, base->pos);
 	rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
 	speed = (float)(M_PI/2.0 - fabs(rotation));
       }

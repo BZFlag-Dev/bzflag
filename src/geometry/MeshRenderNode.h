@@ -32,7 +32,7 @@ class OpaqueRenderNode : public RenderNode {
     void render();
     void renderRadar();
     void renderShadow();
-    virtual const GLfloat* getPosition() const { return NULL;}
+    virtual const fvec3& getPosition() const { return junk; }
   private:
     void drawV() const;
     void drawVN() const;
@@ -46,6 +46,8 @@ class OpaqueRenderNode : public RenderNode {
     const GLfloat* color;
     const Extents* exts;
     int triangles;
+  private:
+    static fvec3 junk;
 };
 
 
@@ -56,10 +58,10 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
 			 const GLfloat* color, int lod, int set,
 			 const Extents* exts, const float pos[3],
 			 int triangles);
-    const GLfloat* getPosition() const { return pos; }
+    const fvec3& getPosition() const { return pos; }
     void setPosition(const GLfloat* pos);
   private:
-    float pos[3];
+    fvec3 pos;
 };
 
 

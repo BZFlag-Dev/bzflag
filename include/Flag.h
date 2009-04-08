@@ -55,6 +55,7 @@
 #include "global.h"
 #include "Address.h"
 #include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
 
 /** This enum says where a flag is. */
@@ -238,9 +239,9 @@ public:
   FlagStatus status;
   FlagEndurance	endurance;
   PlayerId owner;		// who has flag
-  float position[3];		// position on ground
-  float launchPosition[3];	// position flag launched from
-  float landingPosition[3];	// position flag will land
+  fvec3 position;		// position on ground
+  fvec3 launchPosition;		// position flag launched from
+  fvec3 landingPosition;	// position flag will land
   float flightTime;		// flight time so far
   float flightEnd;		// total duration of flight
   float initialVelocity;	// initial launch velocity
@@ -262,7 +263,7 @@ namespace Flags {
     *BlueTeam,
     *Bouncy,
     *Burrow,
-	*CloakedBullet,
+    *CloakedBullet,
     *Cloaking,
     *Colorblindness,
     *ForwardOnly,

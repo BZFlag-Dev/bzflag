@@ -36,7 +36,7 @@ class EighthDBaseSceneNode : public EighthDimSceneNode {
 				const float size[3], float rotation);
 			~EighthDBaseRenderNode();
 	void		render();
-	const GLfloat *	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const EighthDBaseSceneNode *sceneNode;
 	GLfloat corner[8][3];

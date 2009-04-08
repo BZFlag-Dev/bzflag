@@ -187,7 +187,7 @@ void			RobotPlayer::doUpdate(float dt)
 			     getPosition()[1] - p->getPosition()[1],
 			     getPosition()[2] - p->getPosition()[2]};
 	  Ray ray(relpos, dir);
-	  float impact = rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);
+	  float impact = Intersect::rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);
 	  if (impact > 0 && impact < shotRange)
 	  {
 	    shoot=false;

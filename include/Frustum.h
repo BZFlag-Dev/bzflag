@@ -18,6 +18,7 @@
 #define BZF_FRUSTUM_H
 
 #include "common.h"
+#include "vectors.h"
 
 // FIXME -- will need a means for off center projections for
 // looking through teleporters
@@ -27,13 +28,13 @@ class Frustum {
 			Frustum();
 			~Frustum();
 
-    const float*	getEye() const;
-    const float*	getDirection() const;
-    const float*	getUp() const;
-    const float*	getRight() const;
-    const float*	getSide(int index) const;
+    const fvec3&	getEye() const;
+    const fvec3&	getDirection() const;
+    const fvec3&	getUp() const;
+    const fvec3&	getRight() const;
+    const fvec4&	getSide(int index) const;
     int			getPlaneCount() const;
-    const float*	getFarCorner(int index) const;
+    const fvec3&	getFarCorner(int index) const;
     float		getTilt() const; // degrees
     float		getRotation() const; // degrees
     float		getNear() const;
@@ -47,7 +48,7 @@ class Frustum {
     float		getAreaFactor() const;
     const float*	getBillboardMatrix() const;
 
-    void		setView(const float* eye, const float* target);
+    void		setView(const fvec3& eye, const fvec3& target);
     void		setProjection(float fov,
 				      float m_near, float m_far, float m_deep_far,
 				      int width, int height, int viewHeight);
@@ -61,41 +62,41 @@ class Frustum {
 				       float width, float breadth);
 
   protected:
-    void		makePlane(const float* v1, const float* v2, int);
+    void		makePlane(const fvec3& v1, const fvec3& v2, int index);
 
   protected:
-    float		eye[3];
-    float		target[3];
-    float		right[3], up[3];
-    float		plane[6][4];		// pointing in
-    int			planeCount;
-    float		farCorner[4][3];
-    float		tilt;
-    float		rotation;
-    float		viewMatrix[16];
-    float		billboardMatrix[16];
-    float		m_near, m_far, m_deep_far;
-    float		fovx, fovy;
-    float		areaFactor;
-    float		projectionMatrix[16];
-    float		deepProjectionMatrix[16];
+    fvec3 eye;
+    fvec3 target;
+    fvec3 right, up;
+    fvec4 plane[6];  // pointing in
+    int   planeCount;
+    fvec3 farCorner[4];
+    float tilt;
+    float rotation;
+    float viewMatrix[16];
+    float billboardMatrix[16];
+    float m_near, m_far, m_deep_far;
+    float fovx, fovy;
+    float areaFactor;
+    float projectionMatrix[16];
+    float deepProjectionMatrix[16];
 };
 
 //
 // Frustum
 //
 
-inline const float*	Frustum::getEye() const
+inline const fvec3&	Frustum::getEye() const
 {
   return eye;
 }
 
-inline const float*	Frustum::getDirection() const
+inline const fvec3&	Frustum::getDirection() const
 {
-  return plane[0];
+  return (fvec3&)plane[0];
 }
 
-inline const float*	Frustum::getSide(int index) const
+inline const fvec4&	Frustum::getSide(int index) const
 {
   return plane[index];
 }
@@ -105,7 +106,7 @@ inline int		Frustum::getPlaneCount() const
   return planeCount;
 }
 
-inline const float*	Frustum::getFarCorner(int index) const
+inline const fvec3&	Frustum::getFarCorner(int index) const
 {
   return farCorner[index];
 }
@@ -120,12 +121,12 @@ inline float		Frustum::getRotation() const
   return rotation;
 }
 
-inline const float*	Frustum::getUp() const
+inline const fvec3&	Frustum::getUp() const
 {
   return up;
 }
 
-inline const float*	Frustum::getRight() const
+inline const fvec3&	Frustum::getRight() const
 {
   return right;
 }

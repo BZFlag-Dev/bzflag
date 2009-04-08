@@ -82,24 +82,24 @@ WeatherRenderer::WeatherRenderer()
   cellCount = 0;
 
   // install callbacks
-  BZDB.addCallback("_rainType", bzdbCallBack, this);
-  BZDB.addCallback("_rainDensity", bzdbCallBack, this);
-  BZDB.addCallback("_rainSpread", bzdbCallBack, this);
-  BZDB.addCallback("_rainSpeedMod", bzdbCallBack, this);
-  BZDB.addCallback("_rainStartZ", bzdbCallBack, this);
-  BZDB.addCallback("_rainEndZ", bzdbCallBack, this);
-  BZDB.addCallback("_rainBaseColor", bzdbCallBack, this);
-  BZDB.addCallback("_useRainPuddles", bzdbCallBack, this);
-  BZDB.addCallback("_useLineRain", bzdbCallBack, this);
+  BZDB.addCallback("_rainType",          bzdbCallBack, this);
+  BZDB.addCallback("_rainDensity",       bzdbCallBack, this);
+  BZDB.addCallback("_rainSpread",        bzdbCallBack, this);
+  BZDB.addCallback("_rainSpeedMod",      bzdbCallBack, this);
+  BZDB.addCallback("_rainStartZ",        bzdbCallBack, this);
+  BZDB.addCallback("_rainEndZ",          bzdbCallBack, this);
+  BZDB.addCallback("_rainBaseColor",     bzdbCallBack, this);
+  BZDB.addCallback("_useRainPuddles",    bzdbCallBack, this);
+  BZDB.addCallback("_useLineRain",       bzdbCallBack, this);
   BZDB.addCallback("_useRainBillboards", bzdbCallBack, this);
-  BZDB.addCallback("_rainPuddleSpeed", bzdbCallBack, this);
+  BZDB.addCallback("_rainPuddleSpeed",   bzdbCallBack, this);
   BZDB.addCallback("_rainMaxPuddleTime", bzdbCallBack, this);
-  BZDB.addCallback("_rainPuddleColor", bzdbCallBack, this);
+  BZDB.addCallback("_rainPuddleColor",   bzdbCallBack, this);
   BZDB.addCallback("_rainPuddleTexture", bzdbCallBack, this);
-  BZDB.addCallback("_rainTexture", bzdbCallBack, this);
-  BZDB.addCallback("_rainSpins", bzdbCallBack, this);
-  BZDB.addCallback("_rainRoofs", bzdbCallBack, this);
-  BZDB.addCallback("userRainScale", bzdbCallBack, this);
+  BZDB.addCallback("_rainTexture",       bzdbCallBack, this);
+  BZDB.addCallback("_rainSpins",         bzdbCallBack, this);
+  BZDB.addCallback("_rainRoofs",         bzdbCallBack, this);
+  BZDB.addCallback("userRainScale",      bzdbCallBack, this);
 }
 
 WeatherRenderer::~WeatherRenderer()
@@ -107,24 +107,24 @@ WeatherRenderer::~WeatherRenderer()
   DisplayListSystem::Instance().freeList(puddleList);
   DisplayListSystem::Instance().freeList(dropList);
 
-  BZDB.removeCallback("_rainType", bzdbCallBack, this);
-  BZDB.removeCallback("_rainDensity", bzdbCallBack, this);
-  BZDB.removeCallback("_rainSpread", bzdbCallBack, this);
-  BZDB.removeCallback("_rainSpeedMod", bzdbCallBack, this);
-  BZDB.removeCallback("_rainStartZ", bzdbCallBack, this);
-  BZDB.removeCallback("_rainEndZ", bzdbCallBack, this);
-  BZDB.removeCallback("_rainBaseColor", bzdbCallBack, this);
-  BZDB.removeCallback("_useRainPuddles", bzdbCallBack, this);
-  BZDB.removeCallback("_useLineRain", bzdbCallBack, this);
+  BZDB.removeCallback("_rainType",          bzdbCallBack, this);
+  BZDB.removeCallback("_rainDensity",       bzdbCallBack, this);
+  BZDB.removeCallback("_rainSpread",        bzdbCallBack, this);
+  BZDB.removeCallback("_rainSpeedMod",      bzdbCallBack, this);
+  BZDB.removeCallback("_rainStartZ",        bzdbCallBack, this);
+  BZDB.removeCallback("_rainEndZ",          bzdbCallBack, this);
+  BZDB.removeCallback("_rainBaseColor",     bzdbCallBack, this);
+  BZDB.removeCallback("_useRainPuddles",    bzdbCallBack, this);
+  BZDB.removeCallback("_useLineRain",       bzdbCallBack, this);
   BZDB.removeCallback("_useRainBillboards", bzdbCallBack, this);
-  BZDB.removeCallback("_rainPuddleSpeed", bzdbCallBack, this);
+  BZDB.removeCallback("_rainPuddleSpeed",   bzdbCallBack, this);
   BZDB.removeCallback("_rainMaxPuddleTime", bzdbCallBack, this);
-  BZDB.removeCallback("_rainPuddleColor", bzdbCallBack, this);
+  BZDB.removeCallback("_rainPuddleColor",   bzdbCallBack, this);
   BZDB.removeCallback("_rainPuddleTexture", bzdbCallBack, this);
-  BZDB.removeCallback("_rainTexture", bzdbCallBack, this);
-  BZDB.removeCallback("_rainSpins", bzdbCallBack, this);
-  BZDB.removeCallback("_rainRoofs", bzdbCallBack, this);
-  BZDB.removeCallback("userRainScale", bzdbCallBack, this);
+  BZDB.removeCallback("_rainTexture",       bzdbCallBack, this);
+  BZDB.removeCallback("_rainSpins",         bzdbCallBack, this);
+  BZDB.removeCallback("_rainRoofs",         bzdbCallBack, this);
+  BZDB.removeCallback("userRainScale",      bzdbCallBack, this);
 }
 
 
@@ -527,7 +527,7 @@ void WeatherRenderer::draw(const SceneRenderer& sr)
 	// Not using an Extents bbox directly because it is nice to
 	// block the Extents copy constructor to avoid passing by value.
 	exts.set(itr->second.bbox.mins, itr->second.bbox.maxs);
-	if (testAxisBoxInFrustum(exts, frustum) != Outside) {
+	if (Intersect::testAxisBoxInFrustum(exts, frustum) != Intersect::Outside) {
 	  visibleChunks++;
 	  std::vector<rain>::iterator dropItr = itr->second.drops.begin();
 	  while (dropItr != itr->second.drops.end()) {

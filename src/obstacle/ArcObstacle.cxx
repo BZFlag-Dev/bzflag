@@ -33,7 +33,7 @@ ArcObstacle::ArcObstacle()
 
 
 ArcObstacle::ArcObstacle(const MeshTransform& xform,
-			 const float* _pos, const float* _size,
+			 const fvec3& _pos, const fvec3& _size,
 			 float _rotation, float _sweepAngle, float _ratio,
 			 const float _texsize[4], bool _useNormals,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
@@ -221,12 +221,12 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
   // setup the coordinates
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> vertices;
-  std::vector<cfvec3> normals;
-  std::vector<cfvec2> texcoords;
-  cfvec3 v, n;
-  cfvec2 t;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> vertices;
+  std::vector<fvec3> normals;
+  std::vector<fvec2> texcoords;
+  fvec3 v, n;
+  fvec2 t;
 
   // add the checkpoint (one is sufficient)
   if (isCircle) {
@@ -393,12 +393,12 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
 
   // setup the coordinates
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> vertices;
-  std::vector<cfvec3> normals;
-  std::vector<cfvec2> texcoords;
-  cfvec3 v, n;
-  cfvec2 t;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> vertices;
+  std::vector<fvec3> normals;
+  std::vector<fvec2> texcoords;
+  fvec3 v, n;
+  fvec2 t;
 
   // add the checkpoints (very wasteful)
   v[0] = pos[0];
@@ -574,43 +574,43 @@ float ArcObstacle::intersect(const Ray&) const
 }
 
 
-void ArcObstacle::get3DNormal(const float*, float*) const
+void ArcObstacle::get3DNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
 
-void ArcObstacle::getNormal(const float*, float*) const
+void ArcObstacle::getNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
 
-bool ArcObstacle::getHitNormal(const float*, float, const float*, float,
-			       float, float, float, float*) const
+bool ArcObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
+			       float, float, float, fvec3&) const
 {
   assert(false);
   return false;
 }
 
 
-bool ArcObstacle::inCylinder(const float*,float, float) const
+bool ArcObstacle::inCylinder(const fvec3&,float, float) const
 {
   assert(false);
   return false;
 }
 
 
-bool ArcObstacle::inBox(const float*, float, float, float, float) const
+bool ArcObstacle::inBox(const fvec3&, float, float, float, float) const
 {
   assert(false);
   return false;
 }
 
 
-bool ArcObstacle::inMovingBox(const float*, float, const float*, float,
+bool ArcObstacle::inMovingBox(const fvec3&, float, const fvec3&, float,
 			      float, float, float) const
 {
   assert(false);
@@ -618,9 +618,9 @@ bool ArcObstacle::inMovingBox(const float*, float, const float*, float,
 }
 
 
-bool ArcObstacle::isCrossing(const float* /*p*/, float /*angle*/,
+bool ArcObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 			  float /*dx*/, float /*dy*/, float /*height*/,
-			  float* /*_plane*/) const
+			  fvec4* /*_plane*/) const
 {
   assert(false);
   return false;

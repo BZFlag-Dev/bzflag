@@ -28,25 +28,9 @@
 // triangulation parameters
 static fvec3 Normal; // FIXME, uNormal, vNormal;
 //static fvec2* MVertsSpace = NULL;
-static const float* const *Verts = NULL;
+static const fvec3** Verts = NULL;
 static int Count = 0;
 static int* WorkSet = NULL;
-
-
-static bool vec3norm(fvec3 v)
-{
-  const float len = sqrtf(vec3dot(v, v));
-  if (len < 1.0e-6f) {
-    v[0] = v[1] = v[2] = 0.0f;
-    return false;
-  } else {
-    const float scale = 1.0f / len;
-    v[0] *= scale;
-    v[1] *= scale;
-    v[2] *= scale;
-  }
-  return true;
-}
 
 
 static inline bool makeNormal()
@@ -54,15 +38,15 @@ static inline bool makeNormal()
   // Newell method
   Normal[0] = Normal[1] = Normal[2] = 0.0f;
   for (int i = 0; i < Count; i++) {
-    const float* v0 = Verts[i];
-    const float* v1 = Verts[(i + 1) % Count];
-    Normal[0] += ((v0[1] - v1[1]) * (v0[2] + v1[2]));
-    Normal[1] += ((v0[2] - v1[2]) * (v0[0] + v1[0]));
-    Normal[2] += ((v0[0] - v1[0]) * (v0[1] + v1[1]));
+    const fvec3& v0 = *Verts[i];
+    const fvec3& v1 = *Verts[(i + 1) % Count];
+    Normal[0] += ((v0.y - v1.y) * (v0.z + v1.z));
+    Normal[1] += ((v0.z - v1.z) * (v0.x + v1.x));
+    Normal[2] += ((v0.x - v1.x) * (v0.y + v1.y));
   }
 
   // normalize
-  return vec3norm(Normal);
+  return fvec3::normalize(Normal);
 }
 
 
@@ -72,12 +56,10 @@ static inline bool isConvex(int w0, int w1, int w2)
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
   const int v2 = WorkSet[w2];
-  fvec3 e0, e1;
-  vec3sub(e0, Verts[v1], Verts[v0]);
-  vec3sub(e1, Verts[v2], Verts[v1]);
-  fvec3 cross;
-  vec3cross(cross, e0, e1);
-  if (vec3dot(cross, Normal) <= 0.0f) {
+  const fvec3 e0 = *Verts[v1] - *Verts[v0];
+  const fvec3 e1 = *Verts[v2] - *Verts[v1];
+  const fvec3 cross = fvec3::cross(e0, e1);
+  if (fvec3::dot(cross, Normal) <= 0.0f) {
     return false;
   }
   return true;
@@ -93,22 +75,21 @@ static inline bool isFaceClear(int w0, int w1, int w2)
 
   // setup the edges
   fvec3 edges[3];
-  vec3sub(edges[0], Verts[v1], Verts[v0]);
-  vec3sub(edges[1], Verts[v2], Verts[v1]);
-  vec3sub(edges[2], Verts[v0], Verts[v2]);
+  edges[0] = *Verts[v1] - *Verts[v0];
+  edges[1] = *Verts[v2] - *Verts[v1];
+  edges[2] = *Verts[v0] - *Verts[v2];
 
   // get the triangle normal
-  fvec3 normal;
-  vec3cross(normal, edges[0], edges[1]);
+  fvec3 normal = fvec3::cross(edges[0], edges[1]);
 
   // setup the planes
-  float planes[3][4];
-  vec3cross(planes[0], edges[0], normal);
-  vec3cross(planes[1], edges[1], normal);
-  vec3cross(planes[2], edges[2], normal);
-  planes[0][3] = -vec3dot(planes[0], Verts[v0]);
-  planes[1][3] = -vec3dot(planes[1], Verts[v1]);
-  planes[2][3] = -vec3dot(planes[2], Verts[v2]);
+  fvec4 planes[3];
+  (fvec3&)planes[0] = fvec3::cross(edges[0], normal);
+  (fvec3&)planes[1] = fvec3::cross(edges[1], normal);
+  (fvec3&)planes[2] = fvec3::cross(edges[2], normal);
+  planes[0][3] = -fvec3::dot((fvec3&)planes[0], *Verts[v0]);
+  planes[1][3] = -fvec3::dot((fvec3&)planes[1], *Verts[v1]);
+  planes[2][3] = -fvec3::dot((fvec3&)planes[2], *Verts[v2]);
 
   for (int w = 0; w < Count; w++) {
     if ((w == w0) || (w == w1) || (w == w2)) {
@@ -116,7 +97,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
     }
     const int v = WorkSet[w];
     for (i = 0; i < 3; i++) {
-      const float dist = vec3dot(planes[i], Verts[v]) + planes[i][3];
+      const float dist = fvec3::dot((fvec3&)planes[i], *Verts[v]) + planes[i][3];
       if (dist > 0.0f) {
 	break; // this point is clear
       }
@@ -134,16 +115,13 @@ static inline float getDot(int w0, int w1, int w2)
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
   const int v2 = WorkSet[w2];
-  fvec3 e0, e1;
-  vec3sub(e0, Verts[v1], Verts[v0]);
-  vec3sub(e1, Verts[v2], Verts[v1]);
-  vec3norm(e0);
-  vec3norm(e1);
-  return vec3dot(e0, e1);
+  const fvec3 e0 = *Verts[v1] - *Verts[v0];
+  const fvec3 e1 = *Verts[v2] - *Verts[v1];
+  return fvec3::dot(e0.normalize(), e1.normalize());
 }
 
 
-void triangulateFace(int count, const float* const* verts,
+void triangulateFace(int count, const fvec3** verts,
 		     std::vector<TriIndices>& tris)
 {
   tris.clear();

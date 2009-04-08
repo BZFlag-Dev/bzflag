@@ -86,7 +86,7 @@ WorldInfo::~WorldInfo()
 void WorldInfo::addWall(float x, float y, float z,
                         float r, float w, float h)
 {
-  const float pos[3] = {x, y, z};
+  const fvec3 pos(x, y, z);
   WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
   OBSTACLEMGR.addWorldObstacle(wall);
 }
@@ -129,7 +129,7 @@ void WorldInfo::addBox(float x, float y, float z, float r,
 		       float w, float d, float h,
 		       bool drive, bool shoot, bool rico)
 {
-  const float pos[3] = {x, y, z};
+  const fvec3 pos(x, y, z);
   BoxBuilding* box = new BoxBuilding(pos, r, w, d, h,
                                      drive, shoot, rico, false);
   OBSTACLEMGR.addWorldObstacle(box);
@@ -139,7 +139,7 @@ void WorldInfo::addPyramid(float x, float y, float z, float r,
 			   float w, float d, float h, bool flipZ,
 			   bool drive, bool shoot, bool rico)
 {
-  const float pos[3] = {x, y, z};
+  const fvec3 pos(x, y, z);
   PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h,
                                              drive, shoot, rico);
   if (flipZ) {
@@ -153,7 +153,7 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
 			      bool horizontal,
 			      bool drive, bool shoot, bool rico)
 {
-  const float pos[3] = {x, y, z};
+  const fvec3 pos(x, y, z);
   Teleporter* tele = new Teleporter(pos, r, w, d, h, b,
                                     horizontal, drive, shoot, rico);
   OBSTACLEMGR.addWorldObstacle(tele);
@@ -294,7 +294,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
     height = Epsilon;
   }
 
-  float pos[3] = {x, y, z};
+  fvec3 pos(x, y, z);
 
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = OBSTACLEMGR.getWorld()->getList(type);
@@ -345,7 +345,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 					     float x, float y, float z, float radius,
 					     float height) const
 {
-  const float pos[3] = {x, y, z};
+  const fvec3 pos(x, y, z);
   return cylinderInBuilding (location, pos, radius, height);
 }
 

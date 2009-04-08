@@ -28,6 +28,8 @@
 
 /* common interface headers */
 #include "bzfgl.h"
+#include "Extents.h"
+#include "vectors.h"
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 
@@ -59,7 +61,7 @@ protected:
 	OpenGLGState				puddleState;
 	std::string				rainSkin;
 	std::vector<std::string>		rainTextures;
-	float					rainColor[2][4];
+	fvec4					rainColor[2];
 	float					rainSize[2];
 	int					rainDensity;
 	float					rainSpeed;
@@ -75,14 +77,14 @@ protected:
 	float					rainEndZ;
 	float					maxPuddleTime;
 	float					puddleSpeed;
-	float					puddleColor[4];
+	fvec4					puddleColor;
 
 	GLDisplayList				dropList;
 	GLDisplayList				puddleList;
 
 public:
 	typedef struct {
-		float		pos[3];
+		fvec3		pos;
 		float		speed;
 		float		roofTop;
 		int		texture;
@@ -92,7 +94,7 @@ protected:
 	std::vector<rain>	raindrops;
 
 	typedef struct {
-		float		pos[3];
+		fvec3		pos;
 		float		time;
 		int		texture;
 	} puddle;
@@ -114,17 +116,11 @@ protected:
 	float			gridSize;
 	float			keyFactor;
 
-public:
-	typedef struct {
-	  float mins[3];
-	  float maxs[3];
-	} copyExtents;
-
 protected:
-	typedef struct  {
-	  std::vector<rain>	drops;
-	  copyExtents		bbox;
-	} visibleChunk;
+	struct visibleChunk {
+	  Extents bbox;
+	  std::vector<rain> drops;
+	};
 
 	std::map<int, visibleChunk>	chunkMap;
 

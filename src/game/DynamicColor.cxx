@@ -177,12 +177,12 @@ void DynamicColorManager::print(std::ostream& out, const string& indent) const
 
 DynamicColor::DynamicColor()
 {
-  const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  const fvec4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
   name = "";
   possibleAlpha = false;
 
-  memcpy(color, white, sizeof(float[4]));
+  color = white;
 
   varName = "";
   varTime = 1.0f;
@@ -191,8 +191,8 @@ DynamicColor::DynamicColor()
   varInit = false;
   varTimeTmp = varTime;
   varTransition = false;
-  memcpy(varOldColor, white, sizeof(float[4]));
-  memcpy(varNewColor, white, sizeof(float[4]));
+  varOldColor = white;
+  varNewColor = white;
   varLastChange = TimeKeeper::getSunGenesisTime();
 
   statesDelay = 0.0f;
@@ -292,7 +292,7 @@ void DynamicColor::setDelay(float delay)
 }
 
 
-void DynamicColor::addState(float duration, const float _color[4])
+void DynamicColor::addState(float duration, const fvec4& _color)
 {
   if (duration < 0.0f) {
     duration = 0.0f;
@@ -308,8 +308,7 @@ void DynamicColor::addState(float duration,
   if (duration < 0.0f) {
     duration = 0.0f;
   }
-  const float c[4] = { r, g, b, a };
-  colorStates.push_back(ColorState(c, duration));
+  colorStates.push_back(ColorState(fvec4(r, g, b, a), duration));
   return;
 }
 
@@ -326,7 +325,7 @@ void DynamicColor::updateVariable()
   // setup the basics
   varTransition = true;
   varLastChange = TimeKeeper::getTick();
-  memcpy(varOldColor, color, sizeof(float[4]));
+  varOldColor = color;
   string expr = BZDB.get(varName);
 
   // parse the optional delay timing
@@ -365,9 +364,9 @@ void DynamicColor::update(double t)
 }
 
 
-void DynamicColor::setColor(const float value[4])
+void DynamicColor::setColor(const fvec4& value)
 {
-  memcpy(color, value, sizeof(float[4]));
+  color = value;
 }
 
 
@@ -383,8 +382,8 @@ void DynamicColor::colorByVariable(double /* t */)
       expr.resize(atpos);
     }
     parseColorString(expr, color);
-    memcpy(varOldColor, color, sizeof(float[4]));
-    memcpy(varNewColor, color, sizeof(float[4]));
+    varOldColor = color;
+    varNewColor = color;
     BZDB.addCallback(varName, bzdbCallback, this);
   }
 
@@ -394,14 +393,11 @@ void DynamicColor::colorByVariable(double /* t */)
     if (diffTime < varTimeTmp) {
       const float newScale = (varTimeTmp > 0.0f) ? (diffTime / varTimeTmp) : 1.0f;
       const float oldScale = 1.0f - newScale;
-      color[0] = (oldScale * varOldColor[0]) + (newScale * varNewColor[0]);
-      color[1] = (oldScale * varOldColor[1]) + (newScale * varNewColor[1]);
-      color[2] = (oldScale * varOldColor[2]) + (newScale * varNewColor[2]);
-      color[3] = (oldScale * varOldColor[3]) + (newScale * varNewColor[3]);
+      color = (oldScale * varOldColor) + (newScale * varNewColor);
     } else {
       // make sure the final color is set exactly
       varTransition = false;
-      memcpy(color, varNewColor, sizeof(float[4]));
+      color = varNewColor;
     }
     if (varNoAlpha) {
       color[3] = (color[3] >= 0.5f) ? 1.0f : 0.0f;
@@ -414,7 +410,7 @@ void DynamicColor::colorByStates(double t)
 {
   if ((colorStates.size() <= 1) ||
       (statesLength <= 0.0f)) {
-    memcpy(color, colorStates[0].color, sizeof(float[4]));
+    color = colorStates[0].color;
     return;
   }
 
@@ -436,17 +432,15 @@ void DynamicColor::colorByStates(double t)
   const ColorState& next = colorStates[nextIndex];
 
   if (prev.duration <= 0.0f) {
-    memcpy(color, next.color, sizeof(float[4]));
+    color = next.color;
     return;
   }
 
   const float left = endTime - phase;
   const float pf = left / prev.duration;
   const float nf = 1.0f - pf;
-  color[0] = (pf * prev.color[0]) + (nf * next.color[0]);
-  color[1] = (pf * prev.color[1]) + (nf * next.color[1]);
-  color[2] = (pf * prev.color[2]) + (nf * next.color[2]);
-  color[3] = (pf * prev.color[3]) + (nf * next.color[3]);
+
+  color = (pf * prev.color) + (nf * next.color);
 }
 
 

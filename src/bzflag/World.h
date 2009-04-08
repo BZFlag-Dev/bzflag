@@ -26,6 +26,7 @@
 #include "LinkManager.h"
 #include "MapInfo.h"
 #include "global.h"
+#include "vectors.h"
 
 /* local interface headers */
 #include "RemotePlayer.h"
@@ -43,7 +44,16 @@ class MeshDrawInfo;
  *	Game database -- buildings, teleporters, game style
  */
 class World {
+
   friend class WorldBuilder;
+
+  public:
+    struct BaseParams {
+      fvec3 pos;
+      fvec3 size;
+      float rot;
+    };
+
   public:
     World();
     ~World();
@@ -86,33 +96,33 @@ class World {
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
     ClientFlag&		getClientFlag(int index) const;
-    const float*	getBase(int, int=0) const;
+    const BaseParams*	getBase(int team, int base = 0) const;
     const Teleporter*	getTeleporter(int source, int& face) const;
     int			getTeleporter(const Teleporter*, int face) const;
     int			getTeleportTarget(int source) const;
     int			getTeleportTarget(int source, unsigned int seed) const;
     const LinkManager&	getLinkManager() const { return links; }
 
-    TeamColor		whoseBase(const float* pos) const;
-    const Obstacle*	inBuilding(const float* pos, float radius,
+    TeamColor		whoseBase(const fvec3& pos) const;
+    const Obstacle*	inBuilding(const fvec3& pos, float radius,
 				   float tankHeight) const;
-    const Obstacle*	inBuilding(const float* pos, float angle,
+    const Obstacle*	inBuilding(const fvec3& pos, float angle,
 				   float tankWidth, float tankBreadth,
 				   float tankHeight) const;
-    const Obstacle*	hitBuilding(const float* pos, float angle,
+    const Obstacle*	hitBuilding(const fvec3& pos, float angle,
 				    float tankWidth, float tankBreadth,
 				    float tankHeight) const;
-    const Obstacle*	hitBuilding(const float* oldPos, float oldAngle,
-				    const float* pos, float angle,
+    const Obstacle*	hitBuilding(const fvec3& oldPos, float oldAngle,
+				    const fvec3& pos, float angle,
 				    float tankWidth, float tankBreadth,
 				    float tankHeight, bool directional) const;
-    bool		crossingTeleporter(const float* oldPos, float angle,
+    bool		crossingTeleporter(const fvec3& oldPos, float angle,
 					float tankWidth, float tankBreadth,
-					float tankHeight, float* plane) const;
-    const Teleporter*	crossesTeleporter(const float* oldPos,
-					  const float* newPos, int& face) const;
+					float tankHeight, fvec4* plane) const;
+    const Teleporter*	crossesTeleporter(const fvec3& oldPos,
+					  const fvec3& newPos, int& face) const;
     const Teleporter*	crossesTeleporter(const Ray& r, int& face) const;
-    float		getProximity(const float* pos, float radius) const;
+    float		getProximity(const fvec3& pos, float radius) const;
 
     void		initFlag(int index);
     void		updateFlag(int index, float dt);
@@ -173,8 +183,7 @@ class World {
     const BzMaterial*	waterMaterial;
     const BzMaterial*	linkMaterial;
 
-    typedef struct { float p[7]; } BaseParms;
-    typedef std::vector<BaseParms> TeamBases;
+    typedef std::vector<BaseParams> TeamBases;
     TeamBases		bases[NumTeams];
     Team		team[NumTeams];
 
@@ -395,13 +404,13 @@ inline ClientFlag&	World::getClientFlag(int index) const
   return flags[index];
 }
 
-inline const float*	World::getBase(int _team, int base) const
+inline const World::BaseParams* World::getBase(int _team, int base) const
 {
   const TeamBases &b = bases[_team];
   if ((base < 0) || (base >= (int)b.size()))
     return NULL;
 
-  return b[base].p;
+  return &b[base];
 }
 
 inline World*		World::getWorld()

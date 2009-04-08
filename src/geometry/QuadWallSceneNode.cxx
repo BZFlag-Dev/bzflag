@@ -259,12 +259,12 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
   areas[level] = area;
   nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
+				getPlaneRaw(), uOffset, vOffset,
 				uRepeats, vRepeats);
   shadowNode = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats);
+                            base, uEdge, vEdge,
+                            getPlaneRaw(), uOffset, vOffset,
+                            uRepeats, vRepeats);
   shadowNode->setStyle(0);
 
   // make squaring levels if necessary
@@ -278,7 +278,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 	areas[level] = area / (float)uElements;
 	nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
+				getPlaneRaw(), uOffset, vOffset,
 				uRepeats, vRepeats);
 
       }
@@ -291,7 +291,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 	areas[level] = area / (float)vElements;
 	nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
+				getPlaneRaw(), uOffset, vOffset,
 				uRepeats, vRepeats);
 
       }
@@ -307,7 +307,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
+				getPlaneRaw(), uOffset, vOffset,
 				uRepeats, vRepeats);
   }
 
@@ -331,7 +331,7 @@ QuadWallSceneNode::~QuadWallSceneNode()
   delete shadowNode;
 }
 
-int			QuadWallSceneNode::split(const float *_plane,
+int			QuadWallSceneNode::split(const fvec4& _plane,
 				SceneNode*& front, SceneNode*& back) const
 {
   // need to reorder vertices into counterclockwise order
@@ -370,13 +370,13 @@ bool		    QuadWallSceneNode::inAxisBox(const Extents& exts) const
   }
 
   // NOTE: inefficient
-  float vertices[4][3];
-  memcpy (vertices[0], nodes[0]->getVertex(0), sizeof(float[3]));
-  memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
-  memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
-  memcpy (vertices[3], nodes[0]->getVertex(3), sizeof(float[3]));
+  fvec3 vertices[4];
+  vertices[0] = nodes[0]->getVertex(0);
+  vertices[1] = nodes[0]->getVertex(1);
+  vertices[2] = nodes[0]->getVertex(2);
+  vertices[3] = nodes[0]->getVertex(3);
 
-  return testPolygonInAxisBox (4, vertices, getPlane(), exts);
+  return Intersect::testPolygonInAxisBox(4, vertices, getPlaneRaw(), exts);
 }
 
 int		     QuadWallSceneNode::getVertexCount () const

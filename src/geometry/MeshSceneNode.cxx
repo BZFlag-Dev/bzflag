@@ -122,9 +122,8 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       }
     }
     // adjust the sphere
-    float mySphere[4];
-    memcpy(mySphere, drawInfo->getSphere(), sizeof(float[4]));
-    xformTool->modifyVertex(mySphere);
+    fvec4 mySphere(drawInfo->getSphere());
+    xformTool->modifyVertex((fvec3&)mySphere);
     mySphere[3] *= (lengthAdj * lengthAdj);
     setSphere(mySphere);
   }
@@ -314,7 +313,7 @@ bool MeshSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 

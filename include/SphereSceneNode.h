@@ -82,7 +82,7 @@ class SphereLodSceneNode : public SphereSceneNode {
 	~SphereLodRenderNode();
 	void setLod(int lod);
 	void render();
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+	const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
 	const SphereLodSceneNode* sceneNode;
@@ -138,7 +138,7 @@ class SphereFragmentSceneNode : public SceneNode {
 			~FragmentRenderNode();
 	const GLfloat*	getVertex() const;
 	void		render();
-	const GLfloat*	getPosition() const;
+	const fvec3&	getPosition() const;
       private:
 	const SphereBspSceneNode*	sceneNode;
 	int		theta, phi;
@@ -184,7 +184,7 @@ class SphereBspSceneNode : public SphereSceneNode {
 	void		setHighResolution(bool);
 	void		setBaseIndex(int index);
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const SphereBspSceneNode* sceneNode;
 	bool		highResolution;

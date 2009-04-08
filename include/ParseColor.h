@@ -13,18 +13,24 @@
 #ifndef _PARSE_COLOR_H_
 #define _PARSE_COLOR_H_
 
+
 #include "common.h"
 
-/* interface system headers */
+// system headers
 #include <string>
 #include <iostream>
 
+// common headers
+#include "vectors.h"
 
-extern bool parseColorCString(const char* str, float color[4]);
-extern bool parseColorString(const std::string& str, float color[4]);
-extern bool parseColorStream(std::istream& input, float color[4]);
+
+extern bool parseColorCString(const char* str,       fvec4& color);
+extern bool parseColorString(const std::string& str, fvec4& color);
+extern bool parseColorStream(std::istream& input,    fvec4& color);
+
 
 #endif // _PARSE_COLOR_H_
+
 
 // Local Variables: ***
 // mode: C++ ***

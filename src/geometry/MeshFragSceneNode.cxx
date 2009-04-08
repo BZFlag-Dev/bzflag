@@ -366,7 +366,7 @@ bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 

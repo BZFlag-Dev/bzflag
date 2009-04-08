@@ -42,7 +42,7 @@ class ShellSceneNode : public ShotSceneNode {
 			~ShellRenderNode();
 	void		setLighting(bool);
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const ShellSceneNode* sceneNode;
 	bool		lighted;

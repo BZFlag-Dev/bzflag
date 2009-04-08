@@ -176,8 +176,9 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
   bool wouldFree = false;
 
   // split against root's plane
-  SceneNode* front = NULL, *back = NULL;
-  switch (node->split(_root->node->getPlane(), front, back)) {
+  SceneNode* front = NULL;
+  SceneNode* back = NULL;
+  switch (node->split(*_root->node->getPlane(), front, back)) {
     case 0:
       // copy style to new nodes
       // FIXME -- only WallSceneNodes are static but should make type safe
@@ -232,9 +233,9 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
 {
   GLfloat d;
   if (!_root->dynamic && _root->node->getPlane()) {
-    const GLfloat* plane = _root->node->getPlane();
-    const GLfloat* pos = node->getSphere();
-    d = pos[0] * plane[0] + pos[1] * plane[1] + pos[2] * plane[2] + plane[3];
+    const fvec4* plane = _root->node->getPlane();
+    const fvec3& pos = (fvec3&)node->getSphere();
+    d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
   } else {
     d = _root->node->getDistance(eye) - node->getDistance(eye);
   }
@@ -265,9 +266,9 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
 
   GLfloat d;
   if (_root->node->getPlane()) {
-    const GLfloat* plane = _root->node->getPlane();
-    const GLfloat* pos = node->getSphere();
-    d = pos[0] * plane[0] + pos[1] * plane[1] + pos[2] * plane[2] + plane[3];
+    const fvec4* plane = _root->node->getPlane();
+    const fvec3& pos = (fvec3&)node->getSphere();
+    d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
   } else {
     // it's a crap shoot  (draw smaller items first)
     d = node->getSphere()[3] - _root->node->getSphere()[3];
@@ -453,10 +454,9 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
   Node* front = node->front;
   SceneNode* snode = node->node;
 
-  const GLfloat* plane = snode->getPlane();
+  const fvec4* plane = snode->getPlane();
   if (plane) {
-    if (((plane[0] * eye[0]) + (plane[1] * eye[1]) +
-	 (plane[2] * eye[2]) + plane[3]) >= 0.0f) {
+    if ((fvec3::dot(eye, *((fvec3*)plane)) + plane->w) >= 0.0f) {
       // eye is in front so render:  back, node, front
       if (back) {
 	nodeAddRenderNodes(back);

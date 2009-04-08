@@ -98,9 +98,10 @@ TextSceneNode::~TextSceneNode()
 
 bool TextSceneNode::inAxisBox(const Extents& exts) const
 {
-  float points[5][3];
+  fvec3 points[5];
   getPoints(points);
-  return testPolygonInAxisBox(4, points, plane, exts) != Outside;
+  return Intersect::testPolygonInAxisBox(4, points, plane, exts)
+         != Intersect::Outside;
 }
 
 
@@ -115,8 +116,8 @@ void TextSceneNode::calcPlane()
   }
 
   MeshTransform::Tool xformTool(text.xform);
-  float origin[3] = { 0.0f, 0.0f, 0.0f };
-  float normal[3] = { 0.0f, 0.0f, 1.0f };
+  fvec3 origin(0.0f, 0.0f, 0.0f);
+  fvec3 normal(0.0f, 0.0f, 1.0f);
   xformTool.modifyVertex(origin);
   xformTool.modifyNormal(normal);
 
@@ -129,7 +130,7 @@ void TextSceneNode::calcPlane()
 }
 
 
-void TextSceneNode::calcSphere(const float points[5][3])
+void TextSceneNode::calcSphere(const fvec3 points[5])
 {
   const float* orig  = points[4];
   const float radius = getMaxDist(points);
@@ -140,7 +141,7 @@ void TextSceneNode::calcSphere(const float points[5][3])
 
 
 
-void TextSceneNode::calcExtents(const float points[5][3])
+void TextSceneNode::calcExtents(const fvec3 points[5])
 {
   const WorldText& text = renderNode.text;
 
@@ -161,7 +162,7 @@ void TextSceneNode::calcExtents(const float points[5][3])
 }
 
 
-void TextSceneNode::getPoints(float points[5][3]) const
+void TextSceneNode::getPoints(fvec3 points[5]) const
 {
   const WorldText& text = renderNode.text;
 
@@ -213,7 +214,7 @@ void TextSceneNode::getPoints(float points[5][3]) const
 }
 
 
-float TextSceneNode::getMaxDist(const float points[5][3]) const
+float TextSceneNode::getMaxDist(const fvec3 points[5]) const
 {
   float maxDistSqr = 0.0f;
   for (int i = 0; i < 4; i++) {
@@ -293,7 +294,7 @@ bool TextSceneNode::cull(const ViewFrustum& frustum) const
 
   // now do an extents check
   const Frustum* frustumPtr = (const Frustum *) &frustum;
-  return (testAxisBoxInFrustum(extents, frustumPtr) == Outside);
+  return (Intersect::testAxisBoxInFrustum(extents, frustumPtr) == Intersect::Outside);
 }
 
 
@@ -555,7 +556,7 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
     }
   }
 
-  float points[5][3];
+  fvec3 points[5];
   sceneNode->getPoints(points);
   sceneNode->calcSphere(points);
   sceneNode->calcExtents(points);
@@ -758,7 +759,7 @@ void TextSceneNode::TextRenderNode::drawDebug()
 {
   myColor4fv(colorPtr);
 
-  float points[5][3];
+  fvec3 points[5];
   sceneNode->getPoints(points);
 
   glPointSize(3.0f);

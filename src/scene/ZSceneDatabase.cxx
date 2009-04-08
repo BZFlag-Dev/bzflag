@@ -334,7 +334,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
 {
   int i;
   const ViewFrustum& frustum = renderer.getViewFrustum();
-  const float* eye = frustum.getEye();
+  const fvec3& eye = frustum.getEye();
 
   if (staticNodes) {
     // see if we need an octree, or if it needs to be rebuilt
@@ -352,12 +352,11 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
     for (i = 0; i < culledCount; i++) {
       SceneNode* node = culledList[i];
 
-      const float* plane = node->getPlane();
+      const fvec4* plane = node->getPlane();
 
       if (plane != NULL) {
         // see if our eye is behind the plane
-        if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-             plane[3]) <= 0.0f) {
+        if ((fvec3::dot(eye, *((const fvec3*)plane)) + plane->w) <= 0.0f) {
           node->octreeState = SceneNode::OctreeCulled;
           continue;
         }
@@ -367,7 +366,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
       // fully visible, then skip the extents test
       if (node->octreeState != SceneNode::OctreeVisible) {
         const Extents& exts = node->getExtents();
-        if (testAxisBoxInFrustum(exts, frustumPtr) == Outside) {
+        if (Intersect::testAxisBoxInFrustum(exts, frustumPtr) == Intersect::Outside) {
           node->octreeState = SceneNode::OctreeCulled;
           continue;
         }

@@ -31,7 +31,7 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
   const float height = base->getHeight() + base->getPosition()[2];
   if(getNodeNumber() >= 1 && height == 0) return NULL;
   if(getNodeNumber() >= 6) return NULL;
-  GLfloat bPoint[3], sCorner[3], tCorner[3];
+  fvec3 bPoint, sCorner, tCorner;
   if (height == 0) {
     incNodeNumber();
     base->getCorner(0, bPoint);
@@ -94,14 +94,8 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
   }
   color[3] = 1.0;
 
-  GLfloat sEdge[3];
-  GLfloat tEdge[3];
-  sEdge[0] = sCorner[0] - bPoint[0];
-  sEdge[1] = sCorner[1] - bPoint[1];
-  sEdge[2] = sCorner[2] - bPoint[2];
-  tEdge[0] = tCorner[0] - bPoint[0];
-  tEdge[1] = tCorner[1] - bPoint[1];
-  tEdge[2] = tCorner[2] - bPoint[2];
+  const fvec3 sEdge = sCorner - bPoint;
+  const fvec3 tEdge = tCorner - bPoint;
 
   WallSceneNode *retval = new QuadWallSceneNode(bPoint, sEdge, tEdge, uRepeats, vRepeats, lod);
   retval->setColor(color);

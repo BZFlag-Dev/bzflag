@@ -21,6 +21,7 @@
 
 /* common interface header */
 #include "BzMaterial.h"
+#include "vectors.h"
 
 /* local interface header */
 #include "WorldInfo.h"
@@ -34,9 +35,9 @@ public:
 private:
   int vertexCount;
 
-  float vertices[4][3];
-  float normals[4][3][3];
-  float texcoords[4][3][2];
+  fvec3 vertices[4];
+  fvec3 normals[4][3];
+  fvec2 texcoords[4][3];
   bool useNormals[4];
   bool useTexcoords[4];
   BzMaterial materials[4];

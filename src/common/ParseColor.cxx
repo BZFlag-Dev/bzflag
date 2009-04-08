@@ -24,6 +24,7 @@
 
 // common headers
 #include "TextUtils.h"
+#include "vectors.h"
 
 
 //============================================================================//
@@ -32,16 +33,13 @@
 struct ColorMapData {
   ColorMapData()
   {
-    data[0] = data[1] = data[2] = data[3] = 1.0f;
+    data = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
   }
   ColorMapData(float r, float g, float b, float a = 1.0f)
   {
-    data[0] = r;
-    data[1] = g;
-    data[2] = b;
-    data[3] = a;
+    data = fvec4(r, g, b, a);
   }
-  float data[4];
+  fvec4 data;
 };
 
 typedef std::map<std::string, ColorMapData> ColorMap;
@@ -65,7 +63,7 @@ static int parseHexChar(char c)
 }
 
 
-static bool parseHexFormat(const char* str, float color[4])
+static bool parseHexFormat(const char* str, fvec4& color)
 {
   int bytes[8];
   int index;
@@ -125,7 +123,7 @@ static bool parseHexFormat(const char* str, float color[4])
 //============================================================================//
 //============================================================================//
 
-static bool parseFloatFormat(const char* str, float color[4])
+static bool parseFloatFormat(const char* str, fvec4& color)
 {
   int count;
   float tmp[4];
@@ -141,7 +139,7 @@ static bool parseFloatFormat(const char* str, float color[4])
 //============================================================================//
 //============================================================================//
 
-static bool parseNamedFormat(const char* str, float color[4])
+static bool parseNamedFormat(const char* str, fvec4& color)
 {
   const char* end = TextUtils::skipNonWhitespace(str);
   const size_t nameLen = (end - str);
@@ -174,7 +172,7 @@ static bool parseNamedFormat(const char* str, float color[4])
 //============================================================================//
 //============================================================================//
 
-bool parseColorCString(const char* str, float color[4])
+bool parseColorCString(const char* str, fvec4& color)
 {
   static const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -212,13 +210,13 @@ bool parseColorCString(const char* str, float color[4])
 }
 
 
-bool parseColorString(const std::string& str, float color[4])
+bool parseColorString(const std::string& str, fvec4& color)
 {
   return parseColorCString(str.c_str(), color);
 }
 
 
-bool parseColorStream(std::istream& input, float color[4])
+bool parseColorStream(std::istream& input, fvec4& color)
 {
   std::string line;
   std::getline(input, line);

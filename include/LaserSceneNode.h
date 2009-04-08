@@ -42,7 +42,7 @@ class LaserSceneNode : public SceneNode {
 			LaserRenderNode(const LaserSceneNode*);
 			~LaserRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	void renderFlatLaser ( void );
 	void renderGeoLaser ( void );

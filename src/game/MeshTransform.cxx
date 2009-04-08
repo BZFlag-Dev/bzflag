@@ -67,7 +67,7 @@ void MeshTransformManager::update()
 
 int MeshTransformManager::addTransform(MeshTransform* transform)
 {
-  transforms.push_back (transform);
+  transforms.push_back(transform);
   return ((int)transforms.size() - 1);
 }
 
@@ -77,7 +77,7 @@ int MeshTransformManager::findTransform(const std::string& transform) const
   if (transform.size() <= 0) {
     return -1;
   } else if ((transform[0] >= '0') && (transform[0] <= '9')) {
-    int index = atoi (transform.c_str());
+    int index = atoi(transform.c_str());
     if ((index < 0) || (index >= (int)transforms.size())) {
       return -1;
     } else {
@@ -110,7 +110,7 @@ void * MeshTransformManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt(buf, count);
   for (i = 0; i < count; i++) {
     MeshTransform* transform = new MeshTransform;
     buf = transform->unpack(buf);
@@ -122,7 +122,7 @@ void * MeshTransformManager::unpack(void *buf)
 
 int MeshTransformManager::packSize() const
 {
-  int fullSize = sizeof (uint32_t);
+  int fullSize = sizeof(uint32_t);
   std::vector<MeshTransform*>::const_iterator it;
   for (it = transforms.begin(); it != transforms.end(); it++) {
     MeshTransform* transform = *it;
@@ -152,11 +152,13 @@ static void multiply(float m[4][4], const float n[4][4])
   float t[4][4];
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
-      t[i][j] = (m[0][j] * n[i][0]) + (m[1][j] * n[i][1]) +
-	(m[2][j] * n[i][2]) + (m[3][j] * n[i][3]);
+      t[i][j] = (m[0][j] * n[i][0]) +
+                (m[1][j] * n[i][1]) +
+                (m[2][j] * n[i][2]) +
+                (m[3][j] * n[i][3]);
     }
   }
-  memcpy (m, t, sizeof(float[4][4]));
+  memcpy(m, t, sizeof(float[4][4]));
   return;
 }
 
@@ -285,11 +287,9 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
     (vm[0][0] * ((vm[1][1] * vm[2][2]) - (vm[1][2] * vm[2][1]))) +
     (vm[0][1] * ((vm[1][2] * vm[2][0]) - (vm[1][0] * vm[2][2]))) +
     (vm[0][2] * ((vm[1][0] * vm[2][1]) - (vm[1][1] * vm[2][0])));
-  if (determinant < 0.0f) {
-    inverted = true;
-  } else {
-    inverted = false;
-  }
+
+  inverted = (determinant < 0.0f);
+
   return;
 }
 
@@ -344,7 +344,7 @@ void MeshTransform::Tool::processTransforms(
 }
 
 
-void MeshTransform::Tool::modifyVertex(float v[3]) const
+void MeshTransform::Tool::modifyVertex(fvec3& v) const
 {
   if (empty) {
     return;
@@ -359,7 +359,7 @@ void MeshTransform::Tool::modifyVertex(float v[3]) const
 }
 
 
-void MeshTransform::Tool::modifyNormal(float n[3]) const
+void MeshTransform::Tool::modifyNormal(fvec3& n) const
 {
   if (empty) {
     return;
@@ -392,7 +392,7 @@ void MeshTransform::Tool::modifyNormal(float n[3]) const
 }
 
 
-void MeshTransform::Tool::modifyOldStyle(float pos[3], float size[3],
+void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
 					 float& angle, bool& flipz) const
 {
   if (empty) {
@@ -426,7 +426,7 @@ void MeshTransform::Tool::modifyOldStyle(float pos[3], float size[3],
   size[2] *= zlen;
 
   // setup the angle
-  angle = atan2f (x[1], x[0]);
+  angle = atan2f(x[1], x[0]);
 
   // see if the Z axis has flipped
   if (z[2] < 0.0f) {
@@ -524,7 +524,7 @@ const std::string& MeshTransform::getName() const
 }
 
 
-void MeshTransform::addShift(const float shift[3])
+void MeshTransform::addShift(const fvec3& shift)
 {
   TransformData transform;
   memcpy(transform.data, shift, sizeof(float[3]));
@@ -536,7 +536,7 @@ void MeshTransform::addShift(const float shift[3])
 }
 
 
-void MeshTransform::addScale(const float scale[3])
+void MeshTransform::addScale(const fvec3& scale)
 {
   TransformData transform;
   memcpy(transform.data, scale, sizeof(float[3]));
@@ -548,7 +548,7 @@ void MeshTransform::addScale(const float scale[3])
 }
 
 
-void MeshTransform::addShear(const float shear[3])
+void MeshTransform::addShear(const fvec3& shear)
 {
   TransformData transform;
   memcpy(transform.data, shear, sizeof(float[3]));
@@ -560,7 +560,7 @@ void MeshTransform::addShear(const float shear[3])
 }
 
 
-void MeshTransform::addSpin(const float degrees, const float normal[3])
+void MeshTransform::addSpin(const float degrees, const fvec3& normal)
 {
   const float radians = (float)(degrees * (M_PI / 180.0));
   TransformData transform;
@@ -591,13 +591,14 @@ void * MeshTransform::pack(void *buf) const
 
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
-    buf = nboPackUByte (buf, (uint8_t) transform.type);
+    buf = nboPackUByte(buf, (uint8_t) transform.type);
     if (transform.type == IndexTransform) {
-      buf = nboPackInt (buf, transform.index);
+      buf = nboPackInt(buf, transform.index);
     } else {
-      buf = nboPackFloatVec3 (buf, transform.data);
       if (transform.type == SpinTransform) {
-	buf = nboPackFloat (buf, transform.data[3]);
+        buf = nboPackFloatVec4(buf, transform.data);
+      } else {
+        buf = nboPackFloatVec3(buf, (fvec3&)transform.data);
       }
     }
   }
@@ -617,19 +618,19 @@ void * MeshTransform::unpack(void *buf)
   for (unsigned int i = 0; i < count; i++) {
     TransformData transform;
     uint8_t type;
-    buf = nboUnpackUByte (buf, type);
+    buf = nboUnpackUByte(buf, type);
     transform.type = (TransformType) type;
     if (transform.type == IndexTransform) {
-      buf = nboUnpackInt (buf, inTmp);
+      buf = nboUnpackInt(buf, inTmp);
       transform.index = int(inTmp);
-      float* d = transform.data;
-      d[0] = d[1] = d[2] = d[3] = 0.0f;
-    } else {
+      transform.data = fvec4(0.0f, 0.0f, 0.0f, 0.0f);
+    }
+    else {
       transform.index = -1;
-      buf = nboUnpackFloatVec3(buf, transform.data);
       if (transform.type == SpinTransform) {
-	buf = nboUnpackFloat (buf, transform.data[3]);
+	buf = nboUnpackFloatVec4(buf, transform.data);
       } else {
+	buf = nboUnpackFloatVec3(buf, (fvec3&)transform.data);
 	transform.data[3] = 0.0f;
       }
     }
@@ -653,9 +654,10 @@ int MeshTransform::packSize() const
     if (transform.type == IndexTransform) {
       fullSize += sizeof(int32_t);
     } else {
-      fullSize += sizeof(float[3]);
       if (transform.type == SpinTransform) {
-	fullSize += sizeof(float);
+        fullSize += sizeof(fvec4);
+      } else {
+	fullSize += sizeof(fvec3);
       }
     }
   }

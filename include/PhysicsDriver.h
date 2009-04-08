@@ -15,11 +15,14 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <string>
 #include <vector>
 #include <map>
 #include <iostream>
+
+// common headers
+#include "vectors.h"
 
 
 class PhysicsDriver {
@@ -58,14 +61,14 @@ class PhysicsDriver {
     static const float minPeriod;
 
     std::string name;
-    float linear[3];
+    fvec3 linear;
     float angularVel;
-    float angularPos[2];
+    fvec2 angularPos;
     float radialVel;
-    float radialPos[2];
-    bool slide;
+    fvec2 radialPos;
+    bool  slide;
     float slideTime;
-    bool death;
+    bool  death;
     std::string deathMsg;
 };
 

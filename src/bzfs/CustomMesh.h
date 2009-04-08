@@ -42,10 +42,10 @@ class CustomMesh : public WorldFileObstacle {
     BzMaterial material; // holds current defaults
 
     std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> vertices;
-    std::vector<cfvec3> normals;
-    std::vector<cfvec2> texcoords;
+    std::vector<fvec3> checkPoints;
+    std::vector<fvec3> vertices;
+    std::vector<fvec3> normals;
+    std::vector<fvec2> texcoords;
 
     int phydrv;
     bool noclusters;

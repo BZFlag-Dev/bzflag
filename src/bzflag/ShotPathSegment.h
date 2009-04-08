@@ -16,6 +16,7 @@
 /* common interface headers */
 #include "TimeKeeper.h"
 #include "Ray.h"
+#include "Extents.h"
 
 
 class ShotPathSegment {
@@ -34,7 +35,7 @@ class ShotPathSegment {
     double end;
     Ray    ray;
     Reason reason;
-    float  bbox[2][3];
+    Extents bbox;
 };
 
 

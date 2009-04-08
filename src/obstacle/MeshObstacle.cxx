@@ -58,19 +58,19 @@ MeshObstacle::MeshObstacle()
 }
 
 
-static void cfvec3ListToArray(const std::vector<cfvec3>& list,
+static void fvec3ListToArray(const std::vector<fvec3>& list,
 			      int& count, fvec3* &array)
 {
   count = list.size();
   array = new fvec3[count];
   for (int i = 0; i < count; i++) {
-    memcpy (array[i], list[i].data, sizeof(fvec3));
+    memcpy (array[i], list[i].data(), sizeof(fvec3));
   }
   return;
 }
 
 static void arrayToCfvec3List(const fvec3* array, int count,
-			      std::vector<cfvec3>& list)
+			      std::vector<fvec3>& list)
 {
   list.clear();
   for (int i = 0; i < count; i++) {
@@ -82,10 +82,10 @@ static void arrayToCfvec3List(const fvec3* array, int count,
 
 MeshObstacle::MeshObstacle(const MeshTransform& transform,
 			   const std::vector<char>& checkTypesL,
-			   const std::vector<cfvec3>& checkList,
-			   const std::vector<cfvec3>& verticeList,
-			   const std::vector<cfvec3>& normalList,
-			   const std::vector<cfvec2>& texcoordList,
+			   const std::vector<fvec3>& checkList,
+			   const std::vector<fvec3>& verticeList,
+			   const std::vector<fvec3>& normalList,
+			   const std::vector<fvec2>& texcoordList,
 			   int _faceCount, bool _noclusters, bool bounce,
 			   unsigned char drive, unsigned char shoot, bool rico)
 {
@@ -100,9 +100,9 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   for (i = 0; i < checkTypesL.size(); i++) {
     checkTypes[i] = checkTypesL[i];
   }
-  cfvec3ListToArray (checkList, checkCount, checkPoints);
-  cfvec3ListToArray (verticeList, vertexCount, vertices);
-  cfvec3ListToArray (normalList, normalCount, normals);
+  fvec3ListToArray(checkList,   checkCount,  checkPoints);
+  fvec3ListToArray(verticeList, vertexCount, vertices);
+  fvec3ListToArray(normalList,  normalCount, normals);
 
   // modify according to the transform
   int j;
@@ -119,7 +119,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   texcoordCount = texcoordList.size();
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < (unsigned int)texcoordCount; i++) {
-    memcpy (texcoords[i], texcoordList[i].data, sizeof(fvec2));
+    memcpy (texcoords[i], texcoordList[i].data(), sizeof(fvec2));
   }
 
   faceSize = _faceCount;
@@ -178,7 +178,9 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   }
 
   // use the indices to makes lists of pointers
-  float **v, **n, **t;
+  fvec3** v;
+  fvec3** n;
+  fvec2** t;
   makeFacePointers(_vertices, _normals, _texcoords, v, n, t);
 
   // override the flags if they are set for the whole mesh
@@ -213,7 +215,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   else if (triangulate) {
     // triangulate
     std::vector<TriIndices> triIndices;
-    triangulateFace(count, v, triIndices);
+    triangulateFace(count, (const fvec3**)v, triIndices);
     delete face; // delete the old face
     const unsigned int triSize = triIndices.size();
     if (triSize <= 0) {
@@ -264,31 +266,31 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
 				    const std::vector<int>& _normals,
 				    const std::vector<int>& _texcoords,
-				    float**& v, float**& n, float**& t)
+				    fvec3**& v, fvec3**& n, fvec2**& t)
 {
   const int count = _vertices.size();
 
   // use the indices to makes lists of pointers
-  v = new float*[count];
+  v = new fvec3*[count];
   n = NULL;
   t = NULL;
 
   if (_normals.size() > 0) {
-    n = new float*[count];
+    n = new fvec3*[count];
   }
   if (_texcoords.size() > 0) {
-    t = new float*[count];
+    t = new fvec2*[count];
   }
 
   for (int i = 0; i < count; i++) {
     // invert the vertices if required
-    int index = (inverted ? ((count - 1) - i) : i);
-    v[index] = (float*)vertices[_vertices[i]];
+    const int index = (inverted ? ((count - 1) - i) : i);
+    v[index] = &vertices[_vertices[i]];
     if (n != NULL) {
-      n[index] = (float*)normals[_normals[i]];
+      n[index] = &normals[_normals[i]];
     }
     if (t != NULL) {
-      t[index] = (float*)texcoords[_texcoords[i]];
+      t[index] = &texcoords[_texcoords[i]];
     }
   }
   return;
@@ -316,10 +318,10 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
   int i;
   MeshObstacle* copy;
   std::vector<char> ctlist;
-  std::vector<cfvec3> clist;
-  std::vector<cfvec3> vlist;
-  std::vector<cfvec3> nlist;
-  std::vector<cfvec2> tlist;
+  std::vector<fvec3> clist;
+  std::vector<fvec3> vlist;
+  std::vector<fvec3> nlist;
+  std::vector<fvec2> tlist;
 
   // empty arrays for copies of pure visual meshes
   if ((drawInfo != NULL) &&
@@ -364,15 +366,15 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
   const int vcount = face->getVertexCount();
   for (int i = 0; i < vcount; i++) {
     int index;
-    index = ((fvec3*) face->getVertex(i)) - vertices;
+    index = &face->getVertex(i) - vertices;
     vlist.push_back(index);
 
     if (face->useNormals()) {
-      index = ((fvec3*) face->getNormal(i)) - normals;
+      index = &face->getNormal(i) - normals;
       nlist.push_back(index);
     }
     if (face->useTexcoords()) {
-      index = ((fvec2*) face->getTexcoord(i)) - texcoords;
+      index = &face->getTexcoord(i) - texcoords;
       tlist.push_back(index);
     }
   }
@@ -466,7 +468,7 @@ bool MeshObstacle::isValid() const
 }
 
 
-bool MeshObstacle::containsPoint(const float point[3]) const
+bool MeshObstacle::containsPoint(const fvec3& point) const
 {
   // this should use the CollisionManager's rayTest function
 //  const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
@@ -474,19 +476,19 @@ bool MeshObstacle::containsPoint(const float point[3]) const
 }
 
 
-bool MeshObstacle::containsPointNoOctree(const float point[3]) const
+bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
 {
   if (checkCount <= 0) {
     return false;
   }
 
   int c, f;
-  float dir[3];
+  fvec3 dir;
   bool hasOutsides = false;
 
   for (c = 0; c < checkCount; c++) {
     if (checkTypes[c] == CheckInside) {
-      vec3sub (dir, checkPoints[c], point);
+      dir = checkPoints[c] - point;
       Ray ray(point, dir);
       bool hitFace = false;
       for (f = 0; f < faceCount; f++) {
@@ -503,7 +505,7 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
     }
     else if (checkTypes[c] == CheckOutside) {
       hasOutsides = true;
-      vec3sub (dir, point, checkPoints[c]);
+      dir = point - checkPoints[c];
       Ray ray(checkPoints[c], dir);
       bool hitFace = false;
       for (f = 0; f < faceCount; f++) {
@@ -534,15 +536,15 @@ float MeshObstacle::intersect(const Ray& /*ray*/) const
 }
 
 
-void MeshObstacle::get3DNormal(const float* /*p*/, float* /*n*/) const
+void MeshObstacle::get3DNormal(const fvec3& /*p*/, fvec3& /*n*/) const
 {
   return; // this should never be called if intersect() is always < 0.0f
 }
 
 
-void MeshObstacle::getNormal(const float* p, float* n) const
+void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
 {
-  const fvec3 center = { pos[0], pos[1], pos[2] + (0.5f * size[2]) };
+  const fvec3 center( pos[0], pos[1], pos[2] + (0.5f * size[2]));
   fvec3 out;
   vec3sub (out, p, center);
   if (out[2] < 0.0f) {
@@ -564,19 +566,17 @@ void MeshObstacle::getNormal(const float* p, float* n) const
 }
 
 
-bool MeshObstacle::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
-				 const float* p, float /*angle*/,
-				 float, float, float /*height*/,
-				 float* n) const
+bool MeshObstacle::getHitNormal(const fvec3& /*oldPos*/, float /*oldAngle*/,
+                                const fvec3& p, float /*angle*/,
+                                float, float, float /*height*/,
+                                fvec3& n) const
 {
-  if (n != NULL) {
-    getNormal(p, n);
-  }
+  getNormal(p, n);
   return true;
 }
 
 
-bool MeshObstacle::inCylinder(const float* p,
+bool MeshObstacle::inCylinder(const fvec3& p,
 			       float /*radius*/, float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
@@ -584,7 +584,7 @@ bool MeshObstacle::inCylinder(const float* p,
 }
 
 
-bool MeshObstacle::inBox(const float* p, float /*angle*/,
+bool MeshObstacle::inBox(const fvec3& p, float /*angle*/,
 			 float /*dx*/, float /*dy*/, float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
@@ -592,8 +592,8 @@ bool MeshObstacle::inBox(const float* p, float /*angle*/,
 }
 
 
-bool MeshObstacle::inMovingBox(const float*, float,
-			       const float* p, float /*angle*/,
+bool MeshObstacle::inMovingBox(const fvec3&, float,
+			       const fvec3& p, float /*angle*/,
 			       float /*dx*/, float /*dy*/, float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
@@ -601,9 +601,9 @@ bool MeshObstacle::inMovingBox(const float*, float,
 }
 
 
-bool MeshObstacle::isCrossing(const float* /*p*/, float /*angle*/,
+bool MeshObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 			       float /*dx*/, float /*dy*/, float /*height*/,
-			       float* /*plane*/) const
+			       fvec4* /*plane*/) const
 {
   return false; // the MeshFaces should handle this case
 }
@@ -663,8 +663,7 @@ void *MeshObstacle::pack(void *buf) const
   void* txcdStart = buf;
   buf = nboPackInt(buf, texcoordCount);
   for (i = 0; i < texcoordCount; i++) {
-    buf = nboPackFloat(buf, texcoords[i][0]);
-    buf = nboPackFloat(buf, texcoords[i][1]);
+    buf = nboPackFloatVec2(buf, texcoords[i]);
   }
 
   // pack hidden drawInfo data as extra texture coordinates
@@ -746,8 +745,7 @@ void *MeshObstacle::unpack(void *buf)
   texcoordCount = int(inTmp);
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < texcoordCount; i++) {
-    buf = nboUnpackFloat(buf, texcoords[i][0]);
-    buf = nboUnpackFloat(buf, texcoords[i][1]);
+    buf = nboUnpackFloatVec2(buf, texcoords[i]);
   }
   void* texcoordEnd = buf; // for locating hidden drawInfo data
 
@@ -824,7 +822,7 @@ void *MeshObstacle::unpack(void *buf)
 	  if (face->useTexcoords()) {
 	    for (int v = 0; v < face->getVertexCount(); v++) {
 	      face->texcoords[v] =
-		(float*)((char*)face->texcoords[v] + ptrDiff);
+		(fvec2*)((char*)face->texcoords[v] + ptrDiff);
 	    }
 	  }
 	}
@@ -1000,11 +998,11 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
     const bool useTexcoords = face->useTexcoords();
     out << "f";
     for (i = 0; i < vCount; i++) {
-      int vIndex = (fvec3*)face->getVertex(i) - vertices;
+      int vIndex = &face->getVertex(i) - vertices;
       vIndex = vIndex - vertexCount;
       out << " " << vIndex;
       if (useTexcoords) {
-	int tIndex = (fvec2*)face->getTexcoord(i) - texcoords;
+	int tIndex = &face->getTexcoord(i) - texcoords;
 	tIndex = tIndex - texcoordCount;
 	out << "/" << tIndex;
       }
@@ -1012,7 +1010,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
 	if (!useTexcoords) {
 	  out << "/";
 	}
-	int nIndex = (fvec3*)face->getNormal(i) - normals;
+	int nIndex = &face->getNormal(i) - normals;
 	nIndex = nIndex - normalCount;
 	out << "/" << nIndex;
       }

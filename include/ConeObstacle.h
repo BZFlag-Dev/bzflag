@@ -38,7 +38,7 @@ class ConeObstacle : public Obstacle {
 
     ConeObstacle();
     ConeObstacle(const MeshTransform& transform,
-		 const float* _pos, const float* _size,
+		 const fvec3& _pos, const fvec3& _size,
 		 float _rotation, float _angle,
 		 const float _texsize[2], bool _useNormals,
 		 int _divisions, const BzMaterial* mats[MaterialCount],
@@ -55,23 +55,23 @@ class ConeObstacle : public Obstacle {
     bool isValid() const;
 
     float intersect(const Ray&) const;
-    void getNormal(const float* p, float* n) const;
-    void get3DNormal(const float* p, float* n) const;
+    void getNormal(const fvec3& p, fvec3& n) const;
+    void get3DNormal(const fvec3& p, fvec3& n) const;
 
-    bool inCylinder(const float* p, float radius, float height) const;
-    bool inBox(const float* p, float angle,
+    bool inCylinder(const fvec3& p, float radius, float height) const;
+    bool inBox(const fvec3& p, float angle,
 	       float halfWidth, float halfBreadth, float height) const;
-    bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
+    bool inMovingBox(const fvec3& oldP, float oldAngle,
+		     const fvec3& newP, float newAngle,
 		     float halfWidth, float halfBreadth, float height) const;
-    bool isCrossing(const float* p, float angle,
+    bool isCrossing(const fvec3& p, float angle,
 		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
+		    fvec4* plane) const;
 
-    bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
+    bool getHitNormal(const fvec3& pos1, float azimuth1,
+		      const fvec3& pos2, float azimuth2,
 		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
+		      float height, fvec3& normal) const;
 
     int packSize() const;
     void *pack(void*) const;

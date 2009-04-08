@@ -192,9 +192,9 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
   uElements = 1;
   areas[level] = area;
   nodes[level++] = new Geometry(this, uElements, base, uEdge, vEdge,
-				getPlane(), uRepeats, vRepeats);
+				getPlaneRaw(), uRepeats, vRepeats);
   shadowNode = new Geometry(this, uElements, base, uEdge, vEdge,
-				getPlane(), uRepeats, vRepeats);
+				getPlaneRaw(), uRepeats, vRepeats);
   shadowNode->setStyle(0);
 
   // make remaining levels by doubling elements in each dimension
@@ -203,7 +203,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     area *= 0.25f;
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, base, uEdge, vEdge,
-				getPlane(), uRepeats, vRepeats);
+				getPlaneRaw(), uRepeats, vRepeats);
   }
 
   // record extents info
@@ -244,7 +244,7 @@ bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 
@@ -253,7 +253,7 @@ bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-int			TriWallSceneNode::split(const float* _plane,
+int			TriWallSceneNode::split(const fvec4& _plane,
 				SceneNode*& front, SceneNode*& back) const
 {
   return WallSceneNode::splitWall(_plane, nodes[0]->vertex, nodes[0]->uv,
@@ -289,7 +289,7 @@ bool		    TriWallSceneNode::inAxisBox(const Extents& exts) const
   memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
   memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
 
-  return testPolygonInAxisBox (3, vertices, getPlane(), exts);
+  return Intersect::testPolygonInAxisBox(3, (const fvec3*)vertices, getPlaneRaw(), exts);
 }
 
 

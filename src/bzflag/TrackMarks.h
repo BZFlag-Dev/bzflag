@@ -15,6 +15,7 @@
 
 // BZFlag common header
 #include "common.h"
+#include "vectors.h"
 
 class SceneDatabase;
 
@@ -30,7 +31,7 @@ namespace TrackMarks
   void renderGroundTracks();   // zbuffer is not used
   void renderObstacleTracks(); // zbuffer is used
 
-  bool addMark(const float pos[3], float scale, float angle, int phydrv);
+  bool addMark(const fvec3& pos, float scale, float angle, int phydrv);
 
   void setUserFade(float);
   float getUserFade();

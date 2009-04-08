@@ -20,9 +20,6 @@
 
 /* common interface headers */
 #include "global.h"
-#ifndef BUILDING_BZADMIN
-#include "bzfgl.h"
-#endif
 #include "TimeKeeper.h"
 #include "Address.h"
 #include "Flag.h"
@@ -53,10 +50,10 @@ public:
   FlagType*	getFlag() const;
   long		getOrder() const;
   short		getStatus() const;
-  const float*	getPosition() const;
+  const fvec3&	getPosition() const;
   float		getAngle() const;
-  const float*	getForward() const;
-  const float*	getVelocity() const;
+  const fvec3&	getForward() const;
+  const fvec3&	getVelocity() const;
   float         getUserSpeed() const;
   float		getAngularVelocity() const;
   float         getUserAngVel() const;
@@ -72,22 +69,21 @@ public:
   float		getNormalizedScore() const;
   float		getLocalNormalizedScore() const;
   short		getScore() const;
-  const float*	getDimensions() const;
+  const fvec3&	getDimensions() const;
 
   float		getReloadTime() const;
 
-  const float*	getApparentVelocity() const;
+  const fvec3&	getApparentVelocity() const;
   float		getLastUpdateTime() const;
 
   inline bool hasWings() const {
     return getFlag() && (getFlag() == Flags::Wings);
   }
 
-#ifndef BUILDING_BZADMIN
-  inline const float* getColor() const {
+  inline const fvec4& getColor() const {
     return color;
   }
-#endif
+
   float		getRabbitScore() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
@@ -260,10 +256,10 @@ private:
   // data use for drawing
   GfxBlock		gfxBlock;
   PlayerAvatar		*avatar;
-#ifndef BUILDING_BZADMIN
-  GLfloat		color[4];
-  GLfloat		teleAlpha;
-#endif
+
+  fvec4			color;
+  float			teleAlpha;
+
   std::string		userTexture;
   static int		tankTexture;
   static int		tankOverideTexture;
@@ -279,10 +275,10 @@ private:
   // relatively stable data
   FlagType*		flagType;		// flag type I'm holding
   ShotType		shotType;		// the shots I fire
-  float			dimensions[3];		// current tank dimensions
-  float			dimensionsScale[3];	// use to scale the dimensions
-  float			dimensionsRate[3];	// relative to scale
-  float			dimensionsTarget[3];	// relative to scale
+  fvec3			dimensions;		// current tank dimensions
+  fvec3			dimensionsScale;	// use to scale the dimensions
+  fvec3			dimensionsRate;		// relative to scale
+  fvec3			dimensionsTarget;	// relative to scale
   bool			useDimensions;		// use the varying dimensions for gfx
   float			alpha;			// current tank translucency
   float			alphaRate;		// current tank translucency
@@ -311,7 +307,7 @@ private:
   bool			autoPilot;
 
   // computable highly dynamic data
-  float			forward[3];		// forward unit vector
+  fvec3			forward;		// forward unit vector
 
   // relative motion information
   float			relativeSpeed;		// relative speed
@@ -321,8 +317,8 @@ private:
   TimeKeeper inputTime;		// time of input
   double     updateTimeStamp;	// time of  the last update
   int	inputStatus;		// tank status
-  float	inputPos[3];		// tank position
-  float	inputVel[3];		// tank velocity
+  fvec3	inputPos;		// tank position
+  fvec3	inputVel;		// tank velocity
   float	inputAzimuth;		// direction tank is pointing
   float	inputAngVel;		// tank turn rate
   bool	inputTurning;		// tank is turning
@@ -401,7 +397,7 @@ inline short		Player::getStatus() const
   return state.status;
 }
 
-inline const float*	Player::getPosition() const
+inline const fvec3&	Player::getPosition() const
 {
   return state.pos;
 }
@@ -411,17 +407,17 @@ inline float		Player::getAngle() const
   return state.azimuth;
 }
 
-inline const float*	Player::getDimensions() const
+inline const fvec3&	Player::getDimensions() const
 {
   return dimensions;
 }
 
-inline const float*	Player::getForward() const
+inline const fvec3&	Player::getForward() const
 {
   return forward;
 }
 
-inline const float*	Player::getVelocity() const
+inline const fvec3&	Player::getVelocity() const
 {
   return state.velocity;
 }
@@ -445,7 +441,7 @@ inline float	Player::getLastUpdateTime() const
   return state.lastUpdateTime;
 }
 
-inline const float*	Player::getApparentVelocity() const
+inline const fvec3&	Player::getApparentVelocity() const
 {
   return state.apparentVelocity;
 }

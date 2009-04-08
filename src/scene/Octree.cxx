@@ -26,6 +26,10 @@
 #include "Intersect.h"
 
 #include "StateDatabase.h"
+
+using namespace Intersect;
+
+
 static bool F2BSORT = true;//FIXME
 
 
@@ -48,7 +52,7 @@ static int CullListCount = 0;
 static SceneNode** CullList = NULL;
 static const Frustum* CullFrustum = NULL;
 static int ShadowCount = 0;
-static const float (*ShadowPlanes)[4];
+static const fvec4* ShadowPlanes;
 
 static OccluderManager OcclMgrs[2];
 static OccluderManager* OcclMgr = &OcclMgrs[0];
@@ -251,7 +255,7 @@ int Octree::getShadowList(SceneNode** list, int listSize,
   }
 
   ShadowCount = planeCount;
-  ShadowPlanes = planes;
+  ShadowPlanes = (const fvec4*)planes;
 
   CullList = list;
   CullListCount = 0;

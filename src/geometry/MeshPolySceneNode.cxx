@@ -165,7 +165,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
-  const GLfloat* normal = getPlane();
+  const fvec4& normal = getPlaneRaw();
   if (fabsf(normal[0]) > fabsf(normal[1])) {
     if (fabsf(normal[0]) > fabsf(normal[2])) {
       ignoreAxis = 0;
@@ -267,7 +267,7 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 
@@ -282,12 +282,13 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
     return false;
   }
 
-  return testPolygonInAxisBox (getVertexCount(), getVertices(),
-			       getPlane(), exts);
+  return Intersect::testPolygonInAxisBox(getVertexCount(),
+                                         (const fvec3*)getVertices(),
+                                         getPlaneRaw(), exts);
 }
 
 
-int MeshPolySceneNode::split(const float* splitPlane,
+int MeshPolySceneNode::split(const fvec4& splitPlane,
 			     SceneNode*& front, SceneNode*& back) const
 {
   if (node.normals.getSize() > 0) {
@@ -496,9 +497,9 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   }
 
   // make new nodes
-  front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+  front = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
 				vertexFront, normalFront, uvFront);
-  back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+  back = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
 			       vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
@@ -705,9 +706,9 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   }
 
   // make new nodes
-  front = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+  front = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
 				vertexFront, normalFront, uvFront);
-  back = new MeshPolySceneNode(getPlane(), noRadar, noShadow,
+  back = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
 			       vertexBack, normalBack, uvBack);
 
   // free the arrays, if required

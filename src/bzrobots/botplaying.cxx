@@ -51,8 +51,9 @@
 #include "ServerList.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
-#include "version.h"
 #include "WordFilter.h"
+#include "vectors.h"
+#include "version.h"
 
 // local implementation headers
 #include "RCLinkBackend.h"
@@ -1032,7 +1033,8 @@ static void handleTeamUpdate ( void	*msg, uint16_t /*len*/, bool &checkScores )
 static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
 {
   PlayerId id;
-  float pos[3], forward;
+  fvec3 pos;
+  float forward;
 
   msg = nboUnpackUByte(msg, id);
   msg = nboUnpackFloatVec3(msg, pos);

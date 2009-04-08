@@ -902,7 +902,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     if (isCrossingWall()) {
       // get which plane to compute IDL against
-      GLfloat plane[4];
+      fvec4 plane;
       const GLfloat a = atan2f(forward[1], forward[0]);
       const Obstacle* obstacle =
 	world->hitBuilding(state.pos, a,
@@ -910,10 +910,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 			   dimensions[2]);
       if ((obstacle && obstacle->isCrossing(state.pos, a,
 					   dimensions[0], dimensions[1],
-					   dimensions[2], plane)) ||
+					   dimensions[2], &plane)) ||
 	  world->crossingTeleporter(state.pos, a,
 				    dimensions[0], dimensions[1],
-				    dimensions[2], plane)) {
+				    dimensions[2], &plane)) {
 	// stick in interdimensional lights node
 	if (showIDL && GfxBlockMgr::halos.notBlocked()) {
 	  avatar->moveIDL(plane);

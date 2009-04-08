@@ -13,26 +13,29 @@
 #include "common.h"
 #include "Team.h"
 #include "Pack.h"
+#include "BufferedNetworkMessage.h"
 
-float Team::tankColor[NumTeams][3] = {
-  { 0.0f, 0.0f, 0.0f },   // rogue
-  { 1.0f, 0.0f, 0.0f },   // red
-  { 0.0f, 1.0f, 0.0f },   // green
-  { 0.2f, 0.2f, 1.0f },   // blue
-  { 1.0f, 0.0f, 1.0f },   // purple
-  { 0.0f, 1.0f, 1.0f },   // observer
-  { 1.0f, 1.0f, 1.0f },   // rabbit
-  { 1.0f, 0.5f, 0.0f }	// hunter orange
+
+fvec4 Team::tankColor[NumTeams] = {
+  fvec4(0.0f, 0.0f, 0.0f, 1.0f),   // rogue
+  fvec4(1.0f, 0.0f, 0.0f, 1.0f),   // red
+  fvec4(0.0f, 1.0f, 0.0f, 1.0f),   // green
+  fvec4(0.2f, 0.2f, 1.0f, 1.0f),   // blue
+  fvec4(1.0f, 0.0f, 1.0f, 1.0f),   // purple
+  fvec4(0.0f, 1.0f, 1.0f, 1.0f),   // observer
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f),   // rabbit
+  fvec4(1.0f, 0.5f, 0.0f, 1.0f)	// hunter orange
 };
-float Team::radarColor[NumTeams][3] = {
-  { 1.0f, 1.0f, 0.0f },	// rogue
-  { 1.0f, 0.15f, 0.15f }, // red
-  { 0.2f, 0.9f, 0.2f },	// green
-  { 0.08f, 0.25, 1.0f},	// blue
-  { 1.0f, 0.4f, 1.0f },	// purple
-  { 0.0f, 1.0f, 1.0f },	// observer
-  { 1.0f, 1.0f, 1.0f },   // rabbit
-  { 1.0f, 0.5f, 0.0f }	// hunter orange
+
+fvec4 Team::radarColor[NumTeams] = {
+  fvec4(1.0f,  1.0f,  0.0f,  1.0f),	// rogue
+  fvec4(1.0f,  0.15f, 0.15f, 1.0f), // red
+  fvec4(0.2f,  0.9f,  0.2f,  1.0f),	// green
+  fvec4(0.08f, 0.25,  1.0f,  1.0f),	// blue
+  fvec4(1.0f,  0.4f,  1.0f,  1.0f),	// purple
+  fvec4(0.0f,  1.0f,  1.0f,  1.0f),	// observer
+  fvec4(1.0f,  1.0f,  1.0f,  1.0f),   // rabbit
+  fvec4(1.0f,  0.5f,  0.0f,  1.0f)	// hunter orange
 };
 
 
@@ -137,7 +140,7 @@ TeamColor Team::getTeam(const std::string name) // const
 }
 
 
-const float* Team::getTankColor(TeamColor team) // const
+const fvec4& Team::getTankColor(TeamColor team) // const
 {
   if (int(team) < 0) {
     return tankColor[0];
@@ -146,7 +149,7 @@ const float* Team::getTankColor(TeamColor team) // const
 }
 
 
-const float*		Team::getRadarColor(TeamColor team) // const
+const fvec4& Team::getRadarColor(TeamColor team) // const
 {
   if (int(team) < 0) {
     return radarColor[0];
@@ -155,7 +158,7 @@ const float*		Team::getRadarColor(TeamColor team) // const
 }
 
 
-bool		Team::isColorTeam(TeamColor team) // const
+bool Team::isColorTeam(TeamColor team) // const
 {
   return team >= RedTeam  && team <= PurpleTeam;
 }

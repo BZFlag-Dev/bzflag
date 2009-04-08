@@ -244,14 +244,16 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
 {
   MeshTransform::Tool xformTool(xform);
-  float vo[3] = {-1.0f, -1.0f, 0.0f};
-  float vx[3] = {+1.0f, -1.0f, 0.0f};
-  float vy[3] = {-1.0f, +1.0f, 0.0f};
-  float vt[3] = {0.0f, 0.0f, 1.0f};
-  float vxp[3] = {+1.0f, 0.0f, 0.0f};
-  float vxn[3] = {-1.0f, 0.0f, 0.0f};
-  float vyp[3] = {0.0f, +1.0f, 0.0f};
-  float vyn[3] = {0.0f, -1.0f, 0.0f};
+
+  fvec3 vo(-1.0f, -1.0f, 0.0f);
+  fvec3 vx(+1.0f, -1.0f, 0.0f);
+  fvec3 vy(-1.0f, +1.0f, 0.0f);
+  fvec3 vt(0.0f, 0.0f, 1.0f);
+  fvec3 vxp(+1.0f, 0.0f, 0.0f);
+  fvec3 vxn(-1.0f, 0.0f, 0.0f);
+  fvec3 vyp(0.0f, +1.0f, 0.0f);
+  fvec3 vyn(0.0f, -1.0f, 0.0f);
+
   xformTool.modifyVertex(vo);
   xformTool.modifyVertex(vx);
   xformTool.modifyVertex(vy);
@@ -260,19 +262,13 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
   xformTool.modifyVertex(vxn);
   xformTool.modifyVertex(vyp);
   xformTool.modifyVertex(vyn);
-  float dx[3], dy[3], dxp[3], dxn[3], dyp[3], dyn[3];
-  vec3sub(dx, vx, vo);
-  vec3sub(dy, vy, vo);
-  vec3sub(dxp, vxp, vt);
-  vec3sub(dxn, vxn, vt);
-  vec3sub(dyp, vyp, vt);
-  vec3sub(dyn, vyn, vt);
-  lengths[0] = sqrtf(vec3dot(dx, dx));
-  lengths[1] = sqrtf(vec3dot(dy, dy));
-  lengths[2] = sqrtf(vec3dot(dxp, dxp));
-  lengths[3] = sqrtf(vec3dot(dxn, dxn));
-  lengths[4] = sqrtf(vec3dot(dyp, dyp));
-  lengths[5] = sqrtf(vec3dot(dyn, dyn));
+
+  lengths[0] = (vx - vo).length();
+  lengths[1] = (vy - vo).length();
+  lengths[2] = (vxp - vt).length();
+  lengths[3] = (vxn - vt).length();
+  lengths[4] = (vyp - vt).length();
+  lengths[5] = (vyn - vt).length();
   return;
 }
 
@@ -315,10 +311,10 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
 
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> verts;
-  std::vector<cfvec3> norms;
-  std::vector<cfvec2> txcds;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> verts;
+  std::vector<fvec3> norms;
+  std::vector<fvec2> txcds;
 
   // add the checkpoint
   checkTypes.push_back(MeshObstacle::CheckInside);

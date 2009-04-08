@@ -21,6 +21,8 @@
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"
 
+
+//============================================================================//
 //
 // ShotPath
 //
@@ -36,11 +38,10 @@ ShotPath::ShotPath(const FiringInfo& info, double now)
   currentTime = now;
   local = false;
 
-  switch(info.shotType)
-  {
+  switch(info.shotType) {
     default:
       strategy = new NormalShotStrategy(this);
-    break;
+      break;
 
     case GMShot:
       strategy = new GuidedMissileStrategy(this);
@@ -80,74 +81,84 @@ ShotPath::ShotPath(const FiringInfo& info, double now)
   }
 }
 
+
 ShotPath::~ShotPath()
 {
   delete strategy;
 }
 
-float			ShotPath::checkHit(const ShotCollider& tank,
-							float position[3]) const
+
+float ShotPath::checkHit(const ShotCollider& tank, fvec3& position) const
 {
   return strategy->checkHit(tank, position);
 }
 
-bool			ShotPath::isStoppedByHit() const
+
+bool ShotPath::isStoppedByHit() const
 {
   return strategy->isStoppedByHit();
 }
 
-void			ShotPath::addShot(SceneDatabase* scene,
-						bool colorblind)
+
+void ShotPath::addShot(SceneDatabase* scene, bool colorblind)
 {
   strategy->addShot(scene, colorblind);
 }
 
-void			ShotPath::radarRender() const
+
+void ShotPath::radarRender() const
 {
-  if (!isExpired())
+  if (!isExpired()) {
     strategy->radarRender();
+  }
 }
 
-void			ShotPath::updateShot(float dt)
+
+void ShotPath::updateShot(float dt)
 {
   // get new time step and set current time
   currentTime += dt;
 
   // update shot
-  if (!expired)
-  {
-    if (expiring)
+  if (!expired) {
+    if (expiring) {
       setExpired();
-    else
+    } else {
       getStrategy()->update(dt);
+    }
   }
 }
 
-void			ShotPath::setReloadTime(float _reloadTime)
+
+void ShotPath::setReloadTime(float _reloadTime)
 {
   reloadTime = _reloadTime;
 }
 
-void			ShotPath::setPosition(const float* p)
+
+void ShotPath::setPosition(const float* p)
 {
   firingInfo.shot.pos[0] = p[0];
   firingInfo.shot.pos[1] = p[1];
   firingInfo.shot.pos[2] = p[2];
 }
 
-void			ShotPath::setVelocity(const float* v)
+
+void ShotPath::setVelocity(const float* v)
 {
   firingInfo.shot.vel[0] = v[0];
   firingInfo.shot.vel[1] = v[1];
   firingInfo.shot.vel[2] = v[2];
 }
 
-void			ShotPath::setExpiring()
+
+void ShotPath::setExpiring()
 {
   expiring = true;
 }
 
-void			ShotPath::setExpired()
+
+void ShotPath::setExpired()
 {
   expiring = true;
   expired = true;
@@ -155,44 +166,52 @@ void			ShotPath::setExpired()
   eventHandler.ShotRemoved(firingInfo);
 }
 
-void			ShotPath::boostReloadTime(float dt)
+
+void ShotPath::boostReloadTime(float dt)
 {
   reloadTime += dt;
 }
 
-bool                    ShotPath::predictPosition(float dt, float p[3]) const
+
+bool ShotPath::predictPosition(float dt, fvec3& p) const
 {
   return getStrategy()->predictPosition(dt, p);
 }
 
-bool                    ShotPath::predictVelocity(float dt, float p[3]) const
+
+bool ShotPath::predictVelocity(float dt, fvec3& p) const
 {
   return getStrategy()->predictVelocity(dt, p);
 }
 
-void			ShotPath::update(float dt)
+
+void ShotPath::update(float dt)
 {
   // update shot
   updateShot(dt);
 }
 
+
+//============================================================================//
 //
 // LocalShotPath
 //
 
-LocalShotPath::LocalShotPath(const FiringInfo& info, double now) :
-				ShotPath(info,now)
+LocalShotPath::LocalShotPath(const FiringInfo& info, double now)
+: ShotPath(info,now)
 {
   // do nothing
   setLocal(true);
 }
+
 
 LocalShotPath::~LocalShotPath()
 {
   // do nothing
 }
 
-void			LocalShotPath::update(float dt)
+
+void LocalShotPath::update(float dt)
 {
   getFiringInfo().shot.dt += dt;
   updateShot(dt);
@@ -201,28 +220,33 @@ void			LocalShotPath::update(float dt)
   getStrategy()->sendUpdate(getFiringInfo());
 }
 
+
+//============================================================================//
 //
 // RemoteShotPath
 //
 
-RemoteShotPath::RemoteShotPath(const FiringInfo& info,double now) :
-				ShotPath(info,now)
+RemoteShotPath::RemoteShotPath(const FiringInfo& info,double now)
+: ShotPath(info,now)
 {
   // do nothing
 }
+
 
 RemoteShotPath::~RemoteShotPath()
 {
   // do nothing
 }
 
-void			RemoteShotPath::update(float dt)
+
+void RemoteShotPath::update(float dt)
 {
   // update shot
   updateShot(dt);
 }
 
-void			RemoteShotPath::update(const ShotUpdate& shot, void* msg)
+
+void RemoteShotPath::update(const ShotUpdate& shot, void* msg)
 {
   // update shot info
   getFiringInfo().shot = shot;
@@ -230,6 +254,7 @@ void			RemoteShotPath::update(const ShotUpdate& shot, void* msg)
   // let the strategy see the message
   getStrategy()->readUpdate(msg);
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -98,7 +98,7 @@ bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 
@@ -113,7 +113,8 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     return false;
   }
 
-  return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
+  return Intersect::testPolygonInAxisBox(vertexCount,
+                                         (const fvec3*)vertices, plane, exts);
 }
 
 

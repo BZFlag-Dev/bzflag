@@ -754,7 +754,7 @@ void ColDetNode::boxTest(const float* pos, float angle,
 
 void ColDetNode::rayTest(const Ray* ray, float timeLeft) const
 {
-  if (!testRayHitsAxisBox(ray, extents, &inTime) ||
+  if (!Intersect::testRayHitsAxisBox(ray, extents, &inTime) ||
       (inTime > timeLeft)) {
     return;
   }
@@ -780,7 +780,7 @@ void ColDetNode::rayTest(const Ray* ray, float timeLeft) const
 
 void ColDetNode::rayTestNodes(const Ray* ray, float timeLeft) const
 {
-  if (!testRayHitsAxisBox(ray, extents, &inTime, &outTime) ||
+  if (!Intersect::testRayHitsAxisBox(ray, extents, &inTime, &outTime) ||
       (inTime > timeLeft)) {
     return;
   }

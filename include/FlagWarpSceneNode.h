@@ -40,7 +40,7 @@ class FlagWarpSceneNode : public SceneNode {
 			FlagWarpRenderNode(const FlagWarpSceneNode*);
 			~FlagWarpRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const FlagWarpSceneNode* sceneNode;
     };

@@ -16,6 +16,7 @@
 // common headers
 #include "StateDatabase.h"
 #include "ParseColor.h"
+#include "vectors.h"
 
 static const double	radPerDeg = M_PI / 180.0;
 static const double	radPerHour = M_PI / 12.0;
@@ -354,7 +355,7 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
 
   // user adjustment for the sky color
   if (BZDB.get("_skyColor") != "white") {
-    float skyColor[4];
+    fvec4 skyColor;
     parseColorString(BZDB.get("_skyColor"), skyColor);
     sky[0][0]  *= skyColor[0];
     sky[0][1]  *= skyColor[1];

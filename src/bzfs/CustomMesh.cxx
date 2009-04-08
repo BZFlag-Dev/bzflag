@@ -94,7 +94,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 			      smoothBounce, driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "inside") == 0) {
-    cfvec3 inside;
+    fvec3 inside;
     if (!(input >> inside[0] >> inside[1] >> inside[2])) {
       return false;
     }
@@ -102,7 +102,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     checkPoints.push_back(inside);
   }
   else if (strcasecmp(cmd, "outside") == 0) {
-    cfvec3 outside;
+    fvec3 outside;
     if (!(input >> outside[0] >> outside[1] >> outside[2])) {
       return false;
     }
@@ -110,21 +110,21 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     checkPoints.push_back(outside);
   }
   else if (strcasecmp(cmd, "vertex") == 0) {
-    cfvec3 vertex;
+    fvec3 vertex;
     if (!(input >> vertex[0] >> vertex[1] >> vertex[2])) {
       return false;
     }
     vertices.push_back(vertex);
   }
   else if (strcasecmp(cmd, "normal") == 0) {
-    cfvec3 normal;
+    fvec3 normal;
     if (!(input >> normal[0] >> normal[1] >> normal[2])) {
       return false;
     }
     normals.push_back(normal);
   }
   else if (strcasecmp(cmd, "texcoord") == 0) {
-    cfvec2 texcoord;
+    fvec2 texcoord;
     if (!(input >> texcoord[0] >> texcoord[1])) {
       return false;
     }
@@ -196,7 +196,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   // hack to invalidate decorative meshes on older clients
   bool forcePassable = false;
   if (drawInfo) {
-    cfvec3 vert;
+    fvec3 vert;
     if (decorative) {
       vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
       if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
@@ -206,7 +206,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     } else {
       vert[0] = vert[1] = vert[2] = 0.0f;
     }
-    ((std::vector<cfvec3>*)&vertices)->push_back(vert);
+    ((std::vector<fvec3>*)&vertices)->push_back(vert);
   }
 
   MeshObstacle* mesh =

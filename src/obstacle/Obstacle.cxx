@@ -42,7 +42,8 @@ Obstacle::Obstacle()
   insideNodes = NULL;
 }
 
-Obstacle::Obstacle(const float* _pos, float _angle,
+
+Obstacle::Obstacle(const fvec3& _pos, float _angle,
 		   float _width, float _breadth, float _height,
 		   unsigned char drive, unsigned char shoot, bool rico)
 {
@@ -65,13 +66,15 @@ Obstacle::Obstacle(const float* _pos, float _angle,
   listID = 0;
 }
 
+
 Obstacle::~Obstacle()
 {
   delete[] insideNodes;
   return;
 }
 
-bool			Obstacle::isValid() const
+
+bool Obstacle::isValid() const
 {
   for (int a = 0; a < 3; a++) {
     if ((extents.mins[a] < -maxExtent) || (extents.maxs[a] > maxExtent)) {
@@ -81,7 +84,8 @@ bool			Obstacle::isValid() const
   return true;
 }
 
-void			Obstacle::setExtents()
+
+void Obstacle::setExtents()
 {
   float xspan = (fabsf(cosf(angle)) * size[0]) + (fabsf(sinf(angle)) * size[1]);
   float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * size[0]);
@@ -94,36 +98,38 @@ void			Obstacle::setExtents()
   return;
 }
 
-bool			Obstacle::isFlatTop ( void ) const
+
+bool Obstacle::isFlatTop ( void ) const
 {
   return false;
 }
 
-void			Obstacle::setZFlip ( void )
+
+void Obstacle::setZFlip ( void )
 {
   ZFlip = true;
 }
 
-bool			Obstacle::getZFlip ( void ) const
+
+bool Obstacle::getZFlip ( void ) const
 {
   return ZFlip;
 }
 
 
-bool			Obstacle::isCrossing(const float*, float,
-						float, float, float, float*) const
+bool Obstacle::isCrossing(const fvec3&, float, float, float, float, fvec4*) const
 {
   // never crossing by default
   return false;
 }
 
-float			Obstacle::getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float width, float breadth,
-				const float* oPos, float oAzimuth,
-				float oWidth, float oBreadth, float oHeight,
-				float* normal) const
+
+float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
+                             const fvec3& pos2, float azimuth2,
+                             float width, float breadth,
+                             const fvec3& oPos, float oAzimuth,
+                             float oWidth, float oBreadth, float oHeight,
+                             fvec3& normal) const
 {
   static const float	square[4][2] = {
 				{  1.0f,  1.0f },
@@ -149,8 +155,9 @@ float			Obstacle::getHitNormal(
     d[1] = pos2[1] + square[i][0]*s2*width + square[i][1]*c2*breadth - p[1];
     d[2] = 0;
     int side;
-    const float t = timeAndSideRayHitsRect(Ray(p, d),
-				oPos, oAzimuth, oWidth, oBreadth, side);
+    const float t = Intersect::timeAndSideRayHitsRect(Ray(p, d),
+				                      oPos, oAzimuth,
+				                      oWidth, oBreadth, side);
     if (side >= 0 && t <= minTime) {
       minTime = t;
       bestSide = side;
@@ -190,7 +197,8 @@ float			Obstacle::getHitNormal(
     d[0] = p2[0] - p[0];
     d[1] = p2[1] - p[1];
     int side;
-    const float t = timeAndSideRayHitsOrigRect(p, d, width, breadth, side);
+    const float t = Intersect::timeAndSideRayHitsOrigRect(p, d,
+                                                          width, breadth, side);
     if (side >= 0 && t <= minTime) {
       minTime = t;
       bestSide = side;
@@ -252,6 +260,7 @@ SceneNode** Obstacle::getInsideSceneNodeList() const
 {
   return insideNodes;
 }
+
 
 Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
 {

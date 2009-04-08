@@ -61,7 +61,7 @@ class BoltSceneNode : public ShotSceneNode {
 	void		renderGeoGMBolt();
 	void		renderGeoPill( float radius, float length, int segments, float endRad = -1);
 
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
 	void		setAnimation(int cu, int cv);
       private:
 	const BoltSceneNode* sceneNode;

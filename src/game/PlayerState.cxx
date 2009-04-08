@@ -73,13 +73,13 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
   buf = nboPackShort(buf, int16_t(status));
 
   if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
-      (fabsf (pos[0]) >= smallMaxDist)      ||
-      (fabsf (pos[1]) >= smallMaxDist)      ||
-      (fabsf (pos[2]) >= smallMaxDist)      ||
-      (fabsf (velocity[0]) >= smallMaxVel)  ||
-      (fabsf (velocity[1]) >= smallMaxVel)  ||
-      (fabsf (velocity[2]) >= smallMaxVel)  ||
-      (fabsf (angVel) >= smallMaxAngVel)) {
+      (fabsf(pos.x) >= smallMaxDist)      ||
+      (fabsf(pos.y) >= smallMaxDist)      ||
+      (fabsf(pos.z) >= smallMaxDist)      ||
+      (fabsf(velocity.x) >= smallMaxVel)  ||
+      (fabsf(velocity.y) >= smallMaxVel)  ||
+      (fabsf(velocity.z) >= smallMaxVel)  ||
+      (fabsf(angVel) >= smallMaxAngVel)) {
 
     code = MsgPlayerUpdate;
 
@@ -105,7 +105,7 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     } else if (angle < -M_PI) {
       angle += (float)(M_PI * 2.0);
     }
-    aziShort = (int16_t) ((angle * smallScale) / M_PI);
+    aziShort    = (int16_t) ((angle * smallScale) / M_PI);
     angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
 
     buf = nboPackShort(buf, posShort[0]);
@@ -156,13 +156,13 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
   msg->packShort(int16_t(status));
 
   if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
-      (fabsf (pos[0]) >= smallMaxDist)      ||
-      (fabsf (pos[1]) >= smallMaxDist)      ||
-      (fabsf (pos[2]) >= smallMaxDist)      ||
-      (fabsf (velocity[0]) >= smallMaxVel)  ||
-      (fabsf (velocity[1]) >= smallMaxVel)  ||
-      (fabsf (velocity[2]) >= smallMaxVel)  ||
-      (fabsf (angVel) >= smallMaxAngVel)) {
+      (fabsf(pos.x) >= smallMaxDist)      ||
+      (fabsf(pos.y) >= smallMaxDist)      ||
+      (fabsf(pos.z) >= smallMaxDist)      ||
+      (fabsf(velocity.x) >= smallMaxVel)  ||
+      (fabsf(velocity.y) >= smallMaxVel)  ||
+      (fabsf(velocity.z) >= smallMaxVel)  ||
+      (fabsf(angVel) >= smallMaxAngVel)) {
 
     code = MsgPlayerUpdate;
 

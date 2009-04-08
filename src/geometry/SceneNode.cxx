@@ -119,11 +119,9 @@ void			SceneNode::setRadius(GLfloat radiusSquared)
   sphere[3] = radiusSquared;
 }
 
-void			SceneNode::setCenter(const GLfloat center[3])
+void			SceneNode::setCenter(const fvec3& center)
 {
-  sphere[0] = center[0];
-  sphere[1] = center[1];
-  sphere[2] = center[2];
+  (fvec3&)sphere = center;
 }
 
 void			SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
@@ -133,12 +131,9 @@ void			SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
   sphere[2] = z;
 }
 
-void			SceneNode::setSphere(const GLfloat _sphere[4])
+void			SceneNode::setSphere(const fvec4& _sphere)
 {
-  sphere[0] = _sphere[0];
-  sphere[1] = _sphere[1];
-  sphere[2] = _sphere[2];
-  sphere[3] = _sphere[3];
+  sphere = _sphere;
 }
 
 void			SceneNode::notifyStyleChange()
@@ -168,7 +163,7 @@ GLfloat			SceneNode::getDistance(const GLfloat* eye) const
 	 (eye[2] - sphere[2]) * (eye[2] - sphere[2]);
 }
 
-int			SceneNode::split(const float*,
+int			SceneNode::split(const fvec4&,
 					SceneNode*&, SceneNode*&) const
 {
   // can't split me

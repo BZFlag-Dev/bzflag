@@ -24,34 +24,39 @@
 
 #include "common.h"
 #include <string>
+#include "vectors.h"
 
 
-extern void* nboPackUByte(void*, uint8_t);
-extern void* nboPackShort(void*, int16_t);
-extern void* nboPackInt(void*, int32_t);
-extern void* nboPackUShort(void*, uint16_t);
-extern void* nboPackUInt(void*, uint32_t);
-extern void* nboPackI64(void*, int64_t);
-extern void* nboPackU64(void*, uint64_t);
-extern void* nboPackFloat(void*, float);
-extern void* nboPackDouble(void*, double);
-extern void* nboPackFloatVec3(void*, const float*);
-extern void* nboPackString(void*, const void*, int len);
-extern void* nboPackStdString(void*, const std::string& str);
+extern void* nboPackUByte     (void*, uint8_t);
+extern void* nboPackShort     (void*, int16_t);
+extern void* nboPackInt       (void*, int32_t);
+extern void* nboPackUShort    (void*, uint16_t);
+extern void* nboPackUInt      (void*, uint32_t);
+extern void* nboPackI64       (void*, int64_t);
+extern void* nboPackU64       (void*, uint64_t);
+extern void* nboPackFloat     (void*, float);
+extern void* nboPackDouble    (void*, double);
+extern void* nboPackFloatVec2 (void*, const fvec2&);
+extern void* nboPackFloatVec3 (void*, const fvec3&);
+extern void* nboPackFloatVec4 (void*, const fvec4&);
+extern void* nboPackString    (void*, const void*, int len);
+extern void* nboPackStdString (void*, const std::string& str);
 
-extern void* nboUnpackUByte(void*, uint8_t&);
-extern void* nboUnpackShort(void*, int16_t&);
-extern void* nboUnpackInt(void*, int32_t&);
-extern void* nboUnpackUShort(void*, uint16_t&);
-extern void* nboUnpackUInt(void*, uint32_t&);
-extern void* nboUnpackI64(void*, int64_t&);
-extern void* nboUnpackU64(void*, uint64_t&);
-extern void* nboUnpackFloat(void*, float&);
-extern void* nboUnpackDouble(void*, double&);
-extern void* nboUnpackFloatVec3(void*, float*);
-extern void* nboUnpackString(void*, void*, int len);
-extern void* nboUnpackStdString(void*, std::string& str);
-extern void* nboUnpackStdStringRaw(void*, std::string& str);
+extern void* nboUnpackUByte        (void*, uint8_t&);
+extern void* nboUnpackShort        (void*, int16_t&);
+extern void* nboUnpackInt          (void*, int32_t&);
+extern void* nboUnpackUShort       (void*, uint16_t&);
+extern void* nboUnpackUInt         (void*, uint32_t&);
+extern void* nboUnpackI64          (void*, int64_t&);
+extern void* nboUnpackU64          (void*, uint64_t&);
+extern void* nboUnpackFloat        (void*, float&);
+extern void* nboUnpackDouble       (void*, double&);
+extern void* nboUnpackFloatVec2    (void*, fvec2&);
+extern void* nboUnpackFloatVec3    (void*, fvec3&);
+extern void* nboUnpackFloatVec4    (void*, fvec4&);
+extern void* nboUnpackString       (void*, void*, int len);
+extern void* nboUnpackStdString    (void*, std::string& str);
+extern void* nboUnpackStdStringRaw (void*, std::string& str);
 
 extern unsigned int nboStdStringPackSize(const std::string& str);
 

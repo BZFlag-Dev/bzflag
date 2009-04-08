@@ -48,7 +48,7 @@ class TankIDLSceneNode : public SceneNode {
 			IDLRenderNode(const TankIDLSceneNode*);
 			~IDLRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const TankIDLSceneNode* sceneNode;
 	static const int	idlFaces[][5];
@@ -123,7 +123,7 @@ class TankSceneNode : public SceneNode {
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
 	void		setNarrowWithDepth(bool narrow);
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
 
 	void		render();
 	void		renderPart(TankGeometryEnums::TankPart part);

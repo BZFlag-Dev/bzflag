@@ -18,8 +18,8 @@
 
 Frustum::Frustum()
 {
-  static float defaultEye[3] = { 0.0, 0.0, 0.0 };
-  static float defaultTarget[3] = { 0.0, 1.0, 0.0 };
+  static fvec3 defaultEye(0.0f, 0.0f, 0.0f);
+  static fvec3 defaultTarget(0.0f, 1.0f, 0.0f);
   static float identity[16] = { 1.0, 0.0, 0.0, 0.0,
 				  0.0, 1.0, 0.0, 0.0,
 				  0.0, 0.0, 1.0, 0.0,
@@ -49,66 +49,54 @@ float Frustum::getEyeDepth(const float* p) const
 }
 
 
-void Frustum::setView(const float* _eye, const float* _target)
+void Frustum::setView(const fvec3& _eye, const fvec3& _target)
 {
   // set eye and target points
-  eye[0] = _eye[0];
-  eye[1] = _eye[1];
-  eye[2] = _eye[2];
-  target[0] = _target[0];
-  target[1] = _target[1];
-  target[2] = _target[2];
+  eye    = _eye;
+  target = _target;
 
   // compute forward vector and normalize
-  plane[0][0] = target[0] - eye[0];
-  plane[0][1] = target[1] - eye[1];
-  plane[0][2] = target[2] - eye[2];
-  float d = 1.0f / sqrtf(plane[0][0] * plane[0][0] +
-			   plane[0][1] * plane[0][1] +
-			   plane[0][2] * plane[0][2]);
-  plane[0][0] *= d;
-  plane[0][1] *= d;
-  plane[0][2] *= d;
+  const fvec3 dir = (target - eye).normalize();
 
   // compute left vector (by crossing forward with
   // world-up [0 0 1]T and normalizing)
-  right[0] =  plane[0][1];
-  right[1] = -plane[0][0];
-  d = 1.0f / hypotf(right[0], right[1]);
-  right[0] *= d;
-  right[1] *= d;
-  right[2] = 0.0f;
+  right.x =  dir.y;
+  right.y = -dir.x;
+  const float rd = 1.0f / hypotf(right.x, right.y);
+  right.x *= rd;
+  right.y *= rd;
+  right.z = 0.0f;
 
   // compute local up vector (by crossing right and forward,
   // normalization unnecessary)
-  up[0] =  right[1] * plane[0][2];
-  up[1] = -right[0] * plane[0][2];
-  up[2] =  right[0] * plane[0][1] - right[1] * plane[0][0];
+  up.x =  right.y * dir.z;
+  up.y = -right.x * dir.z;
+  up.z = (right.x * dir.y) - (right.y * dir.x);
 
   // build view matrix, including a transformation bringing
   // world up [0 0 1 0]T to eye up [0 1 0 0]T, world north
   // [0 1 0 0]T to eye forward [0 0 -1 0]T.
-  viewMatrix[0] = right[0];
-  viewMatrix[4] = right[1];
+  viewMatrix[0] = right.x;
+  viewMatrix[4] = right.y;
   viewMatrix[8] = 0.0f;
 
-  viewMatrix[1] = up[0];
-  viewMatrix[5] = up[1];
-  viewMatrix[9] = up[2];
+  viewMatrix[1] = up.x;
+  viewMatrix[5] = up.y;
+  viewMatrix[9] = up.z;
 
-  viewMatrix[2] =  -plane[0][0];
-  viewMatrix[6] =  -plane[0][1];
-  viewMatrix[10] = -plane[0][2];
+  viewMatrix[2] =  -dir.x;
+  viewMatrix[6] =  -dir.y;
+  viewMatrix[10] = -dir.z;
 
-  viewMatrix[12] = -(viewMatrix[0] * eye[0] +
-			viewMatrix[4] * eye[1] +
-			viewMatrix[8] * eye[2]);
-  viewMatrix[13] = -(viewMatrix[1] * eye[0] +
-			viewMatrix[5] * eye[1] +
-			viewMatrix[9] * eye[2]);
-  viewMatrix[14] = -(viewMatrix[2] * eye[0] +
-			viewMatrix[6] * eye[1] +
-			viewMatrix[10] * eye[2]);
+  viewMatrix[12] = -(viewMatrix[0]  * eye.x +
+                     viewMatrix[4]  * eye.y +
+                     viewMatrix[8]  * eye.z);
+  viewMatrix[13] = -(viewMatrix[1]  * eye.x +
+                     viewMatrix[5]  * eye.y +
+                     viewMatrix[9]  * eye.z);
+  viewMatrix[14] = -(viewMatrix[2]  * eye.x +
+                     viewMatrix[6]  * eye.y +
+                     viewMatrix[10] * eye.z);
 
   // build billboard matrix.  billboard matrix performs rotation
   // so that polygons drawn in the xy plane face the camera.
@@ -125,43 +113,29 @@ void Frustum::setView(const float* _eye, const float* _target)
   // compute vectors of frustum edges
   const float xs = fabsf(1.0f / projectionMatrix[0]);
   const float ys = fabsf(1.0f / projectionMatrix[5]);
-  float edge[4][3];
-  edge[0][0] = plane[0][0] - xs * right[0] - ys * up[0];
-  edge[0][1] = plane[0][1] - xs * right[1] - ys * up[1];
-  edge[0][2] = plane[0][2] - xs * right[2] - ys * up[2];
-  edge[1][0] = plane[0][0] + xs * right[0] - ys * up[0];
-  edge[1][1] = plane[0][1] + xs * right[1] - ys * up[1];
-  edge[1][2] = plane[0][2] + xs * right[2] - ys * up[2];
-  edge[2][0] = plane[0][0] + xs * right[0] + ys * up[0];
-  edge[2][1] = plane[0][1] + xs * right[1] + ys * up[1];
-  edge[2][2] = plane[0][2] + xs * right[2] + ys * up[2];
-  edge[3][0] = plane[0][0] - xs * right[0] + ys * up[0];
-  edge[3][1] = plane[0][1] - xs * right[1] + ys * up[1];
-  edge[3][2] = plane[0][2] - xs * right[2] + ys * up[2];
+  fvec3 edge[4];
+  edge[0] = dir - (xs * right) - (ys * up);
+  edge[1] = dir + (xs * right) - (ys * up);
+  edge[2] = dir + (xs * right) + (ys * up);
+  edge[3] = dir - (xs * right) + (ys * up);
 
   // make frustum planes
-  plane[0][3] = -(eye[0] * plane[0][0] + eye[1] * plane[0][1] +
-			eye[2] * plane[0][2] + m_near);
+  plane[0] = fvec4(dir, -fvec3::dot(eye, dir));
   makePlane(edge[0], edge[3], 1);
   makePlane(edge[2], edge[1], 2);
   makePlane(edge[1], edge[0], 3);
   makePlane(edge[3], edge[2], 4);
 
-  plane[5][0] = -plane[0][0];
-  plane[5][1] = -plane[0][1];
-  plane[5][2] = -plane[0][2];
-  plane[5][3] = -plane[0][3] + m_far;
+  plane[5] = -plane[0];
+  plane[5].w += m_far;
 
   // make far corners
   for (int i = 0; i < 4; i++) {
-    farCorner[i][0] = eye[0] + m_far * edge[i][0];
-    farCorner[i][1] = eye[1] + m_far * edge[i][1];
-    farCorner[i][2] = eye[2] + m_far * edge[i][2];
+    farCorner[i] = eye + (m_far * edge[i]);
   }
 
   // setup tilt and angle
-  const float* dir = plane[0];
-  tilt = (float)((180.0 / M_PI) * atan2((double)dir[2], 1.0));
+  tilt     = (float)((180.0 / M_PI) * atan2((double)dir[2], 1.0));
   rotation = (float)((180.0 / M_PI) * atan2((double)dir[1], (double)dir[2]));
 }
 
@@ -232,19 +206,12 @@ void Frustum::setOffset(float eyeOffset, float focalPlane)
 }
 
 
-void Frustum::makePlane(const float* v1, const float* v2, int index)
+void Frustum::makePlane(const fvec3& v1, const fvec3& v2, int index)
 {
   // get normal by crossing v1 and v2 and normalizing
-  float n[3];
-  n[0] = v1[1] * v2[2] - v1[2] * v2[1];
-  n[1] = v1[2] * v2[0] - v1[0] * v2[2];
-  n[2] = v1[0] * v2[1] - v1[1] * v2[0];
-  float d = 1.0f / sqrtf(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-  plane[index][0] = d * n[0];
-  plane[index][1] = d * n[1];
-  plane[index][2] = d * n[2];
-  plane[index][3] = -(eye[0] * plane[index][0] + eye[1] * plane[index][1] +
-						eye[2] * plane[index][2]);
+  const fvec3 dir = fvec3::cross(v1, v2).normalize();
+  const float dist = -fvec3::dot(eye, dir);
+  plane[index] = fvec4(dir, dist);
 }
 
 
@@ -252,8 +219,8 @@ void Frustum::makePlane(const float* v1, const float* v2, int index)
 // flipX, flipY, flipZ, all with and offset along the axis
 void Frustum::flipVertical()
 {
-  eye[2] = -eye[2];
-  target[2] = -target[2];
+  eye.z = -eye.z;
+  target.z = -target.z;
   setView(eye, target);
   projectionMatrix[5] = -projectionMatrix[5];
   deepProjectionMatrix[5] = -deepProjectionMatrix[5];
@@ -264,8 +231,8 @@ void Frustum::flipVertical()
 
 void Frustum::flipHorizontal()
 {
-  eye[0] = -eye[0];
-  target[0] = -target[0];
+  eye.x = -eye.x;
+  target.x = -target.x;
   setView(eye, target);
   projectionMatrix[0] = -projectionMatrix[0];
   deepProjectionMatrix[0] = -deepProjectionMatrix[0];
@@ -277,7 +244,7 @@ void Frustum::flipHorizontal()
 void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
 {
   // setup the eye, and the clipping planes
-  memcpy(eye, view.getEye(), sizeof(float[3]));
+  eye = view.getEye();
 
   float front[2], left[2];
   const float* dir = view.getDirection();

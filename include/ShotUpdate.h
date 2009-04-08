@@ -28,15 +28,19 @@
 // system headers
 #include <math.h>
 
-// local implementation headers
+// common headers
 #include "Address.h"
 #include "Flag.h"
-#include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
-const int		ShotUpdatePLen = PlayerIdPLen + 32;
-const int		FiringInfoPLen = ShotUpdatePLen + 10;
+
+const int ShotUpdatePLen = PlayerIdPLen + 32;
+const int FiringInfoPLen = ShotUpdatePLen + 10;
+
 
 class BaseLocalPlayer;
+class BufferedNetworkMessage;
+
 
 struct ShotUpdate {
   public:
@@ -47,15 +51,16 @@ struct ShotUpdate {
   public:
     PlayerId		player;			// who's shot
     uint16_t		id;			// shot id unique to player
-    float		pos[3];			// shot position
-    float		vel[3];			// shot velocity
+    fvec3		pos;			// shot position
+    fvec3		vel;			// shot velocity
     float		dt;			// time shot has existed
     TeamColor		team;
 };
 
+
 struct FiringInfo {
   public:
-			FiringInfo();
+    FiringInfo();
 
     void*		pack(void*) const;
     void		pack(BufferedNetworkMessage *msg) const;
@@ -70,7 +75,9 @@ struct FiringInfo {
     float		lifetime;		// lifetime of shot (s)
 };
 
+
 #endif // BZF_SHOT_UPDATE_H
+
 
 // Local Variables: ***
 // mode: C++ ***

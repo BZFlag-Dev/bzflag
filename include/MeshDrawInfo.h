@@ -73,7 +73,7 @@ class MeshDrawInfo {
     void setName(const std::string&);
     const std::string& getName() const;
 
-    const float* getSphere() const;
+    const fvec4&   getSphere() const;
     const Extents& getExtents() const;
 
     int getLodCount() const;
@@ -117,7 +117,7 @@ class MeshDrawInfo {
     MeshDrawMgr* drawMgr;
 
     Extents extents;
-    float sphere[4];
+    fvec4 sphere;
 
     MaterialMap* matMap;
     MeshTransform::Tool* xformTool;
@@ -170,7 +170,7 @@ inline const std::string& MeshDrawInfo::getName() const
 {
   return name;
 }
-inline const float* MeshDrawInfo::getSphere() const
+inline const fvec4& MeshDrawInfo::getSphere() const
 {
   return sphere;
 }
@@ -295,7 +295,7 @@ class DrawSet {
     DrawCmd* cmds;
     const BzMaterial* material;
     bool wantList;
-    float sphere[4];
+    fvec4 sphere;
     int triangleCount;
 };
 

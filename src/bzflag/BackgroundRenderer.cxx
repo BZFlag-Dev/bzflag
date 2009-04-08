@@ -1279,7 +1279,7 @@ void BackgroundRenderer::drawGround()
     glColor4fv(groundColorInv[styleIndex]);
     invGroundGState[styleIndex].setState();
   } else {
-    float color[4];
+    fvec4 color;
     if (BZDB.isSet("groundOverrideColor") &&
         parseColorString(BZDB.get("groundOverrideColor"), color)) {
       glColor4fv(color);
@@ -1608,7 +1608,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
   // setup the ground tint
   const GLfloat* gndColor = groundColor[styleIndex];
-  GLfloat overrideColor[4];
+  fvec4 overrideColor;
   if (BZDB.isSet("groundOverrideColor") &&
       parseColorString(BZDB.get("groundOverrideColor"), overrideColor)) {
     gndColor = overrideColor;

@@ -32,6 +32,7 @@
 #include "Flag.h"
 #include "ShotUpdate.h"
 #include "GfxBlock.h"
+#include "vectors.h"
 
 /* local interface headers */
 #include "ShotStrategy.h"
@@ -56,10 +57,10 @@ public:
   float getReloadTime() const;
   double getStartTime() const;
   double getCurrentTime() const;
-  const float *getPosition() const;
-  const float *getVelocity() const;
+  const fvec3& getPosition() const;
+  const fvec3& getVelocity() const;
 
-  float checkHit(const ShotCollider &, float[3]) const;
+  float checkHit(const ShotCollider &, fvec3& p) const;
   void setExpiring();
   void setExpired();
   bool isStoppedByHit() const;
@@ -77,8 +78,8 @@ public:
   virtual void update(float);
 
   //This function can be used to predict the position of the shot after a given time dt. Function returns true iff. the shot is still alive.
-  bool predictPosition(float dt, float p[3]) const;
-  bool predictVelocity(float dt, float p[3]) const;
+  bool predictPosition(float dt, fvec3& p) const;
+  bool predictVelocity(float dt, fvec3& p) const;
 
   GfxBlock&       getGfxBlock()       { return gfxBlock; }
   const GfxBlock& getGfxBlock() const { return gfxBlock; }
@@ -181,12 +182,12 @@ inline double ShotPath::getCurrentTime() const
   return currentTime;
 }
 
-inline const float *ShotPath::getPosition() const
+inline const fvec3& ShotPath::getPosition() const
 {
   return firingInfo.shot.pos;
 }
 
-inline const float *ShotPath::getVelocity() const
+inline const fvec3& ShotPath::getVelocity() const
 {
   return firingInfo.shot.vel;
 }

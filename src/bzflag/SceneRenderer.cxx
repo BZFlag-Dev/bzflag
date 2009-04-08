@@ -710,7 +710,7 @@ void SceneRenderer::drawMirror()
   frustum.flipVertical();
   glFrontFace(GL_CCW);
 
-  float mirrorColor[4];
+  fvec4 mirrorColor;
   if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
     mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
     mirrorColor[3] = 0.5f;
@@ -1094,7 +1094,7 @@ bool SceneRenderer::setupMapFog()
   GLfloat fogDensity  = 0.001f;
   GLfloat fogStart    = BZDBCache::worldSize * 0.5f;
   GLfloat fogEnd      = BZDBCache::worldSize;
-  GLfloat fogColor[4] = { 0.25f, 0.25f, 0.25f, 0.25f };
+  fvec4   fogColor(0.25f, 0.25f, 0.25f, 0.25f);
 
   // parse the values;
   if (modeStr == "linear") {

@@ -13,11 +13,15 @@
 #ifndef __WEAPON_H__
 #define __WEAPON_H__
 
-// BZFlag common header
 #include "common.h"
 
+// system headers
 #include <vector>
+ 
+// common headers
 #include "Flag.h"
+#include "vectors.h"
+
 
 class Weapon {
   public:
@@ -25,8 +29,8 @@ class Weapon {
     void* unpack(void*);
 
   public:
-    FlagType *type;
-    float pos[3];
+    FlagType* type;
+    fvec3 pos;
     float dir;
     float initDelay;
     std::vector<float> delay;

@@ -19,11 +19,13 @@
 #include "MeshTransform.h"
 
 
-const char*		BaseBuilding::typeName = "BaseBuilding";
+const char* BaseBuilding::typeName = "BaseBuilding";
+
 
 BaseBuilding::BaseBuilding()
 {
 }
+
 
 BaseBuilding::BaseBuilding(const float *p, float rotation,
                            const float *_size, int _team, bool rico)
@@ -34,10 +36,12 @@ BaseBuilding::BaseBuilding(const float *p, float rotation,
   return;
 }
 
+
 BaseBuilding::~BaseBuilding()
 {
   // do nothing
 }
+
 
 void BaseBuilding::finalize()
 {
@@ -45,12 +49,12 @@ void BaseBuilding::finalize()
   return;
 }
 
+
 Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
 {
-  float newPos[3], newSize[3], newAngle;
-  memcpy(newPos, pos, sizeof(float[3]));
-  memcpy(newSize, size, sizeof(float[3]));
-  newAngle = angle;
+  fvec3 newPos = pos;
+  fvec3 newSize = size;
+  float newAngle = angle;
 
   MeshTransform::Tool tool(xform);
   bool flipped;
@@ -62,28 +66,33 @@ Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
   return copy;
 }
 
-const char*		BaseBuilding::getType() const
+
+const char* BaseBuilding::getType() const
 {
   return typeName;
 }
 
-const char*		BaseBuilding::getClassName()
+
+const char* BaseBuilding::getClassName()
 {
   return typeName;
 }
 
-float			BaseBuilding::intersect(const Ray &r) const
+
+float BaseBuilding::intersect(const Ray &r) const
 {
-  return timeRayHitsBlock(r, getPosition(), getRotation(),
-			  getWidth(), getBreadth(), getHeight());
+  return Intersect::timeRayHitsBlock(r, getPosition(), getRotation(),
+                                     getWidth(), getBreadth(), getHeight());
 }
 
-void			BaseBuilding::getNormal(const float *p, float *n) const
+
+void BaseBuilding::getNormal(const fvec3& p, fvec3& n) const
 {
-  getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
+  Intersect::getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
-void			BaseBuilding::get3DNormal(const float* p, float* n) const
+
+void BaseBuilding::get3DNormal(const fvec3& p, fvec3& n) const
 {
   // This bit of cruft causes bullets to bounce of buildings in the z direction
   if (fabs(p[2] - getPosition()[2]) < Epsilon) {
@@ -96,29 +105,33 @@ void			BaseBuilding::get3DNormal(const float* p, float* n) const
     n[1] = 0.0f;
     n[2] = 1.0f;
   } // end cruftiness
-  else
+  else {
     getNormal(p, n);
+  }
 }
 
-bool			BaseBuilding::inCylinder(const float *p, float radius, float height) const
+
+bool BaseBuilding::inCylinder(const fvec3& p, float radius, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
   &&     ((p[2]+height) > getPosition()[2])
-  &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
+  &&     Intersect::testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			BaseBuilding::inBox(const float *p, float _angle,
-			float dx, float dy, float height) const
+
+bool BaseBuilding::inBox(const fvec3& p, float _angle,
+                         float dx, float dy, float height) const
 {
   return (p[2] < (getPosition()[2] + getHeight()))
   &&     ((p[2]+height) >= getPosition()[2])
-  &&     testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
-		      p, _angle, dx, dy);
+  &&     Intersect::testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
+		                  p, _angle, dx, dy);
 }
 
-bool			BaseBuilding::inMovingBox(const float* oldP, float,
-						  const float *p, float _angle,
-			float dx, float dy, float height) const
+
+bool BaseBuilding::inMovingBox(const fvec3& oldP, float,
+                               const fvec3& p, float _angle,
+                               float dx, float dy, float height) const
 {
   float topBaseHeight = getPosition()[2] + getHeight();
   float higherZ;
@@ -138,20 +151,25 @@ bool			BaseBuilding::inMovingBox(const float* oldP, float,
     return false;
   if ((higherZ + height) < getPosition()[2])
     return false;
-  return testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
-		      p, _angle, dx, dy);
+  return Intersect::testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
+		                 p, _angle, dx, dy);
 }
 
-bool			BaseBuilding::isCrossing(const float *p, float _angle,
-			float dx, float dy, float height,
-			float *plane) const
+
+bool BaseBuilding::isCrossing(const fvec3& p, float _angle,
+                              float dx, float dy, float height,
+                              fvec4* planePtr) const
 {
   // if not inside or contained, then not crossing
   if (!inBox(p, _angle, dx, dy, height) ||
-      testRectInRect(getPosition(), getRotation(),
-	getWidth(), getBreadth(), p, _angle, dx, dy))
+      Intersect::testRectInRect(getPosition(), getRotation(),
+                                getWidth(), getBreadth(), p, _angle, dx, dy)) {
     return false;
-  if(!plane) return true;
+  }
+  if (!planePtr) {
+    return true;
+  }
+  fvec4& plane = *planePtr;
 
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test). Just
@@ -180,17 +198,19 @@ bool			BaseBuilding::isCrossing(const float *p, float _angle,
   return true;
 }
 
-bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
-			const float *pos2, float azimuth2,
-			float halfWidth, float halfBreadth, float,
-			float *normal) const
+
+bool BaseBuilding::getHitNormal(const fvec3& pos1, float azimuth1,
+                                const fvec3& pos2, float azimuth2,
+                                float halfWidth, float halfBreadth, float,
+                                fvec3& normal) const
 {
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, halfWidth, halfBreadth,
-			getPosition(), getRotation(), getWidth(), getBreadth(),
-			getHeight(), normal) >= 0.0f;
+                                getPosition(), getRotation(), getWidth(), getBreadth(),
+                                getHeight(), normal) >= 0.0f;
 }
 
-void			BaseBuilding::getCorner(int index, float *_pos) const
+
+void BaseBuilding::getCorner(int index, fvec3& _pos) const
 {
   const float *base = getPosition();
   const float c = cosf(getRotation());
@@ -219,11 +239,13 @@ void			BaseBuilding::getCorner(int index, float *_pos) const
   if(index >= 4) _pos[2] += getHeight();
 }
 
-int	BaseBuilding::getTeam() const {
+
+int BaseBuilding::getTeam() const {
   return team;
 }
 
-bool			BaseBuilding::isFlatTop() const
+
+bool BaseBuilding::isFlatTop() const
 {
   return true;
 }
@@ -318,26 +340,27 @@ static void outputFloat(std::ostream& out, float value)
   return;
 }
 
+
 void BaseBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
 {
   int i;
-  float verts[8][3] = {
-    {-1.0f, -1.0f, 0.0f},
-    {+1.0f, -1.0f, 0.0f},
-    {+1.0f, +1.0f, 0.0f},
-    {-1.0f, +1.0f, 0.0f},
-    {-1.0f, -1.0f, 1.0f},
-    {+1.0f, -1.0f, 1.0f},
-    {+1.0f, +1.0f, 1.0f},
-    {-1.0f, +1.0f, 1.0f}
+  fvec3 verts[8] = {
+    fvec3(-1.0f, -1.0f, 0.0f),
+    fvec3(+1.0f, -1.0f, 0.0f),
+    fvec3(+1.0f, +1.0f, 0.0f),
+    fvec3(-1.0f, +1.0f, 0.0f),
+    fvec3(-1.0f, -1.0f, 1.0f),
+    fvec3(+1.0f, -1.0f, 1.0f),
+    fvec3(+1.0f, +1.0f, 1.0f),
+    fvec3(-1.0f, +1.0f, 1.0f)
   };
-  float norms[6][3] = {
-    {0.0f, -1.0f, 0.0f}, {+1.0f, 0.0f, 0.0f},
-    {0.0f, +1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, +1.0f}
+  fvec3 norms[6] = {
+    fvec3(0.0f, -1.0f, 0.0f), fvec3(+1.0f, 0.0f, 0.0f),
+    fvec3(0.0f, +1.0f, 0.0f), fvec3(-1.0f, 0.0f, 0.0f),
+    fvec3(0.0f, 0.0f, -1.0f), fvec3(0.0f, 0.0f, +1.0f)
   };
-  float txcds[4][2] = {
-    {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
+  fvec2 txcds[4] = {
+    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f)
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);

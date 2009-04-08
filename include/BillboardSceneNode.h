@@ -64,7 +64,7 @@ class BillboardSceneNode : public SceneNode {
 			~BillboardRenderNode();
 	void		setColor(const GLfloat* rgba);
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
 	void		setFrame(float u, float v);
 	void		setFrameSize(float du, float dv);
       private:

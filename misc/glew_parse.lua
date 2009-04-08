@@ -18,13 +18,13 @@ local wantSpaces = false
 
 local sortNumeric = false
 
-local desired = {}
-
 local scanDir = '.'
 
 local glew_h = '/usr/include/GL/glew.h'
 
 local outputName
+
+local desired = {}
 
 
 --------------------------------------------------------------------------------
@@ -33,7 +33,12 @@ local outputName
 --  parse the command line arguments
 --
 
-local function PrintHelp()
+local function PrintHelp(message)
+  if (type(message) == 'string') then
+    print()
+    print(message)
+    print()
+  end
   print('usage:  ' .. arg[-1] .. ' ' .. arg[0] .. ' [options]')
   print('  -h         : this help')
   print('  -g <path>  : the path to glew.h')
@@ -86,9 +91,7 @@ while (i <= #arg) do
   elseif (a == '-n') then
     sortNumeric = true
   else
-    print('unknown option: "' .. a .. '"')
-    print()
-    PrintHelp()
+    PrintHelp('unknown option: "' .. a .. '"')
     os.exit(1)
   end
   
@@ -159,20 +162,17 @@ end
 
 local input, err = io.open(glew_h, 'rt')
 if (not input) then
-  print(err)
-  print()
-  PrintHelp()
+  PrintHelp(err)
   os.exit(1)
 end
+
 
 local output = io.stdout
 if (type(outputName) == 'string') then
   local err
   output, err = io.open(outputName, 'wt')
   if (not output) then
-    print(err)
-    print()
-    PrintHelp()
+    PrintHelp(err)
     os.exit(1)
   end
 end

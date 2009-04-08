@@ -16,7 +16,7 @@
 Weapon::Weapon()
 {
   type = Flags::Null;
-  pos[0] = pos[1] = pos[2] = 0.0f;
+  pos = fvec3(0.0f, 0.0f, 0.0f);
   dir = 0.0f;
   initDelay = 0.0f;
   delay.clear();

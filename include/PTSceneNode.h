@@ -39,7 +39,7 @@ class PhotonTorpedoSceneNode : public ShotSceneNode {
 			PTRenderNode(const PhotonTorpedoSceneNode*);
 			~PTRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const PhotonTorpedoSceneNode* sceneNode;
 	int		numFlares;

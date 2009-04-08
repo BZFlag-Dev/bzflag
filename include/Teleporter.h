@@ -25,7 +25,7 @@
 class Teleporter : public Obstacle {
   public:
 			Teleporter();
-			Teleporter(const float* pos, float rotation,
+			Teleporter(const fvec3& pos, float rotation,
 			           float width, float breadth, float height,
 			           float borderSize, bool horizontal,
 			           unsigned char drive, unsigned char shoot,
@@ -45,32 +45,32 @@ class Teleporter : public Obstacle {
     bool		isValid() const;
 
     float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
+    void		getNormal(const fvec3& p, fvec3& n) const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
+    bool		inCylinder(const fvec3& p, float radius, float height) const;
+    bool		inBox(const fvec3& p, float angle,
 			      float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
+    bool		inMovingBox(const fvec3& oldP, float oldAngle,
+				    const fvec3& newP, float newAngle,
 				    float halfWidth, float halfBreadth, float height) const;
-    bool		isCrossing(const float* p, float angle,
+    bool		isCrossing(const fvec3& p, float angle,
 				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+				   fvec4* plane) const;
 
     bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
+				const fvec3& pos1, float azimuth1,
+				const fvec3& pos2, float azimuth2,
 				float halfWidth, float halfBreadth,
 				float height,
-				float* normal) const;
+				fvec3& normal) const;
 
     float		isTeleported(const Ray&, int& face) const;
-    float		getProximity(const float* p, float radius) const;
-    bool		hasCrossed(const float* p1, const float* p2,
+    float		getProximity(const fvec3& p, float radius) const;
+    bool		hasCrossed(const fvec3& p1, const fvec3& p2,
 							int& face) const;
     void		getPointWRT(const Teleporter& t2, int face1, int face2,
-				const float* pIn, const float* dIn, float aIn,
-				float* pOut, float* dOut, float* aOut) const;
+                                    const fvec3& pIn, const fvec3* dIn, float aIn,
+                                    fvec3& pOut, fvec3* dOut, float* aOut) const;
 
     void makeLinks();
     const MeshFace* getBackLink() const;
@@ -100,9 +100,9 @@ class Teleporter : public Obstacle {
 
     MeshFace* backLink;
     MeshFace* frontLink;
-    float fvertices[4][3]; // front vertices
-    float bvertices[4][3]; // back vertices
-    float texcoords[4][2]; // shared texture coordinates
+    fvec3 fvertices[4]; // front vertices
+    fvec3 bvertices[4]; // back vertices
+    fvec2 texcoords[4]; // shared texture coordinates
 };
 
 //

@@ -22,27 +22,29 @@
 #define	BZF_RENDER_NODE_H
 
 #include "common.h"
+#include "vectors.h"
 #include "OpenGLGState.h"
 
 
 class RenderNode {
   public:
-			RenderNode() { }
-    virtual		~RenderNode() { }
+    RenderNode() {}
+    virtual ~RenderNode() {}
 
-    virtual void	render() = 0;
-    virtual void	renderShadow() { render(); }
-    virtual void	renderRadar() { renderShadow(); }
-    virtual const GLfloat* getPosition() const = 0;
+    virtual void render() = 0;
+    virtual void renderShadow() { render(); }
+    virtual void renderRadar()  { renderShadow(); }
 
-    static int		getTriangleCount();
-    static void		resetTriangleCount();
+    virtual const fvec3& getPosition() const = 0;
+
+    static int  getTriangleCount();
+    static void	resetTriangleCount();
 
   protected:
-    static void		addTriangleCount(int triCount);
+    static void addTriangleCount(int triCount);
 
   private:
-    static int		triangleCount;
+    static int triangleCount;
 };
 
 
@@ -55,25 +57,26 @@ inline void RenderNode::addTriangleCount(int count)
 
 class RenderNodeList {
   public:
-			RenderNodeList();
-			~RenderNodeList();
+    RenderNodeList();
+    ~RenderNodeList();
 
-    void		clear();
-    void		append(RenderNode*);
-    void		render() const;
+    void clear();
+    void append(RenderNode*);
+    void render() const;
 
   private:
     // no copying (cos that'd be slow)
-			RenderNodeList(const RenderNodeList&);
-    RenderNodeList&	operator=(const RenderNodeList&);
+    RenderNodeList(const RenderNodeList&);
+    RenderNodeList& operator=(const RenderNodeList&);
 
-    void		grow();
+    void grow();
 
   private:
-    int			count;
-    int			size;
-    RenderNode**	list;
+    int	count;
+    int	size;
+    RenderNode** list;
 };
+
 
 inline void RenderNodeList::append(RenderNode* node)
 {
@@ -86,15 +89,15 @@ inline void RenderNodeList::append(RenderNode* node)
 
 class RenderNodeGStateList {
   public:
-			RenderNodeGStateList();
-			~RenderNodeGStateList();
+    RenderNodeGStateList();
+    ~RenderNodeGStateList();
 
-    void		clear();
-    void		append(RenderNode*, const OpenGLGState*);
-    void		append(RenderNode*, const OpenGLGState*, float depth);
-    void		render() const;
+    void clear();
+    void append(RenderNode*, const OpenGLGState*);
+    void append(RenderNode*, const OpenGLGState*, float depth);
+    void render() const;
 
-    void		sort(const GLfloat* eye);
+    void sort(const GLfloat* eye);
 
     // public for the qsort() comparison function
     struct Item {
@@ -107,16 +110,17 @@ class RenderNodeGStateList {
 
   private:
     // no copying (cos that'd be slow)
-			RenderNodeGStateList(const RenderNodeGStateList&);
+    RenderNodeGStateList(const RenderNodeGStateList&);
     RenderNodeGStateList& operator=(const RenderNodeGStateList&);
 
-    void		grow();
+    void grow();
 
   private:
-    int			count;
-    int			size;
-    Item*		list;
+    int   count;
+    int   size;
+    Item* list;
 };
+
 
 inline void RenderNodeGStateList::append(RenderNode* node,
 					 const OpenGLGState* gstate)
@@ -130,7 +134,9 @@ inline void RenderNodeGStateList::append(RenderNode* node,
   count++;
 }
 
+
 #endif // BZF_RENDER_NODE_H
+
 
 // Local Variables: ***
 // mode: C++ ***

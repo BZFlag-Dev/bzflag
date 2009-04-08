@@ -57,7 +57,7 @@ class TrackEntry {
     TrackEntry* next;
     TrackEntry* prev;
   public:
-    float pos[3];
+    fvec3 pos;
     float angle;
     float scale;
     char sides;
@@ -133,7 +133,7 @@ class TrackRenderNode : public RenderNode {
     ~TrackRenderNode();
     void render();
     void renderShadow() { return; }
-    const GLfloat* getPosition() const { return te->pos; }
+    const fvec3& getPosition() const { return te->pos; }
 
   private:
     TrackType type;
@@ -196,7 +196,7 @@ static void setup();
 static void drawSmoke(const TrackEntry& te);
 static void drawPuddle(const TrackEntry& te);
 static void drawTreads(const TrackEntry& te);
-static bool onBuilding(const float pos[3]);
+static bool onBuilding(const fvec3& pos);
 static void updateList(TrackList& list, float dt);
 static void addEntryToList(TrackList& list,
 			   TrackEntry& te, TrackType type);
@@ -300,7 +300,7 @@ static void addEntryToList(TrackList& list,
 }
 
 
-bool TrackMarks::addMark(const float pos[3], float scale, float angle,
+bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
 			 int phydrv)
 {
   TrackEntry te;
@@ -397,10 +397,10 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
 }
 
 
-static bool onBuilding(const float pos[3])
+static bool onBuilding(const fvec3& pos)
 {
-  const float dir[3] = {0.0f, 0.0f, -1.0f};
-  const float org[3] = {pos[0], pos[1], pos[2] + 0.1f};
+  const fvec3 dir(0.0f, 0.0f, -1.0f);
+  const fvec3 org(pos[0], pos[1], pos[2] + 0.1f);
   Ray ray(org, dir);
   const ObsList* olist = COLLISIONMGR.rayTest (&ray, 0.5f);
   for (int i = 0; i < olist->count; i++) {

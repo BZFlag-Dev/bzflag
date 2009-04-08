@@ -40,7 +40,7 @@ class TracerSceneNode : public ShotSceneNode {
 			TracerRenderNode(const TracerSceneNode*);
 			~TracerRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const TracerSceneNode* sceneNode;
     };

@@ -34,10 +34,10 @@ class MeshObstacle : public Obstacle {
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
 		 const std::vector<char>& checkTypes,
-		 const std::vector<cfvec3>& checkPoints,
-		 const std::vector<cfvec3>& vertices,
-		 const std::vector<cfvec3>& normals,
-		 const std::vector<cfvec2>& texcoords,
+		 const std::vector<fvec3>& checkPoints,
+		 const std::vector<fvec3>& vertices,
+		 const std::vector<fvec3>& normals,
+		 const std::vector<fvec2>& texcoords,
 		 int faceCount, bool noclusters, bool bounce,
 		 unsigned char drive, unsigned char shoot, bool ricochet);
 
@@ -71,26 +71,26 @@ class MeshObstacle : public Obstacle {
     bool isValid() const;
 
     float intersect(const Ray&) const;
-    void getNormal(const float* p, float* n) const;
-    void get3DNormal(const float* p, float* n) const;
+    void getNormal(const fvec3& p, fvec3& n) const;
+    void get3DNormal(const fvec3& p, fvec3& n) const;
 
-    bool inCylinder(const float* p, float radius, float height) const;
-    bool inBox(const float* p, float angle,
+    bool inCylinder(const fvec3& p, float radius, float height) const;
+    bool inBox(const fvec3& p, float angle,
 	       float halfWidth, float halfBreadth, float height) const;
-    bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
+    bool inMovingBox(const fvec3& oldP, float oldAngle,
+		     const fvec3& newP, float newAngle,
 		     float halfWidth, float halfBreadth, float height) const;
-    bool isCrossing(const float* p, float angle,
+    bool isCrossing(const fvec3& p, float angle,
 		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
+		    fvec4* plane) const;
 
-    bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
+    bool getHitNormal(const fvec3& pos1, float azimuth1,
+		      const fvec3& pos2, float azimuth2,
 		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
+		      float height, fvec3& normal) const;
 
-    bool containsPoint(const float point[3]) const;
-    bool containsPointNoOctree(const float point[3]) const;
+    bool containsPoint(const fvec3& point) const;
+    bool containsPointNoOctree(const fvec3& point) const;
 
     const char *getCheckTypes() const;
     const fvec3 *getCheckPoints() const;
@@ -121,7 +121,7 @@ class MeshObstacle : public Obstacle {
     void makeFacePointers(const std::vector<int>& _vertices,
 			  const std::vector<int>& _normals,
 			  const std::vector<int>& _texcoords,
-			  float**& v, float**& n, float**& t);
+			  fvec3**& v, fvec3**& n, fvec2**& t);
 
   private:
     static const char* typeName;
@@ -148,27 +148,28 @@ class MeshObstacle : public Obstacle {
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
 };
 
-inline const char *MeshObstacle::getCheckTypes() const
+
+inline const char* MeshObstacle::getCheckTypes() const
 {
   return checkTypes;
 }
 
-inline const fvec3 *MeshObstacle::getCheckPoints() const
+inline const fvec3* MeshObstacle::getCheckPoints() const
 {
   return checkPoints;
 }
 
-inline const fvec3 *MeshObstacle::getVertices() const
+inline const fvec3* MeshObstacle::getVertices() const
 {
   return vertices;
 }
 
-inline const fvec3 *MeshObstacle::getNormals() const
+inline const fvec3* MeshObstacle::getNormals() const
 {
   return normals;
 }
 
-inline const fvec2 *MeshObstacle::getTexcoords() const
+inline const fvec2* MeshObstacle::getTexcoords() const
 {
   return texcoords;
 }
@@ -221,8 +222,8 @@ inline const std::string& MeshObstacle::getName() const
 inline void MeshObstacle::setName(const std::string& str)
 {
   name = str;
-  return;
 }
+
 
 #endif // BZF_MESH_OBSTACLE_H
 

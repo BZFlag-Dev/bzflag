@@ -35,10 +35,10 @@ class GuidedMissileStrategy : public ShotStrategy {
 			~GuidedMissileStrategy();
 
     void		update(float dt);
-    bool                predictPosition(float dt, float p[3]) const;
-    bool                predictVelocity(float dt, float p[3]) const;
+    bool                predictPosition(float dt, fvec3& p) const;
+    bool                predictVelocity(float dt, fvec3& p) const;
 
-    float		checkHit(const ShotCollider&, float[3]) const;
+    float		checkHit(const ShotCollider&, fvec3&) const;
     void		sendUpdate(const FiringInfo&) const;
     void		readUpdate( void*);
     void		addShot(SceneDatabase*, bool colorblind);
@@ -47,7 +47,7 @@ class GuidedMissileStrategy : public ShotStrategy {
 
   private:
     float		checkBuildings(const Ray& ray);
-    bool                _predict(float dt, float p[3], float v[3]) const;
+    bool                _predict(float dt, fvec3& p, fvec3& v) const;
 
   private:
     double		prevTime;
@@ -56,7 +56,7 @@ class GuidedMissileStrategy : public ShotStrategy {
     int			renderTimes;
     float		azimuth;
     float		elevation;
-    float		nextPos[3];
+    fvec3		nextPos;
     BoltSceneNode*	ptSceneNode;
 
 		float	puffTime;

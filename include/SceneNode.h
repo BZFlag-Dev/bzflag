@@ -33,6 +33,7 @@
 #include "OpenGLGState.h"
 #include "RenderNode.h"
 #include "Extents.h"
+#include "vectors.h"
 #include <vector>
 
 #if !defined(_WIN32)
@@ -59,12 +60,13 @@ class SceneNode {
 
     virtual void	notifyStyleChange();
 
-    const GLfloat*	getSphere() const;
+    const fvec3&	getCenter() const;
+    const fvec4&	getSphere() const;
     const Extents&	getExtents() const;
     virtual int		getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
-    const GLfloat*      getPlane() const;
-    const GLfloat*      getPlaneRaw() const;
+    const fvec4*	getPlane() const;
+    const fvec4&	getPlaneRaw() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const; // for BSP
 
     virtual bool	inAxisBox (const Extents& exts) const;
@@ -76,7 +78,7 @@ class SceneNode {
     void		setOccluder(bool value);
 
     virtual void	addLight(SceneRenderer&);
-    virtual int		split(const float* plane,
+    virtual int		split(const fvec4& plane,
 			      SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
@@ -133,9 +135,9 @@ class SceneNode {
 
   protected:
     void		setRadius(GLfloat radiusSquared);
-    void		setCenter(const GLfloat center[3]);
+    void		setCenter(const fvec3& center);
     void		setCenter(GLfloat x, GLfloat y, GLfloat z);
-    void		setSphere(const GLfloat sphere[4]);
+    void		setSphere(const fvec4& sphere);
 
   private:
 			SceneNode(const SceneNode&);
@@ -151,12 +153,12 @@ class SceneNode {
     static void			noStipple(GLfloat);
 
   protected:
-    GLfloat		plane[4];	// unit normal, distance to origin
+    fvec4		plane;	// unit normal, distance to origin
     bool		noPlane;
     bool		occluder;
     Extents		extents;
   private:
-    GLfloat		sphere[4];
+    fvec4		sphere;
 #ifdef __MINGW32__
     static bool	 colorOverride;
 #else
@@ -168,19 +170,25 @@ class SceneNode {
     static void		(*stipple)(GLfloat);
 };
 
-inline const GLfloat*   SceneNode::getPlane() const
+inline const fvec4*   SceneNode::getPlane() const
 {
-  if (noPlane)
+  if (noPlane) {
     return NULL;
-  return plane;
+  }
+  return &plane;
 }
 
-inline const GLfloat*   SceneNode::getPlaneRaw() const
+inline const fvec4&   SceneNode::getPlaneRaw() const
 {
   return plane;
 }
 
-inline const GLfloat*	SceneNode::getSphere() const
+inline const fvec3&	SceneNode::getCenter() const
+{
+  return (fvec3&)sphere;
+}
+
+inline const fvec4&	SceneNode::getSphere() const
 {
   return sphere;
 }

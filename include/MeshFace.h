@@ -36,7 +36,7 @@ class MeshFace : public Obstacle {
   public:
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* mesh, int vertexCount,
-	     float** vertices, float** normals, float** texcoords,
+	     fvec3** vertices, fvec3** normals, fvec2** texcoords,
 	     const BzMaterial* material, int physics,
 	     bool noclusters, bool smoothBounce,
 	     unsigned char drive, unsigned char shoot, bool ricochet);
@@ -48,33 +48,33 @@ class MeshFace : public Obstacle {
     bool isFlatTop() const;
 
     float intersect(const Ray&) const;
-    void getNormal(const float* p, float* n) const;
-    void get3DNormal(const float* p, float* n) const;
+    void getNormal(const fvec3& p, fvec3& n) const;
+    void get3DNormal(const fvec3& p, fvec3& n) const;
 
-    bool inCylinder(const float* p, float radius, float height) const;
-    bool inBox(const float* p, float angle,
+    bool inCylinder(const fvec3& p, float radius, float height) const;
+    bool inBox(const fvec3& p, float angle,
 	       float halfWidth, float halfBreadth, float height) const;
-    bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
+    bool inMovingBox(const fvec3& oldP, float oldAngle,
+		     const fvec3& newP, float newAngle,
 		     float halfWidth, float halfBreadth, float height) const;
-    bool isCrossing(const float* p, float angle,
+    bool isCrossing(const fvec3& p, float angle,
 		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
+		    fvec4* plane) const;
 
-    bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
+    bool getHitNormal(const fvec3& pos1, float azimuth1,
+		      const fvec3& pos2, float azimuth2,
 		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
+		      float height, fvec3& normal) const;
 
     MeshObstacle* getMesh() const;
     inline int  getID() const { return id; }
     int getVertexCount() const;
     bool useNormals() const;
     bool useTexcoords() const;
-    const float* getVertex(int index) const;
-    const float* getNormal(int index) const;
-    const float* getTexcoord(int index) const;
-    const float* getPlane() const;
+    const fvec3& getVertex(int index) const;
+    const fvec3& getNormal(int index) const;
+    const fvec2& getTexcoord(int index) const;
+    const fvec4& getPlane() const;
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
     bool noClusters() const;
@@ -112,9 +112,9 @@ class MeshFace : public Obstacle {
     class MeshObstacle* mesh;
     int id;
     int vertexCount;
-    float** vertices;
-    float** normals;
-    float** texcoords;
+    fvec3** vertices;
+    fvec3** normals;
+    fvec2** texcoords;
     const BzMaterial* bzMaterial;
     bool smoothBounce;
     bool noclusters;
@@ -153,13 +153,13 @@ class MeshFace : public Obstacle {
       // linking data
       const MeshFace* linkFace;
       bool linkFromFlat;
-      float linkFromSide[3]; // sideways vector
-      float linkFromDown[3]; // downwards vector
-      float linkFromCenter[3];
+      fvec3 linkFromSide; // sideways vector
+      fvec3 linkFromDown; // downwards vector
+      fvec3 linkFromCenter;
       bool linkToFlat;
-      float linkToSide[3]; // sideways vector
-      float linkToDown[3]; // downwards vector
-      float linkToCenter[3];
+      fvec3 linkToSide; // sideways vector
+      fvec3 linkToDown; // downwards vector
+      fvec3 linkToCenter;
       // base data
       TeamColor teamColor;
     } SpecialData;
@@ -183,7 +183,7 @@ inline int MeshFace::getPhysicsDriver() const
   return phydrv;
 }
 
-inline const float* MeshFace::getPlane() const
+inline const fvec4& MeshFace::getPlane() const
 {
   return plane;
 }
@@ -193,19 +193,19 @@ inline int MeshFace::getVertexCount() const
   return vertexCount;
 }
 
-inline const float* MeshFace::getVertex(int index) const
+inline const fvec3& MeshFace::getVertex(int index) const
 {
-  return (const float*)vertices[index];
+  return *vertices[index];
 }
 
-inline const float* MeshFace::getNormal(int index) const
+inline const fvec3& MeshFace::getNormal(int index) const
 {
-  return (const float*)normals[index];
+  return *normals[index];
 }
 
-inline const float* MeshFace::getTexcoord(int index) const
+inline const fvec2& MeshFace::getTexcoord(int index) const
 {
-  return (const float*)texcoords[index];
+  return *texcoords[index];
 }
 
 inline bool MeshFace::useNormals() const

@@ -73,6 +73,7 @@
 #include "bzfSDL.h"
 #include "bzfgl.h"
 #include "bzfio.h"
+#include "vectors.h"
 
 /* local headers */
 #include "ActionBinding.h"
@@ -125,7 +126,7 @@ int bail ( int returnCode )
 
 static void setTeamColor(TeamColor team, const std::string &str)
 {
-  float color[4];
+  fvec4 color;
   if (parseColorString(str, color)) {
     color[3] = 1.0f;
     Team::setColors(team, color, Team::getRadarColor(team));
@@ -135,7 +136,7 @@ static void setTeamColor(TeamColor team, const std::string &str)
 
 static void setRadarColor(TeamColor team, const std::string &str)
 {
-  float color[4];
+  fvec4 color;
   if (parseColorString(str, color)) {
     color[3] = 1.0f;
     Team::setColors(team, Team::getTankColor(team), color);

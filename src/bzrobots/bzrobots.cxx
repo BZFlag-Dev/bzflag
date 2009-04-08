@@ -115,7 +115,7 @@ int bail ( int returnCode )
 
 static void		setTeamColor(TeamColor team, const std::string& str)
 {
-  float color[4];
+  fvec4 color;
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, color, Team::getRadarColor(team));
@@ -123,7 +123,7 @@ static void		setTeamColor(TeamColor team, const std::string& str)
 
 static void		setRadarColor(TeamColor team, const std::string& str)
 {
-  float color[4];
+  fvec4 color;
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, Team::getTankColor(team), color);

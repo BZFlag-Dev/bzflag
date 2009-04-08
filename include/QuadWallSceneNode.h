@@ -38,7 +38,7 @@ class QuadWallSceneNode : public WallSceneNode {
 				bool makeLODs);
 			~QuadWallSceneNode();
 
-    int			split(const float*, SceneNode*&, SceneNode*&) const;
+    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
@@ -78,7 +78,7 @@ class QuadWallSceneNode : public WallSceneNode {
 	void		render();
 	void		renderShadow();
 	const GLfloat*  getVertex(int i) const;
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
+	const fvec3&	getPosition() const { return wall->getCenter(); }
       private:
 	void		drawV() const;
 	void		drawVT() const;

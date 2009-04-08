@@ -117,7 +117,7 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
 
   // choose axis to ignore (the one with the largest normal component)
   int ignoreAxis;
-  const GLfloat* normal = getPlane();
+  const fvec4& normal = getPlaneRaw();
   if (fabsf(normal[0]) > fabsf(normal[1]))
     if (fabsf(normal[0]) > fabsf(normal[2]))
       ignoreAxis = 0;
@@ -192,7 +192,7 @@ PolyWallSceneNode::~PolyWallSceneNode()
   delete shadowNode;
 }
 
-int			PolyWallSceneNode::split(const float* _plane,
+int			PolyWallSceneNode::split(const fvec4& _plane,
 				SceneNode*& front, SceneNode*& back) const
 {
   return WallSceneNode::splitWall(_plane, node->vertex, node->uv, front, back);

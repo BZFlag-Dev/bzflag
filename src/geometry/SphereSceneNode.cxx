@@ -760,10 +760,10 @@ const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
   return SphereBspSceneNode::SphereBspRenderNode::lgeom[phi * SphereLowRes + theta];
 }
 
-const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
+const fvec3&		SphereFragmentSceneNode::FragmentRenderNode::
 				getPosition() const
 {
-  return sceneNode->getSphere();
+  return sceneNode->getCenter();
 }
 
 void			SphereFragmentSceneNode::FragmentRenderNode::render()

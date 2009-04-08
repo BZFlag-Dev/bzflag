@@ -473,7 +473,7 @@ public:
       return false;
 
     // data: position of drop
-    float pos[3];
+    fvec3 pos;
     buf = nboUnpackFloatVec3(buf, pos);
 
     const float halfSize = BZDBCache::worldSize * 0.5f;
@@ -520,7 +520,7 @@ public:
 
     PlayerId otherPlayer;
     buf = nboUnpackUByte(buf, otherPlayer);
-    float collpos[3];
+    fvec3 collpos;
     buf = nboUnpackFloatVec3(buf, collpos);
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(otherPlayer);
 

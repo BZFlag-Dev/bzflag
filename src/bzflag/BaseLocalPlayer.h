@@ -18,6 +18,7 @@
 
 /* common interface headers */
 #include "Ray.h"
+#include "Extents.h"
 #include "TimeKeeper.h"
 
 /* local interface headers */
@@ -33,7 +34,7 @@ class BaseLocalPlayer : public Player {
 
   void update( float inputDT = -1.0f);
   Ray getLastMotion() const;
-  const float (*getLastMotionBBox() const)[3];
+  const Extents& getLastMotionBBox() const;
 
   virtual void explodeTank() = 0;
   virtual bool checkHit(const Player* source,
@@ -45,9 +46,9 @@ class BaseLocalPlayer : public Player {
 
  protected:
   TimeKeeper lastTime;
-  float lastPosition[3];
+  fvec3 lastPosition;
   // bbox of last motion
-  float bbox[2][3];
+  Extents bbox;
 
  private:
   int salt;

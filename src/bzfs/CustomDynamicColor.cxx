@@ -74,7 +74,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
       std::cout << "bad dyncol ramp duration" << std::endl;
       return false;
     }
-    float color[4];
+    fvec4 color;
     if (!parseColorStream(input, color)) {
       std::cout << "bad dyncol ramp color" << std::endl;
       return false;
@@ -87,7 +87,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
       std::cout << "bad dyncol level duration" << std::endl;
       return false;
     }
-    float color[4];
+    fvec4 color;
     if (!parseColorStream(input, color)) {
       std::cout << "bad dyncol level color" << std::endl;
       return false;

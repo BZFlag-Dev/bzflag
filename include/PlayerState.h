@@ -16,6 +16,7 @@
 #include "common.h"
 #include "Address.h"
 #include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
 // 58 bytes
 const int PlayerUpdatePLenMax =
@@ -69,13 +70,13 @@ class PlayerState
 
     long	order;		// packet ordering
     short	status;		// see PStatus enum
-    float	pos[3];		// position of tank
-    float	velocity[3];	// velocity of tank
+    fvec3	pos;		// position of tank
+    fvec3	velocity;	// velocity of tank
     float	azimuth;	// orientation of tank
     float	angVel;		// angular velocity of tank
     int		phydrv;		// physics driver
 
-    float	apparentVelocity[3];	// velocity of tank as derived from it's last positional update
+    fvec3	apparentVelocity;	// velocity of tank as derived from it's last positional update
     float	lastUpdateTime;		// the time of the last update
 
     // the following are to be used only for drawing

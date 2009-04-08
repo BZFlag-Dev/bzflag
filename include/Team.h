@@ -19,11 +19,13 @@
 #define	BZF_TEAM_H
 
 #include "common.h"
-#include "global.h"
+
 #include <string>
 
-#include "BufferedNetworkMessage.h"
+#include "global.h"
+#include "vectors.h"
 
+class BufferedNetworkMessage;
 
 const int TeamPLen = 10;
 
@@ -40,8 +42,8 @@ struct Team {
     static const char*	getName(TeamColor);              // const
     static const char*	getShortName(TeamColor);         // const
     static TeamColor	getTeam(const std::string name); // const
-    static const float*	getTankColor(TeamColor);         // const
-    static const float*	getRadarColor(TeamColor team);   // const
+    static const fvec4&	getTankColor(TeamColor);         // const
+    static const fvec4&	getRadarColor(TeamColor team);   // const
     static bool	        isColorTeam(TeamColor);          // const
 
     static void setColors(TeamColor, const float* tank, const float* radar);
@@ -53,8 +55,8 @@ struct Team {
     unsigned short won;   // wins by team members
     unsigned short lost;  // losses by team members
 
-    static float tankColor[NumTeams][3];
-    static float radarColor[NumTeams][3];
+    static fvec4 tankColor[NumTeams];
+    static fvec4 radarColor[NumTeams];
 
 };
 

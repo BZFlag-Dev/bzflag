@@ -25,7 +25,7 @@ WallObstacle::WallObstacle()
 {
 }
 
-WallObstacle::WallObstacle(const float* p, float a, float b, float h, bool rico)
+WallObstacle::WallObstacle(const fvec3& p, float a, float b, float h, bool rico)
 : Obstacle(p, a, 0.0, b, h, false, false, rico)
 {
   finalize();
@@ -34,7 +34,7 @@ WallObstacle::WallObstacle(const float* p, float a, float b, float h, bool rico)
 void WallObstacle::finalize()
 {
   // compute normal
-  const float* p = getPosition();
+  const fvec3& p = getPosition();
   const float a = getRotation();
   plane[0] = cosf(a);
   plane[1] = sinf(a);
@@ -44,25 +44,29 @@ void WallObstacle::finalize()
   return;
 }
 
+
 WallObstacle::~WallObstacle()
 {
   // do nothing
 }
 
-const char*		WallObstacle::getType() const
+
+const char* WallObstacle::getType() const
 {
   return typeName;
 }
 
-const char*		WallObstacle::getClassName() // const
+
+const char* WallObstacle::getClassName() // const
 {
   return typeName;
 }
 
-float			WallObstacle::intersect(const Ray& r) const
+
+float WallObstacle::intersect(const Ray& r) const
 {
-  const float* o = r.getOrigin();
-  const float* d = r.getDirection();
+  const fvec3& o = r.getOrigin();
+  const fvec3& d = r.getDirection();
   const float dot = -(d[0] * plane[0] + d[1] * plane[1] + d[2] * plane[2]);
   if (dot == 0.0f) return -1.0f;
   float t = (o[0] * plane[0] + o[1] * plane[1] + o[2] * plane[2] +
@@ -70,21 +74,24 @@ float			WallObstacle::intersect(const Ray& r) const
   return t;
 }
 
-void			WallObstacle::getNormal(const float*, float* n) const
+
+void WallObstacle::getNormal(const fvec3&, fvec3& n) const
 {
   n[0] = plane[0];
   n[1] = plane[1];
   n[2] = plane[2];
 }
 
-bool			WallObstacle::inCylinder(const float* p, float r, float /* height */) const
+
+bool WallObstacle::inCylinder(const fvec3& p, float r, float /* height */) const
 {
   return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
-bool			WallObstacle::inBox(const float* p, float _angle,
-					    float halfWidth, float halfBreadth,
-					    float /* height */) const
+
+bool WallObstacle::inBox(const fvec3& p, float _angle,
+                         float halfWidth, float halfBreadth,
+                         float /* height */) const
 {
   const float xWidth = cosf(_angle);
   const float yWidth = sinf(_angle);
@@ -110,19 +117,20 @@ bool			WallObstacle::inBox(const float* p, float _angle,
   return false;
 }
 
-bool			WallObstacle::inMovingBox(const float* /* oldP */, float /* oldAngle */,
-				       const float* p, float _angle,
-				       float halfWidth, float halfBreadth, float height) const
+
+bool WallObstacle::inMovingBox(const fvec3& /* oldP */, float /* oldAngle */,
+                               const fvec3& p, float _angle,
+                               float halfWidth, float halfBreadth, float height) const
 
 {
   return inBox (p, _angle, halfWidth, halfBreadth, height);
 }
 
-bool			WallObstacle::getHitNormal(
-				const float*, float,
-				const float*, float,
+
+bool WallObstacle::getHitNormal(const fvec3&, float,
+				const fvec3&, float,
 				float, float, float,
-				float* normal) const
+				fvec3& normal) const
 {
   getNormal(NULL, normal);
   return true;

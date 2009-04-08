@@ -25,6 +25,7 @@
 #include "MeshTransform.h"
 #include "BzMaterial.h"
 #include "Obstacle.h"
+#include "vectors.h"
 
 // avoid nasty dependencies
 class Obstacle;
@@ -57,7 +58,7 @@ class GroupInstance {
 
     void setName(const std::string& name);
     void setTeam(int team);
-    void setTint(const float tint[4]);
+    void setTint(const fvec4& tint);
     void setPhysicsDriver(int phydrv);
     void setTransform(const MeshTransform&);
     void setMaterial(const BzMaterial*);
@@ -86,7 +87,7 @@ class GroupInstance {
     bool modifyTeam;
     int team;
     bool modifyColor;
-    float tint[4];
+    fvec4 tint;
     bool modifyPhysicsDriver;
     int phydrv;
     bool modifyMaterial;

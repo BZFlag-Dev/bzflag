@@ -31,6 +31,7 @@
 
 // common headers
 #include "Extents.h"
+#include "vectors.h"
 
 class Ray;
 class SceneNode;
@@ -84,7 +85,7 @@ class Obstacle {
       @param shoot       @c true if the obstacle is shootthrough, i.e. bullets
 			 can pass through it
   */
-  Obstacle(const float* pos, float rotation,
+  Obstacle(const fvec3& pos, float rotation,
            float hwidth, float hbreadth, float height,
            unsigned char drive, unsigned char shoot, bool rico);
 
@@ -129,10 +130,10 @@ class Obstacle {
   const Extents& getExtents() const;
 
   /** This function returns the position of this obstacle. */
-  const float* getPosition() const;
+  const fvec3& getPosition() const;
 
   /** This function returns the sizes of this obstacle. */
-  const float* getSize() const;
+  const fvec3& getSize() const;
 
   /** This function returns the obstacle's rotation around its own Y axis. */
   float getRotation() const;
@@ -160,26 +161,26 @@ class Obstacle {
 
   /** This function computes the two-dimensional surface normal of this
       obstacle at the point @c p. The normal is stored in @c n. */
-  virtual void getNormal(const float* p, float* n) const = 0;
+  virtual void getNormal(const fvec3& p, fvec3& n) const = 0;
 
   /** This function computes the three-dimensional surface normal of this
       obstacle at the point @c p. The normal is stored in @c n. */
-  virtual void get3DNormal(const float* p, float* n) const;
+  virtual void get3DNormal(const fvec3& p, fvec3& n) const;
 
   /** This function checks if a tank, approximated as a cylinder with base
       centre in point @c p and radius @c radius, intersects this obstacle. */
-  virtual bool inCylinder(const float* p, float radius, float height) const = 0;
+  virtual bool inCylinder(const fvec3& p, float radius, float height) const = 0;
 
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. */
-  virtual bool inBox(const float* p, float angle,
+  virtual bool inBox(const fvec3& p, float angle,
 		     float halfWidth, float halfBreadth, float height) const = 0;
 
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. It also factors in the difference
       between the old Z location and the new Z location */
-  virtual bool inMovingBox(const float* oldP, float oldAngle,
-			   const float* newP, float newAngle,
+  virtual bool inMovingBox(const fvec3& oldP, float oldAngle,
+			   const fvec3& newP, float newAngle,
 			   float halfWidth, float halfBreadth, float height) const = 0;
 
   /** This function checks if a horizontal rectangle crosses the surface of
@@ -191,9 +192,9 @@ class Obstacle {
       @param plane       The tangent plane of the obstacle where it's
 			 intersected by the rectangle will be stored here
   */
-  virtual bool isCrossing(const float* p, float angle,
+  virtual bool isCrossing(const fvec3& p, float angle,
 			  float halfWidth, float halfBreadth, float height,
-			  float* plane) const;
+			  fvec4* plane) const;
 
   /** This function checks if a box moving from @c pos1 to @c pos2 will hit
       this obstacle, and if it does what the surface normal at the hitpoint is.
@@ -209,10 +210,10 @@ class Obstacle {
       @returns	    @c true if the box hits this obstacle, @c false
 			  otherwise
   */
-  virtual bool getHitNormal(const float* pos1, float azimuth1,
-			    const float* pos2, float azimuth2,
+  virtual bool getHitNormal(const fvec3& pos1, float azimuth1,
+			    const fvec3& pos2, float azimuth2,
 			    float halfWidth, float halfBreadth,
-			    float height, float* normal) const = 0;
+			    float height, fvec3& normal) const = 0;
 
   /** This function returns @c true if tanks can pass through this object,
       @c false if they can't. */
@@ -294,12 +295,12 @@ class Obstacle {
 			 rectangle is at @c pos1 and 1 is the time when it's
 			 at @c pos2, and -1 means "no hit"
   */
-  float getHitNormal(const float* pos1, float azimuth1,
-		     const float* pos2, float azimuth2,
+  float getHitNormal(const fvec3& pos1, float azimuth1,
+		     const fvec3& pos2, float azimuth2,
 		     float halfWidth, float halfBreadth,
-		     const float* oPos, float oAzimuth,
+		     const fvec3& oPos, float oAzimuth,
 		     float oWidth, float oBreadth, float oHeight,
-		     float* normal) const;
+		     fvec3& normal) const;
 
   protected:
     static int getObjCounter();
@@ -307,8 +308,8 @@ class Obstacle {
 
   protected:
     Extents extents;
-    float pos[3];
-    float size[3]; // width, breadth, height
+    fvec3 pos;
+    fvec3 size; // width, breadth, height
     float angle;
     unsigned char driveThrough;
     unsigned char shootThrough;
@@ -335,12 +336,12 @@ inline const Extents& Obstacle::getExtents() const
   return extents;
 }
 
-inline const float* Obstacle::getPosition() const
+inline const fvec3& Obstacle::getPosition() const
 {
   return pos;
 }
 
-inline const float* Obstacle::getSize() const
+inline const fvec3& Obstacle::getSize() const
 {
   return size;
 }
@@ -365,7 +366,7 @@ inline float Obstacle::getHeight() const
   return size[2];
 }
 
-inline void Obstacle::get3DNormal(const float *p, float *n) const
+inline void Obstacle::get3DNormal(const fvec3& p, fvec3& n) const
 {
   getNormal(p, n);
 }

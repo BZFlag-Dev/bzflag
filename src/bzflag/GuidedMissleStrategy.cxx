@@ -246,19 +246,22 @@ void GuidedMissileStrategy::update(float dt)
   setVelocity(newDirection);
 }
 
-bool GuidedMissileStrategy::predictPosition(float dt, float p[3]) const
+
+bool GuidedMissileStrategy::predictPosition(float dt, fvec3& p) const
 {
-  float v[3];
+  fvec3 v;
   return _predict(dt, p, v);
 }
 
-bool GuidedMissileStrategy::predictVelocity(float dt, float v[3]) const
+
+bool GuidedMissileStrategy::predictVelocity(float dt, fvec3& v) const
 {
-  float p[3];
+  fvec3 p;
   return _predict(dt, p, v);
 }
 
-bool GuidedMissileStrategy::_predict(float dt, float p[3], float v[3]) const
+
+bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
 {
   const bool isRemote = (getPath().getPlayer() !=
 			 LocalPlayer::getMyTank()->getId());
@@ -406,7 +409,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
   } else if (building) {
     // expire on next update
     setExpiring();
-    float pos[3];
+    fvec3 pos;
     ray.getPoint(t / shotSpeed, pos);
     addShotExplosion(pos);
     return t / shotSpeed;
@@ -414,7 +417,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
   return -1.0f;
 }
 
-float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3]) const
+float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position) const
 {
   float minTime = Infinity;
   if (getPath().isExpired())
@@ -462,7 +465,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
 
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(rayMinusRay(speedRay, 0.0, tankLastMotion, 0.0));
+    Ray relativeRay(Intersect::rayMinusRay(speedRay, 0.0, tankLastMotion, 0.0));
 
     // get closest approach time
     float t;
@@ -470,10 +473,11 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
       static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
-      t = timeRayHitsBlock(relativeRay, tankBase, tank.angle, 0.5f * tank.length, shotRadius, tankHeight);
+      t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
+                                      0.5f * tank.length, shotRadius, tankHeight);
     } else {
       // find time when shot hits sphere around tank
-      t = rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
+      t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
     }
 
     if (t > minTime)
@@ -484,22 +488,18 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, float position[3
       continue;
 
     // check if shot hits tank -- get position at time t, see if in radius
-    float closestPos[3];
+    fvec3 closestPos;
     relativeRay.getPoint(t, closestPos);
-    if (closestPos[0] * closestPos[0] +
-	closestPos[1] * closestPos[1] +
-	closestPos[2] * closestPos[2] < radius2) {
+    if (closestPos.lenSqr() < radius2) {
       // save best time so far
       minTime = t;
 
       // compute location of tank at time of hit
-      float tankPos[3];
+      fvec3 tankPos;
       tank.motion.getPoint(t, tankPos);
 
       // compute position of intersection
-      position[0] = tankPos[0] + closestPos[0];
-      position[1] = tankPos[1] + closestPos[1];
-      position[2] = tankPos[2] + closestPos[2];
+      position = tankPos + closestPos;
     }
   }
 

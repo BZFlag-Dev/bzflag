@@ -335,15 +335,11 @@ void WorldBuilder::setBase(TeamColor team,
 {
   int teamIndex = int(team);
 
-  World::BaseParms bp;
-  bp.p[0] = pos[0];
-  bp.p[1] = pos[1];
-  bp.p[2] = pos[2];
-  bp.p[3] = rotation;
-  bp.p[4] = w;
-  bp.p[5] = b;
-  bp.p[6] = h;
-  world->bases[teamIndex].push_back( bp );
+  World::BaseParams bp;
+  bp.pos  = fvec3(pos);
+  bp.size = fvec3(w, b, h);
+  bp.rot  = rotation;
+  world->bases[teamIndex].push_back(bp);
 }
 
 

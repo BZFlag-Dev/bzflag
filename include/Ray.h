@@ -15,24 +15,25 @@
 
 #include "common.h"
 #include <string.h> // for memset()
+#include "vectors.h"
 
 /** Encapsulates a semi-infinite ray. */
 
 class Ray {
   public:
 			Ray();
-			Ray(const float* o, const float* d);
+			Ray(const fvec3& o, const fvec3& d);
 			Ray(const Ray&);
 			~Ray();
     Ray&		operator=(const Ray&);
 
-    const float*	getOrigin() const;
-    const float*	getDirection() const;
-    void		getPoint(float t, float p[3]) const;
+    const fvec3&	getOrigin() const;
+    const fvec3&	getDirection() const;
+    void		getPoint(float t, fvec3& p) const;
 
   private:
-    float		o[3];
-    float		d[3];
+    fvec3		o;
+    fvec3		d;
 };
 
 //
@@ -49,12 +50,12 @@ inline Ray::~Ray()
   // do nothing
 }
 
-inline const float*	Ray::getOrigin() const
+inline const fvec3&	Ray::getOrigin() const
 {
   return o;
 }
 
-inline const float*	Ray::getDirection() const
+inline const fvec3&	Ray::getDirection() const
 {
   return d;
 }

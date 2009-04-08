@@ -251,25 +251,23 @@ bool CustomBox::read(const char *cmd, std::istream& input)
 }
 
 
-static void getEdgeLengths(const MeshTransform& xform, float lengths[3])
+static fvec3 getEdgeLengths(const MeshTransform& xform)
 {
   MeshTransform::Tool xformTool(xform);
-  float vo[3] = {-1.0f, -1.0f, 0.0f};
-  float vx[3] = {+1.0f, -1.0f, 0.0f};
-  float vy[3] = {-1.0f, +1.0f, 0.0f};
-  float vz[3] = {-1.0f, -1.0f, 1.0f};
+
+  fvec3 vo(-1.0f, -1.0f, 0.0f);
+  fvec3 vx(+1.0f, -1.0f, 0.0f);
+  fvec3 vy(-1.0f, +1.0f, 0.0f);
+  fvec3 vz(-1.0f, -1.0f, 1.0f);
+
   xformTool.modifyVertex(vo);
   xformTool.modifyVertex(vx);
   xformTool.modifyVertex(vy);
   xformTool.modifyVertex(vz);
-  float dx[3], dy[3], dz[3];
-  vec3sub(dx, vx, vo);
-  vec3sub(dy, vy, vo);
-  vec3sub(dz, vz, vo);
-  lengths[0] = sqrtf(vec3dot(dx, dx));
-  lengths[1] = sqrtf(vec3dot(dy, dy));
-  lengths[2] = sqrtf(vec3dot(dz, dz));
-  return;
+
+  return fvec3((vx - vo).length(),
+               (vy - vo).length(),
+               (vz - vo).length());
 }
 
 
@@ -296,15 +294,13 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   xform.append(transform);
 
   // get the length deltas from the transform
-  float edgeLengths[3];
-  getEdgeLengths(xform, edgeLengths);
-
+  const fvec3 edgeLengths = getEdgeLengths(xform);
 
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> verts;
-  std::vector<cfvec3> norms;
-  std::vector<cfvec2> txcds;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> verts;
+  std::vector<fvec3> norms;
+  std::vector<fvec2> txcds;
 
   // add the checkpoint
   checkTypes.push_back(MeshObstacle::CheckInside);

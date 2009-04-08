@@ -99,7 +99,7 @@ MeshDrawInfo::MeshDrawInfo(const MeshDrawInfo* di,
 
   // copy extents and sphere  (xform applied later)
   extents = di->extents;
-  memcpy(sphere, di->sphere, sizeof(float[4]));
+  sphere = di->sphere;
 
   // counts
   cornerCount = di->cornerCount;
@@ -817,9 +817,9 @@ bool MeshDrawInfo::parse(std::istream& input)
   std::vector<Corner> pCorners;
   std::vector<DrawLod> pLods;
   std::vector<DrawLod> pRadarLods;
-  std::vector<cfvec3> pVerts;
-  std::vector<cfvec3> pNorms;
-  std::vector<cfvec2> pTxcds;
+  std::vector<fvec3> pVerts;
+  std::vector<fvec3> pNorms;
+  std::vector<fvec2> pTxcds;
 
   setupDrawModeMap();
   finishLine(input); // flush the rest of the "drawInfo" line
@@ -896,7 +896,7 @@ bool MeshDrawInfo::parse(std::istream& input)
       }
     }
     else if (strcasecmp(cmd.c_str(), "vertex") == 0) {
-      cfvec3 v;
+      fvec3 v;
       if ((parms >> v[0]) && (parms >> v[1]) && (parms >> v[2])) {
 	pVerts.push_back(v);
       } else {
@@ -905,7 +905,7 @@ bool MeshDrawInfo::parse(std::istream& input)
       }
     }
     else if (strcasecmp(cmd.c_str(), "normal") == 0) {
-      cfvec3 n;
+      fvec3 n;
       if ((parms >> n[0]) && (parms >> n[1]) && (parms >> n[2])) {
 	pNorms.push_back(n);
       } else {
@@ -914,7 +914,7 @@ bool MeshDrawInfo::parse(std::istream& input)
       }
     }
     else if (strcasecmp(cmd.c_str(), "texcoord") == 0) {
-      cfvec2 t;
+      fvec2 t;
       if ((parms >> t[0]) && (parms >> t[1])) {
 	pTxcds.push_back(t);
       } else {
@@ -968,7 +968,7 @@ bool MeshDrawInfo::parse(std::istream& input)
     rawVertCount = pVerts.size();
     rawVerts = new fvec3[rawVertCount];
     for (i = 0; i < rawVertCount; i++) {
-      memcpy(rawVerts[i], pVerts[i].data, sizeof(fvec3));
+      rawVerts[i] = pVerts[i];
     }
   }
   // make raw norms
@@ -976,7 +976,7 @@ bool MeshDrawInfo::parse(std::istream& input)
     rawNormCount = pNorms.size();
     rawNorms = new fvec3[rawNormCount];
     for (i = 0; i < rawNormCount; i++) {
-      memcpy(rawNorms[i], pNorms[i].data, sizeof(fvec3));
+      rawNorms[i] = pNorms[i];
     }
   }
   // make raw texcoords
@@ -984,7 +984,7 @@ bool MeshDrawInfo::parse(std::istream& input)
     rawTxcdCount = pTxcds.size();
     rawTxcds = new fvec2[rawTxcdCount];
     for (i = 0; i < rawTxcdCount; i++) {
-      memcpy(rawTxcds[i], pTxcds[i].data, sizeof(fvec2));
+      rawTxcds[i] = pTxcds[i];
     }
   }
 
@@ -1214,7 +1214,9 @@ int MeshDrawInfo::packSize() const
   }
 
   // sphere and extents
-  fullSize += (4 + 6) * sizeof(float);
+  fullSize += sizeof(fvec4);
+  fullSize += sizeof(fvec3);
+  fullSize += sizeof(fvec3);
 
   return fullSize;
 }
@@ -1280,8 +1282,7 @@ void* MeshDrawInfo::pack(void* buf) const
   }
 
   // sphere and extents
-  buf = nboPackFloatVec3(buf, sphere);
-  buf = nboPackFloat(buf, sphere[3]);
+  buf = nboPackFloatVec4(buf, sphere);
   buf = nboPackFloatVec3(buf, extents.mins);
   buf = nboPackFloatVec3(buf, extents.maxs);
 
@@ -1366,8 +1367,7 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // sphere and extents
-  buf = nboUnpackFloatVec3(buf, sphere);
-  buf = nboUnpackFloat(buf, sphere[3]);
+  buf = nboUnpackFloatVec4(buf, sphere);
   buf = nboUnpackFloatVec3(buf, extents.mins);
   buf = nboUnpackFloatVec3(buf, extents.maxs);
 
@@ -1609,7 +1609,7 @@ int DrawSet::packSize() const
     fullSize += cmds[i].packSize();
   }
   fullSize += sizeof(int32_t); // material
-  fullSize += sizeof(float[4]); // sphere
+  fullSize += sizeof(fvec4); // sphere
   fullSize += sizeof(uint8_t); // state bits
 
   return fullSize;
@@ -1628,8 +1628,7 @@ void* DrawSet::pack(void* buf) const
   buf = nboPackInt(buf, matindex);
 
   // sphere
-  buf = nboPackFloatVec3(buf, sphere);
-  buf = nboPackFloat(buf, sphere[3]);
+  buf = nboPackFloatVec4(buf, sphere);
 
   // state bits
   uint8_t state = 0;
@@ -1655,8 +1654,7 @@ void* DrawSet::unpack(void* buf)
   material = MATERIALMGR.getMaterial(s32);
 
   // sphere
-  buf = nboUnpackFloatVec3(buf, sphere);
-  buf = nboUnpackFloat(buf, sphere[3]);
+  buf = nboUnpackFloatVec4(buf, sphere);
 
   // state bits
   uint8_t state;

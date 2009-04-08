@@ -56,7 +56,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     }
   }
   else if (strcasecmp(cmd, "tint") == 0) {
-    float tint[4];
+    fvec4 tint;
     if (!parseColorStream(input, tint)) {
       std::cout << "bad " << cmd << " specification" << std::endl;
       return false;

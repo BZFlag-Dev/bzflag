@@ -40,9 +40,9 @@ TetraBuilding::TetraBuilding()
 
 
 TetraBuilding::TetraBuilding(const MeshTransform& xform,
-			     const float _vertices[4][3],
-			     const float _normals[4][3][3],
-			     const float _texcoords[4][3][2],
+			     const fvec3 _vertices[4],
+			     const fvec3 _normals[4][3],
+			     const fvec2 _texcoords[4][3],
 			     const bool _useNormals[4],
 			     const bool _useTexcoords[4],
 			     const BzMaterial* _materials[4],
@@ -101,10 +101,10 @@ MeshObstacle* TetraBuilding::makeMesh()
   // setup the coordinates
   int i;
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> verts;
-  std::vector<cfvec3> norms;
-  std::vector<cfvec2> texcds;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> verts;
+  std::vector<fvec3> norms;
+  std::vector<fvec2> texcds;
 
   // setup the inside check point
   float center[3] = {0.0f, 0.0f, 0.0f};
@@ -227,43 +227,43 @@ float TetraBuilding::intersect(const Ray&) const
 }
 
 
-void TetraBuilding::get3DNormal(const float*, float*) const
+void TetraBuilding::get3DNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
 
-void TetraBuilding::getNormal(const float*, float*) const
+void TetraBuilding::getNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
 
-bool TetraBuilding::getHitNormal(const float*, float, const float*, float,
-			       float, float, float, float*) const
+bool TetraBuilding::getHitNormal(const fvec3&, float, const fvec3&, float,
+			       float, float, float, fvec3&) const
 {
   assert(false);
   return false;
 }
 
 
-bool TetraBuilding::inCylinder(const float*,float, float) const
+bool TetraBuilding::inCylinder(const fvec3&,float, float) const
 {
   assert(false);
   return false;
 }
 
 
-bool TetraBuilding::inBox(const float*, float, float, float, float) const
+bool TetraBuilding::inBox(const fvec3&, float, float, float, float) const
 {
   assert(false);
   return false;
 }
 
 
-bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
+bool TetraBuilding::inMovingBox(const fvec3&, float, const fvec3&, float,
 			      float, float, float) const
 {
   assert(false);
@@ -271,9 +271,9 @@ bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
 }
 
 
-bool TetraBuilding::isCrossing(const float* /*p*/, float /*angle*/,
+bool TetraBuilding::isCrossing(const fvec3& /*p*/, float /*angle*/,
 			  float /*dx*/, float /*dy*/, float /*height*/,
-			  float* /*_plane*/) const
+			  fvec4* /*_plane*/) const
 {
   assert(false);
   return false;

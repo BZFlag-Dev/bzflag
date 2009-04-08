@@ -32,6 +32,7 @@
 #include "PhysicsDriver.h"
 #include "BzMaterial.h"
 #include "MeshDrawInfo.h"
+#include "vectors.h"
 
 // obstacle headers
 #include "Obstacle.h"
@@ -121,7 +122,7 @@ void GroupInstance::setTeam(int _team)
 }
 
 
-void GroupInstance::setTint(const float _tint[4])
+void GroupInstance::setTint(const fvec4& _tint)
 {
   memcpy(tint, _tint, sizeof(float[4]));
   modifyColor = true;
@@ -216,8 +217,7 @@ void* GroupInstance::pack(void* buf)
     buf = nboPackUShort(buf, team);
   }
   if (modifyColor) {
-    buf = nboPackFloatVec3(buf, tint);
-    buf = nboPackFloat(buf, tint[3]);
+    buf = nboPackFloatVec4(buf, tint);
   }
   if (modifyPhysicsDriver) {
     buf = nboPackInt(buf, phydrv);
@@ -265,8 +265,7 @@ void* GroupInstance::unpack(void* buf)
     team = (int)tmpTeam;
   }
   if (modifyColor) {
-    buf = nboUnpackFloatVec3(buf, tint);
-    buf = nboUnpackFloat(buf, tint[3]);
+    buf = nboUnpackFloatVec4(buf, tint);
   }
   if (modifyPhysicsDriver) {
     int32_t inPhyDrv;
@@ -301,7 +300,7 @@ int GroupInstance::packSize()
     fullSize += sizeof(uint16_t);
   }
   if (modifyColor) {
-    fullSize += sizeof(float[4]);
+    fullSize += sizeof(fvec4);
   }
   if (modifyPhysicsDriver) {
     fullSize += sizeof(int32_t);

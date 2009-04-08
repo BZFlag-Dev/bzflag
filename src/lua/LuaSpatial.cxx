@@ -107,7 +107,7 @@ struct QueryData {
 
 
 struct PlanesData : public QueryData {
-	vector<cfvec4> planes;
+	vector<fvec4> planes;
 };
 
 
@@ -220,13 +220,8 @@ static inline int ParseCylinder(lua_State* L, CylinderData& cyl)
 
 static inline int ParseBox(lua_State* L, BoxData& box)
 {
-	float mins[3], maxs[3];
-	mins[0] = luaL_checkfloat(L, 1);
-	mins[1] = luaL_checkfloat(L, 2);
-	mins[2] = luaL_checkfloat(L, 3);
-	maxs[0] = luaL_checkfloat(L, 4);
-	maxs[1] = luaL_checkfloat(L, 5);
-	maxs[2] = luaL_checkfloat(L, 6);
+	const fvec3 mins = luaL_checkfvec3(L, 1);
+	const fvec3 maxs = luaL_checkfvec3(L, 4);
 	box.extents.set(mins, maxs);
 	box.radians = luaL_optfloat(L, 7, 0.0f);
 	return 6;
@@ -239,7 +234,7 @@ static inline int ParseBox(lua_State* L, BoxData& box)
 static int PushReflect(lua_State* L, const Obstacle* obs,
                        const float pos[3], const float vel[3])
 {
-	float normal[3];
+	fvec3 normal;
 	if (obs != NULL) {
 		obs->get3DNormal(pos, normal);
 	}
@@ -265,13 +260,13 @@ int LuaSpatial::RayTrace(lua_State* L)
 {
 	// FIXME -- use custom routines that do not use shootThrough checks ?
 	//       -- what options might be useful here?
-	float pos[3], vel[3];
-	pos[0] = luaL_checkfloat(L, 1);
-	pos[1] = luaL_checkfloat(L, 2);
-	pos[2] = luaL_checkfloat(L, 3);
-	vel[0] = luaL_checkfloat(L, 4);
-	vel[1] = luaL_checkfloat(L, 5);
-	vel[2] = luaL_checkfloat(L, 6);
+	fvec3 pos, vel;
+	pos.x = luaL_checkfloat(L, 1);
+	pos.y = luaL_checkfloat(L, 2);
+	pos.z = luaL_checkfloat(L, 3);
+	vel.x = luaL_checkfloat(L, 4);
+	vel.y = luaL_checkfloat(L, 5);
+	vel.z = luaL_checkfloat(L, 6);
 	const float minTime = luaL_optfloat(L, 7, 0.0f);
 	float hitTime       = luaL_optfloat(L, 8, +1.0e30f);
 	const bool reflect  = lua_isboolean(L, 9) && lua_tobool(L, 9);
@@ -283,15 +278,13 @@ int LuaSpatial::RayTrace(lua_State* L)
 	const Obstacle* obs    = ShotStrategy::getFirstBuilding(ray, minTime, hitTime);
 	const Teleporter* tele = ShotStrategy::getFirstTeleporter(ray, minTime, hitTime,
 	                                                          teleFace);
-	float point[3];
+	fvec3 point;
 	if (tele != NULL) {
 		int args = 5 + 2;
 		lua_pushinteger(L, 't'); // teleporter
 		lua_pushnumber(L, hitTime);
 		ray.getPoint(hitTime, point);
-		lua_pushnumber(L, point[0]);
-		lua_pushnumber(L, point[1]);
-		lua_pushnumber(L, point[2]);
+		lua_pushfvec3(L, point);
 		if (reflect) {
 			args += PushReflect(L, obs, point, vel);
 		}
@@ -305,9 +298,7 @@ int LuaSpatial::RayTrace(lua_State* L)
 			lua_pushinteger(L, 'o'); // obstacle
 			lua_pushnumber(L, hitTime);
 			ray.getPoint(hitTime, point);
-			lua_pushnumber(L, point[0]);
-			lua_pushnumber(L, point[1]);
-			lua_pushnumber(L, point[2]);
+			lua_pushfvec3(L, point);
 			if (reflect) {
 				args += PushReflect(L, obs, point, vel);
 			}
@@ -322,9 +313,7 @@ int LuaSpatial::RayTrace(lua_State* L)
 			lua_pushinteger(L, 'f'); // face
 			lua_pushnumber(L, hitTime);
 			ray.getPoint(hitTime, point);
-			lua_pushnumber(L, point[0]);
-			lua_pushnumber(L, point[1]);
-			lua_pushnumber(L, point[2]);
+			lua_pushfvec3(L, point);
 			if (reflect) {
 				args += PushReflect(L, obs, point, vel);
 			}
@@ -342,9 +331,7 @@ int LuaSpatial::RayTrace(lua_State* L)
 		lua_pushinteger(L, 'g'); // ground
 		lua_pushnumber(L, hitTime);
 		ray.getPoint(hitTime, point);
-		lua_pushnumber(L, point[0]);
-		lua_pushnumber(L, point[1]);
-		lua_pushnumber(L, point[2]);
+		lua_pushfvec3(L, point);
 		if (reflect) {
 			args += PushReflect(L, NULL, point, vel);
 		}
@@ -360,24 +347,18 @@ int LuaSpatial::RayTeleport(lua_State* L) // FIXME
 	return 0;
 	const int teleID = luaL_checkint(L, 1);
 	const int faceID = luaL_checkint(L, 2);
-	float inPos[3];
-	float inVel[3];
-	inPos[0] = luaL_checkfloat(L, 3);
-	inPos[1] = luaL_checkfloat(L, 4);
-	inPos[2] = luaL_checkfloat(L, 5);
-	inVel[0] = luaL_checkfloat(L, 6);
-	inVel[1] = luaL_checkfloat(L, 7);
-	inVel[2] = luaL_checkfloat(L, 8);
+	fvec3 inPos = luaL_checkfvec3(L, 3);
+	fvec3 inVel = luaL_checkfvec3(L, 6);
 	const int seed = luaL_optint(L, 9, 0);
 
-	float outPos[3];
-	float outVel[3];
+	fvec3 outPos;
+	fvec3 outVel;
 	int outFace = teleID + seed;
 	const Teleporter* inTele = NULL;
 	const Teleporter* outTele = NULL;
 	inTele->getPointWRT(*outTele, faceID, outFace,
-	                    inPos,  inVel,  0.0f,
-	                    outPos, outVel, NULL);
+	                    inPos,  &inVel,  0.0f,
+	                    outPos, &outVel, NULL);
 
 	lua_pushinteger(L, outTele->getGUID());
 	lua_pushinteger(L, outFace);
@@ -509,7 +490,7 @@ static bool PlayerInPlanes(const Player* player, const QueryData& data)
 {
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
-		const cfvec4& p = planes.planes[i];
+		const fvec4& p = planes.planes[i];
 		const float* pos = player->getPosition();
 		const float d = (p[0] * pos[0]) + (p[1] * pos[1]) + (p[2] * pos[2]) + p[3];
 		if (d < 0.0f) {
@@ -679,7 +660,7 @@ static bool FlagInPlanes(const Flag* flag, const QueryData& data)
 {
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
-		const cfvec4& p = planes.planes[i];
+		const fvec4& p = planes.planes[i];
 		const float* pos = flag->position;
 		const float d = (p[0] * pos[0]) + (p[1] * pos[1]) + (p[2] * pos[2]) + p[3];
 		if (d < 0.0f) {
@@ -837,7 +818,7 @@ static bool ShotInPlanes(const ShotPath* shot, const QueryData& data)
 {
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
-		const cfvec4& p = planes.planes[i];
+		const fvec4& p = planes.planes[i];
 		const float* pos = shot->getPosition();
 		const float d = (p[0] * pos[0]) + (p[1] * pos[1]) + (p[2] * pos[2]) + p[3];
 		if (d < 0.0f) {

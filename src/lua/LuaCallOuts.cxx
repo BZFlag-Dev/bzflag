@@ -630,16 +630,11 @@ int LuaCallOuts::GetWind(lua_State* L)
 		return 0;
 	}
 
-	float pos[3];
-	pos[0] = luaL_optfloat(L, 1, 0.0f);
-	pos[1] = luaL_optfloat(L, 1, 0.0f);
-	pos[2] = luaL_optfloat(L, 1, 0.0f);
-	float wind[3];
-	world->getWind(wind, pos);
+	fvec3 pos = luaL_optfvec3(L, 1, fvec3(0.0f, 0.0f, 0.0f));
 
-	lua_pushnumber(L, wind[0]);
-	lua_pushnumber(L, wind[1]);
-	lua_pushnumber(L, wind[2]);
+	fvec3 wind;
+	world->getWind(wind, pos);
+	lua_pushfvec3(L, wind);
 
 	return 3;
 }
@@ -781,7 +776,7 @@ int LuaCallOuts::PlaySound(lua_State* L)
 	bool repeated = false;
 	bool important = false;
 	float volume = 1.0f; // currently unused
-	float pos[3] = { 0.0f, 0.0f, 0.0f };
+	fvec3 pos(0.0f, 0.0f, 0.0f);
 
 	if (lua_istable(L, 2)) {
 		lua_getfield(L, 2, "volume"); // NOTE -- not used
@@ -1174,12 +1169,8 @@ int LuaCallOuts::GetWorldExtents(lua_State* L)
 		return 0;
 	}
 	const Extents& exts = COLLISIONMGR.getWorldExtents();
-	lua_pushnumber(L, exts.mins[0]);
-	lua_pushnumber(L, exts.mins[1]);
-	lua_pushnumber(L, exts.mins[2]);
-	lua_pushnumber(L, exts.maxs[0]);
-	lua_pushnumber(L, exts.maxs[1]);
-	lua_pushnumber(L, exts.maxs[2]);
+	lua_pushfvec3(L, exts.mins);
+	lua_pushfvec3(L, exts.maxs);
 	return 6;
 }
 
@@ -1190,12 +1181,8 @@ int LuaCallOuts::GetVisualExtents(lua_State* L)
 	if (exts == NULL) {
 		return 0;
 	}
-	lua_pushnumber(L, exts->mins[0]);
-	lua_pushnumber(L, exts->mins[1]);
-	lua_pushnumber(L, exts->mins[2]);
-	lua_pushnumber(L, exts->maxs[0]);
-	lua_pushnumber(L, exts->maxs[1]);
-	lua_pushnumber(L, exts->maxs[2]);
+	lua_pushfvec3(L, exts->mins);
+	lua_pushfvec3(L, exts->maxs);
 	return 6;
 }
 
@@ -1218,6 +1205,7 @@ int LuaCallOuts::SetCameraView(lua_State* L)
 	// get the defaults
 	ViewFrustum& vf = RENDERER.getViewFrustum();
 	const float* currPos = vf.getEye();
+
 	const float* currDir = vf.getDirection();
 	float pos[3] = { currPos[0], currPos[1], currPos[2] };
 	float dir[3] = { currDir[0], currDir[1], currDir[2] };
@@ -1313,10 +1301,8 @@ int LuaCallOuts::SetCameraProjection(lua_State* L)
 int LuaCallOuts::GetCameraPosition(lua_State* L)
 {
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
-	const float* pos = vf.getEye();
-	lua_pushnumber(L, pos[0]);
-	lua_pushnumber(L, pos[1]);
-	lua_pushnumber(L, pos[2]);
+	const fvec3& pos = vf.getEye();
+	lua_pushfvec3(L, pos);
 	return 3;
 }
 
@@ -1324,10 +1310,8 @@ int LuaCallOuts::GetCameraPosition(lua_State* L)
 int LuaCallOuts::GetCameraDirection(lua_State* L)
 {
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
-	const float* dir = vf.getDirection();
-	lua_pushnumber(L, dir[0]);
-	lua_pushnumber(L, dir[1]);
-	lua_pushnumber(L, dir[2]);
+	const fvec3& dir = vf.getDirection();
+	lua_pushfvec3(L, dir);
 	return 3;
 }
 
@@ -1335,10 +1319,8 @@ int LuaCallOuts::GetCameraDirection(lua_State* L)
 int LuaCallOuts::GetCameraUp(lua_State* L)
 {
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
-	const float* up = vf.getUp();
-	lua_pushnumber(L, up[0]);
-	lua_pushnumber(L, up[1]);
-	lua_pushnumber(L, up[2]);
+	const fvec3& up = vf.getUp();
+	lua_pushfvec3(L, up);
 	return 3;
 }
 
@@ -1346,10 +1328,8 @@ int LuaCallOuts::GetCameraUp(lua_State* L)
 int LuaCallOuts::GetCameraRight(lua_State* L)
 {
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
-	const float* right = vf.getRight();
-	lua_pushnumber(L, right[0]);
-	lua_pushnumber(L, right[1]);
-	lua_pushnumber(L, right[2]);
+	const fvec3& right = vf.getRight();
+	lua_pushfvec3(L, right);
 	return 3;
 }
 
@@ -1811,13 +1791,11 @@ int LuaCallOuts::GetAntidotePosition(lua_State* L)
 	if (myTank == NULL) {
 		return 0;
 	}
-	const float* pos = myTank->getAntidoteLocation();
+	const fvec3* pos = myTank->getAntidoteLocation();
 	if (pos == NULL) {
 		return 0;
 	}
-	lua_pushnumber(L, pos[0]);
-	lua_pushnumber(L, pos[1]);
-	lua_pushnumber(L, pos[2]);
+	lua_pushfvec3(L, *pos);
 	return 3;
 }
 

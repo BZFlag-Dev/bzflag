@@ -20,23 +20,20 @@
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
 				 const char* name,
-				 const PlayerType _type) :
-  Player(_id, RogueTeam, name, _type),
-  lastTime(TimeKeeper::getTick()),
-  salt(0)
+				 const PlayerType _type)
+: Player(_id, RogueTeam, name, _type)
+, lastTime(TimeKeeper::getTick())
+, lastPosition(0.0f, 0.0f, 0.0f)
+, salt(0)
 {
-  lastPosition[0] = 0.0f;
-  lastPosition[1] = 0.0f;
-  lastPosition[2] = 0.0f;
-  bbox[0][0] = bbox[1][0] = 0.0f;
-  bbox[0][1] = bbox[1][1] = 0.0f;
-  bbox[0][2] = bbox[1][2] = 0.0f;
 }
+
 
 BaseLocalPlayer::~BaseLocalPlayer()
 {
   // do nothing
 }
+
 
 int BaseLocalPlayer::getSalt()
 {
@@ -44,13 +41,12 @@ int BaseLocalPlayer::getSalt()
   return salt << 8;
 }
 
+
 void BaseLocalPlayer::update( float inputDT )
 {
   // save last position
-  const float* oldPosition = getPosition();
-  lastPosition[0] = oldPosition[0];
-  lastPosition[1] = oldPosition[1];
-  lastPosition[2] = oldPosition[2];
+  const fvec3 oldPosition = getPosition();
+  lastPosition = oldPosition;
 
   // update by time step
   float dt = float(TimeKeeper::getTick() - lastTime);
@@ -73,24 +69,9 @@ void BaseLocalPlayer::update( float inputDT )
     doUpdateMotion(dt);
 
     // compute motion's bounding box around center of tank
-    const float* newVelocity = getVelocity();
-    bbox[0][0] = bbox[1][0] = oldPosition[0];
-    bbox[0][1] = bbox[1][1] = oldPosition[1];
-    bbox[0][2] = bbox[1][2] = oldPosition[2];
-    if (newVelocity[0] > 0.0f)
-      bbox[1][0] += dt * newVelocity[0];
-    else
-      bbox[0][0] += dt * newVelocity[0];
-
-    if (newVelocity[1] > 0.0f)
-      bbox[1][1] += dt * newVelocity[1];
-    else
-      bbox[0][1] += dt * newVelocity[1];
-
-    if (newVelocity[2] > 0.0f)
-      bbox[1][2] += dt * newVelocity[2];
-    else
-      bbox[0][2] += dt * newVelocity[2];
+    const fvec3 newVelocity = getVelocity();
+    bbox.set(oldPosition, oldPosition);
+    bbox.expandToPoint(oldPosition + (dt * newVelocity));
 
     // expand bounding box to include entire tank
     float size = BZDBCache::tankRadius;
@@ -101,11 +82,11 @@ void BaseLocalPlayer::update( float inputDT )
     else if (getFlag() == Flags::Thief)
       size *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
 
-    bbox[0][0] -= size;
-    bbox[1][0] += size;
-    bbox[0][1] -= size;
-    bbox[1][1] += size;
-    bbox[1][2] += BZDBCache::tankHeight;
+    bbox.mins.x -= size;
+    bbox.maxs.x += size;
+    bbox.mins.y -= size;
+    bbox.maxs.y += size;
+    bbox.maxs.z += BZDBCache::tankHeight;
 
     // do remaining update stuff
     doUpdate(dt);
@@ -119,12 +100,14 @@ void BaseLocalPlayer::update( float inputDT )
   }
 }
 
+
 Ray BaseLocalPlayer::getLastMotion() const
 {
   return Ray(lastPosition, getVelocity());
 }
 
-const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
+
+const Extents& BaseLocalPlayer::getLastMotionBBox() const
 {
   return bbox;
 }

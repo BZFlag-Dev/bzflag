@@ -99,7 +99,7 @@ void ShockWaveStrategy::update(float dt)
   if (radius >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
 }
 
-bool        ShockWaveStrategy::predictPosition(float dt, float p[3]) const
+bool        ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
 {
   float r = radius + dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
   if (r >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) return false;
@@ -111,7 +111,7 @@ bool        ShockWaveStrategy::predictPosition(float dt, float p[3]) const
   return true;
 }
 
-bool        ShockWaveStrategy::predictVelocity(float dt, float p[3]) const
+bool        ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
 {
   float r = radius + dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
   if (r >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) return false;
@@ -124,7 +124,7 @@ bool        ShockWaveStrategy::predictVelocity(float dt, float p[3]) const
 }
 
 
-float ShockWaveStrategy::checkHit(const ShotCollider& tank, float position[3]) const
+float ShockWaveStrategy::checkHit(const ShotCollider& tank, fvec3& position) const
 {
   // return if player is inside radius of destruction -- note that a
   // shock wave can kill anything inside the radius, be it behind or

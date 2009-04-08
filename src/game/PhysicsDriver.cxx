@@ -283,15 +283,13 @@ void * PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackFloatVec3 (buf, linear);
-  buf = nboPackFloat (buf, angularVel);
-  buf = nboPackFloat (buf, angularPos[0]);
-  buf = nboPackFloat (buf, angularPos[1]);
-  buf = nboPackFloat (buf, radialVel);
-  buf = nboPackFloat (buf, radialPos[0]);
-  buf = nboPackFloat (buf, radialPos[1]);
+  buf = nboPackFloatVec3(buf, linear);
+  buf = nboPackFloat    (buf, angularVel);
+  buf = nboPackFloatVec2(buf, angularPos);
+  buf = nboPackFloat    (buf, radialVel);
+  buf = nboPackFloatVec2(buf, radialPos);
 
-  buf = nboPackFloat (buf, slideTime);
+  buf = nboPackFloat(buf, slideTime);
   buf = nboPackStdString(buf, deathMsg);
 
   return buf;
@@ -302,15 +300,13 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackFloatVec3 (buf, linear);
-  buf = nboUnpackFloat (buf, angularVel);
-  buf = nboUnpackFloat (buf, angularPos[0]);
-  buf = nboUnpackFloat (buf, angularPos[1]);
-  buf = nboUnpackFloat (buf, radialVel);
-  buf = nboUnpackFloat (buf, radialPos[0]);
-  buf = nboUnpackFloat (buf, radialPos[1]);
+  buf = nboUnpackFloatVec3(buf, linear);
+  buf = nboUnpackFloat    (buf, angularVel);
+  buf = nboUnpackFloatVec2(buf, angularPos);
+  buf = nboUnpackFloat    (buf, radialVel);
+  buf = nboUnpackFloatVec2(buf, radialPos);
 
-  buf = nboUnpackFloat (buf, slideTime);
+  buf = nboUnpackFloat(buf, slideTime);
   buf = nboUnpackStdString(buf, deathMsg);
 
   finalize();
@@ -323,12 +319,12 @@ int PhysicsDriver::packSize() const
 {
   int fullSize = nboStdStringPackSize(name);
 
-  fullSize += sizeof(float) * 3; // linear velocity
-  fullSize += sizeof(float) * 1; // angular velocity
-  fullSize += sizeof(float) * 2; // angular position
-  fullSize += sizeof(float) * 1; // radial velocity
-  fullSize += sizeof(float) * 2; // radial position
-  fullSize += sizeof(float) * 1; // slide time
+  fullSize += sizeof(fvec3); // linear velocity
+  fullSize += sizeof(float); // angular velocity
+  fullSize += sizeof(fvec2); // angular position
+  fullSize += sizeof(float); // radial velocity
+  fullSize += sizeof(fvec2); // radial position
+  fullSize += sizeof(float); // slide time
 
   fullSize += nboStdStringPackSize(deathMsg);
 

@@ -235,10 +235,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   const float* oldVelocity = getVelocity();
 
   // prepare new state
-  float newVelocity[3];
-  newVelocity[0] = oldVelocity[0];
-  newVelocity[1] = oldVelocity[1];
-  newVelocity[2] = oldVelocity[2];
+  fvec3 newVelocity(getVelocity());
   float newAngVel = 0.0f;
 
   if (!headless) {
@@ -283,7 +280,7 @@ void LocalPlayer::doUpdateMotion(float dt)
       }
 
       // can't control explosion motion
-      newVelocity[2] += BZDBCache::gravity * dt;
+      newVelocity.z += BZDBCache::gravity * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
     } else if ((location == OnGround) || (location == OnBuilding) ||
 	       (location == InBuilding && oldPosition[2] == groundLimit)) {
@@ -298,9 +295,9 @@ void LocalPlayer::doUpdateMotion(float dt)
 
       // compute velocity so far
       const float angle = oldAzimuth + 0.5f * dt * newAngVel;
-      newVelocity[0] = speed * cosf(angle);
-      newVelocity[1] = speed * sinf(angle);
-      newVelocity[2] = 0.0f;
+      newVelocity.x = speed * cosf(angle);
+      newVelocity.y = speed * sinf(angle);
+      newVelocity.z = 0.0f;
 
       // now friction, if any
       doFriction(dt, oldVelocity, newVelocity);
@@ -310,9 +307,9 @@ void LocalPlayer::doUpdateMotion(float dt)
 	wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 
       if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
-	newVelocity[2] += 4 * BZDBCache::gravity * dt;
+	newVelocity.z += 4 * BZDBCache::gravity * dt;
       else if (oldPosition[2] > groundLimit)
-	newVelocity[2] += BZDBCache::gravity * dt;
+	newVelocity.z += BZDBCache::gravity * dt;
 
       // save speed for next update
       lastSpeed = speed;
@@ -334,13 +331,13 @@ void LocalPlayer::doUpdateMotion(float dt)
 	  newVelocity[1] = speed * sinf(angle);
 	}
 
-	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
+	newVelocity.z += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
 	lastSpeed = speed;
       } else if (getFlag() == Flags::LowGravity) {
-  	newVelocity[2] += BZDB.eval(StateDatabase::BZDB_LGGRAVITY) * dt;
+  	newVelocity.z += BZDB.eval(StateDatabase::BZDB_LGGRAVITY) * dt;
 	newAngVel = oldAngVel;
       } else {
-	newVelocity[2] += BZDBCache::gravity * dt;
+	newVelocity.z += BZDBCache::gravity * dt;
 	newAngVel = oldAngVel;
       }
     }
@@ -359,11 +356,11 @@ void LocalPlayer::doUpdateMotion(float dt)
   if (wantJump) {
     doJump();
     if (!wantJump) {
-      newVelocity[2] = oldVelocity[2];
+      newVelocity.z = oldVelocity[2];
       if ((lastObstacle != NULL) && !lastObstacle->isFlatTop()
 	  && BZDB.isTrue(StateDatabase::BZDB_NOCLIMB)) {
-	newVelocity[0] = 0.0f;
-	newVelocity[1] = 0.0f;
+	newVelocity.x = 0.0f;
+	newVelocity.y = 0.0f;
       }
     }
   }
@@ -374,15 +371,15 @@ void LocalPlayer::doUpdateMotion(float dt)
   if (phydrv != NULL) {
     const float* v = phydrv->getLinearVel();
 
-    newVelocity[2] += v[2];
+    newVelocity.z += v[2];
 
     if (phydrv->getIsSlide()) {
       const float slideTime = phydrv->getSlideTime();
       doSlideMotion(dt, slideTime, newAngVel, newVelocity);
     } else {
       // adjust the horizontal velocity
-      newVelocity[0] += v[0];
-      newVelocity[1] += v[1];
+      newVelocity.x += v[0];
+      newVelocity.y += v[1];
 
       const float av = phydrv->getAngularVel();
       const float* ap = phydrv->getAngularPos();
@@ -400,10 +397,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   lastObstacle = NULL;
 
   // get new position so far (which is just the current position)
-  float newPos[3];
-  newPos[0] = oldPosition[0];
-  newPos[1] = oldPosition[1];
-  newPos[2] = oldPosition[2];
+  fvec3 newPos(oldPosition);
   float newAzimuth = oldAzimuth;
 
   // move tank through the time step.  if there's a collision then
@@ -444,22 +438,20 @@ void LocalPlayer::doUpdateMotion(float dt)
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
       float delta = dt > 0.1f ? 0.1f : dt;
-      float normalStuck[3];
+      fvec3 normalStuck;
       obstacle->getNormal(newPos, normalStuck);
       // use all the given speed to exit
       float movementMax = desiredSpeed * delta;
 
-      newVelocity[0] = movementMax * normalStuck[0];
-      newVelocity[1] = movementMax * normalStuck[1];
+      newVelocity.x = movementMax * normalStuck.x;
+      newVelocity.y = movementMax * normalStuck.y;
       if (canJump())
-	newVelocity[2] = movementMax * normalStuck[2];
+	newVelocity.z = movementMax * normalStuck.z;
       else
-	newVelocity[2] = 0.0f;
+	newVelocity.z = 0.0f;
 
       // exit will be in the normal direction
-      newPos[0] += newVelocity[0];
-      newPos[1] += newVelocity[1];
-      newPos[2] += newVelocity[2];
+      newPos += newVelocity;
       // compute time for all other kind of movements
       timeStep -= delta;
     }
@@ -468,25 +460,20 @@ void LocalPlayer::doUpdateMotion(float dt)
   hitWall = false;
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
-    float tmpPos[3], tmpAzimuth;
-    tmpAzimuth = newAzimuth;
-    tmpPos[0] = newPos[0];
-    tmpPos[1] = newPos[1];
-    tmpPos[2] = newPos[2];
+    fvec3 tmpPos = newPos;
+    float tmpAzimuth = newAzimuth;
 
     // get position at end of time step
     newAzimuth = tmpAzimuth + timeStep * newAngVel;
-    newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
-    newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
-    newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
-    if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
+    newPos = tmpPos + (timeStep * newVelocity);
+    if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
       // Hit lower limit, stop falling
-      newPos[2] = groundLimit;
+      newPos.z = groundLimit;
       if (location == Exploding) {
 	// tank pieces reach the ground, friction
 	// stop them, & mainly player view
-	newPos[0] = tmpPos[0];
-	newPos[1] = tmpPos[1];
+	newPos.x = tmpPos.x;
+	newPos.y = tmpPos.y;
       }
     }
 
@@ -578,7 +565,7 @@ void LocalPlayer::doUpdateMotion(float dt)
     // get normal at intersection.  sometimes fancy test says there's
     // no intersection but we're expecting one so, in that case, fall
     // back to simple normal calculation.
-    float normal[3];
+    fvec3 normal;
     if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal)) {
       obstacle->getNormal(newPos, normal);
     }
@@ -651,10 +638,10 @@ void LocalPlayer::doUpdateMotion(float dt)
     } else {
       setStatus(getStatus() & ~int(PlayerState::CrossingWall));
     }
-  } else if (world->crossingTeleporter( newPos, newAzimuth,
+  } else if (world->crossingTeleporter(newPos, newAzimuth,
 		      0.5f * BZDBCache::tankLength,
 		      0.5f * BZDBCache::tankWidth,
-		      BZDBCache::tankHeight, crossingPlane)) {
+		      BZDBCache::tankHeight, &crossingPlane)) {
     setStatus(getStatus() | int(PlayerState::CrossingWall));
   } else {
     setStatus(getStatus() & ~int(PlayerState::CrossingWall));
@@ -694,8 +681,8 @@ void LocalPlayer::doUpdateMotion(float dt)
       int outFace;
       const Teleporter* outPort = world->getTeleporter(targetTele, outFace);
       teleporter->getPointWRT(*outPort, face, outFace,
-			      newPos, newVelocity, newAzimuth,
-			      newPos, newVelocity, &newAzimuth);
+			      newPos, &newVelocity, newAzimuth,
+			      newPos, &newVelocity, &newAzimuth);
 
       // check for a hit on the other side
       const Obstacle* teleObs =
@@ -962,9 +949,9 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
 
 
 bool LocalPlayer::getHitNormal(const Obstacle* o,
-			       const float* pos1, float azimuth1,
-			       const float* pos2, float azimuth2,
-			       float* normal) const
+			       const fvec3& pos1, float azimuth1,
+			       const fvec3& pos2, float azimuth2,
+			       fvec3& normal) const
 {
   const float* dims = getDimensions();
   return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
@@ -1043,9 +1030,9 @@ int LocalPlayer::getFlagShakingWins() const
 }
 
 
-const GLfloat* LocalPlayer::getAntidoteLocation() const
+const fvec3* LocalPlayer::getAntidoteLocation() const
 {
-  return (const GLfloat*)(antidoteFlag ? antidoteFlag->getSphere() : NULL);
+  return (antidoteFlag ? &antidoteFlag->getCenter() : NULL);
 }
 
 
@@ -1561,19 +1548,19 @@ bool LocalPlayer::checkHit(const Player* source,
     }
 
     // test myself against shot
-    float position[3];
+    fvec3 position;
 
-    ShotCollider  collider;
+    ShotCollider collider;
 
-    memcpy(collider.position,getPosition(),sizeof(float)*3);
+    collider.position = getPosition();
     collider.angle = getAngle();
     collider.length = BZDBCache::tankLength;
     collider.motion = getLastMotion();
     collider.radius = this->getRadius();
-    memcpy(collider.size,getDimensions(),sizeof(float)*3);
+    collider.size = getDimensions();
     collider.test2D = this->getFlag() == Flags::Narrow;
     collider.testLastSegment = getId() == shot->getPlayer();
-    memcpy(collider.bbox,bbox,sizeof(bbox));
+    collider.bbox = bbox;
 
     const float t = shot->checkHit(collider, position);
     if (t >= minTime) continue;

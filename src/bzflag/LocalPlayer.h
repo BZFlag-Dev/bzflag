@@ -54,33 +54,33 @@ public:
   };
 
   LocalPlayer(const PlayerId&,
-	      const char* name,
-	      const PlayerType _type=TankPlayer);
+              const char* name,
+              const PlayerType _type=TankPlayer);
   ~LocalPlayer();
 
-  Location	getLocation() const;
-  FiringStatus	getFiringStatus() const;
-  float		getFlagShakingTime() const;
-  int		getFlagShakingWins() const;
-  const float*	getAntidoteLocation() const;
-  const Player*	getTarget() const;
-  int		getDeathPhysicsDriver() const;
+  Location      getLocation() const;
+  FiringStatus  getFiringStatus() const;
+  float         getFlagShakingTime() const;
+  int           getFlagShakingWins() const;
+  const fvec3*  getAntidoteLocation() const;
+  const Player* getTarget() const;
+  int           getDeathPhysicsDriver() const;
   const std::vector<const Obstacle*>& getInsideBuildings() const;
 
-  void		setTeam(TeamColor);
-  void		setDesiredSpeed(float fracOfMaxSpeed);
-  void		setDesiredAngVel(float fracOfMaxAngVel);
-  void		setPause(bool = true);
-  void		requestAutoPilot(bool = true);
-  bool		fireShot();
-  void		explodeTank();
-  bool		canJump() const;
-  void		doJump();
-  void		setJump();
-  void		setJumpPressed(bool value);
-  void		setTarget(const Player*);
+  void setTeam(TeamColor);
+  void setDesiredSpeed(float fracOfMaxSpeed);
+  void setDesiredAngVel(float fracOfMaxAngVel);
+  void setPause(bool = true);
+  void requestAutoPilot(bool = true);
+  bool fireShot();
+  void explodeTank();
+  bool canJump() const;
+  void doJump();
+  void setJump();
+  void setJumpPressed(bool value);
+  void setTarget(const Player*);
 
-  void		setDeadStop ( void  );
+  void setDeadStop ( void  );
 
   void		setNemesis(const Player*);
   const Player*	getNemesis() const;
@@ -88,26 +88,26 @@ public:
   void		setRecipient(const Player*);
   const Player*	getRecipient() const;
 
-  void		restart(const float* pos, float azimuth);
-  bool		checkHit(const Player* source, const ShotPath*& hit,
-			 float& minTime) const;
-  bool		checkCollision(const Player* otherTank);
-  void		setFlag(FlagType*);
-  void		changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
+  void restart(const float* pos, float azimuth);
+  bool checkHit(const Player* source, const ShotPath*& hit, float& minTime) const;
+  bool checkCollision(const Player* otherTank);
+  void setFlag(FlagType*);
+  void changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
 
-  void		addAntidote(SceneDatabase*);
+  void addAntidote(SceneDatabase*);
 
   InputMethod	getInputMethod() const;
   void		setInputMethod(InputMethod newInput);
   void		setInputMethod(std::string newInput);
-  static std::string	getInputMethodName(InputMethod whatInput);
   bool		queryInputChange();
-  void		setKey(int button, bool pressed);
-  int		getRotation();
-  int		getSpeed();
-  bool		isSpawning();
-  void		setSpawning( bool spawn );
-  bool          hasHitWall();
+  static std::string	getInputMethodName(InputMethod whatInput);
+
+  void setKey(int button, bool pressed);
+  int  getRotation();
+  int  getSpeed();
+  bool isSpawning();
+  void setSpawning( bool spawn );
+  bool hasHitWall();
 
 
   static LocalPlayer*	getMyTank();
@@ -119,20 +119,21 @@ public:
 				       const float* pos, float angle,
 				       bool phased, bool& expel);
   bool		getHitNormal(const Obstacle* o,
-			     const float* pos1, float azimuth1,
-			     const float* pos2, float azimuth2,
-			     float* normal) const;
+			     const fvec3& pos1, float azimuth1,
+			     const fvec3& pos2, float azimuth2,
+			     fvec3& normal) const;
 
   bool		requestedAutopilot;
 
 protected:
-  bool		doEndShot(int index, bool isHit, float* pos);
-  void		doUpdate(float dt);
-  void		doUpdateMotion(float dt);
-  void		doMomentum(float dt, float& speed, float& angVel);
-  void		doFriction(float dt, const float *oldVelocity, float *newVelocity);
-  void		doForces(float dt, float* velocity, float& angVel);
-  bool	  gettingSound;
+  bool doEndShot(int index, bool isHit, float* pos);
+  void doUpdate(float dt);
+  void doUpdateMotion(float dt);
+  void doMomentum(float dt, float& speed, float& angVel);
+  void doFriction(float dt, const float *oldVelocity, float *newVelocity);
+  void doForces(float dt, float* velocity, float& angVel);
+  bool gettingSound;
+
   ServerLink*	server;
 
   inline bool		onSolidSurface(){ return (location == OnGround) || (location == OnBuilding);}
@@ -150,12 +151,12 @@ private:
   TimeKeeper	agilityTime;
   float		flagShakingTime;
   int		flagShakingWins;
-  float		flagAntidotePos[3];
+  fvec3		flagAntidotePos;
   FlagSceneNode*	antidoteFlag;
   float		desiredSpeed;
   float		desiredAngVel;
   float		lastSpeed;
-  float		crossingPlane[4];
+  fvec4		crossingPlane;
   bool		anyShotActive;
   const Player*	target;
   const Player*	nemesis;

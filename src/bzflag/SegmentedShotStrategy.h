@@ -23,6 +23,7 @@
 #include "SceneDatabase.h"
 #include "TimeKeeper.h"
 #include "LaserSceneNode.h"
+#include "Extents.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"
@@ -36,9 +37,9 @@ class SegmentedShotStrategy : public ShotStrategy {
 			~SegmentedShotStrategy();
 
     void  update(float dt);
-    bool  predictPosition(float dt, float p[3]) const;
-    bool  predictVelocity(float dt, float p[3]) const;
-    float checkHit(const ShotCollider&, float[3]) const;
+    bool  predictPosition(float dt, fvec3& p) const;
+    bool  predictVelocity(float dt, fvec3& p) const;
+    float checkHit(const ShotCollider&, fvec3&) const;
     void  addShot(SceneDatabase*, bool colorblind);
     void  radarRender() const;
     TeamColor	team;
@@ -55,9 +56,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     void   setCurrentTime(const double);
     double getLastTime() const;
 
-    bool isOverlapping(const float (*bbox1)[3],
-		const float (*bbox2)[3]) const;
-
     void setCurrentSegment(int segment);
 
   private:
@@ -67,7 +65,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     int    segment, lastSegment;
     std::vector<ShotPathSegment>	segments;
     BoltSceneNode*	boltSceneNode;
-    float  bbox[2][3];
+    Extents bbox;
     int    firstSegment;
 };
 
