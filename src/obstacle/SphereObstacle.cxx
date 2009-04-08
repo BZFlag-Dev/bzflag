@@ -489,8 +489,8 @@ bool SphereObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 void *SphereObstacle::pack(void *buf) const
 {
   buf = transform.pack(buf);
-  buf = nboPackFloatVec3(buf, pos);
-  buf = nboPackFloatVec3(buf, size);
+  buf = nboPackFVec3(buf, pos);
+  buf = nboPackFVec3(buf, size);
   buf = nboPackFloat(buf, angle);
   buf = nboPackInt(buf, divisions);
   buf = nboPackInt(buf, phydrv);
@@ -522,8 +522,8 @@ void *SphereObstacle::unpack(void *buf)
 {
   int32_t inTmp;
   buf = transform.unpack(buf);
-  buf = nboUnpackFloatVec3(buf, pos);
-  buf = nboUnpackFloatVec3(buf, size);
+  buf = nboUnpackFVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, size);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackInt(buf, inTmp);
   divisions = int(inTmp);

@@ -1037,7 +1037,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   float forward;
 
   msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackFloatVec3(msg, pos);
+  msg = nboUnpackFVec3(msg, pos);
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 

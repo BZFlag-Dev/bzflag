@@ -950,7 +950,7 @@ void ServerLink::sendDropFlag(const float* position)
   char msg[13];
   void* buf = msg;
   buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackFloatVec3(buf, position);
+  buf = nboPackFVec3(buf, position);
   send(MsgDropFlag, sizeof(msg), msg);
 }
 
@@ -1165,7 +1165,7 @@ void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
   void* buf = msg;
   buf = nboPackUByte(buf, uint8_t(playerId));
   buf = nboPackUByte(buf, uint8_t(otherId));
-  buf = nboPackFloatVec3(buf, pos);
+  buf = nboPackFVec3(buf, pos);
 
   send(MsgCollide, sizeof(msg), msg);
 }

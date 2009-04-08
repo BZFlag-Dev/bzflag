@@ -483,7 +483,7 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packFloatVec3(pos);
+    msg->packFVec3(pos);
     msg->packStdString(std::string(type->flagName));
     msg->send(playerData->netHandler,MsgNearFlag);
   }
@@ -772,7 +772,7 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUByte(playerID);
-  msg->packFloatVec3(pos);
+  msg->packFVec3(pos);
   msg->packFloat(rot);
   msg->broadcast(MsgAlive);
 

@@ -27,8 +27,8 @@ void*			ShotUpdate::pack(void* buf) const
 {
   buf = nboPackUByte(buf, player);
   buf = nboPackUShort(buf, id);
-  buf = nboPackFloatVec3(buf, pos);
-  buf = nboPackFloatVec3(buf, vel);
+  buf = nboPackFVec3(buf, pos);
+  buf = nboPackFVec3(buf, vel);
   buf = nboPackFloat(buf, dt);
   buf = nboPackShort(buf, team);
   return buf;
@@ -38,8 +38,8 @@ void			ShotUpdate::pack(BufferedNetworkMessage *msg) const
 {
   msg->packUByte(player);
   msg->packUShort(id);
-  msg->packFloatVec3(pos);
-  msg->packFloatVec3(vel);
+  msg->packFVec3(pos);
+  msg->packFVec3(vel);
   msg->packFloat(dt);
   msg->packShort(team);
 }
@@ -48,8 +48,8 @@ void*			ShotUpdate::unpack(void* buf)
 {
   buf = nboUnpackUByte(buf, player);
   buf = nboUnpackUShort(buf, id);
-  buf = nboUnpackFloatVec3(buf, pos);
-  buf = nboUnpackFloatVec3(buf, vel);
+  buf = nboUnpackFVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, vel);
   buf = nboUnpackFloat(buf, dt);
   short temp;
   buf = nboUnpackShort(buf, temp);

@@ -159,7 +159,7 @@ void* nboPackDouble(void* b, double v)
 }
 
 
-void* nboPackFloatVec2(void* b, const fvec2& v)
+void* nboPackFVec2(void* b, const fvec2& v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
@@ -175,7 +175,7 @@ void* nboPackFloatVec2(void* b, const fvec2& v)
 }
 
 
-void* nboPackFloatVec3(void* b, const fvec3& v)
+void* nboPackFVec3(void* b, const fvec3& v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
@@ -191,7 +191,7 @@ void* nboPackFloatVec3(void* b, const fvec3& v)
 }
 
 
-void* nboPackFloatVec4(void* b, const fvec4& v)
+void* nboPackFVec4(void* b, const fvec4& v)
 {
   // hope that float is 4-byte IEEE 754 standard encoding
   floatintuni u;
@@ -401,7 +401,7 @@ void* nboUnpackDouble(void* b, double& v)
 }
 
 
-void* nboUnpackFloatVec2(void* b, fvec2& v)
+void* nboUnpackFVec2(void* b, fvec2& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[2])) {
@@ -428,7 +428,7 @@ void* nboUnpackFloatVec2(void* b, fvec2& v)
 }
 
 
-void* nboUnpackFloatVec3(void* b, fvec3& v)
+void* nboUnpackFVec3(void* b, fvec3& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[3])) {
@@ -454,7 +454,7 @@ void* nboUnpackFloatVec3(void* b, fvec3& v)
 }
 
 
-void* nboUnpackFloatVec4(void* b, fvec4& v)
+void* nboUnpackFVec4(void* b, fvec4& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[4])) {

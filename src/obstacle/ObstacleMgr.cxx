@@ -217,7 +217,7 @@ void* GroupInstance::pack(void* buf)
     buf = nboPackUShort(buf, team);
   }
   if (modifyColor) {
-    buf = nboPackFloatVec4(buf, tint);
+    buf = nboPackFVec4(buf, tint);
   }
   if (modifyPhysicsDriver) {
     buf = nboPackInt(buf, phydrv);
@@ -265,7 +265,7 @@ void* GroupInstance::unpack(void* buf)
     team = (int)tmpTeam;
   }
   if (modifyColor) {
-    buf = nboUnpackFloatVec4(buf, tint);
+    buf = nboUnpackFVec4(buf, tint);
   }
   if (modifyPhysicsDriver) {
     int32_t inPhyDrv;

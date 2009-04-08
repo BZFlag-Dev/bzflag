@@ -139,7 +139,7 @@ bool WallObstacle::getHitNormal(const fvec3&, float,
 
 void* WallObstacle::pack(void* buf) const
 {
-  buf = nboPackFloatVec3(buf, pos);
+  buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
   buf = nboPackFloat(buf, size[1]);
   buf = nboPackFloat(buf, size[2]);
@@ -154,7 +154,7 @@ void* WallObstacle::pack(void* buf) const
 
 void* WallObstacle::unpack(void* buf)
 {
-  buf = nboUnpackFloatVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, size[1]);
   buf = nboUnpackFloat(buf, size[2]);

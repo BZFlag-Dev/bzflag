@@ -376,9 +376,9 @@ void* Flag::pack(void* buf) const
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(endurance));
   buf = nboPackUByte(buf, owner);
-  buf = nboPackFloatVec3(buf, position);
-  buf = nboPackFloatVec3(buf, launchPosition);
-  buf = nboPackFloatVec3(buf, landingPosition);
+  buf = nboPackFVec3(buf, position);
+  buf = nboPackFVec3(buf, launchPosition);
+  buf = nboPackFVec3(buf, landingPosition);
   buf = nboPackFloat(buf, flightTime);
   buf = nboPackFloat(buf, flightEnd);
   buf = nboPackFloat(buf, initialVelocity);
@@ -392,9 +392,9 @@ size_t Flag::pack(BufferedNetworkMessage *msg) const
   msg->packUShort(uint16_t(status));
   msg->packUShort(uint16_t(endurance));
   msg->packUByte(owner);
-  msg->packFloatVec3(position);
-  msg->packFloatVec3(launchPosition);
-  msg->packFloatVec3(landingPosition);
+  msg->packFVec3(position);
+  msg->packFVec3(launchPosition);
+  msg->packFVec3(landingPosition);
   msg->packFloat(flightTime);
   msg->packFloat(flightEnd);
   msg->packFloat(initialVelocity);
@@ -408,9 +408,9 @@ size_t Flag::fakePack(BufferedNetworkMessage *msg) const
   msg->packUShort(uint16_t(status));
   msg->packUShort(uint16_t(endurance));
   msg->packUByte(owner);
-  msg->packFloatVec3(position);
-  msg->packFloatVec3(launchPosition);
-  msg->packFloatVec3(landingPosition);
+  msg->packFVec3(position);
+  msg->packFVec3(launchPosition);
+  msg->packFVec3(landingPosition);
   msg->packFloat(flightTime);
   msg->packFloat(flightEnd);
   msg->packFloat(initialVelocity);
@@ -423,9 +423,9 @@ void* Flag::fakePack(void* buf) const
   buf = nboPackUShort(buf, uint16_t(status));
   buf = nboPackUShort(buf, uint16_t(endurance));
   buf = nboPackUByte(buf, owner);
-  buf = nboPackFloatVec3(buf, position);
-  buf = nboPackFloatVec3(buf, launchPosition);
-  buf = nboPackFloatVec3(buf, landingPosition);
+  buf = nboPackFVec3(buf, position);
+  buf = nboPackFVec3(buf, launchPosition);
+  buf = nboPackFVec3(buf, landingPosition);
   buf = nboPackFloat(buf, flightTime);
   buf = nboPackFloat(buf, flightEnd);
   buf = nboPackFloat(buf, initialVelocity);
@@ -440,9 +440,9 @@ void* Flag::unpack(void* buf)
   buf = nboUnpackUShort(buf, data); status = FlagStatus(data);	      // 2
   buf = nboUnpackUShort(buf, data); endurance = FlagEndurance(data);  // 2
   buf = nboUnpackUByte(buf, owner);				      // 1
-  buf = nboUnpackFloatVec3(buf, position);			      // 12 (3x4)
-  buf = nboUnpackFloatVec3(buf, launchPosition);		      // 12 (3x4)
-  buf = nboUnpackFloatVec3(buf, landingPosition);		      // 12 (3x4)
+  buf = nboUnpackFVec3(buf, position);			      // 12 (3x4)
+  buf = nboUnpackFVec3(buf, launchPosition);		      // 12 (3x4)
+  buf = nboUnpackFVec3(buf, landingPosition);		      // 12 (3x4)
   buf = nboUnpackFloat(buf, flightTime);			      // 4
   buf = nboUnpackFloat(buf, flightEnd);				      // 4
   buf = nboUnpackFloat(buf, initialVelocity);			      // 4

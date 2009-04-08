@@ -534,12 +534,12 @@ static MsgStringList handleMsgAlive (PacketInfo *pi)
   u8 player;
   fvec3 pos;
   float azimuth;
-  d = nboUnpackUByte (d, player);
-  d = nboUnpackFloatVec3 (d, pos);
-  d = nboUnpackFloat (d, azimuth);
-  listPush (list, 1, "player: %s", strPlayer(player).c_str());
-  listPush (list, 2, "pos:    %s", strVector(pos).c_str());
-  listPush (list, 2, "angle:  %-8.3f = %8.3f deg",
+  d = nboUnpackUByte(d, player);
+  d = nboUnpackFVec3(d, pos);
+  d = nboUnpackFloat(d, azimuth);
+  listPush(list, 1, "player: %s", strPlayer(player).c_str());
+  listPush(list, 2, "pos:    %s", strVector(pos).c_str());
+  listPush(list, 2, "angle:  %-8.3f = %8.3f deg",
 	   azimuth, azimuth * (180.0f / M_PI));
 
   return list;
@@ -563,13 +563,13 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
   u16 type, team, wins, losses, tks;
   char callsign[CallSignLen];
 
-  d = nboUnpackUByte (d, index);
-  d = nboUnpackUShort (d, type);
-  d = nboUnpackUShort (d, team);
-  d = nboUnpackUShort (d, wins);
-  d = nboUnpackUShort (d, losses);
-  d = nboUnpackUShort (d, tks);
-  d = nboUnpackString (d, callsign, CallSignLen);
+  d = nboUnpackUByte(d, index);
+  d = nboUnpackUShort(d, type);
+  d = nboUnpackUShort(d, team);
+  d = nboUnpackUShort(d, wins);
+  d = nboUnpackUShort(d, losses);
+  d = nboUnpackUShort(d, tks);
+  d = nboUnpackString(d, callsign, CallSignLen);
 
   if (TrackState) {
     PlayerList[index] = callsign;

@@ -246,9 +246,9 @@ bool BoxBuilding::isFlatTop() const
 
 void* BoxBuilding::pack(void* buf) const
 {
-  buf = nboPackFloatVec3(buf, pos);
+  buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackFloatVec3(buf, size);
+  buf = nboPackFVec3(buf, size);
 
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
@@ -262,9 +262,9 @@ void* BoxBuilding::pack(void* buf) const
 
 void* BoxBuilding::unpack(void* buf)
 {
-  buf = nboUnpackFloatVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackFloatVec3(buf, size);
+  buf = nboUnpackFVec3(buf, size);
 
   unsigned char stateByte;
   buf = nboUnpackUByte(buf, stateByte);

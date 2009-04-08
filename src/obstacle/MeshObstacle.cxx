@@ -647,23 +647,23 @@ void *MeshObstacle::pack(void *buf) const
   buf = nboPackInt(buf, checkCount);
   for (i = 0; i < checkCount; i++) {
     buf = nboPackUByte(buf, checkTypes[i]);
-    buf = nboPackFloatVec3(buf, checkPoints[i]);
+    buf = nboPackFVec3(buf, checkPoints[i]);
   }
 
   buf = nboPackInt(buf, vertexCount);
   for (i = 0; i < vertexCount; i++) {
-    buf = nboPackFloatVec3(buf, vertices[i]);
+    buf = nboPackFVec3(buf, vertices[i]);
   }
 
   buf = nboPackInt(buf, normalCount);
   for (i = 0; i < normalCount; i++) {
-    buf = nboPackFloatVec3(buf, normals[i]);
+    buf = nboPackFVec3(buf, normals[i]);
   }
 
   void* txcdStart = buf;
   buf = nboPackInt(buf, texcoordCount);
   for (i = 0; i < texcoordCount; i++) {
-    buf = nboPackFloatVec2(buf, texcoords[i]);
+    buf = nboPackFVec2(buf, texcoords[i]);
   }
 
   // pack hidden drawInfo data as extra texture coordinates
@@ -724,28 +724,28 @@ void *MeshObstacle::unpack(void *buf)
     unsigned char tmp;
     buf = nboUnpackUByte(buf, tmp);
     checkTypes[i] = tmp;
-    buf = nboUnpackFloatVec3(buf, checkPoints[i]);
+    buf = nboUnpackFVec3(buf, checkPoints[i]);
   }
 
   buf = nboUnpackInt(buf, inTmp);
   vertexCount = int(inTmp);
   vertices = new fvec3[vertexCount];
   for (i = 0; i < vertexCount; i++) {
-    buf = nboUnpackFloatVec3(buf, vertices[i]);
+    buf = nboUnpackFVec3(buf, vertices[i]);
   }
 
   buf = nboUnpackInt(buf, inTmp);
   normalCount = int(inTmp);
   normals = new fvec3[normalCount];
   for (i = 0; i < normalCount; i++) {
-    buf = nboUnpackFloatVec3(buf, normals[i]);
+    buf = nboUnpackFVec3(buf, normals[i]);
   }
 
   buf = nboUnpackInt(buf, inTmp);
   texcoordCount = int(inTmp);
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < texcoordCount; i++) {
-    buf = nboUnpackFloatVec2(buf, texcoords[i]);
+    buf = nboUnpackFVec2(buf, texcoords[i]);
   }
   void* texcoordEnd = buf; // for locating hidden drawInfo data
 

@@ -283,11 +283,11 @@ void * PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackFloatVec3(buf, linear);
-  buf = nboPackFloat    (buf, angularVel);
-  buf = nboPackFloatVec2(buf, angularPos);
-  buf = nboPackFloat    (buf, radialVel);
-  buf = nboPackFloatVec2(buf, radialPos);
+  buf = nboPackFVec3(buf, linear);
+  buf = nboPackFloat(buf, angularVel);
+  buf = nboPackFVec2(buf, angularPos);
+  buf = nboPackFloat(buf, radialVel);
+  buf = nboPackFVec2(buf, radialPos);
 
   buf = nboPackFloat(buf, slideTime);
   buf = nboPackStdString(buf, deathMsg);
@@ -300,11 +300,11 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackFloatVec3(buf, linear);
-  buf = nboUnpackFloat    (buf, angularVel);
-  buf = nboUnpackFloatVec2(buf, angularPos);
-  buf = nboUnpackFloat    (buf, radialVel);
-  buf = nboUnpackFloatVec2(buf, radialPos);
+  buf = nboUnpackFVec3(buf, linear);
+  buf = nboUnpackFloat(buf, angularVel);
+  buf = nboUnpackFVec2(buf, angularPos);
+  buf = nboUnpackFloat(buf, radialVel);
+  buf = nboUnpackFVec2(buf, radialPos);
 
   buf = nboUnpackFloat(buf, slideTime);
   buf = nboUnpackStdString(buf, deathMsg);

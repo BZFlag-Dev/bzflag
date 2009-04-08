@@ -123,24 +123,24 @@ void BufferedNetworkMessage::packDouble(double val)
   packedSize += sizeof(double);
 }
 
-void BufferedNetworkMessage::packFloatVec2(const fvec2& val)
+void BufferedNetworkMessage::packFVec2(const fvec2& val)
 {
   checkData(sizeof(fvec2));
-  nboPackFloatVec2(getWriteBuffer(), val);
+  nboPackFVec2(getWriteBuffer(), val);
   packedSize += sizeof(fvec2);
 }
 
-void BufferedNetworkMessage::packFloatVec3(const fvec3& val)
+void BufferedNetworkMessage::packFVec3(const fvec3& val)
 {
   checkData(sizeof(fvec3));
-  nboPackFloatVec3(getWriteBuffer(), val);
+  nboPackFVec3(getWriteBuffer(), val);
   packedSize += sizeof(fvec3);
 }
 
-void BufferedNetworkMessage::packFloatVec4(const fvec4& val)
+void BufferedNetworkMessage::packFVec4(const fvec4& val)
 {
   checkData(sizeof(fvec4));
-  nboPackFloatVec4(getWriteBuffer(), val);
+  nboPackFVec4(getWriteBuffer(), val);
   packedSize += sizeof(fvec4);
 }
 
@@ -221,32 +221,32 @@ double BufferedNetworkMessage::unpackDouble(void)
   return v;
 }
 
-fvec2& BufferedNetworkMessage::unpackFloatVec2(fvec2& val)
+fvec2& BufferedNetworkMessage::unpackFVec2(fvec2& val)
 {
   memset(val, 0, sizeof(fvec2));
   char *p = getReadBuffer();
   if (p) {
-    packedSize += (char*)(nboUnpackFloatVec2(p, val)) - p;
+    packedSize += (char*)(nboUnpackFVec2(p, val)) - p;
   }
   return val;
 }
 
-fvec3& BufferedNetworkMessage::unpackFloatVec3(fvec3& val)
+fvec3& BufferedNetworkMessage::unpackFVec3(fvec3& val)
 {
   memset(val, 0, sizeof(fvec3));
   char *p = getReadBuffer();
   if (p) {
-    packedSize += (char*)(nboUnpackFloatVec3(p, val)) - p;
+    packedSize += (char*)(nboUnpackFVec3(p, val)) - p;
   }
   return val;
 }
 
-fvec4& BufferedNetworkMessage::unpackFloatVec4(fvec4& val)
+fvec4& BufferedNetworkMessage::unpackFVec4(fvec4& val)
 {
   memset(val, 0, sizeof(fvec4));
   char *p = getReadBuffer();
   if (p) {
-    packedSize += (char*)(nboUnpackFloatVec4(p, val)) - p;
+    packedSize += (char*)(nboUnpackFVec4(p, val)) - p;
   }
   return val;
 }

@@ -28,7 +28,7 @@ void* Weapon::unpack(void* buf)
   uint16_t delayCount;
 
   buf = FlagType::unpack(buf, type);
-  buf = nboUnpackFloatVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, dir);
   buf = nboUnpackFloat(buf, initDelay);
   buf = nboUnpackUShort(buf, delayCount);

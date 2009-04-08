@@ -596,9 +596,9 @@ void * MeshTransform::pack(void *buf) const
       buf = nboPackInt(buf, transform.index);
     } else {
       if (transform.type == SpinTransform) {
-        buf = nboPackFloatVec4(buf, transform.data);
+        buf = nboPackFVec4(buf, transform.data);
       } else {
-        buf = nboPackFloatVec3(buf, (fvec3&)transform.data);
+        buf = nboPackFVec3(buf, (fvec3&)transform.data);
       }
     }
   }
@@ -628,9 +628,9 @@ void * MeshTransform::unpack(void *buf)
     else {
       transform.index = -1;
       if (transform.type == SpinTransform) {
-	buf = nboUnpackFloatVec4(buf, transform.data);
+	buf = nboUnpackFVec4(buf, transform.data);
       } else {
-	buf = nboUnpackFloatVec3(buf, (fvec3&)transform.data);
+	buf = nboUnpackFVec3(buf, (fvec3&)transform.data);
 	transform.data[3] = 0.0f;
       }
     }
