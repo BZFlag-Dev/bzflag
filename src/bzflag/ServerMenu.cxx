@@ -31,81 +31,119 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   ServerList &serverList = ServerList::instance();
 
-  HUDuiServerList* activeTab( dynamic_cast<HUDuiServerList*>(menu->tabbedControl->getActiveTab()));
-  // This may be a bit Draconian, since not all the tests below
-  // actually depend on the active tab being of type HUDuiServerList*,
-  // but they were all blindly casting before, so assume this is a SNH
-  // condition
-  if (activeTab == 0) return false;
+  HUDuiControl* activeTabControl = menu->tabbedControl->getActiveTab();
+  HUDuiServerList* activeServerList = NULL;
 
-  // Note that many of the if statments below test for this condition
-  // as well and have a different return. Seems like a logic error.
-  if (activeTab == static_cast<HUDuiControl*>(menu->customTabControl))
+  // The currently active tab is the custom tab creation control. We don't handle
+  // any key presses for that here, so pass it on, and return the result we get.
+  if (activeTabControl == menu->customTabControl) // Is this the right way to check?
     return MenuDefaultKey::keyPress(key);
+  // The currently active tab is NOT the custom tab, so let's try casting it as a
+  // HUDuiServerList control. For the server browser we only expect controls of type
+  // HUDuiServerListCustomTab, or HUDuiServerList. However, since we are using a
+  // HUDuiTabbedControl, we could have any subclass of HUDuiControl, so we have to
+  // be careful to check what class we are dealing with when executing key presses.
+  else
+    activeServerList = dynamic_cast<HUDuiServerList*>(activeTabControl);
 
-  if (key.chr == 'f') {
-    if ((activeTab == menu->favoritesList) ||
-	(activeTab->hasFocus()) ||
-	(menu->tabbedControl->hasFocus()))
-      return false;
-    if (activeTab != 0) {
-      serverList.markAsFavorite(activeTab->getSelectedServer());
+  // The active tab is not the custom tab control, and is not a HUDuiServerList
+  // Right now we're handling input that affects either custom tab creation, or
+  // server list browsing. Since this is neither, return false, we don't handle it.
+  if ((activeServerList == 0)||(activeServerList == NULL))
+    // dynamic_cast returns 0 if it fails
+    return false;
+
+  // These key presses should only be processed when the user has a server selected.
+  // As such, we should check to see if the server list, or the tabbed control have
+  // focus, and if they do, ignore these key presses for now. Also check that the
+  // user has a server selected.
+  if ((!activeServerList->hasFocus())&&(!menu->tabbedControl->hasFocus())&&
+     (activeServerList->getSelectedServer() != NULL)){
+    // The favorite key was pressed
+    if (key.chr == 'f') {
+	  // Check to see if we're on the favorites list, if we are, ignore keypress
+	  if (activeServerList == menu->favoritesList) {
+	    return false;
+	  }
+	  else {
+        // Mark it as a favorite server
+	    serverList.markAsFavorite(activeServerList->getSelectedServer());
+	    return true;
+	  }
+    }
+
+	// The remove server key was pressed
+    if (key.chr == 'h') {
+	  // Design decision: Don't let users remove any servers from the normal server
+      // list. Let's keep this as a pure representation of all the available servers
+      if (activeServerList == menu->normalList)
+        return false;
+
+	  // If we're on the favorites list, we need to unmark the server
+	  // as a favorite server in order to remove it from the list
+      if (activeServerList == menu->favoritesList)
+        serverList.unmarkAsFavorite(activeServerList->getSelectedServer());
+
+	  // If we're on the recents list, we need to unmark the server
+	  // as a recent server in order to remove it from the list
+      if (activeServerList == menu->recentList)
+        serverList.unmarkAsRecent(activeServerList->getSelectedServer());
+
+      // Remove the selected server from the active server list
+      activeServerList->removeItem(activeServerList->getSelectedServer());
       return true;
     }
-    return false;
   }
 
+  // The clear server list key was pressed
   if (key.chr == 'c') {
-    if ((activeTab == static_cast<HUDuiControl*>(menu->customTabControl)) ||
-	(activeTab == menu->normalList))
+	// Design decision: Don't let users remove any servers from the normal server
+    // list. Let's keep this as a pure representation of all the available servers
+    if (activeServerList == menu->normalList)
       return false;
 
-    if (activeTab == menu->favoritesList) {
-      for (size_t i=0; i<activeTab->getSize(); i++) {
-	serverList.unmarkAsFavorite(activeTab->get(i)->getServer());
+	// If we're on the favorites list, cycle through all favorite servers and unmark
+	// them as favorites. This may be a bad idea, it's fairly easy to accidentally
+	// clear your favorites list using this functionality.
+    if (activeServerList == menu->favoritesList) {
+      for (size_t i=0; i<activeServerList->getSize(); i++) {
+        serverList.unmarkAsFavorite(activeServerList->get(i)->getServer());
       }
     }
 
-    if (activeTab == menu->recentList) {
-      for (size_t i=0; i<activeTab->getSize(); i++) {
-	serverList.unmarkAsRecent(activeTab->get(i)->getServer());
+	// If we're on the recent server list, cycle through all
+	// recent servers and unmark them as a recent server. 
+    if (activeServerList == menu->recentList) {
+      for (size_t i=0; i<activeServerList->getSize(); i++) {
+        serverList.unmarkAsRecent(activeServerList->get(i)->getServer());
       }
     }
 
-    activeTab->clearList();
+	// Clear the list
+    activeServerList->clearList();
     return true;
   }
 
+  // Remove the current tab. This can be pressed at any
+  // time, but only works if the user is on a custom tab.
   if (key.chr == 'v') {
-    if ((activeTab == menu->favoritesList) ||
-	(activeTab == menu->normalList) ||
-	(activeTab == menu->recentList))
+    // Do nothing if the user is on any of the standard tabs
+    if ((activeServerList == menu->favoritesList) ||
+	(activeServerList == menu->normalList) ||
+	(activeServerList == menu->recentList))
       return false;
 
+	// Remove the current tab from the tabbed control
     std::string tabName = menu->tabbedControl->getActiveTabName();
-    HUDuiServerListCache::instance().removeList(activeTab, tabName);
-    menu->tabbedControl->removeTab(activeTab, tabName);
+    HUDuiServerListCache::instance().removeList(activeServerList, tabName);
+    menu->tabbedControl->removeTab(activeServerList, tabName);
+	return true;
   }
 
+  // Refresh the server list. This can be done at any time.
   if (key.chr == 'r') {
     ServerList::instance().clear();
     ServerList::instance().startServerPings(getStartupInfo());
-    return true;
-  }
-
-  if (key.chr == 'h') {
-    if ((activeTab == menu->normalList) ||
-	(activeTab->hasFocus()) ||
-	(menu->tabbedControl->hasFocus()))
-      return false;
-
-    if (activeTab == menu->favoritesList)
-      serverList.unmarkAsFavorite(activeTab->getSelectedServer());
-
-    if (activeTab == menu->recentList)
-      serverList.unmarkAsRecent(activeTab->getSelectedServer());
-
-    activeTab->removeItem(activeTab->getSelectedServer());
     return true;
   }
 
