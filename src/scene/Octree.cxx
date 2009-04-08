@@ -243,7 +243,7 @@ int Octree::getRadarList(SceneNode** list, int listSize,
 
 
 int Octree::getShadowList(SceneNode** list, int listSize,
-			  int planeCount, const float (*planes)[4]) const
+			  int planeCount, const fvec4* planes) const
 {
   if (!root) {
     return 0;

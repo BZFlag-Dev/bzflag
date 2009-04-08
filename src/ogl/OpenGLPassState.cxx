@@ -950,12 +950,13 @@ void OpenGLPassState::SetupScreenLighting()
   glEnable(GL_LIGHT0);
 
   // sunlight
-  const float* diffuse = RENDERER.getSunColor();
-  const float* ambient = RENDERER.getAmbientColor();
-  const float* sunDir  = RENDERER.getSunDirection();
-  if ((diffuse == NULL) || (ambient == NULL) || (sunDir == NULL)) {
+  const fvec3* sunDirPtr = RENDERER.getSunDirection();
+  if (sunDirPtr == NULL) {
     return;
   }
+  const fvec3& sunDir = *sunDirPtr;
+  const fvec4& diffuse   = RENDERER.getSunColor();
+  const fvec4& ambient   = RENDERER.getAmbientColor();
 
   // need the camera transformation for world placement
   glPushMatrix();

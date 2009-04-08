@@ -46,32 +46,13 @@
 
 
 //
-// FlareLight
-//
-
-FlareLight::FlareLight(const float* _pos, const float* _color)
-{
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
-  color[0] = _color[0];
-  color[1] = _color[1];
-  color[2] = _color[2];
-}
-
-FlareLight::~FlareLight()
-{
-  // do nothing
-}
-
-//
 // SceneRenderer
 //
 
-const GLint   SceneRenderer::SunLight = 0;		// also for the moon
-const float   SceneRenderer::dimDensity = 0.75f;
-const GLfloat SceneRenderer::dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-const GLfloat SceneRenderer::blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+const GLint SceneRenderer::SunLight = 0;		// also for the moon
+const float SceneRenderer::dimDensity = 0.75f;
+const fvec4 SceneRenderer::dimnessColor(0.0f, 0.0f, 0.0f, 1.0f);
+const fvec4 SceneRenderer::blindnessColor(1.0f, 1.0f, 0.0f, 1.0f);
 
 /* initialize the singleton */
 template <>
@@ -465,12 +446,6 @@ void SceneRenderer::addLight(OpenGLLight& light)
   }
   lights[lightsCount - 1] = &light;
   return;
-}
-
-
-void SceneRenderer::addFlareLight(const float* pos, const float* color)
-{
-  flareLightList.push_back(FlareLight(pos, color));
 }
 
 
@@ -1210,7 +1185,6 @@ void SceneRenderer::getRenderNodes()
   OpenGLGState::clearLists();
   orderedList.clear();
   shadowList.clear();
-  flareLightList.clear();
 
   // make the lists of render nodes sorted in optimal rendering order
   if (scene) {
@@ -1291,15 +1265,16 @@ void SceneRenderer::getLights()
 }
 
 
-void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
+void SceneRenderer::disableLights(const Extents& exts)
 {
   // temporarily turn off non-applicable lights for big meshes
   for (int i = 0; i < dynamicLights; i++) {
     const float* pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
-    if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
-	(pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
-	(pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
+    
+    if ((pos[0] < (exts.mins[0] - dist)) || (pos[0] > (exts.maxs[0] + dist)) ||
+	(pos[1] < (exts.mins[1] - dist)) || (pos[1] > (exts.maxs[1] + dist)) ||
+	(pos[2] < (exts.mins[2] - dist)) || (pos[2] > (exts.maxs[2] + dist))) {
       OpenGLLight::enableLight(i + reservedLights, false);
     }
   }
@@ -1346,7 +1321,7 @@ const RenderNodeList& SceneRenderer::getShadowList() const
 }
 
 
-const GLfloat* SceneRenderer::getSunDirection() const
+const fvec3* SceneRenderer::getSunDirection() const
 {
   if (background) {
     return background->getSunDirection();
@@ -1372,7 +1347,7 @@ int SceneRenderer::getFrameTriangleCount() const
 }
 
 
-int SceneRenderer::getShadowPlanes(const float (**planes)[4]) const
+int SceneRenderer::getShadowPlanes(const fvec4 **planes) const
 {
   if (shadowPlaneCount <= 0) {
     *planes = NULL;
@@ -1387,10 +1362,11 @@ void SceneRenderer::setupShadowPlanes()
 {
   shadowPlaneCount = 0;
 
-  const float* sunDir = getSunDirection();
-  if (sunDir == NULL) {
+  const fvec3* sunDirPtr = getSunDirection();
+  if (sunDirPtr == NULL) {
     return; // no sun = no shadows, simple
   }
+  const fvec3& sunDir = *sunDirPtr;
 
   // FIXME: As a first cut, we'll assume that
   //	    the frustum top points towards Z.
@@ -1408,7 +1384,7 @@ void SceneRenderer::setupShadowPlanes()
   // 0: left
   // 1: right
   // 2: bottom
-  float (*planes)[4] = shadowPlanes;
+  fvec4* planes = shadowPlanes;
 
   shadowPlaneCount = 2;
   float edge[2];

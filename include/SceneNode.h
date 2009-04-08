@@ -72,7 +72,7 @@ class SceneNode {
     virtual bool	inAxisBox (const Extents& exts) const;
 
     virtual bool	cull(const ViewFrustum&) const;
-    virtual bool	cullShadow(int pCount, const float (*planes)[4]) const;
+    virtual bool	cullShadow(int pCount, const fvec4* planes) const;
 
     bool		isOccluder() const;
     void		setOccluder(bool value);

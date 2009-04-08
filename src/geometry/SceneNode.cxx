@@ -186,7 +186,7 @@ bool			SceneNode::cull(const ViewFrustum& view) const
 }
 
 
-bool SceneNode::cullShadow(int, const float (*)[4]) const
+bool SceneNode::cullShadow(int, const fvec4*) const
 {
   // currently only used for dynamic nodes by ZSceneDatabase
   // we let the octree deal with the static nodes

@@ -154,10 +154,9 @@ void TextSceneNode::calcExtents(const fvec3 points[5])
   }
   else {
     const float dist = getMaxDist(points);
-    const float* orig = points[4];
-    const float mins[3] = { orig[0] - dist, orig[1] - dist, orig[2] - dist };
-    const float maxs[3] = { orig[0] + dist, orig[1] + dist, orig[2] + dist };
-    extents.set(mins, maxs);
+    const fvec3& orig = points[4];
+    extents.set(orig, orig);
+    extents.addMargin(dist);
   }
 }
 
@@ -298,14 +297,14 @@ bool TextSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-bool TextSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 {
   // FIXME -- use extents?
-  const float* s = getSphere();
+  const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
-    const float* p = planes[i];
-    const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
-    if ((d < 0.0f) && ((d * d) > s[3])) {
+    const fvec4& p = planes[i];
+    const float d = fvec3::dot((fvec3&)p, (fvec3&)s) + p.w;
+    if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
   }

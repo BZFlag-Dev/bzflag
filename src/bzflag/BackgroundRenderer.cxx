@@ -34,34 +34,35 @@
 #include "SceneNode.h"
 #include "effectsRenderer.h"
 
-static const GLfloat	squareShape[4][2] =
-  { {  1.0f,  1.0f }, { -1.0f,  1.0f },
-    { -1.0f, -1.0f }, {  1.0f, -1.0f } };
+static const fvec2 squareShape[4] = {
+  fvec2(+1.0f, +1.0f),
+  fvec2(-1.0f, +1.0f),
+  fvec2(-1.0f, -1.0f),
+  fvec2(+1.0f, -1.0f)
+};
 
 
-GLfloat			BackgroundRenderer::skyPyramid[5][3];
+fvec3			BackgroundRenderer::skyPyramid[5];
 const GLfloat		BackgroundRenderer::cloudRepeats = 3.0f;
 static const int	NumMountainFaces = 16;
 
-GLfloat			BackgroundRenderer::groundColor[4][4];
-GLfloat			BackgroundRenderer::groundColorInv[4][4];
+fvec4 BackgroundRenderer::groundColor[4];
+fvec4 BackgroundRenderer::groundColorInv[4];
 
-const GLfloat		BackgroundRenderer::defaultGroundColor[4][4] = {
-  { 0.0f, 0.35f, 0.0f, 1.0f },
-  { 0.0f, 0.20f, 0.0f, 1.0f },
-  { 1.0f, 1.00f, 1.0f, 1.0f },
-  { 1.0f, 1.00f, 1.0f, 1.0f }
+const fvec4 BackgroundRenderer::defaultGroundColor[4] = {
+  fvec4(0.0f, 0.35f, 0.0f, 1.0f),
+  fvec4(0.0f, 0.20f, 0.0f, 1.0f),
+  fvec4(1.0f, 1.00f, 1.0f, 1.0f),
+  fvec4(1.0f, 1.00f, 1.0f, 1.0f)
 };
-const GLfloat		BackgroundRenderer::defaultGroundColorInv[4][4] = {
-  { 0.35f, 0.00f, 0.35f, 1.0f },
-  { 0.20f, 0.00f, 0.20f, 1.0f },
-  { 1.00f, 1.00f, 1.00f, 1.0f },
-  { 1.00f, 1.00f, 1.00f, 1.0f }
+const fvec4 BackgroundRenderer::defaultGroundColorInv[4] = {
+  fvec4(0.35f, 0.00f, 0.35f, 1.0f),
+  fvec4(0.20f, 0.00f, 0.20f, 1.0f),
+  fvec4(1.00f, 1.00f, 1.00f, 1.0f),
+  fvec4(1.00f, 1.00f, 1.00f, 1.0f)
 };
-const GLfloat		BackgroundRenderer::receiverColor[3] =
-  { 0.3f, 0.55f, 0.3f };
-const GLfloat		BackgroundRenderer::receiverColorInv[3] =
-  { 0.55f, 0.3f, 0.55f };
+const fvec4 BackgroundRenderer::receiverColor    = fvec4(0.3f, 0.55f, 0.3f, 1.0f);
+const fvec4 BackgroundRenderer::receiverColorInv = fvec4(0.55f, 0.3f, 0.55f, 1.0f);
 
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
@@ -1069,7 +1070,7 @@ void BackgroundRenderer::drawSkybox()
 
   OpenGLGState::resetState();
 
-  const GLfloat (*color)[4] = skyboxColor;
+  const fvec4* color = skyboxColor;
 
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_CULL_FACE);
@@ -1160,32 +1161,22 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     if (!doSunset) {
       // just a pyramid
       glBegin(GL_TRIANGLE_FAN); {
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);
-	glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
     } else {
       // overall shape is a pyramid, but the solar sides are two
       // triangles each.  the top triangle is all zenith color,
       // the bottom goes from zenith to sun-dir color.
       glBegin(GL_TRIANGLE_FAN); {
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);
-	glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
 
       GLfloat sunsetTopPoint[3];
@@ -1193,28 +1184,18 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
       glBegin(GL_TRIANGLES); {
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glVertex3fv(skyPyramid[4]);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+	                                 glVertex3fv(skyPyramid[4]);
+	                                 glVertex3fv(sunsetTopPoint);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
       } glEnd();
     }
   }
@@ -1763,10 +1744,10 @@ void BackgroundRenderer::drawMountains(void)
 }
 
 
-const GLfloat* BackgroundRenderer::getSunDirection() const
+const fvec3* BackgroundRenderer::getSunDirection() const
 {
   if (areShadowsCast(sunDirection)) {
-    return sunDirection;
+    return &sunDirection;
   } else {
     return NULL;
   }

@@ -711,13 +711,13 @@ void FlagSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-bool FlagSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+bool FlagSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 {
-  const float* s = getSphere();
+  const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
-    const float* p = planes[i];
-    const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
-    if ((d < 0.0f) && ((d * d) > s[3])) {
+    const fvec4& p = planes[i];
+    const float d = fvec3::dot((fvec3&)p, (fvec3&)s) + p.w;
+    if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
   }

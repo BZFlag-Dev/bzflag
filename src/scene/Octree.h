@@ -16,6 +16,7 @@
 #include "SceneNode.h"
 #include "Frustum.h"
 #include "Extents.h"
+#include "vectors.h"
 
 
 class OctreeNode;
@@ -33,7 +34,7 @@ class Octree {
     int getFrustumList(SceneNode** list, int listSize,
                        const Frustum* frustum) const;
     int getShadowList(SceneNode** list, int listSize,
-                      int planeCount, const float (*planes)[4]) const;
+                      int planeCount, const fvec4* planes) const;
     int getRadarList(SceneNode** list, int listSize,
                      const Frustum* frustum) const;
 

@@ -165,7 +165,7 @@ void MeshFragSceneNode::Geometry::render()
   const bool switchLights = (triangles >= minLightDisabling)
 			    && BZDBCache::lighting;
   if (switchLights) {
-    RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
+    RENDERER.disableLights(sceneNode->extents);
   }
 
   // set the color

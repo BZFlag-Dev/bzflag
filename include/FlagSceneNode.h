@@ -55,7 +55,7 @@ class FlagSceneNode : public SceneNode {
 
     void notifyStyleChange();
 
-    bool cullShadow(int planeCount, const float (*planes)[4]) const;
+    bool cullShadow(int planeCount, const fvec4* planes) const;
 
   protected:
     class FlagRenderNode : public RenderNode {

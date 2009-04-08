@@ -67,55 +67,53 @@ class TankSceneNode : public SceneNode {
   friend class TankIDLSceneNode;
   friend class TankIDLSceneNode::IDLRenderNode;
   public:
-			TankSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
-			virtual ~TankSceneNode();
+    TankSceneNode(const fvec3& pos, const fvec3& forward);
+    virtual ~TankSceneNode();
 
-    virtual void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    virtual void move(const fvec3& pos, const fvec3& forward);
 
-    virtual void		setColor(GLfloat r, GLfloat g,
-				 GLfloat b, GLfloat a = 1.0f);
-    virtual void		setColor(const GLfloat* rgba);
-    virtual void		setMaterial(const OpenGLMaterial&);
-    virtual void		setTexture(const int);
-    virtual void		setJumpJetsTexture(const int);
+    virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    virtual void setColor(const GLfloat* rgba);
+    virtual void setMaterial(const OpenGLMaterial&);
+    virtual void setTexture(const int);
+    virtual void setJumpJetsTexture(const int);
 
-    virtual void		setNormal();
-    virtual void		setObese();
-    virtual void		setTiny();
-    virtual void		setNarrow();
-    virtual void		setThief();
-    virtual void		setDimensions(const float size[3]);
+    virtual void setNormal();
+    virtual void setObese();
+    virtual void setTiny();
+    virtual void setNarrow();
+    virtual void setThief();
+    virtual void setDimensions(const float size[3]);
 
-    virtual void		setClipPlane(const GLfloat* plane);
-    virtual void		setExplodeFraction(float t);
-    virtual void		setJumpJets(float scale);
+    virtual void setClipPlane(const GLfloat* plane);
+    virtual void setExplodeFraction(float t);
+    virtual void setJumpJets(float scale);
 
-    virtual void		setInTheCockpit(bool value);
-    virtual void		setOnlyShadows(bool value);
+    virtual void setInTheCockpit(bool value);
+    virtual void setOnlyShadows(bool value);
 
-    virtual void		rebuildExplosion();
-    virtual void		addTreadOffsets(float left, float right);
+    virtual void rebuildExplosion();
+    virtual void addTreadOffsets(float left, float right);
 
-    virtual void		notifyStyleChange();
-    virtual void		addRenderNodes(SceneRenderer&);
-    virtual void		addShadowNodes(SceneRenderer&);
+    virtual void notifyStyleChange();
+    virtual void addRenderNodes(SceneRenderer&);
+    virtual void addShadowNodes(SceneRenderer&);
 
-    virtual bool		cullShadow(int planeCount,
-				   const float (*planes)[4]) const;
+    virtual bool cullShadow(int planeCount, const fvec4* planes) const;
 
-    virtual void		addLight(SceneRenderer&);
+    virtual void addLight(SceneRenderer&);
 
-    virtual void		renderRadar();
+    virtual void renderRadar();
 
-    static void		setMaxLOD(int maxLevel);
+    static void setMaxLOD(int maxLevel);
 
   protected:
 
     class TankRenderNode : public RenderNode {
       public:
-			TankRenderNode(const TankSceneNode*);
-			~TankRenderNode();
+        TankRenderNode(const TankSceneNode*);
+        ~TankRenderNode();
+
 	void		setShadow();
 	void		setRadar(bool);
 	void		setTreads(bool);

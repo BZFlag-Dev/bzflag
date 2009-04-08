@@ -20,18 +20,22 @@
 /* the common header */
 #include "common.h"
 
-/* interface headers */
+/* interface header */
 #include "Singleton.h"
 
-/* system interface headers */
+/* system headers */
 #include <vector>
 
-/* common interface headers */
+/* common headers */
 #include "OpenGLLight.h"
 #include "ViewFrustum.h"
 #include "RenderNode.h"
+#include "Extents.h"
+#include "vectors.h"
+
 
 #define RENDERER (SceneRenderer::instance())
+
 
 class SceneDatabase;
 class SceneIterator;
@@ -41,20 +45,12 @@ class HUDRenderer;
 class MainWindow;
 class Extents;
 
-class FlareLight {
-public:
-  FlareLight(const float* pos, const float* color);
-  ~FlareLight();
-
-public:
-  float		pos[3];
-  float		color[3];
-};
 
 #define _LOW_QUALITY 0
 #define _MEDIUM_QUALITY 1
 #define _HIGH_QUALITY 2
 #define _EXPERIMENTAL_QUALITY 3
+
 
 class SceneRenderer : public Singleton<SceneRenderer>
 {
@@ -122,10 +118,9 @@ public:
   void		enableLight(int index, bool = true);
   void		clearLights();
   void		addLight(OpenGLLight&);
-  void		addFlareLight(const float* pos, const float* color);
 
   // temporarily turn off non-applicable lights for big meshes
-  void		disableLights(const float mins[3], const float maxs[3]);
+  void		disableLights(const Extents& extents);
   void		reenableLights();
 
   void		setupSun(); // setup sun lighting params
@@ -133,11 +128,11 @@ public:
 
   void		setTimeOfDay(double julianDay);
 
-  const GLfloat*	getSunColor() const;
-  const GLfloat*	getSunScaledColor() const;
+  const fvec4&		getSunColor() const;
+  const fvec4&		getSunScaledColor() const;
   GLfloat		getSunBrightness() const;
-  const GLfloat*	getSunDirection() const;
-  const GLfloat*	getAmbientColor() const;
+  const fvec3*		getSunDirection() const;
+  const fvec4&		getAmbientColor() const;
   const GLfloat*	getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;
@@ -165,7 +160,7 @@ public:
   void		addRenderNode(RenderNode* node, const OpenGLGState*);
   void		addShadowNode(RenderNode* node);
 
-  int 		getShadowPlanes(const float (**planes)[4]) const;
+  int 		getShadowPlanes(const fvec4 **planes) const;
 
 protected:
   friend class Singleton<SceneRenderer>;
@@ -209,20 +204,20 @@ private:
   OpenGLLight**		lights;
   OpenGLLight		theSun;
   bool			sunOrMoonUp;
-  GLfloat		sunDirection[3];	// or moon
-  GLfloat		sunColor[4];
-  GLfloat		sunScaledColor[4];
+  fvec3			sunDirection;	// or moon
+  fvec4			sunColor;
+  fvec4			sunScaledColor;
   GLfloat		celestialTransform[4][4];
   GLfloat		sunBrightness;
-  GLfloat		ambientColor[4];
+  fvec4			ambientColor;
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
   int			triangleCount;
   static const GLint	SunLight;
 
   static const float dimDensity;
-  static const GLfloat dimnessColor[4];
-  static const GLfloat blindnessColor[4];
+  static const fvec4 dimnessColor;
+  static const fvec4 blindnessColor;
   float teleporterProximity;
 
   int		useQualityValue;
@@ -241,10 +236,9 @@ private:
   bool		needStyleUpdate;
   bool		rebuildTanks;
 
-  float		shadowPlanes[4][4];
+  fvec4		shadowPlanes[4];
   int		shadowPlaneCount;
 
-  std::vector<FlareLight>	flareLightList;
   RenderNodeList		shadowList;
   RenderNodeGStateList		orderedList;
 };
@@ -299,12 +293,12 @@ inline const OpenGLLight&	SceneRenderer::getLight(int index) const
   return *(lights[index]);
 }
 
-inline const GLfloat*		SceneRenderer::getSunColor() const
+inline const fvec4&		SceneRenderer::getSunColor() const
 {
   return sunColor;
 }
 
-inline const GLfloat*		SceneRenderer::getSunScaledColor() const
+inline const fvec4&		SceneRenderer::getSunScaledColor() const
 {
   return sunScaledColor;
 }
@@ -314,7 +308,7 @@ inline GLfloat			SceneRenderer::getSunBrightness() const
   return sunBrightness;
 }
 
-inline const GLfloat* SceneRenderer::getAmbientColor() const
+inline const fvec4& 		SceneRenderer::getAmbientColor() const
 {
   return ambientColor;
 }

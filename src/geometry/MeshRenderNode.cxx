@@ -57,7 +57,7 @@ void OpaqueRenderNode::render()
 {
   const bool switchLights = (exts != NULL);
   if (switchLights) {
-    RENDERER.disableLights(exts->mins, exts->maxs);
+    RENDERER.disableLights(*exts);
   }
 
   // set the color

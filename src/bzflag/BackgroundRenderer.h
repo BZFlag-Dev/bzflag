@@ -51,7 +51,7 @@ class BackgroundRenderer : public GLDisplayListCreator
 
     void		resize();
 
-    const GLfloat*	getSunDirection() const;
+    const fvec3*	getSunDirection() const;
     void		setBlank(bool blank = true);
     void		setInvert(bool invert = true);
     void		setSimpleGround(bool simple = true);
@@ -136,15 +136,15 @@ class BackgroundRenderer : public GLDisplayListCreator
     bool		haveSkybox;
     GLenum		skyboxWrapMode;
     int			skyboxTexID[6];
-    GLfloat		skyboxColor[8][4];
+    fvec4		skyboxColor[8];
     bool		doStars;
     bool		doSunset;
-    GLfloat		skyZenithColor[3];
-    GLfloat		skySunDirColor[3];
-    GLfloat		skyAntiSunDirColor[3];
-    GLfloat		skyCrossSunDirColor[3];
-    float		sunDirection[3];
-    float		moonDirection[3];
+    fvec4		skyZenithColor;
+    fvec4		skySunDirColor;
+    fvec4		skyAntiSunDirColor;
+    fvec4		skyCrossSunDirColor;
+    fvec3		sunDirection;
+    fvec3		moonDirection;
     float		sunAzimuth;
     float		sunsetTop;
     int			starGStateIndex;
@@ -163,17 +163,17 @@ class BackgroundRenderer : public GLDisplayListCreator
     std::vector<GLDisplayList> mountanLists;
 
 
-    static GLfloat		skyPyramid[5][3];
+    static fvec3		skyPyramid[5];
     static const GLfloat	cloudRepeats;
 
-    static GLfloat		rcvrGroundColor[4][4];
-    static GLfloat		rcvrGroundInvColor[4][4];
-    static GLfloat		groundColor[4][4];
-    static GLfloat		groundColorInv[4][4];
-    static const GLfloat	defaultGroundColor[4][4];
-    static const GLfloat	defaultGroundColorInv[4][4];
-    static const GLfloat	receiverColor[3];
-    static const GLfloat	receiverColorInv[3];
+    static fvec4	rcvrGroundColor[4];
+    static fvec4	rcvrGroundInvColor[4];
+    static fvec4	groundColor[4];
+    static fvec4	groundColorInv[4];
+    static const fvec4	defaultGroundColor[4];
+    static const fvec4	defaultGroundColorInv[4];
+    static const fvec4	receiverColor;
+    static const fvec4	receiverColorInv;
 
     int			triangleCount;
 

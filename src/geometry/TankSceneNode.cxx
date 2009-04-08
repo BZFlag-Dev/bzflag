@@ -44,15 +44,20 @@ static const float vertExplosionRatio = 0.5f;
 const int		TankSceneNode::numLOD = 3;
 int			TankSceneNode::maxLevel = numLOD;
 
-TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-				leftTreadOffset(0.0f), rightTreadOffset(0.0f),
-				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
-				useDimensions(false), useOverride(false),
-				onlyShadows(false), clip(false),
-				inTheCockpit(false),
-				tankRenderNode(this), treadsRenderNode(this),
-				shadowRenderNode(this),
-				tankSize(TankGeometryEnums::Normal)
+TankSceneNode::TankSceneNode(const fvec3& pos, const fvec3& forward)
+: leftTreadOffset(0.0f)
+, rightTreadOffset(0.0f)
+, leftWheelOffset(0.0f)
+, rightWheelOffset(0.0f)
+, useDimensions(false)
+, useOverride(false)
+, onlyShadows(false)
+, clip(false)
+, inTheCockpit(false)
+, tankRenderNode(this)
+, treadsRenderNode(this)
+, shadowRenderNode(this)
+, tankSize(TankGeometryEnums::Normal)
 {
   // setup style factors (BZDB isn't set up at global init time
 
@@ -141,10 +146,10 @@ void TankSceneNode::setJumpJetsTexture(const int texture)
 }
 
 
-void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
+void TankSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
   const float rad2deg = (float)(180.0 / M_PI);
-  azimuth = rad2deg * atan2f(forward[1], forward[0]);
+  azimuth   =  rad2deg * atan2f(forward[1], forward[0]);
   elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
   setCenter(pos);
 
@@ -530,13 +535,13 @@ void TankSceneNode::renderRadar()
 }
 
 
-bool TankSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+bool TankSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 {
-  const float* s = getSphere();
+  const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
-    const float* p = planes[i];
-    const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
-    if ((d < 0.0f) && ((d * d) > s[3])) {
+    const fvec4& p = planes[i];
+    const float d = fvec3::dot((fvec3&)p, (fvec3&)s) + p.w;
+    if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
   }
@@ -938,7 +943,7 @@ void TankSceneNode::TankRenderNode::render()
   const bool switchLights = BZDBCache::lighting &&
 			    !isShadow && (drawLOD == HighTankLOD);
   if (switchLights) {
-    RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
+    RENDERER.disableLights(sceneNode->extents);
   }
 
   if (isRadar && !isExploding) {

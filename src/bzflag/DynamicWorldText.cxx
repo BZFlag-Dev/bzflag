@@ -100,7 +100,7 @@ void DynamicWorldText::addShadowNodes(SceneRenderer& renderer)
 {
   NodeMap::const_iterator it;
 
-  const float (*planes)[4] = NULL;
+  const fvec4* planes = NULL;
   const int planeCount = renderer.getShadowPlanes(&planes);
 
   if (planeCount <= 0) {

@@ -1398,29 +1398,27 @@ int LuaCallOuts::GetSun(lua_State* L)
 {
 	const string param = luaL_checkstring(L, 1);
 
-	const float* data = NULL;
-
 	if (param == "brightness") {
 		lua_pushnumber(L, RENDERER.getSunBrightness());
 		return 1;
 	}
 	else if (param == "dir") {
-		data = RENDERER.getSunDirection();
+		const fvec3* ptr = RENDERER.getSunDirection();
+		if (ptr) {
+			lua_pushfvec3(L, *ptr);
+			return 3;
+		} 
 	}
 	else if (param == "ambient") {
-		data = RENDERER.getAmbientColor();
+		lua_pushfvec3(L, (fvec3&)RENDERER.getAmbientColor());
+		return 3;
 	}
 	else if (param == "diffuse") {
-		data = RENDERER.getSunColor();
+		lua_pushfvec3(L, (fvec3&)RENDERER.getSunColor());
+		return 3;
 	}
 	else if (param == "specular") {
-		data = RENDERER.getSunColor();
-	}
-
-	if (data != NULL) {
-		lua_pushnumber(L, data[0]);
-		lua_pushnumber(L, data[1]);
-		lua_pushnumber(L, data[2]);
+		lua_pushfvec3(L, (fvec3&)RENDERER.getSunColor());
 		return 3;
 	}
 

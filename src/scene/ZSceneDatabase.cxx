@@ -256,7 +256,7 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer,
   }
 
   // setup the shadow clipping planes
-  const float (*planes)[4] = NULL;
+  const fvec4* planes = NULL;
   const int planeCount = renderer.getShadowPlanes(&planes);
 
   if (staticNodes) {

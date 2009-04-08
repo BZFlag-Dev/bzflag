@@ -43,7 +43,7 @@ class TextSceneNode : public SceneNode {
     void notifyStyleChange();
 
     bool cull(const ViewFrustum&) const;
-    bool cullShadow(int pCount, const float (*planes)[4]) const;
+    bool cullShadow(int pCount, const fvec4* planes) const;
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
