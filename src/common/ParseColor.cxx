@@ -30,19 +30,7 @@
 //============================================================================//
 //============================================================================//
 
-struct ColorMapData {
-  ColorMapData()
-  {
-    data = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
-  }
-  ColorMapData(float r, float g, float b, float a = 1.0f)
-  {
-    data = fvec4(r, g, b, a);
-  }
-  fvec4 data;
-};
-
-typedef std::map<std::string, ColorMapData> ColorMap;
+typedef std::map<std::string, fvec4> ColorMap;
 
 static const ColorMap& getColorMap();
 
@@ -153,7 +141,8 @@ static bool parseNamedFormat(const char* str, fvec4& color)
   if (it == colorMap.end()) {
     return false;
   }
-  memcpy(color, it->second.data, sizeof(float[3]));
+
+  color = it->second;
 
   str = TextUtils::skipWhitespace(end);
   if (*str == 0) {
@@ -1003,7 +992,7 @@ static const ColorMap& getColorMap()
   for (size_t i = 0; i < countof(colorArray); i++) {
     const ColorArrayData& data = colorArray[i];
     const std::string lower = TextUtils::tolower(data.name);
-    colorMap[lower] = ColorMapData(data.r, data.g, data.b);
+    colorMap[lower] = fvec4(data.r, data.g, data.b, 1.0f);
   }
 
   return colorMap;
