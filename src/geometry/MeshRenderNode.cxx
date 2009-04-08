@@ -15,6 +15,9 @@
 // implementation header
 #include "MeshRenderNode.h"
 
+// system headers
+#include <string.h>
+
 // common implementation headers
 #include "RenderNode.h"
 #include "MeshDrawMgr.h"
