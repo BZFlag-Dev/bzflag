@@ -63,7 +63,7 @@
 #include "AutoPilot.h"
 #include "bzflag.h"
 #include "commands.h"
-#include "daylight.h"
+#include "Daylight.h"
 #include "FlashClock.h"
 #include "ForceFeedback.h"
 #include "HUDRenderer.h"

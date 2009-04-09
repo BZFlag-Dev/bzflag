@@ -99,6 +99,8 @@ genericfiles =				\
 	../bzflag/ControlPanel.h		\
 	../bzflag/CrackedGlass.cxx		\
 	../bzflag/CrackedGlass.h		\
+	../bzflag/Daylight.cxx			\
+	../bzflag/Daylight.h			\
 	../bzflag/Downloads.cxx			\
 	../bzflag/Downloads.h			\
 	../bzflag/DynamicWorldText.cxx		\
@@ -226,8 +228,6 @@ genericfiles =				\
 	../bzflag/clientConfig.cxx		\
 	../bzflag/clientConfig.h		\
 	../bzflag/commands.h			\
-	../bzflag/daylight.cxx			\
-	../bzflag/daylight.h			\
 	../bzflag/defaultBZDB.cxx		\
 	../bzflag/defaultBZDB.h			\
 	../bzflag/playing.h			\
