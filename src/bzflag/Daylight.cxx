@@ -64,11 +64,10 @@ static void getTruePosition(double julianDay,
   float tz = float(sz * cosf(localSidereal) + sx * sinf(localSidereal));
 
   // rotate by latitude to local position
-  pos[0] = tx;
-  pos[1] = ty * cosf((float)(latitude * M_PI / 180.0)) -
-           tz * sinf((float)(latitude * M_PI / 180.0));
-  pos[2] = tz * cosf((float)(latitude * M_PI / 180.0)) +
-           ty * sinf((float)(latitude * M_PI / 180.0));
+  const float latRads = (float)(latitude * M_PI / 180.0);
+  pos.x = tx;
+  pos.y = (ty * cosf(latRads)) - (tz * sinf(latRads));
+  pos.z = (tz * cosf(latRads)) + (ty * sinf(latRads));
 }
 
 
@@ -204,11 +203,12 @@ void Daylight::getMoonPosition(double julianDay, float latitude,
 
   // position of moon if earth didn't rotate:
   double sx, sy, sz;
-  sx = cos(geocentricLatitude) * sin(geocentricLongitude) * cos(obliquity)
-       - sin(geocentricLatitude) * sin(obliquity);
-  sy = sin(geocentricLatitude) * cos(obliquity) +
-       + cos(geocentricLatitude) * sin(geocentricLongitude) * sin(obliquity);
-  sz = cos(geocentricLatitude) * cos(geocentricLongitude);
+  const double gcLat = geocentricLatitude;
+  const double gcLng = geocentricLongitude;
+  const double obliq = obliquity;
+  sx = (cos(gcLat) * sin(gcLng) * cos(obliq)) - (sin(gcLat) * sin(obliq));
+  sy = (cos(gcLat) * sin(gcLng) * sin(obliq)) + (sin(gcLat) * cos(obliq));
+  sz = (cos(gcLat) * cos(gcLng));
 
   // get true position
   getTruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
