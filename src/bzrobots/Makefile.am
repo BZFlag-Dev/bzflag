@@ -103,6 +103,8 @@ genericfiles =				\
 	../bzflag/Downloads.h			\
 	../bzflag/DynamicWorldText.cxx		\
 	../bzflag/DynamicWorldText.h		\
+	../bzflag/EffectsRenderer.cxx		\
+	../bzflag/EffectsRenderer.h		\
 	../bzflag/EntryZone.cxx			\
 	../bzflag/EntryZone.h			\
 	../bzflag/EventClient.cxx		\
@@ -157,6 +159,8 @@ genericfiles =				\
 	../bzflag/PlatformSound.h		\
 	../bzflag/Player.cxx			\
 	../bzflag/Player.h			\
+	../bzflag/PlayerAvatarManager.cxx	\
+	../bzflag/PlayerAvatarManager.h		\
 	../bzflag/RadarRenderer.cxx		\
 	../bzflag/RadarRenderer.h		\
 	../bzflag/Region.cxx			\
@@ -226,10 +230,6 @@ genericfiles =				\
 	../bzflag/daylight.h			\
 	../bzflag/defaultBZDB.cxx		\
 	../bzflag/defaultBZDB.h			\
-	../bzflag/effectsRenderer.cxx		\
-	../bzflag/effectsRenderer.h		\
-	../bzflag/playerAvatarManager.cxx	\
-	../bzflag/playerAvatarManager.h		\
 	../bzflag/playing.h			\
 	../bzflag/sound.cxx			\
 	../bzflag/sound.h			\
