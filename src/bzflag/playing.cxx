@@ -4962,7 +4962,7 @@ static void updateDaylight(double offset)
   static const double SecondsInDay = 86400.0;
 
   // update sun, moon & sky
-  RENDERER.setTimeOfDay(unixEpoch + offset / SecondsInDay);
+  RENDERER.setTimeOfDay(Daylight::unixEpoch + offset / SecondsInDay);
 }
 
 

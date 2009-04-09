@@ -121,7 +121,7 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   maxLights -= reservedLights;		// can't use the reserved lights
 
   // prepare sun
-  setTimeOfDay(unixEpoch);
+  setTimeOfDay(Daylight::unixEpoch);
 
   // force nodes to update their styles
   notifyStyleChange();
@@ -473,7 +473,7 @@ void SceneRenderer::setTimeOfDay(double julianDay)
 {
 
   // get position of sun and moon at 0,0 lat/long
-  float sunDir[3], moonDir[3];
+  fvec3 sunDir, moonDir;
   float latitude, longitude;
   if (!BZDB.isTrue(StateDatabase::BZDB_SYNCLOCATION)) {
     // use local (client) settings
@@ -485,9 +485,10 @@ void SceneRenderer::setTimeOfDay(double julianDay)
     longitude = BZDB.eval(StateDatabase::BZDB_LONGITUDE);
   }
 
-  getSunPosition(julianDay, latitude, longitude, sunDir);
-  getMoonPosition(julianDay, latitude, longitude, moonDir);
-  ::getCelestialTransform(julianDay, latitude, longitude, celestialTransform);
+  Daylight::getSunPosition(julianDay, latitude, longitude, sunDir);
+  Daylight::getMoonPosition(julianDay, latitude, longitude, moonDir);
+  Daylight::getCelestialTransform(julianDay, latitude, longitude,
+                                  celestialTransform);
 
   // set sun position
   if (sunDir[2] >= -0.009f) {
@@ -507,7 +508,7 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   }
 
   // set sun and ambient colors
-  ::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
+  Daylight::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
   theSun.setColor(sunColor);
   GLfloat maxComponent = sunColor[0];
   if (sunColor[1] > maxComponent) maxComponent = sunColor[1];

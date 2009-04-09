@@ -18,18 +18,23 @@
 #include "ParseColor.h"
 #include "vectors.h"
 
-static const double	radPerDeg = M_PI / 180.0;
-static const double	radPerHour = M_PI / 12.0;
-static const double	siderealHoursPerHour = 1.002737908;
-static const double	epoch = 2415020.0;
 
-static double		getGreenwichSideral(double julianDay)
+static const double radPerDeg  = M_PI / 180.0;
+static const double radPerHour = M_PI / 12.0;
+static const double siderealHoursPerHour = 1.002737908;
+static const double epoch = 2415020.0;
+
+
+static double getGreenwichSideral(double julianDay)
 {
   // true position requires sidereal time of midnight at prime meridian.
   // get midnight of given julian day (midnight has decimal of .5)
   double jdMidnight = floor(julianDay);
-  if (julianDay - jdMidnight >= 0.5) jdMidnight += 0.5;
-  else jdMidnight -= 0.5;
+  if ((julianDay - jdMidnight) >= 0.5) {
+    jdMidnight += 0.5;
+  } else {
+    jdMidnight -= 0.5;
+  }
 
   // get fraction of a day
   double dayFraction = (julianDay - jdMidnight) * 24.0;
@@ -37,20 +42,21 @@ static double		getGreenwichSideral(double julianDay)
   // get Greenwich midnight sidereal time (in hours)
   double T = (jdMidnight - epoch) / 36525.0;
   const double greenwichMidnight =
-		fmod((0.00002581 * T + 2400.051262) * T + 6.6460656, 24.0);
+    fmod((0.00002581 * T + 2400.051262) * T + 6.6460656, 24.0);
 
   // return Greenwich sidereal time
   return radPerHour * (greenwichMidnight + dayFraction * siderealHoursPerHour);
 }
 
-static void		gettruePosition(double julianDay,
-					float latitude, float longitude,
-					double sx, double sy, double sz,
-					float pos[3])
+
+static void getTruePosition(double julianDay,
+                            float latitude, float longitude,
+                            double sx, double sy, double sz,
+                            fvec3& pos)
 {
   // get local sidereal time
-  const float localSidereal = (float)(getGreenwichSideral(julianDay) -
-						longitude * M_PI / 180.0);
+  const float localSidereal =
+    (float)(getGreenwichSideral(julianDay) - longitude * M_PI / 180.0);
 
   // rotate around polar axis (y-axis) by local sidereal time
   float tx = float(sx * cosf(localSidereal) - sz * sinf(localSidereal));
@@ -59,13 +65,16 @@ static void		gettruePosition(double julianDay,
 
   // rotate by latitude to local position
   pos[0] = tx;
-  pos[1] = ty * cosf((float)(latitude*M_PI/180.0)) - tz * sinf((float)(latitude*M_PI/180.0));
-  pos[2] = tz * cosf((float)(latitude*M_PI/180.0)) + ty * sinf((float)(latitude*M_PI/180.0));
+  pos[1] = ty * cosf((float)(latitude * M_PI / 180.0)) -
+           tz * sinf((float)(latitude * M_PI / 180.0));
+  pos[2] = tz * cosf((float)(latitude * M_PI / 180.0)) +
+           ty * sinf((float)(latitude * M_PI / 180.0));
 }
 
-void			getCelestialTransform(double julianDay,
-					float latitude, float longitude,
-					GLfloat (&xform)[4][4])
+
+void Daylight::getCelestialTransform(double julianDay,
+                                     float latitude, float longitude,
+                                     float (&xform)[4][4])
 {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
@@ -100,25 +109,26 @@ void			getCelestialTransform(double julianDay,
   xform[2][2] = sla;
 }
 
-void			getSunPosition(double julianDay, float latitude,
-					float longitude, float pos[3])
+
+void Daylight::getSunPosition(double julianDay, float latitude,
+                              float longitude, fvec3& pos)
 {
   double T = (julianDay - epoch) / 36525.0;
   double geometricMeanLongitude = radPerDeg *
-		((0.0003025 * T + 36000.76892) * T + 279.69668);
+    ((0.0003025 * T + 36000.76892) * T + 279.69668);
   geometricMeanLongitude = fmod(geometricMeanLongitude, 2.0 * M_PI);
 
-  double meanAnomaly = radPerDeg * (358.47583 +
-		((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
+  double meanAnomaly = radPerDeg *
+    (358.47583 + ((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
   meanAnomaly = fmod(meanAnomaly, 2.0 * M_PI);
 
 //  double eccentricity = 0.01675104 +
 //		T * (-0.000000126 * T - 0.0000418);
 
   double C = radPerDeg *
-		(sin(meanAnomaly) * (1.919460 - (0.004789 + 0.000014 * T) * T) +
-		sin(2.0 * meanAnomaly) * (0.020094 - 0.0001 * T) +
-		sin(3.0 * meanAnomaly) * 0.000293);
+    (sin(meanAnomaly) * (1.919460 - (0.004789 + 0.000014 * T) * T) +
+     sin(2.0 * meanAnomaly) * (0.020094 - 0.0001 * T) +
+     sin(3.0 * meanAnomaly) * 0.000293);
   C = fmod(C, 2.0 * M_PI);
 
   double trueLongitude = geometricMeanLongitude + C;
@@ -126,8 +136,7 @@ void			getSunPosition(double julianDay, float latitude,
 
   // get obliquity (earth's tilt)
   double obliquity = radPerDeg *
-		(23.452294 + (-0.0130125 + (-0.00000164 +
-						0.000000503 * T) * T) * T);
+    (23.452294 + (-0.0130125 + (-0.00000164 + 0.000000503 * T) * T) * T);
   obliquity = fmod(obliquity, 2.0 * M_PI);
 
   // position of sun if earth didn't rotate:
@@ -137,34 +146,35 @@ void			getSunPosition(double julianDay, float latitude,
   sz = cos(trueLongitude);
 
   // get true position
-  gettruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
+  getTruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
 }
 
-void			getMoonPosition(double julianDay, float latitude,
-					float longitude, float pos[3])
+
+void Daylight::getMoonPosition(double julianDay, float latitude,
+                               float longitude, fvec3& pos)
 {
   double T = (julianDay - epoch) / 36525.0;
   double e = 1.0 + (-0.002495 - 0.00000752 * T) * T;
   double meanLongitude = radPerDeg *
-		(270.434164 + (481267.8831 + (-0.001133 + 0.0000019 * T)*T)*T);
+    (270.434164 + (481267.8831 + (-0.001133 + 0.0000019 * T) * T) * T);
   meanLongitude = fmod(meanLongitude, 2.0 * M_PI);
 
   double meanAnomaly = radPerDeg *
-		(296.104608 + (477198.8491 + (0.009192 + 0.0000144 * T)*T)*T);
+    (296.104608 + (477198.8491 + (0.009192 + 0.0000144 * T) * T) * T);
   meanAnomaly = fmod(meanAnomaly, 2.0 * M_PI);
 
   double meanElongation = radPerDeg *
-		(350.737486 + (445267.1142 + (-0.001436 + 0.0000019 * T)*T)*T);
+    (350.737486 + (445267.1142 + (-0.001436 + 0.0000019 * T) * T) * T);
   meanElongation = fmod(meanElongation, 2.0 * M_PI);
   double meanElongation2 = 2.0 * meanElongation;
 
   double distFromAscendingNode = radPerDeg *
-		(11.250889 + (483202.0251 + (-0.003211 - 0.0000003 * T)*T)*T);
+    (11.250889 + (483202.0251 + (-0.003211 - 0.0000003 * T) * T) * T);
   distFromAscendingNode = fmod(distFromAscendingNode, 2.0 * M_PI);
 
   // get sun's meanAnomaly
-  double solMeanAnomaly = radPerDeg * (358.47583 +
-		((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
+  double solMeanAnomaly = radPerDeg *
+    (358.47583 + ((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
   solMeanAnomaly = fmod(solMeanAnomaly, 2.0 * M_PI);
 
   // get moon's geocentric latitude and longitude
@@ -189,198 +199,162 @@ void			getMoonPosition(double julianDay, float latitude,
 
   // get obliquity (earth's tilt)
   double obliquity = radPerDeg *
-		(23.452294 + (-0.0130125 + (-0.00000164 +
-						0.000000503 * T) * T) * T);
+    (23.452294 + (-0.0130125 + (-0.00000164 + 0.000000503 * T) * T) * T);
   obliquity = fmod(obliquity, 2.0 * M_PI);
 
   // position of moon if earth didn't rotate:
   double sx, sy, sz;
-  sx = cos(geocentricLatitude) * sin(geocentricLongitude) * cos(obliquity) -
-	sin(geocentricLatitude) * sin(obliquity);
+  sx = cos(geocentricLatitude) * sin(geocentricLongitude) * cos(obliquity)
+       - sin(geocentricLatitude) * sin(obliquity);
   sy = sin(geocentricLatitude) * cos(obliquity) +
-	cos(geocentricLatitude) * sin(geocentricLongitude) * sin(obliquity);
+       + cos(geocentricLatitude) * sin(geocentricLongitude) * sin(obliquity);
   sz = cos(geocentricLatitude) * cos(geocentricLongitude);
 
   // get true position
-  gettruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
+  getTruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
 }
 
-static void		lerpColor(GLfloat out[3], const GLfloat t0[3],
-					const GLfloat t1[3], float t)
+
+static const float nightElevation    = -0.25f;  // ~sin(-15)
+static const float duskElevation     = -0.17f;  // ~sin(-10)
+static const float twilightElevation = -0.087f; // ~sin(-5)
+static const float dawnElevation     =  0.0f;   //  sin(0)
+static const float dayElevation      =  0.087f; // ~sin(5)
+
+
+void Daylight::getSunColor(const fvec3& sunDir,
+                           fvec4& color, fvec4& ambient, float& brightness)
 {
-  out[0] = (1.0f - t) * t0[0] + t * t1[0];
-  out[1] = (1.0f - t) * t0[1] + t * t1[1];
-  out[2] = (1.0f - t) * t0[2] + t * t1[2];
-}
+  static const fvec4 highSunColor (1.75f, 1.75f, 1.4f, 1.0f);
+  static const fvec4 lowSunColor  (0.75f, 0.27f, 0.0f, 1.0f);
+  static const fvec4 moonColor    (0.4f,  0.4f,  0.4f, 1.0f);
+  static const fvec4 nightAmbient (0.3f,  0.3f,  0.3f, 1.0f);
+  static const fvec4 dayAmbient   (0.35f, 0.5f,  0.5f, 1.0f);
 
-static const float	nightElevation = -0.25f;	// ~sin(-15)
-static const float	duskElevation = -0.17f;		// ~sin(-10)
-static const float	twilightElevation = -0.087f;	// ~sin(-5)
-static const float	dawnElevation = 0.0f;		// sin(0)
-static const float	dayElevation = 0.087f;		// ~sin(5)
-
-void			getSunColor(const float sunDir[3], GLfloat color[3],
-					GLfloat ambient[3], GLfloat& brightness)
-{
-  static const GLfloat	highSunColor[3] = { 1.75f, 1.75f, 1.4f };
-  static const GLfloat	lowSunColor[3] = { 0.75f, 0.27f, 0.0f };
-  static const GLfloat	moonColor[3] = { 0.4f, 0.4f, 0.4f };
-  static const GLfloat	nightAmbient[3] = { 0.3f, 0.3f, 0.3f };
-  static const GLfloat	dayAmbient[3] = { 0.35f, 0.5f, 0.5f };
-
-  if (sunDir[2] <= -0.009f) {		// it's the moon
-    color[0] = moonColor[0];
-    color[1] = moonColor[1];
-    color[2] = moonColor[2];
+  // color and brightness
+  if (sunDir.z <= -0.009f) {
+    color = moonColor;;
     brightness = 0.0f;
   }
-  else if (sunDir[2] < dayElevation) {
-    const GLfloat t = (sunDir[2] - dawnElevation) /
-			(dayElevation - dawnElevation);
-    lerpColor(color, lowSunColor, highSunColor, t);
+  else if (sunDir.z < dayElevation) {
+    const float t = (sunDir.z - dawnElevation) /
+                    (dayElevation - dawnElevation);
+    const float tn = (1.0f - t);
+    color = (tn * lowSunColor) + (t * highSunColor);
     brightness = t;
   }
   else {
-    color[0] = highSunColor[0];
-    color[1] = highSunColor[1];
-    color[2] = highSunColor[2];
+    color = highSunColor;
     brightness = 1.0f;
   }
 
-  // now ambient
-  if (sunDir[2] < duskElevation) {
-    ambient[0] = nightAmbient[0];
-    ambient[1] = nightAmbient[1];
-    ambient[2] = nightAmbient[2];
+  // ambient
+  if (sunDir.z < duskElevation) {
+    ambient = nightAmbient;
   }
-  else if (sunDir[2] < dayElevation) {
-    const GLfloat t = (sunDir[2] - duskElevation) /
-			(dayElevation - duskElevation);
-    lerpColor(ambient, nightAmbient, dayAmbient, t);
+  else if (sunDir.z < dayElevation) {
+    const float t = (sunDir.z - duskElevation) /
+                    (dayElevation - duskElevation);
+    const float tn = (1.0f - t);
+    ambient = (tn * nightAmbient) + (t * dayAmbient);
   }
   else {
-    ambient[0] = dayAmbient[0];
-    ambient[1] = dayAmbient[1];
-    ambient[2] = dayAmbient[2];
+    ambient = dayAmbient;
   }
 }
 
-bool			getSunsetTop(const float sunDir[3], float& topAltitude)
+
+bool Daylight::getSunsetTop(const fvec3& sunDir, float& topAltitude)
 {
-  if (sunDir[2] > nightElevation && sunDir[2] < dayElevation) {
-    topAltitude = (sunDir[2]-nightElevation) / (dayElevation-nightElevation);
+  if ((sunDir.z > nightElevation) &&
+      (sunDir.z < dayElevation)) {
+    topAltitude = (sunDir.z - nightElevation) /
+                  (dayElevation - nightElevation);
     return true;
   }
   return false;
 }
 
-void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
+
+void Daylight::getSkyColor(const fvec3& sunDir, fvec4 sky[4])
 {
-  static const GLfloat	nightColor[3] = { 0.04f, 0.04f, 0.08f };
-  static const GLfloat	zenithColor[3] = { 0.25f, 0.55f, 0.86f };
-  static const GLfloat	horizonColor[3] = { 0.43f, 0.75f, 0.95f };
-  static const GLfloat	sunrise1Color[3] = { 0.30f, 0.12f, 0.08f };
-  static const GLfloat	sunrise2Color[3] = { 0.47f, 0.12f, 0.08f };
+  static const fvec4 nightColor    (0.04f, 0.04f, 0.08f, 1.0f);
+  static const fvec4 zenithColor   (0.25f, 0.55f, 0.86f, 1.0f);
+  static const fvec4 horizonColor  (0.43f, 0.75f, 0.95f, 1.0f);
+  static const fvec4 sunrise1Color (0.30f, 0.12f, 0.08f, 1.0f);
+  static const fvec4 sunrise2Color (0.47f, 0.12f, 0.08f, 1.0f);
 
   // sky colors
-  if (sunDir[2] < nightElevation) {
+  if (sunDir.z < nightElevation) {
     // nighttime
-    sky[0][0] = nightColor[0];
-    sky[0][1] = nightColor[1];
-    sky[0][2] = nightColor[2];
-    sky[1][0] = nightColor[0];
-    sky[1][1] = nightColor[1];
-    sky[1][2] = nightColor[2];
-    sky[2][0] = nightColor[0];
-    sky[2][1] = nightColor[1];
-    sky[2][2] = nightColor[2];
-    sky[3][0] = nightColor[0];
-    sky[3][1] = nightColor[1];
-    sky[3][2] = nightColor[2];
+    sky[0] = nightColor;
+    sky[1] = nightColor;
+    sky[2] = nightColor;
+    sky[3] = nightColor;
   }
   else if (sunDir[2] < twilightElevation) {
     // twilight
     const float t = (sunDir[2] - nightElevation) /
-			(twilightElevation - nightElevation);
-    sky[0][0] = nightColor[0];
-    sky[0][1] = nightColor[1];
-    sky[0][2] = nightColor[2];
-    lerpColor(sky[1], nightColor, sunrise1Color, t);
-    sky[2][0] = nightColor[0];
-    sky[2][1] = nightColor[1];
-    sky[2][2] = nightColor[2];
-    sky[3][0] = nightColor[0];
-    sky[3][1] = nightColor[1];
-    sky[3][2] = nightColor[2];
+                    (twilightElevation - nightElevation);
+    const float tn = (1.0f - t);
+    sky[0] = nightColor;
+    sky[1] = (tn * nightColor) + (t * sunrise1Color);
+    sky[2] = nightColor;
+    sky[3] = nightColor;
   }
   else if (sunDir[2] < dawnElevation) {
     // sunrise or sunset
     const float t = (sunDir[2] - twilightElevation) /
-			(dawnElevation - twilightElevation);
-    sky[0][0] = nightColor[0];
-    sky[0][1] = nightColor[1];
-    sky[0][2] = nightColor[2];
-    lerpColor(sky[1], sunrise1Color, sunrise2Color, t);
-    sky[2][0] = nightColor[0];
-    sky[2][1] = nightColor[1];
-    sky[2][2] = nightColor[2];
-    sky[3][0] = nightColor[0];
-    sky[3][1] = nightColor[1];
-    sky[3][2] = nightColor[2];
+                    (dawnElevation - twilightElevation);
+    const float tn = (1.0f - t);
+    sky[0] = nightColor;
+    sky[1] = (tn * sunrise1Color) + (t * sunrise2Color);
+    sky[2] = nightColor;
+    sky[3] = nightColor;
   }
   else if (sunDir[2] < dayElevation) {
     // early morning/late evening
     const float t = (sunDir[2] - dawnElevation) /
-			(dayElevation - dawnElevation);
-    lerpColor(sky[0], nightColor, zenithColor, t);
-    lerpColor(sky[1], sunrise2Color, horizonColor, t);
-    lerpColor(sky[2], nightColor, horizonColor, t);
-    lerpColor(sky[3], nightColor, horizonColor, t);
+                    (dayElevation - dawnElevation);
+    const float tn = (1.0f - t);
+    sky[0] = (tn * nightColor)    + (t * zenithColor);
+    sky[1] = (tn * sunrise2Color) + (t * horizonColor);
+    sky[2] = (tn * nightColor)    + (t * horizonColor);
+    sky[3] = (tn * nightColor)    + (t * horizonColor);
   }
   else {
     // day time
-    sky[0][0] = zenithColor[0];
-    sky[0][1] = zenithColor[1];
-    sky[0][2] = zenithColor[2];
-    sky[1][0] = horizonColor[0];
-    sky[1][1] = horizonColor[1];
-    sky[1][2] = horizonColor[2];
-    sky[2][0] = horizonColor[0];
-    sky[2][1] = horizonColor[1];
-    sky[2][2] = horizonColor[2];
-    sky[3][0] = horizonColor[0];
-    sky[3][1] = horizonColor[1];
-    sky[3][2] = horizonColor[2];
+    sky[0] = zenithColor;
+    sky[1] = horizonColor;
+    sky[2] = horizonColor;
+    sky[3] = horizonColor;
   }
 
   // user adjustment for the sky color
   if (BZDB.get("_skyColor") != "white") {
     fvec4 skyColor;
     parseColorString(BZDB.get("_skyColor"), skyColor);
-    sky[0][0]  *= skyColor[0];
-    sky[0][1]  *= skyColor[1];
-    sky[0][2]  *= skyColor[2];
-    sky[1][0]  *= skyColor[0];
-    sky[1][1]  *= skyColor[1];
-    sky[1][2]  *= skyColor[2];
-    sky[2][0]  *= skyColor[0];
-    sky[2][1]  *= skyColor[1];
-    sky[2][2]  *= skyColor[2];
-    sky[3][0]  *= skyColor[0];
-    sky[3][1]  *= skyColor[1];
-    sky[3][2]  *= skyColor[2];
+    sky[0] *= skyColor;
+    sky[1] *= skyColor;
+    sky[2] *= skyColor;
+    sky[3] *= skyColor;
   }
+
+  sky[0].w = sky[1].w = sky[2].w = sky[3].w = 1.0f;
 }
 
-bool			areShadowsCast(const float sunDir[3])
+
+bool Daylight::areShadowsCast(const fvec3& sunDir)
 {
-  return sunDir[2] > 0.5 * dayElevation;
+  return sunDir.z > (0.5 * dayElevation);
 }
 
-bool			areStarsVisible(const float sunDir[3])
+
+bool Daylight::areStarsVisible(const fvec3& sunDir)
 {
-  return sunDir[2] < dawnElevation;
+  return sunDir.z < dawnElevation;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

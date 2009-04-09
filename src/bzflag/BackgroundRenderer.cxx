@@ -460,22 +460,12 @@ void BackgroundRenderer::buildMountain(unsigned int index)
 void BackgroundRenderer::setSkyColors()
 {
   // change sky colors according to the sun position
-  GLfloat colors[4][3];
-  getSkyColor(sunDirection, colors);
-
-  skyZenithColor[0] = colors[0][0];
-  skyZenithColor[1] = colors[0][1];
-  skyZenithColor[2] = colors[0][2];
-  skySunDirColor[0] = colors[1][0];
-  skySunDirColor[1] = colors[1][1];
-  skySunDirColor[2] = colors[1][2];
-  skyAntiSunDirColor[0] = colors[2][0];
-  skyAntiSunDirColor[1] = colors[2][1];
-  skyAntiSunDirColor[2] = colors[2][2];
-  skyCrossSunDirColor[0] = colors[3][0];
-  skyCrossSunDirColor[1] = colors[3][1];
-  skyCrossSunDirColor[2] = colors[3][2];
-
+  fvec4 colors[4];
+  Daylight::getSkyColor(sunDirection, colors);
+  skyZenithColor      = colors[0];
+  skySunDirColor      = colors[1];
+  skyAntiSunDirColor  = colors[2];
+  skyCrossSunDirColor = colors[3];
   return;
 }
 
@@ -741,9 +731,9 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   lastRenderer = (SceneRenderer*)&renderer;
 
   // get a few other things concerning the sky
-  doShadows = areShadowsCast(sunDirection);
-  doStars = areStarsVisible(sunDirection);
-  doSunset = getSunsetTop(sunDirection, sunsetTop);
+  doShadows = Daylight::areShadowsCast(sunDirection);
+  doStars   = Daylight::areStarsVisible(sunDirection);
+  doSunset  = Daylight::getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
   DisplayListSystem &ds = DisplayListSystem::Instance();
@@ -1746,7 +1736,7 @@ void BackgroundRenderer::drawMountains(void)
 
 const fvec3* BackgroundRenderer::getSunDirection() const
 {
-  if (areShadowsCast(sunDirection)) {
+  if (Daylight::areShadowsCast(sunDirection)) {
     return &sunDirection;
   } else {
     return NULL;
