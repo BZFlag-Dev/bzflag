@@ -36,7 +36,7 @@ void ObstacleModifier::init()
   team = 0;
   // tint
   modifyColor = false;
-  tint[0] = tint[1] = tint[2] = tint[3] = 1.0f;
+  tint = fvec4(0.0f, 0.0f, 0.0f, 0.0f);
   // phydrv
   modifyPhysicsDriver = false;
   phydrv = -1;
@@ -76,16 +76,13 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
   if (grpinst.modifyColor || obsMod.modifyColor) {
     modifyColor = true;
     if (grpinst.modifyColor && obsMod.modifyColor) {
-      tint[0] = grpinst.tint[0] * obsMod.tint[0];
-      tint[1] = grpinst.tint[1] * obsMod.tint[1];
-      tint[2] = grpinst.tint[2] * obsMod.tint[2];
-      tint[3] = grpinst.tint[3] * obsMod.tint[3];
+      tint = grpinst.tint * obsMod.tint;
     }
     else if (obsMod.modifyColor) {
-      memcpy (tint, obsMod.tint, sizeof(float[4]));
+      tint = obsMod.tint;
     }
     else {
-      memcpy (tint, grpinst.tint, sizeof(float[4]));
+      tint = grpinst.tint;
     }
   }
 
@@ -152,18 +149,10 @@ static const BzMaterial* getTintedMaterial(const float tint[4],
 					   const BzMaterial* mat)
 {
   BzMaterial tintmat(*mat);
-  float newColor[4];
-  const float* oldColor;
-
   // diffuse
-  oldColor = mat->getDiffuse();
-  newColor[0] = oldColor[0] * tint[0];
-  newColor[1] = oldColor[1] * tint[1];
-  newColor[2] = oldColor[2] * tint[2];
-  newColor[3] = oldColor[3] * tint[3];
-  tintmat.setDiffuse(newColor);
+  const fvec4& oldColor = mat->getDiffuse();
+  tintmat.setDiffuse(oldColor * tint);
   // ambient, specular, and emission are intentionally unmodifed
-
   const BzMaterial* newmat = MATERIALMGR.addMaterial(&tintmat);
   return newmat;
 }

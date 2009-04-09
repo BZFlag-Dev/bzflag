@@ -185,7 +185,7 @@ const ObsList* CollisionManager::axisBoxTest(const Extents& exts)
 }
 
 
-const ObsList* CollisionManager::cylinderTest(const float *pos,
+const ObsList* CollisionManager::cylinderTest(const fvec3& pos,
                                               float radius, float height) const
 {
   if (root == NULL) {
@@ -216,7 +216,7 @@ const ObsList* CollisionManager::cylinderTest(const float *pos,
 }
 
 
-const ObsList* CollisionManager::boxTest(const float* pos, float /*angle*/,
+const ObsList* CollisionManager::boxTest(const fvec3& pos, float /*angle*/,
                                          float dx, float dy, float dz) const
 {
   float radius = sqrtf(dx*dx + dy*dy);
@@ -225,8 +225,8 @@ const ObsList* CollisionManager::boxTest(const float* pos, float /*angle*/,
 
 
 const ObsList* CollisionManager::movingBoxTest(
-				  const float* oldPos, float /*oldAngle*/,
-				  const float* pos, float /*angle*/,
+				  const fvec3& oldPos, float /*oldAngle*/,
+				  const fvec3& pos, float /*angle*/,
 				  float dx, float dy, float dz) const
 {
   float newpos[3];
@@ -720,7 +720,7 @@ void ColDetNode::axisBoxTest(const Extents& exts) const
 }
 
 
-void ColDetNode::boxTest(const float* pos, float angle,
+void ColDetNode::boxTest(const fvec3& pos, float angle,
                          float dx, float dy, float dz) const
 {
   int i;
@@ -829,7 +829,7 @@ void ColDetNode::tallyStats()
 void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
   int x, y, z, c;
-  float points[5][3];
+  fvec3 points[5];
   const float* exts[2] = { extents.mins, extents.maxs };
 
   // pick a color

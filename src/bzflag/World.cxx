@@ -1138,13 +1138,13 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 }
 
 
-static void drawLines (int count, float (*vertices)[3], int color)
+static void drawLines (int count, const fvec3* vertices, int color)
 {
-  const float colors[][4] = {
-    { 0.25f, 0.25f, 0.25f, 0.8f }, // gray    (branch node)
-    { 0.25f, 0.25f, 0.0f,  0.8f }, // yellow  (regular)
-    { 0.0f,  0.25f, 0.25f, 0.8f }, // cyan    (meshed)
-    { 0.25f, 0.0f,  0.25f, 0.8f }, // purple  (meshed + regular)
+  const fvec4 colors[] = {
+    fvec4(0.25f, 0.25f, 0.25f, 0.8f), // gray    (branch node)
+    fvec4(0.25f, 0.25f, 0.0f,  0.8f), // yellow  (regular)
+    fvec4(0.0f,  0.25f, 0.25f, 0.8f), // cyan    (meshed)
+    fvec4(0.25f, 0.0f,  0.25f, 0.8f)  // purple  (meshed + regular)
   };
   const int colorCount = sizeof(colors) / sizeof(colors[0]);
 
@@ -1153,11 +1153,11 @@ static void drawLines (int count, float (*vertices)[3], int color)
   } else if (color >= colorCount) {
     color = colorCount - 1;
   }
-  glColor4fv (colors[color]);
+  glColor4fv(colors[color]);
 
   glBegin (GL_LINE_STRIP); {
     for (int i = 0; i < count; i++) {
-      glVertex3fv (vertices[i]);
+      glVertex3fv(vertices[i]);
     }
   } glEnd ();
 

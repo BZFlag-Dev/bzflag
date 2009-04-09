@@ -18,6 +18,7 @@
 
 /* common interface headers */
 #include "BzMaterial.h"
+#include "vectors.h"
 
 
 class Obstacle;
@@ -40,7 +41,7 @@ class ObstacleModifier {
     bool modifyTeam; // only for bases
     int team;
     bool modifyColor; // modify by tinting
-    float tint[4];
+    fvec4 tint;
     bool modifyPhysicsDriver; // only replaces valid physics drivers
     int phydrv;
     bool modifyMaterial; // swaps the whole thing

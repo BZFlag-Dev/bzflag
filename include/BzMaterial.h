@@ -18,11 +18,14 @@
 #define	BZ_MATERIAL_H
 
 #include "common.h"
+
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
 #include <iostream>
+
+#include "vectors.h"
 
 
 class BzMaterial;
@@ -58,10 +61,10 @@ class BzMaterial {
 
     void setOrder(int);
     void setDynamicColor(int);
-    void setAmbient(const float[4]);
-    void setDiffuse(const float[4]);
-    void setSpecular(const float[4]);
-    void setEmission(const float[4]);
+    void setAmbient(const fvec4&);
+    void setDiffuse(const fvec4&);
+    void setSpecular(const fvec4&);
+    void setEmission(const fvec4&);
     void setShininess(const float);
 
     void setOccluder(bool);
@@ -97,10 +100,10 @@ class BzMaterial {
 
     int getOrder() const;
     int getDynamicColor() const;
-    const float* getAmbient() const;
-    const float* getDiffuse() const;
-    const float* getSpecular() const;
-    const float* getEmission() const;
+    const fvec4& getAmbient() const;
+    const fvec4& getDiffuse() const;
+    const fvec4& getSpecular() const;
+    const fvec4& getEmission() const;
     float getShininess() const;
 
     bool getOccluder() const;
@@ -150,10 +153,10 @@ class BzMaterial {
     int order;
 
     int dynamicColor;
-    float ambient[4];
-    float diffuse[4];
-    float specular[4];
-    float emission[4];
+    fvec4 ambient;
+    fvec4 diffuse;
+    fvec4 specular;
+    fvec4 emission;
     float shininess;
 
     bool occluder;

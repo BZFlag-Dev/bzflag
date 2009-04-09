@@ -20,6 +20,7 @@
 
 // common headers
 #include "Extents.h"
+#include "vectors.h"
 
 class Ray;
 class Obstacle;
@@ -53,9 +54,7 @@ typedef struct {
 } ColDetNodeList;
 
 
-// well you know my name is Simon, and I like to do drawings
-typedef void (*DrawLinesFunc)
-  (int pointCount, float (*points)[3], int color);
+typedef void (*DrawLinesFunc)(int pointCount, const fvec3* points, int color);
 
 
 class CollisionManager {
@@ -78,14 +77,14 @@ class CollisionManager {
     const ObsList* axisBoxTest(const Extents& extents);
 
     // test against a cylinder
-    const ObsList* cylinderTest(const float *pos,
+    const ObsList* cylinderTest(const fvec3& pos,
                                 float radius, float height) const;
     // test against a box
-    const ObsList* boxTest(const float* pos, float angle,
+    const ObsList* boxTest(const fvec3& pos, float angle,
                            float dx, float dy, float dz) const;
     // test against a moving box
-    const ObsList* movingBoxTest(const float* oldPos, float oldAngle,
-                                 const float* pos, float angle,
+    const ObsList* movingBoxTest(const fvec3& oldPos, float oldAngle,
+                                 const fvec3& pos, float angle,
                                  float dx, float dy, float dz) const;
     // test against a Ray
     const ObsList* rayTest(const Ray* ray, float timeLeft) const;
@@ -127,7 +126,7 @@ class ColDetNode {
 
     // these fill in the FullList return list
     void axisBoxTest(const Extents& extents) const;
-    void boxTest(const float* pos, float angle, float dx, float dy, float dz) const;
+    void boxTest(const fvec3& pos, float angle, float dx, float dy, float dz) const;
     void rayTest(const Ray* ray, float timeLeft) const;
     void rayTestNodes(const Ray* ray, float timeLeft) const;
 

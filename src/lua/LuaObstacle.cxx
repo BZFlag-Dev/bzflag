@@ -592,7 +592,7 @@ int LuaObstacle::GetFacePlane(lua_State* L)
 	if (face == NULL) {
 		return 0;
 	}
-	const float* vec = face->getPlane();
+	const fvec4& vec = face->getPlane();
 	lua_createtable(L, 4, 0);
 	lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
 	lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);

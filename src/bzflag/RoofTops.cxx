@@ -49,8 +49,8 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
   const float zSpeed = -1.0f;
 
   // setup the test ray
-  const float dir[3] = { 0.0f, 0.0f, zSpeed };
-  const float org[3] = { x, y, maxHeight };
+  const fvec3 dir(0.0f, 0.0f, zSpeed);
+  const fvec3 org(x, y, maxHeight);
   Ray ray(org, dir);
 
   // get the obstacle list
