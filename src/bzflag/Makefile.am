@@ -40,6 +40,8 @@ bzflag_SOURCES =			\
 	CrackedGlass.h			\
 	ClientIntangibilityManager.h	\
 	ClientIntangibilityManager.cxx	\
+	Daylight.cxx			\
+	Daylight.h			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
 	Downloads.cxx			\
@@ -233,8 +235,6 @@ bzflag_SOURCES =			\
 	clientConfig.cxx		\
 	clientConfig.h			\
 	commands.h			\
-	daylight.cxx			\
-	daylight.h			\
 	defaultBZDB.cxx			\
 	defaultBZDB.h			\
 	motd.cxx			\

@@ -11,7 +11,7 @@
  */
 
 // interface header
-#include "daylight.h"
+#include "Daylight.h"
 
 // common headers
 #include "StateDatabase.h"

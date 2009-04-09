@@ -72,7 +72,7 @@
 #include "AutoPilot.h"
 #include "bzflag.h"
 #include "commands.h"
-#include "daylight.h"
+#include "Daylight.h"
 #include "Downloads.h"
 #include "EffectsRenderer.h"
 #include "ExportInformation.h"
@@ -4962,7 +4962,7 @@ static void updateDaylight(double offset)
   static const double SecondsInDay = 86400.0;
 
   // update sun, moon & sky
-  RENDERER.setTimeOfDay(Daylight::unixEpoch + offset / SecondsInDay);
+  RENDERER.setTimeOfDay(Daylight::unixEpoch + (offset / SecondsInDay));
 }
 
 

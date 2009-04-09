@@ -28,7 +28,7 @@
 #include "GfxBlock.h"
 
 // local headers
-#include "daylight.h"
+#include "Daylight.h"
 #include "stars.h"
 #include "MainWindow.h"
 #include "SceneNode.h"
