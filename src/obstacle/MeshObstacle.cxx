@@ -544,22 +544,17 @@ void MeshObstacle::get3DNormal(const fvec3& /*p*/, fvec3& /*n*/) const
 
 void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
 {
-  const fvec3 center( pos[0], pos[1], pos[2] + (0.5f * size[2]));
-  fvec3 out;
-  vec3sub (out, p, center);
-  if (out[2] < 0.0f) {
-    out[2] = 0.0f;
+  const fvec3 center(pos.x, pos.y, pos.z + (0.5f * size[2]));
+  fvec3 out = p - center;
+  if (out.z < 0.0f) {
+    out.z = 0.0f;
   }
-  float len = vec3dot(out, out);
-  if (len > 0.0f) {
-    len = 1 / sqrtf(len);
-    n[0] = out[0] * len;
-    n[1] = out[1] * len;
-    n[2] = out[2] * len;
+
+  float lenSqr = out.lenSqr();
+  if (lenSqr > 0.0f) {
+    n = out * (1.0f / sqrtf(lenSqr));
   } else {
-    n[0] = 0.0f;
-    n[1] = 0.0f;
-    n[2] = 1.0f;
+    n = fvec3(0.0f, 0.0f, 1.0f);
   }
 
   return;

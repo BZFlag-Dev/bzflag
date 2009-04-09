@@ -85,9 +85,9 @@ class FlagPhase {
     float ripple1;
     float ripple2;
 
-    GLfloat verts[maxFlagVerts][3];
-    GLfloat norms[maxFlagVerts][3];
-    GLfloat txcds[maxFlagVerts][2];
+    fvec3 verts[maxFlagVerts];
+    fvec3 norms[maxFlagVerts];
+    fvec2 txcds[maxFlagVerts];
 
   private:
     static void makeIndices();
@@ -358,6 +358,8 @@ void FlagPhase::update(float dt)
     txcds[ib][1] = 0.0f;
   }
 
+  const fvec3 negY(0.0f, -1.0f, 0.0f);
+
   // generate the lighting normals
   if (realFlag && BZDBCache::lighting) {
     fvec3  upEdges[maxFlagQuads + 1];
@@ -366,52 +368,33 @@ void FlagPhase::update(float dt)
     for (i = 0; i < quads; i++) {
       const int ue = lookup[i * 2];
       const int us = lookup[i * 2 + 1];
-      vec3sub(upEdges[i], verts[ue], verts[us]);
+      upEdges[i]  = verts[ue] - verts[us];
       const int ts = lookup[i * 2];
       const int te = lookup[i * 2 + 2];
-      vec3sub(topEdges[i], verts[te], verts[ts]);
+      topEdges[i] = verts[te] - verts[ts];
       const int bs = lookup[i * 2 + 1];
       const int be = lookup[i * 2 + 2 + 1];
-      vec3sub(botEdges[i], verts[be], verts[bs]);
+      botEdges[i] = verts[be] - verts[bs];
     }
-    norms[0][0] = norms[1][0] = 0.0f;
-    norms[0][1] = norms[1][1] = -1.0f;
-    norms[0][2] = norms[1][2] = 0.0f;
-    const int lastTop = lookup[quads*2];
-    const int lastBot = lookup[quads*2+1];
-    norms[lastTop][0] = norms[lastBot][0] = 0.0f;
-    norms[lastTop][1] = norms[lastBot][1] = -1.0f;
-    norms[lastTop][2] = norms[lastBot][2] = 0.0f;
+    norms[0] = negY;
+    const int lastTop = lookup[(quads * 2)];
+    const int lastBot = lookup[(quads * 2) + 1];
+    norms[lastTop] = negY;
+    norms[lastBot] = negY;
     for (i = 1; i < quads; i++) {
       fvec3 n0, n1, na;
-      vec3cross(n0, topEdges[i-1], upEdges[i]);
-      vec3cross(n1, topEdges[i], upEdges[i]);
-      vec3add(na, n0, n1);
-      const float tlen = sqrtf(vec3dot(na, na));
-      const int it = lookup[i*2];
-      if (tlen > 0.0f) {
-	norms[it][0] = na[0] / tlen;
-	norms[it][1] = na[1] / tlen;
-	norms[it][2] = na[2] / tlen;
-      } else {
-	norms[it][0] = 0.0f;
-	norms[it][1] = -1.0f;
-	norms[it][2] = 0.0f;
-      }
-      vec3cross(n0, botEdges[i-1], upEdges[i]);
-      vec3cross(n1, botEdges[i], upEdges[i]);
-      vec3add(na, n0, n1);
-      const float blen = sqrtf(vec3dot(na, na));
-      const int ib = lookup[i*2+1];
-      if (blen > 0.0f) {
-	norms[ib][0] = na[0] / blen;
-	norms[ib][1] = na[1] / blen;
-	norms[ib][2] = na[2] / blen;
-      } else {
-	norms[ib][0] = 0.0f;
-	norms[ib][1] = -1.0f;
-	norms[ib][2] = 0.0f;
-      }
+
+      n0 = fvec3::cross(topEdges[i - 1], upEdges[i]);
+      n1 = fvec3::cross(topEdges[i],     upEdges[i]);
+      na = n0 + n1;
+      const int it = lookup[(i * 2)];
+      norms[it] = fvec3::normalize(na) ? na : negY;
+
+      n0 = fvec3::cross(botEdges[i - 1], upEdges[i]);
+      n1 = fvec3::cross(botEdges[i],     upEdges[i]);
+      na = n0 + n1;
+      const int ib = lookup[(i * 2) + 1];
+      norms[ib] = fvec3::normalize(na) ? na : negY;
     }
   }
   return;
@@ -433,7 +416,7 @@ const float FlagSceneNode::lodLengths[maxFlagLODs] = {
 const int FlagSceneNode::minPoleLOD = 3;
 
 
-FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
+FlagSceneNode::FlagSceneNode(const fvec3& pos) : renderNode(this)
 {
   phase = FlagPhase::getPhase();
 
@@ -448,9 +431,7 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
   texturing = false;
   useColor = true;
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
-  whiteColor[0] = 1.0f;
-  whiteColor[1] = 1.0f;
-  whiteColor[2] = 1.0f;
+  whiteColor = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
   color = realColor;
   setCenter(pos);
   setRadius(6.0f * Unit * Unit);
@@ -483,7 +464,7 @@ void FlagSceneNode::waveFlags(float waveSpeed)
 }
 
 
-void FlagSceneNode::move(const GLfloat pos[3])
+void FlagSceneNode::move(const fvec3& pos)
 {
   setCenter(pos);
   return;
@@ -499,7 +480,7 @@ void FlagSceneNode::setAngle(GLfloat _angle)
 }
 
 
-void FlagSceneNode::setWind(const GLfloat wind[3], float dt)
+void FlagSceneNode::setWind(const fvec3& wind, float dt)
 {
   if (!realFlag) {
     angle = atan2f(wind[1], wind[0]) * (float)(180.0 / M_PI);
@@ -559,22 +540,16 @@ void FlagSceneNode::setAlpha(GLfloat a)
 
 void FlagSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  realColor[0] = r;
-  realColor[1] = g;
-  realColor[2] = b;
-  realColor[3] = a;
+  realColor = fvec4(r, g, b, a);
   whiteColor[3] = a;
   translucent = (a != 1.0f);
   return;
 }
 
 
-void FlagSceneNode::setColor(const GLfloat* rgba)
+void FlagSceneNode::setColor(const fvec4& rgba)
 {
-  realColor[0] = rgba[0];
-  realColor[1] = rgba[1];
-  realColor[2] = rgba[2];
-  realColor[3] = rgba[3];
+  realColor = rgba;
   whiteColor[3] = rgba[3];
   translucent = (rgba[3] != 1.0f);
   return;
@@ -673,13 +648,12 @@ inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 
 inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 {
-  const float* s = getSphere();
-  const float* e = renderer.getViewFrustum().getEye();
+  const fvec3& s = (fvec3&)getSphere();
+  const fvec3& e = renderer.getViewFrustum().getEye();
   const fvec3* d = renderer.getSunDirection();
-  fvec3 gap, cross;
-  vec3sub(gap, s, e);
-  vec3cross(cross, gap, *d);
-  const float dist = sqrtf(vec3dot(cross, cross));
+  const fvec3 gap = s - e;
+  const fvec3 cross = fvec3::cross(gap, *d);
+  const float dist = cross.length();
 
   const float lpp = dist * renderer.getLengthPerPixel();
 

@@ -42,7 +42,7 @@ public:
   SphereObstacle();
   SphereObstacle(const MeshTransform& transform,
 		 const fvec3& _pos, const fvec3& _size,
-		 float _rotation, const float _texsize[2],
+		 float _rotation, const fvec2& _texsize,
 		 bool _useNormals, bool hemisphere,
 		 int _divisions, const BzMaterial* mats[MaterialCount],
 		 int physics, bool bounce,
@@ -96,7 +96,7 @@ private:
   int phydrv;
   bool smoothBounce;
   bool useNormals;
-  float texsize[2];
+  fvec2 texsize;
   const BzMaterial* materials[MaterialCount];
 };
 

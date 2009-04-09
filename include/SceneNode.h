@@ -38,10 +38,10 @@
 
 #if !defined(_WIN32)
 // bonehead win32 cruft.  just make it go away on other platforms.
-#ifdef __stdcall
-#undef __stdcall
-#endif
-#define	__stdcall
+#  ifdef __stdcall
+#    undef __stdcall
+#  endif
+#  define __stdcall
 #endif
 
 #define	myColor3f(r, g, b)	SceneNode::glColor3f(r, g, b)
@@ -50,13 +50,15 @@
 #define	myColor4fv(rgba)	SceneNode::glColor4fv(rgba)
 #define	myStipple(alpha)	SceneNode::setStipple(alpha)
 
+
 class ViewFrustum;
 class SceneRenderer;
 
+
 class SceneNode {
   public:
-			SceneNode();
-    virtual		~SceneNode();
+    SceneNode();
+    virtual ~SceneNode();
 
     virtual void	notifyStyleChange();
 
@@ -74,9 +76,6 @@ class SceneNode {
     virtual bool	cull(const ViewFrustum&) const;
     virtual bool	cullShadow(int pCount, const fvec4* planes) const;
 
-    bool		isOccluder() const;
-    void		setOccluder(bool value);
-
     virtual void	addLight(SceneRenderer&);
     virtual int		split(const fvec4& plane,
 			      SceneNode*& front, SceneNode*& back) const;
@@ -84,43 +83,46 @@ class SceneNode {
     virtual void	addRenderNodes(SceneRenderer&);
     virtual void	renderRadar();
 
+    bool		isOccluder() const;
+    void		setOccluder(bool value);
+
     struct RenderSet {
       RenderNode* node;
       const OpenGLGState* gstate;
     };
     virtual void getRenderNodes(std::vector<RenderSet>& rnodes);
 
+    static void setStipple(GLfloat alpha) { (*stipple)(alpha); }
 
-    static void		setColorOverride(bool = true);
-    static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
+    static void setColorOverride(bool = true);
+
 #ifdef __MINGW32__
-      {if (!colorOverride) ::glColor3f(r, g, b); };
+    static void glColor3f(GLfloat r, GLfloat g, GLfloat b) {
+      if (!colorOverride) { ::glColor3f(r, g, b); }
+    }
+    static void glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+      if (!colorOverride) { ::glColor4f(r, g, b, a); }
+    }
+    static void glColor3fv(const GLfloat* rgb) {
+      if (!colorOverride) { ::glColor3fv(rgb); }
+    }
+    static void glColor4fv(const GLfloat* rgba) {
+      if (!colorOverride) { ::glColor4fv(rgba); }
+    }
 #else
-      { (*color3f)(r, g, b); }
-#endif
-
-    static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
-#ifdef __MINGW32__
-      {if (!colorOverride) ::glColor4f(r, g, b, a); };
-#else
-      { (*color4f)(r, g, b, a); }
-#endif
-
-    static void		glColor3fv(const GLfloat* rgb)
-#ifdef __MINGW32__
-      {if (!colorOverride) ::glColor3fv(rgb); };
-#else
-      { (*color3fv)(rgb); }
-#endif
-
-    static void		glColor4fv(const GLfloat* rgba)
-#ifdef __MINGW32__
-      {if (!colorOverride) ::glColor4fv(rgba); };
-#else
-      { (*color4fv)(rgba); }
-#endif
-
-    static void		setStipple(GLfloat alpha) { (*stipple)(alpha); }
+    static void glColor3f(GLfloat r, GLfloat g, GLfloat b) {
+      (*color3f)(r, g, b);
+    }
+    static void glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+      (*color4f)(r, g, b, a);
+    }
+    static void glColor3fv(const GLfloat* rgb) {
+      (*color3fv)(rgb);
+    }
+    static void glColor4fv(const GLfloat* rgba) {
+      (*color4fv)(rgba);
+    }
+#endif // __MINGW32__
 
     enum CullState {
       OctreeCulled,
@@ -140,37 +142,41 @@ class SceneNode {
     void		setSphere(const fvec4& sphere);
 
   private:
-			SceneNode(const SceneNode&);
-    SceneNode&		operator=(const SceneNode&);
+    SceneNode(const SceneNode&);
+    SceneNode& operator=(const SceneNode&);
 
+    static void noStipple(GLfloat);
 
 #ifndef __MINGW32__
-    static void __stdcall	noColor3f(GLfloat, GLfloat, GLfloat);
-    static void __stdcall	noColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-    static void __stdcall	noColor3fv(const GLfloat*);
-    static void __stdcall	noColor4fv(const GLfloat*);
+    static void __stdcall noColor3f(GLfloat, GLfloat, GLfloat);
+    static void __stdcall noColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
+    static void __stdcall noColor3fv(const GLfloat*);
+    static void __stdcall noColor4fv(const GLfloat*);
 #endif
-    static void			noStipple(GLfloat);
 
   protected:
-    fvec4		plane;	// unit normal, distance to origin
-    bool		noPlane;
-    bool		occluder;
-    Extents		extents;
+    fvec4   plane;  // unit normal, distance to origin
+    bool    noPlane;
+    bool    occluder;
+    Extents extents;
+
   private:
-    fvec4		sphere;
+    fvec4 sphere;
+
+  private:
+    static void (*stipple)(GLfloat);
 #ifdef __MINGW32__
-    static bool	 colorOverride;
+    static bool colorOverride;
 #else
-    static void		(__stdcall *color3f)(GLfloat, GLfloat, GLfloat);
-    static void		(__stdcall *color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-    static void		(__stdcall *color3fv)(const GLfloat*);
-    static void		(__stdcall *color4fv)(const GLfloat*);
+    static void (__stdcall *color3f)(GLfloat, GLfloat, GLfloat);
+    static void (__stdcall *color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
+    static void (__stdcall *color3fv)(const GLfloat*);
+    static void (__stdcall *color4fv)(const GLfloat*);
 #endif
-    static void		(*stipple)(GLfloat);
 };
 
-inline const fvec4*   SceneNode::getPlane() const
+
+inline const fvec4* SceneNode::getPlane() const
 {
   if (noPlane) {
     return NULL;
@@ -178,73 +184,61 @@ inline const fvec4*   SceneNode::getPlane() const
   return &plane;
 }
 
-inline const fvec4&   SceneNode::getPlaneRaw() const
-{
-  return plane;
-}
+inline const fvec4&   SceneNode::getPlaneRaw() const { return plane;          }
+inline const fvec3&   SceneNode::getCenter()   const { return (fvec3&)sphere; }
+inline const fvec4&   SceneNode::getSphere()   const { return sphere;         }
+inline const Extents& SceneNode::getExtents()  const { return extents;        }
+inline bool           SceneNode::isOccluder()  const { return occluder;       }
 
-inline const fvec3&	SceneNode::getCenter() const
-{
-  return (fvec3&)sphere;
-}
-
-inline const fvec4&	SceneNode::getSphere() const
-{
-  return sphere;
-}
-
-inline const Extents&	SceneNode::getExtents() const
-{
-  return extents;
-}
-
-inline bool		SceneNode::isOccluder() const
-{
-  return occluder;
-}
-
-inline void		SceneNode::setOccluder(bool value)
-{
-  occluder = value;
-}
+inline void SceneNode::setOccluder(bool value) { occluder = value; }
 
 
-typedef GLfloat		GLfloat2[2];
-typedef GLfloat		GLfloat3[3];
+//============================================================================//
+//
+//  GLfloat array helper classes
+//
+
+typedef GLfloat GLfloat2[2];
+typedef GLfloat GLfloat3[3];
+
 
 class GLfloat2Array {
   public:
-			GLfloat2Array(int s) : size(s)
-				{ data = new GLfloat2[size]; }
-			GLfloat2Array(const GLfloat2Array&);
-			~GLfloat2Array() { delete[] data; }
-    GLfloat2Array&	operator=(const GLfloat2Array&);
-    GLfloat*		operator[](int i) { return data[i]; }
-    const GLfloat*	operator[](int i) const { return data[i]; }
-    int			getSize() const { return size; }
-    const GLfloat2*	getArray() const { return data; }
+    GLfloat2Array(int s) : size(s) { data = new GLfloat2[size]; }
+    GLfloat2Array(const GLfloat2Array&);
+    ~GLfloat2Array() { delete[] data; }
+
+    GLfloat2Array& operator=(const GLfloat2Array&);
+    GLfloat*       operator[](int i) { return data[i]; }
+    const GLfloat* operator[](int i) const { return data[i]; }
+
+    int             getSize()  const { return size; }
+    const GLfloat2* getArray() const { return data; }
 
   private:
-    int			size;
-    GLfloat2*		data;
+    int       size;
+    GLfloat2* data;
 };
+
 
 class GLfloat3Array {
   public:
-			GLfloat3Array(int s) : size(s)
-				{ data = new GLfloat3[size]; }
-			GLfloat3Array(const GLfloat3Array&);
-			~GLfloat3Array() { delete[] data; }
-    GLfloat3Array&	operator=(const GLfloat3Array&);
-    GLfloat*		operator[](int i) { return data[i]; }
-    const GLfloat*	operator[](int i) const { return data[i]; }
-    int			getSize() const { return size; }
-    const GLfloat3*	getArray() const { return data; }
+    GLfloat3Array(int s) : size(s) { data = new GLfloat3[size]; }
+    GLfloat3Array(const GLfloat3Array&);
+    ~GLfloat3Array() { delete[] data; }
+
+    GLfloat3Array& operator=(const GLfloat3Array&);
+    GLfloat*       operator[](int i) { return data[i]; }
+    const GLfloat* operator[](int i) const { return data[i]; }
+
+    int             getSize()  const { return size; }
+    const GLfloat3* getArray() const { return data; }
 
   private:
-    int			size;
-    GLfloat3*		data;
+    int       size;
+    GLfloat3* data;
 };
+
 
 #endif // BZF_SCENE_NODE_H
 

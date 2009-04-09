@@ -42,10 +42,10 @@ class vec2 {
     T x, y;
 
   public:
-    vec2()              { x = 0.0f; y = 0.0f; }
-    vec2(const vec2& v) { x = v.x;  y = v.y;  }
-    vec2(const T v[2])  { x = v[0]; y = v[1]; }
-    vec2(T _x, T _y)    { x = _x;   y = _y;   }
+    vec2()              : x((T)0), y((T)0) {}
+    vec2(const vec2& v) : x(v.x),  y(v.y)  {}
+    vec2(const T v[2])  : x(v[0]), y(v[1]) {}
+    vec2(T _x, T _y)    : x(_x),   y(_y)   {}
 
     inline vec2& operator=(const vec2& v) { x = v.x; y = v.y; return *this; }
 
@@ -128,13 +128,11 @@ class vec3 {
     T x, y, z;
 
   public:
-    vec3()                 { x = 0.0f; y = 0.0f; z = 0.0f; }
-    vec3(const vec3& v)    { x = v.x;  y = v.y;  z = v.z;  }
-    vec3(const T v[3])     { x = v[0]; y = v[1]; z = v[2]; }
-    vec3(T _x, T _y, T _z) { x = _x;   y = _y;   z = _z;   }
-    vec3(const vec2<T>& v, T _z) {
-      x = v.x; y = v.y; z = _z;
-    }
+    vec3()                       : x((T)0), y((T)0), z((T)0) {}
+    vec3(const vec3& v)          : x(v.x),  y(v.y),  z(v.z)  {}
+    vec3(const T v[3])           : x(v[0]), y(v[1]), z(v[2]) {}
+    vec3(T _x, T _y, T _z)       : x(_x),   y(_y),   z(_z)   {}
+    vec3(const vec2<T>& v, T _z) : x(v.x),  y(v.y),  z(_z)   {}
 
     inline vec3& operator=(const vec3& v) {
       x = v.x; y = v.y; z = v.z; return *this;
@@ -225,10 +223,10 @@ class vec3 {
 
     static bool normalize(vec3& v) {
       const T len = v.length();
-      if (len == 0.0f) {
+      if (len == (T)0) {
         return false;
       }
-      const T scale = (1.0f / len);
+      const T scale = ((T)1 / len);
       v *= scale;
       return true;
     }
@@ -262,15 +260,11 @@ class vec4 {
     T x, y, z, w;
 
   public:
-    vec4()              { x = 0.0f; y = 0.0f; z = 0.0f; w = 1.0f; }
-    vec4(const vec4& v) { x = v.x;  y = v.y;  z = v.z;  w = v.w;  }
-    vec4(const T v[4])  { x = v[0]; y = v[1]; z = v[2]; w = v[3]; }
-    vec4(T _x, T _y, T _z, T _w ) {
-      x = _x; y = _y; z = _z; w = _w;
-    }
-    vec4(const vec3<T>& v, T _w) {
-      x = v.x; y = v.y; z = v.z; w = _w;
-    }
+    vec4()                       : x((T)0), y((T)0), z((T)0), w((T)1) {}
+    vec4(const vec4& v)          : x(v.x),  y(v.y),  z(v.z),  w(v.w)  {}
+    vec4(const T v[4])           : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
+    vec4(T _x, T _y, T _z, T _w) : x(_x),   y(_y),   z(_z),   w(_w)   {}
+    vec4(const vec3<T>& v, T _w) : x(v.x),  y(v.y),  z(v.z),  w(_w)   {}
 
     inline vec4& operator=(const vec4& v) {
       x = v.x; y = v.y; z = v.z; w = v.w; return *this;
@@ -378,45 +372,6 @@ typedef vec4<float> fvec4;
 typedef vec2<double> dvec2;
 typedef vec3<double> dvec3;
 typedef vec4<double> dvec4;
-
-
-//============================================================================//
-//============================================================================//
-//
-//  FIXME -- obsolete functions
-//
-
-static inline void vec3add (float *result, const float* v1, const float* v2)
-{
-  result[0] = v1[0] + v2[0];
-  result[1] = v1[1] + v2[1];
-  result[2] = v1[2] + v2[2];
-  return;
-}
-
-
-static inline void vec3sub (float *result, const float* v1, const float* v2)
-{
-  result[0] = v1[0] - v2[0];
-  result[1] = v1[1] - v2[1];
-  result[2] = v1[2] - v2[2];
-  return;
-}
-
-
-static inline float vec3dot (const float* v1, const float* v2)
-{
-  return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]);
-}
-
-
-static inline void vec3cross (float* result, const float* v1, const float* v2)
-{
-  result[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
-  result[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
-  result[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
-  return;
-}
 
 
 //============================================================================//

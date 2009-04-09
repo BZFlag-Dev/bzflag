@@ -112,12 +112,9 @@ void TankSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 }
 
 
-void TankSceneNode::setColor(const GLfloat* rgba)
+void TankSceneNode::setColor(const fvec4& rgba)
 {
-  color[0] = rgba[0];
-  color[1] = rgba[1];
-  color[2] = rgba[2];
-  color[3] = rgba[3];
+  color = rgba;
   transparent = (color[3] != 1.0f);
 }
 
@@ -155,12 +152,12 @@ void TankSceneNode::move(const fvec3& pos, const fvec3& forward)
 
   // setup the extents
   const float maxRadius = 0.5f * (BZDBCache::tankLength + MuzzleMaxX);
-  extents.mins[0] = pos[0] - maxRadius;
-  extents.mins[1] = pos[1] - maxRadius;
-  extents.mins[2] = pos[2];
-  extents.maxs[0] = pos[0] + maxRadius;
-  extents.maxs[1] = pos[1] + maxRadius;
-  extents.maxs[2] = pos[2] + BZDBCache::tankHeight;
+  extents.mins.x = pos.x - maxRadius;
+  extents.mins.y = pos.y - maxRadius;
+  extents.mins.z = pos.z;
+  extents.maxs.x = pos.x + maxRadius;
+  extents.maxs.y = pos.y + maxRadius;
+  extents.maxs.z = pos.z + BZDBCache::tankHeight;
   return;
 }
 
@@ -364,10 +361,10 @@ void TankSceneNode::setThief()
 }
 
 
-void TankSceneNode::setDimensions(const float dims[3])
+void TankSceneNode::setDimensions(const fvec3& dims)
 {
   tankSize = Normal;
-  memcpy (dimensions, dims, sizeof(float[3]));
+  dimensions = dims;
   useDimensions = true;
   return;
 }
@@ -420,16 +417,16 @@ void TankSceneNode::setJumpJets(float scale)
 }
 
 
-void TankSceneNode::setClipPlane(const GLfloat* _plane)
+void TankSceneNode::setClipPlane(const fvec4& _plane)
 {
   if (!_plane) {
     clip = false;
   } else {
     clip = true;
-    clipPlane[0] = GLdouble(_plane[0]);
-    clipPlane[1] = GLdouble(_plane[1]);
-    clipPlane[2] = GLdouble(_plane[2]);
-    clipPlane[3] = GLdouble(_plane[3]);
+    clipPlane[0] = double(_plane[0]);
+    clipPlane[1] = double(_plane[1]);
+    clipPlane[2] = double(_plane[2]);
+    clipPlane[3] = double(_plane[3]);
   }
 }
 
@@ -655,52 +652,52 @@ const int TankIDLSceneNode::IDLRenderNode::idlFaces[][5] = {
   { 4,  37, 36, 38, 32 }
 };
 
-const GLfloat		TankIDLSceneNode::IDLRenderNode::idlVertex[][3] = {
+const fvec3 TankIDLSceneNode::IDLRenderNode::idlVertex[] = {
   // body
-  { 2.430f, 0.877f, 0.000f },
-  { 2.430f, -0.877f, 0.000f },
-  { -2.835f, 0.877f, 1.238f },
-  { -2.835f, -0.877f, 1.238f },
-  { 2.575f, 0.877f, 1.111f },
-  { 2.575f, -0.877f, 1.111f },
-  { -2.229f, -0.877f, 0.000f },
-  { -2.229f, 0.877f, 0.000f },
+  fvec3(2.430f,   0.877f, 0.000f),
+  fvec3(2.430f,  -0.877f, 0.000f),
+  fvec3(-2.835f,  0.877f, 1.238f),
+  fvec3(-2.835f, -0.877f, 1.238f),
+  fvec3(2.575f,   0.877f, 1.111f),
+  fvec3(2.575f,  -0.877f, 1.111f),
+  fvec3(-2.229f, -0.877f, 0.000f),
+  fvec3(-2.229f,  0.877f, 0.000f),
   // turret
-  { -1.370f, 0.764f, 2.050f },
-  { -1.370f, -0.765f, 2.050f },
-  { 1.580f, -0.434f, 1.790f },
-  { 1.580f, 0.435f, 1.790f },
-  { -0.456f, -1.060f, 1.040f },
-  { -0.456f, 1.080f, 1.040f },
-  { 1.480f, 0.516f, 1.040f },
-  { 1.480f, -0.516f, 1.040f },
+  fvec3(-1.370f,  0.764f, 2.050f),
+  fvec3(-1.370f, -0.765f, 2.050f),
+  fvec3(1.580f,  -0.434f, 1.790f),
+  fvec3(1.580f,   0.435f, 1.790f),
+  fvec3(-0.456f, -1.060f, 1.040f),
+  fvec3(-0.456f,  1.080f, 1.040f),
+  fvec3(1.480f,   0.516f, 1.040f),
+  fvec3(1.480f,  -0.516f, 1.040f),
   // barrel
-  { 4.940f, 0.047f, 1.410f },
-  { 4.940f, -0.079f, 1.530f },
-  { 4.940f, 0.047f, 1.660f },
-  { 4.940f, 0.173f, 1.530f },
-  { 1.570f, 0.047f, 1.350f },
-  { 1.570f, -0.133f, 1.530f },
-  { 1.570f, 0.047f, 1.710f },
-  { 1.570f, 0.227f, 1.530f },
+  fvec3(4.940f,  0.047f, 1.410f),
+  fvec3(4.940f, -0.079f, 1.530f),
+  fvec3(4.940f,  0.047f, 1.660f),
+  fvec3(4.940f,  0.173f, 1.530f),
+  fvec3(1.570f,  0.047f, 1.350f),
+  fvec3(1.570f, -0.133f, 1.530f),
+  fvec3(1.570f,  0.047f, 1.710f),
+  fvec3(1.570f,  0.227f, 1.530f),
   // ltread
-  { -2.229f, 0.877f, 0.000f },
-  { 2.730f, 1.400f, 1.294f },
-  { 2.597f, 1.400f, 0.000f },
-  { -2.970f, 1.400f, 1.410f },
-  { 2.730f, 0.877f, 1.294f },
-  { 2.597f, 0.877f, 0.000f },
-  { -2.970f, 0.877f, 1.410f },
-  { -2.229f, 1.400f, 0.000f },
+  fvec3(-2.229f, 0.877f, 0.000f),
+  fvec3(2.730f,  1.400f, 1.294f),
+  fvec3(2.597f,  1.400f, 0.000f),
+  fvec3(-2.970f, 1.400f, 1.410f),
+  fvec3(2.730f,  0.877f, 1.294f),
+  fvec3(2.597f,  0.877f, 0.000f),
+  fvec3(-2.970f, 0.877f, 1.410f),
+  fvec3(-2.229f, 1.400f, 0.000f),
   // rtread
-  { -2.229f, -1.400f, 0.000f },
-  { 2.730f, -0.875f, 1.294f },
-  { 2.597f, -0.875f, 0.000f },
-  { -2.970f, -0.875f, 1.410f },
-  { 2.730f, -1.400f, 1.294f },
-  { 2.597f, -1.400f, 0.000f },
-  { -2.970f, -1.400f, 1.410f },
-  { -2.229f, -0.875f, 0.000f }
+  fvec3(-2.229f, -1.400f, 0.000f),
+  fvec3(2.730f,  -0.875f, 1.294f),
+  fvec3(2.597f,  -0.875f, 0.000f),
+  fvec3(-2.970f, -0.875f, 1.410f),
+  fvec3(2.730f,  -1.400f, 1.294f),
+  fvec3(2.597f,  -1.400f, 0.000f),
+  fvec3(-2.970f, -1.400f, 1.410f),
+  fvec3(-2.229f, -0.875f, 0.000f)
 };
 
 
@@ -722,31 +719,27 @@ TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
 
 void TankIDLSceneNode::IDLRenderNode::render()
 {
-  static const GLfloat innerColor[4] = { 1.0f, 1.0f, 1.0f, 0.75f };
-  static const GLfloat outerColor[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+  static const fvec4 innerColor(1.0f, 1.0f, 1.0f, 0.75f);
+  static const fvec4 outerColor(1.0f, 1.0f, 1.0f, 0.0f);
 
   // compute plane in tank's space
-  const GLfloat* sphere = sceneNode->tank->getSphere();
-  const GLfloat* _plane = sceneNode->plane;
+  const fvec4& sphere = sceneNode->tank->getSphere();
+  const fvec4& _plane = sceneNode->plane;
   const GLfloat azimuth = sceneNode->tank->azimuth;
   const GLfloat ca = cosf(-azimuth * (float)M_PI / 180.0f);
   const GLfloat sa = sinf(-azimuth * (float)M_PI / 180.0f);
-  GLfloat plane[4];
-  plane[0] = ca * _plane[0] - sa * _plane[1];
-  plane[1] = sa * _plane[0] + ca * _plane[1];
-  plane[2] = _plane[2];
-  plane[3] = (sphere[0] * _plane[0] + sphere[1] * _plane[1] +
-	      sphere[2] * _plane[2] + _plane[3]);
+  fvec4 plane;
+  plane.x = (ca * _plane.x) - (sa * _plane.y);
+  plane.y = (sa * _plane.x) + (ca * _plane.y);
+  plane.z = _plane.z;
+  plane.w = fvec3::dot((fvec3&)sphere, (fvec3&)_plane) + _plane.w;
 
   // compute projection point -- one TankLength in from plane
-  const GLfloat pd = -1.0f * BZDBCache::tankLength - plane[3];
-  GLfloat origin[3];
-  origin[0] = pd * plane[0];
-  origin[1] = pd * plane[1];
-  origin[2] = pd * plane[2];
+  const GLfloat pd = -1.0f * BZDBCache::tankLength - plane.w;
+  fvec3 origin = pd * (fvec3&)plane;
 
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glRotatef(azimuth, 0.0f, 0.0f, 1.0f);
 
     glBegin(GL_QUADS);
@@ -757,17 +750,19 @@ void TankIDLSceneNode::IDLRenderNode::render()
       const int numVertices = idlFaces[i][0];
       GLfloat d[4];
       int j;
-      for (j = 0; j < numVertices; j++)
+      for (j = 0; j < numVertices; j++) {
 	d[j] = idlVertex[face[j]][0] * plane[0] +
 	       idlVertex[face[j]][1] * plane[1] +
 	       idlVertex[face[j]][2] * plane[2] +
 	       plane[3];
+      }
 
       // get crossing points
-      GLfloat cross[2][3];
+      fvec3 cross[2];
       int crossings = 0, k;
       for (j = 0, k = numVertices-1; j < numVertices; k = j++) {
-	if ((d[k] < 0.0f && d[j] >= 0.0f) || (d[k] >= 0.0f && d[j] < 0.0f)) {
+	if (((d[k] <  0.0f) && (d[j] >= 0.0f)) ||
+	    ((d[k] >= 0.0f) && (d[j] <  0.0f))) {
 	  const GLfloat t = d[k] / (d[k] - d[j]);
 	  cross[crossings][0] =  (1.0f - t) * idlVertex[face[k]][0] +
 					  t * idlVertex[face[j]][0];
@@ -780,17 +775,15 @@ void TankIDLSceneNode::IDLRenderNode::render()
       }
 
       // if not enough crossings then skip
-      if (crossings != 2) continue;
+      if (crossings != 2) {
+        continue;
+      }
 
       // project points out
-      GLfloat project[2][3];
+      fvec3 project[2];
       const GLfloat dist = 2.0f + 0.3f * ((float)bzfrand() - 0.5f);
-      project[0][0] = origin[0] + dist * (cross[0][0] - origin[0]);
-      project[0][1] = origin[1] + dist * (cross[0][1] - origin[1]);
-      project[0][2] = origin[2] + dist * (cross[0][2] - origin[2]);
-      project[1][0] = origin[0] + dist * (cross[1][0] - origin[0]);
-      project[1][1] = origin[1] + dist * (cross[1][1] - origin[1]);
-      project[1][2] = origin[2] + dist * (cross[1][2] - origin[2]);
+      project[0] = origin + (dist * (cross[0] - origin));
+      project[1] = origin + (dist * (cross[1] - origin));
 
       // draw it
       myColor4fv(innerColor);
@@ -811,23 +804,23 @@ void TankIDLSceneNode::IDLRenderNode::render()
 // TankSceneNode::TankRenderNode
 //
 
-const GLfloat  // FIXME: setup so these come from TANKGEOMMGR
-  TankSceneNode::TankRenderNode::centerOfGravity[LastTankPart][3] = {
-  { 0.000f,  0.0f, 1.5f * 0.68f }, // body
-  { 3.252f,  0.0f, 1.532f },	   // barrel
-  { 0.125f,  0.0f, 2.5f * 0.68f }, // turret
-  { 0.000f, +0.7f, 0.5f * 0.68f }, // left case
-  { 0.000f, -0.7f, 0.5f * 0.68f }, // right case
-  { 0.000f, +0.7f, 0.7f }, // left tread
-  { 0.000f, -0.9f, 0.7f }, // right tread
-  { -2.25f, +0.9f, 0.7f }, // left wheel0
-  { -0.75f, +0.9f, 0.7f }, // left wheel1
-  { +0.75f, +0.9f, 0.7f }, // left wheel2
-  { +2.25f, +0.9f, 0.7f }, // left wheel3
-  { -2.25f, -0.9f, 0.7f }, // right wheel0
-  { -0.75f, -0.9f, 0.7f }, // right wheel1
-  { +0.75f, -0.9f, 0.7f }, // right wheel2
-  { +2.25f, -0.9f, 0.7f }  // right wheel3
+// FIXME: setup so these come from TANKGEOMMGR
+const fvec3 TankSceneNode::TankRenderNode::centerOfGravity[LastTankPart] = {
+  fvec3(0.000f,  0.0f, 1.5f * 0.68f), // body
+  fvec3(3.252f,  0.0f, 1.532f),	      // barrel
+  fvec3(0.125f,  0.0f, 2.5f * 0.68f), // turret
+  fvec3(0.000f, +0.7f, 0.5f * 0.68f), // left case
+  fvec3(0.000f, -0.7f, 0.5f * 0.68f), // right case
+  fvec3(0.000f, +0.7f, 0.7f), // left tread
+  fvec3(0.000f, -0.9f, 0.7f), // right tread
+  fvec3(-2.25f, +0.9f, 0.7f), // left wheel0
+  fvec3(-0.75f, +0.9f, 0.7f), // left wheel1
+  fvec3(+0.75f, +0.9f, 0.7f), // left wheel2
+  fvec3(+2.25f, +0.9f, 0.7f), // left wheel3
+  fvec3(-2.25f, -0.9f, 0.7f), // right wheel0
+  fvec3(-0.75f, -0.9f, 0.7f), // right wheel1
+  fvec3(+0.75f, -0.9f, 0.7f), // right wheel2
+  fvec3(+2.25f, -0.9f, 0.7f)  // right wheel3
 };
 
 

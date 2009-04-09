@@ -689,15 +689,13 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
   map[0] -= halfWidth;
   map[1] -= halfHeight;
 
-  float headingVec[3] = {0,0,0};
-  headingVec[0] = sinf( heading *deg2Rad );
-  headingVec[1] = cosf( heading *deg2Rad );
+  const fvec2 headingVec(sinf(heading * deg2Rad),
+                         cosf(heading * deg2Rad));
 
-  float toPosVec[3] = {0,0,0};
-  toPosVec[0] = (float)object[0] - viewPos[0];
-  toPosVec[1] = (float)object[1] - viewPos[1];
+  const fvec2 toPosVec((float)object[0] - viewPos[0],
+                       (float)object[1] - viewPos[1]);
 
-  if ( vec3dot(toPosVec,headingVec) <= 1.0f/*0.866f*/ ) {
+  if (fvec2::dot(toPosVec, headingVec) <= 1.0f /*0.866f*/) {
     if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
       map[0] = -halfWidth;
       map[1] = 0;
@@ -805,15 +803,13 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
   map[0] -= halfWidth;
   map[1] -= halfHeight;
 
-  float headingVec[3] = {0,0,0};
-  headingVec[0] = sinf( heading *deg2Rad );
-  headingVec[1] = cosf( heading *deg2Rad );
+  const fvec2 headingVec(sinf(heading * deg2Rad),
+                         cosf(heading * deg2Rad));
 
-  float toPosVec[3] = {0,0,0};
-  toPosVec[0] = (float)object[0] - viewPos[0];
-  toPosVec[1] = (float)object[1] - viewPos[1];
+  const fvec2 toPosVec((float)object[0] - viewPos[0],
+                       (float)object[1] - viewPos[1]);
 
-  if ( vec3dot(toPosVec,headingVec) <= 1.0f ) {
+  if (fvec2::dot(toPosVec, headingVec) <= 1.0f) {
     if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
       map[0] = -halfWidth;
       map[1] = 0;

@@ -128,7 +128,7 @@ void MeshFace::finalize()
   plane[0] = bestCross[0] * scale;
   plane[1] = bestCross[1] * scale;
   plane[2] = bestCross[2] * scale;
-  plane[3] = -vec3dot(plane, *vert);
+  plane[3] = -fvec3::dot((fvec3&)plane, *vert);
 
   // see if the whole face is convex
   int v;
@@ -137,7 +137,7 @@ void MeshFace::finalize()
     a = *vertices[(v + 1) % vertexCount] - *vertices[(v + 0) % vertexCount];
     b = *vertices[(v + 2) % vertexCount] - *vertices[(v + 1) % vertexCount];
     c = fvec3::cross(a, b);
-    const float d = vec3dot(c, plane);
+    const float d = fvec3::dot(c, (fvec3&)plane);
     if (d <= 0.0f) {
       logDebugMessage(1,"non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
@@ -156,7 +156,7 @@ void MeshFace::finalize()
 
   // see if the vertices are coplanar
   for (v = 0; v < vertexCount; v++) {
-    const float cross = vec3dot(*vertices[v], plane);
+    const float cross = fvec3::dot(*vertices[v], (fvec3&)plane);
     if (fabsf(cross + plane[3]) > 1.0e-3) {
       logDebugMessage(1,"non-planar mesh face (%f)", cross + plane[3]);
       if ((debugLevel >= 3) && (mesh != NULL)) {
@@ -352,11 +352,10 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
     float* areas = new float[vertexCount];
     for (i = 0; i < vertexCount; i++) {
       int next = (i + 1) % vertexCount;
-      float ea[3], eb[3], cross[3];
-      vec3sub(ea, p, *vertices[i]);
-      vec3sub(eb, *vertices[next], *vertices[i]);
-      vec3cross(cross, ea, eb);
-      areas[i] = sqrtf(vec3dot(cross, cross));
+      const fvec3 ea = p - *vertices[i];
+      const fvec3 eb = *vertices[next] - *vertices[i];
+      const fvec3 cross = fvec3::cross(ea, eb);
+      areas[i] = cross.length();
       totalArea = totalArea + areas[i];
     }
     float smallestArea = MAXFLOAT;
@@ -374,15 +373,13 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
 	smallestArea = twinAreas[i];
       }
     }
-    float normal[3] = {0.0f, 0.0f, 0.0f};
+    fvec3 normal(0.0f, 0.0f, 0.0f);
     for (i = 0; i < vertexCount; i++) {
       int next = (i + 1) % vertexCount;
       float factor = smallestArea / twinAreas[i];
-      normal[0] = normal[0] + (*normals[next][0] * factor);
-      normal[1] = normal[1] + (*normals[next][1] * factor);
-      normal[2] = normal[2] + (*normals[next][2] * factor);
+      normal += (*normals[next] * factor);
     }
-    float len = sqrtf(vec3dot(normal, normal));
+    float len = normal.length();
     if (len < 1.0e-10) {
       memcpy (n, plane, sizeof(float[3]));
       delete[] areas;
@@ -462,7 +459,7 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
   pln[0] = (cos_val * plane[0]) - (sin_val * plane[1]);
   pln[1] = (cos_val * plane[1]) + (sin_val * plane[0]);
   pln[2] = plane[2];
-  pln[3] = plane[3] + vec3dot(plane, p);
+  pln[3] = plane[3] + fvec3::dot((fvec3&)plane, p);
 
   // testPolygonInAxisBox() expects us to have already done all of the
   // separation tests with respect to the box planes. we could not do

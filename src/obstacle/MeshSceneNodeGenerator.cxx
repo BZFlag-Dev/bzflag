@@ -470,32 +470,15 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 }
 
 
-bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
+bool MeshSceneNodeGenerator::makeTexcoords(const fvec4& plane,
 					   const GLfloat3Array& vertices,
 					   GLfloat2Array& texcoords)
 {
-  float x[3], y[3];
+  fvec3 x = fvec3(vertices[1]) - fvec3(vertices[0]);
+  fvec3 y = fvec3::cross((fvec3&)plane, x);
 
-  vec3sub (x, vertices[1], vertices[0]);
-  vec3cross (y, plane, x);
-
-  float len = vec3dot(x, x);
-  if (len > 0.0f) {
-    len = 1.0f / sqrtf(len);
-    x[0] = x[0] * len;
-    x[1] = x[1] * len;
-    x[2] = x[2] * len;
-  } else {
-    return false;
-  }
-
-  len = vec3dot(y, y);
-  if (len > 0.0f) {
-    len = 1.0f / sqrtf(len);
-    y[0] = y[0] * len;
-    y[1] = y[1] * len;
-    y[2] = y[2] * len;
-  } else {
+  if (!fvec3::normalize(x) ||
+      !fvec3::normalize(y)) {
     return false;
   }
 
@@ -505,10 +488,9 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
   texcoords[0][1] = 0.0f;
   const int count = vertices.getSize();
   for (int i = 1; i < count; i++) {
-    float delta[3];
-    vec3sub (delta, vertices[i], vertices[0]);
-    texcoords[i][0] = vec3dot(delta, x) / uvScale;
-    texcoords[i][1] = vec3dot(delta, y) / uvScale;
+    const fvec3 delta = fvec3(vertices[i]) - fvec3(vertices[0]);
+    texcoords[i][0] = fvec3::dot(delta, x) / uvScale;
+    texcoords[i][1] = fvec3::dot(delta, y) / uvScale;
   }
 
   return true;

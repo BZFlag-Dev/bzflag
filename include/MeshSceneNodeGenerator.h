@@ -13,11 +13,17 @@
 #ifndef __MESHSCENENODEGENERATOR_H__
 #define __MESHSCENENODEGENERATOR_H__
 
+#include "common.h"
+
+// system headers
+#include <vector>
+
+// common headers
 #include "SceneNode.h"
 #include "MeshFace.h"
 #include "MeshObstacle.h"
 #include "BzMaterial.h"
-#include <vector>
+#include "vectors.h"
 
 class WallSceneNode;
 class MeshPolySceneNode;
@@ -35,7 +41,7 @@ class MeshSceneNodeGenerator {
 				  const BzMaterial* mat);
     static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
 
-    static bool makeTexcoords(const float* plane,
+    static bool makeTexcoords(const fvec4& plane,
 			      const GLfloat3Array& vertices,
 			      GLfloat2Array& texcoords);
 

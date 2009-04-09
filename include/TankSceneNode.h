@@ -21,6 +21,7 @@
 #include "SceneNode.h"
 #include "OpenGLLight.h"
 #include "TankGeometryMgr.h"
+#include "vectors.h"
 
 class TankSceneNode;
 
@@ -52,16 +53,17 @@ class TankIDLSceneNode : public SceneNode {
       private:
 	const TankIDLSceneNode* sceneNode;
 	static const int	idlFaces[][5];
-	static const GLfloat	idlVertex[][3];
+	static const fvec3	idlVertex[];
     };
     friend class IDLRenderNode;
 
   protected:
     const TankSceneNode	*tank;
-    GLfloat		plane[4];
+    fvec4		plane;
     OpenGLGState	gstate;
     IDLRenderNode	renderNode;
 };
+
 
 class TankSceneNode : public SceneNode {
   friend class TankIDLSceneNode;
@@ -73,7 +75,7 @@ class TankSceneNode : public SceneNode {
     virtual void move(const fvec3& pos, const fvec3& forward);
 
     virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    virtual void setColor(const GLfloat* rgba);
+    virtual void setColor(const fvec4& rgba);
     virtual void setMaterial(const OpenGLMaterial&);
     virtual void setTexture(const int);
     virtual void setJumpJetsTexture(const int);
@@ -83,9 +85,9 @@ class TankSceneNode : public SceneNode {
     virtual void setTiny();
     virtual void setNarrow();
     virtual void setThief();
-    virtual void setDimensions(const float size[3]);
+    virtual void setDimensions(const fvec3& size);
 
-    virtual void setClipPlane(const GLfloat* plane);
+    virtual void setClipPlane(const fvec4& plane);
     virtual void setExplodeFraction(float t);
     virtual void setJumpJets(float scale);
 
@@ -150,13 +152,13 @@ class TankSceneNode : public SceneNode {
 	bool		isExploding;
 	bool		narrowWithDepth;
 	GLfloat		explodeFraction;
-	static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
+	static const fvec3 centerOfGravity[TankGeometryEnums::LastTankPart];
     };
     friend class TankRenderNode;
   protected:
     GLfloat		azimuth, elevation;
     GLfloat		baseRadius;
-    float		dimensions[3]; // tank dimensions
+    fvec3		dimensions; // tank dimensions
     float		leftTreadOffset;
     float		rightTreadOffset;
     float		leftWheelOffset;
@@ -169,9 +171,9 @@ class TankSceneNode : public SceneNode {
     float		explodeFraction;
     bool		clip;
     bool		inTheCockpit;
-    GLfloat		colorOverride[4];
-    GLfloat		color[4];
-    GLdouble		clipPlane[4];
+    fvec4		colorOverride;
+    fvec4		color;
+    dvec4		clipPlane;
     OpenGLGState	gstate;
     OpenGLGState	treadState;
     OpenGLGState	lightsGState;
@@ -179,12 +181,12 @@ class TankSceneNode : public SceneNode {
     TankRenderNode	treadsRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    GLfloat vel[TankGeometryEnums::LastTankPart][3];
+    fvec3 vel[TankGeometryEnums::LastTankPart];
     GLfloat spin[TankGeometryEnums::LastTankPart][4];
     bool		jumpJetsOn;
     GLfloat		jumpJetsScale;
     GLfloat		jumpJetsLengths[4];
-    GLfloat		jumpJetsPositions[4][3];
+    fvec3		jumpJetsPositions[4];
     OpenGLLight		jumpJetsRealLight;
     OpenGLLight		jumpJetsGroundLights[4];
     OpenGLGState	jumpJetsGState;

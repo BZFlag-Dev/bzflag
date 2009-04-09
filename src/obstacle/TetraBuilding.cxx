@@ -157,16 +157,14 @@ void TetraBuilding::checkVertexOrder()
   int v, a;
 
   // make sure the the planes are facing outwards
-  float edge[3][3]; // edges from vertex 0
+  fvec3 edge[3]; // edges from vertex 0
   for (v = 0; v < 3; v++) {
     for (a = 0; a < 3; a++) {
       edge[v][a] = vertices[v+1][a] - vertices[0][a];
     }
   }
-  float cross[3];
-  vec3cross(cross, edge[0], edge[1]);
-
-  const float dot = vec3dot (cross, edge[2]);
+  const fvec3 cross = fvec3::cross(edge[0], edge[1]);
+  const float dot   = fvec3::dot(cross, edge[2]);
 
   // swap vertices 1 & 2 if we are out of order
   if (dot < 0.0f) {

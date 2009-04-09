@@ -19,6 +19,7 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "vectors.h"
 
 
 const int maxFlagLODs = 9; // max 256 quads
@@ -32,19 +33,19 @@ class FlagSceneNode : public SceneNode {
   friend class FlagRenderNode;
 
   public:
-    FlagSceneNode(const GLfloat pos[3]);
+    FlagSceneNode(const fvec3& pos);
     ~FlagSceneNode();
 
     static void waveFlags(float waveSpeed);
     static void setTimeStep(float dt);
 
-    void move(const GLfloat pos[3]);
+    void move(const fvec3& pos);
     void setAngle(GLfloat angle);
-    void setWind(const GLfloat wind[3], float dt);
+    void setWind(const fvec3& wind, float dt);
     void setFlat(bool flat);
 
     void setAlpha(GLfloat);
-    void setColor(const GLfloat* rgba);
+    void setColor(const fvec4& rgba);
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
     void setTexture(int);
     void setUseColor(bool);
@@ -96,8 +97,8 @@ class FlagSceneNode : public SceneNode {
     GLfloat		hscl;
 
     GLfloat*		color;
-    GLfloat		realColor[4];
-    GLfloat		whiteColor[4];
+    fvec4		realColor;
+    fvec4		whiteColor;
     bool		useColor;
 
     OpenGLGState	gstate;
