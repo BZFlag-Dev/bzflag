@@ -24,7 +24,7 @@
 #include "TrackMarks.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 #include "LocalFontFace.h"
 
 EffectsMenu::EffectsMenu()

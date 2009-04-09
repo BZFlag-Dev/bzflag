@@ -11,20 +11,22 @@
 */
 
 // interface header
-#include "playerAvatarManager.h"
+#include "PlayerAvatarManager.h"
 
 #include "StandardTankAvatar.h"
 
+
 // new avatar stuff, just return a standard tank for now;
-PlayerAvatar * getPlayerAvatar ( int playerID, const float pos[3], const float forward[3] )
+PlayerAvatar* getPlayerAvatar(int playerID, const fvec3& pos,
+                                            const fvec3& forward)
 {
-  return new StandardTankAvatar (playerID, pos, forward);
+  return new StandardTankAvatar(playerID, pos, forward);
 }
 
-void  freePlayerAvatar ( PlayerAvatar *avatar )
+
+void freePlayerAvatar(PlayerAvatar* avatar)
 {
-  if (avatar)
-    delete(avatar);
+  delete(avatar);
 }
 
 

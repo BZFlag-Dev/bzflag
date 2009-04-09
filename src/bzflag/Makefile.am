@@ -48,6 +48,8 @@ bzflag_SOURCES =			\
 	DynamicWorldText.h		\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
+	EffectsRenderer.cxx		\
+	EffectsRenderer.h		\
 	EntryZone.cxx			\
 	EntryZone.h			\
 	EventClient.cxx			\
@@ -148,6 +150,8 @@ bzflag_SOURCES =			\
 	PlatformSound.h			\
 	Player.cxx			\
 	Player.h			\
+	PlayerAvatarManager.cxx		\
+	PlayerAvatarManager.h		\
 	QuickKeysMenu.cxx		\
 	QuickKeysMenu.h			\
 	QuitMenu.cxx			\
@@ -233,12 +237,8 @@ bzflag_SOURCES =			\
 	daylight.h			\
 	defaultBZDB.cxx			\
 	defaultBZDB.h			\
-	effectsRenderer.cxx		\
-	effectsRenderer.h		\
 	motd.cxx			\
 	motd.h				\
-	playerAvatarManager.cxx		\
-	playerAvatarManager.h		\
 	playing.cxx			\
 	playing.h			\
 	sound.cxx			\

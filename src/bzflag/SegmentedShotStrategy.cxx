@@ -27,7 +27,7 @@
 #include "sound.h"
 #include "LocalPlayer.h"
 #include "World.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 #include "playing.h"
 
 

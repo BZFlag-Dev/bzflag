@@ -32,7 +32,7 @@
 #include "stars.h"
 #include "MainWindow.h"
 #include "SceneNode.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 
 static const fvec2 squareShape[4] = {
   fvec2(+1.0f, +1.0f),

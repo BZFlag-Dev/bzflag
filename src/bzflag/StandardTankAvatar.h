@@ -13,34 +13,35 @@
 #ifndef	__STD_TANK_AVATAR_H__
 #define	__STD_TANK_AVATAR_H__
 
-#include "playerAvatarManager.h"
+#include "PlayerAvatarManager.h"
 #include "SphereSceneNode.h"
 #include "TankSceneNode.h"
+#include "vectors.h"
 
 class StandardTankAvatar : public PlayerAvatar
 {
 public:
-  StandardTankAvatar ( int playerID, const float pos[3], const float forward[3] );
-  virtual ~StandardTankAvatar ( void );
+  StandardTankAvatar(int playerID, const fvec3& pos, const fvec3& forward);
+  virtual ~StandardTankAvatar();
 
-  virtual void move ( const float pos[3], const float forward[3] );
-  virtual void moveIDL ( const float plane[4] );
-  virtual void movePause ( const float pos[3], float rad );
-  virtual void setTurnOffsets ( const float left, const float right );
-  virtual void setScale ( const float scale[3]);
-  virtual void setScale ( teAvatarScaleModes mode );
-  virtual void explode ( void );
-  virtual void setVisualTeam (TeamColor visualTeam, const float color[4] );
-  virtual void setVisualMode ( bool inCockpit, bool showTreads );
-  virtual void setAnimationValues ( float explodeParam, float jumpParam );
-  virtual void setClippingPlane (  const float plane[4] );
-  virtual void setColor ( const float color[4] );
+  virtual void move(const fvec3& pos, const fvec3& forward);
+  virtual void moveIDL(const fvec4& plane);
+  virtual void movePause(const fvec3& pos, float rad);
+  virtual void setTurnOffsets(const float left, const float right);
+  virtual void setScale(const fvec3& scale);
+  virtual void setScale(teAvatarScaleModes mode);
+  virtual void explode();
+  virtual void setVisualTeam(TeamColor visualTeam, const fvec4& color);
+  virtual void setVisualMode(bool inCockpit, bool showTreads);
+  virtual void setAnimationValues(float explodeParam, float jumpParam);
+  virtual void setClippingPlane( const fvec4& plane);
+  virtual void setColor(const fvec4& color);
 
-  virtual void renderRadar ( void );
+  virtual void renderRadar();
 
-  virtual std::vector<SceneNode*> getSceneNodes ( void );
-  virtual std::vector<SceneNode*> getIDLSceneNodes ( void );
-  virtual std::vector<SceneNode*> getPauseSceneNodes ( void );
+  virtual std::vector<SceneNode*> getSceneNodes();
+  virtual std::vector<SceneNode*> getIDLSceneNodes();
+  virtual std::vector<SceneNode*> getPauseSceneNodes();
 
 protected:
   TankSceneNode		*tankNode;

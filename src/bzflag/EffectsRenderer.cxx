@@ -11,7 +11,7 @@
  */
 
 // interface header
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 
 // common impl headers
 #include "TextureManager.h"

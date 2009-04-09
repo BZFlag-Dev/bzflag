@@ -19,7 +19,7 @@
 #include "OpenGLMaterial.h"
 
 
-StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const float pos[3], const float forward[3] )
+StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const fvec3& pos, const fvec3& forward )
 {
   tankNode = new TankSceneNode(pos,forward);
   IDLNode = new TankIDLSceneNode(tankNode);
@@ -45,19 +45,19 @@ StandardTankAvatar::~StandardTankAvatar ( void )
 
 
 
-void StandardTankAvatar::move ( const float pos[3], const float forward[3] )
+void StandardTankAvatar::move ( const fvec3& pos, const fvec3& forward )
 {
   tankNode->move(pos,forward);
 }
 
 
-void StandardTankAvatar::moveIDL ( const float plane[4] )
+void StandardTankAvatar::moveIDL ( const fvec4& plane )
 {
   IDLNode->move(plane);
 }
 
 
-void StandardTankAvatar::movePause ( const float pos[3], float rad )
+void StandardTankAvatar::movePause ( const fvec3& pos, float rad )
 {
   pausedSphere->move(pos,rad);
 }
@@ -69,7 +69,7 @@ void StandardTankAvatar::setTurnOffsets ( const float left, const float right )
 }
 
 
-void StandardTankAvatar::setScale ( const float scale[3])
+void StandardTankAvatar::setScale ( const fvec3& scale)
 {
   tankNode->setDimensions(scale);
 }
@@ -93,7 +93,7 @@ void StandardTankAvatar::explode ( void )
 }
 
 
-void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[4] )
+void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color )
 {
   tankNode->setColor(color);
 
@@ -136,7 +136,7 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const float color[
 }
 
 
-void StandardTankAvatar::setColor ( const float color[4] )
+void StandardTankAvatar::setColor ( const fvec4& color )
 {
   tankNode->setColor(color);
 }
@@ -166,7 +166,7 @@ void StandardTankAvatar::setAnimationValues ( float explodeParam, float jumpPara
 }
 
 
-void StandardTankAvatar::setClippingPlane (  const float plane[4] )
+void StandardTankAvatar::setClippingPlane (  const fvec4& plane )
 {
   tankNode->setClipPlane(plane);
 }

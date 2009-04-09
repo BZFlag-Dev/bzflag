@@ -74,7 +74,7 @@
 #include "commands.h"
 #include "daylight.h"
 #include "Downloads.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 #include "ExportInformation.h"
 #include "FlashClock.h"
 #include "ForceFeedback.h"

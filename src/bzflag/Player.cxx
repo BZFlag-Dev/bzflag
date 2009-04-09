@@ -30,7 +30,7 @@
 #include "World.h"
 #include "TrackMarks.h"
 #include "sound.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 #include "Roaming.h"
 #include "SyncClock.h"
 

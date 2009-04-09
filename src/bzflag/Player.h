@@ -25,7 +25,7 @@
 #include "Flag.h"
 #include "PlayerState.h"
 #include "ShotStatistics.h"
-#include "playerAvatarManager.h"
+#include "PlayerAvatarManager.h"
 #include "GfxBlock.h"
 
 /* local interface headers */

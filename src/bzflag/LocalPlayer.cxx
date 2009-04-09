@@ -29,7 +29,7 @@
 #include "World.h"
 #include "sound.h"
 #include "ForceFeedback.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 #include "playing.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
