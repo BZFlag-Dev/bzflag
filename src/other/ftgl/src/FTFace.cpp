@@ -27,6 +27,7 @@
 #include "config.h"
 
 #include "FTFace.h"
+#include "FTCleanup.h"
 #include "FTLibrary.h"
 
 #include FT_TRUETYPE_TABLES_H
@@ -48,6 +49,8 @@ FTFace::FTFace(const char* fontFilePath, bool precomputeKerning)
         ftFace = 0;
         return;
     }
+
+    FTCleanup::Instance()->RegisterObject(&ftFace);
 
     numGlyphs = (*ftFace)->num_glyphs;
     hasKerningTable = (FT_HAS_KERNING((*ftFace)) != 0);
@@ -79,6 +82,8 @@ FTFace::FTFace(const unsigned char *pBufferBytes, size_t bufferSizeInBytes,
         return;
     }
 
+    FTCleanup::Instance()->RegisterObject(&ftFace);
+
     numGlyphs = (*ftFace)->num_glyphs;
     hasKerningTable = (FT_HAS_KERNING((*ftFace)) != 0);
 
@@ -95,7 +100,10 @@ FTFace::~FTFace()
 
     if(ftFace)
     {
+        FTCleanup::Instance()->UnregisterObject(&ftFace);
+
         FT_Done_Face(*ftFace);
+
         delete ftFace;
         ftFace = 0;
     }

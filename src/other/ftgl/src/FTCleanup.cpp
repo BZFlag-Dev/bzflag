@@ -1,7 +1,7 @@
 /*
  * FTGL - OpenGL font library
  *
- * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
+ * Copyright (c) 2009 Sam Hocevar <sam@zoy.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,54 +25,43 @@
 
 #include "config.h"
 
-#include "FTLibrary.h"
 #include "FTCleanup.h"
 
-const FTLibrary&  FTLibrary::Instance()
+FTCleanup *FTCleanup::_instance = 0;
+
+
+FTCleanup::FTCleanup()
 {
-    static FTLibrary ftlib;
-    return ftlib;
 }
 
 
-FTLibrary::~FTLibrary()
+FTCleanup::~FTCleanup()
 {
-    FTCleanup::Instance()->DestroyAll();
+    std::set<FT_Face **>::iterator cleanupItr = cleanupFT_FaceItems.begin();
+    FT_Face **cleanupFace = 0;
 
-    if(library != 0)
+    while(cleanupItr != cleanupFT_FaceItems.end())
     {
-        FT_Done_FreeType(*library);
-
-        delete library;
-        library= 0;
+        cleanupFace = *cleanupItr;
+        if(*cleanupFace)
+        {
+            FT_Done_Face(**cleanupFace);
+            delete *cleanupFace;
+            *cleanupFace = 0;
+        }
+        cleanupItr++;
     }
+    cleanupFT_FaceItems.clear();
 }
 
 
-FTLibrary::FTLibrary()
-:   library(0),
-    err(0)
+void FTCleanup::RegisterObject(FT_Face **obj)
 {
-    Initialise();
+    cleanupFT_FaceItems.insert(obj);
 }
 
 
-bool FTLibrary::Initialise()
+void FTCleanup::UnregisterObject(FT_Face **obj)
 {
-    if(library != 0)
-        return true;
-
-    library = new FT_Library;
-
-    err = FT_Init_FreeType(library);
-    if(err)
-    {
-        delete library;
-        library = 0;
-        return false;
-    }
-
-    FTCleanup::Instance();
-
-    return true;
+    cleanupFT_FaceItems.erase(obj);
 }

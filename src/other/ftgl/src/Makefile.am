@@ -6,6 +6,8 @@ libftgl_la_SOURCES = \
     FTCharmap.cpp \
     FTCharmap.h \
     FTCharToGlyphIndexMap.h \
+    FTCleanup.cpp \
+    FTCleanup.h \
     FTContour.cpp \
     FTContour.h \
     FTFace.cpp \
