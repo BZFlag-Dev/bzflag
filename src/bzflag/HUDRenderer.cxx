@@ -689,8 +689,8 @@ void HUDRenderer::drawWaypointMarker ( float *color, float alpha, float *object,
   map[0] -= halfWidth;
   map[1] -= halfHeight;
 
-  const fvec2 headingVec(sinf(heading * deg2Rad),
-                         cosf(heading * deg2Rad));
+  const fvec2 headingVec(sinf(heading * DEG2RAD),
+                         cosf(heading * DEG2RAD));
 
   const fvec2 toPosVec((float)object[0] - viewPos[0],
                        (float)object[1] - viewPos[1]);
@@ -803,8 +803,8 @@ void HUDRenderer::drawLockonMarker ( float *color , float alpha, float *object, 
   map[0] -= halfWidth;
   map[1] -= halfHeight;
 
-  const fvec2 headingVec(sinf(heading * deg2Rad),
-                         cosf(heading * deg2Rad));
+  const fvec2 headingVec(sinf(heading * DEG2RAD),
+                         cosf(heading * DEG2RAD));
 
   const fvec2 toPosVec((float)object[0] - viewPos[0],
                        (float)object[1] - viewPos[1]);
@@ -893,12 +893,13 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     glEnd();
 
     glBegin(GL_LINE_LOOP);
-    for ( float t = 0; t < 360; t += segmentation ) {
-      if ( t != 0 ) {
-	float spT = t-segmentation;
-
-	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad+rad,0.02f);
-	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad+rad,0.02f);
+    for (float t = 0; t < 360; t += segmentation) {
+      if (t != 0) {
+	const float s = (t - segmentation);
+        const float tRads = t * DEG2RAD;
+        const float sRads = s * DEG2RAD;
+	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
+	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }
     }
     glEnd();
@@ -914,12 +915,13 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     glEnd();
 
     glBegin(GL_LINE_LOOP);
-    for ( float t = 0; t < 360; t += segmentation ) {
-      if ( t != 0 ) {
-	float spT = t-segmentation;
-
-	glVertex3f(sinf(spT*deg2Rad)*rad,cosf(spT*deg2Rad)*rad+rad,0.02f);
-	glVertex3f(sinf(t*deg2Rad)*rad,cosf(t*deg2Rad)*rad+rad,0.02f);
+    for (float t = 0; t < 360; t += segmentation) {
+      if (t != 0) {
+	const float s = (t - segmentation);
+        const float tRads = t * DEG2RAD;
+        const float sRads = s * DEG2RAD;
+	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
+	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }
     }
     glEnd();

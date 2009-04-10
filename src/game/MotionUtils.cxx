@@ -157,8 +157,8 @@ float computeGroundLimit(FlagType *flag)
 
 void vecFromAngle2d(float ang, float vec[3], float mag)
 {
-  vec[0] = cosf(ang*deg2Rad) * mag;
-  vec[1] = sinf(ang*deg2Rad) * mag;
+  vec[0] = cosf(ang * DEG2RAD) * mag;
+  vec[1] = sinf(ang * DEG2RAD) * mag;
   vec[2] = 0;
 }
 

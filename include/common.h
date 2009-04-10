@@ -63,8 +63,11 @@
  */
 #define ZERO_TOLERANCE 0.00005f
 
-// because math is fun and this is used EVERYWHERE
-#define deg2Rad 0.017453292519943295769236907684886f
+// (radians <--> degrees) conversion values
+#define DEG2RAD 0.0174532925199432957692369076848861271344287189
+#define RAD2DEG 57.29577951308232087679815481410517033240547247
+#define DEG2RADf ((float)DEG2RAD)
+#define RAD2DEGf ((float)RAD2DEF)
 
 
 /* Might we be BSDish? sys/param.h has BSD defined if so */

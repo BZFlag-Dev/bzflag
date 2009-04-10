@@ -649,7 +649,7 @@ void StdShotEffect::draw(const SceneRenderer &)
   pos[2] = position[2] + velocity[2] * age;
 
   glTranslatef(pos[0], pos[1], pos[2]);
-  glRotatef(180 + rotation[2] / deg2Rad, 0, 0, 1);
+  glRotatef(180.0f + (rotation[2] * RAD2DEG), 0.0f, 0.0f, 1.0f);
 
   ringState.setState();
 
@@ -716,7 +716,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
   pos[2] = position[2] + velocity[2] * age;
 
   glTranslatef(pos[0], pos[1], pos[2]);
-  glRotatef(270 + rotation[2] / deg2Rad, 0, 0, 1);
+  glRotatef(270.0f + (rotation[2] * RAD2DEG), 0.0f, 0.0f, 1.0f);
 
   ringState.setState();
 
@@ -805,7 +805,7 @@ void StdDeathEffect::draw(const SceneRenderer &)
   glPushMatrix();
 
   glTranslatef(position[0], position[1], position[2]);
-  glRotatef(180 + rotation[2] / deg2Rad, 0, 0, 1);
+  glRotatef(180.0f + (rotation[2] * RAD2DEG), 0.0f, 0.0f, 1.0f);
 
   ringState.setState();
 
@@ -952,8 +952,8 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
   pos[2] = position[2] + velocity[2] * age;
 
   glTranslatef(pos[0], pos[1], pos[2]);
-  glRotatef(180 + rotation[2] / deg2Rad, 0, 0, 1);
-  glRotatef(rotation[1] / deg2Rad, 0, 1, 0);
+  glRotatef(180.0f + (rotation[2] * RAD2DEG), 0.0f, 0.0f, 1.0f);
+  glRotatef((rotation[1] * RAD2DEG), 0.0f, 1.0f, 0.0f);
 
   ringState.setState();
 
@@ -1018,8 +1018,8 @@ void StdRicoEffect::draw(const SceneRenderer &)
   pos[2] = position[2] + velocity[2] * age;
 
   glTranslatef(pos[0], pos[1], pos[2]);
-  glRotatef((rotation[2] / deg2Rad) + 180, 0, 0, 1);
-  glRotatef(rotation[1] / deg2Rad, 0, 1, 0);
+  glRotatef((rotation[2] * RAD2DEG) + 180.0f, 0.0f, 0.0f, 1.0f);
+  glRotatef(rotation[1] * RAD2DEG, 0.0f, 1.0f, 0.0f);
 
   ringState.setState();
 
@@ -1085,8 +1085,8 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
   pos[2] = position[2] + velocity[2] * age;
 
   glTranslatef(pos[0], pos[1], pos[2]);
-  glRotatef((rotation[2] / deg2Rad), 0, 0, 1);
-  glRotatef(rotation[1] / deg2Rad, 0, 1, 0);
+  glRotatef(rotation[2] * RAD2DEG, 0.0f, 0.0f, 1.0f);
+  glRotatef(rotation[1] * RAD2DEG, 0.0f, 1.0f, 0.0f);
   glRotatef(age * 90, 1, 0, 0);
 
   ringState.setState();
@@ -1111,8 +1111,8 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 
 static void RadialToCartesian(float angle, float rad, float *pos)
 {
-  pos[0] = sinf(angle * deg2Rad) * rad;
-  pos[1] = cosf(angle * deg2Rad) * rad;
+  pos[0] = sinf(angle * DEG2RAD) * rad;
+  pos[1] = cosf(angle * DEG2RAD) * rad;
 }
 
 static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
