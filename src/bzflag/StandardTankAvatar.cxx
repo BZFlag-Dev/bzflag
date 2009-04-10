@@ -166,7 +166,7 @@ void StandardTankAvatar::setAnimationValues ( float explodeParam, float jumpPara
 }
 
 
-void StandardTankAvatar::setClippingPlane (  const fvec4& plane )
+void StandardTankAvatar::setClippingPlane (const fvec4* plane)
 {
   tankNode->setClipPlane(plane);
 }

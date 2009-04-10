@@ -34,7 +34,7 @@ public:
   virtual void setVisualTeam(TeamColor visualTeam, const fvec4& color);
   virtual void setVisualMode(bool inCockpit, bool showTreads);
   virtual void setAnimationValues(float explodeParam, float jumpParam);
-  virtual void setClippingPlane( const fvec4& plane);
+  virtual void setClippingPlane(const fvec4* plane);
   virtual void setColor(const fvec4& color);
 
   virtual void renderRadar();

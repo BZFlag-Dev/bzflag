@@ -417,16 +417,17 @@ void TankSceneNode::setJumpJets(float scale)
 }
 
 
-void TankSceneNode::setClipPlane(const fvec4& _plane)
+void TankSceneNode::setClipPlane(const fvec4* planePtr)
 {
-  if (!_plane) {
+  if (!planePtr) {
     clip = false;
   } else {
     clip = true;
-    clipPlane[0] = double(_plane[0]);
-    clipPlane[1] = double(_plane[1]);
-    clipPlane[2] = double(_plane[2]);
-    clipPlane[3] = double(_plane[3]);
+    const fvec4& p = *planePtr;
+    clipPlane[0] = double(p.x);
+    clipPlane[1] = double(p.y);
+    clipPlane[2] = double(p.z);
+    clipPlane[3] = double(p.w);
   }
 }
 

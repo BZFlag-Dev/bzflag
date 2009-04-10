@@ -87,7 +87,7 @@ class TankSceneNode : public SceneNode {
     virtual void setThief();
     virtual void setDimensions(const fvec3& size);
 
-    virtual void setClipPlane(const fvec4& plane);
+    virtual void setClipPlane(const fvec4* plane);
     virtual void setExplodeFraction(float t);
     virtual void setJumpJets(float scale);
 

@@ -896,8 +896,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     for (float t = 0; t < 360; t += segmentation) {
       if (t != 0) {
 	const float s = (t - segmentation);
-        const float tRads = t * DEG2RAD;
-        const float sRads = s * DEG2RAD;
+	const float tRads = t * DEG2RAD;
+	const float sRads = s * DEG2RAD;
 	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
 	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }
@@ -918,8 +918,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     for (float t = 0; t < 360; t += segmentation) {
       if (t != 0) {
 	const float s = (t - segmentation);
-        const float tRads = t * DEG2RAD;
-        const float sRads = s * DEG2RAD;
+	const float tRads = t * DEG2RAD;
+	const float sRads = s * DEG2RAD;
 	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
 	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }

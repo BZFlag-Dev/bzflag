@@ -827,7 +827,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 			bool inCockpit, bool seerView,
 			bool showTreads, bool showIDL, bool thirdPerson)
 {
-  const GLfloat groundPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+  const fvec4 groundPlane(0.0f, 0.0f, 1.0f, 0.0f);
 
   if (gfxBlock.blocked()) {
     return; // don't draw anything
@@ -926,12 +926,12 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 	// add clipping plane to tank node
 	if (!inCockpit) {
-	  avatar->setClippingPlane(plane);
+	  avatar->setClippingPlane(&plane);
 	}
       }
     } else if (getPosition()[2] < 0.0f) {
       // this should only happen with Burrow flags
-      avatar->setClippingPlane(groundPlane);
+      avatar->setClippingPlane(&groundPlane);
     } // isCrossingWall()
   } else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
     // isAlive()
@@ -954,7 +954,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
       avatar->setColor(newColor);
     }
     avatar->setAnimationValues(t,0);
-    avatar->setClippingPlane(groundPlane); // shadows are not clipped
+    avatar->setClippingPlane(&groundPlane); // shadows are not clipped
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ ) {
