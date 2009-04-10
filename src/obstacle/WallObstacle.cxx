@@ -132,7 +132,8 @@ bool WallObstacle::getHitNormal(const fvec3&, float,
 				float, float, float,
 				fvec3& normal) const
 {
-  getNormal(NULL, normal);
+  float p[3];
+  getNormal(p, normal);
   return true;
 }
 
