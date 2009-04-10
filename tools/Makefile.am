@@ -1,4 +1,5 @@
 SUBDIRS = \
+	StartBZFS \
 	modeltool \
 	tankview
 

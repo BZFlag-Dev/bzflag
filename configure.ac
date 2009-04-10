@@ -1391,6 +1391,8 @@ AC_CONFIG_FILES([
 	src/platform/Makefile
 	src/scene/Makefile
 	tools/Makefile
+	tools/StartBZFS/Makefile
+	tools/StartBZFS/Properties/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/vc8/Makefile
 	tools/tankview/Makefile
