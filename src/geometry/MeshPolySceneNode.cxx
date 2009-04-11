@@ -33,8 +33,8 @@
 //
 
 MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* node,
-  const GLfloat3Array& _vertices, const GLfloat3Array& _normals,
-  const GLfloat2Array& _texcoords, const GLfloat* _normal) :
+  const fvec3Array& _vertices, const fvec3Array& _normals,
+  const fvec2Array& _texcoords, const GLfloat* _normal) :
     vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
   sceneNode = node;
@@ -146,11 +146,11 @@ void MeshPolySceneNode::Geometry::renderShadow()
 // MeshPolySceneNode
 //
 
-MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
+MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
 				     bool _noRadar, bool _noShadow,
-				     const GLfloat3Array& vertices,
-				     const GLfloat3Array& normals,
-				     const GLfloat2Array& texcoords) :
+				     const fvec3Array& vertices,
+				     const fvec3Array& normals,
+				     const fvec2Array& texcoords) :
   node(this, vertices, normals, texcoords, plane)
 {
   int i, j;
@@ -181,7 +181,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   }
 
   // project vertices onto plane
-  GLfloat2Array flat(count);
+  fvec2Array flat(count);
   switch (ignoreAxis) {
     case 0:
       for (i = 0; i < count; i++) {
@@ -215,7 +215,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
   setNumLODs(1, area);
 
   // compute bounding sphere, put center at average of vertices
-  GLfloat mySphere[4];
+  fvec4 mySphere;
   mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
   for (i = 0; i < count; i++) {
     mySphere[0] += vertices[i][0];
@@ -334,9 +334,9 @@ void MeshPolySceneNode::renderRadar()
 
 
 int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
-				    const GLfloat3Array& vertices,
-				    const GLfloat3Array& normals,
-				    const GLfloat2Array& texcoords,
+				    const fvec3Array& vertices,
+				    const fvec3Array& normals,
+				    const fvec2Array& texcoords,
 				    SceneNode*& front, SceneNode*& back) const
 {
   int i;
@@ -435,12 +435,12 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
   }
 
   // make space for new polygons
-  GLfloat3Array vertexFront(frontCount);
-  GLfloat3Array normalFront(frontCount);
-  GLfloat2Array uvFront(frontCount);
-  GLfloat3Array vertexBack(backCount);
-  GLfloat3Array normalBack(backCount);
-  GLfloat2Array uvBack(backCount);
+  fvec3Array vertexFront(frontCount);
+  fvec3Array normalFront(frontCount);
+  fvec2Array uvFront(frontCount);
+  fvec3Array vertexBack(backCount);
+  fvec3Array normalBack(backCount);
+  fvec2Array uvBack(backCount);
 
   // fill in the splitting vertices
   int frontIndex = 0;
@@ -552,8 +552,8 @@ void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
 
 
 int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
-				   const GLfloat3Array& vertices,
-				   const GLfloat2Array& texcoords,
+				   const fvec3Array& vertices,
+				   const fvec2Array& texcoords,
 				   SceneNode*& front, SceneNode*& back) const
 {
   int i;
@@ -652,12 +652,12 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
   }
 
   // make space for new polygons
-  GLfloat3Array vertexFront(frontCount);
-  GLfloat3Array normalFront(0);
-  GLfloat2Array uvFront(frontCount);
-  GLfloat3Array vertexBack(backCount);
-  GLfloat3Array normalBack(0);
-  GLfloat2Array uvBack(backCount);
+  fvec3Array vertexFront(frontCount);
+  fvec3Array normalFront(0);
+  fvec2Array uvFront(frontCount);
+  fvec3Array vertexBack(backCount);
+  fvec3Array normalBack(0);
+  fvec2Array uvBack(backCount);
 
   // fill in the splitting vertices
   int frontIndex = 0;

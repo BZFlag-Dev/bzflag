@@ -29,20 +29,22 @@
 #include "ViewFrustum.h"
 
 
-const float		FlagWarpSize =	7.5;		// meters
-const GLfloat		FlagWarpAlpha = 0.5f;
-const GLfloat		FlagWarpSceneNode::color[7][3] = {
-				{ 0.25, 1.0, 0.25 },
-				{ 0.25, 0.25, 1.0 },
-				{ 1.0, 0.0, 1.0 },
-				{ 1.0, 0.25, 0.25 },
-				{ 1.0, 0.5, 0.0 },
-				{ 1.0, 1.0, 0.0 },
-				{ 1.0, 1.0, 1.0 }
-			};
+const float   FlagWarpSize  = 7.5f;  // meters
+const GLfloat FlagWarpAlpha = 0.5f;
 
-FlagWarpSceneNode::FlagWarpSceneNode(const GLfloat pos[3]) :
-				renderNode(this)
+const fvec4 FlagWarpSceneNode::color[7] = {
+  fvec4(0.25, 1.0,  0.25, 1.0f),
+  fvec4(0.25, 0.25, 1.0,  1.0f),
+  fvec4(1.0,  0.0,  1.0,  1.0f),
+  fvec4(1.0,  0.25, 0.25, 1.0f),
+  fvec4(1.0,  0.5,  0.0,  1.0f),
+  fvec4(1.0,  1.0,  0.0,  1.0f),
+  fvec4(1.0,  1.0,  1.0,  1.0f)
+};
+
+
+FlagWarpSceneNode::FlagWarpSceneNode(const fvec3& pos)
+: renderNode(this)
 {
   move(pos);
   setRadius(1.25f * FlagWarpSize * FlagWarpSize);
@@ -54,17 +56,20 @@ FlagWarpSceneNode::~FlagWarpSceneNode()
   // do nothing
 }
 
-void			FlagWarpSceneNode::setSizeFraction(GLfloat _size)
+
+void FlagWarpSceneNode::setSizeFraction(GLfloat _size)
 {
   size = _size;
 }
 
-void			FlagWarpSceneNode::move(const GLfloat pos[3])
+
+void FlagWarpSceneNode::move(const fvec3& pos)
 {
   setCenter(pos);
 }
 
-GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
+
+GLfloat FlagWarpSceneNode::getDistance(const GLfloat* eye) const
 {
   // shift position of warp down a little because a flag and it's warp
   // are at the same position but we want the warp to appear below the
@@ -75,7 +80,8 @@ GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
 	 (eye[2] - mySphere[2] + 0.2f) * (eye[2] - mySphere[2] + 0.2f);
 }
 
-void			FlagWarpSceneNode::notifyStyleChange()
+
+void FlagWarpSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {
@@ -89,11 +95,13 @@ void			FlagWarpSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			FlagWarpSceneNode::addRenderNodes(
+
+void FlagWarpSceneNode::addRenderNodes(
 				SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // FlagWarpSceneNode::FlagWarpRenderNode
@@ -106,12 +114,14 @@ FlagWarpSceneNode::FlagWarpRenderNode::FlagWarpRenderNode(
   // do nothing
 }
 
+
 FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
 {
   // do nothing
 }
 
-void			FlagWarpSceneNode::FlagWarpRenderNode::render()
+
+void FlagWarpSceneNode::FlagWarpRenderNode::render()
 {
   // make a perturbed ring
   GLfloat geom[12][2];
@@ -178,6 +188,7 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
 
   glPopMatrix();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

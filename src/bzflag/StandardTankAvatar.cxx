@@ -102,20 +102,20 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color
     return;
   lastVisualTeam = visualTeam;
 
-  static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
-  static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec4	tankSpecular(0.1f, 0.1f, 0.1f, 1.0f);
+  static const fvec4	tankEmissive(0.0f, 0.0f, 0.0f, 1.0f);
   static float		tankShininess = 20.0f;
-  static GLfloat	rabbitEmissive[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec4	rabbitEmissive(0.0f, 0.0f, 0.0f, 1.0f);
   static float		rabbitShininess = 100.0f;
 
-  GLfloat *emissive;
+  const fvec4* emissive;
   GLfloat shininess;
 
   if (visualTeam == RabbitTeam) {
-    emissive = rabbitEmissive;
+    emissive = &rabbitEmissive;
     shininess = rabbitShininess;
   } else {
-    emissive = tankEmissive;
+    emissive = &tankEmissive;
     shininess = tankShininess;
   }
 
@@ -128,7 +128,7 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color
   // now after we did all that, see if they have a user texture
   tankTexture = tm.getTextureID(texName.c_str(),false);
 
-  tankNode->setMaterial(OpenGLMaterial(tankSpecular, emissive, shininess));
+  tankNode->setMaterial(OpenGLMaterial(tankSpecular, *emissive, shininess));
   tankNode->setTexture(tankTexture);
 
   int jumpJetsTexture = tm.getTextureID("jumpjets", false);

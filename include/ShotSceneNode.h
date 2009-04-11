@@ -22,10 +22,10 @@
 
 class ShotSceneNode : public SceneNode {
   public:
-			ShotSceneNode() { }
-			~ShotSceneNode() { }
+    ShotSceneNode() {}
+    ~ShotSceneNode() {}
 
-    virtual void	move(const GLfloat pos[3], const GLfloat forward[3])=0;
+    virtual void move(const fvec3& pos, const fvec3& forward) = 0;
 };
 
 #endif // BZF_SHOT_SCENE_NODE_H

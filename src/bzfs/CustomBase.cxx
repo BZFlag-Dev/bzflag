@@ -52,7 +52,7 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
 
 void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
 {
-  float absSize[3] = { fabsf(size[0]), fabsf(size[1]), fabsf(size[2]) };
+  const fvec3 absSize(fabsf(size.x), fabsf(size.y), fabsf(size.z));
   BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color, ricochet);
   base->setName(name.c_str());
   groupdef->addObstacle(base);

@@ -18,53 +18,53 @@
 using namespace Intersect;
 
 // get angle of normal vector to axis aligned rect centered at origin by point p
-static float getNormalOrigRect(const fvec3& p, float dx, float dy)
+static float getNormalOrigRect(const fvec2& p, float dx, float dy)
 {
-  if (p[0] > dx) {					// east of box
-    if (p[1] > dy)					//  ne corner
-      return atan2f(p[1] - dy, p[0] - dx);
-    else if (p[1] < -dy)				//  se corner
-      return atan2f(p[1] + dy, p[0] - dx);
+  if (p.x > dx) {					// east of box
+    if (p.y > dy)					//  ne corner
+      return atan2f(p.y - dy, p.x - dx);
+    else if (p.y < -dy)				//  se corner
+      return atan2f(p.y + dy, p.x - dx);
     else						//  east side
       return 0.0f;
   }
 
-  if (p[0] < -dx) {					// west of box
-    if (p[1] > dy)					//  nw corner
-      return atan2f(p[1] - dy, p[0] + dx);
-    else if (p[1] < -dy)				//  sw corner
-      return atan2f(p[1] + dy, p[0] + dx);
+  if (p.x < -dx) {					// west of box
+    if (p.y > dy)					//  nw corner
+      return atan2f(p.y - dy, p.x + dx);
+    else if (p.y < -dy)				//  sw corner
+      return atan2f(p.y + dy, p.x + dx);
     else						//  west side
       return (float)M_PI;
   }
 
-  if (p[1] > dy)					// north of box
+  if (p.y > dy)					// north of box
     return (float)(0.5 * M_PI);
 
-  if (p[1] < -dy)					// south of box
+  if (p.y < -dy)					// south of box
     return (float)(1.5 * M_PI);
 
   // inside box
-  if (p[0] > 0.0f) {					// inside east
-    if (p[1] > 0.0f) {					//  inside ne quadrant
-      if (dy * p[0] > dx * p[1])			//   east wall
+  if (p.x > 0.0f) {					// inside east
+    if (p.y > 0.0f) {					//  inside ne quadrant
+      if (dy * p.x > dx * p.y)			//   east wall
 	return 0.0f;
       else						//   north wall
 	return (float)(0.5 * M_PI);
     } else {						//  inside se quadrant
-      if (dy * p[0] > -dx * p[1])			//   east wall
+      if (dy * p.x > -dx * p.y)			//   east wall
 	return 0.0f;
       else						//   south wall
 	return (float)(1.5 * M_PI);
     }
   } else {						// inside west
-    if (p[1] > 0.0f) {					//  inside nw quadrant
-      if (dy * p[0] < -dx * p[1])			//   west wall
+    if (p.y > 0.0f) {					//  inside nw quadrant
+      if (dy * p.x < -dx * p.y)			//   west wall
 	return (float)M_PI;
       else						//   north wall
 	return (float)(0.5 * M_PI);
     } else {						//  inside sw quadrant
-      if (dy * p[0] < dx * p[1])			//   west wall
+      if (dy * p.x < dx * p.y)			//   west wall
 	return (float)M_PI;
       else						//   south wall
 	return (float)(1.5 * M_PI);
@@ -74,19 +74,16 @@ static float getNormalOrigRect(const fvec3& p, float dx, float dy)
 
 
 void Intersect::getNormalRect(const fvec3& p1, const fvec3& p2,
-                              float angle, float dx, float dy, float* n)
+                              float angle, float dx, float dy, fvec3& n)
 {
   // translate origin
-  float pa[2];
-  pa[0] = p1[0] - p2[0];
-  pa[1] = p1[1] - p2[1];
+  const fvec3 pa = p1 - p2;
 
   // rotate
-  float pb[2];
-  const float c = cosf(-angle), s = sinf(-angle);
-  pb[0] = c * pa[0] - s * pa[1];
-  pb[1] = c * pa[1] + s * pa[0];
-
+  const float c = cosf(-angle);
+  const float s = sinf(-angle);
+  const fvec2 pb((c * pa.x) - (s * pa.y),
+                 (c * pa.y) + (s * pa.x));
   // get angle
   const float normAngle = getNormalOrigRect(pb, dx, dy) + angle;
 
@@ -98,10 +95,12 @@ void Intersect::getNormalRect(const fvec3& p1, const fvec3& p2,
 
 
 // true iff axis aligned rect centered at origin intersects circle
-static bool testOrigRectCircle(float dx, float dy, const fvec3& p, float r)
+static bool testOrigRectCircle(float dx, float dy, const fvec2& p, float r)
 {
   // Algorithm from Graphics Gems, pp51-53.
-  const float rr = r * r, rx = -p[0], ry = -p[1];
+  const float rr = r * r;
+  const float rx = -p.x;
+  const float ry = -p.y;
   if (rx + dx < 0.0) {					// west of rect
     if (ry + dy < 0.0)					//  sw corner
       return (rx + dx) * (rx + dx) + (ry + dy) * (ry + dy) < rr;
@@ -130,16 +129,13 @@ bool Intersect::testRectCircle(const fvec3& p1, float angle,
                                float dx, float dy, const fvec3& p2, float r)
 {
   // translate origin
-  float pa[2];
-  pa[0] = p2[0] - p1[0];
-  pa[1] = p2[1] - p1[1];
+  const fvec3 pa = p2 - p1;
 
   // rotate
-  float pb[2];
-  const float c = cosf(-angle), s = sinf(-angle);
-  pb[0] = c * pa[0] - s * pa[1];
-  pb[1] = c * pa[1] + s * pa[0];
-
+  const float c = cosf(-angle);
+  const float s = sinf(-angle);
+  const fvec2 pb((c * pa.x) - (s * pa.y),
+                 (c * pa.y) + (s * pa.x));
   // do test
   return testOrigRectCircle(dx, dy, pb, r);
 }
@@ -154,7 +150,7 @@ Ray Intersect::rayMinusRay(const Ray& r1, float t1, const Ray& r2, float t2)
   r2.getPoint(t2, p2);
 
   // construct new ray
-  float p[3], d[3];
+  fvec3 p, d;
   p[0] = p1[0] - p2[0];
   p[1] = p1[1] - p2[1];
   p[2] = p1[2] - p2[2];
@@ -309,7 +305,7 @@ float Intersect::timeRayHitsBlock(const Ray& r, const fvec3& p1,
   pa[1] = p2[1] - p1[1];
 
   // rotate
-  float pb[3], db[3];
+  fvec3 pb, db;
   const float c = cosf(-angle), s = sinf(-angle);
   pb[0] = c * pa[0] - s * pa[1];
   pb[1] = c * pa[1] + s * pa[0];
@@ -574,7 +570,7 @@ float Intersect::timeAndSideRayHitsRect(const Ray& r, const fvec3& p1, float ang
   pa[1] = p2[1] - p1[1];
 
   // rotate
-  float pb[3], db[3];
+  fvec3 pb, db;
   const float c = cosf(-angle), s = sinf(-angle);
   pb[0] = c * pa[0] - s * pa[1];
   pb[1] = c * pa[1] + s * pa[0];
@@ -588,7 +584,7 @@ float Intersect::timeAndSideRayHitsRect(const Ray& r, const fvec3& p1, float ang
 }
 
 
-static bool testOrigRectRect(const fvec3& p, float angle,
+static bool testOrigRectRect(const fvec2& p, float angle,
 			     float dx1, float dy1, float dx2, float dy2)
 {
   static const float	box[4][2] =	{ {  1.0,  1.0 }, {  1.0, -1.0 },
@@ -666,15 +662,16 @@ bool Intersect::testRectRect(const fvec3& p1, float angle1, float dx1, float dy1
                              const fvec3& p2, float angle2, float dx2, float dy2)
 {
   // translate origin
-  float pa[2];
+  fvec2 pa;
   pa[0] = p2[0] - p1[0];
   pa[1] = p2[1] - p1[1];
 
   // rotate
-  float pb[2];
-  const float c = cosf(-angle1), s = sinf(-angle1);
-  pb[0] = c * pa[0] - s * pa[1];
-  pb[1] = c * pa[1] + s * pa[0];
+  const float c = cosf(-angle1);
+  const float s = sinf(-angle1);
+  fvec2 pb;
+  pb[0] = (c * pa.x) - (s * pa.y);
+  pb[1] = (c * pa.y) + (s * pa.x);
 
   // do test
   return testOrigRectRect(pb, angle2 - angle1, dx2, dy2, dx1, dy1);
@@ -805,19 +802,12 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
   };
   for (t = 0; t < pointCount; t++) {
     int next = (t + 1) % pointCount;
-    float edge[3];
-    edge[0] = points[next][0] - points[t][0];
-    edge[1] = points[next][1] - points[t][1];
-    edge[2] = points[next][2] - points[t][2];
+    const fvec3 edge = points[next] - points[t];
     for (int a = 0; a < 3; a++) {
-      float cross[3];
       const fvec3& axis = axisNormals[a];
-      cross[0] = (edge[1] * axis[2]) - (edge[2] * axis[1]);
-      cross[1] = (edge[2] * axis[0]) - (edge[0] * axis[2]);
-      cross[2] = (edge[0] * axis[1]) - (edge[1] * axis[0]);
-      const float length =
-	(cross[0] * cross[0]) + (cross[1] * cross[1]) + (cross[2] * cross[2]);
-      if (length < 0.001f) {
+      const fvec3 cross = fvec3::cross(edge, axis);
+      const float lengthSq = cross.lengthSq();
+      if (lengthSq < 0.001f) {
 	continue;
       }
       // find the projected distances

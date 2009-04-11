@@ -1667,11 +1667,11 @@ static bool savePlayersState()
     }
     PlayerInfo *pi = &gkPlayer->player;
     if (pi->isAlive()) {
-      float pos[3] = {0.0f, 0.0f, 0.0f};
+      fvec3 pos(0.0f, 0.0f, 0.0f);
       // Complete MsgAlive
       buf = nboPackUByte(bufStart, i);
       buf = nboPackFVec3(buf, pos);
-      buf = nboPackFloat(buf, pos[0]); // azimuth
+      buf = nboPackFloat(buf, 0.0f); // azimuth
       routePacket(MsgAlive,
 		   (char*)buf - (char*)bufStart, bufStart, StatePacket);
     }

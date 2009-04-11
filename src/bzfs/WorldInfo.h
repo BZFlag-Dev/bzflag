@@ -15,18 +15,19 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <vector>
 #include <string>
 
-/* bzfs implementation headers */
+// common headers
+#include "MapInfo.h"
+#include "vectors.h"
+
+// bzfs headers
 #include "EntryZones.h"
 #include "WorldWeapons.h"
 #include "TeamBases.h"
 #include "LinkManager.h"
-
-/* common implementation headers */
-#include "MapInfo.h"
 
 class BzMaterial;
 class Obstacle;
@@ -94,7 +95,7 @@ public:
   void addTeleporter(float x, float y, float z, float r,
 	             float w, float d, float h, float b, bool horizontal = false,
                      bool drive = false, bool shoot = false, bool rico = false);
-  void addBase(const float pos[3], float r, const float size[3], int color,
+  void addBase(const fvec3& pos, float r, const fvec3& size, int color,
                bool drive = false, bool shoot = false, bool rico = false);
 
   void setMapInfo(const std::vector<std::string>& lines);
@@ -102,9 +103,9 @@ public:
   float getWaterLevel() const;
   float getMaxWorldHeight() const;
 
-  bool getFlagDropPoint(const FlagInfo* fi, const float* pos, float* pt) const;
-  bool getFlagSpawnPoint(const FlagInfo* fi, float* pt) const;
-  bool getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const;
+  bool getFlagDropPoint(const FlagInfo* fi, const fvec3& pos, fvec3& pt) const;
+  bool getFlagSpawnPoint(const FlagInfo* fi, fvec3& pt) const;
+  bool getPlayerSpawnPoint(const PlayerInfo* pi, fvec3& pt) const;
 
   void *getDatabase() const;
   int getDatabaseSize() const;
@@ -118,10 +119,11 @@ public:
 
   bool isFinished() { return finished;}
 
-  const Obstacle* hitBuilding(const float* oldPos, float oldAngle,
-    const float* pos, float angle,
-    float tankWidth, float tankBreadth,
-    float tankHeight, bool directional, bool checkwalls = true) const;
+  const Obstacle* hitBuilding(const fvec3& oldPos, float oldAngle,
+                              const fvec3& pos, float angle,
+                              float tankWidth, float tankBreadth,
+                              float tankHeight, bool directional,
+                              bool checkwalls = true) const;
 private:
 
   bool finished;
@@ -158,7 +160,7 @@ public:
    * Checking is quite raw
    */
   InBuildingType cylinderInBuilding(const Obstacle **obstacle,
-				    const float* pos,
+				    const fvec3& pos,
 				    float radius, float height = 0.0f) const;
 
   /** check collision between world object and a Z-axis aligned box.
@@ -166,7 +168,7 @@ public:
    * location will return a pointer to the world colliding object
    */
   InBuildingType boxInBuilding(const Obstacle **obstacle,
-			       const float* pos, float angle,
+			       const fvec3& pos, float angle,
 			       float width, float breadth, float height) const;
 
 

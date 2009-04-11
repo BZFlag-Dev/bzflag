@@ -124,7 +124,7 @@ void GroupInstance::setTeam(int _team)
 
 void GroupInstance::setTint(const fvec4& _tint)
 {
-  memcpy(tint, _tint, sizeof(float[4]));
+  tint = _tint;
   modifyColor = true;
   return;
 }

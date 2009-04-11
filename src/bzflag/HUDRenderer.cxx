@@ -1099,11 +1099,9 @@ void HUDRenderer::renderStatus(void)
   if (roaming && BZDB.isTrue("showVelocities")) {
     Player *target = ROAM.getTargetTank();
     if (target) {
-      float vel[3] = {0};
-      memcpy(vel,target->getVelocity(),sizeof(float)*3);
+      const fvec3& vel = target->getVelocity();
 
-      float apparentVel[3] = {0};
-      memcpy(apparentVel,target->getApparentVelocity(),sizeof(float)*3);
+      const fvec3& apparentVel = target->getApparentVelocity();
 
       float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
       float vertSpeed = vel[2];
@@ -1292,8 +1290,7 @@ void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 			0, labelsFontFace->getFMFace(), labelsFontSize, fname);
 	}
 	if (roaming && BZDB.isTrue("showVelocities")) {
-	  float vel[3] = {0};
-	  memcpy(vel,pl->getVelocity(),sizeof(float)*3);
+	  const fvec3& vel = pl->getVelocity();
 	  std::string speedStr = TextUtils::format("[%5.2f]",sqrt(vel[0]*vel[0]+vel[1]*vel[1]));
 	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, speedStr.c_str()) / 2.0f,
 			float(y) + offset -

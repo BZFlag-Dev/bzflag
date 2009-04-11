@@ -23,9 +23,9 @@
 
 class EighthDPyrSceneNode : public EighthDimSceneNode {
   public:
-			EighthDPyrSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDPyrSceneNode();
+    EighthDPyrSceneNode(const fvec3& pos,
+                        const fvec3& size, float rotation);
+    ~EighthDPyrSceneNode();
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -34,14 +34,14 @@ class EighthDPyrSceneNode : public EighthDimSceneNode {
     class EighthDPyrRenderNode : public RenderNode {
       public:
 			EighthDPyrRenderNode(const EighthDPyrSceneNode*,
-				const float pos[3],
-				const float size[3], float rotation);
+				const fvec3& pos,
+				const fvec3& size, float rotation);
 			~EighthDPyrRenderNode();
 	void		render();
 	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const EighthDPyrSceneNode* sceneNode;
-	GLfloat		corner[5][3];
+	fvec3		corner[5];
     };
 
   private:

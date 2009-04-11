@@ -123,7 +123,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     }
     // adjust the sphere
     fvec4 mySphere(drawInfo->getSphere());
-    xformTool->modifyVertex((fvec3&)mySphere);
+    xformTool->modifyVertex(mySphere.xyz());
     mySphere[3] *= (lengthAdj * lengthAdj);
     setSphere(mySphere);
   }

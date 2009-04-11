@@ -23,23 +23,23 @@
 
 class EighthDBaseSceneNode : public EighthDimSceneNode {
   public:
-			EighthDBaseSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDBaseSceneNode();
+    EighthDBaseSceneNode(const fvec3& pos,
+                         const fvec3& size, float rotation);
+    ~EighthDBaseSceneNode();
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
   protected:
     class EighthDBaseRenderNode : public RenderNode {
       public:
 			EighthDBaseRenderNode(const EighthDBaseSceneNode *,
-				const float pos[3],
-				const float size[3], float rotation);
+				const fvec3& pos,
+				const fvec3& size, float rotation);
 			~EighthDBaseRenderNode();
 	void		render();
 	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const EighthDBaseSceneNode *sceneNode;
-	GLfloat corner[8][3];
+	fvec3 corner[8];
     };
   private:
     OpenGLGState	  gstate;

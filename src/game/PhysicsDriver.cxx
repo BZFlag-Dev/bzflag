@@ -220,28 +220,26 @@ const std::string& PhysicsDriver::getName() const
 }
 
 
-void PhysicsDriver::setLinear(const float vel[3])
+void PhysicsDriver::setLinear(const fvec3& vel)
 {
-  memcpy (linear, vel, sizeof(float[3]));
+  linear = vel;
   return;
 }
 
 
-void PhysicsDriver::setAngular(float vel, const float pos[2])
+void PhysicsDriver::setAngular(float vel, const fvec2& pos)
 {
   // convert from (rotations/second) to (radians/second)
   angularVel = (float)(vel * (2.0 * M_PI));
-  angularPos[0] = pos[0];
-  angularPos[1] = pos[1];
+  angularPos = pos;
   return;
 }
 
 
-void PhysicsDriver::setRadial(float vel, const float pos[2])
+void PhysicsDriver::setRadial(float vel, const fvec2& pos)
 {
   radialVel = vel;
-  radialPos[0] = pos[0];
-  radialPos[1] = pos[1];
+  radialPos = pos;
   return;
 }
 

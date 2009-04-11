@@ -25,26 +25,27 @@
 
 // common headers
 #include "bzfgl.h"
+#include "vectors.h"
 #include "ViewFrustum.h"
 
 
 class OpenGLLight {
   public:
-			OpenGLLight();
-			OpenGLLight(const OpenGLLight&);
-			~OpenGLLight();
-    OpenGLLight&	operator=(const OpenGLLight&);
+    OpenGLLight();
+    OpenGLLight(const OpenGLLight&);
+    OpenGLLight& operator=(const OpenGLLight&);
+    ~OpenGLLight();
 
-    const GLfloat*	getPosition() const;
-    const GLfloat*	getColor() const;
-    const GLfloat*	getAttenuation() const;
+    const fvec4&	getPosition() const;
+    const fvec4&	getColor() const;
+    const fvec3&	getAttenuation() const;
     GLfloat		getMaxDist() const;
 
-    void		setDirection(const GLfloat* xyz);
-    void		setPosition(const GLfloat* xyz);
+    void		setDirection(const fvec3& xyz);
+    void		setPosition(const fvec3& xyz);
     void		setColor(GLfloat r, GLfloat g, GLfloat b);
-    void		setColor(const GLfloat* rgb);
-    void		setAttenuation(const GLfloat* clq);
+    void		setColor(const fvec4& rgba);
+    void		setAttenuation(const fvec3& clq);
     void		setAttenuation(int index, GLfloat value);
 
     void		calculateImportance(const ViewFrustum& frustum);
@@ -70,9 +71,9 @@ class OpenGLLight {
     static void		initContext(void*);
 
   private:
-    GLfloat		pos[4];
-    GLfloat		color[4];
-    GLfloat		atten[3];
+    fvec4		pos;
+    fvec4		color;
+    fvec3		atten;
     GLfloat		maxDist;
     GLfloat		importance;
     bool		onlyReal;
@@ -85,17 +86,17 @@ class OpenGLLight {
 // OpenGLLight
 //
 
-inline const GLfloat*	OpenGLLight::getPosition() const
+inline const fvec4&	OpenGLLight::getPosition() const
 {
   return pos;
 }
 
-inline const GLfloat*	OpenGLLight::getColor() const
+inline const fvec4&	OpenGLLight::getColor() const
 {
   return color;
 }
 
-inline const GLfloat*	OpenGLLight::getAttenuation() const
+inline const fvec3&	OpenGLLight::getAttenuation() const
 {
   return atten;
 }

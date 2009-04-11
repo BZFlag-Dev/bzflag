@@ -27,8 +27,8 @@ BaseBuilding::BaseBuilding()
 }
 
 
-BaseBuilding::BaseBuilding(const float *p, float rotation,
-                           const float *_size, int _team, bool rico)
+BaseBuilding::BaseBuilding(const fvec3& p, float rotation,
+                           const fvec3& _size, int _team, bool rico)
 : Obstacle(p, rotation, _size[0], _size[1], _size[2], false, false, rico)
 , team(_team)
 {
@@ -364,7 +364,7 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) co
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);
-  const float zAxis[3] = {0.0f, 0.0f, +1.0f};
+  const fvec3 zAxis(0.0f, 0.0f, +1.0f);
   xform.addScale(getSize());
   xform.addSpin(degrees, zAxis);
   xform.addShift(getPosition());

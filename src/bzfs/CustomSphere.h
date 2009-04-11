@@ -39,7 +39,7 @@ class CustomSphere : public WorldFileObstacle {
     static const char* sideNames[MaterialCount];
 
     int divisions;
-    float texsize[2];
+    fvec2 texsize;
     bool hemisphere;
     int phydrv;
     bool useNormals;

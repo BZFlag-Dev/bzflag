@@ -23,6 +23,7 @@
 #include "Flag.h"
 #include "TimeKeeper.h"
 #include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
 
 /** FlagInfo describes a flag as it pertains to the world.
@@ -36,8 +37,8 @@ public:
   void addFlag();
   void *pack(void *buf, bool hide = false);
   size_t pack(BufferedNetworkMessage *msg , bool hide = false);
-  void dropFlag(float pos[3], float landingPos[3], bool vanish);
-  void resetFlag(float position[3], bool teamIsEmpty);
+  void dropFlag(const fvec3& pos, const fvec3& landingPos, bool vanish);
+  void resetFlag(const fvec3& pos, bool teamIsEmpty);
   void grab(int playerIndex);
   int  teamIndex() const;
   int  getIndex() const;

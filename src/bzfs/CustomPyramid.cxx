@@ -292,13 +292,13 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // setup the transform
   MeshTransform xform;
   if (flipz || (size[2] < 0.0f)) {
-    const float flipScale[3] = {1.0f, 1.0f, -1.0f};
-    const float flipShift[3] = {0.0f, 0.0f, +1.0f};
+    const fvec3 flipScale(1.0f, 1.0f, -1.0f);
+    const fvec3 flipShift(0.0f, 0.0f, +1.0f);
     xform.addScale(flipScale);
     xform.addShift(flipShift);
   }
 
-  const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+  const fvec3 zAxis(0.0f, 0.0f, 1.0f);
   xform.addScale(size);
   xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   xform.addShift(pos);
@@ -318,14 +318,14 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
   // add the checkpoint
   checkTypes.push_back(MeshObstacle::CheckInside);
-  const float middle[3] = { 0.0f, 0.0f, 0.5f };
+  const fvec3 middle(0.0f, 0.0f, 0.5f);
   checkPoints.push_back(middle);
 
   // add the vertex coordinates
-  const float vertsData[5][3] = {
-    {-1.0f, -1.0f, 0.0f}, {+1.0f, -1.0f, 0.0f},
-    {+1.0f, +1.0f, 0.0f}, {-1.0f, +1.0f, 0.0f},
-    {+0.0f, +0.0f, 1.0f}
+  const fvec3 vertsData[5] = {
+    fvec3(-1.0f, -1.0f, 0.0f), fvec3(+1.0f, -1.0f, 0.0f),
+    fvec3(+1.0f, +1.0f, 0.0f), fvec3(-1.0f, +1.0f, 0.0f),
+    fvec3(+0.0f, +0.0f, 1.0f)
   };
   for (i = 0; i < 5; i++) {
     verts.push_back(vertsData[i]);
@@ -339,9 +339,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     {0, 5}, // YN
     {0, 1}  // ZN
   };
-  const float txcdData[7][2] = {
-    {0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f}, // triangles
-    {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} // quad
+  const fvec2 txcdData[7] = {
+    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(0.5f, 1.0f), // triangles
+    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f) // quad
   };
   for (int face = 0; face < FaceCount; face++) {
     int cornerCount;
@@ -354,7 +354,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
       cornerOffset = 3;
     }
     for (int corner = 0; corner < cornerCount; corner++) {
-      float txcd[2];
+      fvec2 txcd;
       for (int a = 0; a < 2; a++) {
 	float scale;
 	if (texSizes[face][a] >= 0.0f) {

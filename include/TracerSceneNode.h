@@ -24,12 +24,11 @@
 
 class TracerSceneNode : public ShotSceneNode {
   public:
-			TracerSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
+			TracerSceneNode(const fvec3& pos, const fvec3& forward);
 			~TracerSceneNode();
 
     void		addLight(SceneRenderer&);
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    void		move(const fvec3& pos, const fvec3& forward);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -52,7 +51,7 @@ class TracerSceneNode : public ShotSceneNode {
     int			style;
     OpenGLGState	gstate;
     TracerRenderNode	renderNode;
-    static const GLfloat tailVertex[9][3];
+    static const fvec3   tailVertex[9];
     static const GLfloat TailLength;
 };
 

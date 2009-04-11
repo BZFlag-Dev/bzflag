@@ -28,8 +28,8 @@
 //
 
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
-				const GLfloat3Array& _vertex,
-				const GLfloat2Array& _uv,
+				const fvec3Array& _vertex,
+				const fvec2Array& _uv,
 				const GLfloat* _normal) :
 				wall(_wall),
 				normal(_normal),
@@ -81,8 +81,8 @@ void			PolyWallSceneNode::Geometry::drawVT() const
 // PolyWallSceneNode
 //
 
-PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
-					const GLfloat2Array& uv)
+PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
+					const fvec2Array& uv)
 {
   const int count = vertex.getSize();
   assert(uv.getSize() == count);
@@ -130,7 +130,7 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
       ignoreAxis = 2;
 
   // project vertices onto plane
-  GLfloat2Array flat(vertex.getSize());
+  fvec2Array flat(vertex.getSize());
   switch (ignoreAxis) {
     case 0:
       for (i = 0; i < count; i++) {
@@ -167,7 +167,7 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
   setNumLODs(1, area);
 
   // compute bounding sphere, put center at average of vertices
-  GLfloat mySphere[4];
+  fvec4 mySphere;
   mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
   for (i = 0; i < count; i++) {
     mySphere[0] += vertex[i][0];

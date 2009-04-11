@@ -97,7 +97,7 @@ bool WallObstacle::inBox(const fvec3& p, float _angle,
   const float yWidth = sinf(_angle);
   const float xBreadth = -yWidth;
   const float yBreadth = xWidth;
-  float corner[3];
+  fvec3 corner;
   corner[2] = p[2];
 
   // check to see if any corner is inside negative half-space
@@ -132,8 +132,7 @@ bool WallObstacle::getHitNormal(const fvec3&, float,
 				float, float, float,
 				fvec3& normal) const
 {
-  float p[3];
-  getNormal(p, normal);
+  getNormal(fvec3(), normal);
   return true;
 }
 

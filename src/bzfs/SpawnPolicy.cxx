@@ -31,14 +31,14 @@ SpawnPolicy::~SpawnPolicy()
 }
 
 
-bool
-SpawnPolicy::isFacing(const float *selfPos, const float *enemyPos, const float enemyAzimuth, const float deviation) const
+bool SpawnPolicy::isFacing(const fvec3& selfPos, const fvec3& enemyPos,
+                           const float enemyAzimuth, const float deviation) const
 {
   // vector points from test to enemy
   float dx = enemyPos[0] - selfPos[0];
   float dy = enemyPos[1] - selfPos[1];
   float dz = enemyPos[2] - selfPos[2];
-  float angActual = atan2f (dy, dx);
+  float angActual = atan2f(dy, dx);
   float diff = fmodf(enemyAzimuth - angActual, (float)M_PI * 2.0f);
 
   // Ignore tanks that are above or below us
@@ -58,18 +58,7 @@ SpawnPolicy::isFacing(const float *selfPos, const float *enemyPos, const float e
 }
 
 
-float
-SpawnPolicy::distanceFrom(const float *pos, const float* farPos) const
-{
-  float dx = farPos[0] - pos[0];
-  float dy = farPos[1] - pos[1];
-  float dz = farPos[2] - pos[2];
-  return (float)sqrt(dx*dx + dy*dy + dz*dz);
-}
-
-
-bool
-SpawnPolicy::isImminentlyDangerous(const float *selfPos) const
+bool SpawnPolicy::isImminentlyDangerous(const fvec3& selfPos) const
 {
   const float tankRadius = BZDBCache::tankRadius;
   const float safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * BZDB.eval("_spawnSafeSWMod"));
@@ -84,8 +73,8 @@ SpawnPolicy::isImminentlyDangerous(const float *selfPos) const
     if (!playerData)
       continue;
     if (playerData->player.isAlive()) {
-      float *enemyPos   = playerData->currentPos;
-      float  enemyAngle = playerData->currentRot;
+      const fvec3& enemyPos   = playerData->currentPos;
+      float        enemyAngle = playerData->currentRot;
       if (playerData->player.getFlag() >= 0) {
 	// check for dangerous flags
 	const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
@@ -96,17 +85,17 @@ SpawnPolicy::isImminentlyDangerous(const float *selfPos) const
 	    return true;	// eek, don't spawn here
 	  }
 	} else if (ftype == Flags::ShockWave) {  // don't spawn next to a SW
-	  if (distanceFrom(selfPos, enemyPos) < safeSWRadius) { // too close to SW
+	  if ((selfPos - enemyPos).length() < safeSWRadius) { // too close to SW
 	    return true;	// eek, don't spawn here
 	  }
 	} else if (ftype == Flags::Steamroller || ftype == Flags::Burrow) { // don't spawn if you'll squish or be squished
-	  if (distanceFrom(selfPos, enemyPos) < safeSRRadius) { // too close to SR or BU
+	  if ((selfPos - enemyPos).length() < safeSRRadius) { // too close to SR or BU
 	    return true;	// eek, don't spawn here
 	  }
 	}
       }
       // don't spawn in the line of sight of a normal-shot tank within a certain distance
-      if (distanceFrom(selfPos, enemyPos) < safeDistance) { // within danger zone?
+      if ((selfPos - enemyPos).length() < safeDistance) { // within danger zone?
 	if (isFacing(selfPos, enemyPos, enemyAngle, twentyDegrees)) { //and he's looking at me
 	  return true;
 	}

@@ -15,8 +15,12 @@
 
 #include "common.h"
 
+// system headers
 #include <assert.h>
 #include <string.h>
+
+// common headers
+#include "vectors.h"
 
 // Escape character to begin ANSI codes
 #define ESC_CHAR	((char) 0x1B)
@@ -100,16 +104,16 @@ static int ColorStringsLength = sizeof(ColorStrings);
 static bool quellAnsiCodesWarning = ColorStringsLength > 0 ? quellAnsiCodesWarning : false;
 
 // These RGB float values have to line up with the colors above
-static const float BrightColors[9][3] = {
-  {1.0f,1.0f,0.0f}, // yellow
-  {1.0f,0.0f,0.0f}, // red
-  {0.0f,1.0f,0.0f}, // green
-  {0.1f,0.2f,1.0f}, // blue
-  {1.0f,0.0f,1.0f}, // purple
-  {1.0f,1.0f,1.0f}, // white
-  {0.5f,0.5f,0.5f}, // grey
-  {1.0f,0.5f,0.0f}, // orange (nonstandard)
-  {0.0f,1.0f,1.0f}  // cyan
+static const fvec4 BrightColors[9] = {
+  fvec4(1.0f, 1.0f, 0.0f, 1.0f), // yellow
+  fvec4(1.0f, 0.0f, 0.0f, 1.0f), // red
+  fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green
+  fvec4(0.1f, 0.2f, 1.0f, 1.0f), // blue
+  fvec4(1.0f, 0.0f, 1.0f, 1.0f), // purple
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f), // white
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f), // grey
+  fvec4(1.0f, 0.5f, 0.0f, 1.0f), // orange (nonstandard)
+  fvec4(0.0f, 1.0f, 1.0f, 1.0f)  // cyan
 };
 
 

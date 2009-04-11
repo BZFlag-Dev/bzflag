@@ -96,7 +96,7 @@ class Teleporter : public Obstacle {
 
     float border;
     bool horizontal;
-    float origSize[3];
+    fvec3 origSize;
 
     MeshFace* backLink;
     MeshFace* frontLink;

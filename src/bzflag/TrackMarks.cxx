@@ -368,7 +368,7 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
     else {
       // cull based on track mark support
       te.sides = 0;
-      float markPos[3];
+      fvec3 markPos;
       markPos[2] = pos[2];
       const float dx = -sinf(angle) * TreadMiddle;
       const float dy = +cosf(angle) * TreadMiddle;
@@ -461,7 +461,7 @@ static void updateList(TrackList& list, float dt)
 	  continue;
 	}
 	// cull the track marks if they aren't supported
-	float markPos[3];
+	fvec3 markPos;
 	markPos[2] = te.pos[2] - TextureHeightOffset;
 	const float radians = (float)(te.angle * (M_PI / 180.0));
 	const float dx = -sinf(radians) * TreadMiddle;

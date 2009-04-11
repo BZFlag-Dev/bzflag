@@ -196,7 +196,7 @@ unsigned int WorldWeapons::count(void)
 }
 
 
-void * WorldWeapons::pack(void *buf) const
+void* WorldWeapons::pack(void *buf) const
 {
   buf = nboPackUInt(buf, weapons.size());
 

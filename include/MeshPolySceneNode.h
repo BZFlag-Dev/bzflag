@@ -23,18 +23,18 @@
 
 class MeshPolySceneNode : public WallSceneNode {
   public:
-    MeshPolySceneNode(const float plane[4],
+    MeshPolySceneNode(const fvec4& plane,
 		      bool noRadar, bool noShadow,
-		      const GLfloat3Array& vertices,
-		      const GLfloat3Array& normals,
-		      const GLfloat2Array& texcoords);
+		      const fvec3Array& vertices,
+		      const fvec3Array& normals,
+		      const fvec2Array& texcoords);
     ~MeshPolySceneNode();
 
     bool cull(const ViewFrustum& frustum) const;
     bool inAxisBox (const Extents& exts) const;
     int getVertexCount () const;
-    const GLfloat* getVertex (int vertex) const;
-    const GLfloat (*getVertices() const)[3];
+    const fvec3& getVertex(int vertex) const;
+    const fvec3* getVertices() const;
 
     int split(const fvec4& plane, SceneNode*&, SceneNode*&) const;
 
@@ -49,9 +49,9 @@ class MeshPolySceneNode : public WallSceneNode {
     class Geometry : public RenderNode {
       public:
 	Geometry(MeshPolySceneNode*,
-		 const GLfloat3Array& vertices,
-		 const GLfloat3Array& normals,
-		 const GLfloat2Array& texcoords,
+		 const fvec3Array& vertices,
+		 const fvec3Array& normals,
+		 const fvec2Array& texcoords,
 		 const GLfloat* normal);
 	~Geometry();
 	void setStyle(int _style) { style = _style; }
@@ -60,8 +60,8 @@ class MeshPolySceneNode : public WallSceneNode {
 	void render();
 	void renderRadar();
 	void renderShadow();
-	const GLfloat* getVertex(int i) const;
-	const GLfloat (*getVertices() const)[3];
+	const fvec3& getVertex(int i) const;
+	const fvec3* getVertices() const;
 	int getVertexCount() const;
 	const fvec3& getPosition() const { return sceneNode->getCenter(); }
       private:
@@ -76,16 +76,16 @@ class MeshPolySceneNode : public WallSceneNode {
 	bool draw;
 	const GLfloat* normal;
       public:
-	GLfloat3Array vertices;
-	GLfloat3Array normals;
-	GLfloat2Array texcoords;
+	fvec3Array vertices;
+	fvec3Array normals;
+	fvec2Array texcoords;
     };
 
   private:
     int splitWallVTN(const GLfloat* plane,
-		     const GLfloat3Array& vertices,
-		     const GLfloat3Array& normals,
-		     const GLfloat2Array& texcoords,
+		     const fvec3Array& vertices,
+		     const fvec3Array& normals,
+		     const fvec2Array& texcoords,
 		     SceneNode*& front, SceneNode*& back) const;
 
     void splitEdgeVTN(float d1, float d2,
@@ -95,8 +95,8 @@ class MeshPolySceneNode : public WallSceneNode {
 		      GLfloat* p, GLfloat* n, GLfloat* uv) const;
 
     int splitWallVT(const GLfloat* plane,
-		    const GLfloat3Array& vertices,
-		    const GLfloat2Array& texcoords,
+		    const fvec3Array& vertices,
+		    const fvec2Array& texcoords,
 		    SceneNode*& front, SceneNode*& back) const;
 
     void splitEdgeVT(float d1, float d2,
@@ -119,22 +119,22 @@ inline int MeshPolySceneNode::getVertexCount () const
   return node.getVertexCount();
 }
 
-inline const GLfloat* MeshPolySceneNode::Geometry::getVertex(int i) const
+inline const fvec3& MeshPolySceneNode::Geometry::getVertex(int i) const
 {
   return vertices[i];
 }
 
-inline const GLfloat (*MeshPolySceneNode::Geometry::getVertices() const)[3]
+inline const fvec3* MeshPolySceneNode::Geometry::getVertices() const
 {
   return vertices.getArray();
 }
 
-inline const GLfloat* MeshPolySceneNode::getVertex(int i) const
+inline const fvec3& MeshPolySceneNode::getVertex(int i) const
 {
   return node.getVertex(i);
 }
 
-inline const GLfloat (*MeshPolySceneNode::getVertices() const)[3]
+inline const fvec3* MeshPolySceneNode::getVertices() const
 {
   return node.getVertices();
 }

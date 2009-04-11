@@ -25,11 +25,10 @@ const GLfloat		ShellRadius = 0.5f;
 
 class ShellSceneNode : public ShotSceneNode {
   public:
-			ShellSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
+			ShellSceneNode(const fvec3& pos, const fvec3& forward);
 			~ShellSceneNode();
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    void		move(const fvec3& pos, const fvec3& forward);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -53,8 +52,8 @@ class ShellSceneNode : public ShotSceneNode {
     GLfloat		azimuth, elevation;
     OpenGLGState	gstate;
     ShellRenderNode	renderNode;
-    static const GLfloat shellVertex[9][3];
-    static const GLfloat shellNormal[10][3];
+    static const fvec3 shellVertex[9];
+    static const fvec3 shellNormal[10];
 };
 
 #endif // BZF_SHELL_SCENE_NODE_H

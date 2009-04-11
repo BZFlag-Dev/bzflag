@@ -2057,12 +2057,12 @@ static void handleJoinServer(void *msg)
   if (addr.empty()) {
     return;
   }
-  if (port <= 0 || port > 65535) {
+  if ((port < 0) || (port > 65535)) {
     return;
   }
 
   if (!BZDB.isTrue("autoJoin")) {
-    addMessage (NULL,
+    addMessage(NULL,
       TextUtils::format("ignored autoJoin to %s:%i", addr.c_str(), port)
     );
     return;
@@ -2405,7 +2405,7 @@ static void handleAliveMessage(void *msg)
     }
   }
 
-  static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec3 zero(0.0f, 0.0f, 0.0f);
   tank->setStatus(tank->getStatus() | PlayerState::Alive);
   tank->move(pos, forward);
   tank->setVelocity(zero);
@@ -4117,7 +4117,7 @@ bool addExplosion(const float *_pos,
 
   // make a copy and initialize it
   BillboardSceneNode *newExplosion = prototypeExplosions[index]->copy();
-  GLfloat pos[3];
+  fvec3 pos;
   pos[0] = _pos[0];
   pos[1] = _pos[1];
   pos[2] = _pos[2];
@@ -4155,7 +4155,7 @@ bool addExplosion(const float *_pos,
 
     // make a copy and initialize it
     BillboardSceneNode *newExpl = prototypeExplosions[idx]->copy();
-    GLfloat explPos[3];
+    fvec3 explPos;
     explPos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
     explPos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
     explPos[2] = _pos[2]+(float)(bzfrand()*10.0);
@@ -4696,9 +4696,7 @@ void setLookAtMarker(void)
   // get info about my tank
   const float c = cosf(- myTank->getAngle());
   const float s = sinf(- myTank->getAngle());
-  const float x0 = myTank->getPosition()[0];
-  const float y0 = myTank->getPosition()[1];
-  const float z0 = myTank->getPosition()[2];
+  const fvec3& myPos = myTank->getPosition();
 
   // initialize best target
   Player *bestTarget = NULL;
@@ -4710,9 +4708,9 @@ void setLookAtMarker(void)
       continue;
 
     // compute position in my local coordinate system
-    const float *pos = remotePlayers[i]->getPosition();
-    const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
-    const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
+    const fvec3& rPos = remotePlayers[i]->getPosition();
+    const float x = (c * (rPos[0] - myPos.x)) - (s * (rPos[1] - myPos.y));
+    const float y = (s * (rPos[0] - myPos.x)) + (c * (rPos[1] - myPos.y));
 
     // ignore things behind me
     if (x < 0.0f)
@@ -4725,12 +4723,9 @@ void setLookAtMarker(void)
 
     if (inLookRange(a, d, bestDistance, remotePlayers[i])) {
       // check and see if we can cast a ray from our point to the object
-      float vec[3];
-      vec[0] = pos[0]-x0;
-      vec[1] = pos[1]-y0;
-      vec[2] = (pos[2]-z0);//+(BZDBCache::tankHeight*0.5f);
+      fvec3 vec = rPos - myPos;
 
-      Ray ray = Ray(myTank->getPosition(), vec);
+      Ray ray = Ray(myPos, vec);
 
       // get the list of objects that fall in this ray
       const ObsList *olist = COLLISIONMGR.rayTest (&ray, d);
@@ -5709,7 +5704,7 @@ void leaveGame()
   serverLink = NULL;
 
   // reset viewpoint
-  float eyePoint[3], targetPoint[3];
+  fvec3 eyePoint, targetPoint;
   eyePoint[0] = 0.0f;
   eyePoint[1] = 0.0f;
   eyePoint[2] = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -6199,8 +6194,8 @@ static void setupFarPlane()
 
 //============================================================================//
 
-static void drawThreeChannel(float fov, const float myTankDir[3],
-                             float eyePoint[3], float targetPoint[3])
+static void drawThreeChannel(float fov, const fvec3& myTankDir,
+                             fvec3& eyePoint, fvec3& targetPoint)
 {
   ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
@@ -6438,8 +6433,7 @@ static void drawInterlaced()
 //============================================================================//
 
 static void setupRoamingCamera(float muzzleHeight,
-                               float eyePoint[3], float targetPoint[3],
-                               float& fov)
+                               fvec3& eyePoint, fvec3& targetPoint, float& fov)
 {
   hud->setAltitude(-1.0f);
 
@@ -6518,7 +6512,7 @@ static void setupRoamingCamera(float muzzleHeight,
     roamViewAngle = roam->theta;
   }
 
-  const float virtPos[] = { eyePoint[0], eyePoint[1], 0.0f };
+  const fvec3 virtPos(eyePoint[0], eyePoint[1], 0.0f);
   if (myTank) {
     myTank->move(virtPos, (float)(roamViewAngle * (M_PI / 180.0)));
   }
@@ -6527,33 +6521,28 @@ static void setupRoamingCamera(float muzzleHeight,
 }
 
 
-static void setupCamera(const float myTankPos[3], const float myTankDir[3],
+static void setupCamera(const fvec3& myTankPos, const fvec3& myTankDir,
                         float muzzleHeight,
-                        float eyePoint[3], float targetPoint[3], float& fov)
+                        fvec3& eyePoint, fvec3& targetPoint, float& fov)
 {
   if (ROAM.isRoaming()) {
     setupRoamingCamera(muzzleHeight, eyePoint, targetPoint, fov);
   }
   else {
     // default setup
-    eyePoint[0] = myTankPos[0];
-    eyePoint[1] = myTankPos[1];
-    eyePoint[2] = myTankPos[2] + muzzleHeight;
-    targetPoint[0] = eyePoint[0] + myTankDir[0];
-    targetPoint[1] = eyePoint[1] + myTankDir[1];
-    targetPoint[2] = eyePoint[2] + myTankDir[2];
+    eyePoint = myTankPos;
+    eyePoint.z += muzzleHeight;
+    targetPoint = eyePoint + myTankDir;
 
     if (myTank && thirdPersonVars.b3rdPerson) {
       // 3rd person camera
       const float distScale = thirdPersonVars.targetMultiplier;
-      targetPoint[0] = eyePoint[0] + (myTankDir[0] * distScale);
-      targetPoint[1] = eyePoint[1] + (myTankDir[1] * distScale);
-      targetPoint[2] = eyePoint[2] + (myTankDir[2] * distScale);
+      targetPoint = eyePoint + (distScale * myTankDir);
       const float offsetXY = thirdPersonVars.cameraOffsetXY;
       const float offsetZ  = thirdPersonVars.cameraOffsetZ;
-      eyePoint[0] -= (myTankDir[0] * offsetXY);
-      eyePoint[1] -= (myTankDir[1] * offsetXY);
-      eyePoint[2] += (muzzleHeight * offsetZ);
+      eyePoint.x -= (myTankDir.x * offsetXY);
+      eyePoint.y -= (myTankDir.y * offsetXY);
+      eyePoint.z += (muzzleHeight * offsetZ);
     }
   }
 
@@ -6714,16 +6703,16 @@ void drawFrame(const float dt)
   static SceneRenderer::ViewType viewType = RENDERER.getViewType();
   static BzfMedia* media = PlatformFactory::getMedia();
 
-  static const float defaultPos[3] = { 0.0f, 0.0f, 0.0f };
-  static const float defaultDir[3] = { 1.0f, 0.0f, 0.0f };
+  static const fvec3 defaultPos(0.0f, 0.0f, 0.0f);
+  static const fvec3 defaultDir(1.0f, 0.0f, 0.0f);
   static int   frameCount = 0;
   static float cumTime = 0.0f;
 
-  const float* myTankPos;
-  const float* myTankDir;
+  const fvec3* myTankPos;
+  const fvec3* myTankDir;
   GLfloat fov;
-  GLfloat eyePoint[3];
-  GLfloat targetPoint[3];
+  fvec3 eyePoint;
+  fvec3 targetPoint;
 
   checkDirtyControlPanel(controlPanel);
 
@@ -6744,14 +6733,14 @@ void drawFrame(const float dt)
   // get tank camera info
   float muzzleHeight;
   if (!myTank) {
-    myTankPos = defaultPos;
-    myTankDir = defaultDir;
+    myTankPos = &defaultPos;
+    myTankDir = &defaultDir;
     muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
     fov = BZDB.eval("defaultFOV");
   }
   else {
-    myTankPos = myTank->getPosition();
-    myTankDir = myTank->getForward();
+    myTankPos = &myTank->getPosition();
+    myTankDir = &myTank->getForward();
     muzzleHeight = myTank->getMuzzleHeight();
 
     fov = BZDB.eval("displayFOV");
@@ -6764,7 +6753,7 @@ void drawFrame(const float dt)
   }
   fov *= (float)(M_PI / 180.0);
 
-  setupCamera(myTankPos, myTankDir, muzzleHeight, // const
+  setupCamera(*myTankPos, *myTankDir, muzzleHeight, // const
               eyePoint, targetPoint, fov);        // modified
 
   // only use a close plane for drawing in the
@@ -6798,7 +6787,7 @@ void drawFrame(const float dt)
     const float hnp = 0.5f * NearPlane; // half near plane distance
     const float *eye = viewFrustum.getEye();
     const float *dir = viewFrustum.getDirection();
-    float clipPos[3];
+    fvec3 clipPos;
     clipPos[0] = eye[0] + (dir[0] * hnp);
     clipPos[1] = eye[1] + (dir[1] * hnp);
     clipPos[2] = eye[2];
@@ -6858,7 +6847,7 @@ void drawFrame(const float dt)
   // draw frame
   switch (viewType) {
     case SceneRenderer::ThreeChannel: {
-      drawThreeChannel(fov, myTankDir, eyePoint, targetPoint);
+      drawThreeChannel(fov, *myTankDir, eyePoint, targetPoint);
       break;
     }
     case SceneRenderer::Stacked:    { drawStacked();    break; }
@@ -7902,8 +7891,8 @@ static void findFastConfiguration()
 
   // setup projection
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
-  static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
+  static const fvec3 eyePoint(0.0f, 0.0f, muzzleHeight);
+  static const fvec3 targetPoint(0.0f, 10.0f, muzzleHeight);
   RENDERER.getViewFrustum().setProjection((float)(45.0 * M_PI / 180.0),
     NearPlaneNormal,
     FarPlaneDefault,
@@ -7918,10 +7907,10 @@ static void findFastConfiguration()
   // anything.  this will ensure that we continue to test polygon fill
   // rate.  with one polygon it doesn't matter if we use a z or bsp
   // database.
-  static const GLfloat base[3]  = { -10.0f, 10.0f,  0.0f };
-  static const GLfloat sEdge[3] = {  20.0f,  0.0f,  0.0f };
-  static const GLfloat tEdge[3] = {   0.0f,  0.0f, 10.0f };
-  static const GLfloat color[4] = { 1.0f, 1.0f, 1.0f, 0.5f };
+  static const fvec3 base (-10.0f, 10.0f,  0.0f);
+  static const fvec3 sEdge( 20.0f,  0.0f,  0.0f);
+  static const fvec3 tEdge(  0.0f,  0.0f, 10.0f);
+  static const fvec4 color(1.0f, 1.0f, 1.0f, 0.5f);
   SceneDatabase *timingScene = new ZSceneDatabase;
   WallSceneNode *node = new QuadWallSceneNode(base,
     sEdge, tEdge, 1.0f, 1.0f, true);
@@ -8156,7 +8145,7 @@ void startPlaying()
     dumpResources();
   }
 
-  static const GLfloat zero[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec3 zero(0.0f, 0.0f, 0.0f);
 
   TextureManager &tm = TextureManager::instance();
 

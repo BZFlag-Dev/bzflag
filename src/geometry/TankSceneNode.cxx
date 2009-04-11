@@ -391,7 +391,7 @@ void TankSceneNode::setJumpJets(float scale)
     jumpJetsScale = scale;
 
     // set the real light's position
-    const float* pos = getSphere();
+    const fvec3& pos = getSphere().xyz();
     jumpJetsRealLight.setPosition(pos);
 
     // set the jet ground-light and model positions
@@ -402,7 +402,7 @@ void TankSceneNode::setJumpJets(float scale)
       const float* scaleFactor = TankGeometryMgr::getScaleFactor(tankSize);
       const float* jm = jumpJetsModel[i];
       const float v[2] = {jm[0] * scaleFactor[0], jm[1] * scaleFactor[1]};
-      float* jetPos = jumpJetsPositions[i];
+      fvec3& jetPos = jumpJetsPositions[i];
       jetPos[0] = pos[0] + ((cos_val * v[0]) - (sin_val * v[1]));
       jetPos[1] = pos[1] + ((cos_val * v[1]) + (sin_val * v[0]));
       jetPos[2] = pos[2] + jm[2];
@@ -419,15 +419,15 @@ void TankSceneNode::setJumpJets(float scale)
 
 void TankSceneNode::setClipPlane(const fvec4* planePtr)
 {
-  if (!planePtr) {
+  if (planePtr == NULL) {
     clip = false;
   } else {
     clip = true;
     const fvec4& p = *planePtr;
-    clipPlane[0] = double(p.x);
-    clipPlane[1] = double(p.y);
-    clipPlane[2] = double(p.z);
-    clipPlane[3] = double(p.w);
+    clipPlane.x = double(p.x);
+    clipPlane.y = double(p.y);
+    clipPlane.z = double(p.z);
+    clipPlane.w = double(p.w);
   }
 }
 
@@ -488,18 +488,17 @@ void TankSceneNode::rebuildExplosion()
 void TankSceneNode::renderRadar()
 {
   const float angleCopy = azimuth;
-  const float* mySphere = getSphere();
-  float posCopy[3];
-  memcpy(posCopy, mySphere, sizeof(float[3]));
+  const fvec4& mySphere = getSphere();
+  fvec3 posCopy = mySphere.xyz();
 
   // allow negative values for burrowed clipping
-  float tankPos[3];
-  tankPos[0] = 0.0f;
-  tankPos[1] = 0.0f;
-  if (mySphere[2] >= 0.0f) {
-    tankPos[2] = 0.0f;
+  fvec3 tankPos;
+  tankPos.x = 0.0f;
+  tankPos.y = 0.0f;
+  if (mySphere.z >= 0.0f) {
+    tankPos.z = 0.0f;
   } else {
-    tankPos[2] = mySphere[2];
+    tankPos.z = mySphere.z;
   }
 
   setCenter(tankPos);
@@ -538,7 +537,7 @@ bool TankSceneNode::cullShadow(int planeCount, const fvec4* planes) const
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
     const fvec4& p = planes[i];
-    const float d = fvec3::dot((fvec3&)p, (fvec3&)s) + p.w;
+    const float d = fvec3::dot(p.xyz(), s.xyz()) + p.w;
     if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
@@ -555,7 +554,7 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
 				   tank(_tank),
 				   renderNode(this)
 {
-  static const GLfloat defaultPlane[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
+  static const fvec4 defaultPlane(1.0f, 0.0f, 0.0f, 0.0f);
   move(defaultPlane);
   float radius = BZDBCache::tankLength;
   radius = radius * 4.0f;
@@ -577,7 +576,7 @@ TankIDLSceneNode::~TankIDLSceneNode()
 }
 
 
-void TankIDLSceneNode::move(const GLfloat _plane[4])
+void TankIDLSceneNode::move(const fvec4& _plane)
 {
   plane[0] = _plane[0];
   plane[1] = _plane[1];
@@ -733,11 +732,11 @@ void TankIDLSceneNode::IDLRenderNode::render()
   plane.x = (ca * _plane.x) - (sa * _plane.y);
   plane.y = (sa * _plane.x) + (ca * _plane.y);
   plane.z = _plane.z;
-  plane.w = fvec3::dot((fvec3&)sphere, (fvec3&)_plane) + _plane.w;
+  plane.w = fvec3::dot(sphere.xyz(), _plane.xyz()) + _plane.w;
 
   // compute projection point -- one TankLength in from plane
   const GLfloat pd = -1.0f * BZDBCache::tankLength - plane.w;
-  fvec3 origin = pd * (fvec3&)plane;
+  fvec3 origin = pd * plane.xyz();
 
   glPushMatrix();
     glTranslatef(sphere.x, sphere.y, sphere.z);
@@ -1396,11 +1395,11 @@ void TankSceneNode::TankRenderNode::renderLights()
 }
 
 
-GLfloat TankSceneNode::jumpJetsModel[4][3] = {
-  {-1.5f, -0.6f, +0.25f},
-  {-1.5f, +0.6f, +0.25f},
-  {+1.5f, -0.6f, +0.25f},
-  {+1.5f, +0.6f, +0.25f}
+fvec3 TankSceneNode::jumpJetsModel[4] = {
+  fvec3(-1.5f, -0.6f, +0.25f),
+  fvec3(-1.5f, +0.6f, +0.25f),
+  fvec3(+1.5f, -0.6f, +0.25f),
+  fvec3(+1.5f, +0.6f, +0.25f)
 };
 
 void TankSceneNode::TankRenderNode::renderJumpJets()

@@ -229,10 +229,10 @@ void LocalPlayer::doUpdateMotion(float dt)
 
   // save old state
   const Location oldLocation = location;
-  const float* oldPosition = getPosition();
+  const fvec3& oldPosition = getPosition();
   const float oldAzimuth = getAngle();
   const float oldAngVel = getAngularVelocity();
-  const float* oldVelocity = getVelocity();
+  const fvec3& oldVelocity = getVelocity();
 
   // prepare new state
   fvec3 newVelocity(getVelocity());
@@ -508,7 +508,8 @@ void LocalPlayer::doUpdateMotion(float dt)
     hitWall = true;
 
     // record position when hitting
-    float hitPos[3], hitAzimuth;
+    fvec3 hitPos;
+    float hitAzimuth;
     hitAzimuth = newAzimuth;
     hitPos[0] = newPos[0];
     hitPos[1] = newPos[1];
@@ -689,7 +690,7 @@ void LocalPlayer::doUpdateMotion(float dt)
 	getHitBuilding(newPos, newAzimuth, newPos, newAzimuth, phased, expel);
       if (teleObs != NULL) {
 	// revert
-	memcpy (newPos, oldPosition, sizeof(float[3]));
+	newPos = oldPosition;
 	newVelocity[0] = newVelocity[1] = 0.0f;
 	newVelocity[2] = oldVelocity[2];
 	newAzimuth = oldAzimuth;
@@ -895,7 +896,7 @@ bool LocalPlayer::canJump() const
 }
 
 
-const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
+const Obstacle* LocalPlayer::getHitBuilding(const fvec3& p, float a,
 					    bool phased, bool& expel) const
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
@@ -915,8 +916,8 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
 }
 
 
-const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
-					    const float* p, float a,
+const Obstacle* LocalPlayer::getHitBuilding(const fvec3& oldP, float oldA,
+					    const fvec3& p, float a,
 					    bool phased, bool& expel)
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
@@ -973,9 +974,9 @@ static bool notInObstacleList(const Obstacle* obs,
 
 void LocalPlayer::collectInsideBuildings()
 {
-  const float* pos = getPosition();
+  const fvec3& pos = getPosition();
   const float angle = getAngle();
-  const float* dims = getDimensions();
+  const fvec3& dims = getDimensions();
 
   // get the list of possible inside buildings
   const ObsList* olist =
@@ -1036,7 +1037,7 @@ const fvec3* LocalPlayer::getAntidoteLocation() const
 }
 
 
-void LocalPlayer::restart(const float* pos, float _azimuth)
+void LocalPlayer::restart(const fvec3& pos, float _azimuth)
 {
   // put me in limbo
   setStatus(short(PlayerState::DeadStatus));
@@ -1061,7 +1062,7 @@ void LocalPlayer::restart(const float* pos, float _azimuth)
   deathPhyDrv = -1;
 
   // initialize position/speed state
-  static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec3 zero(0.0f, 0.0f, 0.0f);
   location = (pos[2] > 0.0f) ? OnBuilding : OnGround;
   lastObstacle = NULL;
   lastSpeed = 0.0f;
@@ -1183,12 +1184,10 @@ void LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 }
 
 
-void LocalPlayer::setDeadStop ( void  )
+void LocalPlayer::setDeadStop(void)
 {
-	float allStop[3] = {0,0,0};
-
-	setVelocity(allStop);
-	setAngularVelocity(0.0);
+  setVelocity(fvec3(0.0f, 0.0f, 0.0f));
+  setAngularVelocity(0.0);
 }
 
 
@@ -1391,7 +1390,7 @@ void LocalPlayer::doJump()
   // add jump velocity (actually, set the vertical component since you
   // can only jump if resting on something)
   const float* oldVelocity = getVelocity();
-  float newVelocity[3];
+  fvec3 newVelocity;
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
   if (flag == Flags::Wings) {
@@ -1462,7 +1461,7 @@ void LocalPlayer::explodeTank()
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
   const float* oldVelocity = getVelocity();
-  float newVelocity[3];
+  fvec3 newVelocity;
   float maxSpeed;
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
@@ -1591,8 +1590,8 @@ bool LocalPlayer::checkCollision(const Player* otherTank)
     return false;
   }
 
-  const float *myPosition = getPosition();
-  const float *otherPosition = otherTank->getPosition();
+  const fvec3& myPosition = getPosition();
+  const fvec3& otherPosition = otherTank->getPosition();
 
   const float dx = otherPosition[0] - myPosition[0];
   const float dy = otherPosition[1] - myPosition[1];

@@ -20,6 +20,7 @@
 #include "Singleton.h"
 #include "Player.h"
 #include "Flag.h"
+#include "vectors.h"
 
 /* local headers */
 #include "World.h"
@@ -64,7 +65,7 @@ public:
   std::string getRoamingLabel(void) const;
 
   struct RoamingCamera {
-    float pos[3];
+    fvec3 pos;
     float theta;
     float phi;
     float zoom;

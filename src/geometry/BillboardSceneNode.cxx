@@ -30,17 +30,20 @@
 #include "StateDatabase.h"
 
 
-BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
-				show(false),
-				hasAlpha(false),
-				hasTexture(false),
-				hasTextureAlpha(false),
-				looping(false),
-				lightSource(false),
-				width(1.0f), height(1.0f),
-				cu(1), cv(1),
-				t(0.0f), duration(0.0f),
-				renderNode(this)
+BillboardSceneNode::BillboardSceneNode(const fvec3& pos)
+: show(false)
+, hasAlpha(false)
+, hasTexture(false)
+, hasTextureAlpha(false)
+, looping(false)
+, lightSource(false)
+, width(1.0f)
+, height(1.0f)
+, cu(1)
+, cv(1)
+, t(0.0f)
+, duration(0.0f)
+, renderNode(this)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setBlending();
@@ -72,7 +75,7 @@ BillboardSceneNode::~BillboardSceneNode()
 
 BillboardSceneNode*	BillboardSceneNode::copy() const
 {
-  BillboardSceneNode* e = new BillboardSceneNode(getSphere());
+  BillboardSceneNode* e = new BillboardSceneNode(getSphere().xyz());
   e->show = show;
   e->hasAlpha = hasAlpha;
   e->hasTexture = hasTexture;
@@ -269,7 +272,7 @@ void			BillboardSceneNode::
   setFrame();
 }
 
-void			BillboardSceneNode::move(const GLfloat pos[3])
+void			BillboardSceneNode::move(const fvec3& pos)
 {
   setCenter(pos);
   light.setPosition(pos);

@@ -32,22 +32,22 @@
 //
 
 QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
-				int uCount, int vCount,
-				const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				const GLfloat* _normal,
-				float uOffset, float vOffset,
-				float uRepeats, float vRepeats) :
-				wall(_wall),
-				style(0),
-				ds(uCount),
-				dt(vCount),
-				dsq(uCount / 4),
-				dsr(uCount % 4),
-				normal(_normal),
-				vertex((uCount+1) * (vCount+1)),
-				uv((uCount+1) * (vCount+1))
+                                      int uCount, int vCount,
+                                      const fvec3& base,
+                                      const fvec3& uEdge,
+                                      const fvec3& vEdge,
+                                      const GLfloat* _normal,
+                                      float uOffset, float vOffset,
+                                      float uRepeats, float vRepeats)
+: wall(_wall)
+, style(0)
+, ds(uCount)
+, dt(vCount)
+, dsq(uCount / 4)
+, dsr(uCount % 4)
+, normal(_normal)
+, vertex((uCount+1) * (vCount+1))
+, uv((uCount+1) * (vCount+1))
 {
   for (int n = 0, j = 0; j <= vCount; j++) {
     const float t = (float)j / (float)vCount;
@@ -63,10 +63,12 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
   triangles = 2 * (uCount * vCount);
 }
 
+
 QuadWallSceneNode::Geometry::~Geometry()
 {
   // do nothing
 }
+
 
 #define	RENDER(_e)							\
   for (int k = 0, t = 0; t < dt; t++) {					\
@@ -108,7 +110,8 @@ QuadWallSceneNode::Geometry::~Geometry()
 #define EMITV(_i)	glVertex3fv(vertex[_i])
 #define EMITVT(_i)	glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
-void			QuadWallSceneNode::Geometry::render()
+
+void QuadWallSceneNode::Geometry::render()
 {
   wall->setColor();
   glNormal3fv(normal);
@@ -121,7 +124,8 @@ void			QuadWallSceneNode::Geometry::render()
   return;
 }
 
-void			QuadWallSceneNode::Geometry::renderShadow()
+
+void QuadWallSceneNode::Geometry::renderShadow()
 {
   int last = (ds + 1) * dt;
   glBegin(GL_TRIANGLE_STRIP);
@@ -133,58 +137,64 @@ void			QuadWallSceneNode::Geometry::renderShadow()
   addTriangleCount(2);
 }
 
-void			QuadWallSceneNode::Geometry::drawV() const
+
+void QuadWallSceneNode::Geometry::drawV() const
 {
   RENDER(EMITV)
 }
 
-void			QuadWallSceneNode::Geometry::drawVT() const
+
+void QuadWallSceneNode::Geometry::drawVT() const
 {
   RENDER(EMITVT)
 }
 
-const GLfloat*		QuadWallSceneNode::Geometry::getVertex(int i) const
+
+const fvec3& QuadWallSceneNode::Geometry::getVertex(int i) const
 {
   return vertex[i];
 }
+
 
 //
 // QuadWallSceneNode
 //
 
-QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uOffset,
-				float vOffset,
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs)
+QuadWallSceneNode::QuadWallSceneNode(const fvec3& base,
+                                     const fvec3& uEdge,
+                                     const fvec3& vEdge,
+                                     float uOffset,
+                                     float vOffset,
+                                     float uRepeats,
+                                     float vRepeats,
+                                     bool makeLODs)
 {
   init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs);
 }
 
-QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs)
+
+QuadWallSceneNode::QuadWallSceneNode(const fvec3& base,
+                                     const fvec3& uEdge,
+                                     const fvec3& vEdge,
+                                     float uRepeats,
+                                     float vRepeats,
+                                     bool makeLODs)
 {
   init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs);
 }
 
-void			QuadWallSceneNode::init(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uOffset,
-				float vOffset,
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs)
+
+void QuadWallSceneNode::init(const fvec3& base,
+                             const fvec3& uEdge,
+                             const fvec3& vEdge,
+                             float uOffset,
+                             float vOffset,
+                             float uRepeats,
+                             float vRepeats,
+                             bool makeLODs)
 {
   // record plane and bounding sphere info
-  GLfloat myPlane[4], mySphere[4];
+  fvec4 myPlane, mySphere;
   myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
   myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
   myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
@@ -313,13 +323,14 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 
   // record extents info
   for (int i = 0; i < 4; i++) {
-    const float* point = getVertex(i);
+    const fvec3& point = getVertex(i);
     extents.expandToPoint(point);
   }
 
   // record LOD info
   setNumLODs(numLevels, areas);
 }
+
 
 QuadWallSceneNode::~QuadWallSceneNode()
 {
@@ -331,12 +342,13 @@ QuadWallSceneNode::~QuadWallSceneNode()
   delete shadowNode;
 }
 
-int			QuadWallSceneNode::split(const fvec4& _plane,
-				SceneNode*& front, SceneNode*& back) const
+
+int QuadWallSceneNode::split(const fvec4& _plane,
+                             SceneNode*& front, SceneNode*& back) const
 {
   // need to reorder vertices into counterclockwise order
-  GLfloat3Array vertex(4);
-  GLfloat2Array uv(4);
+  fvec3Array vertex(4);
+  fvec2Array uv(4);
   for (int i = 0; i < 4; i++) {
     int j = i;
     if (j == 2 || j == 3) j = 5 - j;
@@ -349,21 +361,22 @@ int			QuadWallSceneNode::split(const fvec4& _plane,
   return WallSceneNode::splitWall(_plane, vertex, uv, front, back);
 }
 
-void			QuadWallSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void QuadWallSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   const int lod = pickLevelOfDetail(renderer);
   nodes[lod]->setStyle(getStyle());
   renderer.addRenderNode(nodes[lod], getWallGState());
 }
 
-void			QuadWallSceneNode::addShadowNodes(
-				SceneRenderer& renderer)
+
+void QuadWallSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   renderer.addShadowNode(shadowNode);
 }
 
-bool		    QuadWallSceneNode::inAxisBox(const Extents& exts) const
+
+bool QuadWallSceneNode::inAxisBox(const Extents& exts) const
 {
   if (!extents.touches(exts)) {
     return false;
@@ -379,12 +392,14 @@ bool		    QuadWallSceneNode::inAxisBox(const Extents& exts) const
   return Intersect::testPolygonInAxisBox(4, vertices, getPlaneRaw(), exts);
 }
 
-int		     QuadWallSceneNode::getVertexCount () const
+
+int QuadWallSceneNode::getVertexCount () const
 {
   return 4;
 }
 
-const GLfloat*	  QuadWallSceneNode::getVertex (int vertex) const
+
+const fvec3& QuadWallSceneNode::getVertex (int vertex) const
 {
   // re-map these to a counter-clockwise order
   const int remap[4] = {0, 1, 3, 2};

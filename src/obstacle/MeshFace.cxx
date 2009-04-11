@@ -83,7 +83,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 void MeshFace::finalize()
 {
   float maxCrossSqr = 0.0f;
-  float bestCross[3] = { 0.0f, 0.0f, 0.0f };
+  fvec3 bestCross(0.0f, 0.0f, 0.0f);
   int bestSet[3] = { -1, -1, -1 };
 
   // find the best vertices for making the plane
@@ -94,13 +94,13 @@ void MeshFace::finalize()
 	const fvec3 edge1 = *vertices[k] - *vertices[j];
 	const fvec3 edge2 = *vertices[i] - *vertices[j];
 	const fvec3 cross = fvec3::cross(edge1, edge2);
-	const float lenSqr = cross.lenSqr();
-	if (lenSqr > maxCrossSqr) {
-	  maxCrossSqr = lenSqr;
+	const float lengthSq = cross.lengthSq();
+	if (lengthSq > maxCrossSqr) {
+	  maxCrossSqr = lengthSq;
 	  bestSet[0] = i;
 	  bestSet[1] = j;
 	  bestSet[2] = k;
-	  memcpy (bestCross, cross, sizeof(float[3]));
+	  bestCross = cross;
 	}
       }
     }
@@ -128,7 +128,7 @@ void MeshFace::finalize()
   plane[0] = bestCross[0] * scale;
   plane[1] = bestCross[1] * scale;
   plane[2] = bestCross[2] * scale;
-  plane[3] = -fvec3::dot((fvec3&)plane, *vert);
+  plane[3] = -fvec3::dot(plane.xyz(), *vert);
 
   // see if the whole face is convex
   int v;
@@ -137,7 +137,7 @@ void MeshFace::finalize()
     a = *vertices[(v + 1) % vertexCount] - *vertices[(v + 0) % vertexCount];
     b = *vertices[(v + 2) % vertexCount] - *vertices[(v + 1) % vertexCount];
     c = fvec3::cross(a, b);
-    const float d = fvec3::dot(c, (fvec3&)plane);
+    const float d = fvec3::dot(c, plane.xyz());
     if (d <= 0.0f) {
       logDebugMessage(1,"non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
@@ -156,7 +156,7 @@ void MeshFace::finalize()
 
   // see if the vertices are coplanar
   for (v = 0; v < vertexCount; v++) {
-    const float cross = fvec3::dot(*vertices[v], (fvec3&)plane);
+    const float cross = fvec3::dot(*vertices[v], plane.xyz());
     if (fabsf(cross + plane[3]) > 1.0e-3) {
       logDebugMessage(1,"non-planar mesh face (%f)", cross + plane[3]);
       if ((debugLevel >= 3) && (mesh != NULL)) {
@@ -193,9 +193,9 @@ void MeshFace::finalize()
   for (v = 0; v < vertexCount; v++) {
     const int next = (v + 1) % vertexCount;
     const fvec3 edge = *vertices[next] - *vertices[v];
-    (fvec3&)edgePlanes[v] = fvec3::cross(edge, (fvec3&)plane);
-    fvec3::normalize((fvec3&)edgePlanes[v]);
-    edgePlanes[v][3] = -fvec3::dot(*vertices[v], (fvec3&)edgePlanes[v]);
+    edgePlanes[v].xyz() = fvec3::cross(edge, plane.xyz());
+    fvec3::normalize(edgePlanes[v].xyz());
+    edgePlanes[v][3] = -fvec3::dot(*vertices[v], edgePlanes[v].xyz());
   }
 
   // set the plane type
@@ -341,7 +341,7 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
 {
   if (!smoothBounce || !useNormals()) {
     // just use the plain normal
-    memcpy (n, plane, sizeof(float[3]));
+    n = plane.xyz();
   }
   else {
     // FIXME: this isn't quite right
@@ -364,7 +364,7 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
       int next = (i + 1) % vertexCount;
       twinAreas[i] = areas[i] + areas[next];
       if (twinAreas[i] < 1.0e-10f) {
-	memcpy (n, normals[next], sizeof(float[3]));
+	n = *normals[next];
 	delete[] areas;
 	delete[] twinAreas;
 	return;
@@ -381,7 +381,7 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
     }
     float len = normal.length();
     if (len < 1.0e-10) {
-      memcpy (n, plane, sizeof(float[3]));
+      n = plane.xyz();
       delete[] areas;
       delete[] twinAreas;
       return;
@@ -401,7 +401,7 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
 
 void MeshFace::getNormal(const fvec3& /*p*/, fvec3& n) const
 {
-  memcpy (n, plane, sizeof(float[3]));
+  n = plane.xyz();
   return;
 }
 
@@ -417,7 +417,7 @@ bool MeshFace::getHitNormal(const fvec3& /*oldPos*/, float /*oldAngle*/,
 			    fvec3& normal) const
 {
   if (normal) {
-    memcpy (normal, plane, sizeof(float[3]));
+    normal = plane.xyz();
   }
   return true;
 }
@@ -444,7 +444,7 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
   // to move the polygon than the box, tris and quads will
   // probably be the dominant polygon types).
 
-  float pln[4]; // translated plane
+  fvec4 pln; // translated plane
   fvec3* v = new fvec3[vertexCount]; // translated vertices
   const float cos_val = cosf(-_angle);
   const float sin_val = sinf(-_angle);
@@ -459,7 +459,7 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
   pln[0] = (cos_val * plane[0]) - (sin_val * plane[1]);
   pln[1] = (cos_val * plane[1]) + (sin_val * plane[0]);
   pln[2] = plane[2];
-  pln[3] = plane[3] + fvec3::dot((fvec3&)plane, p);
+  pln[3] = plane[3] + fvec3::dot(plane.xyz(), p);
 
   // testPolygonInAxisBox() expects us to have already done all of the
   // separation tests with respect to the box planes. we could not do
@@ -523,7 +523,7 @@ bool MeshFace::inMovingBox(const fvec3& oldPos, float /*oldAngle*/,
 			   float dx, float dy, float height) const
 {
   // expand the box with respect to Z axis motion
-  float _pos[3];
+  fvec3 _pos;
   _pos[0] = newPos[0];
   _pos[1] = newPos[1];
   if (oldPos[2] < newPos[2]) {

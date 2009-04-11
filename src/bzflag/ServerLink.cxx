@@ -945,7 +945,7 @@ void ServerLink::sendCaptureFlag(TeamColor team)
   send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
-void ServerLink::sendDropFlag(const float* position)
+void ServerLink::sendDropFlag(const fvec3& position)
 {
   char msg[13];
   void* buf = msg;
@@ -1157,8 +1157,8 @@ void ServerLink::sendExit()
   flush();
 }
 
-void ServerLink::sendCollide(const PlayerId playerId, const PlayerId otherId,
-      const float *pos)
+void ServerLink::sendCollide(const PlayerId playerId,
+                             const PlayerId otherId, const fvec3& pos)
 {
   char msg[14];
 

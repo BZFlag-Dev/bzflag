@@ -645,8 +645,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
   if (roaming && BZDB.isTrue("showVelocities")) {
-    float vel[3] = {0};
-    memcpy(vel,player->getVelocity(),sizeof(float)*3);
+    const fvec3& vel = player->getVelocity();
 
     float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
 

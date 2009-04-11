@@ -1042,7 +1042,7 @@ static void handleAliveMessage ( void	*msg, uint16_t /*len*/ )
   int playerIndex = lookupPlayerIndex(id);
 
   if ((playerIndex >= 0) || (playerIndex == -2)) {
-    static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+    static const fvec3 zero(0.0f, 0.0f, 0.0f);
     Player* tank = getPlayerByIndex(playerIndex);
     if (tank->getPlayerType() == ComputerPlayer) {
       for (int r = 0; r < numRobots; r++) {

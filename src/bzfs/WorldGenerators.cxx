@@ -32,6 +32,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TimeKeeper.h"
+#include "vectors.h"
 #include "version.h"
 
 // local headers
@@ -633,40 +634,40 @@ WorldInfo *defineTeamWorld()
       bases.erase(t);
     } else {
       CustomZone zone;
-      float p[3] = {0.0f, 0.0f, 0.0f};
-      const float size[3] = {baseSize * 0.5f, baseSize * 0.5f, 0.0f};
+      fvec3 pos(0.0f, 0.0f, 0.0f);
+      const fvec3 size(baseSize * 0.5f, baseSize * 0.5f, 0.0f);
       const float safeOff = 0.5f * (baseSize + pyrBase);
       switch (t) {
 	case RedTeam: {
-	  p[0] = (-worldSize + baseSize) / 2.0f;
-	  p[1] = 0.0f;
-	  myWorld->addBase(p, 0.0f, size, t);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
+	  pos[0] = (-worldSize + baseSize) / 2.0f;
+	  pos[1] = 0.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] - safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] + safeOff, myWorld);
 	  break;
 	}
 	case GreenTeam: {
-	  p[0] = (worldSize - baseSize) / 2.0f;
-	  p[1] = 0.0f;
-	  myWorld->addBase(p, 0.0f, size, t);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
+	  pos[0] = (worldSize - baseSize) / 2.0f;
+	  pos[1] = 0.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] - safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] + safeOff, myWorld);
 	  break;
 	}
 	case BlueTeam: {
-	  p[0] = 0.0f;
-	  p[1] = (-worldSize + baseSize) / 2.0f;
-	  myWorld->addBase(p, 0.0f, size, t);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
+	  pos[0] = 0.0f;
+	  pos[1] = (-worldSize + baseSize) / 2.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] + safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] + safeOff, myWorld);
 	  break;
 	}
 	case PurpleTeam: {
-	  p[0] = 0.0f;
-	  p[1] = (worldSize - baseSize) / 2.0f;
-	  myWorld->addBase(p, 0.0f, size, t);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
+	  pos[0] = 0.0f;
+	  pos[1] = (worldSize - baseSize) / 2.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] - safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] - safeOff, myWorld);
 	  break;
 	}
       }

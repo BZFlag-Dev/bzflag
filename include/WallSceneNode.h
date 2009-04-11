@@ -83,8 +83,8 @@ class WallSceneNode : public SceneNode {
     const OpenGLGState*	getWallGState() const;
 
     static int		splitWall(const GLfloat* plane,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
+				const fvec3Array& vertices,
+				const fvec2Array& uvs,
 				SceneNode*& front, SceneNode*& back); // const
 
   private:

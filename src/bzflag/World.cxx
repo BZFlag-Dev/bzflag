@@ -191,14 +191,16 @@ TeamColor World::whoseBase(const fvec3& pos) const
 
   for (int i = 1; i < NumTeams; i++) {
     for (TeamBases::const_iterator it = bases[i].begin(); it != bases[i].end(); ++it) {
-      float nx = pos.x - it->pos.x;
-      float ny = pos.y - it->pos.y;
-      float rx = (float) (cosf(atanf(ny / nx) - it->rot) * sqrt((ny * ny) + (nx * nx)));
-      float ry = (float) (sinf(atanf(ny / nx) - it->rot) * sqrt((ny * ny) + (nx * nx)));
+      const float nx = pos.x - it->pos.x;
+      const float ny = pos.y - it->pos.y;
+      const float dist = sqrtf((nx * nx) + (ny * ny));
+      const float angle = atanf(ny / nx) - it->radians;
+      const float rx = dist * cosf(angle);
+      const float ry = dist * sinf(angle);
       if ((fabsf(rx) < it->size.x) &&
 	  (fabsf(ry) < it->size.y)) {
-	float nz = it->pos.z + it->size.z;
-	float rz = pos.z - nz;
+	const float nz = it->pos.z + it->size.z;
+	const float rz = pos.z - nz;
 	if (fabsf(rz) < 0.1) { // epsilon kludge
 	  return TeamColor(i);
 	}
@@ -573,7 +575,7 @@ void World::makeLinkMaterial()
   }
 
   BzMaterial mat;
-  const float color[4] = {0.0f, 0.0f, 0.0f, 0.5f};
+  const fvec4 color(0.0f, 0.0f, 0.0f, 0.5f);
   mat.setDiffuse(color);
   mat.setDynamicColor(dyncolID);
   mat.setTexture("telelink");
@@ -613,7 +615,7 @@ void World::initFlag(int index)
   // if coming or going then position warp
   Flag& flag = flags[index];
   if (flag.status == FlagComing || flag.status == FlagGoing) {
-    GLfloat pos[3];
+    fvec3 pos;
     pos[0] = flag.position[0];
     pos[1] = flag.position[1];
     pos[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
@@ -783,7 +785,7 @@ void World::updateFlag(int index, float dt)
 	flagNode->setFlat(true);
       }
       else {
-	float myWind[3];
+	fvec3 myWind;
 	getWind(myWind, flagPlayer->getPosition());
 	const float* vel = flagPlayer->getVelocity();
 	myWind[0] -= vel[0];
@@ -851,24 +853,24 @@ static void writeDefaultOBJMaterials(std::ostream& out)
   typedef struct {
     const char* name;
     const char* texture;
-    float color[4];
+    fvec4 color;
   } MatProps;
   const MatProps defaultMats[] = {
-    {"std_ground",	"std_ground.png",		{0.5f, 0.5f, 0.5f, 1.0f}},
-    {"boxtop",		"roof.png",			{1.0f, 1.0f, 0.9f, 1.0f}},
-    {"boxwall",		"boxwall.png",			{1.0f, 0.9f, 0.8f, 1.0f}},
-    {"pyrwall",		"pyrwall.png",			{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"telefront",	"telelink.png",			{1.0f, 0.0f, 0.0f, 0.5f}},
-    {"teleback",	"telelink.png",			{0.0f, 1.0f, 0.0f, 0.5f}},
-    {"telerim",		"caution.png",			{1.0f, 1.0f, 0.0f, 0.5f}},
-    {"basetop_team1",	"skins/red/basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basewall_team1",	"skins/red/basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-    {"basetop_team2",	"skins/green/basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basewall_team2",	"skins/green/basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-    {"basetop_team3",	"skins/blue/basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team3",	"skins/blue/basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-    {"basetop_team4",	"skins/purple/basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
-    {"basewall_team4",	"skins/purple/basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
+    {"std_ground",     "std_ground.png",            fvec4(0.5f, 0.5f, 0.5f, 1.0f)},
+    {"boxtop",         "roof.png",                  fvec4(1.0f, 1.0f, 0.9f, 1.0f)},
+    {"boxwall",        "boxwall.png",               fvec4(1.0f, 0.9f, 0.8f, 1.0f)},
+    {"pyrwall",        "pyrwall.png",               fvec4(0.8f, 0.8f, 1.0f, 1.0f)},
+    {"telefront",      "telelink.png",              fvec4(1.0f, 0.0f, 0.0f, 0.5f)},
+    {"teleback",       "telelink.png",              fvec4(0.0f, 1.0f, 0.0f, 0.5f)},
+    {"telerim",        "caution.png",               fvec4(1.0f, 1.0f, 0.0f, 0.5f)},
+    {"basetop_team1",  "skins/red/basetop.png",     fvec4(1.0f, 0.8f, 0.8f, 1.0f)},
+    {"basewall_team1", "skins/red/basewall.png",    fvec4(1.0f, 0.8f, 0.8f, 1.0f)},
+    {"basetop_team2",  "skins/green/basetop.png",   fvec4(0.8f, 1.0f, 0.8f, 1.0f)},
+    {"basewall_team2", "skins/green/basewall.png",  fvec4(0.8f, 1.0f, 0.8f, 1.0f)},
+    {"basetop_team3",  "skins/blue/basetop.png",    fvec4(0.8f, 0.8f, 1.0f, 1.0f)},
+    {"basewall_team3", "skins/blue/basewall.png",   fvec4(0.8f, 0.8f, 1.0f, 1.0f)},
+    {"basetop_team4",  "skins/purple/basetop.png",  fvec4(1.0f, 0.8f, 1.0f, 1.0f)},
+    {"basewall_team4", "skins/purple/basewall.png", fvec4(1.0f, 0.8f, 1.0f, 1.0f)}
   };
   const int count = sizeof(defaultMats) / sizeof(defaultMats[0]);
   BzMaterial mat;

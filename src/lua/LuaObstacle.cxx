@@ -87,11 +87,11 @@ bool LuaObstacle::PushEntries(lua_State* L)
 //
 
 static bool makeTexcoords(const fvec4& plane,
-					                const GLfloat3Array& vertices,
-					                GLfloat2Array& texcoords)
+					                const fvec3Array& vertices,
+					                fvec2Array& texcoords)
 {
 	fvec3 x = fvec3(vertices[1]) - fvec3(vertices[0]);
-	fvec3 y = fvec3::cross((fvec3&)plane, x);
+	fvec3 y = fvec3::cross(plane.xyz(), x);
 
 	if (!fvec3::normalize(x) ||
 	    !fvec3::normalize(y)) {
@@ -544,11 +544,11 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 	// generated texcoords
 	if (!lua_isboolean(L, 3) || lua_tobool(L, 3)) {
 		const int elements = face->getVertexCount();
-		GLfloat3Array vertArray(elements);
+		fvec3Array vertArray(elements);
 		for (int i = 0; i < elements; i++) {
 			memcpy(vertArray[i], face->getVertex(i), sizeof(float[3]));
 		}
-		GLfloat2Array txcdArray(elements);
+		fvec2Array txcdArray(elements);
 		if (!makeTexcoords(face->getPlane(), vertArray, txcdArray)) {
 			return 0;
 		}

@@ -34,37 +34,38 @@
 /* common interface headers */
 #include "Singleton.h"
 #include "ShotUpdate.h"
+#include "vectors.h"
 
 class ShotEventCallbacks
 {
 public:
   virtual ~ShotEventCallbacks(){};
 
-  virtual void shotEnded ( int id ) = 0;
-  virtual void shotStarted ( int id ) = 0;
-  virtual void shotUpdated ( int id ) = 0;
+  virtual void shotEnded(int id) = 0;
+  virtual void shotStarted(int id) = 0;
+  virtual void shotUpdated(int id) = 0;
 };
 
 class ShotManager  : public Singleton<ShotManager>
 {
 public:
-  int newShot ( FiringInfo *info, int param );
-  void update ( double dt );
+  int newShot(FiringInfo *info, int param);
+  void update(double dt);
 
-  void addEventHandler ( ShotEventCallbacks *cb );
-  void removeEventHandler ( ShotEventCallbacks *cb );
+  void addEventHandler(ShotEventCallbacks *cb);
+  void removeEventHandler(ShotEventCallbacks *cb);
 
   class Shot
   {
   public:
     Shot(FiringInfo* info, int GUID, int p = 0);
 
-    typedef enum
+    enum ObstacleMode
     {
       Stop,
       Ignore,
       Reflect
-    }ObstacleMode;
+    };
 
   protected:
     int param;
@@ -81,8 +82,8 @@ public:
     double lifetime;
     double range;
 
-    float pos[3];
-    float vec[3];
+    fvec3 pos;
+    fvec3 vec;
   };
 
 protected:
@@ -92,7 +93,7 @@ private:
   ShotManager();
   ~ShotManager();
 
-  std::map<int,Shot> shots;
+  std::map<int, Shot> shots;
 
   std::vector<ShotEventCallbacks*> callbacks;
 };

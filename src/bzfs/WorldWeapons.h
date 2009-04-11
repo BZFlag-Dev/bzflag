@@ -22,6 +22,7 @@
 /* common interface headers */
 #include "Flag.h"
 #include "TimeKeeper.h"
+#include "vectors.h"
 
 #include "WorldEventManager.h"
 
@@ -51,12 +52,12 @@ public:
 private:
   struct Weapon
   {
-    const FlagType	*type;
+    const FlagType*	type;
     TeamColor		teamColor;
-    float		origin[3];
+    fvec3		origin;
     float		direction;
     float		tilt;
-    float	initDelay;
+    float		initDelay;
     std::vector<float>  delay;
     TimeKeeper		nextTime;
     int			nextDelay;
@@ -78,8 +79,8 @@ public:
 	virtual void process ( bz_EventData *eventData );
 
 protected:
-	FlagType	*type;
-	float		origin[3];
+	FlagType*	type;
+	fvec3		origin;
 	float		direction;
 	float		tilt;
 	bz_eTeamType	team;

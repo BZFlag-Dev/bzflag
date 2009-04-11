@@ -589,12 +589,8 @@ public:
 	  if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)) {
 	    // drop flag at last known position of player
 	    // also handle case where limit was set to 0
-	    float lastPos [3];
-	    for (int i = 0; i < 3; i ++)
-	      lastPos[i] = player->currentPos[i];
-
 	    fInfo.grabs = 0; // recycle this flag now
-	    dropPlayerFlag(*player, lastPos);
+	    dropPlayerFlag(*player, player->currentPos);
 	  } else {
 	    // more shots fired than allowed
 	    // do nothing for now -- could return and not allow shot

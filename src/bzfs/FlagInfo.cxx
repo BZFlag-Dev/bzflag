@@ -173,21 +173,15 @@ size_t FlagInfo::pack(BufferedNetworkMessage *msg , bool hide )
   return msg->size() - s;
 }
 
-void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
+void FlagInfo::dropFlag(const fvec3& pos, const fvec3& landingPos, bool vanish)
 {
   numFlagsInAir++;
   flag.status	     = vanish ? FlagGoing : FlagInAir;
 
-  flag.landingPosition[0] = landingPos[0];
-  flag.landingPosition[1] = landingPos[1];
-  flag.landingPosition[2] = landingPos[2];
-
-  flag.position[0]       = landingPos[0];
-  flag.position[1]       = landingPos[1];
-  flag.position[2]       = landingPos[2];
-  flag.launchPosition[0] = pos[0];
-  flag.launchPosition[1] = pos[1];
-  flag.launchPosition[2] = pos[2] + BZDBCache::tankHeight;
+  flag.landingPosition = landingPos;
+  flag.position        = landingPos;
+  flag.launchPosition  = pos;
+  flag.launchPosition.z += BZDBCache::tankHeight;
 
   // compute flight info -- flight time depends depends on start and end
   // altitudes and desired height above start altitude
@@ -196,40 +190,42 @@ void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
   const float thrownAltitude = (flag.type == Flags::Shield) ?
     BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
   const float maxAltitude    = pos[2] + thrownAltitude;
-  const float upTime	 = sqrtf(-2.0f * thrownAltitude / gravity);
+  const float upTime	       = sqrtf(-2.0f * thrownAltitude / gravity);
   const float downTime       = sqrtf(-2.0f * (maxAltitude - pos[2]) / gravity);
   const float flightTime     = upTime + downTime;
 
-  dropDone	     = TimeKeeper::getCurrent();
-  dropDone	    += flightTime;
+  dropDone = TimeKeeper::getCurrent();
+  dropDone += flightTime;
   flag.flightTime      = 0.0f;
   flag.flightEnd       = flightTime;
   flag.initialVelocity = -gravity * upTime;
 }
 
-void FlagInfo::resetFlag(float position[3], bool teamIsEmpty)
+void FlagInfo::resetFlag(const fvec3& position, bool teamIsEmpty)
 {
   // reset a flag's info
-  player      = -1;
-  // if it's a random flag, reset flag id
-  if (flagIndex >= numFlags - numExtraFlags)
-    flag.type = Flags::Null;
+  player = -1;
 
-  flag.position[0] = position[0];
-  flag.position[1] = position[1];
-  flag.position[2] = position[2];
+  // if it's a random flag, reset flag id
+  if (flagIndex >= numFlags - numExtraFlags) {
+    flag.type = Flags::Null;
+  }
+
+  flag.position = position;
 
   // required flags mustn't just disappear
-  if (required) {
-    if (flag.type->flagTeam == ::NoTeam)
+  if (!required) {
+    flag.status = FlagNoExist;
+  }
+  else {
+    if (flag.type->flagTeam == ::NoTeam) {
       // flag in now entering game
       addFlag();
-    else if (teamIsEmpty)
+    } else if (teamIsEmpty) {
       flag.status = FlagNoExist;
-    else
+    } else {
       flag.status = FlagOnGround;
-  } else {
-    flag.status = FlagNoExist;
+    }
   }
 }
 

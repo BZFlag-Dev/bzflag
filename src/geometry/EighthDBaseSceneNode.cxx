@@ -28,10 +28,10 @@
 const int BasePolygons = 60;
 
 
-EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
-				const float size[3], float rotation) :
-				EighthDimSceneNode(BasePolygons),
-				renderNode(this, pos, size, rotation)
+EighthDBaseSceneNode::EighthDBaseSceneNode(const fvec3& pos,
+                                           const fvec3& size, float rotation)
+: EighthDimSceneNode(BasePolygons)
+, renderNode(this, pos, size, rotation)
 {
   // get rotation stuff
   const float c = cosf(rotation);
@@ -100,8 +100,8 @@ void EighthDBaseSceneNode::addRenderNodes(SceneRenderer& renderer)
 
 EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
 			const EighthDBaseSceneNode * _sceneNode,
-			const float pos[3],
-			const float size[3], float rotation) :
+			const fvec3& pos,
+			const fvec3& size, float rotation) :
 			sceneNode(_sceneNode)
 {
   // get rotation stuff

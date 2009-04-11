@@ -19,13 +19,16 @@
 
 #include "common.h"
 
-/* system interface headers */
-#include <vector>
-
-/* interface header */
+// interface header
 #include "LocalPlayer.h"
 
-/* local interface headers */
+// system headers
+#include <vector>
+
+// common headers
+#include "vectors.h"
+
+// local headers
 #include "Region.h"
 #include "RegionPriorityQueue.h"
 #include "ServerLink.h"
@@ -41,7 +44,7 @@ class RobotPlayer : public LocalPlayer {
     void		setTarget(const Player*);
     static void		setObstacleList(std::vector<BzfRegion*>*);
 
-    void		restart(const float* pos, float azimuth);
+    void		restart(const fvec3& pos, float azimuth);
     void		explodeTank();
 
   private:
@@ -56,8 +59,8 @@ class RobotPlayer : public LocalPlayer {
 				BzfRegion* region, BzfRegion* targetRegion,
 				const float targetPoint[2], int mailbox);
 
-     void		projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const;
-     void		getProjectedPosition(const Player *targ, float *projpos) const;
+     void		projectPosition(const Player *targ, const float t, fvec3& pos) const;
+     void		getProjectedPosition(const Player *targ, fvec3& projpos) const;
 
   private:
     const Player*	target;

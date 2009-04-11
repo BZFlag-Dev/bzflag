@@ -392,7 +392,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 	        printf("array[idx] = %i, vCount = %i\n", array[idx], vCount);
               }
 	      assert(array[idx] < vCount && "ERROR: UShort Vertex out of bounds");
-	      const float* v = verts[array[idx]];
+	      const fvec3& v = verts[array[idx]];
 	      exts.expandToPoint(v);
 	    }
 	  }
@@ -400,7 +400,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 	    unsigned int* array = (unsigned int*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
 	      assert(array[idx] < (unsigned int)vCount && "ERROR: UInt Vertex out of bounds");
-	      const float* v = verts[array[idx]];
+	      const fvec3& v = verts[array[idx]];
 	      exts.expandToPoint(v);
 	    }
 	  }

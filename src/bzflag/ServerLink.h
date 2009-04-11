@@ -26,6 +26,7 @@
 #include "ShotPath.h"
 #include "Flag.h"
 #include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
 class ServerLink {
 public:
@@ -69,7 +70,7 @@ public:
     uint16_t& code, uint16_t& rejcode);
 
   void		sendCaptureFlag(TeamColor);
-  void		sendDropFlag(const float* position);
+  void		sendDropFlag(const fvec3& position);
   void		sendKilled(const PlayerId victim,
     const PlayerId shooter,
     int reason, int shotId,
@@ -92,7 +93,7 @@ public:
   void		sendPaused(bool paused);
   void		sendNewPlayer( int botID);
   void		sendCollide(const PlayerId playerId,
-                            const PlayerId otherId, const float *pos);
+                      const PlayerId otherId, const fvec3& pos);
 
   void		sendExit();
   void		sendAutoPilot(bool autopilot);

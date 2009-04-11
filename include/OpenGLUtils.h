@@ -25,10 +25,10 @@
 #define GL_INVALID_ID 0xffffffff
 
 
-float getFloatColor ( int val );
-void setColor ( float c[3], int r, int g, int b );
-void glSetColor ( float c[3], float alpha = 1.0f );
-void glTranslatefv ( float v[3] );
+float getFloatColor(int val);
+void setColor(float dstColor[3], int r, int g, int b);
+void glSetColor(const float c[3], float alpha = 1.0f);
+void glTranslatefv(const float v[3]);
 
 typedef enum {
   eCenter,
@@ -42,30 +42,42 @@ typedef enum {
   eCenterBottom
 } eAlignment;
 
-void glQuad ( float x, float y, eAlignment align, float scale = 1.0f );
-void glLineRing ( float radius, float width = 1 );
+void glQuad(float x, float y, eAlignment align, float scale = 1.0f);
+void glLineRing(float radius, float width = 1.0f);
 
 // draw an outline box with the outside at the bounds, and inset by the thickness
-void glOutlineBoxCP ( float thickness, float centerX, float centerY, float width, float height, float depth = 0 );
-inline void glOutlineBoxCP ( float t, int x, int y, int w, int h, int d = 0 ){glOutlineBoxCP(t,(float)x,(float)y,(float)w,(float)h,(float)d);}
-void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float maxY, float depth = 0 );
-inline void glOutlineBoxHV ( float t, int minX, int minY, int maxX, int maxY, int d = 0 ){glOutlineBoxHV(t,(float)minX,(float)minY,(float)maxX,(float)maxY,(float)d);}
+void glOutlineBoxCP(float thickness, float centerX, float centerY,
+                    float width, float height, float depth = 0.0f);
+inline void glOutlineBoxCP(float t, int x, int y, int w, int h, int d = 0) {
+  glOutlineBoxCP(t, (float)x, (float)y, (float)w, (float)h, (float)d);
+}
+
+void glOutlineBoxHV(float thickness, float minX, float minY,
+                    float maxX, float maxY, float depth = 0.0f);
+inline void glOutlineBoxHV(float t, int minX, int minY, int maxX, int maxY, int d = 0) {
+  glOutlineBoxHV(t, (float)minX, (float)minY, (float)maxX, (float)maxY, (float)d);
+}
 
 // draw an outline tabbed box
-void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabWidth, float tabHeight, float depth = 0);
+void glOutlineTabbedBox(float thickness, float minX, float minY,
+                        float maxX, float maxY,
+                        float tabInset, float tabWidth, float tabHeight,
+                        float depth = 0);
 
 // display list system
 typedef unsigned int GLDisplayList;
 
 #define _INVALID_LIST GL_INVALID_ID
 
+
 class GLDisplayListCreator
 {
  public:
-  virtual ~GLDisplayListCreator(){};
+  virtual ~GLDisplayListCreator() {};
 
-  virtual void buildGeometry ( GLDisplayList displayList ) = 0;
+  virtual void buildGeometry(GLDisplayList displayList) = 0;
 };
+
 
 class DisplayListSystem
 {
@@ -77,13 +89,13 @@ class DisplayListSystem
 
   ~DisplayListSystem();
 
-  GLDisplayList newList (GLDisplayListCreator *creator);
-  void freeList (GLDisplayList displayList);
+  GLDisplayList newList(GLDisplayListCreator *creator);
+  void freeList(GLDisplayList displayList);
 
-  void flushLists ( void );
+  void flushLists();
 
-  void callList (GLDisplayList displayList);
-  void callListsV (std::vector<GLDisplayList> &displayLists);
+  void callList(GLDisplayList displayList);
+  void callListsV(std::vector<GLDisplayList> &displayLists);
 
  protected:
   DisplayListSystem();

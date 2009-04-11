@@ -22,6 +22,7 @@ using std::map;
 #include "TextUtils.h"
 #include "PlayerState.h"
 #include "bzfsAPI.h"
+#include "vectors.h"
 #include "version.h"
 
 // bzfs headers
@@ -1024,7 +1025,7 @@ static int GetPlayerPosition(lua_State* L)
   }
 
   const bool useLastState = lua_tobool(L, 2);
-  float pos[3];
+  fvec3 pos;
   const float* posPtr = pos;
   if (useLastState) {
     posPtr = player->lastState.pos;
@@ -1078,7 +1079,7 @@ static int GetPlayerRotation(lua_State* L)
   if (useLastState) {
     rotation = player->lastState.azimuth;
   } else {
-    float pos[3];
+    fvec3 pos;
     player->getPlayerCurrentPosRot(pos, rotation);
   }
 

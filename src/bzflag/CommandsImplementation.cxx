@@ -643,7 +643,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
       LocalPlayer* myTank = LocalPlayer::getMyTank();
       if (myTank != NULL) {
 	const Roaming::RoamingCamera* camPtr = ROAM.getCamera();
-	float fakeVel[3] = { camPtr->theta, camPtr->phi, camPtr->zoom };
+	fvec3 fakeVel(camPtr->theta, camPtr->phi, camPtr->zoom);
 	myTank->move(camPtr->pos, camPtr->theta);
 	myTank->setVelocity(fakeVel);
 	serverLink->sendPlayerUpdate(myTank);

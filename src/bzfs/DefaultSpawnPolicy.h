@@ -13,11 +13,12 @@
 #ifndef __DEFAULTSPAWNPOLICY_H__
 #define __DEFAULTSPAWNPOLICY_H__
 
-/* interface header */
+// interface header
 #include "SpawnPolicy.h"
 
-/* common interface headers */
+// common headers
 #include "global.h"  /* for TeamColor */
+#include "vectors.h"
 
 
 /** a DefaultSpawnPolicy is used to determine a new SpawnPosition.  Policies
@@ -37,7 +38,7 @@ public:
     return name;
   }
 
-  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
+  virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
 
 protected:
@@ -46,7 +47,7 @@ protected:
 private:
   /* temp, internal use */
   TeamColor   team;
-  float       testPos[3];
+  fvec3       testPos;
 };
 
 #endif  /*__DEFAULTSPAWNPOLICY_H__ */

@@ -15,13 +15,14 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <map>
 #include <string>
 #include <vector>
 
-/* common interface headers */
+// common headers
 #include "bzfgl.h"
+#include "vectors.h"
 #include "AnsiCodes.h"
 #include "Singleton.h"
 
@@ -186,7 +187,7 @@ private:
   /** do not mess with GL blending */
   bool rawBlending;
   /** precompute colors on dim/darkness changes */
-  GLfloat dimUnderlineColor[4];
+  fvec4 dimUnderlineColor;
 
   /**
    * STATIC: called during "underline"
@@ -194,7 +195,7 @@ private:
   static void	underlineCallback(const std::string& name, void *);
 
   /** STATIC: underline color */
-  static GLfloat underlineColor[4];
+  static fvec4 underlineColor;
 
   /**
    * STATIC: GL Context callbacks

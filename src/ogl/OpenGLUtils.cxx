@@ -16,26 +16,26 @@
 #include <math.h>
 #define GL_INVALID_ID 0xffffffff
 
-float getFloatColor ( int val )
+float getFloatColor(int val)
 {
-	return val/255.0f;
+	return val / 255.0f;
 }
 
-void setColor ( float c[3], int r, int g, int b )
+void setColor(float dst[3], int r, int g, int b)
 {
-	c[0] = getFloatColor(r);
-	c[1] = getFloatColor(g);
-	c[2] = getFloatColor(b);
+	dst[0] = getFloatColor(r);
+	dst[1] = getFloatColor(g);
+	dst[2] = getFloatColor(b);
 }
 
-void glSetColor ( float c[3], float alpha )
+void glSetColor(const float c[3], float alpha)
 {
-	glColor4f(c[0],c[1],c[2],alpha);
+	glColor4f(c[0], c[1], c[2], alpha);
 }
 
-void glTranslatefv ( float v[3] )
+void glTranslatefv (const float v[3] )
 {
-	glTranslatef(v[0],v[1],v[2]);
+	glTranslatef(v[0], v[1], v[2]);
 }
 
 void glQuad ( float x, float y, eAlignment align, float scale )

@@ -105,10 +105,7 @@ void RCRobotPlayer::explodeTank()
 
 void RCRobotPlayer::restart(const double* _pos, double _azimuth)
 {
-  float pos[3];
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
+  fvec3 pos(_pos[0], _pos[1], _pos[2]);;
   LocalPlayer::restart(pos, (float)_azimuth);
 }
 

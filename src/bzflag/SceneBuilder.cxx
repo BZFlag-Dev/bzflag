@@ -158,7 +158,7 @@ const fvec4 SceneDatabaseBuilder::teleporterLightedModulateColors[3] = {
 };
 
 
-static const GLfloat black[3] = { 0.0f, 0.0f, 0.0f };
+static const fvec4 black(0.0f, 0.0f, 0.0f, 0.0f);
 
 
 SceneDatabaseBuilder::SceneDatabaseBuilder()
@@ -283,7 +283,7 @@ void SceneDatabaseBuilder::addWorldTexts(SceneDatabase* db)
 void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 					 const World* world)
 {
-  float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+  fvec4 plane(0.0f, 0.0f, 1.0f, 0.0f);
   const float level = world->getWaterLevel();
   plane[3] = -level;
 
@@ -294,9 +294,9 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 
   // setup the vertex and texture coordinates
   float size = BZDBCache::worldSize;
-  GLfloat3Array v(4);
-  GLfloat3Array n(0);
-  GLfloat2Array t(4);
+  fvec3Array v(4);
+  fvec3Array n(0);
+  fvec2Array t(4);
   v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
   v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
   v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
@@ -443,12 +443,8 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 
 #ifndef SHELL_INSIDE_NODES
   // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
   SceneNode* inode =
-    new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+    new EighthDBoxSceneNode(o.getPosition(), o.getSize(), o.getRotation());
   o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 
@@ -504,12 +500,8 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
 #ifndef SHELL_INSIDE_NODES
   // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
   SceneNode* inode =
-    new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+    new EighthDPyrSceneNode(o.getPosition(), o.getSize(), o.getRotation());
   o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 
@@ -592,12 +584,8 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 
 #ifndef SHELL_INSIDE_NODES
   // add the inside node
-  GLfloat obstacleSize[3];
-  obstacleSize[0] = o.getWidth();
-  obstacleSize[1] = o.getBreadth();
-  obstacleSize[2] = o.getHeight();
   SceneNode* inode = new
-    EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+    EighthDBaseSceneNode(o.getPosition(), o.getSize(), o.getRotation());
   o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 

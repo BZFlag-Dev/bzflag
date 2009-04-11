@@ -339,9 +339,9 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
 
   // vertices
   const int vertexCount = face->getVertexCount();
-  GLfloat3Array vertices(vertexCount);
+  fvec3Array vertices(vertexCount);
   for (i = 0; i < vertexCount; i++) {
-    memcpy (vertices[i], face->getVertex(i), sizeof(float[3]));
+    vertices[i] = face->getVertex(i);
   }
 
   // normals
@@ -349,16 +349,16 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   if (face->useNormals()) {
     normalCount = vertexCount;
   }
-  GLfloat3Array normals(normalCount);
+  fvec3Array normals(normalCount);
   for (i = 0; i < normalCount; i++) {
-    memcpy (normals[i], face->getNormal(i), sizeof(float[3]));
+    normals[i] = face->getNormal(i);
   }
 
   // texcoords
-  GLfloat2Array texcoords(vertexCount);
+  fvec2Array texcoords(vertexCount);
   if (face->useTexcoords()) {
     for (i = 0; i < vertexCount; i++) {
-      memcpy (texcoords[i], face->getTexcoord(i), sizeof(float[2]));
+      texcoords[i] = face->getTexcoord(i);
     }
   } else {
     makeTexcoords (face->getPlane(), vertices, texcoords);
@@ -471,11 +471,11 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 
 
 bool MeshSceneNodeGenerator::makeTexcoords(const fvec4& plane,
-					   const GLfloat3Array& vertices,
-					   GLfloat2Array& texcoords)
+					   const fvec3Array& vertices,
+					   fvec2Array& texcoords)
 {
   fvec3 x = fvec3(vertices[1]) - fvec3(vertices[0]);
-  fvec3 y = fvec3::cross((fvec3&)plane, x);
+  fvec3 y = fvec3::cross(plane.xyz(), x);
 
   if (!fvec3::normalize(x) ||
       !fvec3::normalize(y)) {

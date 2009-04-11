@@ -28,10 +28,10 @@
 const int PyrPolygons = 20;
 
 
-EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
-					const float size[3], float rotation) :
-				EighthDimSceneNode(PyrPolygons),
-				renderNode(this, pos, size, rotation)
+EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
+                                         const fvec3& size, float rotation)
+: EighthDimSceneNode(PyrPolygons)
+, renderNode(this, pos, size, rotation)
 {
   // get rotation stuff
   const float c = cosf(rotation);
@@ -75,12 +75,14 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
   setRadius(0.25f * (size[0]*size[0] + size[1]*size[1] + size[2]*size[2]));
 }
 
+
 EighthDPyrSceneNode::~EighthDPyrSceneNode()
 {
   // do nothing
 }
 
-void			EighthDPyrSceneNode::notifyStyleChange()
+
+void EighthDPyrSceneNode::notifyStyleChange()
 {
   EighthDimSceneNode::notifyStyleChange();
 
@@ -96,12 +98,13 @@ void			EighthDPyrSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			EighthDPyrSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void EighthDPyrSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   EighthDimSceneNode::addRenderNodes(renderer);
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // EighthDPyrSceneNode::EighthDPyrRenderNode
@@ -109,8 +112,8 @@ void			EighthDPyrSceneNode::addRenderNodes(
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
 				const EighthDPyrSceneNode* _sceneNode,
-				const float pos[3],
-				const float size[3], float rotation) :
+				const fvec3& pos,
+				const fvec3& size, float rotation) :
 				sceneNode(_sceneNode)
 {
   // get rotation stuff

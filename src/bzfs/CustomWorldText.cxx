@@ -142,11 +142,11 @@ void CustomWorldText::writeToManager() const
     xform.addScale(size);
   }
   if (upright) {
-    const float xAxis[3] = { 1.0f, 0.0f, 0.0f };
+    const fvec3 xAxis(1.0f, 0.0f, 0.0f);
     xform.addSpin(90.0f, xAxis);
   }
   if (rotation != 0.0f) {
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   }
   if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {

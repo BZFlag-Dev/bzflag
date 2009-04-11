@@ -79,8 +79,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
 {
   static bool init = false;
   OpenGLGStateBuilder gstate;
-  static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
+  static const fvec4 white(1.0f, 1.0f, 1.0f, 1.0f);
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
   OpenGLMaterial rainMaterial(white, white, 0.0f);
 
@@ -102,9 +102,9 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
   }
 
   // initialize the celestial vectors
-  static const float up[3] = { 0.0f, 0.0f, 1.0f };
-  memcpy(sunDirection, up, sizeof(float[3]));
-  memcpy(moonDirection, up, sizeof(float[3]));
+  static const fvec3 up(0.0f, 0.0f, 1.0f);
+  sunDirection = up;
+  moonDirection = up;
 
   // make ground materials
   setupSkybox();
@@ -287,19 +287,19 @@ void BackgroundRenderer::setupGroundMaterials()
 
   if (bzmat == NULL) {
     // default ground material
-    memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+    memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
     groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
   } else {
     // map specified material
     ((BzMaterial*)bzmat)->setReference();
     for (int i = 0; i < 4; i++) {
-      memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
+      groundColor[i] = bzmat->getDiffuse();
     }
     if (bzmat->getTextureCount() > 0) {
       groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
       if (groundTextureID < 0) {
 	// use the default as a backup (default color too)
-	memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+	memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
 	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
       } else {
 	// only apply the texture matrix if the texture is valid
@@ -312,7 +312,7 @@ void BackgroundRenderer::setupGroundMaterials()
     }
   }
 
-  static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
   OpenGLGStateBuilder gb;
@@ -337,7 +337,7 @@ void BackgroundRenderer::setupGroundMaterials()
 
   // default inverted ground material
   int groundInvTextureID = -1;
-  memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4][4]));
+  memcpy(groundColorInv, defaultGroundColorInv, sizeof(fvec4[4]));
   if (groundInvTextureID < 0) {
     groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture").c_str(), false);
   }

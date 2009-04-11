@@ -93,7 +93,7 @@ inline const fvec3&	Frustum::getEye() const
 
 inline const fvec3&	Frustum::getDirection() const
 {
-  return (fvec3&)plane[0];
+  return plane[0].xyz();
 }
 
 inline const fvec4&	Frustum::getSide(int index) const

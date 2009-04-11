@@ -24,13 +24,14 @@
 #  include <pthread.h>
 #endif
 
-// common interface headers
+// common headers
 #include "PlayerInfo.h"
 #include "PlayerState.h"
 #include "TimeKeeper.h"
 #include "bzfsAPI.h"
+#include "vectors.h"
 
-// implementation-specific bzfs-specific headers
+// bzfs headers
 #include "CmdLineOptions.h"
 #include "FlagHistory.h"
 #include "Permissions.h"
@@ -129,11 +130,11 @@ public:
     bool	   needsHostbanChecked();
 
     // To handle player State
-    void	   setPlayerState(float pos[3], float azimuth);
-    void	   getPlayerState(float pos[3], float &azimuth);
+    void	   setPlayerState(const fvec3& pos, float azimuth);
+    void	   getPlayerState(fvec3& pos, float &azimuth);
     void	   setPlayerState(PlayerState state, TimeKeeper const& timestamp);
 
-    void	   getPlayerCurrentPosRot(float pos[3], float &rot);
+    void	   getPlayerCurrentPosRot(fvec3&, float &rot);
 
     void	   setBzIdentifier(const std::string& id);
     const std::string& getBzIdentifier() const;
@@ -197,8 +198,8 @@ public:
     std::vector<int>  childBots;
 
     void doPlayerDR ( TimeKeeper const& time = TimeKeeper::getCurrent() );
-    float	      currentPos[3];
-    float	      curentVel[3];
+    fvec3	      currentPos;
+    fvec3	      curentVel;
     float	      currentRot;
     float	      currentAngVel;
 

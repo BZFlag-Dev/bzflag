@@ -425,8 +425,8 @@ void			WallSceneNode::setColor()
 }
 
 int WallSceneNode::splitWall(const GLfloat* splitPlane,
-			     const GLfloat3Array& vertices,
-			     const GLfloat2Array& texcoords,
+			     const fvec3Array& vertices,
+			     const fvec2Array& texcoords,
 			     SceneNode*& front, SceneNode*& back) // const
 {
   int i;
@@ -528,10 +528,10 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   }
 
   // make space for new polygons
-  GLfloat3Array vertexFront(frontCount);
-  GLfloat2Array uvFront(frontCount);
-  GLfloat3Array vertexBack(backCount);
-  GLfloat2Array uvBack(backCount);
+  fvec3Array vertexFront(frontCount);
+  fvec2Array uvFront(frontCount);
+  fvec3Array vertexBack(backCount);
+  fvec2Array uvBack(backCount);
 
   // fill in the splitting vertices
   int frontIndex = 0;

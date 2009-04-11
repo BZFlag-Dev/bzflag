@@ -23,13 +23,13 @@
 
 class FlagWarpSceneNode : public SceneNode {
   public:
-			FlagWarpSceneNode(const GLfloat pos[3]);
-			~FlagWarpSceneNode();
+    FlagWarpSceneNode(const fvec3& pos);
+    ~FlagWarpSceneNode();
 
     void		setSizeFraction(GLfloat);
 
     GLfloat		getDistance(const GLfloat*) const;
-    void		move(const GLfloat pos[3]);
+    void		move(const fvec3& pos);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -50,7 +50,7 @@ class FlagWarpSceneNode : public SceneNode {
     GLfloat		size;
     OpenGLGState	gstate;
     FlagWarpRenderNode	renderNode;
-    static const GLfloat color[7][3];
+    static const fvec4  color[7];
 };
 
 #endif // BZF_FLAG_WARP_SCENE_NODE_H

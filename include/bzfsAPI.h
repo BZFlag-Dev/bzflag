@@ -1967,7 +1967,7 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void playerRemoved(int player);
   virtual void playerRejected(bz_eRejectCodes code, const char *reason);
   virtual void playerAccepted(void) {};
-  virtual void playerSpawned(int player, float pos[3], float rot);
+  virtual void playerSpawned(int player, const float pos[3], float rot);
   virtual void textMessage(int dest, int source, const char *text);
   virtual void playerKilledMessage(int victimIndex, int killerIndex,
 				   bz_ePlayerDeathReason reason, int shotIndex,
@@ -1985,7 +1985,7 @@ class BZF_API bz_ServerSidePlayerHandler
 				 double timestamp);
   virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs);
   virtual void flagTransfer(int from, int to, int flagID, bz_eShotType shotType);
-  virtual void nearestFlag(const char* flagName, float pos[3]);
+  virtual void nearestFlag(const char* flagName, const float pos[3]);
   virtual void grabFlag(int player, int flagID, const char* flagType, bz_eShotType shotType);
   virtual void setShotType(int player, bz_eShotType shotType);
   virtual void shotFired(int player, unsigned short shotID, bz_eShotType shotType);

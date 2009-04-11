@@ -15,10 +15,10 @@
 
 #include "common.h"
 
-/* system headers */
+// system headers
 #include <string>
 
-/* common interface headers */
+// common headers
 #include "global.h"
 #include "TimeKeeper.h"
 #include "Address.h"
@@ -27,6 +27,7 @@
 #include "ShotStatistics.h"
 #include "PlayerAvatarManager.h"
 #include "GfxBlock.h"
+#include "vectors.h"
 
 /* local interface headers */
 class ShotPath;
@@ -161,8 +162,8 @@ public:
   void		doDeadReckoning();
 
   // called to update state according to incoming packets
-  void		move(const float* pos, float azimuth);
-  void		setVelocity(const float* velocity);
+  void		move(const fvec3& pos, float azimuth);
+  void		setVelocity(const fvec3& velocity);
   void		setAngularVelocity(float);
   void		setPhysicsDriver(int);
   void		setRelativeMotion();
@@ -226,8 +227,8 @@ private:
   // position if you return true (it's okay to return false if
   // there's no meaningful shot position).
   virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
-  void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-			float* predictedVel, float time) const;
+  void getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
+			fvec3& predictedVel, float time) const;
   void calcRelativeMotion(float vel[2], float& speed, float& angvel);
   void setVisualTeam (TeamColor team );
   void updateFlagEffect(FlagType* flag);

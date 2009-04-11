@@ -15,6 +15,9 @@
 
 #include "common.h"
 
+// common headers
+#include "vectors.h"
+
 
 /** a SpawnPolicy is used to determine a new SpawnPosition.  Policies
  *  are defined to describe various spawning behaviors such as purely
@@ -30,13 +33,14 @@ public:
 
   virtual const char *Name() const = 0;
 
-  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges) = 0;
+  virtual void getPosition(fvec3& pos, int playerId,
+                           bool onGroundOnly, bool notNearEdges) = 0;
   virtual void getAzimuth(float &azimuth) = 0;
 
 protected:
-  virtual bool isFacing(const float *selfPos, const float *enemyPos, const float enemyAzimuth, const float deviation) const;
-  virtual float distanceFrom(const float *pos, const float *farPos) const;
-  virtual bool isImminentlyDangerous(const float *selfPos) const;
+  virtual bool isFacing(const fvec3& selfPos, const fvec3& enemyPos,
+                        const float enemyAzimuth, const float deviation) const;
+  virtual bool isImminentlyDangerous(const fvec3& selfPos) const;
 };
 
 #endif  /*__SPAWNPOLICY_H__ */

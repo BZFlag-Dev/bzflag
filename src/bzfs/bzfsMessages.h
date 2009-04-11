@@ -21,6 +21,7 @@
 // common headers
 #include "global.h"
 #include "Address.h"
+#include "vectors.h"
 
 // local headers
 #include "bzfs.h"
@@ -42,7 +43,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false )
 void sendWorldChunk(NetHandler *handler, uint32_t &ptr);
 void broadcastPlayerStateUpdate ( void );
 void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool recordOnly = false );
-void sendMessageAlive ( int playerID, float pos[3], float rot );
+void sendMessageAlive ( int playerID, const fvec3& pos, float rot );
 void sendMessageAllow ( int recipID, int playerID, unsigned char allow );
 void sendMessageAllow ( int playerID, unsigned char allow );
 bool sendPlayerStateMessage ( GameKeeper::Player *playerData, bool shortState);
@@ -53,7 +54,7 @@ void sendDropFlagMessage ( int playerIndex, FlagInfo &flag );
 void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured );
 void sendRabbitUpdate ( int playerIndex, unsigned char mode );
 void sendSetTeam ( int playerIndex, int team );
-void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
+void sendClosestFlagMessage(int playerIndex,FlagType *type, const fvec3& pos );
 bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag );
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag );
 void sendSetShotType ( int playerIndex, ShotType type );

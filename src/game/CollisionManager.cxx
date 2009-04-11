@@ -192,7 +192,7 @@ const ObsList* CollisionManager::cylinderTest(const fvec3& pos,
     return &EmptyList;
   }
 
-  float tmpMins[3], tmpMaxs[3];
+  fvec3 tmpMins, tmpMaxs;
   tmpMins[0] = pos[0] - radius;
   tmpMins[1] = pos[1] - radius;
   tmpMins[2] = pos[2];
@@ -229,15 +229,14 @@ const ObsList* CollisionManager::movingBoxTest(
 				  const fvec3& pos, float /*angle*/,
 				  float dx, float dy, float dz) const
 {
-  float newpos[3];
+  fvec3 newpos = pos;
 
   // adjust the Z parameters for the motion
-  memcpy(newpos, pos, sizeof(float[3]));
-  if (oldPos[2] < pos[2]) {
-    newpos[2] = oldPos[2];
-    dz = dz + (pos[2] - oldPos[2]);
+  if (oldPos.z < pos.z) {
+    newpos.z = oldPos.z;
+    dz = dz + (pos.z - oldPos.z);
   } else {
-    dz = dz + (oldPos[2] - pos[2]);
+    dz = dz + (oldPos.z - pos.z);
   }
 
   float radius = sqrtf(dx*dx + dy*dy);
@@ -517,15 +516,15 @@ ColDetNode::ColDetNode(unsigned char _depth,
   testExts.addMargin(testFudge);
 
   // setup some test parameters
-  float pos[3];
+  fvec3 pos;
   pos[0] = 0.5f * (testExts.maxs[0] + testExts.mins[0]);
   pos[1] = 0.5f * (testExts.maxs[1] + testExts.mins[1]);
   pos[2] = testExts.mins[2];
-  float size[3];
+  fvec3 size;
   size[0] = 0.5f * (testExts.maxs[0] - testExts.mins[0]);
   size[1] = 0.5f * (testExts.maxs[1] - testExts.mins[1]);
   size[2] = (testExts.maxs[2] - testExts.mins[2]);
-  float point[3];
+  fvec3 point;
   point[0] = pos[0];
   point[1] = pos[1];
   point[2] = 0.5f * (testExts.maxs[2] + testExts.mins[2]);

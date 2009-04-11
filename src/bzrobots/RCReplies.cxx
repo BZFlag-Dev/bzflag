@@ -525,7 +525,7 @@ messageParseStatus ObstacleReply::parseBox(char **arguments, int count)
   if (count != 10)
     return InvalidArgumentCount;
 
-  float p[3];
+  fvec3 p;
   float rot, width, breadth, height;
   bool drive, shoot;
   bool invisible;
@@ -562,7 +562,7 @@ messageParseStatus ObstacleReply::parsePyr(char **arguments, int count)
 {
   if (count != 9)
     return InvalidArgumentCount;
-  float p[3];
+  fvec3 p;
   float rot, width, breadth, height;
   bool drive, shoot;
 
@@ -596,7 +596,7 @@ messageParseStatus ObstacleReply::parseWall(char **arguments, int count)
   if (count != 6)
     return InvalidArgumentCount;
 
-  float p[3];
+  fvec3 p;
   float rot, breadth, height;
 
   if (!MessageUtilities::parse(arguments[0], p[0]))
@@ -622,8 +622,8 @@ messageParseStatus ObstacleReply::parseBase(char **arguments, int count)
   if (count != 8)
     return InvalidArgumentCount;
 
-  float p[3];
-  float s[3];
+  fvec3 p;
+  fvec3 s;
   float rot;
   uint32_t team;
 
@@ -654,8 +654,8 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
   if (count != 11)
     return InvalidArgumentCount;
 
-  float p[3];
-  float s[3];
+  fvec3 p;
+  fvec3 s;
   float rot, border;
   bool horiz, drive, shoot;
 

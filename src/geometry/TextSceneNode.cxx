@@ -134,7 +134,7 @@ void TextSceneNode::calcSphere(const fvec3 points[5])
 {
   const float* orig  = points[4];
   const float radius = getMaxDist(points);
-  float tmpSphere[4] = { orig[0], orig[1], orig[2], (radius * radius) };
+  fvec4 tmpSphere(orig[0], orig[1], orig[2], (radius * radius));
 
   setSphere(tmpSphere);
 }
@@ -303,7 +303,7 @@ bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
     const fvec4& p = planes[i];
-    const float d = fvec3::dot((fvec3&)p, (fvec3&)s) + p.w;
+    const float d = fvec3::dot(p.xyz(), s.xyz()) + p.w;
     if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }

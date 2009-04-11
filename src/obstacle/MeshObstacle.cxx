@@ -550,9 +550,9 @@ void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
     out.z = 0.0f;
   }
 
-  float lenSqr = out.lenSqr();
-  if (lenSqr > 0.0f) {
-    n = out * (1.0f / sqrtf(lenSqr));
+  float lengthSq = out.lengthSq();
+  if (lengthSq > 0.0f) {
+    n = out * (1.0f / sqrtf(lengthSq));
   } else {
     n = fvec3(0.0f, 0.0f, 1.0f);
   }
@@ -574,7 +574,7 @@ bool MeshObstacle::getHitNormal(const fvec3& /*oldPos*/, float /*oldAngle*/,
 bool MeshObstacle::inCylinder(const fvec3& p,
 			       float /*radius*/, float height) const
 {
-  const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
+  const fvec3 mid(p[0], p[1], p[2] + (0.5f * height));
   return containsPoint(mid);
 }
 
@@ -582,7 +582,7 @@ bool MeshObstacle::inCylinder(const fvec3& p,
 bool MeshObstacle::inBox(const fvec3& p, float /*angle*/,
 			 float /*dx*/, float /*dy*/, float height) const
 {
-  const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
+  const fvec3 mid(p[0], p[1], p[2] + (0.5f * height));
   return containsPoint(mid);
 }
 
@@ -591,7 +591,7 @@ bool MeshObstacle::inMovingBox(const fvec3&, float,
 			       const fvec3& p, float /*angle*/,
 			       float /*dx*/, float /*dy*/, float height) const
 {
-  const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
+  const fvec3 mid(p[0], p[1], p[2] + (0.5f * height));
   return containsPoint(mid);
 }
 

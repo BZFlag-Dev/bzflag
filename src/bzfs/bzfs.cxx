@@ -2120,7 +2120,7 @@ void resetFlag(FlagInfo &flag)
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
   // reposition flag (middle of the map might be a bad idea)
-  float flagPos[3] = {0.0f, 0.0f, 0.0f};
+  fvec3 flagPos(0.0f, 0.0f, 0.0f);
 
   int teamIndex = flag.teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
@@ -2174,7 +2174,8 @@ void resetFlag(FlagInfo &flag)
   worldEventManager.callEvents(bz_eFlagResetEvent,&eventData);
 
   // reset a flag's info
-  flag.resetFlag(eventData.pos, teamIsEmpty);
+  const fvec3 pos(eventData.pos[0], eventData.pos[1], eventData.pos[2]);
+  flag.resetFlag(pos, teamIsEmpty);
 
   sendFlagUpdateMessage(flag);
 }
@@ -2495,9 +2496,10 @@ void spawnPlayer ( int playerIndex )
   worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
   // update last position immediately
-  playerData->setPlayerState(spawnData.pos, spawnData.rot);
+  const fvec3 pos(spawnData.pos[0], spawnData.pos[1], spawnData.pos[2]);
+  playerData->setPlayerState(pos, spawnData.rot);
 
-  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
+  sendMessageAlive(playerIndex, playerData->currentPos, playerData->currentRot);
 
   playerData->efectiveShotType = StandardShot;
   playerData->player.setAllow(AllowAll);
@@ -2519,6 +2521,7 @@ void spawnPlayer ( int playerIndex )
   }
 
 }
+
 
 void playerAlive(int playerIndex)
 {
@@ -2599,6 +2602,7 @@ void playerAlive(int playerIndex)
   spawnPlayer(playerIndex);
 }
 
+
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
   if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex)))
@@ -2645,7 +2649,9 @@ bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim,
   return false;
 }
 
-void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer, bool teamkill)
+
+void updateScoresForKill(GameKeeper::Player* victim,
+                         GameKeeper::Player* killer, bool teamkill)
 {
   // change the player score
   if (victim) {
@@ -2662,7 +2668,9 @@ void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer,
     sendPlayerScoreUpdate(killer);
   }
 }
-void updateHandicaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
+
+
+void updateHandicaps(GameKeeper::Player* victim, GameKeeper::Player* killer)
 {
   if (!(clOptions->gameOptions & HandicapGameStyle))
     return;
@@ -2674,7 +2682,8 @@ void updateHandicaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
     sendSingleHandicapInfoUpdate(victim);
 }
 
-void checkForScoreLimit ( GameKeeper::Player* killer )
+
+void checkForScoreLimit(GameKeeper::Player* killer)
 {
   // see if the player reached the score limit
   if (clOptions->maxPlayerScore != 0 && killer && killer->score.reached()) {
@@ -2689,7 +2698,8 @@ void checkForScoreLimit ( GameKeeper::Player* killer )
   }
 }
 
-const float *closestBase( TeamColor color, float *position )
+
+const float* closestBase(TeamColor color, const fvec3& position)
 {
   float bestdist = Infinity;
   const float *bestbase = NULL;
@@ -2714,7 +2724,9 @@ const float *closestBase( TeamColor color, float *position )
   return bestbase;
 }
 
-void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] )
+
+void processFreezeTagCollision(GameKeeper::Player *player,
+                               GameKeeper::Player *otherPlayer, const fvec3& pos)
 {
   TeamColor playerTeam = player->player.getTeam();
   TeamColor otherTeam = otherPlayer->player.getTeam();
@@ -2754,7 +2766,8 @@ void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player 
   }
 }
 
-void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] )
+void processCollision(GameKeeper::Player *player,
+                      GameKeeper::Player *otherPlayer, const fvec3& pos)
 {
   if (!player || !otherPlayer)
     return;
@@ -2762,14 +2775,14 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
   bz_PlayerCollisionEventData_V1  eventData;
   eventData.players[0] = player->getIndex();
   eventData.players[1] = otherPlayer->getIndex();
-  memcpy(eventData.pos,pos,sizeof(float)*3);
+  memcpy(eventData.pos, pos, sizeof(float[3]));
   worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
 
   if (eventData.handled)
     return;
 
   if (clOptions->gameOptions & FreezeTagGameStyle)
-    processFreezeTagCollision(player,otherPlayer,pos);
+    processFreezeTagCollision(player, otherPlayer, pos);
 }
 
 // FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
@@ -2954,16 +2967,17 @@ void searchFlag(GameKeeper::Player &playerData)
   }
 }
 
-void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
+void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
 {
   assert(world != NULL);
 
   // maximum X or Y coordinate is 1/2 of worldsize
   const float size = BZDBCache::worldSize * 0.5f;
-  float pos[3];
-  pos[0] = ((dropPos[0] < -size) || (dropPos[0] > size)) ? 0.0f : dropPos[0];
-  pos[1] = ((dropPos[1] < -size) || (dropPos[1] > size)) ? 0.0f : dropPos[1];
-  pos[2] = (dropPos[2] > maxWorldHeight) ? maxWorldHeight : dropPos[2];
+  const fvec3 pos(
+    ((dropPos[0] < -size) || (dropPos[0] > size)) ? 0.0f : dropPos[0],
+    ((dropPos[1] < -size) || (dropPos[1] > size)) ? 0.0f : dropPos[1],
+    (dropPos[2] > maxWorldHeight) ? maxWorldHeight : dropPos[2]
+  );
 
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
@@ -2986,7 +3000,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 
   const float maxZ = MAXFLOAT;
 
-  float landing[3] = {pos[0], pos[1], pos[2]};
+  fvec3 landing = pos;
   bool safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
 
   bool vanish;
@@ -3043,7 +3057,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 }
 
 
-void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
+void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos)
 {
   const int flagIndex = playerData.player.getFlag();
   if (flagIndex < 0)
@@ -3059,6 +3073,7 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
 
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 }
+
 
 void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
@@ -3086,10 +3101,13 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   bz_AllowCTFCaptureEventData_V1  allowData;
 
+  fvec3 posTmp;
+
   allowData.teamCapped = convertTeam((TeamColor)teamIndex);
   allowData.teamCapping = convertTeam(teamCaptured);
   allowData.playerCapping = playerIndex;
-  playerData->getPlayerCurrentPosRot(allowData.pos, allowData.rot);
+  playerData->getPlayerCurrentPosRot(posTmp, allowData.rot);
+  memcpy(allowData.pos, posTmp, sizeof(float[3]));
   allowData.allow = true;
   allowData.killTeam = true;
 
@@ -3109,7 +3127,8 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.teamCapped = convertTeam((TeamColor)teamIndex);
   eventData.teamCapping = convertTeam(teamCaptured);
   eventData.playerCapping = playerIndex;
-  playerData->getPlayerCurrentPosRot(eventData.pos, eventData.rot);
+  playerData->getPlayerCurrentPosRot(posTmp, eventData.rot);
+  memcpy(eventData.pos, posTmp, sizeof(float[3]));
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 

@@ -145,7 +145,7 @@ ObstacleModifier::~ObstacleModifier()
 }
 
 
-static const BzMaterial* getTintedMaterial(const float tint[4],
+static const BzMaterial* getTintedMaterial(const fvec4& tint,
 					   const BzMaterial* mat)
 {
   BzMaterial tintmat(*mat);

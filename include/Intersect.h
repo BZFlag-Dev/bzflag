@@ -36,7 +36,7 @@ namespace Intersect {
   // returns normal to 2d rect (size 2dx x 2dy) by point p
   void getNormalRect(const fvec3& p,
                      const fvec3& boxPos, float boxAngle,
-                     float dx, float dy, float* n);
+                     float dx, float dy, fvec3& n);
 
   // true iff 2d rect (size 2dx x 2dy) intersects circle (in z = const plane)
   bool testRectCircle(const fvec3& boxPos, float boxAngle, float dx, float dy,

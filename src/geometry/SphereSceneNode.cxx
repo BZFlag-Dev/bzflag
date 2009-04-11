@@ -36,7 +36,7 @@
 // SphereSceneNode
 //
 
-SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius)
+SphereSceneNode::SphereSceneNode(const fvec3& pos, GLfloat _radius)
 {
   transparent = false;
 
@@ -61,25 +61,19 @@ SphereSceneNode::~SphereSceneNode()
 
 void SphereSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
+  color = fvec4(r, g, b, a);
   transparent = (color[3] != 1.0f);
 }
 
 
-void SphereSceneNode::setColor(const GLfloat* rgba)
+void SphereSceneNode::setColor(const fvec4& rgba)
 {
-  color[0] = rgba[0];
-  color[1] = rgba[1];
-  color[2] = rgba[2];
-  color[3] = rgba[3];
+  color = rgba;
   transparent = (color[3] != 1.0f);
 }
 
 
-void SphereSceneNode::move(const GLfloat pos[3], GLfloat _radius)
+void SphereSceneNode::move(const fvec3& pos, GLfloat _radius)
 {
   radius = _radius;
   setCenter(pos);
@@ -213,7 +207,7 @@ void SphereLodSceneNode::kill()
 }
 
 
-SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
+SphereLodSceneNode::SphereLodSceneNode(const fvec3& pos, GLfloat _radius) :
 				       SphereSceneNode(pos, _radius),
 				       renderNode(this)
 {
@@ -232,8 +226,8 @@ SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_BACK);
   builder.setShading(GL_SMOOTH);
-  const float spec[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  const float emis[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+  const fvec4 spec(1.0f, 1.0f, 1.0f, 1.0f);
+  const fvec4 emis(0.0f, 0.0f, 0.0f, 1.0f);
   OpenGLMaterial glmat(spec, emis, 64.0f);
   builder.setMaterial(glmat, RENDERER.useQuality() > _LOW_QUALITY);
   gstate = builder.getState();
@@ -447,15 +441,16 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 // SphereBspSceneNode
 //
 
-const int		NumSlices = 2 * SphereRes;
-const int		NumParts = SphereLowRes * SphereLowRes;
+const int NumSlices = 2 * SphereRes;
+const int NumParts  = SphereLowRes * SphereLowRes;
 
-SphereBspSceneNode::SphereBspSceneNode(const GLfloat pos[3], GLfloat _radius) :
+SphereBspSceneNode::SphereBspSceneNode(const fvec3& pos, GLfloat _radius) :
 				       SphereSceneNode(pos, _radius),
 				       renderNode(this),
 				       parts(NULL)
 {
 }
+
 
 SphereBspSceneNode::~SphereBspSceneNode()
 {
@@ -466,7 +461,8 @@ SphereBspSceneNode::~SphereBspSceneNode()
   }
 }
 
-SceneNode**		SphereBspSceneNode::getParts(int& numParts)
+
+SceneNode** SphereBspSceneNode::getParts(int& numParts)
 {
   if (!parts) {
     // make parts -- always use low detail sphere (if your zbuffer is
@@ -489,8 +485,8 @@ SceneNode**		SphereBspSceneNode::getParts(int& numParts)
   return (SceneNode**)parts;
 }
 
-void			SphereBspSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void SphereBspSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   const GLfloat* mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
@@ -511,8 +507,8 @@ void			SphereBspSceneNode::addRenderNodes(
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
-void			SphereBspSceneNode::addShadowNodes(
-				SceneRenderer& /*renderer*/)
+
+void SphereBspSceneNode::addShadowNodes(SceneRenderer& /*renderer*/)
 {
   return;
 /*
@@ -522,14 +518,14 @@ void			SphereBspSceneNode::addShadowNodes(
 */
 }
 
+
 //
 // SphereBspSceneNode::SphereBspRenderNode
 //
 
-GLfloat			SphereBspSceneNode::SphereBspRenderNode::
-				geom[NumSlices * (SphereRes + 1)][3];
-GLfloat			SphereBspSceneNode::SphereBspRenderNode::
-				lgeom[SphereLowRes * (SphereLowRes + 1)][3];
+fvec3 SphereBspSceneNode::SphereBspRenderNode::geom[NumSlices * (SphereRes + 1)];
+
+fvec3 SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * (SphereLowRes + 1)];
 
 SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
 				const SphereBspSceneNode* _sceneNode) :
@@ -567,24 +563,26 @@ SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
   }
 }
 
+
 SphereBspSceneNode::SphereBspRenderNode::~SphereBspRenderNode()
 {
   // do nothing
 }
 
-void			SphereBspSceneNode::SphereBspRenderNode::
-				setHighResolution(bool _highResolution)
+
+void SphereBspSceneNode::SphereBspRenderNode::setHighResolution(bool value)
 {
-  highResolution = _highResolution;
+  highResolution = value;
 }
 
-void			SphereBspSceneNode::SphereBspRenderNode::
-				setBaseIndex(int _baseIndex)
+
+void SphereBspSceneNode::SphereBspRenderNode:: setBaseIndex(int value)
 {
-  baseIndex = _baseIndex;
+  baseIndex = value;
 }
 
-void			SphereBspSceneNode::SphereBspRenderNode::render()
+
+void SphereBspSceneNode::SphereBspRenderNode::render()
 {
   static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
 
@@ -688,6 +686,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
   glDisable(GL_CLIP_PLANE0);
 }
 
+
 //
 // SphereFragmentSceneNode
 //
@@ -701,12 +700,14 @@ SphereFragmentSceneNode::SphereFragmentSceneNode(int _theta, int _phi,
   move();
 }
 
+
 SphereFragmentSceneNode::~SphereFragmentSceneNode()
 {
   // do nothing
 }
 
-void			SphereFragmentSceneNode::move()
+
+void SphereFragmentSceneNode::move()
 {
   const GLfloat* pSphere = parentSphere->getSphere();
   const GLfloat pRadius = parentSphere->getRadius();
@@ -718,14 +719,14 @@ void			SphereFragmentSceneNode::move()
 			GLfloat(SphereLowRes * SphereLowRes));
 }
 
-void			SphereFragmentSceneNode::addRenderNodes
-				(SceneRenderer& renderer)
+
+void SphereFragmentSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &parentSphere->gstate);
 }
 
-void			SphereFragmentSceneNode::addShadowNodes(
-				SceneRenderer& /*renderer*/)
+
+void SphereFragmentSceneNode::addShadowNodes(SceneRenderer& /*renderer*/)
 {
   return;
 /*
@@ -737,7 +738,7 @@ void			SphereFragmentSceneNode::addShadowNodes(
 // SphereFragmentSceneNode::FragmentRenderNode
 //
 
- SphereFragmentSceneNode::FragmentRenderNode::FragmentRenderNode(
+SphereFragmentSceneNode::FragmentRenderNode::FragmentRenderNode(
 				const SphereBspSceneNode* _sceneNode,
 				int _theta, int _phi) :
 				sceneNode(_sceneNode),
@@ -749,24 +750,26 @@ void			SphereFragmentSceneNode::addShadowNodes(
   phi2 = phi + 1;
 }
 
+
 SphereFragmentSceneNode::FragmentRenderNode::~FragmentRenderNode()
 {
   // do nothing
 }
 
-const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
-				getVertex() const
+
+const GLfloat* SphereFragmentSceneNode::FragmentRenderNode::getVertex() const
 {
   return SphereBspSceneNode::SphereBspRenderNode::lgeom[phi * SphereLowRes + theta];
 }
 
-const fvec3&		SphereFragmentSceneNode::FragmentRenderNode::
-				getPosition() const
+
+const fvec3& SphereFragmentSceneNode::FragmentRenderNode::getPosition() const
 {
   return sceneNode->getCenter();
 }
 
-void			SphereFragmentSceneNode::FragmentRenderNode::render()
+
+void SphereFragmentSceneNode::FragmentRenderNode::render()
 {
   const GLfloat pRadius = sceneNode->getRadius();
   const GLfloat* pSphere = sceneNode->getSphere();

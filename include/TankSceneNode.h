@@ -27,13 +27,13 @@ class TankSceneNode;
 
 class TankIDLSceneNode : public SceneNode {
   public:
-			TankIDLSceneNode(const TankSceneNode*);
-			virtual ~TankIDLSceneNode();
+    TankIDLSceneNode(const TankSceneNode*);
+    virtual ~TankIDLSceneNode();
 
-    virtual void		move(const GLfloat plane[4]);
+    virtual void move(const fvec4& plane);
 
-    virtual void		notifyStyleChange();
-   virtual  void		addRenderNodes(SceneRenderer&);
+    virtual void notifyStyleChange();
+    virtual void addRenderNodes(SceneRenderer&);
   // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
   // following declaration isn't public it generates an error when trying
   // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
@@ -46,8 +46,8 @@ class TankIDLSceneNode : public SceneNode {
   public:
     class IDLRenderNode : public RenderNode {
       public:
-			IDLRenderNode(const TankIDLSceneNode*);
-			~IDLRenderNode();
+        IDLRenderNode(const TankIDLSceneNode*);
+        ~IDLRenderNode();
 	void		render();
 	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
@@ -66,8 +66,10 @@ class TankIDLSceneNode : public SceneNode {
 
 
 class TankSceneNode : public SceneNode {
+
   friend class TankIDLSceneNode;
   friend class TankIDLSceneNode::IDLRenderNode;
+
   public:
     TankSceneNode(const fvec3& pos, const fvec3& forward);
     virtual ~TankSceneNode();
@@ -156,8 +158,9 @@ class TankSceneNode : public SceneNode {
     };
     friend class TankRenderNode;
   protected:
-    GLfloat		azimuth, elevation;
-    GLfloat		baseRadius;
+    float		azimuth;
+    float		elevation;
+    float		baseRadius;
     fvec3		dimensions; // tank dimensions
     float		leftTreadOffset;
     float		rightTreadOffset;
@@ -182,10 +185,10 @@ class TankSceneNode : public SceneNode {
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
     fvec3 vel[TankGeometryEnums::LastTankPart];
-    GLfloat spin[TankGeometryEnums::LastTankPart][4];
+    float spin[TankGeometryEnums::LastTankPart][4];
     bool		jumpJetsOn;
-    GLfloat		jumpJetsScale;
-    GLfloat		jumpJetsLengths[4];
+    float		jumpJetsScale;
+    float		jumpJetsLengths[4];
     fvec3		jumpJetsPositions[4];
     OpenGLLight		jumpJetsRealLight;
     OpenGLLight		jumpJetsGroundLights[4];
@@ -193,7 +196,7 @@ class TankSceneNode : public SceneNode {
 
     static int		maxLevel;
     static const int	numLOD;
-    static GLfloat	jumpJetsModel[4][3];
+    static fvec3	jumpJetsModel[4];
 };
 
 

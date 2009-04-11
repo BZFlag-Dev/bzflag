@@ -42,18 +42,18 @@ bool Plan::isValid()
 
 void Plan::execute(float &, float &)
 {
-  float pos[3];
+  fvec3 pos;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();
   if (!myTank || !world) {
     return;
   }
-  memcpy(pos, myTank->getPosition(), sizeof(pos));
+  pos = myTank->getPosition();
   if (pos[2] < 0.0f)
     pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
 
-  float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
+  fvec3 dir(cosf(myAzimuth), sinf(myAzimuth), 0.0f);
   pos[2] += myTank->getMuzzleHeight();
   Ray tankRay(pos, dir);
   pos[2] -= myTank->getMuzzleHeight();
@@ -67,12 +67,12 @@ void Plan::execute(float &, float &)
 	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
 	    !remotePlayers[t]->isNotResponding()) {
 
-	  const float *tp = remotePlayers[t]->getPosition();
-	  float enemyPos[3];
+	  const fvec3& tp = remotePlayers[t]->getPosition();
+	  fvec3 enemyPos;
 
 	  //toss in some lag adjustment/future prediction - 300 millis
-	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = remotePlayers[t]->getVelocity();
+	  enemyPos = tp;
+	  const fvec3& tv = remotePlayers[t]->getVelocity();
 	  enemyPos[0] += 0.3f * tv[0];
 	  enemyPos[1] += 0.3f * tv[1];
 	  enemyPos[2] += 0.3f * tv[2];
@@ -112,10 +112,10 @@ void Plan::execute(float &, float &)
 	      && (myTank->getFlag() != Flags::SuperBullet))
 	    continue;
 
-	  const float *tp = remotePlayers[t]->getPosition();
-	  float enemyPos[3];
+	  const fvec3& tp = remotePlayers[t]->getPosition();
+	  fvec3 enemyPos;
 	  //toss in some lag adjustment/future prediction - 300 millis
-	  memcpy(enemyPos,tp,sizeof(enemyPos));
+	  enemyPos = tp;
 	  const float *tv = remotePlayers[t]->getVelocity();
 	  enemyPos[0] += 0.3f * tv[0];
 	  enemyPos[1] += 0.3f * tv[1];
@@ -158,7 +158,7 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   if (!myTank || !world) {
     return false;
   }
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
 
   if ((myTank->getFlag() == Flags::Narrow) ||
       (myTank->getFlag() == Flags::Burrow))
@@ -170,8 +170,8 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   if ((shot == NULL) || (minDistance > 100.0f))
     return false;
 
-  const float *shotPos = shot->getPosition();
-  const float *shotVel = shot->getVelocity();
+  const fvec3& shotPos = shot->getPosition();
+  const fvec3& shotVel = shot->getVelocity();
   float shotAngle = atan2f(shotVel[1],shotVel[0]);
   float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -222,7 +222,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
   if (!myTank || !world) {
     return NULL;
   }
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
   ShotPath *minPath = NULL;
 
   minDistance = Infinity;
@@ -246,7 +246,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 	  (myTank->getFlag() == Flags::Cloaking))
 	continue; //cloaked tanks can't die from lasers
 
-      const float* shotPos = shot->getPosition();
+      const fvec3& shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
 	  (shot->getShotType() != GMShot))
 	continue;
@@ -281,7 +281,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
     if (shot->getShotType() == LaserShot && myTank->getFlag() == Flags::Cloaking)
       continue; //cloaked tanks can't die from lasers
 
-    const float* shotPos = shot->getPosition();
+    const fvec3& shotPos = shot->getPosition();
     if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
       continue;
 
@@ -379,10 +379,10 @@ Plan *TopLevelPlan::createSubPlan()
  * GotoPointPlan
  */
 
-GotoPointPlan::GotoPointPlan(float *pt)
-  : Plan(20.0f)
+GotoPointPlan::GotoPointPlan(const fvec3& pt)
+: Plan(20.0f)
+, gotoPt(pt)
 {
-  memcpy( gotoPt, pt, sizeof( gotoPt ));
 }
 
 bool GotoPointPlan::usesSubPlan()
@@ -489,7 +489,7 @@ Plan *HuntPlayerPlan::createSubPlan()
   bool isObscured = TargetingUtils::isLocationObscured(myTank->getPosition(),
 						       pPlayer->getPosition());
   if (isObscured) {
-    float pt[3];
+    fvec3 pt;
     // fill in pt with a open spot to go to
     return new GotoPointPlan(pt);
   } else {

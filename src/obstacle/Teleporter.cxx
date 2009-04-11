@@ -71,9 +71,7 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 
 void Teleporter::finalize()
 {
-  origSize[0] = size[0];
-  origSize[1] = size[1];
-  origSize[2] = size[2];
+  origSize = size;
 
   if (!horizontal) {
     size[1] = origSize[1] + (border * 2.0f);
@@ -230,13 +228,13 @@ float Teleporter::intersect(const Ray& r) const
 void Teleporter::getNormal(const fvec3& p1, fvec3& n) const
 {
   // get normal to closest border column (assume column is circular)
-  const float* p2 = getPosition();
+  const fvec3& p2 = getPosition();
   const float c = cosf(-getRotation());
   const float s = sinf(-getRotation());
   const float b = 0.5f * getBorder();
   const float d = getBreadth() - b;
   const float j = (c * (p1[1] - p2[1]) + s * (p1[0] - p2[0]) > 0.0f) ? d : -d;
-  float cc[2];
+  fvec3 cc;
   cc[0] = p2[0] + (s * j);
   cc[1] = p2[1] + (c * j);
   Intersect::getNormalRect(p1, cc, getRotation(), b, b, n);
@@ -265,7 +263,7 @@ bool Teleporter::inBox(const fvec3& p, float a,
     const float s = sinf(getRotation());
     const float d = getBreadth() - (0.5f * getBorder());
     const float r = 0.5f * getBorder();
-    float o[2];
+    fvec3 o;
     o[0] = getPosition()[0] - (s * d);
     o[1] = getPosition()[1] + (c * d);
     if (Intersect::testRectRect(p, a, dx, dy, o, getRotation(), r, r)) {
@@ -294,7 +292,7 @@ bool Teleporter::inMovingBox(const fvec3& oldP, float /*oldAngle */,
 			     const fvec3& p, float a,
 			     float dx, float dy, float dz) const
 {
-  float minPos[3];
+  fvec3 minPos;
   minPos[0] = p[0];
   minPos[1] = p[1];
   if (oldP[2] < p[2]) {
@@ -312,7 +310,7 @@ bool Teleporter::isCrossing(const fvec3& p, float a,
 			    fvec4* planePtr) const
 {
   // if not inside or contained then not crossing
-  const float* p2 = getPosition();
+  const fvec3& p2 = getPosition();
   if (!Intersect::testRectRect(p, a, dx, dy,
 		               p2, getRotation(), getWidth(), getBreadth() - getBorder())
       || (p[2] < p2[2]) || (p[2] > (p2[2] + getHeight() - getBorder()))) {
@@ -645,7 +643,7 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& /*indent*/) cons
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);
-  const float zAxis[3] = {0.0f, 0.0f, +1.0f};
+  const fvec3 zAxis(0.0f, 0.0f, +1.0f);
   xform.addScale(getSize());
   xform.addSpin(degrees, zAxis);
   xform.addShift(getPosition());

@@ -442,9 +442,9 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
 
 #endif
 
-void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
+void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
 {
-  memcpy(lastState.pos, pos, sizeof(float) * 3);
+  lastState.pos = pos;
   lastState.azimuth = azimuth;
   // Set Speeds to 0 too
   memset(lastState.velocity, 0, sizeof(float) * 3);
@@ -469,17 +469,17 @@ void GameKeeper::Player::setPlayerState(PlayerState state, TimeKeeper const& tim
   doPlayerDR(); // or should it be timestamp?
 }
 
-void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
+void GameKeeper::Player::getPlayerState(fvec3& pos, float &azimuth)
 {
   memcpy(pos, lastState.pos, sizeof(float) * 3);
   azimuth = lastState.azimuth;
 }
 
-void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
+void GameKeeper::Player::getPlayerCurrentPosRot(fvec3& pos, float &rot)
 {
   doPlayerDR();
 
-  memcpy(pos, currentPos, sizeof(float) * 3);
+  pos = currentPos;
   rot = currentRot;
 }
 
@@ -487,9 +487,7 @@ void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
 {
   float delta = static_cast<float>(time - stateTimeStamp);
 
-  currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
-  currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
-  currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
+  currentPos = lastState.pos + (delta * lastState.velocity);
   if (currentPos[2] < 0.0f) {
     currentPos[2] = 0.0f; // burrow depth maybe?
   }

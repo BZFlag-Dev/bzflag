@@ -31,9 +31,9 @@ class PhysicsDriver {
     ~PhysicsDriver();
 
     bool setName(const std::string& name);
-    void setLinear(const float vel[3]);
-    void setAngular(float angleVel, const float pos[2]);
-    void setRadial(float radialVel, const float pos[2]);
+    void setLinear(const fvec3& vel);
+    void setAngular(float angleVel, const fvec2& pos);
+    void setRadial(float radialVel, const fvec2& pos);
     void setSlideTime(float slideTime);
     void setDeathMessage(const std::string& msg);
 
@@ -41,11 +41,11 @@ class PhysicsDriver {
     void update(float time);
 
     const std::string& getName() const;
-    const float* getLinearVel() const;
+    const fvec3& getLinearVel() const;
     float getAngularVel() const;
-    const float* getAngularPos() const;
+    const fvec2& getAngularPos() const;
     float getRadialVel() const;
-    const float* getRadialPos() const;
+    const fvec2& getRadialPos() const;
     bool getIsSlide() const;
     float getSlideTime() const;
     bool getIsDeath() const;
@@ -72,7 +72,7 @@ class PhysicsDriver {
     std::string deathMsg;
 };
 
-inline const float* PhysicsDriver::getLinearVel() const
+inline const fvec3& PhysicsDriver::getLinearVel() const
 {
   return linear;
 }
@@ -80,7 +80,7 @@ inline float PhysicsDriver::getAngularVel() const
 {
   return angularVel;
 }
-inline const float* PhysicsDriver::getAngularPos() const
+inline const fvec2& PhysicsDriver::getAngularPos() const
 {
   return angularPos;
 }
@@ -88,7 +88,7 @@ inline float PhysicsDriver::getRadialVel() const
 {
   return radialVel;
 }
-inline const float* PhysicsDriver::getRadialPos() const
+inline const fvec2& PhysicsDriver::getRadialPos() const
 {
   return radialPos;
 }

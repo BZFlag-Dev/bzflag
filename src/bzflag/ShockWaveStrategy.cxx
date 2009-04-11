@@ -32,7 +32,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
 
   // make scene node
-  const float* pos = _path->getPosition();
+  const fvec3& pos = _path->getPosition();
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode = new SphereLodSceneNode(pos, radius);
     shockNode->setShockWave(true);

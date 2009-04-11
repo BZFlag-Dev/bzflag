@@ -66,7 +66,7 @@ class SceneNode {
     const fvec4&	getSphere() const;
     const Extents&	getExtents() const;
     virtual int		getVertexCount () const;
-    virtual const GLfloat* getVertex (int vertex) const;
+    virtual const fvec3& getVertex (int vertex) const;
     const fvec4*	getPlane() const;
     const fvec4&	getPlaneRaw() const;
     virtual GLfloat	getDistance(const GLfloat* eye) const; // for BSP
@@ -184,11 +184,11 @@ inline const fvec4* SceneNode::getPlane() const
   return &plane;
 }
 
-inline const fvec4&   SceneNode::getPlaneRaw() const { return plane;          }
-inline const fvec3&   SceneNode::getCenter()   const { return (fvec3&)sphere; }
-inline const fvec4&   SceneNode::getSphere()   const { return sphere;         }
-inline const Extents& SceneNode::getExtents()  const { return extents;        }
-inline bool           SceneNode::isOccluder()  const { return occluder;       }
+inline const fvec4&   SceneNode::getPlaneRaw() const { return plane;        }
+inline const fvec3&   SceneNode::getCenter()   const { return sphere.xyz(); }
+inline const fvec4&   SceneNode::getSphere()   const { return sphere;       }
+inline const Extents& SceneNode::getExtents()  const { return extents;      }
+inline bool           SceneNode::isOccluder()  const { return occluder;     }
 
 inline void SceneNode::setOccluder(bool value) { occluder = value; }
 
@@ -198,45 +198,49 @@ inline void SceneNode::setOccluder(bool value) { occluder = value; }
 //  GLfloat array helper classes
 //
 
-typedef GLfloat GLfloat2[2];
-typedef GLfloat GLfloat3[3];
-
-
-class GLfloat2Array {
+class fvec2Array {
   public:
-    GLfloat2Array(int s) : size(s) { data = new GLfloat2[size]; }
-    GLfloat2Array(const GLfloat2Array&);
-    ~GLfloat2Array() { delete[] data; }
+    fvec2Array(int s) : size(s) {
+      data = new fvec2[size];
+    }
+    ~fvec2Array() {
+      delete[] data;
+    }
+    fvec2Array(const fvec2Array&);
+    fvec2Array& operator=(const fvec2Array&);
 
-    GLfloat2Array& operator=(const GLfloat2Array&);
-    GLfloat*       operator[](int i) { return data[i]; }
-    const GLfloat* operator[](int i) const { return data[i]; }
+          fvec2& operator[](int i)       { return data[i]; }
+    const fvec2& operator[](int i) const { return data[i]; }
 
-    int             getSize()  const { return size; }
-    const GLfloat2* getArray() const { return data; }
+    int           getSize() const { return size; }
+    const fvec2* getArray() const { return data; }
 
   private:
-    int       size;
-    GLfloat2* data;
+    int    size;
+    fvec2* data;
 };
 
 
-class GLfloat3Array {
+class fvec3Array {
   public:
-    GLfloat3Array(int s) : size(s) { data = new GLfloat3[size]; }
-    GLfloat3Array(const GLfloat3Array&);
-    ~GLfloat3Array() { delete[] data; }
+    fvec3Array(int s) : size(s) {
+      data = new fvec3[size];
+    }
+    ~fvec3Array() {
+      delete[] data;
+    }
+    fvec3Array(const fvec3Array&);
+    fvec3Array& operator=(const fvec3Array&);
 
-    GLfloat3Array& operator=(const GLfloat3Array&);
-    GLfloat*       operator[](int i) { return data[i]; }
-    const GLfloat* operator[](int i) const { return data[i]; }
+          fvec3& operator[](int i)       { return data[i]; }
+    const fvec3& operator[](int i) const { return data[i]; }
 
-    int             getSize()  const { return size; }
-    const GLfloat3* getArray() const { return data; }
+    int          getSize()  const { return size; }
+    const fvec3* getArray() const { return data; }
 
   private:
-    int       size;
-    GLfloat3* data;
+    int    size;
+    fvec3* data;
 };
 
 

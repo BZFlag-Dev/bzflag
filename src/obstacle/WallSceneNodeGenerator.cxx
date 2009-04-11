@@ -37,9 +37,9 @@ WallSceneNode*		WallSceneNodeGenerator::getNextNode(
 {
   if (getNodeNumber() == 1) return NULL;
 
-  GLfloat base[3];
-  GLfloat sEdge[3];
-  GLfloat tEdge[3];
+  fvec3 base;
+  fvec3 sEdge;
+  fvec3 tEdge;
   const float* pos = wall->getPosition();
   const float c = cosf(wall->getRotation());
   const float s = sinf(wall->getRotation());

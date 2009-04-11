@@ -343,7 +343,7 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
     fvec3(0.0f, +1.0f, 0.0f), fvec3(-1.0f, 0.0f, 0.0f),
     fvec3(0.0f, 0.0f, -1.0f), fvec3(0.0f, 0.0f, +1.0f)
   };
-  const float* s = getSize();
+  const fvec3& s = getSize();
   const float k = 1.0f / 8.0f;
   fvec2 txcds[8] = {
     fvec2(0.0f, 0.0f), fvec2(k*s[0], 0.0f), fvec2(k*s[0], k*s[2]),
@@ -352,7 +352,7 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);
-  const float zAxis[3] = {0.0f, 0.0f, +1.0f};
+  const fvec3 zAxis(0.0f, 0.0f, +1.0f);
   xform.addScale(s);
   xform.addSpin(degrees, zAxis);
   xform.addShift(getPosition());

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 // common headers
+#include "vectors.h"
 #include "Intersect.h"
 #include "Obstacle.h"
 #include "MeshFace.h"
@@ -55,15 +56,15 @@ static int compareDescending(const void* a, const void* b);
 static bool isDeathLanding(const Obstacle* landing);
 static bool isOpposingTeam(const Obstacle* obs, int team);
 static bool isValidLanding(const Obstacle* obs);
-static bool isValidClearance(const float pos[3], float radius,
+static bool isValidClearance(const fvec3& pos, float radius,
 			     float height, int team);
-static bool dropIt(float pos[3], float minZ, float maxZ,
+static bool dropIt(fvec3& pos, float minZ, float maxZ,
 		   float radius, float height, int team);
 
 
 //============================================================================//
 
-bool DropGeometry::dropPlayer(float pos[3], float minZ, float maxZ)
+bool DropGeometry::dropPlayer(fvec3& pos, float minZ, float maxZ)
 {
   // fudge-it to avoid spawn stickiness on obstacles
   const float fudge = 0.001f;
@@ -74,14 +75,14 @@ bool DropGeometry::dropPlayer(float pos[3], float minZ, float maxZ)
 }
 
 
-bool DropGeometry::dropFlag(float pos[3], float minZ, float maxZ)
+bool DropGeometry::dropFlag(fvec3& pos, float minZ, float maxZ)
 {
   const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
   return dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, flagHeight, -1);
 }
 
 
-bool DropGeometry::dropTeamFlag(float pos[3], float minZ, float maxZ,
+bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ,
 				int team)
 {
   // team flags do not get real clearance checks (radius = 0)
@@ -149,7 +150,7 @@ static inline bool isValidLanding(const Obstacle* obs)
 }
 
 
-static bool isValidClearance(const float pos[3], float radius,
+static bool isValidClearance(const fvec3& pos, float radius,
 			     float height, int team)
 {
   const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
@@ -167,7 +168,7 @@ static bool isValidClearance(const float pos[3], float radius,
       // do not check coplanars unless they are fatal
       if (isDeathLanding(obs) || isOpposingTeam(obs, team)) {
 	const float fudge = 0.001f; // dig in a little to make sure
-	const float testPos[3] = {pos[0], pos[1], pos[2] - fudge};
+	const fvec3 testPos(pos[0], pos[1], pos[2] - fudge);
 	if (obs->inCylinder(testPos, radius, height + fudge)) {
 	  return false;
 	}
@@ -213,7 +214,7 @@ static int compareDescending(const void* a, const void* b)
 
 //============================================================================//
 
-static bool dropIt(float pos[3], float minZ, float maxZ,
+static bool dropIt(fvec3& pos, float minZ, float maxZ,
 		   float radius, float height, int team)
 {
   int i;
@@ -235,8 +236,8 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
 
   // use a downwards ray to hit the onFlatTop() buildings
   const float maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
-  const float dir[3] = {0.0f, 0.0f, -1.0f};
-  const float org[3] = {pos[0], pos[1], maxHeight + 1.0f};
+  const fvec3 dir(0.0f, 0.0f, -1.0f);
+  const fvec3 org(pos[0], pos[1], maxHeight + 1.0f);
   Ray ray(org, dir);
 
   // list of  possible landings

@@ -37,14 +37,12 @@ class OccluderSceneNode : public SceneNode {
     void addRenderNodes(SceneRenderer&) { return; }
     void renderRadar() { return; }
 
-    int getVertexCount () const
-      { return vertexCount; }
-    const GLfloat* getVertex (int vertex) const
-      { return vertices[vertex]; }
+    int getVertexCount () const { return vertexCount; }
+    const fvec3& getVertex (int vertex) const { return vertices[vertex]; }
 
   private:
     int vertexCount;
-    GLfloat3* vertices;
+    fvec3* vertices;
 };
 
 

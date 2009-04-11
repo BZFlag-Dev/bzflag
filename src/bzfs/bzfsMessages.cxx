@@ -471,7 +471,7 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
   }
 }
 
-void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
+void sendClosestFlagMessage(int playerIndex,FlagType *type , const fvec3& pos )
 {
   GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 
@@ -479,7 +479,7 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
     return;
 
   if ( playerData->playerHandler) {
-    playerData->playerHandler->nearestFlag(type->flagName.c_str(),pos);
+    playerData->playerHandler->nearestFlag(type->flagName.c_str(), pos);
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
@@ -767,7 +767,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   free(localtext);
 }
 
-void sendMessageAlive ( int playerID, float pos[3], float rot )
+void sendMessageAlive ( int playerID, const fvec3& pos, float rot )
 {
   NetMsg msg = MSGMGR.newMessage();
 

@@ -13,18 +13,19 @@
 #ifndef __LOCALPLAYER_H__
 #define __LOCALPLAYER_H__
 
-/* interface header */
+// interface header
 #include "BaseLocalPlayer.h"
 
-/* system interface headers */
+// system headers
 #include <string>
 #include <vector>
 
-/* common interface headers */
+// common headers
 #include "Obstacle.h"
 #include "TimeKeeper.h"
+#include "vectors.h"
 
-/* local interface headers */
+// local headers
 #include "Player.h"
 #include "ServerLink.h"
 
@@ -88,7 +89,7 @@ public:
   void		setRecipient(const Player*);
   const Player*	getRecipient() const;
 
-  void restart(const float* pos, float azimuth);
+  void restart(const fvec3& pos, float azimuth);
   bool checkHit(const Player* source, const ShotPath*& hit, float& minTime) const;
   bool checkCollision(const Player* otherTank);
   void setFlag(FlagType*);
@@ -113,15 +114,15 @@ public:
   static LocalPlayer*	getMyTank();
   static void		setMyTank(LocalPlayer*);
 
-  const Obstacle*	getHitBuilding(const float* pos, float angle,
-				       bool phased, bool& expel) const;
-  const Obstacle*	getHitBuilding(const float* oldPos, float oldAngle,
-				       const float* pos, float angle,
-				       bool phased, bool& expel);
-  bool		getHitNormal(const Obstacle* o,
-			     const fvec3& pos1, float azimuth1,
-			     const fvec3& pos2, float azimuth2,
-			     fvec3& normal) const;
+  const Obstacle*	getHitBuilding(const fvec3& pos, float angle,
+                                 bool phased, bool& expel) const;
+  const Obstacle*	getHitBuilding(const fvec3& oldPos, float oldAngle,
+                                 const fvec3& pos, float angle,
+                                 bool phased, bool& expel);
+  bool getHitNormal(const Obstacle* o,
+                    const fvec3& pos1, float azimuth1,
+                    const fvec3& pos2, float azimuth2,
+                    fvec3& normal) const;
 
   bool		requestedAutopilot;
 

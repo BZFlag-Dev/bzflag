@@ -148,7 +148,7 @@ static bool GetRadarBox(BoxData& box)
 		return false;
 	}
 
-	float mins[3], maxs[3];
+	fvec3 mins, maxs;
 	mins[0] = +1.0e30f;
 	maxs[0] = -1.0e30f;
 	mins[1] = +1.0e30f;
@@ -176,7 +176,7 @@ static inline int ParsePlanes(lua_State* L, PlanesData& planes)
 	const int table = 1;
 	for (int i = 1; lua_checkgeti(L, table, i); lua_pop(L, 1), i++) {
 		if (lua_istable(L, -1)) {
-			float plane[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			fvec4 plane(0.0f, 0.0f, 0.0f, 0.0f);
 			const int planeIndex = lua_gettop(L);
 			int p;
 			for (p = 0; p < 4; p++) {
@@ -232,7 +232,7 @@ static inline int ParseBox(lua_State* L, BoxData& box)
 //============================================================================//
 
 static int PushReflect(lua_State* L, const Obstacle* obs,
-                       const float pos[3], const float vel[3])
+                       const fvec3& pos, const fvec3& vel)
 {
 	fvec3 normal;
 	if (obs != NULL) {
@@ -527,7 +527,7 @@ static bool PlayerInCylinder(const Player* player, const QueryData& data)
 static bool PlayerInBox(const Player* player, const QueryData& data)
 {
 	const BoxData& box = (const BoxData&)data;
-	const float* pos = player->getPosition();
+	const fvec3& pos = player->getPosition();
 	return box.extents.contains(pos);
 }
 
@@ -697,8 +697,7 @@ static bool FlagInCylinder(const Flag* flag, const QueryData& data)
 static bool FlagInBox(const Flag* flag, const QueryData& data)
 {
 	const BoxData& box = (const BoxData&)data;
-	const float* pos = flag->position;
-	return box.extents.contains(pos);
+	return box.extents.contains(flag->position);
 }
 
 
@@ -855,7 +854,7 @@ static bool ShotInCylinder(const ShotPath* shot, const QueryData& data)
 static bool ShotInBox(const ShotPath* shot, const QueryData& data)
 {
 	const BoxData& box = (const BoxData&)data;
-	const float* pos = shot->getPosition();
+	const fvec3& pos = shot->getPosition();
 	return box.extents.contains(pos);
 }
 

@@ -74,7 +74,7 @@ int LuaDynCol::SetDynCol(lua_State* L)
 		return 0;
 	}
 	const float* oldColor = dyncol->getColor();
-	float newColor[4];
+	fvec4 newColor;
 	newColor[0] = luaL_optfloat(L, 2, oldColor[0]);
 	newColor[1] = luaL_optfloat(L, 3, oldColor[1]);
 	newColor[2] = luaL_optfloat(L, 4, oldColor[2]);

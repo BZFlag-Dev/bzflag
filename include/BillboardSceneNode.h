@@ -23,7 +23,7 @@
 
 class BillboardSceneNode : public SceneNode {
   public:
-			BillboardSceneNode(const GLfloat pos[3]);
+			BillboardSceneNode(const fvec3& pos);
 			~BillboardSceneNode();
 
     virtual BillboardSceneNode*	copy() const;
@@ -50,7 +50,7 @@ class BillboardSceneNode : public SceneNode {
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
-    void		move(const GLfloat pos[3]);
+    void		move(const fvec3& pos);
     void		setAngle(GLfloat);
     void		addLight(SceneRenderer&);
 
@@ -86,10 +86,10 @@ class BillboardSceneNode : public SceneNode {
     bool		lightSource;
     bool		groundLight;
     float		width, height;
-    GLfloat		color[4];
-    GLfloat		angle;
-    GLfloat		lightColor[3];
-    GLfloat		lightScale;
+    fvec4		color;
+    float		angle;
+    fvec4		lightColor;
+    float		lightScale;
     float		lightCutoffTime;
     int			cu, cv;
     float		t, duration;

@@ -268,7 +268,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   diffs[0] = extents.maxs[0] - extents.mins[0];
   diffs[1] = extents.maxs[1] - extents.mins[1];
   diffs[2] = extents.maxs[2] - extents.mins[2];
-  float mySphere[4];
+  fvec4 mySphere;
   mySphere[0] = 0.5f * (extents.maxs[0] + extents.mins[0]);
   mySphere[1] = 0.5f * (extents.maxs[1] + extents.mins[1]);
   mySphere[2] = 0.5f * (extents.maxs[2] + extents.mins[2]);
@@ -295,9 +295,9 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     const MeshFace* face = faces[i];
 
     // pre-generate the texcoords if required
-    GLfloat2Array t(face->getVertexCount());
+    fvec2Array t(face->getVertexCount());
     if (!face->useTexcoords()) {
-      GLfloat3Array v(face->getVertexCount());
+      fvec3Array v(face->getVertexCount());
       for (j = 0; j < face->getVertexCount(); j++) {
 	memcpy(v[j], face->getVertex(j), sizeof(float[3]));
       }
@@ -379,11 +379,11 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 {
   // NOTE: it should be OK to use the faces while building
 
-  float pos[3];
+  fvec3 pos;
   pos[0] = 0.5f * (exts.maxs[0] + exts.mins[0]);
   pos[1] = 0.5f * (exts.maxs[1] + exts.mins[1]);
   pos[2] = exts.mins[2];
-  float size[3];
+  fvec3 size;
   size[0] = 0.5f * (exts.maxs[0] - exts.mins[0]);
   size[1] = 0.5f * (exts.maxs[1] - exts.mins[1]);
   size[2] = (exts.maxs[2] - exts.mins[2]);

@@ -21,6 +21,7 @@
 
 #include "common.h"
 #include "bzfgl.h"
+#include "vectors.h"
 #include "SceneNode.h"
 
 //
@@ -83,7 +84,7 @@ class MeshSceneNode : public SceneNode {
     struct MeshMaterial {
       const BzMaterial* bzmat;
       OpenGLGState gstate;
-      GLfloat color[4];
+      fvec4 color;
       const GLfloat* colorPtr;
       bool drawRadar;
       bool drawShadow;

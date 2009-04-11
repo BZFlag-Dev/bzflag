@@ -32,7 +32,7 @@
 
 
 
-BoltSceneNode::BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3])
+BoltSceneNode::BoltSceneNode(const fvec3& pos, const fvec3& vel)
 : phasingShot(false)
 , drawFlares(false)
 , invisible(false)
@@ -148,7 +148,7 @@ void BoltSceneNode::setTextureAnimation(int cu, int cv)
 }
 
 
-void BoltSceneNode::move(const GLfloat pos[3], const GLfloat vel[3] )
+void BoltSceneNode::move(const fvec3& pos, const fvec3& vel)
 {
   setCenter(pos);
   light.setPosition(pos);

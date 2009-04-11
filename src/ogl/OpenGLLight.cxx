@@ -23,19 +23,13 @@ GLint OpenGLLight::maxLights = 0;
 
 
 OpenGLLight::OpenGLLight()
+: pos(0.0f, 0.0f, 1.0f, 0.0f)
+, color(0.8f, 0.8f, 0.8f, 1.0f)
+, atten(1.0f, 0.0f, 0.0f)
+, maxDist(50.0f)
+, onlyReal(false)
+, onlyGround(false)
 {
-  pos[0] = 0.0f;
-  pos[1] = 0.0f;
-  pos[2] = 1.0f;
-  pos[3] = 0.0f;
-  color[0] = 0.8f;
-  color[1] = 0.8f;
-  color[2] = 0.8f;
-  color[3] = 1.0f;
-  atten[0] = 1.0f;
-  atten[1] = 0.0f;
-  atten[2] = 0.0f;
-  maxDist = 50.0f;
   //
   // Here's the equation for maxDist:
   //
@@ -48,8 +42,6 @@ OpenGLLight::OpenGLLight()
   // it doesn't seem to be worth the bother or CPU time to actually
   // use this equation. Grep for 'Attenuation' to find the values.
   //
-  onlyReal = false;
-  onlyGround = false;
   makeLists();
   return;
 }
@@ -57,17 +49,9 @@ OpenGLLight::OpenGLLight()
 
 OpenGLLight::OpenGLLight(const OpenGLLight& l)
 {
-  pos[0] = l.pos[0];
-  pos[1] = l.pos[1];
-  pos[2] = l.pos[2];
-  pos[3] = l.pos[3];
-  color[0] = l.color[0];
-  color[1] = l.color[1];
-  color[2] = l.color[2];
-  color[3] = l.color[3];
-  atten[0] = l.atten[0];
-  atten[1] = l.atten[1];
-  atten[2] = l.atten[2];
+  pos = l.pos;
+  color = l.color;
+  atten = l.atten;
   maxDist = l.maxDist;
   onlyReal = l.onlyReal;
   onlyGround = l.onlyGround;
@@ -80,17 +64,9 @@ OpenGLLight& OpenGLLight::operator=(const OpenGLLight& l)
 {
   if (this != &l) {
     freeLists();
-    pos[0] = l.pos[0];
-    pos[1] = l.pos[1];
-    pos[2] = l.pos[2];
-    pos[3] = l.pos[3];
-    color[0] = l.color[0];
-    color[1] = l.color[1];
-    color[2] = l.color[2];
-    color[3] = l.color[3];
-    atten[0] = l.atten[0];
-    atten[1] = l.atten[1];
-    atten[2] = l.atten[2];
+    pos = l.pos;
+    color = l.color;
+    atten = l.atten;
     maxDist = l.maxDist;
     onlyReal = l.onlyReal;
     onlyGround = l.onlyGround;
@@ -125,50 +101,38 @@ OpenGLLight::~OpenGLLight()
 }
 
 
-void OpenGLLight::setDirection(const GLfloat* _pos)
+void OpenGLLight::setDirection(const fvec3& _pos)
 {
   freeLists();
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
-  pos[3] = 0.0f;
+  pos = fvec4(_pos, 0.0f);
 }
 
 
-void OpenGLLight::setPosition(const GLfloat* _pos)
+void OpenGLLight::setPosition(const fvec3& _pos)
 {
   freeLists();
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
-  pos[3] = 1.0f;
+  pos = fvec4(_pos, 1.0f);
 }
 
 
 void OpenGLLight::setColor(GLfloat r, GLfloat g, GLfloat b)
 {
   freeLists();
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
+  color = fvec4(r, g, b, 1.0f);
 }
 
 
-void OpenGLLight::setColor(const GLfloat* rgb)
+void OpenGLLight::setColor(const fvec4& rgba)
 {
   freeLists();
-  color[0] = rgb[0];
-  color[1] = rgb[1];
-  color[2] = rgb[2];
+  color = rgba;
 }
 
 
-void OpenGLLight::setAttenuation(const GLfloat* _atten)
+void OpenGLLight::setAttenuation(const fvec3& _atten)
 {
   freeLists();
-  atten[0] = _atten[0];
-  atten[1] = _atten[1];
-  atten[2] = _atten[2];
+  atten = _atten;
 }
 
 
@@ -298,8 +262,8 @@ void OpenGLLight::genLight(GLenum light) const
   glLightfv(light, GL_DIFFUSE, color);
   glLightfv(light, GL_SPECULAR, color);
   glLighti(light, GL_SPOT_EXPONENT, 0);
-  glLightf(light, GL_CONSTANT_ATTENUATION, atten[0]);
-  glLightf(light, GL_LINEAR_ATTENUATION, atten[1]);
+  glLightf(light, GL_CONSTANT_ATTENUATION,  atten[0]);
+  glLightf(light, GL_LINEAR_ATTENUATION,    atten[1]);
   glLightf(light, GL_QUADRATIC_ATTENUATION, atten[2]);
   return;
 }

@@ -40,7 +40,7 @@ RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
 }
 
 // estimate a player's position at now+t, similar to dead reckoning
-void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const
+void RobotPlayer::projectPosition(const Player *targ, const float t, fvec3& pos) const
 {
   double hisx=targ->getPosition()[0];
   double hisy=targ->getPosition()[1];
@@ -69,12 +69,15 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
     sx = hisspeed * t * cos(rho);
     sy = hisspeed * t * sin(rho);
   }
-  x=(float)hisx+(float)sx;
-  y=(float)hisy+(float)sy;
-  z=(float)hisz+(float)hisvz*t;
-  if (targ->getStatus() & PlayerState::Falling)
-    z += 0.5f * BZDBCache::gravity * t * t;
-  if (z < 0) z = 0;
+  pos.x = (float)hisx+(float)sx;
+  pos.y = (float)hisy+(float)sy;
+  pos.z = (float)hisz+(float)hisvz*t;
+  if (targ->getStatus() & PlayerState::Falling) {
+    pos.z += 0.5f * BZDBCache::gravity * t * t;
+  }
+  if (pos.z < 0.0f) {
+    pos.z = 0.0f;
+  }
 }
 
 
@@ -82,7 +85,7 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
 // 1. estimate how long it will take shot to hit target
 // 2. calc position of target at that point of time
 // 3. jump to 1., using projected position, loop until result is stable
-void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
+void RobotPlayer::getProjectedPosition(const Player *targ, fvec3& projpos) const
 {
   double myx = getPosition()[0];
   double myy = getPosition()[1];
@@ -99,22 +102,21 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
       hypotf(getVelocity()[0], getVelocity()[1]);
 
   double errdistance = 1.0;
-  float tx, ty, tz;
+  fvec3 tmpPos;
   for (int tries=0 ; errdistance > 0.05 && tries < 4 ; tries++)
   {
     float t = (float)distance / (float)shotspeed;
-    projectPosition(targ, t + 0.05f, tx, ty, tz); // add 50ms for lag
-    double distance2 = hypotf(tx - myx, ty - myy);
+    projectPosition(targ, t + 0.05f, tmpPos); // add 50ms for lag
+    double distance2 = hypotf(tmpPos.x - myx, tmpPos.y - myy);
     errdistance = fabs(distance2-distance) / (distance + ZERO_TOLERANCE);
     distance = distance2;
   }
-  projpos[0] = tx; projpos[1] = ty; projpos[2] = tz;
+  projpos = tmpPos;
 
   // projected pos in building -> use current pos
-  if (World::getWorld() && World::getWorld()->inBuilding(projpos, 0.0f, BZDBCache::tankHeight)) {
-    projpos[0] = targ->getPosition()[0];
-    projpos[1] = targ->getPosition()[1];
-    projpos[2] = targ->getPosition()[2];
+  if (World::getWorld() &&
+      World::getWorld()->inBuilding(projpos, 0.0f, BZDBCache::tankHeight)) {
+    projpos = targ->getPosition();
   }
 }
 
@@ -144,9 +146,9 @@ void			RobotPlayer::doUpdate(float dt)
   const float azimuth = getAngle();
   // Allow shooting only if angle is near and timer has elapsed
   if ((int)path.size() != 0 && timerForShot <= 0.0f) {
-    float p1[3];
+    fvec3 p1;
     getProjectedPosition(target, p1);
-    const float* p2     = getPosition();
+    const fvec3& p2     = getPosition();
     float shootingAngle = atan2f(p1[1] - p2[1], p1[0] - p2[0]);
     if (shootingAngle < 0.0f)
       shootingAngle += (float)(2.0 * M_PI);
@@ -165,9 +167,9 @@ void			RobotPlayer::doUpdate(float dt)
     // only shoot if we miss by less than half a tanklength and no building inbetween
     if (missby < 0.5f * BZDBCache::tankLength &&
 	p1[2] < shotRadius) {
-      float pos[3] = {getPosition()[0], getPosition()[1],
-		      getPosition()[2] +  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)};
-      float dir[3] = {cosf(azimuth), sinf(azimuth), 0.0f};
+      fvec3 pos = getPosition();
+      pos.z +=  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      fvec3 dir(cosf(azimuth), sinf(azimuth), 0.0f);
       Ray tankRay(pos, dir);
       float maxdistance = targetdistance;
       if (!ShotStrategy::getFirstBuilding(tankRay, -0.5f, maxdistance))
@@ -183,9 +185,7 @@ void			RobotPlayer::doUpdate(float dt)
 	    p = LocalPlayer::getMyTank();
 	  if (!p || p->getId() == getId() || validTeamTarget(p) ||
 	     !p->isAlive()) continue;
-	  float relpos[3] = {getPosition()[0] - p->getPosition()[0],
-			     getPosition()[1] - p->getPosition()[1],
-			     getPosition()[2] - p->getPosition()[2]};
+	  const fvec3 relpos = getPosition() - p->getPosition();
 	  Ray ray(relpos, dir);
 	  float impact = Intersect::rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);
 	  if (impact > 0 && impact < shotRange)
@@ -210,11 +210,8 @@ void			RobotPlayer::doUpdateMotion(float dt)
     bool evading = false;
     // record previous position
     const float oldAzimuth = getAngle();
-    const float* oldPosition = getPosition();
-    float position[3];
-    position[0] = oldPosition[0];
-    position[1] = oldPosition[1];
-    position[2] = oldPosition[2];
+    const fvec3& oldPosition = getPosition();
+    fvec3 position = oldPosition;
     float azimuth = oldAzimuth;
     float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
     float tankSpeed = BZDBCache::tankSpeed;
@@ -243,7 +240,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
 	if ((shot->getShotType() == InvisibleShot) || (shot->getShotType() == CloakedShot))
 	  continue;
 
-	const float* shotPos = shot->getPosition();
+	const fvec3& shotPos = shot->getPosition();
 	if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
 	  continue;
 	const float dist = TargetingUtils::getTargetDistance(position, shotPos);
@@ -335,7 +332,7 @@ void			RobotPlayer::explodeTank()
   path.clear();
 }
 
-void			RobotPlayer::restart(const float* pos, float _azimuth)
+void			RobotPlayer::restart(const fvec3& pos, float _azimuth)
 {
   LocalPlayer::restart(pos, _azimuth);
   // no target
@@ -355,8 +352,8 @@ float			RobotPlayer::getTargetPriority(const
   // go after closest player
   // FIXME -- this is a pretty stupid heuristic
   const float worldSize = BZDBCache::worldSize;
-  const float* p1 = getPosition();
-  const float* p2 = _target->getPosition();
+  const fvec3& p1 = getPosition();
+  const fvec3& p2 = _target->getPosition();
 
   float basePriority = 1.0f;
   // give bonus to non-paused player
@@ -393,10 +390,10 @@ void			RobotPlayer::setTarget(const Player* _target)
   if (!target) return;
 
   // work backwards (from target to me)
-  float proj[3];
+  fvec3 proj;
   getProjectedPosition(target, proj);
   const float *p1 = proj;
-  const float* p2 = getPosition();
+  const fvec3& p2 = getPosition();
   float q1[2], q2[2];
   BzfRegion* headRegion = findRegion(p1, q1);
   BzfRegion* tailRegion = findRegion(p2, q2);

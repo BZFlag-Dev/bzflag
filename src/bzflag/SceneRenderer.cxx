@@ -770,8 +770,8 @@ void SceneRenderer::renderScene()
   float waveSpeed = 1.0f;
   const World* world = World::getWorld();
   if (world) {
-    static const float pos[3] = { 0.0f, 0.0f, 0.0f };
-    float wind[3];
+    static const fvec3 pos(0.0f, 0.0f, 0.0f);
+    fvec3 wind;
     world->getWind(wind, pos);
     const float speed = sqrtf((wind[0] * wind[0]) + (wind[1] * wind[1]));
     waveSpeed = 1.0f + (speed * 0.1f);
@@ -1146,15 +1146,15 @@ void SceneRenderer::renderPostDimming()
 
 void SceneRenderer::renderDepthComplexity()
 {
-  static const GLfloat depthColors[][3] = {
-    { 0.0f, 0.0f, 0.0f }, // black -- 0 times
-    { 0.5f, 0.0f, 1.0f }, // purple -- 1 time
-    { 0.0f, 0.0f, 1.0f }, // blue -- 2 times
-    { 0.0f, 1.0f, 1.0f }, // cyan -- 3 times
-    { 0.0f, 1.0f, 0.0f }, // green -- 4 times
-    { 1.0f, 1.0f, 0.0f }, // yellow -- 5 times
-    { 1.0f, 0.5f, 0.0f }, // orange -- 6 times
-    { 1.0f, 0.0f, 0.0f }  // red -- 7 or more
+  static const fvec4 depthColors[] = {
+    fvec4(0.0f, 0.0f, 0.0f, 1.0f), // black -- 0 times
+    fvec4(0.5f, 0.0f, 1.0f, 1.0f), // purple -- 1 time
+    fvec4(0.0f, 0.0f, 1.0f, 1.0f), // blue -- 2 times
+    fvec4(0.0f, 1.0f, 1.0f, 1.0f), // cyan -- 3 times
+    fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green -- 4 times
+    fvec4(1.0f, 1.0f, 0.0f, 1.0f), // yellow -- 5 times
+    fvec4(1.0f, 0.5f, 0.0f, 1.0f), // orange -- 6 times
+    fvec4(1.0f, 0.0f, 0.0f, 1.0f)  // red -- 7 or more
   };
   static const int numColors = countof(depthColors);
 

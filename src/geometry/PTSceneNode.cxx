@@ -34,8 +34,8 @@ const GLfloat		PhotonTorpedoSceneNode::CoronaSize = 1.0f;
 const GLfloat		PhotonTorpedoSceneNode::FlareSize = 1.0f;
 const GLfloat		PhotonTorpedoSceneNode::FlareSpread = 0.08f;
 
-PhotonTorpedoSceneNode::PhotonTorpedoSceneNode(const GLfloat pos[3]) :
-				renderNode(this)
+PhotonTorpedoSceneNode::PhotonTorpedoSceneNode(const fvec3& pos)
+: renderNode(this)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setShading(GL_SMOOTH);
@@ -48,7 +48,7 @@ PhotonTorpedoSceneNode::PhotonTorpedoSceneNode(const GLfloat pos[3]) :
   light.setColor(2.0f, 0.4f, 0.0f);
 
   // prepare geometry
-  move(pos, NULL);
+  move(pos, fvec3());
   setRadius(FlareSize * FlareSize);
 }
 
@@ -57,8 +57,8 @@ PhotonTorpedoSceneNode::~PhotonTorpedoSceneNode()
   // do nothing
 }
 
-void			PhotonTorpedoSceneNode::move(const GLfloat pos[3],
-							const GLfloat[3])
+
+void PhotonTorpedoSceneNode::move(const fvec3& pos, const fvec3&)
 {
   setCenter(pos);
   light.setPosition(pos);

@@ -17,7 +17,10 @@
 
 #include "common.h"
 
-/* local interface headers */
+// common headers
+#include "vectors.h"
+
+// local headers
 #include "SpawnPolicy.h"
 
 
@@ -43,7 +46,7 @@ public:
 
 private:
   float	      azimuth;
-  float       pos[3];
+  fvec3       pos;
 
   /* class data - determines how the pos and azimuth are determined */
   static SpawnPolicy *policy;

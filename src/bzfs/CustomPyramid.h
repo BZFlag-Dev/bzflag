@@ -44,7 +44,7 @@ class CustomPyramid : public WorldFileObstacle {
 
     bool flipz;
 
-    int phyDrvs[FaceCount];
+    int   phyDrvs[FaceCount];
     float texSizes[FaceCount][2];
     float texOffsets[FaceCount][2];
     unsigned char driveThroughs[FaceCount];

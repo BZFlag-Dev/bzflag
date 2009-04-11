@@ -49,10 +49,10 @@ typedef FTBitmapFont CRAP_FONT;
 
 /** initialize the singleton */
 template <>
-FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
+FontManager* Singleton<FontManager>::_instance = (FontManager*)NULL;
 
 /** initialize underline to black */
-GLfloat FontManager::underlineColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+fvec4 FontManager::underlineColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 
 /**

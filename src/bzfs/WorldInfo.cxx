@@ -159,8 +159,8 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
   OBSTACLEMGR.addWorldObstacle(tele);
 }
 
-void WorldInfo::addBase(const float pos[3], float r,
-			const float _size[3], int color,
+void WorldInfo::addBase(const fvec3& pos, float r,
+			const fvec3& _size, int color,
 			bool /* drive */, bool /* shoot */, bool rico)
 {
   BaseBuilding* base = new BaseBuilding(pos, r, _size, color, rico);
@@ -185,7 +185,7 @@ void WorldInfo::makeWaterMaterial()
 
   // the material
   BzMaterial material;
-  const float diffuse[4] = {0.65f, 1.0f, 0.5f, 0.9f};
+  const fvec4 diffuse(0.65f, 1.0f, 0.5f, 0.9f);
   material.reset();
   material.setName("WaterMaterial");
   material.setTexture("water");
@@ -318,7 +318,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
-					     const float* pos, float radius,
+					     const fvec3& pos, float radius,
 					     float height) const
 {
   if (height < Epsilon) {
@@ -351,7 +351,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 
 
 InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
-					const float* pos, float angle,
+					const fvec3& pos, float angle,
 					float width, float breadth, float height) const
 {
   if (height < Epsilon) {
@@ -405,8 +405,8 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 }
 
 
-bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
-				float* pt) const
+bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const fvec3& pos,
+				fvec3& pt) const
 {
   FlagType* flagType = fi->flag.type;
   const int flagTeam = (int)flagType->flagTeam;
@@ -434,7 +434,7 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
 }
 
 
-bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
+bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, fvec3& pt) const
 {
   FlagType* flagType = fi->flag.type;
   const int flagTeam = (int)flagType->flagTeam;
@@ -457,7 +457,7 @@ bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
 }
 
 
-bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const
+bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, fvec3& pt) const
 {
   const std::string& teamQual =
     CustomZone::getPlayerTeamQualifier((int)pi->getTeam());
@@ -621,10 +621,10 @@ int WorldInfo::getUncompressedSize() const
   return uncompressedSize;
 }
 
-const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
-				   const float* pos, float angle,
-				   float dx, float dy, float dz,
-				   bool directional, bool checkWalls) const
+const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
+                                       const fvec3& pos, float angle,
+                                       float dx, float dy, float dz,
+                                       bool directional, bool checkWalls) const
 {
   // check walls
   if(checkWalls)
@@ -663,11 +663,8 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
 
   // do some prep work for mesh faces
   int hitCount = 0;
-  float vel[3];
-  vel[0] = pos[0] - oldPos[0];
-  vel[1] = pos[1] - oldPos[1];
-  vel[2] = pos[2] - oldPos[2];
-  bool goingDown = (vel[2] <= 0.0f);
+  const fvec3 vel = pos - oldPos;
+  const bool goingDown = (vel[2] <= 0.0f);
 
   // check mesh faces
   for (/* do nothing */; i < olist->count; i++) {
@@ -695,8 +692,7 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle,
 	olist->list[hitCount] = (Obstacle*) obs;
 	hitCount++;
 	// compute its dot product and stick it in the scratchPad
-	const float* p = face->getPlane();
-	const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+	const float dot = fvec3::dot(vel, face->getPlane().xyz());
 	face->scratchPad = dot;
       }
     }

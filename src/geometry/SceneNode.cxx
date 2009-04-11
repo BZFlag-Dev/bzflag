@@ -121,7 +121,7 @@ void			SceneNode::setRadius(GLfloat radiusSquared)
 
 void			SceneNode::setCenter(const fvec3& center)
 {
-  (fvec3&)sphere = center;
+  sphere.xyz() = center;
 }
 
 void			SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
@@ -207,53 +207,54 @@ int SceneNode::getVertexCount () const
   return 0;
 }
 
-const GLfloat* SceneNode::getVertex (int) const
+const fvec3& SceneNode::getVertex(int) const
 {
-  return NULL;
+  static const fvec3 junk;
+  return junk;
 }
 
 
 //
-// GLfloat2Array
+// fvec2Array
 //
 
-GLfloat2Array::GLfloat2Array(const GLfloat2Array& a) :
+fvec2Array::fvec2Array(const fvec2Array& a) :
 				size(a.size)
 {
-  data = new GLfloat2[size];
-  ::memcpy(data, a.data, size * sizeof(GLfloat2));
+  data = new fvec2[size];
+  ::memcpy(data, a.data, size * sizeof(fvec2));
 }
 
-GLfloat2Array&		GLfloat2Array::operator=(const GLfloat2Array& a)
+fvec2Array& fvec2Array::operator=(const fvec2Array& a)
 {
   if (this != &a) {
     delete[] data;
     size = a.size;
-    data = new GLfloat2[size];
-    ::memcpy(data, a.data, size * sizeof(GLfloat2));
+    data = new fvec2[size];
+    ::memcpy(data, a.data, size * sizeof(fvec2));
   }
   return *this;
 }
 
 
 //
-// GLfloat3Array
+// fvec3Array
 //
 
-GLfloat3Array::GLfloat3Array(const GLfloat3Array& a) :
+fvec3Array::fvec3Array(const fvec3Array& a) :
 				size(a.size)
 {
-  data = new GLfloat3[size];
-  ::memcpy(data, a.data, size * sizeof(GLfloat3));
+  data = new fvec3[size];
+  ::memcpy(data, a.data, size * sizeof(fvec3));
 }
 
-GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
+fvec3Array& fvec3Array::operator=(const fvec3Array& a)
 {
   if (this != &a) {
     delete[] data;
     size = a.size;
-    data = new GLfloat3[size];
-    ::memcpy(data, a.data, size * sizeof(GLfloat3));
+    data = new fvec3[size];
+    ::memcpy(data, a.data, size * sizeof(fvec3));
   }
   return *this;
 }

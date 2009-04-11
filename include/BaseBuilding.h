@@ -20,16 +20,17 @@
 #include "common.h"
 #include <string>
 #include "Obstacle.h"
+#include "vectors.h"
 
 class BaseBuilding : public Obstacle {
 
   friend class ObstacleModifier;
 
   public:
-			BaseBuilding();
-			BaseBuilding(const float *pos, float rotation,
-				     const float *size, int _team, bool ricochet);
-			~BaseBuilding();
+    BaseBuilding();
+    BaseBuilding(const fvec3& pos, float rotation,
+                 const fvec3& size, int _team, bool ricochet);
+    ~BaseBuilding();
 
     Obstacle*	copyWithTransform(const MeshTransform&) const;
 

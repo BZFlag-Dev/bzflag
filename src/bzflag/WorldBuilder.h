@@ -15,7 +15,10 @@
 
 #include "common.h"
 
-/* local interface headers */
+// common headers
+#include "vectors.h"
+
+// local headers
 #include "World.h"
 
 
@@ -40,8 +43,7 @@ class WorldBuilder {
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
     void		setBase(TeamColor team,
-				const float* pos, float rotation,
-				float w, float b, float h);
+                    const fvec3& pos, const fvec3& size, float radians);
 
   private:
     void		preGetWorld();

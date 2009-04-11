@@ -192,8 +192,7 @@ void* WorldBuilder::unpack(void* buf)
     for (i = 0; i < bases.size(); i++) {
       const BaseBuilding* base = (const BaseBuilding*) bases[i];
       setBase((TeamColor)base->getTeam(),
-	      base->getPosition(), base->getRotation(),
-	      base->getWidth(), base->getBreadth(), base->getHeight());
+              base->getPosition(), base->getSize(), base->getRotation());
     }
   } else {
     OBSTACLEMGR.replaceBasesWithBoxes();
@@ -330,15 +329,14 @@ void WorldBuilder::setShakeWins(int wins) const
 }
 
 void WorldBuilder::setBase(TeamColor team,
-			   const float* pos, float rotation,
-			   float w, float b, float h)
+                           const fvec3& pos, const fvec3& size, float radians)
 {
   int teamIndex = int(team);
 
   World::BaseParams bp;
-  bp.pos  = fvec3(pos);
-  bp.size = fvec3(w, b, h);
-  bp.rot  = rotation;
+  bp.pos     = pos;
+  bp.size    = size;
+  bp.radians = radians;
   world->bases[teamIndex].push_back(bp);
 }
 

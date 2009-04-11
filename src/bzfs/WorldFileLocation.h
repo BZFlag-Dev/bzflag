@@ -29,9 +29,9 @@ public:
   virtual void writeToWorld(WorldInfo*) const;
   void *pack(void *buf) const;
 protected:
-  float pos[3];
+  fvec3 pos;
+  fvec3 size;
   float rotation;
-  float size[3];
   MeshTransform transform;
 };
 

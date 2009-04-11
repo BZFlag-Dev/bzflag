@@ -804,7 +804,8 @@ int LuaCallOuts::PlaySound(lua_State* L)
 		}
 	}
 
-	SOUNDSYSTEM.play(soundID, local ? NULL : pos, important, local, repeated);
+	SOUNDSYSTEM.play(soundID, local ? NULL : (const float*)pos,
+	                 important, local, repeated);
 
 	return 0;
 }
@@ -1204,11 +1205,11 @@ int LuaCallOuts::SetCameraView(lua_State* L)
 
 	// get the defaults
 	ViewFrustum& vf = RENDERER.getViewFrustum();
-	const float* currPos = vf.getEye();
+	const fvec3& currPos = vf.getEye();
 
-	const float* currDir = vf.getDirection();
-	float pos[3] = { currPos[0], currPos[1], currPos[2] };
-	float dir[3] = { currDir[0], currDir[1], currDir[2] };
+	const fvec3& currDir = vf.getDirection();
+	fvec3 pos = currPos;
+	fvec3 dir = currDir;
 
 	const int table = 1;
 	if (!lua_istable(L, table)) {
@@ -1234,10 +1235,7 @@ int LuaCallOuts::SetCameraView(lua_State* L)
 		}
 	}
 
-	float target[3];
-	target[0] = pos[0] + dir[0];
-	target[1] = pos[1] + dir[1];
-	target[2] = pos[2] + dir[2];
+	fvec3 target = pos + dir;
 
 	vf.setView(pos, target);
 
@@ -1410,15 +1408,15 @@ int LuaCallOuts::GetSun(lua_State* L)
 		} 
 	}
 	else if (param == "ambient") {
-		lua_pushfvec3(L, (fvec3&)RENDERER.getAmbientColor());
+		lua_pushfvec3(L, RENDERER.getAmbientColor().xyz());
 		return 3;
 	}
 	else if (param == "diffuse") {
-		lua_pushfvec3(L, (fvec3&)RENDERER.getSunColor());
+		lua_pushfvec3(L, RENDERER.getSunColor().xyz());
 		return 3;
 	}
 	else if (param == "specular") {
-		lua_pushfvec3(L, (fvec3&)RENDERER.getSunColor());
+		lua_pushfvec3(L, RENDERER.getSunColor().xyz());
 		return 3;
 	}
 

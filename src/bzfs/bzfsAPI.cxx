@@ -1444,8 +1444,10 @@ BZF_API bool bz_getPlayerPosition(int playerID, float pos[3], bool extrapolate)
   }
 
   if (extrapolate) {
+    fvec3 p;
     float rot;
-    player->getPlayerCurrentPosRot(pos, rot);
+    player->getPlayerCurrentPosRot(p, rot);
+    memcpy(pos, p, sizeof(float[3]));
   } else {
     memcpy(pos, player->lastState.pos, sizeof(float[3]));
   }
@@ -1454,7 +1456,7 @@ BZF_API bool bz_getPlayerPosition(int playerID, float pos[3], bool extrapolate)
 }
 
 
-BZF_API bool bz_getPlayerRotation(int playerID, float *rot, bool extrapolate)
+BZF_API bool bz_getPlayerRotation(int playerID, float* rot, bool extrapolate)
 {
   GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player) {
@@ -1462,7 +1464,7 @@ BZF_API bool bz_getPlayerRotation(int playerID, float *rot, bool extrapolate)
   }
 
   if (extrapolate) {
-    float pos[3];
+    fvec3 pos;
     player->getPlayerCurrentPosRot(pos, *rot);
   } else {
     *rot = player->lastState.azimuth;
@@ -3043,13 +3045,15 @@ BZF_API bool bz_moveFlag(int flag, float pos[3], bool reset)
     return false;
 
   // if somone has it, drop it
-  if(pFlag->player!=-1)
+  if (pFlag->player != -1)
     dropFlag(*pFlag);
 
-  if(reset)
-    pFlag->resetFlag(pos, true);
-  else
-    memcpy(pFlag->flag.position, pos, sizeof(float) *3);
+  fvec3 p(pos[0], pos[1], pos[2]);
+  if (reset) {
+    pFlag->resetFlag(p, true);
+  } else {
+    pFlag->flag.position = p;
+  }
 
   sendFlagUpdateMessage(*pFlag);
 
@@ -3568,8 +3572,9 @@ bz_eAPIColType bz_cylinderInMapObject(float pos[3], float height, float radius, 
   if(!world)
     return eNoCol;
 
-  const Obstacle *obs=NULL;
-  return getAPIMapObject(world->cylinderInBuilding(&obs, pos, radius, height), obs, object);
+  const Obstacle *obs = NULL;
+  const fvec3 p(pos[0], pos[1], pos[2]);
+  return getAPIMapObject(world->cylinderInBuilding(&obs, p, radius, height), obs, object);
 }
 
 //-------------------------------------------------------------------------
@@ -3578,8 +3583,9 @@ bz_eAPIColType bz_boxInMapObject(float pos[3], float size[3], float angle, bz_AP
 {
   if(!world)
     return eNoCol;
-  const Obstacle *obs=NULL;
-  return getAPIMapObject(world->boxInBuilding(&obs, pos, angle, size[0], size[1], size[2]), obs, object);
+  const Obstacle *obs = NULL;
+  const fvec3 p(pos[0], pos[1], pos[2]);
+  return getAPIMapObject(world->boxInBuilding(&obs, p, angle, size[0], size[1], size[2]), obs, object);
 }
 
 //-------------------------------------------------------------------------
@@ -4729,7 +4735,7 @@ void bz_ServerSidePlayerHandler::playerRemoved(int){}
 
 void bz_ServerSidePlayerHandler::playerRejected(bz_eRejectCodes, const char*){}
 
-void bz_ServerSidePlayerHandler::playerSpawned(int id, float _pos[3], float _rot)
+void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], float _rot)
 {
   if(id==playerID)
   {
@@ -4783,7 +4789,7 @@ void bz_ServerSidePlayerHandler::playerScoreUpdate(int, float, int, int, int){}
 
 void bz_ServerSidePlayerHandler::flagTransfer(int, int, int, bz_eShotType){}
 
-void bz_ServerSidePlayerHandler::nearestFlag(const char *, float[3]){}
+void bz_ServerSidePlayerHandler::nearestFlag(const char *, const float[3]){}
 
 void bz_ServerSidePlayerHandler::grabFlag(int player, int /*flagID*/, const char* flagType, bz_eShotType shotType)
 {
@@ -4876,10 +4882,11 @@ void bz_ServerSidePlayerHandler::dropFlag(void)
   if(!player)
     return ;
 
-  float p[3],r;
-  player->getPlayerCurrentPosRot(p,r);
+  fvec3 pos;
+  float rot;
+  player->getPlayerCurrentPosRot(pos, rot);
 
-  dropPlayerFlag(*player, p);
+  dropPlayerFlag(*player, pos);
 }
 
 //-------------------------------------------------------------------------
@@ -4987,25 +4994,26 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
   return NULL;
 
   // check and see if this path goes thru a building.
-  const Obstacle* hit = world->hitBuilding(oldPos.pos, oldPos.rot, newPos.pos, newPos.rot, width, breadth, breadth, directional,checkWalls);
-  if (!hit) // if it does not, it's clear
+  const fvec3 oldP(oldPos.pos[0], oldPos.pos[1], oldPos.pos[2]);
+  const fvec3 newP(newPos.pos[0], newPos.pos[1], newPos.pos[2]);
+  const Obstacle* hit = world->hitBuilding(oldP, oldPos.rot, newP, newPos.rot,
+                                           width, breadth, breadth, directional,checkWalls);
+  if (!hit) { // if it does not, it's clear
     return NULL;
-  else
-  {
-    // we assume that the start point of the path is always clear, so if we get here, then the endpoint passed thru a building.
+  }
+  else {
+    // we assume that the start point of the path is always clear,
+    // so if we get here, then the endpoint passed thru a building.
 
     // compute the distance that the center point moves.
-   float len = 0;
-   float vec[3];
-    for (int i =0; i < 3; i++)
-      vec[i] = newPos.pos[i] - oldPos.pos[i];
-    len = sqrtf(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
-
-    // if the distance is less then our tolerance, and the END point is IN an object, assume that the start point since we know that is clear
+    const fvec3 vec = newP - oldP;
+    const float len = vec.length();
+   
+    // if the distance is less then our tolerance, and the END point
+    // is IN an object, assume that the start point since we know that is clear
     // return this as the collision value
-    float collideTol = 0.1f;
-    if ( len <= collideTol)
-    {
+    const float collideTol = 0.1f;
+    if (len <= collideTol) {
       newPos = oldPos;
       return hit;
     }
@@ -5015,28 +5023,33 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
   //    return hit;
   //  }
 
-    // compute a midpoint to test, so we can do a binary search to find what "side" of the midpoint is clear
+    // compute a midpoint to test, so we can do a binary
+    // search to find what "side" of the midpoint is clear
     bz_ServerSidePlayerHandler::UpdateInfo midpoint;
 
-    for (int i =0; i < 3; i++)
+    for (int i =0; i < 3; i++) {
       midpoint.pos[i] = oldPos.pos[i] + vec[i]*0.5f;
+    }
 
     midpoint.rot = oldPos.rot + ((oldPos.rot-newPos.rot)*0.5f);
 
     // test from the start point to the midpoint
-    hit = world->hitBuilding(oldPos.pos, oldPos.rot, midpoint.pos, midpoint.rot, width, breadth, breadth, directional,checkWalls);
+    
+    const fvec3 midP(midpoint.pos[0], midpoint.pos[1], midpoint.pos[2]);
+    hit = world->hitBuilding(oldP, oldPos.rot, midP, midpoint.rot,
+                             width, breadth, breadth, directional,checkWalls);
 
     // if we have a hit, then the midpoint is "in" a building, so the valid section is the oldPos -> midpoint section.
     // so set the endpoint to the midpoint and retest.
     // if we don't have a hit. then the midpoint is outside of the building, and we want to test from the midpoint to the newpos and get closer
-    if (hit)
-    {
+    if (hit) {
       newPos = midpoint;
       midpoint = oldPos;
     }
 
     // recurse to get closer to the actual collision point
-    return hitBuilding(midpoint,newPos,width,breadth,height,directional,checkWalls);
+    return hitBuilding(midpoint, newPos,
+                       width, breadth, height, directional,checkWalls);
   }
 
   return NULL;
@@ -5150,8 +5163,19 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	// see if the thing we hit was below us.
 	newState.pos[2] += 0.1f;
 
-	// if we move the postion up a tad and test again, if we laned on something we should not be in contact with it.
-	if(!target->inMovingBox(currentState.pos,currentState.rot,newState.pos,newState.rot,BZDBCache::tankWidth*0.5f,BZDBCache::tankLength*0.5f,BZDBCache::tankHeight))
+	// if we move the postion up a tad and test again,
+	// if we laned on something we should not be in contact with it.
+	const fvec3 oldPos(currentState.pos[0],
+	                   currentState.pos[1],
+	                   currentState.pos[2]);
+	const fvec3 newPos(newState.pos[0],
+	                   newState.pos[1],
+	                   newState.pos[2]);
+	if(!target->inMovingBox(oldPos, currentState.rot,
+	                        newPos, newState.rot,
+	                        BZDBCache::tankWidth*0.5f,
+	                        BZDBCache::tankLength*0.5f,
+	                        BZDBCache::tankHeight))
 	{
 	  newState.pos[2] -= 0.1f;
 
@@ -5350,8 +5374,10 @@ void bz_ServerSidePlayerHandler::getPosition ( float *p )
   if(!player || !p)
     return;
 
-  float r;
-  player->getPlayerCurrentPosRot(p,r);
+  fvec3 pos;
+  float rot;
+  player->getPlayerCurrentPosRot(pos, rot);
+  memcpy(p, pos, sizeof(float[3]));
 }
 
 void bz_ServerSidePlayerHandler::getVelocity ( float *v )
@@ -5369,10 +5395,11 @@ float bz_ServerSidePlayerHandler::getFacing ( void )
   if(!player)
     return 0.0;
 
-  float p[3],r;
-  player->getPlayerCurrentPosRot(p,r);
+  fvec3 pos;
+  float rot;
+  player->getPlayerCurrentPosRot(pos, rot);
 
-  return r;
+  return rot;
 }
 
 float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )

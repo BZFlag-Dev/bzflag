@@ -23,7 +23,7 @@
 
 class BoltSceneNode : public ShotSceneNode {
   public:
-			BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3]);
+			BoltSceneNode(const fvec3& pos, const fvec3& vel);
 			~BoltSceneNode();
 
     void		setFlares(bool);
@@ -40,7 +40,7 @@ class BoltSceneNode : public ShotSceneNode {
     bool		getInvisible() const;
     void		setInvisible(bool);
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    void		move(const fvec3& pos, const fvec3& forward);
     void		addLight(SceneRenderer&);
 
     void		notifyStyleChange();
@@ -67,12 +67,12 @@ class BoltSceneNode : public ShotSceneNode {
 	const BoltSceneNode* sceneNode;
 	int		u, v, cu, cv;
 	GLfloat		du, dv;
-	GLfloat		mainColor[4];
-	GLfloat		innerColor[4];
-	GLfloat		outerColor[4];
-	GLfloat		coronaColor[4];
-	GLfloat		flareColor[4];
-	GLfloat		textureColor[4];
+	fvec4		mainColor;
+	fvec4		innerColor;
+	fvec4		outerColor;
+	fvec4		coronaColor;
+	fvec4		flareColor;
+	fvec4		textureColor;
 	int		numFlares;
 	float		theta[6];
 	float		phi[6];
@@ -92,8 +92,8 @@ class BoltSceneNode : public ShotSceneNode {
     bool		texturing;
     bool		colorblind;
     float		size;
-    GLfloat		velocity[3];
-    GLfloat		color[4];
+    fvec3		velocity;
+    fvec4		color;
     OpenGLLight		light;
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;

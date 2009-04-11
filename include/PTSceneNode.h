@@ -24,38 +24,38 @@
 
 class PhotonTorpedoSceneNode : public ShotSceneNode {
   public:
-			PhotonTorpedoSceneNode(const GLfloat pos[3]);
-			~PhotonTorpedoSceneNode();
+    PhotonTorpedoSceneNode(const fvec3& pos);
+    ~PhotonTorpedoSceneNode();
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
-    void		addLight(SceneRenderer&);
+    void move(const fvec3& pos, const fvec3& forward);
+    void addLight(SceneRenderer&);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void notifyStyleChange();
+    void addRenderNodes(SceneRenderer&);
 
   protected:
     class PTRenderNode : public RenderNode {
       public:
-			PTRenderNode(const PhotonTorpedoSceneNode*);
-			~PTRenderNode();
-	void		render();
+        PTRenderNode(const PhotonTorpedoSceneNode*);
+        ~PTRenderNode();
+	void render();
 	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const PhotonTorpedoSceneNode* sceneNode;
-	int		numFlares;
-	float		theta[6];
-	float		phi[6];
+	int   numFlares;
+	float theta[6];
+	float phi[6];
 
-	static GLfloat	 core[9][2];
-	static GLfloat	 corona[8][2];
+	static GLfloat core[9][2];
+	static GLfloat corona[8][2];
 	static const GLfloat ring[8][2];
     };
     friend class PTRenderNode;
 
   private:
-    OpenGLLight		light;
-    OpenGLGState	gstate;
-    PTRenderNode	renderNode;
+    OpenGLLight  light;
+    OpenGLGState gstate;
+    PTRenderNode renderNode;
     static const GLfloat CoreSize;
     static const GLfloat CoronaSize;
     static const GLfloat FlareSize;

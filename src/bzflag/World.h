@@ -51,7 +51,7 @@ class World {
     struct BaseParams {
       fvec3 pos;
       fvec3 size;
-      float rot;
+      float radians;
     };
 
   public:
@@ -129,7 +129,7 @@ class World {
     void		updateAnimations(float dt);
     void		addFlags(SceneDatabase*, bool seerView);
     void		updateWind(float dt);
-    void		getWind(float wind[3], const float pos[3]) const;
+    void		getWind(fvec3& wind, const fvec3& pos) const;
 
     void		makeMeshDrawMgrs();
 
@@ -200,7 +200,7 @@ class World {
     int			drawInfoCount;
     MeshDrawInfo**	drawInfoArray;
 
-    float		wind[3];
+    fvec3		wind;
 
     LinkManager		links;
 
@@ -438,7 +438,7 @@ inline void		World::setLocale(const std::string& _locale)
   locale = _locale;
 }
 
-inline void		World::getWind(float w[3], const float[3]) const
+inline void		World::getWind(fvec3& w, const fvec3&) const
 {
   // homogeneous, for now
   w[0] = wind[0];

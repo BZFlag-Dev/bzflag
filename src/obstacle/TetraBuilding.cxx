@@ -107,7 +107,7 @@ MeshObstacle* TetraBuilding::makeMesh()
   std::vector<fvec2> texcds;
 
   // setup the inside check point
-  float center[3] = {0.0f, 0.0f, 0.0f};
+  fvec3 center(0.0f, 0.0f, 0.0f);
   for (i = 0; i < 4; i++) {
     center[0] += vertices[i][0];
     center[1] += vertices[i][1];

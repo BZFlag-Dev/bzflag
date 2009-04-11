@@ -80,7 +80,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , oldStatus(0)
 , oldZSpeed(0.0f)
 {
-  static const float zero[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec3 zero(0.0f, 0.0f, 0.0f);
   move(zero, 0.0f);
   setVelocity(zero);
   setAngularVelocity(0.0f);
@@ -256,7 +256,7 @@ float Player::getMuzzleHeight() const
 }
 
 
-void Player::move(const float* _pos, float _azimuth)
+void Player::move(const fvec3& _pos, float _azimuth)
 {
   // update the speed of the state
   float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
@@ -291,7 +291,7 @@ void Player::move(const float* _pos, float _azimuth)
 }
 
 
-void Player::setVelocity(const float* _velocity)
+void Player::setVelocity(const fvec3& _velocity)
 {
   state.velocity[0] = _velocity[0];
   state.velocity[1] = _velocity[1];
@@ -469,7 +469,7 @@ void Player::updateTrackMarks()
     const float lifeTime = float(TimeKeeper::getCurrent() - lastTrackDraw);
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
-      float markPos[3];
+      fvec3 markPos;
       markPos[2] = state.pos[2];
       // FIXME - again, this should be pulled for TankGeometryMgr
       const float fullLength = 6.0f;
@@ -503,12 +503,9 @@ void Player::updateTrackMarks()
 void Player::updateDimensions(float dt, bool local)
 {
   // copy the current information
-  float oldRates[3];
-  float oldScales[3];
-  float oldDimensions[3];
-  memcpy (oldRates, dimensionsRate, sizeof(float[3]));
-  memcpy (oldScales, dimensionsScale, sizeof(float[3]));
-  memcpy (oldDimensions, dimensions, sizeof(float[3]));
+  const fvec3 oldRates      = dimensionsRate;
+  const fvec3 oldScales     = dimensionsScale;
+  const fvec3 oldDimensions = dimensions;
 
   // update the dimensions
   bool resizing = false;
@@ -544,9 +541,9 @@ void Player::updateDimensions(float dt, bool local)
     // also do not bother with collision checking if we are not resizing
     if (resizing && hitObstacleResizing()) {
       // copy the old information
-      memcpy (dimensions, oldDimensions, sizeof(float[3]));
-      memcpy (dimensionsScale, oldScales, sizeof(float[3]));
-      memcpy (dimensionsRate, oldRates, sizeof(float[3]));
+      dimensions      = oldDimensions;
+      dimensionsScale = oldScales;
+      dimensionsRate  = oldRates;
     }
   }
 
@@ -769,7 +766,7 @@ void Player::updateFlagEffect(FlagType* effectFlag)
 
 void Player::endShot(int index, bool isHit, bool showExplosion)
 {
-  float pos[3];
+  fvec3 pos;
   if (doEndShot(index, isHit, pos) && showExplosion) {
     addShotExplosion(pos);
   }
@@ -947,8 +944,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     // fade at the end of the explosion
     const float fadeRatio = 0.8f;
     if (t > fadeRatio) {
-      GLfloat newColor[4];
-      memcpy(newColor, color, sizeof(float[3]));
+      fvec4 newColor = color;
       const float fadeFactor = (1.0f - t) / (1.0f - fadeRatio);
       newColor[3] = color[3] * fadeFactor;
       avatar->setColor(newColor);
@@ -1086,10 +1082,10 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
 }
 
 
-void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-			      float* predictedVel, float dt) const
+void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
+                              fvec3& predictedVel, float dt) const
 {
-  *predictedAzimuth = inputAzimuth;
+  predictedAzimuth = inputAzimuth;
 
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
@@ -1108,7 +1104,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     predictedPos[1] = inputPos[1] + (dt * inputVel[1]);
     // only turn if alive
     if (inputStatus & PlayerState::Alive) {
-      *predictedAzimuth += (dt * inputAngVel);
+      predictedAzimuth += (dt * inputAngVel);
     }
     // following the parabola
     predictedVel[2] = inputVel[2] + (BZDBCache::gravity * dt);
@@ -1130,7 +1126,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
     } else {
       // make a sweeping arc
       const float angle = (dt * inputRelAngVel);
-      *predictedAzimuth += angle;
+      predictedAzimuth += angle;
       const float cos_val = cosf(angle);
       const float sin_val = sinf(angle);
       const float* tc = inputTurnCenter;
@@ -1155,7 +1151,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
 	const float pdAngVel = phydrv->getAngularVel();
 	if (pdAngVel != 0.0f) {
 	  const float angle = (dt * pdAngVel);
-	  *predictedAzimuth += angle;
+	  predictedAzimuth += angle;
 	  const float* pdAngPos = phydrv->getAngularPos();
 	  const float dx = predictedPos[0] - pdAngPos[0];
 	  const float dy = predictedPos[1] - pdAngPos[1];
@@ -1213,10 +1209,10 @@ bool Player::isDeadReckoningWrong() const
   }
 
   // get predicted state
-  float predictedPos[3];
-  float predictedVel[3];
+  fvec3 predictedPos;
+  fvec3 predictedVel;
   float predictedAzimuth;
-  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, (float)dt);
+  getDeadReckoning(predictedPos, predictedAzimuth, predictedVel, (float)dt);
 
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
@@ -1274,12 +1270,12 @@ void Player::doDeadReckoning()
     return;
 
   // get predicted state
-  float predictedPos[3];
-  float predictedVel[3];
+  fvec3 predictedPos;
+  fvec3 predictedVel;
   float predictedAzimuth;
 
   double dt = syncedClock.GetServerSeconds() - updateTimeStamp;
-  getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, (float)dt);
+  getDeadReckoning(predictedPos, predictedAzimuth, predictedVel, (float)dt);
 
   // setup notResponding
   if (!isAlive())
@@ -1388,8 +1384,8 @@ void Player::setDeadReckoning(double timestamp)
   inputStatus = state.status;
   inputAzimuth = state.azimuth;
   inputAngVel = state.angVel;
-  memcpy(inputPos, state.pos, sizeof(float[3]));
-  memcpy(inputVel, state.velocity, sizeof(float[3]));
+  inputPos = state.pos;
+  inputVel = state.velocity;
   inputPhyDrv = state.phydrv;
 
   //

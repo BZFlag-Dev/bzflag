@@ -14,14 +14,17 @@
 #define __DROP_GEOMETRY_H__
 
 
+#include "vectors.h"
+
+
 class WorldInfo;
 
 
 namespace DropGeometry
 {
-  bool dropFlag (float pos[3], float minZ, float maxZ);
-  bool dropPlayer (float pos[3], float minZ, float maxZ);
-  bool dropTeamFlag (float pos[3], float minZ, float maxZ, int team);
+  bool dropFlag     (fvec3& pos, float minZ, float maxZ);
+  bool dropPlayer   (fvec3& pos, float minZ, float maxZ);
+  bool dropTeamFlag (fvec3& pos, float minZ, float maxZ, int team);
 }
 
 

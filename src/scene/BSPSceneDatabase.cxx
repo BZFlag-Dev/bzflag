@@ -234,7 +234,7 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
   GLfloat d;
   if (!_root->dynamic && _root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
-    const fvec3& pos = (fvec3&)node->getSphere();
+    const fvec3& pos = node->getSphere().xyz();
     d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
   } else {
     d = _root->node->getDistance(eye) - node->getDistance(eye);
@@ -267,7 +267,7 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
   GLfloat d;
   if (_root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
-    const fvec3& pos = (fvec3&)node->getSphere();
+    const fvec3& pos = node->getSphere().xyz();
     d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
   } else {
     // it's a crap shoot  (draw smaller items first)

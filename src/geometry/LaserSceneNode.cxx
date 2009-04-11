@@ -24,11 +24,13 @@
 #include "BZDBCache.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-const GLfloat		LaserRadius = 0.1f;
 
-LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-texturing(false),
-renderNode(this)
+const GLfloat LaserRadius = 0.1f;
+
+
+LaserSceneNode::LaserSceneNode(const fvec3& pos, const fvec3& forward)
+: texturing(false)
+, renderNode(this)
 {
   // prepare rendering info
   azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
@@ -48,26 +50,30 @@ renderNode(this)
   setCenterColor(1,1,1);
 }
 
+
 LaserSceneNode::~LaserSceneNode()
 {
   // do nothing
 }
 
-void	LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
+
+void LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
 {
   color[0] = r;
   color[1] = g;
   color[2] = b;
 }
 
-void		LaserSceneNode::setCenterColor ( GLfloat r, GLfloat g, GLfloat b )
+
+void LaserSceneNode::setCenterColor ( GLfloat r, GLfloat g, GLfloat b )
 {
   centerColor[0] = r;
   centerColor[1] = g;
   centerColor[2] = b;
 }
 
-void			LaserSceneNode::setTexture(const int texture)
+
+void LaserSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
@@ -75,13 +81,15 @@ void			LaserSceneNode::setTexture(const int texture)
   gstate = builder.getState();
 }
 
-bool			LaserSceneNode::cull(const ViewFrustum&) const
+
+bool LaserSceneNode::cull(const ViewFrustum&) const
 {
   // no culling
   return false;
 }
 
-void			LaserSceneNode::notifyStyleChange()
+
+void LaserSceneNode::notifyStyleChange()
 {
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
@@ -98,21 +106,22 @@ void			LaserSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			LaserSceneNode::addRenderNodes(
-  SceneRenderer& renderer)
+
+void LaserSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // LaserSceneNode::LaserRenderNode
 //
 
-GLfloat			LaserSceneNode::LaserRenderNode::geom[6][2];
+GLfloat LaserSceneNode::LaserRenderNode::geom[6][2];
 
-LaserSceneNode::LaserRenderNode::LaserRenderNode(
-  const LaserSceneNode* _sceneNode) :
-sceneNode(_sceneNode)
+
+LaserSceneNode::LaserRenderNode::LaserRenderNode(const LaserSceneNode* _sceneNode)
+: sceneNode(_sceneNode)
 {
   // initialize geometry if first instance
   static bool init = false;
@@ -125,12 +134,14 @@ sceneNode(_sceneNode)
   }
 }
 
+
 LaserSceneNode::LaserRenderNode::~LaserRenderNode()
 {
   // do nothing
 }
 
-void			LaserSceneNode::LaserRenderNode::render()
+
+void LaserSceneNode::LaserRenderNode::render()
 {
   if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
     renderGeoLaser();
@@ -139,7 +150,7 @@ void			LaserSceneNode::LaserRenderNode::render()
 }
 
 
-void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
+void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
   const GLfloat length = sceneNode->length;
   const GLfloat* sphere = sceneNode->getSphere();
@@ -188,7 +199,8 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
   glPopMatrix();
 }
 
-void			LaserSceneNode::LaserRenderNode::renderFlatLaser()
+
+void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
   const GLfloat length = sceneNode->length;
   const GLfloat* sphere = sceneNode->getSphere();
@@ -270,6 +282,7 @@ void			LaserSceneNode::LaserRenderNode::renderFlatLaser()
 
   glPopMatrix();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

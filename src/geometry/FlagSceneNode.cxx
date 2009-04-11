@@ -648,7 +648,7 @@ inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 
 inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 {
-  const fvec3& s = (fvec3&)getSphere();
+  const fvec3& s = getSphere().xyz();
   const fvec3& e = renderer.getViewFrustum().getEye();
   const fvec3* d = renderer.getSunDirection();
   const fvec3 gap = s - e;
@@ -690,7 +690,7 @@ bool FlagSceneNode::cullShadow(int planeCount, const fvec4* planes) const
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
     const fvec4& p = planes[i];
-    const float d = fvec3::dot((fvec3&)p, (fvec3&)s) + p.w;
+    const float d = fvec3::dot(p.xyz(), s.xyz()) + p.w;
     if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }

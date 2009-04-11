@@ -51,12 +51,9 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   // get initial shot info
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
-  const float* vel = getPath().getVelocity();
+  const fvec3& vel = getPath().getVelocity();
   const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
-  float dir[3];
-  dir[0] = vel[0] * d;
-  dir[1] = vel[1] * d;
-  dir[2] = vel[2] * d;
+  const fvec3 dir = vel * d;
   azimuth = limitAngle(atan2f(dir[1], dir[0]));
   elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
 
@@ -71,21 +68,15 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // setup shot
   float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  f.shot.vel[0] = shotSpeed * dir[0];
-  f.shot.vel[1] = shotSpeed * dir[1];
-  f.shot.vel[2] = shotSpeed * dir[2];
+  f.shot.vel = shotSpeed * dir;
 
   // set next position to starting position
-  nextPos[0] = f.shot.pos[0];
-  nextPos[1] = f.shot.pos[1];
-  nextPos[2] = f.shot.pos[2];
+  nextPos = f.shot.pos;
 
   // check that first segment doesn't start inside a building
-  float startPos[3];
   float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-  startPos[0] = f.shot.pos[0] - muzzleFront * dir[0];
-  startPos[1] = f.shot.pos[1] - muzzleFront * dir[1];
-  startPos[2] = f.shot.pos[2] - muzzleFront * dir[2];
+  fvec3 startPos = f.shot.pos - (muzzleFront * dir);
+
   Ray firstRay = Ray(startPos, dir);
   prevTime = currentTime;
   prevTime += -muzzleFront / BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
@@ -194,7 +185,7 @@ void GuidedMissileStrategy::update(float dt)
       elevation = limitAngle(elevation - dt * gmissileAng);
   }
 
-  float newDirection[3];
+  fvec3 newDirection;
   newDirection[0] = cosf(azimuth) * cosf(elevation);
   newDirection[1] = sinf(azimuth) * cosf(elevation);
   newDirection[2] = sinf(elevation);
@@ -325,7 +316,7 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
       tmpElevation = limitAngle(elevation - dt * gmissileAng);
   }
 
-  float newDirection[3];
+  fvec3 newDirection;
   newDirection[0] = cosf(tmpAzimuth) * cosf(tmpElevation);
   newDirection[1] = sinf(tmpAzimuth) * cosf(tmpElevation);
   newDirection[2] = sinf(tmpElevation);
@@ -438,7 +429,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   // half a tank height.
   const float tankHeight = tank.size[2];
 
-  float lastTankPositionRaw[3];
+  fvec3 lastTankPositionRaw;
   lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
   lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
   lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
@@ -455,12 +446,9 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
     const Ray& ray = segments[i].ray;
 
     // construct ray with correct velocity
-    float speed[3];
-    const float* dir = ray.getDirection();
     float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-    speed[0] = shotSpeed * dir[0];
-    speed[1] = shotSpeed * dir[1];
-    speed[2] = shotSpeed * dir[2];
+    const fvec3& dir = ray.getDirection();
+    fvec3 speed = shotSpeed * dir;
     Ray speedRay(ray.getOrigin(), speed);
 
     // construct relative shot ray:  origin and velocity relative to
@@ -472,7 +460,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
     if (tank.test2D) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
-      static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
+      static const fvec3 tankBase(0.0f, 0.0f, -0.5f * tankHeight);
       t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
                                       0.5f * tank.length, shotRadius, tankHeight);
     } else {
@@ -490,7 +478,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
     // check if shot hits tank -- get position at time t, see if in radius
     fvec3 closestPos;
     relativeRay.getPoint(t, closestPos);
-    if (closestPos.lenSqr() < radius2) {
+    if (closestPos.lengthSq() < radius2) {
       // save best time so far
       minTime = t;
 

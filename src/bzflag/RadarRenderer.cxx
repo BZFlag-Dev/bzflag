@@ -1388,7 +1388,7 @@ void RadarRenderer::renderBasesAndTeles()
 	glBegin(GL_LINE_LOOP);
 	const fvec3& pos  = bp->pos;
 	const fvec3& size = bp->size;
-	const float& rot  = bp->rot;
+	const float& rot  = bp->radians;
 	const float beta  = atan2f(size.y, size.x);
 	const float r     = hypotf(size.x, size.y);
 	glVertex2f(pos.x + r * cosf(rot + beta),

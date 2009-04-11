@@ -35,20 +35,20 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
   setOccluder(true);
 
   // record plane info
-  memcpy(plane, face->getPlane(), sizeof(float[4]));
+  plane = face->getPlane();
 
   // record extents info
   extents = face->getExtents();
 
   // record vertex info
   vertexCount = face->getVertexCount();
-  vertices = new GLfloat3[vertexCount];
+  vertices = new fvec3[vertexCount];
   for (i = 0; i < vertexCount; i++) {
-    memcpy(vertices[i], face->getVertex(i), sizeof(float[3]));
+    vertices[i] = face->getVertex(i);
   }
 
   // record sphere info
-  GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+  fvec4 mySphere(0.0f, 0.0f, 0.0f, 0.0f);
   for (i = 0; i < vertexCount; i++) {
     const float* v = vertices[i];
     mySphere[0] += v[0];

@@ -31,7 +31,7 @@ float TargetingUtils::normalizeAngle(float ang)
   return ang;
 }
 
-void TargetingUtils::getUnitVector( const float *src, const float *target, float unitVector[3] )
+void TargetingUtils::getUnitVector(const fvec3& src, const fvec3& target, fvec3& unitVector )
 {
   unitVector[0] = target[0] - src[0];
   unitVector[1] = target[1] - src[1];
@@ -47,7 +47,7 @@ void TargetingUtils::getUnitVector( const float *src, const float *target, float
   unitVector[1] /= len;
 }
 
-void TargetingUtils::get3DUnitVector( const float *src, const float *target, float unitVector[3] )
+void TargetingUtils::get3DUnitVector( const fvec3& src, const fvec3& target, fvec3& unitVector )
 {
   unitVector[0] = target[0] - src[0];
   unitVector[1] = target[1] - src[1];
@@ -65,7 +65,7 @@ void TargetingUtils::get3DUnitVector( const float *src, const float *target, flo
   unitVector[2] /= len;
 }
 
-float TargetingUtils::getTargetDistance( const float *src, const float *target )
+float TargetingUtils::getTargetDistance( const fvec3& src, const fvec3& target )
 {
   float vec[2];
 
@@ -76,7 +76,7 @@ float TargetingUtils::getTargetDistance( const float *src, const float *target )
 		      vec[1] * vec[1]);
 }
 
-float TargetingUtils::getTargetAzimuth( const float *src, const float *target )
+float TargetingUtils::getTargetAzimuth( const fvec3& src, const fvec3& target )
 {
   return atan2f((target[1] - src[1]), (target[0] - src[0]));
 }
@@ -90,11 +90,10 @@ float TargetingUtils::getTargetRotation( const float startAzimuth, float targetA
   return targetRotation;
 }
 
-float TargetingUtils::getTargetAngleDifference( const float *src, float srcAzimuth, const float *target )
+float TargetingUtils::getTargetAngleDifference( const fvec3& src, float srcAzimuth, const fvec3& target )
 {
-  float targetUnitVector[3];
-  float srcUnitVector[3];
-
+  fvec3 targetUnitVector;
+  fvec3 srcUnitVector;
   getUnitVector(src, target, targetUnitVector);
 
   srcUnitVector[0] = cosf(srcAzimuth);
@@ -104,37 +103,36 @@ float TargetingUtils::getTargetAngleDifference( const float *src, float srcAzimu
   return acos( targetUnitVector[0]*srcUnitVector[0] + targetUnitVector[1]*srcUnitVector[1] );
 }
 
-bool TargetingUtils::isLocationObscured( const float *src, const float *target )
+bool TargetingUtils::isLocationObscured( const fvec3& src, const fvec3& target )
 {
-  float dir[3];
-
+  fvec3 dir;
   getUnitVector(src, target, dir);
 
-  Ray tankRay( src, dir );
+  Ray tankRay(src, dir);
   float targetDistance = getTargetDistance(src, target);
   const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, targetDistance);
   return building != NULL;
 }
 
-float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
+float TargetingUtils::getOpenDistance( const fvec3& src, const float azimuth )
 {
   float t = MAXFLOAT; //Some constant?
 
-  float dir[3] = { cosf(azimuth), sinf(azimuth), 0.0f };
+  fvec3 dir(cosf(azimuth), sinf(azimuth), 0.0f);
   *((float *) &src[2]) += 0.1f; //Don't hit building because your sitting on one
-  Ray tankRay( src, dir );
+  Ray tankRay(src, dir);
   *((float *) &src[2]) -= 0.1f;
   ShotStrategy::getFirstBuilding(tankRay, -0.5f, t);
   return t;
 }
 
-bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *target, float *collisionPt )
+bool TargetingUtils::getFirstCollisionPoint( const fvec3& src, const fvec3& target, fvec3& collisionPt )
 {
   float t = MAXFLOAT;
-  float dir[3];
+  fvec3 dir;
   get3DUnitVector(src, target, dir);
 
-  Ray tankRay( src, dir );
+  Ray tankRay(src, dir);
   const Obstacle *building = ShotStrategy::getFirstBuilding(tankRay, 0.0f, t);
   if (building == NULL)
 	  return false;

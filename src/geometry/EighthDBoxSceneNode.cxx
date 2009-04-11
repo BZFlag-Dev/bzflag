@@ -28,10 +28,10 @@
 const int BoxPolygons = 60;
 
 
-EighthDBoxSceneNode::EighthDBoxSceneNode(const float pos[3],
-					const float size[3], float rotation) :
-				EighthDimSceneNode(BoxPolygons),
-				renderNode(this, pos, size, rotation)
+EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
+                                         const fvec3& size, float rotation)
+: EighthDimSceneNode(BoxPolygons)
+, renderNode(this, pos, size, rotation)
 {
   // get rotation stuff
   const float c = cosf(rotation);
@@ -107,8 +107,8 @@ void			EighthDBoxSceneNode::addRenderNodes(
 
 EighthDBoxSceneNode::EighthDBoxRenderNode::EighthDBoxRenderNode(
 				const EighthDBoxSceneNode* _sceneNode,
-				const float pos[3],
-				const float size[3], float rotation) :
+				const fvec3& pos,
+				const fvec3& size, float rotation) :
 				sceneNode(_sceneNode)
 {
   // get rotation stuff

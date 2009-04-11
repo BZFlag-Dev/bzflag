@@ -30,6 +30,7 @@
 #include "Address.h"
 #include "Flag.h"
 #include "Ping.h"
+#include "vectors.h"
 
 // bzfs specific headers
 #include "TeamBases.h"
@@ -70,7 +71,7 @@ extern int   getCurMaxPlayers();
 extern PingPacket getTeamCounts();
 extern void  zapFlagByPlayer(int playerIndex);
 extern void  resetFlag(FlagInfo &flag);
-extern void  dropFlag(FlagInfo& flag, const float dropPos[3]);
+extern void  dropFlag(FlagInfo& flag, const fvec3& dropPos);
 extern void  publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 extern void checkGameOn ( void );
@@ -86,7 +87,7 @@ extern void searchFlag(GameKeeper::Player &playerData);
 extern void playerAlive(int playerIndex);
 extern int  lookupPlayer(const PlayerId& id);
 extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
-extern void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
+extern void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos);
 extern void captureFlag(int playerIndex, TeamColor teamCaptured);
 extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
 extern bool allowTeams ( void );
@@ -106,7 +107,8 @@ void lagKick(int playerIndex);
 void jitterKick(int playerIndex);
 void packetLossKick(int playerIndex);
 
-void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] );
+void processCollision(GameKeeper::Player *player,
+                      GameKeeper::Player *otherPlayer, const fvec3& pos);
 
 typedef struct _CheatProtectionOptions
 {

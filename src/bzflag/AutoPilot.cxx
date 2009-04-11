@@ -79,7 +79,7 @@ static bool isFlagUseful(FlagType *type)
 static ShotPath *findWorstBullet(float &minDistance)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
   ShotPath *minPath = NULL;
 
   minDistance = Infinity;
@@ -102,7 +102,7 @@ static ShotPath *findWorstBullet(float &minDistance)
 	  (myTank->getFlag() == Flags::Cloaking))
 	continue; //cloaked tanks can't die from lasers
 
-      const float* shotPos = shot->getPosition();
+      const fvec3& shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
 	  (shot->getShotType() != GMShot))
 	continue;
@@ -142,7 +142,7 @@ static ShotPath *findWorstBullet(float &minDistance)
     if (shot->getShotType() == LaserShot && myTank->getFlag() == Flags::Cloaking)
       continue; //cloaked tanks can't die from lasers
 
-    const float* shotPos = shot->getPosition();
+    const fvec3& shotPos = shot->getPosition();
     if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
       continue;
 
@@ -171,9 +171,8 @@ static ShotPath *findWorstBullet(float &minDistance)
 static bool avoidDeathFall(float &/*rotation*/, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  float pos1[3], pos2[3];
-  memcpy(pos1, myTank->getPosition(), sizeof(pos1));
-  memcpy(pos2, pos1, sizeof(pos1));
+  fvec3 pos1 = myTank->getPosition();
+  fvec3 pos2 = pos1;
   pos1[2] += 10.0f * BZDBCache::tankHeight;
   float azimuth = myTank->getAngle();
   if (speed < 0.0f)
@@ -190,7 +189,7 @@ static bool avoidDeathFall(float &/*rotation*/, float &speed)
     return false;
   }
 
-  float collisionPt[3];
+  fvec3 collisionPt;
   if (TargetingUtils::getFirstCollisionPoint( pos1, pos2, collisionPt )) {
     if (collisionPt[2] < 0.0f)
       collisionPt[2] = 0.0f;
@@ -213,7 +212,7 @@ static bool avoidBullet(float &rotation, float &speed)
     return false;
   }
 
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
 
   if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
     return false; // take our chances
@@ -224,8 +223,8 @@ static bool avoidBullet(float &rotation, float &speed)
   if ((shot == NULL) || (minDistance > 100.0f))
     return false;
 
-  const float *shotPos = shot->getPosition();
-  const float *shotVel = shot->getVelocity();
+  const fvec3& shotPos = shot->getPosition();
+  const fvec3& shotVel = shot->getVelocity();
   float shotAngle = atan2f(shotVel[1],shotVel[0]);
   float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -290,7 +289,7 @@ static bool stuckOnWall(float &rotation, float &speed)
   }
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
 
   const bool phased = (myTank->getFlag() == Flags::OscillationOverthruster)
@@ -323,7 +322,7 @@ static RemotePlayer *findBestTarget()
 {
   RemotePlayer *target = NULL;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
   float myAzimuth = myTank->getAngle();
   float distance = Infinity;
 
@@ -383,7 +382,7 @@ static RemotePlayer *findBestTarget()
 static bool chasePlayer(float &rotation, float &speed)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
 
   RemotePlayer *rPlayer = findBestTarget();
   if (rPlayer == NULL)
@@ -391,16 +390,16 @@ static bool chasePlayer(float &rotation, float &speed)
 
   myTank->setTarget(rPlayer);
 
-  const float *targetPos = rPlayer->getPosition();
+  const fvec3& targetPos = rPlayer->getPosition();
   float distance = TargetingUtils::getTargetDistance(pos, targetPos);
   if (distance > 250.0f)
     return false;
 
-  const float *tp = rPlayer->getPosition();
-  float enemyPos[3];
+  const fvec3& tp = rPlayer->getPosition();
+  fvec3 enemyPos;
   //toss in some lag adjustment/future prediction - 300 millis
-  memcpy(enemyPos,tp,sizeof(enemyPos));
-  const float *tv = rPlayer->getVelocity();
+  enemyPos = tp;
+  const fvec3& tv = rPlayer->getVelocity();
   enemyPos[0] += 0.3f * tv[0];
   enemyPos[1] += 0.3f * tv[1];
   enemyPos[2] += 0.3f * tv[2];
@@ -416,7 +415,7 @@ static bool chasePlayer(float &rotation, float &speed)
     const Obstacle *building = NULL;
     float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
 
-    float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
+    fvec3 dir(cosf(myAzimuth), sinf(myAzimuth), 0.0f);
     Ray tankRay(pos, dir);
 
     building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
@@ -488,10 +487,10 @@ static bool lookForFlag(float &rotation, float &speed)
     return false;
   }
 
-  float pos[3];
+  fvec3 pos;
   int closestFlag = -1;
 
-  memcpy( pos, myTank->getPosition(), sizeof( pos ));
+  pos = myTank->getPosition();
   if (pos[2] < 0.0f) {
     pos[2] = 0.0f;
   }
@@ -524,7 +523,7 @@ static bool lookForFlag(float &rotation, float &speed)
       else
 	continue;
     }
-    const float* fpos = world->getFlag(i).position;
+    const fvec3& fpos = world->getFlag(i).position;
     if (fpos[2] == pos[2]) {
       float dist = TargetingUtils::getTargetDistance(pos, fpos);
       bool isTargetObscured = TargetingUtils::isLocationObscured(pos, fpos);
@@ -548,7 +547,7 @@ static bool lookForFlag(float &rotation, float &speed)
       }
     }
 
-    const float *fpos = world->getFlag(closestFlag).position;
+    const fvec3& fpos = world->getFlag(closestFlag).position;
     float myAzimuth = myTank->getAngle();
     float flagAzimuth = TargetingUtils::getTargetAzimuth(pos, fpos);
     rotation = TargetingUtils::getTargetRotation(myAzimuth, flagAzimuth);
@@ -572,13 +571,13 @@ static bool navigate(float &rotation, float &speed)
     return true;
   }
 
-  float pos[3];
+  fvec3 pos;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!myTank) {
     return false;
   }
 
-  memcpy(pos, myTank->getPosition(), sizeof(pos));
+  pos = myTank->getPosition();
   if (pos[2] < 0.0f)
     pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
@@ -640,13 +639,13 @@ static bool navigate(float &rotation, float &speed)
 static bool fireAtTank()
 {
   static TimeKeeper lastShot;
-  float pos[3];
+  fvec3 pos;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!myTank) {
     return false;
   }
 
-  memcpy(pos, myTank->getPosition(), sizeof(pos));
+  pos = myTank->getPosition();
   if (pos[2] < 0.0f)
     pos[2] = 0.01f;
   float myAzimuth = myTank->getAngle();
@@ -655,7 +654,7 @@ static bool fireAtTank()
     return false;
   }
 
-  float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
+  fvec3 dir(cosf(myAzimuth), sinf(myAzimuth), 0.0f);
   pos[2] += myTank->getMuzzleHeight();
   Ray tankRay(pos, dir);
   pos[2] -= myTank->getMuzzleHeight();
@@ -675,10 +674,10 @@ static bool fireAtTank()
 	  continue;
 	}
 
-	const float *tp = remotePlayers[t]->getPosition();
-	float enemyPos[3];
+	const fvec3& tp = remotePlayers[t]->getPosition();
+	fvec3 enemyPos;
 	//toss in some lag adjustment/future prediction - 300 millis
-	memcpy(enemyPos,tp,sizeof(enemyPos));
+	enemyPos = tp;
 	const float *tv = remotePlayers[t]->getVelocity();
 	enemyPos[0] += 0.3f * tv[0];
 	enemyPos[1] += 0.3f * tv[1];
@@ -729,11 +728,11 @@ static bool fireAtTank()
 	  && (myTank->getFlag() != Flags::ShockWave))
 	continue;
 
-      const float *tp = remotePlayers[t]->getPosition();
-      float enemyPos[3];
+      const fvec3& tp = remotePlayers[t]->getPosition();
+      fvec3 enemyPos;
 
       //toss in some lag adjustment/future prediction - 300 millis
-      memcpy(enemyPos,tp,sizeof(enemyPos));
+      enemyPos = tp;
       const float *tv = remotePlayers[t]->getVelocity();
       enemyPos[0] += 0.3f * tv[0];
       enemyPos[1] += 0.3f * tv[1];

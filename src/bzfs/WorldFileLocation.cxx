@@ -31,8 +31,8 @@
 WorldFileLocation::WorldFileLocation()
 {
   pos[0] = pos[1] = pos[2] = 0.0f;
-  rotation = 0.0f;
   size[0] = size[1] = size[2] = 1.0f;
+  rotation = 0.0f;
 }
 
 
@@ -61,32 +61,33 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     rotation = (float)(rotation * (M_PI / 180.0));
   }
   else if (strcasecmp ("shift", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addShift(data);
   }
   else if (strcasecmp ("scale", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addScale(data);
   }
   else if (strcasecmp ("shear", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addShear(data);
   }
   else if (strcasecmp ("spin", cmd) == 0) {
-    float angle, normal[3];
-    if (!(input >> angle >> normal[0] >> normal[1] >> normal[2])) {
+    float angle;
+    fvec3 normal;
+    if (!(input >> angle >> normal.x >> normal.y >> normal.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
@@ -113,13 +114,15 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
   return true;
 }
 
-void * WorldFileLocation::pack(void *buf) const
+
+void* WorldFileLocation::pack(void *buf) const
 {
-  buf = nboPackFVec3 (buf, pos);
-  buf = nboPackFVec3 (buf, size);
-  buf = nboPackFloat (buf, rotation);
+  buf = nboPackFVec3(buf, pos);
+  buf = nboPackFVec3(buf, size);
+  buf = nboPackFloat(buf, rotation);
   return buf;
 }
+
 
 // Local variables: ***
 // mode: C++ ***

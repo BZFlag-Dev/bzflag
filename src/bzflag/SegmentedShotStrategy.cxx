@@ -191,7 +191,7 @@ bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const
   while (cur < numSegments && segments[cur].end < ctime) cur++;
   if (cur >= numSegments) return false;
 
-  segments[segment].ray.getPoint(float(ctime - segments[segment].start), (fvec3&)p);
+  segments[segment].ray.getPoint(float(ctime - segments[segment].start), p);
 
   return true;
 }
@@ -246,10 +246,8 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
   const float tankHeight = tank.size[2];
-  float lastTankPositionRaw[3];
-  lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
-  lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
-  lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
+  fvec3 lastTankPositionRaw = tank.motion.getOrigin();
+  lastTankPositionRaw.z += 0.5f * tankHeight;
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
@@ -287,7 +285,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     if (tank.test2D) {
       // find closest approach to narrow box around tank.  width of box
       // is shell radius so you can actually hit narrow tank head on.
-      static float tankBase[3] = { 0.0f, 0.0f, -0.5f * tankHeight };
+      static fvec3 tankBase(0.0f, 0.0f, -0.5f * tankHeight);
       t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
 			0.5f * tank.length, shotRadius, tankHeight);
     } else {
@@ -305,7 +303,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     // check if shot hits tank -- get position at time t, see if in radius
     fvec3 closestPos;
     relativeRay.getPoint(t, closestPos);
-    if (closestPos.lenSqr() < radius2) {
+    if (closestPos.lengthSq() < radius2) {
       // save best time so far
       minTime = t;
 
@@ -650,11 +648,8 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
     const ShotPathSegment& segm = getSegments()[i];
     const float t = float(segm.end - segm.start);
     const Ray& ray = segm.ray;
-    const float* rawdir = ray.getDirection();
-    float dir[3];
-    dir[0] = t * rawdir[0];
-    dir[1] = t * rawdir[1];
-    dir[2] = t * rawdir[2];
+    const fvec3& rawdir = ray.getDirection();
+    const fvec3 dir = t * rawdir;
     thiefNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
     if (texture >= 0)
       thiefNodes[i]->setTexture(texture);
@@ -835,11 +830,8 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
     const ShotPathSegment& segm = getSegments()[i];
     const float t = float(segm.end - segm.start);
     const Ray& ray = segm.ray;
-    const float* rawdir = ray.getDirection();
-    float dir[3];
-    dir[0] = t * rawdir[0];
-    dir[1] = t * rawdir[1];
-    dir[2] = t * rawdir[2];
+    const fvec3& rawdir = ray.getDirection();
+    const fvec3 dir = t * rawdir;
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
     if (texture >= 0)
       laserNodes[i]->setTexture(texture);

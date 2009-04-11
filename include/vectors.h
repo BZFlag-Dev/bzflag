@@ -44,7 +44,6 @@ class vec2 {
   public:
     vec2()              : x((T)0), y((T)0) {}
     vec2(const vec2& v) : x(v.x),  y(v.y)  {}
-    vec2(const T v[2])  : x(v[0]), y(v[1]) {}
     vec2(T _x, T _y)    : x(_x),   y(_y)   {}
 
     inline vec2& operator=(const vec2& v) { x = v.x; y = v.y; return *this; }
@@ -101,8 +100,17 @@ class vec2 {
       return dot(*this, v);
     }
 
-    T lenSqr() const { return dot(*this, *this);    }
-    T length() const { return typed_sqrt(lenSqr()); }
+    T lengthSq() const { return dot(*this, *this); }
+    T length()   const { return typed_sqrt(lengthSq()); }
+
+    vec2 rotate(T radians) const {
+      const T c = typed_cos(radians);
+      const T s = typed_sin(radians);
+      const T nx = (c * x) - (s * y);
+      const T ny = (c * y) + (s * x);
+      return vec2(nx, ny);
+    }
+    static void rotate(vec2& v, T radians) { v = v.rotate(radians); }
 
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }
@@ -130,7 +138,6 @@ class vec3 {
   public:
     vec3()                       : x((T)0), y((T)0), z((T)0) {}
     vec3(const vec3& v)          : x(v.x),  y(v.y),  z(v.z)  {}
-    vec3(const T v[3])           : x(v[0]), y(v[1]), z(v[2]) {}
     vec3(T _x, T _y, T _z)       : x(_x),   y(_y),   z(_z)   {}
     vec3(const vec2<T>& v, T _z) : x(v.x),  y(v.y),  z(_z)   {}
 
@@ -148,6 +155,11 @@ class vec3 {
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
 
     inline vec3 operator-() const { return vec3(-x, -y, -z); }
+
+    inline       vec2<T>& xy()       { return (vec2<T>&)x; }
+    inline const vec2<T>& xy() const { return (vec2<T>&)x; }
+    inline       vec2<T>& yz()       { return (vec2<T>&)y; }
+    inline const vec2<T>& yz() const { return (vec2<T>&)y; }
 
     vec3& operator+=(const vec3& v) {
       x += v.x; y += v.y; z += v.z; return *this;
@@ -218,8 +230,8 @@ class vec3 {
       return cross(*this, v);
     }
 
-    T lenSqr() const { return dot(*this, *this);    }
-    T length() const { return typed_sqrt(lenSqr()); }
+    T lengthSq() const { return dot(*this, *this); }
+    T length()   const { return typed_sqrt(lengthSq()); }
 
     static bool normalize(vec3& v) {
       const T len = v.length();
@@ -230,10 +242,36 @@ class vec3 {
       v *= scale;
       return true;
     }
-
     vec3 normalize() const {
       vec3 v(*this); normalize(v); return v;
     }
+
+    vec3 rotateX(T radians) const {
+      const T c = typed_cos(radians);
+      const T s = typed_sin(radians);
+      const T ny = (c * y) - (s * z);
+      const T nz = (c * z) + (s * y);
+      return vec3(x, ny, nz);
+    }
+    static void rotateX(vec3& v, T radians) { v = v.rotateX(radians); }
+
+    vec3 rotateY(T radians) const {
+      const T c = typed_cos(radians);
+      const T s = typed_sin(radians);
+      const T nz = (c * z) - (s * x);
+      const T nx = (c * x) + (s * z);
+      return vec3(nx, y, nz);
+    }
+    static void rotateY(vec3& v, T radians) { v = v.rotateY(radians); }
+
+    vec3 rotateZ(T radians) const {
+      const T c = typed_cos(radians);
+      const T s = typed_sin(radians);
+      const T nx = (c * x) - (s * y);
+      const T ny = (c * y) + (s * x);
+      return vec3(nx, ny, z);
+    }
+    static void rotateZ(vec3& v, T radians) { v = v.rotateZ(radians); }
 
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }
@@ -262,7 +300,6 @@ class vec4 {
   public:
     vec4()                       : x((T)0), y((T)0), z((T)0), w((T)1) {}
     vec4(const vec4& v)          : x(v.x),  y(v.y),  z(v.z),  w(v.w)  {}
-    vec4(const T v[4])           : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
     vec4(T _x, T _y, T _z, T _w) : x(_x),   y(_y),   z(_z),   w(_w)   {}
     vec4(const vec3<T>& v, T _w) : x(v.x),  y(v.y),  z(v.z),  w(_w)   {}
 
@@ -280,6 +317,11 @@ class vec4 {
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
 
     inline vec4 operator-() const { return vec4(-x, -y, -z, -w); }
+
+    inline       vec3<T>& xyz()       { return (vec3<T>&)x; }
+    inline const vec3<T>& xyz() const { return (vec3<T>&)x; }
+    inline       vec3<T>& yzw()       { return (vec3<T>&)y; }
+    inline const vec3<T>& yzw() const { return (vec3<T>&)y; }
 
     vec4& operator+=(const vec4& v) {
       x += v.x; y += v.y; z += v.z; w += v.w; return *this;
@@ -342,8 +384,8 @@ class vec4 {
       return dot(*this, v);
     }
 
-    T lenSqr() const { return dot(*this, *this);    }
-    T length() const { return typed_sqrt(lenSqr()); }
+    T lengthSq() const { return dot(*this, *this);    }
+    T length()   const { return typed_sqrt(lengthSq()); }
 
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }

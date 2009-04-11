@@ -13,8 +13,11 @@
 #ifndef __DANGEROUSSPAWNPOLICY_H__
 #define __DANGEROUSSPAWNPOLICY_H__
 
-/* interface header */
+// interface header
 #include "DefaultSpawnPolicy.h"
+
+// common headers
+#include "vectors.h"
 
 
 /** a DangerousSpawnPolicy is a SpawnPolicy that just generates a mostly
@@ -31,13 +34,13 @@ public:
     return name;
   }
 
-  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
+  virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
 
 private:
   /* internal use */
   TeamColor   team;
-  float       testPos[3];
+  fvec3       testPos;
 };
 
 #endif  /*__DANGEROUSSPAWNPOLICY_H__ */

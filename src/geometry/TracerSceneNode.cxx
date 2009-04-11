@@ -30,22 +30,23 @@
 
 #define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 
-const GLfloat		TracerSceneNode::TailLength = 10.0f;
-const GLfloat		TracerSceneNode::tailVertex[9][3] = {
-				{-0.5f * TailLength, 0.0f, 0.0f },
-				{ 0.5f * TailLength, -ShellRadius, 0.0f },
-				{ 0.5f * TailLength, -ShellRadius1_2, -ShellRadius1_2 },
-				{ 0.5f * TailLength, 0.0f, -ShellRadius },
-				{ 0.5f * TailLength, ShellRadius1_2, -ShellRadius1_2 },
-				{ 0.5f * TailLength, ShellRadius, 0.0f },
-				{ 0.5f * TailLength, ShellRadius1_2, ShellRadius1_2 },
-				{ 0.5f * TailLength, 0.0f, ShellRadius },
-				{ 0.5f * TailLength, -ShellRadius1_2, ShellRadius1_2 }
-			};
+const GLfloat TracerSceneNode::TailLength = 10.0f;
 
-TracerSceneNode::TracerSceneNode(const GLfloat pos[3],
-				const GLfloat forward[3]) :
-				renderNode(this)
+const fvec3 TracerSceneNode::tailVertex[9] = {
+  fvec3(-0.5f * TailLength, 0.0f, 0.0f),
+  fvec3(0.5f * TailLength, -ShellRadius, 0.0f),
+  fvec3(0.5f * TailLength, -ShellRadius1_2, -ShellRadius1_2),
+  fvec3(0.5f * TailLength, 0.0f, -ShellRadius),
+  fvec3(0.5f * TailLength, ShellRadius1_2, -ShellRadius1_2),
+  fvec3(0.5f * TailLength, ShellRadius, 0.0f),
+  fvec3(0.5f * TailLength, ShellRadius1_2, ShellRadius1_2),
+  fvec3(0.5f * TailLength, 0.0f, ShellRadius),
+  fvec3(0.5f * TailLength, -ShellRadius1_2, ShellRadius1_2)
+};
+
+
+TracerSceneNode::TracerSceneNode(const fvec3& pos, const fvec3& forward)
+: renderNode(this)
 {
   // prepare light
   light.setAttenuation(0, 0.0667f);
@@ -58,13 +59,14 @@ TracerSceneNode::TracerSceneNode(const GLfloat pos[3],
   setRadius(0.25f * TailLength * TailLength);
 }
 
+
 TracerSceneNode::~TracerSceneNode()
 {
   // do nothing
 }
 
-void			TracerSceneNode::move(const GLfloat pos[3],
-						const GLfloat forward[3])
+
+void TracerSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
   const GLfloat d = 1.0f / sqrtf(forward[0] * forward[0] +
 				forward[1] * forward[1] +
@@ -74,15 +76,17 @@ void			TracerSceneNode::move(const GLfloat pos[3],
   setCenter(pos[0] - 0.5f * TailLength * d * forward[0],
 	    pos[1] - 0.5f * TailLength * d * forward[1],
 	    pos[2] - 0.5f * TailLength * d * forward[2]);
-  light.setPosition(getSphere());
+  light.setPosition(getSphere().xyz());
 }
 
-void			TracerSceneNode::addLight(SceneRenderer& renderer)
+
+void TracerSceneNode::addLight(SceneRenderer& renderer)
 {
   renderer.addLight(light);
 }
 
-void			TracerSceneNode::notifyStyleChange()
+
+void TracerSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDB.isTrue("blend")) {
@@ -101,11 +105,12 @@ void			TracerSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			TracerSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void TracerSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // TracerSceneNode::TracerRenderNode
@@ -123,7 +128,8 @@ TracerSceneNode::TracerRenderNode::~TracerRenderNode()
   // do nothing
 }
 
-void			TracerSceneNode::TracerRenderNode::render()
+
+void TracerSceneNode::TracerRenderNode::render()
 {
   const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
@@ -163,6 +169,7 @@ void			TracerSceneNode::TracerRenderNode::render()
 
   glPopMatrix();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

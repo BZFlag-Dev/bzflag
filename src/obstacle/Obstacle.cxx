@@ -147,7 +147,7 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
   int i, bestSide = -1;
   float minTime = 1.0f;
   for (i = 0; i < 4; i++) {
-    float p[3], d[3];
+    fvec3 p, d;
     p[0] = pos1[0] + square[i][0]*c1*width - square[i][1]*s1*breadth;
     p[1] = pos1[1] + square[i][0]*s1*width + square[i][1]*c1*breadth;
     p[2] = 0;
@@ -184,7 +184,7 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
   c1 = cosf(oAzimuth);
   s1 = sinf(oAzimuth);
   for (i = 0; i < 4; i++) {
-    float v[2], p[2], p2[2], d[2];
+    fvec3 v, p, p2, d; // FIXME - change to fvec2 with Intersect is fixed
     v[0] = oPos[0] + square[i][0] * c1 * oWidth - square[i][1] * s1 * oBreadth;
     v[1] = oPos[1] + square[i][0] * s1 * oWidth + square[i][1] * c1 * oBreadth;
 

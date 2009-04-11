@@ -23,8 +23,8 @@
 
 class PolyWallSceneNode : public WallSceneNode {
   public:
-			PolyWallSceneNode(const GLfloat3Array& vertices,
-					const GLfloat2Array& uvs);
+			PolyWallSceneNode(const fvec3Array& vertices,
+					const fvec2Array& uvs);
 			~PolyWallSceneNode();
 
     int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
@@ -39,8 +39,8 @@ class PolyWallSceneNode : public WallSceneNode {
     class Geometry : public RenderNode {
       public:
 			Geometry(PolyWallSceneNode*,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
+				const fvec3Array& vertices,
+				const fvec2Array& uvs,
 				const GLfloat* normal);
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
@@ -54,8 +54,8 @@ class PolyWallSceneNode : public WallSceneNode {
 	int		style;
 	const GLfloat*	normal;
       public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
+	fvec3Array	vertex;
+	fvec2Array	uv;
     };
 
   private:

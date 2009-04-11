@@ -151,19 +151,19 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 			    texsize, useNormals, divisions, mats, phydrv,
 			    smoothBounce, driveThrough, shootThrough, ricochet);
   } else {
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
-    const float origin[3] = {0.0f, 0.0f, 0.0f};
+    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
+    const fvec3 origin(0.0f, 0.0f, 0.0f);
     MeshTransform xform;
     if (flipz || (size[2] < 0.0f)) {
-      const float flipScale[3] = {1.0f, 1.0f, -1.0f};
-      const float flipShift[3] = {0.0f, 0.0f, +size[2]};
+      const fvec3 flipScale(1.0f, 1.0f, -1.0f);
+      const fvec3 flipShift(0.0f, 0.0f, +size[2]);
       xform.addScale(flipScale);
       xform.addShift(flipShift);
     }
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);
     xform.append(transform);
-    float newSize[3];
+    fvec3 newSize;
     newSize[0] = (float)(size[0] * M_SQRT2);
     newSize[1] = (float)(size[1] * M_SQRT2);
     newSize[2] = fabsf(size[2]);

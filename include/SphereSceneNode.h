@@ -25,12 +25,12 @@
 
 class SphereSceneNode : public SceneNode {
   public:
-    SphereSceneNode(const GLfloat pos[3], GLfloat radius);
+    SphereSceneNode(const fvec3& pos, GLfloat radius);
     virtual ~SphereSceneNode();
 
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    void setColor(const GLfloat* rgba);
-    void move(const GLfloat pos[3], GLfloat radius);
+    void setColor(const fvec4& rgba);
+    void move(const fvec3& pos, GLfloat radius);
     void notifyStyleChange();
 
     virtual void setShockWave(bool) { return; };
@@ -42,7 +42,7 @@ class SphereSceneNode : public SceneNode {
 
   protected:
     GLfloat		radius;
-    GLfloat		color[4];
+    fvec4		color;
     bool		transparent;
     OpenGLGState	gstate;
 };
@@ -54,12 +54,12 @@ const int sphereLods = 5;
 
 class SphereLodSceneNode : public SphereSceneNode {
   public:
-    SphereLodSceneNode(const GLfloat pos[3], GLfloat radius);
+    SphereLodSceneNode(const fvec3& pos, GLfloat radius);
     ~SphereLodSceneNode();
 
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void setColor(const GLfloat* rgba);
-    void move(const GLfloat pos[3], GLfloat radius);
+    void move(const fvec3& pos, GLfloat radius);
 
     void setShockWave(bool value);
 
@@ -155,13 +155,13 @@ class SphereBspSceneNode : public SphereSceneNode {
   friend class SphereFragmentSceneNode;
   friend class SphereFragmentSceneNode::FragmentRenderNode;
   public:
-			SphereBspSceneNode(const GLfloat pos[3], GLfloat radius);
+			SphereBspSceneNode(const fvec3& pos, GLfloat radius);
 			~SphereBspSceneNode();
 
     void		setColor(GLfloat r, GLfloat g,
 				 GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgba);
-    void		move(const GLfloat pos[3], GLfloat radius);
+    void		move(const fvec3& pos, GLfloat radius);
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
@@ -189,8 +189,8 @@ class SphereBspSceneNode : public SphereSceneNode {
 	const SphereBspSceneNode* sceneNode;
 	bool		highResolution;
 	int		baseIndex;
-	static GLfloat	geom[2 * SphereRes * (SphereRes + 1)][3];
-	static GLfloat	lgeom[SphereLowRes * (SphereLowRes + 1)][3];
+	static fvec3	geom[2 * SphereRes * (SphereRes + 1)];
+	static fvec3	lgeom[SphereLowRes * (SphereLowRes + 1)];
     };
     friend class SphereBspRenderNode;
 
