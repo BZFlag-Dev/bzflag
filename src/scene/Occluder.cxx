@@ -361,7 +361,7 @@ bool Occluder::makePlanes(const Frustum* frustum)
   // occluders can't have their back towards the camera
   const fvec4& plane = *sceneNode->getPlane();
   const fvec3& eye = frustum->getEye();
-  float dist = planed.planeDist(eye);
+  float dist = plane.planeDist(eye);
   if (dist < +0.1f) {
     return false;
   }
