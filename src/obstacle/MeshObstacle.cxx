@@ -178,9 +178,9 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   }
 
   // use the indices to makes lists of pointers
-  fvec3** v;
-  fvec3** n;
-  fvec2** t;
+  const fvec3** v;
+  const fvec3** n;
+  const fvec2** t;
   makeFacePointers(_vertices, _normals, _texcoords, v, n, t);
 
   // override the flags if they are set for the whole mesh
@@ -266,20 +266,22 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
 				    const std::vector<int>& _normals,
 				    const std::vector<int>& _texcoords,
-				    fvec3**& v, fvec3**& n, fvec2**& t)
+				    const fvec3**& v,
+				    const fvec3**& n,
+				    const fvec2**& t)
 {
   const int count = _vertices.size();
 
   // use the indices to makes lists of pointers
-  v = new fvec3*[count];
+  v = new const fvec3*[count];
   n = NULL;
   t = NULL;
 
   if (_normals.size() > 0) {
-    n = new fvec3*[count];
+    n = new const fvec3*[count];
   }
   if (_texcoords.size() > 0) {
-    t = new fvec2*[count];
+    t = new const fvec2*[count];
   }
 
   for (int i = 0; i < count; i++) {

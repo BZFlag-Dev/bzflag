@@ -51,7 +51,9 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 
 
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
-                   fvec3** _vertices, fvec3** _normals, fvec2** _texcoords,
+                   const fvec3** _vertices,
+                   const fvec3** _normals,
+                   const fvec2** _texcoords,
                    const BzMaterial* _bzMaterial, int physics,
                    bool _noclusters, bool bounce,
                    unsigned char drive, unsigned char shoot, bool rico)
@@ -112,7 +114,7 @@ void MeshFace::finalize()
     if ((debugLevel >= 3) && (mesh != NULL)) {
       logDebugMessage(0,":");
       for (i = 0; i < vertexCount; i++) {
-	logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	logDebugMessage(0," %i", (int)(vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
@@ -143,7 +145,7 @@ void MeshFace::finalize()
       if ((debugLevel >= 3) && (mesh != NULL)) {
 	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
-	  logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	  logDebugMessage(0," %i", (int)(vertices[i] - mesh->getVertices()));
 	}
 	print(std::cerr, "");
       }
@@ -162,7 +164,7 @@ void MeshFace::finalize()
       if ((debugLevel >= 3) && (mesh != NULL)) {
 	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
-	  logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	  logDebugMessage(0," %i", (int)(vertices[i] - mesh->getVertices()));
 	}
 	print(std::cerr, "");
       }
@@ -286,48 +288,39 @@ float MeshFace::intersect(const Ray& ray) const
   // to see if the intersection point is contained within
   // the face.
   //
-  //  L - line unit vector	  Lo - line origin
+  //  L - line unit vector	    Lo - line origin
   //  N - plane normal unit vector  d  - plane offset
-  //  P - point in question	 t - time
+  //  P - point in question	    t  - time
   //
-  //  (N dot P) + d = 0		      { plane equation }
-  //  P = (t * L) + Lo		       { line equation }
+  //  (N dot P) + d = 0		       { plane equation }
+  //  P = (t * L) + Lo		       { line  equation }
   //  t (N dot L) + (N dot Lo) + d = 0
   //
   //  t = - (d + (N dot Lo)) / (N dot L)     { time of impact }
   //
-  const float* dir = ray.getDirection();
-  const float* origin = ray.getOrigin();
+  const fvec3& dir = ray.getDirection();
+  const fvec3& origin = ray.getOrigin();
   float hitTime;
 
   // get the time until the shot would hit each plane
-  const float linedot = (plane[0] * dir[0]) +
-			(plane[1] * dir[1]) +
-			(plane[2] * dir[2]);
+  const float linedot = fvec3::dot(dir, plane.xyz());
   if (linedot >= -0.001f) {
     // shot is either parallel, or going through backwards
     return -1.0f;
   }
-  const float origindot = (plane[0] * origin[0]) +
-			  (plane[1] * origin[1]) +
-			  (plane[2] * origin[2]);
+  const float origindot = fvec3::dot(origin, plane.xyz());
   // linedot should be safe to divide with now
-  hitTime = - (plane[3] + origindot) / linedot;
+  hitTime = - (plane.w + origindot) / linedot;
   if (hitTime < 0.0f) {
     return -1.0f;
   }
 
   // get the contact location
-  float point[3];
-  point[0] = (dir[0] * hitTime) + origin[0];
-  point[1] = (dir[1] * hitTime) + origin[1];
-  point[2] = (dir[2] * hitTime) + origin[2];
+  const fvec3 point = origin + (dir * hitTime);
 
   // now test against the edge planes
   for (int q = 0; q < vertexCount; q++) {
-    float d = (edgePlanes[q][0] * point[0]) +
-	      (edgePlanes[q][1] * point[1]) +
-	      (edgePlanes[q][2] * point[2]) + edgePlanes[q][3];
+    const float d = edgePlanes[q].planeDist(point);
     if (d > 0.001f) {
       return -1.0f;
     }
@@ -614,30 +607,30 @@ void *MeshFace::unpack(void *buf)
   // vertices
   buf = nboUnpackInt(buf, inTmp);
   vertexCount = int(inTmp);
-  vertices = new fvec3*[vertexCount];
+  vertices = new const fvec3*[vertexCount];
   for (int i = 0; i < vertexCount; i++) {
     int32_t index;
     buf = nboUnpackInt(buf, index);
-    vertices[i] = (fvec3*)&mesh->getVertices()[index];
+    vertices[i] = mesh->getVertices() + index;
   }
 
   // normals
   if (tmpNormals) {
-    normals = new fvec3*[vertexCount];
+    normals = new const fvec3*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       int32_t index;
       buf = nboUnpackInt(buf, index);
-      normals[i] = (fvec3*)&mesh->getNormals()[index];
+      normals[i] = mesh->getNormals() + index;
     }
   }
 
   // texcoords
   if (tmpTexcoords) {
-    texcoords = new fvec2*[vertexCount];
+    texcoords = new const fvec2*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       int32_t index;
       buf = nboUnpackInt(buf, index);
-      texcoords[i] = (fvec2*)&mesh->getTexcoords()[index];
+      texcoords[i] = mesh->getTexcoords() + index;
     }
   }
 
@@ -690,7 +683,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "    vertices";
   for (i = 0; i < vertexCount; i++) {
-    int index = (fvec3*)vertices[i] - mesh->getVertices();
+    const int index = vertices[i] - mesh->getVertices();
     out << " " << index;
   }
   if (debugLevel >= 3) {
@@ -704,7 +697,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (normals != NULL) {
     out << indent << "    normals";
     for (i = 0; i < vertexCount; i++) {
-      int index = (fvec3*)normals[i] - mesh->getNormals();
+      const int index = normals[i] - mesh->getNormals();
       out << " " << index;
     }
     if (debugLevel >= 3) {
@@ -719,7 +712,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (texcoords != NULL) {
     out << indent << "    texcoords";
     for (i = 0; i < vertexCount; i++) {
-      int index = (fvec2*)texcoords[i] - mesh->getTexcoords();
+      const int index = texcoords[i] - mesh->getTexcoords();
       out << " " << index;
     }
     if (debugLevel >= 3) {

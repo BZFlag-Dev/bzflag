@@ -384,8 +384,14 @@ class vec4 {
       return dot(*this, v);
     }
 
-    T lengthSq() const { return dot(*this, *this);    }
+    T lengthSq() const { return dot(*this, *this); }
     T length()   const { return typed_sqrt(lengthSq()); }
+
+    // for the plane equation,
+    // (x * p.x) + (y * p.y) + (z * p.z) + w = 0  {for a point on the plane}
+    T planeDist(const vec3<T>& point) const {
+      return vec3<T>::dot(point, xyz()) + w;
+    }
 
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }

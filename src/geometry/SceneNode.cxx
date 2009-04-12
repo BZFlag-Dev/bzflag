@@ -188,9 +188,9 @@ bool SceneNode::cull(const ViewFrustum& view) const
   // greater than radius of object then cull.
   const int planeCount = view.getPlaneCount();
   for (int i = 0; i < planeCount; i++) {
-    const fvec4& norm = view.getSide(i);
+    const fvec4& side = view.getSide(i);
     
-    const float d = fvec3::dot(sphere.xyz(), norm.xyz()) + norm.w;
+    const float d = side.planeDist(sphere.xyz());
     if ((d < 0.0f) && ((d * d) > sphere[3])) {
       return true;
     }

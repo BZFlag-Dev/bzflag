@@ -55,20 +55,20 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     return NULL;
   }
 
-  if (teleporter->isHorizontal ()) {
-    if (getNodeNumber () >= 16)
+  if (teleporter->isHorizontal()) {
+    if (getNodeNumber() >= 16)
       return NULL;
 
     fvec3 base;
     fvec3 sEdge;
     fvec3 tEdge;
-    const float *pos = teleporter->getPosition ();
-    const float *size = teleporter->getSize ();
-    const float c = cosf (teleporter->getRotation ());
-    const float s = sinf (teleporter->getRotation ());
-    const float w = teleporter->getWidth ();
-    const float d = teleporter->getBreadth ();
-    const float b = teleporter->getBorder ();
+    const fvec3& pos = teleporter->getPosition();
+    const fvec3& size = teleporter->getSize();
+    const float c = cosf(teleporter->getRotation());
+    const float s = sinf(teleporter->getRotation());
+    const float w = teleporter->getWidth();
+    const float d = teleporter->getBreadth();
+    const float b = teleporter->getBorder();
 
     // NOTE -- 1,2,3,4: outer sides
     // 3,4,5,6: inner sides
@@ -76,7 +76,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     // 11,12,13,14: top sides
     // 15,16 top and bottom teleport faces
 
-    const int n = incNodeNumber ();
+    const int n = incNodeNumber();
     switch (n) {
       case 1:		    // -x outside edge
 	base[0] = pos[0] + ((-w) * c - (-d) * s);
@@ -276,13 +276,13 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     fvec3 base;
     fvec3 sEdge;
     fvec3 tEdge;
-    const float *pos = teleporter->getPosition ();
-    const float c = cosf (teleporter->getRotation ());
-    const float s = sinf (teleporter->getRotation ());
-    const float h = teleporter->getBreadth () - teleporter->getBorder ();
-    const float b = 0.5f * teleporter->getBorder ();
+    const fvec3& pos = teleporter->getPosition();
+    const float c = cosf(teleporter->getRotation());
+    const float s = sinf(teleporter->getRotation());
+    const float h = teleporter->getBreadth() - teleporter->getBorder();
+    const float b = 0.5f * teleporter->getBorder();
     const float d = h + b;
-    const float z = teleporter->getHeight () - teleporter->getBorder ();
+    const float z = teleporter->getHeight() - teleporter->getBorder();
     GLfloat x[2], y[2];
     x[0] = c;
     x[1] = s;
@@ -294,7 +294,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     // 9,10: horizontal bar top and bottom
     // 11,12: front and back horizontal sides
     // 13,14: front and back teleport faces
-    const int n = incNodeNumber ();
+    const int n = incNodeNumber();
     switch (n) {
       case 1:
 	base[0] = pos[0] + d * y[0] + b * x[0] + b * y[0];

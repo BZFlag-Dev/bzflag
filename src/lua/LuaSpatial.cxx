@@ -376,8 +376,8 @@ int LuaSpatial::IsPointInView(lua_State* L)
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
 	const int planeCount = vf.getPlaneCount();
 	for (int p = 0; p < planeCount; p++) {
-		const fvec4& s = vf.getSide(p);
-		const float d = fvec3::dot(point, s.xyz()) + s.w;
+		const fvec4& side = vf.getSide(p);
+		const float d = side.planeDist(point);
 		if (d < 0.0f) {
 			lua_pushboolean(L, false);
 			return 1;
@@ -396,8 +396,8 @@ int LuaSpatial::IsSphereInView(lua_State* L)
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
 	const int planeCount = vf.getPlaneCount();
 	for (int p = 0; p < planeCount; p++) {
-		const fvec4& s = vf.getSide(p);
-		const float d = fvec3::dot(center, s.xyz()) + s.w;
+		const fvec4& side = vf.getSide(p);
+		const float d = side.planeDist(center);
 		if (d < -radius) {
 			lua_pushboolean(L, false);
 			return 1;
@@ -480,9 +480,9 @@ static bool PlayerInPlanes(const Player* player, const QueryData& data)
 {
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
-		const fvec4& p = planes.planes[i];
+		const fvec4& plane = planes.planes[i];
 		const fvec3& pos = player->getPosition();
-		const float d = fvec3::dot(pos, p.xyz()) + p.w;
+		const float d = plane.planeDist(pos);
 		if (d < 0.0f) {
 			return false;
 		}
@@ -645,9 +645,9 @@ static bool FlagInPlanes(const Flag* flag, const QueryData& data)
 {
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
-		const fvec4& p = planes.planes[i];
+		const fvec4& plane = planes.planes[i];
 		const fvec3& pos = flag->position;
-		const float d = fvec3::dot(pos, p.xyz()) + p.w;
+		const float d = plane.planeDist(pos);
 		if (d < 0.0f) {
 			return false;
 		}
@@ -797,9 +797,9 @@ static bool ShotInPlanes(const ShotPath* shot, const QueryData& data)
 {
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
-		const fvec4& p = planes.planes[i];
+		const fvec4& plane = planes.planes[i];
 		const fvec3& pos = shot->getPosition();
-		const float d = fvec3::dot(pos, p.xyz()) + p.w;
+		const float d = plane.planeDist(pos);
 		if (d < 0.0f) {
 			return false;
 		}

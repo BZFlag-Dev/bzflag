@@ -174,8 +174,8 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 
   // check if the light is in front of the front viewing plane
   bool sphereCull = true;
-  const fvec4& p = frustum.getSide(0);
-  const float fd = fvec3::dot(pos.xyz(), p.xyz()) + p.w;
+  const fvec4& forward = frustum.getSide(0);
+  const float fd = forward.planeDist(pos.xyz());
 
   // cull against the frustum planes
   if (fd > 0.0f) {
@@ -183,7 +183,7 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
     const int planeCount = frustum.getPlaneCount();
     for (int i = 1; i < planeCount; i++) {
       const fvec4& plane = frustum.getSide(i);
-      const float len = fvec3::dot(pos.xyz(), plane.xyz()) + plane.w;
+      const float len = plane.planeDist(pos.xyz());
       if (len < -maxDist) {
 	importance = -1.0f;
 	return;

@@ -862,13 +862,13 @@ IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
     }
 
     // check the inside length
-    len = fvec3::dot(inside, plane.xyz()) + plane.w;
+    len = plane.planeDist(inside);
     if (len < -1.0f) {
       return Outside; // box is fully outside the frustum
     }
 
     // check the outside length
-    len = fvec3::dot(outside, plane.xyz()) + plane.w;
+    len = plane.planeDist(outside);
     if (len < -1.0f) {
       result = Partial; // partial containment at best
     }

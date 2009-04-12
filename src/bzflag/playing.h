@@ -27,6 +27,7 @@
 #include "StartupInfo.h"
 #include "CommandCompleter.h"
 #include "Address.h"
+#include "vectors.h"
 
 /* local headers */
 #include "MainWindow.h"
@@ -67,10 +68,10 @@ Player*			lookupPlayer(PlayerId id);
 void			startPlaying();
 void			forceControls(bool enabled, float speed, float angVel);
 
-bool			addExplosion(const float* pos, float size, float duration);
-void			addTankExplosion(const float* pos);
-void			addShotExplosion(const float* pos);
-void			addShotPuff(const float* pos, float azimuth, float elevation);
+bool			addExplosion(const fvec3& pos, float size, float duration);
+void			addTankExplosion(const fvec3& pos);
+void			addShotExplosion(const fvec3& pos);
+void			addShotPuff(const fvec3& pos, float azimuth, float elevation);
 void			warnAboutMainFlags();
 void			warnAboutRadarFlags();
 void			warnAboutRadar();

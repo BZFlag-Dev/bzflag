@@ -627,12 +627,10 @@ void FlagSceneNode::notifyStyleChange()
 inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 {
   const ViewFrustum& vf = renderer.getViewFrustum();
-  const float* s = getSphere();
-  const float* e = vf.getEye();
-  const float* d = vf.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-		     (d[1] * (s[1] - e[1])) +
-		     (d[2] * (s[2] - e[2]));
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& eye = vf.getEye();
+  const fvec3& dir = vf.getDirection();
+  const float dist = fvec3::dot(dir, pos - eye);
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
@@ -648,12 +646,10 @@ inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 
 inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 {
-  const fvec3& s = getSphere().xyz();
-  const fvec3& e = renderer.getViewFrustum().getEye();
-  const fvec3* d = renderer.getSunDirection();
-  const fvec3 gap = s - e;
-  const fvec3 cross = fvec3::cross(gap, *d);
-  const float dist = cross.length();
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& eye = renderer.getViewFrustum().getEye();
+  const fvec3* dir = renderer.getSunDirection();
+  const float dist = fvec3::cross(pos - eye, *dir).length();
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
@@ -689,8 +685,7 @@ bool FlagSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 {
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
-    const fvec4& p = planes[i];
-    const float d = fvec3::dot(p.xyz(), s.xyz()) + p.w;
+    const float d = planes[i].planeDist(s.xyz());
     if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
@@ -850,7 +845,7 @@ void FlagSceneNode::FlagRenderNode::render()
   const bool flat = sceneNode->flat;
   const bool texturing = sceneNode->texturing;
   const bool translucent = sceneNode->translucent;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   const FlagPhase* phase = sceneNode->phase;
   const int lod = isShadow ? sceneNode->shadowLOD : sceneNode->lod;
 
@@ -863,7 +858,7 @@ void FlagSceneNode::FlagRenderNode::render()
 
   glPushMatrix();
   {
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
 
     if (realFlag) {
 

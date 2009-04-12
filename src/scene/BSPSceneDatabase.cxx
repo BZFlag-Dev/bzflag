@@ -235,7 +235,7 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
   if (!_root->dynamic && _root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
     const fvec3& pos = node->getSphere().xyz();
-    d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
+    d = plane->planeDist(pos);
   } else {
     d = _root->node->getDistanceSq(eye) - node->getDistanceSq(eye);
   }
@@ -268,7 +268,7 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
   if (_root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
     const fvec3& pos = node->getSphere().xyz();
-    d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
+    d = plane->planeDist(pos);
   } else {
     // it's a crap shoot  (draw smaller items first)
     d = node->getSphere()[3] - _root->node->getSphere()[3];
@@ -456,7 +456,7 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
 
   const fvec4* plane = snode->getPlane();
   if (plane) {
-    if ((fvec3::dot(eye, *((fvec3*)plane)) + plane->w) >= 0.0f) {
+    if (plane->planeDist(eye) >= 0.0f) {
       // eye is in front so render:  back, node, front
       if (back) {
 	nodeAddRenderNodes(back);

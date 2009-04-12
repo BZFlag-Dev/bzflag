@@ -36,7 +36,9 @@ class MeshFace : public Obstacle {
   public:
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* mesh, int vertexCount,
-	     fvec3** vertices, fvec3** normals, fvec2** texcoords,
+	     const fvec3** vertices,
+	     const fvec3** normals,
+	     const fvec2** texcoords,
 	     const BzMaterial* material, int physics,
 	     bool noclusters, bool smoothBounce,
 	     unsigned char drive, unsigned char shoot, bool ricochet);
@@ -112,9 +114,9 @@ class MeshFace : public Obstacle {
     class MeshObstacle* mesh;
     int id;
     int vertexCount;
-    fvec3** vertices;
-    fvec3** normals;
-    fvec2** texcoords;
+    const fvec3** vertices;
+    const fvec3** normals;
+    const fvec2** texcoords;
     const BzMaterial* bzMaterial;
     bool smoothBounce;
     bool noclusters;

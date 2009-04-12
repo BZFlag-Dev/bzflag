@@ -536,7 +536,7 @@ bool TankSceneNode::cullShadow(int planeCount, const fvec4* planes) const
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
     const fvec4& p = planes[i];
-    const float d = fvec3::dot(p.xyz(), s.xyz()) + p.w;
+    const float d = p.planeDist(s.xyz());
     if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
@@ -577,10 +577,7 @@ TankIDLSceneNode::~TankIDLSceneNode()
 
 void TankIDLSceneNode::move(const fvec4& _plane)
 {
-  plane[0] = _plane[0];
-  plane[1] = _plane[1];
-  plane[2] = _plane[2];
-  plane[3] = _plane[3];
+  plane = _plane;
 
   // compute new sphere
   const GLfloat* s = tank->getSphere();
@@ -724,14 +721,10 @@ void TankIDLSceneNode::IDLRenderNode::render()
   // compute plane in tank's space
   const fvec4& sphere = sceneNode->tank->getSphere();
   const fvec4& _plane = sceneNode->plane;
-  const GLfloat azimuth = sceneNode->tank->azimuth;
-  const GLfloat ca = cosf(-azimuth * (float)DEG2RAD);
-  const GLfloat sa = sinf(-azimuth * (float)DEG2RAD);
+  const float azimuth = sceneNode->tank->azimuth;
   fvec4 plane;
-  plane.x = (ca * _plane.x) - (sa * _plane.y);
-  plane.y = (sa * _plane.x) + (ca * _plane.y);
-  plane.z = _plane.z;
-  plane.w = fvec3::dot(sphere.xyz(), _plane.xyz()) + _plane.w;
+  plane.xyz() = _plane.xyz().rotateZ(-azimuth * DEG2RAD);
+  plane.w = _plane.planeDist(sphere.xyz());
 
   // compute projection point -- one TankLength in from plane
   const GLfloat pd = -1.0f * BZDBCache::tankLength - plane.w;

@@ -457,19 +457,19 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
 
   // write the vertex information
   for (i = 0; i < 4; i++) {
-    const float* vertex = vertices[i];
+    const fvec3& vertex = vertices[i];
     out << indent << "  vertex " << vertex[0] << " " << vertex[1] << " "
 				 << vertex[2] << std::endl;
     if (useNormals[i]) {
       for (int j = 0; j < 3; j++) {
-	const float* normal = normals[i][j];
+	const fvec3& normal = normals[i][j];
 	out << indent << "  normal " << normal[0] << " " << normal[1] << " "
 				     << normal[2] << std::endl;
       }
     }
     if (useTexcoords[i]) {
       for (int j = 0; j < 3; j++) {
-	const float* texcoord = texcoords[i][j];
+	const fvec2& texcoord = texcoords[i][j];
 	out << indent << "  normal " << texcoord[0] << " "
 				     << texcoord[1] << " "
 				     << texcoord[2] << std::endl;

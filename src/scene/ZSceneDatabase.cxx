@@ -355,8 +355,8 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
       const fvec4* plane = node->getPlane();
 
       if (plane != NULL) {
-        // see if our eye is behind the plane
-        if ((fvec3::dot(eye, *((const fvec3*)plane)) + plane->w) <= 0.0f) {
+        // see if our eye is behind or on the plane
+        if (plane->planeDist(eye) <= 0.0f) {
           node->octreeState = SceneNode::OctreeCulled;
           continue;
         }

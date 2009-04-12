@@ -105,10 +105,10 @@ void Teleporter::makeLinks()
 
   // make the new pointers to floats,
   // the MeshFace will delete[] them
-  fvec3** fvrts  = new fvec3*[4];
-  fvec3** bvrts  = new fvec3*[4];
-  fvec2** ftxcds = new fvec2*[4];
-  fvec2** btxcds = new fvec2*[4];
+  const fvec3** fvrts  = new const fvec3*[4];
+  const fvec3** bvrts  = new const fvec3*[4];
+  const fvec2** ftxcds = new const fvec2*[4];
+  const fvec2** btxcds = new const fvec2*[4];
   for (i = 0; i < 4; i++) {
     fvrts[i]  = &fvertices[i];
     bvrts[i]  = &bvertices[i];
@@ -151,17 +151,17 @@ void Teleporter::makeLinks()
     float blen[2] = { (-sin_val * (b - br)), (cos_val * (b - br)) };
 
     for (i = 0; i < 4 ;i++) {
-      bvrts[i]->x = p.x + (wlen[0] + (blen[0] * params[i][0]));
-      bvrts[i]->y = p.y + (wlen[1] + (blen[1] * params[i][0]));
-      bvrts[i]->z = p.z + ((h - br) * params[i][1]);
+      bvertices[i].x = p.x + (wlen[0] + (blen[0] * params[i][0]));
+      bvertices[i].y = p.y + (wlen[1] + (blen[1] * params[i][0]));
+      bvertices[i].z = p.z + ((h - br) * params[i][1]);
     }
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
 			    NULL, -1, false, false, true, true, false);
 
     for (i = 0; i < 4 ;i++) {
-      fvrts[i]->x = p.x - (wlen[0] + (blen[0] * params[i][0]));
-      fvrts[i]->y = p.y - (wlen[1] + (blen[1] * params[i][0]));
-      fvrts[i]->z = p.z + ((h - br) * params[i][1]);
+      fvertices[i].x = p.x - (wlen[0] + (blen[0] * params[i][0]));
+      fvertices[i].y = p.y - (wlen[1] + (blen[1] * params[i][0]));
+      fvertices[i].z = p.z + ((h - br) * params[i][1]);
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
 			     NULL, -1, false, false, true, true, false);
@@ -169,24 +169,24 @@ void Teleporter::makeLinks()
   else {
     float xlen = w - br;
     float ylen = b - br;
-    bvrts[0]->x = p.x + ((cos_val * xlen) - (sin_val * ylen));
-    bvrts[0]->y = p.y + ((cos_val * ylen) + (sin_val * xlen));
-    bvrts[0]->z = p.z + h - br;
-    bvrts[1]->x = p.x + ((cos_val * xlen) - (sin_val * -ylen));
-    bvrts[1]->y = p.y + ((cos_val * -ylen) + (sin_val * xlen));
-    bvrts[1]->z = p.z + h - br;
-    bvrts[2]->x = p.x + ((cos_val * -xlen) - (sin_val * -ylen));
-    bvrts[2]->y = p.y + ((cos_val * -ylen) + (sin_val * -xlen));
-    bvrts[2]->z = p.z + h - br;
-    bvrts[3]->x = p.x + ((cos_val * -xlen) - (sin_val * ylen));
-    bvrts[3]->y = p.y + ((cos_val * ylen) + (sin_val * -xlen));
-    bvrts[3]->z = p.z + h - br;
+    bvertices[0].x = p.x + ((cos_val * xlen) - (sin_val * ylen));
+    bvertices[0].y = p.y + ((cos_val * ylen) + (sin_val * xlen));
+    bvertices[0].z = p.z + h - br;
+    bvertices[1].x = p.x + ((cos_val * xlen) - (sin_val * -ylen));
+    bvertices[1].y = p.y + ((cos_val * -ylen) + (sin_val * xlen));
+    bvertices[1].z = p.z + h - br;
+    bvertices[2].x = p.x + ((cos_val * -xlen) - (sin_val * -ylen));
+    bvertices[2].y = p.y + ((cos_val * -ylen) + (sin_val * -xlen));
+    bvertices[2].z = p.z + h - br;
+    bvertices[3].x = p.x + ((cos_val * -xlen) - (sin_val * ylen));
+    bvertices[3].y = p.y + ((cos_val * ylen) + (sin_val * -xlen));
+    bvertices[3].z = p.z + h - br;
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
 			    NULL, -1, false, false, true, true, false);
 
     for (i = 0; i < 4; i++) {
-      fvrts[i] = bvrts[3 - i];
-      fvrts[i]->z = p.z + h; // change the height
+      fvertices[i] = bvertices[3 - i];
+      fvertices[i].z = p.z + h; // change the height
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
 			     NULL, -1, false, false, true, true, false);
@@ -593,7 +593,7 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
     out << " " << name;
   }
   out << std::endl;
-  const float *_pos = getPosition();
+  const fvec3& _pos = getPosition();
   out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
 				 << _pos[2] << std::endl;
   out << indent << "  size " << origSize[0] << " " << origSize[1] << " "

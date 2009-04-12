@@ -285,7 +285,7 @@ bool TextSceneNode::cull(const ViewFrustum& frustum) const
   // see if our eye is behind the plane
   if (!text.billboard && !text.bzMaterial->getNoCulling()) {
     const fvec3& eye = frustum.getEye();
-    if ((fvec3::dot(eye, plane.xyz()) + plane.w) <= 0.0f) {
+    if (plane.planeDist(eye) <= 0.0f) {
       return false;
     }
   }
@@ -301,8 +301,7 @@ bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const
   // FIXME -- use extents?
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
-    const fvec4& p = planes[i];
-    const float d = fvec3::dot(p.xyz(), s.xyz()) + p.w;
+    const float d = planes[i].planeDist(s.xyz());
     if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }

@@ -121,7 +121,7 @@ class MeshObstacle : public Obstacle {
     void makeFacePointers(const std::vector<int>& _vertices,
 			  const std::vector<int>& _normals,
 			  const std::vector<int>& _texcoords,
-			  fvec3**& v, fvec3**& n, fvec2**& t);
+			  const fvec3**& v, const fvec3**& n, const fvec2**& t);
 
   private:
     static const char* typeName;

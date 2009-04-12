@@ -223,7 +223,7 @@ bool TriWallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const fvec3& eye = frustum.getEye();
-  if ((fvec3::dot(eye, plane.xyz()) + plane.w) <= 0.0f) {
+  if (plane.planeDist(eye) <= 0.0f) {
     return true;
   }
 

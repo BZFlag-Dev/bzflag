@@ -200,11 +200,11 @@ bool			setVideoFormat(int, bool)
   return false;
 }
 
-void			addShotExplosion(const float*)
+void			addShotExplosion(const fvec3&)
 {
 }
 
-void			addShotPuff(const float*, float, float)
+void			addShotPuff(const fvec3&, float, float)
 {
 }
 

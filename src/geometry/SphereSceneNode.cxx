@@ -258,8 +258,8 @@ void SphereLodSceneNode::setShockWave(bool value)
 void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float* s = getSphere();
-  const float* e = view.getEye();
+  const fvec4& s = getSphere();
+  const fvec3& e = view.getEye();
   const float dx = e[0] - s[0];
   const float dy = e[1] - s[1];
   const float dz = e[2] - s[2];
@@ -345,7 +345,7 @@ static inline void drawFullScreenRect()
 void SphereLodSceneNode::SphereLodRenderNode::render()
 {
   const GLfloat radius = sceneNode->radius;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
 
   static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
   glClipPlane(GL_CLIP_PLANE0, groundPlane);
@@ -475,7 +475,7 @@ SceneNode** SphereBspSceneNode::getParts(int& numParts)
 
   // choose number of parts to cut off bottom at around ground level
   int i;
-  const GLfloat* mySphere = getSphere();
+  const fvec4& mySphere = getSphere();
   for (i = 0; i < SphereLowRes; i++)
     if (radius * SphereBspRenderNode::lgeom[SphereLowRes*i][2]
 	+ mySphere[2] < 0.01f)
@@ -497,7 +497,7 @@ void SphereBspSceneNode::addRenderNodes(SceneRenderer& renderer)
   renderNode.setHighResolution(lod != 0);
 
   if (BZDBCache::blend) {
-    const GLfloat* eye = view.getEye();
+    const fvec3& eye = view.getEye();
     const float azimuth = atan2f(mySphere[1] - eye[1], eye[0] - mySphere[0]);
     const int numSlices = (lod == 1) ? NumSlices : SphereLowRes;
     renderNode.setBaseIndex(int(float(numSlices) *
@@ -588,18 +588,21 @@ void SphereBspSceneNode::SphereBspRenderNode::render()
 
   int i, j;
   const GLfloat radius = sceneNode->radius;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
 
   glClipPlane(GL_CLIP_PLANE0, groundPlane);
   glEnable(GL_CLIP_PLANE0);
 
   glPushMatrix();
+  {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
     glScalef(radius, radius, radius);
 
     myColor4fv(sceneNode->color);
-    if (!BZDBCache::blend && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent) {
       myStipple(sceneNode->color[3]);
+    }
+
     if (BZDBCache::lighting) {
       glEnable(GL_RESCALE_NORMAL);
       // draw with normals (normal is same as vertex!
@@ -678,9 +681,10 @@ void SphereBspSceneNode::SphereBspRenderNode::render()
       }
     }
 
-    if (!BZDBCache::blend && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent) {
       myStipple(0.5f);
-
+    }
+  }
   glPopMatrix();
 
   glDisable(GL_CLIP_PLANE0);
@@ -709,9 +713,9 @@ SphereFragmentSceneNode::~SphereFragmentSceneNode()
 
 void SphereFragmentSceneNode::move()
 {
-  const GLfloat* pSphere = parentSphere->getSphere();
+  const fvec4& pSphere = parentSphere->getSphere();
   const GLfloat pRadius = parentSphere->getRadius();
-  const GLfloat* vertex = renderNode.getVertex();
+  const fvec3& vertex = renderNode.getVertex();
   setCenter(pSphere[0] + pRadius * vertex[0],
 	    pSphere[1] + pRadius * vertex[1],
 	    pSphere[2] + pRadius * vertex[2]);
@@ -757,7 +761,7 @@ SphereFragmentSceneNode::FragmentRenderNode::~FragmentRenderNode()
 }
 
 
-const GLfloat* SphereFragmentSceneNode::FragmentRenderNode::getVertex() const
+const fvec3& SphereFragmentSceneNode::FragmentRenderNode::getVertex() const
 {
   return SphereBspSceneNode::SphereBspRenderNode::lgeom[phi * SphereLowRes + theta];
 }
@@ -772,7 +776,7 @@ const fvec3& SphereFragmentSceneNode::FragmentRenderNode::getPosition() const
 void SphereFragmentSceneNode::FragmentRenderNode::render()
 {
   const GLfloat pRadius = sceneNode->getRadius();
-  const GLfloat* pSphere = sceneNode->getSphere();
+  const fvec4& pSphere = sceneNode->getSphere();
 
   glPushMatrix();
   {
@@ -780,25 +784,28 @@ void SphereFragmentSceneNode::FragmentRenderNode::render()
     glScalef(pRadius, pRadius, pRadius);
 
     myColor4fv(sceneNode->color);
-    if (!BZDBCache::blend && sceneNode->transparent)
+    if (!BZDBCache::blend && sceneNode->transparent) {
       myStipple(sceneNode->color[3]);
+    }
+
     glBegin(GL_QUADS);
     {
+      const fvec3* lgeom = SphereBspSceneNode::SphereBspRenderNode::lgeom;
       if (BZDBCache::lighting) {
-	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
-	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta]);
-	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
-	glNormal3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
+	glNormal3fv(lgeom[SphereLowRes * phi  + theta]);
+	glVertex3fv(lgeom[SphereLowRes * phi  + theta]);
+	glNormal3fv(lgeom[SphereLowRes * phi2 + theta]);
+	glVertex3fv(lgeom[SphereLowRes * phi2 + theta]);
+	glNormal3fv(lgeom[SphereLowRes * phi2 + theta2]);
+	glVertex3fv(lgeom[SphereLowRes * phi2 + theta2]);
+	glNormal3fv(lgeom[SphereLowRes * phi  + theta2]);
+	glVertex3fv(lgeom[SphereLowRes * phi  + theta2]);
 	addTriangleCount(2);
       } else {
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi2 + theta2]);
-	glVertex3fv(SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * phi + theta2]);
+	glVertex3fv(lgeom[SphereLowRes * phi  + theta]);
+	glVertex3fv(lgeom[SphereLowRes * phi2 + theta]);
+	glVertex3fv(lgeom[SphereLowRes * phi2 + theta2]);
+	glVertex3fv(lgeom[SphereLowRes * phi  + theta2]);
 	addTriangleCount(2);
       }
     }

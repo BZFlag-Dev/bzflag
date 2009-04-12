@@ -97,7 +97,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
     }
     const int v = WorkSet[w];
     for (i = 0; i < 3; i++) {
-      const float dist = fvec3::dot(planes[i].xyz(), *Verts[v]) + planes[i][3];
+      const float dist = planes[i].planeDist(*Verts[v]);
       if (dist > 0.0f) {
 	break; // this point is clear
       }

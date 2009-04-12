@@ -40,7 +40,7 @@ WallSceneNode*		WallSceneNodeGenerator::getNextNode(
   fvec3 base;
   fvec3 sEdge;
   fvec3 tEdge;
-  const float* pos = wall->getPosition();
+  const fvec3& pos = wall->getPosition();
   const float c = cosf(wall->getRotation());
   const float s = sinf(wall->getRotation());
   const float h = wall->getBreadth();

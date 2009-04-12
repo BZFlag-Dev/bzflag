@@ -120,11 +120,11 @@ static bool translucentMaterial(const BzMaterial* mat)
 
 static bool groundClippedFace(const MeshFace* face)
 {
-  const float* plane = face->getPlane();
-  if (plane[2] < -0.9f) {
+  const fvec4& plane = face->getPlane();
+  if (plane.z < -0.9f) {
     // plane is facing downwards
     const Extents& exts = face->getExtents();
-    if (exts.maxs[2] < 0.001) {
+    if (exts.maxs.z < 0.001) {
       // plane is on or below the ground, ditch it
       return true;
     }

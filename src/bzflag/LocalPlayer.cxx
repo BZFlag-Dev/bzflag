@@ -508,12 +508,8 @@ void LocalPlayer::doUpdateMotion(float dt)
     hitWall = true;
 
     // record position when hitting
-    fvec3 hitPos;
-    float hitAzimuth;
-    hitAzimuth = newAzimuth;
-    hitPos[0] = newPos[0];
-    hitPos[1] = newPos[1];
-    hitPos[2] = newPos[2];
+    fvec3 hitPos     = newPos;
+    float hitAzimuth = newAzimuth;
 
     // find the latest time before the collision
     float searchTime = 0.0f, searchStep = 0.5f * timeStep;
@@ -522,9 +518,7 @@ void LocalPlayer::doUpdateMotion(float dt)
       // get intermediate position
       const float t = searchTime + searchStep;
       newAzimuth = tmpAzimuth + (t * newAngVel);
-      newPos[0] = tmpPos[0] + (t * newVelocity[0]);
-      newPos[1] = tmpPos[1] + (t * newVelocity[1]);
-      newPos[2] = tmpPos[2] + (t * newVelocity[2]);
+      newPos = tmpPos + (t * newVelocity);
       if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
 	newPos[2] = groundLimit;
       }
@@ -544,17 +538,13 @@ void LocalPlayer::doUpdateMotion(float dt)
 
 	expel = searchExpel;
 	hitAzimuth = newAzimuth;
-	hitPos[0] = newPos[0];
-	hitPos[1] = newPos[1];
-	hitPos[2] = newPos[2];
+	hitPos = newPos;
       }
     }
 
     // get position just before impact
     newAzimuth = tmpAzimuth + (searchTime * newAngVel);
-    newPos[0] = tmpPos[0] + (searchTime * newVelocity[0]);
-    newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
-    newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
+    newPos = tmpPos + (searchTime * newVelocity);
     if (oldPosition[2] < groundLimit) {
       newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
     }
@@ -821,13 +811,11 @@ void LocalPlayer::doUpdateMotion(float dt)
 
   // see if I'm over my antidote
   if (antidoteFlag && location == OnGround) {
-    float dist =
-      ((flagAntidotePos[0] - newPos[0]) * (flagAntidotePos[0] - newPos[0])) +
-      ((flagAntidotePos[1] - newPos[1]) * (flagAntidotePos[1] - newPos[1]));
+    const float distSq = (flagAntidotePos.xy() - newPos.xy()).lengthSq();
     const float twoRads = getRadius() + BZDBCache::flagRadius;
-    if (dist < (twoRads * twoRads)) {
+    if (distSq < (twoRads * twoRads)) {
       server->sendDropFlag(getPosition());
-	  setShotType(StandardShot);
+      setShotType(StandardShot);
     }
   }
 
@@ -1333,9 +1321,9 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
 
   // end it
   const fvec3& shotPos = shots[index]->getPosition();
-  pos[0] = shotPos[0];
-  pos[1] = shotPos[1];
-  pos[2] = shotPos[2];
+  pos[0] = shotPos.x;
+  pos[1] = shotPos.y;
+  pos[2] = shotPos.z;
   shots[index]->setExpired();
   return true;
 }
@@ -1455,8 +1443,8 @@ void LocalPlayer::setRecipient(const Player* _recipient)
 void LocalPlayer::explodeTank()
 {
   if (location == Dead || location == Exploding) return;
-  float gravity      = BZDBCache::gravity;
-  float explodeTim   = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+  const float gravity    = BZDBCache::gravity;
+  const float explodeTim = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
@@ -1465,7 +1453,7 @@ void LocalPlayer::explodeTank()
   float maxSpeed;
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
-  if (gravity < 0) {
+  if (gravity < 0.0f) {
     // comparing 2 speed:
     //   to have a simmetric path (ending at same height as starting)
     //   to reach the acme of parabola, under the max height established
@@ -1509,30 +1497,36 @@ bool LocalPlayer::checkHit(const Player* source,
   bool goodHit = false;
 
   // if firing tank is paused then it doesn't count
-  if (source->isPaused()) return goodHit;
+  if (source->isPaused()) {
+    return goodHit;
+  }
 
   const int maxShots = source->getMaxShots();
   for (int i = 0; i < maxShots; i++) {
-    // get shot
     const ShotPath* shot = source->getShot(i);
-    if (!shot || shot->isExpired()) continue;
-    ShotType	_shotType = shot->getShotType();
+    if (!shot || shot->isExpired()) {
+      continue;
+    }
+    ShotType _shotType = shot->getShotType();
 
     // my own shock wave cannot kill me
-    if (source == this && ((_shotType == ShockWaveShot) || (_shotType == ThiefShot))) continue;
+    if ((source == this) && ((_shotType == ShockWaveShot) ||
+                             (_shotType == ThiefShot))) {
+      continue;
+    }
 
     // if no team kills, shots of my team can't kill me
-    if (source != this && (shot->getTeam() != RogueTeam) &&
-        !World::getWorld()->allowTeamKills() && (shot->getTeam() == getTeam())) {
+    if ((source != this) && !World::getWorld()->allowTeamKills() &&
+        (shot->getTeam() != RogueTeam) && (shot->getTeam() == getTeam())) {
       continue;
     }
 
     // short circuit test if shot can't possibly hit.
     // only superbullet or shockwave can kill zoned dude
     if (isPhantomZoned()             &&
-	      (_shotType != SuperShot)     &&
-	      (_shotType != PhantomShot)   &&
-	      (_shotType != ShockWaveShot)) {
+        (_shotType != SuperShot)     &&
+        (_shotType != PhantomShot)   &&
+        (_shotType != ShockWaveShot)) {
       continue;
     }
 
@@ -1562,14 +1556,15 @@ bool LocalPlayer::checkHit(const Player* source,
     collider.bbox = bbox;
 
     const float t = shot->checkHit(collider, position);
-    if (t >= minTime) continue;
+    if (t >= minTime) {
+      continue;
+    }
 
     // test if shot hit a part of my tank that's through a teleporter.
     // hit is no good if hit point is behind crossing plane.
-    if (isCrossingWall() && position[0] * crossingPlane[0] +
-	position[1] * crossingPlane[1] +
-	position[2] * crossingPlane[2] + crossingPlane[3] < 0.0)
+    if (isCrossingWall() && (crossingPlane.planeDist(position) < 0.0f)) {
       continue;
+    }
 
     // okay, shot hit
     goodHit = true;
@@ -1593,12 +1588,11 @@ bool LocalPlayer::checkCollision(const Player* otherTank)
   const fvec3& myPosition = getPosition();
   const fvec3& otherPosition = otherTank->getPosition();
 
-  const float dx = otherPosition[0] - myPosition[0];
-  const float dy = otherPosition[1] - myPosition[1];
+  const float distSq2D = (otherPosition.xy() - myPosition.xy()).lengthSq();
 
   const float r = BZDBCache::freezeTagRadius;
 
-  if ((dx * dx + dy * dy) < (r * r)) {
+  if (distSq2D < (r * r)) {
     server->sendCollide(getId(), otherTank->getId(), myPosition);
     lastCollisionTime = current;
     return true;
@@ -1616,16 +1610,23 @@ void LocalPlayer::setFlag(FlagType* flag)
     return;
   }
 
-  float worldSize = BZDBCache::worldSize;
+  const float worldSize = BZDBCache::worldSize;
+
   // if it's bad then reset countdowns and set antidote flag
-  if (getFlag() != Flags::Null && getFlag()->endurance == FlagSticky) {
-    if (world->allowShakeTimeout())
+  if ((getFlag() != Flags::Null) && (getFlag()->endurance == FlagSticky)) {
+
+    if (world->allowShakeTimeout()) {
       flagShakingTime = world->getFlagShakeTimeout();
-    if (world->allowShakeWins())
+    }
+
+    if (world->allowShakeWins()) {
       flagShakingWins = world->getFlagShakeWins();
+    }
+
     if (world->allowAntidote()) {
       float tankRadius = BZDBCache::tankRadius;
       float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+
       do {
 	if (world->allowTeamFlags()) {
 	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
@@ -1637,7 +1638,8 @@ void LocalPlayer::setFlag(FlagType* flag)
 	  flagAntidotePos[2] = 0.0f;
 	}
       } while (world->inBuilding(flagAntidotePos, tankRadius,
-					     BZDBCache::tankHeight));
+                                 BZDBCache::tankHeight));
+
       antidoteFlag = new FlagSceneNode(flagAntidotePos);
       antidoteFlag->setColor(1.0f, 1.0f, 0.0f, 1.0f); // yellow
       World::setFlagTexture(antidoteFlag);
@@ -1681,35 +1683,20 @@ void LocalPlayer::addAntidote(SceneDatabase* scene)
 std::string LocalPlayer::getInputMethodName(InputMethod whatInput)
 {
   switch (whatInput) {
-    case Keyboard:
-      return std::string("Keyboard");
-      break;
-    case Mouse:
-      return std::string("Mouse");
-      break;
-    case Joystick:
-      return std::string("Joystick");
-      break;
-    default:
-      return std::string("Unnamed Device");
+    case Keyboard: { return std::string("Keyboard");       }
+    case Mouse:    { return std::string("Mouse");          }
+    case Joystick: { return std::string("Joystick");       }
+    default:       { return std::string("Unnamed Device"); }
   }
 }
 
 
 void LocalPlayer::setKey(int button, bool pressed) {
   switch (button) {
-  case BzfKeyEvent::Left:
-    left = pressed;
-    break;
-  case BzfKeyEvent::Right:
-    right = pressed;
-    break;
-  case BzfKeyEvent::Up:
-    up = pressed;
-    break;
-  case BzfKeyEvent::Down:
-    down = pressed;
-    break;
+    case BzfKeyEvent::Left:  { left  = pressed; break; }
+    case BzfKeyEvent::Right: { right = pressed; break; }
+    case BzfKeyEvent::Up:    { up    = pressed; break; }
+    case BzfKeyEvent::Down:  { down  = pressed; break; }
   }
 }
 

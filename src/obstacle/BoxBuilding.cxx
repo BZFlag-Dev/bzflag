@@ -170,7 +170,7 @@ bool BoxBuilding::isCrossing(const fvec3& p, float a,
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test).  just
   // see which wall the point is closest to.
-  const float* p2 = getPosition();
+  const fvec3& p2 = getPosition();
   const float a2 = getRotation();
   const float c = cosf(-a2), s = sinf(-a2);
   const float x = c * (p[0] - p2[0]) - s * (p[1] - p2[1]);
@@ -209,7 +209,7 @@ bool BoxBuilding::getHitNormal(const fvec3& pos1, float azimuth1,
 
 void BoxBuilding::getCorner(int index, fvec3& _pos) const
 {
-  const float* base = getPosition();
+  const fvec3& base = getPosition();
   const float c = cosf(getRotation());
   const float s = sinf(getRotation());
   const float w = getWidth();
@@ -292,7 +292,7 @@ int BoxBuilding::packSize() const
 void BoxBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "box" << std::endl;
-  const float *myPos = getPosition();
+  const fvec3& myPos = getPosition();
   out << indent << "  position " << myPos[0] << " " << myPos[1] << " "
 				 << myPos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()

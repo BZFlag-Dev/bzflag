@@ -88,8 +88,8 @@ bool WallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
   const fvec3& eye = frustum.getEye();
-  const float eyedot = fvec3::dot(eye, plane.xyz()) + plane.w;
-  if (eyedot <= 0.0f) {
+  const float eyeDist = plane.planeDist(eye);
+  if (eyeDist <= 0.0f) {
     return true;
   }
 
@@ -107,8 +107,8 @@ bool WallSceneNode::cull(const ViewFrustum& frustum) const
   const fvec4& mySphere = getSphere();
   bool inside = true;
   for (i = 0; i < planeCount; i++) {
-    const fvec4& norm = frustum.getSide(i);
-    d[i] = fvec3::dot(mySphere.xyz(), norm.xyz()) + norm.w;
+    const fvec4& side = frustum.getSide(i);
+    d[i] = side.planeDist(mySphere.xyz());
     if (d[i] < 0.0f) {
       d2[i] = d[i] * d[i];
       if (d2[i] > mySphere.w) {
@@ -158,7 +158,7 @@ int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
     const fvec4& pos = renderer.getLight(i).getPosition();
 
     // get signed distance from plane
-    const float pd = fvec3::dot(pos.xyz(), plane.xyz()) + plane.w;
+    const float pd = plane.planeDist(pos.xyz());
 
     // ignore if behind wall
     if (pd < 0.0f) {
@@ -196,7 +196,7 @@ int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
 
 GLfloat WallSceneNode::getDistanceSq(const fvec3& eye) const
 {
-  const GLfloat d = fvec3::dot(eye, plane.xyz()) + plane.w;
+  const GLfloat d = plane.planeDist(eye);
   return (d * d);
 }
 
@@ -442,7 +442,7 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const GLfloat d = fvec3::dot(vertices[i], splitPlane.xyz()) + splitPlane.w;
+    const GLfloat d = splitPlane.planeDist(vertices[i]);
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;

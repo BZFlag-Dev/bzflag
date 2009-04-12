@@ -58,7 +58,7 @@ class SphereLodSceneNode : public SphereSceneNode {
     ~SphereLodSceneNode();
 
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    void setColor(const GLfloat* rgba);
+    void setColor(const fvec4& rgba);
     void move(const fvec3& pos, GLfloat radius);
 
     void setShockWave(bool value);
@@ -136,7 +136,7 @@ class SphereFragmentSceneNode : public SceneNode {
 			FragmentRenderNode(const SphereBspSceneNode*,
 				int theta, int phi);
 			~FragmentRenderNode();
-	const GLfloat*	getVertex() const;
+	const fvec3&	getVertex() const;
 	void		render();
 	const fvec3&	getPosition() const;
       private:
@@ -160,7 +160,7 @@ class SphereBspSceneNode : public SphereSceneNode {
 
     void		setColor(GLfloat r, GLfloat g,
 				 GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
+    void		setColor(const fvec4& rgba);
     void		move(const fvec3& pos, GLfloat radius);
 
     void		addRenderNodes(SceneRenderer&);
