@@ -1202,10 +1202,9 @@ void SceneRenderer::getRenderNodes()
   }
 
   // add the shadow rendering nodes
-  if (scene && BZDBCache::shadows &&
-      !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS) &&
-      GfxBlockMgr::shadows.notBlocked() &&
-      (!mirror || !clearZbuffer)) {
+  if (scene && BZDBCache::shadows && (getSunDirection() != NULL) &&
+      GfxBlockMgr::shadows.notBlocked() && (!mirror || !clearZbuffer) &&
+      !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
     setupShadowPlanes();
     scene->addShadowNodes(*this, drawObstacles, true);
     if (drawObstacles) {
