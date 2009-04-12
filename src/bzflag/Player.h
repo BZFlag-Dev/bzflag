@@ -205,6 +205,14 @@ public:
   }
   const std::string& getCustomField(const std::string& key) const;
 
+  const Obstacle*	getHitBuilding(const fvec3& oldPos, float oldAngle,
+				       const fvec3& pos, float angle,
+				       bool phased, bool& expel);
+  bool		getHitNormal(const Obstacle* o,
+			     const fvec3& pos1, float azimuth1,
+			     const fvec3& pos2, float azimuth2,
+			     fvec3& normal) const;
+
 protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);
@@ -238,6 +246,10 @@ private:
   void updateJumpJets(float dt);
   void updateTrackMarks();
   bool hitObstacleResizing();
+  bool getHitCorrection(const fvec3& startPos, const float startAzimuth,
+      const fvec3& endPos, const float endAzimuth, const fvec3& startVelocity, 
+	  double timeStep, float groundLimit, fvec3& velocity, fvec3& position, 
+	  float* azimuth);
 
 private:
   // data not communicated with other players

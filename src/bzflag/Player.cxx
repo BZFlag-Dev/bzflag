@@ -598,6 +598,248 @@ bool Player::hitObstacleResizing()
   return false;
 }
 
+bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
+      const fvec3& endPos, const float endAzimuth, const fvec3& startVelocity, 
+	  double dt, float groundLimit, fvec3& velocity, fvec3& position, 
+	  float* azimuth) 
+{ 
+  // constants
+  static const float MinSearchStep = 0.0001f;
+  static const int MaxSearchSteps = 7;
+  static const int MaxSteps = 4;
+  static const float TinyDistance = 0.0001f;
+
+  fvec3 newPos;
+  fvec3 newVelocity;
+  float newAzimuth;
+  float newAngVel;
+  bool hitWall;
+  const Obstacle* obstacle;
+  bool expel;
+  float timeStep = (float)dt;
+  
+  newPos[0] = startPos[0];
+  newPos[1] = startPos[1];
+  newPos[2] = startPos[2];
+  newVelocity[0] = startVelocity[0];
+  newVelocity[1] = startVelocity[1];
+  newVelocity[2] = startVelocity[2];
+  newAngVel = state.angVel;
+  newAzimuth = startAzimuth;
+  hitWall = false;
+
+  bool phased = !isSolid();
+
+  for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
+    // record position at beginning of time step
+    fvec3 tmpPos; 
+	float tmpAzimuth;
+    tmpAzimuth = newAzimuth;
+    tmpPos[0] = newPos[0];
+    tmpPos[1] = newPos[1];
+    tmpPos[2] = newPos[2];
+
+    // get position at end of time step
+    newAzimuth = tmpAzimuth + timeStep * newAngVel;
+    newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
+    newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
+    newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
+    if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
+      // Hit lower limit, stop falling
+      newPos[2] = groundLimit;
+	  if ((state.status & PlayerState::Exploding) != 0) {
+	    // tank pieces reach the ground, friction
+	    // stop them, & mainly player view
+	    newPos[0] = tmpPos[0];
+	    newPos[1] = tmpPos[1];
+      }
+    }
+
+    // see if we hit anything.  if not then we're done.
+    obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+			      phased, expel);
+
+    if (!obstacle || !expel)
+      break;
+
+    float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
+	if (((inputStatus & PlayerState::Falling) == 0) && obstacle->isFlatTop() &&
+	(obstacleTop != tmpPos[2]) &&
+	(obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+      newPos[0] = startPos[0];
+      newPos[1] = startPos[1];
+      newPos[2] = obstacleTop;
+
+      // drive over bumps
+      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
+						    newPos, newAzimuth,
+						    phased, expel);
+      if (!bumpObstacle) {
+	    move(newPos, getAngle());
+	    const float speedFactor = BZDB.eval("_bumpSpeedFactor");
+	    newPos[0] += newVelocity[0] * ((float)dt * speedFactor);
+	    newPos[1] += newVelocity[1] * ((float)dt * speedFactor);
+	    break;
+      }
+    }
+
+    hitWall = true;
+
+    // record position when hitting
+    fvec3 hitPos;
+	float hitAzimuth;
+    hitAzimuth = newAzimuth;
+    hitPos[0] = newPos[0];
+    hitPos[1] = newPos[1];
+    hitPos[2] = newPos[2];
+
+    // find the latest time before the collision
+    float searchTime = 0.0f, searchStep = 0.5f * timeStep;
+    for (int i = 0; searchStep > MinSearchStep && i < MaxSearchSteps;
+		searchStep *= 0.5f, i++) {
+      // get intermediate position
+      const float t = searchTime + searchStep;
+      newAzimuth = tmpAzimuth + (t * newAngVel);
+      newPos[0] = tmpPos[0] + (t * newVelocity[0]);
+      newPos[1] = tmpPos[1] + (t * newVelocity[1]);
+      newPos[2] = tmpPos[2] + (t * newVelocity[2]);
+      if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
+	    newPos[2] = groundLimit;
+      }
+
+      // see if we hit anything
+      bool searchExpel;
+      const Obstacle* searchObstacle =
+	    getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+		       phased, searchExpel);
+
+      if (!searchObstacle || !searchExpel) {
+	    // if no hit then search latter half of time step
+	    searchTime = t;
+      } else if (searchObstacle) {
+	    // if we hit a building then record which one and where
+	    obstacle = searchObstacle;
+
+	    expel = searchExpel;
+	    hitAzimuth = newAzimuth;
+	    hitPos[0] = newPos[0];
+	    hitPos[1] = newPos[1];
+	    hitPos[2] = newPos[2];
+      }
+    }
+
+    // get position just before impact
+    newAzimuth = tmpAzimuth + (searchTime * newAngVel);
+    newPos[0] = tmpPos[0] + (searchTime * newVelocity[0]);
+    newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
+    newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
+    if (startPos[2] < groundLimit) {
+      newVelocity[2] = std::max(newVelocity[2], -startPos[2] / 2.0f + 0.5f);
+    }
+
+
+    // record how much time is left in time step
+    timeStep -= searchTime;
+
+    // get normal at intersection.  sometimes fancy test says there's
+    // no intersection but we're expecting one so, in that case, fall
+    // back to simple normal calculation.
+    fvec3 normal;
+    if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal)) {
+      obstacle->getNormal(newPos, normal);
+    }
+
+    // check for being on a building
+    if ((newPos[2] > 0.0f) && (normal[2] > 0.001f)) {
+		if (((state.status & PlayerState::DeadStatus) == 0) && 
+			((state.status & PlayerState::Exploding) == 0) && expel) {
+	    lastObstacle = obstacle;
+      }
+      newVelocity[2] = 0.0f;
+    } else {
+      // get component of velocity in normal direction (in horizontal plane)
+      float mag = (normal[0] * newVelocity[0]) +
+		  (normal[1] * newVelocity[1]);
+
+      // handle upward normal component to prevent an upward force
+      if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
+	    // if going down then stop falling
+	    if (newVelocity[2] < 0.0f && newVelocity[2] -
+	        (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f) {
+	      newVelocity[2] = 0.0f;
+	    }
+
+	    // normalize force magnitude in horizontal plane
+	    float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
+	    if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
+	      mag /= horNormal;
+	    }
+      }
+
+      // cancel out component in normal direction (if velocity and
+      // normal point in opposite directions).  also back off a tiny
+      // amount to prevent a spurious collision against the same
+      // obstacle.
+      if (mag < 0.0f) {
+	    newVelocity[0] -= mag * normal[0];
+	    newVelocity[1] -= mag * normal[1];
+	    if (!(getStatus() & PlayerState::BackedOff)) {
+	      newPos[0] -= TinyDistance * mag * normal[0];
+	      newPos[1] -= TinyDistance * mag * normal[1];
+	      setStatus(getStatus() | PlayerState::BackedOff);
+	    }
+      }
+      if (mag > -0.01f) {
+	    // assume we're not allowed to turn anymore if there's no
+	    // significant velocity component to cancel out.
+	    newAngVel = 0.0f;
+      }
+    }
+  }
+
+  velocity[0] = newVelocity[0];
+  velocity[1] = newVelocity[1];
+  velocity[2] = newVelocity[2];
+  position[0] = newPos[0]; 
+  position[1] = newPos[1]; 
+  position[2] = newPos[2]; 
+  *azimuth = newAzimuth;
+
+  return hitWall;
+}
+
+const Obstacle* Player::getHitBuilding(const fvec3& oldP, float oldA,
+					    const fvec3& p, float a,
+					    bool phased, bool& expel)
+{
+  const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
+  const float* dims = getDimensions();
+  World *world = World::getWorld();
+  if (!world) {
+    return NULL;
+  }
+  const Obstacle* obstacle = world->hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
+
+  expel = (obstacle != NULL);
+  if (expel && phased)
+    expel = (obstacle->getType() == WallObstacle::getClassName() ||
+		obstacle->getType() == Teleporter::getClassName());
+
+  return obstacle;
+}
+
+
+bool Player::getHitNormal(const Obstacle* o,
+			       const fvec3& pos1, float azimuth1,
+			       const fvec3& pos2, float azimuth2,
+			       fvec3& normal) const
+{
+  const float* dims = getDimensions();
+  return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
+			 dims[0], dims[1], dims[2], normal);
+}
+
+
 void Player::updateTranslucency(float dt)
 {
   // update the alpha value
@@ -1283,34 +1525,69 @@ void Player::doDeadReckoning()
   else
     notResponding = (dt > BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
 
+  bool hitWorld = false;
   bool ZHit = false;
+  
   // if the tanks hits something in Z then update input state (we don't want to fall anymore)
   float zLimit = 0.0f;
-  if (getFlag() == Flags::Burrow)
+  if (getFlag() == Flags::Burrow )
     zLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
 
-  // check to see if we will fall on anything, if so THAT is our z limit
+  // check for collisions and correct accordingly
   World *world = World::getWorld();
   if (world) {
-    const Obstacle* obstacle = world->hitBuilding(inputPos, inputAzimuth,
-      predictedPos, predictedAzimuth, dimensions[0], dimensions[1],
-      dimensions[2], isSolid());
+	bool expel;
+    const Obstacle* obstacle = getHitBuilding(inputPos, inputAzimuth, 
+		  predictedPos, predictedAzimuth, !isSolid(), expel);
 
     // did they hit something?
-    if (obstacle && isSolid()){
-      // we know they hit something just move them to the top of it
-      const Extents& exts = obstacle->getExtents();
-      zLimit = exts.maxs[2];
+    if (obstacle && expel) {
+      fvec3 hitPos;
+      fvec3 hitVelocity;
+	  fvec3 hitNormal;
+	  float hitAzimuth;
+
+	  // get the normal for the collision
+      if (!getHitNormal(obstacle, inputPos, inputAzimuth, 
+		  predictedPos, predictedAzimuth, hitNormal)) {
+        obstacle->getNormal(inputPos, hitNormal);
+      }
+
+	  // get the corrected position
+	  // FIXME: Azimuth isn't corrected properly
+      hitWorld = getHitCorrection(inputPos, inputAzimuth, predictedPos, 
+		  predictedAzimuth, inputVel, dt, zLimit, hitVelocity, hitPos, 
+		  &hitAzimuth);
+
+      if (hitWorld) {
+		// there was a collision, copy corrected position and velocity
+		predictedPos[0] = hitPos[0];
+		predictedPos[1] = hitPos[1];
+		predictedPos[2] = hitPos[2];
+		predictedVel[0] = hitVelocity[0];
+		predictedVel[1] = hitVelocity[1];
+		predictedVel[2] = hitVelocity[2];
+		//predictedAzimuth = hitAzimuth; 
+
+		// check if the collision was in the Z direction
+		if (hitNormal[2] > 0.001f)
+		{
+		  zLimit = hitPos[2];
+		  ZHit = true;
+		}
+	  }
     }
   }
+  
 
   // the velocity check is for when a Burrow flag is dropped
-  if ((predictedPos[2] <= zLimit) && (predictedVel[2] <= 0.0f)) {
+  if (ZHit || ((predictedPos[2] <= zLimit) 
+	  && (predictedVel[2] <= 0.0f))) {
     predictedPos[2] = zLimit;
     predictedVel[2] = 0.0f;
     inputStatus &= ~PlayerState::Falling;
     inputVel[2] = 0.0f;
-    ZHit = true;
+	hitWorld = true;
   }
 
   // setup remote players' landing sounds and graphics, and jumping sounds
@@ -1356,7 +1633,7 @@ void Player::doDeadReckoning()
   setVelocity(predictedVel);
   setRelativeMotion();
 
-  if (ZHit) { // if we hit something, then we want to DR from here now, instead of from the starting point
+  if (hitWorld) { // if we hit something, then we want to DR from here now, instead of from the starting point
     setDeadReckoning(syncedClock.GetServerSeconds());
   }
 
