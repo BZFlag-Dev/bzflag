@@ -356,9 +356,9 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
   if (phydrv != NULL) {
-    const float* v = phydrv->getLinearVel();
+    const fvec3& v = phydrv->getLinearVel();
     const float av = phydrv->getAngularVel();
-    const float* ap = phydrv->getAngularPos();
+    const fvec2& ap = phydrv->getAngularPos();
 
     // adjust for driver velocity
     vel[0] -= v[0];
@@ -562,7 +562,7 @@ void Player::updateDimensions(float dt, bool local)
 
 bool Player::hitObstacleResizing()
 {
-  const float* dims = dimensions;
+  const fvec3& dims = dimensions;
 
   // check walls
   const World* world = World::getWorld();
@@ -599,9 +599,10 @@ bool Player::hitObstacleResizing()
 }
 
 bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
-      const fvec3& endPos, const float endAzimuth, const fvec3& startVelocity, 
-	  double dt, float groundLimit, fvec3& velocity, fvec3& position, 
-	  float* azimuth) 
+                              const fvec3& /*endPos*/, const float /*endAzimuth*/,
+                              const fvec3& startVelocity, double dt,
+                              float groundLimit, fvec3& velocity, fvec3& position,
+                              float* azimuth) 
 { 
   // constants
   static const float MinSearchStep = 0.0001f;
@@ -1394,7 +1395,7 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 	if (pdAngVel != 0.0f) {
 	  const float angle = (dt * pdAngVel);
 	  predictedAzimuth += angle;
-	  const float* pdAngPos = phydrv->getAngularPos();
+	  const fvec2& pdAngPos = phydrv->getAngularPos();
 	  const float dx = predictedPos[0] - pdAngPos[0];
 	  const float dy = predictedPos[1] - pdAngPos[1];
 	  const float cos_val = cosf(angle);
@@ -1405,7 +1406,7 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 	  predictedVel[1] += (+dx * pdAngVel);
 	}
 	// linear velocity adjustment
-	const float* pdVel = phydrv->getLinearVel();
+	const fvec3& pdVel = phydrv->getLinearVel();
 	predictedPos[0] += (dt * pdVel[0]);
 	predictedPos[1] += (dt * pdVel[1]);
 	predictedVel[0] += pdVel[0];
@@ -1740,7 +1741,7 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
 
   if (firingInfo.shotType == ShockWaveShot) {
     // move shot origin under tank and make it stationary
-    const float* pos = getPosition();
+    const fvec3& pos = getPosition();
     firingInfo.shot.pos[0] = pos[0];
     firingInfo.shot.pos[1] = pos[1];
     firingInfo.shot.pos[2] = pos[2];
@@ -1750,8 +1751,8 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   } else {
     getMuzzle(firingInfo.shot.pos);
 
-    const float* dir     = getForward();
-    const float* tankVel = getVelocity();
+    const fvec3& dir     = getForward();
+    const fvec3& tankVel = getVelocity();
     float shotSpeed      = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
 
     if (handicap > 0.0f) {
