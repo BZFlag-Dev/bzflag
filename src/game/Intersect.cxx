@@ -163,12 +163,12 @@ Ray Intersect::rayMinusRay(const Ray& r1, float t1, const Ray& r2, float t2)
 
 float Intersect::rayAtDistanceFromOrigin(const Ray& r, float radius)
 {
-  const float* d = r.getDirection();
+  const fvec3& d = r.getDirection();
 
   if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0)
     return 0.0f;
 
-  const float* p = r.getOrigin();
+  const fvec3& p = r.getOrigin();
   const float a = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
   const float b = -(p[0] * d[0] + p[1] * d[1] + p[2] * d[2]);
   const float c = p[0] * p[0] + p[1] * p[1] + p[2] * p[2] - radius * radius;
@@ -296,8 +296,8 @@ float Intersect::timeRayHitsBlock(const Ray& r, const fvec3& p1,
                                   float angle, float dx, float dy, float dz)
 {
   // get names for ray info
-  const float* p2 = r.getOrigin();
-  const float* d = r.getDirection();
+  const fvec3& p2 = r.getOrigin();
+  const fvec3& d = r.getDirection();
 
   // translate origin
   float pa[2];
@@ -378,8 +378,8 @@ float Intersect::timeRayHitsPyramids(const Ray& r, const fvec3& p1, float angle,
   const float epsilon = 1.0e-3f;
   // get names for ray info
   int i;
-  const float* p2 = r.getOrigin();
-  const float* d  = r.getDirection();
+  const fvec3& p2 = r.getOrigin();
+  const fvec3& d  = r.getDirection();
 
   // translate origin
   float pa[2];
@@ -561,8 +561,8 @@ float Intersect::timeAndSideRayHitsRect(const Ray& r, const fvec3& p1, float ang
                                         float dx, float dy, int& side)
 {
   // get names for ray info
-  const float* p2 = r.getOrigin();
-  const float* d = r.getDirection();
+  const fvec3& p2 = r.getOrigin();
+  const fvec3& d = r.getDirection();
 
   // translate origin
   float pa[2];
@@ -834,11 +834,9 @@ IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
 {
   // FIXME - use a sphere vs. cone test first?
 
-  static int s, t;
-  static float i[3]; // inside point  (assuming partial)
-  static float o[3]; // outside point (assuming partial)
-  static float len;
-  static const float* p; // the plane
+  fvec3 inside;  // inside point  (assuming partial)
+  fvec3 outside; // outside point (assuming partial)
+  float len;
   IntersectLevel result = Contained;
 
   // FIXME - 0 is the near clip plane, not that useful really?
@@ -846,30 +844,31 @@ IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
 
   const int planeCount = frustum->getPlaneCount();
 
-  for (s = 1 /* NOTE: not 0 */; s < planeCount; s++) {
+  for (int s = 1 /* NOTE: not 0 */; s < planeCount; s++) {
 
-    p = frustum->getSide(s);
+    const fvec4& plane = frustum->getSide(s);
 
     // setup the inside/outside corners
     // this can be determined easily based
     // on the normal vector for the plane
-    for (t = 0; t < 3; t++) {
-      if (p[t] > 0.0f) {
-	i[t] = extents.maxs[t];
-	o[t] = extents.mins[t];
+    for (int t = 0; t < 3; t++) {
+      if (plane[t] > 0.0f) {
+	inside[t]  = extents.maxs[t];
+	outside[t] = extents.mins[t];
       } else {
-	i[t] = extents.mins[t];
-	o[t] = extents.maxs[t];
+	inside[t]  = extents.mins[t];
+	outside[t] = extents.maxs[t];
       }
     }
+
     // check the inside length
-    len = (p[0] * i[0]) + (p[1] * i[1]) + (p[2] * i[2]) + p[3];
+    len = fvec3::dot(inside, plane.xyz()) + plane.w;
     if (len < -1.0f) {
       return Outside; // box is fully outside the frustum
     }
 
     // check the outside length
-    len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
+    len = fvec3::dot(outside, plane.xyz()) + plane.w;
     if (len < -1.0f) {
       result = Partial; // partial containment at best
     }
@@ -937,11 +936,10 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
                                    float* inTime)
 {
   int a;
-  const float* const o = ray->getOrigin();
-  const float* const v = ray->getDirection();
-  const float* extents[2] = { exts.mins, exts.maxs };
-  int zone[3];
+  const fvec3& o = ray->getOrigin();
+  const fvec3& v = ray->getDirection();
   bool inside = true;
+  int zone[3];
 
   // setup the zones
   for (a = 0; a < 3; a++) {
@@ -949,58 +947,62 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
       if (v[a] <= 0.0f) {
 	return false;
       }
-      zone[a] = 0;
+      zone[a] = -1;
       inside = false;
-    } else if (o[a] > exts.maxs[a]) {
+    }
+    else if (o[a] > exts.maxs[a]) {
       if (v[a] >= 0.0f) {
 	return false;
       }
-      zone[a] = 1;
+      zone[a] = +1;
       inside = false;
-    } else {
-      zone[a] = -1;
+    } 
+    else {
+      zone[a] = 0;
     }
+  }
+
+  if (inside) {
+    *inTime = 0.0f;
+    return true;
   }
 
   int hitPlane;
   float hitTime[3];
 
-  if (inside) {
-    *inTime = 0.0f;
-  } else {
-    // calculate the hitTimes
-    for (a = 0; a < 3; a++) {
-      if (zone[a] < 0) {
-	hitTime[a] = -1.0f;
-      } else {
-	hitTime[a] = (extents[zone[a]][a] - o[a]) / v[a];
-      }
+  // calculate the hitTimes
+  for (a = 0; a < 3; a++) {
+    switch (zone[a]) {
+      case  0: { hitTime[a] = -1.0f; break; }
+      case -1: { hitTime[a] = (exts.mins[a] - o[a]) / v[a]; break; }
+      case +1: { hitTime[a] = (exts.maxs[a] - o[a]) / v[a]; break; }
     }
-
-    // use the largest hitTime
-    hitPlane = 0;
-    if (hitTime[1] > hitTime[0]) {
-      hitPlane = 1;
-    }
-    if (hitTime[2] > hitTime[hitPlane]) {
-      hitPlane = 2;
-    }
-
-    // check the hitPlane
-    const float useTime = hitTime[hitPlane];
-    if (useTime < 0.0f) {
-      return false;
-    }
-    for (a = 0; a < 3; a++) {
-      if (a != hitPlane) {
-	const float hitDist = o[a] + (useTime * v[a]);
-	if ((hitDist < exts.mins[a]) || (hitDist > exts.maxs[a])) {
-	  return false;
-	}
-      }
-    }
-    *inTime = useTime;
   }
+
+  // use the largest hitTime
+  hitPlane = 0;
+  if (hitTime[1] > hitTime[0]) {
+    hitPlane = 1;
+  }
+  if (hitTime[2] > hitTime[hitPlane]) {
+    hitPlane = 2;
+  }
+
+  // check the hitPlane
+  const float useTime = hitTime[hitPlane];
+  if (useTime < 0.0f) {
+    return false;
+  }
+  for (a = 0; a < 3; a++) {
+    if (a != hitPlane) {
+      const float hitDist = o[a] + (useTime * v[a]);
+      if ((hitDist < exts.mins[a]) || (hitDist > exts.maxs[a])) {
+        return false;
+      }
+    }
+  }
+
+  *inTime = useTime;
 
   return true;
 }
@@ -1016,8 +1018,8 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& extents,
   }
 
   int a;
-  const float* const o = ray->getOrigin();
-  const float* const v = ray->getDirection();
+  const fvec3& o = ray->getOrigin();
+  const fvec3& v = ray->getDirection();
 
   // calculate the hitTimes for the outTime
   float hitTime[3];

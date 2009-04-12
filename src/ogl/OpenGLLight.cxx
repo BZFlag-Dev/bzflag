@@ -161,9 +161,9 @@ void OpenGLLight::setOnlyGround(bool value)
 
 void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 {
-  // for away lights count the most
+  // far away lights (directional) count the most
   // (shouldn't happen for dynamic lights?)
-  if (pos[3] == 0.0f) {
+  if (pos.w == 0.0f) {
     importance = MAXFLOAT;
     return;
   }
@@ -174,20 +174,16 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 
   // check if the light is in front of the front viewing plane
   bool sphereCull = true;
-  const GLfloat* p = frustum.getDirection();
-  const float fd = (p[0] * pos[0]) +
-		   (p[1] * pos[1]) +
-		   (p[2] * pos[2]) + p[3];
+  const fvec4& p = frustum.getSide(0);
+  const float fd = fvec3::dot(pos.xyz(), p.xyz()) + p.w;
 
   // cull against the frustum planes
   if (fd > 0.0f) {
     sphereCull = false; // don't need a sphere cull
     const int planeCount = frustum.getPlaneCount();
     for (int i = 1; i < planeCount; i++) {
-      const float* plane = frustum.getSide(i);
-      const float len = (plane[0] * pos[0]) +
-			(plane[1] * pos[1]) +
-			(plane[2] * pos[2]) + plane[3];
+      const fvec4& plane = frustum.getSide(i);
+      const float len = fvec3::dot(pos.xyz(), plane.xyz()) + plane.w;
       if (len < -maxDist) {
 	importance = -1.0f;
 	return;
@@ -196,14 +192,8 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
   }
 
   // calculate the distance
-  const GLfloat* eye = frustum.getEye();
-  const float v[3] = {
-    (eye[0] - pos[0]),
-    (eye[1] - pos[1]),
-    (eye[2] - pos[2]),
-  };
-  float dist = (v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]);
-  dist = sqrtf(dist);
+  const fvec3& eye = frustum.getEye();
+  const float dist = (eye - pos.xyz()).length();
 
   // do a sphere cull if requested
   if (sphereCull && (dist > maxDist)) {

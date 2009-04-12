@@ -82,13 +82,14 @@ void			PolyWallSceneNode::Geometry::drawVT() const
 //
 
 PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
-					const fvec2Array& uv)
+                                     const fvec2Array& uv)
 {
   const int count = vertex.getSize();
   assert(uv.getSize() == count);
 
   // figure out plane (find non-colinear edges and get cross product)
-  GLfloat uEdge[3], vEdge[3], myPlane[4];
+  fvec3 uEdge, vEdge;
+  fvec4 myPlane;
   GLfloat uLen, vLen, nLen;
   uEdge[0] = vertex[0][0] - vertex[count - 1][0];
   uEdge[1] = vertex[0][1] - vertex[count - 1][1];

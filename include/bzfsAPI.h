@@ -2065,8 +2065,8 @@ public:
   {
   public:
     float pos[3];
-    float vec[3];
-    float rot;
+    float vec[3];  // FIXME -- vel for velocity?
+    float rot;     // FIXME -- radians or degrees?
     float rotVel;
     double time;
 

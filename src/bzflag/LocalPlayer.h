@@ -131,8 +131,8 @@ protected:
   void doUpdate(float dt);
   void doUpdateMotion(float dt);
   void doMomentum(float dt, float& speed, float& angVel);
-  void doFriction(float dt, const float *oldVelocity, float *newVelocity);
-  void doForces(float dt, float* velocity, float& angVel);
+  void doFriction(float dt, const fvec3& oldVelocity, fvec3& newVelocity);
+  void doForces(float dt, fvec3& velocity, float& angVel);
   bool gettingSound;
 
   ServerLink*	server;

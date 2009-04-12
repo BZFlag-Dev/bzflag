@@ -88,7 +88,7 @@ void RadarRenderer::setWorld(World* _world)
 }
 
 
-void RadarRenderer::setControlColor(const GLfloat *color)
+void RadarRenderer::setControlColor(const GLfloat* color)
 {
   if (color)
     memcpy(teamColor, color, 3 * sizeof(float));
@@ -132,7 +132,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
 {
   glPushMatrix();
 
-  const float* pos = player->getPosition();
+  const fvec3& pos = player->getPosition();
 
   // 'ps' is pixel scale, setup in render()
   const float tankRadius = BZDBCache::tankRadius;
@@ -166,7 +166,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
     if (useTankModels) {
       drawFancyTank(player);
     } else {
-      const float* dims = player->getDimensions();
+      const fvec3& dims = player->getDimensions();
       glRectf(-dims[0], -dims[1], +dims[0], +dims[1]);
     }
     glPopMatrix();
@@ -500,7 +500,7 @@ bool RadarRenderer::executeTransform(bool localView)
   glLoadIdentity();
 
   if (localView) {
-    const float* myPos = myTank->getPosition();
+    const fvec3& myPos = myTank->getPosition();
     const float myAngle = myTank->getAngle();
 
     // transform to the observer's viewpoint
@@ -684,7 +684,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   // relative to my tank
-  const float* myPos = myTank->getPosition();
+  const fvec3& myPos = myTank->getPosition();
   const float myAngle = myTank->getAngle();
 
   // draw the view angle below stuff
@@ -784,7 +784,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       continue;
     }
 
-    const float* position = player->getPosition();
+    const fvec3& position = player->getPosition();
 
     if (player->getFlag() != Flags::Null) {
       glColor3fv(player->getFlag()->getColor());
@@ -848,7 +848,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       const ShotPath* shot = player->getShot(j);
       if (shot && (shot->getShotType() != InvisibleShot || iSeeAll)) {
         const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-        const float *shotcolor;
+        const float* shotcolor;
         if (coloredShot) {
           if (colorblind) {
             shotcolor = Team::getRadarColor(RogueTeam);
@@ -879,7 +879,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       continue;
     // Flags change color by height
     const float cs = colorScale(flag.position[2], muzzleHeight);
-    const float *flagcolor = flag.type->getColor();
+    const float* flagcolor = flag.type->getColor();
     glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
     drawFlag(flag.position);
   }
@@ -1052,7 +1052,7 @@ void RadarRenderer::renderWalls()
     const float wid = wall.getBreadth();
     const float c   = wid * cosf(wall.getRotation());
     const float s   = wid * sinf(wall.getRotation());
-    const float* pos = wall.getPosition();
+    const fvec3& pos = wall.getPosition();
     glVertex2f(pos[0] - s, pos[1] + c);
     glVertex2f(pos[0] + s, pos[1] - c);
   }
@@ -1195,7 +1195,7 @@ void RadarRenderer::buildBoxPyr ( Obstacle* object )
   const float s = sinf(object->getRotation());
   const float wx = c * object->getWidth(), wy = s * object->getWidth();
   const float hx = -s * object->getBreadth(), hy = c * object->getBreadth();
-  const float* pos = object->getPosition();
+  const fvec3& pos = object->getPosition();
 
   glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
   glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
@@ -1231,7 +1231,7 @@ void RadarRenderer::buildMeshGeo ( MeshObstacle* mesh, bool deathFaces )
     int vertexCount = face->getVertexCount();
     glBegin(GL_TRIANGLE_FAN);
     for (int v = 0; v < vertexCount; v++) {
-      const float* pos = face->getVertex(v);
+      const fvec3& pos = face->getVertex(v);
       glVertex2f(pos[0], pos[1]);
     }
     glEnd();
@@ -1247,7 +1247,7 @@ void RadarRenderer::buildOutline ( Obstacle* object )
   const float s = sinf(object->getRotation());
   const float wx = c * object->getWidth(), wy = s * object->getWidth();
   const float hx = -s * object->getBreadth(), hy = c * object->getBreadth();
-  const float* pos = object->getPosition();
+  const fvec3& pos = object->getPosition();
 
   glBegin(GL_LINE_LOOP);
   glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
@@ -1425,7 +1425,7 @@ void RadarRenderer::renderBasesAndTeles()
       const float s = sinf (tele.getRotation ());
       const float wx = c * tele.getWidth (), wy = s * tele.getWidth ();
       const float hx = -s * tele.getBreadth (), hy = c * tele.getBreadth ();
-      const float *pos = tele.getPosition ();
+      const fvec3& pos = tele.getPosition();
       glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
       glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
 
@@ -1447,9 +1447,9 @@ void RadarRenderer::renderBasesAndTeles()
       const float cs = colorScale (z, bh);
       glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
       const float tw = tele.getBreadth ();
-      const float c = tw * cosf (tele.getRotation ());
-      const float s = tw * sinf (tele.getRotation ());
-      const float *pos = tele.getPosition ();
+      const float c = tw * cosf(tele.getRotation());
+      const float s = tw * sinf(tele.getRotation());
+      const fvec3& pos = tele.getPosition();
       glVertex2f (pos[0] - s, pos[1] + c);
       glVertex2f (pos[0] + s, pos[1] - c);
       glVertex2f (pos[0] + s, pos[1] - c);

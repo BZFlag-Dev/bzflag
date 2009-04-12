@@ -194,42 +194,32 @@ void QuadWallSceneNode::init(const fvec3& base,
                              bool makeLODs)
 {
   // record plane and bounding sphere info
-  fvec4 myPlane, mySphere;
-  myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-  myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-  myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-  myPlane[3] = -(myPlane[0] * base[0] + myPlane[1] * base[1]
-		 + myPlane[2] * base[2]);
+  fvec4 myPlane;
+  myPlane.xyz() = fvec3::cross(uEdge, vEdge);
+  myPlane.w = -fvec3::dot(base, myPlane.xyz());
   setPlane(myPlane);
-  mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
-  mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
-  mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
-  mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
-    + mySphere[2]*mySphere[2];
-  mySphere[0] += base[0];
-  mySphere[1] += base[1];
-  mySphere[2] += base[2];
+
+  fvec4 mySphere;
+  mySphere.xyz() = 0.5f * (uEdge + vEdge);
+  mySphere.w = mySphere.xyz().lengthSq();
+  mySphere.xyz() += base;
   setSphere(mySphere);
 
   // get length of sides
-  const float uLength = sqrtf(float(uEdge[0] * uEdge[0] +
-				uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]));
-  const float vLength = sqrtf(float(vEdge[0] * vEdge[0] +
-				vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]));
+  const float uLength = uEdge.length();
+  const float vLength = vEdge.length();
   float area = uLength * vLength;
 
   // If negative then these values aren't a number of times to repeat
   // the texture along the surface but the width, or a desired scaled
   // width, of the texture itself. Repeat the texture as many times
   // as necessary to fit the surface.
-  if (uRepeats < 0.0f)
-  {
-      uRepeats = - uLength / uRepeats;
+  if (uRepeats < 0.0f) {
+    uRepeats = - uLength / uRepeats;
   }
 
-  if (vRepeats < 0.0f)
-  {
-      vRepeats = - vLength / vRepeats;
+  if (vRepeats < 0.0f) {
+    vRepeats = - vLength / vRepeats;
   }
 
   // compute how many LODs required to get smaller edge down to
@@ -351,12 +341,9 @@ int QuadWallSceneNode::split(const fvec4& _plane,
   fvec2Array uv(4);
   for (int i = 0; i < 4; i++) {
     int j = i;
-    if (j == 2 || j == 3) j = 5 - j;
-    vertex[i][0] = nodes[0]->vertex[j][0];
-    vertex[i][1] = nodes[0]->vertex[j][1];
-    vertex[i][2] = nodes[0]->vertex[j][2];
-    uv[i][0] = nodes[0]->uv[j][0];
-    uv[i][1] = nodes[0]->uv[j][1];
+    if (j == 2 || j == 3) { j = 5 - j; }
+    vertex[i] = nodes[0]->vertex[j];
+    uv[i] = nodes[0]->uv[j];
   }
   return WallSceneNode::splitWall(_plane, vertex, uv, front, back);
 }
@@ -383,11 +370,12 @@ bool QuadWallSceneNode::inAxisBox(const Extents& exts) const
   }
 
   // NOTE: inefficient
-  fvec3 vertices[4];
-  vertices[0] = nodes[0]->getVertex(0);
-  vertices[1] = nodes[0]->getVertex(1);
-  vertices[2] = nodes[0]->getVertex(2);
-  vertices[3] = nodes[0]->getVertex(3);
+  const fvec3 vertices[4] = {
+    nodes[0]->getVertex(0),
+    nodes[0]->getVertex(1),
+    nodes[0]->getVertex(2),
+    nodes[0]->getVertex(3)
+  };
 
   return Intersect::testPolygonInAxisBox(4, vertices, getPlaneRaw(), exts);
 }

@@ -621,25 +621,18 @@ ColDetNode::~ColDetNode()
 void ColDetNode::makeChildren()
 {
   int side[3];    // the axis sides  (0 or 1)
-  float center[3];
   Extents exts;
-
-  // setup the center point
-  for (int i = 0; i < 3; i++) {
-    center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
-  }
-
   childCount = 0;
-  const float* extentSet[3] = { extents.mins, center, extents.maxs };
+  const fvec3 center = 0.5f * (extents.mins + extents.maxs);
+  const fvec3* extentSet[3] = { &extents.mins, &center, &extents.maxs };
 
   for (side[0] = 0; side[0] < 2; side[0]++) {
     for (side[1] = 0; side[1] < 2; side[1]++) {
       for (side[2] = 0; side[2] < 2; side[2]++) {
 
-	// calculate the child's extents
 	for (int a = 0; a < 3; a++) {
-	  exts.mins[a] = extentSet[side[a]+0][a];
-	  exts.maxs[a] = extentSet[side[a]+1][a];
+	  exts.mins[a] = (*extentSet[side[a] + 0])[a];
+	  exts.maxs[a] = (*extentSet[side[a] + 1])[a];
 	}
 
 	int kid = side[0] + (2 * side[1]) + (4 * side[2]);

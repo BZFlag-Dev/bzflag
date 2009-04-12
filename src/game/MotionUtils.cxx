@@ -15,6 +15,8 @@
 #include "MotionUtils.h"
 #include "Flag.h"
 #include "StateDatabase.h"
+#include "BZDBCache.h"
+
 
 float computeAngleVelocity(float old, float desired, float dt)
 {
@@ -92,11 +94,21 @@ float computeMaxLinVelocity(FlagType *flag, float z)
   return speed;
 }
 
-void computeMomentum(float dt, FlagType *flag, float& speed, float& angVel, const float lastSpeed, const float lastAngVel)
+
+void computeMomentum(float dt, FlagType *flag,
+                     float& speed, float& angVel,
+                     const float lastSpeed, const float lastAngVel)
 {
+  static BZDB_float bzdbLinearMomentum(StateDatabase::BZDB_MOMENTUMLINACC);
+  static BZDB_float bzdbLinearInertia(StateDatabase::BZDB_INERTIALINEAR);
+  static BZDB_float bzdbAngularMomentum(StateDatabase::BZDB_MOMENTUMANGACC);
+  static BZDB_float bzdbAngularInertia(StateDatabase::BZDB_INERTIAANGULAR);
+
   // get maximum linear and angular accelerations
-  float linearAcc = (flag == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) : BZDB.eval(StateDatabase::BZDB_INERTIALINEAR);
-  float angularAcc = (flag == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) : BZDB.eval(StateDatabase::BZDB_INERTIAANGULAR);
+  const float linearAcc = (flag == Flags::Momentum) ? bzdbLinearMomentum
+                                                    : bzdbLinearInertia;
+  const float angularAcc = (flag == Flags::Momentum) ? bzdbAngularMomentum
+                                                     : bzdbAngularInertia;
 
   // limit linear acceleration
   if (linearAcc > 0.0f) {
@@ -118,13 +130,20 @@ void computeMomentum(float dt, FlagType *flag, float& speed, float& angVel, cons
   }
 }
 
-void computeFriction(float dt, FlagType *flag, const float *oldVelocity, float *newVelocity)
+
+void computeFriction(float dt, FlagType *flag,
+                     const fvec3& oldVelocity, fvec3& newVelocity)
 {
-  const float friction = (flag== Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) : BZDB.eval(StateDatabase::BZDB_FRICTION);
+  static BZDB_float bzdbFriction(StateDatabase::BZDB_FRICTION);
+  static BZDB_float bzdbMomentumFriction(StateDatabase::BZDB_MOMENTUMFRICTION);
+
+  const float friction = (flag == Flags::Momentum) ? bzdbFriction
+                                                   : bzdbMomentumFriction;
 
   if (friction > 0.0f) {
     // limit vector acceleration
 
+    
     float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
     float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
     float accLimit = 20.0f * friction;
@@ -137,6 +156,7 @@ void computeFriction(float dt, FlagType *flag, const float *oldVelocity, float *
   }
 }
 
+
 float computeJumpVelocity(FlagType *flag)
 {
   if (flag == Flags::Wings)
@@ -144,6 +164,7 @@ float computeJumpVelocity(FlagType *flag)
 
   return BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 }
+
 
 float computeGroundLimit(FlagType *flag)
 {
@@ -153,63 +174,6 @@ float computeGroundLimit(FlagType *flag)
 
   return groundLimit;
 }
-
-
-void vecFromAngle2d(float ang, float vec[3], float mag)
-{
-  vec[0] = cosf(ang * DEG2RAD) * mag;
-  vec[1] = sinf(ang * DEG2RAD) * mag;
-  vec[2] = 0;
-}
-
-float getMagnitude(const float v[3])
-{
-  return sqrtf(getMagnitudeSquare(v));
-}
-
-float getMagnitude(const float p1[3], const float p2[3])
-{
-  return sqrtf(getMagnitudeSquare(p1, p2));
-}
-
-float getMagnitude2d(const float v[2])
-{
-  return sqrtf(getMagnitude2dSquare(v));
-}
-
-float getMagnitude2d(const float p1[2], const float p2[2])
-{
-  return sqrtf(getMagnitude2dSquare(p1, p2));
-}
-
-float getMagnitudeSquare(const float v[3])
-{
-  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
-}
-
-float getMagnitudeSquare(const float p1[3], const float p2[3])
-{
-  float v[3];
-  for (int i =0; i < 3; i++)
-    v[i] = p1[i]-p2[i];
-
-  return getMagnitudeSquare(v);
-}
-
-float getMagnitude2dSquare(const float v[2])
-{
-  return v[0]*v[0] + v[1]*v[1];
-}
-
-float getMagnitude2dSquare(const float p1[2], const float p2[2])
-{
-  float v[2];
-  for (int i =0; i < 2; i++)
-    v[i] = p1[i]-p2[i];
-
-  return getMagnitude2dSquare(v);
-}
-
 
 
 // Local Variables: ***

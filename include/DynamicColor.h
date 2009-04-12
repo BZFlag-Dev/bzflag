@@ -48,7 +48,7 @@ class DynamicColor {
     void setColor(const fvec4& color);
 
     bool canHaveAlpha() const;
-    const float* getColor() const;
+    const fvec4& getColor() const;
     const std::string& getName() const;
 
     int packSize() const;
@@ -106,7 +106,7 @@ inline bool DynamicColor::canHaveAlpha() const
   return possibleAlpha;
 }
 
-inline const float* DynamicColor::getColor() const {
+inline const fvec4& DynamicColor::getColor() const {
   return color;
 }
 

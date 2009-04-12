@@ -68,14 +68,11 @@ TracerSceneNode::~TracerSceneNode()
 
 void TracerSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
-  const GLfloat d = 1.0f / sqrtf(forward[0] * forward[0] +
-				forward[1] * forward[1] +
-				forward[2] * forward[2]);
-  azimuth = (GLfloat)(180.0 / M_PI * atan2f(forward[1], forward[0]));
-  elevation = (GLfloat)(-180.0 / M_PI * atan2f(forward[2], hypotf(forward[0],forward[1])));
-  setCenter(pos[0] - 0.5f * TailLength * d * forward[0],
-	    pos[1] - 0.5f * TailLength * d * forward[1],
-	    pos[2] - 0.5f * TailLength * d * forward[2]);
+  setCenter(pos - 0.5f * TailLength * forward.normalize());
+
+  azimuth   = (GLfloat)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (GLfloat)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
+
   light.setPosition(getSphere().xyz());
 }
 
@@ -131,9 +128,9 @@ TracerSceneNode::TracerRenderNode::~TracerRenderNode()
 
 void TracerSceneNode::TracerRenderNode::render()
 {
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 

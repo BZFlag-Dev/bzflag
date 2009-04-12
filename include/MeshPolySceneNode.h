@@ -52,7 +52,7 @@ class MeshPolySceneNode : public WallSceneNode {
 		 const fvec3Array& vertices,
 		 const fvec3Array& normals,
 		 const fvec2Array& texcoords,
-		 const GLfloat* normal);
+		 const fvec3& normal);
 	~Geometry();
 	void setStyle(int _style) { style = _style; }
 	bool getNoRadar() const;
@@ -74,7 +74,7 @@ class MeshPolySceneNode : public WallSceneNode {
 	int style;
 	bool drawRadar;
 	bool draw;
-	const GLfloat* normal;
+	const fvec3& normal;
       public:
 	fvec3Array vertices;
 	fvec3Array normals;
@@ -82,27 +82,27 @@ class MeshPolySceneNode : public WallSceneNode {
     };
 
   private:
-    int splitWallVTN(const GLfloat* plane,
+    int splitWallVTN(const fvec4& plane,
 		     const fvec3Array& vertices,
 		     const fvec3Array& normals,
 		     const fvec2Array& texcoords,
 		     SceneNode*& front, SceneNode*& back) const;
 
     void splitEdgeVTN(float d1, float d2,
-		      const GLfloat* p1, const GLfloat* p2,
-		      const GLfloat* n1, const GLfloat* n2,
-		      const GLfloat* uv1, const GLfloat* uv2,
-		      GLfloat* p, GLfloat* n, GLfloat* uv) const;
+		      const fvec3& p1,  const fvec3& p2,
+		      const fvec3& n1,  const fvec3& n2,
+		      const fvec2& uv1, const fvec2& uv2,
+		      fvec3& p, fvec3& n, fvec2& uv) const;
 
-    int splitWallVT(const GLfloat* plane,
+    int splitWallVT(const fvec4& plane,
 		    const fvec3Array& vertices,
 		    const fvec2Array& texcoords,
 		    SceneNode*& front, SceneNode*& back) const;
 
     void splitEdgeVT(float d1, float d2,
-		     const GLfloat* p1, const GLfloat* p2,
-		     const GLfloat* uv1, const GLfloat* uv2,
-		     GLfloat* p, GLfloat* uv) const;
+		     const fvec3& p1,  const fvec3& p2,
+		     const fvec2& uv1, const fvec2& uv2,
+		     fvec3& p, fvec2& uv) const;
 
     Geometry node;
     bool noRadar;

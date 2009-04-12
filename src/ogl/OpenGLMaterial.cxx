@@ -27,19 +27,15 @@ OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
 {
   // see if we've already got an identical material
   for (Rep* scan = head; scan; scan = scan->next) {
-    if (shininess != scan->shininess)
+    if (shininess != scan->shininess) {
       continue;
-
-    const GLfloat* c1 = specular;
-    const GLfloat* c2 = scan->specular;
-    if (c1[0] != c2[0] || c1[1] != c2[1] || c1[2] != c2[2])
+    }
+    if (specular.xyz() != scan->specular.xyz()) {
       continue;
-
-    c1 = emissive;
-    c2 = scan->emissive;
-    if (c1[0] != c2[0] || c1[1] != c2[1] || c1[2] != c2[2])
+    }
+    if (emissive.xyz() != scan->emissive.xyz()) {
       continue;
-
+    }
     scan->ref();
     return scan;
   }

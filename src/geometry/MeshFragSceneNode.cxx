@@ -245,7 +245,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
   // disable the plane
   noPlane = true;
-  static const float fakePlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+  static const fvec4 fakePlane(0.0f, 0.0f, 1.0f, 0.0f);
   setPlane(fakePlane);
 
   const BzMaterial* bzmat = faces[0]->getMaterial();
@@ -264,16 +264,8 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   }
 
   // setup sphere
-  float diffs[3];
-  diffs[0] = extents.maxs[0] - extents.mins[0];
-  diffs[1] = extents.maxs[1] - extents.mins[1];
-  diffs[2] = extents.maxs[2] - extents.mins[2];
-  fvec4 mySphere;
-  mySphere[0] = 0.5f * (extents.maxs[0] + extents.mins[0]);
-  mySphere[1] = 0.5f * (extents.maxs[1] + extents.mins[1]);
-  mySphere[2] = 0.5f * (extents.maxs[2] + extents.mins[2]);
-  mySphere[3] = 0.25f *
-    ((diffs[0] * diffs[0]) + (diffs[1] * diffs[1]) + (diffs[2] * diffs[2]));
+  fvec4 mySphere(0.50f * (extents.maxs + extents.mins), // midpoint
+                 0.25f * (extents.maxs - extents.mins).lengthSq());
   setSphere(mySphere);
 
   // count the number of actual vertices

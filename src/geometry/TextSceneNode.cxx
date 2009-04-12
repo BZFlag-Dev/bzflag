@@ -132,9 +132,9 @@ void TextSceneNode::calcPlane()
 
 void TextSceneNode::calcSphere(const fvec3 points[5])
 {
-  const float* orig  = points[4];
+  const fvec3& orig  = points[4];
   const float radius = getMaxDist(points);
-  fvec4 tmpSphere(orig[0], orig[1], orig[2], (radius * radius));
+  fvec4 tmpSphere(orig, (radius * radius));
 
   setSphere(tmpSphere);
 }
@@ -284,9 +284,8 @@ bool TextSceneNode::cull(const ViewFrustum& frustum) const
   const WorldText& text = renderNode.text;
   // see if our eye is behind the plane
   if (!text.billboard && !text.bzMaterial->getNoCulling()) {
-    const float* eye = frustum.getEye();
-    if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-         plane[3]) <= 0.0f) {
+    const fvec3& eye = frustum.getEye();
+    if ((fvec3::dot(eye, plane.xyz()) + plane.w) <= 0.0f) {
       return false;
     }
   }
@@ -590,13 +589,10 @@ inline bool TextSceneNode::TextRenderNode::checkDist() const
   }
   const SceneRenderer& renderer = RENDERER;
   const ViewFrustum&   frustum  = renderer.getViewFrustum();
-  const float* s = sceneNode->getSphere();
-  const float* e = frustum.getEye();
-  const float* d = frustum.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-                     (d[1] * (s[1] - e[1])) +
-                     (d[2] * (s[2] - e[2]));
-
+  const fvec3& pos = sceneNode->getSphere().xyz();
+  const fvec3& eye = frustum.getEye();
+  const fvec3& dir = frustum.getDirection();
+  const float dist = fvec3::dot(dir, pos - eye);
   const float lpp = dist * renderer.getLengthPerPixel();
 
   return (lpp < text.lengthPerPixel);
@@ -726,7 +722,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
 
   fm.setRawBlending(true);
 
-  static float shadowColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  static fvec4 shadowColor(0.0f, 0.0f, 0.0f, 1.0f);
   const float* oldColor = colorPtr;
   colorPtr = shadowColor;
 

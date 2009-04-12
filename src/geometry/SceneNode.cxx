@@ -28,12 +28,13 @@
 
 
 #ifndef __MINGW32__
-void			(__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);
-void			(__stdcall *SceneNode::color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-void			(__stdcall *SceneNode::color3fv)(const GLfloat*);
-void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
+void (__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);
+void (__stdcall *SceneNode::color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
+void (__stdcall *SceneNode::color3fv)(const GLfloat*);
+void (__stdcall *SceneNode::color4fv)(const GLfloat*);
 #endif
-void			(*SceneNode::stipple)(GLfloat);
+void (*SceneNode::stipple)(GLfloat);
+
 
 SceneNode::SceneNode()
 {
@@ -55,10 +56,12 @@ SceneNode::SceneNode()
   return;
 }
 
+
 SceneNode::~SceneNode()
 {
   // do nothing
 }
+
 
 #if defined(sun)
 static void __stdcall	oglColor3f(GLfloat r, GLfloat g, GLfloat b)
@@ -81,6 +84,7 @@ void __stdcall		SceneNode::noColor3fv(const GLfloat*) { }
 void __stdcall		SceneNode::noColor4fv(const GLfloat*) { }
 #endif
 void			SceneNode::noStipple(GLfloat) { }
+
 
 void			SceneNode::setColorOverride(bool on)
 {
@@ -114,73 +118,82 @@ void			SceneNode::setColorOverride(bool on)
   }
 }
 
-void			SceneNode::setRadius(GLfloat radiusSquared)
+
+void SceneNode::setRadius(GLfloat radiusSquared)
 {
   sphere[3] = radiusSquared;
 }
 
-void			SceneNode::setCenter(const fvec3& center)
+
+void SceneNode::setCenter(const fvec3& center)
 {
   sphere.xyz() = center;
 }
 
-void			SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
+
+void SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
 {
   sphere[0] = x;
   sphere[1] = y;
   sphere[2] = z;
 }
 
-void			SceneNode::setSphere(const fvec4& _sphere)
+
+void SceneNode::setSphere(const fvec4& _sphere)
 {
   sphere = _sphere;
 }
 
-void			SceneNode::notifyStyleChange()
+
+void SceneNode::notifyStyleChange()
 {
   // do nothing
 }
 
-void			SceneNode::addRenderNodes(SceneRenderer&)
+
+void SceneNode::addRenderNodes(SceneRenderer&)
 {
   // do nothing
 }
 
-void			SceneNode::addShadowNodes(SceneRenderer&)
+
+void SceneNode::addShadowNodes(SceneRenderer&)
 {
   // do nothing
 }
 
-void			SceneNode::addLight(SceneRenderer&)
+
+void SceneNode::addLight(SceneRenderer&)
 {
   // do nothing
 }
 
-GLfloat			SceneNode::getDistance(const GLfloat* eye) const
+
+GLfloat SceneNode::getDistanceSq(const fvec3& eye) const
 {
-  return (eye[0] - sphere[0]) * (eye[0] - sphere[0]) +
-	 (eye[1] - sphere[1]) * (eye[1] - sphere[1]) +
-	 (eye[2] - sphere[2]) * (eye[2] - sphere[2]);
+  return (eye - sphere.xyz()).lengthSq();
 }
 
-int			SceneNode::split(const fvec4&,
-					SceneNode*&, SceneNode*&) const
+
+int SceneNode::split(const fvec4&, SceneNode*&, SceneNode*&) const
 {
   // can't split me
   return 1;
 }
 
-bool			SceneNode::cull(const ViewFrustum& view) const
+
+bool SceneNode::cull(const ViewFrustum& view) const
 {
   // if center of object is outside view frustum and distance is
   // greater than radius of object then cull.
   const int planeCount = view.getPlaneCount();
   for (int i = 0; i < planeCount; i++) {
-    const GLfloat* norm = view.getSide(i);
-    const GLfloat d = (sphere[0] * norm[0]) +
-		      (sphere[1] * norm[1]) +
-		      (sphere[2] * norm[2]) + norm[3];
-    if ((d < 0.0f) && ((d * d) > sphere[3])) return true;
+    const fvec4& norm = view.getSide(i);
+    
+    const float d = fvec3::dot(sphere.xyz(), norm.xyz()) + norm.w;
+    if ((d < 0.0f) && ((d * d) > sphere[3])) {
+      return true;
+    }
   }
   return false;
 }
@@ -202,10 +215,12 @@ bool SceneNode::inAxisBox (const Extents& exts) const
   return true;
 }
 
+
 int SceneNode::getVertexCount () const
 {
   return 0;
 }
+
 
 const fvec3& SceneNode::getVertex(int) const
 {
@@ -214,6 +229,20 @@ const fvec3& SceneNode::getVertex(int) const
 }
 
 
+void SceneNode::getRenderNodes(std::vector<RenderSet>&)
+{
+  return; // do nothing
+}
+
+
+void SceneNode::renderRadar()
+{
+  printf ("SceneNode::renderRadar() called, implement in subclass\n");
+  return;
+}
+
+
+//============================================================================//
 //
 // fvec2Array
 //
@@ -257,19 +286,6 @@ fvec3Array& fvec3Array::operator=(const fvec3Array& a)
     ::memcpy(data, a.data, size * sizeof(fvec3));
   }
   return *this;
-}
-
-
-void SceneNode::getRenderNodes(std::vector<RenderSet>&)
-{
-  return; // do nothing
-}
-
-
-void SceneNode::renderRadar()
-{
-  printf ("SceneNode::renderRadar() called, implement in subclass\n");
-  return;
 }
 
 

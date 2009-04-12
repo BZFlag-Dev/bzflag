@@ -42,6 +42,7 @@
 #include "BufferedNetworkMessage.h"
 #include "ServerIntangibilityManager.h"
 #include "bz_md5.h"
+#include "vectors.h"
 #include "version.h"
 #include "BZDBCache.h"
 #include "MotionUtils.h"
@@ -5031,7 +5032,7 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
       midpoint.pos[i] = oldPos.pos[i] + vec[i]*0.5f;
     }
 
-    midpoint.rot = oldPos.rot + ((oldPos.rot-newPos.rot)*0.5f);
+    midpoint.rot = oldPos.rot + ((oldPos.rot - newPos.rot)*0.5f);
 
     // test from the start point to the midpoint
     
@@ -5184,11 +5185,9 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	  currentState.vec[2] = 0;
 
 	  // get our facing and apply it to our vector so we keep the components that are along our facing.
-	  float facing[3];
-	  vecFromAngle2d(newState.rot,facing);
-
-	  currentState.vec[0] *= facing[0];
-	  currentState.vec[1] *= facing[1];
+	  currentState.vec[0] *= cosf(newState.rot);
+	  currentState.vec[1] *= sinf(newState.rot);
+	  currentState.vec[2] = 0.0f;
 
 	  // set the state to have landed
 	  player->lastState.status &= ~PlayerState::Falling;
@@ -5220,29 +5219,42 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       float desiredTurn = input[1] * getMaxRotSpeed();
 
       // clamp to the rotation speed for the frame.
-      newState.rotVel = computeAngleVelocity(newState.rotVel,desiredTurn,delta);
+      newState.rotVel = computeAngleVelocity(newState.rotVel, desiredTurn, delta);
 
       float currentSpeed = input[1] * getMaxLinSpeed();
 
+      float* newVel = newState.vec;
+      float* curVel = currentState.vec;
+
       // compute the momentum
-      float lastSpeed = getMagnitude(newState.vec);
+      float lastSpeed = fvec3(newVel[0], newVel[1], newVel[2]).length();
       if (lastSpeed < 0.001)
 	lastSpeed = 0;
 
-      computeMomentum(delta, flag, currentSpeed, newState.rotVel, getMagnitude(newState.vec), currentState.rotVel );
+      computeMomentum(delta, flag, currentSpeed, newState.rotVel,
+                      lastSpeed, currentState.rotVel);
 
       // compute our new rotation;
       newState.rot += newState.rotVel * delta;
 
       // compute our new velocity
-      vecFromAngle2d(newState.rot,newState.vec,currentSpeed);
+      newState.vec[0] = currentSpeed * cosf(newState.rot);
+      newState.vec[1] = currentSpeed * sinf(newState.rot);
+      newState.vec[2] = 0.0f;
 
       // clamp the speed to acceleration and the world
-      computeFriction(delta,flag,currentState.vec,newState.vec);
+
+      fvec3 tmpVel(newVel[0], newVel[1], newVel[2]);
+      computeFriction(delta, flag, fvec3(curVel[0], curVel[1], curVel[2]), tmpVel);
+      newVel[0] = tmpVel.x;
+      newVel[1] = tmpVel.y;
+      newVel[2] = tmpVel.z;
 
       // compute our new position
       for (int j =0; j < 3; j++)
+      {
 	newState.pos[j] += newState.vec[j] * delta;
+      }
 
       // clamp us to in bounds
       if (!checkBounds(newState.pos,BZDBCache::tankRadius))

@@ -68,12 +68,14 @@ BillboardSceneNode::BillboardSceneNode(const fvec3& pos)
   resetTime();
 }
 
+
 BillboardSceneNode::~BillboardSceneNode()
 {
   // do nothing
 }
 
-BillboardSceneNode*	BillboardSceneNode::copy() const
+
+BillboardSceneNode* BillboardSceneNode::copy() const
 {
   BillboardSceneNode* e = new BillboardSceneNode(getSphere().xyz());
   e->show = show;
@@ -106,25 +108,29 @@ BillboardSceneNode*	BillboardSceneNode::copy() const
   return e;
 }
 
-void			BillboardSceneNode::setLoop(bool _looping)
+
+void BillboardSceneNode::setLoop(bool _looping)
 {
   looping = _looping;
 }
 
-void			BillboardSceneNode::setDuration(float _duration)
+
+void BillboardSceneNode::setDuration(float _duration)
 {
   duration = _duration;
   if (t > duration) t = duration;
   setFrame();
 }
 
-void			BillboardSceneNode::resetTime()
+
+void BillboardSceneNode::resetTime()
 {
   t = 0.0f;
   setFrame();
 }
 
-void			BillboardSceneNode::updateTime(float dt)
+
+void BillboardSceneNode::updateTime(float dt)
 {
   // change time by dt then make sure it's in bounds
   const float ot = t;
@@ -146,12 +152,14 @@ void			BillboardSceneNode::updateTime(float dt)
   }
 }
 
-bool			BillboardSceneNode::isAtEnd() const
+
+bool BillboardSceneNode::isAtEnd() const
 {
   return t == duration;
 }
 
-void			BillboardSceneNode::setFrame()
+
+void BillboardSceneNode::setFrame()
 {
   // update frame
   if (duration == 0.0f) {
@@ -165,20 +173,22 @@ void			BillboardSceneNode::setFrame()
   }
 }
 
-bool			BillboardSceneNode::isLight() const
+
+bool BillboardSceneNode::isLight() const
 {
   return lightSource && show;
 }
 
-void			BillboardSceneNode::setLight(bool on)
+
+void BillboardSceneNode::setLight(bool on)
 {
   if (lightSource == on) return;
   lightSource = on;
   if (lightSource) prepLight();
 }
 
-void			BillboardSceneNode::setLightColor(
-				GLfloat r, GLfloat g, GLfloat b)
+
+void BillboardSceneNode::setLightColor(GLfloat r, GLfloat g, GLfloat b)
 {
   lightColor[0] = r;
   lightColor[1] = g;
@@ -186,33 +196,37 @@ void			BillboardSceneNode::setLightColor(
   prepLight();
 }
 
-void			BillboardSceneNode::setLightAttenuation(
-				GLfloat c, GLfloat l, GLfloat q)
+
+void BillboardSceneNode::setLightAttenuation(GLfloat c, GLfloat l, GLfloat q)
 {
   light.setAttenuation(0, c);
   light.setAttenuation(1, l);
   light.setAttenuation(2, q);
 }
 
-void			BillboardSceneNode::setLightScaling(GLfloat s)
+
+void BillboardSceneNode::setLightScaling(GLfloat s)
 {
   lightScale = s;
   prepLight();
 }
 
-void			BillboardSceneNode::setLightFadeStartTime(float _t)
+
+void BillboardSceneNode::setLightFadeStartTime(float _t)
 {
   lightCutoffTime = _t;
   prepLight();
 }
 
-void			BillboardSceneNode::setGroundLight(bool value)
+
+void BillboardSceneNode::setGroundLight(bool value)
 {
   groundLight = value;
   light.setOnlyGround(value);
 }
 
-void			BillboardSceneNode::prepLight()
+
+void BillboardSceneNode::prepLight()
 {
   if (!lightSource) return;
   const float s = (t <= lightCutoffTime || lightCutoffTime >= duration) ? 1.0f :
@@ -222,20 +236,22 @@ void			BillboardSceneNode::prepLight()
 		 lightColor[2] * lightScale * s);
 }
 
-void			BillboardSceneNode::setSize(float side)
+
+void BillboardSceneNode::setSize(float side)
 {
   setSize(side, side);
 }
 
-void			BillboardSceneNode::setSize(float _width, float _height)
+
+void BillboardSceneNode::setSize(float _width, float _height)
 {
   width = 0.5f * _width;
   height = 0.5f * _height;
   setRadius(width * width + height * height);
 }
 
-void			BillboardSceneNode::setColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+
+void BillboardSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
   color[0] = r;
   color[1] = g;
@@ -244,13 +260,15 @@ void			BillboardSceneNode::setColor(
   hasAlpha = (color[3] != 1.0f || hasTextureAlpha);
 }
 
-void			BillboardSceneNode::setColor(const GLfloat* rgba)
+
+void BillboardSceneNode::setColor(const GLfloat* rgba)
 {
   setColor(rgba[0], rgba[1], rgba[2], rgba[3]);
 }
 
-void			BillboardSceneNode::setTexture(
-				const int texture)
+
+
+void BillboardSceneNode::setTexture(const int texture)
 {
   hasTexture = texture >= 0;
   TextureManager &tm = TextureManager::instance();
@@ -263,8 +281,8 @@ void			BillboardSceneNode::setTexture(
   gstate = builder.getState();
 }
 
-void			BillboardSceneNode::
-				setTextureAnimation(int _cu, int _cv)
+
+void BillboardSceneNode::setTextureAnimation(int _cu, int _cv)
 {
   cu = _cu;
   cv = _cv;
@@ -272,18 +290,21 @@ void			BillboardSceneNode::
   setFrame();
 }
 
-void			BillboardSceneNode::move(const fvec3& pos)
+
+void BillboardSceneNode::move(const fvec3& pos)
 {
   setCenter(pos);
   light.setPosition(pos);
 }
 
-void			BillboardSceneNode::setAngle(GLfloat _angle)
+
+void BillboardSceneNode::setAngle(GLfloat _angle)
 {
-  angle = (float)(180.0 / M_PI * _angle);
+  angle = RAD2DEG * _angle;
 }
 
-void			BillboardSceneNode::addLight(
+
+void BillboardSceneNode::addLight(
 				SceneRenderer& renderer)
 {
   if (show && lightSource) {
@@ -291,7 +312,8 @@ void			BillboardSceneNode::addLight(
   }
 }
 
-void			BillboardSceneNode::notifyStyleChange()
+
+void BillboardSceneNode::notifyStyleChange()
 {
   show = hasTexture && BZDBCache::texture &&
 	(!hasAlpha || BZDBCache::blend);
@@ -311,7 +333,8 @@ void			BillboardSceneNode::notifyStyleChange()
   }
 }
 
-void			BillboardSceneNode::addRenderNodes(
+
+void BillboardSceneNode::addRenderNodes(
 				SceneRenderer& renderer)
 {
   if (show)
@@ -335,21 +358,24 @@ BillboardSceneNode::BillboardRenderNode::~BillboardRenderNode()
   // do nothing
 }
 
-void			BillboardSceneNode::BillboardRenderNode::
+
+void BillboardSceneNode::BillboardRenderNode::
 				setFrame(float _u, float _v)
 {
   u = _u;
   v = _v;
 }
 
-void			BillboardSceneNode::BillboardRenderNode::
+
+void BillboardSceneNode::BillboardRenderNode::
 				setFrameSize(float _du, float _dv)
 {
   du = _du;
   dv = _dv;
 }
 
-void			BillboardSceneNode::BillboardRenderNode::render()
+
+void BillboardSceneNode::BillboardRenderNode::render()
 {
   static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
 
@@ -361,33 +387,26 @@ void			BillboardSceneNode::BillboardRenderNode::render()
   // will move in the direction of the view, which isn't necessarily
   // the direction to the billboard from the eye.
   ViewFrustum& frustum = RENDERER.getViewFrustum();
-  const GLfloat* eye = frustum.getEye();
-  const GLfloat* sphere = sceneNode->getSphere();
-  GLfloat dir[3], d;
-  dir[0] = eye[0] - sphere[0];
-  dir[1] = eye[1] - sphere[1];
-  dir[2] = eye[2] - sphere[2];
-  d = sceneNode->width / hypotf(dir[0], hypotf(dir[1], dir[2]));
+  const fvec3& eye = frustum.getEye();
+  const fvec4& sphere = sceneNode->getSphere();
+
+  const fvec3 dir = eye - sphere.xyz();
+  const float dist = sceneNode->width / dir.length();
+  const fvec3 trans = sphere.xyz() + (dist * dir);
 
   glPushMatrix();
   {
-    glTranslatef(sphere[0] + d * dir[0],
-		 sphere[1] + d * dir[1],
-		 sphere[2] + d * dir[2]);
+    glTranslatef(trans.x, trans.y, trans.z);
     frustum.executeBillboard();
     glRotatef(sceneNode->angle, 0.0f, 0.0f, 1.0f);
 
     // draw billboard
     myColor4fv(sceneNode->color);
     glBegin(GL_QUADS);
-    glTexCoord2f(   u,    v);
-    glVertex2f  (-sceneNode->width, -sceneNode->height);
-    glTexCoord2f(du+u,    v);
-    glVertex2f  ( sceneNode->width, -sceneNode->height);
-    glTexCoord2f(du+u, dv+v);
-    glVertex2f  ( sceneNode->width,  sceneNode->height);
-    glTexCoord2f(   u, dv+v);
-    glVertex2f  (-sceneNode->width,  sceneNode->height);
+    glTexCoord2f(   u,    v); glVertex2f(-sceneNode->width, -sceneNode->height);
+    glTexCoord2f(du+u,    v); glVertex2f( sceneNode->width, -sceneNode->height);
+    glTexCoord2f(du+u, dv+v); glVertex2f( sceneNode->width,  sceneNode->height);
+    glTexCoord2f(   u, dv+v); glVertex2f(-sceneNode->width,  sceneNode->height);
     glEnd();
   }
   glPopMatrix();
@@ -396,6 +415,7 @@ void			BillboardSceneNode::BillboardRenderNode::render()
 
   glDisable(GL_CLIP_PLANE0);
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -1270,7 +1270,7 @@ void SceneRenderer::disableLights(const Extents& exts)
 {
   // temporarily turn off non-applicable lights for big meshes
   for (int i = 0; i < dynamicLights; i++) {
-    const float* pos = lights[i]->getPosition();
+    const fvec4& pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
     
     if ((pos[0] < (exts.mins[0] - dist)) || (pos[0] > (exts.maxs[0] + dist)) ||
@@ -1375,7 +1375,7 @@ void SceneRenderer::setupShadowPlanes()
     return; // tilted views are not supported
   }
 
-  const float* eye = frustum.getEye();
+  const fvec3& eye = frustum.getEye();
 
   // we project the frustum onto the ground plane, and then
   // use those lines to generate planes in the direction of

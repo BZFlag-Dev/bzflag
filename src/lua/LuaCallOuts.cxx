@@ -655,7 +655,7 @@ int LuaCallOuts::GetLights(lua_State* L)
 		HSTR_PUSH_NUMBER(L, "maxDist",    light.getMaxDist());
 		HSTR_PUSH_NUMBER(L, "importance", light.getImportance());
 
-		const float* pos = light.getPosition();
+		const fvec4& pos = light.getPosition();
 		lua_pushliteral(L, "pos");
 		lua_createtable(L, 4, 0);
 		lua_pushnumber(L, pos[0]); lua_rawseti(L, -2, 1);
@@ -664,7 +664,7 @@ int LuaCallOuts::GetLights(lua_State* L)
 		lua_pushnumber(L, pos[3]); lua_rawseti(L, -2, 4);
 		lua_rawset(L, -3);
 
-		const float* color = light.getColor();
+		const fvec4& color = light.getColor();
 		lua_pushliteral(L, "color");
 		lua_createtable(L, 4, 0);
 		lua_pushnumber(L, color[0]); lua_rawseti(L, -2, 1);
@@ -673,7 +673,7 @@ int LuaCallOuts::GetLights(lua_State* L)
 		lua_pushnumber(L, color[3]); lua_rawseti(L, -2, 4);
 		lua_rawset(L, -3);
 
-		const float* atten = light.getColor();
+		const fvec4& atten = light.getColor();
 		lua_pushliteral(L, "atten");
 		lua_createtable(L, 3, 0);
 		lua_pushnumber(L, atten[0]); lua_rawseti(L, -2, 1);
@@ -957,9 +957,7 @@ int LuaCallOuts::GetRoamInfo(lua_State* L)
 
 	lua_pushinteger(L, ROAM.getMode());
 	const Roaming::RoamingCamera* cam = ROAM.getCamera();
-	lua_pushnumber(L, cam->pos[0]);
-	lua_pushnumber(L, cam->pos[1]);
-	lua_pushnumber(L, cam->pos[2]);
+	lua_pushfvec3(L, cam->pos);
 	lua_pushnumber(L, cam->theta);
 	lua_pushnumber(L, cam->phi);
 	lua_pushnumber(L, cam->zoom);
@@ -1053,9 +1051,7 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 		case Roaming::roamViewFree: {
 			Roaming::RoamingCamera cam;
 			memcpy(&cam, ROAM.getCamera(), sizeof(Roaming::RoamingCamera));
-			cam.pos[0] = luaL_optfloat(L, 2, cam.pos[0]);
-			cam.pos[1] = luaL_optfloat(L, 3, cam.pos[1]);
-			cam.pos[2] = luaL_optfloat(L, 4, cam.pos[2]);
+			cam.pos    = luaL_optfvec3(L, 2, cam.pos);
 			cam.theta  = luaL_optfloat(L, 5, cam.theta);
 			cam.phi    = luaL_optfloat(L, 6, cam.phi);
 			cam.zoom   = luaL_optfloat(L, 7, cam.zoom);
@@ -1213,24 +1209,20 @@ int LuaCallOuts::SetCameraView(lua_State* L)
 
 	const int table = 1;
 	if (!lua_istable(L, table)) {
-		pos[0] = luaL_optfloat(L, 1, pos[0]);
-		pos[1] = luaL_optfloat(L, 2, pos[1]);
-		pos[2] = luaL_optfloat(L, 3, pos[2]);
-		dir[0] = luaL_optfloat(L, 4, dir[0]);
-		dir[1] = luaL_optfloat(L, 5, dir[1]);
-		dir[2] = luaL_optfloat(L, 6, dir[2]);
+		pos = luaL_optfvec3(L, 1, pos);
+		dir = luaL_optfvec3(L, 4, dir);
 	}
 	else {
 		for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
 			if (lua_israwstring(L, -2) && // key
 			    lua_israwnumber(L, -1)) { // value
 				const string key = lua_tostring(L, -2);
-				     if (key == "px") { pos[0] = lua_tofloat(L, -1); }
-				else if (key == "py") { pos[1] = lua_tofloat(L, -1); }
-				else if (key == "pz") { pos[2] = lua_tofloat(L, -1); }
-				else if (key == "dx") { pos[0] = lua_tofloat(L, -1); }
-				else if (key == "dy") { pos[1] = lua_tofloat(L, -1); }
-				else if (key == "dz") { pos[2] = lua_tofloat(L, -1); }
+				     if (key == "px") { pos.x = lua_tofloat(L, -1); }
+				else if (key == "py") { pos.y = lua_tofloat(L, -1); }
+				else if (key == "pz") { pos.z = lua_tofloat(L, -1); }
+				else if (key == "dx") { dir.x = lua_tofloat(L, -1); }
+				else if (key == "dy") { dir.y = lua_tofloat(L, -1); }
+				else if (key == "dz") { dir.z = lua_tofloat(L, -1); }
 			}
 		}
 	}
@@ -1372,12 +1364,7 @@ int LuaCallOuts::GetFrustumPlane(lua_State* L)
 		return 0;
 	}
 
-	const float* p = vf.getSide(plane);
-	lua_pushnumber(L, p[0]);
-	lua_pushnumber(L, p[1]);
-	lua_pushnumber(L, p[2]);
-	lua_pushnumber(L, p[3]);
-
+	lua_pushfvec4(L, vf.getSide(plane));
 	return 4;
 }
 
@@ -1570,13 +1557,11 @@ int LuaCallOuts::GetTeamColor(lua_State* L)
 	if (teamID == NoTeam) {
 		return 0;
 	}
-	const float* color = Team::getTankColor(teamID);
+	const fvec4& color = Team::getTankColor(teamID);
 	if (color == NULL) {
 		return 0;
 	}
-	lua_pushnumber(L, color[0]);
-	lua_pushnumber(L, color[1]);
-	lua_pushnumber(L, color[2]);
+	lua_pushfvec3(L, color.xyz());
 	return 3;
 }
 
@@ -1587,13 +1572,11 @@ int LuaCallOuts::GetTeamRadarColor(lua_State* L)
 	if (teamID == NoTeam) {
 		return 0;
 	}
-	const float* color = Team::getRadarColor(teamID);
+	const fvec4& color = Team::getRadarColor(teamID);
 	if (color == NULL) {
 		return 0;
 	}
-	lua_pushnumber(L, color[0]);
-	lua_pushnumber(L, color[1]);
-	lua_pushnumber(L, color[2]);
+	lua_pushfvec3(L, color.xyz());
 	return 3;
 }
 
@@ -2201,10 +2184,7 @@ int LuaCallOuts::GetPlayerPosition(lua_State* L)
 	if (player == NULL) {
 		return 0;
 	}
-	const float* pos = player->getPosition();
-	lua_pushnumber(L, pos[0]);
-	lua_pushnumber(L, pos[1]);
-	lua_pushnumber(L, pos[2]);
+	lua_pushfvec3(L, player->getPosition());
 	return 3;
 }
 
@@ -2226,10 +2206,7 @@ int LuaCallOuts::GetPlayerDirection(lua_State* L)
 	if (player == NULL) {
 		return 0;
 	}
-	const float* dir = player->getForward();
-	lua_pushnumber(L, dir[0]);
-	lua_pushnumber(L, dir[1]);
-	lua_pushnumber(L, dir[2]);
+	lua_pushfvec3(L, player->getForward());
 	return 3;
 }
 
@@ -2240,10 +2217,7 @@ int LuaCallOuts::GetPlayerVelocity(lua_State* L)
 	if (player == NULL) {
 		return 0;
 	}
-	const float* vel = player->getVelocity();
-	lua_pushnumber(L, vel[0]);
-	lua_pushnumber(L, vel[1]);
-	lua_pushnumber(L, vel[2]);
+	lua_pushfvec3(L, player->getVelocity());
 	return 3;
 }
 
@@ -2266,10 +2240,7 @@ int LuaCallOuts::GetPlayerDimensions(lua_State* L)
 	if (player == NULL) {
 		return 0;
 	}
-	const float* dims = player->getDimensions();
-	lua_pushnumber(L, dims[0]);
-	lua_pushnumber(L, dims[1]);
-	lua_pushnumber(L, dims[2]);
+	lua_pushfvec3(L, player->getDimensions());
 	return 3;
 }
 
@@ -2487,10 +2458,7 @@ int LuaCallOuts::GetFlagPosition(lua_State* L)
 	if (flag == NULL) {
 		return 0;
 	}
-	const float* pos = flag->position;
-	lua_pushnumber(L, pos[0]);
-	lua_pushnumber(L, pos[1]);
-	lua_pushnumber(L, pos[2]);
+	lua_pushfvec3(L, flag->position);
 	return 3;
 }
 
@@ -2614,10 +2582,7 @@ int LuaCallOuts::GetShotPosition(lua_State* L)
 	if (shot == NULL) {
 		return 0;
 	}
-	const float* pos = shot->getPosition();
-	lua_pushnumber(L, pos[0]);
-	lua_pushnumber(L, pos[1]);
-	lua_pushnumber(L, pos[2]);
+	lua_pushfvec3(L, shot->getPosition());
 	return 3;
 }
 
@@ -2628,10 +2593,7 @@ int LuaCallOuts::GetShotVelocity(lua_State* L)
 	if (shot == NULL) {
 		return 0;
 	}
-	const float* vel = shot->getVelocity();
-	lua_pushnumber(L, vel[0]);
-	lua_pushnumber(L, vel[1]);
-	lua_pushnumber(L, vel[2]);
+	lua_pushfvec3(L, shot->getVelocity());
 	return 3;
 }
 

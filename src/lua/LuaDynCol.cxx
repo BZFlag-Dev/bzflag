@@ -58,11 +58,7 @@ int LuaDynCol::GetDynCol(lua_State* L)
 	if (dyncol == NULL) {
 		return 0;
 	}
-	const float* color = dyncol->getColor();
-	lua_pushnumber(L, color[0]);
-	lua_pushnumber(L, color[1]);
-	lua_pushnumber(L, color[2]);
-	lua_pushnumber(L, color[3]);
+	lua_pushfvec4(L, dyncol->getColor());
 	return 4;
 }
 
@@ -73,12 +69,8 @@ int LuaDynCol::SetDynCol(lua_State* L)
 	if (dyncol == NULL) {
 		return 0;
 	}
-	const float* oldColor = dyncol->getColor();
-	fvec4 newColor;
-	newColor[0] = luaL_optfloat(L, 2, oldColor[0]);
-	newColor[1] = luaL_optfloat(L, 3, oldColor[1]);
-	newColor[2] = luaL_optfloat(L, 4, oldColor[2]);
-	newColor[3] = luaL_optfloat(L, 5, oldColor[3]);
+	const fvec4& oldColor = dyncol->getColor();
+	const fvec4 newColor = luaL_optfvec4(L, 2, oldColor);
 	dyncol->setColor(newColor);
 	lua_pushboolean(L, true);
 	return 1;

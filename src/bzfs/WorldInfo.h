@@ -79,7 +79,7 @@ public:
   void addLink(const std::string& from, const std::string& to);
 
   void addZone(const CustomZone *zone);
-  void addWeapon(const FlagType *type, const float *origin,
+  void addWeapon(const FlagType *type, const fvec3& origin,
                  float direction, float tilt, TeamColor teamColor,
                  float initdelay, const std::vector<float> &delay,
                  TimeKeeper &sync);
@@ -128,7 +128,6 @@ private:
 
   bool finished;
 
-  bool rectHitCirc(float dx, float dy, const float *p, float r) const;
   void loadCollisionManager();
   InBuildingType classifyHit (const Obstacle* obstacle) const;
   void makeWaterMaterial();
@@ -176,9 +175,6 @@ public:
    * matches that of BZDB. if not, reload the CollisionManager
    */
   void checkCollisionManager();
-
-  bool inRect(const float *p1, float angle, const float *size,
-			 float x, float y, float r) const;
 
   const MapInfo&     getMapInfo()     const { return mapInfo; }
   const LinkManager& getLinkManager() const { return links; }

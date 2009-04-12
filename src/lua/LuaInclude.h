@@ -84,6 +84,13 @@ inline float luaL_optfloat(lua_State* L, int idx, float def)
 }
 
 
+inline fvec2 luaL_checkfvec2(lua_State* L, int idx)
+{
+	return fvec2((float)luaL_checknumber(L, idx + 0),
+	             (float)luaL_checknumber(L, idx + 1));
+}
+
+
 inline fvec3 luaL_checkfvec3(lua_State* L, int idx)
 {
 	return fvec3((float)luaL_checknumber(L, idx + 0),
@@ -101,6 +108,13 @@ inline fvec4 luaL_checkfvec4(lua_State* L, int idx)
 }
 
 
+inline fvec2 luaL_optfvec2(lua_State* L, int idx, const fvec2& def)
+{
+	return fvec2((float)luaL_optnumber(L, idx + 0, def.x),
+	             (float)luaL_optnumber(L, idx + 1, def.y));
+}
+
+
 inline fvec3 luaL_optfvec3(lua_State* L, int idx, const fvec3& def)
 {
 	return fvec3((float)luaL_optnumber(L, idx + 0, def.x),
@@ -115,6 +129,13 @@ inline fvec4 luaL_optfvec4(lua_State* L, int idx, const fvec4& def)
 	             (float)luaL_optnumber(L, idx + 1, def.y),
 	             (float)luaL_optnumber(L, idx + 2, def.z),
 	             (float)luaL_optnumber(L, idx + 3, def.w));
+}
+
+
+inline void lua_pushfvec2(lua_State* L, const fvec2& v)
+{
+	lua_pushnumber(L, v.x);
+	lua_pushnumber(L, v.y);
 }
 
 

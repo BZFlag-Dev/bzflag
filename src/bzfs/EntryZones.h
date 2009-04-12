@@ -13,13 +13,14 @@
 #ifndef __ENTRYZONES_H__
 #define __ENTRYZONES_H__
 
-/* common header */
+// common header
 #include "common.h"
 
-/* common interface headers */
+// common headers
 #include "Flag.h"
+#include "vectors.h"
 
-// bzfs-specific headers
+// bzfs headers
 #include "CustomZone.h"
 
 
@@ -33,23 +34,23 @@ class EntryZones
   public:
     EntryZones();
 
-    void addZone( const CustomZone *zone );
+    void addZone(const CustomZone *zone);
     void addZoneFlag(int zone, int flagId);
 
     void calculateQualifierLists();
 
-    bool getZonePoint(const std::string &qualifier, float *pt) const;
+    bool getZonePoint(const std::string &qualifier, fvec3& pt) const;
     bool getSafetyPoint(const std::string &qualifier,
-			const float *pos, float *pt) const;
+			const fvec3& pos, fvec3& pt) const;
 
-    bool getRandomPoint(const std::string &qual, float *pt) const;
-    bool getClosePoint(const std::string &qual, const float pos[3],
-		       float *pt) const;
+    bool getRandomPoint(const std::string &qual, fvec3& pt) const;
+    bool getClosePoint(const std::string &qual, const fvec3& pos,
+		       fvec3& pt) const;
 
     const ZoneList& getZoneList() const;
 
     int packSize() const;
-    void *pack(void *buf) const;
+    void* pack(void* buf) const;
 
   private:
     ZoneList zones;

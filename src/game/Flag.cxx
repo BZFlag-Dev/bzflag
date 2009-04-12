@@ -478,9 +478,9 @@ FlagSet& Flag::getBadFlags()
   return FlagType::flagSets[FlagBad];
 }
 
-const float* FlagType::getColor() const
+const fvec4& FlagType::getColor() const
 {
-  static const float superColor[3] = { 1.0, 1.0, 1.0 };
+  static const fvec4 superColor(1.0f, 1.0f, 1.0f, 1.0f);
 
   if (flagTeam == NoTeam)
     return superColor;

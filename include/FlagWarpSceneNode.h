@@ -28,7 +28,7 @@ class FlagWarpSceneNode : public SceneNode {
 
     void		setSizeFraction(GLfloat);
 
-    GLfloat		getDistance(const GLfloat*) const;
+    GLfloat		getDistanceSq(const fvec3& eye) const;
     void		move(const fvec3& pos);
 
     void		notifyStyleChange();

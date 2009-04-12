@@ -189,12 +189,10 @@ MeshSceneNode::~MeshSceneNode()
 
 inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 {
-  const float* e = vf.getEye();
-  const float* s = getSphere();
-  const float* d = vf.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-		     (d[1] * (s[1] - e[1])) +
-		     (d[2] * (s[2] - e[2]));
+  const fvec3& eye = vf.getEye();
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& dir = vf.getDirection();
+  const float dist = fvec3::dot(dir, (pos - eye));
   const float lengthPerPixel = dist * LodScale;
   for (int i = (lodCount - 1); i > 0; i--) {
     if (lengthPerPixel > lodLengths[i]) {
@@ -208,12 +206,10 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
 {
   // FIXME: adjust for ray direction
-  const float* e = vf.getEye();
-  const float* s = getSphere();
-  const float* d = vf.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-		     (d[1] * (s[1] - e[1])) +
-		     (d[2] * (s[2] - e[2]));
+  const fvec3& eye = vf.getEye();
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& dir = vf.getDirection();
+  const float dist = fvec3::dot(dir, (pos - eye));
   const float lengthPerPixel = dist * LodScale;
   for (int i = (lodCount - 1); i > 0; i--) {
     if (lengthPerPixel > lodLengths[i]) {
@@ -250,10 +246,10 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     for (int i = 0; i < lod.count; i++) {
       SetNode& set = lod.sets[i];
       if (set.meshMat.animRepos) {
-	const float* s = drawLods[level].sets[i].sphere;
+	const fvec4& s = drawLods[level].sets[i].sphere;
 	fvec3 pos;
-	pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
-	pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
+	pos[0] = (cos_val * s.x) - (sin_val * s.y);
+	pos[1] = (sin_val * s.x) + (cos_val * s.y);
 	pos[2] = s[2];
 	if (xformTool != NULL) {
 	  xformTool->modifyVertex(pos);

@@ -59,8 +59,8 @@ static lua_CFunction ll_sym (lua_State *L, void *lib, const char *sym);
 */
 
 #include <dlfcn.h>
-#include <string.h> // for the dlsym pointer problem
-#include <assert.h> // for the dlsym pointer problem
+#include <string.h> /* for the dlsym pointer problem */
+#include <assert.h> /* for the dlsym pointer problem */
 
 static void ll_unloadlib (void *lib) {
   dlclose(lib);

@@ -473,7 +473,7 @@ void FlagSceneNode::move(const fvec3& pos)
 
 void FlagSceneNode::setAngle(GLfloat _angle)
 {
-  angle = (float)(_angle * 180.0 / M_PI);
+  angle = (float)(_angle * RAD2DEG);
   tilt = 0.0f;
   hscl = 1.0f;
   return;
@@ -483,13 +483,13 @@ void FlagSceneNode::setAngle(GLfloat _angle)
 void FlagSceneNode::setWind(const fvec3& wind, float dt)
 {
   if (!realFlag) {
-    angle = atan2f(wind[1], wind[0]) * (float)(180.0 / M_PI);
+    angle = atan2f(wind[1], wind[0]) * RAD2DEG;
     tilt = 0.0f;
     hscl = 1.0f;
   } else {
     // the angle points from the end of the flag to the pole
-    const float cos_val = cosf(angle * (float)(M_PI / 180.0));
-    const float sin_val = sinf(angle * (float)(M_PI / 180.0));
+    const float cos_val = cosf(angle * DEG2RAD);
+    const float sin_val = sinf(angle * DEG2RAD);
     const float force = (wind[0] * sin_val) - (wind[1] * cos_val);
     const float angleScale = 25.0f;
     angle = fmodf(angle + (force * dt * angleScale), 360.0f);

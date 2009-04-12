@@ -368,7 +368,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   bool noShadow = false;
   const BzMaterial* bzmat = face->getMaterial();
   if (bzmat != NULL) {
-    noRadar = bzmat->getNoRadar();
+    noRadar  = bzmat->getNoRadar();
     noShadow = bzmat->getNoShadow();
   }
   MeshPolySceneNode* node =
@@ -455,7 +455,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   // one of these colors is used to set the stipple value.
   // we'll just set it to the middle value.
   if (dyncol) {
-    const float color[4] = { 1.0f, 1.0f, 1.0f, 0.5f }; // alpha value != 1.0f
+    const fvec4 color(1.0f, 1.0f, 1.0f, 0.5f); // alpha value != 1.0f
     if (dyncol->canHaveAlpha()) {
       node->setColor(color); // trigger transparency check
       node->setModulateColor(color);

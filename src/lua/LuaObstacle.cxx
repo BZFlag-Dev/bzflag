@@ -486,7 +486,7 @@ int LuaObstacle::GetFaceVerts(lua_State* L)
 	const int elements = face->getVertexCount();
 	lua_createtable(L, elements, 0);
 	for (int i = 0; i < elements; i++) {
-		const float* vec = face->getVertex(i);
+		const fvec3& vec = face->getVertex(i);
 		lua_createtable(L, 3, 0);
 		lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
 		lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
@@ -509,7 +509,7 @@ int LuaObstacle::GetFaceNorms(lua_State* L)
 	const int elements = face->getVertexCount();
 	lua_createtable(L, elements, 0);
 	for (int i = 0; i < elements; i++) {
-		const float* vec = face->getNormal(i);
+		const fvec3& vec = face->getNormal(i);
 		lua_createtable(L, 3, 0);
 		lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
 		lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
@@ -532,7 +532,7 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 		const int elements = face->getVertexCount();
 		lua_createtable(L, elements, 0);
 		for (int i = 0; i < elements; i++) {
-			const float* vec = face->getTexcoord(i);
+			const fvec2& vec = face->getTexcoord(i);
 			lua_createtable(L, 2, 0);
 			lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
 			lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
@@ -554,7 +554,7 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 		}
 		lua_createtable(L, elements, 0);
 		for (int i = 0; i < elements; i++) {
-			const float* vec = txcdArray[i];
+			const fvec2& vec = txcdArray[i];
 			lua_createtable(L, 2, 0);
 			lua_pushnumber(L, vec[0]); lua_rawseti(L, -2, 1);
 			lua_pushnumber(L, vec[1]); lua_rawseti(L, -2, 2);
@@ -797,7 +797,7 @@ static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
 	}
 
 	HSTR_PUSH(L, "sphere");
-	const float* sphere = info.getSphere();
+	const fvec4& sphere = info.getSphere();
 	lua_createtable(L, 0, 4);
 	HSTR_PUSH_NUMBER(L, "x", sphere[0]);
 	HSTR_PUSH_NUMBER(L, "y", sphere[1]);

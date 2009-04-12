@@ -61,7 +61,7 @@ static std::string strFlag (u16 id);
 static std::string strFlagStatus (FlagStatus status);
 static std::string strTeam (u16 id);
 static std::string strPlayer (u16 id);
-static std::string strVector (const float* vector);
+static std::string strVector (const fvec3& vector);
 static std::string strKillReason (int16_t reason);
 static std::string strAddress (Address& address);
 
@@ -450,7 +450,7 @@ static std::string strPlayer (u16 id)
 }
 
 
-static std::string strVector (const float *vector)
+static std::string strVector (const fvec3& vector)
 {
   std::string str = TextUtils::format ("(%8.3f, %8.3f, %8.3f)",
     vector[0], vector[1], vector[2]);

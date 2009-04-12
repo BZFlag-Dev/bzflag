@@ -2699,10 +2699,10 @@ void checkForScoreLimit(GameKeeper::Player* killer)
 }
 
 
-const float* closestBase(TeamColor color, const fvec3& position)
+const fvec3* closestBase(TeamColor color, const fvec3& position)
 {
   float bestdist = Infinity;
-  const float *bestbase = NULL;
+  const fvec3* bestbase = NULL;
 
   if (bases.find(color) == bases.end())
     return NULL;
@@ -2710,13 +2710,13 @@ const float* closestBase(TeamColor color, const fvec3& position)
   TeamBases &teamBases = bases[color];
   int count = teamBases.size();
   for (int i=0; i<count; i++) {
-    const float *basepos = teamBases.getBasePosition(i);
+    const fvec3& basepos = teamBases.getBasePosition(i);
     float dx = position[0] - basepos[0];
     float dy = position[1] - basepos[1];
     float dist = sqrt(dx * dx + dy * dy);
 
     if (dist < bestdist) {
-      bestbase = basepos;
+      bestbase = &basepos;
       bestdist = dist;
     }
   }
@@ -2737,29 +2737,26 @@ void processFreezeTagCollision(GameKeeper::Player *player,
       sendMessageAllow(player->getIndex(), AllowAll);
       player->player.setAllow(AllowAll);
     }
-  } else {
-    float dx, dy, dist, angle, cos_angle;
-    const float *playerBase = closestBase(playerTeam, pos);
-    const float *otherBase = closestBase(otherTeam, pos);
-
-    if (!playerBase || !otherBase)
+  }
+  else {
+    const fvec3* playerBasePtr = closestBase(playerTeam, pos);
+    const fvec3* otherBasePtr = closestBase(otherTeam, pos);
+    if (!playerBasePtr || !otherBasePtr) {
       return;
+    }
+    const fvec3& playerBase = *playerBasePtr;
+    const fvec3& otherBase = *otherBasePtr;
 
-    angle = atan2f(otherBase[1] - playerBase[1], otherBase[0] - playerBase[0]);
-    cos_angle = fabs(cosf(angle));
+    const fvec2 hdiff = otherBase.xy() - playerBase.xy();
 
-    dx = pos[0] - playerBase[0];
-    dy = pos[1] - playerBase[1];
-    dist = sqrt(dx * dx + dy * dy);
-    float playerDist = dist * cos_angle;
+    const float angle = atan2f(hdiff.y, hdiff.x);
+    const float cos_angle = fabs(cosf(angle));
 
-    dx = pos[0] - otherBase[0];
-    dy = pos[1] - otherBase[1];
-    dist = sqrt(dx * dx + dy * dy);
-    float otherDist = dist * cos_angle;
+    const float playerDist = cos_angle * (pos.xy() - playerBase.xy()).length();
+    const float  otherDist = cos_angle * (pos.xy() -  otherBase.xy()).length();
 
-    if ((playerDist - otherDist > 2.0 * BZDBCache::dmzWidth) &&
-	(player->player.canShoot() || player->player.canMove()) ) {
+    if (((playerDist - otherDist) > (2.0 * BZDBCache::dmzWidth)) &&
+	(player->player.canShoot() || player->player.canMove())) {
       sendMessageAllow(player->getIndex(), AllowNone);
       player->player.setAllow(AllowNone);
     }
@@ -2919,7 +2916,7 @@ void searchFlag(GameKeeper::Player &playerData)
 
   const PlayerId playerIndex = playerData.getIndex();
 
-  const float *tpos = playerData.lastState.pos;
+  const fvec3& tpos = playerData.lastState.pos;
   float radius2 = radius * radius;
 
   int closestFlag = -1;
@@ -2930,7 +2927,7 @@ void searchFlag(GameKeeper::Player &playerData)
     if (flag.flag.status != FlagOnGround)
       continue;
 
-    const float *fpos = flag.flag.position;
+    const fvec3& fpos = flag.flag.position;
     float dist = (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
     if (!id && dist >= 0.01f)
       continue;
@@ -3278,7 +3275,7 @@ static void adjustTolerances()
   int i = 0;
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
-    const float* v = phydrv->getLinearVel();
+    const fvec3& v = phydrv->getLinearVel();
     const float av = phydrv->getAngularVel();
     if (!phydrv->getIsDeath()) {
       if (!phydrv->getIsSlide() &&

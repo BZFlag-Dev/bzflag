@@ -310,11 +310,9 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
 
   // do some prep work for mesh faces
   int hitCount = 0;
-  float vel[3];
-  vel[0] = pos[0] - oldPos[0];
-  vel[1] = pos[1] - oldPos[1];
-  vel[2] = pos[2] - oldPos[2];
-  bool goingDown = (vel[2] <= 0.0f);
+
+  const fvec3 vel = pos - oldPos;
+  bool goingDown = (vel.z <= 0.0f);
 
   // check mesh faces
   for (/* do nothing */; i < olist->count; i++) {
@@ -342,8 +340,8 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
 	olist->list[hitCount] = (Obstacle*) obs;
 	hitCount++;
 	// compute its dot product and stick it in the scratchPad
-	const float* p = face->getPlane();
-	const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+	const fvec4& plane = face->getPlane();
+	const float dot = fvec3::dot(vel, plane.xyz());
 	face->scratchPad = dot;
       }
     }
@@ -591,7 +589,7 @@ void World::makeLinkMaterial()
 void World::initFlag(int index)
 {
   // set the color
-  const float* color = flags[index].type->getColor();
+  const fvec4& color = flags[index].type->getColor();
   flagNodes[index]->setColor(color[0], color[1], color[2], 1.0f);
 
   // set the texture
@@ -787,7 +785,7 @@ void World::updateFlag(int index, float dt)
       else {
 	fvec3 myWind;
 	getWind(myWind, flagPlayer->getPosition());
-	const float* vel = flagPlayer->getVelocity();
+	const fvec3& vel = flagPlayer->getVelocity();
 	myWind[0] -= vel[0];
 	myWind[1] -= vel[1];
 	if (flagPlayer->isFalling()) {

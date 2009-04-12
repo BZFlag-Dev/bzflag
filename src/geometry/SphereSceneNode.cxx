@@ -488,10 +488,10 @@ SceneNode** SphereBspSceneNode::getParts(int& numParts)
 
 void SphereBspSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
-  const GLfloat* mySphere = getSphere();
+  const fvec4& mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = mySphere[3] * view.getAreaFactor() /
-					getDistance(view.getEye());
+  const float size = mySphere[3] *
+                     view.getAreaFactor() / getDistanceSq(view.getEye());
   const int lod = (size < 100.0f) ? 0 : 1;
 
   renderNode.setHighResolution(lod != 0);

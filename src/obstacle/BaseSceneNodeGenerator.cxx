@@ -77,7 +77,7 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 
     }
   }
-  GLfloat color[4];
+  fvec4 color;
   switch(base->getTeam()) {
     case 1:
       color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.0f;

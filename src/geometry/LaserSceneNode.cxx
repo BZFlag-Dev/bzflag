@@ -33,9 +33,10 @@ LaserSceneNode::LaserSceneNode(const fvec3& pos, const fvec3& forward)
 , renderNode(this)
 {
   // prepare rendering info
-  azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
-  elevation = (float)(-180.0 / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1])));
-  length = hypotf(forward[0], hypotf(forward[1], forward[2]));
+  azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
+
+  length = forward.length();
 
   // setup sphere
   setCenter(pos);

@@ -145,9 +145,8 @@ void TankSceneNode::setJumpJetsTexture(const int texture)
 
 void TankSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
-  const float rad2deg = (float)(180.0 / M_PI);
-  azimuth   =  rad2deg * atan2f(forward[1], forward[0]);
-  elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
+  azimuth   =  RAD2DEG * atan2f(forward[1], forward[0]);
+  elevation = -RAD2DEG * atan2f(forward[2], hypotf(forward[0], forward[1]));
   setCenter(pos);
 
   // setup the extents
@@ -227,10 +226,10 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   }
 
   // pick level of detail
-  const GLfloat* mySphere = getSphere();
+  const fvec4& mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
   const float size = mySphere[3] *
-		     (view.getAreaFactor() /getDistance(view.getEye()));
+		     (view.getAreaFactor() / getDistanceSq(view.getEye()));
 
   // set the level of detail
   TankLOD mode = LowTankLOD;
@@ -264,7 +263,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const GLfloat* eye = view.getEye();
     GLfloat dx = eye[0] - mySphere[0];
     GLfloat dy = eye[1] - mySphere[1];
-    const float radians = (float)(azimuth * M_PI / 180.0);
+    const float radians = (float)(azimuth * DEG2RAD);
     const float cos_val = cosf(radians);
     const float sin_val = sinf(radians);
 
@@ -396,7 +395,7 @@ void TankSceneNode::setJumpJets(float scale)
 
     // set the jet ground-light and model positions
     for (int i = 0; i < 4; i++) {
-      const float radians = (float)(azimuth * (M_PI / 180.0));
+      const float radians = (float)(azimuth * DEG2RAD);
       const float cos_val = cosf(radians);
       const float sin_val = sinf(radians);
       const float* scaleFactor = TankGeometryMgr::getScaleFactor(tankSize);
@@ -726,8 +725,8 @@ void TankIDLSceneNode::IDLRenderNode::render()
   const fvec4& sphere = sceneNode->tank->getSphere();
   const fvec4& _plane = sceneNode->plane;
   const GLfloat azimuth = sceneNode->tank->azimuth;
-  const GLfloat ca = cosf(-azimuth * (float)M_PI / 180.0f);
-  const GLfloat sa = sinf(-azimuth * (float)M_PI / 180.0f);
+  const GLfloat ca = cosf(-azimuth * (float)DEG2RAD);
+  const GLfloat sa = sinf(-azimuth * (float)DEG2RAD);
   fvec4 plane;
   plane.x = (ca * _plane.x) - (sa * _plane.y);
   plane.y = (sa * _plane.x) + (ca * _plane.y);

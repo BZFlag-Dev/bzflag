@@ -77,8 +77,8 @@ ShellSceneNode::~ShellSceneNode()
 void ShellSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
   setCenter(pos);
-  azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
-  elevation = (float)(-180.0 / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1])));
+  azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
 }
 
 

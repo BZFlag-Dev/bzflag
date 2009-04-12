@@ -110,7 +110,7 @@ void WorldInfo::addZone(const CustomZone *zone)
   entryZones.addZone( zone );
 }
 
-void WorldInfo::addWeapon(const FlagType *type, const float *origin,
+void WorldInfo::addWeapon(const FlagType *type, const fvec3& origin,
 			  float direction, float tilt, TeamColor teamColor,
 			  float initdelay, const std::vector<float> &delay,
 			  TimeKeeper &sync)
@@ -201,20 +201,24 @@ void WorldInfo::makeWaterMaterial()
   return;
 }
 
+
 float WorldInfo::getWaterLevel() const
 {
   return waterLevel;
 }
+
 
 float WorldInfo::getMaxWorldHeight() const
 {
   return maxHeight;
 }
 
+
 WorldWeapons& WorldInfo::getWorldWeapons()
 {
   return worldWeapons;
 }
+
 
 EntryZones& WorldInfo::getEntryZones()
 {
@@ -222,67 +226,20 @@ EntryZones& WorldInfo::getEntryZones()
 }
 
 
-void		    WorldInfo::loadCollisionManager()
+void WorldInfo::loadCollisionManager()
 {
   COLLISIONMGR.load();
   return;
 }
 
-void		    WorldInfo::checkCollisionManager()
+
+void WorldInfo::checkCollisionManager()
 {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
     COLLISIONMGR.load();
   }
   return;
-}
-
-bool WorldInfo::rectHitCirc(float dx, float dy, const float *p, float r) const
-{
-  // Algorithm from Graphics Gems, pp51-53.
-  const float rr = r * r, rx = -p[0], ry = -p[1];
-  if (rx + dx < 0.0f) // west of rect
-    if (ry + dy < 0.0f) //  sw corner
-      return (rx + dx) * (rx + dx) + (ry + dy) * (ry + dy) < rr;
-    else if (ry - dy > 0.0f) //  nw corner
-      return (rx + dx) * (rx + dx) + (ry - dy) * (ry - dy) < rr;
-    else //  due west
-      return rx + dx > -r;
-
-  else if (rx - dx > 0.0f) // east of rect
-    if (ry + dy < 0.0f) //  se corner
-      return (rx - dx) * (rx - dx) + (ry + dy) * (ry + dy) < rr;
-    else if (ry - dy > 0.0f) //  ne corner
-      return (rx - dx) * (rx - dx) + (ry - dy) * (ry - dy) < rr;
-    else //  due east
-      return rx - dx < r;
-
-  else if (ry + dy < 0.0f) // due south
-    return ry + dy > -r;
-
-  else if (ry - dy > 0.0f) // due north
-    return ry - dy < r;
-
-  // circle origin in rect
-  return true;
-}
-
-bool WorldInfo::inRect(const float *p1, float angle, const float *_size,
-		       float x, float y, float r) const
-{
-  // translate origin
-  float pa[2];
-  pa[0] = x - p1[0];
-  pa[1] = y - p1[1];
-
-  // rotate
-  float pb[2];
-  const float c = cosf(-angle), s = sinf(-angle);
-  pb[0] = c * pa[0] - s * pa[1];
-  pb[1] = c * pa[1] + s * pa[0];
-
-  // do test
-  return rectHitCirc(_size[0], _size[1], pb, r);
 }
 
 
@@ -606,20 +563,24 @@ int WorldInfo::packDatabase()
   return 1;
 }
 
+
 void *WorldInfo::getDatabase() const
 {
   return database;
 }
+
 
 int WorldInfo::getDatabaseSize() const
 {
   return databaseSize;
 }
 
+
 int WorldInfo::getUncompressedSize() const
 {
   return uncompressedSize;
 }
+
 
 const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
                                        const fvec3& pos, float angle,
@@ -723,7 +684,6 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
 
   return NULL; // no more obstacles, we are done
 }
-
 
 
 // Local Variables: ***

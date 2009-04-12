@@ -92,10 +92,7 @@ int LuaPhyDrv::GetPhyDrvVelocity(lua_State* L)
 	if (phydrv == NULL) {
 		return 0;
 	}
-	const float* vec = phydrv->getLinearVel();
-	lua_pushnumber(L, vec[0]);
-	lua_pushnumber(L, vec[1]);
-	lua_pushnumber(L, vec[2]);
+	lua_pushfvec3(L, phydrv->getLinearVel());
 	return 3;
 }
 
@@ -106,11 +103,8 @@ int LuaPhyDrv::GetPhyDrvRadialPos(lua_State* L)
 	if (phydrv == NULL) {
 		return 0;
 	}
-	const float* vec = phydrv->getRadialPos();
-	lua_pushnumber(L, vec[0]);
-	lua_pushnumber(L, vec[1]);
-	lua_pushnumber(L, vec[2]);
-	return 3;
+	lua_pushfvec2(L, phydrv->getRadialPos());
+	return 2;
 }
 
 
@@ -131,11 +125,8 @@ int LuaPhyDrv::GetPhyDrvAngularPos(lua_State* L)
 	if (phydrv == NULL) {
 		return 0;
 	}
-	const float* vec = phydrv->getAngularPos();
-	lua_pushnumber(L, vec[0]);
-	lua_pushnumber(L, vec[1]);
-	lua_pushnumber(L, vec[2]);
-	return 3;
+	lua_pushfvec2(L, phydrv->getAngularPos());
+	return 2;
 }
 
 

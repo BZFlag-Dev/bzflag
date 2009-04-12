@@ -97,7 +97,7 @@ class RenderNodeGStateList {
     void append(RenderNode*, const OpenGLGState*, float depth);
     void render() const;
 
-    void sort(const GLfloat* eye);
+    void sort(const fvec3& eye);
 
     // public for the qsort() comparison function
     struct Item {

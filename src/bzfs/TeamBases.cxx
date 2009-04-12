@@ -72,10 +72,9 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     teamBase.size[2] = 0.0f;
 }
 
-void TeamBases::addBase(const float *position, const float *_size,
-			float rotation )
+void TeamBases::addBase(const fvec3& _pos, const fvec3& _size, float _rotation)
 {
-  TeamBase base(position, _size, rotation);
+  TeamBase base(_pos, _size, _rotation);
   teamBases.push_back(base);
 }
 
@@ -89,7 +88,7 @@ TeamColor TeamBases::getTeam() const
   return color;
 }
 
-const float *TeamBases::getBasePosition( int base ) const
+const fvec3& TeamBases::getBasePosition( int base ) const
 {
   if ((base < 0) || (base >= (int)teamBases.size()))
     base = 0;
@@ -100,8 +99,8 @@ const float *TeamBases::getBasePosition( int base ) const
 float TeamBases::findBaseZ( float x, float y, float z ) const
 {
   for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {
-    const float *pos  = it->position;
-    const float *_size = it->size;
+    const fvec3& pos   = it->position;
+    const fvec3& _size = it->size;
     float rotation = it->rotation;
     float nx = x - pos[0];
     float ny = y - pos[1];
@@ -125,11 +124,11 @@ const TeamBase &TeamBases::getRandomBase( int id )
   return teamBases[id % teamBases.size()];
 }
 
-TeamBase::TeamBase(const float *pos, const float *siz, float rot)
+TeamBase::TeamBase(const fvec3& pos, const fvec3& siz, float rot)
+: position(pos)
+, size(siz)
+, rotation(rot)
 {
-  memcpy(&position, pos, sizeof position);
-  memcpy(&size, siz, sizeof size);
-  rotation = rot;
 }
 
 void TeamBase::getRandomPosition( float &x, float &y, float &z ) const

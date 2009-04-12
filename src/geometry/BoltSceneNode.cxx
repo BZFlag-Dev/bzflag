@@ -153,16 +153,11 @@ void BoltSceneNode::move(const fvec3& pos, const fvec3& vel)
   setCenter(pos);
   light.setPosition(pos);
 
-  memcpy(velocity, vel, sizeof(GLfloat[3]));
-  float dir[3];
-  length = sqrt((vel[0] * vel[0]) + (vel[1] * vel[1]) + (vel[2] * vel[2]));
-  const float invLength = (1.0f / length);
-  dir[0] = vel[0] * invLength;
-  dir[1] = vel[1] * invLength;
-  dir[2] = vel[2] * invLength;
+  velocity = vel;
+  length = vel.length();
 
-  azimuth   = (float)(+180.0 / M_PI * atan2f(dir[1], dir[0]));
-  elevation = (float)(-180.0 / M_PI * atan2f(dir[2], hypotf(dir[0], dir[1])));
+  azimuth   = (float)(+RAD2DEG * atan2f(vel.y, vel.x));
+  elevation = (float)(-RAD2DEG * atan2f(vel.z, vel.xy().length()));
 }
 
 
@@ -274,41 +269,26 @@ void BoltSceneNode::BoltRenderNode::setAnimation(int _cu, int _cv)
 }
 
 
-void BoltSceneNode::BoltRenderNode::setTextureColor(const GLfloat* rgba)
+void BoltSceneNode::BoltRenderNode::setTextureColor(const fvec4& rgba)
 {
-  textureColor[0] = rgba[0];
-  textureColor[1] = rgba[1];
-  textureColor[2] = rgba[2];
-  textureColor[3] = rgba[3];
+  textureColor = rgba;
 }
 
 
-void BoltSceneNode::BoltRenderNode::setColor(const GLfloat* rgba)
+void BoltSceneNode::BoltRenderNode::setColor(const fvec4& rgba)
 {
-  mainColor[0] = rgba[0];
-  mainColor[1] = rgba[1];
-  mainColor[2] = rgba[2];
-  mainColor[3] = rgba[3];
+  mainColor = rgba;
 
-  innerColor[0] = mainColor[0] + 0.5f * (1.0f - mainColor[0]);
-  innerColor[1] = mainColor[1] + 0.5f * (1.0f - mainColor[1]);
-  innerColor[2] = mainColor[2] + 0.5f * (1.0f - mainColor[2]);
-  innerColor[3] = rgba[3];
+  innerColor.xyz() = 0.5f * (rgba.xyz() + 1.0f);
+  innerColor.w = rgba.w;
 
-  outerColor[0] = mainColor[0];
-  outerColor[1] = mainColor[1];
-  outerColor[2] = mainColor[2];
-  outerColor[3] = (rgba[3] == 1.0f )? 0.1f: rgba[3];
+  outerColor.xyz()  = rgba.xyz();
+  flareColor.xyz()  = rgba.xyz();
+  coronaColor.xyz() = rgba.xyz();
 
-  coronaColor[0] = mainColor[0];
-  coronaColor[1] = mainColor[1];
-  coronaColor[2] = mainColor[2];
-  coronaColor[3] = (rgba[3] == 1.0f )? 0.5f : rgba[3];
-
-  flareColor[0] = mainColor[0];
-  flareColor[1] = mainColor[1];
-  flareColor[2] = mainColor[2];
-  flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
+  outerColor.w  = (rgba.w == 1.0f)  ? 0.1f   : rgba.w;
+  flareColor.w  = (rgba.w == 1.0f ) ? 0.667f : rgba.w;
+  coronaColor.w = (rgba.w == 1.0f ) ? 0.5f   : rgba.w;
 }
 
 
@@ -527,9 +507,9 @@ void BoltSceneNode::BoltRenderNode::render()
   const float u1 = u0 + du;
   const float v1 = v0 + dv;
 
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glTranslatef(sphere.x, sphere.y, sphere.z);
   const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
   if ((shotLength <= 0) &&
       (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)) {
@@ -600,14 +580,8 @@ void BoltSceneNode::BoltRenderNode::render()
           texInfo.texture->execute();
         }
 
-        const float* vel = sceneNode->velocity;
-        const float speed = sceneNode->length;
-        const float negInvSpeed = -1.0f / speed;
-        const float dx = vel[0] * negInvSpeed;
-        const float dy = vel[1] * negInvSpeed;
-        const float dz = vel[2] * negInvSpeed;
-        float pos[3];
-        memcpy(pos, sphere, sizeof(float[3]));
+        const fvec3& vel = sceneNode->velocity;
+        const fvec3  dir = vel * (-1.0f / sceneNode->length);
 
         const float invLenPlusOne = 1.0f / (float)(shotLength + 1);
         const float shiftScale = 90.0f / (150.0f + (float)shotLength);
@@ -615,6 +589,8 @@ void BoltSceneNode::BoltRenderNode::render()
         float alpha = startAlpha;
         const float sizeStep  = size  * invLenPlusOne;
         const float alphaStep = alpha * invLenPlusOne;
+
+        fvec3 pos = sphere.xyz();
 
         int uvCell = rand() % 16;
 
@@ -633,11 +609,10 @@ void BoltSceneNode::BoltRenderNode::render()
 
           const float s = size * (0.65f + (1.0f * (float)bzfrand()));
           const float shift = s * shiftScale;
-          pos[0] += dx * shift;
-          pos[1] += dy * shift;
-          pos[2] += dz * shift;
 
-          glTranslatef(pos[0], pos[1], pos[2]);
+          pos += (shift * dir);
+
+          glTranslatef(pos.x, pos.y, pos.z);
           RENDERER.getViewFrustum().executeBillboard();
           glScalef(s, s, s);
 

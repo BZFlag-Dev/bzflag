@@ -58,15 +58,9 @@ int LuaVector::dot(lua_State* L)
 int LuaVector::cross(lua_State* L)
 {
 	if (lua_gettop(L) == 6) {
-		const float ax = luaL_checkfloat(L, 1);
-		const float ay = luaL_checkfloat(L, 2);
-		const float az = luaL_checkfloat(L, 3);
-		const float bx = luaL_checkfloat(L, 4);
-		const float by = luaL_checkfloat(L, 5);
-		const float bz = luaL_checkfloat(L, 6);
-		lua_pushnumber(L, (ay * bz) - (by * az));
-		lua_pushnumber(L, (bx * az) - (ax * bz));
-		lua_pushnumber(L, (ax * by) - (bx * ay));
+		const fvec3 a = luaL_checkfvec3(L, 1);
+		const fvec3 b = luaL_checkfvec3(L, 4);
+		lua_pushfvec3(L, fvec3::cross(a, b));
 		return 3;
 	}
 	return 0;

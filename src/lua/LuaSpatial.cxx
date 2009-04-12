@@ -112,12 +112,14 @@ struct PlanesData : public QueryData {
 
 
 struct SphereData : public QueryData {
-	float x, y, z, r, r2;
+	fvec3 pos;
+	float r, r2;
 };
 
 
 struct CylinderData : public QueryData {
-	float x, y, r, r2;
+	fvec2 pos;
+	float r, r2;
 };
 
 
@@ -199,10 +201,8 @@ static inline int ParsePlanes(lua_State* L, PlanesData& planes)
 
 static inline int ParseSphere(lua_State* L, SphereData& sphere)
 {
-	sphere.x = luaL_checkfloat(L, 1);
-	sphere.y = luaL_checkfloat(L, 2);
-	sphere.z = luaL_checkfloat(L, 3);
-	sphere.r = luaL_checkfloat(L, 4);
+	sphere.pos = luaL_checkfvec3(L, 1);
+	sphere.r   = luaL_checkfloat(L, 4);
 	sphere.r2 = sphere.r * sphere.r;
 	return 4;
 }
@@ -210,9 +210,8 @@ static inline int ParseSphere(lua_State* L, SphereData& sphere)
 
 static inline int ParseCylinder(lua_State* L, CylinderData& cyl)
 {
-	cyl.x = luaL_checkfloat(L, 1);
-	cyl.y = luaL_checkfloat(L, 2);
-	cyl.r = luaL_checkfloat(L, 3);
+	cyl.pos = luaL_checkfvec2(L, 1);
+	cyl.r   = luaL_checkfloat(L, 3);
 	cyl.r2 = cyl.r * cyl.r;
 	return 3;
 }
@@ -244,8 +243,7 @@ static int PushReflect(lua_State* L, const Obstacle* obs,
 		normal[2] = 1.0f;
 	}
 
-	float dir[3];
-	memcpy(dir, vel, sizeof(float[3]));
+	fvec3 dir = vel;
 	ShotStrategy::reflect(dir, normal);
 
 	lua_pushnumber(L, dir[0]);
@@ -261,12 +259,8 @@ int LuaSpatial::RayTrace(lua_State* L)
 	// FIXME -- use custom routines that do not use shootThrough checks ?
 	//       -- what options might be useful here?
 	fvec3 pos, vel;
-	pos.x = luaL_checkfloat(L, 1);
-	pos.y = luaL_checkfloat(L, 2);
-	pos.z = luaL_checkfloat(L, 3);
-	vel.x = luaL_checkfloat(L, 4);
-	vel.y = luaL_checkfloat(L, 5);
-	vel.z = luaL_checkfloat(L, 6);
+	pos = luaL_checkfvec3(L, 1);
+	vel = luaL_checkfvec3(L, 4);
 	const float minTime = luaL_optfloat(L, 7, 0.0f);
 	float hitTime       = luaL_optfloat(L, 8, +1.0e30f);
 	const bool reflect  = lua_isboolean(L, 9) && lua_tobool(L, 9);
@@ -377,15 +371,13 @@ int LuaSpatial::RayTeleport(lua_State* L) // FIXME
 
 int LuaSpatial::IsPointInView(lua_State* L)
 {
-	const float x = luaL_checkfloat(L, 1);
-	const float y = luaL_checkfloat(L, 2);
-	const float z = luaL_checkfloat(L, 3);
+	const fvec3 point = luaL_checkfvec3(L, 1);
 
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
 	const int planeCount = vf.getPlaneCount();
 	for (int p = 0; p < planeCount; p++) {
-		const float* s = vf.getSide(p);
-		const float d = (s[0] * x) + (s[1] * y) + (s[2] * z) + s[3];
+		const fvec4& s = vf.getSide(p);
+		const float d = fvec3::dot(point, s.xyz()) + s.w;
 		if (d < 0.0f) {
 			lua_pushboolean(L, false);
 			return 1;
@@ -398,17 +390,15 @@ int LuaSpatial::IsPointInView(lua_State* L)
 
 int LuaSpatial::IsSphereInView(lua_State* L)
 {
-	const float x = luaL_checkfloat(L, 1);
-	const float y = luaL_checkfloat(L, 2);
-	const float z = luaL_checkfloat(L, 3);
-	const float r = luaL_checkfloat(L, 4);
+	const fvec3 center = luaL_checkfvec3(L, 1);
+	const float radius = luaL_checkfloat(L, 4);
 
 	const ViewFrustum& vf = RENDERER.getViewFrustum();
 	const int planeCount = vf.getPlaneCount();
 	for (int p = 0; p < planeCount; p++) {
-		const float* s = vf.getSide(p);
-		const float d = (s[0] * x) + (s[1] * y) + (s[2] * z) + s[3];
-		if (d < -r) {
+		const fvec4& s = vf.getSide(p);
+		const float d = fvec3::dot(center, s.xyz()) + s.w;
+		if (d < -radius) {
 			lua_pushboolean(L, false);
 			return 1;
 		}
@@ -491,8 +481,8 @@ static bool PlayerInPlanes(const Player* player, const QueryData& data)
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
 		const fvec4& p = planes.planes[i];
-		const float* pos = player->getPosition();
-		const float d = (p[0] * pos[0]) + (p[1] * pos[1]) + (p[2] * pos[2]) + p[3];
+		const fvec3& pos = player->getPosition();
+		const float d = fvec3::dot(pos, p.xyz()) + p.w;
 		if (d < 0.0f) {
 			return false;
 		}
@@ -504,11 +494,8 @@ static bool PlayerInPlanes(const Player* player, const QueryData& data)
 static bool PlayerInSphere(const Player* player, const QueryData& data)
 {
 	const SphereData& sphere = (const SphereData&)data;
-	const float* pos = player->getPosition();
-	const float dx = sphere.x - pos[0];
-	const float dy = sphere.y - pos[1];
-	const float dz = sphere.z - pos[2];
-	const float distSqr = ((dx * dx) + (dy * dy) + (dz * dz));
+	const fvec3& pos = player->getPosition();
+	const float distSqr = (sphere.pos - pos).lengthSq();
 	return (distSqr <= sphere.r2);
 }
 
@@ -516,10 +503,8 @@ static bool PlayerInSphere(const Player* player, const QueryData& data)
 static bool PlayerInCylinder(const Player* player, const QueryData& data)
 {
 	const CylinderData& cyl = (const CylinderData&)data;
-	const float* pos = player->getPosition();
-	const float dx = cyl.x - pos[0];
-	const float dy = cyl.y - pos[1];
-	const float distSqr = ((dx * dx) + (dy * dy));
+	const fvec3& pos = player->getPosition();
+	const float distSqr = (cyl.pos - pos.xy()).lengthSq();
 	return (distSqr <= cyl.r2);
 }
 
@@ -661,8 +646,8 @@ static bool FlagInPlanes(const Flag* flag, const QueryData& data)
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
 		const fvec4& p = planes.planes[i];
-		const float* pos = flag->position;
-		const float d = (p[0] * pos[0]) + (p[1] * pos[1]) + (p[2] * pos[2]) + p[3];
+		const fvec3& pos = flag->position;
+		const float d = fvec3::dot(pos, p.xyz()) + p.w;
 		if (d < 0.0f) {
 			return false;
 		}
@@ -674,11 +659,8 @@ static bool FlagInPlanes(const Flag* flag, const QueryData& data)
 static bool FlagInSphere(const Flag* flag, const QueryData& data)
 {
 	const SphereData& sphere = (const SphereData&)data;
-	const float* pos = flag->position;
-	const float dx = sphere.x - pos[0];
-	const float dy = sphere.y - pos[1];
-	const float dz = sphere.z - pos[2];
-	const float distSqr = ((dx * dx) + (dy * dy) + (dz * dz));
+	const fvec3& pos = flag->position;
+	const float distSqr = (sphere.pos - pos).lengthSq();
 	return (distSqr <= sphere.r2);
 }
 
@@ -686,10 +668,8 @@ static bool FlagInSphere(const Flag* flag, const QueryData& data)
 static bool FlagInCylinder(const Flag* flag, const QueryData& data)
 {
 	const CylinderData& cyl = (const CylinderData&)data;
-	const float* pos = flag->position;
-	const float dx = cyl.x - pos[0];
-	const float dy = cyl.y - pos[1];
-	const float distSqr = ((dx * dx) + (dy * dy));
+	const fvec3& pos = flag->position;
+	const float distSqr = (cyl.pos - pos.xy()).lengthSq();
 	return (distSqr <= cyl.r2);
 }
 
@@ -818,8 +798,8 @@ static bool ShotInPlanes(const ShotPath* shot, const QueryData& data)
 	const PlanesData& planes = (const PlanesData&)data;
 	for (size_t i = 0; i < planes.planes.size(); i++) {
 		const fvec4& p = planes.planes[i];
-		const float* pos = shot->getPosition();
-		const float d = (p[0] * pos[0]) + (p[1] * pos[1]) + (p[2] * pos[2]) + p[3];
+		const fvec3& pos = shot->getPosition();
+		const float d = fvec3::dot(pos, p.xyz()) + p.w;
 		if (d < 0.0f) {
 			return false;
 		}
@@ -831,11 +811,8 @@ static bool ShotInPlanes(const ShotPath* shot, const QueryData& data)
 static bool ShotInSphere(const ShotPath* shot, const QueryData& data)
 {
 	const SphereData& sphere = (const SphereData&)data;
-	const float* pos = shot->getPosition();
-	const float dx = sphere.x - pos[0];
-	const float dy = sphere.y - pos[1];
-	const float dz = sphere.z - pos[2];
-	const float distSqr = ((dx * dx) + (dy * dy) + (dz * dz));
+	const fvec3& pos = shot->getPosition();
+	const float distSqr = (sphere.pos - pos).lengthSq();
 	return (distSqr <= sphere.r2);
 }
 
@@ -843,10 +820,8 @@ static bool ShotInSphere(const ShotPath* shot, const QueryData& data)
 static bool ShotInCylinder(const ShotPath* shot, const QueryData& data)
 {
 	const CylinderData& cyl = (const CylinderData&)data;
-	const float* pos = shot->getPosition();
-	const float dx = cyl.x - pos[0];
-	const float dy = cyl.y - pos[1];
-	const float distSqr = ((dx * dx) + (dy * dy));
+	const fvec3& pos = shot->getPosition();
+	const float distSqr = (cyl.pos - pos.xy()).lengthSq();
 	return (distSqr <= cyl.r2);
 }
 

@@ -340,7 +340,7 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   if (driver == NULL) {
     te.phydrv = -1;
   } else {
-    const float* v = driver->getLinearVel();
+    const fvec3& v = driver->getLinearVel();
     const float av = driver->getAngularVel();
     if ((v[0] == 0.0f) && (v[1] == 0.0f) && (av == 0.0f)) {
       te.phydrv = -1;
@@ -438,20 +438,20 @@ static void updateList(TrackList& list, float dt)
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(te.phydrv);
     if (phydrv != NULL) {
 
-      const float* v = phydrv->getLinearVel();
-      te.pos[0] += (v[0] * dt);
-      te.pos[1] += (v[1] * dt);
+      const fvec3& v = phydrv->getLinearVel();
+      te.pos.x += (v.x * dt);
+      te.pos.y += (v.y * dt);
 
       const float av = phydrv->getAngularVel();
       if (av != 0.0f) {
-	const float* ap = phydrv->getAngularPos();
+	const fvec2& ap = phydrv->getAngularPos();
 	const float da = (av * dt);
 	const float cos_val = cosf(da);
 	const float sin_val = sinf(da);
 	const float dx = te.pos[0] - ap[0];
 	const float dy = te.pos[1] - ap[1];
-	te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
-	te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
+	te.pos.x = ap.x + ((cos_val * dx) - (sin_val * dy));
+	te.pos.y = ap.y + ((cos_val * dy) + (sin_val * dx));
 	te.angle += (float)(da * (180.0 / M_PI));
       }
 

@@ -237,7 +237,7 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
     const fvec3& pos = node->getSphere().xyz();
     d = fvec3::dot(pos, *((fvec3*)plane)) + plane->w;
   } else {
-    d = _root->node->getDistance(eye) - node->getDistance(eye);
+    d = _root->node->getDistanceSq(eye) - node->getDistanceSq(eye);
   }
 
   if (d >= 0.0f) {

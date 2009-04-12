@@ -177,14 +177,14 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 				float newAngVel, float* newVelocity)
 {
   const float oldAzimuth = getAngle();
-  const float* oldVelocity = getVelocity();
+  const fvec3& oldVelocity = getVelocity();
 
   const float angle = oldAzimuth + (0.5f * dt * newAngVel);
   const float cos_val = cosf(angle);
   const float sin_val = sinf(angle);
   const float scale = (dt / slideTime);
   const float speedAdj = desiredSpeed * scale;
-  const float* ov = oldVelocity;
+  const fvec3& ov = oldVelocity;
   const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
   float* nv = newVelocity;
   nv[0] = ov[0] + (cos_val * speedAdj);
@@ -369,7 +369,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   const int driverId = getPhysicsDriver();
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driverId);
   if (phydrv != NULL) {
-    const float* v = phydrv->getLinearVel();
+    const fvec3& v = phydrv->getLinearVel();
 
     newVelocity.z += v[2];
 
@@ -382,7 +382,7 @@ void LocalPlayer::doUpdateMotion(float dt)
       newVelocity.y += v[1];
 
       const float av = phydrv->getAngularVel();
-      const float* ap = phydrv->getAngularPos();
+      const fvec2& ap = phydrv->getAngularPos();
 
       if (av != 0.0f) {
 	// the angular velocity is in radians/sec
@@ -900,7 +900,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const fvec3& p, float a,
 					    bool phased, bool& expel) const
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
-  const float* dims = getDimensions();
+  const fvec3& dims = getDimensions();
   World *world = World::getWorld();
   if (!world) {
     return NULL;
@@ -921,7 +921,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const fvec3& oldP, float oldA,
 					    bool phased, bool& expel)
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
-  const float* dims = getDimensions();
+  const fvec3& dims = getDimensions();
   World *world = World::getWorld();
   if (!world) {
     return NULL;
@@ -954,7 +954,7 @@ bool LocalPlayer::getHitNormal(const Obstacle* o,
 			       const fvec3& pos2, float azimuth2,
 			       fvec3& normal) const
 {
-  const float* dims = getDimensions();
+  const fvec3& dims = getDimensions();
   return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
 			 dims[0], dims[1], dims[2], normal);
 }
@@ -1332,7 +1332,7 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
     return false;
 
   // end it
-  const float* shotPos = shots[index]->getPosition();
+  const fvec3& shotPos = shots[index]->getPosition();
   pos[0] = shotPos[0];
   pos[1] = shotPos[1];
   pos[2] = shotPos[2];
@@ -1389,7 +1389,7 @@ void LocalPlayer::doJump()
 
   // add jump velocity (actually, set the vertical component since you
   // can only jump if resting on something)
-  const float* oldVelocity = getVelocity();
+  const fvec3& oldVelocity = getVelocity();
   fvec3 newVelocity;
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
@@ -1460,7 +1460,7 @@ void LocalPlayer::explodeTank()
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
-  const float* oldVelocity = getVelocity();
+  const fvec3& oldVelocity = getVelocity();
   fvec3 newVelocity;
   float maxSpeed;
   newVelocity[0] = oldVelocity[0];
@@ -1489,13 +1489,13 @@ void LocalPlayer::doMomentum(float dt,float& speed, float& angVel)
 }
 
 
-void LocalPlayer::doFriction(float dt, const float *oldVelocity, float *newVelocity)
+void LocalPlayer::doFriction(float dt, const fvec3& oldVel, fvec3& newVel)
 {
-  computeFriction(dt,getFlag(),oldVelocity,newVelocity);
+  computeFriction(dt, getFlag(), oldVel, newVel);
 }
 
 
-void LocalPlayer::doForces(float /*dt*/, float* /*velocity*/, float& /*angVel*/)
+void LocalPlayer::doForces(float /*dt*/, fvec3& /*velocity*/, float& /*angVel*/)
 {
   // apply external forces
   // do nothing -- no external forces right now

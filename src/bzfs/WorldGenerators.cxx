@@ -213,7 +213,7 @@ WorldInfo *defineTeamWorld()
   // make pyramids
   if (haveRed) {
     // around red base
-    const float *pos = bases[RedTeam].getBasePosition(0);
+    const fvec3& pos = bases[RedTeam].getBasePosition(0);
     myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -234,7 +234,7 @@ WorldInfo *defineTeamWorld()
 
   if (haveGreen) {
     // around green base
-    const float *pos = bases[GreenTeam].getBasePosition(0);
+    const fvec3& pos = bases[GreenTeam].getBasePosition(0);
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -255,7 +255,7 @@ WorldInfo *defineTeamWorld()
 
   if (haveBlue) {
     // around blue base
-    const float *pos = bases[BlueTeam].getBasePosition(0);
+    const fvec3& pos = bases[BlueTeam].getBasePosition(0);
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -276,7 +276,7 @@ WorldInfo *defineTeamWorld()
 
   if (havePurple) {
     // around purple base
-    const float *pos = bases[PurpleTeam].getBasePosition(0);
+    const fvec3& pos = bases[PurpleTeam].getBasePosition(0);
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
@@ -305,10 +305,10 @@ WorldInfo *defineTeamWorld()
       std::cerr << "need some teams, use -mp" << std::endl;
       exit(20);
     }
-    const float *redPosition = bases[RedTeam].getBasePosition(0);
-    const float *greenPosition = bases[GreenTeam].getBasePosition(0);
-    const float *bluePosition = bases[BlueTeam].getBasePosition(0);
-    const float *purplePosition = bases[PurpleTeam].getBasePosition(0);
+    const fvec3& redPosition    = bases[RedTeam].getBasePosition(0);
+    const fvec3& greenPosition  = bases[GreenTeam].getBasePosition(0);
+    const fvec3& bluePosition   = bases[BlueTeam].getBasePosition(0);
+    const fvec3& purplePosition = bases[PurpleTeam].getBasePosition(0);
 
     int numBoxes = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize);
     float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);

@@ -54,8 +54,8 @@ class BoltSceneNode : public ShotSceneNode {
       public:
 			BoltRenderNode(const BoltSceneNode*);
 			~BoltRenderNode();
-	void		setColor(const GLfloat* rgba);
-	void		setTextureColor(const GLfloat* rgba);
+	void		setColor(const fvec4& rgba);
+	void		setTextureColor(const fvec4& rgba);
 	void		render();
 	void		renderGeoBolt();
 	void		renderGeoGMBolt();

@@ -15,21 +15,23 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <vector>
 #include <map>
 
+// common headers
 #include "global.h"
+#include "vectors.h"
 
 
 class TeamBase
 { // This class represents one base
 public:
   TeamBase() {}
-  TeamBase(const float *pos, const float *siz, float rot);
-  void getRandomPosition( float &x, float &y, float &z ) const;
-  float position[3];
-  float size[3];
+  TeamBase(const fvec3& pos, const fvec3& siz, float rot);
+  void getRandomPosition(float &x, float &y, float &z) const;
+  fvec3 position;
+  fvec3 size;
   float rotation;
 };
 
@@ -40,11 +42,11 @@ public:
 
   TeamBases();
   TeamBases(TeamColor team, bool initDefault = false);
-  void addBase( const float *position, const float *size, float rotation );
+  void addBase(const fvec3& position, const fvec3& size, float rotation);
   int size() const;
   TeamColor getTeam() const;
-  const float *getBasePosition( int base ) const;
-  float findBaseZ( float x, float y, float z ) const;
+  const fvec3& getBasePosition(int base) const;
+  float findBaseZ(float x, float y, float z) const;
   const TeamBase& getRandomBase( int id );
 
 private:

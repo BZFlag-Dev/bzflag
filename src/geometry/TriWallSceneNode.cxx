@@ -61,17 +61,17 @@ TriWallSceneNode::Geometry::~Geometry()
 }
 
 
-#define	RENDER(_e)							\
-  for (int k = 0, t = 0; t < de; t++) {					\
-    int e = de - t;							\
-    glBegin(GL_TRIANGLE_STRIP);						\
-    for (int s = 0; s < e; k++, s++) {					\
-      _e(k+e+1);							\
-      _e(k);								\
-    }									\
-    _e(k);								\
-    glEnd();								\
-    k++;								\
+#define	RENDER(_e)			\
+  for (int k = 0, t = 0; t < de; t++) {	\
+    int e = de - t;			\
+    glBegin(GL_TRIANGLE_STRIP);		\
+    for (int s = 0; s < e; k++, s++) {	\
+      _e(k+e+1);			\
+      _e(k);				\
+    }					\
+    _e(k);				\
+    glEnd();				\
+    k++;				\
   }
 #define EMITV(_i)	glVertex3fv(vertex[_i])
 #define EMITVT(_i)	glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
@@ -129,47 +129,36 @@ TriWallSceneNode::TriWallSceneNode(const fvec3& base,
                                    bool makeLODs)
 {
   // record plane info
-  fvec4 myPlane, mySphere;
-  myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-  myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-  myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-  myPlane[3] = -(myPlane[0] * base[0] + myPlane[1] * base[1]
-		 + myPlane[2] * base[2]);
+  fvec4 myPlane;
+  myPlane.xyz() = fvec3::cross(uEdge, vEdge);
+  myPlane.w = -fvec3::dot(base, myPlane.xyz());
   setPlane(myPlane);
 
   // record bounding sphere info -- ought to calculate center and
   // and radius of circumscribing sphere but it's late and i'm tired.
   // i'll just calculate something easy.  it hardly matters as it's
   // hard to tightly bound a triangle with a sphere.
-  mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
-  mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
-  mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
-  mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
-    + mySphere[2]*mySphere[2];
-  mySphere[0] += base[0];
-  mySphere[1] += base[1];
-  mySphere[2] += base[2];
+  fvec4 mySphere;
+  mySphere.xyz() = 0.5f * (uEdge + vEdge);
+  mySphere.w = mySphere.xyz().lengthSq();
+  mySphere.xyz() += base;
   setSphere(mySphere);
 
   // get length of sides
-  const float uLength = sqrtf(uEdge[0] * uEdge[0] +
-				uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]);
-  const float vLength = sqrtf(vEdge[0] * vEdge[0] +
-				vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]);
+  const float uLength = uEdge.length();
+  const float vLength = vEdge.length();
   float area = 0.5f * uLength * vLength;
 
   // If negative then these values aren't a number of times to repeat
   // the texture along the surface but the width, or a desired scaled
   // width, of the texture itself. Repeat the texture as many times
   // as necessary to fit the surface.
-  if (uRepeats < 0.0f)
-  {
-      uRepeats = - uLength / uRepeats;
+  if (uRepeats < 0.0f) {
+    uRepeats = - uLength / uRepeats;
   }
 
-  if (vRepeats < 0.0f)
-  {
-      vRepeats = - vLength / vRepeats;
+  if (vRepeats < 0.0f) {
+    vRepeats = - vLength / vRepeats;
   }
 
   // compute how many LODs required to get larger edge down to
@@ -194,9 +183,9 @@ TriWallSceneNode::TriWallSceneNode(const fvec3& base,
   uElements = 1;
   areas[level] = area;
   nodes[level++] = new Geometry(this, uElements, base, uEdge, vEdge,
-				getPlaneRaw(), uRepeats, vRepeats);
+                                getPlaneRaw(), uRepeats, vRepeats);
   shadowNode = new Geometry(this, uElements, base, uEdge, vEdge,
-				getPlaneRaw(), uRepeats, vRepeats);
+                            getPlaneRaw(), uRepeats, vRepeats);
   shadowNode->setStyle(0);
 
   // make remaining levels by doubling elements in each dimension
@@ -205,13 +194,12 @@ TriWallSceneNode::TriWallSceneNode(const fvec3& base,
     area *= 0.25f;
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, base, uEdge, vEdge,
-				getPlaneRaw(), uRepeats, vRepeats);
+                                  getPlaneRaw(), uRepeats, vRepeats);
   }
 
   // record extents info
   for (int i = 0; i < 3; i++) {
-    const fvec3& point = getVertex(i);
-    extents.expandToPoint(point);
+    extents.expandToPoint(getVertex(i));
   }
 
   // record LOD info
@@ -223,8 +211,9 @@ TriWallSceneNode::~TriWallSceneNode()
 {
   // free LODs
   const int numLevels = getNumLODs();
-  for (int i = 0; i < numLevels; i++)
+  for (int i = 0; i < numLevels; i++) {
     delete nodes[i];
+  }
   delete[] nodes;
   delete shadowNode;
 }
@@ -233,9 +222,8 @@ TriWallSceneNode::~TriWallSceneNode()
 bool TriWallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
-  const GLfloat* eye = frustum.getEye();
-  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-       plane[3]) <= 0.0f) {
+  const fvec3& eye = frustum.getEye();
+  if ((fvec3::dot(eye, plane.xyz()) + plane.w) <= 0.0f) {
     return true;
   }
 
@@ -258,8 +246,8 @@ bool TriWallSceneNode::cull(const ViewFrustum& frustum) const
 int TriWallSceneNode::split(const fvec4& _plane,
                             SceneNode*& front, SceneNode*& back) const
 {
-  return WallSceneNode::splitWall(_plane, nodes[0]->vertex, nodes[0]->uv,
-				  front, back);
+  return WallSceneNode::splitWall(_plane,
+                                  nodes[0]->vertex, nodes[0]->uv, front, back);
 }
 
 
@@ -284,12 +272,13 @@ bool TriWallSceneNode::inAxisBox(const Extents& exts) const
   }
 
   // NOTE: inefficient
-  float vertices[3][3];
-  memcpy (vertices[0], nodes[0]->getVertex(0), sizeof(float[3]));
-  memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
-  memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
+  const fvec3 vertices[3] = {
+    nodes[0]->getVertex(0),
+    nodes[0]->getVertex(1),
+    nodes[0]->getVertex(2)
+  };
 
-  return Intersect::testPolygonInAxisBox(3, (const fvec3*)vertices, getPlaneRaw(), exts);
+  return Intersect::testPolygonInAxisBox(3, vertices, getPlaneRaw(), exts);
 }
 
 

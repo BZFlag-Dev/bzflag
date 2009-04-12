@@ -71,7 +71,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       std::cout << "Extra tetrahedron vertex" << std::endl;
       // keep on chugging
     } else {
-      float* vertex = vertices[vertexCount];
+      fvec3& vertex = vertices[vertexCount];
       input >> vertex[0] >> vertex[1] >> vertex[2];
       vertexCount++;
     }
@@ -85,7 +85,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     } else {
       useNormals[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
-	float* normal = normals[vertexCount - 1][v];
+	fvec3& normal = normals[vertexCount - 1][v];
 	input >> normal[0] >> normal[1] >> normal[2];
       }
     }
@@ -99,7 +99,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     } else {
       useTexcoords[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
-	float* texcoord = texcoords[vertexCount - 1][v];
+	fvec2& texcoord = texcoords[vertexCount - 1][v];
 	input >> texcoord[0] >> texcoord[1];
       }
     }

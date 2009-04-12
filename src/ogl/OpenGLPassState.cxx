@@ -939,10 +939,10 @@ void OpenGLPassState::RevertScreenMatrices()
 void OpenGLPassState::SetupScreenLighting()
 {
   // back light
-  const float backLightPos[4]  = { 1.0f, 2.0f, 2.0f, 0.0f };
-  const float backLightAmbt[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-  const float backLightDiff[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
-  const float backLightSpec[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  const fvec4 backLightPos  = fvec4(1.0f, 2.0f, 2.0f, 0.0f);
+  const fvec4 backLightAmbt = fvec4(0.1f, 0.1f, 0.1f, 1.0f);
+  const fvec4 backLightDiff = fvec4(0.5f, 0.5f, 0.5f, 1.0f);
+  const fvec4 backLightSpec = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
   glLightfv(GL_LIGHT0, GL_POSITION, backLightPos);
   glLightfv(GL_LIGHT0, GL_AMBIENT,  backLightAmbt);
   glLightfv(GL_LIGHT0, GL_DIFFUSE,  backLightDiff);
@@ -954,31 +954,23 @@ void OpenGLPassState::SetupScreenLighting()
   if (sunDirPtr == NULL) {
     return;
   }
-  const fvec3& sunDir = *sunDirPtr;
-  const fvec4& diffuse   = RENDERER.getSunColor();
-  const fvec4& ambient   = RENDERER.getAmbientColor();
+  const fvec3& sunDir  = *sunDirPtr;
+  const fvec4& diffuse = RENDERER.getSunColor();
+  const fvec4& ambient = RENDERER.getAmbientColor();
 
   // need the camera transformation for world placement
   glPushMatrix();
   glLoadIdentity();
   RENDERER.getViewFrustum().executeView();
-  const float sunPos[4] = { sunDir[0], sunDir[1], sunDir[2], 0.0f };
-  glLightfv(GL_LIGHT1, GL_POSITION, sunPos);
+  glLightfv(GL_LIGHT1, GL_POSITION, fvec4(sunDir, 0.0f));
   glPopMatrix();
 
-  const float  sf = 1.0f; // sunFactor;
-  const float* la = ambient;
-  const float* ld = diffuse;
+  const float sf = 1.0f; // sunFactor;
 
-  const float sunLightAmbt[4] = {
-    la[0] * sf, la[1] * sf, la[2] * sf, la[3] * sf
-  };
-  const float sunLightDiff[4] = {
-    ld[0] * sf, ld[1] * sf, ld[2] * sf, ld[3] * sf
-  };
-  const float sunLightSpec[4] = {
-    la[0] * sf, la[1] * sf, la[2] * sf, la[3] * sf
-  };
+  const fvec4 sunLightAmbt = ambient * sf;
+  const fvec4 sunLightDiff = diffuse * sf;
+  const fvec4 sunLightSpec = ambient * sf;
+
   glLightfv(GL_LIGHT1, GL_AMBIENT,  sunLightAmbt);
   glLightfv(GL_LIGHT1, GL_DIFFUSE,  sunLightDiff);
   glLightfv(GL_LIGHT1, GL_SPECULAR, sunLightSpec);

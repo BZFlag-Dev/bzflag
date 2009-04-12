@@ -89,7 +89,7 @@ void EntryZones::calculateQualifierLists()
 }
 
 
-bool EntryZones::getRandomPoint(const std::string &qual, float *pt) const
+bool EntryZones::getRandomPoint(const std::string &qual, fvec3& pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qual);
   if (mit == qmap.end())
@@ -116,8 +116,8 @@ bool EntryZones::getRandomPoint(const std::string &qual, float *pt) const
 }
 
 
-bool EntryZones::getClosePoint(const std::string &qual, const float pos[3],
-			       float *pt) const
+bool EntryZones::getClosePoint(const std::string &qual, const fvec3& pos,
+			       fvec3& pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qual);
   if (mit == qmap.end())
@@ -147,7 +147,7 @@ bool EntryZones::getClosePoint(const std::string &qual, const float pos[3],
 }
 
 
-bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
+bool EntryZones::getZonePoint(const std::string &qualifier, fvec3& pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qualifier);
   if (mit == qmap.end())
@@ -174,8 +174,8 @@ bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
 }
 
 
-bool EntryZones::getSafetyPoint( const std::string &qualifier,
-				 const float *pos, float *pt ) const
+bool EntryZones::getSafetyPoint(const std::string &qualifier,
+				const fvec3& pos, fvec3& pt) const
 {
   std::string safetyString = /*EntryZones::getSafetyPrefix() + */ qualifier;
 
@@ -285,8 +285,8 @@ int EntryZones::packSize() const
     std::vector<TeamColor> teams;
     std::vector<TeamColor> safety;
     makeSplitLists (i, flags, teams, safety);
-    fullSize += sizeof(float[3]); // pos
-    fullSize += sizeof(float[3]); // size
+    fullSize += sizeof(fvec3); // pos
+    fullSize += sizeof(fvec3); // size
     fullSize += sizeof(float);    // angle
     fullSize += sizeof(uint16_t); // flag count
     fullSize += sizeof(uint16_t); // team count

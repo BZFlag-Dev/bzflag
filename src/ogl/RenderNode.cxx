@@ -152,27 +152,16 @@ static int nodeCompare(const void *a, const void* b)
   }
 }
 
-void RenderNodeGStateList::sort(const GLfloat* e)
+void RenderNodeGStateList::sort(const fvec3& eye)
 {
   // calculate distances from the eye (squared)
   for (int i = 0; i < count; i++) {
-    const GLfloat* p = list[i].node->getPosition();
-    if (!p) { // Some nodes don't normally need sorting, so they don't keep a position
-      list[i].depth = 0;
-      continue;
-    }
-    const float dx = (p[0] - e[0]);
-    const float dy = (p[1] - e[1]);
-    const float dz = (p[2] - e[2]);
-    list[i].depth = ((dx * dx) + (dy * dy) + (dz * dz));
-    // FIXME - dirty hack (they are all really getSphere())
-    //if (list[i].depth < p[3]) {
-    //  list[i].depth = -1.0f;
-    //}
+    const fvec3& pos = list[i].node->getPosition();
+    list[i].depth = (pos - eye).lengthSq();
   }
 
   // sort from farthest to closest
-  qsort (list, count, sizeof(Item), nodeCompare);
+  qsort(list, count, sizeof(Item), nodeCompare);
 
   return;
 }

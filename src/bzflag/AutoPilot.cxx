@@ -109,7 +109,7 @@ static ShotPath *findWorstBullet(float &minDistance)
 
       const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
       if (dist < minDistance) {
-	const float *shotVel = shot->getVelocity();
+	const fvec3& shotVel = shot->getVelocity();
 	float shotAngle = atan2f(shotVel[1], shotVel[0]);
 	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -148,7 +148,7 @@ static ShotPath *findWorstBullet(float &minDistance)
 
     const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
     if (dist < minDistance) {
-      const float *shotVel = shot->getVelocity();
+      const fvec3& shotVel = shot->getVelocity();
       float shotAngle = atan2f(shotVel[1], shotVel[0]);
       float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -678,7 +678,7 @@ static bool fireAtTank()
 	fvec3 enemyPos;
 	//toss in some lag adjustment/future prediction - 300 millis
 	enemyPos = tp;
-	const float *tv = remotePlayers[t]->getVelocity();
+	const fvec3& tv = remotePlayers[t]->getVelocity();
 	enemyPos[0] += 0.3f * tv[0];
 	enemyPos[1] += 0.3f * tv[1];
 	enemyPos[2] += 0.3f * tv[2];
@@ -733,7 +733,7 @@ static bool fireAtTank()
 
       //toss in some lag adjustment/future prediction - 300 millis
       enemyPos = tp;
-      const float *tv = remotePlayers[t]->getVelocity();
+      const fvec3& tv = remotePlayers[t]->getVelocity();
       enemyPos[0] += 0.3f * tv[0];
       enemyPos[1] += 0.3f * tv[1];
       enemyPos[2] += 0.3f * tv[2];

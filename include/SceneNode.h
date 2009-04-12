@@ -69,7 +69,7 @@ class SceneNode {
     virtual const fvec3& getVertex (int vertex) const;
     const fvec4*	getPlane() const;
     const fvec4&	getPlaneRaw() const;
-    virtual GLfloat	getDistance(const GLfloat* eye) const; // for BSP
+    virtual GLfloat	getDistanceSq(const fvec3& eye) const; // for BSP
 
     virtual bool	inAxisBox (const Extents& exts) const;
 

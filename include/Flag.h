@@ -162,7 +162,7 @@ public:
   const std::string information() const;
 
   /** returns the color of the flag */
-  const float* getColor() const;
+  const fvec4& getColor() const;
 
   /** network serialization */
   void* pack(void* buf) const;
