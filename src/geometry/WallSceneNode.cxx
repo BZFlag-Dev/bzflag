@@ -194,14 +194,14 @@ int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
 }
 
 
-GLfloat WallSceneNode::getDistanceSq(const fvec3& eye) const
+float WallSceneNode::getDistanceSq(const fvec3& eye) const
 {
-  const GLfloat d = plane.planeDist(eye);
+  const float d = plane.planeDist(eye);
   return (d * d);
 }
 
 
-void WallSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void WallSceneNode::setColor(float r, float g, float b, float a)
 {
   color[0] = r;
   color[1] = g;
@@ -241,7 +241,7 @@ void WallSceneNode::setColor(const fvec4& rgba)
 
 
 void WallSceneNode::setModulateColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+				float r, float g, float b, float a)
 {
   modulateColor = fvec4(r, g, b, a);
 }
@@ -253,7 +253,7 @@ void WallSceneNode::setModulateColor(const fvec4& rgba)
 }
 
 
-void WallSceneNode::setLightedColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void WallSceneNode::setLightedColor(float r, float g, float b, float a)
 {
   lightedColor = fvec4(r, g, b, a);
 }
@@ -265,7 +265,7 @@ void WallSceneNode::setLightedColor(const fvec4& rgba)
 }
 
 
-void WallSceneNode::setLightedModulateColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void WallSceneNode::setLightedModulateColor(float r, float g, float b, float a)
 {
   lightedModulateColor = fvec4(r, g, b, a);
 }
@@ -311,7 +311,7 @@ void WallSceneNode::setTexture(const int tex)
 }
 
 
-void WallSceneNode::setTextureMatrix(const GLfloat* texmat)
+void WallSceneNode::setTextureMatrix(const float* texmat)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTextureMatrix(texmat);
@@ -442,7 +442,7 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const GLfloat d = splitPlane.planeDist(vertices[i]);
+    const float d = splitPlane.planeDist(vertices[i]);
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;

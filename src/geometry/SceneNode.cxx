@@ -28,12 +28,12 @@
 
 
 #ifndef __MINGW32__
-void (__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);
-void (__stdcall *SceneNode::color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-void (__stdcall *SceneNode::color3fv)(const GLfloat*);
-void (__stdcall *SceneNode::color4fv)(const GLfloat*);
+void (__stdcall *SceneNode::color3f)(float, float, float);
+void (__stdcall *SceneNode::color4f)(float, float, float, float);
+void (__stdcall *SceneNode::color3fv)(const float*);
+void (__stdcall *SceneNode::color4fv)(const float*);
 #endif
-void (*SceneNode::stipple)(GLfloat);
+void (*SceneNode::stipple)(float);
 
 
 SceneNode::SceneNode()
@@ -44,7 +44,7 @@ SceneNode::SceneNode()
     init = true;
     setColorOverride(false);
   }
-  memset(sphere, 0, sizeof(GLfloat) & 4);
+  memset(sphere, 0, sizeof(float) & 4);
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
@@ -64,26 +64,26 @@ SceneNode::~SceneNode()
 
 
 #if defined(sun)
-static void __stdcall	oglColor3f(GLfloat r, GLfloat g, GLfloat b)
+static void __stdcall	oglColor3f(float r, float g, float b)
 				{ glColor3f(r, g, b); }
-static void __stdcall	oglColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+static void __stdcall	oglColor4f(float r, float g, float b, float a)
 				{ glColor4f(r, g, b, a); }
-static void __stdcall	oglColor3fv(const GLfloat* v)
+static void __stdcall	oglColor3fv(const float* v)
 				{ glColor3fv(v); }
-static void __stdcall	oglColor4fv(const GLfloat* v)
+static void __stdcall	oglColor4fv(const float* v)
 				{ glColor4fv(v); }
 #endif
 
 #ifdef __MINGW32__
 bool			SceneNode::colorOverride = true;
 #else
-void __stdcall		SceneNode::noColor3f(GLfloat, GLfloat, GLfloat) { }
+void __stdcall		SceneNode::noColor3f(float, float, float) { }
 void __stdcall		SceneNode::noColor4f(
-				GLfloat, GLfloat, GLfloat, GLfloat) { }
-void __stdcall		SceneNode::noColor3fv(const GLfloat*) { }
-void __stdcall		SceneNode::noColor4fv(const GLfloat*) { }
+				float, float, float, float) { }
+void __stdcall		SceneNode::noColor3fv(const float*) { }
+void __stdcall		SceneNode::noColor4fv(const float*) { }
 #endif
-void			SceneNode::noStipple(GLfloat) { }
+void			SceneNode::noStipple(float) { }
 
 
 void			SceneNode::setColorOverride(bool on)
@@ -119,7 +119,7 @@ void			SceneNode::setColorOverride(bool on)
 }
 
 
-void SceneNode::setRadius(GLfloat radiusSquared)
+void SceneNode::setRadius(float radiusSquared)
 {
   sphere[3] = radiusSquared;
 }
@@ -131,7 +131,7 @@ void SceneNode::setCenter(const fvec3& center)
 }
 
 
-void SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
+void SceneNode::setCenter(float x, float y, float z)
 {
   sphere[0] = x;
   sphere[1] = y;
@@ -169,7 +169,7 @@ void SceneNode::addLight(SceneRenderer&)
 }
 
 
-GLfloat SceneNode::getDistanceSq(const fvec3& eye) const
+float SceneNode::getDistanceSq(const fvec3& eye) const
 {
   return (eye - sphere.xyz()).lengthSq();
 }

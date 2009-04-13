@@ -363,7 +363,7 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const GLfloat d = (vertices[i][0] * splitPlane[0]) +
+    const float d = (vertices[i][0] * splitPlane[0]) +
 		      (vertices[i][1] * splitPlane[1]) +
 		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
     if (d < -fudgeFactor) {
@@ -582,7 +582,7 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const GLfloat d = (vertices[i][0] * splitPlane[0]) +
+    const float d = (vertices[i][0] * splitPlane[0]) +
 		      (vertices[i][1] * splitPlane[1]) +
 		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
     if (d < -fudgeFactor) {

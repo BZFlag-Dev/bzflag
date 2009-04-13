@@ -76,7 +76,7 @@ class TankSceneNode : public SceneNode {
 
     virtual void move(const fvec3& pos, const fvec3& forward);
 
-    virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    virtual void setColor(float r, float g, float b, float a = 1.0f);
     virtual void setColor(const fvec4& rgba);
     virtual void setMaterial(const OpenGLMaterial&);
     virtual void setTexture(const int);
@@ -143,8 +143,8 @@ class TankSceneNode : public SceneNode {
 	const TankSceneNode* sceneNode;
 	TankGeometryEnums::TankLOD drawLOD;
 	TankGeometryEnums::TankSize drawSize;
-	const GLfloat*	color;
-	GLfloat		alpha;
+	const float*	color;
+	float		alpha;
 	bool		isRadar;
 	bool		isTreads;
 	bool		isShadow;
@@ -153,7 +153,7 @@ class TankSceneNode : public SceneNode {
 	bool		towards;
 	bool		isExploding;
 	bool		narrowWithDepth;
-	GLfloat		explodeFraction;
+	float		explodeFraction;
 	static const fvec3 centerOfGravity[TankGeometryEnums::LastTankPart];
     };
     friend class TankRenderNode;

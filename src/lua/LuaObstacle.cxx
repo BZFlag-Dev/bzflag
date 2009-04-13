@@ -23,7 +23,7 @@ using std::string;
 #include "TetraBuilding.h"
 #include "WallObstacle.h"
 
-#include "SceneNode.h" // for the GLfloat arrays
+#include "SceneNode.h" // for the fvec[23]Array classes
 
 // bzflag headers
 #include "../bzflag/World.h"

@@ -46,9 +46,9 @@ class PhotonTorpedoSceneNode : public ShotSceneNode {
 	float theta[6];
 	float phi[6];
 
-	static GLfloat core[9][2];
-	static GLfloat corona[8][2];
-	static const GLfloat ring[8][2];
+	static float core[9][2];
+	static float corona[8][2];
+	static const float ring[8][2];
     };
     friend class PTRenderNode;
 
@@ -56,10 +56,10 @@ class PhotonTorpedoSceneNode : public ShotSceneNode {
     OpenGLLight  light;
     OpenGLGState gstate;
     PTRenderNode renderNode;
-    static const GLfloat CoreSize;
-    static const GLfloat CoronaSize;
-    static const GLfloat FlareSize;
-    static const GLfloat FlareSpread;
+    static const float CoreSize;
+    static const float CoronaSize;
+    static const float FlareSize;
+    static const float FlareSpread;
 };
 
 #endif // BZF_PHOTON_TORPEDO_SCENE_NODE_H

@@ -455,7 +455,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 	const int texMatId = bzmat->getTextureMatrix(0);
 	const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
 	if (texmat != NULL) {
-	  const GLfloat* matrix = texmat->getMatrix();
+	  const float* matrix = texmat->getMatrix();
 	  if (matrix != NULL) {
 	    builder.setTextureMatrix(matrix);
 	    builder.enableTextureMatrix(true);

@@ -59,7 +59,7 @@ class SceneNode {
     virtual const fvec3& getVertex (int vertex) const;
     const fvec4*	getPlane() const;
     const fvec4&	getPlaneRaw() const;
-    virtual GLfloat	getDistanceSq(const fvec3& eye) const; // for BSP
+    virtual float	getDistanceSq(const fvec3& eye) const; // for BSP
 
     virtual bool	inAxisBox (const Extents& exts) const;
 
@@ -82,34 +82,34 @@ class SceneNode {
     };
     virtual void getRenderNodes(std::vector<RenderSet>& rnodes);
 
-    static void setStipple(GLfloat alpha) { (*stipple)(alpha); }
+    static void setStipple(float alpha) { (*stipple)(alpha); }
 
     static void setColorOverride(bool = true);
 
 #ifdef __MINGW32__
-    static void glColor3f(GLfloat r, GLfloat g, GLfloat b) {
+    static void glColor3f(float r, float g, float b) {
       if (!colorOverride) { ::glColor3f(r, g, b); }
     }
-    static void glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+    static void glColor4f(float r, float g, float b, float a) {
       if (!colorOverride) { ::glColor4f(r, g, b, a); }
     }
-    static void glColor3fv(const GLfloat* rgb) {
+    static void glColor3fv(const float* rgb) {
       if (!colorOverride) { ::glColor3fv(rgb); }
     }
-    static void glColor4fv(const GLfloat* rgba) {
+    static void glColor4fv(const float* rgba) {
       if (!colorOverride) { ::glColor4fv(rgba); }
     }
 #else
-    static void glColor3f(GLfloat r, GLfloat g, GLfloat b) {
+    static void glColor3f(float r, float g, float b) {
       (*color3f)(r, g, b);
     }
-    static void glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+    static void glColor4f(float r, float g, float b, float a) {
       (*color4f)(r, g, b, a);
     }
-    static void glColor3fv(const GLfloat* rgb) {
+    static void glColor3fv(const float* rgb) {
       (*color3fv)(rgb);
     }
-    static void glColor4fv(const GLfloat* rgba) {
+    static void glColor4fv(const float* rgba) {
       (*color4fv)(rgba);
     }
 #endif // __MINGW32__
@@ -126,22 +126,22 @@ class SceneNode {
     CullState octreeState;
 
   protected:
-    void		setRadius(GLfloat radiusSquared);
+    void		setRadius(float radiusSquared);
     void		setCenter(const fvec3& center);
-    void		setCenter(GLfloat x, GLfloat y, GLfloat z);
+    void		setCenter(float x, float y, float z);
     void		setSphere(const fvec4& sphere);
 
   private:
     SceneNode(const SceneNode&);
     SceneNode& operator=(const SceneNode&);
 
-    static void noStipple(GLfloat);
+    static void noStipple(float);
 
 #ifndef __MINGW32__
-    static void __stdcall noColor3f(GLfloat, GLfloat, GLfloat);
-    static void __stdcall noColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-    static void __stdcall noColor3fv(const GLfloat*);
-    static void __stdcall noColor4fv(const GLfloat*);
+    static void __stdcall noColor3f(float, float, float);
+    static void __stdcall noColor4f(float, float, float, float);
+    static void __stdcall noColor3fv(const float*);
+    static void __stdcall noColor4fv(const float*);
 #endif
 
   protected:
@@ -154,14 +154,14 @@ class SceneNode {
     fvec4 sphere;
 
   private:
-    static void (*stipple)(GLfloat);
+    static void (*stipple)(float);
 #ifdef __MINGW32__
     static bool colorOverride;
 #else
-    static void (__stdcall *color3f)(GLfloat, GLfloat, GLfloat);
-    static void (__stdcall *color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-    static void (__stdcall *color3fv)(const GLfloat*);
-    static void (__stdcall *color4fv)(const GLfloat*);
+    static void (__stdcall *color3f)(float, float, float);
+    static void (__stdcall *color4f)(float, float, float, float);
+    static void (__stdcall *color3fv)(const float*);
+    static void (__stdcall *color4fv)(const float*);
 #endif
 };
 
@@ -185,7 +185,7 @@ inline void SceneNode::setOccluder(bool value) { occluder = value; }
 
 //============================================================================//
 //
-//  GLfloat array helper classes
+//  float array helper classes
 //
 
 class fvec2Array {

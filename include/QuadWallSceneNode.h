@@ -63,7 +63,7 @@ class QuadWallSceneNode : public WallSceneNode {
       public:
         Geometry(QuadWallSceneNode*, int uCount, int vCount,
                  const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
-                 const GLfloat* normal, float uOffset, float vOffset,
+                 const float* normal, float uOffset, float vOffset,
                  float uRepeats, float vRepeats);
         ~Geometry();
 	void		setStyle(int _style) { style = _style; }
@@ -79,7 +79,7 @@ class QuadWallSceneNode : public WallSceneNode {
 	int		style;
 	int		ds, dt;
 	int		dsq, dsr;
-	const GLfloat*	normal;
+	const float*	normal;
       public:
 	fvec3Array	vertex;
 	fvec2Array	uv;

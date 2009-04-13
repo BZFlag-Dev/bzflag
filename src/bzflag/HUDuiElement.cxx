@@ -25,9 +25,9 @@
 //
 
 // init static members
-const GLfloat		HUDuiElement::dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
-const GLfloat		HUDuiElement::moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
-const GLfloat		HUDuiElement::textColor[3] = { 1.0f, 1.0f, 1.0f };
+const float		HUDuiElement::dimTextColor[3] = { 0.7f, 0.7f, 0.7f };
+const float		HUDuiElement::moreDimTextColor[3] = { 0.4f, 0.4f, 0.4f };
+const float		HUDuiElement::textColor[3] = { 1.0f, 1.0f, 1.0f };
 
 HUDuiElement::HUDuiElement()
 {

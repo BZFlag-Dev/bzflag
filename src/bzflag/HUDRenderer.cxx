@@ -41,7 +41,7 @@
 // headingOffset:  the number of degrees from the center of the heading
 // strip display to either side.  altitudeOffset is similar.
 const float   HUDRenderer::altitudeOffset = 20.0f;
-const GLfloat HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
+const float HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
 std::string   HUDRenderer::headingLabel[36];
 std::string   HUDRenderer::restartLabelFormat("Press %s to start");
 std::string   HUDRenderer::resumeLabel("Press Pause to resume");
@@ -602,7 +602,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
 static const float dimFactor = 0.2f;
 
 
-void HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
+void HUDRenderer::hudColor3f(float r, float g, float b)
 {
   if (dim)
     glColor3f(dimFactor * r, dimFactor * g, dimFactor * b);
@@ -611,7 +611,7 @@ void HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
 }
 
 
-void HUDRenderer::hudColor3Afv( const GLfloat*c , const float a)
+void HUDRenderer::hudColor3Afv( const float*c , const float a)
 {
   if( dim )
     glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
@@ -621,7 +621,7 @@ void HUDRenderer::hudColor3Afv( const GLfloat*c , const float a)
 
 
 void HUDRenderer::hudColor4f(
-						GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+						float r, float g, float b, float a)
 {
   if (dim)
     glColor4f(dimFactor * r, dimFactor * g, dimFactor * b, a);
@@ -630,7 +630,7 @@ void HUDRenderer::hudColor4f(
 }
 
 
-void HUDRenderer::hudColor3fv(const GLfloat* c)
+void HUDRenderer::hudColor3fv(const float* c)
 {
   if (dim)
     glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
@@ -639,7 +639,7 @@ void HUDRenderer::hudColor3fv(const GLfloat* c)
 }
 
 
-void HUDRenderer::hudSColor3fv(const GLfloat* c)
+void HUDRenderer::hudSColor3fv(const float* c)
 {
   if (dim)
     glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
@@ -648,7 +648,7 @@ void HUDRenderer::hudSColor3fv(const GLfloat* c)
 }
 
 
-void HUDRenderer::hudColor4fv(const GLfloat* c)
+void HUDRenderer::hudColor4fv(const float* c)
 {
   if (dim)
     glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
@@ -1146,10 +1146,10 @@ void HUDRenderer::renderStatus(void)
   }
 
   // print status top-center
-  static const GLfloat redColor[3] = { 1.0f, 0.0f, 0.0f };
-  static const GLfloat yellowColor[3] = { 1.0f, 1.0f, 0.0f };
-  static const GLfloat greenColor[3] = { 0.0f, 1.0f, 0.0f };
-  const GLfloat* statusColor = warningColor;
+  static const float redColor[3] = { 1.0f, 0.0f, 0.0f };
+  static const float yellowColor[3] = { 1.0f, 1.0f, 0.0f };
+  static const float greenColor[3] = { 0.0f, 1.0f, 0.0f };
+  const float* statusColor = warningColor;
   // TODO: the upper 4 values of timeLeft (~0u-3 to ~0u)
   // are reserved for future use as timer flags (e.g. paused)
   if ((timeLeft == 0) || (timeLeft >= (~0u - 3))) {
@@ -1255,8 +1255,8 @@ void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
   GLint view[] = {window.getOriginX(), window.getOriginY(),
 		  window.getWidth(), window.getHeight()};
-  const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
-  const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
+  const float *projf = renderer.getViewFrustum().getProjectionMatrix();
+  const float *modelf = renderer.getViewFrustum().getViewMatrix();
 
   // convert to doubles
   GLdouble proj[16], model[16];
@@ -1436,7 +1436,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
       glEnable(GL_LINE_SMOOTH);
       glEnable(GL_BLEND);
     }
-    GLfloat basex = maxMotionSize * (heading - 10.0f * float(minMark)) / headingOffset;
+    float basex = maxMotionSize * (heading - 10.0f * float(minMark)) / headingOffset;
     if (!smooth) basex = floorf(basex);
     glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
     x = smooth ? 0.0f : -0.5f;
@@ -1493,7 +1493,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
       hudColor3fv(m.color);
       if (relAngle <= headingOffset || relAngle >= 360.0f - headingOffset) {
 	// on the visible part of tape
-	GLfloat mx = maxMotionSize / headingOffset *
+	float mx = maxMotionSize / headingOffset *
 	  ((relAngle < 180.0f) ? relAngle : relAngle - 360.0f);
 	glBegin(GL_QUADS);
 	glVertex2f(mx, 0.0f);
@@ -1551,7 +1551,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
     }
     // NOTE: before I (Steve Krenzel) made changes, minMark was always 0, which appears
     // to have made basey always equal 0, maybe I overlooked something
-    GLfloat basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
+    float basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
       altitudeOffset;
     if (!smooth) basey = floorf(basey);
     glTranslatef((float)(centerx + maxMotionSize),

@@ -283,7 +283,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     const float b = 0.5f * teleporter->getBorder();
     const float d = h + b;
     const float z = teleporter->getHeight() - teleporter->getBorder();
-    GLfloat x[2], y[2];
+    float x[2], y[2];
     x[0] = c;
     x[1] = s;
     y[0] = -s;

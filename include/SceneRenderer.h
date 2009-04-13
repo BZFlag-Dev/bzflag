@@ -130,10 +130,10 @@ public:
 
   const fvec4&		getSunColor() const;
   const fvec4&		getSunScaledColor() const;
-  GLfloat		getSunBrightness() const;
+  float		getSunBrightness() const;
   const fvec3*		getSunDirection() const;
   const fvec4&		getAmbientColor() const;
-  const GLfloat*	getCelestialTransform() const;
+  const float*	getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;
   void			setSceneDatabase(SceneDatabase*);
@@ -207,8 +207,8 @@ private:
   fvec3			sunDirection;	// or moon
   fvec4			sunColor;
   fvec4			sunScaledColor;
-  GLfloat		celestialTransform[4][4];
-  GLfloat		sunBrightness;
+  float		celestialTransform[4][4];
+  float		sunBrightness;
   fvec4			ambientColor;
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
@@ -303,7 +303,7 @@ inline const fvec4&		SceneRenderer::getSunScaledColor() const
   return sunScaledColor;
 }
 
-inline GLfloat			SceneRenderer::getSunBrightness() const
+inline float			SceneRenderer::getSunBrightness() const
 {
   return sunBrightness;
 }
@@ -313,7 +313,7 @@ inline const fvec4& 		SceneRenderer::getAmbientColor() const
   return ambientColor;
 }
 
-inline const GLfloat*		SceneRenderer::getCelestialTransform() const
+inline const float*		SceneRenderer::getCelestialTransform() const
 {
   return &celestialTransform[0][0];
 }

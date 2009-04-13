@@ -63,7 +63,7 @@ class ControlPanel {
     ControlPanel(MainWindow&, SceneRenderer&);
     ~ControlPanel();
 
-    void setControlColor(const GLfloat *color = NULL);
+    void setControlColor(const float *color = NULL);
     void render(SceneRenderer&);
     void resize();
     void invalidate();
@@ -120,7 +120,7 @@ class ControlPanel {
     int			messageAreaPixels[4];
     std::deque<ControlPanelMessage>	messages[MessageModeCount];
     MessageModes	messageMode;
-    GLfloat		teamColor[3];
+    float		teamColor[3];
     static int		messagesOffset;
     static const int	maxScrollPages;
     int			maxLines;

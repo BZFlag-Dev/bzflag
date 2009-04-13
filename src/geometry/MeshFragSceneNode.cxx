@@ -277,9 +277,9 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
   // make the lists
   const int vertexCount = (arrayCount * 3);
-  normals = new GLfloat[vertexCount * 3];
-  vertices = new GLfloat[vertexCount * 3];
-  texcoords = new GLfloat[vertexCount * 2];
+  normals = new float[vertexCount * 3];
+  vertices = new float[vertexCount * 3];
+  texcoords = new float[vertexCount * 2];
 
   // fill in the lists
   int arrayIndex = 0;

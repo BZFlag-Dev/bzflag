@@ -44,7 +44,7 @@ public:
   RadarRenderer(const SceneRenderer&, World* _world);
   void		setWorld(World* _world);
 
-  void		setControlColor(const GLfloat *color = NULL);
+  void		setControlColor(const float *color = NULL);
 
   int getX() const;
   int getY() const;
@@ -100,7 +100,7 @@ private:
   float		ps;
   float		range;
   double	decay;
-  GLfloat	teamColor[3];
+  float	teamColor[3];
   bool		smooth;
   bool		jammed;
   bool		colorblind;

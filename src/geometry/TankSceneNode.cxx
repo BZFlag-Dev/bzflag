@@ -102,7 +102,7 @@ TankSceneNode::~TankSceneNode()
 }
 
 
-void TankSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void TankSceneNode::setColor(float r, float g, float b, float a)
 {
   color[0] = r;
   color[1] = g;
@@ -261,8 +261,8 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   // if drawing in sorted order then decide which order
   if (sort || transparent || narrow) {
     const fvec3& eye = view.getEye();
-    GLfloat dx = eye[0] - mySphere[0];
-    GLfloat dy = eye[1] - mySphere[1];
+    float dx = eye[0] - mySphere[0];
+    float dy = eye[1] - mySphere[1];
     const float radians = (float)(azimuth * DEG2RAD);
     const float cos_val = cosf(radians);
     const float sin_val = sinf(radians);
@@ -457,7 +457,7 @@ void TankSceneNode::rebuildExplosion()
   // prepare explosion rotations and translations
   for (int i = 0; i < LastTankPart; i++) {
     // pick an unbiased rotation vector
-    GLfloat d;
+    float d;
     do {
       spin[i][0] = (float)bzfrand() - 0.5f;
       spin[i][1] = (float)bzfrand() - 0.5f;
@@ -725,7 +725,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
   plane.w = _plane.planeDist(sphere.xyz());
 
   // compute projection point -- one TankLength in from plane
-  const GLfloat pd = -1.0f * BZDBCache::tankLength - plane.w;
+  const float pd = -1.0f * BZDBCache::tankLength - plane.w;
   fvec3 origin = pd * plane.xyz();
 
   glPushMatrix();
@@ -738,7 +738,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
       // get distances from plane
       const int* face = idlFaces[i] + 1;
       const int numVertices = idlFaces[i][0];
-      GLfloat d[4];
+      float d[4];
       int j;
       for (j = 0; j < numVertices; j++) {
 	d[j] = idlVertex[face[j]][0] * plane[0] +
@@ -770,7 +770,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
 
       // project points out
       fvec3 project[2];
-      const GLfloat dist = 2.0f + 0.3f * ((float)bzfrand() - 0.5f);
+      const float dist = 2.0f + 0.3f * ((float)bzfrand() - 0.5f);
       project[0] = origin + (dist * (cross[0] - origin));
       project[1] = origin + (dist * (cross[1] - origin));
 
@@ -1064,7 +1064,7 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
 
   // use a fill depth buffer offset to avoid flickering
   GLboolean usingPolyOffset;
-  GLfloat factor, units;
+  float factor, units;
   glGetBooleanv(GL_POLYGON_OFFSET_FILL, &usingPolyOffset);
   if (usingPolyOffset == GL_TRUE) {
     glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
@@ -1236,8 +1236,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
 void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
 {
-  const GLfloat white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  const GLfloat* clr = color;
+  const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+  const float* clr = color;
 
   // do not use color modulation with tank textures
   if (BZDBCache::texture) {
@@ -1348,7 +1348,7 @@ void TankSceneNode::TankRenderNode::renderLights()
   if (isTreads)
     return;
 
-  static const GLfloat lights[3][6] = {
+  static const float lights[3][6] = {
     { 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
     { 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
     { 0.0f, 1.0f, 0.0f,  0.10f, -0.75f, 2.1f }
@@ -1401,8 +1401,8 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   }
 
   struct jetVertex {
-    GLfloat vertex[3];
-    GLfloat texcoord[2];
+    float vertex[3];
+    float texcoord[2];
   };
   static const jetVertex jet[3] = {
     {{+0.3f,  0.0f, 0.0f}, {0.0f, 1.0f}},

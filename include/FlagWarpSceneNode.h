@@ -26,9 +26,9 @@ class FlagWarpSceneNode : public SceneNode {
     FlagWarpSceneNode(const fvec3& pos);
     ~FlagWarpSceneNode();
 
-    void		setSizeFraction(GLfloat);
+    void		setSizeFraction(float);
 
-    GLfloat		getDistanceSq(const fvec3& eye) const;
+    float		getDistanceSq(const fvec3& eye) const;
     void		move(const fvec3& pos);
 
     void		notifyStyleChange();
@@ -47,7 +47,7 @@ class FlagWarpSceneNode : public SceneNode {
     friend class FlagWarpRenderNode;
 
   private:
-    GLfloat		size;
+    float		size;
     OpenGLGState	gstate;
     FlagWarpRenderNode	renderNode;
     static const fvec4  color[7];

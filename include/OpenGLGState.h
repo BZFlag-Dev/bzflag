@@ -48,7 +48,7 @@ class OpenGLGState {
     static void		resetState();
     static void		clearLists();
     static void		renderLists();
-    static void		setStipple(GLfloat alpha);
+    static void		setStipple(float alpha);
     static void		setStippleIndex(int index);
     static int		getStippleIndex(float alpha);
     static int		getOpaqueStippleIndex();
@@ -160,7 +160,7 @@ class OpenGLGStateBuilder {
     void		resetSmoothing();
     void		resetAlphaFunc();
     void		setTexture(const int texture);
-    void		setTextureMatrix(const GLfloat* matrix);
+    void		setTextureMatrix(const float* matrix);
     void		setTextureEnvMode(GLenum mode = GL_MODULATE);
     void		setMaterial(const OpenGLMaterial& material, bool highQuality);
     void		setBlending(GLenum sFactor = GL_SRC_ALPHA,

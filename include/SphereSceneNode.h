@@ -25,12 +25,12 @@
 
 class SphereSceneNode : public SceneNode {
   public:
-    SphereSceneNode(const fvec3& pos, GLfloat radius);
+    SphereSceneNode(const fvec3& pos, float radius);
     virtual ~SphereSceneNode();
 
-    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    void setColor(float r, float g, float b, float a = 1.0f);
     void setColor(const fvec4& rgba);
-    void move(const fvec3& pos, GLfloat radius);
+    void move(const fvec3& pos, float radius);
     void notifyStyleChange();
 
     virtual void setShockWave(bool) { return; };
@@ -41,7 +41,7 @@ class SphereSceneNode : public SceneNode {
     virtual void addShadowNodes(SceneRenderer&) = 0;
 
   protected:
-    GLfloat		radius;
+    float		radius;
     fvec4		color;
     bool		transparent;
     OpenGLGState	gstate;
@@ -54,12 +54,12 @@ const int sphereLods = 5;
 
 class SphereLodSceneNode : public SphereSceneNode {
   public:
-    SphereLodSceneNode(const fvec3& pos, GLfloat radius);
+    SphereLodSceneNode(const fvec3& pos, float radius);
     ~SphereLodSceneNode();
 
-    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    void setColor(float r, float g, float b, float a = 1.0f);
     void setColor(const fvec4& rgba);
-    void move(const fvec3& pos, GLfloat radius);
+    void move(const fvec3& pos, float radius);
 
     void setShockWave(bool value);
 
@@ -155,13 +155,13 @@ class SphereBspSceneNode : public SphereSceneNode {
   friend class SphereFragmentSceneNode;
   friend class SphereFragmentSceneNode::FragmentRenderNode;
   public:
-			SphereBspSceneNode(const fvec3& pos, GLfloat radius);
+			SphereBspSceneNode(const fvec3& pos, float radius);
 			~SphereBspSceneNode();
 
-    void		setColor(GLfloat r, GLfloat g,
-				 GLfloat b, GLfloat a = 1.0f);
+    void		setColor(float r, float g,
+				 float b, float a = 1.0f);
     void		setColor(const fvec4& rgba);
-    void		move(const fvec3& pos, GLfloat radius);
+    void		move(const fvec3& pos, float radius);
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
@@ -169,7 +169,7 @@ class SphereBspSceneNode : public SphereSceneNode {
     SceneNode**		getParts(int& numParts);
 
   protected:
-    GLfloat		getRadius() const { return radius; }
+    float		getRadius() const { return radius; }
 
   private:
     void		freeParts();

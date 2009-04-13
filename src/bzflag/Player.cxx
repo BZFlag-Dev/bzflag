@@ -1146,7 +1146,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     if (isCrossingWall()) {
       // get which plane to compute IDL against
       fvec4 plane;
-      const GLfloat a = atan2f(forward[1], forward[0]);
+      const float a = atan2f(forward[1], forward[0]);
       const Obstacle* obstacle =
 	world->hitBuilding(state.pos, a,
 			   dimensions[0], dimensions[1],

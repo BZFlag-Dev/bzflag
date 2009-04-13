@@ -43,9 +43,9 @@ static const int maxFlagVerts = 2 * (maxFlagQuads + 1);
 static bool geoPole = false;	// draw the pole as quads
 static bool realFlag = false;	// don't use billboarding
 
-static const GLfloat Unit = 0.8f;
-static const GLfloat Width = 1.5f * Unit;
-static const GLfloat Height = Unit;
+static const float Unit = 0.8f;
+static const float Width = 1.5f * Unit;
+static const float Height = Unit;
 
 static const fvec4 specular(0.3f, 0.3f, 0.3f, 1.0f);
 static const fvec4 emission(0.0f, 0.0f, 0.0f, 1.0f);
@@ -471,7 +471,7 @@ void FlagSceneNode::move(const fvec3& pos)
 }
 
 
-void FlagSceneNode::setAngle(GLfloat _angle)
+void FlagSceneNode::setAngle(float _angle)
 {
   angle = (float)(_angle * RAD2DEG);
   tilt = 0.0f;
@@ -529,7 +529,7 @@ void FlagSceneNode::setUseColor(bool value)
 }
 
 
-void FlagSceneNode::setAlpha(GLfloat a)
+void FlagSceneNode::setAlpha(float a)
 {
   realColor[3] = a;
   whiteColor[3] = a;
@@ -538,7 +538,7 @@ void FlagSceneNode::setAlpha(GLfloat a)
 }
 
 
-void FlagSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void FlagSceneNode::setColor(float r, float g, float b, float a)
 {
   realColor = fvec4(r, g, b, a);
   whiteColor[3] = a;
@@ -874,7 +874,7 @@ void FlagSceneNode::FlagRenderNode::render()
       }
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
-      static GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
+      static float shear[16] = {hscl, 0.0f, tilt, 0.0f,
 				  0.0f, 1.0f, 0.0f, 0.0f,
 				  0.0f, 0.0f, 1.0f, 0.0f,
 				  0.0f, 0.0f, 0.0f, 1.0f};

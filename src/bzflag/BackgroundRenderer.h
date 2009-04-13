@@ -58,7 +58,7 @@ class BackgroundRenderer : public GLDisplayListCreator
     void		setCelestial(const SceneRenderer&,
 				     const float sunDirection[3],
 				     const float moonDirection[3]);
-    void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
+    void		addCloudDrift(float uDrift, float vDrift);
     void		notifyStyleChange();
 
     int			getTriangleCount() const;
@@ -101,11 +101,11 @@ class BackgroundRenderer : public GLDisplayListCreator
     OpenGLGState	groundGState[4];
     OpenGLGState	invGroundGState[4];
     int			groundTextureID;
-    const GLfloat*	groundTextureMatrix;
+    const float*	groundTextureMatrix;
 
     // stuff for grid
-    GLfloat		gridSpacing;
-    GLfloat		gridCount;
+    float		gridSpacing;
+    float		gridCount;
     OpenGLGState	gridGState;
 
     // stuff for ground receivers
@@ -119,7 +119,7 @@ class BackgroundRenderer : public GLDisplayListCreator
     OpenGLGState*	mountainsGState;
 
     // stuff for clouds
-    GLfloat		cloudDriftU, cloudDriftV;
+    float		cloudDriftU, cloudDriftV;
     bool		cloudsAvailable;
     bool		cloudsVisible;
     OpenGLGState	cloudsGState;
@@ -164,7 +164,7 @@ class BackgroundRenderer : public GLDisplayListCreator
 
 
     static fvec3		skyPyramid[5];
-    static const GLfloat	cloudRepeats;
+    static const float	cloudRepeats;
 
     static fvec4	rcvrGroundColor[4];
     static fvec4	rcvrGroundInvColor[4];

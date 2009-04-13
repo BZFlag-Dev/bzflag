@@ -38,8 +38,8 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
   const float s = sinf(rotation);
 
   // compute polygons
-  const GLfloat polySize = size[0] / powf(float(PyrPolygons), 0.3333f);
-  const GLfloat slope = size[2] / size[0];
+  const float polySize = size[0] / powf(float(PyrPolygons), 0.3333f);
+  const float slope = size[2] / size[0];
   for (int i = 0; i < PyrPolygons; i++) {
     fvec3 base, verts[3];
     base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);

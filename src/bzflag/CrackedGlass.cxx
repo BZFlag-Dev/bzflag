@@ -83,7 +83,7 @@ CrackedGlass::RenderHighResCracks(SceneRenderer& renderer)
 
   glEnable(GL_BLEND);
   glPushMatrix();
-  glTranslatef(GLfloat(window.getWidth() >> 1), GLfloat(window.getViewHeight() >> 1), -0.02f);
+  glTranslatef(float(window.getWidth() >> 1), float(window.getViewHeight() >> 1), -0.02f);
 
   glLineWidth(5.0);
   glColor4f(1.0f, 1.0f, 1.0f,0.25f);
@@ -126,8 +126,8 @@ CrackedGlass::RenderClassicCracks(SceneRenderer& renderer)
   int maxLevels = (int)NUM_CRACKLEVELS;
 
   glPushMatrix();
-  glTranslatef(GLfloat(window.getWidth() >> 1),
-	       GLfloat(window.getViewHeight() >> 1), 0.0f);
+  glTranslatef(float(window.getWidth() >> 1),
+	       float(window.getViewHeight() >> 1), 0.0f);
   glLineWidth(3.0);
   glColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINES);

@@ -48,9 +48,9 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
   }
 
   drawLods = drawInfo->getDrawLods();
-  vertices = (const GLfloat*)drawInfo->getVertices();
-  normals = (const GLfloat*)drawInfo->getNormals();
-  texcoords = (const GLfloat*)drawInfo->getTexcoords();
+  vertices = (const float*)drawInfo->getVertices();
+  normals = (const float*)drawInfo->getNormals();
+  texcoords = (const float*)drawInfo->getTexcoords();
 
   lodCount = drawInfo->getLodCount();
   lodLists = new LodList[lodCount];

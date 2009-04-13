@@ -36,22 +36,22 @@ class BillboardSceneNode : public SceneNode {
 
     bool		isLight() const;
     void		setLight(bool = true);
-    void		setLightColor(GLfloat r, GLfloat g, GLfloat b);
-    void		setLightAttenuation(GLfloat c, GLfloat l, GLfloat q);
-    void		setLightScaling(GLfloat intensityScaleFactor);
+    void		setLightColor(float r, float g, float b);
+    void		setLightAttenuation(float c, float l, float q);
+    void		setLightScaling(float intensityScaleFactor);
     void		setLightFadeStartTime(float t);
     void		setGroundLight(bool value);
 
     void		setSize(float side);
     void		setSize(float width, float height);
-    void		setColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+    void		setColor(float r, float g,
+				float b, float a = 1.0f);
     void		setColor(const fvec4& rgba);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
     void		move(const fvec3& pos);
-    void		setAngle(GLfloat);
+    void		setAngle(float);
     void		addLight(SceneRenderer&);
 
     void		notifyStyleChange();
@@ -70,7 +70,7 @@ class BillboardSceneNode : public SceneNode {
       private:
 	const BillboardSceneNode* sceneNode;
 	float		u, v;
-	GLfloat		du, dv;
+	float		du, dv;
     };
     friend class BillboardRenderNode;
 

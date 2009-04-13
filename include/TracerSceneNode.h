@@ -46,13 +46,13 @@ class TracerSceneNode : public ShotSceneNode {
     friend class TracerRenderNode;
 
   private:
-    GLfloat		azimuth, elevation;
+    float		azimuth, elevation;
     OpenGLLight		light;
     int			style;
     OpenGLGState	gstate;
     TracerRenderNode	renderNode;
     static const fvec3   tailVertex[9];
-    static const GLfloat TailLength;
+    static const float TailLength;
 };
 
 #endif // BZF_TRACER_SCENE_NODE_H

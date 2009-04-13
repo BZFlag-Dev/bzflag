@@ -41,7 +41,7 @@ const int		MaxAlerts = 3;
 class HUDMarker {
 public:
   float   heading;
-  GLfloat color[3];
+  float color[3];
 };
 typedef std::vector<HUDMarker> MarkerList;
 
@@ -57,12 +57,12 @@ public:
 
   EnhancedHUDMarker( const float *p, const float* c)
   {
-    memcpy( color, c, sizeof(GLfloat)*3);
+    memcpy( color, c, sizeof(float)*3);
     memcpy( pos, p, sizeof(float)*3);
   }
 
   float pos[3];
-  GLfloat color[3];
+  float color[3];
   std::string name;
   bool friendly;
 };
@@ -124,12 +124,12 @@ public:
   ScoreboardRenderer *getScoreboard();
 
 protected:
-  void hudColor3f(GLfloat, GLfloat, GLfloat);
-  void hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-  void hudColor3fv(const GLfloat*);
-  void hudColor3Afv( const GLfloat*, const float );
-  void hudColor4fv(const GLfloat*);
-  void hudSColor3fv(const GLfloat*);
+  void hudColor3f(float, float, float);
+  void hudColor4f(float, float, float, float);
+  void hudColor3fv(const float*);
+  void hudColor3Afv( const float*, const float );
+  void hudColor4fv(const float*);
+  void hudSColor3fv(const float*);
   void renderAlerts(void);
   void renderStatus(void);
   void renderOptions(SceneRenderer&);
@@ -176,9 +176,9 @@ private:
   int			noMotionSize;
   int			maxMotionSize;
   float			headingOffset;
-  GLfloat		hudColor[3];
-  GLfloat		messageColor[3];
-  GLfloat		warningColor[3];
+  float		hudColor[3];
+  float		messageColor[3];
+  float		warningColor[3];
 
   LocalFontFace*	bigFontFace;
   float			bigFontSize;
@@ -229,7 +229,7 @@ private:
   FlashClock		alertClock[MaxAlerts];
   std::string		alertLabel[MaxAlerts];
   float		alertLabelWidth[MaxAlerts];
-  const GLfloat*	alertColor[MaxAlerts];
+  const float*	alertColor[MaxAlerts];
 
   float		flagHelpY;
   FlashClock		flagHelpClock;
@@ -248,7 +248,7 @@ private:
   HUDuiTypeIn*	composeTypeIn;
 
   static const float	altitudeOffset;
-  static const GLfloat black[3];
+  static const float black[3];
   static std::string	headingLabel[36];
   static std::string	restartLabelFormat;
   static std::string	resumeLabel;

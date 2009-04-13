@@ -30,7 +30,7 @@
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
 				const fvec3Array& _vertex,
 				const fvec2Array& _uv,
-				const GLfloat* _normal) :
+				const float* _normal) :
 				wall(_wall),
 				normal(_normal),
 				vertex(_vertex),
@@ -90,7 +90,7 @@ PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
   // figure out plane (find non-colinear edges and get cross product)
   fvec3 uEdge, vEdge;
   fvec4 myPlane;
-  GLfloat uLen, vLen, nLen;
+  float uLen, vLen, nLen;
   uEdge[0] = vertex[0][0] - vertex[count - 1][0];
   uEdge[1] = vertex[0][1] - vertex[count - 1][1];
   uEdge[2] = vertex[0][2] - vertex[count - 1][2];
@@ -179,7 +179,7 @@ PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
   mySphere[1] /= (float)count;
   mySphere[2] /= (float)count;
   for (i = 0; i < count; i++) {
-    GLfloat r = (mySphere[0] - vertex[i][0]) * (mySphere[0] - vertex[i][0]) +
+    float r = (mySphere[0] - vertex[i][0]) * (mySphere[0] - vertex[i][0]) +
 		(mySphere[1] - vertex[i][1]) * (mySphere[1] - vertex[i][1]) +
 		(mySphere[2] - vertex[i][2]) * (mySphere[2] - vertex[i][2]);
     if (r > mySphere[3]) mySphere[3] = r;

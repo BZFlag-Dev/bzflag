@@ -40,13 +40,13 @@ class FlagSceneNode : public SceneNode {
     static void setTimeStep(float dt);
 
     void move(const fvec3& pos);
-    void setAngle(GLfloat angle);
+    void setAngle(float angle);
     void setWind(const fvec3& wind, float dt);
     void setFlat(bool flat);
 
-    void setAlpha(GLfloat);
+    void setAlpha(float);
     void setColor(const fvec4& rgba);
-    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    void setColor(float r, float g, float b, float a);
     void setTexture(int);
     void setUseColor(bool);
     const fvec4* getColor() const { return color; }
@@ -92,9 +92,9 @@ class FlagSceneNode : public SceneNode {
     bool		translucent;
     bool		texturing;
 
-    GLfloat		angle;
-    GLfloat		tilt;
-    GLfloat		hscl;
+    float		angle;
+    float		tilt;
+    float		hscl;
 
     fvec4*		color;
     fvec4		realColor;

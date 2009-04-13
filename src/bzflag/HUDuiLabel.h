@@ -34,7 +34,7 @@ class HUDuiLabel : public HUDuiControl {
     std::string		getString() const;
     void		setString(const std::string&, const std::vector<std::string> *_params = NULL);
     void		setDarker(bool d); // render darker than usual when not in focus
-    void		setColor(GLfloat r, GLfloat g, GLfloat b);
+    void		setColor(float r, float g, float b);
 
   protected:
     void		onSetFont();
@@ -46,7 +46,7 @@ class HUDuiLabel : public HUDuiControl {
     std::string		string;
     std::vector<std::string> *params;
     bool		darker;
-    GLfloat		color[3];
+    float		color[3];
 };
 
 #endif // __HUDUILABEL_H__

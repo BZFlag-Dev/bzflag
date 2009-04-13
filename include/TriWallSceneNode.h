@@ -48,7 +48,7 @@ class TriWallSceneNode : public WallSceneNode {
       public:
         Geometry(TriWallSceneNode*, int eCount,
                  const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
-                 const GLfloat* normal, float uRepeats, float vRepeats);
+                 const float* normal, float uRepeats, float vRepeats);
         ~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
@@ -62,7 +62,7 @@ class TriWallSceneNode : public WallSceneNode {
 	WallSceneNode*	wall;
 	int		style;
 	int		de;
-	const GLfloat*	normal;
+	const float*	normal;
       public:
 	fvec3Array	vertex;
 	fvec2Array	uv;

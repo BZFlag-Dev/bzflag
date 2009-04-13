@@ -36,7 +36,7 @@
 // SphereSceneNode
 //
 
-SphereSceneNode::SphereSceneNode(const fvec3& pos, GLfloat _radius)
+SphereSceneNode::SphereSceneNode(const fvec3& pos, float _radius)
 {
   transparent = false;
 
@@ -59,7 +59,7 @@ SphereSceneNode::~SphereSceneNode()
 }
 
 
-void SphereSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void SphereSceneNode::setColor(float r, float g, float b, float a)
 {
   color = fvec4(r, g, b, a);
   transparent = (color[3] != 1.0f);
@@ -73,7 +73,7 @@ void SphereSceneNode::setColor(const fvec4& rgba)
 }
 
 
-void SphereSceneNode::move(const fvec3& pos, GLfloat _radius)
+void SphereSceneNode::move(const fvec3& pos, float _radius)
 {
   radius = _radius;
   setCenter(pos);
@@ -207,7 +207,7 @@ void SphereLodSceneNode::kill()
 }
 
 
-SphereLodSceneNode::SphereLodSceneNode(const fvec3& pos, GLfloat _radius) :
+SphereLodSceneNode::SphereLodSceneNode(const fvec3& pos, float _radius) :
 				       SphereSceneNode(pos, _radius),
 				       renderNode(this)
 {
@@ -344,7 +344,7 @@ static inline void drawFullScreenRect()
 
 void SphereLodSceneNode::SphereLodRenderNode::render()
 {
-  const GLfloat radius = sceneNode->radius;
+  const float radius = sceneNode->radius;
   const fvec4& sphere = sceneNode->getSphere();
 
   static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
@@ -444,7 +444,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 const int NumSlices = 2 * SphereRes;
 const int NumParts  = SphereLowRes * SphereLowRes;
 
-SphereBspSceneNode::SphereBspSceneNode(const fvec3& pos, GLfloat _radius) :
+SphereBspSceneNode::SphereBspSceneNode(const fvec3& pos, float _radius) :
 				       SphereSceneNode(pos, _radius),
 				       renderNode(this),
 				       parts(NULL)
@@ -587,7 +587,7 @@ void SphereBspSceneNode::SphereBspRenderNode::render()
   static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
 
   int i, j;
-  const GLfloat radius = sceneNode->radius;
+  const float radius = sceneNode->radius;
   const fvec4& sphere = sceneNode->getSphere();
 
   glClipPlane(GL_CLIP_PLANE0, groundPlane);
@@ -714,13 +714,13 @@ SphereFragmentSceneNode::~SphereFragmentSceneNode()
 void SphereFragmentSceneNode::move()
 {
   const fvec4& pSphere = parentSphere->getSphere();
-  const GLfloat pRadius = parentSphere->getRadius();
+  const float pRadius = parentSphere->getRadius();
   const fvec3& vertex = renderNode.getVertex();
   setCenter(pSphere[0] + pRadius * vertex[0],
 	    pSphere[1] + pRadius * vertex[1],
 	    pSphere[2] + pRadius * vertex[2]);
-  setRadius((GLfloat)(4.0 * M_PI * M_PI * pSphere[3]) /
-			GLfloat(SphereLowRes * SphereLowRes));
+  setRadius((float)(4.0 * M_PI * M_PI * pSphere[3]) /
+			float(SphereLowRes * SphereLowRes));
 }
 
 
@@ -775,7 +775,7 @@ const fvec3& SphereFragmentSceneNode::FragmentRenderNode::getPosition() const
 
 void SphereFragmentSceneNode::FragmentRenderNode::render()
 {
-  const GLfloat pRadius = sceneNode->getRadius();
+  const float pRadius = sceneNode->getRadius();
   const fvec4& pSphere = sceneNode->getSphere();
 
   glPushMatrix();

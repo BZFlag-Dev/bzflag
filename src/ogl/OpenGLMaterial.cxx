@@ -23,7 +23,7 @@ OpenGLMaterial::Rep* OpenGLMaterial::Rep::head = NULL;
 OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
 				const fvec4& specular,
 				const fvec4& emissive,
-				GLfloat shininess)
+				float shininess)
 {
   // see if we've already got an identical material
   for (Rep* scan = head; scan; scan = scan->next) {
@@ -46,7 +46,7 @@ OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
 
 OpenGLMaterial::Rep::Rep(const fvec4& _specular,
 			 const fvec4& _emissive,
-			 GLfloat _shininess)
+			 float _shininess)
 : refCount(1)
 , shininess(_shininess)
 {
@@ -156,7 +156,7 @@ OpenGLMaterial::OpenGLMaterial()
 
 OpenGLMaterial::OpenGLMaterial(const fvec4& specular,
                                const fvec4& emissive,
-                               GLfloat shininess)
+                               float shininess)
 {
   rep = Rep::getRep(specular, emissive, shininess);
 }

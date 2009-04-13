@@ -39,7 +39,7 @@ class OpenGLMaterial {
     OpenGLMaterial();
     OpenGLMaterial(const fvec4& specularRGB,
                    const fvec4& emissiveRGB,
-                   GLfloat shininess = 0.0f);
+                   float shininess = 0.0f);
     OpenGLMaterial(const OpenGLMaterial&);
     ~OpenGLMaterial();
     OpenGLMaterial&	operator=(const OpenGLMaterial&);
@@ -50,7 +50,7 @@ class OpenGLMaterial {
 
     const fvec4&	getSpecularColor() const;
     const fvec4&	getEmissiveColor() const;
-    GLfloat		getShininess() const;
+    float		getShininess() const;
 
     void		setQuality(bool highQuality);
 
@@ -66,11 +66,11 @@ class OpenGLMaterial {
 	void		execute();
 	static Rep*	getRep(const fvec4& specular,
 	                       const fvec4& emissive,
-	                       GLfloat shininess);
+	                       float shininess);
       private:
         Rep(const fvec4& specular,
             const fvec4& emissive,
-            GLfloat shininess);
+            float shininess);
 	static void	freeContext(void*);
 	static void	initContext(void*);
       public:
@@ -80,7 +80,7 @@ class OpenGLMaterial {
 	GLuint		list;
 	fvec4		specular;
 	fvec4		emissive;
-	GLfloat		shininess;
+	float		shininess;
 	static Rep*	head;
         bool		highQuality;
     };
@@ -101,7 +101,7 @@ inline const fvec4&	OpenGLMaterial::getEmissiveColor() const
   return rep->emissive;
 }
 
-inline GLfloat		OpenGLMaterial::getShininess() const
+inline float		OpenGLMaterial::getShininess() const
 {
   return rep->shininess;
 }

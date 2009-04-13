@@ -25,7 +25,7 @@
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 
-const GLfloat LaserRadius = 0.1f;
+const float LaserRadius = 0.1f;
 
 
 LaserSceneNode::LaserSceneNode(const fvec3& pos, const fvec3& forward)
@@ -58,7 +58,7 @@ LaserSceneNode::~LaserSceneNode()
 }
 
 
-void LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
+void LaserSceneNode::setColor ( float r, float g, float b )
 {
   color[0] = r;
   color[1] = g;
@@ -66,7 +66,7 @@ void LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
 }
 
 
-void LaserSceneNode::setCenterColor ( GLfloat r, GLfloat g, GLfloat b )
+void LaserSceneNode::setCenterColor ( float r, float g, float b )
 {
   centerColor[0] = r;
   centerColor[1] = g;
@@ -118,7 +118,7 @@ void LaserSceneNode::addRenderNodes(SceneRenderer& renderer)
 // LaserSceneNode::LaserRenderNode
 //
 
-GLfloat LaserSceneNode::LaserRenderNode::geom[6][2];
+float LaserSceneNode::LaserRenderNode::geom[6][2];
 
 
 LaserSceneNode::LaserRenderNode::LaserRenderNode(const LaserSceneNode* _sceneNode)

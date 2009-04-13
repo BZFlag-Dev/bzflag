@@ -188,7 +188,7 @@ void BillboardSceneNode::setLight(bool on)
 }
 
 
-void BillboardSceneNode::setLightColor(GLfloat r, GLfloat g, GLfloat b)
+void BillboardSceneNode::setLightColor(float r, float g, float b)
 {
   lightColor[0] = r;
   lightColor[1] = g;
@@ -197,7 +197,7 @@ void BillboardSceneNode::setLightColor(GLfloat r, GLfloat g, GLfloat b)
 }
 
 
-void BillboardSceneNode::setLightAttenuation(GLfloat c, GLfloat l, GLfloat q)
+void BillboardSceneNode::setLightAttenuation(float c, float l, float q)
 {
   light.setAttenuation(0, c);
   light.setAttenuation(1, l);
@@ -205,7 +205,7 @@ void BillboardSceneNode::setLightAttenuation(GLfloat c, GLfloat l, GLfloat q)
 }
 
 
-void BillboardSceneNode::setLightScaling(GLfloat s)
+void BillboardSceneNode::setLightScaling(float s)
 {
   lightScale = s;
   prepLight();
@@ -251,7 +251,7 @@ void BillboardSceneNode::setSize(float _width, float _height)
 }
 
 
-void BillboardSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void BillboardSceneNode::setColor(float r, float g, float b, float a)
 {
   color[0] = r;
   color[1] = g;
@@ -298,7 +298,7 @@ void BillboardSceneNode::move(const fvec3& pos)
 }
 
 
-void BillboardSceneNode::setAngle(GLfloat _angle)
+void BillboardSceneNode::setAngle(float _angle)
 {
   angle = RAD2DEG * _angle;
 }

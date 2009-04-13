@@ -24,7 +24,7 @@
 #include "StateDatabase.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-#define	ShellRadius1_2	((GLfloat)(M_SQRT1_2 * ShellRadius))
+#define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 
 const fvec3 ShellSceneNode::shellVertex[9] = {
   fvec3(3.0f * ShellRadius, 0.0f, 0.0f),

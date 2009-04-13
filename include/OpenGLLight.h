@@ -39,17 +39,17 @@ class OpenGLLight {
     const fvec4&	getPosition() const;
     const fvec4&	getColor() const;
     const fvec3&	getAttenuation() const;
-    GLfloat		getMaxDist() const;
+    float		getMaxDist() const;
 
     void		setDirection(const fvec3& xyz);
     void		setPosition(const fvec3& xyz);
-    void		setColor(GLfloat r, GLfloat g, GLfloat b);
+    void		setColor(float r, float g, float b);
     void		setColor(const fvec4& rgba);
     void		setAttenuation(const fvec3& clq);
-    void		setAttenuation(int index, GLfloat value);
+    void		setAttenuation(int index, float value);
 
     void		calculateImportance(const ViewFrustum& frustum);
-    GLfloat		getImportance() const;
+    float		getImportance() const;
 
     void		setOnlyReal(bool value);
     bool		getOnlyReal() const;
@@ -74,8 +74,8 @@ class OpenGLLight {
     fvec4		pos;
     fvec4		color;
     fvec3		atten;
-    GLfloat		maxDist;
-    GLfloat		importance;
+    float		maxDist;
+    float		importance;
     bool		onlyReal;
     bool		onlyGround;
     GLuint*		lists;
@@ -101,12 +101,12 @@ inline const fvec3&	OpenGLLight::getAttenuation() const
   return atten;
 }
 
-inline GLfloat		OpenGLLight::getMaxDist() const
+inline float		OpenGLLight::getMaxDist() const
 {
   return maxDist;
 }
 
-inline GLfloat		 OpenGLLight::getImportance() const
+inline float		 OpenGLLight::getImportance() const
 {
   return importance;
 }

@@ -115,7 +115,7 @@ void OpenGLLight::setPosition(const fvec3& _pos)
 }
 
 
-void OpenGLLight::setColor(GLfloat r, GLfloat g, GLfloat b)
+void OpenGLLight::setColor(float r, float g, float b)
 {
   freeLists();
   color = fvec4(r, g, b, 1.0f);
@@ -136,7 +136,7 @@ void OpenGLLight::setAttenuation(const fvec3& _atten)
 }
 
 
-void OpenGLLight::setAttenuation(int index, GLfloat value)
+void OpenGLLight::setAttenuation(int index, float value)
 {
   freeLists();
   atten[index] = value;

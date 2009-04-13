@@ -30,7 +30,7 @@
 
 
 const float   FlagWarpSize  = 7.5f;  // meters
-const GLfloat FlagWarpAlpha = 0.5f;
+const float FlagWarpAlpha = 0.5f;
 
 const fvec4 FlagWarpSceneNode::color[7] = {
   fvec4(0.25, 1.0,  0.25, 1.0f),
@@ -57,7 +57,7 @@ FlagWarpSceneNode::~FlagWarpSceneNode()
 }
 
 
-void FlagWarpSceneNode::setSizeFraction(GLfloat _size)
+void FlagWarpSceneNode::setSizeFraction(float _size)
 {
   size = _size;
 }
@@ -69,7 +69,7 @@ void FlagWarpSceneNode::move(const fvec3& pos)
 }
 
 
-GLfloat FlagWarpSceneNode::getDistanceSq(const fvec3& eye) const
+float FlagWarpSceneNode::getDistanceSq(const fvec3& eye) const
 {
   // shift position of warp down a little because a flag and it's warp
   // are at the same position but we want the warp to appear below the
@@ -123,9 +123,9 @@ FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
 void FlagWarpSceneNode::FlagWarpRenderNode::render()
 {
   // make a perturbed ring
-  GLfloat geom[12][2];
+  float geom[12][2];
   for (int i = 0; i < 12; i++) {
-    const GLfloat r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
+    const float r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
     geom[i][0] = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
     geom[i][1] = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
   }
@@ -136,7 +136,7 @@ void FlagWarpSceneNode::FlagWarpRenderNode::render()
 
     if (sphere[2] > RENDERER.getViewFrustum().getEye()[2]){
       for (int i = 0; i < 7; i++) {
-	GLfloat s = sceneNode->size - 0.05f * float(i);
+	float s = sceneNode->size - 0.05f * float(i);
 	if (s < 0.0f) break;
 	myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
 	glBegin(GL_TRIANGLE_FAN);
@@ -161,7 +161,7 @@ void FlagWarpSceneNode::FlagWarpRenderNode::render()
     }
     else {
       for (int i = 0; i < 7; i++) {
-	GLfloat s = sceneNode->size - 0.05f * float(i);
+	float s = sceneNode->size - 0.05f * float(i);
 	if (s < 0.0f) break;
 	myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
 	glBegin(GL_TRIANGLE_FAN);

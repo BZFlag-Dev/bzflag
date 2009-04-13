@@ -60,9 +60,9 @@ class HUDuiElement {
 
     void		renderLabel();
 
-    static const GLfloat	dimTextColor[3];
-    static const GLfloat	moreDimTextColor[3];
-    static const GLfloat	textColor[3];
+    static const float	dimTextColor[3];
+    static const float	moreDimTextColor[3];
+    static const float	textColor[3];
 
     bool		skipRenderLabel;
     float		fontHeight;

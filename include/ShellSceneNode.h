@@ -21,7 +21,7 @@
 #include "common.h"
 #include "ShotSceneNode.h"
 
-const GLfloat		ShellRadius = 0.5f;
+const float		ShellRadius = 0.5f;
 
 class ShellSceneNode : public ShotSceneNode {
   public:
@@ -49,7 +49,7 @@ class ShellSceneNode : public ShotSceneNode {
     friend class ShellRenderNode;
 
   private:
-    GLfloat		azimuth, elevation;
+    float		azimuth, elevation;
     OpenGLGState	gstate;
     ShellRenderNode	renderNode;
     static const fvec3 shellVertex[9];

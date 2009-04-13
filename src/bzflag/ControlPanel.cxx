@@ -199,7 +199,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
     messageCounts[i] = 0;
     unRead[i] = false;
   }
-  teamColor[0] = teamColor[1] = teamColor[2] = (GLfloat)0.0f;
+  teamColor[0] = teamColor[1] = teamColor[2] = (float)0.0f;
 
   maxLines = 30;
 
@@ -284,7 +284,7 @@ void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
 }
 
 
-void ControlPanel::setControlColor(const GLfloat *color)
+void ControlPanel::setControlColor(const float *color)
 {
   if (color)
     memcpy(teamColor, color, 3 * sizeof(float));
@@ -515,7 +515,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
 
     // default to drawing text in white
-    GLfloat whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
+    float whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
     glColor4fv(whiteColor);
 
     bool isTab = false;

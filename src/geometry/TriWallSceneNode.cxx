@@ -31,7 +31,7 @@
 
 TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
   const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
-  const GLfloat* _normal, float uRepeats, float vRepeats)
+  const float* _normal, float uRepeats, float vRepeats)
 : wall(_wall)
 , style(0)
 , de(eCount)

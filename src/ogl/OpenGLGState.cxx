@@ -55,7 +55,7 @@ class OpenGLGStateState {
     void enableSphereMap(bool);
     void enableMaterial(bool);
     void setTexture(const int tex);
-    void setTextureMatrix(const GLfloat* matrix);
+    void setTextureMatrix(const float* matrix);
     void setTextureEnvMode(GLenum mode);
     void setMaterial(const OpenGLMaterial&, bool highquality);
     void setBlending(GLenum sFactor, GLenum dFactor);
@@ -95,7 +95,7 @@ class OpenGLGStateState {
 	bool		hasSphereMap;
 	bool		hasMaterial;
 	int		texture;
-	const GLfloat*	textureMatrix;
+	const float*	textureMatrix;
 	GLenum		textureEnvMode;
 	OpenGLMaterial	material;
     };
@@ -371,7 +371,7 @@ void OpenGLGStateState::setTexture(
 }
 
 void OpenGLGStateState::setTextureMatrix(
-					const GLfloat* _textureMatrix)
+					const float* _textureMatrix)
 {
   sorted.hasTextureMatrix = (_textureMatrix != NULL);
   sorted.textureMatrix = _textureMatrix;
@@ -1160,7 +1160,7 @@ void OpenGLGState::renderLists()
   SortedGState::render();
 }
 
-void OpenGLGState::setStipple(GLfloat alpha)
+void OpenGLGState::setStipple(float alpha)
 {
   setStippleIndex(getStippleIndex(alpha));
 }
@@ -1462,7 +1462,7 @@ void OpenGLGStateBuilder::setTexture(
 }
 
 void OpenGLGStateBuilder::setTextureMatrix(
-					const GLfloat* textureMatrix)
+					const float* textureMatrix)
 {
   state->setTextureMatrix(textureMatrix);
 }

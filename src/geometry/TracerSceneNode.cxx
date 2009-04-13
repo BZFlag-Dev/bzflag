@@ -30,7 +30,7 @@
 
 #define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 
-const GLfloat TracerSceneNode::TailLength = 10.0f;
+const float TracerSceneNode::TailLength = 10.0f;
 
 const fvec3 TracerSceneNode::tailVertex[9] = {
   fvec3(-0.5f * TailLength, 0.0f, 0.0f),
@@ -70,8 +70,8 @@ void TracerSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
   setCenter(pos - 0.5f * TailLength * forward.normalize());
 
-  azimuth   = (GLfloat)( RAD2DEG * atan2f(forward.y, forward.x));
-  elevation = (GLfloat)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
+  azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
 
   light.setPosition(getSphere().xyz());
 }

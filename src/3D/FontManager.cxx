@@ -430,7 +430,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   bool underline = false;
   bool reverse = false;
   // negatives are invalid, we use them to signal "no change"
-  GLfloat color[4];
+  float color[4];
   if (resetColor != (float*)NULL) {
     color[0] = resetColor[0] * darkness;
     color[1] = resetColor[1] * darkness;
@@ -699,7 +699,7 @@ float FontManager::getStringHeight(int font, float size)
 }
 
 
-void FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
+void FontManager::getPulseColor(const float *color, float *pulseColor) const
 {
   float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
 

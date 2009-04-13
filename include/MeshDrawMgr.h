@@ -41,9 +41,9 @@ class MeshDrawMgr {
     const MeshDrawInfo* drawInfo;
 
     const DrawLod* drawLods;
-    const GLfloat* vertices;
-    const GLfloat* normals;
-    const GLfloat* texcoords;
+    const float* vertices;
+    const float* normals;
+    const float* texcoords;
 
     struct LodList {
       int count;

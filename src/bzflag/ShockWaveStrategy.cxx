@@ -92,7 +92,7 @@ void ShockWaveStrategy::update(float dt)
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
-    const GLfloat frac = (radius - shockIn) / (shockOut - shockIn);
+    const float frac = (radius - shockIn) / (shockOut - shockIn);
     shockNode->setColor(c[0], c[1], c[2], 0.75f - (0.5f * frac));
   }
 

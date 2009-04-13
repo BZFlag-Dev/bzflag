@@ -28,8 +28,8 @@ class BoltSceneNode : public ShotSceneNode {
 
     void		setFlares(bool);
     void		setSize(float radius);
-    void		setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    void		setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
+    void		setColor(float r, float g, float b, float a = 1.0f);
+    void		setTextureColor(float r, float g, float b, float a = 1.0f);
     void		setColor(const fvec4& rgb);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
@@ -66,7 +66,7 @@ class BoltSceneNode : public ShotSceneNode {
       private:
 	const BoltSceneNode* sceneNode;
 	int		u, v, cu, cv;
-	GLfloat		du, dv;
+	float		du, dv;
 	fvec4		mainColor;
 	fvec4		innerColor;
 	fvec4		outerColor;
@@ -77,12 +77,12 @@ class BoltSceneNode : public ShotSceneNode {
 	float		theta[6];
 	float		phi[6];
 
-	static GLfloat	core[9][2];
-	static GLfloat	corona[8][2];
-	static const GLfloat ring[8][2];
-	static const GLfloat CoreFraction;
-	static const GLfloat FlareSize;
-	static const GLfloat FlareSpread;
+	static float	core[9][2];
+	static float	corona[8][2];
+	static const float ring[8][2];
+	static const float CoreFraction;
+	static const float FlareSize;
+	static const float FlareSpread;
     };
     friend class BoltRenderNode;
 
@@ -99,7 +99,7 @@ class BoltSceneNode : public ShotSceneNode {
     OpenGLGState	colorblindGState;
     BoltRenderNode	renderNode;
 
-    GLfloat		azimuth, elevation, length;
+    float		azimuth, elevation, length;
 };
 
 #endif // BZF_BOLT_SCENE_NODE_H

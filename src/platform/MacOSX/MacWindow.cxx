@@ -242,7 +242,7 @@ class GLContext
 
       glEnd();
 
-      GLfloat frame[4] = { 1,1,1,1};
+      float frame[4] = { 1,1,1,1};
       glColor4fv(frame);
 
       glBegin(GL_LINE_LOOP);

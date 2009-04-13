@@ -91,7 +91,7 @@ void			HUDuiLabel::setDarker(bool d)
   darker = d;
 }
 
-void			HUDuiLabel::setColor(GLfloat r, GLfloat g, GLfloat b)
+void			HUDuiLabel::setColor(float r, float g, float b)
 {
   color[0] = r;
   color[1] = g;

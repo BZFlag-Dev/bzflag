@@ -173,7 +173,7 @@ void ScoreboardRenderer::setDim(bool _dim)
 
 static const float dimFactor = 0.2f;
 
-void ScoreboardRenderer::hudColor3fv(const GLfloat* c)
+void ScoreboardRenderer::hudColor3fv(const float* c)
 {
   if (dim) {
     glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);

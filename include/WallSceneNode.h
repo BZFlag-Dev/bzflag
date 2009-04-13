@@ -38,24 +38,24 @@ class WallSceneNode : public SceneNode {
     const fvec4&	getModulateColor() const;
     const fvec4&	getLightedColor() const;
     const fvec4&	getLightedModulateColor() const;
-    GLfloat		getDistanceSq(const fvec3& eye) const;
+    float		getDistanceSq(const fvec3& eye) const;
     virtual bool	inAxisBox (const Extents& exts) const;
 
-    void		setColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+    void		setColor(float r, float g,
+				float b, float a = 1.0f);
     void		setColor(const fvec4& rgba);
-    void		setModulateColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+    void		setModulateColor(float r, float g,
+				float b, float a = 1.0f);
     void		setModulateColor(const fvec4& rgba);
-    void		setLightedColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+    void		setLightedColor(float r, float g,
+				float b, float a = 1.0f);
     void		setLightedColor(const fvec4& rgba);
-    void		setLightedModulateColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+    void		setLightedModulateColor(float r, float g,
+				float b, float a = 1.0f);
     void		setLightedModulateColor(const fvec4& rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
-    void		setTextureMatrix(const GLfloat* texmat);
+    void		setTextureMatrix(const float* texmat);
     void		setOrder(int);
     void		setDynamicColor(const fvec4* color);
     void		setBlending(bool);

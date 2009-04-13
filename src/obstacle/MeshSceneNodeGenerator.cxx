@@ -435,7 +435,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   const int texMatId = mat->getTextureMatrix(0);
   const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
   if (texmat != NULL) {
-    const GLfloat* matrix = texmat->getMatrix();
+    const float* matrix = texmat->getMatrix();
     if (matrix != NULL) {
       node->setTextureMatrix(matrix);
     }

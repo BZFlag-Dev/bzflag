@@ -29,10 +29,10 @@
 #include "ViewFrustum.h"
 
 
-const GLfloat		PhotonTorpedoSceneNode::CoreSize = 0.125f;
-const GLfloat		PhotonTorpedoSceneNode::CoronaSize = 1.0f;
-const GLfloat		PhotonTorpedoSceneNode::FlareSize = 1.0f;
-const GLfloat		PhotonTorpedoSceneNode::FlareSpread = 0.08f;
+const float		PhotonTorpedoSceneNode::CoreSize = 0.125f;
+const float		PhotonTorpedoSceneNode::CoronaSize = 1.0f;
+const float		PhotonTorpedoSceneNode::FlareSize = 1.0f;
+const float		PhotonTorpedoSceneNode::FlareSpread = 0.08f;
 
 PhotonTorpedoSceneNode::PhotonTorpedoSceneNode(const fvec3& pos)
 : renderNode(this)
@@ -94,9 +94,9 @@ void			PhotonTorpedoSceneNode::addRenderNodes(
 // PhotonTorpedoSceneNode::PTRenderNode
 //
 
-GLfloat			PhotonTorpedoSceneNode::PTRenderNode::core[9][2];
-GLfloat			PhotonTorpedoSceneNode::PTRenderNode::corona[8][2];
-const GLfloat		PhotonTorpedoSceneNode::PTRenderNode::ring[8][2] = {
+float			PhotonTorpedoSceneNode::PTRenderNode::core[9][2];
+float			PhotonTorpedoSceneNode::PTRenderNode::corona[8][2];
+const float		PhotonTorpedoSceneNode::PTRenderNode::ring[8][2] = {
 				{ 1.0f, 0.0f },
 				{ (float)M_SQRT1_2, (float)M_SQRT1_2 },
 				{ 0.0f, 1.0f },
@@ -134,11 +134,11 @@ PhotonTorpedoSceneNode::PTRenderNode::~PTRenderNode()
 
 void			PhotonTorpedoSceneNode::PTRenderNode::render()
 {
-  static const GLfloat mainColor[3]  = { 1.0f, 0.2f, 0.0f };
-  static const GLfloat innerColor[3] = { 1.0f, 0.5f, 0.375f };
-  static const GLfloat outerColor[4] = { 1.0f, 0.2f, 0.0f, 0.0f};
-  static const GLfloat flareColor[4] = { 1.0f, 0.2f, 0.0f, 0.667f};
-  static const GLfloat coronaColor[4] = { 1.0f, 0.2f, 0.0f, 0.333f};
+  static const float mainColor[3]  = { 1.0f, 0.2f, 0.0f };
+  static const float innerColor[3] = { 1.0f, 0.5f, 0.375f };
+  static const float outerColor[4] = { 1.0f, 0.2f, 0.0f, 0.0f};
+  static const float flareColor[4] = { 1.0f, 0.2f, 0.0f, 0.667f};
+  static const float coronaColor[4] = { 1.0f, 0.2f, 0.0f, 0.333f};
 
   const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
@@ -165,8 +165,8 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
       // the bias completely, but moves it towards the equator, which is
       // really where i want it anyway cos the flares are more noticeable
       // there.
-      const GLfloat c = FlareSize * GLfloat(cosf(phi[i]));
-      const GLfloat s = FlareSize * GLfloat(sinf(phi[i]));
+      const float c = FlareSize * float(cosf(phi[i]));
+      const float s = FlareSize * float(sinf(phi[i]));
       glVertex3fv(core[0]);
       glVertex3f(c * cosf(theta[i]-FlareSpread), c * sinf(theta[i]-FlareSpread), s);
       glVertex3f(2.0f * c * cosf(theta[i]), 2.0f * c * sinf(theta[i]), 2.0f * s);

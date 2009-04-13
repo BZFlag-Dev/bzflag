@@ -38,7 +38,7 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const fvec3& pos,
   const float s = sinf(rotation);
 
   // compute polygons
-  const GLfloat polySize = size[0] / powf(float(BasePolygons), 0.3333f);
+  const float polySize = size[0] / powf(float(BasePolygons), 0.3333f);
   for (int i = 0; i < BasePolygons; i++) {
     fvec3 base, verts[3];
     base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);

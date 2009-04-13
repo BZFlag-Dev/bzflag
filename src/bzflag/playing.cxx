@@ -5343,9 +5343,9 @@ static void enteringServer(void* buf)
 
   // observer colors are actually cyan, make them black
   const bool observer = (myTank->getTeam() == ObserverTeam);
-  const GLfloat *borderColor;
+  const float *borderColor;
   if (observer) {
-    static const GLfloat black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    static const float black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     borderColor = black;
   } else {
     borderColor = Team::getRadarColor(myTank->getTeam());
@@ -6683,7 +6683,7 @@ void drawFrame(const float dt)
 
   const fvec3* myTankPos;
   const fvec3* myTankDir;
-  GLfloat fov;
+  float fov;
   fvec3 eyePoint;
   fvec3 targetPoint;
 

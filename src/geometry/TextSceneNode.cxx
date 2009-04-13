@@ -487,7 +487,7 @@ void TextSceneNode::TextRenderNode::initXFormList()
   };
 
   // oops, transpose
-  GLfloat matrix[16];
+  float matrix[16];
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       matrix[(i*4)+j] = xformTool.getMatrix()[(j*4)+i];

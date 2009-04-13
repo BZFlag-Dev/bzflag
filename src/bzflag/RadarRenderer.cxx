@@ -88,7 +88,7 @@ void RadarRenderer::setWorld(World* _world)
 }
 
 
-void RadarRenderer::setControlColor(const GLfloat* color)
+void RadarRenderer::setControlColor(const float* color)
 {
   if (color)
     memcpy(teamColor, color, 3 * sizeof(float));
@@ -137,7 +137,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   // 'ps' is pixel scale, setup in render()
   const float tankRadius = BZDBCache::tankRadius;
   float minSize = 1.5f + (ps * BZDBCache::radarTankPixels);
-  GLfloat size;
+  float size;
   if (tankRadius < minSize) {
     size = minSize;
   } else {
@@ -325,7 +325,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
 
 void RadarRenderer::drawFlag(const float pos[3])
 {
-  GLfloat s = BZDBCache::flagRadius > 3.0f * ps ? BZDBCache::flagRadius : 3.0f * ps;
+  float s = BZDBCache::flagRadius > 3.0f * ps ? BZDBCache::flagRadius : 3.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(pos[0] - s, pos[1]);
   glVertex2f(pos[0] + s, pos[1]);
@@ -348,7 +348,7 @@ void RadarRenderer::drawFlagOnTank(const float pos[3])
   glRotatef(float(angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
 
   float tankRadius = BZDBCache::tankRadius;
-  GLfloat s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
+  float s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(-s, 0.0f);
   glVertex2f(+s, 0.0f);
@@ -665,7 +665,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   // get size of pixel in model space (assumes radar is square)
-  ps = 2.0f * (radarRange / GLfloat(w));
+  ps = 2.0f * (radarRange / float(w));
   MeshSceneNode::setRadarLodScale(ps);
 
   float tankWidth = BZDBCache::tankWidth;
@@ -894,7 +894,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   glPopMatrix(); // depth = 2
 
   // north marker
-  GLfloat ns = 0.05f * radarRange, ny = 0.9f * radarRange;
+  float ns = 0.05f * radarRange, ny = 0.9f * radarRange;
   glColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINE_STRIP);
   glVertex2f(-ns, ny - ns);
@@ -1116,7 +1116,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   // setup the texturing mapping
   const float hf = 128.0f; // height factor, goes from 0.0 to 1.0 in texcoords
   const float vfz = RENDERER.getViewFrustum().getEye()[2];
-  const GLfloat plane[4] = { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
+  const float plane[4] = { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
   glTexGenfv(GL_S, GL_EYE_PLANE, plane);
 

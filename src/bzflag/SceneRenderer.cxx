@@ -510,7 +510,7 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   // set sun and ambient colors
   Daylight::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
   theSun.setColor(sunColor);
-  GLfloat maxComponent = sunColor[0];
+  float maxComponent = sunColor[0];
   if (sunColor[1] > maxComponent) maxComponent = sunColor[1];
   if (sunColor[2] > maxComponent) maxComponent = sunColor[2];
   if (maxComponent <= 0.0f) maxComponent = 1.0f;
@@ -1067,9 +1067,9 @@ bool SceneRenderer::setupMapFog()
   }
 
   GLenum  fogMode     = GL_EXP;
-  GLfloat fogDensity  = 0.001f;
-  GLfloat fogStart    = BZDBCache::worldSize * 0.5f;
-  GLfloat fogEnd      = BZDBCache::worldSize;
+  float fogDensity  = 0.001f;
+  float fogStart    = BZDBCache::worldSize * 0.5f;
+  float fogEnd      = BZDBCache::worldSize;
   fvec4   fogColor(0.25f, 0.25f, 0.25f, 0.25f);
 
   // parse the values;
@@ -1111,7 +1111,7 @@ bool SceneRenderer::setupMapFog()
 void SceneRenderer::renderPostDimming()
 {
   float density = 0.0f;
-  const GLfloat* color = NULL;
+  const float* color = NULL;
   if (useDimming) {
     density = dimDensity;
     color = dimnessColor;

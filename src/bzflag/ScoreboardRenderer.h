@@ -74,7 +74,7 @@ public:
   void setRoaming ( bool val ){roaming = val;}
 
 protected:
-  void		hudColor3fv(const GLfloat*);
+  void		hudColor3fv(const float*);
   void		renderScoreboard();
   void		renderTeamScores();
   void	  renderCtfFlags ();
@@ -103,7 +103,7 @@ private:
   float teamScoreYVal;
   bool	roaming;
 
-  GLfloat	messageColor[3];
+  float	messageColor[3];
   LocalFontFace*  minorFontFace;
   float		minorFontSize;
   LocalFontFace*  labelsFontFace;

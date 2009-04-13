@@ -151,7 +151,7 @@ protected:
   /**
    * return the pulse color
    */
-  void getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
+  void getPulseColor(const float* color, float* pulseColor) const;
 
   /**
    * returns the number of fonts loaded

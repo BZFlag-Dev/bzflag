@@ -54,7 +54,7 @@ BSPSceneDatabase::BSPSceneDatabase() :
 				depth(0)
 {
   needNoPlaneNodes = true;
-  memset(eye, 0, sizeof(GLfloat) * 3);
+  memset(eye, 0, sizeof(float) * 3);
 }
 
 
@@ -231,7 +231,7 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
 void BSPSceneDatabase::insertDynamic(int level, Node* _root,
 				     SceneNode* node)
 {
-  GLfloat d;
+  float d;
   if (!_root->dynamic && _root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
     const fvec3& pos = node->getSphere().xyz();
@@ -264,7 +264,7 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
   // dynamic nodes should only be inserted after all static nodes
   assert(_root->dynamic == false);
 
-  GLfloat d;
+  float d;
   if (_root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
     const fvec3& pos = node->getSphere().xyz();

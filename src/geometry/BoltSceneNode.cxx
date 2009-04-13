@@ -81,7 +81,7 @@ void BoltSceneNode::setSize(float radius)
 }
 
 
-void BoltSceneNode::setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void BoltSceneNode::setTextureColor(float r, float g, float b, float a)
 {
   color[0] = r;
   color[1] = g;
@@ -92,7 +92,7 @@ void BoltSceneNode::setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 }
 
 
-void BoltSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void BoltSceneNode::setColor(float r, float g, float b, float a)
 {
   color[0] = r;
   color[1] = g;
@@ -204,12 +204,12 @@ void BoltSceneNode::addRenderNodes(SceneRenderer& renderer)
 // BoltSceneNode::BoltRenderNode
 //
 
-const GLfloat BoltSceneNode::BoltRenderNode::CoreFraction = 0.4f;
-const GLfloat BoltSceneNode::BoltRenderNode::FlareSize    = 1.0f;
-const GLfloat BoltSceneNode::BoltRenderNode::FlareSpread  = 0.08f;
-GLfloat       BoltSceneNode::BoltRenderNode::core[9][2];
-GLfloat       BoltSceneNode::BoltRenderNode::corona[8][2];
-const GLfloat BoltSceneNode::BoltRenderNode::ring[8][2] = {
+const float BoltSceneNode::BoltRenderNode::CoreFraction = 0.4f;
+const float BoltSceneNode::BoltRenderNode::FlareSize    = 1.0f;
+const float BoltSceneNode::BoltRenderNode::FlareSpread  = 0.08f;
+float       BoltSceneNode::BoltRenderNode::core[9][2];
+float       BoltSceneNode::BoltRenderNode::corona[8][2];
+const float BoltSceneNode::BoltRenderNode::ring[8][2] = {
   { 1.0f, 0.0f },
   { (float)M_SQRT1_2, (float)M_SQRT1_2 },
   { 0.0f, 1.0f },
@@ -363,7 +363,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
   float lenMod = 0.025f;
   float baseRadius = 0.2f;
 
-  GLfloat len = sceneNode->length * lenMod;
+  float len = sceneNode->length * lenMod;
   glPushMatrix();
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
@@ -436,7 +436,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
   float lenMod = 0.025f;
   float baseRadius = 0.225f;
 
-  GLfloat len = sceneNode->length * lenMod;
+  float len = sceneNode->length * lenMod;
   glPushMatrix();
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
@@ -543,8 +543,8 @@ void BoltSceneNode::BoltRenderNode::render()
 	// the bias completely, but moves it towards the equator, which is
 	// really where i want it anyway cos the flares are more noticeable
 	// there.
-	const GLfloat c = FlareSize * GLfloat(cosf(phi[i]));
-	const GLfloat s = FlareSize * GLfloat(sinf(phi[i]));
+	const float c = FlareSize * float(cosf(phi[i]));
+	const float s = FlareSize * float(sinf(phi[i]));
 	glVertex3fv(core[0]);
 	glVertex3f(c * cosf(theta[i]-FlareSpread), c * sinf(theta[i]-FlareSpread), s);
 	glVertex3f(2.0f * c * cosf(theta[i]), 2.0f * c * sinf(theta[i]), 2.0f * s);

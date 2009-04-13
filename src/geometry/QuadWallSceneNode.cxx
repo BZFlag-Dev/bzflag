@@ -36,7 +36,7 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
                                       const fvec3& base,
                                       const fvec3& uEdge,
                                       const fvec3& vEdge,
-                                      const GLfloat* _normal,
+                                      const float* _normal,
                                       float uOffset, float vOffset,
                                       float uRepeats, float vRepeats)
 : wall(_wall)

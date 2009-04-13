@@ -32,8 +32,8 @@ class LaserSceneNode : public SceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-    void		setColor ( GLfloat r, GLfloat g, GLfloat b );
-    void		setCenterColor ( GLfloat r, GLfloat g, GLfloat b );
+    void		setColor ( float r, float g, float b );
+    void		setCenterColor ( float r, float g, float b );
     void		setFirst ( void ) {first = true;}
   protected:
     class LaserRenderNode : public RenderNode {
@@ -46,7 +46,7 @@ class LaserSceneNode : public SceneNode {
 	void renderFlatLaser();
 	void renderGeoLaser();
 	const LaserSceneNode* sceneNode;
-	static GLfloat	geom[6][2];
+	static float	geom[6][2];
     };
     fvec4 color;
     fvec4 centerColor;
@@ -54,8 +54,8 @@ class LaserSceneNode : public SceneNode {
     friend class LaserRenderNode;
 
   private:
-    GLfloat		azimuth, elevation;
-    GLfloat		length;
+    float		azimuth, elevation;
+    float		length;
     bool		texturing;
     OpenGLGState	gstate;
     LaserRenderNode	renderNode;

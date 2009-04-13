@@ -110,9 +110,9 @@ namespace TankGeometryUtils {
   float getTreadTexLen();
 
   // help to scale vertices and normals
-  inline void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
-  inline void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
-  inline void doTexCoord2f(GLfloat x, GLfloat y);
+  inline void doVertex3f(float x, float y, float z);
+  inline void doNormal3f(float x, float y, float z);
+  inline void doTexCoord2f(float x, float y);
 
   //
   // NOTE:  these all return their triangle count
@@ -160,7 +160,7 @@ namespace TankGeometryUtils {
 // ---------------------------
 
 inline
-void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
+void TankGeometryUtils::doVertex3f(float x, float y, float z)
 {
   const fvec3* scale = currentScaleFactor;
   const fvec3 pos(x * scale->x, y * scale->y, z * scale->z);
@@ -170,7 +170,7 @@ void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
 
 
 inline
-void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
+void TankGeometryUtils::doNormal3f(float x, float y, float z)
 {
   if (shadowMode == TankGeometryEnums::ShadowOn) {
     return;
@@ -184,7 +184,7 @@ void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
 
 
 inline
-void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
+void TankGeometryUtils::doTexCoord2f(float x, float y)
 {
   if (shadowMode == TankGeometryEnums::ShadowOn) {
     return;

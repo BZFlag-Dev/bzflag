@@ -109,7 +109,7 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color
   static float		rabbitShininess = 100.0f;
 
   const fvec4* emissive;
-  GLfloat shininess;
+  float shininess;
 
   if (visualTeam == RabbitTeam) {
     emissive = &rabbitEmissive;

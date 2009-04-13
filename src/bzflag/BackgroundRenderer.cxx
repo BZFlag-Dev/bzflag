@@ -43,7 +43,7 @@ static const fvec2 squareShape[4] = {
 
 
 fvec3			BackgroundRenderer::skyPyramid[5];
-const GLfloat		BackgroundRenderer::cloudRepeats = 3.0f;
+const float		BackgroundRenderer::cloudRepeats = 3.0f;
 static const int	NumMountainFaces = 16;
 
 fvec4 BackgroundRenderer::groundColor[4];
@@ -499,10 +499,10 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 
   const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
 
-  const GLfloat groundSize = 10.0f * worldSize;
-  const GLfloat gameSize = 0.5f * worldSize;
-  GLfloat groundPlane[4][3];
-  GLfloat gameArea[4][3];
+  const float groundSize = 10.0f * worldSize;
+  const float gameSize = 0.5f * worldSize;
+  float groundPlane[4][3];
+  float gameArea[4][3];
   for (int i = 0; i < 4; i++) {
     groundPlane[i][0] = groundSize * squareShape[i][0];
     groundPlane[i][1] = groundSize * squareShape[i][1];
@@ -512,12 +512,12 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
     gameArea[i][2] = 0.0f;
   }
 
-  GLfloat xmin, xmax;
-  GLfloat ymin, ymax;
-  GLfloat xdist, ydist;
-  GLfloat xtexmin, xtexmax;
-  GLfloat ytexmin, ytexmax;
-  GLfloat xtexdist, ytexdist;
+  float xmin, xmax;
+  float ymin, ymax;
+  float xdist, ydist;
+  float xtexmin, xtexmax;
+  float ytexmin, ytexmax;
+  float xtexdist, ytexdist;
   float vec[2];
 
 #define GROUND_DIVS	(4)	//FIXME -- seems to be enough
@@ -538,8 +538,8 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
   xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
   ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
 
-  GLfloat cloudsOuter[4][3], cloudsInner[4][3];
-  const GLfloat uvScale = 0.25f;
+  float cloudsOuter[4][3], cloudsInner[4][3];
+  const float uvScale = 0.25f;
   for (int i = 0; i < 4; i++) {
     cloudsOuter[i][0] = groundPlane[i][0];
     cloudsOuter[i][1] = groundPlane[i][1];
@@ -551,13 +551,13 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 
   // make cloud display list.  RIVA 128 doesn't interpolate alpha,
   // so on that system use full alpha everywhere.
-  GLfloat minAlpha = 0.0f;
+  float minAlpha = 0.0f;
 
   if (displayList == sunXFormList) {
     glPushMatrix();
-    glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
+    glRotatef((float)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
 	      0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+    glRotatef((float)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
 
     glBegin(GL_TRIANGLE_FAN); {
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
@@ -574,8 +574,8 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
     int moonSegements = BZDB.evalInt("moonSegments");
 
     glPushMatrix();
-    glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+    glRotatef((float)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef((float)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
     glRotatef((float)(limbAngle * 180.0 / M_PI), 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP); {
       // glTexCoord2f(0,-1);
@@ -612,10 +612,10 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
   }
   else if (displayList == mediumGroundList) {
     for (int i = 0; i < GROUND_DIVS; i++) {
-      GLfloat yoff, ytexoff;
+      float yoff, ytexoff;
 
-      yoff = ymin + ydist * (GLfloat)i;
-      ytexoff = ytexmin + ytexdist * (GLfloat)i;
+      yoff = ymin + ydist * (float)i;
+      ytexoff = ytexmin + ytexdist * (float)i;
 
       glBegin(GL_TRIANGLE_STRIP); {
 
@@ -625,10 +625,10 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 	glVertex2f(xmin, yoff);
 
 	for (int j = 0; j < GROUND_DIVS; j++) {
-	  GLfloat xoff, xtexoff;
+	  float xoff, xtexoff;
 
-	  xoff = xmin + xdist * (GLfloat)(j + 1);
-	  xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
+	  xoff = xmin + xdist * (float)(j + 1);
+	  xtexoff = xtexmin + xtexdist * (float)(j + 1);
 
 	  glTexCoord2f(xtexoff, ytexoff + ytexdist);
 	  glVertex2f(xoff, yoff + ydist);
@@ -751,7 +751,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
+void BackgroundRenderer::addCloudDrift(float uDrift, float vDrift)
 {
   cloudDriftU += 0.01f * uDrift / cloudRepeats;
   cloudDriftV += 0.01f * vDrift / cloudRepeats;
@@ -789,7 +789,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw ground -- first get the color (assume it's all green)
-    GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+    float _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
     if (fullWindow && viewType == SceneRenderer::ThreeChannel)
       glScissor(x, y, width, height >> 1);
     else if (fullWindow && viewType == SceneRenderer::Stacked)
@@ -840,7 +840,7 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow)
   glClear(GL_COLOR_BUFFER_BIT);
 
   // draw ground -- first get the color (assume it's all green)
-  GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+  float _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
   if (fullWindow && viewType == SceneRenderer::ThreeChannel) {
     glScissor(x, y, width, height >> 1);
   }
@@ -961,7 +961,7 @@ void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 void BackgroundRenderer::resizeSky() {
   // sky pyramid must fit inside far clipping plane
   // (adjusted for the deepProjection matrix)
-  const GLfloat skySize = 3.0f * BZDBCache::worldSize;
+  const float skySize = 3.0f * BZDBCache::worldSize;
   for (int i = 0; i < 4; i++) {
     skyPyramid[i][0] = skySize * squareShape[i][0];
     skyPyramid[i][1] = skySize * squareShape[i][1];
@@ -1047,11 +1047,11 @@ void BackgroundRenderer::drawSkybox()
   // sky box must fit inside far clipping plane
   // (adjusted for the deepProjection matrix)
   const float d = 3.0f * BZDBCache::worldSize;
-  const GLfloat verts[8][3] = {
+  const float verts[8][3] = {
     {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
     {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
   };
-  const GLfloat txcds[4][2] = {
+  const float txcds[4][2] = {
     {1.0f, 0.0f}, {0.0f, 0.0f},
     {0.0f, 1.0f}, {1.0f, 1.0f}
   };
@@ -1143,7 +1143,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   if (!doSkybox) {
     // rotate sky so that horizon-point-toward-sun-color is actually
     // toward the sun
-    glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
+    glRotatef((float)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
 	      0.0f, 0.0f, 1.0f);
 
     // draw sky
@@ -1169,7 +1169,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
 
-      GLfloat sunsetTopPoint[3];
+      float sunsetTopPoint[3];
       sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
@@ -1285,7 +1285,7 @@ void BackgroundRenderer::drawGroundCentered()
   const float vXmax = +groundSize;
   const float vYmin = -groundSize;
   const float vYmax = +groundSize;
-  const GLfloat vertices[5][2] = {
+  const float vertices[5][2] = {
     {center[0], center[1]},
     {vXmin, vYmin}, {vXmax, vYmin}, {vXmax, vYmax}, {vXmin, vYmax}
   };
@@ -1297,7 +1297,7 @@ void BackgroundRenderer::drawGroundCentered()
   const float tXmax = +groundSize * repeat;
   const float tYmin = -groundSize * repeat;
   const float tYmax = +groundSize * repeat;
-  const GLfloat texcoords[5][2] = {
+  const float texcoords[5][2] = {
     {tcenterX, tcenterY},
     {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
   };
@@ -1322,11 +1322,11 @@ void BackgroundRenderer::drawGroundCentered()
 void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
 {
   const fvec3& pos = renderer.getViewFrustum().getEye();
-  const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
-  const GLfloat yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
-  const GLfloat x0 = floorf(pos[0] / gridSpacing) * gridSpacing;
-  const GLfloat y0 = floorf(pos[1] / gridSpacing) * gridSpacing;
-  GLfloat i;
+  const float xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
+  const float yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
+  const float x0 = floorf(pos[0] / gridSpacing) * gridSpacing;
+  const float y0 = floorf(pos[1] / gridSpacing) * gridSpacing;
+  float i;
 
   gridGState.setState();
 
@@ -1356,7 +1356,7 @@ void BackgroundRenderer::multShadowMatrix() const
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
-  static GLfloat shadowProjection[16] = {
+  static float shadowProjection[16] = {
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
     8888, 9999, 0.0f, 0.0f,
@@ -1513,8 +1513,8 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     triangleCount += receiverSlices;
 
     for (i = 1; i < receiverRings; i++) {
-      const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
-      const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
+      const float innerSize = receiverRingSize * float(i * i);
+      const float outerSize = receiverRingSize * float((i + 1) * (i + 1));
 
       // compute inner and outer lit colors
       d = hypotf(innerSize, pos[2]);
@@ -1676,7 +1676,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       memcpy(innerColor, outerColor, sizeof(float[3]));
 
       // outer ring
-      outerSize = receiverRingSize * GLfloat(i * i);
+      outerSize = receiverRingSize * float(i * i);
       d = hypotf(outerSize, pos[2]);
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
