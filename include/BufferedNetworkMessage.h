@@ -40,8 +40,10 @@ public:
   void packUInt8(uint8_t);
   void packInt16(int16_t);
   void packInt32(int32_t);
+  void packInt64(int64_t);
   void packUInt16(uint16_t);
   void packUInt32(uint32_t);
+  void packUInt64(uint64_t);
   void packFloat(float);
   void packDouble(double);
   void packFVec2(const fvec2&);
@@ -53,8 +55,10 @@ public:
   uint8_t  unpackUInt8(void);
   int16_t  unpackInt16(void);
   int32_t  unpackInt32(void);
+  int64_t  unpackInt64(void);
   uint16_t unpackUInt16(void);
   uint32_t unpackUInt32(void);
+  uint64_t unpackUInt64(void);
   float    unpackFloat(void);
   double   unpackDouble(void);
   fvec2&   unpackFVec2(fvec2&);

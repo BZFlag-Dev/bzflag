@@ -95,6 +95,13 @@ void BufferedNetworkMessage::packInt32(int32_t val)
   packedSize += sizeof(int32_t);
 }
 
+void BufferedNetworkMessage::packInt64(int64_t val)
+{
+  checkData(sizeof(int64_t));
+  nboPackInt64(getWriteBuffer(), val);
+  packedSize += sizeof(int64_t);
+}
+
 void BufferedNetworkMessage::packUInt16(uint16_t val)
 {
   checkData(sizeof(uint16_t));
@@ -107,6 +114,13 @@ void BufferedNetworkMessage::packUInt32(uint32_t val)
   checkData(sizeof(uint32_t));
   nboPackUInt32(getWriteBuffer(), val);
   packedSize += sizeof(uint32_t);
+}
+
+void BufferedNetworkMessage::packUInt64(uint64_t val)
+{
+  checkData(sizeof(uint64_t));
+  nboPackUInt64(getWriteBuffer(), val);
+  packedSize += sizeof(uint64_t);
 }
 
 void BufferedNetworkMessage::packFloat(float val)
@@ -163,7 +177,7 @@ uint8_t BufferedNetworkMessage::unpackUInt8(void)
   uint8_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUInt8(p, v))-p;
+    packedSize += (char*)(nboUnpackUInt8(p, v)) - p;
   return v;
 }
 
@@ -172,7 +186,7 @@ int16_t BufferedNetworkMessage::unpackInt16(void)
   int16_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackInt16(p, v))-p;
+    packedSize += (char*)(nboUnpackInt16(p, v)) - p;
   return v;
 }
 
@@ -181,7 +195,16 @@ int32_t BufferedNetworkMessage::unpackInt32(void)
   int32_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackInt32(p, v))-p;
+    packedSize += (char*)(nboUnpackInt32(p, v)) - p;
+  return v;
+}
+
+int64_t BufferedNetworkMessage::unpackInt64(void)
+{
+  int64_t v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackInt64(p, v)) - p;
   return v;
 }
 
@@ -190,7 +213,7 @@ uint16_t BufferedNetworkMessage::unpackUInt16(void)
   uint16_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUInt16(p, v))-p;
+    packedSize += (char*)(nboUnpackUInt16(p, v)) - p;
   return v;
 }
 
@@ -199,7 +222,16 @@ uint32_t BufferedNetworkMessage::unpackUInt32(void)
   uint32_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUInt32(p, v))-p;
+    packedSize += (char*)(nboUnpackUInt32(p, v)) - p;
+  return v;
+}
+
+uint64_t BufferedNetworkMessage::unpackUInt64(void)
+{
+  uint64_t v = 0;
+  char *p = getReadBuffer();
+  if (p)
+    packedSize += (char*)(nboUnpackUInt64(p, v)) - p;
   return v;
 }
 
@@ -208,7 +240,7 @@ float BufferedNetworkMessage::unpackFloat(void)
   float v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackFloat(p, v))-p;
+    packedSize += (char*)(nboUnpackFloat(p, v)) - p;
   return v;
 }
 
@@ -217,7 +249,7 @@ double BufferedNetworkMessage::unpackDouble(void)
   double v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackDouble(p, v))-p;
+    packedSize += (char*)(nboUnpackDouble(p, v)) - p;
   return v;
 }
 
@@ -255,7 +287,7 @@ const std::string& BufferedNetworkMessage::unpackStdString(std::string& str)
 {
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackStdString(p, str))-p;
+    packedSize += (char*)(nboUnpackStdString(p, str)) - p;
   return str;
 }
 
