@@ -40,31 +40,29 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const fvec3& pos,
   // compute polygons
   const GLfloat polySize = size[0] / powf(float(BasePolygons), 0.3333f);
   for (int i = 0; i < BasePolygons; i++) {
-    GLfloat base[3], vertex[3][3];
-    base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float) bzfrand() - 1.0f);
-    base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float) bzfrand() - 1.0f);
-    base[2] = (size[2] - 0.5f * polySize) * (float) bzfrand();
-    for(int j = 0; j < 3; j++) {
+    fvec3 base, verts[3];
+    base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base[2] = (size[2] - 0.5f * polySize) * (float)bzfrand();
+    for (int j = 0; j < 3; j++) {
       // pick point around origin
-      GLfloat p[3];
-      p[0] = base[0] + polySize * ((float) bzfrand() - 0.5f);
-      p[1] = base[1] + polySize * ((float) bzfrand() - 0.5f);
-      p[2] = base[2] + polySize * ((float) bzfrand() - 0.5f);
+      fvec3 p;
+      p[0] = base[0] + polySize * ((float)bzfrand() - 0.5f);
+      p[1] = base[1] + polySize * ((float)bzfrand() - 0.5f);
+      p[2] = base[2] + polySize * ((float)bzfrand() - 0.5f);
 
       // make sure it's inside the base
-      if (p[0] < -size[0]) p[0] = -size[0];
-      else if(p[0] > size[0]) p[0] = size[0];
-      if (p[1] < -size[1]) p[1] = -size[1];
-      else if(p[1] > size[1]) p[1] = size[1];
-      if (p[2] < -size[2]) p[2] = -size[2];
-      else if(p[2] > size[2]) p[2] = size[2];
+      p.x = (p.x < -size.x) ? -size.x : ((p.x > +size.x) ? +size.x : p.x);
+      p.y = (p.y < -size.y) ? -size.y : ((p.y > +size.y) ? +size.y : p.y);
+      p.z = (p.z < -size.z) ? -size.z : ((p.z > +size.z) ? +size.z : p.z);
 
       // rotate it
-      vertex[j][0] = pos[0] + c * p[0] - s * p[1];
-      vertex[j][1] = pos[1] + s * p[0] + c * p[1];
-      vertex[j][2] = pos[2] + p[2];
+      verts[j].x = pos.x + (c * p.x) - (s * p.y);
+      verts[j].y = pos.y + (s * p.x) + (c * p.y);
+      verts[j].z = pos.z + p.z;
     }
-    setPolygon(i, vertex);
+
+    setPolygon(i, verts);
   }
 
   // set sphere

@@ -1196,7 +1196,7 @@ int LuaOpenGL::TexRect(lua_State* L)
 
 //============================================================================//
 
-static bool ParseColor(lua_State* L, float color[4], const char* funcName)
+static bool ParseColor(lua_State* L, fvec4& color, const char* funcName)
 {
 	const int args = lua_gettop(L); // number of arguments
 	if (args < 1) {
@@ -1237,7 +1237,7 @@ int LuaOpenGL::Color(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
 
-	float color[4];
+	fvec4 color;
 	ParseColor(L, color, __FUNCTION__);
 	glColor4fv(color);
 
@@ -1254,7 +1254,7 @@ int LuaOpenGL::Material(lua_State* L)
 		luaL_error(L, "Incorrect arguments to gl.Material(table)");
 	}
 
-	float color[4];
+	fvec4 color;
 
 	const int table = lua_gettop(L);
 	for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
@@ -1314,7 +1314,7 @@ int LuaOpenGL::Ambient(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
 
-	float color[4];
+	fvec4 color;
 	ParseColor(L, color, __FUNCTION__);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color);
 
@@ -1326,7 +1326,7 @@ int LuaOpenGL::Diffuse(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
 
-	float color[4];
+	fvec4 color;
 	ParseColor(L, color, __FUNCTION__);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
 
@@ -1338,7 +1338,7 @@ int LuaOpenGL::Emission(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
 
-	float color[4];
+	fvec4 color;
 	ParseColor(L, color, __FUNCTION__);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color);
 
@@ -1350,7 +1350,7 @@ int LuaOpenGL::Specular(lua_State* L)
 {
 	CheckDrawingEnabled(L, __FUNCTION__);
 
-	float color[4];
+	fvec4 color;
 	ParseColor(L, color, __FUNCTION__);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
 

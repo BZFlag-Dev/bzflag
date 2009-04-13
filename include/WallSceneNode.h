@@ -34,7 +34,7 @@ class WallSceneNode : public SceneNode {
 			~WallSceneNode();
 
     const fvec4&	getColor() const;
-    const GLfloat*	getDynamicColor() const;
+    const fvec4*	getDynamicColor() const;
     const fvec4&	getModulateColor() const;
     const fvec4&	getLightedColor() const;
     const fvec4&	getLightedModulateColor() const;
@@ -57,7 +57,7 @@ class WallSceneNode : public SceneNode {
     void		setTexture(const int);
     void		setTextureMatrix(const GLfloat* texmat);
     void		setOrder(int);
-    void		setDynamicColor(const float* color);
+    void		setDynamicColor(const fvec4* color);
     void		setBlending(bool);
     void		setSphereMap(bool);
     void		setNoCulling(bool);
@@ -98,7 +98,7 @@ class WallSceneNode : public SceneNode {
     int			numLODs;
     float*		elementAreas;
     int			order;
-    const GLfloat*	dynamicColor;
+    const fvec4*	dynamicColor;
     fvec4		color;
     fvec4		modulateColor;
     fvec4		lightedColor;
@@ -127,7 +127,7 @@ inline const fvec4& WallSceneNode::getColor() const
 {
   return color;
 }
-inline const GLfloat* WallSceneNode::getDynamicColor() const
+inline const fvec4* WallSceneNode::getDynamicColor() const
 {
   return dynamicColor;
 }

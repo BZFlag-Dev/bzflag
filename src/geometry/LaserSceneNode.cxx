@@ -153,10 +153,10 @@ void LaserSceneNode::LaserRenderNode::render()
 
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
-  const GLfloat length = sceneNode->length;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const float length = sceneNode->length;
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glTranslatef(sphere.x, sphere.y, sphere.z);
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
   glRotatef(90, 0.0f, 1.0f, 0.0f);
@@ -165,33 +165,35 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
   GLUquadric *q = gluNewQuadric();
 
-  //myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
-  myColor4f(sceneNode->centerColor[0], sceneNode->centerColor[1], sceneNode->centerColor[2], 0.85f);
-  gluCylinder(q,0.0625f,0.0625f,length,10,1);
+  const fvec4& color       = sceneNode->color;
+  const fvec4& centerColor = sceneNode->centerColor;
+
+  myColor4f(centerColor[0], centerColor[1], centerColor[2], 0.85f);
+  gluCylinder(q, 0.0625f, 0.0625f, length, 10, 1);
   addTriangleCount(20);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  gluCylinder(q,0.1f,0.1f,length,16,1);
+  myColor4f(color[0], color[1], color[2], 0.125f);
+  gluCylinder(q, 0.1f, 0.1f, length, 16, 1);
   addTriangleCount(32);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  gluCylinder(q,0.2f,0.2f,length,24,1);
+  myColor4f(color[0], color[1], color[2], 0.125f);
+  gluCylinder(q, 0.2f, 0.2f, length, 24, 1);
   addTriangleCount(48);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  gluCylinder(q,0.4f,0.4f,length,32,1);
+  myColor4f(color[0], color[1], color[2], 0.125f);
+  gluCylinder(q, 0.4f, 0.4f, length, 32, 1);
   addTriangleCount(64);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
+  myColor4f(color[0], color[1], color[2], 0.125f);
   if (sceneNode->first)
   {
-    gluSphere(q,0.5f,32,32);
+    gluSphere(q, 0.5f, 32, 32);
     addTriangleCount(32*32*2);
   }
   else
   {
-    gluSphere(q,0.5f,12,12);
-    addTriangleCount(12*12*2);
+    gluSphere(q, 0.5f, 12, 12);
+    addTriangleCount(12 * 12 * 2);
   }
 
   gluDeleteQuadric(q);
@@ -203,10 +205,10 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
 void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
-  const GLfloat length = sceneNode->length;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const float length = sceneNode->length;
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glTranslatef(sphere.x, sphere.y, sphere.z);
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 

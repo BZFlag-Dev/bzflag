@@ -431,12 +431,12 @@ void* nboUnpackFVec2(void* b, fvec2& v)
 void* nboUnpackFVec3(void* b, fvec3& v)
 {
   if (ErrorChecking) {
-    if (Length < sizeof(float[3])) {
+    if (Length < sizeof(fvec3)) {
       Error = true;
       memset(&v, 0, sizeof(fvec3));
       return b;
     } else {
-      Length -= sizeof(float[3]);
+      Length -= sizeof(fvec3);
     }
   }
 
@@ -457,12 +457,12 @@ void* nboUnpackFVec3(void* b, fvec3& v)
 void* nboUnpackFVec4(void* b, fvec4& v)
 {
   if (ErrorChecking) {
-    if (Length < sizeof(float[4])) {
+    if (Length < sizeof(fvec4)) {
       Error = true;
       memset(&v, 0, sizeof(fvec4));
       return b;
     } else {
-      Length -= sizeof(float[4]);
+      Length -= sizeof(fvec4);
     }
   }
 

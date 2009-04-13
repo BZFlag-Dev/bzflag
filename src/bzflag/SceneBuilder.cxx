@@ -285,7 +285,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 {
   fvec4 plane(0.0f, 0.0f, 1.0f, 0.0f);
   const float level = world->getWaterLevel();
-  plane[3] = -level;
+  plane.w = -level;
 
   // don't draw it if it isn't active
   if (level < 0.0f) {
@@ -293,15 +293,14 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   }
 
   // setup the vertex and texture coordinates
-  float size = BZDBCache::worldSize;
   fvec3Array v(4);
   fvec3Array n(0);
   fvec2Array t(4);
-  v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
-  v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
-  v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;
-  t[0][0] = t[0][1] = t[1][1] = t[3][0] = 0.0f;
-  t[1][0] = t[2][0] = t[2][1] = t[3][1] = 2.0f;
+  const float hs = 0.5f * BZDBCache::worldSize;
+  v[0] = fvec3(-hs, -hs, level);  t[0] = fvec2(0.0f, 0.0f);
+  v[1] = fvec3(+hs, -hs, level);  t[1] = fvec2(2.0f, 0.0f);
+  v[2] = fvec3(+hs, +hs, level);  t[2] = fvec2(2.0f, 2.0f);
+  v[3] = fvec3(-hs, +hs, level);  t[3] = fvec2(0.0f, 2.0f);
 
   // get the material
   const BzMaterial* mat = world->getWaterMaterial();

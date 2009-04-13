@@ -474,8 +474,8 @@ void *ConeObstacle::unpack(void *buf)
 int ConeObstacle::packSize() const
 {
   int fullSize = transform.packSize();
-  fullSize += sizeof(float[3]);
-  fullSize += sizeof(float[3]);
+  fullSize += sizeof(fvec3);
+  fullSize += sizeof(fvec3);
   fullSize += sizeof(float);
   fullSize += sizeof(float);
   fullSize += sizeof(int32_t);

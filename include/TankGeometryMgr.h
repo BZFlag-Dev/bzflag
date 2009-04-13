@@ -19,6 +19,7 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "vectors.h"
 
 
 namespace TankGeometryEnums {
@@ -89,7 +90,7 @@ namespace TankGeometryMgr {
 			   TankGeometryEnums::TankSize size,
 			   TankGeometryEnums::TankLOD lod);
 
-  const float* getScaleFactor(TankGeometryEnums::TankSize size);
+  const fvec3& getScaleFactor(TankGeometryEnums::TankSize size);
 }
 
 
@@ -146,7 +147,7 @@ namespace TankGeometryUtils {
   int buildHighLWheel (int wheel, float angle, int divs);
   int buildHighRWheel (int wheel, float angle, int divs);
 
-  extern const float* currentScaleFactor;
+  extern const fvec3* currentScaleFactor;
   extern TankGeometryEnums::TankShadow shadowMode;
 
   bool buildGeoFromObj ( const char* path, int &count );
@@ -161,11 +162,9 @@ namespace TankGeometryUtils {
 inline
 void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
 {
-  const float* scale = currentScaleFactor;
-  x = x * scale[0];
-  y = y * scale[1];
-  z = z * scale[2];
-  glVertex3f(x, y, z);
+  const fvec3* scale = currentScaleFactor;
+  const fvec3 pos(x * scale->x, y * scale->y, z * scale->z);
+  glVertex3fv(pos);
   return;
 }
 
@@ -176,17 +175,10 @@ void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
   if (shadowMode == TankGeometryEnums::ShadowOn) {
     return;
   }
-  const float* scale = currentScaleFactor;
-  GLfloat sx = x * scale[0];
-  GLfloat sy = y * scale[1];
-  GLfloat sz = z * scale[2];
-  const GLfloat d = sqrtf ((sx * sx) + (sy * sy) + (sz * sz));
-  if (d > 1.0e-5f) {
-    x *= scale[0] / d;
-    y *= scale[1] / d;
-    z *= scale[2] / d;
-  }
-  glNormal3f(x, y, z);
+  const fvec3* scale = currentScaleFactor;
+  fvec3 normal(x / scale->x, y / scale->y, z / scale->z);
+  fvec3::normalize(normal);
+  glNormal3fv(normal);
   return;
 }
 

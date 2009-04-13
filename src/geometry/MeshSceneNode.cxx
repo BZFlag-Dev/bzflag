@@ -112,8 +112,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       const fvec3& s = c[0]; // all mins
       // mins, except: c[1] -> max[0], c[3] -> max[1], c[5] -> max[2]
       const fvec3& e = c[(a * 2) + 1];
-      const float d[3] = {s[0] - e[0], s[1] - e[1], s[2] - e[2]};
-      const float newWidth = sqrtf(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+      const float newWidth = (s - e).length();
       if (oldWidth > 0.0f) {
 	const float scale = (newWidth / oldWidth);
 	if (scale < lengthAdj) {
@@ -261,7 +260,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
-    if (set.meshMat.colorPtr[3] != 0.0f) {
+    if (set.meshMat.colorPtr->w != 0.0f) {
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
@@ -278,7 +277,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
     const MeshMaterial& mat = set.meshMat;
-    if (mat.drawShadow && (mat.colorPtr[3] != 0.0f)) {
+    if (mat.drawShadow && (mat.colorPtr->w != 0.0f)) {
       renderer.addShadowNode(set.node);
     }
   }
@@ -417,7 +416,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // get the references
   const BzMaterial* bzmat  = mat->bzmat;
   OpenGLGState&     gstate = mat->gstate;
-  GLfloat*          color  = mat->color;
+  fvec4             color  = mat->color;
 
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
@@ -485,7 +484,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
   // color
   if (useDiffuseColor) {
-    memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
+    color = bzmat->getDiffuse();
     colorAlpha = (color[3] != 1.0f);
   } else {
     // set it to white, this should only happen when
@@ -497,10 +496,10 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // dynamic color
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
   if (dyncol != NULL) {
-    mat->colorPtr = dyncol->getColor();
+    mat->colorPtr = &dyncol->getColor();
     colorAlpha = dyncol->canHaveAlpha(); // override
   } else {
-    mat->colorPtr = color;
+    mat->colorPtr = &color;
   }
 
   // blending
@@ -568,18 +567,22 @@ void MeshSceneNode::makeXFormList()
       }
     };
 
-    // oops, transpose
-    GLfloat matrix[16];
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-	matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
-      }
-    }
-
     xformList = glGenLists(1);
     glNewList(xformList, GL_COMPILE);
     {
-      glMultMatrixf(matrix);
+      const float* m = xformTool->getMatrix();
+      if (glMultTransposeMatrixf) {
+        glMultTransposeMatrixf(m);
+      }
+      else {
+        float matrix[16];
+        for (int i = 0; i < 4; i++) {
+          for (int j = 0; j < 4; j++) {
+            matrix[(i * 4) + j] = m[(j * 4) + i];
+          }
+        }
+        glMultMatrixf(matrix);
+      }
     }
     glEndList();
 

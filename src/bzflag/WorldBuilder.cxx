@@ -267,9 +267,9 @@ void WorldBuilder::preGetWorld()
     world->flags[i].gfxBlock.init(GfxBlock::Flag, i, true);
     world->flags[i].type = Flags::Null;
     world->flags[i].status = FlagNoExist;
-    world->flags[i].position[0] = 0.0f;
-    world->flags[i].position[1] = 0.0f;
-    world->flags[i].position[2] = 0.0f;
+    world->flags[i].position.x = 0.0f;
+    world->flags[i].position.y = 0.0f;
+    world->flags[i].position.z = 0.0f;
     world->flagNodes[i] = new FlagSceneNode(world->flags[i].position);
     world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
     world->flagNodes[i]->setTexture(World::flagTexture);

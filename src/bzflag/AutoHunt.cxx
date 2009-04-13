@@ -666,12 +666,9 @@ static void clearPlayers()
 
 static float distBetweenPlayers(const Player* p0, const Player* p1)
 {
-  const float* pos0 = p0->getPosition();
-  const float* pos1 = p1->getPosition();
-  const float dx = pos0[0] - pos1[0];
-  const float dy = pos0[1] - pos1[1];
-  const float dz = pos0[2] - pos1[2];
-  return sqrtf((dx * dx) + (dy * dy) + (dz * dz));
+  const fvec3& pos0 = p0->getPosition();
+  const fvec3& pos1 = p1->getPosition();
+  return (pos1 - pos0).length();
 }
 
 

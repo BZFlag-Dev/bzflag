@@ -49,7 +49,7 @@ class FlagSceneNode : public SceneNode {
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
     void setTexture(int);
     void setUseColor(bool);
-    const GLfloat* getColor() const { return color; }
+    const fvec4* getColor() const { return color; }
 
     void addRenderNodes(SceneRenderer&); // also computes the LOD
     void addShadowNodes(SceneRenderer&);
@@ -96,7 +96,7 @@ class FlagSceneNode : public SceneNode {
     GLfloat		tilt;
     GLfloat		hscl;
 
-    GLfloat*		color;
+    fvec4*		color;
     fvec4		realColor;
     fvec4		whiteColor;
     bool		useColor;

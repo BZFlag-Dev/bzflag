@@ -46,7 +46,7 @@ class BillboardSceneNode : public SceneNode {
     void		setSize(float width, float height);
     void		setColor(GLfloat r, GLfloat g,
 				GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
+    void		setColor(const fvec4& rgba);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
@@ -62,7 +62,7 @@ class BillboardSceneNode : public SceneNode {
       public:
 			BillboardRenderNode(const BillboardSceneNode*);
 			~BillboardRenderNode();
-	void		setColor(const GLfloat* rgba);
+	void		setColor(const fvec4& rgba);
 	void		render();
 	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
 	void		setFrame(float u, float v);

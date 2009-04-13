@@ -576,12 +576,12 @@ int Teleporter::packSize() const
 {
   int fullSize = 0;
   fullSize += nboStdStringPackSize(name);
-  fullSize += sizeof(float[3]); // pos
-  fullSize += sizeof(float);    // rotation
-  fullSize += sizeof(float[3]); // size
-  fullSize += sizeof(float);    // border
-  fullSize += sizeof(uint8_t);  // horizontal
-  fullSize += sizeof(uint8_t);  // state bits
+  fullSize += sizeof(fvec3);   // pos
+  fullSize += sizeof(float);   // rotation
+  fullSize += sizeof(fvec3);   // size
+  fullSize += sizeof(float);   // border
+  fullSize += sizeof(uint8_t); // horizontal
+  fullSize += sizeof(uint8_t); // state bits
   return fullSize;
 }
 

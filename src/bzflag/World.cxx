@@ -655,16 +655,16 @@ void World::updateFlag(int index, float dt)
 
   Flag& flag = flags[index];
   FlagSceneNode* flagNode = flagNodes[index];
-  const GLfloat* color = flagNode->getColor();
-  GLfloat alpha = color[3];
+  const fvec4* color = flagNode->getColor();
+  float alpha = color->w;
 
   switch (flag.status) {
-    default:
+    default: {
       // do nothing (don't move cos either it's not moving or we
       // don't know the position to move it to)
       break;
-
-    case FlagInAir:
+    }
+    case FlagInAir: {
       flag.flightTime += dt;
       if (flag.flightTime >= flag.flightEnd) {
 	// touchdown
@@ -672,33 +672,32 @@ void World::updateFlag(int index, float dt)
 	flag.position[0] = flag.landingPosition[0];
 	flag.position[1] = flag.landingPosition[1];
 	flag.position[2] = flag.landingPosition[2];
-      } else {
+      }
+      else {
 	// still flying
 	float t = flag.flightTime / flag.flightEnd;
-	flag.position[0] = (1.0f - t) * flag.launchPosition[0] +
-				t * flag.landingPosition[0];
-	flag.position[1] = (1.0f - t) * flag.launchPosition[1] +
-				t * flag.landingPosition[1];
-	flag.position[2] = (1.0f - t) * flag.launchPosition[2] +
-				t * flag.landingPosition[2] +
-				flag.flightTime * (flag.initialVelocity +
-					0.5f * BZDBCache::gravity * flag.flightTime);
+	flag.position = ((1.0f - t) * flag.launchPosition) +
+	                        (t  * flag.landingPosition);
+        flag.position.z += flag.flightTime *
+          (flag.initialVelocity + 0.5f * BZDBCache::gravity * flag.flightTime);
       }
       break;
-
-    case FlagComing:
+    }
+    case FlagComing: {
       flag.flightTime += dt;
       if (flag.flightTime >= flag.flightEnd) {
 	// touchdown
 	flag.status = FlagOnGround;
-	flag.position[2] = 0.0f;
+	flag.position.z = 0.0f;
 	alpha = 1.0f;
-      } else if (flag.flightTime >= 0.5f * flag.flightEnd) {
+      }
+      else if (flag.flightTime >= (0.5f * flag.flightEnd)) {
 	// falling
-	flag.position[2] = flag.flightTime * (flag.initialVelocity +
-	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition[2];
+	flag.position.z = flag.flightTime * (flag.initialVelocity +
+	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition.z;
 	alpha = 1.0f;
-      } else {
+      }
+      else {
 	// hovering
 	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
 	    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
@@ -721,20 +720,22 @@ void World::updateFlag(int index, float dt)
 	}
       }
       break;
-
-    case FlagGoing:
+    }
+    case FlagGoing: {
       flag.flightTime += dt;
       if (flag.flightTime >= flag.flightEnd) {
 	// all gone
 	flag.status = FlagNoExist;
-      } else if (flag.flightTime < 0.5f * flag.flightEnd) {
+      }
+      else if (flag.flightTime < (0.5f * flag.flightEnd)) {
 	// rising
-	flag.position[2] = flag.flightTime * (flag.initialVelocity +
+	flag.position.z = flag.flightTime * (flag.initialVelocity +
 	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition[2];
 	alpha = 1.0f;
-      } else {
+      }
+      else {
 	// hovering
-	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
+	flag.position.z = 0.5f * flag.flightEnd * (flag.initialVelocity +
 	    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
 
 	// flag is opaque during first half of hovering period
@@ -756,10 +757,11 @@ void World::updateFlag(int index, float dt)
 	}
       }
       break;
+    }
   }
 
   // update alpha if changed
-  if (alpha != color[3]) {
+  if (alpha != color->w) {
     flagNode->setAlpha(alpha);
   }
 
@@ -786,10 +788,9 @@ void World::updateFlag(int index, float dt)
 	fvec3 myWind;
 	getWind(myWind, flagPlayer->getPosition());
 	const fvec3& vel = flagPlayer->getVelocity();
-	myWind[0] -= vel[0];
-	myWind[1] -= vel[1];
+	myWind.xy() -= vel.xy();
 	if (flagPlayer->isFalling()) {
-	  myWind[2] -= vel[2];
+	  myWind.z -= vel.z;
 	}
 	flagNode->setWind(myWind, dt);
 	flagNode->setFlat(false);

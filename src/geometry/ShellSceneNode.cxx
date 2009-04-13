@@ -132,9 +132,9 @@ void ShellSceneNode::ShellRenderNode::setLighting(bool _lighted)
 
 void ShellSceneNode::ShellRenderNode::render()
 {
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 

@@ -48,8 +48,8 @@ class OpenGLMaterial {
     bool		operator!=(const OpenGLMaterial&) const;
     bool		operator<(const OpenGLMaterial&) const;
 
-    const GLfloat*	getSpecularColor() const;
-    const GLfloat*	getEmissiveColor() const;
+    const fvec4&	getSpecularColor() const;
+    const fvec4&	getEmissiveColor() const;
     GLfloat		getShininess() const;
 
     void		setQuality(bool highQuality);
@@ -91,12 +91,12 @@ class OpenGLMaterial {
 // OpenGLMaterial
 //
 
-inline const GLfloat*	OpenGLMaterial::getSpecularColor() const
+inline const fvec4&	OpenGLMaterial::getSpecularColor() const
 {
   return rep->specular;
 }
 
-inline const GLfloat*	OpenGLMaterial::getEmissiveColor() const
+inline const fvec4&	OpenGLMaterial::getEmissiveColor() const
 {
   return rep->emissive;
 }

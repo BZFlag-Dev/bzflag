@@ -19,35 +19,36 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "vectors.h"
 
 class EighthDimSceneNode : public SceneNode {
   public:
-			~EighthDimSceneNode();
+    ~EighthDimSceneNode();
 
-    bool		cull(const ViewFrustum&) const;
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    bool cull(const ViewFrustum&) const;
+    void notifyStyleChange();
+    void addRenderNodes(SceneRenderer&);
 
   protected:
-			EighthDimSceneNode(int numPolys);
+    EighthDimSceneNode(int numPolys);
 
-    void		setPolygon(int index, const GLfloat[3][3]);
+    void setPolygon(int index, const fvec3[3]);
 
   protected:
     class EighthDimRenderNode : public RenderNode {
       public:
-			EighthDimRenderNode(
-				const EighthDimSceneNode*,
-				int numPolygons);
-			~EighthDimRenderNode();
-	void		render();
-	void		setPolygon(int index, const GLfloat[3][3]);
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        EighthDimRenderNode(const EighthDimSceneNode*, int numPolygons);
+        ~EighthDimRenderNode();
+	void render();
+	void setPolygon(int index, const fvec3[3]);
+	const fvec3& getPosition() const { return sceneNode->getCenter(); }
       private:
 	const EighthDimSceneNode* sceneNode;
-	int		numPolygons;
-	GLfloat		(*color)[4];
-	GLfloat		(*poly)[3][3];
+
+	typedef fvec3 Vert3[3];	 // 3 verts per polygon
+	int    numPolygons;
+	Vert3* polys;
+	fvec4* color;
     };
 
   private:

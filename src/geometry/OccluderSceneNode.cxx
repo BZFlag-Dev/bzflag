@@ -50,23 +50,14 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
   // record sphere info
   fvec4 mySphere(0.0f, 0.0f, 0.0f, 0.0f);
   for (i = 0; i < vertexCount; i++) {
-    const float* v = vertices[i];
-    mySphere[0] += v[0];
-    mySphere[1] += v[1];
-    mySphere[2] += v[2];
+    mySphere.xyz() += vertices[i];
   }
-  mySphere[0] /= (float)vertexCount;
-  mySphere[1] /= (float)vertexCount;
-  mySphere[2] /= (float)vertexCount;
+  mySphere.xyz() /= (float)vertexCount;
 
   for (i = 0; i < vertexCount; i++) {
-    const float* v = vertices[i];
-    const float dx = mySphere[0] - v[0];
-    const float dy = mySphere[1] - v[1];
-    const float dz = mySphere[2] - v[2];
-    GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
-    if (r > mySphere[3]) {
-      mySphere[3] = r;
+    const float distSq = (mySphere.xyz() - vertices[i]).lengthSq();
+    if (mySphere.w < distSq) {
+      mySphere.w = distSq;
     }
   }
   setSphere(mySphere);
@@ -85,9 +76,8 @@ OccluderSceneNode::~OccluderSceneNode()
 bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
-  const GLfloat* eye = frustum.getEye();
-  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-       plane[3]) <= 0.0f) {
+  const fvec3& eye = frustum.getEye();
+  if (plane.planeDist(eye) <= 0.0f) {
     return true;
   }
 

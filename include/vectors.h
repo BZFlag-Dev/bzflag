@@ -121,7 +121,13 @@ class vec2 {
 
 
 template <typename T>
+vec2<T> operator+(T s, const vec2<T>& in) { vec2<T> v(in); v += s; return v; }
+template <typename T>
+vec2<T> operator-(T s, const vec2<T>& in) { vec2<T> v(s, s); v -= in; return v; }
+template <typename T>
 vec2<T> operator*(T s, const vec2<T>& in) { vec2<T> v(in); v *= s; return v; }
+template <typename T>
+vec2<T> operator/(T s, const vec2<T>& in) { vec2<T> v(s, s); v /= in; return v; }
 
 
 //============================================================================//
@@ -283,7 +289,13 @@ class vec3 {
 
 
 template <typename T>
+vec3<T> operator+(T s, const vec3<T>& in) { vec3<T> v(in); v += s; return v; }
+template <typename T>
+vec3<T> operator-(T s, const vec3<T>& in) { vec3<T> v(s, s, s); v -= in; return v; }
+template <typename T>
 vec3<T> operator*(T s, const vec3<T>& in) { vec3<T> v(in); v *= s; return v; }
+template <typename T>
+vec3<T> operator/(T s, const vec3<T>& in) { vec3<T> v(s, s, s); v /= in; return v; }
 
 
 //============================================================================//
@@ -404,7 +416,13 @@ class vec4 {
 
 
 template <typename T>
+vec4<T> operator+(T s, const vec4<T>& in) { vec4<T> v(in); v += s; return v; }
+template <typename T>
+vec4<T> operator-(T s, const vec4<T>& in) { vec4<T> v(s, s, s, s); v -= in; return v; }
+template <typename T>
 vec4<T> operator*(T s, const vec4<T>& in) { vec4<T> v(in); v *= s; return v; }
+template <typename T>
+vec4<T> operator/(T s, const vec4<T>& in) { vec4<T> v(s, s, s, s); v /= in; return v; }
 
 
 //============================================================================//

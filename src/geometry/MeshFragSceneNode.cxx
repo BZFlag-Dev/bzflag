@@ -291,7 +291,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     if (!face->useTexcoords()) {
       fvec3Array v(face->getVertexCount());
       for (j = 0; j < face->getVertexCount(); j++) {
-	memcpy(v[j], face->getVertex(j), sizeof(float[3]));
+	v[j] = face->getVertex(j);
       }
       MeshSceneNodeGenerator::makeTexcoords(face->getPlane(), v, t);
     }
@@ -393,8 +393,8 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderNode.setStyle(getStyle());
-  const GLfloat* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+  const fvec4* dyncol = getDynamicColor();
+  if ((dyncol == NULL) || (dyncol->w != 0.0f)) {
     renderer.addRenderNode(&renderNode, getWallGState());
   }
   return;
@@ -404,8 +404,8 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   if (!noShadow) {
-    const GLfloat* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+    const fvec4* dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->w != 0.0f)) {
       renderer.addShadowNode(&renderNode);
     }
   }

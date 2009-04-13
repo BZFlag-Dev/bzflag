@@ -42,15 +42,15 @@ bool Plan::isValid()
 
 void Plan::execute(float &, float &)
 {
-  fvec3 pos;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();
   if (!myTank || !world) {
     return;
   }
-  pos = myTank->getPosition();
-  if (pos[2] < 0.0f)
-    pos[2] = 0.01f;
+  fvec3 pos = myTank->getPosition();
+  if (pos.z < 0.0f) {
+    pos.z = 0.01f;
+  }
   float myAzimuth = myTank->getAngle();
 
   fvec3 dir(cosf(myAzimuth), sinf(myAzimuth), 0.0f);
@@ -68,18 +68,14 @@ void Plan::execute(float &, float &)
 	    !remotePlayers[t]->isNotResponding()) {
 
 	  const fvec3& tp = remotePlayers[t]->getPosition();
-	  fvec3 enemyPos;
-
-	  //toss in some lag adjustment/future prediction - 300 millis
-	  enemyPos = tp;
 	  const fvec3& tv = remotePlayers[t]->getVelocity();
-	  enemyPos[0] += 0.3f * tv[0];
-	  enemyPos[1] += 0.3f * tv[1];
-	  enemyPos[2] += 0.3f * tv[2];
-
-	  if (enemyPos[2] < 0.0f)
-	    enemyPos[2] = 0.0f;
-	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+	  // toss in some lag adjustment/future prediction - 300 millis
+	  fvec3 enemyPos = tp + (0.3f * tv);
+	  if (enemyPos.z < 0.0f) {
+	    enemyPos.z = 0.0f;
+          }
+  
+	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
 	    if (!myTank->validTeamTarget(remotePlayers[t])) {
 	      hasSWTarget = false;
@@ -113,28 +109,25 @@ void Plan::execute(float &, float &)
 	    continue;
 
 	  const fvec3& tp = remotePlayers[t]->getPosition();
-	  fvec3 enemyPos;
-	  //toss in some lag adjustment/future prediction - 300 millis
-	  enemyPos = tp;
-	  const float *tv = remotePlayers[t]->getVelocity();
-	  enemyPos[0] += 0.3f * tv[0];
-	  enemyPos[1] += 0.3f * tv[1];
-	  enemyPos[2] += 0.3f * tv[2];
-	  if (enemyPos[2] < 0.0f)
-	    enemyPos[2] = 0.0f;
+	  const fvec3& tv = remotePlayers[t]->getVelocity();
+	  // toss in some lag adjustment/future prediction - 300 millis
+	  fvec3 enemyPos = tp + (0.3f * tv);
+	  if (enemyPos.z < 0.0f) {
+	    enemyPos.z = 0.0f;
+          }
 
-	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 
 	  if ((myTank->getFlag() == Flags::GuidedMissile) ||
 	      (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
 
-	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
+	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
 	    if ((targetDiff < errorLimit) ||
 		((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) &&
 		 (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
 	      if (myTank->getFlag() != Flags::SuperBullet)
-		isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
+		isTargetObscured = TargetingUtils::isLocationObscured(pos, enemyPos);
 	      else
 		isTargetObscured = false;
 
@@ -172,12 +165,10 @@ bool Plan::avoidBullet(float &rotation, float &speed)
 
   const fvec3& shotPos = shot->getPosition();
   const fvec3& shotVel = shot->getVelocity();
-  float shotAngle = atan2f(shotVel[1],shotVel[0]);
-  float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
-
-  float trueVec[2] = { (pos[0] - shotPos[0]) / minDistance,
-		       (pos[1] - shotPos[1]) / minDistance };
-  float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+  const float  shotAngle = atan2f(shotVel.y, shotVel.x);
+  const fvec2  shotUnitVec(cosf(shotAngle), sinf(shotAngle));
+  const fvec2  trueVec = (pos.xy() - shotPos.xy()) / minDistance;
+  const float  dotProd = fvec2::dot(trueVec, shotUnitVec);
 
   if ((myTank->canJump()) &&
       (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))) {
@@ -253,7 +244,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 
       const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
       if (dist < minDistance) {
-	const float *shotVel = shot->getVelocity();
+	const fvec3& shotVel = shot->getVelocity();
 	float shotAngle = atan2f(shotVel[1], shotVel[0]);
 	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -287,7 +278,7 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 
     const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
     if (dist < minDistance) {
-      const float *shotVel = shot->getVelocity();
+      const fvec3& shotVel = shot->getVelocity();
       float shotAngle = atan2f(shotVel[1], shotVel[0]);
       float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -423,7 +414,7 @@ bool WeavePlan::isValid()
     return false;
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pVel = myTank->getVelocity();
+  const fvec3& pVel = myTank->getVelocity();
   if ((pVel[0] == 0.0f) && (pVel[1] == 0.0f) && (pVel[2] == 0.0f))
     return false;
 

@@ -407,7 +407,7 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
 }
 
 
-bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
+bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
 {
   if ((image == NULL) || (scaledWidth <= 0) || (scaledHeight <= 0)) {
     return false;
@@ -417,7 +417,7 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
   const int channelCount = alpha ? 4 : 3;
 
   // tally the values
-  int64_t rgbaTally[4] = {0, 0, 0, 0};
+  int64_t rgbaTally[4] = { 0, 0, 0, 0 };
   for (int x = 0; x < scaledWidth; x++) {
     for (int y = 0; y < scaledHeight; y++) {
       for (int c = 0; c < channelCount; c++) {

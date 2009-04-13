@@ -19,9 +19,8 @@
 
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
-			   const char* _name,
-			   const PlayerType _type) :
-  Player(_id, _team, _name, _type)
+			   const char* _name, const PlayerType _type)
+: Player(_id, _team, _name, _type)
 {
   if (World::getWorld()) {
     numShots = World::getWorld()->getMaxShots();
@@ -34,18 +33,20 @@ RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
   }
 }
 
+
 RemotePlayer::~RemotePlayer()
 {
 }
 
-void			RemotePlayer::addShot(FiringInfo& info)
+
+void RemotePlayer::addShot(FiringInfo& info)
 {
   prepareShotInfo(info);
-  Player::addShot(new RemoteShotPath(info,syncedClock.GetServerSeconds()), info);
+  Player::addShot(new RemoteShotPath(info, syncedClock.GetServerSeconds()), info);
 }
 
-bool			RemotePlayer::doEndShot(
-				int ident, bool isHit, float* pos)
+
+bool RemotePlayer::doEndShot(int ident, bool isHit, fvec3& pos)
 {
   const int index = ident & 255;
   const int salt = (ident >> 8) & 127;
@@ -78,20 +79,21 @@ bool			RemotePlayer::doEndShot(
     return false;
 
   // end it
-  const float* shotPos = shots[index]->getPosition();
-  pos[0] = shotPos[0];
-  pos[1] = shotPos[1];
-  pos[2] = shotPos[2];
+  pos = shots[index]->getPosition();
   shots[index]->setExpired();
   return true;
 }
 
-void			RemotePlayer::updateShots(float dt)
+
+void RemotePlayer::updateShots(float dt)
 {
-  for (int i = 0; i < numShots; i++)
-    if (shots[i])
+  for (int i = 0; i < numShots; i++) {
+    if (shots[i]) {
       shots[i]->update(dt);
+    }
+  }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

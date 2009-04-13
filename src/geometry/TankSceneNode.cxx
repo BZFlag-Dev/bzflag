@@ -260,7 +260,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   // if drawing in sorted order then decide which order
   if (sort || transparent || narrow) {
-    const GLfloat* eye = view.getEye();
+    const fvec3& eye = view.getEye();
     GLfloat dx = eye[0] - mySphere[0];
     GLfloat dy = eye[1] - mySphere[1];
     const float radians = (float)(azimuth * DEG2RAD);
@@ -398,13 +398,13 @@ void TankSceneNode::setJumpJets(float scale)
       const float radians = (float)(azimuth * DEG2RAD);
       const float cos_val = cosf(radians);
       const float sin_val = sinf(radians);
-      const float* scaleFactor = TankGeometryMgr::getScaleFactor(tankSize);
-      const float* jm = jumpJetsModel[i];
-      const float v[2] = {jm[0] * scaleFactor[0], jm[1] * scaleFactor[1]};
+      const fvec3& scaleFactor = TankGeometryMgr::getScaleFactor(tankSize);
+      const fvec3& jm = jumpJetsModel[i];
+      const fvec2 v = jm.xy() * scaleFactor.xy();
       fvec3& jetPos = jumpJetsPositions[i];
-      jetPos[0] = pos[0] + ((cos_val * v[0]) - (sin_val * v[1]));
-      jetPos[1] = pos[1] + ((cos_val * v[1]) + (sin_val * v[0]));
-      jetPos[2] = pos[2] + jm[2];
+      jetPos.x = pos.x + ((cos_val * v.x) - (sin_val * v.y));
+      jetPos.y = pos.y + ((cos_val * v.y) + (sin_val * v.x));
+      jetPos.z = pos.z + jm.z;
       jumpJetsGroundLights[i].setPosition(jetPos);
 
       // setup the random lengths
@@ -580,10 +580,8 @@ void TankIDLSceneNode::move(const fvec4& _plane)
   plane = _plane;
 
   // compute new sphere
-  const GLfloat* s = tank->getSphere();
-  setCenter(s[0] + 1.5f * BZDBCache::tankLength * plane[0],
-	    s[1] + 1.5f * BZDBCache::tankLength * plane[1],
-	    s[2] + 1.5f * BZDBCache::tankLength * plane[2]);
+  const fvec3& center = tank->getCenter();
+  setCenter(center + 1.5f * BZDBCache::tankLength * plane.xyz());
   return;
 }
 
@@ -751,18 +749,17 @@ void TankIDLSceneNode::IDLRenderNode::render()
 
       // get crossing points
       fvec3 cross[2];
-      int crossings = 0, k;
+      int crossings = 0;
+      int k;
       for (j = 0, k = numVertices-1; j < numVertices; k = j++) {
 	if (((d[k] <  0.0f) && (d[j] >= 0.0f)) ||
 	    ((d[k] >= 0.0f) && (d[j] <  0.0f))) {
-	  const GLfloat t = d[k] / (d[k] - d[j]);
-	  cross[crossings][0] =  (1.0f - t) * idlVertex[face[k]][0] +
-					  t * idlVertex[face[j]][0];
-	  cross[crossings][1] =  (1.0f - t) * idlVertex[face[k]][1] +
-					  t * idlVertex[face[j]][1];
-	  cross[crossings][2] =  (1.0f - t) * idlVertex[face[k]][2] +
-					  t * idlVertex[face[j]][2];
-	  if (++crossings == 2) break;
+	  const float t = d[k] / (d[k] - d[j]);
+	  cross[crossings] = ((1.0f - t) * idlVertex[face[k]])
+                                   + (t  * idlVertex[face[j]]);
+	  if (++crossings == 2) {
+	    break;
+          }
 	}
       }
 
@@ -910,17 +907,17 @@ void TankSceneNode::TankRenderNode::render()
     glEnable(GL_CLIP_PLANE0);
   }
 
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec3& center = sceneNode->getCenter();
 
   // save the MODELVIEW matrix
   glPushMatrix();
 
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glTranslatef(center.x, center.y, center.z);
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
   if (sceneNode->useDimensions) {
-    const float* dims = sceneNode->dimensions;
-    glScalef(dims[0], dims[1], dims[2]);
+    const fvec3& dims = sceneNode->dimensions;
+    glScalef(dims.x, dims.y, dims.z);
     glEnable(GL_NORMALIZE);
   }
 
@@ -959,7 +956,7 @@ void TankSceneNode::TankRenderNode::render()
   else if (narrowWithDepth) {
     renderNarrowWithDepth();
   }
-  else if (isShadow && (sphere[2] < 0.0f)) {
+  else if (isShadow && (center.z < 0.0f)) {
     // burrowed or burrowing tank, just render the top shadows
     renderPart(Turret);
     renderPart(Barrel);

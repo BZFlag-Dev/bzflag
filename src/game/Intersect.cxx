@@ -886,31 +886,30 @@ IntersectLevel Intersect::testAxisBoxOcclusion(const Extents& extents,
                                                int planeCount)
 {
   static int s, t;
-  static float i[3]; // inside point  (assuming partial)
-  static float o[3]; // outside point (assuming partial)
+  static fvec3 inside;  // inside point  (assuming partial)
+  static fvec3 outside; // outside point (assuming partial)
   static float len;
-  static const float* p; // the plane
   IntersectLevel result = Contained;
 
   for (s = 0; s < planeCount; s++) {
 
-    p = planes[s];
+    const fvec4& plane = planes[s];
 
     // setup the inside/outside corners
     // this can be determined easily based
     // on the normal vector for the plane
     for (t = 0; t < 3; t++) {
-      if (p[t] > 0.0f) {
-	i[t] = extents.maxs[t];
-	o[t] = extents.mins[t];
+      if (plane[t] > 0.0f) {
+	inside[t]  = extents.maxs[t];
+	outside[t] = extents.mins[t];
       } else {
-	i[t] = extents.mins[t];
-	o[t] = extents.maxs[t];
+	inside[t]  = extents.mins[t];
+	outside[t] = extents.maxs[t];
       }
     }
 
     // check the inside length
-    len = (p[0] * i[0]) + (p[1] * i[1]) + (p[2] * i[2]) + p[3];
+    len = plane.planeDist(inside);
     if (len < +0.1f) {
       return Outside; // box is fully outside the occluder
     }
@@ -921,7 +920,7 @@ IntersectLevel Intersect::testAxisBoxOcclusion(const Extents& extents,
     //	 the likely number of loops
 
     // check the outside length
-    len = (p[0] * o[0]) + (p[1] * o[1]) + (p[2] * o[2]) + p[3];
+    len = plane.planeDist(outside);
     if (len < +0.1f) {
       result =  Partial; // partial containment at best
     }

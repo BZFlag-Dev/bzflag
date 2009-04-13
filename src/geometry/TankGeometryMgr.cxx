@@ -30,6 +30,7 @@
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
 #include "Model.h"
+#include "vectors.h"
 
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
@@ -53,15 +54,15 @@ static int partTriangles[LastTankShadow][LastTankLOD]
 			[LastTankSize][LastTankPart];
 
 // the scaling factors
-static GLfloat scaleFactors[LastTankSize][3] = {
-  {1.0f, 1.0f, 1.0f},   // Normal
-  {1.0f, 1.0f, 1.0f},   // Obese
-  {1.0f, 1.0f, 1.0f},   // Tiny
-  {1.0f, 0.001f, 1.0f}, // Narrow
-  {1.0f, 1.0f, 1.0f}    // Thief
+static fvec3 scaleFactors[LastTankSize] = {
+  fvec3(1.0f, 1.0f,   1.0f), // Normal
+  fvec3(1.0f, 1.0f,   1.0f), // Obese
+  fvec3(1.0f, 1.0f,   1.0f), // Tiny
+  fvec3(1.0f, 0.001f, 1.0f), // Narrow
+  fvec3(1.0f, 1.0f,   1.0f)  // Thief
 };
 // the current scaling factors
-const float* TankGeometryUtils::currentScaleFactor = scaleFactors[Normal];
+const fvec3* TankGeometryUtils::currentScaleFactor = &scaleFactors[Normal];
 
 // the current shadow mode (used to remove glNormal3f and glTexcoord2f calls)
 TankShadow TankGeometryUtils::shadowMode = ShadowOn;
@@ -180,7 +181,7 @@ void TankGeometryMgr::buildLists()
 
   // setup the scale factors
   setupScales();
-  currentScaleFactor = scaleFactors[Normal];
+  currentScaleFactor = &scaleFactors[Normal];
   const bool animated = BZDBCache::animatedTreads;
 
   // setup the quality level
@@ -223,7 +224,7 @@ void TankGeometryMgr::buildLists()
 	  glNewList(list, GL_COMPILE);
 
 	  // setup the scale factor
-	  currentScaleFactor = scaleFactors[size];
+	  currentScaleFactor = &scaleFactors[size];
 
 	  if ((part <= Turret)  || (!animated)) {
 	    // the basic parts
@@ -285,7 +286,7 @@ int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
 }
 
 
-const float* TankGeometryMgr::getScaleFactor(TankSize size)
+const fvec3& TankGeometryMgr::getScaleFactor(TankSize size)
 {
   return scaleFactors[size];
 }

@@ -46,7 +46,7 @@ struct Team {
     static const fvec4&	getRadarColor(TeamColor team);   // const
     static bool	        isColorTeam(TeamColor);          // const
 
-    static void setColors(TeamColor, const float* tank, const float* radar);
+    static void setColors(TeamColor, const fvec4& tank, const fvec4& radar);
 
     static bool areFoes(TeamColor team1, TeamColor team2, GameType style); //const
 

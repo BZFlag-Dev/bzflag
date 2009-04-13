@@ -104,7 +104,7 @@ class TextSceneNode : public SceneNode {
 
         float lineStep;
 
-        const float* colorPtr;
+        const fvec4* colorPtr;
 
         bool noRadar;
         bool noShadow;

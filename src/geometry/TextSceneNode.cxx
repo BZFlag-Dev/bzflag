@@ -386,9 +386,9 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
   const BzMaterial* bzmat = text.bzMaterial;
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
   if (dyncol != NULL) {
-    colorPtr = dyncol->getColor();
+    colorPtr = &dyncol->getColor();
   } else {
-    colorPtr = bzmat->getDiffuse();
+    colorPtr = &bzmat->getDiffuse();
   }
 
   fontID = getFontID();
@@ -623,10 +623,10 @@ void TextSceneNode::TextRenderNode::render()
 
   glNormal3f(0.0f, 0.0f, 1.0f);
 
-  myColor4fv(colorPtr);
+  myColor4fv(*colorPtr);
   const float oldOpacity = fm.getOpacity(); // FIXME -- just do it once at the start
-  if (colorPtr[3] != oldOpacity) {
-    fm.setOpacity(colorPtr[3]);
+  if (colorPtr->w != oldOpacity) {
+    fm.setOpacity(colorPtr->w);
   }
 
   glCallList(xformList);
@@ -648,7 +648,7 @@ void TextSceneNode::TextRenderNode::render()
       singleLineXForm();
     }
     fm.drawString(0.0f, 0.0f, 0.0f, fontID, fontSize,
-                  currLines[0].c_str(), colorPtr, AlignLeft);
+                  currLines[0].c_str(), *colorPtr, AlignLeft);
   }
   else {
     for (size_t i = 0; i < currLines.size(); i++) {
@@ -664,7 +664,7 @@ void TextSceneNode::TextRenderNode::render()
         glPushMatrix();
         glScalef(fixedWidth / width, 1.0f, 1.0f);
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      currLines[i].c_str(), colorPtr, AlignLeft);
+                      currLines[i].c_str(), *colorPtr, AlignLeft);
         glPopMatrix();
       }
       else {
@@ -673,7 +673,7 @@ void TextSceneNode::TextRenderNode::render()
           offx = -text.justify * width;
         }
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      currLines[i].c_str(), colorPtr, AlignLeft);
+                      currLines[i].c_str(), *colorPtr, AlignLeft);
       }
       glTranslatef(0.0f, lineStep, 0.0f);
     }
@@ -722,8 +722,8 @@ void TextSceneNode::TextRenderNode::renderShadow()
   fm.setRawBlending(true);
 
   static fvec4 shadowColor(0.0f, 0.0f, 0.0f, 1.0f);
-  const float* oldColor = colorPtr;
-  colorPtr = shadowColor;
+  const fvec4* oldColor = colorPtr;
+  colorPtr = &shadowColor;
 
   linesPtr = &stripped;
 
@@ -751,7 +751,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
 
 void TextSceneNode::TextRenderNode::drawDebug()
 {
-  myColor4fv(colorPtr);
+  myColor4fv(*colorPtr);
 
   fvec3 points[5];
   sceneNode->getPoints(points);

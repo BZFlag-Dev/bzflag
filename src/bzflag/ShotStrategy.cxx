@@ -56,14 +56,14 @@ void ShotStrategy::setReloadTime(float t) const
   path->setReloadTime(t);
 }
 
-void ShotStrategy::setPosition(const float* p) const
+void ShotStrategy::setPosition(const fvec3& pos) const
 {
-  path->setPosition(p);
+  path->setPosition(pos);
 }
 
-void ShotStrategy::setVelocity(const float* v) const
+void ShotStrategy::setVelocity(const fvec3& vel) const
 {
-  path->setVelocity(v);
+  path->setVelocity(vel);
 }
 
 void ShotStrategy::setExpiring() const
@@ -128,29 +128,23 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
   return closestObstacle;
 }
 
-void ShotStrategy::reflect(float* v, const float* n) // const
+void ShotStrategy::reflect(fvec3& v, const fvec3& n) // const
 {
   // normal is assumed to be normalized, v needn't be
-  float d = -2.0f * ((n[0] * v[0]) + (n[1] * v[1]) + (n[2] * v[2]));
+  float d = -2.0f * fvec3::dot(v, n);
 
   if (d >= 0.0f) {
     // normal reflection
-    v[0] += d * n[0];
-    v[1] += d * n[1];
-    v[2] += d * n[2];
-  } else {
+    v += d * n;
+  }
+  else {
     // refraction due to inverted normal (still using the 2X factor)
-    float oldSpeed = sqrtf((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+    float oldSpeed = v.length();
     d = -2.0f * d; // now using 4X refraction factor
-    v[0] += d * n[0];
-    v[1] += d * n[1];
-    v[2] += d * n[2];
+    v += d * n;
     // keep the same speed as the incoming vector
-    float newSpeed = sqrtf((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
-    const float scale = (oldSpeed / newSpeed);
-    v[0] *= scale;
-    v[1] *= scale;
-    v[2] *= scale;
+    float newSpeed = v.length();
+    v *= (oldSpeed / newSpeed);
   }
 
   return;
@@ -179,10 +173,10 @@ const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray, float min,
 
 bool ShotStrategy::getGround(const Ray& r, float min, float &t)
 {
-  if (r.getDirection()[2] >= 0.0f)
+  if (r.getDirection().z >= 0.0f)
     return false;
 
-  float groundT = r.getOrigin()[2] / -r.getDirection()[2];
+  float groundT = r.getOrigin().z / -r.getDirection()[2];
   if ((groundT > min) && (groundT < t)) {
     t = groundT;
     return true;

@@ -93,7 +93,7 @@ class CollisionManager {
     const ColDetNodeList* rayTestNodes(const Ray* ray, float timeLeft) const;
 
     // test against a box and return a split list
-    //const SplitObsList *boxTestSplit(const float* pos, float angle,
+    //const SplitObsList *boxTestSplit(const fvec3& pos, float angle,
     //				  float dx, float dy, float dz) const;
 
     // drawing function

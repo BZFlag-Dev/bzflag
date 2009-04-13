@@ -840,14 +840,14 @@ static int PlaySound(lua_State* L)
 static int GetStandardSpawn(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  float pos[3];
+  fvec3 pos;
   float rot;
   if (!bz_getStandardSpawn(playerID, pos, &rot)) {
     return 0;
   }
-  lua_pushnumber(L, pos[0]);
-  lua_pushnumber(L, pos[1]);
-  lua_pushnumber(L, pos[2]);
+  lua_pushnumber(L, pos.x);
+  lua_pushnumber(L, pos.y);
+  lua_pushnumber(L, pos.z);
   lua_pushnumber(L, rot);
   return 4;
 }
@@ -855,10 +855,10 @@ static int GetStandardSpawn(lua_State* L)
 
 static int GetBaseAtPosition(lua_State* L)
 {
-  float pos[3];
-  pos[0] = luaL_checkfloat(L, 1);
-  pos[1] = luaL_checkfloat(L, 2);
-  pos[2] = luaL_checkfloat(L, 3);
+  fvec3 pos;
+  pos.x = luaL_checkfloat(L, 1);
+  pos.y = luaL_checkfloat(L, 2);
+  pos.z = luaL_checkfloat(L, 3);
   const bz_eTeamType teamID = bz_checkBaseAtPoint(pos);
   lua_pushinteger(L, teamID);
   return 1;
@@ -1026,17 +1026,16 @@ static int GetPlayerPosition(lua_State* L)
 
   const bool useLastState = lua_tobool(L, 2);
   fvec3 pos;
-  const float* posPtr = pos;
   if (useLastState) {
-    posPtr = player->lastState.pos;
+    pos = player->lastState.pos;
   } else {
     float rotation;
     player->getPlayerCurrentPosRot(pos, rotation);
   }
 
-  lua_pushnumber(L, pos[0]);
-  lua_pushnumber(L, pos[1]);
-  lua_pushnumber(L, pos[2]);
+  lua_pushnumber(L, pos.x);
+  lua_pushnumber(L, pos.y);
+  lua_pushnumber(L, pos.z);
   return 3;
 }
 
@@ -1058,10 +1057,10 @@ static int GetPlayerVelocity(lua_State* L)
     state = player->getCurrentStateAsState();
   }
 
-  const float* vel = statePtr->velocity;
-  lua_pushnumber(L, vel[0]);
-  lua_pushnumber(L, vel[1]);
-  lua_pushnumber(L, vel[2]);
+  const fvec3& vel = statePtr->velocity;
+  lua_pushnumber(L, vel.x);
+  lua_pushnumber(L, vel.y);
+  lua_pushnumber(L, vel.z);
   return 3;
 }
 
@@ -1567,13 +1566,13 @@ static int GetFlagName(lua_State* L)
 static int GetFlagPosition(lua_State* L)
 {
   const int flagID = luaL_checkint(L, 1);
-  float pos[3];
+  fvec3 pos;
   if (!bz_getFlagPosition(flagID, pos)) {
     return 0;
   }
-  lua_pushnumber(L, pos[0]);
-  lua_pushnumber(L, pos[1]);
-  lua_pushnumber(L, pos[2]);
+  lua_pushnumber(L, pos.x);
+  lua_pushnumber(L, pos.y);
+  lua_pushnumber(L, pos.z);
   return 3;
 }
 
@@ -1602,10 +1601,10 @@ static int ZapFlag(lua_State* L)
 static int MoveFlag(lua_State* L)
 {
   const int flagID = luaL_checkint(L, 1);
-  float pos[3] = { 0.0f, 0.0f, 0.0f };
-  pos[0] = luaL_checkfloat(L, 2);
-  pos[1] = luaL_checkfloat(L, 3);
-  pos[2] = luaL_checkfloat(L, 4);
+  fvec3 pos;
+  pos.x = luaL_checkfloat(L, 2);
+  pos.y = luaL_checkfloat(L, 3);
+  pos.z = luaL_checkfloat(L, 4);
   const bool reset = !lua_isboolean(L, 5) || lua_tobool(L, 5);
   bz_moveFlag(flagID, pos, reset);
   return 0;
@@ -1702,11 +1701,11 @@ static int SetTeamLosses(lua_State* L)
 
 static int FireWeapon(lua_State* L)
 {
-  float pos[3];
+  fvec3 pos;
   const char* flagType = luaL_checkstring(L, 1);
-  pos[0]               = luaL_checkfloat(L, 2);
-  pos[1]               = luaL_checkfloat(L, 3);
-  pos[2]               = luaL_checkfloat(L, 4);
+  pos.x                = luaL_checkfloat(L, 2);
+  pos.y                = luaL_checkfloat(L, 3);
+  pos.z                = luaL_checkfloat(L, 4);
   const float rot      = luaL_optfloat(L, 5, 0.0f);
   const float tilt     = luaL_optfloat(L, 6, 0.0f);
   const float lifeTime = luaL_optfloat(L, 7, -1.0f);
@@ -1721,11 +1720,11 @@ static int FireWeapon(lua_State* L)
 
 static int FireMissile(lua_State* L)
 {
-  float pos[3];
+  fvec3 pos;
   const int   targetID = luaL_checkint(L, 1);
-  pos[0]               = luaL_checkfloat(L, 2);
-  pos[1]               = luaL_checkfloat(L, 3);
-  pos[2]               = luaL_checkfloat(L, 4);
+  pos.x                = luaL_checkfloat(L, 2);
+  pos.y                = luaL_checkfloat(L, 3);
+  pos.z                = luaL_checkfloat(L, 4);
   const float rot      = luaL_checkfloat(L, 5);
   const float tilt     = luaL_checkfloat(L, 6);
   const float lifeTime = luaL_checkfloat(L, 7);

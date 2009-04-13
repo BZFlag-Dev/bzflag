@@ -224,7 +224,7 @@ int WorldWeapons::packSize(void) const
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
     fullSize += FlagType::packSize; // flag type
-    fullSize += sizeof(float[3]); // pos
+    fullSize += sizeof(fvec3); // pos
     fullSize += sizeof(float);    // direction
     fullSize += sizeof(float);    // init delay
     fullSize += sizeof(uint16_t); // delay count

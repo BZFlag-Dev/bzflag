@@ -234,7 +234,7 @@ private:
   // was already terminated.  position must be set to the shot's
   // position if you return true (it's okay to return false if
   // there's no meaningful shot position).
-  virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
+  virtual bool	doEndShot(int index, bool isHit, fvec3& position) = 0;
   void getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 			fvec3& predictedVel, float time) const;
   void calcRelativeMotion(float vel[2], float& speed, float& angvel);

@@ -90,9 +90,9 @@ class MeshFragSceneNode : public WallSceneNode {
     bool noRadar;
     bool noShadow;
     GLint arrayCount;
-    GLfloat* vertices;
-    GLfloat* normals;
-    GLfloat* texcoords;
+    float* vertices;
+    float* normals;
+    float* texcoords;
 
   friend class MeshFragSceneNode::Geometry;
 };

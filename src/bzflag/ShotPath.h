@@ -91,8 +91,8 @@ protected:
 
   friend class ShotStrategy;
   void setReloadTime(float);
-  void setPosition(const float *);
-  void setVelocity(const float *);
+  void setPosition(const fvec3&);
+  void setVelocity(const fvec3&);
 
 private:
   ShotStrategy *strategy; // strategy for moving shell

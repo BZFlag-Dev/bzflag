@@ -92,8 +92,8 @@ class MeshTransform {
 	bool empty;
 	bool inverted;
 	bool skewed;
-	float vertexMatrix[4][4];
-	float normalMatrix[3][3];
+	fvec4 vertexMatrix[4];
+	fvec3 normalMatrix[3];
     };
 
   friend class MeshTransform::Tool;

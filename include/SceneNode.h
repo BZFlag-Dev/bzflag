@@ -12,16 +12,6 @@
 
 /* SceneNode:
  *	Encapsulates information for rendering an object in the scene.
- *
- * GLfloat2
- * GLfloat3
- *	Arrays of two and three GLfloat's
- *
- * GLfloat2Array
- * GLfloat3Array
- *	Arrays of GLfloat2's and GLfloat3's
- *
- * Probably shouldn't use names like this (GLfloat...).  Oh well.
  */
 
 #ifndef	BZF_SCENE_NODE_H

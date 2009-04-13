@@ -37,7 +37,7 @@ public:
   void updateShots(float dt);
 
 private:
-  bool doEndShot(int index, bool isHit, float* pos);
+  bool doEndShot(int index, bool isHit, fvec3& pos);
 
 private:
   int numShots;

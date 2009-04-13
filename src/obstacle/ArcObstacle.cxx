@@ -124,7 +124,7 @@ MeshObstacle* ArcObstacle::makeMesh()
   const float minSize = 1.0e-6f; // cheezy / lazy
 
   // absolute the sizes
-  float sz[3];
+  fvec3 sz;
   sz[0] = fabsf(size[0]);
   sz[1] = fabsf(size[1]);
   sz[2] = fabsf(size[2]);
@@ -145,8 +145,8 @@ MeshObstacle* ArcObstacle::makeMesh()
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
     const float circ =
-      (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
-	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+      (float)M_PI * ((3.0f * (sz.x + sz.y)) -
+	      sqrtf((sz.x + (3.0f * sz.y)) * (sz.y + (3.0f * sz.x))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
   }

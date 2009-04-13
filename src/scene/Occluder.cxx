@@ -326,32 +326,21 @@ bool Occluder::doCullSceneNode(SceneNode* node)
 }
 
 
-static bool makePlane(const float* p1, const float* p2, const float* pc,
-                      float* r)
+static bool makePlane(const fvec3& p1, const fvec3& p2, const fvec3& pc,
+                      fvec4& r)
 {
   // make vectors from points
-  float x[3] = {p1[0] - pc[0], p1[1] - pc[1], p1[2] - pc[2]};
-  float y[3] = {p2[0] - pc[0], p2[1] - pc[1], p2[2] - pc[2]};
-  float n[3];
+  const fvec3 x = p1 - pc;
+  const fvec3 y = p2 - pc;
 
-  // cross product to get the normal
-  n[0] = (x[1] * y[2]) - (x[2] * y[1]);
-  n[1] = (x[2] * y[0]) - (x[0] * y[2]);
-  n[2] = (x[0] * y[1]) - (x[1] * y[0]);
-
-  // normalize
-  float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
-  if (len < +0.001f) {
+  fvec3 n = fvec3::cross(x, y);
+  if (!fvec3::normalize(n)) {
     return false;
-  } else {
-    len = 1.0f / sqrtf(len);
   }
-  r[0] = n[0] * len;
-  r[1] = n[1] * len;
-  r[2] = n[2] * len;
+  r.xyz() = n;
 
   // finish the plane equation: {rx*px + ry*py + rz+pz + rd = 0}
-  r[3] = -((pc[0] * r[0]) + (pc[1] * r[1]) + (pc[2] * r[2]));
+  r.w = -fvec3::dot(pc, n);
 
   return true;
 }
@@ -385,12 +374,12 @@ bool Occluder::makePlanes(const Frustum* frustum)
 void Occluder::draw() const
 {
   int v;
-  GLfloat colors[5][4] = {
-    {1.0f, 0.0f, 1.0f, 1.0f}, // purple  (occluder's normal)
-    {1.0f, 0.0f, 0.0f, 1.0f}, // red
-    {0.0f, 1.0f, 0.0f, 1.0f}, // green
-    {0.0f, 0.0f, 1.0f, 1.0f}, // blue
-    {1.0f, 1.0f, 0.0f, 1.0f}, // yellow
+  const fvec4 colors[5] = {
+    fvec4(1.0f, 0.0f, 1.0f, 1.0f), // purple  (occluder's normal)
+    fvec4(1.0f, 0.0f, 0.0f, 1.0f), // red
+    fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green
+    fvec4(0.0f, 0.0f, 1.0f, 1.0f), // blue
+    fvec4(1.0f, 1.0f, 0.0f, 1.0f)  // yellow
   };
   const float length = 5.0f;
 
@@ -400,24 +389,18 @@ void Occluder::draw() const
 
   if (DrawNormals) {
     // the tri-wall 'getSphere()' center sucks...
-    float center[3];
-    for (int a = 0; a < 3; a++) {
-      center[a] = 0.0f;
-      for (v = 0; v < vertexCount; v++) {
-	center[a] += vertices[v][a];
-      }
-      center[a] = center[a] / (float) vertexCount;
+    fvec3 midpoint(0.0f, 0.0f, 0.0f);
+    for (v = 0; v < vertexCount; v++) {
+      midpoint += vertices[v];
     }
+    midpoint /= (float)vertexCount;
 
-    float outwards[3];
-    outwards[0] = center[0] - (length * planes[0][0]);
-    outwards[1] = center[1] - (length * planes[0][1]);
-    outwards[2] = center[2] - (length * planes[0][2]);
+    const fvec3 outwards = midpoint - (length * planes[0].xyz());
 
     // draw the plane normal
     glBegin(GL_LINES);
     glColor4fv(colors[0]);
-    glVertex3fv(center);
+    glVertex3fv(midpoint);
     glVertex3fv(outwards);
     glEnd();
   }
@@ -425,13 +408,9 @@ void Occluder::draw() const
   // drawn the edges and normals
   if (DrawEdges || DrawNormals) {
     for (v = 0; v < vertexCount; v++) {
-      float midpoint[3];
-      float outwards[3];
-      int vn = (v + 1) % vertexCount;
-      for (int a = 0; a < 3; a++) {
-	midpoint[a] = 0.5f * (vertices[v][a] + vertices[vn][a]);
-	outwards[a] = midpoint[a] - (length * planes[vn + 1][a]);
-      }
+      const int vn = (v + 1) % vertexCount;
+      const fvec3 midpoint = 0.5f * (vertices[v] + vertices[vn]);
+      const fvec3 outwards = midpoint - (length * planes[vn + 1].xyz());
       glBegin(GL_LINES);
       glColor4fv(colors[(v % 4) + 1]);
       if (DrawEdges) {
@@ -472,12 +451,10 @@ void Occluder::print(const char* string) const
   printf("%s: %p, V = %i, P = %i\n", string,
          (void*)sceneNode, vertexCount, planeCount);
   for (int v = 0; v < vertexCount; v++) {
-    printf("  v%i: %f, %f, %f\n", v,
-           vertices[v][0], vertices[v][1], vertices[v][2]);
+    printf("  v%i: %s\n", v, vertices[v].tostring().c_str());
   }
   for (int p = 0; p < planeCount; p++) {
-    printf("  p%i: %f, %f, %f, %f\n", p,
-           planes[p][0], planes[p][1], planes[p][2], planes[p][3]);
+    printf("  p%i: %s\n", p, planes[p].tostring().c_str());
   }
 
   return;

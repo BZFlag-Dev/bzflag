@@ -791,7 +791,7 @@ void ColDetNode::rayTestNodes(const Ray* ray, float timeLeft) const
 
 
 /*
-void ColDetNode::boxTestSplit(const float* pos, float angle,
+void ColDetNode::boxTestSplit(const fvec3& pos, float angle,
                               float dx, float dy, float dz) const
 {
   pos = pos;
@@ -822,7 +822,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
   int x, y, z, c;
   fvec3 points[5];
-  const float* exts[2] = { extents.mins, extents.maxs };
+  const fvec3* exts[2] = { &extents.mins, &extents.maxs };
 
   // pick a color
   int hasMeshObs = 0;
@@ -841,11 +841,11 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
     for (c = 0; c < 4; c++) {
       x = ((c + 0) % 4) / 2;
       y = ((c + 1) % 4) / 2;
-      points[c][0] = exts[x][0];
-      points[c][1] = exts[y][1];
-      points[c][2] = exts[z][2];
+      points[c].x = exts[x]->x;
+      points[c].y = exts[y]->y;
+      points[c].z = exts[z]->z;
     }
-    memcpy(points[4], points[0], sizeof(points[4]));
+    points[4] = points[0];
     drawLinesFunc(5, points, color);
   }
 
@@ -854,9 +854,9 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
     x = ((c + 0) % 4) / 2;
     y = ((c + 1) % 4) / 2;
     for (z = 0; z < 2; z++) {
-      points[z][0] = exts[x][0];
-      points[z][1] = exts[y][1];
-      points[z][2] = exts[z][2];
+      points[z].x = exts[x]->x;
+      points[z].y = exts[y]->y;
+      points[z].z = exts[z]->z;
     }
     drawLinesFunc(2, points, color);
   }

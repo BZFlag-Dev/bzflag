@@ -83,14 +83,14 @@ class ShotStrategy {
     static const Teleporter* getFirstTeleporter(const Ray&, float min, float& t,
                                                 int& face);
 
-    static void		reflect(float* v, const float* n); // const
+    static void		reflect(fvec3& v, const fvec3& n); // const
 
   protected:
     const ShotPath&	getPath() const;
     FiringInfo&		getFiringInfo(ShotPath*) const;
     void		setReloadTime(float) const;
-    void		setPosition(const float*) const;
-    void		setVelocity(const float*) const;
+    void		setPosition(const fvec3&) const;
+    void		setVelocity(const fvec3&) const;
     void		setExpiring() const;
     void		setExpired() const;
 

@@ -174,7 +174,7 @@ void LocalPlayer::doUpdate(float dt)
 
 
 void LocalPlayer::doSlideMotion(float dt, float slideTime,
-				float newAngVel, float* newVelocity)
+				float newAngVel, fvec3& newVelocity)
 {
   const float oldAzimuth = getAngle();
   const fvec3& oldVelocity = getVelocity();
@@ -182,16 +182,19 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
   const float angle = oldAzimuth + (0.5f * dt * newAngVel);
   const float cos_val = cosf(angle);
   const float sin_val = sinf(angle);
+
   const float scale = (dt / slideTime);
   const float speedAdj = desiredSpeed * scale;
-  const fvec3& ov = oldVelocity;
-  const float oldSpeed = sqrtf((ov[0] * ov[0]) + (ov[1] * ov[1]));
-  float* nv = newVelocity;
-  nv[0] = ov[0] + (cos_val * speedAdj);
-  nv[1] = ov[1] + (sin_val * speedAdj);
-  const float newSpeed = sqrtf((nv[0] * nv[0]) + (nv[1] * nv[1]));
 
-  float maxSpeed = getMaxSpeed();
+  const fvec2& ov = oldVelocity.xy();
+  fvec2&       nv = newVelocity.xy();
+
+  const float oldSpeed = ov.length();
+  nv = ov;
+  nv += speedAdj * fvec2(cos_val, sin_val);
+  const float newSpeed = nv.length();
+
+  const float maxSpeed = getMaxSpeed();
 
   if (newSpeed > maxSpeed) {
     float adjSpeed;
@@ -203,9 +206,7 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
     } else {
       adjSpeed = maxSpeed;
     }
-    const float speedScale = adjSpeed / newSpeed;
-    nv[0] *= speedScale;
-    nv[1] *= speedScale;
+    nv *= (adjSpeed / newSpeed);
   }
   return;
 }
@@ -1287,7 +1288,7 @@ bool LocalPlayer::fireShot()
 }
 
 
-bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
+bool LocalPlayer::doEndShot(int ident, bool isHit, fvec3& pos)
 {
   const int index = ident & 255;
   const int slt   = (ident >> 8) & 127;
@@ -1320,10 +1321,7 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
     return false;
 
   // end it
-  const fvec3& shotPos = shots[index]->getPosition();
-  pos[0] = shotPos.x;
-  pos[1] = shotPos.y;
-  pos[2] = shotPos.z;
+  pos = shots[index]->getPosition();
   shots[index]->setExpired();
   return true;
 }

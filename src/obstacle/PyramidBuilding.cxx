@@ -247,7 +247,7 @@ bool PyramidBuilding::isCrossing(const fvec3& p, float a,
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test).  just
   // see which wall the point is closest to.
-  const float* p2 = getPosition();
+  const fvec3& p2 = getPosition();
   const float a2 = getRotation();
   const float c = cosf(-a2), s = sinf(-a2);
   const float x = c * (p[0] - p2[0]) - s * (p[1] - p2[1]);
@@ -334,7 +334,7 @@ bool PyramidBuilding::getHitNormal(const fvec3& pos1, float,
 
 void PyramidBuilding::getCorner(int index, fvec3& _pos) const
 {
-  const float* base = getPosition();
+  const fvec3& base = getPosition();
   const float c = cosf(getRotation());
   const float s = sinf(getRotation());
   const float w = getWidth();
@@ -398,7 +398,7 @@ float PyramidBuilding::shrinkFactor(float z, float height) const
   }
 
  // Remove heights bias
-  const float *_pos = getPosition();
+  const fvec3& _pos = getPosition();
   z -= _pos[2];
   if (oHeight <= ZERO_TOLERANCE) {
     shrink = 1.0f;
@@ -486,7 +486,7 @@ int PyramidBuilding::packSize() const
 void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "pyramid" << std::endl;
-  const float *_pos = getPosition();
+  const fvec3& _pos = getPosition();
   out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
 				 << _pos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
@@ -539,7 +539,7 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
     fvec3(0.0f, +sqrt1_2, +sqrt1_2), fvec3(-sqrt1_2, 0.0f, +sqrt1_2),
     fvec3(0.0f, 0.0f, -1.0f)
   };
-  const float* s = getSize();
+  const fvec3& s = getSize();
   const float k = 1.0f / 8.0f;
   fvec2 txcds[7] = {
     fvec2(0.0f, 0.0f), fvec2(k*s[0], 0.0f), fvec2(k*s[0], k*s[1]),

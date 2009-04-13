@@ -305,7 +305,7 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 }
 
 
-bool TextureManager::getColorAverages(int texId, float rgba[4],
+bool TextureManager::getColorAverages(int texId, fvec4& rgba,
 				      bool factorAlpha) const
 {
   TextureIDMap::const_iterator it = textureIDs.find(texId);

@@ -103,9 +103,9 @@ void BoltSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 }
 
 
-void BoltSceneNode::setColor(const GLfloat* rgb)
+void BoltSceneNode::setColor(const fvec4& rgb)
 {
-  setColor(rgb[0], rgb[1], rgb[2]);
+  setColor(rgb[0], rgb[1], rgb[2], rgb[3]);
 }
 
 
@@ -364,7 +364,6 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
   float baseRadius = 0.2f;
 
   GLfloat len = sceneNode->length * lenMod;
-  //	const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
@@ -378,46 +377,47 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 
   float coreBleed = 4.5f;
   float minimumChannelVal = 0.45f;
-  float coreColor[3];
+  fvec3 coreColor;
 
-  coreColor[0] = sceneNode->color[0]*coreBleed;
+  coreColor[0] = sceneNode->color[0] * coreBleed;
   if (coreColor[0] < minimumChannelVal)
     coreColor[0] = minimumChannelVal;
 
-  coreColor[1] = sceneNode->color[1]*coreBleed;
+  coreColor[1] = sceneNode->color[1] * coreBleed;
   if (coreColor[1] < minimumChannelVal)
     coreColor[1] = minimumChannelVal;
 
-  coreColor[2] = sceneNode->color[2]*coreBleed;
+  coreColor[2] = sceneNode->color[2] * coreBleed;
   if (coreColor[2] < minimumChannelVal)
     coreColor[2] = minimumChannelVal;
 
   glPushMatrix();
-  myColor4f(1, 1, 1, 0.85f*alphaMod);
+  myColor4f(1, 1, 1, 0.85f * alphaMod);
   glTranslatef(0, 0, len-baseRadius);
-  GLUquadric *q = gluNewQuadric();
-  gluSphere(q,baseRadius*0.75f,6,6);
-  addTriangleCount(6*6);
+
+  GLUquadric* q = gluNewQuadric();
+  gluSphere(q, baseRadius * 0.75f, 6, 6);
+  addTriangleCount(6 * 6);
   glPopMatrix();
 
-  myColor4f(coreColor[0], coreColor[1], coreColor[2], 0.85f*alphaMod);
-  renderGeoPill(baseRadius,len,16,baseRadius*0.25f);
+  myColor4f(coreColor[0], coreColor[1], coreColor[2], 0.85f * alphaMod);
+  renderGeoPill(baseRadius, len, 16, baseRadius * 0.25f);
 
-  float radInc = 1.5f*baseRadius - baseRadius;
+  float radInc = 1.5f * baseRadius - baseRadius;
   glPushMatrix();
-  glTranslatef(0, 0, -radInc*0.5f);
+  glTranslatef(0, 0, -radInc * 0.5f);
   myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.5f);
-  renderGeoPill(1.5f*baseRadius,len+radInc,25,1.5f*baseRadius*0.25f);
+  renderGeoPill(1.5f * baseRadius, len + radInc, 25, 1.5f * baseRadius * 0.25f);
   glPopMatrix();
 
   glPushMatrix();
   myColor4f(1, 1, 1, 0.125f);
   glTranslatef(0, 0, len*0.125f);
-  gluCylinder(q,3.0f*baseRadius,1.75f*baseRadius,len*0.35f,16,1);
+  gluCylinder(q, 3.0f * baseRadius, 1.75f * baseRadius, len * 0.35f, 16, 1);
   addTriangleCount(16);
 
-  glTranslatef(0, 0, len*0.5f);
-  gluCylinder(q,2.5f*baseRadius,1.5f*baseRadius,len*0.25f,16,1);
+  glTranslatef(0, 0, len * 0.5f);
+  gluCylinder(q, 2.5f * baseRadius, 1.5f * baseRadius, len * 0.25f, 16, 1);
   addTriangleCount(16);
 
   glPopMatrix();
@@ -437,7 +437,6 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
   float baseRadius = 0.225f;
 
   GLfloat len = sceneNode->length * lenMod;
-  //	const GLfloat* sphere = sceneNode->getSphere();
   glPushMatrix();
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
@@ -451,7 +450,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 
   float coreBleed = 4.5f;
   float minimumChannelVal = 0.45f;
-  float coreColor[3];
+  fvec3 coreColor;
 
   coreColor[0] = sceneNode->color[0]*coreBleed;
   if (coreColor[0] < minimumChannelVal)

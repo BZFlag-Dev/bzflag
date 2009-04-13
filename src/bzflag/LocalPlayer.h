@@ -127,7 +127,7 @@ public:
   bool		requestedAutopilot;
 
 protected:
-  bool doEndShot(int index, bool isHit, float* pos);
+  bool doEndShot(int index, bool isHit, fvec3& pos);
   void doUpdate(float dt);
   void doUpdateMotion(float dt);
   void doMomentum(float dt, float& speed, float& angVel);
@@ -141,7 +141,7 @@ protected:
 
 private:
   void		doSlideMotion(float dt, float slideTime,
-			      float newAngVel, float* newVelocity);
+                              float newAngVel, fvec3& newVelocity);
   float		getNewAngVel(float old, float desired, float dt);
   void		collectInsideBuildings();
 

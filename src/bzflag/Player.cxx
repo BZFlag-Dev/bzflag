@@ -814,30 +814,32 @@ const Obstacle* Player::getHitBuilding(const fvec3& oldP, float oldA,
 					    bool phased, bool& expel)
 {
   const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
-  const float* dims = getDimensions();
+  const fvec3& dims = getDimensions();
   World *world = World::getWorld();
   if (!world) {
     return NULL;
   }
-  const Obstacle* obstacle = world->hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
+  const Obstacle* obstacle = world->hitBuilding(oldP, oldA, p, a,
+                                                dims.x, dims.y, dims.z,
+                                                !hasOOflag);
 
   expel = (obstacle != NULL);
   if (expel && phased)
-    expel = (obstacle->getType() == WallObstacle::getClassName() ||
-		obstacle->getType() == Teleporter::getClassName());
+    expel = ((obstacle->getType() == WallObstacle::getClassName()) ||
+             (obstacle->getType() == Teleporter::getClassName()));
 
   return obstacle;
 }
 
 
 bool Player::getHitNormal(const Obstacle* o,
-			       const fvec3& pos1, float azimuth1,
-			       const fvec3& pos2, float azimuth2,
-			       fvec3& normal) const
+                          const fvec3& pos1, float azimuth1,
+                          const fvec3& pos2, float azimuth2,
+                          fvec3& normal) const
 {
-  const float* dims = getDimensions();
+  const fvec3& dims = getDimensions();
   return o->getHitNormal(pos1, azimuth1, pos2, azimuth2,
-			 dims[0], dims[1], dims[2], normal);
+			 dims.x, dims.y, dims.z, normal);
 }
 
 
@@ -1019,14 +1021,13 @@ void Player::endShot(int index, bool isHit, bool showExplosion)
 
 void Player::setVisualTeam (TeamColor visualTeam)
 {
-  const float* _color = Team::getTankColor(visualTeam);
-  color[0] = _color[0];
-  color[1] = _color[1];
-  color[2] = _color[2];
+  color.xyz() = Team::getTankColor(visualTeam).xyz();
 
-  if (avatar)
-    avatar->setVisualTeam(visualTeam,color);
+  if (avatar) {
+    avatar->setVisualTeam(visualTeam, color);
+  }
 }
+
 
 void Player::fireJumpJets()
 {
@@ -1034,6 +1035,7 @@ void Player::fireJumpJets()
   state.status |= PlayerState::JumpJets;
   return;
 }
+
 
 const std::string & Player::getCustomField ( const std::string & key )const
 {
@@ -1045,6 +1047,7 @@ const std::string & Player::getCustomField ( const std::string & key )const
 
   return emptyField;
 }
+
 
 void Player::clearRemoteSounds()
 {

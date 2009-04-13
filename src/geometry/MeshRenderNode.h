@@ -17,6 +17,7 @@
 // common implementation headers
 #include "bzfgl.h"
 #include "RenderNode.h"
+#include "vectors.h"
 
 
 class Extents;
@@ -27,7 +28,7 @@ class OpaqueRenderNode : public RenderNode {
   public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
 		     GLuint* xformList, bool normalize,
-		     const GLfloat* color, int lod, int set,
+		     const fvec4* color, int lod, int set,
 		     const Extents* exts, int triangles);
     void render();
     void renderRadar();
@@ -43,7 +44,7 @@ class OpaqueRenderNode : public RenderNode {
     GLuint* xformList;
     bool normalize;
     int lod, set;
-    const GLfloat* color;
+    const fvec4* color;
     const Extents* exts;
     int triangles;
   private:
@@ -55,11 +56,11 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
   public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
 			 GLuint* xformList, bool normalize,
-			 const GLfloat* color, int lod, int set,
-			 const Extents* exts, const float pos[3],
+			 const fvec4* color, int lod, int set,
+			 const Extents* exts, const fvec3& pos,
 			 int triangles);
     const fvec3& getPosition() const { return pos; }
-    void setPosition(const GLfloat* pos);
+    void setPosition(const fvec3& pos);
   private:
     fvec3 pos;
 };

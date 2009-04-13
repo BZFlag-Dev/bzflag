@@ -386,8 +386,7 @@ void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer,
   if (root) {
     renderer = &_renderer;
     frustum = &renderer->getViewFrustum();
-    const GLfloat* _eye = frustum->getEye();
-    memcpy (eye, _eye, sizeof(GLfloat[3]));
+    eye = frustum->getEye();
     nodeAddRenderNodes(root);
   }
   return;

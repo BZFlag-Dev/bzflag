@@ -140,9 +140,9 @@ void			PhotonTorpedoSceneNode::PTRenderNode::render()
   static const GLfloat flareColor[4] = { 1.0f, 0.2f, 0.0f, 0.667f};
   static const GLfloat coronaColor[4] = { 1.0f, 0.2f, 0.0f, 0.333f};
 
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     RENDERER.getViewFrustum().executeBillboard();
 
     if (!RENDERER.isSameFrame()) {

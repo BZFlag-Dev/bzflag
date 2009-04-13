@@ -527,9 +527,9 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
   }
 
   // material
-  const float ambient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-  const float diffuse[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
-  const float black[4]   = { 0.0f, 0.0f, 0.0f, 1.0f };
+  const fvec4 ambient (0.2f, 0.2f, 0.2f, 1.0f);
+  const fvec4 diffuse (0.8f, 0.8f, 0.8f, 1.0f);
+  const fvec4 black   (0.0f, 0.0f, 0.0f, 1.0f);
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, black);
@@ -538,7 +538,7 @@ void OpenGLPassState::ResetModeState(DrawMode mode)
 
   if (GLEW_VERSION_2_0) {
     glDisable(GL_POINT_SPRITE);
-    GLfloat atten[3] = { 1.0f, 0.0f, 0.0f };
+    fvec3 atten(1.0f, 0.0f, 0.0f);
     glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, atten);
     glPointParameterf(GL_POINT_SIZE_MIN, 0.0f);
     glPointParameterf(GL_POINT_SIZE_MAX, 1.0e9f);

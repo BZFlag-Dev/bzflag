@@ -413,9 +413,9 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   //       could use the ambient color for non-lighted,and diffuse
   //       for lighted
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
-  const GLfloat* dc = NULL;
+  const fvec4* dc = NULL;
   if (dyncol != NULL) {
-    dc = dyncol->getColor();
+    dc = &dyncol->getColor();
   }
   node->setOrder(mat->getOrder());
   node->setDynamicColor(dc);

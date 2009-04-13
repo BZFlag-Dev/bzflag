@@ -261,7 +261,7 @@ void BillboardSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 }
 
 
-void BillboardSceneNode::setColor(const GLfloat* rgba)
+void BillboardSceneNode::setColor(const fvec4& rgba)
 {
   setColor(rgba[0], rgba[1], rgba[2], rgba[3]);
 }

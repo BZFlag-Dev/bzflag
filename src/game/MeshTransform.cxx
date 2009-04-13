@@ -28,6 +28,7 @@
 #include "Pack.h"
 
 
+//============================================================================//
 //
 // Mesh Transform Manager
 //
@@ -132,7 +133,8 @@ int MeshTransformManager::packSize() const
 }
 
 
-void MeshTransformManager::print(std::ostream& out, const std::string& indent) const
+void MeshTransformManager::print(std::ostream& out,
+                                 const std::string& indent) const
 {
   std::vector<MeshTransform*>::const_iterator it;
   for (it = transforms.begin(); it != transforms.end(); it++) {
@@ -143,13 +145,14 @@ void MeshTransformManager::print(std::ostream& out, const std::string& indent) c
 }
 
 
+//============================================================================//
 //
 // Mesh Transform Tool
 //
 
-static void multiply(float m[4][4], const float n[4][4])
+static void multiply(fvec4 m[4], const fvec4 n[4])
 {
-  float t[4][4];
+  fvec4 t[4];
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       t[i][j] = (m[0][j] * n[i][0]) +
@@ -158,63 +161,63 @@ static void multiply(float m[4][4], const float n[4][4])
                 (m[3][j] * n[i][3]);
     }
   }
-  memcpy(m, t, sizeof(float[4][4]));
+  memcpy(m, t, sizeof(fvec4[4]));
   return;
 }
 
 
-static void shift(float m[4][4], const float p[3])
+static void shift(fvec4 m[4], const fvec3& p)
 {
-  const float t[4][4] = {{1.0f, 0.0f, 0.0f, p[0]},
-			 {0.0f, 1.0f, 0.0f, p[1]},
-			 {0.0f, 0.0f, 1.0f, p[2]},
-			 {0.0f, 0.0f, 0.0f, 1.0f}};
+  const fvec4 t[4] = {
+    fvec4(1.0f, 0.0f, 0.0f, p.x),
+    fvec4(0.0f, 1.0f, 0.0f, p.y),
+    fvec4(0.0f, 0.0f, 1.0f, p.z),
+    fvec4(0.0f, 0.0f, 0.0f, 1.0f)
+  };
   multiply(m, t);
   return;
 }
 
 
-static void scale(float m[4][4], const float p[3])
+static void scale(fvec4 m[4], const fvec3& p)
 {
-  const float t[4][4] = {{p[0], 0.0f, 0.0f, 0.0f},
-			 {0.0f, p[1], 0.0f, 0.0f},
-			 {0.0f, 0.0f, p[2], 0.0f},
-			 {0.0f, 0.0f, 0.0f, 1.0f}};
+  const fvec4 t[4] = {
+    fvec4(p.x, 0.0f, 0.0f, 0.0f),
+    fvec4(0.0f, p.y, 0.0f, 0.0f),
+    fvec4(0.0f, 0.0f, p.z, 0.0f),
+    fvec4(0.0f, 0.0f, 0.0f, 1.0f)
+  };
   multiply(m, t);
   return;
 }
 
 
-static void shear(float m[4][4], const float p[3])
+static void shear(fvec4 m[4], const fvec3& p)
 {
-  const float t[4][4] = {{1.0f, 0.0f, p[0], 0.0f},
-			 {0.0f, 1.0f, p[1], 0.0f},
-			 {p[2], 0.0f, 1.0f, 0.0f},
-			 {0.0f, 0.0f, 0.0f, 1.0f}};
+  const fvec4 t[4] = {
+    fvec4(1.0f, 0.0f, p.x, 0.0f),
+    fvec4(0.0f, 1.0f, p.y, 0.0f),
+    fvec4(p.z, 0.0f, 1.0f, 0.0f),
+    fvec4(0.0f, 0.0f, 0.0f, 1.0f)
+  };
   multiply(m, t);
   return;
 }
 
 
-static void spin(float m[4][4], const float radians, const float normal[3])
+static void spin(fvec4 m[4], const float radians, const fvec3& normal)
 {
   // normalize
-  const float len = (normal[0] * normal[0]) +
-    (normal[1] * normal[1]) +
-    (normal[2] * normal[2]);
-  if (len <= 0.0f) {
+  fvec3 n = normal;
+  if (!fvec3::normalize(n)) {
     return;
   }
-  const float scale = 1.0f / sqrtf(len);
-  const float n[3] = {normal[0] * scale,
-		      normal[1] * scale,
-		      normal[2] * scale};
 
   // setup
   const float cos_val = cosf(radians);
   const float sin_val = sinf(radians);
   const float icos_val = (1.0f - cos_val);
-  float t[4][4];
+  fvec4 t[4];
   t[3][3] = 1.0f;
   t[0][3] = t[1][3] = t[2][3] = 0.0f;
   t[3][0] = t[3][1] = t[3][2] = 0.0f;
@@ -271,16 +274,11 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
   processTransforms(xform.transforms);
 
   // generate the normal matrix
-  const float (*vm)[4] = vertexMatrix;
-  normalMatrix[0][0] = (vm[1][1] * vm[2][2]) - (vm[1][2] * vm[2][1]);
-  normalMatrix[0][1] = (vm[1][2] * vm[2][0]) - (vm[1][0] * vm[2][2]);
-  normalMatrix[0][2] = (vm[1][0] * vm[2][1]) - (vm[1][1] * vm[2][0]);
-  normalMatrix[1][0] = (vm[2][1] * vm[0][2]) - (vm[2][2] * vm[0][1]);
-  normalMatrix[1][1] = (vm[2][2] * vm[0][0]) - (vm[2][0] * vm[0][2]);
-  normalMatrix[1][2] = (vm[2][0] * vm[0][1]) - (vm[2][1] * vm[0][0]);
-  normalMatrix[2][0] = (vm[0][1] * vm[1][2]) - (vm[0][2] * vm[1][1]);
-  normalMatrix[2][1] = (vm[0][2] * vm[1][0]) - (vm[0][0] * vm[1][2]);
-  normalMatrix[2][2] = (vm[0][0] * vm[1][1]) - (vm[0][1] * vm[1][0]);
+  const fvec4* vm = vertexMatrix;
+  
+  normalMatrix[0] = fvec3::cross(vm[1].xyz(), vm[2].xyz());
+  normalMatrix[1] = fvec3::cross(vm[2].xyz(), vm[0].xyz());
+  normalMatrix[2] = fvec3::cross(vm[0].xyz(), vm[1].xyz());
 
   // setup the polarity
   const float determinant =
@@ -307,21 +305,21 @@ void MeshTransform::Tool::processTransforms(
     const TransformData& transform = transforms[i];
     switch (transform.type) {
       case ShiftTransform: {
-	shift(vertexMatrix, transform.data);
+	shift(vertexMatrix, transform.data.xyz());
 	break;
       }
       case ScaleTransform: {
 	skewed = true;
-	scale(vertexMatrix, transform.data);
+	scale(vertexMatrix, transform.data.xyz());
 	break;
       }
       case ShearTransform: {
 	skewed = true;
-	shear(vertexMatrix, transform.data);
+	shear(vertexMatrix, transform.data.xyz());
 	break;
       }
       case SpinTransform: {
-	spin(vertexMatrix, transform.data[3], transform.data);
+	spin(vertexMatrix, transform.data.w, transform.data.xyz());
 	break;
       }
       case IndexTransform: {
@@ -350,12 +348,12 @@ void MeshTransform::Tool::modifyVertex(fvec3& v) const
     return;
   }
 
-  float t[3];
-  const float (*vm)[4] = vertexMatrix;
-  t[0] = (v[0] * vm[0][0]) + (v[1] * vm[0][1]) + (v[2] * vm[0][2]) + vm[0][3];
-  t[1] = (v[0] * vm[1][0]) + (v[1] * vm[1][1]) + (v[2] * vm[1][2]) + vm[1][3];
-  t[2] = (v[0] * vm[2][0]) + (v[1] * vm[2][1]) + (v[2] * vm[2][2]) + vm[2][3];
-  memcpy(v, t, sizeof(float[3]));
+  fvec3 t;
+  const fvec4* vm = vertexMatrix;
+  t.x = vm[0].planeDist(v);
+  t.y = vm[1].planeDist(v);
+  t.z = vm[2].planeDist(v);
+  v = t;
 }
 
 
@@ -365,27 +363,20 @@ void MeshTransform::Tool::modifyNormal(fvec3& n) const
     return;
   }
 
-  float t[3];
-  const float (*nm)[3] = normalMatrix;
-  t[0] = (n[0] * nm[0][0]) + (n[1] * nm[0][1]) + (n[2] * nm[0][2]);
-  t[1] = (n[0] * nm[1][0]) + (n[1] * nm[1][1]) + (n[2] * nm[1][2]);
-  t[2] = (n[0] * nm[2][0]) + (n[1] * nm[2][1]) + (n[2] * nm[2][2]);
+  fvec3 t;
+  const fvec3* nm = normalMatrix;
+  t.x = fvec3::dot(n, nm[0]);
+  t.y = fvec3::dot(n, nm[1]);
+  t.z = fvec3::dot(n, nm[2]);
+  n = t;
+
   // normalize
-  const float len = (t[0] * t[0]) + (t[1] * t[1]) + (t[2] * t[2]);
-  if (len > 0.0f) {
-    const float scale = 1.0f / sqrtf(len);
-    n[0] = t[0] * scale;
-    n[1] = t[1] * scale;
-    n[2] = t[2] * scale;
-  } else {
-    n[0] = n[1] = 0.0f; // dunno, going with Z...
-    n[2] = 1.0f;
+  if (!fvec3::normalize(n)) {
+    n = fvec3(0.0f, 0.0f, 1.0f); // dunno, going with Z...
   }
 
   if (inverted) {
-    n[0] = -n[0];
-    n[1] = -n[1];
-    n[2] = -n[2];
+    n = -n;
   }
 
   return;
@@ -404,34 +395,41 @@ void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
   modifyVertex(pos);
 
   // transform the object's axis unit vectors
-  const float cos_val = cosf (angle);
-  const float sin_val = sinf (angle);
-  float x[3], y[3], z[3];
-  const float (*vm)[4] = vertexMatrix;
+  const float cos_val = cosf(angle);
+  const float sin_val = sinf(angle);
+
+  fvec3 x, y, z;
+  const fvec4* vm = vertexMatrix;
+  const fvec2& xy0 = vm[0].xyz().xy();
+  const fvec2& xy1 = vm[1].xyz().xy();
+  const fvec2& xy2 = vm[2].xyz().xy();
+
   // NOTE - the translation (shift) elements are not used
-  x[0] = (+cos_val * vm[0][0]) + (+sin_val * vm[0][1]);
-  x[1] = (+cos_val * vm[1][0]) + (+sin_val * vm[1][1]);
-  x[2] = (+cos_val * vm[2][0]) + (+sin_val * vm[2][1]);
-  y[0] = (-sin_val * vm[0][0]) + (+cos_val * vm[0][1]);
-  y[1] = (-sin_val * vm[1][0]) + (+cos_val * vm[1][1]);
-  y[2] = (-sin_val * vm[2][0]) + (+cos_val * vm[2][1]);
-  z[0] = vm[0][2];
-  z[1] = vm[1][2];
-  z[2] = vm[2][2];
-  const float xlen = sqrtf ((x[0] * x[0]) + (x[1] * x[1]) + (x[2] * x[2]));
-  const float ylen = sqrtf ((y[0] * y[0]) + (y[1] * y[1]) + (y[2] * y[2]));
-  const float zlen = sqrtf ((z[0] * z[0]) + (z[1] * z[1]) + (z[2] * z[2]));
-  size[0] *= xlen;
-  size[1] *= ylen;
-  size[2] *= zlen;
+  const fvec2 xUnit(+cos_val, +sin_val);
+  x.x = fvec2::dot(xUnit, xy0);
+  x.y = fvec2::dot(xUnit, xy1);
+  x.z = fvec2::dot(xUnit, xy2);
+
+  const fvec2 yUnit(-sin_val, +cos_val);
+  y.x = fvec2::dot(yUnit, xy0);
+  y.y = fvec2::dot(yUnit, xy1);
+  y.z = fvec2::dot(yUnit, xy2);
+
+  z.x = vm[0].z;
+  z.y = vm[1].z;
+  z.z = vm[2].z;
+
+  size.x *= x.length();
+  size.y *= y.length();
+  size.z *= z.length();
 
   // setup the angle
-  angle = atan2f(x[1], x[0]);
+  angle = atan2f(x.y, x.x);
 
   // see if the Z axis has flipped
-  if (z[2] < 0.0f) {
+  if (z.z < 0.0f) {
     flipz = true;
-    pos[2] = pos[2] - size[2];
+    pos.z = pos.z - size.z;
   } else {
     flipz = false;
   }
@@ -440,6 +438,7 @@ void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
 }
 
 
+//============================================================================//
 //
 // Mesh Transform
 //
@@ -527,8 +526,8 @@ const std::string& MeshTransform::getName() const
 void MeshTransform::addShift(const fvec3& shift)
 {
   TransformData transform;
-  memcpy(transform.data, shift, sizeof(float[3]));
-  transform.data[3] = 0.0f;
+  transform.data.xyz() = shift;
+  transform.data.w = 0.0f;
   transform.type = ShiftTransform;
   transform.index = -1;
   transforms.push_back(transform);
@@ -539,8 +538,8 @@ void MeshTransform::addShift(const fvec3& shift)
 void MeshTransform::addScale(const fvec3& scale)
 {
   TransformData transform;
-  memcpy(transform.data, scale, sizeof(float[3]));
-  transform.data[3] = 0.0f;
+  transform.data.xyz() = scale;
+  transform.data.w = 0.0f;
   transform.type = ScaleTransform;
   transform.index = -1;
   transforms.push_back(transform);
@@ -551,8 +550,8 @@ void MeshTransform::addScale(const fvec3& scale)
 void MeshTransform::addShear(const fvec3& shear)
 {
   TransformData transform;
-  memcpy(transform.data, shear, sizeof(float[3]));
-  transform.data[3] = 0.0f;
+  transform.data.xyz() = shear;
+  transform.data.w = 0.0f;
   transform.type = ShearTransform;
   transform.index = -1;
   transforms.push_back(transform);
@@ -564,8 +563,8 @@ void MeshTransform::addSpin(const float degrees, const fvec3& normal)
 {
   const float radians = (float)(degrees * (M_PI / 180.0));
   TransformData transform;
-  memcpy(transform.data, normal, sizeof(float[3]));
-  transform.data[3] = radians;
+  transform.data.xyz() = normal;
+  transform.data.w = radians;
   transform.type = SpinTransform;
   transform.index = -1;
   transforms.push_back(transform);
@@ -687,7 +686,7 @@ void MeshTransform::printTransforms(std::ostream& out,
 {
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
-    const float* d = transform.data;
+    const fvec4& d = transform.data;
     switch (transform.type) {
       case ShiftTransform: {
 	out << indent << "  shift "

@@ -216,7 +216,7 @@ void WallSceneNode::setOrder(int value)
 }
 
 
-void WallSceneNode::setDynamicColor(const GLfloat* rgba)
+void WallSceneNode::setDynamicColor(const fvec4* rgba)
 {
   dynamicColor = rgba;
 }
@@ -397,7 +397,7 @@ void WallSceneNode::setColor()
     myColor4f(1,1,1,1);
   }
   else if (dynamicColor != NULL) {
-    myColor4fv(dynamicColor);
+    myColor4fv(*dynamicColor);
   }
   else {
     switch (style) {

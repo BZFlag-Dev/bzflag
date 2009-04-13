@@ -50,7 +50,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
     team = p ? p->getTeam() : RogueTeam;
   }
 
-  const float* c = Team::getRadarColor(team);
+  const fvec4& c = Team::getRadarColor(team);
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
@@ -67,7 +67,10 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void ShockWaveStrategy::update(float dt)
 {
-  radius += dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
+  const float shockIn  = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
+  const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
+
+  radius += dt * (shockOut - shockIn) / getPath().getLifetime();
   radius2 = radius * radius;
 
   // update shock wave scene node
@@ -83,14 +86,12 @@ void ShockWaveStrategy::update(float dt)
     currentTeam = team;
   }
 
-  const float* c = Team::getRadarColor(currentTeam);
+  const fvec4& c = Team::getRadarColor(currentTeam);
 
   // fade old-style shockwaves
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
-    const float shockIn = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
-    const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
     const GLfloat frac = (radius - shockIn) / (shockOut - shockIn);
     shockNode->setColor(c[0], c[1], c[2], 0.75f - (0.5f * frac));
   }
@@ -99,10 +100,16 @@ void ShockWaveStrategy::update(float dt)
   if (radius >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
 }
 
-bool        ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
+
+bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
 {
-  float r = radius + dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
-  if (r >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) return false;
+  const float shockIn  = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
+  const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
+
+  const float r = radius + dt * (shockOut - shockIn) / getPath().getLifetime();
+  if (r >= shockOut) {
+    return false;
+  }
 
   const float *pos = getPath().getPosition();
   p[0] = pos[0];
@@ -113,12 +120,17 @@ bool        ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
 
 bool        ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
 {
-  float r = radius + dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
-  if (r >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) return false;
+  const float shockIn  = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
+  const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
 
-  p[0] = (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
-  p[1] = 0;
-  p[2] = 0;
+  const float r = radius + dt * (shockOut - shockIn) / getPath().getLifetime();
+  if (r >= shockOut) {
+    return false;
+  }
+
+  p.x = (shockOut - shockIn) / getPath().getLifetime();
+  p.y = 0;
+  p.z = 0;
 
   return true;
 }
@@ -129,37 +141,35 @@ float ShockWaveStrategy::checkHit(const ShotCollider& tank, fvec3& position) con
   // return if player is inside radius of destruction -- note that a
   // shock wave can kill anything inside the radius, be it behind or
   // in a building or even zoned.
-  const float* playerPos = tank.position;
-  const float* shotPos = getPath().getPosition();
-  const float dx = playerPos[0] - shotPos[0];
-  const float dy = playerPos[1] - shotPos[1];
-  const float dz = playerPos[2] - shotPos[2];
-  if (dx * dx + dy * dy + dz * dz <= radius2)
-  {
-    position[0] = playerPos[0];
-    position[1] = playerPos[1];
-    position[2] = playerPos[2];
+  const fvec3& playerPos = tank.position;
+  const fvec3& shotPos = getPath().getPosition();
+  if ((playerPos - shotPos).lengthSq() <= radius2) {
+    position = playerPos;
     return 0.5f;
   }
-  else
+  else {
     return Infinity;
+  }
 }
+
 
 bool ShockWaveStrategy::isStoppedByHit() const
 {
   return false;
 }
 
+
 void ShockWaveStrategy::addShot(SceneDatabase* scene, bool)
 {
   scene->addDynamicSphere(shockNode);
 }
 
+
 void ShockWaveStrategy::radarRender() const
 {
   // draw circle of current radius
   static const int sides = 20;
-  const float* shotPos = getPath().getPosition();
+  const fvec3& shotPos = getPath().getPosition();
   glBegin(GL_LINE_LOOP);
   for (int i = 0; i < sides; i++) {
     const float angle = (float)(2.0 * M_PI * double(i) / double(sides));

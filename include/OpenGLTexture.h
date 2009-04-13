@@ -44,6 +44,7 @@
 #include "common.h"
 #include <string>
 #include "bzfgl.h"
+#include "vectors.h"
 
 class OpenGLTexture {
   public:
@@ -80,7 +81,7 @@ class OpenGLTexture {
     GLenum		getInternalFormat() const { return internalFormat; }
     bool		getRepeat() const { return repeat; }
 
-    bool		getColorAverages(float rgbaRaw[4],
+    bool		getColorAverages(fvec4& rgbaRaw,
 					 bool factorAlpha) const;
 
     void		freeContext();

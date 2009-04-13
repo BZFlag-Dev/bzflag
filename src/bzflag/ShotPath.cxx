@@ -136,19 +136,15 @@ void ShotPath::setReloadTime(float _reloadTime)
 }
 
 
-void ShotPath::setPosition(const float* p)
+void ShotPath::setPosition(const fvec3& pos)
 {
-  firingInfo.shot.pos[0] = p[0];
-  firingInfo.shot.pos[1] = p[1];
-  firingInfo.shot.pos[2] = p[2];
+  firingInfo.shot.pos = pos;
 }
 
 
-void ShotPath::setVelocity(const float* v)
+void ShotPath::setVelocity(const fvec3& vel)
 {
-  firingInfo.shot.vel[0] = v[0];
-  firingInfo.shot.vel[1] = v[1];
-  firingInfo.shot.vel[2] = v[2];
+  firingInfo.shot.vel = vel;
 }
 
 

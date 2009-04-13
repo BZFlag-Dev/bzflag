@@ -52,10 +52,9 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
   const fvec3& vel = getPath().getVelocity();
-  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
-  const fvec3 dir = vel * d;
-  azimuth = limitAngle(atan2f(dir[1], dir[0]));
-  elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
+  const fvec3 dir = vel.normalize();
+  azimuth   = limitAngle(atan2f(dir.y, dir.x));
+  elevation = limitAngle(atan2f(dir.z, dir.xy().length()));
 
   // initialize segments
   currentTime = getPath().getStartTime();
@@ -75,7 +74,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // check that first segment doesn't start inside a building
   float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-  fvec3 startPos = f.shot.pos - (muzzleFront * dir);
+  const fvec3 startPos = f.shot.pos - (muzzleFront * dir);
 
   Ray firstRay = Ray(startPos, dir);
   prevTime = currentTime;
@@ -153,16 +152,13 @@ void GuidedMissileStrategy::update(float dt)
   if (target) {
     // turn towards target
     // find desired direction
-    const float* targetPos = target->getPosition();
-    float desiredDir[3];
-    desiredDir[0] = targetPos[0] - nextPos[0];
-    desiredDir[1] = targetPos[1] - nextPos[1];
-    desiredDir[2] = targetPos[2] - nextPos[2];
-    desiredDir[2] += target->getMuzzleHeight(); // right between the eyes
+    const fvec3& targetPos = target->getPosition();
+    fvec3 desiredDir = targetPos - nextPos;
+    desiredDir.z += target->getMuzzleHeight(); // right between the eyes
 
     // compute desired angles
-    float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
-    float newElevation = atan2f(desiredDir[2], hypotf(desiredDir[1], desiredDir[0]));
+    float newAzimuth   = atan2f(desiredDir.y, desiredDir.x);
+    float newElevation = atan2f(desiredDir.z, desiredDir.xy().length());
 
     float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
 
@@ -186,10 +182,10 @@ void GuidedMissileStrategy::update(float dt)
   }
 
   fvec3 newDirection;
-  newDirection[0] = cosf(azimuth) * cosf(elevation);
-  newDirection[1] = sinf(azimuth) * cosf(elevation);
-  newDirection[2] = sinf(elevation);
-  Ray ray = Ray(nextPos, newDirection);
+  newDirection.x = cosf(azimuth) * cosf(elevation);
+  newDirection.y = sinf(azimuth) * cosf(elevation);
+  newDirection.z = sinf(elevation);
+  Ray ray(nextPos, newDirection);
 
   renderTimes++;
 
@@ -284,16 +280,13 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   if (target) {
     // turn towards target
     // find desired direction
-    const float* targetPos = target->getPosition();
-    float desiredDir[3];
-    desiredDir[0] = targetPos[0] - nextPos[0];
-    desiredDir[1] = targetPos[1] - nextPos[1];
-    desiredDir[2] = targetPos[2] - nextPos[2];
-    desiredDir[2] += target->getMuzzleHeight(); // right between the eyes
+    const fvec3& targetPos = target->getPosition();
+    fvec3 desiredDir = targetPos - nextPos;
+    desiredDir.z += target->getMuzzleHeight(); // right between the eyes
 
     // compute desired angles
-    float newAzimuth = atan2f(desiredDir[1], desiredDir[0]);
-    float newElevation = atan2f(desiredDir[2], hypotf(desiredDir[1], desiredDir[0]));
+    float newAzimuth   = atan2f(desiredDir.y, desiredDir.x);
+    float newElevation = atan2f(desiredDir.z, desiredDir.xy().length());
 
     float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
 
@@ -520,18 +513,12 @@ void GuidedMissileStrategy::readUpdate( void* msg)
   nboUnpackUByte(msg, lastTarget);
 
   // fix up dependent variables
-  const float* vel = getPath().getVelocity();
-  const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
-  float dir[3];
-  dir[0] = vel[0] * d;
-  dir[1] = vel[1] * d;
-  dir[2] = vel[2] * d;
-  azimuth = limitAngle(atan2f(dir[1], dir[0]));
-  elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
-  const float* pos = getPath().getPosition();
-  nextPos[0] = pos[0];
-  nextPos[1] = pos[1];
-  nextPos[2] = pos[2];
+  const fvec3& vel = getPath().getVelocity();
+  const fvec3 dir = vel.normalize();
+  azimuth   = limitAngle(atan2f(dir.y, dir.x));
+  elevation = limitAngle(atan2f(dir.z, dir.xy().length()));
+  const fvec3& pos = getPath().getPosition();
+  nextPos = pos;
 
   // note that we do not call update(float).  let that happen on the
   // next time step.
@@ -554,25 +541,21 @@ void GuidedMissileStrategy::expire()
 
 void GuidedMissileStrategy::radarRender() const
 {
-  const float *orig = getPath().getPosition();
+  const fvec3& orig = getPath().getPosition();
   const int length = BZDBCache::linedRadarShots;
   const int size   = BZDBCache::sizedRadarShots;
 
-  float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
+  const float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
   // Display leading lines
   if (length > 0) {
-    const float* vel = getPath().getVelocity();
-    const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
-    float dir[3];
-    dir[0] = vel[0] * d * shotTailLength * length;
-    dir[1] = vel[1] * d * shotTailLength * length;
-    dir[2] = vel[2] * d * shotTailLength * length;
+    const fvec3& vel = getPath().getVelocity();
+    const fvec3 dir = vel.normalize() * shotTailLength * length;
     glBegin(GL_LINES); {
       glVertex2fv(orig);
       if (BZDBCache::leadingShotLine) {
-	glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+	glVertex2fv(orig.xy() + dir.xy());
       } else {
-	glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+	glVertex2fv(orig.xy() - dir.xy());
       }
     } glEnd();
 
@@ -581,7 +564,7 @@ void GuidedMissileStrategy::radarRender() const
       glColor3f(1.0f, 0.75f, 0.75f);
       glPointSize((float)size);
       glBegin(GL_POINTS); {
-	glVertex2f(orig[0], orig[1]);
+	glVertex2fv(orig);
       } glEnd();
       glPointSize(1.0f);
     }

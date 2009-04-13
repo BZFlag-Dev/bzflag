@@ -416,15 +416,13 @@ void OctreeNode::makeChildren()
 {
   int side[3];    // the axis sides  (0 or 1)
   Extents exts;
-  float center[3];
+  fvec3 center;
 
   // setup the center point
-  for (int i = 0; i < 3; i++) {
-    center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
-  }
+  center = 0.5f * (extents.maxs + extents.mins);
 
   childCount = 0;
-  const float* extentSet[3] = { extents.mins, center, extents.maxs };
+  const fvec3* extentSet[3] = { &extents.mins, &center, &extents.maxs };
 
   for (side[0] = 0; side[0] < 2; side[0]++) {
     for (side[1] = 0; side[1] < 2; side[1]++) {
@@ -432,8 +430,8 @@ void OctreeNode::makeChildren()
 
 	// calculate the child's extents
 	for (int a = 0; a < 3; a++) {
-	  exts.mins[a] = extentSet[side[a]+0][a];
-	  exts.maxs[a] = extentSet[side[a]+1][a];
+	  exts.mins[a] = (*extentSet[side[a] + 0])[a];
+	  exts.maxs[a] = (*extentSet[side[a] + 1])[a];
 	}
 
 	int kid = side[0] + (2 * side[1]) + (4 * side[2]);
@@ -804,14 +802,15 @@ void OctreeNode::tallyStats()
 
 void OctreeNode::draw()
 {
-  GLfloat red[4] = {1.0f, 0.0f, 0.0f, 0.75f};    // red
-  GLfloat blue[4] = {0.0f, 0.0f, 1.0f, 0.75f};   // blue
-  GLfloat green[4] = {0.0f, 1.0f, 0.0f, 0.75f};  // green
-  GLfloat yellow[4] = {1.0f, 1.0f, 0.0f, 0.75f}; // yellow
-  GLfloat purple[4] = {1.0f, 0.0f, 1.0f, 0.75f}; // purple
-  GLfloat *color = purple;
+  const fvec4 red    (1.0f, 0.0f, 0.0f, 0.75f);
+  const fvec4 blue   (0.0f, 0.0f, 1.0f, 0.75f);
+  const fvec4 green  (0.0f, 1.0f, 0.0f, 0.75f);
+  const fvec4 yellow (1.0f, 1.0f, 0.0f, 0.75f);
+  const fvec4 purple (1.0f, 0.0f, 1.0f, 0.75f);
+  const fvec4* color = &purple;
+
   int x, y, z, c;
-  float points[5][3];
+  fvec3 points[5];
   IntersectLevel frustumCull = Contained;
   bool occludeCull = false;
 
@@ -823,16 +822,16 @@ void OctreeNode::draw()
   // choose the color
   switch (frustumCull) {
     case Outside:
-      color = purple;
+      color = &purple;
       break;
     case Partial:
-      color = occludeCull ? green : blue;
+      color = occludeCull ? &green : &blue;
       break;
     case Contained:
-      color = occludeCull ? yellow : red;
+      color = occludeCull ? &yellow : &red;
       break;
   }
-  glColor4fv(color);
+  glColor4fv(*color);
 
   const float* exts[2] = { extents.mins, extents.maxs };
 

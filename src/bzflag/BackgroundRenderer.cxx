@@ -1275,7 +1275,7 @@ void BackgroundRenderer::drawGround()
 void BackgroundRenderer::drawGroundCentered()
 {
   const ViewFrustum& frustum = RENDERER.getViewFrustum();
-  const float* center = frustum.getEye();
+  const fvec3& center = frustum.getEye();
 
   const float groundSize = 10.0f * BZDBCache::worldSize;
   const float repeat = BZDB.eval("groundHighResTexRepeat");
@@ -1321,7 +1321,7 @@ void BackgroundRenderer::drawGroundCentered()
 
 void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
 {
-  const GLfloat* pos = renderer.getViewFrustum().getEye();
+  const fvec3& pos = renderer.getViewFrustum().getEye();
   const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
   const GLfloat yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
   const GLfloat x0 = floorf(pos[0] / gridSpacing) * gridSpacing;
@@ -1469,20 +1469,19 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       continue;
     }
 
-    const GLfloat* pos = light.getPosition();
-    const GLfloat* lightColor = light.getColor();
-    const GLfloat* atten = light.getAttenuation();
+    const fvec4& pos = light.getPosition();
+    const fvec4& lightColor = light.getColor();
+    const fvec3& atten = light.getAttenuation();
 
     // point under light
     float d = pos[2];
     float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
 
     // maximum value
-    const float maxVal = (lightColor[0] > lightColor[1]) ?
-      ((lightColor[0] > lightColor[2]) ?
-       lightColor[0] : lightColor[2]) :
-      ((lightColor[1] > lightColor[2]) ?
-       lightColor[1] : lightColor[2]);
+    const float maxVal =
+      (lightColor[0] > lightColor[1]) ? 
+       ((lightColor[0] > lightColor[2]) ? lightColor[0] : lightColor[2]) :
+       ((lightColor[1] > lightColor[2]) ? lightColor[1] : lightColor[2]);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < 0.02f) {
@@ -1493,11 +1492,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     glTranslatef(pos[0], pos[1], 0.0f);
 
     // set the main lighting color
-    float color[4];
-    color[0] = lightColor[0];
-    color[1] = lightColor[1];
-    color[2] = lightColor[2];
-    color[3] = I;
+    fvec4 color(lightColor.xyz(), I);
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
@@ -1578,11 +1573,11 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   }
 
   // setup the ground tint
-  const GLfloat* gndColor = groundColor[styleIndex];
+  const fvec4* gndColor = &groundColor[styleIndex];
   fvec4 overrideColor;
   if (BZDB.isSet("groundOverrideColor") &&
       parseColorString(BZDB.get("groundOverrideColor"), overrideColor)) {
-    gndColor = overrideColor;
+    gndColor = &overrideColor;
   }
 
   const bool useTexture = BZDBCache::texture && (groundTextureID >= 0);
@@ -1619,31 +1614,25 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     }
 
     // get the light parameters
-    const GLfloat* pos = light.getPosition();
-    const GLfloat* lightColor = light.getColor();
-    const GLfloat* atten = light.getAttenuation();
+    const fvec4& pos = light.getPosition();
+    const fvec4& lightColor = light.getColor();
+    const fvec3& atten = light.getAttenuation();
 
     // point under light
     float d = pos[2];
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
 
     // set the main lighting color
-    float baseColor[3];
-    baseColor[0] = gndColor[0] * lightColor[0];
-    baseColor[1] = gndColor[1] * lightColor[1];
-    baseColor[2] = gndColor[2] * lightColor[2];
+    fvec3 baseColor = gndColor->xyz() * lightColor.xyz();
     if (invert) { // beats me, should just color logic op the static nodes
-      baseColor[0] = 1.0f - baseColor[0];
-      baseColor[1] = 1.0f - baseColor[1];
-      baseColor[2] = 1.0f - baseColor[2];
+      baseColor = 1.0f - baseColor;
     }
 
     // maximum value
-    const float maxVal = (baseColor[0] > baseColor[1]) ?
-      ((baseColor[0] > baseColor[2]) ?
-       baseColor[0] : baseColor[2]) :
-      ((baseColor[1] > baseColor[2]) ?
-       baseColor[1] : baseColor[2]);
+    const float maxVal =
+       (baseColor[0] > baseColor[1]) ?
+      ((baseColor[0] > baseColor[2]) ? baseColor[0] : baseColor[2]) :
+      ((baseColor[1] > baseColor[2]) ? baseColor[1] : baseColor[2]);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < minLuminance) {
@@ -1654,16 +1643,15 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     glTranslatef(pos[0], pos[1], 0.0f);
 
     float innerSize;
-    float innerColor[3];
+    fvec3 innerColor;
     float outerSize;
-    float outerColor[3];
+    fvec3 outerColor;
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
       // center point
-      innerColor[0] = I * baseColor[0];
-      innerColor[1] = I * baseColor[1];
-      innerColor[2] = I * baseColor[2];
+      
+      innerColor = I * baseColor;
       glColor3fv(innerColor);
       glVertex2f(0.0f, 0.0f);
 
@@ -1671,9 +1659,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       d = hypotf(receiverRingSize, pos[2]);
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
-      outerColor[0] = I * baseColor[0];
-      outerColor[1] = I * baseColor[1];
-      outerColor[2] = I * baseColor[2];
+      outerColor = I * baseColor;
       glColor3fv(outerColor);
       outerSize = receiverRingSize;
       for (j = 0; j <= receiverSlices; j++) {
@@ -1698,9 +1684,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 	I = 0.0f;
 	moreRings = false; // bail after this ring
       }
-      outerColor[0] = I * baseColor[0];
-      outerColor[1] = I * baseColor[1];
-      outerColor[2] = I * baseColor[2];
+      outerColor = I * baseColor;
 
       glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {

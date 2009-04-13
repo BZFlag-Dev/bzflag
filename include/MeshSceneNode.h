@@ -85,7 +85,7 @@ class MeshSceneNode : public SceneNode {
       const BzMaterial* bzmat;
       OpenGLGState gstate;
       fvec4 color;
-      const GLfloat* colorPtr;
+      const fvec4* colorPtr;
       bool drawRadar;
       bool drawShadow;
       bool needsSorting;

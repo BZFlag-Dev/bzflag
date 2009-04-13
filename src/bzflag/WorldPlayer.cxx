@@ -14,22 +14,25 @@
 #include "WorldPlayer.h"
 #include "SyncClock.h"
 
+
 WorldPlayer::WorldPlayer() :
    Player(ServerPlayer, RogueTeam, "world weapon", ComputerPlayer)
 {
 }
 
+
 WorldPlayer::~WorldPlayer()
 {
 }
+
 
 void			WorldPlayer::addShot(const FiringInfo& info)
 {
   Player::addShot(new RemoteShotPath(info,syncedClock.GetServerSeconds()), info);
 }
 
-bool			WorldPlayer::doEndShot(
-				int ident, bool isHit, float* pos)
+
+bool WorldPlayer::doEndShot(int ident, bool isHit, fvec3& pos)
 {
   const int index = ident & 255;
   const int salt = (ident >> 8) & 127;
@@ -59,15 +62,13 @@ bool			WorldPlayer::doEndShot(
     return false;
 
   // end it
-  const float* shotPos = shots[index]->getPosition();
-  pos[0] = shotPos[0];
-  pos[1] = shotPos[1];
-  pos[2] = shotPos[2];
+  pos = shots[index]->getPosition();
   shots[index]->setExpired();
   return true;
 }
 
-void			WorldPlayer::updateShots(float dt)
+
+void WorldPlayer::updateShots(float dt)
 {
   const size_t count = shots.size();
   for (size_t i = 0; i < count; ++i)
@@ -75,8 +76,8 @@ void			WorldPlayer::updateShots(float dt)
       shots[i]->update(dt);
 }
 
-void			WorldPlayer::addShots(SceneDatabase* scene,
-					bool colorblind) const
+
+void WorldPlayer::addShots(SceneDatabase* scene, bool colorblind) const
 {
   const size_t count = shots.size();
   for (unsigned int i = 0; i < count; ++i) {

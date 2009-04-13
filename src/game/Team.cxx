@@ -164,19 +164,16 @@ bool Team::isColorTeam(TeamColor team) // const
 }
 
 
-void Team::setColors(TeamColor team, const float* tank, const float* radar)
+void Team::setColors(TeamColor team, const fvec4& tank, const fvec4& radar)
 {
   const int teamIndex = int(team);
   // ignore bogus team color
   if (teamIndex < 0)
     return;
 
-  tankColor[teamIndex][0] = tank[0];
-  tankColor[teamIndex][1] = tank[1];
-  tankColor[teamIndex][2] = tank[2];
-  radarColor[teamIndex][0] = radar[0];
-  radarColor[teamIndex][1] = radar[1];
-  radarColor[teamIndex][2] = radar[2];
+  // leave alpha at 1.0f
+  tankColor[teamIndex].xyz()  = tank.xyz();
+  radarColor[teamIndex].xyz() = radar.xyz();
 }
 
 

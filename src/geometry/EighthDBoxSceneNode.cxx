@@ -40,32 +40,29 @@ EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
   // compute polygons
   const GLfloat polySize = size[0] / powf(float(BoxPolygons), 0.3333f);
   for (int i = 0; i < BoxPolygons; i++) {
-    GLfloat base[3], vertex[3][3];
+    fvec3 base, verts[3];
     base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
     base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
     base[2] = (size[2] - 0.5f * polySize) * (float)bzfrand();
     for (int j = 0; j < 3; j++) {
       // pick point around origin
-      GLfloat p[3];
+      fvec3 p;
       p[0] = base[0] + polySize * ((float)bzfrand() - 0.5f);
       p[1] = base[1] + polySize * ((float)bzfrand() - 0.5f);
       p[2] = base[2] + polySize * ((float)bzfrand() - 0.5f);
 
       // make sure it's inside the box
-      if (p[0] < -size[0]) p[0] = -size[0];
-      else if (p[0] > size[0]) p[0] = size[0];
-      if (p[1] < -size[1]) p[1] = -size[1];
-      else if (p[1] > size[1]) p[1] = size[1];
-      if (p[2] < 0.0f) p[2] = 0.0f;
-      else if (p[2] > size[2]) p[2] = size[2];
+      p.x = (p.x < -size.x) ? -size.x : ((p.x > +size.x) ? +size.x : p.x);
+      p.y = (p.y < -size.y) ? -size.y : ((p.y > +size.y) ? +size.y : p.y);
+      p.z = (p.z < -size.z) ? -size.z : ((p.z > +size.z) ? +size.z : p.z);
 
       // rotate it
-      vertex[j][0] = pos[0] + c * p[0] - s * p[1];
-      vertex[j][1] = pos[1] + s * p[0] + c * p[1];
-      vertex[j][2] = pos[2] + p[2];
+      verts[j].x = pos.x + (c * p.x) - (s * p.y);
+      verts[j].y = pos.y + (s * p.x) + (c * p.y);
+      verts[j].z = pos.z + p.z;
     }
 
-    setPolygon(i, vertex);
+    setPolygon(i, verts);
   }
 
   // set sphere
@@ -73,12 +70,14 @@ EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
   setRadius(0.25f * (size[0]*size[0] + size[1]*size[1] + size[2]*size[2]));
 }
 
+
 EighthDBoxSceneNode::~EighthDBoxSceneNode()
 {
   // do nothing
 }
 
-void			EighthDBoxSceneNode::notifyStyleChange()
+
+void EighthDBoxSceneNode::notifyStyleChange()
 {
   EighthDimSceneNode::notifyStyleChange();
 
@@ -94,12 +93,13 @@ void			EighthDBoxSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			EighthDBoxSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void EighthDBoxSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   EighthDimSceneNode::addRenderNodes(renderer);
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // EighthDBoxSceneNode::EighthDBoxRenderNode
@@ -128,12 +128,14 @@ EighthDBoxSceneNode::EighthDBoxRenderNode::EighthDBoxRenderNode(
   corner[4][2] = corner[5][2] = corner[6][2] = corner[7][2] = pos[2] + size[2];
 }
 
+
 EighthDBoxSceneNode::EighthDBoxRenderNode::~EighthDBoxRenderNode()
 {
   // do nothing
 }
 
-void			EighthDBoxSceneNode::EighthDBoxRenderNode::render()
+
+void EighthDBoxSceneNode::EighthDBoxRenderNode::render()
 {
   myColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINE_LOOP);

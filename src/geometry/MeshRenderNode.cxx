@@ -38,7 +38,7 @@ fvec3 OpaqueRenderNode::junk(0.0f, 0.0f, 0.0f);
 
 OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 				   GLuint* _xformList, bool _normalize,
-				   const GLfloat* _color,
+				   const fvec4* _color,
 				   int _lod, int _set,
 				   const Extents* _exts, int tris)
 {
@@ -61,7 +61,7 @@ void OpaqueRenderNode::render()
   }
 
   // set the color
-  myColor4fv(color);
+  myColor4fv(*color);
 
   // do the transformation
   if (*xformList != INVALID_GL_LIST_ID) {
@@ -132,22 +132,22 @@ void OpaqueRenderNode::renderShadow()
 AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
 					   GLuint* _xformList,
 					   bool _normalize,
-					   const GLfloat* _color,
+					   const fvec4* _color,
 					   int _lod, int _set,
 					   const Extents* _exts,
-					   const GLfloat _pos[3],
+					   const fvec3& _pos,
 					   int _triangles) :
     OpaqueRenderNode(_drawMgr, _xformList, _normalize,
 		     _color, _lod, _set, _exts, _triangles)
 {
-  memcpy(pos, _pos, sizeof(GLfloat[3]));
+  pos = _pos;
   return;
 }
 
 
-void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
+void AlphaGroupRenderNode::setPosition(const fvec3& _pos)
 {
-  memcpy(pos, _pos, sizeof(GLfloat[3]));
+  pos = _pos;
   return;
 }
 

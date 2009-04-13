@@ -17,6 +17,7 @@
 
 #include "OpenGLTexture.h"
 #include "Singleton.h"
+#include "vectors.h"
 
 
 struct FileTextureInit
@@ -72,7 +73,7 @@ public:
   const ImageInfo& getInfo ( int id );
   const ImageInfo& getInfo ( const char* name );
 
-  bool getColorAverages(int texId, float rgba[4], bool factorAlpha) const;
+  bool getColorAverages(int texId, fvec4& rgba, bool factorAlpha) const;
 
   OpenGLTexture::Filter getMaxFilter ( void );
   std::string getMaxFilterName ( void );
