@@ -1738,8 +1738,6 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   if (getFlag() == Flags::PhantomZone && !isFlagActive())
     firingInfo.shotType = StandardShot;
 
-  // FIXME team coloring of shot is never used; it was meant to be used
-  // for rabbit mode to correctly calculate team kills when rabbit changes
   firingInfo.shot.team = getTeam();
 
   if (firingInfo.shotType == ShockWaveShot) {
