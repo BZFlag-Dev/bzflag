@@ -20,7 +20,6 @@
 #define	BZF_MESH_SCENE_NODE_H
 
 #include "common.h"
-#include "bzfgl.h"
 #include "vectors.h"
 #include "SceneNode.h"
 
@@ -79,7 +78,7 @@ class MeshSceneNode : public SceneNode {
     bool animRepos;
 
     // transform display list
-    GLuint xformList;
+    unsigned int xformList;
 
     struct MeshMaterial {
       const BzMaterial* bzmat;

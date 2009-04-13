@@ -10,15 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "World.h"
 
-/* system implementation headers */
+// system headers
 #include <fstream>
 #include <time.h>
 #include <assert.h>
 
-/* common implementation headers */
+// common headers
+#include "bzfgl.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "FileManager.h"
@@ -38,7 +39,7 @@
 #include "LocalPlayer.h"
 #include "ClientIntangibilityManager.h"
 
-/* local implementation headers */
+// local headers
 #include "DynamicWorldText.h"
 #include "Roster.h"
 

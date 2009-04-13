@@ -18,7 +18,6 @@
 #define	BZF_VIEW_FRUSTUM_H
 
 #include "common.h"
-#include "bzfgl.h"
 #include "Frustum.h"
 
 // FIXME -- will need a means for off center projections for

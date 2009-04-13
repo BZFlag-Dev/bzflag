@@ -11,7 +11,12 @@
  */
 
 #include "common.h"
+
+// interface header
 #include "OpenGLMaterial.h"
+
+// common headers
+#include "bzfgl.h"
 #include "OpenGLGState.h"
 
 //
@@ -129,7 +134,7 @@ void			OpenGLMaterial::Rep::execute()
 
 void OpenGLMaterial::Rep::freeContext(void* self)
 {
-  GLuint& list = ((Rep*)self)->list;
+  unsigned int& list = ((Rep*)self)->list;
   if (list != INVALID_GL_LIST_ID) {
     glDeleteLists(list, 1);
     list = INVALID_GL_LIST_ID;

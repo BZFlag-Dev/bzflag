@@ -26,7 +26,8 @@
 using std::string;
 using std::vector;
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
 #include "CacheManager.h"
@@ -42,7 +43,7 @@ using std::vector;
 #include "WorldText.h"
 #include "bzfio.h" // for debugLevel
 
-// local implementation headers
+// local headers
 #include "ViewFrustum.h"
 
 

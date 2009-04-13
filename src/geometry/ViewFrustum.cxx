@@ -17,7 +17,7 @@
 #include "Frustum.h"
 #include "ViewFrustum.h"
 
-// common implementation headers
+// common headers
 #include "bzfgl.h"
 
 ViewFrustum::ViewFrustum()

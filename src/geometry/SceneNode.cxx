@@ -20,7 +20,8 @@
 #include <string.h>
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "Extents.h"
 #include "RenderNode.h"
 #include "StateDatabase.h"
@@ -75,13 +76,28 @@ static void __stdcall	oglColor4fv(const float* v)
 #endif
 
 #ifdef __MINGW32__
-bool			SceneNode::colorOverride = true;
+bool SceneNode::colorOverride = true;
+void SceneNode::glColor3f(float r, float g, float b)
+{
+  if (!colorOverride) { ::glColor3f(r, g, b); }
+}
+void SceneNode::glColor4f(float r, float g, float b, float a)
+{
+  if (!colorOverride) { ::glColor4f(r, g, b, a); }
+}
+void SceneNode::glColor3fv(const float* rgb)
+{
+  if (!colorOverride) { ::glColor3fv(rgb); }
+}
+void SceneNode::glColor4fv(const float* rgba)
+{
+  if (!colorOverride) { ::glColor4fv(rgba); }
+}
 #else
-void __stdcall		SceneNode::noColor3f(float, float, float) { }
-void __stdcall		SceneNode::noColor4f(
-				float, float, float, float) { }
-void __stdcall		SceneNode::noColor3fv(const float*) { }
-void __stdcall		SceneNode::noColor4fv(const float*) { }
+void __stdcall SceneNode::noColor3f(float, float, float) {}
+void __stdcall SceneNode::noColor4f(float, float, float, float) {}
+void __stdcall SceneNode::noColor3fv(const float*) {}
+void __stdcall SceneNode::noColor4fv(const float*) {}
 #endif
 void			SceneNode::noStipple(float) { }
 

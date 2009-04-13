@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-// common implementation headers
+// common headers
 #include "vectors.h"
 #include "Extents.h"
 #include "Intersect.h"

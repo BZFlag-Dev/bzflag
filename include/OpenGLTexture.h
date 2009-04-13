@@ -43,7 +43,6 @@
 
 #include "common.h"
 #include <string>
-#include "bzfgl.h"
 #include "vectors.h"
 
 class OpenGLTexture {
@@ -61,7 +60,7 @@ class OpenGLTexture {
     };
 
 			OpenGLTexture(int width, int height,
-					const GLvoid* pixels,
+					const void* pixels,
 					Filter maxFilter = Linear,
 					bool repeat = true,
 					int internalFormat = 0);
@@ -76,9 +75,9 @@ class OpenGLTexture {
 
     void		setFilter(Filter);
     Filter		getFilter();
-    GLenum		getMinFilter();
-    GLenum		getMagFilter();
-    GLenum		getInternalFormat() const { return internalFormat; }
+    unsigned int	getMinFilter();
+    unsigned int	getMagFilter();
+    unsigned int	getInternalFormat() const { return internalFormat; }
     bool		getRepeat() const { return repeat; }
 
     bool		getColorAverages(fvec4& rgbaRaw,
@@ -88,7 +87,7 @@ class OpenGLTexture {
     void		initContext();
 
     // MUST be in the final scaled format
-    void		replateImageData(const GLvoid* pixels);
+    void		replateImageData(const void* pixels);
 
     static int		getFilterCount();
     static const char*	getFilterName(Filter id);
@@ -101,40 +100,40 @@ class OpenGLTexture {
     int			getScaledWidth ( void ) { return scaledHeight;}
 
   private:
-			OpenGLTexture(const OpenGLTexture&);
+    OpenGLTexture(const OpenGLTexture&);
     OpenGLTexture&	operator=(const OpenGLTexture&);
 
     bool		operator==(const OpenGLTexture&) const;
     bool		operator!=(const OpenGLTexture&) const;
     bool		operator<(const OpenGLTexture&) const;
     int			getBestFormat(int width, int height,
-                                      const GLvoid* pixels);
+                                      const void* pixels);
     bool		bind();
-    bool		setupImage(const GLubyte* pixels);
+    bool		setupImage(const void* pixels);
 
     void* operator new(size_t s) { return ::operator new(s);}
     void  operator delete(void *p) {::operator delete(p);}
 
-    bool	alpha;
-    const int	width;
-    const int	height;
-    GLint	scaledWidth;
-    GLint	scaledHeight;
-    GLubyte*	image;
-    GLubyte*	imageMemory;
-    bool	repeat;
-    int		internalFormat;
-    GLuint	list;
-    Filter	filter;
-    Filter	realFilter;
+    bool		alpha;
+    const int		width;
+    const int		height;
+    int			scaledWidth;
+    int			scaledHeight;
+    unsigned char*	image;
+    unsigned char*	imageMemory;
+    bool		repeat;
+    unsigned int	list;
+    Filter		filter;
+    Filter		realFilter;
+    unsigned int	internalFormat;
 
     static Filter	maxFilter;
 
     static const int	filterCount;
     static const char*	configFilterNames[];
 
-    static const GLenum	minifyFilter[];
-    static const GLenum	magnifyFilter[];
+    static const unsigned int	minifyFilter[];
+    static const unsigned int	magnifyFilter[];
 
     static void		static_freeContext(void *that);
     static void		static_initContext(void *that);

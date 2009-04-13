@@ -80,10 +80,10 @@ namespace TankGeometryMgr {
   void buildLists();
   void deleteLists();
 
-  GLuint getPartList(TankGeometryEnums::TankShadow shadow,
-		     TankGeometryEnums::TankPart part,
-		     TankGeometryEnums::TankSize size,
-		     TankGeometryEnums::TankLOD lod);
+  unsigned int getPartList(TankGeometryEnums::TankShadow shadow,
+		           TankGeometryEnums::TankPart part,
+		           TankGeometryEnums::TankSize size,
+		           TankGeometryEnums::TankLOD lod);
 
   int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
 			   TankGeometryEnums::TankPart part,
@@ -110,9 +110,9 @@ namespace TankGeometryUtils {
   float getTreadTexLen();
 
   // help to scale vertices and normals
-  inline void doVertex3f(float x, float y, float z);
-  inline void doNormal3f(float x, float y, float z);
-  inline void doTexCoord2f(float x, float y);
+  void doVertex3f(float x, float y, float z);
+  void doNormal3f(float x, float y, float z);
+  void doTexCoord2f(float x, float y);
 
   //
   // NOTE:  these all return their triangle count
@@ -152,45 +152,6 @@ namespace TankGeometryUtils {
 
   bool buildGeoFromObj ( const char* path, int &count );
 
-}
-
-
-
-// TankGeometryUtils Functions
-// ---------------------------
-
-inline
-void TankGeometryUtils::doVertex3f(float x, float y, float z)
-{
-  const fvec3* scale = currentScaleFactor;
-  const fvec3 pos(x * scale->x, y * scale->y, z * scale->z);
-  glVertex3fv(pos);
-  return;
-}
-
-
-inline
-void TankGeometryUtils::doNormal3f(float x, float y, float z)
-{
-  if (shadowMode == TankGeometryEnums::ShadowOn) {
-    return;
-  }
-  const fvec3* scale = currentScaleFactor;
-  fvec3 normal(x / scale->x, y / scale->y, z / scale->z);
-  fvec3::normalize(normal);
-  glNormal3fv(normal);
-  return;
-}
-
-
-inline
-void TankGeometryUtils::doTexCoord2f(float x, float y)
-{
-  if (shadowMode == TankGeometryEnums::ShadowOn) {
-    return;
-  }
-  glTexCoord2f(x, y);
-  return;
 }
 
 

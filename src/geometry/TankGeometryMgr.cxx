@@ -24,7 +24,8 @@
 #include <string>
 #include <fstream>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
@@ -268,10 +269,10 @@ void TankGeometryMgr::buildLists()
 }
 
 
-GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
-				    TankGeometryEnums::TankPart part,
-				    TankGeometryEnums::TankSize size,
-				    TankGeometryEnums::TankLOD lod)
+unsigned int TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
+                                          TankGeometryEnums::TankPart part,
+                                          TankGeometryEnums::TankSize size,
+                                          TankGeometryEnums::TankLOD lod)
 {
   return displayLists[shadow][lod][size][part];
 }
@@ -316,9 +317,46 @@ bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
 }
 
 //============================================================================//
+//
+//  Utility functions
+//
 
+void TankGeometryUtils::doVertex3f(float x, float y, float z)
+{
+  const fvec3* scale = currentScaleFactor;
+  const fvec3 pos(x * scale->x, y * scale->y, z * scale->z);
+  glVertex3fv(pos);
+  return;
+}
+
+
+void TankGeometryUtils::doNormal3f(float x, float y, float z)
+{
+  if (shadowMode == TankGeometryEnums::ShadowOn) {
+    return;
+  }
+  const fvec3* scale = currentScaleFactor;
+  fvec3 normal(x / scale->x, y / scale->y, z / scale->z);
+  fvec3::normalize(normal);
+  glNormal3fv(normal);
+  return;
+}
+
+
+void TankGeometryUtils::doTexCoord2f(float x, float y)
+{
+  if (shadowMode == TankGeometryEnums::ShadowOn) {
+    return;
+  }
+  glTexCoord2f(x, y);
+  return;
+}
+
+
+//============================================================================//
+//
 // Local Functions
-// ---------------
+//
 
 
 static void bzdbCallback(const std::string& /*name*/, void * /*data*/)

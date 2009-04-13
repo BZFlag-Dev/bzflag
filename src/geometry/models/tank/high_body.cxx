@@ -11,6 +11,9 @@
  */
 
 #include "TankGeometryMgr.h"
+
+#include "bzfgl.h"
+
 using namespace TankGeometryUtils;
 
 float sideVerts[][3] = {  {2.800000f, 0.878000f, 0.829000f},

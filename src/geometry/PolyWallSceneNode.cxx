@@ -21,6 +21,7 @@
 #include <math.h>
 
 // common headers
+#include "bzfgl.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 //

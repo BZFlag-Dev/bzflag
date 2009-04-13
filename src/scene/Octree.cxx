@@ -12,20 +12,21 @@
 
 #include "common.h"
 
+// interface header
+#include "Octree.h"
+
 // system headers
 #include <math.h>
-
-// implementation header
-#include "Octree.h"
 
 // local headers
 #include "Occluder.h"
 
 // common headers
+#include "bzfgl.h"
 #include "Extents.h"
 #include "Intersect.h"
-
 #include "StateDatabase.h"
+
 
 using namespace Intersect;
 

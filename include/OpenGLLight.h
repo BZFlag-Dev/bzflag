@@ -24,7 +24,6 @@
 #include <vector>
 
 // common headers
-#include "bzfgl.h"
 #include "vectors.h"
 #include "ViewFrustum.h"
 
@@ -58,13 +57,13 @@ class OpenGLLight {
 
     void		execute(int index, bool useList) const;
 
-    static GLint	getMaxLights();
+    static int		getMaxLights();
     static void		enableLight(int index, bool on); // const
 
   protected:
     void		makeLists();
     void		freeLists();
-    void		genLight(GLenum light) const;
+    void		genLight(unsigned int light) const;
 
   private:
     static void		freeContext(void*);
@@ -78,8 +77,8 @@ class OpenGLLight {
     float		importance;
     bool		onlyReal;
     bool		onlyGround;
-    GLuint*		lists;
-    static GLint	maxLights;
+    unsigned int*	lists;
+    static int		maxLights;
 };
 
 //

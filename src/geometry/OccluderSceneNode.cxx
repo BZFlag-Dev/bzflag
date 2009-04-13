@@ -21,7 +21,7 @@
 #include <math.h>
 #include <string.h>
 
-// common implementation headers
+// common headers
 #include "MeshFace.h"
 #include "Intersect.h"
 #include "ViewFrustum.h"

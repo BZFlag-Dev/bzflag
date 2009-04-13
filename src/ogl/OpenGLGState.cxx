@@ -21,6 +21,7 @@
 #include <assert.h>
 
 /* common implementation headers */
+#include "bzfgl.h" // for logDebugMessage(3,)
 #include "bzfio.h" // for logDebugMessage(3,)
 #include "OpenGLGState.h"
 #include "TextureManager.h"
@@ -1079,7 +1080,7 @@ static const GLubyte stipplePattern[NumStipples][4] = {
   { 0xff, 0xff, 0xff, 0xff },
 };
 
-GLuint OpenGLGState::stipples = INVALID_GL_LIST_ID;
+unsigned int OpenGLGState::stipples = INVALID_GL_LIST_ID;
 
 OpenGLGState::OpenGLGState()
 {
@@ -1467,8 +1468,7 @@ void OpenGLGStateBuilder::setTextureMatrix(
   state->setTextureMatrix(textureMatrix);
 }
 
-void OpenGLGStateBuilder::setTextureEnvMode(
-					GLenum mode)
+void OpenGLGStateBuilder::setTextureEnvMode(unsigned int mode)
 {
   state->setTextureEnvMode(mode);
 }
@@ -1480,8 +1480,8 @@ void OpenGLGStateBuilder::setMaterial(
   state->setMaterial(material, highQuality);
 }
 
-void OpenGLGStateBuilder::setBlending(
-					GLenum sFactor, GLenum dFactor)
+void OpenGLGStateBuilder::setBlending(unsigned int sFactor,
+                                      unsigned int dFactor)
 {
   state->setBlending(sFactor, dFactor);
 }
@@ -1496,18 +1496,17 @@ void OpenGLGStateBuilder::setSmoothing(bool smooth)
   state->setSmoothing(smooth);
 }
 
-void OpenGLGStateBuilder::setCulling(GLenum culling)
+void OpenGLGStateBuilder::setCulling(unsigned int culling)
 {
   state->setCulling(culling);
 }
 
-void OpenGLGStateBuilder::setShading(GLenum shading)
+void OpenGLGStateBuilder::setShading(unsigned int shading)
 {
   state->setShading(shading);
 }
 
-void OpenGLGStateBuilder::setAlphaFunc(
-					GLenum func, GLclampf ref)
+void OpenGLGStateBuilder::setAlphaFunc(unsigned int func, float ref)
 {
   state->setAlphaFunc(func, ref);
 }

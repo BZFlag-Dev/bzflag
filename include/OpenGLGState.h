@@ -18,7 +18,15 @@
 #define	BZF_OPENGL_GSTATE_H
 
 #include "common.h"
-#include "bzfgl.h"
+
+
+// copied from glew.h, instead of including bzfgl.h
+#define BZ_GL_MODULATE             0x2100
+#define BZ_GL_SRC_ALPHA            0x0302
+#define BZ_GL_ONE_MINUS_SRC_ALPHA  0x0303
+#define BZ_GL_SMOOTH               0x1D01
+#define BZ_GL_GEQUAL               0x0206
+
 
 class OpenGLMaterial;
 class OpenGLGStateRep;
@@ -127,7 +135,7 @@ class OpenGLGState {
 
   private:
     OpenGLGStateRep*	rep;
-    static GLuint	stipples;
+    static unsigned int	stipples;
   public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
@@ -145,9 +153,10 @@ inline bool OpenGLGState::isExecutingInitFuncs()
 
 class OpenGLGStateBuilder {
   public:
-			OpenGLGStateBuilder();
-			OpenGLGStateBuilder(const OpenGLGState&);
-			~OpenGLGStateBuilder();
+    OpenGLGStateBuilder();
+    OpenGLGStateBuilder(const OpenGLGState&);
+    ~OpenGLGStateBuilder();
+
     OpenGLGStateBuilder &operator=(const OpenGLGState&);
 
     void		reset();
@@ -161,16 +170,16 @@ class OpenGLGStateBuilder {
     void		resetAlphaFunc();
     void		setTexture(const int texture);
     void		setTextureMatrix(const float* matrix);
-    void		setTextureEnvMode(GLenum mode = GL_MODULATE);
+    void		setTextureEnvMode(unsigned int mode = BZ_GL_MODULATE);
     void		setMaterial(const OpenGLMaterial& material, bool highQuality);
-    void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
-				    GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);
+    void		setBlending(unsigned int sFactor = BZ_GL_SRC_ALPHA,
+				    unsigned int dFactor = BZ_GL_ONE_MINUS_SRC_ALPHA);
     void		setStipple(float alpha);
     void		setSmoothing(bool smooth = true);
-    void		setCulling(GLenum culling);
-    void		setShading(GLenum shading = GL_SMOOTH);
-    void		setAlphaFunc(GLenum func = GL_GEQUAL,
-				     GLclampf ref = 0.1f);
+    void		setCulling(unsigned int culling);
+    void		setShading(unsigned int shading = BZ_GL_SMOOTH);
+    void		setAlphaFunc(unsigned int func = BZ_GL_GEQUAL,
+				     float  ref = 0.1f);
     void		setNeedsSorting(bool);
     OpenGLGState	getState() const;
 

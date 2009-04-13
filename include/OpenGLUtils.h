@@ -15,12 +15,9 @@
 
 #include "common.h"
 
-/* interface system headers */
+// system headers
 #include <map>
 #include <vector>
-
-/* common interface headers */
-#include "bzfgl.h"
 
 #define GL_INVALID_ID 0xffffffff
 
@@ -102,7 +99,7 @@ class DisplayListSystem
 
   typedef struct _DisplayList {
     GLDisplayListCreator	*creator;
-    GLuint			glList;
+    unsigned int		list;
   } DisplayList;
 
   std::map<GLDisplayList,DisplayList>	lists;

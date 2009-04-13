@@ -13,7 +13,13 @@
 
 #include "OpenGLUtils.h"
 
+// system headers
 #include <math.h>
+
+// common headers
+#include "bzfgl.h"
+
+
 #define GL_INVALID_ID 0xffffffff
 
 float getFloatColor(int val)
@@ -266,10 +272,10 @@ void DisplayListSystem::flushLists ( void )
 
 	while (itr != lists.end())
 	{
-		if (itr->second.glList != GL_INVALID_ID)
-			glDeleteLists(itr->second.glList,1);
+		if (itr->second.list != GL_INVALID_ID)
+			glDeleteLists(itr->second.list, 1);
 
-		itr->second.glList = GL_INVALID_ID;
+		itr->second.list = GL_INVALID_ID;
 		itr++;
 	}
 }
@@ -281,7 +287,7 @@ GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *creator)
 
 	DisplayList displayList;
 	displayList.creator = creator;
-	displayList.glList = GL_INVALID_ID;
+	displayList.list = GL_INVALID_ID;
 
 	lastList++;
 	lists[lastList] = displayList;
@@ -294,8 +300,8 @@ void DisplayListSystem::freeList (GLDisplayList displayList)
 	if (itr == lists.end())
 		return;
 
-	if (itr->second.glList != GL_INVALID_ID)
-		glDeleteLists(itr->second.glList,1);
+	if (itr->second.list != GL_INVALID_ID)
+		glDeleteLists(itr->second.list, 1);
 
 	lists.erase(itr);
 }
@@ -306,15 +312,15 @@ void DisplayListSystem::callList (GLDisplayList displayList)
 	if (itr == lists.end())
 		return;
 
-	if (itr->second.glList == GL_INVALID_ID)
+	if (itr->second.list == GL_INVALID_ID)
 	{
-		itr->second.glList = glGenLists(1);
-		glNewList(itr->second.glList,GL_COMPILE);
+		itr->second.list = glGenLists(1);
+		glNewList(itr->second.list,GL_COMPILE);
 		itr->second.creator->buildGeometry(displayList);
 		glEndList();
 	}
 
-	glCallList(itr->second.glList);
+	glCallList(itr->second.list);
 }
 
 void DisplayListSystem::callListsV (std::vector<GLDisplayList> &displayLists)

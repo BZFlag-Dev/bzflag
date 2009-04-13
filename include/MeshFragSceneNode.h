@@ -77,19 +77,19 @@ class MeshFragSceneNode : public WallSceneNode {
 
       private:
 	int style;
-	GLuint list;
+	unsigned int list;
 	MeshFragSceneNode* sceneNode;
     };
 
   private:
     Geometry renderNode;
 
-    GLint faceCount;
+    int faceCount;
     const MeshFace** faces;
 
     bool noRadar;
     bool noShadow;
-    GLint arrayCount;
+    int arrayCount;
     float* vertices;
     float* normals;
     float* texcoords;

@@ -18,7 +18,7 @@
 // system headers
 #include <string.h>
 
-// common implementation headers
+// common headers
 #include "RenderNode.h"
 #include "MeshDrawMgr.h"
 #include "OpenGLGState.h"

@@ -31,7 +31,6 @@
 #define	BZF_OPENGL_MATERIAL_H
 
 #include "common.h"
-#include "bzfgl.h"
 #include "vectors.h"
 
 class OpenGLMaterial {
@@ -77,7 +76,7 @@ class OpenGLMaterial {
 	int		refCount;
 	Rep*		prev;
 	Rep*		next;
-	GLuint		list;
+	unsigned int	list;
 	fvec4		specular;
 	fvec4		emissive;
 	float		shininess;

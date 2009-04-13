@@ -64,7 +64,9 @@ int OpenGLPassState::maxAttribStackDepth = 16; // 16 are guaranteed
 
 bool OpenGLPassState::creatingList = false;
 
-GLuint OpenGLPassState::stateLists[DRAW_MODE_COUNT] = { INVALID_GL_LIST_ID };
+unsigned int OpenGLPassState::stateLists[DRAW_MODE_COUNT] = {
+  INVALID_GL_LIST_ID
+};
 
 
 //============================================================================//
@@ -118,7 +120,7 @@ bool OpenGLPassState::TryAttribStackPop()
 }
 
 
-bool OpenGLPassState::PushAttrib(GLbitfield bits)
+bool OpenGLPassState::PushAttrib(unsigned int bits)
 {
   if (!TryAttribStackPush()) {
     return false;

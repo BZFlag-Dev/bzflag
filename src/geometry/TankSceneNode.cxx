@@ -13,23 +13,23 @@
 
 // bzflag common headers
 #include "common.h"
-#include "global.h"
 
 // interface header
 #include "TankSceneNode.h"
-
-#include "TextureManager.h"
 
 // system headers
 #include <math.h>
 #include <string.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
+#include "global.h"
 #include "StateDatabase.h"
 #include "SceneRenderer.h"
+#include "TextureManager.h"
 #include "BZDBCache.h"
 
-// local implementation headers
+// local headers
 #include "ViewFrustum.h"
 
 using namespace TankGeometryEnums;

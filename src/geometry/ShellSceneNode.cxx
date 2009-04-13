@@ -19,7 +19,8 @@
 // system headers
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "OpenGLMaterial.h"
 #include "StateDatabase.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)

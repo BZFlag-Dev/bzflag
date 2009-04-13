@@ -22,7 +22,7 @@
 #include "bzfio.h" // for DEBUGx()
 
 
-GLuint MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;
+unsigned int MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;
 
 
 void MeshDrawMgr::init()
@@ -58,7 +58,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
   for (int i = 0; i < lodCount; i++) {
     LodList& lodList = lodLists[i];
     lodList.count = drawLods[i].count;
-    lodList.setLists = new GLuint[lodList.count];
+    lodList.setLists = new unsigned int[lodList.count];
     for (int j = 0; j < lodList.count; j++) {
       lodList.setLists[j] = INVALID_GL_LIST_ID;
     }
@@ -108,7 +108,7 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
     glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
   }
 
-  const GLuint list = lodLists[lod].setLists[set];
+  const unsigned int list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
   }
@@ -153,7 +153,7 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
     glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
   }
 
-  const GLuint list = lodLists[lod].setLists[set];
+  const unsigned int list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
   }

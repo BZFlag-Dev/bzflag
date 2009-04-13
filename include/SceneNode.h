@@ -18,7 +18,6 @@
 #define	BZF_SCENE_NODE_H
 
 #include "common.h"
-#include "bzfgl.h"
 #include "bzfio.h"
 #include "OpenGLGState.h"
 #include "RenderNode.h"
@@ -87,30 +86,16 @@ class SceneNode {
     static void setColorOverride(bool = true);
 
 #ifdef __MINGW32__
-    static void glColor3f(float r, float g, float b) {
-      if (!colorOverride) { ::glColor3f(r, g, b); }
-    }
-    static void glColor4f(float r, float g, float b, float a) {
-      if (!colorOverride) { ::glColor4f(r, g, b, a); }
-    }
-    static void glColor3fv(const float* rgb) {
-      if (!colorOverride) { ::glColor3fv(rgb); }
-    }
-    static void glColor4fv(const float* rgba) {
-      if (!colorOverride) { ::glColor4fv(rgba); }
-    }
+    static void glColor3fv(const float* rgb);
+    static void glColor4fv(const float* rgba);
+    static void glColor3f(float r, float g, float b);
+    static void glColor4f(float r, float g, float b, float a);
 #else
-    static void glColor3f(float r, float g, float b) {
-      (*color3f)(r, g, b);
-    }
+    static void glColor3fv(const float* rgb)         { (*color3fv)(rgb);    }
+    static void glColor4fv(const float* rgba)        { (*color4fv)(rgba);   }
+    static void glColor3f(float r, float g, float b) { (*color3f)(r, g, b); }
     static void glColor4f(float r, float g, float b, float a) {
       (*color4f)(r, g, b, a);
-    }
-    static void glColor3fv(const float* rgb) {
-      (*color3fv)(rgb);
-    }
-    static void glColor4fv(const float* rgba) {
-      (*color4fv)(rgba);
     }
 #endif // __MINGW32__
 
@@ -126,10 +111,10 @@ class SceneNode {
     CullState octreeState;
 
   protected:
-    void		setRadius(float radiusSquared);
-    void		setCenter(const fvec3& center);
-    void		setCenter(float x, float y, float z);
-    void		setSphere(const fvec4& sphere);
+    void setRadius(float radiusSquared);
+    void setCenter(const fvec3& center);
+    void setCenter(float x, float y, float z);
+    void setSphere(const fvec4& sphere);
 
   private:
     SceneNode(const SceneNode&);

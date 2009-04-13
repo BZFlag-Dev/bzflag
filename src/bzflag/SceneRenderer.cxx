@@ -49,7 +49,7 @@
 // SceneRenderer
 //
 
-const GLint SceneRenderer::SunLight = 0;		// also for the moon
+const int   SceneRenderer::SunLight = 0;		// also for the moon
 const float SceneRenderer::dimDensity = 0.75f;
 const fvec4 SceneRenderer::dimnessColor(0.0f, 0.0f, 0.0f, 1.0f);
 const fvec4 SceneRenderer::blindnessColor(1.0f, 1.0f, 0.0f, 1.0f);

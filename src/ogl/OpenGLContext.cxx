@@ -17,6 +17,7 @@
 // there is no 'implementation header'
 
 // common headers
+#include "bzfgl.h"
 #include "bzfio.h"
 
 /////////////////////////

@@ -11,6 +11,9 @@
  */
 
 #include "TankGeometryMgr.h"
+
+#include "bzfgl.h"
+
 using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildMedRCasing ( void )

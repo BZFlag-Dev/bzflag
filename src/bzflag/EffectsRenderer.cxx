@@ -13,15 +13,18 @@
 // interface header
 #include "EffectsRenderer.h"
 
-// common impl headers
+// common headers
+#include "bzfgl.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "OpenGLUtils.h"
 
+
 template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
+
 
 // utils for geo
 static void drawRingYZ(float rad, float z, float topsideOffset = 0,

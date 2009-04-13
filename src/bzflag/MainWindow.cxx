@@ -10,11 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 
-/* interface headers */
+// interface header
 #include "MainWindow.h"
 
-/* common implementation headers */
+// common headers
+#include "bzfgl.h"
 #include "global.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"

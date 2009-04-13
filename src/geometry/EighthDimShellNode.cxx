@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 // common headers
+#include "bzfgl.h"
 #include "SceneRenderer.h"
 #include "OpenGLGState.h"
 #include "BZDBCache.h"

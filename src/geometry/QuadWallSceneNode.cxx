@@ -19,11 +19,12 @@
 // system headers
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "Intersect.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// local implementation headers
+// local headers
 #include "ViewFrustum.h"
 
 

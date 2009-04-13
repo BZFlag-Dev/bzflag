@@ -20,7 +20,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-// common implementation header
+// common headers
+#include "bzfgl.h"
 #include "StateDatabase.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 

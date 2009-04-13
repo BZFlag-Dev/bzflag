@@ -28,32 +28,34 @@
 // OpenGLTexture::Rep
 //
 
-const GLenum		OpenGLTexture::minifyFilter[] = {
-				GL_NEAREST,
-				GL_NEAREST,
-				GL_LINEAR,
-				GL_NEAREST_MIPMAP_NEAREST,
-				GL_LINEAR_MIPMAP_NEAREST,
-				GL_NEAREST_MIPMAP_LINEAR,
-				GL_LINEAR_MIPMAP_LINEAR
-			};
-const GLenum		OpenGLTexture::magnifyFilter[] = {
-				GL_NEAREST,
-				GL_NEAREST,
-				GL_LINEAR,
-				GL_NEAREST,
-				GL_LINEAR,
-				GL_NEAREST,
-				GL_LINEAR
-			};
-const char*		OpenGLTexture::configFilterNames[] = {
-				"no",
-				"nearest",
-				"linear",
-				"nearestmipmapnearest",
-				"linearmipmapnearest",
-				"nearestmipmaplinear",
-				"linearmipmaplinear"
+const unsigned int OpenGLTexture::minifyFilter[] = {
+  GL_NEAREST,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST_MIPMAP_NEAREST,
+  GL_LINEAR_MIPMAP_NEAREST,
+  GL_NEAREST_MIPMAP_LINEAR,
+  GL_LINEAR_MIPMAP_LINEAR
+};
+
+const unsigned int OpenGLTexture::magnifyFilter[] = {
+  GL_NEAREST,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST,
+  GL_LINEAR
+};
+
+const char* OpenGLTexture::configFilterNames[] = {
+  "no",
+  "nearest",
+  "linear",
+  "nearestmipmapnearest",
+  "linearmipmapnearest",
+  "nearestmipmaplinear",
+  "linearmipmaplinear"
 };
 
 
@@ -65,9 +67,10 @@ const int OpenGLTexture::filterCount = Max + 1;
 OpenGLTexture::Filter OpenGLTexture::maxFilter = Default;
 
 
-OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
-			     Filter _filter, bool _repeat, int _internalFormat) :
-			   width(_width), height(_height)
+OpenGLTexture::OpenGLTexture(int _width, int _height, const void* pixels,
+			     Filter _filter, bool _repeat, int _internalFormat)
+: width(_width)
+, height(_height)
 {
   alpha = false;
   repeat = _repeat;
@@ -80,7 +83,7 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
     internalFormat = getBestFormat(width, height, pixels);
 
   // copy/scale the original texture image
-  setupImage((const GLubyte*)pixels);
+  setupImage(pixels);
 
   // build and bind the GL texture
   initContext();
@@ -145,15 +148,15 @@ void OpenGLTexture::initContext()
   return;
 }
 
-void OpenGLTexture::replateImageData(const GLvoid* pixels)
+void OpenGLTexture::replateImageData(const void* pixels)
 {
   freeContext();
-  memcpy(image,pixels,internalFormat*scaledWidth*scaledHeight);
+  memcpy(image, pixels, internalFormat * scaledWidth * scaledHeight);
   initContext();
 }
 
 
-bool OpenGLTexture::setupImage(const GLubyte* pixels)
+bool OpenGLTexture::setupImage(const void* pixels)
 {
   // align to a 2^N value
   scaledWidth = 1;
@@ -293,13 +296,13 @@ OpenGLTexture::Filter OpenGLTexture::getFilter()
 }
 
 
-GLenum OpenGLTexture::getMinFilter()
+unsigned int OpenGLTexture::getMinFilter()
 {
   return minifyFilter[realFilter];
 }
 
 
-GLenum OpenGLTexture::getMagFilter()
+unsigned int OpenGLTexture::getMagFilter()
 {
   return magnifyFilter[realFilter];
 }
@@ -363,7 +366,7 @@ bool OpenGLTexture::bind()
 }
 
 
-int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
+int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels)
 {
   // see if all pixels are achromatic
   const GLubyte* scan = (const GLubyte*)pixels;

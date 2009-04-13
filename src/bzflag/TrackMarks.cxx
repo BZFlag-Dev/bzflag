@@ -10,11 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 
-// Interface header
+// interface header
 #include "TrackMarks.h"
 
-// Common interface headers
+// common  headers
+#include "bzfgl.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "Obstacle.h"

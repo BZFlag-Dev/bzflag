@@ -13,7 +13,6 @@
 #ifndef _MESH_DRAW_MGR_H_
 #define _MESH_DRAW_MGR_H_
 
-#include "bzfgl.h"
 #include "MeshDrawInfo.h"
 
 class MeshDrawMgr {
@@ -47,13 +46,13 @@ class MeshDrawMgr {
 
     struct LodList {
       int count;
-      GLuint* setLists;
+      unsigned int* setLists;
     };
 
     int lodCount;
     LodList* lodLists;
 
-    static GLuint unloadList;
+    static unsigned int unloadList;
 };
 
 #endif // _MESH_DRAW_MGR_H_

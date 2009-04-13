@@ -14,7 +14,7 @@
 #define _MESH_RENDER_NODE_H
 
 
-// common implementation headers
+// common headers
 #include "bzfgl.h"
 #include "RenderNode.h"
 #include "vectors.h"

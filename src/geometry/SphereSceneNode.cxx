@@ -19,14 +19,15 @@
 // system headers
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLMaterial.h"
 #include "TextureManager.h"
 
-// local implementation headers
+// local headers
 #include "ViewFrustum.h"
 
 
@@ -110,10 +111,10 @@ void SphereSceneNode::notifyStyleChange()
 //
 
 
-bool SphereLodSceneNode::initialized = false;
-GLuint SphereLodSceneNode::lodLists[sphereLods];
-float SphereLodSceneNode::lodPixelsSqr[sphereLods];
-int SphereLodSceneNode::listTriangleCount[sphereLods];
+bool         SphereLodSceneNode::initialized = false;
+unsigned int SphereLodSceneNode::lodLists[sphereLods];
+float        SphereLodSceneNode::lodPixelsSqr[sphereLods];
+int          SphereLodSceneNode::listTriangleCount[sphereLods];
 
 
 static GLuint buildSphereList(GLdouble radius, GLint slices, GLint stacks)

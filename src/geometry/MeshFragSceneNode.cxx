@@ -21,7 +21,8 @@
 #include <math.h>
 #include <string.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "Intersect.h"
 #include "MeshFace.h"
 #include "MeshSceneNodeGenerator.h"

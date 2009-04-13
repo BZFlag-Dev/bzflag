@@ -13,9 +13,6 @@
 #include <string>
 #include <set>
 
-// common headers
-#include "bzfgl.h"
-
 
 class OpenGLPassState {
   public:
@@ -40,7 +37,7 @@ class OpenGLPassState {
     static inline int GetMaxAttribStackDepth() { return maxAttribStackDepth; }
     static bool TryAttribStackChange(int change);
     static bool TestAttribStackChange(int change);
-    static bool PushAttrib(GLbitfield bits); // GLbitfield
+    static bool PushAttrib(unsigned int bits); // GLbitfield
     static bool PopAttrib();
     static bool TryAttribStackPush();
     static bool TryAttribStackPop();
@@ -146,7 +143,7 @@ class OpenGLPassState {
 
     static void (*resetStateFunc)(void);
     static void (*resetMatrixFunc)(void);
-    static GLuint stateLists[DRAW_MODE_COUNT];
+    static unsigned int stateLists[DRAW_MODE_COUNT];
     typedef void (*ResetFunc)(void);
     static ResetFunc resetStateFuncs[DRAW_MODE_COUNT];
     static ResetFunc resetMatrixFuncs[DRAW_MODE_COUNT];

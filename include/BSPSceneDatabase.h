@@ -24,7 +24,6 @@
 #include <vector>
 
 // common implementation headers
-#include "bzfgl.h"
 #include "SceneDatabase.h"
 
 

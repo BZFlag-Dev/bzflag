@@ -21,7 +21,6 @@
 #include <vector>
 
 // common headers
-#include "bzfgl.h"
 #include "vectors.h"
 #include "AnsiCodes.h"
 #include "Singleton.h"

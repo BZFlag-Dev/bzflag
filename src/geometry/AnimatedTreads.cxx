@@ -11,11 +11,15 @@
  */
 
 #include "common.h"
+
 // system headers
 #include <assert.h>
 #include <math.h>
 
-// local implementation headers
+// common headers
+#include "bzfgl.h"
+
+// local headers
 #include "TankSceneNode.h"
 #include "TankGeometryMgr.h"
 

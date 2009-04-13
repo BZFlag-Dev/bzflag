@@ -20,12 +20,13 @@
 #include <stdlib.h>
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// local implementation headers
+// local headers
 #include "ViewFrustum.h"
 #include "StateDatabase.h"
 

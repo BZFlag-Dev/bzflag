@@ -12,14 +12,19 @@
 
 #include "common.h"
 
+// interface header
+#include "OpenGLLight.h"
+
+// system headers
 #include <math.h>
 
-#include "OpenGLLight.h"
+// common headers
+#include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "ViewFrustum.h"
 
 
-GLint OpenGLLight::maxLights = 0;
+int OpenGLLight::maxLights = 0;
 
 
 OpenGLLight::OpenGLLight()
@@ -80,7 +85,7 @@ void OpenGLLight::makeLists()
   const int numLights = getMaxLights();
 
   // invalidate the lists
-  lists = new GLuint[numLights];
+  lists = new unsigned int[numLights];
   for (int i = 0; i < numLights; i++) {
     lists[i] = INVALID_GL_LIST_ID;
   }
@@ -227,7 +232,7 @@ void OpenGLLight::enableLight(int index, bool on) // const
 void OpenGLLight::execute(int index, bool useList) const
 {
   if (!useList) {
-    genLight((GLenum)(GL_LIGHT0 + index));
+    genLight((unsigned int)(GL_LIGHT0 + index));
     return;
   }
 
@@ -239,14 +244,14 @@ void OpenGLLight::execute(int index, bool useList) const
   else {
     lists[index] = glGenLists(1);
     glNewList(lists[index], GL_COMPILE_AND_EXECUTE);
-    genLight((GLenum)(GL_LIGHT0 + index));
+    genLight((unsigned int)(GL_LIGHT0 + index));
     glEndList();
   }
   return;
 }
 
 
-void OpenGLLight::genLight(GLenum light) const
+void OpenGLLight::genLight(unsigned int light) const
 {
   glLightfv(light, GL_POSITION, pos);
   glLightfv(light, GL_DIFFUSE, color);
@@ -272,7 +277,7 @@ void OpenGLLight::freeLists()
 }
 
 
-GLint OpenGLLight::getMaxLights()
+int OpenGLLight::getMaxLights()
 {
   if (maxLights == 0) {
     glGetIntegerv(GL_MAX_LIGHTS, &maxLights);

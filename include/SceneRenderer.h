@@ -196,9 +196,9 @@ private:
   bool			mapFog;
   ViewFrustum		frustum;
   float			lengthPerPixel;
-  GLint			maxLights;
-  GLint			reservedLights;
-  GLint			dynamicLights;
+  int			maxLights;
+  int			reservedLights;
+  int			dynamicLights;
   int			lightsSize;
   int			lightsCount;
   OpenGLLight**		lights;
@@ -213,7 +213,7 @@ private:
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
   int			triangleCount;
-  static const GLint	SunLight;
+  static const int	SunLight;
 
   static const float dimDensity;
   static const fvec4 dimnessColor;

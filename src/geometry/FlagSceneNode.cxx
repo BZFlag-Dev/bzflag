@@ -20,7 +20,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "vectors.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"

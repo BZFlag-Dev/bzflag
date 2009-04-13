@@ -89,7 +89,7 @@ class TextSceneNode : public SceneNode {
 
         const WorldText text;
 
-        GLuint xformList;
+        unsigned int xformList;
 
         int fontID;
         float fontSize;
