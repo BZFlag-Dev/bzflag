@@ -59,7 +59,6 @@ noinst_HEADERS =			\
 	Frustum.h			\
 	GameTime.h			\
 	GfxBlock.h			\
-	GLCollect.h			\
 	Intersect.h			\
 	KeyManager.h			\
 	LagInfo.h			\
