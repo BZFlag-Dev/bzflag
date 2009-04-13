@@ -416,7 +416,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // get the references
   const BzMaterial* bzmat  = mat->bzmat;
   OpenGLGState&     gstate = mat->gstate;
-  fvec4             color  = mat->color;
+  fvec4&            color  = mat->color;
 
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
