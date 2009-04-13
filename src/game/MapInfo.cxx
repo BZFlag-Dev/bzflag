@@ -143,7 +143,7 @@ int MapInfo::packSize() const
 void* MapInfo::pack(void* buf) const
 {
   uint32_t count = (uint32_t)infoVec.size();
-  buf = nboPackUInt(buf, count);
+  buf = nboPackUInt32(buf, count);
   for (uint32_t i = 0; i < count; i++) {
     buf = nboPackStdString(buf, infoVec[i]);
   }
@@ -155,7 +155,7 @@ void* MapInfo::unpack(void* buf)
 {
   infoVec.clear();
   uint32_t count;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (uint32_t i = 0; i < count; i++) {
     std::string line;
     buf = nboUnpackStdString(buf, line);

@@ -316,7 +316,7 @@ void *TetraBuilding::pack(void* buf) const
   stateByte |= isDriveThrough() ? (1 << 0) : 0;
   stateByte |= isShootThrough() ? (1 << 1) : 0;
   stateByte |= canRicochet()    ? (1 << 2) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   // pack the transform
   buf = transform.pack(buf);
@@ -329,7 +329,7 @@ void *TetraBuilding::pack(void* buf) const
   // pack the normals
   unsigned char useNormalsByte;
   pack4Bools (&useNormalsByte, useNormals);
-  buf = nboPackUByte(buf, useNormalsByte);
+  buf = nboPackUInt8(buf, useNormalsByte);
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
       for (int i = 0; i < 3; i++) {
@@ -341,7 +341,7 @@ void *TetraBuilding::pack(void* buf) const
   // pack the texcoords
   unsigned char useTexcoordsByte;
   pack4Bools (&useTexcoordsByte, useTexcoords);
-  buf = nboPackUByte(buf, useTexcoordsByte);
+  buf = nboPackUInt8(buf, useTexcoordsByte);
   for (v = 0; v < 4; v++) {
     if (useTexcoords[v]) {
       for (int i = 0; i < 3; i++) {
@@ -354,7 +354,7 @@ void *TetraBuilding::pack(void* buf) const
   // pack the materials
   for (v = 0; v < 4; v++) {
     int matindex = MATERIALMGR.getIndex(materials[v]);
-    buf = nboPackInt(buf, matindex);
+    buf = nboPackInt32(buf, matindex);
   }
 
   return buf;
@@ -367,7 +367,7 @@ void *TetraBuilding::unpack(void* buf)
 
   // unpack the state byte
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   ricochet     = (stateByte & (1 << 2)) != 0;
@@ -382,7 +382,7 @@ void *TetraBuilding::unpack(void* buf)
 
   // unpack the normals
   unsigned char useNormalsByte;
-  buf = nboUnpackUByte(buf, useNormalsByte);
+  buf = nboUnpackUInt8(buf, useNormalsByte);
   unpack4Bools (useNormalsByte, useNormals);
   for (v = 0; v < 4; v++) {
     if (useNormals[v]) {
@@ -394,7 +394,7 @@ void *TetraBuilding::unpack(void* buf)
 
   // unpack the texcoords
   unsigned char useTexcoordsByte;
-  buf = nboUnpackUByte(buf, useTexcoordsByte);
+  buf = nboUnpackUInt8(buf, useTexcoordsByte);
   unpack4Bools (useTexcoordsByte, useTexcoords);
   for (v = 0; v < 4; v++) {
     if (useTexcoords[v]) {
@@ -408,7 +408,7 @@ void *TetraBuilding::unpack(void* buf)
   // unpack the materials
   for (v = 0; v < 4; v++) {
     int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt32(buf, matindex);
     materials[v] = MATERIALMGR.getMaterial(matindex);
   }
 

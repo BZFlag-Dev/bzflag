@@ -281,22 +281,22 @@ namespace Flags {
 void* FlagType::pack(void* buf) const
 {
   if (flagAbbv.size() > 0)
-    buf = nboPackUByte(buf, flagAbbv[0]);
+    buf = nboPackUInt8(buf, flagAbbv[0]);
   else
-    buf = nboPackUByte(buf, 0);
+    buf = nboPackUInt8(buf, 0);
 
   if (flagAbbv.size() > 1)
-    buf = nboPackUByte(buf, flagAbbv[1]);
+    buf = nboPackUInt8(buf, flagAbbv[1]);
   else
-    buf = nboPackUByte(buf, 0);
+    buf = nboPackUInt8(buf, 0);
 
   return buf;
 }
 
 void* FlagType::fakePack(void* buf) const
 {
-  buf = nboPackUByte(buf, 'P');
-  buf = nboPackUByte(buf, 'Z');
+  buf = nboPackUInt8(buf, 'P');
+  buf = nboPackUInt8(buf, 'Z');
   return buf;
 }
 
@@ -306,16 +306,16 @@ size_t FlagType::pack(BufferedNetworkMessage *msg) const
 
   pack((void*)buf);
 
-  msg->packUByte(buf[0]);
-  msg->packUByte(buf[1]);
+  msg->packUInt8(buf[0]);
+  msg->packUInt8(buf[1]);
 
   return 2;
 }
 
 size_t FlagType::fakePack(BufferedNetworkMessage *msg) const
 {
-  msg->packUByte('P');
-  msg->packUByte('Z');
+  msg->packUInt8('P');
+  msg->packUInt8('Z');
   return 2;
 }
 
@@ -323,8 +323,8 @@ size_t FlagType::packCustom(BufferedNetworkMessage *msg) const
 {
   size_t  s = msg->size();
   pack(msg);
-  msg->packUByte(uint8_t(flagQuality));
-  msg->packUByte(uint8_t(flagShot));
+  msg->packUInt8(uint8_t(flagQuality));
+  msg->packUInt8(uint8_t(flagShot));
   msg->packStdString(flagName);
   msg->packStdString(flagHelp);
   return  msg->size()-s;
@@ -333,8 +333,8 @@ size_t FlagType::packCustom(BufferedNetworkMessage *msg) const
 void* FlagType::unpack(void* buf, FlagType* &type)
 {
   unsigned char abbv[3] = {0, 0, 0};
-  buf = nboUnpackUByte(buf, abbv[0]);
-  buf = nboUnpackUByte(buf, abbv[1]);
+  buf = nboUnpackUInt8(buf, abbv[0]);
+  buf = nboUnpackUInt8(buf, abbv[1]);
   type = Flag::getDescFromAbbreviation((const char *)abbv);
   return buf;
 }
@@ -342,12 +342,12 @@ void* FlagType::unpack(void* buf, FlagType* &type)
 void* FlagType::unpackCustom(void* buf, FlagType* &type)
 {
   unsigned char abbv[3] = {0, 0, 0};
-  buf = nboUnpackUByte(buf, abbv[0]);
-  buf = nboUnpackUByte(buf, abbv[1]);
+  buf = nboUnpackUInt8(buf, abbv[0]);
+  buf = nboUnpackUInt8(buf, abbv[1]);
 
   uint8_t quality, shot;
-  buf = nboUnpackUByte(buf, quality);
-  buf = nboUnpackUByte(buf, shot);
+  buf = nboUnpackUInt8(buf, quality);
+  buf = nboUnpackUInt8(buf, shot);
 
   std::string sName, sHelp;
   buf = nboUnpackStdString(buf, sName);
@@ -373,9 +373,9 @@ FlagTypeMap& FlagType::getFlagMap() {
 void* Flag::pack(void* buf) const
 {
   buf = type->pack(buf);
-  buf = nboPackUShort(buf, uint16_t(status));
-  buf = nboPackUShort(buf, uint16_t(endurance));
-  buf = nboPackUByte(buf, owner);
+  buf = nboPackUInt16(buf, uint16_t(status));
+  buf = nboPackUInt16(buf, uint16_t(endurance));
+  buf = nboPackUInt8(buf, owner);
   buf = nboPackFVec3(buf, position);
   buf = nboPackFVec3(buf, launchPosition);
   buf = nboPackFVec3(buf, landingPosition);
@@ -389,9 +389,9 @@ size_t Flag::pack(BufferedNetworkMessage *msg) const
 {
   size_t s = msg->size();
   type->pack(msg);
-  msg->packUShort(uint16_t(status));
-  msg->packUShort(uint16_t(endurance));
-  msg->packUByte(owner);
+  msg->packUInt16(uint16_t(status));
+  msg->packUInt16(uint16_t(endurance));
+  msg->packUInt8(owner);
   msg->packFVec3(position);
   msg->packFVec3(launchPosition);
   msg->packFVec3(landingPosition);
@@ -405,9 +405,9 @@ size_t Flag::fakePack(BufferedNetworkMessage *msg) const
 {
   size_t s = msg->size();
   type->fakePack(msg);
-  msg->packUShort(uint16_t(status));
-  msg->packUShort(uint16_t(endurance));
-  msg->packUByte(owner);
+  msg->packUInt16(uint16_t(status));
+  msg->packUInt16(uint16_t(endurance));
+  msg->packUInt8(owner);
   msg->packFVec3(position);
   msg->packFVec3(launchPosition);
   msg->packFVec3(landingPosition);
@@ -420,9 +420,9 @@ size_t Flag::fakePack(BufferedNetworkMessage *msg) const
 void* Flag::fakePack(void* buf) const
 {
   buf = type->fakePack(buf);
-  buf = nboPackUShort(buf, uint16_t(status));
-  buf = nboPackUShort(buf, uint16_t(endurance));
-  buf = nboPackUByte(buf, owner);
+  buf = nboPackUInt16(buf, uint16_t(status));
+  buf = nboPackUInt16(buf, uint16_t(endurance));
+  buf = nboPackUInt8(buf, owner);
   buf = nboPackFVec3(buf, position);
   buf = nboPackFVec3(buf, launchPosition);
   buf = nboPackFVec3(buf, landingPosition);
@@ -436,16 +436,16 @@ void* Flag::unpack(void* buf)
 {
   uint16_t data;
   // bytes
-  buf = FlagType::unpack(buf, type);				      // 2
-  buf = nboUnpackUShort(buf, data); status = FlagStatus(data);	      // 2
-  buf = nboUnpackUShort(buf, data); endurance = FlagEndurance(data);  // 2
-  buf = nboUnpackUByte(buf, owner);				      // 1
-  buf = nboUnpackFVec3(buf, position);			      // 12 (3x4)
-  buf = nboUnpackFVec3(buf, launchPosition);		      // 12 (3x4)
-  buf = nboUnpackFVec3(buf, landingPosition);		      // 12 (3x4)
-  buf = nboUnpackFloat(buf, flightTime);			      // 4
-  buf = nboUnpackFloat(buf, flightEnd);				      // 4
-  buf = nboUnpackFloat(buf, initialVelocity);			      // 4
+  buf = FlagType::unpack(buf, type);				     // 2
+  buf = nboUnpackUInt16(buf, data); status = FlagStatus(data);	     // 2
+  buf = nboUnpackUInt16(buf, data); endurance = FlagEndurance(data); // 2
+  buf = nboUnpackUInt8(buf, owner);				     // 1
+  buf = nboUnpackFVec3(buf, position);                               // 12 (3x4)
+  buf = nboUnpackFVec3(buf, launchPosition);                         // 12 (3x4)
+  buf = nboUnpackFVec3(buf, landingPosition);                        // 12 (3x4)
+  buf = nboUnpackFloat(buf, flightTime);			     // 4
+  buf = nboUnpackFloat(buf, flightEnd);				     // 4
+  buf = nboUnpackFloat(buf, initialVelocity);			     // 4
   return buf;						// total        55
 }
 

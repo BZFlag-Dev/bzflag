@@ -148,7 +148,7 @@ void *FlagInfo::pack(void *buf, bool hide)
     hide = false;
   if (FlagInfo::flagList[flagIndex].player != -1)
     hide = false;
-  buf = nboPackUShort(buf, flagIndex);
+  buf = nboPackUInt16(buf, flagIndex);
   if (hide)
     buf = FlagInfo::flagList[flagIndex].flag.fakePack(buf);
   else
@@ -164,7 +164,7 @@ size_t FlagInfo::pack(BufferedNetworkMessage *msg , bool hide )
     hide = false;
 
   size_t s = msg->size();
-  msg->packUShort(flagIndex);
+  msg->packUInt16(flagIndex);
 
   if (hide)
     FlagInfo::flagList[flagIndex].flag.fakePack(msg);

@@ -1498,12 +1498,12 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
   uint16_t team, type, wins, losses, tks;
   float rank;
   char callsign[CallSignLen];
-  msg = nboUnpackUShort (msg, type);
-  msg = nboUnpackUShort (msg, team);
+  msg = nboUnpackUInt16 (msg, type);
+  msg = nboUnpackUInt16 (msg, team);
   msg = nboUnpackFloat (msg, rank);
-  msg = nboUnpackUShort (msg, wins);
-  msg = nboUnpackUShort (msg, losses);
-  msg = nboUnpackUShort (msg, tks);
+  msg = nboUnpackUInt16 (msg, wins);
+  msg = nboUnpackUInt16 (msg, losses);
+  msg = nboUnpackUInt16 (msg, tks);
   msg = nboUnpackString (msg, callsign, CallSignLen);
 
   // Strip any ANSI color codes
@@ -1901,7 +1901,7 @@ void WorldDownLoader::askToBZFS()
   HUDDialogStack::get()->setFailedMessage("Downloading World...");
   char message[MaxPacketLen];
   // ask for world
-  nboPackUInt(message, 0);
+  nboPackUInt32(message, 0);
   serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
   worldPtr = 0;
   if (cacheOut)
@@ -1965,7 +1965,7 @@ static void handleResourceFetch (void *msg)
   uint16_t numItems;
   void *buf;
 
-  buf = nboUnpackUShort (msg, numItems);    // the type
+  buf = nboUnpackUInt16 (msg, numItems);    // the type
 
   for (int i = 0; i < numItems; i++) {
     uint16_t itemType;
@@ -1973,11 +1973,11 @@ static void handleResourceFetch (void *msg)
     uint16_t stringLen;
     trResourceItem item;
 
-    buf = nboUnpackUShort (buf, itemType);
+    buf = nboUnpackUInt16 (buf, itemType);
     item.resType = (teResourceType) itemType;
 
     // URL
-    buf = nboUnpackUShort (buf, stringLen);
+    buf = nboUnpackUInt16 (buf, stringLen);
     buf = nboUnpackString (buf, buffer, stringLen);
 
     buffer[stringLen] = '\0';
@@ -2017,8 +2017,8 @@ static void handleCustomSound(void *msg)
   uint16_t stringLen;
   std::string soundName;
 
-  buf = nboUnpackUShort(msg, soundType);
-  buf = nboUnpackUShort(buf, stringLen);
+  buf = nboUnpackUInt16(msg, soundType);
+  buf = nboUnpackUInt16(buf, stringLen);
   buf = nboUnpackString(buf, buffer, stringLen);
 
   buffer[stringLen] = '\0';
@@ -2049,8 +2049,8 @@ static void handleJoinServer(void *msg)
   std::string message;
 
   msg = nboUnpackStdString(msg, addr);
-  msg = nboUnpackInt(msg, port);
-  msg = nboUnpackInt(msg, team);
+  msg = nboUnpackInt32(msg, port);
+  msg = nboUnpackInt32(msg, team);
   msg = nboUnpackStdString(msg, referrer);
   msg = nboUnpackStdString(msg, message);
 
@@ -2109,7 +2109,7 @@ static void handleJoinServer(void *msg)
 static void handleSuperKill(void *msg)
 {
   uint8_t id;
-  nboUnpackUByte(msg, id);
+  nboUnpackUInt8(msg, id);
   if (!myTank || myTank->getId() == id || id == 0xff) {
     serverError = true;
     printError("Server forced a disconnect");
@@ -2137,7 +2137,7 @@ static void handleRejectMessage(void *msg)
   uint16_t rejcode;
   std::string reason;
 
-  buf = nboUnpackUShort (msg, rejcode); // filler for now
+  buf = nboUnpackUInt16 (msg, rejcode); // filler for now
   buf = nboUnpackString (buf, buffer, MessageLen);
   buffer[MessageLen - 1] = '\0';
   reason = buffer;
@@ -2193,13 +2193,13 @@ static void handleGetWorld(void *msg, uint16_t len)
 {
   // create world
   uint32_t bytesLeft;
-  void *buf = nboUnpackUInt(msg, bytesLeft);
+  void *buf = nboUnpackUInt32(msg, bytesLeft);
   bool last = processWorldChunk(buf, len - 4, bytesLeft);
   if (!last) {
     char message[MaxPacketLen];
     // ask for next chunk
     worldPtr += len - 4;
-    nboPackUInt(message, worldPtr);
+    nboPackUInt32(message, worldPtr);
     serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
     return;
   }
@@ -2216,7 +2216,7 @@ static void handleGetWorld(void *msg, uint16_t len)
 static void handleTimeUpdate(void *msg)
 {
   int32_t timeLeft;
-  msg = nboUnpackInt(msg, timeLeft);
+  msg = nboUnpackInt32(msg, timeLeft);
   hud->setTimeLeft(timeLeft);
   if (timeLeft == 0) {
     gameOver = true;
@@ -2239,8 +2239,8 @@ static void handleScoreOver(void *msg)
   // unpack packet
   PlayerId id;
   uint16_t team;
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackUShort(msg, team);
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt16(msg, team);
   Player *player = lookupPlayer(id);
 
   // make a message
@@ -2276,7 +2276,7 @@ static void handleScoreOver(void *msg)
 static void handleAddPlayer(void* msg, bool& checkScores)
 {
   PlayerId id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 
 #if defined(FIXME) && defined(ROBOT)
   saveRobotInfo(id, msg);
@@ -2308,7 +2308,7 @@ static void handleAddPlayer(void* msg, bool& checkScores)
 static void handleRemovePlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 
   if (removePlayer(id)) {
     checkScores = true;
@@ -2321,13 +2321,13 @@ static void handleFlagUpdate(void *msg, size_t len)
   uint16_t count = 0;
   uint16_t flagIndex;
   if (len >= 2)
-    msg = nboUnpackUShort(msg, count);
+    msg = nboUnpackUInt16(msg, count);
 
   size_t perFlagSize = 2 + 55;
 
   if (len >= (2 + (perFlagSize*count)))
     for (int i = 0; i < count; i++) {
-      msg = nboUnpackUShort(msg, flagIndex);
+      msg = nboUnpackUInt16(msg, flagIndex);
       msg = world->getFlag(int(flagIndex)).unpack(msg);
       world->initFlag(int(flagIndex));
     }
@@ -2339,9 +2339,9 @@ static void handleTeamUpdate(void *msg, bool &checkScores)
   uint8_t  numTeams;
   uint16_t team;
 
-  msg = nboUnpackUByte(msg, numTeams);
+  msg = nboUnpackUInt8(msg, numTeams);
   for (int i = 0; i < numTeams; i++) {
-    msg = nboUnpackUShort(msg, team);
+    msg = nboUnpackUInt16(msg, team);
     msg = teams[int(team)].unpack(msg);
   }
   updateNumPlayers();
@@ -2355,7 +2355,7 @@ static void handleAliveMessage(void *msg)
   fvec3 pos;
   float forward;
 
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackFVec3(msg, pos);
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
@@ -2425,10 +2425,10 @@ static void handleAliveMessage(void *msg)
 static void handleAutoPilot(void *msg)
 {
   PlayerId id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 
   uint8_t autopilot;
-  nboUnpackUByte(msg, autopilot);
+  nboUnpackUInt8(msg, autopilot);
 
   Player *tank = lookupPlayer(id);
   if (!tank)
@@ -2471,10 +2471,10 @@ static void handleAllow(void *msg)
 {
   PlayerId id;
   LocalPlayer *localtank = NULL;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 
   uint8_t allow;
-  nboUnpackUByte(msg, allow);
+  nboUnpackUInt8(msg, allow);
 
   Player *tank = NULL;
   if (myTank && myTank->getId() == id) {
@@ -2522,14 +2522,14 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   FlagType *flagType;
   int16_t shotId, reason;
   int phydrv = -1;
-  msg = nboUnpackUByte(msg, victim);
-  msg = nboUnpackUByte(msg, killer);
-  msg = nboUnpackShort(msg, reason);
-  msg = nboUnpackShort(msg, shotId);
+  msg = nboUnpackUInt8(msg, victim);
+  msg = nboUnpackUInt8(msg, killer);
+  msg = nboUnpackInt16(msg, reason);
+  msg = nboUnpackInt16(msg, shotId);
   msg = FlagType::unpack(msg, flagType);
   if (reason == (int16_t)PhysicsDriverDeath) {
     int32_t inPhyDrv;
-    msg = nboUnpackInt(msg, inPhyDrv);
+    msg = nboUnpackInt32(msg, inPhyDrv);
     phydrv = int(inPhyDrv);
   }
   BaseLocalPlayer *victimLocal = getLocalPlayer(victim);
@@ -2732,14 +2732,14 @@ static void handleGrabFlag(void *msg)
   uint16_t flagIndex;
   unsigned char shot;
 
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackUShort(msg, flagIndex);
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt16(msg, flagIndex);
   if (flagIndex >= world->getMaxFlags()) {
     return;
   }
   Flag& flag = world->getFlag(int(flagIndex));
   msg = flag.unpack(msg);
-  msg = nboUnpackUByte(msg, shot);
+  msg = nboUnpackUInt8(msg, shot);
 
   Player *tank = lookupPlayer(id);
   if (!tank)
@@ -2789,8 +2789,8 @@ static void handleDropFlag(void *msg)
   PlayerId id;
   uint16_t flagIndex;
 
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackUShort(msg, flagIndex);
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt16(msg, flagIndex);
   if (flagIndex >= world->getMaxFlags()) {
     return;
   }
@@ -2811,12 +2811,12 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
   uint16_t flagIndex, team;
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackUShort(msg, flagIndex);
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt16(msg, flagIndex);
   if (flagIndex >= world->getMaxFlags()) {
     return;
   }
-  msg = nboUnpackUShort(msg, team);
+  msg = nboUnpackUInt16(msg, team);
   Player *capturer = lookupPlayer(id);
 
   Flag& capturedFlag = world->getFlag(int(flagIndex));
@@ -2876,12 +2876,12 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
 static void handleNewRabbit(void *msg)
 {
   PlayerId id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
   Player *rabbit = lookupPlayer(id);
 
   // new mode option,
   unsigned char mode;
-  msg = nboUnpackUByte(msg, mode);
+  msg = nboUnpackUInt8(msg, mode);
 
   // mode 0 == swap the current rabbit with this rabbit
   // mode 1 == add this person as a rabbit
@@ -2965,10 +2965,10 @@ static void handleSetTeam(void *msg, uint16_t len)
   }
 
   PlayerId id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 
   uint8_t team;
-  msg = nboUnpackUByte(msg, team);
+  msg = nboUnpackUInt8(msg, team);
 
   Player *p = lookupPlayer(id);
 
@@ -3002,7 +3002,7 @@ static void handleWhatTimeIsIt(void *msg)
   double time = -1;
   unsigned char tag = 0;
 
-  msg = nboUnpackUByte(msg, tag);
+  msg = nboUnpackUInt8(msg, tag);
   msg = nboUnpackDouble(msg, time);
   syncedClock.timeMessage(tag, time);
 }
@@ -3010,8 +3010,8 @@ static void handleWhatTimeIsIt(void *msg)
 
 static void handleSetShotType(BufferedNetworkMessage *msg)
 {
-  PlayerId id = msg->unpackUByte();
-  unsigned char shotType = msg->unpackUByte();
+  PlayerId id = msg->unpackUInt8();
+  unsigned char shotType = msg->unpackUInt8();
 
   Player *p = lookupPlayer(id);
   if (!p)
@@ -3073,8 +3073,8 @@ static void handleShotBegin(bool human, void *msg)
   PlayerId shooterid;
   uint16_t id;
 
-  msg = nboUnpackUByte(msg, shooterid);
-  msg = nboUnpackUShort(msg, id);
+  msg = nboUnpackUInt8(msg, shooterid);
+  msg = nboUnpackUInt16(msg, id);
 
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
@@ -3139,9 +3139,9 @@ static void handleShotEnd(void *msg)
   PlayerId id;
   int16_t shotId;
   uint16_t reason;
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackShort(msg, shotId);
-  msg = nboUnpackUShort(msg, reason);
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackInt16(msg, shotId);
+  msg = nboUnpackUInt16(msg, reason);
   BaseLocalPlayer *localPlayer = getLocalPlayer(id);
 
   if (localPlayer) {
@@ -3159,10 +3159,10 @@ static void handleHandicap(void *msg)
   PlayerId id;
   uint8_t numHandicaps;
   int16_t handicap;
-  msg = nboUnpackUByte(msg, numHandicaps);
+  msg = nboUnpackUInt8(msg, numHandicaps);
   for (uint8_t s = 0; s < numHandicaps; s++) {
-    msg = nboUnpackUByte(msg, id);
-    msg = nboUnpackShort(msg, handicap);
+    msg = nboUnpackUInt8(msg, id);
+    msg = nboUnpackInt16(msg, handicap);
     Player *sPlayer = NULL;
     if (id == myTank->getId()) {
       sPlayer = myTank;
@@ -3200,14 +3200,14 @@ static void handleScore(void *msg)
   PlayerId id;
   float rank;
   uint16_t wins, losses, tks;
-  msg = nboUnpackUByte(msg, numScores);
+  msg = nboUnpackUInt8(msg, numScores);
 
   for (uint8_t s = 0; s < numScores; s++) {
-    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUInt8(msg, id);
     msg = nboUnpackFloat(msg, rank);
-    msg = nboUnpackUShort(msg, wins);
-    msg = nboUnpackUShort(msg, losses);
-    msg = nboUnpackUShort(msg, tks);
+    msg = nboUnpackUInt16(msg, wins);
+    msg = nboUnpackUInt16(msg, losses);
+    msg = nboUnpackUInt16(msg, tks);
 
     Player *sPlayer = NULL;
     if (id == myTank->getId()) {
@@ -3238,9 +3238,9 @@ static void handleTeleport(void *msg)
 {
   PlayerId id;
   uint16_t from, to;
-  msg = nboUnpackUByte(msg, id);
-  msg = nboUnpackUShort(msg, from);
-  msg = nboUnpackUShort(msg, to);
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt16(msg, from);
+  msg = nboUnpackUInt16(msg, to);
   Player *tank = lookupPlayer(id);
   if (tank) {
     eventHandler.PlayerTeleported(*tank, from, to); // FIXME ?
@@ -3259,12 +3259,12 @@ static void handleTransferFlag(void *msg)
 {
   PlayerId fromId, toId;
   unsigned short flagIndex;
-  msg = nboUnpackUByte(msg, fromId);
-  msg = nboUnpackUByte(msg, toId);
-  msg = nboUnpackUShort(msg, flagIndex);
+  msg = nboUnpackUInt8(msg, fromId);
+  msg = nboUnpackUInt8(msg, toId);
+  msg = nboUnpackUInt16(msg, flagIndex);
   msg = world->getFlag(int(flagIndex)).unpack(msg);
   unsigned char t = 0;
-  msg = nboUnpackUByte(msg, t);
+  msg = nboUnpackUInt8(msg, t);
   Player *fromTank = lookupPlayer(fromId);
   Player *toTank = lookupPlayer(toId);
   handleFlagTransferred(fromTank, toTank, flagIndex, (ShotType)t);
@@ -3275,8 +3275,8 @@ static void handleMessage(void *msg)
 {
   PlayerId src;
   PlayerId dst;
-  msg = nboUnpackUByte(msg, src);
-  msg = nboUnpackUByte(msg, dst);
+  msg = nboUnpackUInt8(msg, src);
+  msg = nboUnpackUInt8(msg, dst);
   Player *srcPlayer = lookupPlayer(src);
   Player *dstPlayer = lookupPlayer(dst);
   TeamColor dstTeam = PlayerIdToTeam(dst);
@@ -3494,7 +3494,7 @@ static void handleReplayReset(void *msg, bool &checkScores)
 {
   int i;
   unsigned char lastPlayer;
-  msg = nboUnpackUByte(msg, lastPlayer);
+  msg = nboUnpackUInt8(msg, lastPlayer);
 
   // remove players up to 'lastPlayer'
   // any PlayerId above lastPlayer is a replay observers
@@ -3515,7 +3515,7 @@ static void handleReplayReset(void *msg, bool &checkScores)
 static void handleAdminInfo(void *msg)
 {
   uint8_t numIPs;
-  msg = nboUnpackUByte(msg, numIPs);
+  msg = nboUnpackUInt8(msg, numIPs);
 
   /* if we're getting this, we have playerlist perm */
   myTank->setPlayerList(true);
@@ -3527,8 +3527,8 @@ static void handleAdminInfo(void *msg)
     Address ip;
     void *tmpMsg = msg; // leave 'msg' pointing at the first entry
 
-    tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
-    tmpMsg = nboUnpackUByte(tmpMsg, index);
+    tmpMsg = nboUnpackUInt8(tmpMsg, ipsize);
+    tmpMsg = nboUnpackUInt8(tmpMsg, index);
     tmpMsg = ip.unpack(tmpMsg);
     int playerIndex = lookupPlayerIndex(index);
     Player *tank = getPlayerByIndex(playerIndex);
@@ -3564,8 +3564,8 @@ default:
     Address addr;
 
     for (int i = 0; i < numIPs; i++) {
-      msg = nboUnpackUByte(msg, addrlen);
-      msg = nboUnpackUByte(msg, playerId);
+      msg = nboUnpackUInt8(msg, addrlen);
+      msg = nboUnpackUInt8(msg, playerId);
       msg = addr.unpack(msg);
 
       int playerIndex = lookupPlayerIndex(playerId);
@@ -3582,14 +3582,14 @@ static void handlePlayerInfo(void *msg)
 {
   uint8_t numPlayers;
   int i;
-  msg = nboUnpackUByte(msg, numPlayers);
+  msg = nboUnpackUInt8(msg, numPlayers);
   for (i = 0; i < numPlayers; ++i) {
     PlayerId id;
-    msg = nboUnpackUByte(msg, id);
+    msg = nboUnpackUInt8(msg, id);
     Player *p = lookupPlayer(id);
     uint8_t info;
     // parse player info bitfield
-    msg = nboUnpackUByte(msg, info);
+    msg = nboUnpackUInt8(msg, info);
     if (!p)
       continue;
     p->setAdmin((info & IsAdmin) != 0);
@@ -3602,7 +3602,7 @@ static void handlePlayerInfo(void *msg)
 static void handleNewPlayer(void *msg)
 {
   uint8_t id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 #ifdef ROBOT
   int i;
   for (i = 0; i < MAX_ROBOTS; i++)
@@ -3632,9 +3632,9 @@ static void handleTangUpdate(uint16_t len, void *msg)
 {
   if (len >= 5) {
     unsigned int objectID = 0;
-    msg = nboUnpackUInt(msg, objectID);
+    msg = nboUnpackUInt32(msg, objectID);
     unsigned char tang = 0;
-    msg = nboUnpackUByte(msg, tang);
+    msg = nboUnpackUInt8(msg, tang);
 
     ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID, tang);
   }
@@ -3644,7 +3644,7 @@ static void handleTangUpdate(uint16_t len, void *msg)
 static void handlePlayerData(void *msg)
 {
   PlayerId id;
-  msg = nboUnpackUByte(msg, id);
+  msg = nboUnpackUInt8(msg, id);
 
   std::string key, value;
   msg = nboUnpackStdString(msg, key);
@@ -3665,11 +3665,11 @@ static void handleLuaData(void *msg)
   uint8_t  statusBits;
   std::string data;
 
-  msg = nboUnpackUByte(msg, srcPlayerID);
-  msg = nboUnpackShort(msg, srcScriptID);
-  msg = nboUnpackUByte(msg, dstPlayerID);
-  msg = nboUnpackShort(msg, dstScriptID);
-  msg = nboUnpackUByte(msg, statusBits);
+  msg = nboUnpackUInt8(msg, srcPlayerID);
+  msg = nboUnpackInt16(msg, srcScriptID);
+  msg = nboUnpackUInt8(msg, dstPlayerID);
+  msg = nboUnpackInt16(msg, dstScriptID);
+  msg = nboUnpackUInt8(msg, statusBits);
   msg = nboUnpackStdStringRaw(msg, data);
 
   eventHandler.RecvLuaData(srcPlayerID, srcScriptID,
@@ -3688,7 +3688,7 @@ static void handleAllowSpawn(uint16_t len, void *msg)
 {
   if (len >= 1) {
     unsigned char allow = 0;
-    msg = nboUnpackUByte(msg, allow);
+    msg = nboUnpackUInt8(msg, allow);
 
     canSpawn = allow != 0;
   }
@@ -3966,14 +3966,14 @@ static void handleMovementUpdate(uint16_t code, void *msg)
   int32_t order;
   void *buf = msg;
 
-  buf = nboUnpackUByte(buf, id); // peek! don't update the msg pointer
+  buf = nboUnpackUInt8(buf, id); // peek! don't update the msg pointer
   buf = nboUnpackDouble(buf, timestamp); // peek
 
   Player *tank = lookupPlayer(id);
   if (!tank || tank == myTank)
     return;
 
-  nboUnpackInt(buf, order); // peek
+  nboUnpackInt32(buf, order); // peek
   if (order <= tank->getOrder())
     return;
   short oldStatus = tank->getStatus();
@@ -4009,7 +4009,7 @@ static void handleGMUpdate (void *msg)
   if (shotPath)
     shotPath->update(shot, msg);
   PlayerId targetId;
-  msg = nboUnpackUByte(msg, targetId);
+  msg = nboUnpackUInt8(msg, targetId);
   Player *targetTank = getPlayerByIndex(targetId);
 
   if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
@@ -4263,7 +4263,7 @@ static void handleMsgSetVars(void *msg)
   std::string name;
   std::string value;
 
-  msg = nboUnpackUShort(msg, numVars);
+  msg = nboUnpackUInt16(msg, numVars);
   for (int i = 0; i < numVars; i++) {
     msg = nboUnpackStdString(msg, name);
     msg = nboUnpackStdString(msg, value);
@@ -5299,12 +5299,12 @@ static void enteringServer(void* buf)
   void *tmpbuf = buf;
   uint16_t team, type, wins, losses, tks;
   float rank;
-  tmpbuf = nboUnpackUShort(tmpbuf, type);
-  tmpbuf = nboUnpackUShort(tmpbuf, team);
+  tmpbuf = nboUnpackUInt16(tmpbuf, type);
+  tmpbuf = nboUnpackUInt16(tmpbuf, team);
   tmpbuf = nboUnpackFloat(tmpbuf, rank);
-  tmpbuf = nboUnpackUShort(tmpbuf, wins);
-  tmpbuf = nboUnpackUShort(tmpbuf, losses);
-  tmpbuf = nboUnpackUShort(tmpbuf, tks);
+  tmpbuf = nboUnpackUInt16(tmpbuf, wins);
+  tmpbuf = nboUnpackUInt16(tmpbuf, losses);
+  tmpbuf = nboUnpackUInt16(tmpbuf, tks);
 
   myTank->changeScore(rank, wins, losses, tks);
 
@@ -5558,11 +5558,11 @@ static void saveRobotInfo(Playerid id, void *msg)
       void *tmpbuf = msg;
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
-      tmpbuf = nboUnpackUShort(tmpbuf, type);
-      tmpbuf = nboUnpackUShort(tmpbuf, team);
-      tmpbuf = nboUnpackUShort(tmpbuf, wins);
-      tmpbuf = nboUnpackUShort(tmpbuf, losses);
-      tmpbuf = nboUnpackUShort(tmpbuf, tks);
+      tmpbuf = nboUnpackUInt16(tmpbuf, type);
+      tmpbuf = nboUnpackUInt16(tmpbuf, team);
+      tmpbuf = nboUnpackUInt16(tmpbuf, wins);
+      tmpbuf = nboUnpackUInt16(tmpbuf, losses);
+      tmpbuf = nboUnpackUInt16(tmpbuf, tks);
       tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
       std::cerr << "id " << id.port << ':' <<
 	id.number << ':' <<
@@ -5578,7 +5578,7 @@ static void saveRobotInfo(Playerid id, void *msg)
 	std::cerr << buffer;
 	if (tmpbuf < (char *)msg + len) {
 	  PlayerId id;
-	  tmpbuf = nboUnpackUByte(tmpbuf, id);
+	  tmpbuf = nboUnpackUInt8(tmpbuf, id);
 	  robots[i]->id.serverHost = id.serverHost;
 	  robots[i]->id.port = id.port;
 	  robots[i]->id.number = id.number;

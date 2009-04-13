@@ -635,8 +635,8 @@ void* ArcObstacle::pack(void* buf) const
   buf = nboPackFloat(buf, angle);
   buf = nboPackFloat(buf, sweepAngle);
   buf = nboPackFloat(buf, ratio);
-  buf = nboPackInt(buf, divisions);
-  buf = nboPackInt(buf, phydrv);
+  buf = nboPackInt32(buf, divisions);
+  buf = nboPackInt32(buf, phydrv);
 
   int i;
   for (i = 0; i < 4; i++) {
@@ -644,7 +644,7 @@ void* ArcObstacle::pack(void* buf) const
   }
   for (i = 0; i < MaterialCount; i++) {
     int matindex = MATERIALMGR.getIndex(materials[i]);
-    buf = nboPackInt(buf, matindex);
+    buf = nboPackInt32(buf, matindex);
   }
 
   // pack the state byte
@@ -654,7 +654,7 @@ void* ArcObstacle::pack(void* buf) const
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= useNormals       ? (1 << 3) : 0;
   stateByte |= canRicochet()    ? (1 << 4) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -669,9 +669,9 @@ void* ArcObstacle::unpack(void* buf)
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, sweepAngle);
   buf = nboUnpackFloat(buf, ratio);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   divisions = int(inTmp);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   phydrv = int(inTmp);
 
   int i;
@@ -680,14 +680,14 @@ void* ArcObstacle::unpack(void* buf)
   }
   for (i = 0; i < MaterialCount; i++) {
     int matindex;
-    buf = nboUnpackInt(buf, inTmp);
+    buf = nboUnpackInt32(buf, inTmp);
     matindex = int(inTmp);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }
 
   // unpack the state byte
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 2)) != 0;

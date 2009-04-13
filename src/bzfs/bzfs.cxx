@@ -342,7 +342,7 @@ static void onGlobalChanged(const std::string& name, void*)
 
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUShort(1);
+  msg->packUInt16(1);
   msg->packStdString(name);
   msg->packStdString(value);
   msg->broadcast(MsgSetVar);
@@ -444,7 +444,7 @@ void sendPlayerInfo()
   for (i = 0; i < int(NumTeams); i++)
     numPlayers += team[i].team.size;
 
-  msg->packUByte(numPlayers);
+  msg->packUInt8(numPlayers);
   for (i = 0; i < curMaxPlayers; ++i) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
@@ -786,7 +786,7 @@ static void serverStop()
 
   // tell all clients to quit
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(0xff);
+  msg->packUInt8(0xff);
   msg->broadcast(MsgSuperKill);
   MSGMGR.update();
   TimeKeeper::sleep(0.5);	// provide some time for message delivery
@@ -920,14 +920,14 @@ bool defineWorld ( void )
   memset(worldDatabase, 0, worldDatabaseSize);
 
   void *buf = worldDatabase;
-  buf = nboPackUShort(buf, WorldCodeHeaderSize);
-  buf = nboPackUShort(buf, WorldCodeHeader);
-  buf = nboPackUShort(buf, mapVersion);
-  buf = nboPackUInt(buf, world->getUncompressedSize());
-  buf = nboPackUInt(buf, world->getDatabaseSize());
+  buf = nboPackUInt16(buf, WorldCodeHeaderSize);
+  buf = nboPackUInt16(buf, WorldCodeHeader);
+  buf = nboPackUInt16(buf, mapVersion);
+  buf = nboPackUInt32(buf, world->getUncompressedSize());
+  buf = nboPackUInt32(buf, world->getDatabaseSize());
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
-  buf = nboPackUShort(buf, WorldCodeEndSize);
-  buf = nboPackUShort(buf, WorldCodeEnd);
+  buf = nboPackUInt16(buf, WorldCodeEndSize);
+  buf = nboPackUInt16(buf, WorldCodeEnd);
 
   TimeKeeper startTime = TimeKeeper::getCurrent();
   MD5 md5;
@@ -1105,21 +1105,21 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
   uint16_t len, code;
   void *buf = netPlayer.getTcpBuffer();
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 
   // trying to get the real player from the message: bots share tcp
   // connection with the player
   PlayerId t = i;
   switch (code) {
   case MsgShotBegin: {
-    nboUnpackUByte(buf, t);
+    nboUnpackUInt8(buf, t);
     break;
   }
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall: {
     double timestamp;
-    buf = nboUnpackUByte(buf, t);
+    buf = nboUnpackUInt8(buf, t);
     buf = nboUnpackDouble(buf, timestamp);
     break;
   }
@@ -1398,8 +1398,8 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // record server commands
     if (Record::enabled()) {
       NetMsg msg = MSGMGR.newMessage();
-      msg->packUByte(srcPlayer);
-      msg->packUByte(dstPlayer);
+      msg->packUInt8(srcPlayer);
+      msg->packUInt8(dstPlayer);
       msg->packString(message, strlen(message) + 1);
       Record::addPacket(MsgMessage, msg->size(), msg->buffer(),HiddenPacket);
     }
@@ -1989,9 +1989,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (clOptions->gameType == RabbitChase) {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packUByte(rabbitIndex);
+    msg->packUInt8(rabbitIndex);
     // swap mode
-    msg->packUByte(0);
+    msg->packUInt8(0);
     msg->send(playerData->netHandler, MsgNewRabbit);
   }
 
@@ -2070,7 +2070,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       timeLeft = 0.0f;
 
     NetMsg msg = MSGMGR.newMessage();
-    msg->packInt((int32_t)timeLeft);
+    msg->packInt32((int32_t)timeLeft);
     msg->send(playerData->netHandler, MsgTimeUpdate);
     // players should know when the countdown is paused
     if (clOptions->countdownPaused) {
@@ -2081,7 +2081,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
       msg = MSGMGR.newMessage();
-      msg->packInt(-1);
+      msg->packInt32(-1);
       msg->send(playerData->netHandler, MsgTimeUpdate);
     }
   }
@@ -2281,8 +2281,8 @@ void pausePlayer(int playerIndex, bool paused = true)
     zapFlag(*playerFlag);
 
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerIndex);
-  msg->packUByte( paused);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8( paused);
   msg->broadcast(MsgPause);
 
   bz_PlayerPausedEventData_V1	pauseEventData;
@@ -2361,9 +2361,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       // do not use message system, remove the player NOW
       char tempBuf[5];
       void *buf  = tempBuf;
-      buf	= nboPackUShort(buf, 1);
-      buf	= nboPackUShort(buf, MsgSuperKill);
-      buf	= nboPackUByte(buf, uint8_t(playerIndex));
+      buf	= nboPackUInt16(buf, 1);
+      buf	= nboPackUInt16(buf, MsgSuperKill);
+      buf	= nboPackUInt8(buf, uint8_t(playerIndex));
       playerData->netHandler->pwrite(tempBuf, 5);
     }
   }
@@ -3468,7 +3468,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
     if (nextPingSeqno > 0) {
       NetMsg msg = MSGMGR.newMessage();
-      msg->packUShort(nextPingSeqno);
+      msg->packUInt16(nextPingSeqno);
       msg->send(playerData.netHandler, MsgLagPing);
 
       if (warn) {
@@ -4973,7 +4973,7 @@ static void runMainLoop ( void )
 	    // This could be factored into it's own function
 	    // Also, Maybe have an option to ignore pings
 	    unsigned char tag = 0;
-	    buf = nboUnpackUByte(buf, tag);
+	    buf = nboUnpackUInt8(buf, tag);
 
 	    sendEchoResponse(&uaddr, tag);
 
@@ -4983,7 +4983,7 @@ static void runMainLoop ( void )
 	  if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
 	    // It is a UDP Link Request ... try to match it
 	    uint8_t index;
-	    buf = nboUnpackUByte(buf, index);
+	    buf = nboUnpackUInt8(buf, index);
 	    GameKeeper::Player *playerData =
 	      GameKeeper::Player::getPlayerByIndex(index);
 

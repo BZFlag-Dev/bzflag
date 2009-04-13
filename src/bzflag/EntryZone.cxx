@@ -32,9 +32,9 @@ void* EntryZone::unpack(void* buf)
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFVec3(buf, size);
   buf = nboUnpackFloat(buf, rot);
-  buf = nboUnpackUShort(buf, flagCount);
-  buf = nboUnpackUShort(buf, teamCount);
-  buf = nboUnpackUShort(buf, safetyCount);
+  buf = nboUnpackUInt16(buf, flagCount);
+  buf = nboUnpackUInt16(buf, teamCount);
+  buf = nboUnpackUInt16(buf, safetyCount);
 
   int i;
   for (i = 0; i < flagCount; i++) {
@@ -44,12 +44,12 @@ void* EntryZone::unpack(void* buf)
   }
   for (i = 0; i < teamCount; i++) {
     uint16_t team;
-    buf = nboUnpackUShort(buf, team);
+    buf = nboUnpackUInt16(buf, team);
     teams.push_back((TeamColor)team);
   }
   for (i = 0; i < safetyCount; i++) {
     uint16_t safetyTeam;
-    buf = nboUnpackUShort(buf, safetyTeam);
+    buf = nboUnpackUInt16(buf, safetyTeam);
     safety.push_back((TeamColor)safetyTeam);
   }
 

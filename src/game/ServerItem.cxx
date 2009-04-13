@@ -57,21 +57,21 @@ void ServerItem::writeToFile(std::ostream& out) const
   ping.writeToFile(out);
 
   // write out favorite status
-  nboPackUByte(buffer, favorite);
+  nboPackUInt8(buffer, favorite);
   out.write(buffer, 1);
 
   // write out recent status
-  nboPackUByte(buffer, recent);
+  nboPackUInt8(buffer, recent);
   out.write(buffer, 1);
 
   // write out recent time
   memset(buffer,0,sizeof(buffer));
-  nboPackInt(buffer,(int32_t)recentTime);
+  nboPackInt32(buffer,(int32_t)recentTime);
   out.write(&buffer[0], 4);
 
   // write out current time
   memset(buffer,0,sizeof(buffer));
-  nboPackInt(buffer,(int32_t)updateTime);
+  nboPackInt32(buffer,(int32_t)updateTime);
   out.write(&buffer[0], 4);
 }
 
@@ -111,20 +111,20 @@ bool ServerItem::readFromFile(std::istream& in)
   // read in favorite flag
   uint8_t fav;
   in.read(buffer, 1);
-  nboUnpackUByte(buffer, fav);
+  nboUnpackUInt8(buffer, fav);
   favorite = (fav != 0);
 
   // read in recent flag
   uint8_t rec;
   in.read(buffer, 1);
-  nboUnpackUByte(buffer, rec);
+  nboUnpackUInt8(buffer, rec);
   recent = (rec != 0);
 
   // read in recent time
   in.read(&buffer[0],4);
   if (in.gcount() < 4) return false;
   int32_t rTime;
-  nboUnpackInt(&buffer[0],rTime);
+  nboUnpackInt32(&buffer[0],rTime);
   recentTime = (time_t) rTime;
 
   // recent server from more than 10 days ago, unmark as recent
@@ -137,7 +137,7 @@ bool ServerItem::readFromFile(std::istream& in)
   in.read(&buffer[0],4);
   if (in.gcount() < 4) return false;
   int32_t theTime;
-  nboUnpackInt(&buffer[0],theTime);
+  nboUnpackInt32(&buffer[0],theTime);
   updateTime = (time_t) theTime;
   cached = true;
   return true;

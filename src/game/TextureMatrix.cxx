@@ -113,7 +113,7 @@ const TextureMatrix* TextureMatrixManager::getMatrix(int id) const
 void * TextureMatrixManager::pack(void *buf) const
 {
   std::vector<TextureMatrix*>::const_iterator it;
-  buf = nboPackUInt(buf, (unsigned int)matrices.size());
+  buf = nboPackUInt32(buf, (unsigned int)matrices.size());
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
     buf = texmat->pack(buf);
@@ -126,7 +126,7 @@ void * TextureMatrixManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt32 (buf, count);
   for (i = 0; i < count; i++) {
     TextureMatrix* texmat = new TextureMatrix;
     buf = texmat->unpack(buf);
@@ -452,7 +452,7 @@ void * TextureMatrix::pack(void *buf) const
   uint8_t state = 0;
   if (useStatic)  state |= (1 << 0);
   if (useDynamic) state |= (1 << 1);
-  buf = nboPackUByte (buf, state);
+  buf = nboPackUInt8 (buf, state);
 
   if (useStatic) {
     buf = nboPackFloat (buf, rotation);
@@ -485,7 +485,7 @@ void * TextureMatrix::unpack(void *buf)
   buf = nboUnpackStdString (buf, name);
 
   uint8_t state;
-  buf = nboUnpackUByte (buf, state);
+  buf = nboUnpackUInt8 (buf, state);
   useStatic =  (state & (1 << 0)) != 0;
   useDynamic = (state & (1 << 1)) != 0;
 

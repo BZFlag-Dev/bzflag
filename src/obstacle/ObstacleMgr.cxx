@@ -192,13 +192,13 @@ void* GroupInstance::pack(void* buf)
   buf = nboPackStdString(buf, groupdef);
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackInt(buf, matMap.size());
+  buf = nboPackInt32(buf, matMap.size());
   MaterialMap::const_iterator it;
   for (it = matMap.begin(); it != matMap.end(); it++) {
     const int srcIndex = MATERIALMGR.getIndex(it->first);
     const int dstIndex = MATERIALMGR.getIndex(it->second);
-    buf = nboPackInt(buf, srcIndex);
-    buf = nboPackInt(buf, dstIndex);
+    buf = nboPackInt32(buf, srcIndex);
+    buf = nboPackInt32(buf, dstIndex);
   }
 
   buf = transform.pack(buf);
@@ -211,20 +211,20 @@ void* GroupInstance::pack(void* buf)
   if (driveThrough)        bits |= (1 << 4);
   if (shootThrough)        bits |= (1 << 5);
   if (ricochet)            bits |= (1 << 6);
-  buf = nboPackUByte(buf, bits);
+  buf = nboPackUInt8(buf, bits);
 
   if (modifyTeam) {
-    buf = nboPackUShort(buf, team);
+    buf = nboPackUInt16(buf, team);
   }
   if (modifyColor) {
     buf = nboPackFVec4(buf, tint);
   }
   if (modifyPhysicsDriver) {
-    buf = nboPackInt(buf, phydrv);
+    buf = nboPackInt32(buf, phydrv);
   }
   if (modifyMaterial) {
     int matindex = MATERIALMGR.getIndex(material);
-    buf = nboPackInt(buf, (int32_t) matindex);
+    buf = nboPackInt32(buf, (int32_t) matindex);
   }
 
   return buf;
@@ -237,11 +237,11 @@ void* GroupInstance::unpack(void* buf)
   buf = nboUnpackStdString(buf, name);
 
   int32_t count;
-  buf = nboUnpackInt(buf, count);
+  buf = nboUnpackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     int32_t srcIndex, dstIndex;
-    buf = nboUnpackInt(buf, srcIndex);
-    buf = nboUnpackInt(buf, dstIndex);
+    buf = nboUnpackInt32(buf, srcIndex);
+    buf = nboUnpackInt32(buf, dstIndex);
     const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
     const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
     matMap[srcMat] = dstMat;
@@ -250,7 +250,7 @@ void* GroupInstance::unpack(void* buf)
   buf = transform.unpack(buf);
 
   uint8_t bits;
-  buf = nboUnpackUByte(buf, bits);
+  buf = nboUnpackUInt8(buf, bits);
   modifyTeam          = ((bits & (1 << 0)) == 0) ? false : true;
   modifyColor         = ((bits & (1 << 1)) == 0) ? false : true;
   modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
@@ -261,7 +261,7 @@ void* GroupInstance::unpack(void* buf)
 
   if (modifyTeam) {
     uint16_t tmpTeam;
-    buf = nboUnpackUShort(buf, tmpTeam);
+    buf = nboUnpackUInt16(buf, tmpTeam);
     team = (int)tmpTeam;
   }
   if (modifyColor) {
@@ -269,12 +269,12 @@ void* GroupInstance::unpack(void* buf)
   }
   if (modifyPhysicsDriver) {
     int32_t inPhyDrv;
-    buf = nboUnpackInt(buf, inPhyDrv);
+    buf = nboUnpackInt32(buf, inPhyDrv);
     phydrv = int(inPhyDrv);
   }
   if (modifyMaterial) {
     int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt32(buf, matindex);
     material = MATERIALMGR.getMaterial(matindex);
   }
 
@@ -749,7 +749,7 @@ void* GroupDefinition::pack(void* buf) const
 	count++;
       }
     }
-    buf = nboPackUInt(buf, count);
+    buf = nboPackUInt32(buf, count);
     for (i = 0; i < list.size(); i++) {
       if (list[i]->isFromWorldFile()) {
 	buf = list[i]->pack(buf);
@@ -757,7 +757,7 @@ void* GroupDefinition::pack(void* buf) const
     }
   }
 
-  buf = nboPackUInt(buf, groups.size());
+  buf = nboPackUInt32(buf, groups.size());
   for (i = 0; i < groups.size(); i++) {
     buf = groups[i]->pack(buf);
   }
@@ -773,7 +773,7 @@ void* GroupDefinition::unpack(void* buf)
   uint32_t i, count;
 
   for (int type = 0; type < ObstacleTypeCount; type++) {
-    buf = nboUnpackUInt(buf, count);
+    buf = nboUnpackUInt32(buf, count);
     for (i = 0; i < count; i++) {
       Obstacle* obs = newObstacle(type);
       if (obs != NULL) {
@@ -785,7 +785,7 @@ void* GroupDefinition::unpack(void* buf)
     }
   }
 
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     GroupInstance* group = new GroupInstance;
     buf = group->unpack(buf);
@@ -1060,7 +1060,7 @@ void GroupDefinitionMgr::getSourceMeshes(std::vector<MeshObstacle*>& meshes) con
 void* GroupDefinitionMgr::pack(void* buf) const
 {
   buf = world.pack(buf);
-  buf = nboPackUInt(buf, list.size());
+  buf = nboPackUInt32(buf, list.size());
   for (unsigned int i = 0; i < list.size(); i++) {
     buf = list[i]->pack(buf);
   }
@@ -1072,7 +1072,7 @@ void* GroupDefinitionMgr::unpack(void* buf)
 {
   buf = world.unpack(buf);
   uint32_t i, count;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     GroupDefinition* groupdef = new GroupDefinition("");
     buf = groupdef->unpack(buf);

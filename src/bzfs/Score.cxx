@@ -67,17 +67,17 @@ void Score::kill() {
 
 void* Score::pack(void* buf) const {
   buf = nboPackFloat(buf, ranking());
-  buf = nboPackUShort(buf, wins);
-  buf = nboPackUShort(buf, losses);
-  buf = nboPackUShort(buf, tks);
+  buf = nboPackUInt16(buf, wins);
+  buf = nboPackUInt16(buf, losses);
+  buf = nboPackUInt16(buf, tks);
   return buf;
 }
 
 void Score::pack(BufferedNetworkMessage* msg) const {
   msg->packFloat( ranking() );
-  msg->packUShort(wins);
-  msg->packUShort(losses);
-  msg->packUShort(tks);
+  msg->packUInt16(wins);
+  msg->packUInt16(losses);
+  msg->packUInt16(tks);
 }
 
 void Score::setTeamKillRatio(int _tkKickRatio) {

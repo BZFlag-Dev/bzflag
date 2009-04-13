@@ -89,9 +89,9 @@ void* BzDocket::pack(void* buf) const
   const size_t maxLen = (int)getMaxNameLen();
 
   buf = nboPackString(buf, magic, strlen(magic));
-  buf = nboPackUInt(buf, 0); // version
-  buf = nboPackUInt(buf, 0); // flags
-  buf = nboPackUInt(buf, dataMap.size()); // file count
+  buf = nboPackUInt32(buf, 0); // version
+  buf = nboPackUInt32(buf, 0); // flags
+  buf = nboPackUInt32(buf, dataMap.size()); // file count
   DataMap::const_iterator it;
   uint32_t offset = 0;
   for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
@@ -99,9 +99,9 @@ void* BzDocket::pack(void* buf) const
                     (int)maxLen, it->first.c_str(), (int)it->second.size());
     const size_t dataSize = it->second.size();
     buf = nboPackStdString(buf, it->first);
-    buf = nboPackUInt(buf, 0); // extra
-    buf = nboPackUInt(buf, offset);
-    buf = nboPackUInt(buf, dataSize);
+    buf = nboPackUInt32(buf, 0); // extra
+    buf = nboPackUInt32(buf, offset);
+    buf = nboPackUInt32(buf, dataSize);
     offset += dataSize;
   }
   for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
@@ -121,13 +121,13 @@ void* BzDocket::unpack(void* buf)
   }
 
   uint32_t version;
-  buf = nboUnpackUInt(buf, version);
+  buf = nboUnpackUInt32(buf, version);
 
   uint32_t flags;
-  buf = nboUnpackUInt(buf, flags);
+  buf = nboUnpackUInt32(buf, flags);
 
   uint32_t count;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   vector<string> names;
   size_t maxLen = 0;
   for (uint32_t i = 0; i < count; i++) {
@@ -136,9 +136,9 @@ void* BzDocket::unpack(void* buf)
     names.push_back(name);
 
     uint32_t extra, offset, dataSize;
-    buf = nboUnpackUInt(buf, extra);
-    buf = nboUnpackUInt(buf, offset);
-    buf = nboUnpackUInt(buf, dataSize);
+    buf = nboUnpackUInt32(buf, extra);
+    buf = nboUnpackUInt32(buf, offset);
+    buf = nboUnpackUInt32(buf, dataSize);
 
     if (maxLen < name.size()) {
       maxLen = name.size();

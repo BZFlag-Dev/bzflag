@@ -247,7 +247,7 @@ void EntryZones::makeSplitLists (int zone,
 
 void * EntryZones::pack(void *buf) const
 {
-  buf = nboPackUInt(buf, zones.size());
+  buf = nboPackUInt32(buf, zones.size());
 
   for (unsigned int i = 0; i < zones.size(); i++) {
     const WorldFileLocation& z = (const WorldFileLocation) zones[i];
@@ -256,18 +256,18 @@ void * EntryZones::pack(void *buf) const
     std::vector<TeamColor> safety;
     makeSplitLists (i, flags, teams, safety);
     buf = z.pack (buf);
-    buf = nboPackUShort(buf, flags.size());
-    buf = nboPackUShort(buf, teams.size());
-    buf = nboPackUShort(buf, safety.size());
+    buf = nboPackUInt16(buf, flags.size());
+    buf = nboPackUInt16(buf, teams.size());
+    buf = nboPackUInt16(buf, safety.size());
     unsigned int j;
     for (j = 0; j < flags.size(); j++) {
       buf = flags[j]->pack(buf);
     }
     for (j = 0; j < teams.size(); j++) {
-      buf = nboPackUShort(buf, teams[j]);
+      buf = nboPackUInt16(buf, teams[j]);
     }
     for (j = 0; j < safety.size(); j++) {
-      buf = nboPackUShort(buf, safety[j]);
+      buf = nboPackUInt16(buf, safety[j]);
     }
   }
   return buf;

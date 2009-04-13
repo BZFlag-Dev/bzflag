@@ -31,7 +31,7 @@ void* Weapon::unpack(void* buf)
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, dir);
   buf = nboUnpackFloat(buf, initDelay);
-  buf = nboUnpackUShort(buf, delayCount);
+  buf = nboUnpackUInt16(buf, delayCount);
 
   int i;
   for (i = 0; i < delayCount; i++) {

@@ -98,7 +98,7 @@ int MeshTransformManager::findTransform(const std::string& transform) const
 void * MeshTransformManager::pack(void *buf) const
 {
   std::vector<MeshTransform*>::const_iterator it;
-  buf = nboPackUInt(buf, (int)transforms.size());
+  buf = nboPackUInt32(buf, (int)transforms.size());
   for (it = transforms.begin(); it != transforms.end(); it++) {
     MeshTransform* transform = *it;
     buf = transform->pack(buf);
@@ -111,7 +111,7 @@ void * MeshTransformManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     MeshTransform* transform = new MeshTransform;
     buf = transform->unpack(buf);
@@ -586,13 +586,13 @@ void * MeshTransform::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackUInt(buf, (uint32_t)transforms.size());
+  buf = nboPackUInt32(buf, (uint32_t)transforms.size());
 
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
-    buf = nboPackUByte(buf, (uint8_t) transform.type);
+    buf = nboPackUInt8(buf, (uint8_t) transform.type);
     if (transform.type == IndexTransform) {
-      buf = nboPackInt(buf, transform.index);
+      buf = nboPackInt32(buf, transform.index);
     } else {
       if (transform.type == SpinTransform) {
         buf = nboPackFVec4(buf, transform.data);
@@ -612,15 +612,15 @@ void * MeshTransform::unpack(void *buf)
 
   uint32_t count;
   int32_t inTmp;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
 
   for (unsigned int i = 0; i < count; i++) {
     TransformData transform;
     uint8_t type;
-    buf = nboUnpackUByte(buf, type);
+    buf = nboUnpackUInt8(buf, type);
     transform.type = (TransformType) type;
     if (transform.type == IndexTransform) {
-      buf = nboUnpackInt(buf, inTmp);
+      buf = nboUnpackInt32(buf, inTmp);
       transform.index = int(inTmp);
       transform.data = fvec4(0.0f, 0.0f, 0.0f, 0.0f);
     }

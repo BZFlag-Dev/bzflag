@@ -27,14 +27,14 @@ void packWorldSettings ( void )
 
   // the settings
   buffer = nboPackFloat  (buffer, BZDBCache::worldSize);
-  buffer = nboPackUShort (buffer, clOptions->gameType);
-  buffer = nboPackUShort (buffer, clOptions->gameOptions);
+  buffer = nboPackUInt16 (buffer, clOptions->gameType);
+  buffer = nboPackUInt16 (buffer, clOptions->gameOptions);
   // An hack to fix a bug on the client
-  buffer = nboPackUShort (buffer, PlayerSlot);
-  buffer = nboPackUShort (buffer, clOptions->maxShots);
-  buffer = nboPackUShort (buffer, numFlags);
-  buffer = nboPackUShort (buffer, clOptions->shakeTimeout);
-  buffer = nboPackUShort (buffer, clOptions->shakeWins);
+  buffer = nboPackUInt16 (buffer, PlayerSlot);
+  buffer = nboPackUInt16 (buffer, clOptions->maxShots);
+  buffer = nboPackUInt16 (buffer, numFlags);
+  buffer = nboPackUInt16 (buffer, clOptions->shakeTimeout);
+  buffer = nboPackUInt16 (buffer, clOptions->shakeWins);
 }
 
 
@@ -52,7 +52,7 @@ public:
     // time, so everyone can go and compensate for some lag.
     unsigned char tag = 0;
     if (len >= 1)
-      buf = nboUnpackUByte(buf,tag);
+      buf = nboUnpackUInt8(buf,tag);
 
     double time = TimeKeeper::getCurrent().getSeconds();
 
@@ -136,7 +136,7 @@ public:
       return false;
 
     uint32_t ptr;	// data: count (bytes read so far)
-    buf = nboUnpackUInt(buf, ptr);
+    buf = nboUnpackUInt32(buf, ptr);
 
     sendWorldChunk(handler, ptr);
 
@@ -186,29 +186,29 @@ public:
     // the server address, which must already be known, and the
     // server version, which was already sent).
     NetMsg   msg = MSGMGR.newMessage();
-    msg->packUShort(pingReply.gameType);
-    msg->packUShort(pingReply.gameOptions);
-    msg->packUShort(pingReply.maxPlayers);
-    msg->packUShort(pingReply.maxShots);
-    msg->packUShort(team[0].team.size);
-    msg->packUShort(team[1].team.size);
-    msg->packUShort(team[2].team.size);
-    msg->packUShort(team[3].team.size);
-    msg->packUShort(team[4].team.size);
-    msg->packUShort(team[5].team.size);
-    msg->packUShort(pingReply.rogueMax);
-    msg->packUShort(pingReply.redMax);
-    msg->packUShort(pingReply.greenMax);
-    msg->packUShort(pingReply.blueMax);
-    msg->packUShort(pingReply.purpleMax);
-    msg->packUShort(pingReply.observerMax);
-    msg->packUShort(pingReply.shakeWins);
+    msg->packUInt16(pingReply.gameType);
+    msg->packUInt16(pingReply.gameOptions);
+    msg->packUInt16(pingReply.maxPlayers);
+    msg->packUInt16(pingReply.maxShots);
+    msg->packUInt16(team[0].team.size);
+    msg->packUInt16(team[1].team.size);
+    msg->packUInt16(team[2].team.size);
+    msg->packUInt16(team[3].team.size);
+    msg->packUInt16(team[4].team.size);
+    msg->packUInt16(team[5].team.size);
+    msg->packUInt16(pingReply.rogueMax);
+    msg->packUInt16(pingReply.redMax);
+    msg->packUInt16(pingReply.greenMax);
+    msg->packUInt16(pingReply.blueMax);
+    msg->packUInt16(pingReply.purpleMax);
+    msg->packUInt16(pingReply.observerMax);
+    msg->packUInt16(pingReply.shakeWins);
     // 1/10ths of second
-    msg->packUShort(pingReply.shakeTimeout);
-    msg->packUShort(pingReply.maxPlayerScore);
-    msg->packUShort(pingReply.maxTeamScore);
-    msg->packUShort(pingReply.maxTime);
-    msg->packUShort((uint16_t)clOptions->timeElapsed);
+    msg->packUInt16(pingReply.shakeTimeout);
+    msg->packUInt16(pingReply.maxPlayerScore);
+    msg->packUInt16(pingReply.maxTeamScore);
+    msg->packUInt16(pingReply.maxTime);
+    msg->packUInt16((uint16_t)clOptions->timeElapsed);
 
     // send it
     msg->send(handler, MsgQueryGame);
@@ -229,8 +229,8 @@ public:
     // first send number of teams and players being sent
     NetMsg   msg = MSGMGR.newMessage();
 
-    msg->packUShort(NumTeams);
-    msg->packUShort(numPlayers);
+    msg->packUInt16(NumTeams);
+    msg->packUInt16(numPlayers);
 
     msg->send(handler, MsgQueryPlayers);
 
@@ -274,7 +274,7 @@ public:
     // byte * 3
     if ( len >= 1 ) {
       unsigned char temp = 0;
-      buf  = nboUnpackUByte(buf, temp);
+      buf  = nboUnpackUInt8(buf, temp);
       player = GameKeeper::Player::getPlayerByIndex(temp);
 
       return buf;
@@ -294,7 +294,7 @@ public:
     if ( len < 1)
       return false;
 
-    buf = nboUnpackUByte(buf, botID);
+    buf = nboUnpackUInt8(buf, botID);
 
     PlayerId id = getNewBot(player->getIndex(),botID);
     if (id == 0xff)
@@ -302,7 +302,7 @@ public:
 
     NetMsg   msg = MSGMGR.newMessage();
 
-    msg->packUByte(id);
+    msg->packUInt8(id);
     msg->send(player->netHandler, MsgNewPlayer);
 
     return true;
@@ -320,10 +320,10 @@ public:
 
     unsigned char temp = 0;
 
-    buf = nboUnpackUByte(buf,temp);
+    buf = nboUnpackUInt8(buf,temp);
     player->caps.canDownloadResources = temp != 0;
 
-    buf = nboUnpackUByte(buf,temp);
+    buf = nboUnpackUInt8(buf,temp);
     player->caps.canPlayRemoteSounds = temp != 0;
 
     return true;
@@ -436,14 +436,14 @@ public:
     int16_t shot, reason;
     int phydrv = -1;
 
-    buf = nboUnpackUByte(buf, killer);
-    buf = nboUnpackShort(buf, reason);
-    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackUInt8(buf, killer);
+    buf = nboUnpackInt16(buf, reason);
+    buf = nboUnpackInt16(buf, shot);
     buf = FlagType::unpack(buf, flagType);
 
     if (reason == PhysicsDriverDeath) {
       int32_t inPhyDrv;
-      buf = nboUnpackInt(buf, inPhyDrv);
+      buf = nboUnpackInt32(buf, inPhyDrv);
       phydrv = int(inPhyDrv);
     }
 
@@ -502,7 +502,7 @@ public:
 
     // data: team whose territory flag was brought to
     uint16_t _team;
-    buf = nboUnpackUShort(buf, _team);
+    buf = nboUnpackUInt16(buf, _team);
 
     captureFlag(player->getIndex(), TeamColor(_team));
     return true;
@@ -519,7 +519,7 @@ public:
       return false;
 
     PlayerId otherPlayer;
-    buf = nboUnpackUByte(buf, otherPlayer);
+    buf = nboUnpackUInt8(buf, otherPlayer);
     fvec3 collpos;
     buf = nboUnpackFVec3(buf, collpos);
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(otherPlayer);
@@ -543,7 +543,7 @@ public:
     uint16_t		id;
     void		*bufTmp;
 
-    bufTmp = nboUnpackUShort(buf, id);
+    bufTmp = nboUnpackUInt16(buf, id);
 
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
@@ -631,8 +631,8 @@ public:
 
     int16_t shot;
     uint16_t reason;
-    buf = nboUnpackShort(buf, shot);
-    buf = nboUnpackUShort(buf, reason);
+    buf = nboUnpackInt16(buf, shot);
+    buf = nboUnpackUInt16(buf, reason);
 
     // ask the API if it wants to modify this shot
     bz_ShotEndedEventData_V1 shotEvent;
@@ -667,8 +667,8 @@ public:
     FiringInfo firingInfo;
     int16_t shot;
 
-    buf = nboUnpackUByte(buf, shooterPlayer);
-    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackUInt8(buf, shooterPlayer);
+    buf = nboUnpackInt16(buf, shot);
     GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
 
     if (!shooterData)
@@ -707,8 +707,8 @@ public:
     if (invalidPlayerAction(player->player, player->getIndex(), "teleport"))
       return true;
 
-    buf = nboUnpackUShort(buf, from);
-    buf = nboUnpackUShort(buf, to);
+    buf = nboUnpackUInt16(buf, from);
+    buf = nboUnpackUInt16(buf, to);
 
     bz_TeleportEventData_V1 eventData;
     eventData.playerID = player->getIndex();
@@ -735,7 +735,7 @@ public:
     PlayerId dstPlayer;
     char message[MessageLen];
 
-    buf = nboUnpackUByte(buf, dstPlayer);
+    buf = nboUnpackUInt8(buf, dstPlayer);
     buf = nboUnpackString(buf, message, sizeof(message));
     message[MessageLen - 1] = '\0';
 
@@ -778,7 +778,7 @@ public:
 
     from = player->getIndex();
 
-    buf = nboUnpackUByte(buf, to);
+    buf = nboUnpackUInt8(buf, to);
 
     int flagIndex = player->player.getFlag();
     if (to == ServerPlayer) {
@@ -873,7 +873,7 @@ public:
       return false;
 
     uint8_t autopilot;
-    nboUnpackUByte(buf, autopilot);
+    nboUnpackUInt8(buf, autopilot);
 
 	bool allow = !BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS);
 
@@ -995,7 +995,7 @@ public:
     // byte * 3
     if ( len >= 1 ) {
       unsigned char temp = 0;
-      nboUnpackUByte(buf, temp);
+      nboUnpackUInt8(buf, temp);
       player = GameKeeper::Player::getPlayerByIndex(temp);
 
       return buf;
@@ -1017,7 +1017,7 @@ public:
     buf = shot.unpack(buf);
 
     unsigned char temp = 0;
-    nboUnpackUByte(buf, temp);
+    nboUnpackUInt8(buf, temp);
 
     PlayerId target = temp;
 
@@ -1054,11 +1054,11 @@ public:
     uint8_t  status;
     std::string data;
 
-    buf = nboUnpackUByte(buf, srcPlayerID);
-    buf = nboUnpackShort(buf, srcScriptID);
-    buf = nboUnpackUByte(buf, dstPlayerID);
-    buf = nboUnpackShort(buf, dstScriptID);
-    buf = nboUnpackUByte(buf, status);
+    buf = nboUnpackUInt8(buf, srcPlayerID);
+    buf = nboUnpackInt16(buf, srcScriptID);
+    buf = nboUnpackUInt8(buf, dstPlayerID);
+    buf = nboUnpackInt16(buf, dstScriptID);
+    buf = nboUnpackUInt8(buf, status);
     buf = nboUnpackStdStringRaw(buf, data);
 
     if (GameKeeper::Player::getPlayerByIndex(srcPlayerID) == NULL) {

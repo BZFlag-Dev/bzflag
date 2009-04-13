@@ -179,8 +179,8 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 
   // read head
   void *buf = udpmsg + udpRead;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
   if ((udpLen - udpRead) < len + 4) {
     // No space for data :-(
     udpLen  = 0;
@@ -430,8 +430,8 @@ int NetHandler::pwrite(const void *b, int l)
 
   void *buf = (void *)b;
   uint16_t len, code;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 #ifdef NETWORK_STATS
   countMessage(code, len, 1);
 #endif
@@ -493,8 +493,8 @@ RxStatus NetHandler::tcpReceive(bool doCodes)
 
   if (doCodes) {
     // read body if we don't have it yet
-    buf = nboUnpackUShort(buf, len);
-    buf = nboUnpackUShort(buf, code);
+    buf = nboUnpackUInt16(buf, len);
+    buf = nboUnpackUInt16(buf, code);
     if (len + 4U > MaxPacketLen) {
       netConnections.remove(this);
       return ReadHuge;

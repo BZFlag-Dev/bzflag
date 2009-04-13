@@ -49,27 +49,27 @@ Team::Team()
 
 void* Team::pack(void* buf) const
 {
-  buf = nboPackUShort(buf, uint16_t(size));
-  buf = nboPackUShort(buf, uint16_t(won));
-  buf = nboPackUShort(buf, uint16_t(lost));
+  buf = nboPackUInt16(buf, uint16_t(size));
+  buf = nboPackUInt16(buf, uint16_t(won));
+  buf = nboPackUInt16(buf, uint16_t(lost));
   return buf;
 }
 
 
 void Team::pack(BufferedNetworkMessage *msg) const
 {
-  msg->packUShort(uint16_t(size));
-  msg->packUShort(uint16_t(won));
-  msg->packUShort(uint16_t(lost));
+  msg->packUInt16(uint16_t(size));
+  msg->packUInt16(uint16_t(won));
+  msg->packUInt16(uint16_t(lost));
 }
 
 
 void* Team::unpack(void* buf)
 {
   uint16_t inSize, inWon, inLost;
-  buf = nboUnpackUShort(buf, inSize);
-  buf = nboUnpackUShort(buf, inWon);
-  buf = nboUnpackUShort(buf, inLost);
+  buf = nboUnpackUInt16(buf, inSize);
+  buf = nboUnpackUInt16(buf, inWon);
+  buf = nboUnpackUInt16(buf, inLost);
   size = (unsigned short)inSize;
   won = (unsigned short)inWon;
   lost = (unsigned short)inLost;

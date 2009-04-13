@@ -1878,9 +1878,9 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 
   NetMsg   msg = MSGMGR.newMessage();
 
-  msg->packUShort(1); // the count
-  msg->packUShort((short)resType);
-  msg->packUShort((unsigned short)strlen(URL));
+  msg->packUInt16(1); // the count
+  msg->packUInt16((short)resType);
+  msg->packUInt16((unsigned short)strlen(URL));
   msg->packString(URL, strlen(URL));
 
   if(playerID==BZ_ALLUSERS)
@@ -1934,8 +1934,8 @@ BZF_API bool bz_sendJoinServer(int playerID,
   NetMsg netMsg = MSGMGR.newMessage();
 
   netMsg->packStdString(addr);
-  netMsg->packInt(port);
-  netMsg->packInt(teamID);
+  netMsg->packInt32(port);
+  netMsg->packInt32(teamID);
   netMsg->packStdString(refr);
   netMsg->packStdString(mesg);
 
@@ -3699,8 +3699,8 @@ BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName)
 
   NetMsg   msg = MSGMGR.newMessage();
 
-  msg->packUShort(LocalCustomSound);
-  msg->packUShort((unsigned short)strlen(soundName));
+  msg->packUInt16(LocalCustomSound);
+  msg->packUInt16((unsigned short)strlen(soundName));
   msg->packString(soundName, strlen(soundName));
 
   if(playerID==BZ_ALLUSERS)

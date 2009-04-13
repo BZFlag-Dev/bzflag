@@ -92,7 +92,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 			    bool &jittkick, bool &plosswarn, bool &plosskick) {
   uint16_t _pingseqno;
-  nboUnpackUShort(buf, _pingseqno);
+  nboUnpackUInt16(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
     float timepassed = float(info->now - lastping);
     // time is smoothed exponentially using a dynamic smoothing factor

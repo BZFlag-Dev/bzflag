@@ -253,7 +253,7 @@ bool BaseBuilding::isFlatTop() const
 
 void* BaseBuilding::pack(void* buf) const
 {
-  buf = nboPackUShort(buf, (uint16_t) team);
+  buf = nboPackUInt16(buf, (uint16_t) team);
 
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
@@ -263,7 +263,7 @@ void* BaseBuilding::pack(void* buf) const
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
   stateByte |= canRicochet()    ? _RICOCHET   : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -272,7 +272,7 @@ void* BaseBuilding::pack(void* buf) const
 void* BaseBuilding::unpack(void* buf)
 {
   uint16_t shortTeam;
-  buf = nboUnpackUShort(buf, shortTeam);
+  buf = nboUnpackUInt16(buf, shortTeam);
   team = (int)shortTeam;
 
   buf = nboUnpackFVec3(buf, pos);
@@ -280,7 +280,7 @@ void* BaseBuilding::unpack(void* buf)
   buf = nboUnpackFVec3(buf, size);
 
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0 ? 0xFF : 0;
   ricochet     = (stateByte & _RICOCHET)   != 0;

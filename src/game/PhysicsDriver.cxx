@@ -111,7 +111,7 @@ int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 void * PhysicsDriverManager::pack(void *buf) const
 {
   std::vector<PhysicsDriver*>::const_iterator it;
-  buf = nboPackUInt(buf, (int)drivers.size());
+  buf = nboPackUInt32(buf, (int)drivers.size());
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
     buf = driver->pack(buf);
@@ -124,7 +124,7 @@ void * PhysicsDriverManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt32 (buf, count);
   for (i = 0; i < count; i++) {
     PhysicsDriver* driver = new PhysicsDriver;
     buf = driver->unpack(buf);

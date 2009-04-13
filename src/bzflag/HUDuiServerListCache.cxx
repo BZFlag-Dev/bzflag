@@ -54,29 +54,29 @@ void HUDuiServerListCache::saveCache()
 
     // write out normal list sort mode
     memset(buffer,0,sizeof(buffer));
-    nboPackInt(buffer,cachedLists[0].first->getSortMode());
+    nboPackInt32(buffer,cachedLists[0].first->getSortMode());
     outFile->write(&buffer[0], 4);
 
     // write out normal list reverse sort flag
-    nboPackUByte(buffer, cachedLists[0].first->getReverseSort());
+    nboPackUInt8(buffer, cachedLists[0].first->getReverseSort());
     outFile->write(buffer, 1);
 
     // write out recent list sort mode
     memset(buffer,0,sizeof(buffer));
-    nboPackInt(buffer,cachedLists[1].first->getSortMode());
+    nboPackInt32(buffer,cachedLists[1].first->getSortMode());
     outFile->write(&buffer[0], 4);
 
     // write out recent list reverse sort flag
-    nboPackUByte(buffer, cachedLists[1].first->getReverseSort());
+    nboPackUInt8(buffer, cachedLists[1].first->getReverseSort());
     outFile->write(buffer, 1);
 
     // write out favorites list sort mode
     memset(buffer,0,sizeof(buffer));
-    nboPackInt(buffer, cachedLists[2].first->getSortMode());
+    nboPackInt32(buffer, cachedLists[2].first->getSortMode());
     outFile->write(&buffer[0], 4);
 
     // write out favorites list reverse sort flag
-    nboPackUByte(buffer, cachedLists[2].first->getReverseSort());
+    nboPackUInt8(buffer, cachedLists[2].first->getReverseSort());
     outFile->write(buffer, 1);
 
     for (size_t i=3; i<cachedLists.size(); i++)
@@ -89,16 +89,16 @@ void HUDuiServerListCache::saveCache()
 
       // write out the list's sort mode
       memset(buffer,0,sizeof(buffer));
-      nboPackInt(buffer,cachedLists[i].first->getSortMode());
+      nboPackInt32(buffer,cachedLists[i].first->getSortMode());
       outFile->write(&buffer[0], 4);
 
       // write out the list's reverse sort flag
-      nboPackUByte(buffer, cachedLists[i].first->getReverseSort());
+      nboPackUInt8(buffer, cachedLists[i].first->getReverseSort());
       outFile->write(buffer, 1);
 
       // write out the list's filter options
       memset(buffer,0,sizeof(buffer));
-      nboPackInt(buffer,cachedLists[i].first->getFilterOptions());
+      nboPackInt32(buffer,cachedLists[i].first->getFilterOptions());
       outFile->write(&buffer[0], 4);
 
       // write out the list's server name filter
@@ -115,7 +115,7 @@ void HUDuiServerListCache::saveCache()
 
       // write out the number of servers in the list
       memset(buffer,0,sizeof(buffer));
-      nboPackInt(buffer,(int)cachedLists[i].first->getSize());
+      nboPackInt32(buffer,(int)cachedLists[i].first->getSize());
       outFile->write(&buffer[0], 4);
 
       // write out the server keys of servers in the list
@@ -150,12 +150,12 @@ bool HUDuiServerListCache::loadCache()
     inFile.read(&buffer[0],4);
     if (inFile.gcount() < 4) return false;
     int32_t sort;
-    nboUnpackInt(&buffer[0], sort);
+    nboUnpackInt32(&buffer[0], sort);
 
     // read in normal list reverse sort flag
     uint8_t rev;
     inFile.read(buffer, 1);
-    nboUnpackUByte(buffer, rev);
+    nboUnpackUInt8(buffer, rev);
     bool reverse = (rev != 0);
 
     // apply sort mode
@@ -164,11 +164,11 @@ bool HUDuiServerListCache::loadCache()
     // read in recent list sort mode
     inFile.read(&buffer[0],4);
     if (inFile.gcount() < 4) return false;
-    nboUnpackInt(&buffer[0],sort);
+    nboUnpackInt32(&buffer[0],sort);
 
     // read in recent list reverse sort flag
     inFile.read(buffer, 1);
-    nboUnpackUByte(buffer, rev);
+    nboUnpackUInt8(buffer, rev);
     reverse = (rev != 0);
 
     // apply sort mode
@@ -177,11 +177,11 @@ bool HUDuiServerListCache::loadCache()
     // read in favorites list sort mode
     inFile.read(&buffer[0],4);
     if (inFile.gcount() < 4) return false;
-    nboUnpackInt(&buffer[0],sort);
+    nboUnpackInt32(&buffer[0],sort);
 
     // read in favorites list reverse sort flag
     inFile.read(buffer, 1);
-    nboUnpackUByte(buffer, rev);
+    nboUnpackUInt8(buffer, rev);
     reverse = (rev != 0);
 
     // apply sort mode
@@ -197,11 +197,11 @@ bool HUDuiServerListCache::loadCache()
       // read in the sort mode
       inFile.read(&buffer[0],4);
       if (inFile.gcount() < 4) return false;
-      nboUnpackInt(&buffer[0],sort);
+      nboUnpackInt32(&buffer[0],sort);
 
       // read in the reverse sort flag
       inFile.read(buffer, 1);
-      nboUnpackUByte(buffer, rev);
+      nboUnpackUInt8(buffer, rev);
       reverse = (rev != 0);
 
       cachedLists.push_back(std::pair<HUDuiServerList*, std::string>(new HUDuiServerList, tabName));
@@ -214,7 +214,7 @@ bool HUDuiServerListCache::loadCache()
       inFile.read(&buffer[0],4);
       if (inFile.gcount() < 1) return false;
       int32_t filters_signed;
-      nboUnpackInt(&buffer[0], filters_signed);
+      nboUnpackInt32(&buffer[0], filters_signed);
       uint32_t filters = (uint32_t) filters_signed;
 
       cachedLists[i].first->applyFilters(filters);
@@ -239,7 +239,7 @@ bool HUDuiServerListCache::loadCache()
       inFile.read(&buffer[0],4);
       if (inFile.gcount() < 1) return false;
       int32_t serverCount;
-      nboUnpackInt(&buffer[0], serverCount);
+      nboUnpackInt32(&buffer[0], serverCount);
 
       int j = 0;
       while(j<serverCount)

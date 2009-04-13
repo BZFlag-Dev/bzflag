@@ -74,38 +74,38 @@ void BufferedNetworkMessage::broadcast (uint16_t messageCode, bool toAdminClient
   MSGMGR.queueMessage(this);
 }
 
-void BufferedNetworkMessage::packUByte(uint8_t val)
+void BufferedNetworkMessage::packUInt8(uint8_t val)
 {
   checkData(sizeof(uint8_t));
-  nboPackUByte(getWriteBuffer(), val);
+  nboPackUInt8(getWriteBuffer(), val);
   packedSize += sizeof(uint8_t);
 }
 
-void BufferedNetworkMessage::packShort(int16_t val)
+void BufferedNetworkMessage::packInt16(int16_t val)
 {
   checkData(sizeof(int16_t));
-  nboPackShort(getWriteBuffer(), val);
+  nboPackInt16(getWriteBuffer(), val);
   packedSize += sizeof(int16_t);
 }
 
-void BufferedNetworkMessage::packInt(int32_t val)
+void BufferedNetworkMessage::packInt32(int32_t val)
 {
   checkData(sizeof(int32_t));
-  nboPackInt(getWriteBuffer(), val);
+  nboPackInt32(getWriteBuffer(), val);
   packedSize += sizeof(int32_t);
 }
 
-void BufferedNetworkMessage::packUShort(uint16_t val)
+void BufferedNetworkMessage::packUInt16(uint16_t val)
 {
   checkData(sizeof(uint16_t));
-  nboPackUShort(getWriteBuffer(), val);
+  nboPackUInt16(getWriteBuffer(), val);
   packedSize += sizeof(uint16_t);
 }
 
-void BufferedNetworkMessage::packUInt(uint32_t val)
+void BufferedNetworkMessage::packUInt32(uint32_t val)
 {
   checkData(sizeof(uint32_t));
-  nboPackUInt(getWriteBuffer(), val);
+  nboPackUInt32(getWriteBuffer(), val);
   packedSize += sizeof(uint32_t);
 }
 
@@ -158,48 +158,48 @@ void BufferedNetworkMessage::packStdString(const std::string& str)
   packedSize += str.size()+sizeof(uint32_t);
 }
 
-uint8_t BufferedNetworkMessage::unpackUByte(void)
+uint8_t BufferedNetworkMessage::unpackUInt8(void)
 {
   uint8_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUByte(p, v))-p;
+    packedSize += (char*)(nboUnpackUInt8(p, v))-p;
   return v;
 }
 
-int16_t BufferedNetworkMessage::unpackShort(void)
+int16_t BufferedNetworkMessage::unpackInt16(void)
 {
   int16_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackShort(p, v))-p;
+    packedSize += (char*)(nboUnpackInt16(p, v))-p;
   return v;
 }
 
-int32_t BufferedNetworkMessage::unpackInt(void)
+int32_t BufferedNetworkMessage::unpackInt32(void)
 {
   int32_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackInt(p, v))-p;
+    packedSize += (char*)(nboUnpackInt32(p, v))-p;
   return v;
 }
 
-uint16_t BufferedNetworkMessage::unpackUShort(void)
+uint16_t BufferedNetworkMessage::unpackUInt16(void)
 {
   uint16_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUShort(p, v))-p;
+    packedSize += (char*)(nboUnpackUInt16(p, v))-p;
   return v;
 }
 
-uint32_t BufferedNetworkMessage::unpackUInt(void)
+uint32_t BufferedNetworkMessage::unpackUInt32(void)
 {
   uint32_t v = 0;
   char *p = getReadBuffer();
   if (p)
-    packedSize += (char*)(nboUnpackUInt(p, v))-p;
+    packedSize += (char*)(nboUnpackUInt32(p, v))-p;
   return v;
 }
 
@@ -299,8 +299,8 @@ bool BufferedNetworkMessage::process (void)
   if (!transferCallback || (!recipient && code == 0))
     return false;
 
-  nboPackUShort(data, uint16_t(packedSize));
-  nboPackUShort(data+sizeof(uint16_t), code);
+  nboPackUInt16(data, uint16_t(packedSize));
+  nboPackUInt16(data+sizeof(uint16_t), code);
 
   if (recipient) {
     return transferCallback->send(recipient, data, packedSize+4) == packedSize+4;

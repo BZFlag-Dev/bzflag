@@ -552,20 +552,20 @@ void *MeshFace::pack(void *buf) const
   stateByte |= smoothBounce     ? (1 << 4) : 0;
   stateByte |= noclusters       ? (1 << 5) : 0;
   stateByte |= canRicochet()    ? (1 << 6) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   // vertices
-  buf = nboPackInt(buf, vertexCount);
+  buf = nboPackInt32(buf, vertexCount);
   for (int i = 0; i < vertexCount; i++) {
     int32_t index = vertices[i] - mesh->getVertices();
-    buf = nboPackInt(buf, index);
+    buf = nboPackInt32(buf, index);
   }
 
   // normals
   if (useNormals()) {
     for (int i = 0; i < vertexCount; i++) {
       int32_t index = normals[i] - mesh->getNormals();
-      buf = nboPackInt(buf, index);
+      buf = nboPackInt32(buf, index);
     }
   }
 
@@ -573,16 +573,16 @@ void *MeshFace::pack(void *buf) const
   if (useTexcoords()) {
     for (int i = 0; i < vertexCount; i++) {
       int32_t index = texcoords[i] - mesh->getTexcoords();
-      buf = nboPackInt(buf, index);
+      buf = nboPackInt32(buf, index);
     }
   }
 
   // material
   int matindex = MATERIALMGR.getIndex(bzMaterial);
-  buf = nboPackInt(buf, matindex);
+  buf = nboPackInt32(buf, matindex);
 
   // physics driver
-  buf = nboPackInt(buf, phydrv);
+  buf = nboPackInt32(buf, phydrv);
 
   return buf;
 }
@@ -595,7 +595,7 @@ void *MeshFace::unpack(void *buf)
   // state byte
   bool tmpNormals, tmpTexcoords;
   unsigned char stateByte = 0;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   tmpNormals   =  (stateByte & (1 << 0)) != 0;
   tmpTexcoords =  (stateByte & (1 << 1)) != 0;
   driveThrough = ((stateByte & (1 << 2)) != 0) ? 0xFF : 0;
@@ -605,12 +605,12 @@ void *MeshFace::unpack(void *buf)
   ricochet     =  (stateByte & (1 << 6)) != 0;
 
   // vertices
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   vertexCount = int(inTmp);
   vertices = new const fvec3*[vertexCount];
   for (int i = 0; i < vertexCount; i++) {
     int32_t index;
-    buf = nboUnpackInt(buf, index);
+    buf = nboUnpackInt32(buf, index);
     vertices[i] = mesh->getVertices() + index;
   }
 
@@ -619,7 +619,7 @@ void *MeshFace::unpack(void *buf)
     normals = new const fvec3*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       int32_t index;
-      buf = nboUnpackInt(buf, index);
+      buf = nboUnpackInt32(buf, index);
       normals[i] = mesh->getNormals() + index;
     }
   }
@@ -629,18 +629,18 @@ void *MeshFace::unpack(void *buf)
     texcoords = new const fvec2*[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       int32_t index;
-      buf = nboUnpackInt(buf, index);
+      buf = nboUnpackInt32(buf, index);
       texcoords[i] = mesh->getTexcoords() + index;
     }
   }
 
   // material
   int32_t matindex;
-  buf = nboUnpackInt(buf, matindex);
+  buf = nboUnpackInt32(buf, matindex);
   bzMaterial = MATERIALMGR.getMaterial(matindex);
 
   // physics driver
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   phydrv = int(inTmp);
 
   finalize();

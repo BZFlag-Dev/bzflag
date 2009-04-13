@@ -146,7 +146,7 @@ void* WallObstacle::pack(void* buf) const
 
   unsigned char stateByte = 0;
   stateByte |= canRicochet() ? _RICOCHET : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -160,7 +160,7 @@ void* WallObstacle::unpack(void* buf)
   buf = nboUnpackFloat(buf, size[2]);
 
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   ricochet = (stateByte & _RICOCHET) != 0;
 
   finalize();

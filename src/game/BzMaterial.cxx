@@ -124,7 +124,7 @@ int BzMaterialManager::getIndex(const BzMaterial* material) const
 
 void* BzMaterialManager::pack(void* buf)
 {
-  buf = nboPackUInt(buf, (unsigned int)materials.size());
+  buf = nboPackUInt32(buf, (unsigned int)materials.size());
   for (unsigned int i = 0; i < materials.size(); i++) {
     buf = materials[i]->pack(buf);
     materials[i]->setID(i);
@@ -138,7 +138,7 @@ void* BzMaterialManager::unpack(void* buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt32 (buf, count);
   for (i = 0; i < count; i++) {
     BzMaterial* mat = new BzMaterial;
     buf = mat->unpack(buf);
@@ -407,10 +407,10 @@ void* BzMaterial::pack(void* buf) const
   if (occluder)   { modeByte |= (1 << 4); }
   if (groupAlpha) { modeByte |= (1 << 5); }
   if (noLighting) { modeByte |= (1 << 6); }
-  buf = nboPackUByte(buf, modeByte);
+  buf = nboPackUInt8(buf, modeByte);
 
-  buf = nboPackInt(buf, order);
-  buf = nboPackInt(buf, dynamicColor);
+  buf = nboPackInt32(buf, order);
+  buf = nboPackInt32(buf, dynamicColor);
   buf = nboPackFVec4(buf, ambient);
   buf = nboPackFVec4(buf, diffuse);
   buf = nboPackFVec4(buf, specular);
@@ -418,13 +418,13 @@ void* BzMaterial::pack(void* buf) const
   buf = nboPackFloat(buf, shininess);
   buf = nboPackFloat(buf, alphaThreshold);
 
-  buf = nboPackUByte(buf, textureCount);
+  buf = nboPackUInt8(buf, textureCount);
   for (i = 0; i < textureCount; i++) {
     const TextureInfo* texinfo = &textures[i];
 
     buf = nboPackStdString(buf, texinfo->name);
-    buf = nboPackInt(buf, texinfo->matrix);
-    buf = nboPackInt(buf, texinfo->combineMode);
+    buf = nboPackInt32(buf, texinfo->matrix);
+    buf = nboPackInt32(buf, texinfo->combineMode);
     unsigned char stateByte = 0;
     if (texinfo->useAlpha) {
       stateByte = stateByte | (1 << 0);
@@ -435,10 +435,10 @@ void* BzMaterial::pack(void* buf) const
     if (texinfo->useSphereMap) {
       stateByte = stateByte | (1 << 2);
     }
-    buf = nboPackUByte(buf, stateByte);
+    buf = nboPackUInt8(buf, stateByte);
   }
 
-  buf = nboPackUByte(buf, shaderCount);
+  buf = nboPackUInt8(buf, shaderCount);
   for (i = 0; i < shaderCount; i++) {
     buf = nboPackStdString(buf, shaders[i].name);
   }
@@ -455,7 +455,7 @@ void* BzMaterial::unpack(void* buf)
   buf = nboUnpackStdString(buf, name);
 
   uint8_t modeByte;
-  buf = nboUnpackUByte(buf, modeByte);
+  buf = nboUnpackUInt8(buf, modeByte);
   noCulling  = (modeByte & (1 << 0)) != 0;
   noSorting  = (modeByte & (1 << 1)) != 0;
   noRadar    = (modeByte & (1 << 2)) != 0;
@@ -464,8 +464,8 @@ void* BzMaterial::unpack(void* buf)
   groupAlpha = (modeByte & (1 << 5)) != 0;
   noLighting = (modeByte & (1 << 6)) != 0;
 
-  buf = nboUnpackInt(buf, order);
-  buf = nboUnpackInt(buf, inTmp); dynamicColor = int(inTmp);
+  buf = nboUnpackInt32(buf, order);
+  buf = nboUnpackInt32(buf, inTmp); dynamicColor = int(inTmp);
   buf = nboUnpackFVec4(buf, ambient);
   buf = nboUnpackFVec4(buf, diffuse);
   buf = nboUnpackFVec4(buf, specular);
@@ -474,22 +474,22 @@ void* BzMaterial::unpack(void* buf)
   buf = nboUnpackFloat(buf, alphaThreshold);
 
   unsigned char tCount;
-  buf = nboUnpackUByte(buf, tCount);
+  buf = nboUnpackUInt8(buf, tCount);
   textureCount = tCount;
   textures = new TextureInfo[textureCount];
   for (i = 0; i < textureCount; i++) {
     TextureInfo* texinfo = &textures[i];
     buf = nboUnpackStdString(buf, texinfo->name);
     texinfo->localname = texinfo->name;
-    buf = nboUnpackInt(buf, inTmp);
+    buf = nboUnpackInt32(buf, inTmp);
     texinfo->matrix = int(inTmp);
-    buf = nboUnpackInt(buf, inTmp);
+    buf = nboUnpackInt32(buf, inTmp);
     texinfo->combineMode = int(inTmp);
     texinfo->useAlpha = false;
     texinfo->useColor = false;
     texinfo->useSphereMap = false;
     unsigned char stateByte;
-    buf = nboUnpackUByte(buf, stateByte);
+    buf = nboUnpackUInt8(buf, stateByte);
     if (stateByte & (1 << 0)) {
       texinfo->useAlpha = true;
     }
@@ -502,7 +502,7 @@ void* BzMaterial::unpack(void* buf)
   }
 
   unsigned char sCount;
-  buf = nboUnpackUByte(buf, sCount);
+  buf = nboUnpackUInt8(buf, sCount);
   shaderCount = sCount;
   shaders = new ShaderInfo[shaderCount];
   for (i = 0; i < shaderCount; i++) {

@@ -166,7 +166,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       switch (code) {
 
       case MsgNewRabbit:
-	vbuf = nboUnpackUByte(vbuf, p);
+	vbuf = nboUnpackUInt8(vbuf, p);
 	if (p != NoPlayer)
 	  lastMessage.first = std::string("*** '") + players[p].name +
 	    "' is now the rabbit.";
@@ -174,14 +174,14 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
       case MsgPause:
 	uint8_t paused;
-	vbuf = nboUnpackUByte(vbuf, p);
-	vbuf = nboUnpackUByte(vbuf, paused);
+	vbuf = nboUnpackUInt8(vbuf, p);
+	vbuf = nboUnpackUInt8(vbuf, paused);
 	lastMessage.first = std::string("*** '") + players[p].name + "': " +
 	  (paused ? "paused" : "resumed") + ".";
 	break;
 
       case MsgAlive:
-	vbuf = nboUnpackUByte(vbuf, p);
+	vbuf = nboUnpackUInt8(vbuf, p);
 	lastMessage.first = std::string("*** '") + players[p].name +
 	  "' has respawned.";
 	break;
@@ -196,7 +196,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	std::string name;
 	std::string value;
 
-	vbuf = nboUnpackUShort(vbuf, numVars);
+	vbuf = nboUnpackUInt16(vbuf, numVars);
 	for (i = 0; i < numVars; i++) {
 	  vbuf = nboUnpackStdString(vbuf, name);
 	  vbuf = nboUnpackStdString(vbuf, value);
@@ -218,13 +218,13 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	uint16_t team, type, wins, losses, tks;
 	float rank;
 	char callsign[CallSignLen];
-	vbuf = nboUnpackUByte(vbuf, p);
-	vbuf = nboUnpackUShort(vbuf, type);
-	vbuf = nboUnpackUShort(vbuf, team);
+	vbuf = nboUnpackUInt8(vbuf, p);
+	vbuf = nboUnpackUInt16(vbuf, type);
+	vbuf = nboUnpackUInt16(vbuf, team);
 	vbuf = nboUnpackFloat(vbuf, rank);
-	vbuf = nboUnpackUShort(vbuf, wins);
-	vbuf = nboUnpackUShort(vbuf, losses);
-	vbuf = nboUnpackUShort(vbuf, tks);
+	vbuf = nboUnpackUInt16(vbuf, wins);
+	vbuf = nboUnpackUInt16(vbuf, losses);
+	vbuf = nboUnpackUInt16(vbuf, tks);
 	vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
 	players[p].name = callsign;
 	players[p].team = TeamColor(team);
@@ -246,7 +246,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	break;
 
       case MsgRemovePlayer:
-	vbuf = nboUnpackUByte(vbuf, p);
+	vbuf = nboUnpackUInt8(vbuf, p);
 	if (ui != NULL)
 	  ui->removingPlayer(p);
 	if (messageMask[MsgRemovePlayer]) {
@@ -258,12 +258,12 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
       case MsgPlayerInfo:
 	uint8_t numPlayers;
-	vbuf = nboUnpackUByte(vbuf, numPlayers);
+	vbuf = nboUnpackUInt8(vbuf, numPlayers);
 	for (i = 0; i < numPlayers; ++i) {
-	  vbuf = nboUnpackUByte(vbuf, p);
+	  vbuf = nboUnpackUInt8(vbuf, p);
 	  uint8_t info;
 	  // parse player info bitfield
-	  vbuf = nboUnpackUByte(vbuf, info);
+	  vbuf = nboUnpackUInt8(vbuf, info);
 	  players[p].isAdmin = ((info & IsAdmin) != 0);
 	  players[p].isRegistered = ((info & IsRegistered) != 0);
 	  players[p].isVerified = ((info & IsVerified) != 0);
@@ -273,11 +273,11 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       case MsgAdminInfo:
 	uint8_t numIPs;
 	uint8_t tmp;
-	vbuf = nboUnpackUByte(vbuf, numIPs);
+	vbuf = nboUnpackUInt8(vbuf, numIPs);
 	if(numIPs > 1) {
 	  for (i = 0; i < numIPs; ++i) {
-	    vbuf = nboUnpackUByte(vbuf, tmp);
-	    vbuf = nboUnpackUByte(vbuf, p);
+	    vbuf = nboUnpackUInt8(vbuf, tmp);
+	    vbuf = nboUnpackUInt8(vbuf, p);
 	    vbuf = a.unpack(vbuf);
 	    players[p].ip = a.getDotNotation();
 	    if ((ui != NULL) && messageMask[MsgAdminInfo]) {
@@ -288,8 +288,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	}
 	//Alternative to the MsgAddPlayer message
 	else if(numIPs == 1) {
-	  vbuf = nboUnpackUByte(vbuf, tmp);
-	  vbuf = nboUnpackUByte(vbuf, p);
+	  vbuf = nboUnpackUInt8(vbuf, tmp);
+	  vbuf = nboUnpackUInt8(vbuf, p);
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
 	  Team temp;
@@ -304,8 +304,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       case MsgScoreOver:
 	PlayerId id;
 	uint16_t _team;
-	vbuf = nboUnpackUByte(vbuf, id);
-	vbuf = nboUnpackUShort(vbuf, _team);
+	vbuf = nboUnpackUInt8(vbuf, id);
+	vbuf = nboUnpackUInt16(vbuf, _team);
 	it = players.find(id);
 	victimName = (it != players.end() ? it->second.name : "<unknown>");
 	if (_team != (uint16_t)NoTeam) {
@@ -317,7 +317,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
       case MsgTimeUpdate:
 	uint32_t timeLeft;
-	vbuf = nboUnpackUInt(vbuf, timeLeft);
+	vbuf = nboUnpackUInt32(vbuf, timeLeft);
 	if (timeLeft == 0)
 	  lastMessage.first = "*** Time Expired.";
 	else if (timeLeft == ~0u)
@@ -332,14 +332,14 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	FlagType* flagType;
 	int16_t shotId, reason;
 	int phydrv;
-	vbuf = nboUnpackUByte(vbuf, victim);
-	vbuf = nboUnpackUByte(vbuf, killer);
-	vbuf = nboUnpackShort(vbuf, reason);
-	vbuf = nboUnpackShort(vbuf, shotId);
+	vbuf = nboUnpackUInt8(vbuf, victim);
+	vbuf = nboUnpackUInt8(vbuf, killer);
+	vbuf = nboUnpackInt16(vbuf, reason);
+	vbuf = nboUnpackInt16(vbuf, shotId);
 	vbuf = FlagType::unpack(vbuf, flagType);
 	if (reason == PhysicsDriverDeath) {
 	  int32_t inPhyDrv;
-	  vbuf = nboUnpackInt(vbuf, inPhyDrv);
+	  vbuf = nboUnpackInt32(vbuf, inPhyDrv);
 	  phydrv = int(inPhyDrv);
 	}
 
@@ -363,13 +363,13 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
       case MsgScore:
 	uint8_t numScores;
-	vbuf = nboUnpackUByte(vbuf, numScores);
+	vbuf = nboUnpackUInt8(vbuf, numScores);
 	for (i = 0; i < numScores; i++) {
 	  uint16_t winners, loosers, teamkillers;
-	  vbuf = nboUnpackUByte(vbuf, p);
-	  vbuf = nboUnpackUShort(vbuf, winners);
-	  vbuf = nboUnpackUShort(vbuf, loosers);
-	  vbuf = nboUnpackUShort(vbuf, teamkillers);
+	  vbuf = nboUnpackUInt8(vbuf, p);
+	  vbuf = nboUnpackUInt16(vbuf, winners);
+	  vbuf = nboUnpackUInt16(vbuf, loosers);
+	  vbuf = nboUnpackUInt16(vbuf, teamkillers);
 	  if ((iter = players.find(p)) != players.end()) {
 	    iter->second.wins   = winners;
 	    iter->second.losses = loosers;
@@ -390,8 +390,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	PlayerId src;
 	PlayerId dst;
 	PlayerId me = sLink.getId();
-	vbuf = nboUnpackUByte(vbuf, src);
-	vbuf = nboUnpackUByte(vbuf, dst);
+	vbuf = nboUnpackUInt8(vbuf, src);
+	vbuf = nboUnpackUInt8(vbuf, dst);
 
 	// format the message depending on src and dst
 	TeamColor dstTeam = (dst >= 244 && dst <= 250 ?

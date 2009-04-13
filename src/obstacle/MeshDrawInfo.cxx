@@ -1230,7 +1230,7 @@ void* MeshDrawInfo::pack(void* buf) const
   buf = nboPackStdString(buf, name);
 
   // options
-  buf = nboPackInt(buf, lodOptions.size());
+  buf = nboPackInt32(buf, lodOptions.size());
   for (i = 0; i < (int)lodOptions.size(); i++) {
     buf = nboPackStdString(buf, lodOptions[i]);
   }
@@ -1239,7 +1239,7 @@ void* MeshDrawInfo::pack(void* buf) const
   const bool haveAnim = (animInfo != NULL);
   uint32_t state = 0;
   state |= haveAnim   ? (1 << 0) : 0;
-  buf = nboPackUInt(buf, state);
+  buf = nboPackUInt32(buf, state);
 
   // animation information
   if (haveAnim) {
@@ -1247,36 +1247,36 @@ void* MeshDrawInfo::pack(void* buf) const
   }
 
   // corners
-  buf = nboPackInt (buf, cornerCount);
+  buf = nboPackInt32 (buf, cornerCount);
   for (i = 0; i < cornerCount; i++) {
     buf = corners[i].pack(buf);
   }
 
   // raw vertices
-  buf = nboPackInt (buf, rawVertCount);
+  buf = nboPackInt32 (buf, rawVertCount);
   for (i = 0; i < rawVertCount; i++) {
     buf = nboPackFVec3(buf, rawVerts[i]);
   }
   // raw normals
-  buf = nboPackInt (buf, rawNormCount);
+  buf = nboPackInt32 (buf, rawNormCount);
   for (i = 0; i < rawNormCount; i++) {
     buf = nboPackFVec3(buf, rawNorms[i]);
   }
   // raw texcoords
-  buf = nboPackInt (buf, rawTxcdCount);
+  buf = nboPackInt32 (buf, rawTxcdCount);
   for (i = 0; i < rawTxcdCount; i++) {
     buf = nboPackFloat(buf, rawTxcds[i][0]);
     buf = nboPackFloat(buf, rawTxcds[i][1]);
   }
 
   // lods
-  buf = nboPackInt (buf, lodCount);
+  buf = nboPackInt32 (buf, lodCount);
   for (i = 0; i < lodCount; i++) {
     buf = lods[i].pack(buf);
   }
 
   // radar lods
-  buf = nboPackInt (buf, radarCount);
+  buf = nboPackInt32 (buf, radarCount);
   for (i = 0; i < radarCount; i++) {
     buf = radarLods[i].pack(buf);
   }
@@ -1293,15 +1293,15 @@ void* MeshDrawInfo::pack(void* buf) const
 void* MeshDrawInfo::unpack(void* buf)
 {
   int i;
-  int32_t s32;
+  int32_t i32;
 
   // name
   buf = nboUnpackStdString(buf, name);
 
   // options
-  buf = nboUnpackInt (buf, s32);
+  buf = nboUnpackInt32 (buf, i32);
   lodOptions.clear();
-  for (i = 0; i < s32; i++) {
+  for (i = 0; i < i32; i++) {
     std::string option;
     buf = nboUnpackStdString(buf, option);
     lodOptions.push_back(option);
@@ -1310,7 +1310,7 @@ void* MeshDrawInfo::unpack(void* buf)
   // state bits
   bool haveAnim;
   uint32_t state;
-  buf = nboUnpackUInt(buf, state);
+  buf = nboUnpackUInt32(buf, state);
   haveAnim   = (state & (1 << 0)) != 0;
 
   // animation information
@@ -1320,30 +1320,30 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // corners
-  buf = nboUnpackInt (buf, s32);
-  cornerCount = s32;
+  buf = nboUnpackInt32 (buf, i32);
+  cornerCount = i32;
   corners = new Corner[cornerCount];
   for (i = 0; i < cornerCount; i++) {
     buf = corners[i].unpack(buf);
   }
 
   // raw vertices
-  buf = nboUnpackInt (buf, s32);
-  rawVertCount = s32;
+  buf = nboUnpackInt32 (buf, i32);
+  rawVertCount = i32;
   rawVerts = new fvec3[rawVertCount];
   for (i = 0; i < rawVertCount; i++) {
     buf = nboUnpackFVec3(buf, rawVerts[i]);
   }
   // raw normals
-  buf = nboUnpackInt (buf, s32);
-  rawNormCount = s32;
+  buf = nboUnpackInt32 (buf, i32);
+  rawNormCount = i32;
   rawNorms = new fvec3[rawNormCount];
   for (i = 0; i < rawNormCount; i++) {
     buf = nboUnpackFVec3(buf, rawNorms[i]);
   }
   // raw texcoords
-  buf = nboUnpackInt (buf, s32);
-  rawTxcdCount = s32;
+  buf = nboUnpackInt32 (buf, i32);
+  rawTxcdCount = i32;
   rawTxcds = new fvec2[rawTxcdCount];
   for (i = 0; i < rawTxcdCount; i++) {
     buf = nboUnpackFloat(buf, rawTxcds[i][0]);
@@ -1351,16 +1351,16 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // lods
-  buf = nboUnpackInt (buf, s32);
-  lodCount = s32;
+  buf = nboUnpackInt32 (buf, i32);
+  lodCount = i32;
   lods = new DrawLod[lodCount];
   for (i = 0; i < lodCount; i++) {
     buf = lods[i].unpack(buf);
   }
 
   // radar lods
-  buf = nboUnpackInt (buf, s32);
-  radarCount = s32;
+  buf = nboUnpackInt32 (buf, i32);
+  radarCount = i32;
   radarLods = new DrawLod[radarCount];
   for (i = 0; i < radarCount; i++) {
     buf = radarLods[i].unpack(buf);
@@ -1407,15 +1407,15 @@ void* Corner::pack(void* buf) const
   if ((vertex > MaxUShort) || (vertex < 0) ||
       (normal > MaxUShort) || (normal < 0) ||
       (texcoord > MaxUShort) || (texcoord < 0)) {
-    buf = nboPackUByte(buf, 0);
-    buf = nboPackInt(buf, vertex);
-    buf = nboPackInt(buf, normal);
-    buf = nboPackInt(buf, texcoord);
+    buf = nboPackUInt8(buf, 0);
+    buf = nboPackInt32(buf, vertex);
+    buf = nboPackInt32(buf, normal);
+    buf = nboPackInt32(buf, texcoord);
   } else {
-    buf = nboPackUByte(buf, 1);
-    buf = nboPackUShort(buf, vertex);
-    buf = nboPackUShort(buf, normal);
-    buf = nboPackUShort(buf, texcoord);
+    buf = nboPackUInt8(buf, 1);
+    buf = nboPackUInt16(buf, vertex);
+    buf = nboPackUInt16(buf, normal);
+    buf = nboPackUInt16(buf, texcoord);
   }
   return buf;
 }
@@ -1424,22 +1424,22 @@ void* Corner::pack(void* buf) const
 void* Corner::unpack(void* buf)
 {
   uint8_t u8;
-  buf = nboUnpackUByte(buf, u8);
+  buf = nboUnpackUInt8(buf, u8);
   if (u8 == 0) {
-    int32_t s32;
-    buf = nboUnpackInt(buf, s32);
-    vertex = s32;
-    buf = nboUnpackInt(buf, s32);
-    normal = s32;
-    buf = nboUnpackInt(buf, s32);
-    texcoord = s32;
+    int32_t i32;
+    buf = nboUnpackInt32(buf, i32);
+    vertex = i32;
+    buf = nboUnpackInt32(buf, i32);
+    normal = i32;
+    buf = nboUnpackInt32(buf, i32);
+    texcoord = i32;
   } else {
     uint16_t u16;
-    buf = nboUnpackUShort(buf, u16);
+    buf = nboUnpackUInt16(buf, u16);
     vertex = u16;
-    buf = nboUnpackUShort(buf, u16);
+    buf = nboUnpackUInt16(buf, u16);
     normal = u16;
-    buf = nboUnpackUShort(buf, u16);
+    buf = nboUnpackUInt16(buf, u16);
     texcoord = u16;
   }
   return buf;
@@ -1531,18 +1531,18 @@ int DrawCmd::packSize() const
 
 void* DrawCmd::pack(void* buf) const
 {
-  buf = nboPackUInt(buf, drawMode);
-  buf = nboPackInt(buf, count);
-  buf = nboPackUInt(buf, indexType);
+  buf = nboPackUInt32(buf, drawMode);
+  buf = nboPackInt32(buf, count);
+  buf = nboPackUInt32(buf, indexType);
   if (indexType == DrawIndexUShort) {
     for (int i = 0; i < count; i++) {
       uint16_t tmp = ((unsigned short*)indices)[i];
-      buf = nboPackUShort(buf, tmp);
+      buf = nboPackUInt16(buf, tmp);
     }
   } else {
     for (int i = 0; i < count; i++) {
       uint32_t tmp = ((unsigned int*)indices)[i];
-      buf = nboPackUInt(buf, tmp);
+      buf = nboPackUInt32(buf, tmp);
     }
   }
   return buf;
@@ -1552,25 +1552,25 @@ void* DrawCmd::pack(void* buf) const
 void* DrawCmd::unpack(void* buf)
 {
   uint16_t u16;
-  int32_t s32;
+  int32_t i32;
   uint32_t u32;
 
-  buf = nboUnpackUInt(buf, u32);
+  buf = nboUnpackUInt32(buf, u32);
   drawMode = u32;
-  buf = nboUnpackInt(buf, s32);
-  count = s32;
-  buf = nboUnpackUInt(buf, u32);
+  buf = nboUnpackInt32(buf, i32);
+  count = i32;
+  buf = nboUnpackUInt32(buf, u32);
   indexType = u32;
   if (indexType == DrawIndexUShort) {
     indices = new unsigned short[count];
     for (int i = 0; i < count; i++) {
-      buf = nboUnpackUShort(buf, u16);
+      buf = nboUnpackUInt16(buf, u16);
       ((unsigned short*)indices)[i] = u16;
     }
   } else {
     indices = new unsigned int[count];
     for (int i = 0; i < count; i++) {
-      buf = nboUnpackUInt(buf, u32);
+      buf = nboUnpackUInt32(buf, u32);
       ((unsigned int*)indices)[i] = u32;
     }
   }
@@ -1618,14 +1618,14 @@ int DrawSet::packSize() const
 
 void* DrawSet::pack(void* buf) const
 {
-  buf = nboPackInt(buf, count);
+  buf = nboPackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     buf = cmds[i].pack(buf);
   }
 
   // material
   int matindex = MATERIALMGR.getIndex(material);
-  buf = nboPackInt(buf, matindex);
+  buf = nboPackInt32(buf, matindex);
 
   // sphere
   buf = nboPackFVec4(buf, sphere);
@@ -1633,7 +1633,7 @@ void* DrawSet::pack(void* buf) const
   // state bits
   uint8_t state = 0;
   state |= wantList ? (1 << 0) : 0;
-  buf = nboPackUByte(buf, state);
+  buf = nboPackUInt8(buf, state);
 
   return buf;
 }
@@ -1641,24 +1641,24 @@ void* DrawSet::pack(void* buf) const
 
 void* DrawSet::unpack(void* buf)
 {
-  int32_t s32;
-  buf = nboUnpackInt(buf, s32);
-  count = s32;
+  int32_t i32;
+  buf = nboUnpackInt32(buf, i32);
+  count = i32;
   cmds = new DrawCmd[count];
   for (int i = 0; i < count; i++) {
     buf = cmds[i].unpack(buf);
   }
 
   // material
-  buf = nboUnpackInt(buf, s32);
-  material = MATERIALMGR.getMaterial(s32);
+  buf = nboUnpackInt32(buf, i32);
+  material = MATERIALMGR.getMaterial(i32);
 
   // sphere
   buf = nboUnpackFVec4(buf, sphere);
 
   // state bits
   uint8_t state;
-  buf = nboUnpackUByte(buf, state);
+  buf = nboUnpackUInt8(buf, state);
   wantList = (state & (1 << 0)) != 0;
 
   return buf;
@@ -1700,7 +1700,7 @@ int DrawLod::packSize() const
 
 void* DrawLod::pack(void* buf) const
 {
-  buf = nboPackInt(buf, count);
+  buf = nboPackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     buf = sets[i].pack(buf);
   }
@@ -1711,9 +1711,9 @@ void* DrawLod::pack(void* buf) const
 
 void* DrawLod::unpack(void* buf)
 {
-  int32_t s32;
-  buf = nboUnpackInt(buf, s32);
-  count = s32;
+  int32_t i32;
+  buf = nboUnpackInt32(buf, i32);
+  count = i32;
   sets = new DrawSet[count];
   for (int i = 0; i < count; i++) {
     buf = sets[i].unpack(buf);

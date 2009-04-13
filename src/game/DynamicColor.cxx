@@ -124,7 +124,7 @@ const DynamicColor* DynamicColorManager::getColor(int id) const
 void * DynamicColorManager::pack(void *buf) const
 {
   vector<DynamicColor*>::const_iterator it;
-  buf = nboPackUInt(buf, (int)colors.size());
+  buf = nboPackUInt32(buf, (int)colors.size());
   for (it = colors.begin(); it != colors.end(); it++) {
     const DynamicColor* color = *it;
     buf = color->pack(buf);
@@ -137,7 +137,7 @@ void * DynamicColorManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt32 (buf, count);
   for (i = 0; i < count; i++) {
     DynamicColor* color = new DynamicColor;
     buf = color->unpack(buf);
@@ -450,10 +450,10 @@ void* DynamicColor::pack(void *buf) const
 
   buf = nboPackStdString(buf, varName);
   buf = nboPackFloat(buf, varTime);
-  buf = nboPackUByte(buf, varNoAlpha ? 1 : 0);
+  buf = nboPackUInt8(buf, varNoAlpha ? 1 : 0);
 
   buf = nboPackFloat(buf, statesDelay);
-  buf = nboPackUInt(buf, (uint32_t)colorStates.size());
+  buf = nboPackUInt32(buf, (uint32_t)colorStates.size());
   for (size_t i = 0; i < colorStates.size(); i++) {
     const ColorState& state = colorStates[i];
     buf = nboPackFVec4(buf, state.color);
@@ -471,12 +471,12 @@ void* DynamicColor::unpack(void *buf)
   uint8_t u8;
   buf = nboUnpackStdString(buf, varName);
   buf = nboUnpackFloat(buf, varTime);
-  buf = nboUnpackUByte(buf, u8);
+  buf = nboUnpackUInt8(buf, u8);
   varNoAlpha = (u8 != 0);
 
   uint32_t statesCount;
   buf = nboUnpackFloat(buf, statesDelay);
-  buf = nboUnpackUInt(buf, statesCount);
+  buf = nboUnpackUInt32(buf, statesCount);
   for (size_t i = 0; i < statesCount; i++) {
     ColorState state;
     buf = nboUnpackFVec4(buf, state.color);

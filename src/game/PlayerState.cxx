@@ -69,8 +69,8 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
   if (increment)
     order++;
 
-  buf = nboPackInt(buf, int32_t(order));
-  buf = nboPackShort(buf, int16_t(status));
+  buf = nboPackInt32(buf, int32_t(order));
+  buf = nboPackInt16(buf, int16_t(status));
 
   if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
       (fabsf(pos.x) >= smallMaxDist)      ||
@@ -108,23 +108,23 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     aziShort    = (int16_t) ((angle * smallScale) / M_PI);
     angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
 
-    buf = nboPackShort(buf, posShort[0]);
-    buf = nboPackShort(buf, posShort[1]);
-    buf = nboPackShort(buf, posShort[2]);
-    buf = nboPackShort(buf, velShort[0]);
-    buf = nboPackShort(buf, velShort[1]);
-    buf = nboPackShort(buf, velShort[2]);
-    buf = nboPackShort(buf, aziShort);
-    buf = nboPackShort(buf, angVelShort);
+    buf = nboPackInt16(buf, posShort[0]);
+    buf = nboPackInt16(buf, posShort[1]);
+    buf = nboPackInt16(buf, posShort[2]);
+    buf = nboPackInt16(buf, velShort[0]);
+    buf = nboPackInt16(buf, velShort[1]);
+    buf = nboPackInt16(buf, velShort[2]);
+    buf = nboPackInt16(buf, aziShort);
+    buf = nboPackInt16(buf, angVelShort);
   }
 
   if ((status & JumpJets) != 0) {
     float tmp = clampedValue(jumpJetsScale, 1.0f);
-    buf = nboPackShort(buf, (int16_t) (tmp * smallScale));
+    buf = nboPackInt16(buf, (int16_t) (tmp * smallScale));
   }
 
   if ((status & OnDriver) != 0) {
-    buf = nboPackInt(buf, phydrv);
+    buf = nboPackInt32(buf, phydrv);
   }
 
   if ((status & UserInputs) != 0) {
@@ -132,15 +132,15 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
     int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
-    buf = nboPackShort(buf, speed);
+    buf = nboPackInt16(buf, speed);
     // pack userAngVel
     tmp = clampedValue(userAngVel, smallMaxAngVel);
     int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
-    buf = nboPackShort(buf, angvel);
+    buf = nboPackInt16(buf, angvel);
   }
 
   if ((status & PlaySound) != 0) {
-    buf = nboPackUByte(buf, sounds);
+    buf = nboPackUInt8(buf, sounds);
   }
 
   return buf;
@@ -152,8 +152,8 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
   if (increment)
     order++;
 
-  msg->packInt(int32_t(order));
-  msg->packShort(int16_t(status));
+  msg->packInt32(int32_t(order));
+  msg->packInt16(int16_t(status));
 
   if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
       (fabsf(pos.x) >= smallMaxDist)      ||
@@ -191,23 +191,23 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
     aziShort = (int16_t) ((angle * smallScale) / M_PI);
     angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
 
-    msg->packShort(posShort[0]);
-    msg->packShort(posShort[1]);
-    msg->packShort(posShort[2]);
-    msg->packShort(velShort[0]);
-    msg->packShort(velShort[1]);
-    msg->packShort(velShort[2]);
-    msg->packShort(aziShort);
-    msg->packShort(angVelShort);
+    msg->packInt16(posShort[0]);
+    msg->packInt16(posShort[1]);
+    msg->packInt16(posShort[2]);
+    msg->packInt16(velShort[0]);
+    msg->packInt16(velShort[1]);
+    msg->packInt16(velShort[2]);
+    msg->packInt16(aziShort);
+    msg->packInt16(angVelShort);
   }
 
   if ((status & JumpJets) != 0) {
     float tmp = clampedValue(jumpJetsScale, 1.0f);
-    msg->packShort((int16_t) (tmp * smallScale));
+    msg->packInt16((int16_t) (tmp * smallScale));
   }
 
   if ((status & OnDriver) != 0) {
-    msg->packInt(phydrv);
+    msg->packInt32(phydrv);
   }
 
   if ((status & UserInputs) != 0) {
@@ -215,15 +215,15 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
     int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
-    msg->packShort(speed);
+    msg->packInt16(speed);
     // pack userAngVel
     tmp = clampedValue(userAngVel, smallMaxAngVel);
     int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
-    msg->packShort(angvel);
+    msg->packInt16(angvel);
   }
 
   if ((status & PlaySound) != 0) {
-    msg->packUByte(sounds);
+    msg->packUInt8(sounds);
   }
 }
 
@@ -232,8 +232,8 @@ void* PlayerState::unpack(void* buf, uint16_t code)
 {
   int32_t inOrder;
   int16_t inStatus;
-  buf = nboUnpackInt(buf, inOrder);
-  buf = nboUnpackShort(buf, inStatus);
+  buf = nboUnpackInt32(buf, inOrder);
+  buf = nboUnpackInt16(buf, inStatus);
   order = int(inOrder);
   status = short(inStatus);
 
@@ -245,14 +245,14 @@ void* PlayerState::unpack(void* buf, uint16_t code)
   } else {
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
 
-    buf = nboUnpackShort(buf, posShort[0]);
-    buf = nboUnpackShort(buf, posShort[1]);
-    buf = nboUnpackShort(buf, posShort[2]);
-    buf = nboUnpackShort(buf, velShort[0]);
-    buf = nboUnpackShort(buf, velShort[1]);
-    buf = nboUnpackShort(buf, velShort[2]);
-    buf = nboUnpackShort(buf, aziShort);
-    buf = nboUnpackShort(buf, angVelShort);
+    buf = nboUnpackInt16(buf, posShort[0]);
+    buf = nboUnpackInt16(buf, posShort[1]);
+    buf = nboUnpackInt16(buf, posShort[2]);
+    buf = nboUnpackInt16(buf, velShort[0]);
+    buf = nboUnpackInt16(buf, velShort[1]);
+    buf = nboUnpackInt16(buf, velShort[2]);
+    buf = nboUnpackInt16(buf, aziShort);
+    buf = nboUnpackInt16(buf, angVelShort);
 
     for (int i=0; i<3; i++) {
       pos[i] = ((float)posShort[i] * smallMaxDist) / smallScale;
@@ -264,7 +264,7 @@ void* PlayerState::unpack(void* buf, uint16_t code)
 
   if ((inStatus & JumpJets) != 0) {
     int16_t jumpJetsShort;
-    buf = nboUnpackShort(buf, jumpJetsShort);
+    buf = nboUnpackInt16(buf, jumpJetsShort);
     jumpJetsScale = ((float)jumpJetsShort) / smallScale;
   } else {
     jumpJetsScale = 0.0f;
@@ -272,7 +272,7 @@ void* PlayerState::unpack(void* buf, uint16_t code)
 
   if ((inStatus & OnDriver) != 0) {
     int32_t inPhyDrv;
-    buf = nboUnpackInt(buf, inPhyDrv);
+    buf = nboUnpackInt32(buf, inPhyDrv);
     phydrv = int(inPhyDrv);
   } else {
     phydrv = -1;
@@ -280,8 +280,8 @@ void* PlayerState::unpack(void* buf, uint16_t code)
 
   if ((inStatus & UserInputs) != 0) {
     int16_t userSpeedShort, userAngVelShort;
-    buf = nboUnpackShort(buf, userSpeedShort);
-    buf = nboUnpackShort(buf, userAngVelShort);
+    buf = nboUnpackInt16(buf, userSpeedShort);
+    buf = nboUnpackInt16(buf, userAngVelShort);
     userSpeed = ((float)userSpeedShort * smallMaxVel) / smallScale;
     userAngVel = ((float)userAngVelShort * smallMaxAngVel) / smallScale;
   } else {
@@ -290,7 +290,7 @@ void* PlayerState::unpack(void* buf, uint16_t code)
   }
 
   if ((inStatus & PlaySound) != 0) {
-    buf = nboUnpackUByte(buf, sounds);
+    buf = nboUnpackUInt8(buf, sounds);
   } else {
     sounds = NoSounds;
   }

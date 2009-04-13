@@ -77,8 +77,8 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
 
   // decode header
   void* buf = buffer;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 
   // make sure we got the rest of the message
   if (len != n - 4)
@@ -136,8 +136,8 @@ bool			PingPacket::write(int fd,
 {
   char buffer[PacketSize] = {0};
   void* buf = buffer;
-  buf = nboPackUShort(buf, PacketSize - 4);
-  buf = nboPackUShort(buf, MsgPingCodeReply);
+  buf = nboPackUInt16(buf, PacketSize - 4);
+  buf = nboPackUInt16(buf, MsgPingCodeReply);
   buf = pack(buf, getServerVersion());
   return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
@@ -151,8 +151,8 @@ bool			PingPacket::isRequest(int fd,
   uint16_t len, code;
   int size = recvBroadcast(fd, buffer, sizeof(buffer), addr);
   if (size < 2) return false;
-  msg = nboUnpackUShort(msg, len);
-  msg = nboUnpackUShort(msg, code);
+  msg = nboUnpackUInt16(msg, len);
+  msg = nboUnpackUInt16(msg, code);
   return code == MsgPingCodeRequest;
 }
 
@@ -162,9 +162,9 @@ bool			PingPacket::sendRequest(int fd,
   if (fd < 0 || !addr) return false;
   char buffer[6];
   void *msg = buffer;
-  msg = nboPackUShort(msg, 2);
-  msg = nboPackUShort(msg, MsgPingCodeRequest);
-  msg = nboPackUShort(msg, (uint16_t) 0);
+  msg = nboPackUInt16(msg, 2);
+  msg = nboPackUInt16(msg, MsgPingCodeRequest);
+  msg = nboPackUInt16(msg, (uint16_t) 0);
   return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
@@ -173,27 +173,27 @@ void*			PingPacket::unpack(void* buf, char* version)
   buf = nboUnpackString(buf, version, 8);
   buf = serverId.unpack(buf);
   buf = sourceAddr.unpack(buf);
-  buf = nboUnpackUShort(buf, gameType);
-  buf = nboUnpackUShort(buf, gameOptions);
-  buf = nboUnpackUShort(buf, maxShots);
-  buf = nboUnpackUShort(buf, shakeWins);
-  buf = nboUnpackUShort(buf, shakeTimeout);
-  buf = nboUnpackUShort(buf, maxPlayerScore);
-  buf = nboUnpackUShort(buf, maxTeamScore);
-  buf = nboUnpackUShort(buf, maxTime);
-  buf = nboUnpackUByte(buf, maxPlayers);
-  buf = nboUnpackUByte(buf, rogueCount);
-  buf = nboUnpackUByte(buf, rogueMax);
-  buf = nboUnpackUByte(buf, redCount);
-  buf = nboUnpackUByte(buf, redMax);
-  buf = nboUnpackUByte(buf, greenCount);
-  buf = nboUnpackUByte(buf, greenMax);
-  buf = nboUnpackUByte(buf, blueCount);
-  buf = nboUnpackUByte(buf, blueMax);
-  buf = nboUnpackUByte(buf, purpleCount);
-  buf = nboUnpackUByte(buf, purpleMax);
-  buf = nboUnpackUByte(buf, observerCount);
-  buf = nboUnpackUByte(buf, observerMax);
+  buf = nboUnpackUInt16(buf, gameType);
+  buf = nboUnpackUInt16(buf, gameOptions);
+  buf = nboUnpackUInt16(buf, maxShots);
+  buf = nboUnpackUInt16(buf, shakeWins);
+  buf = nboUnpackUInt16(buf, shakeTimeout);
+  buf = nboUnpackUInt16(buf, maxPlayerScore);
+  buf = nboUnpackUInt16(buf, maxTeamScore);
+  buf = nboUnpackUInt16(buf, maxTime);
+  buf = nboUnpackUInt8(buf, maxPlayers);
+  buf = nboUnpackUInt8(buf, rogueCount);
+  buf = nboUnpackUInt8(buf, rogueMax);
+  buf = nboUnpackUInt8(buf, redCount);
+  buf = nboUnpackUInt8(buf, redMax);
+  buf = nboUnpackUInt8(buf, greenCount);
+  buf = nboUnpackUInt8(buf, greenMax);
+  buf = nboUnpackUInt8(buf, blueCount);
+  buf = nboUnpackUInt8(buf, blueMax);
+  buf = nboUnpackUInt8(buf, purpleCount);
+  buf = nboUnpackUInt8(buf, purpleMax);
+  buf = nboUnpackUInt8(buf, observerCount);
+  buf = nboUnpackUInt8(buf, observerMax);
   return buf;
 }
 
@@ -202,27 +202,27 @@ void*			PingPacket::pack(void* buf, const char* version) const
   buf = nboPackString(buf, version, 8);
   buf = serverId.pack(buf);
   buf = sourceAddr.pack(buf);
-  buf = nboPackUShort(buf, gameType);
-  buf = nboPackUShort(buf, gameOptions);
-  buf = nboPackUShort(buf, maxShots);
-  buf = nboPackUShort(buf, shakeWins);
-  buf = nboPackUShort(buf, shakeTimeout);	// 1/10ths of second
-  buf = nboPackUShort(buf, maxPlayerScore);
-  buf = nboPackUShort(buf, maxTeamScore);
-  buf = nboPackUShort(buf, maxTime);
-  buf = nboPackUByte(buf, maxPlayers);
-  buf = nboPackUByte(buf, rogueCount);
-  buf = nboPackUByte(buf, rogueMax);
-  buf = nboPackUByte(buf, redCount);
-  buf = nboPackUByte(buf, redMax);
-  buf = nboPackUByte(buf, greenCount);
-  buf = nboPackUByte(buf, greenMax);
-  buf = nboPackUByte(buf, blueCount);
-  buf = nboPackUByte(buf, blueMax);
-  buf = nboPackUByte(buf, purpleCount);
-  buf = nboPackUByte(buf, purpleMax);
-  buf = nboPackUByte(buf, observerCount);
-  buf = nboPackUByte(buf, observerMax);
+  buf = nboPackUInt16(buf, gameType);
+  buf = nboPackUInt16(buf, gameOptions);
+  buf = nboPackUInt16(buf, maxShots);
+  buf = nboPackUInt16(buf, shakeWins);
+  buf = nboPackUInt16(buf, shakeTimeout);	// 1/10ths of second
+  buf = nboPackUInt16(buf, maxPlayerScore);
+  buf = nboPackUInt16(buf, maxTeamScore);
+  buf = nboPackUInt16(buf, maxTime);
+  buf = nboPackUInt8(buf, maxPlayers);
+  buf = nboPackUInt8(buf, rogueCount);
+  buf = nboPackUInt8(buf, rogueMax);
+  buf = nboPackUInt8(buf, redCount);
+  buf = nboPackUInt8(buf, redMax);
+  buf = nboPackUInt8(buf, greenCount);
+  buf = nboPackUInt8(buf, greenMax);
+  buf = nboPackUInt8(buf, blueCount);
+  buf = nboPackUInt8(buf, blueMax);
+  buf = nboPackUInt8(buf, purpleCount);
+  buf = nboPackUInt8(buf, purpleMax);
+  buf = nboPackUInt8(buf, observerCount);
+  buf = nboPackUInt8(buf, observerMax);
   return buf;
 }
 
@@ -366,8 +366,8 @@ void			 PingPacket::writeToFile (std::ostream& out) const
 
   char buffer[PingPacket::PacketSize];
   void* buf = buffer;
-  buf = nboPackUShort(buf, PingPacket::PacketSize - 4);
-  buf = nboPackUShort(buf, MsgPingCodeReply);
+  buf = nboPackUInt16(buf, PingPacket::PacketSize - 4);
+  buf = nboPackUInt16(buf, MsgPingCodeReply);
   buf = pack(buf, getServerVersion());
   out.write(buffer,sizeof(buffer));
 }
@@ -389,8 +389,8 @@ bool			 PingPacket::readFromFile(std::istream& in)
 
   // decode header
   void* buf = buffer;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 
   // make sure we got the rest of the message
   if (len != in.gcount() - 4){

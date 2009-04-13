@@ -485,14 +485,14 @@ void* SphereObstacle::pack(void *buf) const
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFVec3(buf, size);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackInt(buf, divisions);
-  buf = nboPackInt(buf, phydrv);
+  buf = nboPackInt32(buf, divisions);
+  buf = nboPackInt32(buf, phydrv);
 
   buf = nboPackFVec2(buf, texsize);
   
   for (int i = 0; i < MaterialCount; i++) {
     int matindex = MATERIALMGR.getIndex(materials[i]);
-    buf = nboPackInt(buf, matindex);
+    buf = nboPackInt32(buf, matindex);
   }
 
   // pack the state byte
@@ -503,7 +503,7 @@ void* SphereObstacle::pack(void *buf) const
   stateByte |= useNormals       ? (1 << 3) : 0;
   stateByte |= hemisphere       ? (1 << 4) : 0;
   stateByte |= canRicochet()    ? (1 << 5) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -516,22 +516,22 @@ void* SphereObstacle::unpack(void *buf)
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFVec3(buf, size);
   buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   divisions = int(inTmp);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   phydrv = int(inTmp);
 
   buf = nboUnpackFVec2(buf, texsize);
 
   for (int i = 0; i < MaterialCount; i++) {
     int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt32(buf, matindex);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }
 
   // unpack the state byte
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 2)) != 0;

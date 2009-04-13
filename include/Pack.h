@@ -27,13 +27,13 @@
 #include "vectors.h"
 
 
-extern void* nboPackUByte     (void*, uint8_t);
-extern void* nboPackShort     (void*, int16_t);
-extern void* nboPackInt       (void*, int32_t);
-extern void* nboPackUShort    (void*, uint16_t);
-extern void* nboPackUInt      (void*, uint32_t);
-extern void* nboPackI64       (void*, int64_t);
-extern void* nboPackU64       (void*, uint64_t);
+extern void* nboPackUInt8     (void*, uint8_t);
+extern void* nboPackInt16     (void*, int16_t);
+extern void* nboPackInt32     (void*, int32_t);
+extern void* nboPackUInt16    (void*, uint16_t);
+extern void* nboPackUInt32    (void*, uint32_t);
+extern void* nboPackInt64     (void*, int64_t);
+extern void* nboPackUInt64    (void*, uint64_t);
 extern void* nboPackFloat     (void*, float);
 extern void* nboPackDouble    (void*, double);
 extern void* nboPackFVec2     (void*, const fvec2&);
@@ -42,13 +42,13 @@ extern void* nboPackFVec4     (void*, const fvec4&);
 extern void* nboPackString    (void*, const void*, int len);
 extern void* nboPackStdString (void*, const std::string& str);
 
-extern void* nboUnpackUByte        (void*, uint8_t&);
-extern void* nboUnpackShort        (void*, int16_t&);
-extern void* nboUnpackInt          (void*, int32_t&);
-extern void* nboUnpackUShort       (void*, uint16_t&);
-extern void* nboUnpackUInt         (void*, uint32_t&);
-extern void* nboUnpackI64          (void*, int64_t&);
-extern void* nboUnpackU64          (void*, uint64_t&);
+extern void* nboUnpackUInt8        (void*, uint8_t&);
+extern void* nboUnpackInt16        (void*, int16_t&);
+extern void* nboUnpackInt32        (void*, int32_t&);
+extern void* nboUnpackUInt16       (void*, uint16_t&);
+extern void* nboUnpackUInt32       (void*, uint32_t&);
+extern void* nboUnpackInt64        (void*, int64_t&);
+extern void* nboUnpackUInt64       (void*, uint64_t&);
 extern void* nboUnpackFloat        (void*, float&);
 extern void* nboUnpackDouble       (void*, double&);
 extern void* nboUnpackFVec2        (void*, fvec2&);

@@ -497,7 +497,7 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   char packet[ShotUpdatePLen + PlayerIdPLen];
   void *buf = (void*)packet;
   buf = firingInfo.shot.pack(buf);
-  buf = nboPackUByte(buf, lastTarget);
+  buf = nboPackUInt8(buf, lastTarget);
   ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
@@ -510,7 +510,7 @@ void GuidedMissileStrategy::readUpdate( void* msg)
   // to be rare anyway.
 
   // read the lastTarget
-  nboUnpackUByte(msg, lastTarget);
+  nboUnpackUInt8(msg, lastTarget);
 
   // fix up dependent variables
   const fvec3& vel = getPath().getVelocity();

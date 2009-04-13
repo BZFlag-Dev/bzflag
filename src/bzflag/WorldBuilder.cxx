@@ -50,13 +50,13 @@ void* WorldBuilder::unpack(void* buf)
   // unpack world database from network transfer
   // read style header
   uint16_t code, len;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
   if (code != WorldCodeHeader) return NULL;
 
   // read style
   uint16_t serverMapVersion;
-  buf = nboUnpackUShort(buf, serverMapVersion);
+  buf = nboUnpackUInt16(buf, serverMapVersion);
   if (serverMapVersion != mapVersion) {
     logDebugMessage(1,"WorldBuilder::unpack() bad map version\n");
     return NULL;
@@ -64,8 +64,8 @@ void* WorldBuilder::unpack(void* buf)
 
   // decompress
   uint32_t compressedSize, uncompressedSize;
-  buf = nboUnpackUInt (buf, uncompressedSize);
-  buf = nboUnpackUInt (buf, compressedSize);
+  buf = nboUnpackUInt32 (buf, uncompressedSize);
+  buf = nboUnpackUInt32 (buf, compressedSize);
   uLongf destLen = uncompressedSize;
   char *uncompressedWorld = new char[destLen];
   char *compressedWorld = (char*) buf;
@@ -125,14 +125,14 @@ void* WorldBuilder::unpack(void* buf)
   buf = nboUnpackFloat(buf, world->waterLevel);
   if (world->waterLevel >= 0.0f) {
     int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt32(buf, matindex);
     world->waterMaterial = MATERIALMGR.getMaterial(matindex);
   }
 
   uint32_t i, count;
 
   // unpack the weapons
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     Weapon weapon;
     buf = weapon.unpack(buf);
@@ -140,7 +140,7 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   // unpack the entry zones
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     EntryZone zone;
     buf = zone.unpack(buf);
@@ -169,8 +169,8 @@ void* WorldBuilder::unpack(void* buf)
 
   // switch back to the original buffer
   buf = compressedWorld + compressedSize;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
   if ((code != WorldCodeEnd) || (len != WorldCodeEndSize)) {
     delete[] uncompressedWorld;
     logDebugMessage(1,"WorldBuilder::unpack() bad ending\n");
@@ -224,20 +224,20 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   float worldSize;
   buf = nboUnpackFloat(buf, worldSize);
   BZDB.setFloat(StateDatabase::BZDB_WORLDSIZE, worldSize);
-  buf = nboUnpackUShort(buf, gameType);
+  buf = nboUnpackUInt16(buf, gameType);
   setGameType(short(gameType));
-  buf = nboUnpackUShort(buf, gameOptions);
+  buf = nboUnpackUInt16(buf, gameOptions);
   setGameOptions(short(gameOptions));
-  buf = nboUnpackUShort(buf, maxPlayers);
+  buf = nboUnpackUInt16(buf, maxPlayers);
   setMaxPlayers(int(maxPlayers));
-  buf = nboUnpackUShort(buf, maxShots);
+  buf = nboUnpackUInt16(buf, maxShots);
   setMaxShots(int(maxShots));
-  buf = nboUnpackUShort(buf, maxFlags);
+  buf = nboUnpackUInt16(buf, maxFlags);
   setMaxFlags(int(maxFlags));
   uint16_t shakeTimeout = 0, shakeWins;
-  buf = nboUnpackUShort(buf, shakeTimeout);
+  buf = nboUnpackUInt16(buf, shakeTimeout);
   setShakeTimeout(0.1f * float(shakeTimeout));
-  buf = nboUnpackUShort(buf, shakeWins);
+  buf = nboUnpackUInt16(buf, shakeWins);
   setShakeWins(shakeWins);
 
   return buf;

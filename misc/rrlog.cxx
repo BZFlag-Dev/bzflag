@@ -297,13 +297,13 @@ static bool loadHeader(ReplayHeader * h, FILE * f)
     return false;
   }
 
-  buf = nboUnpackUInt(buffer, h->magic);
-  buf = nboUnpackUInt(buf, h->version);
-  buf = nboUnpackUInt(buf, h->offset);
+  buf = nboUnpackUInt32(buffer, h->magic);
+  buf = nboUnpackUInt32(buf, h->version);
+  buf = nboUnpackUInt32(buf, h->offset);
   buf = nboUnpackRRtime(buf, h->filetime);
-  buf = nboUnpackUInt(buf, h->player);
-  buf = nboUnpackUInt(buf, h->flagsSize);
-  buf = nboUnpackUInt(buf, h->worldSize);
+  buf = nboUnpackUInt32(buf, h->player);
+  buf = nboUnpackUInt32(buf, h->flagsSize);
+  buf = nboUnpackUInt32(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
 //FIXME  buf = nboUnpackString(buf, h->email, sizeof(h->email));
   buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
@@ -349,11 +349,11 @@ static RRpacket *loadPacket(FILE * f)
     delete p;
     return NULL;
   }
-  buf = nboUnpackUShort(bufStart, p->mode);
-  buf = nboUnpackUShort(buf, p->code);
-  buf = nboUnpackUInt(buf, p->len);
-  buf = nboUnpackUInt(buf, p->nextFilePos);
-  buf = nboUnpackUInt(buf, p->prevFilePos);
+  buf = nboUnpackUInt16(bufStart, p->mode);
+  buf = nboUnpackUInt16(buf, p->code);
+  buf = nboUnpackUInt32(buf, p->len);
+  buf = nboUnpackUInt32(buf, p->nextFilePos);
+  buf = nboUnpackUInt32(buf, p->prevFilePos);
   buf = nboUnpackRRtime(buf, p->timestamp);
 
   if (p->len > (MaxPacketLen - ((int) sizeof(u16) * 2))) {
@@ -383,8 +383,8 @@ static RRpacket *loadPacket(FILE * f)
 static void *nboUnpackRRtime(void *buf, RRtime & value)
 {
   u32 msb, lsb;
-  buf = nboUnpackUInt(buf, msb);
-  buf = nboUnpackUInt(buf, lsb);
+  buf = nboUnpackUInt32(buf, msb);
+  buf = nboUnpackUInt32(buf, lsb);
   value = ((RRtime) msb << 32) + (RRtime) lsb;
   return buf;
 }

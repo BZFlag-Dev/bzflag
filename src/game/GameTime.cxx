@@ -227,8 +227,8 @@ void* GameTime::pack(void *buf, float lag)
     halfLag = (double)(lag * 0.5f);
   }
   const i64 nowTime = getRawTime() + (i64)(halfLag * 1.0e6);
-  buf = nboPackUInt(buf, (u32)(nowTime >> 32));        // msb's
-  buf = nboPackUInt(buf, (u32)(nowTime & 0xFFFFFFFF)); // lsb's
+  buf = nboPackUInt32(buf, (u32)(nowTime >> 32));        // msb's
+  buf = nboPackUInt32(buf, (u32)(nowTime & 0xFFFFFFFF)); // lsb's
   return buf;
 }
 
@@ -242,16 +242,16 @@ void GameTime::pack(BufferedNetworkMessage *msg, float lag)
     halfLag = (double)(lag * 0.5f);
   }
   const i64 nowTime = getRawTime() + (i64)(halfLag * 1.0e6);
-  msg->packUInt((u32)(nowTime >> 32));        // msb's
-  msg->packUInt((u32)(nowTime & 0xFFFFFFFF)); // lsb's
+  msg->packUInt32((u32)(nowTime >> 32));        // msb's
+  msg->packUInt32((u32)(nowTime & 0xFFFFFFFF)); // lsb's
 }
 
 
 void* GameTime::unpack(void *buf)
 {
   u32 msb, lsb;
-  buf = nboUnpackUInt(buf, msb);
-  buf = nboUnpackUInt(buf, lsb);
+  buf = nboUnpackUInt32(buf, msb);
+  buf = nboUnpackUInt32(buf, lsb);
   const i64 netTime = ((i64)msb << 32) + (i64)lsb;
 
   // store the value

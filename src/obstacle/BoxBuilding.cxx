@@ -254,7 +254,7 @@ void* BoxBuilding::pack(void* buf) const
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
   stateByte |= canRicochet()    ? _RICOCHET   : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -267,7 +267,7 @@ void* BoxBuilding::unpack(void* buf)
   buf = nboUnpackFVec3(buf, size);
 
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0 ? 0xFF : 0;
   ricochet     = (stateByte & _RICOCHET)   != 0;

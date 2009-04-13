@@ -499,8 +499,8 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
   oldNeedForSpeed = needForSpeed;
 
   void* buf = txbuf + previousFill;
-  buf = nboPackUShort(buf, len);
-  buf = nboPackUShort(buf, code);
+  buf = nboPackUInt16(buf, len);
+  buf = nboPackUInt16(buf, code);
   if (msg && len != 0) {
     buf = nboPackString(buf, msg, len);
   }
@@ -546,8 +546,8 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 	udpLength = 0;
 	return -1;
       }
-      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
-      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+      udpBufferPtr = (char *)nboUnpackUInt16(udpBufferPtr, len);
+      udpBufferPtr = (char *)nboUnpackUInt16(udpBufferPtr, code);
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
       if (len > udpLength) {
 	udpLength = 0;
@@ -620,8 +620,8 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 
   // unpack header and get message
   void* buf = headerBuffer;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 
   //printError("Code is %02x",code);
   if (len > MaxPacketLen)
@@ -699,8 +699,8 @@ int ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 	udpLength = 0;
 	return -1;
       }
-      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
-      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+      udpBufferPtr = (char *)nboUnpackUInt16(udpBufferPtr, len);
+      udpBufferPtr = (char *)nboUnpackUInt16(udpBufferPtr, code);
       msg->setCode(code);
 
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
@@ -784,8 +784,8 @@ int ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
 
   // unpack header and get message
   void* buf = headerBuffer;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
   msg->setCode(code);
 
 
@@ -867,9 +867,9 @@ void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds )
   char msg[3] = {0};
   void* buf = msg;
 
-  buf = nboPackUByte(buf, uint8_t(_id));
-  buf = nboPackUByte(buf, downloads ? 1 : 0);
-  buf = nboPackUByte(buf, sounds ? 1 : 0);
+  buf = nboPackUInt8(buf, uint8_t(_id));
+  buf = nboPackUInt8(buf, downloads ? 1 : 0);
+  buf = nboPackUInt8(buf, sounds ? 1 : 0);
 
   send(MsgCapBits, (uint16_t)((char*)buf - msg), msg);
 }
@@ -883,10 +883,10 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
   char msg[MaxPacketLen] = {0};
   void* buf = msg;
 
-  buf = nboPackUByte(buf, uint8_t(_id));
+  buf = nboPackUInt8(buf, uint8_t(_id));
 
-  buf = nboPackUShort(buf, uint16_t(type));
-  buf = nboPackUShort(buf, uint16_t(team));
+  buf = nboPackUInt16(buf, uint16_t(type));
+  buf = nboPackUInt16(buf, uint16_t(team));
 
   ::strncpy((char*)buf, name, CallSignLen - 1);
   buf = (void*)((char*)buf + CallSignLen);
@@ -921,7 +921,7 @@ bool ServerLink::readEnter (std::string& reason,
     } else if (code == MsgReject) {
       void *buf;
       char buffer[MessageLen];
-      buf = nboUnpackUShort (msg, rejcode); // filler for now
+      buf = nboUnpackUInt16 (msg, rejcode); // filler for now
       buf = nboUnpackString (buf, buffer, MessageLen);
       buffer[MessageLen - 1] = '\0';
       reason = buffer;
@@ -940,8 +940,8 @@ void ServerLink::sendCaptureFlag(TeamColor team)
 {
   char msg[3];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  nboPackUShort(buf, uint16_t(team));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  nboPackUInt16(buf, uint16_t(team));
   send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
@@ -949,7 +949,7 @@ void ServerLink::sendDropFlag(const fvec3& position)
 {
   char msg[13];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
   buf = nboPackFVec3(buf, position);
   send(MsgDropFlag, sizeof(msg), msg);
 }
@@ -963,14 +963,14 @@ void ServerLink::sendKilled(const PlayerId victim,
   char msg[6 + FlagPackSize + 4];
   void* buf = msg;
 
-  buf = nboPackUByte(buf, uint8_t(victim));
-  buf = nboPackUByte(buf, killer);
-  buf = nboPackUShort(buf, int16_t(reason));
-  buf = nboPackShort(buf, int16_t(shotId));
+  buf = nboPackUInt8(buf, uint8_t(victim));
+  buf = nboPackUInt8(buf, killer);
+  buf = nboPackUInt16(buf, int16_t(reason));
+  buf = nboPackInt16(buf, int16_t(shotId));
   buf = flagType->pack(buf);
 
   if (reason == PhysicsDriverDeath) {
-    buf = nboPackInt(buf, phydrv);
+    buf = nboPackInt32(buf, phydrv);
   }
 
   send(MsgKilled, (uint16_t)((char*)buf - (char*)msg), msg);
@@ -983,7 +983,7 @@ void ServerLink::sendPlayerUpdate(Player* player )
   // dead reckoning use that
   void* buf = msg;
   uint16_t code;
-  buf = nboPackUByte(buf, player->getId());
+  buf = nboPackUInt8(buf, player->getId());
   buf = nboPackDouble(buf, syncedClock.GetServerSeconds());
 
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
@@ -1000,8 +1000,8 @@ void ServerLink::sendBeginShot(const FiringInfo& info)
   char msg[3];
   void* buf = msg;
 
-  buf = nboPackUByte(buf, info.shot.player);
-  buf = nboPackUShort(buf, info.shot.id);
+  buf = nboPackUInt8(buf, info.shot.player);
+  buf = nboPackUInt16(buf, info.shot.id);
 
   send(MsgShotBegin, sizeof(msg), msg);
 }
@@ -1011,9 +1011,9 @@ void ServerLink::sendEndShot(const PlayerId& source,
 {
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
-  buf = nboPackUByte(buf, source);
-  buf = nboPackShort(buf, int16_t(shotId));
-  buf = nboPackUShort(buf, uint16_t(reason));
+  buf = nboPackUInt8(buf, source);
+  buf = nboPackInt16(buf, int16_t(shotId));
+  buf = nboPackUInt16(buf, uint16_t(reason));
   send(MsgShotEnd, sizeof(msg), msg);
 }
 
@@ -1022,9 +1022,9 @@ void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
 {
   char msg[80];
   void* buf = msg;
-  buf = nboPackUByte(buf, source);
-  buf = nboPackUByte(buf, shooter);
-  buf = nboPackShort(buf, int16_t(shotId));
+  buf = nboPackUInt8(buf, source);
+  buf = nboPackUInt8(buf, shooter);
+  buf = nboPackInt16(buf, int16_t(shotId));
   send(MsgHit, sizeof(msg), msg);
 }
 #endif
@@ -1039,7 +1039,7 @@ void ServerLink::sendAlive(const PlayerId playerId)
   char msg[1];
 
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(playerId));
+  buf = nboPackUInt8(buf, uint8_t(playerId));
 
   send(MsgAlive, sizeof(msg), msg);
 }
@@ -1048,9 +1048,9 @@ void ServerLink::sendTeleport(int from, int to)
 {
   char msg[5];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackUShort(buf, uint16_t(from));
-  buf = nboPackUShort(buf, uint16_t(to));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  buf = nboPackUInt16(buf, uint16_t(from));
+  buf = nboPackUInt16(buf, uint16_t(to));
   send(MsgTeleport, sizeof(msg), msg);
 }
 
@@ -1061,7 +1061,7 @@ void ServerLink::sendCustomData ( const std::string &key, const std::string &val
 
   char msg[MaxPacketLen];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
   buf = nboPackStdString(buf, key);
   buf = nboPackStdString(buf, value);
   send(MsgPlayerData, (uint16_t)((char*)buf - msg), msg);
@@ -1089,11 +1089,11 @@ bool ServerLink::sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
 
   char msg[MaxPacketLen];
   void* buf = msg;
-  buf = nboPackUByte(buf, srcPlayerID);
-  buf = nboPackShort(buf, srcScriptID);
-  buf = nboPackUByte(buf, dstPlayerID);
-  buf = nboPackShort(buf, dstScriptID);
-  buf = nboPackUByte(buf, status);
+  buf = nboPackUInt8(buf, srcPlayerID);
+  buf = nboPackInt16(buf, srcScriptID);
+  buf = nboPackUInt8(buf, dstPlayerID);
+  buf = nboPackInt16(buf, dstScriptID);
+  buf = nboPackUInt8(buf, status);
   buf = nboPackStdString(buf, data);
 
   uint16_t code = (status & 0x80) ? MsgLuaDataFast : MsgLuaData;
@@ -1107,8 +1107,8 @@ void ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
 {
   char msg[PlayerIdPLen*2];
   void* buf = msg;
-  buf = nboPackUByte(buf, from);
-  buf = nboPackUByte(buf, to);
+  buf = nboPackUInt8(buf, from);
+  buf = nboPackUInt8(buf, to);
   send(MsgTransferFlag, sizeof(msg), msg);
 }
 
@@ -1116,7 +1116,7 @@ void ServerLink::sendNewRabbit()
 {
   char msg[1];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
   send(MsgNewRabbit, sizeof(msg), msg);
 }
 
@@ -1124,8 +1124,8 @@ void ServerLink::sendPaused(bool paused)
 {
   char msg[2];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackUByte(buf, uint8_t(paused));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(paused));
   send(MsgPause, sizeof(msg), msg);
 }
 
@@ -1133,7 +1133,7 @@ void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
 {
   char msg[2];
   void* buf = msg;
-  buf = nboPackUByte(buf, tag);
+  buf = nboPackUInt8(buf, tag);
   send(MsgWhatTimeIsIt, 1, msg);
 }
 
@@ -1141,8 +1141,8 @@ void ServerLink::sendNewPlayer( int botID )
 {
   char msg[2];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackUByte(buf, uint8_t(botID));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(botID));
 
   send(MsgNewPlayer, sizeof(msg), msg);
 }
@@ -1163,8 +1163,8 @@ void ServerLink::sendCollide(const PlayerId playerId,
   char msg[14];
 
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(playerId));
-  buf = nboPackUByte(buf, uint8_t(otherId));
+  buf = nboPackUInt8(buf, uint8_t(playerId));
+  buf = nboPackUInt8(buf, uint8_t(otherId));
   buf = nboPackFVec3(buf, pos);
 
   send(MsgCollide, sizeof(msg), msg);
@@ -1174,8 +1174,8 @@ void ServerLink::sendAutoPilot(bool autopilot)
 {
   char msg[2];
   void* buf = msg;
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackUByte(buf, uint8_t(autopilot));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(autopilot));
   send(MsgAutoPilot, sizeof(msg), msg);
 }
 
@@ -1192,8 +1192,8 @@ void ServerLink::sendMessage(const PlayerId& to, char message[MessageLen])
   char msg[MaxPacketLen];
   void* buf = msg;
 
-  buf = nboPackUByte(buf, uint8_t(getId()));
-  buf = nboPackUByte(buf, uint8_t(to));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(to));
   buf = nboPackString(buf, message, MessageLen);
 
   send(MsgMessage, (uint16_t)((char *)buf - msg), msg);
@@ -1204,7 +1204,7 @@ void ServerLink::sendLagPing(char pingRequest[2])
   char msg[3];
   void* buf = msg;
 
-  buf = nboPackUByte(buf, uint8_t(getId()));
+  buf = nboPackUInt8(buf, uint8_t(getId()));
   buf = nboPackString(buf, pingRequest, 2);
 
   send(MsgLagPing, sizeof(msg), msg);
@@ -1258,7 +1258,7 @@ void ServerLink::sendUDPlinkRequest()
     printError("Network: Created local UDP downlink port {1}", &args);
   }
 
-  buf = nboPackUByte(buf, id);
+  buf = nboPackUInt8(buf, id);
 
   if (BzfNetwork::setNonBlocking(urecvfd) < 0) {
     printError("Error: Unable to set NonBlocking for UDP receive socket");

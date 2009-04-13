@@ -118,11 +118,11 @@ void ServerPing::doPings()
       if (n < 4)
         return;
 
-      buf = nboUnpackUShort(buf, len);
-      buf = nboUnpackUShort(buf, code);
+      buf = nboUnpackUInt16(buf, len);
+      buf = nboUnpackUInt16(buf, code);
 
       if (code == MsgEchoResponse && len == 1) {
-        buf = nboUnpackUByte(buf, tag);
+        buf = nboUnpackUInt8(buf, tag);
         activepings.at(tag).recvtime = TimeKeeper::getCurrent();
         ++received;
       }
@@ -136,9 +136,9 @@ void ServerPing::sendPing(unsigned char tag)
 {
   char buffer[1 + 4];
   void *buf = buffer;
-  buf = nboPackUShort(buf, 1); //len
-  buf = nboPackUShort(buf, MsgEchoRequest);
-  buf = nboPackUByte(buf, tag);
+  buf = nboPackUInt16(buf, 1); //len
+  buf = nboPackUInt16(buf, MsgEchoRequest);
+  buf = nboPackUInt8(buf, tag);
   sendto(fd, buffer, 1 + 4, 0, (struct sockaddr*)&saddr, sizeof(saddr));
 }
 

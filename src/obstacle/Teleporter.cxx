@@ -535,13 +535,13 @@ void* Teleporter::pack(void* buf) const
   buf = nboPackFloat(buf, border);
 
   unsigned char horizontalByte = horizontal ? 1 : 0;
-  buf = nboPackUByte(buf, horizontalByte);
+  buf = nboPackUInt8(buf, horizontalByte);
 
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
   stateByte |= canRicochet()    ? _RICOCHET   : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -557,11 +557,11 @@ void* Teleporter::unpack(void* buf)
   buf = nboUnpackFloat(buf, border);
 
   unsigned char horizontalByte;
-  buf = nboUnpackUByte(buf, horizontalByte);
+  buf = nboUnpackUInt8(buf, horizontalByte);
   horizontal = (horizontalByte == 0) ? false : true;
 
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = ((stateByte & _DRIVE_THRU) != 0) ? 0xFF : 0;
   shootThrough = ((stateByte & _SHOOT_THRU) != 0) ? 0xFF : 0;
   ricochet     = ((stateByte & _RICOCHET) != 0);

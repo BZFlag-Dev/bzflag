@@ -84,14 +84,14 @@ unsigned int nboGetBufferLength()
 // Packers
 //
 
-void* nboPackUByte(void* b, uint8_t v)
+void* nboPackUInt8(void* b, uint8_t v)
 {
   ::memcpy(b, &v, sizeof(uint8_t));
   return ADV(b, uint8_t);
 }
 
 
-void* nboPackShort(void* b, int16_t v)
+void* nboPackInt16(void* b, int16_t v)
 {
   const int16_t x = (int16_t)htons(v);
   ::memcpy(b, &x, sizeof(int16_t));
@@ -99,7 +99,7 @@ void* nboPackShort(void* b, int16_t v)
 }
 
 
-void* nboPackInt(void* b, int32_t v)
+void* nboPackInt32(void* b, int32_t v)
 {
   const int32_t x = (int32_t)htonl(v);
   ::memcpy(b, &x, sizeof(int32_t));
@@ -107,7 +107,7 @@ void* nboPackInt(void* b, int32_t v)
 }
 
 
-void* nboPackUShort(void* b, uint16_t v)
+void* nboPackUInt16(void* b, uint16_t v)
 {
   const uint16_t x = (uint16_t)htons(v);
   ::memcpy(b, &x, sizeof(uint16_t));
@@ -115,7 +115,7 @@ void* nboPackUShort(void* b, uint16_t v)
 }
 
 
-void* nboPackUInt(void* b, uint32_t v)
+void* nboPackUInt32(void* b, uint32_t v)
 {
   const uint32_t x = (uint32_t)htonl(v);
   ::memcpy(b, &x, sizeof(uint32_t));
@@ -123,7 +123,7 @@ void* nboPackUInt(void* b, uint32_t v)
 }
 
 
-void* nboPackI64(void* b, int64_t v)
+void* nboPackInt64(void* b, int64_t v)
 {
   // not really htond(), but they are the same size
   htond((unsigned char*)b, (const unsigned char *)&v, 1);
@@ -131,7 +131,7 @@ void* nboPackI64(void* b, int64_t v)
 }
 
 
-void* nboPackU64(void* b, uint64_t v)
+void* nboPackUInt64(void* b, uint64_t v)
 {
   // not really htond(), but they are the same size
   htond((unsigned char*)b, (const unsigned char *)&v, 1);
@@ -226,7 +226,7 @@ void* nboPackString(void* b, const void* m, int len)
 void* nboPackStdString(void* b, const std::string& str)
 {
   uint32_t strSize = (uint32_t)str.size();
-  b = nboPackUInt(b, strSize);
+  b = nboPackUInt32(b, strSize);
   b = nboPackString(b, str.data(), strSize);
   return b;
 }
@@ -237,7 +237,7 @@ void* nboPackStdString(void* b, const std::string& str)
 // UnPackers
 //
 
-void* nboUnpackUByte(void* b, uint8_t& v)
+void* nboUnpackUInt8(void* b, uint8_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint8_t)) {
@@ -253,7 +253,7 @@ void* nboUnpackUByte(void* b, uint8_t& v)
 }
 
 
-void* nboUnpackShort(void* b, int16_t& v)
+void* nboUnpackInt16(void* b, int16_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int16_t)) {
@@ -271,7 +271,7 @@ void* nboUnpackShort(void* b, int16_t& v)
 }
 
 
-void* nboUnpackInt(void* b, int32_t& v)
+void* nboUnpackInt32(void* b, int32_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int32_t)) {
@@ -289,7 +289,7 @@ void* nboUnpackInt(void* b, int32_t& v)
 }
 
 
-void* nboUnpackUShort(void* b, uint16_t& v)
+void* nboUnpackUInt16(void* b, uint16_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint16_t)) {
@@ -307,7 +307,7 @@ void* nboUnpackUShort(void* b, uint16_t& v)
 }
 
 
-void* nboUnpackUInt(void* b, uint32_t& v)
+void* nboUnpackUInt32(void* b, uint32_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint32_t)) {
@@ -325,7 +325,7 @@ void* nboUnpackUInt(void* b, uint32_t& v)
 }
 
 
-void* nboUnpackI64(void* b, int64_t& v)
+void* nboUnpackInt64(void* b, int64_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int64_t)) {
@@ -343,7 +343,7 @@ void* nboUnpackI64(void* b, int64_t& v)
 }
 
 
-void* nboUnpackU64(void* b, uint64_t& v)
+void* nboUnpackUInt64(void* b, uint64_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint64_t)) {
@@ -508,7 +508,7 @@ void* nboUnpackString(void* b, void* m, int len)
 void* nboUnpackStdString(void* b, std::string& str)
 {
   uint32_t strSize;
-  b = nboUnpackUInt(b, strSize);
+  b = nboUnpackUInt32(b, strSize);
   char* buffer = new char[strSize + 1];
   b = nboUnpackString(b, buffer, strSize);
   buffer[strSize] = 0;
@@ -525,7 +525,7 @@ void* nboUnpackStdString(void* b, std::string& str)
 void* nboUnpackStdStringRaw(void* b, std::string& str)
 {
   uint32_t strSize;
-  b = nboUnpackUInt(b, strSize);
+  b = nboUnpackUInt32(b, strSize);
   char* buffer = new char[strSize + 1];
   b = nboUnpackString(b, buffer, strSize);
   buffer[strSize] = 0;

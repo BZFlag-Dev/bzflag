@@ -522,7 +522,7 @@ int WorldInfo::packDatabase()
   databasePtr = nboPackFloat(databasePtr, waterLevel);
   if (waterLevel >= 0.0f) {
     int matindex = MATERIALMGR.getIndex(waterMatRef);
-    databasePtr = nboPackInt(databasePtr, matindex);
+    databasePtr = nboPackInt32(databasePtr, matindex);
   }
 
   // pack weapons

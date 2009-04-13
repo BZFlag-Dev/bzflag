@@ -641,24 +641,24 @@ void *MeshObstacle::pack(void *buf) const
 {
   int i;
 
-  buf = nboPackInt(buf, checkCount);
+  buf = nboPackInt32(buf, checkCount);
   for (i = 0; i < checkCount; i++) {
-    buf = nboPackUByte(buf, checkTypes[i]);
+    buf = nboPackUInt8(buf, checkTypes[i]);
     buf = nboPackFVec3(buf, checkPoints[i]);
   }
 
-  buf = nboPackInt(buf, vertexCount);
+  buf = nboPackInt32(buf, vertexCount);
   for (i = 0; i < vertexCount; i++) {
     buf = nboPackFVec3(buf, vertices[i]);
   }
 
-  buf = nboPackInt(buf, normalCount);
+  buf = nboPackInt32(buf, normalCount);
   for (i = 0; i < normalCount; i++) {
     buf = nboPackFVec3(buf, normals[i]);
   }
 
   void* txcdStart = buf;
-  buf = nboPackInt(buf, texcoordCount);
+  buf = nboPackInt32(buf, texcoordCount);
   for (i = 0; i < texcoordCount; i++) {
     buf = nboPackFVec2(buf, texcoords[i]);
   }
@@ -673,23 +673,23 @@ void *MeshObstacle::pack(void *buf) const
     const int length = (char*)buf - (char*)drawInfoStart;
     const int missing = (align - (length % align)) % align;
     for (i = 0; i < missing; i++) {
-      buf = nboPackUByte(buf, 0);
+      buf = nboPackUInt8(buf, 0);
     }
     // bump up the texture coordinate count
     const int fullLength = ((char*)buf - (char*)drawInfoStart);
     const int extraTxcds = fullLength / sizeof(fvec2);
     const int fakeTxcdCount = texcoordCount + extraTxcds + 1;
-    nboPackInt(txcdStart, fakeTxcdCount); // NOTE: 'buf' is not being set
+    nboPackInt32(txcdStart, fakeTxcdCount); // NOTE: 'buf' is not being set
     // add the drawInfo length at the end
-    buf = nboPackInt(buf, fullLength + sizeof(fvec2));
-    buf = nboPackInt(buf, 0); // for alignment to fvec2
+    buf = nboPackInt32(buf, fullLength + sizeof(fvec2));
+    buf = nboPackInt32(buf, 0); // for alignment to fvec2
 
     logDebugMessage(4,"DrawInfo packing: length = %i, missing = %i\n", length, missing);
     logDebugMessage(4,"  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
 	   texcoordCount, fakeTxcdCount, fullLength + sizeof(fvec2));
   }
 
-  buf = nboPackInt(buf, faceCount);
+  buf = nboPackInt32(buf, faceCount);
   for (i = 0; i < faceCount; i++) {
     buf = faces[i]->pack(buf);
   }
@@ -702,7 +702,7 @@ void *MeshObstacle::pack(void *buf) const
   stateByte |= noclusters       ? (1 << 3) : 0;
   stateByte |= drawInfoOwner    ? (1 << 4) : 0;
   stateByte |= canRicochet()    ? (1 << 5) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -713,32 +713,32 @@ void *MeshObstacle::unpack(void *buf)
   int i;
   int32_t inTmp;
 
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   checkCount = int(inTmp);
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];
   for (i = 0; i < checkCount; i++) {
     unsigned char tmp;
-    buf = nboUnpackUByte(buf, tmp);
+    buf = nboUnpackUInt8(buf, tmp);
     checkTypes[i] = tmp;
     buf = nboUnpackFVec3(buf, checkPoints[i]);
   }
 
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   vertexCount = int(inTmp);
   vertices = new fvec3[vertexCount];
   for (i = 0; i < vertexCount; i++) {
     buf = nboUnpackFVec3(buf, vertices[i]);
   }
 
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   normalCount = int(inTmp);
   normals = new fvec3[normalCount];
   for (i = 0; i < normalCount; i++) {
     buf = nboUnpackFVec3(buf, normals[i]);
   }
 
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   texcoordCount = int(inTmp);
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < texcoordCount; i++) {
@@ -746,7 +746,7 @@ void *MeshObstacle::unpack(void *buf)
   }
   void* texcoordEnd = buf; // for locating hidden drawInfo data
 
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   faceSize = int(inTmp);
   faces = new MeshFace*[faceSize];
   faceCount = 0;
@@ -763,7 +763,7 @@ void *MeshObstacle::unpack(void *buf)
   // unpack the state byte
   bool drawInfoOwner;
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough  = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough  = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce  = (stateByte & (1 << 2)) != 0;
@@ -782,7 +782,7 @@ void *MeshObstacle::unpack(void *buf)
     {
       void* drawInfoSize = (char*)texcoordEnd - sizeof(fvec2);
       int32_t rewindLen;
-      nboUnpackInt(drawInfoSize, rewindLen);
+      nboUnpackInt32(drawInfoSize, rewindLen);
 
       const bool useDrawInfo = BZDB.isTrue("useDrawInfo");
 

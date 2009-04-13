@@ -25,34 +25,34 @@
 
 void*			ShotUpdate::pack(void* buf) const
 {
-  buf = nboPackUByte(buf, player);
-  buf = nboPackUShort(buf, id);
+  buf = nboPackUInt8(buf, player);
+  buf = nboPackUInt16(buf, id);
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFVec3(buf, vel);
   buf = nboPackFloat(buf, dt);
-  buf = nboPackShort(buf, team);
+  buf = nboPackInt16(buf, team);
   return buf;
 }
 
 void			ShotUpdate::pack(BufferedNetworkMessage *msg) const
 {
-  msg->packUByte(player);
-  msg->packUShort(id);
+  msg->packUInt8(player);
+  msg->packUInt16(id);
   msg->packFVec3(pos);
   msg->packFVec3(vel);
   msg->packFloat(dt);
-  msg->packShort(team);
+  msg->packInt16(team);
 }
 
 void*			ShotUpdate::unpack(void* buf)
 {
-  buf = nboUnpackUByte(buf, player);
-  buf = nboUnpackUShort(buf, id);
+  buf = nboUnpackUInt8(buf, player);
+  buf = nboUnpackUInt16(buf, id);
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFVec3(buf, vel);
   buf = nboUnpackFloat(buf, dt);
   short temp;
-  buf = nboUnpackShort(buf, temp);
+  buf = nboUnpackInt16(buf, temp);
   team = (TeamColor)temp;
   return buf;
 }
@@ -72,7 +72,7 @@ void*			FiringInfo::pack(void* buf) const
   buf = shot.pack(buf);
   buf = flagType->pack(buf);
   buf = nboPackFloat(buf, lifetime);
-  buf = nboPackUByte(buf, shotType);
+  buf = nboPackUInt8(buf, shotType);
   return buf;
 }
 
@@ -82,7 +82,7 @@ void			FiringInfo::pack(BufferedNetworkMessage *msg) const
   shot.pack(msg);
   flagType->pack(msg);
   msg->packFloat(lifetime);
-  msg->packUByte(shotType);
+  msg->packUInt8(shotType);
 }
 
 void*			FiringInfo::unpack(void* buf)
@@ -92,7 +92,7 @@ void*			FiringInfo::unpack(void* buf)
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
   unsigned char t = 0 ;
-  buf = nboUnpackUByte(buf, t);
+  buf = nboUnpackUInt8(buf, t);
   shotType = (ShotType)t;
   return buf;
 }
@@ -104,7 +104,7 @@ void*			FiringInfo::unpackW(void* buf)
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
   unsigned char t = 0;
-  buf = nboUnpackUByte(buf, t);
+  buf = nboUnpackUInt8(buf, t);
   shotType = (ShotType)t;
   return buf;
 }

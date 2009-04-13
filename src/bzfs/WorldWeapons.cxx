@@ -99,7 +99,7 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
     msg = MSGMGR.newMessage();
 
     firingInfo.shot.pack(msg);
-    msg->packUByte(targetPlayerID);
+    msg->packUInt8(targetPlayerID);
     if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
       msg->broadcast(MsgGMUpdate);
 
@@ -198,7 +198,7 @@ unsigned int WorldWeapons::count(void)
 
 void* WorldWeapons::pack(void *buf) const
 {
-  buf = nboPackUInt(buf, weapons.size());
+  buf = nboPackUInt32(buf, weapons.size());
 
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
@@ -206,7 +206,7 @@ void* WorldWeapons::pack(void *buf) const
     buf = nboPackFVec3(buf, w->origin);
     buf = nboPackFloat(buf, w->direction);
     buf = nboPackFloat(buf, w->initDelay);
-    buf = nboPackUShort(buf, w->delay.size());
+    buf = nboPackUInt16(buf, w->delay.size());
     for (unsigned int j = 0; j < w->delay.size(); j++) {
       buf = nboPackFloat(buf, w->delay[j]);
     }

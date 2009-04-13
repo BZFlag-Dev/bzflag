@@ -872,7 +872,7 @@ static FILE *getRecordFile(const char *filename)
     return NULL;
   }
 
-  nboUnpackUInt(buffer, magic);
+  nboUnpackUInt32(buffer, magic);
   if (magic != ReplayMagic) {
     fclose(file);
     return NULL;
@@ -1382,13 +1382,13 @@ static bool setVariables(void *data)
   char name[MaxPacketLen];
   char value[MaxPacketLen];
 
-  data = nboUnpackUShort(data, numVars);
+  data = nboUnpackUInt16(data, numVars);
   for (int i = 0; i < numVars; i++) {
-    data = nboUnpackUByte(data, nameLen);
+    data = nboUnpackUInt8(data, nameLen);
     data = nboUnpackString(data, name, nameLen);
     name[nameLen] = '\0';
 
-    data = nboUnpackUByte(data, valueLen);
+    data = nboUnpackUInt8(data, valueLen);
     data = nboUnpackString(data, value, valueLen);
     value[valueLen] = '\0';
 
@@ -1540,9 +1540,9 @@ static bool saveTeamsState()
   char bufStart[MaxPacketLen];
   void *buf;
 
-  buf = nboPackUByte(bufStart, CtfTeams);
+  buf = nboPackUInt8(bufStart, CtfTeams);
   for (i = 0; i < CtfTeams; i++) {
-    buf = nboPackUShort(buf, i);
+    buf = nboPackUInt16(buf, i);
     buf = team[i].team.pack(buf); // 3 ushorts: size, won, lost
   }
 
@@ -1560,7 +1560,7 @@ static bool saveFlagsState()
   char bufStart[MaxPacketLen];
   void *buf;
 
-  buf = nboPackUShort(bufStart,0); //placeholder
+  buf = nboPackUInt16(bufStart,0); //placeholder
   int cnt = 0;
   int length = sizeof(u16);
 
@@ -1569,13 +1569,13 @@ static bool saveFlagsState()
     if (flag.exist()) {
       if ((length + sizeof(u16) + FlagPLen) > MaxPacketLen - 2*sizeof(u16)) {
 	// packet length overflow
-	nboPackUShort(bufStart, cnt);
+	nboPackUInt16(bufStart, cnt);
 	routePacket(MsgFlagUpdate,
 		     (char*)buf - (char*)bufStart, bufStart, StatePacket);
 
 	cnt = 0;
 	length = sizeof(u16);
-	buf = nboPackUShort(bufStart,0); //placeholder
+	buf = nboPackUInt16(bufStart,0); //placeholder
       }
 
       buf = flag.pack(buf);
@@ -1585,7 +1585,7 @@ static bool saveFlagsState()
   }
 
   if (cnt > 0) {
-    nboPackUShort(bufStart, cnt);
+    nboPackUInt16(bufStart, cnt);
     routePacket(MsgFlagUpdate,
 		 (char*)buf - (char*)bufStart, bufStart, StatePacket);
   }
@@ -1599,9 +1599,9 @@ static bool saveRabbitState()
   if (clOptions->gameType == RabbitChase) {
     char bufStart[MaxPacketLen];
     void *buf;
-    buf = nboPackUByte(bufStart, rabbitIndex);
+    buf = nboPackUInt8(bufStart, rabbitIndex);
 	// swap state
-	buf = nboPackUByte(bufStart, 0);
+	buf = nboPackUInt8(bufStart, 0);
    routePacket(MsgNewRabbit, (char*)buf - (char*)bufStart, bufStart,
 	       StatePacket);
   }
@@ -1629,7 +1629,7 @@ static bool savePlayersState()
     PlayerInfo *pi = &gkPlayer->player;
     if (pi->isPlaying()) {
       // Complete MsgAddPlayer
-      buf = nboPackUByte(bufStart, i);
+      buf = nboPackUInt8(bufStart, i);
       buf = pi->packUpdate(buf);
       buf = gkPlayer->score.pack(buf);
       buf = pi->packId(buf);
@@ -1649,12 +1649,12 @@ static bool savePlayersState()
   // updates. This way, the scoreboard is current for players that joined
   // before an initializing state update.
   if (infoPtr != (infoBuf + sizeof(unsigned char))) {
-    nboPackUByte(infoBuf, count);
+    nboPackUInt8(infoBuf, count);
     routePacket(MsgPlayerInfo,
 		 (char*)infoPtr - (char*)infoBuf, infoBuf, StatePacket);
   }
   if (adminPtr != (adminBuf + sizeof(unsigned char))) {
-    nboPackUByte(adminBuf, count);
+    nboPackUInt8(adminBuf, count);
     routePacket(MsgAdminInfo,
 		 (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
     // use a hidden packet for the IPs
@@ -1669,7 +1669,7 @@ static bool savePlayersState()
     if (pi->isAlive()) {
       fvec3 pos(0.0f, 0.0f, 0.0f);
       // Complete MsgAlive
-      buf = nboPackUByte(bufStart, i);
+      buf = nboPackUInt8(bufStart, i);
       buf = nboPackFVec3(buf, pos);
       buf = nboPackFloat(buf, 0.0f); // azimuth
       routePacket(MsgAlive,
@@ -1694,16 +1694,16 @@ static void packVars(const std::string& key, void *data)
   std::string value = BZDB.get(key);
   int pairLen = key.length() + 1 + value.length() + 1;
   if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
-    nboPackUShort(pvd.bufStart, pvd.count);
+    nboPackUInt16(pvd.bufStart, pvd.count);
     pvd.count = 0;
     routePacket(MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
-    pvd.buf = nboPackUShort(pvd.bufStart, 0); //placeholder
+    pvd.buf = nboPackUInt16(pvd.bufStart, 0); //placeholder
     pvd.len = sizeof(u16);
   }
 
-  pvd.buf = nboPackUByte(pvd.buf, key.length());
+  pvd.buf = nboPackUInt8(pvd.buf, key.length());
   pvd.buf = nboPackString(pvd.buf, key.c_str(), key.length());
-  pvd.buf = nboPackUByte(pvd.buf, value.length());
+  pvd.buf = nboPackUInt8(pvd.buf, value.length());
   pvd.buf = nboPackString(pvd.buf, value.c_str(), value.length());
   pvd.len += pairLen;
   pvd.count++;
@@ -1725,7 +1725,7 @@ static bool saveVariablesState()
 
   BZDB.iterate(packVars, &pvd);
   if (pvd.len > 0) {
-    nboPackUShort(pvd.bufStart, pvd.count);
+    nboPackUInt16(pvd.bufStart, pvd.count);
     routePacket(MsgSetVar, pvd.len, pvd.bufStart, StatePacket);
   }
   return true;
@@ -1756,9 +1756,9 @@ static bool resetStates()
   NetMsg msg = MSGMGR.newMessage();
 
   // reset team scores
-  msg->packUByte(CtfTeams);
+  msg->packUInt8(CtfTeams);
   for (i = 0; i < CtfTeams; i++) {
-    msg->packUShort(i);
+    msg->packUInt16(i);
     team[i].team.pack(msg);
   }
 
@@ -1773,7 +1773,7 @@ static bool resetStates()
 
   // reset players and flags using MsgReplayReset
   msg = MSGMGR.newMessage();
-  msg->packUByte(MaxPlayers); // the last player to remove
+  msg->packUInt8(MaxPlayers); // the last player to remove
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if (gkPlayer == NULL)
@@ -1816,11 +1816,11 @@ static bool savePacket(RRpacket *p, FILE *f)
   u32 thisFilePos = ftell(f);
   u32 nextFilePos = ftell(f) + RRpacketHdrSize + p->len;
 
-  buf = nboPackUShort(bufStart, p->mode);
-  buf = nboPackUShort(buf, p->code);
-  buf = nboPackUInt(buf, p->len);
-  buf = nboPackUInt(buf, nextFilePos);
-  buf = nboPackUInt(buf, RecordFilePrevPos);
+  buf = nboPackUInt16(bufStart, p->mode);
+  buf = nboPackUInt16(buf, p->code);
+  buf = nboPackUInt32(buf, p->len);
+  buf = nboPackUInt32(buf, nextFilePos);
+  buf = nboPackUInt32(buf, RecordFilePrevPos);
   buf = nboPackRRtime(buf, p->timestamp);
 
   if (fwrite(bufStart, RRpacketHdrSize, 1, f) != 1) {
@@ -1855,11 +1855,11 @@ static RRpacket *loadPacket(FILE *f)
     delete p;
     return NULL;
   }
-  buf = nboUnpackUShort(bufStart, p->mode);
-  buf = nboUnpackUShort(buf, p->code);
-  buf = nboUnpackUInt(buf, p->len);
-  buf = nboUnpackUInt(buf, p->nextFilePos);
-  buf = nboUnpackUInt(buf, p->prevFilePos);
+  buf = nboUnpackUInt16(bufStart, p->mode);
+  buf = nboUnpackUInt16(buf, p->code);
+  buf = nboUnpackUInt32(buf, p->len);
+  buf = nboUnpackUInt32(buf, p->nextFilePos);
+  buf = nboUnpackUInt32(buf, p->prevFilePos);
   buf = nboUnpackRRtime(buf, p->timestamp);
 
   if (p->len > (MaxPacketLen - ((int)sizeof(u16) * 2))) {
@@ -2020,13 +2020,13 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
   int totalSize = ReplayHeaderSize + worldDatabaseSize + hdr.flagsSize;
 
   // pack the data
-  buf = nboPackUInt(buffer, ReplayMagic);
-  buf = nboPackUInt(buf, ReplayVersion);
-  buf = nboPackUInt(buf, totalSize);
+  buf = nboPackUInt32(buffer, ReplayMagic);
+  buf = nboPackUInt32(buf, ReplayVersion);
+  buf = nboPackUInt32(buf, totalSize);
   buf = nboPackRRtime(buf, filetime); // placeholder when saving to file
-  buf = nboPackUInt(buf, p); // player index
-  buf = nboPackUInt(buf, hdr.flagsSize);
-  buf = nboPackUInt(buf, worldDatabaseSize);
+  buf = nboPackUInt32(buf, p); // player index
+  buf = nboPackUInt32(buf, hdr.flagsSize);
+  buf = nboPackUInt32(buf, worldDatabaseSize);
   buf = nboPackString(buf, hdr.callSign, sizeof(hdr.callSign));
   buf = nboPackString(buf, hdr.serverVersion, sizeof(hdr.serverVersion));
   buf = nboPackString(buf, hdr.appVersion, sizeof(hdr.appVersion));
@@ -2061,13 +2061,13 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
     return false;
   }
 
-  buf = nboUnpackUInt(buffer, h->magic);
-  buf = nboUnpackUInt(buf, h->version);
-  buf = nboUnpackUInt(buf, h->offset);
+  buf = nboUnpackUInt32(buffer, h->magic);
+  buf = nboUnpackUInt32(buf, h->version);
+  buf = nboUnpackUInt32(buf, h->offset);
   buf = nboUnpackRRtime(buf, h->filetime);
-  buf = nboUnpackUInt(buf, h->player);
-  buf = nboUnpackUInt(buf, h->flagsSize);
-  buf = nboUnpackUInt(buf, h->worldSize);
+  buf = nboUnpackUInt32(buf, h->player);
+  buf = nboUnpackUInt32(buf, h->flagsSize);
+  buf = nboUnpackUInt32(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
   buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
   buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
@@ -2258,7 +2258,7 @@ static bool replaceSettings(ReplayHeader *h)
     sizeof(float)    + // world size
     sizeof(uint16_t);  // gamestyle
   char *hdrMaxPlayersPtr = h->worldSettings + maxPlayersOffset;
-  nboPackUShort(hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
+  nboPackUInt16(hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
 
   // compare the settings (now that maxPlayer has been adjusted)
   if (memcmp(worldSettings, h->worldSettings, length) == 0) {
@@ -2507,8 +2507,8 @@ static RRtime getRRtime()
 
 static void *nboPackRRtime(void *buf, RRtime value)
 {
-  buf = nboPackUInt(buf, (u32) (value >> 32));       // msb's
-  buf = nboPackUInt(buf, (u32) (value & 0xFFFFFFFF)); // lsb's
+  buf = nboPackUInt32(buf, (u32) (value >> 32));       // msb's
+  buf = nboPackUInt32(buf, (u32) (value & 0xFFFFFFFF)); // lsb's
   return buf;
 }
 
@@ -2516,8 +2516,8 @@ static void *nboPackRRtime(void *buf, RRtime value)
 static void *nboUnpackRRtime(void *buf, RRtime& value)
 {
   u32 msb, lsb;
-  buf = nboUnpackUInt(buf, msb);
-  buf = nboUnpackUInt(buf, lsb);
+  buf = nboUnpackUInt32(buf, msb);
+  buf = nboUnpackUInt32(buf, lsb);
   value = ((RRtime)msb << 32) + (RRtime)lsb;
   return buf;
 }

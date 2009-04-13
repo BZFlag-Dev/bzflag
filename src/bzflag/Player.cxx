@@ -1300,7 +1300,7 @@ void* Player::unpack(void* buf, uint16_t code)
   double timestamp;
   PlayerId ident;
 
-  buf = nboUnpackUByte(buf, ident);
+  buf = nboUnpackUInt8(buf, ident);
   buf = nboUnpackDouble(buf, timestamp);
   buf = state.unpack(buf, code);
 

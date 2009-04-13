@@ -40,15 +40,15 @@ static void *tcpRx(void* arg) {
 
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 {
-  buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUByte(buf, properties);
+  buf = nboPackUInt8(buf, playerIndex);
+  buf = nboPackUInt8(buf, properties);
   return buf;
 }
 
 void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t properties )
 {
-  msg->packUByte(playerIndex);
-  msg->packUByte(properties);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8(properties);
 }
 
 GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback)
@@ -257,16 +257,16 @@ void GameKeeper::Player::updateNextGameTime()
 
 void *GameKeeper::Player::packAdminInfo(void *buf)
 {
-  buf = nboPackUByte(buf, netHandler->sizeOfIP());
-  buf = nboPackUByte(buf, playerIndex);
+  buf = nboPackUInt8(buf, netHandler->sizeOfIP());
+  buf = nboPackUInt8(buf, playerIndex);
   buf = netHandler->packAdminInfo(buf);
   return buf;
 }
 
 void GameKeeper::Player::packAdminInfo(BufferedNetworkMessage *msg)
 {
-  msg->packUByte(netHandler->sizeOfIP());
-  msg->packUByte(playerIndex);
+  msg->packUInt8(netHandler->sizeOfIP());
+  msg->packUInt8(playerIndex);
   char temp[128];
   char* p = (char*)netHandler->packAdminInfo(temp);
   msg->addPackedData(temp,p-temp);
@@ -285,7 +285,7 @@ void GameKeeper::Player::packPlayerInfo(BufferedNetworkMessage *msg)
 
 void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
 {
-  msg->packUByte(playerIndex);
+  msg->packUInt8(playerIndex);
   player.packUpdate(msg);
   score.pack(msg);
   player.packId(msg);

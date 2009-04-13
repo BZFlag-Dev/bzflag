@@ -1127,8 +1127,8 @@ bool GameOverCommand::operator() (const char *,
   }
 
   NetMsg  msg = MSGMGR.newMessage();
-  msg->packUByte(t);
-  msg->packUShort(uint16_t(NoTeam));
+  msg->packUInt8(t);
+  msg->packUInt16(uint16_t(NoTeam));
   msg->broadcast(MsgScoreOver);
 
   gameOver = true;
@@ -1507,7 +1507,7 @@ bool FlagCommand::operator() (const char *message,
 	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
 	if (fPlayer) {
 	  NetMsg newMsg = MSGMGR.newMessage();
-	  newMsg->packUByte(fi->player);
+	  newMsg->packUInt8(fi->player);
 	  fi->pack(newMsg);
 	  newMsg->broadcast(MsgDropFlag);
 	}

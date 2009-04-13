@@ -305,7 +305,7 @@ const LinkManager::LinkNumberSet* LinkManager::getLinkDsts(int linkID) const
 
 void* LinkManager::pack(void* buf) const
 {
-  buf = nboPackUInt(buf, (uint32_t) linkNames.size());
+  buf = nboPackUInt32(buf, (uint32_t) linkNames.size());
   for (unsigned int i = 0; i < linkNames.size(); i++) {
     buf = nboPackStdString(buf, linkNames[i].src);
     buf = nboPackStdString(buf, linkNames[i].dst);
@@ -319,7 +319,7 @@ void* LinkManager::unpack(void* buf)
   clear(); // just in case
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     LinkNameSet link;
     buf = nboUnpackStdString(buf, link.src);

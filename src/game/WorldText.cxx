@@ -87,7 +87,7 @@ int WorldTextManager::packSize() const
 
 void* WorldTextManager::pack(void* buf) const
 {
-  buf = nboPackUInt(buf, (uint32_t)texts.size());
+  buf = nboPackUInt32(buf, (uint32_t)texts.size());
   for (size_t i = 0; i < texts.size(); i++) {
     buf = texts[i]->pack(buf);
   }
@@ -98,7 +98,7 @@ void* WorldTextManager::pack(void* buf) const
 void* WorldTextManager::unpack(void* buf)
 {
   uint32_t count;
-  buf = nboUnpackUInt(buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (uint32_t i = 0; i < count; i++) {
     WorldText* text = new WorldText;
     buf = text->unpack(buf);
@@ -212,12 +212,12 @@ void* WorldText::pack(void* buf) const
 
   // material
   int32_t matindex = MATERIALMGR.getIndex(bzMaterial);
-  buf = nboPackInt(buf, matindex);
+  buf = nboPackInt32(buf, matindex);
 
   uint8_t status = 0;
   status |= useBZDB   ? (1 << 0) : 0;
   status |= billboard ? (1 << 1) : 0;
-  buf = nboPackUByte(buf, status);
+  buf = nboPackUInt8(buf, status);
 
   return buf;
 }
@@ -240,11 +240,11 @@ void* WorldText::unpack(void* buf)
 
   // material
   int32_t matindex;
-  buf = nboUnpackInt(buf, matindex);
+  buf = nboUnpackInt32(buf, matindex);
   bzMaterial = MATERIALMGR.getMaterial(matindex);
 
   uint8_t status;
-  buf = nboUnpackUByte(buf, status);
+  buf = nboUnpackUInt8(buf, status);
   useBZDB   = (status & (1 << 0)) != 0;
   billboard = (status & (1 << 1)) != 0;
 
