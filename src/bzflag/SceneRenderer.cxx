@@ -397,17 +397,16 @@ void SceneRenderer::setBackground(BackgroundRenderer* br)
 }
 
 
-void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
+void SceneRenderer::getGroundUV(const fvec2& p, fvec2& uv) const
 {
   float repeat = 0.01f;
-    if (BZDB.isSet("groundTexRepeat"))
-      repeat = BZDB.eval("groundTexRepeat");
-
-    if (useQualityValue >= _HIGH_QUALITY)
-      repeat = BZDB.eval("groundHighResTexRepeat");
-
-  uv[0] = repeat * p[0];
-  uv[1] = repeat * p[1];
+  if (useQualityValue >= _HIGH_QUALITY) {
+    repeat = BZDB.eval("groundHighResTexRepeat");
+  }
+  else if (BZDB.isSet("groundTexRepeat")) {
+    repeat = BZDB.eval("groundTexRepeat");
+  }
+  uv = repeat * p;
 }
 
 
@@ -510,18 +509,17 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   // set sun and ambient colors
   Daylight::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
   theSun.setColor(sunColor);
-  float maxComponent = sunColor[0];
-  if (sunColor[1] > maxComponent) maxComponent = sunColor[1];
-  if (sunColor[2] > maxComponent) maxComponent = sunColor[2];
-  if (maxComponent <= 0.0f) maxComponent = 1.0f;
-  sunScaledColor[0] = sunColor[0] / maxComponent;
-  sunScaledColor[1] = sunColor[1] / maxComponent;
-  sunScaledColor[2] = sunColor[2] / maxComponent;
-  ambientColor[3] = 1.0f;
+  float maxComponent = sunColor.r;
+  if (sunColor.y > maxComponent) { maxComponent = sunColor.y; }
+  if (sunColor.z > maxComponent) { maxComponent = sunColor.z; }
+  if (maxComponent <= 0.0f)      { maxComponent = 1.0f; }
+  sunScaledColor.rgb() = sunColor.rgb() / maxComponent;
+  ambientColor.a = 1.0f;
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
-  if (background)
+  if (background) {
     background->setCelestial(*this, sunDir, moonDir);
+  }
 }
 
 
@@ -688,16 +686,16 @@ void SceneRenderer::drawMirror()
 
   fvec4 mirrorColor;
   if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
-    mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
-    mirrorColor[3] = 0.5f;
-  } else if (mirrorColor[3] == 1.0f) {
+    mirrorColor.r = mirrorColor.g = mirrorColor.b = 0.0f;
+    mirrorColor.a = 0.5f;
+  } else if (mirrorColor.a == 1.0f) {
     // probably a mistake
-    mirrorColor[3] = 0.5f;
+    mirrorColor.a = 0.5f;
   }
   if (invert) {
-    mirrorColor[0] = 1.0f - mirrorColor[0];
-    mirrorColor[2] = 1.0f - mirrorColor[2];
-    mirrorColor[3] = 0.2f;
+    mirrorColor.r = 1.0f - mirrorColor.r;
+    mirrorColor.b = 1.0f - mirrorColor.b;
+    mirrorColor.a = 0.2f;
   }
 
   // darken the reflection
@@ -714,9 +712,8 @@ void SceneRenderer::drawMirror()
       glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
       glDisable(GL_BLEND);
     } else {
-      float stipple = mirrorColor[3];
       glColor3fv(mirrorColor);
-      OpenGLGState::setStipple(stipple);
+      OpenGLGState::setStipple(mirrorColor.a);
       glEnable(GL_POLYGON_STIPPLE);
       glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
       glDisable(GL_POLYGON_STIPPLE);
@@ -734,9 +731,8 @@ void SceneRenderer::drawMirror()
       glRectf(-extent, -extent, +extent, +extent);
       glDisable(GL_BLEND);
     } else {
-      float stipple = mirrorColor[3];
       glColor3fv(mirrorColor);
-      OpenGLGState::setStipple(stipple);
+      OpenGLGState::setStipple(mirrorColor.a);
       glEnable(GL_POLYGON_STIPPLE);
       glRectf(-extent, -extent, +extent, +extent);
       glDisable(GL_POLYGON_STIPPLE);
@@ -1066,10 +1062,10 @@ bool SceneRenderer::setupMapFog()
     return false;
   }
 
-  GLenum  fogMode     = GL_EXP;
-  float fogDensity  = 0.001f;
-  float fogStart    = BZDBCache::worldSize * 0.5f;
-  float fogEnd      = BZDBCache::worldSize;
+  GLenum  fogMode    = GL_EXP;
+  float   fogDensity = 0.001f;
+  float   fogStart   = BZDBCache::worldSize * 0.5f;
+  float   fogEnd     = BZDBCache::worldSize;
   fvec4   fogColor(0.25f, 0.25f, 0.25f, 0.25f);
 
   // parse the values;
@@ -1087,8 +1083,8 @@ bool SceneRenderer::setupMapFog()
   fogStart   = BZDB.eval(StateDatabase::BZDB_FOGSTART);
   fogEnd     = BZDB.eval(StateDatabase::BZDB_FOGEND);
   if (!parseColorString(BZDB.get(StateDatabase::BZDB_FOGCOLOR), fogColor)) {
-    fogColor[0] = fogColor[1] = fogColor[2] = 0.1f;
-    fogColor[3] = 0.0f; // has no effect
+    fogColor.r = fogColor.g = fogColor.b = 0.1f;
+    fogColor.a = 0.0f; // has no effect
   }
   if (BZDB.evalInt("fogEffect") >= 1) {
     glHint(GL_FOG_HINT, GL_NICEST);
@@ -1272,9 +1268,9 @@ void SceneRenderer::disableLights(const Extents& exts)
     const fvec4& pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
     
-    if ((pos[0] < (exts.mins[0] - dist)) || (pos[0] > (exts.maxs[0] + dist)) ||
-	(pos[1] < (exts.mins[1] - dist)) || (pos[1] > (exts.maxs[1] + dist)) ||
-	(pos[2] < (exts.mins[2] - dist)) || (pos[2] > (exts.maxs[2] + dist))) {
+    if ((pos.x < (exts.mins.x - dist)) || (pos.x > (exts.maxs.x + dist)) ||
+	(pos.y < (exts.mins.y - dist)) || (pos.y > (exts.maxs.y + dist)) ||
+	(pos.z < (exts.mins.z - dist)) || (pos.z > (exts.maxs.z + dist))) {
       OpenGLLight::enableLight(i + reservedLights, false);
     }
   }
@@ -1370,7 +1366,7 @@ void SceneRenderer::setupShadowPlanes()
 
   // FIXME: As a first cut, we'll assume that
   //	    the frustum top points towards Z.
-  if (frustum.getUp()[2] < 0.999f) {
+  if (frustum.getUp().z < 0.999f) {
     return; // tilted views are not supported
   }
 
@@ -1387,36 +1383,32 @@ void SceneRenderer::setupShadowPlanes()
   fvec4* planes = shadowPlanes;
 
   shadowPlaneCount = 2;
-  float edge[2];
+
+  fvec2 edge;
+
   // left edge
-  edge[0] = -frustum.getSide(1)[1];
-  edge[1] = +frustum.getSide(1)[0];
-  planes[0][0] =  (edge[1] * sunDir[2]);
-  planes[0][1] = -(edge[0] * sunDir[2]);
-  planes[0][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
-  planes[0][3] = -((planes[0][0] * eye[0]) + (planes[0][1] * eye[1]));
+  edge = frustum.getSide(1).xy();
+  planes[0].x = (edge.x * sunDir.z);
+  planes[0].y = (edge.y * sunDir.z);
+  planes[0].z = -fvec2::dot(edge, sunDir.xy());
+  planes[0].w = -fvec2::dot(planes[0].xy(), eye.xy());
   // right edge
-  edge[0] = -frustum.getSide(2)[1];
-  edge[1] = +frustum.getSide(2)[0];
-  planes[1][0] =  (edge[1] * sunDir[2]);
-  planes[1][1] = -(edge[0] * sunDir[2]);
-  planes[1][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
-  planes[1][3] = -((planes[1][0] * eye[0]) + (planes[1][1] * eye[1]));
+  edge = frustum.getSide(1).xy();
+  planes[1].x = (edge.x * sunDir.z);
+  planes[1].y = (edge.y * sunDir.z);
+  planes[1].z = -fvec2::dot(edge, sunDir.xy());
+  planes[1].w = -fvec2::dot(planes[1].xy(), eye.xy());
   // only use the bottom edge if we have some height (about one jump's worth)
-  if (eye[2] > 20.0f) {
+  if (eye.z > 20.0f) {
     // bottom edge
-    edge[0] = -frustum.getSide(3)[1];
-    edge[1] = +frustum.getSide(3)[0];
-    planes[2][0] =  (edge[1] * sunDir[2]);
-    planes[2][1] = -(edge[0] * sunDir[2]);
-    planes[2][2] =  (edge[0] * sunDir[1]) - (edge[1] * sunDir[0]);
-    const float hlen = sqrtf ((frustum.getSide(3)[0] * frustum.getSide(3)[0]) +
-			      (frustum.getSide(3)[1] * frustum.getSide(3)[1]));
-    const float slope = frustum.getSide(3)[2] / hlen;
-    float point[2];
-    point[0] = eye[0] + (eye[2] * frustum.getSide(3)[0] * slope);
-    point[1] = eye[1] + (eye[2] * frustum.getSide(3)[1] * slope);
-    planes[2][3] = -((planes[2][0] * point[0]) + (planes[2][1] * point[1]));
+    edge = frustum.getSide(3).xy();
+    planes[2].x = (edge.x * sunDir.z);
+    planes[2].y = (edge.y * sunDir.z);
+    planes[2].z = -fvec2::dot(edge, sunDir.xy());
+    const float slope = frustum.getSide(3).z / 
+                        frustum.getSide(3).xy().length();
+    const fvec2 point = eye.xy() + (eye.z * slope * frustum.getSide(3).xy());
+    planes[2].w = -fvec2::dot(planes[2].xy(), point);
     shadowPlaneCount++;
   }
 }

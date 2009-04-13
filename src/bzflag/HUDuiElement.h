@@ -27,6 +27,7 @@
 
 /* common headers */
 #include "bzfgl.h"
+#include "vectors.h"
 
 class LocalFontFace;
 
@@ -60,9 +61,9 @@ class HUDuiElement {
 
     void		renderLabel();
 
-    static const float	dimTextColor[3];
-    static const float	moreDimTextColor[3];
-    static const float	textColor[3];
+    static const fvec4	dimTextColor;
+    static const fvec4	moreDimTextColor;
+    static const fvec4	textColor;
 
     bool		skipRenderLabel;
     float		fontHeight;

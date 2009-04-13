@@ -336,6 +336,12 @@ class vec4 {
 
     inline vec4 operator-() const { return vec4(-x, -y, -z, -w); }
 
+    inline       vec2<T>&  xy()       { return (vec2<T>&)x; }
+    inline const vec2<T>&  xy() const { return (vec2<T>&)x; }
+    inline       vec2<T>&  yz()       { return (vec2<T>&)y; }
+    inline const vec2<T>&  yz() const { return (vec2<T>&)y; }
+    inline       vec2<T>&  zw()       { return (vec2<T>&)z; }
+    inline const vec2<T>&  zw() const { return (vec2<T>&)z; }
     inline       vec3<T>& xyz()       { return (vec3<T>&)x; }
     inline const vec3<T>& xyz() const { return (vec3<T>&)x; }
     inline       vec3<T>& yzw()       { return (vec3<T>&)y; }

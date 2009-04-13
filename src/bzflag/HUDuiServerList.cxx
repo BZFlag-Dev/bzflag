@@ -366,8 +366,8 @@ void HUDuiServerList::doRender()
 
   FontManager &fm = FontManager::instance();
 
-  float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  float activeColor[3] = {0.0f, 1.0f, 0.0f};
+  const fvec4 color      (1.0f, 1.0f, 1.0f, 1.0f);
+  const fvec4 activeColor(0.0f, 1.0f, 0.0f, 1.0f);
 
   glColor4fv(color);
 
@@ -384,18 +384,18 @@ void HUDuiServerList::doRender()
   for (int i=Modes; i != NoSort; i++) {
     if (sortMode == i)
       if (reverseSort)
-	columnTitle = columns[i].first + " ▼";
+	columnTitle = columns[i].first + " \xE2\x96\xBC";
       else
-	columnTitle = columns[i].first + " ▲";
+	columnTitle = columns[i].first + " \xE2\x96\xB2";
     else
       columnTitle = columns[i].first;
 
     if ((activeColumn == i)&&(hasFocus()))
-      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), activeColor);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), &activeColor);
     else
-      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), color);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), &color);
 
-    x = x + ((*columns[i].second)*(getWidth()));
+    x = x + ((*columns[i].second) * (getWidth()));
     glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
   }
 

@@ -65,9 +65,9 @@ public:
    * main work-horse.  render the provided text with the specified
    * font size, optionally justifying to a particular alignment.
    */
-  void drawString(float x, float y, float z, float size,
-		  const char *text,
-		  const float* resetColor = NULL, fontJustification align = AlignLeft);
+  void drawString(float x, float y, float z, float size, const char *text,
+		  const fvec4* resetColor = NULL,
+		  fontJustification align = AlignLeft);
 private:
   BZFontFace_impl* impl;
 };
@@ -118,7 +118,8 @@ public:
    */
   void drawString(float x, float y, float z, int faceID, float size,
 		  const char *text,
-		  const float* resetColor = NULL, fontJustification align = AlignLeft);
+		  const fvec4* resetColor = NULL,
+		  fontJustification align = AlignLeft);
 
   /**
    * returns the width of the given text string for the specifed font
@@ -150,7 +151,7 @@ protected:
   /**
    * return the pulse color
    */
-  void getPulseColor(const float* color, float* pulseColor) const;
+  void getPulseColor(const fvec4& color, fvec4& pulseColor) const;
 
   /**
    * returns the number of fonts loaded
@@ -208,26 +209,22 @@ inline void FontManager::setDimFactor(float newDimFactor)
 {
   const float darkDim = newDimFactor * darkness;
   dimFactor = newDimFactor;
-  dimUnderlineColor[0] = underlineColor[0] * darkDim;
-  dimUnderlineColor[1] = underlineColor[1] * darkDim;
-  dimUnderlineColor[2] = underlineColor[2] * darkDim;
-  dimUnderlineColor[3] = opacity;
+  dimUnderlineColor.rgb() = underlineColor.rgb() * darkDim;
+  dimUnderlineColor.a = opacity;
 }
 
 inline void FontManager::setOpacity(float newOpacity)
 {
   opacity = newOpacity;
-  underlineColor[3] = opacity;
+  underlineColor.a = opacity;
 }
 
 inline void FontManager::setDarkness(float newDarkness)
 {
   darkness = newDarkness;
   const float darkDim = dimFactor * darkness;
-  dimUnderlineColor[0] = underlineColor[0] * darkDim;
-  dimUnderlineColor[1] = underlineColor[1] * darkDim;
-  dimUnderlineColor[2] = underlineColor[2] * darkDim;
-  dimUnderlineColor[3] = opacity;
+  dimUnderlineColor.rgb() = underlineColor.rgb() * darkDim;
+  dimUnderlineColor.a = opacity;
 }
 
 #endif /* __FONTMANAGER_H__ */

@@ -396,7 +396,9 @@ const char* FontManager::getFaceName(int faceID)
 
 
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const char *text, const float* resetColor, fontJustification align)
+			     const char *text,
+			     const fvec4* resetColor,
+			     fontJustification align)
 {
   if (!text) {
     return;
@@ -425,21 +427,19 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // Break the text every time an ANSI code is encountered.
 
   // sane defaults
-  bool bright = true;
+  bool bright    = true;
   bool pulsating = false;
   bool underline = false;
-  bool reverse = false;
+  bool reverse   = false;
+
   // negatives are invalid, we use them to signal "no change"
-  float color[4];
-  if (resetColor != (float*)NULL) {
-    color[0] = resetColor[0] * darkness;
-    color[1] = resetColor[1] * darkness;
-    color[2] = resetColor[2] * darkness;
-    color[3] = opacity;
+  fvec4 color;
+  if (resetColor != NULL) {
+    color.rgb() = resetColor->rgb() * darkness;
+    color.a = opacity;
   } else {
-    color[0] = color[1] = color[2] = -1.0f;
-    color[3] = opacity;
-    resetColor = BrightColors[WhiteColor];
+    color = fvec4(-1.0f, -1.0f, -1.0f, opacity);
+    resetColor = &BrightColors[WhiteColor];
   }
 
   // ANSI code interpretation is somewhat limited,
@@ -581,13 +581,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       for (int i = 0; i <= LastColor; i++) {
 	if (strcasecmp(tmpText, ColorStrings[i]) == 0) {
 	  if (bright) {
-	    color[0] = BrightColors[i][0] * darkness;
-	    color[1] = BrightColors[i][1] * darkness;
-	    color[2] = BrightColors[i][2] * darkness;
+	    color.rgb() = BrightColors[i].rgb() * darkness;
 	  } else {
-	    color[0] = BrightColors[i][0] * darkDim;
-	    color[1] = BrightColors[i][1] * darkDim;
-	    color[2] = BrightColors[i][2] * darkDim;
+	    color.rgb() = BrightColors[i].rgb() * darkDim;
 	  }
 	  tookCareOfANSICode = true;
 	  break;
@@ -602,17 +598,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  pulsating = false;
 	  underline = false;
 	  reverse = false;
-	  color[0] = resetColor[0] * darkness;
-	  color[1] = resetColor[1] * darkness;
-	  color[2] = resetColor[2] * darkness;
+	  color.rgb() = resetColor->rgb() * darkness;
 	} else if (strcasecmp(tmpText, ANSI_STR_RESET_FINAL) == 0) {
 	  bright = false;
 	  pulsating = false;
 	  underline = false;
 	  reverse = false;
-	  color[0] = resetColor[0] * darkDim;
-	  color[1] = resetColor[1] * darkDim;
-	  color[2] = resetColor[2] * darkDim;
+	  color.rgb() = resetColor->rgb() * darkDim;
 	} else if (strcasecmp(tmpText, ANSI_STR_BRIGHT) == 0) {
 	  bright = true;
 	} else if (strcasecmp(tmpText, ANSI_STR_DIM) == 0) {
@@ -699,7 +691,7 @@ float FontManager::getStringHeight(int font, float size)
 }
 
 
-void FontManager::getPulseColor(const float *color, float *pulseColor) const
+void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
 {
   float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
 
@@ -712,9 +704,7 @@ void FontManager::getPulseColor(const float *color, float *pulseColor) const
   pulseFactor = fabsf(pulseFactor) / (pulseRate/2.0f);
   pulseFactor = pulseDepth * pulseFactor + (1.0f - pulseDepth);
 
-  pulseColor[0] = color[0] * pulseFactor;
-  pulseColor[1] = color[1] * pulseFactor;
-  pulseColor[2] = color[2] * pulseFactor;
+  pulseColor.rgb() = color.rgb() * pulseFactor;
 }
 
 

@@ -456,10 +456,7 @@ void* DynamicColor::pack(void *buf) const
   buf = nboPackUInt(buf, (uint32_t)colorStates.size());
   for (size_t i = 0; i < colorStates.size(); i++) {
     const ColorState& state = colorStates[i];
-    buf = nboPackFloat(buf, state.color[0]);
-    buf = nboPackFloat(buf, state.color[1]);
-    buf = nboPackFloat(buf, state.color[2]);
-    buf = nboPackFloat(buf, state.color[3]);
+    buf = nboPackFVec4(buf, state.color);
     buf = nboPackFloat(buf, state.duration);
   }
 
@@ -482,10 +479,7 @@ void* DynamicColor::unpack(void *buf)
   buf = nboUnpackUInt(buf, statesCount);
   for (size_t i = 0; i < statesCount; i++) {
     ColorState state;
-    buf = nboUnpackFloat(buf, state.color[0]);
-    buf = nboUnpackFloat(buf, state.color[1]);
-    buf = nboUnpackFloat(buf, state.color[2]);
-    buf = nboUnpackFloat(buf, state.color[3]);
+    buf = nboUnpackFVec4(buf, state.color);
     buf = nboUnpackFloat(buf, state.duration);
     colorStates.push_back(state);
   }
@@ -508,7 +502,10 @@ int DynamicColor::packSize() const
 
   fullSize += sizeof(float);    // states delay
   fullSize += sizeof(uint32_t); // states count
-  fullSize += sizeof(float) * 5 * (int)colorStates.size(); // states data
+  fullSize += (int)colorStates.size() * (
+                sizeof(fvec4) + // color
+                sizeof(float)   // duration
+              );
 
   return fullSize;
 }
@@ -548,10 +545,10 @@ void DynamicColor::print(std::ostream& out, const string& indent) const
     }
     out << indent << keyword
                   << state.duration << " "
-                  << state.color[0] << " "
-                  << state.color[1] << " "
-                  << state.color[2] << " "
-                  << state.color[3] << std::endl;
+                  << state.color.r  << " "
+                  << state.color.g  << " "
+                  << state.color.b  << " "
+                  << state.color.a  << std::endl;
   }
 
   out << indent << "end" << std::endl << std::endl;

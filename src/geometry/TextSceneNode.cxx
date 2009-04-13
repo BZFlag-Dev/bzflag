@@ -649,7 +649,7 @@ void TextSceneNode::TextRenderNode::render()
       singleLineXForm();
     }
     fm.drawString(0.0f, 0.0f, 0.0f, fontID, fontSize,
-                  currLines[0].c_str(), *colorPtr, AlignLeft);
+                  currLines[0].c_str(), colorPtr, AlignLeft);
   }
   else {
     for (size_t i = 0; i < currLines.size(); i++) {
@@ -665,7 +665,7 @@ void TextSceneNode::TextRenderNode::render()
         glPushMatrix();
         glScalef(fixedWidth / width, 1.0f, 1.0f);
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      currLines[i].c_str(), *colorPtr, AlignLeft);
+                      currLines[i].c_str(), colorPtr, AlignLeft);
         glPopMatrix();
       }
       else {
@@ -674,7 +674,7 @@ void TextSceneNode::TextRenderNode::render()
           offx = -text.justify * width;
         }
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      currLines[i].c_str(), *colorPtr, AlignLeft);
+                      currLines[i].c_str(), colorPtr, AlignLeft);
       }
       glTranslatef(0.0f, lineStep, 0.0f);
     }

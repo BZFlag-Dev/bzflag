@@ -208,7 +208,8 @@ void HUDuiServerListItem::setFontFace(const LocalFontFace *face)
   resize();
 }
 
-void HUDuiServerListItem::setColumnSizes(float modes_percent, float domain, float server, float player, float ping)
+void HUDuiServerListItem::setColumnSizes(float modes_percent, float domain,
+                                         float server, float player, float ping)
 {
   modes_percentage = modes_percent;
   domain_percentage = domain;
@@ -285,40 +286,32 @@ void HUDuiServerListItem::doRender()
 
   int face = getFontFace()->getFMFace();
 
-  float color[3] = {1.0f, 1.0f, 1.0f};
+  fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
 
   // colorize server descriptions by shot counts
   const int maxShots = server->ping.maxShots;
   if (maxShots <= 0) {
-    color[0] = 0.4f;
-    color[1] = 0.0f;
-    color[2] = 0.6f;
+    color.rgb() = fvec3(0.4f, 0.0f, 0.6f);
   } else if (maxShots == 1) {
-    color[0] = 0.25f;
-    color[1] = 0.25f;
-    color[2] = 1.0f;
+    color.rgb() = fvec3(0.25f, 0.25f, 1.0f);
   } else if (maxShots == 2) {
-    color[0] = 0.25f;
-    color[1] = 1.0f;
-    color[2] = 0.25f;
+    color.rgb() = fvec3(0.25f, 1.0f, 0.25f);
   } else if (maxShots == 3) {
-    color[0] = 1.0f;
-    color[1] = 1.0f;
-    color[2] = 0.25f;
+    color.rgb() = fvec3(1.0f, 1.0f, 0.25f);
   } else {
     // graded orange/red
     const float shotScale = std::min(1.0f, log10f((float)(maxShots - 3)));
-    color[0] = 1.0f;
-    color[1] = 0.4f * (1.0f - shotScale);
-    color[2] = 0.25f * color[1];
+    color.r = 1.0f;
+    color.g = 0.4f * (1.0f - shotScale);
+    color.b = 0.25f * color.g;
   }
 
   fm.setDarkness(darkness);
-  fm.drawString(modesX, getY(), 0, face, getFontSize(), displayModes.c_str());
-  fm.drawString(domainX, getY(), 0, face, getFontSize(), displayDomain.c_str(), color);
-  fm.drawString(serverX, getY(), 0, face, getFontSize(), displayServer.c_str(), color);
-  fm.drawString(playerX, getY(), 0, face, getFontSize(), displayPlayer.c_str(), color);
-  fm.drawString(pingX, getY(), 0, face, getFontSize(), displayPing.c_str(), color);
+  fm.drawString(modesX,  getY(), 0, face, getFontSize(), displayModes.c_str());
+  fm.drawString(domainX, getY(), 0, face, getFontSize(), displayDomain.c_str(), &color);
+  fm.drawString(serverX, getY(), 0, face, getFontSize(), displayServer.c_str(), &color);
+  fm.drawString(playerX, getY(), 0, face, getFontSize(), displayPlayer.c_str(), &color);
+  fm.drawString(pingX,   getY(), 0, face, getFontSize(), displayPing.c_str(),   &color);
   fm.setDarkness(1.0f);
 }
 

@@ -27,9 +27,7 @@ HUDuiLabel::HUDuiLabel() : HUDuiControl()
 {
   darker = false;
   params = NULL;
-  color[0] = textColor[0];
-  color[1] = textColor[1];
-  color[2] = textColor[2];
+  color = textColor;
 }
 
 HUDuiLabel::~HUDuiLabel()
@@ -93,9 +91,9 @@ void			HUDuiLabel::setDarker(bool d)
 
 void			HUDuiLabel::setColor(float r, float g, float b)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
+  color.r = r;
+  color.g = g;
+  color.b = b;
 }
 
 void			HUDuiLabel::doRender()
@@ -116,7 +114,7 @@ void			HUDuiLabel::doRender()
   fm.setDarkness(darkness);
   fm.drawString(getX(), getY(), 0,
 		getFontFace()->getFMFace(), getFontSize(),
-		getString().c_str(), color);
+		getString().c_str(), &color);
   fm.setDarkness(1.0f);
 }
 

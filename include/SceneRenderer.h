@@ -102,7 +102,7 @@ public:
 
   void		clearRadar(float opacity);
 
-  void		getGroundUV(const float p[2], float uv[2]) const;
+  void		getGroundUV(const fvec2& p, fvec2& uv) const;
 
   bool		getBlank() const;
   bool		getInvert() const;
@@ -110,14 +110,14 @@ public:
   void		setInvert(bool invert = true);
 
   const ViewFrustum&	getViewFrustum() const;
-  ViewFrustum&	getViewFrustum();
+  ViewFrustum&		getViewFrustum();
 
   int			getNumLights() const;
   int			getNumAllLights() const;
   const OpenGLLight&	getLight(int index) const;
-  void		enableLight(int index, bool = true);
-  void		clearLights();
-  void		addLight(OpenGLLight&);
+  void			enableLight(int index, bool = true);
+  void			clearLights();
+  void			addLight(OpenGLLight&);
 
   // temporarily turn off non-applicable lights for big meshes
   void		disableLights(const Extents& extents);
@@ -130,10 +130,10 @@ public:
 
   const fvec4&		getSunColor() const;
   const fvec4&		getSunScaledColor() const;
-  float		getSunBrightness() const;
+  float			getSunBrightness() const;
   const fvec3*		getSunDirection() const;
   const fvec4&		getAmbientColor() const;
-  const float*	getCelestialTransform() const;
+  const float*		getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;
   void			setSceneDatabase(SceneDatabase*);
@@ -207,8 +207,8 @@ private:
   fvec3			sunDirection;	// or moon
   fvec4			sunColor;
   fvec4			sunScaledColor;
-  float		celestialTransform[4][4];
-  float		sunBrightness;
+  float			celestialTransform[4][4];
+  float			sunBrightness;
   fvec4			ambientColor;
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
@@ -239,8 +239,8 @@ private:
   fvec4		shadowPlanes[4];
   int		shadowPlaneCount;
 
-  RenderNodeList		shadowList;
-  RenderNodeGStateList		orderedList;
+  RenderNodeList	shadowList;
+  RenderNodeGStateList	orderedList;
 };
 
 

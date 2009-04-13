@@ -62,14 +62,10 @@ OpenGLMaterial::Rep::Rep(const fvec4& _specular,
   head = this;
   if (next) next->prev = this;
 
-  specular[0] = _specular[0];
-  specular[1] = _specular[1];
-  specular[2] = _specular[2];
-  specular[3] = 1.0f;
-  emissive[0] = _emissive[0];
-  emissive[1] = _emissive[1];
-  emissive[2] = _emissive[2];
-  emissive[3] = 1.0f;
+  specular.rgb() = _specular.rgb();
+  specular.a = 1.0f;
+  emissive.rgb() = _emissive.rgb();
+  emissive.a = 1.0f;
 
   OpenGLGState::registerContextInitializer(freeContext,
 					   initContext, (void*)this);
@@ -115,9 +111,9 @@ void			OpenGLMaterial::Rep::execute()
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
       glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
       if (highQuality) {
-	if  ((specular[0] > 0.0f) ||
-	     (specular[1] > 0.0f) ||
-	     (specular[2] > 0.0f)) {
+	if  ((specular.r > 0.0f) ||
+	     (specular.g > 0.0f) ||
+	     (specular.b > 0.0f)) {
 	  // accurate specular highlighting  (more GPU intensive)
 	  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 	} else {

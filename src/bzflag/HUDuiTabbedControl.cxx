@@ -155,8 +155,8 @@ void HUDuiTabbedControl::drawTabs()
 {
   FontManager &fm = FontManager::instance();
 
-  float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  float activeColor[3] = {0.0f, 1.0f, 0.0f};
+  const fvec4 color      (1.0f, 1.0f, 1.0f, 1.0f);
+  const fvec4 activeColor(0.0f, 1.0f, 0.0f, 1.0f);
 
   glColor4fv(color);
 
@@ -170,7 +170,7 @@ void HUDuiTabbedControl::drawTabs()
 
     x = x + sideSpacer;
     if (activeTab == i)
-      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text, activeColor);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text, &activeColor);
     else
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), text);
 

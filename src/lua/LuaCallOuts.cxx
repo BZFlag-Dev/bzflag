@@ -658,19 +658,19 @@ int LuaCallOuts::GetLights(lua_State* L)
 		const fvec4& pos = light.getPosition();
 		lua_pushliteral(L, "pos");
 		lua_createtable(L, 4, 0);
-		lua_pushnumber(L, pos[0]); lua_rawseti(L, -2, 1);
-		lua_pushnumber(L, pos[1]); lua_rawseti(L, -2, 2);
-		lua_pushnumber(L, pos[2]); lua_rawseti(L, -2, 3);
-		lua_pushnumber(L, pos[3]); lua_rawseti(L, -2, 4);
+		lua_pushnumber(L, pos.x); lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, pos.y); lua_rawseti(L, -2, 2);
+		lua_pushnumber(L, pos.z); lua_rawseti(L, -2, 3);
+		lua_pushnumber(L, pos.w); lua_rawseti(L, -2, 4);
 		lua_rawset(L, -3);
 
 		const fvec4& color = light.getColor();
 		lua_pushliteral(L, "color");
 		lua_createtable(L, 4, 0);
-		lua_pushnumber(L, color[0]); lua_rawseti(L, -2, 1);
-		lua_pushnumber(L, color[1]); lua_rawseti(L, -2, 2);
-		lua_pushnumber(L, color[2]); lua_rawseti(L, -2, 3);
-		lua_pushnumber(L, color[3]); lua_rawseti(L, -2, 4);
+		lua_pushnumber(L, color.r); lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, color.g); lua_rawseti(L, -2, 2);
+		lua_pushnumber(L, color.b); lua_rawseti(L, -2, 3);
+		lua_pushnumber(L, color.a); lua_rawseti(L, -2, 4);
 		lua_rawset(L, -3);
 
 		const fvec4& atten = light.getColor();

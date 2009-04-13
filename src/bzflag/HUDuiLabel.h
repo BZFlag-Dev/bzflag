@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "BzfEvent.h"
+#include "vectors.h"
 
 class HUDuiLabel : public HUDuiControl {
   public:
@@ -46,7 +47,7 @@ class HUDuiLabel : public HUDuiControl {
     std::string		string;
     std::vector<std::string> *params;
     bool		darker;
-    float		color[3];
+    fvec4		color;
 };
 
 #endif // __HUDUILABEL_H__
