@@ -39,7 +39,8 @@ template <typename T> inline std::string tostring(T value, const char* fmt) {
 template <typename T>
 class vec2 {
   public:
-    T x, y;
+    union { T x; T r; T s; };
+    union { T y; T g; T t; };
 
   public:
     vec2()              : x((T)0), y((T)0) {}
@@ -64,20 +65,20 @@ class vec2 {
     vec2& operator*=(const vec2& v) { x *= v.x; y *= v.y; return *this; }
     vec2& operator/=(const vec2& v) { x /= v.x; y /= v.y; return *this; }
 
-    vec2& operator+=(T s) { x += s; y += s; return *this; }
-    vec2& operator-=(T s) { x -= s; y -= s; return *this; }
-    vec2& operator*=(T s) { x *= s; y *= s; return *this; }
-    vec2& operator/=(T s) { x /= s; y /= s; return *this; }
+    vec2& operator+=(T d) { x += d; y += d; return *this; }
+    vec2& operator-=(T d) { x -= d; y -= d; return *this; }
+    vec2& operator*=(T d) { x *= d; y *= d; return *this; }
+    vec2& operator/=(T d) { x /= d; y /= d; return *this; }
 
     vec2 operator+(const vec2& v) const { return vec2(x + v.x, y + v.y); }
     vec2 operator-(const vec2& v) const { return vec2(x - v.x, y - v.y); }
     vec2 operator*(const vec2& v) const { return vec2(x * v.x, y * v.y); }
     vec2 operator/(const vec2& v) const { return vec2(x / v.x, y / v.y); }
 
-    vec2 operator+(T s) const { return vec2(x + s, y + s); }
-    vec2 operator-(T s) const { return vec2(x - s, y - s); }
-    vec2 operator*(T s) const { return vec2(x * s, y * s); }
-    vec2 operator/(T s) const { return vec2(x / s, y / s); }
+    vec2 operator+(T d) const { return vec2(x + d, y + d); }
+    vec2 operator-(T d) const { return vec2(x - d, y - d); }
+    vec2 operator*(T d) const { return vec2(x * d, y * d); }
+    vec2 operator/(T d) const { return vec2(x / d, y / d); }
 
     bool operator<(const vec2& v) const {
       if (x < v.x) { return true;  }
@@ -104,10 +105,10 @@ class vec2 {
     T length()   const { return typed_sqrt(lengthSq()); }
 
     vec2 rotate(T radians) const {
-      const T c = typed_cos(radians);
-      const T s = typed_sin(radians);
-      const T nx = (c * x) - (s * y);
-      const T ny = (c * y) + (s * x);
+      const T cv = typed_cos(radians);
+      const T sv = typed_sin(radians);
+      const T nx = (cv * x) - (sv * y);
+      const T ny = (cv * y) + (sv * x);
       return vec2(nx, ny);
     }
     static void rotate(vec2& v, T radians) { v = v.rotate(radians); }
@@ -121,13 +122,13 @@ class vec2 {
 
 
 template <typename T>
-vec2<T> operator+(T s, const vec2<T>& in) { vec2<T> v(in); v += s; return v; }
+vec2<T> operator+(T d, const vec2<T>& in) { vec2<T> v(in); v += d; return v; }
 template <typename T>
-vec2<T> operator-(T s, const vec2<T>& in) { vec2<T> v(s, s); v -= in; return v; }
+vec2<T> operator-(T d, const vec2<T>& in) { vec2<T> v(d, d); v -= in; return v; }
 template <typename T>
-vec2<T> operator*(T s, const vec2<T>& in) { vec2<T> v(in); v *= s; return v; }
+vec2<T> operator*(T d, const vec2<T>& in) { vec2<T> v(in); v *= d; return v; }
 template <typename T>
-vec2<T> operator/(T s, const vec2<T>& in) { vec2<T> v(s, s); v /= in; return v; }
+vec2<T> operator/(T d, const vec2<T>& in) { vec2<T> v(d, d); v /= in; return v; }
 
 
 //============================================================================//
@@ -139,7 +140,9 @@ vec2<T> operator/(T s, const vec2<T>& in) { vec2<T> v(s, s); v /= in; return v; 
 template <typename T>
 class vec3 {
   public:
-    T x, y, z;
+    union { T x; T r; T s; };
+    union { T y; T g; T t; };
+    union { T z; T b; T p; };
 
   public:
     vec3()                       : x((T)0), y((T)0), z((T)0) {}
@@ -179,10 +182,10 @@ class vec3 {
     vec3& operator/=(const vec3& v) {
       x /= v.x; y /= v.y; z /= v.z; return *this;
     }
-    vec3& operator+=(T s) { x += s; y += s; z += s; return *this; }
-    vec3& operator-=(T s) { x -= s; y -= s; z -= s; return *this; }
-    vec3& operator*=(T s) { x *= s; y *= s; z *= s; return *this; }
-    vec3& operator/=(T s) { x /= s; y /= s; z /= s; return *this; }
+    vec3& operator+=(T d) { x += d; y += d; z += d; return *this; }
+    vec3& operator-=(T d) { x -= d; y -= d; z -= d; return *this; }
+    vec3& operator*=(T d) { x *= d; y *= d; z *= d; return *this; }
+    vec3& operator/=(T d) { x /= d; y /= d; z /= d; return *this; }
 
     vec3 operator+(const vec3& v) const {
       return vec3(x + v.x, y + v.y, z + v.z);
@@ -197,10 +200,10 @@ class vec3 {
       return vec3(x / v.x, y / v.y, z / v.z);
     }
 
-    vec3 operator+(T s) const { return vec3(x + s, y + s, z + s); }
-    vec3 operator-(T s) const { return vec3(x - s, y - s, z - s); }
-    vec3 operator*(T s) const { return vec3(x * s, y * s, z * s); }
-    vec3 operator/(T s) const { return vec3(x / s, y / s, z / s); }
+    vec3 operator+(T d) const { return vec3(x + d, y + d, z + d); }
+    vec3 operator-(T d) const { return vec3(x - d, y - d, z - d); }
+    vec3 operator*(T d) const { return vec3(x * d, y * d, z * d); }
+    vec3 operator/(T d) const { return vec3(x / d, y / d, z / d); }
 
     bool operator<(const vec3& v) const {
       if (x < v.x) { return true;  }
@@ -253,28 +256,28 @@ class vec3 {
     }
 
     vec3 rotateX(T radians) const {
-      const T c = typed_cos(radians);
-      const T s = typed_sin(radians);
-      const T ny = (c * y) - (s * z);
-      const T nz = (c * z) + (s * y);
+      const T cv = typed_cos(radians);
+      const T sv = typed_sin(radians);
+      const T ny = (cv * y) - (sv * z);
+      const T nz = (cv * z) + (sv * y);
       return vec3(x, ny, nz);
     }
     static void rotateX(vec3& v, T radians) { v = v.rotateX(radians); }
 
     vec3 rotateY(T radians) const {
-      const T c = typed_cos(radians);
-      const T s = typed_sin(radians);
-      const T nz = (c * z) - (s * x);
-      const T nx = (c * x) + (s * z);
+      const T cv = typed_cos(radians);
+      const T sv = typed_sin(radians);
+      const T nz = (cv * z) - (sv * x);
+      const T nx = (cv * x) + (sv * z);
       return vec3(nx, y, nz);
     }
     static void rotateY(vec3& v, T radians) { v = v.rotateY(radians); }
 
     vec3 rotateZ(T radians) const {
-      const T c = typed_cos(radians);
-      const T s = typed_sin(radians);
-      const T nx = (c * x) - (s * y);
-      const T ny = (c * y) + (s * x);
+      const T cv = typed_cos(radians);
+      const T sv = typed_sin(radians);
+      const T nx = (cv * x) - (sv * y);
+      const T ny = (cv * y) + (sv * x);
       return vec3(nx, ny, z);
     }
     static void rotateZ(vec3& v, T radians) { v = v.rotateZ(radians); }
@@ -289,13 +292,13 @@ class vec3 {
 
 
 template <typename T>
-vec3<T> operator+(T s, const vec3<T>& in) { vec3<T> v(in); v += s; return v; }
+vec3<T> operator+(T d, const vec3<T>& in) { vec3<T> v(in); v += d; return v; }
 template <typename T>
-vec3<T> operator-(T s, const vec3<T>& in) { vec3<T> v(s, s, s); v -= in; return v; }
+vec3<T> operator-(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v -= in; return v; }
 template <typename T>
-vec3<T> operator*(T s, const vec3<T>& in) { vec3<T> v(in); v *= s; return v; }
+vec3<T> operator*(T d, const vec3<T>& in) { vec3<T> v(in); v *= d; return v; }
 template <typename T>
-vec3<T> operator/(T s, const vec3<T>& in) { vec3<T> v(s, s, s); v /= in; return v; }
+vec3<T> operator/(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v /= in; return v; }
 
 
 //============================================================================//
@@ -307,7 +310,10 @@ vec3<T> operator/(T s, const vec3<T>& in) { vec3<T> v(s, s, s); v /= in; return 
 template <typename T>
 class vec4 {
   public:
-    T x, y, z, w;
+    union { T x; T r; T s; };
+    union { T y; T g; T t; };
+    union { T z; T b; T p; };
+    union { T w; T a; T q; };
 
   public:
     vec4()                       : x((T)0), y((T)0), z((T)0), w((T)1) {}
@@ -334,6 +340,8 @@ class vec4 {
     inline const vec3<T>& xyz() const { return (vec3<T>&)x; }
     inline       vec3<T>& yzw()       { return (vec3<T>&)y; }
     inline const vec3<T>& yzw() const { return (vec3<T>&)y; }
+    inline       vec3<T>& rgb()       { return (vec3<T>&)x; }
+    inline const vec3<T>& rgb() const { return (vec3<T>&)x; }
 
     vec4& operator+=(const vec4& v) {
       x += v.x; y += v.y; z += v.z; w += v.w; return *this;
@@ -348,10 +356,10 @@ class vec4 {
       x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this;
     }
 
-    vec4& operator+=(T s) { x += s; y += s; z += s; w += s; return *this; }
-    vec4& operator-=(T s) { x -= s; y -= s; z -= s; w -= s; return *this; }
-    vec4& operator*=(T s) { x *= s; y *= s; z *= s; w *= s; return *this; }
-    vec4& operator/=(T s) { x /= s; y /= s; z /= s; w /= s; return *this; }
+    vec4& operator+=(T d) { x += d; y += d; z += d; w += d; return *this; }
+    vec4& operator-=(T d) { x -= d; y -= d; z -= d; w -= d; return *this; }
+    vec4& operator*=(T d) { x *= d; y *= d; z *= d; w *= d; return *this; }
+    vec4& operator/=(T d) { x /= d; y /= d; z /= d; w /= d; return *this; }
 
     vec4 operator+(const vec4& v) const {
       return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
@@ -366,10 +374,10 @@ class vec4 {
       return vec4(x / v.x, y / v.y, z / v.z, w / v.w);
     }
 
-    vec4 operator+(T s) const { return vec4(x + s, y + s, z + s, w + s); }
-    vec4 operator-(T s) const { return vec4(x - s, y - s, z - s, w - s); }
-    vec4 operator*(T s) const { return vec4(x * s, y * s, z * s, w * s); }
-    vec4 operator/(T s) const { return vec4(x / s, y / s, z / s, w / s); }
+    vec4 operator+(T d) const { return vec4(x + d, y + d, z + d, w + d); }
+    vec4 operator-(T d) const { return vec4(x - d, y - d, z - d, w - d); }
+    vec4 operator*(T d) const { return vec4(x * d, y * d, z * d, w * d); }
+    vec4 operator/(T d) const { return vec4(x / d, y / d, z / d, w / d); }
 
     bool operator<(const vec4& v) const {
       if (x < v.x) { return true;  }
@@ -416,13 +424,13 @@ class vec4 {
 
 
 template <typename T>
-vec4<T> operator+(T s, const vec4<T>& in) { vec4<T> v(in); v += s; return v; }
+vec4<T> operator+(T d, const vec4<T>& in) { vec4<T> v(in); v += d; return v; }
 template <typename T>
-vec4<T> operator-(T s, const vec4<T>& in) { vec4<T> v(s, s, s, s); v -= in; return v; }
+vec4<T> operator-(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v -= in; return v; }
 template <typename T>
-vec4<T> operator*(T s, const vec4<T>& in) { vec4<T> v(in); v *= s; return v; }
+vec4<T> operator*(T d, const vec4<T>& in) { vec4<T> v(in); v *= d; return v; }
 template <typename T>
-vec4<T> operator/(T s, const vec4<T>& in) { vec4<T> v(s, s, s, s); v /= in; return v; }
+vec4<T> operator/(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v /= in; return v; }
 
 
 //============================================================================//

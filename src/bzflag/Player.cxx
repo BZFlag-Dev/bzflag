@@ -1021,7 +1021,7 @@ void Player::endShot(int index, bool isHit, bool showExplosion)
 
 void Player::setVisualTeam (TeamColor visualTeam)
 {
-  color.xyz() = Team::getTankColor(visualTeam).xyz();
+  color.rgb() = Team::getTankColor(visualTeam).rgb();
 
   if (avatar) {
     avatar->setVisualTeam(visualTeam, color);

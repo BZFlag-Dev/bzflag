@@ -659,10 +659,10 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
     out << "illum 2" << std::endl;
   }
   out << "d " << diffuse[3] << std::endl;
-  out << "#Ka " << ambient.xyz().tostring()  << std::endl; // not really used
-  out << "Kd "  << diffuse.xyz().tostring()  << std::endl;
-  out << "Ke "  << emission.xyz().tostring() << std::endl;
-  out << "Ks "  << specular.xyz().tostring() << std::endl;
+  out << "#Ka " << ambient.rgb().tostring()  << std::endl; // not really used
+  out << "Kd "  << diffuse.rgb().tostring()  << std::endl;
+  out << "Ke "  << emission.rgb().tostring() << std::endl;
+  out << "Ks "  << specular.rgb().tostring() << std::endl;
   out << "Ns "  << (1000.0f * (shininess / 128.0f)) << std::endl;
   if (textureCount > 0) {
     const TextureInfo* ti = &textures[0];

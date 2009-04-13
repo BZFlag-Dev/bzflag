@@ -1492,7 +1492,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     glTranslatef(pos[0], pos[1], 0.0f);
 
     // set the main lighting color
-    fvec4 color(lightColor.xyz(), I);
+    fvec4 color(lightColor.rgb(), I);
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
@@ -1623,7 +1623,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
 
     // set the main lighting color
-    fvec3 baseColor = gndColor->xyz() * lightColor.xyz();
+    fvec3 baseColor = gndColor->rgb() * lightColor.rgb();
     if (invert) { // beats me, should just color logic op the static nodes
       baseColor = 1.0f - baseColor;
     }

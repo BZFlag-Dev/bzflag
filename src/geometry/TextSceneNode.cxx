@@ -626,8 +626,8 @@ void TextSceneNode::TextRenderNode::render()
 
   myColor4fv(*colorPtr);
   const float oldOpacity = fm.getOpacity(); // FIXME -- just do it once at the start
-  if (colorPtr->w != oldOpacity) {
-    fm.setOpacity(colorPtr->w);
+  if (colorPtr->a != oldOpacity) {
+    fm.setOpacity(colorPtr->a);
   }
 
   glCallList(xformList);

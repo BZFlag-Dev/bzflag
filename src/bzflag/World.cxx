@@ -657,7 +657,7 @@ void World::updateFlag(int index, float dt)
   Flag& flag = flags[index];
   FlagSceneNode* flagNode = flagNodes[index];
   const fvec4* color = flagNode->getColor();
-  float alpha = color->w;
+  float alpha = color->a;
 
   switch (flag.status) {
     default: {
@@ -762,7 +762,7 @@ void World::updateFlag(int index, float dt)
   }
 
   // update alpha if changed
-  if (alpha != color->w) {
+  if (alpha != color->a) {
     flagNode->setAlpha(alpha);
   }
 

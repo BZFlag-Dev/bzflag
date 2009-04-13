@@ -35,10 +35,10 @@ OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
     if (shininess != scan->shininess) {
       continue;
     }
-    if (specular.xyz() != scan->specular.xyz()) {
+    if (specular.rgb() != scan->specular.rgb()) {
       continue;
     }
-    if (emissive.xyz() != scan->emissive.xyz()) {
+    if (emissive.rgb() != scan->emissive.rgb()) {
       continue;
     }
     scan->ref();

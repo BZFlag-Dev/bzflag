@@ -172,8 +172,8 @@ void Team::setColors(TeamColor team, const fvec4& tank, const fvec4& radar)
     return;
 
   // leave alpha at 1.0f
-  tankColor[teamIndex].xyz()  = tank.xyz();
-  radarColor[teamIndex].xyz() = radar.xyz();
+  tankColor[teamIndex].rgb()  = tank.rgb();
+  radarColor[teamIndex].rgb() = radar.rgb();
 }
 
 

@@ -48,23 +48,22 @@
 class OpenGLTexture {
   public:
     enum Filter {
-			Off,
-			Nearest,
-			Linear,
-			NearestMipmapNearest,
-			LinearMipmapNearest,
-			NearestMipmapLinear,
-			LinearMipmapLinear,
-			Max = LinearMipmapLinear,
-			Default = Max
+      Off,
+      Nearest,
+      Linear,
+      NearestMipmapNearest,
+      LinearMipmapNearest,
+      NearestMipmapLinear,
+      LinearMipmapLinear,
+      Max = LinearMipmapLinear,
+      Default = Max
     };
 
-			OpenGLTexture(int width, int height,
-					const void* pixels,
-					Filter maxFilter = Linear,
-					bool repeat = true,
-					int internalFormat = 0);
-			~OpenGLTexture();
+    OpenGLTexture(int width, int height, const void* pixels,
+                  Filter maxFilter = Linear, bool repeat = true,
+                  int internalFormat = 0);
+    ~OpenGLTexture();
+
     bool		hasAlpha() const;
 
     bool		execute();

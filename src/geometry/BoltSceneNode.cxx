@@ -280,16 +280,16 @@ void BoltSceneNode::BoltRenderNode::setColor(const fvec4& rgba)
 {
   mainColor = rgba;
 
-  innerColor.xyz() = 0.5f * (rgba.xyz() + 1.0f);
-  innerColor.w = rgba.w;
+  innerColor.rgb() = 0.5f * (rgba.rgb() + 1.0f);
+  innerColor.a = rgba.a;
 
-  outerColor.xyz()  = rgba.xyz();
-  flareColor.xyz()  = rgba.xyz();
-  coronaColor.xyz() = rgba.xyz();
+  outerColor.rgb()  = rgba.rgb();
+  flareColor.rgb()  = rgba.rgb();
+  coronaColor.rgb() = rgba.rgb();
 
-  outerColor.w  = (rgba.w == 1.0f)  ? 0.1f   : rgba.w;
-  flareColor.w  = (rgba.w == 1.0f ) ? 0.667f : rgba.w;
-  coronaColor.w = (rgba.w == 1.0f ) ? 0.5f   : rgba.w;
+  outerColor.a  = (rgba.a == 1.0f)  ? 0.1f   : rgba.a;
+  flareColor.a  = (rgba.a == 1.0f ) ? 0.667f : rgba.a;
+  coronaColor.a = (rgba.a == 1.0f ) ? 0.5f   : rgba.a;
 }
 
 

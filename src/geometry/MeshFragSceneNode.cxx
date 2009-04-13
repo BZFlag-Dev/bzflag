@@ -395,7 +395,7 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderNode.setStyle(getStyle());
   const fvec4* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol->w != 0.0f)) {
+  if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
     renderer.addRenderNode(&renderNode, getWallGState());
   }
   return;
@@ -406,7 +406,7 @@ void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   if (!noShadow) {
     const fvec4* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol->w != 0.0f)) {
+    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
       renderer.addShadowNode(&renderNode);
     }
   }

@@ -260,7 +260,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
-    if (set.meshMat.colorPtr->w != 0.0f) {
+    if (set.meshMat.colorPtr->a != 0.0f) {
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
@@ -277,7 +277,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
     const MeshMaterial& mat = set.meshMat;
-    if (mat.drawShadow && (mat.colorPtr->w != 0.0f)) {
+    if (mat.drawShadow && (mat.colorPtr->a != 0.0f)) {
       renderer.addShadowNode(set.node);
     }
   }

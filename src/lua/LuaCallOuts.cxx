@@ -1395,15 +1395,15 @@ int LuaCallOuts::GetSun(lua_State* L)
 		} 
 	}
 	else if (param == "ambient") {
-		lua_pushfvec3(L, RENDERER.getAmbientColor().xyz());
+		lua_pushfvec3(L, RENDERER.getAmbientColor().rgb());
 		return 3;
 	}
 	else if (param == "diffuse") {
-		lua_pushfvec3(L, RENDERER.getSunColor().xyz());
+		lua_pushfvec3(L, RENDERER.getSunColor().rgb());
 		return 3;
 	}
 	else if (param == "specular") {
-		lua_pushfvec3(L, RENDERER.getSunColor().xyz());
+		lua_pushfvec3(L, RENDERER.getSunColor().rgb());
 		return 3;
 	}
 
@@ -1561,7 +1561,7 @@ int LuaCallOuts::GetTeamColor(lua_State* L)
 	if (color == NULL) {
 		return 0;
 	}
-	lua_pushfvec3(L, color.xyz());
+	lua_pushfvec3(L, color.rgb());
 	return 3;
 }
 
@@ -1576,7 +1576,7 @@ int LuaCallOuts::GetTeamRadarColor(lua_State* L)
 	if (color == NULL) {
 		return 0;
 	}
-	lua_pushfvec3(L, color.xyz());
+	lua_pushfvec3(L, color.rgb());
 	return 3;
 }
 

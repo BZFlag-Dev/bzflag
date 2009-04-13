@@ -729,7 +729,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
 
   // the pole base
   if (!isShadow) {
-    glColor4f(0.25f, 0.25f, 0.5f, sceneNode->color->w); // blue
+    glColor4f(0.25f, 0.25f, 0.5f, sceneNode->color->a); // blue
   }
   glBegin(GL_QUAD_STRIP);
   {
@@ -761,7 +761,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
 
   // the pole cap
   if (!isShadow) {
-    glColor4f(0.5f, 0.5f, 0.25f, sceneNode->color->w); // yellow
+    glColor4f(0.5f, 0.5f, 0.25f, sceneNode->color->a); // yellow
     if (lighting) {
       const float yellow[4] = {0.4f, 0.4f, 0.2f, 1.0f};
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, yellow);
@@ -806,7 +806,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
 
   // the pole
   if (!isShadow) {
-    glColor4f(0.1f, 0.1f, 0.1f, sceneNode->color->w); // dark grey
+    glColor4f(0.1f, 0.1f, 0.1f, sceneNode->color->a); // dark grey
     if (lighting) {
       const float black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
@@ -853,7 +853,7 @@ void FlagSceneNode::FlagRenderNode::render()
   if (!isShadow) {
     glColor4fv(*sceneNode->color);
     if (!BZDBCache::blend && (translucent || texturing)) {
-      myStipple(sceneNode->color->w);
+      myStipple(sceneNode->color->a);
     }
   }
 
@@ -932,7 +932,7 @@ void FlagSceneNode::FlagRenderNode::render()
       }
 
       if (!isShadow) {
-	glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color->w);
+	glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color->a);
 	if (texturing) {
 	  glDisable(GL_TEXTURE_2D);
 	}
