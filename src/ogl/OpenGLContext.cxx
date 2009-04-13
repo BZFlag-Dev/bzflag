@@ -17,12 +17,12 @@
 // there is no 'implementation header'
 
 // common headers
-#include "bzfgl.h"
-#include "bzfio.h"
-
 /////////////////////////
 #define UNSAFE_GL_CONTEXT
+/////////// for /////////
+#include "bzfgl.h"
 /////////////////////////
+#include "bzfio.h"
 #include "OpenGLGState.h"
 
 
