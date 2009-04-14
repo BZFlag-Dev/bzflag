@@ -295,7 +295,7 @@ void BillboardSceneNode::move(const fvec3& pos)
 
 void BillboardSceneNode::setAngle(float _angle)
 {
-  angle = RAD2DEG * _angle;
+  angle = RAD2DEGf * _angle;
 }
 
 

@@ -549,7 +549,7 @@ void GuidedMissileStrategy::radarRender() const
   // Display leading lines
   if (length > 0) {
     const fvec3& vel = getPath().getVelocity();
-    const fvec3 dir = vel.normalize() * shotTailLength * length;
+    const fvec3 dir = vel.normalize() * shotTailLength * (float)length;
     glBegin(GL_LINES); {
       glVertex2fv(orig);
       if (BZDBCache::leadingShotLine) {
