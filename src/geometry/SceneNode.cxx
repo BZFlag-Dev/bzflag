@@ -205,7 +205,7 @@ bool SceneNode::cull(const ViewFrustum& view) const
   const int planeCount = view.getPlaneCount();
   for (int i = 0; i < planeCount; i++) {
     const fvec4& side = view.getSide(i);
-    
+
     const float d = side.planeDist(sphere.xyz());
     if ((d < 0.0f) && ((d * d) > sphere[3])) {
       return true;

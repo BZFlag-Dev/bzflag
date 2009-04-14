@@ -74,7 +74,7 @@ void Plan::execute(float &, float &)
 	  if (enemyPos.z < 0.0f) {
 	    enemyPos.z = 0.0f;
           }
-  
+
 	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
 	    if (!myTank->validTeamTarget(remotePlayers[t])) {

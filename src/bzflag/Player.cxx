@@ -602,8 +602,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
                               const fvec3& /*endPos*/, const float /*endAzimuth*/,
                               const fvec3& startVelocity, double dt,
                               float groundLimit, fvec3& velocity, fvec3& position,
-                              float* azimuth) 
-{ 
+                              float* azimuth)
+{
   // constants
   static const float MinSearchStep = 0.0001f;
   static const int MaxSearchSteps = 7;
@@ -618,7 +618,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
   const Obstacle* obstacle;
   bool expel;
   float timeStep = (float)dt;
-  
+
   newPos[0] = startPos[0];
   newPos[1] = startPos[1];
   newPos[2] = startPos[2];
@@ -633,7 +633,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
 
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
-    fvec3 tmpPos; 
+    fvec3 tmpPos;
 	float tmpAzimuth;
     tmpAzimuth = newAzimuth;
     tmpPos[0] = newPos[0];
@@ -752,7 +752,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
 
     // check for being on a building
     if ((newPos[2] > 0.0f) && (normal[2] > 0.001f)) {
-		if (((state.status & PlayerState::DeadStatus) == 0) && 
+		if (((state.status & PlayerState::DeadStatus) == 0) &&
 			((state.status & PlayerState::Exploding) == 0) && expel) {
 	    lastObstacle = obstacle;
       }
@@ -801,9 +801,9 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
   velocity[0] = newVelocity[0];
   velocity[1] = newVelocity[1];
   velocity[2] = newVelocity[2];
-  position[0] = newPos[0]; 
-  position[1] = newPos[1]; 
-  position[2] = newPos[2]; 
+  position[0] = newPos[0];
+  position[1] = newPos[1];
+  position[2] = newPos[2];
   *azimuth = newAzimuth;
 
   return hitWall;
@@ -1531,7 +1531,7 @@ void Player::doDeadReckoning()
 
   bool hitWorld = false;
   bool ZHit = false;
-  
+
   // if the tanks hits something in Z then update input state (we don't want to fall anymore)
   float zLimit = 0.0f;
   if (getFlag() == Flags::Burrow )
@@ -1541,7 +1541,7 @@ void Player::doDeadReckoning()
   World *world = World::getWorld();
   if (world) {
 	bool expel;
-    const Obstacle* obstacle = getHitBuilding(inputPos, inputAzimuth, 
+    const Obstacle* obstacle = getHitBuilding(inputPos, inputAzimuth,
 		  predictedPos, predictedAzimuth, !isSolid(), expel);
 
     // did they hit something?
@@ -1552,15 +1552,15 @@ void Player::doDeadReckoning()
 	  float hitAzimuth;
 
 	  // get the normal for the collision
-      if (!getHitNormal(obstacle, inputPos, inputAzimuth, 
+      if (!getHitNormal(obstacle, inputPos, inputAzimuth,
 		  predictedPos, predictedAzimuth, hitNormal)) {
         obstacle->getNormal(inputPos, hitNormal);
       }
 
 	  // get the corrected position
 	  // FIXME: Azimuth isn't corrected properly
-      hitWorld = getHitCorrection(inputPos, inputAzimuth, predictedPos, 
-		  predictedAzimuth, inputVel, dt, zLimit, hitVelocity, hitPos, 
+      hitWorld = getHitCorrection(inputPos, inputAzimuth, predictedPos,
+		  predictedAzimuth, inputVel, dt, zLimit, hitVelocity, hitPos,
 		  &hitAzimuth);
 
       if (hitWorld) {
@@ -1571,7 +1571,7 @@ void Player::doDeadReckoning()
 		predictedVel[0] = hitVelocity[0];
 		predictedVel[1] = hitVelocity[1];
 		predictedVel[2] = hitVelocity[2];
-		//predictedAzimuth = hitAzimuth; 
+		//predictedAzimuth = hitAzimuth;
 
 		// check if the collision was in the Z direction
 		if (hitNormal[2] > 0.001f)
@@ -1582,10 +1582,10 @@ void Player::doDeadReckoning()
 	  }
     }
   }
-  
+
 
   // the velocity check is for when a Burrow flag is dropped
-  if (ZHit || ((predictedPos[2] <= zLimit) 
+  if (ZHit || ((predictedPos[2] <= zLimit)
 	  && (predictedVel[2] <= 0.0f))) {
     predictedPos[2] = zLimit;
     predictedVel[2] = 0.0f;

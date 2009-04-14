@@ -369,8 +369,8 @@ void HUDRenderer::setFrameRadarTriangleCount(int rtpf)
 }
 
 
-void HUDRenderer::setAlert(int index, const char* string,
-					      float duration, bool warning)
+void HUDRenderer::setAlert(int index, const char* msg,
+                           float duration, bool warning)
 {
   if (index < 0) {
     index = 0;
@@ -379,12 +379,12 @@ void HUDRenderer::setAlert(int index, const char* string,
     index = MaxAlerts - 1;
   }
 
-  if (!string) {
+  if (!msg) {
     alertClock[index].setClock(0.0f);
   }
   else {
     FontManager &fm = FontManager::instance();
-    alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(string);
+    alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(msg);
     alertLabelWidth[index] = fm.getStringWidth(alertFontFace->getFMFace(),
                                                alertFontSize,
                                                alertLabel[index]);
@@ -540,10 +540,11 @@ void HUDRenderer::setTimeLeft(uint32_t _timeLeft)
   timeSet = TimeKeeper::getTick();
 }
 
+
 /* FIXME - makeHelpString should return an array of strings instead of
  * using implicit null chars.
  */
-std::string		HUDRenderer::makeHelpString(const char* help) const
+std::string HUDRenderer::makeHelpString(const char* help) const
 {
   if (!help) return std::string();
 

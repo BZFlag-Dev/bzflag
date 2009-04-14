@@ -275,7 +275,7 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
 
   // generate the normal matrix
   const fvec4* vm = vertexMatrix;
-  
+
   normalMatrix[0] = fvec3::cross(vm[1].xyz(), vm[2].xyz());
   normalMatrix[1] = fvec3::cross(vm[2].xyz(), vm[0].xyz());
   normalMatrix[2] = fvec3::cross(vm[0].xyz(), vm[1].xyz());

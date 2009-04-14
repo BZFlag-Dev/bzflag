@@ -44,7 +44,7 @@ class HUDuiLabel : public HUDuiControl {
     void		doRender();
 
   private:
-    std::string		string;
+    std::string		label;
     std::vector<std::string> *params;
     bool		darker;
     fvec4		color;

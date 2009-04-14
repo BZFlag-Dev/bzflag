@@ -112,7 +112,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     }
 
 	// If we're on the recent server list, cycle through all
-	// recent servers and unmark them as a recent server. 
+	// recent servers and unmark them as a recent server.
     if (activeServerList == menu->recentList) {
       for (size_t i=0; i<activeServerList->getSize(); i++) {
         serverList.unmarkAsRecent(activeServerList->get(i)->getServer());

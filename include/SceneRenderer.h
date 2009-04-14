@@ -109,6 +109,8 @@ public:
   void		setBlank(bool blank = true);
   void		setInvert(bool invert = true);
 
+  inline bool	getDrawingMirror() const { return drawingMirror; }
+
   const ViewFrustum&	getViewFrustum() const;
   ViewFrustum&		getViewFrustum();
 
@@ -191,6 +193,7 @@ private:
   bool			blank;
   bool			invert;
   bool			mirror;
+  bool			drawingMirror;
   bool			drawGround;
   bool			clearZbuffer;
   bool			mapFog;

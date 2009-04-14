@@ -62,9 +62,9 @@ public:
 
 private:
 
-  static const char*	readValue(const char* string, std::string* value);
-  static const char*	readUnquoted(const char* string, std::string* value);
-  static const char*	readQuoted(const char* string, std::string* value);
+  static const char*	readValue(const char* cmd, std::string* value);
+  static const char*	readUnquoted(const char* cmd, std::string* value);
+  static const char*	readQuoted(const char* cmd, std::string* value);
 
   struct CmdInfo {
    public:

@@ -33,8 +33,8 @@
 class CountUTF8StringItr : public UTF8StringItr
 {
 public:
-  CountUTF8StringItr(const char* string) :
-    UTF8StringItr(string), counter(0) {}
+  CountUTF8StringItr(const char* data) :
+    UTF8StringItr(data), counter(0) {}
 
   inline CountUTF8StringItr& operator++()
   {

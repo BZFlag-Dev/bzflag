@@ -246,7 +246,7 @@ static bool checkArgCount(int reqCount, int count,
            type.c_str(), lineNum + 1);
     return false;
   }
-  return true; 
+  return true;
 }
 
 

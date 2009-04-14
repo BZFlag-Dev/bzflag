@@ -759,7 +759,7 @@ bool CMesh::assignData(const tvVec3List& vertInData,
   tsIndexSet normIndexSet;
   tsIndexSet txcdIndexSet;
   getUsedIndices(vertIndexSet, normIndexSet, txcdIndexSet);
-  
+
   tvVec3List vertOutData;
   tvVec3List normOutData;
   tvVec2List txcdOutData;
@@ -1615,7 +1615,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
   // do the custom objects.
   for (unsigned int i = 0; i < drawInfoMeshes.staticMesh.customObjects.size(); i++ )
   {
-    
+
     fprintf(fp, "%s\n", drawInfoMeshes.staticMesh.customObjects[i].name.c_str());
     for (unsigned int j = 0; j < drawInfoMeshes.staticMesh.customObjects[i].params.size(); j++) {
       fprintf(fp, "  %s\n", drawInfoMeshes.staticMesh.customObjects[i].params[j].c_str());

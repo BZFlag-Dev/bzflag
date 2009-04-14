@@ -40,7 +40,7 @@ public:
 
 private:
 
-  HUDuiControl* createLabel(const char* string);
+  HUDuiControl* createLabel(const char* label);
 
   HUDuiControl*	join;
   HUDuiControl*	options;

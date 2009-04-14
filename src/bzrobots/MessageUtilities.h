@@ -28,19 +28,19 @@
 namespace MessageUtilities
 {
   template<typename T>
-  bool parse(const char *string, T &dest);
+  bool parse(const char *message, T &dest);
   template<>
-  bool parse(const char *string, bool &dest);
+  bool parse(const char *message, bool &dest);
   template<>
-  bool parse(const char *string, double &dest);
+  bool parse(const char *message, double &dest);
   template<>
-  bool parse(const char *string, float &dest);
+  bool parse(const char *message, float &dest);
   template<>
-  bool parse(const char *string, uint64_t &dest);
+  bool parse(const char *message, uint64_t &dest);
   template<>
-  bool parse(const char *string, uint32_t &dest);
+  bool parse(const char *message, uint32_t &dest);
   template<>
-  bool parse(const char *string, std::string &dest);
+  bool parse(const char *message, std::string &dest);
 
   template<typename T>
   messageParseStatus parseSingle(char **arguments, int count, T &dest)

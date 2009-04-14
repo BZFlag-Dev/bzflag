@@ -370,17 +370,17 @@ static string cmdCycle(const string&, const CmdArgList& args, bool*)
 //
 
 const struct CommandsItem commands[] = {
-  { "quit",	&cmdQuit,	"quit:  quit the program" },
-  { "help",	&cmdHelp,	"help [<command-name>]:  get help on a command or a list of commands" },
-  { "print",	&cmdPrint,	"print ...:  print arguments; $name is replaced by value of variable \"name\"" },
-  { "set",	&cmdSet,	"set [<name> <value>]:  set a variable or print all set variables" },
-  { "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
-  { "cycle",	&cmdCycle,	"cycle name value1 value2 value3 etc...: cycle through a set of values" },
-  { "toggle",	&cmdToggle,	"toggle <name> [first [second]]:  toggle value of a variable" },
-  { "mult",	&cmdMult,	"mult <name> <value>:  multiply a variable by an amount" },
-  { "add",	&cmdAdd,	"add <name> <value>:  add an amount to a variable" },
-  { "bind",	&cmdBind,	"bind <button-name> {up|down} <command> <args>...: bind a key" },
-  { "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key" }
+  { "quit",   &cmdQuit,   "quit:  quit the program" },
+  { "help",   &cmdHelp,   "help [<command-name>]:  get help on a command or a list of commands" },
+  { "print",  &cmdPrint,  "print ...:  print arguments; $name is replaced by value of variable \"name\"" },
+  { "set",    &cmdSet,    "set [<name> <value>]:  set a variable or print all set variables" },
+  { "unset",  &cmdUnset,  "unset <name>:  unset a variable" },
+  { "cycle",  &cmdCycle,  "cycle name value1 value2 value3 etc...: cycle through a set of values" },
+  { "toggle", &cmdToggle, "toggle <name> [first [second]]:  toggle value of a variable" },
+  { "mult",   &cmdMult,   "mult <name> <value>:  multiply a variable by an amount" },
+  { "add",    &cmdAdd,    "add <name> <value>:  add an amount to a variable" },
+  { "bind",   &cmdBind,   "bind <button-name> {up|down} <command> <args>...: bind a key" },
+  { "unbind", &cmdUnbind, "unbind <button-name> {up|down}:  unbind a key" }
 };
 
 

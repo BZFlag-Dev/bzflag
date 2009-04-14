@@ -97,7 +97,7 @@ void RadarRenderer::setControlColor(const fvec4* color)
     teamColor = *color;
   } else {
     teamColor = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
-  }  
+  }
 }
 
 

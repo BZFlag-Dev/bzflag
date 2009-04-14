@@ -17,7 +17,7 @@
 
 // system headers
 #include <vector>
- 
+
 // common headers
 #include "Flag.h"
 #include "vectors.h"

@@ -5009,7 +5009,7 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
     // compute the distance that the center point moves.
     const fvec3 vec = newP - oldP;
     const float len = vec.length();
-   
+
     // if the distance is less then our tolerance, and the END point
     // is IN an object, assume that the start point since we know that is clear
     // return this as the collision value
@@ -5035,7 +5035,7 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
     midpoint.rot = oldPos.rot + ((oldPos.rot - newPos.rot)*0.5f);
 
     // test from the start point to the midpoint
-    
+
     const fvec3 midP(midpoint.pos[0], midpoint.pos[1], midpoint.pos[2]);
     hit = world->hitBuilding(oldP, oldPos.rot, midP, midpoint.rot,
                              width, breadth, breadth, directional,checkWalls);

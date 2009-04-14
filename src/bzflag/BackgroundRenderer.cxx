@@ -1437,7 +1437,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
     // maximum value
     const float maxVal =
-      (lightColor.r > lightColor.g) ? 
+      (lightColor.r > lightColor.g) ?
        ((lightColor.r > lightColor.b) ? lightColor.r : lightColor.b) :
        ((lightColor.g > lightColor.b) ? lightColor.g : lightColor.b);
 
@@ -1608,7 +1608,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
       // center point
-      
+
       innerColor = I * baseColor;
       glColor3fv(innerColor);
       glVertex2f(0.0f, 0.0f);

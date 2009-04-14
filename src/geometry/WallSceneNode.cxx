@@ -592,7 +592,7 @@ void WallSceneNode::splitEdge(float d1, float d2,
   }
 
   // compute vertex
-  p = p1 + (t1 * (p2  - p1)); 
+  p = p1 + (t1 * (p2  - p1));
 
   // compute texture coordinate
   uv = uv1 + (t1 * (uv2 - uv1));

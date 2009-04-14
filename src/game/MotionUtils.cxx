@@ -143,7 +143,7 @@ void computeFriction(float dt, FlagType *flag,
   if (friction > 0.0f) {
     // limit vector acceleration
 
-    
+
     float delta[2] = {newVelocity[0] - oldVelocity[0], newVelocity[1] - oldVelocity[1]};
     float acc2 = (delta[0] * delta[0] + delta[1] * delta[1]) / (dt*dt);
     float accLimit = 20.0f * friction;

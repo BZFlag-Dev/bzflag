@@ -234,17 +234,17 @@ void HUDuiServerListItem::resize()
   displayPing = shorten(serverPing, (ping_percentage*getWidth())-2*spacerWidth);
 }
 
-std::string HUDuiServerListItem::shorten(std::string string, float width)
+std::string HUDuiServerListItem::shorten(std::string data, float width)
 {
   // Skip if it already fits
-  if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string) <= width)
-    return string;
+  if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), data) <= width)
+    return data;
 
   // Iterate through each character. Expensive.
-  for (int i=0; i<=(int)string.size(); i++) {
+  for (int i=0; i<=(int)data.size(); i++) {
     // Is it too big yet?
-    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i)) > width) {
-      return string.substr(0, i - 1);
+    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), data.substr(0, i)) > width) {
+      return data.substr(0, i - 1);
     }
   }
 

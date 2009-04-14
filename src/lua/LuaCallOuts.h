@@ -65,6 +65,8 @@ class LuaCallOuts {
 		static int GetRoamInfo(lua_State* L);
 		static int SetRoamInfo(lua_State* L);
 
+		static int GetDrawingMirror(lua_State* L);
+
 		static int GetScreenGeometry(lua_State* L);
 		static int GetWindowGeometry(lua_State* L);
 		static int GetViewGeometry(lua_State* L);

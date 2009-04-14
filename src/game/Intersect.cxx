@@ -955,7 +955,7 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
       }
       zone[a] = +1;
       inside = false;
-    } 
+    }
     else {
       zone[a] = 0;
     }

@@ -96,7 +96,7 @@ public:
   void setDrawTime(float drawTimeInseconds);
   void setFrameTriangleCount(int tpf);
   void setFrameRadarTriangleCount(int rtpf);
-  void setAlert(int num, const char* string, float duration,
+  void setAlert(int num, const char* msg, float duration,
                 bool warning = false);
   void setFlagHelp(FlagType* desc, float duration);
   void addMarker(float heading, const float* color);

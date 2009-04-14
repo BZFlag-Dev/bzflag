@@ -94,7 +94,7 @@ while (i <= #arg) do
     PrintHelp('unknown option: "' .. a .. '"')
     os.exit(1)
   end
-  
+
   i = i + 1
 end
 

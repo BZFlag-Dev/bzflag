@@ -126,6 +126,8 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 	PUSH_LUA_CFUNC(L, GetRoamInfo);
 	PUSH_LUA_CFUNC(L, SetRoamInfo);
 
+	PUSH_LUA_CFUNC(L, GetDrawingMirror);
+
 	PUSH_LUA_CFUNC(L, GetScreenGeometry);
 	PUSH_LUA_CFUNC(L, GetWindowGeometry);
 	PUSH_LUA_CFUNC(L, GetViewGeometry);
@@ -1069,6 +1071,13 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 }
 
 
+int LuaCallOuts::GetDrawingMirror(lua_State* L)
+{
+	lua_pushboolean(L, RENDERER.getDrawingMirror());
+	return 1;
+}
+
+
 //============================================================================//
 
 int LuaCallOuts::GetScreenGeometry(lua_State* L)
@@ -1392,7 +1401,7 @@ int LuaCallOuts::GetSun(lua_State* L)
 		if (ptr) {
 			lua_pushfvec3(L, *ptr);
 			return 3;
-		} 
+		}
 	}
 	else if (param == "ambient") {
 		lua_pushfvec3(L, RENDERER.getAmbientColor().rgb());

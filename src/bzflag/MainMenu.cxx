@@ -85,11 +85,11 @@ void	  MainMenu::createControls()
   initNavigation();
 }
 
-HUDuiControl* MainMenu::createLabel(const char* string)
+HUDuiControl* MainMenu::createLabel(const char* label)
 {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFontFace(getFontFace());
-  control->setString(string);
+  control->setString(label);
   return control;
 }
 

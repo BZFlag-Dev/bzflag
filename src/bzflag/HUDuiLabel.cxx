@@ -19,6 +19,7 @@
 #include "FontManager.h"
 #include "LocalFontFace.h"
 
+
 //
 // HUDuiLabel
 //
@@ -30,27 +31,30 @@ HUDuiLabel::HUDuiLabel() : HUDuiControl()
   color = textColor;
 }
 
+
 HUDuiLabel::~HUDuiLabel()
 {
   if (params)
     delete params;
 }
 
-std::string		HUDuiLabel::getString() const
+
+std::string HUDuiLabel::getString() const
 {
   std::string theString;
   Bundle *bdl = BundleMgr::getCurrentBundle();
   if (params)
-    theString = bdl->formatMessage(string, params);
+    theString = bdl->formatMessage(label, params);
   else
-    theString = bdl->getLocalString(string);
+    theString = bdl->getLocalString(label);
 
   return theString;
 }
 
-void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
+
+void HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
 {
-  string = _string;
+  label = _string;
   if (_params) {
     if (params != NULL)
       delete params;
@@ -60,12 +64,14 @@ void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::
   onSetFont();
 }
 
-void			HUDuiLabel::onSetFont()
+
+void HUDuiLabel::onSetFont()
 {
   HUDuiControl::onSetFont();
 }
 
-bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
+
+bool HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 {
   if (HUDuiControl::doKeyPress(key))
     return true;
@@ -79,24 +85,28 @@ bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
+
+bool HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
 {
   return false;
 }
 
-void			HUDuiLabel::setDarker(bool d)
+
+void HUDuiLabel::setDarker(bool d)
 {
   darker = d;
 }
 
-void			HUDuiLabel::setColor(float r, float g, float b)
+
+void HUDuiLabel::setColor(float r, float g, float b)
 {
   color.r = r;
   color.g = g;
   color.b = b;
 }
 
-void			HUDuiLabel::doRender()
+
+void HUDuiLabel::doRender()
 {
   if (getFontFace() < 0) {
     return;
@@ -116,6 +126,7 @@ void			HUDuiLabel::doRender()
                 getString(), &color);
   fm.setDarkness(1.0f);
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

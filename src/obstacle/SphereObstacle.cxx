@@ -489,7 +489,7 @@ void* SphereObstacle::pack(void *buf) const
   buf = nboPackInt32(buf, phydrv);
 
   buf = nboPackFVec2(buf, texsize);
-  
+
   for (int i = 0; i < MaterialCount; i++) {
     int matindex = MATERIALMGR.getIndex(materials[i]);
     buf = nboPackInt32(buf, matindex);

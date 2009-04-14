@@ -247,8 +247,8 @@ private:
   void updateTrackMarks();
   bool hitObstacleResizing();
   bool getHitCorrection(const fvec3& startPos, const float startAzimuth,
-      const fvec3& endPos, const float endAzimuth, const fvec3& startVelocity, 
-	  double timeStep, float groundLimit, fvec3& velocity, fvec3& position, 
+      const fvec3& endPos, const float endAzimuth, const fvec3& startVelocity,
+	  double timeStep, float groundLimit, fvec3& velocity, fvec3& position,
 	  float* azimuth);
 
 private:

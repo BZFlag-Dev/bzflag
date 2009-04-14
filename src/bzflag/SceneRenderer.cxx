@@ -65,6 +65,7 @@ SceneRenderer::SceneRenderer()
 , blank(false)
 , invert(false)
 , mirror(false)
+, drawingMirror(false)
 , mapFog(false)
 , sunBrightness(1.0f)
 , scene(NULL)
@@ -665,6 +666,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
 
 void SceneRenderer::drawMirror()
 {
+  drawingMirror = true;
   drawGround = false;
 
   // flip for the reflection drawing
@@ -744,6 +746,7 @@ void SceneRenderer::drawMirror()
   }
 
   clearZbuffer = false;
+  drawingMirror = false;
 }
 
 
@@ -1267,7 +1270,7 @@ void SceneRenderer::disableLights(const Extents& exts)
   for (int i = 0; i < dynamicLights; i++) {
     const fvec4& pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
-    
+
     if ((pos.x < (exts.mins.x - dist)) || (pos.x > (exts.maxs.x + dist)) ||
 	(pos.y < (exts.mins.y - dist)) || (pos.y > (exts.maxs.y + dist)) ||
 	(pos.z < (exts.mins.z - dist)) || (pos.z > (exts.maxs.z + dist))) {
@@ -1405,7 +1408,7 @@ void SceneRenderer::setupShadowPlanes()
     planes[2].x = (edge.x * sunDir.z);
     planes[2].y = (edge.y * sunDir.z);
     planes[2].z = -fvec2::dot(edge, sunDir.xy());
-    const float slope = frustum.getSide(3).z / 
+    const float slope = frustum.getSide(3).z /
                         frustum.getSide(3).xy().length();
     const fvec2 point = eye.xy() + (eye.z * slope * frustum.getSide(3).xy());
     planes[2].w = -fvec2::dot(planes[2].xy(), point);

@@ -474,7 +474,7 @@ int LuaHandle::ScriptGetID(lua_State* L)
 {
 	if (lua_gettop(L) == 0) {
 		lua_pushinteger(L, activeHandle->GetScriptID());
-	}		
+	}
 	else if (lua_israwstring(L, 1)) {
 		const string key = lua_tostring(L, 1);
 		if (key == "LuaUser") {
