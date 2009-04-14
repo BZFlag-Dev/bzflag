@@ -63,14 +63,14 @@ SphereSceneNode::~SphereSceneNode()
 void SphereSceneNode::setColor(float r, float g, float b, float a)
 {
   color = fvec4(r, g, b, a);
-  transparent = (color[3] != 1.0f);
+  transparent = (color.a != 1.0f);
 }
 
 
 void SphereSceneNode::setColor(const fvec4& rgba)
 {
   color = rgba;
-  transparent = (color[3] != 1.0f);
+  transparent = (color.a != 1.0f);
 }
 
 
@@ -261,11 +261,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
   const ViewFrustum& view = renderer.getViewFrustum();
   const fvec4& s = getSphere();
   const fvec3& e = view.getEye();
-  const float dx = e[0] - s[0];
-  const float dy = e[1] - s[1];
-  const float dz = e[2] - s[2];
-
-  float distSqr = (dx*dx) + (dy*dy) + (dz*dz);
+  float distSqr = (e - s.xyz()).lengthSq();
   if (distSqr <= 0.0f) {
     distSqr = 1.0e-6f;
   }
@@ -277,7 +273,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
   } else {
     ppl = 1.0f / lpp;
   }
-  const float pixelsSqr = (s[3] * (ppl * ppl)) / distSqr;
+  const float pixelsSqr = (s.w * (ppl * ppl)) / distSqr;
 
   int lod;
   for (lod = 0; lod < (sphereLods - 1); lod++) {
@@ -287,7 +283,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
   }
   renderNode.setLod(lod);
 
-  inside = (distSqr < s[3]);
+  inside = (distSqr < s.w);
 
   renderer.addRenderNode(&renderNode, &gstate);
 
@@ -361,7 +357,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 
   glPushMatrix();
   {
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glScalef(radius, radius, radius);
 
     // invert the color within contained volume
@@ -405,7 +401,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
     // draw the surface
     myColor4fv(sceneNode->color);
     if (stippled) {
-      myStipple(sceneNode->color[3]);
+      myStipple(sceneNode->color.a);
     }
     if (!stippled) {
       glCullFace(GL_FRONT);
@@ -491,7 +487,7 @@ void SphereBspSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   const fvec4& mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = mySphere[3] *
+  const float size = mySphere.w *
                      view.getAreaFactor() / getDistanceSq(view.getEye());
   const int lod = (size < 100.0f) ? 0 : 1;
 
@@ -499,7 +495,7 @@ void SphereBspSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   if (BZDBCache::blend) {
     const fvec3& eye = view.getEye();
-    const float azimuth = atan2f(mySphere[1] - eye[1], eye[0] - mySphere[0]);
+    const float azimuth = atan2f(mySphere.y - eye.y, eye.x - mySphere.x);
     const int numSlices = (lod == 1) ? NumSlices : SphereLowRes;
     renderNode.setBaseIndex(int(float(numSlices) *
 				(1.0f + 0.5f * azimuth / M_PI)) % numSlices);
@@ -545,9 +541,9 @@ SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
       const float phi = (float)(M_PI * (0.5f - double(i) / SphereRes));
       for (j = 0; j < NumSlices; j++) {
 	const float theta = (float)(2.0 * M_PI * double(j) / NumSlices);
-	geom[NumSlices * i + j][0] = cosf(theta) * cosf(phi);
-	geom[NumSlices * i + j][1] = sinf(theta) * cosf(phi);
-	geom[NumSlices * i + j][2] = sinf(phi);
+	geom[NumSlices * i + j].x = cosf(theta) * cosf(phi);
+	geom[NumSlices * i + j].y = sinf(theta) * cosf(phi);
+	geom[NumSlices * i + j].z = sinf(phi);
       }
     }
 
@@ -556,9 +552,9 @@ SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
       const float phi = (float)(M_PI * (0.5 - double(i) / SphereLowRes));
       for (j = 0; j < SphereLowRes; j++) {
 	const float theta = (float)(2.0 * M_PI * double(j) / SphereLowRes);
-	lgeom[SphereLowRes * i + j][0] = cosf(theta) * cosf(phi);
-	lgeom[SphereLowRes * i + j][1] = sinf(theta) * cosf(phi);
-	lgeom[SphereLowRes * i + j][2] = sinf(phi);
+	lgeom[SphereLowRes * i + j].x = cosf(theta) * cosf(phi);
+	lgeom[SphereLowRes * i + j].y = sinf(theta) * cosf(phi);
+	lgeom[SphereLowRes * i + j].z = sinf(phi);
       }
     }
   }
@@ -596,12 +592,12 @@ void SphereBspSceneNode::SphereBspRenderNode::render()
 
   glPushMatrix();
   {
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glScalef(radius, radius, radius);
 
     myColor4fv(sceneNode->color);
     if (!BZDBCache::blend && sceneNode->transparent) {
-      myStipple(sceneNode->color[3]);
+      myStipple(sceneNode->color.a);
     }
 
     if (BZDBCache::lighting) {
@@ -717,11 +713,10 @@ void SphereFragmentSceneNode::move()
   const fvec4& pSphere = parentSphere->getSphere();
   const float pRadius = parentSphere->getRadius();
   const fvec3& vertex = renderNode.getVertex();
-  setCenter(pSphere[0] + pRadius * vertex[0],
-	    pSphere[1] + pRadius * vertex[1],
-	    pSphere[2] + pRadius * vertex[2]);
-  setRadius((float)(4.0 * M_PI * M_PI * pSphere[3]) /
-			float(SphereLowRes * SphereLowRes));
+  const fvec3 center = pSphere.xyz() + (pRadius * vertex);
+  setCenter(center.x, center.y, center.z);
+  setRadius((float)(4.0 * M_PI * M_PI * pSphere.w) /
+            (float)(SphereLowRes * SphereLowRes));
 }
 
 
@@ -781,12 +776,12 @@ void SphereFragmentSceneNode::FragmentRenderNode::render()
 
   glPushMatrix();
   {
-    glTranslatef(pSphere[0], pSphere[1], pSphere[2]);
+    glTranslatef(pSphere.x, pSphere.y, pSphere.z);
     glScalef(pRadius, pRadius, pRadius);
 
     myColor4fv(sceneNode->color);
     if (!BZDBCache::blend && sceneNode->transparent) {
-      myStipple(sceneNode->color[3]);
+      myStipple(sceneNode->color.a);
     }
 
     glBegin(GL_QUADS);

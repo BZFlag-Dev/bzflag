@@ -145,8 +145,8 @@ void TankSceneNode::setJumpJetsTexture(const int texture)
 
 void TankSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
-  azimuth   =  RAD2DEG * atan2f(forward[1], forward[0]);
-  elevation = -RAD2DEG * atan2f(forward[2], hypotf(forward[0], forward[1]));
+  azimuth   =  RAD2DEG * atan2f(forward.y, forward.x);
+  elevation = -RAD2DEG * atan2f(forward.z, forward.xy().length());
   setCenter(pos);
 
   // setup the extents
@@ -228,7 +228,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   // pick level of detail
   const fvec4& mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
-  const float size = mySphere[3] *
+  const float size = mySphere.w *
 		     (view.getAreaFactor() / getDistanceSq(view.getEye()));
 
   // set the level of detail

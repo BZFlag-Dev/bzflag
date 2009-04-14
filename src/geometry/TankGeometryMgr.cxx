@@ -353,6 +353,24 @@ void TankGeometryUtils::doTexCoord2f(float x, float y)
 }
 
 
+void TankGeometryUtils::doVertex(const fvec3& v)
+{
+  doVertex3f(v.x, v.y, v.z);
+}
+
+
+void TankGeometryUtils::doNormal(const fvec3& n)
+{
+  doNormal3f(n.x, n.y, n.z);
+}
+
+
+void TankGeometryUtils::doTexCoord(const fvec2& t)
+{
+  doTexCoord2f(t.x, t.y);
+}
+
+
 //============================================================================//
 //
 // Local Functions

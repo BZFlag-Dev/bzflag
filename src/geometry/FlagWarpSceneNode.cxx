@@ -124,37 +124,39 @@ FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
 void FlagWarpSceneNode::FlagWarpRenderNode::render()
 {
   // make a perturbed ring
-  float geom[12][2];
+  fvec2 geom[12];
   for (int i = 0; i < 12; i++) {
     const float r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
-    geom[i][0] = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
-    geom[i][1] = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
+    geom[i].x = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
+    geom[i].y = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
   }
 
   const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
 
-    if (sphere[2] > RENDERER.getViewFrustum().getEye()[2]){
+    if (sphere.z > RENDERER.getViewFrustum().getEye().z){
       for (int i = 0; i < 7; i++) {
-	float s = sceneNode->size - 0.05f * float(i);
-	if (s < 0.0f) break;
-	myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
+	const float s = sceneNode->size - 0.05f * float(i);
+	if (s < 0.0f) {
+	  break;
+        }
+	myColor4fv(fvec4(color[i].rgb(), FlagWarpAlpha));
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(0.0f, 0.0f);
-	glVertex2f(s * geom[0][0], s * geom[0][1]);
-	glVertex2f(s * geom[11][0], s * geom[11][1]);
-	glVertex2f(s * geom[10][0], s * geom[10][1]);
-	glVertex2f(s * geom[9][0], s * geom[9][1]);
-	glVertex2f(s * geom[8][0], s * geom[8][1]);
-	glVertex2f(s * geom[7][0], s * geom[7][1]);
-	glVertex2f(s * geom[6][0], s * geom[6][1]);
-	glVertex2f(s * geom[5][0], s * geom[5][1]);
-	glVertex2f(s * geom[4][0], s * geom[4][1]);
-	glVertex2f(s * geom[3][0], s * geom[3][1]);
-	glVertex2f(s * geom[2][0], s * geom[2][1]);
-	glVertex2f(s * geom[1][0], s * geom[1][1]);
-	glVertex2f(s * geom[0][0], s * geom[0][1]);
+	glVertex2fv(s * geom[0]);
+	glVertex2fv(s * geom[11]);
+	glVertex2fv(s * geom[10]);
+	glVertex2fv(s * geom[9]);
+	glVertex2fv(s * geom[8]);
+	glVertex2fv(s * geom[7]);
+	glVertex2fv(s * geom[6]);
+	glVertex2fv(s * geom[5]);
+	glVertex2fv(s * geom[4]);
+	glVertex2fv(s * geom[3]);
+	glVertex2fv(s * geom[2]);
+	glVertex2fv(s * geom[1]);
+	glVertex2fv(s * geom[0]);
 	glEnd(); // 14 verts -> 12 tris
 	addTriangleCount(12);
 	glTranslatef(0.0f, 0.0f, -0.01f);
@@ -162,24 +164,26 @@ void FlagWarpSceneNode::FlagWarpRenderNode::render()
     }
     else {
       for (int i = 0; i < 7; i++) {
-	float s = sceneNode->size - 0.05f * float(i);
-	if (s < 0.0f) break;
-	myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
+	const float s = sceneNode->size - 0.05f * float(i);
+	if (s < 0.0f) {
+	  break;
+        }
+	myColor4fv(fvec4(color[i].rgb(), FlagWarpAlpha));
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(0.0f, 0.0f);
-	glVertex2f(s * geom[0][0], s * geom[0][1]);
-	glVertex2f(s * geom[1][0], s * geom[1][1]);
-	glVertex2f(s * geom[2][0], s * geom[2][1]);
-	glVertex2f(s * geom[3][0], s * geom[3][1]);
-	glVertex2f(s * geom[4][0], s * geom[4][1]);
-	glVertex2f(s * geom[5][0], s * geom[5][1]);
-	glVertex2f(s * geom[6][0], s * geom[6][1]);
-	glVertex2f(s * geom[7][0], s * geom[7][1]);
-	glVertex2f(s * geom[8][0], s * geom[8][1]);
-	glVertex2f(s * geom[9][0], s * geom[9][1]);
-	glVertex2f(s * geom[10][0], s * geom[10][1]);
-	glVertex2f(s * geom[11][0], s * geom[11][1]);
-	glVertex2f(s * geom[0][0], s * geom[0][1]);
+	glVertex2fv(s * geom[0]);
+	glVertex2fv(s * geom[1]);
+	glVertex2fv(s * geom[2]);
+	glVertex2fv(s * geom[3]);
+	glVertex2fv(s * geom[4]);
+	glVertex2fv(s * geom[5]);
+	glVertex2fv(s * geom[6]);
+	glVertex2fv(s * geom[7]);
+	glVertex2fv(s * geom[8]);
+	glVertex2fv(s * geom[9]);
+	glVertex2fv(s * geom[10]);
+	glVertex2fv(s * geom[11]);
+	glVertex2fv(s * geom[0]);
 	glEnd(); // 14 verts -> 12 tris
 	addTriangleCount(12);
 	glTranslatef(0.0f, 0.0f, 0.01f);

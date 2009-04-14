@@ -122,12 +122,8 @@ void TextSceneNode::calcPlane()
   xformTool.modifyVertex(origin);
   xformTool.modifyNormal(normal);
 
-  plane[0] = normal[0];
-  plane[1] = normal[1];
-  plane[2] = normal[2];
-  plane[3] = -((normal[0] * origin[0]) +
-               (normal[1] * origin[1]) +
-               (normal[2] * origin[2]));
+  plane.xyz() = normal;
+  plane.w = -fvec3::dot(normal, origin);
 }
 
 
@@ -200,11 +196,11 @@ void TextSceneNode::getPoints(fvec3 points[5]) const
   xp = (xp / renderNode.fontSize) + 0.5f;
   xn = (xn / renderNode.fontSize) - 0.5f;
 
-  points[0][0] = xn;   points[0][1] = yn;   points[0][2] = 0.0f;
-  points[1][0] = xp;   points[1][1] = yn;   points[1][2] = 0.0f;
-  points[2][0] = xp;   points[2][1] = yp;   points[2][2] = 0.0f;
-  points[3][0] = xn;   points[3][1] = yp;   points[3][2] = 0.0f;
-  points[4][0] = 0.0f; points[4][1] = 0.0f; points[4][2] = 0.0f; // origin
+  points[0] = fvec3(xn, yn, 0.0f);
+  points[1] = fvec3(xp, yn, 0.0f);
+  points[2] = fvec3(xp, yp, 0.0f);
+  points[3] = fvec3(xn, yp, 0.0f);
+  points[4] = fvec3(0.0f, 0.0f, 0.0f); // origin
 
   MeshTransform xform = text.xform;
   MeshTransform::Tool xformTool(xform);
@@ -218,10 +214,7 @@ float TextSceneNode::getMaxDist(const fvec3 points[5]) const
 {
   float maxDistSqr = 0.0f;
   for (int i = 0; i < 4; i++) {
-    const float dx = (points[4][0] - points[i][0]);
-    const float dy = (points[4][1] - points[i][1]);
-    const float dz = (points[4][2] - points[i][2]);
-    const float distSqr = (dx * dx) + (dy * dy) + (dz * dz);
+    const float distSqr = (points[4] - points[i]).lengthSq();
     if (maxDistSqr < distSqr) {
       maxDistSqr = distSqr;
     }
@@ -729,11 +722,11 @@ void TextSceneNode::TextRenderNode::renderShadow()
   linesPtr = &stripped;
 
   if (!BZDBCache::stencilShadows) {
-    shadowColor[3] = 1.0f;
+    shadowColor.a = 1.0f;
     render();
   }
   else {
-    shadowColor[3] = BZDBCache::shadowAlpha;
+    shadowColor.a = BZDBCache::shadowAlpha;
     glAlphaFunc(GL_GEQUAL, 0.1f);
     glEnable(GL_ALPHA_TEST);
     render();

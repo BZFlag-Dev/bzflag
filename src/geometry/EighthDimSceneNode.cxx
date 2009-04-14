@@ -87,10 +87,10 @@ EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
 
   // make random colors
   for (int i = 0; i < numPolygons; i++) {
-    color[i][0] = 0.2f + 0.8f * (float)bzfrand();
-    color[i][1] = 0.2f + 0.8f * (float)bzfrand();
-    color[i][2] = 0.2f + 0.8f * (float)bzfrand();
-    color[i][3] = 0.2f + 0.6f * (float)bzfrand();
+    color[i].r = 0.2f + 0.8f * (float)bzfrand();
+    color[i].g = 0.2f + 0.8f * (float)bzfrand();
+    color[i].b = 0.2f + 0.8f * (float)bzfrand();
+    color[i].a = 0.2f + 0.6f * (float)bzfrand();
   }
 }
 

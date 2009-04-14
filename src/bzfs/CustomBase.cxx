@@ -57,8 +57,12 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
   base->setName(name.c_str());
   groupdef->addObstacle(base);
 
-  if (triggerWorldWep)
-    worldEventManager.addEvent(bz_eCaptureEvent,new WorldWeaponGlobalEventHandler(Flag::getDescFromAbbreviation(worldWepType.c_str()), pos, rotation, 0,(TeamColor)color));
+  if (triggerWorldWep) {
+    FlagType* flagType = Flag::getDescFromAbbreviation(worldWepType.c_str());
+    WorldWeaponGlobalEventHandler* handler = 
+      new WorldWeaponGlobalEventHandler(flagType, &pos, rotation, 0, (TeamColor)color);
+    worldEventManager.addEvent(bz_eCaptureEvent, handler);
+  }
 }
 
 // Local variables: ***

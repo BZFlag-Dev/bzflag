@@ -61,7 +61,7 @@ class WallObstacle : public Obstacle {
     void finalize();
 
   private:
-    float		plane[4];
+    fvec4		plane;
     static const char*	typeName;
 };
 

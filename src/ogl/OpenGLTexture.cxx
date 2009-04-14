@@ -372,35 +372,41 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels)
   const GLubyte* scan = (const GLubyte*)pixels;
   const int size = _width * _height;
   int i;
-  for (i = 0; i < size; scan += 4, i++)
-    if (scan[0] != scan[1] || scan[0] != scan[2])
+  for (i = 0; i < size; scan += 4, i++) {
+    if (scan[0] != scan[1] || scan[0] != scan[2]) {
       break;
+    }
+  }
   const bool useLuminance = (i == size);
 
   // see if all pixels are opaque
   scan = (const GLubyte*)pixels;
-  for (i = 0; i < size; scan += 4, i++)
-    if (scan[3] != 0xff)
+  for (i = 0; i < size; scan += 4, i++) {
+    if (scan[3] != 0xff) {
       break;
+    }
+  }
   const bool useAlpha = (i != size);
 
   // see if all pixels are r=g=b=a.  if so return intensity format.
   // SGI IMPACT systems don't support GL_INTENSITY.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
-  static bool noIntensity =
-    ((glRenderer == NULL) ||
-     (strncmp(glRenderer, "IMPACT", 6) == 0));
+  static bool noIntensity = ((glRenderer == NULL) ||
+                             (strncmp(glRenderer, "IMPACT", 6) == 0));
   if (!noIntensity) {
     bool useIntensity = false;
     if (useLuminance) {
       scan = (const GLubyte*)pixels;
-      for (i = 0; i < size; scan += 4, i++)
-	if (scan[3] != scan[0])
+      for (i = 0; i < size; scan += 4, i++) {
+	if (scan[3] != scan[0]) {
 	  break;
+        }
+      }
       useIntensity = (i == size);
     }
-    if (useIntensity)
+    if (useIntensity) {
       return GL_INTENSITY;
+    }
   }
 
   // pick internal format
@@ -442,9 +448,9 @@ bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
   // calculate the alpha average
   float maxTally = 255.0f * (scaledWidth * scaledHeight);
   if (channelCount == 3) {
-    rgba[3] = 1.0f;
+    rgba.a = 1.0f;
   } else {
-    rgba[3] = (float)rgbaTally[3] / maxTally;
+    rgba.a = (float)rgbaTally[3] / maxTally;
   }
 
   // adjust the maxTally for alpha weighting

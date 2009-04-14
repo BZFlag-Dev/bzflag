@@ -60,7 +60,7 @@ void GroupInstance::init()
   modifyTeam = false;
   team = 0;
   modifyColor = false;
-  tint[0] = tint[1] = tint[2] = tint[3] = 1.0f;
+  tint = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
   modifyPhysicsDriver = false;
   phydrv = -1;
   modifyMaterial = false;

@@ -37,7 +37,7 @@ public:
   WorldWeapons();
   ~WorldWeapons();
   void fire();
-  void add(const FlagType *type, const float *origin,
+  void add(const FlagType *type, const fvec3& origin,
 	   float direction, float tilt, TeamColor teamColor,
 	   float initdelay, const std::vector<float> &delay,
 	   TimeKeeper &sync);
@@ -73,7 +73,9 @@ private:
 class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
+	WorldWeaponGlobalEventHandler(FlagType *type, const fvec3* origin,
+	                              float direction, float tilt,
+	                              TeamColor teamColor);
 	virtual ~WorldWeaponGlobalEventHandler();
 
 	virtual void process ( bz_EventData *eventData );
@@ -86,9 +88,13 @@ protected:
 	bz_eTeamType	team;
 };
 
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );
+int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
+                 const fvec3& pos, float tilt, float direction,
+                 int shotID, float dt);
 
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt);
+int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
+                PlayerId player, const fvec3& pos, float tilt, float direction,
+                int shotID, float dt);
 
 #endif
 

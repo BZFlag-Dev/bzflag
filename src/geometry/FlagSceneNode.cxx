@@ -335,28 +335,28 @@ void FlagPhase::update(float dt)
     const float x      = float(i) / float(quads);
     const float shift1 = wave0[i];
 
-    const int it = lookup[i*2];
-    const int ib = lookup[i*2+1];
+    const int it = lookup[(i * 2)];
+    const int ib = lookup[(i * 2) + 1];
 
-    verts[it][0] = Width * x;
-    verts[ib][0] = Width * x;
+    verts[it].x = Width * x;
+    verts[ib].x = Width * x;
     if (realFlag) {
       // flag pole is Z axis
-      verts[it][1] = wave1[i];
-      verts[ib][1] = wave2[i];
-      verts[it][2] = base + Height - shift1;
-      verts[ib][2] = base - shift1;
+      verts[it].y = wave1[i];
+      verts[ib].y = wave2[i];
+      verts[it].z = base + Height - shift1;
+      verts[ib].z = base - shift1;
     } else {
       // flag pole is Y axis
-      verts[it][1] = base + Height - shift1;
-      verts[ib][1] = base - shift1;
-      verts[it][2] = wave1[i];
-      verts[ib][2] = wave2[i];
+      verts[it].y = base + Height - shift1;
+      verts[ib].y = base - shift1;
+      verts[it].z = wave1[i];
+      verts[ib].z = wave2[i];
     }
-    txcds[it][0] = x;
-    txcds[ib][0] = x;
-    txcds[it][1] = 1.0f;
-    txcds[ib][1] = 0.0f;
+    txcds[it].x = x;
+    txcds[ib].x = x;
+    txcds[it].y = 1.0f;
+    txcds[ib].y = 0.0f;
   }
 
   const fvec3 negY(0.0f, -1.0f, 0.0f);
@@ -367,14 +367,14 @@ void FlagPhase::update(float dt)
     fvec3 topEdges[maxFlagQuads + 1];
     fvec3 botEdges[maxFlagQuads + 1];
     for (i = 0; i < quads; i++) {
-      const int ue = lookup[i * 2];
-      const int us = lookup[i * 2 + 1];
+      const int ue = lookup[(i * 2)];
+      const int us = lookup[(i * 2) + 1];
       upEdges[i]  = verts[ue] - verts[us];
-      const int ts = lookup[i * 2];
-      const int te = lookup[i * 2 + 2];
+      const int ts = lookup[(i * 2)];
+      const int te = lookup[(i * 2) + 2];
       topEdges[i] = verts[te] - verts[ts];
-      const int bs = lookup[i * 2 + 1];
-      const int be = lookup[i * 2 + 2 + 1];
+      const int bs = lookup[(i * 2) + 1];
+      const int be = lookup[(i * 2) + 2 + 1];
       botEdges[i] = verts[be] - verts[bs];
     }
     norms[0] = negY;
@@ -532,8 +532,8 @@ void FlagSceneNode::setUseColor(bool value)
 
 void FlagSceneNode::setAlpha(float a)
 {
-  realColor[3] = a;
-  whiteColor[3] = a;
+  realColor.a = a;
+  whiteColor.a = a;
   translucent = (a != 1.0f);
   return;
 }
@@ -542,7 +542,7 @@ void FlagSceneNode::setAlpha(float a)
 void FlagSceneNode::setColor(float r, float g, float b, float a)
 {
   realColor = fvec4(r, g, b, a);
-  whiteColor[3] = a;
+  whiteColor.a = a;
   translucent = (a != 1.0f);
   return;
 }
@@ -551,8 +551,8 @@ void FlagSceneNode::setColor(float r, float g, float b, float a)
 void FlagSceneNode::setColor(const fvec4& rgba)
 {
   realColor = rgba;
-  whiteColor[3] = rgba[3];
-  translucent = (rgba[3] != 1.0f);
+  whiteColor.a = rgba.a;
+  translucent = (rgba.a != 1.0f);
   return;
 }
 

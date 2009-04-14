@@ -13,108 +13,117 @@
 #include "TankGeometryMgr.h"
 
 #include "bzfgl.h"
+#include "vectors.h"
 
 using namespace TankGeometryUtils;
 
-float sideVerts[][3] = {  {2.800000f, 0.878000f, 0.829000f},
-			  {2.820000f, 0.878000f, 0.716000f},
-			  {2.680000f, 0.877000f, 0.684000f},
-			  {-1.460000f, 0.877000f, 1.130000f},
-			  {-2.740000f, 0.877000f, 0.528000f},
-			  {-2.900000f, 0.877000f, 1.240000f},
-			  {2.570000f, 0.877000f, 0.990000f},
-			  {2.170000f, 0.877000f, 1.010000f},
-			  {2.610000f, 0.877000f, 0.408000f},
-			  {1.810000f, 0.877000f, 0.250000f},
-			  {-1.620000f, 0.877000f, 0.25000f},
-			  {1.760000f, 0.877000f, 1.130000f},
-			  {1.760000f, 0.877000f, 1.130000f},
-			  {1.760000f, 0.877000f, 1.130000f},
-			  {2.800000f, -0.876000f, 0.829000f},
-			  {2.680000f, -0.877000f, 0.684000f},
-			  {2.820000f, -0.877000f, 0.716000f},
-			  {-2.740000f, -0.877000f, 0.528000f},
-			  {-1.460000f, -0.877000f, 1.130000f},
-			  {-2.900000f, -0.877000f, 1.240000f},
-			  {2.570000f, -0.877000f, 0.990000f},
-			  {2.170000f, -0.877000f, 1.010000f},
-			  {2.610000f, -0.877000f, 0.408000f},
-			  {1.810000f, -0.877000f, 0.250000f},
-			  {-1.620000f, -0.877000f, 0.250000f},
-			  {1.760000f, -0.877000f, 1.130000f}};
 
-float sideUVs[][2] =  {{0.996503f, 0.331452f},
-		      {1.000000f, 0.422581f},
-		      {0.975524f, 0.448387f},
-		      {0.251748f, 0.088710f},
-		      {0.027972f, 0.574194f},
-		      {0.000000f, 0.000000f},
-		      {0.956294f, 0.201613f},
-		      {0.886364f, 0.185484f},
-		      {0.963287f, 0.670968f},
-		      {0.823427f, 1.000000f},
-		      {0.223776f, 1.000000f},
-		      {0.814685f, 0.088710f}};
+fvec3 sideVerts[] = {  
+  fvec3( 2.800000f,  0.878000f, 0.829000f),
+  fvec3( 2.820000f,  0.878000f, 0.716000f),
+  fvec3( 2.680000f,  0.877000f, 0.684000f),
+  fvec3(-1.460000f,  0.877000f, 1.130000f),
+  fvec3(-2.740000f,  0.877000f, 0.528000f),
+  fvec3(-2.900000f,  0.877000f, 1.240000f),
+  fvec3( 2.570000f,  0.877000f, 0.990000f),
+  fvec3( 2.170000f,  0.877000f, 1.010000f),
+  fvec3( 2.610000f,  0.877000f, 0.408000f),
+  fvec3( 1.810000f,  0.877000f, 0.250000f),
+  fvec3(-1.620000f,  0.877000f, 0.250000f),
+  fvec3( 1.760000f,  0.877000f, 1.130000f),
+  fvec3( 1.760000f,  0.877000f, 1.130000f),
+  fvec3( 1.760000f,  0.877000f, 1.130000f),
+  fvec3( 2.800000f, -0.876000f, 0.829000f),
+  fvec3( 2.680000f, -0.877000f, 0.684000f),
+  fvec3( 2.820000f, -0.877000f, 0.716000f),
+  fvec3(-2.740000f, -0.877000f, 0.528000f),
+  fvec3(-1.460000f, -0.877000f, 1.130000f),
+  fvec3(-2.900000f, -0.877000f, 1.240000f),
+  fvec3( 2.570000f, -0.877000f, 0.990000f),
+  fvec3( 2.170000f, -0.877000f, 1.010000f),
+  fvec3( 2.610000f, -0.877000f, 0.408000f),
+  fvec3( 1.810000f, -0.877000f, 0.250000f),
+  fvec3(-1.620000f, -0.877000f, 0.250000f),
+  fvec3( 1.760000f, -0.877000f, 1.130000f)
+};
 
-float sideNormals[][3] ={{-0.006338f, 0.999979f, -0.001652f},
-			{-0.003169f, 0.999995f, -0.000826f},
-			{0.000000f, 1.000000f, 0.000000f},
-			{0.000000f, 0.000000f, 0.000000f},
-			{0.001933f, -0.999984f, 0.005297f},
-			{0.000966f, -0.999996f, 0.002648f},
-			{-0.001944f, -0.999962f, 0.008505f},
-			{0.000000f, -1.000000f, 0.000000f},
-			{0.002905f, -0.999995f, 0.001044f}};
+fvec2 sideUVs[] =  {
+  fvec2(0.996503f, 0.331452f),
+  fvec2(1.000000f, 0.422581f),
+  fvec2(0.975524f, 0.448387f),
+  fvec2(0.251748f, 0.088710f),
+  fvec2(0.027972f, 0.574194f),
+  fvec2(0.000000f, 0.000000f),
+  fvec2(0.956294f, 0.201613f),
+  fvec2(0.886364f, 0.185484f),
+  fvec2(0.963287f, 0.670968f),
+  fvec2(0.823427f, 1.000000f),
+  fvec2(0.223776f, 1.000000f),
+  fvec2(0.814685f, 0.088710f)
+};
+
+fvec3 sideNormals[] ={
+  fvec3(-0.006338f,   0.999979f, -0.001652f),
+  fvec3(-0.003169f,   0.999995f, -0.000826f),
+  fvec3( 0.000000f,   1.000000f,  0.000000f),
+  fvec3( 0.000000f,   0.000000f,  0.000000f),
+  fvec3( 0.001933f,  -0.999984f,  0.005297f),
+  fvec3( 0.000966f,  -0.999996f,  0.002648f),
+  fvec3(-0.001944f,  -0.999962f,  0.008505f),
+  fvec3( 0.000000f,  -1.000000f,  0.000000f),
+  fvec3(  0.002905f, -0.999995f,  0.001044f)
+};
 
 
-static void DrawOBJIndexFace (int v1, int t1, int n1,
-			      int v2, int t2, int n2,
-			      int v3, int t3, int n3)
+static void DrawOBJIndexFace(int v1, int t1, int n1,
+			     int v2, int t2, int n2,
+			     int v3, int t3, int n3)
 {
-  doNormal3f(sideNormals[n1-1][0], sideNormals[n1-1][1],sideNormals[n1-1][2]);
-  doTexCoord2f(sideUVs[t1-1][0],sideUVs[t1-1][1]);
-  doVertex3f(sideVerts[v1-1][0], sideVerts[v1-1][1], sideVerts[v1-1][2]);
+  doNormal(sideNormals[n1 - 1]);
+  doTexCoord(sideUVs[t1 - 1]);
+  doVertex(sideVerts[v1 - 1]);
 
-  doNormal3f(sideNormals[n2-1][0], sideNormals[n2-1][1],sideNormals[n2-1][2]);
-  doTexCoord2f(sideUVs[t2-1][0],sideUVs[t2-1][1]);
-  doVertex3f(sideVerts[v2-1][0], sideVerts[v2-1][1], sideVerts[v2-1][2]);
+  doNormal(sideNormals[n2 - 1]);
+  doTexCoord(sideUVs[t2 - 1]);
+  doVertex(sideVerts[v2 - 1]);
 
-  doNormal3f(sideNormals[n3-1][0], sideNormals[n3-1][1],sideNormals[n3-1][2]);
-  doTexCoord2f(sideUVs[t3-1][0],sideUVs[t3-1][1]);
-  doVertex3f(sideVerts[v3-1][0], sideVerts[v3-1][1], sideVerts[v3-1][2]);
+  doNormal(sideNormals[n3 - 1]);
+  doTexCoord(sideUVs[t3 - 1]);
+  doVertex(sideVerts[v3 - 1]);
 }
 
 
-static int DrawTankSides (void)
+static int DrawTankSides()
 {
   glBegin(GL_TRIANGLES);
-    DrawOBJIndexFace( 1,1,1, 2,2,1, 3,3,2);
-    DrawOBJIndexFace( 4,4,3, 5,5,3 ,6,6,3);
-    DrawOBJIndexFace( 1,1,1, 3,3,2, 7,7,2);
-    DrawOBJIndexFace( 7,7,2, 3,3,2, 8,8,3);
-    DrawOBJIndexFace( 3,3,2, 9,9,3, 8,8,3);
-    DrawOBJIndexFace( 9,9,3, 10,10,3, 8,8,3);
-    DrawOBJIndexFace( 11,11,3, 5,5,3, 4,4,3);
-    DrawOBJIndexFace( 10,10,3, 11,11,3, 4,4,3);
-    DrawOBJIndexFace( 8,8,3, 10,10,3, 4,4,3);
-    DrawOBJIndexFace( 12,12,3, 8,8,3, 4,4,3);
-    DrawOBJIndexFace( 13,12,4, 12,12,3, 4,4,3);
-    DrawOBJIndexFace( 14,12,4, 13,12,4, 4,4,3);
-    DrawOBJIndexFace( 15,1,5, 16,3,6, 17,2,7);
-    DrawOBJIndexFace( 18,5,8, 19,4,8, 20,6,8);
-    DrawOBJIndexFace( 16,3,6, 15,1,5, 21,7,9);
-    DrawOBJIndexFace( 16,3,6, 21,7,9, 22,8,8);
-    DrawOBJIndexFace( 23,9,8, 16,3,6, 22,8,8);
-    DrawOBJIndexFace( 24,10,8, 23,9,8, 22,8,8);
-    DrawOBJIndexFace( 18,5,8, 25,11,8, 19,4,8);
-    DrawOBJIndexFace( 24,10,8, 22,8,8, 26,12,8);
-    DrawOBJIndexFace( 24,10,8, 26,12,8, 19,4,8);
-    DrawOBJIndexFace( 25,11,8, 24,10,8, 19,4,8);
+    DrawOBJIndexFace( 1,  1, 1,     2,  2, 1,     3,  3, 2);
+    DrawOBJIndexFace( 4,  4, 3,     5,  5, 3,     6,  6, 3);
+    DrawOBJIndexFace( 1,  1, 1,     3,  3, 2,     7,  7, 2);
+    DrawOBJIndexFace( 7,  7, 2,     3,  3, 2,     8,  8, 3);
+    DrawOBJIndexFace( 3,  3, 2,     9,  9, 3,     8,  8, 3);
+    DrawOBJIndexFace( 9,  9, 3,    10, 10, 3,     8,  8, 3);
+    DrawOBJIndexFace(11, 11, 3,     5,  5, 3,     4,  4, 3);
+    DrawOBJIndexFace(10, 10, 3,    11, 11, 3,     4,  4, 3);
+    DrawOBJIndexFace( 8,  8, 3,    10, 10, 3,     4,  4, 3);
+    DrawOBJIndexFace(12, 12, 3,     8,  8, 3,     4,  4, 3);
+    DrawOBJIndexFace(13, 12, 4,    12, 12, 3,     4,  4, 3);
+    DrawOBJIndexFace(14, 12, 4,    13, 12, 4,     4,  4, 3);
+    DrawOBJIndexFace(15,  1, 5,    16,  3, 6,    17,  2, 7);
+    DrawOBJIndexFace(18,  5, 8,    19,  4, 8,    20,  6, 8);
+    DrawOBJIndexFace(16,  3, 6,    15,  1, 5,    21,  7, 9);
+    DrawOBJIndexFace(16,  3, 6,    21,  7, 9,    22,  8, 8);
+    DrawOBJIndexFace(23,  9, 8,    16,  3, 6,    22,  8, 8);
+    DrawOBJIndexFace(24, 10, 8,    23,  9, 8,    22,  8, 8);
+    DrawOBJIndexFace(18,  5, 8,    25, 11, 8,    19,  4, 8);
+    DrawOBJIndexFace(24, 10, 8,    22,  8, 8,    26, 12, 8);
+    DrawOBJIndexFace(24, 10, 8,    26, 12, 8,    19,  4, 8);
+    DrawOBJIndexFace(25, 11, 8,    24, 10, 8,    19,  4, 8);
   glEnd();
   return 22;
 }
 
-static int DrawCentralBody(void)
+
+static int DrawCentralBody()
 {
   glShadeModel(GL_FLAT);
   DrawTankSides();
@@ -190,7 +199,7 @@ static int DrawCentralBody(void)
 }
 
 
-static int DrawRightRearExaust (void)
+static int DrawRightRearExaust()
 {
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
@@ -235,7 +244,7 @@ static int DrawRightRearExaust (void)
 }
 
 
-static int DrawLeftRearExaust ( void )
+static int DrawLeftRearExaust()
 {
   glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
@@ -280,7 +289,7 @@ static int DrawLeftRearExaust ( void )
 }
 
 
-int TankGeometryUtils::buildHighBody (void)
+int TankGeometryUtils::buildHighBody()
 {
   int count = 0;
   if (buildGeoFromObj("/model/tank/std/body.obj",count))

@@ -127,10 +127,8 @@ void MeshFace::finalize()
   // make the plane
   float scale = 1.0f / sqrtf (maxCrossSqr);
   const fvec3* vert = vertices[bestSet[1]];
-  plane[0] = bestCross[0] * scale;
-  plane[1] = bestCross[1] * scale;
-  plane[2] = bestCross[2] * scale;
-  plane[3] = -fvec3::dot(plane.xyz(), *vert);
+  plane.xyz() = bestCross * scale;
+  plane.w = -fvec3::dot(plane.xyz(), *vert);
 
   // see if the whole face is convex
   int v;
@@ -159,8 +157,8 @@ void MeshFace::finalize()
   // see if the vertices are coplanar
   for (v = 0; v < vertexCount; v++) {
     const float cross = fvec3::dot(*vertices[v], plane.xyz());
-    if (fabsf(cross + plane[3]) > 1.0e-3) {
-      logDebugMessage(1,"non-planar mesh face (%f)", cross + plane[3]);
+    if (fabsf(cross + plane.w) > 1.0e-3) {
+      logDebugMessage(1,"non-planar mesh face (%f)", cross + plane.w);
       if ((debugLevel >= 3) && (mesh != NULL)) {
 	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
@@ -181,12 +179,10 @@ void MeshFace::finalize()
   }
 
   // setup fake obstacle parameters
-  pos[0] = (extents.maxs[0] + extents.mins[0]) * 0.5f;
-  pos[1] = (extents.maxs[1] + extents.mins[1]) * 0.5f;
-  pos[2] = extents.mins[2];
-  size[0] = (extents.maxs[0] - extents.mins[0]) * 0.5f;
-  size[1] = (extents.maxs[1] - extents.mins[1]) * 0.5f;
-  size[2] = (extents.maxs[2] - extents.mins[2]);
+  pos.xy()  = 0.5f * (extents.maxs.xy() + extents.mins.xy());
+  size.xy() = 0.5f * (extents.maxs.xy() - extents.mins.xy());
+  pos.z  = extents.mins.z;
+  size.z = (extents.maxs.z - extents.mins.z);
   angle = 0.0f;
   ZFlip = false;
 
@@ -197,37 +193,37 @@ void MeshFace::finalize()
     const fvec3 edge = *vertices[next] - *vertices[v];
     edgePlanes[v].xyz() = fvec3::cross(edge, plane.xyz());
     fvec3::normalize(edgePlanes[v].xyz());
-    edgePlanes[v][3] = -fvec3::dot(*vertices[v], edgePlanes[v].xyz());
+    edgePlanes[v].w = -fvec3::dot(*vertices[v], edgePlanes[v].xyz());
   }
 
   // set the plane type
   planeBits = 0;
   const float fudge = 1.0e-3f;
-  if ((fabsf(plane[2]) + fudge) >= 1.0f) {
+  if ((fabsf(plane.z) + fudge) >= 1.0f) {
     planeBits |= ZPlane;
-    if (plane[2] > 0.0f) {
+    if (plane.z > 0.0f) {
       planeBits |= UpPlane;
       //FIXME
-      plane[2] = 1.0f;
-      plane[3] = -pos[2];
+      plane.z = 1.0f;
+      plane.w = -pos.z;
     } else {
       planeBits |= DownPlane;
       //FIXME
-      plane[2] = -1.0f;
-      plane[3] = +pos[2];
+      plane.z = -1.0f;
+      plane.w = +pos.z;
     }
     //FIXME
-    plane[0] = 0.0f;
-    plane[1] = 0.0f;
+    plane.x = 0.0f;
+    plane.y = 0.0f;
   }
-  else if ((fabsf(plane[0]) + fudge) >= 1.0f) {
+  else if ((fabsf(plane.x) + fudge) >= 1.0f) {
     planeBits |= XPlane;
   }
-  else if ((fabsf(plane[1]) + fudge) >= 1.0f) {
+  else if ((fabsf(plane.y) + fudge) >= 1.0f) {
     planeBits |= YPlane;
   }
 
-  if (fabsf(plane[2]) < fudge) {
+  if (fabsf(plane.z) < fudge) {
     planeBits |= WallPlane;
   }
 
@@ -372,17 +368,7 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
       float factor = smallestArea / twinAreas[i];
       normal += (*normals[next] * factor);
     }
-    float len = normal.length();
-    if (len < 1.0e-10) {
-      n = plane.xyz();
-      delete[] areas;
-      delete[] twinAreas;
-      return;
-    }
-    len = 1.0f / len;
-    n[0] = normal[0] * len;
-    n[1] = normal[1] * len;
-    n[2] = normal[2] * len;
+    n = normal.normalize();
 
     delete[] areas;
     delete[] twinAreas;
@@ -428,7 +414,7 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
   int i;
 
   // Z axis separation test
-  if ((extents.mins[2] > (p[2] + height)) || (extents.maxs[2] <= p[2])) {
+  if ((extents.mins.z > (p.z + height)) || (extents.maxs.z <= p.z)) {
     return false;
   }
 
@@ -449,10 +435,10 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
     v[i][1] = (cos_val * h[1]) + (sin_val * h[0]);
     v[i][2] = vertices[i]->z - p[2];
   }
-  pln[0] = (cos_val * plane[0]) - (sin_val * plane[1]);
-  pln[1] = (cos_val * plane[1]) + (sin_val * plane[0]);
-  pln[2] = plane[2];
-  pln[3] = plane[3] + fvec3::dot(plane.xyz(), p);
+  pln.x = (cos_val * plane.x) - (sin_val * plane.y);
+  pln.y = (cos_val * plane.y) + (sin_val * plane.x);
+  pln.z = plane.z;
+  pln.w = plane.w + fvec3::dot(plane.xyz(), p);
 
   // testPolygonInAxisBox() expects us to have already done all of the
   // separation tests with respect to the box planes. we could not do
@@ -464,11 +450,11 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
   min = +MAXFLOAT;
   max = -MAXFLOAT;
   for (i = 0; i < vertexCount; i++) {
-    if (v[i][0] < min) {
-      min = v[i][0];
+    if (v[i].x < min) {
+      min = v[i].x;
     }
-    if (v[i][0] > max) {
-      max = v[i][0];
+    if (v[i].x > max) {
+      max = v[i].x;
     }
   }
   if ((min > dx) || (max < -dx)) {
@@ -480,11 +466,11 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
   min = +MAXFLOAT;
   max = -MAXFLOAT;
   for (i = 0; i < vertexCount; i++) {
-    if (v[i][1] < min) {
-      min = v[i][1];
+    if (v[i].y < min) {
+      min = v[i].y;
     }
-    if (v[i][1] > max) {
-      max = v[i][1];
+    if (v[i].y > max) {
+      max = v[i].y;
     }
   }
   if ((min > dy) || (max < -dy)) {
@@ -494,14 +480,8 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
 
   // FIXME: do not use testPolygonInAxisBox()
   Extents box;
-  // mins
-  box.mins[0] = -dx;
-  box.mins[1] = -dy;
-  box.mins[2] = 0.0f;
-  // maxs
-  box.maxs[0] = +dx;
-  box.maxs[1] = +dy;
-  box.maxs[2] = height;
+  box.mins = fvec3(-dx, -dy, 0.0f);
+  box.maxs = fvec3(+dx, +dy, height);
 
   bool hit = Intersect::testPolygonInAxisBox(vertexCount, v, pln, box);
 
@@ -517,14 +497,14 @@ bool MeshFace::inMovingBox(const fvec3& oldPos, float /*oldAngle*/,
 {
   // expand the box with respect to Z axis motion
   fvec3 _pos;
-  _pos[0] = newPos[0];
-  _pos[1] = newPos[1];
-  if (oldPos[2] < newPos[2]) {
-    _pos[2] = oldPos[2];
+  _pos.x = newPos.x;
+  _pos.y = newPos.y;
+  if (oldPos.z < newPos.z) {
+    _pos.z = oldPos.z;
   } else {
-    _pos[2] = newPos[2];
+    _pos.z = newPos.z;
   }
-  height = height + fabsf(oldPos[2] - newPos[2]);
+  height = height + fabsf(oldPos.z - newPos.z);
 
   return inBox(_pos, newAngle, dx, dy, height);
 }
@@ -677,8 +657,9 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   out << indent << "  face" << std::endl;
 
   if (debugLevel >= 3) {
-    out << indent << "  # plane normal = " << plane[0] << " " << plane[1] << " "
-				 << plane[2] << " " << plane[3] << std::endl;
+    out << indent << "  # plane normal = "
+                  << plane.x << " " << plane.y << " "
+		  << plane.z << " " << plane.w << std::endl;
   }
 
   out << indent << "    vertices";
@@ -689,7 +670,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (debugLevel >= 3) {
     out << indent << " #";
     for (i = 0; i < vertexCount; i++) {
-      out << " " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2];
+      out << " " << vertices[i]->x << " " << vertices[i]->y << " " << vertices[i]->z;
     }
   }
   out << std::endl;
@@ -703,7 +684,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     if (debugLevel >= 3) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
-	out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
+	out << " " << normals[i]->x <<  " " << normals[i]->y << " " << normals[i]->z;
       }
     }
     out << std::endl;
@@ -718,7 +699,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     if (debugLevel >= 3) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
-	out << " " << texcoords[i][0] <<  " " << texcoords[i][1];
+	out << " " << texcoords[i]->x <<  " " << texcoords[i]->y;
       }
     }
     out << std::endl;

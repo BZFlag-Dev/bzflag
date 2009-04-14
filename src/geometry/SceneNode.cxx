@@ -137,7 +137,7 @@ void			SceneNode::setColorOverride(bool on)
 
 void SceneNode::setRadius(float radiusSquared)
 {
-  sphere[3] = radiusSquared;
+  sphere.w = radiusSquared;
 }
 
 
@@ -149,9 +149,7 @@ void SceneNode::setCenter(const fvec3& center)
 
 void SceneNode::setCenter(float x, float y, float z)
 {
-  sphere[0] = x;
-  sphere[1] = y;
-  sphere[2] = z;
+  sphere.xyz() = fvec3(x, y, z);
 }
 
 
@@ -207,7 +205,7 @@ bool SceneNode::cull(const ViewFrustum& view) const
     const fvec4& side = view.getSide(i);
 
     const float d = side.planeDist(sphere.xyz());
-    if ((d < 0.0f) && ((d * d) > sphere[3])) {
+    if ((d < 0.0f) && ((d * d) > sphere.w)) {
       return true;
     }
   }

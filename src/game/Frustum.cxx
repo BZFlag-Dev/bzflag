@@ -20,10 +20,12 @@ Frustum::Frustum()
 {
   static fvec3 defaultEye(0.0f, 0.0f, 0.0f);
   static fvec3 defaultTarget(0.0f, 1.0f, 0.0f);
-  static float identity[16] = { 1.0, 0.0, 0.0, 0.0,
-				  0.0, 1.0, 0.0, 0.0,
-				  0.0, 0.0, 1.0, 0.0,
-				  0.0, 0.0, 0.0, 1.0 };
+  static float identity[16] = {
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
+  };
 
   // initialize view and projection matrices to identity
   ::memcpy(viewMatrix, identity, sizeof(viewMatrix));
@@ -44,8 +46,9 @@ Frustum::~Frustum()
 
 float Frustum::getEyeDepth(const float* p) const
 {
-  return viewMatrix[2] * p[0] + viewMatrix[6] * p[1] +
-	viewMatrix[10] * p[2] + viewMatrix[14];
+  return (viewMatrix[2]  * p[0]) +
+         (viewMatrix[6]  * p[1]) +
+         (viewMatrix[10] * p[2]) + viewMatrix[14];
 }
 
 
@@ -246,49 +249,34 @@ void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
   // setup the eye, and the clipping planes
   eye = view.getEye();
 
-  float front[2], left[2];
-  const float* dir = view.getDirection();
-  float len = (dir[0] * dir[0]) + (dir[1] * dir[1]);
-  if (len != 0) {
-    len = 1.0f / sqrtf(len);
-    front[0] = dir[0] * len;
-    front[1] = dir[1] * len;
-  } else {
-    front[0] = 1.0f;
-    front[1] = 0.0f;
+  const fvec3& dir = view.getDirection();
+  fvec2 front = dir.xy();
+  if (!fvec2::normalize(front)) {
+    front = fvec2(1.0f, 0.0f);
   }
 
-  left[0] = -front[1];
-  left[1] = +front[0];
+  const fvec2 left(-front.y, +front.x);
 
-  plane[1][0] = +left[0];
-  plane[1][1] = +left[1];
-  plane[1][3] = -((eye[0] * plane[1][0]) + (eye[1] * plane[1][1])) + width;
+  plane[1].xy() =  left;
+  plane[1].z = 0.0f;
+  plane[1].w = -fvec2::dot(eye.xy(), plane[1].xy()) + width;
 
-  plane[2][0] = -left[0];
-  plane[2][1] = -left[1];
-  plane[2][3] = -((eye[0] * plane[2][0]) + (eye[1] * plane[2][1])) + width;
+  plane[2].xy() = -left;
+  plane[2].z = 0.0f;
+  plane[2].w = -fvec2::dot(eye.xy(), plane[2].xy()) + width;
 
-  plane[3][0] = +front[0];
-  plane[3][1] = +front[1];
-  plane[3][3] = -((eye[0] * plane[3][0]) + (eye[1] * plane[3][1])) + breadth;
+  plane[3].xy() =  front;
+  plane[3].z = 0.0f;
+  plane[3].w = -fvec2::dot(eye.xy(), plane[3].xy()) + breadth;
 
-  plane[4][0] = -front[0];
-  plane[4][1] = -front[1];
-  plane[4][3] = -((eye[0] * plane[4][0]) + (eye[1] * plane[4][1])) + breadth;
+  plane[4].xy() = -front;
+  plane[4].z = 0.0f;
+  plane[4].w = -fvec2::dot(eye.xy(), plane[4].xy()) + breadth;
 
-  plane[1][2] = 0.0f;
-  plane[2][2] = 0.0f;
-  plane[3][2] = 0.0f;
-  plane[4][2] = 0.0f;
 
   // disable the near and far planes
-  plane[0][0] = plane[0][1] = 0.0f;
-  plane[0][2] = 1.0f;
-  plane[0][3] = -1.0e6;
-  plane[5][0] = plane[0][1] = 0.0f;
-  plane[5][2] = 1.0f;
-  plane[5][3] = -1.0e6;
+  plane[0] = fvec4(0.0f, 0.0f, 1.0f, -1.0e6f);
+  plane[5] = fvec4(0.0f, 0.0f, 1.0f, -1.0e6f);
 
   planeCount = 5;
 

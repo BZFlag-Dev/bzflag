@@ -1971,7 +1971,12 @@ BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, f
   if (dt <= 0)
     dt = 0;
 
-  return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, realShotID, dt)==realShotID;
+  fvec3 tmpPos(0.0f, 0.0f, 0.0f);
+  if (pos != NULL) {
+    tmpPos = fvec3(pos[0], pos[1], pos[2]);
+  }
+  return fireWorldWep(flag, lifetime, ServerPlayer, tmpPos, tilt, direction,
+                      realShotID, dt) == realShotID;
 }
 
 //-------------------------------------------------------------------------
@@ -1993,7 +1998,11 @@ BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float
 
   int shotID=world->getWorldWeapons().getNewWorldShotID();
 
-  fireWorldGM(flag, targetPlayerID, lifetime, player, pos, tilt, direction, shotID, dt);
+  fvec3 tmpPos(0.0f, 0.0f, 0.0f);
+  if (pos != NULL) {
+    tmpPos = fvec3(pos[0], pos[1], pos[2]);
+  }
+  fireWorldGM(flag, targetPlayerID, lifetime, player, tmpPos, tilt, direction, shotID, dt);
 
   return shotID;
 }

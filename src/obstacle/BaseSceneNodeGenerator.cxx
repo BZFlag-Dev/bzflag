@@ -79,20 +79,12 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
   }
   fvec4 color;
   switch(base->getTeam()) {
-    case 1:
-      color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.0f;
-      break;
-    case 2:
-      color[0] = 0.0f; color[1] = 0.7f; color[2] = 0.0f;
-      break;
-    case 3:
-      color[0] = 0.0f; color[1] = 0.0f; color[2] = 0.7f;
-      break;
-    case 4:
-      color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.7f;
-      break;
+    case 1: { color.rgb() = fvec3(0.7f, 0.0f, 0.0f); break; }
+    case 2: { color.rgb() = fvec3(0.0f, 0.7f, 0.0f); break; }
+    case 3: { color.rgb() = fvec3(0.0f, 0.0f, 0.7f); break; }
+    case 4: { color.rgb() = fvec3(0.7f, 0.0f, 0.7f); break; }
   }
-  color[3] = 1.0;
+  color.a = 1.0;
 
   const fvec3 sEdge = sCorner - bPoint;
   const fvec3 tEdge = tCorner - bPoint;

@@ -85,17 +85,12 @@ BillboardSceneNode* BillboardSceneNode::copy() const
   e->hasTextureAlpha = hasTextureAlpha;
   e->looping = looping;
   e->lightSource = lightSource;
-  e->lightColor[0] = lightColor[0];
-  e->lightColor[1] = lightColor[1];
-  e->lightColor[2] = lightColor[2];
+  e->lightColor = lightColor;
   e->lightScale = lightScale;
   e->lightCutoffTime = lightCutoffTime;
   e->width = width;
   e->height = height;
-  e->color[0] = color[0];
-  e->color[1] = color[1];
-  e->color[2] = color[2];
-  e->color[3] = color[3];
+  e->color = color;
   e->angle = angle;
   e->duration = duration;
   e->light = light;
@@ -177,23 +172,25 @@ void BillboardSceneNode::setFrame()
 
 bool BillboardSceneNode::isLight() const
 {
-  return lightSource && show;
+  return (lightSource && show);
 }
 
 
 void BillboardSceneNode::setLight(bool on)
 {
-  if (lightSource == on) return;
+  if (lightSource == on) {
+    return;
+  }
   lightSource = on;
-  if (lightSource) prepLight();
+  if (lightSource) {
+    prepLight();
+  }
 }
 
 
 void BillboardSceneNode::setLightColor(float r, float g, float b)
 {
-  lightColor[0] = r;
-  lightColor[1] = g;
-  lightColor[2] = b;
+  lightColor = fvec4(r, g, b, 1.0f);
   prepLight();
 }
 
@@ -232,9 +229,9 @@ void BillboardSceneNode::prepLight()
   if (!lightSource) return;
   const float s = (t <= lightCutoffTime || lightCutoffTime >= duration) ? 1.0f :
 		(1.0f - (t - lightCutoffTime) / (duration - lightCutoffTime));
-  light.setColor(lightColor[0] * lightScale * s,
-		 lightColor[1] * lightScale * s,
-		 lightColor[2] * lightScale * s);
+  light.setColor(lightColor.r * lightScale * s,
+		 lightColor.g * lightScale * s,
+		 lightColor.b * lightScale * s);
 }
 
 
@@ -254,17 +251,14 @@ void BillboardSceneNode::setSize(float _width, float _height)
 
 void BillboardSceneNode::setColor(float r, float g, float b, float a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
-  hasAlpha = (color[3] != 1.0f || hasTextureAlpha);
+  color = fvec4(r, g, b, a);
+  hasAlpha = (color.a != 1.0f || hasTextureAlpha);
 }
 
 
 void BillboardSceneNode::setColor(const fvec4& rgba)
 {
-  setColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+  setColor(rgba.r, rgba.g, rgba.b, rgba.a);
 }
 
 
@@ -275,7 +269,7 @@ void BillboardSceneNode::setTexture(const int texture)
   TextureManager &tm = TextureManager::instance();
 
   hasTextureAlpha = hasTexture && tm.getInfo(texture).alpha;
-  hasAlpha = (color[3] != 1.0f || hasTextureAlpha);
+  hasAlpha = (color.a != 1.0f || hasTextureAlpha);
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
   builder.enableTexture(hasTexture);

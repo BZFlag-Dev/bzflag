@@ -35,7 +35,7 @@ LaserSceneNode::LaserSceneNode(const fvec3& pos, const fvec3& forward)
 {
   // prepare rendering info
   azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
-  elevation = (float)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, forward.xy().length()));
 
   length = forward.length();
 
@@ -59,19 +59,15 @@ LaserSceneNode::~LaserSceneNode()
 }
 
 
-void LaserSceneNode::setColor ( float r, float g, float b )
+void LaserSceneNode::setColor(float r, float g, float b)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
+  color = fvec4(r, g, b, 1.0f);
 }
 
 
-void LaserSceneNode::setCenterColor ( float r, float g, float b )
+void LaserSceneNode::setCenterColor(float r, float g, float b)
 {
-  centerColor[0] = r;
-  centerColor[1] = g;
-  centerColor[2] = b;
+  centerColor = fvec4(r, g, b, 1.0f);
 }
 
 
@@ -79,7 +75,7 @@ void LaserSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
-  builder.enableTexture(texture>=0);
+  builder.enableTexture(texture >= 0);
   gstate = builder.getState();
 }
 
@@ -166,33 +162,30 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
   GLUquadric *q = gluNewQuadric();
 
-  const fvec4& color       = sceneNode->color;
   const fvec4& centerColor = sceneNode->centerColor;
+  const fvec4& color       = sceneNode->color;
 
-  myColor4f(centerColor[0], centerColor[1], centerColor[2], 0.85f);
+  myColor4fv(fvec4(centerColor.rgb(), 0.85f));
   gluCylinder(q, 0.0625f, 0.0625f, length, 10, 1);
   addTriangleCount(20);
 
-  myColor4f(color[0], color[1], color[2], 0.125f);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
   gluCylinder(q, 0.1f, 0.1f, length, 16, 1);
   addTriangleCount(32);
 
-  myColor4f(color[0], color[1], color[2], 0.125f);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
   gluCylinder(q, 0.2f, 0.2f, length, 24, 1);
   addTriangleCount(48);
 
-  myColor4f(color[0], color[1], color[2], 0.125f);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
   gluCylinder(q, 0.4f, 0.4f, length, 32, 1);
   addTriangleCount(64);
 
-  myColor4f(color[0], color[1], color[2], 0.125f);
-  if (sceneNode->first)
-  {
+  myColor4fv(fvec4(color.rgb(), 0.125f));
+  if (sceneNode->first) {
     gluSphere(q, 0.5f, 32, 32);
-    addTriangleCount(32*32*2);
-  }
-  else
-  {
+    addTriangleCount(32 * 32 * 2);
+  } else {
     gluSphere(q, 0.5f, 12, 12);
     addTriangleCount(12 * 12 * 2);
   }

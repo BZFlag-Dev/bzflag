@@ -104,6 +104,19 @@ class vec2 {
     T lengthSq() const { return dot(*this, *this); }
     T length()   const { return typed_sqrt(lengthSq()); }
 
+    static bool normalize(vec2& v) {
+      const T len = v.length();
+      if (len == (T)0) {
+        return false;
+      }
+      const T scale = ((T)1 / len);
+      v *= scale;
+      return true;
+    }
+    vec2 normalize() const {
+      vec2 v(*this); normalize(v); return v;
+    }
+
     vec2 rotate(T radians) const {
       const T cv = typed_cos(radians);
       const T sv = typed_sin(radians);

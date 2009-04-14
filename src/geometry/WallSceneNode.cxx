@@ -41,17 +41,17 @@ WallSceneNode::WallSceneNode()
   noPlane = false;
   order = 0;
   dynamicColor = NULL;
-  color[3] = 1.0f;
-  modulateColor[3] = 1.0f;
-  lightedColor[3] = 1.0f;
-  lightedModulateColor[3] = 1.0f;
-  color[3] = 1.0f;
-  color[3] = 1.0f;
-  color[3] = 1.0f;
+
+  color.a = 1.0f;
+  modulateColor.a = 1.0f;
+  lightedColor.a = 1.0f;
+  lightedModulateColor.a = 1.0f;
+
   setColor(1.0f, 1.0f, 1.0f);
   setModulateColor(1.0f, 1.0f, 1.0f);
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
+
   useColorTexture = false;
   noCulling = false;
   noSorting = false;
@@ -59,6 +59,7 @@ WallSceneNode::WallSceneNode()
   wantBlending = false;
   wantSphereMap = false;
   alphaThreshold = 0.0f;
+
   return;
 }
 
@@ -204,10 +205,7 @@ float WallSceneNode::getDistanceSq(const fvec3& eye) const
 
 void WallSceneNode::setColor(float r, float g, float b, float a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
+  color = fvec4(r, g, b, a);
 }
 
 
@@ -338,12 +336,12 @@ void WallSceneNode::notifyStyleChange()
     style += 2;
     builder.enableTexture(true);
     builder.enableTextureMatrix(true);
-    alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
+    alpha = lighted ? lightedModulateColor.a : modulateColor.a;
   }
   else {
     builder.enableTexture(false);
     builder.enableTextureMatrix(false);
-    alpha = lighted ? lightedColor[3] : color[3];
+    alpha = lighted ? lightedColor.a : color.a;
   }
   if (BZDB.isTrue("texturereplace")) {
     builder.setTextureEnvMode(GL_REPLACE);

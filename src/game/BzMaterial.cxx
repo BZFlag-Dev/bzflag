@@ -543,11 +543,11 @@ int BzMaterial::packSize() const
 
 
 static void printColor(std::ostream& out, const char *name,
-		       const fvec4& color, const float reference[4])
+		       const fvec4& color, const fvec4& reference)
 {
-  if (memcmp(color, reference, sizeof(float[4])) != 0) {
-    out << name << color[0] << " " << color[1] << " "
-		<< color[2] << " " << color[3] << std::endl;
+  if (color != reference) {
+    out << name << color.r << " " << color.g << " "
+		<< color.b << " " << color.a << std::endl;
   }
   return;
 }
@@ -658,7 +658,7 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
   } else {
     out << "illum 2" << std::endl;
   }
-  out << "d " << diffuse[3] << std::endl;
+  out << "d "   << diffuse.a << std::endl;
   out << "#Ka " << ambient.rgb().tostring()  << std::endl; // not really used
   out << "Kd "  << diffuse.rgb().tostring()  << std::endl;
   out << "Ke "  << emission.rgb().tostring() << std::endl;
@@ -1117,7 +1117,7 @@ const std::string& BzMaterial::getShader(int shdid) const
 bool BzMaterial::isInvisible() const
 {
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
-  if ((diffuse[3] == 0.0f) && (dyncol == NULL) &&
+  if ((diffuse.a == 0.0f) && (dyncol == NULL) &&
       !((textureCount > 0) && !textures[0].useColor)) {
     return true;
   }

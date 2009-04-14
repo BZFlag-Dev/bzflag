@@ -111,8 +111,11 @@ namespace TankGeometryUtils {
 
   // help to scale vertices and normals
   void doVertex3f(float x, float y, float z);
+  void doVertex(const fvec3&);
   void doNormal3f(float x, float y, float z);
+  void doNormal(const fvec3&);
   void doTexCoord2f(float x, float y);
+  void doTexCoord(const fvec2&);
 
   //
   // NOTE:  these all return their triangle count

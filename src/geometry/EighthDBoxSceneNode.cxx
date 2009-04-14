@@ -39,18 +39,18 @@ EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
   const float s = sinf(rotation);
 
   // compute polygons
-  const float polySize = size[0] / powf(float(BoxPolygons), 0.3333f);
+  const float polySize = size.x / powf(float(BoxPolygons), 0.3333f);
   for (int i = 0; i < BoxPolygons; i++) {
     fvec3 base, verts[3];
-    base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
-    base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
-    base[2] = (size[2] - 0.5f * polySize) * (float)bzfrand();
+    base.x = (size.x - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base.y = (size.y - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base.z = (size.z - 0.5f * polySize) * (float)bzfrand();
     for (int j = 0; j < 3; j++) {
       // pick point around origin
       fvec3 p;
-      p[0] = base[0] + polySize * ((float)bzfrand() - 0.5f);
-      p[1] = base[1] + polySize * ((float)bzfrand() - 0.5f);
-      p[2] = base[2] + polySize * ((float)bzfrand() - 0.5f);
+      p.x = base.x + polySize * ((float)bzfrand() - 0.5f);
+      p.y = base.y + polySize * ((float)bzfrand() - 0.5f);
+      p.z = base.z + polySize * ((float)bzfrand() - 0.5f);
 
       // make sure it's inside the box
       p.x = (p.x < -size.x) ? -size.x : ((p.x > +size.x) ? +size.x : p.x);
@@ -68,7 +68,7 @@ EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
 
   // set sphere
   setCenter(pos);
-  setRadius(0.25f * (size[0]*size[0] + size[1]*size[1] + size[2]*size[2]));
+  setRadius(0.25f * size.lengthSq());
 }
 
 
@@ -117,16 +117,16 @@ EighthDBoxSceneNode::EighthDBoxRenderNode::EighthDBoxRenderNode(
   const float s = sinf(rotation);
 
   // compute corners
-  corner[0][0] = corner[4][0] = pos[0] + c * size[0] - s * size[1];
-  corner[0][1] = corner[4][1] = pos[1] + s * size[0] + c * size[1];
-  corner[1][0] = corner[5][0] = pos[0] - c * size[0] - s * size[1];
-  corner[1][1] = corner[5][1] = pos[1] - s * size[0] + c * size[1];
-  corner[2][0] = corner[6][0] = pos[0] - c * size[0] + s * size[1];
-  corner[2][1] = corner[6][1] = pos[1] - s * size[0] - c * size[1];
-  corner[3][0] = corner[7][0] = pos[0] + c * size[0] + s * size[1];
-  corner[3][1] = corner[7][1] = pos[1] + s * size[0] - c * size[1];
-  corner[0][2] = corner[1][2] = corner[2][2] = corner[3][2] = pos[2];
-  corner[4][2] = corner[5][2] = corner[6][2] = corner[7][2] = pos[2] + size[2];
+  corner[0].x = corner[4].x = pos.x + c * size.x - s * size.y;
+  corner[0].y = corner[4].y = pos.y + s * size.x + c * size.y;
+  corner[1].x = corner[5].x = pos.x - c * size.x - s * size.y;
+  corner[1].y = corner[5].y = pos.y - s * size.x + c * size.y;
+  corner[2].x = corner[6].x = pos.x - c * size.x + s * size.y;
+  corner[2].y = corner[6].y = pos.y - s * size.x - c * size.y;
+  corner[3].x = corner[7].x = pos.x + c * size.x + s * size.y;
+  corner[3].y = corner[7].y = pos.y + s * size.x - c * size.y;
+  corner[0].z = corner[1].z = corner[2].z = corner[3].z = pos.z;
+  corner[4].z = corner[5].z = corner[6].z = corner[7].z = pos.z + size.z;
 }
 
 

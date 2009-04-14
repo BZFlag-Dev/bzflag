@@ -36,10 +36,10 @@ void WallObstacle::finalize()
   // compute normal
   const fvec3& p = getPosition();
   const float a = getRotation();
-  plane[0] = cosf(a);
-  plane[1] = sinf(a);
-  plane[2] = 0.0;
-  plane[3] = -(p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2]);
+  plane.x = cosf(a);
+  plane.y = sinf(a);
+  plane.z = 0.0;
+  plane.w = -fvec3::dot(p, plane.xyz());
 
   return;
 }
@@ -67,25 +67,24 @@ float WallObstacle::intersect(const Ray& r) const
 {
   const fvec3& o = r.getOrigin();
   const fvec3& d = r.getDirection();
-  const float dot = -(d[0] * plane[0] + d[1] * plane[1] + d[2] * plane[2]);
-  if (dot == 0.0f) return -1.0f;
-  float t = (o[0] * plane[0] + o[1] * plane[1] + o[2] * plane[2] +
-							plane[3]) / dot;
+  const float dot = -fvec3::dot(d, plane.xyz());
+  if (dot == 0.0f) {
+    return -1.0f;
+  }
+  float t = plane.planeDist(o) / dot;
   return t;
 }
 
 
 void WallObstacle::getNormal(const fvec3&, fvec3& n) const
 {
-  n[0] = plane[0];
-  n[1] = plane[1];
-  n[2] = plane[2];
+  n = plane.xyz();
 }
 
 
 bool WallObstacle::inCylinder(const fvec3& p, float r, float /* height */) const
 {
-  return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
+  return plane.planeDist(p) < r;
 }
 
 
@@ -98,21 +97,21 @@ bool WallObstacle::inBox(const fvec3& p, float _angle,
   const float xBreadth = -yWidth;
   const float yBreadth = xWidth;
   fvec3 corner;
-  corner[2] = p[2];
+  corner.z = p.z;
 
   // check to see if any corner is inside negative half-space
-  corner[0] = p[0] - xWidth * halfWidth - xBreadth * halfBreadth;
-  corner[1] = p[1] - yWidth * halfWidth - yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
-  corner[0] = p[0] + xWidth * halfWidth - xBreadth * halfBreadth;
-  corner[1] = p[1] + yWidth * halfWidth - yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
-  corner[0] = p[0] - xWidth * halfWidth + xBreadth * halfBreadth;
-  corner[1] = p[1] - yWidth * halfWidth + yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
-  corner[0] = p[0] + xWidth * halfWidth + xBreadth * halfBreadth;
-  corner[1] = p[1] + yWidth * halfWidth + yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
+  corner.x = p.x - (xWidth * halfWidth) - (xBreadth * halfBreadth);
+  corner.y = p.y - (yWidth * halfWidth) - (yBreadth * halfBreadth);
+  if (inCylinder(corner, 0.0f, 0.0f)) { return true; }
+  corner.x = p.x + (xWidth * halfWidth) - (xBreadth * halfBreadth);
+  corner.y = p.y + (yWidth * halfWidth) - (yBreadth * halfBreadth);
+  if (inCylinder(corner, 0.0f, 0.0f)) { return true; }
+  corner.x = p.x - (xWidth * halfWidth) + (xBreadth * halfBreadth);
+  corner.y = p.y - (yWidth * halfWidth) + (yBreadth * halfBreadth);
+  if (inCylinder(corner, 0.0f, 0.0f)) { return true; }
+  corner.x = p.x + (xWidth * halfWidth) + (xBreadth * halfBreadth);
+  corner.y = p.y + (yWidth * halfWidth) + (yBreadth * halfBreadth);
+  if (inCylinder(corner, 0.0f, 0.0f)) { return true; }
 
   return false;
 }
@@ -141,8 +140,8 @@ void* WallObstacle::pack(void* buf) const
 {
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackFloat(buf, size[1]);
-  buf = nboPackFloat(buf, size[2]);
+  buf = nboPackFloat(buf, size.y);
+  buf = nboPackFloat(buf, size.z);
 
   unsigned char stateByte = 0;
   stateByte |= canRicochet() ? _RICOCHET : 0;
@@ -156,8 +155,8 @@ void* WallObstacle::unpack(void* buf)
 {
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackFloat(buf, size[1]);
-  buf = nboUnpackFloat(buf, size[2]);
+  buf = nboUnpackFloat(buf, size.y);
+  buf = nboUnpackFloat(buf, size.z);
 
   unsigned char stateByte;
   buf = nboUnpackUInt8(buf, stateByte);
@@ -172,7 +171,7 @@ void* WallObstacle::unpack(void* buf)
 int WallObstacle::packSize() const
 {
   int fullSize = 0;
-  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(fvec3); // pos
   fullSize += sizeof(float);    // rotation
   fullSize += sizeof(float);	// breadth
   fullSize += sizeof(float);	// height

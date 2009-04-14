@@ -39,19 +39,19 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
   const float s = sinf(rotation);
 
   // compute polygons
-  const float polySize = size[0] / powf(float(PyrPolygons), 0.3333f);
-  const float slope = size[2] / size[0];
+  const float polySize = size.x / powf(float(PyrPolygons), 0.3333f);
+  const float slope = size.z / size.x;
   for (int i = 0; i < PyrPolygons; i++) {
     fvec3 base, verts[3];
-    base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
-    base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
-    base[2] = (size[2] - slope * hypotf(base[0], base[1])) * (float)bzfrand();
+    base.x = (size.x - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base.y = (size.y - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base.z = (size.z - slope * hypotf(base.x, base.y)) * (float)bzfrand();
     for (int j = 0; j < 3; j++) {
       // pick point around origin
       fvec3 p;
-      p[0] = base[0] + polySize * ((float)bzfrand() - 0.5f);
-      p[1] = base[1] + polySize * ((float)bzfrand() - 0.5f);
-      p[2] = base[2] + polySize * ((float)bzfrand() - 0.5f);
+      p.x = base.x + polySize * ((float)bzfrand() - 0.5f);
+      p.y = base.y + polySize * ((float)bzfrand() - 0.5f);
+      p.z = base.z + polySize * ((float)bzfrand() - 0.5f);
 
       // make sure it's inside the box
       const float height = size.z - slope * p.xy().length();
@@ -70,7 +70,7 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
 
   // set sphere
   setCenter(pos);
-  setRadius(0.25f * (size[0]*size[0] + size[1]*size[1] + size[2]*size[2]));
+  setRadius(0.25f * size.lengthSq());
 }
 
 
@@ -119,18 +119,18 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
   const float s = sinf(rotation);
 
   // compute corners
-  corner[0][0] = pos[0] + c * size[0] - s * size[1];
-  corner[0][1] = pos[1] + s * size[0] + c * size[1];
-  corner[1][0] = pos[0] - c * size[0] - s * size[1];
-  corner[1][1] = pos[1] - s * size[0] + c * size[1];
-  corner[2][0] = pos[0] - c * size[0] + s * size[1];
-  corner[2][1] = pos[1] - s * size[0] - c * size[1];
-  corner[3][0] = pos[0] + c * size[0] + s * size[1];
-  corner[3][1] = pos[1] + s * size[0] - c * size[1];
-  corner[0][2] = corner[1][2] = corner[2][2] = corner[3][2] = pos[2];
-  corner[4][0] = pos[0];
-  corner[4][1] = pos[1];
-  corner[4][2] = pos[2] + size[2];
+  corner[0].x = pos.x + (c * size.x) - (s * size.y);
+  corner[0].y = pos.y + (s * size.x) + (c * size.y);
+  corner[1].x = pos.x - (c * size.x) - (s * size.y);
+  corner[1].y = pos.y - (s * size.x) + (c * size.y);
+  corner[2].x = pos.x - (c * size.x) + (s * size.y);
+  corner[2].y = pos.y - (s * size.x) - (c * size.y);
+  corner[3].x = pos.x + (c * size.x) + (s * size.y);
+  corner[3].y = pos.y + (s * size.x) - (c * size.y);
+  corner[0].z = corner[1].z = corner[2].z = corner[3].z = pos.z;
+  corner[4].x = pos.x;
+  corner[4].y = pos.y;
+  corner[4].z = pos.z + size.z;
 }
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()

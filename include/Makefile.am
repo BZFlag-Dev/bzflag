@@ -106,7 +106,6 @@ noinst_HEADERS =			\
 	PolyWallSceneNode.h		\
 	PositionTracker.h		\
 	Protocol.h			\
-	PTSceneNode.h			\
 	PyramidBuilding.h		\
 	PyramidSceneNodeGenerator.h	\
 	QuadWallSceneNode.h		\

@@ -119,7 +119,7 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
 		     teamColor, initdelay, delay, sync);
   } else {
     WorldWeaponGlobalEventHandler* eventHandler =
-      new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt,
+      new WorldWeaponGlobalEventHandler(type, &pos, rotation, tilt,
 					(TeamColor)eventTeam);
     worldEventManager.addEvent(triggerType, eventHandler);
   }

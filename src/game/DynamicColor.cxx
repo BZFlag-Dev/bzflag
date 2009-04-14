@@ -233,9 +233,9 @@ void DynamicColor::finalize()
         colorEnds[statesLength] = (int)i;
       }
 
-      const float alpha = state.color[3];
+      const float alpha = state.color.a;
       if (((alpha > 0.0f) && (alpha < 1.0f)) ||
-          ((alpha != next.color[3]) && (state.duration > 0.0f))) {
+          ((alpha != next.color.a) && (state.duration > 0.0f))) {
         possibleAlpha = true;
       }
     }
@@ -400,7 +400,7 @@ void DynamicColor::colorByVariable(double /* t */)
       color = varNewColor;
     }
     if (varNoAlpha) {
-      color[3] = (color[3] >= 0.5f) ? 1.0f : 0.0f;
+      color.a = (color.a >= 0.5f) ? 1.0f : 0.0f;
     }
   }
 }

@@ -321,177 +321,141 @@ float Intersect::timeRayHitsBlock(const Ray& r, const fvec3& p1,
 
 /** Computing ray travel time to the plane described by 3 points
  */
-static float timeRayHitsPlane(const float pb[3], const float db[3],
-			      const float x1[3], const float x2[3],
-			      const float x3[3])
+static float timeRayHitsPlane(const fvec3& pb, const fvec3& db,
+			      const fvec3& x1, const fvec3& x2,
+			      const fvec3& x3)
 {
-  float u[3], v[3], d[3];
-  int i;
-
   // Compute the 2 vectors describing the plane
-  for (i = 0; i < 3; i++) {
-    u[i] = x2[i] - x1[i];
-  }
-  for (i = 0; i < 3; i++) {
-    v[i] = x3[i] - x1[i];
-  }
+  const fvec3 u = x2 - x1;
+  const fvec3 v = x3 - x1;
+
   // Thats a distance vector: a vector from the plane to the ray beginning
-  for (i = 0; i < 3; i++) {
-    d[i] = pb[i] - x1[i];
-  }
+  const fvec3 d = pb - x1;
 
   // plane versor unnormalized
-  float n[3];
-  n[0] = u[1] * v[2] - u[2] * v[1];
-  n[1] = u[2] * v[0] - u[0] * v[2];
-  n[2] = u[0] * v[1] - u[1] * v[0];
+  const fvec3 n = fvec3::cross(u, v);
 
   // computing unnormalized distance projecting the distance on versor
-  float distance = 0.0;
-  for (i = 0; i < 3; i++) {
-    distance += n[i] * d[i];
-  }
+  const float distance = fvec3::dot(n, d);
 
   // if distance is negative, plane is already passed
-  if (distance <= 0.0f)
+  if (distance <= 0.0f) {
     return 0.0f;
-
-  // project velocity vector on the plan versor unnormalized
-  float velocity = 0.0f;
-  for (i = 0; i < 3; i++) {
-    velocity += n[i] * db[i];
   }
 
+  // project velocity vector on the plan versor unnormalized
+  const float velocity = fvec3::dot(n, db);
+
   // if velocity is greater than 0 no way to trespass the plane
-  if (velocity > 0.0f)
+  if (velocity > 0.0f) {
     return -1.0f;
+  }
 
   // time is ... that is normalized
-  return - distance / velocity;
+  return -(distance / velocity);
 }
 
 
 float Intersect::timeRayHitsPyramids(const Ray& r, const fvec3& p1, float angle,
                                      float dx, float dy, float dz, bool flipZ)
 {
-
   const float epsilon = 1.0e-3f;
+
   // get names for ray info
-  int i;
   const fvec3& p2 = r.getOrigin();
   const fvec3& d  = r.getDirection();
 
   // translate origin
-  float pa[2];
-  pa[0] = p2[0] - p1[0];
-  pa[1] = p2[1] - p1[1];
+  const fvec2 pa = p2.xy() - p1.xy();
 
   // rotate
-  float pb[3], db[3];
-  const float c = cosf(-angle), s = sinf(-angle);
-  pb[0] = c * pa[0] - s * pa[1];
-  pb[1] = c * pa[1] + s * pa[0];
-  pb[2] = p2[2] - p1[2];
-  db[0] = c * d[0] - s * d[1];
-  db[1] = c * d[1] + s * d[0];
-  db[2] = d[2];
+  fvec3 pb, db;
+  const float c = cosf(-angle);
+  const float s = sinf(-angle);
 
-  if (dx < 0)
-    dx = - dx;
-  if (dy < 0)
-    dy = - dy;
-  if (dz < 0) {
-    dz = - dz;
-  }
+  pb.x = (c * pa.x) - (s * pa.y);
+  pb.y = (c * pa.y) + (s * pa.x);
+  pb.z = p2.z - p1.z;
+  db.x = (c * d.x) - (s * d.y);
+  db.y = (c * d.y) + (s * d.x);
+  db.z = d.z;
+
+  if (dx < 0.0f) { dx = - dx; }
+  if (dy < 0.0f) { dy = - dy; }
+  if (dz < 0.0f) { dz = - dz; }
+
   if (flipZ) {
-    pb[2] = dz - pb[2];
-    db[2] = - db[2];
+    pb.z = dz - pb.z;
+    db.z = - db.z;
   }
 
   float residualTime = 0.0f;
 
-  float x1[3], x2[3], x3[3];
-  float residualTemp;
-
-  x1[2] = 0.0f;
-  x2[2] = 0.0f;
-  x3[0] = 0.0f;
-  x3[1] = 0.0f;
-  x3[2] = dz;
-
   // trying to get to the pyramid removing half space at time
   // start with the 4 faces, and end with the base
-  x1[0] = - dx;
-  x1[1] = - dy;
-  x2[0] =   dx;
-  x2[1] = - dy;
+  float residualTemp;
+  fvec3 x1( -dx,  -dy, 0.0f);
+  fvec3 x2( +dx,  -dy, 0.0f);
+  fvec3 x3(0.0f, 0.0f,   dz);
+
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
-  if (residualTemp < -0.5f)
+  if (residualTemp < -0.5f) {
     return residualTemp;
-  for (i = 0; i < 3; i++) {
-    pb[i] += residualTemp * db[i];
   }
+  pb += residualTemp * db;
   residualTime += residualTemp;
 
-  x1[0] = - x1[0];
-  x1[1] = - x1[1];
+  x1.xy() = -x1.xy();
   residualTemp = timeRayHitsPlane(pb, db, x2, x1, x3);
-  if (residualTemp < -0.5f)
+  if (residualTemp < -0.5f) {
     return residualTemp;
-  for (i = 0; i < 3; i++) {
-    pb[i] += residualTemp * db[i];
   }
+  pb += residualTemp * db;
   residualTime += residualTemp;
 
-  x2[0] = - x2[0];
-  x2[1] = - x2[1];
+  x2.xy() = -x2.xy();
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
-  if (residualTemp < -0.5f)
+  if (residualTemp < -0.5f) {
     return residualTemp;
-  for (i = 0; i < 3; i++) {
-    pb[i] += residualTemp * db[i];
   }
+  pb += residualTemp * db;
   residualTime += residualTemp;
 
-  x1[0] = - x1[0];
-  x1[1] = - x1[1];
+  x1.xy() = -x1.xy();
   residualTemp = timeRayHitsPlane(pb, db, x2, x1, x3);
-  if (residualTemp < -0.5f)
+  if (residualTemp < -0.5f) {
     return residualTemp;
-  for (i = 0; i < 3; i++) {
-    pb[i] += residualTemp * db[i];
   }
+  pb += residualTemp * db;
   residualTime += residualTemp;
 
-  x3[0] = dx;
-  x3[1] = dy;
-  x3[2] = 0.0f;
+  x3 = fvec3(dx, dy, 0.0f);
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
-  if (residualTemp < -0.5f)
+  if (residualTemp < -0.5f) {
     return residualTemp;
-  for (i = 0; i < 3; i++) {
-    pb[i] += residualTemp * db[i];
   }
+  pb += residualTemp * db;
   residualTime += residualTemp;
 
   // No way to move further. See if inside
   // first bounding box
-  pb[0] = fabsf(pb[0]);
-  pb[1] = fabsf(pb[1]);
-  if (pb[0] > dx + epsilon * dx)
-    return -1.0f;
-  if (pb[1] > dy + epsilon * dy)
-    return -1.0f;
-  if (pb[2] < 0.0f - epsilon * dz)
-    return -1.0f;
+  pb.x = fabsf(pb.x);
+  pb.y = fabsf(pb.y);
+  if (pb.x > (dx   + (epsilon * dx))) { return -1.0f; }
+  if (pb.y > (dy   + (epsilon * dy))) { return -1.0f; }
+  if (pb.z < (0.0f - (epsilon * dz))) { return -1.0f; }
+
   // now shrink
   float scaledDistance;
-  if (pb[0] * dy > pb[1] * dx)
-    scaledDistance = dz * (dx - pb[0]) - pb[2] * dx;
-  else
-    scaledDistance = dz * (dy - pb[1]) - pb[2] * dy;
-  if (scaledDistance < - epsilon * dz)
+  if (pb.x * dy > pb.y * dx) {
+    scaledDistance = dz * (dx - pb.x) - (pb.z * dx);
+  } else {
+    scaledDistance = dz * (dy - pb.y) - (pb.z * dy);
+  }
+
+  if (scaledDistance < - epsilon * dz) {
     residualTime = -1.0f;
+  }
 
   return residualTime;
 }
@@ -710,8 +674,8 @@ bool Intersect::testRectInRect(const fvec3& p1, float angle1, float dx1, float d
 static inline void projectAxisBox(const fvec3& dir, const Extents& extents,
 				  float* minDist, float* maxDist)
 {
-  static float i[3];
-  static float o[3];
+  static fvec3 i;
+  static fvec3 o;
 
   // find the extreme corners
   for (int t = 0; t < 3; t++) {
@@ -724,8 +688,8 @@ static inline void projectAxisBox(const fvec3& dir, const Extents& extents,
     }
   }
 
-  float idist = (i[0] * dir[0]) + (i[1] * dir[1]) + (i[2] * dir[2]);
-  float odist = (o[0] * dir[0]) + (o[1] * dir[1]) + (o[2] * dir[2]);
+  const float idist = fvec3::dot(i, dir);
+  const float odist = fvec3::dot(o, dir);
 
   if (idist < odist) {
     *minDist = idist;
@@ -748,7 +712,7 @@ static inline void projectPolygon(const fvec3& dir,
 
   for (int i = 0; i < count; i++) {
     const fvec3& p = points[i];
-    float dist = (p[0] * dir[0]) + (p[1] * dir[1]) + (p[2] * dir[2]);
+    const float dist = fvec3::dot(p, dir);
     if (dist < mind) {
       mind = dist;
     }
@@ -770,8 +734,8 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
                                      const fvec4& plane, const Extents& extents)
 {
   int t;
-  static float i[3]; // inside point  (assuming partial)
-  static float o[3]; // outside point (assuming partial)
+  static fvec3 i; // inside point  (assuming partial)
+  static fvec3 o; // outside point (assuming partial)
 
   // test the plane
   for (t = 0; t < 3; t++) {
@@ -783,12 +747,8 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
       o[t] = extents.maxs[t];
     }
   }
-  const float icross = (plane[0] * i[0]) +
-    (plane[1] * i[1]) +
-    (plane[2] * i[2]) + plane[3];
-  const float ocross = (plane[0] * o[0]) +
-    (plane[1] * o[1]) +
-    (plane[2] * o[2]) + plane[3];
+  const float icross = plane.planeDist(i);
+  const float ocross = plane.planeDist(o);
   if ((icross * ocross) > 0.0f) {
     // same polarity means that the plane doesn't cut the box
     return false;
@@ -967,7 +927,7 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
   }
 
   int hitPlane;
-  float hitTime[3];
+  fvec3 hitTime;
 
   // calculate the hitTimes
   for (a = 0; a < 3; a++) {
@@ -1021,7 +981,7 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& extents,
   const fvec3& v = ray->getDirection();
 
   // calculate the hitTimes for the outTime
-  float hitTime[3];
+  fvec3 hitTime;
   for (a = 0; a < 3; a++) {
     if (v[a] == 0.0f) {
       hitTime[a] = MAXFLOAT;
