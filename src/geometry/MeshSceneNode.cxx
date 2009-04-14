@@ -439,7 +439,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     if (userTexture) {
       const std::string& texname = bzmat->getTextureLocal(0);
       if (texname.size() > 0) {
-	faceTexture = tm.getTextureID(texname.c_str());
+	faceTexture = tm.getTextureID(texname);
       }
       if (faceTexture >= 0) {
 	useDiffuseColor = bzmat->getUseColorOnTexture(0);

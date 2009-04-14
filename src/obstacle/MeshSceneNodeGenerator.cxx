@@ -83,7 +83,7 @@ static bool translucentMaterial(const BzMaterial* mat)
   if (mat->getTextureCount() > 0) {
     const std::string& texname = mat->getTextureLocal(0);
     if (texname.size() > 0) {
-      faceTexture = tm.getTextureID(texname.c_str());
+      faceTexture = tm.getTextureID(texname);
       if (faceTexture >= 0) {
 	const ImageInfo& imageInfo = tm.getInfo(faceTexture);
 	if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
@@ -396,7 +396,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   if (userTexture) {
     const std::string& texname = mat->getTextureLocal(0);
     if (texname.size() > 0) {
-      faceTexture = tm.getTextureID(texname.c_str());
+      faceTexture = tm.getTextureID(texname);
     }
     if (faceTexture >= 0) {
       gotSpecifiedTexture = true;

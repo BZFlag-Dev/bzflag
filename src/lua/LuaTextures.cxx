@@ -265,7 +265,7 @@ class LuaTextureRef : public LuaTexture
 
 LuaTextureRef::LuaTextureRef(const std::string& _name) : name(_name)
 {
-	bzTexID = TEXMGR.getTextureID(name.c_str(), false);
+	bzTexID = TEXMGR.getTextureID(name, false);
 }
 
 
