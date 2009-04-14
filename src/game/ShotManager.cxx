@@ -56,6 +56,10 @@ void ShotManager::removeEventHandler (ShotEventCallbacks *cb)
 }
 
 ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/)
+: lifetime(0.0)
+, range(0.0)
+, pos(0.0f, 0.0f, 0.0f)
+, vec(0.0f, 0.0f, 0.0f)
 {
   if (info) {
     startTime = info->timeSent;
@@ -68,12 +72,6 @@ ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/)
   //type = NoShot;
 
   lastUpdateTime = startTime;
-
-  lifetime = 0;
-  range = 0;
-
-  for (int i = 0; i < 3; i++)
-    pos[i] = vec[i] = 0;
 }
 
 
