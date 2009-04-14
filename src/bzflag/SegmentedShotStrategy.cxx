@@ -76,7 +76,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
 
     boltSceneNode->phasingShot = useSuperTexture;
 
-    int texture = tm.getTextureID(imageName.c_str());
+    int texture = tm.getTextureID(imageName);
     if (texture >= 0)
       boltSceneNode->setTexture(texture);
   }
@@ -317,7 +317,7 @@ void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(currentTeam);
     imageName += BZDB.get("boltTexture");
-    int texture = tm.getTextureID(imageName.c_str());
+    int texture = tm.getTextureID(imageName);
     if (texture >= 0)
       boltSceneNode->setTexture(texture);
   }
@@ -803,7 +803,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(tmpTeam);
   imageName += BZDB.get("laserTexture");
-  int texture = tm.getTextureID(imageName.c_str());
+  int texture = tm.getTextureID(imageName);
 
   for (int i = 0; i < numSegments; i++) {
     const ShotPathSegment& segm = getSegments()[i];

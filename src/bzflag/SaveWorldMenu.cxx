@@ -102,7 +102,7 @@ void SaveWorldMenu::resize(int _width, int _height)
 
   // reposition title
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;

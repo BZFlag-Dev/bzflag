@@ -288,7 +288,7 @@ void BackgroundRenderer::setupGroundMaterials()
   if (bzmat == NULL) {
     // default ground material
     memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
-    groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+    groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
   } else {
     // map specified material
     ((BzMaterial*)bzmat)->setReference();
@@ -296,11 +296,11 @@ void BackgroundRenderer::setupGroundMaterials()
       groundColor[i] = bzmat->getDiffuse();
     }
     if (bzmat->getTextureCount() > 0) {
-      groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
+      groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0), false);
       if (groundTextureID < 0) {
 	// use the default as a backup (default color too)
 	memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
-	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
       } else {
 	// only apply the texture matrix if the texture is valid
 	const int texMatId = bzmat->getTextureMatrix(0);
@@ -339,7 +339,7 @@ void BackgroundRenderer::setupGroundMaterials()
   int groundInvTextureID = -1;
   memcpy(groundColorInv, defaultGroundColorInv, sizeof(fvec4[4]));
   if (groundInvTextureID < 0) {
-    groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture").c_str(), false);
+    groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture"), false);
   }
 
   // inverted ground gstates
@@ -953,7 +953,7 @@ void BackgroundRenderer::setupSkybox()
     if ((bzmats[i] == NULL) || (bzmats[i]->getTextureCount() <= 0)) {
       break;
     }
-    skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0).c_str());
+    skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0));
     if (skyboxTexID[i] < 0) {
       break;
     }
@@ -964,7 +964,7 @@ void BackgroundRenderer::setupSkybox()
     while (i >= 0) {
       if ((bzmats[i] != NULL) && (bzmats[i]->getTextureCount() > 0)) {
 	// NOTE: this could delete textures the might be used elsewhere
-	tm.removeTexture(bzmats[i]->getTextureLocal(0).c_str());
+	tm.removeTexture(bzmats[i]->getTextureLocal(0));
       }
       i--;
     }

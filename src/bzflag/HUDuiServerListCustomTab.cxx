@@ -138,10 +138,12 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   getNav().addCallback(callback, this);
 }
 
+
 HUDuiServerListCustomTab::~HUDuiServerListCustomTab()
 {
   getNav().removeCallback(callback, this);
 }
+
 
 size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
 {
@@ -158,12 +160,14 @@ size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus,
   return proposedFocus;
 }
 
+
 void HUDuiServerListCustomTab::setSize(float width, float height)
 {
   HUDuiControl::setSize(width, height);
 
   resize();
 }
+
 
 void HUDuiServerListCustomTab::setFontSize(float size)
 {
@@ -172,6 +176,7 @@ void HUDuiServerListCustomTab::setFontSize(float size)
   resize();
 }
 
+
 void HUDuiServerListCustomTab::setFontFace(const LocalFontFace* face)
 {
   HUDuiControl::setFontFace(face);
@@ -179,12 +184,14 @@ void HUDuiServerListCustomTab::setFontFace(const LocalFontFace* face)
   resize();
 }
 
+
 void HUDuiServerListCustomTab::setPosition(float x, float y)
 {
   HUDuiControl::setPosition(x, y);
 
   resize();
 }
+
 
 void HUDuiServerListCustomTab::resize()
 {
@@ -196,7 +203,7 @@ void HUDuiServerListCustomTab::resize()
 
   float spacer = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), "XXXI");
 
-  float width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tabName->getLabel().c_str());
+  float width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), tabName->getLabel());
 
   tabName->setFontFace(getFontFace());
   tabName->setFontSize(getFontSize());
@@ -204,114 +211,118 @@ void HUDuiServerListCustomTab::resize()
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), domainName->getLabel().c_str());
+  const int   faceID = getFontFace()->getFMFace();
+  const float fontSize = getFontSize();
+
+  width = fm.getStringWidth(faceID, fontSize, domainName->getLabel());
 
   domainName->setFontFace(getFontFace());
-  domainName->setFontSize(getFontSize());
+  domainName->setFontSize(fontSize);
   domainName->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), serverName->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, serverName->getLabel());
 
   serverName->setFontFace(getFontFace());
-  serverName->setFontSize(getFontSize());
+  serverName->setFontSize(fontSize);
   serverName->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), emptyServer->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, emptyServer->getLabel());
 
   emptyServer->setFontFace(getFontFace());
-  emptyServer->setFontSize(getFontSize());
+  emptyServer->setFontSize(fontSize);
   emptyServer->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), fullServer->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, fullServer->getLabel());
 
   fullServer->setFontFace(getFontFace());
-  fullServer->setFontSize(getFontSize());
+  fullServer->setFontSize(fontSize);
   fullServer->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), teamFFAServers->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, teamFFAServers->getLabel());
 
   teamFFAServers->setFontFace(getFontFace());
-  teamFFAServers->setFontSize(getFontSize());
+  teamFFAServers->setFontSize(fontSize);
   teamFFAServers->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), openFFAServers->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, openFFAServers->getLabel());
 
   openFFAServers->setFontFace(getFontFace());
-  openFFAServers->setFontSize(getFontSize());
+  openFFAServers->setFontSize(fontSize);
   openFFAServers->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), classicCTFServers->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, classicCTFServers->getLabel());
 
   classicCTFServers->setFontFace(getFontFace());
-  classicCTFServers->setFontSize(getFontSize());
+  classicCTFServers->setFontSize(fontSize);
   classicCTFServers->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), rabbitChaseServers->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, rabbitChaseServers->getLabel());
 
   rabbitChaseServers->setFontFace(getFontFace());
-  rabbitChaseServers->setFontSize(getFontSize());
+  rabbitChaseServers->setFontSize(fontSize);
   rabbitChaseServers->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), ricochet->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, ricochet->getLabel());
 
   ricochet->setFontFace(getFontFace());
-  ricochet->setFontSize(getFontSize());
+  ricochet->setFontSize(fontSize);
   ricochet->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), superFlags->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, superFlags->getLabel());
 
   superFlags->setFontFace(getFontFace());
-  superFlags->setFontSize(getFontSize());
+  superFlags->setFontSize(fontSize);
   superFlags->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), antidoteFlag->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, antidoteFlag->getLabel());
 
   antidoteFlag->setFontFace(getFontFace());
-  antidoteFlag->setFontSize(getFontSize());
+  antidoteFlag->setFontSize(fontSize);
   antidoteFlag->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), jumping->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, jumping->getLabel());
 
   jumping->setFontFace(getFontFace());
-  jumping->setFontSize(getFontSize());
+  jumping->setFontSize(fontSize);
   jumping->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
-  width = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), handicap->getLabel().c_str());
+  width = fm.getStringWidth(faceID, fontSize, handicap->getLabel());
 
   handicap->setFontFace(getFontFace());
-  handicap->setFontSize(getFontSize());
+  handicap->setFontSize(fontSize);
   handicap->setPosition(getX() + width + spacer, y);
 
   y = y - _fontheight;
 
   createNew->setFontFace(getFontFace());
-  createNew->setFontSize(getFontSize());
+  createNew->setFontSize(fontSize);
   createNew->setPosition(getX() + spacer, y);
 }
+
 
 HUDuiServerList* HUDuiServerListCustomTab::createServerList()
 {
@@ -354,6 +365,7 @@ HUDuiServerList* HUDuiServerListCustomTab::createServerList()
   return newServerList;
 }
 
+
 void HUDuiServerListCustomTab::doRender()
 {
   if (getFontFace() < 0) {
@@ -364,7 +376,8 @@ void HUDuiServerListCustomTab::doRender()
 
   glColor4fv(color);
 
-  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() + 1, -0.5f);
+  glOutlineBoxHV(1.0f, getX(), getY(),
+                 getX() + getWidth(), getY() + getHeight() + 1, -0.5f);
 
   tabName->render();
   domainName->render();

@@ -37,12 +37,15 @@
 #include "LocalFontFace.h"
 #include "bzUnicode.h"
 
+
+//============================================================================//
 //
 // ControlPanelMessage
 //
 
-ControlPanelMessage::ControlPanelMessage(const std::string& _string) :
-  string(_string), numlines(0)
+ControlPanelMessage::ControlPanelMessage(const std::string& _string)
+: string(_string)
+, numlines(0)
 {
 }
 
@@ -155,26 +158,28 @@ int ControlPanel::getModeMessageCount(MessageModes mode)
 }
 
 
+//============================================================================//
 //
 // ControlPanel
 //
 int ControlPanel::messagesOffset = 0;
 
-ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
-  tabsOnRight(true),
-  tabs(NULL),
-  totalTabWidth(0),
-  window(_mainWindow),
-  resized(false),
-  numBuffers(2),
-  changedMessage(0),
-  radarRenderer(NULL),
-  renderer(&_renderer),
-  fontFace(NULL),
-  dimming(1.0f),
-  du(0),
-  dv(0),
-  messageMode(MessageAll)
+ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
+: tabsOnRight(true)
+, tabs(NULL)
+, totalTabWidth(0)
+, window(_mainWindow)
+, resized(false)
+, numBuffers(2)
+, changedMessage(0)
+, radarRenderer(NULL)
+, renderer(&_renderer)
+, fontFace(NULL)
+, dimming(1.0f)
+, du(0)
+, dv(0)
+, messageMode(MessageAll)
+, teamColor(0.0f, 0.0f, 0.0f, 1.0f)
 {
   setControlColor();
 
@@ -284,12 +289,13 @@ void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
 }
 
 
-void ControlPanel::setControlColor(const float *color)
+void ControlPanel::setControlColor(const fvec4* color)
 {
-  if (color)
-    memcpy(teamColor, color, 3 * sizeof(float));
-  else
-    memset(teamColor, 0, 3 * sizeof(float));
+  if (color != NULL) {
+    teamColor = *color;
+  } else {
+    teamColor = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
+  }
 }
 
 
@@ -346,8 +352,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
   int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
     : int(lineHeight + 4);
 
-  glScissor(x + messageAreaPixels[0] - 1,
-	    y + messageAreaPixels[1],
+  glScissor(messageAreaPixels[0] + x - 1,
+	    messageAreaPixels[1] + y,
 	    messageAreaPixels[2] + 1,
 	    messageAreaPixels[3] + ay);
   OpenGLGState::resetState();
@@ -470,8 +476,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
    * parameter.
    */
 
-  glScissor(x + messageAreaPixels[0],
-	    y + messageAreaPixels[1],
+  glScissor(messageAreaPixels[0] + x,
+	    messageAreaPixels[1] + y,
 	    messageAreaPixels[2],
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
@@ -540,14 +546,14 @@ void ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if (j + msgy < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, msg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, msg);
 	} else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg.c_str());
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, newMsg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, newMsg);
 	}
       }
 
@@ -563,8 +569,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
     regfree(&re);
   }
 
-  glScissor(x + messageAreaPixels[0] - 2,
-	    y + messageAreaPixels[1] - 2,
+  glScissor(messageAreaPixels[0] + x - 2,
+	    messageAreaPixels[1] + y - 2,
 	    messageAreaPixels[2] + 3,
 	    messageAreaPixels[3] + 33);
   OpenGLGState::resetState();

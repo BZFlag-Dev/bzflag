@@ -336,7 +336,7 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    wallTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+    wallTexture = tm.getTextureID(o.userTextures[0],false);
   if (wallTexture < 0)
     wallTexture = tm.getTextureID( "wall" );
   else
@@ -390,18 +390,18 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+    boxTexture = tm.getTextureID(o.userTextures[0],false);
   if (boxTexture < 0)
-    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
+    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture"),true);
 
   useColorTexture[0] = boxTexture >= 0;
 
   int boxTopTexture = -1;
 
   if (o.userTextures[1].size())
-    boxTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
+    boxTopTexture = tm.getTextureID(o.userTextures[1],false);
   if (boxTopTexture < 0)
-    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture").c_str(),true);
+    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture"),true);
 
   useColorTexture[1] = boxTopTexture >= 0;
 
@@ -464,9 +464,9 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   bool useColorTexture = false;
   // try object, standard, then default
   if (o.userTextures[0].size())
-    pyramidTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+    pyramidTexture = tm.getTextureID(o.userTextures[0],false);
   if (pyramidTexture < 0)
-    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture").c_str(),false);
+    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture"),false);
 
   useColorTexture = pyramidTexture >= 0;
 
@@ -520,25 +520,25 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 
   // try object, standard, then default
   if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+    boxTexture = tm.getTextureID(o.userTextures[0],false);
   if (boxTexture < 0) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
     teamBase += BZDB.get("baseWallTexture");
-    boxTexture = tm.getTextureID(teamBase.c_str(),false);
+    boxTexture = tm.getTextureID(teamBase,false);
   }
   if (boxTexture < 0)
-    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture").c_str() );
+    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture") );
 
   useColorTexture[0] = boxTexture >= 0;
 
   int   baseTopTexture = -1;
 
   if (o.userTextures[1].size())
-    baseTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
+    baseTopTexture = tm.getTextureID(o.userTextures[1],false);
   if (baseTopTexture < 0) {
     std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-    teamBase += BZDB.get("baseTopTexture").c_str();
-    baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
+    teamBase += BZDB.get("baseTopTexture");
+    baseTopTexture = tm.getTextureID(teamBase,false);
   }
   if (baseTopTexture < 0)
     baseTopTexture = -1;
@@ -609,12 +609,12 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
   //check for material, then preset textures.
   const BzMaterial *frameMat = MATERIALMGR.findMaterial(std::string("TeleMaterial"));
   if (frameMat)
-    teleporterTexture = tm.getTextureID(frameMat->getTexture(0).c_str(),true);
+    teleporterTexture = tm.getTextureID(frameMat->getTexture(0),true);
 
   if (teleporterTexture < 0 && o.userTextures[0].size())
-    teleporterTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
+    teleporterTexture = tm.getTextureID(o.userTextures[0],false);
   if (teleporterTexture < 0)
-    teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture").c_str(),true);
+    teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture"),true);
 
   useColorTexture = teleporterTexture >= 0;
 

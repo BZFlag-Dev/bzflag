@@ -216,11 +216,11 @@ void			HUDuiTypeIn::doRender()
   } else {
     renderStr = string;
   }
-  fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(), getFontSize(), renderStr.c_str());
+  fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(), getFontSize(), renderStr);
 
   // find the position of where to draw the input cursor
   float start = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(),
-    renderStr.substr(0, cursorPos.getBufferFromHere() - string.c_str()).c_str());
+    renderStr.substr(0, cursorPos.getBufferFromHere() - string.c_str()));
 
   if (hasFocus() && allowEdit) {
     fm.drawString(getX() + start, getY(), 0, getFontFace()->getFMFace(), getFontSize(), "_");

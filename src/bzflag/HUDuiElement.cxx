@@ -113,7 +113,7 @@ void			HUDuiElement::onSetFont()
   if (elementFontFace != NULL) {
     FontManager &fm = FontManager::instance();
     fontHeight = fm.getStringHeight(elementFontFace->getFMFace(), elementFontSize);
-    trueLabelWidth = fm.getStringWidth(elementFontFace->getFMFace(), elementFontSize, std::string(getLabel() + "99").c_str());
+    trueLabelWidth = fm.getStringWidth(elementFontFace->getFMFace(), elementFontSize, std::string(getLabel() + "99"));
   } else {
     fontHeight = 10.0f;
     trueLabelWidth = 0.0f;

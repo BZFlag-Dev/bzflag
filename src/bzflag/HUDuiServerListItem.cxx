@@ -237,13 +237,13 @@ void HUDuiServerListItem::resize()
 std::string HUDuiServerListItem::shorten(std::string string, float width)
 {
   // Skip if it already fits
-  if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.c_str()) <= width)
+  if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string) <= width)
     return string;
 
   // Iterate through each character. Expensive.
   for (int i=0; i<=(int)string.size(); i++) {
     // Is it too big yet?
-    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i).c_str()) > width) {
+    if (fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), string.substr(0, i)) > width) {
       return string.substr(0, i - 1);
     }
   }
@@ -284,7 +284,7 @@ void HUDuiServerListItem::doRender()
   float playerX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + spacerWidth;
   float pingX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
 
-  int face = getFontFace()->getFMFace();
+  int faceID = getFontFace()->getFMFace();
 
   fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -306,12 +306,13 @@ void HUDuiServerListItem::doRender()
     color.b = 0.25f * color.g;
   }
 
+  const float fontSize = getFontSize();
   fm.setDarkness(darkness);
-  fm.drawString(modesX,  getY(), 0, face, getFontSize(), displayModes.c_str());
-  fm.drawString(domainX, getY(), 0, face, getFontSize(), displayDomain.c_str(), &color);
-  fm.drawString(serverX, getY(), 0, face, getFontSize(), displayServer.c_str(), &color);
-  fm.drawString(playerX, getY(), 0, face, getFontSize(), displayPlayer.c_str(), &color);
-  fm.drawString(pingX,   getY(), 0, face, getFontSize(), displayPing.c_str(),   &color);
+  fm.drawString(modesX,  getY(), 0, faceID, fontSize, displayModes);
+  fm.drawString(domainX, getY(), 0, faceID, fontSize, displayDomain, &color);
+  fm.drawString(serverX, getY(), 0, faceID, fontSize, displayServer, &color);
+  fm.drawString(playerX, getY(), 0, faceID, fontSize, displayPlayer, &color);
+  fm.drawString(pingX,   getY(), 0, faceID, fontSize, displayPing,   &color);
   fm.setDarkness(1.0f);
 }
 

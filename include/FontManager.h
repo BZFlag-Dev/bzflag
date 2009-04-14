@@ -25,6 +25,7 @@
 #include "AnsiCodes.h"
 #include "Singleton.h"
 
+
 typedef enum
 {
   AlignLeft,
@@ -32,7 +33,9 @@ typedef enum
   AlignRight
 } fontJustification;
 
+
 class BZFontFace_impl;
+
 /**
  * This class (currently just an interface) will become the token that
  * is passed around instead of font id. The functions defined are
@@ -59,25 +62,28 @@ public:
   /**
    * returns the width of the given text string for the specifed font
    */
-  float getStringWidth(float size, const char *text, bool alreadyStripped = false);
+  float getStringWidth(float size, const std::string& text,
+                       bool alreadyStripped = false);
 
   /**
    * main work-horse.  render the provided text with the specified
    * font size, optionally justifying to a particular alignment.
    */
-  void drawString(float x, float y, float z, float size, const char *text,
+  void drawString(float x, float y, float z, float size,
+                  const std::string& text,
 		  const fvec4* resetColor = NULL,
 		  fontJustification align = AlignLeft);
 private:
   BZFontFace_impl* impl;
 };
 
+
 /**
  * An FTGL-based font manager system with enhancements for font
  * decorations like underline and opacity factors.
  */
-class FontManager : public Singleton<FontManager> {
-
+class FontManager : public Singleton<FontManager>
+{
 public:
   enum FontState {
     Missing = -1,
@@ -94,7 +100,7 @@ public:
   /**
    * load a specified font
    */
-  int load(const char* file);
+  int load(const std::string& file);
 
   /**
    * return an index to the requested font if it's been loaded or the
@@ -117,14 +123,15 @@ public:
    * font size, optionally justifying to a particular alignment.
    */
   void drawString(float x, float y, float z, int faceID, float size,
-		  const char *text,
+		  const std::string& text,
 		  const fvec4* resetColor = NULL,
 		  fontJustification align = AlignLeft);
 
   /**
    * returns the width of the given text string for the specifed font
    */
-  float getStringWidth(int faceID, float size, const char *text, bool alreadyStripped = false);
+  float getStringWidth(int faceID, float size, const std::string& text,
+                       bool alreadyStripped = false);
 
   /**
    * returns the height of the given font size
@@ -145,7 +152,6 @@ public:
   void clear();
 
 protected:
-
   friend class Singleton<FontManager>;
 
   /**
@@ -164,7 +170,6 @@ protected:
   const char* getFaceName(int faceID);
 
 private:
-
   /**
    * default constructor, protected because of singleton
    */
@@ -227,7 +232,9 @@ inline void FontManager::setDarkness(float newDarkness)
   dimUnderlineColor.a = opacity;
 }
 
+
 #endif /* __FONTMANAGER_H__ */
+
 
 // Local Variables: ***
 // mode: C++ ***

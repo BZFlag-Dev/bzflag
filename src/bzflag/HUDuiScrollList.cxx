@@ -275,7 +275,7 @@ void HUDuiScrollList::doRender()
     msg << "Page: " << currentPage << "/" << numPages;
     pageLabel->setString(msg.str());
 
-    float labelWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), pageLabel->getString().c_str());
+    float labelWidth = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(), pageLabel->getString());
 
     pageLabel->setFontFace(getFontFace());
     pageLabel->setFontSize(getFontSize());

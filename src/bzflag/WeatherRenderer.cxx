@@ -261,18 +261,18 @@ void WeatherRenderer::set(void)
 
     if (dbItemSet("_rainPuddleTexture")) {
       puddleGStateBuilder.setTexture(
-	tm.getTextureID(BZDB.get("_rainPuddleTexture").c_str()));
+	tm.getTextureID(BZDB.get("_rainPuddleTexture")));
     }
 
     // see if the texture is specifically overridden
     if (dbItemSet("_rainTexture"))
     {
-      int textureID = tm.getTextureID(BZDB.get("_rainTexture").c_str());
+      int textureID = tm.getTextureID(BZDB.get("_rainTexture"));
       if (textureID < 0 ) // try it as a materil
       {
 	const BzMaterial * mat = MATERIALMGR.findMaterial(BZDB.get("_rainTexture"));
 	if (mat)
-	 textureID = tm.getTextureID(mat->getTexture(0).c_str());
+	 textureID = tm.getTextureID(mat->getTexture(0));
       }
       gstate.setTexture(textureID);
     }

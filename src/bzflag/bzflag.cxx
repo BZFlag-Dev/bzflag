@@ -614,10 +614,12 @@ static bool needsFullscreen()
   if (!BZDB.isSet("view")) return false;
 
   // fullscreen if view is not default
-  std::string value = BZDB.get("view");
-  for (int i = 1; i < (int)configViewValues.size(); i++)
-    if (value == configViewValues[i])
+  const std::string value = BZDB.get("view");
+  for (int i = 1; i < (int)configViewValues.size(); i++) {
+    if (value == configViewValues[i]) {
       return true;
+    }
+  }
 
   // bogus view, default to normal so no fullscreen
   return false;
@@ -714,9 +716,9 @@ void setupConfigs ( void )
 	      sizeof(startupInfo.password) - 1);
       startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
     }
-    if (BZDB.isSet("motto"))
+    if (BZDB.isSet("motto")) {
       startupInfo.motto = BZDB.get("motto");
-
+    }
     if (BZDB.isSet("team")) {
       std::string value = BZDB.get("team");
       startupInfo.team = Team::getTeam(value);
@@ -726,8 +728,9 @@ void setupConfigs ( void )
 	      sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
     }
-    if (BZDB.isSet("port"))
-      startupInfo.serverPort = atoi(BZDB.get("port").c_str());
+    if (BZDB.isSet("port")) {
+      startupInfo.serverPort = BZDB.evalInt("port");
+    }
 
     // check for reassigned team colors
     if (BZDB.isSet("roguecolor"))
@@ -758,9 +761,9 @@ void setupConfigs ( void )
     BZDB.unset("_multisample");
 
     // however, if the "__window" setting is enabled, let it through
-    if (BZDB.isSet("__window"))
-      if (BZDB.isTrue("__window"))
-	BZDB.set("_window", "1");
+    if (BZDB.isTrue("__window")) {
+      BZDB.setBool("_window", true);
+    }
   }
 }
 
@@ -1246,9 +1249,9 @@ int initDisplay ( void )
 
   // set gamma if set in resources and we have gamma control
   if (BZDB.isSet("gamma")) {
-    if (pmainWindow->getWindow()->hasGammaControl())
-      pmainWindow->getWindow()->setGamma
-	((float)atof(BZDB.get("gamma").c_str()));
+    if (pmainWindow->getWindow()->hasGammaControl()) {
+      pmainWindow->getWindow()->setGamma(BZDB.eval("gamma"));
+    }
   }
 
   // set the scene renderer's window
@@ -1291,7 +1294,7 @@ int initDisplay ( void )
       RENDERER.setRadarSize(BZDB.getIntClamped("radarsize", 0, GUIOptionsMenu::maxRadarSize));
 
     if (BZDB.isSet("mouseboxsize"))
-      RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));
+      RENDERER.setMaxMotionFactor(BZDB.evalInt("mouseboxsize"));
   }
 
   // grab the mouse only if allowed
@@ -1315,8 +1318,8 @@ int initDisplay ( void )
   // clear the grid graphics if they are not accessible
 #if !defined(DEBUG_RENDERING)
   if (debugLevel <= 0) {
-    BZDB.set("showCullingGrid", "0");
-    BZDB.set("showCollisionGrid", "0");
+    BZDB.setBool("showCullingGrid",   false);
+    BZDB.setBool("showCollisionGrid", false);
   }
 #endif
 
@@ -1380,7 +1383,7 @@ int postWindowInit ( void )
   }
 
   if (BZDB.isSet("serverCacheAge")) {
-    (ServerListCache::get())->setMaxCacheAge(atoi(BZDB.get("serverCacheAge").c_str()));
+    (ServerListCache::get())->setMaxCacheAge(BZDB.evalInt("serverCacheAge"));
   }
 
   return 0;
@@ -1439,20 +1442,20 @@ void saveSettings ( void )
 
 void saveStartupInfo ( void )
 {
-	std::string conf = getConfigDirName();
-	conf += "bzflag.dir";
-	FILE *fp = fopen(conf.c_str(),"wt");
-	if (fp)
-	{
-		std::string exepath = getModuleDir();
-		exepath += "\n";
-		fwrite(exepath.c_str(),exepath.size(),1,fp);
-		exepath = getModuleName();
-		exepath += "\n";
-		fwrite(exepath.c_str(),exepath.size(),1,fp);
-		fclose(fp);
-	}
+  std::string conf = getConfigDirName();
+  conf += "bzflag.dir";
+  FILE *fp = fopen(conf.c_str(),"wt");
+  if (fp) {
+    std::string exepath = getModuleDir();
+    exepath += "\n";
+    fwrite(exepath.c_str(),exepath.size(),1,fp);
+    exepath = getModuleName();
+    exepath += "\n";
+    fwrite(exepath.c_str(),exepath.size(),1,fp);
+    fclose(fp);
+  }
 }
+
 
 //
 // main()

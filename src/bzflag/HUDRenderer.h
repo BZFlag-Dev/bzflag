@@ -15,17 +15,18 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <vector>
 #include <string>
 
-/* common interface headers */
+// common headers
 #include "TimeKeeper.h"
 #include "HUDuiTypeIn.h"
 #include "Flag.h"
 #include "SceneRenderer.h"
+#include "vectors.h"
 
-/* local interface headers */
+// local headers
 #include "FlashClock.h"
 #include "MainWindow.h"
 #include "BzfDisplay.h"
@@ -36,12 +37,14 @@
 
 class LocalFontFace;
 
-const int		MaxAlerts = 3;
+
+const int MaxAlerts = 3;
+
 
 class HUDMarker {
 public:
-  float   heading;
-  float color[3];
+  float heading;
+  fvec4 color;
 };
 typedef std::vector<HUDMarker> MarkerList;
 
@@ -50,23 +53,19 @@ class EnhancedHUDMarker
 {
 public:
   EnhancedHUDMarker()
-  {
-    pos[0] = pos[1] = pos[2] = 0;
-    color[0] = color[1] = color[2] = 0;
-  }
-
-  EnhancedHUDMarker( const float *p, const float* c)
-  {
-    memcpy( color, c, sizeof(float)*3);
-    memcpy( pos, p, sizeof(float)*3);
-  }
-
-  float pos[3];
-  float color[3];
+  : pos(0.0f, 0.0f, 0.0f)
+  , color(0.0f, 0.0f, 0.0f, 1.0f)
+  {}
+  EnhancedHUDMarker(const fvec3& p, const fvec4& c)
+  : pos(p)
+  , color(c)
+  {}
+  fvec3 pos;
+  fvec4 color;
   std::string name;
   bool friendly;
 };
-typedef std::vector < EnhancedHUDMarker > EnhancedMarkerList;
+typedef std::vector<EnhancedHUDMarker> EnhancedMarkerList;
 
 
 
@@ -79,7 +78,7 @@ public:
   HUDRenderer(const BzfDisplay*, const SceneRenderer&);
   ~HUDRenderer();
 
-  virtual void buildGeometry ( GLDisplayList displayList );
+  virtual void buildGeometry(GLDisplayList displayList);
 
   int getNoMotionSize() const;
   int getMaxMotionSize() const;
@@ -100,25 +99,27 @@ public:
   void setAlert(int num, const char* string, float duration,
                 bool warning = false);
   void setFlagHelp(FlagType* desc, float duration);
-  void addMarker(float heading, const float *color);
+  void addMarker(float heading, const float* color);
   void setRestartKeyLabel(const std::string&);
   void setTimeLeft(uint32_t timeLeftInSeconds);
 
-  void AddEnhancedMarker ( const float* pos, const float *color, bool friendly = false, float zShift = 0 );
-  void AddEnhancedNamedMarker ( const float* pos, const float *color, std::string name, bool friendly = false, float zShift = 0 );
+  void AddEnhancedMarker(const fvec3& pos, const fvec4& color,
+                         bool friendly = false, float zShift = 0.0f);
+  void AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color, std::string name,
+                              bool friendly = false, float zShift = 0.0f);
+  void AddLockOnMarker(const fvec3& pos, std::string name,
+                       bool friendly = false, float zShift = 0.0f);
 
-  void AddLockOnMarker ( const float* pos, std::string name, bool friendly = false, float zShift = 0 );
-
-  void saveMatrixes ( const float *mm, const float *pm );
+  void saveMatrixes(const float* mm, const float* pm);
   void setDim(bool);
 
   bool getComposing() const;
   std::string getComposeString() const;
-  void        setComposeString(const std::string &message) const;
-  void        setComposeString(const std::string &message, bool _allowEdit) const;
+  void setComposeString(const std::string& message) const;
+  void setComposeString(const std::string& message, bool allowEdit) const;
 
-  void setComposing(const std::string &prompt);
-  void setComposing(const std::string &prompt, bool _allowEdit);
+  void setComposing(const std::string& prompt);
+  void setComposing(const std::string& prompt, bool allowEdit);
 
   void render(void);
   ScoreboardRenderer *getScoreboard();
@@ -127,7 +128,7 @@ protected:
   void hudColor3f(float, float, float);
   void hudColor4f(float, float, float, float);
   void hudColor3fv(const float*);
-  void hudColor3Afv( const float*, const float );
+  void hudColor3Afv(const float*, const float);
   void hudColor4fv(const float*);
   void hudSColor3fv(const float*);
   void renderAlerts(void);
@@ -143,10 +144,12 @@ protected:
   void renderNotPlaying(SceneRenderer&);
   void renderRoaming(SceneRenderer&);
 
-  void drawLockonMarker(float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly);
-  void drawWaypointMarker(float *color, float alpha, float *object, const float *viewPos, std::string name, bool friendly);
-
+  void drawLockonMarker(float* color, float alpha, float* object,
+                        const float* viewPos, std::string name, bool friendly);
+  void drawWaypointMarker(float* color, float alpha, float* object,
+                          const float* viewPos, std::string name, bool friendly);
   void drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
+
   /** basic render update used by renderPlaying(), renderNotPlaying(), and renderRoaming()
    */
   void renderUpdate(SceneRenderer&);
@@ -162,10 +165,11 @@ private:
   void setComposeFontSize(int width, int height);
   void setLabelsFontSize(int width, int height);
 
-  void		resize(bool firstTime);
-  static void	resizeCallback(void*);
-  static float	tankScoreCompare(const void* _a, const void* _b);
-  static int	teamScoreCompare(const void* _a, const void* _b);
+  void resize(bool firstTime);
+
+  static void  resizeCallback(void*);
+  static float tankScoreCompare(const void* a, const void* b);
+  static int   teamScoreCompare(const void* a, const void* b);
 
   GLDisplayList	friendlyMarkerList;
 private:
@@ -176,9 +180,9 @@ private:
   int			noMotionSize;
   int			maxMotionSize;
   float			headingOffset;
-  float		hudColor[3];
-  float		messageColor[3];
-  float		warningColor[3];
+  fvec4			hudColor;
+  fvec4			messageColor;
+  fvec4			warningColor;
 
   LocalFontFace*	bigFontFace;
   float			bigFontSize;
@@ -223,46 +227,45 @@ private:
   float		tkWarnRatio;
   std::string	restartLabel;
 
-  FlashClock		globalClock;
-  FlashClock		scoreClock;
+  FlashClock	globalClock;
+  FlashClock	scoreClock;
 
-  FlashClock		alertClock[MaxAlerts];
-  std::string		alertLabel[MaxAlerts];
+  FlashClock	alertClock[MaxAlerts];
+  std::string	alertLabel[MaxAlerts];
   float		alertLabelWidth[MaxAlerts];
   const float*	alertColor[MaxAlerts];
 
   float		flagHelpY;
-  FlashClock		flagHelpClock;
-  int			flagHelpLines;
-  std::string		flagHelpText;
+  FlashClock	flagHelpClock;
+  int		flagHelpLines;
+  std::string	flagHelpText;
 
   bool		showOptions;
   bool		showCompose;
   bool		showCracks;
 
+  HUDuiTypeIn*	composeTypeIn;
+
+  bool		dater;
+  time_t	lastTimeChange;
+  int		triangleCount;
+  int		radarTriangleCount;
+
+  double	modelMatrix[16];
+  double	projMatrix[16];
+  int		viewport[4];
+
   MarkerList		markers;
   EnhancedMarkerList	enhancedMarkers;
   EnhancedMarkerList	lockOnMarkers;
 
-
-  HUDuiTypeIn*	composeTypeIn;
-
   static const float	altitudeOffset;
-  static const float black[3];
+  static const fvec4	black;
   static std::string	headingLabel[36];
   static std::string	restartLabelFormat;
   static std::string	resumeLabel;
   static std::string	gameOverLabel;
   static std::string	autoPilotLabel;
-  bool			dater;
-  time_t		lastTimeChange;
-  int			triangleCount;
-  int			radarTriangleCount;
-
-  double modelMatrix[16];
-  double projMatrix[16];
-  int		viewport[4];
-
 };
 
 

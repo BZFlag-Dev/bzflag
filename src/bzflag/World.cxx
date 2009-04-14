@@ -600,7 +600,7 @@ void World::initFlag(int index)
     TextureManager &tm = TextureManager::instance();
     const std::string flagTextureName =
       Team::getImagePrefix(flagTeam) + "flag";
-    texID = tm.getTextureID(flagTextureName.c_str());
+    texID = tm.getTextureID(flagTextureName);
     if (texID >= 0) {
       flagNodes[index]->setTexture(texID);
       flagNodes[index]->setUseColor(false);

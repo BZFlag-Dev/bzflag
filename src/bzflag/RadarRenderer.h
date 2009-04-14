@@ -22,6 +22,7 @@
 
 /* common interface headers */
 #include "bzfgl.h"
+#include "vectors.h"
 #include "Obstacle.h"
 #include "OpenGLUtils.h"
 
@@ -44,7 +45,7 @@ public:
   RadarRenderer(const SceneRenderer&, World* _world);
   void		setWorld(World* _world);
 
-  void		setControlColor(const float *color = NULL);
+  void		setControlColor(const fvec4* color = NULL);
 
   int getX() const;
   int getY() const;
@@ -86,8 +87,8 @@ private:
   void drawFancyTank(const Player* player);
   void drawHuntLevel(const Player* player,
 			      float tankSize, float heightBoxSize);
-  void drawFlag(const float pos[3]);
-  void drawFlagOnTank(const float pos[3]);
+  void drawFlag(const fvec3& pos);
+  void drawFlagOnTank(const fvec3& pos);
 
   static float colorScale(const float z, const float h);
   static float transScale(const float z, const float h);
@@ -100,7 +101,7 @@ private:
   float		ps;
   float		range;
   double	decay;
-  float	teamColor[3];
+  fvec4		teamColor;
   bool		smooth;
   bool		jammed;
   bool		colorblind;

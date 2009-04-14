@@ -198,7 +198,7 @@ void CacheMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight =
     fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);

@@ -118,7 +118,7 @@ static const fvec4 BrightColors[9] = {
 
 
 // strip ANSI codes from a string
-inline const char *stripAnsiCodes(const char *text)
+inline const char* stripAnsiCodes(const char* text)
 {
   static char* str = NULL;
   static size_t strSize = 0;

@@ -318,7 +318,7 @@ void ServerMenu::resize(int _width, int _height)
   const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   x = 0.5f * ((float)_width - titleWidth);
   y = (float)_height - titleHeight;
@@ -338,7 +338,7 @@ void ServerMenu::resize(int _width, int _height)
 
   y = y - (titleHeight/2) - tabbedControl->getHeight();
 
-  float helpLength = fm.getStringWidth(fontFace->getFMFace(), fontSize, help->getString().c_str());
+  float helpLength = fm.getStringWidth(fontFace->getFMFace(), fontSize, help->getString());
 
   tabbedControl->setPosition(edgeSpacer, y);
   serverInfo->setPosition(edgeSpacer, bottomSpacer/2 + bottomSpacer);

@@ -174,7 +174,7 @@ void			MainMenu::resize(int _width, int _height)
 
   // reposition instructions
   hint->setFontSize(tinyFontSize);
-  const float hintWidth = fm.getStringWidth(fontFace->getFMFace(), tinyFontSize, hint->getString().c_str());
+  const float hintWidth = fm.getStringWidth(fontFace->getFMFace(), tinyFontSize, hint->getString());
   y -= 1.25f * fm.getStringHeight(fontFace->getFMFace(), tinyFontSize);
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
   y -= 1.5f * fm.getStringHeight(fontFace->getFMFace(), fontSize);

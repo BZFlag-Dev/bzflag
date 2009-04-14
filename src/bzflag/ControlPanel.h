@@ -27,6 +27,7 @@
 
 //common headers
 #include "bzfgl.h"
+#include "vectors.h"
 
 // local headers
 #include "MainWindow.h"
@@ -63,7 +64,7 @@ class ControlPanel {
     ControlPanel(MainWindow&, SceneRenderer&);
     ~ControlPanel();
 
-    void setControlColor(const float *color = NULL);
+    void setControlColor(const fvec4* color = NULL);
     void render(SceneRenderer&);
     void resize();
     void invalidate();
@@ -120,14 +121,15 @@ class ControlPanel {
     int			messageAreaPixels[4];
     std::deque<ControlPanelMessage>	messages[MessageModeCount];
     MessageModes	messageMode;
-    float		teamColor[3];
-    static int		messagesOffset;
-    static const int	maxScrollPages;
+    fvec4		teamColor;
     int			maxLines;
     float		margin;
     float		lineHeight;
     bool		unRead[MessageModeCount];
     int			messageCounts[MessageModeCount];
+
+    static int		messagesOffset;
+    static const int	maxScrollPages;
 };
 
 

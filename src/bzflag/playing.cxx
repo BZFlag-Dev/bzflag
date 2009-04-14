@@ -5343,12 +5343,12 @@ static void enteringServer(void* buf)
 
   // observer colors are actually cyan, make them black
   const bool observer = (myTank->getTeam() == ObserverTeam);
-  const float *borderColor;
+  const fvec4* borderColor;
   if (observer) {
-    static const float black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-    borderColor = black;
+    static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
+    borderColor = &black;
   } else {
-    borderColor = Team::getRadarColor(myTank->getTeam());
+    borderColor = &Team::getRadarColor(myTank->getTeam());
   }
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
@@ -6931,35 +6931,40 @@ static void updateRoamingCamera(float dt)
 static void prepareTheHUD()
 {
   // prep the HUD
-  if (myTank) {
-    const fvec3& myPos = myTank->getPosition();
-    hud->setHeading(myTank->getAngle());
-    hud->setAltitude(myPos[2]);
-    if (world->allowTeamFlags()) {
-      const fvec4& myTeamColor = Team::getTankColor(myTank->getTeam());
-      // markers for my team flag
-      for (int i = 0; i < numFlags; i++) {
-	Flag &flag = world->getFlag(i);
-	if ((flag.type->flagTeam == myTank->getTeam())
-	    && ((flag.status != FlagOnTank) ||
-		(flag.owner != myTank->getId()))) {
-	  const fvec3& flagPos = flag.position;
-	  float heading = atan2f(flagPos[1] - myPos[1], flagPos[0] - myPos[0]);
-	  hud->addMarker(heading, myTeamColor);
-	  hud->AddEnhancedMarker(flagPos, myTeamColor, false, BZDBCache::flagPoleSize*2);
-	}
+  if (myTank == NULL) {
+    return;
+  }
+
+  const fvec3& myPos = myTank->getPosition();
+  hud->setHeading(myTank->getAngle());
+  hud->setAltitude(myPos.z);
+  if (world->allowTeamFlags()) {
+    const fvec4& myTeamColor = Team::getTankColor(myTank->getTeam());
+    // markers for my team flag
+    for (int i = 0; i < numFlags; i++) {
+      const Flag &flag = world->getFlag(i);
+      if ((flag.type->flagTeam == myTank->getTeam())
+          && ((flag.status != FlagOnTank) ||
+              (flag.owner != myTank->getId()))) {
+        const fvec3& flagPos = flag.position;
+        const float heading = atan2f(flagPos.y - myPos.y, flagPos.x - myPos.x);
+        hud->addMarker(heading, myTeamColor);
+        hud->AddEnhancedMarker(flagPos, myTeamColor,
+                               false, BZDBCache::flagPoleSize * 2.0f);
       }
     }
-    if (myTank->getAntidoteLocation()) {
-      // marker for my antidote flag
-      const fvec3* antidotePos = myTank->getAntidoteLocation();
-      float heading = atan2f(antidotePos->y - myPos[1],
-			     antidotePos->x - myPos[0]);
-      const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
-      hud->addMarker(heading, antidoteColor);
-      hud->AddEnhancedMarker(*antidotePos, antidoteColor, false, BZDBCache::flagPoleSize*2);
-    }
   }
+
+  const fvec3* antiPos = myTank->getAntidoteLocation();
+  if (antiPos != NULL) {
+    // marker for my antidote flag
+    const float heading = atan2f(antiPos->y - myPos.y, antiPos->x - myPos.x);
+    const fvec4 antiColor(1.0f, 1.0f, 0.0f, 1.0f); // yellow
+    hud->addMarker(heading, antiColor);
+    hud->AddEnhancedMarker(*antiPos, antiColor, false,
+                           BZDBCache::flagPoleSize * 2.0f);
+  }
+
   return;
 }
 

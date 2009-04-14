@@ -126,7 +126,7 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color
   texName += BZDB.get("tankTexture");
 
   // now after we did all that, see if they have a user texture
-  tankTexture = tm.getTextureID(texName.c_str(),false);
+  tankTexture = tm.getTextureID(texName,false);
 
   tankNode->setMaterial(OpenGLMaterial(tankSpecular, *emissive, shininess));
   tankNode->setTexture(tankTexture);

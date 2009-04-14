@@ -57,17 +57,19 @@ void RadarRenderer::clearRadarObjects ( void )
   radarObjectLists.clear();
 }
 
+
 RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
-  : world(_world),
-    x(0),
-    y(0),
-    w(0),
-    h(0),
-    dimming(0.0f),
-    decay(0.01f),
-    jammed(false),
-    colorblind(false),
-    multiSampled(false)
+: world(_world)
+, x(0)
+, y(0)
+, w(0)
+, h(0)
+, dimming(0.0f)
+, decay(0.01f)
+, teamColor(0.0f, 0.0f, 0.0f, 1.0f)
+, jammed(false)
+, colorblind(false)
+, multiSampled(false)
 {
 
   clearRadarObjects();
@@ -81,6 +83,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
 #endif
 }
 
+
 void RadarRenderer::setWorld(World* _world)
 {
   world = _world;
@@ -88,12 +91,13 @@ void RadarRenderer::setWorld(World* _world)
 }
 
 
-void RadarRenderer::setControlColor(const float* color)
+void RadarRenderer::setControlColor(const fvec4* color)
 {
-  if (color)
-    memcpy(teamColor, color, 3 * sizeof(float));
-  else
-    memset(teamColor, 0, 3 * sizeof(float));
+  if (color != NULL) {
+    teamColor = *color;
+  } else {
+    teamColor = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
+  }  
 }
 
 
@@ -143,7 +147,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   } else {
     size = tankRadius;
   }
-  if (pos[2] < 0.0f) {
+  if (pos.z < 0.0f) {
     size = 0.5f;
   }
 
@@ -151,7 +155,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   const float myAngle = LocalPlayer::getMyTank()->getAngle();
 
   // transform to the tanks location
-  glTranslatef(pos[0], pos[1], 0.0f);
+  glTranslatef(pos.x, pos.y, 0.0f);
 
   // draw the tank
   if (!allowFancy || !useTankDimensions) {
@@ -167,7 +171,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
       drawFancyTank(player);
     } else {
       const fvec3& dims = player->getDimensions();
-      glRectf(-dims[0], -dims[1], +dims[0], +dims[1]);
+      glRectf(-dims.x, -dims.y, +dims.x, +dims.y);
     }
     glPopMatrix();
 
@@ -177,7 +181,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
 
   // adjust with height box size
   const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-  const float hbSize = size * (1.0f + (0.5f * (pos[2] / boxHeight)));
+  const float hbSize = size * (1.0f + (0.5f * (pos.z / boxHeight)));
 
   // draw the height box
   glBegin(GL_LINE_STRIP); {
@@ -242,29 +246,24 @@ void RadarRenderer::drawHuntLevel(const Player* player,
   }
 
   // setup the color
-  float color[4];
+  fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
   const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
   const float period = AutoHunt::getBlinkPeriod(huntLevel);
   const float thresh = AutoHunt::getOuterBlinkThreshold(huntLevel);
   const bool blink = fmodf((float)diffTime, period) < (period * thresh);
   if (blink) {
-    color[0] = 0.5f;
-    color[1] = 0.5f;
-    color[2] = 0.5f;
-  } else {
-    color[0] = 1.0f;
-    color[1] = 1.0f;
-    color[2] = 1.0f;
+    color.rgb() = fvec3(0.5f, 0.5f, 0.5f);;
   }
+
   // translucency range
   const float innerAlpha = AutoHunt::getChevronInnerAlpha(huntLevel);
   const float outerAlpha = AutoHunt::getChevronOuterAlpha(huntLevel);
-  color[3] = innerAlpha;
   const float alphaRange = innerAlpha - outerAlpha;
   float alphaDelta = 0.0f;
   if (chevrons > 1) {
     alphaDelta = alphaRange / (float)(chevrons - 1);
   }
+  color.a = innerAlpha;
 
   // setup the geometry
   float s = (float)M_SQRT1_2 * heightBoxSize;
@@ -312,7 +311,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
     // setup for the next pass
     s += spacing;
     c += cDelta;
-    color[3] -= alphaDelta;
+    color.a -= alphaDelta;
   }
 
   if (!smooth) {
@@ -323,32 +322,34 @@ void RadarRenderer::drawHuntLevel(const Player* player,
 }
 
 
-void RadarRenderer::drawFlag(const float pos[3])
+void RadarRenderer::drawFlag(const fvec3& pos)
 {
   float s = BZDBCache::flagRadius > 3.0f * ps ? BZDBCache::flagRadius : 3.0f * ps;
   glBegin(GL_LINES);
-  glVertex2f(pos[0] - s, pos[1]);
-  glVertex2f(pos[0] + s, pos[1]);
-  glVertex2f(pos[0] + s, pos[1]);
-  glVertex2f(pos[0] - s, pos[1]);
-  glVertex2f(pos[0], pos[1] - s);
-  glVertex2f(pos[0], pos[1] + s);
-  glVertex2f(pos[0], pos[1] + s);
-  glVertex2f(pos[0], pos[1] - s);
+  glVertex2f(pos.x - s, pos.y);
+  glVertex2f(pos.x + s, pos.y);
+  glVertex2f(pos.x + s, pos.y);
+  glVertex2f(pos.x - s, pos.y);
+  glVertex2f(pos.x, pos.y - s);
+  glVertex2f(pos.x, pos.y + s);
+  glVertex2f(pos.x, pos.y + s);
+  glVertex2f(pos.x, pos.y - s);
   glEnd();
 }
 
-void RadarRenderer::drawFlagOnTank(const float pos[3])
+void RadarRenderer::drawFlagOnTank(const fvec3& pos)
 {
   glPushMatrix();
 
   // align it to the screen axes
   const float angle = LocalPlayer::getMyTank()->getAngle();
-  glTranslatef(pos[0], pos[1], 0.0f);
-  glRotatef(float(angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+  glTranslatef(pos.x, pos.y, 0.0f);
+  glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
 
-  float tankRadius = BZDBCache::tankRadius;
-  float s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
+  const float tankRadius = BZDBCache::tankRadius;
+  const float s1 = (2.5f * tankRadius);
+  const float s2 = (4.0f * ps);
+  const float s  = (s1 > s2) ? s1 : s2;
   glBegin(GL_LINES);
   glVertex2f(-s, 0.0f);
   glVertex2f(+s, 0.0f);
@@ -398,13 +399,13 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   if (BZDBCache::blend) {
     glEnable(GL_BLEND);
   }
-  glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
+  glColor4f(teamColor.r, teamColor.g, teamColor.b, outlineOpacity);
   glOutlineBoxHV(10,left,top,right,bottom);
   if (BZDBCache::blend) {
     glDisable(GL_BLEND);
   }
 
-  glColor4f(teamColor[0], teamColor[1], teamColor[2], 1.0f);
+  glColor4f(teamColor.r, teamColor.g, teamColor.b, 1.0f);
 
   const float opacity = renderer.getPanelOpacity();
   if ((opacity < 1.0f) && (opacity > 0.0f)) {
@@ -489,7 +490,7 @@ bool RadarRenderer::executeTransform(bool localView)
   double maxHeight = 0.0;
   const Extents* visExts = renderer.getVisualExtents();
   if (visExts) {
-    maxHeight = (double)visExts->maxs[2];
+    maxHeight = (double)visExts->maxs.z;
   }
   glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
 	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
@@ -505,7 +506,7 @@ bool RadarRenderer::executeTransform(bool localView)
 
     // transform to the observer's viewpoint
     glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    glTranslatef(-myPos[0], -myPos[1], 0.0f);
+    glTranslatef(-myPos.x, -myPos.y, 0.0f);
   }
 
   return true;
@@ -514,8 +515,8 @@ bool RadarRenderer::executeTransform(bool localView)
 
 void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
 {
-  TextureManager &tm = TextureManager::instance();
-  int noiseTexture = tm.getTextureID( "noise" );
+  TextureManager& tm = TextureManager::instance();
+  const int noiseTexture = tm.getTextureID("noise");
 
   glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -523,20 +524,20 @@ void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
 
     const int sequences = 10;
 
-    static float np[] =
-      { 0, 0, 1, 1,
-        1, 1, 0, 0,
-        0.5f, 0.5f, 1.5f, 1.5f,
-        1.5f, 1.5f, 0.5f, 0.5f,
-        0.25f, 0.25f, 1.25f, 1.25f,
-        1.25f, 1.25f, 0.25f, 0.25f,
-        0, 0.5f, 1, 1.5f,
-        1, 1.5f, 0, 0.5f,
-        0.5f, 0, 1.5f, 1,
-        1.4f, 1, 0.5f, 0,
-        0.75f, 0.75f, 1.75f, 1.75f,
-        1.75f, 1.75f, 0.75f, 0.75f,
-      };
+    static float np[] = {
+      0.00f, 0.00f, 1.00f, 1.00f,
+      1.00f, 1.00f, 0.00f, 0.00f,
+      0.50f, 0.50f, 1.50f, 1.50f,
+      1.50f, 1.50f, 0.50f, 0.50f,
+      0.25f, 0.25f, 1.25f, 1.25f,
+      1.25f, 1.25f, 0.25f, 0.25f,
+      0.00f, 0.50f, 1.00f, 1.50f,
+      1.00f, 1.50f, 0.00f, 0.50f,
+      0.50f, 0.00f, 1.50f, 1.00f,
+      1.40f, 1.00f, 0.50f, 0.00f,
+      0.75f, 0.75f, 1.75f, 1.75f,
+      1.75f, 1.75f, 0.75f, 0.75f,
+    };
 
     int noisePattern = 4 * int(floor(sequences * bzfrand()));
 
@@ -545,13 +546,13 @@ void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
 
     glBegin(GL_QUADS); {
       glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
-      glVertex2f(-radarRange,-radarRange);
+      glVertex2f(-radarRange, -radarRange);
       glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
-      glVertex2f( radarRange,-radarRange);
+      glVertex2f(+radarRange, -radarRange);
       glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
-      glVertex2f( radarRange, radarRange);
+      glVertex2f(+radarRange, +radarRange);
       glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
-      glVertex2f(-radarRange, radarRange);
+      glVertex2f(-radarRange, +radarRange);
     } glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -562,14 +563,10 @@ void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
     tm.bind(noiseTexture);
 
     glBegin(GL_QUADS); {
-      glTexCoord2f(0,0);
-      glVertex2f(-radarRange,-radarRange);
-      glTexCoord2f(1,0);
-      glVertex2f( radarRange,-radarRange);
-      glTexCoord2f(1,1);
-      glVertex2f( radarRange, radarRange);
-      glTexCoord2f(0,1);
-      glVertex2f(-radarRange, radarRange);
+      glTexCoord2f(0.0f, 0.0f); glVertex2f(-radarRange,-radarRange);
+      glTexCoord2f(1.0f, 0.0f); glVertex2f( radarRange,-radarRange);
+      glTexCoord2f(1.0f, 1.0f); glVertex2f( radarRange, radarRange);
+      glTexCoord2f(0.0f, 1.0f); glVertex2f(-radarRange, radarRange);
     } glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -619,7 +616,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   float maxRange = radarLimit;
   // when burrowed, limit radar range to (1/4)
   if (myTank && (myTank->getFlag() == Flags::Burrow) &&
-      (myTank->getPosition()[2] < 0.0f)) {
+      (myTank->getPosition().z < 0.0f)) {
     maxRange = radarLimit * 0.25f;
   }
   if (radarRange > maxRange) {
@@ -715,7 +712,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   glPushMatrix(); // depth = 2
   glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
   glPushMatrix(); // depth = 3
-  glTranslatef(-myPos[0], -myPos[1], 0.0f);
+  glTranslatef(-myPos.x, -myPos.y, 0.0f);
 
   if (useTankModels) {
     // new modelview transform requires repositioning
@@ -743,7 +740,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   for (i = 0; i < maxShots; i++) {
     const ShotPath* shot = myTank->getShot(i);
     if (shot) {
-      const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
+      const float cs = colorScale(shot->getPosition().z, muzzleHeight);
       glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
       shot->radarRender();
     }
@@ -755,7 +752,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   for (i = 0; i < maxShots; i++) {
     const ShotPath* shot = worldWeapons->getShot(i);
     if (shot) {
-      const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
+      const float cs = colorScale(shot->getPosition().z, muzzleHeight);
       glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
       shot->radarRender();
     }
@@ -791,24 +788,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       drawFlagOnTank(position);
     }
 
+    const TeamColor visTeam = colorblind ? RogueTeam : player->getTeam();
     if (player->isPaused() || player->isNotResponding()) {
       const float dimfactor = 0.4f;
-
-      const float *color;
-      if (colorblind) {
-        color = Team::getRadarColor(RogueTeam);
-      } else {
-        color = Team::getRadarColor(player->getTeam());
-      }
-
-      float dimmedcolor[3];
-      dimmedcolor[0] = color[0] * dimfactor;
-      dimmedcolor[1] = color[1] * dimfactor;
-      dimmedcolor[2] = color[2] * dimfactor;
-      glColor3fv(dimmedcolor);
+      glColor3fv(Team::getRadarColor(visTeam).rgb() * dimfactor);
     } else {
-      const TeamColor team = colorblind ? RogueTeam : player->getTeam();
-      glColor3fv(Team::getRadarColor(team));
+      glColor3fv(Team::getRadarColor(visTeam));
     }
 
     // If this tank is hunted flash it on the radar
@@ -822,8 +807,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       }
       const bool blink = fmodf((float)diffTime, period) < (period * thresh);
       if (blink) {
-        const float greenBlinkColor[3] = {1.0f, 0.8f, 1.0f};
-        const float normalBlinkColor[3] = {0.0f, 0.8f, 0.9f};
+        const fvec4  greenBlinkColor(1.0f, 0.8f, 1.0f, 1.0f);
+        const fvec4 normalBlinkColor(0.0f, 0.8f, 0.9f, 1.0f);
         if (player->getTeam() == GreenTeam) {
           glColor3fv(greenBlinkColor);
         } else {
@@ -847,15 +832,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     for (int j = 0; j < maxShots; j++) {
       const ShotPath* shot = player->getShot(j);
       if (shot && (shot->getShotType() != InvisibleShot || iSeeAll)) {
-        const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-        const float* shotcolor;
+        const float cs = colorScale(shot->getPosition().z, muzzleHeight);
         if (coloredShot) {
-          if (colorblind) {
-            shotcolor = Team::getRadarColor(RogueTeam);
-          } else {
-            shotcolor = Team::getRadarColor(player->getTeam());
-          }
-          glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+          const TeamColor visTeam = colorblind ? RogueTeam : player->getTeam();
+          glColor3fv(Team::getRadarColor(visTeam).rgb() * cs);
         } else {
           glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
         }
@@ -878,9 +858,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
       continue;
     // Flags change color by height
-    const float cs = colorScale(flag.position[2], muzzleHeight);
-    const float* flagcolor = flag.type->getColor();
-    glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
+    const float cs = colorScale(flag.position.z, muzzleHeight);
+    const fvec4& flagColor = flag.type->getColor();
+    glColor3fv(flagColor.rgb() * cs);
     drawFlag(flag.position);
   }
   // draw antidote flag
@@ -918,7 +898,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // revert to the centered transformation
     glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    glTranslatef(-myPos[0], -myPos[1], 0.0f);
+    glTranslatef(-myPos.x, -myPos.y, 0.0f);
 
     // my flag
     if (myTank->getFlag() != Flags::Null) {
@@ -966,7 +946,7 @@ float RadarRenderer::colorScale(const float z, const float h)
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
     // Scale color so that objects that are close to tank's level are opaque
-    const float zTank = myTank->getPosition()[2];
+    const float zTank = myTank->getPosition().z;
 
     if (zTank > (z + h))
       scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
@@ -992,7 +972,7 @@ float RadarRenderer::transScale(const float z, const float h)
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   // Scale color so that objects that are close to tank's level are opaque
-  const float zTank = myTank->getPosition()[2];
+  const float zTank = myTank->getPosition().z;
   if (zTank > (z + h))
     scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
   else if (zTank < z)
@@ -1053,8 +1033,8 @@ void RadarRenderer::renderWalls()
     const float c   = wid * cosf(wall.getRotation());
     const float s   = wid * sinf(wall.getRotation());
     const fvec3& pos = wall.getPosition();
-    glVertex2f(pos[0] - s, pos[1] + c);
-    glVertex2f(pos[0] + s, pos[1] - c);
+    glVertex2f(pos.x - s, pos.y + c);
+    glVertex2f(pos.x + s, pos.y - c);
   }
   glEnd();
 
@@ -1115,8 +1095,8 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
 
   // setup the texturing mapping
   const float hf = 128.0f; // height factor, goes from 0.0 to 1.0 in texcoords
-  const float vfz = RENDERER.getViewFrustum().getEye()[2];
-  const float plane[4] = { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
+  const float vfz = RENDERER.getViewFrustum().getEye().z;
+  const fvec4 plane(0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf));
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
   glTexGenfv(GL_S, GL_EYE_PLANE, plane);
 
@@ -1183,64 +1163,71 @@ void RadarRenderer::buildGeometry ( GLDisplayList displayList )
   }
 }
 
+
 // boxes and pyramids can share the same code, since they render just a box
 // and optimisation for super fast radar may be to just use this radar box
 // for meshes as well
-void RadarRenderer::buildBoxPyr ( Obstacle* object )
+void RadarRenderer::buildBoxPyr(Obstacle* object)
 {
-  glBegin(GL_QUADS);
-  //  const float z = object->getPosition()[2];
+  //  const float z = object->getPosition().z;
   //  const float bh = object->getHeight();
+
+  const fvec3& pos = object->getPosition();
   const float c = cosf(object->getRotation());
   const float s = sinf(object->getRotation());
-  const float wx = c * object->getWidth(), wy = s * object->getWidth();
-  const float hx = -s * object->getBreadth(), hy = c * object->getBreadth();
-  const fvec3& pos = object->getPosition();
-
-  glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-  glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-  glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-  glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+  const float wx = +c * object->getWidth();
+  const float wy = +s * object->getWidth();
+  const float hx = -s * object->getBreadth();
+  const float hy = +c * object->getBreadth();
+  glBegin(GL_QUADS);
+  glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
+  glVertex2f(pos.x + wx - hx, pos.y + wy - hy);
+  glVertex2f(pos.x + wx + hx, pos.y + wy + hy);
+  glVertex2f(pos.x - wx + hx, pos.y - wy + hy);
   glEnd();
 }
 
-void RadarRenderer::buildMeshGeo ( MeshObstacle* mesh, bool deathFaces )
+
+void RadarRenderer::buildMeshGeo(MeshObstacle* mesh, bool deathFaces)
 {
   int faces = mesh->getFaceCount();
 
   for (int f = 0; f < faces; f++) {
     const MeshFace* face = mesh->getFace(f);
-    if (face->getPlane()[2] <= 0.0f)
+    if (face->getPlane().z <= 0.0f) {
       continue;
+    }
 
     const BzMaterial* bzmat = face->getMaterial();
-    if ((bzmat != NULL) && bzmat->getNoRadar())
+    if ((bzmat != NULL) && bzmat->getNoRadar()) {
       continue;
+    }
 
-    //      const float z = face->getPosition()[2];
+    //      const float z = face->getPosition().z;
     //      const float bh = face->getHeight();
 
     // draw death faces with a soupcon of red
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
-    bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
+    const bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
 
     if (isDeath != deathFaces)
       continue;
 
     // draw the face as a triangle fan
-    int vertexCount = face->getVertexCount();
+    const int vertexCount = face->getVertexCount();
     glBegin(GL_TRIANGLE_FAN);
     for (int v = 0; v < vertexCount; v++) {
       const fvec3& pos = face->getVertex(v);
-      glVertex2f(pos[0], pos[1]);
+      glVertex2f(pos.x, pos.y);
     }
     glEnd();
   }
 }
 
-void RadarRenderer::buildOutline ( Obstacle* object )
+
+void RadarRenderer::buildOutline(Obstacle* object)
 {
-  //  const float z = object->getPosition()[2];
+  //  const float z = object->getPosition().z;
   //  const float bh = object->getHeight();
 
   const float c = cosf(object->getRotation());
@@ -1250,12 +1237,13 @@ void RadarRenderer::buildOutline ( Obstacle* object )
   const fvec3& pos = object->getPosition();
 
   glBegin(GL_LINE_LOOP);
-  glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-  glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-  glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-  glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+  glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
+  glVertex2f(pos.x + wx - hx, pos.y + wy - hy);
+  glVertex2f(pos.x + wx + hx, pos.y + wy + hy);
+  glVertex2f(pos.x - wx + hx, pos.y - wy + hy);
   glEnd();
 }
+
 
 void RadarRenderer::renderBoxPyrMesh()
 {
@@ -1311,7 +1299,7 @@ void RadarRenderer::renderBoxPyrMesh()
 
     while ( itr != radarObjectLists.end() ) {
       // all objcts use the same color scale
-      const float z = itr->second.second->getPosition()[2];
+      const float z  = itr->second.second->getPosition().z;
       const float bh = itr->second.second->getHeight();
       const float cs = colorScale(z, bh);
 
@@ -1377,8 +1365,8 @@ void RadarRenderer::renderBasesAndTeles()
   int i;
 
   // draw team bases
-  if(world->allowTeamFlags()) {
-    for(i = 1; i < NumTeams; i++) {
+  if (world->allowTeamFlags()) {
+    for (i = 1; i < NumTeams; i++) {
       for (int j = 0; /* no-op */;j++) {
 	const World::BaseParams* bp = world->getBase(i, j);
 	if (bp == NULL) {
@@ -1390,7 +1378,7 @@ void RadarRenderer::renderBasesAndTeles()
 	const fvec3& size = bp->size;
 	const float& rot  = bp->radians;
 	const float beta  = atan2f(size.y, size.x);
-	const float r     = hypotf(size.x, size.y);
+	const float r     = size.xy().length();
 	glVertex2f(pos.x + r * cosf(rot + beta),
 		   pos.y + r * sinf(rot + beta));
 	glVertex2f(pos.x + r * cosf((float)(rot - beta + M_PI)),
@@ -1416,44 +1404,40 @@ void RadarRenderer::renderBasesAndTeles()
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
     const Teleporter & tele = *((const Teleporter *) teleporters[i]);
-    if (tele.isHorizontal ()) {
-      const float z = tele.getPosition ()[2];
-      const float bh = tele.getHeight ();
-      const float cs = colorScale (z, bh);
-      glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
-      const float c = cosf (tele.getRotation ());
-      const float s = sinf (tele.getRotation ());
-      const float wx = c * tele.getWidth (), wy = s * tele.getWidth ();
-      const float hx = -s * tele.getBreadth (), hy = c * tele.getBreadth ();
+    if (tele.isHorizontal()) {
+      const float z = tele.getPosition().z;
+      const float bh = tele.getHeight();
+      const float cs = colorScale(z, bh);
+      glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, bh));
+      const float c = cosf(tele.getRotation());
+      const float s = sinf(tele.getRotation());
+      const float wx = c * tele.getWidth(), wy = s * tele.getWidth();
+      const float hx = -s * tele.getBreadth(), hy = c * tele.getBreadth();
       const fvec3& pos = tele.getPosition();
-      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
-      glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
-
-      glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
-      glVertex2f (pos[0] + wx + hx, pos[1] + wy + hy);
-
-      glVertex2f (pos[0] + wx + hx, pos[1] + wy + hy);
-      glVertex2f (pos[0] - wx + hx, pos[1] - wy + hy);
-
-      glVertex2f (pos[0] - wx + hx, pos[1] - wy + hy);
-      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
-
-      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
-      glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
+      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
+      glVertex2f(pos.x + wx - hx, pos.y + wy - hy);
+      glVertex2f(pos.x + wx - hx, pos.y + wy - hy);
+      glVertex2f(pos.x + wx + hx, pos.y + wy + hy);
+      glVertex2f(pos.x + wx + hx, pos.y + wy + hy);
+      glVertex2f(pos.x - wx + hx, pos.y - wy + hy);
+      glVertex2f(pos.x - wx + hx, pos.y - wy + hy);
+      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
+      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
+      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
     }
     else {
-      const float z = tele.getPosition ()[2];
-      const float bh = tele.getHeight ();
-      const float cs = colorScale (z, bh);
-      glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
-      const float tw = tele.getBreadth ();
+      const float z = tele.getPosition().z;
+      const float bh = tele.getHeight();
+      const float cs = colorScale(z, bh);
+      glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, bh));
+      const float tw = tele.getBreadth();
       const float c = tw * cosf(tele.getRotation());
       const float s = tw * sinf(tele.getRotation());
       const fvec3& pos = tele.getPosition();
-      glVertex2f (pos[0] - s, pos[1] + c);
-      glVertex2f (pos[0] + s, pos[1] - c);
-      glVertex2f (pos[0] + s, pos[1] - c);
-      glVertex2f (pos[0] - s, pos[1] + c);
+      glVertex2f(pos.x - s, pos.y + c);
+      glVertex2f(pos.x + s, pos.y - c);
+      glVertex2f(pos.x + s, pos.y - c);
+      glVertex2f(pos.x - s, pos.y + c);
     }
   }
   glEnd();

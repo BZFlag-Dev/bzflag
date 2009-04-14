@@ -441,7 +441,7 @@ int TextSceneNode::TextRenderNode::getFontID() const
     const string localName = CACHEMGR.getLocalName(text.font);
     id = fm.lookupFileID(localName);
     if (id < 0) {
-      id = fm.load(localName.c_str());
+      id = fm.load(localName);
     }
   }
   // backup plan
@@ -537,7 +537,7 @@ void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
   widths.clear();
   FontManager &fm = FontManager::instance();
   for (size_t i = 0; i < lines.size(); i++) {
-    widths.push_back(fm.getStringWidth(fontID, fontSize, lines[i].c_str()));
+    widths.push_back(fm.getStringWidth(fontID, fontSize, lines[i]));
   }
 
   fixedWidth = 0.0f;
@@ -649,7 +649,7 @@ void TextSceneNode::TextRenderNode::render()
       singleLineXForm();
     }
     fm.drawString(0.0f, 0.0f, 0.0f, fontID, fontSize,
-                  currLines[0].c_str(), colorPtr, AlignLeft);
+                  currLines[0], colorPtr, AlignLeft);
   }
   else {
     for (size_t i = 0; i < currLines.size(); i++) {
@@ -665,7 +665,7 @@ void TextSceneNode::TextRenderNode::render()
         glPushMatrix();
         glScalef(fixedWidth / width, 1.0f, 1.0f);
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      currLines[i].c_str(), colorPtr, AlignLeft);
+                      currLines[i], colorPtr, AlignLeft);
         glPopMatrix();
       }
       else {
@@ -674,7 +674,7 @@ void TextSceneNode::TextRenderNode::render()
           offx = -text.justify * width;
         }
         fm.drawString(offx, 0.0f, 0.0f, fontID, fontSize,
-                      currLines[i].c_str(), colorPtr, AlignLeft);
+                      currLines[i], colorPtr, AlignLeft);
       }
       glTranslatef(0.0f, lineStep, 0.0f);
     }

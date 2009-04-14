@@ -112,9 +112,8 @@ void			HUDuiLabel::doRender()
     darkness = 0.4f;
   }
   fm.setDarkness(darkness);
-  fm.drawString(getX(), getY(), 0,
-		getFontFace()->getFMFace(), getFontSize(),
-		getString().c_str(), &color);
+  fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(), getFontSize(),
+                getString(), &color);
   fm.setDarkness(1.0f);
 }
 

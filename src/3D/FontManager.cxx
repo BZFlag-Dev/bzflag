@@ -22,6 +22,8 @@
 #include <string.h>
 #include <assert.h>
 
+using std::string;
+
 // Global implementation headers
 #include "bzfgl.h"
 #include "bzfio.h"
@@ -70,7 +72,7 @@ public:
   /**
    * Preferred constructor
    */
-  BZFontFace_impl(std::string const& name_, std::string const& path_)
+  BZFontFace_impl(string const& name_, string const& path_)
     : privateName(name_), path(path_)
   {
   }
@@ -78,7 +80,7 @@ public:
   /**
    * Accessor for the face name
    */
-  std::string name() const { return privateName; }
+  string name() const { return privateName; }
 
   /**
    * release all loaded sizes
@@ -113,8 +115,8 @@ public:
   FTFont* loadSize(size_t size);
 
 private:
-  std::string privateName;
-  std::string path;
+  string privateName;
+  string path;
 
   typedef std::map<size_t, FTFont*> FontSizes;
   FontSizes sizes;
@@ -132,7 +134,7 @@ namespace {
   FontFamilies fontFaces;
 
   /** faceName and fileName maps */
-  typedef std::map<std::string, int> IdMap;
+  typedef std::map<string, int> IdMap;
   IdMap name2id;
   IdMap file2id;
 
@@ -233,7 +235,7 @@ FontManager::FontManager()
   std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
 #endif
 
-  BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
+  BZDB.addCallback(string("underlineColor"), underlineCallback, NULL);
   BZDB.touch("underlineColor");
 
   OpenGLGState::registerContextInitializer(freeContext, initContext, (void*)this);
@@ -247,7 +249,7 @@ FontManager::~FontManager()
 }
 
 
-int FontManager::load(const char* fileName)
+int FontManager::load(const string& fileName)
 {
   int id = -1;
 
@@ -255,7 +257,7 @@ int FontManager::load(const char* fileName)
   std::cout << "FontManager::load entry file: " << fileName << std::endl;
 #endif
 
-  if (!fileName || !fileName[0]) {
+  if (fileName.empty()) {
     return id;
   }
 
@@ -289,7 +291,7 @@ int FontManager::load(const char* fileName)
 }
 
 
-int FontManager::loadAll(std::string directory)
+int FontManager::loadAll(string directory)
 {
   if (directory.size() == 0)
     return 0;
@@ -326,7 +328,7 @@ void FontManager::clear(void)
 }
 
 
-bool FontManager::freeFontFile(const std::string& fileName)
+bool FontManager::freeFontFile(const string& fileName)
 {
   const int id = lookupFileID(fileName);
   if (id < 0) {
@@ -337,7 +339,7 @@ bool FontManager::freeFontFile(const std::string& fileName)
 }
 
 
-int FontManager::lookupID(std::string const& faceName)
+int FontManager::lookupID(string const& faceName)
 {
   IdMap::const_iterator it = name2id.find(faceName);
   if (it == name2id.end()) {
@@ -347,7 +349,7 @@ int FontManager::lookupID(std::string const& faceName)
 }
 
 
-int FontManager::lookupFileID(std::string const& fileName)
+int FontManager::lookupFileID(string const& fileName)
 {
   IdMap::const_iterator it = file2id.find(fileName);
   if (it == file2id.end()) {
@@ -357,7 +359,7 @@ int FontManager::lookupFileID(std::string const& fileName)
 }
 
 
-int FontManager::getFaceID(std::string const& faceName, bool quietly)
+int FontManager::getFaceID(string const& faceName, bool quietly)
 {
   const int id = lookupID(faceName);
   if (id >= 0) {
@@ -396,26 +398,26 @@ const char* FontManager::getFaceName(int faceID)
 
 
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const char *text,
+			     const string& text,
 			     const fvec4* resetColor,
 			     fontJustification align)
 {
-  if (!text) {
+  if (text.empty()) {
     return;
   }
 
   const int bufSize = 1024;
   char buffer[bufSize];
-  int textlen = (int)strlen(text);
 
+  int textlen = (int)strlen(text.c_str()); // use strlen, for FTGL
   if (textlen >= bufSize) {
     logDebugMessage(1, "drawString text is too long: %i\n", textlen);
     textlen = (bufSize - 1);
   }
-  memcpy(buffer, text, textlen + 1);
+  memcpy(buffer, text.c_str(), textlen + 1);
   buffer[bufSize - 1] = 0;
 
-  FTFont* theFont = getGLFont(faceID ,(int)size);
+  FTFont* theFont = getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
     logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
     return;
@@ -569,7 +571,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	}
       }
 
-      // std::string tmpText = text.substr(endSend, pos - endSend + 1);
+      // string tmpText = text.substr(endSend, pos - endSend + 1);
       char savechar = buffer[pos + 1];
       buffer[pos + 1] = '\0'; // need terminator
       const char* tmpText = &buffer[endSend];
@@ -659,10 +661,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 }
 
 
-float FontManager::getStringWidth(int faceID, float size, const char *text, bool alreadyStripped)
+float FontManager::getStringWidth(int faceID, float size, const string& text,
+                                  bool alreadyStripped)
 {
-  if (!text || strlen(text) <= 0)
+  if (text.empty()) {
     return 0.0f;
+  }
 
   FTFont* theFont = getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
@@ -671,7 +675,8 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
   }
 
   // don't include ansi codes in the length, but allow outside funcs to skip
-  const char *stripped = alreadyStripped ? text : stripAnsiCodes(text);
+  const char* stripped = alreadyStripped ? text.c_str()
+                                         : stripAnsiCodes(text.c_str());
   if (!stripped) {
     return 0.0f;
   }
@@ -682,11 +687,10 @@ float FontManager::getStringWidth(int faceID, float size, const char *text, bool
 
 float FontManager::getStringHeight(int font, float size)
 {
-  FTFont* theFont = getGLFont(font, (int)size);
-
-  if (!theFont)
+  const FTFont* theFont = getGLFont(font, (int)size);
+  if (theFont == NULL) {
     return 0;
-
+  }
   return theFont->LineHeight();
 }
 
@@ -708,10 +712,10 @@ void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
 }
 
 
-void FontManager::underlineCallback(const std::string &, void *)
+void FontManager::underlineCallback(const string &, void *)
 {
   // set underline color
-  const std::string uColor = BZDB.get("underlineColor");
+  const string uColor = BZDB.get("underlineColor");
   if (strcasecmp(uColor.c_str(), "text") == 0) {
     underlineColor[0] = -1.0f;
     underlineColor[1] = -1.0f;

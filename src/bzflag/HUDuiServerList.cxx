@@ -391,9 +391,9 @@ void HUDuiServerList::doRender()
       columnTitle = columns[i].first;
 
     if ((activeColumn == i)&&(hasFocus()))
-      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), &activeColor);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &activeColor);
     else
-      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle.c_str(), &color);
+      fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &color);
 
     x = x + ((*columns[i].second) * (getWidth()));
     glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
