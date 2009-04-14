@@ -72,7 +72,7 @@ ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/)
   lifetime = 0;
   range = 0;
 
-  for (size_t i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++)
     pos[i] = vec[i] = 0;
 }
 

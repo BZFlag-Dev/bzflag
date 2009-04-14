@@ -265,8 +265,8 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
 
   // modify X and Y coords
   if (!tracking) {
-    const float c = cosf(camera.theta * DEG2RAD);
-    const float s = sinf(camera.theta * DEG2RAD);
+    const float c = cosf(camera.theta * DEG2RADf);
+    const float s = sinf(camera.theta * DEG2RADf);
     camera.pos[0] += dt * (c * dc->pos[0] - s * dc->pos[1]);
     camera.pos[1] += dt * (c * dc->pos[1] + s * dc->pos[0]);
     camera.theta  += dt * dc->theta;
@@ -302,16 +302,16 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     dy = dy * scale;
     if (fabsf(dx) < 0.001f) dx = 0.001f;
     if (fabsf(dy) < 0.001f) dy = 0.001f;
-    const float dtheta = -(dt * dc->theta * DEG2RAD);
+    const float dtheta = -(dt * dc->theta * DEG2RADf);
     const float c = cosf(dtheta);
     const float s = sinf(dtheta);
     camera.pos[0] = trackPos[0] + ((c * dx) - (s * dy));
     camera.pos[1] = trackPos[1] + ((c * dy) + (s * dx));
     // setup so that free roam stays in the last state
     camera.theta = atan2f(trackPos[1] - camera.pos[1], trackPos[0] - camera.pos[0]);
-    camera.theta *= RAD2DEG;
+    camera.theta *= RAD2DEGf;
     camera.phi = atan2f(trackPos[2] - camera.pos[2], newDist);
-    camera.phi *= RAD2DEG;
+    camera.phi *= RAD2DEGf;
   }
 
   // modify Z coordinate

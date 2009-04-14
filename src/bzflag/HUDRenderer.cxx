@@ -696,8 +696,8 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
   map[0] -= halfWidth;
   map[1] -= halfHeight;
 
-  const fvec2 headingVec(sinf(heading * DEG2RAD),
-                         cosf(heading * DEG2RAD));
+  const fvec2 headingVec(sinf(heading * DEG2RADf),
+                         cosf(heading * DEG2RADf));
 
   const fvec2 toPosVec((float)object[0] - viewPos[0],
                        (float)object[1] - viewPos[1]);
@@ -813,8 +813,8 @@ void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
   map[0] -= halfWidth;
   map[1] -= halfHeight;
 
-  const fvec2 headingVec(sinf(heading * DEG2RAD),
-                         cosf(heading * DEG2RAD));
+  const fvec2 headingVec(sinf(heading * DEG2RADf),
+                         cosf(heading * DEG2RADf));
 
   const fvec2 toPosVec((float)object[0] - viewPos[0],
                        (float)object[1] - viewPos[1]);
@@ -906,8 +906,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     for (float t = 0; t < 360; t += segmentation) {
       if (t != 0) {
 	const float s = (t - segmentation);
-	const float tRads = t * DEG2RAD;
-	const float sRads = s * DEG2RAD;
+	const float tRads = t * DEG2RADf;
+	const float sRads = s * DEG2RADf;
 	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
 	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }
@@ -928,8 +928,8 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     for (float t = 0; t < 360; t += segmentation) {
       if (t != 0) {
 	const float s = (t - segmentation);
-	const float tRads = t * DEG2RAD;
-	const float sRads = s * DEG2RAD;
+	const float tRads = t * DEG2RADf;
+	const float sRads = s * DEG2RADf;
 	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
 	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }

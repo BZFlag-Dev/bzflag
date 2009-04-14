@@ -145,8 +145,8 @@ void TankSceneNode::setJumpJetsTexture(const int texture)
 
 void TankSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
-  azimuth   =  RAD2DEG * atan2f(forward.y, forward.x);
-  elevation = -RAD2DEG * atan2f(forward.z, forward.xy().length());
+  azimuth   =  RAD2DEGf * atan2f(forward.y, forward.x);
+  elevation = -RAD2DEGf * atan2f(forward.z, forward.xy().length());
   setCenter(pos);
 
   // setup the extents
@@ -720,7 +720,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
   const fvec4& _plane = sceneNode->plane;
   const float azimuth = sceneNode->tank->azimuth;
   fvec4 plane;
-  plane.xyz() = _plane.xyz().rotateZ(-azimuth * DEG2RAD);
+  plane.xyz() = _plane.xyz().rotateZ(-azimuth * DEG2RADf);
   plane.w = _plane.planeDist(sphere.xyz());
 
   // compute projection point -- one TankLength in from plane
