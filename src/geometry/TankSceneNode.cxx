@@ -71,7 +71,7 @@ TankSceneNode::TankSceneNode(const fvec3& pos, const fvec3& forward)
   baseRadius = (length * length) + (width * width) + (height * height);
   setRadius(baseRadius);
 
-  color[3] = 1.0f;
+  color.a = 1.0f;
   setColor(1.0f, 1.0f, 1.0f);
   setExplodeFraction(0.0f);
   setJumpJets(0.0f);
@@ -104,18 +104,18 @@ TankSceneNode::~TankSceneNode()
 
 void TankSceneNode::setColor(float r, float g, float b, float a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
-  transparent = (color[3] != 1.0f);
+  color.r = r;
+  color.g = g;
+  color.b = b;
+  color.a = a;
+  transparent = (color.a != 1.0f);
 }
 
 
 void TankSceneNode::setColor(const fvec4& rgba)
 {
   color = rgba;
-  transparent = (color[3] != 1.0f);
+  transparent = (color.a != 1.0f);
 }
 
 
@@ -251,7 +251,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   bool narrow = false;
   if ((tankSize == Narrow) &&
-      (!useDimensions || (dimensions[1] < 0.01f)) &&
+      (!useDimensions || (dimensions.y < 0.01f)) &&
       BZDBCache::animatedTreads && BZDBCache::zbuffer) {
     narrow = true;
   }
@@ -261,8 +261,8 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   // if drawing in sorted order then decide which order
   if (sort || transparent || narrow) {
     const fvec3& eye = view.getEye();
-    float dx = eye[0] - mySphere[0];
-    float dy = eye[1] - mySphere[1];
+    float dx = eye.x - mySphere.x;
+    float dy = eye.y - mySphere.y;
     const float radians = (float)(azimuth * DEG2RAD);
     const float cos_val = cosf(radians);
     const float sin_val = sinf(radians);
@@ -273,7 +273,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     const float leftDot = (-sin_val * dx) + (cos_val * dy);
     const bool left = (leftDot > 0.0f);
 
-    const bool above = eye[2] > mySphere[2];
+    const bool above = (eye.z > mySphere.z);
 
     tankRenderNode.sortOrder(above, towards, left);
     treadsRenderNode.sortOrder(above, towards, left);
@@ -373,7 +373,7 @@ void TankSceneNode::setExplodeFraction(float t)
 {
   explodeFraction = t;
   if (t != 0.0f) {
-    const float radius = sqrtf(getSphere()[3]);
+    const float radius = sqrtf(getSphere().w);
     const float radinc = t * maxExplosionVel;
     const float newrad = radius + radinc;
     setRadius(newrad * newrad);
@@ -457,28 +457,26 @@ void TankSceneNode::rebuildExplosion()
   // prepare explosion rotations and translations
   for (int i = 0; i < LastTankPart; i++) {
     // pick an unbiased rotation vector
-    float d;
+    float distSq;
     do {
-      spin[i][0] = (float)bzfrand() - 0.5f;
-      spin[i][1] = (float)bzfrand() - 0.5f;
-      spin[i][2] = (float)bzfrand() - 0.5f;
-      d = hypotf(spin[i][0], hypotf(spin[i][1], spin[i][2]));
-    } while (d < 0.001f || d > 0.5f);
-    spin[i][0] /= d;
-    spin[i][1] /= d;
-    spin[i][2] /= d;
+      spin[i].x = (float)(bzfrand() - 0.5);
+      spin[i].y = (float)(bzfrand() - 0.5);
+      spin[i].z = (float)(bzfrand() - 0.5);
+      distSq = spin[i].xyz().lengthSq();
+    } while ((distSq < 1.0e-6) || (distSq > 0.25f));
+    spin[i].xyz() *= (1.0f / sqrtf(distSq)); // normalize
 
     // now an angular velocity -- make sure we get at least 2 complete turns
-    spin[i][3] = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
+    spin[i].w = 360.0f * (5.0f * (float)bzfrand() + 2.0f);
 
     // different cheezy spheroid explosion pattern
     const float vhMax = maxExplosionVel;
     const float vhAngleVert = (float)(0.25 * M_PI * bzfrand());
     const float vhMag = vhMax * cosf(vhAngleVert);
     const float vhAngle = (float)(2.0 * M_PI * bzfrand());
-    vel[i][2] = vhMax * sinf(vhAngleVert) * vertExplosionRatio;
-    vel[i][1] = vhMag * cosf(vhAngle);
-    vel[i][0] = vhMag * sinf(vhAngle);
+    vel[i].z = vhMax * sinf(vhAngleVert) * vertExplosionRatio;
+    vel[i].y = vhMag * cosf(vhAngle);
+    vel[i].x = vhMag * sinf(vhAngle);
   }
   return;
 }
@@ -503,9 +501,9 @@ void TankSceneNode::renderRadar()
   setCenter(tankPos);
   azimuth = 0.0f;
 
-  float oldAlpha = color[3];
-  if (color[3] < 0.15f) {
-    color[3] = 0.15f;
+  float oldAlpha = color.a;
+  if (color.a < 0.15f) {
+    color.a = 0.15f;
   }
 
   if (BZDBCache::animatedTreads) {
@@ -522,7 +520,7 @@ void TankSceneNode::renderRadar()
   tankRenderNode.render();
   tankRenderNode.setRadar(false);
 
-  color[3] = oldAlpha;
+  color.a = oldAlpha;
 
   setCenter(posCopy);
   azimuth = angleCopy;
@@ -545,6 +543,7 @@ bool TankSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 }
 
 
+//============================================================================//
 //
 // TankIDLSceneNode
 //
@@ -741,10 +740,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
       float d[4];
       int j;
       for (j = 0; j < numVertices; j++) {
-	d[j] = idlVertex[face[j]][0] * plane[0] +
-	       idlVertex[face[j]][1] * plane[1] +
-	       idlVertex[face[j]][2] * plane[2] +
-	       plane[3];
+	d[j] = plane.planeDist(idlVertex[face[j]]);
       }
 
       // get crossing points
@@ -789,6 +785,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
 }
 
 
+//============================================================================//
 //
 // TankSceneNode::TankRenderNode
 //
@@ -895,8 +892,8 @@ void TankSceneNode::TankRenderNode::render()
 
   explodeFraction = sceneNode->explodeFraction;
   isExploding = (explodeFraction != 0.0f);
-  color = sceneNode->color;
-  alpha = sceneNode->color[3];
+  color = &sceneNode->color;
+  alpha = sceneNode->color.a;
 
   if (!BZDBCache::blend && sceneNode->transparent) {
     myStipple(alpha);
@@ -1180,14 +1177,13 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // apply explosion transform
   if (isExploding) {
     glPushMatrix();
-    const float* vel = sceneNode->vel[part];
-    const float* spin = sceneNode->spin[part];
-    const float* cog = centerOfGravity[part];
-    glTranslatef(cog[0] + (explodeFraction * vel[0]),
-		 cog[1] + (explodeFraction * vel[1]),
-		 cog[2] + (explodeFraction * vel[2]));
-    glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
-    glTranslatef(-cog[0], -cog[1], -cog[2]);
+    const fvec3& vel  = sceneNode->vel[part];
+    const fvec4& spin = sceneNode->spin[part];
+    const fvec3& cog  = centerOfGravity[part];
+    const fvec3 pos = cog + (explodeFraction * vel);
+    glTranslatef(pos.x, pos.y, pos.z);
+    glRotatef(spin.w * explodeFraction, spin.x, spin.y, spin.z);
+    glTranslatef(-cog.x, -cog.y, -cog.z);
   }
 
   // setup the animation texture matrix
@@ -1236,35 +1232,35 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
 void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
 {
-  const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-  const float* clr = color;
+  const fvec4 white(1.0f, 1.0f, 1.0f, 1.0f);
+  const fvec4* clr = color;
 
   // do not use color modulation with tank textures
   if (BZDBCache::texture) {
-    clr = white;
+    clr = &white;
   }
 
   switch (part) {
-    case Body: {
-      myColor4f(clr[0], clr[1], clr[2], alpha);
-      break;
-    }
     case Barrel: {
       myColor4f(0.25f, 0.25f, 0.25f, alpha);
       break;
     }
+    case Body: {
+      myColor4fv(fvec4(clr->rgb(), alpha));
+      break;
+    }
     case Turret: {
-      myColor4f(0.9f * clr[0], 0.9f * clr[1], 0.9f * clr[2], alpha);
+      myColor4fv(fvec4(clr->rgb() * 0.9f, alpha));
       break;
     }
     case LeftCasing:
     case RightCasing: {
-      myColor4f(0.7f * clr[0], 0.7f * clr[1], 0.7f * clr[2], alpha);
+      myColor4fv(fvec4(clr->rgb() * 0.7f, alpha));
       break;
     }
     case LeftTread:
     case RightTread: {
-      myColor4f(0.3f * clr[0], 0.3f * clr[1], 0.3f * clr[2], alpha);
+      myColor4fv(fvec4(clr->rgb() * 0.3f, alpha));
       break;
     }
     case LeftWheel0:
@@ -1275,7 +1271,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
     case RightWheel1:
     case RightWheel2:
     case RightWheel3: {
-      myColor4f(0.4f * clr[0], 0.4f * clr[1], 0.4f * clr[2], alpha);
+      myColor4fv(fvec4(clr->rgb() * 0.4f, alpha));
       break;
     }
     default: { // avoid warnings about unused enumerated values
@@ -1296,7 +1292,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case LeftTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
-      glScalef(treadUScale,1,1);
+      glScalef(treadUScale, 1.0f, 1.0f);
       glTranslatef(sceneNode->leftTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
@@ -1304,7 +1300,7 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
     case RightTread: {
       glMatrixMode(GL_TEXTURE);
       glLoadIdentity();
-      glScalef(treadUScale,1,1);
+      glScalef(treadUScale, 1.0f, 1.0f);
       glTranslatef(sceneNode->rightTreadOffset, 0.0f, 0.0f);
       glMatrixMode(GL_MODELVIEW);
       break;
@@ -1348,30 +1344,25 @@ void TankSceneNode::TankRenderNode::renderLights()
   if (isTreads)
     return;
 
-  static const float lights[3][6] = {
-    { 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
-    { 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
-    { 0.0f, 1.0f, 0.0f,  0.10f, -0.75f, 2.1f }
+  struct LightVertex {
+    fvec3 vertex;
+    fvec4 color;
   };
+  static const LightVertex lights[3] = {
+    { fvec3(-1.53f,  0.00f, 2.1f ), fvec4(1.0f, 1.0f, 1.0f, 1.0f) },
+    { fvec3( 0.10f,  0.75f, 2.1f ), fvec4(1.0f, 0.0f, 0.0f, 1.0f) },
+    { fvec3( 0.10f, -0.75f, 2.1f ), fvec4(0.0f, 1.0f, 0.0f, 1.0f) }
+  };
+
   sceneNode->lightsGState.setState();
   glPointSize(2.0f);
 
   glBegin(GL_POINTS);
   {
-    const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
-
-    myColor3fv(lights[0]);
-    glVertex3f(lights[0][3] * scale[0],
-	       lights[0][4] * scale[1],
-	       lights[0][5] * scale[2]);
-    myColor3fv(lights[1]);
-    glVertex3f(lights[1][3] * scale[0],
-	       lights[1][4] * scale[1],
-	       lights[1][5] * scale[2]);
-    myColor3fv(lights[2]);
-    glVertex3f(lights[2][3] * scale[0],
-	       lights[2][4] * scale[1],
-	       lights[2][5] * scale[2]);
+    const fvec3& scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
+    myColor3fv(lights[0].color); glVertex3fv(lights[0].vertex * scale);
+    myColor3fv(lights[1].color); glVertex3fv(lights[1].vertex * scale);
+    myColor3fv(lights[2].color); glVertex3fv(lights[2].vertex * scale);
   }
   glEnd();
 
@@ -1400,20 +1391,20 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
     return;
   }
 
-  struct jetVertex {
-    float vertex[3];
-    float texcoord[2];
+  struct JetVertex {
+    fvec3 vertex;
+    fvec2 texcoord;
   };
-  static const jetVertex jet[3] = {
-    {{+0.3f,  0.0f, 0.0f}, {0.0f, 1.0f}},
-    {{-0.3f,  0.0f, 0.0f}, {1.0f, 1.0f}},
-    {{ 0.0f, -1.0f, 0.0f}, {0.5f, 0.0f}}
+  static const JetVertex jet[3] = {
+    { fvec3(+0.3f,  0.0f, 0.0f), fvec2(0.0f, 1.0f) },
+    { fvec3(-0.3f,  0.0f, 0.0f), fvec2(1.0f, 1.0f) },
+    { fvec3( 0.0f, -1.0f, 0.0f), fvec2(0.5f, 0.0f) }
   };
 
   myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
   // use a clip plane, because the ground has no depth
-  const GLdouble clipPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+  const GLdouble clipPlane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
   glClipPlane(GL_CLIP_PLANE1, clipPlane);
   glEnable(GL_CLIP_PLANE1);
 
@@ -1422,8 +1413,8 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   for (int j = 0; j < 4; j++) {
     glPushMatrix();
     {
-      const float* pos = sceneNode->jumpJetsPositions[j];
-      glTranslatef(pos[0], pos[1], pos[2]);
+      const fvec3& pos = sceneNode->jumpJetsPositions[j];
+      glTranslatef(pos.x, pos.y, pos.z);
       glScalef(1.0f, 1.0f, sceneNode->jumpJetsLengths[j]);
 
       RENDERER.getViewFrustum().executeBillboard();
@@ -1448,8 +1439,6 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
   return;
 }
-
-
 
 
 // Local Variables: ***

@@ -32,7 +32,6 @@
 #include "ViewFrustum.h"
 
 
-
 BoltSceneNode::BoltSceneNode(const fvec3& pos, const fvec3& vel)
 : phasingShot(false)
 , drawFlares(false)
@@ -84,10 +83,7 @@ void BoltSceneNode::setSize(float radius)
 
 void BoltSceneNode::setTextureColor(float r, float g, float b, float a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
+  color = fvec4(r, g, b, a);
   light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
   renderNode.setTextureColor(color);
 }
@@ -95,18 +91,15 @@ void BoltSceneNode::setTextureColor(float r, float g, float b, float a)
 
 void BoltSceneNode::setColor(float r, float g, float b, float a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
+  color = fvec4(r, g, b, a);
   light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
   renderNode.setColor(color);
 }
 
 
-void BoltSceneNode::setColor(const fvec4& rgb)
+void BoltSceneNode::setColor(const fvec4& rgba)
 {
-  setColor(rgb[0], rgb[1], rgb[2], rgb[3]);
+  setColor(rgba.r, rgba.g, rgba.b, rgba.a);
 }
 
 
@@ -240,10 +233,7 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(const BoltSceneNode* _sceneNode)
     }
   }
 
-  textureColor[0] = 1.0f;
-  textureColor[1] = 1.0f;
-  textureColor[2] = 1.0f;
-  textureColor[3] = 1.0f;
+  textureColor = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
 
   setAnimation(1, 1);
 }
@@ -378,36 +368,27 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 
   float coreBleed = 4.5f;
   float minimumChannelVal = 0.45f;
-  fvec3 coreColor;
-
-  coreColor[0] = sceneNode->color[0] * coreBleed;
-  if (coreColor[0] < minimumChannelVal)
-    coreColor[0] = minimumChannelVal;
-
-  coreColor[1] = sceneNode->color[1] * coreBleed;
-  if (coreColor[1] < minimumChannelVal)
-    coreColor[1] = minimumChannelVal;
-
-  coreColor[2] = sceneNode->color[2] * coreBleed;
-  if (coreColor[2] < minimumChannelVal)
-    coreColor[2] = minimumChannelVal;
+  fvec3 coreColor = sceneNode->color.rgb() * coreBleed;
+  if (coreColor.r < minimumChannelVal) { coreColor.r = minimumChannelVal; }
+  if (coreColor.g < minimumChannelVal) { coreColor.g = minimumChannelVal; }
+  if (coreColor.b < minimumChannelVal) { coreColor.b = minimumChannelVal; }
 
   glPushMatrix();
   myColor4f(1, 1, 1, 0.85f * alphaMod);
-  glTranslatef(0, 0, len-baseRadius);
+  glTranslatef(0, 0, len - baseRadius);
 
   GLUquadric* q = gluNewQuadric();
   gluSphere(q, baseRadius * 0.75f, 6, 6);
   addTriangleCount(6 * 6);
   glPopMatrix();
 
-  myColor4f(coreColor[0], coreColor[1], coreColor[2], 0.85f * alphaMod);
+  myColor4fv(fvec4(coreColor,  0.85f * alphaMod));
   renderGeoPill(baseRadius, len, 16, baseRadius * 0.25f);
 
   float radInc = 1.5f * baseRadius - baseRadius;
   glPushMatrix();
   glTranslatef(0, 0, -radInc * 0.5f);
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.5f);
+  myColor4fv(fvec4(sceneNode->color.rgb(), 0.5f));
   renderGeoPill(1.5f * baseRadius, len + radInc, 25, 1.5f * baseRadius * 0.25f);
   glPopMatrix();
 
@@ -451,42 +432,34 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 
   float coreBleed = 4.5f;
   float minimumChannelVal = 0.45f;
-  fvec3 coreColor;
 
-  coreColor[0] = sceneNode->color[0]*coreBleed;
-  if (coreColor[0] < minimumChannelVal)
-    coreColor[0] = minimumChannelVal;
+  fvec3 coreColor =  sceneNode->color.rgb() * coreBleed;
+  if (coreColor.r < minimumChannelVal) { coreColor.r = minimumChannelVal; }
+  if (coreColor.g < minimumChannelVal) { coreColor.g = minimumChannelVal; }
+  if (coreColor.b < minimumChannelVal) { coreColor.b = minimumChannelVal; }
 
-  coreColor[1] = sceneNode->color[1]*coreBleed;
-  if (coreColor[1] < minimumChannelVal)
-    coreColor[1] = minimumChannelVal;
-
-  coreColor[2] = sceneNode->color[2]*coreBleed;
-  if (coreColor[2] < minimumChannelVal)
-    coreColor[2] = minimumChannelVal;
-
-  myColor4f(coreColor[0], coreColor[1], coreColor[2], 0.85f*alphaMod);
+  myColor4fv(fvec4(coreColor, 0.85f * alphaMod));
   renderGeoPill(baseRadius,len,16);
 
-  float radInc = 1.5f*baseRadius - baseRadius;
+  float radInc = 1.5f * baseRadius - baseRadius;
   glPushMatrix();
-  glTranslatef(0, 0, -radInc*0.5f);
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.5f);
-  renderGeoPill(1.5f*baseRadius,len+radInc,25);
+  glTranslatef(0, 0, -radInc * 0.5f);
+  myColor4fv(fvec4(sceneNode->color.rgb(), 0.5f));
+  renderGeoPill(1.5f * baseRadius, len + radInc, 25);
   glPopMatrix();
 
-  radInc = 2.7f*baseRadius - baseRadius;
+  radInc = 2.7f * baseRadius - baseRadius;
   glPushMatrix();
   glTranslatef(0, 0, -radInc*0.5f);
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.25f);
-  renderGeoPill(2.7f*baseRadius,len+radInc,32);
+  myColor4fv(fvec4(sceneNode->color.rgb(), 0.25f));
+  renderGeoPill(2.7f * baseRadius, len + radInc, 32);
   glPopMatrix();
 
-  radInc = 3.8f*baseRadius - baseRadius;
+  radInc = 3.8f * baseRadius - baseRadius;
   glPushMatrix();
   glTranslatef(0, 0,-radInc*0.5f);
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  renderGeoPill(3.8f*baseRadius,len+radInc,48);
+  myColor4fv(fvec4(sceneNode->color.rgb(), 0.125f));
+  renderGeoPill(3.8f * baseRadius, len + radInc, 48);
   glPopMatrix();
 
   glEnable(GL_TEXTURE_2D);

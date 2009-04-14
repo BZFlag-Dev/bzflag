@@ -875,10 +875,10 @@ void FlagSceneNode::FlagRenderNode::render()
       }
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
-      static float shear[16] = {hscl, 0.0f, tilt, 0.0f,
-				  0.0f, 1.0f, 0.0f, 0.0f,
-				  0.0f, 0.0f, 1.0f, 0.0f,
-				  0.0f, 0.0f, 0.0f, 1.0f};
+      static float shear[16] = { hscl, 0.0f, tilt, 0.0f,
+                                 0.0f, 1.0f, 0.0f, 0.0f,
+                                 0.0f, 0.0f, 1.0f, 0.0f,
+                                 0.0f, 0.0f, 0.0f, 1.0f };
       shear[0] = hscl; // maintains the flag length
       shear[2] = tilt; // pulls the flag up or down
       glPushMatrix();

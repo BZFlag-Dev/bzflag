@@ -82,7 +82,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 
   // disable the plane
   noPlane = true;
-  plane[0] = plane[1] = plane[2] = plane[3] = 0.0f;
+  plane.x = plane.y = plane.z = plane.w = 0.0f;
 
   // setup the extents, sphere, and lengthPerPixel adjustment
   float lengthAdj = 1.0f;
@@ -94,12 +94,12 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
   } else {
     // sloppy way to recalcuate the transformed extents
     fvec3 c[8];
-    c[0][0] = c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
-    c[7][0] = c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
-    c[0][1] = c[1][1] = c[5][1] = c[4][1] = diExts.mins[1];
-    c[7][1] = c[6][1] = c[2][1] = c[3][1] = diExts.maxs[1];
-    c[0][2] = c[1][2] = c[2][2] = c[3][2] = diExts.mins[2];
-    c[7][2] = c[6][2] = c[5][2] = c[4][2] = diExts.maxs[2];
+    c[0].x = c[6].x = c[5].x = c[3].x = diExts.mins.x;
+    c[7].x = c[1].x = c[2].x = c[4].x = diExts.maxs.x;
+    c[0].y = c[1].y = c[5].y = c[4].y = diExts.mins.y;
+    c[7].y = c[6].y = c[2].y = c[3].y = diExts.maxs.y;
+    c[0].z = c[1].z = c[2].z = c[3].z = diExts.mins.z;
+    c[7].z = c[6].z = c[5].z = c[4].z = diExts.maxs.z;
     extents.reset();
     for (int v = 0; v < 8; v++) {
       xformTool->modifyVertex(c[v]);
@@ -123,7 +123,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     // adjust the sphere
     fvec4 mySphere(drawInfo->getSphere());
     xformTool->modifyVertex(mySphere.xyz());
-    mySphere[3] *= (lengthAdj * lengthAdj);
+    mySphere.w *= (lengthAdj * lengthAdj);
     setSphere(mySphere);
   }
 
@@ -247,9 +247,9 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
       if (set.meshMat.animRepos) {
 	const fvec4& s = drawLods[level].sets[i].sphere;
 	fvec3 pos;
-	pos[0] = (cos_val * s.x) - (sin_val * s.y);
-	pos[1] = (sin_val * s.x) + (cos_val * s.y);
-	pos[2] = s[2];
+	pos.x = (cos_val * s.x) - (sin_val * s.y);
+	pos.y = (sin_val * s.x) + (cos_val * s.y);
+	pos.z = s.z;
 	if (xformTool != NULL) {
 	  xformTool->modifyVertex(pos);
 	}
@@ -372,9 +372,9 @@ void MeshSceneNode::notifyStyleChange()
 	  new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
 				   mat.colorPtr, lod, set, extPtr, setPos,
 				   drawSet.triangleCount);
-	if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
-	    (fabsf(drawSet.sphere[1]) > 0.001f) &&
-	    (mat.color[3] != 0.0f) &&
+	if ((fabsf(drawSet.sphere.x) > 0.001f) &&
+	    (fabsf(drawSet.sphere.y) > 0.001f) &&
+	    (mat.color.a != 0.0f) &&
 	    (drawInfo->getAnimationInfo() != NULL)) {
 	  animRepos = true;
 	  mat.animRepos = true;
@@ -485,12 +485,12 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   // color
   if (useDiffuseColor) {
     color = bzmat->getDiffuse();
-    colorAlpha = (color[3] != 1.0f);
+    colorAlpha = (color.a != 1.0f);
   } else {
     // set it to white, this should only happen when
     // we've gotten a user texture, and there's a
     // request to not use the material's diffuse color.
-    color[0] = color[1] = color[2] = color[3] = 1.0f;
+    color.r = color.g = color.b = color.a = 1.0f;
   }
 
   // dynamic color
@@ -513,7 +513,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
       if (dyncol != NULL) {
 	builder.setStipple(0.5f);
       } else {
-	builder.setStipple(color[3]);
+	builder.setStipple(color.a);
       }
     }
   }

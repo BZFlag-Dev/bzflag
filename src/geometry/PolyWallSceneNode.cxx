@@ -92,44 +92,28 @@ PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
   fvec3 uEdge, vEdge;
   fvec4 myPlane;
   float uLen, vLen, nLen;
-  uEdge[0] = vertex[0][0] - vertex[count - 1][0];
-  uEdge[1] = vertex[0][1] - vertex[count - 1][1];
-  uEdge[2] = vertex[0][2] - vertex[count - 1][2];
-  uLen = uEdge[0] * uEdge[0] + uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2];
+  uEdge = vertex[0] - vertex[count - 1];
+  uLen = uEdge.lengthSq();
   int i;
   for (i = 1; i < count; i++) {
-    vEdge[0] = vertex[i][0] - vertex[i - 1][0];
-    vEdge[1] = vertex[i][1] - vertex[i - 1][1];
-    vEdge[2] = vertex[i][2] - vertex[i - 1][2];
-    vLen = vEdge[0] * vEdge[0] + vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2];
-    myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-    myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-    myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-    nLen = myPlane[0] * myPlane[0] + myPlane[1] * myPlane[1]
-      + myPlane[2] * myPlane[2];
-    if (nLen > 1.0e-5f * uLen * vLen) break;
-    uEdge[0] = vEdge[0];
-    uEdge[1] = vEdge[1];
-    uEdge[2] = vEdge[2];
+    vEdge = vertex[i] - vertex[i - 1];
+    vLen = vEdge.lengthSq();
+    myPlane.xyz() = fvec3::cross(uEdge, vEdge);
+    nLen = myPlane.lengthSq();
+    if (nLen > (1.0e-5f * uLen * vLen)) {
+      break;
+    }
+    uEdge = vEdge;
     uLen = vLen;
   }
-  myPlane[3] = -(myPlane[0] * vertex[0][0] + myPlane[1] * vertex[0][1] +
-		 myPlane[2] * vertex[0][2]);
+  myPlane.w = -fvec3::dot(myPlane.xyz(), vertex[0]);
   setPlane(myPlane);
 
   // choose axis to ignore (the one with the largest normal component)
-  int ignoreAxis;
-  const fvec4& normal = getPlaneRaw();
-  if (fabsf(normal[0]) > fabsf(normal[1]))
-    if (fabsf(normal[0]) > fabsf(normal[2]))
-      ignoreAxis = 0;
-    else
-      ignoreAxis = 2;
-  else
-    if (fabsf(normal[1]) > fabsf(normal[2]))
-      ignoreAxis = 1;
-    else
-      ignoreAxis = 2;
+  const fvec4& norm = getPlaneRaw();
+  const int ignoreAxis =
+    (fabsf(norm.x) > fabsf(norm.y)) ? ((fabsf(norm.x) > fabsf(norm.z)) ? 0 : 2)
+                                    : ((fabsf(norm.y) > fabsf(norm.z)) ? 1 : 2);
 
   // project vertices onto plane
   fvec2Array flat(vertex.getSize());
@@ -158,33 +142,31 @@ PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
   float* area = new float[1];
   area[0] = 0.0f;
   int j;
-  for (j = count - 1, i = 0; i < count; j = i, i++)
-    area[0] += flat[j][0] * flat[i][1] - flat[j][1] * flat[i][0];
-  area[0] = 0.5f * fabsf(area[0]) / normal[ignoreAxis];
-  node = new Geometry(this, vertex, uv, normal);
-  shadowNode = new Geometry(this, vertex, uv, normal);
+  for (j = count - 1, i = 0; i < count; j = i, i++) {
+    area[0] += (flat[j][0] * flat[i][1]) - (flat[j][1] * flat[i][0]);
+  }
+  area[0] = 0.5f * fabsf(area[0]) / norm[ignoreAxis];
+  node = new Geometry(this, vertex, uv, norm);
+  shadowNode = new Geometry(this, vertex, uv, norm);
   shadowNode->setStyle(0);
 
   // set lod info
   setNumLODs(1, area);
 
   // compute bounding sphere, put center at average of vertices
-  fvec4 mySphere;
-  mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
+  fvec4 mySphere(0.0f, 0.0f, 0.0f, 0.0f);
   for (i = 0; i < count; i++) {
-    mySphere[0] += vertex[i][0];
-    mySphere[1] += vertex[i][1];
-    mySphere[2] += vertex[i][2];
+    mySphere.xyz() += vertex[i];
   }
-  mySphere[0] /= (float)count;
-  mySphere[1] /= (float)count;
-  mySphere[2] /= (float)count;
+  mySphere.xyz() /= (float)count;
+
   for (i = 0; i < count; i++) {
-    float r = (mySphere[0] - vertex[i][0]) * (mySphere[0] - vertex[i][0]) +
-		(mySphere[1] - vertex[i][1]) * (mySphere[1] - vertex[i][1]) +
-		(mySphere[2] - vertex[i][2]) * (mySphere[2] - vertex[i][2]);
-    if (r > mySphere[3]) mySphere[3] = r;
+    const float radSq = (mySphere.xyz() - vertex[i]).lengthSq();
+    if (mySphere.w < radSq) {
+      mySphere.w = radSq;
+    }
   }
+
   setSphere(mySphere);
 }
 

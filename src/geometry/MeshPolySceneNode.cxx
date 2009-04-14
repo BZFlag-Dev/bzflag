@@ -190,20 +190,20 @@ MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
   switch (ignoreAxis) {
     case 0:
       for (i = 0; i < count; i++) {
-	flat[i][0] = vertices[i][1];
-	flat[i][1] = vertices[i][2];
+	flat[i].x = vertices[i].y;
+	flat[i].y = vertices[i].z;
       }
       break;
     case 1:
       for (i = 0; i < count; i++) {
-	flat[i][0] = vertices[i][2];
-	flat[i][1] = vertices[i][0];
+	flat[i].x = vertices[i].z;
+	flat[i].y = vertices[i].x;
       }
       break;
     case 2:
       for (i = 0; i < count; i++) {
-	flat[i][0] = vertices[i][0];
-	flat[i][1] = vertices[i][1];
+	flat[i].x = vertices[i].x;
+	flat[i].y = vertices[i].y;
       }
       break;
   }
@@ -212,7 +212,7 @@ MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
   float* area = new float[1];
   area[0] = 0.0f;
   for (j = count - 1, i = 0; i < count; j = i, i++) {
-    area[0] += flat[j][0] * flat[i][1] - flat[j][1] * flat[i][0];
+    area[0] += (flat[j][0] * flat[i][1]) - (flat[j][1] * flat[i][0]);
   }
   area[0] = 0.5f * fabsf(area[0]) / normal[ignoreAxis];
 
@@ -364,9 +364,7 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const float d = (vertices[i][0] * splitPlane[0]) +
-		      (vertices[i][1] * splitPlane[1]) +
-		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+    const float d = splitPlane.planeDist(vertices[i]);
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;
@@ -445,9 +443,9 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
   if (firstFront != lastBack) {
     fvec3 splitVertex, splitNormal;
     fvec2 splitUV;
-    splitEdgeVTN(dists[firstFront], dists[lastBack],
-		 vertices[firstFront], vertices[lastBack],
-		 normals[firstFront], normals[lastBack],
+    splitEdgeVTN(dists[firstFront],     dists[lastBack],
+		 vertices[firstFront],  vertices[lastBack],
+		 normals[firstFront],   normals[lastBack],
 		 texcoords[firstFront], texcoords[lastBack],
 		 splitVertex, splitNormal, splitUV);
     vertexFront[0] = splitVertex;
@@ -462,9 +460,9 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
   if (firstBack != lastFront) {
     fvec3 splitVertex, splitNormal;
     fvec2 splitUV;
-    splitEdgeVTN(dists[firstBack], dists[lastFront],
-		 vertices[firstBack], vertices[lastFront],
-		 normals[firstBack], normals[lastFront],
+    splitEdgeVTN(dists[firstBack],     dists[lastFront],
+		 vertices[firstBack],  vertices[lastFront],
+		 normals[firstBack],   normals[lastFront],
 		 texcoords[firstBack], texcoords[lastFront],
 		 splitVertex, splitNormal, splitUV);
     vertexBack[0] = splitVertex;
@@ -524,27 +522,15 @@ void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
   }
 
   // compute vertex
-  p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
-  p[1] = p1[1] + (t1 * (p2[1] - p1[1]));
-  p[2] = p1[2] + (t1 * (p2[2] - p1[2]));
+  p = p1 + (t1 * (p2 - p1));
 
   // compute normal
-  const float t2 = 1.0f - t1;
-  n[0] = (n1[0] * t2) + (n2[0] * t1);
-  n[1] = (n1[1] * t2) + (n2[1] * t1);
-  n[2] = (n1[2] * t2) + (n2[2] * t1);
-  // normalize
-  float len = ((n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]));
-  if (len > 1.0e-20f) { // otherwise, let it go...
-    len = 1.0f / sqrtf(len);
-    n[0] = n[0] * len;
-    n[1] = n[1] * len;
-    n[2] = n[2] * len;
-  }
+  const float t2 = (1.0f - t1);
+  n = (n1 * t2) + (n2 * t1);
+  fvec3::normalize(n);
 
   // compute texture coordinate
-  uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
-  uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
+  uv = uv1 + (t1 * (uv2 - uv1));
 
   return;
 }
@@ -583,9 +569,7 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const float d = (vertices[i][0] * splitPlane[0]) +
-		      (vertices[i][1] * splitPlane[1]) +
-		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+    const float d = splitPlane.planeDist(vertices[i]);
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;
@@ -664,8 +648,8 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
   if (firstFront != lastBack) {
     fvec3 splitVertex;
     fvec2 splitUV;
-    splitEdgeVT(dists[firstFront], dists[lastBack],
-		vertices[firstFront], vertices[lastBack],
+    splitEdgeVT(dists[firstFront],     dists[lastBack],
+		vertices[firstFront],  vertices[lastBack],
 		texcoords[firstFront], texcoords[lastBack],
 		splitVertex, splitUV);
     vertexFront[0] = splitVertex;
@@ -678,8 +662,8 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
   if (firstBack != lastFront) {
     fvec3 splitVertex;
     fvec2 splitUV;
-    splitEdgeVT(dists[firstBack], dists[lastFront],
-		vertices[firstBack], vertices[lastFront],
+    splitEdgeVT(dists[firstBack],     dists[lastFront],
+		vertices[firstBack],  vertices[lastFront],
 		texcoords[firstBack], texcoords[lastFront],
 		splitVertex, splitUV);
     vertexBack[0] = splitVertex;
@@ -734,13 +718,10 @@ void MeshPolySceneNode::splitEdgeVT(float d1, float d2,
   }
 
   // compute vertex
-  p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
-  p[1] = p1[1] + (t1 * (p2[1] - p1[1]));
-  p[2] = p1[2] + (t1 * (p2[2] - p1[2]));
+  p = p1 + (t1 * (p2 - p1));
 
   // compute texture coordinate
-  uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
-  uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
+  uv = uv1 + (t1 * (uv2 - uv1));
 
   return;
 }

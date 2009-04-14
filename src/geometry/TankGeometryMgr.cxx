@@ -386,36 +386,36 @@ static void setupScales()
 {
   float scale;
 
-  scaleFactors[Normal][0] = BZDBCache::tankLength;
+  scaleFactors[Normal].x = BZDBCache::tankLength;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
-  scaleFactors[Normal][0] /= scale;
+  scaleFactors[Normal].x /= scale;
 
-  scaleFactors[Normal][1] = BZDBCache::tankWidth;
+  scaleFactors[Normal].y = BZDBCache::tankWidth;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
-  scaleFactors[Normal][1] /= scale;
+  scaleFactors[Normal].y /= scale;
 
-  scaleFactors[Normal][2] = BZDBCache::tankHeight;
+  scaleFactors[Normal].z = BZDBCache::tankHeight;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
-  scaleFactors[Normal][2] /= scale;
+  scaleFactors[Normal].z /= scale;
 
   scale = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  scaleFactors[Obese][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Obese][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Obese][2] = scaleFactors[Normal][2];
+  scaleFactors[Obese].x = scale * scaleFactors[Normal].x;
+  scaleFactors[Obese].y = scale * scaleFactors[Normal].y;
+  scaleFactors[Obese].z = scaleFactors[Normal].z;
 
   scale = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  scaleFactors[Tiny][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Tiny][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Tiny][2] = scaleFactors[Normal][2];
+  scaleFactors[Tiny].x = scale * scaleFactors[Normal].x;
+  scaleFactors[Tiny].y = scale * scaleFactors[Normal].y;
+  scaleFactors[Tiny].z = scaleFactors[Normal].z;
 
   scale = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  scaleFactors[Thief][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Thief][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Thief][2] = scaleFactors[Normal][2];
+  scaleFactors[Thief].x = scale * scaleFactors[Normal].x;
+  scaleFactors[Thief].y = scale * scaleFactors[Normal].y;
+  scaleFactors[Thief].z = scaleFactors[Normal].z;
 
-  scaleFactors[Narrow][0] = scaleFactors[Normal][0];
-  scaleFactors[Narrow][1] = 0.001f;
-  scaleFactors[Narrow][2] = scaleFactors[Normal][2];
+  scaleFactors[Narrow].x = scaleFactors[Normal].x;
+  scaleFactors[Narrow].y = 0.001f;
+  scaleFactors[Narrow].z = scaleFactors[Normal].z;
 
   return;
 }

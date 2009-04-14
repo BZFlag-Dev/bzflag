@@ -136,9 +136,9 @@ AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
 					   int _lod, int _set,
 					   const Extents* _exts,
 					   const fvec3& _pos,
-					   int _triangles) :
-    OpaqueRenderNode(_drawMgr, _xformList, _normalize,
-		     _color, _lod, _set, _exts, _triangles)
+					   int _triangles)
+: OpaqueRenderNode(_drawMgr, _xformList, _normalize,
+		   _color, _lod, _set, _exts, _triangles)
 {
   pos = _pos;
   return;

@@ -143,7 +143,7 @@ class TankSceneNode : public SceneNode {
 	const TankSceneNode* sceneNode;
 	TankGeometryEnums::TankLOD drawLOD;
 	TankGeometryEnums::TankSize drawSize;
-	const float*	color;
+	const fvec4*	color;
 	float		alpha;
 	bool		isRadar;
 	bool		isTreads;
@@ -184,8 +184,8 @@ class TankSceneNode : public SceneNode {
     TankRenderNode	treadsRenderNode;
     TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    fvec3 vel[TankGeometryEnums::LastTankPart];
-    float spin[TankGeometryEnums::LastTankPart][4];
+    fvec3		vel[TankGeometryEnums::LastTankPart];
+    fvec4		spin[TankGeometryEnums::LastTankPart];
     bool		jumpJetsOn;
     float		jumpJetsScale;
     float		jumpJetsLengths[4];
