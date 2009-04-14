@@ -92,7 +92,7 @@ void			HUDuiElement::setLabel(const std::string& _label)
   if (elementFontFace != NULL) {
     FontManager &fm = FontManager::instance();
     trueLabelWidth = fm.getStringWidth(elementFontFace->getFMFace(),
-				     elementFontSize, std::string(getLabel() + "99").c_str());
+				     elementFontSize, std::string(getLabel() + "99"));
   }
 }
 
@@ -128,7 +128,7 @@ void			HUDuiElement::renderLabel()
     const float dx = (desiredLabelWidth > trueLabelWidth)
       ? desiredLabelWidth : trueLabelWidth;
     fm.drawString(elementX - dx, elementY, 0, elementFontFace->getFMFace(),
-		  elementFontSize, theLabel.c_str());
+		  elementFontSize, theLabel);
   }
 }
 

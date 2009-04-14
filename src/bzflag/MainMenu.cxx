@@ -182,7 +182,7 @@ void			MainMenu::resize(int _width, int _height)
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
     = fm.getStringWidth(fontFace->getFMFace(), fontSize,
-		      ((HUDuiLabel*)listHUD[3])->getString().c_str());
+		      ((HUDuiLabel*)listHUD[3])->getString());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {

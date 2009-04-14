@@ -75,7 +75,7 @@ class HUDuiTypeIn : public HUDuiControl {
 
   private:
     size_t		maxLength;
-    std::string		string;
+    std::string		data;
     CountUTF8StringItr	cursorPos;
     bool		allowEdit;
     bool		obfuscate;
