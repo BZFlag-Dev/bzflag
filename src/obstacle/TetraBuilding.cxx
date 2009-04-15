@@ -49,12 +49,12 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
 			     unsigned char drive, unsigned char shoot, bool rico)
 {
   // tetra specific parameters
-  memcpy (vertices, _vertices, sizeof(vertices));
-  memcpy (normals, _normals, sizeof(normals));
-  memcpy (texcoords, _texcoords, sizeof(texcoords));
-  memcpy (useNormals, _useNormals, sizeof(useNormals));
-  memcpy (useTexcoords, _useTexcoords, sizeof(useTexcoords));
-  memcpy (materials, _materials, sizeof(materials));
+  memcpy(vertices, _vertices, sizeof(vertices));
+  memcpy(normals, _normals, sizeof(normals));
+  memcpy(texcoords, _texcoords, sizeof(texcoords));
+  memcpy(useNormals, _useNormals, sizeof(useNormals));
+  memcpy(useTexcoords, _useTexcoords, sizeof(useTexcoords));
+  memcpy(materials, _materials, sizeof(materials));
   transform = xform;
 
   // common obstace parameters
@@ -169,19 +169,19 @@ void TetraBuilding::checkVertexOrder()
   // swap vertices 1 & 2 if we are out of order
   if (dot < 0.0f) {
     float tmpVertex[3];
-    memcpy (tmpVertex, vertices[1], sizeof(tmpVertex));
-    memcpy (vertices[1], vertices[2], sizeof(vertices[1]));
-    memcpy (vertices[2], tmpVertex, sizeof(vertices[2]));
+    memcpy(tmpVertex, vertices[1], sizeof(tmpVertex));
+    memcpy(vertices[1], vertices[2], sizeof(vertices[1]));
+    memcpy(vertices[2], tmpVertex, sizeof(vertices[2]));
 
     float tmpNormals[4][3];
-    memcpy (tmpNormals, normals[1], sizeof(tmpNormals));
-    memcpy (normals[1], normals[2], sizeof(normals[1]));
-    memcpy (normals[2], tmpNormals, sizeof(normals[2]));
+    memcpy(tmpNormals, normals[1], sizeof(tmpNormals));
+    memcpy(normals[1], normals[2], sizeof(normals[1]));
+    memcpy(normals[2], tmpNormals, sizeof(normals[2]));
 
     float tmpTexcoords[3][2];
-    memcpy (tmpTexcoords, texcoords[1], sizeof(tmpTexcoords));
-    memcpy (texcoords[1], texcoords[2], sizeof(texcoords[1]));
-    memcpy (texcoords[2], tmpTexcoords, sizeof(texcoords[2]));
+    memcpy(tmpTexcoords, texcoords[1], sizeof(tmpTexcoords));
+    memcpy(texcoords[1], texcoords[2], sizeof(texcoords[1]));
+    memcpy(texcoords[2], tmpTexcoords, sizeof(texcoords[2]));
 
     bool tmpBool = useNormals[1];
     useNormals[1] = useNormals[2];
@@ -420,28 +420,28 @@ void *TetraBuilding::unpack(void* buf)
 
 int TetraBuilding::packSize() const
 {
-  int v;
-  int fullSize = transform.packSize();
+  int fullSize = 0;
+  fullSize += transform.packSize();
   // state byte
-  fullSize = fullSize + sizeof(unsigned char);
+  fullSize += sizeof(uint8_t);
   // vectors
-  fullSize = fullSize + (4 * sizeof(float[3]));
+  fullSize += (4 * sizeof(fvec3));
   // normals
-  fullSize = fullSize + sizeof(unsigned char);
-  for (v = 0; v < 4; v++) {
+  fullSize += sizeof(uint8_t);
+  for (int v = 0; v < 4; v++) {
     if (useNormals[v]) {
-      fullSize = fullSize + sizeof(float[3][3]);
+      fullSize += sizeof(fvec3[3]);
     }
   }
   // texcoords
-  fullSize = fullSize + sizeof(unsigned char);
-  for (v = 0; v < 4; v++) {
+  fullSize += sizeof(uint8_t);
+  for (int v = 0; v < 4; v++) {
     if (useTexcoords[v]) {
-      fullSize = fullSize + sizeof(float[3][2]);
+      fullSize += sizeof(fvec2[3]);
     }
   }
   // materials
-  fullSize = fullSize + sizeof(int32_t[4]);
+  fullSize += sizeof(int32_t[4]);
 
   return fullSize;
 }

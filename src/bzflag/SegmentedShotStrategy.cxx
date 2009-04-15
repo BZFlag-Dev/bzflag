@@ -514,7 +514,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
           o += (t * d);
 
 	  // reflect direction about normal to ground
-	  fvec3 normal(0.0f, 0.0f, 1.0f);
+	  const fvec3 normal(0.0f, 0.0f, 1.0f);
 	  reflect(d, normal);
 	  reason = ShotPathSegment::Ricochet;
 	  break;

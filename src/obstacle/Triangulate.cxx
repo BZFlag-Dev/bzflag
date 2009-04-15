@@ -84,12 +84,12 @@ static inline bool isFaceClear(int w0, int w1, int w2)
 
   // setup the planes
   fvec4 planes[3];
-  planes[0].xyz() = fvec3::cross(edges[0], normal);
-  planes[1].xyz() = fvec3::cross(edges[1], normal);
-  planes[2].xyz() = fvec3::cross(edges[2], normal);
-  planes[0][3] = -fvec3::dot(planes[0].xyz(), *Verts[v0]);
-  planes[1][3] = -fvec3::dot(planes[1].xyz(), *Verts[v1]);
-  planes[2][3] = -fvec3::dot(planes[2].xyz(), *Verts[v2]);
+  planes[0].xyz() =  fvec3::cross(edges[0], normal);
+  planes[0].w     = -fvec3::dot(planes[0].xyz(), *Verts[v0]);
+  planes[1].xyz() =  fvec3::cross(edges[1], normal);
+  planes[1].w     = -fvec3::dot(planes[1].xyz(), *Verts[v1]);
+  planes[2].xyz() =  fvec3::cross(edges[2], normal);
+  planes[2].w     = -fvec3::dot(planes[2].xyz(), *Verts[v2]);
 
   for (int w = 0; w < Count; w++) {
     if ((w == w0) || (w == w1) || (w == w2)) {

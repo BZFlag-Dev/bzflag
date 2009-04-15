@@ -435,9 +435,9 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
   texcoords = new fvec2[cornerCount];
   for (int i = 0; i < cornerCount; i++) {
     Corner& corner = corners[i];
-    memcpy(vertices[i],  verts[corner.vertex],   sizeof(fvec3));
-    memcpy(normals[i],   norms[corner.normal],   sizeof(fvec3));
-    memcpy(texcoords[i], txcds[corner.texcoord], sizeof(fvec2));
+    vertices[i]  = verts[corner.vertex];
+    normals[i]   = norms[corner.normal];
+    texcoords[i] = txcds[corner.texcoord];
   }
 
   // tally the triangle counts

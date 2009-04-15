@@ -28,7 +28,7 @@ public:
   static void  get3DUnitVector(const fvec3& src, const fvec3& target, fvec3& unitVector);
   static float getTargetDistance(const fvec3& src, const fvec3& target);
   static float getTargetAzimuth(const fvec3& src, const fvec3& target);
-  static float getTargetRotation(const float startAzimuth, float targetAzimuth);
+  static float getTargetRotation(float startAzimuth, float targetAzimuth);
   static float getTargetAngleDifference(const fvec3& src, float srcAzimuth, const fvec3& target);
   static bool  isLocationObscured(const fvec3& src, const fvec3& target);
   static float getOpenDistance(const fvec3& src, const float azimuth);

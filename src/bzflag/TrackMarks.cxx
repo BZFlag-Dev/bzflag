@@ -284,7 +284,7 @@ static void addEntryToList(TrackList& list,
   list.addNode(te);
 
   // make a sceneNode for the BSP rendering, if not on the ground
-  if (!BZDBCache::zbuffer && (te.pos[2] != TextureHeightOffset)) {
+  if (!BZDBCache::zbuffer && (te.pos.z != TextureHeightOffset)) {
     const OpenGLGState* gstate = NULL;
     if (type == TreadsTrack) {
       gstate = &treadsGState;
@@ -311,9 +311,9 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   te.sceneNode = NULL;
 
   // determine the track mark type
-  if ((pos[2] <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
+  if ((pos.z <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
     type = PuddleTrack;
-    if (pos[2] < 0.0f) {
+    if (pos.z < 0.0f) {
       scale = 0.0f; // single puddle, like Narrow tanks
     }
   } else {
@@ -321,18 +321,18 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
     if (scale < 0.01f) {
       return false; // Narrow tanks don't draw tread marks
     }
-    if (pos[2] < 0.0f) {
+    if (pos.z < 0.0f) {
       return false; // Burrowed tanks don't draw tread marks
     }
   }
 
   // copy some parameters
-  te.pos[0] = pos[0];
-  te.pos[1] = pos[1];
-  if (pos[2] < 0.0f) {
-    te.pos[2] = TextureHeightOffset;
+  te.pos.x = pos.x;
+  te.pos.y = pos.y;
+  if (pos.z < 0.0f) {
+    te.pos.z = TextureHeightOffset;
   } else {
-    te.pos[2] = pos[2] + TextureHeightOffset;
+    te.pos.z = pos.z + TextureHeightOffset;
   }
   te.scale = scale;
   te.angle = (float)(angle * (180.0 / M_PI)); // in degress, for glRotatef()
@@ -344,7 +344,7 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   } else {
     const fvec3& v = driver->getLinearVel();
     const float av = driver->getAngularVel();
-    if ((v[0] == 0.0f) && (v[1] == 0.0f) && (av == 0.0f)) {
+    if ((v.x == 0.0f) && (v.y == 0.0f) && (av == 0.0f)) {
       te.phydrv = -1;
     } else {
       te.phydrv = phydrv;
@@ -357,7 +357,7 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   }
   else {
     // Treads track marks
-    if (pos[2] == 0.0f) {
+    if (pos.z == 0.0f) {
       // no culling required
       te.sides = BothTreads;
       addEntryToList(TreadsGroundList, te, type);
@@ -371,18 +371,18 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
       // cull based on track mark support
       te.sides = 0;
       fvec3 markPos;
-      markPos[2] = pos[2];
+      markPos.z = pos.z;
       const float dx = -sinf(angle) * TreadMiddle;
       const float dy = +cosf(angle) * TreadMiddle;
       // left tread
-      markPos[0] = pos[0] + dx;
-      markPos[1] = pos[1] + dy;
+      markPos.x = pos.x + dx;
+      markPos.y = pos.y + dy;
       if (onBuilding(markPos)) {
 	te.sides |= LeftTread;
       }
       // right tread
-      markPos[0] = pos[0] - dx;
-      markPos[1] = pos[1] - dy;
+      markPos.x = pos.x - dx;
+      markPos.y = pos.y - dy;
       if (onBuilding(markPos)) {
 	te.sides |= RightTread;
       }
@@ -402,14 +402,14 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
 static bool onBuilding(const fvec3& pos)
 {
   const fvec3 dir(0.0f, 0.0f, -1.0f);
-  const fvec3 org(pos[0], pos[1], pos[2] + 0.1f);
+  const fvec3 org(pos.x, pos.y, pos.z + 0.1f);
   Ray ray(org, dir);
   const ObsList* olist = COLLISIONMGR.rayTest (&ray, 0.5f);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->isFlatTop()) {
-      const float top = obs->getExtents().maxs[2];
-      if ((pos[2] >= (top - 0.1f)) && (pos[2] <= (top + 0.1f))) {
+      const float top = obs->getExtents().maxs.z;
+      if ((pos.z >= (top - 0.1f)) && (pos.z <= (top + 0.1f))) {
 	const float hitTime = obs->intersect(ray);
 	if (hitTime >= 0.0f) {
 	  return true;
@@ -450,8 +450,8 @@ static void updateList(TrackList& list, float dt)
 	const float da = (av * dt);
 	const float cos_val = cosf(da);
 	const float sin_val = sinf(da);
-	const float dx = te.pos[0] - ap[0];
-	const float dy = te.pos[1] - ap[1];
+	const float dx = te.pos.x - ap.x;
+	const float dy = te.pos.y - ap.y;
 	te.pos.x = ap.x + ((cos_val * dx) - (sin_val * dy));
 	te.pos.y = ap.y + ((cos_val * dy) + (sin_val * dx));
 	te.angle += (float)(da * (180.0 / M_PI));
@@ -459,27 +459,27 @@ static void updateList(TrackList& list, float dt)
 
       if ((AirCull & PhyDrvAirCull) != 0) {
 	// no need to cull ground marks
-	if (te.pos[2] == 0.0f) {
+	if (te.pos.z == 0.0f) {
 	  continue;
 	}
 	// cull the track marks if they aren't supported
 	fvec3 markPos;
-	markPos[2] = te.pos[2] - TextureHeightOffset;
+	markPos.z = te.pos.z - TextureHeightOffset;
 	const float radians = (float)(te.angle * (M_PI / 180.0));
 	const float dx = -sinf(radians) * TreadMiddle;
 	const float dy = +cosf(radians) * TreadMiddle;
 	// left tread
 	if ((te.sides & LeftTread) != 0) {
-	  markPos[0] = te.pos[0] + dx;
-	  markPos[1] = te.pos[1] + dy;
+	  markPos.x = te.pos.x + dx;
+	  markPos.y = te.pos.y + dy;
 	  if (!onBuilding(markPos)) {
 	    te.sides &= ~LeftTread;
 	  }
 	}
 	// right tread
 	if ((te.sides & RightTread) != 0) {
-	  markPos[0] = te.pos[0] - dx;
-	  markPos[1] = te.pos[1] - dy;
+	  markPos.x = te.pos.x - dx;
+	  markPos.y = te.pos.y - dy;
 	  if (!onBuilding(markPos)) {
 	    te.sides &= ~RightTread;
 	  }
@@ -650,7 +650,7 @@ static void drawPuddle(const TrackEntry& te)
 
   glPushMatrix();
   {
-    glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+    glTranslatef(te.pos.x, te.pos.y, te.pos.z);
     glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
     glTranslatef(0.0f, +offset, 0.0f);
     glScalef(scale, scale, 1.0f);
@@ -673,7 +673,7 @@ static void drawPuddle(const TrackEntry& te)
   if (offset > 0.01f) {
     glPushMatrix();
     {
-      glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+      glTranslatef(te.pos.x, te.pos.y, te.pos.z);
       glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
       glTranslatef(0.0f, -offset, 0.0f);
       glScalef(scale, scale, 1.0f);
@@ -706,7 +706,7 @@ static void drawTreads(const TrackEntry& te)
 
   glPushMatrix();
   {
-    glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+    glTranslatef(te.pos.x, te.pos.y, te.pos.z);
     glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
     glScalef(1.0f, te.scale, 1.0f);
 
@@ -733,7 +733,7 @@ static void drawSmoke(const TrackEntry& te)
 
   glPushMatrix();
   {
-    glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
+    glTranslatef(te.pos.x, te.pos.y, te.pos.z);
     glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
     glScalef(1.0f, te.scale, 1.0f);
 

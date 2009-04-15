@@ -27,28 +27,30 @@ TeleporterSceneNodeGenerator::TeleporterSceneNodeGenerator(
   // do nothing
 }
 
+
 TeleporterSceneNodeGenerator::~TeleporterSceneNodeGenerator()
 {
   // do nothing
 }
 
-WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
-				float /*uRepeats*/, float /*vRepeats*/,
-				bool lod)
+
+WallSceneNode* TeleporterSceneNodeGenerator::getNextNode(float /*uRepeats*/,
+                                                         float /*vRepeats*/,
+                                                         bool lod)
 {
   static const float texCoords[][4][2] = {
     {{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.5f }, { 0.0f, 9.5f }},
-	{{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.5f }, { 0.5f, 9.5f }},
-	{{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f }},
-	{{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f }},
-	{{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f }},
-	{{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f }},
-	{{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f }},
-	{{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f }},
-	{{ 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.5f, 5.0f }, { 0.5f, 5.0f }},
-	{{ 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.5f, 4.0f }, { 0.5f, 4.0f }},
-	{{ 0.0f, 0.0f }, { 5.0f, 0.0f }, { 5.0f, 0.5f }, { 0.0f, 0.5f }},
-	{{ 0.0f, 0.5f }, { 5.0f, 0.5f }, { 5.0f, 1.0f }, { 0.0f, 1.0f }}
+    {{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.5f }, { 0.5f, 9.5f }},
+    {{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f }},
+    {{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f }},
+    {{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f }},
+    {{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f }},
+    {{ 0.5f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 9.0f }, { 0.5f, 9.0f }},
+    {{ 0.0f, 0.0f }, { 0.5f, 0.0f }, { 0.5f, 9.0f }, { 0.0f, 9.0f }},
+    {{ 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.5f, 5.0f }, { 0.5f, 5.0f }},
+    {{ 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.5f, 4.0f }, { 0.5f, 4.0f }},
+    {{ 0.0f, 0.0f }, { 5.0f, 0.0f }, { 5.0f, 0.5f }, { 0.0f, 0.5f }},
+    {{ 0.0f, 0.5f }, { 5.0f, 0.5f }, { 5.0f, 1.0f }, { 0.0f, 1.0f }}
   };
 
   if (fabsf(teleporter->getBorder()) < 1.0e-6f) {
@@ -62,6 +64,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     fvec3 base;
     fvec3 sEdge;
     fvec3 tEdge;
+
     const fvec3& pos = teleporter->getPosition();
     const fvec3& size = teleporter->getSize();
     const float c = cosf(teleporter->getRotation());
@@ -258,8 +261,8 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
 
     float u, v, uc, vc;
     if (n >= 1 && n <= 16) {
-      u = texCoords[0][0][0];
-      v = texCoords[0][0][1];
+      u  = texCoords[0][0][0];
+      v  = texCoords[0][0][1];
       uc = texCoords[0][1][0] - u;
       vc = texCoords[0][3][1] - v;
     }
@@ -267,7 +270,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
       u = v = 0.0f;
       uc = vc = 1.0f;
     }
-    return new QuadWallSceneNode (base, sEdge, tEdge, u, v, uc, vc, lod);
+    return new QuadWallSceneNode(base, sEdge, tEdge, u, v, uc, vc, lod);
   }
   else {
     if (getNodeNumber () >= 12)
@@ -431,8 +434,8 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     }
     float u, v, uc, vc;
     if (n >= 1 && n <= 12) {
-      u = texCoords[n - 1][0][0];
-      v = texCoords[n - 1][0][1];
+      u  = texCoords[n - 1][0][0];
+      v  = texCoords[n - 1][0][1];
       uc = texCoords[n - 1][1][0] - u;
       vc = texCoords[n - 1][3][1] - v;
     }
@@ -440,7 +443,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
       u = v = 0.0f;
       uc = vc = 1.0f;
     }
-    return new QuadWallSceneNode (base, sEdge, tEdge, u, v, uc, vc, lod);
+    return new QuadWallSceneNode(base, sEdge, tEdge, u, v, uc, vc, lod);
   }
 }
 

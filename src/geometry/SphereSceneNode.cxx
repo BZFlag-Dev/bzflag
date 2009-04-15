@@ -208,9 +208,9 @@ void SphereLodSceneNode::kill()
 }
 
 
-SphereLodSceneNode::SphereLodSceneNode(const fvec3& pos, float _radius) :
-				       SphereSceneNode(pos, _radius),
-				       renderNode(this)
+SphereLodSceneNode::SphereLodSceneNode(const fvec3& pos, float _radius)
+: SphereSceneNode(pos, _radius)
+, renderNode(this)
 {
   if (!initialized) {
     initialized = true;
@@ -302,8 +302,8 @@ void SphereLodSceneNode::addShadowNodes(SceneRenderer&)
 //
 
 SphereLodSceneNode::SphereLodRenderNode::SphereLodRenderNode(
-				const SphereLodSceneNode* _sceneNode) :
-				sceneNode(_sceneNode)
+				const SphereLodSceneNode* _sceneNode)
+: sceneNode(_sceneNode)
 {
   return;
 }
@@ -441,10 +441,10 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 const int NumSlices = 2 * SphereRes;
 const int NumParts  = SphereLowRes * SphereLowRes;
 
-SphereBspSceneNode::SphereBspSceneNode(const fvec3& pos, float _radius) :
-				       SphereSceneNode(pos, _radius),
-				       renderNode(this),
-				       parts(NULL)
+SphereBspSceneNode::SphereBspSceneNode(const fvec3& pos, float _radius)
+: SphereSceneNode(pos, _radius)
+, renderNode(this)
+, parts(NULL)
 {
 }
 
@@ -465,18 +465,22 @@ SceneNode** SphereBspSceneNode::getParts(int& numParts)
     // make parts -- always use low detail sphere (if your zbuffer is
     // slow, then you probably don't want to render lots o' polygons)
     parts = new SphereFragmentSceneNode*[NumParts];
-    for (int i = 0; i < SphereLowRes; i++)
-      for (int j = 0; j < SphereLowRes; j++)
+    for (int i = 0; i < SphereLowRes; i++) {
+      for (int j = 0; j < SphereLowRes; j++) {
 	parts[SphereLowRes * i + j] = new SphereFragmentSceneNode(j, i, this);
+      }
+    }
   }
 
   // choose number of parts to cut off bottom at around ground level
   int i;
   const fvec4& mySphere = getSphere();
-  for (i = 0; i < SphereLowRes; i++)
-    if (radius * SphereBspRenderNode::lgeom[SphereLowRes*i][2]
-	+ mySphere[2] < 0.01f)
+  for (i = 0; i < SphereLowRes; i++) {
+    const float geomZ = SphereBspRenderNode::lgeom[SphereLowRes * i].z;
+    if (((radius * geomZ) + mySphere.z) < 0.01f) {
       break;
+    }
+  }
   numParts = SphereLowRes * i;
 
   return (SceneNode**)parts;
@@ -525,10 +529,10 @@ fvec3 SphereBspSceneNode::SphereBspRenderNode::geom[NumSlices * (SphereRes + 1)]
 fvec3 SphereBspSceneNode::SphereBspRenderNode::lgeom[SphereLowRes * (SphereLowRes + 1)];
 
 SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
-				const SphereBspSceneNode* _sceneNode) :
-				sceneNode(_sceneNode),
-				highResolution(false),
-				baseIndex(0)
+				const SphereBspSceneNode* _sceneNode)
+: sceneNode(_sceneNode)
+, highResolution(false)
+, baseIndex(0)
 {
   // initialize geometry if first instance
   static bool init = false;
@@ -693,9 +697,9 @@ void SphereBspSceneNode::SphereBspRenderNode::render()
 //
 
 SphereFragmentSceneNode::SphereFragmentSceneNode(int _theta, int _phi,
-					SphereBspSceneNode* _parentSphere) :
-				parentSphere(_parentSphere),
-				renderNode(_parentSphere, _theta, _phi)
+					SphereBspSceneNode* _parentSphere)
+: parentSphere(_parentSphere)
+, renderNode(_parentSphere, _theta, _phi)
 {
   // position sphere fragment
   move();
@@ -740,10 +744,10 @@ void SphereFragmentSceneNode::addShadowNodes(SceneRenderer& /*renderer*/)
 
 SphereFragmentSceneNode::FragmentRenderNode::FragmentRenderNode(
 				const SphereBspSceneNode* _sceneNode,
-				int _theta, int _phi) :
-				sceneNode(_sceneNode),
-				theta(_theta),
-				phi(_phi)
+				int _theta, int _phi)
+: sceneNode(_sceneNode)
+, theta(_theta)
+, phi(_phi)
 {
   // compute incremented theta and phi
   theta2 = (theta + 1) % SphereLowRes;

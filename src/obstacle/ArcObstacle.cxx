@@ -41,10 +41,10 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
 			 unsigned char drive, unsigned char shoot, bool rico)
 {
   // common obstace parameters
-  memcpy(pos, _pos, sizeof(pos));
-  memcpy(size, _size, sizeof(size));
+  pos = _pos;
+  size = _size;
   angle = _rotation;
-  ZFlip = false;
+  zFlip = false;
   driveThrough = drive;
   shootThrough = shoot;
   ricochet     = rico;
@@ -703,8 +703,8 @@ void* ArcObstacle::unpack(void* buf)
 int ArcObstacle::packSize() const
 {
   int fullSize = transform.packSize();
-  fullSize += sizeof(float[3]);
-  fullSize += sizeof(float[3]);
+  fullSize += sizeof(fvec3);
+  fullSize += sizeof(fvec3);
   fullSize += sizeof(float);
   fullSize += sizeof(float);
   fullSize += sizeof(float);

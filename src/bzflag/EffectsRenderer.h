@@ -28,6 +28,7 @@
 /* common interface headers */
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
+#include "vectors.h"
 
 #include "Singleton.h"
 
@@ -41,19 +42,20 @@ public:
   BasicEffect();
   virtual ~BasicEffect() {};
 
-  virtual void setPos(const float *pos, const float *rot);
-  virtual void setVel(const float *vel);
-  virtual void setColor(const float *rgb);
+  virtual void setPos(const fvec3& pos);
+  virtual void setRot(const fvec3& rot);
+  virtual void setVel(const fvec3& vel);
+  virtual void setColor(const fvec4& rgba);
   virtual void setStartTime(float time);
 
   virtual bool update(float time);
   virtual void draw(const SceneRenderer &) = 0;
 
 protected:
-  float position[3];
-  float rotation[3];
-  float velocity[3];
-  float color[3];
+  fvec3 position;
+  fvec3 rotation;
+  fvec3 velocity;
+  fvec4 color;
   float startTime;
   float lifetime;
   float lastTime;
@@ -205,45 +207,43 @@ class EffectsRenderer : public Singleton<EffectsRenderer>
 {
 public:
   // called once to setup the effects system
-  void init(void);
+  void init();
 
   // called to update the various effects
-  void update(void);
+  void update();
 
   // called to draw all the current effects
   void draw(const SceneRenderer& sr);
 
   // spawn flashes
-  void addSpawnEffect(const float* rgb, const float* pos );
-  std::vector<std::string> getSpawnEffectTypes ( void );
+  void addSpawnEffect(const fvec4& rgba, const fvec3& pos );
+  std::vector<std::string> getSpawnEffectTypes();
 
   // shot flashes
-  void addShotEffect(const float* rgb, const float* pos, float rot,
-		     const float* vel = NULL, int _type = -1);
-  std::vector<std::string> getShotEffectTypes(void);
+  void addShotEffect(const fvec4& rgba, const fvec3& pos, float rot,
+		     const fvec3& vel, int _type = -1);
+  std::vector<std::string> getShotEffectTypes();
 
   // gm puffs
-  void addGMPuffEffect(const float* pos, float rot[2], const float* vel = NULL);
-  std::vector<std::string> getGMPuffEffectTypes(void);
+  void addGMPuffEffect(const fvec3& pos, const fvec2& rot, const fvec3* vel = NULL);
+  std::vector<std::string> getGMPuffEffectTypes();
 
   // death effects
-  void addDeathEffect(const float* rgb, const float* pos, float rot);
-  std::vector<std::string> getDeathEffectTypes(void);
+  void addDeathEffect(const fvec4& rgba, const fvec3& pos, float rot);
+  std::vector<std::string> getDeathEffectTypes();
 
   // landing effects
-  void addLandEffect(const float* rgb, const float* pos, float rot );
-  std::vector<std::string> getLandEffectTypes(void);
+  void addLandEffect(const fvec4& rgba, const fvec3& pos, float rot);
+  std::vector<std::string> getLandEffectTypes();
 
   // rico effect
-  void addRicoEffect(const float* pos,
-                     const float* normal,
-                     const float* vel = NULL);
-  std::vector<std::string> getRicoEffectTypes(void);
+  void addRicoEffect(const fvec3& pos, const fvec3& normal, const fvec3* vel = NULL);
+  std::vector<std::string> getRicoEffectTypes();
 
   // shot teleport effect
-  void addShotTeleportEffect(const float* pos, float rot[2],
-			     const float* vel = NULL);
-  std::vector<std::string> getShotTeleportEffectTypes(void);
+  void addShotTeleportEffect(const fvec3& pos, const fvec2& rot,
+			     const fvec3* vel = NULL);
+  std::vector<std::string> getShotTeleportEffectTypes();
 
 protected:
   friend class Singleton<EffectsRenderer>;

@@ -100,7 +100,7 @@ class Obstacle {
   virtual const char* getType() const = 0;
 
   const char* getName() const { return name.c_str(); }
-  void setName(const char* n) { if (n) name = n; else name = ""; }
+  void setName(const char* n) { if (n) { name = n; } else { name = ""; } }
 
   /** This function calculates extents from pos, size, and rotation */
   void setExtents();
@@ -252,7 +252,7 @@ class Obstacle {
   void setSource(char);
   char getSource() const;
   bool isFromWorldFile() const;
-  bool isFromGroupDef() const;
+  bool isFromGroupDef()  const;
   bool isFromContainer() const;
 
   /** This function resets the object ID counter for printing OBJ files */
@@ -314,7 +314,7 @@ class Obstacle {
     unsigned char driveThrough;
     unsigned char shootThrough;
     bool ricochet;
-    bool ZFlip;
+    bool zFlip;
     char source;
     std::string name;
     unsigned short listID;
@@ -353,17 +353,17 @@ inline float Obstacle::getRotation() const
 
 inline float Obstacle::getWidth() const
 {
-  return size[0];
+  return size.x;
 }
 
 inline float Obstacle::getBreadth() const
 {
-  return size[1];
+  return size.y;
 }
 
 inline float Obstacle::getHeight() const
 {
-  return size[2];
+  return size.z;
 }
 
 inline void Obstacle::get3DNormal(const fvec3& p, fvec3& n) const

@@ -184,7 +184,7 @@ void MeshFace::finalize()
   pos.z  = extents.mins.z;
   size.z = (extents.maxs.z - extents.mins.z);
   angle = 0.0f;
-  ZFlip = false;
+  zFlip = false;
 
   // make the edge planes
   edgePlanes = new fvec4[vertexCount];

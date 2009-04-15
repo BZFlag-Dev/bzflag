@@ -1434,7 +1434,7 @@ static void updateFlag(FlagType *flag)
     hud->setAlert(2, NULL, 0.0f);
   } else {
     const fvec4& color = flag->getColor();
-    hud->setColor(color[0], color[1], color[2]);
+    hud->setColor(color.r, color.g, color.b);
     hud->setAlert(2, flag->flagName.c_str(), 3.0f, flag->endurance == FlagSticky);
   }
 
@@ -2397,7 +2397,7 @@ static void handleAliveMessage(void *msg)
                               (tank != ROAM.getTargetTank())))
         || BZDB.isTrue("enableLocalSpawnEffect")) {
       if (myTank->getFlag() != Flags::Colorblindness) {
-        static float cbColor[4] = {1, 1, 1, 1};
+        static fvec4 cbColor(1.0f, 1.0f, 1.0f, 1.0f);
         EFFECTS.addSpawnEffect(cbColor, pos);
       } else {
         EFFECTS.addSpawnEffect(tank->getColor(), pos);
@@ -4186,8 +4186,7 @@ void addShotPuff(const fvec3& pos, float azimuth, float elevation)
     return;
   }
 
-  float rots[2] = {azimuth, elevation};
-  EFFECTS.addGMPuffEffect(pos, rots, NULL);
+  EFFECTS.addGMPuffEffect(pos, fvec2(azimuth, elevation));
 }
 
 
@@ -4476,29 +4475,46 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
 }
 
 
-static bool canSquishMe(int id)
+// check for Steamroller and Burrow kills
+static bool checkSquishKill(const Player* victim,
+                            const Player* killer, bool localKiller = false)
 {
-  // I must be playing
-  if (!myTank || myTank->getTeam() == ObserverTeam || !myTank->isAlive() || myTank->isPaused())
+  static BZDB_float srRadiusMult(StateDatabase::BZDB_SRRADIUSMULT);
+
+  if (!victim || !victim->isAlive() || victim->isPaused() ||
+      !killer || !killer->isAlive() || killer->isPaused()) {
     return false;
+  }
 
-  // he must be playing
-  if (!remotePlayers[id] || !remotePlayers[id]->isAlive() || remotePlayers[id]->isPaused() || remotePlayers[id]->isNotResponding())
+  const fvec3& victimPos = victim->getPosition();
+  const fvec3& killerPos = killer->getPosition();
+
+  if (killer->getFlag() != Flags::Steamroller) {
+    if (victim->getFlag() != Flags::Burrow) {
+      return false;
+    }
+    else if ((victimPos.z >= 0.0f) || (killerPos.z < 0.0f)) {
+      return false;
+    }
+  }
+
+  if (victim->isPhantomZoned() || (victim->getTeam() == ObserverTeam) ||
+      killer->isPhantomZoned() || (killer->getTeam() == ObserverTeam)) {
     return false;
-
-  // no squishy action if either of us is zoned
-  if (myTank->isPhantomZoned() || remotePlayers[id]->isPhantomZoned())
+  }
+  if (!localKiller && killer->isNotResponding()) {
     return false;
+  }
+  
+  fvec3 diff = (victimPos - killerPos);
+  diff.z *= 2.0f; // oblate spheroids
 
-  // otherwise, he can always squish me if he has steamroller
-  if (remotePlayers[id]->getFlag() == Flags::Steamroller)
-    return true;
+  const float victimRadius = victim->getRadius();
+  const float killerRadius = killer->getRadius();
 
-  // or he can squish me if I'm burrowed and he's not
-  if ((myTank->getPosition()[2] < 0.0f) && (remotePlayers[id]->getPosition()[2] >= 0.0f))
-    return true;
+  const float radius = victimRadius + (killerRadius * srRadiusMult);
 
-  return false;
+  return (diff.lengthSq() < (radius * radius));
 }
 
 
@@ -4528,11 +4544,13 @@ static void checkEnvironment()
       const float radius = myTank->getRadius();
       const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
       for (int i = 0; i < numFlags; i++) {
-	if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagOnGround)
+	if ((world->getFlag(i).type == Flags::Null) ||
+	    (world->getFlag(i).status != FlagOnGround)) {
 	  continue;
-
+        }
 	const fvec3& fpos = world->getFlag(i).position;
-	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
+	if ((fabs(tpos.z - fpos.z) < 0.1f) &&
+	    ((tpos.xy() - fpos.xy()).lengthSq() < radius2)) {
 	  serverLink->sendPlayerUpdate(myTank);
 	  lastGrabSent = TimeKeeper::getTick();
 	}
@@ -4546,9 +4564,11 @@ static void checkEnvironment()
 
   myTank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < curMaxPlayers; i++)
-    if (remotePlayers[i])
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (remotePlayers[i]) {
       myTank->checkHit(remotePlayers[i], hit, minTime);
+    }
+  }
 
   // Check Server Shots
   myTank->checkHit(World::getWorld()->getWorldWeapons(), hit, minTime);
@@ -4600,23 +4620,13 @@ static void checkEnvironment()
   } else if (myTank->getDeathPhysicsDriver() >= 0) { // if not dead yet, see if i'm sitting on death
     gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
     // this is done on the server now, we should remove this when we are sure its ok.
-    /*	else if ((waterLevel > 0.0f) && (myTank->getPosition()[2] <= waterLevel))  // if not dead yet, see if i've dropped below the death level
+    /*	else if ((waterLevel > 0.0f) && (myTank->getPosition().z <= waterLevel))  // if not dead yet, see if i've dropped below the death level
     gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
   } else {
     // if not dead yet, see if i got squished
-    const fvec3& myPos = myTank->getPosition();
-    const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++) {
-      if (canSquishMe(i)) {
-	const fvec3& pos = remotePlayers[i]->getPosition();
-
-	const float radius = myRadius
-	  + BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius();
-	fvec3 delta = (myPos - pos);
-	delta.z *= 2.0f; // oblate spheroid
-	if (delta.lengthSq() < (radius * radius)) {
-	  gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
-        }
+      if (checkSquishKill(myTank, remotePlayers[i])) {
+        gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
       }
     }
   }
@@ -4698,8 +4708,8 @@ void setLookAtMarker(void)
 
     // compute position in my local coordinate system
     const fvec3& rPos = remotePlayers[i]->getPosition();
-    const float x = (c * (rPos[0] - myPos.x)) - (s * (rPos[1] - myPos.y));
-    const float y = (s * (rPos[0] - myPos.x)) + (c * (rPos[1] - myPos.y));
+    const float x = (c * (rPos.x - myPos.x)) - (s * (rPos.y - myPos.y));
+    const float y = (s * (rPos.x - myPos.x)) + (c * (rPos.y - myPos.y));
 
     // ignore things behind me
     if (x < 0.0f)
@@ -4762,8 +4772,8 @@ void setTarget()
   // get info about my tank
   const float c = cosf(-myTank->getAngle());
   const float s = sinf(-myTank->getAngle());
-  const float x0 = myTank->getPosition()[0];
-  const float y0 = myTank->getPosition()[1];
+  const float x0 = myTank->getPosition().x;
+  const float y0 = myTank->getPosition().y;
 
   // initialize best target
   Player *bestTarget = NULL;
@@ -4776,8 +4786,8 @@ void setTarget()
 
     // compute position in my local coordinate system
     const fvec3& pos = remotePlayers[i]->getPosition();
-    const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
-    const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
+    const float x = c * (pos.x - x0) - s * (pos.y - y0);
+    const float y = s * (pos.x - x0) + c * (pos.y - y0);
 
     // ignore things behind me
     if (x < 0.0f) continue;
@@ -4871,8 +4881,8 @@ static void setHuntTarget()
   const fvec3& myPos = myTank->getPosition();
   const float c = cosf(-degrees);
   const float s = sinf(-degrees);
-  const float x0 = myPos[0];
-  const float y0 = myPos[1];
+  const float x0 = myPos.x;
+  const float y0 = myPos.y;
 
   // initialize best target
   Player *bestTarget = NULL;
@@ -4885,8 +4895,8 @@ static void setHuntTarget()
 
     // compute position in my local coordinate system
     const fvec3& pos = remotePlayers[i]->getPosition();
-    const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
-    const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
+    const float x = c * (pos.x - x0) - s * (pos.y - y0);
+    const float y = s * (pos.x - x0) + c * (pos.y - y0);
 
     // ignore things behind me
     if (x < 0.0f) continue;
@@ -5156,9 +5166,11 @@ static void checkEnvironment(RobotPlayer *tank)
   float minTime = Infinity;
   tank->checkHit(myTank, hit, minTime);
   int i;
-  for (i = 0; i < curMaxPlayers; i++)
-    if (remotePlayers[i] && remotePlayers[i]->getId() != tank->getId())
+  for (i = 0; i < curMaxPlayers; i++) {
+    if (remotePlayers[i] && remotePlayers[i]->getId() != tank->getId()) {
       tank->checkHit(remotePlayers[i], hit, minTime);
+    }
+  }
 
   // Check Server Shots
   tank->checkHit(World::getWorld()->getWorldWeapons(), hit, minTime);
@@ -5191,51 +5203,29 @@ static void checkEnvironment(RobotPlayer *tank)
       Player *hitter = lookupPlayer(hit->getPlayer());
       if (hitter) hitter->endShot(hit->getShotId());
     }
-  } else if (tank->getDeathPhysicsDriver() >= 0) {
+  }
+  else if (tank->getDeathPhysicsDriver() >= 0) {
     // if not dead yet, see if i'm sitting on death
     gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,
       tank->getDeathPhysicsDriver());
-  } else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
+  }
+  else if ((waterLevel > 0.0f) && (tank->getPosition().z <= waterLevel)) {
     // if not dead yet, see if the robot dropped below the death level
     gotBlowedUp(tank, WaterDeath, ServerPlayer);
-  } else {
-    // if not dead yet, see if i got run over by the steamroller
-    bool dead = false;
-    const fvec3& myPos = tank->getPosition();
-    const float myRadius = tank->getRadius();
-    if (((myTank->getFlag() == Flags::Steamroller) ||
-      ((tank->getFlag() == Flags::Burrow) && myTank->isAlive() &&
-      !myTank->isPhantomZoned()))
-      && !myTank->isPaused()) {
-	const fvec3& pos = myTank->getPosition();
-	if (pos[2] >= 0.0f) {
-	  const float radius = myRadius +
-	    (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * myTank->getRadius());
-	  const float distSquared =
-	    hypotf(hypotf(myPos[0] - pos[0],
-	    myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	  if (distSquared < radius) {
-	    gotBlowedUp(tank, GotRunOver, myTank->getId());
-	    dead = true;
-	  }
-	}
+  }
+  else { // if not dead yet, see if i got run over by the steamroller
+    // robot vs. myTank
+    if (checkSquishKill(tank, myTank, true)) {
+      gotBlowedUp(tank, GotRunOver, myTank->getId());
     }
-    for (i = 0; !dead && i < curMaxPlayers; i++) {
-      if (remotePlayers[i] && !remotePlayers[i]->isPaused() &&
-	((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
-	((tank->getFlag() == Flags::Burrow) && remotePlayers[i]->isAlive() &&
-	!remotePlayers[i]->isPhantomZoned()))) {
-	  const fvec3& pos = remotePlayers[i]->getPosition();
-	  if (pos[2] < 0.0f) continue;
-	  const float radius = myRadius +
-	    (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius());
-	  const float distSquared =
-	    hypotf(hypotf(myPos[0] - pos[0],
-	    myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	  if (distSquared < radius) {
-	    gotBlowedUp(tank, GotRunOver, remotePlayers[i]->getId());
-	    dead = true;
-	  }
+    else {
+      // robot vs. remote tanks
+      for (i = 0; i < curMaxPlayers; i++) {
+        const Player* remote = remotePlayers[i];
+        if (checkSquishKill(tank, remote)) {
+          gotBlowedUp(tank, GotRunOver, remotePlayers[i]->getId());
+          break;
+        }
       }
     }
   }
@@ -5401,7 +5391,7 @@ static void enteringServer(void* buf)
   updateFlag(Flags::Null);
   updateHighScores();
   hud->setHeading(myTank->getAngle());
-  hud->setAltitude(myTank->getPosition()[2]);
+  hud->setAltitude(myTank->getPosition().z);
   hud->setTimeLeft((uint32_t)~0);
   fireButton = false;
   firstLife = true;
@@ -5694,12 +5684,12 @@ void leaveGame()
 
   // reset viewpoint
   fvec3 eyePoint, targetPoint;
-  eyePoint[0] = 0.0f;
-  eyePoint[1] = 0.0f;
-  eyePoint[2] = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  targetPoint[0] = eyePoint[0] - 1.0f;
-  targetPoint[1] = eyePoint[1] + 0.0f;
-  targetPoint[2] = eyePoint[2] + 0.0f;
+  eyePoint.x = 0.0f;
+  eyePoint.y = 0.0f;
+  eyePoint.z = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  targetPoint.x = eyePoint.x - 1.0f;
+  targetPoint.y = eyePoint.y + 0.0f;
+  targetPoint.z = eyePoint.z + 0.0f;
   RENDERER.getViewFrustum().setProjection((float)(60.0 * DEG2RAD),
     NearPlaneNormal,
     FarPlaneDefault,
@@ -6072,26 +6062,22 @@ static bool trackPlayerShot(Player *target,
     if (sp != NULL) {
       const fvec3& pos = sp->getPosition();
       const fvec3& vel = sp->getVelocity();
-      const float speed = sqrtf(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]);
+      const float speed = vel.length();
       if (speed > 0.0f) {
 	const float ilen = 1.0f / speed;
-	const float dir[3] = {ilen * vel[0], ilen * vel[1], ilen * vel[2]};
-	float topDir[3] = {1.0f, 0.0f, 0.0f};
-	const float hlen = sqrtf(dir[0]*dir[0] + dir[1]*dir[1]);
+	const fvec3 dir = vel * ilen;
+	fvec3 topDir(1.0f, 0.0f, 0.0f);
+	const float hlen = dir.xy().length();
 	if (hlen > 0.0f) {
-	  topDir[2] = hlen;
-	  const float hfactor = -fabsf(dir[2] / hlen);
-	  topDir[0] = hfactor * dir[0];
-	  topDir[1] = hfactor * dir[1];
+	  topDir.z = hlen;
+	  const float hfactor = -fabsf(dir.z / hlen);
+	  topDir.x = hfactor * dir.x;
+	  topDir.y = hfactor * dir.y;
 	}
 	const float offset = -10.0f;
 	const float tOffset = +2.0f;
-	eyePoint[0] = pos[0] + (offset * dir[0]) + (tOffset * topDir[0]);
-	eyePoint[1] = pos[1] + (offset * dir[1]) + (tOffset * topDir[1]);
-	eyePoint[2] = pos[2] + (offset * dir[2]) + (tOffset * topDir[2]);
-	targetPoint[0] = eyePoint[0] + dir[0];
-	targetPoint[1] = eyePoint[1] + dir[1];
-	targetPoint[2] = eyePoint[2] + dir[2];
+	eyePoint = pos + (offset * dir) + (tOffset * topDir);
+	targetPoint = eyePoint + dir;
 	return true;
       }
     }
@@ -6120,7 +6106,7 @@ static void setupNearPlane()
     return;
 
   const float halfLength = 0.5f * BZDBCache::tankLength;
-  const float length = tank->getDimensions()[1];
+  const float length = tank->getDimensions().y;
   if (fabsf(length - halfLength) > 0.1f)
     NearPlane = NearPlaneClose;
 
@@ -6197,9 +6183,9 @@ static void drawThreeChannel(float fov, const fvec3& myTankDir,
   // FIXME -- this assumes up is along +z
   const float cFOV = cosf(fov);
   const float sFOV = sinf(fov);
-  targetPoint[0] = eyePoint[0] + (cFOV * myTankDir[0]) - (sFOV * myTankDir[1]);
-  targetPoint[1] = eyePoint[1] + (cFOV * myTankDir[1]) + (sFOV * myTankDir[0]);
-  targetPoint[2] = eyePoint[2] + myTankDir[2];
+  targetPoint.x = eyePoint.x + (cFOV * myTankDir.x) - (sFOV * myTankDir.y);
+  targetPoint.y = eyePoint.y + (cFOV * myTankDir.y) + (sFOV * myTankDir.x);
+  targetPoint.z = eyePoint.z + myTankDir.z;
   viewFrustum.setView(eyePoint, targetPoint);
 
   // draw left channel
@@ -6208,9 +6194,9 @@ static void drawThreeChannel(float fov, const fvec3& myTankDir,
   // set up for drawing right channel
   mainWindow->setQuadrant(MainWindow::LowerRight);
   // FIXME -- this assumes up is along +z
-  targetPoint[0] = eyePoint[0] + (cFOV * myTankDir[0]) + (sFOV * myTankDir[1]);
-  targetPoint[1] = eyePoint[1] + (cFOV * myTankDir[1]) - (sFOV * myTankDir[0]);
-  targetPoint[2] = eyePoint[2] + myTankDir[2];
+  targetPoint.x = eyePoint.x + (cFOV * myTankDir.x) + (sFOV * myTankDir.y);
+  targetPoint.y = eyePoint.y + (cFOV * myTankDir.y) - (sFOV * myTankDir.x);
+  targetPoint.z = eyePoint.z + myTankDir.z;
   viewFrustum.setView(eyePoint, targetPoint);
 
   // draw right channel
@@ -6220,9 +6206,9 @@ static void drawThreeChannel(float fov, const fvec3& myTankDir,
   // set up for drawing rear channel
   mainWindow->setQuadrant(MainWindow::UpperLeft);
   // FIXME -- this assumes up is along +z
-  targetPoint[0] = eyePoint[0] - myTankDir[0];
-  targetPoint[1] = eyePoint[1] - myTankDir[1];
-  targetPoint[2] = eyePoint[2] + myTankDir[2];
+  targetPoint.x = eyePoint.x - myTankDir.x;
+  targetPoint.y = eyePoint.y - myTankDir.y;
+  targetPoint.z = eyePoint.z + myTankDir.z;
   viewFrustum.setView(eyePoint, targetPoint);
 
   // draw rear channel
@@ -6485,7 +6471,7 @@ static void setupRoamingCamera(float muzzleHeight,
     roamViewAngle = roam->theta;
   }
 
-  const fvec3 virtPos(eyePoint[0], eyePoint[1], 0.0f);
+  const fvec3 virtPos(eyePoint.x, eyePoint.y, 0.0f);
   if (myTank) {
     myTank->move(virtPos, (float)(roamViewAngle * DEG2RAD));
   }
@@ -6519,7 +6505,7 @@ static void setupCamera(const fvec3& myTankPos, const fvec3& myTankDir,
     }
   }
 
-  SOUNDSYSTEM.setReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+  SOUNDSYSTEM.setReceiver(eyePoint.x, eyePoint.y, eyePoint.z, 0.0, false);
 }
 
 
@@ -6761,9 +6747,9 @@ void drawFrame(const float dt)
     const fvec3& eye = viewFrustum.getEye();
     const fvec3& dir = viewFrustum.getDirection();
     fvec3 clipPos;
-    clipPos[0] = eye[0] + (dir[0] * hnp);
-    clipPos[1] = eye[1] + (dir[1] * hnp);
-    clipPos[2] = eye[2];
+    clipPos.x = eye.x + (dir.x * hnp);
+    clipPos.y = eye.y + (dir.y * hnp);
+    clipPos.z = eye.z;
     const Obstacle *obs;
     obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
     if (obs != NULL) {
@@ -6803,9 +6789,9 @@ void drawFrame(const float dt)
   // so observers can have enhanced radar
   if (ROAM.isRoaming() && myTank) {
     if (ROAM.getMode() == Roaming::roamViewFP && ROAM.getTargetTank()) {
-      myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
+      myTank->setZpos(ROAM.getTargetTank()->getPosition().z);
     } else {
-      myTank->setZpos(ROAM.getCamera()->pos[2]);
+      myTank->setZpos(ROAM.getCamera()->pos.z);
     }
   }
 
@@ -6886,11 +6872,11 @@ static void updateRoamingCamera(float dt)
     }
 
     if (!control && !shift) {
-      deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+      deltaCamera.pos.x = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }
 
     if (alt) {
-      deltaCamera.pos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
+      deltaCamera.pos.y = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
     } else {
       deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
     }
@@ -6900,7 +6886,7 @@ static void updateRoamingCamera(float dt)
     }
 
     if (shift) {
-      deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+      deltaCamera.pos.z = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
     }
   }
 

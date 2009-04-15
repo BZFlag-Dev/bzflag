@@ -835,7 +835,7 @@ void Player::updateTranslucency(float dt)
   // set the tankNode color
   if (isPhantomZoned()) {
     teleAlpha = 1.0f;
-    color[3] = 0.25f; // barely visible, regardless of teleporter proximity
+    color.a = 0.25f; // barely visible, regardless of teleporter proximity
   } else {
     World *world = World::getWorld();
     if (!world) {
@@ -846,9 +846,9 @@ void Player::updateTranslucency(float dt)
     teleAlpha = (1.0f - (0.75f * teleporterProximity));
 
     if (alpha == 0.0f) {
-      color[3] = 0.0f; // not trusting FP accuracy
+      color.a = 0.0f; // not trusting FP accuracy
     } else {
-      color[3] = teleAlpha * alpha;
+      color.a = teleAlpha * alpha;
     }
   }
 
@@ -1081,7 +1081,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   }
 
   // is this tank fully cloaked?
-  bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
+  bool cloaked = (flagType == Flags::Cloaking) && (color.a == 0.0f);
 
   // in third person we draw like the radar does. cloak is visible, and ST is not
   if (thirdPerson)
@@ -1095,9 +1095,9 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   // adjust alpha for seerView
   if (seerView) {
     if (isPhantomZoned()) {
-      color[3] = 0.25f;
+      color.a = 0.25f;
     } else {
-      color[3] = teleAlpha;
+      color.a = teleAlpha;
     }
   }
 
@@ -1162,7 +1162,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     if (t > fadeRatio) {
       fvec4 newColor = color;
       const float fadeFactor = (1.0f - t) / (1.0f - fadeRatio);
-      newColor[3] = color[3] * fadeFactor;
+      newColor.a = color.a * fadeFactor;
       avatar->setColor(newColor);
     }
     avatar->setAnimationValues(t,0);
@@ -1179,9 +1179,10 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     avatar->movePause(state.pos, 1.5f * BZDBCache::tankRadius * dimensionsScale.x);
 
     std::vector<SceneNode*> nodeList = avatar->getPauseSceneNodes();
-    for ( int i = 0; i < (int)nodeList.size(); i++ ) {
-      if ( nodeList[i] )
+    for (int i = 0; i < (int)nodeList.size(); i++) {
+      if (nodeList[i]) {
 	scene->addDynamicNode(nodeList[i]);
+      }
     }
   }
 }
@@ -1240,11 +1241,9 @@ void Player::spawnEffect()
   const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness > 0.0f) {
     const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
-    const float factor = 1.0f / effectTime;
-    for (int i = 0; i < 3; i++) {
-      dimensionsRate[i] = factor;
-      dimensionsScale[i] = 0.01f;
-    }
+    const float factor = (1.0f / effectTime);
+    dimensionsRate = fvec3(factor, factor, factor);
+    dimensionsScale = fvec3(0.01f, 0.01f, 0.01f);
   }
   spawnTime = TimeKeeper::getCurrent();
   return;

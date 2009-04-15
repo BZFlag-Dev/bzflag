@@ -45,11 +45,8 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
     const float t = (float)j / (float)eCount;
     for (int i = 0; i <= k; n++, i++) {
       const float s = (float)i / (float)eCount;
-      vertex[n][0] = base[0] + s * uEdge[0] + t * vEdge[0];
-      vertex[n][1] = base[1] + s * uEdge[1] + t * vEdge[1];
-      vertex[n][2] = base[2] + s * uEdge[2] + t * vEdge[2];
-      uv[n][0] = 0.0f + s * uRepeats;
-      uv[n][1] = 0.0f + t * vRepeats;
+      vertex[n] = base + (s * uEdge) + (t * vEdge);
+      uv[n] = fvec2(s * uRepeats, t * vRepeats);
     }
   }
   triangles = (eCount * eCount);
@@ -305,7 +302,7 @@ void TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 
 void TriWallSceneNode::renderRadar()
 {
-  if (plane[2] > 0.0f) {
+  if (plane.z > 0.0f) {
     nodes[0]->renderRadar();
   }
   return;

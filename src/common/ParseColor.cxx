@@ -77,29 +77,29 @@ static bool parseHexFormat(const char* str, fvec4& color)
 
   switch (index) {
     case 3: { // rgb
-      color[0] = (float)bytes[0] / 15.0f;
-      color[1] = (float)bytes[1] / 15.0f;
-      color[2] = (float)bytes[2] / 15.0f;
+      color.r = (float)bytes[0] / 15.0f;
+      color.g = (float)bytes[1] / 15.0f;
+      color.b = (float)bytes[2] / 15.0f;
       return true;
     }
     case 4: { // rgba
-      color[0] = (float)bytes[0] / 15.0f;
-      color[1] = (float)bytes[1] / 15.0f;
-      color[2] = (float)bytes[2] / 15.0f;
-      color[3] = (float)bytes[3] / 15.0f;
+      color.r = (float)bytes[0] / 15.0f;
+      color.g = (float)bytes[1] / 15.0f;
+      color.b = (float)bytes[2] / 15.0f;
+      color.a = (float)bytes[3] / 15.0f;
       return true;
     }
     case 6: { // rrggbb
-      color[0] = (float)((bytes[0] << 4) + bytes[1]) / 255.0f;
-      color[1] = (float)((bytes[2] << 4) + bytes[3]) / 255.0f;
-      color[2] = (float)((bytes[4] << 4) + bytes[5]) / 255.0f;
+      color.r = (float)((bytes[0] << 4) + bytes[1]) / 255.0f;
+      color.g = (float)((bytes[2] << 4) + bytes[3]) / 255.0f;
+      color.b = (float)((bytes[4] << 4) + bytes[5]) / 255.0f;
       return true;
     }
     case 8: { // rrggbbaa
-      color[0] = (float)((bytes[0] << 4) + bytes[1]) / 255.0f;
-      color[1] = (float)((bytes[2] << 4) + bytes[3]) / 255.0f;
-      color[2] = (float)((bytes[4] << 4) + bytes[5]) / 255.0f;
-      color[3] = (float)((bytes[6] << 4) + bytes[7]) / 255.0f;
+      color.r = (float)((bytes[0] << 4) + bytes[1]) / 255.0f;
+      color.g = (float)((bytes[2] << 4) + bytes[3]) / 255.0f;
+      color.b = (float)((bytes[4] << 4) + bytes[5]) / 255.0f;
+      color.a = (float)((bytes[6] << 4) + bytes[7]) / 255.0f;
       return true;
     }
   }
@@ -113,14 +113,13 @@ static bool parseHexFormat(const char* str, fvec4& color)
 
 static bool parseFloatFormat(const char* str, fvec4& color)
 {
-  int count;
-  float tmp[4];
-  count = sscanf(str, "%f %f %f %f", &tmp[0], &tmp[1], &tmp[2], &tmp[3]);
-  if (count < 3) {
-    return false;
+  fvec4 tmp(1.0f, 1.0f, 1.0f, 1.0f);
+  const int count = sscanf(str, "%f %f %f %f", &tmp.r, &tmp.g, &tmp.b, &tmp.a);
+  switch (count) {
+    case 3: { color.rgb() = tmp.rgb(); return true; }
+    case 4: { color = tmp;             return true; }
   }
-  memcpy(color, tmp, count * sizeof(float));
-  return true;
+  return false;
 }
 
 
@@ -151,7 +150,7 @@ static bool parseNamedFormat(const char* str, fvec4& color)
 
   float alpha;
   if (sscanf(str, "%f", &alpha) > 0) {
-    color[3] = alpha;
+    color.a = alpha;
   }
 
   return true;

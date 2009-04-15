@@ -573,7 +573,7 @@ void BoltSceneNode::BoltRenderNode::render()
           const float shift = s * shiftScale;
 
           pos += (shift * dir);
-          if (pos.z <= 0.0f) {
+          if (pos.z < 0.0f) {
             continue;
           }
 

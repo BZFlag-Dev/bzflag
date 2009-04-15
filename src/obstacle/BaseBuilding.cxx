@@ -295,9 +295,9 @@ int BaseBuilding::packSize() const
 {
   int fullSize = 0;
   fullSize += sizeof(uint16_t); // team
-  fullSize += sizeof(float[3]); // pos
+  fullSize += sizeof(fvec3);    // pos
   fullSize += sizeof(float);    // rotation
-  fullSize += sizeof(float[3]); // size
+  fullSize += sizeof(fvec3);    // size
   fullSize += sizeof(uint8_t);  // state bits
   return fullSize;
 }

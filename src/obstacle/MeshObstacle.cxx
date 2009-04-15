@@ -64,7 +64,7 @@ static void fvec3ListToArray(const std::vector<fvec3>& list,
   count = list.size();
   array = new fvec3[count];
   for (int i = 0; i < count; i++) {
-    memcpy (array[i], list[i].data(), sizeof(fvec3));
+    array[i] = list[i];
   }
   return;
 }
@@ -119,7 +119,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   texcoordCount = texcoordList.size();
   texcoords = new fvec2[texcoordCount];
   for (i = 0; i < (unsigned int)texcoordCount; i++) {
-    memcpy (texcoords[i], texcoordList[i].data(), sizeof(fvec2));
+    texcoords[i] = texcoordList[i];
   }
 
   faceSize = _faceCount;
@@ -416,7 +416,7 @@ void MeshObstacle::finalize()
   size[1] = (extents.maxs[1] - extents.mins[1]) / 2.0f;
   size[2] = (extents.maxs[2] - extents.mins[2]);
   angle = 0.0f;
-  ZFlip = false;
+  zFlip = false;
 
   return;
 }

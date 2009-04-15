@@ -373,16 +373,16 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
   // NOTE: it should be OK to use the faces while building
 
   fvec3 pos;
-  pos[0] = 0.5f * (exts.maxs[0] + exts.mins[0]);
-  pos[1] = 0.5f * (exts.maxs[1] + exts.mins[1]);
-  pos[2] = exts.mins[2];
+  pos.x = 0.5f * (exts.maxs.x + exts.mins.x);
+  pos.y = 0.5f * (exts.maxs.y + exts.mins.y);
+  pos.z = exts.mins.z;
   fvec3 size;
-  size[0] = 0.5f * (exts.maxs[0] - exts.mins[0]);
-  size[1] = 0.5f * (exts.maxs[1] - exts.mins[1]);
-  size[2] = (exts.maxs[2] - exts.mins[2]);
+  size.x = 0.5f * (exts.maxs.x - exts.mins.x);
+  size.y = 0.5f * (exts.maxs.y - exts.mins.y);
+  size.z = (exts.maxs.z - exts.mins.z);
 
   for (int i = 0; i < faceCount; i++) {
-    if (faces[i]->inBox(pos, 0.0f, size[0], size[1], size[2])) {
+    if (faces[i]->inBox(pos, 0.0f, size.x, size.y, size.z)) {
       return true;
     }
   }

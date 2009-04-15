@@ -51,7 +51,7 @@ void			ViewFrustum::executeView() const
 void			ViewFrustum::executeOrientation() const
 {
   glMultMatrixf(viewMatrix);
-  glTranslatef(eye[0], eye[1], eye[2]);
+  glTranslatef(eye.x, eye.y, eye.z);
 }
 
 void			ViewFrustum::executeBillboard() const

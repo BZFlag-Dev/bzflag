@@ -1461,7 +1461,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       d = hypotf(receiverRingSize, pos[2]);
       I = B / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d;
-      color[3] = I;
+      color.a = I;
       glColor4fv(color);
       for (j = 0; j <= receiverSlices; j++) {
 	glVertex2f(receiverRingSize * angle[j][0],
@@ -1491,10 +1491,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
       glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {
-	  color[3] = innerAlpha;
+	  color.a = innerAlpha;
 	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
-	  color[3] = outerAlpha;
+	  color.a = outerAlpha;
 	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
