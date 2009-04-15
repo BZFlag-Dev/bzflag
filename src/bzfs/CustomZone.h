@@ -46,8 +46,8 @@ class CustomZone : public WorldFileLocation
     const ZoneFlagMap& getZoneFlagMap() const;
 
     float getArea() const;
-    void getRandomPoint(float *pt) const;
-    float getDistToPoint (const float *pos) const;
+    void getRandomPoint(fvec3& pt) const;
+    float getDistToPoint(const fvec3& pos) const;
 
   public:
     static const std::string& getFlagIdQualifier(int flagId);
@@ -85,9 +85,9 @@ inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
 
 inline float CustomZone::getArea() const
 {
-  float x = (size[0] >= 1.0f) ? size[0] : 1.0f;
-  float y = (size[1] >= 1.0f) ? size[1] : 1.0f;
-  float z = (size[2] >= 1.0f) ? size[2] : 1.0f;
+  const float x = (size.x >= 1.0f) ? size.x : 1.0f;
+  const float y = (size.y >= 1.0f) ? size.y : 1.0f;
+  const float z = (size.z >= 1.0f) ? size.z : 1.0f;
   return (x * y * z);
 }
 

@@ -131,7 +131,7 @@ bool OccluderManager::occludePeek(const Extents& exts)
 void OccluderManager::update(const Frustum* frustum)
 {
 //  const float* e = frustum->getEye();
-//  printf("Eye = %f, %f, %f\n", e[0], e[1], e[2]);
+//  printf("Eye = %s\n", e.tostring().c_str());
 
   for (int i = 0; i < activeOccluders; i++) {
     if (!occluders[i]->makePlanes(frustum)) {
@@ -301,10 +301,7 @@ Occluder::Occluder(const SceneNode* node)
 
   // counter-clockwise order as viewed from the front face
   for (int i = 0; i < vertexCount; i++) {
-    const float* vertex = node->getVertex(i);
-    vertices[i][0] = vertex[0];
-    vertices[i][1] = vertex[1];
-    vertices[i][2] = vertex[2];
+    vertices[i] = node->getVertex(i);
   }
 
   return;

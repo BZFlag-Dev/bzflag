@@ -91,8 +91,8 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
   refCount	 = 1;
 #endif
 
-  currentPos[0] = currentPos[1] = currentPos[2] = 0;
-  curentVel[0] = curentVel[1] = curentVel[2] = 0;
+  currentPos = fvec3(0.0f, 0.0f, 0.0f);
+  currentVel = fvec3(0.0f, 0.0f, 0.0f);
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
@@ -136,8 +136,8 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   refCount	 = 1;
 #endif
 
-  currentPos[0] = currentPos[1] = currentPos[2] = 0;
-  curentVel[0] = curentVel[1] = curentVel[2] = 0;
+  currentPos = fvec3(0.0f, 0.0f, 0.0f);
+  currentVel = fvec3(0.0f, 0.0f, 0.0f);
 }
 
 GameKeeper::Player::~Player()
@@ -488,8 +488,8 @@ void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
   float delta = static_cast<float>(time - stateTimeStamp);
 
   currentPos = lastState.pos + (delta * lastState.velocity);
-  if (currentPos[2] < 0.0f) {
-    currentPos[2] = 0.0f; // burrow depth maybe?
+  if (currentPos.z < 0.0f) {
+    currentPos.z = 0.0f; // burrow depth maybe?
   }
 
   currentRot = lastState.azimuth + (lastState.angVel * delta);
@@ -673,7 +673,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   else if (flagType == Flags::Thief)
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-  else if ((flagType == Flags::Burrow) && (lastState.pos[2] < 0.0f))
+  else if ((flagType == Flags::Burrow) && (lastState.pos.z < 0.0f))
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
   else if ((flagType == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
     fracOfMaxSpeed = 0.0f;

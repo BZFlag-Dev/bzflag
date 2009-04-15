@@ -44,7 +44,7 @@ const char* CustomArc::sideNames[MaterialCount] = {
 CustomArc::CustomArc(bool box)
 {
   divisions = 16;
-  size[0] = size[1] = size[2] = 10.0f;
+  size = fvec3(10.0f, 10.0f, 10.0f);
   ratio = 1.0f;
   angle = 360.0f;
   texsize[0] = texsize[1] = texsize[2] = texsize[3] = -8.0f;
@@ -56,8 +56,8 @@ CustomArc::CustomArc(bool box)
   if (boxStyle) {
     divisions = 4;
     useNormals = false;
-    size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+    size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   }
 
   // setup the default textures
@@ -158,9 +158,9 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     xform.addShift(pos);
     xform.append(transform);
     fvec3 newSize;
-    newSize[0] = (float)(size[0] * M_SQRT2);
-    newSize[1] = (float)(size[1] * M_SQRT2);
-    newSize[2] = size[2];
+    newSize.x = (float)(size.x * M_SQRT2);
+    newSize.y = (float)(size.y * M_SQRT2);
+    newSize.z = size.z;
     arc = new ArcObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle, ratio,
 			  texsize, useNormals, divisions, mats, phydrv,
 			  smoothBounce, driveThrough, shootThrough, ricochet);

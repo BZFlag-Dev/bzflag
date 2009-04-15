@@ -54,17 +54,17 @@ private:
 
 inline float SpawnPosition::getX() const
 {
-  return pos[0];
+  return pos.x;
 }
 
 inline float SpawnPosition::getY() const
 {
-  return pos[1];
+  return pos.y;
 }
 
 inline float SpawnPosition::getZ() const
 {
-  return pos[2];
+  return pos.z;
 }
 
 /** returns the rotational orientation of this spawn position, from

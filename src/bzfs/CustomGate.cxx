@@ -25,10 +25,10 @@
 CustomGate::CustomGate(const char* _telename)
 {
   telename = _telename;
-  size[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
-  size[1] = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
-  size[2] = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
-  border = size[0] * 2.0f;
+  size.x = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
+  size.y = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
+  size.z = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+  border = size.x * 2.0f;
   horizontal = false;
 }
 
@@ -49,7 +49,7 @@ void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 {
   Teleporter* tele =
     new Teleporter(pos, rotation,
-		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+		   fabsf(size.x), fabsf(size.y), fabsf(size.z),
 		   border, horizontal, driveThrough, shootThrough, ricochet);
 
   if (!telename.size() && name.size())

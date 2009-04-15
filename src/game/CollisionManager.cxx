@@ -193,12 +193,12 @@ const ObsList* CollisionManager::cylinderTest(const fvec3& pos,
   }
 
   fvec3 tmpMins, tmpMaxs;
-  tmpMins[0] = pos[0] - radius;
-  tmpMins[1] = pos[1] - radius;
-  tmpMins[2] = pos[2];
-  tmpMaxs[0] = pos[0] + radius;
-  tmpMaxs[1] = pos[1] + radius;
-  tmpMaxs[2] = pos[2] + height;
+  tmpMins.x = pos.x - radius;
+  tmpMins.y = pos.y - radius;
+  tmpMins.z = pos.z;
+  tmpMaxs.x = pos.x + radius;
+  tmpMaxs.y = pos.y + radius;
+  tmpMaxs.z = pos.z + height;
 
   FullPad.count = 0;
 
@@ -472,7 +472,7 @@ void CollisionManager::setExtents(ObsList *list)
       gridExtents.maxs[i] = gridExtents.maxs[i] + adjust;
     }
   }
-  gridExtents.maxs[2] = gridExtents.mins[2] + width;
+  gridExtents.maxs.z = gridExtents.mins.z + width;
 
   return;
 }
@@ -517,17 +517,17 @@ ColDetNode::ColDetNode(unsigned char _depth,
 
   // setup some test parameters
   fvec3 pos;
-  pos[0] = 0.5f * (testExts.maxs[0] + testExts.mins[0]);
-  pos[1] = 0.5f * (testExts.maxs[1] + testExts.mins[1]);
-  pos[2] = testExts.mins[2];
+  pos.x = 0.5f * (testExts.maxs.x + testExts.mins.x);
+  pos.y = 0.5f * (testExts.maxs.y + testExts.mins.y);
+  pos.z = testExts.mins.z;
   fvec3 size;
-  size[0] = 0.5f * (testExts.maxs[0] - testExts.mins[0]);
-  size[1] = 0.5f * (testExts.maxs[1] - testExts.mins[1]);
-  size[2] = (testExts.maxs[2] - testExts.mins[2]);
+  size.x = 0.5f * (testExts.maxs.x - testExts.mins.x);
+  size.y = 0.5f * (testExts.maxs.y - testExts.mins.y);
+  size.z = (testExts.maxs.z - testExts.mins.z);
   fvec3 point;
-  point[0] = pos[0];
-  point[1] = pos[1];
-  point[2] = 0.5f * (testExts.maxs[2] + testExts.mins[2]);
+  point.x = pos.x;
+  point.y = pos.y;
+  point.z = 0.5f * (testExts.maxs.z + testExts.mins.z);
 
   // find all of the intersecting nodes
   //
@@ -544,7 +544,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
     const char* obsType = obs->getType();
     if (testExts.touches(obs->getExtents())) {
       if (obsType != meshType) {
-	if (obs->inBox(pos, 0.0f, size[0], size[1], size[2])) {
+	if (obs->inBox(pos, 0.0f, size.x, size.y, size.z)) {
 	  // add this obstacle to the list
 	  fullList.list[fullList.count] = obs;
 	  fullList.count++;
@@ -718,9 +718,9 @@ void ColDetNode::boxTest(const fvec3& pos, float angle,
   int i;
 
 /* FIXME
-  if ((_maxs[0] < mins[0]) || (_mins[0] > maxs[0]) ||
-      (_maxs[1] < mins[1]) || (_mins[1] > maxs[1]) ||
-      (_maxs[2] < mins[2]) || (_mins[2] > maxs[2])) {
+  if ((_maxs.x < mins.x) || (_mins.x > maxs.x) ||
+      (_maxs.y < mins.y) || (_mins.y > maxs.y) ||
+      (_maxs.z < mins.z) || (_mins.z > maxs.z)) {
     return;
   }
 */
@@ -874,7 +874,7 @@ inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB)
 {
   const Extents& eA = obsA->getExtents();
   const Extents& eB = obsB->getExtents();
-  if (eA.maxs[2] > eB.maxs[2]) {
+  if (eA.maxs.z > eB.maxs.z) {
     return -1;
   } else {
     return +1;
@@ -947,7 +947,7 @@ int compareHitNormal(const void* a, const void* b)
 
   // highest Up Plane comes first
   if (faceA->isUpPlane() && faceB->isUpPlane()) {
-    if (faceA->getPosition()[2] > faceB->getPosition()[2]) {
+    if (faceA->getPosition().z > faceB->getPosition().z) {
       return -1;
     } else {
       return +1;

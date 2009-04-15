@@ -508,7 +508,7 @@ void BoltSceneNode::BoltRenderNode::render()
 
       if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
       myColor4fv(flareColor);
-      if (!BZDBCache::blend) myStipple(flareColor[3]);
+      if (!BZDBCache::blend) myStipple(flareColor.a);
       glBegin(GL_QUADS);
       for (int i = 0; i < numFlares; i++) {
 	// pick random direction in 3-space.  picking a random theta with

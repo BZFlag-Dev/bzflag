@@ -477,11 +477,12 @@ public:
     buf = nboUnpackFVec3(buf, pos);
 
     const float halfSize = BZDBCache::worldSize * 0.5f;
-    if (fabsf(pos[0]) > halfSize || fabsf(pos[1]) > halfSize) {
+    if ((fabsf(pos.x) > halfSize) ||
+        (fabsf(pos.y) > halfSize)) {
       // client may be cheating
       const PlayerId id = player->getIndex();
-      logDebugMessage(1,"Player %s [%d] dropped flag out of bounds to %f %f %f\n",
-		      player->player.getCallSign(), id, pos[0], pos[1], pos[2]);
+      logDebugMessage(1, "Player %s [%d] dropped flag out of bounds to %f %f %f\n",
+		      player->player.getCallSign(), id, pos.x, pos.y, pos.z);
       sendMessage(ServerPlayer, id, "Autokick: Flag dropped out of bounds.");
     }
 
@@ -602,9 +603,9 @@ public:
     // ask the API if it wants to modify this shot
     bz_ShotFiredEventData_V1 shotEvent;
 
-    shotEvent.pos[0] = firingInfo.shot.pos[0];
-    shotEvent.pos[1] = firingInfo.shot.pos[1];
-    shotEvent.pos[2] = firingInfo.shot.pos[2];
+    shotEvent.pos[0] = firingInfo.shot.pos.x;
+    shotEvent.pos[1] = firingInfo.shot.pos.y;
+    shotEvent.pos[2] = firingInfo.shot.pos.z;
     shotEvent.playerID = (int)player->getIndex();
 
     shotEvent.type = firingInfo.flagType->flagAbbv;

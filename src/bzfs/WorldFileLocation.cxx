@@ -29,10 +29,10 @@
 
 
 WorldFileLocation::WorldFileLocation()
+: pos(0.0f, 0.0f, 0.0f)
+, size(1.0f, 1.0f, 1.0f)
+, rotation(0.0f)
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  size[0] = size[1] = size[2] = 1.0f;
-  rotation = 0.0f;
 }
 
 
@@ -43,12 +43,12 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
   //
   if ((strcasecmp(cmd, "pos") == 0) ||
       (strcasecmp(cmd, "position") == 0)) {
-    if (!(input >> pos[0] >> pos[1] >> pos[2])) {
+    if (!(input >> pos.x >> pos.y >> pos.z)) {
       return false;
     }
   }
   else if (strcasecmp(cmd, "size") == 0) {
-    if (!(input >> size[0] >> size[1] >> size[2])) {
+    if (!(input >> size.x >> size.y >> size.z)) {
       return false;
     }
   }

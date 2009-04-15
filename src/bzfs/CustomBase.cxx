@@ -24,9 +24,9 @@
 
 CustomBase::CustomBase()
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
+  pos = fvec3(0.0f, 0.0f, 0.0f);
   rotation = 0.0f;
-  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+  size.x = size.y = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   color = 0;
 
   triggerWorldWep = false;

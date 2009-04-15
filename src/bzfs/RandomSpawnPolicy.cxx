@@ -60,7 +60,7 @@ void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
 
     TeamBases &teamBases = bases[t];
     const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
-    base.getRandomPosition(pos[0], pos[1], pos[2]);
+    base.getRandomPosition(pos.x, pos.y, pos.z);
     playerData->player.setRestartOnBase(false);
 
   } else {
@@ -80,9 +80,9 @@ void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getPlayerSpawnPoint(&pi, pos)) {
-	pos[0] = ((float)bzfrand() - 0.5f) * size;
-	pos[1] = ((float)bzfrand() - 0.5f) * size;
-	pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
+	pos.x = ((float)bzfrand() - 0.5f) * size;
+	pos.y = ((float)bzfrand() - 0.5f) * size;
+	pos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 

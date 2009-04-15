@@ -103,9 +103,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     avatar = NULL;
 
   // setup the dimension properties
-  dimensions[0] = 0.5f * BZDBCache::tankLength;
-  dimensions[1] = 0.5f * BZDBCache::tankWidth;
-  dimensions[2] = BZDBCache::tankHeight;
+  dimensions.x = 0.5f * BZDBCache::tankLength;
+  dimensions.y = 0.5f * BZDBCache::tankWidth;
+  dimensions.z = BZDBCache::tankHeight;
 
   for (int i = 0; i < 3; i++) {
     dimensionsRate[i] = 0.0f;
@@ -213,7 +213,7 @@ float Player::getRadius() const
   // NOTE: this encompasses everything but Narrow
   //       the Obese, Tiny, and Thief flags adjust
   //       the radius, but Narrow does not.
-  return (dimensionsScale[0] * BZDBCache::tankRadius);
+  return (dimensionsScale.x * BZDBCache::tankRadius);
 }
 
 float Player::getMaxSpeed ( void ) const
@@ -229,30 +229,30 @@ float Player::getMaxSpeed ( void ) const
 }
 
 
-void Player::getMuzzle(float* m) const
+void Player::getMuzzle(fvec3& m) const
 {
-  // NOTE: like getRadius(), we only use dimensionsScale[0].
+  // NOTE: like getRadius(), we only use dimensionsScale.x.
   //       as well, we do not use BZDB_MUZZLEFRONT, but the
   //       0.1f value listed in global.cxx is added on to the
   //       scaled version of tankRadius.
-  float front = (dimensionsScale[0] * BZDBCache::tankRadius);
-  if (dimensionsRate[0] > 0.0f)
-    front = front + (dimensionsRate[0] * 0.1f);
+  float front = (dimensionsScale.x * BZDBCache::tankRadius);
+  if (dimensionsRate.x > 0.0f)
+    front = front + (dimensionsRate.x * 0.1f);
 
   front = front + 0.1f;
 
-  m[0] = state.pos[0] + (front * forward[0]);
-  m[1] = state.pos[1] + (front * forward[1]);
+  m.x = state.pos.x + (front * forward.x);
+  m.y = state.pos.y + (front * forward.y);
 
   const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  m[2] = state.pos[2] + (height * dimensionsScale[2]);
+  m.z = state.pos.z + (height * dimensionsScale.z);
   return;
 }
 
 
 float Player::getMuzzleHeight() const
 {
-  return (dimensionsScale[2] * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+  return (dimensionsScale.z * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
 }
 
 
@@ -262,16 +262,12 @@ void Player::move(const fvec3& _pos, float _azimuth)
   float currentTime = (float)TimeKeeper::getCurrent().getSeconds();
   if ( state.lastUpdateTime >= 0 ) {
     float delta = currentTime - state.lastUpdateTime;
-    state.apparentVelocity[0] = (_pos[0]-state.pos[0])/delta;
-    state.apparentVelocity[1] = (_pos[1]-state.pos[1])/delta;
-    state.apparentVelocity[2] = (_pos[2]-state.pos[2])/delta;
+    state.apparentVelocity = (_pos - state.pos) / delta;
   }
   state.lastUpdateTime = currentTime;
 
   // assumes _forward is normalized
-  state.pos[0] = _pos[0];
-  state.pos[1] = _pos[1];
-  state.pos[2] = _pos[2];
+  state.pos = _pos;
   state.azimuth = _azimuth;
 
   // limit angle
@@ -281,9 +277,9 @@ void Player::move(const fvec3& _pos, float _azimuth)
     state.azimuth = fmodf(state.azimuth, (float)(2.0 * M_PI));
 
   // update forward vector (always in horizontal plane)
-  forward[0] = cosf(state.azimuth);
-  forward[1] = sinf(state.azimuth);
-  forward[2] = 0.0f;
+  forward.x = cosf(state.azimuth);
+  forward.y = sinf(state.azimuth);
+  forward.z = 0.0f;
 
   // compute teleporter proximity
   if (World::getWorld())
@@ -293,9 +289,7 @@ void Player::move(const fvec3& _pos, float _azimuth)
 
 void Player::setVelocity(const fvec3& _velocity)
 {
-  state.velocity[0] = _velocity[0];
-  state.velocity[1] = _velocity[1];
-  state.velocity[2] = _velocity[2];
+  state.velocity = _velocity;
 }
 
 
@@ -326,9 +320,8 @@ void Player::setRelativeMotion()
     return;    // no adjustments while falling
 
   // set 'relativeSpeed' and 'relativeAngVel'
-  float relativeVel[2];
+  fvec2 relativeVel;
   Player::calcRelativeMotion(relativeVel, relativeSpeed, relativeAngVel);
-
   return;
 }
 
@@ -347,10 +340,10 @@ void Player::setUserAngVel(float angVel)
 }
 
 
-void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
+void Player::calcRelativeMotion(fvec2& vel, float& speed, float& angVel)
 {
-  vel[0] = state.velocity[0];
-  vel[1] = state.velocity[1];
+  vel.x = state.velocity.x;
+  vel.y = state.velocity.y;
 
   angVel = state.angVel;
 
@@ -361,15 +354,15 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
     const fvec2& ap = phydrv->getAngularPos();
 
     // adjust for driver velocity
-    vel[0] -= v[0];
-    vel[1] -= v[1];
+    vel.x -= v.x;
+    vel.y -= v.y;
 
     // adjust for driver angular velocity
     if (av != 0.0f) {
-      const float dx = state.pos[0] - ap[0];
-      const float dy = state.pos[1] - ap[1];
-      vel[0] += av * dy;
-      vel[1] -= av * dx;
+      const float dx = state.pos.x - ap.x;
+      const float dy = state.pos.y - ap.y;
+      vel.x += av * dy;
+      vel.y -= av * dx;
       angVel = state.angVel - av;
     }
   }
@@ -377,7 +370,7 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
   // speed relative to the tank's direction
   // (could use forward[] instead of re-doing the trig, but this is
   //  used in the setDeadReckoning(), when forward[] is not yet set)
-  speed = (vel[0] * cosf(state.azimuth)) + (vel[1] * sinf(state.azimuth));
+  speed = (vel.x * cosf(state.azimuth)) + (vel.y * sinf(state.azimuth));
 
   return;
 }
@@ -470,27 +463,27 @@ void Player::updateTrackMarks()
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
       fvec3 markPos;
-      markPos[2] = state.pos[2];
+      markPos.z = state.pos.z;
       // FIXME - again, this should be pulled for TankGeometryMgr
       const float fullLength = 6.0f;
       const float treadHeight = 1.2f;
       const float dist =
-	dimensions[0] * ((fullLength - treadHeight) / fullLength);
+	dimensions.x * ((fullLength - treadHeight) / fullLength);
 
       if (relativeSpeed > +minSpeed) {
 	// draw the mark at the back of the treads
-	markPos[0] = state.pos[0] - (forward[0] * dist);
-	markPos[1] = state.pos[1] - (forward[1] * dist);
+	markPos.x = state.pos.x - (forward.x * dist);
+	markPos.y = state.pos.y - (forward.y * dist);
       } else if (relativeSpeed < -minSpeed) {
 	// draw the mark at the front of the treads
-	markPos[0] = state.pos[0] + (forward[0] * dist);
-	markPos[1] = state.pos[1] + (forward[1] * dist);
+	markPos.x = state.pos.x + (forward.x * dist);
+	markPos.y = state.pos.y + (forward.y * dist);
       } else {
 	drawMark = false;
       }
 
       if (drawMark) {
-	TrackMarks::addMark(markPos, dimensionsScale[1],
+	TrackMarks::addMark(markPos, dimensionsScale.y,
 			    state.azimuth, state.phydrv);
 	lastTrackDraw = TimeKeeper::getCurrent();
       }
@@ -531,9 +524,9 @@ void Player::updateDimensions(float dt, bool local)
   }
 
   // set the actual dimensions based on the scale
-  dimensions[0] = dimensionsScale[0] * (0.5f * BZDBCache::tankLength);
-  dimensions[1] = dimensionsScale[1] * (0.5f * BZDBCache::tankWidth);
-  dimensions[2] = dimensionsScale[2] * BZDBCache::tankHeight;
+  dimensions.x = dimensionsScale.x * (0.5f * BZDBCache::tankLength);
+  dimensions.y = dimensionsScale.y * (0.5f * BZDBCache::tankWidth);
+  dimensions.z = dimensionsScale.z * BZDBCache::tankHeight;
 
   // do not resize if it will cause a collision
   // only checked for the local player, remote is computationally expensive
@@ -548,9 +541,7 @@ void Player::updateDimensions(float dt, bool local)
   }
 
   // check if the dimensions are at a steady state
-  if ((dimensionsScale[0] == dimensionsTarget[0]) &&
-      (dimensionsScale[1] == dimensionsTarget[1]) &&
-      (dimensionsScale[2] == dimensionsTarget[2])) {
+  if (dimensionsScale == dimensionsTarget) {
     useDimensions = false;
   } else {
     useDimensions = true;
@@ -573,14 +564,14 @@ bool Player::hitObstacleResizing()
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   for (unsigned int i = 0; i < walls.size(); i++) {
     const WallObstacle* wall = (const WallObstacle*) walls[i];
-    if (wall->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+    if (wall->inBox(getPosition(), getAngle(), dims.x, dims.y, dims.z)) {
       return true;
     }
   }
 
   // check everything else
   const ObsList* olist =
-    COLLISIONMGR.boxTest(getPosition(), getAngle(), dims[0], dims[1], dims[2]);
+    COLLISIONMGR.boxTest(getPosition(), getAngle(), dims.x, dims.y, dims.z);
   if (!olist) {
     return false;
   }
@@ -588,9 +579,9 @@ bool Player::hitObstacleResizing()
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const bool onTop = obs->isFlatTop() &&
-      ((obs->getPosition()[2] + obs->getHeight()) <= getPosition()[2]);
+      ((obs->getPosition().z + obs->getHeight()) <= getPosition().z);
     if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs) == 0 && !onTop &&
-	obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2])) {
+	obs->inBox(getPosition(), getAngle(), dims.x, dims.y, dims.z)) {
       return true;
     }
   }
@@ -619,12 +610,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
   bool expel;
   float timeStep = (float)dt;
 
-  newPos[0] = startPos[0];
-  newPos[1] = startPos[1];
-  newPos[2] = startPos[2];
-  newVelocity[0] = startVelocity[0];
-  newVelocity[1] = startVelocity[1];
-  newVelocity[2] = startVelocity[2];
+  newPos = startPos;
+  newVelocity = startVelocity;
   newAngVel = state.angVel;
   newAzimuth = startAzimuth;
   hitWall = false;
@@ -636,23 +623,19 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     fvec3 tmpPos;
 	float tmpAzimuth;
     tmpAzimuth = newAzimuth;
-    tmpPos[0] = newPos[0];
-    tmpPos[1] = newPos[1];
-    tmpPos[2] = newPos[2];
+    tmpPos = newPos;
 
     // get position at end of time step
     newAzimuth = tmpAzimuth + timeStep * newAngVel;
-    newPos[0] = tmpPos[0] + timeStep * newVelocity[0];
-    newPos[1] = tmpPos[1] + timeStep * newVelocity[1];
-    newPos[2] = tmpPos[2] + timeStep * newVelocity[2];
-    if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
+    newPos = tmpPos + (timeStep * newVelocity);
+    if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
       // Hit lower limit, stop falling
-      newPos[2] = groundLimit;
+      newPos.z = groundLimit;
 	  if ((state.status & PlayerState::Exploding) != 0) {
 	    // tank pieces reach the ground, friction
 	    // stop them, & mainly player view
-	    newPos[0] = tmpPos[0];
-	    newPos[1] = tmpPos[1];
+	    newPos.x = tmpPos.x;
+	    newPos.y = tmpPos.y;
       }
     }
 
@@ -663,13 +646,13 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     if (!obstacle || !expel)
       break;
 
-    float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
+    float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
 	if (((inputStatus & PlayerState::Falling) == 0) && obstacle->isFlatTop() &&
-	(obstacleTop != tmpPos[2]) &&
-	(obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
-      newPos[0] = startPos[0];
-      newPos[1] = startPos[1];
-      newPos[2] = obstacleTop;
+	(obstacleTop != tmpPos.z) &&
+	(obstacleTop < (tmpPos.z + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+      newPos.x = startPos.x;
+      newPos.y = startPos.y;
+      newPos.z = obstacleTop;
 
       // drive over bumps
       const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
@@ -678,8 +661,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       if (!bumpObstacle) {
 	    move(newPos, getAngle());
 	    const float speedFactor = BZDB.eval("_bumpSpeedFactor");
-	    newPos[0] += newVelocity[0] * ((float)dt * speedFactor);
-	    newPos[1] += newVelocity[1] * ((float)dt * speedFactor);
+	    newPos.x += newVelocity.x * ((float)dt * speedFactor);
+	    newPos.y += newVelocity.y * ((float)dt * speedFactor);
 	    break;
       }
     }
@@ -690,9 +673,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     fvec3 hitPos;
 	float hitAzimuth;
     hitAzimuth = newAzimuth;
-    hitPos[0] = newPos[0];
-    hitPos[1] = newPos[1];
-    hitPos[2] = newPos[2];
+    hitPos = newPos;
 
     // find the latest time before the collision
     float searchTime = 0.0f, searchStep = 0.5f * timeStep;
@@ -701,11 +682,9 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       // get intermediate position
       const float t = searchTime + searchStep;
       newAzimuth = tmpAzimuth + (t * newAngVel);
-      newPos[0] = tmpPos[0] + (t * newVelocity[0]);
-      newPos[1] = tmpPos[1] + (t * newVelocity[1]);
-      newPos[2] = tmpPos[2] + (t * newVelocity[2]);
-      if ((newPos[2] < groundLimit) && (newVelocity[2] < 0)) {
-	    newPos[2] = groundLimit;
+      newPos = tmpPos + (t * newVelocity);
+      if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
+	    newPos.z = groundLimit;
       }
 
       // see if we hit anything
@@ -723,19 +702,15 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
 
 	    expel = searchExpel;
 	    hitAzimuth = newAzimuth;
-	    hitPos[0] = newPos[0];
-	    hitPos[1] = newPos[1];
-	    hitPos[2] = newPos[2];
+	    hitPos = newPos;
       }
     }
 
     // get position just before impact
     newAzimuth = tmpAzimuth + (searchTime * newAngVel);
-    newPos[0] = tmpPos[0] + (searchTime * newVelocity[0]);
-    newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
-    newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
-    if (startPos[2] < groundLimit) {
-      newVelocity[2] = std::max(newVelocity[2], -startPos[2] / 2.0f + 0.5f);
+    newPos = tmpPos + (searchTime * newVelocity);
+    if (startPos.z < groundLimit) {
+      newVelocity.z = std::max(newVelocity.z, -startPos.z / 2.0f + 0.5f);
     }
 
 
@@ -751,27 +726,27 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     }
 
     // check for being on a building
-    if ((newPos[2] > 0.0f) && (normal[2] > 0.001f)) {
-		if (((state.status & PlayerState::DeadStatus) == 0) &&
-			((state.status & PlayerState::Exploding) == 0) && expel) {
-	    lastObstacle = obstacle;
+    if ((newPos.z > 0.0f) && (normal.z > 0.001f)) {
+      if (((state.status & PlayerState::DeadStatus) == 0) &&
+          ((state.status & PlayerState::Exploding) == 0) && expel) {
+        lastObstacle = obstacle;
       }
-      newVelocity[2] = 0.0f;
+      newVelocity.z = 0.0f;
     } else {
       // get component of velocity in normal direction (in horizontal plane)
-      float mag = (normal[0] * newVelocity[0]) +
-		  (normal[1] * newVelocity[1]);
+      float mag = (normal.x * newVelocity.x) +
+		  (normal.y * newVelocity.y);
 
       // handle upward normal component to prevent an upward force
-      if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE)) {
+      if (!NEAR_ZERO(normal.z, ZERO_TOLERANCE)) {
 	    // if going down then stop falling
-	    if (newVelocity[2] < 0.0f && newVelocity[2] -
-	        (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f) {
-	      newVelocity[2] = 0.0f;
+	    if (newVelocity.z < 0.0f && newVelocity.z -
+	        (mag + normal.z * newVelocity.z) * normal.z > 0.0f) {
+	      newVelocity.z = 0.0f;
 	    }
 
 	    // normalize force magnitude in horizontal plane
-	    float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
+	    float horNormal = (normal.x * normal.x) + (normal.y * normal.y);
 	    if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
 	      mag /= horNormal;
 	    }
@@ -782,11 +757,11 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       // amount to prevent a spurious collision against the same
       // obstacle.
       if (mag < 0.0f) {
-	    newVelocity[0] -= mag * normal[0];
-	    newVelocity[1] -= mag * normal[1];
+	    newVelocity.x -= mag * normal.x;
+	    newVelocity.y -= mag * normal.y;
 	    if (!(getStatus() & PlayerState::BackedOff)) {
-	      newPos[0] -= TinyDistance * mag * normal[0];
-	      newPos[1] -= TinyDistance * mag * normal[1];
+	      newPos.x -= TinyDistance * mag * normal.x;
+	      newPos.y -= TinyDistance * mag * normal.y;
 	      setStatus(getStatus() | PlayerState::BackedOff);
 	    }
       }
@@ -798,12 +773,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     }
   }
 
-  velocity[0] = newVelocity[0];
-  velocity[1] = newVelocity[1];
-  velocity[2] = newVelocity[2];
-  position[0] = newPos[0];
-  position[1] = newPos[1];
-  position[2] = newPos[2];
+  velocity = newVelocity;
+  position = newPos;
   *azimuth = newAzimuth;
 
   return hitWall;
@@ -899,8 +870,8 @@ void Player::updateTreads(float dt)
   }
 
   // setup the linear component
-  if (dimensionsScale[0] > 1.0e-6f) {
-    speedFactor = speedFactor / dimensionsScale[0];
+  if (dimensionsScale.x > 1.0e-6f) {
+    speedFactor = speedFactor / dimensionsScale.x;
   } else {
     speedFactor = speedFactor * 1.0e6f;
   }
@@ -909,8 +880,8 @@ void Player::updateTreads(float dt)
   const float angularScale = 4.0f; // spin factor (at 1.0, the edges line up)
   angularFactor *= angularScale;
   const float halfWidth = 0.5f * BZDBCache::tankWidth;
-  // not using dimensions[1], because it may be set to 0.001 by a Narrow flag
-  angularFactor *= dimensionsScale[0] * halfWidth;
+  // not using dimensions.y, because it may be set to 0.001 by a Narrow flag
+  angularFactor *= dimensionsScale.x * halfWidth;
 
   const float leftOff = dt * (speedFactor - angularFactor);
   const float rightOff = dt * (speedFactor + angularFactor);
@@ -963,26 +934,24 @@ void Player::updateFlagEffect(FlagType* effectFlag)
   }
 
   // set the dimension targets
-  dimensionsTarget[0] = 1.0f;
-  dimensionsTarget[1] = 1.0f;
-  dimensionsTarget[2] = 1.0f;
+  dimensionsTarget = fvec3(1.0f, 1.0f, 1.0f);
   if (effectFlag == Flags::Obesity) {
     const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-    dimensionsTarget[0] = factor;
-    dimensionsTarget[1] = factor;
+    dimensionsTarget.x = factor;
+    dimensionsTarget.y = factor;
   }
   else if (effectFlag == Flags::Tiny) {
     const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-    dimensionsTarget[0] = factor;
-    dimensionsTarget[1] = factor;
+    dimensionsTarget.x = factor;
+    dimensionsTarget.y = factor;
   }
   else if (effectFlag == Flags::Thief) {
     const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-    dimensionsTarget[0] = factor;
-    dimensionsTarget[1] = factor;
+    dimensionsTarget.x = factor;
+    dimensionsTarget.y = factor;
   }
   else if (effectFlag == Flags::Narrow) {
-    dimensionsTarget[1] = 0.001f;
+    dimensionsTarget.y = 0.001f;
   }
 
   // set the dimension rates
@@ -1146,17 +1115,18 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     if (isCrossingWall()) {
       // get which plane to compute IDL against
       fvec4 plane;
-      const float a = atan2f(forward[1], forward[0]);
+      const float a = atan2f(forward.y, forward.x);
       const Obstacle* obstacle =
 	world->hitBuilding(state.pos, a,
-			   dimensions[0], dimensions[1],
-			   dimensions[2]);
+			   dimensions.x, dimensions.y, dimensions.z);
       if ((obstacle && obstacle->isCrossing(state.pos, a,
-					   dimensions[0], dimensions[1],
-					   dimensions[2], &plane)) ||
+					   dimensions.x,
+					   dimensions.y,
+					   dimensions.z, &plane)) ||
 	  world->crossingTeleporter(state.pos, a,
-				    dimensions[0], dimensions[1],
-				    dimensions[2], &plane)) {
+				    dimensions.x,
+				    dimensions.y,
+				    dimensions.z, &plane)) {
 	// stick in interdimensional lights node
 	if (showIDL && GfxBlockMgr::halos.notBlocked()) {
 	  avatar->moveIDL(plane);
@@ -1172,11 +1142,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	  avatar->setClippingPlane(&plane);
 	}
       }
-    } else if (getPosition()[2] < 0.0f) {
+    } else if (getPosition().z < 0.0f) {
       // this should only happen with Burrow flags
       avatar->setClippingPlane(&groundPlane);
     } // isCrossingWall()
-  } else if (isExploding() && (state.pos[2] > ZERO_TOLERANCE)) {
+  } else if (isExploding() && (state.pos.z > ZERO_TOLERANCE)) {
     // isAlive()
     float t = float((TimeKeeper::getTick() - explodeTime) /
 		    BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
@@ -1206,7 +1176,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   }
 
   if (isAlive() && (isPaused() || isNotResponding())) {
-    avatar->movePause(state.pos, 1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
+    avatar->movePause(state.pos, 1.5f * BZDBCache::tankRadius * dimensionsScale.x);
 
     std::vector<SceneNode*> nodeList = avatar->getPauseSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ ) {
@@ -1255,10 +1225,10 @@ void Player::setLandingSpeed(float velocity)
 
   // don't update if the tank is still recovering
   // from a spawn effect or a larger fall.
-  if (newZscale < dimensionsScale[2]) {
-    dimensionsScale[2] = newZscale;
+  if (newZscale < dimensionsScale.z) {
+    dimensionsScale.z = newZscale;
     // use a fixed decompression rate
-    dimensionsRate[2] = 1.0f / squishTime;
+    dimensionsRate.z = 1.0f / squishTime;
   }
 
   return;
@@ -1335,63 +1305,59 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 
   if (inputStatus & PlayerState::Paused) {
     // don't move when paused
-    predictedPos[0] = inputPos[0];
-    predictedPos[1] = inputPos[1];
-    predictedPos[2] = inputPos[2];
-    predictedVel[0] = 0.0f;
-    predictedVel[1] = 0.0f;
-    predictedVel[2] = 0.0f;
+    predictedPos = inputPos;
+    predictedVel = fvec3(0.0f, 0.0f, 0.0f);
   }
   else if (inputStatus & PlayerState::Falling) {
     // no control when falling
-    predictedVel[0] = inputVel[0];
-    predictedVel[1] = inputVel[1];
-    predictedPos[0] = inputPos[0] + (dt * inputVel[0]);
-    predictedPos[1] = inputPos[1] + (dt * inputVel[1]);
+    predictedVel.x = inputVel.x;
+    predictedVel.y = inputVel.y;
+    predictedPos.x = inputPos.x + (dt * inputVel.x);
+    predictedPos.y = inputPos.y + (dt * inputVel.y);
     // only turn if alive
     if (inputStatus & PlayerState::Alive) {
       predictedAzimuth += (dt * inputAngVel);
     }
     // following the parabola
-    predictedVel[2] = inputVel[2] + (BZDBCache::gravity * dt);
-    predictedPos[2] = inputPos[2] + (inputVel[2] * dt) +
+    predictedVel.z = inputVel.z + (BZDBCache::gravity * dt);
+    predictedPos.z = inputPos.z + (inputVel.z * dt) +
       (0.5f * BZDBCache::gravity * dt * dt);
   } else {
-    // velocity[2] is zero when not falling, except for Burrow flag
-    predictedVel[2] = inputVel[2];
-    predictedPos[2] = inputPos[2] + (inputVel[2] * dt);
+    // velocity.z is zero when not falling, except for Burrow flag
+    predictedVel.z = inputVel.z;
+    predictedPos.z = inputPos.z + (inputVel.z * dt);
 
     // different algorithms for tanks moving in
     // a straight line vs. turning in a circle
     if (!inputTurning) {
       // move straight
-      predictedVel[0] = inputRelVel[0];
-      predictedVel[1] = inputRelVel[1];
-      predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
-      predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
+      predictedVel.x = inputRelVel.x;
+      predictedVel.y = inputRelVel.y;
+      predictedPos.x = inputPos.x + (dt * inputRelVel.x);
+      predictedPos.y = inputPos.y + (dt * inputRelVel.y);
     } else {
       // make a sweeping arc
       const float angle = (dt * inputRelAngVel);
       predictedAzimuth += angle;
       const float cos_val = cosf(angle);
       const float sin_val = sinf(angle);
-      const float* tc = inputTurnCenter;
-      const float* tv = inputTurnVector;
-      predictedPos[0] = tc[0] + ((tv[0] * cos_val) - (tv[1] * sin_val));
-      predictedPos[1] = tc[1] + ((tv[1] * cos_val) + (tv[0] * sin_val));
-      const float* rv = inputRelVel;
-      predictedVel[0] = (rv[0] * cos_val) - (rv[1] * sin_val);
-      predictedVel[1] = (rv[1] * cos_val) + (rv[0] * sin_val);
+      const fvec2& tc = inputTurnCenter;
+      const fvec2& tv = inputTurnVector;
+      predictedPos.x = tc.x + ((tv.x * cos_val) - (tv.y * sin_val));
+      predictedPos.y = tc.y + ((tv.y * cos_val) + (tv.x * sin_val));
+      const fvec2& rv = inputRelVel;
+      predictedVel.x = (rv.x * cos_val) - (rv.y * sin_val);
+      predictedVel.y = (rv.y * cos_val) + (rv.x * sin_val);
     }
 
     // make the physics driver adjustments
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(inputPhyDrv);
     if (phydrv != NULL) {
       if (phydrv->getIsSlide()) {
-	predictedVel[0] = inputRelVel[0];
-	predictedVel[1] = inputRelVel[1];
-	predictedPos[0] = inputPos[0] + (dt * inputRelVel[0]);
-	predictedPos[1] = inputPos[1] + (dt * inputRelVel[1]);
+	predictedVel.x = inputRelVel.x;
+	predictedVel.y = inputRelVel.y;
+	predictedPos.x = inputPos.x + (dt * inputRelVel.x);
+	predictedPos.y = inputPos.y + (dt * inputRelVel.y);
       } else {
 	// angular velocity adjustment
 	const float pdAngVel = phydrv->getAngularVel();
@@ -1399,21 +1365,21 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 	  const float angle = (dt * pdAngVel);
 	  predictedAzimuth += angle;
 	  const fvec2& pdAngPos = phydrv->getAngularPos();
-	  const float dx = predictedPos[0] - pdAngPos[0];
-	  const float dy = predictedPos[1] - pdAngPos[1];
+	  const float dx = predictedPos.x - pdAngPos.x;
+	  const float dy = predictedPos.y - pdAngPos.y;
 	  const float cos_val = cosf(angle);
 	  const float sin_val = sinf(angle);
-	  predictedPos[0] = pdAngPos[0] + ((dx * cos_val) - (dy * sin_val));
-	  predictedPos[1] = pdAngPos[1] + ((dy * cos_val) + (dx * sin_val));
-	  predictedVel[0] += (-dy * pdAngVel);
-	  predictedVel[1] += (+dx * pdAngVel);
+	  predictedPos.x = pdAngPos.x + ((dx * cos_val) - (dy * sin_val));
+	  predictedPos.y = pdAngPos.y + ((dy * cos_val) + (dx * sin_val));
+	  predictedVel.x += (-dy * pdAngVel);
+	  predictedVel.y += (+dx * pdAngVel);
 	}
 	// linear velocity adjustment
 	const fvec3& pdVel = phydrv->getLinearVel();
-	predictedPos[0] += (dt * pdVel[0]);
-	predictedPos[1] += (dt * pdVel[1]);
-	predictedVel[0] += pdVel[0];
-	predictedVel[1] += pdVel[1];
+	predictedPos.x += (dt * pdVel.x);
+	predictedPos.y += (dt * pdVel.y);
+	predictedVel.x += pdVel.x;
+	predictedVel.y += pdVel.y;
       }
     }
   }
@@ -1465,7 +1431,7 @@ bool Player::isDeadReckoningWrong() const
   if (getFlag() == Flags::Burrow) {
     groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
   }
-  if (predictedPos[2] < groundLimit) {
+  if (predictedPos.z < groundLimit) {
     return true;
   }
 
@@ -1478,21 +1444,21 @@ bool Player::isDeadReckoningWrong() const
 
   // see if position and azimuth are close enough
   float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
-  if ((fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) ||
-      (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) ||
-      (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance)) {
+  if ((fabsf(state.pos.x - predictedPos.x) > positionTolerance) ||
+      (fabsf(state.pos.y - predictedPos.y) > positionTolerance) ||
+      (fabsf(state.pos.z - predictedPos.z) > positionTolerance)) {
     if (debugLevel >= 4) {
-      if (fabsf(state.pos[0] - predictedPos[0]) > positionTolerance) {
-	printf ("state.pos[0] = %f, predictedPos[0] = %f\n",
-		state.pos[0], predictedPos[0]);
+      if (fabsf(state.pos.x - predictedPos.x) > positionTolerance) {
+	printf ("state.pos.x = %f, predictedPos.x = %f\n",
+		state.pos.x, predictedPos.x);
       }
-      if (fabsf(state.pos[1] - predictedPos[1]) > positionTolerance) {
-	printf ("state.pos[1] = %f, predictedPos[1] = %f\n",
-		state.pos[1], predictedPos[1]);
+      if (fabsf(state.pos.y - predictedPos.y) > positionTolerance) {
+	printf ("state.pos.y = %f, predictedPos.y = %f\n",
+		state.pos.y, predictedPos.y);
       }
-      if (fabsf(state.pos[2] - predictedPos[2]) > positionTolerance) {
-	printf ("state.pos[2] = %f, predictedPos[2] = %f\n",
-		state.pos[2], predictedPos[2]);
+      if (fabsf(state.pos.z - predictedPos.z) > positionTolerance) {
+	printf ("state.pos.z = %f, predictedPos.z = %f\n",
+		state.pos.z, predictedPos.z);
       }
     }
     return true;
@@ -1565,18 +1531,14 @@ void Player::doDeadReckoning()
 
       if (hitWorld) {
 		// there was a collision, copy corrected position and velocity
-		predictedPos[0] = hitPos[0];
-		predictedPos[1] = hitPos[1];
-		predictedPos[2] = hitPos[2];
-		predictedVel[0] = hitVelocity[0];
-		predictedVel[1] = hitVelocity[1];
-		predictedVel[2] = hitVelocity[2];
+		predictedPos = hitPos;
+		predictedVel = hitVelocity;
 		//predictedAzimuth = hitAzimuth;
 
 		// check if the collision was in the Z direction
-		if (hitNormal[2] > 0.001f)
+		if (hitNormal.z > 0.001f)
 		{
-		  zLimit = hitPos[2];
+		  zLimit = hitPos.z;
 		  ZHit = true;
 		}
 	  }
@@ -1585,13 +1547,13 @@ void Player::doDeadReckoning()
 
 
   // the velocity check is for when a Burrow flag is dropped
-  if (ZHit || ((predictedPos[2] <= zLimit)
-	  && (predictedVel[2] <= 0.0f))) {
-    predictedPos[2] = zLimit;
-    predictedVel[2] = 0.0f;
+  if (ZHit || ((predictedPos.z <= zLimit) &&
+	       (predictedVel.z <= 0.0f))) {
+    predictedPos.z = zLimit;
+    predictedVel.z = 0.0f;
     inputStatus &= ~PlayerState::Falling;
-    inputVel[2] = 0.0f;
-	hitWorld = true;
+    inputVel.z = 0.0f;
+    hitWorld = true;
   }
 
   // setup remote players' landing sounds and graphics, and jumping sounds
@@ -1608,7 +1570,7 @@ void Player::doDeadReckoning()
 
       // setup the sound
       if (BZDB.isTrue("remoteSounds")){
-        if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f))
+        if ((getFlag() != Flags::Burrow) || (predictedPos.z > 0.0f))
           SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
         else    // probably never gets played
           SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
@@ -1630,7 +1592,7 @@ void Player::doDeadReckoning()
   }
 
   // copy some old state
-  oldZSpeed = state.velocity[2];
+  oldZSpeed = state.velocity.z;
   oldStatus = inputStatus;
 
   move(predictedPos, predictedAzimuth);
@@ -1681,10 +1643,10 @@ void Player::setDeadReckoning(double timestamp)
   if (fabsf(inputRelAngVel) > 0.001f) {
     inputTurning = true;
     const float radius = (inputRelSpeed / inputRelAngVel);
-    inputTurnVector[0] = +sinf(inputAzimuth) * radius;
-    inputTurnVector[1] = -cosf(inputAzimuth) * radius;
-    inputTurnCenter[0] = inputPos[0] - inputTurnVector[0];
-    inputTurnCenter[1] = inputPos[1] - inputTurnVector[1];
+    inputTurnVector.x = +sinf(inputAzimuth) * radius;
+    inputTurnVector.y = -cosf(inputAzimuth) * radius;
+    inputTurnCenter.x = inputPos.x - inputTurnVector.x;
+    inputTurnCenter.y = inputPos.y - inputTurnVector.y;
   }
 
   setRelativeMotion ();
@@ -1743,12 +1705,8 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
   if (firingInfo.shotType == ShockWaveShot) {
     // move shot origin under tank and make it stationary
     const fvec3& pos = getPosition();
-    firingInfo.shot.pos[0] = pos[0];
-    firingInfo.shot.pos[1] = pos[1];
-    firingInfo.shot.pos[2] = pos[2];
-    firingInfo.shot.vel[0] = 0.0f;
-    firingInfo.shot.vel[1] = 0.0f;
-    firingInfo.shot.vel[2] = 0.0f;
+    firingInfo.shot.pos = pos;
+    firingInfo.shot.vel = fvec3(0.0f, 0.0f, 0.0f);
   } else {
     getMuzzle(firingInfo.shot.pos);
 
@@ -1762,15 +1720,13 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
       shotSpeed *= speedAd;
     }
 
-    firingInfo.shot.vel[0] = tankVel[0] + shotSpeed * dir[0];
-    firingInfo.shot.vel[1] = tankVel[1] + shotSpeed * dir[1];
-    firingInfo.shot.vel[2] = tankVel[2] + shotSpeed * dir[2];
+    firingInfo.shot.vel = tankVel + (shotSpeed * dir);
 
     // Set _shotsKeepVerticalVelocity on the server if you want shots
     // to have the same vertical velocity as the tank when fired.
     // keeping shots moving horizontally makes the game more playable.
     if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV))
-      firingInfo.shot.vel[2] = 0.0f;
+      firingInfo.shot.vel.z = 0.0f;
   }
 }
 

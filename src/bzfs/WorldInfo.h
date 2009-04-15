@@ -69,8 +69,8 @@ public:
   WorldInfo();
   ~WorldInfo();
 
-  void setSize ( float x, float y );
-  void getSize ( float &x, float &y ){x = size[0]; y = size[1];}
+  void setSize(float x, float y );
+  void getSize(float& x, float& y ) { x = size.x; y = size.y; }
 
   void setGravity ( float g );
 
@@ -181,7 +181,7 @@ public:
 
 private:
 
-  float size[2];
+  fvec2 size;
   float gravity;
   float maxHeight;
   float waterLevel;

@@ -61,7 +61,7 @@ public:
   int		getPhysicsDriver() const;
   int		getDeathPhysicsDriver() const;
   float		getRadius() const;
-  void		getMuzzle(float*) const;
+  void		getMuzzle(fvec3&) const;
   float		getMuzzleHeight() const;
   short		getWins() const;
   short		getLosses() const;
@@ -237,7 +237,7 @@ private:
   virtual bool	doEndShot(int index, bool isHit, fvec3& position) = 0;
   void getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 			fvec3& predictedVel, float time) const;
-  void calcRelativeMotion(float vel[2], float& speed, float& angvel);
+  void calcRelativeMotion(fvec2& vel, float& speed, float& angvel);
   void setVisualTeam (TeamColor team );
   void updateFlagEffect(FlagType* flag);
   void updateTranslucency(float dt);
@@ -247,9 +247,10 @@ private:
   void updateTrackMarks();
   bool hitObstacleResizing();
   bool getHitCorrection(const fvec3& startPos, const float startAzimuth,
-      const fvec3& endPos, const float endAzimuth, const fvec3& startVelocity,
-	  double timeStep, float groundLimit, fvec3& velocity, fvec3& position,
-	  float* azimuth);
+                        const fvec3& endPos,   const float endAzimuth,
+                        const fvec3& startVelocity, double timeStep,
+                        float groundLimit, fvec3& velocity, fvec3& position,
+                        float* azimuth);
 
 private:
   // data not communicated with other players
@@ -335,11 +336,11 @@ private:
   float	inputAzimuth;		// direction tank is pointing
   float	inputAngVel;		// tank turn rate
   bool	inputTurning;		// tank is turning
-  float inputRelVel[2];		// relative velocity
+  fvec2 inputRelVel;		// relative velocity
   float	inputRelSpeed;		// relative speed
   float	inputRelAngVel;		// relative angular velocity
-  float	inputTurnCenter[2];	// tank turn center
-  float	inputTurnVector[2];	// tank turn vector
+  fvec2	inputTurnCenter;	// tank turn center
+  fvec2	inputTurnVector;	// tank turn vector
   int	inputPhyDrv;		// physics driver
 
   // average difference between time source and time destination
@@ -354,7 +355,7 @@ private:
   int			deadReckoningState;
 
   int			oldStatus;		// old tank status bits
-  float			oldZSpeed;		// old tank vertical speed
+  float		oldZSpeed;		// old tank vertical speed
 
   bool isSolid();
 };

@@ -95,7 +95,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     fvec3 inside;
-    if (!(input >> inside[0] >> inside[1] >> inside[2])) {
+    if (!(input >> inside.x >> inside.y >> inside.z)) {
       return false;
     }
     checkTypes.push_back(MeshObstacle::CheckInside);
@@ -103,7 +103,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp(cmd, "outside") == 0) {
     fvec3 outside;
-    if (!(input >> outside[0] >> outside[1] >> outside[2])) {
+    if (!(input >> outside.x >> outside.y >> outside.z)) {
       return false;
     }
     checkTypes.push_back(MeshObstacle::CheckOutside);
@@ -111,21 +111,21 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp(cmd, "vertex") == 0) {
     fvec3 vertex;
-    if (!(input >> vertex[0] >> vertex[1] >> vertex[2])) {
+    if (!(input >> vertex.x >> vertex.y >> vertex.z)) {
       return false;
     }
     vertices.push_back(vertex);
   }
   else if (strcasecmp(cmd, "normal") == 0) {
     fvec3 normal;
-    if (!(input >> normal[0] >> normal[1] >> normal[2])) {
+    if (!(input >> normal.x >> normal.y >> normal.z)) {
       return false;
     }
     normals.push_back(normal);
   }
   else if (strcasecmp(cmd, "texcoord") == 0) {
     fvec2 texcoord;
-    if (!(input >> texcoord[0] >> texcoord[1])) {
+    if (!(input >> texcoord.x >> texcoord.y)) {
       return false;
     }
     texcoords.push_back(texcoord);
@@ -181,14 +181,14 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 {
   // include the old style parameters
   MeshTransform xform;
-  if ((size[0] != 1.0f) || (size[1] != 1.0f) || (size[2] != 1.0f)) {
+  if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
     xform.addScale(size);
   }
   if (rotation != 0.0f) {
     const fvec3 zAxis(0.0f, 0.0f, 1.0f);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   }
-  if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
+  if ((pos.x != 0.0f) || (pos.y != 0.0f) || (pos.z != 0.0f)) {
     xform.addShift(pos);
   }
   xform.append(transform);
@@ -198,13 +198,13 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   if (drawInfo) {
     fvec3 vert;
     if (decorative) {
-      vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
+      vert.x = vert.y = vert.z = (Obstacle::maxExtent * 2.0f);
       if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
 	logDebugMessage(0,"WARNING: mesh is supposed to be decorative, setting to passable\n");
 	forcePassable = true;
       }
     } else {
-      vert[0] = vert[1] = vert[2] = 0.0f;
+      vert.x = vert.y = vert.z = 0.0f;
     }
     ((std::vector<fvec3>*)&vertices)->push_back(vert);
   }

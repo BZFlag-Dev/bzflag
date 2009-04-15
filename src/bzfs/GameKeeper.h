@@ -199,7 +199,7 @@ public:
 
     void doPlayerDR ( TimeKeeper const& time = TimeKeeper::getCurrent() );
     fvec3	      currentPos;
-    fvec3	      curentVel;
+    fvec3	      currentVel;
     float	      currentRot;
     float	      currentAngVel;
 

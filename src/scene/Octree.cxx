@@ -305,7 +305,7 @@ void Octree::getExtents(SceneNode** list, int listSize)
       extents.maxs[i] = extents.maxs[i] + adjust;
     }
   }
-  extents.maxs[2] = extents.mins[2] + width;
+  extents.maxs.z = extents.mins.z + width;
 
   return;
 }
@@ -514,11 +514,11 @@ void OctreeNode::getFrustumList() const
 
   if (childCount > 0) {
     if (F2BSORT) {
-      const float* dir = CullFrustum->getDirection();
+      const fvec3& dir = CullFrustum->getDirection();
       unsigned char dirbits = 0;
-      if (dir[0] < 0.0f) dirbits |= (1 << 0);
-      if (dir[1] < 0.0f) dirbits |= (1 << 1);
-      if (dir[2] < 0.0f) dirbits |= (1 << 2);
+      if (dir.x < 0.0f) { dirbits |= (1 << 0); }
+      if (dir.y < 0.0f) { dirbits |= (1 << 1); }
+      if (dir.z < 0.0f) { dirbits |= (1 << 2); }
       const OctreeNode* onode;
 
   #define GET_NODE(x)		\
@@ -834,16 +834,16 @@ void OctreeNode::draw()
   }
   glColor4fv(*color);
 
-  const float* exts[2] = { extents.mins, extents.maxs };
+  const fvec3* exts[2] = { &extents.mins, &extents.maxs };
 
   // draw Z-normal squares
   for (z = 0; z < 2; z++) {
     for (c = 0; c < 4; c++) {
       x = ((c + 0) % 4) / 2;
       y = ((c + 1) % 4) / 2;
-      points[c][0] = exts[x][0];
-      points[c][1] = exts[y][1];
-      points[c][2] = exts[z][2];
+      points[c].x = exts[x]->x;
+      points[c].y = exts[y]->y;
+      points[c].z = exts[z]->z;
     }
     memcpy(points[4], points[0], sizeof(points[4]));
     glBegin(GL_LINE_STRIP);
@@ -858,9 +858,9 @@ void OctreeNode::draw()
     x = ((c + 0) % 4) / 2;
     y = ((c + 1) % 4) / 2;
     for (z = 0; z < 2; z++) {
-      points[z][0] = exts[x][0];
-      points[z][1] = exts[y][1];
-      points[z][2] = exts[z][2];
+      points[z].x = exts[x]->x;
+      points[z].y = exts[y]->y;
+      points[z].z = exts[z]->z;
     }
     glBegin(GL_LINE_STRIP);
     glVertex3fv(points[0]);

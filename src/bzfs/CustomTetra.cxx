@@ -72,7 +72,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       // keep on chugging
     } else {
       fvec3& vertex = vertices[vertexCount];
-      input >> vertex[0] >> vertex[1] >> vertex[2];
+      input >> vertex.x >> vertex.y >> vertex.z;
       vertexCount++;
     }
   } else if (strcasecmp(cmd, "normals") == 0) {
@@ -86,7 +86,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       useNormals[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
 	fvec3& normal = normals[vertexCount - 1][v];
-	input >> normal[0] >> normal[1] >> normal[2];
+	input >> normal.x >> normal.y >> normal.z;
       }
     }
   } else if (strcasecmp(cmd, "texcoords") == 0) {
@@ -100,7 +100,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
       useTexcoords[vertexCount - 1] = true;
       for (int v = 0; v < 3; v++) {
 	fvec2& texcoord = texcoords[vertexCount - 1][v];
-	input >> texcoord[0] >> texcoord[1];
+	input >> texcoord.x >> texcoord.y;
       }
     }
   } else {

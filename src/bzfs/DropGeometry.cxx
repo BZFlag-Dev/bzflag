@@ -70,7 +70,7 @@ bool DropGeometry::dropPlayer(fvec3& pos, float minZ, float maxZ)
   const float fudge = 0.001f;
   const float tankHeight = BZDBCache::tankHeight + fudge;
   bool value = dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, tankHeight, -1);
-  pos[2] += fudge;
+  pos.z += fudge;
   return value;
 }
 
@@ -158,8 +158,8 @@ static bool isValidClearance(const fvec3& pos, float radius,
   // invalid if it touches a building
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    const float zTop = obs->getExtents().maxs[2];
-    if (zTop > pos[2]) {
+    const float zTop = obs->getExtents().maxs.z;
+    if (zTop > pos.z) {
       if (obs->inCylinder(pos, radius, height)) {
 	return false;
       }
@@ -168,7 +168,7 @@ static bool isValidClearance(const fvec3& pos, float radius,
       // do not check coplanars unless they are fatal
       if (isDeathLanding(obs) || isOpposingTeam(obs, team)) {
 	const float fudge = 0.001f; // dig in a little to make sure
-	const fvec3 testPos(pos[0], pos[1], pos[2] - fudge);
+	const fvec3 testPos(pos.x, pos.y, pos.z - fudge);
 	if (obs->inCylinder(testPos, radius, height + fudge)) {
 	  return false;
 	}
@@ -184,8 +184,8 @@ static int compareAscending(const void* a, const void* b)
 {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  const float topA = obsA->getExtents().maxs[2];
-  const float topB = obsB->getExtents().maxs[2];
+  const float topA = obsA->getExtents().maxs.z;
+  const float topB = obsB->getExtents().maxs.z;
   if (topA < topB) {
     return -1;
   } else if (topA > topB) {
@@ -200,8 +200,8 @@ static int compareDescending(const void* a, const void* b)
 {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  const float topA = obsA->getExtents().maxs[2];
-  const float topB = obsB->getExtents().maxs[2];
+  const float topA = obsA->getExtents().maxs.z;
+  const float topB = obsB->getExtents().maxs.z;
   if (topA < topB) {
     return +1;
   } else if (topA > topB) {
@@ -221,7 +221,7 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
 
   // special case, just check the ground
   if (maxZ <= 0.0f) {
-    pos[2] = 0.0f;
+    pos.z = 0.0f;
     if (isValidClearance(pos, radius, height, team)) {
       return true;
     } else {
@@ -230,21 +230,21 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
   }
 
   // adjust the position to the minimum level
-  if (pos[2] < minZ) {
-    pos[2] = minZ;
+  if (pos.z < minZ) {
+    pos.z = minZ;
   }
 
   // use a downwards ray to hit the onFlatTop() buildings
-  const float maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
+  const float maxHeight = COLLISIONMGR.getWorldExtents().maxs.z;
   const fvec3 dir(0.0f, 0.0f, -1.0f);
-  const fvec3 org(pos[0], pos[1], maxHeight + 1.0f);
+  const fvec3 org(pos.x, pos.y, maxHeight + 1.0f);
   Ray ray(org, dir);
 
   // list of  possible landings
   const ObsList* olist = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
   rayList.copy(olist); // copy the list, so that COLLISIONMGR can be re-used
 
-  const float startZ = pos[2];
+  const float startZ = pos.z;
 
   // are we in the clear?
   if (isValidClearance(pos, radius, height, team)) {
@@ -253,7 +253,7 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
     // no interference, try dropping
     for (i = 0; i < rayList.count; i++) {
       const Obstacle* obs = rayList.list[i];
-      const float zTop = obs->getExtents().maxs[2];
+      const float zTop = obs->getExtents().maxs.z;
       // make sure that it's within the limits
       if ((zTop > startZ) || (zTop > maxZ)) {
 	continue;
@@ -261,7 +261,7 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
       if (zTop < minZ) {
 	break;
       }
-      pos[2] = zTop;
+      pos.z = zTop;
 
       if (obs->intersect(ray) >= 0.0f) {
 	if (isValidLanding(obs) &&
@@ -276,7 +276,7 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
     }
     // check the ground
     if (minZ <= 0.0f) {
-      pos[2] = 0.0f;
+      pos.z = 0.0f;
       if (isValidClearance(pos, radius, height, team)) {
 	return true;
       }
@@ -288,7 +288,7 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
     // we're blocked, try climbing
     for (i = 0; i < rayList.count; i++) {
       const Obstacle* obs = rayList.list[i];
-      const float zTop = obs->getExtents().maxs[2];
+      const float zTop = obs->getExtents().maxs.z;
       // make sure that it's within the limits
       if ((zTop < startZ) || (zTop < minZ)) {
 	continue;
@@ -296,7 +296,7 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
       if (zTop > maxZ) {
 	return false;
       }
-      pos[2] = zTop;
+      pos.z = zTop;
 
       if (isValidLanding(obs) &&
 	  (obs->intersect(ray) >= 0.0f) &&

@@ -32,11 +32,12 @@
 /* public */
 
 // flags list
-FlagInfo	      *FlagInfo::flagList      = NULL;
+FlagInfo* FlagInfo::flagList      = NULL;
+int       FlagInfo::numExtraFlags = 0;
+int       FlagInfo::numFlags      = 0;
+int       FlagInfo::numFlagsInAir = 0;
 std::vector<FlagType*> FlagInfo::allowedFlags;
-int		    FlagInfo::numExtraFlags = 0;
-int		    FlagInfo::numFlags      = 0;
-int		    FlagInfo::numFlagsInAir;
+
 
 FlagInfo::FlagInfo()
 {
@@ -45,15 +46,9 @@ FlagInfo::FlagInfo()
   flag.status		  = FlagNoExist;
   flag.endurance	  = FlagNormal;
   flag.owner		  = NoPlayer;
-  flag.position[0]	  = 0.0f;
-  flag.position[1]	  = 0.0f;
-  flag.position[2]	  = 0.0f;
-  flag.launchPosition[0]  = 0.0f;
-  flag.launchPosition[1]  = 0.0f;
-  flag.launchPosition[2]  = 0.0f;
-  flag.landingPosition[0] = 0.0f;
-  flag.landingPosition[1] = 0.0f;
-  flag.landingPosition[2] = 0.0f;
+  flag.position           = fvec3(0.0f, 0.0f, 0.0f);
+  flag.launchPosition     = fvec3(0.0f, 0.0f, 0.0f);
+  flag.landingPosition    = fvec3(0.0f, 0.0f, 0.0f);
   flag.flightTime	  = 0.0f;
   flag.flightEnd	  = 0.0f;
   flag.initialVelocity    = 0.0f;
@@ -61,6 +56,7 @@ FlagInfo::FlagInfo()
   grabs			  = 0;
   required		  = false;
 }
+
 
 void FlagInfo::setSize(int _numFlags)
 {
@@ -116,15 +112,15 @@ void FlagInfo::addFlag()
 
   // flag in now entering game
   numFlagsInAir++;
-  flag.status	  = FlagComing;
+  flag.status = FlagComing;
 
   // compute drop time
   const float flightTime = 2.0f * sqrtf(-2.0f * flagAltitude / gravity);
-  flag.flightTime	= 0.0f;
-  flag.flightEnd	 = flightTime;
+  flag.flightTime        = 0.0f;
+  flag.flightEnd         = flightTime;
   flag.initialVelocity   = -0.5f * gravity * flightTime;
-  dropDone	       = TimeKeeper::getCurrent();
-  dropDone	      += flightTime;
+  dropDone               = TimeKeeper::getCurrent();
+  dropDone               += flightTime;
 
   if (flag.type == Flags::Null)    // pick a random flag
     flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
@@ -189,9 +185,9 @@ void FlagInfo::dropFlag(const fvec3& pos, const fvec3& landingPos, bool vanish)
   const float flagAltitude   = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
   const float thrownAltitude = (flag.type == Flags::Shield) ?
     BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
-  const float maxAltitude    = pos[2] + thrownAltitude;
-  const float upTime	       = sqrtf(-2.0f * thrownAltitude / gravity);
-  const float downTime       = sqrtf(-2.0f * (maxAltitude - pos[2]) / gravity);
+  const float maxAltitude    = pos.z + thrownAltitude;
+  const float upTime	     = sqrtf(-2.0f * thrownAltitude / gravity);
+  const float downTime       = sqrtf(-2.0f * (maxAltitude - pos.z) / gravity);
   const float flightTime     = upTime + downTime;
 
   dropDone = TimeKeeper::getCurrent();
@@ -297,7 +293,7 @@ void FlagInfo::getTextualInfo(char *message)
 		   "p:{%.1f, %.1f, %.1f}",
 	  flagIndex, flag.type->flagAbbv.c_str(), player,
 	  required ? 1 : 0, grabs, flag.status,
-	  flag.position[0], flag.position[1], flag.position[2]);
+	  flag.position.x, flag.position.y, flag.position.z);
 }
 
 bool FlagInfo::exist()

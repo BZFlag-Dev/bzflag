@@ -47,8 +47,8 @@ CustomBox::CustomBox()
 {
   isOldBox = true;
 
-  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-  size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
 
   materials[XP].setTexture("boxwall");
   materials[XN].setTexture("boxwall");
@@ -276,7 +276,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   if (isOldBox && transform.isEmpty()) {
     BoxBuilding* box =
       new BoxBuilding(pos, rotation,
-		      fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+		      fabsf(size.x), fabsf(size.y), fabsf(size.z),
 		      driveThrough, shootThrough, ricochet, false);
     groupdef->addObstacle(box);
     return;

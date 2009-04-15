@@ -49,7 +49,7 @@ CustomPyramid::CustomPyramid()
   flipz = false;
 
   size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
-  size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+  size.z = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
 
   materials[XP].setTexture("pyrwall");
   materials[XN].setTexture("pyrwall");
@@ -278,9 +278,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   if (isOldPyramid && transform.isEmpty()) {
     PyramidBuilding* pyr =
       new PyramidBuilding(pos, rotation,
-			  fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+			  fabsf(size.x), fabsf(size.y), fabsf(size.z),
 			  driveThrough, shootThrough, ricochet);
-    if (flipz || (size[2] < 0.0f)) {
+    if (flipz || (size.z < 0.0f)) {
       pyr->setZFlip();
     }
     groupdef->addObstacle(pyr);
@@ -291,7 +291,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
   // setup the transform
   MeshTransform xform;
-  if (flipz || (size[2] < 0.0f)) {
+  if (flipz || (size.z < 0.0f)) {
     const fvec3 flipScale(1.0f, 1.0f, -1.0f);
     const fvec3 flipShift(0.0f, 0.0f, +1.0f);
     xform.addScale(flipScale);

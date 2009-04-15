@@ -41,15 +41,9 @@ static int compareZExtents(const void* a, const void* b)
   const SceneNode* nodeB = *((const SceneNode**)b);
   const Extents& eA = nodeA->getExtents();
   const Extents& eB = nodeB->getExtents();
-  if (eA.maxs[2] > eB.maxs[2]) {
-    return +1;
-  }
-  else if (eB.maxs[2] > eA.maxs[2]) {
-    return -1;
-  }
-  else {
-    return 0;
-  }
+  if (eA.maxs.z > eB.maxs.z) { return +1; }
+  if (eB.maxs.z > eA.maxs.z) { return -1; }
+  return 0;
 }
 
 

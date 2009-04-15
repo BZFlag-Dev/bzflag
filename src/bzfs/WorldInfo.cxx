@@ -433,7 +433,7 @@ void WorldInfo::finishWorld()
 
   links.doLinking();
 
-  maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
+  maxHeight = COLLISIONMGR.getWorldExtents().maxs.z;
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   if (maxHeight < wallHeight) {
     maxHeight = wallHeight;
@@ -624,8 +624,8 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
 
   // do some prep work for mesh faces
   int hitCount = 0;
-  const fvec3 vel = pos - oldPos;
-  const bool goingDown = (vel[2] <= 0.0f);
+  const fvec3 vel = (pos - oldPos);
+  const bool goingDown = (vel.z <= 0.0f);
 
   // check mesh faces
   for (/* do nothing */; i < olist->count; i++) {
@@ -643,10 +643,10 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
       driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
 
     if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
-      const float facePos2 = face->getPosition()[2];
-      if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
+      const float facePos2 = face->getPosition().z;
+      if (face->isUpPlane() && (!goingDown || (oldPos.z < (facePos2 - 1.0e-3f))))
 	continue;
-      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
+      else if (face->isDownPlane() && ((oldPos.z >= facePos2) || goingDown))
 	continue;
       else {
 	// add the face to the hitlist

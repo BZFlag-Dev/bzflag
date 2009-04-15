@@ -2130,9 +2130,9 @@ void resetFlag(FlagInfo &flag)
       // bases.. we assume it'll fit.
       TeamBases &teamBases = bases[teamIndex];
       const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
-      flagPos[0] = base.position[0];
-      flagPos[1] = base.position[1];
-      flagPos[2] = base.position[2] + base.size[2];
+      flagPos.x = base.position.x;
+      flagPos.y = base.position.y;
+      flagPos.z = base.position.z + base.size.z;
     }
   } else {
     // random position (not in a building)
@@ -2149,9 +2149,9 @@ void resetFlag(FlagInfo &flag)
     int i;
     for (i = 0; i < 10000; i++) {
       if (!world->getFlagSpawnPoint(&flag, flagPos)) {
-	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	flagPos[2] = world->getMaxWorldHeight() * (float)bzfrand();
+	flagPos.x = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	flagPos.y = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	flagPos.z = world->getMaxWorldHeight() * (float)bzfrand();
       }
       if (DropGeometry::dropFlag(flagPos, minZ, maxZ))
 	break;
@@ -2701,27 +2701,25 @@ void checkForScoreLimit(GameKeeper::Player* killer)
 
 const fvec3* closestBase(TeamColor color, const fvec3& position)
 {
-  float bestdist = Infinity;
-  const fvec3* bestbase = NULL;
+  float bestDistSq = Infinity;
+  const fvec3* bestBase = NULL;
 
-  if (bases.find(color) == bases.end())
+  if (bases.find(color) == bases.end()) {
     return NULL;
+  }
 
   TeamBases &teamBases = bases[color];
   int count = teamBases.size();
   for (int i=0; i<count; i++) {
     const fvec3& basepos = teamBases.getBasePosition(i);
-    float dx = position[0] - basepos[0];
-    float dy = position[1] - basepos[1];
-    float dist = sqrt(dx * dx + dy * dy);
-
-    if (dist < bestdist) {
-      bestbase = &basepos;
-      bestdist = dist;
+    const float distSq = (position.xy() - basepos.xy()).lengthSq();
+    if (distSq < bestDistSq) {
+      bestBase = &basepos;
+      bestDistSq = distSq;
     }
   }
 
-  return bestbase;
+  return bestBase;
 }
 
 
@@ -2740,12 +2738,12 @@ void processFreezeTagCollision(GameKeeper::Player *player,
   }
   else {
     const fvec3* playerBasePtr = closestBase(playerTeam, pos);
-    const fvec3* otherBasePtr = closestBase(otherTeam, pos);
+    const fvec3*  otherBasePtr = closestBase(otherTeam,  pos);
     if (!playerBasePtr || !otherBasePtr) {
       return;
     }
     const fvec3& playerBase = *playerBasePtr;
-    const fvec3& otherBase = *otherBasePtr;
+    const fvec3&  otherBase = *otherBasePtr;
 
     const fvec2 hdiff = otherBase.xy() - playerBase.xy();
 
@@ -2897,6 +2895,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
   }
 }
 
+
 void searchFlag(GameKeeper::Player &playerData)
 {
   if (!playerData.player.isAlive())
@@ -2928,17 +2927,19 @@ void searchFlag(GameKeeper::Player &playerData)
       continue;
 
     const fvec3& fpos = flag.flag.position;
-    float dist = (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
-    if (!id && dist >= 0.01f)
+    float dist = (tpos.z - fpos.z) * (tpos.z - fpos.z);
+    if (!id && dist >= 0.01f) {
       continue;
-    dist += (tpos[0] - fpos[0]) * (tpos[0] - fpos[0])
-      + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+    }
+    dist += (tpos.x - fpos.x) * (tpos.x - fpos.x)
+          + (tpos.y - fpos.y) * (tpos.y - fpos.y);
 
     if (dist < radius2) {
-      radius2     = dist;
+      radius2 = dist;
       closestFlag = i;
-      if (!id)
+      if (!id) {
 	break;
+      }
     }
   }
 
@@ -2971,9 +2972,9 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
   // maximum X or Y coordinate is 1/2 of worldsize
   const float size = BZDBCache::worldSize * 0.5f;
   const fvec3 pos(
-    ((dropPos[0] < -size) || (dropPos[0] > size)) ? 0.0f : dropPos[0],
-    ((dropPos[1] < -size) || (dropPos[1] > size)) ? 0.0f : dropPos[1],
-    (dropPos[2] > maxWorldHeight) ? maxWorldHeight : dropPos[2]
+    ((dropPos.x < -size) || (dropPos.x > size)) ? 0.0f : dropPos.x,
+    ((dropPos.y < -size) || (dropPos.y > size)) ? 0.0f : dropPos.y,
+    (dropPos.z > maxWorldHeight) ? maxWorldHeight : dropPos.z
   );
 
   // player wants to drop flag.  we trust that the client won't tell
@@ -3007,7 +3008,7 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
   } else if (--drpFlag.grabs <= 0) {
     vanish = true;
     drpFlag.grabs = 0;
-  } else if (!clOptions->flagsOnBuildings && (landing[2] > 0.0f)) {
+  } else if (!clOptions->flagsOnBuildings && (landing.z > 0.0f)) {
     vanish = true;
   } else {
     vanish = !safelyDropped;
@@ -3022,15 +3023,14 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
     std::string teamName = Team::getName((TeamColor) flagTeam);
     if (!world->getFlagDropPoint(&drpFlag, pos, landing)) {
       // try the center
-      landing[0] = landing[1] = landing[2] = 0.0f;
+      landing = fvec3(0.0f, 0.0f, 0.0f);
       safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
       if (!safelyDropped) {
 	// ok, we give up, send it home
 	TeamBases &teamBases = bases[flagTeam];
 	const TeamBase &base = teamBases.getRandomBase(flagIndex);
-	landing[0] = base.position[0];
-	landing[1] = base.position[1];
-	landing[2] = base.position[2] + base.size[2];
+	landing = base.position;
+	landing.z += base.size.z;
       }
     }
   }
@@ -3279,10 +3279,10 @@ static void adjustTolerances()
     const float av = phydrv->getAngularVel();
     if (!phydrv->getIsDeath()) {
       if (!phydrv->getIsSlide() &&
-	  ((v[0] != 0.0f) || (v[1] != 0.0f) || (av != 0.0f))) {
+	  ((v.x != 0.0f) || (v.y != 0.0f) || (av != 0.0f))) {
 	cheatProtectionOptions.doSpeedChecks = false;
       }
-      if (v[2] > 0.0f) {
+      if (v.z > 0.0f) {
 	cheatProtectionOptions.doHeightChecks = false;
       }
     }
@@ -3597,8 +3597,11 @@ static void checkForWorldDeaths(void)
     for (int i = 0; i < curMaxPlayers; i++) {
       // kill anyone under the water level
       GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
-      if ( player && player->player.isAlive() && player->lastState.pos[2] <= waterLevel)
-	playerKilled(player->getIndex(), ServerPlayer, WaterDeath, -1, Flags::Null, -1);
+      if (player && player->player.isAlive() &&
+          player->lastState.pos.z <= waterLevel) {
+	playerKilled(player->getIndex(), ServerPlayer,
+	             WaterDeath, -1, Flags::Null, -1);
+      }
     }
   }
 }
@@ -3832,23 +3835,23 @@ static void setupPingReply(void)
 {
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
-  pingReply.serverId.port = htons(clOptions->wksPort);
-  pingReply.serverId.number = 0;
-  pingReply.gameType = clOptions->gameType;
-  pingReply.gameOptions = clOptions->gameOptions;
-  pingReply.maxPlayers = (uint8_t)maxRealPlayers;
-  pingReply.maxShots = clOptions->maxShots;
-  pingReply.rogueMax = (uint8_t)clOptions->maxTeam[0];
-  pingReply.redMax = (uint8_t)clOptions->maxTeam[1];
-  pingReply.greenMax = (uint8_t)clOptions->maxTeam[2];
-  pingReply.blueMax = (uint8_t)clOptions->maxTeam[3];
-  pingReply.purpleMax = (uint8_t)clOptions->maxTeam[4];
-  pingReply.observerMax = (uint8_t)clOptions->maxTeam[5];
-  pingReply.shakeWins = clOptions->shakeWins;
-  pingReply.shakeTimeout = clOptions->shakeTimeout;
-  pingReply.maxTime = (uint16_t)clOptions->timeLimit;
-  pingReply.maxPlayerScore = clOptions->maxPlayerScore;
-  pingReply.maxTeamScore = clOptions->maxTeamScore;
+  pingReply.serverId.port       = htons(clOptions->wksPort);
+  pingReply.serverId.number     = 0;
+  pingReply.gameType            = clOptions->gameType;
+  pingReply.gameOptions         = clOptions->gameOptions;
+  pingReply.maxPlayers          = (uint8_t)maxRealPlayers;
+  pingReply.maxShots            = clOptions->maxShots;
+  pingReply.rogueMax            = (uint8_t)clOptions->maxTeam[0];
+  pingReply.redMax              = (uint8_t)clOptions->maxTeam[1];
+  pingReply.greenMax            = (uint8_t)clOptions->maxTeam[2];
+  pingReply.blueMax             = (uint8_t)clOptions->maxTeam[3];
+  pingReply.purpleMax           = (uint8_t)clOptions->maxTeam[4];
+  pingReply.observerMax         = (uint8_t)clOptions->maxTeam[5];
+  pingReply.shakeWins           = clOptions->shakeWins;
+  pingReply.shakeTimeout        = clOptions->shakeTimeout;
+  pingReply.maxTime             = (uint16_t)clOptions->timeLimit;
+  pingReply.maxPlayerScore      = clOptions->maxPlayerScore;
+  pingReply.maxTeamScore        = clOptions->maxTeamScore;
 }
 
 static void setupPermissions(void)

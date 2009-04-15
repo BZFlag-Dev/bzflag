@@ -28,15 +28,21 @@ void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
     strncpy(flagRecord->type,flag.flag.type->flagAbbv.c_str(),2);
   }
 
-  flagRecord->status = flag.flag.status;
-  flagRecord->endurance = flag.flag.endurance;
-  flagRecord->owner = flag.flag.owner;
-  flagRecord->position[0] = flag.flag.position[0];flagRecord->position[1] = flag.flag.position[1];flagRecord->position[2] = flag.flag.position[2];
-  flagRecord->launchPosition[0] = flag.flag.launchPosition[0];flagRecord->launchPosition[1] = flag.flag.launchPosition[1];flagRecord->launchPosition[2] = flag.flag.launchPosition[2];
-  flagRecord->landingPosition[0] = flag.flag.landingPosition[0];flagRecord->landingPosition[1] = flag.flag.landingPosition[1];flagRecord->landingPosition[2] = flag.flag.landingPosition[2];
-  flagRecord->flightTime = flag.flag.flightTime;
-  flagRecord->flightEnd = flag.flag.flightEnd;
-  flagRecord->initialVelocity = flag.flag.initialVelocity;
+  flagRecord->status             = flag.flag.status;
+  flagRecord->endurance          = flag.flag.endurance;
+  flagRecord->owner              = flag.flag.owner;
+  flagRecord->position[0]        = flag.flag.position.x;
+  flagRecord->position[1]        = flag.flag.position.y;
+  flagRecord->position[2]        = flag.flag.position.z;
+  flagRecord->launchPosition[0]  = flag.flag.launchPosition.x;
+  flagRecord->launchPosition[1]  = flag.flag.launchPosition.y;
+  flagRecord->launchPosition[2]  = flag.flag.launchPosition.z;
+  flagRecord->landingPosition[0] = flag.flag.landingPosition.x;
+  flagRecord->landingPosition[1] = flag.flag.landingPosition.y;
+  flagRecord->landingPosition[2] = flag.flag.landingPosition.z;
+  flagRecord->flightTime         = flag.flag.flightTime;
+  flagRecord->flightEnd          = flag.flag.flightEnd;
+  flagRecord->initialVelocity    = flag.flag.initialVelocity;
 }
 
 void sendRemovePlayerMessage ( int playerID )

@@ -120,14 +120,14 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
 {
   // include the old style parameters
   MeshTransform xform;
-  if ((size[0] != 1.0f) || (size[1] != 1.0f) || (size[2] != 1.0f)) {
+  if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
     xform.addScale(size);
   }
   if (rotation != 0.0f) {
     const fvec3 zAxis(0.0f, 0.0f, 1.0f);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   }
-  if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
+  if ((pos.x != 0.0f) || (pos.x != 0.0f) || (pos.z != 0.0f)) {
     xform.addShift(pos);
   }
   xform.append(transform);

@@ -41,23 +41,23 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
     TeamBase &teamBase = teamBases[0];
     switch (team) {
       case RedTeam:
-	teamBase.position[0] = (-worldSize + baseSize) / 2.0f;
-	teamBase.position[1] = 0.0f;
+	teamBase.position.x = (-worldSize + baseSize) / 2.0f;
+	teamBase.position.y = 0.0f;
 	break;
 
       case GreenTeam:
-	teamBase.position[0] = (worldSize - baseSize) / 2.0f;
-	teamBase.position[1] = 0.0f;
+	teamBase.position.x = (worldSize - baseSize) / 2.0f;
+	teamBase.position.y = 0.0f;
 	break;
 
       case BlueTeam:
-	teamBase.position[0] = 0.0f;
-	teamBase.position[1] = (-worldSize + baseSize) / 2.0f;
+	teamBase.position.x = 0.0f;
+	teamBase.position.y = (-worldSize + baseSize) / 2.0f;
 	break;
 
       case PurpleTeam:
-	teamBase.position[0] = 0.0f;
-	teamBase.position[1] = (worldSize - baseSize) / 2.0f;
+	teamBase.position.x = 0.0f;
+	teamBase.position.y = (worldSize - baseSize) / 2.0f;
 	break;
 
       default:
@@ -65,11 +65,11 @@ TeamBases::TeamBases(TeamColor team, bool initDefault)
 	break;
     }
 
-    teamBase.position[2] = 0.0f;
+    teamBase.position.z = 0.0f;
     teamBase.rotation = 0.0f;
-    teamBase.size[0] = baseSize / 2.0f;
-    teamBase.size[1] = baseSize / 2.0f;
-    teamBase.size[2] = 0.0f;
+    teamBase.size.x = baseSize / 2.0f;
+    teamBase.size.y = baseSize / 2.0f;
+    teamBase.size.z = 0.0f;
 }
 
 void TeamBases::addBase(const fvec3& _pos, const fvec3& _size, float _rotation)
@@ -102,18 +102,18 @@ float TeamBases::findBaseZ( float x, float y, float z ) const
     const fvec3& pos   = it->position;
     const fvec3& _size = it->size;
     float rotation = it->rotation;
-    float nx = x - pos[0];
-    float ny = y - pos[1];
+    float nx = x - pos.x;
+    float ny = y - pos.y;
     if (nx == 0.0f)
       nx = 1.0f;
     float rx = (float)(cosf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
     float ry = (float)(sinf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
 
 
-    if (fabsf(rx) < _size[0] &&
-	fabsf(ry) < _size[1] &&
-	pos[2] <= z)
-      return pos[2];
+    if (fabsf(rx) < _size.x &&
+	fabsf(ry) < _size.y &&
+	pos.z <= z)
+      return pos.z;
   }
 
   return -1.0f;
@@ -133,11 +133,11 @@ TeamBase::TeamBase(const fvec3& pos, const fvec3& siz, float rot)
 
 void TeamBase::getRandomPosition( float &x, float &y, float &z ) const
 {
-  float deltaX = (size[0] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  float deltaY = (size[1] - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  x = position[0] + deltaX * cosf(rotation) - deltaY * sinf(rotation);
-  y = position[1] + deltaX * sinf(rotation) + deltaY * cosf(rotation);
-  z = position[2] + size[2];
+  float deltaX = (size.x - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  float deltaY = (size.y - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
+  x = position.x + deltaX * cosf(rotation) - deltaY * sinf(rotation);
+  y = position.y + deltaX * sinf(rotation) + deltaY * cosf(rotation);
+  z = position.z + size.z;
 }
 
 // Local Variables: ***

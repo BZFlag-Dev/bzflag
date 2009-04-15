@@ -32,21 +32,17 @@
 
 CustomZone::CustomZone()
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
+  pos = fvec3(0.0f, 0.0f, 0.0f);
+  size = fvec3(1.0f, 1.0f, 1.0f);
   rotation = 0.0f;
-  size[0] = size[1] = size[2] = 1.0f;
 }
 
 
 // make a safety zone for all team flags
 void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
 {
-  pos[0] = x;
-  pos[1] = y;
-  pos[2] = 0.0f;
-  size[0] = 0.0f;
-  size[1] = 0.0f;
-  size[2] = 0.0f;
+  pos = fvec3(x, y, 0.0f);
+  size = fvec3(0.0f, 0.0f, 0.0f);
   rotation = 0.0f;
 
   // add the qualifiers
@@ -212,31 +208,26 @@ void CustomZone::writeToWorld(WorldInfo* worldInfo) const
   worldInfo->addZone( this );
 }
 
-void CustomZone::getRandomPoint(float *pt) const
+
+void CustomZone::getRandomPoint(fvec3& pt) const
 {
-  float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
-  float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
+  const float x = (float)((bzfrand() * (2.0f * size.x)) - size.x);
+  const float y = (float)((bzfrand() * (2.0f * size.y)) - size.y);
 
   const float cos_val = cosf(rotation);
   const float sin_val = sinf(rotation);
-  pt[0] = (x * cos_val) - (y * sin_val);
-  pt[1] = (x * sin_val) + (y * cos_val);
 
-  pt[0] += pos[0];
-  pt[1] += pos[1];
-  pt[2] = pos[2];
+  pt = pos;
+  pt.x += (x * cos_val) - (y * sin_val);
+  pt.y += (x * sin_val) + (y * cos_val);
 }
 
-float CustomZone::getDistToPoint (const float *_pos) const
+
+float CustomZone::getDistToPoint (const fvec3& _pos) const
 {
   // FIXME - should use proper minimum distance from
   // the zone edge, and maybe -1.0f if its inside the zone
-  const float dx = _pos[0] - pos[0];
-  const float dy = _pos[1] - pos[1];
-  const float dz = _pos[2] - pos[2];
-  const float dist = sqrtf (dx*dx + dy*dy + dz*dz);
-
-  return dist;
+  return (pos - _pos).length();
 }
 
 
@@ -309,6 +300,7 @@ const std::string& CustomZone::getFlagSafetyQualifier(int team)
   return qual;
 }
 
+
 int CustomZone::getFlagSafetyFromQualifier(const std::string& qual)
 {
   return checkIntQualifier('$', qual);
@@ -325,6 +317,7 @@ const std::string& CustomZone::getPlayerTeamQualifier(int team)
   }
   return qual;
 }
+
 
 int CustomZone::getPlayerTeamFromQualifier(const std::string& qual)
 {

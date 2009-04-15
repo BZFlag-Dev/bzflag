@@ -35,14 +35,12 @@ bool SpawnPolicy::isFacing(const fvec3& selfPos, const fvec3& enemyPos,
                            const float enemyAzimuth, const float deviation) const
 {
   // vector points from test to enemy
-  float dx = enemyPos[0] - selfPos[0];
-  float dy = enemyPos[1] - selfPos[1];
-  float dz = enemyPos[2] - selfPos[2];
-  float angActual = atan2f(dy, dx);
+  const fvec3 d = (enemyPos - selfPos);
+  const float angActual = atan2f(d.y, d.x);
   float diff = fmodf(enemyAzimuth - angActual, (float)M_PI * 2.0f);
 
   // Ignore tanks that are above or below us
-  if (fabs(dz) > 2.0f * BZDBCache::tankHeight )
+  if (fabs(d.z) > 2.0f * BZDBCache::tankHeight )
     return false;
 
   // now diff is between {-PI*2 and +PI*2}, and we're looking for values around

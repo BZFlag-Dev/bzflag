@@ -22,7 +22,7 @@
 #include "BZDBCache.h"
 
 
-bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
+bool doSpeedChecks(GameKeeper::Player *playerData, PlayerState &state)
 {
   // Speed problems occur around flag drops, so don't check for
   // a short period of time after player drops a flag. Currently
@@ -34,7 +34,7 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
     // check for highspeed cheat; if inertia is enabled, skip test for now
     if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f) {
       // Doesn't account for going fast backwards, or jumping/falling
-      float curPlanarSpeedSqr = state.velocity[0]*state.velocity[0] + state.velocity[1]*state.velocity[1];
+      float curPlanarSpeedSqr = state.velocity.xy().lengthSq();
 
       float maxPlanarSpeed = BZDBCache::tankSpeed;
 
@@ -56,7 +56,10 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
 	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
 	else if (flag.flag.type == Flags::Agility)
 	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-	else if ((flag.flag.type == Flags::Burrow) && (playerData->lastState.pos[2] == state.pos[2]) && (playerData->lastState.velocity[2] == state.velocity[2]) && (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH))) {
+	else if ((flag.flag.type == Flags::Burrow) &&
+	         (playerData->lastState.pos.z == state.pos.z) &&
+	         (playerData->lastState.velocity.z == state.velocity.z) &&
+	         (state.pos.z <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH))) {
 	  // if we have burrow and are not actively burrowing.
 	  // You may have burrow and still be above ground. Must
 	  // check z in ground!!
@@ -69,8 +72,11 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
       // If player is moving vertically, or not alive the speed checks
       // seem to be problematic. If this happens, just log it for now,
       // but don't actually kick
-      if ((playerData->lastState.pos[2] != state.pos[2]) || (playerData->lastState.velocity[2] != state.velocity[2]) || ((state.status & PlayerState::Alive) == 0))
+      if ((playerData->lastState.pos.z != state.pos.z) ||
+          (playerData->lastState.velocity.z != state.velocity.z) ||
+          ((state.status & PlayerState::Alive) == 0)) {
 	logOnly = true;
+      }
 
       // allow a 10% tolerance level for speed if -speedtol is not sane
       if (cheatProtectionOptions.doSpeedChecks) {
@@ -95,7 +101,8 @@ bool doSpeedChecks ( GameKeeper::Player *playerData, PlayerState &state )
   return true;
 }
 
-bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
+
+bool doBoundsChecks(GameKeeper::Player *playerData, PlayerState &state)
 {
   // make sure the player is still in the map
   // test all the map bounds + some fudge factor, just in case
@@ -103,31 +110,41 @@ bool doBoundsChecks ( GameKeeper::Player *playerData, PlayerState &state )
   bool InBounds = true;
   float worldSize = BZDBCache::worldSize;
 
-  if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
-    std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
+  if ((state.pos.y >= ((+worldSize * 0.5f) + positionFudge)) ||
+      (state.pos.y <= ((-worldSize * 0.5f) - positionFudge))) {
+    std::cout << "y position (" << state.pos.y << ") is out of bounds ("
+              << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
     InBounds = false;
-  } else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
-    std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
+  } else if ((state.pos.x >= ((+worldSize * 0.5f) + positionFudge)) ||
+             (state.pos.x <= ((-worldSize * 0.5f) - positionFudge))) {
+    std::cout << "x position (" << state.pos.x << ") is out of bounds ("
+              << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
     InBounds = false;
   }
 
   static const float burrowFudge = 1.0f; /* linear distance */
-  if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
-    std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
+  if (state.pos.z < BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
+    std::cout << "z depth (" << state.pos.z << ") is less than burrow depth ("
+              << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - "
+              << burrowFudge << ")" << std::endl;
     InBounds = false;
   }
 
   // kick em cus they are most likely cheating or using a buggy client
   if (!InBounds) {
-    logDebugMessage(1,"Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n", playerData->player.getCallSign(), playerData->getIndex(), state.pos[0], state.pos[1], state.pos[2]);
-    sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was outside the playing area.");
+    logDebugMessage(1, "Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
+                    playerData->player.getCallSign(), playerData->getIndex(),
+                    state.pos.x, state.pos.y, state.pos.z);
+    sendMessage(ServerPlayer, playerData->getIndex(),
+                "Autokick: Player location was outside the playing area.");
     removePlayer(playerData->getIndex(), "Out of map bounds", true);
     return false;
   }
   return true;
 }
 
-bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
+
+bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &state)
 {
   // make sure the player only pauses after the waiting time for pause is over
   // we need some inaccuracy here that is computed using pauseRequestTime and pauseRequestLag
@@ -149,8 +166,10 @@ bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
     }
 
     // kick the players when they do not pause within allowed situations
-    if ((state.status & PlayerState::InBuilding) || (state.status & PlayerState::PhantomZoned)
-      || (state.status & PlayerState::Falling) || (state.status & PlayerState::Alive) == false) {
+    if ((state.status & PlayerState::InBuilding)   ||
+        (state.status & PlayerState::PhantomZoned) ||
+        (state.status & PlayerState::Falling)      ||
+        (state.status & PlayerState::Alive) == false) {
 	// the player did pause while being a wall or in air
 	logDebugMessage(1,"Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
 	  playerData->getIndex());
@@ -163,14 +182,16 @@ bool doPauseChecks ( GameKeeper::Player *playerData, PlayerState &state )
   return true;
 }
 
-bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
+
+bool doHeightChecks(GameKeeper::Player *playerData, PlayerState &state)
 {
   float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
   float normalGravity = BZDBCache::gravity;
   float lgGravity = BZDB.eval(StateDatabase::BZDB_LGGRAVITY);
 
   // All tanks with wings are flying away or they do without a flag
-  if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) || (normalGravity >= 0.0f)) {
+  if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) ||
+      (normalGravity >= 0.0f)) {
     return true;
   }
 
@@ -178,8 +199,9 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
   float wingsMaxHeight = 0.0f;
   float lgMaxHeight = 0.0f;
 
-  if (!(state.status & PlayerState::Falling) || (playerData->player.allowedHeightAtJumpStart < 0)) {
-    playerData->player.jumpStartPos = state.pos[2];
+  if (!(state.status & PlayerState::Falling) ||
+      (playerData->player.allowedHeightAtJumpStart < 0)) {
+    playerData->player.jumpStartPos = state.pos.z;
   }
 
   float heightFudge = BZDB.eval(StateDatabase::BZDB_HEIGHTCHECKTOL);
@@ -233,11 +255,13 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
     maxHeight = normalMaxHeight;
   }
 
-  if (playerData->player.allowedHeightAtJumpStart > 0.0f && !(state.status & PlayerState::Falling)) {
+  if ((playerData->player.allowedHeightAtJumpStart > 0.0f) &&
+      !(state.status & PlayerState::Falling)) {
     playerData->player.allowedHeightAtJumpStart = 0.0f;
   }
 
-  if ((playerData->player.allowedHeightAtJumpStart <= 0.0f) && !(state.status & PlayerState::Falling)) {
+  if ((playerData->player.allowedHeightAtJumpStart <= 0.0f) &&
+      !(state.status & PlayerState::Falling)) {
     playerData->player.allowedHeightAtJumpStart = maxHeight;
   }
 
@@ -247,12 +271,14 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
   }
 
   // Don't kick players that are spawning in the air
-  if ((state.status & PlayerState::Falling) && (!(playerData->lastState.status & PlayerState::Alive))) {
+  if ((state.status & PlayerState::Falling) &&
+      (!(playerData->lastState.status & PlayerState::Alive))) {
     playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
   }
 
   // currently we don't know how high the teleporter is so skip the check
-  if ((state.status & PlayerState::Falling) && (state.status & PlayerState::Teleporting)) {
+  if ((state.status & PlayerState::Falling) &&
+      (state.status & PlayerState::Teleporting)) {
     playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
   }
 
@@ -265,12 +291,14 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
 
   // if player was on physics driver skip check until he lands again
   // FIXME: Compute how high the player should jump
-  if ((state.status & PlayerState::Falling) && (playerData->lastState.status & PlayerState::OnDriver)
-    && !cheatProtectionOptions.doHeightChecks) {
-      playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
+  if ((state.status & PlayerState::Falling) &&
+      (playerData->lastState.status & PlayerState::OnDriver) &&
+      !cheatProtectionOptions.doHeightChecks) {
+    playerData->player.allowedHeightAtJumpStart = MAXFLOAT;
   }
 
-  if ((normalGravity < -25.0f) && !(playerData->player.allowedHeightAtJumpStart == MAXFLOAT)) {
+  if ((normalGravity < -25.0f) &&
+      !(playerData->player.allowedHeightAtJumpStart == MAXFLOAT)) {
     maxHeight += 1.0f;
   }
 
@@ -282,9 +310,9 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
     maxHeight += playerData->player.jumpStartPos;
   }
 
-  if (state.pos[2] > maxHeight) {
+  if (state.pos.z > maxHeight) {
     logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos[2]);
+      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
     sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was too high.");
     removePlayer(playerData->getIndex(), "too high", true);
     return false;
@@ -292,7 +320,8 @@ bool doHeightChecks ( GameKeeper::Player *playerData, PlayerState &state )
   return true;
 }
 
-bool doOOChecks ( GameKeeper::Player *playerData, PlayerState &state )
+
+bool doOOChecks(GameKeeper::Player *playerData, PlayerState &state)
 {
   // skip if tank does not have OO flag
   int flagId = playerData->player.getFlag();
@@ -305,27 +334,27 @@ bool doOOChecks ( GameKeeper::Player *playerData, PlayerState &state )
     return true;
 
   // tank did not move therefore skip check
-  if  (!(((state.velocity[0]) != (playerData->lastState.velocity[0]))
-    || ((state.velocity[1]) != (playerData->lastState.velocity[1]))
-    || ((state.velocity[2]) != (playerData->lastState.velocity[2]))))
-  {
+  if  (state.velocity == playerData->lastState.velocity) {
     return true;
   }
 
-  float forward[3];
+  fvec3 forward;
   float rotation = state.azimuth;
-  forward[0] = cosf(rotation);
-  forward[1] = sinf(rotation);
-  forward[2] = 0.0f;
+  forward.x = cosf(rotation);
+  forward.y = sinf(rotation);
+  forward.z = 0.0f;
   bool droveForward = false;
-  if (state.velocity[0] != 0)
-    droveForward = ((forward[0] / (state.velocity[0])) > ZERO_TOLERANCE);
-  if (state.velocity[1] != 0 && !droveForward)
-    droveForward = ((forward[1] / (state.velocity[1])) > ZERO_TOLERANCE);
+  if (state.velocity.x != 0) {
+    droveForward = ((forward.x / state.velocity.x) > ZERO_TOLERANCE);
+  }
+  if (state.velocity.y != 0 && !droveForward) {
+    droveForward = ((forward.y / state.velocity.y) > ZERO_TOLERANCE);
+  }
 
-
-  if (!droveForward && (((state.velocity[0]) == 0) || ((state.velocity[1]) == 0)))
+  if (!droveForward &&
+      ((state.velocity.x == 0.0f) || (state.velocity.y == 0.0f))) {
     droveForward = true;
+  }
 
   // InBuilding state doesn't get set when tank is inside a drivethrough obstacle
   if (!(state.status & PlayerState::Falling) && !droveForward && !(playerData->lastState.status & PlayerState::Falling)
@@ -338,6 +367,7 @@ bool doOOChecks ( GameKeeper::Player *playerData, PlayerState &state )
   }
   return true;
 }
+
 
 bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
 {
@@ -366,12 +396,14 @@ bool validatePlayerState(GameKeeper::Player *playerData, PlayerState &state)
   return true;
 }
 
-bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex )
+
+bool checkFlagCheats(GameKeeper::Player *playerData, int teamIndex)
 {
   bool foundACheat = false;
-  TeamColor base = whoseBase(playerData->currentPos[0], playerData->currentPos[1], playerData->currentPos[2]);
+  const fvec3& currPos = playerData->currentPos;
+  TeamColor base = whoseBase(currPos.x, currPos.y, currPos.z);
   if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam())) {
-    logDebugMessage(1,"Player %s [%d] might have sent MsgCaptureFlag for taking their own "
+    logDebugMessage(1, "Player %s [%d] might have sent MsgCaptureFlag for taking their own "
       "flag onto their own base\n",
       playerData->player.getCallSign(), playerData->getIndex());
     foundACheat = true;
@@ -383,13 +415,13 @@ bool checkFlagCheats ( GameKeeper::Player *playerData, int teamIndex )
       playerData->player.getCallSign(), playerData->getIndex(),
       Team::getName(playerData->player.getTeam()),
       Team::getName((TeamColor)teamIndex),
-      playerData->currentPos[0], playerData->currentPos[1],
-      playerData->currentPos[2]);
+      currPos.x, currPos.y, currPos.z);
     foundACheat = true;
   }
 
   return foundACheat;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***
