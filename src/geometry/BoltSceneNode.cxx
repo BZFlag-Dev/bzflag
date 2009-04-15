@@ -568,6 +568,15 @@ void BoltSceneNode::BoltRenderNode::render()
         int uvCell = rand() % 16;
 
         for (int i = 0; i < shotLength; i++) {
+          size  -= sizeStep;
+          const float s = size * (0.65f + (1.0f * (float)bzfrand()));
+          const float shift = s * shiftScale;
+
+          pos += (shift * dir);
+          if (pos.z <= 0.0f) {
+            continue;
+          }
+
           uvCell = (uvCell + 1) % 16;
           const float U0 = (uvCell % 4 ) * 0.25f;
           const float V0 = (uvCell / 4 ) * 0.25f;
@@ -575,15 +584,9 @@ void BoltSceneNode::BoltRenderNode::render()
           const float V1 = V0 + 0.25f;
 
           alpha -= alphaStep;
-          size  -= sizeStep;
           glColor4f(1.0f, 1.0f, 1.0f, alpha);
           glPopMatrix();
           glPushMatrix();
-
-          const float s = size * (0.65f + (1.0f * (float)bzfrand()));
-          const float shift = s * shiftScale;
-
-          pos += (shift * dir);
 
           glTranslatef(pos.x, pos.y, pos.z);
           RENDERER.getViewFrustum().executeBillboard();
@@ -596,6 +599,7 @@ void BoltSceneNode::BoltRenderNode::render()
           glTexCoord2f(U0, V1); glVertex2f(-1.0f, +1.0f);
           glEnd();
         }
+
         addTriangleCount(shotLength * 2);
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glPopAttrib(); // revert the texture

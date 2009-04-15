@@ -176,7 +176,7 @@ bool ShotStrategy::getGround(const Ray& r, float min, float &t)
   if (r.getDirection().z >= 0.0f)
     return false;
 
-  float groundT = r.getOrigin().z / -r.getDirection()[2];
+  float groundT = r.getOrigin().z / -r.getDirection().z;
   if ((groundT > min) && (groundT < t)) {
     t = groundT;
     return true;

@@ -56,12 +56,12 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
   if (!headless) {
     boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
 
-    const fvec4& c = Team::getRadarColor(team);
+    const fvec4& color = Team::getRadarColor(team);
     if (faint) {
-      boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
+      boltSceneNode->setColor(color.r, color.g, color.b, 0.2f);
       boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
     } else {
-      boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
+      boltSceneNode->setColor(color.r, color.g, color.b, 1.0f);
     }
     if ((_path->getShotType() == CloakedShot) &&
         (LocalPlayer::getMyTank()->getFlag() != Flags::Seer)) {
@@ -126,15 +126,12 @@ void SegmentedShotStrategy::update(float dt)
           }
 	  default: {
             // this is fugly but it's what we do
-            float dir[3];
-            dir[0] = segments[segment].ray.getDirection()[0];
-            dir[1] = segments[segment].ray.getDirection()[1];
-            dir[2] = segments[segment].ray.getDirection()[2];
+            fvec3 dir;
+            dir = segments[segment].ray.getDirection();
 
-            float rots[2];
-            const float horiz = sqrtf((dir[0]*dir[0]) + (dir[1]*dir[1]));
-            rots[0] = atan2f(dir[1], dir[0]);
-            rots[1] = atan2f(dir[2], horiz);
+            fvec2 rots;
+            rots.x = atan2f(dir.y, dir.x);
+            rots.y = atan2f(dir.z, dir.xy().length());
 
             const fvec3& pos = segments[segment].ray.getOrigin();
             EFFECTS.addShotTeleportEffect(pos, rots);
@@ -151,8 +148,8 @@ void SegmentedShotStrategy::update(float dt)
 
     if (numSegments > 0) {
       ShotPathSegment &segm = segments[numSegments - 1];
-      const float     *dir  = segm.ray.getDirection();
-      const float speed = hypotf(dir[0], hypotf(dir[1], dir[2]));
+      const fvec3& dir  = segm.ray.getDirection();
+      const float speed = dir.length();
       fvec3 pos;
       segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
       /* NOTE -- comment out to not explode when shot expires */
@@ -228,7 +225,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
 
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
-  const float tankHeight = tank.size[2];
+  const float tankHeight = tank.size.z;
   fvec3 lastTankPositionRaw = tank.motion.getOrigin();
   lastTankPositionRaw.z += 0.5f * tankHeight;
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
@@ -311,8 +308,8 @@ void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
     boltSceneNode->setColorblind(colorblind);
     TeamColor currentTeam = colorblind ? RogueTeam : team;
 
-    const fvec4& c = Team::getRadarColor(currentTeam);
-    boltSceneNode->setColor(c[0], c[1], c[2]);
+    const fvec4& color = Team::getRadarColor(currentTeam);
+    boltSceneNode->setColor(color.r, color.g, color.b);
 
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(currentTeam);
@@ -384,7 +381,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   double         startTime = shotPath.getStartTime();
   float          timeLeft  = shotPath.getLifetime();
   float          minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) /
-                             hypotf(v[0], hypotf(v[1], v[2]));
+                             v.length();
   World          *world    = World::getWorld();
 
   if (!world) {
@@ -398,7 +395,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
   // prepare first segment
   fvec3 o, d;
-  d = v; // use v[2] to have jumping affect shot velocity
+  d = v; // use v.z to have jumping affect shot velocity
   o = shotPath.getPosition();
 
   segments.clear();
@@ -432,7 +429,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // then ignore hit.
     if (!teleporter && building && (e == Reflect) &&
 	(building->getType() == WallObstacle::getClassName()) &&
-	((o[2] + t * d[2]) > building->getHeight())) {
+	((o.z + t * d.z) > building->getHeight())) {
       ignoreHit = true;
     }
 
@@ -517,7 +514,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
           o += (t * d);
 
 	  // reflect direction about normal to ground
-	  fvec3 normal(0.0f, 0.0f, 0.0f);
+	  fvec3 normal(0.0f, 0.0f, 1.0f);
 	  reflect(d, normal);
 	  reason = ShotPathSegment::Ricochet;
 	  break;
@@ -682,7 +679,7 @@ void ThiefStrategy::radarRender() const
       const fvec3& direction = segm.ray.getDirection();
       const float dt = float(segm.end - segm.start);
       glVertex2fv(origin);
-      glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+      glVertex2fv(origin.xy() + (dt * direction.xy()));
     }
   glEnd();
 }
@@ -705,9 +702,7 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* _path) :
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
   float mgunAdVel = BZDB.eval(StateDatabase::BZDB_MGUNADVEL);
-  f.shot.vel[0] *= mgunAdVel;
-  f.shot.vel[1] *= mgunAdVel;
-  f.shot.vel[2] *= mgunAdVel;
+  f.shot.vel *= mgunAdVel;
   setReloadTime(_path->getReloadTime()
 		/ BZDB.eval(StateDatabase::BZDB_MGUNADRATE));
 
@@ -816,7 +811,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
       laserNodes[i]->setTexture(texture);
 
       const fvec4& color = Team::getRadarColor(tmpTeam);
-      laserNodes[i]->setColor(color[0], color[1], color[2]);
+      laserNodes[i]->setColor(color.r, color.g, color.b);
 
       if (i == 0) {
         laserNodes[i]->setFirst();
@@ -867,7 +862,7 @@ void LaserStrategy::radarRender() const
     const fvec3& direction = segm.ray.getDirection();
     const float dt = float(segm.end - segm.start);
     glVertex2fv(origin);
-    glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
+    glVertex2fv(origin.xy() + (dt * direction.xy()));
   }
   glEnd();
 }
