@@ -3100,7 +3100,7 @@ static void handleShotBegin(bool human, void *msg)
         eventHandler.ShotAdded(firingInfo);
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
-	  float shotPos[3];
+	  fvec3 shotPos;
 	  shooter->getMuzzle(shotPos);
 
 	  if (showShotEffects(shooterid)) {
