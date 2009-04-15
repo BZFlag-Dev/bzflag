@@ -1573,7 +1573,6 @@ typedef enum {
   eArcObject,
   eConeObject,
   eSphereObject,
-  eTetraObject,
   eUnknownObject
 } bz_eSolidWorldObjectType;
 

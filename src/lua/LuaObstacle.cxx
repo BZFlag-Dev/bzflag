@@ -20,7 +20,6 @@ using std::string;
 #include "PyramidBuilding.h"
 #include "SphereObstacle.h"
 #include "Teleporter.h"
-#include "TetraBuilding.h"
 #include "WallObstacle.h"
 
 #include "SceneNode.h" // for the fvec[23]Array classes
@@ -126,7 +125,6 @@ static int GetTypeFromName(const string& name)
 	else if (name == "arc")    { return arcType;    }
 	else if (name == "cone")   { return coneType;   }
 	else if (name == "sphere") { return sphereType; }
-	else if (name == "tetra")  { return tetraType;  }
 	return -1;
 }
 

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+/* MeshFace:
+ *	Encapsulates an individual mesh face in the game environment.
  */
 
 #ifndef	BZF_MESH_FACE_OBSTACLE_H

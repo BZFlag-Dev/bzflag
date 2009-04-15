@@ -36,8 +36,8 @@ private:
   int vertexCount;
 
   fvec3 vertices[4];
-  fvec3 normals[4][3];
-  fvec2 texcoords[4][3];
+  fvec3 normals[4];
+  fvec2 texcoords[4];
   bool useNormals[4];
   bool useTexcoords[4];
   BzMaterial materials[4];

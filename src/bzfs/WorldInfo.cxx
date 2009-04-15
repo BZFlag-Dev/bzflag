@@ -39,7 +39,6 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
-#include "TetraBuilding.h"
 #include "Teleporter.h"
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
@@ -344,8 +343,6 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
     }
   } else if (obstacle->getType() == PyramidBuilding::getClassName()) {
     return IN_PYRAMID;
-  } else if (obstacle->getType() == TetraBuilding::getClassName()) {
-    return IN_TETRA;
   } else if (obstacle->getType() == MeshObstacle::getClassName()) {
     return IN_MESH;
   } else if (obstacle->getType() == MeshFace::getClassName()) {

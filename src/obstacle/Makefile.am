@@ -31,7 +31,6 @@ gl_files = \
 	MeshDrawInfo.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
-	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
 	Obstacle.cxx			\
 	ObstacleModifier.cxx		\
@@ -52,7 +51,6 @@ nogl_files = \
 	MeshDrawInfo.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
-	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
 	Obstacle.cxx			\
 	ObstacleModifier.cxx		\

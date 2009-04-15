@@ -373,7 +373,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
   MeshObstacle* mesh = new MeshObstacle(xform, checkTypes, checkPoints,
 					verts, norms, txcds, FaceCount,
-					false, false, false, false, false);
+					false, false, 0, 0, false);
 
   mesh->setDriveThrough(driveThrough);
   mesh->setShootThrough(shootThrough);

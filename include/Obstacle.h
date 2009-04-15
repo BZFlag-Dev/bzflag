@@ -53,7 +53,6 @@ enum ObstacleTypes {
   arcType,
   coneType,
   sphereType,
-  tetraType,
   ObstacleTypeCount
 };
 

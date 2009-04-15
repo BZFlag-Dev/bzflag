@@ -132,7 +132,6 @@ noinst_HEADERS =			\
 	Team.h				\
 	Teleporter.h			\
 	TeleporterSceneNodeGenerator.h	\
-	TetraBuilding.h			\
 	TextChunkManager.h		\
 	TextSceneNode.h			\
 	TextUtils.h			\

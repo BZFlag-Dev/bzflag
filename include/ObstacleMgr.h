@@ -37,7 +37,6 @@ class MeshObstacle;
 class ArcObstacle;
 class ConeObstacle;
 class SphereObstacle;
-class TetraBuilding;
 class ObstacleModifier;
 
 
@@ -210,7 +209,6 @@ class GroupDefinitionMgr {
     const ObstacleList& getArcs() const;
     const ObstacleList& getCones() const;
     const ObstacleList& getSpheres() const;
-    const ObstacleList& getTetras() const;
 
     Obstacle* getObstacleFromID(unsigned int id);
 
@@ -265,10 +263,6 @@ inline const ObstacleList& GroupDefinitionMgr::getCones() const
 inline const ObstacleList& GroupDefinitionMgr::getSpheres() const
 {
   return world.getList(sphereType);
-}
-inline const ObstacleList& GroupDefinitionMgr::getTetras() const
-{
-  return world.getList(tetraType);
 }
 
 inline Obstacle* GroupDefinitionMgr::getObstacleFromID (unsigned int id)
@@ -328,12 +322,6 @@ inline Obstacle* GroupDefinitionMgr::getObstacleFromID (unsigned int id)
     case sphereType: {
       if (getSpheres().size() > listID) {
 	return getSpheres()[listID];
-      }
-      break;
-    }
-    case tetraType: {
-      if (getTetras().size() > listID) {
-	return getTetras()[listID];
       }
       break;
     }

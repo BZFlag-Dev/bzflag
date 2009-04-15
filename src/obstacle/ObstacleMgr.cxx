@@ -45,7 +45,6 @@
 #include "ArcObstacle.h"
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
-#include "TetraBuilding.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -404,7 +403,6 @@ Obstacle* GroupDefinition::newObstacle(int type)
   else if (type == arcType)    { obs = new ArcObstacle();     }
   else if (type == coneType)   { obs = new ConeObstacle();    }
   else if (type == sphereType) { obs = new SphereObstacle();  }
-  else if (type == tetraType)  { obs = new TetraBuilding();   }
 
   return obs;
 }
@@ -421,7 +419,6 @@ static int obstacleTypeNameToEnum(const char* type)
   else if (ArcObstacle::getClassName()     == type) { return arcType;    }
   else if (ConeObstacle::getClassName()    == type) { return coneType;   }
   else if (SphereObstacle::getClassName()  == type) { return sphereType; }
-  else if (TetraBuilding::getClassName()   == type) { return tetraType;  }
 
   return -1;
 }
@@ -453,7 +450,6 @@ static bool isContainer(int type)
     case arcType:
     case coneType:
     case sphereType:
-    case tetraType:
       return true;
     default:
       return false;
@@ -517,7 +513,6 @@ static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
     case arcType:    { mesh =    ((ArcObstacle*)obs)->makeMesh(); break; }
     case coneType:   { mesh =   ((ConeObstacle*)obs)->makeMesh(); break; }
     case sphereType: { mesh = ((SphereObstacle*)obs)->makeMesh(); break; }
-    case tetraType:  { mesh =  ((TetraBuilding*)obs)->makeMesh(); break; }
   }
   return mesh;
 }

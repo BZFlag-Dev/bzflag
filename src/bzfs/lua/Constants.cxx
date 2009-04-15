@@ -136,7 +136,6 @@ static bool PushObstacles(lua_State* L)
   PushDualPair(L, "ARC",     eArcObject);
   PushDualPair(L, "CONE",    eConeObject);
   PushDualPair(L, "SPHERE",  eSphereObject);
-  PushDualPair(L, "TETRA",   eTetraObject);
   PushDualPair(L, "UNKNOWN", eUnknownObject);
 
   lua_rawset(L, -3);

@@ -273,7 +273,6 @@ static bool PushObstacleTypes(lua_State* L)
 	LuaPushDualPair(L, "ARC",    arcType);
 	LuaPushDualPair(L, "CONE",   coneType);
 	LuaPushDualPair(L, "SPHERE", sphereType);
-	LuaPushDualPair(L, "TETRA",  tetraType);
 
 	lua_rawset(L, -3);
 

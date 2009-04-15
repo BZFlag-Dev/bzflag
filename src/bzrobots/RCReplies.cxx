@@ -447,11 +447,6 @@ void ObstacleReply::getParameters(std::ostream &stream) const
        * TODO: Implement this.
        */
       break;
-    case tetraType:
-      /*
-       * TODO: Implement this.
-       */
-      break;
     default:
       /*
        * TODO: Implement this.
@@ -505,11 +500,6 @@ messageParseStatus ObstacleReply::parse(char **arguments, int count)
        */
       break;
     case sphereType:
-      /*
-       * TODO: Implement this.
-       */
-      break;
-    case tetraType:
       /*
        * TODO: Implement this.
        */

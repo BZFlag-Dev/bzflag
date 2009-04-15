@@ -34,7 +34,6 @@ class Obstacle;
 class BoxBuilding;
 class PyramidBuilding;
 class BaseBuilding;
-class TetraBuilding;
 class Teleporter;
 class WallObstacle;
 class MeshObstacle;
@@ -57,7 +56,6 @@ typedef enum {
   IN_MESH,
   IN_MESHFACE,
   IN_PYRAMID,
-  IN_TETRA,
   IN_TELEPORTER
 } InBuildingType;
 

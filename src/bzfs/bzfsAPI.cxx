@@ -3199,7 +3199,14 @@ BZF_API void bz_getWorldSize(float *size, float *wallHeight)
 
 BZF_API unsigned int bz_getWorldObjectCount(void)
 {
-  return (unsigned int)(OBSTACLEMGR.getWalls().size() + OBSTACLEMGR.getBoxes().size() + OBSTACLEMGR.getPyrs().size() + OBSTACLEMGR.getBases().size() + OBSTACLEMGR.getMeshes().size() + OBSTACLEMGR.getArcs().size() + OBSTACLEMGR.getCones().size() + OBSTACLEMGR.getSpheres().size() + OBSTACLEMGR.getTetras().size());
+  return (unsigned int)(OBSTACLEMGR.getWalls()  .size() +
+                        OBSTACLEMGR.getBoxes()  .size() +
+                        OBSTACLEMGR.getPyrs()   .size() +
+                        OBSTACLEMGR.getBases()  .size() +
+                        OBSTACLEMGR.getMeshes() .size() +
+                        OBSTACLEMGR.getArcs()   .size() +
+                        OBSTACLEMGR.getCones()  .size() +
+                        OBSTACLEMGR.getSpheres().size());
 }
 
 bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
@@ -3222,8 +3229,6 @@ bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
       return eConeObject;
     case sphereType:
       return eSphereObject;
-    case tetraType:
-      return eTetraObject;
   }
   return eUnknownObject;
 }
@@ -3253,8 +3258,6 @@ const ObstacleList* obstacleListFromObstacleType ( int type )
     return &OBSTACLEMGR.getCones();
   case sphereType:
     return &OBSTACLEMGR.getSpheres();
-  case tetraType:
-    return &OBSTACLEMGR.getTetras();
   }
   return NULL;
 }
@@ -3355,7 +3358,6 @@ BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getArcs());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getCones());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getSpheres());
-  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getTetras());
 
   return worldList;
 }
@@ -3441,10 +3443,6 @@ BZF_API unsigned int bz_findWorldObject ( const char *name )
     return id;
 
   id = findFirstNameInList(OBSTACLEMGR.getSpheres(),eSphereObject,nameStr);
-  if (id)
-    return id;
-
-  id = findFirstNameInList(OBSTACLEMGR.getTetras(),eTetraObject,nameStr);
   if (id)
     return id;
 
@@ -3564,7 +3562,6 @@ bz_eAPIColType getAPIMapObject(InBuildingType colType, const Obstacle *obs, bz_A
     case IN_MESH:
     case IN_MESHFACE:
     case IN_PYRAMID:
-    case IN_TETRA:
       if(object)
 	*object = APISolidFromObsacle(obs);
       return base ? eInBase : eInSolid;

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+/* BzMaterial:
+ *	Encapsulates a material in the game environment.
  */
 
 #ifndef	BZ_MATERIAL_H
