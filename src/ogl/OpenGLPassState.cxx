@@ -1,11 +1,3 @@
-//
-// TODO:
-// - go back to counting matrix push/pops (just for modelview?)
-//   would have to make sure that display lists are also handled
-//   (GL_MODELVIEW_STACK_DEPTH could help current situation, but
-//    requires the ARB_imaging extension)
-// - use materials instead of raw calls (again, handle dlists)
-//
 
 #include "common.h"
 
