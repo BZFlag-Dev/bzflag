@@ -461,10 +461,10 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   const fvec2 dims2(size2.y - bord2, size2.z - bord2);
   const fvec2 dimsScale = (dims2 / dims1);
 
-  fvec3 p;
+  fvec3 p = pIn;
 
   // translate to origin, and revert rotation
-  p = pIn - tele1.getPosition();
+  p -= tele1.getPosition();
   p = p.rotateZ(-tele1.getRotation());
 
   // fixed x offset, and scale y & z coordinates
