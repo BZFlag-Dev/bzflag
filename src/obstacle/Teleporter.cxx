@@ -60,7 +60,7 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
   tool.modifyOldStyle(newPos, newSize, newAngle, flipped);
 
   Teleporter* copy =
-    new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],
+    new Teleporter(newPos, newAngle, newSize.x, newSize.y, newSize.z,
 		   border, horizontal, driveThrough, shootThrough, ricochet);
 
   copy->setName(name);
@@ -74,24 +74,24 @@ void Teleporter::finalize()
   origSize = size;
 
   if (!horizontal) {
-    size[1] = origSize[1] + (border * 2.0f);
-    size[2] = origSize[2] + border;
+    size.y = origSize.y + (border * 2.0f);
+    size.z = origSize.z + border;
   }
 
   // the same as the default Obstacle::getExtents(), except
-  // that we use the larger of the border half-width and size[0].
+  // that we use the larger of the border half-width and size.x.
   float sizeX = border * 0.5f;
-  if (size[0] > sizeX) {
-    sizeX = size[0];
+  if (size.x > sizeX) {
+    sizeX = size.x;
   }
-  float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size[1]);
-  float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * sizeX);
-  extents.mins[0] = pos[0] - xspan;
-  extents.maxs[0] = pos[0] + xspan;
-  extents.mins[1] = pos[1] - yspan;
-  extents.maxs[1] = pos[1] + yspan;
-  extents.mins[2] = pos[2];
-  extents.maxs[2] = pos[2] + size[2];
+  float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size.y);
+  float yspan = (fabsf(cosf(angle)) * size.y) + (fabsf(sinf(angle)) * sizeX);
+  extents.mins.x = pos.x - xspan;
+  extents.maxs.x = pos.x + xspan;
+  extents.mins.y = pos.y - yspan;
+  extents.maxs.y = pos.y + yspan;
+  extents.mins.z = pos.z;
+  extents.maxs.z = pos.z + size.z;
 
   makeLinks();
 
@@ -145,23 +145,27 @@ void Teleporter::makeLinks()
   const float sin_val = sinf(a);
 
   if (!horizontal) {
-    const float params[4][2] =
-      {{-1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {-1.0f, 1.0f}};
-    float wlen[2] = { (cos_val * w), (sin_val * w) };
-    float blen[2] = { (-sin_val * (b - br)), (cos_val * (b - br)) };
+    const fvec2 params[4] = {
+      fvec2(-1.0f, 0.0f),
+      fvec2(+1.0f, 0.0f),
+      fvec2(+1.0f, 1.0f),
+      fvec2(-1.0f, 1.0f)
+    };
+    fvec2 wlen(cos_val * w, sin_val * w);
+    fvec2 blen(-sin_val * (b - br), cos_val * (b - br));
 
     for (i = 0; i < 4 ;i++) {
-      bvertices[i].x = p.x + (wlen[0] + (blen[0] * params[i][0]));
-      bvertices[i].y = p.y + (wlen[1] + (blen[1] * params[i][0]));
-      bvertices[i].z = p.z + ((h - br) * params[i][1]);
+      bvertices[i].x = p.x + (wlen.x + (blen.x * params[i].x));
+      bvertices[i].y = p.y + (wlen.y + (blen.y * params[i].x));
+      bvertices[i].z = p.z + ((h - br) * params[i].y);
     }
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
 			    NULL, -1, false, false, true, true, false);
 
     for (i = 0; i < 4 ;i++) {
-      fvertices[i].x = p.x - (wlen[0] + (blen[0] * params[i][0]));
-      fvertices[i].y = p.y - (wlen[1] + (blen[1] * params[i][0]));
-      fvertices[i].z = p.z + ((h - br) * params[i][1]);
+      fvertices[i].x = p.x - (wlen.x + (blen.x * params[i].x));
+      fvertices[i].y = p.y - (wlen.y + (blen.y * params[i].x));
+      fvertices[i].z = p.z + ((h - br) * params[i].y);
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
 			     NULL, -1, false, false, true, true, false);
@@ -233,18 +237,18 @@ void Teleporter::getNormal(const fvec3& p1, fvec3& n) const
   const float s = sinf(-getRotation());
   const float b = 0.5f * getBorder();
   const float d = getBreadth() - b;
-  const float j = (c * (p1[1] - p2[1]) + s * (p1[0] - p2[0]) > 0.0f) ? d : -d;
+  const float j = (c * (p1.y - p2.y) + s * (p1.x - p2.x) > 0.0f) ? d : -d;
   fvec3 cc;
-  cc[0] = p2[0] + (s * j);
-  cc[1] = p2[1] + (c * j);
+  cc.x = p2.x + (s * j);
+  cc.y = p2.y + (c * j);
   Intersect::getNormalRect(p1, cc, getRotation(), b, b, n);
 }
 
 
 bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const
 {
-  return (p[2]+height) >= getPosition()[2] &&
-	  p[2] <= getPosition()[2] + getHeight() &&
+  return (p.z + height) >= getPosition().z &&
+	  p.z <= getPosition().z + getHeight() &&
 	  Intersect::testRectCircle(getPosition(), getRotation(),
 	                            getWidth(), getBreadth(), p, radius);
 }
@@ -253,30 +257,30 @@ bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const
 bool Teleporter::inBox(const fvec3& p, float a,
 		       float dx, float dy, float dz) const
 {
-  const float tankTop = p[2] + dz;
-  const float teleTop = getExtents().maxs[2];
+  const float tankTop = p.z + dz;
+  const float teleTop = getExtents().maxs.z;
   const float crossbarBottom = teleTop - getBorder();
 
-  if ((p[2] < crossbarBottom) && (tankTop >= getPosition()[2])) {
+  if ((p.z < crossbarBottom) && (tankTop >= getPosition().z)) {
     // test individual border columns
     const float c = cosf(getRotation());
     const float s = sinf(getRotation());
     const float d = getBreadth() - (0.5f * getBorder());
     const float r = 0.5f * getBorder();
     fvec3 o;
-    o[0] = getPosition()[0] - (s * d);
-    o[1] = getPosition()[1] + (c * d);
+    o.x = getPosition().x - (s * d);
+    o.y = getPosition().y + (c * d);
     if (Intersect::testRectRect(p, a, dx, dy, o, getRotation(), r, r)) {
       return true;
     }
-    o[0] = getPosition()[0] + (s * d);
-    o[1] = getPosition()[1] - (c * d);
+    o.x = getPosition().x + (s * d);
+    o.y = getPosition().y - (c * d);
     if (Intersect::testRectRect(p, a, dx, dy, o, getRotation(), r, r)) {
       return true;
     }
   }
 
-  if ((p[2] < teleTop) && (tankTop >= crossbarBottom)) {
+  if ((p.z < teleTop) && (tankTop >= crossbarBottom)) {
     // test crossbar
     if (Intersect::testRectRect(p, a, dx, dy, getPosition(),
 		                getRotation(), getWidth(), getBreadth())) {
@@ -293,14 +297,14 @@ bool Teleporter::inMovingBox(const fvec3& oldP, float /*oldAngle */,
 			     float dx, float dy, float dz) const
 {
   fvec3 minPos;
-  minPos[0] = p[0];
-  minPos[1] = p[1];
-  if (oldP[2] < p[2]) {
-    minPos[2] = oldP[2];
+  minPos.x = p.x;
+  minPos.y = p.y;
+  if (oldP.z < p.z) {
+    minPos.z = oldP.z;
   } else {
-    minPos[2] = p[2];
+    minPos.z = p.z;
   }
-  dz += fabsf(oldP[2] - p[2]);
+  dz += fabsf(oldP.z - p.z);
   return inBox(minPos, a, dx, dy, dz);
 }
 
@@ -313,7 +317,7 @@ bool Teleporter::isCrossing(const fvec3& p, float a,
   const fvec3& p2 = getPosition();
   if (!Intersect::testRectRect(p, a, dx, dy,
 		               p2, getRotation(), getWidth(), getBreadth() - getBorder())
-      || (p[2] < p2[2]) || (p[2] > (p2[2] + getHeight() - getBorder()))) {
+      || (p.z < p2.z) || (p.z > (p2.z + getHeight() - getBorder()))) {
     return false;
   }
 
@@ -328,16 +332,16 @@ bool Teleporter::isCrossing(const fvec3& p, float a,
   const float a2 = getRotation();
   const float c = cosf(-a2);
   const float s = sinf(-a2);
-  const float x = c * (p[0] - p2[0]) - s * (p[1] - p2[1]);
-  float pw[2];
-  plane[0] = ((x < 0.0f) ? -cosf(a2) : cosf(a2));
-  plane[1] = ((x < 0.0f) ? -sinf(a2) : sinf(a2));
-  pw[0] = p2[0] + getWidth() * plane[0];
-  pw[1] = p2[1] + getWidth() * plane[1];
+  const float x = c * (p.x - p2.x) - s * (p.y - p2.y);
+  fvec2 pw;
+  plane.x = ((x < 0.0f) ? -cosf(a2) : cosf(a2));
+  plane.y = ((x < 0.0f) ? -sinf(a2) : sinf(a2));
+  pw.x = p2.x + getWidth() * plane.x;
+  pw.y = p2.y + getWidth() * plane.y;
 
   // now finish off plane equation
-  plane[2] = 0.0f;
-  plane[3] = -(plane[0] * pw[0] + plane[1] * pw[1]);
+  plane.z = 0.0f;
+  plane.w = -(plane.x * pw.x + plane.y * pw.y);
   return true;
 }
 
@@ -360,15 +364,15 @@ float Teleporter::isTeleported(const Ray& r, int& face) const
   // get teleport position.  if above or below teleporter then no teleportation.
   fvec3 p;
   r.getPoint(t, p);
-  p[2] -= getPosition()[2];
-  if (p[2] < 0.0f || p[2] > getHeight() - getBorder()) {
+  p.z -= getPosition().z;
+  if (p.z < 0.0f || p.z > getHeight() - getBorder()) {
     return -1.0f;
   }
 
   // figure out which face:  rotate intersection into teleporter space,
   //	if to east of teleporter then face 0 else face 1.
-  const float x = cosf(-getRotation()) * (p[0] - getPosition()[0]) -
-		sinf(-getRotation()) * (p[1] - getPosition()[1]);
+  const float x = cosf(-getRotation()) * (p.x - getPosition().x) -
+                  sinf(-getRotation()) * (p.y - getPosition().y);
   face = (x > 0.0f) ? 0 : 1;
   return t;
 }
@@ -428,9 +432,9 @@ bool Teleporter::hasCrossed(const fvec3& p1, const fvec3& p2, int& f) const
     return false;
 
   const float c = cosf(-getRotation()), s = sinf(-getRotation());
-  const float x1 = c * (p1[0] - p[0]) - s * (p1[1] - p[1]);
-  const float x2 = c * (p2[0] - p[0]) - s * (p2[1] - p[1]);
-  const float y2 = c * (p2[1] - p[1]) + s * (p2[0] - p[0]);
+  const float x1 = c * (p1.x - p.x) - s * (p1.y - p.y);
+  const float x2 = c * (p2.x - p.x) - s * (p2.y - p.y);
+  const float y2 = c * (p2.y - p.y) + s * (p2.x - p.x);
   if (x1 * x2 < 0.0f && fabsf(y2) <= getBreadth() - getBorder()) {
     f = (x1 > 0.0f) ? 0 : 1;
     return true;
@@ -443,72 +447,50 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 			     const fvec3& pIn, const fvec3* dInPtr, float aIn,
 			     fvec3& pOut, fvec3* dOutPtr, float* aOutPtr) const
 {
-  const float x1 = pIn.x - getPosition().x;
-  const float y1 = pIn.y - getPosition().y;
-  const float a = t2.getRotation() - getRotation() +
-			(face1 == face2 ? (float)M_PI : 0.0f);
-  const float c = cosf(a);
-  const float s = sinf(a);
-  const float x2 = (c * x1) - (s * y1);
-  const float y2 = (c * y1) + (s * x1);
+  // transforming pIn to pOut, going from tele1(this) to tele2
+  const Teleporter& tele1 = *this;
+  const Teleporter& tele2 = t2;
 
-  /*
-	Here's what the next statements do:
+  const fvec3& size1 = tele1.getSize();
+  const fvec3& size2 = tele2.getSize();
+  const float  bord1 = tele1.getBorder();
+  const float  bord2 = tele2.getBorder();
 
-  In order to account for different-size teleporters, each of the dimensions
-  is expressed a a ratio of the length of the transporter in the dimension
-  divided by position of the tank relative to the transporter in that dimension, and
-  is proportional to the width of the target teleporter in that dimension.
-  Here is the formula, with example lengths:
+  // y & z axis scaling factors  (relative active areas)
+  const fvec2 dims1(size1.y - bord1, size1.z - bord1);
+  const fvec2 dims2(size2.y - bord2, size2.z - bord2);
+  const fvec2 dimsScale = (dims2 / dims1);
 
-  W1/W2 = T1/T2
+  fvec3 p;
 
+  // translate to origin, and revert rotation
+  p = pIn - tele1.getPosition();
+  p = p.rotateZ(-tele1.getRotation());
 
-  |--------|	Tank Pos (T1)
-  |----------------------------------------------------------|	Transport width (W1)
+  // fixed x offset, and scale y & z coordinates
+  p.x = (face2 == 0) ? size2.x : -size2.x;
+  p.yz() *= dimsScale; // note the .yz() 
 
+  // apply rotation, translate to new position
+  p = p.rotateZ(+tele2.getRotation());
+  p += tele2.getPosition();
 
-  |-|	New tank Pos (T2)
-  |---------|	New Transport width (W2)
+  pOut = p; // final output position
 
-  We are looking for T2, and simple algebra tells us that T2 = (W2 * T1) / W1
-
-  Now, we can correctly position the tank.
-
-  Note that this is only the position relative to the transporter, to get the real position,
-  it is added to the rest.  Since I'm not 100% sure of my work, I am leaving the old code
-  commented above.
-  */
-
-  //T1 = x2 and y2
-  //W2 = t2.getWidth()
-  //W1 = getWidth()
-
-  //pOut[0] = x2 + t2.getPosition()[0];
-  //pOut[1] = y2 + t2.getPosition()[1];
-  pOut.x = t2.getPosition().x + (x2 * (t2.getBreadth() - t2.getBorder())) / (getBreadth() - getBorder());
-  pOut.y = t2.getPosition().y + (y2 * (t2.getBreadth() - t2.getBorder())) / (getBreadth() - getBorder());
-  //T1 = pIn[2] - getPosition()[2]
-  //W2 = t2.getHeight()
-  //W1 = getHeight
-
-  //(t2.getPosition()[2] - getPosition()[2]) adds the height differences between the
-  //teleporters so that teleporters can be off of the ground at different heights.
-
-  //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
-  pOut.z = t2.getPosition().z
-	  + ((pIn.z - getPosition().z) * (t2.getHeight() - t2.getBorder())) / (getHeight() - getBorder());
-
+  // fill in output angle and direction variables, if requested
+  const float a = tele2.getRotation() - tele1.getRotation() +
+                  ((face1 == face2) ? (float)M_PI : 0.0f);
+  if (aOutPtr) {
+    *aOutPtr = aIn + a;
+  }
   if (dOutPtr && dInPtr) {
+    const float c = cosf(a);
+    const float s = sinf(a);
     const float dx = dInPtr->x;
     const float dy = dInPtr->y;
     dOutPtr->x = (c * dx) - (s * dy);
     dOutPtr->y = (c * dy) + (s * dx);
     dOutPtr->z = dInPtr->z;
-  }
-
-  if (aOutPtr) {
-    *aOutPtr = aIn + a;
   }
 }
 
@@ -594,10 +576,10 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
   }
   out << std::endl;
   const fvec3& _pos = getPosition();
-  out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
-				 << _pos[2] << std::endl;
-  out << indent << "  size " << origSize[0] << " " << origSize[1] << " "
-			     << origSize[2] << std::endl;
+  out << indent << "  position " << _pos.x << " " << _pos.y << " "
+				 << _pos.z << std::endl;
+  out << indent << "  size " << origSize.x << " " << origSize.y << " "
+			     << origSize.z << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
 				 << std::endl;
   out << indent << "  border " << getBorder() << std::endl;
@@ -661,22 +643,22 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& /*indent*/) cons
 
   for (i = 0; i < 8; i++) {
     out << "v";
-    outputFloat(out, verts[i][0]);
-    outputFloat(out, verts[i][1]);
-    outputFloat(out, verts[i][2]);
+    outputFloat(out, verts[i].x);
+    outputFloat(out, verts[i].y);
+    outputFloat(out, verts[i].z);
     out << std::endl;
   }
   for (i = 0; i < 4; i++) {
     out << "vt";
-    outputFloat(out, txcds[i][0]);
-    outputFloat(out, txcds[i][1]);
+    outputFloat(out, txcds[i].x);
+    outputFloat(out, txcds[i].y);
     out << std::endl;
   }
   for (i = 0; i < 6; i++) {
     out << "vn";
-    outputFloat(out, norms[i][0]);
-    outputFloat(out, norms[i][1]);
-    outputFloat(out, norms[i][2]);
+    outputFloat(out, norms[i].x);
+    outputFloat(out, norms[i].y);
+    outputFloat(out, norms[i].z);
     out << std::endl;
   }
   out << "usemtl telefront" << std::endl;
