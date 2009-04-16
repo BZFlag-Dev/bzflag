@@ -2575,13 +2575,14 @@ void playerAlive(int playerIndex)
 
       if ((pbData->netHandler->getIPAddress().s_addr == playerIP.s_addr) && pbData->player.isBot()) {
 	botsFound++;
-	if (botsFound >= clOptions->botsPerIP)
+	if (botsFound > clOptions->botsPerIP)
 	  break;
       }
     }
-    if (botsFound >= clOptions->botsPerIP) {
-      sendMessage(ServerPlayer, playerIndex, "So sorry.  You are attempting to connect with too many bots.");
-      sendMessage(ServerPlayer, playerIndex,
+    if (botsFound > clOptions->botsPerIP) {
+      sendMessage(ServerPlayer, playerData->botHost,
+		  "So sorry.  You are attempting to connect with too many bots.");
+      sendMessage(ServerPlayer, playerData->botHost,
 		  TextUtils::format("This server only allows a maximum of %d %s per IP address.",
 				    clOptions->botsPerIP,
 				    clOptions->botsPerIP==1?"bot":"bots").c_str());
