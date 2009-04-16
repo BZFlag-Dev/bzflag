@@ -125,12 +125,12 @@ MeshObstacle* ArcObstacle::makeMesh()
 
   // absolute the sizes
   fvec3 sz;
-  sz[0] = fabsf(size[0]);
-  sz[1] = fabsf(size[1]);
-  sz[2] = fabsf(size[2]);
+  sz.x = fabsf(size.x);
+  sz.y = fabsf(size.y);
+  sz.z = fabsf(size.z);
 
   // validity checking
-  if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
+  if ((sz.x < minSize) || (sz.y < minSize) || (sz.z < minSize) ||
       (fabsf(texsize[0]) < minSize) || (fabsf(texsize[1]) < minSize) ||
       (fabsf(texsize[2]) < minSize) || (fabsf(texsize[3]) < minSize) ||
       (ratio < 0.0f) || (ratio > 1.0f)) {
@@ -151,7 +151,7 @@ MeshObstacle* ArcObstacle::makeMesh()
     texsz[0] = -floorf(circ / texsz[0]);
   }
   if (texsz[1] < 0.0f) {
-    texsz[1] = -(sz[2] / texsz[1]);
+    texsz[1] = -(sz.z / texsz[1]);
   }
 
   // setup the angles
@@ -179,8 +179,8 @@ MeshObstacle* ArcObstacle::makeMesh()
   }
 
   // setup the radii
-  float inrad = sz[0] * (1.0f - ratio);
-  float outrad = sz[0];
+  float inrad = sz.x * (1.0f - ratio);
+  float outrad = sz.x;
   if (inrad > outrad) {
     const float tmp = inrad;
     inrad = outrad;
@@ -192,12 +192,12 @@ MeshObstacle* ArcObstacle::makeMesh()
   if (inrad < minSize) {
     isPie = true;
   }
-  const float squish = sz[1] / sz[0];
+  const float squish = sz.y / sz.x;
 
   if (isPie) {
-    mesh = makePie(isCircle, a, r, sz[2], outrad, squish, texsz);
+    mesh = makePie(isCircle, a, r, sz.z, outrad, squish, texsz);
   } else {
-    mesh = makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, texsz);
+    mesh = makeRing(isCircle, a, r, sz.z, inrad, outrad, squish, texsz);
   }
 
   // wrap it up
@@ -230,14 +230,14 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
   // add the checkpoint (one is sufficient)
   if (isCircle) {
-    v[0] = pos[0];
-    v[1] = pos[1];
+    v.x = pos.x;
+    v.y = pos.y;
   } else {
     const float dir = r + (0.5f * a);
-    v[0] = pos[0] + (cosf(dir) * radius * 0.5f);
-    v[1] = pos[1] + (sinf(dir) * radius * 0.5f * squish);
+    v.x = pos.x + (cosf(dir) * radius * 0.5f);
+    v.y = pos.y + (sinf(dir) * radius * 0.5f * squish);
   }
-  v[2] = pos[2] + (0.5f * fabsf(size[2]));
+  v.z = pos.z + (0.5f * fabsf(size.z));
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -258,35 +258,35 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
     // vertices and normals
     if (!isCircle || (i != divisions)) {
-      float delta[2];
-      delta[0] = cos_val * radius;
-      delta[1] = (sin_val * radius) * squish;
+      fvec2 delta;
+      delta.x =  cos_val * radius;
+      delta.y = (sin_val * radius) * squish;
       // vertices
-      v[0] = pos[0] + delta[0];
-      v[1] = pos[1] + delta[1];
-      v[2] = pos[2];
+      v.x = pos.x + delta.x;
+      v.y = pos.y + delta.y;
+      v.z = pos.z;
       vertices.push_back(v);
-      v[2] = v[2] + h;
+      v.z = v.z + h;
       vertices.push_back(v);
       // normal
       if (useNormals) {
-	n[2] = 0.0f;
-	n[0] = cos_val * squish;
-	n[1] = sin_val;
-	float len = 1.0f / sqrtf((n[0] * n[0]) + (n[1] * n[1]));
-	n[0] = n[0] * len;
-	n[1] = n[1] * len;
+	n.z = 0.0f;
+	n.x = cos_val * squish;
+	n.y = sin_val;
+	float len = 1.0f / sqrtf((n.x * n.x) + (n.y * n.y));
+	n.x = n.x * len;
+	n.y = n.y * len;
 	normals.push_back(n);
       }
     }
 
     // texture coordinates (around the edge)
-    t[0] = (float) i / (float) divisions;
-    t[0] = texsz[0] * t[0];
-    t[1] = 0.0f;
+    t.x = (float) i / (float) divisions;
+    t.x = texsz[0] * t.x;
+    t.y = 0.0f;
     texcoords.push_back(t);
     // outside texcoord
-    t[1] = texsz[1] * 1.0f;
+    t.y = texsz[1] * 1.0f;
     texcoords.push_back(t);
   }
 
@@ -295,20 +295,20 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
     float ang = astep * (float)i;
     float cos_val = cosf(ang);
     float sin_val = sinf(ang);
-    t[0] = texsz[2] * (0.5f + (0.5f * cos_val));
-    t[1] = texsz[3] * (0.5f + (0.5f * sin_val));
+    t.x = texsz[2] * (0.5f + (0.5f * cos_val));
+    t.y = texsz[3] * (0.5f + (0.5f * sin_val));
     texcoords.push_back(t);
   }
 
   // the central coordinates
-  v[0] = pos[0];
-  v[1] = pos[1];
-  v[2] = pos[2];
+  v.x = pos.x;
+  v.y = pos.y;
+  v.z = pos.z;
   vertices.push_back(v); // bottom
-  v[2] = pos[2] + h;
+  v.z = pos.z + h;
   vertices.push_back(v); // top
-  t[0] = texsz[2] * 0.5f;
-  t[1] = texsz[3] * 0.5f;
+  t.x = texsz[2] * 0.5f;
+  t.y = texsz[3] * 0.5f;
   texcoords.push_back(t);
 
   // setup the face count
@@ -401,44 +401,44 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
   fvec2 t;
 
   // add the checkpoints (very wasteful)
-  v[0] = pos[0];
-  v[1] = pos[1];
-  const float height = fabsf(size[2]);
-  if (pos[2] > 0.0f) {
+  v.x = pos.x;
+  v.y = pos.y;
+  const float height = fabsf(size.z);
+  if (pos.z > 0.0f) {
     // down
-    v[2] = pos[2] - (1.0f * height);
+    v.z = pos.z - (1.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
     // up
-    v[2] = pos[2] + (2.0f * height);
+    v.z = pos.z + (2.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
   } else {
     // up
-    v[2] = pos[2] + (2.0f * height);
+    v.z = pos.z + (2.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
     // down
-    v[2] = pos[2] - (1.0f * height);
+    v.z = pos.z - (1.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckOutside);
   }
   // east
-  v[2] = pos[2] + (0.5f * height);
-  v[0] = pos[0] + (outrad * 2.0f);
+  v.z = pos.z + (0.5f * height);
+  v.x = pos.x + (outrad * 2.0f);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckOutside);
   // west
-  v[0] = pos[0] - (outrad * 2.0f);
+  v.x = pos.x - (outrad * 2.0f);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckOutside);
   // north
-  v[0] = pos[0];
-  v[1] = pos[1] + (outrad * squish * 2.0f);
+  v.x = pos.x;
+  v.y = pos.y + (outrad * squish * 2.0f);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckOutside);
   // south
-  v[1] = pos[1] - (outrad * squish * 2.0f);
+  v.y = pos.y - (outrad * squish * 2.0f);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckOutside);
 
@@ -453,43 +453,43 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
     // vertices and normals
     if (!isCircle || (i != divisions)) {
       // inside points
-      v[0] = pos[0] + (cos_val * inrad);
-      v[1] = pos[1] + (squish * (sin_val * inrad));
-      v[2] = pos[2];
+      v.x = pos.x + (cos_val * inrad);
+      v.y = pos.y + (squish * (sin_val * inrad));
+      v.z = pos.z;
       vertices.push_back(v);
-      v[2] = v[2] + h;
+      v.z = v.z + h;
       vertices.push_back(v);
       // outside points
-      v[0] = pos[0] + (cos_val * outrad);
-      v[1] = pos[1] + (squish * (sin_val * outrad));
-      v[2] = pos[2];
+      v.x = pos.x + (cos_val * outrad);
+      v.y = pos.y + (squish * (sin_val * outrad));
+      v.z = pos.z;
       vertices.push_back(v);
-      v[2] = v[2] + h;
+      v.z = v.z + h;
       vertices.push_back(v);
       // inside normal
       if (useNormals) {
-	n[2] = 0.0f;
-	n[0] = -cos_val * squish;
-	n[1] = -sin_val;
-	float len = 1.0f / sqrtf((n[0] * n[0]) + (n[1] * n[1]));
-	n[0] = n[0] * len;
-	n[1] = n[1] * len;
+	n.z = 0.0f;
+	n.x = -cos_val * squish;
+	n.y = -sin_val;
+	float len = 1.0f / sqrtf((n.x * n.x) + (n.y * n.y));
+	n.x = n.x * len;
+	n.y = n.y * len;
 	normals.push_back(n);
 	// outside normal
-	n[0] = -n[0];
-	n[1] = -n[1];
+	n.x = -n.x;
+	n.y = -n.y;
 	normals.push_back(n);
       }
     }
 
     // texture coordinates
     // inside texcoord
-    t[0] = (float) i / (float) divisions;
-    t[0] = texsz[0] * t[0];
-    t[1] = 0.0f;
+    t.x = (float) i / (float) divisions;
+    t.x = texsz[0] * t.x;
+    t.y = 0.0f;
     texcoords.push_back(t);
     // outside texcoord
-    t[1] = texsz[1] * 1.0f;
+    t.y = texsz[1] * 1.0f;
     texcoords.push_back(t);
   }
 
@@ -723,10 +723,10 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "arc" << std::endl;
 
-  out << indent << "  position " << pos[0] << " "
-				 << pos[1] << " " << pos[2] << std::endl;
-  out << indent << "  size " << size[0] << " "
-			     << size[1] << " " << size[2] << std::endl;
+  out << indent << "  position " << pos.x << " "
+				 << pos.y << " " << pos.z << std::endl;
+  out << indent << "  size " << size.x << " "
+			     << size.y << " " << size.z << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  ratio " << ratio << std::endl;

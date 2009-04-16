@@ -134,13 +134,13 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
   const float polarity = fvec3::dot(edge03, cross);
   const int (*faceSets)[3] = (polarity >= 0.0f) ? posFaceSets : invFaceSets;
 
-  std::vector<char> checkTypes;
+  std::vector<char>  checkTypes;
   std::vector<fvec3> checkPoints;
   std::vector<fvec3> verts;
   std::vector<fvec3> norms;
   std::vector<fvec2> txcds;
 
-  if (fabsf(polarity) > 1.0e-3f) {
+  if ((driveThrough == 0) && (fabsf(polarity) > 1.0e-3f)) {
     fvec3 center;
     for (int v = 0; v < 4; v++) {
       center += vertices[v];

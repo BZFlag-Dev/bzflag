@@ -1971,7 +1971,7 @@ static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
 
 static void addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstacle)
 {
-  float p[4][2];
+  fvec2 p[4];
   const float* c = obstacle.getPosition();
   const float tankRadius = BZDBCache::tankRadius;
 
@@ -2015,8 +2015,8 @@ static void addObstacle(std::vector<BzfRegion*>& rgnList, const Obstacle& obstac
     for (int j = 0; j < 4; j++) {
       if (side[j] == -1) continue;		// to inside
       // split
-      const float* p1 = p[j];
-      const float* p2 = p[(j+1)&3];
+      const fvec2& p1 = p[j];
+      const fvec2& p2 = p[(j+1)&3];
       BzfRegion* newRegion = region->orphanSplitRegion(p2, p1);
       if (!newRegion) continue;		// no split
       if (region != rgnList[k]) rgnList.push_back(region);
@@ -2036,7 +2036,7 @@ static void makeObstacleList()
   obstacleList.clear();
 
   // FIXME -- shouldn't hard code game area
-  float gameArea[4][2];
+  fvec2 gameArea[4];
   float worldSize = BZDBCache::worldSize;
   gameArea[0][0] = -0.5f * worldSize + tankRadius;
   gameArea[0][1] = -0.5f * worldSize + tankRadius;

@@ -409,12 +409,12 @@ void MeshObstacle::finalize()
   }
 
   // setup fake obstacle parameters
-  pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
-  pos[1] = (extents.maxs[1] + extents.mins[1]) / 2.0f;
-  pos[2] = extents.mins[2];
-  size[0] = (extents.maxs[0] - extents.mins[0]) / 2.0f;
-  size[1] = (extents.maxs[1] - extents.mins[1]) / 2.0f;
-  size[2] = (extents.maxs[2] - extents.mins[2]);
+  pos.x = (extents.maxs.x + extents.mins.x) / 2.0f;
+  pos.y = (extents.maxs.y + extents.mins.y) / 2.0f;
+  pos.z = extents.mins.z;
+  size.x = (extents.maxs.x - extents.mins.x) / 2.0f;
+  size.y = (extents.maxs.y - extents.mins.y) / 2.0f;
+  size.z = (extents.maxs.z - extents.mins.z);
   angle = 0.0f;
   zFlip = false;
 
@@ -546,7 +546,7 @@ void MeshObstacle::get3DNormal(const fvec3& /*p*/, fvec3& /*n*/) const
 
 void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
 {
-  const fvec3 center(pos.x, pos.y, pos.z + (0.5f * size[2]));
+  const fvec3 center(pos.x, pos.y, pos.z + (0.5f * size.z));
   fvec3 out = p - center;
   if (out.z < 0.0f) {
     out.z = 0.0f;
@@ -576,7 +576,7 @@ bool MeshObstacle::getHitNormal(const fvec3& /*oldPos*/, float /*oldAngle*/,
 bool MeshObstacle::inCylinder(const fvec3& p,
 			       float /*radius*/, float height) const
 {
-  const fvec3 mid(p[0], p[1], p[2] + (0.5f * height));
+  const fvec3 mid(p.x, p.y, p.z + (0.5f * height));
   return containsPoint(mid);
 }
 
@@ -584,7 +584,7 @@ bool MeshObstacle::inCylinder(const fvec3& p,
 bool MeshObstacle::inBox(const fvec3& p, float /*angle*/,
 			 float /*dx*/, float /*dy*/, float height) const
 {
-  const fvec3 mid(p[0], p[1], p[2] + (0.5f * height));
+  const fvec3 mid(p.x, p.y, p.z + (0.5f * height));
   return containsPoint(mid);
 }
 
@@ -593,7 +593,7 @@ bool MeshObstacle::inMovingBox(const fvec3&, float,
 			       const fvec3& p, float /*angle*/,
 			       float /*dx*/, float /*dy*/, float height) const
 {
-  const fvec3 mid(p[0], p[1], p[2] + (0.5f * height));
+  const fvec3 mid(p.x, p.y, p.z + (0.5f * height));
   return containsPoint(mid);
 }
 
@@ -855,12 +855,12 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "# vertices = " << vertexCount << std::endl;
   out << indent << "# normals = " << normalCount << std::endl;
   out << indent << "# texcoords = " << texcoordCount << std::endl;
-  out << indent << "# mins = " << extents.mins[0] << " "
-			       << extents.mins[1] << " "
-			       << extents.mins[2] << std::endl;
-  out << indent << "# maxs = " << extents.maxs[0] << " "
-			       << extents.maxs[1] << " "
-			       << extents.maxs[2] << std::endl;
+  out << indent << "# mins = " << extents.mins.x << " "
+			       << extents.mins.y << " "
+			       << extents.mins.z << std::endl;
+  out << indent << "# maxs = " << extents.maxs.x << " "
+			       << extents.maxs.y << " "
+			       << extents.maxs.z << std::endl;
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
@@ -953,31 +953,31 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
   out << "# normals = " << normalCount << std::endl;
   out << "# texcoords = " << texcoordCount << std::endl;
 
-  const float* tmp;
-  tmp = extents.mins;
-  out << "# mins = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
-  tmp = extents.maxs;
-  out << "# maxs = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
+  const fvec3* tmp;
+  tmp = &extents.mins;
+  out << "# mins = " << tmp->x << " " << tmp->y << " " << tmp->z << std::endl;
+  tmp = &extents.maxs;
+  out << "# maxs = " << tmp->x << " " << tmp->y << " " << tmp->z << std::endl;
 
 
   for (i = 0; i < vertexCount; i++) {
     out << "v";
-    outputFloat(out, vertices[i][0]);
-    outputFloat(out, vertices[i][1]);
-    outputFloat(out, vertices[i][2]);
+    outputFloat(out, vertices[i].x);
+    outputFloat(out, vertices[i].y);
+    outputFloat(out, vertices[i].z);
     out << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
     out << "vn";
-    outputFloat(out, normals[i][0]);
-    outputFloat(out, normals[i][1]);
-    outputFloat(out, normals[i][2]);
+    outputFloat(out, normals[i].x);
+    outputFloat(out, normals[i].y);
+    outputFloat(out, normals[i].z);
     out << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
     out << "vt";
-    outputFloat(out, texcoords[i][0]);
-    outputFloat(out, texcoords[i][1]);
+    outputFloat(out, texcoords[i].x);
+    outputFloat(out, texcoords[i].y);
     out << std::endl;
   }
   const BzMaterial* bzmat = NULL;

@@ -4969,12 +4969,13 @@ static void updateDaylight(double offset)
 
 static void addObstacle(std::vector<BzfRegion*> &rgnList, const Obstacle &obstacle)
 {
-  float p[4][2];
+  fvec2 p[4];
   const fvec3& c = obstacle.getPosition();
   const float tankRadius = BZDBCache::tankRadius;
 
-  if (BZDBCache::tankHeight < c[2])
+  if (BZDBCache::tankHeight < c.z) {
     return;
+  }
 
   const float a = obstacle.getRotation();
   const float w = obstacle.getWidth() + tankRadius;
@@ -4983,27 +4984,28 @@ static void addObstacle(std::vector<BzfRegion*> &rgnList, const Obstacle &obstac
   const float xy =  w * sinf(a);
   const float yx = -h * sinf(a);
   const float yy =  h * cosf(a);
-  p[0][0] = c[0] - xx - yx;
-  p[0][1] = c[1] - xy - yy;
-  p[1][0] = c[0] + xx - yx;
-  p[1][1] = c[1] + xy - yy;
-  p[2][0] = c[0] + xx + yx;
-  p[2][1] = c[1] + xy + yy;
-  p[3][0] = c[0] - xx + yx;
-  p[3][1] = c[1] - xy + yy;
+  p[0].x = c.x - xx - yx;
+  p[0].y = c.y - xy - yy;
+  p[1].x = c.x + xx - yx;
+  p[1].y = c.y + xy - yy;
+  p[2].x = c.x + xx + yx;
+  p[2].y = c.y + xy + yy;
+  p[3].x = c.x - xx + yx;
+  p[3].y = c.y - xy + yy;
 
   size_t numRegions = rgnList.size();
   for (size_t k = 0; k < numRegions; k++) {
     BzfRegion *region = rgnList[k];
     int side[4];
     if ((side[0] = region->classify(p[0], p[1])) == 1 ||
-      (side[1] = region->classify(p[1], p[2])) == 1 ||
-      (side[2] = region->classify(p[2], p[3])) == 1 ||
-      (side[3] = region->classify(p[3], p[0])) == 1)
+        (side[1] = region->classify(p[1], p[2])) == 1 ||
+        (side[2] = region->classify(p[2], p[3])) == 1 ||
+        (side[3] = region->classify(p[3], p[0])) == 1) {
       continue;
+    }
     if (side[0] == -1 && side[1] == -1 && side[2] == -1 && side[3] == -1) {
-      rgnList[k] = rgnList[numRegions-1];
-      rgnList[numRegions-1] = rgnList[rgnList.size()-1];
+      rgnList[k] = rgnList[numRegions - 1];
+      rgnList[numRegions-1] = rgnList[rgnList.size() - 1];
       rgnList.pop_back();
       numRegions--;
       k--;
@@ -5011,16 +5013,20 @@ static void addObstacle(std::vector<BzfRegion*> &rgnList, const Obstacle &obstac
       continue;
     }
     for (size_t j = 0; j < 4; j++) {
-      if (side[j] == -1) continue; // to inside
+      if (side[j] == -1) {
+        continue; // to inside
+      }
       // split
-      const float *p1 = p[j];
-      const float *p2 = p[(j+1)&3];
+      const fvec2& p1 = p[j];
+      const fvec2& p2 = p[(j + 1) & 3];
       BzfRegion *newRegion = region->orphanSplitRegion(p2, p1);
       if (!newRegion) continue; // no split
       if (region != rgnList[k]) rgnList.push_back(region);
       region = newRegion;
     }
-    if (region != rgnList[k]) delete region;
+    if (region != rgnList[k]) {
+      delete region;
+    }
   }
 }
 
@@ -5035,16 +5041,16 @@ static void makeObstacleList()
   obstacleList.clear();
 
   // FIXME -- shouldn't hard code game area
-  float gameArea[4][2];
+  fvec2 gameArea[4];
   float worldSize = BZDBCache::worldSize;
-  gameArea[0][0] = -0.5f * worldSize + tankRadius;
-  gameArea[0][1] = -0.5f * worldSize + tankRadius;
-  gameArea[1][0] =  0.5f * worldSize - tankRadius;
-  gameArea[1][1] = -0.5f * worldSize + tankRadius;
-  gameArea[2][0] =  0.5f * worldSize - tankRadius;
-  gameArea[2][1] =  0.5f * worldSize - tankRadius;
-  gameArea[3][0] = -0.5f * worldSize + tankRadius;
-  gameArea[3][1] =  0.5f * worldSize - tankRadius;
+  gameArea[0].x = -0.5f * worldSize + tankRadius;
+  gameArea[0].y = -0.5f * worldSize + tankRadius;
+  gameArea[1].x =  0.5f * worldSize - tankRadius;
+  gameArea[1].y = -0.5f * worldSize + tankRadius;
+  gameArea[2].x =  0.5f * worldSize - tankRadius;
+  gameArea[2].y =  0.5f * worldSize - tankRadius;
+  gameArea[3].x = -0.5f * worldSize + tankRadius;
+  gameArea[3].y =  0.5f * worldSize - tankRadius;
   obstacleList.push_back(new BzfRegion(4, gameArea));
 
   const ObstacleList &boxes = OBSTACLEMGR.getBoxes();
@@ -5072,7 +5078,7 @@ static void makeObstacleList()
     const int numBases = bases.size();
     for (i = 0; i < numBases; i++) {
       const BaseBuilding *base = (const BaseBuilding*) bases[i];
-      if ((base->getHeight() != 0.0f) || (base->getPosition()[2] != 0.0f)) {
+      if ((base->getHeight() != 0.0f) || (base->getPosition().z != 0.0f)) {
 	addObstacle(obstacleList, *base);
       }
     }
@@ -5092,13 +5098,15 @@ static void setRobotTarget(RobotPlayer *robot)
 	if (remotePlayers[j]->isPhantomZoned() && !robot->isPhantomZoned())
 	  continue;
 
+        const TeamColor robotTeam = robot->getTeam();
+        const FlagType* flagType = remotePlayers[j]->getFlag();
 	if (World::getWorld()->allowTeamFlags() &&
-	  ((robot->getTeam() == RedTeam && remotePlayers[j]->getFlag() == Flags::RedTeam) ||
-	  (robot->getTeam() == GreenTeam && remotePlayers[j]->getFlag() == Flags::GreenTeam) ||
-	  (robot->getTeam() == BlueTeam && remotePlayers[j]->getFlag() == Flags::BlueTeam) ||
-	  (robot->getTeam() == PurpleTeam && remotePlayers[j]->getFlag() == Flags::PurpleTeam))) {
-	    bestTarget = remotePlayers[j];
-	    break;
+	    (((robotTeam == RedTeam)    && (flagType == Flags::RedTeam))   ||
+	     ((robotTeam == GreenTeam)  && (flagType == Flags::GreenTeam)) ||
+	     ((robotTeam == BlueTeam)   && (flagType == Flags::BlueTeam))  ||
+	     ((robotTeam == PurpleTeam) && (flagType == Flags::PurpleTeam)))) {
+          bestTarget = remotePlayers[j];
+          break;
 	}
 
 	const float priority = robot->getTargetPriority(remotePlayers[j]);

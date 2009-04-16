@@ -15,35 +15,39 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <vector>
 
+// common headers
+#include "vectors.h"
 
-const float	     maxDistance = 1.0e6;
+
+
 
 class RegionPoint {
   public:
-			RegionPoint(float x, float y);
-			RegionPoint(const float v[2]);
-			~RegionPoint();
-
-    const float*	get() const;
-
+    inline RegionPoint(float x, float y) : p(x,y) {}
+    inline RegionPoint(const fvec2& v)   : p(v)   {}
+    inline ~RegionPoint() {}
+    inline const fvec2& get() const { return p; }
   private:
-    float		p[2];
+    fvec2 p;
 };
 
 
 class BzfRegion {
   public:
-			BzfRegion(int sides, const float p[][2]);
-			~BzfRegion();
+    static const float maxDistance;
 
-    bool		isInside(const float p[2]) const;
+  public:
+    BzfRegion(int sides, const fvec2 p[]);
+    ~BzfRegion();
+
+    bool		isInside(const fvec2& p) const;
     // get point distance from Region. Point should be outside Region!
-    float		getDistance(const float p[2], float nearest[2]) const;
-    int			classify(const float p1[2], const float p2[2]) const;
-    BzfRegion*		orphanSplitRegion(const float p1[2], const float p2[2]);
+    float		getDistance(const fvec2& p, fvec2& nearest) const;
+    int			classify(const fvec2& p1, const fvec2& p2) const;
+    BzfRegion*		orphanSplitRegion(const fvec2& p1, const fvec2& p2);
 
     int			getNumSides() const;
     const RegionPoint&	getCorner(int index) const;
@@ -51,10 +55,10 @@ class BzfRegion {
 
     bool		test(int mailboxIndex);
     void		setPathStuff(float distance, BzfRegion* target,
-					const float p[2], int mailboxIndex);
+					const fvec2& p, int mailboxIndex);
     float		getDistance() const;
     BzfRegion*		getTarget() const;
-    const float*	getA() const;
+    const fvec2&	getA() const;
 
   protected:
 			BzfRegion();

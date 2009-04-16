@@ -197,7 +197,7 @@ public:
   virtual bool update(float time);
   virtual void draw(const SceneRenderer& sr);
 protected:
-  int	  texture;
+  int texture;
   float	radius;
   OpenGLGState ringState;
 };

@@ -50,14 +50,14 @@ class RobotPlayer : public LocalPlayer {
   private:
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
-    BzfRegion*		findRegion(const float p[2], float nearest[2]) const;
+    BzfRegion*		findRegion(const fvec2&, fvec2&) const;
     float		getRegionExitPoint(
-				const float p1[2], const float p2[2],
-				const float a[2], const float targetPoint[2],
-				float mid[2], float& priority);
+				const fvec2&, const fvec2&,
+				const fvec2&, const fvec2&,
+				fvec2&, float& priority);
      void		findPath(RegionPriorityQueue& queue,
 				BzfRegion* region, BzfRegion* targetRegion,
-				const float targetPoint[2], int mailbox);
+				const fvec2&, int mailbox);
 
      void		projectPosition(const Player *targ, const float t, fvec3& pos) const;
      void		getProjectedPosition(const Player *targ, fvec3& projpos) const;

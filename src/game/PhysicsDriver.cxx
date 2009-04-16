@@ -163,19 +163,18 @@ void PhysicsDriverManager::print(std::ostream& out,
 //
 
 PhysicsDriver::PhysicsDriver()
+: name("")
+, linear(0.0f, 0.0f, 0.0f)
+, angularVel(0.0f)
+, angularPos(0.0f, 0.0f)
+, radialVel(0.0f)
+, radialPos(0.0f, 0.0f)
+, slide(false)
+, slideTime(0.0f)
+, death(false)
+, deathMsg("")
 {
-  // initialize
-  name = "";
-  linear[0] = linear[1] = linear[2] = 0.0f;
-  angularVel = 0.0f;
-  angularPos[0] = angularPos[1] = 0.0f;
-  radialVel = 0.0f;
-  radialPos[0] = radialPos[1] = 0.0f;
-  slide = false;
-  slideTime = 0.0f;
-  death = false;
-  deathMsg = "";
-  return;
+  // do nothing
 }
 
 
@@ -339,21 +338,21 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
   }
 
   const fvec3& v = linear;
-  if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
+  if ((v.x != 0.0f) || (v.y != 0.0f) || (v.z != 0.0f)) {
     out << indent << "  linear "
-	<< v[0] << " " << v[1] << " " << v[2] << std::endl;
+	<< v.x << " " << v.y << " " << v.z << std::endl;
   }
 
   if (angularVel != 0.0f) {
     const fvec2& ap = angularPos;
     out << indent << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
-	<< ap[0] << " " << ap[1] << std::endl;
+	<< ap.x << " " << ap.y << std::endl;
   }
 
   if (radialVel != 0.0f) {
     const fvec2& rp = radialPos;
     out << indent << "  radial "
-	<< radialVel << " " << rp[0] << " " << rp[1] << std::endl;
+	<< radialVel << " " << rp.x << " " << rp.y << std::endl;
   }
 
   if (slide) {

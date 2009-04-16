@@ -116,13 +116,13 @@ MeshObstacle* ConeObstacle::makeMesh()
   const float minSize = 1.0e-6f; // cheezy / lazy
 
   // absolute the sizes
-  float sz[3];
-  sz[0] = fabsf(size[0]);
-  sz[1] = fabsf(size[1]);
-  sz[2] = fabsf(size[2]);
+  fvec3 sz;
+  sz.x = fabsf(size.x);
+  sz.y = fabsf(size.y);
+  sz.z = fabsf(size.z);
 
   // validity checking
-  if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
+  if ((sz.x < minSize) || (sz.y < minSize) || (sz.z < minSize) ||
       (fabs(texsize[0]) < minSize) || (fabs(texsize[1]) < minSize)) {
     return NULL;
   }
@@ -135,13 +135,13 @@ MeshObstacle* ConeObstacle::makeMesh()
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
     const float circ =
-      (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
-	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+      (float)M_PI * ((3.0f * (sz.x + sz.y)) -
+	      sqrtf ((sz.x + (3.0f * sz.y)) * (sz.y + (3.0f * sz.x))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
   }
   if (texsz[1] < 0.0f) {
-    texsz[1] = -(sz[2] / texsz[1]);
+    texsz[1] = -(sz.z / texsz[1]);
   }
 
   // setup the angles
@@ -179,14 +179,14 @@ MeshObstacle* ConeObstacle::makeMesh()
 
   // add the checkpoint (one is sufficient)
   if (isCircle) {
-    v[0] = pos[0];
-    v[1] = pos[1];
+    v.x = pos.x;
+    v.y = pos.y;
   } else {
     const float dir = r + (0.5f * a);
-    v[0] = pos[0] + (cosf(dir) * sz[0] * 0.25f);
-    v[1] = pos[1] + (sinf(dir) * sz[1] * 0.25f);
+    v.x = pos.x + (cosf(dir) * sz.x * 0.25f);
+    v.y = pos.y + (sinf(dir) * sz.y * 0.25f);
   }
-  v[2] = pos[2] + (0.5f * sz[2]);
+  v.z = pos.z + (0.5f * sz.z);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -200,33 +200,33 @@ MeshObstacle* ConeObstacle::makeMesh()
 
     // vertices
     if (!isCircle || (i != divisions)) {
-      float delta[2];
+      fvec2 delta;
       // vertices (around the edge)
-      delta[0] = cos_val * sz[0];
-      delta[1] = sin_val * sz[1];
-      v[0] = pos[0] + delta[0];
-      v[1] = pos[1] + delta[1];
-      v[2] = pos[2];
+      delta.x = cos_val * sz.x;
+      delta.y = sin_val * sz.y;
+      v.x = pos.x + delta.x;
+      v.y = pos.y + delta.y;
+      v.z = pos.z;
       vertices.push_back(v);
       // normals (around the edge)
       if (useNormals) {
 	// the horizontal normals
-	n[0] = cos_val / sz[0];
-	n[1] = sin_val / sz[1];
-	n[2] = 1.0f / sz[2];
+	n.x = cos_val / sz.x;
+	n.y = sin_val / sz.y;
+	n.z = 1.0f / sz.z;
 	// normalize
-	float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
+	float len = (n.x * n.x) + (n.y * n.y) + (n.z * n.z);
 	len = 1.0f / sqrtf(len);
-	n[0] *= len;
-	n[1] *= len;
-	n[2] *= len;
+	n.x *= len;
+	n.y *= len;
+	n.z *= len;
 	normals.push_back(n);
       }
     }
 
     // texture coordinates (around the edge)
-    t[0] = texsz[0] * (0.5f + (0.5f * cosf(ang)));
-    t[1] = texsz[1] * (0.5f + (0.5f * sinf(ang)));
+    t.x = texsz[0] * (0.5f + (0.5f * cosf(ang)));
+    t.y = texsz[1] * (0.5f + (0.5f * sinf(ang)));
     texcoords.push_back(t);
   }
 
@@ -235,43 +235,43 @@ MeshObstacle* ConeObstacle::makeMesh()
     for (i = 0; i < divisions; i++) {
       float ang = r + (astep * (0.5f + (float)i));
       // the horizontal normals
-      n[0] = cosf(ang) / sz[0];
-      n[1] = sinf(ang) / sz[1];
-      n[2] = 1.0f / sz[2];
+      n.x = cosf(ang) / sz.x;
+      n.y = sinf(ang) / sz.y;
+      n.z = 1.0f / sz.z;
       // normalize
-      float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
+      float len = (n.x * n.x) + (n.y * n.y) + (n.z * n.z);
       len = 1.0f / sqrtf(len);
-      n[0] *= len;
-      n[1] *= len;
-      n[2] *= len;
+      n.x *= len;
+      n.y *= len;
+      n.z *= len;
       normals.push_back(n);
     }
   }
 
   // the central coordinates
-  v[0] = pos[0];
-  v[1] = pos[1];
-  v[2] = pos[2];
+  v.x = pos.x;
+  v.y = pos.y;
+  v.z = pos.z;
   vertices.push_back(v); // bottom
-  v[2] = pos[2] + sz[2];
+  v.z = pos.z + sz.z;
   vertices.push_back(v); // top
-  t[0] = texsz[0] * 0.5f;
-  t[1] = texsz[1] * 0.5f;
+  t.x = texsz[0] * 0.5f;
+  t.y = texsz[1] * 0.5f;
   texcoords.push_back(t);
 
   // for the start/end faces
   if (!isCircle) {
-    t[0] = texsz[0] * 0.0f;
-    t[1] = texsz[1] * 0.0f;
+    t.x = texsz[0] * 0.0f;
+    t.y = texsz[1] * 0.0f;
     texcoords.push_back(t);
-    t[0] = texsz[0] * 1.0f;
-    t[1] = texsz[1] * 0.0f;
+    t.x = texsz[0] * 1.0f;
+    t.y = texsz[1] * 0.0f;
     texcoords.push_back(t);
-    t[0] = texsz[0] * 1.0f;
-    t[1] = texsz[1] * 1.0f;
+    t.x = texsz[0] * 1.0f;
+    t.y = texsz[1] * 1.0f;
     texcoords.push_back(t);
-    t[0] = texsz[0] * 0.0f;
-    t[1] = texsz[1] * 1.0f;
+    t.x = texsz[0] * 0.0f;
+    t.y = texsz[1] * 1.0f;
     texcoords.push_back(t);
   }
 
@@ -493,10 +493,10 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "cone" << std::endl;
 
-  out << indent << "  position " << pos[0] << " " << pos[1] << " "
-				 << pos[2] << std::endl;
-  out << indent << "  size " << size[0] << " " << size[1] << " "
-			     << size[2] << std::endl;
+  out << indent << "  position " << pos.x << " " << pos.y << " "
+				 << pos.z << std::endl;
+  out << indent << "  size " << size.x << " " << size.y << " "
+			     << size.z << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  divisions " << divisions << std::endl;

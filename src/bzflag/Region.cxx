@@ -18,27 +18,8 @@
 #include <vector>
 
 
-RegionPoint::RegionPoint(float x, float y)
-{
-  p[0] = x;
-  p[1] = y;
-}
+const float BzfRegion::maxDistance = 1.0e6;
 
-RegionPoint::RegionPoint(const float v[2])
-{
-  p[0] = v[0];
-  p[1] = v[1];
-}
-
-RegionPoint::~RegionPoint()
-{
-  // do nothing
-}
-
-const float* RegionPoint::get() const
-{
-  return p;
-}
 
 //
 // BzfRegion
@@ -48,18 +29,25 @@ const float* RegionPoint::get() const
 // clockwise.
 //
 
-BzfRegion::BzfRegion() : mailbox(0), target(0), A(0.0, 0.0)
+BzfRegion::BzfRegion()
+: mailbox(0)
+, target(0)
+, A(0.0, 0.0)
 {
 }
 
-BzfRegion::BzfRegion(int sides, const float p[][2]) :
-  mailbox(0), target(0), A(0.0, 0.0)
+
+BzfRegion::BzfRegion(int sides, const fvec2 p[])
+: mailbox(0)
+, target(0)
+, A(0.0, 0.0)
 {
   for (int i = 0; i < sides; i++) {
     corners.push_back(RegionPoint(p[i]));
     neighbors.push_back((BzfRegion*)0);
   }
 }
+
 
 BzfRegion::~BzfRegion()
 {
@@ -70,7 +58,8 @@ BzfRegion::~BzfRegion()
       neighbors[i]->setNeighbor(this, 0);
 }
 
-bool BzfRegion::isInside(const float p[2]) const
+
+bool BzfRegion::isInside(const fvec2& p) const
 {
   // see if testPoint is inside my edges
   const size_t count = corners.size();
@@ -95,7 +84,8 @@ bool BzfRegion::isInside(const float p[2]) const
   return inside;
 }
 
-float BzfRegion::getDistance(const float p[2], float nearest[2]) const
+
+float BzfRegion::getDistance(const fvec2& p, fvec2& nearest) const
 {
   const size_t count = corners.size();
   float currentDistance = maxDistance;
@@ -104,8 +94,8 @@ float BzfRegion::getDistance(const float p[2], float nearest[2]) const
   //compute distance from any edge
   const float* p1 = corners[count - 1].get();
   const float* p2 = NULL;
-  float	d[2];
-  float	m[2];
+  fvec2	d;
+  fvec2	m;
   float	t;
   float	edgeSquareDist;
   float	x, y;
@@ -140,7 +130,8 @@ float BzfRegion::getDistance(const float p[2], float nearest[2]) const
   return currentDistance;
 }
 
-int BzfRegion::classify(const float e1[2], const float e2[2]) const
+
+int BzfRegion::classify(const fvec2& e1, const fvec2& e2) const
 {
   // return true if all points lie to right side of edge
   const float dx = e2[0] - e1[0];
@@ -159,22 +150,26 @@ int BzfRegion::classify(const float e1[2], const float e2[2]) const
   return -1;					// all to left
 }
 
+
 int BzfRegion::getNumSides() const
 {
   return (int)neighbors.size();
 }
+
 
 const RegionPoint& BzfRegion::getCorner(int index) const
 {
   return corners[index];
 }
 
+
 BzfRegion* BzfRegion::getNeighbor(int index) const
 {
   return neighbors[index];
 }
 
-BzfRegion* BzfRegion::orphanSplitRegion(const float e1[2], const float e2[2])
+
+BzfRegion* BzfRegion::orphanSplitRegion(const fvec2& e1, const fvec2& e2)
 {
   // if edge p1,p2 intersects me then split myself along that edge.
   // return new region (the other half of the split), or NULL if no
@@ -183,7 +178,7 @@ BzfRegion* BzfRegion::orphanSplitRegion(const float e1[2], const float e2[2])
   const int count = (const int)corners.size();
   if (count == 0) return NULL;
   int i, split = 0, edge[2];
-  float tsplit[2], etsplit[2];
+  fvec2 tsplit, etsplit;
   const float dx = e2[0] - e1[0];
   const float dy = e2[1] - e1[1];
   const float d = dy * e1[0] - dx * e1[1];
@@ -299,6 +294,7 @@ BzfRegion* BzfRegion::orphanSplitRegion(const float e1[2], const float e2[2])
   return newRegion;
 }
 
+
 void BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
 			  BzfRegion* newNeighbor,
 			  const RegionPoint& p,
@@ -327,22 +323,26 @@ void BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
     }
 }
 
+
 void BzfRegion::addSide(const RegionPoint& p, BzfRegion* neighbor)
 {
   corners.push_back(p);
   neighbors.push_back(neighbor);
 }
 
+
 void BzfRegion::setNeighbor(const BzfRegion* oldNeighbor,
 			    BzfRegion* newNeighbor)
 {
   const size_t count = corners.size();
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     if (neighbors[i] == oldNeighbor) {
       neighbors[i] = newNeighbor;
       break;
     }
+  }
 }
+
 
 void BzfRegion::tidy()
 {
@@ -364,14 +364,15 @@ void BzfRegion::tidy()
   }
 }
 
+
 bool BzfRegion::test(int mailboxIndex)
 {
   return (mailbox != mailboxIndex);
 }
 
-void BzfRegion::setPathStuff(float _distance,
-			     BzfRegion* _target,
-			     const float _a[2], int mailboxIndex)
+
+void BzfRegion::setPathStuff(float _distance, BzfRegion* _target,
+			     const fvec2& _a, int mailboxIndex)
 {
   distance = _distance;
   target = _target;
@@ -379,17 +380,20 @@ void BzfRegion::setPathStuff(float _distance,
   mailbox = mailboxIndex;
 }
 
+
 float BzfRegion::getDistance() const
 {
   return distance;
 }
+
 
 BzfRegion* BzfRegion::getTarget() const
 {
   return target;
 }
 
-const float* BzfRegion::getA() const
+
+const fvec2& BzfRegion::getA() const
 {
   return A.get();
 }

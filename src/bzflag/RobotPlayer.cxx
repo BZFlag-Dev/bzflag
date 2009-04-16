@@ -361,9 +361,9 @@ float			RobotPlayer::getTargetPriority(const
     basePriority += 2.0f;
   // give bonus to non-deadzone targets
   if (obstacleList) {
-    float nearest[2];
-    const BzfRegion* targetRegion = findRegion (p2, nearest);
-    if (targetRegion && targetRegion->isInside(p2))
+    fvec2 nearest;
+    const BzfRegion* targetRegion = findRegion (p2.xy(), nearest);
+    if (targetRegion && targetRegion->isInside(p2.xy()))
       basePriority += 1.0f;
   }
   return basePriority
@@ -392,9 +392,9 @@ void			RobotPlayer::setTarget(const Player* _target)
   // work backwards (from target to me)
   fvec3 proj;
   getProjectedPosition(target, proj);
-  const float *p1 = proj;
-  const fvec3& p2 = getPosition();
-  float q1[2], q2[2];
+  const fvec2& p1 = proj.xy();
+  const fvec2& p2 = getPosition().xy();
+  fvec2 q1, q2;
   BzfRegion* headRegion = findRegion(p1, q1);
   BzfRegion* tailRegion = findRegion(p2, q2);
   if (!headRegion || !tailRegion) {
@@ -413,8 +413,7 @@ void			RobotPlayer::setTarget(const Player* _target)
   // get list of points to go through to reach the target
   next = tailRegion;
   do {
-    p1 = next->getA();
-    path.push_back(p1);
+    path.push_back(next->getA());
     next = next->getTarget();
   } while (next && next != headRegion);
   if (next || tailRegion == headRegion)
@@ -424,8 +423,8 @@ void			RobotPlayer::setTarget(const Player* _target)
   pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const float p[2],
-						float nearest[2]) const
+BzfRegion*		RobotPlayer::findRegion(const fvec2& p,
+						fvec2& nearest) const
 {
   nearest[0] = p[0];
   nearest[1] = p[1];
@@ -435,10 +434,10 @@ BzfRegion*		RobotPlayer::findRegion(const float p[2],
       return (*itr);
 
   // point is outside: find nearest region
-  float      distance      = maxDistance;
+  float distance = BzfRegion::maxDistance;
   BzfRegion* nearestRegion = NULL;
   for (itr = obstacleList->begin(); itr != obstacleList->end(); ++itr) {
-    float currNearest[2];
+    fvec2 currNearest;
     float currDistance = (*itr)->getDistance(p, currNearest);
     if (currDistance < distance) {
       nearestRegion = (*itr);
@@ -451,14 +450,14 @@ BzfRegion*		RobotPlayer::findRegion(const float p[2],
 }
 
 float			RobotPlayer::getRegionExitPoint(
-				const float p1[2], const float p2[2],
-				const float a[2], const float targetPoint[2],
-				float mid[2], float& priority)
+				const fvec2& p1, const fvec2& p2,
+				const fvec2& a, const fvec2& targetPoint,
+				fvec2& mid, float& priority)
 {
-  float b[2];
+  fvec2 b;
   b[0] = targetPoint[0] - a[0];
   b[1] = targetPoint[1] - a[1];
-  float d[2];
+  fvec2 d;
   d[0] = p2[0] - p1[0];
   d[1] = p2[1] - p1[1];
 
@@ -486,7 +485,7 @@ float			RobotPlayer::getRegionExitPoint(
 void			RobotPlayer::findPath(RegionPriorityQueue& queue,
 					BzfRegion* region,
 					BzfRegion* targetRegion,
-					const float targetPoint[2],
+					const fvec2& targetPoint,
 					int mailbox)
 {
   const int numEdges = region->getNumSides();
@@ -494,14 +493,16 @@ void			RobotPlayer::findPath(RegionPriorityQueue& queue,
     BzfRegion* neighbor = region->getNeighbor(i);
     if (!neighbor) continue;
 
-    const float* p1 = region->getCorner(i).get();
-    const float* p2 = region->getCorner((i+1)%numEdges).get();
-    float mid[2], priority;
+    const fvec2& p1 = region->getCorner(i).get();
+    const fvec2& p2 = region->getCorner((i+1)%numEdges).get();
+    fvec2 mid;
+    float priority;
     float total = getRegionExitPoint(p1, p2, region->getA(),
-					targetPoint, mid, priority);
+                                     targetPoint, mid, priority);
     priority += region->getDistance();
-    if (neighbor == targetRegion)
+    if (neighbor == targetRegion) {
       total += hypotf(targetPoint[0] - mid[0], targetPoint[1] - mid[1]);
+    }
     total += region->getDistance();
     if (neighbor->test(mailbox) || total < neighbor->getDistance()) {
       neighbor->setPathStuff(total, region, mid, mailbox);
