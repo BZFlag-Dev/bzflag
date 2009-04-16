@@ -486,8 +486,8 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 
   //pOut[0] = x2 + t2.getPosition()[0];
   //pOut[1] = y2 + t2.getPosition()[1];
-  pOut.x = t2.getPosition().x + (x2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
-  pOut.y = t2.getPosition().y + (y2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
+  pOut.x = t2.getPosition().x + (x2 * (t2.getBreadth() - t2.getBorder())) / (getBreadth() - getBorder());
+  pOut.y = t2.getPosition().y + (y2 * (t2.getBreadth() - t2.getBorder())) / (getBreadth() - getBorder());
   //T1 = pIn[2] - getPosition()[2]
   //W2 = t2.getHeight()
   //W1 = getHeight
@@ -497,7 +497,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 
   //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
   pOut.z = t2.getPosition().z
-	  + ((pIn.z - getPosition().z) * (t2.getHeight() - t2.getBorder())) / getHeight();
+	  + ((pIn.z - getPosition().z) * (t2.getHeight() - t2.getBorder())) / (getHeight() - getBorder());
 
   if (dOutPtr && dInPtr) {
     const float dx = dInPtr->x;
