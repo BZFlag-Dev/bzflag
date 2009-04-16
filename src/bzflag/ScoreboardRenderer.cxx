@@ -741,9 +741,6 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   if (statusInfo.size() > 0)
     fm.drawString(xs, y, 0, minorFontFace->getFMFace(), minorFontSize, statusInfo);
 
-  if (BZDB.isTrue("debugHud"))
-    printf("playerInfo: %s\n", playerInfo.c_str()); //FIXME
-
   // draw huntEnabled status
   if (player->isHunted()) {
     std::string huntStr = ColorStrings[WhiteColor];
