@@ -63,9 +63,13 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
     } else {
       boltSceneNode->setColor(color.r, color.g, color.b, 1.0f);
     }
-    if ((_path->getShotType() == CloakedShot) &&
-        (LocalPlayer::getMyTank()->getFlag() != Flags::Seer)) {
-      boltSceneNode->setInvisible(true);
+    if (_path->getShotType() == CloakedShot) {
+      const Player* myTank = LocalPlayer::getMyTank();
+      if ((myTank == NULL) || 
+          ((myTank->getId() != _path->getPlayer()) &&
+           (myTank->getFlag() != Flags::Seer))) {
+        boltSceneNode->setInvisible(true);
+      }
     }
 
     TextureManager &tm = TextureManager::instance();
