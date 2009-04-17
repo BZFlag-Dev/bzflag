@@ -12,6 +12,12 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
+* sounds don't appear to be affected by the receiver's angle
+
+* PZ flag can be dropped when pausing
+
+* SH flag remains visible after the player has been shot
+
 * fix the Z dead-reckoning issue  (ask JeffM about it)
 
 * fix the '/set _<tab>' crash bug (look in ControlPanel.cxx)
