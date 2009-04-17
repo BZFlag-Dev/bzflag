@@ -91,7 +91,7 @@ public:
                   float w, float d, float h, bool flipZ = false,
                   bool drive = false, bool shoot = false, bool rico = false);
   void addTeleporter(float x, float y, float z, float r,
-	             float w, float d, float h, float b, bool horizontal = false,
+	             float w, float d, float h, float b,
                      bool drive = false, bool shoot = false, bool rico = false);
   void addBase(const fvec3& pos, float r, const fvec3& size, int color,
                bool drive = false, bool shoot = false, bool rico = false);

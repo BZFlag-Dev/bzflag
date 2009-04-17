@@ -149,12 +149,11 @@ void WorldInfo::addPyramid(float x, float y, float z, float r,
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r,
 			      float w, float d, float h, float b,
-			      bool horizontal,
 			      bool drive, bool shoot, bool rico)
 {
   const fvec3 pos(x, y, z);
   Teleporter* tele = new Teleporter(pos, r, w, d, h, b,
-                                    horizontal, drive, shoot, rico);
+                                    drive, shoot, rico);
   OBSTACLEMGR.addWorldObstacle(tele);
 }
 

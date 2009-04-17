@@ -235,8 +235,9 @@ inline void LocalPlayer::setInputMethod(std::string newInput)
 {
   // FIXME - using hardcoded upper bound is ugly
   for (int i = 0; i < 3; i++) {
-    if (newInput == getInputMethodName((InputMethod)i))
+    if (newInput == getInputMethodName((InputMethod)i)) {
       setInputMethod((InputMethod)i);
+    }
   }
 }
 

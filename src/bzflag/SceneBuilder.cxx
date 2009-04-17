@@ -206,10 +206,11 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   // pick type of database
   SceneDatabase* db;
-  if (BZDBCache::zbuffer)
+  if (BZDBCache::zbuffer) {
     db = new ZSceneDatabase;
-  else
+  } else {
     db = new BSPSceneDatabase;
+  }
   // FIXME -- when making BSP tree, try several shuffles for best tree
 
   if (!world) {
@@ -218,7 +219,6 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   // free any prior inside nodes
   world->freeInsideNodes();
-
 
   // add nodes to database
   unsigned int i;
@@ -230,27 +230,27 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   for (i = 0; i < boxes.size(); i++) {
-    addBox (db, *((BoxBuilding*) boxes[i]));
+    addBox(db, *((BoxBuilding*) boxes[i]));
   }
 
   const ObstacleList& bases = OBSTACLEMGR.getBases();
   for (i = 0; i < bases.size(); i++) {
-    addBase (db, *((BaseBuilding*) bases[i]));
+    addBase(db, *((BaseBuilding*) bases[i]));
   }
 
   const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
   for (i = 0; i < pyramids.size(); i++) {
-    addPyramid (db, *((PyramidBuilding*) pyramids[i]));
+    addPyramid(db, *((PyramidBuilding*) pyramids[i]));
   }
 
   const ObstacleList& teles = OBSTACLEMGR.getTeles();
   for (i = 0; i < teles.size(); i++) {
-    addTeleporter (db, *((Teleporter*) teles[i]), world);
+    addTeleporter(db, *((Teleporter*) teles[i]), world);
   }
 
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (i = 0; i < meshes.size(); i++) {
-    addMesh (db, (MeshObstacle*) meshes[i]);
+    addMesh(db, (MeshObstacle*) meshes[i]);
   }
 
   // add the world text
@@ -618,38 +618,26 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 
   useColorTexture = teleporterTexture >= 0;
 
-  int numParts = o.isHorizontal() ? 18 : 14;
+  const int numParts = 14;
 
   while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
 				      teleporterLOD))) {
-    if (o.isHorizontal ()) {
-      if (part >= 0 && part <= 15) {
-	node->setColor (teleporterColors[0]);
-	node->setModulateColor (teleporterModulateColors[0]);
-	node->setLightedColor (teleporterLightedColors[0]);
-	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
-	node->setMaterial (teleporterMaterial);
-	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
-      }
-    } else {
-      if (part >= 0 && part <= 1) {
-	node->setColor (teleporterColors[0]);
-	node->setModulateColor (teleporterModulateColors[0]);
-	node->setLightedColor (teleporterLightedColors[0]);
-	node->setLightedModulateColor (teleporterLightedModulateColors[0]);
-	node->setMaterial (teleporterMaterial);
-	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
-      } else if (part >= 2 && part <= 11) {
-	node->setColor (teleporterColors[1]);
-	node->setModulateColor (teleporterModulateColors[1]);
-	node->setLightedColor (teleporterLightedColors[1]);
-	node->setLightedModulateColor (teleporterLightedModulateColors[1]);
-	node->setMaterial (teleporterMaterial);
-	node->setTexture (teleporterTexture);
-	node->setUseColorTexture (useColorTexture);
-      }
+    if (part >= 0 && part <= 1) {
+      node->setColor(teleporterColors[0]);
+      node->setModulateColor(teleporterModulateColors[0]);
+      node->setLightedColor(teleporterLightedColors[0]);
+      node->setLightedModulateColor(teleporterLightedModulateColors[0]);
+      node->setMaterial(teleporterMaterial);
+      node->setTexture(teleporterTexture);
+      node->setUseColorTexture(useColorTexture);
+    } else if (part >= 2 && part <= 11) {
+      node->setColor(teleporterColors[1]);
+      node->setModulateColor(teleporterModulateColors[1]);
+      node->setLightedColor(teleporterLightedColors[1]);
+      node->setLightedModulateColor(teleporterLightedModulateColors[1]);
+      node->setMaterial(teleporterMaterial);
+      node->setTexture(teleporterTexture);
+      node->setUseColorTexture(useColorTexture);
     }
 
     db->addStaticNode(node, false);

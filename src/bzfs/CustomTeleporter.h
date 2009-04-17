@@ -24,9 +24,9 @@
 #include "WorldInfo.h"
 
 
-class CustomGate : public WorldFileObstacle {
+class CustomTeleporter : public WorldFileObstacle {
   public:
-    CustomGate(const char* telename);
+    CustomTeleporter(const char* telename);
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToGroupDef(GroupDefinition*) const;
 

@@ -27,7 +27,7 @@ class Teleporter : public Obstacle {
 			Teleporter();
 			Teleporter(const fvec3& pos, float rotation,
 			           float width, float breadth, float height,
-			           float borderSize, bool horizontal,
+			           float borderSize,
 			           unsigned char drive, unsigned char shoot,
 			           bool ricochet);
 			~Teleporter();
@@ -41,7 +41,6 @@ class Teleporter : public Obstacle {
     static const char*	getClassName(); // const
 
     float		getBorder() const;
-    bool		isHorizontal() const;
     bool		isValid() const;
 
     float		intersect(const Ray&) const;
@@ -95,7 +94,6 @@ class Teleporter : public Obstacle {
     std::string name;
 
     float border;
-    bool horizontal;
     fvec3 origSize;
 
     MeshFace* backLink;
@@ -112,11 +110,6 @@ class Teleporter : public Obstacle {
 inline float Teleporter::getBorder() const
 {
   return border;
-}
-
-inline bool Teleporter::isHorizontal() const
-{
-  return horizontal;
 }
 
 inline const MeshFace* Teleporter::getBackLink() const

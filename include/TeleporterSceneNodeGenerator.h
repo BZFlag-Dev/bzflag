@@ -17,17 +17,19 @@
 #include "Teleporter.h"
 
 class TeleporterSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
-  public:
-			~TeleporterSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+  friend class SceneDatabaseBuilder;
+
+  public:
+    ~TeleporterSceneNodeGenerator();
+
+    WallSceneNode* getNextNode(float, float, bool);
 
   protected:
-			TeleporterSceneNodeGenerator(const Teleporter*);
+    TeleporterSceneNodeGenerator(const Teleporter*);
 
   private:
-    const Teleporter*	teleporter;
+    const Teleporter* teleporter;
 };
 
 #endif

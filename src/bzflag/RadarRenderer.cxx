@@ -1404,41 +1404,18 @@ void RadarRenderer::renderBasesAndTeles()
   glBegin(GL_LINES);
   for (i = 0; i < count; i++) {
     const Teleporter & tele = *((const Teleporter *) teleporters[i]);
-    if (tele.isHorizontal()) {
-      const float z = tele.getPosition().z;
-      const float bh = tele.getHeight();
-      const float cs = colorScale(z, bh);
-      glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, bh));
-      const float c = cosf(tele.getRotation());
-      const float s = sinf(tele.getRotation());
-      const float wx = c * tele.getWidth(), wy = s * tele.getWidth();
-      const float hx = -s * tele.getBreadth(), hy = c * tele.getBreadth();
-      const fvec3& pos = tele.getPosition();
-      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
-      glVertex2f(pos.x + wx - hx, pos.y + wy - hy);
-      glVertex2f(pos.x + wx - hx, pos.y + wy - hy);
-      glVertex2f(pos.x + wx + hx, pos.y + wy + hy);
-      glVertex2f(pos.x + wx + hx, pos.y + wy + hy);
-      glVertex2f(pos.x - wx + hx, pos.y - wy + hy);
-      glVertex2f(pos.x - wx + hx, pos.y - wy + hy);
-      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
-      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
-      glVertex2f(pos.x - wx - hx, pos.y - wy - hy);
-    }
-    else {
-      const float z = tele.getPosition().z;
-      const float bh = tele.getHeight();
-      const float cs = colorScale(z, bh);
-      glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, bh));
-      const float tw = tele.getBreadth();
-      const float c = tw * cosf(tele.getRotation());
-      const float s = tw * sinf(tele.getRotation());
-      const fvec3& pos = tele.getPosition();
-      glVertex2f(pos.x - s, pos.y + c);
-      glVertex2f(pos.x + s, pos.y - c);
-      glVertex2f(pos.x + s, pos.y - c);
-      glVertex2f(pos.x - s, pos.y + c);
-    }
+    const float z = tele.getPosition().z;
+    const float bh = tele.getHeight();
+    const float cs = colorScale(z, bh);
+    glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, bh));
+    const float tw = tele.getBreadth();
+    const float c = tw * cosf(tele.getRotation());
+    const float s = tw * sinf(tele.getRotation());
+    const fvec3& pos = tele.getPosition();
+    glVertex2f(pos.x - s, pos.y + c);
+    glVertex2f(pos.x + s, pos.y - c);
+    glVertex2f(pos.x + s, pos.y - c);
+    glVertex2f(pos.x - s, pos.y + c);
   }
   glEnd();
 

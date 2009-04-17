@@ -31,10 +31,10 @@ Teleporter::Teleporter()
 
 
 Teleporter::Teleporter(const fvec3& p, float a, float w,
-		       float b, float h, float _border, bool _horizontal,
+		       float b, float h, float _border,
 		       unsigned char drive, unsigned char shoot, bool rico)
 : Obstacle(p, a, w, b, h, drive, shoot, rico)
-, border(_border), horizontal(_horizontal)
+, border(_border)
 {
   finalize();
   return;
@@ -61,7 +61,7 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 
   Teleporter* copy =
     new Teleporter(newPos, newAngle, newSize.x, newSize.y, newSize.z,
-		   border, horizontal, driveThrough, shootThrough, ricochet);
+		   border, driveThrough, shootThrough, ricochet);
 
   copy->setName(name);
 
@@ -71,12 +71,13 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 
 void Teleporter::finalize()
 {
+  if (size.y < 0.001f) { size.y = 0.001f; }
+  if (size.z < 0.001f) { size.z = 0.001f; }
+
   origSize = size;
 
-  if (!horizontal) {
-    size.y = origSize.y + (border * 2.0f);
-    size.z = origSize.z + border;
-  }
+  size.y = origSize.y + (border * 2.0f);
+  size.z = origSize.z + border;
 
   // the same as the default Obstacle::getExtents(), except
   // that we use the larger of the border half-width and size.x.
@@ -144,57 +145,30 @@ void Teleporter::makeLinks()
   const float cos_val = cosf(a);
   const float sin_val = sinf(a);
 
-  if (!horizontal) {
-    const fvec2 params[4] = {
-      fvec2(-1.0f, 0.0f),
-      fvec2(+1.0f, 0.0f),
-      fvec2(+1.0f, 1.0f),
-      fvec2(-1.0f, 1.0f)
-    };
-    fvec2 wlen(cos_val * w, sin_val * w);
-    fvec2 blen(-sin_val * (b - br), cos_val * (b - br));
+  const fvec2 params[4] = {
+    fvec2(-1.0f, 0.0f),
+    fvec2(+1.0f, 0.0f),
+    fvec2(+1.0f, 1.0f),
+    fvec2(-1.0f, 1.0f)
+  };
+  fvec2 wlen(cos_val * w, sin_val * w);
+  fvec2 blen(-sin_val * (b - br), cos_val * (b - br));
 
-    for (i = 0; i < 4 ;i++) {
-      bvertices[i].x = p.x + (wlen.x + (blen.x * params[i].x));
-      bvertices[i].y = p.y + (wlen.y + (blen.y * params[i].x));
-      bvertices[i].z = p.z + ((h - br) * params[i].y);
-    }
-    backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
-			    NULL, -1, false, false, true, true, false);
-
-    for (i = 0; i < 4 ;i++) {
-      fvertices[i].x = p.x - (wlen.x + (blen.x * params[i].x));
-      fvertices[i].y = p.y - (wlen.y + (blen.y * params[i].x));
-      fvertices[i].z = p.z + ((h - br) * params[i].y);
-    }
-    frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
-			     NULL, -1, false, false, true, true, false);
+  for (i = 0; i < 4 ;i++) {
+    bvertices[i].x = p.x + (wlen.x + (blen.x * params[i].x));
+    bvertices[i].y = p.y + (wlen.y + (blen.y * params[i].x));
+    bvertices[i].z = p.z + ((h - br) * params[i].y);
   }
-  else {
-    float xlen = w - br;
-    float ylen = b - br;
-    bvertices[0].x = p.x + ((cos_val * xlen) - (sin_val * ylen));
-    bvertices[0].y = p.y + ((cos_val * ylen) + (sin_val * xlen));
-    bvertices[0].z = p.z + h - br;
-    bvertices[1].x = p.x + ((cos_val * xlen) - (sin_val * -ylen));
-    bvertices[1].y = p.y + ((cos_val * -ylen) + (sin_val * xlen));
-    bvertices[1].z = p.z + h - br;
-    bvertices[2].x = p.x + ((cos_val * -xlen) - (sin_val * -ylen));
-    bvertices[2].y = p.y + ((cos_val * -ylen) + (sin_val * -xlen));
-    bvertices[2].z = p.z + h - br;
-    bvertices[3].x = p.x + ((cos_val * -xlen) - (sin_val * ylen));
-    bvertices[3].y = p.y + ((cos_val * ylen) + (sin_val * -xlen));
-    bvertices[3].z = p.z + h - br;
-    backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
-			    NULL, -1, false, false, true, true, false);
+  backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
+                          NULL, -1, false, false, true, true, false);
 
-    for (i = 0; i < 4; i++) {
-      fvertices[i] = bvertices[3 - i];
-      fvertices[i].z = p.z + h; // change the height
-    }
-    frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
-			     NULL, -1, false, false, true, true, false);
+  for (i = 0; i < 4 ;i++) {
+    fvertices[i].x = p.x - (wlen.x + (blen.x * params[i].x));
+    fvertices[i].y = p.y - (wlen.y + (blen.y * params[i].x));
+    fvertices[i].z = p.z + ((h - br) * params[i].y);
   }
+  frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
+                           NULL, -1, false, false, true, true, false);
 
   return;
 }
@@ -516,9 +490,6 @@ void* Teleporter::pack(void* buf) const
   buf = nboPackFVec3(buf, origSize);
   buf = nboPackFloat(buf, border);
 
-  unsigned char horizontalByte = horizontal ? 1 : 0;
-  buf = nboPackUInt8(buf, horizontalByte);
-
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
@@ -537,10 +508,6 @@ void* Teleporter::unpack(void* buf)
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFVec3(buf, size);
   buf = nboUnpackFloat(buf, border);
-
-  unsigned char horizontalByte;
-  buf = nboUnpackUInt8(buf, horizontalByte);
-  horizontal = (horizontalByte == 0) ? false : true;
 
   unsigned char stateByte;
   buf = nboUnpackUInt8(buf, stateByte);
@@ -562,7 +529,6 @@ int Teleporter::packSize() const
   fullSize += sizeof(float);   // rotation
   fullSize += sizeof(fvec3);   // size
   fullSize += sizeof(float);   // border
-  fullSize += sizeof(uint8_t); // horizontal
   fullSize += sizeof(uint8_t); // state bits
   return fullSize;
 }
@@ -583,12 +549,11 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
 				 << std::endl;
   out << indent << "  border " << getBorder() << std::endl;
-  if (horizontal) {
-    out << indent << "  horizontal" << std::endl;
-  }
+
   if (ricochet) {
     out << indent << "  ricochet" << std::endl;
   }
+
   out << indent << "end" << std::endl << std::endl;
   return;
 }

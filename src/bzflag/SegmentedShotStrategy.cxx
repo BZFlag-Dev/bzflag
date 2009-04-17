@@ -135,6 +135,7 @@ void SegmentedShotStrategy::update(float dt)
 
             const fvec3& pos = segments[segment].ray.getOrigin();
             EFFECTS.addShotTeleportEffect(pos, rots);
+            eventHandler.ShotTeleported(getPath(), -1, -1); // FIXME
 	    break;
           }
 	}

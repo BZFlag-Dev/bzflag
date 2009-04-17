@@ -57,8 +57,8 @@ bzfs_SOURCES = \
 	CustomCone.h \
 	CustomDynamicColor.cxx \
 	CustomDynamicColor.h \
-	CustomGate.cxx \
-	CustomGate.h \
+	CustomTeleporter.cxx \
+	CustomTeleporter.h \
 	CustomGroup.cxx \
 	CustomGroup.h \
 	CustomLink.cxx \

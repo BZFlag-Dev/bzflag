@@ -11,7 +11,7 @@
  */
 
 /* interface header */
-#include "CustomGate.h"
+#include "CustomTeleporter.h"
 
 /* system implementation headers */
 #include <math.h>
@@ -22,35 +22,33 @@
 #include "ObstacleMgr.h"
 
 
-CustomGate::CustomGate(const char* _telename)
+CustomTeleporter::CustomTeleporter(const char* _telename)
 {
   telename = _telename;
   size.x = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
   size.y = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
   size.z = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
   border = size.x * 2.0f;
-  horizontal = false;
 }
 
 
-bool CustomGate::read(const char *cmd, std::istream& input)
+bool CustomTeleporter::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "border") == 0)
+  if (strcasecmp(cmd, "border") == 0) {
     input >> border;
-  else if (strcasecmp(cmd, "horizontal") == 0)
-    horizontal = true;
-  else
+  } else {
     return WorldFileObstacle::read(cmd, input);
+  }
   return true;
 }
 
 
-void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
+void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 {
   Teleporter* tele =
     new Teleporter(pos, rotation,
 		   fabsf(size.x), fabsf(size.y), fabsf(size.z),
-		   border, horizontal, driveThrough, shootThrough, ricochet);
+		   border, driveThrough, shootThrough, ricochet);
 
   if (!telename.size() && name.size())
     tele->setName(name);

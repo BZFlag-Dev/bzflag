@@ -757,7 +757,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomGate.cxx"
+					RelativePath="..\..\src\bzfs\CustomTeleporter.cxx"
 					>
 				</File>
 				<File
@@ -943,7 +943,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\CustomGate.h"
+				RelativePath="..\..\src\bzfs\CustomTeleporter.h"
 				>
 			</File>
 			<File

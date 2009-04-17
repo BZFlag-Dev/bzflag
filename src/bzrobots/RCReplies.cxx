@@ -423,7 +423,7 @@ void ObstacleReply::getParameters(std::ostream &stream) const
       stream << obs->getRotation() << " " << obs->getWidth() << " ";
       stream << obs->getBreadth() << " " << obs->getHeight() << " ";
       tele = (Teleporter *)obs;
-      stream << tele->getBorder() << " " << tele->isHorizontal() << " ";
+      stream << tele->getBorder() << " ";
       stream << (bool)tele->isDriveThrough() << " ";
       stream << (bool)tele->isShootThrough();
       break;
@@ -672,7 +672,7 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[10], shoot))
     return InvalidArguments;
 
-  obs = new Teleporter(p, rot, s[0], s[1], s[2], border, horiz,
+  obs = new Teleporter(p, rot, s[0], s[1], s[2], border,
                        (unsigned char)drive, (unsigned char)shoot, false);
                          // FIXME false is for ricochet
   return ParseOk;

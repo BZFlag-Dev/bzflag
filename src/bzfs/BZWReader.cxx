@@ -33,7 +33,7 @@ using std::vector;
 #include "CustomBox.h"
 #include "CustomCone.h"
 #include "CustomDynamicColor.h"
-#include "CustomGate.h"
+#include "CustomTeleporter.h"
 #include "CustomGroup.h"
 #include "CustomLink.h"
 #include "CustomMaterial.h"
@@ -366,7 +366,7 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
     }
     else if (strcasecmp(buffer, "teleporter") == 0) {
       readToken(buffer, sizeof(buffer));
-      newObject = new CustomGate(buffer);
+      newObject = new CustomTeleporter(buffer);
     }
     else if (strcasecmp(buffer, "define") == 0) {
       if (groupDef != worldDef) {

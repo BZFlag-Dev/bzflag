@@ -19,6 +19,7 @@
 
 #include "common.h"
 #include <string>
+#include <set>
 #include <iostream>
 #include "vectors.h"
 #include "Ray.h"
@@ -34,6 +35,11 @@ class MeshFace : public Obstacle {
   friend class ObstacleModifier;
 
   public:
+    static const char* getClassName(); // const
+  private:
+    static const char* typeName;
+
+  public:
     MeshFace(class MeshObstacle* mesh);
     MeshFace(MeshObstacle* mesh, int vertexCount,
 	     const fvec3** vertices,
@@ -45,7 +51,6 @@ class MeshFace : public Obstacle {
     ~MeshFace();
 
     const char* getType() const;
-    static const char* getClassName(); // const
     bool isValid() const;
     bool isFlatTop() const;
 
@@ -100,7 +105,6 @@ class MeshFace : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
     virtual int getTypeID() const {return meshType;}
 
-
   public:
     mutable float scratchPad;
 
@@ -109,8 +113,6 @@ class MeshFace : public Obstacle {
     inline void setID(int value) { id = value; }
 
   private:
-    static const char* typeName;
-
     class MeshObstacle* mesh;
     int id;
     int vertexCount;
@@ -139,8 +141,7 @@ class MeshFace : public Obstacle {
 
     char planeBits;
 
-
-    enum {
+    enum SpecialBits {
       LinkToFace   = (1 << 0),
       LinkFromFace = (1 << 1),
       BaseFace     = (1 << 2),
@@ -148,7 +149,8 @@ class MeshFace : public Obstacle {
       StickyFace   = (1 << 5),
       DeathFace    = (1 << 6),
       PortalFace   = (1 << 7)
-    } SpecialBits;
+    };
+    uint16_t specialState;
 
     // combining all types into one struct, because I'm lazy
     typedef struct {
@@ -162,13 +164,14 @@ class MeshFace : public Obstacle {
       fvec3 linkToSide; // sideways vector
       fvec3 linkToDown; // downwards vector
       fvec3 linkToCenter;
+      std::set<MeshFace*> linkDsts;
       // base data
       TeamColor teamColor;
     } SpecialData;
 
-    uint16_t specialState;
     SpecialData* specialData;
 };
+
 
 inline MeshObstacle* MeshFace::getMesh() const
 {
