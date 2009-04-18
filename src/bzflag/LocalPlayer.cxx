@@ -1341,6 +1341,8 @@ void LocalPlayer::setJumpPressed(bool value)
 
 void LocalPlayer::doJump()
 {
+  wantJump = false;
+
   FlagType* flag = getFlag();
   World *world = World::getWorld();
   if (!world) {
@@ -1408,8 +1410,6 @@ void LocalPlayer::doJump()
       addRemoteSound(PlayerState::JumpSound);
     }
   }
-
-  wantJump = false;
 }
 
 
