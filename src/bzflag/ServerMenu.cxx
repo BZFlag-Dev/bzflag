@@ -61,31 +61,30 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
      (activeServerList->getSelectedServer() != NULL)){
     // The favorite key was pressed
     if (key.chr == 'f') {
-	  // Check to see if we're on the favorites list, if we are, ignore keypress
-	  if (activeServerList == menu->favoritesList) {
-	    return false;
-	  }
-	  else {
-        // Mark it as a favorite server
-	    serverList.markAsFavorite(activeServerList->getSelectedServer());
-	    return true;
-	  }
+      // Check to see if we're on the favorites list, if we are, ignore keypress
+      if (activeServerList == menu->favoritesList) {
+	return false;
+      } else {
+	// Mark it as a favorite server
+	serverList.markAsFavorite(activeServerList->getSelectedServer());
+	return true;
+      }
     }
 
-	// The remove server key was pressed
+    // The remove server key was pressed
     if (key.chr == 'h') {
-	  // Design decision: Don't let users remove any servers from the normal server
+      // Design decision: Don't let users remove any servers from the normal server
       // list. Let's keep this as a pure representation of all the available servers
       if (activeServerList == menu->normalList)
         return false;
 
-	  // If we're on the favorites list, we need to unmark the server
-	  // as a favorite server in order to remove it from the list
+      // If we're on the favorites list, we need to unmark the server
+      // as a favorite server in order to remove it from the list
       if (activeServerList == menu->favoritesList)
         serverList.unmarkAsFavorite(activeServerList->getSelectedServer());
 
-	  // If we're on the recents list, we need to unmark the server
-	  // as a recent server in order to remove it from the list
+      // If we're on the recents list, we need to unmark the server
+      // as a recent server in order to remove it from the list
       if (activeServerList == menu->recentList)
         serverList.unmarkAsRecent(activeServerList->getSelectedServer());
 
@@ -97,29 +96,29 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   // The clear server list key was pressed
   if (key.chr == 'c') {
-	// Design decision: Don't let users remove any servers from the normal server
+    // Design decision: Don't let users remove any servers from the normal server
     // list. Let's keep this as a pure representation of all the available servers
     if (activeServerList == menu->normalList)
       return false;
 
-	// If we're on the favorites list, cycle through all favorite servers and unmark
-	// them as favorites. This may be a bad idea, it's fairly easy to accidentally
-	// clear your favorites list using this functionality.
+    // If we're on the favorites list, cycle through all favorite servers and unmark
+    // them as favorites. This may be a bad idea, it's fairly easy to accidentally
+    // clear your favorites list using this functionality.
     if (activeServerList == menu->favoritesList) {
       for (size_t i=0; i<activeServerList->getSize(); i++) {
         serverList.unmarkAsFavorite(activeServerList->get(i)->getServer());
       }
     }
 
-	// If we're on the recent server list, cycle through all
-	// recent servers and unmark them as a recent server.
+    // If we're on the recent server list, cycle through all
+    // recent servers and unmark them as a recent server.
     if (activeServerList == menu->recentList) {
       for (size_t i=0; i<activeServerList->getSize(); i++) {
         serverList.unmarkAsRecent(activeServerList->get(i)->getServer());
       }
     }
 
-	// Clear the list
+    // Clear the list
     activeServerList->clearList();
     return true;
   }
@@ -133,11 +132,11 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 	(activeServerList == menu->recentList))
       return false;
 
-	// Remove the current tab from the tabbed control
+    // Remove the current tab from the tabbed control
     std::string tabName = menu->tabbedControl->getActiveTabName();
     HUDuiServerListCache::instance().removeList(activeServerList, tabName);
     menu->tabbedControl->removeTab(activeServerList, tabName);
-	return true;
+    return true;
   }
 
   // Refresh the server list. This can be done at any time.
