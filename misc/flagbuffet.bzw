@@ -30,6 +30,21 @@ box
   size 10 10 10
 end
 
+teleporter portal
+  position 35 -80 0
+  rotation 90
+end
+
+link
+  from portal:f
+  to   portal:b
+end
+
+link
+  from portal:b
+  to   portal:f
+end
+
 zone
   position 0 0 0
   size 1 1 0
