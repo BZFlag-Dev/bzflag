@@ -30,15 +30,15 @@ Crashes
 
 * Segfault - two clients connecting to the server then leaving causes the server
   to crash
-  
+
 * starting for the first time on a new install seems to geek on the config
   creation on at least 2 OSs, ( linux and OSX ).
-  
+
 * reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a teleporter
   (and landing in front of the teleporter, albeit dead).  i didn't respawn,
   waited a couple sec (was chatting), then the assertion was raised.
-  
+
 * Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
   client in Rabbit game. The reported message buffer address was bad (ie
   0xbfffd7ed) Could we be running off the end of the packet (ie count is
@@ -52,9 +52,12 @@ Crashes
 Regressions
 -----------
 
+* Some players hear clicks and pops with sound effects, others do not.
+  Sounds cause an observable reduction in frame rate.
+
 * GM does not seem to lock on reliably (try against a remote client, bots work
-  fine)
-  
+  fine) (may be fixed as of 2.99.21)
+
 * bullets no longer bounce off the walls in replays even when ricochets have
   been enabled
 
@@ -62,7 +65,8 @@ Regressions
   that tanks can't spawn or shoot.
 
 * server communication error when someone logs off and people are still playing
-  
+  (may be fixed as of 2.99.21)
+
 Documentation
 -------------
 
@@ -74,15 +78,15 @@ Bans
 * a banned registered player that gets added to both the banList and idBanList
   is not listed in the latter on a idbanlist yet prevented from joining even
   after the ban is removed from the banList.
-  
+
 Controls
 --------
 
 * someone broke the key-driving rotational acceleration dampening, feels like
   1.7 driving again.
-  
+
 * Observer movement controls seems to get locked-up in Hunt mode.
-  
+
 Rendering
 ---------
 
@@ -91,7 +95,7 @@ Rendering
 * New font system renders tabs (such as those from the /ban command usage) as a
   square, and indents the line as much as 28 characters.  Example:
   http://static.bzexcess.com/bzfi1003.png
-  
+
 * At low screen resolutions, small text becomes very blurry.  Example:
   http://static.bzexcess.com/bzfi1005.png
 
@@ -104,13 +108,13 @@ Rendering
 * some ATI cards get font rendering to have variable alpha values on each
   letter. The gl restate was removed from the font manager.  It should be put in
   and tied to a config option that defaults to off.
-  
+
 * Burrowed tank shadows should be ground clipped (the shadow perspective matrix
   messes with the clip plane?)
-  
+
 * Material properties for mesh containers are not adjusted by ObstacleModifier,
   and will not save correctly if using saveFlatFile.
- 
+
 * same stipple on teleporters and phantom zone, making phatom tank behind
    teleporter virtually invisible when blending is off.
 
@@ -121,11 +125,11 @@ Rendering
   screen.  need to prevent this by either detecting if there is an available
   mode that is possible, lowering memory usage, or reporting an error and
   aborting.
-  
+
 * Flaghelp falls into the radar area when radar is 'bigger'
 
 * When setting resolution to 1400x1050 ~ 1920x1080 the font listing the various
-  resolutions overlaps one another. @ r18096 -spldart-  
+  resolutions overlaps one another. @ r18096 -spldart-
   -confirmed- @ r19553
 
 * Navigating the server list jumps around.  Join->Find Server then press the
@@ -139,7 +143,7 @@ Platform (multiple)
 * Shift+Tab seems to be bound to jump without being bound to jump It doesn't
   happen on Linux. Shift+Tab action is untranslated by XLookupString (xfree86
   4.3), so need custom code to go into bzflag.
-  
+
 Platform (Windows)
 ------------------
 
@@ -149,10 +153,10 @@ Platform (Windows)
 
 - error dialogs on win32 may appear off screen
    only when display resolution was changed
-   
+
 * jitter on windows servers is reported as very high, but play is unaffected.
-  
-* Two separate boxen, windows build with vc8 (VC9), nvidia vid cards. (ATI) 
+
+* Two separate boxen, windows build with vc8 (VC9), nvidia vid cards. (ATI)
 
   When jumping on box "name Box - position 250 250 118 - rotation 0 - size 15 15
   0.1 - end" on my WarTowers map, the one with the transporter on it, tanks
@@ -165,18 +169,29 @@ Platform (Windows)
   not mesh, and it localized the bug to windows builds currently. But could
   obviously be related.  @ r16889 -spldart- (r19553) ()<- recent retest.
 
-   
+
 bzfs
 ----
 
+* Jumping backward into a building with OO incorrectly triggers cheat detection.
+
+* After about 28 minutes with 4 players on the map there was an unexplained
+  minute of everyone rapidly toggling between NR and okay.  Chat messages were
+  queued and delivered to the server after things returned to normal.  Lag
+  numbers were very high (up to 1.3 seconds) right after this.
+
+* After nearly an hour of playing bzfs provided a new random map to rejoiners,
+  while the player who stayed was on the original random map.  Each player was
+  seen interacting with their own map.  Very confusing.
+
 * ANSI codes can be used in the server -public messages.  The best solution is
   probably to strip the codes at the listserver
-  
+
 * bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
 * maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
-  
+
 * Bad BZDB: some BZDB variables are not range checked: "/set _syncTime -" goes
   boom on the client side.
   (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
@@ -189,19 +204,19 @@ Gameplay
   someone with the fifth shot, only that player dies because the flag was
   dropped by the time the kill was scored...  even though the shot was fired
   while I still had the flag.
- 
+
 * dropping a team flag, when the related team is empty, start a timeout.  The
   related code does not take into account that we can have now multiple team
   flags.
-  
+
 * teleporting is blocking when going from a ground teleporter to a teleporter
   sitting on a mesh object. fix during next protocol breakage (workaround by
   dropping the ground teleporter by a small amount... causing the burrow sound)
-  
+
 * shooting straight shots with the Agility flag while just having accelerated
   forward (common tactic to shoot "fast shots") will miss targets that are
   rather stationary and directly in the shot's path.
-    
+
 * world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once a
   second, use _weapons BZDB var to test...)
@@ -225,7 +240,7 @@ Services
   to the 59999 server mask the 5156 server.  it'd be easy to blow this off as
   expected behavior, but I expect one can also trojan any server's counts using
   this same technique..
-  
+
 Tools
 -----
 
