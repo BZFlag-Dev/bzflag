@@ -547,13 +547,12 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(help);
   
   float wordWidth;
-  std::string word = "",remaining = "";
+  std::string word = "";
   float currentLineWidth = 0.0f;
   std::string::size_type position = text.find(" ",0);
   while (position < text.size()) {
     word = text.substr(0,position+1);
-    remaining = text.substr(position+1,text.size());
-    text = remaining;
+    text = text.substr(position+1,text.size());
     position = text.find(" ",0);
     // Here we split based on the space character into words and store them into a vector
     if (word.size() == 0) 
@@ -1730,7 +1729,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     hudColor3fv(messageColor);
     flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY;
-    for (size_t i = 0; i < flagHelpText.size(); i++) {
+    for (std::string::size_type i = 0; i < flagHelpText.size(); i++) {
       y -= fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
       fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str())/2.0),
 		    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str());
