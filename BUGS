@@ -92,9 +92,9 @@ Rendering
 
 * turning off texturing screws up the menu icon
 
-* New font system renders tabs (such as those from the /ban command usage) as a
-  square, and indents the line as much as 28 characters.  Example:
-  http://static.bzexcess.com/bzfi1003.png
+* Tab rendering on the control panel is braindead.  Probably should use some
+  kind of begin/end tabular data markers across multiple messages and line up
+  the columns based on that.
 
 * At low screen resolutions, small text becomes very blurry.  Example:
   http://static.bzexcess.com/bzfi1005.png
