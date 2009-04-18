@@ -536,9 +536,6 @@ void HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 }
 
 
-/* FIXME - makeHelpString should return an array of strings instead of
- * using implicit null chars.
- */
 std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
 {
   std::vector<std::string> listOfWords;
