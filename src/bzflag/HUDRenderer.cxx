@@ -466,9 +466,6 @@ void HUDRenderer::setFlagHelp(FlagType* desc, float duration)
 
   // Generate the formatted help for this flag
   flagHelpText = makeHelpString(desc->flagHelp.c_str());
-
-  // count the number of lines in the help message
-  flagHelpLines = (int) flagHelpText.size();
 }
 
 
@@ -1686,7 +1683,6 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const int oy = window.getOriginY();
   const int centerx = width >> 1;
   const int centery = viewHeight >> 1;
-  int i;
   float y;
 
   FontManager &fm = FontManager::instance();
@@ -1734,7 +1730,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     hudColor3fv(messageColor);
     flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY;
-    for (i = 0; i < flagHelpLines; i++) {
+    for (size_t i = 0; i < flagHelpText.size(); i++) {
       y -= fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
       fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str())/2.0),
 		    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str());

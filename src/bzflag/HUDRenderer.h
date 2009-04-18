@@ -237,7 +237,6 @@ private:
 
   float		flagHelpY;
   FlashClock	flagHelpClock;
-  int		flagHelpLines;
   std::vector<std::string>	flagHelpText;
 
   bool		showOptions;
