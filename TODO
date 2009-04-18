@@ -12,11 +12,26 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* sounds don't appear to be affected by the receiver's angle
+* A tank spinning at a fixed location experiences no change in the
+  apparent direction of fixed sounds.  However, moving the tank to a
+  different location can make a difference.  Sounds seem to come
+  either from one o'clock (mostly) or eleven o'clock.  Trepan wonders
+  if raw world positions are used and suggests that the receiver's
+  transform may not be performed.
 
-* PZ flag can be dropped when pausing
+* Canceling a pause command before the 5 second countdown completes
+  causes the client to drop any good flag without notifying the
+  server, so other players will still see a flag on the tank even
+  though it considers itself to have none.  When the flag "dropped"
+  this way is PZ and the player was zoned, other players continue to
+  treat the tank as zoned, and picking up PZ again results in being
+  zoned immediately.  The printing of "MsgPause(FIXME)" in playing.cxx
+  is probably related to this.
 
-* SH flag remains visible after the player has been shot
+* Other players continue to see a white flag on a tank after SH saved
+  it from being killed even though the flag has been dropped from that
+  player's point of view.  The tank blows up normally the next time it
+  is shot.
 
 * fix the Z dead-reckoning issue  (ask JeffM about it)
 
@@ -361,6 +376,10 @@ so that no work is duplicated.
 --
 --  Future Development
 --
+
+* When a BU flag is dropped, wait until the tank is fully out of the
+  ground before returning its maximum speed and acceleration to
+  normal.
 
 * flags should all be nullflags from client view until
   a) you pick one up
