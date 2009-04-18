@@ -154,7 +154,7 @@ protected:
    */
   void renderUpdate(SceneRenderer&);
 
-  std::string makeHelpString(const char* help) const;
+  std::vector<std::string> makeHelpString(const char* help) const;
 
 private:
   void setBigFontSize(int width, int height);
@@ -238,7 +238,7 @@ private:
   float		flagHelpY;
   FlashClock	flagHelpClock;
   int		flagHelpLines;
-  std::string	flagHelpText;
+  std::vector<std::string>	flagHelpText;
 
   bool		showOptions;
   bool		showCompose;

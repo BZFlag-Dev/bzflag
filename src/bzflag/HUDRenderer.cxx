@@ -468,12 +468,7 @@ void HUDRenderer::setFlagHelp(FlagType* desc, float duration)
   flagHelpText = makeHelpString(desc->flagHelp.c_str());
 
   // count the number of lines in the help message
-  flagHelpLines = 0;
-  const int helpLength = (const int)flagHelpText.size();
-  const char* helpMsg = flagHelpText.c_str();
-  for (int i = 0; i < helpLength; i++)
-    if (helpMsg[i] == '\0')
-      flagHelpLines++;
+  flagHelpLines = (int) flagHelpText.size();
 }
 
 
@@ -544,9 +539,10 @@ void HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 /* FIXME - makeHelpString should return an array of strings instead of
  * using implicit null chars.
  */
-std::string HUDRenderer::makeHelpString(const char* help) const
+std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
 {
-  if (!help) return std::string();
+  std::vector<std::string> listOfWords;
+  if (!help) return listOfWords;
 
   FontManager &fm = FontManager::instance();
   static const float spaceWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, " ");
@@ -554,53 +550,45 @@ std::string HUDRenderer::makeHelpString(const char* help) const
   // find sections of string not more than maxWidth pixels wide
   // and put them into a std::string separated by \0's.
   const float maxWidth = (float)window.getWidth() * 0.75f;
-  std::string msg;
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(help);
-
-  char c;
+  
   float wordWidth;
-  std::string word = "";
+  std::string word = "",remaining = "";
   float currentLineWidth = 0.0f;
-  unsigned int position = 0;
+  std::string::size_type position = text.find(" ",0);
   while (position < text.size()) {
-    c = text[position];
-    // when we hit a space, append the previous word
-    if (c == ' ') {
-      if (word.size() == 0) {
-	position++;
-	continue;
-      }
+    word = text.substr(0,position+1);
+    remaining = text.substr(position+1,text.size());
+    text = remaining;
+    position = text.find(" ",0);
+    // Here we split based on the space character into words and store them into a vector
+    if (word.size() == 0) 
+      continue;
 
-      wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word);
-      msg += c;
-      if (wordWidth + currentLineWidth + spaceWidth < maxWidth) {
-	currentLineWidth += wordWidth;
-      } else {
-	msg += '\0';
-	currentLineWidth = 0.0f;
-      }
-      msg.append(word);
-      word.resize(0);
-
+    wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word.c_str());
+    if (wordWidth + currentLineWidth + spaceWidth < maxWidth) {
+      currentLineWidth += wordWidth;
     } else {
-      word += c;
+      listOfWords.push_back("");
+      currentLineWidth = 0.0f;
     }
-    position++;
+    if (listOfWords.empty())
+      listOfWords.push_back("");
+    listOfWords.back() += word;
   }
 
+  word = text;
   if (word.size() > 0) {
     wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word);
     if (wordWidth + currentLineWidth + spaceWidth >= maxWidth) {
-      msg += '\0';
+      listOfWords.push_back(""); 
     }
-    msg += ' ';
-    msg.append(word);
+    if (listOfWords.empty())
+      listOfWords.push_back("");
+    listOfWords.back() += word;
   }
 
-  // append terminating null so line counts are correct
-  msg += '\0';
-
-  return msg;
+  return listOfWords;
 }
 
 
@@ -1749,13 +1737,10 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     hudColor3fv(messageColor);
     flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY;
-    const char* flagHelpBase = flagHelpText.c_str();
     for (i = 0; i < flagHelpLines; i++) {
       y -= fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
-      fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpBase)/2.0),
-		    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpBase);
-      while (*flagHelpBase) flagHelpBase++;
-      flagHelpBase++;
+      fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str())/2.0),
+		    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str());
     }
   }
 
