@@ -545,7 +545,7 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
   static const float spaceWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, " ");
 
   // find sections of string not more than maxWidth pixels wide
-  // and put them into a std::string separated by \0's.
+  // and pack them into a vector
   const float maxWidth = (float)window.getWidth() * 0.75f;
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(help);
   
