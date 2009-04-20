@@ -1141,10 +1141,10 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
   // simple ruleset, if player sends a MsgShotBegin over TCP he/she
   // must not be using the UDP link
-  if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
+  if (true && playerData != NULL && !playerData->player.isBot()) {
     if (code == MsgShotBegin) {
       sendMessage(ServerPlayer, i, "Your end is not using UDP.");
-      sendMessage(ServerPlayer, i, "Turn on UDP or try another server.");
+      sendMessage(ServerPlayer, i, "Turn on UDP on your firewall or router.");
       removePlayer(i, "no UDP", true);
       return;
     }
