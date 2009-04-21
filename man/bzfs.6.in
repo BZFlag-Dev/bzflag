@@ -81,7 +81,6 @@ bzfs \- BZFlag game server
 [\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
-[\fB\-requireudp\fR]
 [\fB\+s \fIflag\-count\fR]
 [\fB\-s \fIflag\-count\fR]
 [\fB\-sa\fR]
@@ -441,10 +440,6 @@ this file. If neither \fB\-reportfile\fR or \fB\-reportpipe\fR is used the
 .B \-reportpipe \fIcommand\fR
 Pipe messages to the server admin written using the \fB/report\fR command to
 this program or shell command. See \fB\-reportfile\fR.
-.TP 
-.B \-requireudp
-Require clients to use parallel UDP. If players fire before opening a
-UDP channel, kick them off the server.
 .TP 
 \fB+s \fInum\-flags\fR
 The server will have an extra \fInum\-flags\fR random super flags available
