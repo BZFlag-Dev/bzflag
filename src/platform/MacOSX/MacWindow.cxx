@@ -99,14 +99,16 @@ class GLContext
 
     bool Init(u_int32_t display_id, const CGRect& display_rect) {
       CGLPixelFormatObj pixel_format;
-#ifdef CGL_VERSION_1_1
+
+#if defined(CGL_VERSION_1_1) && !defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
       long int num_pixel_formats;
 #else
       GLint num_pixel_formats;
 #endif
+		
+		
 
-      CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24),
-	  &pixel_format, &num_pixel_formats);
+      CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24), &pixel_format, &num_pixel_formats);
 
       if (err || !pixel_format)
 	return false;
@@ -185,7 +187,7 @@ class GLContext
     }
 
     void SetVBLSynch(bool synch) {
-#ifdef CGL_VERSION_1_1
+#if defined(CGL_VERSION_1_1) && !defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
       long int params[] = { synch ? 1 : 0 };
 #else
       GLint params[] = { synch ? 1 : 0 };
