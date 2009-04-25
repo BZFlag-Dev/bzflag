@@ -90,6 +90,9 @@ public:
   bool	isBot() const;
   bool	isHuman() const;
   bool  isChat() const;
+  bool  getsPlayerUpdates() const;
+  bool  getsChatUpdates() const;
+  bool  getsAllUpdates() const;
   void  *packUpdate(void *buf);
   void  packUpdate(BufferedNetworkMessage *msg);
   void  *packId(void *buf);
@@ -149,6 +152,7 @@ public:
   void setToken ( const char* text );
   void setClientVersion ( const char* text );
   void setType ( PlayerType playerType );
+  void setUpdates ( NetworkUpdates whichUpdates );
 
   bool processEnter ( uint16_t &rejectCode, char *rejectMsg );
 
@@ -167,6 +171,8 @@ private:
   bool       hasDoneEntering;
   // type of player
   PlayerType type;
+  // updates player should receive
+  NetworkUpdates updates;
   // player's pseudonym
   char callSign[CallSignLen];
   // token from db server
@@ -324,6 +330,18 @@ inline bool PlayerInfo::isBot() const {
 
 inline bool PlayerInfo::isChat() const {
   return type == ChatPlayer;
+}
+
+inline bool PlayerInfo::getsPlayerUpdates() const {
+  return ( (updates == PlayerUpdates) || (updates == AllUpdates) ); 
+}
+
+inline bool PlayerInfo::getsChatUpdates() const {
+  return ( (updates == ChatUpdates) || (updates == AllUpdates) ); 
+}
+
+inline bool PlayerInfo::getsAllUpdates() const {
+  return updates == AllUpdates; 
 }
 
 inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) const {

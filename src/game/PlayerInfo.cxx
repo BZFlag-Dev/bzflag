@@ -155,6 +155,10 @@ void PlayerInfo::setType (PlayerType playerType)
   type = playerType;
 }
 
+void PlayerInfo::setUpdates (NetworkUpdates whichUpdates)
+{
+  updates = whichUpdates;
+}
 
 bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
 {
