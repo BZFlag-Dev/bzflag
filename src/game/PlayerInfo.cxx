@@ -33,7 +33,7 @@ bool PlayerInfo::simpleFiltering = true;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
   state(PlayerInLimbo), playerIndex(_playerIndex), hasDoneEntering(false),
-  type(TankPlayer), team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now),
+  type(TankPlayer), updates(AllUpdates), team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now),
   paused(false), pausedSince(TimeKeeper::getNullTime()), autopilot(false),
   tracker(0)
 {
