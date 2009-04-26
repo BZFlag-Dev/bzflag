@@ -2939,7 +2939,7 @@ void searchFlag(GameKeeper::Player &playerData)
       continue;
     }
 
-    // horizontal separation check
+    // spherical separation check
     distSq += (tpos.xy() - fpos.xy()).lengthSq();
     if (distSq >= radius2) {
       continue;
