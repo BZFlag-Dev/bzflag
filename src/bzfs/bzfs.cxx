@@ -68,6 +68,9 @@
 #include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
 
+#include "CollisionManager.h"
+#include "Ray.h"
+
 #include "Stats.h"
 
 StatsLink statsLink;
@@ -2935,13 +2938,16 @@ void searchFlag(GameKeeper::Player &playerData)
     dist += (tpos.x - fpos.x) * (tpos.x - fpos.x)
           + (tpos.y - fpos.y) * (tpos.y - fpos.y);
 
-    if (dist < radius2) {
-      radius2 = dist;
-      closestFlag = i;
-      if (!id) {
-	break;
-      }
-    }
+	if (dist < radius2){
+		Ray ray(fpos, tpos-fpos);
+		const ObsList* olist = COLLISIONMGR.rayTest(&ray,dist);
+		if (olist == NULL || olist->count < 1)
+			continue;
+		radius2 = dist;
+		closestFlag = i;
+		if (!id)
+			break;
+	}
   }
 
   if (closestFlag < 0) {
