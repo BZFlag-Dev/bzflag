@@ -2941,7 +2941,7 @@ void searchFlag(GameKeeper::Player &playerData)
 	if (dist < radius2){
 		Ray ray(fpos, tpos-fpos);
 		const ObsList* olist = COLLISIONMGR.rayTest(&ray,dist);
-		if (olist == NULL || olist->count < 1)
+		if (olist->count != 0)
 			continue;
 		radius2 = dist;
 		closestFlag = i;
