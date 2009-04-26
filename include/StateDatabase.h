@@ -242,9 +242,11 @@ public:
   static const std::string	BZDB_FOGSTART;
   static const std::string	BZDB_FOGEND;
   static const std::string	BZDB_FOGCOLOR;
+  static const std::string	BZDB_FORBIDDEBUG;
   static const std::string	BZDB_FREEZETAGRADIUS;
   static const std::string	BZDB_GMACTIVATIONTIME;
   static const std::string	BZDB_GMADLIFE;
+  static const std::string	BZDB_GMADSPEED;
   static const std::string	BZDB_GMTURNANGLE;
   static const std::string	BZDB_GRABOWNFLAG;
   static const std::string	BZDB_GRAVITY;

@@ -29,7 +29,6 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
-#include "Teleporter.h"
 #include "TimeKeeper.h"
 
 
@@ -303,11 +302,9 @@ void CollisionManager::load()
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
   const ObstacleList& bases = OBSTACLEMGR.getBases();
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
   const int boxCount = (int)boxes.size();
   const int pyrCount = (int)pyrs.size();
   const int baseCount = (int)bases.size();
-  const int teleCount = (int)teles.size();
   const int meshCount = (int)meshes.size();
 
   // clean out the cell lists
@@ -321,23 +318,22 @@ void CollisionManager::load()
   // determine the total number of obstacles
   int fullCount = 0;
   for (i = 0; i < boxCount; i++) {
-    if (!boxes[i]->isPassable()) fullCount++;
+    if (!boxes[i]->isPassable()) { fullCount++; }
   }
   for (i = 0; i < pyrCount; i++) {
-    if (!pyrs[i]->isPassable()) fullCount++;
+    if (!pyrs[i]->isPassable()) { fullCount++; }
   }
   for (i = 0; i < baseCount; i++) {
-    if (!bases[i]->isPassable()) fullCount++;
-  }
-  for (i = 0; i < teleCount; i++) {
-    if (!teles[i]->isPassable()) fullCount++;
+    if (!bases[i]->isPassable()) { fullCount++; }
   }
   for (i = 0; i < meshCount; i++) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     if (!mesh->isPassable()) {
       for (int f = 0; f < mesh->getFaceCount(); f++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(f);
-	if (!face->isPassable()) fullCount++;
+	if (!face->isPassable() || face->isLinkSrc()) {
+	  fullCount++;
+        }
       }
       fullCount++; // one for the mesh itself
     }
@@ -358,16 +354,13 @@ void CollisionManager::load()
   //
 
   for (i = (boxCount - 1); i >= 0; i--) {
-    if (!boxes[i]->isPassable()) addToFullList(boxes[i]);
+    if (!boxes[i]->isPassable()) { addToFullList(boxes[i]); }
   }
   for (i = (pyrCount - 1); i >= 0; i--) {
-    if (!pyrs[i]->isPassable()) addToFullList(pyrs[i]);
+    if (!pyrs[i]->isPassable())  { addToFullList(pyrs[i]); }
   }
   for (i = (baseCount - 1); i >= 0; i--) {
-    if (!bases[i]->isPassable()) addToFullList(bases[i]);
-  }
-  for (i = (teleCount - 1); i >= 0; i--) {
-    if (!teles[i]->isPassable()) addToFullList(teles[i]);
+    if (!bases[i]->isPassable()) { addToFullList(bases[i]); }
   }
   // add the mesh types last (faces then meshes)
   for (i = (meshCount - 1); i >= 0; i--) {
@@ -376,12 +369,14 @@ void CollisionManager::load()
       const int meshFaceCount = mesh->getFaceCount();
       for (int f = 0; f < meshFaceCount; f++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(f);
-	if (!face->isPassable()) addToFullList((Obstacle*) face);
+	if (!face->isPassable() || face->isLinkSrc()) {
+	  addToFullList((Obstacle*) face);
+        }
       }
     }
   }
   for (i = (meshCount - 1); i >= 0; i--) {
-    if (!meshes[i]->isPassable()) addToFullList(meshes[i]);
+    if (!meshes[i]->isPassable()) { addToFullList(meshes[i]); }
   }
 
   // do the type/height sort
@@ -432,9 +427,6 @@ void CollisionManager::load()
   SplitList.named.pyrs.list = listPtr;
   SplitList.named.pyrs.count = (int)pyrs.size();
   listPtr = listPtr + pyrs.size();
-  SplitList.named.teles.list = listPtr;
-  SplitList.named.teles.count = (int)teles.size();
-
 
   return;
 }
@@ -537,11 +529,9 @@ ColDetNode::ColDetNode(unsigned char _depth,
   // which must be cleared before leaving).
   //
   fullList.count = 0;
-  const char* faceType = MeshFace::getClassName();
-  const char* meshType = MeshObstacle::getClassName();
   for (i = 0; i < _list->count; i++) {
     Obstacle* obs = _list->list[i];
-    const char* obsType = obs->getType();
+    const ObstacleType obsType = obs->getTypeID();
     if (testExts.touches(obs->getExtents())) {
       if (obsType != meshType) {
 	if (obs->inBox(pos, 0.0f, size.x, size.y, size.z)) {
@@ -828,7 +818,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
   int hasMeshObs = 0;
   int hasNormalObs = 0;
   for (x = 0; x < fullList.count; x++) {
-    if (fullList.list[x]->getType() == MeshObstacle::getClassName()) {
+    if (fullList.list[x]->getTypeID() == meshType) {
       hasMeshObs = 1;
     } else {
       hasNormalObs = 1;
@@ -888,11 +878,11 @@ int compareObstacles(const void* a, const void* b)
   // - and finally, the mesh objects (checkpoints really)
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  const char* typeA = obsA->getType();
-  const char* typeB = obsB->getType();
+  const ObstacleType typeA = obsA->getTypeID();
+  const ObstacleType typeB = obsB->getTypeID();
 
-  bool isMeshA = (typeA == MeshObstacle::getClassName());
-  bool isMeshB = (typeB == MeshObstacle::getClassName());
+  bool isMeshA = (typeA == meshType);
+  bool isMeshB = (typeB == meshType);
 
   if (isMeshA) {
     if (!isMeshB) {
@@ -910,8 +900,8 @@ int compareObstacles(const void* a, const void* b)
     }
   }
 
-  bool isFaceA = (typeA == MeshFace::getClassName());
-  bool isFaceB = (typeB == MeshFace::getClassName());
+  bool isFaceA = (typeA == faceType);
+  bool isFaceB = (typeB == faceType);
 
   if (isFaceA) {
     if (!isFaceB) {

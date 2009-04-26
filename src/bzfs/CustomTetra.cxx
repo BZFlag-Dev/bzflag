@@ -170,7 +170,7 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
       txcdOffset += 1;
     }
   }
-    
+
   MeshObstacle* mesh = new MeshObstacle(transform,
                                         checkTypes, checkPoints,
 					verts, norms, txcds, 4,
@@ -190,7 +190,7 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
 
   for (int f = 0; f < 4; f++) {
     const int* fs = faceSets[f];
-    iv.clear(); in.clear(); it.clear(); 
+    iv.clear(); in.clear(); it.clear();
     iv.push_back(fs[0]); iv.push_back(fs[1]); iv.push_back(fs[2]);
     if (false && useNormals[f]) { // FIXME
       in.push_back(fs[0]); in.push_back(fs[1]); in.push_back(fs[2]);

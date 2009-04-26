@@ -29,10 +29,15 @@ class BzMaterial;
 
 
 class WorldText {
+
+  friend class ObstacleModifier;
+
   public:
     WorldText();
     WorldText(const WorldText& text);
     ~WorldText();
+
+    WorldText* copyWithTransform(const MeshTransform&) const;
 
     bool isValid() const;
 
@@ -64,33 +69,6 @@ class WorldText {
     float poFactor;
     float poUnits;
 };
-
-
-class WorldTextManager {
-  public:
-    WorldTextManager();
-    ~WorldTextManager();
-
-    void clear();
-
-    int addText(WorldText* text);
-
-    const std::vector<WorldText*>& GetTexts() const { return texts; }
-
-    void getFontURLs(std::set<std::string>& fontURLs) const;
-
-    int packSize() const;
-    void *pack(void* buf) const;
-    void *unpack(void* buf);
-
-    void print(std::ostream& out, const std::string& indent) const;
-
-  private:
-    std::vector<WorldText*> texts;
-};
-
-
-extern WorldTextManager WORLDTEXTMGR;
 
 
 #endif

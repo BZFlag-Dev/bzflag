@@ -70,6 +70,15 @@ namespace TextUtils {
                           const std::string& replaceMe,
                           const std::string& withMe);
 
+  /** remove leading whitespace */
+  std::string ltrim(const std::string& s);
+
+  /** remove trailing whitespace */
+  std::string rtrim(const std::string& s);
+
+  /** remove leading and trailing whitespace */
+  std::string trim(const std::string& s);
+
   /** return copy of string with all whitespace stripped
    */
   std::string no_whitespace(const std::string &s);

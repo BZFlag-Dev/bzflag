@@ -21,6 +21,7 @@
 #include "PhysicsDriver.h"
 #include "ObstacleList.h"
 #include "WallObstacle.h"
+#include "MeshFace.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
 #include "EventHandler.h"
@@ -62,8 +63,8 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , team(_team)
 , type(_type)
 , flagType(Flags::Null)
-, fromTeleporter(0)
-, toTeleporter(0)
+, teleLinkSrcID(0)
+, teleLinkDstID(0)
 , teleporterProximity(0.0f)
 , rank(0.42f)			// rank is received from the server on join
 , wins(0)
@@ -420,12 +421,14 @@ void Player::setExplode(const TimeKeeper& t)
 }
 
 
-void Player::setTeleport(const TimeKeeper& t, short from, short to)
+void Player::setTeleport(const TimeKeeper& t, short srcID, short dstID)
 {
-  if (!isAlive()) return;
+  if (!isAlive()) {
+    return;
+  }
   teleportTime = t;
-  fromTeleporter = from;
-  toTeleporter = to;
+  teleLinkSrcID = srcID;
+  teleLinkDstID = dstID;
   setStatus(getStatus() | short(PlayerState::Teleporting));
 }
 
@@ -690,19 +693,19 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       // see if we hit anything
       bool searchExpel;
       const Obstacle* searchObstacle =
-	    getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-		       phased, searchExpel);
+        getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+                       phased, searchExpel);
 
       if (!searchObstacle || !searchExpel) {
-	    // if no hit then search latter half of time step
-	    searchTime = t;
+        // if no hit then search latter half of time step
+        searchTime = t;
       } else if (searchObstacle) {
-	    // if we hit a building then record which one and where
-	    obstacle = searchObstacle;
+        // if we hit a building then record which one and where
+        obstacle = searchObstacle;
 
-	    expel = searchExpel;
-	    hitAzimuth = newAzimuth;
-	    hitPos = newPos;
+        expel = searchExpel;
+        hitAzimuth = newAzimuth;
+        hitPos = newPos;
       }
     }
 
@@ -739,17 +742,17 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
 
       // handle upward normal component to prevent an upward force
       if (!NEAR_ZERO(normal.z, ZERO_TOLERANCE)) {
-	    // if going down then stop falling
-	    if (newVelocity.z < 0.0f && newVelocity.z -
-	        (mag + normal.z * newVelocity.z) * normal.z > 0.0f) {
-	      newVelocity.z = 0.0f;
-	    }
+        // if going down then stop falling
+        if (newVelocity.z < 0.0f && newVelocity.z -
+            (mag + normal.z * newVelocity.z) * normal.z > 0.0f) {
+          newVelocity.z = 0.0f;
+        }
 
-	    // normalize force magnitude in horizontal plane
-	    float horNormal = (normal.x * normal.x) + (normal.y * normal.y);
-	    if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
-	      mag /= horNormal;
-	    }
+        // normalize force magnitude in horizontal plane
+        float horNormal = (normal.x * normal.x) + (normal.y * normal.y);
+        if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
+          mag /= horNormal;
+        }
       }
 
       // cancel out component in normal direction (if velocity and
@@ -757,18 +760,18 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       // amount to prevent a spurious collision against the same
       // obstacle.
       if (mag < 0.0f) {
-	    newVelocity.x -= mag * normal.x;
-	    newVelocity.y -= mag * normal.y;
-	    if (!(getStatus() & PlayerState::BackedOff)) {
-	      newPos.x -= TinyDistance * mag * normal.x;
-	      newPos.y -= TinyDistance * mag * normal.y;
-	      setStatus(getStatus() | PlayerState::BackedOff);
-	    }
+        newVelocity.x -= mag * normal.x;
+        newVelocity.y -= mag * normal.y;
+        if (!(getStatus() & PlayerState::BackedOff)) {
+          newPos.x -= TinyDistance * mag * normal.x;
+          newPos.y -= TinyDistance * mag * normal.y;
+          setStatus(getStatus() | PlayerState::BackedOff);
+        }
       }
       if (mag > -0.01f) {
-	    // assume we're not allowed to turn anymore if there's no
-	    // significant velocity component to cancel out.
-	    newAngVel = 0.0f;
+        // assume we're not allowed to turn anymore if there's no
+        // significant velocity component to cancel out.
+        newAngVel = 0.0f;
       }
     }
   }
@@ -795,9 +798,12 @@ const Obstacle* Player::getHitBuilding(const fvec3& oldP, float oldA,
                                                 !hasOOflag);
 
   expel = (obstacle != NULL);
-  if (expel && phased)
-    expel = ((obstacle->getType() == WallObstacle::getClassName()) ||
-             (obstacle->getType() == Teleporter::getClassName()));
+  if (expel && phased) {
+    const ObstacleType obsType = obstacle->getTypeID();
+    expel = ((obsType == wallType) ||
+             ((obsType == faceType) &&
+              ((const MeshFace*)obstacle)->isLinkFace()));
+  }
 
   return obstacle;
 }
@@ -1108,25 +1114,37 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     std::vector<SceneNode*> nodeList = avatar->getSceneNodes();
     for ( int i = 0; i < (int)nodeList.size(); i++ ) {
-      if (nodeList[i])
+      if (nodeList[i]) {
 	scene->addDynamicNode(nodeList[i]);
+      }
     }
 
     if (isCrossingWall()) {
       // get which plane to compute IDL against
       fvec4 plane;
       const float a = atan2f(forward.y, forward.x);
-      const Obstacle* obstacle =
-	world->hitBuilding(state.pos, a,
-			   dimensions.x, dimensions.y, dimensions.z);
-      if ((obstacle && obstacle->isCrossing(state.pos, a,
-					   dimensions.x,
-					   dimensions.y,
-					   dimensions.z, &plane)) ||
-	  world->crossingTeleporter(state.pos, a,
-				    dimensions.x,
-				    dimensions.y,
-				    dimensions.z, &plane)) {
+      const fvec3& d = dimensions;
+
+      const Obstacle* obs = world->hitBuilding(state.pos, a, d.x, d.y, d.z);
+      if (obs && !obs->isCrossing(state.pos, a, d.x, d.y, d.z, &plane)) {
+        obs = NULL;
+      }
+
+      if (!obs) {
+        const MeshFace* face =
+          world->crossingTeleporter(state.pos, a, d.x, d.y, d.z);
+        if (face) {
+          plane = face->getPlane();
+          obs = face;
+        }
+      }
+
+      if (obs && (obs->getTypeID() == faceType) &&
+          (((const MeshFace*)obs)->linkSrcNoEffect())) {
+        obs = NULL;
+      }
+
+      if (obs) {
 	// stick in interdimensional lights node
 	if (showIDL && GfxBlockMgr::halos.notBlocked()) {
 	  avatar->moveIDL(plane);
@@ -1138,15 +1156,15 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 	}
 
 	// add clipping plane to tank node
-	if (!inCockpit) {
-	  avatar->setClippingPlane(&plane);
-	}
+        avatar->setClippingPlane(&plane);
       }
-    } else if (getPosition().z < 0.0f) {
+    }
+    else if (getPosition().z < 0.0f) {
       // this should only happen with Burrow flags
       avatar->setClippingPlane(&groundPlane);
     } // isCrossingWall()
-  } else if (isExploding() && (state.pos.z > ZERO_TOLERANCE)) {
+  }
+  else if (isExploding() && (state.pos.z > ZERO_TOLERANCE)) {
     // isAlive()
     float t = float((TimeKeeper::getTick() - explodeTime) /
 		    BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
@@ -1446,7 +1464,7 @@ bool Player::isDeadReckoningWrong() const
   if ((fabsf(state.pos.x - predictedPos.x) > positionTolerance) ||
       (fabsf(state.pos.y - predictedPos.y) > positionTolerance) ||
       (fabsf(state.pos.z - predictedPos.z) > positionTolerance)) {
-    if (debugLevel >= 4) {
+    if ((debugLevel >= 4) && !BZDBCache::forbidDebug) {
       if (fabsf(state.pos.x - predictedPos.x) > positionTolerance) {
 	printf ("state.pos.x = %f, predictedPos.x = %f\n",
 		state.pos.x, predictedPos.x);
@@ -1505,7 +1523,7 @@ void Player::doDeadReckoning()
   // check for collisions and correct accordingly
   World *world = World::getWorld();
   if (world) {
-	bool expel;
+    bool expel;
     const Obstacle* obstacle = getHitBuilding(inputPos, inputAzimuth,
 		  predictedPos, predictedAzimuth, !isSolid(), expel);
 
@@ -1513,8 +1531,8 @@ void Player::doDeadReckoning()
     if (obstacle && expel) {
       fvec3 hitPos;
       fvec3 hitVelocity;
-	  fvec3 hitNormal;
-	  float hitAzimuth;
+      fvec3 hitNormal;
+      float hitAzimuth;
 
 	  // get the normal for the collision
       if (!getHitNormal(obstacle, inputPos, inputAzimuth,

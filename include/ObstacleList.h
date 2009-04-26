@@ -18,6 +18,7 @@
 
 class Obstacle;
 
+
 class ObstacleList {
   public:
     ObstacleList();

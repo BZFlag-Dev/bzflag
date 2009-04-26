@@ -14,131 +14,148 @@
 #pragma warning(4:4786)
 #endif
 
-/* system headers */
+#include "common.h"
+
+// interface header
+#include "TeamBases.h"
+
+// system headers
 #include <string.h>
 
+// common headers
 #include "Protocol.h"
-#include "TeamBases.h"
 #include "Pack.h"
 #include "BZDBCache.h"
+#include "Obstacle.h"
+#include "MeshFace.h"
+#include "Ray.h"
+#include "vectors.h"
+
+
+//============================================================================//
 
 TeamBases::TeamBases()
 {
-    color = RedTeam;
+  color = RedTeam;
 }
 
-TeamBases::TeamBases(TeamColor team, bool initDefault)
+
+void TeamBases::addBase(const Obstacle* obs)
 {
-    color = team;
-
-    if (!initDefault)
-      return;
-
-    float worldSize = BZDBCache::worldSize;
-    float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
-
-    teamBases.resize(1);
-    TeamBase &teamBase = teamBases[0];
-    switch (team) {
-      case RedTeam:
-	teamBase.position.x = (-worldSize + baseSize) / 2.0f;
-	teamBase.position.y = 0.0f;
-	break;
-
-      case GreenTeam:
-	teamBase.position.x = (worldSize - baseSize) / 2.0f;
-	teamBase.position.y = 0.0f;
-	break;
-
-      case BlueTeam:
-	teamBase.position.x = 0.0f;
-	teamBase.position.y = (-worldSize + baseSize) / 2.0f;
-	break;
-
-      case PurpleTeam:
-	teamBase.position.x = 0.0f;
-	teamBase.position.y = (worldSize - baseSize) / 2.0f;
-	break;
-
-      default:
-	// no valid team, should throw here if we could
-	break;
-    }
-
-    teamBase.position.z = 0.0f;
-    teamBase.rotation = 0.0f;
-    teamBase.size.x = baseSize / 2.0f;
-    teamBase.size.y = baseSize / 2.0f;
-    teamBase.size.z = 0.0f;
+  teamBases.push_back(TeamBase(obs));
 }
 
-void TeamBases::addBase(const fvec3& _pos, const fvec3& _size, float _rotation)
-{
-  TeamBase base(_pos, _size, _rotation);
-  teamBases.push_back(base);
-}
 
 int TeamBases::size() const
 {
   return teamBases.size();
 }
 
+
 TeamColor TeamBases::getTeam() const
 {
   return color;
 }
 
-const fvec3& TeamBases::getBasePosition( int base ) const
-{
-  if ((base < 0) || (base >= (int)teamBases.size()))
-    base = 0;
 
-  return teamBases[base].position;
+const fvec3& TeamBases::getBasePosition(int base) const
+{
+  if ((base < 0) || (base >= (int)teamBases.size())) {
+    base = 0;
+  }
+  return teamBases[base].getObstacle()->getPosition();
 }
 
-float TeamBases::findBaseZ( float x, float y, float z ) const
+
+float TeamBases::findBaseZ(const fvec3& testPos) const
 {
-  for (TeamBaseList::const_iterator it = teamBases.begin(); it != teamBases.end(); ++it) {
-    const fvec3& pos   = it->position;
-    const fvec3& _size = it->size;
-    float rotation = it->rotation;
-    float nx = x - pos.x;
-    float ny = y - pos.y;
-    if (nx == 0.0f)
-      nx = 1.0f;
-    float rx = (float)(cosf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
-    float ry = (float)(sinf(atanf(ny/nx)-rotation) * sqrt((ny * ny) + (nx * nx)));
+  TeamBaseList::const_iterator it;
+  for (it = teamBases.begin(); it != teamBases.end(); ++it) {
+    const Obstacle* obs = it->getObstacle();
+    if (obs->getTypeID() == faceType) {
+      const MeshFace* face = (const MeshFace*) obs;
+      const Ray ray(testPos, fvec3(0.0f, 0.0f, -1.0f));
+      const float t = face->intersect(ray);
+      if (t >= 0.0f) {
+        return face->getPosition().z;
+      }
+    }
+    else {
+      const fvec3& pos = obs->getPosition();
+      const fvec3& sz  = obs->getSize();
+      const float  rot = obs->getRotation();
+      float nx = testPos.x - pos.x;
+      float ny = testPos.y - pos.y;
+      if (nx == 0.0f) {
+        nx = 1.0f;
+      }
+      const float len = sqrt((nx * nx) + (ny * ny));
+      float rx = (float)(cosf(atanf(ny / nx) - rot) * len);
+      float ry = (float)(sinf(atanf(ny / nx) - rot) * len);
 
-
-    if (fabsf(rx) < _size.x &&
-	fabsf(ry) < _size.y &&
-	pos.z <= z)
-      return pos.z;
+      if ((fabsf(rx) < sz.x) && (fabsf(ry) < sz.y) && (pos.z <= testPos.z)) {
+        return pos.z;
+      }
+    }
   }
 
   return -1.0f;
 }
 
-const TeamBase &TeamBases::getRandomBase( int id )
+
+//============================================================================//
+
+const TeamBase& TeamBases::getRandomBase()
 {
-  return teamBases[id % teamBases.size()];
+  const int index = (int)(bzfrand() * (double)teamBases.size());
+  return teamBases[index % teamBases.size()];
 }
 
-TeamBase::TeamBase(const fvec3& pos, const fvec3& siz, float rot)
-: position(pos)
-, size(siz)
-, rotation(rot)
+
+void TeamBase::getTopCenter(fvec3& topPos) const
 {
+  if (obstacle->getTypeID() == faceType) {
+    const MeshFace* face = (const MeshFace*) obstacle;
+    topPos = face->calcCenter();
+  }
+  else {
+    const fvec3& pos  = obstacle->getPosition();
+    const fvec3& size = obstacle->getSize();
+    topPos = pos;
+    topPos.z += size.z;
+  }
 }
 
-void TeamBase::getRandomPosition( float &x, float &y, float &z ) const
+
+void TeamBase::getRandomPosition(fvec3& randPos) const
 {
-  float deltaX = (size.x - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  float deltaY = (size.y - 2.0f * BZDBCache::tankRadius) * ((float)bzfrand() - 0.5f);
-  x = position.x + deltaX * cosf(rotation) - deltaY * sinf(rotation);
-  y = position.y + deltaX * sinf(rotation) + deltaY * cosf(rotation);
-  z = position.z + size.z;
+  if (obstacle->getTypeID() == faceType) {
+    const MeshFace* face = (const MeshFace*) obstacle;
+    const fvec3 rPos = face->getRandomPoint();
+    const fvec3 center = face->calcCenter();
+    const fvec3 diff = (rPos - center);
+    randPos = center + (0.9f * diff);
+  }
+  else {
+    const fvec3& pos  = obstacle->getPosition();
+    const fvec3& size = obstacle->getSize();
+    const float  rot  = obstacle->getRotation();
+
+    const float c = cosf(rot);
+    const float s = sinf(rot);
+    const float tankRad2 = 2.0f * BZDBCache::tankRadius;
+    const float deltaX = (size.x - tankRad2) * ((float)bzfrand() - 0.5f);
+    const float deltaY = (size.y - tankRad2) * ((float)bzfrand() - 0.5f);
+    randPos = pos;
+    randPos.x += (deltaX * c) - (deltaY * s);
+    randPos.y += (deltaX * s) + (deltaY * c);
+    randPos.z += size.z; // the top
+  }
 }
+
+
+//============================================================================//
+
 
 // Local Variables: ***
 // mode: C++ ***

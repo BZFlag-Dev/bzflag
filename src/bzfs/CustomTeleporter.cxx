@@ -29,6 +29,7 @@ CustomTeleporter::CustomTeleporter(const char* _telename)
   size.y = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
   size.z = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
   border = size.x * 2.0f;
+  texSize = 0.0f; // use the default
 }
 
 
@@ -36,7 +37,11 @@ bool CustomTeleporter::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp(cmd, "border") == 0) {
     input >> border;
-  } else {
+  }
+  else if (strcasecmp(cmd, "texsize") == 0) {
+    input >> texSize;
+  }
+  else {
     return WorldFileObstacle::read(cmd, input);
   }
   return true;
@@ -46,14 +51,16 @@ bool CustomTeleporter::read(const char *cmd, std::istream& input)
 void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 {
   Teleporter* tele =
-    new Teleporter(pos, rotation,
+    new Teleporter(transform, pos, rotation,
 		   fabsf(size.x), fabsf(size.y), fabsf(size.z),
-		   border, driveThrough, shootThrough, ricochet);
+		   border, texSize,
+		   driveThrough, shootThrough, ricochet);
 
-  if (!telename.size() && name.size())
+  if (!telename.size() && name.size()) {
     tele->setName(name);
-  else
+  } else {
     tele->setName(telename);
+  }
 
   groupdef->addObstacle(tele);
 }

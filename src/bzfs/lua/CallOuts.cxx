@@ -21,6 +21,8 @@ using std::map;
 #include "BzVFS.h"
 #include "TextUtils.h"
 #include "PlayerState.h"
+#include "LinkManager.h"
+#include "MeshFace.h"
 #include "bzfsAPI.h"
 #include "vectors.h"
 #include "version.h"
@@ -125,8 +127,11 @@ static int GetWorldURL(lua_State* L);
 static int SetWorldURL(lua_State* L);
 static int GetWorldCache(lua_State* L);
 
-static int GetTeleLinkIDs(lua_State* L);
-static int GetLinkTeleName(lua_State* L);
+static int GetLinkSrcIDs(lua_State* L);
+static int GetLinkDstIDs(lua_State* L);
+static int GetLinkSrcName(lua_State* L);
+static int GetLinkDstName(lua_State* L);
+
 static int GetPhyDrvID(lua_State* L);
 static int GetPhyDrvName(lua_State* L);
 
@@ -327,8 +332,11 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetWorldSize);
   PUSH_LUA_CFUNC(L, SetWorldURL);
 
-  PUSH_LUA_CFUNC(L, GetTeleLinkIDs);
-  PUSH_LUA_CFUNC(L, GetLinkTeleName);
+  PUSH_LUA_CFUNC(L, GetLinkSrcIDs);
+  PUSH_LUA_CFUNC(L, GetLinkDstIDs);
+  PUSH_LUA_CFUNC(L, GetLinkSrcName);
+  PUSH_LUA_CFUNC(L, GetLinkDstName);
+
   PUSH_LUA_CFUNC(L, GetPhyDrvID);
   PUSH_LUA_CFUNC(L, GetPhyDrvName);
 
@@ -691,28 +699,60 @@ static int SetWorldURL(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetTeleLinkIDs(lua_State* L)
+static int GetLinkSrcIDs(lua_State* L)
 {
-  const char* name = luaL_checkstring(L, 1);
-  int frontLink, backLink;
-  const int id = bz_getTeleLinkIDs(name, &frontLink, &backLink);
-  if (id < 0) {
-    return 0;
+  const string srcName = luaL_checkstring(L, 1);
+
+  lua_newtable(L);
+  const LinkManager::FaceVec& linkSrcs = linkManager.getLinkSrcs();
+  for (size_t i = 0; i < linkSrcs.size(); i++) {
+    const MeshFace* face = linkSrcs[i];
+    if (face->getLinkName() == srcName) {
+      lua_pushinteger(L, i);
+      lua_rawseti(L, -2, i + 1);
+    }
   }
-  lua_pushinteger(L, frontLink);
-  lua_pushinteger(L, backLink);
-  return 2;
+  return 1;
 }
 
 
-static int GetLinkTeleName(lua_State* L)
+static int GetLinkDstIDs(lua_State* L)
 {
-  const int linkID = luaL_checkint(L, 1);
-  const char* name = bz_getLinkTeleName(linkID);
-  if (name == NULL) {
+  const string dstName = luaL_checkstring(L, 1);
+
+  lua_newtable(L);
+  const LinkManager::DstDataVec& linkDsts = linkManager.getLinkDsts();
+  for (size_t i = 0; i < linkDsts.size(); i++) {
+    const MeshFace* face = linkDsts[i].face;
+    if (face->getLinkName() == dstName) {
+      lua_pushinteger(L, i);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  return 1;
+}
+
+
+static int GetLinkSrcName(lua_State* L)
+{
+  const int linkSrcID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
+  if (face == NULL) {
     return 0;
   }
-  lua_pushstring(L, name);
+  lua_pushstdstring(L, face->getLinkName());
+  return 1;
+}
+
+
+static int GetLinkDstName(lua_State* L)
+{
+  const int linkDstID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushstdstring(L, face->getLinkName());
   return 1;
 }
 

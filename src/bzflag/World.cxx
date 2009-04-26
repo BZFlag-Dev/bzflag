@@ -30,6 +30,7 @@
 #include "WorldText.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
+#include "LinkManager.h"
 #include "MeshDrawInfo.h"
 #include "MeshDrawMgr.h"
 #include "DirectoryNames.h"
@@ -42,6 +43,7 @@
 // local headers
 #include "DynamicWorldText.h"
 #include "Roster.h"
+#include "WorldPlayer.h"
 
 
 //
@@ -69,7 +71,6 @@ World::World() :
   worldWeapons = new WorldPlayer();
   waterLevel = -1.0f;
   waterMaterial = NULL;
-  linkMaterial = NULL;
   drawInfoCount = 0;
   drawInfoArray = NULL;
 }
@@ -81,8 +82,9 @@ World::~World()
   freeFlags();
   freeInsideNodes();
   freeMeshDrawMgrs();
-  for (i = 0; i < curMaxPlayers; i++)
+  for (i = 0; i < curMaxPlayers; i++) {
     delete players[i];
+  }
   delete[] players;
   delete worldWeapons;
   for (i = 0; i < NumTeams; i++) {
@@ -92,7 +94,6 @@ World::~World()
   DYNAMICWORLDTEXT.clear();
 
   // clear the managers
-  links.clear();
   DYNCOLORMGR.clear();
   TEXMATRIXMGR.clear();
   MATERIALMGR.clear();
@@ -100,7 +101,7 @@ World::~World()
   TRANSFORMMGR.clear();
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
-
+  linkManager.clear();
 
   return;
 }
@@ -148,63 +149,28 @@ void World::setWorld(World* _playingField)
 }
 
 
-int World::getTeleportTarget(int source) const
+TeamColor World::whoseBase(const fvec3& testPos) const
 {
-  return links.getTeleportTarget(source);
-}
-
-
-int World::getTeleportTarget(int source, unsigned int seed) const
-{
-  return links.getTeleportTarget(source, seed);
-}
-
-
-int World::getTeleporter(const Teleporter* teleporter, int face) const
-{
-  // search for teleporter
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  const int count = teleporters.size();
-  for (int i = 0; i < count; i++) {
-    if (teleporter == (const Teleporter*)teleporters[i]) {
-      return ((2 * i) + face);
-    }
-  }
-  printf ("World::getTeleporter() error\n");
-  fflush(stdout);
-  exit(1);
-}
-
-
-const Teleporter* World::getTeleporter(int source, int& face) const
-{
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  assert(source >= 0 && source < (int)(2 * teleporters.size()));
-  face = (source & 1);
-  return ((const Teleporter*) teleporters[source / 2]);
-}
-
-
-TeamColor World::whoseBase(const fvec3& pos) const
-{
-  if (gameType != ClassicCTF)
+  if (gameType != ClassicCTF) {
     return NoTeam;
+  }
 
-  for (int i = 1; i < NumTeams; i++) {
-    for (TeamBases::const_iterator it = bases[i].begin(); it != bases[i].end(); ++it) {
-      const float nx = pos.x - it->pos.x;
-      const float ny = pos.y - it->pos.y;
-      const float dist = sqrtf((nx * nx) + (ny * ny));
-      const float angle = atanf(ny / nx) - it->radians;
-      const float rx = dist * cosf(angle);
-      const float ry = dist * sinf(angle);
-      if ((fabsf(rx) < it->size.x) &&
-	  (fabsf(ry) < it->size.y)) {
-	const float nz = it->pos.z + it->size.z;
-	const float rz = pos.z - nz;
-	if (fabsf(rz) < 0.1) { // epsilon kludge
-	  return TeamColor(i);
-	}
+  const float baseFudge  = 0.1f;
+  const float baseFudge2 = baseFudge * 2.0f;
+
+  const fvec3 rayPos(testPos.x, testPos.y, testPos.z + baseFudge);
+  const Ray ray(rayPos, fvec3(0.0f, 0.0f, -1.0f));
+
+  const ObsList* oList = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
+  const int count = oList->count;
+
+  for (int i = 0; i < count; i++) {
+    const Obstacle* obs = oList->list[i];
+    const int baseTeam = obs->getBaseTeam();
+    if (baseTeam >= 0) {
+      const float t = obs->intersect(ray);
+      if ((t > 0.0f) && (t < baseFudge2)) {
+        return (TeamColor)baseTeam;
       }
     }
   }
@@ -217,9 +183,9 @@ const Obstacle* World::inBuilding(const fvec3& pos,
                                   float radius, float height) const
 {
   // check everything but walls
-  const ObsList* olist = COLLISIONMGR.cylinderTest (pos, radius, height);
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
+  const ObsList* oList = COLLISIONMGR.cylinderTest(pos, radius, height);
+  for (int i = 0; i < oList->count; i++) {
+    const Obstacle* obs = oList->list[i];
     if (obs->inCylinder(pos, radius, height)) {
       return obs;
     }
@@ -233,10 +199,10 @@ const Obstacle* World::inBuilding(const fvec3& pos, float angle,
                                   float dx, float dy, float dz) const
 {
   // check everything but the walls
-  const ObsList* olist = COLLISIONMGR.boxTest (pos, angle, dx, dy, dz);
+  const ObsList* oList = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
 
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
+  for (int i = 0; i < oList->count; i++) {
+    const Obstacle* obs = oList->list[i];
     if (obs->inBox(pos, angle, dx, dy, dz)) {
       return obs;
     }
@@ -259,11 +225,14 @@ const Obstacle* World::hitBuilding(const fvec3& pos, float angle,
   }
 
   // check everything else
-  const ObsList* olist = COLLISIONMGR.boxTest (pos, angle, dx, dy, dz);
+  const ObsList* oList = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
 
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    if (ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)==0 && obs->inBox(pos, angle, dx, dy, dz)) {
+  ClientIntangibilityManager& CIMgr = ClientIntangibilityManager::instance();
+
+  for (int i = 0; i < oList->count; i++) {
+    const Obstacle* obs = oList->list[i];
+    if ((CIMgr.getWorldObjectTangibility(obs) == 0) &&
+        obs->inBox(pos, angle, dx, dy, dz)) {
       return obs;
     }
   }
@@ -277,6 +246,8 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
 				   float dx, float dy, float dz,
 				   bool directional) const
 {
+  ClientIntangibilityManager& CIMgr = ClientIntangibilityManager::instance();
+
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   for (unsigned int w = 0; w < walls.size(); w++) {
@@ -286,28 +257,31 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
   }
 
   // get the list of potential hits from the collision manager
-  const ObsList* olist = COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
+  const ObsList* oList = COLLISIONMGR.movingBoxTest(oldPos, oldAngle, pos, angle, dx, dy, dz);
 
   // sort the list by type and height
-  qsort (olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
+  qsort(oList->list, oList->count, sizeof(Obstacle*), compareObstacles);
 
   int i;
 
   // check non-mesh obstacles
-  for (i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    const char* type = obs->getType();
-    if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
+  for (i = 0; i < oList->count; i++) {
+    const Obstacle* obs = oList->list[i];
+    const ObstacleType type = obs->getTypeID();
+    if ((type == faceType) || (type == meshType)) {
       break;
+    }
 
-    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+    const bool driveThru = CIMgr.getWorldObjectTangibility(obs) != 0;
 
-    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
+    }
   }
 
-  if (i == olist->count)
+  if (i == oList->count) {
     return NULL; // no more obstacles, we are done
+  }
 
   // do some prep work for mesh faces
   int hitCount = 0;
@@ -316,29 +290,32 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
   bool goingDown = (vel.z <= 0.0f);
 
   // check mesh faces
-  for (/* do nothing */; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    const char* type = obs->getType();
-    if (type == MeshObstacle::getClassName())
+  for (/* do nothing */; i < oList->count; i++) {
+    const Obstacle* obs = oList->list[i];
+    if (obs->getTypeID() == meshType) {
       break;
+    }
 
     const MeshFace* face = (const MeshFace*) obs;
 
     // first check the face
     // if the face is drive thru, then we don't care about the tangibility of the mesh
     bool driveThru = obs->isDriveThrough() != 0;
-    if (!driveThru)
-      driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+    if (!driveThru) {
+      driveThru = CIMgr.getWorldObjectTangibility(obs) != 0;
+    }
 
-   if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       const float facePos2 = face->getPosition()[2];
-      if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
+      if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
 	continue;
-      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
+      }
+      else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
 	continue;
+      }
       else {
 	// add the face to the hitlist
-	olist->list[hitCount] = (Obstacle*) obs;
+	oList->list[hitCount] = (Obstacle*) obs;
 	hitCount++;
 	// compute its dot product and stick it in the scratchPad
 	const fvec4& plane = face->getPlane();
@@ -347,58 +324,70 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
       }
     }
   }
-  // sort the list by dot product (this sort will be replaced with a running tab
-  qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
+  // sort the list by dot product
+  qsort(oList->list, hitCount, sizeof(Obstacle*), compareHitNormal);
 
   // see if there as a valid meshface hit
   if (hitCount > 0) {
-    const MeshFace* face = (const MeshFace*) olist->list[0];
-    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
+    const MeshFace* face = (const MeshFace*) oList->list[0];
+    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional) {
       return face;
+    }
   }
-  if (i == olist->count)
-    return NULL; // no more obstacles, we are done
 
-  // JeffM, I have NO clue why we do this again, we just got done checking all the faces in the thing
-  // all this seems to do is screw us up by testing the same thing again with worse paramaters
+  // check mesh obstacles ('i' is at the beginning of the MeshObstacles)
+  for (/*no-op*/; i < oList->count; i++) {
+    const Obstacle* obs = oList->list[i];
+    bool driveThru = CIMgr.getWorldObjectTangibility(obs) != 0;
 
-  // check mesh obstacles
-  for (; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    bool driveThru = ClientIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
-
-    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
+    }
   }
 
   return NULL; // no more obstacles, we are done
 }
 
 
-bool World::crossingTeleporter(const fvec3& pos,
-                               float angle, float dx, float dy, float dz,
-                               fvec4* plane) const
+const MeshFace* World::crossingTeleporter(const fvec3& pos, float angle,
+                                          float dx, float dy, float dz) const
 {
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  for (unsigned int i = 0; i < teleporters.size(); i++) {
-    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
-    if (teleporter->isCrossing(pos, angle, dx, dy, dz, plane)) {
-      return true;
+  const ObsList* oList = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
+
+  const int count = oList->count;
+  for (int i = 0; i < count; i++) {
+    const Obstacle* obs = oList->list[i];
+    if (obs->getTypeID() == faceType) {
+      const MeshFace* face = (const MeshFace*)obs;
+      if (face->isLinkFace() &&
+          face->isCrossing(pos, angle, dx, dy, dz, NULL)) {
+        return face;
+      }
     }
   }
-  return false;
+  return NULL;
 }
 
-const Teleporter* World::crossesTeleporter(const fvec3& oldPos,
-                                           const fvec3& newPos,
-                                           int& face) const
+
+const MeshFace* World::crossesTeleporter(const fvec3& oldPos,
+                                         const fvec3& newPos) const
 {
-  // check teleporters
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  for (unsigned int i = 0; i < teleporters.size(); i++) {
-    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
-    if (teleporter->hasCrossed(oldPos, newPos, face)) {
-      return teleporter;
+  // check linkSrcs
+  Extents exts;
+  exts.expandToPoint(oldPos);
+  exts.expandToPoint(newPos);
+  const ObsList* oList = COLLISIONMGR.axisBoxTest(exts);
+  const int count = oList->count;
+
+  for (int i = 0; i < count; i++) {
+    const Obstacle* obs = oList->list[i];
+    if (obs->getTypeID() == faceType) {
+      const MeshFace* face = (const MeshFace*)obs;
+      if (face->isLinkSrc() &&
+          face->isDriveThrough() &&
+          face->hasCrossed(oldPos, newPos)) {
+        return face;
+      }
     }
   }
 
@@ -407,34 +396,33 @@ const Teleporter* World::crossesTeleporter(const fvec3& oldPos,
 }
 
 
-const Teleporter* World::crossesTeleporter(const Ray& r, int& face) const
+float World::getProximity(const fvec3& p, float radius) const
 {
-  // check teleporters
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  for (unsigned int i = 0; i < teleporters.size(); i++) {
-    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
-    if (teleporter->isTeleported(r, face) > Epsilon) {
-      return teleporter;
-    }
-  }
+  const float r = (radius * 1.2f);
 
-  // didn't cross
-  return NULL;
-}
-
-
-float World::getProximity(const fvec3& p, float r) const
-{
   // get maximum over all teleporters
   float bestProximity = 0.0;
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  for (unsigned int i = 0; i < teleporters.size(); i++) {
-    const Teleporter* teleporter = (const Teleporter*) teleporters[i];
-    const float proximity = teleporter->getProximity(p, r);
-    if (proximity > bestProximity) {
-      bestProximity = proximity;
+
+  const Extents exts(fvec3(p.x - r, p.y - r, p.z - r),
+                     fvec3(p.x + r, p.y + r, p.z + r));
+  const ObsList* oList = COLLISIONMGR.axisBoxTest(exts);
+  const int count = oList->count;
+
+  for (int i = 0; i < count; i++) {
+    const Obstacle* obs = oList->list[i];
+    if (obs->getTypeID() == faceType) {
+      const MeshFace* face = (const MeshFace*)obs;
+      if (face->isLinkSrc() &&
+          face->isDriveThrough() &&
+          !face->linkSrcNoGlow()) {
+        const float proximity = face->getProximity(p, r);
+        if (proximity > bestProximity) {
+          bestProximity = proximity;
+        }
+      }
     }
   }
+
   return bestProximity;
 }
 
@@ -442,12 +430,16 @@ float World::getProximity(const fvec3& p, float r) const
 void World::freeFlags()
 {
   int i;
-  if (flagNodes)
-    for (i = 0; i < maxFlags; i++)
+  if (flagNodes) {
+    for (i = 0; i < maxFlags; i++) {
       delete flagNodes[i];
-  if (flagWarpNodes)
-    for (i = 0; i < maxFlags; i++)
+    }
+  }
+  if (flagWarpNodes) {
+    for (i = 0; i < maxFlags; i++) {
       delete flagWarpNodes[i];
+    }
+  }
   delete[] flags;
   delete[] flagNodes;
   delete[] flagWarpNodes;
@@ -540,49 +532,6 @@ void World::freeInsideNodes() const
     }
     obs->freeInsideSceneNodeList();
   }
-  return;
-}
-
-
-void World::makeLinkMaterial()
-{
-  const std::string name = "LinkMaterial";
-
-  linkMaterial = MATERIALMGR.findMaterial(name);
-  if (linkMaterial != NULL) {
-    return;
-  }
-
-  int dyncolID = DYNCOLORMGR.findColor(name);
-  if (dyncolID < 0) {
-    DynamicColor* dyncol = new DynamicColor;
-    dyncol->addState(0.6f, 0.5f, 0.0f, 0.0f, 0.75f);
-    dyncol->addState(0.6f, 0.0f, 0.3f, 0.0f, 0.75f);
-    dyncol->addState(0.6f, 0.0f, 0.0f, 0.7f, 0.75f);
-    dyncol->setName(name);
-    dyncol->finalize();
-    dyncolID = DYNCOLORMGR.addColor (dyncol);
-  }
-
-  int texmatID = TEXMATRIXMGR.findMatrix(name);
-  if (texmatID < 0) {
-    TextureMatrix* texmat = new TextureMatrix;
-    texmat->setDynamicShift(0.0f, -0.05f);
-    texmat->setName(name);
-    texmat->finalize();
-    texmatID = TEXMATRIXMGR.addMatrix (texmat);
-  }
-
-  BzMaterial mat;
-  const fvec4 color(0.0f, 0.0f, 0.0f, 0.5f);
-  mat.setDiffuse(color);
-  mat.setDynamicColor(dyncolID);
-  mat.setTexture("telelink");
-  mat.setTextureMatrix(texmatID);
-  mat.setNoLighting(true);
-  mat.setName(name);
-  linkMaterial = MATERIALMGR.addMaterial(&mat);
-
   return;
 }
 
@@ -906,7 +855,7 @@ static void writeOBJGround(std::ostream& out)
 }
 
 
-static void writeBZDBvar (const std::string& name, void *userData)
+static void writeBZDBvar(const std::string& name, void *userData)
 {
   std::ofstream& out = *((std::ofstream*)userData);
   if ((BZDB.getPermission(name) == StateDatabase::Server)
@@ -956,7 +905,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   // for notational convenience
   std::ostream& out = *stream;
 
-  time_t nowTime = time (NULL);
+  time_t nowTime = time(NULL);
   out << "# BZFlag client: saved world on " << ctime(&nowTime) << std::endl;
 
   // Write the Map Information
@@ -973,10 +922,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << indent << "  -c" << std::endl;
       out << indent << "  -mp 2,";
       for (int t = RedTeam; t <= PurpleTeam; t++) {
-	if (getBase(t, 0) != NULL)
-	  out << "2,";
-	else
-	  out << "0,";
+        out << ((getBase(t, 0) == NULL) ? "0," : "2,");
       }
       out << "2" << std::endl;
     }
@@ -997,7 +943,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     out << indent << "  -ms " << getMaxShots() << std::endl;
 
     // Write BZDB server variables that aren't defaults
-    BZDB.iterate (writeBZDBvar, &out);
+    BZDB.iterate(writeBZDBvar, &out);
 
     out << indent << "end" << std::endl << std::endl;
   }
@@ -1068,12 +1014,6 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
   }
   OBSTACLEMGR.print(out, indent);
 
-  // Write world text
-  WORLDTEXTMGR.print(out, indent);
-
-  // Write links
-  links.print(out, indent);
-
   // Write weapons
   for (std::vector<Weapon>::iterator it = weapons.begin();
        it != weapons.end(); ++it) {
@@ -1140,7 +1080,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 }
 
 
-static void drawLines (int count, const fvec3* vertices, int color)
+static void drawLines(int count, const fvec3* vertices, int color)
 {
   const fvec4 colors[] = {
     fvec4(0.25f, 0.25f, 0.25f, 0.8f), // gray    (branch node)
@@ -1157,11 +1097,11 @@ static void drawLines (int count, const fvec3* vertices, int color)
   }
   glColor4fv(colors[color]);
 
-  glBegin (GL_LINE_STRIP); {
+  glBegin(GL_LINE_STRIP); {
     for (int i = 0; i < count; i++) {
       glVertex3fv(vertices[i]);
     }
-  } glEnd ();
+  } glEnd();
 
   return;
 }
@@ -1171,13 +1111,13 @@ void World::drawCollisionGrid() const
 {
   GLboolean usingTextures;
 
-  glGetBooleanv (GL_TEXTURE_2D, &usingTextures);
-  glDisable (GL_TEXTURE_2D);
+  glGetBooleanv(GL_TEXTURE_2D, &usingTextures);
+  glDisable(GL_TEXTURE_2D);
 
-  COLLISIONMGR.draw (&drawLines);
+  COLLISIONMGR.draw(&drawLines);
 
   if (usingTextures) {
-    glEnable (GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
   }
 
   return;
@@ -1203,8 +1143,9 @@ void World::setPlayersSize(int _playersSize)
 {
   playersSize = _playersSize;
   players     = new RemotePlayer*[playersSize];
-  for (int i = 0; i < maxPlayers; i++)
+  for (int i = 0; i < maxPlayers; i++) {
     players[i] = NULL;
+  }
 }
 
 

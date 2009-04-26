@@ -464,6 +464,38 @@ namespace TextUtils
 
 }
 
+
+std::string TextUtils::ltrim(const std::string& s)
+{
+
+  std::string::size_type i;
+  for (i = 0; i < s.size(); i++) {
+    if (!isWhitespace(s[i])) {
+      return s.substr(i);
+    }
+  }
+  return s;
+}
+
+
+std::string TextUtils::rtrim(const std::string& s)
+{
+  std::string::size_type i;
+  for (i = s.size(); i != 0; i--) {
+    if (!isWhitespace(s[i - 1])) {
+      return s.substr(0, i);
+    }
+  }
+  return s;
+}
+
+
+std::string TextUtils::trim(const std::string& s)
+{
+  return ltrim(rtrim(s));
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

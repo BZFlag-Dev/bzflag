@@ -541,7 +541,8 @@ void BoltSceneNode::BoltRenderNode::render()
       glEnd();
       addTriangleCount(2);
 
-      if (shotLength > 0) {
+
+      if ((shotLength > 0) && (sceneNode->length > 1.0e-6f)) {
         const float startSize  = 0.6f;
         const float startAlpha = 0.8f;
 

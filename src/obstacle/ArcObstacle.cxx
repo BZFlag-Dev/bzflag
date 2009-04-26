@@ -40,7 +40,7 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
 			 int physics, bool bounce,
 			 unsigned char drive, unsigned char shoot, bool rico)
 {
-  // common obstace parameters
+  // common obstacle parameters
   pos = _pos;
   size = _size;
   angle = _rotation;
@@ -114,6 +114,8 @@ void ArcObstacle::finalize()
   return;
 }
 
+
+//============================================================================//
 
 MeshObstacle* ArcObstacle::makeMesh()
 {
@@ -318,9 +320,9 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
   }
 
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
-	                        vertices, normals, texcoords, fcount,
-	                        false, smoothBounce,
-	                        driveThrough, shootThrough, ricochet);
+                          vertices, normals, texcoords, fcount,
+                          false, smoothBounce,
+                          driveThrough, shootThrough, ricochet);
 
   // now make the faces
   int vlen, nlen;
@@ -567,6 +569,8 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
 }
 
 
+//============================================================================//
+
 float ArcObstacle::intersect(const Ray&) const
 {
   assert(false);
@@ -574,14 +578,14 @@ float ArcObstacle::intersect(const Ray&) const
 }
 
 
-void ArcObstacle::get3DNormal(const fvec3&, fvec3&) const
+void ArcObstacle::getNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
 
-void ArcObstacle::getNormal(const fvec3&, fvec3&) const
+void ArcObstacle::get3DNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
@@ -626,6 +630,8 @@ bool ArcObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
   return false;
 }
 
+
+//============================================================================//
 
 void* ArcObstacle::pack(void* buf) const
 {
@@ -702,7 +708,8 @@ void* ArcObstacle::unpack(void* buf)
 
 int ArcObstacle::packSize() const
 {
-  int fullSize = transform.packSize();
+  int fullSize = 0;
+  fullSize += transform.packSize();
   fullSize += sizeof(fvec3);
   fullSize += sizeof(fvec3);
   fullSize += sizeof(float);
@@ -716,6 +723,8 @@ int ArcObstacle::packSize() const
   return fullSize;
 }
 
+
+//============================================================================//
 
 void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 {
@@ -777,6 +786,9 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 
   return;
 }
+
+
+//============================================================================//
 
 
 // Local Variables: ***

@@ -22,13 +22,17 @@
 #include "PhysicsDriver.h"
 #include "TimeKeeper.h"
 #include "EventHandler.h"
+#include "LinkManager.h"
 
 // local implementation headers
 #include "ObstacleMgr.h"
 #include "ObstacleList.h"
 #include "MeshSceneNode.h"
+#include "BaseBuilding.h"
 #include "WallObstacle.h"
 #include "LocalPlayer.h"
+#include "RemotePlayer.h"
+#include "WorldPlayer.h"
 #include "World.h"
 #include "ShotPath.h"
 #include "AutoHunt.h"
@@ -43,7 +47,7 @@ RadarRenderer::~RadarRenderer()
 }
 
 
-void RadarRenderer::clearRadarObjects ( void )
+void RadarRenderer::clearRadarObjects()
 {
   RadarObjectMap::iterator itr = radarObjectLists.begin();
 
@@ -392,7 +396,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
   float outlineOpacity = RENDERER.getPanelOpacity();
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
-  if ( outlineOpacity < 1.0f ) {
+  if (outlineOpacity < 1.0f ) {
     outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
   }
 
@@ -997,8 +1001,9 @@ void RadarRenderer::renderObstacles(bool fastRadar, float _range)
   // draw the walls
   renderWalls();
 
-  if (lastFast != fastRadar)
+  if (lastFast != fastRadar) {
     clearRadarObjects();
+  }
 
   // draw the boxes, pyramids, and meshes
   if (!fastRadar) {
@@ -1133,7 +1138,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   return;
 }
 
-void RadarRenderer::buildGeometry ( GLDisplayList displayList )
+void RadarRenderer::buildGeometry(GLDisplayList displayList)
 {
   // we need to make the geometry for one of our lists
   // see if the list is one of our objects
@@ -1141,25 +1146,29 @@ void RadarRenderer::buildGeometry ( GLDisplayList displayList )
   // don't do any color calls in here
   // as the color is set outside the list
   RadarObjectMap::iterator itr = radarObjectLists.find(displayList);
-  if ( itr == radarObjectLists.end() )
+  if (itr == radarObjectLists.end()) {
     return;
+  }
+  const RadarObjectType type = itr->second.first;
+  const Obstacle* obstacle = itr->second.second;
 
-  switch ( itr->second.first) {
-  case eBoxPyr:
-    buildBoxPyr(itr->second.second);
-    break;
-
-  case eMesh:
-  case eMeshDeathFaces:
-    buildMeshGeo((MeshObstacle*)itr->second.second,itr->second.first == eMeshDeathFaces);
-    break;
-
-  case eBoxPyrOutline:
-    buildOutline(itr->second.second);
-    break;
-
-  default:
-    break;
+  switch (type) {
+    case eBoxPyr: {
+      buildBoxPyr(obstacle);
+      break;
+    }
+    case eMesh:
+    case eMeshDeathFaces: {
+      buildMeshGeo((const MeshObstacle*) obstacle, type);
+      break;
+    }
+    case eBoxPyrOutline: {
+      buildOutline(obstacle);
+      break;
+    }
+    default: {
+      break;
+    }
   }
 }
 
@@ -1167,7 +1176,7 @@ void RadarRenderer::buildGeometry ( GLDisplayList displayList )
 // boxes and pyramids can share the same code, since they render just a box
 // and optimisation for super fast radar may be to just use this radar box
 // for meshes as well
-void RadarRenderer::buildBoxPyr(Obstacle* object)
+void RadarRenderer::buildBoxPyr(const Obstacle* object)
 {
   //  const float z = object->getPosition().z;
   //  const float bh = object->getHeight();
@@ -1188,9 +1197,9 @@ void RadarRenderer::buildBoxPyr(Obstacle* object)
 }
 
 
-void RadarRenderer::buildMeshGeo(MeshObstacle* mesh, bool deathFaces)
+void RadarRenderer::buildMeshGeo(const MeshObstacle* mesh, RadarObjectType type)
 {
-  int faces = mesh->getFaceCount();
+  const int faces = mesh->getFaceCount();
 
   for (int f = 0; f < faces; f++) {
     const MeshFace* face = mesh->getFace(f);
@@ -1210,8 +1219,9 @@ void RadarRenderer::buildMeshGeo(MeshObstacle* mesh, bool deathFaces)
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
     const bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
 
-    if (isDeath != deathFaces)
+    if (isDeath != (type == eMeshDeathFaces)) {
       continue;
+    }
 
     // draw the face as a triangle fan
     const int vertexCount = face->getVertexCount();
@@ -1225,7 +1235,7 @@ void RadarRenderer::buildMeshGeo(MeshObstacle* mesh, bool deathFaces)
 }
 
 
-void RadarRenderer::buildOutline(Obstacle* object)
+void RadarRenderer::buildOutline(const Obstacle* object)
 {
   //  const float z = object->getPosition().z;
   //  const float bh = object->getHeight();
@@ -1256,12 +1266,13 @@ void RadarRenderer::renderBoxPyrMesh()
   // them in a display list, hopefully on the card
   // the display list manager will regenerate the list
   // data if needed ( context invalidation ).
-  if ( !radarObjectLists.size()) {
+  if (!radarObjectLists.size()) {
     // add box buildings.
     const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
     for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
-      if (((BoxBuilding*)boxes[i])->isInvisible())
+      if (((BoxBuilding*)boxes[i])->isInvisible()) {
 	continue;
+      }
       radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(BoxBuilding*)boxes[i]);
     }
 
@@ -1287,8 +1298,9 @@ void RadarRenderer::renderBoxPyrMesh()
 	continue;
       radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(BoxBuilding*)boxes[i]);
     }
-    for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
+    for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++) {
       radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(PyramidBuilding*)pyramids[i]);
+    }
   }
 
   // if we have lists to render, call them,
@@ -1297,7 +1309,7 @@ void RadarRenderer::renderBoxPyrMesh()
 
     RadarObjectType lastType = eNone;
 
-    while ( itr != radarObjectLists.end() ) {
+    while (itr != radarObjectLists.end()) {
       // all objcts use the same color scale
       const float z  = itr->second.second->getPosition().z;
       const float bh = itr->second.second->getHeight();
@@ -1311,21 +1323,23 @@ void RadarRenderer::renderBoxPyrMesh()
       // we have to change some of the blend modes
       // we want to minimise these changes to the state
       // so don't do them every object.
-      if ( thisType != lastType ) {
-	if ( thisType == eBoxPyr ) {
+      if (thisType != lastType) {
+	if (thisType == eBoxPyr) {
 	  if (!smooth) {
 	    // smoothing has blending disabled
-	    if (enhanced)
+	    if (enhanced) {
 	      glEnable(GL_BLEND); // always blend the polygons if we're enhanced
+            }
 	  } else {
 	    // smoothing has blending enabled
-	    if (!enhanced)
+	    if (!enhanced) {
 	      glDisable(GL_BLEND); // don't blend the polygons if we're not enhanced
+            }
 	  }
-	} else if ( thisType == eBoxPyrOutline ) {
-	  if (!enhanced)
+	} else if (thisType == eBoxPyrOutline) {
+	  if (!enhanced) {
 	    glEnable(GL_CULL_FACE);
-
+          }
 	  if (smooth) {
 	    glDisable(GL_POLYGON_SMOOTH);
 	    glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
@@ -1335,23 +1349,33 @@ void RadarRenderer::renderBoxPyrMesh()
 	}
 	else {
 	  // draw mesh obstacles
-	  if (smooth)
+	  if (smooth) {
 	    glEnable(GL_POLYGON_SMOOTH);
-
-	  if (!enhanced)
+          }
+	  if (!enhanced) {
 	    glDisable(GL_CULL_FACE);
+          }
 	}
       }
 
+      const float alpha = transScale(z, bh);
+
       // the only thing that gets difrent colors is the death faces
-      if ( thisType == eMeshDeathFaces)
-	glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
-      else
-	glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+      switch (thisType) {
+        case eMeshDeathFaces: {
+          glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, alpha);
+          break;
+        }
+        default: {
+          glColor4f(0.25f * cs, 0.50f * cs, 0.50f * cs, alpha);
+          break;
+        }
+      }
 
       // draw all lists, except outlines when we arn't smoothing
-      if ( thisType != eBoxPyrOutline || ( thisType == eBoxPyrOutline && smooth ) )
+      if (thisType != eBoxPyrOutline || (thisType == eBoxPyrOutline && smooth)) {
 	ds.callList(list);
+      }
 
       itr++;
     }
@@ -1362,62 +1386,59 @@ void RadarRenderer::renderBoxPyrMesh()
 
 void RadarRenderer::renderBasesAndTeles()
 {
-  int i;
+  // draw teleporters
+  const LinkManager::FaceVec linkSrcs = linkManager.getLinkSrcs();
+  if (!linkSrcs.empty()) {
+    glColor3f(1.0f, 1.0f, 0.25f); // yellow
+    for (size_t i = 0; i < linkSrcs.size(); i++) {
+      const MeshFace* face = linkSrcs[i];
+      if (!face->linkSrcNoRadar()) {
+        glBegin(GL_LINE_LOOP);
+        const int vertCount = face->getVertexCount();
+        for (int v = 0; v < vertCount; v++) {
+          glVertex2fv(face->getVertex(v).xy());
+        }
+        glEnd();
+      }
+    }
+  }
 
   // draw team bases
   if (world->allowTeamFlags()) {
-    for (i = 1; i < NumTeams; i++) {
+    for (int i = 1; i < NumTeams; i++) {
       for (int j = 0; /* no-op */;j++) {
-	const World::BaseParams* bp = world->getBase(i, j);
+	const Obstacle* bp = world->getBase(i, j);
 	if (bp == NULL) {
 	  break;
         }
 	glColor3fv(Team::getRadarColor(TeamColor(i)));
 	glBegin(GL_LINE_LOOP);
-	const fvec3& pos  = bp->pos;
-	const fvec3& size = bp->size;
-	const float& rot  = bp->radians;
-	const float beta  = atan2f(size.y, size.x);
-	const float r     = size.xy().length();
-	glVertex2f(pos.x + r * cosf(rot + beta),
-		   pos.y + r * sinf(rot + beta));
-	glVertex2f(pos.x + r * cosf((float)(rot - beta + M_PI)),
-		   pos.y + r * sinf((float)(rot - beta + M_PI)));
-	glVertex2f(pos.x + r * cosf((float)(rot + beta + M_PI)),
-		   pos.y + r * sinf((float)(rot + beta + M_PI)));
-	glVertex2f(pos.x + r * cosf(rot - beta),
-		   pos.y + r * sinf(rot - beta));
+        if (bp->getTypeID() == faceType) {
+          const MeshFace* face = (const MeshFace*)bp;
+          const int vertCount = face->getVertexCount();
+          for (int v = 0; v < vertCount; v++) {
+            glVertex2fv(face->getVertex(v).xy());
+          }
+        }
+        else if (bp->getTypeID() == baseType) {
+          const fvec3& pos  = bp->getPosition();
+          const fvec3& size = bp->getSize();
+          const float& rot  = bp->getRotation();
+          const float beta  = atan2f(size.y, size.x);
+          const float r     = size.xy().length();
+          glVertex2f(pos.x + r * cosf(rot + beta),
+                     pos.y + r * sinf(rot + beta));
+          glVertex2f(pos.x + r * cosf((float)(rot - beta + M_PI)),
+                     pos.y + r * sinf((float)(rot - beta + M_PI)));
+          glVertex2f(pos.x + r * cosf((float)(rot + beta + M_PI)),
+                     pos.y + r * sinf((float)(rot + beta + M_PI)));
+          glVertex2f(pos.x + r * cosf(rot - beta),
+                     pos.y + r * sinf(rot - beta));
+        }
 	glEnd();
       }
     }
   }
-
-  // draw teleporters.  teleporters are pretty thin so use lines
-  // (which, if longer than a pixel, are guaranteed to draw something;
-  // not so for a polygon).  just in case the system doesn't correctly
-  // filter the ends of line segments, we'll draw the line in each
-  // direction (which degrades the antialiasing).  Newport graphics
-  // is one system that doesn't do correct filtering.
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  int count = teleporters.size();
-  glColor3f(1.0f, 1.0f, 0.25f);
-  glBegin(GL_LINES);
-  for (i = 0; i < count; i++) {
-    const Teleporter & tele = *((const Teleporter *) teleporters[i]);
-    const float z = tele.getPosition().z;
-    const float bh = tele.getHeight();
-    const float cs = colorScale(z, bh);
-    glColor4f(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale(z, bh));
-    const float tw = tele.getBreadth();
-    const float c = tw * cosf(tele.getRotation());
-    const float s = tw * sinf(tele.getRotation());
-    const fvec3& pos = tele.getPosition();
-    glVertex2f(pos.x - s, pos.y + c);
-    glVertex2f(pos.x + s, pos.y - c);
-    glVertex2f(pos.x + s, pos.y - c);
-    glVertex2f(pos.x - s, pos.y + c);
-  }
-  glEnd();
 
   return;
 }

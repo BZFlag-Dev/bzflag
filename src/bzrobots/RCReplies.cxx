@@ -416,7 +416,7 @@ void ObstacleReply::getParameters(std::ostream &stream) const
       stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
       stream << obs->getRotation() << " " << obs->getWidth() << " ";
       stream << obs->getBreadth() << " " << obs->getHeight() << " ";
-      stream << ((BaseBuilding *)obs)->getTeam();
+      stream << ((BaseBuilding *)obs)->getBaseTeam();
     case teleType:
       pos = obs->getPosition();
       stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
@@ -466,7 +466,7 @@ messageParseStatus ObstacleReply::parse(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[0], t))
     return InvalidArguments;
 
-  type = (ObstacleTypes)t;
+  type = (ObstacleType)t;
 
   switch (type) {
     case boxType:
@@ -672,7 +672,8 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[10], shoot))
     return InvalidArguments;
 
-  obs = new Teleporter(p, rot, s[0], s[1], s[2], border,
+  const MeshTransform transform;
+  obs = new Teleporter(transform, p, rot, s[0], s[1], s[2], border, 0.0f,
                        (unsigned char)drive, (unsigned char)shoot, false);
                          // FIXME false is for ricochet
   return ParseOk;

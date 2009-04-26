@@ -20,19 +20,20 @@
 
 // 58 bytes
 const int PlayerUpdatePLenMax =
-			sizeof(double)		+ // timestamp
-			PlayerIdPLen		+ // player id
-			sizeof(int32_t)	+ // order
-			sizeof(int16_t)	+ // status
-			sizeof(float) * 3	+ // position			(or int16_t * 3)
-			sizeof(float) * 3	+ // velocity			(or int16_t * 3)
-			sizeof(float)		+ // angle			(or int16_t)
-			sizeof(float)		+ // angular velocity		(or int16_t)
-			sizeof(int16_t)	+ // jump jets			(conditional)
-			sizeof(int32_t)	+ // physics driver		(conditional)
-			sizeof(int16_t)	+ // user speed			(conditional)
-			sizeof(int16_t)	+ // user angular velocity	(conditional)
-			sizeof(uint8_t);	  // sounds			(conditional)
+  sizeof(double)	+ // timestamp
+  PlayerIdPLen		+ // player id
+  sizeof(int32_t)	+ // order
+  sizeof(int16_t)	+ // status
+  sizeof(fvec3)		+ // position			(or int16_t * 3)
+  sizeof(fvec3)		+ // velocity			(or int16_t * 3)
+  sizeof(float)		+ // angle			(or int16_t)
+  sizeof(float)		+ // angular velocity		(or int16_t)
+  sizeof(int16_t)	+ // jump jets			(conditional)
+  sizeof(int32_t)	+ // physics driver		(conditional)
+  sizeof(int16_t)	+ // user speed			(conditional)
+  sizeof(int16_t)	+ // user angular velocity	(conditional)
+  sizeof(uint8_t);	  // sounds			(conditional)
+
 
 class PlayerState
 {
@@ -76,7 +77,9 @@ class PlayerState
     float	angVel;		// angular velocity of tank
     int		phydrv;		// physics driver
 
-    fvec3	apparentVelocity;	// velocity of tank as derived from it's last positional update
+    fvec3	apparentVelocity;	// velocity of tank as derived from
+                                        // its last positional update
+
     float	lastUpdateTime;		// the time of the last update
 
     // the following are to be used only for drawing

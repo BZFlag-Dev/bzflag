@@ -60,11 +60,11 @@ void DefaultSpawnPolicy::getPosition(fvec3& pos, int playerId,
      */
 
     TeamBases &teamBases = bases[team];
-    const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
-    base.getRandomPosition(pos.x, pos.y, pos.z);
+    const TeamBase &base = teamBases.getRandomBase();
+    base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
-
-  } else {
+  }
+  else {
     /* *** "random" spawn position selection occurs below here. ***
      *
      * The idea is to basically find a position that is the farthest

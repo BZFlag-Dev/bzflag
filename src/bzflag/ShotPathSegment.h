@@ -19,6 +19,9 @@
 #include "Extents.h"
 
 
+class MeshFace;
+
+
 class ShotPathSegment {
   public:
     enum Reason { Initial, Through, Ricochet, Teleport, Boundary };
@@ -27,8 +30,18 @@ class ShotPathSegment {
     ShotPathSegment(const double start, const double end,
                                 const Ray& r, Reason = Initial);
     ShotPathSegment(const ShotPathSegment&);
-    ~ShotPathSegment();
     ShotPathSegment& operator=(const ShotPathSegment&);
+
+    static std::string getReasonString(Reason reason) {
+      switch (reason) {
+        case Initial:  { return "Initial"; }
+        case Through:  { return "Through"; }
+        case Ricochet: { return "Ricochet"; }
+        case Teleport: { return "Teleport"; }
+        case Boundary: { return "Boundary"; }
+      }
+      return "unknown";
+    }
 
   public:
     double start;
@@ -36,6 +49,10 @@ class ShotPathSegment {
     Ray    ray;
     Reason reason;
     Extents bbox;
+    int linkSrcID;
+    int linkDstID;
+    const MeshFace* dstFace;
+    bool noEffect;
 };
 
 

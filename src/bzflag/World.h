@@ -15,29 +15,33 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <vector>
 #include <string>
 
-/* common interface headers */
+// common headers
 #include "Team.h"
 #include "FlagWarpSceneNode.h"
 #include "BundleMgr.h"
-#include "LinkManager.h"
 #include "MapInfo.h"
 #include "global.h"
 #include "vectors.h"
 
-/* local interface headers */
-#include "RemotePlayer.h"
-#include "WorldPlayer.h"
+// local headers
 #include "Weapon.h"
 #include "EntryZone.h"
 #include "ClientFlag.h"
 
 
+class WorldPlayer;
+class RemotePlayer;
 class FlagSceneNode;
+class Obstacle;
+class MeshFace;
 class MeshDrawInfo;
+class BzMaterial;
+class SceneDatabase;
+
 
 /**
  * World:
@@ -46,13 +50,6 @@ class MeshDrawInfo;
 class World {
 
   friend class WorldBuilder;
-
-  public:
-    struct BaseParams {
-      fvec3 pos;
-      fvec3 size;
-      float radians;
-    };
 
   public:
     World();
@@ -74,7 +71,6 @@ class World {
     bool		luaWorldRequired() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
-    const BzMaterial*	getLinkMaterial() const;
     float		getFlagShakeTimeout() const;
     int			getFlagShakeWins() const;
     int			getMaxPlayers() const;
@@ -96,12 +92,7 @@ class World {
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
     ClientFlag&		getClientFlag(int index) const;
-    const BaseParams*	getBase(int team, int base = 0) const;
-    const Teleporter*	getTeleporter(int source, int& face) const;
-    int			getTeleporter(const Teleporter*, int face) const;
-    int			getTeleportTarget(int source) const;
-    int			getTeleportTarget(int source, unsigned int seed) const;
-    const LinkManager&	getLinkManager() const { return links; }
+    const Obstacle*	getBase(int team, int base = 0) const;
 
     TeamColor		whoseBase(const fvec3& pos) const;
     const Obstacle*	inBuilding(const fvec3& pos, float radius,
@@ -116,12 +107,12 @@ class World {
 				    const fvec3& pos, float angle,
 				    float tankWidth, float tankBreadth,
 				    float tankHeight, bool directional) const;
-    bool		crossingTeleporter(const fvec3& oldPos, float angle,
-					float tankWidth, float tankBreadth,
-					float tankHeight, fvec4* plane) const;
-    const Teleporter*	crossesTeleporter(const fvec3& oldPos,
-					  const fvec3& newPos, int& face) const;
-    const Teleporter*	crossesTeleporter(const Ray& r, int& face) const;
+
+    const MeshFace*	crossingTeleporter(const fvec3& oldPos, float angle,
+                                           float tankWidth, float tankBreadth,
+                                           float tankHeight) const;
+    const MeshFace*	crossesTeleporter(const fvec3& oldPos,
+                                          const fvec3& newPos) const;
     float		getProximity(const fvec3& pos, float radius) const;
 
     void		initFlag(int index);
@@ -145,8 +136,6 @@ class World {
     static void		init();
     static void		done();
     static void		setFlagTexture(FlagSceneNode*);
-
-    void		makeLinkMaterial();
 
     void		loadCollisionManager();
     void		checkCollisionManager();
@@ -181,9 +170,8 @@ class World {
     int			shakeWins;
     float		waterLevel;
     const BzMaterial*	waterMaterial;
-    const BzMaterial*	linkMaterial;
 
-    typedef std::vector<BaseParams> TeamBases;
+    typedef std::vector<const Obstacle*> TeamBases;
     TeamBases		bases[NumTeams];
     Team		team[NumTeams];
 
@@ -201,8 +189,6 @@ class World {
     MeshDrawInfo**	drawInfoArray;
 
     fvec3		wind;
-
-    LinkManager		links;
 
     // required graphics settings
     int			oldFogEffect;
@@ -224,7 +210,7 @@ class World {
 
 inline bool	World::allowTeams() const
 {
-	return gameType != OpenFFA;
+  return gameType != OpenFFA;
 }
 
 
@@ -235,7 +221,7 @@ inline bool		World::allowTeamFlags() const
 
 inline bool		World::allowTeamKills() const
 {
-	return (gameOptions & short(NoTeamKills)) == 0;
+  return (gameOptions & short(NoTeamKills)) == 0;
 }
 
 inline bool		World::allowSuperFlags() const
@@ -297,11 +283,6 @@ inline float		World::getWaterLevel() const
 inline const BzMaterial*	World::getWaterMaterial() const
 {
   return waterMaterial;
-}
-
-inline const BzMaterial*	World::getLinkMaterial() const
-{
-  return linkMaterial;
 }
 
 inline GameType		World::getGameType() const
@@ -404,13 +385,13 @@ inline ClientFlag&	World::getClientFlag(int index) const
   return flags[index];
 }
 
-inline const World::BaseParams* World::getBase(int _team, int base) const
+inline const Obstacle* World::getBase(int _team, int base) const
 {
   const TeamBases &b = bases[_team];
-  if ((base < 0) || (base >= (int)b.size()))
+  if ((base < 0) || (base >= (int)b.size())) {
     return NULL;
-
-  return &b[base];
+  }
+  return b[base];
 }
 
 inline World*		World::getWorld()

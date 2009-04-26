@@ -30,7 +30,6 @@
 #include "ObstacleSceneNodeGenerator.h"
 #include "PyramidSceneNodeGenerator.h"
 #include "TankSceneNode.h"
-#include "TeleporterSceneNodeGenerator.h"
 #include "TextSceneNode.h"
 #include "WallSceneNodeGenerator.h"
 
@@ -243,11 +242,6 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
     addPyramid(db, *((PyramidBuilding*) pyramids[i]));
   }
 
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  for (i = 0; i < teles.size(); i++) {
-    addTeleporter(db, *((Teleporter*) teles[i]), world);
-  }
-
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (i = 0; i < meshes.size(); i++) {
     addMesh(db, (MeshObstacle*) meshes[i]);
@@ -267,7 +261,7 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
 void SceneDatabaseBuilder::addWorldTexts(SceneDatabase* db)
 {
-  const std::vector<WorldText*>& texts = WORLDTEXTMGR.GetTexts();
+  const std::vector<WorldText*>& texts = OBSTACLEMGR.getTexts();
   for (size_t i = 0; i < texts.size(); i++) {
     const WorldText* text = texts[i];
     if (text->useBZDB) {
@@ -332,7 +326,7 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
   TextureManager &tm = TextureManager::instance();
   int wallTexture = -1;
 
-  bool  useColorTexture = false;
+  bool useColorTexture = false;
 
   // try object, standard, then default
   if (o.userTextures[0].size())
@@ -385,8 +379,8 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new BoxSceneNodeGenerator(&o);
   TextureManager &tm = TextureManager::instance();
-  int    boxTexture = -1;
-  bool  useColorTexture[2] = {false,false};
+  int boxTexture = -1;
+  bool useColorTexture[2] = { false, false };
 
   // try object, standard, then default
   if (o.userTextures[0].size())
@@ -514,7 +508,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
 
   TextureManager &tm = TextureManager::instance();
-  int   boxTexture = -1;
+  int boxTexture = -1;
 
   bool  useColorTexture[2] = {false,false};
 
@@ -522,7 +516,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   if (o.userTextures[0].size())
     boxTexture = tm.getTextureID(o.userTextures[0],false);
   if (boxTexture < 0) {
-    std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
+    std::string teamBase = Team::getImagePrefix((TeamColor)o.getBaseTeam());
     teamBase += BZDB.get("baseWallTexture");
     boxTexture = tm.getTextureID(teamBase,false);
   }
@@ -531,12 +525,12 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 
   useColorTexture[0] = boxTexture >= 0;
 
-  int   baseTopTexture = -1;
+  int baseTopTexture = -1;
 
   if (o.userTextures[1].size())
     baseTopTexture = tm.getTextureID(o.userTextures[1],false);
   if (baseTopTexture < 0) {
-    std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
+    std::string teamBase = Team::getImagePrefix((TeamColor)o.getBaseTeam());
     teamBase += BZDB.get("baseTopTexture");
     baseTopTexture = tm.getTextureID(teamBase,false);
   }
@@ -591,72 +585,6 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   delete nodeGen;
 }
 
-void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-					 const Teleporter& o,
-					 const World* world)
-{
-  // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
-  int part = 0;
-  WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new TeleporterSceneNodeGenerator(&o);
-
-  TextureManager &tm = TextureManager::instance();
-  int teleporterTexture = -1;
-
-  bool  useColorTexture = false;
-
-  // try object, standard, then default
-  //check for material, then preset textures.
-  const BzMaterial *frameMat = MATERIALMGR.findMaterial(std::string("TeleMaterial"));
-  if (frameMat)
-    teleporterTexture = tm.getTextureID(frameMat->getTexture(0),true);
-
-  if (teleporterTexture < 0 && o.userTextures[0].size())
-    teleporterTexture = tm.getTextureID(o.userTextures[0],false);
-  if (teleporterTexture < 0)
-    teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture"),true);
-
-  useColorTexture = teleporterTexture >= 0;
-
-  const int numParts = 14;
-
-  while ((node = nodeGen->getNextNode(1.0, o.getHeight() / o.getBreadth(),
-				      teleporterLOD))) {
-    if (part >= 0 && part <= 1) {
-      node->setColor(teleporterColors[0]);
-      node->setModulateColor(teleporterModulateColors[0]);
-      node->setLightedColor(teleporterLightedColors[0]);
-      node->setLightedModulateColor(teleporterLightedModulateColors[0]);
-      node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
-      node->setUseColorTexture(useColorTexture);
-    } else if (part >= 2 && part <= 11) {
-      node->setColor(teleporterColors[1]);
-      node->setModulateColor(teleporterModulateColors[1]);
-      node->setLightedColor(teleporterLightedColors[1]);
-      node->setLightedModulateColor(teleporterLightedModulateColors[1]);
-      node->setMaterial(teleporterMaterial);
-      node->setTexture(teleporterTexture);
-      node->setUseColorTexture(useColorTexture);
-    }
-
-    db->addStaticNode(node, false);
-    part = (part + 1) % numParts;
-  }
-
-  MeshPolySceneNode* linkNode;
-  const BzMaterial* mat = world->getLinkMaterial();
-
-  linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getBackLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
-  db->addStaticNode(linkNode, false);
-
-  linkNode = MeshSceneNodeGenerator::getMeshPolySceneNode(o.getFrontLink());
-  MeshSceneNodeGenerator::setupNodeMaterial(linkNode, mat);
-  db->addStaticNode(linkNode, false);
-
-  delete nodeGen;
-}
 
 // Local Variables: ***
 // mode: C++ ***

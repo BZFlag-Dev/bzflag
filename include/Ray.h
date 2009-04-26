@@ -21,44 +21,28 @@
 
 class Ray {
   public:
-			Ray();
-			Ray(const fvec3& o, const fvec3& d);
-			Ray(const Ray&);
-			~Ray();
-    Ray&		operator=(const Ray&);
+    inline Ray() : orig(0.0f, 0.0f, 0.0f) {}
+    inline Ray(const fvec3& o, const fvec3& d) : orig(o) , dir(d) {}
+    inline Ray(const Ray& r) : orig(r.orig), dir(r.dir)  {}
+    inline Ray& operator=(const Ray& r) {
+      if (this != &r) {
+        orig = r.orig;
+        dir  = r.dir;
+      }
+      return *this;
+    }
 
-    const fvec3&	getOrigin() const;
-    const fvec3&	getDirection() const;
-    void		getPoint(float t, fvec3& p) const;
+    inline const fvec3& getOrigin()    const { return orig; }
+    inline const fvec3& getDirection() const { return dir;  }
+
+    inline fvec3 getPoint(float t)           const { return orig + (t * dir); }
+    inline void  getPoint(float t, fvec3& p) const    { p = orig + (t * dir); }
 
   private:
-    fvec3		o;
-    fvec3		d;
+    fvec3 orig;
+    fvec3 dir;
 };
 
-//
-// Ray
-//
-
-inline Ray::Ray()
-{
-  memset(o, 0, sizeof(float) * 3);
-}
-
-inline Ray::~Ray()
-{
-  // do nothing
-}
-
-inline const fvec3&	Ray::getOrigin() const
-{
-  return o;
-}
-
-inline const fvec3&	Ray::getDirection() const
-{
-  return d;
-}
 
 #endif // BZF_RAY_H
 

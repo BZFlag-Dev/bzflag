@@ -20,6 +20,7 @@
 
 /* common headers */
 #include "WorldText.h"
+#include "ObstacleMgr.h"
 #include "ParseColor.h"
 
 /* system headers */
@@ -134,7 +135,7 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWorldText::writeToManager() const
+void CustomWorldText::writeToGroupDef(GroupDefinition *groupdef) const
 {
   MeshTransform xform;
 
@@ -160,7 +161,11 @@ void CustomWorldText::writeToManager() const
 
   text->name = name;
 
-  WORLDTEXTMGR.addText(text);
+  if (text->isValid()) {
+    groupdef->addText(text);
+  } else {
+    delete text;
+  }
   text = NULL;
 
   return;

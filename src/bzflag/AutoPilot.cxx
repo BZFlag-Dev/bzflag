@@ -16,6 +16,7 @@
 /* common headers */
 #include "BZDBCache.h"
 #include "BoxBuilding.h"
+#include "MeshFace.h"
 
 /* local headers */
 #include "Roster.h"
@@ -439,7 +440,7 @@ static bool chasePlayer(float &rotation, float &speed)
       //Never did good in math, he should really see if he can reach the building
       //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
       if ((d > 20.0f) && (d < 50.0f) &&
-	  (building->getType() == BoxBuilding::getClassName())) {
+	  (building->getTypeID() == boxType)) {
 	float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
 	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
@@ -603,21 +604,23 @@ static bool navigate(float &rotation, float &speed)
     }
 
     // FIXME: team flag handling does not account for Z distance
-    const World::BaseParams* base = world->getBase(myTank->getTeam());
+    const Obstacle* base = world->getBase(myTank->getTeam());
     if (base == NULL) {
       // I don't have a team base (rogue maybe) - don't want the flag
       serverLink->sendDropFlag(myTank->getPosition());
       handleFlagDropped(myTank);
-    } else {
-      if ((fabs(base->pos.x - pos[0]) < baseEpsilon) &&
-	  (fabs(base->pos.y - pos[1]) < baseEpsilon) &&
-	  (myTank->getFlag()->flagTeam == myTank->getTeam())) {
+    }
+    else {
+      const fvec3& basePos = base->getPosition();
+      const float baseDist = (basePos.xy() - pos.xy()).length();
+      if ((baseDist < baseEpsilon) &&
+          (myTank->getFlag()->flagTeam == myTank->getTeam())) {
 	// I am near the center of my team base, drop the flag
 	serverLink->sendDropFlag(myTank->getPosition());
 	handleFlagDropped(myTank);
       } else {
 	// Move towards my base
-	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, base->pos);
+	float baseAzimuth = TargetingUtils::getTargetAzimuth(pos, basePos);
 	rotation = TargetingUtils::getTargetRotation(myAzimuth, baseAzimuth);
 	speed = (float)(M_PI/2.0 - fabs(rotation));
       }

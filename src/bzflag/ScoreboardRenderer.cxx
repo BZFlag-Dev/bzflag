@@ -28,6 +28,7 @@
 /* local implementation headers */
 #include "FontSizer.h"
 #include "LocalPlayer.h"
+#include "RemotePlayer.h"
 #include "AutoHunt.h"
 #include "World.h"
 #include "sound.h"

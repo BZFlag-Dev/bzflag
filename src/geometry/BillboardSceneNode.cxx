@@ -151,7 +151,7 @@ void BillboardSceneNode::updateTime(float dt)
 
 bool BillboardSceneNode::isAtEnd() const
 {
-  return t == duration;
+  return (t == duration);
 }
 
 
@@ -299,8 +299,7 @@ void BillboardSceneNode::setAngle(float _angle)
 }
 
 
-void BillboardSceneNode::addLight(
-				SceneRenderer& renderer)
+void BillboardSceneNode::addLight(SceneRenderer& renderer)
 {
   if (show && lightSource) {
     renderer.addLight(light);
@@ -329,20 +328,20 @@ void BillboardSceneNode::notifyStyleChange()
 }
 
 
-void BillboardSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+void BillboardSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   if (show)
     renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // BillboardSceneNode::BillboardRenderNode
 //
 
 BillboardSceneNode::BillboardRenderNode::BillboardRenderNode(
-				const BillboardSceneNode* _sceneNode) :
-				sceneNode(_sceneNode)
+                                   const BillboardSceneNode* _sceneNode)
+: sceneNode(_sceneNode)
 {
   setFrame(0.0f, 0.0f);
   setFrameSize(1.0f, 1.0f);
@@ -354,16 +353,14 @@ BillboardSceneNode::BillboardRenderNode::~BillboardRenderNode()
 }
 
 
-void BillboardSceneNode::BillboardRenderNode::
-				setFrame(float _u, float _v)
+void BillboardSceneNode::BillboardRenderNode::setFrame(float _u, float _v)
 {
   u = _u;
   v = _v;
 }
 
 
-void BillboardSceneNode::BillboardRenderNode::
-				setFrameSize(float _du, float _dv)
+void BillboardSceneNode::BillboardRenderNode::setFrameSize(float _du, float _dv)
 {
   du = _du;
   dv = _dv;

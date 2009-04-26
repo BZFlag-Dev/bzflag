@@ -337,7 +337,7 @@ class ObstacleReply : public RCReply
 {
 public:
   ObstacleReply() {}
-  ObstacleReply(Obstacle *_obs, enum ObstacleTypes _type) : obs(_obs), type(_type) {}
+  ObstacleReply(Obstacle *_obs, enum ObstacleType _type) : obs(_obs), type(_type) {}
 
   std::string getType() const { return "Obstacle"; }
 
@@ -353,7 +353,7 @@ private:
   messageParseStatus parseTele(char **arguments, int count);
 
   Obstacle *obs;
-  enum ObstacleTypes type;
+  enum ObstacleType type;
 };
 
 class ShotsBeginReply : public RCReply

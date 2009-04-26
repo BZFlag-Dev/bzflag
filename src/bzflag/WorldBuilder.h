@@ -22,6 +22,9 @@
 #include "World.h"
 
 
+class Obstacle;
+
+
 /** builds a bzlfag world
  */
 class WorldBuilder {
@@ -42,8 +45,7 @@ class WorldBuilder {
     void		setMaxFlags(int maxFlags);
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
-    void		setBase(TeamColor team,
-                    const fvec3& pos, const fvec3& size, float radians);
+    void		setBase(const Obstacle* obs);
 
   private:
     void		preGetWorld();

@@ -35,16 +35,19 @@ CustomBase::CustomBase()
 
 
 bool CustomBase::read(const char *cmd, std::istream& input) {
-  if (strcasecmp(cmd, "color") == 0) {
+  if ((strcasecmp(cmd, "team")  == 0) ||
+      (strcasecmp(cmd, "color") == 0)) {
     input >> color;
-    if ((color <= 0) || (color >= CtfTeams))
+    if ((color <= 0) || (color >= CtfTeams)) {
       return false;
+    }
   } else if (strcasecmp(cmd, "oncap") == 0) {
     triggerWorldWep = true;
     input >> worldWepType;
   } else {
-    if (!WorldFileObstacle::read(cmd, input))
+    if (!WorldFileObstacle::read(cmd, input)) {
       return false;
+    }
   }
   return true;
 }
@@ -59,7 +62,7 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
 
   if (triggerWorldWep) {
     FlagType* flagType = Flag::getDescFromAbbreviation(worldWepType.c_str());
-    WorldWeaponGlobalEventHandler* handler = 
+    WorldWeaponGlobalEventHandler* handler =
       new WorldWeaponGlobalEventHandler(flagType, &pos, rotation, 0, (TeamColor)color);
     worldEventManager.addEvent(bz_eCaptureEvent, handler);
   }

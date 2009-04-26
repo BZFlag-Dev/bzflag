@@ -98,7 +98,7 @@ bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ,
 
 static inline bool isDeathLanding(const Obstacle* obs)
 {
-  if (obs->getType() == MeshFace::getClassName()) {
+  if (obs->getTypeID() == faceType) {
     const MeshFace* face = (const MeshFace*) obs;
     int driver = face->getPhysicsDriver();
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
@@ -116,16 +116,12 @@ static inline bool isOpposingTeam(const Obstacle* obs, int team)
     return false;
   }
 
-  if (obs->getType() != BaseBuilding::getClassName()) {
+  const int baseTeam = obs->getBaseTeam();
+  if (baseTeam < 0) {
     return false;
   }
 
-  const BaseBuilding* base = (const BaseBuilding*) obs;
-  if (base->getTeam() == team) {
-    return false;
-  }
-
-  return true;
+  return (baseTeam != team);
 }
 
 
@@ -337,6 +333,9 @@ void HoldingList::copy(const ObsList* olist)
   memcpy(list, olist->list, count * sizeof(Obstacle*));
   return;
 }
+
+
+//============================================================================//
 
 
 // Local Variables: ***

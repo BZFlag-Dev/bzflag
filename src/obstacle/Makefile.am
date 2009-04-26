@@ -15,7 +15,6 @@ gl_files = \
 	EmptySceneNodeGenerator.cxx	\
 	ObstacleSceneNodeGenerator.cxx	\
 	PyramidSceneNodeGenerator.cxx	\
-	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
 	MeshSceneNodeGenerator.cxx	\
 	ArcObstacle.cxx			\

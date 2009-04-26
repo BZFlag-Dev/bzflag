@@ -23,16 +23,18 @@
 
 class BoxBuilding : public Obstacle {
   public:
-			BoxBuilding();
-			BoxBuilding(const fvec3& pos, float rotation,
-			            float width, float breadth, float height,
-			            unsigned char drive, unsigned char shoot, bool ricochet,
-			            bool invisible);
-			~BoxBuilding();
+    BoxBuilding();
+    BoxBuilding(const fvec3& pos, float rotation,
+                float width, float breadth, float height,
+                unsigned char drive, unsigned char shoot, bool ricochet,
+                bool invisible);
+    ~BoxBuilding();
 
     Obstacle*		copyWithTransform(const MeshTransform&) const;
 
     const char*		getType() const;
+    ObstacleType	getTypeID() const { return boxType; }
+
     static const char*	getClassName(); // const
 
     bool		isFlatTop() const;
@@ -67,7 +69,6 @@ class BoxBuilding : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
-    virtual int getTypeID() const {return boxType;}
 
     std::string	userTextures[2];
 

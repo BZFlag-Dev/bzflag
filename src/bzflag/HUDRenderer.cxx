@@ -545,7 +545,7 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
   // and pack them into a vector
   const float maxWidth = (float)window.getWidth() * 0.75f;
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(help);
-  
+
   float wordWidth;
   std::string word = "";
   float currentLineWidth = 0.0f;
@@ -555,7 +555,7 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
     text = text.substr(position+1,text.size());
     position = text.find(" ",0);
     // Here we split based on the space character into words and store them into a vector
-    if (word.size() == 0) 
+    if (word.size() == 0)
       continue;
 
     wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word.c_str());
@@ -574,7 +574,7 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
   if (word.size() > 0) {
     wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word);
     if (wordWidth + currentLineWidth + spaceWidth >= maxWidth) {
-      listOfWords.push_back(""); 
+      listOfWords.push_back("");
     }
     if (listOfWords.empty())
       listOfWords.push_back("");

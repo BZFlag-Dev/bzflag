@@ -50,6 +50,7 @@ using std::map;
 #include "../bzflag/ScoreboardRenderer.h"
 #include "../bzflag/ServerLink.h"
 #include "../bzflag/World.h"
+#include "../bzflag/WorldPlayer.h"
 #include "../bzflag/playing.h"
 #include "../bzflag/sound.h"
 

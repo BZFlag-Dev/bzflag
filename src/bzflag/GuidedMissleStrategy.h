@@ -40,7 +40,7 @@ class GuidedMissileStrategy : public ShotStrategy {
 
     float		checkHit(const ShotCollider&, fvec3&) const;
     void		sendUpdate(const FiringInfo&) const;
-    void		readUpdate( void*);
+    void		readUpdate(void* buffer);
     void		addShot(SceneDatabase*, bool colorblind);
     void		expire();
     void		radarRender() const;
@@ -50,19 +50,24 @@ class GuidedMissileStrategy : public ShotStrategy {
     bool                _predict(float dt, fvec3& p, fvec3& v) const;
 
   private:
-    double		prevTime;
-    double		currentTime;
-    std::vector<ShotPathSegment>	segments;
-    int			renderTimes;
-    float		azimuth;
-    float		elevation;
-    fvec3		nextPos;
-    BoltSceneNode*	ptSceneNode;
+    BoltSceneNode* ptSceneNode;
 
-		float	puffTime;
-		double	lastPuff;
-    bool		needUpdate;
-    PlayerId		lastTarget;
+    std::vector<ShotPathSegment> segments;
+
+    double prevTime;
+    double currentTime;
+    double lastPuff;
+
+    float speed;
+    fvec3 nextPos;
+    fvec3 nextVel;
+
+    int renderTimes;
+
+    float puffTime;
+    bool  needUpdate;
+
+    PlayerId lastTarget;
 };
 
 

@@ -71,7 +71,7 @@ void			forceControls(bool enabled, float speed, float angVel);
 bool			addExplosion(const fvec3& pos, float size, float duration);
 void			addTankExplosion(const fvec3& pos);
 void			addShotExplosion(const fvec3& pos);
-void			addShotPuff(const fvec3& pos, float azimuth, float elevation);
+void			addShotPuff(const fvec3& pos, const fvec3& vel);
 void			warnAboutMainFlags();
 void			warnAboutRadarFlags();
 void			warnAboutRadar();

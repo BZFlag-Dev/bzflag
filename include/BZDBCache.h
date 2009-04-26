@@ -63,6 +63,7 @@ class BZDBCache
     typedef ReadOnly<std::string> String;
 
   public:
+    // client-side
     static Bool  displayMainFlags;
     static Bool  blend;
     static Bool  texture;
@@ -89,7 +90,10 @@ class BZDBCache
     static Bool  showCullingGrid;
     static Int   maxFlagLOD;
     static Int   vsync;
+    static Float hudGUIBorderOpacityFactor;
 
+    // server-side
+    static Bool  forbidDebug;
     static Bool  drawCelestial;
     static Bool  drawClouds;
     static Bool  drawGround;
@@ -97,24 +101,23 @@ class BZDBCache
     static Bool  drawMountains;
     static Bool  drawSky;
 
-    static Float maxLOD;
-    static Float worldSize;
-    static Float radarLimit;
-    static Float gravity;
-    static Float tankWidth;
-    static Float tankLength;
-    static Float tankHeight;
-    static Float tankSpeed;
-    static Float tankRadius;
-    static Float flagRadius;
     static Float flagPoleSize;
     static Float flagPoleWidth;
+    static Float flagRadius;
+    static Float gravity;
+    static Float maxLOD;
+    static Float radarLimit;
+    static Float tankHeight;
+    static Float tankLength;
+    static Float tankRadius;
+    static Float tankSpeed;
+    static Float tankWidth;
+    static Float worldSize;
 
-    static Float freezeTagRadius;
     static Float collisionLimit;
     static Float dmzWidth;
+    static Float freezeTagRadius;
 
-    static Float hudGUIBorderOpacityFactor;
 
   private:
     static void clientCallback(const std::string &name, void *);

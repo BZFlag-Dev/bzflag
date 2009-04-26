@@ -14,6 +14,7 @@
 #include "BZDBCache.h"
 #include "playing.h"
 #include "LocalPlayer.h"
+#include "WorldPlayer.h"
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"

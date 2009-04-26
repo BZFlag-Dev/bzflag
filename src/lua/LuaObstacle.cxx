@@ -21,6 +21,7 @@ using std::string;
 #include "SphereObstacle.h"
 #include "Teleporter.h"
 #include "WallObstacle.h"
+#include "LinkManager.h"
 
 #include "SceneNode.h" // for the fvec[23]Array classes
 
@@ -120,8 +121,8 @@ static int GetTypeFromName(const string& name)
 	else if (name == "box")    { return boxType;    }
 	else if (name == "pyr")    { return pyrType;    }
 	else if (name == "base")   { return baseType;   }
-	else if (name == "tele")   { return teleType;   }
 	else if (name == "mesh")   { return meshType;   }
+	else if (name == "tele")   { return teleType;   }
 	else if (name == "arc")    { return arcType;    }
 	else if (name == "cone")   { return coneType;   }
 	else if (name == "sphere") { return sphereType; }
@@ -137,13 +138,13 @@ static int GetTypeFromName(const string& name)
 
 static inline bool IsMeshFace(const Obstacle* obs)
 {
-	return (obs->getType() == MeshFace::getClassName());
+	return (obs->getTypeID() == faceType);
 }
 
 
 static inline bool IsMeshObstacle(const Obstacle* obs)
 {
-	return (obs->getType() == MeshObstacle::getClassName());
+	return (obs->getTypeID() == meshType);
 }
 
 
@@ -156,15 +157,7 @@ static inline const Obstacle* ParsePrimaryObstacle(lua_State* L, int index)
 
 static inline const MeshFace* GetFace(const Obstacle* obs, int faceIndex)
 {
-	if (obs->getTypeID() == teleType) {
-		const Teleporter* tele = (const Teleporter*)obs;
-		switch (faceIndex) {
-			case 0:  { return tele->getFrontLink(); }
-			case 1:  { return tele->getBackLink(); }
-		}
-		return NULL;
-	}
-	else if (obs->getType() == MeshObstacle::getClassName()) {
+	if (obs->getTypeID() == meshType) {
 		const MeshObstacle* mesh = (const MeshObstacle*)obs;
 		if ((faceIndex < 0) || (faceIndex >= mesh->getFaceCount())) {
 			return NULL;
@@ -202,14 +195,11 @@ static inline const MeshFace* ParseMeshFace(lua_State* L, int index)
 
 static bool PushObstacleList(lua_State* L, int type, int& index)
 {
-	const GroupDefinition* world = OBSTACLEMGR.getWorld();
-	if (world == NULL) {
-		return false;
-	}
+	const GroupDefinition& world = OBSTACLEMGR.getWorld();
 	if ((type < 0) || (type >= ObstacleTypeCount)) {
 		return false;
 	}
-	const ObstacleList& obsList = world->getList(type);
+	const ObstacleList& obsList = world.getList(type);
 	const size_t count = obsList.size();
 	for (size_t i = 0; i < count; i++) {
 		index++;
@@ -267,7 +257,7 @@ int LuaObstacle::GetObstacleName(lua_State* L)
 	if (obs == NULL) {
 		return 0;
 	}
-	lua_pushstring(L, obs->getName());
+	lua_pushstdstring(L, obs->getName());
 	return 1;
 }
 
@@ -381,11 +371,11 @@ int LuaObstacle::GetObstacleTeam(lua_State* L)
 	if (obs == NULL) {
 		return 0;
 	}
-	if (obs->getTypeID() != baseType) {
+	const int baseTeam = obs->getBaseTeam();
+	if (baseTeam < 0) {
 		return 0;
 	}
-	const BaseBuilding* base = (BaseBuilding*)obs;
-	lua_pushinteger(L, base->getTeam());
+	lua_pushinteger(L, baseTeam);
 	return 1;
 }
 
@@ -422,11 +412,6 @@ int LuaObstacle::GetObstacleBorder(lua_State* L)
 int LuaObstacle::GetObstacleFaceCount(lua_State* L)
 {
 	const Obstacle* obs = ParseObstacle(L, 1);
-
-	if (obs->getTypeID() == teleType) {
-		lua_pushinteger(L, 2);
-		return 1;
-	}
 
 	if (!IsMeshObstacle(obs)) {
 		return 0;
@@ -662,26 +647,29 @@ int LuaObstacle::GetTeleLinks(lua_State* L)
 }
 
 
+
 int LuaObstacle::GetLinkDestinations(lua_State* L)
 {
-	const int linkID = luaL_checkint(L, 1);
+	L = L;
+	const int linkSrcID = luaL_checkint(L, 1);
 	const World* world = World::getWorld();
 	if (world == NULL) {
 		return 0;
 	}
-	const LinkManager& linkMgr = world->getLinkManager();
-	const LinkManager::LinkNumberSet* links = linkMgr.getLinkDsts(linkID);
-	if (links == NULL) {
+	const MeshFace* srcFace = linkManager.getLinkSrcFace(linkSrcID);
+	if (srcFace == NULL) {
 		return 0;
 	}
-	const std::vector<int>& dsts = links->dsts;
-	std::vector<int>::const_iterator it;
-	lua_createtable(L, dsts.size(), 0);
-	int count = 0;
-	for (it = dsts.begin(); it != dsts.end(); ++it) {
-		count++;
-		lua_pushinteger(L, *it);
-		lua_rawseti(L, -2, count);
+	const LinkManager::LinkMap& linkMap = linkManager.getLinkMap();
+	LinkManager::LinkMap::const_iterator it = linkMap.find(srcFace);
+	if (it == linkMap.end()) {
+		return 0;
+	}
+	const LinkManager::IntVec& dstIDs = it->second;
+	lua_createtable(L, dstIDs.size(), 0);
+	for (size_t i = 0; i < dstIDs.size(); i++) {
+		lua_pushinteger(L, dstIDs[i]);
+		lua_rawseti(L, -2, i + 1);
 	}
 	return 1;
 }

@@ -21,7 +21,9 @@
 #include "Intersect.h"
 #include "BZDBCache.h"
 #include "WallObstacle.h"
+#include "LinkManager.h"
 #include "EventHandler.h"
+#include "MeshFace.h"
 
 /* local implementation headers */
 #include "sound.h"
@@ -29,6 +31,9 @@
 #include "World.h"
 #include "EffectsRenderer.h"
 #include "playing.h"
+
+
+static BZDB_int debugShotSegments("debugShotSegments");
 
 
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
@@ -65,7 +70,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
     }
     if (_path->getShotType() == CloakedShot) {
       const Player* myTank = LocalPlayer::getMyTank();
-      if ((myTank == NULL) || 
+      if ((myTank == NULL) ||
           ((myTank->getId() != _path->getPlayer()) &&
            (myTank->getFlag() != Flags::Seer))) {
         boltSceneNode->setInvisible(true);
@@ -103,43 +108,56 @@ void SegmentedShotStrategy::update(float dt)
 
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
-  if (segment < numSegments && segments[segment].end <= currentTime) {
+  if ((segment < numSegments) && (segments[segment].end <= currentTime)) {
+
     lastSegment = segment;
-    while (segment < numSegments && segments[segment].end <= currentTime) {
-      if (++segment < numSegments) {
-	switch (segments[segment].reason) {
+
+    while ((segment < numSegments) && (segments[segment].end <= currentTime)) {
+
+      segment++;
+
+      if (segment < numSegments) {
+
+        const ShotPathSegment& segm = segments[segment];
+
+	switch (segm.reason) {
+	  case ShotPathSegment::Boundary: {
+	    break;
+          }
+          case ShotPathSegment::Through: {
+            break;
+          }
+          case ShotPathSegment::Initial: {
+            break;
+          }
 	  case ShotPathSegment::Ricochet: {
             // play ricochet sound.  ricochet of local player's shots
             // are important, others are not.
             const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
             const bool important = (getPath().getPlayer() == myTankId);
-            const fvec3& pos = segments[segment].ray.getOrigin();
+            const fvec3& pos = segm.ray.getOrigin();
             SOUNDSYSTEM.play(SFX_RICOCHET, pos, important, false);
 
             // this is fugly but it's what we do
-            const fvec3& newDir = segments[segment].ray.getDirection();
+            const fvec3& newDir = segm.ray.getDirection();
             const fvec3& oldDir = segments[segment - 1].ray.getDirection();
             const fvec3 normal = (newDir - oldDir).normalize();
             eventHandler.ShotRicochet(getPath(), pos, normal);
 
-            EFFECTS.addRicoEffect(pos, normal);
+            if (!segm.noEffect) {
+              EFFECTS.addRicoEffect(pos, normal);
+            }
             break;
           }
-	  case ShotPathSegment::Boundary: {
-	    break;
-          }
-	  default: {
-            // this is fugly but it's what we do
-            fvec3 dir;
-            dir = segments[segment].ray.getDirection();
-
-            fvec2 rots;
-            rots.x = atan2f(dir.y, dir.x);
-            rots.y = atan2f(dir.z, dir.xy().length());
-
-            const fvec3& pos = segments[segment].ray.getOrigin();
-            EFFECTS.addShotTeleportEffect(pos, rots);
-            eventHandler.ShotTeleported(getPath(), -1, -1); // FIXME
+          case ShotPathSegment::Teleport: {
+            if (!segm.noEffect) {
+              const fvec4* clipPlane = &segm.dstFace->getPlane();
+              EFFECTS.addShotTeleportEffect(segm.ray.getOrigin(),
+                                            segm.ray.getDirection(),
+                                            clipPlane);
+            }
+            eventHandler.ShotTeleported(getPath(), segm.linkSrcID,
+                                                   segm.linkDstID);
 	    break;
           }
 	}
@@ -150,17 +168,14 @@ void SegmentedShotStrategy::update(float dt)
   // if ran out of segments then expire shot on next update
   if (segment == numSegments) {
     setExpiring();
-
     if (numSegments > 0) {
-      ShotPathSegment &segm = segments[numSegments - 1];
-      const fvec3& dir  = segm.ray.getDirection();
-      const float speed = dir.length();
+      const ShotPathSegment& segm = segments[numSegments - 1];
       fvec3 pos;
-      segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
-      /* NOTE -- comment out to not explode when shot expires */
+      segm.ray.getPoint(float(segm.end - segm.start), pos);
       addShotExplosion(pos);
     }
-  } else {
+  }
+  else {
     // otherwise update position and velocity
     fvec3 p;
     segments[segment].ray.getPoint(float(currentTime - segments[segment].start), p);
@@ -223,7 +238,9 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
 {
   float minTime = Infinity;
   // expired shot can't hit anything
-  if (getPath().isExpired()) return minTime;
+  if (getPath().isExpired()) {
+    return minTime;
+  }
 
   // get tank radius
   const float radius2 = tank.radius * tank.radius;
@@ -237,7 +254,9 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
   const Extents& tankBBox = tank.bbox;
-  if (!bbox.touches(tankBBox)) { return minTime; }
+  if (!bbox.touches(tankBBox)) {
+    return minTime;
+  }
 
   float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
 
@@ -246,8 +265,10 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
   const int numSegments = (const int)segments.size();
   for (int i = lastSegment; i <= segment && i < numSegments; i++) {
     // can never hit your own first laser segment
-    if (i == 0 && getPath().getShotType() == LaserShot && tank.testLastSegment)
+    if ((i == 0) && tank.testLastSegment &&
+        (getPath().getShotType() == LaserShot)) {
       continue;
+    }
 
 /*
     // skip segments that don't overlap in time with current interval
@@ -282,8 +303,8 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     if (t > minTime) continue;
 
     // make sure time falls within segment
-    if (t < 0.0f || t > dt) continue;
-    if (t > s.end - prevTime) continue;
+    if ((t < 0.0f) || (t > dt)) continue;
+    if (t > (s.end - prevTime)) continue;
 
     // check if shot hits tank -- get position at time t, see if in radius
     fvec3 closestPos;
@@ -301,6 +322,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
       //printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
     }
   }
+
   return minTime;
 }
 
@@ -330,15 +352,15 @@ void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
 void SegmentedShotStrategy::radarRender() const
 {
   const fvec3& orig = getPath().getPosition();
-  const int length = BZDBCache::linedRadarShots;
-  const int size   = BZDBCache::sizedRadarShots;
+  const int length  = BZDBCache::linedRadarShots;
+  const int size    = BZDBCache::sizedRadarShots;
 
   float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
 
   // Display leading lines
   if (length > 0) {
     const fvec3& vel = getPath().getVelocity();
-    const fvec3 dir = vel.normalize() * shotTailLength * (float)length;
+    const fvec3  dir = vel.normalize() * shotTailLength * (float)length;
     glBegin(GL_LINES);
     glVertex2fv(orig);
     if (BZDBCache::leadingShotLine) {
@@ -379,18 +401,26 @@ void SegmentedShotStrategy::radarRender() const
 
 void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 {
+  segments.clear();
+
+  World* world = World::getWorld();
+  if (!world) {
+    return; // no world, no shots
+  }
+
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
-  const ShotPath &shotPath = getPath();
-  const fvec3&   v        = shotPath.getVelocity();
-  double         startTime = shotPath.getStartTime();
-  float          timeLeft  = shotPath.getLifetime();
-  float          minTime   = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) /
-                             v.length();
-  World          *world    = World::getWorld();
+  const ShotPath& shotPath = getPath();
 
-  if (!world) {
-    return; /* no world, no shots */
+  fvec3  vel       = shotPath.getVelocity();
+  double startTime = shotPath.getStartTime();
+  float  timeLeft  = shotPath.getLifetime();
+
+  // minTime is used to move back to the tank's origin during the first for loop
+  float minTime = 0.0f;
+  const float speed = vel.length();
+  if (speed > 0.0f) {
+    minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / speed;
   }
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
@@ -399,85 +429,94 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   }
 
   // prepare first segment
-  fvec3 o, d;
-  d = v; // use v.z to have jumping affect shot velocity
-  o = shotPath.getPosition();
+  fvec3 orig = shotPath.getPosition();
 
-  segments.clear();
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
-  int i;
-  const int maxSegment = 100;
-  float worldSize = BZDBCache::worldSize / 2.0f - 0.01f;
-  for (i = 0; (i < maxSegment) && (timeLeft > Epsilon); i++) {
+  int linkSrcID = -1;
+  int linkDstID = -1;
+  const MeshFace* dstFace = NULL;
+  bool noEffect = false;
+
+  const int   maxSegment = 100;
+  const float worldSize = (BZDBCache::worldSize * 0.5f) - 0.01f;
+
+  for (int i = 0; (i < maxSegment) && (timeLeft > Epsilon); i++) {
     // construct ray and find the first building, teleporter, or outer wall
-    fvec3 o2 = o - (minTime * d);
-
+    fvec3 testOrig = orig - (minTime * vel);
     // Sometime shot start outside world
-    if (o2.x <= -worldSize) { o2.x = -worldSize; }
-    if (o2.x >= +worldSize) { o2.x = +worldSize; }
-    if (o2.y <= -worldSize) { o2.y = -worldSize; }
-    if (o2.y >= +worldSize) { o2.y = +worldSize; }
+    if (testOrig.x <= -worldSize) { testOrig.x = -worldSize; }
+    if (testOrig.x >= +worldSize) { testOrig.x = +worldSize; }
+    if (testOrig.y <= -worldSize) { testOrig.y = -worldSize; }
+    if (testOrig.y >= +worldSize) { testOrig.y = +worldSize; }
 
-    Ray r(o2, d);
-    Ray rs(o, d);
+    Ray testRay(testOrig, vel);
     float t = timeLeft + minTime;
-    int face;
-    bool hitGround = getGround(r, Epsilon, t);
-    Obstacle* building =
-      (Obstacle*)((e == Through) ? NULL : getFirstBuilding(r, Epsilon, t));
-    const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
-    t -= minTime;
-    minTime = 0.0f;
-    bool ignoreHit = false;
+    const bool hitGround = getGround(testRay, Epsilon, t);
+    const Obstacle* building =
+      (e == Through) ? getFirstLinkSrc(testRay, Epsilon, t)
+                     : getFirstBuilding(testRay, Epsilon, t);
 
-    // if hit outer wall with ricochet and hit is above top of wall
-    // then ignore hit.
-    if (!teleporter && building && (e == Reflect) &&
-	(building->getType() == WallObstacle::getClassName()) &&
-	((o.z + t * d.z) > building->getHeight())) {
-      ignoreHit = true;
+    const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
+    if (linkSrc != NULL) {
+      const ShotPath& myPath = getPath();
+      const ShotType shotType = myPath.getShotType();
+      const TeamColor teamNum = myPath.getTeam();
+      if (!linkSrc->shotCanCross(orig + (t * vel), vel, teamNum, shotType)) {
+        linkSrc = NULL;
+      }
     }
+
+    t -= minTime;
+    minTime = 0.0f; // only used the first time around the loop
+
+    // if hit outer wall with ricochet and the hit is
+    // above the top of the wall then ignore the hit.
+    const bool ignoreHit = (building != NULL) && (e == Reflect) &&
+                           (building->getTypeID() == wallType) &&
+	                   ((orig.z + t * vel.z) > building->getHeight());
 
     // construct next shot segment and add it to list
-    double endTime(startTime);
-
-    if (t < 0.0f) {
-      endTime += Epsilon;
-    } else {
-      endTime += t;
+    const double endTime = startTime + double((t < 0.0f) ? Epsilon : t);
+    const Ray startRay(orig, vel);
+    ShotPathSegment segm(startTime, endTime, startRay, reason);
+    if (reason == ShotPathSegment::Teleport) {
+      segm.linkSrcID = linkSrcID;
+      segm.linkDstID = linkDstID;
+      segm.dstFace   = dstFace;
+      segm.noEffect  = noEffect;
     }
-
-    ShotPathSegment segm(startTime, endTime, rs, reason);
     segments.push_back(segm);
     startTime = endTime;
+    linkSrcID = -1;
+    linkDstID = -1;
+    dstFace = NULL;
+    noEffect = false;
 
     // used up this much time in segment
-    if (t < 0.0f) {
-      timeLeft -= Epsilon;
-    } else {
-      timeLeft -= t;
-    }
+    timeLeft -= (t < 0.0f) ? Epsilon : t;
 
     // check in reverse order to see what we hit first
     reason = ShotPathSegment::Through;
+
     if (ignoreHit) {
       // uh...ignore this.  usually used if you shoot over the boundary wall.
       // just move the point of origin and build the next segment
-      o += (t * d);
+      orig += (t * vel);
       reason = ShotPathSegment::Boundary;
+      timeLeft = 0.0f;
     }
-    else if (teleporter) {
+    else if (linkSrc) {
+      // move origin to point of teleport
+      orig += (t * vel);
       // entered teleporter -- teleport it
       unsigned int seed = shotPath.getShotId() + i;
-      int source = world->getTeleporter(teleporter, face);
-      int target = world->getTeleportTarget(source, seed);
-
-      int outFace;
-      const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
-      o += (t * d);
-      teleporter->getPointWRT(*outTeleporter, face, outFace,
-                              o, &d, 0.0f, o, &d, NULL);
+      const LinkPhysics* physics;
+      const MeshFace* linkDst =
+        linkManager.getShotLinkDst(linkSrc, seed, linkSrcID, linkDstID, physics);
+      linkSrc->teleportShot(*linkDst, *physics, orig, orig, vel, vel);
       reason = ShotPathSegment::Teleport;
+      dstFace = linkDst;
+      noEffect = linkSrc->linkSrcNoEffect();
     }
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
@@ -492,12 +531,12 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
         case Reflect: {
           // move origin to point of reflection
-          o += (t * d);
+          orig += (t * vel);
 
           // reflect direction about normal to building
           fvec3 normal;
-          building->get3DNormal(o, normal);
-          reflect(d, normal);
+          building->get3DNormal(orig, normal);
+          reflect(vel, normal);
           reason = ShotPathSegment::Ricochet;
           break;
         }
@@ -516,30 +555,51 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
 	case Reflect: {
 	  // move origin to point of reflection
-          o += (t * d);
+          orig += (t * vel);
 
 	  // reflect direction about normal to ground
-	  const fvec3 normal(0.0f, 0.0f, 1.0f);
-	  reflect(d, normal);
+	  const fvec3 zPos(0.0f, 0.0f, 1.0f);
+	  reflect(vel, zPos);
 	  reason = ShotPathSegment::Ricochet;
 	  break;
 	}
       }
     }
   }
+
   lastTime = startTime;
 
   // make bounding box for entire path
   const size_t numSegments = segments.size();
   if (numSegments > 0) {
-    const ShotPathSegment& firstSeg = segments[0];
-    bbox = firstSeg.bbox;
+    bbox = segments[0].bbox;
     for (size_t j = 1; j < numSegments; ++j) {
-      const ShotPathSegment& segm = segments[j];
-      bbox.expandToBox(segm.bbox);
+      bbox.expandToBox(segments[j].bbox);
     }
   } else {
     bbox.reset();
+  }
+
+  if ((debugShotSegments >= 1) && !BZDBCache::forbidDebug) {
+    logDebugMessage(0, "\n");
+    logDebugMessage(0, "SegShotStrategy %i\n", (int)getPath().getFiringInfo().shot.id);
+    for (size_t s = 0; s< segments.size(); s++) {
+      const ShotPathSegment& sps = segments[s];
+      const double segTime = sps.end - sps.start;
+      const fvec3 endPos = sps.ray.getPoint(segTime);
+      const std::string reasonStr = ShotPathSegment::getReasonString(sps.reason).c_str();
+      logDebugMessage(0, "  segment %i\n", (int)s);
+      logDebugMessage(0, "    start  %f\n", sps.start);
+      logDebugMessage(0, "    end    %f\n", sps.end);
+      logDebugMessage(0, "    orig   %s\n", sps.ray.getOrigin().tostring().c_str());
+      logDebugMessage(0, "    endPos %s\n", endPos.tostring().c_str());
+      logDebugMessage(0, "    dir    %s\n", sps.ray.getDirection().tostring().c_str());
+      logDebugMessage(0, "    reason %s\n", reasonStr.c_str());
+      logDebugMessage(0, "    mins   %s\n", sps.bbox.mins.tostring().c_str());
+      logDebugMessage(0, "    maxs   %s\n", sps.bbox.maxs.tostring().c_str());
+    }
+    logDebugMessage(0, "  path mins: %s\n", bbox.mins.tostring().c_str());
+    logDebugMessage(0, "  path maxs: %s\n", bbox.maxs.tostring().c_str());
   }
 }
 

@@ -85,15 +85,15 @@ public:
     return color;
   }
 
-  float		getRabbitScore() const;
-  short		getLocalWins() const;
-  short		getLocalLosses() const;
-  short		getLocalTeamKills() const;
+  float	getRabbitScore() const;
+  short	getLocalWins() const;
+  short	getLocalLosses() const;
+  short	getLocalTeamKills() const;
+  short	getLinkSrcID() const;
+  short	getLinkDstID() const;
+  float	getTeleporterProximity() const;
   const TimeKeeper&	getExplodeTime() const;
   const TimeKeeper&	getTeleportTime() const;
-  short		getFromTeleporter() const;
-  short		getToTeleporter() const;
-  float		getTeleporterProximity() const;
 
   // shots
   int		getMaxShots() const;
@@ -178,7 +178,7 @@ public:
   void		setExplode(const TimeKeeper&);
   void		setAllow(unsigned char _allow);
   unsigned char		getAllow();
-  void		setTeleport(const TimeKeeper&, short from, short to);
+  void		setTeleport(const TimeKeeper&, short src, short dst);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
 
@@ -300,8 +300,8 @@ private:
   TimeKeeper		spawnTime;		// time I started spawning
   TimeKeeper		explodeTime;		// time I started exploding
   TimeKeeper		teleportTime;		// time I started teleporting
-  short			fromTeleporter;		// teleporter I entered
-  short			toTeleporter;		// teleporter I exited
+  short			teleLinkSrcID;		// teleporter I entered
+  short			teleLinkDstID;		// teleporter I exited
   float			teleporterProximity;	// how close to a teleporter
   float			rank;			// server ranking
   short			wins;			// number of kills
@@ -510,14 +510,14 @@ inline const TimeKeeper	&Player::getTeleportTime() const
   return teleportTime;
 }
 
-inline short		Player::getFromTeleporter() const
+inline short		Player::getLinkSrcID() const
 {
-  return fromTeleporter;
+  return teleLinkSrcID;
 }
 
-inline short		Player::getToTeleporter() const
+inline short		Player::getLinkDstID() const
 {
-  return toTeleporter;
+  return teleLinkDstID;
 }
 
 inline float		Player::getTeleporterProximity() const

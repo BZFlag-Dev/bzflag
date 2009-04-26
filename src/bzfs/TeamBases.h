@@ -24,36 +24,41 @@
 #include "vectors.h"
 
 
+class Obstacle;
+
+
 class TeamBase
 { // This class represents one base
-public:
-  TeamBase() {}
-  TeamBase(const fvec3& pos, const fvec3& siz, float rot);
-  void getRandomPosition(float &x, float &y, float &z) const;
-  fvec3 position;
-  fvec3 size;
-  float rotation;
+  public:
+    TeamBase() : obstacle(NULL) {}
+    TeamBase(const Obstacle* obs) { obstacle = obs; }
+    void getTopCenter(fvec3& pos) const;
+    void getRandomPosition(fvec3& pos) const;
+    const Obstacle* getObstacle() const { return obstacle; }
+  private:
+    const Obstacle* obstacle;
 };
 
 
 class TeamBases
 { // This class represents all the bases for one team
-public:
+  public:
 
-  TeamBases();
-  TeamBases(TeamColor team, bool initDefault = false);
-  void addBase(const fvec3& position, const fvec3& size, float rotation);
-  int size() const;
-  TeamColor getTeam() const;
-  const fvec3& getBasePosition(int base) const;
-  float findBaseZ(float x, float y, float z) const;
-  const TeamBase& getRandomBase( int id );
+    TeamBases();
+    TeamBases(TeamColor team) : color(team) {}
 
-private:
-  typedef std::vector<TeamBase> TeamBaseList;
+    void addBase(const Obstacle* obs);
+    int size() const;
+    TeamColor getTeam() const;
+    const fvec3& getBasePosition(int base) const;
+    float findBaseZ(const fvec3& pos) const;
+    const TeamBase& getRandomBase();
 
-  TeamBaseList teamBases;
-  TeamColor    color;
+  private:
+    typedef std::vector<TeamBase> TeamBaseList;
+
+    TeamColor    color;
+    TeamBaseList teamBases;
 };
 
 typedef std::map<int, TeamBases> BasesList;

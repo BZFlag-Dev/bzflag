@@ -23,16 +23,18 @@
 
 class PyramidBuilding : public Obstacle {
   public:
-			PyramidBuilding();
-			PyramidBuilding(const fvec3& pos, float rotation,
-			                float width, float breadth, float height,
-			                unsigned char drive, unsigned char shoot,
-			                bool ricochet);
-			~PyramidBuilding();
+    PyramidBuilding();
+    PyramidBuilding(const fvec3& pos, float rotation,
+                    float width, float breadth, float height,
+                    unsigned char drive, unsigned char shoot,
+                    bool ricochet);
+    ~PyramidBuilding();
 
     virtual Obstacle*	copyWithTransform(const MeshTransform&) const;
 
     const char*		getType() const;
+    ObstacleType	getTypeID() const { return pyrType; }
+
     static const char*	getClassName(); // const
 
     bool		isFlatTop() const;
@@ -66,7 +68,6 @@ class PyramidBuilding : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
-    virtual int getTypeID() const {return pyrType;}
 
     std::string userTextures[1];
 

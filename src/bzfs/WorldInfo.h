@@ -27,7 +27,6 @@
 #include "EntryZones.h"
 #include "WorldWeapons.h"
 #include "TeamBases.h"
-#include "LinkManager.h"
 
 class BzMaterial;
 class Obstacle;
@@ -48,7 +47,9 @@ class FlagType;
 class FlagInfo;
 class PlayerInfo;
 
-typedef enum {
+class LinkPhysics;
+
+enum InBuildingType {
   NOT_IN_BUILDING,
   IN_BASE,
   IN_BOX_NOTDRIVETHROUGH,
@@ -57,7 +58,7 @@ typedef enum {
   IN_MESHFACE,
   IN_PYRAMID,
   IN_TELEPORTER
-} InBuildingType;
+};
 
 
 class WorldInfo {
@@ -73,9 +74,6 @@ public:
   void setGravity ( float g );
 
   void addWall(float x, float y, float z, float r, float w, float h);
-  void addLink(int from, int to);
-  void addLink(const std::string& from, const std::string& to);
-
   void addZone(const CustomZone *zone);
   void addWeapon(const FlagType *type, const fvec3& origin,
                  float direction, float tilt, TeamColor teamColor,
@@ -95,6 +93,7 @@ public:
                      bool drive = false, bool shoot = false, bool rico = false);
   void addBase(const fvec3& pos, float r, const fvec3& size, int color,
                bool drive = false, bool shoot = false, bool rico = false);
+  void addLink(int src, int dst);
 
   void setMapInfo(const std::vector<std::string>& lines);
 
@@ -127,7 +126,7 @@ private:
   bool finished;
 
   void loadCollisionManager();
-  InBuildingType classifyHit (const Obstacle* obstacle) const;
+  InBuildingType classifyHit(const Obstacle* obstacle) const;
   void makeWaterMaterial();
 
 public:
@@ -138,7 +137,7 @@ public:
    * Checking is quite raw. Does not use the CollisionManager and
    * can therefore be used before it has been setup.
    */
-  InBuildingType inCylinderNoOctree(Obstacle **location,
+  InBuildingType inCylinderNoOctree(Obstacle** location,
 				    float x, float y, float z,
 				    float r, float height) const;
 
@@ -147,7 +146,7 @@ public:
    * location will return a pointer to the world colliding object
    * Checking is quite raw
    */
-  InBuildingType cylinderInBuilding(const Obstacle **obstacle,
+  InBuildingType cylinderInBuilding(const Obstacle** obstacle,
 				    float x, float y, float z,
 				    float radius, float height = 0.0f) const;
 
@@ -156,7 +155,7 @@ public:
    * location will return a pointer to the world colliding object
    * Checking is quite raw
    */
-  InBuildingType cylinderInBuilding(const Obstacle **obstacle,
+  InBuildingType cylinderInBuilding(const Obstacle** obstacle,
 				    const fvec3& pos,
 				    float radius, float height = 0.0f) const;
 
@@ -164,7 +163,7 @@ public:
    * return value is kind of collision.
    * location will return a pointer to the world colliding object
    */
-  InBuildingType boxInBuilding(const Obstacle **obstacle,
+  InBuildingType boxInBuilding(const Obstacle** obstacle,
 			       const fvec3& pos, float angle,
 			       float width, float breadth, float height) const;
 
@@ -175,7 +174,6 @@ public:
   void checkCollisionManager();
 
   const MapInfo&     getMapInfo()     const { return mapInfo; }
-  const LinkManager& getLinkManager() const { return links; }
 
 private:
 
@@ -186,7 +184,6 @@ private:
   const BzMaterial* waterMatRef;
 
   EntryZones entryZones;
-  LinkManager links;
   WorldWeapons worldWeapons;
 
   char *database;

@@ -39,12 +39,14 @@ class CustomMeshFace {
     std::vector<int> normals;
     std::vector<int> texcoords;
 
-    int phydrv;
+    int  phydrv;
     bool noclusters;
     bool smoothBounce;
     unsigned char driveThrough;
     unsigned char shootThrough;
     bool          ricochet;
+
+    MeshFace::SpecialData specialData;
 };
 
 

@@ -53,6 +53,7 @@ MeshObstacle::MeshObstacle()
   shootThrough = 0;
   ricochet = false;
   inverted = false;
+  hasSpecialFaces = false;
   drawInfo = NULL;
   return;
 }
@@ -132,6 +133,8 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   shootThrough = shoot;
   ricochet = rico;
 
+  hasSpecialFaces = false;
+
   drawInfo = NULL;
 
   return;
@@ -144,7 +147,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 			   const BzMaterial* _material, int phydrv,
 			   bool _noclusters, bool bounce,
 			   unsigned char drive, unsigned char shoot, bool rico,
-			   bool triangulate)
+			   bool triangulate, const MeshFace::SpecialData* sd)
 {
   // protect the face list from overrun
   if (faceCount >= faceSize) {
@@ -200,17 +203,20 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     int tmpDebugLevel = debugLevel;
     debugLevel = 0;
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-			_noclusters, bounce, drive, shoot, rico);
+			_noclusters, bounce, drive, shoot, rico, sd);
     debugLevel = tmpDebugLevel;
   } else {
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-			_noclusters, bounce, drive, shoot, rico);
+			_noclusters, bounce, drive, shoot, rico, sd);
   }
 
   // check its validity
   if (face->isValid()) {
     faces[faceCount] = face;
     faceCount++;
+    if (face->isSpecial()) {
+      hasSpecialFaces = true;
+    }
   }
   else if (triangulate) {
     // triangulate
@@ -243,10 +249,13 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 	}
 	makeFacePointers(triV, triN, triT, v, n, t);
 	face = new MeshFace(this, 3, v, n, t, _material, phydrv,
-			    _noclusters, bounce, drive, shoot, rico);
+			    _noclusters, bounce, drive, shoot, rico, sd);
 	if (face->isValid()) {
 	  faces[faceCount] = face;
 	  faceCount++;
+          if (face->isSpecial()) {
+            hasSpecialFaces = true;
+          }
 	} else {
 	  delete face;
 	}
@@ -332,7 +341,9 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     copy = new MeshObstacle(xform, ctlist, clist,
 			    vlist, nlist, tlist, 0, noclusters,
 			    smoothBounce, driveThrough, shootThrough, ricochet);
-  } else {
+    copy->setName(name);
+  }
+  else {
     for (i = 0; i < checkCount; i++) {
       ctlist.push_back(checkTypes[i]);
     }
@@ -346,6 +357,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     copy = new MeshObstacle(xform, ctlist, clist,
 			    vlist, nlist, tlist, faceCount, noclusters,
 			    smoothBounce, driveThrough, shootThrough, ricochet);
+    copy->setName(name);
 
     for (i = 0; i < faceCount; i++) {
       copyFace(i, copy);
@@ -385,7 +397,7 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
 		face->getPhysicsDriver(), face->noClusters(),
 		face->isSmoothBounce(),
 		face->isDriveThrough(), face->isShootThrough(),
-		face->canRicochet(), false);
+		face->canRicochet(), false, face->getSpecialData());
   return;
 }
 
@@ -608,12 +620,17 @@ bool MeshObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 
 int MeshObstacle::packSize() const
 {
-  int fullSize = 5 * sizeof(int32_t);
+  int fullSize = 0;
+
+  fullSize += nboStdStringPackSize(name);
+
+  fullSize += 5 * sizeof(int32_t);
   fullSize += sizeof(char) * checkCount;
   fullSize += sizeof(fvec3) * checkCount;
   fullSize += sizeof(fvec3) * vertexCount;
   fullSize += sizeof(fvec3) * normalCount;
   fullSize += sizeof(fvec2) * texcoordCount;
+
   if ((drawInfo != NULL) && !drawInfo->isCopy()) {
     const int drawInfoPackSize = drawInfo->packSize();
     // align the packing
@@ -640,6 +657,8 @@ int MeshObstacle::packSize() const
 void *MeshObstacle::pack(void *buf) const
 {
   int i;
+
+  buf = nboPackStdString(buf, name);
 
   buf = nboPackInt32(buf, checkCount);
   for (i = 0; i < checkCount; i++) {
@@ -713,6 +732,8 @@ void *MeshObstacle::unpack(void *buf)
   int i;
   int32_t inTmp;
 
+  buf = nboUnpackStdString(buf, name);
+
   buf = nboUnpackInt32(buf, inTmp);
   checkCount = int(inTmp);
   checkTypes = new char[checkCount];
@@ -751,12 +772,17 @@ void *MeshObstacle::unpack(void *buf)
   faces = new MeshFace*[faceSize];
   faceCount = 0;
   for (i = 0; i < faceSize; i++) {
-    faces[faceCount] = new MeshFace(this);
-    buf = faces[faceCount]->unpack(buf);
-    if (!faces[faceCount]->isValid()) {
-      delete faces[faceCount];
-    } else {
+    MeshFace* face = new MeshFace(this);
+    buf = face->unpack(buf);
+    if (!face->isValid()) {
+      delete face;
+    }
+    else {
+      faces[faceCount] = face;
       faceCount++;
+      if (face->isSpecial()) {
+        hasSpecialFaces = true;
+      }
     }
   }
 
@@ -792,7 +818,6 @@ void *MeshObstacle::unpack(void *buf)
 	  void* drawInfoData = (char*)texcoordEnd - rewindLen;
 	  drawInfo = new MeshDrawInfo();
 	  drawInfo->unpack(drawInfoData);
-	  name = drawInfo->getName(); // get the proxied name
 	}
 
 	// free the bogus texcoords
@@ -862,7 +887,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 			       << extents.maxs.y << " "
 			       << extents.maxs.z << std::endl;
 
-  if (name.size() > 0) {
+  if (!name.empty() && (name[0] != '$')) {
     out << indent << "  name " << name << std::endl;
   }
 
@@ -942,7 +967,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
   int i;
 
   out << "# OBJ - start" << std::endl;
-  if (name.size() > 0) {
+  if (!name.empty() && (name[0] != '$')) {
     out << "o " << name << "_" << getObjCounter() << std::endl;
   } else {
     out << "o unnamed_" << getObjCounter() << std::endl;

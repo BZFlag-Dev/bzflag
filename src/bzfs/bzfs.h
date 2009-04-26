@@ -130,7 +130,7 @@ extern CmdLineOptions	*clOptions;
 extern uint16_t		curMaxPlayers;
 extern bool		serverDone;
 extern bool		gameOver;
-extern TeamInfo		team[NumTeams];
+extern TeamInfo		teamInfos[NumTeams];
 extern int		numFlags;
 extern bool		countdownActive;
 extern int		countdownDelay;

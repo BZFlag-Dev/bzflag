@@ -240,7 +240,8 @@ void BaseBuilding::getCorner(int index, fvec3& _pos) const
 }
 
 
-int BaseBuilding::getTeam() const {
+int BaseBuilding::getBaseTeam() const
+{
   return team;
 }
 
@@ -313,7 +314,7 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
 			     << " " << getHeight() << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
 				 << std::endl;
-  out << indent << "  color " << getTeam() << std::endl;
+  out << indent << "  color " << getBaseTeam() << std::endl;
   if (isPassable()) {
     out << indent << "  passable" << std::endl;
   } else {

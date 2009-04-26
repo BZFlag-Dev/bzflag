@@ -189,9 +189,9 @@ bool sendTeamUpdateMessage( int newPlayer )
       teams[t] = new bz_TeamInfoRecord;
 
       teams[t]->id = t;
-      teams[t]->size = team[t].team.size;
-      teams[t]->wins = team[t].team.won;
-      teams[t]->losses = team[t].team.won;
+      teams[t]->size   = teamInfos[t].team.size;
+      teams[t]->wins   = teamInfos[t].team.won;
+      teams[t]->losses = teamInfos[t].team.won;
     }
     playerData->playerHandler->teamUpdate ( CtfTeams, teams );
 
@@ -218,18 +218,18 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
     msg->packUInt8(CtfTeams);
     for (int t = 0; t < CtfTeams; t++) {
       msg->packUInt16(t);
-      team[t].team.pack(msg);
+      teamInfos[t].team.pack(msg);
     }
   } else if (teamIndex2 == -1) {
     msg->packUInt8(1);
     msg->packUInt16(teamIndex1);
-    team[teamIndex1].team.pack(msg);
+    teamInfos[teamIndex1].team.pack(msg);
   } else {
     msg->packUInt8(2);
     msg->packUInt16(teamIndex1);
-    team[teamIndex1].team.pack(msg);
+    teamInfos[teamIndex1].team.pack(msg);
     msg->packUInt16(teamIndex2);
-    team[teamIndex2].team.pack(msg);
+    teamInfos[teamIndex2].team.pack(msg);
   }
 
   msg->broadcast(MsgTeamUpdate,false);
@@ -245,9 +245,9 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
       teams[t] = new bz_TeamInfoRecord;
 
       teams[t]->id = t;
-      teams[t]->size = team[t].team.size;
-      teams[t]->wins = team[t].team.won;
-      teams[t]->losses = team[t].team.won;
+      teams[t]->size   = teamInfos[t].team.size;
+      teams[t]->wins   = teamInfos[t].team.won;
+      teams[t]->losses = teamInfos[t].team.won;
     }
   } else if (teamIndex2 == -1) {
     teamCount = 1;
@@ -256,8 +256,8 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
     teams[0] = new bz_TeamInfoRecord;
 
     teams[0]->id = teamIndex1;
-    teams[0]->size = team[teamIndex1].team.size;
-    teams[0]->wins = team[teamIndex1].team.won;
+    teams[0]->size = teamInfos[teamIndex1].team.size;
+    teams[0]->wins = teamInfos[teamIndex1].team.won;
   } else {
     teamCount = 2;
     teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
@@ -265,14 +265,14 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
     teams[0] = new bz_TeamInfoRecord;
 
     teams[0]->id = teamIndex1;
-    teams[0]->size = team[teamIndex1].team.size;
-    teams[0]->wins = team[teamIndex1].team.won;
+    teams[0]->size = teamInfos[teamIndex1].team.size;
+    teams[0]->wins = teamInfos[teamIndex1].team.won;
 
     teams[1] = new bz_TeamInfoRecord;
 
     teams[1]->id = teamIndex2;
-    teams[1]->size = team[teamIndex2].team.size;
-    teams[1]->wins = team[teamIndex2].team.won;
+    teams[1]->size = teamInfos[teamIndex2].team.size;
+    teams[1]->wins = teamInfos[teamIndex2].team.won;
   }
 
   // now do everyone who dosn't have network
@@ -659,7 +659,7 @@ int sendTeamUpdateDirect(NetHandler *handler)
 
   for (int t = 0; t < CtfTeams; t++) {
     msg->packUInt16(t);
-    team[t].team.pack(msg);
+    teamInfos[t].team.pack(msg);
   }
   msg->send(handler,MsgTeamUpdate);
   return (int)msg->size();

@@ -25,8 +25,7 @@ class CustomWorldText : public WorldFileLocation {
     CustomWorldText();
     ~CustomWorldText();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   private:
     mutable WorldText* text;

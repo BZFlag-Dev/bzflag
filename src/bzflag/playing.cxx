@@ -40,6 +40,7 @@
 #include "BzVFS.h"
 #include "bzsignal.h"
 #include "CacheManager.h"
+#include "CollisionManager.h"
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
@@ -49,6 +50,7 @@
 #include "GameTime.h"
 #include "GfxBlock.h"
 #include "KeyManager.h"
+#include "LinkManager.h"
 #include "LuaClientScripts.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
@@ -62,43 +64,43 @@
 #include "TextureManager.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
-#include "version.h"
 #include "WordFilter.h"
 #include "ZSceneDatabase.h"
 #include "bz_md5.h"
 #include "vectors.h"
+#include "version.h"
 
 // local implementation headers
 #include "AutoPilot.h"
-#include "bzflag.h"
-#include "commands.h"
+#include "ClientIntangibilityManager.h"
 #include "Daylight.h"
 #include "Downloads.h"
 #include "EffectsRenderer.h"
 #include "ExportInformation.h"
 #include "FlashClock.h"
 #include "ForceFeedback.h"
-#include "LocalPlayer.h"
 #include "HUDDialogStack.h"
 #include "HUDRenderer.h"
+#include "HUDui.h"
+#include "LocalPlayer.h"
 #include "MainMenu.h"
-#include "motd.h"
 #include "RadarRenderer.h"
 #include "Roaming.h"
 #include "RobotPlayer.h"
 #include "Roster.h"
 #include "SceneBuilder.h"
 #include "ScoreboardRenderer.h"
-#include "sound.h"
 #include "ShotStats.h"
+#include "SyncClock.h"
 #include "TrackMarks.h"
 #include "VerticalSync.h"
-#include "World.h"
 #include "WorldBuilder.h"
-#include "HUDui.h"
-#include "SyncClock.h"
-#include "ClientIntangibilityManager.h"
-#include "CollisionManager.h"
+#include "WorldPlayer.h"
+#include "World.h"
+#include "bzflag.h"
+#include "commands.h"
+#include "motd.h"
+#include "sound.h"
 //#include "messages.h"
 
 static const float FlagHelpDuration = 60.0f;
@@ -3237,19 +3239,23 @@ static void handleScore(void *msg)
 static void handleTeleport(void *msg)
 {
   PlayerId id;
-  uint16_t from, to;
+  uint16_t srcID, dstID;
   msg = nboUnpackUInt8(msg, id);
-  msg = nboUnpackUInt16(msg, from);
-  msg = nboUnpackUInt16(msg, to);
+  msg = nboUnpackUInt16(msg, srcID);
+  msg = nboUnpackUInt16(msg, dstID);
   Player *tank = lookupPlayer(id);
   if (tank) {
-    eventHandler.PlayerTeleported(*tank, from, to); // FIXME ?
+    eventHandler.PlayerTeleported(*tank, srcID, dstID); // FIXME
     if (tank != myTank) {
-      int face;
-      const Teleporter *teleporter = world->getTeleporter(int(to), face);
-      const fvec3& pos = teleporter->getPosition();
-      tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-      SOUNDSYSTEM.play(SFX_TELEPORT, pos, false, false);
+      tank->setTeleport(TimeKeeper::getTick(), short(srcID), short(dstID));
+      const MeshFace* linkDst = linkManager.getLinkDstFace(dstID);
+      const MeshFace* linkSrc = linkManager.getLinkSrcFace(srcID);
+      if (linkDst && linkSrc) {
+        const fvec3& pos = linkDst->getPosition();
+        if (!linkSrc->linkSrcNoSound()) {
+          SOUNDSYSTEM.play(SFX_TELEPORT, pos, false, false);
+        }
+      }
     }
   }
 }
@@ -4179,13 +4185,14 @@ void addShotExplosion(const fvec3& pos)
 }
 
 
-void addShotPuff(const fvec3& pos, float azimuth, float elevation)
+void addShotPuff(const fvec3& pos, const fvec3& vel)
 {
   if (BZDB.evalInt("gmPuffEffect") == 1) {
     addExplosion(pos, 0.3f * BZDBCache::tankLength, 0.8f, true);
     return;
   }
-
+  const float azimuth   = atan2f(vel.y, vel.x);
+  const float elevation = atan2f(vel.z, vel.xy().length());
   EFFECTS.addGMPuffEffect(pos, fvec2(azimuth, elevation));
 }
 
@@ -4505,7 +4512,7 @@ static bool checkSquishKill(const Player* victim,
   if (!localKiller && killer->isNotResponding()) {
     return false;
   }
-  
+
   fvec3 diff = (victimPos - killerPos);
   diff.z *= 2.0f; // oblate spheroids
 
@@ -4520,40 +4527,48 @@ static bool checkSquishKill(const Player* victim,
 
 static void checkEnvironment()
 {
-  if (!myTank || myTank->getTeam() == ObserverTeam)
+  if (!myTank || (myTank->getTeam() == ObserverTeam)) {
     return;
+  }
 
   // skip this if i'm dead or paused
-  if (!myTank->isAlive() || myTank->isPaused())
+  if (!myTank->isAlive() || myTank->isPaused()) {
     return;
+  }
 
-  FlagType *flagd = myTank->getFlag();
+  if (myTank->onSolidSurface()) {
 
-  if (flagd->flagTeam != NoTeam) {
-    // have I captured a flag?
-    TeamColor base = world->whoseBase(myTank->getPosition());
-    TeamColor team = myTank->getTeam();
-    if (((base != NoTeam) && (flagd->flagTeam == team && base != team)) || (flagd->flagTeam != team && base == team))
-      serverLink->sendCaptureFlag(base);
-  } else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround || myTank->getLocation() == LocalPlayer::OnBuilding)) {
-    // Don't grab too fast
-    static TimeKeeper lastGrabSent;
-    if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
-      // grab any and all flags i'm driving over
-      const fvec3& tpos = myTank->getPosition();
-      const float radius = myTank->getRadius();
-      const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
-      for (int i = 0; i < numFlags; i++) {
-	if ((world->getFlag(i).type == Flags::Null) ||
-	    (world->getFlag(i).status != FlagOnGround)) {
-	  continue;
+    FlagType* flagd = myTank->getFlag();
+
+    if (flagd->flagTeam != NoTeam) {
+      // have I captured a flag?
+      const TeamColor base = world->whoseBase(myTank->getPosition());
+      const TeamColor team = myTank->getTeam();
+      if (((base != NoTeam) && ((flagd->flagTeam == team) && (base != team))) ||
+          ((flagd->flagTeam != team) && (base == team))) {
+        serverLink->sendCaptureFlag(base);
+      }
+    }
+    else if (flagd == Flags::Null) {
+      // Don't grab too fast
+      static TimeKeeper lastGrabSent;
+      if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
+        // grab any and all flags i'm driving over
+        const fvec3& tpos = myTank->getPosition();
+        const float radius = myTank->getRadius() + BZDBCache::flagRadius;
+        const float radius2 = radius * radius;
+        for (int i = 0; i < numFlags; i++) {
+          if ((world->getFlag(i).type == Flags::Null) ||
+              (world->getFlag(i).status != FlagOnGround)) {
+            continue;
+          }
+          const fvec3& fpos = world->getFlag(i).position;
+          if ((fabs(tpos.z - fpos.z) < 0.1f) &&
+              ((tpos.xy() - fpos.xy()).lengthSq() < radius2)) {
+            serverLink->sendPlayerUpdate(myTank);
+            lastGrabSent = TimeKeeper::getTick();
+          }
         }
-	const fvec3& fpos = world->getFlag(i).position;
-	if ((fabs(tpos.z - fpos.z) < 0.1f) &&
-	    ((tpos.xy() - fpos.xy()).lengthSq() < radius2)) {
-	  serverLink->sendPlayerUpdate(myTank);
-	  lastGrabSent = TimeKeeper::getTick();
-	}
       }
     }
   }
@@ -4733,16 +4748,11 @@ void setLookAtMarker(void)
       if (olist && olist->count > 0) {
 	for (int o = 0; o < olist->count; o++) {
 	  const Obstacle *obs = olist->list[o];
-
-	  if (obs->getType() != Teleporter::getClassName()) {
-	    // if it's not a teleporter (they are too thin to hide things)
-	    // then see if it's closer to us then the other tank
-	    const float timet = obs->intersect(ray);
-	    if (timet > 1.0f) {
-	      blocked = true;
-	      o = olist->count;
-	    }
-	  }
+          const float timet = obs->intersect(ray);
+          if (timet > 1.0f) {
+            blocked = true;
+            break;
+          }
 	}
       }
 
@@ -5062,11 +5072,6 @@ static void makeObstacleList()
   const int numPyramids = pyramids.size();
   for (i = 0; i < numPyramids; i++)
     addObstacle(obstacleList, *pyramids[i]);
-
-  const ObstacleList &teleporters = OBSTACLEMGR.getTeles();
-  const int numTeleporters = teleporters.size();
-  for (i = 0; i < numTeleporters; i++)
-    addObstacle(obstacleList, *teleporters[i]);
 
   const ObstacleList &meshes = OBSTACLEMGR.getMeshes();
   const int numMeshes = meshes.size();

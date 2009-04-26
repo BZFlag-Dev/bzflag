@@ -78,7 +78,7 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
     }
   }
   fvec4 color;
-  switch(base->getTeam()) {
+  switch(base->getBaseTeam()) {
     case 1: { color.rgb() = fvec3(0.7f, 0.0f, 0.0f); break; }
     case 2: { color.rgb() = fvec3(0.0f, 0.7f, 0.0f); break; }
     case 3: { color.rgb() = fvec3(0.0f, 0.0f, 0.7f); break; }

@@ -116,7 +116,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
+void CustomGroup::writeToGroupDef(GroupDefinition *groupDef) const
 {
   // include the old style parameters
   MeshTransform xform;
@@ -132,24 +132,17 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
   }
   xform.append(transform);
 
+  group->setName(name);
+
   group->setTransform(xform);
 
-
-  if (driveThrough) {
-    group->setDriveThrough();
-  }
-  if (shootThrough) {
-    group->setShootThrough();
-  }
-  if (ricochet) {
-    group->setCanRicochet();
-  }
-
-  group->setName(name);
+  if (driveThrough) { group->setDriveThrough(); }
+  if (shootThrough) { group->setShootThrough(); }
+  if (ricochet)     { group->setCanRicochet();  }
 
   // make the group instance
   if (group->getGroupDef().size() > 0) {
-    grpdef->addGroupInstance(group);
+    groupDef->addGroupInstance(group);
   } else {
     delete group;
   }

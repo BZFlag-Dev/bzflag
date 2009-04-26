@@ -1,14 +1,14 @@
 .\" bzflag
 .\" Copyright (c) 1993 - 2009 Tim Riker
-.\" 
+.\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
 .\" named COPYING that should have accompanied this file.
-.\" 
+.\"
 .\" THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
 .\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 .\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-.\" 
+.\"
 .TH "bzw" "5" "@BZFLAG_DATE@" "bzw-@BZFLAG_VERSION@" "BZFlag"
 .SH "NAME"
 bzw \- BZFlag world file format
@@ -16,118 +16,118 @@ bzw \- BZFlag world file format
 The BZFlag world file format describes a world environment that is
 used by the BZFlag game server, bzfs.
 .I X "BZW file format"
-.PP 
+.PP
 The BZFlag world file format describes and environment that includes
 the game map, physical world attributes, and automatic world weapons.
 The map may contain a variety of "obstacles" like buildings, pyramids,
 and meshes.  These obstacles make up the world that the BZFlag tanks
 will drive around in.  Map attributes may be set to create worlds of
 various sizes, the default size is 800x800.
-.TP 
+.TP
 Here is small example world:
-.PP 
+.PP
 # simple world containing a box, pyramid, and mesh
-.br 
+.br
 .B world
-.br 
+.br
 \fB  name\fR Simple World
-.br 
+.br
 \fB  size\fR 100.0
-.br 
+.br
 .B end
-.br 
+.br
 .B box
-.br 
+.br
 \fB  position\fR \-20 \-20 0
-.br 
+.br
 \fB  size\fR 10 20 10
-.br 
+.br
 .B end
-.br 
+.br
 .B pyramid
-.br 
+.br
 \fB  position\fR 20 20 0
-.br 
+.br
 \fB  size\fR 10 10 20
-.br 
+.br
 .B end
-.br 
+.br
 .B mesh
-.br 
+.br
 \fB  vertex\fR \-10 0 0
-.br 
+.br
 \fB  vertex\fR 10 0 0
-.br 
+.br
 \fB  vertex\fR 0 10 0
-.br 
+.br
 \fB  face\fR
-.br 
+.br
 \fB    vertices\fR 0 1 2
-.br 
+.br
 \fB  endface\fR
-.br 
+.br
 .B end
-.br 
-.PP 
+.br
+.PP
 The .bzw file is a plain text file with a relatively simple file
 format.  The format of this text file consists of any number of
 objects listed in any order (except that physics, textureMatrix,
 dynamicColor, and material must come before they are referenced)
 separated by newlines and grouped into blocks of types. The list of
 world types consists of:
-.br 
+.br
 .B world
-.br 
+.br
 .B mapinfo
-.br 
+.br
 .B options
-.br 
+.br
 .B waterLevel
-.br 
+.br
 .B dynamicColor
-.br 
+.br
 .B textureMatrix
 .br
 .B transform
-.br 
+.br
 .B material
-.br 
+.br
 .B physics
-.br 
+.br
 .B define
-.br 
+.br
 .B group
-.br 
+.br
 .B mesh
-.br 
+.br
 .B meshbox
-.br 
+.br
 .B meshpyr
-.br 
+.br
 .B arc
-.br 
+.br
 .B cone
-.br 
+.br
 .B sphere
-.br 
+.br
 .B tetra
-.br 
+.br
 .B box
-.br 
+.br
 .B pyramid
-.br 
+.br
 .B link
-.br 
+.br
 .B teleporter
-.br 
+.br
 .B base
-.br 
+.br
 .B text
-.br 
+.br
 .B weapon
-.br 
+.br
 .B zone
-.br 
+.br
 
 Each object is described by placing the type on one line, the word
 \fIend\fR on a following line, and a list of attributes for that
@@ -148,32 +148,32 @@ command line arguments that are used to configure the server's game
 mode, but can not contain server specific options such as \-p, \-passwd,
 and \-conf.
 
-.br 
+.br
 In the following examples, the values are the defaults.
 
 
 .B The World object
-.br 
+.br
 Header for the world.
 
 \fBworld\fR
-.br 
+.br
 \fB  name\fR example_world
-.br 
+.br
 \fB  size\fR 400.0
-.br 
+.br
 \fB  flagHeight\fR 10.0
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The MapInfo object
-.br 
+.br
 A block of text to provide information about the world.
 
 \fBmapinfo\fR
-.br 
+.br
   author:  bob
 .br
   name:    bob_cool.bzw
@@ -187,123 +187,119 @@ A block of text to provide information about the world.
   url:     http://bobland.bz/maps/cool/
 .br
   license: http://creativecommons.org/licenses/by/3.0/us/
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Options object
-.br 
+.br
 A world file interface for setting command line options for BZFS.
 
 \fBoptions\fR
-.br 
+.br
   \-set _tankSpeed 36
-.br 
+.br
   \-j +r \-ms 3
-.br 
+.br
   +f GM{5} +f SW{5}
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Water Level object
-.br 
+.br
 Sets how high the water is, in a matter of units.
 
 \fBwaterLevel\fR
-.br 
+.br
 \fB  name\fR example_waterlevel
-.br 
+.br
 \fB  height\fR \-1.0 # anything below 0 turns it off
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Group Definition object
-.br 
+.br
 Defines a group, which may include other group instances
-.br 
+.br
 This does not place any objects into the world, a group instance
 must be used to generate world objects from a group definition.
 
 \fBdefine\fR <example_groupdef>
-.br 
+.br
   # You can add any object to a group definition,
-.br 
+.br
   # except for the following types:
-.br 
+.br
   #   textureMatrix
-.br 
+.br
   #   dynamicColor
-.br 
+.br
   #   material
-.br 
+.br
   #   physics
-.br 
-  #   links
-.br 
-  #   text
-.br 
+.br
   #   weapon
-.br 
+.br
   #   zone
-.br 
+.br
 \fBenddef\fR
-.br 
+.br
 
 
 .B The Group Instantiation object
-.br 
+.br
 Instantiates a group, and possibly modifies subobjects
 
 \fBgroup\fR <example_groupdef>  # a valid group definition reference
-.br 
+.br
 \fB  shift\fR 0 0 0          # (\fBrepeatable\fR)
-.br 
+.br
 \fB  scale\fR 1 1 1          # (\fBrepeatable\fR)
-.br 
+.br
 \fB  shear\fR 0 0 0          # (\fBrepeatable\fR)
-.br 
+.br
 \fB  spin\fR angle nx ny nz  # (\fBrepeatable\fR)
-.br 
+.br
                        # angle degrees about vector n
-.br 
+.br
 \fB  team\fR 0        # change all base colors within group
-.br 
+.br
 \fB  tint\fR 1 1 1 1  # hierarchically tints objects within this group
-.br 
+.br
 \fB  drivethrough\fR  # make all subobjects drivethrough
-.br 
+.br
 \fB  shootthrough\fR  # make all subobjects shootthrough
-.br 
+.br
 \fB  ricochet\fR      # make all subobjects ricochet
-.br 
+.br
 \fB  phydrv\fR example_phydrv     # reassign any valid physics drivers
-.br 
+.br
 \fB  matref\fR example_material   # set material properties
                             # (except for the color)
-.br 
+.br
 \fB  matswap\fR oldMat newMat     # replace a given material in the instance
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Dynamic Color object
 
 \fBdynamicColor\fR
-.br 
+.br
 \fB  name\fR example_dyncol
 .br
   # States control
 .br
 \fB  ramp\fR  2.0 red 0.5  # duration, startColor  (\fBrepeatable\fR)
-.br 
+.br
 \fB  level\fR 3.0 red 0.5  # duration, levelColor  (\fBrepeatable\fR)
-.br 
+.br
 \fB  delay\fR 0.0          # delay seconds for color states
 .br
   # BZDB variable control  (overrides states control)
@@ -311,41 +307,41 @@ Instantiates a group, and possibly modifies subobjects
 \fB  varName\fR _varname  # the BZDB variable name
 .br
 \fB  varTime\fR 1.0       # the transition time (in seconds)
-.br 
+.br
 \fB  varNoAlpha\fR        # do not use the alpha channel
-.br 
+.br
   # the BZDB variable should contain a valid color string.
-.br 
+.br
   # it can also be suffixed with '@ <seconds>', which will
-.br 
+.br
   # override the varTime value for that change.
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Texture Matrix object
 
 \fBtextureMatrix\fR
-.br 
+.br
 \fB  name\fR example_texmat
-.br 
+.br
 \fB  scale\fR 0.0 0.0 1.0 1.0  # u/v freqs, u/v scales
-.br 
-\fB  spin\fR 0.0               # rotation freq 
-.br 
+.br
+\fB  spin\fR 0.0               # rotation freq
+.br
 \fB  shift\fR 0.0 0.0          # u/v freqs
-.br 
+.br
 \fB  center\fR 0.5 0.5         # dynamic u/v center (for spin and scale)
-.br 
+.br
 \fB  fixedscale\fR 0.0 0.0     # time invariant u/v scale
-.br 
+.br
 \fB  fixedspin\fR 0.0          # time invariant rotation
-.br 
+.br
 \fB  fixedshift\fR 0.0 0.0     # time invariant u/v shift
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B Material Properties
@@ -353,445 +349,527 @@ Instantiates a group, and possibly modifies subobjects
 Material properties may be set on several types of objects, including
 meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the
 properties:
-.br 
+.br
 
 \fBmaterial\fR
-.br 
+.br
 \fB  name\fR example_material
-.br 
+.br
 \fB  resetmat\fR                  # restore default values
-.br 
+.br
 \fB  matref\fR material_name      # copy another material's properties
-.br 
+.br
 \fB  ambient\fR  0.2 0.2 0.2 1.0  # ambient color
-.br 
+.br
 \fB  diffuse\fR  1.0 1.0 1.0 1.0  # diffuse color (\fBmain color\fR)
-.br 
+.br
 \fB  color\fR    1.0 1.0 1.0 1.0  # synonym for 'diffuse'
-.br 
+.br
 \fB  specular\fR 0.0 0.0 0.0 1.0  # specular color
-.br 
+.br
 \fB  emission\fR 0.0 0.0 0.0 1.0  # emission color
-.br 
+.br
 \fB  shininess\fR 0.0             # shininess (0.0 - 128.0)
-.br 
+.br
 \fB  texture\fR filename     # set working texture
-.br 
-  # - non-interlaced PNG 
-.br 
+.br
+  # - non-interlaced PNG
+.br
   # - http:// or ftp:// hyperlinks can be used  (no spaces)
-.br 
+.br
   # - BZFlag default texture names can be used  (.png not required)
-.br 
+.br
 \fB  addtexture\fR filename  # add texture
-.br 
+.br
 \fB  notextures\fR           # specify that no textures are to be used
-.br 
+.br
 \fB  notexalpha\fR           # don't use the texture's alpha channel
-.br 
+.br
 \fB  notexcolor\fR           # the color is not applied to the texture
-.br 
+.br
   # if a texture is specified, but not found, the default texture
-.br 
+.br
   # will be used. if the default texture is also not available, then
-.br 
+.br
   # the color will be used (untextured)
-.br 
+.br
 \fB  spheremap\fR            # use spherical texture coordinate mapping
-.br 
+.br
 \fB  texmat\fR \-1            # texture matrix  (\-1 for none)
-.br 
+.br
 \fB  dyncol\fR \-1            # dynamic color  (\-1 for none)
-.br 
+.br
 \fB  noradar\fR              # do not display on radar  (except normal mode)
-.br 
+.br
 \fB  noshadow\fR             # do not render shadows
-.br 
+.br
 \fB  noculling\fR            # do not cull by face winding  (double-sided)
-.br 
+.br
 \fB  nosorting\fR            # do not do front-to-back alpha sorting
-.br 
+.br
 \fB  nolighting\fR           # disable lighting
-.br 
+.br
 \fB  alphathresh 0.0\fR      # alpha thresholding value
-.br 
+.br
 \fB  groupalpha\fR           # sort translucent faces as a group
-.br 
+.br
 \fB  occluder\fR             # faces with this material will occlude
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Physics Driver object
 
 \fBphysics\fR
-.br 
+.br
 \fB  name\fR example_phydrv
-.br 
+.br
 \fB  linear\fR  0.0 0.0 0.0  # x/y/z linear velocities
-.br 
+.br
 \fB  angular\fR 0.0 0.0 0.0  # rotation freq, x/y coordinates
-.br 
+.br
 \fB  slide\fR 0.0            # time until max velocity  (> 0.0 enables)
-.br 
+.br
 \fB  death\fR Message goes here.
-.br 
+.br
   # the 'death' property requires a non\-blank message
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Mesh object
 
 \fBmesh\fR
-.br 
+.br
 \fB  name\fR example_mesh
-.br 
+.br
   # Material properties applied to a mesh apply to all faces
-.br 
+.br
   # that follow the setting. Mesh faces will alter their own
-.br 
+.br
   # properties without affecting the state of the mesh properties.
-.br 
+.br
   # The same pattern is used to apply physics drivers.
-.br 
+.br
 \fB  vertex\fR 100 200 300  # add a vertex              (\fBrepeatable\fR)
-.br 
+.br
 \fB  normal\fR 1.0 0 0      # add a normal              (\fBrepeatable\fR)
-.br 
+.br
 \fB  texcoord\fR 0.1 0.75   # add a texture coordinate  (\fBrepeatable\fR)
-.br 
+.br
 \fB  inside\fR 5.5 4.5 1.2  # add an inside point       (\fBrepeatable\fR)
-.br 
+.br
 \fB  outside\fR 0 0 1000    # add an outside point      (\fBrepeatable\fR)
-.br 
+.br
 \fB  shift\fR 0 0 0           # (\fBrepeatable\fR)
-.br 
+.br
 \fB  scale\fR 1 1 1           # (\fBrepeatable\fR)
-.br 
+.br
 \fB  shear\fR 0 0 0           # (\fBrepeatable\fR)
-.br 
+.br
 \fB  spin\fR angle nx ny nz   # (\fBrepeatable\fR)
-.br 
+.br
 \fB  phydrv\fR example_phydrv # assign a physics driver
-.br 
+.br
 \fB  smoothbounce\fR          # ricochets use normals
-.br 
+.br
 \fB  noclusters\fR            # render each mesh face individually
-.br 
+.br
 \fB  face\fR  # start a face   (\fBrepeatable\fR)
-.br 
+.br
     # the front-face winding is counter-clockwise
-.br 
+.br
 \fB    vertices\fR 1 4 0 3 5   # list of vertices (requires at least three)
-.br 
+.br
 \fB    normals\fR 2 6 0 4 7    # list of normals              (optional)
-.br 
+.br
 \fB    texcoords\fR 0 3 2 4 9  # list of texture coordinates  (optional)
-.br 
+.br
 \fB    phydrv\fR example_phydrv  # assign a physics driver
-.br 
+.br
+    # special parameters
+.br
+\fB    baseTeam 1
+.br
+    # link parameters
+.br
+\fB    linkName yourName
+.br
+\fB    linkSrcRebound
+.br
+\fB    linkSrcNoGlow
+.br
+\fB    linkSrcNoRadar
+.br
+\fB    linkSrcNoSound
+.br
+\fB    linkSrcNoEffect
+.br
+\fB    linkSrcCenter 0 0 0
+.br
+\fB    linkSrcSdir 0 +1 0
+.br
+\fB    linkSrcTdir 0 0 +1
+.br
+\fB    linkSrcPdir +1 0 0
+.br
+\fB    linkSrcSscale 1.0
+.br
+\fB    linkSrcTscale 1.0
+.br
+\fB    linkSrcPscale 0.0
+.br
+\fB    linkDstCenter 0 0 0
+.br
+\fB    linkDstSdir 0 -1 0
+.br
+\fB    linkDstTdir 0 0 +1
+.br
+\fB    linkDstPdir -1 0 0
+.br
+\fB    linkDstSscale 1.0
+.br
+\fB    linkDstTscale 1.0
+.br
+\fB    linkDstPscale 0.0
+.br
 \fB  endface\fR  # end the face
-.br 
+.br
   #
-.br 
+.br
   #  This next element can be added to increase the rendering speed
-.br 
+.br
   #  of the mesh object. If the client is capable of using this data,
-.br 
+.br
   #  then it is used to draw the mesh instead of the face information.
-.br 
+.br
   #
-.br 
+.br
 \fB  drawInfo\fR
-.br 
+.br
 \fB    dlist\fR                      # display list for all material sets
-.br 
+.br
 \fB    decorative\fR                 # older clients with not see this mesh
-.br 
+.br
 \fB    angvel\fR <degrees/sec>       # rotation about initial Z axis
-.br 
+.br
 \fB    extents\fR <minX> <minY> <minZ> <maxX> <maxY> <maxZ>
-.br 
+.br
 \fB    sphere\fR <x> <y> <z> <radiusSquared>
-.br 
+.br
 \fB    corner\fR <v> <n> <t>         (\fBrepeatable\fR)
-.br 
+.br
 \fB    vertex\fR 0.0 0.0 0.0         (\fBrepeatable\fR)
-.br 
+.br
 \fB    normal\fR 0.0 0.0 0.0         (\fBrepeatable\fR)
-.br 
+.br
 \fB    texcoord\fR 0.0 0.0           (\fBrepeatable\fR)
-.br 
+.br
 \fB    lod\fR                        (\fBrepeatable\fR)
-.br 
+.br
 \fB      lengthPerPixel\fR <value>
-.br 
+.br
 \fB      matref\fR <name>            (\fBrepeatable\fR)
-.br 
+.br
 \fB        dlist\fR                  # display list for this material set
-.br 
+.br
 \fB        sphere\fR <x> <y> <z> <radiusSquared>
-.br 
+.br
 \fB        points\fR    0            (\fBrepeatable\fR)
-.br 
+.br
 \fB        lines\fR     0 1          (\fBrepeatable\fR)
-.br 
+.br
 \fB        lineloop\fR  0 1          (\fBrepeatable\fR)
-.br 
+.br
 \fB        linestrip\fR 0 1          (\fBrepeatable\fR)
-.br 
+.br
 \fB        tris\fR      0 1 2        (\fBrepeatable\fR)
-.br 
+.br
 \fB        tristrip\fR  0 1 2        (\fBrepeatable\fR)
-.br 
+.br
 \fB        trifan\fR    0 1 2        (\fBrepeatable\fR)
-.br 
+.br
 \fB        quads\fR     0 1 2 3      (\fBrepeatable\fR)
-.br 
+.br
 \fB        quadstrip\fR 0 1 2 3      (\fBrepeatable\fR)
-.br 
+.br
 \fB        polygon\fR   0 1 2        (\fBrepeatable\fR)
-.br 
+.br
 \fB      end\fR  # matref
-.br 
+.br
 \fB    end\fR    # lod
-.br 
+.br
 \fB  end\fR      # drawInfo
-.br 
+.br
 \fBend\fR        # mesh
-.br 
+.br
 
 
 .B The Arc object
 
 \fBarc\fR
-.br 
+.br
 \fB  name\fR example_arc
-.br 
+.br
 \fB  divisions 16\fR   # number of subdivisions
-.br 
+.br
 \fB  flatshading\fR    # flat shading  (smooth is default)
-.br 
+.br
 \fB  angle 360\fR      # the sweep angle
-.br 
+.br
 \fB  ratio 1\fR        # (outrad \- inrad) / outrad
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 10 10 10
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
-.br 
+.br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
-.br 
+.br
 \fB  smoothbounce\fR           # ricochets use normals
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Cone object
 
 \fBcone\fR
-.br 
+.br
 \fB  name\fR example_cone
-.br 
+.br
 \fB  divisions 16\fR   # number of subdivisions
-.br 
+.br
 \fB  flatshading\fR    # flat shading  (smooth is default)
-.br 
+.br
 \fB  angle 360\fR      # the sweep angle
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 10 10 10
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
-.br 
+.br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
-.br 
+.br
 \fB  smoothbounce\fR           # ricochets use normals
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Sphere object
 
 \fBsphere\fR
-.br 
+.br
 \fB  name\fR example_sphere
-.br 
+.br
 \fB  divisions 4\fR    # number of subdivisions
-.br 
+.br
 \fB  hemisphere\fR     # only generate the top half of the sphere
-.br 
+.br
 \fB  flatshading\fR    # flat shading  (smooth is default)
-.br 
+.br
 \fB  position\fR 0.0 0.0 10.0
-.br 
+.br
 \fB  size\fR 10 10 10
-.br 
+.br
 \fB  radius 10\fR      #  sets all size values to this value
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
-.br 
+.br
 \fB  phydrv\fR example_phydrv  # assign a physics driver
-.br 
+.br
 \fB  smoothbounce\fR           # ricochets use normals
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Tetrahedron object
 
 \fBtetra\fR
-.br 
+.br
 \fB  name\fR example_tetra
-.br 
+.br
 # there must always be 4 vertices
-.br 
+.br
 \fB  vertex\fR \-10.0 \-5.0 0.0
-.br 
+.br
 \fB  vertex\fR +10.0 \-5.0 0.0
-.br 
+.br
 \fB  vertex\fR 0.0 10.0 0.0
-.br 
+.br
 \fB  vertex\fR 0.0 5.0 10.0
-.br 
+.br
 \fB  shift\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  scale\fR 1 1 1            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  shear\fR 0 0 0            # (\fBrepeatable\fR)
-.br 
+.br
 \fB  spin\fR angle nx ny nz    # (\fBrepeatable\fR)
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Box object
-.br 
+.br
 Adds a simple block.
 
 \fBbox\fR
-.br 
+.br
 \fB  name\fR example_box
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 30.0 30.0 9.42
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Pyramid object
-.br 
+.br
 Adds a triangular shaped object.
 
 \fBpyramid\fR
-.br 
+.br
 \fB  name\fR example_pyramid
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 8.2 8.2 10.25
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Teleporter object
-.br 
+.br
 Adds an object that places a tank at another teleporter in a different area when ran through.
 
 \fBteleporter\fR [name]
-.br 
+.br
 # the [name] tag is used for linkage
-.br 
+.br
 \fB  name\fR example_teleporter
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 5.06 4.48 20.16
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fB  border\fR 1.12
-.br 
+.br
+\fB  texsize\fR 0.0  # 0.0 sets it to (1.0 / border)
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Link object
-.br 
-Adds a route to teleport a tank between two teleporters.
+.br
+Adds a route to teleport between a linkSrc and a linkDst.
 
 # Teleporter names are terminated with either :f (forward)
-.br 
+.br
 # or :b (backwards). The forwards link points to 0 degrees,
-.br 
+.br
 # and the backwards link points to 180. Links are made by
-.br 
-# pattern matching the teleporter names. The '*' and '?' 
-.br 
+.br
+# pattern matching the teleporter names. The '*' and '?'
+.br
 # globbing characters can be used to make multiple matches.
-.br 
+.br
 # If there are multiple matches for the "to" link, then the
-.br 
+.br
 # destination will be selected randomly between the matches.
-.br 
+.br
 # in\-game.
-.br 
+.br
 
-# NOTE: bzfs \-d \-d \-d \-d will print the linkage table.
+# NOTE: bzfs -setforced debugLinks 3 will print the linkage table.
 
 \fBlink\fR
-.br 
+.br
 \fB  name\fR example_link
-.br 
-# this will link all teleporters randomly to all other teleporters
-.br 
+.br
+  # this will link all teleporters randomly to all other teleporters
+.br
 \fB  from\fR *
-.br 
+.br
 \fB  to\fR   *
-.br 
+.br
+  # physics parameters
+.br
+\fB  sameSpeed
+.br
+\fB  shotSameSpeed
+.br
+\fB  tankSameSpeed
+.br
+\fB  srcPosScale x y z
+.br
+\fB  shotSrcPosScale x y z
+.br
+\fB  tankSrcPosScale x y z
+.br
+\fB  srcVelScale x y z
+.br
+\fB  shotSrcVelScale x y z
+.br
+\fB  tankSrcVelScale x y z
+.br
+\fB  dstVel x y z
+.br
+\fB  shotDstVel x y z
+.br
+\fB  tankDstVel x y z
+.br
+\fB  tankAngle degrees
+.br
+\fB  tankAngVel degrees
+.br
+\fB  tankAngleOffset degrees
+.br
+\fB  tankAngVelOffset degrees
+.br
 \fBend\fR
-.br 
+.br
 
 # or, to link  between known teleporters examp_tele1(front) and examp_tele2(back)
 
@@ -808,30 +886,30 @@ Adds a route to teleport a tank between two teleporters.
 
 
 .B The Base object
-.br 
+.br
 Creates a team base where the corresponding team's flag is stored.
 The oncap option will fire a world weapon of the specified type when the team flag for this base is captured.
 
 \fBbase\fR
-.br 
+.br
 \fB  name\fR example_base
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 60.0 60.0 0.0
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fB  color\fR 0
-.br 
+.br
 \fB  oncap\fR V
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Text object
-.br 
+.br
 Creates a text message in the world. Although text objects can not be grouped,
 they can still use all of the transformation keywords (shift, scale, spin, shear,
 etc...) Text objects can also use all of the material keywords, but some of them
@@ -908,7 +986,7 @@ BZDB variable), can use the following escape characters:
 
 
 .B The Weapon object
-.br 
+.br
 Creates a world weapon, or a weapon fired automatically by the world. The weapon can either be timed or be event driven.
 Timed weapons should use the initdelay and delay fields.
 Event driven weapons need to use the trigger option to define what the trigger event is.
@@ -920,791 +998,855 @@ If the weapon is to be triggered only for a specific team then the eventteam opt
 A eventteam value of -1 will trigger this weapon for any team. -1 is the default eventteam value.
 
 \fBweapon\fR
-.br 
+.br
 \fB  name\fR example_weapon
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 \fB  tilt\fR 0.0
-.br 
+.br
 \fB  initdelay\fR 10.0
-.br 
+.br
 \fB  delay\fR 10.0 3.0 5.0 3.0
-.br 
+.br
 \fB  type\fR V
-.br 
+.br
 \fB  trigger\fR flagcap
-.br 
+.br
 \fB  eventteam\fR V
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .B The Zone object
-.br 
+.br
 Specifies a certain range in the world, and what attributes that range has.
 
 \fBzone\fR
-.br 
+.br
 \fB  name\fR example_zone
-.br 
+.br
 \fB  position\fR 0.0 0.0 0.0
-.br 
+.br
 \fB  size\fR 1.0 1.0 1.0
-.br 
+.br
 \fB  rotation\fR 0.0
-.br 
+.br
 # where players may spawn
-.br 
+.br
 \fB  team\fR 0 1 2 3 4
-.br 
+.br
 # where flag may spawn
-.br 
+.br
 \fB  flag\fR GM SW good bad
-.br 
+.br
 # dropped team flags will fly to the closest safety zone
-.br 
+.br
 \fB  safety\fR 1 2 3 4
-.br 
+.br
 # attach a flag to this zone (always spawn in this zone)
-.br 
+.br
 \fB  zoneflag\fR GM 3  # type, count (type can be a team flag, ex: R*)
-.br 
+.br
 \fBend\fR
-.br 
+.br
 
 
 .SH "FILE SYNTAX"
-.PP 
+.PP
 The symbol '?' means that the item is optional.
-.PP 
+.PP
 The notation {a..b} means that the number of times the item can be present must
 be between 'a' and 'b', where '*' mean infinity. ('?' is equivalent to {0..1})
-.TP 
+.TP
 angle := <float>
-.TP 
+.TP
 2dpoint := <float> <float>
-.TP 
+.TP
 3dpoint := <float> <float> <float>
-.TP 
+.TP
 rgbColor := <float> <float> <float>
-.TP 
+.TP
 alpha := <float>
-.TP 
+.TP
 rgbaColor := rgbColor alpha? | <color_name> alpha?
-.TP 
-channel := "red" | "green" | "blue" | "alpha"
 
-.TP 
+.TP
 .B (BZWReader.cxx/parseNormalObject)
-.TP 
+.TP
 allObjects :=
-.br 
+.br
 	  "box"
-.br 
+.br
 	| "pyramid"
-.br 
+.br
 	| "base"
-.br 
+.br
 	| "link"
-.br 
+.br
 	| "teleporter"
-.br 
+.br
 	| "mesh"
-.br 
+.br
 	| "arc"
-.br 
+.br
 	| "meshbox"
-.br 
+.br
 	| "cone"
-.br 
+.br
 	| "meshpyr"
-.br 
+.br
 	| "sphere"
-.br 
+.br
 	| "tetra"
-.br 
+.br
 	| "text"
-.br 
+.br
 	| "weapon"
-.br 
+.br
 	| "zone"
-.br 
+.br
 	| "waterLevel"
-.br 
+.br
 	| "dynamicColor"
-.br 
+.br
 	| "textureMatrix"
-.br 
+.br
 	| "material"
-.br 
+.br
 	| "physics"
-.br 
+.br
 	| "transform"
-.br 
-.TP 
+.br
+.TP
 .B (BZWReader.cxx/BZWReader::readWorldStream)
-.br 
+.br
 Note: Blank lines and lines starting with # are discarded.
-.br 
-.TP 
+.br
+.TP
 worldStream :=
-.br 
+.br
 	  "end"
-.br 
+.br
 	| allObjects
-.br 
+.br
 	| "define" <group_name>
-.br 
+.br
 	| "enddef"
-.br 
+.br
 	| "group" <group_name>
-.br 
+.br
 	| "teleporter" <name>?
-.br 
+.br
 	| "mapinfo"
-.br 
+.br
 	| "options"
-.br 
+.br
 	| "include" <filename>
-.br 
+.br
 	| "world"
-.br 
-.TP 
+.br
+.TP
 .B (ParseMaterial.cxx/parseMaterials)
-.br 
-.TP 
+.br
+.TP
 material :=
-.br 
+.br
 	object
-.br 
+.br
 	| "matref" <material_name>
-.br 
+.br
 	| "resetmat"
-.br 
+.br
 	| "dyncol" <dynamic_color_name>
-.br 
+.br
 	| "ambient" rgbaColor
-.br 
+.br
 	| ("diffuse" | "color") rgbaColor
-.br 
+.br
 	| "specular" rgbaColor
-.br 
+.br
 	| "emission" rgbaColor
-.br 
+.br
 	| "shininess" <float>
-.br 
+.br
 	| "texture <texture_name>
-.br 
+.br
 	| "notextures"
-.br 
+.br
 	| "addtexture" <texture_name>
-.br 
+.br
 	| "texmat" <matrix_name>
-.br 
+.br
 	| "notexalpha"
-.br 
+.br
 	| "notexcolor"
-.br 
+.br
 	| "spheremap"
-.br 
+.br
 	| "noradar"
-.br 
+.br
 	| "noshadow"
-.br 
+.br
 	| "noculling"
-.br 
+.br
 	| "nosorting"
-.br 
+.br
 	| "nolighting"
-.br 
+.br
 	| "alphathresh" <value>
-.br 
+.br
 	| "groupalpha"
-.br 
+.br
 	| "occluder"
-.br 
+.br
 	| "shader" <shader_name>  # NOT IMPLEMENTED
-.br 
+.br
 	| "addshader" <shader_name>  # NOT IMPLEMENTED
-.br 
+.br
 	| "noshaders"  # NOT IMPLEMENTED
-.br 
-.TP 
+.br
+.TP
 .B (WorldFileObject:.cxx/WorldFileObject::read)
-.br 
-.TP 
+.br
+.TP
 object := "name" <name>
-.br 
-.TP 
+.br
+.TP
 .B (WorldFileLocation.cxx/readWorldFileLocation::read)
-.br 
-.TP 
+.br
+.TP
 location :=
-.br 
+.br
 	  ("pos" | "position") 3dpoint
-.br 
+.br
 	| "size" 3dpoint
-.br 
+.br
 	| ("rot" | "rotation") <float>
-.br 
+.br
 	| "shift" 3dpoint
-.br 
+.br
 	| "scale" 3dpoint
-.br 
+.br
 	| "shear" 3dpoint
-.br 
+.br
 	| "spin" angle 3dpoint
-.br 
+.br
 	| "xform" <transform_name>
-.br 
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (WorldFileObstacle.cxx/WorldFileObstacle::read)
-.br 
-.TP 
+.br
+.TP
 obstacle :=
-.br 
+.br
 	  "drivethrough"
-.br 
+.br
 	| "shootthrough"
-.br 
+.br
 	| "passable"
-.br 
+.br
 	| "ricochet"
-.br 
+.br
 	| location
-.br 
-.TP 
+.br
+.TP
 .B (CustomArc.cxx/CustomArc::read)
-.br 
-.TP 
+.br
+.TP
 meshbox :=
-.br 
+.br
 	  "divisions" <integer>
-.br 
+.br
 	| "angle" angle
-.br 
+.br
 	| "ratio" <float>
-.br 
+.br
 	| "texsize" <float> <float> <float> <float>
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "flatshading"
-.br 
+.br
 	| material
-.br 
+.br
 	| ("top" | "bottom" | "inside" | "outside" | "startside" | "endside") material
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 arc :=
-.br 
+.br
 	  "divisions" <integer>
-.br 
+.br
 	| "angle" angle
-.br 
+.br
 	| "ratio" <float>
-.br 
+.br
 	| "texsize" <float> <float> <float> <float>
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "flatshading"
-.br 
+.br
 	| material
-.br 
+.br
 	| ("top" | "bottom" | "inside" | "outside" | "startside" | "endside") material
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomBase.cxx/CustomBase::read)
-.br 
-.TP 
+.br
+.TP
 base :=
-.br 
+.br
 	  "color" <integer>
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomBox.cxx)
-.br 
-.TP 
+.br
+.TP
 box := obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomCone.cxx/CustomCone::read)
-.br 
-.TP 
+.br
+.TP
 meshpyr :=
-.br 
+.br
 	  "divisions" <integer>
-.br 
+.br
 	| "angle" <float>
-.br 
+.br
 	| "texsize" <float> <float>
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "flatshading"
-.br 
+.br
 	| material
-.br 
+.br
 	| ("edge" | "bottom" | "startside" | "endside") material
-.br 
+.br
 	| "flipz"
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 cone :=
-.br 
+.br
 	  "divisions" <integer>
-.br 
+.br
 	| "angle" <float>
-.br 
+.br
 	| "texsize" <float> <float>
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "flatshading"
-.br 
+.br
 	| material
-.br 
+.br
 	| ("edge" | "bottom" | "startside" | "endside") material
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomDynamicColor.cxx/CustomDynamicColor::read)
-.br 
-.TP 
+.br
+.TP
 dynamicColor :=
-.br 
+.br
 	  object
-.br 
-	| channel "limits" <float> <float>
-.br 
-	| channel "sinusoid" <float> <float> <float>
-.br 
-	| channel "clampup" <float> <float> <float>
-.br 
-	| channel "clampdown" <float> <float> <float>
-.br 
-	| channel "sequence" <float> <float> ("0" "1" "2"){1..*}
-.br 
-	| variable <bzdb_varname>
-.br 
-	| varTime <float>
-.br 
-	| varUseAlpha
-.br 
-.TP 
+.br
+	| "delay" <float>
+.br
+	| "ramp" <float> <rgbaColor>
+.br
+	| "level" <float> <rgbaColor>
+.br
+	| "varName" <bzdb_varname>
+.br
+	| "varTime" <float>
+.br
+	| "varNoAlpha"
+.br
+.TP
 .B (CustomGate.cxx/CustomGate::read)
-.br 
-.TP 
+.br
+.TP
 teleporter :=
-.br 
+.br
 	  "border" <float>
-.br 
-	| "horizontal"  # NOT IMPLEMENTED
-.br 
+.br
+	  "texsize" <float>
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomGroup.cxx/CustomGroup::read)
-.br 
-.TP 
+.br
+.TP
 group :=
-.br 
+.br
 	  "team" <integer>
-.br 
+.br
 	| "tint" rgbaColor
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "matref" <material_name>
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomLink.cxx/CustomLink::read)
-.br 
-.TP 
+.br
+.TP
 teleporter_spec :=
-.br 
+.br
 	  <integer>
-.br 
+.br
 	| <teleporter_name_with_wilcards> (":f" | ":b")?
-.br 
-.TP 
+.br
+.TP
 link :=
-.br 
-	  "from" <teleporter_spec>
-.br 
-	| "to" <teleporter_spec>
-.br 
+.br
+	| ("src" | "from") <linkSrc_spec>
+.br
+	| ("dst" | "to")   <linkSrc_spec>
+.br
+	| "sameSpeed"
+.br
+	| "shotSameSpeed"
+.br
+	| "tankSameSpeed"
+.br
+	| "srcPosScale" 3dpoint
+.br
+	| "shotSrcPosScale" 3dpoint
+.br
+	| "tankSrcPosScale" 3dpoint
+.br
+	| "srcVelScale" 3dpoint
+.br
+	| "shotSrcVelScale" 3dpoint
+.br
+	| "tankSrcVelScale" 3dpoint
+.br
+	| "dstVel" 3dpoint
+.br
+	| "shotDstVel" 3dpoint
+.br
+	| "tankDstVel" 3dpoint
+.br
+	| "tankAngle" <float>
+.br
+	| "tankAngVel" <float>
+.br
+	| "tankAngleOffset" <float>
+.br
+	| "tankAngVelOffset" <float>
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawCmd)
-.br 
-.TP 
+.br
+.TP
 drawInfoCmd :=
-.br 
+.br
 	  "points"    <integer>+
-.br 
+.br
 	| "lines"     <integer> <integer> <integer>{2}*
-.br 
+.br
 	| "lineloop"  <integer> <integer>+
-.br 
+.br
 	| "linestrip" <integer> <integer> <integer{2}*
-.br 
+.br
 	| "tris"      <integer> <integer> <integer> <integer>{3}*
-.br 
+.br
 	| "tristrip"  <integer> <integer> <integer>+
-.br 
+.br
 	| "trifan"    <integer> <integer> <integer>+
-.br 
+.br
 	| "quads"     <integer> <integer> <integer> <integer> <integer>{4}*
-.br 
+.br
 	| "quadstrip" <integer> <integer> <integer>{2}+
-.br 
+.br
 	| "polygon"   <integer> <integer> <integer> <integer>{3}*
-.br 
-.TP 
+.br
+.TP
 .B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawSet)
-.br 
-.TP 
+.br
+.TP
 drawInfoSet :=
-.br 
+.br
 	  "matref" <material_name>
-.br 
+.br
 	| "dlist"
-.br 
+.br
 	| "sphere" 3dpoint <float>
-.br 
+.br
 	| drawInfoCmd
-.br 
-.TP 
+.br
+.TP
 .B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawLod)
-.br 
-.TP 
+.br
+.TP
 drawInfoLod :=
-.br 
+.br
 	  "lod"
-.br 
+.br
 	| "lengthPerPixel" <float>
-.br 
+.br
 	| drawInfoSet
-.br 
-.TP 
+.br
+.TP
 .B (MeshDrawInfo.cxx/MeshDrawInfo::parse)
-.br 
-.TP 
+.br
+.TP
 drawInfo :=
-.br 
+.br
 	  "drawInfo"
-.br 
+.br
 	| "dlist"
-.br 
-	| "decorative" 
-.br 
+.br
+	| "decorative"
+.br
 	| "angvel" <float>
-.br 
+.br
 	| "extents" 3dpoint 3dpoint
-.br 
+.br
 	| "sphere" 3dpoint <float>
-.br 
+.br
 	| "corner" <integer> <integer> <integer>
-.br 
+.br
 	| "vertex" 3dpoint
-.br 
+.br
 	| "normal" 3dpoint
-.br 
+.br
 	| "texcoord" <float> <float>
-.br 
+.br
 	| drawInfoLod
-.br 
-.TP 
+.br
+.TP
 .B (CustomMesh.cxx/CustomMesh::read)
-.br 
-.TP 
+.br
+.TP
 mesh :=
-.br 
+.br
 	  "face"
-.br 
+.br
 	| face
-.br 
+.br
 	| "endface"
-.br 
+.br
 	| "inside" 3dpoint
-.br 
+.br
 	| "outside" 3dpoint
-.br 
+.br
 	| "vertex" 3dpoint
-.br 
+.br
 	| "normal" 3dpoint
-.br 
+.br
 	| "texcoord" <float> <float>
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "noclusters"
-.br 
+.br
 	| drawInfo
-.br 
+.br
 	| material
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomMeshFace.cxx/CustomMeshFace::read)
-.br 
-.TP 
+.br
+.TP
 face :=
-.br 
+.br
 	  "vertices" <integer>{3..*}
-.br 
+.br
 	| "normals" <integer>{3..*}
-.br 
+.br
 	| "texcoords" <integer>{3..*}
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "noclusters"
-.br 
+.br
 	| "drivethrough"
-.br 
+.br
 	| "shootthrough"
-.br 
+.br
 	| "passable"
-.br 
+.br
 	| "ricochet"
-.br 
+.br
+	| "linkName" <link_name>
+.br
+	| "linkSrcNoGlow"
+.br
+	| "linkSrcNoRadar"
+.br
+	| "linkSrcNoSound"
+.br
+	| "linkSrcNoEffect"
+.br
+	| "linkSrcCenter" 3dpoint
+.br
+	| "linkSrcSdir" 3dpoint
+.br
+	| "linkSrcTdir" 3dpoint
+.br
+	| "linkSrcPdir" 3dpoint
+.br
+	| "linkSrcSscale" <float>
+.br
+	| "linkSrcTscale" <float>
+.br
+	| "linkSrcPscale" <float>
+.br
+	| "linkDstCenter" 3dpoint
+.br
+	| "linkDstSdir" 3dpoint
+.br
+	| "linkDstTdir" 3dpoint
+.br
+	| "linkDstPdir" 3dpoint
+.br
+	| "linkDstSscale" <float>
+.br
+	| "linkDstTscale" <float>
+.br
+	| "linkDstPscale" <float>
+.br
 	| material
-.br 
-.TP 
+.br
+.TP
 .B (CustomMeshTransform.cxx/CustomMeshTransform::read)
-.br 
-.TP 
+.br
+.TP
 transform :=
-.br 
+.br
 	  "shift" 3dpoint
-.br 
+.br
 	| "scale" 3dpoint
-.br 
+.br
 	| "shear" 3dpoint
-.br 
+.br
 	| "spin" angle 3dpoint
-.br 
+.br
 	| "xform" <transform_name>
-.br 
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (CustomPhysicsDriver.cxx/CustomPhysicsDriver::read)
-.br 
-.TP 
+.br
+.TP
 physics :=
-.br 
+.br
 	  "linear" 3dpoint
-.br 
+.br
 	| "angular" <float> 2dpoint
-.br 
+.br
 	| "radial" <float> 2dpoint  # NOT IMPLEMENTED
-.br 
+.br
 	| "slide" <float>
-.br 
+.br
 	| "death" <string>
-.br 
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (CustomPyramid.cxx/CustomPyramid::read)
-.br 
-.TP 
+.br
+.TP
 pyramid :=
-.br 
+.br
 	  "flipz"
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomSphere.cxx/CustomSphere::read)
-.br 
-.TP 
+.br
+.TP
 sphere :=
-.br 
+.br
 	  "divisions" <integer>
-.br 
+.br
 	| "radius" <float>
-.br 
+.br
 	| ("hemi" | "hemisphere")
-.br 
+.br
 	| "texsize" <float> <float>
-.br 
+.br
 	| "phydrv" <physics_driver_name>
-.br 
+.br
 	| "smoothbounce"
-.br 
+.br
 	| "flatshading"
-.br 
+.br
 	| material
-.br 
+.br
 	| ("edge" | "bottom") material
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomTetra.cxx/CustomTetra::read)
-.br 
+.br
 Note: At most 4 vertices can be specified.
-.br 
+.br
 Note2: material will apply to all vertices when specified first, otherwise like
 "normals" and "texcoords" they apply to the previous vertex.
-.br 
-.TP 
+.br
+.TP
 tetra :=
-.br 
+.br
 	  "vertex" 3dpoint
-.br 
+.br
 	| "normals" 3dpoint
-.br 
+.br
 	| "texcoords" 2dpoint
-.br 
+.br
 	| material
-.br 
+.br
 	| obstacle
-.br 
-.TP 
+.br
+.TP
 .B (CustomTextureMatrix.cxx/CustomTextureMatrix::read)
-.br 
-.TP 
+.br
+.TP
 textureMatrix :=
-.br 
+.br
 	  "fixedshift" 2dpoint
-.br 
+.br
 	| "fixedscale" 2dpoint
-.br 
+.br
 	| "fixedspin" angle
-.br 
+.br
 	| "fixedcenter" 2dpoint
-.br 
+.br
 	| "shift" <float> <float>
-.br 
+.br
 	| "spin" <float>
-.br 
+.br
 	| "scale" <float> <float> <float> <float>
-.br 
+.br
 	| "center" 2dpoint
-.br 
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (CustomWaterLevel.cxx/CustomWaterLevel::read)
-.br 
-.TP 
+.br
+.TP
 waterLevel :=
-.br 
+.br
 	  "height" <float>
-.br 
+.br
 	| material
-.br 
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (CustomWeapon.cxx/CustomWeapon::read)
-.br 
-.TP 
+.br
+.TP
 weapon :=
-.br 
+.br
 	  "initdelay" <float>
-.br 
+.br
 	| "delay" <float>{1..*}
-.br 
+.br
 	| "type" <flag_short_name>
-.br 
+.br
 	| location
-.br 
-.TP 
+.br
+.TP
 .B (CustomWorld.cxx/CustomWorld::read)
-.br 
-.TP 
+.br
+.TP
 world :=
-.br 
+.br
 	  "size" <float>
-.br 
+.br
 	| "flagHeight" <float>
-.br 
+.br
 	| object
-.br 
-.TP 
+.br
+.TP
 .B (CustomWorldText.cxx/CustomWorldText::read)
-.br 
-.TP 
+.br
+.TP
 text :=
-.br 
+.br
 	  "data" <string>
-.br 
+.br
 	| "bzdb"
-.br 
+.br
 	| "font" <string>
-.br 
+.br
 	| "fontsize" <float>
-.br 
+.br
 	| "justify" <float>
-.br 
+.br
 	| "linespace" <float>
-.br 
+.br
 	| "fixedwidth" <float>
-.br 
+.br
 	| "polyoffset" <float> <float>
-.br 
+.br
 	| "billboard"
-.br 
+.br
 	| "lengthPerPixel" <float>
-.br 
+.br
 	| material
-.br 
+.br
 	| location
-.br 
-.TP 
+.br
+.TP
 .B (CustomZone.cxx/CustomZone::read)
-.br 
-.TP 
+.br
+.TP
 zone :=
-.br 
+.br
 	  "team" <integer>{1..*}
-.br 
+.br
 	  "flag" ("good" | "bad" | <flag_short_name>){1..*}
-.br 
+.br
 	| "safety" <integer>{1..*}
-.br 
+.br
 	| "zoneflag" <flag_short_name> <integer>?
-.br 
+.br
 	| location
-.br 
+.br
 
 .SH "SEE ALSO"
 bzflag(6), bzadmin(6), bzfs(6)

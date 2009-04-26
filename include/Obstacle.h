@@ -43,7 +43,7 @@ class MeshTransform;
     All these functions have to be implemented in concrete subclasses.
 */
 
-enum ObstacleTypes {
+enum ObstacleType {
   wallType = 0,
   boxType,
   pyrType,
@@ -53,16 +53,21 @@ enum ObstacleTypes {
   arcType,
   coneType,
   sphereType,
-  ObstacleTypeCount
+
+  ObstacleTypeCount,
+
+  faceType // a mesh sub-object
 };
 
+
 #define _PASSABLE_MASK     0
-#define _INTANGIBLE        0x01
-#define _RED_PASSABLE      0x02
-#define _GREEN_PASSABLE    0x04
-#define _BLUE_PASSABLE     0x08
-#define _PURPLE_PASSABLE   0x10
-#define _ROGUE_PASSABLE    0x20
+#define _ROGUE_PASSABLE    (1 << 0)
+#define _RED_PASSABLE      (1 << 1)
+#define _GREEN_PASSABLE    (1 << 2)
+#define _BLUE_PASSABLE     (1 << 3)
+#define _PURPLE_PASSABLE   (1 << 4)
+#define _INTANGIBLE        (1 << 7)
+
 
 class Obstacle {
   friend class ObstacleModifier;
@@ -96,10 +101,11 @@ class Obstacle {
 
   /** This function returns a string describing what kind of obstacle this is.
    */
-  virtual const char* getType() const = 0;
+  virtual const char*  getType() const = 0;
+  virtual ObstacleType getTypeID() const = 0;
 
-  const char* getName() const { return name.c_str(); }
-  void setName(const char* n) { if (n) { name = n; } else { name = ""; } }
+  const std::string& getName() const { return name; }
+  void setName(const std::string& n) { name = n; }
 
   /** This function calculates extents from pos, size, and rotation */
   void setExtents();
@@ -146,12 +152,13 @@ class Obstacle {
   /** This function returns the obstacle's full height. */
   float getHeight() const;
 
-  virtual int getTypeID() const = 0;
 
   unsigned short getListID() const { return listID;}
   void setListID(unsigned short id) { listID = id; }
 
   unsigned int getGUID() const { return (getTypeID() << 16) | getListID(); }
+
+  virtual int getBaseTeam() const { return -1; }
 
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is
@@ -277,20 +284,20 @@ class Obstacle {
   /** This function checks if a moving horizontal rectangle will hit a
       box-shaped obstacle, and if it does, computes the obstacle's normal
       at the hitpoint.
-      @param pos1	The original position of the rectangle
+      @param pos1        The original position of the rectangle
       @param azimuth1    The original rotation of the rectangle
-      @param pos2	The final position of the rectangle
+      @param pos2        The final position of the rectangle
       @param azimuth2    The final rotation of the rectangle
       @param halfWidth   Half the width of the rectangle
       @param halfBreadth Half the breadth of the rectangle
-      @param oPos	The position of the obstacle
+      @param oPos        The position of the obstacle
       @param oAzimuth    The rotation of the obstacle
       @param oWidth      Half the width of the obstacle
       @param oBreadth    Half the breadth of the obstacle
       @param oHeight     The height of the obstacle
       @param normal      The surface normal of the obstacle at the hitpoint
-			 will be stored here
-      @returns	   The time of the hit, where 0 is the time when the
+                         will be stored here
+      @returns           The time of the hit, where 0 is the time when the
 			 rectangle is at @c pos1 and 1 is the time when it's
 			 at @c pos2, and -1 means "no hit"
   */
@@ -302,7 +309,7 @@ class Obstacle {
 		     fvec3& normal) const;
 
   protected:
-    static int getObjCounter();
+    static int  getObjCounter();
     static void incObjCounter();
 
   protected:
@@ -325,6 +332,7 @@ class Obstacle {
   private:
     static int objCounter;
 };
+
 
 //
 // Obstacle
@@ -365,10 +373,12 @@ inline float Obstacle::getHeight() const
   return size.z;
 }
 
+
 inline void Obstacle::get3DNormal(const fvec3& p, fvec3& n) const
 {
   getNormal(p, n);
 }
+
 
 inline unsigned char Obstacle::isDriveThrough() const
 {
@@ -389,6 +399,7 @@ inline bool Obstacle::canRicochet() const
 {
   return ricochet;
 }
+
 
 inline void Obstacle::setSource(char _source)
 {
@@ -416,6 +427,7 @@ inline bool Obstacle::isFromContainer() const
   return ((source & ContainerSource) != 0);
 }
 
+
 inline int Obstacle::getObjCounter()
 {
   return objCounter;
@@ -429,7 +441,9 @@ inline void Obstacle::resetObjCounter()
   objCounter = 0;
 }
 
+
 #endif // BZF_OBSTACLE_H
+
 
 // Local Variables: ***
 // mode: C++ ***

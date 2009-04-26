@@ -51,6 +51,7 @@
 #include "ServerList.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
+#include "TimeKeeper.h"
 #include "WordFilter.h"
 #include "vectors.h"
 #include "version.h"
@@ -76,6 +77,7 @@
 #include "RCRobotPlayer.h"
 #include "World.h"
 #include "WorldBuilder.h"
+#include "WorldPlayer.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
 #include "Logger.h"
@@ -204,7 +206,7 @@ void			addShotExplosion(const fvec3&)
 {
 }
 
-void			addShotPuff(const fvec3&, float, float)
+void			addShotPuff(const fvec3&, const fvec3&)
 {
 }
 
@@ -2058,11 +2060,6 @@ static void makeObstacleList()
   for (i = 0; i < numPyramids; i++) {
     addObstacle(obstacleList, *pyramids[i]);
   }
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  const int numTeleporters = teleporters.size();
-  for (i = 0; i < numTeleporters; i++) {
-    addObstacle(obstacleList, *teleporters[i]);
-  }
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const int numMeshes = meshes.size();
   for (i = 0; i < numMeshes; i++) {
@@ -2363,7 +2360,6 @@ static void		sendObsList()
   const int numBoxes = boxes.size();
   const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
   const int numPyramids = pyramids.size();
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
   const int numTeleporters = teleporters.size();
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   const int numMeshes = meshes.size();

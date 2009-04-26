@@ -38,7 +38,7 @@ class MeshObstacle : public Obstacle {
 		 const std::vector<fvec3>& vertices,
 		 const std::vector<fvec3>& normals,
 		 const std::vector<fvec2>& texcoords,
-		 int faceCount, bool noclusters, bool bounce,
+		 int faceCount, bool noclusters, bool smoothBounce,
 		 unsigned char drive, unsigned char shoot, bool ricochet);
 
     bool addFace(const std::vector<int>& vertices,
@@ -47,7 +47,7 @@ class MeshObstacle : public Obstacle {
                  const BzMaterial* bzMaterial, int physics,
                  bool noclusters, bool bounce,
                  unsigned char drive, unsigned char shoot, bool ricochet,
-                 bool triangulate);
+                 bool triangulate, const MeshFace::SpecialData* sd = NULL);
 
     ~MeshObstacle();
 
@@ -56,9 +56,6 @@ class MeshObstacle : public Obstacle {
     Obstacle* copyWithTransform(const MeshTransform&) const;
     void copyFace(int face, MeshObstacle* mesh) const;
 
-    void setName(const std::string& name);
-    const std::string&	getName() const;
-
     enum CheckType {
       CheckInside =  0,
       CheckOutside = 1,
@@ -66,8 +63,11 @@ class MeshObstacle : public Obstacle {
       OutsidePartiy = 3
     };
 
-    const char* getType() const;
+    const char*  getType() const;
+    ObstacleType getTypeID() const { return meshType; }
+
     static const char* getClassName(); // const
+
     bool isValid() const;
 
     float intersect(const Ray&) const;
@@ -92,20 +92,32 @@ class MeshObstacle : public Obstacle {
     bool containsPoint(const fvec3& point) const;
     bool containsPointNoOctree(const fvec3& point) const;
 
-    const char *getCheckTypes() const;
-    const fvec3 *getCheckPoints() const;
-    const fvec3 *getVertices() const;
-    const fvec3 *getNormals() const;
-    const fvec2 *getTexcoords() const;
-    int getVertexCount() const;
-    int getNormalCount() const;
-    int getTexcoordCount() const;
-    int getFaceCount() const;
-    const MeshFace* getFace(int face) const;
-    bool useSmoothBounce() const;
-    bool noClusters() const;
+    inline const char*  getCheckTypes()      const { return checkTypes;      }
+    inline const fvec3* getCheckPoints()     const { return checkPoints;     }
+    inline const fvec3* getVertices()        const { return vertices;        }
+    inline const fvec3* getNormals()         const { return normals;         }
+    inline const fvec2* getTexcoords()       const { return texcoords;       }
+    inline int          getVertexCount()     const { return vertexCount;     }
+    inline int          getNormalCount()     const { return normalCount;     }
+    inline int          getTexcoordCount()   const { return texcoordCount;   }
+    inline int          getFaceCount()       const { return faceCount;       }
+    inline       MeshFace* getFace(int f)          { return faces[f];        }
+    inline const MeshFace* getFace(int f)    const { return faces[f];        }
+    inline bool         useSmoothBounce()    const { return smoothBounce;    }
+    inline bool         noClusters()         const { return noclusters;      }
+    inline bool         getHasSpecialFaces() const { return hasSpecialFaces; }
+    inline const MeshDrawInfo* getDrawInfo() const { return drawInfo;        }
 
-    const MeshDrawInfo* getDrawInfo() const;
+    inline bool isValidVertex(int index) {
+      return ((index >= 0) && (index < vertexCount));
+    }
+    inline bool isValidNormal(int index) {
+      return ((index >= 0) && (index < normalCount));
+    }
+    inline bool isValidTexcoord(int index) {
+      return (isValidVertex(index) && (texcoords != NULL));
+    }
+
     void setDrawInfo(MeshDrawInfo*);
 
     int packSize() const;
@@ -115,7 +127,6 @@ class MeshObstacle : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
 
-    virtual int getTypeID() const {return meshType;}
 
   private:
     void makeFacePointers(const std::vector<int>& _vertices,
@@ -126,16 +137,14 @@ class MeshObstacle : public Obstacle {
   private:
     static const char* typeName;
 
-    std::string name;
-
     int checkCount;
     char* checkTypes;
     fvec3* checkPoints;
     int vertexCount;
-    fvec3* vertices;
     int normalCount;
-    fvec3* normals;
     int texcoordCount;
+    fvec3* vertices;
+    fvec3* normals;
     fvec2* texcoords;
     int faceCount, faceSize;
     MeshFace** faces;
@@ -144,85 +153,9 @@ class MeshObstacle : public Obstacle {
     bool inverted; // used during building. can be ditched if
 		   // edge tables are setup with bi-directional
 		   // ray-vs-face tests and parity counts.
-
+    bool hasSpecialFaces;
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
 };
-
-
-inline const char* MeshObstacle::getCheckTypes() const
-{
-  return checkTypes;
-}
-
-inline const fvec3* MeshObstacle::getCheckPoints() const
-{
-  return checkPoints;
-}
-
-inline const fvec3* MeshObstacle::getVertices() const
-{
-  return vertices;
-}
-
-inline const fvec3* MeshObstacle::getNormals() const
-{
-  return normals;
-}
-
-inline const fvec2* MeshObstacle::getTexcoords() const
-{
-  return texcoords;
-}
-
-inline int MeshObstacle::getVertexCount() const
-{
-  return vertexCount;
-}
-
-inline int MeshObstacle::getNormalCount() const
-{
-  return normalCount;
-}
-
-inline int MeshObstacle::getTexcoordCount() const
-{
-  return texcoordCount;
-}
-
-inline int MeshObstacle::getFaceCount() const
-{
-  return faceCount;
-}
-
-inline const MeshFace* MeshObstacle::getFace(int face) const
-{
-  return faces[face];
-}
-
-inline bool MeshObstacle::useSmoothBounce() const
-{
-  return smoothBounce;
-}
-
-inline bool MeshObstacle::noClusters() const
-{
-  return noclusters;
-}
-
-inline const MeshDrawInfo* MeshObstacle::getDrawInfo() const
-{
-  return drawInfo;
-}
-
-inline const std::string& MeshObstacle::getName() const
-{
-  return name;
-}
-
-inline void MeshObstacle::setName(const std::string& str)
-{
-  name = str;
-}
 
 
 #endif // BZF_MESH_OBSTACLE_H

@@ -26,7 +26,6 @@
 #include "Ray.h"
 #include "Extents.h"
 #include "Obstacle.h"
-#include "Teleporter.h"
 #include "SceneDatabase.h"
 #include "vectors.h"
 
@@ -78,10 +77,9 @@ class ShotStrategy {
     // points to the part of the message after the ShotUpdate portion.
     virtual void readUpdate(void* msg);
 
-    static bool              getGround(const Ray&, float min, float& t);
-    static const Obstacle*   getFirstBuilding(const Ray&, float min, float& t);
-    static const Teleporter* getFirstTeleporter(const Ray&, float min, float& t,
-                                                int& face);
+    static bool            getGround(const Ray&, float min, float& t);
+    static const Obstacle* getFirstBuilding(const Ray&, float min, float& t);
+    static const Obstacle* getFirstLinkSrc(const Ray&, float min, float& t);
 
     static void		reflect(fvec3& v, const fvec3& n); // const
 

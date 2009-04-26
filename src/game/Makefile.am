@@ -23,7 +23,9 @@ libGame_la_SOURCES =			\
 	GameTime.cxx			\
 	Intersect.cxx			\
 	LagInfo.cxx			\
+	LinkDef.cxx			\
 	LinkManager.cxx			\
+	LinkPhysics.cxx			\
 	MapInfo.cxx			\
 	MsgStrings.cxx			\
 	MeshTransform.cxx		\
@@ -32,7 +34,6 @@ libGame_la_SOURCES =			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
 	PlayerState.cxx			\
-	Ray.cxx				\
 	ServerItem.cxx			\
 	ServerList.cxx			\
 	ServerListCache.cxx		\

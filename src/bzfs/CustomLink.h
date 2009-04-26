@@ -13,14 +13,18 @@
 #ifndef __CUSTOMLINK_H__
 #define __CUSTOMLINK_H__
 
-/* interface header */
+// interface header
 #include "WorldFileObject.h"
 
-/* system interface headers */
+// system headers
 #include <iostream>
 #include <string>
 
-/* local interface headers */
+// common headers
+#include "ObstacleMgr.h"
+#include "LinkDef.h"
+
+// local headers
 #include "WorldInfo.h"
 
 
@@ -28,12 +32,10 @@ class CustomLink : public WorldFileObject {
   public:
     CustomLink();
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
-    std::string from;
-    std::string to;
+    LinkDef linkDef;
 };
 
 #endif  /* __CUSTOMLINK_H__ */

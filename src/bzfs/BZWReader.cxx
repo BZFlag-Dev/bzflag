@@ -53,6 +53,8 @@ using std::vector;
 // common headers
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
+#include "MeshObstacle.h"
+#include "MeshFace.h"
 #include "TextUtils.h"
 #include "StateDatabase.h"
 
@@ -125,28 +127,40 @@ void BZWReader::finalization(char *data, unsigned int length, bool good)
 }
 
 
-void BZWReader::readToken(char *buffer, int n)
+void BZWReader::readToken(char *buffer, int bufSize)
 {
   int c = -1;
 
-  // skip whitespace
-  while (input->good() && (c = input->get()) != -1 && isspace(c) && c != '\n')
-    ;
+  // skip whitespace (but not newlines)
+  while (input->good()) {
+    c = input->get();
+    if ((c == -1) || !isspace(c) || (c == '\n')) {
+      break;
+    }
+  }
 
-  // read up to whitespace or n - 1 characters into buffer
+  // read up to whitespace or (bufSize - 1) characters into buffer
   int i = 0;
-  if (c != -1 && c != '\n') {
-    buffer[i++] = c;
-    while (input->good() && i < n - 1 && (c = input->get()) != -1 && !isspace(c))
-      buffer[i++] = (char)c;
+  if ((c != -1) && (c != '\n')) {
+    buffer[i] = (char)c;
+    i++;
+    while (input->good() && (i < (bufSize - 1))) {
+      c = input->get();
+      if ((c == -1) || isspace(c)) {
+        break;
+      }
+      buffer[i] = (char)c;
+      i++;
+    }
   }
 
   // terminate string
   buffer[i] = 0;
 
   // put back last character we didn't use
-  if (c != -1 && isspace(c))
+  if ((c != -1) && isspace(c)) {
     input->putback(c);
+  }
 }
 
 
@@ -299,8 +313,8 @@ bool BZWReader::readWorldStream(vector<WorldFileObject*>& wlist,
   char buffer[4096];
   WorldFileObject* object = NULL;
   WorldFileObject* newObject = NULL;
-  GroupDefinition* const worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
-  GroupDefinition* const startDef = groupDef;
+  GroupDefinition* worldDef = (GroupDefinition*)&OBSTACLEMGR.getWorld();
+  GroupDefinition* startDef = groupDef;
   bool error = false;
 
   while (!input->eof() && !input->fail() && input->good()) {
@@ -498,7 +512,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
   // read file
   bool gotWorld = false;
   vector<WorldFileObject*> list;
-  GroupDefinition* worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
+  GroupDefinition* worldDef = (GroupDefinition*)&OBSTACLEMGR.getWorld();
   if (!readWorldStream(list, worldDef, gotWorld)) {
     emptyWorldFileObjectList(list);
     errorHandler->fatalError("world file failed to load.", 0);
@@ -523,17 +537,37 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
   // make local bases
   unsigned int i;
+
+  // BaseBuilding bases
   const ObstacleList& baseList = OBSTACLEMGR.getBases();
   for (i = 0; i < baseList.size(); i++) {
     const BaseBuilding* base = (const BaseBuilding*) baseList[i];
-    TeamColor color = (TeamColor)base->getTeam();
+    TeamColor color = (TeamColor)base->getBaseTeam();
     if (bases.find(color) == bases.end()) {
       bases[color] = TeamBases((TeamColor)color);
     }
-    bases[color].addBase(base->getPosition(),
-                         base->getSize(),
-                         base->getRotation());
+    bases[color].addBase(base);
   }
+  // MeshFace bases
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  for (i = 0; i < meshes.size(); i++) {
+    const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
+    if (!mesh->getHasSpecialFaces()) {
+      continue;
+    }
+    const int faceCount = mesh->getFaceCount();
+    for (int f = 0; f < faceCount; f++) {
+      const MeshFace* face = mesh->getFace(f);
+      if (face->isBaseFace()) {
+        TeamColor color = (TeamColor)face->getBaseTeam();
+        if (bases.find(color) == bases.end()) {
+          bases[color] = TeamBases((TeamColor)color);
+        }
+        bases[color].addBase(face);
+      }
+    }
+  }
+
 
   // add objects
   const unsigned int n = list.size();

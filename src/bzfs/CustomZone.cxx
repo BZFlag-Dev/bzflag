@@ -93,7 +93,8 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	    }
 	  }
 	}
-      } else if (flag == "bad") {
+      }
+      else if (flag == "bad") {
 	FlagSet &fs = Flag::getBadFlags();
 	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	  FlagType *f = *it;
@@ -104,15 +105,16 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	    }
 	  }
 	}
-      } else {
+      }
+      else {
 	FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
 	if (f == Flags::Null) {
-	  logDebugMessage(1,"WARNING: bad flag type: %s\n", flag.c_str());
+	  logDebugMessage(1, "WARNING: bad flag type: %s\n", flag.c_str());
 	  input.putback('\n');
 	  return false;
 	}
 	if (f->endurance == FlagNormal) {
-	  logDebugMessage(1,"WARNING: you probably want a safety: %s\n", flag.c_str());
+	  logDebugMessage(1, "WARNING: you probably want a safety: %s\n", flag.c_str());
 	  input.putback('\n');
 	  return false;
 	}
@@ -127,7 +129,8 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     if (qualifiers.size() == 0) {
       return false;
     }
-  } else if (strcasecmp(cmd, "zoneflag") == 0) {
+  }
+  else if (strcasecmp(cmd, "zoneflag") == 0) {
     std::string args, flag;
     std::getline(input, args);
     std::istringstream parms(args);
@@ -148,7 +151,8 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	  addZoneFlagCount(f, count);
 	}
       }
-    } else if (flag == "bad") {
+    }
+    else if (flag == "bad") {
       FlagSet &fs = Flag::getBadFlags();
       for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 	FlagType *f = *it;
@@ -156,19 +160,21 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	  addZoneFlagCount(f, count);
 	}
       }
-    } else {
+    }
+    else {
       FlagType *f = Flag::getDescFromAbbreviation(flag.c_str());
       if (f != Flags::Null) {
 	addZoneFlagCount(f, count);
       } else {
-	logDebugMessage(1,"WARNING: bad zoneflag type: %s\n", flag.c_str());
+	logDebugMessage(1, "WARNING: bad zoneflag type: %s\n", flag.c_str());
 	input.putback('\n');
 	return false;
       }
     }
     input.putback('\n');
-  } else if ((strcasecmp(cmd, "team") == 0) ||
-	     (strcasecmp(cmd, "safety") == 0)) {
+  }
+  else if ((strcasecmp(cmd, "team") == 0) ||
+           (strcasecmp(cmd, "safety") == 0)) {
     std::string args;
     std::getline(input, args);
     std::istringstream  parms(args);
@@ -179,6 +185,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams)) {
 	input.putback('\n');
+	logDebugMessage(1, "WARNING: bad team number: %i\n", color);
 	return false;
       }
       std::string qual;
@@ -195,7 +202,8 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     if (qualifiers.size() == 0) {
       return false;
     }
-  } else if (!WorldFileLocation::read(cmd, input)) {
+  }
+  else if (!WorldFileLocation::read(cmd, input)) {
     return false;
   }
 

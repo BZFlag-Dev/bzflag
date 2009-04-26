@@ -150,7 +150,8 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     arc = new ArcObstacle(transform, pos, size, rotation, angle, ratio,
 			  texsize, useNormals, divisions, mats, phydrv,
 			  smoothBounce, driveThrough, shootThrough, ricochet);
-  } else {
+  }
+  else {
     const fvec3 zAxis(0.0f, 0.0f, 1.0f);
     const fvec3 origin(0.0f, 0.0f, 0.0f);
     MeshTransform xform;

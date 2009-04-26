@@ -22,12 +22,15 @@
 // common headers
 #include "ObstacleMgr.h"
 #include "BzMaterial.h"
+#include "WorldText.h"
 
 // obstacle headers
 #include "Obstacle.h"
 #include "BaseBuilding.h"
 #include "MeshObstacle.h"
 
+
+//============================================================================//
 
 void ObstacleModifier::init()
 {
@@ -109,7 +112,8 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
       } else {
 	material = grpinst.material;
       }
-    } else {
+    }
+    else {
       matMap = obsMod.matMap;
       MaterialMap::const_iterator it;
       for (it = grpinst.matMap.begin(); it != grpinst.matMap.end(); it++) {
@@ -145,6 +149,8 @@ ObstacleModifier::~ObstacleModifier()
 }
 
 
+//============================================================================//
+
 static const BzMaterial* getTintedMaterial(const fvec4& tint,
 					   const BzMaterial* mat)
 {
@@ -161,19 +167,31 @@ static const BzMaterial* getTintedMaterial(const fvec4& tint,
 void ObstacleModifier::execute(Obstacle* obstacle) const
 {
   if (modifyTeam) {
-    if (obstacle->getType() == BaseBuilding::getClassName()) {
+    if (obstacle->getTypeID() == baseType) {
       BaseBuilding* base = (BaseBuilding*) obstacle;
       base->team = team;
     }
+    else if (obstacle->getTypeID() == meshType) {
+      const MeshObstacle* mesh = (MeshObstacle*) obstacle;
+      for (int i = 0; i < mesh->getFaceCount(); i++) {
+	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	// only modify faces that already have a team
+	if (face->isBaseFace()) {
+	  face->specialData->baseTeam = team;
+	}
+      }
+    }
   }
+
   if (modifyColor || modifyMaterial || (matMap.size() > 0)) {
-    if (obstacle->getType() == MeshObstacle::getClassName()) {
+    if (obstacle->getTypeID() == meshType) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
 	if (modifyMaterial) {
 	  face->bzMaterial = material;
-	} else if (matMap.size() > 0) {
+	}
+	else if (matMap.size() > 0) {
 	  MaterialMap::const_iterator it = matMap.find(face->bzMaterial);
 	  if (it != matMap.end()) {
 	    face->bzMaterial = it->second;
@@ -185,8 +203,9 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       }
     }
   }
+
   if (modifyPhysicsDriver) {
-    if (obstacle->getType() == MeshObstacle::getClassName()) {
+    if (obstacle->getTypeID() == meshType) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
@@ -197,9 +216,10 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       }
     }
   }
+
   if (driveThrough) {
     obstacle->driveThrough = 0xFF;
-    if (obstacle->getType() == MeshObstacle::getClassName()) {
+    if (obstacle->getTypeID() == meshType) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
@@ -207,9 +227,10 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       }
     }
   }
+
   if (shootThrough) {
     obstacle->shootThrough = 0xFF;
-    if (obstacle->getType() == MeshObstacle::getClassName()) {
+    if (obstacle->getTypeID() == meshType) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
@@ -217,9 +238,10 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       }
     }
   }
+
   if (ricochet) {
     obstacle->ricochet = true;
-    if (obstacle->getType() == MeshObstacle::getClassName()) {
+    if (obstacle->getTypeID() == meshType) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
@@ -231,6 +253,25 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
   return;
 }
 
+
+void ObstacleModifier::execute(WorldText* text) const
+{
+  if (modifyMaterial) {
+    text->bzMaterial = material;
+  }
+  else if (matMap.size() > 0) {
+    MaterialMap::const_iterator it = matMap.find(text->bzMaterial);
+    if (it != matMap.end()) {
+      text->bzMaterial = it->second;
+    }
+  }
+  if (modifyColor) {
+    text->bzMaterial = getTintedMaterial(tint, text->bzMaterial);
+  }
+}
+
+
+//============================================================================//
 
 void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
 				      MaterialMap& materialMap) const
@@ -260,6 +301,9 @@ void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
   }
   return;
 }
+
+
+//============================================================================//
 
 
 // Local Variables: ***

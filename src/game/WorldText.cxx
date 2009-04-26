@@ -27,93 +27,8 @@
 #include "CacheManager.h"
 
 
-WorldTextManager WORLDTEXTMGR;
-
-
 static const float defFontSize = 18.0f;
 static const float defLineSpace = 1.1f;
-
-
-//============================================================================//
-//============================================================================//
-
-WorldTextManager::WorldTextManager()
-{
-}
-
-
-WorldTextManager::~WorldTextManager()
-{
-  clear();
-}
-
-
-void WorldTextManager::clear()
-{
-  for (size_t i = 0; i < texts.size(); i++) {
-    delete texts[i];
-  }
-  texts.clear();
-}
-
-
-int WorldTextManager::addText(WorldText* text)
-{
-  texts.push_back(text);
-  return ((int)texts.size() - 1);
-}
-
-
-void WorldTextManager::getFontURLs(std::set<std::string>& fontURLs) const
-{
-  for (size_t i = 0; i < texts.size(); i++) {
-    const WorldText* text = texts[i];
-    if (CacheManager::isCacheFileType(text->font)) {
-      fontURLs.insert(text->font);
-    }
-  }
-}
-
-
-int WorldTextManager::packSize() const
-{
-  int fullSize = sizeof(uint32_t);
-  for (size_t i = 0; i < texts.size(); i++) {
-    fullSize += texts[i]->packSize();
-  }
-  return fullSize;
-}
-
-
-void* WorldTextManager::pack(void* buf) const
-{
-  buf = nboPackUInt32(buf, (uint32_t)texts.size());
-  for (size_t i = 0; i < texts.size(); i++) {
-    buf = texts[i]->pack(buf);
-  }
-  return buf;
-}
-
-
-void* WorldTextManager::unpack(void* buf)
-{
-  uint32_t count;
-  buf = nboUnpackUInt32(buf, count);
-  for (uint32_t i = 0; i < count; i++) {
-    WorldText* text = new WorldText;
-    buf = text->unpack(buf);
-    texts.push_back(text);
-  }
-  return buf;
-}
-
-
-void WorldTextManager::print(std::ostream& out, const std::string& indent) const
-{
-  for (size_t i = 0; i < texts.size(); i++) {
-    texts[i]->print(out, indent);
-  }
-}
 
 
 //============================================================================//
@@ -158,6 +73,14 @@ WorldText::WorldText(const WorldText& wt)
 
 WorldText::~WorldText()
 {
+}
+
+
+WorldText* WorldText::copyWithTransform(const MeshTransform& transform) const
+{
+  WorldText* newText = new WorldText(*this);
+  newText->xform.append(transform);
+  return newText;
 }
 
 

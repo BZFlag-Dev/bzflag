@@ -190,12 +190,12 @@ public:
     msg->packUInt16(pingReply.gameOptions);
     msg->packUInt16(pingReply.maxPlayers);
     msg->packUInt16(pingReply.maxShots);
-    msg->packUInt16(team[0].team.size);
-    msg->packUInt16(team[1].team.size);
-    msg->packUInt16(team[2].team.size);
-    msg->packUInt16(team[3].team.size);
-    msg->packUInt16(team[4].team.size);
-    msg->packUInt16(team[5].team.size);
+    msg->packUInt16(teamInfos[0].team.size);
+    msg->packUInt16(teamInfos[1].team.size);
+    msg->packUInt16(teamInfos[2].team.size);
+    msg->packUInt16(teamInfos[3].team.size);
+    msg->packUInt16(teamInfos[4].team.size);
+    msg->packUInt16(teamInfos[5].team.size);
     msg->packUInt16(pingReply.rogueMax);
     msg->packUInt16(pingReply.redMax);
     msg->packUInt16(pingReply.greenMax);

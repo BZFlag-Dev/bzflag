@@ -108,7 +108,7 @@ static int wksSocket = -1;
 bool handlePings = true;
 PingPacket pingReply;
 // team info
-TeamInfo team[NumTeams];
+TeamInfo teamInfos[NumTeams];
 // num flags in flag list
 int numFlags = 0;
 bool serverDone = false;
@@ -442,7 +442,7 @@ void sendPlayerInfo()
 
   int i, numPlayers = 0;
   for (i = 0; i < int(NumTeams); i++)
-    numPlayers += team[i].team.size;
+    numPlayers += teamInfos[i].team.size;
 
   msg->packUInt8(numPlayers);
   for (i = 0; i < curMaxPlayers; ++i) {
@@ -543,7 +543,7 @@ void resetTeamScores ( void )
 {
   // reset team scores
   for (int i = RedTeam; i <= PurpleTeam; i++) {
-    team[i].team.lost = team[i].team.won = 0;
+    teamInfos[i].team.lost = teamInfos[i].team.won = 0;
   }
   sendTeamUpdateMessageBroadcast();
 }
@@ -954,9 +954,9 @@ bool defineWorld ( void )
   // reset other stuff
   int i;
   for (i = 0; i < NumTeams; i++) {
-    team[i].team.size = 0;
-    team[i].team.won = 0;
-    team[i].team.lost = 0;
+    teamInfos[i].team.size = 0;
+    teamInfos[i].team.won = 0;
+    teamInfos[i].team.lost = 0;
   }
   FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++)
@@ -994,18 +994,19 @@ TeamColor whoseBase(float x, float y, float z)
   float highest = -1;
   int highestteam = -1;
 
+  const fvec3 pos(x, y, z);
   for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it) {
-    float baseZ = it->second.findBaseZ(x,y,z);
+    const float baseZ = it->second.findBaseZ(pos);
     if (baseZ > highest) {
       highest = baseZ;
       highestteam = it->second.getTeam();
     }
   }
 
-  if (highestteam == -1)
+  if (highestteam == -1) {
     return NoTeam;
-  else
-    return TeamColor(highestteam);
+  }
+  return TeamColor(highestteam);
 }
 
 
@@ -1019,7 +1020,7 @@ static void dumpScore()
 
   std::cout << "#teams";
   for (int i = int(RedTeam); i < NumTeams; i++)
-    std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' << Team::getName(TeamColor(i));
+    std::cout << ' ' << teamInfos[i].team.won << '-' << teamInfos[i].team.lost << ' ' << Team::getName(TeamColor(i));
 
   GameKeeper::Player::dumpScore();
   std::cout << "#end" << std::endl;
@@ -1260,13 +1261,13 @@ static void acceptClient()
 static void respondToPing(Address addr)
 {
   // reply with current game info
-  pingReply.sourceAddr = addr;
-  pingReply.rogueCount = (uint8_t)team[0].team.size;
-  pingReply.redCount = (uint8_t)team[1].team.size;
-  pingReply.greenCount = (uint8_t)team[2].team.size;
-  pingReply.blueCount = (uint8_t)team[3].team.size;
-  pingReply.purpleCount = (uint8_t)team[4].team.size;
-  pingReply.observerCount = (uint8_t)team[5].team.size;
+  pingReply.sourceAddr    = addr;
+  pingReply.rogueCount    = (uint8_t)teamInfos[0].team.size;
+  pingReply.redCount      = (uint8_t)teamInfos[1].team.size;
+  pingReply.greenCount    = (uint8_t)teamInfos[2].team.size;
+  pingReply.blueCount     = (uint8_t)teamInfos[3].team.size;
+  pingReply.purpleCount   = (uint8_t)teamInfos[4].team.size;
+  pingReply.observerCount = (uint8_t)teamInfos[5].team.size;
 }
 
 
@@ -1513,15 +1514,16 @@ void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 // Team Size is wrong at some time
 static void fixTeamCount() {
   int playerIndex, teamNum;
-  for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++)
-    team[teamNum].team.size = 0;
+  for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++) {
+    teamInfos[teamNum].team.size = 0;
+  }
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (p && p->player.isPlaying()) {
       teamNum = p->player.getTeam();
       if (teamNum == RabbitTeam)
 	teamNum = HunterTeam;
-      team[teamNum].team.size++;
+      teamInfos[teamNum].team.size++;
     }
   }
 }
@@ -1580,7 +1582,7 @@ static TeamColor autoTeamSelect(TeamColor t)
   int numplayers = 0, i = 0;
   for (i = 0; i < int(NumTeams); i++)
     if (i != int(ObserverTeam))
-      numplayers += team[i].team.size;
+      numplayers += teamInfos[i].team.size;
 
   // if no player are available, join as Observer
   if (numplayers == maxRealPlayers)
@@ -1592,7 +1594,7 @@ static TeamColor autoTeamSelect(TeamColor t)
 
   // If tank ask for rogues, and rogues are allowed, give it
   if ((t == RogueTeam)
-      && team[RogueTeam].team.size < clOptions->maxTeam[RogueTeam])
+      && teamInfos[RogueTeam].team.size < clOptions->maxTeam[RogueTeam])
     return RogueTeam;
 
   // If no auto-team, server or client, go back with client choice
@@ -1604,7 +1606,7 @@ static TeamColor autoTeamSelect(TeamColor t)
 
   for (i = (int)RedTeam; i < (int)ObserverTeam; i++) {
     TeamSize currTeam = {(TeamColor)i,
-			 team[i].team.size,
+			 teamInfos[i].team.size,
 			 clOptions->maxTeam[i]};
     if (currTeam.max > 0)
       teams.push_back(currTeam);
@@ -1889,8 +1891,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // count current number of players and players+observers
   int numplayers = 0;
   for (int i = 0; i < int(ObserverTeam); i++)
-    numplayers += team[i].team.size;
-  const int numplayersobs = numplayers + team[ObserverTeam].team.size;
+    numplayers += teamInfos[i].team.size;
+  const int numplayersobs = numplayers + teamInfos[ObserverTeam].team.size;
 
   if (!playerData->playerHandler) {	// locals can rejoin as fast as they want
     // no quick rejoining, make 'em wait
@@ -1932,7 +1934,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     rejectPlayer(playerIndex, RejectServerFull,
 		 "This game is full.  Try again later.");
     return;
-  } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
+  } else if (teamInfos[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
     rejectPlayer(playerIndex, RejectTeamFull,
 		 "This team is full.  Try another team.");
     return ;
@@ -1949,11 +1951,11 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // update team state and if first player on team, reset it's score
   int teamIndex = int(playerData->player.getTeam());
-  team[teamIndex].team.size++;
-  if (team[teamIndex].team.size == 1
+  teamInfos[teamIndex].team.size++;
+  if (teamInfos[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
-    team[teamIndex].team.won = 0;
-    team[teamIndex].team.lost = 0;
+    teamInfos[teamIndex].team.won = 0;
+    teamInfos[teamIndex].team.lost = 0;
   }
 
   // send new player updates on each player, all existing flags, and all teams.
@@ -2000,7 +2002,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     return;
 
   // if first player on team add team's flag
-  if (team[teamIndex].team.size == 1
+  if (teamInfos[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
     if (clOptions->gameType == ClassicCTF) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
@@ -2128,11 +2130,9 @@ void resetFlag(FlagInfo &flag)
     if (!world->getFlagSpawnPoint(&flag, flagPos)) {
       // return the flag to the center of the top of one of the team
       // bases.. we assume it'll fit.
-      TeamBases &teamBases = bases[teamIndex];
-      const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
-      flagPos.x = base.position.x;
-      flagPos.y = base.position.y;
-      flagPos.z = base.position.z + base.size.z;
+      TeamBases& teamBases = bases[teamIndex];
+      const TeamBase& base = teamBases.getRandomBase();
+      base.getTopCenter(flagPos);
     }
   } else {
     // random position (not in a building)
@@ -2163,7 +2163,7 @@ void resetFlag(FlagInfo &flag)
 
   bool teamIsEmpty = true;
   if (teamIndex != ::NoTeam)
-    teamIsEmpty = (team[teamIndex].team.size == 0);
+    teamIsEmpty = (teamInfos[teamIndex].team.size == 0);
 
   bz_FlagResetEventData_V1 eventData;
   memcpy(eventData.pos,flagPos,sizeof(float)*3);
@@ -2404,12 +2404,12 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
     // decrease team size
     int teamNum = int(playerData->player.getTeam());
-    --team[teamNum].team.size;
+    --teamInfos[teamNum].team.size;
 
     // if last active player on team then remove team's flag if no one
     // is carrying it
     if (Team::isColorTeam((TeamColor)teamNum)
-	&& team[teamNum].team.size == 0 &&
+	&& teamInfos[teamNum].team.size == 0 &&
 	(clOptions->gameType == ClassicCTF)) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
@@ -2609,7 +2609,7 @@ static void checkTeamScore(int playerIndex, int teamIndex)
   if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex)))
     return;
 
-  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore) {
+  if (teamInfos[teamIndex].team.won - teamInfos[teamIndex].team.lost >= clOptions->maxTeamScore) {
     sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
 
     gameOver = true;
@@ -2869,17 +2869,17 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
       if (killer && victim->getTeam() == killer->getTeam()) {
 	if (!killer->isTeam(RogueTeam)) {
 	  if (killerIndex == victimIndex)
-	    team[int(victim->getTeam())].team.lost += 1;
+	    teamInfos[int(victim->getTeam())].team.lost += 1;
 	  else
-	    team[int(victim->getTeam())].team.lost += 2;
+	    teamInfos[int(victim->getTeam())].team.lost += 2;
 	}
       } else {
 	if (killer && !killer->isTeam(RogueTeam)) {
 	  winningTeam = int(killer->getTeam());
-	  team[winningTeam].team.won++;
+	  teamInfos[winningTeam].team.won++;
 	}
 	if (!victim->isTeam(RogueTeam))
-	  team[int(victim->getTeam())].team.lost++;
+	  teamInfos[int(victim->getTeam())].team.lost++;
 	if (killer)
 	  killerTeam = killer->getTeam();
       }
@@ -3028,10 +3028,9 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
       safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
       if (!safelyDropped) {
 	// ok, we give up, send it home
-	TeamBases &teamBases = bases[flagTeam];
-	const TeamBase &base = teamBases.getRandomBase(flagIndex);
-	landing = base.position;
-	landing.z += base.size.z;
+	TeamBases& teamBases = bases[flagTeam];
+	const TeamBase& base = teamBases.getRandomBase();
+	base.getTopCenter(landing);
       }
     }
   }
@@ -3039,9 +3038,9 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
   if (isTeamFlag) {
     // if it is a team flag, check if there are any players left in
     // that team - if not, start the flag timeout
-    if (team[drpFlag.flag.type->flagTeam].team.size == 0) {
-      team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
-      team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+    if (teamInfos[drpFlag.flag.type->flagTeam].team.size == 0) {
+      teamInfos[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
+      teamInfos[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
     }
   }
 
@@ -3145,9 +3144,9 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   if (teamIndex != int(playerData->player.getTeam())) {
     // player captured enemy flag
     winningTeam = int(playerData->player.getTeam());
-    team[winningTeam].team.won++;
+    teamInfos[winningTeam].team.won++;
   }
-  team[teamIndex].team.lost++;
+  teamInfos[teamIndex].team.lost++;
   sendTeamUpdateMessageBroadcast(winningTeam, teamIndex);
 
   dumpScore();
@@ -4537,7 +4536,7 @@ static void doTeamFlagTimeouts ( TimeKeeper &tm )
   // check team flag timeouts
   if (clOptions->gameType == ClassicCTF) {
     for (int i = RedTeam; i < CtfTeams; ++i) {
-      if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
+      if (teamInfos[i].flagTimeout - tm < 0 && teamInfos[i].team.size == 0) {
 	int flagid = FlagInfo::lookupFirstTeamFlag(i);
 	if (flagid >= 0) {
 	  for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {

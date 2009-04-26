@@ -457,7 +457,7 @@ void LuaHandle::ShotTeleported(const ShotPath& path, int srcLink, int dstLink)
 	lua_pushinteger(L, srcLink);
 	lua_pushinteger(L, dstLink);
 
-	RunCallIn(LUA_CI_ShotTeleported, 1, 0);
+	RunCallIn(LUA_CI_ShotTeleported, 3, 0);
 	return;
 }
 

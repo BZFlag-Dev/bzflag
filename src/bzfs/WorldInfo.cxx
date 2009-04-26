@@ -26,10 +26,11 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
+#include "LinkDef.h"
 #include "PhysicsDriver.h"
-#include "WorldText.h"
 #include "MeshTransform.h"
 #include "MeshDrawInfo.h"
+#include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "BzDocket.h"
 
@@ -76,9 +77,8 @@ WorldInfo::~WorldInfo()
   database = NULL;
   databaseSize = 0;
   uncompressedSize = 0;
-  links.clear();
   OBSTACLEMGR.clear();
-	finished = false;
+  finished = false;
 }
 
 
@@ -88,19 +88,6 @@ void WorldInfo::addWall(float x, float y, float z,
   const fvec3 pos(x, y, z);
   WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
   OBSTACLEMGR.addWorldObstacle(wall);
-}
-
-
-void WorldInfo::addLink(int src, int dst)
-{
-  links.addLink(src, dst);
-  return;
-}
-
-void WorldInfo::addLink(const std::string& src, const std::string& dst)
-{
-  links.addLink(src, dst);
-  return;
 }
 
 
@@ -152,10 +139,12 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
 			      bool drive, bool shoot, bool rico)
 {
   const fvec3 pos(x, y, z);
-  Teleporter* tele = new Teleporter(pos, r, w, d, h, b,
+  MeshTransform transform;
+  Teleporter* tele = new Teleporter(transform, pos, r, w, d, h, b, 0.0f,
                                     drive, shoot, rico);
   OBSTACLEMGR.addWorldObstacle(tele);
 }
+
 
 void WorldInfo::addBase(const fvec3& pos, float r,
 			const fvec3& _size, int color,
@@ -163,6 +152,16 @@ void WorldInfo::addBase(const fvec3& pos, float r,
 {
   BaseBuilding* base = new BaseBuilding(pos, r, _size, color, rico);
   OBSTACLEMGR.addWorldObstacle(base);
+}
+
+
+void WorldInfo::addLink(int src, int dst)
+{
+  LinkDef linkDef;
+  linkDef.addSrc(TextUtils::itoa(src));
+  linkDef.addDst(TextUtils::itoa(dst));
+  OBSTACLEMGR.addWorldLinkDef(new LinkDef(linkDef));
+  return;
 }
 
 
@@ -241,7 +240,7 @@ void WorldInfo::checkCollisionManager()
 }
 
 
-InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
+InBuildingType WorldInfo::inCylinderNoOctree(Obstacle** location,
 					     float x, float y, float z,
 					     float radius, float height) const
 {
@@ -252,7 +251,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
   fvec3 pos(x, y, z);
 
   for (int type = 0; type < ObstacleTypeCount; type++) {
-    const ObstacleList& list = OBSTACLEMGR.getWorld()->getList(type);
+    const ObstacleList& list = OBSTACLEMGR.getWorld().getList(type);
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs = list[i];
       if (obs->inCylinder(pos, radius, height)) {
@@ -272,7 +271,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
 }
 
 
-InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
+InBuildingType WorldInfo::cylinderInBuilding(const Obstacle** location,
 					     const fvec3& pos, float radius,
 					     float height) const
 {
@@ -292,11 +291,11 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
     }
   }
 
-  return classifyHit (*location);
+  return classifyHit(*location);
 }
 
 
-InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
+InBuildingType WorldInfo::cylinderInBuilding(const Obstacle** location,
 					     float x, float y, float z, float radius,
 					     float height) const
 {
@@ -305,7 +304,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
 }
 
 
-InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
+InBuildingType WorldInfo::boxInBuilding(const Obstacle** location,
 					const fvec3& pos, float angle,
 					float width, float breadth, float height) const
 {
@@ -326,35 +325,42 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
     }
   }
 
-  return classifyHit (*location);
+  return classifyHit(*location);
 }
 
 
-InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
+InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
 {
   if (obstacle == NULL) {
     return NOT_IN_BUILDING;
-  } else if (obstacle->getType() == BoxBuilding::getClassName()) {
-    if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0) {
-      return IN_BOX_DRIVETHROUGH;
-    } else {
-      return IN_BOX_NOTDRIVETHROUGH;
+  } 
+  switch (obstacle->getTypeID()) {
+    case boxType: {
+      if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0) {
+        return IN_BOX_DRIVETHROUGH;
+      } else {
+        return IN_BOX_NOTDRIVETHROUGH;
+      }
     }
-  } else if (obstacle->getType() == PyramidBuilding::getClassName()) {
-    return IN_PYRAMID;
-  } else if (obstacle->getType() == MeshObstacle::getClassName()) {
-    return IN_MESH;
-  } else if (obstacle->getType() == MeshFace::getClassName()) {
-    return IN_MESHFACE;
-  } else if (obstacle->getType() == BaseBuilding::getClassName()) {
-    return IN_BASE;
-  } else if (obstacle->getType() == Teleporter::getClassName()) {
-    return IN_TELEPORTER;
-  } else {
-    // FIXME - choke here?
-    printf ("*** Unknown obstacle type in WorldInfo::classifyHit()\n");
-    return IN_BASE;
+    case pyrType: {
+      return IN_PYRAMID;
+    }
+    case meshType: {
+      return IN_MESH;
+    }
+    case faceType: {
+      return IN_MESHFACE;
+    }
+    case baseType: {
+      return IN_BASE;
+    }
+    default: {
+      // FIXME - choke here?
+      printf ("*** Unknown obstacle type in WorldInfo::classifyHit()\n");
+      return IN_BASE;
+    }
   }
+  return NOT_IN_BUILDING;
 }
 
 
@@ -427,8 +433,6 @@ void WorldInfo::finishWorld()
 
   loadCollisionManager();
 
-  links.doLinking();
-
   maxHeight = COLLISIONMGR.getWorldExtents().maxs.z;
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
   if (maxHeight < wallHeight) {
@@ -469,13 +473,17 @@ int WorldInfo::packDatabase()
   }
 
   // compute the database size
-  databaseSize =
-    mapInfo.packSize() +
-    DYNCOLORMGR.packSize() + TEXMATRIXMGR.packSize() +
-    MATERIALMGR.packSize() + PHYDRVMGR.packSize() +
-    TRANSFORMMGR.packSize() + OBSTACLEMGR.packSize() + links.packSize() +
-    WORLDTEXTMGR.packSize() + worldWeapons.packSize() + entryZones.packSize() +
-    luaWorld.packSize();
+  databaseSize = 0
+    + mapInfo.packSize()
+    + DYNCOLORMGR.packSize()
+    + TEXMATRIXMGR.packSize()
+    + MATERIALMGR.packSize()
+    + PHYDRVMGR.packSize()
+    + TRANSFORMMGR.packSize()
+    + OBSTACLEMGR.packSize()
+    + worldWeapons.packSize()
+    + entryZones.packSize()
+    + luaWorld.packSize();
 
   // add water level size
   databaseSize += sizeof(float);
@@ -507,12 +515,6 @@ int WorldInfo::packDatabase()
 
   // pack obstacles
   databasePtr = OBSTACLEMGR.pack(databasePtr);
-
-  // pack teleporter links
-  databasePtr = links.pack(databasePtr);
-
-  // pack world text
-  databasePtr = WORLDTEXTMGR.pack(databasePtr);
 
   // pack water level
   databasePtr = nboPackFloat(databasePtr, waterLevel);
@@ -605,18 +607,21 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
   // check non-mesh obstacles
   for (i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    const char* type = obs->getType();
-    if ((type == MeshFace::getClassName()) || (type == MeshObstacle::getClassName()))
+    const ObstacleType type = obs->getTypeID();
+    if ((type == faceType) || (type == meshType)) {
       break;
+    }
 
     bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
 
-    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
+    }
   }
 
-  if (i == olist->count)
+  if (i == olist->count) {
     return NULL; // no more obstacles, we are done
+  }
 
   // do some prep work for mesh faces
   int hitCount = 0;
@@ -626,9 +631,9 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
   // check mesh faces
   for (/* do nothing */; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    const char* type = obs->getType();
-    if (type == MeshObstacle::getClassName())
+    if (obs->getTypeID() == meshType) {
       break;
+    }
 
     const MeshFace* face = (const MeshFace*) obs;
 

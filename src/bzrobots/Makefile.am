@@ -256,8 +256,8 @@ NACLIB = ../platform/MacOSX/libMac.la
 endif
 
 LDADD =	\
-	../game/libGame.la		\
 	../obstacle/libObstacle.la	\
+	../game/libGame.la		\
 	../geometry/libGeometry.la	\
 	../3D/lib3D.la			\
 	../net/libNet.la		\

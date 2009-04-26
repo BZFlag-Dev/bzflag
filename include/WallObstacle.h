@@ -23,12 +23,14 @@
 
 class WallObstacle : public Obstacle {
   public:
-			WallObstacle();
-			WallObstacle(const fvec3& pos, float rotation,
-				     float breadth, float height, bool ricochet);
-			~WallObstacle();
+    WallObstacle();
+    WallObstacle(const fvec3& pos, float rotation,
+                 float breadth, float height, bool ricochet);
+    ~WallObstacle();
 
     const char*		getType() const;
+    ObstacleType	getTypeID() const { return wallType; }
+
     static const char*	getClassName(); // const
 
     float		intersect(const Ray&) const;
@@ -40,20 +42,16 @@ class WallObstacle : public Obstacle {
     bool		inMovingBox(const fvec3& oldP, float oldAngle,
 				    const fvec3& newP, float newAngle,
 				    float halfWidth, float halfBreadth, float height) const;
-
-    bool		getHitNormal(
-				const fvec3& pos1, float azimuth1,
-				const fvec3& pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				fvec3& normal) const;
+    bool		getHitNormal(const fvec3& pos1, float azimuth1,
+                                     const fvec3& pos2, float azimuth2,
+                                     float halfWidth, float halfBreadth,
+                                     float height, fvec3& normal) const;
 
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-    virtual int getTypeID() const {return wallType;}
 
     std::string		userTextures[1];
 

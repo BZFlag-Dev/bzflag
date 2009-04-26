@@ -1543,7 +1543,7 @@ static bool saveTeamsState()
   buf = nboPackUInt8(bufStart, CtfTeams);
   for (i = 0; i < CtfTeams; i++) {
     buf = nboPackUInt16(buf, i);
-    buf = team[i].team.pack(buf); // 3 ushorts: size, won, lost
+    buf = teamInfos[i].team.pack(buf); // 3 ushorts: size, won, lost
   }
 
   routePacket(MsgTeamUpdate,
@@ -1759,7 +1759,7 @@ static bool resetStates()
   msg->packUInt8(CtfTeams);
   for (i = 0; i < CtfTeams; i++) {
     msg->packUInt16(i);
-    team[i].team.pack(msg);
+    teamInfos[i].team.pack(msg);
   }
 
   for (i = MaxPlayers; i < curMaxPlayers; i++) {

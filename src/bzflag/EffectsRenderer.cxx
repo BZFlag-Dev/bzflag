@@ -20,6 +20,10 @@
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "OpenGLUtils.h"
+#include "BZDBCache.h"
+
+
+static BZDB_bool useFancyEffects("useFancyEffects");
 
 
 template <>
@@ -86,11 +90,11 @@ void EffectsRenderer::draw(const SceneRenderer& sr)
 
 void EffectsRenderer::addSpawnEffect(const fvec4& rgba, const fvec3& pos )
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects)
     return;
 
   BasicEffect *effect = NULL;
-  switch(static_cast<int>(BZDB.eval("spawnEffect"))) {
+  switch(BZDB.evalInt("spawnEffect")) {
     case 1:
       effect = new StdSpawnEffect;
       break;
@@ -130,11 +134,10 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes(void)
 void EffectsRenderer::addShotEffect(const fvec4& rgba, const fvec3& pos,
 				    float rot, const fvec3& vel, int _type)
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects)
     return;
 
-  int flashType = (_type >= 0) ? _type
-			       : static_cast<int>(BZDB.eval("shotEffect"));
+  int flashType = (_type >= 0) ? _type : BZDB.evalInt("shotEffect");
 
   BasicEffect *effect = NULL;
   switch(flashType) {
@@ -178,11 +181,11 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes(void)
 void EffectsRenderer::addGMPuffEffect(const fvec3& pos, const fvec2& rot,
 				      const fvec3* velPtr)
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects)
     return;
 
   BasicEffect *effect = NULL;
-  switch(static_cast<int>(BZDB.eval("gmPuffEffect"))) {
+  switch(BZDB.evalInt("gmPuffEffect")) {
     case 1:
       // handled outside this manager in the "old" code
       // FIXME: it'd be nice to move that here
@@ -221,11 +224,11 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes(void)
 void EffectsRenderer::addDeathEffect(const fvec4& rgba, const fvec3& pos,
 				     float rot)
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects)
     return;
 
   BasicEffect *effect = NULL;
-  switch(static_cast<int>(BZDB.eval("deathEffect"))) {
+  switch(BZDB.evalInt("deathEffect")) {
     case 1:
       effect = new StdDeathEffect;
       break;
@@ -256,11 +259,11 @@ std::vector<std::string> EffectsRenderer::getDeathEffectTypes(void)
 // landing effects
 void EffectsRenderer::addLandEffect(const fvec4& rgba, const fvec3& pos, float rot)
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects)
     return;
 
   BasicEffect *effect = NULL;
-  switch(static_cast<int>(BZDB.eval("landEffect"))) {
+  switch(BZDB.evalInt("landEffect")) {
     case 1:
       effect = new StdLandEffect;
       break;
@@ -288,11 +291,11 @@ void EffectsRenderer::addRicoEffect(const fvec3& pos,
                                     const fvec3& normal,
                                     const fvec3* velPtr)
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects)
     return;
 
   BasicEffect *effect = NULL;
-  switch(static_cast<int>(BZDB.eval("ricoEffect"))) {
+  switch(BZDB.evalInt("ricoEffect")) {
     case 1:
       effect = new StdRicoEffect;
       break;
@@ -328,29 +331,46 @@ std::vector<std::string> EffectsRenderer::getRicoEffectTypes(void)
   return ret;
 }
 
-void EffectsRenderer::addShotTeleportEffect(const fvec3& pos, const fvec2& rot,
-					    const fvec3* velPtr)
+void EffectsRenderer::addShotTeleportEffect(const fvec3& pos,
+                                            const fvec3& vel,
+					    const fvec4* clipPlane)
 {
-  if (!BZDB.isTrue("useFancyEffects"))
+  if (!useFancyEffects) {
     return;
+  }
 
-  BasicEffect *effect = NULL;
-  switch(static_cast<int>(BZDB.eval("tpEffect"))) {
-    case 1:
-      effect = new StdShotTeleportEffect;
-      break;
+  fvec3 p = pos;
 
-    default:
-      // includes "0" (no effect)
+  BasicEffect* effect = NULL;
+  switch (BZDB.evalInt("tpEffect")) {
+    case 1: {
+      effect = new StdShotTeleportEffect(2.0f, NULL);
       break;
+    }
+    case 2: { // with clipping
+      if (!clipPlane) {
+        effect = new StdShotTeleportEffect(2.0f, NULL);
+      } else {
+        effect = new StdShotTeleportEffect(3.0f, clipPlane);
+        p -= vel.normalize();
+      }
+      break;
+    }
+    default: { // includes "0" (no effect)
+      break;
+    }
   }
 
   if (effect) {
-    effect->setPos(pos);
-    effect->setRot(fvec3(0.0f, rot.y, rot.x));
+    fvec3 rots(0.0f, 0.0f, 0.0f);
+    rots.y = atan2f(-vel.z, vel.xy().length());
+    rots.z = atan2f(vel.y, vel.x);
+
+    effect->setPos(p);
+    effect->setRot(rots);
     effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
-    if (velPtr && BZDB.isTrue("useVelOnShotEffects")) {
-      effect->setVel(*velPtr);
+    if (false && BZDB.isTrue("useVelOnShotEffects")) {
+      effect->setVel(vel);
     }
     effectsList.push_back(effect);
   }
@@ -361,8 +381,8 @@ std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes(void)
   std::vector<std::string> ret;
   ret.push_back(std::string("None"));
   ret.push_back(std::string("IDL"));
+  ret.push_back(std::string("IDL(fancy)"));
   // ret.push_back(std::string("Sparks"));
-
   return ret;
 }
 
@@ -628,7 +648,7 @@ void StdShotEffect::draw(const SceneRenderer &)
   fvec3 pos = position +(age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
-  glRotatef(180.0f + (rotation[2] * RAD2DEGf), 0.0f, 0.0f, 1.0f);
+  glRotatef(180.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
 
   ringState.setState();
 
@@ -691,7 +711,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
   fvec3 pos = position +(age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
-  glRotatef(270.0f + (rotation[2] * RAD2DEGf), 0.0f, 0.0f, 1.0f);
+  glRotatef(270.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
 
   ringState.setState();
 
@@ -780,7 +800,7 @@ void StdDeathEffect::draw(const SceneRenderer &)
   glPushMatrix();
 
   glTranslatef(position.x, position.y, position.z);
-  glRotatef(180.0f + (rotation[2] * RAD2DEGf), 0.0f, 0.0f, 1.0f);
+  glRotatef(180.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
 
   ringState.setState();
 
@@ -919,8 +939,8 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
   fvec3 pos = position +(age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
-  glRotatef(180.0f + (rotation[2] * RAD2DEGf), 0.0f, 0.0f, 1.0f);
-  glRotatef((rotation[1] * RAD2DEGf), 0.0f, 1.0f, 0.0f);
+  glRotatef(180.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
+  glRotatef((rotation.y * RAD2DEGf), 0.0f, 1.0f, 0.0f);
 
   ringState.setState();
 
@@ -981,8 +1001,8 @@ void StdRicoEffect::draw(const SceneRenderer &)
   fvec3 pos = position +(age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
-  glRotatef((rotation[2] * RAD2DEGf) + 180.0f, 0.0f, 0.0f, 1.0f);
-  glRotatef(rotation[1] * RAD2DEGf, 0.0f, 1.0f, 0.0f);
+  glRotatef((rotation.z * RAD2DEGf) + 180.0f, 0.0f, 0.0f, 1.0f);
+  glRotatef((rotation.y * RAD2DEGf), 0.0f, 1.0f, 0.0f);
 
   ringState.setState();
 
@@ -1003,12 +1023,14 @@ void StdRicoEffect::draw(const SceneRenderer &)
 }
 
 //******************StdShotTeleportEffect****************
-StdShotTeleportEffect::StdShotTeleportEffect() : BasicEffect()
+StdShotTeleportEffect::StdShotTeleportEffect(float len, const fvec4* cp)
+: BasicEffect()
+, length(len)
+, clipPlane(cp)
 {
   texture = TextureManager::instance().getTextureID("dusty_flare",false);
   lifetime = 4.0f;
   radius = 0.25f;
-
 
   OpenGLGStateBuilder gstate;
   gstate.reset();
@@ -1037,33 +1059,53 @@ bool StdShotTeleportEffect::update(float time)
   return false;
 }
 
-void StdShotTeleportEffect::draw(const SceneRenderer &)
+void StdShotTeleportEffect::draw(const SceneRenderer&)
 {
+  const GLenum clipperID = GL_CLIP_PLANE0;
+  if (clipPlane) {
+    double cp[4] = {
+      double(clipPlane->x),
+      double(clipPlane->y),
+      double(clipPlane->z),
+      double(clipPlane->w)
+    };
+    glClipPlane(clipperID, cp);
+    glEnable(clipperID);
+  }
+
   glPushMatrix();
 
-  fvec3 pos = position +(age * velocity);
+  fvec3 pos = position + (age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
-  glRotatef(rotation[2] * RAD2DEGf, 0.0f, 0.0f, 1.0f);
-  glRotatef(rotation[1] * RAD2DEGf, 0.0f, 1.0f, 0.0f);
+  glRotatef(rotation.z * RAD2DEGf, 0.0f, 0.0f, 1.0f);
+  glRotatef(rotation.y * RAD2DEGf, 0.0f, 1.0f, 0.0f);
   glRotatef(age * 90, 1, 0, 0);
 
   ringState.setState();
 
   color.r = color.g = color.b = 1;
 
-  float alpha = 1.0f;
+  const float fraction = 1.0f - (age / lifetime);
+
+  const float alpha = 0.25f + (0.75f * fraction);
 
   glColor4f(color.r, color.g, color.b, alpha);
   glDepthMask(0);
 
-  float mod = (age - (int) age) - 0.5f;
-
-  drawRingYZ(radius, 0.5f + mod * 0.5f, 0.125f, 0.00f, pos.z, 0.8f, 6);
+  drawRingYZ(0.0f,
+             length * fraction,
+             length * fraction * (1.0f - fraction),
+             0.00f, +MAXFLOAT, 0.8f, 6);
+//             0.00f, pos.z, 0.8f, 6);
 
   glColor4f(1, 1, 1, 1);
   glDepthMask(1);
   glPopMatrix();
+
+  if (clipPlane) {
+    glDisable(clipperID);
+  }
 }
 
 //******************************** geo utiliys********************************

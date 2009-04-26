@@ -15,6 +15,7 @@
 
 /* local implementation headers */
 #include "World.h"
+#include "WorldPlayer.h"
 
 
 NameList silencePlayers;

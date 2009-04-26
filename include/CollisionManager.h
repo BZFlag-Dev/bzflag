@@ -42,7 +42,6 @@ typedef union {
     ObsList boxes;
     ObsList bases;
     ObsList pyrs;
-    ObsList teles;
     ObsList faces;
     ObsList meshes;
   } named;

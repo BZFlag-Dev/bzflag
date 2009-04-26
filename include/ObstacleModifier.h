@@ -16,12 +16,13 @@
 // the common header
 #include "common.h"
 
-/* common interface headers */
+// common headers
 #include "BzMaterial.h"
 #include "vectors.h"
 
 
 class Obstacle;
+class WorldText;
 class GroupInstance;
 
 
@@ -34,6 +35,7 @@ class ObstacleModifier {
     void init();
 
     void execute(Obstacle* obstacle) const;
+    void execute(WorldText* text) const;
 
     void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
 

@@ -18,7 +18,6 @@
 #include "Obstacle.h"
 #include "Ray.h"
 #include "CollisionManager.h"
-#include "Teleporter.h"
 
 
 //============================================================================//
@@ -61,11 +60,7 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const float t = obs->intersect(ray);
-    if (obs->getType() == Teleporter::getClassName()) {
-      // the physics for teles is whacked, imho
-      continue;
-    }
-    else if ((t > 0.0f) && (t < minTime)) {
+    if ((t > 0.0f) && (t < minTime)) {
       minTime = t;
     }
   }

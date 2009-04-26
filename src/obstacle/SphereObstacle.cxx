@@ -40,7 +40,7 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
 			 int physics, bool bounce,
 			 unsigned char drive, unsigned char shoot, bool rico)
 {
-  // common obstace parameters
+  // common obstacle parameters
   pos = _pos;
   size = _size;
   angle = _rotation;

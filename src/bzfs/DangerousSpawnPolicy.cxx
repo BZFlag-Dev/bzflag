@@ -60,8 +60,8 @@ void DangerousSpawnPolicy::getPosition(fvec3& pos, int playerId,
      */
 
     TeamBases &teamBases = bases[t];
-    const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
-    base.getRandomPosition(pos.x, pos.y, pos.z);
+    const TeamBase &base = teamBases.getRandomBase();
+    base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
 
   } else {

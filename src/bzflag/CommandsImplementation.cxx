@@ -126,6 +126,12 @@ class SaveWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class SelfLockCommand : LocalCommand {
+  public:
+    SelfLockCommand();
+    bool operator() (const char *commandLine);
+};
+
 class WorldInfoCommand : LocalCommand {
   public:
     WorldInfoCommand();
@@ -174,6 +180,7 @@ static ReTextureCommand   reTextureCommand;
 static RoamPosCommand     RoamPosCommand;
 static SaveMsgsCommand    saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
+static SelfLockCommand    selfLockCommand;
 static SetCommand         setCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
@@ -181,25 +188,26 @@ static WorldInfoCommand   worldInfoCommand;
 
 
 // class constructors
-BindCommand::BindCommand() :			LocalCommand("/bind")      {}
-CommandList::CommandList() :			LocalCommand("/cmds")      {}
-DebugLevelCommand::DebugLevelCommand() :	LocalCommand("/debug")     {}
-DiffCommand::DiffCommand() :			LocalCommand("/diff")      {}
-DumpCommand::DumpCommand() :			LocalCommand("/dumpvars")  {}
-HighlightCommand::HighlightCommand() :		LocalCommand("/highlight") {}
-LocalSetCommand::LocalSetCommand() :		LocalCommand("/localset")  {}
-LuaBzOrgCommand::LuaBzOrgCommand() :		LocalCommand("/luabzorg")  {}
-LuaUserCommand::LuaUserCommand() :		LocalCommand("/luauser")   {}
-LuaWorldCommand::LuaWorldCommand() :		LocalCommand("/luaworld")  {}
-QuitCommand::QuitCommand() :			LocalCommand("/quit")      {}
-ReTextureCommand::ReTextureCommand() :		LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :		LocalCommand("/roampos")   {}
-SaveMsgsCommand::SaveMsgsCommand() :		LocalCommand("/savemsgs")  {}
-SaveWorldCommand::SaveWorldCommand() :		LocalCommand("/saveworld") {}
-SetCommand::SetCommand() :			LocalCommand("/set")       {}
-SilenceCommand::SilenceCommand() :		LocalCommand("/silence")   {}
-UnsilenceCommand::UnsilenceCommand() :		LocalCommand("/unsilence") {}
-WorldInfoCommand::WorldInfoCommand() :		LocalCommand("/worldinfo")   {}
+BindCommand::BindCommand()             : LocalCommand("/bind")      {}
+CommandList::CommandList()             : LocalCommand("/cmds")      {}
+DebugLevelCommand::DebugLevelCommand() : LocalCommand("/debug")     {}
+DiffCommand::DiffCommand()             : LocalCommand("/diff")      {}
+DumpCommand::DumpCommand()             : LocalCommand("/dumpvars")  {}
+HighlightCommand::HighlightCommand()   : LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand()     : LocalCommand("/localset")  {}
+LuaBzOrgCommand::LuaBzOrgCommand()     : LocalCommand("/luabzorg")  {}
+LuaUserCommand::LuaUserCommand()       : LocalCommand("/luauser")   {}
+LuaWorldCommand::LuaWorldCommand()     : LocalCommand("/luaworld")  {}
+QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
+ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand()       : LocalCommand("/roampos")   {}
+SaveMsgsCommand::SaveMsgsCommand()     : LocalCommand("/savemsgs")  {}
+SaveWorldCommand::SaveWorldCommand()   : LocalCommand("/saveworld") {}
+SelfLockCommand::SelfLockCommand()     : LocalCommand("/selflock")  {}
+SetCommand::SetCommand()               : LocalCommand("/set")       {}
+SilenceCommand::SilenceCommand()       : LocalCommand("/silence")   {}
+UnsilenceCommand::UnsilenceCommand()   : LocalCommand("/unsilence") {}
+WorldInfoCommand::WorldInfoCommand()   : LocalCommand("/worldinfo") {}
 
 
 // the meat of the matter
@@ -820,6 +828,18 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     }
   }
 
+  return true;
+}
+
+bool SelfLockCommand::operator() (const char*)
+{
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank == NULL) {
+    addMessage(NULL, "you do not exist");
+    return true;
+  }
+  myTank->setTarget(myTank);
+  addMessage(NULL, "self-locked");
   return true;
 }
 

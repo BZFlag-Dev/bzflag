@@ -14,10 +14,11 @@
 #include "Downloads.h"
 
 /* common implementation headers */
-#include "CacheManager.h"
-#include "AnsiCodes.h"
-#include "TextureManager.h"
 #include "cURLManager.h"
+#include "AnsiCodes.h"
+#include "CacheManager.h"
+#include "ObstacleMgr.h"
+#include "TextureManager.h"
 #include "WorldText.h"
 
 /* local implementation headers */
@@ -233,7 +234,15 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
   BzMaterialManager::TextureSet texSet;
   BzMaterialManager::TextureSet::iterator set_it;
   MATERIALMGR.makeTextureList(texSet, referencing);
-  WORLDTEXTMGR.getFontURLs(texSet); // get the fonts as well
+
+  // get the fonts as well
+  const std::vector<WorldText*>& texts = OBSTACLEMGR.getTexts();
+  for (size_t i = 0; i < texts.size(); i++) {
+    const WorldText* text = texts[i];
+    if (CacheManager::isCacheFileType(text->font)) {
+      texSet.insert(text->font);
+    }
+  }
 
   float timeout = 15;
   if (BZDB.isSet("httpTimeout")) {

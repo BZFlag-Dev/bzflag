@@ -33,6 +33,7 @@ class CustomTeleporter : public WorldFileObstacle {
   protected:
     std::string telename;
     float border;
+    float texSize;
     bool horizontal;
 };
 

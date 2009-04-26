@@ -113,25 +113,25 @@ private:
 
   bool		lastFast;
 
-  typedef enum {
+  enum RadarObjectType {
     eNone,
     eBoxPyr,
     eMesh,
     eMeshDeathFaces,
     eBoxPyrOutline
-  } RadarObjectType;
+  };
 
-  typedef std::pair<RadarObjectType,Obstacle*> RadarObject;
-  typedef std::map<GLDisplayList,RadarObject> RadarObjectMap;
+  typedef std::pair<RadarObjectType, const Obstacle*> RadarObject;
+  typedef std::map<GLDisplayList, RadarObject> RadarObjectMap;
   RadarObjectMap radarObjectLists;
 
-  void buildBoxPyr ( Obstacle* object );
-  // void buildBoxGeo ( BoxBuilding* box );
-  // void buildPryGeo ( PyramidBuilding* pyr );
-  void buildMeshGeo ( MeshObstacle* mesh, bool deathFaces );
-  void buildOutline ( Obstacle* object );
-  //   void buildBoxOutline ( const BoxBuilding& box );
-  //   void buildPyrOutline ( const PyramidBuilding& pyr );
+  void buildBoxPyr(const Obstacle* object);
+  // void buildBoxGeo(BoxBuilding* box);
+  // void buildPryGeo(PyramidBuilding* pyr);
+  void buildMeshGeo(const MeshObstacle* mesh, RadarObjectType type);
+  void buildOutline(const Obstacle* object);
+  //   void buildBoxOutline(const BoxBuilding& box);
+  //   void buildPyrOutline(const PyramidBuilding& pyr);
 };
 
 //

@@ -25,14 +25,15 @@ using std::vector;
 #include "StateDatabase.h"
 
 // bzflag headers
-#include "../bzflag/World.h"
-#include "../bzflag/Roster.h"
 #include "../bzflag/playing.h"
-#include "../bzflag/MainWindow.h"
 #include "../bzflag/LocalPlayer.h"
+#include "../bzflag/MainWindow.h"
+#include "../bzflag/RadarRenderer.h"
+#include "../bzflag/Roster.h"
 #include "../bzflag/ShotPath.h"
 #include "../bzflag/ShotStrategy.h"
-#include "../bzflag/RadarRenderer.h"
+#include "../bzflag/World.h"
+#include "../bzflag/WorldPlayer.h"
 
 // local headers
 #include "LuaInclude.h"
@@ -266,28 +267,33 @@ int LuaSpatial::RayTrace(lua_State* L)
 	const bool reflect  = lua_isboolean(L, 9) && lua_tobool(L, 9);
 
 	Ray ray(pos, vel);
-	int teleFace = -1;
 
-	const bool hitGround   = ShotStrategy::getGround(ray, minTime, hitTime);
-	const Obstacle* obs    = ShotStrategy::getFirstBuilding(ray, minTime, hitTime);
-	const Teleporter* tele = ShotStrategy::getFirstTeleporter(ray, minTime, hitTime,
-	                                                          teleFace);
+	const bool hitGround = ShotStrategy::getGround(ray, minTime, hitTime);
+	const Obstacle* obs  = ShotStrategy::getFirstBuilding(ray, minTime, hitTime);
+
+	const MeshFace* linkSrc = MeshFace::getShotLinkSrc(obs);
+
 	fvec3 point;
-	if (tele != NULL) {
+	if (linkSrc != NULL) {
 		int args = 5 + 2;
-		lua_pushinteger(L, 't'); // teleporter
+		lua_pushinteger(L, 'l'); // link
 		lua_pushnumber(L, hitTime);
 		ray.getPoint(hitTime, point);
 		lua_pushfvec3(L, point);
 		if (reflect) {
 			args += PushReflect(L, obs, point, vel);
 		}
-		lua_pushinteger(L, tele->getGUID());
-		lua_pushinteger(L, teleFace);
+		const MeshObstacle* mesh = linkSrc->getMesh();
+		if (mesh != NULL) {
+			lua_pushinteger(L, mesh->getGUID());
+		} else {
+			lua_pushboolean(L, false); // should not happen
+		}
+		lua_pushinteger(L, linkSrc->getID() + 1);
 		return args;
 	}
 	else if (obs != NULL) {
-		if (obs->getType() != MeshFace::getClassName()) {
+		if (obs->getTypeID() != faceType) {
 			int args = 5 + 1;
 			lua_pushinteger(L, 'o'); // obstacle
 			lua_pushnumber(L, hitTime);
@@ -338,19 +344,29 @@ int LuaSpatial::RayTrace(lua_State* L)
 
 int LuaSpatial::RayTeleport(lua_State* L) // FIXME
 {
-	return 0;
-	const int teleID = luaL_checkint(L, 1);
-	const int faceID = luaL_checkint(L, 2);
+	return 0; L = L;
+/* FIXME -- LuaSpatial::RayTeleport
+	const int meshID = luaL_checkint(L, 1);
+	const int faceID = luaL_checkint(L, 2) - 1;
+
+	const ObstacleList& meshList = OBSTACLEMGR.getMeshes();
+	if ((meshID < 0) || (meshID >= (int)meshList.size()) {
+		return 0;
+	}
+	const MeshObstacle* mesh = (MeshObstacle*)meshList[meshID];
+	if (faceID < 0) || (faceID >= mesh->getFaceCount())) {
+		return 0;
+	}
+	const MeshFace* linkSrc = mesh->getFace(faceID);
+
 	fvec3 inPos = luaL_checkfvec3(L, 3);
 	fvec3 inVel = luaL_checkfvec3(L, 6);
 	const int seed = luaL_optint(L, 9, 0);
 
 	fvec3 outPos;
 	fvec3 outVel;
-	int outFace = teleID + seed;
-	const Teleporter* inTele = NULL;
-	const Teleporter* outTele = NULL;
-	inTele->getPointWRT(*outTele, faceID, outFace,
+	const
+	linkSrc->getPointWRT(*outTele, faceID, outFace,
 	                    inPos,  &inVel,  0.0f,
 	                    outPos, &outVel, NULL);
 
@@ -363,6 +379,7 @@ int LuaSpatial::RayTeleport(lua_State* L) // FIXME
 	lua_pushnumber(L, outVel[1]);
 	lua_pushnumber(L, outVel[2]);
 	return 8;
+*/
 }
 
 

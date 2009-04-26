@@ -54,6 +54,12 @@ public:
     Joystick
   };
 
+public:
+  static LocalPlayer*	getMyTank();
+  static void		setMyTank(LocalPlayer*);
+  static std::string	getLocationString(Location);
+
+public:
   LocalPlayer(const PlayerId&,
               const char* name,
               const PlayerType _type=TankPlayer);
@@ -111,9 +117,6 @@ public:
   bool hasHitWall();
 
 
-  static LocalPlayer*	getMyTank();
-  static void		setMyTank(LocalPlayer*);
-
   const Obstacle*	getHitBuilding(const fvec3& pos, float angle,
                                  bool phased, bool& expel) const;
   const Obstacle*	getHitBuilding(const fvec3& oldPos, float oldAngle,
@@ -123,6 +126,10 @@ public:
                     const fvec3& pos1, float azimuth1,
                     const fvec3& pos2, float azimuth2,
                     fvec3& normal) const;
+
+  inline bool onSolidSurface() {
+    return (location == OnGround) || (location == OnBuilding);
+  }
 
   bool		requestedAutopilot;
 
@@ -137,11 +144,14 @@ protected:
 
   ServerLink*	server;
 
-  inline bool		onSolidSurface(){ return (location == OnGround) || (location == OnBuilding);}
-
 private:
   void		doSlideMotion(float dt, float slideTime,
                               float newAngVel, fvec3& newVelocity);
+  bool		tryTeleporting(const fvec3& oldPos,    fvec3& newPos,
+                               const fvec3& oldVel,    fvec3& newVel,
+                               const float  oldAngle,  float& newAngle,
+                               const float  oldAngVel, float& newAngVel,
+                               bool phased, bool& expel);
   float		getNewAngVel(float old, float desired, float dt);
   void		collectInsideBuildings();
 

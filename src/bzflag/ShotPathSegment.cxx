@@ -19,42 +19,39 @@ ShotPathSegment::ShotPathSegment()
   // do nothing
 }
 
+
 ShotPathSegment::ShotPathSegment(const double _start, const double _end,
                                  const Ray& _ray, Reason _reason)
 : start(_start)
 , end(_end)
 , ray(_ray)
 , reason(_reason)
+, linkSrcID(-1)
+, linkDstID(-1)
+, dstFace(NULL)
+, noEffect(false)
 {
   // compute bounding box
-  fvec3 v;
-
-  // start point -- FIXME -- should be 'start' instead of 0?
-  ray.getPoint(0, v);
-  bbox.expandToPoint(v);
-
-  // end point
-  ray.getPoint(float(end - start), v);
-  bbox.expandToPoint(v);
+  bbox.expandToPoint(ray.getOrigin());             // start
+  bbox.expandToPoint(ray.getPoint(float(end - start))); // end
 }
 
-ShotPathSegment::ShotPathSegment(const ShotPathSegment& segment) :
-				start(segment.start),
-				end(segment.end),
-				ray(segment.ray),
-				reason(segment.reason)
+
+ShotPathSegment::ShotPathSegment(const ShotPathSegment& segment)
+: start(segment.start)
+, end(segment.end)
+, ray(segment.ray)
+, reason(segment.reason)
+, bbox(segment.bbox)
+, linkSrcID(segment.linkSrcID)
+, linkDstID(segment.linkDstID)
+, dstFace(segment.dstFace)
+, noEffect(segment.noEffect)
 {
-  // copy bounding box
-  bbox = segment.bbox;
 }
 
-ShotPathSegment::~ShotPathSegment()
-{
-  // do nothing
-}
 
-ShotPathSegment&	ShotPathSegment::operator=(const
-					ShotPathSegment& segment)
+ShotPathSegment& ShotPathSegment::operator=(const ShotPathSegment& segment)
 {
   if (this != &segment) {
     start = segment.start;
@@ -62,6 +59,10 @@ ShotPathSegment&	ShotPathSegment::operator=(const
     ray = segment.ray;
     reason = segment.reason;
     bbox = segment.bbox;
+    linkSrcID = segment.linkSrcID;
+    linkDstID = segment.linkDstID;
+    dstFace = segment.dstFace;
+    noEffect = segment.noEffect;
   }
   return *this;
 }

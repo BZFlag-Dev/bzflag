@@ -195,8 +195,7 @@ so that no work is duplicated.
   ObstacleMgr::makeWorld()  (including materials, physics drivers,
   texture matrices, transforms, and dynamic colors).
 
-* grouping for links (with  relative and absolute names)
-  grouping for weapons and entry zones (with transforms)
+* grouping for weapons and entry zones (with transforms)
   grouping for physics drivers (with transforms and copying)
   grouping for texture matrices, dynamic color, xforms, and materials
     (mostly for keeping a clean namespace)

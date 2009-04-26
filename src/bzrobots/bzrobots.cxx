@@ -56,6 +56,7 @@
 #include "TextUtils.h"
 #include "TextureManager.h"
 #include "TimeBomb.h"
+#include "TimeKeeper.h"
 #include "WordFilter.h"
 #include "World.h"
 #include "bzfio.h"

@@ -10,27 +10,22 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "GuidedMissleStrategy.h"
 
-/* common implementation headers */
+// common headers
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "LinkManager.h"
 #include "Intersect.h"
 #include "EventHandler.h"
+#include "MeshFace.h"
 
-/* local implementation headers */
+// local headers
 #include "LocalPlayer.h"
 #include "World.h"
 #include "playing.h"
 
-
-static float limitAngle(float a)
-{
-  if (a < -M_PI) a += (float)(2.0 * M_PI);
-  else if (a >= M_PI) a -= (float)(2.0 * M_PI);
-  return a;
-}
 
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   ShotStrategy(_path),
@@ -51,34 +46,34 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   // get initial shot info
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
-  const fvec3& vel = getPath().getVelocity();
-  const fvec3 dir = vel.normalize();
-  azimuth   = limitAngle(atan2f(dir.y, dir.x));
-  elevation = limitAngle(atan2f(dir.z, dir.xy().length()));
 
+  // setup shot
+  speed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) *
+          BZDB.eval(StateDatabase::BZDB_GMADSPEED);
+  const fvec3 dir = getPath().getVelocity().normalize();
+  f.shot.vel = speed * dir;
+  const fvec3& vel = getPath().getVelocity();
+  
   // initialize segments
   currentTime = getPath().getStartTime();
-  Ray ray = Ray(f.shot.pos, dir);
+  Ray ray = Ray(f.shot.pos, vel);
   ShotPathSegment segment(currentTime, currentTime, ray);
   segments.push_back(segment);
   segments.push_back(segment);
   segments.push_back(segment);
   segments.push_back(segment);
 
-  // setup shot
-  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  f.shot.vel = shotSpeed * dir;
-
   // set next position to starting position
   nextPos = f.shot.pos;
+  nextVel = f.shot.vel;
 
   // check that first segment doesn't start inside a building
   float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
   const fvec3 startPos = f.shot.pos - (muzzleFront * dir);
 
-  Ray firstRay = Ray(startPos, dir);
+  Ray firstRay = Ray(startPos, vel);
   prevTime = currentTime;
-  prevTime += -muzzleFront / BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+  prevTime -= (muzzleFront / speed);
   checkBuildings(firstRay);
   prevTime = currentTime;
 
@@ -89,10 +84,12 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   puffTime = BZDB.eval("gmPuffTime");
 }
 
+
 GuidedMissileStrategy::~GuidedMissileStrategy()
 {
   delete ptSceneNode;
 }
+
 
 // NOTE -- ray is base of shot segment and normalized direction of flight.
 //	distance traveled is ShotSpeed * dt.
@@ -103,7 +100,9 @@ void GuidedMissileStrategy::update(float dt)
 			 LocalPlayer::getMyTank()->getId());
 
   // ignore packets that arrive out of order
-  if (isRemote && dt < 0.0f) return;
+  if (isRemote && (dt < 0.0f)) {
+    return;
+  }
 
   // update time
   prevTime = currentTime;
@@ -121,13 +120,15 @@ void GuidedMissileStrategy::update(float dt)
   // get target
   const Player* target = NULL;
   if (isRemote) {
-    if (lastTarget != NoPlayer)
+    if (lastTarget != NoPlayer) {
       target = lookupPlayer(lastTarget);
-  } else {
+    }
+  }
+  else {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
-    if (myTank)
+    if (myTank) {
       target = myTank->getTarget();
-
+    }
     // see if the target changed
     if (target) {
       if (lastTarget != target->getId()) {
@@ -142,73 +143,62 @@ void GuidedMissileStrategy::update(float dt)
     }
   }
 
-  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
+  if ((target != NULL) &&
+      ((target->getFlag() == Flags::Stealth) ||
+       ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
     target = NULL;
     lastTarget = NoPlayer;
     needUpdate = true;
   }
 
+  nextVel = getPath().getVelocity();
+
   // compute next segment's ray
   if (target) {
     // turn towards target
-    // find desired direction
-    const fvec3& targetPos = target->getPosition();
-    fvec3 desiredDir = targetPos - nextPos;
-    desiredDir.z += target->getMuzzleHeight(); // right between the eyes
-
-    // compute desired angles
-    float newAzimuth   = atan2f(desiredDir.y, desiredDir.x);
-    float newElevation = atan2f(desiredDir.z, desiredDir.xy().length());
-
-    float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
-
-    // compute new azimuth
-    float deltaAzimuth = limitAngle(newAzimuth - azimuth);
-    if (fabsf(deltaAzimuth) <= dt * gmissileAng)
-      azimuth = limitAngle(newAzimuth);
-    else if (deltaAzimuth > 0.0f)
-      azimuth = limitAngle(azimuth + dt * gmissileAng);
-    else
-      azimuth = limitAngle(azimuth - dt * gmissileAng);
-
-    // compute new elevation
-    float deltaElevation = limitAngle(newElevation - elevation);
-    if (fabsf(deltaElevation) <= dt * gmissileAng)
-      elevation = limitAngle(newElevation);
-    else if (deltaElevation > 0.0f)
-      elevation = limitAngle(elevation + dt * gmissileAng);
-    else
-      elevation = limitAngle(elevation - dt * gmissileAng);
+    fvec3 targetPos = target->getPosition();
+    targetPos.z += target->getMuzzleHeight(); // right between the eyes
+    const fvec3 desiredDir = (targetPos - nextPos).normalize();
+    const fvec3 currentDir = nextVel.normalize();
+    fvec3 cross = fvec3::cross(currentDir, desiredDir);
+    float crossLen = cross.length();
+    if (crossLen > 0.0f) {
+      cross *= (1.0f / crossLen); // normalize
+      const float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
+      const float radDiff = asinf(crossLen);
+      float radians = (gmissileAng * dt);
+      if (radians > radDiff) {
+        if (fvec3::dot(currentDir, desiredDir) > 0.0f) {
+          radians = radDiff;
+        }
+      }
+      nextVel = nextVel.rotate(radians, cross).normalize() * speed;
+    }
   }
 
-  fvec3 newDirection;
-  newDirection.x = cosf(azimuth) * cosf(elevation);
-  newDirection.y = sinf(azimuth) * cosf(elevation);
-  newDirection.z = sinf(elevation);
-  Ray ray(nextPos, newDirection);
+  Ray ray(nextPos, nextVel);
 
   renderTimes++;
 
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
   if (currentTime - lastPuff > puffTime ) {
     lastPuff = currentTime;
-    addShotPuff(nextPos,azimuth,elevation);
+    addShotPuff(nextPos, nextVel);
   }
 
   // get next position
-  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  ray.getPoint(dt * shotSpeed, nextPos);
+  nextPos = ray.getPoint(dt);
 
   // see if we hit something
   double segmentEndTime = currentTime;
 
-  if (nextPos[2] <= 0.0f) {
+  if (nextPos.z <= 0.0f) {
     // hit ground -- expire it and shorten life of segment to time of impact
     setExpiring();
-    float t = ray.getOrigin()[2] / (ray.getOrigin()[2] - nextPos[2]);
+    float t = ray.getOrigin().z / (ray.getOrigin().z - nextPos.z);
     segmentEndTime = prevTime;
     segmentEndTime += t * (currentTime - prevTime);
-    ray.getPoint(t / shotSpeed, nextPos);
+    nextPos = ray.getPoint(t);
     addShotExplosion(nextPos);
   } else {
     // see if we hit a building
@@ -219,18 +209,14 @@ void GuidedMissileStrategy::update(float dt)
     }
   }
 
-
   // throw out old segment and add new one
   ShotPathSegment nextSegment(prevTime, segmentEndTime, ray);
   segments.insert(segments.begin(), nextSegment);
   segments.pop_back();
 
   // update shot
-  newDirection[0] *= shotSpeed;
-  newDirection[1] *= shotSpeed;
-  newDirection[2] *= shotSpeed;
   setPosition(nextPos);
-  setVelocity(newDirection);
+  setVelocity(nextVel);
 }
 
 
@@ -250,8 +236,13 @@ bool GuidedMissileStrategy::predictVelocity(float dt, fvec3& v) const
 
 bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
 {
-  const bool isRemote = (getPath().getPlayer() !=
-			 LocalPlayer::getMyTank()->getId());
+  World *world = World::getWorld();
+  if (!world) {
+    return false;
+  }
+
+  const bool isRemote =
+    (getPath().getPlayer() != LocalPlayer::getMyTank()->getId());
 
   float ctime = (float)currentTime + dt;
 
@@ -272,95 +263,78 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
       target = myTank->getTarget();
   }
 
-  if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
+  if ((target != NULL) &&
+      ((target->getFlag() == Flags::Stealth) ||
+       ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
     target = NULL;
+  }
 
-  float tmpAzimuth = azimuth, tmpElevation = elevation;
+  fvec3 tmpVel = getPath().getVelocity();
+
   // compute next segment's ray
   if (target) {
     // turn towards target
-    // find desired direction
-    const fvec3& targetPos = target->getPosition();
-    fvec3 desiredDir = targetPos - nextPos;
-    desiredDir.z += target->getMuzzleHeight(); // right between the eyes
-
-    // compute desired angles
-    float newAzimuth   = atan2f(desiredDir.y, desiredDir.x);
-    float newElevation = atan2f(desiredDir.z, desiredDir.xy().length());
-
-    float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
-
-    // compute new azimuth
-    float deltaAzimuth = limitAngle(newAzimuth - azimuth);
-    if (fabsf(deltaAzimuth) <= dt * gmissileAng)
-      tmpAzimuth = limitAngle(newAzimuth);
-    else if (deltaAzimuth > 0.0f)
-      tmpAzimuth = limitAngle(azimuth + dt * gmissileAng);
-    else
-      tmpAzimuth = limitAngle(azimuth - dt * gmissileAng);
-
-    // compute new elevation
-    float deltaElevation = limitAngle(newElevation - elevation);
-    if (fabsf(deltaElevation) <= dt * gmissileAng)
-      tmpElevation = limitAngle(newElevation);
-    else if (deltaElevation > 0.0f)
-      tmpElevation = limitAngle(elevation + dt * gmissileAng);
-    else
-      tmpElevation = limitAngle(elevation - dt * gmissileAng);
+    fvec3 targetPos = target->getPosition();
+    targetPos.z += target->getMuzzleHeight(); // right between the eyes
+    const fvec3 desiredDir = (targetPos - nextPos).normalize();
+    const fvec3 currentDir = tmpVel.normalize();
+    fvec3 cross = fvec3::cross(currentDir, desiredDir);
+    float crossLen = cross.length();
+    if (crossLen > 0.0f) {
+      cross *= (1.0f / crossLen); // normalize
+      const float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
+      const float radDiff = asinf(crossLen);
+      float radians = (gmissileAng * dt);
+      if (radians > radDiff) {
+        if (fvec3::dot(currentDir, desiredDir) > 0.0f) {
+          radians = radDiff;
+        }
+      }
+      tmpVel = tmpVel.rotate(radians, cross).normalize() * speed;
+    }
   }
 
-  fvec3 newDirection;
-  newDirection[0] = cosf(tmpAzimuth) * cosf(tmpElevation);
-  newDirection[1] = sinf(tmpAzimuth) * cosf(tmpElevation);
-  newDirection[2] = sinf(tmpElevation);
-  Ray ray = Ray(nextPos, newDirection);
+  Ray ray = Ray(nextPos, tmpVel);
 
   // get next position
-  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  ray.getPoint(dt * shotSpeed, p);
+  p = ray.getPoint(dt);
 
   // see if we hit something
-  if (p[2] <= 0.0f)
+  if (p.z <= 0.0f) {
     return false;
-  else {
-    // see if we hit a building
-    float t = float((currentTime - prevTime) * shotSpeed);
-    int face;
-    const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
-    const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);
+  }
 
-    World *world = World::getWorld();
-    if (!world) {
-      return false;
-    }
+  // see if we hit a building
+  float t = float(currentTime - prevTime);
 
-    // check in reverse order to see what we hit first
-    if (teleporter) {
-      // entered teleporter -- teleport it
-      unsigned int seed = getPath().getShotId();
-      int source = world->getTeleporter(teleporter, face);
-      int teletarget = world->getTeleportTarget(source, seed);
+  const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
+  const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
+  if (linkSrc != NULL) {
+    const ShotPath& myPath = getPath();
+    const ShotType shotType = myPath.getShotType();
+    const TeamColor teamNum = myPath.getTeam();
+    if (!linkSrc->shotCanCross(p, tmpVel, teamNum, shotType)) {
+      linkSrc = NULL;
+    }
+  }
 
-      int outFace;
-      const Teleporter* outTeleporter = world->getTeleporter(teletarget, outFace);
-      teleporter->getPointWRT(*outTeleporter, face, outFace,
-                              p, NULL, tmpAzimuth, p, NULL, &tmpAzimuth);
-      eventHandler.ShotTeleported(getPath(), face, outFace); // FIXME
-    }
-    else if (building) {
-      // expire on next update
-      return false;
-    }
+  // check in reverse order to see what we hit first
+  if (linkSrc) {
+    // entered teleporter -- teleport it
+    const unsigned int seed = getPath().getShotId();
+    int srcID, dstID; // unused
+    const LinkPhysics* physics;
+    const MeshFace* linkDst =
+      linkManager.getShotLinkDst(linkSrc, seed, srcID, dstID, physics);
+    linkSrc->teleportShot(*linkDst, *physics, p, p, tmpVel, tmpVel);
+  }
+  else if (building) {
+    // expire on next update
+    return false;
   }
 
   // update shot
-  newDirection[0] *= shotSpeed;
-  newDirection[1] *= shotSpeed;
-  newDirection[2] *= shotSpeed;
-
-  v[0] = newDirection[0];
-  v[1] = newDirection[1];
-  v[2] = newDirection[2];
+  v = tmpVel;
 
   return true;
 }
@@ -368,44 +342,53 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
 
 float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
-  float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  float t = float((currentTime - prevTime) * shotSpeed);
-  int face;
+  float t = float(currentTime - prevTime);
   const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
-  const Teleporter* teleporter = getFirstTeleporter(ray, Epsilon, t, face);
+  const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
+  if (linkSrc != NULL) {
+    const ShotPath& myPath = getPath();
+    const ShotType shotType = myPath.getShotType();
+    const TeamColor teamNum = myPath.getTeam();
+    if (!linkSrc->shotCanCross(nextPos, nextVel, teamNum, shotType)) {
+      linkSrc = NULL;
+    }
+  }
 
-  World *world = World::getWorld();
+  World* world = World::getWorld();
   if (!world) {
     return -1.0f;
   }
 
   // check in reverse order to see what we hit first
-  if (teleporter) {
+  if (linkSrc) {
     // entered teleporter -- teleport it
     unsigned int seed = getPath().getShotId();
-    int source = world->getTeleporter(teleporter, face);
-    int target = world->getTeleportTarget(source, seed);
-
-    int outFace;
-    const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
-    teleporter->getPointWRT(*outTeleporter, face, outFace, nextPos, NULL, azimuth, nextPos, NULL, &azimuth);
-    return t / shotSpeed;
-  } else if (building) {
+    int srcID, dstID;
+    const LinkPhysics* physics;
+    const MeshFace* linkDst =
+      linkManager.getShotLinkDst(linkSrc, seed, srcID, dstID, physics);
+    fvec3 vel = getPath().getVelocity();
+    linkSrc->teleportShot(*linkDst, *physics, nextPos, nextPos,
+                                              nextVel, nextVel);
+    eventHandler.ShotTeleported(getPath(), srcID, dstID);
+    return t;
+  }
+  else if (building) {
     // expire on next update
     setExpiring();
-    fvec3 pos;
-    ray.getPoint(t / shotSpeed, pos);
-    addShotExplosion(pos);
-    return t / shotSpeed;
+    addShotExplosion(ray.getPoint(t));
+    return t;
   }
   return -1.0f;
 }
 
+
 float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position) const
 {
   float minTime = Infinity;
-  if (getPath().isExpired())
+  if (getPath().isExpired()) {
     return minTime;
+  }
 
   // GM is not active until activation time passes (for any tank)
   const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
@@ -422,10 +405,8 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   // half a tank height.
   const float tankHeight = tank.size[2];
 
-  fvec3 lastTankPositionRaw;
-  lastTankPositionRaw[0] = tank.motion.getOrigin()[0];
-  lastTankPositionRaw[1] = tank.motion.getOrigin()[1];
-  lastTankPositionRaw[2] = tank.motion.getOrigin()[2] + 0.5f * tankHeight;
+  fvec3 lastTankPositionRaw = tank.motion.getOrigin();
+  lastTankPositionRaw.z += (0.5f * tankHeight);
 
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
@@ -433,20 +414,15 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   const size_t numSegments = segments.size();
   size_t i = 0;
   // only test most recent segment if shot is from my tank
-  if (numSegments > 1 && tank.testLastSegment )
+  if ((numSegments > 1) && tank.testLastSegment) {
     i = numSegments - 1;
+  }
   for (; i < numSegments; i++) {
     const Ray& ray = segments[i].ray;
 
-    // construct ray with correct velocity
-    float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-    const fvec3& dir = ray.getDirection();
-    fvec3 speed = shotSpeed * dir;
-    Ray speedRay(ray.getOrigin(), speed);
-
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(Intersect::rayMinusRay(speedRay, 0.0, tankLastMotion, 0.0));
+    Ray relativeRay(Intersect::rayMinusRay(ray, 0.0, tankLastMotion, 0.0));
 
     // get closest approach time
     float t;
@@ -461,23 +437,23 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
       t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
     }
 
-    if (t > minTime)
+    if (t > minTime) {
       continue;
+    }
 
     // if not in shot segment times then no hit
-    if (t < 0.0f || t > segments[i].end - segments[i].start)
+    if ((t < 0.0f) || (t > (segments[i].end - segments[i].start))) {
       continue;
+    }
 
     // check if shot hits tank -- get position at time t, see if in radius
-    fvec3 closestPos;
-    relativeRay.getPoint(t, closestPos);
+    fvec3 closestPos = relativeRay.getPoint(t);
     if (closestPos.lengthSq() < radius2) {
       // save best time so far
       minTime = t;
 
       // compute location of tank at time of hit
-      fvec3 tankPos;
-      tank.motion.getPoint(t, tankPos);
+      fvec3 tankPos = tank.motion.getPoint(t);
 
       // compute position of intersection
       position = tankPos + closestPos;
@@ -487,10 +463,13 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   return minTime;
 }
 
+
 void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
 {
   // only send an update when needed
-  if (!needUpdate) return;
+  if (!needUpdate) {
+    return;
+  }
   ((GuidedMissileStrategy*)this)->needUpdate = false;
 
   // construct and send packet
@@ -501,7 +480,8 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
-void GuidedMissileStrategy::readUpdate( void* msg)
+
+void GuidedMissileStrategy::readUpdate(void* msg)
 {
   // position and velocity have been replaced by the remote system's
   // concept of the position and velocity.  this may cause a discontinuity
@@ -512,23 +492,20 @@ void GuidedMissileStrategy::readUpdate( void* msg)
   // read the lastTarget
   nboUnpackUInt8(msg, lastTarget);
 
-  // fix up dependent variables
-  const fvec3& vel = getPath().getVelocity();
-  const fvec3 dir = vel.normalize();
-  azimuth   = limitAngle(atan2f(dir.y, dir.x));
-  elevation = limitAngle(atan2f(dir.z, dir.xy().length()));
-  const fvec3& pos = getPath().getPosition();
-  nextPos = pos;
+  nextPos = getPath().getPosition();
+  nextVel = getPath().getVelocity();
 
   // note that we do not call update(float).  let that happen on the
   // next time step.
 }
+
 
 void GuidedMissileStrategy::addShot(SceneDatabase* scene, bool)
 {
   ptSceneNode->move(getPath().getPosition(), getPath().getVelocity());
   scene->addDynamicNode(ptSceneNode);
 }
+
 
 void GuidedMissileStrategy::expire()
 {
@@ -538,6 +515,7 @@ void GuidedMissileStrategy::expire()
     ServerLink::getServer()->sendEndShot(shot.getPlayer(), shot.getShotId(), 0);
   }
 }
+
 
 void GuidedMissileStrategy::radarRender() const
 {
@@ -584,6 +562,7 @@ void GuidedMissileStrategy::radarRender() const
     }
   }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

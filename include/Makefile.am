@@ -65,6 +65,7 @@ noinst_HEADERS =			\
 	Language.h			\
 	LaserSceneNode.h		\
 	LinkManager.h			\
+	LinkPhysics.h			\
 	ListServer.h			\
 	LuaClientScripts.h		\
 	MapInfo.h			\
@@ -131,7 +132,6 @@ noinst_HEADERS =			\
 	TankSceneNode.h			\
 	Team.h				\
 	Teleporter.h			\
-	TeleporterSceneNodeGenerator.h	\
 	TextChunkManager.h		\
 	TextSceneNode.h			\
 	TextUtils.h			\

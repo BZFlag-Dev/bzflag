@@ -19,10 +19,11 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "PhysicsDriver.h"
-#include "WorldText.h"
 #include "FlagSceneNode.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
+#include "MeshObstacle.h"
+#include "MeshFace.h"
 #include "BzDocket.h"
 #include "BzVFS.h"
 
@@ -113,14 +114,6 @@ void* WorldBuilder::unpack(void* buf)
   OBSTACLEMGR.clear();
   buf = OBSTACLEMGR.unpack(buf);
 
-  // unpack the teleporter links
-  world->links.clear();
-  buf = world->links.unpack(buf);
-
-  // unpack world text
-  WORLDTEXTMGR.clear();
-  buf = WORLDTEXTMGR.unpack(buf);
-
   // unpack water level
   buf = nboUnpackFloat(buf, world->waterLevel);
   if (world->waterLevel >= 0.0f) {
@@ -183,22 +176,31 @@ void* WorldBuilder::unpack(void* buf)
   // build the world obstacles
   OBSTACLEMGR.makeWorld();
 
-  // link the teleporters
-  world->links.doLinking();
-
   // make the team bases
-  if (world->gameType == ClassicCTF) {
+  if (world->gameType != ClassicCTF) {
+    OBSTACLEMGR.replaceBasesWithBoxes();
+  }
+  else {
     const ObstacleList& bases = OBSTACLEMGR.getBases();
     for (i = 0; i < bases.size(); i++) {
       const BaseBuilding* base = (const BaseBuilding*) bases[i];
-      setBase((TeamColor)base->getTeam(),
-              base->getPosition(), base->getSize(), base->getRotation());
+      setBase(base);
     }
-  } else {
-    OBSTACLEMGR.replaceBasesWithBoxes();
+    const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+    for (i = 0; i < meshes.size(); i++) {
+      const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
+      if (!mesh->getHasSpecialFaces()) {
+        continue;
+      }
+      const int faceCount = mesh->getFaceCount();
+      for (int f = 0; f < faceCount; f++) {
+        const MeshFace* face = mesh->getFace(f);
+        if (face->isBaseFace()) {
+          setBase(face);
+        }
+      }
+    }
   }
-
-  world->makeLinkMaterial();
 
   world->makeMeshDrawMgrs();
 
@@ -328,16 +330,9 @@ void WorldBuilder::setShakeWins(int wins) const
   world->shakeWins = wins;
 }
 
-void WorldBuilder::setBase(TeamColor team,
-                           const fvec3& pos, const fvec3& size, float radians)
+void WorldBuilder::setBase(const Obstacle* base)
 {
-  int teamIndex = int(team);
-
-  World::BaseParams bp;
-  bp.pos     = pos;
-  bp.size    = size;
-  bp.radians = radians;
-  world->bases[teamIndex].push_back(bp);
+  world->bases[base->getBaseTeam()].push_back(base);
 }
 
 

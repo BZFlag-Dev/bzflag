@@ -22,6 +22,7 @@
 
 // local implementation headers
 #include "World.h"
+#include "RemotePlayer.h"
 #include "Intersect.h"
 #include "TargetingUtils.h"
 

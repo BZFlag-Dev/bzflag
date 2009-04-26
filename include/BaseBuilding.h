@@ -35,6 +35,8 @@ class BaseBuilding : public Obstacle {
     Obstacle*	copyWithTransform(const MeshTransform&) const;
 
     const char*		getType() const;
+    ObstacleType	getTypeID() const { return baseType; }
+
     static const char*	getClassName(); // const
 
     bool		isFlatTop() const;
@@ -59,7 +61,7 @@ class BaseBuilding : public Obstacle {
 				float height,
 				fvec3& normal) const;
     void		getCorner(int index, fvec3& pos) const;
-    int			getTeam() const;
+    int			getBaseTeam() const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -68,7 +70,6 @@ class BaseBuilding : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
 
-    virtual int getTypeID() const {return baseType;}
 
     std::string		userTextures[2];
 

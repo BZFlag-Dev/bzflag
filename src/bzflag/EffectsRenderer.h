@@ -191,14 +191,17 @@ protected:
 class StdShotTeleportEffect : public BasicEffect
 {
 public:
-  StdShotTeleportEffect();
+  StdShotTeleportEffect(float length, const fvec4* clipPlane);
   virtual ~StdShotTeleportEffect();
 
   virtual bool update(float time);
   virtual void draw(const SceneRenderer& sr);
+
 protected:
   int texture;
   float	radius;
+  float length;
+  const fvec4* clipPlane;
   OpenGLGState ringState;
 };
 
@@ -241,8 +244,8 @@ public:
   std::vector<std::string> getRicoEffectTypes();
 
   // shot teleport effect
-  void addShotTeleportEffect(const fvec3& pos, const fvec2& rot,
-			     const fvec3* vel = NULL);
+  void addShotTeleportEffect(const fvec3& pos, const fvec3& vel,
+                             const fvec4* plane = NULL);
   std::vector<std::string> getShotTeleportEffectTypes();
 
 protected:

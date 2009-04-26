@@ -29,6 +29,7 @@
 // common headers
 #include "WorldInfo.h"
 #include "ObstacleMgr.h"
+#include "BaseBuilding.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TimeKeeper.h"
@@ -53,7 +54,7 @@ static void CreateMapInfo(const std::string& type,
 }
 
 
-WorldInfo *defineRandomWorld()
+WorldInfo* defineRandomWorld()
 {
   WorldInfo* myWorld = new WorldInfo();
   if (!myWorld) {
@@ -166,7 +167,7 @@ WorldInfo *defineRandomWorld()
 }
 
 
-WorldInfo *defineTeamWorld()
+WorldInfo* defineTeamWorld()
 {
   WorldInfo *myWorld = new WorldInfo();
   if (!myWorld) {
@@ -191,11 +192,15 @@ WorldInfo *defineTeamWorld()
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
   const int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
   const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+  const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
 
-  // set team base and team flag safety positions
-  int t;
-  for (t = RedTeam; t <= PurpleTeam; t++)
-    bases[t] = TeamBases((TeamColor)t, true);
+  // setup the default base positions
+  const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+  const float baseDist = 0.5f * (worldSize - baseSize);
+  const fvec3 redPosition    (-baseDist, 0.0f, 0.0f);
+  const fvec3 greenPosition  (+baseDist, 0.0f, 0.0f);
+  const fvec3 bluePosition   (0.0f, -baseDist, 0.0f);
+  const fvec3 purplePosition (0.0f, +baseDist, 0.0f);
 
   // make walls
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
@@ -208,12 +213,10 @@ WorldInfo *defineTeamWorld()
   myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
 		   wallHeight);
 
-  const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
-  const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   // make pyramids
   if (haveRed) {
     // around red base
-    const fvec3& pos = bases[RedTeam].getBasePosition(0);
+    const fvec3& pos = redPosition;
     myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -234,7 +237,7 @@ WorldInfo *defineTeamWorld()
 
   if (haveGreen) {
     // around green base
-    const fvec3& pos = bases[GreenTeam].getBasePosition(0);
+    const fvec3& pos = greenPosition;
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -255,7 +258,7 @@ WorldInfo *defineTeamWorld()
 
   if (haveBlue) {
     // around blue base
-    const fvec3& pos = bases[BlueTeam].getBasePosition(0);
+    const fvec3& pos = bluePosition;
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -276,7 +279,7 @@ WorldInfo *defineTeamWorld()
 
   if (havePurple) {
     // around purple base
-    const fvec3& pos = bases[PurpleTeam].getBasePosition(0);
+    const fvec3& pos = purplePosition;
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
@@ -305,10 +308,6 @@ WorldInfo *defineTeamWorld()
       std::cerr << "need some teams, use -mp" << std::endl;
       exit(20);
     }
-    const fvec3& redPosition    = bases[RedTeam].getBasePosition(0);
-    const fvec3& greenPosition  = bases[GreenTeam].getBasePosition(0);
-    const fvec3& bluePosition   = bases[BlueTeam].getBasePosition(0);
-    const fvec3& purplePosition = bases[PurpleTeam].getBasePosition(0);
 
     int numBoxes = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize);
     float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
@@ -629,10 +628,11 @@ WorldInfo *defineTeamWorld()
   }
 
   // generate the required bases
-  for (t = RedTeam; t <= PurpleTeam; t++) {
+  for (int t = RedTeam; t <= PurpleTeam; t++) {
     if (clOptions->maxTeam[t] == 0) {
       bases.erase(t);
-    } else {
+    }
+    else {
       CustomZone zone;
       fvec3 pos(0.0f, 0.0f, 0.0f);
       const fvec3 size(baseSize * 0.5f, baseSize * 0.5f, 0.0f);
@@ -675,6 +675,19 @@ WorldInfo *defineTeamWorld()
   }
 
   OBSTACLEMGR.makeWorld();
+
+  // make local bases
+  unsigned int i;
+  const ObstacleList& baseList = OBSTACLEMGR.getBases();
+  for (i = 0; i < baseList.size(); i++) {
+    const BaseBuilding* base = (const BaseBuilding*) baseList[i];
+    TeamColor color = (TeamColor)base->getBaseTeam();
+    if (bases.find(color) == bases.end()) {
+      bases[color] = TeamBases((TeamColor)color);
+    }
+    bases[color].addBase(base);
+  }
+
   myWorld->finishWorld();
 
   return myWorld;

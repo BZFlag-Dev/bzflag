@@ -20,36 +20,36 @@
 #  include <iostream>
 #endif
 
+#include "bz_md5.h"
 #include "bzfs.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
-#include "WorldWeapons.h"
-#include "WorldEventManager.h"
-#include "GameKeeper.h"
-#include "FlagInfo.h"
-#include "VotingArbiter.h"
-#include "commands.h"
-#include "SpawnPosition.h"
-#include "WorldInfo.h"
-#include "BzMaterial.h"
-#include "cURLManager.h"
-#include "CustomWorld.h"
-#include "Permissions.h"
-#include "CommandManager.h"
 #include "bzfsPlugins.h"
-#include "ObstacleMgr.h"
-#include "BaseBuilding.h"
-#include "BufferedNetworkMessage.h"
-#include "ServerIntangibilityManager.h"
-#include "bz_md5.h"
 #include "vectors.h"
 #include "version.h"
+#include "BaseBuilding.h"
+#include "BufferedNetworkMessage.h"
 #include "BZDBCache.h"
-#include "MotionUtils.h"
-#include "Reports.h"
+#include "BzMaterial.h"
+#include "CommandManager.h"
+#include "commands.h"
+#include "cURLManager.h"
+#include "CustomWorld.h"
+#include "FlagInfo.h"
+#include "GameKeeper.h"
 #include "LinkManager.h"
-#include "Teleporter.h"
+#include "MeshFace.h"
+#include "MotionUtils.h"
+#include "ObstacleMgr.h"
+#include "Permissions.h"
 #include "PhysicsDriver.h"
+#include "Reports.h"
+#include "ServerIntangibilityManager.h"
+#include "SpawnPosition.h"
+#include "VotingArbiter.h"
+#include "WorldEventManager.h"
+#include "WorldInfo.h"
+#include "WorldWeapons.h"
 
 
 TimeKeeper synct=TimeKeeper::getCurrent();
@@ -3340,7 +3340,7 @@ void addCTFBasesToListsFromObstacleList ( bz_APIWorldObjectList *solidList, cons
     solid->id = buildObjectIDFromObstacle(*list[i]);
     setSolidObjectFromObstacle(*solid,*list[i]);
     BaseBuilding* base = (BaseBuilding*)list[i];
-    solid->team = convertTeam((TeamColor)base->getTeam());
+    solid->team = convertTeam((TeamColor)base->getBaseTeam());
     solidList->push_back(solid);
   }
 }
@@ -3353,7 +3353,6 @@ BZF_API bz_APIWorldObjectList *bz_getWorldObjectList(void)
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getBoxes());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getPyrs());
   addCTFBasesToListsFromObstacleList(worldList,OBSTACLEMGR.getBases());
-  addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getTeles());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getMeshes());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getArcs());
   addObjectsToListsFromObstacleList(worldList,OBSTACLEMGR.getCones());
@@ -3469,31 +3468,63 @@ BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
 }
 
 
-BZF_API bool bz_getTeleLinkIDs(const char* teleName,
-                               int* frontLink, int* backLink)
+BZF_API int bz_getLinkSrcID(const char* srcName, int lastID)
 {
-  if (world == NULL) {
-    return false;
+  if (srcName == NULL) {
+    return -1;
   }
-  const int teleIndex = world->getLinkManager().getTeleportIndex(teleName);
-  if (teleIndex < 0) {
-    return false;
+  const LinkManager::FaceVec& linkSrcs = linkManager.getLinkSrcs();
+
+  lastID++;
+  size_t i = (lastID >= 0) ? (size_t)lastID : 0;
+  for (/*no-op*/; i < linkSrcs.size(); i++) {
+    const MeshFace* face = linkSrcs[i];
+    if (face->getLinkName() == srcName) {
+      return i;
+    }
   }
-  *frontLink = teleIndex * 2;
-  *backLink = *frontLink + 1;
-  return true;
+  return -1;
 }
 
 
-BZF_API const char* bz_getLinkTeleName(int linkIndex)
+BZF_API int bz_getLinkDstID(const char* dstName, int lastID)
 {
-  const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  const int teleCount = (int)teleporters.size();
-  if ((linkIndex < 0) || (linkIndex >= (2 * teleCount))) {
+  if (dstName == NULL) {
+    return -1;
+  }
+  const LinkManager::DstDataVec& linkDsts = linkManager.getLinkDsts();
+
+  lastID++;
+  size_t i = (lastID >= 0) ? (size_t)lastID : 0;
+  for (/*no-op*/; i < linkDsts.size(); i++) {
+    const MeshFace* face = linkDsts[i].face;
+    if (face->getLinkName() == dstName) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+BZF_API const char* bz_getLinkSrcName(int linkSrcID)
+{
+  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
+  if (face == NULL) {
     return NULL;
   }
-  const Teleporter* tele = (const Teleporter*) teleporters[linkIndex / 2];
-  return tele->getName().c_str();
+  static std::string faceName = face->getLinkName();
+  return faceName.c_str();
+}
+
+
+BZF_API const char* bz_getLinkDstName(int linkDstID)
+{
+  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
+  if (face == NULL) {
+    return NULL;
+  }
+  static std::string faceName = face->getLinkName();
+  return faceName.c_str();
 }
 
 
@@ -3890,7 +3921,7 @@ BZF_API int bz_getTeamScore(bz_eTeamType _team)
   if(teamIndex < 0 || teamIndex >= NumTeams)
     return 0;
 
-  return team[teamIndex].team.won-team[teamIndex].team.lost;
+  return teamInfos[teamIndex].team.won - teamInfos[teamIndex].team.lost;
 }
 
 //-------------------------------------------------------------------------
@@ -3902,7 +3933,7 @@ BZF_API int bz_getTeamWins(bz_eTeamType _team)
   if(teamIndex < 0 || teamIndex >= NumTeams)
     return 0;
 
-  return team[teamIndex].team.won;
+  return teamInfos[teamIndex].team.won;
 }
 
 //-------------------------------------------------------------------------
@@ -3914,7 +3945,7 @@ BZF_API int bz_getTeamLosses(bz_eTeamType _team)
   if(teamIndex < 0 || teamIndex >= NumTeams)
     return 0;
 
-  return team[teamIndex].team.lost;
+  return teamInfos[teamIndex].team.lost;
 }
 
 //-------------------------------------------------------------------------
@@ -3926,7 +3957,7 @@ BZF_API void bz_setTeamWins(bz_eTeamType _team, int wins)
   if(teamIndex < 0 || teamIndex >= NumTeams)
     return ;
 
-  team[teamIndex].team.won=wins;
+  teamInfos[teamIndex].team.won = wins;
   sendTeamUpdateMessageBroadcast(teamIndex);
 }
 
@@ -3939,7 +3970,7 @@ BZF_API void bz_setTeamLosses(bz_eTeamType _team, int losses)
   if(teamIndex < 0 || teamIndex >= NumTeams)
     return ;
 
-  team[teamIndex].team.lost=losses;
+  teamInfos[teamIndex].team.lost = losses;
   sendTeamUpdateMessageBroadcast(teamIndex);
 }
 
@@ -3954,16 +3985,16 @@ BZF_API void bz_resetTeamScore(bz_eTeamType _team)
 
   if(teamIndex >= 0)
   {
-    team[teamIndex].team.won=0;
-    team[teamIndex].team.lost=0;
+    teamInfos[teamIndex].team.won = 0;
+    teamInfos[teamIndex].team.lost = 0;
     sendTeamUpdateMessageBroadcast(teamIndex);
   }
   else
   {
     for(int i=0; i < NumTeams; i++)
     {
-      team[i].team.won=0;
-      team[i].team.lost=0;
+      teamInfos[i].team.won = 0;
+      teamInfos[i].team.lost = 0;
       sendTeamUpdateMessageBroadcast(i);
     }
   }

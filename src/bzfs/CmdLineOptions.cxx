@@ -829,7 +829,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.masterBanListURL.push_back(argv[i]);
     } else if (strcmp(argv[i], "-noTeamKills") == 0) {
-      // allow jumping
+      // forbid team kills
       options.gameOptions |= int(NoTeamKills);
     } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port

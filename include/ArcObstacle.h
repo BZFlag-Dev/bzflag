@@ -52,38 +52,36 @@ class ArcObstacle : public Obstacle {
 
     MeshObstacle* makeMesh();
 
-    const char* getType() const;
+    const char*  getType() const;
+    ObstacleType getTypeID() const { return arcType; }
+
     static const char* getClassName(); // const
+
     bool isValid() const;
     bool isFlatTop() const;
 
     float intersect(const Ray&) const;
     void getNormal(const fvec3& p, fvec3& n) const;
     void get3DNormal(const fvec3& p, fvec3& n) const;
-
+    bool getHitNormal(const fvec3& pos1, float azimuth1,
+                      const fvec3& pos2, float azimuth2,
+                      float halfWidth, float halfBreadth,
+                      float height, fvec3& normal) const;
     bool inCylinder(const fvec3& p, float radius, float height) const;
     bool inBox(const fvec3& p, float angle,
-	       float halfWidth, float halfBreadth, float height) const;
+               float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const fvec3& oldP, float oldAngle,
-		     const fvec3& newP, float newAngle,
-		     float halfWidth, float halfBreadth, float height) const;
+                     const fvec3& newP, float newAngle,
+                     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const fvec3& p, float angle,
-		    float halfWidth, float halfBreadth, float height,
-		    fvec4* plane) const;
-
-    bool getHitNormal(const fvec3& pos1, float azimuth1,
-		      const fvec3& pos2, float azimuth2,
-		      float halfWidth, float halfBreadth,
-		      float height, fvec3& normal) const;
+                    float halfWidth, float halfBreadth, float height,
+                    fvec4* plane) const;
 
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-
-    virtual int getTypeID() const {return arcType;}
-
 
   private:
     void finalize();

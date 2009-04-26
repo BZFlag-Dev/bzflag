@@ -18,7 +18,7 @@
 using namespace TankGeometryUtils;
 
 
-fvec3 sideVerts[] = {  
+fvec3 sideVerts[] = {
   fvec3( 2.800000f,  0.878000f, 0.829000f),
   fvec3( 2.820000f,  0.878000f, 0.716000f),
   fvec3( 2.680000f,  0.877000f, 0.684000f),

@@ -348,7 +348,6 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
     }
   }
 
-
   MeshObstacle* mesh = new MeshObstacle(xform, checkTypes, checkPoints,
 					verts, norms, txcds, FaceCount,
 					false, false, 0, 0, false);

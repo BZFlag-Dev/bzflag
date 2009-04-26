@@ -295,6 +295,27 @@ class vec3 {
     }
     static void rotateZ(vec3& v, T radians) { v = v.rotateZ(radians); }
 
+    vec3 rotate(T radians, const vec3& n) const {
+      const T cv = typed_cos(radians);
+      const T sv = typed_sin(radians);
+      const T ic = (T)1 - cv;
+      const T fxx = ic * (n.x * n.x);
+      const T fyy = ic * (n.y * n.y);
+      const T fzz = ic * (n.z * n.z);
+      const T fxy = ic * (n.x * n.y);
+      const T fxz = ic * (n.x * n.z);
+      const T fyz = ic * (n.y * n.z);
+      const T xs = n.x * sv;
+      const T ys = n.y * sv;
+      const T zs = n.z * sv;
+      return vec3(dot(vec3(fxx + cv, fxy - zs, fxz + ys)),
+                  dot(vec3(fxy + zs, fyy + cv, fyz - xs)),
+                  dot(vec3(fxz - ys, fyz + xs, fzz + cv)));
+    }
+    static void rotate(vec3& v, T radians, const vec3& n) {
+      v = v.rotate(radians, n);
+    }
+
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }
       return ::tostring(x, fmt) + sep +

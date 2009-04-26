@@ -18,7 +18,9 @@
 #include "Obstacle.h"
 #include "ObstacleList.h"
 #include "WallObstacle.h"
+#include "MeshFace.h"
 #include "ObstacleMgr.h"
+
 
 ShotStrategy::ShotStrategy(ShotPath* _path) :
   path(_path)
@@ -26,60 +28,72 @@ ShotStrategy::ShotStrategy(ShotPath* _path) :
   // do nothing
 }
 
+
 ShotStrategy::~ShotStrategy()
 {
   // do nothing
 }
+
 
 bool ShotStrategy::isStoppedByHit() const
 {
   return true;
 }
 
+
 void ShotStrategy::sendUpdate(const FiringInfo&) const
 {
   // do nothing by default -- normal shots don't need updates
 }
+
 
 void ShotStrategy::readUpdate( void*)
 {
   // do nothing by default -- normal shots don't need updates
 }
 
+
 void ShotStrategy::expire()
 {
   // do nothing by default
 }
+
 
 void ShotStrategy::setReloadTime(float t) const
 {
   path->setReloadTime(t);
 }
 
+
 void ShotStrategy::setPosition(const fvec3& pos) const
 {
   path->setPosition(pos);
 }
+
 
 void ShotStrategy::setVelocity(const fvec3& vel) const
 {
   path->setVelocity(vel);
 }
 
+
 void ShotStrategy::setExpiring() const
 {
   path->setExpiring();
 }
+
 
 void ShotStrategy::setExpired() const
 {
   path->setExpired();
 }
 
+
 FiringInfo& ShotStrategy::getFiringInfo(ShotPath* p) const
 {
   return p->getFiringInfo();
 }
+
 
 const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 					       float min, float& t)
@@ -93,40 +107,62 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     const WallObstacle* wall = (const WallObstacle*) walls[i];
     if (!wall->isShootThrough()) {
       const float wallt = wall->intersect(ray);
-      if (wallt > min && wallt < t) {
+      if ((wallt > min) && (wallt < t)) {
 	t = wallt;
 	closestObstacle = wall;
       }
     }
   }
 
-  //check everything else
-  const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
+  // check everything else
+  const ObsList* olist = COLLISIONMGR.rayTest(&ray, t);
 
   for (i = 0; i < (unsigned int)olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    if (!obs->isShootThrough()) {
-      const float timet = obs->intersect(ray);
-      if (obs->getType() == Teleporter::getClassName()) {
-	const Teleporter* tele = (const Teleporter*) obs;
-	int face;
-	if ((timet > min) && (timet < t) &&
-	    (tele->isTeleported(ray, face) < 0.0f)) {
-	  t = timet;
-	  closestObstacle = obs;
-	}
+    if (obs->isShootThrough()) {
+      if ((obs->getTypeID() != faceType) ||
+          !((const MeshFace*)obs)->isLinkSrc()) {
+        continue; // shootThrough, and not a linkSrc; skip it
       }
-      else {
-	if ((timet > min) && (timet < t)) {
-	  t = timet;
-	  closestObstacle = obs;
-	}
-      }
+    }
+    const float timet = obs->intersect(ray);
+    if ((timet > min) && (timet < t)) {
+      t = timet;
+      closestObstacle = obs;
     }
   }
 
   return closestObstacle;
 }
+
+
+const Obstacle* ShotStrategy::getFirstLinkSrc(const Ray& ray,
+                                              float min, float& t)
+{
+  const Obstacle* closestObstacle = NULL;
+
+  // check everything else
+  const ObsList* olist = COLLISIONMGR.rayTest(&ray, t);
+
+  for (int i = 0; i < olist->count; i++) {
+    const Obstacle* obs = olist->list[i];
+    if (!obs->isShootThrough() || (obs->getTypeID() != faceType)) {
+      continue;
+    }
+    const MeshFace* face = (const MeshFace*)obs;
+    if (!face->isLinkSrc()) {
+      continue;
+    }
+    const float timet = obs->intersect(ray);
+    if ((timet > min) && (timet < t)) {
+      t = timet;
+      closestObstacle = obs;
+    }
+  }
+
+  return closestObstacle;
+}
+
 
 void ShotStrategy::reflect(fvec3& v, const fvec3& n) // const
 {
@@ -150,26 +186,6 @@ void ShotStrategy::reflect(fvec3& v, const fvec3& n) // const
   return;
 }
 
-const Teleporter* ShotStrategy::getFirstTeleporter(const Ray& ray, float min,
-						   float& t, int& f)
-{
-  const Teleporter* closestTeleporter = NULL;
-  int face;
-
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-
-  for (unsigned int i = 0; i < teles.size(); i++) {
-    const Teleporter& tele = *((const Teleporter*) teles[i]);
-    const float telet = tele.isTeleported(ray, face);
-    if (telet > min && telet < t) {
-      t = telet;
-      f = face;
-      closestTeleporter = &tele;
-    }
-  }
-
-  return closestTeleporter;
-}
 
 bool ShotStrategy::getGround(const Ray& r, float min, float &t)
 {
