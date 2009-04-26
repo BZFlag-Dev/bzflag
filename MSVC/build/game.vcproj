@@ -611,10 +611,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\Ray.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\game\ServerItem.cxx"
 				>
 			</File>
