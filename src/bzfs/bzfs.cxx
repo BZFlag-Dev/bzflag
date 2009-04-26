@@ -2933,32 +2933,35 @@ void searchFlag(GameKeeper::Player &playerData)
     }
     const fvec3& fpos = flag.flag.position;
 
-    // z separation check
-    float distSq = (tpos.z - fpos.z) * (tpos.z - fpos.z);
-    if (!identify && (distSq >= 0.01f)) {
-      continue;
+    if (!identify) {
+      // z separation check
+      if (fabsf(tpos.z - fpos.z) >= 0.1f) {
+        continue;
+      }
     }
 
     // spherical separation check
-    distSq += (tpos.xy() - fpos.xy()).lengthSq();
+    const float distSq = (tpos - fpos).lengthSq();
     if (distSq >= radius2) {
       continue;
     }
 
-    // check if there's an obstacle between the tank and the flag
-    const Ray ray(fpos, tpos - fpos);
-    const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
-    const int count = oList->count;
-    int o;
-    for (o = 0; o < count; o++) {
-      const Obstacle* obs = oList->list[o];
-      const float t = obs->intersect(ray);
-      if ((t >= 0.0f) && (t <= 1.0f)) {
-        break;
+    // check if there is an obstacle between the tank and the flag
+    if (!identify) {
+      const Ray ray(fpos, tpos - fpos);
+      const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
+      const int count = oList->count;
+      int o;
+      for (o = 0; o < count; o++) {
+        const Obstacle* obs = oList->list[o];
+        const float t = obs->intersect(ray);
+        if ((t >= 0.0f) && (t <= 1.0f)) {
+          break;
+        }
       }
-    }
-    if (o != count) {
-      continue; // there is a blocking obstacle
+      if (o != count) {
+        continue; // there is a blocking obstacle
+      }
     }
 
     radius2 = distSq;
