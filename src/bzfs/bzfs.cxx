@@ -2902,74 +2902,99 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
 
 void searchFlag(GameKeeper::Player &playerData)
 {
-  if (!playerData.player.isAlive())
+  if (!playerData.player.isAlive()) {
     return;
+  }
 
+  bool identify = false;
   float radius = BZDBCache::tankRadius + BZDBCache::flagRadius;
-  bool id = false;
 
   int flagId = playerData.player.getFlag();
   if (flagId >= 0) {
     FlagInfo &playerFlag = *FlagInfo::get(flagId);
-    if (playerFlag.flag.type != Flags::Identify)
+    if (playerFlag.flag.type != Flags::Identify) {
       return;
-    id = true;
+    }
+    identify = true;
     radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
   }
 
   const PlayerId playerIndex = playerData.getIndex();
 
   const fvec3& tpos = playerData.lastState.pos;
+
   float radius2 = radius * radius;
 
   int closestFlag = -1;
   for (int i = 0; i < numFlags; i++) {
     FlagInfo &flag = *FlagInfo::get(i);
-    if (!flag.exist())
-      continue;
-    if (flag.flag.status != FlagOnGround)
-      continue;
-
-    const fvec3& fpos = flag.flag.position;
-    float dist = (tpos.z - fpos.z) * (tpos.z - fpos.z);
-    if (!id && dist >= 0.01f) {
+    if (!flag.exist() || (flag.flag.status != FlagOnGround)) {
       continue;
     }
-    dist += (tpos.x - fpos.x) * (tpos.x - fpos.x)
-          + (tpos.y - fpos.y) * (tpos.y - fpos.y);
+    const fvec3& fpos = flag.flag.position;
 
-	if (dist < radius2){
-		Ray ray(fpos, tpos-fpos);
-		if (COLLISIONMGR.rayTest(&ray,dist)->count != 0)
-			continue;
-		radius2 = dist;
-		closestFlag = i;
-		if (!id)
-			break;
-	}
+    // z separation check
+    float distSq = (tpos.z - fpos.z) * (tpos.z - fpos.z);
+    if (!identify && (distSq >= 0.01f)) {
+      continue;
+    }
+
+    // horizontal separation check
+    distSq += (tpos.xy() - fpos.xy()).lengthSq();
+    if (distSq >= radius2) {
+      continue;
+    }
+
+    // check if there's an obstacle between the tank and the flag
+    const Ray ray(fpos, tpos - fpos);
+    const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
+    const int count = oList->count;
+    int o;
+    for (o = 0; o < count; o++) {
+      const Obstacle* obs = oList->list[o];
+      const float t = obs->intersect(ray);
+      if ((t >= 0.0f) && (t <= 1.0f)) {
+        break;
+      }
+    }
+    if (o != count) {
+      continue; // there is a blocking obstacle
+    }
+
+    radius2 = distSq;
+    closestFlag = i;
+
+    if (!identify) {
+      break;
+    }
   }
 
   if (closestFlag < 0) {
-    if (id)
+    if (identify) {
       playerData.setLastIdFlag(-1);
+    }
     return;
   }
+
   FlagInfo &flag = *FlagInfo::get(closestFlag);
-  if (id) {
+  if (identify) {
     if (closestFlag != playerData.getLastIdFlag()) {
-      sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
+      sendClosestFlagMessage(playerIndex, flag.flag.type, flag.flag.position);
       playerData.setLastIdFlag(closestFlag);
     }
-  } else {
+  }
+  else {
     if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG)) {
-      if (flag.flag.type->flagTeam != playerData.player.getTeam())
-	sendGrabFlagMessage(playerIndex,flag);
+      if (flag.flag.type->flagTeam != playerData.player.getTeam()) {
+	sendGrabFlagMessage(playerIndex, flag);
+      }
     }
-    else
-      sendGrabFlagMessage(playerIndex,flag);
-
+    else {
+      sendGrabFlagMessage(playerIndex, flag);
+    }
   }
 }
+
 
 void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
 {
