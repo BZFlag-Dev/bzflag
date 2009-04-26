@@ -575,7 +575,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\LinkDef.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\LinkManager.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\LinkPhysics.cxx"
 				>
 			</File>
 			<File
