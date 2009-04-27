@@ -393,7 +393,7 @@ int LinkPhysics::packSize() const
     fullSize += nboStdStringPackSize(*it);
   }
 
-  fullSize += sizeof(uint16_t); // shotBlockFlags count
+  fullSize += sizeof(uint16_t); // tankBlockFlags count
   for (it = tankBlockFlags.begin(); it != tankBlockFlags.end(); ++it) {
     fullSize += nboStdStringPackSize(*it);
   }
