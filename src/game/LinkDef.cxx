@@ -156,10 +156,10 @@ void LinkDef::print(std::ostream& out, const string& indent) const
 {
   out << indent << "link" << std::endl;
   for (size_t i = 0; i < srcs.size(); i++) {
-    out << indent << "  src " << srcs[i] << std::endl;
+    out << indent << "  addSrc " << srcs[i] << std::endl;
   }
   for (size_t i = 0; i < dsts.size(); i++) {
-    out << indent << "  dst " << dsts[i] << std::endl;
+    out << indent << "  addDst " << dsts[i] << std::endl;
   }
   physics.print(out, indent);
   out << indent << "end" << std::endl << std::endl;

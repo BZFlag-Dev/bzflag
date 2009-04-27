@@ -6756,17 +6756,21 @@ void drawFrame(const float dt)
   // and no longer exploding, or when we are in a building.
   bool insideDim = false;
   if (myTank) {
-    const float hnp = 0.5f * NearPlane; // half near plane distance
-    const fvec3& eye = viewFrustum.getEye();
-    const fvec3& dir = viewFrustum.getDirection();
-    fvec3 clipPos;
-    clipPos.x = eye.x + (dir.x * hnp);
-    clipPos.y = eye.y + (dir.y * hnp);
-    clipPos.z = eye.z;
-    const Obstacle *obs;
-    obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
-    if (obs != NULL) {
-      insideDim = true;
+    const float teleProx = myTank->getTeleporterProximity();
+    // teleporter glow has priority
+    if (teleProx < 0.25f) {
+      const float hnp = 0.5f * NearPlane; // half near plane distance
+      const fvec3& eye = viewFrustum.getEye();
+      const fvec3& dir = viewFrustum.getDirection();
+      fvec3 clipPos;
+      clipPos.x = eye.x + (dir.x * hnp);
+      clipPos.y = eye.y + (dir.y * hnp);
+      clipPos.z = eye.z;
+      const Obstacle *obs;
+      obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
+      if (obs != NULL) {
+        insideDim = true;
+      }
     }
   }
   RENDERER.setDim(HUDDialogStack::get()->isActive() || insideDim ||

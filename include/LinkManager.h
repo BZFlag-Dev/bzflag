@@ -32,10 +32,14 @@
 
 
 class MeshFace;
+class FlagType;
 
 
 class LinkManager {
   public:
+    typedef std::vector<int>         IntVec;
+    typedef std::vector<std::string> StringVec;
+
     struct DstData {
       DstData() : face(NULL) {}
       DstData(const MeshFace* f, const LinkPhysics& lp)
@@ -48,10 +52,13 @@ class LinkManager {
       LinkPhysics  physics;
     };
 
-    typedef std::vector<int>         IntVec;
-    typedef std::vector<std::string> StringVec;
+    struct DstIndexList {
+      DstIndexList() : needTest(false) {}
+      bool needTest;
+      IntVec dstIDs;
+    };
 
-    typedef std::map<const MeshFace*, IntVec> LinkMap;
+    typedef std::map<const MeshFace*, DstIndexList> LinkMap;
 
     typedef std::vector<DstData>   DstDataVec;
     typedef std::map<DstData, int> DstDataIntMap;
@@ -77,13 +84,17 @@ class LinkManager {
 
     void addLinkDef(const LinkDef& linkDef);
 
-    const MeshFace* getTankLinkDst(const MeshFace* srcLink,
-                                   int& linkSrcID, int& linkDstID,
-                                   const LinkPhysics*& physics) const;
     const MeshFace* getShotLinkDst(const MeshFace* srcLink,
                                    unsigned int seed,
                                    int& linkSrcID, int& linkDstID,
-                                   const LinkPhysics*& physics) const;
+                                   const LinkPhysics*& physics,
+                                   const fvec3& pos, const fvec3& vel,
+                                   int team, const FlagType* flagType) const;
+    const MeshFace* getTankLinkDst(const MeshFace* srcLink,
+                                   int& linkSrcID, int& linkDstID,
+                                   const LinkPhysics*& physics,
+                                   const fvec3& pos, const fvec3& vel,
+                                   int team, const FlagType* flagType) const;
 
     const MeshFace* getLinkSrcFace(int linkSrcID) const;
     const MeshFace* getLinkDstFace(int linkDstID) const;

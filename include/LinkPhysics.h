@@ -18,6 +18,7 @@
 // system headers
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 #include <iostream>
 
@@ -27,8 +28,26 @@
 
 class LinkPhysics {
   public:
+    enum BlockTest {
+      ShotSpeedTest = (1 << 0),
+      TankSpeedTest = (1 << 1),
+      ShotAngleTest = (1 << 2),
+      TankAngleTest = (1 << 3),
+      ShotTeamTest  = (1 << 4),
+      TankTeamTest  = (1 << 5),
+      ShotFlagTest  = (1 << 6),
+      TankFlagTest  = (1 << 7),
+      ShotBZDBTest  = (1 << 8),
+      TankBZDBTest  = (1 << 9)
+    };
+
+  public:
     LinkPhysics();
     ~LinkPhysics();
+
+    void finalize();
+
+    uint16_t getTestBits() const { return testBits; }
 
     bool operator<(const LinkPhysics&) const;
     bool operator==(const LinkPhysics&) const;
@@ -40,24 +59,50 @@ class LinkPhysics {
     void print(std::ostream& out, const std::string& indent) const;
 
   public:
+    uint16_t testBits;
+
     fvec3 shotSrcPosScale;
     fvec3 shotSrcVelScale;
-    fvec3 shotDstVel;
+    fvec3 shotDstVelOffset;
     bool  shotSameSpeed;
 
     fvec3 tankSrcPosScale;
     fvec3 tankSrcVelScale;
-    fvec3 tankDstVel;
+    fvec3 tankDstVelOffset;
     bool  tankSameSpeed;
 
     // angles in radians
-    float tankAngleOffset;
-    float tankAngVelOffset;
-    bool  tankForceAngle;
-    bool  tankForceAngVel;
+    bool  tankForceAngle;  // for tankAngle
+    bool  tankForceAngVel; // for tankAngVel
     float tankAngle;
     float tankAngVel;
+    float tankAngleOffset;
+    float tankAngVelOffset;
     float tankAngVelScale;
+
+    // speed blocks
+    float shotMinSpeed;
+    float shotMaxSpeed;
+    float tankMinSpeed;
+    float tankMaxSpeed;
+
+    // angle blocks
+    float shotMinAngle;
+    float shotMaxAngle;
+    float tankMinAngle;
+    float tankMaxAngle;
+
+    // team blocks
+    uint8_t shotBlockTeams;
+    uint8_t tankBlockTeams;
+
+    // flag blocks
+    std::set<std::string> shotBlockFlags;
+    std::set<std::string> tankBlockFlags;
+
+    // BZDB blocks
+    std::string shotBlockBZDB;
+    std::string tankBlockBZDB;
 };
 
 

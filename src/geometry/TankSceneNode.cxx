@@ -899,7 +899,7 @@ void TankSceneNode::TankRenderNode::render()
     myStipple(alpha);
   }
 
-  if (sceneNode->clip && !isShadow) {
+  if (sceneNode->clip && !isShadow && !isRadar) {
     glClipPlane(GL_CLIP_PLANE0, sceneNode->clipPlane);
     glEnable(GL_CLIP_PLANE0);
   }

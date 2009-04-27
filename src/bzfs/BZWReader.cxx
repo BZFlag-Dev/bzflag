@@ -173,7 +173,8 @@ bool BZWReader::parseNormalObject(const char* token, WorldFileObject** object)
        if (lower == "box")           { obj = new CustomBox;           }
   else if (lower == "pyramid")       { obj = new CustomPyramid();     }
   else if (lower == "base")          { obj = new CustomBase;          }
-  else if (lower == "link")          { obj = new CustomLink();        }
+  else if (lower == "link")          { obj = new CustomLink(false);   }
+  else if (lower == "linkset")       { obj = new CustomLink(true);    }
   else if (lower == "mesh")          { obj = new CustomMesh;          }
   else if (lower == "arc")           { obj = new CustomArc(false);    }
   else if (lower == "meshbox")       { obj = new CustomArc(true);     }

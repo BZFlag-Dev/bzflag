@@ -17,6 +17,11 @@
 #include <string.h>
 #include <string>
 #include <vector>
+#include <set>
+#include <sstream>
+#include <iostream>
+using std::string;
+using std::vector;
 
 // common headers
 #include "TextUtils.h"
@@ -24,46 +29,175 @@
 
 //============================================================================//
 
-static void stripComments(std::string& s)
+CustomLink::CustomLink(bool _linkSet)
+: linkSet(_linkSet)
 {
-  const std::string::size_type pos = s.find_first_of('#');
-  if (pos != std::string::npos) {
-    s = s.substr(0, pos); // discard the comments
-  }
 }
 
 
 //============================================================================//
 
-CustomLink::CustomLink()
+static void stripComments(string& s)
 {
+  const string::size_type pos = s.find_first_of('#');
+  if (pos != string::npos) {
+    s = s.substr(0, pos); // discard the comments
+  }
 }
 
+
+static void getIntList(std::istream& input, vector<int>& list)
+{
+  string args;
+  int value;
+
+  list.clear();
+  std::getline(input, args);
+  std::istringstream parms(args);
+  input.putback('\n');
+
+  while (parms >> value) {
+    list.push_back(value);
+  }
+
+  return;
+}
+
+
+static void getStringSet(std::istream& input, std::set<string>& list)
+{
+  string args;
+  string value;
+
+  list.clear();
+  std::getline(input, args);
+  std::istringstream parms(args);
+  input.putback('\n');
+
+  while (parms >> value) {
+    list.insert(value);
+  }
+
+  return;
+}
+
+
+static void getAllowFlags(std::istream& input, std::set<string>& blocked)
+{
+  std::set<string> allowed;
+  getStringSet(input, allowed);
+
+  FlagSet::const_iterator it;
+
+  // add the good
+  const FlagSet& goodFlags = Flag::getGoodFlags();
+  for (it = goodFlags.begin(); it != goodFlags.end(); it++) {
+    const string& abbv = (*it)->flagAbbv;
+    if (allowed.find(abbv) == allowed.end()) {
+      blocked.insert(abbv);
+    }
+  }
+
+  // and the bad
+  const FlagSet& badFlags = Flag::getGoodFlags();
+  for (it = badFlags.begin(); it != badFlags.end(); it++) {
+    const string& abbv = (*it)->flagAbbv;
+    if (allowed.find(abbv) == allowed.end()) {
+      blocked.insert(abbv);
+    }
+  }
+}
+
+
+static uint8_t parseTeamBits(std::istream& input)
+{
+  uint8_t teamBits = 0;
+  vector<int> teams;
+  getIntList(input, teams);
+  for (size_t i = 0; i < teams.size(); i++) {
+    const int team = teams[i];
+    if ((team >= 0) && (team < 8)) {
+      teamBits |= (1 << team);
+    }
+  }
+  return teamBits;
+}
+
+
+//============================================================================//
 
 bool CustomLink::read(const char *cmd, std::istream& input)
 {
   if ((strcasecmp(cmd, "src")  == 0) ||
       (strcasecmp(cmd, "from") == 0)) {
-    std::string line;
+    string line;
     std::getline(input, line);
     input.putback('\n');
 
     stripComments(line);
-    std::vector<std::string> srcs = TextUtils::tokenize(line, " \t\n\r");
+    linkDef.srcs = TextUtils::tokenize(line, " \t\n\r");
+  }
+  else if ((strcasecmp(cmd, "dst") == 0) ||
+           (strcasecmp(cmd, "to")  == 0)) {
+    string line;
+    std::getline(input, line);
+    input.putback('\n');
+
+    stripComments(line);
+    linkDef.dsts = TextUtils::tokenize(line, " \t\n\r");
+  }
+  else if (strcasecmp(cmd, "addSrc") == 0) {
+    string line;
+    std::getline(input, line);
+    input.putback('\n');
+
+    stripComments(line);
+    vector<string> srcs = TextUtils::tokenize(line, " \t\n\r");
     for (size_t i = 0; i < srcs.size(); i++) {
       linkDef.addSrc(srcs[i]);
     }
   }
-  else if ((strcasecmp(cmd, "dst") == 0) ||
-           (strcasecmp(cmd, "to")  == 0)) {
-    std::string line;
+  else if (strcasecmp(cmd, "addDst") == 0) {
+    string line;
     std::getline(input, line);
     input.putback('\n');
 
     stripComments(line);
-    std::vector<std::string> dsts = TextUtils::tokenize(line, " \t\n\r");
+    vector<string> dsts = TextUtils::tokenize(line, " \t\n\r");
     for (size_t i = 0; i < dsts.size(); i++) {
       linkDef.addDst(dsts[i]);
+    }
+  }
+  else if (strcasecmp(cmd, "addLink") == 0) {
+    if (linkSet) {
+      linkDefVec.push_back(linkDef);
+    }
+    else {
+      std::cout << "'add' can only be used in 'linkset's" << std::endl;
+      return false;
+    }
+  }
+  else if (strcasecmp(cmd, "addBiDir") == 0) {
+    if (linkSet) {
+      // add the original link
+      linkDefVec.push_back(linkDef); // add link
+
+      // swap the srcs and dsts
+      const vector<string> tmpSrcs = linkDef.srcs;
+      const vector<string> tmpDsts = linkDef.dsts;
+      linkDef.srcs = tmpDsts;
+      linkDef.dsts = tmpSrcs;
+
+      // add the swapped link
+      linkDefVec.push_back(linkDef); // add link
+
+      // revert the srcs and dsts
+      linkDef.srcs = tmpSrcs;
+      linkDef.dsts = tmpDsts;
+    }
+    else {
+      std::cout << "'addBiDir' can only be used in 'linkset's" << std::endl;
+      return false;
     }
   }
   //
@@ -132,30 +266,30 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     }
     linkDef.physics.tankSrcVelScale = v;
   }
-  else if (strcasecmp(cmd, "dstVel") == 0) {
+  else if (strcasecmp(cmd, "dstVelOffset") == 0) {
     fvec3 v;
     if (!(input >> v.x >> v.y >> v.z)) {
       std::cout << "missing dstVel parameter" << std::endl;
       return false;
     }
-    linkDef.physics.shotDstVel = v;
-    linkDef.physics.tankDstVel = v;
+    linkDef.physics.shotDstVelOffset = v;
+    linkDef.physics.tankDstVelOffset = v;
   }
-  else if (strcasecmp(cmd, "shotDstVel") == 0) {
+  else if (strcasecmp(cmd, "shotDstVelOffset") == 0) {
     fvec3 v;
     if (!(input >> v.x >> v.y >> v.z)) {
-      std::cout << "missing shotDstVel parameter" << std::endl;
+      std::cout << "missing shotDstVelOffset parameter" << std::endl;
       return false;
     }
-    linkDef.physics.shotDstVel = v;
+    linkDef.physics.shotDstVelOffset = v;
   }
-  else if (strcasecmp(cmd, "tankDstVel") == 0) {
+  else if (strcasecmp(cmd, "tankDstVelOffset") == 0) {
     fvec3 v;
     if (!(input >> v.x >> v.y >> v.z)) {
-      std::cout << "missing tankDstVel parameter" << std::endl;
+      std::cout << "missing tankDstVelOffset parameter" << std::endl;
       return false;
     }
-    linkDef.physics.tankDstVel = v;
+    linkDef.physics.tankDstVelOffset = v;
   }
   //
   //  angular control
@@ -202,6 +336,172 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     }
     linkDef.physics.tankAngVelScale = v;
   }
+  //
+  //  speed blocks
+  //
+  else if (strcasecmp(cmd, "shotMinSpeed") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing shotMinSpeed parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotMinSpeed = v;
+  }
+  else if (strcasecmp(cmd, "tankMinSpeed") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing tankMinSpeed parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankMinSpeed = v;
+  }
+  else if (strcasecmp(cmd, "shotMaxSpeed") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing shotMaxSpeed parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotMaxSpeed = v;
+  }
+  else if (strcasecmp(cmd, "tankMaxSpeed") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing tankMaxSpeed parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankMaxSpeed = v;
+  }
+  //
+  //  angle blocks
+  //
+  else if (strcasecmp(cmd, "shotMinAngle") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing shotMinAngle parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotMinAngle = (v * DEG2RADf);
+  }
+  else if (strcasecmp(cmd, "tankMinAngle") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing tankMinAngle parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankMinAngle = (v * DEG2RADf);
+  }
+  else if (strcasecmp(cmd, "shotMaxAngle") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing shotMaxAngle parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotMaxAngle = (v * DEG2RADf);
+  }
+  else if (strcasecmp(cmd, "tankMaxAngle") == 0) {
+    float v;
+    if (!(input >> v)) {
+      std::cout << "missing tankMaxAngle parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankMaxAngle = (v * DEG2RADf);
+  }
+  //
+  //  team blocks
+  //
+  else if (strcasecmp(cmd, "blockTeams") == 0) {
+    const uint8_t teamBits = parseTeamBits(input);
+    if (teamBits == 0) {
+      std::cout << "invalid blockTeams parameters" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotBlockTeams = teamBits;
+    linkDef.physics.tankBlockTeams = teamBits;
+  }
+  else if (strcasecmp(cmd, "shotBlockTeams") == 0) {
+    const uint8_t teamBits = parseTeamBits(input);
+    if (teamBits == 0) {
+      std::cout << "invalid shotBlockTeams parameters" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotBlockTeams = teamBits;
+  }
+  else if (strcasecmp(cmd, "tankBlockTeams") == 0) {
+    const uint8_t teamBits = parseTeamBits(input);
+    if (teamBits == 0) {
+      std::cout << "invalid tankBlockTeams parameters" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankBlockTeams = teamBits;
+  }
+  else if (strcasecmp(cmd, "allowTeams") == 0) {
+    const uint8_t teamBits = parseTeamBits(input);
+    if (teamBits == 0) {
+      std::cout << "invalid allowTeams parameters" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotBlockTeams = ~teamBits;
+    linkDef.physics.tankBlockTeams = ~teamBits;
+  }
+  else if (strcasecmp(cmd, "shotAllowTeams") == 0) {
+    const uint8_t teamBits = parseTeamBits(input);
+    if (teamBits == 0) {
+      std::cout << "invalid shotAllowTeams parameters" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotBlockTeams = ~teamBits;
+  }
+  else if (strcasecmp(cmd, "tankAllowTeams") == 0) {
+    const uint8_t teamBits = parseTeamBits(input);
+    if (teamBits == 0) {
+      std::cout << "invalid tankAllowTeams parameters" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankBlockTeams = ~teamBits;
+  }
+  //
+  //  flag blocks
+  //
+  else if (strcasecmp(cmd, "shotBlockFlags") == 0) {
+    getStringSet(input, linkDef.physics.shotBlockFlags);
+  }
+  else if (strcasecmp(cmd, "tankBlockFlags") == 0) {
+    getStringSet(input, linkDef.physics.tankBlockFlags);
+  }
+  else if (strcasecmp(cmd, "shotAllowFlags") == 0) {
+    getAllowFlags(input, linkDef.physics.shotBlockFlags);
+  }
+  else if (strcasecmp(cmd, "tankAllowFlags") == 0) {
+    getAllowFlags(input, linkDef.physics.tankBlockFlags);
+  }
+  //
+  //  BZDB blocks
+  //
+  else if (strcasecmp(cmd, "blockBZDB") == 0) {
+    string value;
+    if (!(input >> value)) {
+      std::cout << "missing blockBZDB parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotBlockBZDB = value;
+    linkDef.physics.tankBlockBZDB = value;
+  }
+  else if (strcasecmp(cmd, "shotBlockBZDB") == 0) {
+    string value;
+    if (!(input >> value)) {
+      std::cout << "missing shotBlockBZDB parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotBlockBZDB = value;
+  }
+  else if (strcasecmp(cmd, "tankBlockBZDB") == 0) {
+    string value;
+    if (!(input >> value)) {
+      std::cout << "missing tankBlockBZDB parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankBlockBZDB = value;
+  }
   else {
     return WorldFileObject::read(cmd, input);
   }
@@ -209,9 +509,19 @@ bool CustomLink::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomLink::writeToGroupDef(GroupDefinition *groupdef) const
+//============================================================================//
+
+
+void CustomLink::writeToGroupDef(GroupDefinition *groupDef) const
 {
-  groupdef->addLinkDef(new LinkDef(linkDef));
+  if (!linkSet) {
+    groupDef->addLinkDef(new LinkDef(linkDef));
+  }
+  else {
+    for (size_t i = 0; i < linkDefVec.size(); i++) {
+      groupDef->addLinkDef(new LinkDef(linkDefVec[i]));
+    }
+  }
 }
 
 

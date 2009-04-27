@@ -665,7 +665,7 @@ int LuaObstacle::GetLinkDestinations(lua_State* L)
 	if (it == linkMap.end()) {
 		return 0;
 	}
-	const LinkManager::IntVec& dstIDs = it->second;
+	const LinkManager::IntVec& dstIDs = it->second.dstIDs;
 	lua_createtable(L, dstIDs.size(), 0);
 	for (size_t i = 0; i < dstIDs.size(); i++) {
 		lua_pushinteger(L, dstIDs[i]);

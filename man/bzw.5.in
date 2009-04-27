@@ -809,17 +809,27 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
 # or :b (backwards). The forwards link points to 0 degrees,
 .br
-# and the backwards link points to 180. Links are made by
+# and the backwards link points to 180. Mesh defined links
 .br
-# pattern matching the teleporter names. The '*' and '?'
+# use their face ':linkName' string instead of ':f' or ':b'.
 .br
-# globbing characters can be used to make multiple matches.
+# Links are made by pattern matching the teleporter names.
 .br
-# If there are multiple matches for the "to" link, then the
+# The '*' and '?' globbing characters can be used to make
 .br
-# destination will be selected randomly between the matches.
+# multiple matches. If there are multiple destination matches,
 .br
-# in\-game.
+# the destination will be selected randomly from the list
+.br
+# of unblocked candidates. If links are created in a group
+.br
+# definition, they can link to teleporters outside of the
+.br
+# definition using the absolute linking syntax (prefix the
+.br
+# teleporter name with the '/' character, for example:
+.br
+# '/other_group/shinyTele:f').
 .br
 
 # NOTE: bzfs -setforced debugLinks 3 will print the linkage table.
@@ -830,43 +840,103 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
   # this will link all teleporters randomly to all other teleporters
 .br
-\fB  from\fR *
+\fB  src\fR *
 .br
-\fB  to\fR   *
+\fB  dst\fR *
+.br
+  # cumulative labels
+.br
+\fB  addSrc\fR src1 src2 ...
+.br
+\fB  addDst\fR src1 src2 ...
 .br
   # physics parameters
 .br
-\fB  sameSpeed
+  # make the output speed the same as the input speed
 .br
-\fB  shotSameSpeed
+\fB  sameSpeed\fR
 .br
-\fB  tankSameSpeed
+\fB  shotSameSpeed\fR
 .br
-\fB  srcPosScale x y z
+\fB  tankSameSpeed\fR
 .br
-\fB  shotSrcPosScale x y z
+  # source position scale
 .br
-\fB  tankSrcPosScale x y z
+\fB  srcPosScale\fR      x y z
 .br
-\fB  srcVelScale x y z
+\fB  shotSrcPosScale\fR  x y z
 .br
-\fB  shotSrcVelScale x y z
+\fB  tankSrcPosScale\fR  x y z
 .br
-\fB  tankSrcVelScale x y z
+  # source velocity scale
 .br
-\fB  dstVel x y z
+\fB  srcVelScale\fR      x y z
 .br
-\fB  shotDstVel x y z
+\fB  shotSrcVelScale\fR  x y z
 .br
-\fB  tankDstVel x y z
+\fB  tankSrcVelScale\fR  x y z
 .br
-\fB  tankAngle degrees
+  # destination velocity offset (using linkDst's S/T/P vectors)
 .br
-\fB  tankAngVel degrees
+\fB  dstVelOffset\fR     x y z
 .br
-\fB  tankAngleOffset degrees
+\fB  shotDstVelOffset\fR x y z
 .br
-\fB  tankAngVelOffset degrees
+\fB  tankDstVelOffset\fR x y z
+.br
+  # angle control
+.br
+\fB  tankAngle\fR  degrees
+.br
+\fB  tankAngVel\fR degrees
+.br
+\fB  tankAngleOffset\fR d egrees
+.br
+\fB  tankAngVelOffset\fR degrees
+.br
+  # speed blocks
+.br
+\fB  shotMinSpeed\fR speed
+.br
+\fB  shotMaxSpeed\fR speed
+.br
+\fB  tankMinSpeed\fR speed
+.br
+\fB  tankMaxSpeed\fR speed
+.br
+  # angle blocks
+.br
+\fB  shotMinAngle\fR degrees
+.br
+\fB  shotMaxAngle\fR degrees
+.br
+\fB  tankMinAngle\fR degrees
+.br
+\fB  tankMaxAngle\fR degrees
+.br
+  # team blocks
+.br
+\fB  blockTeams\fR 1 2 3
+.br
+\fB  shotBlockTeams\fR 1 2 3
+.br
+\fB  tankBlockTeams\fR 1 2 3
+.br
+\fB  allowTeams\fR 1 2 3
+.br
+\fB  shotAllowTeams\fR 1 2 3
+.br
+\fB  tankAllowTeams\fR 1 2 3
+.br
+  # flag blocks
+.br
+\fB  shotBlockFlags\fR GM ST OO
+.br
+\fB  tankBlockFlags\fR GM ST OO
+.br
+\fB  shotAllowFlags\fR GM ST OO
+.br
+\fB  tankAllowFlags\fR GM ST OO
 .br
 \fBend\fR
 .br
@@ -877,11 +947,61 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
 \fB  name\fR  example_realLink
 .br
-\fB  from\fR examp_tele1:f
+\fB  src\fR examp_tele1:f
 .br
-\fB  to\fR examp_tele2:b
+\fB  dst\fR examp_tele2:b
 .br
 \fBend\fR
+.br
+
+# you can also use the linkSet object, which allows you to define multiple links
+in one block, re-using the state within the block.
+
+\fBlinkSet\fR
+.br
+  # this state will be used by all links
+.br
+\fB  shotBlockFlags\fR ST CL
+.br
+\fB  tankBlockFlags\fR ST CL
+.br
+\fB  srcPosScale\fR 0 0 0
+.br
+
+.br
+\fB  addSrc\fR centerTele1:*
+.br
+\fB  addSrc\fR centerTele2:*
+.br
+
+.br
+\fB  dst\fR teleTeam1:*
+.br
+\fB  allowTeams\fR 1
+.br
+\fB  addBiDir\fR  # adds bidirectional links between current srcs and dsts
+.br
+
+.br
+\fB  dst\fR teleTeam2:*
+.br
+\fB  allowTeams\fR 2
+.br
+\fB  addBiDir\fR  # adds bidirectional links between current srcs and dsts
+.br
+
+.br
+\fB  blockTeams\fR  # reset the team blocking state
+.br
+
+.br
+\fB  src\fR topTele:*   # reset the srcs
+.br
+\fB  dst\fR voidTele:*  # reset the dsts
+.br
+\fB  addLink\fR   # adds a single unidirection link
+.br
+\fBend
 .br
 
 

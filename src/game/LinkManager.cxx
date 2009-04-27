@@ -107,6 +107,16 @@ void LinkManager::clear()
 
 //============================================================================//
 
+void LinkManager::addLinkDef(const LinkDef& linkDef)
+{
+  if (!linkDef.getSrcs().empty() &&
+      !linkDef.getDsts().empty()) {
+    linkDefs.push_back(linkDef);
+  }
+  return;
+}
+
+
 int LinkManager::getLinkSrcID(const MeshFace* face) const
 {
   FaceIntMap::const_iterator it = linkSrcMap.find(face);
@@ -161,18 +171,56 @@ const LinkManager::DstData* LinkManager::getLinkDstData(int linkDstID) const
 const MeshFace* LinkManager::getShotLinkDst(const MeshFace* srcLink,
                                             unsigned int seed,
                                             int& linkSrcID, int& linkDstID,
-                                            const LinkPhysics*& physics) const
+                                            const LinkPhysics*& physics,
+                                            const fvec3& pos,
+                                            const fvec3& vel, int team,
+                                            const FlagType* flagType) const
 {
   LinkMap::const_iterator it = linkMap.find(srcLink);
   if (it == linkMap.end()) {
     return NULL;
   }
-  const IntVec& dstIDs = it->second;
-  seed = (seed * 1103515245 + 12345) >> 8; // from POSIX rand() example
-  seed = seed % (dstIDs.size());
 
+  const DstIndexList& dstList = it->second;
+  const IntVec* dstIDs = &dstList.dstIDs;
+
+  // use a simpler method for single entries
+  if (dstIDs->size() == 1) {
+    const int dstIndex = (*dstIDs)[0];
+    const DstData& dstData = linkDsts[dstIndex];
+    if (dstList.needTest) {
+      if (!srcLink->shotCanCross(dstData.physics, pos, vel, team, flagType)) {
+        return NULL;
+      }
+    }
+    linkSrcID = linkSrcMap.find(srcLink)->second;
+    linkDstID = dstIndex;
+    physics = &dstData.physics;
+    return dstData.face;
+  }
+
+  // construct the vector of possible destinations
+  IntVec testIDs;
+  if (dstList.needTest) {
+    for (size_t i = 0; i < dstIDs->size(); i++) {
+      const int dstIndex = (*dstIDs)[i];
+      const DstData& dstData = linkDsts[dstIndex];
+      if (srcLink->shotCanCross(dstData.physics, pos, vel, team, flagType)) {
+        testIDs.push_back(dstIndex);
+      }
+    }
+    dstIDs = &testIDs;
+  }
+  if (dstIDs->empty()) {
+    return NULL;
+  }
+
+  seed = (seed * 1103515245 + 12345) >> 8; // from POSIX rand() example
+  seed = seed % dstIDs->size();
+
+  // assign the output variables
   linkSrcID = linkSrcMap.find(srcLink)->second;
-  linkDstID = dstIDs[seed];
+  linkDstID = (*dstIDs)[seed];
   const DstData& dstData = linkDsts[linkDstID];
   physics = &dstData.physics;
   return dstData.face;
@@ -181,32 +229,58 @@ const MeshFace* LinkManager::getShotLinkDst(const MeshFace* srcLink,
 
 const MeshFace* LinkManager::getTankLinkDst(const MeshFace* srcLink,
                                             int& linkSrcID, int& linkDstID,
-                                            const LinkPhysics*& physics) const
+                                            const LinkPhysics*& physics,
+                                            const fvec3& pos,
+                                            const fvec3& vel, int team,
+                                            const FlagType* flagType) const
 {
-  linkSrcID = 0;
-  physics = NULL;
   LinkMap::const_iterator it = linkMap.find(srcLink);
   if (it == linkMap.end()) {
     return NULL;
   }
-  const IntVec& dstIDs = it->second;
-  const int randIndex = rand() % int(dstIDs.size());
 
+  const DstIndexList& dstList = it->second;
+  const IntVec* dstIDs = &dstList.dstIDs;
+
+  // use a simpler method for single entries
+  if (dstIDs->size() == 1) {
+    const int dstIndex = (*dstIDs)[0];
+    const DstData& dstData = linkDsts[dstIndex];
+    if (dstList.needTest) {
+      if (!srcLink->tankCanCross(dstData.physics, pos, vel, team, flagType)) {
+        return NULL;
+      }
+    }
+    linkSrcID = linkSrcMap.find(srcLink)->second;
+    linkDstID = dstIndex;
+    physics = &dstData.physics;
+    return dstData.face;
+  }
+
+  // construct the vector of possible destinations
+  IntVec testIDs;
+  if (dstList.needTest) {
+    for (size_t i = 0; i < dstIDs->size(); i++) {
+      const int dstIndex = (*dstIDs)[i];
+      const DstData& dstData = linkDsts[dstIndex];
+      if (srcLink->tankCanCross(dstData.physics, pos, vel, team, flagType)) {
+        testIDs.push_back(dstIndex);
+      }
+    }
+    dstIDs = &testIDs;
+  }
+  if (dstIDs->empty()) {
+    return NULL;
+  }
+
+  const int randIndex = rand() % (int)dstIDs->size();
+
+  // assign the output variables
   linkSrcID = linkSrcMap.find(srcLink)->second;
-  linkDstID = dstIDs[randIndex];
+  linkDstID = (*dstIDs)[randIndex];
   const DstData& dstData = linkDsts[linkDstID];
   physics = &dstData.physics;
   return dstData.face;
-}
-
-
-void LinkManager::addLinkDef(const LinkDef& linkDef)
-{
-  if (!linkDef.getSrcs().empty() &&
-      !linkDef.getDsts().empty()) {
-    linkDefs.push_back(linkDef);
-  }
-  return;
 }
 
 
@@ -238,6 +312,26 @@ void LinkManager::doLinking()
   // by adding links from front-to-back (or back-to-front),
   // when a given link source has no destination
   crossLink();
+
+  // setup the LinkPhysics::needTest() values
+  for (size_t i = 0; i < linkDsts.size(); i++) {
+    linkDsts[i].physics.finalize();
+  }
+
+  // setup the 'needTest' parameters
+  LinkMap::iterator mapIt;
+  for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
+    const IntVec& dstIDs = mapIt->second.dstIDs;
+    bool& needTest       = mapIt->second.needTest;
+    needTest = false;
+    for (size_t i = 0; i < dstIDs.size(); i++) {
+      const DstData& dstData = linkDsts[i];
+      if (dstData.physics.getTestBits() != 0) {
+        needTest = true;
+        break;
+      }
+    }
+  }
 
   // assign the LinkSrcFace bits
   for (size_t i = 0; i < linkSrcs.size(); i++) {
@@ -439,7 +533,7 @@ void LinkManager::createLink(const MeshFace* linkSrc,
     linkDsts.push_back(data);
   }
 
-  linkMap[linkSrc].push_back(dstID);
+  linkMap[linkSrc].dstIDs.push_back(dstID);
 }
 
 
@@ -484,7 +578,7 @@ void LinkManager::printDebug()
   for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
     const MeshFace* linkSrc = mapIt->first;
     logDebugMessage(0, "  src %s\n", linkSrc->getLinkName().c_str());
-    const IntVec& dstIDs = mapIt->second;
+    const IntVec& dstIDs = mapIt->second.dstIDs;
     for (size_t d = 0; d < dstIDs.size(); d++) {
       const int dstID = dstIDs[d];
       const DstData* dd = getLinkDstData(dstID);

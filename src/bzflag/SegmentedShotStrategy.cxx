@@ -456,24 +456,9 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       (e == Through) ? getFirstLinkSrc(testRay, Epsilon, t)
                      : getFirstBuilding(testRay, Epsilon, t);
 
-    const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
-    if (linkSrc != NULL) {
-      const ShotPath& myPath = getPath();
-      const ShotType shotType = myPath.getShotType();
-      const TeamColor teamNum = myPath.getTeam();
-      if (!linkSrc->shotCanCross(orig + (t * vel), vel, teamNum, shotType)) {
-        linkSrc = NULL;
-      }
-    }
-
+    
     t -= minTime;
     minTime = 0.0f; // only used the first time around the loop
-
-    // if hit outer wall with ricochet and the hit is
-    // above the top of the wall then ignore the hit.
-    const bool ignoreHit = (building != NULL) && (e == Reflect) &&
-                           (building->getTypeID() == wallType) &&
-	                   ((orig.z + t * vel.z) > building->getHeight());
 
     // construct next shot segment and add it to list
     const double endTime = startTime + double((t < 0.0f) ? Epsilon : t);
@@ -492,6 +477,31 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     dstFace = NULL;
     noEffect = false;
 
+    const fvec3 nextOrig = (orig + (t * vel));
+
+    // if hit outer wall with ricochet and the hit is
+    // above the top of the wall then ignore the hit.
+    const bool ignoreHit = (building != NULL) && (e == Reflect) &&
+                           (building->getTypeID() == wallType) &&
+	                   (nextOrig.z > building->getHeight());
+
+    // check for teleportation
+    const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
+    const MeshFace* linkDst = NULL;
+    const LinkPhysics* physics = NULL;;
+    if (linkSrc != NULL) {
+      const ShotPath& myPath = getPath();
+      const FlagType* flagType = myPath.getFlag();
+      const TeamColor teamNum = myPath.getTeam();
+      const unsigned int seed = shotPath.getShotId() + i;
+      linkDst = linkManager.getShotLinkDst(linkSrc, seed,
+                                           linkSrcID, linkDstID, physics,
+                                           nextOrig, vel, teamNum, flagType);
+      if (linkDst == NULL) {
+        linkSrc = NULL;
+      }
+    }
+
     // used up this much time in segment
     timeLeft -= (t < 0.0f) ? Epsilon : t;
 
@@ -501,18 +511,14 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     if (ignoreHit) {
       // uh...ignore this.  usually used if you shoot over the boundary wall.
       // just move the point of origin and build the next segment
-      orig += (t * vel);
+      orig = nextOrig;
       reason = ShotPathSegment::Boundary;
       timeLeft = 0.0f;
     }
     else if (linkSrc) {
       // move origin to point of teleport
-      orig += (t * vel);
+      orig = nextOrig;
       // entered teleporter -- teleport it
-      unsigned int seed = shotPath.getShotId() + i;
-      const LinkPhysics* physics;
-      const MeshFace* linkDst =
-        linkManager.getShotLinkDst(linkSrc, seed, linkSrcID, linkDstID, physics);
       linkSrc->teleportShot(*linkDst, *physics, orig, orig, vel, vel);
       reason = ShotPathSegment::Teleport;
       dstFace = linkDst;
@@ -531,7 +537,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
         case Reflect: {
           // move origin to point of reflection
-          orig += (t * vel);
+          orig = nextOrig;
 
           // reflect direction about normal to building
           fvec3 normal;
@@ -555,7 +561,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
 	case Reflect: {
 	  // move origin to point of reflection
-          orig += (t * vel);
+          orig = nextOrig;
 
 	  // reflect direction about normal to ground
 	  const fvec3 zPos(0.0f, 0.0f, 1.0f);

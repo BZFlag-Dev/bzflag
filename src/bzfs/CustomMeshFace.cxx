@@ -152,44 +152,6 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "linkSrcNoEffect") == 0) {
     specialData.stateBits |=  MeshFace::LinkSrcNoEffect;
   }
-  else if (strcasecmp(cmd, "linkSrcMinSpeed") == 0) {
-    float speed;
-    if (!(input >> speed)) {
-      std::cout << "missing linkSrcMinSpeed parameter" << std::endl;
-      return false;
-    }
-    specialData.linkSrcMinSpeed = speed;
-  }
-  else if (strcasecmp(cmd, "linkSrcMaxSpeed") == 0) {
-    float speed;
-    if (!(input >> speed)) {
-      std::cout << "missing linkSrcMaxSpeed parameter" << std::endl;
-      return false;
-    }
-    specialData.linkSrcMaxSpeed = speed;
-  }
-  else if (strcasecmp(cmd, "linkSrcShotBlockTeams") == 0) {
-    std::vector<int> teams;
-    uint8_t bits = 0;
-    getIntList (input, teams);
-    for (size_t i = 0; i < teams.size(); i++) {
-      if ((teams[i] >= 0) && (teams[i] <= 7)) {
-        bits |= (1 << teams[i]);
-      }
-    }
-    specialData.linkSrcShotBlockBits = bits;
-  }
-  else if (strcasecmp(cmd, "linkSrcTankBlockTeams") == 0) {
-    std::vector<int> teams;
-    uint8_t bits = 0;
-    getIntList (input, teams);
-    for (size_t i = 0; i < teams.size(); i++) {
-      if ((teams[i] >= 0) && (teams[i] <= 7)) {
-        bits |= (1 << teams[i]);
-      }
-    }
-    specialData.linkSrcTankBlockBits = bits;
-  }
   else if (strcasecmp(cmd, "linkSrcCenter") == 0) {
     int index;
     if (!(input >> index)) {

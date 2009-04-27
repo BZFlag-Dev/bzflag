@@ -30,12 +30,15 @@
 
 class CustomLink : public WorldFileObject {
   public:
-    CustomLink();
+    CustomLink(bool linkSet);
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
     LinkDef linkDef;
+
+    bool linkSet;
+    std::vector<LinkDef> linkDefVec;
 };
 
 #endif  /* __CUSTOMLINK_H__ */

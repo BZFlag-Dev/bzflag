@@ -283,8 +283,10 @@ void Player::move(const fvec3& _pos, float _azimuth)
   forward.z = 0.0f;
 
   // compute teleporter proximity
-  if (World::getWorld())
-    teleporterProximity = World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+  if (World::getWorld()) {
+    teleporterProximity =
+      World::getWorld()->getProximity(state.pos, BZDBCache::tankRadius);
+  }
 }
 
 
@@ -847,8 +849,7 @@ void Player::updateTranslucency(float dt)
     if (!world) {
       return;
     }
-    teleporterProximity =
-      world->getProximity(state.pos, BZDBCache::tankRadius);
+    teleporterProximity = world->getProximity(state.pos, BZDBCache::tankRadius);
     teleAlpha = (1.0f - (0.75f * teleporterProximity));
 
     if (alpha == 0.0f) {

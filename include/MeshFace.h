@@ -32,6 +32,7 @@
 #include "BzMaterial.h"
 
 
+class FlagType;
 class LinkPhysics;
 
 
@@ -44,18 +45,6 @@ class MeshFace : public Obstacle {
     static const char* getClassName(); // const
   private:
     static const char* typeName;
-
-  //==========================================================================//
-
-  private:
-    enum PlaneBits {
-      XPlane    = (1 << 0),
-      YPlane    = (1 << 1),
-      ZPlane    = (1 << 2),
-      UpPlane   = (1 << 3),
-      DownPlane = (1 << 4),
-      WallPlane = (1 << 5)
-    };
 
   //==========================================================================//
 
@@ -107,10 +96,6 @@ class MeshFace : public Obstacle {
       SpecialData()
       : stateBits(0)
       , baseTeam(-1)
-      , linkSrcMinSpeed(-MAXFLOAT)
-      , linkSrcMaxSpeed(+MAXFLOAT)
-      , linkSrcShotBlockBits(0)
-      , linkSrcTankBlockBits(0)
       {}
 
       uint16_t stateBits; // using SpecialBits enum
@@ -120,10 +105,24 @@ class MeshFace : public Obstacle {
       std::string  linkName;
       LinkGeometry linkSrcGeo;
       LinkGeometry linkDstGeo;
-      float linkSrcMinSpeed;
-      float linkSrcMaxSpeed;
-      uint8_t linkSrcShotBlockBits;
-      uint8_t linkSrcTankBlockBits;
+
+      int   packSize() const;
+      void* pack(void*) const;
+      void* unpack(void*);
+
+      void print(std::ostream& out, const std::string& indent) const;
+    };
+
+  //==========================================================================//
+
+  private:
+    enum PlaneBits {
+      XPlane    = (1 << 0),
+      YPlane    = (1 << 1),
+      ZPlane    = (1 << 2),
+      UpPlane   = (1 << 3),
+      DownPlane = (1 << 4),
+      WallPlane = (1 << 5)
     };
 
   //==========================================================================//
@@ -180,10 +179,12 @@ class MeshFace : public Obstacle {
     float getProximity(const fvec3& p, float radius) const;
     float isTeleported(const Ray&) const;
     bool  hasCrossed(const fvec3& oldPos, const fvec3& newPos) const;
-    bool  shotCanCross(const fvec3& pos,
-                       const fvec3& vel, int team, int shotType) const;
-    bool  tankCanCross(const fvec3& pos, // FIXME -- also flagType?
-                       const fvec3& vel, int team) const;
+    bool  shotCanCross(const LinkPhysics& physics,
+                       const fvec3& pos, const fvec3& vel,
+                       int team, const FlagType* flagType) const;
+    bool  tankCanCross(const LinkPhysics& physics,
+                       const fvec3& pos, const fvec3& vel,
+                       int team, const FlagType* flagType) const;
     bool  teleportShot(const MeshFace& dstFace, const LinkPhysics&,
                        const fvec3& srcPos, fvec3& dstPos,
                        const fvec3& srcVel, fvec3& dstVel) const;
@@ -193,6 +194,7 @@ class MeshFace : public Obstacle {
                        const float& srcAngle,  float& dstAngle,
                        const float& srcAngVel, float& dstAngVel) const;
 
+    // query functions
     inline MeshObstacle* getMesh() const { return mesh; }
     inline int  getID()            const { return faceID; }
     inline int  getVertexCount()   const { return vertexCount;  }
@@ -265,7 +267,7 @@ class MeshFace : public Obstacle {
       if ((obs == NULL) || (obs->getTypeID() != faceType)) { return NULL; }
       const MeshFace* face = (const MeshFace*) obs;
       if (!face->isLinkSrc())          { return NULL; }
-      if (face->isShootThrough() == 0) { return NULL; }
+      if (face->isShootThrough() == 0) { return NULL; } // NOTE
       return face;
     }
 
@@ -273,21 +275,23 @@ class MeshFace : public Obstacle {
       if ((obs == NULL) || (obs->getTypeID() != faceType)) { return NULL; }
       const MeshFace* face = (const MeshFace*) obs;
       if (!face->isLinkSrc())          { return NULL; }
-      if (face->isDriveThrough() == 0) { return NULL; }
+      if (face->isDriveThrough() == 0) { return NULL; } // NOTE
       return face;
     }
 
+    // geometry utilities
     fvec3 calcCenter() const;
     void  calcAxisSpan(const fvec3& point, const fvec3& dir,
                        float& minDist, float& maxDist) const;
 
+    // overrides the Obstacle virtual function
     int getBaseTeam() const {
       return isBaseFace() ? specialData->baseTeam : -1;
     }
 
-    int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    int   packSize() const;
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 

@@ -869,11 +869,7 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
     return false;
   }
 
-  // see if we are allowed to teleport
-  if (!linkSrc->tankCanCross(newPos, newVel, getTeam())) {
-    return false;
-  }
-
+  // PhantomZone tanks just change phase
   if (getFlag() == Flags::PhantomZone) {
     // change zoned state
     setStatus(getStatus() ^ PlayerState::PhantomZoned);
@@ -889,7 +885,9 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
   const LinkPhysics* linkPhysics;
   const MeshFace* linkDst = linkManager.getTankLinkDst(linkSrc,
                                                        linkSrcID, linkDstID,
-                                                       linkPhysics);
+                                                       linkPhysics,
+                                                       newPos, newVel,
+                                                       getTeam(), getFlag());
   // no link, no love; bail out
   if (!linkDst) {
     return false;

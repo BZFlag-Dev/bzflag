@@ -27,21 +27,34 @@ static const LinkPhysics defLinkPhysics;
 //============================================================================//
 
 LinkPhysics::LinkPhysics()
-: shotSrcPosScale(1.0f, 1.0f, 1.0f)
-, shotSrcVelScale(1.0f, 1.0f, 1.0f)
-, shotDstVel     (0.0f, 0.0f, 0.0f)
+: testBits(0)
+, shotSrcPosScale (1.0f, 1.0f, 1.0f)
+, shotSrcVelScale (1.0f, 1.0f, 1.0f)
+, shotDstVelOffset(0.0f, 0.0f, 0.0f)
 , shotSameSpeed(false)
-, tankSrcPosScale(1.0f, 1.0f, 1.0f)
-, tankSrcVelScale(1.0f, 1.0f, 1.0f)
-, tankDstVel     (0.0f, 0.0f, 0.0f)
+, tankSrcPosScale (1.0f, 1.0f, 1.0f)
+, tankSrcVelScale (1.0f, 1.0f, 1.0f)
+, tankDstVelOffset(0.0f, 0.0f, 0.0f)
 , tankSameSpeed(false)
-, tankAngleOffset(0.0f)
-, tankAngVelOffset(0.0f)
 , tankForceAngle(false)
 , tankForceAngVel(false)
 , tankAngle(0.0f)
 , tankAngVel(0.0f)
+, tankAngleOffset(0.0f)
+, tankAngVelOffset(0.0f)
 , tankAngVelScale(1.0f)
+, shotMinSpeed(0.0f)
+, shotMaxSpeed(0.0f)
+, tankMinSpeed(0.0f)
+, tankMaxSpeed(0.0f)
+, shotMinAngle(0.0f)
+, shotMaxAngle(0.0f)
+, tankMinAngle(0.0f)
+, tankMaxAngle(0.0f)
+, shotBlockTeams(0)
+, tankBlockTeams(0)
+, shotBlockBZDB("")
+, tankBlockBZDB("")
 {
   // do nothing
 }
@@ -54,22 +67,64 @@ LinkPhysics::~LinkPhysics()
 
 //============================================================================//
 
+void LinkPhysics::finalize()
+{
+  testBits = 0;
+
+  if ((shotMinSpeed != -123456.0f) || (shotMaxSpeed != +123456.0f)) {
+    testBits |= ShotSpeedTest;
+  }
+  if ((tankMinSpeed != -123456.0f) || (tankMaxSpeed != +123456.0f)) {
+    testBits |= TankSpeedTest;
+  }
+  if ((shotMinAngle != 0.0f) || (shotMaxAngle != 2.0f)) {
+    testBits |= ShotAngleTest;
+  }
+  if ((tankMinAngle != 0.0f) || (tankMaxAngle != 2.0f)) {
+    testBits |= TankAngleTest;
+  }
+
+  if (shotBlockTeams != 0)     { testBits |= ShotTeamTest; }
+  if (tankBlockTeams != 0)     { testBits |= TankTeamTest; }
+  if (!shotBlockFlags.empty()) { testBits |= ShotFlagTest; }
+  if (!tankBlockFlags.empty()) { testBits |= TankFlagTest; }
+  if (!shotBlockBZDB.empty())  { testBits |= ShotBZDBTest; }
+  if (!tankBlockBZDB.empty())  { testBits |= TankBZDBTest; }
+}
+
+
+//============================================================================//
+
 bool LinkPhysics::operator==(const LinkPhysics& lp) const
 {
   if (shotSrcPosScale  != lp.shotSrcPosScale)  { return false; }
   if (shotSrcVelScale  != lp.shotSrcVelScale)  { return false; }
-  if (shotDstVel       != lp.shotDstVel)       { return false; }
+  if (shotDstVelOffset != lp.shotDstVelOffset) { return false; }
   if (shotSameSpeed    != lp.shotSameSpeed)    { return false; }
   if (tankSrcPosScale  != lp.tankSrcPosScale)  { return false; }
   if (tankSrcVelScale  != lp.tankSrcVelScale)  { return false; }
-  if (tankDstVel       != lp.tankDstVel)       { return false; }
+  if (tankDstVelOffset != lp.tankDstVelOffset) { return false; }
   if (tankForceAngle   != lp.tankForceAngle)   { return false; }
   if (tankForceAngVel  != lp.tankForceAngVel)  { return false; }
   if (tankAngle        != lp.tankAngle)        { return false; }
-  if (tankAngleOffset  != lp.tankAngleOffset)  { return false; }
   if (tankAngVel       != lp.tankAngVel)       { return false; }
+  if (tankAngleOffset  != lp.tankAngleOffset)  { return false; }
   if (tankAngVelOffset != lp.tankAngVelOffset) { return false; }
   if (tankAngVelScale  != lp.tankAngVelScale)  { return false; }
+  if (shotMinSpeed     != lp.shotMinSpeed)     { return false; }
+  if (shotMaxSpeed     != lp.shotMaxSpeed)     { return false; }
+  if (shotMinAngle     != lp.shotMinAngle)     { return false; }
+  if (shotMaxAngle     != lp.shotMaxAngle)     { return false; }
+  if (tankMinSpeed     != lp.tankMinSpeed)     { return false; }
+  if (tankMaxSpeed     != lp.tankMaxSpeed)     { return false; }
+  if (tankMinAngle     != lp.tankMinAngle)     { return false; }
+  if (tankMaxAngle     != lp.tankMaxAngle)     { return false; }
+  if (shotBlockTeams   != lp.shotBlockTeams)   { return false; }
+  if (tankBlockTeams   != lp.tankBlockTeams)   { return false; }
+  if (shotBlockFlags   != lp.shotBlockFlags)   { return false; }
+  if (tankBlockFlags   != lp.tankBlockFlags)   { return false; }
+  if (shotBlockBZDB    != lp.shotBlockBZDB)    { return false; }
+  if (tankBlockBZDB    != lp.tankBlockBZDB)    { return false; }
   return true;
 }
 
@@ -82,8 +137,8 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
   if (shotSrcVelScale < lp.shotSrcVelScale)  { return true;  }
   if (lp.shotSrcVelScale < shotSrcVelScale)  { return false; }
 
-  if (shotDstVel < lp.shotDstVel) { return true;  }
-  if (lp.shotDstVel < shotDstVel) { return false; }
+  if (shotDstVelOffset < lp.shotDstVelOffset) { return true;  }
+  if (lp.shotDstVelOffset < shotDstVelOffset) { return false; }
 
   if (!shotSameSpeed && lp.shotSameSpeed) { return true;  }
   if (shotSameSpeed && !lp.shotSameSpeed) { return false; }
@@ -94,8 +149,8 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
   if (tankSrcVelScale < lp.tankSrcVelScale)  { return true;  }
   if (lp.tankSrcVelScale < tankSrcVelScale)  { return false; }
 
-  if (tankDstVel < lp.tankDstVel) { return true;  }
-  if (lp.tankDstVel < tankDstVel) { return false; }
+  if (tankDstVelOffset < lp.tankDstVelOffset) { return true;  }
+  if (lp.tankDstVelOffset < tankDstVelOffset) { return false; }
 
   if (!tankSameSpeed && lp.tankSameSpeed) { return true;  }
   if (tankSameSpeed && !lp.tankSameSpeed) { return false; }
@@ -109,17 +164,59 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
   if (tankAngle < lp.tankAngle) { return true;  }
   if (lp.tankAngle < tankAngle) { return false; }
 
-  if (tankAngleOffset < lp.tankAngleOffset) { return true;  }
-  if (lp.tankAngleOffset < tankAngleOffset) { return false; }
-
   if (tankAngVel < lp.tankAngVel) { return true;  }
   if (lp.tankAngVel < tankAngVel) { return false; }
+
+  if (tankAngleOffset < lp.tankAngleOffset) { return true;  }
+  if (lp.tankAngleOffset < tankAngleOffset) { return false; }
 
   if (tankAngVelOffset < lp.tankAngVelOffset) { return true;  }
   if (lp.tankAngVelOffset < tankAngVelOffset) { return false; }
 
   if (tankAngVelScale < lp.tankAngVelScale) { return true;  }
   if (lp.tankAngVelScale < tankAngVelScale) { return false; }
+
+  if (shotMinSpeed < lp.shotMinSpeed) { return true;  }
+  if (lp.shotMinSpeed < shotMinSpeed) { return false; }
+
+  if (shotMaxSpeed < lp.shotMaxSpeed) { return true;  }
+  if (lp.shotMaxSpeed < shotMaxSpeed) { return false; }
+
+  if (tankMinSpeed < lp.tankMinSpeed) { return true;  }
+  if (lp.tankMinSpeed < tankMinSpeed) { return false; }
+
+  if (tankMaxSpeed < lp.tankMaxSpeed) { return true;  }
+  if (lp.tankMaxSpeed < tankMaxSpeed) { return false; }
+
+  if (shotMinAngle < lp.shotMinAngle) { return true;  }
+  if (lp.shotMinAngle < shotMinAngle) { return false; }
+
+  if (shotMaxAngle < lp.shotMaxAngle) { return true;  }
+  if (lp.shotMaxAngle < shotMaxAngle) { return false; }
+
+  if (tankMinAngle < lp.tankMinAngle) { return true;  }
+  if (lp.tankMinAngle < tankMinAngle) { return false; }
+
+  if (tankMaxAngle < lp.tankMaxAngle) { return true;  }
+  if (lp.tankMaxAngle < tankMaxAngle) { return false; }
+
+  if (shotBlockTeams < lp.shotBlockTeams) { return true;  }
+  if (lp.shotBlockTeams < shotBlockTeams) { return false; }
+
+  if (tankBlockTeams < lp.tankBlockTeams) { return true;  }
+  if (lp.tankBlockTeams < tankBlockTeams) { return false; }
+
+  if (shotBlockFlags < lp.shotBlockFlags) { return true;  }
+  if (lp.shotBlockFlags < shotBlockFlags) { return false; }
+
+  if (tankBlockFlags < lp.tankBlockFlags) { return true;  }
+  if (lp.tankBlockFlags < tankBlockFlags) { return false; }
+
+  if (shotBlockBZDB < lp.shotBlockBZDB) { return true;  }
+  if (lp.shotBlockBZDB < shotBlockBZDB) { return false; }
+
+  if (tankBlockBZDB < lp.tankBlockBZDB) { return true;  }
+  if (lp.tankBlockBZDB < tankBlockBZDB) { return false; }
 
   return false;
 }
@@ -144,15 +241,48 @@ void* LinkPhysics::pack(void* buf) const
 
   buf = nboPackFVec3(buf, shotSrcPosScale);
   buf = nboPackFVec3(buf, shotSrcVelScale);
-  buf = nboPackFVec3(buf, shotDstVel);
+  buf = nboPackFVec3(buf, shotDstVelOffset);
+
   buf = nboPackFVec3(buf, tankSrcPosScale);
   buf = nboPackFVec3(buf, tankSrcVelScale);
-  buf = nboPackFVec3(buf, tankDstVel);
+  buf = nboPackFVec3(buf, tankDstVelOffset);
+
   buf = nboPackFloat(buf, tankAngle);
-  buf = nboPackFloat(buf, tankAngleOffset);
   buf = nboPackFloat(buf, tankAngVel);
+  buf = nboPackFloat(buf, tankAngleOffset);
   buf = nboPackFloat(buf, tankAngVelOffset);
   buf = nboPackFloat(buf, tankAngVelScale);
+
+  buf = nboPackFloat(buf, shotMinSpeed);
+  buf = nboPackFloat(buf, shotMaxSpeed);
+  buf = nboPackFloat(buf, tankMinSpeed);
+  buf = nboPackFloat(buf, tankMaxSpeed);
+
+  buf = nboPackFloat(buf, shotMinAngle);
+  buf = nboPackFloat(buf, shotMaxAngle);
+  buf = nboPackFloat(buf, tankMinAngle);
+  buf = nboPackFloat(buf, tankMaxAngle);
+
+  buf = nboPackUInt8(buf, shotBlockTeams);
+  buf = nboPackUInt8(buf, tankBlockTeams);
+
+  uint16_t count;
+  std::set<std::string>::const_iterator it;
+
+  count = (uint16_t)shotBlockFlags.size();
+  buf = nboPackUInt16(buf, count);
+  for (it = shotBlockFlags.begin(); it != shotBlockFlags.end(); ++it) {
+    buf = nboPackStdString(buf, *it);
+  }
+
+  count = (uint16_t)shotBlockFlags.size();
+  buf = nboPackUInt16(buf, count);
+  for (it = tankBlockFlags.begin(); it != tankBlockFlags.end(); ++it) {
+    buf = nboPackStdString(buf, *it);
+  }
+
+  buf = nboPackStdString(buf, shotBlockBZDB);
+  buf = nboPackStdString(buf, tankBlockBZDB);
 
   return buf;
 }
@@ -172,15 +302,48 @@ void* LinkPhysics::unpack(void* buf)
 
   buf = nboUnpackFVec3(buf, shotSrcPosScale);
   buf = nboUnpackFVec3(buf, shotSrcVelScale);
-  buf = nboUnpackFVec3(buf, shotDstVel);
+  buf = nboUnpackFVec3(buf, shotDstVelOffset);
+
   buf = nboUnpackFVec3(buf, tankSrcPosScale);
   buf = nboUnpackFVec3(buf, tankSrcVelScale);
-  buf = nboUnpackFVec3(buf, tankDstVel);
+  buf = nboUnpackFVec3(buf, tankDstVelOffset);
+
   buf = nboUnpackFloat(buf, tankAngle);
-  buf = nboUnpackFloat(buf, tankAngleOffset);
   buf = nboUnpackFloat(buf, tankAngVel);
+  buf = nboUnpackFloat(buf, tankAngleOffset);
   buf = nboUnpackFloat(buf, tankAngVelOffset);
   buf = nboUnpackFloat(buf, tankAngVelScale);
+
+  buf = nboUnpackFloat(buf, shotMinSpeed);
+  buf = nboUnpackFloat(buf, shotMaxSpeed);
+  buf = nboUnpackFloat(buf, tankMinSpeed);
+  buf = nboUnpackFloat(buf, tankMaxSpeed);
+
+  buf = nboUnpackFloat(buf, shotMinAngle);
+  buf = nboUnpackFloat(buf, shotMaxAngle);
+  buf = nboUnpackFloat(buf, tankMinAngle);
+  buf = nboUnpackFloat(buf, tankMaxAngle);
+
+  buf = nboUnpackUInt8(buf, shotBlockTeams);
+  buf = nboUnpackUInt8(buf, tankBlockTeams);
+
+  uint16_t count;
+  std::string flag;
+
+  buf = nboUnpackUInt16(buf, count);
+  for (uint16_t i = 0; i < count; i++) {
+    buf = nboUnpackStdString(buf, flag);
+    shotBlockFlags.insert(flag);
+  }
+
+  buf = nboUnpackUInt16(buf, count);
+  for (uint16_t i = 0; i < count; i++) {
+    buf = nboUnpackStdString(buf, flag);
+    tankBlockFlags.insert(flag);
+  }
+
+  buf = nboUnpackStdString(buf, shotBlockBZDB);
+  buf = nboUnpackStdString(buf, tankBlockBZDB);
 
   return buf;
 }
@@ -198,21 +361,71 @@ int LinkPhysics::packSize() const
 
   fullSize += sizeof(fvec3); // shotSrcPosScale
   fullSize += sizeof(fvec3); // shotSrcVelScale
-  fullSize += sizeof(fvec3); // shotDstVel
+  fullSize += sizeof(fvec3); // shotDstVelOffset
+
   fullSize += sizeof(fvec3); // tankSrcPosScale
   fullSize += sizeof(fvec3); // tankSrcVelScale
-  fullSize += sizeof(fvec3); // tankDstVel
+  fullSize += sizeof(fvec3); // tankDstVelOffset
+
   fullSize += sizeof(float); // tankAngle
-  fullSize += sizeof(float); // tankAngleOffset
   fullSize += sizeof(float); // tankAngVel
+  fullSize += sizeof(float); // tankAngleOffset
   fullSize += sizeof(float); // tankAngVelOffset
   fullSize += sizeof(float); // tankAngVelScale
+
+  fullSize += sizeof(float); // shotMinSpeed
+  fullSize += sizeof(float); // shotMaxSpeed
+  fullSize += sizeof(float); // tankMinSpeed
+  fullSize += sizeof(float); // tankMaxSpeed
+
+  fullSize += sizeof(float); // shotMinAngle
+  fullSize += sizeof(float); // shotMaxAngle
+  fullSize += sizeof(float); // tankMinAngle
+  fullSize += sizeof(float); // tankMaxAngle
+
+  fullSize += sizeof(uint8_t); // shotBlockTeams
+  fullSize += sizeof(uint8_t); // tankBlockTeams
+
+  std::set<std::string>::const_iterator it;
+
+  fullSize += sizeof(uint16_t); // shotBlockFlags count
+  for (it = shotBlockFlags.begin(); it != shotBlockFlags.end(); ++it) {
+    fullSize += nboStdStringPackSize(*it);
+  }
+
+  fullSize += sizeof(uint16_t); // shotBlockFlags count
+  for (it = tankBlockFlags.begin(); it != tankBlockFlags.end(); ++it) {
+    fullSize += nboStdStringPackSize(*it);
+  }
+
+  fullSize += nboStdStringPackSize(shotBlockBZDB);
+  fullSize += nboStdStringPackSize(tankBlockBZDB);
 
   return fullSize;
 }
 
 
 //============================================================================//
+
+static void outputBits(std::ostream& out, uint8_t bits)
+{
+  for (int i = 0; i < 8; i++) {
+    if ((bits & (1 << i)) != 0) {
+      out << " " << i;
+    }
+  }
+}
+
+
+static void outputStringSet(std::ostream& out,
+                            const std::set<std::string>& strings)
+{
+  std::set<std::string>::const_iterator it;
+  for (it = strings.begin(); it != strings.end(); ++it) {
+    out << " " << *it;
+  }
+}
+
 
 void LinkPhysics::print(std::ostream& out, const std::string& indent) const
 {
@@ -225,8 +438,9 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
     out << indent << "  shotSrcVelScale "
                   << shotSrcVelScale.tostring() << std::endl;
   }
-  if (shotDstVel != fvec3(0.0f, 0.0f, 0.0f)) {
-    out << indent << "  shotDstVel " << shotDstVel.tostring() << std::endl;
+  if (shotDstVelOffset != fvec3(0.0f, 0.0f, 0.0f)) {
+    out << indent << "  shotDstVelOffset "
+                  << shotDstVelOffset.tostring() << std::endl;
   }
   if (shotSameSpeed) {
     out << indent << "  shotSameSpeed" << std::endl;
@@ -241,8 +455,9 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
     out << indent << "  tankSrcVelScale "
                   << tankSrcVelScale.tostring() << std::endl;
   }
-  if (tankDstVel != fvec3(0.0f, 0.0f, 0.0f)) {
-    out << indent << "  tankDstVel " << tankDstVel.tostring() << std::endl;
+  if (tankDstVelOffset != fvec3(0.0f, 0.0f, 0.0f)) {
+    out << indent << "  tankDstVelOffset "
+                  << tankDstVelOffset.tostring() << std::endl;
   }
   if (tankSameSpeed) {
     out << indent << "  tankSameSpeed" << std::endl;
@@ -269,6 +484,75 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
 
   if (tankAngVelScale != 0.0f) {
     out << indent << "  tankAngVelScale " << tankAngVelScale << std::endl;
+  }
+
+  // speed blocks
+  if (shotMinSpeed != 0.0f) {
+    out << indent << "  shotMinSpeed " << shotMinSpeed << std::endl;
+  }
+
+  if (shotMaxSpeed != 0.0f) {
+    out << indent << "  shotMaxSpeed " << shotMaxSpeed << std::endl;
+  }
+
+  if (tankMinSpeed != 0.0f) {
+    out << indent << "  tankMinSpeed " << tankMinSpeed << std::endl;
+  }
+
+  if (tankMaxSpeed != 0.0f) {
+    out << indent << "  tankMaxSpeed " << tankMaxSpeed << std::endl;
+  }
+
+  // angle blocks
+  if (shotMinAngle != 0.0f) {
+    out << indent << "  shotMinAngle " << shotMinAngle * RAD2DEGf << std::endl;
+  }
+
+  if (shotMaxAngle != 0.0f) {
+    out << indent << "  shotMaxAngle " << shotMaxAngle * RAD2DEGf << std::endl;
+  }
+
+  if (tankMinAngle != 0.0f) {
+    out << indent << "  tankMinAngle " << tankMinAngle * RAD2DEGf << std::endl;
+  }
+
+  if (tankMaxAngle != 0.0f) {
+    out << indent << "  tankMaxAngle " << tankMaxAngle * RAD2DEGf << std::endl;
+  }
+
+  // team blocks
+  if (shotBlockTeams != 0) {
+    out << indent << "  shotBlockTeams";
+    outputBits(out, shotBlockTeams);
+    out << std::endl;
+  }
+
+  if (tankBlockTeams != 0) {
+    out << indent << "  tankBlockTeams";
+    outputBits(out, tankBlockTeams);
+    out << std::endl;
+  }
+
+  // flag blocks
+  if (!shotBlockFlags.empty()) {
+    out << indent << "  shotBlockFlags";
+    outputStringSet(out, shotBlockFlags);
+    out << std::endl;
+  }
+
+  if (!tankBlockFlags.empty()) {
+    out << indent << "  tankBlockFlags";
+    outputStringSet(out, tankBlockFlags);
+    out << std::endl;
+  }
+
+  // bzdb blocks
+  if (!shotBlockBZDB.empty()) {
+    out << indent << "  shotBlockBZDB " << shotBlockBZDB << std::endl;
+  }
+
+  if (!tankBlockBZDB.empty()) {
+    out << indent << "  tankBlockBZDB " << tankBlockBZDB << std::endl;
   }
 
   return;

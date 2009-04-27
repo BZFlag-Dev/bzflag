@@ -308,12 +308,21 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   float t = float(currentTime - prevTime);
 
   const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
+
+  // check for teleportation
   const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
+  const MeshFace* linkDst = NULL;
+  const LinkPhysics* physics = NULL;;
+  int linkSrcID, linkDstID;
   if (linkSrc != NULL) {
     const ShotPath& myPath = getPath();
-    const ShotType shotType = myPath.getShotType();
+    const FlagType* flagType = myPath.getFlag();
     const TeamColor teamNum = myPath.getTeam();
-    if (!linkSrc->shotCanCross(p, tmpVel, teamNum, shotType)) {
+    const unsigned int seed = getPath().getShotId();
+    linkDst = linkManager.getShotLinkDst(linkSrc, seed,
+                                         linkSrcID, linkDstID, physics,
+                                         p, tmpVel, teamNum, flagType);
+    if (linkDst == NULL) {
       linkSrc = NULL;
     }
   }
@@ -321,11 +330,6 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   // check in reverse order to see what we hit first
   if (linkSrc) {
     // entered teleporter -- teleport it
-    const unsigned int seed = getPath().getShotId();
-    int srcID, dstID; // unused
-    const LinkPhysics* physics;
-    const MeshFace* linkDst =
-      linkManager.getShotLinkDst(linkSrc, seed, srcID, dstID, physics);
     linkSrc->teleportShot(*linkDst, *physics, p, p, tmpVel, tmpVel);
   }
   else if (building) {
@@ -342,35 +346,39 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
 
 float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 {
-  float t = float(currentTime - prevTime);
-  const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
-  const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
-  if (linkSrc != NULL) {
-    const ShotPath& myPath = getPath();
-    const ShotType shotType = myPath.getShotType();
-    const TeamColor teamNum = myPath.getTeam();
-    if (!linkSrc->shotCanCross(nextPos, nextVel, teamNum, shotType)) {
-      linkSrc = NULL;
-    }
-  }
-
   World* world = World::getWorld();
   if (!world) {
     return -1.0f;
   }
 
+  float t = float(currentTime - prevTime);
+  const Obstacle* building = getFirstBuilding(ray, Epsilon, t);
+
+  // check for teleportation
+  const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
+  const MeshFace* linkDst = NULL;
+  const LinkPhysics* physics = NULL;;
+  int linkSrcID, linkDstID;
+  if (linkSrc != NULL) {
+    const ShotPath& myPath = getPath();
+    const FlagType* flagType = myPath.getFlag();
+    const TeamColor teamNum = myPath.getTeam();
+    const unsigned int seed = getPath().getShotId();
+    linkDst = linkManager.getShotLinkDst(linkSrc, seed,
+                                         linkSrcID, linkDstID, physics,
+                                         nextPos, nextVel, teamNum, flagType);
+    if (linkDst == NULL) {
+      linkSrc = NULL;
+    }
+  }
+
   // check in reverse order to see what we hit first
   if (linkSrc) {
     // entered teleporter -- teleport it
-    unsigned int seed = getPath().getShotId();
-    int srcID, dstID;
-    const LinkPhysics* physics;
-    const MeshFace* linkDst =
-      linkManager.getShotLinkDst(linkSrc, seed, srcID, dstID, physics);
     fvec3 vel = getPath().getVelocity();
     linkSrc->teleportShot(*linkDst, *physics, nextPos, nextPos,
                                               nextVel, nextVel);
-    eventHandler.ShotTeleported(getPath(), srcID, dstID);
+    eventHandler.ShotTeleported(getPath(), linkSrcID, linkDstID);
     return t;
   }
   else if (building) {

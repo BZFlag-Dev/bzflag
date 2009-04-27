@@ -10,17 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "MeshFace.h"
 
-/* system implementation headers */
+// system headers
 #include <iostream>
 #include <math.h>
 
-/* common implementation headers */
+// common headers
 #include "global.h"
 #include "Pack.h"
 #include "vectors.h"
+#include "Flag.h"
 #include "MeshObstacle.h"
 #include "PhysicsDriver.h"
 #include "LinkPhysics.h"
@@ -79,8 +80,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   if (special == NULL) {
     specialData = NULL;
   } else {
-    specialData = new SpecialData;
-    *specialData = *special;
+    specialData = new SpecialData(*special);
   }
   edges = NULL;
   edgePlanes = NULL;
@@ -341,7 +341,7 @@ void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
 
   // pScale
   if ((geo.bits & LinkAutoPscale) != 0) {
-    geo.pScale = 0.0f; // clamp to the plane
+    geo.pScale = 0.0f; // clamp to the plane (at the center)
   }
 
   // angle
@@ -767,48 +767,174 @@ float MeshFace::getProximity(const fvec3& pIn, float radius) const
 }
 
 
-bool MeshFace::shotCanCross(const fvec3& /*pos*/,
-                            const fvec3& vel, int team, int /*shotType*/) const
+bool MeshFace::shotCanCross(const LinkPhysics& physics,
+                             const fvec3& /*pos*/, const fvec3& vel,
+                             int team, const FlagType* flagType) const
 {
   if (!isSpecial()) {
     return false;
   }
-  const SpecialData& sd = *specialData;
-  if (sd.linkSrcShotBlockBits != 0) {
-    if ((sd.linkSrcShotBlockBits & (1 << team)) != 0) {
+
+  const uint16_t testBits = physics.getTestBits();
+
+  if (testBits == 0) {
+    return true;
+  }
+
+  // teams test
+  if (physics.shotBlockTeams != 0) {
+    if ((physics.shotBlockTeams & (1 << team)) != 0) {
       return false;
     }
   }
-  const float speed = -fvec3::dot(plane.xyz(), vel);
-  if (speed < sd.linkSrcMinSpeed) {
-    return false;
+
+  // flags test
+  if ((testBits & LinkPhysics::ShotFlagTest) != 0) {
+    const std::set<std::string>& flags = physics.shotBlockFlags;
+    if ((flagType != NULL) &&
+        (flags.find(flagType->flagAbbv) != flags.end())) {
+      return false;
+    }
   }
-  if (speed > sd.linkSrcMaxSpeed) {
-    return false;
+
+  // speed tests
+  if ((testBits & LinkPhysics::ShotSpeedTest) != 0) {
+    // shotMinSpeed
+    if (physics.shotMinSpeed > 0.0f) {
+      const float speed = vel.length();
+      if (speed < -physics.shotMinSpeed) {
+        return false;
+      }
+    }
+    else if (physics.shotMinSpeed < 0.0f) {
+      const float speed = -fvec3::dot(plane.xyz(), vel);
+      if (speed < physics.shotMinSpeed) {
+        return false;
+      }
+    }
+    // shotMaxSpeed
+    if (physics.shotMaxSpeed > 0.0f) {
+      const float speed = vel.length();
+      if (speed >= -physics.shotMaxSpeed) {
+        return false;
+      }
+    }
+    else if (physics.shotMaxSpeed < 0.0f) {
+      const float speed = -fvec3::dot(plane.xyz(), vel);
+      if (speed >= physics.shotMaxSpeed) {
+        return false;
+      }
+    }
   }
+
+  // angle tests
+  if ((testBits & LinkPhysics::ShotAngleTest) != 0) {
+    const float dot = fvec3::dot(vel.normalize(), -plane.xyz());
+    if (physics.shotMinAngle != 0.0f) {
+      if (dot > cosf(physics.shotMinAngle)) {
+        return false;
+      }
+    }
+    if (physics.shotMaxAngle != 0.0f) {
+      if (dot <= cosf(physics.shotMaxAngle)) {
+        return false;
+      }
+    }
+  }
+
+  // bzdb test
+  if ((testBits & LinkPhysics::ShotBZDBTest) != 0) {
+    if (BZDB.isTrue(physics.shotBlockBZDB)) {
+      return false;
+    }
+  }
+
   return true;
 }
 
 
-bool MeshFace::tankCanCross(const fvec3& /*pos*/,
-                            const fvec3& vel, int team) const
+bool MeshFace::tankCanCross(const LinkPhysics& physics,
+                             const fvec3& /*pos*/, const fvec3& vel,
+                             int team, const FlagType* flagType) const
 {
   if (!isSpecial()) {
     return false;
   }
-  const SpecialData& sd = *specialData;
-  if (sd.linkSrcTankBlockBits != 0) {
-    if ((sd.linkSrcTankBlockBits & (1 << team)) != 0) {
+
+  const uint16_t testBits = physics.getTestBits();
+
+  if (testBits == 0) {
+    return true;
+  }
+
+  // teams test
+  if (physics.tankBlockTeams != 0) {
+    if ((physics.tankBlockTeams & (1 << team)) != 0) {
       return false;
     }
   }
-  const float speed = -fvec3::dot(plane.xyz(), vel);
-  if (speed < sd.linkSrcMinSpeed) {
-    return false;
+
+  // flags test
+  if ((testBits & LinkPhysics::TankFlagTest) != 0) {
+    const std::set<std::string>& flags = physics.tankBlockFlags;
+    if ((flagType != NULL) &&
+        (flags.find(flagType->flagAbbv) != flags.end())) {
+      return false;
+    }
   }
-  if (speed > sd.linkSrcMaxSpeed) {
-    return false;
+
+  // speed tests
+  if ((testBits & LinkPhysics::TankSpeedTest) != 0) {
+    // tankMinSpeed
+    if (physics.tankMinSpeed > 0.0f) {
+      const float speed = vel.length();
+      if (speed < -physics.tankMinSpeed) {
+        return false;
+      }
+    }
+    else if (physics.tankMinSpeed < 0.0f) {
+      const float speed = -fvec3::dot(plane.xyz(), vel);
+      if (speed < physics.tankMinSpeed) {
+        return false;
+      }
+    }
+    // tankMaxSpeed
+    if (physics.tankMaxSpeed > 0.0f) {
+      const float speed = vel.length();
+      if (speed >= -physics.tankMaxSpeed) {
+        return false;
+      }
+    }
+    else if (physics.tankMaxSpeed < 0.0f) {
+      const float speed = -fvec3::dot(plane.xyz(), vel);
+      if (speed >= physics.tankMaxSpeed) {
+        return false;
+      }
+    }
   }
+
+  // angle tests
+  if ((testBits & LinkPhysics::TankAngleTest) != 0) {
+    const float dot = fvec3::dot(vel.normalize(), -plane.xyz());
+    if (physics.tankMinAngle != 0.0f) {
+      if (dot > cosf(physics.tankMinAngle)) {
+        return false;
+      }
+    }
+    if (physics.tankMaxAngle != 0.0f) {
+      if (dot <= cosf(physics.tankMaxAngle)) {
+        return false;
+      }
+    }
+  }
+
+  // bzdb test
+  if ((testBits & LinkPhysics::TankBZDBTest) != 0) {
+    if (BZDB.isTrue(physics.tankBlockBZDB)) {
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -853,9 +979,10 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
   }
 
   // position
-  const float sScale = linkPhysics.shotSrcPosScale.x * srcGeo.sScale;
-  const float tScale = linkPhysics.shotSrcPosScale.y * srcGeo.tScale;
-  const float pScale = linkPhysics.shotSrcPosScale.z * srcGeo.pScale;
+  const fvec3& srcPosScale = linkPhysics.shotSrcPosScale;
+  const float sScale = srcPosScale.x * srcGeo.sScale;
+  const float tScale = srcPosScale.y * srcGeo.tScale;
+  const float pScale = srcPosScale.z * srcGeo.pScale;
   const fvec3 relPos = (srcPos - srcGeo.center);
   const float sLen = sScale * fvec3::dot(relPos, srcGeo.sDir);
   const float tLen = tScale * fvec3::dot(relPos, srcGeo.tDir);
@@ -868,10 +995,15 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
 
   // velocity
   const fvec3& srcVelScale = linkPhysics.shotSrcVelScale;
-  fvec3 vel = (dstGeo.sDir * (srcVelScale.x * fvec3::dot(srcVel, srcGeo.sDir)))
-            + (dstGeo.tDir * (srcVelScale.y * fvec3::dot(srcVel, srcGeo.tDir)))
-            + (dstGeo.pDir * (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)));
-  vel += linkPhysics.shotDstVel;
+  const fvec3& linkDstVel  = linkPhysics.shotDstVelOffset;
+  const fvec3 velScales(
+    (srcVelScale.x * fvec3::dot(srcVel, srcGeo.sDir)) + linkDstVel.x,
+    (srcVelScale.y * fvec3::dot(srcVel, srcGeo.tDir)) + linkDstVel.y,
+    (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)) + linkDstVel.z
+  );
+  fvec3 vel = (velScales.x * dstGeo.sDir)
+            + (velScales.y * dstGeo.tDir)
+            + (velScales.z * dstGeo.pDir);
   if (linkPhysics.shotSameSpeed) {
     const float srcSpeed = srcVel.length();
     const float dstSpeed =    vel.length();
@@ -941,10 +1073,11 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   }
 
   // position
-  const float sScale = linkPhysics.tankSrcPosScale.x * srcGeo.sScale;
-  const float tScale = linkPhysics.tankSrcPosScale.y * srcGeo.tScale;
-  const float pScale = linkPhysics.tankSrcPosScale.z * srcGeo.pScale;
-  fvec3 relPos = (srcPos - srcGeo.center);
+  const fvec3& srcPosScale = linkPhysics.tankSrcPosScale;
+  const float sScale = srcPosScale.x * srcGeo.sScale;
+  const float tScale = srcPosScale.y * srcGeo.tScale;
+  const float pScale = srcPosScale.z * srcGeo.pScale;
+  const fvec3 relPos = (srcPos - srcGeo.center);
   const float sLen = sScale * fvec3::dot(relPos, srcGeo.sDir);
   const float tLen = tScale * fvec3::dot(relPos, srcGeo.tDir);
   const float pLen = pScale * fvec3::dot(relPos, srcGeo.pDir);
@@ -956,10 +1089,15 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
 
   // velocity
   const fvec3& srcVelScale = linkPhysics.tankSrcVelScale;
-  fvec3 vel = (dstGeo.sDir * (srcVelScale.x * fvec3::dot(srcVel, srcGeo.sDir)))
-            + (dstGeo.tDir * (srcVelScale.y * fvec3::dot(srcVel, srcGeo.tDir)))
-            + (dstGeo.pDir * (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)));
-  vel += linkPhysics.tankDstVel;
+  const fvec3& linkDstVel  = linkPhysics.tankDstVelOffset;
+  const fvec3 velScales(
+    (srcVelScale.x * fvec3::dot(srcVel, srcGeo.sDir)) + linkDstVel.x,
+    (srcVelScale.y * fvec3::dot(srcVel, srcGeo.tDir)) + linkDstVel.y,
+    (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)) + linkDstVel.z
+  );
+  fvec3 vel = (velScales.x * dstGeo.sDir)
+            + (velScales.y * dstGeo.tDir)
+            + (velScales.z * dstGeo.pDir);
   if (linkPhysics.tankSameSpeed) {
     const float srcSpeed = srcVel.length();
     const float dstSpeed =    vel.length();
@@ -1008,7 +1146,35 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
 //  Pack/Unpack routines
 //
 
-void *MeshFace::pack(void *buf) const
+int MeshFace::packSize() const
+{
+  int fullSize = 0;
+  fullSize += sizeof(uint16_t); // stateBytes
+
+  fullSize += nboStdStringPackSize(name);
+
+  fullSize += sizeof(int32_t);  // vertexCount
+  fullSize += sizeof(int32_t) * vertexCount;
+  if (useNormals()) {
+    fullSize += sizeof(int32_t) * vertexCount;
+  }
+  if (useTexcoords()) {
+    fullSize += sizeof(int32_t) * vertexCount;
+  }
+
+  fullSize += sizeof(int32_t); // material
+  fullSize += sizeof(int32_t); // physics driver
+
+  // special data
+  if (specialData != NULL) {
+    fullSize += specialData->packSize();
+  }
+
+  return fullSize;
+}
+
+
+void* MeshFace::pack(void *buf) const
 {
   // state byte
   uint16_t stateBytes = 0;
@@ -1054,46 +1220,16 @@ void *MeshFace::pack(void *buf) const
   // physics driver
   buf = nboPackInt32(buf, phydrv);
 
+  // special data
   if (specialData) {
-    buf = nboPackUInt16(buf, specialData->stateBits);
-
-    int32_t tmpTeam = specialData->baseTeam;
-    buf = nboPackInt32(buf, tmpTeam);
-
-    buf = nboPackStdString(buf, specialData->linkName);
-
-    if (!specialData->linkName.empty()) {
-      // linkSrc geometry
-      buf = nboPackUInt8(buf, specialData->linkSrcGeo.bits);
-      buf = nboPackInt32(buf, specialData->linkSrcGeo.centerIndex);
-      buf = nboPackInt32(buf, specialData->linkSrcGeo.sDirIndex);
-      buf = nboPackInt32(buf, specialData->linkSrcGeo.tDirIndex);
-      buf = nboPackInt32(buf, specialData->linkSrcGeo.pDirIndex);
-      buf = nboPackFloat(buf, specialData->linkSrcGeo.sScale);
-      buf = nboPackFloat(buf, specialData->linkSrcGeo.tScale);
-      buf = nboPackFloat(buf, specialData->linkSrcGeo.pScale);
-      // linkDst geometry
-      buf = nboPackUInt8(buf, specialData->linkDstGeo.bits);
-      buf = nboPackInt32(buf, specialData->linkDstGeo.centerIndex);
-      buf = nboPackInt32(buf, specialData->linkDstGeo.sDirIndex);
-      buf = nboPackInt32(buf, specialData->linkDstGeo.tDirIndex);
-      buf = nboPackInt32(buf, specialData->linkDstGeo.pDirIndex);
-      buf = nboPackFloat(buf, specialData->linkDstGeo.sScale);
-      buf = nboPackFloat(buf, specialData->linkDstGeo.tScale);
-      buf = nboPackFloat(buf, specialData->linkDstGeo.pScale);
-      // special linkSrc properties
-      buf = nboPackFloat(buf, specialData->linkSrcMinSpeed);
-      buf = nboPackFloat(buf, specialData->linkSrcMaxSpeed);
-      buf = nboPackUInt8(buf, specialData->linkSrcShotBlockBits);
-      buf = nboPackUInt8(buf, specialData->linkSrcTankBlockBits);
-    }
+    buf = specialData->pack(buf);
   }
 
   return buf;
 }
 
 
-void *MeshFace::unpack(void *buf)
+void* MeshFace::unpack(void *buf)
 {
   int32_t inTmp;
   driveThrough = shootThrough = smoothBounce = false;
@@ -1151,42 +1287,10 @@ void *MeshFace::unpack(void *buf)
   buf = nboUnpackInt32(buf, inTmp);
   phydrv = int(inTmp);
 
+  // special data
   if (hasSpecial) {
     specialData = new SpecialData;
-
-    buf = nboUnpackUInt16(buf, specialData->stateBits);
-
-    int32_t baseTeam;
-    buf = nboUnpackInt32(buf, baseTeam);
-    specialData->baseTeam = (int)baseTeam;
-
-    buf = nboUnpackStdString(buf, specialData->linkName);
-
-    if (!specialData->linkName.empty()) {
-      // linkSrc geometry
-      buf = nboUnpackUInt8(buf, specialData->linkSrcGeo.bits);
-      buf = nboUnpackInt32(buf, specialData->linkSrcGeo.centerIndex);
-      buf = nboUnpackInt32(buf, specialData->linkSrcGeo.sDirIndex);
-      buf = nboUnpackInt32(buf, specialData->linkSrcGeo.tDirIndex);
-      buf = nboUnpackInt32(buf, specialData->linkSrcGeo.pDirIndex);
-      buf = nboUnpackFloat(buf, specialData->linkSrcGeo.sScale);
-      buf = nboUnpackFloat(buf, specialData->linkSrcGeo.tScale);
-      buf = nboUnpackFloat(buf, specialData->linkSrcGeo.pScale);
-      // linkDst geometry
-      buf = nboUnpackUInt8(buf, specialData->linkDstGeo.bits);
-      buf = nboUnpackInt32(buf, specialData->linkDstGeo.centerIndex);
-      buf = nboUnpackInt32(buf, specialData->linkDstGeo.sDirIndex);
-      buf = nboUnpackInt32(buf, specialData->linkDstGeo.tDirIndex);
-      buf = nboUnpackInt32(buf, specialData->linkDstGeo.pDirIndex);
-      buf = nboUnpackFloat(buf, specialData->linkDstGeo.sScale);
-      buf = nboUnpackFloat(buf, specialData->linkDstGeo.tScale);
-      buf = nboUnpackFloat(buf, specialData->linkDstGeo.pScale);
-      // special linkSrc properties
-      buf = nboUnpackFloat(buf, specialData->linkSrcMinSpeed);
-      buf = nboUnpackFloat(buf, specialData->linkSrcMaxSpeed);
-      buf = nboUnpackUInt8(buf, specialData->linkSrcShotBlockBits);
-      buf = nboUnpackUInt8(buf, specialData->linkSrcTankBlockBits);
-    }
+    buf = specialData->unpack(buf);
   }
 
   finalize();
@@ -1195,57 +1299,102 @@ void *MeshFace::unpack(void *buf)
 }
 
 
-int MeshFace::packSize() const
+int MeshFace::SpecialData::packSize() const
 {
   int fullSize = 0;
-  fullSize += sizeof(uint16_t); // stateBytes
-
-  fullSize += nboStdStringPackSize(name);
-
-  fullSize += sizeof(int32_t);  // vertexCount
-  fullSize += sizeof(int32_t) * vertexCount;
-  if (useNormals()) {
-    fullSize += sizeof(int32_t) * vertexCount;
+  fullSize += sizeof(uint16_t); // state
+  fullSize += sizeof(int32_t);  // teamNum
+  fullSize += nboStdStringPackSize(linkName);
+  if (!linkName.empty()) {
+    // linkSrc geometry
+    fullSize += sizeof(uint8_t); // linkSrcGeo.bits
+    fullSize += sizeof(int32_t); // linkSrcGeo.centerIndex
+    fullSize += sizeof(int32_t); // linkSrcGeo.sDirIndex
+    fullSize += sizeof(int32_t); // linkSrcGeo.tDirIndex
+    fullSize += sizeof(int32_t); // linkSrcGeo.pDirIndex
+    fullSize += sizeof(float);   // linkSrcGeo.sScale
+    fullSize += sizeof(float);   // linkSrcGeo.tScale
+    fullSize += sizeof(float);   // linkSrcGeo.pScale
+    // linkDst geometry
+    fullSize += sizeof(uint8_t); // linkDstGeo.bits
+    fullSize += sizeof(int32_t); // linkDstGeo.center
+    fullSize += sizeof(int32_t); // linkDstGeo.sDir
+    fullSize += sizeof(int32_t); // linkDstGeo.tDir
+    fullSize += sizeof(int32_t); // linkDstGeo.pDir
+    fullSize += sizeof(float);   // linkDstGeo.sScale
+    fullSize += sizeof(float);   // linkDstGeo.tScale
+    fullSize += sizeof(float);   // linkDstGeo.pScale
   }
-  if (useTexcoords()) {
-    fullSize += sizeof(int32_t) * vertexCount;
-  }
-
-  fullSize += sizeof(int32_t); // material
-  fullSize += sizeof(int32_t); // physics driver
-
-  if (specialData != NULL) {
-    fullSize += sizeof(uint16_t); // state
-    fullSize += sizeof(int32_t);  // teamNum
-    fullSize += nboStdStringPackSize(specialData->linkName);
-    if (!specialData->linkName.empty()) {
-      // linkSrc geometry
-      fullSize += sizeof(uint8_t); // linkSrcGeo.bits
-      fullSize += sizeof(int32_t); // linkSrcGeo.centerIndex
-      fullSize += sizeof(int32_t); // linkSrcGeo.sDirIndex
-      fullSize += sizeof(int32_t); // linkSrcGeo.tDirIndex
-      fullSize += sizeof(int32_t); // linkSrcGeo.pDirIndex
-      fullSize += sizeof(float);   // linkSrcGeo.sScale
-      fullSize += sizeof(float);   // linkSrcGeo.tScale
-      fullSize += sizeof(float);   // linkSrcGeo.pScale
-      // linkDst geometry
-      fullSize += sizeof(uint8_t); // linkDstGeo.bits
-      fullSize += sizeof(int32_t); // linkDstGeo.center
-      fullSize += sizeof(int32_t); // linkDstGeo.sDir
-      fullSize += sizeof(int32_t); // linkDstGeo.tDir
-      fullSize += sizeof(int32_t); // linkDstGeo.pDir
-      fullSize += sizeof(float);   // linkDstGeo.sScale
-      fullSize += sizeof(float);   // linkDstGeo.tScale
-      fullSize += sizeof(float);   // linkDstGeo.pScale
-      // special linkSrc properties
-      fullSize += sizeof(float);   // linkSrcMinSpeed
-      fullSize += sizeof(float);   // linkSrcMaxSpeed
-      fullSize += sizeof(uint8_t); // linkSrcShotBlockBits
-      fullSize += sizeof(uint8_t); // linkSrcTankBlockBits
-    }
-  }
-
   return fullSize;
+}
+
+
+void* MeshFace::SpecialData::pack(void* buf) const
+{
+  buf = nboPackUInt16(buf, stateBits);
+
+  int32_t tmpTeam = baseTeam;
+  buf = nboPackInt32(buf, tmpTeam);
+
+  buf = nboPackStdString(buf, linkName);
+
+  if (!linkName.empty()) {
+    // linkSrc geometry
+    buf = nboPackUInt8(buf, linkSrcGeo.bits);
+    buf = nboPackInt32(buf, linkSrcGeo.centerIndex);
+    buf = nboPackInt32(buf, linkSrcGeo.sDirIndex);
+    buf = nboPackInt32(buf, linkSrcGeo.tDirIndex);
+    buf = nboPackInt32(buf, linkSrcGeo.pDirIndex);
+    buf = nboPackFloat(buf, linkSrcGeo.sScale);
+    buf = nboPackFloat(buf, linkSrcGeo.tScale);
+    buf = nboPackFloat(buf, linkSrcGeo.pScale);
+    // linkDst geometry
+    buf = nboPackUInt8(buf, linkDstGeo.bits);
+    buf = nboPackInt32(buf, linkDstGeo.centerIndex);
+    buf = nboPackInt32(buf, linkDstGeo.sDirIndex);
+    buf = nboPackInt32(buf, linkDstGeo.tDirIndex);
+    buf = nboPackInt32(buf, linkDstGeo.pDirIndex);
+    buf = nboPackFloat(buf, linkDstGeo.sScale);
+    buf = nboPackFloat(buf, linkDstGeo.tScale);
+    buf = nboPackFloat(buf, linkDstGeo.pScale);
+  }
+
+  return buf;
+}
+
+
+void* MeshFace::SpecialData::unpack(void* buf)
+{
+  buf = nboUnpackUInt16(buf, stateBits);
+
+  int32_t tmpTeam;
+  buf = nboUnpackInt32(buf, tmpTeam);
+  baseTeam = (int)tmpTeam;
+
+  buf = nboUnpackStdString(buf, linkName);
+
+  if (!linkName.empty()) {
+    // linkSrc geometry
+    buf = nboUnpackUInt8(buf, linkSrcGeo.bits);
+    buf = nboUnpackInt32(buf, linkSrcGeo.centerIndex);
+    buf = nboUnpackInt32(buf, linkSrcGeo.sDirIndex);
+    buf = nboUnpackInt32(buf, linkSrcGeo.tDirIndex);
+    buf = nboUnpackInt32(buf, linkSrcGeo.pDirIndex);
+    buf = nboUnpackFloat(buf, linkSrcGeo.sScale);
+    buf = nboUnpackFloat(buf, linkSrcGeo.tScale);
+    buf = nboUnpackFloat(buf, linkSrcGeo.pScale);
+    // linkDst geometry
+    buf = nboUnpackUInt8(buf, linkDstGeo.bits);
+    buf = nboUnpackInt32(buf, linkDstGeo.centerIndex);
+    buf = nboUnpackInt32(buf, linkDstGeo.sDirIndex);
+    buf = nboUnpackInt32(buf, linkDstGeo.tDirIndex);
+    buf = nboUnpackInt32(buf, linkDstGeo.pDirIndex);
+    buf = nboUnpackFloat(buf, linkDstGeo.sScale);
+    buf = nboUnpackFloat(buf, linkDstGeo.tScale);
+    buf = nboUnpackFloat(buf, linkDstGeo.pScale);
+  }
+
+  return buf;
 }
 
 
@@ -1253,16 +1402,6 @@ int MeshFace::packSize() const
 //
 //  Printing
 //
-
-static void outputBits(std::ostream& out, uint8_t bits)
-{
-  for (int i = 0; i < 8; i++) {
-    if ((bits & (1 << i)) != 0) {
-      out << " " << i;
-    }
-  }
-}
-
 
 void MeshFace::print(std::ostream& out, const std::string& indent) const
 {
@@ -1277,12 +1416,14 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << indent << "    name " << name << std::endl;
   }
 
+  // plane info
   if (debugLevel >= 3) {
     out << indent << "  # plane normal = "
                   << plane.x << " " << plane.y << " "
 		  << plane.z << " " << plane.w << std::endl;
   }
 
+  // vertices
   out << indent << "    vertices";
   for (i = 0; i < vertexCount; i++) {
     const int index = vertices[i] - mesh->getVertices();
@@ -1298,6 +1439,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   }
   out << std::endl;
 
+  // normals
   if (normals != NULL) {
     out << indent << "    normals";
     for (i = 0; i < vertexCount; i++) {
@@ -1315,6 +1457,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << std::endl;
   }
 
+  // texcoords
   if (texcoords != NULL) {
     out << indent << "    texcoords";
     for (i = 0; i < vertexCount; i++) {
@@ -1330,10 +1473,12 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << std::endl;
   }
 
+  // material
   out << indent << "    matref ";
   MATERIALMGR.printReference(out, bzMaterial);
   out << std::endl;
 
+  // physics driver
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver != NULL) {
     out << indent << "    phydrv ";
@@ -1345,6 +1490,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << std::endl;
   }
 
+  // physics properties
   if (noclusters && !mesh->noClusters()) {
     out << indent << "    noclusters" << std::endl;
   }
@@ -1366,113 +1512,95 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << indent << "    ricochet" << std::endl;
   }
 
+  // special data
   if (specialData) {
-    const SpecialData& sd = *specialData;
-
-    const uint16_t stateBits = sd.stateBits;
-
-    if (sd.baseTeam >= 0) {
-      out << indent << "    baseTeam " << sd.baseTeam << std::endl;
-    }
-
-    if (!sd.linkName.empty()) {
-      out << indent << "    linkName " << sd.linkName << std::endl;
-    }
-
-    if ((stateBits & LinkSrcRebound) != 0) {
-      out << indent << "    linkSrcRebound" << std::endl;
-    }
-
-    if ((stateBits & LinkSrcNoGlow) != 0) {
-      out << indent << "    linkSrcNoGlow" << std::endl;
-    }
-
-    if ((stateBits & LinkSrcNoRadar) != 0) {
-      out << indent << "    linkSrcNoRadar" << std::endl;
-    }
-
-    if ((stateBits & LinkSrcNoSound) != 0) {
-      out << indent << "    linkSrcNoSound" << std::endl;
-    }
-
-    if ((stateBits & LinkSrcNoEffect) != 0) {
-      out << indent << "    linkSrcNoEffect" << std::endl;
-    }
-
-    if (sd.linkSrcMinSpeed != -MAXFLOAT) {
-      out << indent << "    linkSrcMinSpeed "
-                    << sd.linkSrcMinSpeed << std::endl;
-    }
-
-    if (sd.linkSrcMaxSpeed != +MAXFLOAT) {
-      out << indent << "    linkSrcMaxSpeed "
-                    << sd.linkSrcMaxSpeed << std::endl;
-    }
-
-    if (sd.linkSrcShotBlockBits != 0) {
-      out << indent << "    linkSrcShotBlockTeams ";
-      outputBits(out, sd.linkSrcShotBlockBits);
-      out << std::endl;
-    }
-
-    if (sd.linkSrcTankBlockBits != 0) {
-      out << indent << "    linkSrcTankBlockTeams ";
-      outputBits(out, sd.linkSrcTankBlockBits);
-      out << std::endl;
-    }
-
-    // linkSrc
-    const LinkGeometry& srcGeo = sd.linkSrcGeo;
-    if (srcGeo.centerIndex >= 0) {
-      out << indent << "    linkSrcCenter " << srcGeo.centerIndex << std::endl;
-    }
-    if (srcGeo.sDirIndex >= 0) {
-      out << indent << "    linkSrcSdir " << srcGeo.sDirIndex << std::endl;
-    }
-    if (srcGeo.tDirIndex >= 0) {
-      out << indent << "    linkSrcTdir " << srcGeo.tDirIndex << std::endl;
-    }
-    if (srcGeo.pDirIndex >= 0) {
-      out << indent << "    linkSrcPdir " << srcGeo.pDirIndex << std::endl;
-    }
-    if ((srcGeo.bits & LinkAutoSscale) == 0) {
-      out << indent << "    linkSrcSscale " << srcGeo.sScale << std::endl;
-    }
-    if ((srcGeo.bits & LinkAutoTscale) == 0) {
-      out << indent << "    linkSrcTscale " << srcGeo.tScale << std::endl;
-    }
-    if ((srcGeo.bits & LinkAutoPscale) == 0) {
-      out << indent << "    linkSrcPscale " << srcGeo.pScale << std::endl;
-    }
-
-    // linkDst
-    const LinkGeometry& dstGeo = sd.linkDstGeo;
-    if (dstGeo.centerIndex >= 0) {
-      out << indent << "    linkDstCenter " << dstGeo.centerIndex << std::endl;
-    }
-    if (dstGeo.sDirIndex >= 0) {
-      out << indent << "    linkDstSdir " << dstGeo.sDirIndex << std::endl;
-    }
-    if (dstGeo.tDirIndex >= 0) {
-      out << indent << "    linkDstTdir " << dstGeo.tDirIndex << std::endl;
-    }
-    if (dstGeo.pDirIndex >= 0) {
-      out << indent << "    linkDstPdir " << dstGeo.pDirIndex << std::endl;
-    }
-    if ((dstGeo.bits & LinkAutoSscale) == 0) {
-      out << indent << "    linkDstSscale " << dstGeo.sScale << std::endl;
-    }
-    if ((dstGeo.bits & LinkAutoTscale) == 0) {
-      out << indent << "    linkDstTscale " << dstGeo.tScale << std::endl;
-    }
-    if ((dstGeo.bits & LinkAutoPscale) == 0) {
-      out << indent << "    linkDstPscale " << dstGeo.pScale << std::endl;
-    }
+    specialData->print(out, indent);
   }
 
   out << indent << "  endface" << std::endl;
 
   return;
+}
+
+
+void MeshFace::SpecialData::print(std::ostream& out,
+                                  const std::string& indent) const
+{
+  const std::string prefix = indent + "    ";
+
+  if (baseTeam >= 0) {
+    out << prefix << "baseTeam " << baseTeam << std::endl;
+  }
+
+  if (!linkName.empty()) {
+    out << prefix << "linkName " << linkName << std::endl;
+  }
+
+  if ((stateBits & LinkSrcRebound) != 0) {
+    out << prefix << "linkSrcRebound" << std::endl;
+  }
+
+  if ((stateBits & LinkSrcNoGlow) != 0) {
+    out << prefix << "linkSrcNoGlow" << std::endl;
+  }
+
+  if ((stateBits & LinkSrcNoRadar) != 0) {
+    out << prefix << "linkSrcNoRadar" << std::endl;
+  }
+
+  if ((stateBits & LinkSrcNoSound) != 0) {
+    out << prefix << "linkSrcNoSound" << std::endl;
+  }
+
+  if ((stateBits & LinkSrcNoEffect) != 0) {
+    out << prefix << "linkSrcNoEffect" << std::endl;
+  }
+
+  // linkSrcGeo
+  if (linkSrcGeo.centerIndex >= 0) {
+    out << prefix << "linkSrcCenter " << linkSrcGeo.centerIndex << std::endl;
+  }
+  if (linkSrcGeo.sDirIndex >= 0) {
+    out << prefix << "linkSrcSdir " << linkSrcGeo.sDirIndex << std::endl;
+  }
+  if (linkSrcGeo.tDirIndex >= 0) {
+    out << prefix << "linkSrcTdir " << linkSrcGeo.tDirIndex << std::endl;
+  }
+  if (linkSrcGeo.pDirIndex >= 0) {
+    out << prefix << "linkSrcPdir " << linkSrcGeo.pDirIndex << std::endl;
+  }
+  if ((linkSrcGeo.bits & LinkAutoSscale) == 0) {
+    out << prefix << "linkSrcSscale " << linkSrcGeo.sScale << std::endl;
+  }
+  if ((linkSrcGeo.bits & LinkAutoTscale) == 0) {
+    out << prefix << "linkSrcTscale " << linkSrcGeo.tScale << std::endl;
+  }
+  if ((linkSrcGeo.bits & LinkAutoPscale) == 0) {
+    out << prefix << "linkSrcPscale " << linkSrcGeo.pScale << std::endl;
+  }
+
+  // linkDstGeo
+  if (linkDstGeo.centerIndex >= 0) {
+    out << prefix << "linkDstCenter " << linkDstGeo.centerIndex << std::endl;
+  }
+  if (linkDstGeo.sDirIndex >= 0) {
+    out << prefix << "linkDstSdir " << linkDstGeo.sDirIndex << std::endl;
+  }
+  if (linkDstGeo.tDirIndex >= 0) {
+    out << prefix << "linkDstTdir " << linkDstGeo.tDirIndex << std::endl;
+  }
+  if (linkDstGeo.pDirIndex >= 0) {
+    out << prefix << "linkDstPdir " << linkDstGeo.pDirIndex << std::endl;
+  }
+  if ((linkDstGeo.bits & LinkAutoSscale) == 0) {
+    out << prefix << "linkDstSscale " << linkDstGeo.sScale << std::endl;
+  }
+  if ((linkDstGeo.bits & LinkAutoTscale) == 0) {
+    out << prefix << "linkDstTscale " << linkDstGeo.tScale << std::endl;
+  }
+  if ((linkDstGeo.bits & LinkAutoPscale) == 0) {
+    out << prefix << "linkDstPscale " << linkDstGeo.pScale << std::endl;
+  }
 }
 
 
