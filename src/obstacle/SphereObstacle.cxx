@@ -451,7 +451,7 @@ bool SphereObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
   return false;
 }
 
-bool SphereObstacle::inCylinder(const fvec3&,float, float) const
+bool SphereObstacle::inCylinder(const fvec3&, float, float) const
 {
   assert(false);
   return false;

@@ -415,10 +415,22 @@ bool Teleporter::getHitNormal(const fvec3&, float, const fvec3&, float,
 }
 
 
-bool Teleporter::inCylinder(const fvec3&,float, float) const
+bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const
 {
-  assert(false);
-  return false;
+  // used by bzfs/WorldGenerators.cxx via bzfs/WorldInfo::inCylinderNoOctree()
+  // (note that the bzfs code does not use the MeshTransform capabilities)
+
+  if (p.z > (pos.z + size.z + border)) {
+    return false;
+  }
+  if ((p.z + height) < pos.z) {
+    return false;
+  }
+
+  const float xsize = (size.x > border) ? size.x : border;
+  const float ysize = (size.y + border);
+  
+  return Intersect::testRectCircle(pos, angle, xsize, ysize, p, radius);
 }
 
 

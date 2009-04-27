@@ -600,7 +600,7 @@ bool ArcObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
 }
 
 
-bool ArcObstacle::inCylinder(const fvec3&,float, float) const
+bool ArcObstacle::inCylinder(const fvec3&, float, float) const
 {
   assert(false);
   return false;
