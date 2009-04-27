@@ -64,6 +64,7 @@ noinst_HEADERS =			\
 	LagInfo.h			\
 	Language.h			\
 	LaserSceneNode.h		\
+	LinkDef.h			\
 	LinkManager.h			\
 	LinkPhysics.h			\
 	ListServer.h			\
