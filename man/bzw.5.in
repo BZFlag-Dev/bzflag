@@ -999,7 +999,7 @@ in one block, re-using the state within the block.
 .br
 \fB  dst\fR voidTele:*  # reset the dsts
 .br
-\fB  addLink\fR   # adds a single unidirection link
+\fB  addLink\fR   # adds a single unidirectional link
 .br
 \fBend
 .br
