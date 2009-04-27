@@ -71,16 +71,16 @@ void LinkPhysics::finalize()
 {
   testBits = 0;
 
-  if ((shotMinSpeed != -123456.0f) || (shotMaxSpeed != +123456.0f)) {
+  if ((shotMinSpeed != 0.0f) || (shotMaxSpeed != 0.0f)) {
     testBits |= ShotSpeedTest;
   }
-  if ((tankMinSpeed != -123456.0f) || (tankMaxSpeed != +123456.0f)) {
+  if ((tankMinSpeed != 0.0f) || (tankMaxSpeed != 0.0f)) {
     testBits |= TankSpeedTest;
   }
-  if ((shotMinAngle != 0.0f) || (shotMaxAngle != 2.0f)) {
+  if ((shotMinAngle != 0.0f) || (shotMaxAngle != 0.0f)) {
     testBits |= ShotAngleTest;
   }
-  if ((tankMinAngle != 0.0f) || (tankMaxAngle != 2.0f)) {
+  if ((tankMinAngle != 0.0f) || (tankMaxAngle != 0.0f)) {
     testBits |= TankAngleTest;
   }
 
@@ -482,7 +482,7 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
                   << (tankAngleOffset * RAD2DEGf) << std::endl;
   }
 
-  if (tankAngVelScale != 0.0f) {
+  if (tankAngVelScale != 1.0f) {
     out << indent << "  tankAngVelScale " << tankAngVelScale << std::endl;
   }
 
