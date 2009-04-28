@@ -20,10 +20,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using std::string;
-using std::vector;
-using std::map;
-
 
 /* common implementation headers */
 #include "GameTime.h"
@@ -60,7 +56,7 @@ DynamicColorManager::~DynamicColorManager()
 
 void DynamicColorManager::clear()
 {
-  vector<DynamicColor*>::iterator it;
+  std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     delete *it;
   }
@@ -72,7 +68,7 @@ void DynamicColorManager::clear()
 void DynamicColorManager::update()
 {
   const double gameTime = GameTime::getStepTime();
-  vector<DynamicColor*>::iterator it;
+  std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     color->update(gameTime);
@@ -88,7 +84,7 @@ int DynamicColorManager::addColor(DynamicColor* color)
 }
 
 
-int DynamicColorManager::findColor(const string& dyncol) const
+int DynamicColorManager::findColor(const std::string& dyncol) const
 {
   if (dyncol.empty()) {
     return -1;
@@ -123,7 +119,7 @@ const DynamicColor* DynamicColorManager::getColor(int id) const
 
 void * DynamicColorManager::pack(void *buf) const
 {
-  vector<DynamicColor*>::const_iterator it;
+  std::vector<DynamicColor*>::const_iterator it;
   buf = nboPackUInt32(buf, (int)colors.size());
   for (it = colors.begin(); it != colors.end(); it++) {
     const DynamicColor* color = *it;
@@ -150,7 +146,7 @@ void * DynamicColorManager::unpack(void *buf)
 int DynamicColorManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
-  vector<DynamicColor*>::const_iterator it;
+  std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     fullSize = fullSize + color->packSize();
@@ -159,9 +155,9 @@ int DynamicColorManager::packSize() const
 }
 
 
-void DynamicColorManager::print(std::ostream& out, const string& indent) const
+void DynamicColorManager::print(std::ostream& out, const std::string& indent) const
 {
-  vector<DynamicColor*>::const_iterator it;
+  std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
     color->print(out, indent);
@@ -243,7 +239,7 @@ void DynamicColor::finalize()
 }
 
 
-bool DynamicColor::setName(const string& dyncol)
+bool DynamicColor::setName(const std::string& dyncol)
 {
   if (dyncol.empty()) {
     name = "";
@@ -258,13 +254,13 @@ bool DynamicColor::setName(const string& dyncol)
 }
 
 
-const string& DynamicColor::getName() const
+const std::string& DynamicColor::getName() const
 {
   return name;
 }
 
 
-void DynamicColor::setVariableName(const string& vName)
+void DynamicColor::setVariableName(const std::string& vName)
 {
   varName = vName;
   return;
@@ -313,7 +309,7 @@ void DynamicColor::addState(float duration,
 }
 
 
-void DynamicColor::bzdbCallback(const string& /*varName*/, void* data)
+void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data)
 {
   ((DynamicColor*)data)->updateVariable();
   return;
@@ -326,11 +322,11 @@ void DynamicColor::updateVariable()
   varTransition = true;
   varLastChange = TimeKeeper::getTick();
   varOldColor = color;
-  string expr = BZDB.get(varName);
+  std::string expr = BZDB.get(varName);
 
   // parse the optional delay timing
-  string::size_type atpos = expr.find_first_of('@');
-  if (atpos == string::npos) {
+  std::string::size_type atpos = expr.find_first_of('@');
+  if (atpos == std::string::npos) {
     varTimeTmp = varTime;
   }
   else {
@@ -376,9 +372,9 @@ void DynamicColor::colorByVariable(double /* t */)
   if (!varInit) {
     varInit = true;
     varTransition = false;
-    string expr = BZDB.get(varName);
-    string::size_type atpos = expr.find_first_of('@');
-    if (atpos != string::npos) {
+    std::string expr = BZDB.get(varName);
+    std::string::size_type atpos = expr.find_first_of('@');
+    if (atpos != std::string::npos) {
       expr.resize(atpos);
     }
     parseColorString(expr, color);
@@ -420,7 +416,7 @@ void DynamicColor::colorByStates(double t)
   int prevIndex = 0;
   float endTime = colorStates[0].duration;
   // finds the first element whose key is not less than the value
-  map<float, int>::const_iterator it = colorEnds.lower_bound(phase);
+  std::map<float, int>::const_iterator it = colorEnds.lower_bound(phase);
   if (it != colorEnds.end()) {
     endTime = it->first;
     prevIndex = it->second;
@@ -511,7 +507,7 @@ int DynamicColor::packSize() const
 }
 
 
-void DynamicColor::print(std::ostream& out, const string& indent) const
+void DynamicColor::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "dynamicColor" << std::endl;
 

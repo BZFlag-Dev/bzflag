@@ -16,7 +16,6 @@
 // system headers
 #include <string>
 #include <vector>
-using std::string;
 
 // common headers
 #include "Pack.h"
@@ -44,7 +43,7 @@ LinkDef::~LinkDef()
 
 //============================================================================//
 
-void LinkDef::addSrc(const string& src)
+void LinkDef::addSrc(const std::string& src)
 {
   if (!src.empty()) {
     srcs.push_back(src);
@@ -52,7 +51,7 @@ void LinkDef::addSrc(const string& src)
 }
 
 
-void LinkDef::addDst(const string& dst)
+void LinkDef::addDst(const std::string& dst)
 {
   if (!dst.empty()) {
     dsts.push_back(dst);
@@ -62,18 +61,18 @@ void LinkDef::addDst(const string& dst)
 
 //============================================================================//
 
-LinkDef LinkDef::prepend(const string& prefix)
+LinkDef LinkDef::prepend(const std::string& prefix)
 {
   LinkDef def;
   def.physics = physics;
   for (size_t i = 0; i < srcs.size(); i++) {
-    const string& src = srcs[i];
+    const std::string& src = srcs[i];
     if (!src.empty() && (src[0] != '/')) {
       srcs[i] = prefix + src;
     }
   }
   for (size_t i = 0; i < dsts.size(); i++) {
-    const string& dst = dsts[i];
+    const std::string& dst = dsts[i];
     if (!dst.empty() && (dst[0] != '/')) {
       dsts[i] = prefix + dst;
     }
@@ -132,14 +131,14 @@ void* LinkDef::unpack(void* buf)
 
   buf = nboUnpackUInt16(buf, count);
   for (uint16_t i = 0; i < count; i++) {
-    string src;
+    std::string src;
     buf = nboUnpackStdString(buf, src);
     addSrc(src);
   }
 
   buf = nboUnpackUInt16(buf, count);
   for (uint16_t i = 0; i < count; i++) {
-    string dst;
+    std::string dst;
     buf = nboUnpackStdString(buf, dst);
     addDst(dst);
   }
@@ -152,7 +151,7 @@ void* LinkDef::unpack(void* buf)
 
 //============================================================================//
 
-void LinkDef::print(std::ostream& out, const string& indent) const
+void LinkDef::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "link" << std::endl;
   for (size_t i = 0; i < srcs.size(); i++) {

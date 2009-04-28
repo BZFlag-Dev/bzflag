@@ -28,6 +28,8 @@ static const LinkPhysics defLinkPhysics;
 
 LinkPhysics::LinkPhysics()
 : testBits(0)
+, finalized(false)
+, allDefaults(true)
 , shotSrcPosScale (1.0f, 1.0f, 1.0f)
 , shotSrcVelScale (1.0f, 1.0f, 1.0f)
 , shotDstVelOffset(0.0f, 0.0f, 0.0f)
@@ -69,7 +71,14 @@ LinkPhysics::~LinkPhysics()
 
 void LinkPhysics::finalize()
 {
+  finalized = true;
+
   testBits = 0;
+
+  allDefaults = (*this == defLinkPhysics);
+  if (allDefaults) {
+    return;
+  }
 
   if ((shotMinSpeed != 0.0f) || (shotMaxSpeed != 0.0f)) {
     testBits |= ShotSpeedTest;
@@ -97,6 +106,9 @@ void LinkPhysics::finalize()
 
 bool LinkPhysics::operator==(const LinkPhysics& lp) const
 {
+  if (finalized && allDefaults && lp.finalized && lp.allDefaults) {
+    return true;
+  }
   if (shotSrcPosScale  != lp.shotSrcPosScale)  { return false; }
   if (shotSrcVelScale  != lp.shotSrcVelScale)  { return false; }
   if (shotDstVelOffset != lp.shotDstVelOffset) { return false; }
@@ -131,6 +143,10 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
 
 bool LinkPhysics::operator<(const LinkPhysics& lp) const
 {
+  if (finalized && allDefaults && lp.finalized && lp.allDefaults) {
+    return false;
+  }
+
   if (shotSrcPosScale < lp.shotSrcPosScale)  { return true;  }
   if (lp.shotSrcPosScale < shotSrcPosScale)  { return false; }
 
@@ -344,6 +360,8 @@ void* LinkPhysics::unpack(void* buf)
 
   buf = nboUnpackStdString(buf, shotBlockBZDB);
   buf = nboUnpackStdString(buf, tankBlockBZDB);
+
+  finalize();
 
   return buf;
 }

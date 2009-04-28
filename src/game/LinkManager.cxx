@@ -26,10 +26,6 @@
 #include <set>
 #include <map>
 #include <iostream>
-using std::string;
-using std::vector;
-using std::set;
-using std::map;
 
 // common headers
 #include "bzglob.h"
@@ -288,6 +284,13 @@ const MeshFace* LinkManager::getTankLinkDst(const MeshFace* srcLink,
 
 void LinkManager::doLinking()
 {
+  // check for linkDef.physics finalization
+  for (size_t i = 0; i < linkDefs.size(); i++) {
+    if (!linkDefs[i].physics.finalized) {
+      logDebugMessage(0, "ERROR: linkDef not finalized\n");
+    }
+  }
+
   // get the potential named faces
   buildNameMap();
 
@@ -312,11 +315,6 @@ void LinkManager::doLinking()
   // by adding links from front-to-back (or back-to-front),
   // when a given link source has no destination
   crossLink();
-
-  // setup the LinkPhysics::needTest() values
-  for (size_t i = 0; i < linkDsts.size(); i++) {
-    linkDsts[i].physics.finalize();
-  }
 
   // setup the 'needTest' parameters
   LinkMap::iterator mapIt;
@@ -388,9 +386,9 @@ void LinkManager::buildNameMap()
 
 //============================================================================//
 
-static string numberLinkName(int number)
+static std::string numberLinkName(int number)
 {
-  string name = "$mt";
+  std::string name = "$mt";
   char buffer[8];
   snprintf(buffer, sizeof(buffer), "%i", (number / 2));
   name += buffer;
@@ -400,7 +398,7 @@ static string numberLinkName(int number)
 }
 
 
-static bool allDigits(const string& s)
+static bool allDigits(const std::string& s)
 {
   for (size_t i = 0; i < s.size(); i++) {
     if ((s[i] < '0') || (s[i] > '9')) {
@@ -422,7 +420,7 @@ bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const
   }
 
   for (size_t i = 0; i < patterns.size(); i++) {
-    string glob = patterns[i];
+    std::string glob = patterns[i];
     if (glob.empty() || glob == "/") {
       continue;
     }
@@ -466,7 +464,7 @@ void LinkManager::crossLink()
 {
   NameFaceVec::const_iterator it;
   for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
-    const string&   srcName = it->name;
+    const std::string&   srcName = it->name;
     const MeshFace* srcFace = it->face;
     // already linked?
     if (linkMap.find(srcFace) != linkMap.end()) {
@@ -486,7 +484,7 @@ void LinkManager::crossLink()
 
     // setup the destination link name
     const char type = srcName[srcName.size() - 1];
-    string dstName = srcName.substr(0, srcName.size() - 1);
+    std::string dstName = srcName.substr(0, srcName.size() - 1);
     switch (type) {
       case 'f': { dstName += 'b';  break; }
       case 'b': { dstName += 'f';  break; }
