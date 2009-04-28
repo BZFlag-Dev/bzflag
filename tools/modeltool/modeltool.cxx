@@ -28,7 +28,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using std::string;
 
 // common headers
 #include "TextUtils.h"
@@ -49,9 +48,9 @@ int GFXMain(int argc, char* argv[]);
 // globals
 const char VersionString[] = "ModelTool v1.9.9 (WaveFront OBJ/BZW to BZFlag BZW converter)";
 
-string texdir = "";
-string groupName = "";
-string floatFormat = "%g";
+std::string texdir = "";
+std::string groupName = "";
+std::string floatFormat = "%g";
 bool useMaterials    = true;
 bool useAmbient      = true;
 bool useDiffuse      = true;
@@ -78,15 +77,15 @@ float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
 float globalScale = 1.0f;
 float globalShift[3] = {0,0,0};
-std::vector<string> bspMaterialSkips; // materials to skip in a bsp map
+std::vector<std::string> bspMaterialSkips; // materials to skip in a bsp map
 
 
 struct DrawInfoConfig {
-  string staticFile;
-  string boundingFile;
-  std::vector<string> lodFiles;
+  std::string staticFile;
+  std::string boundingFile;
+  std::vector<std::string> lodFiles;
   std::vector<float> lodPixelDistances;
-  std::vector<string>  animComands;
+  std::vector<std::string>  animComands;
 };
 
 
@@ -95,7 +94,7 @@ struct DrawInfoMeshes {
   CModel boundingMesh;
   std::vector<CModel> lodMeshes;
   std::vector<float>  lodPixelDistances;
-  std::vector<string>  animComands;
+  std::vector<std::string>  animComands;
 
   bool valid()
   {
@@ -113,7 +112,7 @@ struct DrawInfoMeshes {
 
 //============================================================================//
 
-static string ftoa(float v)
+static std::string ftoa(float v)
 {
   char buf[64];
   snprintf(buf, sizeof(buf), floatFormat.c_str(), v);
@@ -121,10 +120,10 @@ static string ftoa(float v)
 }
 
 
-static string ftoa(const float* va, int count)
+static std::string ftoa(const float* va, int count)
 {
   char buf[64];
-  string s;
+  std::string s;
   for (int i = 0; i < count; i++) {
     if (i != 0) {
       s += ' ';
@@ -138,12 +137,12 @@ static string ftoa(const float* va, int count)
 
 //============================================================================//
 
-void progressLog ( int value, int total, const string &text )
+void progressLog ( int value, int total, const std::string &text )
 {
   printf("Working %d/%d(%f): %s\n",value,total,(float)value/(float)total,text.c_str());
 }
 
-void progressLog ( const string &text )
+void progressLog ( const std::string &text )
 {
   printf("Working: %s\n",text.c_str());
 }
@@ -154,20 +153,20 @@ void progressLog ( const  char* text )
 }
 
 
-void parseDrawInfoConfig ( DrawInfoConfig &config, string file );
+void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file );
 void buildDrawInfoMeshesFromConfig ( DrawInfoConfig &config, DrawInfoMeshes &drawInfoMeshes );
-void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file );
+void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file );
 
-string writeMaterial ( CMaterial &material, const string &name )
+std::string writeMaterial ( CMaterial &material, const std::string &name )
 {
-  string out;
+  std::string out;
 
   if (supressMats)
     return out;
   out += TextUtils::format("material\n  name %s\n",name.c_str());
   if ( material.texture.size())
   {
-    string texName = texdir + material.texture;
+    std::string texName = texdir + material.texture;
     // change the extension to png
     const char *p = strrchr(texName.c_str(), '.');
     if (p)
@@ -194,7 +193,7 @@ string writeMaterial ( CMaterial &material, const string &name )
 }
 
 
-static void writeBZW  ( CModel &model, string file )
+static void writeBZW  ( CModel &model, std::string file )
 {
   if (model.meshes.size() < 1 )
     return;
@@ -243,7 +242,7 @@ static void writeBZW  ( CModel &model, string file )
     for (int v = 0; v < (int)mesh.verts.size();v++)
     {
       const CVector3* vert = &mesh.verts[v];
-      const string msg = "  vertex " + ftoa(vert->x) + " "
+      const std::string msg = "  vertex " + ftoa(vert->x) + " "
                                      + ftoa(vert->y) + " "
                                      + ftoa(vert->z);
       fprintf(fp, msg.c_str());
@@ -261,14 +260,14 @@ static void writeBZW  ( CModel &model, string file )
                                (norm->y * norm->y) +
                                (norm->z * norm->z));
       if (dist == 0.0f) {
-        const string nums = ftoa(norm->x) + " "
+        const std::string nums = ftoa(norm->x) + " "
                           + ftoa(norm->y) + " "
                           + ftoa(norm->z);
         fprintf(stderr, "BAD NORMAL: %s\n", nums.c_str());
         fprintf(fp,"  normal 0 0 1\t# %d  BAD NORMAL %s", n, nums.c_str());
       } else {
         const float scale = (1.0f / dist);
-        const string msg = "  normal " + ftoa(norm->x * scale) + " "
+        const std::string msg = "  normal " + ftoa(norm->x * scale) + " "
                                        + ftoa(norm->y * scale) + " "
                                        + ftoa(norm->z * scale);
         fprintf(fp, msg.c_str());
@@ -283,7 +282,7 @@ static void writeBZW  ( CModel &model, string file )
     for (int t = 0; t < (int)mesh.texCoords.size(); t++)
     {
       const CVector2* coord = &mesh.texCoords[t];
-      const string msg = "  texcoord " + ftoa(coord->u) + " " + ftoa(coord->v);
+      const std::string msg = "  texcoord " + ftoa(coord->u) + " " + ftoa(coord->v);
       fprintf(fp, msg.c_str());
       if (outputComments)
       {
@@ -390,7 +389,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
  return 1;
 }
 
-bool setupArgs (int argc, char* argv[], string &input, string &extenstion, string &output )
+bool setupArgs (int argc, char* argv[], std::string &input, std::string &extenstion, std::string &output )
 {
   // make sure we have all the right stuff
   if ( argc < 2)
@@ -418,12 +417,12 @@ bool setupArgs (int argc, char* argv[], string &input, string &extenstion, strin
   else
   {
     *p = '\0'; // clip the old extension
-    output = argv[1] + string(".bzw");
+    output = argv[1] + std::string(".bzw");
   }
 
   for (int i = 2; i < argc; i++)
   {
-    string command = argv[i];
+    std::string command = argv[i];
     command = TextUtils::tolower(command);
 
     if (command == "-yz")
@@ -560,7 +559,7 @@ bool setupArgs (int argc, char* argv[], string &input, string &extenstion, strin
 	if ((i + 1) < argc)
 	{
 	  i++;
-	  bspMaterialSkips.push_back(string(argv[i]));
+	  bspMaterialSkips.push_back(std::string(argv[i]));
 	}
 	else
 	  printf ("missing -bspskip argument\n");
@@ -575,9 +574,9 @@ int main(int argc, char* argv[])
   return GFXMain(argc,argv);
 #endif
 
-  string input;
-  string extenstion = "OBJ";
-  string output;
+  std::string input;
+  std::string extenstion = "OBJ";
+  std::string output;
 
   if (!setupArgs(argc, argv, input,extenstion,output))
     return 1;
@@ -813,9 +812,9 @@ bool CMesh::assignData(const tvVec3List& vertInData,
 
 //============================================================================//
 
-void parseDrawInfoConfig ( DrawInfoConfig &config, string file )
+void parseDrawInfoConfig ( DrawInfoConfig &config, std::string file )
 {
-  string text;
+  std::string text;
   FILE	*fp = fopen(file.c_str(),"rb");
   if (!fp)
     return;
@@ -837,23 +836,23 @@ void parseDrawInfoConfig ( DrawInfoConfig &config, string file )
   if (!size)
     return;
 
-  text = TextUtils::replace_all(text,string("\r"),string(""));
-  std::vector<string> lines = TextUtils::tokenize(text,string("\n"));
+  text = TextUtils::replace_all(text,std::string("\r"),std::string(""));
+  std::vector<std::string> lines = TextUtils::tokenize(text,std::string("\n"));
   if (!lines.size())
     return;
 
   int numLines = (int)lines.size();
   for (int i = 0; i < numLines; i++ )
   {
-    string &line = lines[i];
+    std::string &line = lines[i];
     if (!line.size())
       continue;
 
-    std::vector<string> chunks = TextUtils::tokenize(line,string(" "),0,true);
+    std::vector<std::string> chunks = TextUtils::tokenize(line,std::string(" "),0,true);
     if (!chunks.size())
       continue;
 
-    string key = TextUtils::tolower(chunks[0]);
+    std::string key = TextUtils::tolower(chunks[0]);
     if (key == "static")
       config.staticFile = chunks[1];
     else if (key == "bounding")
@@ -1153,7 +1152,7 @@ int computeCorner ( const CMesh &mesh, const CTriFan &fan, int index, tvVec3List
   return getNewIndex(vert,c);
 }
 
-void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
+void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, std::string file )
 {
   if (!drawInfoMeshes.valid())
     return;
@@ -1164,13 +1163,13 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
   // thing into one bzw.
   // This way we can do things in any order and not worry about
   // duplicating indexes.
-  string materialsSection;
-  string inxexesSection;
-  string staticGeoSection;
-  string boundingGeoSection;
-  string drawInfoSection;
+  std::string materialsSection;
+  std::string inxexesSection;
+  std::string staticGeoSection;
+  std::string boundingGeoSection;
+  std::string drawInfoSection;
 
-  string invisibleMatName = "bounding.invisible";
+  std::string invisibleMatName = "bounding.invisible";
 
   // the 3 major lists
   tvVec3List  verts;
@@ -1202,9 +1201,9 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
 	  staticGeoSection += TextUtils::format("\t#%d",f);
 	staticGeoSection += "\n";
 
-	string vert = "vertices";
-	string norm = "normals";
-	string uv = "texcoords";
+	std::string vert = "vertices";
+	std::string norm = "normals";
+	std::string uv = "texcoords";
 
 	for (int v = 0; v < (int)face.verts.size(); v++ )
 	{
@@ -1242,8 +1241,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
 	  boundingGeoSection += TextUtils::format("\t#%d",f);
 	staticGeoSection += "\n";
 
-	string vert = "vertices";
-	string norm = "normals";
+	std::string vert = "vertices";
+	std::string norm = "normals";
 
 	for (int v = 0; v < (int)face.verts.size(); v++ )
 	{
@@ -1264,8 +1263,8 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
   {
     // use the bounds of the first LOD for the bounds of the draw info
 
-    string cornerSection;
-    std::vector<string> lodSections;
+    std::string cornerSection;
+    std::vector<std::string> lodSections;
 
     MeshExtents	lod0Extents;
     if (computeExtents(drawInfoMeshes.lodMeshes[0],lod0Extents))
@@ -1284,7 +1283,7 @@ void writeDrawInfoBZW ( DrawInfoMeshes &drawInfoMeshes, string file )
       for (int l = 0; l < (int)drawInfoMeshes.lodMeshes.size(); l++ )
       {
 	CModel &lodModel = drawInfoMeshes.lodMeshes[l];
-	string section;
+	std::string section;
 	if ( lodModel.meshes.size() )
 	{
 	  section += TextUtils::format("lod #%d\n",l );
@@ -1659,7 +1658,7 @@ class ModelToolApp : public GraphicApplication
 public:
   void init ( int argc, char* argv[] );
   virtual void setupDisplay();
-  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, string &title, bool &resizeable );
+  virtual bool getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title, bool &resizeable );
   virtual bool drawView();
   virtual bool drawOverlay();
 
@@ -1712,9 +1711,9 @@ void ModelToolApp::init ( int argc, char* argv[] )
   gridSpacing = 1.0f;
   gridExtents = 15.0f;
 
-  string input;
-  string extenstion = "OBJ";
-  string output;
+  std::string input;
+  std::string extenstion = "OBJ";
+  std::string output;
 
   if (!setupArgs(argc, argv, input,extenstion,output))
   {
@@ -1726,7 +1725,7 @@ void ModelToolApp::init ( int argc, char* argv[] )
     readOBJ(model,input);
 }
 
-bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, string &title, bool &resizeable )
+bool ModelToolApp::getStartupInfo ( int &x, int &y, bool &fullScreen, std::string &title, bool &resizeable )
 {
   x = 640;
   y = 480;
