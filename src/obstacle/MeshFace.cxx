@@ -802,26 +802,26 @@ bool MeshFace::shotCanCross(const LinkPhysics& physics,
     // shotMinSpeed
     if (physics.shotMinSpeed > 0.0f) {
       const float speed = vel.length();
-      if (speed < -physics.shotMinSpeed) {
+      if (speed < physics.shotMinSpeed) {
         return false;
       }
     }
     else if (physics.shotMinSpeed < 0.0f) {
       const float speed = -fvec3::dot(plane.xyz(), vel);
-      if (speed < physics.shotMinSpeed) {
+      if (speed < -physics.shotMinSpeed) {
         return false;
       }
     }
     // shotMaxSpeed
     if (physics.shotMaxSpeed > 0.0f) {
       const float speed = vel.length();
-      if (speed >= -physics.shotMaxSpeed) {
+      if (speed >= physics.shotMaxSpeed) {
         return false;
       }
     }
     else if (physics.shotMaxSpeed < 0.0f) {
       const float speed = -fvec3::dot(plane.xyz(), vel);
-      if (speed >= physics.shotMaxSpeed) {
+      if (speed >= -physics.shotMaxSpeed) {
         return false;
       }
     }
@@ -829,7 +829,7 @@ bool MeshFace::shotCanCross(const LinkPhysics& physics,
 
   // angle tests
   if ((testBits & LinkPhysics::ShotAngleTest) != 0) {
-    const float dot = fvec3::dot(vel.normalize(), -plane.xyz());
+    const float dot = fvec3::dot(-plane.xyz(), vel.normalize());
     if (physics.shotMinAngle != 0.0f) {
       if (dot > cosf(physics.shotMinAngle)) {
         return false;
@@ -888,26 +888,26 @@ bool MeshFace::tankCanCross(const LinkPhysics& physics,
     // tankMinSpeed
     if (physics.tankMinSpeed > 0.0f) {
       const float speed = vel.length();
-      if (speed < -physics.tankMinSpeed) {
+      if (speed < physics.tankMinSpeed) {
         return false;
       }
     }
     else if (physics.tankMinSpeed < 0.0f) {
       const float speed = -fvec3::dot(plane.xyz(), vel);
-      if (speed < physics.tankMinSpeed) {
+      if (speed < -physics.tankMinSpeed) {
         return false;
       }
     }
     // tankMaxSpeed
     if (physics.tankMaxSpeed > 0.0f) {
       const float speed = vel.length();
-      if (speed >= -physics.tankMaxSpeed) {
+      if (speed >= physics.tankMaxSpeed) {
         return false;
       }
     }
     else if (physics.tankMaxSpeed < 0.0f) {
       const float speed = -fvec3::dot(plane.xyz(), vel);
-      if (speed >= physics.tankMaxSpeed) {
+      if (speed >= -physics.tankMaxSpeed) {
         return false;
       }
     }
@@ -915,7 +915,7 @@ bool MeshFace::tankCanCross(const LinkPhysics& physics,
 
   // angle tests
   if ((testBits & LinkPhysics::TankAngleTest) != 0) {
-    const float dot = fvec3::dot(vel.normalize(), -plane.xyz());
+    const float dot = fvec3::dot(-plane.xyz(), vel.normalize());
     if (physics.tankMinAngle != 0.0f) {
       if (dot > cosf(physics.tankMinAngle)) {
         return false;
@@ -1324,6 +1324,9 @@ int MeshFace::SpecialData::packSize() const
     fullSize += sizeof(float);   // linkDstGeo.sScale
     fullSize += sizeof(float);   // linkDstGeo.tScale
     fullSize += sizeof(float);   // linkDstGeo.pScale
+    // fail messages
+    fullSize += nboStdStringPackSize(linkSrcShotFail);
+    fullSize += nboStdStringPackSize(linkSrcTankFail);
   }
   return fullSize;
 }
@@ -1357,6 +1360,9 @@ void* MeshFace::SpecialData::pack(void* buf) const
     buf = nboPackFloat(buf, linkDstGeo.sScale);
     buf = nboPackFloat(buf, linkDstGeo.tScale);
     buf = nboPackFloat(buf, linkDstGeo.pScale);
+    // fail messages
+    buf = nboPackStdString(buf, linkSrcShotFail);
+    buf = nboPackStdString(buf, linkSrcTankFail);
   }
 
   return buf;
@@ -1392,6 +1398,9 @@ void* MeshFace::SpecialData::unpack(void* buf)
     buf = nboUnpackFloat(buf, linkDstGeo.sScale);
     buf = nboUnpackFloat(buf, linkDstGeo.tScale);
     buf = nboUnpackFloat(buf, linkDstGeo.pScale);
+    // fail messages
+    buf = nboUnpackStdString(buf, linkSrcShotFail);
+    buf = nboUnpackStdString(buf, linkSrcTankFail);
   }
 
   return buf;
@@ -1600,6 +1609,14 @@ void MeshFace::SpecialData::print(std::ostream& out,
   }
   if ((linkDstGeo.bits & LinkAutoPscale) == 0) {
     out << prefix << "linkDstPscale " << linkDstGeo.pScale << std::endl;
+  }
+
+  // fail messages
+  if (!linkSrcShotFail.empty()) {
+    out << prefix << "linkSrcShotFail " << linkSrcShotFail << std::endl;
+  }
+  if (!linkSrcTankFail.empty()) {
+    out << prefix << "linkSrcTankFail " << linkSrcTankFail << std::endl;
   }
 }
 

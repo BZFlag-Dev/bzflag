@@ -12,18 +12,19 @@
 
 #include "common.h"
 
-/* interface header */
+// interface
 #include "CustomMeshFace.h"
 
-/* bzfs implementation headers */
-#include "ParseMaterial.h"
-
-/* common implementation headers */
-#include "PhysicsDriver.h"
-
-/* system headers */
+// system headers
 #include <sstream>
 #include <iostream>
+
+// common headers
+#include "PhysicsDriver.h"
+#include "TextUtils.h"
+
+// bzfs headers
+#include "ParseMaterial.h"
 
 
 CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
@@ -272,6 +273,21 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
     }
     specialData.linkDstGeo.pScale = scale;
     specialData.linkDstGeo.bits &= ~MeshFace::LinkAutoPscale;
+  }
+  //
+  //  Link failure messages
+  //
+  else if (strcasecmp(cmd, "linkSrcShotFail") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    specialData.linkSrcShotFail = TextUtils::trim(line);
+  }
+  else if (strcasecmp(cmd, "linkSrcTankFail") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    specialData.linkSrcTankFail = TextUtils::trim(line);
   }
   //
   //  Material

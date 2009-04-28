@@ -113,10 +113,10 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
   if (tankAngVelScale  != lp.tankAngVelScale)  { return false; }
   if (shotMinSpeed     != lp.shotMinSpeed)     { return false; }
   if (shotMaxSpeed     != lp.shotMaxSpeed)     { return false; }
-  if (shotMinAngle     != lp.shotMinAngle)     { return false; }
-  if (shotMaxAngle     != lp.shotMaxAngle)     { return false; }
   if (tankMinSpeed     != lp.tankMinSpeed)     { return false; }
   if (tankMaxSpeed     != lp.tankMaxSpeed)     { return false; }
+  if (shotMinAngle     != lp.shotMinAngle)     { return false; }
+  if (shotMaxAngle     != lp.shotMaxAngle)     { return false; }
   if (tankMinAngle     != lp.tankMinAngle)     { return false; }
   if (tankMaxAngle     != lp.tankMaxAngle)     { return false; }
   if (shotBlockTeams   != lp.shotBlockTeams)   { return false; }
@@ -275,7 +275,7 @@ void* LinkPhysics::pack(void* buf) const
     buf = nboPackStdString(buf, *it);
   }
 
-  count = (uint16_t)shotBlockFlags.size();
+  count = (uint16_t)tankBlockFlags.size();
   buf = nboPackUInt16(buf, count);
   for (it = tankBlockFlags.begin(); it != tankBlockFlags.end(); ++it) {
     buf = nboPackStdString(buf, *it);

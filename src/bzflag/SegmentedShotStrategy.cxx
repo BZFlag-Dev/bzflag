@@ -408,6 +408,8 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     return; // no world, no shots
   }
 
+  bool teleFail = false;
+
   // compute segments of shot until total length of segments exceeds the
   // lifetime of the shot.
   const ShotPath& shotPath = getPath();
@@ -498,7 +500,17 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
                                            linkSrcID, linkDstID, physics,
                                            nextOrig, vel, teamNum, flagType);
       if (linkDst == NULL) {
-        linkSrc = NULL;
+        if (!teleFail) {
+          if ((startTime - shotPath.getStartTime() + (double)t) < 1.0) {
+            const MeshFace::SpecialData* sd = linkSrc->getSpecialData();
+            const std::string& failMsg = sd->linkSrcShotFail;
+            if (!failMsg.empty()) {
+              addMessage(NULL, failMsg);
+              teleFail = true; // only one message per shot
+            }
+          }
+        }
+        linkSrc = NULL; // disable teleporting
       }
     }
 

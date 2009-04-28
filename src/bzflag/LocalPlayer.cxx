@@ -890,6 +890,10 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
                                                        getTeam(), getFlag());
   // no link, no love; bail out
   if (!linkDst) {
+    const std::string& failMsg = linkSrc->getSpecialData()->linkSrcTankFail;
+    if (!failMsg.empty()) {
+      addMessage(NULL, failMsg);
+    }
     return false;
   }
 

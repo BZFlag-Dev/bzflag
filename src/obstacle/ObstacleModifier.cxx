@@ -37,15 +37,19 @@ void ObstacleModifier::init()
   // team
   modifyTeam = false;
   team = 0;
+
   // tint
   modifyColor = false;
   tint = fvec4(0.0f, 0.0f, 0.0f, 0.0f);
+
   // phydrv
   modifyPhysicsDriver = false;
   phydrv = -1;
+
   // material;
   modifyMaterial = false;
   material = NULL;
+
   // passable bits
   driveThrough = 0;
   shootThrough = 0;

@@ -368,7 +368,14 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
                                          linkSrcID, linkDstID, physics,
                                          nextPos, nextVel, teamNum, flagType);
     if (linkDst == NULL) {
-      linkSrc = NULL;
+      if ((currentTime - getPath().getStartTime() + (double)t) < 1.0) {
+        const MeshFace::SpecialData* sd = linkSrc->getSpecialData();
+        const std::string& failMsg = sd->linkSrcShotFail;
+        if (!failMsg.empty()) { 
+          addMessage(NULL, failMsg);
+        }
+      }
+      linkSrc = NULL; // disable teleporting
     }
   }
 
