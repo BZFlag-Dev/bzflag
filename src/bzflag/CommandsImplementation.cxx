@@ -17,10 +17,6 @@
 #include <iostream>
 #include <math.h>
 #include <ctype.h>
-#include <string>
-#include <vector>
-using std::string;
-using std::vector;
 
 // common implementation headers
 #include "AnsiCodes.h"
@@ -49,122 +45,122 @@ using std::vector;
 class CommandList : LocalCommand {
   public:
     CommandList();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class BindCommand : LocalCommand {
   public:
     BindCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class SilenceCommand : LocalCommand {
   public:
     SilenceCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class UnsilenceCommand : LocalCommand {
   public:
     UnsilenceCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class DumpCommand : LocalCommand {
   public:
     DumpCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class HighlightCommand : LocalCommand {
   public:
     HighlightCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class SetCommand : LocalCommand {
   public:
     SetCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class DiffCommand : LocalCommand {
   public:
     DiffCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class LocalSetCommand : LocalCommand {
   public:
     LocalSetCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class QuitCommand : LocalCommand {
   public:
     QuitCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class RoamPosCommand : LocalCommand {
   public:
     RoamPosCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class ReTextureCommand : LocalCommand {
   public:
     ReTextureCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class SaveMsgsCommand : LocalCommand {
   public:
     SaveMsgsCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class SaveWorldCommand : LocalCommand {
   public:
     SaveWorldCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class SelfLockCommand : LocalCommand {
   public:
     SelfLockCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class WorldInfoCommand : LocalCommand {
   public:
     WorldInfoCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class LuaUserCommand : LocalCommand {
   public:
     LuaUserCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class LuaBzOrgCommand : LocalCommand {
   public:
     LuaBzOrgCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 class LuaWorldCommand : LocalCommand {
   public:
     LuaWorldCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 
 class DebugLevelCommand : LocalCommand {
   public:
     DebugLevelCommand();
-    bool operator() (const char* commandLine);
+    bool operator() (const char *commandLine);
 };
 
 
@@ -216,17 +212,17 @@ WorldInfoCommand::WorldInfoCommand()   : LocalCommand("/worldinfo") {}
 
 // the meat of the matter
 
-bool CommandList::operator() (const char* /*cmdLine*/)
+bool CommandList::operator() (const char * /*cmdLine*/)
 {
   int i;
   const int maxLineLen = 64;
 
-  // build a vector<> from the std::map<> of command names
-  vector<const string*> cmds;
+  // build a std::vector<> from the std::map<> of command names
+  std::vector<const std::string*> cmds;
   MapOfCommands::iterator it;
   MapOfCommands& commandMap = *mapOfCommands;
   for (it = commandMap.begin(); it != commandMap.end(); it++) {
-    const string& cmd = it->first;
+    const std::string& cmd = it->first;
     cmds.push_back(&cmd);
   }
   const int cmdCount = (int)cmds.size();
@@ -290,10 +286,10 @@ static void printBindHelp()
   addMessage(NULL, "   action:  ex: \"scrollpanel up 3\"");
 }
 
-bool BindCommand::operator() (const char* commandLine)
+bool BindCommand::operator() (const char *commandLine)
 {
-  const string params = commandLine + commandName.size();
-  const vector<string> tokens = TextUtils::tokenize(params, " ", 3, true);
+  std::string params = commandLine + commandName.size();
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
   if ((tokens.size() < 1) || (tokens.size() > 3)) {
     printBindHelp();
     return true;
@@ -337,7 +333,7 @@ bool BindCommand::operator() (const char* commandLine)
   }
   else {
     // print the current binding
-    string msg;
+    std::string msg;
     msg = "binding:  \"";
     msg += tokens[0];
     msg += "\" down ";
@@ -354,17 +350,17 @@ bool BindCommand::operator() (const char* commandLine)
 }
 
 
-bool SilenceCommand::operator() (const char* commandLine)
+bool SilenceCommand::operator() (const char *commandLine)
 {
   Player *loudmouth = getPlayerByName(commandLine + 9);
   if (loudmouth) {
     silencePlayers.push_back(commandLine + 9);
-    string silenceMessage = "Silenced";
+    std::string silenceMessage = "Silenced";
     silenceMessage += (commandLine + 8);
     addMessage(NULL, silenceMessage);
   }
   else {
-    string silenceMessage = "no such callsign:";
+    std::string silenceMessage = "no such callsign:";
     silenceMessage += (commandLine + 8);
     addMessage(NULL, silenceMessage);
   }
@@ -372,15 +368,15 @@ bool SilenceCommand::operator() (const char* commandLine)
 }
 
 
-bool UnsilenceCommand::operator() (const char* commandLine)
+bool UnsilenceCommand::operator() (const char *commandLine)
 {
   Player *loudmouth = getPlayerByName(commandLine + 11);
   if (loudmouth) {
-    vector<string>::iterator it;
-    for (it = silencePlayers.begin(); it != silencePlayers.end(); ++it) {
+    std::vector<std::string>::iterator it = silencePlayers.begin();
+    for (; it != silencePlayers.end(); it++) {
       if (*it == commandLine + 10) {
 	silencePlayers.erase(it);
-	string unsilenceMessage = "Unsilenced ";
+	std::string unsilenceMessage = "Unsilenced ";
 	unsilenceMessage += (commandLine + 10);
 	addMessage(NULL, unsilenceMessage);
 	break;
@@ -391,12 +387,12 @@ bool UnsilenceCommand::operator() (const char* commandLine)
 }
 
 
-static void printout(const string& name, void*)
+static void printout(const std::string& name, void*)
 {
   std::cout << name << " = " << BZDB.get(name) << std::endl;
 }
 
-bool DumpCommand::operator() (const char*)
+bool DumpCommand::operator() (const char *)
 {
   BZDB.iterate(printout, NULL);
   addMessage(NULL, "Dumped all BZDB values to stdout");
@@ -404,11 +400,11 @@ bool DumpCommand::operator() (const char*)
 }
 
 
-bool HighlightCommand::operator() (const char* commandLine)
+bool HighlightCommand::operator() (const char *commandLine)
 {
   const char* c = commandLine + 10;
   c = TextUtils::skipWhitespace(c);
-  BZDB.set("highlightPattern", string(c));
+  BZDB.set("highlightPattern", std::string(c));
   return true;
 }
 
@@ -417,20 +413,20 @@ static bool foundVar = false;
 
 class VarDispInfo {
   public:
-    VarDispInfo(const string& _prefix)
+    VarDispInfo(const std::string& _prefix)
     {
       prefix = _prefix;
       pattern = "";
       diff = client = server = false;
     }
-    string prefix;
-    string pattern;
+    std::string prefix;
+    std::string pattern;
     bool diff;
     bool client;
     bool server;
 };
 
-static float parseFloatExpr(const string& str, bool zeroNan)
+static float parseFloatExpr(const std::string& str, bool zeroNan)
 {
   // BZDB.eval() can't take expressions directly
   BZDB.set("tmp", str);
@@ -447,7 +443,7 @@ static float parseFloatExpr(const string& str, bool zeroNan)
   }
 }
 
-static bool varIsEqual(const string& name)
+static bool varIsEqual(const std::string& name)
 {
   // avoid "poll"
   if (name[0] != '_') {
@@ -455,8 +451,8 @@ static bool varIsEqual(const string& name)
   }
 
   // get the parameters
-  const string exp = BZDB.get(name);
-  const string defexp = BZDB.getDefault(name);
+  const std::string exp = BZDB.get(name);
+  const std::string defexp = BZDB.getDefault(name);
   const float val = BZDB.eval(name);
   const float defval = parseFloatExpr(defexp, false);
   const bool valNaN = (isnan(val) != 0);
@@ -473,7 +469,7 @@ static bool varIsEqual(const string& name)
   }
 }
 
-static void listSetVars(const string& name, void* varDispPtr)
+static void listSetVars(const std::string& name, void* varDispPtr)
 {
   const VarDispInfo* varDisp = (VarDispInfo*)varDispPtr;
   const bool diff = varDisp->diff;
@@ -506,20 +502,20 @@ static void listSetVars(const string& name, void* varDispPtr)
 }
 
 
-bool SetCommand::operator() (const char* commandLine)
+bool SetCommand::operator() (const char *commandLine)
 {
-  const string params = commandLine + 4;
-  const vector<string> tokens = TextUtils::tokenize(params, " ", 2);
+  std::string params = commandLine + 4;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
   if (tokens.size() > 1) {
     return false;
   }
 
-  string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
+  std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
     pattern = '_' + pattern;
   }
 
-  const string header = "/set " + pattern;
+  const std::string header = "/set " + pattern;
   addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
   VarDispInfo varDisp(commandName);
@@ -536,17 +532,17 @@ bool SetCommand::operator() (const char* commandLine)
 }
 
 
-bool DiffCommand::operator() (const char* commandLine)
+bool DiffCommand::operator() (const char *commandLine)
 {
-  const string params = commandLine + 5;
-  const vector<string> tokens = TextUtils::tokenize(params, " ", 2);
+  std::string params = commandLine + 5;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
 
-  string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
+  std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
     pattern = '_' + pattern;
   }
 
-  const string header = "/diff " + pattern;
+  const std::string header = "/diff " + pattern;
   addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
   VarDispInfo varDisp(commandName);
@@ -570,11 +566,10 @@ bool DiffCommand::operator() (const char* commandLine)
 }
 
 
-bool LocalSetCommand::operator() (const char* commandLine)
+bool LocalSetCommand::operator() (const char *commandLine)
 {
-  const string params = commandLine + 9;
-  const vector<string> tokens = TextUtils::tokenize(params, " ", 0, true);
-
+  std::string params = commandLine + 9;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
 #ifdef DEBUG
   const bool debug = true;
 #else
@@ -582,7 +577,7 @@ bool LocalSetCommand::operator() (const char* commandLine)
 #endif
 
   if (tokens.size() == 1) {
-    const string header = "/localset " + tokens[0];
+    const std::string header = "/localset " + tokens[0];
     addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
     if (!debug &&
@@ -613,7 +608,7 @@ bool LocalSetCommand::operator() (const char* commandLine)
     if (!(BZDB.getPermission(tokens[0]) == StateDatabase::Server)) {
       BZDB.setPersistent(tokens[0], BZDB.isPersistent(tokens[0]));
       BZDB.set(tokens[0], tokens[1]);
-      string msg = "/localset " + tokens[0] + " " + tokens[1];
+      std::string msg = "/localset " + tokens[0] + " " + tokens[1];
       addMessage(NULL, msg);
     } else {
       addMessage (NULL, "This is a server-defined variable. "
@@ -631,7 +626,7 @@ bool LocalSetCommand::operator() (const char* commandLine)
 }
 
 
-bool QuitCommand::operator() (const char* commandLine)
+bool QuitCommand::operator() (const char *commandLine)
 {
   char messageBuffer[MessageLen]; // send message
   memset(messageBuffer, 0, MessageLen);
@@ -642,11 +637,11 @@ bool QuitCommand::operator() (const char* commandLine)
 }
 
 
-bool RoamPosCommand::operator() (const char* commandLine)
+bool RoamPosCommand::operator() (const char *commandLine)
 {
   // change the observer position and orientation
-  const string params = commandLine + 8;
-  const vector<string> tokens = TextUtils::tokenize(params, " ");
+  std::string params = commandLine + 8;
+  std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
 
   if (tokens.size() == 1) {
     Roaming::RoamingCamera cam;
@@ -714,7 +709,7 @@ bool RoamPosCommand::operator() (const char* commandLine)
 }
 
 
-bool ReTextureCommand::operator() (const char*)
+bool ReTextureCommand::operator() (const char *)
 {
   TextureManager& tm = TextureManager::instance();
   tm.reloadTextures();
@@ -722,13 +717,14 @@ bool ReTextureCommand::operator() (const char*)
 }
 
 
-bool SaveMsgsCommand::operator() (const char* commandLine)
+bool SaveMsgsCommand::operator() (const char *commandLine)
 {
   if (controlPanel == NULL) {
     return true;
   }
 
-  const vector<string> args = TextUtils::tokenize(commandLine, " ");
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
   bool stripAnsi = false;
@@ -736,11 +732,11 @@ bool SaveMsgsCommand::operator() (const char* commandLine)
     stripAnsi = true;
   }
 
-  const string filename = getConfigDirName() + "msglog.txt";
+  std::string filename = getConfigDirName() + "msglog.txt";
 
   controlPanel->saveMessages(filename, stripAnsi);
 
-  const string msg = "Saved messages to: " + filename;
+  std::string msg = "Saved messages to: " + filename;
   addMessage(NULL, msg);
 
   return true;
@@ -757,15 +753,16 @@ static void sendSaveWorldHelp()
   return;
 }
 
-bool SaveWorldCommand::operator() (const char* commandLine)
+bool SaveWorldCommand::operator() (const char *commandLine)
 {
   bool meshprims  = false;
   bool ungrouped  = false;
   bool wavefront  = false;
   bool skipDocket = false;
 
-  const string cmdLine = commandLine;
-  const vector<string> args = TextUtils::tokenize(commandLine, " ");
+  std::string cmdLine = commandLine;
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
   if (argCount <= 1) {
@@ -775,7 +772,7 @@ bool SaveWorldCommand::operator() (const char* commandLine)
 
   int pos = 1;
   while (pos < (argCount - 1)) {
-    const string& arg = args[pos];
+    const std::string& arg = args[pos];
     if (arg == "-m") {
       meshprims = true;
     } else if (arg == "-g") {
@@ -795,7 +792,7 @@ bool SaveWorldCommand::operator() (const char* commandLine)
     sendSaveWorldHelp();
     return true;
   }
-  const string& filename = args[pos];
+  const std::string& filename = args[pos];
 
   BZDB.set("saveAsMeshes", meshprims ? "1" : "0");
   BZDB.set("saveFlatFile", ungrouped ? "1" : "0");
@@ -807,7 +804,7 @@ bool SaveWorldCommand::operator() (const char* commandLine)
   }
 
   char buffer[256] = { 0 };
-  string fullname;
+  std::string fullname;
   if (world->writeWorld(filename, fullname)) {
     snprintf(buffer, 256, "World saved:  %s %s%s%s", fullname.c_str(),
 	     meshprims ? " [meshprims]" : "",
@@ -821,12 +818,12 @@ bool SaveWorldCommand::operator() (const char* commandLine)
   if (!skipDocket) {
     const BzDocket* docket = bzVFS.getDocket(BZVFS_LUA_WORLD);
     if (docket != NULL) {
-      const string docketDir = fullname + ".docket";
+      const std::string docketDir = fullname + ".docket";
       // FIXME - should move directory if already exists
       if (docket->save(docketDir)) {
-        addMessage(NULL, string("Docket saved: ") + docketDir);
+        addMessage(NULL, std::string("Docket saved: ") + docketDir);
       } else {
-        addMessage(NULL, string("Docket failed: ") + docketDir);
+        addMessage(NULL, std::string("Docket failed: ") + docketDir);
       }
     }
   }
@@ -851,11 +848,10 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
 {
   World* world = World::getWorld();
   if (world == NULL) {
-    addMessage(NULL, "world does not exist");
+    addMessage(NULL, "no world");
     return true;
   }
-
-  const string indent = ANSI_STR_FG_GREEN "[info]" ANSI_STR_RESET;
+  const std::string indent = ANSI_STR_FG_GREEN "[info]" ANSI_STR_RESET;
   const MapInfo::InfoVec& infoVec = world->getMapInfo().getVec();
   if (infoVec.empty()) {
     addMessage(NULL, "no world info");
@@ -870,7 +866,7 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
       MapInfo::InfoMap::const_iterator it;
       for (it = infoMap.begin(); it != infoMap.end(); ++it) {
         addMessage(NULL, indent + it->first);
-        const vector<string>& values = it->second;
+        const std::vector<std::string>& values = it->second;
         for (unsigned int i = 0; i < values.size(); i++) {
           addMessage(NULL, indent + "  " + values[i]);
         }
@@ -914,9 +910,10 @@ bool LuaWorldCommand::operator() (const char* cmdLine)
 
 bool DebugLevelCommand::operator() (const char* cmdLine)
 {
-  const vector<string> args = TextUtils::tokenize(cmdLine, " ");
+  std::vector<std::string> args;
+  args = TextUtils::tokenize(cmdLine, " ");
   if (args.size() < 2) {
-    string msg = "debug level is ";
+    std::string msg = "debug level is ";
     msg += TextUtils::itoa(debugLevel);
     addMessage(NULL, msg);
     return true;
