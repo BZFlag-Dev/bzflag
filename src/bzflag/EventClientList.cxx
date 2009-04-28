@@ -18,8 +18,6 @@
 // system headers
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "EventClient.h"
@@ -36,8 +34,8 @@ inline bool EventClientList::lessThan(const EventClient* a,
   if (aOrder < bOrder) { return !reversed; }
   if (aOrder > bOrder) { return  reversed; }
 
-  const string& aName = a->GetName();
-  const string& bName = b->GetName();
+  const std::string& aName = a->GetName();
+  const std::string& bName = b->GetName();
   if (aName < bName) { return !reversed; }
   if (aName > bName) { return  reversed; }
 
@@ -76,7 +74,7 @@ inline void EventClientList::dec_ptrs(size_t index)
 bool EventClientList::insert(EventClient* ec)
 {
   size_t index = 0;
-  vector<EventClient*>::iterator it;
+  std::vector<EventClient*>::iterator it;
 
   // forbid duplicates
   for (it = data.begin(); it != data.end(); ++it) {
@@ -104,7 +102,7 @@ bool EventClientList::insert(EventClient* ec)
 
 bool EventClientList::remove(const EventClient* ec)
 {
-  vector<EventClient*>::iterator it;
+  std::vector<EventClient*>::iterator it;
   size_t index = 0;
   for (it = data.begin(); it != data.end(); ++it) {
     if (*it == ec) {

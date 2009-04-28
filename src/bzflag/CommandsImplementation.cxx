@@ -18,6 +18,8 @@
 #include <math.h>
 #include <ctype.h>
 
+#include <vector>
+
 // common implementation headers
 #include "AnsiCodes.h"
 #include "BZDBCache.h"
@@ -288,8 +290,8 @@ static void printBindHelp()
 
 bool BindCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + commandName.size();
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
+  const std::string params = commandLine + commandName.size();
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
   if ((tokens.size() < 1) || (tokens.size() > 3)) {
     printBindHelp();
     return true;
@@ -372,8 +374,8 @@ bool UnsilenceCommand::operator() (const char *commandLine)
 {
   Player *loudmouth = getPlayerByName(commandLine + 11);
   if (loudmouth) {
-    std::vector<std::string>::iterator it = silencePlayers.begin();
-    for (; it != silencePlayers.end(); it++) {
+    std::vector<std::string>::iterator it;
+    for (it = silencePlayers.begin(); it != silencePlayers.end(); ++it) {
       if (*it == commandLine + 10) {
 	silencePlayers.erase(it);
 	std::string unsilenceMessage = "Unsilenced ";
@@ -504,8 +506,8 @@ static void listSetVars(const std::string& name, void* varDispPtr)
 
 bool SetCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + 4;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  const std::string params = commandLine + 4;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
   if (tokens.size() > 1) {
     return false;
   }
@@ -534,8 +536,8 @@ bool SetCommand::operator() (const char *commandLine)
 
 bool DiffCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + 5;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  const std::string params = commandLine + 5;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
 
   std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
@@ -568,8 +570,8 @@ bool DiffCommand::operator() (const char *commandLine)
 
 bool LocalSetCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + 9;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
+  const std::string params = commandLine + 9;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
 #ifdef DEBUG
   const bool debug = true;
 #else
@@ -640,8 +642,8 @@ bool QuitCommand::operator() (const char *commandLine)
 bool RoamPosCommand::operator() (const char *commandLine)
 {
   // change the observer position and orientation
-  std::string params = commandLine + 8;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
+  const std::string params = commandLine + 8;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
 
   if (tokens.size() == 1) {
     Roaming::RoamingCamera cam;
@@ -723,8 +725,7 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     return true;
   }
 
-  std::vector<std::string> args;
-  args = TextUtils::tokenize(commandLine, " ");
+  const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
   bool stripAnsi = false;
@@ -732,11 +733,11 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     stripAnsi = true;
   }
 
-  std::string filename = getConfigDirName() + "msglog.txt";
+  const std::string filename = getConfigDirName() + "msglog.txt";
 
   controlPanel->saveMessages(filename, stripAnsi);
 
-  std::string msg = "Saved messages to: " + filename;
+  const std::string msg = "Saved messages to: " + filename;
   addMessage(NULL, msg);
 
   return true;
@@ -760,9 +761,8 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   bool wavefront  = false;
   bool skipDocket = false;
 
-  std::string cmdLine = commandLine;
-  std::vector<std::string> args;
-  args = TextUtils::tokenize(commandLine, " ");
+  const std::string cmdLine = commandLine;
+  const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
   if (argCount <= 1) {
@@ -851,6 +851,7 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
     addMessage(NULL, "no world");
     return true;
   }
+
   const std::string indent = ANSI_STR_FG_GREEN "[info]" ANSI_STR_RESET;
   const MapInfo::InfoVec& infoVec = world->getMapInfo().getVec();
   if (infoVec.empty()) {
@@ -910,8 +911,7 @@ bool LuaWorldCommand::operator() (const char* cmdLine)
 
 bool DebugLevelCommand::operator() (const char* cmdLine)
 {
-  std::vector<std::string> args;
-  args = TextUtils::tokenize(cmdLine, " ");
+  const std::vector<std::string> args = TextUtils::tokenize(cmdLine, " ");
   if (args.size() < 2) {
     std::string msg = "debug level is ";
     msg += TextUtils::itoa(debugLevel);

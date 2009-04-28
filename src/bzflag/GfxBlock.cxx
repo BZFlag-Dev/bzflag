@@ -18,11 +18,7 @@
 // system headers
 #include <assert.h>
 #include <string>
-#include <vector>
 #include <map>
-using std::string;
-using std::vector;
-using std::map;
 
 // common headers
 #include "EventClient.h"
@@ -40,11 +36,11 @@ using std::map;
 //============================================================================//
 //============================================================================//
 
-static map<string, int> name2idMap;
-static map<int, string> id2nameMap;
+static std::map<std::string, int> name2idMap;
+static std::map<int, std::string> id2nameMap;
 
 
-static void pushEntry(int id, const string& name)
+static void pushEntry(int id, const std::string& name)
 {
   name2idMap[name] = id;
   id2nameMap[id] = name;
@@ -62,8 +58,8 @@ static bool isBetterClient(EventClient* a, EventClient* b, int orderType)
   if (aOrder < bOrder) { return true;  }
   if (aOrder > bOrder) { return false; }
 
-  const string& aName = a->GetName();
-  const string& bName = b->GetName();
+  const std::string& aName = a->GetName();
+  const std::string& bName = b->GetName();
   if (aName < bName) { return true;  }
   if (aName > bName) { return false; }
 
@@ -201,7 +197,7 @@ const char* GfxBlock::getTypeString(int type)
 
 int GfxBlock::getStringType(const char* name)
 {
-  const string key = name;
+  const std::string key = name;
        if (key == "global") { return Global; }
   else if (key == "tank")   { return Tank;   }
   else if (key == "shot")   { return Shot;   }
@@ -308,7 +304,7 @@ void GfxBlockMgr::removeClient(EventClient* ec)
 
 const char* GfxBlockMgr::getIDString(int id)
 {
-  map<int, string>::const_iterator it = id2nameMap.find(id);
+  std::map<int, std::string>::const_iterator it = id2nameMap.find(id);
   if (it == id2nameMap.end()) {
     return "unknown";
   }
@@ -318,7 +314,7 @@ const char* GfxBlockMgr::getIDString(int id)
 
 int GfxBlockMgr::getStringID(const char* name)
 {
-  map<string, int>::const_iterator it = name2idMap.find(name);
+  std::map<std::string, int>::const_iterator it = name2idMap.find(name);
   if (it == name2idMap.end()) {
     return -1;
   }

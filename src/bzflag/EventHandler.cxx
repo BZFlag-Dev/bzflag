@@ -24,11 +24,6 @@
 #include "GfxBlock.h"
 #include "OpenGLPassState.h"
 
-using std::string;
-using std::vector;
-using std::set;
-using std::map;
-
 
 EventHandler eventHandler;
 
@@ -44,7 +39,7 @@ static const int REVERSED       = (1 << 3);
 static const int REENTRANT      = (1 << 4);
 
 
-void EventHandler::SetupEvent(const string& eName, EventClientList* list,
+void EventHandler::SetupEvent(const std::string& eName, EventClientList* list,
                               int orderType, LoopType loopType, int bits)
 {
   assert(eventMap.find(eName) == eventMap.end());
@@ -190,7 +185,7 @@ void EventHandler::RemoveClient(EventClient* ec)
 //============================================================================//
 //============================================================================//
 
-void EventHandler::GetEventList(vector<string>& list) const
+void EventHandler::GetEventList(std::vector<std::string>& list) const
 {
   list.clear();
   EventMap::const_iterator it;
@@ -208,13 +203,13 @@ const EventHandler::EventInfo*
 }
 
 
-bool EventHandler::IsKnown(const string& eName) const
+bool EventHandler::IsKnown(const std::string& eName) const
 {
   return GetEventInfo(eName) != NULL;
 }
 
 
-bool EventHandler::IsManaged(const string& eName) const
+bool EventHandler::IsManaged(const std::string& eName) const
 {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && (ei->GetList() != NULL);
@@ -270,7 +265,7 @@ bool EventHandler::CanUseEvent(EventClient* ec, const EventInfo& ei) const
 }
 
 
-bool EventHandler::InsertEvent(EventClient* ec, const string& ciName)
+bool EventHandler::InsertEvent(EventClient* ec, const std::string& ciName)
 {
   if (clientSet.find(ec) == clientSet.end()) {
     return false;
@@ -291,7 +286,7 @@ bool EventHandler::InsertEvent(EventClient* ec, const string& ciName)
 }
 
 
-bool EventHandler::RemoveEvent(EventClient* ec, const string& ciName)
+bool EventHandler::RemoveEvent(EventClient* ec, const std::string& ciName)
 {
   if (clientSet.find(ec) == clientSet.end()) {
     return false;
@@ -502,14 +497,14 @@ bool EventHandler::IsAbove(int x, int y)
 }
 
 
-string EventHandler::GetTooltip(int x, int y)
+std::string EventHandler::GetTooltip(int x, int y)
 {
   EventClientList& list = listGetTooltip;
   if (list.empty()) { return ""; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    const string tt = ec->GetTooltip(x, y);
+    const std::string tt = ec->GetTooltip(x, y);
     if (!tt.empty()) {
       list.finish();
       return tt;
@@ -520,16 +515,16 @@ string EventHandler::GetTooltip(int x, int y)
 }
 
 
-void EventHandler::WordComplete(const string& line, set<string>& partials)
+void EventHandler::WordComplete(const std::string& line, std::set<std::string>& partials)
 {
   EventClientList& list = listWordComplete;
   if (list.empty()) { return; }
   size_t i = 0;
   EventClient* ec;
   for (list.start(i); list.next(i, ec); /* no-op */) {
-    set<string> safePartials;
+    std::set<std::string> safePartials;
     ec->WordComplete(line, safePartials);
-    set<string>::const_iterator it;
+    std::set<std::string>::const_iterator it;
     for (it = safePartials.begin(); it != safePartials.end(); ++it) {
       partials.insert(*it); // NOTE: empty strings are valid
     }

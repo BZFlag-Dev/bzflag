@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string>
-using std::string;
 
 /* common implementation headers */
 #include "CommandManager.h"
@@ -32,7 +31,7 @@ typedef CommandManager::ArgList CmdArgList;
 static bool quitFlag = false;
 
 
-bool isValidKey(const string& key)
+bool isValidKey(const std::string& key)
 {
   if (!key.size()) {
     return false;
@@ -50,26 +49,26 @@ bool isValidKey(const string& key)
 // command handlers
 //
 
-static string cmdQuit(const string&, const CmdArgList&, bool*)
+static std::string cmdQuit(const std::string&, const CmdArgList&, bool*)
 {
   CommandsStandard::quit();
-  return string();
+  return std::string();
 }
 
 
-static void onHelpCB(const string& name, void* userData)
+static void onHelpCB(const std::string& name, void* userData)
 {
-  string& result = *static_cast<string*>(userData);
+  std::string& result = *static_cast<std::string*>(userData);
   result += name;
   result += "\n";
 }
 
 
-static string cmdHelp(const string&, const CmdArgList& args, bool*)
+static std::string cmdHelp(const std::string&, const CmdArgList& args, bool*)
 {
   switch (args.size()) {
     case 0: {
-      string result;
+      std::string result;
       CMDMGR.iterate(&onHelpCB, &result);
       return result;
     }
@@ -83,10 +82,10 @@ static string cmdHelp(const string&, const CmdArgList& args, bool*)
 }
 
 
-static string cmdPrint(const string&, const CmdArgList& args, bool*)
+static std::string cmdPrint(const std::string&, const CmdArgList& args, bool*)
 {
   // merge all arguments into one string
-  string arg;
+  std::string arg;
   const unsigned int n = (int)args.size();
   if (n > 0)
     arg = args[0];
@@ -96,7 +95,7 @@ static string cmdPrint(const string&, const CmdArgList& args, bool*)
   }
 
   // interpolate variables
-  string result;
+  std::string result;
   const char* scan = arg.c_str();
   while (*scan != '\0') {
     if (*scan != '$') {
@@ -117,7 +116,7 @@ static string cmdPrint(const string&, const CmdArgList& args, bool*)
 	scan = TextUtils::skipNonWhitespace(scan);
 
 	// look up variable
-	result += BZDB.get(string(name, scan - name));
+	result += BZDB.get(std::string(name, scan - name));
       }
       else {
 	// parse "quoted" variable name
@@ -127,7 +126,7 @@ static string cmdPrint(const string&, const CmdArgList& args, bool*)
 
 	if (*scan != '\0') {
 	  // look up variable
-	  result += BZDB.get(string(name, scan - name));
+	  result += BZDB.get(std::string(name, scan - name));
 
 	  // skip }
 	  ++scan;
@@ -141,10 +140,10 @@ static string cmdPrint(const string&, const CmdArgList& args, bool*)
 }
 
 
-static void onSetCB(const string& name, void* userData)
+static void onSetCB(const std::string& name, void* userData)
 {
   // don't show names starting with _
-  string& result = *static_cast<string*>(userData);
+  std::string& result = *static_cast<std::string*>(userData);
   if (!name.empty() && name.c_str()[0] != '_') {
     result += name;
     result += " = ";
@@ -154,7 +153,7 @@ static void onSetCB(const string& name, void* userData)
 }
 
 
-static string cmdSet(const string&, const CmdArgList& args, bool* error)
+static std::string cmdSet(const std::string&, const CmdArgList& args, bool* error)
 {
   if (error) {
     *error = false;
@@ -163,7 +162,7 @@ static string cmdSet(const string&, const CmdArgList& args, bool* error)
   switch (args.size()) {
     case 0: {
 	// print out all values that are set
-	string result;
+	std::string result;
 	BZDB.iterate(&onSetCB, &result);
 	return result;
     }
@@ -179,7 +178,7 @@ static string cmdSet(const string&, const CmdArgList& args, bool* error)
     case 2: {
 	// set variable to value
 	BZDB.set(args[0], args[1], StateDatabase::User);
-	return string();
+	return std::string();
     }
     default: {
       if (error) {
@@ -191,19 +190,19 @@ static string cmdSet(const string&, const CmdArgList& args, bool* error)
 }
 
 
-static string cmdUnset(const string&, const CmdArgList& args, bool*)
+static std::string cmdUnset(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 1)
     return "usage: unset <name>";
   BZDB.unset(args[0], StateDatabase::User);
-  return string();
+  return std::string();
 }
 
 
-static void onBindCB(const string& name, bool press,
-                     const string& cmd, void* userData)
+static void onBindCB(const std::string& name, bool press,
+                     const std::string& cmd, void* userData)
 {
-  string& result = *static_cast<string*>(userData);
+  std::string& result = *static_cast<std::string*>(userData);
   result += name;
   result += (press ? " down " : " up ");
   result += cmd;
@@ -211,10 +210,10 @@ static void onBindCB(const string& name, bool press,
 }
 
 
-static string cmdBind(const string&, const CmdArgList& args, bool*)
+static std::string cmdBind(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() == 0) {
-    string result;
+    std::string result;
     KEYMGR.iterate(&onBindCB, &result);
     return result;
   }
@@ -223,12 +222,12 @@ static string cmdBind(const string&, const CmdArgList& args, bool*)
   }
 
   if (!isValidKey(TextUtils::tolower(args[0]))) {
-    return string("bind error: OS can not bind \"") + args[0] + "\"";
+    return std::string("bind error: OS can not bind \"") + args[0] + "\"";
   }
 
   BzfKeyEvent key;
   if (!KEYMGR.stringToKeyEvent(args[0], key)) {
-    return string("bind error: unknown and uncreatable button name \"") + args[0] + "\"";
+    return std::string("bind error: unknown and uncreatable button name \"") + args[0] + "\"";
   }
 
   bool down;
@@ -239,10 +238,10 @@ static string cmdBind(const string&, const CmdArgList& args, bool*)
     down = true;
   }
   else {
-    return string("bind error: illegal state \"") + args[1] + "\"";
+    return std::string("bind error: illegal state \"") + args[1] + "\"";
   }
 
-  string cmd = args[2];
+  std::string cmd = args[2];
   for (unsigned int i = 3; i < args.size(); ++i) {
     cmd += " ";
     cmd += args[i];
@@ -253,18 +252,18 @@ static string cmdBind(const string&, const CmdArgList& args, bool*)
     KEYMGR.bind(key, down, cmd);
   }
 
-  return string();
+  return std::string();
 }
 
 
-static string cmdUnbind(const string&, const CmdArgList& args, bool*)
+static std::string cmdUnbind(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 2)
     return "usage: unbind <button-name> {up|down}";
 
   BzfKeyEvent key_event;
   if (!KEYMGR.stringToKeyEvent(args[0], key_event)) {
-    return string("bind error: unknown button name \"") + args[0] + "\"";
+    return std::string("bind error: unknown button name \"") + args[0] + "\"";
   }
 
   bool down;
@@ -275,21 +274,21 @@ static string cmdUnbind(const string&, const CmdArgList& args, bool*)
     down = true;
   }
   else {
-    return string("bind error: illegal state \"") + args[1] + "\"";
+    return std::string("bind error: illegal state \"") + args[1] + "\"";
   }
 
   KEYMGR.unbind(key_event, down);
 
-  return string();
+  return std::string();
 }
 
 
-static string cmdToggle(const string&, const CmdArgList& args, bool*)
+static std::string cmdToggle(const std::string&, const CmdArgList& args, bool*)
 {
   if ((args.size() < 1) || (args.size() > 3)) {
     return "usage: toggle <name> [first [second]]";
   }
-  const string& name = args[0];
+  const std::string& name = args[0];
   if (args.size() == 1) {
     BZDB.set(name, BZDB.isTrue(name) ? "0" : "1");
   } else if (args.size() == 2) {
@@ -297,11 +296,11 @@ static string cmdToggle(const string&, const CmdArgList& args, bool*)
   } else {
     BZDB.set(name, (BZDB.get(name) == args[1]) ? args[2] : args[1]);
   }
-  return string();
+  return std::string();
 }
 
 
-static string cmdMult(const string&, const CmdArgList& args, bool*)
+static std::string cmdMult(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 2) {
     return "usage: mult <name> <value>";
@@ -316,11 +315,11 @@ static string cmdMult(const string&, const CmdArgList& args, bool*)
   }
   value *= amount;
   BZDB.set(args[0], TextUtils::format("%f", value), StateDatabase::User);
-  return string();
+  return std::string();
 }
 
 
-static string cmdAdd(const string&, const CmdArgList& args, bool*)
+static std::string cmdAdd(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 2) {
     return "usage: add <name> <value>";
@@ -335,18 +334,18 @@ static string cmdAdd(const string&, const CmdArgList& args, bool*)
   }
   value += amount;
   BZDB.set(args[0], TextUtils::format("%f", value), StateDatabase::User);
-  return string();
+  return std::string();
 }
 
 
-static string cmdCycle(const string&, const CmdArgList& args, bool*)
+static std::string cmdCycle(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() < 2) {
     return "usage: cycle <name> <value> [value2] [value3] ...";
   }
 
-  const string& key = args[0];
-  const string& val = BZDB.get(key);
+  const std::string& key = args[0];
+  const std::string& val = BZDB.get(key);
 
   size_t index;
   for (index = 1; index < args.size(); index++) {
@@ -361,7 +360,7 @@ static string cmdCycle(const string&, const CmdArgList& args, bool*)
 
   BZDB.set(key, args[index]);
 
-  return string();
+  return std::string();
 }
 
 
