@@ -20,8 +20,6 @@
 #include <set>
 #include <sstream>
 #include <iostream>
-using std::string;
-using std::vector;
 
 // common headers
 #include "TextUtils.h"
@@ -37,18 +35,18 @@ CustomLink::CustomLink(bool _linkSet)
 
 //============================================================================//
 
-static void stripComments(string& s)
+static void stripComments(std::string& s)
 {
-  const string::size_type pos = s.find_first_of('#');
-  if (pos != string::npos) {
+  const std::string::size_type pos = s.find_first_of('#');
+  if (pos != std::string::npos) {
     s = s.substr(0, pos); // discard the comments
   }
 }
 
 
-static void getIntList(std::istream& input, vector<int>& list)
+static void getIntList(std::istream& input, std::vector<int>& list)
 {
-  string args;
+  std::string args;
   int value;
 
   list.clear();
@@ -64,10 +62,10 @@ static void getIntList(std::istream& input, vector<int>& list)
 }
 
 
-static void getStringSet(std::istream& input, std::set<string>& list)
+static void getStringSet(std::istream& input, std::set<std::string>& list)
 {
-  string args;
-  string value;
+  std::string args;
+  std::string value;
 
   list.clear();
   std::getline(input, args);
@@ -82,9 +80,9 @@ static void getStringSet(std::istream& input, std::set<string>& list)
 }
 
 
-static void getAllowFlags(std::istream& input, std::set<string>& blocked)
+static void getAllowFlags(std::istream& input, std::set<std::string>& blocked)
 {
-  std::set<string> allowed;
+  std::set<std::string> allowed;
   getStringSet(input, allowed);
 
   FlagSet::const_iterator it;
@@ -92,7 +90,7 @@ static void getAllowFlags(std::istream& input, std::set<string>& blocked)
   // add the good
   const FlagSet& goodFlags = Flag::getGoodFlags();
   for (it = goodFlags.begin(); it != goodFlags.end(); it++) {
-    const string& abbv = (*it)->flagAbbv;
+    const std::string& abbv = (*it)->flagAbbv;
     if (allowed.find(abbv) == allowed.end()) {
       blocked.insert(abbv);
     }
@@ -101,7 +99,7 @@ static void getAllowFlags(std::istream& input, std::set<string>& blocked)
   // and the bad
   const FlagSet& badFlags = Flag::getGoodFlags();
   for (it = badFlags.begin(); it != badFlags.end(); it++) {
-    const string& abbv = (*it)->flagAbbv;
+    const std::string& abbv = (*it)->flagAbbv;
     if (allowed.find(abbv) == allowed.end()) {
       blocked.insert(abbv);
     }
@@ -112,7 +110,7 @@ static void getAllowFlags(std::istream& input, std::set<string>& blocked)
 static uint8_t parseTeamBits(std::istream& input)
 {
   uint8_t teamBits = 0;
-  vector<int> teams;
+  std::vector<int> teams;
   getIntList(input, teams);
   for (size_t i = 0; i < teams.size(); i++) {
     const int team = teams[i];
@@ -130,7 +128,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
 {
   if ((strcasecmp(cmd, "src")  == 0) ||
       (strcasecmp(cmd, "from") == 0)) {
-    string line;
+    std::string line;
     std::getline(input, line);
     input.putback('\n');
 
@@ -139,7 +137,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
   }
   else if ((strcasecmp(cmd, "dst") == 0) ||
            (strcasecmp(cmd, "to")  == 0)) {
-    string line;
+    std::string line;
     std::getline(input, line);
     input.putback('\n');
 
@@ -147,23 +145,23 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     linkDef.dsts = TextUtils::tokenize(line, " \t\n\r");
   }
   else if (strcasecmp(cmd, "addSrc") == 0) {
-    string line;
+    std::string line;
     std::getline(input, line);
     input.putback('\n');
 
     stripComments(line);
-    vector<string> srcs = TextUtils::tokenize(line, " \t\n\r");
+    std::vector<std::string> srcs = TextUtils::tokenize(line, " \t\n\r");
     for (size_t i = 0; i < srcs.size(); i++) {
       linkDef.addSrc(srcs[i]);
     }
   }
   else if (strcasecmp(cmd, "addDst") == 0) {
-    string line;
+    std::string line;
     std::getline(input, line);
     input.putback('\n');
 
     stripComments(line);
-    vector<string> dsts = TextUtils::tokenize(line, " \t\n\r");
+    std::vector<std::string> dsts = TextUtils::tokenize(line, " \t\n\r");
     for (size_t i = 0; i < dsts.size(); i++) {
       linkDef.addDst(dsts[i]);
     }
@@ -183,8 +181,8 @@ bool CustomLink::read(const char *cmd, std::istream& input)
       linkDefVec.push_back(linkDef); // add link
 
       // swap the srcs and dsts
-      const vector<string> tmpSrcs = linkDef.srcs;
-      const vector<string> tmpDsts = linkDef.dsts;
+      const std::vector<std::string> tmpSrcs = linkDef.srcs;
+      const std::vector<std::string> tmpDsts = linkDef.dsts;
       linkDef.srcs = tmpDsts;
       linkDef.dsts = tmpSrcs;
 
@@ -478,7 +476,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
   //  BZDB blocks
   //
   else if (strcasecmp(cmd, "blockBZDB") == 0) {
-    string value;
+    std::string value;
     if (!(input >> value)) {
       std::cout << "missing blockBZDB parameter" << std::endl;
       return false;
@@ -487,7 +485,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     linkDef.physics.tankBlockBZDB = value;
   }
   else if (strcasecmp(cmd, "shotBlockBZDB") == 0) {
-    string value;
+    std::string value;
     if (!(input >> value)) {
       std::cout << "missing shotBlockBZDB parameter" << std::endl;
       return false;
@@ -495,7 +493,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     linkDef.physics.shotBlockBZDB = value;
   }
   else if (strcasecmp(cmd, "tankBlockBZDB") == 0) {
-    string value;
+    std::string value;
     if (!(input >> value)) {
       std::cout << "missing tankBlockBZDB parameter" << std::endl;
       return false;
