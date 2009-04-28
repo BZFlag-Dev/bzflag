@@ -22,8 +22,6 @@
 #include <string.h>
 #include <assert.h>
 
-using std::string;
-
 // Global implementation headers
 #include "bzfgl.h"
 #include "bzfio.h"
@@ -72,7 +70,7 @@ public:
   /**
    * Preferred constructor
    */
-  BZFontFace_impl(string const& name_, string const& path_)
+  BZFontFace_impl(std::string const& name_, std::string const& path_)
     : privateName(name_), path(path_)
   {
   }
@@ -80,7 +78,7 @@ public:
   /**
    * Accessor for the face name
    */
-  string name() const { return privateName; }
+  std::string name() const { return privateName; }
 
   /**
    * release all loaded sizes
@@ -115,8 +113,8 @@ public:
   FTFont* loadSize(size_t size);
 
 private:
-  string privateName;
-  string path;
+  std::string privateName;
+  std::string path;
 
   typedef std::map<size_t, FTFont*> FontSizes;
   FontSizes sizes;
@@ -134,7 +132,7 @@ namespace {
   FontFamilies fontFaces;
 
   /** faceName and fileName maps */
-  typedef std::map<string, int> IdMap;
+  typedef std::map<std::string, int> IdMap;
   IdMap name2id;
   IdMap file2id;
 
@@ -235,7 +233,7 @@ FontManager::FontManager()
   std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
 #endif
 
-  BZDB.addCallback(string("underlineColor"), underlineCallback, NULL);
+  BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
   BZDB.touch("underlineColor");
 
   OpenGLGState::registerContextInitializer(freeContext, initContext, (void*)this);
@@ -249,7 +247,7 @@ FontManager::~FontManager()
 }
 
 
-int FontManager::load(const string& fileName)
+int FontManager::load(const std::string& fileName)
 {
   int id = -1;
 
@@ -291,7 +289,7 @@ int FontManager::load(const string& fileName)
 }
 
 
-int FontManager::loadAll(string directory)
+int FontManager::loadAll(std::string directory)
 {
   if (directory.size() == 0)
     return 0;
@@ -328,7 +326,7 @@ void FontManager::clear(void)
 }
 
 
-bool FontManager::freeFontFile(const string& fileName)
+bool FontManager::freeFontFile(const std::string& fileName)
 {
   const int id = lookupFileID(fileName);
   if (id < 0) {
@@ -339,7 +337,7 @@ bool FontManager::freeFontFile(const string& fileName)
 }
 
 
-int FontManager::lookupID(string const& faceName)
+int FontManager::lookupID(std::string const& faceName)
 {
   IdMap::const_iterator it = name2id.find(faceName);
   if (it == name2id.end()) {
@@ -349,7 +347,7 @@ int FontManager::lookupID(string const& faceName)
 }
 
 
-int FontManager::lookupFileID(string const& fileName)
+int FontManager::lookupFileID(std::string const& fileName)
 {
   IdMap::const_iterator it = file2id.find(fileName);
   if (it == file2id.end()) {
@@ -359,7 +357,7 @@ int FontManager::lookupFileID(string const& fileName)
 }
 
 
-int FontManager::getFaceID(string const& faceName, bool quietly)
+int FontManager::getFaceID(std::string const& faceName, bool quietly)
 {
   const int id = lookupID(faceName);
   if (id >= 0) {
@@ -398,7 +396,7 @@ const char* FontManager::getFaceName(int faceID)
 
 
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const string& text,
+			     const std::string& text,
 			     const fvec4* resetColor,
 			     fontJustification align)
 {
@@ -667,7 +665,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 }
 
 
-float FontManager::getStringWidth(int faceID, float size, const string& text,
+float FontManager::getStringWidth(int faceID, float size, const std::string& text,
                                   bool alreadyStripped)
 {
   if (text.empty()) {
@@ -718,10 +716,10 @@ void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
 }
 
 
-void FontManager::underlineCallback(const string &, void *)
+void FontManager::underlineCallback(const std::string &, void *)
 {
   // set underline color
-  const string uColor = BZDB.get("underlineColor");
+  const std::string uColor = BZDB.get("underlineColor");
   if (strcasecmp(uColor.c_str(), "text") == 0) {
     underlineColor[0] = -1.0f;
     underlineColor[1] = -1.0f;
