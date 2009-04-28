@@ -829,7 +829,7 @@ bool MeshFace::shotCanCross(const LinkPhysics& physics,
 
   // angle tests
   if ((testBits & LinkPhysics::ShotAngleTest) != 0) {
-    const float dot = fvec3::dot(-plane.xyz(), vel.normalize());
+    const float dot = -fvec3::dot(plane.xyz(), vel.normalize());
     if (physics.shotMinAngle != 0.0f) {
       if (dot > cosf(physics.shotMinAngle)) {
         return false;
@@ -915,7 +915,7 @@ bool MeshFace::tankCanCross(const LinkPhysics& physics,
 
   // angle tests
   if ((testBits & LinkPhysics::TankAngleTest) != 0) {
-    const float dot = fvec3::dot(-plane.xyz(), vel.normalize());
+    const float dot = -fvec3::dot(plane.xyz(), vel.normalize());
     if (physics.tankMinAngle != 0.0f) {
       if (dot > cosf(physics.tankMinAngle)) {
         return false;
