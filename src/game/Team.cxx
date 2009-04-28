@@ -17,25 +17,25 @@
 
 
 fvec4 Team::tankColor[NumTeams] = {
-  fvec4(0.0f, 0.0f, 0.0f, 1.0f),   // rogue
-  fvec4(1.0f, 0.0f, 0.0f, 1.0f),   // red
-  fvec4(0.0f, 1.0f, 0.0f, 1.0f),   // green
-  fvec4(0.2f, 0.2f, 1.0f, 1.0f),   // blue
-  fvec4(1.0f, 0.0f, 1.0f, 1.0f),   // purple
-  fvec4(0.0f, 1.0f, 1.0f, 1.0f),   // observer
-  fvec4(1.0f, 1.0f, 1.0f, 1.0f),   // rabbit
-  fvec4(1.0f, 0.5f, 0.0f, 1.0f)	// hunter orange
+  fvec4(0.0f, 0.0f, 0.0f, 1.0f), // rogue    - black
+  fvec4(1.0f, 0.0f, 0.0f, 1.0f), // red
+  fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green
+  fvec4(0.2f, 0.2f, 1.0f, 1.0f), // blue
+  fvec4(1.0f, 0.0f, 1.0f, 1.0f), // purple
+  fvec4(0.0f, 1.0f, 1.0f, 1.0f), // observer - cyan
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f), // rabbit   - white
+  fvec4(1.0f, 0.5f, 0.0f, 1.0f)  // hunter   - orange
 };
 
 fvec4 Team::radarColor[NumTeams] = {
-  fvec4(1.0f,  1.0f,  0.0f,  1.0f),	// rogue
+  fvec4(1.0f,  1.0f,  0.0f,  1.0f), // rogue    - yellow
   fvec4(1.0f,  0.15f, 0.15f, 1.0f), // red
-  fvec4(0.2f,  0.9f,  0.2f,  1.0f),	// green
-  fvec4(0.08f, 0.25,  1.0f,  1.0f),	// blue
-  fvec4(1.0f,  0.4f,  1.0f,  1.0f),	// purple
-  fvec4(0.0f,  1.0f,  1.0f,  1.0f),	// observer
-  fvec4(1.0f,  1.0f,  1.0f,  1.0f),   // rabbit
-  fvec4(1.0f,  0.5f,  0.0f,  1.0f)	// hunter orange
+  fvec4(0.2f,  0.9f,  0.2f,  1.0f), // green
+  fvec4(0.08f, 0.25,  1.0f,  1.0f), // blue
+  fvec4(1.0f,  0.4f,  1.0f,  1.0f), // purple
+  fvec4(0.0f,  1.0f,  1.0f,  1.0f), // observer - cyan
+  fvec4(1.0f,  1.0f,  1.0f,  1.0f), // rabbit   - white
+  fvec4(1.0f,  0.5f,  0.0f,  1.0f)  // hunter   - orange
 };
 
 
