@@ -23,8 +23,6 @@
 #include <math.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "bzfgl.h"
@@ -56,9 +54,9 @@ static const GLbitfield FTGL_MISSING_ATTRIBS = GL_TEXTURE_BIT;
 //  static callbacks
 //
 
-void TextSceneNode::TextRenderNode::bzdbCallback(const string& name, void* data)
+void TextSceneNode::TextRenderNode::bzdbCallback(const std::string& name, void* data)
 {
-  const string value = BZDB.get(name);
+  const std::string value = BZDB.get(name);
   ((TextRenderNode*)data)->setRawText(value);
 }
 
@@ -178,7 +176,7 @@ void TextSceneNode::getPoints(fvec3 points[5]) const
 
   float xn = +1.0e20f;
   float xp = -1.0e20f;
-  const vector<float>& widths = renderNode.widths;
+  const std::vector<float>& widths = renderNode.widths;
   if (renderNode.fixedWidth > 0.0f) {
     xn = renderNode.fixedWidth * -text.justify;
     xp = xn + renderNode.fixedWidth;
@@ -330,14 +328,14 @@ void TextSceneNode::renderRadar()
 //  static text routines
 //
 
-static void breakLines(const string& source, vector<string>& lines)
+static void breakLines(const std::string& source, std::vector<std::string>& lines)
 {
   lines.clear();
   const char* c = source.c_str();
   const char* s = c;
   while (true) {
     if ((*c == 0) || (*c == '\n')) {
-      lines.push_back(string(s, c - s));
+      lines.push_back(std::string(s, c - s));
       if (*c == 0) {
         break;
       }
@@ -407,7 +405,7 @@ TextSceneNode::TextRenderNode::~TextRenderNode()
 {
   if (CacheManager::isCacheFileType(text.font)) {
     FontManager &fm = FontManager::instance();
-    const string localName = CACHEMGR.getLocalName(text.font);
+    const std::string localName = CACHEMGR.getLocalName(text.font);
     fm.freeFontFile(localName);
   }
 
@@ -431,7 +429,7 @@ int TextSceneNode::TextRenderNode::getFontID() const
   }
   else {
     // try the URL cache
-    const string localName = CACHEMGR.getLocalName(text.font);
+    const std::string localName = CACHEMGR.getLocalName(text.font);
     id = fm.lookupFileID(localName);
     if (id < 0) {
       id = fm.load(localName);
@@ -518,7 +516,7 @@ void TextSceneNode::TextRenderNode::freeXFormList()
 
 //============================================================================//
 
-void TextSceneNode::TextRenderNode::setRawText(const string& rawText)
+void TextSceneNode::TextRenderNode::setRawText(const std::string& rawText)
 {
   breakLines(TextUtils::unescape_colors(rawText), lines);
 
@@ -563,7 +561,7 @@ void TextSceneNode::TextRenderNode::countTriangles()
 {
   triangles = 0;
   for (size_t i = 0; i < stripped.size(); i++) {
-    const string& line = stripped[i];
+    const std::string& line = stripped[i];
     for (size_t c = 0; c < line.size(); c++) {
       if (!isspace(line[c])) {
         triangles += 2;
@@ -634,7 +632,7 @@ void TextSceneNode::TextRenderNode::render()
     glPolygonOffset(text.poFactor, text.poUnits);
   }
 
-  const vector<string>& currLines = *linesPtr;
+  const std::vector<std::string>& currLines = *linesPtr;
 
   if (currLines.size() == 1) {
     // all transformations are compiled into xformList
