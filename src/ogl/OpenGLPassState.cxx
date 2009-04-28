@@ -10,10 +10,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-using std::max;
-using std::string;
-using std::vector;
-using std::set;
 
 // common headers
 #include "StateDatabase.h"
@@ -209,7 +205,7 @@ void OpenGLPassState::FreeContext(void* /*data*/)
 }
 
 
-void OpenGLPassState::BZDBCallback(const string& /*name*/, void* /*data*/)
+void OpenGLPassState::BZDBCallback(const std::string& /*name*/, void* /*data*/)
 {
   FreeContext(NULL);
   InitContext(NULL);
