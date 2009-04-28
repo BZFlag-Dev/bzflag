@@ -284,13 +284,6 @@ const MeshFace* LinkManager::getTankLinkDst(const MeshFace* srcLink,
 
 void LinkManager::doLinking()
 {
-  // check for linkDef.physics finalization
-  for (size_t i = 0; i < linkDefs.size(); i++) {
-    if (!linkDefs[i].physics.finalized) {
-      logDebugMessage(0, "ERROR: linkDef not finalized\n");
-    }
-  }
-
   // get the potential named faces
   buildNameMap();
 
@@ -315,6 +308,11 @@ void LinkManager::doLinking()
   // by adding links from front-to-back (or back-to-front),
   // when a given link source has no destination
   crossLink();
+
+  // setup the LinkPhysics::needTest() values
+  for (size_t i = 0; i < linkDsts.size(); i++) {
+    linkDsts[i].physics.finalize();
+  }
 
   // setup the 'needTest' parameters
   LinkMap::iterator mapIt;
