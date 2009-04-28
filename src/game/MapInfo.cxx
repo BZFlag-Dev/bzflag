@@ -19,8 +19,6 @@
 #include <ctype.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::string;
 
 // common headers
 #include "Pack.h"
@@ -61,7 +59,7 @@ void MapInfo::setLines(const InfoVec& lines)
 }
 
 
-static bool ParseKeyValue(const string& line, string& key, string& value)
+static bool ParseKeyValue(const std::string& line, std::string& key, std::string& value)
 {
   const char* c = line.c_str();
 
@@ -108,7 +106,7 @@ void MapInfo::finalize()
 {
   infoMap.clear();
   for (size_t i = 0; i < infoVec.size(); i++) {
-    string key, value;
+    std::string key, value;
     if (ParseKeyValue(infoVec[i], key, value)) {
       infoMap[key].push_back(value);
     }
