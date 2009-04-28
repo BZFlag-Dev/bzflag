@@ -14,9 +14,6 @@
 #include <map>
 #include <algorithm>
 #include <iostream>
-using std::string;
-using std::vector;
-using std::map;
 
 // common headers
 #include "bzfio.h"
@@ -27,7 +24,7 @@ using std::map;
 
 const char* BzDocket::magic = "BzDocket";
 
-string BzDocket::errorMsg = "";
+std::string BzDocket::errorMsg = "";
 
 #ifndef _WIN32
   static const char dirSep = '/';
@@ -37,7 +34,7 @@ string BzDocket::errorMsg = "";
 
 //============================================================================//
 
-BzDocket::BzDocket(const string& name) : docketName(name)
+BzDocket::BzDocket(const std::string& name) : docketName(name)
 {
 }
 
@@ -128,10 +125,10 @@ void* BzDocket::unpack(void* buf)
 
   uint32_t count;
   buf = nboUnpackUInt32(buf, count);
-  vector<string> names;
+  std::vector<std::string> names;
   size_t maxLen = 0;
   for (uint32_t i = 0; i < count; i++) {
-    string name;
+    std::string name;
     buf = nboUnpackStdString(buf, name);
     names.push_back(name);
 
@@ -146,7 +143,7 @@ void* BzDocket::unpack(void* buf)
   }
 
   for (uint32_t i = 0; i < count; i++) {
-    string data;
+    std::string data;
     buf = nboUnpackStdString(buf, data);
     addData(data, names[i]);
     //dataMap[names[i]] = data;
@@ -160,9 +157,9 @@ void* BzDocket::unpack(void* buf)
 
 //============================================================================//
 
-static string getMapPath(const string& path)
+static std::string getMapPath(const std::string& path)
 {
-  string p = path;
+  std::string p = path;
   std::replace(p.begin(), p.end(), '\\', '/');
   return p;
 }
@@ -194,9 +191,9 @@ int BzDocket::getFileSize(FILE* file)
 }
 
 
-bool BzDocket::addData(const string& data, const string& mapPath)
+bool BzDocket::addData(const std::string& data, const std::string& mapPath)
 {
-  if (mapPath.find_first_of("\\:") != string::npos) {
+  if (mapPath.find_first_of("\\:") != std::string::npos) {
     errorMsg = "bad map path (" + mapPath + ")";
     logDebugMessage(4, "internal BzDocket error: %s\n", errorMsg.c_str());
     return false;
@@ -210,9 +207,9 @@ bool BzDocket::addData(const string& data, const string& mapPath)
 
   dataMap[mapPath] = data;
 
-  const string::size_type pos = mapPath.find_last_of('/');
-  if (pos != string::npos) {
-    const string dirPath = mapPath.substr(0, pos + 1);
+  const std::string::size_type pos = mapPath.find_last_of('/');
+  if (pos != std::string::npos) {
+    const std::string dirPath = mapPath.substr(0, pos + 1);
     if (dirSet.find(dirPath) == dirSet.end()) {
       logDebugMessage(4, "DIRPATH = %s\n", dirPath.c_str());
     }
@@ -223,7 +220,7 @@ bool BzDocket::addData(const string& data, const string& mapPath)
 }
 
 
-bool BzDocket::addFile(const string& filePath, const string& mapPath)
+bool BzDocket::addFile(const std::string& filePath, const std::string& mapPath)
 {
   errorMsg = "";
   if (dataMap.find(mapPath) != dataMap.end()) {
@@ -252,7 +249,7 @@ bool BzDocket::addFile(const string& filePath, const string& mapPath)
 
   fclose(file);
 
-  const string data(buf, len);
+  const std::string data(buf, len);
   delete[] buf;
 
   logDebugMessage(3, "adding to %s: '%s' as '%s'  (%li)\n",
@@ -262,7 +259,7 @@ bool BzDocket::addFile(const string& filePath, const string& mapPath)
 }
 
 
-bool BzDocket::addDir(const string& dirPath, const string& mapPrefix)
+bool BzDocket::addDir(const std::string& dirPath, const std::string& mapPrefix)
 {
   errorMsg = "";
 
@@ -271,7 +268,7 @@ bool BzDocket::addDir(const string& dirPath, const string& mapPrefix)
     return false;
   }
 
-  string realDir = dirPath;
+  std::string realDir = dirPath;
   if (realDir[realDir.size() - 1] != dirSep) {
     realDir += dirSep;
   }
@@ -281,7 +278,7 @@ bool BzDocket::addDir(const string& dirPath, const string& mapPrefix)
 
   OSFile file;
   while (dir.getNextFile(file, true)) { // recursive
-    const string truncPath = file.getStdName().substr(dirLen);
+    const std::string truncPath = file.getStdName().substr(dirLen);
     addFile(file.getStdName(), getMapPath(mapPrefix + truncPath));
   }
 
@@ -291,7 +288,7 @@ bool BzDocket::addDir(const string& dirPath, const string& mapPrefix)
 
 //============================================================================//
 
-bool BzDocket::hasData(const string& mapPath)
+bool BzDocket::hasData(const std::string& mapPath)
 {
   DataMap::const_iterator it = dataMap.find(mapPath);
   if (it == dataMap.end()) {
@@ -301,7 +298,7 @@ bool BzDocket::hasData(const string& mapPath)
 }
 
 
-bool BzDocket::getData(const string& mapPath, string& data)
+bool BzDocket::getData(const std::string& mapPath, std::string& data)
 {
   DataMap::const_iterator it = dataMap.find(mapPath);
   if (it == dataMap.end()) {
@@ -312,7 +309,7 @@ bool BzDocket::getData(const string& mapPath, string& data)
 }
 
 
-int BzDocket::getDataSize(const string& mapPath)
+int BzDocket::getDataSize(const std::string& mapPath)
 {
   DataMap::const_iterator it = dataMap.find(mapPath);
   if (it == dataMap.end()) {
@@ -322,7 +319,7 @@ int BzDocket::getDataSize(const string& mapPath)
 }
 
 
-static int countSlashes(const string& path)
+static int countSlashes(const std::string& path)
 {
   int count = 0;
   for (size_t i = 0; i < path.size(); i++) {
@@ -334,8 +331,8 @@ static int countSlashes(const string& path)
 }
 
 
-void BzDocket::dirList(const string& path, bool recursive,
-                       vector<string>& dirs, vector<string>& files) const
+void BzDocket::dirList(const std::string& path, bool recursive,
+                       std::vector<std::string>& dirs, std::vector<std::string>& files) const
 {
   dirs = dirs; // FIXME
   const int pathSlashes = recursive ? countSlashes(path) : 0;
@@ -359,11 +356,11 @@ void BzDocket::dirList(const string& path, bool recursive,
 
 //============================================================================//
 
-static bool createParentDirs(const string& path)
+static bool createParentDirs(const std::string& path)
 {
-  string::size_type pos = 0;
+  std::string::size_type pos = 0;
   for (pos = path.find('/');
-       pos != string::npos;
+       pos != std::string::npos;
        pos = path.find('/', pos + 1)) {
     OSDir dir;
     dir.makeOSDir(path.substr(0, pos));
@@ -372,20 +369,20 @@ static bool createParentDirs(const string& path)
 }
 
 
-bool BzDocket::save(const string& dirPath) const
+bool BzDocket::save(const std::string& dirPath) const
 {
   if (dirPath.empty()) {
     return false;
   }
 
-  string realDir = dirPath;
+  std::string realDir = dirPath;
   if (realDir[realDir.size() - 1] != dirSep) {
     realDir += dirSep;
   }
 
   DataMap::const_iterator it;
   for (it = dataMap.begin(); it != dataMap.end(); ++it) {
-    const string fullPath = realDir + it->first;
+    const std::string fullPath = realDir + it->first;
     if (!createParentDirs(fullPath)) {
       continue;
     }
@@ -393,7 +390,7 @@ bool BzDocket::save(const string& dirPath) const
     if (file == NULL) {
       continue;
     }
-    const string& data = it->second;
+    const std::string& data = it->second;
     fwrite(data.data(), 1, data.size(), file);
     fclose(file);
   }
