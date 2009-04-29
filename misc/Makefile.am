@@ -26,7 +26,6 @@ EXTRA_DIST =				\
 	groups.conf			\
 	hix.bzw				\
 	libtool.m4			\
-	lua_localize.lua		\
 	man2html.c			\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
