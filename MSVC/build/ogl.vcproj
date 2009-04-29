@@ -579,10 +579,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLPassState.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\ogl\OpenGLTexture.cxx"
 				>
 			</File>
