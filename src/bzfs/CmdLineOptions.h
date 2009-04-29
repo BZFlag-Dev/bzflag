@@ -78,8 +78,7 @@ struct CmdLineOptions
     filterFilename(""), filterAnnounce(false), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
-    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""),
-    luaServer(""), luaWorldDir(""), botsPerIP(1)
+    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(1)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -205,9 +204,6 @@ struct CmdLineOptions
 
   std::string		cacheURL;
   std::string		cacheOut;
-
-  std::string		luaServer;
-  std::string		luaWorldDir;
 
   /* freezetag options */
   bool			freezeTag;

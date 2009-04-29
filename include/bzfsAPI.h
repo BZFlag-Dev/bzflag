@@ -154,7 +154,6 @@ typedef enum {
   bz_ePlayerSentCustomData,
   bz_ePlayerCustomDataChanged,
   bz_eBZDBChange,
-  bz_eLuaDataEvent,
   bz_eAutoPilotChangeEvent,
   bz_eAllowAutoPilotChangeEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
@@ -1144,32 +1143,6 @@ public:
 	int playerID;
 };
 
-class BZF_API bz_LuaDataEventData_V1 : public bz_EventData
-{
-public:
-  bz_LuaDataEventData_V1(int _srcPlayerID, int _srcScriptID,
-                         int _dstPlayerID, int _dstScriptID,
-                         int _status, const std::string& _data)
-  : srcPlayerID(_srcPlayerID)
-  , srcScriptID(_srcScriptID)
-  , dstPlayerID(_dstPlayerID)
-  , dstScriptID(_dstScriptID)
-  , status(_status)
-  , data(_data.data())
-  , dataLen((int)_data.size())
-  , doNotSend(false)
-  {}
-
-  int srcPlayerID;
-  int srcScriptID;
-  int dstPlayerID;
-  int dstScriptID;
-  int status;
-  const char* data;
-  int dataLen;
-  bool doNotSend;
-};
-
 class bz_EventHandler;
 
 BZF_API bool bz_registerEvent(bz_eEventType eventType, bz_EventHandler* eventHandler);
@@ -1365,9 +1338,6 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...
 BZF_API bool bz_sendFetchResMessage(int playerID,  const char* URL);
 BZF_API bool bz_sendJoinServer(int playerID, const char* address, int port,
                                int team, const char* referrer, const char* message);
-BZF_API bool bz_sendLuaData(int srcPlayerID, int srcScriptID,
-                            int dstPlayerID, int dstScriptID,
-                            int statusBits, const char* data, int len);
 
 // world weapons
 BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, float *pos, float tilt, float direction, int shotID , float dt);

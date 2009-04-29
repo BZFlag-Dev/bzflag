@@ -68,8 +68,6 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_forbidDebug",		"1",				false, StateDatabase::Locked },
   { "_forbidHunting",		"0",				false, StateDatabase::Locked },
   { "_forbidIdentify",		"0",				false, StateDatabase::Locked },
-  { "_forbidLuaBzOrg",		"0",				false, StateDatabase::Locked },
-  { "_forbidLuaUser",		"0",				false, StateDatabase::Locked },
   { "_forbidMarkers",		"1",				false, StateDatabase::Locked },
   { "_freezeTagRadius",		"_tankRadius",			false, StateDatabase::Locked },
   { "_friction",		"0",				false, StateDatabase::Locked },
