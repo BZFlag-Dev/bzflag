@@ -28,6 +28,9 @@ class GroupInstance;
 
 class ObstacleModifier {
   public:
+    typedef std::map<std::string, std::string> TextSwapMap;
+
+  public:
     ObstacleModifier();
     ObstacleModifier(const ObstacleModifier& obsMod,
 		     const GroupInstance& grpinst);
@@ -48,7 +51,9 @@ class ObstacleModifier {
     int phydrv;
     bool modifyMaterial; // swaps the whole thing
     const BzMaterial* material;
+
     MaterialMap matMap;
+    TextSwapMap textMap;
 
     unsigned char driveThrough;
     unsigned char shootThrough;

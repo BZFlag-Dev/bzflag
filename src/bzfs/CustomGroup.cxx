@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <string.h>
 
 /* common headers */
@@ -24,6 +25,7 @@
 #include "ObstacleMgr.h"
 #include "ParseColor.h"
 #include "PhysicsDriver.h"
+#include "TextUtils.h"
 #include "BzMaterial.h"
 
 
@@ -107,6 +109,17 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     } else {
       group->addMaterialSwap(srcMat, dstMat);
     }
+  }
+  else if (strcasecmp(cmd, "textswap") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    std::vector<std::string> tokens = TextUtils::tokenize(line, " \t", 2);
+    if (tokens.size() != 2) {
+      std::cout << "invalid textswap parameters" << std::endl;
+      return false;
+    }
+    group->addTextSwap(tokens[0], tokens[1]);
   }
   else if (!WorldFileObstacle::read(cmd, input)) {
     return false;

@@ -109,8 +109,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
   else if (obsMod.matMap.size() > 0) {
     if (grpinst.modifyMaterial) {
       modifyMaterial = true;
-      MaterialMap::const_iterator find;
-      find = obsMod.matMap.find(grpinst.material);
+      MaterialMap::const_iterator find = obsMod.matMap.find(grpinst.material);
       if (find != obsMod.matMap.end()) {
 	material = find->second;
       } else {
@@ -142,6 +141,18 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
   driveThrough = grpinst.driveThrough | obsMod.driveThrough;
   shootThrough = grpinst.shootThrough | obsMod.shootThrough;
   ricochet     = grpinst.ricochet    || obsMod.ricochet;
+
+  textMap = obsMod.textMap;
+  const GroupInstance::TextSwapMap& groupTextMap = grpinst.textMap;
+  TextSwapMap::const_iterator textIt;
+  for (textIt = groupTextMap.begin(); textIt != groupTextMap.end(); ++textIt) {
+    TextSwapMap::const_iterator find_it = obsMod.textMap.find(textIt->second);
+    if (find_it != obsMod.textMap.end()) {
+      textMap[textIt->first] = find_it->second;
+    } else {
+      textMap[textIt->first] = textIt->second;
+    }
+  }
 
   return;
 }
@@ -271,6 +282,11 @@ void ObstacleModifier::execute(WorldText* text) const
   }
   if (modifyColor) {
     text->bzMaterial = getTintedMaterial(tint, text->bzMaterial);
+  }
+
+  TextSwapMap::const_iterator textIt = textMap.find(text->data);
+  if (textIt != textMap.end()) {
+    text->data = textIt->second;
   }
 }
 

@@ -179,6 +179,14 @@ void GroupInstance::addMaterialSwap(const BzMaterial* srcMat,
 }
 
 
+void GroupInstance::addTextSwap(const std::string& srcText,
+				const std::string& dstText)
+{
+  textMap[srcText] = dstText;
+  return;
+}
+
+
 const std::string& GroupInstance::getGroupDef() const
 {
   return groupDef;
@@ -219,6 +227,13 @@ int GroupInstance::packSize() const
 
   fullSize += sizeof(int32_t); // matMap count
   fullSize += matMap.size() * 2 * sizeof(int32_t);
+
+  fullSize += sizeof(int32_t); // textMap count
+  TextSwapMap::const_iterator textIt;
+  for (textIt = textMap.begin(); textIt != textMap.end(); ++textIt) {
+    fullSize += nboStdStringPackSize(textIt->first);
+    fullSize += nboStdStringPackSize(textIt->second);
+  }
 
   return fullSize;
 }
@@ -262,6 +277,13 @@ void* GroupInstance::pack(void* buf) const
     const int dstIndex = MATERIALMGR.getIndex(matIt->second);
     buf = nboPackInt32(buf, srcIndex);
     buf = nboPackInt32(buf, dstIndex);
+  }
+
+  buf = nboPackInt32(buf, textMap.size());
+  TextSwapMap::const_iterator textIt;
+  for (textIt = textMap.begin(); textIt != textMap.end(); ++textIt) {
+    buf = nboPackStdString(buf, textIt->first);
+    buf = nboPackStdString(buf, textIt->second);
   }
 
   return buf;
@@ -314,6 +336,14 @@ void* GroupInstance::unpack(void* buf)
     const BzMaterial* srcMat = MATERIALMGR.getMaterial(srcIndex);
     const BzMaterial* dstMat = MATERIALMGR.getMaterial(dstIndex);
     matMap[srcMat] = dstMat;
+  }
+
+  buf = nboUnpackInt32(buf, count);
+  for (int i = 0; i < count; i++) {
+    std::string srcText, dstText;
+    buf = nboUnpackStdString(buf, srcText);
+    buf = nboUnpackStdString(buf, dstText);
+    textMap[srcText] = dstText;
   }
 
   return buf;
@@ -373,6 +403,12 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
 
   if (modifyTeam) {
     out << indent << "  team " << team << std::endl;
+  }
+
+  TextSwapMap::const_iterator textIt;
+  for (textIt = textMap.begin(); textIt != textMap.end(); textIt++) {
+    out << indent << "  textswap " << textIt->first << " "
+                                   << textIt->second << std::endl;
   }
 
   out << indent << "end" << std::endl << std::endl;

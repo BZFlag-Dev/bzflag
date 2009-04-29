@@ -282,7 +282,9 @@ Instantiates a group, and possibly modifies subobjects
 \fB  matref\fR example_material   # set material properties
                             # (except for the color)
 .br
-\fB  matswap\fR oldMat newMat     # replace a given material in the instance
+\fB  matswap\fR  oldMat  newMat   # replace materials in the instance
+.br
+\fB  textswap\fR oldData newData  # replace the 'data' in text objects
 .br
 \fBend\fR
 .br
