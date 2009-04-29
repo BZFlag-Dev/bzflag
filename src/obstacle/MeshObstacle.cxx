@@ -622,34 +622,26 @@ int MeshObstacle::packSize() const
 {
   int fullSize = 0;
 
+  fullSize += sizeof(uint8_t); // state byte
+
   fullSize += nboStdStringPackSize(name);
 
-  fullSize += 5 * sizeof(int32_t);
-  fullSize += sizeof(char) * checkCount;
-  fullSize += sizeof(fvec3) * checkCount;
-  fullSize += sizeof(fvec3) * vertexCount;
-  fullSize += sizeof(fvec3) * normalCount;
-  fullSize += sizeof(fvec2) * texcoordCount;
+  fullSize += 4 * sizeof(int32_t); // the counts
+  fullSize += checkCount    * (sizeof(fvec3) + sizeof(uint8_t));
+  fullSize += vertexCount   * sizeof(fvec3);
+  fullSize += normalCount   * sizeof(fvec3);
+  fullSize += texcoordCount * sizeof(fvec2);
 
-  if ((drawInfo != NULL) && !drawInfo->isCopy()) {
-    const int drawInfoPackSize = drawInfo->packSize();
-    // align the packing
-    const int align = sizeof(fvec2);
-    fullSize += align * ((drawInfoPackSize + (align - 1)) / align);
-    // drawInfo fake txcd count
-    fullSize += sizeof(fvec2);
 
-    if (debugLevel >= 4) {
-      logDebugMessage(0,"DrawInfo packSize = %i, align = %i, full = %i\n",
-	     drawInfoPackSize,
-	     align * ((drawInfoPackSize + (align - 1)) / align),
-	     align * ((drawInfoPackSize + (align - 1)) / align) + sizeof(fvec2));
-    }
-  }
+  fullSize += sizeof(int32_t); // faceCount
   for (int f = 0; f < faceCount; f++) {
     fullSize += faces[f]->packSize();
   }
-  fullSize += sizeof(unsigned char); // state byte
+
+  if ((drawInfo != NULL) && !drawInfo->isCopy()) {
+    fullSize += drawInfo->packSize();
+  }
+
   return fullSize;
 }
 
@@ -657,6 +649,19 @@ int MeshObstacle::packSize() const
 void *MeshObstacle::pack(void *buf) const
 {
   int i;
+
+  const bool drawInfoOwner = (drawInfo != NULL) && !drawInfo->isCopy();
+
+  // setup the state byte
+  uint8_t stateByte = 0;
+  stateByte |= isDriveThrough() ? (1 << 0) : 0;
+  stateByte |= isShootThrough() ? (1 << 1) : 0;
+  stateByte |= smoothBounce     ? (1 << 2) : 0;
+  stateByte |= noclusters       ? (1 << 3) : 0;
+  stateByte |= canRicochet()    ? (1 << 4) : 0;
+  stateByte |= drawInfoOwner    ? (1 << 5) : 0;
+
+  buf = nboPackUInt8(buf, stateByte);
 
   buf = nboPackStdString(buf, name);
 
@@ -676,36 +681,9 @@ void *MeshObstacle::pack(void *buf) const
     buf = nboPackFVec3(buf, normals[i]);
   }
 
-  void* txcdStart = buf;
   buf = nboPackInt32(buf, texcoordCount);
   for (i = 0; i < texcoordCount; i++) {
     buf = nboPackFVec2(buf, texcoords[i]);
-  }
-
-  // pack hidden drawInfo data as extra texture coordinates
-  const bool drawInfoOwner = ((drawInfo != NULL) && !drawInfo->isCopy());
-  if (drawInfoOwner) {
-    void* drawInfoStart = buf;
-    buf = drawInfo->pack(buf);
-    // align the packing
-    const int align = sizeof(fvec2);
-    const int length = (char*)buf - (char*)drawInfoStart;
-    const int missing = (align - (length % align)) % align;
-    for (i = 0; i < missing; i++) {
-      buf = nboPackUInt8(buf, 0);
-    }
-    // bump up the texture coordinate count
-    const int fullLength = ((char*)buf - (char*)drawInfoStart);
-    const int extraTxcds = fullLength / sizeof(fvec2);
-    const int fakeTxcdCount = texcoordCount + extraTxcds + 1;
-    nboPackInt32(txcdStart, fakeTxcdCount); // NOTE: 'buf' is not being set
-    // add the drawInfo length at the end
-    buf = nboPackInt32(buf, fullLength + sizeof(fvec2));
-    buf = nboPackInt32(buf, 0); // for alignment to fvec2
-
-    logDebugMessage(4,"DrawInfo packing: length = %i, missing = %i\n", length, missing);
-    logDebugMessage(4,"  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
-	   texcoordCount, fakeTxcdCount, fullLength + sizeof(fvec2));
   }
 
   buf = nboPackInt32(buf, faceCount);
@@ -713,15 +691,9 @@ void *MeshObstacle::pack(void *buf) const
     buf = faces[i]->pack(buf);
   }
 
-  // pack the state byte
-  unsigned char stateByte = 0;
-  stateByte |= isDriveThrough() ? (1 << 0) : 0;
-  stateByte |= isShootThrough() ? (1 << 1) : 0;
-  stateByte |= smoothBounce     ? (1 << 2) : 0;
-  stateByte |= noclusters       ? (1 << 3) : 0;
-  stateByte |= drawInfoOwner    ? (1 << 4) : 0;
-  stateByte |= canRicochet()    ? (1 << 5) : 0;
-  buf = nboPackUInt8(buf, stateByte);
+  if (drawInfoOwner) {
+    buf = drawInfo->pack(buf);
+  }
 
   return buf;
 }
@@ -732,6 +704,18 @@ void *MeshObstacle::unpack(void *buf)
   int i;
   int32_t inTmp;
 
+  uint8_t stateByte;
+  buf = nboUnpackUInt8(buf, stateByte);
+
+  // unravel the state byte
+  bool drawInfoOwner;
+  driveThrough  = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
+  shootThrough  = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
+  smoothBounce  = (stateByte & (1 << 2)) != 0;
+  noclusters    = (stateByte & (1 << 3)) != 0;
+  ricochet      = (stateByte & (1 << 4)) != 0;
+  drawInfoOwner = (stateByte & (1 << 5)) != 0;
+
   buf = nboUnpackStdString(buf, name);
 
   buf = nboUnpackInt32(buf, inTmp);
@@ -739,7 +723,7 @@ void *MeshObstacle::unpack(void *buf)
   checkTypes = new char[checkCount];
   checkPoints = new fvec3[checkCount];
   for (i = 0; i < checkCount; i++) {
-    unsigned char tmp;
+    uint8_t tmp;
     buf = nboUnpackUInt8(buf, tmp);
     checkTypes[i] = tmp;
     buf = nboUnpackFVec3(buf, checkPoints[i]);
@@ -765,7 +749,6 @@ void *MeshObstacle::unpack(void *buf)
   for (i = 0; i < texcoordCount; i++) {
     buf = nboUnpackFVec2(buf, texcoords[i]);
   }
-  void* texcoordEnd = buf; // for locating hidden drawInfo data
 
   buf = nboUnpackInt32(buf, inTmp);
   faceSize = int(inTmp);
@@ -786,74 +769,21 @@ void *MeshObstacle::unpack(void *buf)
     }
   }
 
-  // unpack the state byte
-  bool drawInfoOwner;
-  unsigned char stateByte;
-  buf = nboUnpackUInt8(buf, stateByte);
-  driveThrough  = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
-  shootThrough  = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
-  smoothBounce  = (stateByte & (1 << 2)) != 0;
-  noclusters    = (stateByte & (1 << 3)) != 0;
-  drawInfoOwner = (stateByte & (1 << 4)) != 0;
-  ricochet      = (stateByte & (1 << 5)) != 0;
-
-  if (drawInfoOwner && (vertexCount >= 1)) {
-    // remove the extraneous vertex
-    vertexCount--;
-  }
-
-  // unpack hidden drawInfo data from the extra texture coordinates
-  if (drawInfoOwner &&  (texcoordCount >= 2)) {
-    nboUseErrorChecking(false);
-    {
-      void* drawInfoSize = (char*)texcoordEnd - sizeof(fvec2);
-      int32_t rewindLen;
-      nboUnpackInt32(drawInfoSize, rewindLen);
-
-      const bool useDrawInfo = BZDB.isTrue("useDrawInfo");
-
-      if (rewindLen <= (int)(texcoordCount * sizeof(fvec2))) {
-	// unpack the drawInfo
-	if (useDrawInfo) {
-	  void* drawInfoData = (char*)texcoordEnd - rewindLen;
-	  drawInfo = new MeshDrawInfo();
-	  drawInfo->unpack(drawInfoData);
-	}
-
-	// free the bogus texcoords
-	const int fakeTxcds = rewindLen / sizeof(fvec2);
-	texcoordCount = texcoordCount - fakeTxcds;
-	fvec2* tmpTxcds = new fvec2[texcoordCount];
-	memcpy(tmpTxcds, texcoords, texcoordCount * sizeof(fvec2));
-	delete[] texcoords;
-	int ptrDiff = (char*)tmpTxcds - (char*)texcoords;
-	texcoords = tmpTxcds;
-
-	// setup the drawInfo arrays
-	if (useDrawInfo) {
-	  drawInfo->clientSetup(this);
-	  if (!drawInfo->isValid()) {
-	    delete drawInfo;
-	    drawInfo = NULL;
-	  }
-	}
-
-	// remap the texcoord pointers in the faces
-	for (i = 0; i < faceCount; i++) {
-	  MeshFace* face = faces[i];
-	  if (face->useTexcoords()) {
-	    for (int v = 0; v < face->getVertexCount(); v++) {
-	      face->texcoords[v] =
-		(fvec2*)((char*)face->texcoords[v] + ptrDiff);
-	    }
-	  }
-	}
-
-	logDebugMessage(4,"DrawInfo unpacking: fakeTxcds = %i, realTxcds = %i\n",
-	       fakeTxcds, texcoordCount);
+  if (drawInfoOwner) {
+    drawInfo = new MeshDrawInfo();
+    buf = drawInfo->unpack(buf);
+    if (!BZDB.isTrue("useDrawInfo")) {
+      delete drawInfo;
+      drawInfo = NULL;
+    }
+    else {
+      // setup the drawInfo arrays
+      drawInfo->clientSetup(this);
+      if (!drawInfo->isValid()) { 
+        delete drawInfo;
+        drawInfo = NULL;
       }
     }
-    nboUseErrorChecking(true);
   }
 
   finalize();
