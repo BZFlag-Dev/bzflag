@@ -52,7 +52,6 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 #include "Reports.h"
-#include "lua/LuaServer.h"
 
 #include "BackgroundTask.h"
 
@@ -476,14 +475,6 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
-class LuaServerCommand : public ServerCommand {
-public:
-  LuaServerCommand();
-
-  virtual bool operator() (const char *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
 class DebugCommand : ServerCommand {
 public:
   DebugCommand();
@@ -507,7 +498,6 @@ static CountdownCommand   countdownCommand;
 static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagDropCommand     lagDropCommand;
-static LuaServerCommand     luaServerCommand;
 static JitterWarnCommand  jitterWarnCommand;
 static JitterDropCommand  jitterDropCommand;
 static PacketLossWarnCommand  packetLossWarnCommand;
@@ -634,7 +624,6 @@ SayCommand::SayCommand()		 : ServerCommand("/say",
 							 "[message] - generate a public message sent by the server") {}
 ModCountCommand::ModCountCommand()	 : ServerCommand("/modcount",
 								 "[+-seconds] - adjust countdown (if any)") {}
-LuaServerCommand::LuaServerCommand()	 : ServerCommand("/luaserver") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
 DebugCommand::DebugCommand()		 : ServerCommand("/serverdebug",
@@ -3110,15 +3099,6 @@ bool SayCommand::operator() (const char *message,
 
   // send the message
   sendMessage(ServerPlayer, AllPlayers, messageText.c_str() + messageStart );
-  return true;
-}
-
-
-bool LuaServerCommand::operator() (const char *message,
-			     GameKeeper::Player *playerData)
-{
-  printf("LuaServerCommand::operator() %s\n", message); // FIXME
-  LuaServer::recvCommand(message, playerData->getIndex());
   return true;
 }
 

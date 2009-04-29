@@ -26,7 +26,6 @@
 #include "PlayerState.h"
 #include "ShotStatistics.h"
 #include "PlayerAvatarManager.h"
-#include "GfxBlock.h"
 #include "vectors.h"
 
 /* local interface headers */
@@ -114,9 +113,6 @@ public:
   void		setLandingSpeed(float velocity);
   void		spawnEffect();
   void		fireJumpJets();
-
-  GfxBlock&       getGfxBlock()       { return gfxBlock; }
-  const GfxBlock& getGfxBlock() const { return gfxBlock; }
 
   void		forceReload(float time = 0.0f);
 
@@ -268,7 +264,6 @@ private:
   bool			haveIpAddr;
 
   // data use for drawing
-  GfxBlock		gfxBlock;
   PlayerAvatar		*avatar;
 
   fvec4			color;

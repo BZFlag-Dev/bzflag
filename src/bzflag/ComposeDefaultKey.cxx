@@ -20,7 +20,6 @@
 /* common implementation headers */
 #include "BzfEvent.h"
 #include "KeyManager.h"
-#include "EventHandler.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -71,7 +70,6 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     if (!BZDB.isTrue("noDefaultWordComplete")) {
       completer.complete(line, partials);
     }
-    eventHandler.WordComplete(line, partials);
     if (!partials.empty()) {
       // find the longest common string
       const std::string first = *(partials.begin());

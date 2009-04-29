@@ -24,7 +24,6 @@
 #include "MeshFace.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
-#include "EventHandler.h"
 
 // local implementation headers
 #include "playing.h"
@@ -58,7 +57,6 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , registered(false)
 , verified(false)
 , playerList(false)
-, gfxBlock(GfxBlock::Tank, id, true)
 , lastVisualTeam(NoTeam)
 , team(_team)
 , type(_type)
@@ -380,18 +378,12 @@ void Player::calcRelativeMotion(fvec2& vel, float& speed, float& angVel)
 
 void Player::changeTeam(TeamColor _team)
 {
-  const TeamColor oldTeam = team;
-
   // set team
   team = _team;
 
   // set the scene node
   if (!headless) {
     setVisualTeam(team);
-  }
-
-  if (team != oldTeam) {
-    eventHandler.PlayerTeamChange(*this, (int)oldTeam);
   }
 }
 
@@ -909,8 +901,6 @@ void Player::changeScore(float newRank,
   wins   = newWins;
   losses = newLosses;
   tks    = newTeamKills;
-
-  eventHandler.PlayerScoreChange(*this);
 }
 
 
@@ -1048,10 +1038,6 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 {
   const fvec4 groundPlane(0.0f, 0.0f, 1.0f, 0.0f);
 
-  if (gfxBlock.blocked()) {
-    return; // don't draw anything
-  }
-
   if (!isAlive() && !isExploding()) {
     return; // don't draw anythinge
   }
@@ -1147,7 +1133,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
       if (obs) {
 	// stick in interdimensional lights node
-	if (showIDL && GfxBlockMgr::halos.notBlocked()) {
+	if (showIDL) {
 	  avatar->moveIDL(plane);
 	  nodeList = avatar->getIDLSceneNodes();
 	  for ( int i = 0; i < (int)nodeList.size(); i++ ) {
@@ -1209,8 +1195,6 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 void Player::setLandingSpeed(float velocity)
 {
-  eventHandler.PlayerLanded(*this, velocity);
-
   float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
   if (squishiness < 0.001f) {
     return;
@@ -1275,9 +1259,7 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
   for (int i = 0; i < count; i++) {
     ShotPath* shot = getShot(i);
     if (shot && !shot->isExpiring() && !shot->isExpired()) {
-      if (shot->getGfxBlock().notBlocked()) {
-        shot->addShot(scene, colorblind);
-      }
+      shot->addShot(scene, colorblind);
     }
   }
 }

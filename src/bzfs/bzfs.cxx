@@ -55,7 +55,6 @@
 #include "bzfsPlayerStateVerify.h"
 #include "AutoAllowTimer.h"
 #include "ServerIntangibilityManager.h"
-#include "lua/LuaServer.h"
 
 #include "DirectoryNames.h"
 
@@ -5148,8 +5147,6 @@ static void cleanupServer ( void )
 #ifdef BZ_PLUGINS
   unloadPlugins();
 #endif
-
-  LuaServer::kill();
 
   // print uptime
   logDebugMessage(1,"Shutting down server: uptime %s\n", TimeKeeper::printTime(TimeKeeper::getCurrent() - TimeKeeper::getStartTime()).c_str());

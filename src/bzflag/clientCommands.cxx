@@ -27,9 +27,7 @@
 /* common implementation headers */
 #include "BZDBCache.h"
 #include "DirectoryNames.h"
-#include "EventHandler.h"
 #include "FileManager.h"
-#include "LuaClientScripts.h"
 #include "MotionUtils.h"
 #include "TextUtils.h"
 #include "bzglob.h"
@@ -59,9 +57,6 @@ static std::string cmdHunt          (const std::string&, const CmdArgList& args,
 static std::string cmdIconify       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdIdentify      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdJump          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaBzOrg      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaUser       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaWorld      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMessagePanel  (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMouseGrab     (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdPause         (const std::string&, const CmdArgList& args, bool*);
@@ -117,9 +112,6 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("toggleRadar",   &cmdToggleRadar,   "toggleRadar:  toggle radar visibility");
   PUSHCMD("toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility");
   PUSHCMD("toggleFlags",   &cmdToggleFlags,   "toggleFlags {main|radar}:  turn off/on field radar flags");
-  PUSHCMD("luauser",       &cmdLuaUser,       "luauser {'reload | disable | status }: control luauser");
-  PUSHCMD("luabzorg",      &cmdLuaBzOrg,      "luabzorg {'reload | disable | status }: control luabzorg");
-  PUSHCMD("luaworld",      &cmdLuaWorld,      "luaworld {'reload | disable | status }: control luaworld");
 #undef  PUSHCMD
   return commandVector;
 }
@@ -237,12 +229,10 @@ static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*)
         (flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
         !(flag == Flags::OscillationOverthruster &&
           myTank->getLocation() == LocalPlayer::InBuilding)) {
-      if (!eventHandler.ForbidFlagDrop()) {
-        serverLink->sendDropFlag(myTank->getPosition());
-        // changed: on windows it may happen the MsgDropFlag
-        // never comes back to us, so we drop it right away
-        handleFlagDropped(myTank);
-      }
+      serverLink->sendDropFlag(myTank->getPosition());
+      // changed: on windows it may happen the MsgDropFlag
+      // never comes back to us, so we drop it right away
+      handleFlagDropped(myTank);
     }
   }
   return std::string();
@@ -270,14 +260,12 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
     if (!gameOver && !myTank->isSpawning() &&
         (myTank->getTeam() != ObserverTeam) &&
         !myTank->isAlive() && !myTank->isExploding()) {
-      if (!eventHandler.ForbidSpawn()) {
-        serverLink->sendAlive(myTank->getId());
-        myTank->setSpawning(true);
-        CmdArgList zoomArgs;
-        std::string resetArg = "reset";
-        zoomArgs.push_back(resetArg);
-        cmdViewZoom("", zoomArgs,NULL);
-      }
+      serverLink->sendAlive(myTank->getId());
+      myTank->setSpawning(true);
+      CmdArgList zoomArgs;
+      std::string resetArg = "reset";
+      zoomArgs.push_back(resetArg);
+      cmdViewZoom("", zoomArgs,NULL);
     }
   }
   return std::string();
@@ -995,50 +983,6 @@ static std::string cmdAddHunt(const std::string&, const CmdArgList& args, bool*)
   if (args.size() != 0)
     return "usage: addhunt";
   hud->getScoreboard()->huntKeyEvent (true);
-  return std::string();
-}
-
-
-static std::string concatArgs(const CmdArgList& args)
-{
-  std::string line;
-  for (size_t i = 0; i < args.size(); i++) {
-    if (i == 0) {
-      line = args[i];
-    } else {
-      line += " " + args[i];
-    }
-  }
-  return line;
-}
-
-
-static std::string cmdLuaUser(const std::string& cmd, const CmdArgList& args, bool*)
-{
-  if (args.size() < 1) {
-    return "usage: luauser { reload | disable | status }";
-  }
-  LuaClientScripts::LuaUserCommand(cmd + " " + concatArgs(args));
-  return std::string();
-}
-
-
-static std::string cmdLuaBzOrg(const std::string& cmd, const CmdArgList& args, bool*)
-{
-  if (args.size() < 1) {
-    return "usage: luabzorg { reload | disable | status }";
-  }
-  LuaClientScripts::LuaBzOrgCommand(cmd + " " + concatArgs(args));
-  return std::string();
-}
-
-
-static std::string cmdLuaWorld(const std::string& cmd, const CmdArgList& args, bool*)
-{
-  if (args.size() < 1) {
-    return "usage: luaworld { reload | disable | status }";
-  }
-  LuaClientScripts::LuaWorldCommand(cmd + " " + concatArgs(args));
   return std::string();
 }
 

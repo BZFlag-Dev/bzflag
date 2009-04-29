@@ -15,8 +15,6 @@ libCommon_la_SOURCES  =			\
 	AutoCompleter.cxx		\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
-	BzDocket.cxx			\
-	BzVFS.cxx			\
 	CacheManager.cxx		\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\

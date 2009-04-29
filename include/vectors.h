@@ -1,5 +1,14 @@
-//============================================================================//
-//============================================================================//
+/* bzflag
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #ifndef VECTORS_H
 #define VECTORS_H
@@ -30,8 +39,6 @@ template <typename T> inline std::string tostring(T value, const char* fmt) {
 }
 
 
-//============================================================================//
-//============================================================================//
 //
 //  vec2
 //
@@ -43,19 +50,19 @@ class vec2 {
     union { T y; T g; T t; };
 
   public:
-    vec2()              : x((T)0), y((T)0) {}
-    vec2(const vec2& v) : x(v.x),  y(v.y)  {}
-    vec2(T _x, T _y)    : x(_x),   y(_y)   {}
+    vec2() : x((T)0), y((T)0) {}
+    vec2(const vec2& v) : x(v.x), y(v.y) {}
+    vec2(T _x, T _y): x(_x), y(_y) {}
 
     inline vec2& operator=(const vec2& v) { x = v.x; y = v.y; return *this; }
 
-    inline       T* data()       { return &x; }
+    inline T* data() { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator       T*()       { return &x; }
+    inline operator T*() { return &x; }
     inline operator const T*() const { return &x; }
 
-    inline       T& operator[](int index)       { return ((T*)&x)[index]; }
+    inline T& operator[](int index) { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
 
     inline vec2 operator-() const { return vec2(-x, -y); }
@@ -87,22 +94,14 @@ class vec2 {
       if (y > v.y) { return false; }
       return false;
     }
-    bool operator==(const vec2& v) const {
-      return ((x == v.x) && (y == v.y));
-    }
-    bool operator!=(const vec2& v) const {
-      return ((x != v.x) || (y != v.y));
-    }
+    bool operator==(const vec2& v) const { return ((x == v.x) && (y == v.y)); }
+    bool operator!=(const vec2& v) const { return ((x != v.x) || (y != v.y)); }
 
-    static T dot(const vec2& a, const vec2& b) {
-      return ((a.x * b.x) + (a.y * b.y));
-    }
-    T dot(const vec2& v) const {
-      return dot(*this, v);
-    }
+    static T dot(const vec2& a, const vec2& b) { return ((a.x * b.x) + (a.y * b.y)); }
+    T dot(const vec2& v) const { return dot(*this, v); }
 
     T lengthSq() const { return dot(*this, *this); }
-    T length()   const { return typed_sqrt(lengthSq()); }
+    T length() const { return typed_sqrt(lengthSq()); }
 
     static bool normalize(vec2& v) {
       const T len = v.length();
@@ -134,18 +133,12 @@ class vec2 {
 };
 
 
-template <typename T>
-vec2<T> operator+(T d, const vec2<T>& in) { vec2<T> v(in); v += d; return v; }
-template <typename T>
-vec2<T> operator-(T d, const vec2<T>& in) { vec2<T> v(d, d); v -= in; return v; }
-template <typename T>
-vec2<T> operator*(T d, const vec2<T>& in) { vec2<T> v(in); v *= d; return v; }
-template <typename T>
-vec2<T> operator/(T d, const vec2<T>& in) { vec2<T> v(d, d); v /= in; return v; }
+template <typename T> vec2<T> operator+(T d, const vec2<T>& in) { vec2<T> v(in); v += d; return v; }
+template <typename T> vec2<T> operator-(T d, const vec2<T>& in) { vec2<T> v(d, d); v -= in; return v; }
+template <typename T> vec2<T> operator*(T d, const vec2<T>& in) { vec2<T> v(in); v *= d; return v; }
+template <typename T> vec2<T> operator/(T d, const vec2<T>& in) { vec2<T> v(d, d); v /= in; return v; }
 
 
-//============================================================================//
-//============================================================================//
 //
 //  vec3
 //
@@ -158,60 +151,42 @@ class vec3 {
     union { T z; T b; T p; };
 
   public:
-    vec3()                       : x((T)0), y((T)0), z((T)0) {}
-    vec3(const vec3& v)          : x(v.x),  y(v.y),  z(v.z)  {}
-    vec3(T _x, T _y, T _z)       : x(_x),   y(_y),   z(_z)   {}
-    vec3(const vec2<T>& v, T _z) : x(v.x),  y(v.y),  z(_z)   {}
+    vec3() : x((T)0), y((T)0), z((T)0) {}
+    vec3(const vec3& v) : x(v.x), y(v.y), z(v.z) {}
+    vec3(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
+    vec3(const vec2<T>& v, T _z) : x(v.x), y(v.y), z(_z) {}
 
-    inline vec3& operator=(const vec3& v) {
-      x = v.x; y = v.y; z = v.z; return *this;
-    }
+    inline vec3& operator=(const vec3& v) { x = v.x; y = v.y; z = v.z; return *this; }
 
-    inline       T* data()       { return &x; }
+    inline T* data() { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator       T*()       { return &x; }
+    inline operator T*() { return &x; }
     inline operator const T*() const { return &x; }
 
-    inline       T& operator[](int index)       { return ((T*)&x)[index]; }
+    inline T& operator[](int index) { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
 
     inline vec3 operator-() const { return vec3(-x, -y, -z); }
 
-    inline       vec2<T>& xy()       { return (vec2<T>&)x; }
+    inline vec2<T>& xy() { return (vec2<T>&)x; }
     inline const vec2<T>& xy() const { return (vec2<T>&)x; }
-    inline       vec2<T>& yz()       { return (vec2<T>&)y; }
+    inline vec2<T>& yz() { return (vec2<T>&)y; }
     inline const vec2<T>& yz() const { return (vec2<T>&)y; }
 
-    vec3& operator+=(const vec3& v) {
-      x += v.x; y += v.y; z += v.z; return *this;
-    }
-    vec3& operator-=(const vec3& v) {
-      x -= v.x; y -= v.y; z -= v.z; return *this;
-    }
-    vec3& operator*=(const vec3& v) {
-      x *= v.x; y *= v.y; z *= v.z; return *this;
-    }
-    vec3& operator/=(const vec3& v) {
-      x /= v.x; y /= v.y; z /= v.z; return *this;
-    }
+    vec3& operator+=(const vec3& v) { x += v.x; y += v.y; z += v.z; return *this; }
+    vec3& operator-=(const vec3& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
+    vec3& operator*=(const vec3& v) { x *= v.x; y *= v.y; z *= v.z; return *this; }
+    vec3& operator/=(const vec3& v) { x /= v.x; y /= v.y; z /= v.z; return *this; }
     vec3& operator+=(T d) { x += d; y += d; z += d; return *this; }
     vec3& operator-=(T d) { x -= d; y -= d; z -= d; return *this; }
     vec3& operator*=(T d) { x *= d; y *= d; z *= d; return *this; }
     vec3& operator/=(T d) { x /= d; y /= d; z /= d; return *this; }
 
-    vec3 operator+(const vec3& v) const {
-      return vec3(x + v.x, y + v.y, z + v.z);
-    }
-    vec3 operator-(const vec3& v) const {
-      return vec3(x - v.x, y - v.y, z - v.z);
-    }
-    vec3 operator*(const vec3& v) const {
-      return vec3(x * v.x, y * v.y, z * v.z);
-    }
-    vec3 operator/(const vec3& v) const {
-      return vec3(x / v.x, y / v.y, z / v.z);
-    }
+    vec3 operator+(const vec3& v) const { return vec3(x + v.x, y + v.y, z + v.z); }
+    vec3 operator-(const vec3& v) const { return vec3(x - v.x, y - v.y, z - v.z); }
+    vec3 operator*(const vec3& v) const { return vec3(x * v.x, y * v.y, z * v.z); }
+    vec3 operator/(const vec3& v) const { return vec3(x / v.x, y / v.y, z / v.z); }
 
     vec3 operator+(T d) const { return vec3(x + d, y + d, z + d); }
     vec3 operator-(T d) const { return vec3(x - d, y - d, z - d); }
@@ -227,19 +202,11 @@ class vec3 {
       if (z > v.z) { return false; }
       return false;
     }
-    bool operator==(const vec3& v) const {
-      return ((x == v.x) && (y == v.y) && (z == v.z));
-    }
-    bool operator!=(const vec3& v) const {
-      return ((x != v.x) || (y != v.y) || (z != v.z));
-    }
+    bool operator==(const vec3& v) const { return ((x == v.x) && (y == v.y) && (z == v.z)); }
+    bool operator!=(const vec3& v) const { return ((x != v.x) || (y != v.y) || (z != v.z)); }
 
-    static T dot(const vec3& a, const vec3& b) {
-      return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z));
-    }
-    T dot(const vec3& v) const {
-      return dot(*this, v);
-    }
+    static T dot(const vec3& a, const vec3& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z)); }
+    T dot(const vec3& v) const { return dot(*this, v); }
 
     static vec3 cross(const vec3& a, const vec3& b) {
       return vec3(
@@ -253,7 +220,7 @@ class vec3 {
     }
 
     T lengthSq() const { return dot(*this, *this); }
-    T length()   const { return typed_sqrt(lengthSq()); }
+    T length() const { return typed_sqrt(lengthSq()); }
 
     static bool normalize(vec3& v) {
       const T len = v.length();
@@ -264,9 +231,7 @@ class vec3 {
       v *= scale;
       return true;
     }
-    vec3 normalize() const {
-      vec3 v(*this); normalize(v); return v;
-    }
+    vec3 normalize() const { vec3 v(*this); normalize(v); return v; }
 
     vec3 rotateX(T radians) const {
       const T cv = typed_cos(radians);
@@ -325,18 +290,14 @@ class vec3 {
 };
 
 
-template <typename T>
-vec3<T> operator+(T d, const vec3<T>& in) { vec3<T> v(in); v += d; return v; }
-template <typename T>
-vec3<T> operator-(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v -= in; return v; }
-template <typename T>
-vec3<T> operator*(T d, const vec3<T>& in) { vec3<T> v(in); v *= d; return v; }
-template <typename T>
-vec3<T> operator/(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v /= in; return v; }
+template <typename T> vec3<T> operator+(T d, const vec3<T>& in) { vec3<T> v(in); v += d; return v; }
+template <typename T> vec3<T> operator-(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v -= in; return v; }
+template <typename T> vec3<T> operator*(T d, const vec3<T>& in) { vec3<T> v(in); v *= d; return v; }
+template <typename T> vec3<T> operator/(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v /= in; return v; }
 
 
-//============================================================================//
-//============================================================================//
+
+
 //
 //  vec4
 //
@@ -350,69 +311,51 @@ class vec4 {
     union { T w; T a; T q; };
 
   public:
-    vec4()                       : x((T)0), y((T)0), z((T)0), w((T)1) {}
-    vec4(const vec4& v)          : x(v.x),  y(v.y),  z(v.z),  w(v.w)  {}
-    vec4(T _x, T _y, T _z, T _w) : x(_x),   y(_y),   z(_z),   w(_w)   {}
-    vec4(const vec3<T>& v, T _w) : x(v.x),  y(v.y),  z(v.z),  w(_w)   {}
+    vec4() : x((T)0), y((T)0), z((T)0), w((T)1) {}
+    vec4(const vec4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+    vec4(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) {}
+    vec4(const vec3<T>& v, T _w) : x(v.x), y(v.y), z(v.z), w(_w) {}
 
-    inline vec4& operator=(const vec4& v) {
-      x = v.x; y = v.y; z = v.z; w = v.w; return *this;
-    }
+    inline vec4& operator=(const vec4& v) { x = v.x; y = v.y; z = v.z; w = v.w; return *this; }
 
-    inline       T* data()       { return &x; }
+    inline T* data() { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator       T*()       { return &x; }
+    inline operator T*() { return &x; }
     inline operator const T*() const { return &x; }
 
-    inline       T& operator[](int index)       { return ((T*)&x)[index]; }
+    inline T& operator[](int index) { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
 
     inline vec4 operator-() const { return vec4(-x, -y, -z, -w); }
 
-    inline       vec2<T>&  xy()       { return (vec2<T>&)x; }
+    inline vec2<T>&  xy() { return (vec2<T>&)x; }
     inline const vec2<T>&  xy() const { return (vec2<T>&)x; }
-    inline       vec2<T>&  yz()       { return (vec2<T>&)y; }
+    inline vec2<T>&  yz() { return (vec2<T>&)y; }
     inline const vec2<T>&  yz() const { return (vec2<T>&)y; }
-    inline       vec2<T>&  zw()       { return (vec2<T>&)z; }
+    inline vec2<T>&  zw() { return (vec2<T>&)z; }
     inline const vec2<T>&  zw() const { return (vec2<T>&)z; }
-    inline       vec3<T>& xyz()       { return (vec3<T>&)x; }
+    inline vec3<T>& xyz() { return (vec3<T>&)x; }
     inline const vec3<T>& xyz() const { return (vec3<T>&)x; }
-    inline       vec3<T>& yzw()       { return (vec3<T>&)y; }
+    inline vec3<T>& yzw() { return (vec3<T>&)y; }
     inline const vec3<T>& yzw() const { return (vec3<T>&)y; }
-    inline       vec3<T>& rgb()       { return (vec3<T>&)x; }
+    inline vec3<T>& rgb() { return (vec3<T>&)x; }
     inline const vec3<T>& rgb() const { return (vec3<T>&)x; }
 
-    vec4& operator+=(const vec4& v) {
-      x += v.x; y += v.y; z += v.z; w += v.w; return *this;
-    }
-    vec4& operator-=(const vec4& v) {
-      x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this;
-    }
-    vec4& operator*=(const vec4& v) {
-      x *= v.x; y *= v.y; z *= v.z; w *= v.w; return *this;
-    }
-    vec4& operator/=(const vec4& v) {
-      x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this;
-    }
+    vec4& operator+=(const vec4& v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
+    vec4& operator-=(const vec4& v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
+    vec4& operator*=(const vec4& v) { x *= v.x; y *= v.y; z *= v.z; w *= v.w; return *this; }
+    vec4& operator/=(const vec4& v) { x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this; }
 
     vec4& operator+=(T d) { x += d; y += d; z += d; w += d; return *this; }
     vec4& operator-=(T d) { x -= d; y -= d; z -= d; w -= d; return *this; }
     vec4& operator*=(T d) { x *= d; y *= d; z *= d; w *= d; return *this; }
     vec4& operator/=(T d) { x /= d; y /= d; z /= d; w /= d; return *this; }
 
-    vec4 operator+(const vec4& v) const {
-      return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
-    }
-    vec4 operator-(const vec4& v) const {
-      return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
-    }
-    vec4 operator*(const vec4& v) const {
-      return vec4(x * v.x, y * v.y, z * v.z, w * v.w);
-    }
-    vec4 operator/(const vec4& v) const {
-      return vec4(x / v.x, y / v.y, z / v.z, w / v.w);
-    }
+    vec4 operator+(const vec4& v) const { return vec4(x + v.x, y + v.y, z + v.z, w + v.w); }
+    vec4 operator-(const vec4& v) const { return vec4(x - v.x, y - v.y, z - v.z, w - v.w); }
+    vec4 operator*(const vec4& v) const { return vec4(x * v.x, y * v.y, z * v.z, w * v.w); }
+    vec4 operator/(const vec4& v) const { return vec4(x / v.x, y / v.y, z / v.z, w / v.w); }
 
     vec4 operator+(T d) const { return vec4(x + d, y + d, z + d, w + d); }
     vec4 operator-(T d) const { return vec4(x - d, y - d, z - d, w - d); }
@@ -430,22 +373,14 @@ class vec4 {
       if (w > v.w) { return false; }
       return false;
     }
-    bool operator==(const vec4& v) const {
-      return ((x == v.x) && (y == v.y) && (z == v.z) && (w == v.w));
-    }
-    bool operator!=(const vec4& v) const {
-      return ((x != v.x) || (y != v.y) || (z != v.z) || (w != v.w));
-    }
+    bool operator==(const vec4& v) const { return ((x == v.x) && (y == v.y) && (z == v.z) && (w == v.w)); }
+    bool operator!=(const vec4& v) const { return ((x != v.x) || (y != v.y) || (z != v.z) || (w != v.w)); }
 
-    static T dot(const vec4& a, const vec4& b) {
-      return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w));
-    }
-    T dot(const vec4& v) const {
-      return dot(*this, v);
-    }
+    static T dot(const vec4& a, const vec4& b) { return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w)); }
+    T dot(const vec4& v) const { return dot(*this, v); }
 
     T lengthSq() const { return dot(*this, *this); }
-    T length()   const { return typed_sqrt(lengthSq()); }
+    T length() const { return typed_sqrt(lengthSq()); }
 
     // for the plane equation,
     // (x * p.x) + (y * p.y) + (z * p.z) + w = 0  {for a point on the plane}
@@ -463,18 +398,12 @@ class vec4 {
 };
 
 
-template <typename T>
-vec4<T> operator+(T d, const vec4<T>& in) { vec4<T> v(in); v += d; return v; }
-template <typename T>
-vec4<T> operator-(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v -= in; return v; }
-template <typename T>
-vec4<T> operator*(T d, const vec4<T>& in) { vec4<T> v(in); v *= d; return v; }
-template <typename T>
-vec4<T> operator/(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v /= in; return v; }
+template <typename T> vec4<T> operator+(T d, const vec4<T>& in) { vec4<T> v(in); v += d; return v; }
+template <typename T> vec4<T> operator-(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v -= in; return v; }
+template <typename T> vec4<T> operator*(T d, const vec4<T>& in) { vec4<T> v(in); v *= d; return v; }
+template <typename T> vec4<T> operator/(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v /= in; return v; }
 
 
-//============================================================================//
-//============================================================================//
 //
 //  Easier to type
 //
@@ -488,11 +417,12 @@ typedef vec3<double> dvec3;
 typedef vec4<double> dvec4;
 
 
-//============================================================================//
-//============================================================================//
-
 #endif // VECTORS_H
 
-//============================================================================//
-//============================================================================//
-
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

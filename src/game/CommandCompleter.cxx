@@ -60,10 +60,6 @@ void CommandCompleter::reset()
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");
-  registerWord("/luaserver ");
-  registerWord("/luauser ");
-  registerWord("/luabzorg ");
-  registerWord("/luaworld ");
   registerWord("/mute ");
   registerWord("/password ");
   registerWord("/playerlist");

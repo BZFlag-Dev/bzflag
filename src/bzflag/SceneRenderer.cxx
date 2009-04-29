@@ -31,8 +31,6 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 #include "FlagSceneNode.h"
-#include "EventHandler.h"
-#include "GfxBlock.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
@@ -622,7 +620,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   }
 
   // get the track mark sceneNodes (only for BSP)
-  if (scene && GfxBlockMgr::trackMarks.notBlocked()) {
+  if (scene) {
     TrackMarks::addSceneNodes(scene);
   }
 
@@ -637,7 +635,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   mapFog = setupMapFog();
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
-	   && BZDB.isTrue("userMirror") && GfxBlockMgr::mirror.notBlocked();
+	   && BZDB.isTrue("userMirror");
 
   clearZbuffer = true;
   drawGround = true;
@@ -1018,18 +1016,14 @@ void SceneRenderer::doRender()
 {
   const bool mirrorPass = (mirror && clearZbuffer);
 
-  eventHandler.DrawWorldStart();
-
   // render the ground tank tracks
-  if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
+  if (!mirrorPass) {
     TrackMarks::renderGroundTracks();
   }
 
   // NOTE -- this should go into a separate thread
   // now draw each render node list
   OpenGLGState::renderLists();
-
-  eventHandler.DrawWorld();
 
   draw3rdPersonTarget(this);
 
@@ -1046,11 +1040,9 @@ void SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 
   // render the obstacle tank tracks
-  if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
+  if (!mirrorPass) {
     TrackMarks::renderObstacleTracks();
   }
-
-  eventHandler.DrawWorldAlpha();
 
   return;
 }
@@ -1179,8 +1171,6 @@ void SceneRenderer::getRenderNodes()
     return;
   }
 
-  const bool drawObstacles = GfxBlockMgr::obstacles.notBlocked();
-
   // empty the render node lists in preparation for the next frame
   OpenGLGState::clearLists();
   orderedList.clear();
@@ -1188,7 +1178,7 @@ void SceneRenderer::getRenderNodes()
 
   // make the lists of render nodes sorted in optimal rendering order
   if (scene) {
-    scene->addRenderNodes(*this, drawObstacles, true);
+    scene->addRenderNodes(*this, true, true);
   }
 
   // sort ordered list in reverse depth order
@@ -1196,19 +1186,14 @@ void SceneRenderer::getRenderNodes()
     orderedList.sort(frustum.getEye());
   }
 
-  if (drawObstacles) {
-    DYNAMICWORLDTEXT.addRenderNodes(*this);
-  }
+  DYNAMICWORLDTEXT.addRenderNodes(*this);
 
   // add the shadow rendering nodes
   if (scene && BZDBCache::shadows && (getSunDirection() != NULL) &&
-      GfxBlockMgr::shadows.notBlocked() && (!mirror || !clearZbuffer) &&
-      !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
+      (!mirror || !clearZbuffer) && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
     setupShadowPlanes();
-    scene->addShadowNodes(*this, drawObstacles, true);
-    if (drawObstacles) {
-      DYNAMICWORLDTEXT.addShadowNodes(*this);
-    }
+    scene->addShadowNodes(*this, true, true);
+    DYNAMICWORLDTEXT.addShadowNodes(*this);
   }
 
   return;

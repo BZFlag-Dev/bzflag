@@ -13,9 +13,6 @@
 // interface header
 #include "ShotPath.h"
 
-// common headers
-#include "EventHandler.h"
-
 // local  headers
 #include "SegmentedShotStrategy.h"
 #include "GuidedMissleStrategy.h"
@@ -32,7 +29,6 @@ ShotPath::ShotPath(const FiringInfo& info, double now)
 , reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME))
 , expiring(false)
 , expired(false)
-, gfxBlock(GfxBlock::Shot, (info.shot.player << 16) | info.shot.id, true)
 {
   startTime = info.timeSent;
   currentTime = now;
@@ -159,7 +155,6 @@ void ShotPath::setExpired()
   expiring = true;
   expired = true;
   getStrategy()->expire();
-  eventHandler.ShotRemoved(firingInfo);
 }
 
 

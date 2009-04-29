@@ -19,7 +19,6 @@
 #include "BzfEvent.h"
 #include "CollisionManager.h"
 #include "CommandManager.h"
-#include "EventHandler.h"
 #include "FlagSceneNode.h"
 #include "MeshObstacle.h"
 #include "PhysicsDriver.h"
@@ -1378,10 +1377,6 @@ bool LocalPlayer::fireShot()
   if (!canShoot())
     return false;
 
-  if (eventHandler.ForbidShot()) {
-    return false;
-  }
-
   // find an empty slot
   const int numShots = getMaxShots();
   int i;
@@ -1525,10 +1520,6 @@ void LocalPlayer::doJump()
     return;
   }
 
-  if (eventHandler.ForbidJump()) {
-    return;
-  }
-
   if (hasWings()) {
     if (wingsFlapCount <= 0) {
       return;
@@ -1585,9 +1576,6 @@ void LocalPlayer::doJump()
 
 void LocalPlayer::setTarget(const Player* _target)
 {
-  if (_target && eventHandler.ForbidShotLock(*_target)) {
-    return;
-  }
   target = _target;
 }
 

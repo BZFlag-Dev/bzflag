@@ -1031,50 +1031,6 @@ public:
 };
 
 
-class LuaDataHandler : public PlayerFirstNoBumpHandler
-{
-public:
-  virtual bool execute(uint16_t& /*code*/, void* buf, int len)
-  {
-    const size_t minSize =
-      sizeof(PlayerId) + // src playerID
-      sizeof(int16_t)  + // src scriptID
-      sizeof(PlayerId) + // dst playerID
-      sizeof(int16_t)  + // dst scriptID
-      sizeof(uint8_t)  + // status
-      sizeof(uint32_t);  // the data
-
-    if ((len + 1) < (int)minSize) { // +1 for the 'NoBump' srcPlayerID
-      return false;
-    }
-
-    PlayerId srcPlayerID;
-    int16_t  srcScriptID;
-    PlayerId dstPlayerID;
-    int16_t  dstScriptID;
-    uint8_t  status;
-    std::string data;
-
-    buf = nboUnpackUInt8(buf, srcPlayerID);
-    buf = nboUnpackInt16(buf, srcScriptID);
-    buf = nboUnpackUInt8(buf, dstPlayerID);
-    buf = nboUnpackInt16(buf, dstScriptID);
-    buf = nboUnpackUInt8(buf, status);
-    buf = nboUnpackStdStringRaw(buf, data);
-
-    if (GameKeeper::Player::getPlayerByIndex(srcPlayerID) == NULL) {
-      return false;
-    }
-
-    sendMsgLuaData(srcPlayerID, srcScriptID,
-                   dstPlayerID, dstScriptID,
-                   status, data);
-
-    return true;
-  }
-};
-
-
 void registerDefaultHandlers ( void )
 {
   clientNetworkHandlers[MsgWhatTimeIsIt]       = new WhatTimeIsItHandler;
@@ -1110,8 +1066,6 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgGMUpdate]          = new GMUpdateHandler;
   playerNetworkHandlers[MsgPlayerData]        = new PlayerDataHandler;
-  playerNetworkHandlers[MsgLuaData]           = new LuaDataHandler;
-  playerNetworkHandlers[MsgLuaDataFast]       = new LuaDataHandler;
 }
 
 

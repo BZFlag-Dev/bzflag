@@ -12,7 +12,6 @@ libGLKit_la_SOURCES =		\
 	OpenGLGState.cxx	\
 	OpenGLLight.cxx		\
 	OpenGLMaterial.cxx	\
-	OpenGLPassState.cxx	\
 	OpenGLTexture.cxx	\
 	OpenGLUtils.cxx		\
 	RenderNode.cxx

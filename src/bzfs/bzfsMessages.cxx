@@ -1123,7 +1123,6 @@ bool isUDPAttackMessage ( uint16_t &code )
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall:
     case MsgGMUpdate:
-    case MsgLuaDataFast:
     case MsgUDPLinkRequest:
     case MsgUDPLinkEstablished:
     case MsgHit:
@@ -1201,95 +1200,6 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
   playerState.angVel = apiState.angVel;
   memcpy(playerState.pos,apiState.pos,sizeof(float)*3);
   memcpy(playerState.velocity,apiState.velocity,sizeof(float)*3);
-}
-
-
-bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
-                    PlayerId dstPlayerID, int16_t dstScriptID,
-                    uint8_t status, const std::string& data)
-{
-  if (srcPlayerID != ServerPlayer) {
-    GameKeeper::Player* srcPlayer =
-      GameKeeper::Player::getPlayerByIndex(srcPlayerID);
-    if (srcPlayer == NULL) {
-      return false;
-    }
-
-    // FIXME -- 0x80 is the UDP bit, define it somewhere
-    const uint8_t knownBits = (0x80 | IsAdmin | IsVerified | IsRegistered);
-    status &= knownBits;
-
-    const PlayerAccessInfo& info = srcPlayer->accessInfo;
-    if ((status & IsAdmin) && !info.isAdmin()) {
-      status &= ~IsAdmin; // clear the bit
-    }
-    if ((status & IsVerified) && !info.isVerified()) {
-      status &= ~IsVerified; // clear the bit
-    }
-    if ((status & IsRegistered) && !info.isRegistered()) {
-      status &= ~IsRegistered; // clear the bit
-    }
-  }
-
-  bz_LuaDataEventData_V1 eventData(srcPlayerID, srcScriptID,
-                                   dstPlayerID, dstScriptID,
-                                   status, data);
-  worldEventManager.callEvents(bz_eLuaDataEvent, &eventData);
-  if (eventData.doNotSend) {
-    return false; // blocked by the event system
-  }
-
-  uint16_t netCode = (status & 0x80) ? MsgLuaDataFast : MsgLuaData;
-
-  NetMsg msg = MSGMGR.newMessage();
-
-  msg->packUInt8(srcPlayerID);
-  msg->packInt16(srcScriptID);
-  msg->packUInt8(dstPlayerID);
-  msg->packInt16(dstScriptID);
-  msg->packUInt8(status);
-  msg->packStdString(data);
-
-  // broadcast
-  if (dstPlayerID == AllPlayers) {
-    msg->broadcast(netCode);
-    return true;
-  }
-
-  // specific player
-  if (dstPlayerID <= LastRealPlayer) {
-    GameKeeper::Player* dstPlayer =
-      GameKeeper::Player::getPlayerByIndex(dstPlayerID);
-    if (dstPlayer == NULL) {
-      return false;
-    }
-    msg->send(dstPlayer->netHandler, netCode);
-    return true;
-  }
-
-  // admin group
-  if (dstPlayerID == AdminPlayers) {
-    std::vector<int> admins =
-      GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
-    for (size_t i = 0; i < admins.size(); ++i) {
-      GameKeeper::Player* adminPlayer =
-        GameKeeper::Player::getPlayerByIndex(admins[i]);
-      MSGMGR.newMessage(msg)->send(adminPlayer->netHandler, netCode);
-    }
-    return true;
-  }
-
-  // send to a team
-  TeamColor dstTeam = TeamColor(250 - dstPlayerID);
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player* dstPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (dstPlayer &&
-        dstPlayer->player.isPlaying() &&
-        dstPlayer->player.isTeam(dstTeam)) {
-      MSGMGR.newMessage(msg)->send(dstPlayer->netHandler, netCode);
-    }
-  }
-  return true;
 }
 
 

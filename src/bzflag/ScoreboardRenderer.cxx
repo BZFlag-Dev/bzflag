@@ -23,7 +23,6 @@
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
 #include "TextUtils.h"
-#include "GfxBlock.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
@@ -311,10 +310,6 @@ void ScoreboardRenderer::huntReset()
 
 void ScoreboardRenderer::renderTeamScores()
 {
-  if (GfxBlockMgr::teamScores.blocked()) {
-    return;
-  }
-
   FontManager &fm = FontManager::instance();
   float x = winWidth;
   float y = winY;
@@ -428,10 +423,6 @@ void ScoreboardRenderer::clearHuntedTanks()
 
 void ScoreboardRenderer::renderScoreboard(void)
 {
-  if (GfxBlockMgr::playerScores.blocked()) {
-    return;
-  }
-
   int i = 0;
   int numPlayers;
   Player** players;

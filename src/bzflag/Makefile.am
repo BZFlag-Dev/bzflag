@@ -28,7 +28,6 @@ bzflag_SOURCES =			\
 	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
-	ClientFlag.h			\
 	CommandsImplementation.cxx	\
 	CommandsStandard.cxx		\
 	CommandsStandard.h		\
@@ -54,9 +53,6 @@ bzflag_SOURCES =			\
 	EffectsRenderer.h		\
 	EntryZone.cxx			\
 	EntryZone.h			\
-	EventClient.cxx			\
-	EventClientList.cxx		\
-	EventHandler.cxx		\
 	ExportInformation.cxx		\
 	ExportInformation.h		\
 	FlashClock.cxx			\
@@ -69,7 +65,6 @@ bzflag_SOURCES =			\
 	FormatMenu.h			\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
-	GfxBlock.cxx			\
 	GuidedMissleStrategy.cxx	\
 	GuidedMissleStrategy.h		\
 	HUDDialog.cxx			\
@@ -268,11 +263,9 @@ LDADD =	\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
-	../lua/libBzLua.la		\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\
-	$(LIBLUA)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\

@@ -91,11 +91,6 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("messagepanel server"), press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"), press));
 
-  wayToBindActions.insert(std::make_pair(std::string("luauser reload"), press));
-  wayToBindActions.insert(std::make_pair(std::string("luauser disable"), press));
-  wayToBindActions.insert(std::make_pair(std::string("luaworld reload"), press));
-  wayToBindActions.insert(std::make_pair(std::string("luaworld disable"), press));
-
   /*
    * NOTE: the following keys are 'hard coded' in the playing loop and shouldn't
    * be used as part of default bindings:
@@ -196,15 +191,6 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+F3", "messagepanel server"));
   defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
   defaultBinding.insert(BindingTable::value_type("Shift+F5", "messagepanel debug"));
-
-  defaultBinding.insert(BindingTable::value_type("Alt+U",  "luauser reload"));
-  defaultBinding.insert(BindingTable::value_type("Alt+W",  "luaworld reload"));
-  defaultBinding.insert(BindingTable::value_type("Alt+B",  "luabzorg reload"));
-/* FIXME -- luauser & luaworld default bindings
-  defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
-  defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
-  defaultBinding.insert(BindingTable::value_type("Ctrl+B", "luabzorg disable"));
-*/
 }
 
 void ActionBinding::resetBindings() {

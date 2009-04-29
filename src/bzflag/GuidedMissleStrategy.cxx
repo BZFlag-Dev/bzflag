@@ -18,7 +18,6 @@
 #include "TextureManager.h"
 #include "LinkManager.h"
 #include "Intersect.h"
-#include "EventHandler.h"
 #include "MeshFace.h"
 
 // local headers
@@ -385,7 +384,6 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     fvec3 vel = getPath().getVelocity();
     linkSrc->teleportShot(*linkDst, *physics, nextPos, nextPos,
                                               nextVel, nextVel);
-    eventHandler.ShotTeleported(getPath(), linkSrcID, linkDstID);
     return t;
   }
   else if (building) {

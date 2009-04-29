@@ -22,7 +22,6 @@
 #include "BZDBCache.h"
 #include "WallObstacle.h"
 #include "LinkManager.h"
-#include "EventHandler.h"
 #include "MeshFace.h"
 
 /* local implementation headers */
@@ -142,7 +141,6 @@ void SegmentedShotStrategy::update(float dt)
             const fvec3& newDir = segm.ray.getDirection();
             const fvec3& oldDir = segments[segment - 1].ray.getDirection();
             const fvec3 normal = (newDir - oldDir).normalize();
-            eventHandler.ShotRicochet(getPath(), pos, normal);
 
             if (!segm.noEffect) {
               EFFECTS.addRicoEffect(pos, normal);
@@ -156,8 +154,6 @@ void SegmentedShotStrategy::update(float dt)
                                             segm.ray.getDirection(),
                                             clipPlane);
             }
-            eventHandler.ShotTeleported(getPath(), segm.linkSrcID,
-                                                   segm.linkDstID);
 	    break;
           }
 	}

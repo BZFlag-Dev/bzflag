@@ -478,7 +478,6 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
       case MsgPlayerUpdate:
       case MsgPlayerUpdateSmall:
       case MsgGMUpdate:
-      case MsgLuaDataFast:
       case MsgUDPLinkRequest:
       case MsgUDPLinkEstablished:
       case MsgWhatTimeIsIt: {
@@ -1065,41 +1064,6 @@ void ServerLink::sendCustomData ( const std::string &key, const std::string &val
   buf = nboPackStdString(buf, key);
   buf = nboPackStdString(buf, value);
   send(MsgPlayerData, (uint16_t)((char*)buf - msg), msg);
-}
-
-
-bool ServerLink::sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
-                             PlayerId dstPlayerID, int16_t dstScriptID,
-                             uint8_t status, const std::string& data)
-{
-  if (srcPlayerID != getId()) {
-    return false;
-  }
-
-  const size_t headerSize =
-    (sizeof(uint16_t) * 2) + // code and len
-    (sizeof(uint8_t)  * 2) + // player ids
-    (sizeof(int16_t)  * 2) + // script ids
-    (sizeof(uint8_t))      + // status bits
-    (sizeof(uint32_t));      // data count
-
-  if ((headerSize + data.size()) > MaxPacketLen) {
-    return false;
-  }
-
-  char msg[MaxPacketLen];
-  void* buf = msg;
-  buf = nboPackUInt8(buf, srcPlayerID);
-  buf = nboPackInt16(buf, srcScriptID);
-  buf = nboPackUInt8(buf, dstPlayerID);
-  buf = nboPackInt16(buf, dstScriptID);
-  buf = nboPackUInt8(buf, status);
-  buf = nboPackStdString(buf, data);
-
-  uint16_t code = (status & 0x80) ? MsgLuaDataFast : MsgLuaData;
-  send(code, (uint16_t)((char*)buf - msg), msg);
-
-  return true;
 }
 
 

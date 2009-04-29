@@ -109,16 +109,12 @@ genericfiles =				\
 	../bzflag/EffectsRenderer.h		\
 	../bzflag/EntryZone.cxx			\
 	../bzflag/EntryZone.h			\
-	../bzflag/EventClient.cxx		\
-	../bzflag/EventClientList.cxx		\
-	../bzflag/EventHandler.cxx		\
 	../bzflag/FlashClock.cxx		\
 	../bzflag/FlashClock.h			\
 	../bzflag/FontSizer.cxx			\
 	../bzflag/FontSizer.h			\
 	../bzflag/ForceFeedback.cxx		\
 	../bzflag/ForceFeedback.h		\
-	../bzflag/GfxBlock.cxx			\
 	../bzflag/GuidedMissleStrategy.cxx	\
 	../bzflag/GuidedMissleStrategy.h	\
 	../bzflag/HUDDialog.cxx			\
@@ -267,11 +263,9 @@ LDADD =	\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
-	../lua/libBzLua.la		\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\
-	$(LIBLUA)			\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\

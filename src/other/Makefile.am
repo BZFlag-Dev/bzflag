@@ -35,7 +35,6 @@ FREETYPE_DIR =
 endif
 
 SUBDIRS = \
-	lua \
 	${ZLIB_DIR} \
 	${ARES_DIR} \
 	${CURL_DIR} \
@@ -44,7 +43,6 @@ SUBDIRS = \
 	${REGEX_DIR}
 
 DIST_SUBDIRS = \
-	lua \
 	regex \
 	zlib
 

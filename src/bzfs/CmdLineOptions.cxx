@@ -48,7 +48,6 @@
 #include "Permissions.h"
 #include "EntryZones.h"
 #include "SpawnPolicyFactory.h"
-#include "lua/LuaServer.h"
 
 
 const char *usageString =
@@ -90,9 +89,6 @@ const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
-  "[-luaserver <filepath>] "
-  "[-luaworld <dirpath>] "
-  "[-luaworldReq] "
   "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
   "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
@@ -194,9 +190,6 @@ const char *extraUsageString =
   "\t-jitterdrop: drop player after this many jitter warnings\n"
   "\t-jitterwarn: jitter warning threshhold time [ms]\n"
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
-  "\t-luaserver: path to the LuaServer entry source file\n"
-  "\t-luaworld: path to the LuaWorld sources directory\n"
-  "\t-luaworldReq: LuaWorld script execution is required\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
   "\t-mp: maximum players total or per team\n"
@@ -621,20 +614,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-cacheout") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheOut = argv[i];
-    } else if (strcmp(argv[i], "-luaserver") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      if (LuaServer::isActive()) {
-        std::cerr << "WARNING: ignoring extra '-luaserver "
-                  << argv[i] << "' argument" << std::endl;
-      } else {
-        options.luaServer = argv[i];
-        LuaServer::init(options.luaServer);
-      }
-    } else if (strcmp(argv[i], "-luaworld") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.luaWorldDir = argv[i];
-    } else if (strcmp(argv[i], "-luaworldReq") == 0) {
-      options.gameOptions |= int(LuaWorldRequired);
     } else if (strcmp(argv[i], "-conf") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);

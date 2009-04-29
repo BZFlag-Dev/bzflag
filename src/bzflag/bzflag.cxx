@@ -54,7 +54,6 @@
 #include "FontManager.h"
 #include "GUIOptionsMenu.h"
 #include "KeyManager.h"
-#include "LuaClientScripts.h"
 #include "OSFile.h"
 #include "OpenGLGState.h"
 #include "ParseColor.h"
@@ -234,9 +233,6 @@ static void parse(int argc, char **argv)
     if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-    }
-    else if (strcmp(argv[i], "-devmode") == 0) {
-      LuaClientScripts::SetDevMode(true);
     }
     else if ((strcmp(argv[i], "-dir") == 0) ||
 	       (strcmp(argv[i], "-directory") == 0)) {
@@ -1014,13 +1010,6 @@ void initAudio ( void )
     else
       closedir(localedir);
 #endif
-  }
-
-  // setup the default LuaUser/ directory
-  if (!BZDB.isSet("luaUserDir")) {
-    if (BZDB.isSet("directory")) {
-      BZDB.set("luaUserDir", BZDB.get("directory") + "/LuaUser");
-    }
   }
 }
 

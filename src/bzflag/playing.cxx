@@ -37,24 +37,19 @@
 #include "BillboardSceneNode.h"
 #include "BZDBCache.h"
 #include "BzfMedia.h"
-#include "BzVFS.h"
 #include "bzsignal.h"
 #include "CacheManager.h"
 #include "CollisionManager.h"
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
-#include "EventHandler.h"
 #include "FileManager.h"
 #include "FlagSceneNode.h"
 #include "GameTime.h"
-#include "GfxBlock.h"
 #include "KeyManager.h"
 #include "LinkManager.h"
-#include "LuaClientScripts.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
-#include "OpenGLPassState.h"
 #include "PhysicsDriver.h"
 #include "PlatformFactory.h"
 #include "QuadWallSceneNode.h"
@@ -1061,116 +1056,10 @@ static void doMotion()
 }
 
 
-static bool handleEvent(const BzfEvent& event)
-{
-  // return 'true' to consume the event
-  // would be better to have raw keysyms (SDL?) as well as unicode values
-  switch (event.type) {
-    case BzfEvent::KeyUp: {
-      const BzfKeyEvent& ev = event.keyUp;
-      switch (ev.button) {
-        case BzfKeyEvent::F12: {
-          return false;
-        }
-        case BzfKeyEvent::WheelUp: {
-          return eventHandler.MouseWheel(false, +1.0f);
-        }
-        case BzfKeyEvent::WheelDown: {
-          return eventHandler.MouseWheel(false, -1.0f);
-        }
-        case BzfKeyEvent::LeftMouse:
-        case BzfKeyEvent::MiddleMouse:
-        case BzfKeyEvent::RightMouse:
-        case BzfKeyEvent::MouseButton6:
-        case BzfKeyEvent::MouseButton7:
-        case BzfKeyEvent::MouseButton8:
-        case BzfKeyEvent::MouseButton9:
-        case BzfKeyEvent::MouseButton10: {
-          int mx, my;
-          mainWindow->getWindow()->getMouse(mx, my);
-          my = mainWindow->getHeight() - my - 1;
-          const int button = ev.button - BzfKeyEvent::LeftMouse;
-          return eventHandler.MouseRelease(false, mx, my, button);
-        }
-        default: {
-          const int keyCode = ev.chr ? ev.chr : -ev.button;
-          if (!HUDui::getFocus()) {
-            return eventHandler.KeyRelease(false, keyCode);
-          } else {
-            // the HUDui already owns the event, so taken = true
-            eventHandler.KeyRelease(true, keyCode); // ignored return value
-            return false;
-          }
-        }
-      }
-      break;
-    }
-    case BzfEvent::KeyDown: {
-      const BzfKeyEvent& ev = event.keyDown;
-      switch (ev.button) {
-        case BzfKeyEvent::F12: {
-          return false;
-        }
-        case BzfKeyEvent::WheelUp: {
-          return eventHandler.MouseWheel(false, +1.0f);
-        }
-        case BzfKeyEvent::WheelDown: {
-          return eventHandler.MouseWheel(false, -1.0f);
-        }
-        case BzfKeyEvent::LeftMouse:
-        case BzfKeyEvent::MiddleMouse:
-        case BzfKeyEvent::RightMouse:
-        case BzfKeyEvent::MouseButton6:
-        case BzfKeyEvent::MouseButton7:
-        case BzfKeyEvent::MouseButton8:
-        case BzfKeyEvent::MouseButton9:
-        case BzfKeyEvent::MouseButton10: {
-          int mx, my;
-          mainWindow->getWindow()->getMouse(mx, my);
-          my = mainWindow->getHeight() - my - 1;
-          const int button = ev.button - BzfKeyEvent::LeftMouse;
-          return eventHandler.MousePress(false, mx, my, button);
-        }
-        default: {
-          const int keyCode = ev.chr ? ev.chr : -ev.button;
-          if (!HUDui::getFocus()) {
-            return eventHandler.KeyPress(false, keyCode, false);
-          } else {
-            // the HUDui already owns the event, so taken = true
-            eventHandler.KeyPress(true, keyCode, false); // ignored return value
-            return false;
-          }
-        }
-      }
-      break;
-    }
-    case BzfEvent::MouseMove: {
-      const BzfMotionEvent& ev = event.mouseMove;
-      const int yCoord = mainWindow->getHeight() - ev.y - 1;
-      return eventHandler.MouseMove(false, ev.x, yCoord);
-      break;
-    }
-    case BzfEvent::Unset:
-    case BzfEvent::Quit:
-    case BzfEvent::Redraw:
-    case BzfEvent::Resize:
-    case BzfEvent::Map:
-    case BzfEvent::Unmap: {
-      break;
-    }
-  }
-  return false;
-}
-
-
 static void doEvent(BzfDisplay *disply)
 {
   BzfEvent event;
   if (!disply->getEvent(event)) {
-    return;
-  }
-
-  if (handleEvent(event)) {
     return;
   }
 
@@ -1189,7 +1078,6 @@ static void doEvent(BzfDisplay *disply)
           (mainWindow->getHeight() != event.resize.height)) {
         mainWindow->getWindow()->setSize(event.resize.width, event.resize.height);
         mainWindow->getWindow()->callResizeCallbacks();
-        eventHandler.GLResize();
       }
       break;
     }
@@ -1264,7 +1152,6 @@ static void doEvent(BzfDisplay *disply)
 
       unmapped = true;
       mainWindow->ungrabMouse();
-      eventHandler.GLUnmapped();
       break;
     }
     case BzfEvent::KeyUp: {
@@ -1640,8 +1527,6 @@ static bool removePlayer (PlayerId id)
     return false;
 
   Player *p = getPlayerByIndex(playerIndex);
-
-  eventHandler.PlayerRemoved(*p);
 
   Address addr;
   std::string msg = "signing off";
@@ -2296,14 +2181,6 @@ static void handleAddPlayer(void* msg, bool& checkScores)
       setTankFlags(); // update the tank flags when in replay mode.
     }
   }
-
-  const int index = lookupPlayerIndex(id);
-  if ((index >= 0) || (index == -2)) {
-    const Player* player = getPlayerByIndex(index);
-    if (player) {
-      eventHandler.PlayerAdded(*player);
-    }
-  }
 }
 
 
@@ -2417,8 +2294,6 @@ static void handleAliveMessage(void *msg)
   if (tank == myTank) {
     myTank->setSpawning(false);
   }
-
-  eventHandler.PlayerSpawned(*tank);
 
   SOUNDSYSTEM.play(SFX_POP, pos, true, isViewTank(tank));
 }
@@ -2538,11 +2413,6 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
   BaseLocalPlayer *killerLocal = getLocalPlayer(killer);
   Player *victimPlayer = lookupPlayer(victim);
   Player *killerPlayer = lookupPlayer(killer);
-
-  if (victimPlayer != NULL) {
-    eventHandler.PlayerKilled(*victimPlayer, killerPlayer,
-                              reason, flagType, phydrv);
-  }
 
   if (victimPlayer == myTank) {
     // uh oh, i'm dead
@@ -2781,8 +2651,6 @@ static void handleGrabFlag(void *msg)
   message += " flag";
 
   addMessage(tank, message);
-
-  eventHandler.FlagGrabbed(flag, *tank);
 }
 
 
@@ -2804,8 +2672,6 @@ static void handleDropFlag(void *msg)
     return;
 
   handleFlagDropped(tank);
-
-  eventHandler.FlagDropped(flag, *tank);
 }
 
 
@@ -2827,10 +2693,6 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
     return;
 
   int capturedTeam = capturedFlag.type->flagTeam;
-
-  if (capturer) { // FIXME ?
-    eventHandler.FlagCaptured(capturedFlag, *capturer);
-  }
 
   // player no longer has flag
   if (capturer) {
@@ -3091,7 +2953,6 @@ static void handleShotBegin(bool human, void *msg)
     // the shot is ours, find the shot we made, and kill it
     // then rebuild the shot with the info from the server
     myTank->updateShot(firingInfo, id, firingInfo.timeSent);
-    eventHandler.ShotAdded(firingInfo); // FIXME ?
   }
   else {
     RemotePlayer *shooter = remotePlayers[shooterid];
@@ -3099,7 +2960,6 @@ static void handleShotBegin(bool human, void *msg)
     if (shooterid != ServerPlayer) {
       if (shooter && remotePlayers[shooterid]->getId() == shooterid) {
 	shooter->addShot(firingInfo);
-        eventHandler.ShotAdded(firingInfo);
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
 	  fvec3 shotPos;
@@ -3132,7 +2992,6 @@ static void handleWShotBegin (void *msg)
 
   worldWeapons->addShot(firingInfo);
   playShotSound(firingInfo, false);
-  eventHandler.ShotAdded(firingInfo);
 }
 
 
@@ -3245,7 +3104,6 @@ static void handleTeleport(void *msg)
   msg = nboUnpackUInt16(msg, dstID);
   Player *tank = lookupPlayer(id);
   if (tank) {
-    eventHandler.PlayerTeleported(*tank, srcID, dstID); // FIXME
     if (tank != myTank) {
       tank->setTeleport(TimeKeeper::getTick(), short(srcID), short(dstID));
       const MeshFace* linkDst = linkManager.getLinkDstFace(dstID);
@@ -3290,8 +3148,6 @@ static void handleMessage(void *msg)
   bool fromServer = (src == ServerPlayer);
   bool toAdmin = (dst == AdminPlayers);
   std::string dstName;
-
-  eventHandler.RecvChatMsg((char*)msg, src, dst); // FIXME -- make sure it's terminated
 
   const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
   if (dstPlayer) {
@@ -3662,28 +3518,6 @@ static void handlePlayerData(void *msg)
 }
 
 
-static void handleLuaData(void *msg)
-{
-  PlayerId srcPlayerID;
-  int16_t  srcScriptID;
-  PlayerId dstPlayerID;
-  int16_t  dstScriptID;
-  uint8_t  statusBits;
-  std::string data;
-
-  msg = nboUnpackUInt8(msg, srcPlayerID);
-  msg = nboUnpackInt16(msg, srcScriptID);
-  msg = nboUnpackUInt8(msg, dstPlayerID);
-  msg = nboUnpackInt16(msg, dstScriptID);
-  msg = nboUnpackUInt8(msg, statusBits);
-  msg = nboUnpackStdStringRaw(msg, data);
-
-  eventHandler.RecvLuaData(srcPlayerID, srcScriptID,
-                           dstPlayerID, dstScriptID,
-                           statusBits,  data);
-}
-
-
 static void handleTangReset(void)
 {
   ClientIntangibilityManager::instance().resetTangibility();
@@ -3942,11 +3776,6 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
     }
     case MsgPlayerData: {
       handlePlayerData(msg);
-      break;
-    }
-    case MsgLuaData:
-    case MsgLuaDataFast: {
-      handleLuaData(msg);
       break;
     }
     case MsgPause: {
@@ -4240,9 +4069,6 @@ static void updateExplosions(float dt)
 
 static void addExplosions(SceneDatabase *scene)
 {
-  if (GfxBlockMgr::explosions.blocked()) {
-    return;
-  }
   const size_t count = explosions.size();
   for (size_t i = 0; i < count; i++) {
     scene->addDynamicNode(explosions[i]);
@@ -4332,8 +4158,6 @@ static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagInde
       SOUNDSYSTEM.play(SFX_ALERT);
     }
   }
-
-  eventHandler.FlagTransferred(f, *fromTank, *toTank);
 
   std::string message(toTank->getCallSign());
   message += " stole ";
@@ -5605,9 +5429,6 @@ static void resetServerVar(const std::string &name, void*)
 
 void leaveGame()
 {
-  eventHandler.ServerParted();
-  LuaClientScripts::LuaWorldFreeHandler();
-
   thirdPersonVars.clear();
   entered = false;
   joiningGame = false;
@@ -5725,16 +5546,6 @@ void leaveGame()
 
   // purge any custom flags we may have accumulated
   Flags::clearCustomFlags();
-
-  // reload LuaUser and LuaBzOrg in case they were forbidden
-  if (!CommandsStandard::isQuit()) {
-    if (!LuaClientScripts::LuaUserIsActive()) {
-      LuaClientScripts::LuaUserLoadHandler();
-    }
-    if (!LuaClientScripts::LuaBzOrgIsActive()) {
-      LuaClientScripts::LuaBzOrgLoadHandler();
-    }
-  }
 
   return;
 }
@@ -5962,19 +5773,11 @@ static void joinInternetGame2()
   while (stack->isActive())
     stack->pop();
   joiningGame = false;
-
-  LuaClientScripts::LuaBzOrgUpdateForbidden();
-  LuaClientScripts::LuaUserUpdateForbidden();
-  LuaClientScripts::LuaWorldLoadHandler();
-  eventHandler.ServerJoined();
 }
 
 
 static void renderDialog()
 {
-  if (GfxBlockMgr::menu.blocked()) {
-    return;
-  }
   if (HUDDialogStack::get()->isActive()) {
     const int width = mainWindow->getWidth();
     const int height = mainWindow->getHeight();
@@ -6026,19 +5829,15 @@ static void drawUI()
   }
 
   // draw the control panel
-  if (GfxBlockMgr::console.notBlocked()) {
-    if (controlPanel) {
-      controlPanel->render(RENDERER);
-    }
+  if (controlPanel) {
+    controlPanel->render(RENDERER);
   }
 
   // draw the radar
-  if (GfxBlockMgr::radar.notBlocked()) {
-    if (radar) {
-      const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
-      const bool observer = myTank && (myTank->getTeam() == ObserverTeam);
-      radar->render(RENDERER, showBlankRadar, observer);
-    }
+  if (radar) {
+    const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
+    const bool observer = myTank && (myTank->getTeam() == ObserverTeam);
+    radar->render(RENDERER, showBlankRadar, observer);
   }
 
   // update the HUD (menus)
@@ -6593,15 +6392,13 @@ static void addDynamicSceneNodes()
   addExplosions(scene);
 
   // if inside a building, add some eighth dimension scene nodes.
-  if (GfxBlockMgr::insides.notBlocked()) {
-    const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
-    for (unsigned int n = 0; n < list.size(); n++) {
-      const Obstacle *obs = list[n];
-      const int nodeCount = obs->getInsideSceneNodeCount();
-      SceneNode **nodeList = obs->getInsideSceneNodeList();
-      for (int o = 0; o < nodeCount; o++) {
-        scene->addDynamicNode(nodeList[o]);
-      }
+  const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
+  for (unsigned int n = 0; n < list.size(); n++) {
+    const Obstacle *obs = list[n];
+    const int nodeCount = obs->getInsideSceneNodeCount();
+    SceneNode **nodeList = obs->getInsideSceneNodeList();
+    for (int o = 0; o < nodeCount; o++) {
+      scene->addDynamicNode(nodeList[o]);
     }
   }
 }
@@ -6648,14 +6445,13 @@ static void handleMouseDrawing()
   static bool cursorIsHidden = false;
 
   const bool fakeCursor = BZDB.isTrue("fakecursor");
-  const bool gfxBlocked = GfxBlockMgr::cursor.blocked();
 
-  if (fakeCursor || gfxBlocked) {
+  if (fakeCursor) {
     if (!cursorIsHidden) {
       cursorIsHidden = true;
       mainWindow->getWindow()->hideMouse();
     }
-    if (fakeCursor && !gfxBlocked) {
+    if (fakeCursor) {
       drawFakeCursor();
     }
   }
@@ -6812,8 +6608,6 @@ void drawFrame(const float dt)
     }
   }
 
-  eventHandler.DrawGenesis();
-
   // let the hud save off the view matrix so it can do view projections
   if (hud) {
     hud->saveMatrixes(viewFrustum.getViewMatrix(),
@@ -6832,7 +6626,6 @@ void drawFrame(const float dt)
     case SceneRenderer::Interlaced: { drawInterlaced(); break; }
     default: { // normal rendering
       RENDERER.render();
-      eventHandler.DrawScreenStart();
       drawUI();
       break;
     }
@@ -6850,8 +6643,6 @@ void drawFrame(const float dt)
   }
 
   handleMouseDrawing();
-
-  eventHandler.DrawScreen();
 
   verticalSync();
 
@@ -7112,16 +6903,6 @@ void handlePendingJoins(void)
   // before we actually try to join.
   if (!joinRequested) {
     return;
-  }
-
-  if (LuaClientScripts::GetDevMode()) {
-    strcpy(startupInfo.callsign, "devmode");
-    if (strcmp(startupInfo.serverName, "127.0.0.1") != 0) {
-      addMessage(NULL,
-        "ABORTING!!!  -- you can only join '127.0.0.1' when using '-devmode'");
-      joinRequested = false;
-      return;
-    }
   }
 
   // if already connected to a game then first sign off
@@ -7637,23 +7418,14 @@ static void playingLoop()
 
     doUpdates(dt);
 
-    LuaClientScripts::LuaUserUpdate();
-    LuaClientScripts::LuaBzOrgUpdate();
-    LuaClientScripts::LuaWorldUpdate();
-
-    eventHandler.Update(); // FIXME ?
-
     // prep the HUD
     prepareTheHUD();
 
     // draw the frame
     if (!unmapped) {
       drawFrame(dt);
-      // NOTE: eventHandler.DrawGenesis() is called in drawFrame(),
-      //       after it has setup a number of parameters
     }
     else {
-      eventHandler.DrawGenesis(); // called every frame
       // wait around a little to avoid spinning the CPU when iconified
       TimeKeeper::sleep(0.05f);
     }
@@ -7929,12 +7701,6 @@ static void startupErrorCallback(const char *msg)
   glClear(GL_COLOR_BUFFER_BIT);
   controlPanel->render(RENDERER);
   mainWindow->getWindow()->swapBuffers();
-}
-
-
-static void BZDBGlobalCallback(const std::string& name, void* /*userData*/)
-{
-  eventHandler.BZDBChange(name);
 }
 
 
@@ -8287,13 +8053,6 @@ void startPlaying()
   std::string cacheDir = getCacheDirName();
   CACHEMGR.setCacheDirectory(cacheDir);
 
-  bzVFS.reset();
-  BZDB.addGlobalCallback(BZDBGlobalCallback, NULL);
-  OpenGLPassState::Init();
-  LuaClientScripts::Init();
-  LuaClientScripts::LuaUserLoadHandler();
-  LuaClientScripts::LuaBzOrgLoadHandler();
-
     //////////
    ////////////
   //////////////
@@ -8301,12 +8060,6 @@ void startPlaying()
   //////////////
    ////////////
     //////////
-
-  LuaClientScripts::LuaBzOrgFreeHandler();
-  LuaClientScripts::LuaUserFreeHandler();
-  LuaClientScripts::Free();
-  OpenGLPassState::Free();
-  BZDB.removeGlobalCallback(BZDBGlobalCallback, NULL);
 
   // clean up
   TankGeometryMgr::kill();

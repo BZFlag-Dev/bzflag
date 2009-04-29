@@ -17,9 +17,6 @@
 #include <ctype.h>
 #include <wctype.h>
 
-// common headers
-#include "EventHandler.h"
-
 // local implementation headers
 #include "bzUnicode.h"
 
@@ -29,9 +26,9 @@ LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;
 
 //============================================================================//
 
-static bool fallbackCommand(const char* cmd)
+static bool fallbackCommand(const char*)
 {
-  return eventHandler.CommandFallback(cmd);
+  return false; // do nothing
 }
 
 

@@ -127,9 +127,6 @@ if test x$enable_plugins != xno ; then
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
-AC_ARG_ENABLE(luaexecs, [  --enable-luaexecs         build the bzlua and bzluac executables])
-AM_CONDITIONAL(BUILD_LUA_EXECS, test "x$enable_luaexecs" = "xyes")
-
 # check whether threads are desired
 AC_ARG_ENABLE(threads, [  --disable-threads        build without threading])
 
@@ -1237,9 +1234,6 @@ if test "x$BUILD_FTGL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
 fi
 
-LIBLUA="\$(top_srcdir)/src/other/lua/liblua.la"
-AC_SUBST(LIBLUA)
-
 
 # GLEW
 if test "x$enable_client" != "xno" ; then
@@ -1368,7 +1362,6 @@ AC_CONFIG_FILES([
 	src/bzadmin/Makefile
 	src/bzflag/Makefile
 	src/bzfs/Makefile
-	src/bzfs/lua/Makefile
 	src/bzrobots/Makefile
 	src/common/Makefile
 	src/date/Makefile
@@ -1376,14 +1369,12 @@ AC_CONFIG_FILES([
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/tank/Makefile
-	src/lua/Makefile
 	src/mediafile/Makefile
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
 	src/other/Makefile
 	src/other/freetype/Makefile
-	src/other/lua/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
@@ -1491,12 +1482,6 @@ else
     fi
 fi
 
-if test "x$enable_luaexecs" = "xyes"; then
-    build_luaexecs="yes"
-else
-    build_luaexecs="no"
-fi
-
 
 dnl
 dnl Expand the variables for summary reporting
@@ -1554,7 +1539,6 @@ AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
 AC_MSG_RESULT([BZAdmin client ....: $build_bzadmin])
 AC_MSG_RESULT([BZRobots client ...: $build_bzrobots])
-AC_MSG_RESULT([bzlua & bzluac ....: $build_luaexecs])
 AC_MSG_RESULT([])
 if test "x$time_elapsed" != "xunknown" ; then
 AC_MSG_RESULT([Elapsed configuration time: $time_elapsed])

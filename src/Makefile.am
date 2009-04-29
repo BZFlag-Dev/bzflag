@@ -37,8 +37,7 @@ gui_dirs = \
 	3D \
 	geometry \
 	scene \
-	platform \
-	lua
+	platform
 
 if CLIENT_INCLUDED
 CLIENT_DIRS = $(gui_dirs)

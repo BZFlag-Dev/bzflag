@@ -20,7 +20,6 @@ noinst_HEADERS =			\
 	BundleMgr.h			\
 	BSPSceneDatabase.h		\
 	BZDBCache.h			\
-	BzDocket.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\
 	BzfJoystick.h			\
@@ -28,7 +27,6 @@ noinst_HEADERS =			\
 	BzfVisual.h			\
 	BzfWindow.h			\
 	BzMaterial.h			\
-	BzVFS.h				\
 	CacheManager.h			\
 	CallbackList.h			\
 	CollisionManager.h		\
@@ -46,9 +44,6 @@ noinst_HEADERS =			\
 	EighthDimShellNode.h		\
 	EmptySceneNodeGenerator.h	\
 	ErrorHandler.h			\
-	EventClient.h			\
-	EventClientList.h		\
-	EventHandler.h			\
 	Extents.h			\
 	Factory.h			\
 	FileManager.h			\
@@ -68,7 +63,6 @@ noinst_HEADERS =			\
 	LinkManager.h			\
 	LinkPhysics.h			\
 	ListServer.h			\
-	LuaClientScripts.h		\
 	MapInfo.h			\
 	MathUtils.h			\
 	MediaFile.h			\
@@ -94,7 +88,6 @@ noinst_HEADERS =			\
 	OpenGLGState.h			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\
-	OpenGLPassState.h		\
 	OpenGLTexture.h			\
 	OpenGLUtils.h			\
 	OSFile.h			\

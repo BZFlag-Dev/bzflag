@@ -21,7 +21,6 @@
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
 #include "TimeKeeper.h"
-#include "EventHandler.h"
 #include "LinkManager.h"
 
 // local implementation headers
@@ -918,8 +917,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   glPopMatrix(); // depth = 0
-
-  eventHandler.DrawRadar();
 
   if (dimming > 0.0f) {
     glPushMatrix(); // depth = 1

@@ -24,8 +24,6 @@
 #include "BaseBuilding.h"
 #include "MeshObstacle.h"
 #include "MeshFace.h"
-#include "BzDocket.h"
-#include "BzVFS.h"
 
 /* compression library header */
 #include "zlib.h"
@@ -139,12 +137,6 @@ void* WorldBuilder::unpack(void* buf)
     buf = zone.unpack(buf);
     world->entryZones.push_back(zone);
   }
-
-  // unpack the LuaWorld docket
-  BzDocket* docket = new BzDocket("LuaWorld");
-  buf = docket->unpack(buf);
-  bzVFS.removeFS(BZVFS_LUA_WORLD);
-  bzVFS.addFS(BZVFS_LUA_WORLD, docket);
 
   // check if the unpacking was successful
   nboUseErrorChecking(false);
@@ -261,12 +253,11 @@ void WorldBuilder::preGetWorld()
 
   // prepare flags array
   world->freeFlags();
-  world->flags = new ClientFlag[world->maxFlags];
+  world->flags = new Flag[world->maxFlags];
   world->flagNodes = new FlagSceneNode*[world->maxFlags];
   world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];
   for (i = 0; i < world->maxFlags; i++) {
     world->flags[i].id = i;
-    world->flags[i].gfxBlock.init(GfxBlock::Flag, i, true);
     world->flags[i].type = Flags::Null;
     world->flags[i].status = FlagNoExist;
     world->flags[i].position.x = 0.0f;
