@@ -58,7 +58,7 @@ static inline void addFace(MeshObstacle* mesh,
   // use the mesh defaults for smoothBounce, driveThrough, and shootThough
   const BzMaterial* matref = MATERIALMGR.addMaterial(material);
   mesh->addFace(verticesList, normalsList, texcoordsList, matref, phydrv,
-		false, false, 0, 0, false, false);
+		false, false, 0, 0, false, false, NULL);
   verticesList.clear();
   normalsList.clear();
   texcoordsList.clear();

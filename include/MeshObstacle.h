@@ -47,7 +47,7 @@ class MeshObstacle : public Obstacle {
                  const BzMaterial* bzMaterial, int physics,
                  bool noclusters, bool bounce,
                  unsigned char drive, unsigned char shoot, bool ricochet,
-                 bool triangulate, const MeshFace::SpecialData* sd = NULL);
+                 bool triangulate, const MeshFace::SpecialData* sd);
 
     ~MeshObstacle();
 

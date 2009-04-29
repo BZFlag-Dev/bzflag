@@ -199,7 +199,7 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
       it.push_back(fs[0]); it.push_back(fs[1]); it.push_back(fs[2]);
     }
     mesh->addFace(iv, in, it, mats[f], -1, false, false,
-                  driveThrough, shootThrough, ricochet,  false);
+                  driveThrough, shootThrough, ricochet, false, NULL);
   }
 
   // to be or not to be...

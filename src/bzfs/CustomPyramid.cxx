@@ -394,35 +394,40 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   iv.push_back(1); iv.push_back(2); iv.push_back(4);
   it.push_back(0); it.push_back(1); it.push_back(2);
   mesh->addFace(iv, in, it, mats[XP], phyDrvs[XP], false, false,
-		driveThroughs[XP], shootThroughs[XP], ricochets[XP], false);
+		driveThroughs[XP], shootThroughs[XP], ricochets[XP],
+		false, NULL);
 
   // XN
   iv.clear(); it.clear();
   iv.push_back(3); iv.push_back(0); iv.push_back(4);
   it.push_back(3); it.push_back(4); it.push_back(5);
   mesh->addFace(iv, in, it, mats[XN], phyDrvs[XN], false, false,
-		driveThroughs[XN], shootThroughs[XN], ricochets[XN], false);
+		driveThroughs[XN], shootThroughs[XN], ricochets[XN],
+		false, NULL);
 
   // YP
   iv.clear(); it.clear();
   iv.push_back(2); iv.push_back(3); iv.push_back(4);
   it.push_back(6); it.push_back(7); it.push_back(8);
   mesh->addFace(iv, in, it, mats[YP], phyDrvs[YP], false, false,
-		driveThroughs[YP], shootThroughs[YP], ricochets[YP], false);
+		driveThroughs[YP], shootThroughs[YP], ricochets[YP],
+		false, NULL);
 
   // YN
   iv.clear(); it.clear();
   iv.push_back(0); iv.push_back(1); iv.push_back(4);
   it.push_back(9); it.push_back(10); it.push_back(11);
   mesh->addFace(iv, in, it, mats[YN], phyDrvs[YN], false, false,
-		driveThroughs[YN], shootThroughs[YN], ricochets[YN], false);
+		driveThroughs[YN], shootThroughs[YN], ricochets[YN],
+		false, NULL);
 
   // ZN
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(0); iv.push_back(3); iv.push_back(2);
   it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
   mesh->addFace(iv, in, it, mats[ZN], phyDrvs[ZN], false, false,
-		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN], false);
+		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
+		false, NULL);
 
   mesh->setName(name.c_str());
 

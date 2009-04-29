@@ -138,7 +138,7 @@ class MeshFace : public Obstacle {
              const BzMaterial* material, int physics,
              bool noclusters, bool smoothBounce,
              unsigned char drive, unsigned char shoot, bool ricochet,
-             const SpecialData* special = NULL);
+             const SpecialData* special);
     ~MeshFace();
 
     void setSpecialData(const SpecialData* data);
