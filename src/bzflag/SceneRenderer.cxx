@@ -1440,20 +1440,6 @@ static void dstSTPLine(const fvec3& center, const fvec3& dir, float scale)
 }
 
 
-struct TwoFace {
-  TwoFace(const MeshFace* s, const MeshFace* d) : src(s), dst(d) {}
-  const MeshFace* src;
-  const MeshFace* dst;
-  bool operator<(const TwoFace& tf) const {
-    if (src < tf.src) { return true;  }
-    if (tf.src < src) { return false; }
-    if (dst < tf.dst) { return true;  }
-    if (tf.dst < dst) { return false; }
-    return false;
-  }
-};
-
-
 void SceneRenderer::drawLinkDebug() const
 {
   static BZDB_string bzdbStr("debugLinkDraw");
@@ -1488,85 +1474,84 @@ void SceneRenderer::drawLinkDebug() const
   glEnable(GL_BLEND);
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_POINT_SMOOTH);
-
   glPointSize(4.0f);
   glLineWidth(2.0f);
 
-  if (drawSrc || drawDst) {
-    const LinkManager::FaceSet& faces = linkManager.getLinkFaceSet();
-    LinkManager::FaceSet::const_iterator it;
-    for (it = faces.begin(); it != faces.end(); ++it) {
-      const MeshFace* face = *it;
+  if (drawSrc) {
+    const LinkManager::FaceSet& linkSrcs = linkManager.getLinkSrcSet();
+    LinkManager::FaceSet::const_iterator srcIt;
+    for (srcIt = linkSrcs.begin(); srcIt != linkSrcs.end(); ++srcIt) {
+      const MeshFace* face = *srcIt;
       const MeshFace::SpecialData* sd = face->getSpecialData();
-
+      const MeshFace::LinkGeometry& geo = sd->linkSrcGeo;
       const fvec3& normal = face->getPlane().xyz();
+      glBegin(GL_LINES);
+      glColor4fv(nrmlColor); srcSTPLine(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); srcSTPLine(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); srcSTPLine(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); srcSTPLine(geo.center, geo.pDir, geo.pScale);
+      glEnd();
+      glBegin(GL_POINTS);
+      glColor4fv(nrmlColor); srcSTPPoint(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); srcSTPPoint(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); srcSTPPoint(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); srcSTPPoint(geo.center, geo.pDir, geo.pScale);
+      glColor4fv(colors[0]); glVertex3fv(geo.center);
+      glEnd();
+    }
+  }
 
-      if (drawSrc && face->isLinkSrc()) {
-        const MeshFace::LinkGeometry& geo = sd->linkSrcGeo;
-        glBegin(GL_LINES);
-        glColor4fv(nrmlColor); srcSTPLine(geo.center, normal,   1.0f);
-        glColor4fv(colors[0]); srcSTPLine(geo.center, geo.sDir, geo.sScale);
-        glColor4fv(colors[1]); srcSTPLine(geo.center, geo.tDir, geo.tScale);
-        glColor4fv(colors[2]); srcSTPLine(geo.center, geo.pDir, geo.pScale);
-        glEnd();
-        glBegin(GL_POINTS);
-        glColor4fv(nrmlColor); srcSTPPoint(geo.center, normal,   1.0f);
-        glColor4fv(colors[0]); srcSTPPoint(geo.center, geo.sDir, geo.sScale);
-        glColor4fv(colors[1]); srcSTPPoint(geo.center, geo.tDir, geo.tScale);
-        glColor4fv(colors[2]); srcSTPPoint(geo.center, geo.pDir, geo.pScale);
-        glColor4fv(colors[0]); glVertex3fv(geo.center);
-        glEnd();
-      }
-      if (drawDst && face->isLinkDst()) {
-        const MeshFace::LinkGeometry& geo = sd->linkDstGeo;
-        glBegin(GL_LINES);
-        glColor4fv(nrmlColor); dstSTPLine(geo.center, normal,   1.0f);
-        glColor4fv(colors[0]); dstSTPLine(geo.center, geo.sDir, geo.sScale);
-        glColor4fv(colors[1]); dstSTPLine(geo.center, geo.tDir, geo.tScale);
-        glColor4fv(colors[2]); dstSTPLine(geo.center, geo.pDir, geo.pScale);
-        glEnd();
-        glBegin(GL_POINTS);
-        glColor4fv(nrmlColor); dstSTPPoint(geo.center, normal,   1.0f);
-        glColor4fv(colors[0]); dstSTPPoint(geo.center, geo.sDir, geo.sScale);
-        glColor4fv(colors[1]); dstSTPPoint(geo.center, geo.tDir, geo.tScale);
-        glColor4fv(colors[2]); dstSTPPoint(geo.center, geo.pDir, geo.pScale);
-        glColor4fv(colors[0]); glVertex3fv(geo.center);
-        glEnd();
-      }
+  if (drawDst) {
+    const LinkManager::FaceSet& linkDsts = linkManager.getLinkSrcSet();
+    LinkManager::FaceSet::const_iterator dstIt;
+    for (dstIt = linkDsts.begin(); dstIt != linkDsts.end(); ++dstIt) {
+      const MeshFace* face = *dstIt;
+      const MeshFace::SpecialData* sd = face->getSpecialData();
+      const MeshFace::LinkGeometry& geo = sd->linkDstGeo;
+      const fvec3& normal = face->getPlane().xyz();
+      glBegin(GL_LINES);
+      glColor4fv(nrmlColor); dstSTPLine(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); dstSTPLine(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); dstSTPLine(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); dstSTPLine(geo.center, geo.pDir, geo.pScale);
+      glEnd();
+      glBegin(GL_POINTS);
+      glColor4fv(nrmlColor); dstSTPPoint(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); dstSTPPoint(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); dstSTPPoint(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); dstSTPPoint(geo.center, geo.pDir, geo.pScale);
+      glColor4fv(colors[0]); glVertex3fv(geo.center);
+      glEnd();
     }
   }
 
   if (drawCon) {
     glBegin(GL_LINES);
-    std::set<TwoFace> doneFaces;
     const LinkManager::LinkMap& linkMap = linkManager.getLinkMap();
-    LinkManager::LinkMap::const_iterator mit;
-    for (mit = linkMap.begin(); mit != linkMap.end(); ++mit) {
-      const MeshFace* src = mit->first;
-      const LinkManager::IntVec& dstIDs = mit->second.dstIDs;
+    LinkManager::LinkMap::const_iterator mapIt;
+    for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
+      const MeshFace* src = mapIt->first;
+      std::set<const MeshFace*> doneFaces;
+      const LinkManager::IntVec& dstIDs = mapIt->second.dstIDs;
       for (size_t d = 0; d < dstIDs.size(); d++) {
         const MeshFace* dst = linkManager.getLinkDstFace(dstIDs[d]);
-        if (dst) {
-          TwoFace twoFace(src, dst);
-          if (doneFaces.find(twoFace) == doneFaces.end()) {
-            doneFaces.insert(twoFace);
-            glColor4fv(colors[0]); glVertex3fv(src->calcCenter());
-            glColor4fv(colors[1]); glVertex3fv(dst->calcCenter());
-          }
+        if (doneFaces.find(dst) == doneFaces.end()) {
+          doneFaces.insert(dst);
+          glColor4fv(colors[0]); glVertex3fv(src->calcCenter());
+          glColor4fv(colors[1]); glVertex3fv(dst->calcCenter());
         }
       }
     }
     glEnd();
   }
 
+  glPointSize(1.0f);
+  glLineWidth(1.0f);
   glDisable(GL_POINT_SMOOTH);
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glShadeModel(GL_FLAT);
-
-  glPointSize(1.0f);
-  glLineWidth(1.0f);
 }
 
 
