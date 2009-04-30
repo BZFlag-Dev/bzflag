@@ -1525,6 +1525,8 @@ void SceneRenderer::drawLinkDebug() const
     }
   }
 
+  glPointSize(10.0f);
+
   if (drawCon) {
     glBegin(GL_LINES);
     const LinkManager::LinkMap& linkMap = linkManager.getLinkMap();
@@ -1539,6 +1541,14 @@ void SceneRenderer::drawLinkDebug() const
           doneFaces.insert(dst);
           glColor4fv(colors[0]); glVertex3fv(src->calcCenter());
           glColor4fv(colors[1]); glVertex3fv(dst->calcCenter());
+          if (src == dst) {
+            glEnd();
+            glBegin(GL_POINTS);
+            const fvec4 yellow(1.0f, 1.0f, 0.0f, alpha);
+            glColor4fv(yellow); glVertex3fv(src->calcCenter());
+            glEnd();
+            glBegin(GL_LINES);
+          }
         }
       }
     }
