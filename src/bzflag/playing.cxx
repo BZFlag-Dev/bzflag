@@ -1960,7 +1960,7 @@ static void handleJoinServer(void *msg)
   nameAndIp.push_back(addr);
 //FIXME  nameAndIp.push_back(serverAddress.getDotNotation());
   if (!autoJoinAccessList.authorized(nameAndIp)) {
-    HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
+    HUDDialogStack::get()->setFailedMessage("Auto Join Denied Locally");
     std::string warn = ColorStrings[WhiteColor];
     warn += "NOTE: ";
     warn += ColorStrings[GreyColor];

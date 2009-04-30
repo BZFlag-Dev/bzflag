@@ -19,7 +19,7 @@
 // interface header
 #include "SceneRenderer.h"
 
-/* common implementation headers */
+// common headers
 #include "SceneDatabase.h"
 #include "MainWindow.h"
 #include "DynamicColor.h"
@@ -31,8 +31,10 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 #include "FlagSceneNode.h"
+#include "LinkManager.h"
+#include "MeshFace.h"
 
-/* FIXME - local implementation dependancies */
+// local headers -- FIXME, local dependencies for a global interface
 #include "BackgroundRenderer.h"
 #include "DynamicWorldText.h"
 #include "LocalPlayer.h"
@@ -1037,6 +1039,7 @@ void SceneRenderer::doRender()
   // off depth buffer updates for potentially transparent stuff.
   glDepthMask(GL_FALSE);
   orderedList.render();
+  drawLinkDebug();
   glDepthMask(GL_TRUE);
 
   // render the obstacle tank tracks
@@ -1400,6 +1403,174 @@ void SceneRenderer::setupShadowPlanes()
     shadowPlaneCount++;
   }
 }
+
+
+//============================================================================//
+//
+//  drawLinkDebug(), and friends
+//
+
+static void srcSTPPoint(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : (1.0f / scale);
+  glVertex3fv(center + (scale * dir));
+}
+
+
+static void srcSTPLine(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : (1.0f / scale);
+  glVertex3fv(center);
+  glVertex3fv(center + (scale * dir));
+}
+
+
+static void dstSTPPoint(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : scale;
+  glVertex3fv(center + (scale * dir));
+}
+
+
+static void dstSTPLine(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : scale;
+  glVertex3fv(center);
+  glVertex3fv(center + (scale * dir));
+}
+
+
+struct TwoFace {
+  TwoFace(const MeshFace* s, const MeshFace* d) : src(s), dst(d) {}
+  const MeshFace* src;
+  const MeshFace* dst;
+  bool operator<(const TwoFace& tf) const {
+    if (src < tf.src) { return true;  }
+    if (tf.src < src) { return false; }
+    if (dst < tf.dst) { return true;  }
+    if (tf.dst < dst) { return false; }
+    return false;
+  }
+};
+
+
+void SceneRenderer::drawLinkDebug() const
+{
+  static BZDB_string bzdbStr("debugLinkDraw");
+  const std::string str = bzdbStr;
+  if (str.empty() || (str == "0")) {
+    return;
+  }
+  if (BZDB.isTrue("_forbidDebug")) {
+    return;
+  }
+
+  const std::string::size_type npos = std::string::npos;
+  const bool drawSrc = (str.find('s') != npos) || (str == "1");
+  const bool drawDst = (str.find('d') != npos) || (str == "1");
+  const bool drawCon = (str.find('c') != npos) || (str == "1");
+  if (!drawSrc && !drawDst && !drawCon) {
+    return;
+  }
+
+  const float alpha = 0.3f;
+  const fvec4 colors[3] = {
+    fvec4(0.8f, 0.0f, 0.0f, alpha), // red
+    fvec4(0.0f, 0.6f, 0.0f, alpha), // green
+    fvec4(0.0f, 0.0f, 1.0f, alpha)  // blue
+  };
+  const fvec4 nrmlColor(0.5f, 0.5f, 0.5f, alpha);
+
+  OpenGLGState::resetState();
+
+  glShadeModel(GL_SMOOTH);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+  glEnable(GL_BLEND);
+  glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_POINT_SMOOTH);
+
+  glPointSize(4.0f);
+  glLineWidth(2.0f);
+
+  if (drawSrc || drawDst) {
+    const LinkManager::FaceSet& faces = linkManager.getLinkFaceSet();
+    LinkManager::FaceSet::const_iterator it;
+    for (it = faces.begin(); it != faces.end(); ++it) {
+      const MeshFace* face = *it;
+      const MeshFace::SpecialData* sd = face->getSpecialData();
+
+      const fvec3& normal = face->getPlane().xyz();
+
+      if (drawSrc && face->isLinkSrc()) {
+        const MeshFace::LinkGeometry& geo = sd->linkSrcGeo;
+        glBegin(GL_LINES);
+        glColor4fv(nrmlColor); srcSTPLine(geo.center, normal,   1.0f);
+        glColor4fv(colors[0]); srcSTPLine(geo.center, geo.sDir, geo.sScale);
+        glColor4fv(colors[1]); srcSTPLine(geo.center, geo.tDir, geo.tScale);
+        glColor4fv(colors[2]); srcSTPLine(geo.center, geo.pDir, geo.pScale);
+        glEnd();
+        glBegin(GL_POINTS);
+        glColor4fv(nrmlColor); srcSTPPoint(geo.center, normal,   1.0f);
+        glColor4fv(colors[0]); srcSTPPoint(geo.center, geo.sDir, geo.sScale);
+        glColor4fv(colors[1]); srcSTPPoint(geo.center, geo.tDir, geo.tScale);
+        glColor4fv(colors[2]); srcSTPPoint(geo.center, geo.pDir, geo.pScale);
+        glColor4fv(colors[0]); glVertex3fv(geo.center);
+        glEnd();
+      }
+      if (drawDst && face->isLinkDst()) {
+        const MeshFace::LinkGeometry& geo = sd->linkDstGeo;
+        glBegin(GL_LINES);
+        glColor4fv(nrmlColor); dstSTPLine(geo.center, normal,   1.0f);
+        glColor4fv(colors[0]); dstSTPLine(geo.center, geo.sDir, geo.sScale);
+        glColor4fv(colors[1]); dstSTPLine(geo.center, geo.tDir, geo.tScale);
+        glColor4fv(colors[2]); dstSTPLine(geo.center, geo.pDir, geo.pScale);
+        glEnd();
+        glBegin(GL_POINTS);
+        glColor4fv(nrmlColor); dstSTPPoint(geo.center, normal,   1.0f);
+        glColor4fv(colors[0]); dstSTPPoint(geo.center, geo.sDir, geo.sScale);
+        glColor4fv(colors[1]); dstSTPPoint(geo.center, geo.tDir, geo.tScale);
+        glColor4fv(colors[2]); dstSTPPoint(geo.center, geo.pDir, geo.pScale);
+        glColor4fv(colors[0]); glVertex3fv(geo.center);
+        glEnd();
+      }
+    }
+  }
+
+  if (drawCon) {
+    glBegin(GL_LINES);
+    std::set<TwoFace> doneFaces;
+    const LinkManager::LinkMap& linkMap = linkManager.getLinkMap();
+    LinkManager::LinkMap::const_iterator mit;
+    for (mit = linkMap.begin(); mit != linkMap.end(); ++mit) {
+      const MeshFace* src = mit->first;
+      const LinkManager::IntVec& dstIDs = mit->second.dstIDs;
+      for (size_t d = 0; d < dstIDs.size(); d++) {
+        const MeshFace* dst = linkManager.getLinkDstFace(dstIDs[d]);
+        if (dst) {
+          TwoFace twoFace(src, dst);
+          if (doneFaces.find(twoFace) == doneFaces.end()) {
+            doneFaces.insert(twoFace);
+            glColor4fv(colors[0]); glVertex3fv(src->calcCenter());
+            glColor4fv(colors[1]); glVertex3fv(dst->calcCenter());
+          }
+        }
+      }
+    }
+    glEnd();
+  }
+
+  glDisable(GL_POINT_SMOOTH);
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glShadeModel(GL_FLAT);
+
+  glPointSize(1.0f);
+  glLineWidth(1.0f);
+}
+
+
+//============================================================================//
 
 
 // Local Variables: ***

@@ -187,6 +187,8 @@ private:
 
   void		setupShadowPlanes();
 
+  void		drawLinkDebug() const;
+
 private:
   MainWindow*		window;
   SpecialMode		specialMode;

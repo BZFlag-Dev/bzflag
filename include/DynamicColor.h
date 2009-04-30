@@ -115,8 +115,10 @@ class DynamicColorManager {
   public:
     DynamicColorManager();
     ~DynamicColorManager();
+
     void update();
     void clear();
+
     int addColor(DynamicColor* dyncolor);
     int findColor(const std::string& name) const;
     const DynamicColor* getColor(int id) const;
