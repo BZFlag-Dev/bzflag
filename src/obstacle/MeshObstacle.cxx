@@ -772,17 +772,11 @@ void *MeshObstacle::unpack(void *buf)
   if (drawInfoOwner) {
     drawInfo = new MeshDrawInfo();
     buf = drawInfo->unpack(buf);
-    if (!BZDB.isTrue("useDrawInfo")) {
+    // setup the drawInfo arrays
+    drawInfo->clientSetup(this);
+    if (!drawInfo->isValid()) { 
       delete drawInfo;
       drawInfo = NULL;
-    }
-    else {
-      // setup the drawInfo arrays
-      drawInfo->clientSetup(this);
-      if (!drawInfo->isValid()) { 
-        delete drawInfo;
-        drawInfo = NULL;
-      }
     }
   }
 

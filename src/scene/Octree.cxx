@@ -568,7 +568,7 @@ void OctreeNode::getFrustumList() const
         GET_FULL_NODE(dirbits);				// 7:  1,1,1
       }
     }
-    else { // F2BSORT
+    else { // !F2BSORT
       if (occLevel == Outside) {
 	for (int i = 0; i < childCount; i++) {
 	  squeezed[i]->getFrustumList();

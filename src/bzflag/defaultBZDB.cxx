@@ -125,12 +125,10 @@ DefaultDBItem	defaultDBItems[] = {
 
   // hidden graphics rendering params
   { "f2bsort",			"1",			true,  DefPerm, NULL },
-  { "flagLists",		"0",			true,  DefPerm, NULL },
   { "lightLists",		"0",			true,  DefPerm, NULL },
   { "meshLists",		"1",			true,  DefPerm, NULL },
   { "multisamples",		"0",			true,  DefPerm, NULL },
   { "noMeshClusters",		"0",			true,  DefPerm, NULL },
-  { "useDrawInfo",		"1",			true,  DefPerm, NULL },
 
   // default texture names
   { "stdGroundTexture",		"std_ground",		true,  DefPerm, NULL },
