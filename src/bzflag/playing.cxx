@@ -1056,6 +1056,48 @@ static void doMotion()
 }
 
 
+static void clampMouse(const BzfMotionEvent& event)
+{
+  // only clamp when it might be useful
+  if ((myTank == NULL) || !myTank->isAlive() ||
+      myTank->isPaused() || (myTank->getTeam() == ObserverTeam)) {
+    return;
+  }
+
+  // do not clamp if CTRL is being held down
+  bool alt, ctrl, shift;
+  display->getModState(alt, ctrl, shift);
+  if (ctrl) {
+    return;
+  }
+
+  // calculate the max motion size in pixels
+  const int clampFudge = 2;
+  const int w  = mainWindow->getWidth();
+  const int vh = mainWindow->getViewHeight();
+  const float xScale = (float)w  / (float) MinX;
+  const float yScale = (float)vh / (float) MinY;
+  const float scale = (xScale < yScale) ? xScale : yScale;
+  const float effScale =  scale * (0.7f + RENDERER.getMaxMotionFactor() / 16.667f);
+  const int maxMotionSize = (int)((float)MaxMotionSize * effScale);
+  const int pixels = maxMotionSize + clampFudge;
+
+  // calculate the clamp extents
+  const int xc = (w / 2);
+  const int xn = xc - pixels;
+  const int xp = xc + pixels;
+  const int yc = (vh / 2);
+  const int yn = yc - pixels;
+  const int yp = yc + pixels;
+
+  // clamp, as required
+  if (event.x < xn) { mainWindow->getWindow()->warpMouse(xn, event.y); }
+  if (event.x > xp) { mainWindow->getWindow()->warpMouse(xp, event.y); }
+  if (event.y < yn) { mainWindow->getWindow()->warpMouse(event.x, yn); }
+  if (event.y > yp) { mainWindow->getWindow()->warpMouse(event.x, yp); }
+}
+
+
 static void doEvent(BzfDisplay *disply)
 {
   BzfEvent event;
@@ -1167,6 +1209,10 @@ static void doEvent(BzfDisplay *disply)
           (myTank->getInputMethod() != LocalPlayer::Mouse) &&
           (BZDB.isTrue("allowInputChange"))) {
         myTank->setInputMethod(LocalPlayer::Mouse);
+      }
+      static BZDB_bool bzdbClampMouse("clampMouse");
+      if (bzdbClampMouse) {
+        clampMouse(event.mouseMove);
       }
       break;
     }
