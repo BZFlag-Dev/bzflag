@@ -1056,7 +1056,7 @@ static void doMotion()
 }
 
 
-static void clampMouse(const BzfMotionEvent& event)
+static void mouseClamp(const BzfMotionEvent& event)
 {
   // only clamp when it might be useful
   if ((myTank == NULL) || !myTank->isAlive() ||
@@ -1210,9 +1210,9 @@ static void doEvent(BzfDisplay *disply)
           (BZDB.isTrue("allowInputChange"))) {
         myTank->setInputMethod(LocalPlayer::Mouse);
       }
-      static BZDB_bool bzdbClampMouse("clampMouse");
-      if (bzdbClampMouse) {
-        clampMouse(event.mouseMove);
+      static BZDB_bool bzdbMouseClamp("mouseClamp");
+      if (bzdbMouseClamp) {
+        mouseClamp(event.mouseMove);
       }
       break;
     }
