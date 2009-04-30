@@ -6452,7 +6452,7 @@ static void addDynamicSceneNodes()
 
 //============================================================================//
 
-static void drawFakeCursor()
+static void drawFakeCursor(int type)
 {
   int mx, my;
   const int width = mainWindow->getWidth();
@@ -6460,7 +6460,7 @@ static void drawFakeCursor()
   const int ox = mainWindow->getOriginX();
   const int oy = mainWindow->getOriginY();
   mainWindow->getWindow()->getMouse(mx, my);
-  my = height - my - 1;
+  my = height - my - 1; // flip the y axis
 
   glScissor(ox, oy, width, height);
   glMatrixMode(GL_PROJECTION);
@@ -6470,17 +6470,62 @@ static void drawFakeCursor()
   glPushMatrix();
   glLoadIdentity();
 
-  glColor3f(0.0f, 0.0f, 0.0f);
-  glRecti(mx - 8, my - 2, mx - 2, my + 2);
-  glRecti(mx + 2, my - 2, mx + 8, my + 2);
-  glRecti(mx - 2, my - 8, mx + 2, my - 2);
-  glRecti(mx - 2, my + 2, mx + 2, my + 8);
+  if (type <= 1) {
+    // old style
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRecti(mx - 8, my - 2, mx - 2, my + 2);
+    glRecti(mx + 2, my - 2, mx + 8, my + 2);
+    glRecti(mx - 2, my - 8, mx + 2, my - 2);
+    glRecti(mx - 2, my + 2, mx + 2, my + 8);
 
-  glColor3f(1.0f, 1.0f, 1.0f);
-  glRecti(mx - 7, my - 1, mx - 3, my + 1);
-  glRecti(mx + 3, my - 1, mx + 7, my + 1);
-  glRecti(mx - 1, my - 7, mx + 1, my - 3);
-  glRecti(mx - 1, my + 3, mx + 1, my + 7);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRecti(mx - 7, my - 1, mx - 3, my + 1);
+    glRecti(mx + 3, my - 1, mx + 7, my + 1);
+    glRecti(mx - 1, my - 7, mx + 1, my - 3);
+    glRecti(mx - 1, my + 3, mx + 1, my + 7);
+  }
+  else {
+    // new style
+    const int xc = ox + (width / 2);
+    const int y2 = oy + (mainWindow->getViewHeight() / 2);
+    const int yc = (height - y2 - 1); // flip the y axis
+
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glShadeModel(GL_SMOOTH);
+
+    if (myTank) {
+      const TeamColor myTeam = myTank->getTeam();
+      if (myTeam != ObserverTeam) {
+        // draw the drag bar
+        const fvec4  fadeWhite(1.0f, 1.0f, 1.0f, 0.2f);
+        const fvec4& teamColor = Team::getRadarColor(myTeam);
+        glLineWidth(1.49f);
+        glBegin(GL_LINES);
+        glColor4fv(fadeWhite); glVertex2i(xc, yc);
+        glColor4fv(teamColor); glVertex2i(mx, my);
+        glEnd();
+        glLineWidth(1.0f);
+      }
+    }
+
+    glPointSize(6.0f);
+    glBegin(GL_POINTS);
+    glColor3f(1.0f, 1.0f, 1.0f); glVertex2i(mx, my);
+    glEnd();
+
+    glPointSize(3.0f);
+    glBegin(GL_POINTS);
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2i(mx, my);
+    glEnd();
+    glPointSize(1.0f);
+
+    glShadeModel(GL_FLAT);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
+  }
 
   glPopMatrix();
 }
@@ -6489,8 +6534,7 @@ static void drawFakeCursor()
 static void handleMouseDrawing()
 {
   static bool cursorIsHidden = false;
-
-  const bool fakeCursor = BZDB.isTrue("fakecursor");
+  static BZDB_int fakeCursor("fakecursor");
 
   if (fakeCursor) {
     if (!cursorIsHidden) {
@@ -6498,7 +6542,7 @@ static void handleMouseDrawing()
       mainWindow->getWindow()->hideMouse();
     }
     if (fakeCursor) {
-      drawFakeCursor();
+      drawFakeCursor(fakeCursor);
     }
   }
   else {
