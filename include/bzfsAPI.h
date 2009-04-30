@@ -2090,4 +2090,4 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// ex: shiftwidth
+// ex: shiftwidth=2 tabstop=8
