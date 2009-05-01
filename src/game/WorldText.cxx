@@ -190,7 +190,7 @@ void WorldText::print(std::ostream& out, const std::string& indent) const
     out << indent << "  data " << data << std::endl;
   }
   if (useBZDB) {
-    out << indent << "  bzdb" << std::endl;
+    out << indent << "  variable" << std::endl;
   }
   if (font.size() > 0) {
     out << indent << "  font " << font << std::endl;

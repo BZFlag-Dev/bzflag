@@ -88,8 +88,8 @@ class MeshFace : public Obstacle {
       float sScale;
       float tScale;
       float pScale;
-      float angle; // calculated
-      uint8_t bits;
+      float angle;   // calculated
+      uint8_t bits; // uses LinkGeoBits enum
     };
 
     struct SpecialData {
@@ -98,7 +98,7 @@ class MeshFace : public Obstacle {
       , baseTeam(-1)
       {}
 
-      uint16_t stateBits; // using SpecialBits enum
+      uint16_t stateBits; // uses SpecialBits enum
 
       int baseTeam;
 

@@ -101,7 +101,7 @@ void CustomTextureMatrix::writeToManager() const
 {
   texmat->setName(name);
   if ((name.size() > 0) && (TEXMATRIXMGR.findMatrix(name) >= 0)) {
-    std::cout << "warning: duplicate texture matrix"
+    std::cout << "WARNING: duplicate texture matrix"
 	      << " (" << name << ")" << std::endl;
   }
   texmat->finalize();

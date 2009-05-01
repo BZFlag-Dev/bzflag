@@ -96,7 +96,7 @@ void CustomPhysicsDriver::writeToManager() const
 {
   driver->setName(name);
   if ((name.size() > 0) && (PHYDRVMGR.findDriver(name) >= 0)) {
-    std::cout << "warning: duplicate physics driver"
+    std::cout << "WARNING: duplicate physics driver"
 	      << " (" << name << ")" << std::endl;
   }
   driver->finalize();

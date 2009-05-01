@@ -53,8 +53,8 @@ LinkPhysics::LinkPhysics()
 , tankMaxAngle(0.0f)
 , shotBlockTeams(0)
 , tankBlockTeams(0)
-, shotBlockBZDB("")
-, tankBlockBZDB("")
+, shotBlockVar("")
+, tankBlockVar("")
 {
   // do nothing
 }
@@ -88,8 +88,8 @@ void LinkPhysics::finalize()
   if (tankBlockTeams != 0)     { testBits |= TankTeamTest; }
   if (!shotBlockFlags.empty()) { testBits |= ShotFlagTest; }
   if (!tankBlockFlags.empty()) { testBits |= TankFlagTest; }
-  if (!shotBlockBZDB.empty())  { testBits |= ShotBZDBTest; }
-  if (!tankBlockBZDB.empty())  { testBits |= TankBZDBTest; }
+  if (!shotBlockVar.empty())   { testBits |= ShotVarTest; }
+  if (!tankBlockVar.empty())   { testBits |= TankVarTest; }
 }
 
 
@@ -123,8 +123,8 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
   if (tankBlockTeams   != lp.tankBlockTeams)   { return false; }
   if (shotBlockFlags   != lp.shotBlockFlags)   { return false; }
   if (tankBlockFlags   != lp.tankBlockFlags)   { return false; }
-  if (shotBlockBZDB    != lp.shotBlockBZDB)    { return false; }
-  if (tankBlockBZDB    != lp.tankBlockBZDB)    { return false; }
+  if (shotBlockVar    != lp.shotBlockVar)    { return false; }
+  if (tankBlockVar    != lp.tankBlockVar)    { return false; }
   return true;
 }
 
@@ -212,11 +212,11 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
   if (tankBlockFlags < lp.tankBlockFlags) { return true;  }
   if (lp.tankBlockFlags < tankBlockFlags) { return false; }
 
-  if (shotBlockBZDB < lp.shotBlockBZDB) { return true;  }
-  if (lp.shotBlockBZDB < shotBlockBZDB) { return false; }
+  if (shotBlockVar < lp.shotBlockVar) { return true;  }
+  if (lp.shotBlockVar < shotBlockVar) { return false; }
 
-  if (tankBlockBZDB < lp.tankBlockBZDB) { return true;  }
-  if (lp.tankBlockBZDB < tankBlockBZDB) { return false; }
+  if (tankBlockVar < lp.tankBlockVar) { return true;  }
+  if (lp.tankBlockVar < tankBlockVar) { return false; }
 
   return false;
 }
@@ -281,8 +281,8 @@ void* LinkPhysics::pack(void* buf) const
     buf = nboPackStdString(buf, *it);
   }
 
-  buf = nboPackStdString(buf, shotBlockBZDB);
-  buf = nboPackStdString(buf, tankBlockBZDB);
+  buf = nboPackStdString(buf, shotBlockVar);
+  buf = nboPackStdString(buf, tankBlockVar);
 
   return buf;
 }
@@ -342,8 +342,8 @@ void* LinkPhysics::unpack(void* buf)
     tankBlockFlags.insert(flag);
   }
 
-  buf = nboUnpackStdString(buf, shotBlockBZDB);
-  buf = nboUnpackStdString(buf, tankBlockBZDB);
+  buf = nboUnpackStdString(buf, shotBlockVar);
+  buf = nboUnpackStdString(buf, tankBlockVar);
 
   return buf;
 }
@@ -398,8 +398,8 @@ int LinkPhysics::packSize() const
     fullSize += nboStdStringPackSize(*it);
   }
 
-  fullSize += nboStdStringPackSize(shotBlockBZDB);
-  fullSize += nboStdStringPackSize(tankBlockBZDB);
+  fullSize += nboStdStringPackSize(shotBlockVar);
+  fullSize += nboStdStringPackSize(tankBlockVar);
 
   return fullSize;
 }
@@ -547,12 +547,12 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
   }
 
   // bzdb blocks
-  if (!shotBlockBZDB.empty()) {
-    out << indent << "  shotBlockBZDB " << shotBlockBZDB << std::endl;
+  if (!shotBlockVar.empty()) {
+    out << indent << "  shotBlockVar " << shotBlockVar << std::endl;
   }
 
-  if (!tankBlockBZDB.empty()) {
-    out << indent << "  tankBlockBZDB " << tankBlockBZDB << std::endl;
+  if (!tankBlockVar.empty()) {
+    out << indent << "  tankBlockVar " << tankBlockVar << std::endl;
   }
 
   return;

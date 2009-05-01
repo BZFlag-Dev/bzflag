@@ -37,8 +37,8 @@ class LinkPhysics {
       TankTeamTest  = (1 << 5),
       ShotFlagTest  = (1 << 6),
       TankFlagTest  = (1 << 7),
-      ShotBZDBTest  = (1 << 8),
-      TankBZDBTest  = (1 << 9)
+      ShotVarTest   = (1 << 8),
+      TankVarTest   = (1 << 9)
     };
 
   public:
@@ -101,8 +101,8 @@ class LinkPhysics {
     std::set<std::string> tankBlockFlags;
 
     // BZDB blocks
-    std::string shotBlockBZDB;
-    std::string tankBlockBZDB;
+    std::string shotBlockVar;
+    std::string tankBlockVar;
 };
 
 

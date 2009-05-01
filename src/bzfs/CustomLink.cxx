@@ -475,30 +475,30 @@ bool CustomLink::read(const char *cmd, std::istream& input)
   //
   //  BZDB blocks
   //
-  else if (strcasecmp(cmd, "blockBZDB") == 0) {
+  else if (strcasecmp(cmd, "blockVar") == 0) {
     std::string value;
     if (!(input >> value)) {
-      std::cout << "missing blockBZDB parameter" << std::endl;
+      std::cout << "missing blockVar parameter" << std::endl;
       return false;
     }
-    linkDef.physics.shotBlockBZDB = value;
-    linkDef.physics.tankBlockBZDB = value;
+    linkDef.physics.shotBlockVar = value;
+    linkDef.physics.tankBlockVar = value;
   }
-  else if (strcasecmp(cmd, "shotBlockBZDB") == 0) {
+  else if (strcasecmp(cmd, "shotBlockVar") == 0) {
     std::string value;
     if (!(input >> value)) {
-      std::cout << "missing shotBlockBZDB parameter" << std::endl;
+      std::cout << "missing shotBlockVar parameter" << std::endl;
       return false;
     }
-    linkDef.physics.shotBlockBZDB = value;
+    linkDef.physics.shotBlockVar = value;
   }
-  else if (strcasecmp(cmd, "tankBlockBZDB") == 0) {
+  else if (strcasecmp(cmd, "tankBlockVar") == 0) {
     std::string value;
     if (!(input >> value)) {
-      std::cout << "missing tankBlockBZDB parameter" << std::endl;
+      std::cout << "missing tankBlockVar parameter" << std::endl;
       return false;
     }
-    linkDef.physics.tankBlockBZDB = value;
+    linkDef.physics.tankBlockVar = value;
   }
   else {
     return WorldFileObject::read(cmd, input);

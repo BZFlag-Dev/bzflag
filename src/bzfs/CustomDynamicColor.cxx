@@ -108,7 +108,7 @@ void CustomDynamicColor::writeToManager() const
 {
   dyncol->setName(name);
   if ((name.size() > 0) && (DYNCOLORMGR.findColor(name) >= 0)) {
-    std::cout << "warning: duplicate dynamic color"
+    std::cout << "WARNING: duplicate dynamic color"
 	      << " (" << name << ")" << std::endl;
   }
   dyncol->finalize();

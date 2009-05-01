@@ -940,6 +940,11 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
 \fB  tankAllowFlags\fR GM ST OO
 .br
+  # BZDB variable blocks
+\fB  shotBlockVar\fR varName
+.br
+\fB  tankBlockVar\fR varName
+.br
 \fBend\fR
 .br
 
@@ -1073,7 +1078,7 @@ BZDB variable), can use the following escape characters:
 .br
 \fB  data\fR my text string   # the text, or the bzdb variable name
 .br
-\fB  bzdb\fR                  # use 'data' as a BZDB variable name
+\fB  variable\fR              # use 'data' as a BZDB variable name
 .br
 \fB  font\fR myFontName       # the font name, can use URLs
 .br
@@ -1541,7 +1546,7 @@ group :=
 .B (CustomLink.cxx/CustomLink::read)
 .br
 .TP
-teleporter_spec :=
+link_spec :=
 .br
 	  <integer>
 .br
@@ -1550,9 +1555,13 @@ teleporter_spec :=
 .TP
 link :=
 .br
-	| ("src" | "from") <linkSrc_spec>
+	| ("src" | "from") <link_spec>{1..*}
 .br
-	| ("dst" | "to")   <linkSrc_spec>
+	| ("dst" | "to")   <link_spec>{1..*}
+.br
+	| "addSrc" <link_spec>{1..*}
+.br
+	| "addDst" <link_spec>{1..*}
 .br
 	| "sameSpeed"
 .br
@@ -1572,11 +1581,11 @@ link :=
 .br
 	| "tankSrcVelScale" 3dpoint
 .br
-	| "dstVel" 3dpoint
+	| "dstVelOffset" 3dpoint
 .br
-	| "shotDstVel" 3dpoint
+	| "shotDstVelOffset" 3dpoint
 .br
-	| "tankDstVel" 3dpoint
+	| "tankDstVelOffset" 3dpoint
 .br
 	| "tankAngle" <float>
 .br
@@ -1585,6 +1594,48 @@ link :=
 	| "tankAngleOffset" <float>
 .br
 	| "tankAngVelOffset" <float>
+.br
+	| "shotMinSpeed" <float>
+.br
+	| "tankMinSpeed" <float>
+.br
+	| "shotMaxSpeed" <float>
+.br
+	| "tankMaxSpeed" <float>
+.br
+	| "shotMinAngle" <float>
+.br
+	| "tankMinAngle" <float>
+.br
+	| "shotMaxAngle" <float>
+.br
+	| "tankMaxAngle" <float>
+.br
+	| "blockTeams" <integer>{0..*}
+.br
+	| "shotBlockTeams" <integer>{0..*}
+.br
+	| "tankBlockTeams" <integer>{0..*}
+.br
+	| "allowTeams" <integer>{0..*}
+.br
+	| "shotAllowTeams" <integer>{0..*}
+.br
+	| "tankAllowTeams" <integer>{0..*}
+.br
+	| "shotBlockFlags" <flag_short_name>{0..*}
+.br
+	| "tankBlockFlags" <flag_short_name>{0..*}
+.br
+	| "shotAllowFlags" <flag_short_name>{0..*}
+.br
+	| "tankAllowFlags" <flag_short_name>{0..*}
+.br
+	| "blockVar" <varName>
+.br
+	| "shotBlockVar" <varName>
+.br
+	| "tankBlockVar" <varName>
 .br
 	| object
 .br

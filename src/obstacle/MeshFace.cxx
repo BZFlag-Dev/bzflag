@@ -843,8 +843,8 @@ bool MeshFace::shotCanCross(const LinkPhysics& physics,
   }
 
   // bzdb test
-  if ((testBits & LinkPhysics::ShotBZDBTest) != 0) {
-    if (BZDB.isTrue(physics.shotBlockBZDB)) {
+  if ((testBits & LinkPhysics::ShotVarTest) != 0) {
+    if (BZDB.isTrue(physics.shotBlockVar)) {
       return false;
     }
   }
@@ -929,8 +929,8 @@ bool MeshFace::tankCanCross(const LinkPhysics& physics,
   }
 
   // bzdb test
-  if ((testBits & LinkPhysics::TankBZDBTest) != 0) {
-    if (BZDB.isTrue(physics.tankBlockBZDB)) {
+  if ((testBits & LinkPhysics::TankVarTest) != 0) {
+    if (BZDB.isTrue(physics.tankBlockVar)) {
       return false;
     }
   }

@@ -33,7 +33,7 @@ CustomGroup::CustomGroup(const std::string& groupdef)
 {
   group = new GroupInstance(groupdef);
   if (groupdef.size() <= 0) {
-    std::cout << "warning: group instance has no group definition" << std::endl;
+    std::cout << "WARNING: group instance has no group definition" << std::endl;
   }
   return;
 }

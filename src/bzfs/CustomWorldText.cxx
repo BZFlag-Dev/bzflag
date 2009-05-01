@@ -108,7 +108,7 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
     text->lengthPerPixel =
       minDist * tan(fov * 0.5f * ((float)M_PI / 180.0f)) / (pixels * 0.5f);
   }
-  else if (strcasecmp ("bzdb", cmd) == 0) {
+  else if (strcasecmp ("variable", cmd) == 0) {
     text->useBZDB = true;
   }
   else if (strcasecmp ("billboard", cmd) == 0) {
