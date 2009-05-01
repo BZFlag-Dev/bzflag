@@ -774,7 +774,7 @@ void *MeshObstacle::unpack(void *buf)
     buf = drawInfo->unpack(buf);
     // setup the drawInfo arrays
     drawInfo->clientSetup(this);
-    if (!drawInfo->isValid()) { 
+    if (!drawInfo->isValid()) {
       delete drawInfo;
       drawInfo = NULL;
     }

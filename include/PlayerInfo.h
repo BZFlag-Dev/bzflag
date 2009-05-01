@@ -333,15 +333,15 @@ inline bool PlayerInfo::isChat() const {
 }
 
 inline bool PlayerInfo::getsPlayerUpdates() const {
-  return ( (updates == PlayerUpdates) || (updates == AllUpdates) ); 
+  return ( (updates == PlayerUpdates) || (updates == AllUpdates) );
 }
 
 inline bool PlayerInfo::getsChatUpdates() const {
-  return ( (updates == ChatUpdates) || (updates == AllUpdates) ); 
+  return ( (updates == ChatUpdates) || (updates == AllUpdates) );
 }
 
 inline bool PlayerInfo::getsAllUpdates() const {
-  return updates == AllUpdates; 
+  return updates == AllUpdates;
 }
 
 inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) const {

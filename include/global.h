@@ -46,7 +46,7 @@ enum PlayerType {
 // types of updates we can receive
 enum NetworkUpdates {
   NoUpdates       = 0, // receive no player data and no chats
-  PlayerUpdates   = 1, // receive only player updates  
+  PlayerUpdates   = 1, // receive only player updates
   ChatUpdates     = 2, // receive only chats
   AllUpdates      = 3	 // receive player data and chats
 };

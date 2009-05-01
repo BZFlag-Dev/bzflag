@@ -454,7 +454,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       (e == Through) ? getFirstLinkSrc(testRay, Epsilon, t)
                      : getFirstBuilding(testRay, Epsilon, t);
 
-    
+
     t -= minTime;
     minTime = 0.0f; // only used the first time around the loop
 

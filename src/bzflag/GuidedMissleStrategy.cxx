@@ -52,7 +52,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   const fvec3 dir = getPath().getVelocity().normalize();
   f.shot.vel = speed * dir;
   const fvec3& vel = getPath().getVelocity();
-  
+
   // initialize segments
   currentTime = getPath().getStartTime();
   Ray ray = Ray(f.shot.pos, vel);
@@ -370,7 +370,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
       if ((currentTime - getPath().getStartTime() + (double)t) < 1.0) {
         const MeshFace::SpecialData* sd = linkSrc->getSpecialData();
         const std::string& failMsg = sd->linkSrcShotFail;
-        if (!failMsg.empty()) { 
+        if (!failMsg.empty()) {
           addMessage(NULL, failMsg);
         }
       }

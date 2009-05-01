@@ -332,7 +332,7 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
 {
   if (obstacle == NULL) {
     return NOT_IN_BUILDING;
-  } 
+  }
   switch (obstacle->getTypeID()) {
     case boxType: {
       if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0) {

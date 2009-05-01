@@ -128,7 +128,7 @@ MeshObstacle* Teleporter::makeMesh()
   else {
     texScale = -texSize;
   }
-  
+
 
   // setup the transform
   MeshTransform tmpXform;
@@ -429,7 +429,7 @@ bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const
 
   const float xsize = (size.x > border) ? size.x : border;
   const float ysize = (size.y + border);
-  
+
   return Intersect::testRectCircle(pos, angle, xsize, ysize, p, radius);
 }
 

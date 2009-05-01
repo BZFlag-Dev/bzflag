@@ -878,7 +878,7 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
     }
     return false; // just a phase change
   }
-  
+
   // get the destination link, the link IDs, and the link physics
   int linkSrcID, linkDstID;
   const LinkPhysics* linkPhysics;
