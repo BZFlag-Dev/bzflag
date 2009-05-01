@@ -49,6 +49,8 @@ Crashes
   calculation in HUDuiTypeIn.cxx line 175 that results in a std::out_of_range
   exception on line 181
 
+* The WebAdmin plugin segfaults the server on shutdown.
+
 Regressions
 -----------
 
