@@ -185,7 +185,6 @@ static void usage()
 		  "  -configdir <config dir name>\n"
 		  "  -d | -debug\n"
 		  "  -date <mm/dd/yyyy>\n"
-		  "  -devmode\n"
 		  "  {-dir | -directory} <data-directory>\n"
 		  "  -e | -echo\n"
 		  "  -ea | -echoAnsi\n"
