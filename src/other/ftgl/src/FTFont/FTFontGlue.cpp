@@ -52,30 +52,44 @@ FTGL_BEGIN_C_DECLS
 // FTBitmapFont::FTBitmapFont();
 C_TOR(ftglCreateBitmapFont, (const char *fontname),
       FTBitmapFont, (fontname), FONT_BITMAP);
+C_TOR(ftglCreateBitmapFontFromMem, (const unsigned char *bytes, size_t len),
+      FTBitmapFont, (bytes, len), FONT_BITMAP);
 
 // FTBufferFont::FTBufferFont();
 C_TOR(ftglCreateBufferFont, (const char *fontname),
       FTBufferFont, (fontname), FONT_BUFFER);
+C_TOR(ftglCreateBufferFontFromMem, (const unsigned char *bytes, size_t len),
+      FTBufferFont, (bytes, len), FONT_BUFFER);
 
 // FTExtrudeFont::FTExtrudeFont();
 C_TOR(ftglCreateExtrudeFont, (const char *fontname),
       FTExtrudeFont, (fontname), FONT_EXTRUDE);
+C_TOR(ftglCreateExtrudeFontFromMem, (const unsigned char *bytes, size_t len),
+      FTExtrudeFont, (bytes, len), FONT_EXTRUDE);
 
 // FTOutlineFont::FTOutlineFont();
 C_TOR(ftglCreateOutlineFont, (const char *fontname),
       FTOutlineFont, (fontname), FONT_OUTLINE);
+C_TOR(ftglCreateOutlineFontFromMem, (const unsigned char *bytes, size_t len),
+      FTOutlineFont, (bytes, len), FONT_OUTLINE);
 
 // FTPixmapFont::FTPixmapFont();
 C_TOR(ftglCreatePixmapFont, (const char *fontname),
       FTPixmapFont, (fontname), FONT_PIXMAP);
+C_TOR(ftglCreatePixmapFontFromMem, (const unsigned char *bytes, size_t len),
+      FTPixmapFont, (bytes, len), FONT_PIXMAP);
 
 // FTPolygonFont::FTPolygonFont();
 C_TOR(ftglCreatePolygonFont, (const char *fontname),
       FTPolygonFont, (fontname), FONT_POLYGON);
+C_TOR(ftglCreatePolygonFontFromMem, (const unsigned char *bytes, size_t len),
+      FTPolygonFont, (bytes, len), FONT_POLYGON);
 
 // FTTextureFont::FTTextureFont();
 C_TOR(ftglCreateTextureFont, (const char *fontname),
       FTTextureFont, (fontname), FONT_TEXTURE);
+C_TOR(ftglCreateTextureFontFromMem, (const unsigned char *bytes, size_t len),
+      FTTextureFont, (bytes, len), FONT_TEXTURE);
 
 // FTCustomFont::FTCustomFont();
 class FTCustomFont : public FTFont
@@ -84,6 +98,13 @@ public:
     FTCustomFont(char const *fontFilePath, void *p,
                  FTGLglyph * (*makeglyph) (FT_GlyphSlot, void *))
      : FTFont(fontFilePath),
+       data(p),
+       makeglyphCallback(makeglyph)
+    {}
+
+    FTCustomFont(const unsigned char *pBufferBytes, size_t bufferSizeInBytes,
+                 void *p, FTGLglyph * (*makeglyph) (FT_GlyphSlot, void *))
+     : FTFont(pBufferBytes, bufferSizeInBytes),
        data(p),
        makeglyphCallback(makeglyph)
     {}
@@ -110,6 +131,9 @@ private:
 C_TOR(ftglCreateCustomFont, (char const *fontFilePath, void *data,
                    FTGLglyph * (*makeglyphCallback) (FT_GlyphSlot, void *)),
       FTCustomFont, (fontFilePath, data, makeglyphCallback), FONT_CUSTOM);
+C_TOR(ftglCreateCustomFontFromMem, (const unsigned char *bytes, size_t len,
+          void *data, FTGLglyph * (*makeglyphCallback) (FT_GlyphSlot, void *)),
+      FTCustomFont, (bytes, len, data, makeglyphCallback), FONT_CUSTOM);
 
 #define C_FUN(cret, cname, cargs, cxxerr, cxxname, cxxarg) \
     cret cname cargs \

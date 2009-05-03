@@ -35,6 +35,11 @@ Projects are listed in alphabetical order.
   %FTGL into a Python module so that it can be used in conjunction with
   PyOpenGL.
 
+\subsection tcl3d Tcl3D
+
+  Tcl3D (http://www.tcl3d.org) offers the 3D functionality of OpenGL
+  and other 3D libraries (including %FTGL) at the Tcl scripting level.
+
 \section current Projects currently using %FTGL
 
 \subsection agentw Agent World
@@ -148,6 +153,13 @@ Projects are listed in alphabetical order.
 
   Duel (http://www.personal.rdg.ac.uk/~sir03me/play/code.html) is a small
   overhead perspective spaceship game.
+
+\subsection emptyclip EMAN2
+
+  EMAN2 (http://blake.bcm.tmc.edu/eman/eman2/) is a suite of
+  scientific image processing tools aimed primarily at the
+  transmission electron microscopy community.
+
 
 \subsection emptyclip Empty Clip
 

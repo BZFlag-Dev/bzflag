@@ -431,6 +431,19 @@ FTGL_EXPORT FTGLfont *ftglCreateCustomFont(char const *fontFilePath,
                    FTGLglyph * (*makeglyphCallback) (FT_GlyphSlot, void *));
 
 /**
+ * Create a custom FTGL font object from a buffer in memory.
+ *
+ * @param bytes  the in-memory buffer
+ * @param len  the length of the buffer in bytes
+ * @param data  A pointer to private data that will be passed to callbacks.
+ * @param makeglyphCallback  A glyph-making callback function.
+ * @return  An FTGLfont* object.
+ */
+FTGL_EXPORT FTGLfont *ftglCreateCustomFontFromMem(const unsigned char *bytes,
+                                                  size_t len, void *data,
+                   FTGLglyph * (*makeglyphCallback) (FT_GlyphSlot, void *));
+
+/**
  * Destroy an FTGL font object.
  *
  * @param font  An FTGLfont* object.

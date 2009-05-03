@@ -36,24 +36,26 @@
 #define FTGL_ASSERTS_SHOULD_SOFT_FAIL
 
 #ifdef FTGL_ASSERTS_SHOULD_SOFT_FAIL
-  #define FTASSERT(x) \
-    if (!(x)) { \
-      static int count = 0; \
-      if (count < 8) { \
-        count++; \
-        fprintf(stderr,"ASSERTION FAILED (%s:%d)(soft): %s\n",__FILE__,__LINE__,#x); \
-        if (count == 8) { \
-          fprintf(stderr,"\\__ last warning for this FTGL assertion\n"); \
-        } \
-      } \
-    }
+	#define FTASSERT(x) \
+		if (!(x)) \
+		{ \
+		    static int count = 0; \
+		    if (count < 8) \
+		    { \
+			count++; \
+			fprintf(stderr,"ASSERTION FAILED (%s:%d)(soft): %s\n",__FILE__,__LINE__,#x); \
+			if (count == 8) \
+				fprintf(stderr,"\\__ last warning for this FTGL assertion\n"); \
+		    } \
+		}
 #else
-  #define FTASSERT(x) \
-    if (!(x)) { \
-      fprintf(stderr,"ASSERTION FAILED (%s:%d): %s\n",__FILE__,__LINE__,#x); \
-      int *a = (int*)0x0; \
-      *a = 0xD15EA5ED; \
-    }
+	#define FTASSERT(x) \
+		if (!(x)) \
+		{ \
+			fprintf(stderr,"ASSERTION FAILED (%s:%d): %s\n",__FILE__,__LINE__,#x); \
+			int *a = (int*)0x0; \
+			*a = 0xD15EA5ED; \
+		}
 #endif
 
 
@@ -118,14 +120,14 @@ FTTextureGlyphImpl::FTTextureGlyphImpl(FT_GlyphSlot glyph, int id, int xOffset,
 	    GLint w,h;
 	    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&w);
 	    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_HEIGHT,&h);
-		
+
 	    FTASSERT(xOffset >= 0);
 	    FTASSERT(yOffset >= 0);
 	    FTASSERT(destWidth >= 0);
 	    FTASSERT(destHeight >= 0);
 	    FTASSERT(xOffset+destWidth <= w);
 	    FTASSERT(yOffset+destHeight <= h);
-	    
+
 	    if (yOffset+destHeight > h)
 	    {
 	        //We'll only get here if we are soft-failing our asserts. In that case,
