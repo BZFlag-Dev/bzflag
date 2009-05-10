@@ -230,7 +230,7 @@ void warnAboutRadarFlags()
 {
 }
 
-void			notifyBzfKeyMapChanged()
+void notifyBzfKeyMapChanged()
 {
 }
 
@@ -246,15 +246,14 @@ void drawFrame(float)
 {
 }
 
-bool		shouldGrabMouse()
+bool shouldGrabMouse()
 {
   return false;
 }
 
-void			setSceneDatabase()
+void setSceneDatabase()
 {
 }
-
 
 void printout(const std::string& line)
 {
@@ -1747,7 +1746,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     robots[i] = new RCRobotPlayer(id, callsign, serverLink);
     BACKENDLOGGER << "New tank; type " << robots[i]->getPlayerType() << std::endl;
     robots[i]->setTeam(startupInfo.team);
-    serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
+    serverLink->sendEnter(id, ComputerPlayer, AllUpdates, robots[i]->getTeam(),
 			  robots[i]->getCallSign(), "", "");
     if (!numRobots) {
       makeObstacleList();
@@ -2652,8 +2651,10 @@ static void enteringServer(void *buf)
 {
 #if defined(ROBOT)
   int i;
-  for (i = 0; i < numRobotTanks; i++)
-    serverLink->sendNewPlayer(robots[i]->getId());
+  for (i = 0; i < numRobotTanks; i++) {
+    if(robots[i])
+      serverLink->sendNewPlayer(robots[i]->getId());
+  }
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to
@@ -3079,7 +3080,7 @@ static void joinInternetGame2()
   LocalPlayer::setMyTank(observerTank);
 
   // tell the server that the observer tank wants to join
-  serverLink->sendEnter(observerTank->getId(), TankPlayer,
+  serverLink->sendEnter(observerTank->getId(), TankPlayer, NoUpdates, 
 			observerTank->getTeam(), observerTank->getCallSign(),
 			startupInfo.token, startupInfo.referrer);
   startupInfo.token[0] = '\0';
