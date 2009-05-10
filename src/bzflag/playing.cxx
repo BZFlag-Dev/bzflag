@@ -3952,7 +3952,7 @@ static void doMessages()
     if (!handleServerMessage(true, *itr))
       handleServerMessage(true, (*itr)->getCode(), (uint16_t)(*itr)->size(), (*itr)->buffer());
 
-    (*itr)->clear(); // blow it out so it gets cleared at the end
+    delete *itr;
     itr++;
   }
 }
