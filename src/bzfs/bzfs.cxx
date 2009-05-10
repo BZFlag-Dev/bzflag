@@ -2950,7 +2950,7 @@ void searchFlag(GameKeeper::Player &playerData)
       fvec3 flagCenter = fpos;
       fvec3 tankCenter = tpos;
       flagCenter.z += 0.5f * BZDBCache::flagPoleSize;
-      tankCenter.z += BZDBCache::muzzleHeight;
+      tankCenter.z += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
       const Ray ray(flagCenter, tankCenter - flagCenter);
       const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
       const int count = oList->count;
