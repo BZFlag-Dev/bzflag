@@ -242,12 +242,13 @@ bool CommandList::operator() (const char * /*cmdLine*/)
     addMessage(NULL, buffer);
   }
 
-  addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
-		   "Server-side Commands");
-
-  const char* msg = "/?";
-  strncpy(buffer, msg, MessageLen);
-  serverLink->sendMessage(ServerPlayer, buffer);
+  if (serverLink != NULL) {
+    addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
+               "Server-side Commands");
+    const char* msg = "/?";
+    strncpy(buffer, msg, MessageLen);
+    serverLink->sendMessage(ServerPlayer, buffer);
+  }
   return true;
 }
 
@@ -486,7 +487,7 @@ bool SetCommand::operator() (const char *commandLine)
 
   std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
-    pattern = '_' + pattern;
+//FIXME ?    pattern = '_' + pattern;
   }
 
   const std::string header = "/set " + pattern;
