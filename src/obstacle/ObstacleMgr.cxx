@@ -1114,7 +1114,6 @@ void GroupDefinitionMgr::clear()
     delete groupDefs[i];
   }
   groupDefs.clear();
-  linkManager.clear();
   return;
 }
 
