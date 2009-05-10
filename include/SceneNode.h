@@ -75,6 +75,8 @@ class SceneNode {
     bool		isOccluder() const;
     void		setOccluder(bool value);
 
+    bool 		isAnimated() const;
+
     struct RenderSet {
       RenderNode* node;
       const OpenGLGState* gstate;
@@ -134,6 +136,7 @@ class SceneNode {
     bool    noPlane;
     bool    occluder;
     Extents extents;
+    bool    animated;
 
   private:
     fvec4 sphere;
@@ -164,6 +167,7 @@ inline const fvec3&   SceneNode::getCenter()   const { return sphere.xyz(); }
 inline const fvec4&   SceneNode::getSphere()   const { return sphere;       }
 inline const Extents& SceneNode::getExtents()  const { return extents;      }
 inline bool           SceneNode::isOccluder()  const { return occluder;     }
+inline bool           SceneNode::isAnimated()  const { return animated;     }
 
 inline void SceneNode::setOccluder(bool value) { occluder = value; }
 
