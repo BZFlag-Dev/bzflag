@@ -60,6 +60,7 @@ BZDBCache::Bool  BZDBCache::drawSky;
 BZDBCache::Float BZDBCache::worldSize;
 BZDBCache::Float BZDBCache::radarLimit;
 BZDBCache::Float BZDBCache::gravity;
+BZDBCache::Float BZDBCache::muzzleHeight;
 BZDBCache::Float BZDBCache::tankWidth;
 BZDBCache::Float BZDBCache::tankLength;
 BZDBCache::Float BZDBCache::tankHeight;
@@ -82,9 +83,8 @@ BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 static float getGoodPosValue (float oldVal, const std::string var )
 {
   float newVal = BZDB.eval(var);
-  if (isnan(newVal) || newVal <= 0.0f)  // it's bad
-  {
-    BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
+  if (isnan(newVal) || newVal <= 0.0f) { // it's bad
+    BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
     return oldVal;
   }
   return newVal;
@@ -94,9 +94,8 @@ static float getGoodPosValue (float oldVal, const std::string var )
 static float getGoodNonZeroValue (float oldVal, const std::string var )
 {
   float newVal = BZDB.eval(var);
-  if (isnan(newVal) || newVal == 0.0f)  // it's bad
-  {
-    BZDB.setFloat(var,oldVal,BZDB.getPermission(var));
+  if (isnan(newVal) || newVal == 0.0f) { // it's bad
+    BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
       return oldVal;
   }
   return newVal;
@@ -168,6 +167,7 @@ void BZDBCache::init()
   flagPoleWidth    = getGoodPosValue(flagPoleWidth,   StateDatabase::BZDB_FLAGPOLEWIDTH);
   flagRadius       = getGoodPosValue(flagRadius,      StateDatabase::BZDB_FLAGRADIUS);
   gravity          = getGoodNonZeroValue(gravity,     StateDatabase::BZDB_GRAVITY);
+  muzzleHeight     = getGoodPosValue(muzzleHeight,    StateDatabase::BZDB_MUZZLEHEIGHT);
   tankHeight       = getGoodPosValue(tankHeight,      StateDatabase::BZDB_TANKHEIGHT);
   tankLength       = getGoodPosValue(tankLength,      StateDatabase::BZDB_TANKLENGTH);
   tankRadius       = getGoodPosValue(tankRadius,      StateDatabase::BZDB_TANKRADIUS);
@@ -276,6 +276,9 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   }
   else if (name == StateDatabase::BZDB_GRAVITY) {
     gravity = getGoodNonZeroValue(gravity,StateDatabase::BZDB_GRAVITY);
+  }
+  else if (name == StateDatabase::BZDB_MUZZLEHEIGHT) {
+    muzzleHeight = getGoodNonZeroValue(gravity,StateDatabase::BZDB_MUZZLEHEIGHT);
   }
   else if (name == StateDatabase::BZDB_TANKWIDTH) {
     tankWidth = getGoodPosValue(tankWidth,StateDatabase::BZDB_TANKWIDTH);
