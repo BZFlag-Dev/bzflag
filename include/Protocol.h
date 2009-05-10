@@ -199,7 +199,7 @@ const uint16_t MsgLagPing = 0x7069; // 'pi'
 
 player to server messages:
   MsgEnter		player is joining game
-			--> id, type, team, name
+			--> id, type, updates, team, name
 			<-- MsgReject (if rejected)
 			<-- MsgAccept (if accepted)
 			if accepted, new player is sent (following MsgAccept):

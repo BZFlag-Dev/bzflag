@@ -873,7 +873,7 @@ void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds )
   send(MsgCapBits, (uint16_t)((char*)buf - msg), msg);
 }
 
-void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
+void ServerLink::sendEnter(PlayerId _id, PlayerType type, NetworkUpdates updates, TeamColor team,
                            const char* name,
                            const char* token,
                            const char* referrer)
@@ -883,8 +883,8 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, TeamColor team,
   void* buf = msg;
 
   buf = nboPackUInt8(buf, uint8_t(_id));
-
   buf = nboPackUInt16(buf, uint16_t(type));
+  buf = nboPackUInt16(buf, uint16_t(updates));
   buf = nboPackUInt16(buf, uint16_t(team));
 
   ::strncpy((char*)buf, name, CallSignLen - 1);

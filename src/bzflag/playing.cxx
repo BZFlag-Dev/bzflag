@@ -3525,7 +3525,7 @@ static void handleNewPlayer(void *msg)
     i).c_str(),
     serverLink);
   robots[i]->setTeam(AutomaticTeam);
-  serverLink->sendEnter(id, ComputerPlayer, robots[i]->getTeam(),
+  serverLink->sendEnter(id, ComputerPlayer, NoUpdates, robots[i]->getTeam(),
     robots[i]->getCallSign(), "", "");
   if (!numRobots) {
     makeObstacleList();
@@ -5769,7 +5769,7 @@ static void joinInternetGame2()
 
   // tell server we want to join
   bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
-  serverLink->sendEnter(myTank->getId(), TankPlayer, myTank->getTeam(),
+  serverLink->sendEnter(myTank->getId(), TankPlayer, AllUpdates, myTank->getTeam(),
                         myTank->getCallSign(),
                         startupInfo.token,
                         startupInfo.referrer);

@@ -215,10 +215,13 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
   // data: type, team, name,
   uint16_t _type;
+  uint16_t _updates;
   int16_t _team;
   buf = nboUnpackUInt16(buf, _type);
+  buf = nboUnpackUInt16(buf, _updates);
   buf = nboUnpackInt16(buf, _team);
   type = PlayerType(_type);
+  updates = NetworkUpdates(_updates);
   team = TeamColor(_team);
   buf = nboUnpackString(buf, callSign, CallSignLen);
   buf = nboUnpackString(buf, token, TokenLen);

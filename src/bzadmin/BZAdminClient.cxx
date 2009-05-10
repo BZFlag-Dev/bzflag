@@ -72,7 +72,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     // won't really output anything, just gets token
     outputServerList();
   }
-  sLink.sendEnter(sLink.getId(), ChatPlayer, myTeam,
+  sLink.sendEnter(sLink.getId(), ChatPlayer, ChatUpdates, myTeam,
                   startupInfo.callsign, startupInfo.token, startupInfo.referrer);
   sLink.sendCaps(sLink.getId(), false, false);
   sLink.sendCustomData("motto", "bzadmin");

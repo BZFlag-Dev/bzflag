@@ -64,7 +64,7 @@ public:
   int			read(BufferedNetworkMessage *msg, int millisecondsToBlock = 0);
 
   void		sendCaps(PlayerId id, bool downloads, bool sounds );
-  void		sendEnter(PlayerId, PlayerType, TeamColor,
+  void		sendEnter(PlayerId, PlayerType, NetworkUpdates, TeamColor,
                           const char* name, const char* token, const char* referrer);
   bool		readEnter(std::string& reason,
     uint16_t& code, uint16_t& rejcode);
