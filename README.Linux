@@ -31,6 +31,7 @@ BZFlag.  Known requirements include:
     libglu1-mesa-dev
     libsdl1.2-dev
     libcurl3-dev
+    libsdl-sound1.2-dev (may have to add this yourself as well)
 
   Fedora:
 
