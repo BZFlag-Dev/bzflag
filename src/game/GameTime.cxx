@@ -139,8 +139,9 @@ static void resetToRecord(const TimeRecord& record)
   avgRate = 1.0;
   avgPoint = record;
   stepTime = record.netTime;
+  const TimeRecord trCopy = record; // make a copy, could reference timeRecs
   timeRecs.clear();
-  timeRecs.push_front(record);
+  timeRecs.push_front(trCopy);
   return;
 }
 
