@@ -2947,14 +2947,18 @@ void searchFlag(GameKeeper::Player &playerData)
 
     // check if there is an obstacle between the tank and the flag
     if (!identify) {
-      const Ray ray(fpos, tpos - fpos);
+      fvec3 flagCenter = fpos;
+      fvec3 tankCenter = tpos;
+      flagCenter.z += 0.5f * BZDBCache::flagPoleSize;
+      tankCenter.z += BZDBCache::muzzleHeight;
+      const Ray ray(flagCenter, tankCenter - flagCenter);
       const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
       const int count = oList->count;
       int o;
       for (o = 0; o < count; o++) {
         const Obstacle* obs = oList->list[o];
         const float t = obs->intersect(ray);
-        if ((t >= 0.0f) && (t <= 1.0f)) {
+        if ((t >= 0.0f) && (t < 1.0f)) {
           break;
         }
       }
