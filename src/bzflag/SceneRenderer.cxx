@@ -22,6 +22,7 @@
 // common headers
 #include "SceneDatabase.h"
 #include "MainWindow.h"
+#include "GameTime.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "TankSceneNode.h"
@@ -569,8 +570,8 @@ static int sortLights (const void* a, const void* b)
 
 void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
 {
-  lastFrame = _lastFrame;
-  sameFrame = _sameFrame;
+  lastFrame  = _lastFrame;
+  sameFrame  = _sameFrame;
   fullWindow = _fullWindow;
 
   // set the special mode
@@ -642,6 +643,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   clearZbuffer = true;
   drawGround = true;
 
+  // draw the mirror pass
   if (mirror) {
     drawMirror();
   }
@@ -1184,12 +1186,12 @@ void SceneRenderer::getRenderNodes()
     scene->addRenderNodes(*this, true, true);
   }
 
+  DYNAMICWORLDTEXT.addRenderNodes(*this);
+
   // sort ordered list in reverse depth order
   if (!inOrder) {
     orderedList.sort(frustum.getEye());
   }
-
-  DYNAMICWORLDTEXT.addRenderNodes(*this);
 
   // add the shadow rendering nodes
   if (scene && BZDBCache::shadows && (getSunDirection() != NULL) &&
@@ -1475,7 +1477,7 @@ void SceneRenderer::drawLinkDebug() const
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_POINT_SMOOTH);
   glPointSize(4.0f);
-  glLineWidth(2.0f);
+  glLineWidth(2.49f);
 
   if (drawSrc) {
     const LinkManager::FaceSet& linkSrcs = linkManager.getLinkSrcSet();
@@ -1528,6 +1530,24 @@ void SceneRenderer::drawLinkDebug() const
   glPointSize(10.0f);
 
   if (drawCon) {
+    // load a basic 1D texture
+    const float texData[8] = {
+      1.0f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f
+    };
+    glEnable(GL_TEXTURE_1D);
+    glBindTexture(GL_TEXTURE_1D, 0);
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_ALPHA, countof(texData), 0,
+                 GL_ALPHA, GL_FLOAT, texData);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+    const float texDist = 10.0f;
+    const float texScale = (1.0f / texDist);
+    const float texPeriod = 0.5f;
+    const float phase = (float)fmod(GameTime::getStepTime(), (double)texPeriod);
+    const float offset = phase / texPeriod;
+
     glBegin(GL_LINES);
     const LinkManager::LinkMap& linkMap = linkManager.getLinkMap();
     LinkManager::LinkMap::const_iterator mapIt;
@@ -1539,20 +1559,29 @@ void SceneRenderer::drawLinkDebug() const
         const MeshFace* dst = linkManager.getLinkDstFace(dstIDs[d]);
         if (doneFaces.find(dst) == doneFaces.end()) {
           doneFaces.insert(dst);
-          glColor4fv(colors[0]); glVertex3fv(src->calcCenter());
-          glColor4fv(colors[1]); glVertex3fv(dst->calcCenter());
+          const fvec3 srcPos = src->calcCenter();
+          const fvec3 dstPos = dst->calcCenter();
+          const float len = (srcPos - dstPos).length();
+          const float txcd0 = offset;
+          const float txcd1 = offset + (len * texScale);
+          glColor4fv(colors[0]); glTexCoord1f(txcd0); glVertex3fv(srcPos);
+          glColor4fv(colors[1]); glTexCoord1f(txcd1); glVertex3fv(dstPos);
           if (src == dst) {
             glEnd();
+            glDisable(GL_TEXTURE_1D);
             glBegin(GL_POINTS);
             const fvec4 yellow(1.0f, 1.0f, 0.0f, alpha);
             glColor4fv(yellow); glVertex3fv(src->calcCenter());
             glEnd();
+            glEnable(GL_TEXTURE_1D);
             glBegin(GL_LINES);
           }
         }
       }
     }
     glEnd();
+
+    glDisable(GL_TEXTURE_1D);
   }
 
   glPointSize(1.0f);
