@@ -123,64 +123,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug|x64"
-			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="./bzflag_release/"
 			IntermediateDirectory="./bzflag_release/"
@@ -276,64 +218,6 @@
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFlag to root..."
 				CommandLine="copy .\bzflag_release\*.exe ..\..\*.exe"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|x64"
-			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
@@ -434,64 +318,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Distribution|x64"
-			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug_Distribution|Win32"
 			OutputDirectory="./bzflag_debug/"
 			IntermediateDirectory="./bzflag_debug/"
@@ -528,7 +354,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;..\..\src\other\zlib;.\;..\..\src\other\curl\include;..\..\src\other\glew\include"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;..\..\src\other\zlib;.\;..\..\src\other\curl\include;..\..\src\other\glew\include;..\..\src\clientbase;..\..\src\bzflag"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -594,6 +420,180 @@
 				Name="VCPostBuildEventTool"
 				Description="Copying BZFlag to root..."
 				CommandLine="copy .\bzflag_debug\*.exe ..\..\*.exe"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_Distribution|x64"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
@@ -663,10 +663,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\bzflag\ActionBinding.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\AutoHunt.cxx"
 				>
 			</File>
@@ -683,19 +679,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\clientCommands.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ClientIntangibilityManager.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\CommandsImplementation.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\CommandsStandard.cxx"
 				>
 			</File>
 			<File
@@ -707,15 +691,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\EntryZone.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\ExportInformation.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\FlashClock.cxx"
 				>
 			</File>
 			<File
@@ -747,23 +723,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Region.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\Roaming.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\RoofTops.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ServerLink.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\ShotStatistics.cxx"
 				>
 			</File>
 			<File
@@ -779,19 +743,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\SyncClock.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\TargetingUtils.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\TrackMarks.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\Weapon.cxx"
 				>
 			</File>
 			<File
@@ -926,39 +878,11 @@
 				Name="game"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\BaseLocalPlayer.cxx"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\ComposeDefaultKey.cxx"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\LocalPlayer.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\Player.cxx"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\playing.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\RegionPriorityQueue.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\RemotePlayer.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\RobotPlayer.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\Roster.cxx"
 					>
 				</File>
 				<File
@@ -969,31 +893,19 @@
 					RelativePath="..\..\src\bzflag\SilenceDefaultKey.cxx"
 					>
 				</File>
-				<File
-					RelativePath="..\..\src\bzflag\World.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\WorldBuilder.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\WorldPlayer.cxx"
-					>
-				</File>
 				<Filter
 					Name="shots"
 					>
 					<File
-						RelativePath="..\..\src\bzflag\GuidedMissleStrategy.cxx"
+						RelativePath="..\..\src\clientbase\GuidedMissleStrategy.cxx"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\bzflag\SegmentedShotStrategy.cxx"
+						RelativePath="..\..\src\clientbase\SegmentedShotStrategy.cxx"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\bzflag\ShockWaveStrategy.cxx"
+						RelativePath="..\..\src\clientbase\ShockWaveStrategy.cxx"
 						>
 					</File>
 					<File
@@ -1005,15 +917,15 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\bzflag\ShotPath.cxx"
+						RelativePath="..\..\src\clientbase\ShotPath.cxx"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\bzflag\ShotPathSegment.cxx"
+						RelativePath="..\..\src\clientbase\ShotPathSegment.cxx"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\bzflag\ShotStrategy.cxx"
+						RelativePath="..\..\src\clientbase\ShotStrategy.cxx"
 						>
 					</File>
 				</Filter>
@@ -1125,42 +1037,22 @@
 			<Filter
 				Name="bzdb"
 				>
-				<File
-					RelativePath="..\..\src\bzflag\callbacks.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\callbacks.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\defaultBZDB.cxx"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\bzflag\defaultBZDB.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Config"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\clientConfig.cxx"
+					RelativePath="..\..\src\clientbase\clientConfig.cxx"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\clientConfig.h"
+					RelativePath="..\..\src\clientbase\clientConfig.h"
 					>
 				</File>
 			</Filter>
 			<Filter
 				Name="Sound"
 				>
-				<File
-					RelativePath="..\..\src\bzflag\FmodSound.h"
-					>
-				</File>
 				<File
 					RelativePath="..\..\src\bzflag\PlatformSound.cxx"
 					>
@@ -1174,11 +1066,115 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="clientbase"
+				>
+				<File
+					RelativePath="..\..\src\clientbase\ActionBinding.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\BaseLocalPlayer.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\callbacks.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\clientCommands.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\ClientIntangibilityManager.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\CommandsStandard.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\defaultBZDB.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\EntryZone.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\FlashClock.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\LocalPlayer.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\Player.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\Region.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\RegionPriorityQueue.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\RemotePlayer.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\RobotPlayer.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\Roster.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\ServerLink.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\ShotStatistics.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\SyncClock.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\TargetingUtils.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\Weapon.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\World.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\WorldBuilder.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\clientbase\WorldPlayer.cxx"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath="..\..\src\clientbase\ActionBinding.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\src\bzflag\AudioMenu.h"
 				>
@@ -1192,7 +1188,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\BaseLocalPlayer.h"
+				RelativePath="..\..\src\clientbase\BaseLocalPlayer.h"
 				>
 			</File>
 			<File
@@ -1200,7 +1196,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ClientIntangibilityManager.h"
+				RelativePath="..\..\src\clientbase\callbacks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ClientIntangibilityManager.h"
 				>
 			</File>
 			<File
@@ -1208,7 +1208,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\CommandsStandard.h"
+				RelativePath="..\..\src\clientbase\CommandsStandard.h"
 				>
 			</File>
 			<File
@@ -1225,6 +1225,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\daylight.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\defaultBZDB.h"
 				>
 			</File>
 			<File
@@ -1248,7 +1252,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\EntryZone.h"
+				RelativePath="..\..\src\clientbase\EntryZone.h"
 				>
 			</File>
 			<File
@@ -1256,7 +1260,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\FlashClock.h"
+				RelativePath="..\..\src\clientbase\FlashClock.h"
 				>
 			</File>
 			<File
@@ -1272,7 +1276,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\GuidedMissleStrategy.h"
+				RelativePath="..\..\src\clientbase\GuidedMissleStrategy.h"
 				>
 			</File>
 			<File
@@ -1408,7 +1412,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\LocalPlayer.h"
+				RelativePath="..\..\src\clientbase\LocalPlayer.h"
 				>
 			</File>
 			<File
@@ -1440,7 +1444,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Player.h"
+				RelativePath="..\..\src\clientbase\Player.h"
 				>
 			</File>
 			<File
@@ -1468,15 +1472,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Region.h"
+				RelativePath="..\..\src\clientbase\Region.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\RegionPriorityQueue.h"
+				RelativePath="..\..\src\clientbase\RegionPriorityQueue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\RemotePlayer.h"
+				RelativePath="..\..\src\clientbase\RemotePlayer.h"
 				>
 			</File>
 			<File
@@ -1484,7 +1488,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\RobotPlayer.h"
+				RelativePath="..\..\src\clientbase\RobotPlayer.h"
 				>
 			</File>
 			<File
@@ -1492,7 +1496,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Roster.h"
+				RelativePath="..\..\src\clientbase\Roster.h"
 				>
 			</File>
 			<File
@@ -1512,7 +1516,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\SegmentedShotStrategy.h"
+				RelativePath="..\..\src\clientbase\SegmentedShotStrategy.h"
 				>
 			</File>
 			<File
@@ -1520,7 +1524,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ServerLink.h"
+				RelativePath="..\..\src\clientbase\ServerLink.h"
 				>
 			</File>
 			<File
@@ -1528,19 +1532,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ServerStartMenu.h"
+				RelativePath="..\..\src\clientbase\ShockWaveStrategy.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ShockWaveStrategy.h"
+				RelativePath="..\..\src\clientbase\ShotPath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ShotPath.h"
+				RelativePath="..\..\src\clientbase\ShotPathSegment.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ShotStatistics.h"
+				RelativePath="..\..\src\clientbase\ShotStatistics.h"
 				>
 			</File>
 			<File
@@ -1552,7 +1556,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ShotStrategy.h"
+				RelativePath="..\..\src\clientbase\ShotStrategy.h"
 				>
 			</File>
 			<File
@@ -1576,11 +1580,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\SyncClock.h"
+				RelativePath="..\..\src\clientbase\SyncClock.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\TargetingUtils.h"
+				RelativePath="..\..\src\clientbase\TargetingUtils.h"
 				>
 			</File>
 			<File
@@ -1600,7 +1604,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Weapon.h"
+				RelativePath="..\..\src\clientbase\Weapon.h"
 				>
 			</File>
 			<File
@@ -1608,15 +1612,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\World.h"
+				RelativePath="..\..\src\clientbase\World.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\WorldBuilder.h"
+				RelativePath="..\..\src\clientbase\WorldBuilder.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\WorldPlayer.h"
+				RelativePath="..\..\src\clientbase\WorldPlayer.h"
 				>
 			</File>
 			<File
@@ -1629,7 +1633,7 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="bzflag.ico"
+				RelativePath="..\bzflag.ico"
 				>
 			</File>
 		</Filter>
