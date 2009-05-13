@@ -6,6 +6,7 @@ bin_PROGRAMS = bzflag
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src/clientbase \
 	$(SDL_CFLAGS) \
 	$(LIBCURL_CPPFLAGS) \
 	@X_CFLAGS@ \
@@ -14,8 +15,6 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 bzflag_LDFLAGS = -static
 bzflag_SOURCES =			\
-	ActionBinding.cxx		\
-	ActionBinding.h			\
 	AudioMenu.cxx			\
 	AudioMenu.h			\
 	AutoHunt.cxx			\
@@ -24,21 +23,15 @@ bzflag_SOURCES =			\
 	AutoPilot.h			\
 	BackgroundRenderer.cxx		\
 	BackgroundRenderer.h		\
-	BaseLocalPlayer.cxx		\
-	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
 	CommandsImplementation.cxx	\
-	CommandsStandard.cxx		\
-	CommandsStandard.h		\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
 	ControlPanel.cxx		\
 	ControlPanel.h			\
 	CrackedGlass.cxx		\
 	CrackedGlass.h			\
-	ClientIntangibilityManager.h	\
-	ClientIntangibilityManager.cxx	\
 	Daylight.cxx			\
 	Daylight.h			\
 	DisplayMenu.cxx			\
@@ -51,12 +44,8 @@ bzflag_SOURCES =			\
 	EffectsMenu.h			\
 	EffectsRenderer.cxx		\
 	EffectsRenderer.h		\
-	EntryZone.cxx			\
-	EntryZone.h			\
 	ExportInformation.cxx		\
 	ExportInformation.h		\
-	FlashClock.cxx			\
-	FlashClock.h			\
 	FontSizer.cxx			\
 	FontSizer.h			\
 	ForceFeedback.cxx		\
@@ -65,8 +54,6 @@ bzflag_SOURCES =			\
 	FormatMenu.h			\
 	GUIOptionsMenu.cxx		\
 	GUIOptionsMenu.h		\
-	GuidedMissleStrategy.cxx	\
-	GuidedMissleStrategy.h		\
 	HUDDialog.cxx			\
 	HUDDialog.h			\
 	HUDDialogStack.cxx		\
@@ -129,8 +116,6 @@ bzflag_SOURCES =			\
 	LocalCommand.h			\
 	LocalFontFace.cxx		\
 	LocalFontFace.h			\
-	LocalPlayer.cxx			\
-	LocalPlayer.h			\
 	MainMenu.cxx			\
 	MainMenu.h			\
 	MainWindow.cxx			\
@@ -145,8 +130,6 @@ bzflag_SOURCES =			\
 	Plan.h				\
 	PlatformSound.cxx		\
 	PlatformSound.h			\
-	Player.cxx			\
-	Player.h			\
 	PlayerAvatarManager.cxx		\
 	PlayerAvatarManager.h		\
 	QuickKeysMenu.cxx		\
@@ -155,20 +138,10 @@ bzflag_SOURCES =			\
 	QuitMenu.h			\
 	RadarRenderer.cxx		\
 	RadarRenderer.h			\
-	Region.cxx			\
-	Region.h			\
-	RegionPriorityQueue.cxx		\
-	RegionPriorityQueue.h		\
-	RemotePlayer.cxx		\
-	RemotePlayer.h			\
 	Roaming.cxx			\
 	Roaming.h			\
-	RobotPlayer.cxx			\
-	RobotPlayer.h			\
 	RoofTops.cxx			\
 	RoofTops.h			\
-	Roster.cxx			\
-	Roster.h			\
 	SaveWorldMenu.cxx		\
 	SaveWorldMenu.h			\
 	SceneBuilder.cxx		\
@@ -176,62 +149,29 @@ bzflag_SOURCES =			\
 	SceneRenderer.cxx		\
 	ScoreboardRenderer.cxx		\
 	ScoreboardRenderer.h		\
-	SegmentedShotStrategy.cxx	\
-	SegmentedShotStrategy.h		\
 	ServerCommandKey.cxx		\
 	ServerCommandKey.h		\
-	ServerLink.cxx			\
-	ServerLink.h			\
 	ServerMenu.cxx			\
 	ServerMenu.h			\
-	ShockWaveStrategy.cxx		\
-	ShockWaveStrategy.h		\
 	ShotList.cxx			\
 	ShotList.h			\
-	ShotPath.cxx			\
-	ShotPath.h			\
-	ShotPathSegment.cxx		\
-	ShotPathSegment.h		\
-	ShotStatistics.cxx		\
-	ShotStatistics.h		\
 	ShotStats.cxx			\
 	ShotStats.h			\
 	ShotStatsDefaultKey.cxx		\
 	ShotStatsDefaultKey.h		\
-	ShotStrategy.cxx		\
-	ShotStrategy.h			\
 	SilenceDefaultKey.cxx		\
 	SilenceDefaultKey.h		\
 	StandardTankAvatar.cxx		\
 	StandardTankAvatar.h		\
-	SyncClock.cxx			\
-	SyncClock.h			\
-	TargetingUtils.cxx		\
-	TargetingUtils.h		\
 	TrackMarks.cxx			\
 	TrackMarks.h			\
-	Weapon.cxx			\
-	Weapon.h			\
 	WeatherRenderer.cxx		\
 	WeatherRenderer.h		\
-	World.cxx			\
-	World.h				\
-	WorldBuilder.cxx		\
-	WorldBuilder.h			\
-	WorldPlayer.cxx			\
-	WorldPlayer.h			\
 	XfireGameClient.cxx		\
 	XfireGameClient.h		\
 	bzflag.cxx			\
 	bzflag.h			\
-	callbacks.cxx			\
-	callbacks.h			\
-	clientCommands.cxx		\
-	clientConfig.cxx		\
-	clientConfig.h			\
 	commands.h			\
-	defaultBZDB.cxx			\
-	defaultBZDB.h			\
 	motd.cxx			\
 	motd.h				\
 	playing.cxx			\
@@ -253,6 +193,7 @@ endif
 
 LDADD =	\
 	../obstacle/libObstacle.la	\
+	../clientbase/libClientBase.la	\
 	../game/libGame.la		\
 	../geometry/libGeometry.la	\
 	../3D/lib3D.la			\

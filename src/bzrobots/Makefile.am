@@ -11,7 +11,8 @@ lib_LTLIBRARIES = TestRobot.la $(libbzrobot)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
-	-I../bzflag \
+	-I$(top_srcdir)/src/clientbase \
+	-I$(top_srcdir)/src/bzflag \
 	$(SDL_CFLAGS) \
 	$(LIBCURL_CPPFLAGS) \
 	@X_CFLAGS@ \
@@ -79,158 +80,8 @@ genericfiles =				\
 	BZRobot.cxx			\
 	BZRobot.h			\
 	Robot.cxx			\
-	Robot.h				\
-	../bzflag/ActionBinding.cxx		\
-	../bzflag/ActionBinding.h		\
-	../bzflag/AutoHunt.cxx			\
-	../bzflag/AutoHunt.h			\
-	../bzflag/AutoPilot.cxx			\
-	../bzflag/AutoPilot.h			\
-	../bzflag/BackgroundRenderer.cxx	\
-	../bzflag/BackgroundRenderer.h		\
-	../bzflag/BaseLocalPlayer.cxx		\
-	../bzflag/BaseLocalPlayer.h		\
-	../bzflag/ClientIntangibilityManager.cxx	\
-	../bzflag/CommandsStandard.cxx	\
-	../bzflag/CommandsImplementation.cxx	\
-	../bzflag/ComposeDefaultKey.cxx		\
-	../bzflag/ComposeDefaultKey.h		\
-	../bzflag/ControlPanel.cxx		\
-	../bzflag/ControlPanel.h		\
-	../bzflag/CrackedGlass.cxx		\
-	../bzflag/CrackedGlass.h		\
-	../bzflag/Daylight.cxx			\
-	../bzflag/Daylight.h			\
-	../bzflag/Downloads.cxx			\
-	../bzflag/Downloads.h			\
-	../bzflag/DynamicWorldText.cxx		\
-	../bzflag/DynamicWorldText.h		\
-	../bzflag/EffectsRenderer.cxx		\
-	../bzflag/EffectsRenderer.h		\
-	../bzflag/EntryZone.cxx			\
-	../bzflag/EntryZone.h			\
-	../bzflag/FlashClock.cxx		\
-	../bzflag/FlashClock.h			\
-	../bzflag/FontSizer.cxx			\
-	../bzflag/FontSizer.h			\
-	../bzflag/ForceFeedback.cxx		\
-	../bzflag/ForceFeedback.h		\
-	../bzflag/GuidedMissleStrategy.cxx	\
-	../bzflag/GuidedMissleStrategy.h	\
-	../bzflag/HUDDialog.cxx			\
-	../bzflag/HUDDialog.h			\
-	../bzflag/HUDDialogStack.cxx		\
-	../bzflag/HUDDialogStack.h		\
-	../bzflag/HUDNavigationQueue.cxx	\
-	../bzflag/HUDNavigationQueue.h		\
-	../bzflag/HUDRenderer.cxx		\
-	../bzflag/HUDRenderer.h			\
-	../bzflag/HUDui.cxx			\
-	../bzflag/HUDui.h			\
-	../bzflag/HUDuiControl.cxx		\
-	../bzflag/HUDuiControl.h		\
-	../bzflag/HUDuiDefaultKey.cxx		\
-	../bzflag/HUDuiDefaultKey.h		\
-	../bzflag/HUDuiElement.cxx		\
-	../bzflag/HUDuiElement.h		\
-	../bzflag/HUDuiFrame.cxx		\
-	../bzflag/HUDuiFrame.h			\
-	../bzflag/HUDuiImage.cxx		\
-	../bzflag/HUDuiImage.h			\
-	../bzflag/HUDuiLabel.cxx		\
-	../bzflag/HUDuiLabel.h			\
-	../bzflag/HUDuiList.cxx			\
-	../bzflag/HUDuiList.h			\
-	../bzflag/HUDuiTypeIn.cxx		\
-	../bzflag/HUDuiTypeIn.h			\
-	../bzflag/LocalCommand.cxx		\
-	../bzflag/LocalCommand.h		\
-	../bzflag/LocalFontFace.cxx		\
-	../bzflag/LocalFontFace.h		\
-	../bzflag/LocalPlayer.cxx		\
-	../bzflag/LocalPlayer.h			\
-	../bzflag/MainWindow.cxx		\
-	../bzflag/MainWindow.h			\
-	../bzflag/Plan.cxx			\
-	../bzflag/Plan.h			\
-	../bzflag/PlatformSound.cxx		\
-	../bzflag/PlatformSound.h		\
-	../bzflag/Player.cxx			\
-	../bzflag/Player.h			\
-	../bzflag/PlayerAvatarManager.cxx	\
-	../bzflag/PlayerAvatarManager.h		\
-	../bzflag/RadarRenderer.cxx		\
-	../bzflag/RadarRenderer.h		\
-	../bzflag/Region.cxx			\
-	../bzflag/Region.h			\
-	../bzflag/RegionPriorityQueue.cxx	\
-	../bzflag/RegionPriorityQueue.h		\
-	../bzflag/RemotePlayer.cxx		\
-	../bzflag/RemotePlayer.h		\
-	../bzflag/Roaming.cxx			\
-	../bzflag/Roaming.h			\
-	../bzflag/RobotPlayer.cxx		\
-	../bzflag/RobotPlayer.h			\
-	../bzflag/RoofTops.cxx			\
-	../bzflag/RoofTops.h			\
-	../bzflag/Roster.cxx			\
-	../bzflag/Roster.h			\
-	../bzflag/SceneRenderer.cxx		\
-	../bzflag/ScoreboardRenderer.cxx	\
-	../bzflag/ScoreboardRenderer.h		\
-	../bzflag/SegmentedShotStrategy.cxx	\
-	../bzflag/SegmentedShotStrategy.h	\
-	../bzflag/ServerCommandKey.cxx		\
-	../bzflag/ServerCommandKey.h		\
-	../bzflag/ServerLink.cxx		\
-	../bzflag/ServerLink.h			\
-	../bzflag/ShockWaveStrategy.cxx		\
-	../bzflag/ShockWaveStrategy.h		\
-	../bzflag/ShotPath.cxx			\
-	../bzflag/ShotPath.h			\
-	../bzflag/ShotPathSegment.cxx		\
-	../bzflag/ShotPathSegment.h		\
-	../bzflag/ShotStatistics.cxx		\
-	../bzflag/ShotStatistics.h		\
-	../bzflag/ShotStats.cxx			\
-	../bzflag/ShotStats.h			\
-	../bzflag/ShotStatsDefaultKey.cxx	\
-	../bzflag/ShotStatsDefaultKey.h		\
-	../bzflag/ShotStrategy.cxx		\
-	../bzflag/ShotStrategy.h		\
-	../bzflag/SilenceDefaultKey.cxx		\
-	../bzflag/SilenceDefaultKey.h		\
-	../bzflag/StandardTankAvatar.cxx	\
-	../bzflag/StandardTankAvatar.h		\
-	../bzflag/SyncClock.cxx			\
-	../bzflag/SyncClock.h			\
-	../bzflag/TargetingUtils.cxx		\
-	../bzflag/TargetingUtils.h		\
-	../bzflag/TrackMarks.cxx		\
-	../bzflag/TrackMarks.h			\
-	../bzflag/Weapon.cxx			\
-	../bzflag/Weapon.h			\
-	../bzflag/WeatherRenderer.cxx		\
-	../bzflag/WeatherRenderer.h		\
-	../bzflag/World.cxx			\
-	../bzflag/World.h			\
-	../bzflag/WorldBuilder.cxx		\
-	../bzflag/WorldBuilder.h		\
-	../bzflag/WorldPlayer.cxx		\
-	../bzflag/WorldPlayer.h			\
-	../bzflag/callbacks.cxx			\
-	../bzflag/callbacks.h			\
-	../bzflag/clientCommands.cxx		\
-	../bzflag/clientConfig.cxx		\
-	../bzflag/clientConfig.h		\
-	../bzflag/commands.h			\
-	../bzflag/defaultBZDB.cxx		\
-	../bzflag/defaultBZDB.h			\
-	../bzflag/playing.h			\
-	../bzflag/sound.cxx			\
-	../bzflag/sound.h			\
-	../bzflag/stars.cxx			\
-	../bzflag/stars.h
+	Robot.h				
+
 
 if CLIENT_INCLUDED
 bzrobots_SOURCES = $(genericfiles)		\
@@ -253,6 +104,7 @@ endif
 
 LDADD =	\
 	../obstacle/libObstacle.la	\
+	../clientbase/libClientBase.la	\
 	../game/libGame.la		\
 	../geometry/libGeometry.la	\
 	../3D/lib3D.la			\

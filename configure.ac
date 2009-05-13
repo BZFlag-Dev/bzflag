@@ -1363,6 +1363,7 @@ AC_CONFIG_FILES([
 	src/bzflag/Makefile
 	src/bzfs/Makefile
 	src/bzrobots/Makefile
+	src/clientbase/Makefile
 	src/common/Makefile
 	src/date/Makefile
 	src/game/Makefile

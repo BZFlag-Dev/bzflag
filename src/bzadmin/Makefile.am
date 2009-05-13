@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 	-DBUILDING_BZADMIN \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src/bzflag \
+	-I$(top_srcdir)/src/clientbase \
 	$(LIBCURL_CPPFLAGS) \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
@@ -47,8 +48,8 @@ EXTRA_bzadmin_SOURCES = \
 	CursesUI.h \
 	CursesUI.cxx
 
-ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
-	cp -pR @top_srcdir@/src/bzflag/ServerLink.cxx .
+ServerLink.cxx: @top_srcdir@/src/clientbase/ServerLink.cxx
+	cp -pR @top_srcdir@/src/clientbase/ServerLink.cxx .
 
 LDADD = \
 	../date/libDate.la	\
