@@ -558,59 +558,6 @@ if test "x$enable_threads" != "xno" ; then
     AC_MSG_RESULT([$pthread_check])
 fi
 
-# Check for the IL library (Image Library, aka: DevIL)
-AC_MSG_CHECKING([for IL library])
-tmpLIBS=$LIBS
-IL_LIBS="-lIL"
-LIBS=$IL_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <IL/il.h>]],
-				[[ilInit()]])],
-	       [il_check="yes"], [il_check="no"])
-if test $il_check = "yes"; then
-    AC_DEFINE(HAVE_IL, 1, [IL library is available])
-else
-    IL_LIBS=""
-fi
-AC_MSG_RESULT([$il_check])
-AC_SUBST(IL_LIBS)
-LIBS=$tmpLIBS
-
-
-# Check for the ILU library (Image Library, aka: DevIL Utility)
-AC_MSG_CHECKING([for ILU library])
-tmpLIBS=$LIBS
-ILU_LIBS="-lILU"
-LIBS=$ILU_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <IL/ilu.h>]],
-				[[iluInit()]])],
-	       [ilu_check="yes"], [ilu_check="no"])
-if test $ilu_check = "yes"; then
-    AC_DEFINE(HAVE_ILU, 1, [ILU library is available])
-else
-    ILU_LIBS=""
-fi
-AC_MSG_RESULT([$ilu_check])
-AC_SUBST(ILU_LIBS)
-LIBS=$tmpLIBS
-
-
-# Check for the ILUT library (Image Library, aka: DevIL Utility Toolkit)
-AC_MSG_CHECKING([for ILUT library])
-tmpLIBS=$LIBS
-ILUT_LIBS="-lILUT"
-LIBS=$ILUT_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <IL/ilut.h>]],
-				[[ilutInit()]])],
-	       [ilut_check="yes"], [ilut_check="no"])
-if test $ilut_check = "yes"; then
-    AC_DEFINE(HAVE_ILUT, 1, [ILUT library is available])
-else
-    ILUT_LIBS=""
-fi
-AC_MSG_RESULT([$ilut_check])
-AC_SUBST(ILUT_LIBS)
-LIBS=$tmpLIBS
-
 
 case $host_os in
     mingw32*)
@@ -676,22 +623,6 @@ if test x$with_SDL = xyes; then
 fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
 
-# Check for the SDL_image library
-AC_MSG_CHECKING([for SDL_image library])
-tmpLIBS=$LIBS
-SDL_IMAGE_LIBS="-lSDL_image"
-LIBS=$SDL_IMAGE_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
-				[[IMG_Load(NULL)]])],
-	       [sdl_image_check="yes"], [sdl_image_check="no"])
-if test "x$sdl_image_check" = "xyes"; then
-    AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
-else
-    SDL_IMAGE_LIBS=""
-fi
-AC_MSG_RESULT([$sdl_image_check])
-AC_SUBST(SDL_IMAGE_LIBS)
-LIBS=$tmpLIBS
 
 # dumb temp hacks to add missing linkage stuff
 case $host_os in

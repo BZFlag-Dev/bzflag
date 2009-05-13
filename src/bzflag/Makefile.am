@@ -212,11 +212,7 @@ LDADD =	\
 	$(LIBZ)				\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
-	$(SDL_IMAGE_LIBS)		\
 	$(GLIBS)			\
-	$(IL_LIBS)			\
-	$(ILU_LIBS)			\
-	$(ILUT_LIBS)			\
 	$(GLEW_LIBS)			\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries
