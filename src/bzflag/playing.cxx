@@ -32,9 +32,7 @@
 #include "AnsiCodes.h"
 #include "AresHandler.h"
 #include "AutoHunt.h"
-#include "BackgroundRenderer.h"
 #include "BaseBuilding.h"
-#include "BillboardSceneNode.h"
 #include "BZDBCache.h"
 #include "BzfMedia.h"
 #include "bzsignal.h"
@@ -44,7 +42,6 @@
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
 #include "FileManager.h"
-#include "FlagSceneNode.h"
 #include "GameTime.h"
 #include "KeyManager.h"
 #include "LinkManager.h"
@@ -52,101 +49,102 @@
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
 #include "PlatformFactory.h"
-#include "QuadWallSceneNode.h"
 #include "ServerList.h"
-#include "SphereSceneNode.h"
-#include "TankGeometryMgr.h"
-#include "TextureManager.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
+#include "TimeKeeper.h"
 #include "WordFilter.h"
-#include "ZSceneDatabase.h"
 #include "bz_md5.h"
 #include "vectors.h"
 #include "version.h"
 
+// common client headers
+#include "ClientIntangibilityManager.h"
+#include "FlashClock.h"
+#include "LocalPlayer.h"
+#include "Roaming.h"
+#include "RobotPlayer.h"
+#include "Roster.h"
+#include "ShotStats.h"
+#include "SyncClock.h"
+#include "WorldBuilder.h"
+#include "WorldPlayer.h"
+#include "World.h"
+
+// gui headers
+#include "BackgroundRenderer.h"
+#include "BillboardSceneNode.h"
+#include "FlagSceneNode.h"
+#include "QuadWallSceneNode.h"
+#include "SphereSceneNode.h"
+#include "TankGeometryMgr.h"
+#include "TextureManager.h"
+#include "ZSceneDatabase.h"
+
 // local implementation headers
 #include "AutoPilot.h"
-#include "ClientIntangibilityManager.h"
 #include "Daylight.h"
 #include "Downloads.h"
 #include "EffectsRenderer.h"
 #include "ExportInformation.h"
-#include "FlashClock.h"
 #include "ForceFeedback.h"
 #include "HUDDialogStack.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
-#include "LocalPlayer.h"
 #include "MainMenu.h"
 #include "RadarRenderer.h"
-#include "Roaming.h"
-#include "RobotPlayer.h"
-#include "Roster.h"
 #include "SceneBuilder.h"
 #include "ScoreboardRenderer.h"
-#include "ShotStats.h"
-#include "SyncClock.h"
 #include "TrackMarks.h"
 #include "VerticalSync.h"
-#include "WorldBuilder.h"
-#include "WorldPlayer.h"
-#include "World.h"
+
 #include "bzflag.h"
 #include "commands.h"
 #include "motd.h"
+
 #include "sound.h"
 //#include "messages.h"
 
+
+bool canSpawn = true;
+bool headless = false;
 static const float FlagHelpDuration = 60.0f;
 StartupInfo startupInfo;
-static MainMenu *mainMenu;
 ServerLink *serverLink = NULL;
 static World *world = NULL;
-static LocalPlayer *myTank = NULL;
-MainWindow *mainWindow = NULL;
-ControlPanel *controlPanel = NULL;
-static RadarRenderer *radar = NULL;
-HUDRenderer *hud = NULL;
-bool headless = false;
-static ScoreboardRenderer *scoreboard = NULL;
-static SceneDatabaseBuilder *sceneBuilder = NULL;
 static Team *teams = NULL;
 int numFlags = 0;
 static bool joinRequested = false;
 static bool waitingDNS = false;
 static bool serverError = false;
 static bool serverDied = false;
-bool fireButton = false;
-bool roamButton = false;
-static bool firstLife = false;
-static bool showFPS = false;
-static bool showDrawTime = false;
-bool pausedByUnmap = false;
-static bool unmapped = false;
-static int preUnmapFormat = -1;
 static double epochOffset;
 static double lastEpochOffset;
-float clockAdjust = 0.0f;
-float pauseCountdown = 0.0f;
-float destructCountdown = 0.0f;
-static float testVideoFormatTimer = 0.0f;
-static int testVideoPrevFormat = -1;
 static std::vector<PlayingCallbackItem> playingCallbacks;
 bool gameOver = false;
-bool canSpawn = true;
+
 std::string customLimboMessage;
 
-static std::vector<BillboardSceneNode*> explosions;
-static std::vector<BillboardSceneNode*> prototypeExplosions;
-int savedVolume = -1;
 static FlashClock pulse;
-static bool wasRabbit = false;
 static bool justJoined = false;
 
-static bool forcedControls = false;
-static float forcedSpeed  = 0.0f;
-static float forcedAngVel = 0.0f;
+static LocalPlayer *myTank = NULL;
+
+static MainMenu *mainMenu;
+
+// FIXME: The following are globally referenced
+//        in some parts of the client base
+MainWindow *mainWindow = NULL;
+ControlPanel *controlPanel = NULL;
+HUDRenderer *hud = NULL;
+float clockAdjust = 0.0f;
+bool fireButton = false;
+bool roamButton = false;
+float pauseCountdown = 0.0f;
+float destructCountdown = 0.0f;
+int savedVolume = -1;
+bool pausedByUnmap = false;
+// END FIXME
 
 float roamDZoom = 0.0f;
 
@@ -154,6 +152,27 @@ static MessageOfTheDay *motd = NULL;
 CommandCompleter completer;
 
 PlayerId msgDestination;
+
+static RadarRenderer *radar = NULL;
+static ScoreboardRenderer *scoreboard = NULL;
+static SceneDatabaseBuilder *sceneBuilder = NULL;
+static bool firstLife = false;
+static bool showFPS = false;
+static bool showDrawTime = false;
+static bool unmapped = false;
+static int preUnmapFormat = -1;
+static float testVideoFormatTimer = 0.0f;
+static int testVideoPrevFormat = -1;
+
+static std::vector<BillboardSceneNode*> explosions;
+static std::vector<BillboardSceneNode*> prototypeExplosions;
+static bool wasRabbit = false;
+
+static bool forcedControls = false;
+static float forcedSpeed  = 0.0f;
+static float forcedAngVel = 0.0f;
+
+
 
 static void setHuntTarget();
 static void setTankFlags();
@@ -277,7 +296,6 @@ ThirdPersonVars::~ThirdPersonVars()
   BZDB.removeCallback("3rdPersonFarTargetSize",      bzdbCallback, this);
 }
 
-
 void ThirdPersonVars::load(void)
 {
   b3rdPerson = !BZDB.isTrue(std::string("_forbid3rdPersonCam")) &&
@@ -295,12 +313,10 @@ void ThirdPersonVars::load(void)
   }
 }
 
-
 void ThirdPersonVars::clear(void)
 {
   b3rdPerson = false;
 }
-
 
 void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data)
 {
@@ -1450,8 +1466,7 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
   // sanity check
   if (i < 0) {
     printError (TextUtils::format ("Invalid player identification (%d)", i));
-    std::cerr <<
-      "WARNING: invalid player identification when adding player with id "
+    std::cerr << "WARNING: invalid player identification when adding player with id "
       << i << std::endl;
     return NULL;
   }
@@ -1466,37 +1481,40 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 
   if (i >= curMaxPlayers) {
     curMaxPlayers = i + 1;
-    if (World::getWorld())
+    if (World::getWorld()) {
       World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+    }
   }
 
   // add player
   if (PlayerType (type) == TankPlayer
     || PlayerType (type) == ComputerPlayer
     || PlayerType (type) == ChatPlayer) {
-      remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, PlayerType (type));
-      remotePlayers[i]->changeScore (rank, short (wins), short (losses), short (tks));
+    remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, PlayerType (type));
+    remotePlayers[i]->changeScore (rank, short (wins), short (losses), short (tks));
   }
 
 #ifdef ROBOT
-  if (PlayerType (type) == ComputerPlayer)
-    for (int j = 0; j < numRobots; j++)
+  if (PlayerType (type) == ComputerPlayer) {
+    for (int j = 0; j < numRobots; j++) {
       if (robots[j] && !strncmp (robots[j]->getCallSign (), callsign, CallSignLen)) {
 	robots[j]->setTeam (TeamColor (team));
 	robots[j]->changeScore(rank, wins, losses, tks);
 	break;
       }
+    }
+  }
 #endif
 
-      // show the message if we don't have the playerlist
-      // permission.  if * we do, MsgAdminInfo should arrive
-      // with more info.
-      if (showMessage && !myTank->hasPlayerList ()) {
-	std::string message ("joining as ");
-	if (team == ObserverTeam) {
-	  message += "an observer";
-	} else {
-	  switch (PlayerType (type)) {
+  // show the message if we don't have the playerlist
+  // permission.  if * we do, MsgAdminInfo should arrive
+  // with more info.
+  if (showMessage && !myTank->hasPlayerList ()) {
+    std::string message ("joining as ");
+    if (team == ObserverTeam) {
+      message += "an observer";
+    } else {
+      switch (PlayerType (type)) {
       case TankPlayer:
 	message += "a tank";
 	break;
@@ -1506,18 +1524,19 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
       default:
 	message += "an unknown type";
 	break;
-	  }
-	}
-	if (!remotePlayers[i]) {
-	  std::string name (callsign);
-	  name += ": " + message;
-	  message = name;
-	}
-	addMessage (remotePlayers[i], message);
       }
-      completer.registerWord(callsign, true /* quote spaces */);
+    }
 
-      return remotePlayers[i];
+    if (!remotePlayers[i]) {
+      std::string name (callsign);
+      name += ": " + message;
+      message = name;
+    }
+    addMessage (remotePlayers[i], message);
+  }
+  completer.registerWord(callsign, true /* quote spaces */);
+
+  return remotePlayers[i];
 }
 
 
@@ -1530,17 +1549,17 @@ static void printIpInfo(const Player *player,
   }
 
   std::string colorStr;
-  if (player->getId() >= 200) {
-    colorStr = ColorStrings[CyanColor]; // replay observers
-  }
-  else {
+  if (player->getId() < 200) {
     int color = player->getTeam();
-    if (color == RabbitTeam || color < 0 || color > LastColor)
+    if (color == RabbitTeam || color < 0 || color > LastColor) {
       // non-teamed, rabbit are white (same as observer)
       color = WhiteColor;
-
+    }
     colorStr = ColorStrings[color];
+  } else {
+    colorStr = ColorStrings[CyanColor]; // replay observers
   }
+
   const std::string addrStr = addr.getDotNotation();
   std::string message = ColorStrings[CyanColor]; // default color
   message += "IPINFO: ";
@@ -1604,10 +1623,11 @@ static bool removePlayer (PlayerId id)
     playerIndex--;
     curMaxPlayers--;
   }
+
   World *_world = World::getWorld();
   if (!_world) {
     return false;
-  };
+  }
 
   _world->setCurMaxPlayers(curMaxPlayers);
 
