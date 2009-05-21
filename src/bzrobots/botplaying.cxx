@@ -72,6 +72,7 @@
 #include "World.h"
 
 // local implementation headers
+#include "Downloads.h"
 #include "Frontend.h"
 #include "Logger.h"
 #include "RCLinkBackend.h"
@@ -195,10 +196,20 @@ void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void */*data*/)
 
 ThirdPersonVars thirdPersonVars;
 
+#ifdef ROBOT
+static void makeObstacleList();
+static std::vector<BzfRegion*> obstacleList;  // for robots
+#endif
 
+// to simplify code shared between bzrobots and bzflag
+// - in bzrobots, this just goes to the error console
+static void showError(const char *msg)
+{
+  printError(msg);
+}
 
 // access silencePlayers from bzflag.cxx
-std::vector<std::string>& getSilenceList()
+std::vector<std::string> &getSilenceList()
 {
   return silencePlayers;
 }
@@ -230,8 +241,6 @@ void warnAboutConsole()
 {
 }
 
-static void makeObstacleList();
-static std::vector<BzfRegion*>	obstacleList;  // for robots
 
 
 
@@ -355,7 +364,7 @@ void joinGame()
       delete[] worldDatabase;
       worldDatabase = NULL;
     }
-    printError("Download stopped by user action");
+    showError("Download stopped by user action");
     joiningGame = false;
   }
   joinRequested = true;
@@ -489,7 +498,7 @@ static void updateHighScores()
 //
 // server message handling
 //
-static Player* addPlayer(PlayerId id, void *msg, int)
+static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 {
   uint16_t team, type, wins, losses, tks;
   float rank;
@@ -554,7 +563,7 @@ static Player* addPlayer(PlayerId id, void *msg, int)
   // show the message if we don't have the playerlist
   // permission.  if * we do, MsgAdminInfo should arrive
   // with more info.
-  if (!myTank->hasPlayerList ()) {
+  if (showMessage && !myTank->hasPlayerList ()) {
     std::string message ("joining as ");
     if (team == ObserverTeam) {
       message += "an observer";
@@ -697,10 +706,58 @@ static bool isCached(char *hexDigest)
 }
 
 
+int curlProgressFunc(void * /*clientp*/,
+		     double dltotal, double dlnow,
+		     double /*ultotal*/, double /*ulnow*/)
+{
+  // FIXME: beaucoup cheeze here in the aborting style
+  // we should be using async dns and multi-curl
+
+  // run an inner main loop to check if we should abort
+  /*
+  BzfEvent event;
+  if (display->isEventPending() && display->peekEvent(event)) {
+    switch (event.type) {
+    case BzfEvent::Quit:
+      return 1; // terminate the curl call
+    case BzfEvent::KeyDown:
+      display->getEvent(event); // flush the event
+      if (event.keyDown.chr == 27)
+	return 1; // terminate the curl call
+
+      break;
+    case BzfEvent::KeyUp:
+      display->getEvent(event); // flush the event
+      break;
+    case BzfEvent::MouseMove:
+      display->getEvent(event); // flush the event
+      break;
+    case BzfEvent::Unset:
+    case BzfEvent::Map:
+    case BzfEvent::Unmap:
+    case BzfEvent::Redraw:
+    case BzfEvent::Resize:
+      // leave the event, it might be important
+      break;
+    }
+  }
+  */
+  
+  // update the status
+  double percentage = 0.0;
+  if ((int)dltotal > 0)
+    percentage = 100.0 * dlnow / dltotal;
+
+  showError(TextUtils::format("%2.1f%% (%i/%i)", percentage, (int) dlnow, (int) dltotal).c_str());
+
+  return 0;
+}
+
+
 static void loadCachedWorld()
 {
   // can't get a cache from nothing
-  if (worldCachePath == std::string("")) {
+  if (worldCachePath.size() == 0) {
     joiningGame = false;
     return;
   }
@@ -708,14 +765,14 @@ static void loadCachedWorld()
   // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
-    printError("World cache files disappeared.  Join canceled");
+    showError("World cache files disappeared.  Join canceled");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
 
   // status update
-  printout("Loading world into memory...");
+  showError("Loading world into memory...");
 
   // get the world size
   cachedWorld->seekg(0, std::ios::end);
@@ -726,7 +783,7 @@ static void loadCachedWorld()
   cachedWorld->seekg(0);
   char *localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
-    printError("Error loading cached world.  Join canceled");
+    showError("Error loading cached world.  Join canceled");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -735,7 +792,7 @@ static void loadCachedWorld()
   delete cachedWorld;
 
   // verify
-  printout("Verifying world integrity...");
+  showError("Verifying world integrity...");
   MD5 md5;
   md5.update((unsigned char *)localWorldDatabase, charSize);
   md5.finalize();
@@ -746,14 +803,14 @@ static void loadCachedWorld()
       worldBuilder = NULL;
     }
     delete[] localWorldDatabase;
-    printError("Error on md5. Removing offending file.");
+    showError("Error on md5. Removing offending file.");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
 
   // make world
-  printout("Preparing world...");
+  showError("Preparing world...");
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder) {
@@ -761,7 +818,7 @@ static void loadCachedWorld()
       worldBuilder = NULL;
     }
     delete[] localWorldDatabase;
-    printError("Error unpacking world database. Join canceled.");
+    showError("Error unpacking world database. Join canceled.");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -776,24 +833,30 @@ static void loadCachedWorld()
     worldBuilder = NULL;
   }
 
-  // Unlike playing.cxx, we aren't going to do startDownloads
-  joinInternetGame2();
+  showError("Downloading files...");
+
+  const bool doDownloads = BZDB.isTrue("doDownloads");
+  const bool updateDownloads =  BZDB.isTrue("updateDownloads");
+  Downloads::instance().startDownloads(doDownloads, updateDownloads, false);
 }
 
+
 class WorldDownLoader : private cURLManager {
-public:
-  void	 start(char * hexDigest);
-private:
-  void	 askToBZFS();
-  virtual void finalization(char *data, unsigned int length, bool good);
+  public:
+    void start(char *hexDigest);
+
+  private:
+    void askToBZFS();
+    virtual void finalization(char *data, unsigned int length, bool good);
 };
 
-void WorldDownLoader::start(char * hexDigest)
+
+void WorldDownLoader::start(char *hexDigest)
 {
   if (isCached(hexDigest)) {
     loadCachedWorld();
   } else if (worldUrl.size()) {
-    printout(("Loading world from " + worldUrl).c_str());
+    showError(("Loading world from " + worldUrl).c_str());
     setURL(worldUrl);
     addHandle();
     worldUrl = ""; // clear the state
@@ -801,6 +864,7 @@ void WorldDownLoader::start(char * hexDigest)
     askToBZFS();
   }
 }
+
 
 void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
 {
@@ -812,17 +876,17 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
     md5.finalize();
     std::string digest = md5.hexdigest();
     if (digest != md5Digest) {
-      printError("Download from URL failed");
+      showError("Download from URL failed");
       askToBZFS();
     } else {
-      std::ostream* cache =
+      std::ostream *cache =
 	FILEMGR.createDataOutStream(worldCachePath, true, true);
       if (cache != NULL) {
 	cache->write(worldDatabase, length);
 	delete cache;
 	loadCachedWorld();
       } else {
-	printError("Problem writing cache");
+	showError("Problem writing cache");
 	askToBZFS();
       }
     }
@@ -831,9 +895,11 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
   }
 }
 
+
 void WorldDownLoader::askToBZFS()
 {
-  printout("Downloading World...");
+  // Why do we use the error status for this?
+  showError("Downloading World...");
   char message[MaxPacketLen];
   // ask for world
   nboPackUInt32(message, 0);
@@ -844,7 +910,9 @@ void WorldDownLoader::askToBZFS()
   cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
 }
 
-static WorldDownLoader *worldDownLoader;
+
+static WorldDownLoader* worldDownLoader = NULL;
+
 
 static void dumpMissingFlag(char *buf, uint16_t len)
 {
@@ -864,11 +932,9 @@ static void dumpMissingFlag(char *buf, uint16_t len)
     buf += 2;
   }
 
-  std::vector<std::string> args;
-  args.push_back(flags);
-  printError(TextUtils::format("Flags not supported by this client: %s",
-			       flags.c_str()).c_str());
+  showError(TextUtils::format("Flags not supported by this client: %s",flags.c_str()).c_str());
 }
+
 
 static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
 {
@@ -876,31 +942,35 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   int doneSize  = worldPtr + len;
   if (cacheOut)
     cacheOut->write((char *)buf, len);
-  printError(TextUtils::format
-	     ("Downloading World (%2d%% complete/%d kb remaining)...",
-	      (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
+  showError(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
+    (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
 
-static void handleSuperKill(void *msg )
+static void handleSuperKill(void *msg)
 {
   uint8_t id;
   nboUnpackUInt8(msg, id);
-  serverError = true;
-  printError("Server forced a disconnect");
-
-  int i;
-  for (i = 0; i < MAX_ROBOTS; i++) {
-    if (robots[i] && robots[i]->getId() == id)
-      break;
+  if (!myTank || myTank->getId() == id || id == 0xff) {
+    serverError = true;
+    printError("Server forced a disconnect");
+#ifdef ROBOT
+  } else {
+    int i;
+    for (i = 0; i < MAX_ROBOTS; i++) {
+      if (robots[i] && robots[i]->getId() == id)
+	break;
+    }
+    if (i >= MAX_ROBOTS)
+      return;
+    delete robots[i];
+    robots[i] = NULL;
+    numRobots--;
+#endif
   }
-  if (i >= MAX_ROBOTS)
-    return;
-  delete robots[i];
-  robots[i] = NULL;
-  numRobots--;
 }
+
 
 static void handleRejectMessage(void *msg )
 {
@@ -916,7 +986,8 @@ static void handleRejectMessage(void *msg )
   printError(reason);
 }
 
-static void handleFlagNegotiation(void *msg, uint16_t len )
+
+static void handleFlagNegotiation(void *msg, uint16_t len)
 {
   if (len > 0) {
     dumpMissingFlag((char *)msg, len);
@@ -925,7 +996,8 @@ static void handleFlagNegotiation(void *msg, uint16_t len )
   serverLink->send(MsgWantSettings, 0, NULL);
 }
 
-static void handleGameSettings(void *msg )
+
+static void handleGameSettings(void *msg)
 {
   if (worldBuilder) {
     delete worldBuilder;
@@ -934,9 +1006,11 @@ static void handleGameSettings(void *msg )
   worldBuilder = new WorldBuilder;
   worldBuilder->unpackGameSettings(msg);
   serverLink->send(MsgWantWHash, 0, NULL);
+  showError("Requesting World Hash...");
 }
 
-static void handleCacheURL(void *msg, uint16_t len )
+
+static void handleCacheURL(void *msg, uint16_t len)
 {
   char *cacheURL = new char[len];
   nboUnpackString(msg, cacheURL, len);
@@ -944,7 +1018,8 @@ static void handleCacheURL(void *msg, uint16_t len )
   delete [] cacheURL;
 }
 
-static void handleWantHash(void *msg, uint16_t len )
+
+static void handleWantHash(void *msg, uint16_t len)
 {
   char *hexDigest = new char[len];
   nboUnpackString(msg, hexDigest, len);
@@ -955,7 +1030,8 @@ static void handleWantHash(void *msg, uint16_t len )
   delete [] hexDigest;
 }
 
-static void handleGetWorld(void *msg, uint16_t len )
+
+static void handleGetWorld(void *msg, uint16_t len)
 {
   // create world
   uint32_t bytesLeft;
@@ -969,6 +1045,7 @@ static void handleGetWorld(void *msg, uint16_t len )
     serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
     return;
   }
+
   if (cacheOut)
     delete cacheOut;
   cacheOut = NULL;
@@ -977,51 +1054,55 @@ static void handleGetWorld(void *msg, uint16_t len )
     markOld(worldCachePath);
 }
 
-static void handleTimeUpdate(void *msg, uint16_t /*len*/ )
+
+static void handleTimeUpdate(void *msg)
 {
   int32_t timeLeft;
   msg = nboUnpackInt32(msg, timeLeft);
   //hud->setTimeLeft(timeLeft);
   if (timeLeft == 0) {
     gameOver = true;
+    myTank->explodeTank();
+    //controlPanel->addMessage("Time Expired");
+    //hud->setAlert(0, "Time Expired", 10.0f, true);
 #ifdef ROBOT
     for (int i = 0; i < numRobots; i++)
       if (robots[i])
 	robots[i]->explodeTank();
 #endif
   } else if (timeLeft < 0) {
-//hud->setAlert(0, "Game Paused", 10.0f, true);
+    //hud->setAlert(0, "Game Paused", 10.0f, true);
   }
 }
 
-static void handleScoreOver(void *msg, uint16_t /*len*/ )
+
+static void handleScoreOver(void *msg)
 {
   // unpack packet
   PlayerId id;
   uint16_t team;
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt16(msg, team);
-  Player* player = lookupPlayer(id);
+  Player *player = lookupPlayer(id);
 
   // make a message
   std::string msg2;
   if (team == (uint16_t)NoTeam) {
     // a player won
     if (player) {
-      msg2 = player->getCallSign();
-      msg2 += " (";
-      msg2 += Team::getName(player->getTeam());
-      msg2 += ")";
+      msg2 = TextUtils::format("%s (%s) won the game",
+      player->getCallSign(),
+      Team::getName(player->getTeam()));
     } else {
-      msg2 = "[unknown player]";
+      msg2 = "[unknown player] won the game";
     }
   } else {
-    msg2 = Team::getName(TeamColor(team));		// a team won
+    msg2 = TextUtils::format("%s won the game",
+      Team::getName(TeamColor(team)));
   }
 
-  msg2 += " won the game";
-
   gameOver = true;
+  myTank->explodeTank();
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++) {
@@ -1031,7 +1112,8 @@ static void handleScoreOver(void *msg, uint16_t /*len*/ )
 #endif
 }
 
-static void handleAddPlayer(void	*msg, uint16_t /*len*/, bool &checkScores )
+
+static void handleAddPlayer(void* msg, bool& checkScores)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -1041,40 +1123,55 @@ static void handleAddPlayer(void	*msg, uint16_t /*len*/, bool &checkScores )
 #endif
 
   if (id == myTank->getId()) {
-    enteringServer(msg);		// it's me!  should be the end of updates
+    enteringServer(msg); // it's me!  should be the end of updates
   } else {
-    addPlayer(id, msg, entered);
+    //addPlayer(id, msg, entered);
+    addPlayer(id, msg, true);
     updateNumPlayers();
     checkScores = true;
+
+    if (myTank->getId() >= 200) {
+      setTankFlags(); // update the tank flags when in replay mode.
+    }
   }
 }
 
-static void handleRemovePlayer(void	*msg, uint16_t /*len*/, bool &checkScores )
+
+static void handleRemovePlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
 
-  if (removePlayer (id))
+  if (removePlayer(id)) {
     checkScores = true;
-}
-
-static void handleFlagUpdate(void	*msg, uint16_t /*len*/ )
-{
-  uint16_t count;
-  uint16_t flagIndex;
-  msg = nboUnpackUInt16(msg, count);
-  for (int i = 0; i < count; i++) {
-    msg = nboUnpackUInt16(msg, flagIndex);
-    msg = world->getFlag(int(flagIndex)).unpack(msg);
   }
 }
 
-static void handleTeamUpdate(void	*msg, uint16_t /*len*/, bool &checkScores )
+
+static void handleFlagUpdate(void *msg, size_t len)
+{
+  uint16_t count = 0;
+  uint16_t flagIndex;
+  if (len >= 2)
+    msg = nboUnpackUInt16(msg, count);
+
+  size_t perFlagSize = 2 + 55;
+
+  if (len >= (2 + (perFlagSize*count)))
+    for (int i = 0; i < count; i++) {
+      msg = nboUnpackUInt16(msg, flagIndex);
+      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      world->initFlag(int(flagIndex));
+    }
+}
+
+
+static void handleTeamUpdate(void *msg, bool &checkScores)
 {
   uint8_t  numTeams;
   uint16_t team;
 
-  msg = nboUnpackUInt8(msg,numTeams);
+  msg = nboUnpackUInt8(msg, numTeams);
   for (int i = 0; i < numTeams; i++) {
     msg = nboUnpackUInt16(msg, team);
     msg = teams[int(team)].unpack(msg);
@@ -1083,7 +1180,8 @@ static void handleTeamUpdate(void	*msg, uint16_t /*len*/, bool &checkScores )
   checkScores = true;
 }
 
-static void handleAliveMessage(void	*msg, uint16_t /*len*/ )
+
+static void handleAliveMessage(void *msg)
 {
   PlayerId id;
   fvec3 pos;
@@ -1094,30 +1192,54 @@ static void handleAliveMessage(void	*msg, uint16_t /*len*/ )
   msg = nboUnpackFloat(msg, forward);
   int playerIndex = lookupPlayerIndex(id);
 
-  if ((playerIndex >= 0) || (playerIndex == -2)) {
-    static const fvec3 zero(0.0f, 0.0f, 0.0f);
-    Player* tank = getPlayerByIndex(playerIndex);
-    if (tank->getPlayerType() == ComputerPlayer) {
-      for (int r = 0; r < numRobots; r++) {
-	if (robots[r] && robots[r]->getId() == playerIndex) {
-	  robots[r]->restart(pos,forward);
-	  if (!rcLink) {
-	    setRobotTarget(robots[r]);
-	  }
-	  break;
-	}
+  if ((playerIndex < 0) && (playerIndex != -2)) {
+    return;
+  }
+  Player *tank = getPlayerByIndex(playerIndex);
+  if (tank == NULL) {
+    return;
+  }
+
+  if (tank == myTank) {
+    //wasRabbit = tank->getTeam() == RabbitTeam;
+    myTank->restart(pos, forward);
+    myTank->setShotType(StandardShot);
+    //firstLife = false;
+    justJoined = false;
+
+    //if (!myTank->isAutoPilot())
+    //  mainWindow->warpMouse();
+
+    //hud->setAltitudeTape(myTank->canJump());
+  }
+#ifdef ROBOT
+  else if (tank->getPlayerType() == ComputerPlayer) {
+    for (int r = 0; r < numRobots; r++) {
+      if (robots[r] && robots[r]->getId() == playerIndex) {
+        robots[r]->restart(pos, forward);
+        setRobotTarget(robots[r]);
+        break;
       }
     }
-
-    tank->setStatus(PlayerState::Alive);
-    tank->move(pos, forward);
-    tank->setVelocity(zero);
-    tank->setAngularVelocity(0.0f);
-    tank->setDeadReckoning((float)syncedClock.GetServerSeconds());
   }
+#endif
+
+  static const fvec3 zero(0.0f, 0.0f, 0.0f);
+  tank->setStatus(tank->getStatus() | PlayerState::Alive);
+  tank->move(pos, forward);
+  tank->setVelocity(zero);
+  tank->setAngularVelocity(0.0f);
+  tank->setDeadReckoning(syncedClock.GetServerSeconds());
+  tank->spawnEffect();
+  if (tank == myTank) {
+    myTank->setSpawning(false);
+  }
+
+  //SOUNDSYSTEM.play(SFX_POP, pos, true, isViewTank(tank));
 }
 
-static void handleAutoPilot(void *msg, uint16_t /*len*/ )
+
+static void handleAutoPilot(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -1125,7 +1247,7 @@ static void handleAutoPilot(void *msg, uint16_t /*len*/ )
   uint8_t autopilot;
   nboUnpackUInt8(msg, autopilot);
 
-  Player* tank = lookupPlayer(id);
+  Player *tank = lookupPlayer(id);
   if (!tank)
     return;
 
@@ -1133,7 +1255,7 @@ static void handleAutoPilot(void *msg, uint16_t /*len*/ )
   addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
 }
 
-static void handleAllow(void *msg, uint16_t /*len*/ )
+static void handleAllow(void *msg)
 {
   PlayerId id;
   LocalPlayer *localtank = NULL;
@@ -1142,37 +1264,50 @@ static void handleAllow(void *msg, uint16_t /*len*/ )
   uint8_t allow;
   nboUnpackUInt8(msg, allow);
 
-  Player* tank = NULL;
-  for (int i = 0; i < MAX_ROBOTS; i++) {
-    if (robots[i] && robots[i]->getId() == id) {
-      tank = localtank = robots[i];
+  Player *tank = NULL;
+  if (myTank && myTank->getId() == id) {
+    tank = localtank = myTank;
+  } else {
+#ifdef ROBOT
+    for (int i = 0; i < MAX_ROBOTS; i++) {
+      if (robots[i] && robots[i]->getId() == id) {
+	tank = localtank = robots[i];
+      }
     }
+#endif
+    if (!tank)
+      tank = lookupPlayer(id);
+
   }
-  if (!tank) {
-    tank = lookupPlayer(id);
-  }
-  if (!tank)
-    return;
+  if (!tank) return;
 
   if (localtank) {
     localtank->setDesiredSpeed(0.0);
     localtank->setDesiredAngVel(0.0);
     // drop any team flag we may have, as would happen if we paused
-    const FlagType* flagd = localtank->getFlag();
-    if (flagd->flagTeam != NoTeam)
+    const FlagType *flagd = localtank->getFlag();
+    if (flagd->flagTeam != NoTeam) {
       serverLink->sendDropFlag(localtank->getPosition());
+      localtank->setShotType(StandardShot);
+    }
   }
-  
+
+  // FIXME - this is currently too noisy
   tank->setAllow(allow);
   addMessage(tank, allow & AllowShoot ? "Shooting allowed" : "Shooting forbidden");
-  addMessage(tank, allow & (AllowMoveForward | AllowMoveBackward | AllowTurnLeft | AllowTurnRight) ? "Movement allowed" : "Movement restricted");
+  addMessage(tank, allow & (AllowMoveForward  |
+                            AllowMoveBackward |
+                            AllowTurnLeft     |
+                            AllowTurnRight) ? "Movement allowed"
+                                            : "Movement restricted");
   addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
 }
 
-static void handleKilledMessage(void *msg, uint16_t /*len*/, bool, bool &checkScores )
+
+static void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
 {
   PlayerId victim, killer;
-  FlagType* flagType;
+  FlagType *flagType;
   int16_t shotId, reason;
   int phydrv = -1;
   msg = nboUnpackUInt8(msg, victim);
@@ -1185,10 +1320,20 @@ static void handleKilledMessage(void *msg, uint16_t /*len*/, bool, bool &checkSc
     msg = nboUnpackInt32(msg, inPhyDrv);
     phydrv = int(inPhyDrv);
   }
-  BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
-  BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
-  Player* victimPlayer = lookupPlayer(victim);
-  Player* killerPlayer = lookupPlayer(killer);
+  BaseLocalPlayer *victimLocal = getLocalPlayer(victim);
+  BaseLocalPlayer *killerLocal = getLocalPlayer(killer);
+  Player *victimPlayer = lookupPlayer(victim);
+  Player *killerPlayer = lookupPlayer(killer);
+
+  if (victimPlayer == myTank) {
+    // uh oh, i'm dead
+    if (myTank->isAlive()) {
+      serverLink->sendDropFlag(myTank->getPosition());
+      myTank->setShotType(StandardShot);
+      //handleMyTankKilled(reason);
+    }
+  }
+
   if (victimLocal) {
     // uh oh, local player is dead
     if (victimLocal->isAlive()) {
@@ -1209,7 +1354,7 @@ static void handleKilledMessage(void *msg, uint16_t /*len*/, bool, bool &checkSc
 #ifdef ROBOT
   // blow up robots on victim's team if shot was genocide
   if (killerPlayer && victimPlayer && shotId >= 0) {
-    const ShotPath* shot = killerPlayer->getShot(int(shotId));
+    const ShotPath *shot = killerPlayer->getShot(int(shotId));
     if (shot && shot->getFlag() == Flags::Genocide) {
       for (int i = 0; i < numRobots; i++) {
 	if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
@@ -1222,21 +1367,29 @@ static void handleKilledMessage(void *msg, uint16_t /*len*/, bool, bool &checkSc
   checkScores = true;
 }
 
-static void handleGrabFlag(void *msg, uint16_t /*len*/ )
+
+static void handleGrabFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
+  unsigned char shot;
 
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt16(msg, flagIndex);
-  msg = world->getFlag(int(flagIndex)).unpack(msg);
+  if (flagIndex >= world->getMaxFlags()) {
+    return;
+  }
+  Flag& flag = world->getFlag(int(flagIndex));
+  msg = flag.unpack(msg);
+  msg = nboUnpackUInt8(msg, shot);
 
-  Player* tank = lookupPlayer(id);
+  Player *tank = lookupPlayer(id);
   if (!tank)
     return;
 
   // player now has flag
-  tank->setFlag(world->getFlag(flagIndex).type);
+  tank->setFlag(flag.type);
+  tank->setShotType((ShotType)shot);
 
   std::string message("grabbed ");
   message += tank->getFlag()->flagName;
@@ -1245,35 +1398,41 @@ static void handleGrabFlag(void *msg, uint16_t /*len*/ )
   addMessage(tank, message);
 }
 
-static void handleDropFlag(void *msg, uint16_t /*len*/)
+
+static void handleDropFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
 
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt16(msg, flagIndex);
-  msg = world->getFlag(int(flagIndex)).unpack(msg);
+  if (flagIndex >= world->getMaxFlags()) {
+    return;
+  }
+  Flag& flag = world->getFlag(int(flagIndex));
+  msg = flag.unpack(msg);
 
-  Player* tank = lookupPlayer(id);
+  Player *tank = lookupPlayer(id);
   if (!tank)
     return;
 
   handleFlagDropped(tank);
 }
 
-static void handleCaptureFlag(void *msg, uint16_t /*len*/, bool &checkScores )
+
+static void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
   uint16_t flagIndex, team;
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt16(msg, flagIndex);
-  msg = nboUnpackUInt16(msg, team);
-  Player* capturer = lookupPlayer(id);
-
-  if (flagIndex >= world->getMaxFlags())
+  if (flagIndex >= world->getMaxFlags()) {
     return;
+  }
+  msg = nboUnpackUInt16(msg, team);
+  Player *capturer = lookupPlayer(id);
 
-  Flag capturedFlag = world->getFlag(int(flagIndex));
+  Flag& capturedFlag = world->getFlag(int(flagIndex));
 
   if (capturedFlag.type == Flags::Null)
     return;
@@ -1473,19 +1632,19 @@ static void		handleServerMessage(bool human, uint16_t code,
     break;
 
   case MsgTimeUpdate:
-    handleTimeUpdate(msg,len);
+    handleTimeUpdate(msg);
     break;
 
   case MsgScoreOver:
-    handleScoreOver(msg,len);
+    handleScoreOver(msg);
     break;
 
   case MsgAddPlayer:
-    handleAddPlayer(msg,len,checkScores);
+    handleAddPlayer(msg,checkScores);
     break;
 
   case MsgRemovePlayer:
-    handleRemovePlayer(msg,len,checkScores);
+    handleRemovePlayer(msg,checkScores);
     break;
 
   case MsgFlagUpdate:
@@ -1493,27 +1652,27 @@ static void		handleServerMessage(bool human, uint16_t code,
     break;
 
   case MsgTeamUpdate:
-    handleTeamUpdate(msg,len,checkScores);
+    handleTeamUpdate(msg,checkScores);
     break;
 
   case MsgAlive:
-    handleAliveMessage(msg,len);
+    handleAliveMessage(msg);
     break;
 
   case MsgAutoPilot:
-    handleAutoPilot(msg,len);
+    handleAutoPilot(msg);
     break;
 
   case MsgAllow:
-    handleAllow(msg,len);
+    handleAllow(msg);
     break;
 
   case MsgKilled:
-    handleKilledMessage(msg,len,human,checkScores);
+    handleKilledMessage(msg,human,checkScores);
     break;
 
   case MsgGrabFlag:
-    handleGrabFlag(msg,len);
+    handleGrabFlag(msg);
     break;
 
   case MsgTangibilityUpdate:
@@ -1529,11 +1688,11 @@ static void		handleServerMessage(bool human, uint16_t code,
     break;
 
   case MsgDropFlag:
-    handleDropFlag(msg,len);
+    handleDropFlag(msg);
     break;
 
   case MsgCaptureFlag:
-    handleCaptureFlag(msg,len,checkScores);
+    handleCaptureFlag(msg,checkScores);
     break;
 
   case MsgNewRabbit:
@@ -3290,6 +3449,15 @@ void doNetworkStuff(void )
   cURLManager::perform();
 }
 
+bool checkForCompleteDownloads(void)
+{
+  // check if we are waiting for initial texture downloading
+  if (!Downloads::instance().requestFinalized())
+    return false;
+
+  return true;
+}
+
 void doEnergySaver(void )
 {
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
@@ -3361,6 +3529,9 @@ static void		playingLoop()
     doUpdates(dt);
 
     doNetworkStuff();
+
+    if (checkForCompleteDownloads())
+      joinInternetGame2(); // we did the inital downloads, so we should join
 
     doEnergySaver();
 

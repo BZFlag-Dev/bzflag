@@ -326,6 +326,17 @@ void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data)
 
 ThirdPersonVars thirdPersonVars;
 
+#ifdef ROBOT
+static void makeObstacleList();
+static std::vector<BzfRegion*> obstacleList;  // for robots
+#endif
+
+// to simplify code shared between bzrobots and bzflag
+// - in bzflag, this shows the error on the HUD
+static void showError(const char *msg)
+{
+  HUDDialogStack::get()->setFailedMessage(msg);
+}
 
 // access silencePlayers from bzflag.cxx
 std::vector<std::string> &getSilenceList()
@@ -649,7 +660,7 @@ void joinGame()
       delete[] worldDatabase;
       worldDatabase = NULL;
     }
-    HUDDialogStack::get()->setFailedMessage("Download stopped by user action");
+    showError("Download stopped by user action");
     joiningGame = false;
   }
   joinRequested = true;
@@ -1693,7 +1704,7 @@ int curlProgressFunc(void * /*clientp*/,
   if ((int)dltotal > 0)
     percentage = 100.0 * dlnow / dltotal;
 
-  HUDDialogStack::get()->setFailedMessage(TextUtils::format("%2.1f%% (%i/%i)", percentage, (int) dlnow, (int) dltotal).c_str());
+  showError(TextUtils::format("%2.1f%% (%i/%i)", percentage, (int) dlnow, (int) dltotal).c_str());
 
   return 0;
 }
@@ -1710,7 +1721,7 @@ static void loadCachedWorld()
   // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
-    HUDDialogStack::get()->setFailedMessage("World cache files disappeared.  Join canceled");
+    showError("World cache files disappeared.  Join canceled");
     drawFrame(0.0f);
     remove(worldCachePath.c_str());
     joiningGame = false;
@@ -1718,7 +1729,7 @@ static void loadCachedWorld()
   }
 
   // status update
-  HUDDialogStack::get()->setFailedMessage("Loading world into memory...");
+  showError("Loading world into memory...");
   drawFrame(0.0f);
 
   // get the world size
@@ -1730,7 +1741,7 @@ static void loadCachedWorld()
   cachedWorld->seekg(0);
   char *localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
-    HUDDialogStack::get()->setFailedMessage("Error loading cached world.  Join canceled");
+    showError("Error loading cached world.  Join canceled");
     drawFrame(0.0f);
     remove(worldCachePath.c_str());
     joiningGame = false;
@@ -1740,7 +1751,7 @@ static void loadCachedWorld()
   delete cachedWorld;
 
   // verify
-  HUDDialogStack::get()->setFailedMessage("Verifying world integrity...");
+  showError("Verifying world integrity...");
   drawFrame(0.0f);
   MD5 md5;
   md5.update((unsigned char *)localWorldDatabase, charSize);
@@ -1752,14 +1763,14 @@ static void loadCachedWorld()
       worldBuilder = NULL;
     }
     delete[] localWorldDatabase;
-    HUDDialogStack::get()->setFailedMessage("Error on md5. Removing offending file.");
+    showError("Error on md5. Removing offending file.");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
 
   // make world
-  HUDDialogStack::get()->setFailedMessage("Preparing world...");
+  showError("Preparing world...");
   drawFrame(0.0f);
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
@@ -1768,7 +1779,7 @@ static void loadCachedWorld()
       worldBuilder = NULL;
     }
     delete[] localWorldDatabase;
-    HUDDialogStack::get()->setFailedMessage("Error unpacking world database. Join canceled.");
+    showError("Error unpacking world database. Join canceled.");
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1783,7 +1794,7 @@ static void loadCachedWorld()
     worldBuilder = NULL;
   }
 
-  HUDDialogStack::get()->setFailedMessage("Downloading files...");
+  showError("Downloading files...");
 
   const bool doDownloads = BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
@@ -1807,8 +1818,7 @@ void WorldDownLoader::start(char *hexDigest)
   if (isCached(hexDigest)) {
     loadCachedWorld();
   } else if (worldUrl.size()) {
-    HUDDialogStack::get()->setFailedMessage
-      (("Loading world from " + worldUrl).c_str());
+    showError(("Loading world from " + worldUrl).c_str());
     setProgressFunction(curlProgressFunc, (char*)worldUrl.c_str());
     setURL(worldUrl);
     addHandle();
@@ -1829,7 +1839,7 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
     md5.finalize();
     std::string digest = md5.hexdigest();
     if (digest != md5Digest) {
-      HUDDialogStack::get()->setFailedMessage("Download from URL failed");
+      showError("Download from URL failed");
       askToBZFS();
     } else {
       std::ostream *cache =
@@ -1839,7 +1849,7 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
 	delete cache;
 	loadCachedWorld();
       } else {
-	HUDDialogStack::get()->setFailedMessage("Problem writing cache");
+	showError("Problem writing cache");
 	askToBZFS();
       }
     }
@@ -1851,7 +1861,8 @@ void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
 
 void WorldDownLoader::askToBZFS()
 {
-  HUDDialogStack::get()->setFailedMessage("Downloading World...");
+  // Why do we use the error status for this?
+  showError("Downloading World...");
   char message[MaxPacketLen];
   // ask for world
   nboPackUInt32(message, 0);
@@ -1874,8 +1885,8 @@ static void dumpMissingFlag(char *buf, uint16_t len)
 
   for (i = 0; i < nFlags; i++) {
     /* We can't use FlagType::unpack() here, since it counts on the
-    * flags existing in our flag database.
-    */
+     * flags existing in our flag database.
+     */
     if (i)
       flags += ", ";
     flags += buf[0];
@@ -1884,9 +1895,7 @@ static void dumpMissingFlag(char *buf, uint16_t len)
     buf += 2;
   }
 
-  HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format("Flags not supported by this client: %s",
-    flags.c_str()).c_str());
+  showError(TextUtils::format("Flags not supported by this client: %s",flags.c_str()).c_str());
 }
 
 
@@ -1896,18 +1905,10 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   int doneSize  = worldPtr + len;
   if (cacheOut)
     cacheOut->write((char *)buf, len);
-  HUDDialogStack::get()->setFailedMessage(
-    TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
-    (100 * doneSize / totalSize),
-    bytesLeft / 1024).c_str());
+  showError(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
+    (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
-
-
-#ifdef ROBOT
-static void makeObstacleList();
-static std::vector<BzfRegion*> obstacleList;  // for robots
-#endif
 
 
 static void handleResourceFetch (void *msg)
@@ -2026,7 +2027,7 @@ static void handleJoinServer(void *msg)
   nameAndIp.push_back(addr);
 //FIXME  nameAndIp.push_back(serverAddress.getDotNotation());
   if (!autoJoinAccessList.authorized(nameAndIp)) {
-    HUDDialogStack::get()->setFailedMessage("Auto Join Denied Locally");
+    showError("Auto Join Denied Locally");
     std::string warn = ColorStrings[WhiteColor];
     warn += "NOTE: ";
     warn += ColorStrings[GreyColor];
@@ -2117,7 +2118,7 @@ static void handleGameSettings(void *msg)
   worldBuilder = new WorldBuilder;
   worldBuilder->unpackGameSettings(msg);
   serverLink->send(MsgWantWHash, 0, NULL);
-  HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
+  showError("Requesting World Hash...");
 }
 
 
@@ -2219,9 +2220,10 @@ static void handleScoreOver(void *msg)
   hud->setAlert(0, msg2.c_str(), 10.0f, true);
 
 #ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
+  for (int i = 0; i < numRobots; i++) {
     if (robots[i])
       robots[i]->explodeTank();
+  }
 #endif
 }
 
@@ -2237,8 +2239,7 @@ static void handleAddPlayer(void* msg, bool& checkScores)
 
   if (id == myTank->getId()) {
     enteringServer(msg); // it's me!  should be the end of updates
-  }
-  else {
+  } else {
     addPlayer(id, msg, entered);
     updateNumPlayers();
     checkScores = true;
@@ -5622,7 +5623,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // get server address
   Address serverAddress(*inAddress);
   if (serverAddress.isAny()) {
-    HUDDialogStack::get()->setFailedMessage("Server not found");
+    showError("Server not found");
     return;
   }
 
@@ -5632,7 +5633,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   nameAndIp.push_back(startupInfo.serverName);
   nameAndIp.push_back(serverAddress.getDotNotation());
   if (!serverAccessList.authorized(nameAndIp)) {
-    HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
+    showError("Server Access Denied Locally");
     std::string msg = ColorStrings[WhiteColor];
     msg += "NOTE: ";
     msg += ColorStrings[GreyColor];
@@ -5657,7 +5658,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   serverError = false;
 
   if (!serverLink) {
-    HUDDialogStack::get()->setFailedMessage("Memory error");
+    showError("Memory error");
     return;
   }
 
@@ -5668,7 +5669,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
         static char versionError[] = "Incompatible server version XXXXXXXX";
         strncpy(versionError + strlen(versionError) - 8,
           serverLink->getVersion(), 8);
-        HUDDialogStack::get()->setFailedMessage(versionError);
+        showError(versionError);
         break;
       }
       case ServerLink::Refused: {
@@ -5678,7 +5679,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
         // add to the HUD
         std::string msg = ColorStrings[RedColor];
         msg += "You have been banned from this server";
-        HUDDialogStack::get()->setFailedMessage(msg.c_str());
+        showError(msg.c_str());
 
         // add to the console
         msg = ColorStrings[RedColor];
@@ -5698,7 +5699,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
         break;
       }
       case ServerLink::SocketError: {
-        HUDDialogStack::get()->setFailedMessage("Error connecting to server.");
+        showError("Error connecting to server.");
         break;
       }
       case ServerLink::CrippledVersion: {
@@ -5720,7 +5721,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // use parallel UDP if desired and using server relay
   serverLink->sendUDPlinkRequest();
 
-  HUDDialogStack::get()->setFailedMessage("Connection Established...");
+  showError("Connection Established...");
 
   sendFlagNegotiation();
   joiningGame = true;
@@ -5746,7 +5747,7 @@ static void joinInternetGame2()
 {
   justJoined = true;
 
-  HUDDialogStack::get()->setFailedMessage("Entering game...");
+  showError("Entering game...");
 
   ServerLink::setServer(serverLink);
   World::setWorld(world);
@@ -7047,7 +7048,7 @@ bool dnsLookupDone(struct in_addr &inAddress)
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
   if (status == AresHandler::Failed) {
-    HUDDialogStack::get()->setFailedMessage("Server not found");
+    showError("Server not found");
     waitingDNS = false;
   } else if (status == AresHandler::HbNSucceeded) {
     waitingDNS = false;
@@ -7549,7 +7550,6 @@ static void playingLoop()
       joinInternetGame2(); // we did the inital downloads, so we should join
 
     doFPSLimit();
-
 
     if (serverLink)
       serverLink->flush();
