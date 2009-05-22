@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\win32;..\..\include;..\..\src\bzflag;.\;..\..\src\other\curl\include"
+				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\clientbase;..\..\src\bzflag,.\,..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;BUILDING_BZADMIN"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -144,7 +144,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\win32;..\..\include;..\..\src\bzflag;.\;..\..\src\other\curl\include"
+				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\clientbase;..\..\src\bzflag,.\,..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -237,7 +237,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\,..\..\src\other\curl\include"
+				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\clientbase;..\..\src\bzflag,.\,..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE HAVE_CURSES_H;BUILDING_BZADMIN"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -329,7 +329,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\bzflag,.\,..\..\src\other\curl\include"
+				AdditionalIncludeDirectories="..\..\win32,..\..\include,..\..\src\clientbase;..\..\src\bzflag,.\,..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;BUILDING_BZADMIN;HAVE_CURSES_H"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -695,7 +695,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ServerLink.cxx"
+				RelativePath="..\..\src\clientbase\ServerLink.cxx"
 				>
 			</File>
 			<File
