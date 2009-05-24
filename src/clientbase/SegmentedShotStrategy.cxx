@@ -599,8 +599,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     logDebugMessage(0, "SegShotStrategy %i\n", (int)getPath().getFiringInfo().shot.id);
     for (size_t s = 0; s< segments.size(); s++) {
       const ShotPathSegment& sps = segments[s];
-      const double segTime = sps.end - sps.start;
-      const fvec3 endPos = sps.ray.getPoint(segTime);
+      const fvec3 endPos = sps.ray.getPoint((float)(sps.end - sps.start));
       const std::string reasonStr = ShotPathSegment::getReasonString(sps.reason).c_str();
       logDebugMessage(0, "  segment %i\n", (int)s);
       logDebugMessage(0, "    start  %f\n", sps.start);
