@@ -51,7 +51,8 @@ public:
   enum InputMethod {	// what device am I using to move around
     Keyboard = 0,
     Mouse,
-    Joystick
+    Joystick,
+    InputMethodCount
   };
 
 public:
@@ -243,8 +244,7 @@ inline void LocalPlayer::setInputMethod(InputMethod newInput)
 
 inline void LocalPlayer::setInputMethod(std::string newInput)
 {
-  // FIXME - using hardcoded upper bound is ugly
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < InputMethodCount; i++) {
     if (newInput == getInputMethodName((InputMethod)i)) {
       setInputMethod((InputMethod)i);
     }
