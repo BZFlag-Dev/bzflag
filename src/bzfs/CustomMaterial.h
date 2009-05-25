@@ -33,7 +33,7 @@ class CustomMaterial : public WorldFileObject {
 
 #endif  /* __CUSTOM_MATERIAL_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

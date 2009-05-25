@@ -333,7 +333,7 @@ int CustomZone::getPlayerTeamFromQualifier(const std::string& qual)
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

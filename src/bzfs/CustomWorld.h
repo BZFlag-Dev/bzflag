@@ -59,7 +59,7 @@ bool removeCustomMapObject ( const char* object );
 
 #endif  /* __CUSTOMWORLD_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

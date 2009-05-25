@@ -95,3 +95,11 @@ public:
   BaseTimerStrategy* action(TimeKeeper& tm);
 }
 #endif /* _TIMERSTRATEGY_H */
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

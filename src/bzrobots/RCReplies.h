@@ -432,4 +432,4 @@ private:
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***
 // End: ***
-// vim: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8

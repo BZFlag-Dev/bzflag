@@ -35,7 +35,7 @@ class CustomWorldText : public WorldFileLocation {
 
 #endif  /* __CUSTOM_WORLD_TEXT__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

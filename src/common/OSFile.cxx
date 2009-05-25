@@ -774,3 +774,11 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
   return true;
 #endif// !Win32
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

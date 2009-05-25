@@ -39,7 +39,7 @@ class CustomGroup : public WorldFileObstacle {
 
 #endif  /* __CUSTOM_GROUP_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

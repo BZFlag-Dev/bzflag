@@ -68,7 +68,7 @@ static inline void addFace(MeshObstacle* mesh,
 
 #endif  /* __MESH_UTILS_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

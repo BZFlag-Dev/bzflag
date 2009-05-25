@@ -48,7 +48,7 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
   return true;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

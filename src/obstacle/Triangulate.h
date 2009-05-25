@@ -32,7 +32,7 @@ extern void triangulateFace(int count, const fvec3** verts,
 
 #endif  /* __TRIANGULATE_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
