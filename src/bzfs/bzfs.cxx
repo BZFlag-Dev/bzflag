@@ -2861,12 +2861,12 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
     if (victimIndex == rabbitIndex)
       anointNewRabbit(killerIndex);
   } else {
-    // change the team scores -- rogues don't have team scores.  don't
-    // change team scores for individual player's kills in capture the
-    // flag mode.
-    // Team score is even not used on RabbitChase
+    // Change the team scores -- rogues don't have team scores.
+    // Change team scores for individual players' kills only in
+    // the free-for-all modes.
+    // Team score is not used at all on RabbitChase.
     int winningTeam = (int)NoTeam;
-    if ( clOptions->gameType == ClassicCTF || clOptions->gameType == TeamFFA ) {
+    if ( clOptions->gameType == OpenFFA || clOptions->gameType == TeamFFA ) {
       int killerTeam = -1;
       if (killer && victim->getTeam() == killer->getTeam()) {
 	if (!killer->isTeam(RogueTeam)) {
