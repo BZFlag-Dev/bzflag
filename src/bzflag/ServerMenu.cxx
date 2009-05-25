@@ -361,7 +361,7 @@ void ServerMenu::playingCB(void* _self)
 {
   ServerList &list = ServerList::instance();
   for (PingsMap::iterator i = ServerMenu::activePings.begin();
-       i != ServerMenu::activePings.end();) {
+       i != ServerMenu::activePings.end(); i++) {
     i->second.first->doPings();
     if (i->second.first->done()) {
       ServerItem* server = list.lookupServer(i->first);
@@ -373,10 +373,8 @@ void ServerMenu::playingCB(void* _self)
 	i->second.second[j]->addItem(server);
       }
       delete i->second.first;
-      ServerMenu::activePings.erase(i++);
-      continue;
+      ServerMenu::activePings.erase(i);
     }
-    ++i;
   }
 
   static_cast<ServerMenu*>(_self)->serverList.checkEchos(getStartupInfo());
