@@ -1,4 +1,3 @@
-
 /* bzflag
  * Copyright (c) 1993 - 2009 Tim Riker
  *
@@ -344,6 +343,7 @@ void SDLMedia::audioDriver(std::string& driverName)
 }
 
 #endif //HAVE_SDL
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

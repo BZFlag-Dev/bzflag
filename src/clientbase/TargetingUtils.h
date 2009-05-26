@@ -1,4 +1,3 @@
-
 /* bzflag
  * Copyright (c) 1993 - 2009 Tim Riker
  *

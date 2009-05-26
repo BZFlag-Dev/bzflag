@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // a series of utilitys for bzfs plugins to use with permision groups
 #ifndef _PLUGIN_GROUPS_H_
@@ -29,7 +29,6 @@ std::vector<std::string> findGroupsWithPerm( const char* perm, bool skipLocal = 
 std::vector<std::string> findGroupsWithAdmin( bool skipLocal = true );
 
 #endif //_PLUGIN_GROUPS_H_
-
 
 // Local Variables: ***
 // mode: C++ ***

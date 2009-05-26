@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #ifndef __MOTION_UTILS_H_
 #define __MOTION_UTILS_H_
@@ -31,7 +31,6 @@ void  computeFriction(float dt, FlagType* flag,
                       const fvec3& oldVelocity, fvec3& newVelocity);
 float computeJumpVelocity(FlagType* flag);
 float computeGroundLimit(FlagType* flag);
-
 
 #endif  /*__MOTION_UTILS_H_ */
 

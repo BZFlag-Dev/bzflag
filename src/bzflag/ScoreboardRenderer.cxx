@@ -8,10 +8,7 @@
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- * $Id$
  */
-
 
 /* interface header */
 #include "ScoreboardRenderer.h"
@@ -60,18 +57,18 @@ bool ScoreboardRenderer::alwaysShowTeamScore = 0;
 
 
 ScoreboardRenderer::ScoreboardRenderer()
-: winWidth(0.0)
-, teamScoreYVal(0.0f)
-, roaming(false)
-, messageColor(1.0f, 1.0f, 1.0f, 1.0f)
-, dim(false)
-, huntIndicator(false)
-, huntPosition(0)
-, huntSelectEvent(false)
-, huntPositionEvent(0)
-, huntState(HUNT_NONE)
-, huntAddMode(false)
-, numHunted(0)
+  : winWidth(0.0)
+  , teamScoreYVal(0.0f)
+  , roaming(false)
+  , messageColor(1.0f, 1.0f, 1.0f, 1.0f)
+  , dim(false)
+  , huntIndicator(false)
+  , huntPosition(0)
+  , huntSelectEvent(false)
+  , huntPositionEvent(0)
+  , huntState(HUNT_NONE)
+  , huntAddMode(false)
+  , numHunted(0)
 {
   sortMode = BZDB.getIntClamped("scoreboardSort", 0, SortTypeCount - 1);
   alwaysShowTeamScore = (BZDB.getIntClamped("alwaysShowTeamScore", 0, 1) != 0);

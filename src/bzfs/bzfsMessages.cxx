@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // bzflag global header
 #include "bzfsMessages.h"
@@ -728,7 +728,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
     msg->packUInt8(0);
 
     if (recordOnly) {
-	Record::addPacket(MsgMessage, (int)msg->size(), msg->buffer(), HiddenPacket);
+      Record::addPacket(MsgMessage, (int)msg->size(), msg->buffer(), HiddenPacket);
     } else {
       if (!broadcast && !toGroup) {
         if (srcPlayerData && (sourcePlayer != destPlayer))
@@ -892,8 +892,7 @@ void sendScoreOverMessage(int playerID, TeamColor _team)
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->scoreLimitReached(playerID,
-      convertTeam(_team));
+      otherData->playerHandler->scoreLimitReached(playerID, convertTeam(_team));
   }
 }
 
@@ -1201,7 +1200,6 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
   memcpy(playerState.pos,apiState.pos,sizeof(float)*3);
   memcpy(playerState.velocity,apiState.velocity,sizeof(float)*3);
 }
-
 
 // Local Variables: ***
 // mode: C++ ***

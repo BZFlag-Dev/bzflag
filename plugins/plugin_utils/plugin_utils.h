@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // a series of utilitys for bzfs plugins to use.
 #ifndef _PLUGIN_UTILS_H_
@@ -91,10 +91,10 @@ inline int compare_nocase(const char* s1,
 inline bool isAlphabetic(const char c)
 {
   if (( c > 64 && c < 91) ||
-    ( c > 96 && c < 123)) {
-      return true;
-    }
-    return false;
+      ( c > 96 && c < 123)) {
+    return true;
+  }
+  return false;
 }
 
 inline bool isNumeric(const char c)
@@ -108,21 +108,21 @@ inline bool isNumeric(const char c)
 inline bool isWhitespace(const char c)
 {
   if ((( c >= 9 ) && ( c <= 13 )) ||
-    (c == 32)) {
-      return true;
-    }
-    return false;
+      (c == 32)) {
+    return true;
+  }
+  return false;
 }
 
 inline bool isPunctuation(const char c)
 {
   if (( c > 32 && c < 48) ||
-    ( c > 57 && c < 65) ||
-    ( c > 90 && c < 97) ||
-    ( c > 122 && c < 127)) {
-      return true;
-    }
-    return false;
+      ( c > 57 && c < 65) ||
+      ( c > 90 && c < 97) ||
+      ( c > 122 && c < 127)) {
+    return true;
+  }
+  return false;
 }
 
 inline bool isAlphanumeric(const char c)
@@ -152,7 +152,6 @@ inline bool isPrintable(const char c)
 const std::vector<std::string> bzu_standardPerms (void);
 
 #endif //_PLUGIN_UTILS_H_
-
 
 // Local Variables: ***
 // mode: C++ ***

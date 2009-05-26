@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #include "Model.h"
 #include "bzfgl.h"
@@ -40,7 +40,6 @@ OBJVert& OBJVert::operator += ( const OBJVert& vert )
   z += vert.z;
   return *this;
 }
-
 
 void OBJVert::glVertex ( void ) const
 {
@@ -182,7 +181,6 @@ bool OBJModel::read ( const std::string &fileName )
   ifs.close();
   return true;
 }
-
 
 // Local Variables: ***
 // mode: C++ ***

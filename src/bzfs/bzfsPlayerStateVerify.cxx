@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /* interface header */
 #include "bzfsPlayerStateVerify.h"
@@ -154,13 +154,13 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &state)
     pauseDelay += (- playerData->player.pauseRequestLag / 1000.0);
 
     if ((TimeKeeper::getCurrent() - pauseDelay) < 5.0f
-      && (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)) {
-	// we have one of those players all love
-	logDebugMessage(1,"Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
-	  playerData->getIndex());
-	sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused too fast.");
-	removePlayer(playerData->getIndex(), "Paused too fast");
-	return false;
+	&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)) {
+      // we have one of those players all love
+      logDebugMessage(1,"Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
+		      playerData->getIndex());
+      sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused too fast.");
+      removePlayer(playerData->getIndex(), "Paused too fast");
+      return false;
     } else {
       pausePlayer(playerData->player.getPlayerIndex(), true);
     }
@@ -170,12 +170,12 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &state)
         (state.status & PlayerState::PhantomZoned) ||
         (state.status & PlayerState::Falling)      ||
         (state.status & PlayerState::Alive) == false) {
-	// the player did pause while being a wall or in air
-	logDebugMessage(1,"Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
-	  playerData->getIndex());
-	sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused in unallowed state.");
-	removePlayer(playerData->getIndex(), "Paused in unallowed state");
-	return false;
+      // the player did pause while being a wall or in air
+      logDebugMessage(1,"Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
+		      playerData->getIndex());
+      sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused in unallowed state.");
+      removePlayer(playerData->getIndex(), "Paused in unallowed state");
+      return false;
     }
   }
 
@@ -312,7 +312,7 @@ bool doHeightChecks(GameKeeper::Player *playerData, PlayerState &state)
 
   if (state.pos.z > maxHeight) {
     logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
+		    playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
     sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was too high.");
     removePlayer(playerData->getIndex(), "too high", true);
     return false;
@@ -358,7 +358,7 @@ bool doOOChecks(GameKeeper::Player *playerData, PlayerState &state)
 
   // InBuilding state doesn't get set when tank is inside a drivethrough obstacle
   if (!(state.status & PlayerState::Falling) && !droveForward && !(playerData->lastState.status & PlayerState::Falling)
-    && (state.status & PlayerState::InBuilding))
+      && (state.status & PlayerState::InBuilding))
   {
     logDebugMessage(1, "%s drove backward in building\n", playerData->player.getCallSign());
     char message[MessageLen];
@@ -404,18 +404,18 @@ bool checkFlagCheats(GameKeeper::Player *playerData, int teamIndex)
   TeamColor base = whoseBase(currPos.x, currPos.y, currPos.z);
   if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam())) {
     logDebugMessage(1, "Player %s [%d] might have sent MsgCaptureFlag for taking their own "
-      "flag onto their own base\n",
-      playerData->player.getCallSign(), playerData->getIndex());
+		    "flag onto their own base\n",
+		    playerData->player.getCallSign(), playerData->getIndex());
     foundACheat = true;
   }
 
   if ((teamIndex != playerData->player.getTeam() && base != playerData->player.getTeam())) {
     logDebugMessage(1,"Player %s [%d] (%s) might have tried to capture %s flag without "
-      "reaching their own base. (Player position: %f %f %f)\n",
-      playerData->player.getCallSign(), playerData->getIndex(),
-      Team::getName(playerData->player.getTeam()),
-      Team::getName((TeamColor)teamIndex),
-      currPos.x, currPos.y, currPos.z);
+		    "reaching their own base. (Player position: %f %f %f)\n",
+		    playerData->player.getCallSign(), playerData->getIndex(),
+		    Team::getName(playerData->player.getTeam()),
+		    Team::getName((TeamColor)teamIndex),
+		    currPos.x, currPos.y, currPos.z);
     foundACheat = true;
   }
 

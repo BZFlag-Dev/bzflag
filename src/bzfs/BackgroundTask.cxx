@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // bzflag global header
 #include "BackgroundTask.h"
@@ -64,8 +64,8 @@ void BackgroundTaskManager::removeTask ( BackgroundTaskFunc task, void *param )
 {
   for (size_t i = 0; i < tasks.size(); i++ ) {
     if (tasks[i].funcCB == task && tasks[i].param == param) {
-	tasks.erase(tasks.begin()+i);
-	return;
+      tasks.erase(tasks.begin()+i);
+      return;
     }
   }
 }
@@ -109,7 +109,6 @@ void BackgroundTaskManager::process ( bz_EventData *eventData )
   else
     bz_clearMaxWaitTime("BackgroundTaskManager");
 }
-
 
 // Local Variables: ***
 // mode: C++ ***

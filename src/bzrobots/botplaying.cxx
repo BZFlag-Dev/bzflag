@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // interface header
 #include "playing.h"
@@ -85,9 +85,6 @@
 #include "motd.h"
 
 
-
-
-
 bool canSpawn = true;
 bool headless = true;
 static const float FlagHelpDuration = 60.0f;
@@ -137,8 +134,6 @@ PlayerId msgDestination;
 RCLinkBackend *rcLink = NULL;
 
 
-
-
 static void setTankFlags();
 static void handleMsgSetVars(void *msg);
 static void handlePlayerMessage(uint16_t, uint16_t, void*);
@@ -170,7 +165,7 @@ static char *worldDatabase = NULL;
 static bool isCacheTemp;
 static std::ostream *cacheOut = NULL;
 
-static AresHandler      ares;
+static AresHandler ares;
 
 static AccessList serverAccessList("ServerAccess.txt", NULL);
 
@@ -242,11 +237,6 @@ void warnAboutConsole()
 }
 
 
-
-
-
-
-
 BzfDisplay*		getDisplay()
 {
   return NULL;
@@ -268,8 +258,6 @@ void forceControls(bool, float, float)
 }
 
 
-
-
 void setSceneDatabase()
 {
 }
@@ -287,27 +275,24 @@ void printout(const std::string& line)
 #endif
 }
 
-StartupInfo*		getStartupInfo()
+StartupInfo* getStartupInfo()
 {
   return &startupInfo;
 }
 
 
-bool			setVideoFormat(int, bool)
+bool setVideoFormat(int, bool)
 {
   return false;
 }
 
-void			addShotExplosion(const fvec3&)
+void addShotExplosion(const fvec3&)
 {
 }
 
-void			addShotPuff(const fvec3&, const fvec3&)
+void addShotPuff(const fvec3&, const fvec3&)
 {
 }
-
-
-
 
 
 void notifyBzfKeyMapChanged()
@@ -521,7 +506,7 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
   if (i < 0) {
     printError (TextUtils::format ("Invalid player identification (%d)", i));
     std::cerr << "WARNING: invalid player identification when adding player with id "
-      << i << std::endl;
+	      << i << std::endl;
     return NULL;
   }
 
@@ -529,7 +514,7 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
     // we're not in synch with server -> help! not a good sign, but not fatal.
     printError ("Server error when adding player, player already added");
     std::cerr << "WARNING: player already exists at location with id "
-      << i << std::endl;
+	      << i << std::endl;
     return NULL;
   }
 
@@ -542,8 +527,8 @@ static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 
   // add player
   if (PlayerType (type) == TankPlayer
-    || PlayerType (type) == ComputerPlayer
-    || PlayerType (type) == ChatPlayer) {
+      || PlayerType (type) == ComputerPlayer
+      || PlayerType (type) == ChatPlayer) {
     remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, PlayerType (type));
     remotePlayers[i]->changeScore (rank, short (wins), short (losses), short (tks));
   }
@@ -842,12 +827,12 @@ static void loadCachedWorld()
 
 
 class WorldDownLoader : private cURLManager {
-  public:
-    void start(char *hexDigest);
+public:
+  void start(char *hexDigest);
 
-  private:
-    void askToBZFS();
-    virtual void finalization(char *data, unsigned int length, bool good);
+private:
+  void askToBZFS();
+  virtual void finalization(char *data, unsigned int length, bool good);
 };
 
 
@@ -943,7 +928,7 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   if (cacheOut)
     cacheOut->write((char *)buf, len);
   showError(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
-    (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
+			      (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
@@ -1091,14 +1076,14 @@ static void handleScoreOver(void *msg)
     // a player won
     if (player) {
       msg2 = TextUtils::format("%s (%s) won the game",
-      player->getCallSign(),
-      Team::getName(player->getTeam()));
+			       player->getCallSign(),
+			       Team::getName(player->getTeam()));
     } else {
       msg2 = "[unknown player] won the game";
     }
   } else {
     msg2 = TextUtils::format("%s won the game",
-      Team::getName(TeamColor(team)));
+			     Team::getName(TeamColor(team)));
   }
 
   gameOver = true;
@@ -1348,7 +1333,7 @@ static void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
   if (killerLocal) {
     // local player did it
     if (shotId >= 0)
-      killerLocal->endShot(shotId, true);				// terminate the shot
+      killerLocal->endShot(shotId, true);	// terminate the shot
   }
 
 #ifdef ROBOT
@@ -1702,8 +1687,8 @@ static void		handleServerMessage(bool human, uint16_t code,
   case MsgShotBegin: {
     FiringInfo firingInfo;
 
-    PlayerId		shooterid;
-    uint16_t		id;
+    PlayerId shooterid;
+    uint16_t id;
 
     msg = nboUnpackUInt8(msg, shooterid);
     msg = nboUnpackUInt16(msg, id);

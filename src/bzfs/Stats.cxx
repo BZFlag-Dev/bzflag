@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #include "Stats.h"
 #include "StateDatabase.h"
@@ -22,15 +22,15 @@ StatsLink::StatsLink()
 
 void StatsLink::init( void )
 {
-	sentAdd = false;
-	bz_registerEvent(bz_eWorldFinalized,this);
-	bz_registerEvent(bz_eListServerUpdateEvent,this);
-	bz_registerEvent(bz_ePlayerPartEvent,this);
+  sentAdd = false;
+  bz_registerEvent(bz_eWorldFinalized,this);
+  bz_registerEvent(bz_eListServerUpdateEvent,this);
+  bz_registerEvent(bz_ePlayerPartEvent,this);
 
-	if (BZDB.isSet("_statURL"))
-		url = BZDB.get("_statURL");
-	if (!url.size())
-		url = "http://stattrack.bzflag.bz:88";
+  if (BZDB.isSet("_statURL"))
+    url = BZDB.get("_statURL");
+  if (!url.size())
+    url = "http://stattrack.bzflag.bz:88";
 }
 
 StatsLink::~StatsLink()
@@ -39,27 +39,27 @@ StatsLink::~StatsLink()
 
 const char* getTeamName ( TeamColor team )
 {
-    switch(team) {
-      default:
-	break;
-      case RogueTeam:
-	return "Rogue";
-      case RedTeam:
-	return "Red";
-      case GreenTeam:
-	return "Green";
-      case BlueTeam:
-	return "Blue";
-      case PurpleTeam:
-	return "Purple";
-      case ObserverTeam:
-	return "Observer";
-      case RabbitTeam:
-	return "Rabbit";
-      case HunterTeam:
-	return "Hunter";
-    }
-    return "unknown";
+  switch(team) {
+  default:
+    break;
+  case RogueTeam:
+    return "Rogue";
+  case RedTeam:
+    return "Red";
+  case GreenTeam:
+    return "Green";
+  case BlueTeam:
+    return "Blue";
+  case PurpleTeam:
+    return "Purple";
+  case ObserverTeam:
+    return "Observer";
+  case RabbitTeam:
+    return "Rabbit";
+  case HunterTeam:
+    return "Hunter";
+  }
+  return "unknown";
 }
 
 void StatsLink::buildXMLPlayer ( std::string &params, int playerID )
@@ -67,7 +67,7 @@ void StatsLink::buildXMLPlayer ( std::string &params, int playerID )
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (player) {
     params += "\t<GamePlayer>\n";
-      params += TextUtils::format("\t\t<callsign>%s</callsign>\n",player->player.getCallSign());
+    params += TextUtils::format("\t\t<callsign>%s</callsign>\n",player->player.getCallSign());
     if (player->hasCustomField("motto") && player->customData["motto"].size())
       params += TextUtils::format("\t\t<motto>%s</motto>\n", player->customData["motto"].c_str());
     else
@@ -104,7 +104,7 @@ void StatsLink::buildXMLPlayerList ( std::string &params )
     params += "<ArrayOfGamePlayer xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n";
 
     for( unsigned int i = 0; i < players->size(); i++ )
-     buildXMLPlayer(params,players->get(i));
+      buildXMLPlayer(params,players->get(i));
     params += "</ArrayOfGamePlayer>\n";
   }
   bz_deleteIntList(players);

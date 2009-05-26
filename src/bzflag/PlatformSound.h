@@ -1,18 +1,18 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /*
-* Sound engine that uses the native platform system and does all it's own software sound
-*/
+ * Sound engine that uses the native platform system and does all it's own software sound
+ */
 
 #ifndef PLATFORM_SOUND_H
 #define PLATFORM_SOUND_H
@@ -158,11 +158,11 @@ protected:
 
 
   /* NOTE:
-  *	world sounds use the ptrFrac member, local sounds the ptr member.
-  *	world sounds only use the monoaural samples so the ptrFrac member
-  *	is incremented by 1 for each sample.  local sounds are in stereo
-  *	and ptr is incremented by 2 for each (stereo) sample.
-  */
+   *	world sounds use the ptrFrac member, local sounds the ptr member.
+   *	world sounds only use the monoaural samples so the ptrFrac member
+   *	is incremented by 1 for each sample.  local sounds are in stereo
+   *	and ptr is incremented by 2 for each (stereo) sample.
+   */
 
   /* last position of the receiver */
   float lastX, lastY, lastZ, lastTheta;

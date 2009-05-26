@@ -1,18 +1,18 @@
 /* bzflag
-* Copyright (c) 1993 - 2009 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /* WinDisplay:
-*	Encapsulates an Windows windows display
-*/
+ *	Encapsulates an Windows windows display
+ */
 
 #ifndef BZF_WINDISPLAY_H
 #define	BZF_WINDISPLAY_H
@@ -26,7 +26,7 @@ class Resolution;
 class WinDisplay : public BzfDisplay {
 public:
   WinDisplay(const char* displayName,
-    const char* videoFormat);
+	     const char* videoFormat);
   ~WinDisplay();
 
   virtual bool	isValid() const;
@@ -38,8 +38,8 @@ public:
   bool		setDefaultResolution() const;
 
   bool		isFullScreenOnly() const;
-  int			getFullWidth() const;
-  int			getFullHeight() const;
+  int		getFullWidth() const;
+  int		getFullHeight() const;
 
   bool		peekEvent(BzfEvent& event) const;
 
@@ -50,8 +50,8 @@ public:
     Rep(const char*);
     ~Rep();
 
-    void		ref();
-    void		unref();
+    void	ref();
+    void	unref();
 
   private:
     static LONG WINAPI windowProc(HWND, UINT, WPARAM, LPARAM);
@@ -66,14 +66,14 @@ public:
 
 private:
   WinDisplay(const WinDisplay&);
-  WinDisplay&		operator=(const WinDisplay&);
+  WinDisplay&	operator=(const WinDisplay&);
 
   bool		getKey(const MSG&, BzfKeyEvent&) const;
   bool		isNastyKey(const MSG&) const;
 
   bool		doSetResolution(int);
-  ResInfo**		getVideoFormats(int& num, int& current);
-  static bool		canChangeDepth();
+  ResInfo**	getVideoFormats(int& num, int& current);
+  static bool	canChangeDepth();
 
   bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
 
@@ -82,13 +82,13 @@ private:
 
   // resolution info
   HWND		hwnd;
-  int			fullWidth;
-  int			fullHeight;
-  Resolution*		resolutions;
+  int		fullWidth;
+  int		fullHeight;
+  Resolution*	resolutions;
 
   // for key to character translations
   mutable bool	translated;
-  mutable int		charCode;
+  mutable int	charCode;
 
   // keyboard mapping
   static const int	buttonMap[];
