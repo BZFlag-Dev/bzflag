@@ -141,9 +141,6 @@ private:
 
 };
 
-#define SEND 1
-#define RECEIVE 0
-
 //
 // ServerLink
 //
