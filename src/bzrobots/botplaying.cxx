@@ -164,6 +164,7 @@ static uint32_t worldPtr = 0;
 static char *worldDatabase = NULL;
 static bool isCacheTemp;
 static std::ostream *cacheOut = NULL;
+static bool downloadingData = false;
 
 static AresHandler ares;
 
@@ -823,6 +824,7 @@ static void loadCachedWorld()
   const bool doDownloads = BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
   Downloads::instance().startDownloads(doDownloads, updateDownloads, false);
+  downloadingData  = true;
 }
 
 
@@ -3255,6 +3257,8 @@ static void joinInternetGame2()
   ServerLink::setServer(serverLink);
   World::setWorld(world);
 
+  canSpawn = true;
+
   // prep teams
   teams = world->getTeams();
 
@@ -3281,7 +3285,7 @@ static void joinInternetGame2()
 			myTank->getTeam(), myTank->getCallSign(),
 			startupInfo.token, startupInfo.referrer);
   startupInfo.token[0] = '\0';
-
+  startupInfo.referrer[0] = '\0';
   joiningGame = false;
 }
 
@@ -3428,11 +3432,19 @@ void doUpdates ( const float dt )
 
 void doNetworkStuff(void )
 {
+  // send my data
+  if (myTank && myTank->isDeadReckoningWrong() &&
+    (myTank->getTeam() != ObserverTeam))
+    serverLink->sendPlayerUpdate(myTank); // also calls setDeadReckoning()
+
+#ifdef ROBOT
   if (entered)
     sendRobotUpdates();
+#endif
 
   cURLManager::perform();
 }
+
 
 bool checkForCompleteDownloads(void)
 {
@@ -3440,7 +3452,16 @@ bool checkForCompleteDownloads(void)
   if (!Downloads::instance().requestFinalized())
     return false;
 
-  return true;
+  // downloading is terminated. go!
+  Downloads::instance().finalizeDownloads();
+  if (downloadingData) {
+    downloadingData = false;
+    return true;
+  } else {
+    //setSceneDatabase();
+  }
+
+  return false;
 }
 
 void doEnergySaver(void )

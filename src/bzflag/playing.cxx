@@ -235,7 +235,7 @@ static uint32_t worldPtr = 0;
 static char *worldDatabase = NULL;
 static bool isCacheTemp;
 static std::ostream *cacheOut = NULL;
-static bool downloadingInitialTexture = false;
+static bool downloadingData = false;
 
 static AresHandler      ares;
 
@@ -1799,7 +1799,7 @@ static void loadCachedWorld()
   const bool doDownloads = BZDB.isTrue("doDownloads");
   const bool updateDownloads =  BZDB.isTrue("updateDownloads");
   Downloads::instance().startDownloads(doDownloads, updateDownloads, false);
-  downloadingInitialTexture  = true;
+  downloadingData  = true;
 }
 
 
@@ -7403,8 +7403,8 @@ bool checkForCompleteDownloads(void)
 
   // downloading is terminated. go!
   Downloads::instance().finalizeDownloads();
-  if (downloadingInitialTexture) {
-    downloadingInitialTexture = false;
+  if (downloadingData) {
+    downloadingData = false;
     return true;
   } else {
     setSceneDatabase();
