@@ -12,6 +12,7 @@
 
 // interface header
 #include "playing.h"
+#include "guiplaying.h"
 
 // system includes
 #include <iostream>
@@ -29,7 +30,6 @@
 
 // common headers
 #include "AccessList.h"
-#include "AnsiCodes.h"
 #include "AresHandler.h"
 #include "AutoHunt.h"
 #include "BaseBuilding.h"
@@ -83,6 +83,7 @@
 
 // local implementation headers
 #include "AutoPilot.h"
+#include "AnsiCodes.h"
 #include "Daylight.h"
 #include "Downloads.h"
 #include "EffectsRenderer.h"
@@ -106,14 +107,14 @@
 //#include "messages.h"
 
 
-bool canSpawn = true;
+// FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
+// it's operating in a context where graphics and sound are available.
 bool headless = false;
+
+
 static const float FlagHelpDuration = 60.0f;
-StartupInfo startupInfo;
-ServerLink *serverLink = NULL;
 static World *world = NULL;
 static Team *teams = NULL;
-int numFlags = 0;
 static bool joinRequested = false;
 static bool waitingDNS = false;
 static bool serverError = false;
@@ -121,9 +122,6 @@ static bool serverDied = false;
 static double epochOffset;
 static double lastEpochOffset;
 static std::vector<PlayingCallbackItem> playingCallbacks;
-bool gameOver = false;
-
-std::string customLimboMessage;
 
 static FlashClock pulse;
 static bool justJoined = false;
@@ -132,26 +130,7 @@ static LocalPlayer *myTank = NULL;
 
 static MainMenu *mainMenu;
 
-// FIXME: The following are globally referenced
-//        in some parts of the client base
-MainWindow *mainWindow = NULL;
-ControlPanel *controlPanel = NULL;
-HUDRenderer *hud = NULL;
-float clockAdjust = 0.0f;
-bool fireButton = false;
-bool roamButton = false;
-float pauseCountdown = 0.0f;
-float destructCountdown = 0.0f;
-int savedVolume = -1;
-bool pausedByUnmap = false;
-// END FIXME
-
-float roamDZoom = 0.0f;
-
 static MessageOfTheDay *motd = NULL;
-CommandCompleter completer;
-
-PlayerId msgDestination;
 
 static RadarRenderer *radar = NULL;
 static ScoreboardRenderer *scoreboard = NULL;
@@ -176,8 +155,8 @@ static float forcedAngVel = 0.0f;
 
 static void setHuntTarget();
 static void setTankFlags();
-static void handleMsgSetVars(void *msg);
-static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
+void handleMsgSetVars(void *msg);
+void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
 static void enteringServer(void *buf);
 static void joinInternetGame2();
 static void cleanWorldCache();
@@ -187,7 +166,6 @@ static void setRobotTarget(RobotPlayer *robot);
 #endif
 
 static ResourceGetter *resourceDownloader = NULL;
-WordFilter *wordFilter = NULL;
 
 // Far and Near Frustum clipping planes
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
@@ -217,7 +195,7 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
 			int physicsDriver = -1);
 
 #ifdef ROBOT
-static void handleMyTankKilled(int reason);
+void handleMyTankKilled(int reason);
 #endif
 
 static double userTimeEpochOffset;
@@ -265,63 +243,6 @@ static const char AutoJoinContent[] = // FIXME
   "deny *\n";
 static AccessList autoJoinAccessList("AutoJoinAccess.txt", AutoJoinContent);
 
-
-ThirdPersonVars::ThirdPersonVars()
-: b3rdPerson(false)
-{
-  BZDB.addCallback("_forbid3rdPersonCam",         bzdbCallback, this);
-  BZDB.addCallback("3rdPersonCam",                bzdbCallback, this);
-  BZDB.addCallback("3rdPersonCamXYOffset",        bzdbCallback, this);
-  BZDB.addCallback("3rdPersonCamZOffset",         bzdbCallback, this);
-  BZDB.addCallback("3rdPersonCamTargetMult",      bzdbCallback, this);
-  BZDB.addCallback("3rdPersonNearTargetDistance", bzdbCallback, this);
-  BZDB.addCallback("3rdPersonNearTargetSize",     bzdbCallback, this);
-  BZDB.addCallback("3rdPersonFarTargetDistance",  bzdbCallback, this);
-  BZDB.addCallback("3rdPersonFarTargetSize",      bzdbCallback, this);
-}
-
-
-ThirdPersonVars::~ThirdPersonVars()
-{
-  BZDB.removeCallback("_forbid3rdPersonCam",         bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonCam",                bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonCamXYOffset",        bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonCamZOffset",         bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonCamTargetMult",      bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonNearTargetDistance", bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonNearTargetSize",     bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonFarTargetDistance",  bzdbCallback, this);
-  BZDB.removeCallback("3rdPersonFarTargetSize",      bzdbCallback, this);
-}
-
-void ThirdPersonVars::load(void)
-{
-  b3rdPerson = !BZDB.isTrue(std::string("_forbid3rdPersonCam")) &&
-                BZDB.isTrue(std::string("3rdPersonCam"));
-
-  if (b3rdPerson) {
-    cameraOffsetXY   = BZDB.eval(std::string("3rdPersonCamXYOffset"));
-    cameraOffsetZ    = BZDB.eval(std::string("3rdPersonCamZOffset"));
-    targetMultiplier = BZDB.eval(std::string("3rdPersonCamTargetMult"));
-
-    nearTargetDistance = BZDB.eval(std::string("3rdPersonNearTargetDistance"));
-    nearTargetSize     = BZDB.eval(std::string("3rdPersonNearTargetSize"));
-    farTargetDistance  = BZDB.eval(std::string("3rdPersonFarTargetDistance"));
-    farTargetSize      = BZDB.eval(std::string("3rdPersonFarTargetSize"));
-  }
-}
-
-void ThirdPersonVars::clear(void)
-{
-  b3rdPerson = false;
-}
-
-void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data)
-{
-  ((ThirdPersonVars*)data)->load();
-}
-
-
 ThirdPersonVars thirdPersonVars;
 
 #ifdef ROBOT
@@ -331,15 +252,23 @@ static std::vector<BzfRegion*> obstacleList;  // for robots
 
 // to simplify code shared between bzrobots and bzflag
 // - in bzflag, this shows the error on the HUD
-static void showError(const char *msg)
+void showError(const char *msg, bool flush)
 {
   HUDDialogStack::get()->setFailedMessage(msg);
+  if(flush) {
+    drawFrame(0.0f);
+  }
 }
 
 // - in bzflag, this shows the error on the HUD
-static void showMessage(const std::string& line)
+void showMessage(const std::string& line)
 {
   controlPanel->addMessage(line);
+}
+
+void showMessage(const std::string& line, ControlPanel::MessageModes mode)
+{
+  controlPanel->addMessage(line,mode);
 }
 
 
@@ -1256,65 +1185,7 @@ static void doEvent(BzfDisplay *disply)
 }
 
 
-void addMessage(const Player *player, const std::string &msg,
-		ControlPanel::MessageModes mode, bool highlight,
-		const char *oldColor)
-{
-  std::string prefix;
-  const char *message;
 
-  if (BZDB.isTrue("colorful")) {
-    if (player) {
-      if (highlight) {
-	if (BZDB.get("killerhighlight") == "1")
-	  prefix += ColorStrings[PulsatingColor];
-	else if (BZDB.get("killerhighlight") == "2")
-	  prefix += ColorStrings[UnderlineColor];
-      }
-      const PlayerId pid = player->getId();
-      if (pid < 200) {
-	int color = player->getTeam();
-	if (color < 0 || (color > 4 && color != HunterTeam))
-	  // non-teamed, rabbit are white (same as observer)
-	  color = WhiteColor;
-
-	prefix += ColorStrings[color];
-      } else if (pid == ServerPlayer) {
-	prefix += ColorStrings[YellowColor];
-      } else {
-	prefix += ColorStrings[CyanColor]; //replay observers
-      }
-      prefix += player->getCallSign();
-
-      if (highlight)
-	prefix += ColorStrings[ResetColor];
-#ifdef BWSUPPORT
-      prefix += " (";
-      prefix += Team::getName(player->getTeam());
-      prefix += ")";
-#endif
-      prefix += std::string(ColorStrings[DefaultColor]) + ": ";
-    }
-    message = msg.c_str();
-  } else {
-    if (oldColor != NULL)
-      prefix = oldColor;
-
-    if (player) {
-      prefix += player->getCallSign();
-
-#ifdef BWSUPPORT
-      prefix += " (";
-      prefix += Team::getName(player->getTeam());
-      prefix += ")";
-#endif
-      prefix += ": ";
-    }
-    message = stripAnsiCodes(msg.c_str());
-  }
-  const std::string msgf = TextUtils::format("%s%s", prefix.c_str(), message);
-  controlPanel->addMessage(msgf, mode);
-}
 
 
 static void updateNumPlayers()
@@ -1330,7 +1201,7 @@ static void updateNumPlayers()
 }
 
 
-static void updateHighScores()
+void updateHighScores()
 {
   /* check scores to see if my team and/or have the high score.  change
   * `>= bestScore' to `> bestScore' if you want to share the number
@@ -1726,16 +1597,14 @@ static void loadCachedWorld()
   // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
-    showError("World cache files disappeared.  Join canceled");
-    drawFrame(0.0f);
+    showError("World cache files disappeared.  Join canceled",true);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
 
   // status update
-  showError("Loading world into memory...");
-  drawFrame(0.0f);
+  showError("Loading world into memory...",true);
 
   // get the world size
   cachedWorld->seekg(0, std::ios::end);
@@ -1746,8 +1615,7 @@ static void loadCachedWorld()
   cachedWorld->seekg(0);
   char *localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
-    showError("Error loading cached world.  Join canceled");
-    drawFrame(0.0f);
+    showError("Error loading cached world.  Join canceled",true);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -1756,8 +1624,7 @@ static void loadCachedWorld()
   delete cachedWorld;
 
   // verify
-  showError("Verifying world integrity...");
-  drawFrame(0.0f);
+  showError("Verifying world integrity...",true);
   MD5 md5;
   md5.update((unsigned char *)localWorldDatabase, charSize);
   md5.finalize();
@@ -1775,8 +1642,7 @@ static void loadCachedWorld()
   }
 
   // make world
-  showError("Preparing world...");
-  drawFrame(0.0f);
+  showError("Preparing world...",true);
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder) {
@@ -1916,7 +1782,7 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
 }
 
 
-static void handleResourceFetch (void *msg)
+void handleResourceFetch (void *msg)
 {
   if (BZDB.isSet ("_noRemoteFiles") && BZDB.isTrue ("_noRemoteFiles"))
     return;
@@ -1963,7 +1829,7 @@ static void handleResourceFetch (void *msg)
 }
 
 
-static void handleCustomSound(void *msg)
+void handleCustomSound(void *msg)
 {
   // bail out if we don't want to do remote sounds
   if (BZDB.isTrue("_noRemoteSounds")) {
@@ -1993,7 +1859,7 @@ static void handleCustomSound(void *msg)
 }
 
 
-static void handleJoinServer(void *msg)
+void handleJoinServer(void *msg)
 {
   // FIXME: MsgJoinServer notes ...
   //        - fix whatever is broken
@@ -2065,7 +1931,7 @@ static void handleJoinServer(void *msg)
 }
 
 
-static void handleSuperKill(void *msg)
+void handleSuperKill(void *msg)
 {
   uint8_t id;
   nboUnpackUInt8(msg, id);
@@ -2089,7 +1955,7 @@ static void handleSuperKill(void *msg)
 }
 
 
-static void handleRejectMessage(void *msg)
+void handleRejectMessage(void *msg)
 {
   void *buf;
   char buffer[MessageLen];
@@ -2104,7 +1970,7 @@ static void handleRejectMessage(void *msg)
 }
 
 
-static void handleFlagNegotiation(void *msg, uint16_t len)
+void handleFlagNegotiation(void *msg, uint16_t len)
 {
   if (len > 0) {
     dumpMissingFlag((char *)msg, len);
@@ -2114,7 +1980,7 @@ static void handleFlagNegotiation(void *msg, uint16_t len)
 }
 
 
-static void handleFlagType(void *msg)
+void handleFlagType(void *msg)
 {
 FlagType* typ = NULL;
       FlagType::unpackCustom(msg, typ);
@@ -2123,7 +1989,7 @@ FlagType* typ = NULL;
 }
 
 
-static void handleGameSettings(void *msg)
+void handleGameSettings(void *msg)
 {
   if (worldBuilder) {
     delete worldBuilder;
@@ -2136,7 +2002,7 @@ static void handleGameSettings(void *msg)
 }
 
 
-static void handleCacheURL(void *msg, uint16_t len)
+void handleCacheURL(void *msg, uint16_t len)
 {
   char *cacheURL = new char[len];
   nboUnpackString(msg, cacheURL, len);
@@ -2145,7 +2011,7 @@ static void handleCacheURL(void *msg, uint16_t len)
 }
 
 
-static void handleWantHash(void *msg, uint16_t len)
+void handleWantHash(void *msg, uint16_t len)
 {
   char *hexDigest = new char[len];
   nboUnpackString(msg, hexDigest, len);
@@ -2157,7 +2023,7 @@ static void handleWantHash(void *msg, uint16_t len)
 }
 
 
-static void handleGetWorld(void *msg, uint16_t len)
+void handleGetWorld(void *msg, uint16_t len)
 {
   // create world
   uint32_t bytesLeft;
@@ -2181,14 +2047,14 @@ static void handleGetWorld(void *msg, uint16_t len)
 }
 
 
-static void handleGameTime(void *msg)
+void handleGameTime(void *msg)
 {
   GameTime::unpack(msg);
   GameTime::update();
 }
 
 
-static void handleTimeUpdate(void *msg)
+void handleTimeUpdate(void *msg)
 {
   int32_t timeLeft;
   msg = nboUnpackInt32(msg, timeLeft);
@@ -2209,7 +2075,7 @@ static void handleTimeUpdate(void *msg)
 }
 
 
-static void handleScoreOver(void *msg)
+void handleScoreOver(void *msg)
 {
   // unpack packet
   PlayerId id;
@@ -2249,7 +2115,7 @@ static void handleScoreOver(void *msg)
 }
 
 
-static void handleAddPlayer(void* msg, bool& checkScores)
+void handleAddPlayer(void* msg, bool& checkScores)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -2272,7 +2138,7 @@ static void handleAddPlayer(void* msg, bool& checkScores)
 }
 
 
-static void handleRemovePlayer(void *msg, bool &checkScores)
+void handleRemovePlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -2283,7 +2149,7 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
 }
 
 
-static void handleFlagUpdate(void *msg, size_t len)
+void handleFlagUpdate(void *msg, size_t len)
 {
   uint16_t count = 0;
   uint16_t flagIndex;
@@ -2301,7 +2167,7 @@ static void handleFlagUpdate(void *msg, size_t len)
 }
 
 
-static void handleTeamUpdate(void *msg, bool &checkScores)
+void handleTeamUpdate(void *msg, bool &checkScores)
 {
   uint8_t  numTeams;
   uint16_t team;
@@ -2316,7 +2182,7 @@ static void handleTeamUpdate(void *msg, bool &checkScores)
 }
 
 
-static void handleAliveMessage(void *msg)
+void handleAliveMessage(void *msg)
 {
   PlayerId id;
   fvec3 pos;
@@ -2387,7 +2253,7 @@ static void handleAliveMessage(void *msg)
 }
 
 
-static void handleAutoPilot(void *msg)
+void handleAutoPilot(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -2432,7 +2298,7 @@ static void handleAutoPilot(void *msg)
   }
 }
 
-static void handleAllow(void *msg)
+void handleAllow(void *msg)
 {
   PlayerId id;
   LocalPlayer *localtank = NULL;
@@ -2481,7 +2347,7 @@ static void handleAllow(void *msg)
 }
 
 
-static void handleKilledMessage(void *msg, bool human, bool &checkScores)
+void handleKilledMessage(void *msg, bool human, bool &checkScores)
 {
   PlayerId victim, killer;
   FlagType *flagType;
@@ -2686,7 +2552,7 @@ static void handleKilledMessage(void *msg, bool human, bool &checkScores)
 }
 
 
-static void handleGrabFlag(void *msg)
+void handleGrabFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
@@ -2742,7 +2608,7 @@ static void handleGrabFlag(void *msg)
 }
 
 
-static void handleDropFlag(void *msg)
+void handleDropFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
@@ -2763,7 +2629,7 @@ static void handleDropFlag(void *msg)
 }
 
 
-static void handleCaptureFlag(void *msg, bool &checkScores)
+void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
   uint16_t flagIndex, team;
@@ -2825,7 +2691,7 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
 }
 
 
-static void handleNewRabbit(void *msg)
+void handleNewRabbit(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -2910,7 +2776,7 @@ static void handleNewRabbit(void *msg)
 }
 
 
-static void handleSetTeam(void *msg, uint16_t len)
+void handleSetTeam(void *msg, uint16_t len)
 {
   if (len < 2) {
     return;
@@ -2928,7 +2794,7 @@ static void handleSetTeam(void *msg, uint16_t len)
 }
 
 
-static void handleNearFlag(void *msg)
+void handleNearFlag(void *msg)
 {
   fvec3 pos;
   std::string flagName;
@@ -2949,7 +2815,7 @@ static void handleNearFlag(void *msg)
 }
 
 
-static void handleWhatTimeIsIt(void *msg)
+void handleWhatTimeIsIt(void *msg)
 {
   double time = -1;
   unsigned char tag = 0;
@@ -2960,7 +2826,7 @@ static void handleWhatTimeIsIt(void *msg)
 }
 
 
-static void handleSetShotType(BufferedNetworkMessage *msg)
+void handleSetShotType(BufferedNetworkMessage *msg)
 {
   PlayerId id = msg->unpackUInt8();
   unsigned char shotType = msg->unpackUInt8();
@@ -3020,7 +2886,7 @@ static void playShotSound (const FiringInfo &info, bool localSound)
 }
 
 
-static void handleShotBegin(bool human, void *msg)
+void handleShotBegin(bool human, void *msg)
 {
   PlayerId shooterid;
   uint16_t id;
@@ -3071,7 +2937,7 @@ static void handleShotBegin(bool human, void *msg)
 }
 
 
-static void handleWShotBegin (void *msg)
+void handleWShotBegin (void *msg)
 {
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
@@ -3083,7 +2949,7 @@ static void handleWShotBegin (void *msg)
 }
 
 
-static void handleShotEnd(void *msg)
+void handleShotEnd(void *msg)
 {
   PlayerId id;
   int16_t shotId;
@@ -3103,7 +2969,7 @@ static void handleShotEnd(void *msg)
 }
 
 
-static void handleHandicap(void *msg)
+void handleHandicap(void *msg)
 {
   PlayerId id;
   uint8_t numHandicaps;
@@ -3143,7 +3009,7 @@ static void handleHandicap(void *msg)
 }
 
 
-static void handleScore(void *msg)
+void handleScore(void *msg)
 {
   uint8_t numScores;
   PlayerId id;
@@ -3183,7 +3049,7 @@ static void handleScore(void *msg)
 }
 
 
-static void handleTeleport(void *msg)
+void handleTeleport(void *msg)
 {
   PlayerId id;
   uint16_t srcID, dstID;
@@ -3207,7 +3073,7 @@ static void handleTeleport(void *msg)
 }
 
 
-static void handleTransferFlag(void *msg)
+void handleTransferFlag(void *msg)
 {
   PlayerId fromId, toId;
   unsigned short flagIndex;
@@ -3223,7 +3089,7 @@ static void handleTransferFlag(void *msg)
 }
 
 
-static void handleMessage(void *msg)
+void handleMessage(void *msg)
 {
   PlayerId src;
   PlayerId dst;
@@ -3440,7 +3306,7 @@ static void handleMessage(void *msg)
 }
 
 
-static void handleReplayReset(void *msg, bool &checkScores)
+void handleReplayReset(void *msg, bool &checkScores)
 {
   int i;
   unsigned char lastPlayer;
@@ -3462,7 +3328,7 @@ static void handleReplayReset(void *msg, bool &checkScores)
 }
 
 
-static void handleAdminInfo(void *msg)
+void handleAdminInfo(void *msg)
 {
   uint8_t numIPs;
   msg = nboUnpackUInt8(msg, numIPs);
@@ -3528,7 +3394,7 @@ default:
 }
 
 
-static void handlePlayerInfo(void *msg)
+void handlePlayerInfo(void *msg)
 {
   uint8_t numPlayers;
   int i;
@@ -3549,7 +3415,7 @@ static void handlePlayerInfo(void *msg)
 }
 
 
-static void handleNewPlayer(void *msg)
+void handleNewPlayer(void *msg)
 {
   uint8_t id;
   msg = nboUnpackUInt8(msg, id);
@@ -3578,7 +3444,7 @@ static void handleNewPlayer(void *msg)
 }
 
 
-static void handlePlayerData(void *msg)
+void handlePlayerData(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -3593,7 +3459,7 @@ static void handlePlayerData(void *msg)
 }
 
 
-static void handleMovementUpdate(uint16_t code, void *msg)
+void handleMovementUpdate(uint16_t code, void *msg)
 {
   double timestamp;
   PlayerId id;
@@ -3630,7 +3496,7 @@ static void handleMovementUpdate(uint16_t code, void *msg)
 }
 
 
-static void handleGMUpdate(void *msg)
+void handleGMUpdate(void *msg)
 {
   ShotUpdate shot;
   msg = shot.unpack(msg);
@@ -3659,7 +3525,7 @@ static void handleGMUpdate(void *msg)
 }
 
 
-static void handleTangUpdate(uint16_t len, void *msg)
+void handleTangUpdate(uint16_t len, void *msg)
 {
   if (len >= 5) {
     unsigned int objectID = 0;
@@ -3672,13 +3538,13 @@ static void handleTangUpdate(uint16_t len, void *msg)
 }
 
 
-static void handleTangReset(void)
+void handleTangReset(void)
 {
   ClientIntangibilityManager::instance().resetTangibility();
 }
 
 
-static void handleAllowSpawn(uint16_t len, void *msg)
+void handleAllowSpawn(uint16_t len, void *msg)
 {
   if (len >= 1) {
     unsigned char allow = 0;
@@ -3689,254 +3555,9 @@ static void handleAllowSpawn(uint16_t len, void *msg)
 }
 
 
-static void handleLimboMessage(void *msg)
+void handleLimboMessage(void *msg)
 {
   nboUnpackStdString(msg, customLimboMessage);
-}
-
-
-static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg)
-{
-  switch (msg->getCode()) {
-default:
-  return false;
-
-case MsgSetShot:
-  handleSetShotType(msg);
-  break;
-  }
-  return true;
-}
-
-
-static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
-{
-  std::vector<std::string> args;
-  bool checkScores = false;
-
-  switch (code) {
-    case MsgWhatTimeIsIt: {
-      handleWhatTimeIsIt(msg);
-      break;
-    }
-    case MsgNearFlag: {
-      handleNearFlag(msg);
-      break;
-    }
-    case MsgSetTeam: {
-      handleSetTeam(msg, len);
-      break;
-    }
-    case MsgFetchResources: {
-      handleResourceFetch(msg);
-      break;
-    }
-    case MsgCustomSound: {
-      handleCustomSound(msg);
-      break;
-    }
-    case MsgUDPLinkEstablished: {
-      serverLink->enableOutboundUDP();  // server got our initial UDP packet
-      break;
-    }
-    case MsgUDPLinkRequest: {
-      serverLink->confirmIncomingUDP();  // we got server's initial UDP packet
-      break;
-    }
-    case MsgJoinServer: {
-      handleJoinServer(msg);
-      break;
-    }
-    case MsgSuperKill: {
-      handleSuperKill(msg);
-      break;
-    }
-    case MsgAccept: {
-      break;
-    }
-    case MsgReject: {
-      handleRejectMessage(msg);
-      break;
-    }
-    case MsgNegotiateFlags: {
-      handleFlagNegotiation(msg, len);
-      break;
-    }
-    case MsgFlagType: {
-      handleFlagType(msg);
-      break;
-    }
-    case MsgGameSettings: {
-      handleGameSettings(msg);
-      break;
-    }
-    case MsgCacheURL: {
-      handleCacheURL(msg, len);
-      break;
-    }
-    case MsgWantWHash: {
-      handleWantHash(msg, len);
-      break;
-    }
-    case MsgGetWorld: {
-      handleGetWorld(msg, len);
-      break;
-    }
-    case MsgGameTime: {
-      handleGameTime(msg);
-      break;
-    }
-    case MsgTimeUpdate: {
-      handleTimeUpdate(msg);
-      break;
-    }
-    case MsgScoreOver: {
-      handleScoreOver(msg);
-      break;
-    }
-    case MsgAddPlayer: {
-      handleAddPlayer(msg, checkScores);
-      break;
-    }
-    case MsgRemovePlayer: {
-      handleRemovePlayer(msg, checkScores);
-      break;
-    }
-    case MsgFlagUpdate: {
-      handleFlagUpdate(msg, len);
-      break;
-    }
-    case MsgTeamUpdate: {
-      handleTeamUpdate(msg, checkScores);
-      break;
-    }
-    case MsgAlive: {
-      handleAliveMessage(msg);
-      break;
-    }
-    case MsgAutoPilot: {
-      handleAutoPilot(msg);
-      break;
-    }
-    case MsgAllow: {
-      handleAllow(msg);
-      break;
-    }
-    case MsgKilled: {
-      handleKilledMessage(msg, human, checkScores);
-      break;
-    }
-    case MsgGrabFlag: {
-      handleGrabFlag(msg);
-      break;
-    }
-    case MsgDropFlag: {
-      handleDropFlag(msg);
-      break;
-    }
-    case MsgCaptureFlag: {
-      handleCaptureFlag(msg, checkScores);
-      break;
-    }
-    case MsgNewRabbit: {
-      handleNewRabbit(msg);
-      break;
-    }
-    case MsgShotBegin: {
-      handleShotBegin(human, msg);
-      break;
-    }
-    case MsgWShotBegin: {
-      handleWShotBegin(msg);
-      break;
-    }
-    case MsgShotEnd: {
-      handleShotEnd(msg);
-      break;
-    }
-    case MsgHandicap: {
-      handleHandicap(msg);
-      break;
-    }
-    case MsgScore: {
-      handleScore(msg);
-      break;
-    }
-    case MsgSetVar: {
-      handleMsgSetVars(msg);
-      break;
-    }
-    case MsgTeleport: {
-      handleTeleport(msg);
-      break;
-    }
-    case MsgTransferFlag: {
-      handleTransferFlag(msg);
-      break;
-    }
-    case MsgMessage: {
-      handleMessage(msg);
-      break;
-    }
-    case MsgReplayReset: {
-      handleReplayReset(msg, checkScores);
-      break;
-    }
-    case MsgAdminInfo: {
-      handleAdminInfo(msg);
-      break;
-    }
-    case MsgPlayerInfo: {
-      handlePlayerInfo(msg);
-      break;
-    }
-    case MsgNewPlayer: {
-      handleNewPlayer(msg);
-      break;
-    }
-    // inter-player relayed message
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      handleMovementUpdate(code, msg);
-      break;
-    }
-    case MsgGMUpdate: {
-      handleGMUpdate(msg);
-      break;
-    }
-    case MsgLagPing: {
-      serverLink->sendLagPing((char *)msg);
-      break;
-    }
-    case MsgTangibilityUpdate: {
-      handleTangUpdate(len, msg);
-      break;
-    }
-    case MsgTangibilityReset: {
-      handleTangReset();
-      break;
-    }
-    case MsgAllowSpawn: {
-      handleAllowSpawn(len, msg);
-      break;
-    }
-    case MsgLimboMessage: {
-      handleLimboMessage(msg);
-      break;
-    }
-    case MsgPlayerData: {
-      handlePlayerData(msg);
-      break;
-    }
-    case MsgPause: {
-      printf("MsgPause(FIXME) %s:%i\n", __FILE__, __LINE__);
-      break;
-    }
-  }
-
-  if (checkScores) {
-    updateHighScores();
-  }
 }
 
 
@@ -4158,7 +3779,7 @@ static void addExplosions(SceneDatabase *scene)
 
 
 #ifdef ROBOT
-static void handleMyTankKilled(int reason)
+void handleMyTankKilled(int reason)
 {
   // blow me up
   myTank->explodeTank();
@@ -4170,7 +3791,7 @@ static void handleMyTankKilled(int reason)
 #endif
 
 
-static void handleMsgSetVars(void *msg)
+void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
   std::string name;
@@ -4218,7 +3839,7 @@ void handleFlagDropped(Player *tank)
 }
 
 
-static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType)
+void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType)
 {
   Flag& f = world->getFlag(flagIndex);
 
@@ -5708,8 +5329,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
       case ServerLink::Rejected: {
         // the server is probably full or the game is over.  if not then
         // the server is having network problems.
-        HUDDialogStack::get()->setFailedMessage
-          ("Game is full or over.  Try again later.");
+        showError("Game is full or over.  Try again later.");
         break;
       }
       case ServerLink::SocketError: {
@@ -5718,13 +5338,11 @@ static void joinInternetGame(const struct in_addr *inAddress)
       }
       case ServerLink::CrippledVersion: {
         // can't connect to (otherwise compatible) non-crippled server
-        HUDDialogStack::get()->setFailedMessage
-          ("Cannot connect to full version server.");
+        showError("Cannot connect to full version server.");
         break;
       }
       default: {
-        HUDDialogStack::get()->setFailedMessage
-          (TextUtils::format
+        showError(TextUtils::format
           ("Internal error connecting to server (error code %d).",
           serverLink->getState()).c_str());
         break;
@@ -6566,7 +6184,7 @@ static void drawFakeCursor(int type)
 }
 
 
-static void handleMouseDrawing()
+void handleMouseDrawing()
 {
   static bool cursorIsHidden = false;
   static BZDB_int fakeCursor("fakecursor");

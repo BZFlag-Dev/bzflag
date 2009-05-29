@@ -79,8 +79,8 @@
 #include "ExportInformation.h"
 #include "callbacks.h"
 #include "playing.h"
+#include "guiplaying.h"
 #include "sound.h"
-#include "playing.h"
 #include "SceneRenderer.h"
 
 // invoke incessant rebuilding for build versioning
@@ -99,8 +99,6 @@ static bool noAudio = false;
 struct tm userTime;
 bool echoToConsole = false;
 bool echoAnsi = false;
-
-BzfDisplay* display = NULL;
 
 
 #ifdef ROBOT

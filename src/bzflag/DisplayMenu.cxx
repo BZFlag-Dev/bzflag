@@ -32,6 +32,7 @@
 #include "MainMenu.h"
 #include "Roaming.h"
 #include "playing.h"
+#include "guiplaying.h"
 
 
 DisplayMenu::DisplayMenu()

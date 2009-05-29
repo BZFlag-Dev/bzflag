@@ -22,8 +22,9 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
-#include "playing.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {

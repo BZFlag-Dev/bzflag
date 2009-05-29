@@ -36,6 +36,7 @@ endif
 
 genericfiles =				\
 	bzrobots.cxx			\
+	botplaying.h			\
 	botplaying.cxx			\
 	RCLink.cxx			\
 	RCLink.h			\

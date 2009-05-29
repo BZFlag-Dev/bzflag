@@ -18,8 +18,9 @@
 
 /* local implementation headers */
 #include "LocalPlayer.h"
-#include "playing.h"
+#include "Roster.h"
 #include "World.h"
+#include "playing.h"
 
 
 ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :

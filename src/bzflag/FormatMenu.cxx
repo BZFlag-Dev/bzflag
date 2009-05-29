@@ -21,10 +21,11 @@
 /* local implementation headers */
 #include "FontSizer.h"
 #include "MainMenu.h"
-#include "playing.h"
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 const int FormatMenu::NumReadouts = 4;
 const int FormatMenu::NumItems = 30;

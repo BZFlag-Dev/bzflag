@@ -12,6 +12,7 @@
 
 // interface header
 #include "playing.h"
+#include "botplaying.h"
 
 // system includes
 #include <iostream>
@@ -85,14 +86,12 @@
 #include "motd.h"
 
 
-bool canSpawn = true;
 bool headless = true;
+
+
 static const float FlagHelpDuration = 60.0f;
-StartupInfo startupInfo;
-ServerLink *serverLink = NULL;
 static World *world = NULL;
 static Team *teams = NULL;
-int numFlags = 0;
 static bool joinRequested = false;
 static bool waitingDNS = false;
 static bool serverError = false;
@@ -100,43 +99,20 @@ static bool serverDied = false;
 static double epochOffset;
 static double lastEpochOffset;
 static std::vector<PlayingCallbackItem> playingCallbacks;
-bool gameOver = false;
-
-std::string customLimboMessage;
 
 static FlashClock pulse;
 static bool justJoined = false;
 
 static LocalPlayer *myTank = NULL;
 
-
-// FIXME: The following are globally referenced
-//        in some parts of the client base
-MainWindow *mainWindow = NULL;
-ControlPanel *controlPanel = NULL;
-HUDRenderer *hud = NULL;
-float clockAdjust = 0.0f;
-bool fireButton = false;
-bool roamButton = false;
-float pauseCountdown = 0.0f;
-float destructCountdown = 0.0f;
-int savedVolume = -1;
-bool pausedByUnmap = false;
-// END FIXME
-
-float roamDZoom = 0.0f;
-
 static MessageOfTheDay *motd = NULL;
-CommandCompleter completer;
-
-PlayerId msgDestination;
 
 RCLinkBackend *rcLink = NULL;
 
 
 static void setTankFlags();
-static void handleMsgSetVars(void *msg);
-static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
+void handleMsgSetVars(void *msg);
+void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
 static void enteringServer(void *buf);
 static void joinInternetGame2();
 static void cleanWorldCache();
@@ -225,9 +201,12 @@ static std::vector<BzfRegion*> obstacleList;  // for robots
 
 // to simplify code shared between bzrobots and bzflag
 // - in bzrobots, this just goes to the error console
-static void showError(const char *msg)
+void showError(const char *msg, bool flush)
 {
   printError(msg);
+  if(flush) {
+    ;
+  }
 }
 
 
@@ -244,12 +223,17 @@ void printout(const std::string& line)
 #endif
 }
 
-// - in bzrobots, this shows the error on the HUD
-static void showMessage(const std::string& line)
+// - in bzrobots, this shows the error on the console
+void showMessage(const std::string& line)
 {
   printout(line);
 }
 
+
+void showMessage(const std::string& line, ControlPanel::MessageModes)
+{
+  printout(line);
+}
 // access silencePlayers from bzflag.cxx
 std::vector<std::string> &getSilenceList()
 {
@@ -421,64 +405,6 @@ static void hangup(int sig)
 }
 
 
-void addMessage(const Player *player, const std::string& msg,
-		ControlPanel::MessageModes /*mode*/, bool highlight,
-		const char* oldColor)
-{
-  std::string fullMessage;
-
-  if (BZDB.isTrue("colorful")) {
-    if (player) {
-      if (highlight) {
-	if (BZDB.get("killerhighlight") == "1")
-	  fullMessage += ColorStrings[PulsatingColor];
-	else if (BZDB.get("killerhighlight") == "2")
-	  fullMessage += ColorStrings[UnderlineColor];
-      }
-      const PlayerId pid = player->getId();
-      if (pid < 200) {
-	int color = player->getTeam();
-	if (color < 0 || (color > 4 && color != HunterTeam)) {
-	  // non-teamed, rabbit are white (same as observer)
-	  color = WhiteColor;
-	}
-	fullMessage += ColorStrings[color];
-      } else if (pid == ServerPlayer) {
-	fullMessage += ColorStrings[YellowColor];
-      } else {
-	fullMessage += ColorStrings[CyanColor]; //replay observers
-      }
-      fullMessage += player->getCallSign();
-
-      if (highlight)
-	fullMessage += ColorStrings[ResetColor];
-#ifdef BWSUPPORT
-      fullMessage += " (";
-      fullMessage += Team::getName(player->getTeam());
-      fullMessage += ")";
-#endif
-      fullMessage += std::string(ColorStrings[DefaultColor]) + ": ";
-    }
-    fullMessage += msg;
-  } else {
-    if (oldColor != NULL)
-      fullMessage = oldColor;
-
-    if (player) {
-      fullMessage += player->getCallSign();
-
-#ifdef BWSUPPORT
-      fullMessage += " (";
-      fullMessage += Team::getName(player->getTeam());
-      fullMessage += ")";
-#endif
-      fullMessage += ": ";
-    }
-    fullMessage += stripAnsiCodes(msg.c_str());
-  }
-  printout(fullMessage);
-}
-
 static void updateNumPlayers()
 {
   int i, numPlayers[NumTeams];
@@ -489,7 +415,7 @@ static void updateNumPlayers()
       numPlayers[remotePlayers[i]->getTeam()]++;
 }
 
-static void updateHighScores()
+void updateHighScores()
 {
   /* check scores to see if my team and/or have the high score.  change
    * `>= bestScore' to `> bestScore' if you want to share the number
@@ -784,14 +710,14 @@ static void loadCachedWorld()
   // lookup the cached world
   std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
-    showError("World cache files disappeared.  Join canceled");
+    showError("World cache files disappeared.  Join canceled",true);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
 
   // status update
-  showError("Loading world into memory...");
+  showError("Loading world into memory...",true);
 
   // get the world size
   cachedWorld->seekg(0, std::ios::end);
@@ -802,7 +728,7 @@ static void loadCachedWorld()
   cachedWorld->seekg(0);
   char *localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
-    showError("Error loading cached world.  Join canceled");
+    showError("Error loading cached world.  Join canceled",true);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -811,7 +737,7 @@ static void loadCachedWorld()
   delete cachedWorld;
 
   // verify
-  showError("Verifying world integrity...");
+  showError("Verifying world integrity...",true);
   MD5 md5;
   md5.update((unsigned char *)localWorldDatabase, charSize);
   md5.finalize();
@@ -829,7 +755,7 @@ static void loadCachedWorld()
   }
 
   // make world
-  showError("Preparing world...");
+  showError("Preparing world...",true);
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder) {
@@ -862,12 +788,12 @@ static void loadCachedWorld()
 
 
 class WorldDownLoader : private cURLManager {
-public:
-  void start(char *hexDigest);
+  public:
+    void start(char *hexDigest);
 
-private:
-  void askToBZFS();
-  virtual void finalization(char *data, unsigned int length, bool good);
+  private:
+    void askToBZFS();
+    virtual void finalization(char *data, unsigned int length, bool good);
 };
 
 
@@ -963,12 +889,22 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   if (cacheOut)
     cacheOut->write((char *)buf, len);
   showError(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
-			      (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
+    (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
   return bytesLeft == 0;
 }
 
 
-static void handleJoinServer(void *msg)
+void handleResourceFetch (void *)
+{
+}
+
+
+void handleCustomSound(void *)
+{
+}
+
+
+void handleJoinServer(void *msg)
 {
   // FIXME: MsgJoinServer notes ...
   //        - fix whatever is broken
@@ -1040,7 +976,7 @@ static void handleJoinServer(void *msg)
 }
 
 
-static void handleSuperKill(void *msg)
+void handleSuperKill(void *msg)
 {
   uint8_t id;
   nboUnpackUInt8(msg, id);
@@ -1064,7 +1000,7 @@ static void handleSuperKill(void *msg)
 }
 
 
-static void handleRejectMessage(void *msg)
+void handleRejectMessage(void *msg)
 {
   void *buf;
   char buffer[MessageLen];
@@ -1079,7 +1015,7 @@ static void handleRejectMessage(void *msg)
 }
 
 
-static void handleFlagNegotiation(void *msg, uint16_t len)
+void handleFlagNegotiation(void *msg, uint16_t len)
 {
   if (len > 0) {
     dumpMissingFlag((char *)msg, len);
@@ -1089,7 +1025,7 @@ static void handleFlagNegotiation(void *msg, uint16_t len)
 }
 
 
-static void handleFlagType(void *msg)
+void handleFlagType(void *msg)
 {
 FlagType* typ = NULL;
       FlagType::unpackCustom(msg, typ);
@@ -1098,7 +1034,7 @@ FlagType* typ = NULL;
 }
 
 
-static void handleGameSettings(void *msg)
+void handleGameSettings(void *msg)
 {
   if (worldBuilder) {
     delete worldBuilder;
@@ -1111,7 +1047,7 @@ static void handleGameSettings(void *msg)
 }
 
 
-static void handleCacheURL(void *msg, uint16_t len)
+void handleCacheURL(void *msg, uint16_t len)
 {
   char *cacheURL = new char[len];
   nboUnpackString(msg, cacheURL, len);
@@ -1120,7 +1056,7 @@ static void handleCacheURL(void *msg, uint16_t len)
 }
 
 
-static void handleWantHash(void *msg, uint16_t len)
+void handleWantHash(void *msg, uint16_t len)
 {
   char *hexDigest = new char[len];
   nboUnpackString(msg, hexDigest, len);
@@ -1132,7 +1068,7 @@ static void handleWantHash(void *msg, uint16_t len)
 }
 
 
-static void handleGetWorld(void *msg, uint16_t len)
+void handleGetWorld(void *msg, uint16_t len)
 {
   // create world
   uint32_t bytesLeft;
@@ -1156,14 +1092,14 @@ static void handleGetWorld(void *msg, uint16_t len)
 }
 
 
-static void handleGameTime(void *msg)
+void handleGameTime(void *msg)
 {
   GameTime::unpack(msg);
   GameTime::update();
 }
 
 
-static void handleTimeUpdate(void *msg)
+void handleTimeUpdate(void *msg)
 {
   int32_t timeLeft;
   msg = nboUnpackInt32(msg, timeLeft);
@@ -1184,7 +1120,7 @@ static void handleTimeUpdate(void *msg)
 }
 
 
-static void handleScoreOver(void *msg)
+void handleScoreOver(void *msg)
 {
   // unpack packet
   PlayerId id;
@@ -1221,7 +1157,7 @@ static void handleScoreOver(void *msg)
 }
 
 
-static void handleAddPlayer(void* msg, bool& checkScores)
+void handleAddPlayer(void* msg, bool& checkScores)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -1245,7 +1181,7 @@ static void handleAddPlayer(void* msg, bool& checkScores)
 }
 
 
-static void handleRemovePlayer(void *msg, bool &checkScores)
+void handleRemovePlayer(void *msg, bool &checkScores)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -1256,7 +1192,7 @@ static void handleRemovePlayer(void *msg, bool &checkScores)
 }
 
 
-static void handleFlagUpdate(void *msg, size_t len)
+void handleFlagUpdate(void *msg, size_t len)
 {
   uint16_t count = 0;
   uint16_t flagIndex;
@@ -1274,7 +1210,7 @@ static void handleFlagUpdate(void *msg, size_t len)
 }
 
 
-static void handleTeamUpdate(void *msg, bool &checkScores)
+void handleTeamUpdate(void *msg, bool &checkScores)
 {
   uint8_t  numTeams;
   uint16_t team;
@@ -1289,7 +1225,7 @@ static void handleTeamUpdate(void *msg, bool &checkScores)
 }
 
 
-static void handleAliveMessage(void *msg)
+void handleAliveMessage(void *msg)
 {
   PlayerId id;
   fvec3 pos;
@@ -1347,7 +1283,7 @@ static void handleAliveMessage(void *msg)
 }
 
 
-static void handleAutoPilot(void *msg)
+void handleAutoPilot(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -1363,7 +1299,7 @@ static void handleAutoPilot(void *msg)
   addMessage(tank, autopilot ? "Roger taking controls" : "Roger releasing controls");
 }
 
-static void handleAllow(void *msg)
+void handleAllow(void *msg)
 {
   PlayerId id;
   LocalPlayer *localtank = NULL;
@@ -1412,7 +1348,7 @@ static void handleAllow(void *msg)
 }
 
 
-static void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
+void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
 {
   PlayerId victim, killer;
   FlagType *flagType;
@@ -1476,7 +1412,7 @@ static void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
 }
 
 
-static void handleGrabFlag(void *msg)
+void handleGrabFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
@@ -1507,7 +1443,7 @@ static void handleGrabFlag(void *msg)
 }
 
 
-static void handleDropFlag(void *msg)
+void handleDropFlag(void *msg)
 {
   PlayerId id;
   uint16_t flagIndex;
@@ -1528,7 +1464,7 @@ static void handleDropFlag(void *msg)
 }
 
 
-static void handleCaptureFlag(void *msg, bool &checkScores)
+void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
   uint16_t flagIndex, team;
@@ -1580,26 +1516,9 @@ static void handleCaptureFlag(void *msg, bool &checkScores)
 
 
 
-static void handleAllowSpawn ( uint16_t len, void *msg )
-{
-  if ( len >= 1) {
-    unsigned char allow = 0;
-    msg = nboUnpackUInt8(msg,allow);
-
-    canSpawn = allow != 0;
-  }
-}
-
-
-static void handleLimboMessage(void *msg)
-{
-  nboUnpackStdString(msg, customLimboMessage);
-}
-
-
 // changing the rabbit
 
-static void handleNewRabbit(void *msg)
+void handleNewRabbit(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -1653,7 +1572,7 @@ static void handleNewRabbit(void *msg)
 }
 
 
-static void handleSetTeam(void *msg, uint16_t len)
+void handleSetTeam(void *msg, uint16_t len)
 {
   if (len < 2) {
     return;
@@ -1671,7 +1590,7 @@ static void handleSetTeam(void *msg, uint16_t len)
 }
 
 
-static void handleNearFlag(void *msg)
+void handleNearFlag(void *msg)
 {
   fvec3 pos;
   std::string flagName;
@@ -1692,7 +1611,7 @@ static void handleNearFlag(void *msg)
 }
 
 
-static void handleWhatTimeIsIt(void *msg)
+void handleWhatTimeIsIt(void *msg)
 {
   double time = -1;
   unsigned char tag = 0;
@@ -1703,7 +1622,7 @@ static void handleWhatTimeIsIt(void *msg)
 }
 
 
-static void handleSetShotType(BufferedNetworkMessage *msg)
+void handleSetShotType(BufferedNetworkMessage *msg)
 {
   PlayerId id = msg->unpackUInt8();
   unsigned char shotType = msg->unpackUInt8();
@@ -1715,7 +1634,7 @@ static void handleSetShotType(BufferedNetworkMessage *msg)
 }
 
 
-static void handleShotBegin(bool /*human*/, void *msg)
+void handleShotBegin(bool /*human*/, void *msg)
 {
   PlayerId shooterid;
   uint16_t id;
@@ -1749,7 +1668,7 @@ static void handleShotBegin(bool /*human*/, void *msg)
 }
 
 
-static void handleWShotBegin (void *msg)
+void handleWShotBegin (void *msg)
 {
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
@@ -1761,7 +1680,7 @@ static void handleWShotBegin (void *msg)
 }
 
 
-static void handleShotEnd(void *msg)
+void handleShotEnd(void *msg)
 {
   PlayerId id;
   int16_t shotId;
@@ -1781,7 +1700,7 @@ static void handleShotEnd(void *msg)
 }
 
 
-static void handleHandicap(void *msg)
+void handleHandicap(void *msg)
 {
   PlayerId id;
   uint8_t numHandicaps;
@@ -1821,7 +1740,7 @@ static void handleHandicap(void *msg)
 }
 
 
-static void handleScore(void *msg)
+void handleScore(void *msg)
 {
   uint8_t numScores;
   PlayerId id;
@@ -1861,7 +1780,7 @@ static void handleScore(void *msg)
 }
 
 
-static void handleTeleport(void *msg)
+void handleTeleport(void *msg)
 {
   PlayerId id;
   uint16_t srcID, dstID;
@@ -1885,12 +1804,12 @@ static void handleTeleport(void *msg)
 }
 
 
-static void handleMessage(void*/*msg*/)
+void handleMessage(void*/*msg*/)
 {
 }
 
 
-static void handleTransferFlag(void *msg)
+void handleTransferFlag(void *msg)
 {
   PlayerId fromId, toId;
   unsigned short flagIndex;
@@ -1906,7 +1825,7 @@ static void handleTransferFlag(void *msg)
 }
 
 
-static void handleReplayReset(void *msg, bool &checkScores)
+void handleReplayReset(void *msg, bool &checkScores)
 {
   int i;
   unsigned char lastPlayer;
@@ -1928,7 +1847,7 @@ static void handleReplayReset(void *msg, bool &checkScores)
 }
 
 
-static void handleAdminInfo(void *msg)
+void handleAdminInfo(void *msg)
 {
   uint8_t numIPs;
   msg = nboUnpackUInt8(msg, numIPs);
@@ -1994,7 +1913,7 @@ default:
 }
 
 
-static void handlePlayerInfo(void *msg)
+void handlePlayerInfo(void *msg)
 {
   uint8_t numPlayers;
   int i;
@@ -2015,7 +1934,7 @@ static void handlePlayerInfo(void *msg)
 }
 
 
-static void handleNewPlayer(void *msg)
+void handleNewPlayer(void *msg)
 {
   uint8_t id;
   msg = nboUnpackUInt8(msg, id);
@@ -2044,7 +1963,7 @@ static void handleNewPlayer(void *msg)
 }
 
 
-static void handlePlayerData(void *msg)
+void handlePlayerData(void *msg)
 {
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
@@ -2059,7 +1978,7 @@ static void handlePlayerData(void *msg)
 }
 
 
-static void handleMovementUpdate(uint16_t code, void *msg)
+void handleMovementUpdate(uint16_t code, void *msg)
 {
   double timestamp;
   PlayerId id;
@@ -2096,7 +2015,7 @@ static void handleMovementUpdate(uint16_t code, void *msg)
 }
 
 
-static void handleGMUpdate(void *msg)
+void handleGMUpdate(void *msg)
 {
   ShotUpdate shot;
   msg = shot.unpack(msg);
@@ -2125,269 +2044,39 @@ static void handleGMUpdate(void *msg)
 }
 
 
-static void handleTangUpdate( uint16_t len, void *msg )
+void handleTangUpdate(uint16_t len, void *msg)
 {
-  if ( len >= 5) {
+  if (len >= 5) {
     unsigned int objectID = 0;
-    msg = nboUnpackUInt32(msg,objectID);
+    msg = nboUnpackUInt32(msg, objectID);
     unsigned char tang = 0;
-    msg = nboUnpackUInt8(msg,tang);
+    msg = nboUnpackUInt8(msg, tang);
 
-    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID,tang);
+    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID, tang);
   }
 }
 
-static void handleTangReset(void )
+
+void handleTangReset(void)
 {
   ClientIntangibilityManager::instance().resetTangibility();
 }
 
 
-
-static bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg)
+void handleAllowSpawn(uint16_t len, void *msg)
 {
-  switch (msg->getCode()) {
-default:
-  return false;
+  if (len >= 1) {
+    unsigned char allow = 0;
+    msg = nboUnpackUInt8(msg, allow);
 
-case MsgSetShot:
-  handleSetShotType(msg);
-  break;
+    canSpawn = allow != 0;
   }
-  return true;
 }
 
 
-static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
+void handleLimboMessage(void *msg)
 {
-  std::vector<std::string> args;
-  bool checkScores = false;
-
-  fprintf(stderr,"packet 0x%02X (%c%c)\n",code,code >> 8, code);
-
-  switch (code) {
-    case MsgWhatTimeIsIt: {
-      handleWhatTimeIsIt(msg);
-      break;
-    }
-    case MsgNearFlag: {
-      handleNearFlag(msg);
-      break;
-    }
-    case MsgSetTeam: {
-      handleSetTeam(msg, len);
-      break;
-    }
-    case MsgFetchResources: {
-      //handleResourceFetch(msg);
-      break;
-    }
-    case MsgCustomSound: {
-      //handleCustomSound(msg);
-      break;
-    }
-    case MsgUDPLinkEstablished: {
-      serverLink->enableOutboundUDP();  // server got our initial UDP packet
-      break;
-    }
-    case MsgUDPLinkRequest: {
-      serverLink->confirmIncomingUDP();  // we got server's initial UDP packet
-      break;
-    }
-    case MsgJoinServer: {
-      handleJoinServer(msg);
-      break;
-    }
-    case MsgSuperKill: {
-      handleSuperKill(msg);
-      break;
-    }
-    case MsgAccept: {
-      break;
-    }
-    case MsgReject: {
-      handleRejectMessage(msg);
-      break;
-    }
-    case MsgNegotiateFlags: {
-      handleFlagNegotiation(msg, len);
-      break;
-    }
-    case MsgFlagType: {
-      handleFlagType(msg);
-      break;
-    }
-    case MsgGameSettings: {
-      handleGameSettings(msg);
-      break;
-    }
-    case MsgCacheURL: {
-      handleCacheURL(msg, len);
-      break;
-    }
-    case MsgWantWHash: {
-      handleWantHash(msg, len);
-      break;
-    }
-    case MsgGetWorld: {
-      handleGetWorld(msg, len);
-      break;
-    }
-    case MsgGameTime: {
-      handleGameTime(msg);
-      break;
-    }
-    case MsgTimeUpdate: {
-      handleTimeUpdate(msg);
-      break;
-    }
-    case MsgScoreOver: {
-      handleScoreOver(msg);
-      break;
-    }
-    case MsgAddPlayer: {
-      handleAddPlayer(msg, checkScores);
-      break;
-    }
-    case MsgRemovePlayer: {
-      handleRemovePlayer(msg, checkScores);
-      break;
-    }
-    case MsgFlagUpdate: {
-      handleFlagUpdate(msg, len);
-      break;
-    }
-    case MsgTeamUpdate: {
-      handleTeamUpdate(msg, checkScores);
-      break;
-    }
-    case MsgAlive: {
-      handleAliveMessage(msg);
-      break;
-    }
-    case MsgAutoPilot: {
-      handleAutoPilot(msg);
-      break;
-    }
-    case MsgAllow: {
-      handleAllow(msg);
-      break;
-    }
-    case MsgKilled: {
-      handleKilledMessage(msg, human, checkScores);
-      break;
-    }
-    case MsgGrabFlag: {
-      handleGrabFlag(msg);
-      break;
-    }
-    case MsgDropFlag: {
-      handleDropFlag(msg);
-      break;
-    }
-    case MsgCaptureFlag: {
-      handleCaptureFlag(msg, checkScores);
-      break;
-    }
-    case MsgNewRabbit: {
-      handleNewRabbit(msg);
-      break;
-    }
-    case MsgShotBegin: {
-      handleShotBegin(human, msg);
-      break;
-    }
-    case MsgWShotBegin: {
-      handleWShotBegin(msg);
-      break;
-    }
-    case MsgShotEnd: {
-      handleShotEnd(msg);
-      break;
-    }
-    case MsgHandicap: {
-      handleHandicap(msg);
-      break;
-    }
-    case MsgScore: {
-      handleScore(msg);
-      break;
-    }
-    case MsgSetVar: {
-      handleMsgSetVars(msg);
-      break;
-    }
-    case MsgTeleport: {
-      handleTeleport(msg);
-      break;
-    }
-    case MsgTransferFlag: {
-      handleTransferFlag(msg);
-      break;
-    }
-    case MsgMessage: {
-      handleMessage(msg);
-      break;
-    }
-    case MsgReplayReset: {
-      handleReplayReset(msg, checkScores);
-      break;
-    }
-    case MsgAdminInfo: {
-      handleAdminInfo(msg);
-      break;
-    }
-    case MsgPlayerInfo: {
-      handlePlayerInfo(msg);
-      break;
-    }
-    case MsgNewPlayer: {
-      handleNewPlayer(msg);
-      break;
-    }
-    // inter-player relayed message
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall: {
-      handleMovementUpdate(code, msg);
-      break;
-    }
-    case MsgGMUpdate: {
-      handleGMUpdate(msg);
-      break;
-    }
-    case MsgLagPing: {
-      serverLink->sendLagPing((char *)msg);
-      break;
-    }
-    case MsgTangibilityUpdate: {
-      handleTangUpdate(len, msg);
-      break;
-    }
-    case MsgTangibilityReset: {
-      handleTangReset();
-      break;
-    }
-    case MsgAllowSpawn: {
-      handleAllowSpawn(len, msg);
-      break;
-    }
-    case MsgLimboMessage: {
-      handleLimboMessage(msg);
-      break;
-    }
-    case MsgPlayerData: {
-      handlePlayerData(msg);
-      break;
-    }
-    case MsgPause: {
-      printf("MsgPause(FIXME) %s:%i\n", __FILE__, __LINE__);
-      break;
-    }
-  }
-
-  if (checkScores) {
-    updateHighScores();
-  }
+  nboUnpackStdString(msg, customLimboMessage);
 }
 
 
@@ -2444,7 +2133,7 @@ static void doMessages()
 }
 
 
-static void handleMsgSetVars(void *msg)
+void handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
   uint8_t nameLen, valueLen;
@@ -2484,7 +2173,7 @@ void handleFlagDropped(Player* tank)
 }
 
 
-static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType)
+void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType)
 {
   Flag& f = world->getFlag(flagIndex);
 
@@ -3534,7 +3223,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   // get server address
   Address serverAddress(*inAddress);
   if (serverAddress.isAny()) {
-    printError("Server not found");
+    showError("Server not found");
     return;
   }
 
@@ -3544,7 +3233,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   nameAndIp.push_back(startupInfo.serverName);
   nameAndIp.push_back(serverAddress.getDotNotation());
   if (!serverAccessList.authorized(nameAndIp)) {
-    printError("Server Access Denied Locally");
+    showError("Server Access Denied Locally");
     std::string msg = ColorStrings[WhiteColor];
     msg += "NOTE: ";
     msg += ColorStrings[GreyColor];
@@ -3555,9 +3244,10 @@ static void joinInternetGame(const struct in_addr *inAddress)
     return;
   }
 
+  syncedClock.update(NULL);
   // open server
-  ServerLink* _serverLink = new ServerLink(serverAddress,
-					   startupInfo.serverPort);
+  ServerLink *_serverLink = new ServerLink(serverAddress,
+    startupInfo.serverPort);
 
   serverLink = _serverLink;
 
@@ -3568,80 +3258,84 @@ static void joinInternetGame(const struct in_addr *inAddress)
   serverError = false;
 
   if (!serverLink) {
-    printError("Memory error");
+    showError("Memory error");
     return;
   }
 
-  // printError("Join Game");
   // check server
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
-    case ServerLink::BadVersion: {
-      static char versionError[] = "Incompatible server version XXXXXXXX";
-      strncpy(versionError + strlen(versionError) - 8,
-	      serverLink->getVersion(), 8);
-      printError(versionError);
-      break;
-    }
+      case ServerLink::BadVersion: {
+        static char versionError[] = "Incompatible server version XXXXXXXX";
+        strncpy(versionError + strlen(versionError) - 8,
+          serverLink->getVersion(), 8);
+        showError(versionError);
+        break;
+      }
+      case ServerLink::Refused: {
+        // you got banned
+        const std::string &rejmsg = serverLink->getRejectionMessage();
 
-      // you got banned
-    case ServerLink::Refused:{
-      const std::string& rejmsg = serverLink->getRejectionMessage();
+        // add to the HUD
+        std::string msg = ColorStrings[RedColor];
+        msg += "You have been banned from this server";
+        showError(msg.c_str());
 
-      // add to the console
-      std::string msg = ColorStrings[RedColor];
-      msg += "You have been banned from this server:";
-      addMessage(NULL, msg);
-      msg = ColorStrings[YellowColor];
-      msg += rejmsg;
-      addMessage(NULL, msg);
+        // add to the console
+        msg = ColorStrings[RedColor];
+        msg += "You have been banned from this server:";
+        addMessage(NULL, msg);
+        msg = ColorStrings[YellowColor];
+        msg += rejmsg;
+        addMessage(NULL, msg);
 
-      break;
-    }
-
-    case ServerLink::Rejected:
-      // the server is probably full or the game is over.  if not then
-      // the server is having network problems.
-      printError("Game is full or over.  Try again later.");
-      break;
-
-    case ServerLink::SocketError:
-      printError("Error connecting to server.");
-      break;
-
-    case ServerLink::CrippledVersion:
-      // can't connect to (otherwise compatible) non-crippled server
-      printError("Cannot connect to full version server.");
-      break;
-
-    default:
-      printError(TextUtils::format
-		 ("Internal error connecting to server (error code %d).",
-		  serverLink->getState()).c_str());
-      break;
+        break;
+      }
+      case ServerLink::Rejected: {
+        // the server is probably full or the game is over.  if not then
+        // the server is having network problems.
+        showError("Game is full or over.  Try again later.");
+        break;
+      }
+      case ServerLink::SocketError: {
+        showError("Error connecting to server.");
+        break;
+      }
+      case ServerLink::CrippledVersion: {
+        // can't connect to (otherwise compatible) non-crippled server
+        showError("Cannot connect to full version server.");
+        break;
+      }
+      default: {
+        showError(TextUtils::format
+          ("Internal error connecting to server (error code %d).",
+          serverLink->getState()).c_str());
+        break;
+      }
     }
     return;
   }
-
   // use parallel UDP if desired and using server relay
   serverLink->sendUDPlinkRequest();
 
-  printout("Connection Established...");
+  showError("Connection Established...");
 
   sendFlagNegotiation();
   joiningGame = true;
+  //scoreboard->huntReset();
   GameTime::reset();
+  syncedClock.update(serverLink);
 }
 
 
-static void addVarToAutoComplete(const std::string& name, void */*userData*/)
+static void addVarToAutoComplete(const std::string &name, void* /*userData*/)
 {
-  if ((name.size() <= 0) || (name[0] != '_')) {
+  if ((name.size() <= 0) || (name[0] != '_'))
     return; // we're skipping "poll"
-  }
-  if (BZDB.getPermission(name) == StateDatabase::Server) {
+
+  if (BZDB.getPermission(name) == StateDatabase::Server)
     completer.registerWord(name);
-  }
+
   return;
 }
 
@@ -3710,13 +3404,15 @@ void getAFastToken(void )
     startupInfo.token[0] = '\0';
 }
 
-void handlePendingJoins(void )
+
+void handlePendingJoins(void)
 {
   // try to join a game if requested.  do this *before* handling
   // events so we do a redraw after the request is posted and
   // before we actually try to join.
-  if (!joinRequested)
+  if (!joinRequested) {
     return;
+  }
 
   // if already connected to a game then first sign off
   if (myTank)
@@ -3731,7 +3427,8 @@ void handlePendingJoins(void )
   joinRequested = false;
 }
 
-bool dnsLookupDone ( struct in_addr &inAddress )
+
+bool dnsLookupDone(struct in_addr &inAddress)
 {
   if (!waitingDNS)
     return false;
@@ -3749,7 +3446,7 @@ bool dnsLookupDone ( struct in_addr &inAddress )
 
   AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
   if (status == AresHandler::Failed) {
-    printError("Server not found.");
+    showError("Server not found");
     waitingDNS = false;
   } else if (status == AresHandler::HbNSucceeded) {
     waitingDNS = false;
@@ -3772,7 +3469,7 @@ void checkForServerBail(void )
   }
 }
 
-void updateShots ( const float dt )
+void updateShots(const float dt)
 {
   // update other tank's shots
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3786,7 +3483,7 @@ void updateShots ( const float dt )
     _world->getWorldWeapons()->updateShots(dt);
 }
 
-void doTankMotions ( const float /*dt*/ )
+void doTankMotions(const float /*dt*/)
 {
   // do dead reckoning on remote players
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3828,7 +3525,7 @@ void doUpdates ( const float dt )
   AutoHunt::update();
 }
 
-void doNetworkStuff(void )
+void doNetworkStuff(void)
 {
   // send my data
   if (myTank && myTank->isDeadReckoningWrong() &&
@@ -3884,7 +3581,7 @@ void doEnergySaver(void )
 // main playing loop
 //
 
-static void		playingLoop()
+static void playingLoop()
 {
   // start timing
   TimeKeeper::setTick();
@@ -3894,6 +3591,8 @@ static void		playingLoop()
   // main loop
   while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
+
+    canSpawn = true;
 
     // set this step game time
     GameTime::setStepTime();
@@ -3905,8 +3604,11 @@ static void		playingLoop()
 
     doMessages();    // handle incoming packets
 
+    // have the synced clock do anything it has to do
+    syncedClock.update(serverLink);
+
     if (world)
-      world->checkCollisionManager();    // see if the world collision grid needs to be updated
+      world->checkCollisionManager(); // see if the world collision grid needs to be updated
 
     handlePendingJoins();
 
@@ -3925,10 +3627,10 @@ static void		playingLoop()
 
     callPlayingCallbacks();    // invoke callbacks
 
-    checkForServerBail();
-
     if (CommandsStandard::isQuit())     // quick out
       break;
+
+    checkForServerBail();
 
     doUpdates(dt);
 
@@ -3949,11 +3651,11 @@ static void		playingLoop()
 }
 
 
-static void		defaultErrorCallback(const char* msg)
+static void defaultErrorCallback(const char *msg)
 {
   std::string message = ColorStrings[RedColor];
   message += msg;
-  printout(message);
+  showMessage(message);
 }
 
 
@@ -4014,7 +3716,7 @@ void			botStartPlaying()
     // add message about date of expiration
     char bombMessage[80];
     snprintf(bombMessage, 80, "This release will expire on %s", timeBombString());
-    printError(bombMessage);
+    showMessage(bombMessage);
   }
 
   // get current MOTD

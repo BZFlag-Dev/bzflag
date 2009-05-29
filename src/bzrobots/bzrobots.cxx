@@ -89,9 +89,6 @@ static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
-WordFilter*	     wordFilter = NULL;
-
-BzfDisplay*		display = NULL;
 
 // Function in botplaying.cxx:
 void botStartPlaying();

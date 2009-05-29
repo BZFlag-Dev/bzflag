@@ -25,8 +25,9 @@
 #include "ActionBinding.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
-#include "playing.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :

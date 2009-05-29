@@ -163,6 +163,8 @@ bzflag_SOURCES =			\
 	SilenceDefaultKey.h		\
 	StandardTankAvatar.cxx		\
 	StandardTankAvatar.h		\
+	ThirdPersonVars.cxx		\
+	ThirdPersonVars.h		\
 	TrackMarks.cxx			\
 	TrackMarks.h			\
 	WeatherRenderer.cxx		\
@@ -172,10 +174,10 @@ bzflag_SOURCES =			\
 	bzflag.cxx			\
 	bzflag.h			\
 	commands.h			\
+	guiplaying.cxx			\
+	guiplaying.h			\
 	motd.cxx			\
 	motd.h				\
-	playing.cxx			\
-	playing.h			\
 	sound.cxx			\
 	sound.h				\
 	stars.cxx			\

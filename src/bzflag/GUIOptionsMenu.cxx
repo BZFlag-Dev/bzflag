@@ -28,8 +28,9 @@
 #include "HUDuiLabel.h"
 #include "ScoreboardRenderer.h"
 #include "SceneRenderer.h"
-#include "playing.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 
 GUIOptionsMenu::GUIOptionsMenu()

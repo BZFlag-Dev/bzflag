@@ -73,6 +73,8 @@ libClientBase_la_SOURCES =		\
 	clientConfig.h			\
 	defaultBZDB.cxx			\
 	defaultBZDB.h			\
+	playing.cxx			\
+	playing.h			\
 	$(top_srcdir)/src/bzflag/AutoHunt.cxx		\
 	$(top_srcdir)/src/bzflag/AutoHunt.h		\
 	$(top_srcdir)/src/bzflag/AutoPilot.cxx		\
@@ -155,6 +157,8 @@ libClientBase_la_SOURCES =		\
 	$(top_srcdir)/src/bzflag/SilenceDefaultKey.h	\
 	$(top_srcdir)/src/bzflag/StandardTankAvatar.cxx	\
 	$(top_srcdir)/src/bzflag/StandardTankAvatar.h	\
+	$(top_srcdir)/src/bzflag/ThirdPersonVars.cxx	\
+	$(top_srcdir)/src/bzflag/ThirdPersonVars.h	\
 	$(top_srcdir)/src/bzflag/TrackMarks.cxx		\
 	$(top_srcdir)/src/bzflag/TrackMarks.h		\
 	$(top_srcdir)/src/bzflag/WeatherRenderer.cxx	\

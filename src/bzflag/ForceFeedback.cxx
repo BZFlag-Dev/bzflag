@@ -19,6 +19,7 @@
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "playing.h"
+#include "guiplaying.h"
 
 static BzfJoystick*     getJoystick();
 static bool	     useForceFeedback(const char *type = "Rumble");

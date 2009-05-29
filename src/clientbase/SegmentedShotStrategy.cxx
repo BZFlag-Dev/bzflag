@@ -17,12 +17,13 @@
 #include <assert.h>
 
 /* common implementation headers */
+#include "BZDBCache.h"
 #include "TextureManager.h"
 #include "Intersect.h"
-#include "BZDBCache.h"
-#include "WallObstacle.h"
 #include "LinkManager.h"
 #include "MeshFace.h"
+#include "Roster.h"
+#include "WallObstacle.h"
 
 /* local implementation headers */
 #include "sound.h"

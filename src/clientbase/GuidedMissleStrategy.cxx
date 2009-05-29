@@ -15,10 +15,11 @@
 
 // common headers
 #include "BZDBCache.h"
-#include "TextureManager.h"
-#include "LinkManager.h"
 #include "Intersect.h"
+#include "LinkManager.h"
 #include "MeshFace.h"
+#include "Roster.h"
+#include "TextureManager.h"
 
 // local headers
 #include "LocalPlayer.h"
