@@ -177,8 +177,6 @@ static float forcedAngVel = 0.0f;
 static void setHuntTarget();
 static void setTankFlags();
 static void handleMsgSetVars(void *msg);
-static void handleGMUpdate (void *);
-static void handleMovementUpdate(uint16_t code, void *msg);
 static void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
 static void enteringServer(void *buf);
 static void joinInternetGame2();
@@ -337,6 +335,13 @@ static void showError(const char *msg)
 {
   HUDDialogStack::get()->setFailedMessage(msg);
 }
+
+// - in bzflag, this shows the error on the HUD
+static void showMessage(const std::string& line)
+{
+  controlPanel->addMessage(line);
+}
+
 
 // access silencePlayers from bzflag.cxx
 std::vector<std::string> &getSilenceList()
@@ -1159,7 +1164,7 @@ static void doEvent(BzfDisplay *disply)
         pauseCountdown = 0.0f;
         if (myTank && myTank->isAlive() && myTank->isPaused()) {
           myTank->setPause(false);
-          controlPanel->addMessage("Resumed");
+          showMessage("Resumed");
         }
       }
 
@@ -2109,6 +2114,15 @@ static void handleFlagNegotiation(void *msg, uint16_t len)
 }
 
 
+static void handleFlagType(void *msg)
+{
+FlagType* typ = NULL;
+      FlagType::unpackCustom(msg, typ);
+      logDebugMessage(1, "Got custom flag type from server: %s\n",
+                         typ->information().c_str());
+}
+
+
 static void handleGameSettings(void *msg)
 {
   if (worldBuilder) {
@@ -2167,6 +2181,13 @@ static void handleGetWorld(void *msg, uint16_t len)
 }
 
 
+static void handleGameTime(void *msg)
+{
+  GameTime::unpack(msg);
+  GameTime::update();
+}
+
+
 static void handleTimeUpdate(void *msg)
 {
   int32_t timeLeft;
@@ -2175,7 +2196,7 @@ static void handleTimeUpdate(void *msg)
   if (timeLeft == 0) {
     gameOver = true;
     myTank->explodeTank();
-    controlPanel->addMessage("Time Expired");
+    showMessage("Time Expired");
     hud->setAlert(0, "Time Expired", 10.0f, true);
 #ifdef ROBOT
     for (int i = 0; i < numRobots; i++)
@@ -2216,7 +2237,7 @@ static void handleScoreOver(void *msg)
   gameOver = true;
   hud->setTimeLeft((uint32_t)~0);
   myTank->explodeTank();
-  controlPanel->addMessage(msg2);
+  showMessage(msg2);
   hud->setAlert(0, msg2.c_str(), 10.0f, true);
 
 #ifdef ROBOT
@@ -3557,19 +3578,6 @@ static void handleNewPlayer(void *msg)
 }
 
 
-static void handleTangUpdate(uint16_t len, void *msg)
-{
-  if (len >= 5) {
-    unsigned int objectID = 0;
-    msg = nboUnpackUInt32(msg, objectID);
-    unsigned char tang = 0;
-    msg = nboUnpackUInt8(msg, tang);
-
-    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID, tang);
-  }
-}
-
-
 static void handlePlayerData(void *msg)
 {
   PlayerId id;
@@ -3582,6 +3590,85 @@ static void handlePlayerData(void *msg)
   Player *p = lookupPlayer(id);
   if (p && key.size())
     p->customData[key] = value;
+}
+
+
+static void handleMovementUpdate(uint16_t code, void *msg)
+{
+  double timestamp;
+  PlayerId id;
+  int32_t order;
+  void *buf = msg;
+
+  buf = nboUnpackUInt8(buf, id); // peek! don't update the msg pointer
+  buf = nboUnpackDouble(buf, timestamp); // peek
+
+  Player *tank = lookupPlayer(id);
+  if (!tank || tank == myTank)
+    return;
+
+  nboUnpackInt32(buf, order); // peek
+  if (order <= tank->getOrder())
+    return;
+  short oldStatus = tank->getStatus();
+
+  tank->unpack(msg, code); // now read
+  short newStatus = tank->getStatus();
+
+  if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
+    addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
+
+  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
+    // player has started exploding and we haven't gotten killed
+    // message yet -- set explosion now, play sound later (when we
+    // get killed message).  status is already !Alive so make player
+    // alive again, then call setExplode to kill him.
+    tank->setStatus(newStatus | short(PlayerState::Alive));
+    tank->setExplode(TimeKeeper::getTick());
+    // ROBOT -- play explosion now
+  }
+}
+
+
+static void handleGMUpdate(void *msg)
+{
+  ShotUpdate shot;
+  msg = shot.unpack(msg);
+  Player *tank = lookupPlayer(shot.player);
+  if (!tank || tank == myTank)
+    return;
+
+  RemotePlayer *remoteTank = (RemotePlayer*)tank;
+  RemoteShotPath *shotPath = (RemoteShotPath*)remoteTank->getShot(shot.id);
+  if (shotPath)
+    shotPath->update(shot, msg);
+  PlayerId targetId;
+  msg = nboUnpackUInt8(msg, targetId);
+  Player *targetTank = getPlayerByIndex(targetId);
+
+  if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
+  {
+    static TimeKeeper lastLockMsg;
+    if (TimeKeeper::getTick() - lastLockMsg > 0.75)
+    {
+      SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
+      lastLockMsg = TimeKeeper::getTick();
+      addMessage(tank, "locked on me");
+    }
+  }
+}
+
+
+static void handleTangUpdate(uint16_t len, void *msg)
+{
+  if (len >= 5) {
+    unsigned int objectID = 0;
+    msg = nboUnpackUInt32(msg, objectID);
+    unsigned char tang = 0;
+    msg = nboUnpackUInt8(msg, tang);
+
+    ClientIntangibilityManager::instance().setWorldObjectTangibility(objectID, tang);
+  }
 }
 
 
@@ -3676,10 +3763,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       break;
     }
     case MsgFlagType: {
-      FlagType* typ = NULL;
-      FlagType::unpackCustom(msg, typ);
-      logDebugMessage(1, "Got custom flag type from server: %s\n",
-                         typ->information().c_str());
+      handleFlagType(msg);
       break;
     }
     case MsgGameSettings: {
@@ -3699,8 +3783,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       break;
     }
     case MsgGameTime: {
-      GameTime::unpack(msg);
-      GameTime::update();
+      handleGameTime(msg);
       break;
     }
     case MsgTimeUpdate: {
@@ -3818,7 +3901,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       break;
     }
     case MsgGMUpdate: {
-      handleGMUpdate (msg);
+      handleGMUpdate(msg);
       break;
     }
     case MsgLagPing: {
@@ -3858,78 +3941,9 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
 
 
 //
-// player message handling
-//
-
-static void handleMovementUpdate(uint16_t code, void *msg)
-{
-  double timestamp;
-  PlayerId id;
-  int32_t order;
-  void *buf = msg;
-
-  buf = nboUnpackUInt8(buf, id); // peek! don't update the msg pointer
-  buf = nboUnpackDouble(buf, timestamp); // peek
-
-  Player *tank = lookupPlayer(id);
-  if (!tank || tank == myTank)
-    return;
-
-  nboUnpackInt32(buf, order); // peek
-  if (order <= tank->getOrder())
-    return;
-  short oldStatus = tank->getStatus();
-
-  tank->unpack(msg, code); // now read
-  short newStatus = tank->getStatus();
-
-  if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
-    addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
-
-  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
-    // player has started exploding and we haven't gotten killed
-    // message yet -- set explosion now, play sound later (when we
-    // get killed message).  status is already !Alive so make player
-    // alive again, then call setExplode to kill him.
-    tank->setStatus(newStatus | short(PlayerState::Alive));
-    tank->setExplode(TimeKeeper::getTick());
-    // ROBOT -- play explosion now
-  }
-}
-
-
-static void handleGMUpdate (void *msg)
-{
-  ShotUpdate shot;
-  msg = shot.unpack(msg);
-  Player *tank = lookupPlayer(shot.player);
-  if (!tank || tank == myTank)
-    return;
-
-  RemotePlayer *remoteTank = (RemotePlayer*)tank;
-  RemoteShotPath *shotPath = (RemoteShotPath*)remoteTank->getShot(shot.id);
-  if (shotPath)
-    shotPath->update(shot, msg);
-  PlayerId targetId;
-  msg = nboUnpackUInt8(msg, targetId);
-  Player *targetTank = getPlayerByIndex(targetId);
-
-  if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
-  {
-    static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75)
-    {
-      SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
-      lastLockMsg = TimeKeeper::getTick();
-      addMessage(tank, "locked on me");
-    }
-  }
-}
-
-
-//
 // message handling
 //
+
 class ClientReceiveCallback : public NetworkMessageTransferCallback
 {
   public:
@@ -4362,7 +4376,7 @@ static bool gotBlowedUp(BaseLocalPlayer *tank,
       }
     }
     hud->setAlert(0, blowedUpNotice.c_str(), 4.0f, true);
-    controlPanel->addMessage(blowedUpNotice);
+    showMessage(blowedUpNotice);
   }
 
   // make sure shot is terminated locally (if not globally) so it can't
@@ -6932,7 +6946,7 @@ static void updatePauseCountdown(float dt)
 	// now actually pause
 	myTank->setPause(true);
 	hud->setAlert(1, NULL, 0.0f, true);
-	controlPanel->addMessage("Paused");
+	showMessage("Paused");
 
 	// turn off the sound
 	if (savedVolume == -1) {
@@ -7284,7 +7298,7 @@ void updatePositions(const float dt)
 {
   // notify if input changed
   if ((myTank != NULL) && (myTank->queryInputChange() == true))
-    controlPanel->addMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
+    showMessage(LocalPlayer::getInputMethodName(myTank->getInputMethod()) + " movement");
 
   moveRoamingCamera(dt);
 
@@ -7447,7 +7461,7 @@ void doFPSLimit(void)
   if (notify) {
     char clamped[80] = {0};
     snprintf(clamped, sizeof(clamped), "WARNING: fpsLimit is set too low, clamped to %f", fpsLimit);
-    controlPanel->addMessage(clamped);
+    showMessage(clamped);
     notify = false;
   }
 
@@ -7800,13 +7814,13 @@ static void defaultErrorCallback(const char *msg)
 {
   std::string message = ColorStrings[RedColor];
   message += msg;
-  controlPanel->addMessage(message);
+  showMessage(message);
 }
 
 
 static void startupErrorCallback(const char *msg)
 {
-  controlPanel->addMessage(msg);
+  showMessage(msg);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   controlPanel->render(RENDERER);
@@ -8083,13 +8097,13 @@ void startPlaying()
     // add message about date of expiration
     char bombMessage[80];
     snprintf(bombMessage, 80, "This release will expire on %s", timeBombString());
-    controlPanel->addMessage(bombMessage);
+    showMessage(bombMessage);
   }
 
   // send informative header to the console
   std::string tmpString;
 
-  controlPanel->addMessage("");
+  showMessage("");
   // print app version
   tmpString = ColorStrings[RedColor];
   tmpString += "BZFlag version: ";
@@ -8097,30 +8111,30 @@ void startPlaying()
   tmpString += " (";
   tmpString += getProtocolVersion();
   tmpString += ")";
-  controlPanel->addMessage(tmpString);
+  showMessage(tmpString);
   // print copyright
   tmpString = ColorStrings[YellowColor];
   tmpString += bzfcopyright;
-  controlPanel->addMessage(tmpString);
+  showMessage(tmpString);
   // print license
   tmpString = ColorStrings[CyanColor];
   tmpString += "Distributed under the terms of the LGPL";
-  controlPanel->addMessage(tmpString);
+  showMessage(tmpString);
   // print author
   tmpString = ColorStrings[GreenColor];
   tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
-  controlPanel->addMessage(tmpString);
+  showMessage(tmpString);
   // print maintainer
   tmpString = ColorStrings[CyanColor];
   tmpString += "Maintainer: Tim Riker <Tim@Rikers.org>";
-  controlPanel->addMessage(tmpString);
+  showMessage(tmpString);
   // print audio driver
   std::string audioStr;
   PlatformFactory::getMedia()->audioDriver(audioStr);
   if (tmpString != "" && audioStr != "") {
     tmpString = ColorStrings[BlueColor];
     tmpString += "Audio Driver: " + audioStr;
-    controlPanel->addMessage(tmpString);
+    showMessage(tmpString);
   }
   // print GL renderer
   tmpString = ColorStrings[PurpleColor];
@@ -8129,7 +8143,7 @@ void startPlaying()
   tmpString += "  (GLEW ";
   tmpString += (const char*)glewGetString(GLEW_VERSION);
   tmpString += ")";
-  controlPanel->addMessage(tmpString);
+  showMessage(tmpString);
 
   // get current MOTD
   if (!BZDB.isTrue("disableMOTD")) {
@@ -8144,7 +8158,7 @@ void startPlaying()
     if (silencePlayers[j] == "*") {
       aString = "Silenced All Msgs";
     }
-    controlPanel->addMessage(aString);
+    showMessage(aString);
   }
 
   // enter game if we have all the info we need, otherwise
@@ -8153,7 +8167,7 @@ void startPlaying()
       startupInfo.callsign[0] &&
       startupInfo.serverName[0]) {
     joinRequested = true;
-    controlPanel->addMessage("Trying...");
+    showMessage("Trying...");
   } else {
     mainMenu->createControls();
     HUDDialogStack::get()->push(mainMenu);
