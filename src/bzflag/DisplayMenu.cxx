@@ -83,6 +83,17 @@ DisplayMenu::DisplayMenu()
   option->update();
   addControl(option);
 
+  // Texture Remapping
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("AntiFlicker:");
+  option->setCallback(callback, (void*)"R");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  addControl(option);
+
   // Texture Anisotropy
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -325,6 +336,9 @@ void DisplayMenu::resize(int _width, int _height)
   // Texturing
   ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
 
+  // TexRemap
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
+
   // Anisotropy
   int aniso = BZDB.evalInt("aniso");
   aniso = (aniso < 1) ? 1 : aniso;
@@ -465,6 +479,11 @@ void DisplayMenu::callback(HUDuiControl* w, void* data)
       tm.setMaxFilter((OpenGLTexture::Filter)list->getIndex());
       BZDB.set("texture", tm.getMaxFilterName());
       RENDERER.notifyStyleChange();
+      break;
+    }
+    case 'R': {
+      BZDB.setBool("remapTexCoords", list->getIndex() == 1);
+      setSceneDatabase();
       break;
     }
     case 'A': {

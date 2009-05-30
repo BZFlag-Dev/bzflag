@@ -26,7 +26,8 @@ class QuadWallSceneNode : public WallSceneNode {
     QuadWallSceneNode(const fvec3& base,
                       const fvec3& sEdge, const fvec3& tEdge,
                       float uRepeats = 1.0, float vRepeats = 1.0,
-                      bool makeLODs = true);
+                      bool makeLODs = true,
+                      bool fixedUVs = false);
     QuadWallSceneNode(const fvec3& base,
                       const fvec3& sEdge,
                       const fvec3& tEdge,
@@ -56,7 +57,7 @@ class QuadWallSceneNode : public WallSceneNode {
                              const fvec3& uEdge, const fvec3& vEdge,
                              float uOffset, float vOffset,
                              float uRepeats, float vRepeats,
-                             bool makeLODs);
+                             bool makeLODs, bool fixedUVs);
 
   protected:
     class Geometry : public RenderNode {
@@ -64,7 +65,7 @@ class QuadWallSceneNode : public WallSceneNode {
         Geometry(QuadWallSceneNode*, int uCount, int vCount,
                  const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
                  const float* normal, float uOffset, float vOffset,
-                 float uRepeats, float vRepeats);
+                 float uRepeats, float vRepeats, bool fixedUVs);
         ~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();

@@ -21,6 +21,7 @@
 
 // common headers
 #include "bzfgl.h"
+#include "BZDBCache.h"
 #include "Intersect.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
@@ -39,7 +40,8 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
                                       const fvec3& vEdge,
                                       const float* _normal,
                                       float uOffset, float vOffset,
-                                      float uRepeats, float vRepeats)
+                                      float uRepeats, float vRepeats,
+                                      bool fixedUVs)
 : wall(_wall)
 , style(0)
 , ds(uCount)
@@ -61,6 +63,32 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
       uv[n][1] = vOffset + t * vRepeats;
     }
   }
+
+  static BZDB_bool remapTexCoords("remapTexCoords");
+  if (remapTexCoords && !fixedUVs) {
+    const float uScale = 10.0f / floorf(10.0f * uEdge.length() / uRepeats);
+    const float vScale = 10.0f / floorf(10.0f * vEdge.length() / vRepeats);
+    if (fabsf(normal[2]) > 0.999f) {
+      // horizontal surface
+      for (int i = 0; i < vertex.getSize(); i++) {
+        uv[i][0] = uScale * vertex[i][0];
+        uv[i][1] = vScale * vertex[i][1];
+      }
+    }
+    else {
+      // vertical surface
+      const fvec2 nh = fvec2(normal[0], normal[1]).normalize();
+      const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
+      for (int i = 0; i < vertex.getSize(); i++) {
+        const fvec3& v = vertex[i];
+        const float uGeoScale = (nh[0] * v[1]) - (nh[1] * v[0]);
+        const float vGeoScale = v[2] * vs;
+        uv[i][0] = uScale * uGeoScale;
+        uv[i][1] = vScale * vGeoScale;
+      }
+    }
+  }
+
   triangles = 2 * (uCount * vCount);
 }
 
@@ -170,7 +198,7 @@ QuadWallSceneNode::QuadWallSceneNode(const fvec3& base,
                                      float vRepeats,
                                      bool makeLODs)
 {
-  init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs);
+  init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs, false);
 }
 
 
@@ -179,9 +207,10 @@ QuadWallSceneNode::QuadWallSceneNode(const fvec3& base,
                                      const fvec3& vEdge,
                                      float uRepeats,
                                      float vRepeats,
-                                     bool makeLODs)
+                                     bool makeLODs,
+                                     bool fixedUVs)
 {
-  init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs);
+  init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs, fixedUVs);
 }
 
 
@@ -192,7 +221,8 @@ void QuadWallSceneNode::init(const fvec3& base,
                              float vOffset,
                              float uRepeats,
                              float vRepeats,
-                             bool makeLODs)
+                             bool makeLODs,
+                             bool fixedUVs)
 {
   // record plane and bounding sphere info
   fvec4 myPlane;
@@ -211,6 +241,7 @@ void QuadWallSceneNode::init(const fvec3& base,
   const float vLength = vEdge.length();
   float area = uLength * vLength;
 
+  
   // If negative then these values aren't a number of times to repeat
   // the texture along the surface but the width, or a desired scaled
   // width, of the texture itself. Repeat the texture as many times
@@ -261,11 +292,11 @@ void QuadWallSceneNode::init(const fvec3& base,
   nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
   shadowNode = new Geometry(this, uElements, vElements,
                             base, uEdge, vEdge,
                             getPlaneRaw(), uOffset, vOffset,
-                            uRepeats, vRepeats);
+                            uRepeats, vRepeats, fixedUVs);
   shadowNode->setStyle(0);
 
   // make squaring levels if necessary
@@ -280,7 +311,7 @@ void QuadWallSceneNode::init(const fvec3& base,
 	nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
 
       }
       area /= (float)uElements;
@@ -293,7 +324,7 @@ void QuadWallSceneNode::init(const fvec3& base,
 	nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
 
       }
       area /= (float)vElements;
@@ -309,7 +340,7 @@ void QuadWallSceneNode::init(const fvec3& base,
     nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
   }
 
   // record extents info

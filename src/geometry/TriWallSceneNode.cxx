@@ -22,6 +22,7 @@
 
 // common headers
 #include "bzfgl.h"
+#include "BZDBCache.h"
 #include "Intersect.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
@@ -49,6 +50,32 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
       uv[n] = fvec2(s * uRepeats, t * vRepeats);
     }
   }
+
+  static BZDB_bool remapTexCoords("remapTexCoords");
+  if (remapTexCoords) {
+    const float uScale = 10.0f / floorf(10.0f * uEdge.length() / uRepeats);
+    const float vScale = 10.0f / floorf(10.0f * vEdge.length() / vRepeats);
+    if (fabsf(normal[2]) > 0.999f) {
+      // horizontal surface
+      for (int i = 0; i < vertex.getSize(); i++) {
+        uv[i][0] = uScale * vertex[i][0];
+        uv[i][1] = vScale * vertex[i][1];
+      }
+    }
+    else {
+      // vertical surface
+      const fvec2 nh = fvec2(normal[0], normal[1]).normalize();
+      const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
+      for (int i = 0; i < vertex.getSize(); i++) {
+        const fvec3& v = vertex[i];
+        const float uGeoScale = (nh[0] * v[1]) - (nh[1] * v[0]);
+        const float vGeoScale = v[2] * vs;
+        uv[i][0] = uScale * uGeoScale;
+        uv[i][1] = vScale * vGeoScale;
+      }
+    }
+  }
+
   triangles = (eCount * eCount);
 }
 
