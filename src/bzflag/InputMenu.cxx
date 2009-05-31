@@ -118,7 +118,8 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
   options->push_back(std::string("No"));
-  options->push_back(std::string("Yes"));
+  options->push_back(std::string("Window"));
+  options->push_back(std::string("MotionBox"));
   option->setIndex(getMainWindow()->isGrabEnabled() ? 1 : 0);
   option->update();
   addControl(option);
@@ -252,9 +253,12 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     /* Grab mouse */
     case 'G':
       {
-	bool grabbing = (selectedOption == "Yes");
+	const bool grabbing = (selectedOption == "Window");
 	BZDB.set("mousegrab", grabbing ? "true" : "false");
 	getMainWindow()->enableGrabMouse(grabbing);
+
+	const bool clamped = (selectedOption == "MotionBox");
+        BZDB.set("mouseClamp", clamped ? "true" : "false");
       }
       break;
 
@@ -329,6 +333,20 @@ void			InputMenu::resize(int _width, int _height)
   }
   if (BZDB.isTrue("allowInputChange"))
     activeInput->setIndex(0);
+
+  for (i = 1; i < count; i++) {
+    if (listHUD[i]->getLabel() == "Confine mouse:") {
+      HUDuiList* list = reinterpret_cast<HUDuiList*>(listHUD[i]);      
+      if (BZDB.isTrue("mousegrab")) {
+        list->setIndex(1);
+      } else if (BZDB.isTrue("mouseClamp")) {
+        list->setIndex(2);
+      } else {
+        list->setIndex(0);
+      }
+      break;
+    }
+  }
 }
 
 
