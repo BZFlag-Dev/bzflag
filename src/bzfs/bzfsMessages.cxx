@@ -689,7 +689,7 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
-		     int len, bool recordOnly)
+		     int len, int type, bool recordOnly)
 {
   bool broadcast = false;
   bool toGroup   = false;
@@ -724,6 +724,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 
     msg->packUInt8(sourcePlayer);
     msg->packUInt8(destPlayer);
+	msg->packUInt8(type);
     msg->packString(localtext, len);
     msg->packUInt8(0);
 

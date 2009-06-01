@@ -3093,8 +3093,10 @@ void handleMessage(void *msg)
 {
   PlayerId src;
   PlayerId dst;
+  uint8_t type;
   msg = nboUnpackUInt8(msg, src);
   msg = nboUnpackUInt8(msg, dst);
+  msg = nboUnpackUInt8(msg, type);
   Player *srcPlayer = lookupPlayer(src);
   Player *dstPlayer = lookupPlayer(dst);
   TeamColor dstTeam = PlayerIdToTeam(dst);
@@ -3177,15 +3179,6 @@ void handleMessage(void *msg)
 
     fullMsg += colorStr;
 
-    // display action messages differently
-    bool isAction = false;
-    if ((text[0] == '*') && (text[1] == ' ') &&
-      (text[text.size() - 1] == '*') &&
-      (text[text.size() - 2] == '\t')) {
-        isAction = true;
-        text = text.substr(2, text.size() - 4);
-    }
-
     // play a sound on a message not from self or server
     bool playSound = true;
     if (fromServer) {
@@ -3212,16 +3205,16 @@ void handleMessage(void *msg)
         }
 
         if (srcPlayer == myTank) {
-          if (isAction) {
-            fullMsg += "[->" + text + "]";
+          if (type == ActionMessage) {
+            fullMsg += "[->" + dstName + " " + text + "]";
           } else {
             fullMsg += "[->" + dstName + "]";
             fullMsg += std::string(ColorStrings[ResetColor]) + " ";
             fullMsg += std::string(ColorStrings[CyanColor]) + text;
           }
         } else {
-          if (isAction) {
-            fullMsg += "[" + text + "->]";
+          if (type == ActionMessage) {
+            fullMsg += "[" + srcName + " " + text + "->]";
           } else {
             fullMsg += "[" + srcName + "->]";
             fullMsg += std::string(ColorStrings[ResetColor]) + " ";
@@ -3273,8 +3266,8 @@ void handleMessage(void *msg)
       }
 
       // display action messages differently
-      if (isAction) {
-        fullMsg += text;
+      if (type == ActionMessage) {
+        fullMsg += srcName + " " + text;
       } else {
         fullMsg += srcName + colorStr + ": " +
                    std::string(ColorStrings[CyanColor]) + text;

@@ -42,7 +42,7 @@ void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData );
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record = false );
 void sendWorldChunk(NetHandler *handler, uint32_t &ptr);
 void broadcastPlayerStateUpdate ( void );
-void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, bool recordOnly = false );
+void sendTextMessage ( int destPlayer, int sourcePlayer, const char* text, int len, int type = ChatMessage, bool recordOnly = false );
 void sendMessageAlive ( int playerID, const fvec3& pos, float rot );
 void sendMessageAllow ( int recipID, int playerID, unsigned char allow );
 void sendMessageAllow ( int playerID, unsigned char allow );

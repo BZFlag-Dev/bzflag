@@ -50,7 +50,8 @@
 
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
-			const char *message);
+			const char *message,
+			uint8_t    type = ChatMessage);
 extern void removePlayer(int	 playerIndex,
 			 const char *reason,
 			 bool	notify = true);
@@ -58,7 +59,7 @@ extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
 
-extern void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *message );
+extern void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *message, uint8_t type = ChatMessage );
 extern void  pausePlayer(int playerIndex, bool paused);
 extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  dropFlag(FlagInfo &flag);

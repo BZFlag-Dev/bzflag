@@ -80,6 +80,12 @@ enum PlayerAllow {
   AllowAll = 0xFF
 };
 
+// Types of chat messages
+enum MessageType {
+  ChatMessage,
+  ActionMessage
+};
+
 #ifdef ROBOT
 // robots
 #define MAX_ROBOTS 100

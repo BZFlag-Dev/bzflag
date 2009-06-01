@@ -1273,7 +1273,7 @@ static void respondToPing(Address addr)
 }
 
 
-void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
+void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message, uint8_t type)
 {
   const char* msg = message;
   char filtered[MessageLen] = {0};
@@ -1344,7 +1344,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     if (sendingPlayer == BZ_SERVER) {
       sendingPlayer = ServerPlayer;
     }
-    sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
+    sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str(), type);
   }
 
   // If the message was filtered report it on the admin channel
@@ -1362,7 +1362,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 		       const char *message)
 {
   const PlayerId srcPlayer = playerData->getIndex();
-  std::string actionMsg = "";
+  uint8_t type = ChatMessage;
 
   // reformat any '/me' action messages
   // this is here instead of in commands.cxx to allow player-player/player-channel targetted messages
@@ -1390,10 +1390,11 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
       return;
     }
 
-    // format and send it
-    actionMsg = TextUtils::format("* %s %s\t*",
-				  playerData->player.getCallSign(), message + 4);
-    message = actionMsg.c_str();
+	// Trim off the command to leave the player's message
+    message = message + 4;
+
+	// Set the message type to an action message
+	type = ActionMessage;
   }
 
   // check for a server command
@@ -1403,6 +1404,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
       NetMsg msg = MSGMGR.newMessage();
       msg->packUInt8(srcPlayer);
       msg->packUInt8(dstPlayer);
+	  msg->packUInt8(type);
       msg->packString(message, strlen(message) + 1);
       Record::addPacket(MsgMessage, msg->size(), msg->buffer(),HiddenPacket);
     }
@@ -1425,11 +1427,11 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
-  sendChatMessage(srcPlayer, dstPlayer, message);
+  sendChatMessage(srcPlayer, dstPlayer, message, type);
 }
 
 
-void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message)
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, uint8_t type)
 {
   bz_ChatEventData_V1 chatData;
   chatData.from = BZ_SERVER;
@@ -1454,11 +1456,11 @@ void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message
     worldEventManager.callEvents(bz_eRawChatMessageEvent,&chatData);
 
   if (chatData.message.size())
-    sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
+    sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str(), type);
 }
 
 
-void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
+void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, uint8_t type)
 {
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
@@ -1473,6 +1475,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
     msglen = MessageLen;
   }
 
+  // TODO: Add the message type to the API
   // Notify any plugins
   if (playerIndex == ServerPlayer) {
     bz_ServerMsgEventData_V1 serverMsgData;
@@ -1497,10 +1500,10 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
     worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
   }
 
-  sendTextMessage(dstPlayer, playerIndex, msg, msglen);
+  sendTextMessage(dstPlayer, playerIndex, msg, msglen, type);
 
   if (Record::enabled() && !(dstPlayer == AllPlayers)) // don't record twice
-    sendTextMessage(-1, playerIndex, msg, msglen, true);
+    sendTextMessage(-1, playerIndex, msg, msglen, type, true);
 }
 
 void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
