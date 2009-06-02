@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -55,7 +55,7 @@ namespace {
       dest += source;
     }
   }
-// 
+//
   const ServerCommandKey::Mode nonAdminModes [] = {ServerCommandKey::LagStats,
 						   ServerCommandKey::IdleStats,
 						   ServerCommandKey::FlagHistory,
@@ -431,7 +431,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     if (sendMsg != "") {
       displayMsg = "-> \"" + sendMsg + "\"";
       if (sendMsg.find("/password", 0) == std::string::npos)
-	addMessage(NULL, displayMsg, 2);
+	addMessage(NULL, displayMsg, ControlPanel::MessageServer);
 
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);

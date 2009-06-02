@@ -26,13 +26,13 @@ class StalkBot(BZAdvancedRobot):
         try:
             self.getPlayers()
             self.printplayers()
-    
+
             if self.target == None:
                 if len(self.players) == 0:
                     sleep(2)
                     return
                 self.target = self.players[0].callsign
-            
+
             tank = None
             for player in self.players:
                 if player.callsign == self.target:

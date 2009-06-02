@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,11 +37,6 @@
 #include "version.h"
 
 
-#ifdef _WIN32
-void Player::setDeadReckoning( float timestamp )
-{
-}
-#endif
 /** @file
     This is the main file for bzadmin, the bzflag text client.
 */

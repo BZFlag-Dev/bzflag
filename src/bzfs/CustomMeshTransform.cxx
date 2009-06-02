@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,6 +22,7 @@
 
 /* common implementation headers */
 #include "MeshTransform.h"
+#include "vectors.h"
 
 
 CustomMeshTransform::CustomMeshTransform()
@@ -41,36 +42,37 @@ CustomMeshTransform::~CustomMeshTransform()
 bool CustomMeshTransform::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp ("shift", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform->addShift(data);
   }
   else if (strcasecmp ("scale", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform->addScale(data);
   }
   else if (strcasecmp ("shear", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform->addShear(data);
   }
   else if (strcasecmp ("spin", cmd) == 0) {
-    float data[4];
-    if (!(input >> data[0] >> data[1] >> data[2] >> data[3])) {
+    float degrees;
+    fvec3 normal;
+    if (!(input >> degrees >> normal.x >> normal.y >> normal.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
-    transform->addSpin(data[0], &data[1]);
+    transform->addSpin(degrees, normal);
   }
   else if (strcasecmp ("xform", cmd) == 0) {
     std::string _name;
@@ -98,7 +100,7 @@ void CustomMeshTransform::writeToManager() const
 {
   transform->setName(name);
   if ((name.size() > 0) && (TRANSFORMMGR.findTransform(name) >= 0)) {
-    std::cout << "warning: duplicate transform"
+    std::cout << "WARNING: duplicate transform"
 	      << " (" << name << ")" << std::endl;
   }
   transform->finalize();
@@ -108,7 +110,7 @@ void CustomMeshTransform::writeToManager() const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -57,9 +57,14 @@ bool MessageUtilities::parse(const char *str, float &dest)
 template <>
 bool MessageUtilities::parse(const char *str, uint64_t &dest)
 {
-  if (sscanf(str,"%jd",(intmax_t *)&dest) != 1)
-    return false;
-  return true;
+#if   (SIZEOF_LONG_INT == 8)
+  static const char* fmt = "%lu";
+#elif (SIZEOF_LONG_LONG_INT == 8)
+  static const char* fmt = "%Lu";
+#else
+#  error uint64_t sscanf format was not found
+#endif
+  return (sscanf(str, fmt, &dest) == 1);
 }
 
 template<>

@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.99
-  !define VER_MINOR .5_07212008
+  !define VER_MINOR .27.20090531
 
 ;--------------------------------
 ;Compression options
@@ -67,7 +67,7 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nClick Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nPlease note that you must have the Visual C++ 2008 Redistributable Package to run BZFlag, it can be downloaded from Microsoft.\r\n\r\nClick Next to continue."
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
@@ -121,39 +121,49 @@ Section "!BZFlag (Required)" BZFlag
   
   ; make the data dir
   SetOutPath $INSTDIR\data
-  File ..\..\..\data\*.*
+  File ..\..\..\data\*.png
 
   ; make the fonts dir
   SetOutPath $INSTDIR\data\fonts
-  File ..\..\..\data\fonts\*.*
+  File ..\..\..\data\fonts\*.ttf
+  File ..\..\..\data\fonts\README
 
   ; make the l10n dir
   SetOutPath $INSTDIR\data\l10n
-  File ..\..\..\data\l10n\*.*
+  File ..\..\..\data\l10n\*.po
+  File ..\..\..\data\l10n\*.txt
 
   SetOutPath $INSTDIR\data\skins\blue
-  File ..\..\..\data\skins\blue\*.*
+  File ..\..\..\data\skins\blue\*.png
 
   SetOutPath $INSTDIR\data\skins\red
-  File ..\..\..\data\skins\red\*.*
+  File ..\..\..\data\skins\red\*.png
 
   SetOutPath $INSTDIR\data\skins\green
-  File ..\..\..\data\skins\green\*.*
+  File ..\..\..\data\skins\green\*.png
 
   SetOutPath $INSTDIR\data\skins\purple
-  File ..\..\..\data\skins\purple\*.*
+  File ..\..\..\data\skins\purple\*.png
 
   SetOutPath $INSTDIR\data\skins\hunter
-  File ..\..\..\data\skins\hunter\*.*
+  File ..\..\..\data\skins\hunter\*.png
 
   SetOutPath $INSTDIR\data\skins\observer
-  File ..\..\..\data\skins\observer\*.*
+  File ..\..\..\data\skins\observer\*.png
 
   SetOutPath $INSTDIR\data\skins\rabbit
-  File ..\..\..\data\skins\rabbit\*.*
+  File ..\..\..\data\skins\rabbit\*.png
 
   SetOutPath $INSTDIR\data\skins\rogue
-  File ..\..\..\data\skins\rogue\*.*
+  File ..\..\..\data\skins\rogue\*.png
+
+  ; make the sounds dir
+  SetOutPath $INSTDIR\data\sounds
+  File ..\..\..\data\sounds\*.wav
+
+  ; make the LuaUser dir 
+  ;SetOutPath $INSTDIR\data\LuaUser
+  ;File ..\..\..\data\LuaUser\*.*
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
@@ -164,12 +174,11 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
-  ;File ..\..\..\glew32.dll
 
-  ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
-  ; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."
-  File ..\..\..\msvcr80.dll
-  File ..\..\..\msvcp80.dll
+
+  ; need to change this to just install the MSVC9 runtimes
+  ;File ..\..\..\msvcr80.dll
+  ;File ..\..\..\msvcp80.dll
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
@@ -276,7 +285,9 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Add the API library and header
     SetOutPath $INSTDIR\API
     File ..\..\..\bzfs.lib
+    File ..\..\..\plugins\plugin_utils\Release\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
+    File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
 SectionGroupEnd
 

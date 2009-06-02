@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 // bzflag common header
@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-// common implementation headers
+// common headers
 #include "vectors.h"
 #include "Extents.h"
 #include "Intersect.h"
@@ -82,7 +82,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 
   // disable the plane
   noPlane = true;
-  plane[0] = plane[1] = plane[2] = plane[3] = 0.0f;
+  plane.x = plane.y = plane.z = plane.w = 0.0f;
 
   // setup the extents, sphere, and lengthPerPixel adjustment
   float lengthAdj = 1.0f;
@@ -94,12 +94,12 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
   } else {
     // sloppy way to recalcuate the transformed extents
     fvec3 c[8];
-    c[0][0] = c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
-    c[7][0] = c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
-    c[0][1] = c[1][1] = c[5][1] = c[4][1] = diExts.mins[1];
-    c[7][1] = c[6][1] = c[2][1] = c[3][1] = diExts.maxs[1];
-    c[0][2] = c[1][2] = c[2][2] = c[3][2] = diExts.mins[2];
-    c[7][2] = c[6][2] = c[5][2] = c[4][2] = diExts.maxs[2];
+    c[0].x = c[6].x = c[5].x = c[3].x = diExts.mins.x;
+    c[7].x = c[1].x = c[2].x = c[4].x = diExts.maxs.x;
+    c[0].y = c[1].y = c[5].y = c[4].y = diExts.mins.y;
+    c[7].y = c[6].y = c[2].y = c[3].y = diExts.maxs.y;
+    c[0].z = c[1].z = c[2].z = c[3].z = diExts.mins.z;
+    c[7].z = c[6].z = c[5].z = c[4].z = diExts.maxs.z;
     extents.reset();
     for (int v = 0; v < 8; v++) {
       xformTool->modifyVertex(c[v]);
@@ -112,8 +112,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       const fvec3& s = c[0]; // all mins
       // mins, except: c[1] -> max[0], c[3] -> max[1], c[5] -> max[2]
       const fvec3& e = c[(a * 2) + 1];
-      const float d[3] = {s[0] - e[0], s[1] - e[1], s[2] - e[2]};
-      const float newWidth = sqrtf(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+      const float newWidth = (s - e).length();
       if (oldWidth > 0.0f) {
 	const float scale = (newWidth / oldWidth);
 	if (scale < lengthAdj) {
@@ -122,10 +121,9 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       }
     }
     // adjust the sphere
-    float mySphere[4];
-    memcpy(mySphere, drawInfo->getSphere(), sizeof(float[4]));
-    xformTool->modifyVertex(mySphere);
-    mySphere[3] *= (lengthAdj * lengthAdj);
+    fvec4 mySphere(drawInfo->getSphere());
+    xformTool->modifyVertex(mySphere.xyz());
+    mySphere.w *= (lengthAdj * lengthAdj);
     setSphere(mySphere);
   }
 
@@ -190,12 +188,10 @@ MeshSceneNode::~MeshSceneNode()
 
 inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 {
-  const float* e = vf.getEye();
-  const float* s = getSphere();
-  const float* d = vf.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-		     (d[1] * (s[1] - e[1])) +
-		     (d[2] * (s[2] - e[2]));
+  const fvec3& eye = vf.getEye();
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& dir = vf.getDirection();
+  const float dist = fvec3::dot(dir, (pos - eye));
   const float lengthPerPixel = dist * LodScale;
   for (int i = (lodCount - 1); i > 0; i--) {
     if (lengthPerPixel > lodLengths[i]) {
@@ -209,12 +205,10 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
 {
   // FIXME: adjust for ray direction
-  const float* e = vf.getEye();
-  const float* s = getSphere();
-  const float* d = vf.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-		     (d[1] * (s[1] - e[1])) +
-		     (d[2] * (s[2] - e[2]));
+  const fvec3& eye = vf.getEye();
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& dir = vf.getDirection();
+  const float dist = fvec3::dot(dir, (pos - eye));
   const float lengthPerPixel = dist * LodScale;
   for (int i = (lodCount - 1); i > 0; i--) {
     if (lengthPerPixel > lodLengths[i]) {
@@ -251,11 +245,11 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     for (int i = 0; i < lod.count; i++) {
       SetNode& set = lod.sets[i];
       if (set.meshMat.animRepos) {
-	const float* s = drawLods[level].sets[i].sphere;
+	const fvec4& s = drawLods[level].sets[i].sphere;
 	fvec3 pos;
-	pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
-	pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
-	pos[2] = s[2];
+	pos.x = (cos_val * s.x) - (sin_val * s.y);
+	pos.y = (sin_val * s.x) + (cos_val * s.y);
+	pos.z = s.z;
 	if (xformTool != NULL) {
 	  xformTool->modifyVertex(pos);
 	}
@@ -266,7 +260,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
-    if (set.meshMat.colorPtr[3] != 0.0f) {
+    if (set.meshMat.colorPtr->a != 0.0f) {
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
@@ -283,7 +277,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
     const MeshMaterial& mat = set.meshMat;
-    if (mat.drawShadow && (mat.colorPtr[3] != 0.0f)) {
+    if (mat.drawShadow && (mat.colorPtr->a != 0.0f)) {
       renderer.addShadowNode(set.node);
     }
   }
@@ -314,7 +308,7 @@ bool MeshSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 
@@ -378,9 +372,9 @@ void MeshSceneNode::notifyStyleChange()
 	  new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
 				   mat.colorPtr, lod, set, extPtr, setPos,
 				   drawSet.triangleCount);
-	if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
-	    (fabsf(drawSet.sphere[1]) > 0.001f) &&
-	    (mat.color[3] != 0.0f) &&
+	if ((fabsf(drawSet.sphere.x) > 0.001f) &&
+	    (fabsf(drawSet.sphere.y) > 0.001f) &&
+	    (mat.color.a != 0.0f) &&
 	    (drawInfo->getAnimationInfo() != NULL)) {
 	  animRepos = true;
 	  mat.animRepos = true;
@@ -420,15 +414,17 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 // FIXME - deal with invisibility
 
   // get the references
-  const BzMaterial*       bzmat = mat->bzmat;
-  OpenGLGState&	  gstate = mat->gstate;
-  GLfloat*		color = mat->color;
+  const BzMaterial* bzmat  = mat->bzmat;
+  OpenGLGState&     gstate = mat->gstate;
+  fvec4&            color  = mat->color;
 
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
 
   // cheat a little
   ((BzMaterial*)bzmat)->setReference();
+
+  builder.setOrder(bzmat->getOrder());
 
   // ways of requiring blending
   bool colorAlpha = false;
@@ -443,7 +439,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     if (userTexture) {
       const std::string& texname = bzmat->getTextureLocal(0);
       if (texname.size() > 0) {
-	faceTexture = tm.getTextureID(texname.c_str());
+	faceTexture = tm.getTextureID(texname);
       }
       if (faceTexture >= 0) {
 	useDiffuseColor = bzmat->getUseColorOnTexture(0);
@@ -459,7 +455,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 	const int texMatId = bzmat->getTextureMatrix(0);
 	const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
 	if (texmat != NULL) {
-	  const GLfloat* matrix = texmat->getMatrix();
+	  const float* matrix = texmat->getMatrix();
 	  if (matrix != NULL) {
 	    builder.setTextureMatrix(matrix);
 	    builder.enableTextureMatrix(true);
@@ -488,22 +484,22 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
   // color
   if (useDiffuseColor) {
-    memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
-    colorAlpha = (color[3] != 1.0f);
+    color = bzmat->getDiffuse();
+    colorAlpha = (color.a != 1.0f);
   } else {
     // set it to white, this should only happen when
     // we've gotten a user texture, and there's a
     // request to not use the material's diffuse color.
-    color[0] = color[1] = color[2] = color[3] = 1.0f;
+    color.r = color.g = color.b = color.a = 1.0f;
   }
 
   // dynamic color
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
   if (dyncol != NULL) {
-    mat->colorPtr = dyncol->getColor();
+    mat->colorPtr = &dyncol->getColor();
     colorAlpha = dyncol->canHaveAlpha(); // override
   } else {
-    mat->colorPtr = color;
+    mat->colorPtr = &color;
   }
 
   // blending
@@ -517,7 +513,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
       if (dyncol != NULL) {
 	builder.setStipple(0.5f);
       } else {
-	builder.setStipple(color[3]);
+	builder.setStipple(color.a);
       }
     }
   }
@@ -571,18 +567,22 @@ void MeshSceneNode::makeXFormList()
       }
     };
 
-    // oops, transpose
-    GLfloat matrix[16];
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-	matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
-      }
-    }
-
     xformList = glGenLists(1);
     glNewList(xformList, GL_COMPILE);
     {
-      glMultMatrixf(matrix);
+      const float* m = xformTool->getMatrix();
+      if (glMultTransposeMatrixf) {
+        glMultTransposeMatrixf(m);
+      }
+      else {
+        float matrix[16];
+        for (int i = 0; i < 4; i++) {
+          for (int j = 0; j < 4; j++) {
+            matrix[(i * 4) + j] = m[(j * 4) + i];
+          }
+        }
+        glMultMatrixf(matrix);
+      }
     }
     glEndList();
 
@@ -648,7 +648,8 @@ void MeshSceneNode::setLodScale(int pixelsX, float fovx,
   const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
   const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;
   const float lpp = (lppx < lppy) ? lppx : lppy;
-  LodScale = lpp * BZDB.eval("lodScale");
+  static BZDB_float lodScale("lodScale");
+  LodScale = lpp * lodScale;
   return;
 }
 

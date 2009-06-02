@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,29 +18,12 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 /* common interface headers */
 #include "TimeKeeper.h"
-
-typedef struct sequenceList {
-  float period;
-  float offset;
-  char* list;
-  unsigned int count;
-} sequenceParams;
-
-typedef struct {
-  float period;
-  float offset;
-  float weight;
-} sinusoidParams;
-
-typedef struct {
-  float period;
-  float offset;
-  float width;
-} clampParams;
+#include "vectors.h"
 
 
 class DynamicColor {
@@ -48,30 +31,24 @@ class DynamicColor {
     DynamicColor();
     ~DynamicColor();
 
-    enum SequenceState {
-      colorMin = 0,
-      colorMid = 1,
-      colorMax = 2
-    };
-
     bool setName(const std::string& name);
 
     void setVariableName(const std::string& name);
     void setVariableTiming(float seconds);
-    void setVariableUseAlpha(bool);
+    void setVariableNoAlpha(bool);
 
-    void setLimits(int channel, float min, float max);
-    void setSequence(int channel, float period, float offset,
-		     std::vector<char>& list);
-    void addSinusoid(int channel, const float sinusoid[3]);
-    void addClampUp(int channel, const float clampUp[3]);
-    void addClampDown(int channel, const float clampDown[3]);
+    void setDelay(float delay);
+    void addState(float duration, const fvec4& color);
+    void addState(float duration,
+                  float r, float g, float b, float a);
 
     void finalize();
+
     void update(double time);
+    void setColor(const fvec4& color);
 
     bool canHaveAlpha() const;
-    const float* getColor() const;
+    const fvec4& getColor() const;
     const std::string& getName() const;
 
     int packSize() const;
@@ -81,6 +58,9 @@ class DynamicColor {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
+    void colorByVariable(double t);
+    void colorByStates(double t);
+
     void updateVariable();
     static void bzdbCallback(const std::string& varName, void* data);
 
@@ -88,29 +68,35 @@ class DynamicColor {
     static const float minPeriod;
 
     std::string name;
-    float color[4];
+    fvec4 color;
 
     std::string varName;
-    bool varUseAlpha;
-    float varTiming;
 
+    bool varNoAlpha;
+    float varTime;
     bool varInit;
     bool varTransition;
-    float varTimingTmp;
-    float varOldColor[4];
-    float varNewColor[4];
+    float varTimeTmp;
+    fvec4 varOldColor;
+    fvec4 varNewColor;
     TimeKeeper varLastChange;
 
-    typedef struct {
-      float minValue, maxValue;
-      float totalWeight; // tally of sinusoid weights
-      sequenceParams sequence;
-      std::vector<sinusoidParams> sinusoids;
-      std::vector<clampParams> clampUps;
-      std::vector<clampParams> clampDowns;
-    } ChannelParams;
-
-    ChannelParams channels[4];
+    struct ColorState {
+      ColorState() {
+        color = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
+        duration = 0.0f;
+      }
+      ColorState(const fvec4& c, float d) {
+        color = c;
+        duration = d;
+      }
+      fvec4 color;
+      float duration;
+    };
+    std::vector<ColorState> colorStates;
+    std::map<float, int> colorEnds;
+    float statesDelay;
+    float statesLength;
 
     bool possibleAlpha;
 };
@@ -120,7 +106,7 @@ inline bool DynamicColor::canHaveAlpha() const
   return possibleAlpha;
 }
 
-inline const float* DynamicColor::getColor() const {
+inline const fvec4& DynamicColor::getColor() const {
   return color;
 }
 
@@ -129,8 +115,10 @@ class DynamicColorManager {
   public:
     DynamicColorManager();
     ~DynamicColorManager();
+
     void update();
     void clear();
+
     int addColor(DynamicColor* dyncolor);
     int findColor(const std::string& name) const;
     const DynamicColor* getColor(int id) const;

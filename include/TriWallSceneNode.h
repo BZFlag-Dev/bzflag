@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,15 +22,13 @@
 
 class TriWallSceneNode : public WallSceneNode {
   public:
-			TriWallSceneNode(const GLfloat base[3],
-				const GLfloat sEdge[3],
-				const GLfloat tEdge[3],
-				float uRepeats = 1.0,
-				float vRepeats = 1.0,
-				bool makeLODs = true);
-			~TriWallSceneNode();
+    TriWallSceneNode(const fvec3& base,
+                     const fvec3& sEdge, const fvec3& tEdge,
+                     float uRepeats = 1.0, float vRepeats = 1.0,
+                     bool makeLODs = true);
+    ~TriWallSceneNode();
 
-    int			split(const float*, SceneNode*&, SceneNode*&) const;
+    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
@@ -39,7 +37,7 @@ class TriWallSceneNode : public WallSceneNode {
     bool		inAxisBox (const Extents& exts) const;
 
     int			getVertexCount () const;
-    const		GLfloat* getVertex (int vertex) const;
+    const fvec3&	getVertex (int vertex) const;
 
     bool		cull(const ViewFrustum&) const;
 
@@ -48,19 +46,15 @@ class TriWallSceneNode : public WallSceneNode {
   protected:
     class Geometry : public RenderNode {
       public:
-			Geometry(TriWallSceneNode*,
-				int eCount,
-				const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				const GLfloat* normal,
-				float uRepeats, float vRepeats);
-			~Geometry();
+        Geometry(TriWallSceneNode*, int eCount,
+                 const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
+                 const float* normal, float uRepeats, float vRepeats);
+        ~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
 	void		renderShadow();
-	const GLfloat*  getVertex(int i) const;
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
+	const fvec3&	getVertex(int i) const;
+	const fvec3&	getPosition() const { return wall->getCenter(); }
       private:
 	void		drawV() const;
 	void		drawVT() const;
@@ -68,10 +62,10 @@ class TriWallSceneNode : public WallSceneNode {
 	WallSceneNode*	wall;
 	int		style;
 	int		de;
-	const GLfloat*	normal;
+	const float*	normal;
       public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
+	fvec3Array	vertex;
+	fvec2Array	uv;
 	int	     triangles;
     };
 

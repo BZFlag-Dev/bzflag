@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,7 +16,11 @@
 // bzflag global header
 #include "common.h"
 
+// system headers
 #include <stack>
+
+// common headers
+#include "vectors.h"
 #include "TimeKeeper.h"
 
 class ShotPath;
@@ -110,14 +114,14 @@ public:
 class GotoPointPlan : public Plan
 {
 public:
-  GotoPointPlan(float *pt);
+  GotoPointPlan(const fvec3& pt);
 
   virtual bool usesSubPlan();
   virtual Plan *createSubPlan() ;
   virtual void execute(float &rotation, float &speed);
 
 private:
-  float gotoPt[3];
+  fvec3 gotoPt;
 };
 
 class WeavePlan : public Plan

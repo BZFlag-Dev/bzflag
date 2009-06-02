@@ -1,0 +1,7 @@
+This is a "temporary" library for the purpose of seperating code
+from the BZFlag client that is shared between the BZFlag client
+and the BZRobots client
+
+This code should eventually be refactored, with most of it going
+into the "game" state library, and the rest of it going to the
+rendering and other effects code

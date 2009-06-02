@@ -5,7 +5,7 @@ SUBDIRS = src test demo docs
 DIST_SUBDIRS = $(SUBDIRS) msvc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = ftgl.pc
+noinst_DATA = ftgl.pc
 
 DISTCLEANFILES = ftgl.pc
 
@@ -21,6 +21,7 @@ EXTRA_DIST = \
 	autogen.sh \
 	configure.ac \
 	ftgl.pc.in \
+	m4 \
 	$(NULL)
 
 # Print out an informative summary.

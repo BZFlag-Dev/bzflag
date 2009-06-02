@@ -27,6 +27,7 @@
 #include "config.h"
 
 #include "FTFace.h"
+#include "FTCleanup.h"
 #include "FTLibrary.h"
 
 #include FT_TRUETYPE_TABLES_H
@@ -48,6 +49,8 @@ FTFace::FTFace(const char* fontFilePath, bool precomputeKerning)
         ftFace = 0;
         return;
     }
+
+    FTCleanup::Instance()->RegisterObject(&ftFace);
 
     numGlyphs = (*ftFace)->num_glyphs;
     hasKerningTable = (FT_HAS_KERNING((*ftFace)) != 0);
@@ -79,6 +82,8 @@ FTFace::FTFace(const unsigned char *pBufferBytes, size_t bufferSizeInBytes,
         return;
     }
 
+    FTCleanup::Instance()->RegisterObject(&ftFace);
+
     numGlyphs = (*ftFace)->num_glyphs;
     hasKerningTable = (FT_HAS_KERNING((*ftFace)) != 0);
 
@@ -91,14 +96,14 @@ FTFace::FTFace(const unsigned char *pBufferBytes, size_t bufferSizeInBytes,
 
 FTFace::~FTFace()
 {
-    if(kerningCache)
-    {
-        delete[] kerningCache;
-    }
+    delete[] kerningCache;
 
     if(ftFace)
     {
+        FTCleanup::Instance()->UnregisterObject(&ftFace);
+
         FT_Done_Face(*ftFace);
+
         delete ftFace;
         ftFace = 0;
     }
@@ -158,11 +163,11 @@ FT_Encoding* FTFace::CharMapList()
 
 FTPoint FTFace::KernAdvance(unsigned int index1, unsigned int index2)
 {
-    float x, y;
+    FTGL_DOUBLE x, y;
 
     if(!hasKerningTable || !index1 || !index2)
     {
-        return FTPoint(0.0f, 0.0f);
+        return FTPoint(0.0, 0.0);
     }
 
     if(kerningCache && index1 < FTFace::MAX_PRECOMPUTED
@@ -207,8 +212,8 @@ void FTFace::BuildKerningCache()
     FT_Vector kernAdvance;
     kernAdvance.x = 0;
     kernAdvance.y = 0;
-    kerningCache = new float[FTFace::MAX_PRECOMPUTED
-                              * FTFace::MAX_PRECOMPUTED * 2];
+    kerningCache = new FTGL_DOUBLE[FTFace::MAX_PRECOMPUTED
+				   * FTFace::MAX_PRECOMPUTED * 2];
     for(unsigned int j = 0; j < FTFace::MAX_PRECOMPUTED; j++)
     {
         for(unsigned int i = 0; i < FTFace::MAX_PRECOMPUTED; i++)
@@ -223,9 +228,9 @@ void FTFace::BuildKerningCache()
             }
 
             kerningCache[2 * (j * FTFace::MAX_PRECOMPUTED + i)] =
-                                static_cast<float>(kernAdvance.x) / 64.0f;
+                                static_cast<FTGL_DOUBLE>(kernAdvance.x) / 64.0;
             kerningCache[2 * (j * FTFace::MAX_PRECOMPUTED + i) + 1] =
-                                static_cast<float>(kernAdvance.y) / 64.0f;
+                                static_cast<FTGL_DOUBLE>(kernAdvance.y) / 64.0;
         }
     }
 }

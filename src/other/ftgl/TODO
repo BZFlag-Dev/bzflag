@@ -29,3 +29,6 @@ TODO
 
 * Get rid of frontPointList and backPointList!
 
+* Use fontconfig (optionally) to support more than one font (for non-latin
+  scripts). We can do that without changing the API.
+

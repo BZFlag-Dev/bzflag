@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,34 +14,35 @@
 #define __BZFIO_H__
 
 #include <string>
+#include <stdarg.h>
 
-void setDebugTimestamp (bool enable, bool doMicros);
-void logDebugMessage(int level, const char* fmt, ...);
-void logDebugMessage(int level, const std::string &text);
 
+//============================================================================//
 
 /** global debug level used by libraries and applications, provided in bzfio.cxx */
 extern int debugLevel;
 
+void logDebugMessage(int level, const char* fmt, ...);
+void logDebugMessage(int level, const std::string &text);
+void logDebugMessageArgs(int level, const char* fmt, va_list ap);
 
-class LoggingCallback
-{
-public:
-	virtual ~LoggingCallback(){};
+void setDebugTimestamp (bool enable, bool doMicros);
 
-	virtual void log ( int level, const char* message ) = 0;
-};
+// multiple logging routines can be registered
+typedef void (*LoggingProc)(int level, const std::string& msg, void* data);
+bool registerLoggingProc(LoggingProc, void* data);
+bool unregisterLoggingProc(LoggingProc, void* data);
 
-extern LoggingCallback	*loggingCallback;
+
+//============================================================================//
+
 
 #endif /* __BZFIO_H__ */
 
-/*
- * Local Variables: ***
- * mode: C++ ***
- * tab-width: 8 ***
- * c-basic-offset: 2 ***
- * indent-tabs-mode: t ***
- * End: ***
- * ex: shiftwidth=2 tabstop=8
- */
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

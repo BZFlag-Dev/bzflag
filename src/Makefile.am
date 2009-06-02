@@ -32,6 +32,7 @@ core_dirs = \
 
 # needed only by clients, generally requires OpenGL
 gui_dirs = \
+	clientbase \
 	mediafile \
 	ogl \
 	3D \

@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -13,30 +13,36 @@
 /* interface header */
 #include "NetHandler.h"
 
-std::vector<NetworkDataLogCallback*> logCallbacks;
+namespace {
+  typedef std::vector<NetworkDataLogCallback*> LogCallbacks;
 
-void addNetworkLogCallback(NetworkDataLogCallback * cb )
-{
-  if (cb)
-    logCallbacks.push_back(cb);
+  LogCallbacks& logCallbacks()
+  {
+    static LogCallbacks myCallbacks;
+    return myCallbacks;
+  }
 }
 
-void removeNetworkLogCallback(NetworkDataLogCallback * cb )
+void addNetworkLogCallback(NetworkDataLogCallback * cb)
 {
-  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
-  {
-    if ( logCallbacks[i] == cb )
-    {
-      logCallbacks.erase(logCallbacks.begin()+i);
+  if (cb)
+    logCallbacks().push_back(cb);
+}
+
+void removeNetworkLogCallback(NetworkDataLogCallback * cb)
+{
+  for (size_t i = 0; i < logCallbacks().size(); i++) {
+    if (logCallbacks()[i] == cb) {
+      logCallbacks().erase(logCallbacks().begin()+i);
       return;
     }
   }
 }
 
-void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsigned int size, void *param = NULL )
+void callNetworkDataLog (bool send, bool udp,  const unsigned char *data, unsigned int size, void *param = NULL)
 {
-  for ( unsigned int i = 0; i < (unsigned int)logCallbacks.size(); i++)
-    logCallbacks[i]->networkDataLog(send,udp,data,size,param);
+  for (size_t i = 0; i < logCallbacks().size(); i++)
+    logCallbacks()[i]->networkDataLog(send, udp, data, size, param);
 }
 
 // system headers
@@ -66,13 +72,14 @@ void setNoDelay(int fd)
   }
 }
 
-bool NetHandler::initHandlers(struct sockaddr_in addr) {
+bool NetHandler::initHandlers(struct sockaddr_in addr)
+{
   // udp socket
   int n;
   // we open a udp socket on the same port if alsoUDP
   if ((udpSocket = (int) socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-      nerror("couldn't make udp connect socket");
-      return false;
+    nerror("couldn't make udp connect socket");
+    return false;
   }
 
   // increase send/rcv buffer size
@@ -86,14 +93,14 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
   n = setsockopt(udpSocket, SOL_SOCKET, SO_RCVBUF, (SSOType) &udpBufSize,
 		 sizeof(int));
   if (n < 0) {
-      nerror("couldn't increase udp receive buffer size");
-      close(udpSocket);
-      return false;
+    nerror("couldn't increase udp receive buffer size");
+    close(udpSocket);
+    return false;
   }
   if (bind(udpSocket, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind udp listen port");
-      close(udpSocket);
-      return false;
+    nerror("couldn't bind udp listen port");
+    close(udpSocket);
+    return false;
   }
   // don't buffer info, send it immediately
   BzfNetwork::setNonBlocking(udpSocket);
@@ -101,7 +108,8 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
   return true;
 }
 
-void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
+void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile)
+{
   std::list<NetHandler*>::const_iterator it;
   for (it = netConnections.begin(); it != netConnections.end(); it++) {
     NetHandler *player = *it;
@@ -129,7 +137,8 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
   }
 }
 
-int NetHandler::getUdpSocket() {
+int NetHandler::getUdpSocket()
+{
   return udpSocket;
 }
 
@@ -140,7 +149,8 @@ int  NetHandler::udpRead = 0;
 struct sockaddr_in NetHandler::lastUDPRxaddr;
 
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
-			   NetHandler **netHandler) {
+			   NetHandler **netHandler)
+{
   AddrLen recvlen = sizeof(*uaddr);
   uint16_t len;
   uint16_t code;
@@ -154,11 +164,11 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     // Error receiving data (or no data)
     if (udpLen < 0)
       return -1;
-    logDebugMessage(4,"uread() len %d from %s:%d on %i\n",
-	   udpLen,
-	   inet_ntoa(lastUDPRxaddr.sin_addr),
-	   ntohs(lastUDPRxaddr.sin_port),
-	   udpSocket);
+    logDebugMessage(5, "uread() len %d from %s:%d on %i\n",
+		    udpLen,
+		    inet_ntoa(lastUDPRxaddr.sin_addr),
+		    ntohs(lastUDPRxaddr.sin_port),
+		    udpSocket);
   }
   if ((udpLen - udpRead) < 4) {
     // No space for header :-(
@@ -169,8 +179,8 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 
   // read head
   void *buf = udpmsg + udpRead;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
   if ((udpLen - udpRead) < len + 4) {
     // No space for data :-(
     udpLen  = 0;
@@ -186,7 +196,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   if (len == 2 && code == MsgPingCodeRequest)
     // Ping code request
     return 0;
-  
+
   if (len == 1 && code == MsgEchoRequest) //Same sorta thing
     return 0;
 
@@ -203,38 +213,40 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
       return 0;
     }
     // no match, discard packet
-    logDebugMessage(2,"uread() discard packet! %s:%d choices p(l) h:p",
-	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
+    logDebugMessage(2, "uread() discard packet! %s:%d choices p(l) h:p",
+		    inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
     for (it = netConnections.begin(); it != netConnections.end(); it++)
       if (!(*it)->closed) {
-	logDebugMessage(3,"(%d-%d) %s:%d", (*it)->udpin,
-	       (*it)->udpout,
-	       inet_ntoa((*it)->uaddr.sin_addr),
-	       ntohs((*it)->uaddr.sin_port));
-    }
-    logDebugMessage(2,"\n");
+	logDebugMessage(3, "(%d-%d) %s:%d", (*it)->udpin,
+			(*it)->udpout,
+			inet_ntoa((*it)->uaddr.sin_addr),
+			ntohs((*it)->uaddr.sin_port));
+      }
+    logDebugMessage(2, "\n");
     return -1;
   }
 #ifdef NETWORK_STATS
   (*netHandler)->countMessage(code, len, 0);
 #endif
 
-  callNetworkDataLog(false,true,(unsigned char*)buf,len,(*netHandler));
- 
+  callNetworkDataLog(false, true, (unsigned char*)buf, len, (*netHandler));
+
   if (code == MsgUDPLinkEstablished) {
     (*netHandler)->udpout = true;
   }
   return 0;
 }
 
-bool NetHandler::isUdpFdSet(fd_set *read_set) {
+bool NetHandler::isUdpFdSet(fd_set *read_set)
+{
   if (FD_ISSET(udpSocket, read_set)) {
     return true;
   }
   return false;
 }
 
-void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set) {
+void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set)
+{
   std::list<NetHandler*>::const_iterator it;
   for (it = netConnections.begin(); it != netConnections.end(); it++)
     (*it)->ares.process(read_set, write_set);
@@ -245,7 +257,8 @@ int NetHandler::udpSocket = -1;
 NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
   : fd(_fd), clientType(clientNone), tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
-    udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
+    udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false)
+{
   // store address information for player
   AddrLen addr_len = sizeof(clientAddr);
   memcpy(&uaddr, &clientAddr, addr_len);
@@ -278,7 +291,8 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
   ares.queryHostname((struct sockaddr *) &clientAddr);
 }
 
-NetHandler::~NetHandler() {
+NetHandler::~NetHandler()
+{
 #ifdef NETWORK_STATS
   dumpMessageStats();
 #endif
@@ -291,7 +305,8 @@ NetHandler::~NetHandler() {
   netConnections.remove(this);
 }
 
-bool NetHandler::isFdSet(fd_set *set) {
+bool NetHandler::isFdSet(fd_set *set)
+{
   if (FD_ISSET(fd, set)) {
     return true;
   }
@@ -300,6 +315,7 @@ bool NetHandler::isFdSet(fd_set *set) {
 
 int NetHandler::send(const void *buffer, size_t length) {
 
+  callNetworkDataLog(true, false, (unsigned char*)buffer, (unsigned int)length, this);
   int n = ::send(fd, (const char *)buffer, (int)length, 0);
   if (n >= 0)
     return n;
@@ -316,11 +332,10 @@ int NetHandler::send(const void *buffer, size_t length) {
   if (err != EAGAIN && err != EINTR) {
     // dump other errors and remove the player
     toBeKicked = true;
-    if (err != EAGAIN ) {
+    if (err != EAGAIN) {
       nerror("error on write EAGAIN");
       toBeKickedReason = "Write error EAGAIN";
-    }
-    else {
+    } else {
       nerror("error on write EINTR");
       toBeKickedReason = "Write error EINTR";
     }
@@ -328,7 +343,8 @@ int NetHandler::send(const void *buffer, size_t length) {
   return 0;
 }
 
-int NetHandler::bufferedSend(const void *buffer, size_t length) {
+int NetHandler::bufferedSend(const void *buffer, size_t length)
+{
   // try flushing buffered data
   if (outmsgSize != 0) {
     const int n = send(outmsg + outmsgOffset, outmsgSize);
@@ -402,7 +418,8 @@ void NetHandler::closing()
   closed = true;
 }
 
-int NetHandler::pwrite(const void *b, int l) {
+int NetHandler::pwrite(const void *b, int l)
+{
 
   if (l == 0) {
     return 0;
@@ -413,8 +430,8 @@ int NetHandler::pwrite(const void *b, int l) {
 
   void *buf = (void *)b;
   uint16_t len, code;
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 #ifdef NETWORK_STATS
   countMessage(code, len, 1);
 #endif
@@ -424,20 +441,18 @@ int NetHandler::pwrite(const void *b, int l) {
   if (udpout) {
     // only send bulk messages by UDP
     switch (code) {
-    case MsgShotBegin:
-    case MsgShotEnd:
-    case MsgPlayerUpdate:
-    case MsgPlayerUpdateSmall:
-    case MsgGMUpdate:
-    case MsgLagPing:
-    case MsgGameTime:
-    case MsgWhatTimeIsIt:
-      useUDP = true;
-	  break;
+      case MsgShotBegin:
+      case MsgShotEnd:
+      case MsgPlayerUpdate:
+      case MsgPlayerUpdateSmall:
+      case MsgGMUpdate:
+      case MsgLagPing:
+      case MsgGameTime:
+      case MsgWhatTimeIsIt:
+	useUDP = true;
+	break;
     }
   }
-
-  callNetworkDataLog(true,useUDP,(unsigned char*)b,l,this);
 
   // always sent MsgUDPLinkRequest over udp with udpSend
   if (useUDP || code == MsgUDPLinkRequest) {
@@ -448,14 +463,16 @@ int NetHandler::pwrite(const void *b, int l) {
   return bufferedSend(b, l);
 }
 
-int NetHandler::pflush(fd_set *set) {
+int NetHandler::pflush(fd_set *set)
+{
   if (FD_ISSET(fd, set))
     return bufferedSend(NULL, 0);
   else
     return 0;
 }
 
-RxStatus NetHandler::tcpReceive( bool doCodes ) {
+RxStatus NetHandler::tcpReceive(bool doCodes)
+{
   // read more data into player's message buffer
 #if defined(USE_THREADS) && defined(HAVE_SDL)
   fd_set read_set;
@@ -473,15 +490,14 @@ RxStatus NetHandler::tcpReceive( bool doCodes ) {
   uint16_t len = 0, code =0;
   void *buf = tcpmsg;
 
-  if (doCodes)
-  {
-	// read body if we don't have it yet
-	buf = nboUnpackUShort(buf, len);
-	buf = nboUnpackUShort(buf, code);
-	if (len > MaxPacketLen) {
-		netConnections.remove(this);
-		return ReadHuge;
-	}
+  if (doCodes) {
+    // read body if we don't have it yet
+    buf = nboUnpackUInt16(buf, len);
+    buf = nboUnpackUInt16(buf, code);
+    if (len + 4U > MaxPacketLen) {
+      netConnections.remove(this);
+      return ReadHuge;
+    }
   }
   e = receive(4 + (int) len);
   if (e != ReadAll)
@@ -494,7 +510,7 @@ RxStatus NetHandler::tcpReceive( bool doCodes ) {
   countMessage(code, len, 0);
 #endif
 
-  callNetworkDataLog(false,false,(unsigned char*)buf,len,this);
+  callNetworkDataLog(false, false, (unsigned char*)buf, len, this);
 
   if (code == MsgUDPLinkEstablished) {
     udpout = true;
@@ -502,14 +518,16 @@ RxStatus NetHandler::tcpReceive( bool doCodes ) {
   return ReadAll;
 }
 
-RxStatus NetHandler::receive(size_t length) {
+RxStatus NetHandler::receive(size_t length)
+{
   RxStatus returnValue;
-  if ((int)length <= tcplen)
+
+  if (length <= tcplen)
     return ReadAll;
-  int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
+  int size = recv(fd, tcpmsg + tcplen, (int)(length - tcplen), 0);
   if (size > 0) {
     tcplen += size;
-    if (tcplen == (int)length)
+    if (tcplen == length)
       returnValue = ReadAll;
     else
       returnValue = ReadPart;
@@ -519,9 +537,9 @@ RxStatus NetHandler::receive(size_t length) {
     const int err = getErrno();
 
     // ignore if it's one of these errors
-    if (err == EAGAIN || err == EINTR)
+    if (err == EAGAIN || err == EINTR) {
       returnValue = ReadPart;
-    else if (err == ECONNRESET || err == EPIPE) {
+    } else if (err == ECONNRESET || err == EPIPE) {
       // if socket is closed then give up
       netConnections.remove(this);
       returnValue = ReadReset;
@@ -534,14 +552,17 @@ RxStatus NetHandler::receive(size_t length) {
       }
     }
   }
+
+  callNetworkDataLog(false, false, (const unsigned char*)tcpmsg, (int)tcplen);
   return returnValue;
 }
 
-void *NetHandler::getTcpBuffer() {
+void *NetHandler::getTcpBuffer()
+{
   return tcpmsg;
 }
 
-unsigned int NetHandler::getTcpReadSize ( void  )
+size_t NetHandler::getTcpReadSize (void )
 {
   return tcplen;
 }
@@ -555,7 +576,8 @@ void NetHandler::flushUDP()
   }
 }
 
-void NetHandler::flushAllUDP() {
+void NetHandler::flushAllUDP()
+{
   std::list<NetHandler*>::const_iterator it;
   for (it = netConnections.begin(); it != netConnections.end(); it++)
     if (!(*it)->closed)
@@ -563,7 +585,8 @@ void NetHandler::flushAllUDP() {
   pendingUDP = false;
 }
 
-std::string NetHandler::reasonToKick() {
+std::string NetHandler::reasonToKick()
+{
   std::string reason;
   if (toBeKicked) {
     reason = toBeKickedReason;
@@ -573,7 +596,8 @@ std::string NetHandler::reasonToKick() {
 }
 
 #ifdef NETWORK_STATS
-void NetHandler::countMessage(uint16_t code, int len, int direction) {
+void NetHandler::countMessage(uint16_t code, int len, int direction)
+{
 
   messageExchanged = true;
 
@@ -615,42 +639,46 @@ void NetHandler::countMessage(uint16_t code, int len, int direction) {
   }
 }
 
-void NetHandler::dumpMessageStats() {
+void NetHandler::dumpMessageStats()
+{
   int total;
   int direction;
 
   if (!messageExchanged)
     return;
 
-  logDebugMessage(1,"Player connect time: %f\n", now - time);
+  logDebugMessage(1, "Player connect time: %f\n", now - time);
 
   for (direction = 0; direction <= 1; direction++) {
     total = 0;
-    logDebugMessage(1,"Player messages %s:", direction ? "out" : "in");
+    logDebugMessage(1, "Player messages %s:", direction ? "out" : "in");
 
     for (MessageCountMap::iterator i = msg[direction].begin();
 	 i != msg[direction].end(); i++) {
-      logDebugMessage(1," %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
-	     i->second.count, i->second.maxSize);
+      logDebugMessage(1, " %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
+		      i->second.count, i->second.maxSize);
       total += i->second.count;
     }
 
-    logDebugMessage(1," total:%u(%u) ", total, msgBytes[direction]);
-    logDebugMessage(1,"max msgs/bytes per second: %u/%u\n",
-	perSecondMaxMsg[direction],
-	perSecondMaxBytes[direction]);
+    logDebugMessage(1, " total:%u(%u) ", total, msgBytes[direction]);
+    logDebugMessage(1, "max msgs/bytes per second: %u/%u\n",
+		    perSecondMaxMsg[direction],
+		    perSecondMaxBytes[direction]);
   }
   fflush(stdout);
 }
 #endif
 
-void NetHandler::udpSend(const void *b, size_t l) {
+void NetHandler::udpSend(const void *b, size_t l)
+{
 #ifdef TESTLINK
   if ((random()%LINKQUALITY) == 0) {
-    logDebugMessage(1,"Drop Packet due to Test\n");
+    logDebugMessage(1, "Drop Packet due to Test\n");
     return;
   }
 #endif
+
+  callNetworkDataLog(true, true, (unsigned char*)b, (unsigned int)l, this);
 
   // setting sizeLimit to -1 will disable udp-buffering
   const int sizeLimit = (int)MaxPacketLen - 4;
@@ -682,7 +710,8 @@ void NetHandler::udpSend(const void *b, size_t l) {
 }
 
 bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr,
-				 bool checkPort) {
+				 bool checkPort)
+{
   if (closed)
     return false;
 
@@ -701,17 +730,19 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr,
   return false;
 }
 
-void NetHandler::getPlayerList(char* list, size_t listSize) {
+void NetHandler::getPlayerList(char* list, size_t listSize)
+{
   snprintf(list, listSize, "%s%s%s%s%s%s",
-	  peer.getDotNotation().c_str(),
-	  getHostname() ? " (" : "",
-	  getHostname() ? getHostname() : "",
-	  getHostname() ? ")" : "",
-	  udpin ? " udp" : "",
-	  udpout ? "+" : "");
+	   peer.getDotNotation().c_str(),
+	   getHostname() ? " (" : "",
+	   getHostname() ? getHostname() : "",
+	   getHostname() ? ")" : "",
+	   udpin ? " udp" : "",
+	   udpout ? "+" : "");
 }
 
-const char* NetHandler::getTargetIP() {
+const char* NetHandler::getTargetIP()
+{
   /* peer->getDotNotation returns a temp variable that is not safe
    * to pass around.  we keep a copy in allocated memory for safety.
    */
@@ -720,18 +751,21 @@ const char* NetHandler::getTargetIP() {
   return dotNotation.c_str();
 }
 
-int NetHandler::sizeOfIP() {
+int NetHandler::sizeOfIP()
+{
   // IPv4 is 1 byte for type and 4 bytes for IP = 5
   // IPv6 is 1 byte for type and 16 bytes for IP = 17
   return peer.getIPVersion() == 4 ? 5 : 17;
 }
 
-void *NetHandler::packAdminInfo(void *buf) {
+void *NetHandler::packAdminInfo(void *buf)
+{
   buf = peer.pack(buf);
   return buf;
 }
 
-NetHandler *NetHandler::whoIsAtIP(const std::string& IP) {
+NetHandler *NetHandler::whoIsAtIP(const std::string& IP)
+{
   NetHandler *player = NULL;
   std::list<NetHandler*>::const_iterator it;
 
@@ -746,11 +780,13 @@ NetHandler *NetHandler::whoIsAtIP(const std::string& IP) {
   return player;
 }
 
-in_addr NetHandler::getIPAddress() {
+in_addr NetHandler::getIPAddress()
+{
   return uaddr.sin_addr;
 }
 
-const char *NetHandler::getHostname() {
+const char *NetHandler::getHostname()
+{
   return ares.getHostname();
 }
 
@@ -796,7 +832,7 @@ NetListener::~NetListener()
 
 }
 
-bool NetListener::listen (  Address serverAddress, unsigned short port )
+bool NetListener::listen ( Address serverAddress, unsigned short port)
 {
   // init addr:port structure
   struct sockaddr_in addr;
@@ -814,26 +850,26 @@ bool NetListener::listen (  Address serverAddress, unsigned short port )
     return false;
 
 
-  if (::listen(listenSocket, 5) == -1) 
-  {
-    close(listenSocket);
-    return false;
-  }
+  if (::listen(listenSocket, 5) == -1)
+    {
+      close(listenSocket);
+      return false;
+    }
 
   return true;
 }
 
-bool NetListener::close ( NetHandler* /*handler*/ )
+bool NetListener::close (NetHandler* /*handler*/)
 {
   return false;
 }
 
-bool NetListener::close ( int /*connectionID*/ )
+bool NetListener::close (int /*connectionID*/)
 {
   return false;
 }
 
-int NetListener::update ( float waitTime )
+int NetListener::update (float waitTime)
 {
   if (listenSocket < 0)
     return -1;
@@ -850,7 +886,7 @@ int NetListener::update ( float waitTime )
   if (listenSocket > maxFileDescriptors)
     maxFileDescriptors = listenSocket;
 
- // GameKeeper::Player::freeTCPMutex();
+  // GameKeeper::Player::freeTCPMutex();
   struct timeval timeout;
   timeout.tv_sec = long(floorf(waitTime));
   timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
@@ -859,7 +895,7 @@ int NetListener::update ( float waitTime )
 
   return toRead;
 }
-void NetListener::processConnections ( void )
+void NetListener::processConnections (void)
 {
   if (toRead < 1)
     return;
@@ -871,16 +907,16 @@ void NetListener::processConnections ( void )
   toRead = 0;
 }
 
-void NetListener::accept ( void )
+void NetListener::accept (void)
 {
   struct sockaddr_in clientAddr;
   AddrLen addr_len = sizeof(clientAddr);
   int fd = (int)::accept(listenSocket, (struct sockaddr*)&clientAddr, &addr_len);
   if (fd == -1)
-  {
-    nerror("accepting on wks");
-    return;
-  }
+    {
+      nerror("accepting on wks");
+      return;
+    }
   // don't buffer info, send it immediately
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
@@ -896,54 +932,48 @@ void NetListener::accept ( void )
 
   bool kill = true;
 
-  for ( unsigned int i = 0; i < newConnectionCallbacks.size(); i++ )
-  {
-    if ( newConnectionCallbacks[i]->accept(peer,fd) )
+  for (unsigned int i = 0; i < newConnectionCallbacks.size(); i++) {
+    if (newConnectionCallbacks[i]->accept(peer, fd))
       kill = false;
   }
 
-  if ( kill )
+  if (kill) {
     delete(peer);
-  else
-  {
+  } else {
     handlers[fd] = peer;
-    FD_SET( (unsigned int)fd, &read_set);
+    FD_SET((unsigned int)fd, &read_set);
   }
 }
 
-void NetListener::addNewConnectionCallback ( NewNetworkConnectionCallback *handler )
+void NetListener::addNewConnectionCallback (NewNetworkConnectionCallback *handler)
 {
   if (handler)
     newConnectionCallbacks.push_back(handler);
 }
 
-void NetListener::removeNewConnectionCallback  ( NewNetworkConnectionCallback *handler )
+void NetListener::removeNewConnectionCallback  (NewNetworkConnectionCallback *handler)
 {
-  for (unsigned int i = 0; i < newConnectionCallbacks.size(); i++)
-  {
-    if ( newConnectionCallbacks[i] == handler )
-    {
+  for (unsigned int i = 0; i < newConnectionCallbacks.size(); i++) {
+    if (newConnectionCallbacks[i] == handler) {
       newConnectionCallbacks.erase(newConnectionCallbacks.begin()+i);
       return;
     }
   }
 }
 
-void NetListener::addDataPendingCallback( NetworkDataPendingCallback *handler )
+void NetListener::addDataPendingCallback(NetworkDataPendingCallback *handler)
 {
   if (handler)
     dataPendingCallbacks.push_back(handler);
 }
 
-void NetListener::removeDataPendingCallback( NetworkDataPendingCallback *handler )
+void NetListener::removeDataPendingCallback(NetworkDataPendingCallback *handler)
 {
-  for (unsigned int i = 0; i < dataPendingCallbacks.size(); i++)
-  {
-    if ( dataPendingCallbacks[i] == handler )
-    {
-      dataPendingCallbacks.erase(dataPendingCallbacks.begin()+i);
-      return;
-    }
+  for (unsigned int i = 0; i < dataPendingCallbacks.size(); i++) {
+      if (dataPendingCallbacks[i] == handler) {
+	dataPendingCallbacks.erase(dataPendingCallbacks.begin()+i);
+	return;
+      }
   }
 }
 

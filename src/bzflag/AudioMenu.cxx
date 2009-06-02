@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,18 +42,15 @@ AudioMenu::AudioMenu()
   label->setString("Audio Settings");
   addControl(label, false);
 
-  HUDuiList* option = new HUDuiList;
-
-  option = new HUDuiList;
   std::vector<std::string>* options;
 
   // Sound Volume
-  option = new HUDuiList;
+  HUDuiList* option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Sound Volume:");
   option->setCallback(callback, (void*)"s");
   options = &option->getList();
-  if (isSoundOpen()) {
+  if (SOUNDSYSTEM.active()) {
     options->push_back(std::string("Off"));
     option->createSlider(10);
   } else {
@@ -139,7 +136,7 @@ void			AudioMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
@@ -158,7 +155,7 @@ void			AudioMenu::resize(int _width, int _height)
 
   i = 1;
   // sound
-  ((HUDuiList*)listHUD[i++])->setIndex(getSoundVolume());
+  ((HUDuiList*)listHUD[i++])->setIndex((int)(SOUNDSYSTEM.getVolume()*10));
 #ifdef HAVE_SDL
   i++; // driver
   i++; // device
@@ -173,7 +170,7 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
   switch (((const char*)data)[0]) {
     case 's':
       BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
-      setSoundVolume(list->getIndex());
+      SOUNDSYSTEM.setVolume(list->getIndex() *0.1f);
       break;
     case 'r':
       BZDB.setBool("remoteSounds", (list->getIndex() == 0) ? false : true);

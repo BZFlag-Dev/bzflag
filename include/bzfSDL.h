@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,10 +20,12 @@
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
 #    include <SDL/SDL_getenv.h>
+#    include <SDL/SDL_syswm.h>
 #  else // autotools adds an SDL-specific include path
 #    include "SDL.h"
 #    include "SDL_thread.h"
 #    include "SDL_getenv.h"
+#    include "SDL_syswm.h"
 #  endif //HAVE_SDL_SDL_H
 #endif //HAVE_SDL
 

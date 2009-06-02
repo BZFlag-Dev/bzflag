@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -31,266 +31,89 @@ static void ConvertPath(std::string &path)
 
 
 //
-// Disable SDL_image support, for now
-//
-#undef HAVE_SDL_IMAGE
-
-
-//
 // MediaFile
 //
-
-/******************************************************************************/
-#if defined(HAVE_SDL) && defined(HAVE_SDL_IMAGE)
-/******************************************************************************/
-
-
-#include <SDL/SDL_image.h>
-#include "StateDatabase.h"
-#include "FileManager.h"
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
-
-static bool fileExists (const std::string& name)
-{
-  struct stat buf;
-#ifndef _WIN32
-  return (stat(name.c_str(), &buf) == 0);
-#else
-  // Windows sucks yet again, if there is a trailing  "\"
-  // at the end of the filename, _stat will return -1.
-  std::string dirname = name;
-  while (dirname.find_last_of('\\') == (dirname.size() - 1)) {
-    dirname.resize(dirname.size() - 1);
-  }
-  return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
-#endif
-}
-
-
-static bool checkExt(const std::string& base, const char* ext,
-		     std::string& result)
-{
-#ifndef _WIN32
-  const std::string sep = "/";
-#else
-  const std::string sep = "\\";
-#endif
-
-  result = base;
-  result += ext;
-  const std::string filename = result;
-
-  const bool relative = !FILEMGR.isAbsolute(filename);
-
-  if (relative) {
-    // try directory stored in DB
-    if (BZDB.isSet("directory")) {
-      result = BZDB.get("directory") + sep + filename;
-      if (fileExists(result)) return true;
-    }
-
-    // try data directory
-    result = "data" + sep + filename;
-    if (fileExists(result)) return true;
-  }
-
-  // try current directory (or absolute path)
-  result = filename;
-  if (fileExists(result)) return true;
-
-#if defined(BZFLAG_DATA)
-  // try install directory
-  if (relative) {
-    result = BZFLAG_DATA + sep + filename;
-    if (fileExists(result)) return true;
-  }
-#endif
-
-  return false;
-}
-
-
-/******************************************************************************/
-
-// From the header...
-// - Use delete[] to release the returned image.
-// - Returns NULL on failure.
-// - Images are stored RGBA, left to right, bottom to top.
-
-unsigned char* MediaFile::readImage(std::string filename, int* w, int* h)
-{
-  // get the absolute filename for cache textures
-  if (CacheManager::isCacheFileType(filename)) {
-    filename = CACHEMGR.getLocalName(filename);
-  }
-
-#ifdef WIN32
-  // cheat and make sure the file is a windows file path
-  ConvertPath(filename);
-#endif //WIN32
-
-  // try looking in different directories and appending
-  // supported extensions to find the source image file
-  std::string name;
-  if (!checkExt(filename, "",     name) &&
-      !checkExt(filename, ".png", name) &&
-      !checkExt(filename, ".gif", name) &&
-      !checkExt(filename, ".bmp", name) &&
-      !checkExt(filename, ".pcx", name) &&
-      !checkExt(filename, ".tga", name) &&
-      !checkExt(filename, ".xpm", name) &&
-      !checkExt(filename, ".pbm", name) &&
-      !checkExt(filename, ".pgm", name) &&
-      !checkExt(filename, ".ppm", name) &&
-      !checkExt(filename, ".jpg", name) &&
-      !checkExt(filename, ".jpeg", name) &&
-      !checkExt(filename, ".tif", name) &&
-      !checkExt(filename, ".tiff", name)) {
-    logDebugMessage(3,"SDL_image: could not find %s\n", filename.c_str());
-    return NULL;
-  }
-
-  SDL_Surface* surface;
-  surface = IMG_Load(name.c_str());
-  if (surface == NULL) {
-    logDebugMessage(3,"SDL_image: could not load %s\n", name.c_str());
-    return NULL;
-  }
-
-  // save for debugging
-  const int origWidth = surface->w;
-  const int origHeight = surface->h;
-  const int origBpp = surface->format->BitsPerPixel;
-
-  // convert the format
-  SDL_PixelFormat fmt;
-  fmt.palette = NULL;
-  fmt.BitsPerPixel = 32;
-  fmt.BytesPerPixel = 4;
-  fmt.Rloss = fmt.Gloss = fmt.Bloss = fmt.Aloss = 0;
-  fmt.Rshift = fmt.Gshift = fmt.Bshift = fmt.Ashift = 0;
-  fmt.colorkey = 0;
-  fmt.alpha = 0;
-  // handle endianess
-  fmt.Rmask = fmt.Gmask = fmt.Bmask = fmt.Amask = 0;
-  ((unsigned char*)&fmt.Rmask)[0] = 0xff;
-  ((unsigned char*)&fmt.Gmask)[1] = 0xff;
-  ((unsigned char*)&fmt.Bmask)[2] = 0xff;
-  ((unsigned char*)&fmt.Amask)[3] = 0xff;
-
-  SDL_Surface* rgba = SDL_ConvertSurface(surface, &fmt, SDL_SWSURFACE);
-  SDL_FreeSurface(surface);
-
-  // bail if the conversion failed
-  if (rgba == NULL) {
-    logDebugMessage(3,"SDL_Image: rgba conversion failed: %s: %dx%d %dbpp\n",
-	   name.c_str(), origWidth, origHeight, origBpp);
-    return NULL;
-  }
-
-  // copy the parameters
-  *w = rgba->w;
-  *h = rgba->h;
-
-  // copy the memory, with a vertical flip
-  const int rowlen = (rgba->w * 4);
-  const int imageSize = (rowlen * rgba->h);
-  unsigned char* image = new unsigned char[imageSize];
-  const unsigned char* source = (unsigned char*) rgba->pixels;
-  for (int i = 0; i < rgba->h; i++) {
-    memcpy(image + (rowlen * i),
-	   source + (rowlen * (rgba->h - 1 - i)),
-	   rowlen);
-  }
-
-  logDebugMessage(3,"SDL_Image: loaded %s: %dx%d %dbpp\n",
-	 name.c_str(), origWidth, origHeight, origBpp);
-
-  SDL_FreeSurface(rgba);
-
-  return image;
-}
-
-
-/******************************************************************************/
-#else // ! (HAVE_SDL && HAVE_SDL_IMAGE)
-/******************************************************************************/
-
 
 MediaFile::MediaFile(std::istream* _stream) : stream(_stream)
 {
   // do nothing
 }
 
+
 MediaFile::~MediaFile()
 {
   // do nothing
 }
 
-bool		MediaFile::isOkay() const
+
+bool MediaFile::isOkay() const
 {
   return (stream != NULL && stream->good());
 }
 
-void		MediaFile::readRaw(void* vbuffer, uint32_t bytes)
+
+void MediaFile::readRaw(void* vbuffer, uint32_t bytes)
 {
   char* buffer = reinterpret_cast<char*>(vbuffer);
   stream->read(buffer, bytes);
 }
 
-void		MediaFile::skip(uint32_t bytes)
+
+void MediaFile::skip(uint32_t bytes)
 {
   stream->ignore(bytes);
 }
 
-uint16_t	MediaFile::read16LE()
+
+uint16_t MediaFile::read16LE()
 {
   uint16_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap16LE(&b);
 }
 
-uint16_t	MediaFile::read16BE()
+
+uint16_t MediaFile::read16BE()
 {
   uint16_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap16BE(&b);
 }
 
-uint32_t	MediaFile::read32LE()
+
+uint32_t MediaFile::read32LE()
 {
   uint32_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap32LE(&b);
 }
 
-uint32_t	MediaFile::read32BE()
+
+uint32_t MediaFile::read32BE()
 {
   uint32_t b;
   stream->read(reinterpret_cast<char*>(&b), sizeof(b));
   return swap32BE(&b);
 }
 
-uint16_t	MediaFile::swap16LE(uint16_t* d)
+
+uint16_t MediaFile::swap16LE(uint16_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint16_t>(b[0]) + (static_cast<uint16_t>(b[1]) << 8);
   return *d;
 }
 
-uint16_t	MediaFile::swap16BE(uint16_t* d)
+
+uint16_t MediaFile::swap16BE(uint16_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint16_t>(b[1]) + (static_cast<uint16_t>(b[0]) << 8);
   return *d;
 }
 
-uint32_t	MediaFile::swap32LE(uint32_t* d)
+
+uint32_t MediaFile::swap32LE(uint32_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint32_t>(b[0]) + (static_cast<uint32_t>(b[1]) << 8) +
@@ -299,7 +122,8 @@ uint32_t	MediaFile::swap32LE(uint32_t* d)
   return *d;
 }
 
-uint32_t	MediaFile::swap32BE(uint32_t* d)
+
+uint32_t MediaFile::swap32BE(uint32_t* d)
 {
   unsigned char* b = reinterpret_cast<unsigned char*>(d);
   *d = static_cast<uint32_t>(b[3]) + (static_cast<uint32_t>(b[2]) << 8) +
@@ -307,6 +131,7 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
        (static_cast<uint32_t>(b[0]) << 24);
   return *d;
 }
+
 
 //
 // utility methods to read various media files in any supported format
@@ -316,6 +141,7 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
 #include "SGIImageFile.h"
 #include "PNGImageFile.h"
 #include "WaveAudioFile.h"
+
 
 #define OPENMEDIA(_T)					\
 do {							\
@@ -333,8 +159,9 @@ do {							\
   }							\
 } while (0)
 
-unsigned char*		MediaFile::readImage(std::string filename,
-					     int* width, int* height)
+
+unsigned char* MediaFile::readImage(std::string filename,
+                                    int* width, int* height)
 {
   // get the absolute filename for cache textures
   if (CacheManager::isCacheFileType(filename)) {
@@ -360,7 +187,7 @@ unsigned char*		MediaFile::readImage(std::string filename,
     // get the image size
     int dx = *width  = file->getWidth();
     int dy = *height = file->getHeight();
-    int dz =	   file->getNumChannels();
+    int dz = file->getNumChannels();
 
     // make buffer for final image
     image = new unsigned char[dx * dy * 4];
@@ -426,15 +253,11 @@ unsigned char*		MediaFile::readImage(std::string filename,
 }
 
 
-/******************************************************************************/
-#endif // (HAVE_SDL && HAVE_SDL_IMAGE)
-/******************************************************************************/
-
+//============================================================================//
 
 /*
-float*		MediaFile::readSound(
-			const std::string& filename,
-			int* _numFrames, int* rate)
+float* MediaFile::readSound(const std::string& filename,
+			    int* _numFrames, int* rate)
 {
   // try opening as an audio file
   std::istream* stream;

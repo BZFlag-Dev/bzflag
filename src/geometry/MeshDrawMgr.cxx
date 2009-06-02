@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 #include "common.h"
@@ -22,7 +22,7 @@
 #include "bzfio.h" // for DEBUGx()
 
 
-GLuint MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;
+unsigned int MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;
 
 
 void MeshDrawMgr::init()
@@ -43,14 +43,14 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
     fflush(stdout);
     return;
   } else {
-    logDebugMessage(4,"MeshDrawMgr: initializing\n");
+    logDebugMessage(4, "MeshDrawMgr: initializing\n");
     fflush(stdout);
   }
 
   drawLods = drawInfo->getDrawLods();
-  vertices = (const GLfloat*)drawInfo->getVertices();
-  normals = (const GLfloat*)drawInfo->getNormals();
-  texcoords = (const GLfloat*)drawInfo->getTexcoords();
+  vertices  = (const float*)drawInfo->getVertices();
+  normals   = (const float*)drawInfo->getNormals();
+  texcoords = (const float*)drawInfo->getTexcoords();
 
   lodCount = drawInfo->getLodCount();
   lodLists = new LodList[lodCount];
@@ -58,7 +58,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
   for (int i = 0; i < lodCount; i++) {
     LodList& lodList = lodLists[i];
     lodList.count = drawLods[i].count;
-    lodList.setLists = new GLuint[lodList.count];
+    lodList.setLists = new unsigned int[lodList.count];
     for (int j = 0; j < lodList.count; j++) {
       lodList.setLists[j] = INVALID_GL_LIST_ID;
     }
@@ -72,7 +72,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
 
 MeshDrawMgr::~MeshDrawMgr()
 {
-  logDebugMessage(4,"MeshDrawMgr: killing\n");
+  logDebugMessage(4, "MeshDrawMgr: killing\n");
 
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
   freeLists();
@@ -99,7 +99,8 @@ inline void MeshDrawMgr::rawExecuteCommands(int lod, int set)
 }
 
 
-void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
+void MeshDrawMgr::executeSet(int lod, int set,
+                             bool useNormals, bool useTexcoords)
 {
   // FIXME
   const AnimationInfo* animInfo = drawInfo->getAnimationInfo();
@@ -108,19 +109,19 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
     glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
   }
 
-  const GLuint list = lodLists[lod].setLists[set];
+  const unsigned int list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
   }
   else {
     glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-    if (_normals) {
+    if (useNormals) {
       glNormalPointer(GL_FLOAT, 0, normals);
     } else {
       glDisableClientState(GL_NORMAL_ARRAY);
     }
-    if (_texcoords) {
+    if (useTexcoords) {
       glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
     } else {
       glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -128,10 +129,10 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
 
     rawExecuteCommands(lod, set);
 
-    if (!_normals) {
+    if (!useNormals) {
       glEnableClientState(GL_NORMAL_ARRAY);
     }
-    if (!_texcoords) {
+    if (!useTexcoords) {
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
   }
@@ -153,7 +154,7 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
     glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
   }
 
-  const GLuint list = lodLists[lod].setLists[set];
+  const unsigned int list = lodLists[lod].setLists[set];
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
   }
@@ -202,7 +203,7 @@ void MeshDrawMgr::makeLists()
     }
     errCount++; // avoid a possible spin-lock?
     if (errCount > 666) {
-      logDebugMessage(1,"MeshDrawMgr::makeLists() glError: %i\n", error);
+      logDebugMessage(1, "MeshDrawMgr::makeLists() glError: %i\n", error);
       return; // don't make the lists, something is borked
     }
   };
@@ -216,7 +217,7 @@ void MeshDrawMgr::makeLists()
     glEndList();
     error = glGetError();
     if (error != GL_NO_ERROR) {
-      logDebugMessage(1,"MeshDrawMgr::makeLists() unloadList: %i\n", error);
+      logDebugMessage(1, "MeshDrawMgr::makeLists() unloadList: %i\n", error);
       unloadList = INVALID_GL_LIST_ID;
     }
   }
@@ -244,11 +245,11 @@ void MeshDrawMgr::makeLists()
 
 	error = glGetError();
 	if (error != GL_NO_ERROR) {
-	  logDebugMessage(1,"MeshDrawMgr::makeLists() %i/%i glError: %i\n",
+	  logDebugMessage(1, "MeshDrawMgr::makeLists() %i/%i glError: %i\n",
 		 lod, set, error);
 	  lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
 	} else {
-	  logDebugMessage(3,"MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
+	  logDebugMessage(3, "MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
 	}
       }
     }
@@ -292,7 +293,7 @@ void MeshDrawMgr::freeContext(void* data)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 // Local Variables: ***
 // mode: C++ ***

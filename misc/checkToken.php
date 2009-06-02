@@ -31,7 +31,7 @@ function validate_token($token, $username, $groups = array(), $checkIP = true)
   if (isset($token, $username) && strlen($token) > 0 && strlen($username) > 0)
   {
     $listserver = Array();
-    
+
     // First off, start with the base URL
     $listserver['url'] = 'http://my.bzflag.org/db/';
     // Add on the action and the username
@@ -43,23 +43,23 @@ function validate_token($token, $username, $groups = array(), $checkIP = true)
     // If use have groups to check, add those now
     if (is_array($groups) && sizeof($groups) > 0)
       $listserver['url'] .= '&groups='.implode("%0D%0A", $groups);
-    
+
     // Run the web query and trim the result
     // An alternative to this method would be to use cURL
     $listserver['reply'] = trim(file_get_contents($listserver['url']));
-  
+
   //EXAMPLE TOKGOOD RESPONSE
   /*
   MSG: checktoken callsign=SuperAdmin, ip=, token=1234567890  group=SUPER.ADMIN group=SUPER.COP group=SUPER.OWNER
   TOKGOOD: SuperAdmin:SUPER.ADMIN:SUPER.OWNER
   BZID: 123456 SuperAdmin
   */
-  
+
     // Fix up the line endings just in case
     $listserver['reply'] = str_replace("\r\n", "\n", $listserver['reply']);
     $listserver['reply'] = str_replace("\r", "\n", $listserver['reply']);
     $listserver['reply'] = explode("\n", $listserver['reply']);
-    
+
     // Grab the groups they are in, and their BZID
     foreach ($listserver['reply'] as $line)
     {
@@ -73,12 +73,12 @@ function validate_token($token, $username, $groups = array(), $checkIP = true)
         list($listserver['bzid'],$listserver['username']) = explode(' ', substr($line, strlen('BZID: ')), 2);
       }
     }
-    
+
     if (isset($listserver['bzid']) && is_numeric($listserver['bzid']))
-    { 
+    {
       $return['username'] = $listserver['username'];
       $return['bzid'] = $listserver['bzid'];
-      
+
       if (isset($listserver['groups']) && sizeof($listserver['groups']) > 0)
       {
         $return['groups'] = $listserver['groups'];
@@ -87,7 +87,7 @@ function validate_token($token, $username, $groups = array(), $checkIP = true)
       {
         $return['groups'] = Array();
       }
-      
+
       return $return;
     }
   } // if (isset($token, $username))

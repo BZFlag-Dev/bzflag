@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,7 +19,11 @@
 #define	BZF_SCENE_BUILDER_H
 
 #include "common.h"
+
+// common headers
+#include "vectors.h"
 #include "OpenGLMaterial.h"
+
 
 class SceneRenderer;
 class SceneDatabase;
@@ -30,6 +34,7 @@ class PyramidBuilding;
 class BaseBuilding;
 class Teleporter;
 class World;
+
 
 class SceneDatabaseBuilder {
   public:
@@ -46,6 +51,7 @@ class SceneDatabaseBuilder {
     void		addBase(SceneDatabase*, BaseBuilding&);
     void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
     void		addWaterLevel(SceneDatabase*, const World*);
+    void		addWorldTexts(SceneDatabase*);
 
   private:
     // disallow duplication
@@ -69,22 +75,22 @@ class SceneDatabaseBuilder {
     OpenGLMaterial	teleporterMaterial;
     bool		teleporterLOD;
 
-    static const GLfloat wallColors[4][4];
-    static const GLfloat wallModulateColors[4][4];
-    static const GLfloat wallLightedColors[1][4];
-    static const GLfloat wallLightedModulateColors[1][4];
-    static const GLfloat boxColors[6][4];
-    static const GLfloat boxModulateColors[6][4];
-    static const GLfloat boxLightedColors[6][4];
-    static const GLfloat boxLightedModulateColors[6][4];
-    static const GLfloat pyramidColors[5][4];
-    static const GLfloat pyramidModulateColors[5][4];
-    static const GLfloat pyramidLightedColors[5][4];
-    static const GLfloat pyramidLightedModulateColors[5][4];
-    static const GLfloat teleporterColors[3][4];
-    static const GLfloat teleporterModulateColors[3][4];
-    static const GLfloat teleporterLightedColors[3][4];
-    static const GLfloat teleporterLightedModulateColors[3][4];
+    static const fvec4 wallColors[4];
+    static const fvec4 wallModulateColors[4];
+    static const fvec4 wallLightedColors[1];
+    static const fvec4 wallLightedModulateColors[1];
+    static const fvec4 boxColors[6];
+    static const fvec4 boxModulateColors[6];
+    static const fvec4 boxLightedColors[6];
+    static const fvec4 boxLightedModulateColors[6];
+    static const fvec4 pyramidColors[5];
+    static const fvec4 pyramidModulateColors[5];
+    static const fvec4 pyramidLightedColors[5];
+    static const fvec4 pyramidLightedModulateColors[5];
+    static const fvec4 teleporterColors[3];
+    static const fvec4 teleporterModulateColors[3];
+    static const fvec4 teleporterLightedColors[3];
+    static const fvec4 teleporterLightedModulateColors[3];
 };
 
 #endif // BZF_SCENE_BUILDER_H

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,15 +21,14 @@
 #include "common.h"
 #include "ShotSceneNode.h"
 
-const GLfloat		ShellRadius = 0.5f;
+const float		ShellRadius = 0.5f;
 
 class ShellSceneNode : public ShotSceneNode {
   public:
-			ShellSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
+			ShellSceneNode(const fvec3& pos, const fvec3& forward);
 			~ShellSceneNode();
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    void		move(const fvec3& pos, const fvec3& forward);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -42,7 +41,7 @@ class ShellSceneNode : public ShotSceneNode {
 			~ShellRenderNode();
 	void		setLighting(bool);
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const ShellSceneNode* sceneNode;
 	bool		lighted;
@@ -50,11 +49,11 @@ class ShellSceneNode : public ShotSceneNode {
     friend class ShellRenderNode;
 
   private:
-    GLfloat		azimuth, elevation;
+    float		azimuth, elevation;
     OpenGLGState	gstate;
     ShellRenderNode	renderNode;
-    static const GLfloat shellVertex[9][3];
-    static const GLfloat shellNormal[10][3];
+    static const fvec3 shellVertex[9];
+    static const fvec3 shellNormal[10];
 };
 
 #endif // BZF_SHELL_SCENE_NODE_H

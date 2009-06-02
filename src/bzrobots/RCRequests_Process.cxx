@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -43,7 +43,7 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   if (rrp->pendingUpdates[RCRobotPlayer::distanceUpdate]) {
     if (rrp->nextDistance < 0.0f)
       rrp->distanceForward = false;
-    else 
+    else
       rrp->distanceForward = true;
     rrp->distanceRemaining = (rrp->distanceForward ? 1 : -1) * rrp->nextDistance;
   }
@@ -189,17 +189,17 @@ bool GetShotsReq::process(RCRobotPlayer *)
 {
   link->send(ShotsBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!player[i])
+    if (!remotePlayers[i])
       continue;
 
-    /*TeamColor team = player[i]->getTeam();
+    /*TeamColor team = remotePlayers[i]->getTeam();
     if (team == ObserverTeam)
       continue;
     if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
       continue;*/
 
-    for (int j = 0; j < player[i]->getMaxShots(); j++) {
-      ShotPath *path = player[i]->getShot(j);
+    for (int j = 0; j < remotePlayers[i]->getMaxShots(); j++) {
+      ShotPath *path = remotePlayers[i]->getShot(j);
       if (!path || path->isExpired())
         continue;
 
@@ -283,18 +283,18 @@ bool GetPlayersReq::process(RCRobotPlayer *)
 {
   link->send(PlayersBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!player[i])
+    if (!remotePlayers[i])
       continue;
-    if (robots[0]->getId() == player[i]->getId())
+    if (robots[0]->getId() == remotePlayers[i]->getId())
       continue;
 
-    TeamColor team = player[i]->getTeam();
+    TeamColor team = remotePlayers[i]->getTeam();
     if (team == ObserverTeam)
       continue;
     if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
       continue;
 
-    link->send(PlayersReply(player[i]));
+    link->send(PlayersReply(remotePlayers[i]));
   }
 
   return true;

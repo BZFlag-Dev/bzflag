@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -17,14 +17,16 @@
 #include <iostream>
 
 /* common implementation headers */
+#include "StateDatabase.h"
 #include "Pack.h"
 
 
-float Score::tkKickRatio = 3.0;
-int   Score::score       = 999;
-bool  Score::randomRanking = false;
+float Score::tkKickRatio( 3.0 );
+int   Score::score( 999 );
+bool  Score::randomRanking( false );
 
-Score::Score(): wins(0), losses(0), tks(0) {
+Score::Score(): wins(0), losses(0), tks(0)
+{
 }
 
 void Score::dump() const {
@@ -38,7 +40,7 @@ float Score::ranking() const {
   // otherwise do score-based ranking
   int sum = wins + losses;
   if (sum == 0)
-    return 0.5;
+    return BZDB.eval(StateDatabase::BZDB_STARTINGRANK);
   float average = (float)wins/(float)sum;
   // IIRC that is how wide is the gaussian
   float penalty = (1.0f - 0.5f / sqrt((float)sum));
@@ -63,17 +65,19 @@ void Score::kill() {
   wins++;
 }
 
-void *Score::pack(void *buf) const {
-  buf = nboPackUShort(buf, wins);
-  buf = nboPackUShort(buf, losses);
-  buf = nboPackUShort(buf, tks);
+void* Score::pack(void* buf) const {
+  buf = nboPackFloat(buf, ranking());
+  buf = nboPackUInt16(buf, wins);
+  buf = nboPackUInt16(buf, losses);
+  buf = nboPackUInt16(buf, tks);
   return buf;
 }
 
-void Score::pack(BufferedNetworkMessage *msg) const {
-  msg->packUShort(wins);
-  msg->packUShort(losses);
-  msg->packUShort(tks);
+void Score::pack(BufferedNetworkMessage* msg) const {
+  msg->packFloat( ranking() );
+  msg->packUInt16(wins);
+  msg->packUInt16(losses);
+  msg->packUInt16(tks);
 }
 
 void Score::setTeamKillRatio(int _tkKickRatio) {

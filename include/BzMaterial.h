@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,19 +10,22 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+/* BzMaterial:
+ *	Encapsulates a material in the game environment.
  */
 
 #ifndef	BZ_MATERIAL_H
 #define	BZ_MATERIAL_H
 
 #include "common.h"
+
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
 #include <iostream>
+
+#include "vectors.h"
 
 
 class BzMaterial;
@@ -43,6 +46,9 @@ class BzMaterial {
 
     void reset();
 
+    int  getID() const { return id; }
+    void setID(int value) { id = value; }
+
     void setReference();
     bool getReference() const;
 
@@ -53,11 +59,12 @@ class BzMaterial {
     bool setName(const std::string&);
     bool addAlias(const std::string&);
 
+    void setOrder(int);
     void setDynamicColor(int);
-    void setAmbient(const float[4]);
-    void setDiffuse(const float[4]);
-    void setSpecular(const float[4]);
-    void setEmission(const float[4]);
+    void setAmbient(const fvec4&);
+    void setDiffuse(const fvec4&);
+    void setSpecular(const fvec4&);
+    void setEmission(const fvec4&);
     void setShininess(const float);
 
     void setOccluder(bool);
@@ -91,11 +98,12 @@ class BzMaterial {
     const std::string& getName() const;
     const std::vector<std::string>& getAliases() const;
 
+    int getOrder() const;
     int getDynamicColor() const;
-    const float* getAmbient() const;
-    const float* getDiffuse() const;
-    const float* getSpecular() const;
-    const float* getEmission() const;
+    const fvec4& getAmbient() const;
+    const fvec4& getDiffuse() const;
+    const fvec4& getSpecular() const;
+    const fvec4& getEmission() const;
     float getShininess() const;
 
     bool getOccluder() const;
@@ -139,13 +147,16 @@ class BzMaterial {
     std::string name;
     std::vector<std::string> aliases;
 
+    int id;
     bool referenced;
 
+    int order;
+
     int dynamicColor;
-    float ambient[4];
-    float diffuse[4];
-    float specular[4];
-    float emission[4];
+    fvec4 ambient;
+    fvec4 diffuse;
+    fvec4 specular;
+    fvec4 emission;
     float shininess;
 
     bool occluder;
@@ -215,6 +226,8 @@ class BzMaterialManager {
     const BzMaterial* findMaterial(const std::string& name) const;
     const BzMaterial* getMaterial(int id) const;
     int getIndex(const BzMaterial* material) const;
+
+    int getCount() const { return (int)materials.size(); }
 
     typedef std::set<std::string> TextureSet;
     void makeTextureList(TextureSet& set, bool referenced) const;

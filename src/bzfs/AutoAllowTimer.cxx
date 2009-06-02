@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -55,11 +55,6 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
       }
     }
   }
-}
-
-bool AutoAllowTimerTickHandler::autoDelete()
-{
-  return true;
 }
 
 // Local Variables: ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -60,7 +60,7 @@ void CustomMaterial::writeToManager() const
   material.setName(name);
 
   if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
-    std::cout << "warning: duplicate material name"
+    std::cout << "WARNING: duplicate material name"
 	      << " (" << name << ")" << std::endl;
     std::cout << "	 the first material will be used" << std::endl;
   }
@@ -75,7 +75,7 @@ void CustomMaterial::writeToManager() const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

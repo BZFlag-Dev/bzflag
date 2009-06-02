@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 #ifndef _MESH_DRAW_INFO_H_
@@ -73,12 +73,13 @@ class MeshDrawInfo {
     void setName(const std::string&);
     const std::string& getName() const;
 
-    const float* getSphere() const;
+    const fvec4&   getSphere() const;
     const Extents& getExtents() const;
 
     int getLodCount() const;
     const DrawLod* getDrawLods() const;
 
+    int getCornerCount() const;
     const fvec3* getVertices() const;
     const fvec3* getNormals() const;
     const fvec2* getTexcoords() const;
@@ -116,7 +117,7 @@ class MeshDrawInfo {
     MeshDrawMgr* drawMgr;
 
     Extents extents;
-    float sphere[4];
+    fvec4 sphere;
 
     MaterialMap* matMap;
     MeshTransform::Tool* xformTool;
@@ -169,7 +170,7 @@ inline const std::string& MeshDrawInfo::getName() const
 {
   return name;
 }
-inline const float* MeshDrawInfo::getSphere() const
+inline const fvec4& MeshDrawInfo::getSphere() const
 {
   return sphere;
 }
@@ -184,6 +185,10 @@ inline int MeshDrawInfo::getLodCount() const
 inline const DrawLod* MeshDrawInfo::getDrawLods() const
 {
   return lods;
+}
+inline int MeshDrawInfo::getCornerCount() const
+{
+  return cornerCount;
 }
 inline const fvec3* MeshDrawInfo::getVertices() const
 {
@@ -290,7 +295,7 @@ class DrawSet {
     DrawCmd* cmds;
     const BzMaterial* material;
     bool wantList;
-    float sphere[4];
+    fvec4 sphere;
     int triangleCount;
 };
 

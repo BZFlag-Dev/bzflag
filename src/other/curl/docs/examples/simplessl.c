@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: simplessl.c,v 1.8 2007-08-30 20:34:57 danf Exp $
+ * $Id: simplessl.c,v 1.9 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
           fprintf(stderr,"can't set crypto engine\n");
           break;
         }
-        if (curl_easy_setopt(curl, CURLOPT_SSLENGINE_DEFAULT,1) != CURLE_OK)
+        if (curl_easy_setopt(curl, CURLOPT_SSLENGINE_DEFAULT,1L) != CURLE_OK)
         { /* set the crypto engine as default */
           /* only needed for the first time you load
              a engine in a curl object... */
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
       curl_easy_setopt(curl,CURLOPT_CAINFO,pCACertFile);
 
       /* disconnect if we can't validate server's cert */
-      curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,1);
+      curl_easy_setopt(curl,CURLOPT_SSL_VERIFYPEER,1L);
 
       res = curl_easy_perform(curl);
       break;                   /* we are done... */

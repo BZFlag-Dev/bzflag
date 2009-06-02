@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,67 +20,67 @@
 #include <stdlib.h>
 #include <math.h>
 
-// common implementation header
+// common headers
+#include "bzfgl.h"
 #include "StateDatabase.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
-const int		PyrPolygons = 20;
+const int PyrPolygons = 20;
 
-EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
-					const float size[3], float rotation) :
-				EighthDimSceneNode(PyrPolygons),
-				renderNode(this, pos, size, rotation)
+
+EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
+                                         const fvec3& size, float rotation)
+: EighthDimSceneNode(PyrPolygons)
+, renderNode(this, pos, size, rotation)
 {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
 
   // compute polygons
-  const GLfloat polySize = size[0] / powf(float(PyrPolygons), 0.3333f);
-  const GLfloat slope = size[2] / size[0];
+  const float polySize = size.x / powf(float(PyrPolygons), 0.3333f);
+  const float slope = size.z / size.x;
   for (int i = 0; i < PyrPolygons; i++) {
-    GLfloat base[3], vertex[3][3];
-    base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
-    base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
-    base[2] = (size[2] - slope * hypotf(base[0], base[1])) * (float)bzfrand();
+    fvec3 base, verts[3];
+    base.x = (size.x - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base.y = (size.y - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
+    base.z = (size.z - slope * hypotf(base.x, base.y)) * (float)bzfrand();
     for (int j = 0; j < 3; j++) {
       // pick point around origin
-      GLfloat p[3];
-      p[0] = base[0] + polySize * ((float)bzfrand() - 0.5f);
-      p[1] = base[1] + polySize * ((float)bzfrand() - 0.5f);
-      p[2] = base[2] + polySize * ((float)bzfrand() - 0.5f);
+      fvec3 p;
+      p.x = base.x + polySize * ((float)bzfrand() - 0.5f);
+      p.y = base.y + polySize * ((float)bzfrand() - 0.5f);
+      p.z = base.z + polySize * ((float)bzfrand() - 0.5f);
 
       // make sure it's inside the box
-      if (p[0] < -size[0]) p[0] = -size[0];
-      else if (p[0] > size[0]) p[0] = size[0];
-      if (p[1] < -size[1]) p[1] = -size[1];
-      else if (p[1] > size[1]) p[1] = size[1];
-      GLfloat height = size[2] - slope * hypotf(p[0], p[1]);
-      if (p[2] < 0.0f) p[2] = 0.0f;
-      else if (p[2] > height) p[2] = height;
+      const float height = size.z - slope * p.xy().length();
+      p.x = (p.x < -size.x) ? -size.x : ((p.x > +size.x) ? +size.x : p.x);
+      p.y = (p.y < -size.y) ? -size.y : ((p.y > +size.y) ? +size.y : p.y);
+      p.z = (p.z < 0.0f)    ? 0.0f    : ((p.z > +height) ? +height : p.z);
 
       // rotate it
-      vertex[j][0] = pos[0] + c * p[0] - s * p[1];
-      vertex[j][1] = pos[1] + s * p[0] + c * p[1];
-      vertex[j][2] = pos[2] + p[2];
+      verts[j].x = pos.x + (c * p.x) - (s * p.y);
+      verts[j].y = pos.y + (s * p.x) + (c * p.y);
+      verts[j].z = pos.z + p.z;
     }
 
-    setPolygon(i, vertex);
+    setPolygon(i, verts);
   }
 
   // set sphere
   setCenter(pos);
-  setRadius(0.25f * (size[0]*size[0] + size[1]*size[1] + size[2]*size[2]));
+  setRadius(0.25f * size.lengthSq());
 }
+
 
 EighthDPyrSceneNode::~EighthDPyrSceneNode()
 {
   // do nothing
 }
 
-void			EighthDPyrSceneNode::notifyStyleChange()
+
+void EighthDPyrSceneNode::notifyStyleChange()
 {
   EighthDimSceneNode::notifyStyleChange();
 
@@ -96,12 +96,13 @@ void			EighthDPyrSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			EighthDPyrSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void EighthDPyrSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   EighthDimSceneNode::addRenderNodes(renderer);
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // EighthDPyrSceneNode::EighthDPyrRenderNode
@@ -109,8 +110,8 @@ void			EighthDPyrSceneNode::addRenderNodes(
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
 				const EighthDPyrSceneNode* _sceneNode,
-				const float pos[3],
-				const float size[3], float rotation) :
+				const fvec3& pos,
+				const fvec3& size, float rotation) :
 				sceneNode(_sceneNode)
 {
   // get rotation stuff
@@ -118,18 +119,18 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
   const float s = sinf(rotation);
 
   // compute corners
-  corner[0][0] = pos[0] + c * size[0] - s * size[1];
-  corner[0][1] = pos[1] + s * size[0] + c * size[1];
-  corner[1][0] = pos[0] - c * size[0] - s * size[1];
-  corner[1][1] = pos[1] - s * size[0] + c * size[1];
-  corner[2][0] = pos[0] - c * size[0] + s * size[1];
-  corner[2][1] = pos[1] - s * size[0] - c * size[1];
-  corner[3][0] = pos[0] + c * size[0] + s * size[1];
-  corner[3][1] = pos[1] + s * size[0] - c * size[1];
-  corner[0][2] = corner[1][2] = corner[2][2] = corner[3][2] = pos[2];
-  corner[4][0] = pos[0];
-  corner[4][1] = pos[1];
-  corner[4][2] = pos[2] + size[2];
+  corner[0].x = pos.x + (c * size.x) - (s * size.y);
+  corner[0].y = pos.y + (s * size.x) + (c * size.y);
+  corner[1].x = pos.x - (c * size.x) - (s * size.y);
+  corner[1].y = pos.y - (s * size.x) + (c * size.y);
+  corner[2].x = pos.x - (c * size.x) + (s * size.y);
+  corner[2].y = pos.y - (s * size.x) - (c * size.y);
+  corner[3].x = pos.x + (c * size.x) + (s * size.y);
+  corner[3].y = pos.y + (s * size.x) - (c * size.y);
+  corner[0].z = corner[1].z = corner[2].z = corner[3].z = pos.z;
+  corner[4].x = pos.x;
+  corner[4].y = pos.y;
+  corner[4].z = pos.z + size.z;
 }
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()

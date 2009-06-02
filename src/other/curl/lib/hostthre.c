@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostthre.c,v 1.51 2008-02-10 04:20:10 yangtse Exp $
+ * $Id: hostthre.c,v 1.57 2008-11-06 17:19:57 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -53,10 +53,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -74,6 +70,7 @@
 #include "strerror.h"
 #include "url.h"
 #include "multiif.h"
+#include "inet_pton.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -96,7 +93,7 @@
 /* This function is used to init a threaded resolve */
 static bool init_resolve_thread(struct connectdata *conn,
                                 const char *hostname, int port,
-                                const Curl_addrinfo *hints);
+                                const struct addrinfo *hints);
 
 #ifdef CURLRES_IPV4
   #define THREAD_FUNC  gethostbyname_thread
@@ -104,49 +101,6 @@ static bool init_resolve_thread(struct connectdata *conn,
 #else
   #define THREAD_FUNC  getaddrinfo_thread
   #define THREAD_NAME "getaddrinfo_thread"
-#endif
-
-#if defined(DEBUG_THREADING_GETHOSTBYNAME) || \
-    defined(DEBUG_THREADING_GETADDRINFO)
-/* If this is defined, provide tracing */
-#define TRACE(args)  \
- do { trace_it("%u: ", __LINE__); trace_it args; } while(0)
-
-static void trace_it (const char *fmt, ...)
-{
-  static int do_trace = -1;
-  va_list args;
-
-  if(do_trace == -1) {
-    const char *env = getenv("CURL_TRACE");
-    do_trace = (env && atoi(env) > 0);
-  }
-  if(!do_trace)
-    return;
-  va_start (args, fmt);
-  vfprintf (stderr, fmt, args);
-  fflush (stderr);
-  va_end (args);
-}
-#else
-#define TRACE(x)
-#endif
-
-#ifdef DEBUG_THREADING_GETADDRINFO
-static void dump_addrinfo (struct connectdata *conn, const struct addrinfo *ai)
-{
-  TRACE(("dump_addrinfo:\n"));
-  for ( ; ai; ai = ai->ai_next) {
-    char  buf [INET6_ADDRSTRLEN];
-
-    trace_it("    fam %2d, CNAME %s, ",
-             ai->ai_family, ai->ai_canonname ? ai->ai_canonname : "<none>");
-    if(Curl_printable_address(ai, buf, sizeof(buf)))
-      trace_it("%s\n", buf);
-    else
-      trace_it("failed; %s\n", Curl_strerror(conn, SOCKERRNO));
-  }
-}
 #endif
 
 struct thread_data {
@@ -312,8 +266,6 @@ static unsigned __stdcall gethostbyname_thread (void *arg)
     else {
       rc = Curl_addrinfo4_callback(conn, SOCKERRNO, NULL);
     }
-    TRACE(("Winsock-error %d, addr %s\n", conn->async.status,
-           he ? inet_ntoa(*(struct in_addr*)he->h_addr) : "unknown"));
     release_thread_sync(&tsd);
   }
 
@@ -337,7 +289,7 @@ static unsigned __stdcall getaddrinfo_thread (void *arg)
 {
   struct connectdata *conn = (struct connectdata*) arg;
   struct thread_data *td   = (struct thread_data*) conn->async.os_specific;
-  struct addrinfo    *res;
+  Curl_addrinfo      *res;
   char   service [NI_MAXSERV];
   int    rc;
   struct addrinfo hints = td->hints;
@@ -362,7 +314,7 @@ static unsigned __stdcall getaddrinfo_thread (void *arg)
      need */
   SetEvent(td->event_thread_started);
 
-  rc = getaddrinfo(tsd.hostname, service, &hints, &res);
+  rc = Curl_getaddrinfo_ex(tsd.hostname, service, &hints, &res);
 
   /* is parent thread waiting for us and are we able to access conn members? */
   if(acquire_thread_sync(&tsd)) {
@@ -371,14 +323,10 @@ static unsigned __stdcall getaddrinfo_thread (void *arg)
     SetEvent(td->event_resolved);
 
     if(rc == 0) {
-#ifdef DEBUG_THREADING_GETADDRINFO
-      dump_addrinfo (conn, res);
-#endif
       rc = Curl_addrinfo6_callback(conn, CURL_ASYNC_SUCCESS, res);
     }
     else {
       rc = Curl_addrinfo6_callback(conn, SOCKERRNO, NULL);
-      TRACE(("Winsock-error %d, no address\n", conn->async.status));
     }
     release_thread_sync(&tsd);
   }
@@ -449,7 +397,7 @@ void Curl_destroy_thread_data (struct Curl_async *async)
  */
 static bool init_resolve_thread (struct connectdata *conn,
                                  const char *hostname, int port,
-                                 const Curl_addrinfo *hints)
+                                 const struct addrinfo *hints)
 {
   struct thread_data *td = calloc(sizeof(*td), 1);
   HANDLE thread_and_event[2] = {0};
@@ -536,11 +484,8 @@ static bool init_resolve_thread (struct connectdata *conn,
 #endif
 
   if(!td->thread_hnd) {
-#ifdef _WIN32_WCE
-     TRACE(("CreateThread() failed; %s\n", Curl_strerror(conn, ERRNO)));
-#else
+#ifndef _WIN32_WCE
      SET_ERRNO(errno);
-     TRACE(("_beginthreadex() failed; %s\n", Curl_strerror(conn, ERRNO)));
 #endif
      Curl_destroy_thread_data(&conn->async);
      return FALSE;
@@ -580,7 +525,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
   struct thread_data   *td = (struct thread_data*) conn->async.os_specific;
   struct SessionHandle *data = conn->data;
   long   timeout;
-  DWORD  status, ticks;
+  DWORD  status;
   CURLcode rc;
 
   DEBUGASSERT(conn && td);
@@ -591,7 +536,6 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
     conn->data->set.connecttimeout ? conn->data->set.connecttimeout :
     conn->data->set.timeout ? conn->data->set.timeout :
     CURL_TIMEOUT_RESOLVE * 1000; /* default name resolve timeout */
-  ticks = GetTickCount();
 
   /* wait for the thread to resolve the name */
   status = WaitForSingleObject(td->event_resolved, timeout);
@@ -614,7 +558,6 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
       TerminateThread(td->thread_hnd, 0);
       conn->async.done = TRUE;
       td->thread_status = (DWORD)-1;
-      TRACE(("%s() thread stuck?!, ", THREAD_NAME));
     }
     else {
       /* Thread finished before timeout; propagate Winsock error to this
@@ -623,17 +566,12 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
        */
       SET_SOCKERRNO(conn->async.status);
       GetExitCodeThread(td->thread_hnd, &td->thread_status);
-      TRACE(("%s() status %lu, thread retval %lu, ",
-             THREAD_NAME, status, td->thread_status));
     }
   }
   else {
     conn->async.done = TRUE;
     td->thread_status = (DWORD)-1;
-    TRACE(("%s() timeout, ", THREAD_NAME));
   }
-
-  TRACE(("elapsed %lu ms\n", GetTickCount()-ticks));
 
   if(entry)
     *entry = conn->async.dns;
@@ -690,13 +628,11 @@ CURLcode Curl_is_resolved(struct connectdata *conn,
     /* we're done */
     Curl_destroy_thread_data(&conn->async);
     if(!conn->async.dns) {
-      TRACE(("Curl_is_resolved(): CURLE_COULDNT_RESOLVE_HOST\n"));
       failf(data, "Could not resolve host: %s; %s",
             conn->host.name, Curl_strerror(conn, conn->async.status));
       return CURLE_COULDNT_RESOLVE_HOST;
     }
     *entry = conn->async.dns;
-    TRACE(("resolved okay, dns %p\n", *entry));
   }
   return CURLE_OK;
 }
@@ -730,14 +666,13 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 {
   struct hostent *h = NULL;
   struct SessionHandle *data = conn->data;
-  in_addr_t in;
+  struct in_addr in;
 
   *waitp = 0; /* don't wait, we act synchronously */
 
-  in = inet_addr(hostname);
-  if(in != CURL_INADDR_NONE)
+  if(Curl_inet_pton(AF_INET, hostname, &in) > 0)
     /* This is a dotted IP address 123.123.123.123-style */
-    return Curl_ip2addr(in, hostname, port);
+    return Curl_ip2addr(AF_INET, &in, hostname, port);
 
   /* fire up a new resolver thread! */
   if(init_resolve_thread(conn, hostname, port, NULL)) {
@@ -768,43 +703,45 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
                                 int port,
                                 int *waitp)
 {
-  struct addrinfo hints, *res;
+  struct addrinfo hints;
+  Curl_addrinfo *res;
   int error;
   char sbuf[NI_MAXSERV];
-  curl_socket_t s;
   int pf;
   struct SessionHandle *data = conn->data;
 
   *waitp = FALSE; /* default to synch response */
 
-  /* see if we have an IPv6 stack */
-  s = socket(PF_INET6, SOCK_DGRAM, 0);
-  if(s == CURL_SOCKET_BAD) {
-    /* Some non-IPv6 stacks have been found to make very slow name resolves
-     * when PF_UNSPEC is used, so thus we switch to a mere PF_INET lookup if
-     * the stack seems to be a non-ipv6 one. */
-
+  /*
+   * Check if a limited name resolve has been requested.
+   */
+  switch(data->set.ip_version) {
+  case CURL_IPRESOLVE_V4:
     pf = PF_INET;
+    break;
+  case CURL_IPRESOLVE_V6:
+    pf = PF_INET6;
+    break;
+  default:
+    pf = PF_UNSPEC;
+    break;
   }
-  else {
-    /* This seems to be an IPv6-capable stack, use PF_UNSPEC for the widest
-     * possible checks. And close the socket again.
-     */
-    sclose(s);
 
-    /*
-     * Check if a more limited name resolve has been requested.
-     */
-    switch(data->set.ip_version) {
-    case CURL_IPRESOLVE_V4:
+  if (pf != PF_INET) {
+    /* see if we have an IPv6 stack */
+    curl_socket_t s = socket(PF_INET6, SOCK_DGRAM, 0);
+    if(s == CURL_SOCKET_BAD) {
+      /* Some non-IPv6 stacks have been found to make very slow name resolves
+       * when PF_UNSPEC is used, so thus we switch to a mere PF_INET lookup if
+       * the stack seems to be a non-ipv6 one. */
+
       pf = PF_INET;
-      break;
-    case CURL_IPRESOLVE_V6:
-      pf = PF_INET6;
-      break;
-    default:
-      pf = PF_UNSPEC;
-      break;
+    }
+    else {
+      /* This seems to be an IPv6-capable stack, use PF_UNSPEC for the widest
+       * possible checks. And close the socket again.
+       */
+      sclose(s);
     }
   }
 
@@ -826,7 +763,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
   infof(data, "init_resolve_thread() failed for %s; %s\n",
         hostname, Curl_strerror(conn, ERRNO));
 
-  error = getaddrinfo(hostname, sbuf, &hints, &res);
+  error = Curl_getaddrinfo_ex(hostname, sbuf, &hints, &res);
   if(error) {
     infof(data, "getaddrinfo() failed for %s:%d; %s\n",
           hostname, port, Curl_strerror(conn, SOCKERRNO));

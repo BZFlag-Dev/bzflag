@@ -5,13 +5,27 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: anyauthput.c,v 1.4 2008-02-27 09:06:15 bagder Exp $
+ * $Id: anyauthput.c,v 1.7 2008-08-31 12:12:35 yangtse Exp $
  */
 
 #include <stdio.h>
 #include <fcntl.h>
+#ifdef WIN32
+#  include <io.h>
+#else
+#  include <stdint.h>
+#  include <unistd.h>
+#endif
+#include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+
+#ifdef _MSC_VER
+#  ifdef _WIN64
+     typedef __int64 intptr_t;
+#  else
+     typedef int intptr_t;
+#  endif
+#endif
 
 #include <curl/curl.h>
 
@@ -109,7 +123,7 @@ int main(int argc, char **argv)
     curl_easy_setopt(curl, CURLOPT_IOCTLDATA, (void*)hd);
 
     /* enable "uploading" (which means PUT when doing HTTP) */
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, TRUE) ;
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L) ;
 
     /* specify target URL, and note that this URL should also include a file
        name, not only a directory (as you can do with GTP uploads) */
@@ -117,12 +131,13 @@ int main(int argc, char **argv)
 
     /* and give the size of the upload, this supports large file sizes
        on systems that have general support for it */
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, file_info.st_size);
+    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE,
+    			(curl_off_t)file_info.st_size);
 
     /* tell libcurl we can use "any" auth, which lets the lib pick one, but it
        also costs one extra round-trip and possibly sending of all the PUT
        data twice!!! */
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_ANY);
 
     /* set user name and password for the authentication */
     curl_easy_setopt(curl, CURLOPT_USERPWD, "user:password");

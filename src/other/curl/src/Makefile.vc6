@@ -10,8 +10,6 @@
 ## Comments to: Troy Engel <tengel@sonic.net>
 ## Updated by: Craig Davison <cd@securityfocus.com>
 ## release-ssl added by Miklos Nemeth <mnemeth@kfkisystems.com>
-## winmm.lib added by Miklos Nemeth <mnemeth@kfkisystems.com> to
-## support timeGetTime() in curlutil.c
 #
 #############################################################
 
@@ -100,6 +98,7 @@ RELEASE_OBJS= \
 	getpassr.obj \
 	homedirr.obj \
 	curlutilr.obj \
+	rawstrr.obj \
 	strtoofftr.obj \
 	mainr.obj \
 	curlr.res
@@ -111,6 +110,7 @@ DEBUG_OBJS= \
 	getpassd.obj \
 	homedird.obj \
 	curlutild.obj \
+	rawstrd.obj \
 	strtoofftd.obj \
 	maind.obj \
 	curld.res
@@ -221,8 +221,8 @@ LFLAGS         = $(LFLAGS) $(SSL_IMP_LFLAGS) $(ZLIB_LFLAGS)
 !ENDIF
 
 
-LINKLIBS       = $(LINKLIBS) wsock32.lib wldap32.lib winmm.lib
-LINKLIBS_DEBUG = $(LINKLIBS_DEBUG) wsock32.lib wldap32.lib winmm.lib
+LINKLIBS       = $(LINKLIBS) wsock32.lib wldap32.lib
+LINKLIBS_DEBUG = $(LINKLIBS_DEBUG) wsock32.lib wldap32.lib
 
 all : release
 
@@ -247,6 +247,8 @@ homedirr.obj: homedir.c
 	$(CCR) $(CFLAGS) /Fo"$@" homedir.c
 curlutilr.obj: curlutil.c
 	$(CCR) $(CFLAGS) /Fo"$@" curlutil.c
+rawstrr.obj: ../lib/rawstr.c
+	$(CCR) $(CFLAGS) /Fo"$@" ../lib/rawstr.c
 strtoofftr.obj: ../lib/strtoofft.c
 	$(CCR) $(CFLAGS) /Fo"$@" ../lib/strtoofft.c
 mainr.obj: main.c
@@ -267,6 +269,8 @@ homedird.obj: homedir.c
 	$(CCD) $(CFLAGS) /Fo"$@" homedir.c
 curlutild.obj: curlutil.c
 	$(CCD) $(CFLAGS) /Fo"$@" curlutil.c
+rawstrd.obj: ../lib/rawstr.c
+	$(CCD) $(CFLAGS) /Fo"$@" ../lib/rawstr.c
 strtoofftd.obj: ../lib/strtoofft.c
 	$(CCD) $(CFLAGS) /Fo"$@" ../lib/strtoofft.c
 maind.obj: main.c

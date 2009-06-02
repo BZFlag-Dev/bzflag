@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: file.c,v 1.106 2008-01-31 12:04:33 bagder Exp $
+ * $Id: file.c,v 1.119 2009-02-03 22:28:41 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -57,8 +57,9 @@
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
-#include <signal.h>
+#endif
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -68,7 +69,7 @@
 #include <fcntl.h>
 #endif
 
-#endif
+#endif /* WIN32 */
 
 #include "strtoofft.h"
 #include "urldata.h"
@@ -90,6 +91,9 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+#if defined(WIN32) || defined(MSDOS) || defined(__EMX__) || defined(__SYMBIAN32__)
+#define DOS_FILESYSTEM 1
+#endif
 
 /*
  * Forward declarations.
@@ -115,6 +119,7 @@ const struct Curl_handler Curl_handler_file = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   0,                                    /* defport */
   PROT_FILE                             /* protocol */
@@ -186,7 +191,7 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
   char *real_path = curl_easy_unescape(data, data->state.path, 0, NULL);
   struct FILEPROTO *file;
   int fd;
-#if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
+#ifdef DOS_FILESYSTEM
   int i;
   char *actual_path;
 #endif
@@ -199,7 +204,7 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
   Curl_reset_reqproto(conn);
 
   if(!data->state.proto.file) {
-    file = (struct FILEPROTO *)calloc(sizeof(struct FILEPROTO), 1);
+    file = calloc(sizeof(struct FILEPROTO), 1);
     if(!file) {
       free(real_path);
       return CURLE_OUT_OF_MEMORY;
@@ -217,7 +222,7 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
     file->fd = -1;
   }
 
-#if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
+#ifdef DOS_FILESYSTEM
   /* If the first character is a slash, and there's
      something that looks like a drive at the beginning of
      the path, skip the slash.  If we remove the initial
@@ -279,7 +284,7 @@ static CURLcode file_done(struct connectdata *conn,
   return CURLE_OK;
 }
 
-#if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
+#ifdef DOS_FILESYSTEM
 #define DIRSEP '\\'
 #else
 #define DIRSEP '/'
@@ -319,18 +324,19 @@ static CURLcode file_upload(struct connectdata *conn)
   else {
     int fd;
 
-#if defined(WIN32) || defined(MSDOS) || defined(__EMX__)
+#ifdef DOS_FILESYSTEM
     fd = open(file->path, O_WRONLY|O_CREAT|O_TRUNC|O_BINARY,
               conn->data->set.new_file_perms);
-#else /* !(WIN32 || MSDOS || __EMX__) */
+#else
     fd = open(file->path, O_WRONLY|O_CREAT|O_TRUNC,
               conn->data->set.new_file_perms);
-#endif /* !(WIN32 || MSDOS || __EMX__) */
+#endif
     if(fd < 0) {
       failf(data, "Can't open %s for writing", file->path);
       return CURLE_WRITE_ERROR;
     }
-    fp = fdopen(fd, "wb");
+    close(fd);
+    fp = fopen(file->path, "wb");
   }
 
   if(!fp) {
@@ -344,7 +350,7 @@ static CURLcode file_upload(struct connectdata *conn)
 
   /* treat the negative resume offset value as the case of "-" */
   if(data->state.resume_from < 0) {
-    if(stat(file->path, &file_stat)) {
+    if(fstat(fileno(fp), &file_stat)) {
       fclose(fp);
       failf(data, "Can't get the size of %s", file->path);
       return CURLE_WRITE_ERROR;
@@ -448,6 +454,8 @@ static CURLcode file_do(struct connectdata *conn, bool *done)
   if( -1 != fstat(fd, &statbuf)) {
     /* we could stat it, then read out the size */
     expected_size = statbuf.st_size;
+    /* and store the modification time */
+    data->info.filetime = (long)statbuf.st_mtime;
     fstated = TRUE;
   }
 
@@ -488,6 +496,10 @@ static CURLcode file_do(struct connectdata *conn, bool *done)
                tm->tm_sec);
       result = Curl_client_write(conn, CLIENTWRITE_BOTH, buf, 0);
     }
+    /* if we fstat()ed the file, set the file size to make it available post-
+       transfer */
+    if(fstated)
+      Curl_pgrsSetDownloadSize(data, expected_size);
     return result;
   }
 

@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.am,v 1.49 2008-02-18 15:32:34 gknauf Exp $
+# $Id: Makefile.am,v 1.52 2008-08-07 00:29:08 yangtse Exp $
 #
 
 AUTOMAKE_OPTIONS = foreign nostdinc
@@ -7,7 +7,16 @@ AUTOMAKE_OPTIONS = foreign nostdinc
 EXTRA_DIST = README Makefile.example Makefile.inc Makefile.m32 \
 	makefile.dj $(COMPLICATED_EXAMPLES)
 
-INCLUDES = -I$(top_srcdir)/include
+# Specify our include paths here, and do it relative to $(top_srcdir) and
+# $(top_builddir), to ensure that these paths which belong to the library
+# being currently built and tested are searched before the library which
+# might possibly already be installed in the system.
+#
+# $(top_builddir)/include is for libcurl's generated curl/curlbuild.h file
+# $(top_srcdir)/include is for libcurl's external include files
+
+INCLUDES = -I$(top_builddir)/include \
+           -I$(top_srcdir)/include
 
 LIBDIR = $(top_builddir)/lib
 
@@ -21,7 +30,7 @@ CPPFLAGS = -DCURL_NO_OLDIES $(STATICCPPFLAGS)
 # Dependencies
 LDADD = $(LIBDIR)/libcurl.la
 
-# Makefile.inc provides the noinst_PROGRAMS and COMPLICATED_EXAMPLES defines
+# Makefile.inc provides the check_PROGRAMS and COMPLICATED_EXAMPLES defines
 include Makefile.inc
 
 

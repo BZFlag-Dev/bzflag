@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -62,7 +62,7 @@ class MeshFragSceneNode : public WallSceneNode {
 	void render();
 	void renderRadar();
 	void renderShadow();
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+	const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
 	inline void drawV() const; // draw with just vertices
@@ -77,22 +77,22 @@ class MeshFragSceneNode : public WallSceneNode {
 
       private:
 	int style;
-	GLuint list;
+	unsigned int list;
 	MeshFragSceneNode* sceneNode;
     };
 
   private:
     Geometry renderNode;
 
-    GLint faceCount;
+    int faceCount;
     const MeshFace** faces;
 
     bool noRadar;
     bool noShadow;
-    GLint arrayCount;
-    GLfloat* vertices;
-    GLfloat* normals;
-    GLfloat* texcoords;
+    int arrayCount;
+    float* vertices;
+    float* normals;
+    float* texcoords;
 
   friend class MeshFragSceneNode::Geometry;
 };

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,22 +13,26 @@
 #ifndef __TRIANGULATE_H__
 #define __TRIANGULATE_H__
 
+#include "common.h"
 
-/* system interface headers */
+/* system headers */
 #include <vector>
+
+// common headers
+#include "vectors.h"
 
 
 typedef struct {
   int indices[3];
 } TriIndices;
 
-extern void triangulateFace(int count, const float* const* verts,
+extern void triangulateFace(int count, const fvec3** verts,
 			    std::vector<TriIndices>& tris);
 
 
 #endif  /* __TRIANGULATE_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

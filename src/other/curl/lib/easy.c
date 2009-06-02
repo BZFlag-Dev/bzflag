@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easy.c,v 1.116 2008-03-20 08:09:24 mmarek Exp $
+ * $Id: easy.c,v 1.133 2009-01-29 20:32:31 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -61,7 +61,6 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
-#include <signal.h>
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -83,7 +82,8 @@
 #include "easyif.h"
 #include "select.h"
 #include "sendf.h" /* for failf function prototype */
-#include <ca-bundle.h>
+#include "http_ntlm.h"
+#include "connect.h" /* for Curl_getconnectinfo */
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -103,21 +103,26 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
-#ifdef USE_WINSOCK
 /* win32_cleanup() is for win32 socket cleanup functionality, the opposite
    of win32_init() */
 static void win32_cleanup(void)
 {
+#ifdef USE_WINSOCK
   WSACleanup();
+#endif
+#ifdef USE_WINDOWS_SSPI
+  Curl_sspi_global_cleanup();
+#endif
 }
 
 /* win32_init() performs win32 socket initialization to properly setup the
    stack to allow networking */
 static CURLcode win32_init(void)
 {
+#ifdef USE_WINSOCK
   WORD wVersionRequested;
   WSADATA wsaData;
-  int err;
+  int res;
 
 #if defined(ENABLE_IPV6) && (USE_WINSOCK < 2)
   Error IPV6_requires_winsock2
@@ -125,9 +130,9 @@ static CURLcode win32_init(void)
 
   wVersionRequested = MAKEWORD(USE_WINSOCK, USE_WINSOCK);
 
-  err = WSAStartup(wVersionRequested, &wsaData);
+  res = WSAStartup(wVersionRequested, &wsaData);
 
-  if(err != 0)
+  if(res != 0)
     /* Tell the user that we couldn't find a useable */
     /* winsock.dll.     */
     return CURLE_FAILED_INIT;
@@ -147,14 +152,18 @@ static CURLcode win32_init(void)
     return CURLE_FAILED_INIT;
   }
   /* The Windows Sockets DLL is acceptable. Proceed. */
+#endif
+
+#ifdef USE_WINDOWS_SSPI
+  {
+    CURLcode err = Curl_sspi_global_init();
+    if (err != CURLE_OK)
+      return err;
+  }
+#endif
+
   return CURLE_OK;
 }
-
-#else
-/* These functions exist merely to prevent compiler warnings */
-static CURLcode win32_init(void) { return CURLE_OK; }
-static void win32_cleanup(void) { }
-#endif
 
 #ifdef USE_LIBIDN
 /*
@@ -195,16 +204,35 @@ static long          init_flags;
 #define system_strdup strdup
 #endif
 
+#if defined(_MSC_VER) && defined(_DLL)
+#  pragma warning(disable:4232) /* MSVC extension, dllimport identity */
+#endif
+
+#ifndef __SYMBIAN32__
 /*
  * If a memory-using function (like curl_getenv) is used before
  * curl_global_init() is called, we need to have these pointers set already.
  */
-
 curl_malloc_callback Curl_cmalloc = (curl_malloc_callback)malloc;
 curl_free_callback Curl_cfree = (curl_free_callback)free;
 curl_realloc_callback Curl_crealloc = (curl_realloc_callback)realloc;
 curl_strdup_callback Curl_cstrdup = (curl_strdup_callback)system_strdup;
 curl_calloc_callback Curl_ccalloc = (curl_calloc_callback)calloc;
+#else
+/*
+ * Symbian OS doesn't support initialization to code in writeable static data.
+ * Initialization will occur in the curl_global_init() call.
+ */
+curl_malloc_callback Curl_cmalloc;
+curl_free_callback Curl_cfree;
+curl_realloc_callback Curl_crealloc;
+curl_strdup_callback Curl_cstrdup;
+curl_calloc_callback Curl_ccalloc;
+#endif
+
+#if defined(_MSC_VER) && defined(_DLL)
+#  pragma warning(default:4232) /* MSVC extension, dllimport identity */
+#endif
 
 /**
  * curl_global_init() globally initializes cURL given a bitwise set of the
@@ -474,9 +502,12 @@ CURLcode curl_easy_perform(CURL *curl)
       /* global dns cache was requested but still isn't */
       struct curl_hash *ptr;
 
-      if(data->dns.hostcachetype == HCACHE_PRIVATE)
+      if(data->dns.hostcachetype == HCACHE_PRIVATE) {
         /* if the current cache is private, kill it first */
         Curl_hash_destroy(data->dns.hostcache);
+        data->dns.hostcachetype = HCACHE_NONE;
+        data->dns.hostcache = NULL;
+      }
 
       ptr = Curl_global_host_cache_init();
       if(ptr) {
@@ -571,8 +602,7 @@ CURL *curl_easy_duphandle(CURL *incurl)
   bool fail = TRUE;
   struct SessionHandle *data=(struct SessionHandle *)incurl;
 
-  struct SessionHandle *outcurl = (struct SessionHandle *)
-    calloc(sizeof(struct SessionHandle), 1);
+  struct SessionHandle *outcurl = calloc(sizeof(struct SessionHandle), 1);
 
   if(NULL == outcurl)
     return NULL; /* failure */
@@ -584,7 +614,7 @@ CURL *curl_easy_duphandle(CURL *incurl)
      * get setup on-demand in the code, as that would probably decrease
      * the likeliness of us forgetting to init a buffer here in the future.
      */
-    outcurl->state.headerbuff=(char*)malloc(HEADERSIZE);
+    outcurl->state.headerbuff = malloc(HEADERSIZE);
     if(!outcurl->state.headerbuff) {
       break;
     }
@@ -594,13 +624,8 @@ CURL *curl_easy_duphandle(CURL *incurl)
     if(Curl_dupset(outcurl, data) != CURLE_OK)
       break;
 
-    if(data->state.used_interface == Curl_if_multi)
-      outcurl->state.connc = data->state.connc;
-    else
-      outcurl->state.connc = Curl_mk_connc(CONNCACHE_PRIVATE, -1);
-
-    if(!outcurl->state.connc)
-      break;
+    /* the connection cache is setup on demand */
+    outcurl->state.connc = NULL;
 
     outcurl->state.lastconnect = -1;
 
@@ -697,6 +722,7 @@ void curl_easy_reset(CURL *curl)
   /* zero out UserDefined data: */
   Curl_freeset(data);
   memset(&data->set, 0, sizeof(struct UserDefined));
+  (void)Curl_init_userdefined(&data->set);
 
   /* zero out Progress data: */
   memset(&data->progress, 0, sizeof(struct Progress));
@@ -704,58 +730,8 @@ void curl_easy_reset(CURL *curl)
   /* init Handle data */
   Curl_easy_initHandleData(data);
 
-  /* The remainder of these calls have been taken from Curl_open() */
-
-  data->set.out = stdout; /* default output to stdout */
-  data->set.in  = stdin;  /* default input from stdin */
-  data->set.err  = stderr;  /* default stderr to stderr */
-
-  /* use fwrite as default function to store output */
-  data->set.fwrite_func = (curl_write_callback)fwrite;
-
-  /* use fread as default function to read input */
-  data->set.fread_func = (curl_read_callback)fread;
-
-  data->set.infilesize = -1; /* we don't know any size */
-  data->set.postfieldsize = -1;
-
-  data->state.current_speed = -1; /* init to negative == impossible */
-
-  data->set.httpreq = HTTPREQ_GET; /* Default HTTP request */
-  data->set.ftp_use_epsv = TRUE;   /* FTP defaults to EPSV operations */
-  data->set.ftp_use_eprt = TRUE;   /* FTP defaults to EPRT operations */
-
-  data->set.dns_cache_timeout = 60; /* Timeout every 60 seconds by default */
-
-  /* make libcurl quiet by default: */
-  data->set.hide_progress = TRUE;  /* CURLOPT_NOPROGRESS changes these */
   data->progress.flags |= PGRS_HIDE;
-
-  /* Set the default size of the SSL session ID cache */
-  data->set.ssl.numsessions = 5;
-
-  data->set.proxyport = 1080;
-  data->set.proxytype = CURLPROXY_HTTP; /* defaults to HTTP proxy */
-  data->set.httpauth = CURLAUTH_BASIC;  /* defaults to basic */
-  data->set.proxyauth = CURLAUTH_BASIC; /* defaults to basic */
-
-  /*
-   * libcurl 7.10 introduced SSL verification *by default*! This needs to be
-   * switched off unless wanted.
-   */
-  data->set.ssl.verifypeer = TRUE;
-  data->set.ssl.verifyhost = 2;
-  /* This is our prefered CA cert bundle/path since install time */
-#if defined(CURL_CA_BUNDLE)
-  (void) curl_easy_setopt(curl, CURLOPT_CAINFO, (char *) CURL_CA_BUNDLE);
-#elif defined(CURL_CA_PATH)
-  (void) curl_easy_setopt(curl, CURLOPT_CAPATH, (char *) CURL_CA_PATH);
-#endif
-
-  data->set.ssh_auth_types = CURLSSH_AUTH_DEFAULT; /* defaults to any auth
-                                                      type */
-  data->set.new_file_perms = 0644;    /* Default permissions */
-  data->set.new_directory_perms = 0755; /* Default permissions */
+  data->state.current_speed = -1; /* init to negative == impossible */
 }
 
 /*
@@ -792,6 +768,7 @@ CURLcode curl_easy_pause(CURL *curl, int action)
        return PAUSE again and then we'll get a new copy allocted and stored in
        the tempwrite variables */
     char *tempwrite = data->state.tempwrite;
+    char *freewrite = tempwrite; /* store this pointer to free it later */
     size_t tempsize = data->state.tempwritesize;
     int temptype = data->state.tempwritetype;
     size_t chunklen;
@@ -816,26 +793,26 @@ CURLcode curl_easy_pause(CURL *curl, int action)
 
       result = Curl_client_write(data->state.current_conn,
                                  temptype, tempwrite, chunklen);
-      if(!result)
+      if(result)
         /* failures abort the loop at once */
         break;
 
       if(data->state.tempwrite && (tempsize - chunklen)) {
         /* Ouch, the reading is again paused and the block we send is now
            "cached". If this is the final chunk we can leave it like this, but
-           if we have more chunks that is cached after this, we need to free
+           if we have more chunks that are cached after this, we need to free
            the newly cached one and put back a version that is truly the entire
            contents that is saved for later
         */
         char *newptr;
 
-        free(data->state.tempwrite); /* free the one just cached as it isn't
-                                        enough */
-
         /* note that tempsize is still the size as before the callback was
            used, and thus the whole piece of data to keep */
-        newptr = malloc(tempsize);
+        newptr = realloc(data->state.tempwrite, tempsize);
+
         if(!newptr) {
+          free(data->state.tempwrite); /* free old area */
+          data->state.tempwrite = NULL;
           result = CURLE_OUT_OF_MEMORY;
           /* tempwrite will be freed further down */
           break;
@@ -853,7 +830,7 @@ CURLcode curl_easy_pause(CURL *curl, int action)
 
     } while((result == CURLE_OK) && tempsize);
 
-    free(tempwrite); /* this is unconditionally no longer used */
+    free(freewrite); /* this is unconditionally no longer used */
   }
 
   return result;
@@ -938,7 +915,8 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
             rc, curl_easy_strerror(rc));
     }
     return(rc);
-  } else {
+  }
+  else {
 #ifdef HAVE_ICONV
     /* do the translation ourselves */
     char *input_ptr, *output_ptr;
@@ -953,9 +931,9 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
         error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
-               CURL_ICONV_CODESET_OF_HOST,
-               CURL_ICONV_CODESET_OF_NETWORK,
-               error, strerror(error));
+              CURL_ICONV_CODESET_OF_HOST,
+              CURL_ICONV_CODESET_OF_NETWORK,
+              error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -967,8 +945,8 @@ CURLcode Curl_convert_from_network(struct SessionHandle *data,
     if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
-        "The Curl_convert_from_network iconv call failed with errno %i: %s",
-             error, strerror(error));
+            "The Curl_convert_from_network iconv call failed with errno %i: %s",
+            error, strerror(error));
       return CURLE_CONV_FAILED;
     }
 #else
@@ -1014,9 +992,9 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
         error = ERRNO;
         failf(data,
               "The iconv_open(\"%s\", \"%s\") call failed with errno %i: %s",
-               CURL_ICONV_CODESET_OF_HOST,
-               CURL_ICONV_CODESET_FOR_UTF8,
-               error, strerror(error));
+              CURL_ICONV_CODESET_OF_HOST,
+              CURL_ICONV_CODESET_FOR_UTF8,
+              error, strerror(error));
         return CURLE_CONV_FAILED;
       }
     }
@@ -1028,8 +1006,8 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
     if((rc == ICONV_ERROR) || (in_bytes != 0)) {
       error = ERRNO;
       failf(data,
-        "The Curl_convert_from_utf8 iconv call failed with errno %i: %s",
-             error, strerror(error));
+            "The Curl_convert_from_utf8 iconv call failed with errno %i: %s",
+            error, strerror(error));
       return CURLE_CONV_FAILED;
     }
     if(output_ptr < input_ptr) {
@@ -1046,3 +1024,98 @@ CURLcode Curl_convert_from_utf8(struct SessionHandle *data,
 }
 
 #endif /* CURL_DOES_CONVERSIONS */
+
+static CURLcode easy_connection(struct SessionHandle *data,
+                                curl_socket_t *sfd,
+                                struct connectdata **connp)
+{
+  CURLcode ret;
+  long sockfd;
+
+  if(data == NULL)
+    return CURLE_BAD_FUNCTION_ARGUMENT;
+
+  /* only allow these to be called on handles with CURLOPT_CONNECT_ONLY */
+  if(!data->set.connect_only) {
+    failf(data, "CONNECT_ONLY is required!");
+    return CURLE_UNSUPPORTED_PROTOCOL;
+  }
+
+  ret = Curl_getconnectinfo(data, &sockfd, connp);
+  if(ret != CURLE_OK)
+    return ret;
+
+  if(sockfd == -1) {
+    failf(data, "Failed to get recent socket");
+    return CURLE_UNSUPPORTED_PROTOCOL;
+  }
+
+  *sfd = (curl_socket_t)sockfd; /* we know that this is actually a socket
+                                   descriptor so the typecast is fine here */
+
+  return CURLE_OK;
+}
+
+/*
+ * Receives data from the connected socket. Use after successful
+ * curl_easy_perform() with CURLOPT_CONNECT_ONLY option.
+ * Returns CURLE_OK on success, error code on error.
+ */
+CURLcode curl_easy_recv(CURL *curl, void *buffer, size_t buflen, size_t *n)
+{
+  curl_socket_t sfd;
+  CURLcode ret;
+  int ret1;
+  ssize_t n1;
+  struct connectdata *c;
+  struct SessionHandle *data = (struct SessionHandle *)curl;
+
+  ret = easy_connection(data, &sfd, &c);
+  if(ret)
+    return ret;
+
+  *n = 0;
+  ret1 = Curl_read(c, sfd, buffer, buflen, &n1);
+
+  if(ret1 == -1)
+    return CURLE_AGAIN;
+
+  if(n1 == -1)
+    return CURLE_RECV_ERROR;
+
+  *n = (size_t)n1;
+
+  return CURLE_OK;
+}
+
+/*
+ * Sends data over the connected socket. Use after successful
+ * curl_easy_perform() with CURLOPT_CONNECT_ONLY option.
+ */
+CURLcode curl_easy_send(CURL *curl, const void *buffer, size_t buflen,
+                        size_t *n)
+{
+  curl_socket_t sfd;
+  CURLcode ret;
+  ssize_t n1;
+  struct connectdata *c = NULL;
+  struct SessionHandle *data = (struct SessionHandle *)curl;
+
+  ret = easy_connection(data, &sfd, &c);
+  if(ret)
+    return ret;
+
+  *n = 0;
+  ret = Curl_write(c, sfd, buffer, buflen, &n1);
+
+  if(n1 == -1)
+    return CURLE_SEND_ERROR;
+
+  /* detect EAGAIN */
+  if((CURLE_OK == ret) && (0 == n1))
+    return CURLE_AGAIN;
+
+  *n = (size_t)n1;
+
+  return ret;
+}

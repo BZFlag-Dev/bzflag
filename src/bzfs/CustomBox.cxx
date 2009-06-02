@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -47,8 +47,8 @@ CustomBox::CustomBox()
 {
   isOldBox = true;
 
-  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-  size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
 
   materials[XP].setTexture("boxwall");
   materials[XN].setTexture("boxwall");
@@ -59,14 +59,17 @@ CustomBox::CustomBox()
 
   for (int i = 0; i < FaceCount; i++) {
     const float defScale = (i >= ZP) ? -2.0f : -8.0f;
-    texsize[i][0] = defScale;
-    texsize[i][1] = defScale;
-    texoffset[i][0] = 0.0f;
-    texoffset[i][1] = 0.0f;
-    phydrv[i] = -1;
-    drivethrough[i] = 0;
-    shootthrough[i] = 0;
+    texSizes[i][0] = defScale;
+    texSizes[i][1] = defScale;
+    texOffsets[i][0] = 0.0f;
+    texOffsets[i][1] = 0.0f;
+    phyDrvs[i] = -1;
+    driveThroughs[i] = 0;
+    shootThroughs[i] = 0;
+    ricochets[i] = false;
   }
+
+  ricochet = false;
 
   return;
 }
@@ -135,7 +138,7 @@ bool CustomBox::read(const char *cmd, std::istream& input)
   if (strcasecmp(cmd, "drivethrough") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
-      drivethrough[f] = 0xFF;
+      driveThroughs[f] = 0xFF;
     }
     driveThrough = 0xFF; // for old boxes
     return true;
@@ -143,7 +146,7 @@ bool CustomBox::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "shootthrough") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
-      shootthrough[f] = 0xFF;
+      shootThroughs[f] = 0xFF;
     }
     shootThrough = 0xFF; // for old boxes
     return true;
@@ -151,11 +154,19 @@ bool CustomBox::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "passable") == 0) {
     for (int i = 0; i < faceCount; i++) {
       const int f = faceList[i];
-      drivethrough[f] = 0xFF;
-      shootthrough[f] = 0xFF;
+      driveThroughs[f] = 0xFF;
+      shootThroughs[f] = 0xFF;
     }
     driveThrough = 0xFF; // for old boxes
     shootThrough = 0xFF; // for old boxes
+    return true;
+  }
+  else if (strcasecmp(cmd, "ricochet") == 0) {
+    for (int i = 0; i < faceCount; i++) {
+      const int f = faceList[i];
+      ricochets[f] = true;
+    }
+    ricochet = true; // for old boxes
     return true;
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
@@ -166,8 +177,8 @@ bool CustomBox::read(const char *cmd, std::istream& input)
     } else {
       for (int i = 0; i < faceCount; i++) {
 	const int f = faceList[i];
-	texsize[f][0] = tmp[0];
-	texsize[f][1] = tmp[1];
+	texSizes[f][0] = tmp[0];
+	texSizes[f][1] = tmp[1];
       }
     }
     return true;
@@ -180,8 +191,8 @@ bool CustomBox::read(const char *cmd, std::istream& input)
     } else {
       for (int i = 0; i < faceCount; i++) {
 	const int f = faceList[i];
-	texoffset[f][0] = tmp[0];
-	texoffset[f][1] = tmp[1];
+	texOffsets[f][0] = tmp[0];
+	texOffsets[f][1] = tmp[1];
       }
     }
     return true;
@@ -200,7 +211,7 @@ bool CustomBox::read(const char *cmd, std::istream& input)
     } else {
       for (int i = 0; i < faceCount; i++) {
 	const int f = faceList[i];
-	phydrv[f] = pd;
+	phyDrvs[f] = pd;
       }
       return true;
     }
@@ -240,25 +251,23 @@ bool CustomBox::read(const char *cmd, std::istream& input)
 }
 
 
-static void getEdgeLengths(const MeshTransform& xform, float lengths[3])
+static fvec3 getEdgeLengths(const MeshTransform& xform)
 {
   MeshTransform::Tool xformTool(xform);
-  float vo[3] = {-1.0f, -1.0f, 0.0f};
-  float vx[3] = {+1.0f, -1.0f, 0.0f};
-  float vy[3] = {-1.0f, +1.0f, 0.0f};
-  float vz[3] = {-1.0f, -1.0f, 1.0f};
+
+  fvec3 vo(-1.0f, -1.0f, 0.0f);
+  fvec3 vx(+1.0f, -1.0f, 0.0f);
+  fvec3 vy(-1.0f, +1.0f, 0.0f);
+  fvec3 vz(-1.0f, -1.0f, 1.0f);
+
   xformTool.modifyVertex(vo);
   xformTool.modifyVertex(vx);
   xformTool.modifyVertex(vy);
   xformTool.modifyVertex(vz);
-  float dx[3], dy[3], dz[3];
-  vec3sub(dx, vx, vo);
-  vec3sub(dy, vy, vo);
-  vec3sub(dz, vz, vo);
-  lengths[0] = sqrtf(vec3dot(dx, dx));
-  lengths[1] = sqrtf(vec3dot(dy, dy));
-  lengths[2] = sqrtf(vec3dot(dz, dz));
-  return;
+
+  return fvec3((vx - vo).length(),
+               (vy - vo).length(),
+               (vz - vo).length());
 }
 
 
@@ -267,8 +276,8 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   if (isOldBox && transform.isEmpty()) {
     BoxBuilding* box =
       new BoxBuilding(pos, rotation,
-		      fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-		      driveThrough, shootThrough);
+		      fabsf(size.x), fabsf(size.y), fabsf(size.z),
+		      driveThrough, shootThrough, ricochet, false);
     groupdef->addObstacle(box);
     return;
   }
@@ -278,34 +287,32 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 
   // setup the transform
   MeshTransform xform;
-  const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+  const fvec3 zAxis(0.0f, 0.0f, 1.0f);
   xform.addScale(size);
   xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   xform.addShift(pos);
   xform.append(transform);
 
   // get the length deltas from the transform
-  float edgeLengths[3];
-  getEdgeLengths(xform, edgeLengths);
-
+  const fvec3 edgeLengths = getEdgeLengths(xform);
 
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> verts;
-  std::vector<cfvec3> norms;
-  std::vector<cfvec2> txcds;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> verts;
+  std::vector<fvec3> norms;
+  std::vector<fvec2> txcds;
 
   // add the checkpoint
   checkTypes.push_back(MeshObstacle::CheckInside);
-  const float middle[3] = { 0.0f, 0.0f, 0.5f };
+  const fvec3 middle(0.0f, 0.0f, 0.5f);
   checkPoints.push_back(middle);
 
   // add the vertex coordinates
-  const float vertsData[8][3] = {
-    {-1.0f, -1.0f, 0.0f}, {+1.0f, -1.0f, 0.0f},
-    {+1.0f, +1.0f, 0.0f}, {-1.0f, +1.0f, 0.0f},
-    {-1.0f, -1.0f, 1.0f}, {+1.0f, -1.0f, 1.0f},
-    {+1.0f, +1.0f, 1.0f}, {-1.0f, +1.0f, 1.0f}
+  const fvec3 vertsData[8] = {
+    fvec3(-1.0f, -1.0f, 0.0f), fvec3(+1.0f, -1.0f, 0.0f),
+    fvec3(+1.0f, +1.0f, 0.0f), fvec3(-1.0f, +1.0f, 0.0f),
+    fvec3(-1.0f, -1.0f, 1.0f), fvec3(+1.0f, -1.0f, 1.0f),
+    fvec3(+1.0f, +1.0f, 1.0f), fvec3(-1.0f, +1.0f, 1.0f)
   };
   for (i = 0; i < 8; i++) {
     verts.push_back(vertsData[i]);
@@ -320,30 +327,30 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
     {0, 1}, // ZP
     {0, 1}  // ZN
   };
-  const float txcdData[4][2] = {
-    {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
+  const fvec2 txcdData[4] = {
+    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f),
+    fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f)
   };
   for (int face = 0; face < FaceCount; face++) {
     for (int corner = 0; corner < 4; corner++) {
-      float txcd[2];
+      fvec2 txcd;
       for (int a = 0; a < 2; a++) {
 	float scale;
-	if (texsize[face][a] >= 0.0f) {
-	  scale = texsize[face][a];
+	if (texSizes[face][a] >= 0.0f) {
+	  scale = texSizes[face][a];
 	} else {
 	  const int axis = txcdAxis[face][a];
-	  scale = (edgeLengths[axis] / -texsize[face][a]);
+	  scale = (edgeLengths[axis] / -texSizes[face][a]);
 	}
-	txcd[a] = (txcdData[corner][a] - texoffset[face][a]) * scale;
+	txcd[a] = (txcdData[corner][a] - texOffsets[face][a]) * scale;
       }
       txcds.push_back(txcd);
     }
   }
 
-
   MeshObstacle* mesh = new MeshObstacle(xform, checkTypes, checkPoints,
 					verts, norms, txcds, FaceCount,
-					false, false, false, false);
+					false, false, 0, 0, false);
 
   mesh->setName(name.c_str());
 
@@ -364,43 +371,49 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(2); iv.push_back(6); iv.push_back(5);
   it.push_back(0); it.push_back(1); it.push_back(2); it.push_back(3);
-  mesh->addFace(iv, in, it, mats[XP], phydrv[XP], false, false,
-		drivethrough[XP], shootthrough[XP], false);
+  mesh->addFace(iv, in, it, mats[XP], phyDrvs[XP], false, false,
+		driveThroughs[XP], shootThroughs[XP], ricochets[XP],
+		false, NULL);
 
   // XN
   iv.clear(); it.clear();
   iv.push_back(3); iv.push_back(0); iv.push_back(4); iv.push_back(7);
   it.push_back(4); it.push_back(5); it.push_back(6); it.push_back(7);
-  mesh->addFace(iv, in, it, mats[XN], phydrv[XN], false, false,
-		drivethrough[XN], shootthrough[XN], false);
+  mesh->addFace(iv, in, it, mats[XN], phyDrvs[XN], false, false,
+		driveThroughs[XN], shootThroughs[XN], ricochets[XN],
+		false, NULL);
 
   // YP
   iv.clear(); it.clear();
   iv.push_back(2); iv.push_back(3); iv.push_back(7); iv.push_back(6);
   it.push_back(8); it.push_back(9); it.push_back(10); it.push_back(11);
-  mesh->addFace(iv, in, it, mats[YP], phydrv[YP], false, false,
-		drivethrough[YP], shootthrough[YP], false);
+  mesh->addFace(iv, in, it, mats[YP], phyDrvs[YP], false, false,
+		driveThroughs[YP], shootThroughs[YP], ricochets[YP],
+		false, NULL);
 
   // YN
   iv.clear(); it.clear();
   iv.push_back(0); iv.push_back(1); iv.push_back(5); iv.push_back(4);
   it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
-  mesh->addFace(iv, in, it, mats[YN], phydrv[YN], false, false,
-		drivethrough[YN], shootthrough[YN], false);
+  mesh->addFace(iv, in, it, mats[YN], phyDrvs[YN], false, false,
+		driveThroughs[YN], shootThroughs[YN], ricochets[YN],
+		false, NULL);
 
   // ZP
   iv.clear(); it.clear();
   iv.push_back(4); iv.push_back(5); iv.push_back(6); iv.push_back(7);
   it.push_back(16); it.push_back(17); it.push_back(18); it.push_back(19);
-  mesh->addFace(iv, in, it, mats[ZP], phydrv[ZP], false, false,
-		drivethrough[ZP], shootthrough[ZP], false);
+  mesh->addFace(iv, in, it, mats[ZP], phyDrvs[ZP], false, false,
+		driveThroughs[ZP], shootThroughs[ZP], ricochets[ZP],
+		false, NULL);
 
   // ZN
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(0); iv.push_back(3); iv.push_back(2);
   it.push_back(20); it.push_back(21); it.push_back(22); it.push_back(23);
-  mesh->addFace(iv, in, it, mats[ZN], phydrv[ZN], false, false,
-		drivethrough[ZN], shootthrough[ZN], false);
+  mesh->addFace(iv, in, it, mats[ZN], phyDrvs[ZN], false, false,
+		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
+		false, NULL);
 
   // to be or not to be...
   if (mesh->isValid()) {
@@ -413,7 +426,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

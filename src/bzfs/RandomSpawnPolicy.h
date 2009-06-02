@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,8 +13,11 @@
 #ifndef __RANDOMSPAWNPOLICY_H__
 #define __RANDOMSPAWNPOLICY_H__
 
-/* interface header */
+// interface header
 #include "SpawnPolicy.h"
+
+// common headers
+#include "vectors.h"
 
 
 /** a RandomSpawnPolicy is a SpawnPolicy that just generates a purely
@@ -31,7 +34,7 @@ public:
     return name;
   }
 
-  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
+  virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
   virtual void getAzimuth(float &azimuth);
 };
 

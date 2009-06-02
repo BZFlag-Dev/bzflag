@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -25,54 +25,54 @@ enum ReplayPacketMode {
 };
 
 namespace Record {
-  extern bool init ();
-  extern bool kill ();
+  extern bool init();
+  extern bool kill();
 
-  extern bool setDirectory (const char *dirname);
-  extern const char* getDirectory ();
+  extern bool setDirectory(const char *dirname);
+  extern const char* getDirectory();
 
-  extern bool start (int playerIndex);
-  extern bool stop (int playerIndex);
-  extern bool setSize (int playerIndex, int Mbytes);  // set max size, in Mbytes
-  extern bool setRate (int playerIndex, int seconds); // set state update rate
-  extern bool saveFile (int playerIndex, const char *filename); // unbuffered save
-  extern bool saveBuffer (int playerIndex, const char *filename, int seconds);
+  extern bool start     (int playerIndex);
+  extern bool stop      (int playerIndex);
+  extern bool setSize   (int playerIndex, int Mbytes);  // set max size, in Mbytes
+  extern bool setRate   (int playerIndex, int seconds); // set state update rate
+  extern bool saveFile  (int playerIndex, const char* filename); // unbuffered save
+  extern bool saveBuffer(int playerIndex, const char* filename, int seconds);
   extern bool sendStats (int playerIndex);
 
-  extern bool enabled ();
+  extern bool enabled();
 
   extern bool getAllowFileRecs();
   extern void setAllowFileRecs(bool value);
 
-  extern bool addPacket (uint16_t code, int len, const void * data,
-			 uint16_t mode = RealPacket);
+  extern bool addPacket(uint16_t code, int len, const void* data,
+			uint16_t mode = RealPacket);
 
-  extern void sendHelp (int playerIndex);
+  extern void sendHelp(int playerIndex);
 }
 
 namespace Replay {
-  extern bool init (); // must be done before any players join
-  extern bool kill ();
+  extern bool init(); // must be done before any players join
+  extern bool kill();
 
-  extern bool sendFileList (int playerIndex, const char* options);
-  extern bool loadFile (int playerIndex, const char *filename);
-  extern bool unloadFile (int playerIndex);
-  extern bool play (int playerIndex);
-  extern bool loop (int playerIndex);
-  extern bool sendStats (int playerIndex);
-  extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
-  extern bool pause (int playerIndex);
+  extern bool sendFileList(int playerIndex, const char* options);
+  extern bool loadFile    (int playerIndex, const char* filename);
+  extern bool unloadFile  (int playerIndex);
+  extern bool play        (int playerIndex);
+  extern bool loop        (int playerIndex);
+  extern bool sendStats   (int playerIndex);
+  extern bool skip        (int playerIndex, int seconds); // 0 secs jumps to next packet
+  extern bool pause       (int playerIndex);
 
-  extern bool enabled ();
-  extern bool playing ();
+  extern bool enabled();
+  extern bool playing();
 
-  extern float nextTime ();
-  extern bool sendPackets ();
+  extern float nextTime();
+  extern bool sendPackets();
 
-  extern void sendHelp (int playerIndex);
+  extern void sendHelp(int playerIndex);
 
   enum ReplayListSort {
-    SortNone = 0,
+    SortNone   = 0,
     SortByName = 1,
     SortByTime = 2
   };

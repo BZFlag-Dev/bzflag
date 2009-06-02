@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -328,10 +328,16 @@ bool KickCommand::operator() (const char	 *message,
     GameKeeper::Player *p
       = GameKeeper::Player::getPlayerByIndex(kickEvent.kickedID);
 
+    if (!p) {
+      snprintf(kickmessage, MessageLen, "Error: requested player does not exist.");
+      sendMessage(ServerPlayer, kickEvent.kickerID, kickmessage);
+      return true;
+    }
+
     // operators can override antiperms
     if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
-      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikick))) {
+      if (p->accessInfo.hasPerm(PlayerAccessInfo::antikick)) {
 	snprintf(kickmessage, MessageLen,
 		 "%s is protected from being kicked.",
 		 p->player.getCallSign());
@@ -406,7 +412,7 @@ bool KillCommand::operator() (const char	 *message,
     // operators can override antiperms
     if (!playerData->accessInfo.isOperator()) {
       // otherwise make sure the player is not protected with an antiperm
-      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill))) 
+      if ((p != NULL) && (p->accessInfo.hasPerm(PlayerAccessInfo::antikill)))
 	allow.allow = false;
     }
 
@@ -789,7 +795,7 @@ bool HostbanCommand::operator() (const char* message,
 
   worldEventManager.callEvents(bz_eHostBanModifyEvent,&hostBanEvent);
 
-  if ( t != hostBanEvent.bannerID ) { 
+  if ( t != hostBanEvent.bannerID ) {
     playerData = GameKeeper::Player::getPlayerByIndex(hostBanEvent.bannerID);
     if (!playerData)
       return true;
@@ -882,7 +888,7 @@ bool IdBanCommand::operator() (const char* message,
 
   // check if victim has antiban perms, if so cancel idban
 
-  if ( victimPlayer && victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban )) {  
+  if ( victimPlayer && victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban )) {
     char buffer[MessageLen];
 	snprintf(buffer, MessageLen, "%s is protected from being banned (skipped).",
 	victimPlayer->player.getCallSign());
@@ -1045,17 +1051,10 @@ bool MasterBanCommand::operator() (const char	 *message,
   std::string cmd = "";
 
   // allow for arbitrary whitespace
-  size_t start = 0;
-  while ((start < argument.size()) &&
-	 (isspace(argument[start]))) {
-    start++;
-  }
-
-  size_t end = 0;
-  while ((end < argument.size()) &&
-	 (!isspace(argument[end]))) {
-    end++;
-  }
+  int start = TextUtils::firstVisible(argument);
+  int end = TextUtils::firstNonvisible(argument);
+  if (start < 0) start = 0;
+  if (end < 0) end = 0;
 
   // make sure the command is lower case for comparison
   // simplicity/insensitivity

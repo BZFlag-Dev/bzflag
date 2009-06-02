@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -66,6 +66,13 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   password->setMaxLength(CallSignLen - 1);
   password->setString(info->password);
   addControl(password);
+
+  motto = new HUDuiTypeIn;
+  motto->setFontFace(fontFace);
+  motto->setMaxLength(64);
+  motto->setLabel("Motto:");
+  motto->setString(info->motto);
+  addControl(motto);
 
   team = new HUDuiList;
   team->setFontFace(fontFace);
@@ -163,6 +170,10 @@ void JoinMenu::loadInfo()
     strncpy(info->password, password->getString().c_str(), PasswordLen-1);
     info->token[0] = '\0';
   }
+
+  if (info->motto != motto->getString())
+    info->motto = motto->getString();
+
   info->team = getTeam();
   strncpy(info->serverName, server->getString().c_str(), ServerNameLen-1);
   info->serverPort = atoi(port->getString().c_str());
@@ -213,7 +224,7 @@ void JoinMenu::setFailedMessage(const char* msg)
 
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(),
-	failedMessage->getFontSize(), failedMessage->getString().c_str());
+	failedMessage->getFontSize(), failedMessage->getString());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
@@ -232,7 +243,7 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
   status->setString(msg);
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStringWidth(status->getFontFace()->getFMFace(),
-		status->getFontSize(), status->getString().c_str());
+		status->getFontSize(), status->getString());
   status->setPosition(center - 0.5f * _width, status->getY());
 }
 
@@ -253,7 +264,7 @@ void JoinMenu::updateTeamTexture()
   else
     texture = Team::getImagePrefix(getTeam());
   texture += "icon";
-  int id = tm.getTextureID(texture.c_str());
+  int id = tm.getTextureID(texture);
   teamIcon->setTexture(id);
 
   // make it big enough
@@ -264,7 +275,7 @@ void JoinMenu::updateTeamTexture()
   Bundle *bdl = BundleMgr::getCurrentBundle();
   const float x = team->getX() + fm.getStringWidth(team->getFontFace()->getFMFace(),
 	  team->getFontSize(),
-	  std::string(bdl->getLocalString(team->getList()[team->getIndex()]) + "x").c_str());
+	  std::string(bdl->getLocalString(team->getList()[team->getIndex()]) + "x"));
   teamIcon->setPosition(x, team->getY());
 }
 
@@ -288,7 +299,7 @@ void JoinMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(MainMenu::getFontFace()->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;

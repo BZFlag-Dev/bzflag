@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Auto-fitter hinting routines for CJK script (body).                  */
 /*                                                                         */
-/*  Copyright 2006 by                                                      */
+/*  Copyright 2006, 2007 by                                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -45,7 +45,7 @@
   /*************************************************************************/
   /*************************************************************************/
 
-  static FT_Error
+  FT_LOCAL_DEF( FT_Error )
   af_cjk_metrics_init( AF_LatinMetrics  metrics,
                        FT_Face          face )
   {
@@ -91,7 +91,7 @@
   }
 
 
-  static void
+  FT_LOCAL_DEF( void )
   af_cjk_metrics_scale( AF_LatinMetrics  metrics,
                         AF_Scaler        scaler )
   {
@@ -332,7 +332,6 @@
     AF_Segment    segment_limit = segments + axis->num_segments;
     AF_Segment    seg;
 
-    AF_Direction  up_dir;
     FT_Fixed      scale;
     FT_Pos        edge_distance_threshold;
 
@@ -341,9 +340,6 @@
 
     scale = ( dim == AF_DIMENSION_HORZ ) ? hints->x_scale
                                          : hints->y_scale;
-
-    up_dir = ( dim == AF_DIMENSION_HORZ ) ? AF_DIR_UP
-                                          : AF_DIR_RIGHT;
 
     /*********************************************************************/
     /*                                                                   */
@@ -431,7 +427,9 @@
 
         /* insert a new edge in the list and */
         /* sort according to the position    */
-        error = af_axis_hints_new_edge( axis, seg->pos, memory, &edge );
+        error = af_axis_hints_new_edge( axis, seg->pos,
+                                        (AF_Direction)seg->dir,
+                                        memory, &edge );
         if ( error )
           goto Exit;
 
@@ -600,7 +598,7 @@
   }
 
 
-  static FT_Error
+  FT_LOCAL_DEF( FT_Error )
   af_cjk_hints_init( AF_GlyphHints    hints,
                      AF_LatinMetrics  metrics )
   {
@@ -1354,7 +1352,7 @@
   }
 
 
-  static FT_Error
+  FT_LOCAL_DEF( FT_Error )
   af_cjk_hints_apply( AF_GlyphHints    hints,
                       FT_Outline*      outline,
                       AF_LatinMetrics  metrics )
@@ -1365,7 +1363,7 @@
     FT_UNUSED( metrics );
 
 
-    error = af_glyph_hints_reload( hints, outline );
+    error = af_glyph_hints_reload( hints, outline, 0 );
     if ( error )
       goto Exit;
 

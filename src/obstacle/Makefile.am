@@ -15,7 +15,6 @@ gl_files = \
 	EmptySceneNodeGenerator.cxx	\
 	ObstacleSceneNodeGenerator.cxx	\
 	PyramidSceneNodeGenerator.cxx	\
-	TeleporterSceneNodeGenerator.cxx\
 	WallSceneNodeGenerator.cxx	\
 	MeshSceneNodeGenerator.cxx	\
 	ArcObstacle.cxx			\
@@ -31,7 +30,6 @@ gl_files = \
 	MeshDrawInfo.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
-	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
 	Obstacle.cxx			\
 	ObstacleModifier.cxx		\
@@ -52,7 +50,6 @@ nogl_files = \
 	MeshDrawInfo.cxx		\
 	PyramidBuilding.cxx		\
 	Teleporter.cxx			\
-	TetraBuilding.cxx		\
 	WallObstacle.cxx		\
 	Obstacle.cxx			\
 	ObstacleModifier.cxx		\

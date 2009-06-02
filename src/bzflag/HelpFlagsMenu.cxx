@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,11 +44,11 @@ HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality)
 
     if (((*it)->flagQuality != quality) ||
 	((*it)->flagTeam != NoTeam) ||
-	(strcmp((*it)->flagName, "") == 0)) {
+	((*it)->flagName.size() <= 0)) {
       continue;
     }
 
-    addControl(createLabel((*it)->flagHelp, (*it)->label().c_str()), false);
+    addControl(createLabel((*it)->flagHelp.c_str(), (*it)->label().c_str()), false);
   }
 }
 

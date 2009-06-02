@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,18 +20,22 @@
 /* the common header */
 #include "common.h"
 
-/* interface headers */
+/* interface header */
 #include "Singleton.h"
 
-/* system interface headers */
+/* system headers */
 #include <vector>
 
-/* common interface headers */
+/* common headers */
 #include "OpenGLLight.h"
 #include "ViewFrustum.h"
 #include "RenderNode.h"
+#include "Extents.h"
+#include "vectors.h"
+
 
 #define RENDERER (SceneRenderer::instance())
+
 
 class SceneDatabase;
 class SceneIterator;
@@ -41,20 +45,12 @@ class HUDRenderer;
 class MainWindow;
 class Extents;
 
-class FlareLight {
-public:
-  FlareLight(const float* pos, const float* color);
-  ~FlareLight();
-
-public:
-  float		pos[3];
-  float		color[3];
-};
 
 #define _LOW_QUALITY 0
 #define _MEDIUM_QUALITY 1
 #define _HIGH_QUALITY 2
 #define _EXPERIMENTAL_QUALITY 3
+
 
 class SceneRenderer : public Singleton<SceneRenderer>
 {
@@ -68,15 +64,21 @@ public:
     Interlaced		// right/left interlaced stereo
   };
 
+  enum SpecialMode {
+    NoSpecial,
+    WireFrame,
+    HiddenLine,
+    DepthComplexity,
+    SpecialModeCount
+  };
+
   void		setWindow(MainWindow* _window);
   MainWindow&	getWindow() const;
 
-  bool		useABGR() const;
+  SpecialMode	getSpecialMode() const;
+
   bool		useStencil() const;
   int		useQuality() const;
-  bool		useDepthComplexity() const;
-  bool		useWireframe() const;
-  bool		useHiddenLine() const;
   float		getPanelOpacity() const;
   int		getRadarSize() const;
   int		getMaxMotionFactor() const;
@@ -84,13 +86,11 @@ public:
   bool		isSameFrame() const;
   ViewType	getViewType() const;
 
+  void		setQuality(int value);
+  void		setSpecialMode(SpecialMode mode);
+
   void		setSmoothing(bool on);
   void		setZBuffer(bool on);
-  void		setZBufferSplit(bool on);
-  void		setQuality(int value);
-  void		setDepthComplexity(bool on);
-  void		setWireframe(bool on);
-  void		setHiddenLine(bool on);
   void		setPanelOpacity(float opacity);
   void		setRadarSize(int size);
   void		setMaxMotionFactor(int size);
@@ -102,26 +102,27 @@ public:
 
   void		clearRadar(float opacity);
 
-  void		getGroundUV(const float p[2], float uv[2]) const;
+  void		getGroundUV(const fvec2& p, fvec2& uv) const;
 
   bool		getBlank() const;
   bool		getInvert() const;
   void		setBlank(bool blank = true);
   void		setInvert(bool invert = true);
 
+  inline bool	getDrawingMirror() const { return drawingMirror; }
+
   const ViewFrustum&	getViewFrustum() const;
-  ViewFrustum&	getViewFrustum();
+  ViewFrustum&		getViewFrustum();
 
   int			getNumLights() const;
   int			getNumAllLights() const;
   const OpenGLLight&	getLight(int index) const;
-  void		enableLight(int index, bool = true);
-  void		clearLights();
-  void		addLight(OpenGLLight&);
-  void		addFlareLight(const float* pos, const float* color);
+  void			enableLight(int index, bool = true);
+  void			clearLights();
+  void			addLight(OpenGLLight&);
 
   // temporarily turn off non-applicable lights for big meshes
-  void		disableLights(const float mins[3], const float maxs[3]);
+  void		disableLights(const Extents& extents);
   void		reenableLights();
 
   void		setupSun(); // setup sun lighting params
@@ -129,12 +130,12 @@ public:
 
   void		setTimeOfDay(double julianDay);
 
-  const GLfloat*	getSunColor() const;
-  const GLfloat*	getSunScaledColor() const;
-  GLfloat		getSunBrightness() const;
-  const GLfloat*	getSunDirection() const;
-  const GLfloat*	getAmbientColor() const;
-  const GLfloat*	getCelestialTransform() const;
+  const fvec4&		getSunColor() const;
+  const fvec4&		getSunScaledColor() const;
+  float			getSunBrightness() const;
+  const fvec3*		getSunDirection() const;
+  const fvec4&		getAmbientColor() const;
+  const float*		getCelestialTransform() const;
 
   SceneDatabase*	getSceneDatabase() const;
   void			setSceneDatabase(SceneDatabase*);
@@ -149,15 +150,19 @@ public:
 
   const RenderNodeList& getShadowList() const;
 
+  bool		setupMapFog();
+
   void		render(bool lastFrame = true,
 		       bool sameFrame = false,
 		       bool fullWindow = false);
-  void		renderScene(bool lastFrame = true,
-			    bool sameFrame = false,
-			    bool fullWindow = false);
+  void		renderScene();
+
   void		notifyStyleChange();
+  void		updateNodeStyles();
   void		addRenderNode(RenderNode* node, const OpenGLGState*);
   void		addShadowNode(RenderNode* node);
+
+  int 		getShadowPlanes(const fvec4 **planes) const;
 
 protected:
   friend class Singleton<SceneRenderer>;
@@ -175,69 +180,72 @@ private:
   void		getLights();
   void		getRenderNodes();
 
+  void		drawMirror();
   void		doRender();
   void		renderDepthComplexity();
-  void		renderPreDimming();
   void		renderPostDimming();
 
+  void		setupShadowPlanes();
+
+  void		drawLinkDebug() const;
+
+private:
   MainWindow*		window;
+  SpecialMode		specialMode;
   bool			blank;
   bool			invert;
   bool			mirror;
+  bool			drawingMirror;
   bool			drawGround;
   bool			clearZbuffer;
+  bool			mapFog;
   ViewFrustum		frustum;
   float			lengthPerPixel;
-  GLint			maxLights;
-  GLint			reservedLights;
-  GLint			dynamicLights;
+  int			maxLights;
+  int			reservedLights;
+  int			dynamicLights;
   int			lightsSize;
   int			lightsCount;
   OpenGLLight**		lights;
   OpenGLLight		theSun;
   bool			sunOrMoonUp;
-  GLfloat		sunDirection[3];	// or moon
-  GLfloat		sunColor[4];
-  GLfloat		sunScaledColor[4];
-  GLfloat		celestialTransform[4][4];
-  GLfloat		sunBrightness;
-  GLfloat		ambientColor[4];
+  fvec3			sunDirection;	// or moon
+  fvec4			sunColor;
+  fvec4			sunScaledColor;
+  float			celestialTransform[4][4];
+  float			sunBrightness;
+  fvec4			ambientColor;
   SceneDatabase*	scene;
   BackgroundRenderer*	background;
   int			triangleCount;
-  static const GLint	SunLight;
+  static const int	SunLight;
 
   static const float dimDensity;
-  static const GLfloat dimnessColor[4];
-  static const GLfloat blindnessColor[4];
+  static const fvec4 dimnessColor;
+  static const fvec4 blindnessColor;
   float teleporterProximity;
 
-  bool		abgr;
   int		useQualityValue;
-  bool		useDepthComplexityOn;
-  bool		useWireframeOn;
-  bool		useHiddenLineOn;
   float		panelOpacity;
   int		radarSize;
   int		maxMotionFactor;
-  bool		useFogHack;
   bool		useStencilOn;
   ViewType	viewType;
   bool		inOrder;
-  int		depthRange;
-  int		numDepthRanges;
-  double	depthRangeSize;
   bool		useDimming;
   bool		canUseHiddenLine;
   bool		exposed;
   bool		lastFrame;
   bool		sameFrame;
+  bool		fullWindow;
   bool		needStyleUpdate;
   bool		rebuildTanks;
 
-  std::vector<FlareLight>	flareLightList;
-  RenderNodeList		shadowList;
-  RenderNodeGStateList		orderedList;
+  fvec4		shadowPlanes[4];
+  int		shadowPlaneCount;
+
+  RenderNodeList	shadowList;
+  RenderNodeGStateList	orderedList;
 };
 
 
@@ -290,27 +298,27 @@ inline const OpenGLLight&	SceneRenderer::getLight(int index) const
   return *(lights[index]);
 }
 
-inline const GLfloat*		SceneRenderer::getSunColor() const
+inline const fvec4&		SceneRenderer::getSunColor() const
 {
   return sunColor;
 }
 
-inline const GLfloat*		SceneRenderer::getSunScaledColor() const
+inline const fvec4&		SceneRenderer::getSunScaledColor() const
 {
   return sunScaledColor;
 }
 
-inline GLfloat			SceneRenderer::getSunBrightness() const
+inline float			SceneRenderer::getSunBrightness() const
 {
   return sunBrightness;
 }
 
-inline const GLfloat* SceneRenderer::getAmbientColor() const
+inline const fvec4& 		SceneRenderer::getAmbientColor() const
 {
   return ambientColor;
 }
 
-inline const GLfloat*		SceneRenderer::getCelestialTransform() const
+inline const float*		SceneRenderer::getCelestialTransform() const
 {
   return &celestialTransform[0][0];
 }

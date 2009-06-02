@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,32 +13,37 @@
 #ifndef __CUSTOMLINK_H__
 #define __CUSTOMLINK_H__
 
-/* interface header */
+// interface header
 #include "WorldFileObject.h"
 
-/* system interface headers */
+// system headers
 #include <iostream>
 #include <string>
 
-/* local interface headers */
+// common headers
+#include "ObstacleMgr.h"
+#include "LinkDef.h"
+
+// local headers
 #include "WorldInfo.h"
 
 
 class CustomLink : public WorldFileObject {
   public:
-    CustomLink();
+    CustomLink(bool linkSet);
     virtual bool read(const char *cmd, std::istream& input);
-    virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
-    std::string from;
-    std::string to;
+    LinkDef linkDef;
+
+    bool linkSet;
+    std::vector<LinkDef> linkDefVec;
 };
 
 #endif  /* __CUSTOMLINK_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

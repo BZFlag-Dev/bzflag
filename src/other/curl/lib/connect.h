@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: connect.h,v 1.24 2008-02-07 22:25:04 bagder Exp $
+ * $Id: connect.h,v 1.26 2008-11-03 16:24:56 bagder Exp $
  ***************************************************************************/
 
 int Curl_nonblock(curl_socket_t sockfd,    /* operate on this */
@@ -37,8 +37,6 @@ CURLcode Curl_connecthost(struct connectdata *conn,
                           Curl_addrinfo **addr, /* the one we used */
                           bool *connected); /* truly connected? */
 
-CURLcode Curl_store_ip_addr(struct connectdata *conn);
-
 /* generic function that returns how much time there's left to run, according
    to the timeouts set */
 long Curl_timeleft(struct connectdata *conn,
@@ -47,4 +45,13 @@ long Curl_timeleft(struct connectdata *conn,
 
 #define DEFAULT_CONNECT_TIMEOUT 300000 /* milliseconds == five minutes */
 
+/*
+ * Used to extract socket and connectdata struct for the most recent
+ * transfer on the given SessionHandle.
+ *
+ * The socket 'long' will be -1 in case of failure!
+ */
+CURLcode Curl_getconnectinfo(struct SessionHandle *data,
+                             long *param_longp,
+                             struct connectdata **connp);
 #endif

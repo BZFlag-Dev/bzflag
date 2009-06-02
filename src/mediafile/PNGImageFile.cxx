@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -65,14 +65,14 @@ PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL
 
   unsigned char* data = c->getData();
   int32_t myWidth, myHeight;
-  data = (unsigned char *)nboUnpackInt(data, myWidth);
-  data = (unsigned char *)nboUnpackInt(data, myHeight);
+  data = (unsigned char *)nboUnpackInt32(data, myWidth);
+  data = (unsigned char *)nboUnpackInt32(data, myHeight);
 
-  data = (unsigned char *)nboUnpackUByte(data, bitDepth);
-  data = (unsigned char *)nboUnpackUByte(data, colorDepth);
-  data = (unsigned char *)nboUnpackUByte(data, compressionMethod);
-  data = (unsigned char *)nboUnpackUByte(data, filterMethod);
-  data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
+  data = (unsigned char *)nboUnpackUInt8(data, bitDepth);
+  data = (unsigned char *)nboUnpackUInt8(data, colorDepth);
+  data = (unsigned char *)nboUnpackUInt8(data, compressionMethod);
+  data = (unsigned char *)nboUnpackUInt8(data, filterMethod);
+  data = (unsigned char *)nboUnpackUInt8(data, interlaceMethod);
 
   delete c;
 
@@ -247,9 +247,9 @@ PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 
   unsigned char *pData = c->getData();
   for (int i = 0; i < numColors; i++) {
-    pData = (unsigned char *)nboUnpackUByte(pData, rgb.red);
-    pData = (unsigned char *)nboUnpackUByte(pData, rgb.green);
-    pData = (unsigned char *)nboUnpackUByte(pData, rgb.blue);
+    pData = (unsigned char *)nboUnpackUInt8(pData, rgb.red);
+    pData = (unsigned char *)nboUnpackUInt8(pData, rgb.green);
+    pData = (unsigned char *)nboUnpackUInt8(pData, rgb.blue);
     p->add(rgb);
   }
   return p;

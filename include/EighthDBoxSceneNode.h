@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,8 +23,8 @@
 
 class EighthDBoxSceneNode : public EighthDimSceneNode {
   public:
-			EighthDBoxSceneNode(const float pos[3],
-					const float size[3], float rotation);
+    EighthDBoxSceneNode(const fvec3& pos,
+                        const fvec3& size, float rotation);
 			~EighthDBoxSceneNode();
 
     void		notifyStyleChange();
@@ -34,14 +34,14 @@ class EighthDBoxSceneNode : public EighthDimSceneNode {
     class EighthDBoxRenderNode : public RenderNode {
       public:
 			EighthDBoxRenderNode(const EighthDBoxSceneNode*,
-				const float pos[3],
-				const float size[3], float rotation);
+				const fvec3& pos,
+				const fvec3& size, float rotation);
 			~EighthDBoxRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const EighthDBoxSceneNode* sceneNode;
-	GLfloat		corner[8][3];
+	fvec3		corner[8];
     };
 
   private:

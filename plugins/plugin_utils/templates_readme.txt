@@ -21,7 +21,7 @@ Tags that to not follow this format will be output as normal text.
 
 Tags that start with [$ are variables. These tags will be replaced
 with plug-in generated code. The text after the $ is the name of the
-variable and is case insenstive.
+variable and is case insensitive.
 
 Some standard variables are provided by the template system;
 

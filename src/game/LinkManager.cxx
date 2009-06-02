@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,14 +23,48 @@
 #include <assert.h>
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
 #include <iostream>
 
 // common headers
 #include "bzglob.h"
+#include "BZDBCache.h"
 #include "Pack.h"
-#include "Teleporter.h"
+#include "MeshObstacle.h"
+#include "MeshFace.h"
 #include "ObstacleMgr.h"
+#include "TextUtils.h"
 
+
+static BZDB_int debugLinks("debugLinks");
+
+
+LinkManager linkManager;
+
+
+//============================================================================//
+
+bool LinkManager::DstData::operator<(const DstData& dd) const
+{
+  const unsigned short myMeshID = face->getMesh()->getListID();
+  const unsigned short ddMeshID = dd.face->getMesh()->getListID();
+  if (myMeshID < ddMeshID) { return true;  }
+  if (ddMeshID < myMeshID) { return false; }
+
+  const int myFaceID = face->getID();
+  const int ddFaceID = dd.face->getID();
+  if (myFaceID < ddFaceID) { return true;  }
+  if (ddFaceID < myFaceID) { return false; }
+
+  if (physics < dd.physics) { return true;  }
+  if (dd.physics < physics) { return false; }
+
+  return false;
+}
+
+
+//============================================================================//
 
 LinkManager::LinkManager()
 {
@@ -48,285 +82,511 @@ LinkManager::~LinkManager()
 
 void LinkManager::clear()
 {
-  linkNames.clear();
-  linkNumbers.clear();
+  linkDefs.clear();
+
+  linkMap.clear();
+
+  linkSrcs.clear();
+  linkSrcMap.clear();
+
+  linkDsts.clear();
+  linkDstMap.clear();
+
+  linkSrcSet.clear();
+  linkDstSet.clear();
+  linkFaceSet.clear();
+
+  nameFaceVec.clear();
   return;
 }
 
 
-void LinkManager::makeLinkName(int number, std::string& name)
+//============================================================================//
+
+void LinkManager::addLinkDef(const LinkDef& linkDef)
 {
-  name = "/t";
-  char buffer[8];
-  sprintf(buffer, "%i", (number / 2));
-  name += buffer;
-  name += ":";
-  if ((number % 2) == 0) {
-    name += "f";
-  } else {
-    name += "b";
+  if (!linkDef.getSrcs().empty() &&
+      !linkDef.getDsts().empty()) {
+    linkDefs.push_back(linkDef);
   }
   return;
 }
 
 
-void LinkManager::addLink(int src, int dst)
+int LinkManager::getLinkSrcID(const MeshFace* face) const
 {
-  LinkNameSet link;
-  makeLinkName(src, link.src);
-  makeLinkName(dst, link.dst);
-  linkNames.push_back(link);
-  return;
+  FaceIntMap::const_iterator it = linkSrcMap.find(face);
+  if (it == linkSrcMap.end()) {
+    return -1;
+  }
+  return it->second;
 }
 
 
-void LinkManager::addLink(const std::string& src, const std::string& dst)
+int LinkManager::getLinkDstID(const MeshFace* face,
+                              const LinkPhysics& lp) const
 {
-  LinkNameSet link;
-  if ((src[0] >= '0') && (src[0] <= '9')) {
-    int number = atoi(src.c_str());
-    makeLinkName(number, link.src);
-  } else {
-    link.src = src;
+  const DstData data(face, lp);
+  DstDataIntMap::const_iterator it = linkDstMap.find(data);
+  if (it == linkDstMap.end()) {
+    return -1;
   }
-  if ((dst[0] >= '0') && (dst[0] <= '9')) {
-    int number = atoi(dst.c_str());
-    makeLinkName(number, link.dst);
-  } else {
-    link.dst = dst;
-  }
-  linkNames.push_back(link);
-  return;
+  return it->second;
 }
 
 
-static bool inIntList(int value, const std::vector<int>& list)
+const MeshFace* LinkManager::getLinkSrcFace(int linkSrcID) const
 {
-  for (unsigned int i = 0; i < list.size(); i++) {
-    if (value == list[i]) {
-      return true;
+  if ((linkSrcID < 0) || (linkSrcID >= (int)linkSrcs.size())) {
+    return NULL;
+  }
+  return linkSrcs[linkSrcID];
+}
+
+
+const MeshFace* LinkManager::getLinkDstFace(int linkDstID) const
+{
+  if ((linkDstID < 0) || (linkDstID >= (int)linkDsts.size())) {
+    return NULL;
+  }
+  return linkDsts[linkDstID].face;
+}
+
+
+const LinkManager::DstData* LinkManager::getLinkDstData(int linkDstID) const
+{
+  if ((linkDstID < 0) || (linkDstID >= (int)linkDsts.size())) {
+    return NULL;
+  }
+  return &linkDsts[linkDstID];
+}
+
+
+//============================================================================//
+
+const MeshFace* LinkManager::getShotLinkDst(const MeshFace* srcLink,
+                                            unsigned int seed,
+                                            int& linkSrcID, int& linkDstID,
+                                            const LinkPhysics*& physics,
+                                            const fvec3& pos,
+                                            const fvec3& vel, int team,
+                                            const FlagType* flagType) const
+{
+  LinkMap::const_iterator it = linkMap.find(srcLink);
+  if (it == linkMap.end()) {
+    return NULL;
+  }
+
+  const DstIndexList& dstList = it->second;
+  const IntVec* dstIDs = &dstList.dstIDs;
+
+  // use a simpler method for single entries
+  if (dstIDs->size() == 1) {
+    const int dstIndex = (*dstIDs)[0];
+    const DstData& dstData = linkDsts[dstIndex];
+    if (dstList.needTest) {
+      if (!srcLink->shotCanCross(dstData.physics, pos, vel, team, flagType)) {
+        return NULL;
+      }
     }
+    linkSrcID = linkSrcMap.find(srcLink)->second;
+    linkDstID = dstIndex;
+    physics = &dstData.physics;
+    return dstData.face;
   }
-  return false;
+
+  // construct the vector of possible destinations
+  IntVec testIDs;
+  if (dstList.needTest) {
+    for (size_t i = 0; i < dstIDs->size(); i++) {
+      const int dstIndex = (*dstIDs)[i];
+      const DstData& dstData = linkDsts[dstIndex];
+      if (srcLink->shotCanCross(dstData.physics, pos, vel, team, flagType)) {
+        testIDs.push_back(dstIndex);
+      }
+    }
+    dstIDs = &testIDs;
+  }
+  if (dstIDs->empty()) {
+    return NULL;
+  }
+
+  seed = (seed * 1103515245 + 12345) >> 8; // from POSIX rand() example
+  seed = seed % dstIDs->size();
+
+  // assign the output variables
+  linkSrcID = linkSrcMap.find(srcLink)->second;
+  linkDstID = (*dstIDs)[seed];
+  const DstData& dstData = linkDsts[linkDstID];
+  physics = &dstData.physics;
+  return dstData.face;
 }
 
+
+const MeshFace* LinkManager::getTankLinkDst(const MeshFace* srcLink,
+                                            int& linkSrcID, int& linkDstID,
+                                            const LinkPhysics*& physics,
+                                            const fvec3& pos,
+                                            const fvec3& vel, int team,
+                                            const FlagType* flagType) const
+{
+  LinkMap::const_iterator it = linkMap.find(srcLink);
+  if (it == linkMap.end()) {
+    return NULL;
+  }
+
+  const DstIndexList& dstList = it->second;
+  const IntVec* dstIDs = &dstList.dstIDs;
+
+  // use a simpler method for single entries
+  if (dstIDs->size() == 1) {
+    const int dstIndex = (*dstIDs)[0];
+    const DstData& dstData = linkDsts[dstIndex];
+    if (dstList.needTest) {
+      if (!srcLink->tankCanCross(dstData.physics, pos, vel, team, flagType)) {
+        return NULL;
+      }
+    }
+    linkSrcID = linkSrcMap.find(srcLink)->second;
+    linkDstID = dstIndex;
+    physics = &dstData.physics;
+    return dstData.face;
+  }
+
+  // construct the vector of possible destinations
+  IntVec testIDs;
+  if (dstList.needTest) {
+    for (size_t i = 0; i < dstIDs->size(); i++) {
+      const int dstIndex = (*dstIDs)[i];
+      const DstData& dstData = linkDsts[dstIndex];
+      if (srcLink->tankCanCross(dstData.physics, pos, vel, team, flagType)) {
+        testIDs.push_back(dstIndex);
+      }
+    }
+    dstIDs = &testIDs;
+  }
+  if (dstIDs->empty()) {
+    return NULL;
+  }
+
+  const int randIndex = rand() % (int)dstIDs->size();
+
+  // assign the output variables
+  linkSrcID = linkSrcMap.find(srcLink)->second;
+  linkDstID = (*dstIDs)[randIndex];
+  const DstData& dstData = linkDsts[linkDstID];
+  physics = &dstData.physics;
+  return dstData.face;
+}
+
+
+//============================================================================//
 
 void LinkManager::doLinking()
 {
-  unsigned int i;
+  // get the potential named faces
+  buildNameMap();
 
-  // initial the destinations
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  // findTelesByName() can not return higher then this
-  linkNumbers.resize(teles.size() * 2);
-  for (i = 0; i < linkNumbers.size(); i++) {
-    linkNumbers[i].dsts.clear();
+  // build the link map
+  for (size_t i = 0; i < linkDefs.size(); i++) {
+    const LinkDef& linkDef = linkDefs[i];
+    FaceSet srcs;
+    FaceSet dsts;
+    if (matchLinks(linkDef.getSrcs(), srcs) &&
+        matchLinks(linkDef.getDsts(), dsts)) {
+      FaceSet::const_iterator srcIt;
+      FaceSet::const_iterator dstIt;
+      for (srcIt = srcs.begin(); srcIt != srcs.end(); ++srcIt) {
+        for (dstIt = dsts.begin(); dstIt != dsts.end(); ++dstIt) {
+          createLink(*srcIt, *dstIt, linkDef.physics);
+        }
+      }
+    }
   }
 
-  for (i = 0; i < linkNames.size(); i++) {
-    LinkNameSet& link = linkNames[i];
-    std::vector<int> srcNumbers;
-    std::vector<int> dstNumbers;
-    findTelesByName(link.src, srcNumbers);
-    findTelesByName(link.dst, dstNumbers);
+  // make sure that old style teleporters are always linked
+  // by adding links from front-to-back (or back-to-front),
+  // when a given link source has no destination
+  crossLink();
 
-    bool broken = false;
-    if (srcNumbers.size() <= 0) {
-      broken = true;
-      logDebugMessage(1,"broken link src: %s\n", link.src.c_str());
+  // setup the LinkPhysics::needTest() values
+  for (size_t i = 0; i < linkDsts.size(); i++) {
+    linkDsts[i].physics.finalize();
+  }
+
+  // setup the 'needTest' parameters
+  LinkMap::iterator mapIt;
+  for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
+    const IntVec& dstIDs = mapIt->second.dstIDs;
+    bool& needTest       = mapIt->second.needTest;
+    needTest = false;
+    for (size_t i = 0; i < dstIDs.size(); i++) {
+      const DstData& dstData = linkDsts[i];
+      if (dstData.physics.getTestBits() != 0) {
+        needTest = true;
+        break;
+      }
     }
-    if (dstNumbers.size() <= 0) {
-      broken = true;
-      logDebugMessage(1,"broken link dst: %s\n", link.dst.c_str());
+  }
+
+  // assign the LinkSrcFace bits
+  for (size_t i = 0; i < linkSrcs.size(); i++) {
+    const MeshFace* face = linkSrcs[i];
+    MeshFace::SpecialData* sd =
+      const_cast<MeshFace::SpecialData*>(face->getSpecialData());
+    sd->stateBits |= MeshFace::LinkSrcFace;
+    linkSrcSet.insert(face);
+    linkFaceSet.insert(face);
+  }
+
+  // assign the LinkDstFace bits
+  for (size_t i = 0; i < linkDsts.size(); i++) {
+    const MeshFace* face = linkDsts[i].face;
+    MeshFace::SpecialData* sd =
+      const_cast<MeshFace::SpecialData*>(face->getSpecialData());
+    sd->stateBits |= MeshFace::LinkDstFace;
+    linkDstSet.insert(face);
+    linkFaceSet.insert(face);
+  }
+
+  if (debugLinks >= 1) {
+    printDebug();
+  }
+  return;
+}
+
+
+void LinkManager::buildNameMap()
+{
+  // get the potential named faces
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  for (unsigned int m = 0; m < meshes.size(); m++) {
+    const MeshObstacle* mesh = (const MeshObstacle*) meshes[m];
+    if (!mesh->getHasSpecialFaces()) {
+      continue;
     }
-    if (broken) {
+    const int faceCount = mesh->getFaceCount();
+    for (int f = 0; f < faceCount; f++) {
+      const MeshFace* face = mesh->getFace(f);
+      if (face->isSpecial()) {
+        MeshFace::SpecialData* sd =
+          const_cast<MeshFace::SpecialData*>(face->getSpecialData());
+        // clear the LinkSrcFace and LinkDstFace bits
+        sd->stateBits &= ~(MeshFace::LinkSrcFace | MeshFace::LinkDstFace);
+        if (!sd->linkName.empty()) {
+          nameFaceVec.push_back(NameFace(face->getLinkName(), face));
+        }
+      }
+    }
+  }
+}
+
+
+//============================================================================//
+
+static std::string numberLinkName(int number)
+{
+  std::string name = "$mt";
+  char buffer[8];
+  snprintf(buffer, sizeof(buffer), "%i", (number / 2));
+  name += buffer;
+  name += ":";
+  name += ((number % 2) == 0) ? "f" : "b";
+  return name;
+}
+
+
+static bool allDigits(const std::string& s)
+{
+  for (size_t i = 0; i < s.size(); i++) {
+    if ((s[i] < '0') || (s[i] > '9')) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+
+bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const
+{
+  faces.clear();
+
+  // no chars, no service
+  if (patterns.size() <= 0) {
+    return false;
+  }
+
+  for (size_t i = 0; i < patterns.size(); i++) {
+    std::string glob = patterns[i];
+    if (glob.empty() || glob == "/") {
+      continue;
+    }
+    if (glob[0] == '/') {
+      glob = glob.substr(1);
+    }
+
+    if (allDigits(glob)) {
+      // convert to a default link name
+      glob = numberLinkName(atoi(glob.c_str()));
+    }
+    else {
+      // make the teleporter face specification case-independent
+      const size_t last = (size_t)glob.size() - 1;
+      if ((glob.size() > 2) && (glob[last - 1] == ':') &&
+          ((glob[last] == 'F') || (glob[last] == 'B'))) {
+        glob[last] = tolower(glob[last]);
+      }
+    }
+
+    // insert the matches
+    NameFaceVec::const_iterator it;
+    for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
+      if (debugLinks >= 3) {
+        logDebugMessage(0, "link glob_match:  %s  vs.  %s\n",
+                           glob.c_str(), it->name.c_str());
+      }
+      if (glob_match(glob, it->name)) {
+        faces.insert(it->face);
+      }
+    }
+  }
+
+  return !faces.empty();
+}
+
+
+//============================================================================//
+
+void LinkManager::crossLink()
+{
+  NameFaceVec::const_iterator it;
+  for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
+    const std::string&   srcName = it->name;
+    const MeshFace* srcFace = it->face;
+    // already linked?
+    if (linkMap.find(srcFace) != linkMap.end()) {
       continue;
     }
 
-    for (unsigned s = 0; s < srcNumbers.size(); s++) {
-      for (unsigned d = 0; d < dstNumbers.size(); d++) {
-	std::vector<int>& dstsList = linkNumbers[srcNumbers[s]].dsts;
-	if (!inIntList(dstNumbers[d], dstsList)) { // no duplicates
-	  dstsList.push_back(dstNumbers[d]);
-	}
+    // a teleporter link?
+    const MeshObstacle* srcMesh = srcFace->getMesh();
+    if ((srcMesh == NULL) ||
+        ((srcMesh->getSource() & Obstacle::ContainerSource) == 0)) {
+      continue;
+    }
+    // at least 2 chars are required  (:f or :b)
+    if (srcName.size() < 2) {
+      continue;
+    }
+
+    // setup the destination link name
+    const char type = srcName[srcName.size() - 1];
+    std::string dstName = srcName.substr(0, srcName.size() - 1);
+    switch (type) {
+      case 'f': { dstName += 'b';  break; }
+      case 'b': { dstName += 'f';  break; }
+      default:  { dstName.clear(); break; }
+    }
+    if (dstName.empty()) {
+      continue;
+    }
+
+    // find the dstFace, and create the link
+    const int faceCount = srcMesh->getFaceCount();
+    for (int f = 0; f < faceCount; f++) {
+      const MeshFace* dstFace = srcMesh->getFace(f);
+      if (dstFace->getLinkName() == dstName) {
+        createLink(srcFace, dstFace, LinkPhysics());
+        break;
       }
     }
   }
-
-  // fill in the blanks (passthru linkage)
-  for (i = 0; i < linkNumbers.size(); i++) {
-    std::vector<int>& dstsList = linkNumbers[i].dsts;
-    if (dstsList.size() <= 0) {
-      const int t = (i / 2) * 2; // tele number
-      const int f = 1 - (i % 2); // opposite link
-      dstsList.push_back(t + f);
-    }
-  }
-
-  if (debugLevel >= 4) {
-    for (i = 0; i < teles.size(); i++) {
-      Teleporter* tele = (Teleporter*) teles[i];
-      logDebugMessage(0,"TELE(%i): %s\n", i, tele->getName().c_str());
-    }
-    for (i = 0; i < linkNames.size(); i++) {
-      LinkNameSet& link = linkNames[i];
-      logDebugMessage(0,"LINKSRC: %-32sLINKDST: %s\n", link.src.c_str(), link.dst.c_str());
-    }
-    for (i = 0; i < linkNumbers.size(); i++) {
-      logDebugMessage(0,"SRC %3i%c:  DSTS", (i / 2), ((i % 2) == 0) ? 'f' : 'b');
-      for (unsigned int j = 0; j < linkNumbers[i].dsts.size(); j++) {
-	int dst = linkNumbers[i].dsts[j];
-	logDebugMessage(0," %i%c", (dst / 2), ((dst % 2) == 0) ? 'f' : 'b');
-      }
-      logDebugMessage(0,"\n");
-    }
-  }
-
-  return;
 }
 
 
-void LinkManager::findTelesByName(const std::string& name,
-				  std::vector<int>& list) const
+//============================================================================//
+
+void LinkManager::createLink(const MeshFace* linkSrc,
+                             const MeshFace* linkDst,
+                             const LinkPhysics& physics)
 {
-  list.clear();
-
-  std::string glob = name;
-
-  // no chars, no service
-  if (glob.size() <= 0) {
-    return;
+  FaceIntMap::const_iterator srcIt = linkSrcMap.find(linkSrc);
+  if (srcIt == linkSrcMap.end()) {
+    linkSrcMap[linkSrc] = (int)linkSrcs.size();
+    linkSrcs.push_back(linkSrc);
   }
 
-  // a leading ':' might be used to indicate absolute linking if
-  // links are ever included in group definintions. strip it here
-  // for forwards compatibiliy.
-  if (glob[0] == ':') {
-    glob.erase(0, 1); // erase 1 char from position 0
-  }
-
-  // make the trailing face specification case-independent
-  const unsigned int last = (unsigned int)glob.size() - 1;
-  if ((glob[last] == 'F') || (glob[last] == 'B')) {
-    glob[last] = tolower(glob[last]);
-  }
-
-  // add all teleporters that have matching names
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
-  for (unsigned int i = 0; i < teles.size(); i++) {
-    Teleporter* tele = (Teleporter*) teles[i];
-    const std::string& teleName = tele->getName();
-
-    std::string front = teleName;
-    front += ":f";
-    if (glob_match (glob, front)) {
-      list.push_back((int)(i * 2) + 0);
-    }
-
-    std::string back = teleName;
-    back += ":b";
-    if (glob_match (glob, back)) {
-      list.push_back((int)(i * 2) + 1);
-    }
-  }
-
-  return;
-}
-
-
-int LinkManager::getTeleportTarget(int source) const
-{
-  assert(source < (int)(2 * OBSTACLEMGR.getTeles().size()));
-
-  const std::vector<int>& dstsList = linkNumbers[source].dsts;
-
-  if (dstsList.size() == 1) {
-    return dstsList[0];
-  }
-  else if (dstsList.size() > 1) {
-    int target = rand() % int(dstsList.size());
-    return dstsList[target];
+  int dstID;
+  DstData data(linkDst, physics);
+  DstDataIntMap::const_iterator dstIt = linkDstMap.find(data);
+  if (dstIt != linkDstMap.end()) {
+    dstID = dstIt->second;
   }
   else {
-    assert(false);
-    return 0;
+    dstID = (int)linkDsts.size();
+    linkDstMap[data] = dstID;
+    linkDsts.push_back(data);
   }
+
+  linkMap[linkSrc].dstIDs.push_back(dstID);
 }
 
 
-int LinkManager::getTeleportTarget(int source, unsigned int seed) const
+//============================================================================//
+
+
+void LinkManager::printDebug()
 {
-  assert(source < (int)(2 * OBSTACLEMGR.getTeles().size()));
-
-  const std::vector<int>& dstsList = linkNumbers[source].dsts;
-
-  if (dstsList.size() == 1) {
-    return dstsList[0];
-  }
-  else if (dstsList.size() > 1) {
-    seed = (seed * 1103515245 + 12345) >> 8; // from POSIX rand() example
-    seed = seed % (dstsList.size());
-    return dstsList[seed];
+  if (debugLinks < 2) {
+    logDebugMessage(0, "\n");
   }
   else {
-    assert(false);
-    return 0;
+    logDebugMessage(0, "\n");
+    for (size_t i = 0; i < linkDefs.size(); i++) {
+      linkDefs[i].print(std::cout, "linkdefs: ");
+    }
+
+    logDebugMessage(0, "LinkSrcIDs:\n");
+    for (size_t i = 0; i < linkSrcs.size(); i++) {
+      logDebugMessage(0, "  linkSrc %i: /%s\n", i,
+                      linkSrcs[i]->getLinkName().c_str());
+    }
+    logDebugMessage(0, "\n");
+
+    logDebugMessage(0, "LinkDstIDs:\n");
+    for (size_t i = 0; i < linkDsts.size(); i++) {
+      logDebugMessage(0, "  linkDst %i: /%s\n", i,
+                      linkDsts[i].face->getLinkName().c_str());
+    }
+    logDebugMessage(0, "\n");
   }
+
+  logDebugMessage(0, "Potential Links:\n");
+  NameFaceVec::const_iterator nameIt;
+  for (nameIt = nameFaceVec.begin(); nameIt != nameFaceVec.end(); ++nameIt) {
+    logDebugMessage(0, "  /%s\n", nameIt->name.c_str());
+  }
+  logDebugMessage(0, "\n");
+
+  logDebugMessage(0, "LinkMap:\n");
+  LinkMap::const_iterator mapIt;
+  for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
+    const MeshFace* linkSrc = mapIt->first;
+    logDebugMessage(0, "  src %s\n", linkSrc->getLinkName().c_str());
+    const IntVec& dstIDs = mapIt->second.dstIDs;
+    for (size_t d = 0; d < dstIDs.size(); d++) {
+      const int dstID = dstIDs[d];
+      const DstData* dd = getLinkDstData(dstID);
+      const MeshFace* linkDst = dd->face;
+      logDebugMessage(0, "    dst %s\n", linkDst->getLinkName().c_str());
+    }
+  }
+  logDebugMessage(0, "\n");
 }
 
 
-void* LinkManager::pack(void* buf) const
-{
-  buf = nboPackUInt(buf, (uint32_t) linkNames.size());
-  for (unsigned int i = 0; i < linkNames.size(); i++) {
-    buf = nboPackStdString(buf, linkNames[i].src);
-    buf = nboPackStdString(buf, linkNames[i].dst);
-  }
-  return buf;
-}
-
-
-void* LinkManager::unpack(void* buf)
-{
-  clear(); // just in case
-  unsigned int i;
-  uint32_t count;
-  buf = nboUnpackUInt(buf, count);
-  for (i = 0; i < count; i++) {
-    LinkNameSet link;
-    buf = nboUnpackStdString(buf, link.src);
-    buf = nboUnpackStdString(buf, link.dst);
-    linkNames.push_back(link);
-  }
-  return buf;
-}
-
-
-void LinkManager::print(std::ostream& out, const std::string& indent) const
-{
-  for (unsigned int i = 0; i < linkNames.size(); i++) {
-    const LinkNameSet& link = linkNames[i];
-    out << indent << "link" << std::endl;
-    out << indent << "  from " << link.src << std::endl;
-    out << indent << "  to   " << link.dst << std::endl;
-    out << indent << "end" << std::endl << std::endl;
-  }
-  return;
-}
-
-
-int LinkManager::packSize() const
-{
-  int fullSize = sizeof(uint32_t);
-  for (unsigned int i = 0; i < linkNames.size(); i++) {
-    fullSize += nboStdStringPackSize(linkNames[i].src);
-    fullSize += nboStdStringPackSize(linkNames[i].dst);
-  }
-  return fullSize;
-}
-
-
-/******************************************************************************/
+//============================================================================//
 
 
 // Local Variables: ***

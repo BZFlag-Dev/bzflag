@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,7 +38,7 @@ class EighthDimShellNode : public SceneNode {
 	~ShellRenderNode();
 	void render();
 	void renderShadow() { return; }
-	const GLfloat* getPosition() const { return renderNode->getPosition(); }
+	const fvec3& getPosition() const { return renderNode->getPosition(); }
       public:
 	const OpenGLGState* getGState() const;
       private:

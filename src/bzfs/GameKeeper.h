@@ -1,17 +1,17 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __GAMEKEEPER_H__
-#define __GAMEKEEPER_H__
+#ifndef GAMEKEEPER_H_
+#define GAMEKEEPER_H_
 
 // bzflag global header
 #include "common.h"
@@ -24,13 +24,14 @@
 #  include <pthread.h>
 #endif
 
-// common interface headers
+// common headers
 #include "PlayerInfo.h"
 #include "PlayerState.h"
 #include "TimeKeeper.h"
 #include "bzfsAPI.h"
+#include "vectors.h"
 
-// implementation-specific bzfs-specific headers
+// bzfs headers
 #include "CmdLineOptions.h"
 #include "FlagHistory.h"
 #include "Permissions.h"
@@ -107,10 +108,11 @@ public:
     void	  packAdminInfo(BufferedNetworkMessage *msg);
     void	  *packPlayerInfo(void *buf);
     void	  packPlayerInfo(BufferedNetworkMessage *msg);
-    void	  *packPlayerUpdate(void *buf);
     void	  packPlayerUpdate(BufferedNetworkMessage *msg);
 
     void	  setPlayerAddMessage ( PlayerAddMessage &msg );
+
+    void	  setAutoPilot(bool autopilot);
 
     void	   signingOn(bool ctf);
     void	   close();
@@ -128,11 +130,11 @@ public:
     bool	   needsHostbanChecked();
 
     // To handle player State
-    void	   setPlayerState(float pos[3], float azimuth);
-    void	   getPlayerState(float pos[3], float &azimuth);
-    void	   setPlayerState(PlayerState state, float timestamp);
+    void	   setPlayerState(const fvec3& pos, float azimuth);
+    void	   getPlayerState(fvec3& pos, float &azimuth);
+    void	   setPlayerState(PlayerState state, TimeKeeper const& timestamp);
 
-    void	   getPlayerCurrentPosRot(float pos[3], float &rot);
+    void	   getPlayerCurrentPosRot(fvec3&, float &rot);
 
     void	   setBzIdentifier(const std::string& id);
     const std::string& getBzIdentifier() const;
@@ -172,6 +174,10 @@ public:
       done
     } _LSAState;
 
+    // custom scoreboard data
+    std::map<std::string,std::string> customData;
+    bool hasCustomField ( const std::string & key ){return customData.find(key)!= customData.end();}
+
     // players
     PlayerInfo	      player;
     // Net Handler
@@ -182,7 +188,7 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    float	      stateTimeStamp;
+    TimeKeeper	      stateTimeStamp;
 
     ShotType	      efectiveShotType;
 
@@ -191,9 +197,9 @@ public:
     int		      botID;
     std::vector<int>  childBots;
 
-    void doPlayerDR ( float time = (float)TimeKeeper::getCurrent().getSeconds() );
-    float	      currentPos[3];
-    float	      curentVel[3];
+    void doPlayerDR ( TimeKeeper const& time = TimeKeeper::getCurrent() );
+    fvec3	      currentPos;
+    fvec3	      currentVel;
     float	      currentRot;
     float	      currentAngVel;
 
@@ -217,7 +223,7 @@ public:
     bool isParting;
 
     // logic class for server side players
-    bz_ServerSidePlayerHandler	*playerHandler;
+    bz_ServerSidePlayerHandler*	playerHandler;
 
   private:
     static Player    *playerList[PlayerSlot];

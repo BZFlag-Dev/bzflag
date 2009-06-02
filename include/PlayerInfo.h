@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -90,6 +90,9 @@ public:
   bool	isBot() const;
   bool	isHuman() const;
   bool  isChat() const;
+  bool  getsPlayerUpdates() const;
+  bool  getsChatUpdates() const;
+  bool  getsAllUpdates() const;
   void  *packUpdate(void *buf);
   void  packUpdate(BufferedNetworkMessage *msg);
   void  *packId(void *buf);
@@ -97,8 +100,10 @@ public:
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
   const char *getToken() const;
+  const char *getReferrer() const;
   void	clearToken();
-  void       *packVirtualFlagCapture(void *buf);
+  void	clearReferrer();
+  void  *packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
   TeamColor   getTeam() const;
@@ -147,8 +152,12 @@ public:
   void setToken ( const char* text );
   void setClientVersion ( const char* text );
   void setType ( PlayerType playerType );
+  void setUpdates ( NetworkUpdates whichUpdates );
 
   bool processEnter ( uint16_t &rejectCode, char *rejectMsg );
+
+  // current state of player
+  ClientState state;
 
 private:
 
@@ -158,18 +167,20 @@ private:
 
   bool restartOnBase;
 
-  // current state of player
-  ClientState state;
   // Need to know if entered is already done
   bool       hasDoneEntering;
   // type of player
   PlayerType type;
+  // updates player should receive
+  NetworkUpdates updates;
   // player's pseudonym
   char callSign[CallSignLen];
   // token from db server
   char token[TokenLen];
   // version information from client
   char clientVersion[VersionLen];
+  // information about the referring server
+  char referrer[ReferrerLen];
 
   // player's team
   TeamColor team;
@@ -319,6 +330,18 @@ inline bool PlayerInfo::isBot() const {
 
 inline bool PlayerInfo::isChat() const {
   return type == ChatPlayer;
+}
+
+inline bool PlayerInfo::getsPlayerUpdates() const {
+  return ( (updates == PlayerUpdates) || (updates == AllUpdates) );
+}
+
+inline bool PlayerInfo::getsChatUpdates() const {
+  return ( (updates == ChatUpdates) || (updates == AllUpdates) );
+}
+
+inline bool PlayerInfo::getsAllUpdates() const {
+  return updates == AllUpdates;
 }
 
 inline bool PlayerInfo::isARabbitKill(PlayerInfo &victim) const {

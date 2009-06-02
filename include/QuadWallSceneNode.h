@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,27 +18,27 @@
 #define	BZF_QUAD_WALL_SCENE_NODE_H
 
 #include "common.h"
+#include "vectors.h"
 #include "WallSceneNode.h"
 
 class QuadWallSceneNode : public WallSceneNode {
   public:
-			QuadWallSceneNode(const GLfloat base[3],
-				const GLfloat sEdge[3],
-				const GLfloat tEdge[3],
-				float uRepeats = 1.0,
-				float vRepeats = 1.0,
-				bool makeLODs = true);
-			QuadWallSceneNode(const GLfloat base[3],
-				const GLfloat sEdge[3],
-				const GLfloat tEdge[3],
-				float uOffset,
-				float vOffset,
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs);
-			~QuadWallSceneNode();
+    QuadWallSceneNode(const fvec3& base,
+                      const fvec3& sEdge, const fvec3& tEdge,
+                      float uRepeats = 1.0, float vRepeats = 1.0,
+                      bool makeLODs = true,
+                      bool fixedUVs = false);
+    QuadWallSceneNode(const fvec3& base,
+                      const fvec3& sEdge,
+                      const fvec3& tEdge,
+                      float uOffset,
+                      float vOffset,
+                      float uRepeats,
+                      float vRepeats,
+                      bool makeLODs);
+    ~QuadWallSceneNode();
 
-    int			split(const float*, SceneNode*&, SceneNode*&) const;
+    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
@@ -48,37 +48,30 @@ class QuadWallSceneNode : public WallSceneNode {
     bool		inAxisBox (const Extents& exts) const;
 
     int			getVertexCount () const;
-    const		GLfloat* getVertex (int vertex) const;
+    const		fvec3& getVertex (int vertex) const;
 
     virtual void	getRenderNodes(std::vector<RenderSet>& rnodes);
 
   private:
-    void		init(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uOffset,
-				float vOffset,
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs);
+    void		init(const fvec3& base,
+                             const fvec3& uEdge, const fvec3& vEdge,
+                             float uOffset, float vOffset,
+                             float uRepeats, float vRepeats,
+                             bool makeLODs, bool fixedUVs);
 
   protected:
     class Geometry : public RenderNode {
       public:
-			Geometry(QuadWallSceneNode*,
-				int uCount, int vCount,
-				const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				const GLfloat* normal,
-				float uOffset, float vOffset,
-				float uRepeats, float vRepeats);
-			~Geometry();
+        Geometry(QuadWallSceneNode*, int uCount, int vCount,
+                 const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
+                 const float* normal, float uOffset, float vOffset,
+                 float uRepeats, float vRepeats, bool fixedUVs);
+        ~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
 	void		renderShadow();
-	const GLfloat*  getVertex(int i) const;
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
+	const fvec3&	getVertex(int i) const;
+	const fvec3&	getPosition() const { return wall->getCenter(); }
       private:
 	void		drawV() const;
 	void		drawVT() const;
@@ -87,11 +80,11 @@ class QuadWallSceneNode : public WallSceneNode {
 	int		style;
 	int		ds, dt;
 	int		dsq, dsr;
-	const GLfloat*	normal;
+	const float*	normal;
       public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
-	int	     triangles;
+	fvec3Array	vertex;
+	fvec2Array	uv;
+	int		triangles;
     };
 
   private:

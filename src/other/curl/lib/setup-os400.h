@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,15 +20,8 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup-os400.h,v 1.1 2007-08-23 14:30:24 patrickm Exp $
+ * $Id: setup-os400.h,v 1.5 2008-11-17 19:08:35 yangtse Exp $
  ***************************************************************************/
-
-/* The following must be defined BEFORE common header files inclusion. */
-
-#define __ptr128                        /* No teraspace. */
-#define qadrt_use_fputc_inline          /* Generate fputc() wrapper inline. */
-#define qadrt_use_fread_inline          /* Generate fread() wrapper inline. */
-#define qadrt_use_fwrite_inline         /* Generate fwrite() wrapper inline. */
 
 
 /* OS/400 netdb.h does not define NI_MAXHOST. */
@@ -36,9 +29,6 @@
 
 /* OS/400 netdb.h does not define NI_MAXSERV. */
 #define NI_MAXSERV      32
-
-/* OS/400 does not define the ifr_dstaddr union member. */
-#define ifr_dstaddr     ifr_addr
 
 /* No OS/400 header file defines u_int32_t. */
 typedef unsigned long   u_int32_t;
@@ -65,12 +55,6 @@ extern int      Curl_getnameinfo_a(const struct sockaddr * sa, socklen_t salen,
 
 
 /* SSL wrappers. */
-
-extern int      Curl_inet_ntoa_r_a(struct in_addr internet_address,
-                                   char * output_buffer,
-                                   int output_buffer_length);
-#define inet_ntoa_r             Curl_inet_ntoa_r_a
-
 
 extern int      Curl_SSL_Init_Application_a(SSLInitApp * init_app);
 #define SSL_Init_Application    Curl_SSL_Init_Application_a
@@ -136,5 +120,21 @@ extern OM_uint32 Curl_gss_delete_sec_context_a(OM_uint32 * minor_status,
 #define ldap_get_dn             Curl_ldap_get_dn_a
 #define ldap_first_attribute    Curl_ldap_first_attribute_a
 #define ldap_next_attribute     Curl_ldap_next_attribute_a
+
+/* Some socket functions must be wrapped to process textual addresses
+   like AF_UNIX. */
+
+extern int Curl_os400_connect(int sd, struct sockaddr * destaddr, int addrlen);
+extern int Curl_os400_bind(int sd, struct sockaddr * localaddr, int addrlen);
+extern int Curl_os400_sendto(int sd, char * buffer, int buflen, int flags,
+            struct sockaddr * dstaddr, int addrlen);
+extern int Curl_os400_recvfrom(int sd, char * buffer, int buflen, int flags,
+                                struct sockaddr * fromaddr, int * addrlen);
+
+#define connect                 Curl_os400_connect
+#define bind                    Curl_os400_bind
+#define sendto                  Curl_os400_sendto
+#define recvfrom                Curl_os400_recvfrom
+
 
 #endif /* __SETUP_OS400_H */

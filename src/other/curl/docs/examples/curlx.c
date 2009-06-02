@@ -281,7 +281,7 @@ int main(int argc, char **argv) {
   struct curl_slist * headers=NULL;
   int badarg=0;
 
-  binaryptr=(char*)malloc(tabLength);
+  binaryptr = malloc(tabLength);
 
   p.verbose = 0;
   p.errorbio = BIO_new_fp (stderr, BIO_NOCLOSE);
@@ -404,7 +404,7 @@ int main(int argc, char **argv) {
   /* determine URL to go */
 
   if (hostporturl) {
-    serverurl=(char*) malloc(9+strlen(hostporturl));
+    serverurl = malloc(9+strlen(hostporturl));
     sprintf(serverurl,"https://%s",hostporturl);
   }
   else if (p.accesstype != 0) { /* see whether we can find an AIA or SIA for a given access type */
@@ -438,11 +438,11 @@ int main(int argc, char **argv) {
   /* Now specify the POST binary data */
 
   curl_easy_setopt(p.curl, CURLOPT_POSTFIELDS, binaryptr);
-  curl_easy_setopt(p.curl, CURLOPT_POSTFIELDSIZE,tabLength);
+  curl_easy_setopt(p.curl, CURLOPT_POSTFIELDSIZE,(long)tabLength);
 
   /* pass our list of custom made headers */
 
-  contenttype=(char*) malloc(15+strlen(mimetype));
+  contenttype = malloc(15+strlen(mimetype));
   sprintf(contenttype,"Content-type: %s",mimetype);
   headers = curl_slist_append(headers,contenttype);
   curl_easy_setopt(p.curl, CURLOPT_HTTPHEADER, headers);
@@ -469,7 +469,7 @@ int main(int argc, char **argv) {
       i+=lu;
       if (i== tabLength) {
         tabLength+=100;
-        binaryptr=(char*)realloc(binaryptr,tabLength); /* should be more careful */
+        binaryptr=realloc(binaryptr,tabLength); /* should be more careful */
       }
     }
     tabLength = i;
@@ -477,7 +477,7 @@ int main(int argc, char **argv) {
   /* Now specify the POST binary data */
 
   curl_easy_setopt(p.curl, CURLOPT_POSTFIELDS, binaryptr);
-  curl_easy_setopt(p.curl, CURLOPT_POSTFIELDSIZE,tabLength);
+  curl_easy_setopt(p.curl, CURLOPT_POSTFIELDSIZE,(long)tabLength);
 
 
   /* Perform the request, res will get the return code */

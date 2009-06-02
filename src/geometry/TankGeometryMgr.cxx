@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,12 +24,14 @@
 #include <string>
 #include <fstream>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
 #include "Model.h"
+#include "vectors.h"
 
 #include "PlatformFactory.h"
 #include "BzfMedia.h"
@@ -53,15 +55,15 @@ static int partTriangles[LastTankShadow][LastTankLOD]
 			[LastTankSize][LastTankPart];
 
 // the scaling factors
-static GLfloat scaleFactors[LastTankSize][3] = {
-  {1.0f, 1.0f, 1.0f},   // Normal
-  {1.0f, 1.0f, 1.0f},   // Obese
-  {1.0f, 1.0f, 1.0f},   // Tiny
-  {1.0f, 0.001f, 1.0f}, // Narrow
-  {1.0f, 1.0f, 1.0f}    // Thief
+static fvec3 scaleFactors[LastTankSize] = {
+  fvec3(1.0f, 1.0f,   1.0f), // Normal
+  fvec3(1.0f, 1.0f,   1.0f), // Obese
+  fvec3(1.0f, 1.0f,   1.0f), // Tiny
+  fvec3(1.0f, 0.001f, 1.0f), // Narrow
+  fvec3(1.0f, 1.0f,   1.0f)  // Thief
 };
 // the current scaling factors
-const float* TankGeometryUtils::currentScaleFactor = scaleFactors[Normal];
+const fvec3* TankGeometryUtils::currentScaleFactor = &scaleFactors[Normal];
 
 // the current shadow mode (used to remove glNormal3f and glTexcoord2f calls)
 TankShadow TankGeometryUtils::shadowMode = ShadowOn;
@@ -99,7 +101,7 @@ static void initContext(void *data);
 static void bzdbCallback(const std::string& str, void *data);
 
 
-/****************************************************************************/
+//============================================================================//
 
 // TankGeometryMgr Functions
 // -------------------------
@@ -125,6 +127,7 @@ void TankGeometryMgr::init()
   BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
   BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
   BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
+  BZDB.addCallback ("treadStyle", bzdbCallback, NULL);
 
   // install the context initializer
   OpenGLGState::registerContextInitializer (freeContext, initContext, NULL);
@@ -143,6 +146,7 @@ void TankGeometryMgr::kill()
   BZDB.removeCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
   BZDB.removeCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
   BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
+  BZDB.removeCallback ("treadStyle", bzdbCallback, NULL);
 
   // remove the context initializer callback
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, NULL);
@@ -178,15 +182,15 @@ void TankGeometryMgr::buildLists()
 
   // setup the scale factors
   setupScales();
-  currentScaleFactor = scaleFactors[Normal];
+  currentScaleFactor = &scaleFactors[Normal];
   const bool animated = BZDBCache::animatedTreads;
 
   // setup the quality level
   const int divisionLevels[4][2] = { // wheel divs, tread divs
-    {4, 4},   // low
-    {8, 16},  // med
-    {12, 24}, // high
-    {16, 32}  // experimental
+    {  4,  4 }, // low
+    {  8, 16 }, // med
+    { 12, 24 }, // high
+    { 16, 32 }  // experimental
   };
   int quality = RENDERER.useQuality();
   if (quality < _LOW_QUALITY) {
@@ -195,7 +199,7 @@ void TankGeometryMgr::buildLists()
     quality = _EXPERIMENTAL_QUALITY;
   }
 
-  int wheelDivs = divisionLevels[quality][0]; 
+  int wheelDivs = divisionLevels[quality][0];
   int treadDivs = divisionLevels[quality][1];
 
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
@@ -221,12 +225,13 @@ void TankGeometryMgr::buildLists()
 	  glNewList(list, GL_COMPILE);
 
 	  // setup the scale factor
-	  currentScaleFactor = scaleFactors[size];
+	  currentScaleFactor = &scaleFactors[size];
 
 	  if ((part <= Turret)  || (!animated)) {
 	    // the basic parts
 	    count = partFunctions[lod][part]();
-	  } else if (lod == HighTankLOD){
+	  }
+	  else if (lod == HighTankLOD){
 	    // the animated parts
 	    if (part == LeftCasing) {
 	      count = buildHighLCasingAnim();
@@ -234,8 +239,7 @@ void TankGeometryMgr::buildLists()
 	    else if (part == RightCasing) {
 	      count = buildHighRCasingAnim();
 	    }
-	    else 
-	    if (part == LeftTread) {
+	    else if (part == LeftTread) {
 	      count = buildHighLTread(treadDivs);
 	    }
 	    else if (part == RightTread) {
@@ -265,10 +269,10 @@ void TankGeometryMgr::buildLists()
 }
 
 
-GLuint TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
-				    TankGeometryEnums::TankPart part,
-				    TankGeometryEnums::TankSize size,
-				    TankGeometryEnums::TankLOD lod)
+unsigned int TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
+                                          TankGeometryEnums::TankPart part,
+                                          TankGeometryEnums::TankSize size,
+                                          TankGeometryEnums::TankLOD lod)
 {
   return displayLists[shadow][lod][size][part];
 }
@@ -283,7 +287,7 @@ int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
 }
 
 
-const float* TankGeometryMgr::getScaleFactor(TankSize size)
+const fvec3& TankGeometryMgr::getScaleFactor(TankSize size)
 {
   return scaleFactors[size];
 }
@@ -291,7 +295,7 @@ const float* TankGeometryMgr::getScaleFactor(TankSize size)
 std::map<std::string,OBJModel> modelMap;
 
 bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
-{ 
+{
   std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
   mediaPath += "/models/";
   mediaPath += BZDB.get("playerModel") + path;
@@ -312,10 +316,65 @@ bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
   return count > 0;
 }
 
-/****************************************************************************/
+//============================================================================//
+//
+//  Utility functions
+//
 
+void TankGeometryUtils::doVertex3f(float x, float y, float z)
+{
+  const fvec3* scale = currentScaleFactor;
+  const fvec3 pos(x * scale->x, y * scale->y, z * scale->z);
+  glVertex3fv(pos);
+  return;
+}
+
+
+void TankGeometryUtils::doNormal3f(float x, float y, float z)
+{
+  if (shadowMode == TankGeometryEnums::ShadowOn) {
+    return;
+  }
+  const fvec3* scale = currentScaleFactor;
+  fvec3 normal(x / scale->x, y / scale->y, z / scale->z);
+  fvec3::normalize(normal);
+  glNormal3fv(normal);
+  return;
+}
+
+
+void TankGeometryUtils::doTexCoord2f(float x, float y)
+{
+  if (shadowMode == TankGeometryEnums::ShadowOn) {
+    return;
+  }
+  glTexCoord2f(x, y);
+  return;
+}
+
+
+void TankGeometryUtils::doVertex(const fvec3& v)
+{
+  doVertex3f(v.x, v.y, v.z);
+}
+
+
+void TankGeometryUtils::doNormal(const fvec3& n)
+{
+  doNormal3f(n.x, n.y, n.z);
+}
+
+
+void TankGeometryUtils::doTexCoord(const fvec2& t)
+{
+  doTexCoord2f(t.x, t.y);
+}
+
+
+//============================================================================//
+//
 // Local Functions
-// ---------------
+//
 
 
 static void bzdbCallback(const std::string& /*name*/, void * /*data*/)
@@ -345,36 +404,36 @@ static void setupScales()
 {
   float scale;
 
-  scaleFactors[Normal][0] = BZDBCache::tankLength;
+  scaleFactors[Normal].x = BZDBCache::tankLength;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
-  scaleFactors[Normal][0] /= scale;
+  scaleFactors[Normal].x /= scale;
 
-  scaleFactors[Normal][1] = BZDBCache::tankWidth;
+  scaleFactors[Normal].y = BZDBCache::tankWidth;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
-  scaleFactors[Normal][1] /= scale;
+  scaleFactors[Normal].y /= scale;
 
-  scaleFactors[Normal][2] = BZDBCache::tankHeight;
+  scaleFactors[Normal].z = BZDBCache::tankHeight;
   scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
-  scaleFactors[Normal][2] /= scale;
+  scaleFactors[Normal].z /= scale;
 
   scale = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-  scaleFactors[Obese][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Obese][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Obese][2] = scaleFactors[Normal][2];
+  scaleFactors[Obese].x = scale * scaleFactors[Normal].x;
+  scaleFactors[Obese].y = scale * scaleFactors[Normal].y;
+  scaleFactors[Obese].z = scaleFactors[Normal].z;
 
   scale = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-  scaleFactors[Tiny][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Tiny][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Tiny][2] = scaleFactors[Normal][2];
+  scaleFactors[Tiny].x = scale * scaleFactors[Normal].x;
+  scaleFactors[Tiny].y = scale * scaleFactors[Normal].y;
+  scaleFactors[Tiny].z = scaleFactors[Normal].z;
 
   scale = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
-  scaleFactors[Thief][0] = scale * scaleFactors[Normal][0];
-  scaleFactors[Thief][1] = scale * scaleFactors[Normal][1];
-  scaleFactors[Thief][2] = scaleFactors[Normal][2];
+  scaleFactors[Thief].x = scale * scaleFactors[Normal].x;
+  scaleFactors[Thief].y = scale * scaleFactors[Normal].y;
+  scaleFactors[Thief].z = scaleFactors[Normal].z;
 
-  scaleFactors[Narrow][0] = scaleFactors[Normal][0];
-  scaleFactors[Narrow][1] = 0.001f;
-  scaleFactors[Narrow][2] = scaleFactors[Normal][2];
+  scaleFactors[Narrow].x = scaleFactors[Normal].x;
+  scaleFactors[Narrow].y = 0.001f;
+  scaleFactors[Narrow].z = scaleFactors[Normal].z;
 
   return;
 }

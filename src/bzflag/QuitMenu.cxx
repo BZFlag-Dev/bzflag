@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -131,7 +131,7 @@ void QuitMenu::resize(int _width, int _height)
   // save settings
   HUDuiList* list = (HUDuiList*)listHUD[2];
   list->setFontSize(smallFontSize);
-  const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, std::string(list->getLabel() + "99").c_str());
+  const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, std::string(list->getLabel() + "99"));
   y = (float)_height - 6.25f * fontHeight;
   list->setPosition(x + stringWidth, y);
 

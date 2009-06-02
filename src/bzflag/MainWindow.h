@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,7 +34,6 @@ class MainWindow {
 			UpperRight,
 			LowerLeft,
 			LowerRight,
-			ZoomRegion,
 			UpperHalf,
 			LowerHalf
     };
@@ -50,7 +49,7 @@ class MainWindow {
     int			getWidth() const;
     int			getHeight() const;
     int			getViewHeight() const;
-    bool		getFullscreen();
+    bool		getFullscreen() const;
     bool		getFullView() const;
 
     void		setPosition(int x, int y);
@@ -59,7 +58,8 @@ class MainWindow {
     void		setFullView(bool);
     void		setFullscreen();
     void		toggleFullscreen();
-    void		iconify(void);
+    void		iconify();
+    void		deiconify();
     void		setNoMouseGrab();
 
     void		setZoomFactor(int);

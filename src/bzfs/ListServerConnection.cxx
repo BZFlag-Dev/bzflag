@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -206,7 +206,8 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  for (int i = 0; i < curMaxPlayers; i++) {
 	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
 	    if ((gkp != NULL) &&
-		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0)) {
+		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) &&
+		(gkp->_LSAState == GameKeeper::Player::verified)) {
 	      gkp->setBzIdentifier(bzId);
 	      logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n",
 		     nick.c_str(), i, bzId.c_str());
@@ -250,51 +251,57 @@ void ListServerLink::processAuthReply(bool registered, bool verified, char *call
 {
   if(!publicizeServer) return;
 
-  GameKeeper::Player *playerData = NULL;
-  int playerIndex;
-  for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-    playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-    if (!playerData)
-      continue;
-    if (playerData->_LSAState != GameKeeper::Player::checking)
-      continue;
-    if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
-				   callsign))
-      break;
-  }
-  logDebugMessage(3,"[%d]\n", playerIndex);
+	GameKeeper::Player *playerData = NULL;
+	int playerIndex;
+	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
+	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+	  if (!playerData)
+	    continue;
+	  if (playerData->_LSAState != GameKeeper::Player::checking)
+	    continue;
+	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
+					 callsign))
+	    break;
+	}
+	logDebugMessage(3,"[%d]\n", playerIndex);
 
-  if (playerIndex < curMaxPlayers) {
-    if (registered) {
-      if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
-      if (verified) {
-        playerData->_LSAState = GameKeeper::Player::verified;
-        playerData->accessInfo.setPermissionRights();
-        while (group && *group) {
-	  char *nextgroup = group;
-	  if (nextgroup) {
-	    while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-	    while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+	if (playerIndex < curMaxPlayers) {
+	  if (registered) {
+
+	    bz_PlayerAuthEventData_V1 commandData;
+	    commandData.playerID = playerIndex;
+	    commandData.globalAuth = verified;
+	    worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
+
+	    if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
+	    if (verified) {
+	      playerData->_LSAState = GameKeeper::Player::verified;
+	      playerData->accessInfo.setPermissionRights();
+	      while (group && *group) {
+		char *nextgroup = group;
+		if (nextgroup) {
+		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
+		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		}
+		playerData->accessInfo.addGroup(group);
+		group = nextgroup;
+	      }
+	      playerData->authentication.global(true);
+	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+	    } else {
+	      playerData->_LSAState = GameKeeper::Player::failed;
+	      sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
+	    }
+	  } else {
+	    playerData->_LSAState = GameKeeper::Player::notRequired;
+	    if (!playerData->player.isBot()) {
+	      sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
+	      sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
+	    }
 	  }
-	  playerData->accessInfo.addGroup(group);
-	  group = nextgroup;
-        }
-        playerData->authentication.global(true);
-        sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-      } else {
-        playerData->_LSAState = GameKeeper::Player::failed;
-        sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
+	  playerData->player.clearToken();
+	}
       }
-    } else {
-      playerData->_LSAState = GameKeeper::Player::notRequired;
-      if (!playerData->player.isBot()) {
-        sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
-        sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
-      }
-    }
-    playerData->player.clearToken();
-  }
-}
 
 void ListServerLink::finalizeLSA()
 {
@@ -306,7 +313,7 @@ void ListServerLink::finalizeLSA()
       continue;
     playerData->_LSAState = GameKeeper::Player::timedOut;
   }
-}
+  }
 
 void ListServerLink::queueMessage(MessageType type)
 {

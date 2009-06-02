@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -101,7 +101,7 @@ void CustomTextureMatrix::writeToManager() const
 {
   texmat->setName(name);
   if ((name.size() > 0) && (TEXMATRIXMGR.findMatrix(name) >= 0)) {
-    std::cout << "warning: duplicate texture matrix"
+    std::cout << "WARNING: duplicate texture matrix"
 	      << " (" << name << ")" << std::endl;
   }
   texmat->finalize();
@@ -111,7 +111,7 @@ void CustomTextureMatrix::writeToManager() const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

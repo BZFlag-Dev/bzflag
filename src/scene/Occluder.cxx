@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,14 +10,23 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 
+// interface header
+#include "Occluder.h"
+
+// system headers
 #include <stdlib.h>
 #include <math.h>
-#include "Occluder.h"
+
+// common headers
+#include "bzfgl.h"
 #include "SceneNode.h"
 #include "Frustum.h"
 #include "Intersect.h"
 #include "StateDatabase.h"
+
+using namespace Intersect;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,9 +95,9 @@ IntersectLevel OccluderManager::occlude(const Extents& exts,
 
   for (int i = 0; i < activeOccluders; i++) {
     Occluder* oc = occluders[i];
-    IntersectLevel tmp = oc->doCullAxisBox (exts);
+    IntersectLevel tmp = oc->doCullAxisBox(exts);
     if (tmp == Contained) {
-      oc->addScore (score);
+      oc->addScore(score);
       return Contained;
       // FIXME - this only makes sense for randomly selected
       //	 occluders where there can be overlap
@@ -110,7 +119,7 @@ bool OccluderManager::occludePeek(const Extents& exts)
   // doesn't adjust occluder scores
   for (i = 0; i < activeOccluders; i++) {
     Occluder* oc = occluders[i];
-    if (oc->doCullAxisBox (exts) == Contained) {
+    if (oc->doCullAxisBox(exts) == Contained) {
       result = true;
     }
   }
@@ -121,11 +130,11 @@ bool OccluderManager::occludePeek(const Extents& exts)
 
 void OccluderManager::update(const Frustum* frustum)
 {
-//  const float* e = frustum->getEye ();
-//  printf ("Eye = %f, %f, %f\n", e[0], e[1], e[2]);
+//  const float* e = frustum->getEye();
+//  printf("Eye = %s\n", e.tostring().c_str());
 
   for (int i = 0; i < activeOccluders; i++) {
-    if (!occluders[i]->makePlanes (frustum)) {
+    if (!occluders[i]->makePlanes(frustum)) {
       delete occluders[i];
       activeOccluders--;
       occluders[i] = occluders[activeOccluders];
@@ -138,7 +147,7 @@ void OccluderManager::update(const Frustum* frustum)
 }
 
 
-static void print_scores (Occluder** olist, int count, const char* str)
+static void print_scores(Occluder** olist, int count, const char* str)
 {
   return;
   // FIXME - debugging
@@ -147,14 +156,14 @@ static void print_scores (Occluder** olist, int count, const char* str)
     int score = olist[i]->getScore();
     if (score > 0) {
       if (first) {
-	printf ("%s(%i):", str, count);
+	printf("%s(%i):", str, count);
 	first = false;
       }
-      printf (" %i", score);
+      printf(" %i", score);
     }
   }
   if (!first) {
-    putchar ('\n');
+    putchar('\n');
   }
 }
 
@@ -164,9 +173,9 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
   int oc;
 
   // see if our limit has changed
-  int max = BZDB.evalInt (StateDatabase::BZDB_CULLOCCLUDERS);
+  int max = BZDB.evalInt(StateDatabase::BZDB_CULLOCCLUDERS);
   if (max != allowedOccluders) {
-    setMaxOccluders (max);
+    setMaxOccluders(max);
   }
 
   // don't need more occluders then scenenodes
@@ -219,7 +228,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
   }
 
   // FIXME  - debugging
-  print_scores (occluders, activeOccluders, "prediv");
+  print_scores(occluders, activeOccluders, "prediv");
 
   // decrease the scores
   for (oc = 0; oc < activeOccluders; oc++) {
@@ -230,7 +239,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
 }
 
 
-static int compareOccluders (const void* a, const void* b)
+static int compareOccluders(const void* a, const void* b)
 {
   Occluder** ptrA = (Occluder**)a;
   Occluder** ptrB = (Occluder**)b;
@@ -251,7 +260,7 @@ static int compareOccluders (const void* a, const void* b)
 
 void OccluderManager::sort()
 {
-  qsort (occluders, activeOccluders, sizeof (Occluder*), compareOccluders);
+  qsort(occluders, activeOccluders, sizeof(Occluder*), compareOccluders);
 }
 
 
@@ -285,17 +294,14 @@ Occluder::Occluder(const SceneNode* node)
     vertexCount = 0; // used to flag a bad occluder
     return;
   }
-  vertices = new float[vertexCount][3];
+  vertices = new fvec3[vertexCount];
 
   planeCount = vertexCount + 1; // the occluder's plane normal
-  planes = new float[planeCount][4];
+  planes = new fvec4[planeCount];
 
   // counter-clockwise order as viewed from the front face
   for (int i = 0; i < vertexCount; i++) {
-    const float* vertex = node->getVertex(i);
-    vertices[i][0] = vertex[0];
-    vertices[i][1] = vertex[1];
-    vertices[i][2] = vertex[2];
+    vertices[i] = node->getVertex(i);
   }
 
   return;
@@ -312,7 +318,7 @@ Occluder::~Occluder()
 
 IntersectLevel Occluder::doCullAxisBox(const Extents& exts)
 {
-  return testAxisBoxOcclusion (exts, planes, planeCount);
+  return testAxisBoxOcclusion(exts, planes, planeCount);
 }
 
 
@@ -324,32 +330,21 @@ bool Occluder::doCullSceneNode(SceneNode* node)
 }
 
 
-static bool makePlane (const float* p1, const float* p2, const float* pc,
-		       float* r)
+static bool makePlane(const fvec3& p1, const fvec3& p2, const fvec3& pc,
+                      fvec4& r)
 {
   // make vectors from points
-  float x[3] = {p1[0] - pc[0], p1[1] - pc[1], p1[2] - pc[2]};
-  float y[3] = {p2[0] - pc[0], p2[1] - pc[1], p2[2] - pc[2]};
-  float n[3];
+  const fvec3 x = p1 - pc;
+  const fvec3 y = p2 - pc;
 
-  // cross product to get the normal
-  n[0] = (x[1] * y[2]) - (x[2] * y[1]);
-  n[1] = (x[2] * y[0]) - (x[0] * y[2]);
-  n[2] = (x[0] * y[1]) - (x[1] * y[0]);
-
-  // normalize
-  float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
-  if (len < +0.001f) {
+  fvec3 n = fvec3::cross(x, y);
+  if (!fvec3::normalize(n)) {
     return false;
-  } else {
-    len = 1.0f / sqrtf (len);
   }
-  r[0] = n[0] * len;
-  r[1] = n[1] * len;
-  r[2] = n[2] * len;
+  r.xyz() = n;
 
   // finish the plane equation: {rx*px + ry*py + rz+pz + rd = 0}
-  r[3] = -((pc[0] * r[0]) + (pc[1] * r[1]) + (pc[2] * r[2]));
+  r.w = -fvec3::dot(pc, n);
 
   return true;
 }
@@ -357,25 +352,21 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 bool Occluder::makePlanes(const Frustum* frustum)
 {
   // occluders can't have their back towards the camera
-  const float* eye = frustum->getEye();
-  const float* p = sceneNode->getPlane();
-  float tmp = (p[0] * eye[0]) + (p[1] * eye[1]) + (p[2] * eye[2]) + p[3];
-  if (tmp < +0.1f) {
+  const fvec4& plane = *sceneNode->getPlane();
+  const fvec3& eye = frustum->getEye();
+  float dist = plane.planeDist(eye);
+  if (dist < +0.1f) {
     return false;
   }
   // FIXME - store/flag this so we don't have to do it again?
 
   // make the occluder's normal plane
-  const float* plane = sceneNode->getPlane();
-  planes[0][0] = -plane[0];
-  planes[0][1] = -plane[1];
-  planes[0][2] = -plane[2];
-  planes[0][3] = -plane[3];
+  planes[0] = -plane;
 
   // make the edges planes
   for (int i = 0; i < vertexCount; i++) {
-    int second = (i + vertexCount - 1) % vertexCount;
-    if (!makePlane (vertices[i], vertices[second], eye, planes[i + 1])) {
+    const int second = (i + vertexCount - 1) % vertexCount;
+    if (!makePlane(vertices[i], vertices[second], eye, planes[i + 1])) {
       return false;
     }
   }
@@ -387,62 +378,52 @@ bool Occluder::makePlanes(const Frustum* frustum)
 void Occluder::draw() const
 {
   int v;
-  GLfloat colors[5][4] = {
-    {1.0f, 0.0f, 1.0f, 1.0f}, // purple  (occluder's normal)
-    {1.0f, 0.0f, 0.0f, 1.0f}, // red
-    {0.0f, 1.0f, 0.0f, 1.0f}, // green
-    {0.0f, 0.0f, 1.0f, 1.0f}, // blue
-    {1.0f, 1.0f, 0.0f, 1.0f}, // yellow
+  const fvec4 colors[5] = {
+    fvec4(1.0f, 0.0f, 1.0f, 1.0f), // purple  (occluder's normal)
+    fvec4(1.0f, 0.0f, 0.0f, 1.0f), // red
+    fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green
+    fvec4(0.0f, 0.0f, 1.0f, 1.0f), // blue
+    fvec4(1.0f, 1.0f, 0.0f, 1.0f)  // yellow
   };
   const float length = 5.0f;
 
-  glLineWidth (3.0f);
-  glPointSize (10.0f);
-  glEnable (GL_POINT_SMOOTH);
+  glLineWidth(3.0f);
+  glPointSize(10.0f);
+  glEnable(GL_POINT_SMOOTH);
 
   if (DrawNormals) {
     // the tri-wall 'getSphere()' center sucks...
-    float center[3];
-    for (int a = 0; a < 3; a++) {
-      center[a] = 0.0f;
-      for (v = 0; v < vertexCount; v++) {
-	center[a] += vertices[v][a];
-      }
-      center[a] = center[a] / (float) vertexCount;
+    fvec3 midpoint(0.0f, 0.0f, 0.0f);
+    for (v = 0; v < vertexCount; v++) {
+      midpoint += vertices[v];
     }
+    midpoint /= (float)vertexCount;
 
-    float outwards[3];
-    outwards[0] = center[0] - (length * planes[0][0]);
-    outwards[1] = center[1] - (length * planes[0][1]);
-    outwards[2] = center[2] - (length * planes[0][2]);
+    const fvec3 outwards = midpoint - (length * planes[0].xyz());
 
     // draw the plane normal
-    glBegin (GL_LINES);
-    glColor4fv (colors[0]);
-    glVertex3fv (center);
-    glVertex3fv (outwards);
-    glEnd ();
+    glBegin(GL_LINES);
+    glColor4fv(colors[0]);
+    glVertex3fv(midpoint);
+    glVertex3fv(outwards);
+    glEnd();
   }
 
   // drawn the edges and normals
   if (DrawEdges || DrawNormals) {
     for (v = 0; v < vertexCount; v++) {
-      float midpoint[3];
-      float outwards[3];
-      int vn = (v + 1) % vertexCount;
-      for (int a = 0; a < 3; a++) {
-	midpoint[a] = 0.5f * (vertices[v][a] + vertices[vn][a]);
-	outwards[a] = midpoint[a] - (length * planes[vn + 1][a]);
-      }
-      glBegin (GL_LINES);
-      glColor4fv (colors[(v % 4) + 1]);
+      const int vn = (v + 1) % vertexCount;
+      const fvec3 midpoint = 0.5f * (vertices[v] + vertices[vn]);
+      const fvec3 outwards = midpoint - (length * planes[vn + 1].xyz());
+      glBegin(GL_LINES);
+      glColor4fv(colors[(v % 4) + 1]);
       if (DrawEdges) {
-	glVertex3fv (vertices[v]);
-	glVertex3fv (vertices[vn]);
+	glVertex3fv(vertices[v]);
+	glVertex3fv(vertices[vn]);
       }
       if (DrawNormals) {
-	glVertex3fv (midpoint);
-	glVertex3fv (outwards);
+	glVertex3fv(midpoint);
+	glVertex3fv(outwards);
       }
       glEnd();
     }
@@ -451,16 +432,16 @@ void Occluder::draw() const
   // draw some nice vertex points
   if (DrawVertices) {
     for (v = 0; v < vertexCount; v++) {
-      glBegin (GL_POINTS);
-      glColor4fv (colors[(v % 4) + 1]);
-      glVertex3fv (vertices[v]);
+      glBegin(GL_POINTS);
+      glColor4fv(colors[(v % 4) + 1]);
+      glVertex3fv(vertices[v]);
       glEnd();
     }
   }
 
-  glDisable (GL_POINT_SMOOTH);
-  glPointSize (1.0f);
-  glLineWidth (1.0f);
+  glDisable(GL_POINT_SMOOTH);
+  glPointSize(1.0f);
+  glLineWidth(1.0f);
 
 //  print("Occluder::draw");
 
@@ -471,13 +452,23 @@ void Occluder::draw() const
 void Occluder::print(const char* string) const
 {
   // FIXME - debugging
-  printf ("%s: %p, V = %i, P = %i\n", string, (void*)sceneNode, vertexCount, planeCount);
+  printf("%s: %p, V = %i, P = %i\n", string,
+         (void*)sceneNode, vertexCount, planeCount);
   for (int v = 0; v < vertexCount; v++) {
-    printf ("  v%i: %f, %f, %f\n", v, vertices[v][0], vertices[v][1],vertices[v][2]);
+    printf("  v%i: %s\n", v, vertices[v].tostring().c_str());
   }
   for (int p = 0; p < planeCount; p++) {
-    printf ("  p%i: %f, %f, %f, %f\n", p, planes[p][0], planes[p][1],planes[p][2],planes[p][3]);
+    printf("  p%i: %s\n", p, planes[p].tostring().c_str());
   }
 
   return;
 }
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

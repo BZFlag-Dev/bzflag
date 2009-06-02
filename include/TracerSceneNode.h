@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,12 +24,11 @@
 
 class TracerSceneNode : public ShotSceneNode {
   public:
-			TracerSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
+			TracerSceneNode(const fvec3& pos, const fvec3& forward);
 			~TracerSceneNode();
 
     void		addLight(SceneRenderer&);
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    void		move(const fvec3& pos, const fvec3& forward);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -40,20 +39,20 @@ class TracerSceneNode : public ShotSceneNode {
 			TracerRenderNode(const TracerSceneNode*);
 			~TracerRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const TracerSceneNode* sceneNode;
     };
     friend class TracerRenderNode;
 
   private:
-    GLfloat		azimuth, elevation;
+    float		azimuth, elevation;
     OpenGLLight		light;
     int			style;
     OpenGLGState	gstate;
     TracerRenderNode	renderNode;
-    static const GLfloat tailVertex[9][3];
-    static const GLfloat TailLength;
+    static const fvec3   tailVertex[9];
+    static const float TailLength;
 };
 
 #endif // BZF_TRACER_SCENE_NODE_H

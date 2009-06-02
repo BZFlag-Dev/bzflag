@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,9 +22,8 @@
 
 class LaserSceneNode : public SceneNode {
   public:
-			LaserSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
-			~LaserSceneNode();
+    LaserSceneNode(const fvec3& pos, const fvec3& forward);
+    ~LaserSceneNode();
 
     void		setTexture(const int);
 
@@ -33,30 +32,30 @@ class LaserSceneNode : public SceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-	void		setColor ( GLfloat r, GLfloat g, GLfloat b );
-	void		setCenterColor ( GLfloat r, GLfloat g, GLfloat b );
-	void		setFirst ( void ) {first = true;}
+    void		setColor ( float r, float g, float b );
+    void		setCenterColor ( float r, float g, float b );
+    void		setFirst ( void ) {first = true;}
   protected:
     class LaserRenderNode : public RenderNode {
       public:
-			LaserRenderNode(const LaserSceneNode*);
-			~LaserRenderNode();
+        LaserRenderNode(const LaserSceneNode*);
+        ~LaserRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
-	void renderFlatLaser ( void );
-	void renderGeoLaser ( void );
+	void renderFlatLaser();
+	void renderGeoLaser();
 	const LaserSceneNode* sceneNode;
-	static GLfloat	geom[6][2];
+	static float	geom[6][2];
     };
-	float color[3];
-	float centerColor[3];
-	bool first;
+    fvec4 color;
+    fvec4 centerColor;
+    bool first;
     friend class LaserRenderNode;
 
   private:
-    GLfloat		azimuth, elevation;
-    GLfloat		length;
+    float		azimuth, elevation;
+    float		length;
     bool		texturing;
     OpenGLGState	gstate;
     LaserRenderNode	renderNode;

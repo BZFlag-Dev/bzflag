@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,8 +41,8 @@ CustomPhysicsDriver::~CustomPhysicsDriver()
 bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
 {
   if (strcasecmp ("linear", cmd) == 0) {
-    float vel[3];
-    if (!(input >> vel[0] >> vel[1] >> vel[2])) {
+    fvec3 vel;
+    if (!(input >> vel.x >> vel.y >> vel.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
@@ -50,8 +50,8 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp ("angular", cmd) == 0) {
     float vel;
-    float pos[2];
-    if (!(input >> vel >> pos[0] >> pos[1])) {
+    fvec2 pos;
+    if (!(input >> vel >> pos.x >> pos.y)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
@@ -59,8 +59,8 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
   }
   else if (strcasecmp ("radial", cmd) == 0) {
     float vel;
-    float pos[2];
-    if (!(input >> vel >> pos[0] >> pos[1])) {
+    fvec2 pos;
+    if (!(input >> vel >> pos.x >> pos.y)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
@@ -96,7 +96,7 @@ void CustomPhysicsDriver::writeToManager() const
 {
   driver->setName(name);
   if ((name.size() > 0) && (PHYDRVMGR.findDriver(name) >= 0)) {
-    std::cout << "warning: duplicate physics driver"
+    std::cout << "WARNING: duplicate physics driver"
 	      << " (" << name << ")" << std::endl;
   }
   driver->finalize();
@@ -106,7 +106,7 @@ void CustomPhysicsDriver::writeToManager() const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

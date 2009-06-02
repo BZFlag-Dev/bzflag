@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <string.h>
 
 /* common headers */
@@ -24,6 +25,7 @@
 #include "ObstacleMgr.h"
 #include "ParseColor.h"
 #include "PhysicsDriver.h"
+#include "TextUtils.h"
 #include "BzMaterial.h"
 
 
@@ -31,7 +33,7 @@ CustomGroup::CustomGroup(const std::string& groupdef)
 {
   group = new GroupInstance(groupdef);
   if (groupdef.size() <= 0) {
-    std::cout << "warning: group instance has no group definition" << std::endl;
+    std::cout << "WARNING: group instance has no group definition" << std::endl;
   }
   return;
 }
@@ -56,7 +58,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     }
   }
   else if (strcasecmp(cmd, "tint") == 0) {
-    float tint[4];
+    fvec4 tint;
     if (!parseColorStream(input, tint)) {
       std::cout << "bad " << cmd << " specification" << std::endl;
       return false;
@@ -108,6 +110,17 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
       group->addMaterialSwap(srcMat, dstMat);
     }
   }
+  else if (strcasecmp(cmd, "textswap") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    std::vector<std::string> tokens = TextUtils::tokenize(line, " \t", 2);
+    if (tokens.size() != 2) {
+      std::cout << "invalid textswap parameters" << std::endl;
+      return false;
+    }
+    group->addTextSwap(tokens[0], tokens[1]);
+  }
   else if (!WorldFileObstacle::read(cmd, input)) {
     return false;
   }
@@ -116,37 +129,33 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
+void CustomGroup::writeToGroupDef(GroupDefinition *groupDef) const
 {
   // include the old style parameters
   MeshTransform xform;
-  if ((size[0] != 1.0f) || (size[1] != 1.0f) || (size[2] != 1.0f)) {
+  if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
     xform.addScale(size);
   }
   if (rotation != 0.0f) {
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   }
-  if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
+  if ((pos.x != 0.0f) || (pos.x != 0.0f) || (pos.z != 0.0f)) {
     xform.addShift(pos);
   }
   xform.append(transform);
 
+  group->setName(name);
+
   group->setTransform(xform);
 
-
-  if (driveThrough) {
-    group->setDriveThrough();
-  }
-  if (shootThrough) {
-    group->setShootThrough();
-  }
-
-  group->setName(name);
+  if (driveThrough) { group->setDriveThrough(); }
+  if (shootThrough) { group->setShootThrough(); }
+  if (ricochet)     { group->setCanRicochet();  }
 
   // make the group instance
   if (group->getGroupDef().size() > 0) {
-    grpdef->addGroupInstance(group);
+    groupDef->addGroupInstance(group);
   } else {
     delete group;
   }
@@ -156,7 +165,7 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

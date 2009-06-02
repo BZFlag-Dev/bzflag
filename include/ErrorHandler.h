@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,17 +33,6 @@ typedef void		(*ErrorCallback)(const char*);
 ErrorCallback		setErrorCallback(ErrorCallback);
 void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
 void			printFatalError(const char* fmt, ...) BZ_ATTR_12;
-
-class FatalErrorCallback
-{
-public:
-  virtual ~FatalErrorCallback(){};
-  virtual void error ( const char* title, const char* message ) = 0;
-};
-
-void addFatalErrorCallback ( FatalErrorCallback* callback );
-void removeFatalErrorCallback ( FatalErrorCallback* callback );
-
 
 #endif // BZF_ERROR_HANDLER_H
 

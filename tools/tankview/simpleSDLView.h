@@ -33,7 +33,7 @@
 #include <map>
 #include <string>
 
-class SimpleDisplayCamera 
+class SimpleDisplayCamera
 {
 public:
   SimpleDisplayCamera(float x = 0.0f, float y = 0.0f, float z = 0.0f);
@@ -159,7 +159,7 @@ protected:
   // textures
   unsigned int lastImageID;
 
-  typedef struct  
+  typedef struct
   {
     std::string name;
     unsigned int id;
@@ -209,7 +209,7 @@ protected:
 #define SD_KEY_GREATER	62
 #define SD_KEY_QUESTION	63
 #define SD_KEY_AT		64
-/* 
+/*
 Skip uppercase letters
 */
 #define SD_KEY_LEFTBRACKET	  91
@@ -395,7 +395,7 @@ Skip uppercase letters
 #endif //_SIMPLE_SDL_VIEW_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,6 +12,10 @@
 
 /* interface header */
 #include "ComposeDefaultKey.h"
+
+/* system headers */
+#include <string>
+#include <set>
 
 /* common implementation headers */
 #include "BzfEvent.h"
@@ -51,48 +55,81 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return false;
   }
 
-  if (!myTank || (myTank->getInputMethod() != LocalPlayer::Keyboard)) {
+  if (myTank &&
+      ((myTank->getInputMethod() != LocalPlayer::Keyboard) ||
+       (myTank->getTeam() == ObserverTeam))) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down))
+	(key.button == BzfKeyEvent::Down)) {
       return true;
+    }
   }
 
   if (isWordCompletion(key)) {
-    std::string matches;
-    hud->setComposeString(completer.complete(hud->getComposeString(), &matches));
-    if (matches.size() > 0) {
-      controlPanel->addMessage(matches, -1);
+    const std::string line = hud->getComposeString();
+    std::set<std::string> partials;
+    if (!BZDB.isTrue("noDefaultWordComplete")) {
+      completer.complete(line, partials);
+    }
+    if (!partials.empty()) {
+      // find the longest common string
+      const std::string first = *(partials.begin());
+      const std::string last = *(partials.rbegin());
+      const size_t minLen = std::min(first.size(), last.size());
+      size_t i;
+      for (i = 0; i < minLen; i++) {
+        if (first[i] != last[i]) {
+          break;
+        }
+      }
+      hud->setComposeString(line + first.substr(0, i));
+
+      if (partials.size() >= 2) {
+        const size_t lastSpace = line.find_last_of(" \t");
+        const std::string lastWord = (lastSpace == std::string::npos) ?
+                                     line : line.substr(lastSpace + 1);
+        std::string matches;
+        std::set<std::string>::const_iterator it;
+        for (it = partials.begin(); it != partials.end(); ++it) {
+          matches += "  ";
+          matches += lastWord + it->substr(i);
+        }
+        controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
+      }
     }
     return true;
   }
 
   switch (key.chr) {
-  case 3: // ^C
-  case 27: { // escape
-    sendIt = false; // finished composing -- don't send
-    break;
-  }
-  case 4: // ^D
-  case 13: { // return
-    sendIt = true;
-    break;
-  }
-  default: {
-    return false;
-  }
+    case 3: // ^C
+    case 27: { // escape
+      sendIt = false; // finished composing -- don't send
+      break;
+    }
+    case 4: // ^D
+    case 13: { // return
+      sendIt = true;
+      break;
+    }
+    default: {
+      return false;
+    }
   }
 
   if (sendIt) {
     std::string message = hud->getComposeString();
     if (message.length() > 0) {
       const char* cmd = message.c_str();
-      if (LocalCommand::execute(cmd)) {
-	;
-      } else if (serverLink) {
-	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
-	serverLink->sendMessage(msgDestination, messageBuffer);
+      if (!LocalCommand::execute(cmd)) {
+        if (!myTank) {
+          std::string msg = std::string("unknown local command: ") + cmd;
+          controlPanel->addMessage(msg, ControlPanel::MessageCurrent);
+        }
+        else if (serverLink) {
+          char messageBuffer[MessageLen];
+          memset(messageBuffer, 0, MessageLen);
+          strncpy(messageBuffer, message.c_str(), MessageLen);
+          serverLink->sendMessage(msgDestination, messageBuffer);
+        }
       }
 
       // record message in history
@@ -111,7 +148,6 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	}
 	messageHistory.push_front(message);
       }
-
     }
   }
 
@@ -121,10 +157,13 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
+
 bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard) {
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!myTank ||
+      (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
+      (myTank->getTeam() == ObserverTeam)) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.size()) {
 	hud->setComposeString(messageHistory[messageHistoryIndex]);

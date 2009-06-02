@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -59,6 +59,7 @@ class JoinMenu : public HUDDialog {
     float		center;
     HUDuiTypeIn*	callsign;
     HUDuiTypeIn*	password;
+    HUDuiTypeIn*	motto;
     HUDuiList*		team;
     HUDuiImage*		teamIcon;
     HUDuiTypeIn*	server;

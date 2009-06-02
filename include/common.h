@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,8 +63,11 @@
  */
 #define ZERO_TOLERANCE 0.00005f
 
-// because math is fun and this is used EVERYWHERE
-#define deg2Rad 0.017453292519943295769236907684886f
+/* (radians <--> degrees) conversion values */
+#define DEG2RAD 0.0174532925199432957692369076848861271344287189
+#define RAD2DEG 57.29577951308232087679815481410517033240547247
+#define DEG2RADf ((float)DEG2RAD)
+#define RAD2DEGf ((float)RAD2DEG)
 
 
 /* Might we be BSDish? sys/param.h has BSD defined if so */
@@ -165,6 +168,8 @@
 #ifdef HAVE_STDINT_H
 #  include <stdint.h>
 #else
+typedef signed char	int8_t;
+typedef unsigned char	uint8_t;
 #  if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
@@ -175,7 +180,6 @@ typedef ushort_t	uint16_t;
 typedef signed int	int32_t;
 typedef uint_t		uint32_t;
 #  endif
-typedef unsigned char	uint8_t;
 #endif
 
 /* missing constants */
@@ -252,7 +256,7 @@ typedef unsigned char	uint8_t;
 #    ifdef max
 #      undef max
 #    endif
-#    define max(a,b) a < b ? b : a
+#    define max(a, b) ((a) < (b)) ? (b) : (a)
 #  endif /* __cplusplus */
 #endif /* HAVE_STD__MAX */
 
@@ -273,7 +277,7 @@ typedef unsigned char	uint8_t;
 #    ifdef min
 #      undef min
 #    endif
-#    define min(a,b) b < a ? b : a
+#    define min(a, b) ((b) < (a)) ? (b) : (a)
 #  endif /* __cplusplus */
 #endif /* HAVE_STD_MIN */
 
@@ -357,13 +361,10 @@ typedef unsigned char	uint8_t;
 
 #endif /* BZF_COMMON_H */
 
-
-/*
- * Local Variables: ***
- * mode: C++ ***
- * tab-width: 8 ***
- * c-basic-offset: 2 ***
- * indent-tabs-mode: t ***
- * End: ***
- * ex: shiftwidth=2 tabstop=8
- */
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

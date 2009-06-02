@@ -1,0 +1,17 @@
+[#RequirePerm:playerList]
+[!header.tmpl]
+	<div>&nbsp;</div>
+	<table class="titleBox"><tr><td>Current Players</td></tr></table>
+	<table class="PlayerList">
+  	[*START Players]
+	<tr>
+	<td>[$PlayerID]</td>
+	<td>[?IF PlayerBZID][$PlayerBZID][?ELSE PlayerBZID]&nbsp;[?END PlayerBZID]</td>
+	<td><a href="[$BaseURL]showplayer.tmpl?playerid=[$PlayerID]">[$PlayerCallsign]<a></td>
+	<td>[$PlayerIP]</td>
+	</tr>
+	[*END Players]
+	  <tr><td>No Players</td></tr>
+	[*EMPTY Players]
+	</table>
+[!footer.tmpl]

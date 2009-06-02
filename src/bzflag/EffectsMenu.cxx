@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,7 @@
 #include "TrackMarks.h"
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 #include "LocalFontFace.h"
 
 EffectsMenu::EffectsMenu()
@@ -74,6 +74,17 @@ EffectsMenu::EffectsMenu()
   options = &option->getList();
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Nice"));
+  option->update();
+  addControl(option);
+
+  // Shot Length (Viewport)
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Shot Length:");
+  option->setCallback(callback, (void*)"x");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  option->createSlider(10);
   option->update();
   addControl(option);
 
@@ -289,7 +300,7 @@ void EffectsMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight =
     fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
@@ -305,7 +316,7 @@ void EffectsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 3) || (i == 5) || (i == 7)) {
+    if ((i == 3) || (i == 4) || (i == 5) || (i == 7)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -318,6 +329,7 @@ void EffectsMenu::resize(int _width, int _height)
 					    * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fogEffect"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("shotLength"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   int treadIndex = 0;
   if (BZDB.isTrue("animatedTreads")) {
@@ -362,11 +374,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       BZDB.setFloat("userRainScale", float(scale) / 10.0f);
       break;
     }
-    case 'm': 
+    case 'm':
       BZDB.set("userMirror", list->getIndex() ? "1" : "0");
       break;
 
-    case 'F': 
+    case 'F':
 	BZDB.setInt("fogEffect", list->getIndex());
       break;
 
@@ -407,6 +419,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
 	TrackMarks::setAirCulling(TrackMarks::FullAirCull);
       }
       break;
+    }
+    case 'x': {
+      BZDB.setInt("shotLength", list->getIndex());
+      RENDERER.notifyStyleChange(); // bolt glBlendFunc() may change
+     break;
     }
     case 'f': {
       BZDB.set("useFancyEffects", list->getIndex() ? "1" : "0");

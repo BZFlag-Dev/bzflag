@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,7 +35,7 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
 {
   if (getNodeNumber() == 6) return NULL;
 
-  GLfloat base[3], sCorner[3], tCorner[3];
+  fvec3 base, sCorner, tCorner;
   switch (incNodeNumber()) {
     case 1:
       box->getCorner(0, base);
@@ -64,7 +64,7 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
       break;
     case 6:							//This is the bottom polygon
       //Don't generate the bottom polygon if on the ground (or lower)
-      if (box->getPosition()[2] > 0.0f) {
+      if (box->getPosition().z > 0.0f) {
 	box->getCorner(0, base);
 	box->getCorner(3, sCorner);
 	box->getCorner(1, tCorner);
@@ -74,14 +74,9 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
       break;
   }
 
-  GLfloat sEdge[3];
-  GLfloat tEdge[3];
-  sEdge[0] = sCorner[0] - base[0];
-  sEdge[1] = sCorner[1] - base[1];
-  sEdge[2] = sCorner[2] - base[2];
-  tEdge[0] = tCorner[0] - base[0];
-  tEdge[1] = tCorner[1] - base[1];
-  tEdge[2] = tCorner[2] - base[2];
+  const fvec3 sEdge = sCorner - base;
+  const fvec3 tEdge = tCorner - base;
+
   return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 }
 

@@ -1,14 +1,16 @@
 EXTRA_DIST =				\
 	3ds2bzw.c			\
+	art				\
 	bzbz.pl				\
 	bzflag.desktop.in		\
 	bzfquery.php			\
 	bzfquery.pl			\
+	bzfquery.py			\
 	bzfquery_example.php		\
+	bzfs				\
 	bzfs.conf			\
 	bzfs_conf.html			\
 	bzfsd				\
-	bzfquery.py			\
 	bzirc.pl			\
 	bzlist.php			\
 	bzwcvt.pl			\
@@ -16,7 +18,10 @@ EXTRA_DIST =				\
 	checkToken.php			\
 	doxyfile			\
 	elapsed.sh			\
+	empty_world.bzw			\
 	filter.txt			\
+	flagbuffet.bzw			\
+	footer.sh			\
 	fountains.bzw			\
 	groups.conf			\
 	hix.bzw				\
@@ -27,7 +32,9 @@ EXTRA_DIST =				\
 	pingtimes.sh			\
 	rrlog.cxx			\
 	serverstats.sh			\
+	shtool				\
 	simpleSwearList.txt		\
+	stats				\
 	tar				\
 	Template.cxx			\
 	Template.h			\
@@ -56,14 +63,14 @@ MAINTAINERCLEANFILES =	\
 	missing \
 	mkinstalldirs
 
-Rrlog:  rrlog.cxx
-	$(CXX) $(CXXFLAGS)		\
+rrlog:	rrlog.cxx
+	$(LIBTOOL) --tag=CXX --mode=link $(CXX) $(CXXFLAGS) \
 	  -o rrlog rrlog.cxx		\
 	  -I../include -I../src/bzfs	\
-	  ../src/date/libDate.a		\
-	  ../src/game/libGame.a		\
-	  ../src/net/libNet.a		\
-	  ../src/common/libCommon.a
+	  ../src/date/libDate.la	\
+	  ../src/game/libGame.la	\
+	  ../src/net/libNet.la		\
+	  ../src/common/libCommon.la
 
 3ds2bzw:	3ds2bzw.c
 	$(CC) $(CFLAGS) -o 3ds2bzw 3ds2bzw.c -l3ds -lm

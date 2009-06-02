@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -51,18 +51,21 @@ class BackgroundRenderer : public GLDisplayListCreator
 
     void		resize();
 
-    const GLfloat*	getSunDirection() const;
+    const fvec3*	getSunDirection() const;
     void		setBlank(bool blank = true);
     void		setInvert(bool invert = true);
     void		setSimpleGround(bool simple = true);
     void		setCelestial(const SceneRenderer&,
 				     const float sunDirection[3],
 				     const float moonDirection[3]);
-    void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
+    void		addCloudDrift(float uDrift, float vDrift);
     void		notifyStyleChange();
 
     int			getTriangleCount() const;
     void		resetTriangleCount();
+
+    void		multShadowMatrix() const;
+
   protected:
     void		drawSky(SceneRenderer&, bool mirror);
     void		drawSkybox();
@@ -98,11 +101,11 @@ class BackgroundRenderer : public GLDisplayListCreator
     OpenGLGState	groundGState[4];
     OpenGLGState	invGroundGState[4];
     int			groundTextureID;
-    const GLfloat*	groundTextureMatrix;
+    const float*	groundTextureMatrix;
 
     // stuff for grid
-    GLfloat		gridSpacing;
-    GLfloat		gridCount;
+    float		gridSpacing;
+    float		gridCount;
     OpenGLGState	gridGState;
 
     // stuff for ground receivers
@@ -116,7 +119,7 @@ class BackgroundRenderer : public GLDisplayListCreator
     OpenGLGState*	mountainsGState;
 
     // stuff for clouds
-    GLfloat		cloudDriftU, cloudDriftV;
+    float		cloudDriftU, cloudDriftV;
     bool		cloudsAvailable;
     bool		cloudsVisible;
     OpenGLGState	cloudsGState;
@@ -133,15 +136,15 @@ class BackgroundRenderer : public GLDisplayListCreator
     bool		haveSkybox;
     GLenum		skyboxWrapMode;
     int			skyboxTexID[6];
-    GLfloat		skyboxColor[8][4];
+    fvec4		skyboxColor[8];
     bool		doStars;
     bool		doSunset;
-    GLfloat		skyZenithColor[3];
-    GLfloat		skySunDirColor[3];
-    GLfloat		skyAntiSunDirColor[3];
-    GLfloat		skyCrossSunDirColor[3];
-    float		sunDirection[3];
-    float		moonDirection[3];
+    fvec4		skyZenithColor;
+    fvec4		skySunDirColor;
+    fvec4		skyAntiSunDirColor;
+    fvec4		skyCrossSunDirColor;
+    fvec3		sunDirection;
+    fvec3		moonDirection;
     float		sunAzimuth;
     float		sunsetTop;
     int			starGStateIndex;
@@ -160,23 +163,23 @@ class BackgroundRenderer : public GLDisplayListCreator
     std::vector<GLDisplayList> mountanLists;
 
 
-    static GLfloat		skyPyramid[5][3];
-    static const GLfloat	cloudRepeats;
+    static fvec3		skyPyramid[5];
+    static const float	cloudRepeats;
 
-    static GLfloat		rcvrGroundColor[4][4];
-    static GLfloat		rcvrGroundInvColor[4][4];
-    static GLfloat		groundColor[4][4];
-    static GLfloat		groundColorInv[4][4];
-    static const GLfloat	defaultGroundColor[4][4];
-    static const GLfloat	defaultGroundColorInv[4][4];
-    static const GLfloat	receiverColor[3];
-    static const GLfloat	receiverColorInv[3];
+    static fvec4	rcvrGroundColor[4];
+    static fvec4	rcvrGroundInvColor[4];
+    static fvec4	groundColor[4];
+    static fvec4	groundColorInv[4];
+    static const fvec4	defaultGroundColor[4];
+    static const fvec4	defaultGroundColorInv[4];
+    static const fvec4	receiverColor;
+    static const fvec4	receiverColorInv;
 
     int			triangleCount;
 
     SceneRenderer	      *lastRenderer;
 
-    void buildMountan ( unsigned int index );
+    void buildMountain(unsigned int index);
 };
 
 //

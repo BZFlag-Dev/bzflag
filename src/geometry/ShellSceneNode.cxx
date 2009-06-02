@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,68 +19,71 @@
 // system headers
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "OpenGLMaterial.h"
 #include "StateDatabase.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
+#define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 
-#define	ShellRadius1_2	((GLfloat)(M_SQRT1_2 * ShellRadius))
+const fvec3 ShellSceneNode::shellVertex[9] = {
+  fvec3(3.0f * ShellRadius, 0.0f, 0.0f),
+  fvec3(0.0f, -ShellRadius, 0.0f),
+  fvec3(0.0f, -ShellRadius1_2, -ShellRadius1_2),
+  fvec3(0.0f, 0.0f, -ShellRadius),
+  fvec3(0.0f, ShellRadius1_2, -ShellRadius1_2),
+  fvec3(0.0f, ShellRadius, 0.0f),
+  fvec3(0.0f, ShellRadius1_2, ShellRadius1_2),
+  fvec3(0.0f, 0.0f, ShellRadius),
+  fvec3(0.0f, -ShellRadius1_2, ShellRadius1_2)
+};
 
-const GLfloat		ShellSceneNode::shellVertex[9][3] = {
-				{ 3.0f * ShellRadius, 0.0f, 0.0f },
-				{ 0.0f, -ShellRadius, 0.0f },
-				{ 0.0f, -ShellRadius1_2, -ShellRadius1_2 },
-				{ 0.0f, 0.0f, -ShellRadius },
-				{ 0.0f, ShellRadius1_2, -ShellRadius1_2 },
-				{ 0.0f, ShellRadius, 0.0f },
-				{ 0.0f, ShellRadius1_2, ShellRadius1_2 },
-				{ 0.0f, 0.0f, ShellRadius },
-				{ 0.0f, -ShellRadius1_2, ShellRadius1_2 }
-			};
-const GLfloat		ShellSceneNode::shellNormal[10][3] = {
-				{ 1.0f, 0.0f, 0.0f },
-				{ 0.0f, -1.0f, 0.0f },
-				{ 0.0f, (float)-M_SQRT1_2, (float)-M_SQRT1_2 },
-				{ 0.0f, 0.0f, -1.0f },
-				{ 0.0f, (float)M_SQRT1_2, (float)-M_SQRT1_2 },
-				{ 0.0f, 1.0f, 0.0f },
-				{ 0.0f, (float)M_SQRT1_2, (float)M_SQRT1_2 },
-				{ 0.0f, 0.0f, 1.0f },
-				{ 0.0f, (float)-M_SQRT1_2, (float)M_SQRT1_2 },
-				{-1.0f, 0.0f, 0.0f }
-			};
+const fvec3 ShellSceneNode::shellNormal[10] = {
+  fvec3(1.0f, 0.0f, 0.0f),
+  fvec3(0.0f, -1.0f, 0.0f),
+  fvec3(0.0f, (float)-M_SQRT1_2, (float)-M_SQRT1_2),
+  fvec3(0.0f, 0.0f, -1.0f),
+  fvec3(0.0f, (float)M_SQRT1_2, (float)-M_SQRT1_2),
+  fvec3(0.0f, 1.0f, 0.0f),
+  fvec3(0.0f, (float)M_SQRT1_2, (float)M_SQRT1_2),
+  fvec3(0.0f, 0.0f, 1.0f),
+  fvec3(0.0f, (float)-M_SQRT1_2, (float)M_SQRT1_2),
+  fvec3(-1.0f, 0.0f, 0.0f)
+};
 
-ShellSceneNode::ShellSceneNode(const GLfloat pos[3],
-				const GLfloat forward[3]) :
+
+ShellSceneNode::ShellSceneNode(const fvec3& pos, const fvec3& forward) :
 				renderNode(this)
 {
-  static const GLfloat specular[3] = { 1.0f, 1.0f, 1.0f };
-  static const GLfloat emissive[3] = { 0.0f, 0.0f, 0.0f };
+  static const fvec4 specular(1.0f, 1.0f, 1.0f, 1.0f);
+  static const fvec4 emissive(0.0f, 0.0f, 0.0f, 1.0f);
 
   move(pos, forward);
   setRadius(9.0f * ShellRadius * ShellRadius);
 
   OpenGLGStateBuilder builder(gstate);
-  builder.setMaterial(OpenGLMaterial(specular, emissive, 20.0f), RENDERER.useQuality() > _LOW_QUALITY);
+  builder.setMaterial(OpenGLMaterial(specular, emissive, 20.0f),
+                      RENDERER.useQuality() > _LOW_QUALITY);
   gstate = builder.getState();
 }
+
 
 ShellSceneNode::~ShellSceneNode()
 {
   // do nothing
 }
 
-void			ShellSceneNode::move(const GLfloat pos[3],
-						const GLfloat forward[3])
+
+void ShellSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
   setCenter(pos);
-  azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
-  elevation = (float)(-180.0 / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1])));
+  azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
 }
 
-void			ShellSceneNode::notifyStyleChange()
+
+void ShellSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   const bool lighting = BZDB.isTrue("lighting");
@@ -90,15 +93,18 @@ void			ShellSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			ShellSceneNode::addRenderNodes(SceneRenderer& renderer)
+
+void ShellSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
-void			ShellSceneNode::addShadowNodes(SceneRenderer& renderer)
+
+void ShellSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   renderer.addShadowNode(&renderNode);
 }
+
 
 //
 // ShellSceneNode::ShellRenderNode
@@ -112,22 +118,24 @@ ShellSceneNode::ShellRenderNode::ShellRenderNode(
   // do nothing
 }
 
+
 ShellSceneNode::ShellRenderNode::~ShellRenderNode()
 {
   // do nothing
 }
 
-void			ShellSceneNode::ShellRenderNode::
-				setLighting(bool _lighted)
+
+void ShellSceneNode::ShellRenderNode::setLighting(bool _lighted)
 {
   lighted = _lighted;
 }
 
-void			ShellSceneNode::ShellRenderNode::render()
+
+void ShellSceneNode::ShellRenderNode::render()
 {
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 

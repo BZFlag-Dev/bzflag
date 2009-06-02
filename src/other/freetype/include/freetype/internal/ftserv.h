@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    The FreeType services (specification only).                          */
 /*                                                                         */
-/*  Copyright 2003, 2004, 2005, 2006 by                                    */
+/*  Copyright 2003, 2004, 2005, 2006, 2007 by                              */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -301,6 +301,7 @@ FT_BEGIN_HEADER
    */
 
 #define FT_SERVICE_BDF_H                <freetype/internal/services/svbdf.h>
+#define FT_SERVICE_CID_H                <freetype/internal/services/svcid.h>
 #define FT_SERVICE_GLYPH_DICT_H         <freetype/internal/services/svgldict.h>
 #define FT_SERVICE_GX_VALIDATE_H        <freetype/internal/services/svgxval.h>
 #define FT_SERVICE_KERNING_H            <freetype/internal/services/svkern.h>
@@ -315,6 +316,7 @@ FT_BEGIN_HEADER
 #define FT_SERVICE_TT_CMAP_H            <freetype/internal/services/svttcmap.h>
 #define FT_SERVICE_WINFNT_H             <freetype/internal/services/svwinfnt.h>
 #define FT_SERVICE_XFREE86_NAME_H       <freetype/internal/services/svxf86nm.h>
+#define FT_SERVICE_TRUETYPE_GLYF_H      <freetype/internal/services/svttglyf.h>
 
  /* */
 

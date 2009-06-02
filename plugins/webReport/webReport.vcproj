@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="webReport"
 	ProjectGUID="{5C46119A-FC94-4DFB-9F75-154DC96FFAB1}"
+	RootNamespace="webReport"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -64,11 +66,13 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/webReport.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/debug/"
 				ModuleDefinitionFile="webReport.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/webReport.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/webReport.lib"
 				TargetMachine="1"
 			/>
@@ -89,9 +93,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -145,13 +146,15 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/webReport.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../src/bzfs/;../plugin_utils/vc8/release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/release/"
 				ModuleDefinitionFile="webReport.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/webReport.lib"
 				TargetMachine="1"
 			/>
@@ -172,9 +175,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -217,6 +217,18 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="Templates"
+			>
+			<File
+				RelativePath=".\templates\login.tmpl"
+				>
+			</File>
+			<File
+				RelativePath=".\templates\report.tmpl"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

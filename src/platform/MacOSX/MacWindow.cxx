@@ -99,10 +99,16 @@ class GLContext
 
     bool Init(u_int32_t display_id, const CGRect& display_rect) {
       CGLPixelFormatObj pixel_format;
-      GLint num_pixel_formats;
 
-      CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24),
-	  &pixel_format, &num_pixel_formats);
+#if defined(CGL_VERSION_1_1) && !defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
+      long int num_pixel_formats;
+#else
+      GLint num_pixel_formats;
+#endif
+		
+		
+
+      CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24), &pixel_format, &num_pixel_formats);
 
       if (err || !pixel_format)
 	return false;
@@ -181,7 +187,11 @@ class GLContext
     }
 
     void SetVBLSynch(bool synch) {
+#if defined(CGL_VERSION_1_1) && !defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
+      long int params[] = { synch ? 1 : 0 };
+#else
       GLint params[] = { synch ? 1 : 0 };
+#endif
       CGLSetParameter(cgl_context, kCGLCPSwapInterval, params);
 
       settings.VBL_Synch = synch;
@@ -234,7 +244,7 @@ class GLContext
 
       glEnd();
 
-      GLfloat frame[4] = { 1,1,1,1};
+      float frame[4] = { 1,1,1,1};
       glColor4fv(frame);
 
       glBegin(GL_LINE_LOOP);
@@ -277,7 +287,7 @@ class DirectDisplay
   CGDisplayCount num_displays;
   CGDirectDisplayID* display_ids;
 
-  void DumpDisplayModeValues(CFDictionaryRef values) {
+  void DumpDisplayModeValues(CFDictionaryRef /* values */) {
   /*
     dprintf("   ----- Display Mode Info for %d -----\n", get_value(values, kCGDisplayMode));
     dprintf("   Bounds = %d x %d\n", get_value(values, kCGDisplayWidth), get_value(values, kCGDisplayHeight));
@@ -421,7 +431,8 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
   //hideMouse();
 }
 
-MacWindow::~MacWindow() {
+MacWindow::~MacWindow()
+{
   if (window != NULL)
     DisposeWindow(window);
 
@@ -482,7 +493,8 @@ void MacWindow::setSize(int width, int height)
 
 }
 
-void MacWindow::setMinSize(int, int) {
+void MacWindow::setMinSize(int, int)
+{
 #ifndef USE_DSP
   if (window == NULL) return;
 
@@ -491,8 +503,19 @@ void MacWindow::setMinSize(int, int) {
 #endif
 }
 
-void MacWindow::setFullscreen(bool) {} // do nothing for now
-void MacWindow::warpMouse(int x, int y) {
+void MacWindow::setFullscreen(bool)
+{
+  // do nothing for now
+}
+
+bool MacWindow::getFullscreen() const
+{
+  // always fullscreen
+  return true;
+}
+
+void MacWindow::warpMouse(int x, int y)
+{
   CGDisplayErr cgErr;
   CGPoint  mp;
 

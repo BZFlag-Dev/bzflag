@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: threaded-ssl.c,v 1.2 2008-02-23 23:00:24 bagder Exp $
+ * $Id: threaded-ssl.c,v 1.4 2008-05-22 21:20:09 danf Exp $
  *
  * A multi-threaded example that uses pthreads and fetches 4 remote files at
  * once over HTTPS. The lock callbacks and stuff assume OpenSSL or GnuTLS
@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <curl/curl.h>
+
+#define NUMT 4
 
 /* we have this global to let the callback get easy access to it */
 static pthread_mutex_t *lockarray;
@@ -89,7 +91,7 @@ void init_locks(void)
 #endif
 
 /* List of URLs to fetch.*/
-const char *urls[]= {
+const char * const urls[]= {
   "https://www.sf.net/",
   "https://www.openssl.org/",
   "https://www.sf.net/",
@@ -104,8 +106,8 @@ static void *pull_one_url(void *url)
   curl_easy_setopt(curl, CURLOPT_URL, url);
   /* this example doesn't verify the server's certificate, which means we
      might be downloading stuff from an impostor */
-  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
-  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
   curl_easy_perform(curl); /* ignores error */
   curl_easy_cleanup(curl);
 
@@ -114,15 +116,18 @@ static void *pull_one_url(void *url)
 
 int main(int argc, char **argv)
 {
-  pthread_t tid[4];
+  pthread_t tid[NUMT];
   int i;
   int error;
   (void)argc; /* we don't use any arguments in this example */
   (void)argv;
 
+  /* Must initialize libcurl before any threads are started */
+  curl_global_init(CURL_GLOBAL_ALL);
+
   init_locks();
 
-  for(i=0; i< 4; i++) {
+  for(i=0; i< NUMT; i++) {
     error = pthread_create(&tid[i],
                            NULL, /* default attributes please */
                            pull_one_url,
@@ -134,7 +139,7 @@ int main(int argc, char **argv)
   }
 
   /* now wait for all threads to terminate */
-  for(i=0; i< 4; i++) {
+  for(i=0; i< NUMT; i++) {
     error = pthread_join(tid[i], NULL);
     fprintf(stderr, "Thread %d terminated\n", i);
   }

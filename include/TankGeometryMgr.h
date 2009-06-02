@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,7 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "vectors.h"
 
 
 namespace TankGeometryEnums {
@@ -79,17 +80,17 @@ namespace TankGeometryMgr {
   void buildLists();
   void deleteLists();
 
-  GLuint getPartList(TankGeometryEnums::TankShadow shadow,
-		     TankGeometryEnums::TankPart part,
-		     TankGeometryEnums::TankSize size,
-		     TankGeometryEnums::TankLOD lod);
+  unsigned int getPartList(TankGeometryEnums::TankShadow shadow,
+		           TankGeometryEnums::TankPart part,
+		           TankGeometryEnums::TankSize size,
+		           TankGeometryEnums::TankLOD lod);
 
   int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
 			   TankGeometryEnums::TankPart part,
 			   TankGeometryEnums::TankSize size,
 			   TankGeometryEnums::TankLOD lod);
 
-  const float* getScaleFactor(TankGeometryEnums::TankSize size);
+  const fvec3& getScaleFactor(TankGeometryEnums::TankSize size);
 }
 
 
@@ -109,9 +110,12 @@ namespace TankGeometryUtils {
   float getTreadTexLen();
 
   // help to scale vertices and normals
-  inline void doVertex3f(GLfloat x, GLfloat y, GLfloat z);
-  inline void doNormal3f(GLfloat x, GLfloat y, GLfloat z);
-  inline void doTexCoord2f(GLfloat x, GLfloat y);
+  void doVertex3f(float x, float y, float z);
+  void doVertex(const fvec3&);
+  void doNormal3f(float x, float y, float z);
+  void doNormal(const fvec3&);
+  void doTexCoord2f(float x, float y);
+  void doTexCoord(const fvec2&);
 
   //
   // NOTE:  these all return their triangle count
@@ -146,59 +150,11 @@ namespace TankGeometryUtils {
   int buildHighLWheel (int wheel, float angle, int divs);
   int buildHighRWheel (int wheel, float angle, int divs);
 
-  extern const float* currentScaleFactor;
+  extern const fvec3* currentScaleFactor;
   extern TankGeometryEnums::TankShadow shadowMode;
 
   bool buildGeoFromObj ( const char* path, int &count );
 
-}
-
-
-
-// TankGeometryUtils Functions
-// ---------------------------
-
-inline 
-void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
-{
-  const float* scale = currentScaleFactor;
-  x = x * scale[0];
-  y = y * scale[1];
-  z = z * scale[2];
-  glVertex3f(x, y, z);
-  return;
-}
-
-
-inline
-void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
-{
-  if (shadowMode == TankGeometryEnums::ShadowOn) {
-    return;
-  }
-  const float* scale = currentScaleFactor;
-  GLfloat sx = x * scale[0];
-  GLfloat sy = y * scale[1];
-  GLfloat sz = z * scale[2];
-  const GLfloat d = sqrtf ((sx * sx) + (sy * sy) + (sz * sz));
-  if (d > 1.0e-5f) {
-    x *= scale[0] / d;
-    y *= scale[1] / d;
-    z *= scale[2] / d;
-  }
-  glNormal3f(x, y, z);
-  return;
-}
-
-
-inline
-void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
-{
-  if (shadowMode == TankGeometryEnums::ShadowOn) {
-    return;
-  }
-  glTexCoord2f(x, y);
-  return;
 }
 
 

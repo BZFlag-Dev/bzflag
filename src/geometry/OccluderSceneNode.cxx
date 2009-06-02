@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 
@@ -21,7 +21,7 @@
 #include <math.h>
 #include <string.h>
 
-// common implementation headers
+// common headers
 #include "MeshFace.h"
 #include "Intersect.h"
 #include "ViewFrustum.h"
@@ -35,38 +35,29 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
   setOccluder(true);
 
   // record plane info
-  memcpy(plane, face->getPlane(), sizeof(float[4]));
+  plane = face->getPlane();
 
   // record extents info
   extents = face->getExtents();
 
   // record vertex info
   vertexCount = face->getVertexCount();
-  vertices = new GLfloat3[vertexCount];
+  vertices = new fvec3[vertexCount];
   for (i = 0; i < vertexCount; i++) {
-    memcpy(vertices[i], face->getVertex(i), sizeof(float[3]));
+    vertices[i] = face->getVertex(i);
   }
 
   // record sphere info
-  GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+  fvec4 mySphere(0.0f, 0.0f, 0.0f, 0.0f);
   for (i = 0; i < vertexCount; i++) {
-    const float* v = vertices[i];
-    mySphere[0] += v[0];
-    mySphere[1] += v[1];
-    mySphere[2] += v[2];
+    mySphere.xyz() += vertices[i];
   }
-  mySphere[0] /= (float)vertexCount;
-  mySphere[1] /= (float)vertexCount;
-  mySphere[2] /= (float)vertexCount;
+  mySphere.xyz() /= (float)vertexCount;
 
   for (i = 0; i < vertexCount; i++) {
-    const float* v = vertices[i];
-    const float dx = mySphere[0] - v[0];
-    const float dy = mySphere[1] - v[1];
-    const float dz = mySphere[2] - v[2];
-    GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
-    if (r > mySphere[3]) {
-      mySphere[3] = r;
+    const float distSq = (mySphere.xyz() - vertices[i]).lengthSq();
+    if (mySphere.w < distSq) {
+      mySphere.w = distSq;
     }
   }
   setSphere(mySphere);
@@ -85,9 +76,8 @@ OccluderSceneNode::~OccluderSceneNode()
 bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
-  const GLfloat* eye = frustum.getEye();
-  if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-       plane[3]) <= 0.0f) {
+  const fvec3& eye = frustum.getEye();
+  if (plane.planeDist(eye) <= 0.0f) {
     return true;
   }
 
@@ -98,7 +88,7 @@ bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 
@@ -113,7 +103,8 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     return false;
   }
 
-  return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
+  return Intersect::testPolygonInAxisBox(vertexCount,
+                                         (const fvec3*)vertices, plane, exts);
 }
 
 

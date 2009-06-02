@@ -2,7 +2,7 @@
 #  Adapted for djgpp2 / Watt-32 / DOS by
 #  Gisle Vanem <giva@bgnett.no>
 #
-# $Id: makefile.dj,v 1.12 2007-02-27 15:24:32 giva Exp $
+# $Id: makefile.dj,v 1.13 2008-08-21 13:51:07 giva Exp $
 
 DEPEND_PREREQ = config.h
 TOPDIR = ..
@@ -16,12 +16,15 @@ OBJECTS := $(patsubst %.c,$(OBJ_DIR)/%.o,$(strip $(CSOURCES)))
 
 CURL_LIB = libcurl.a
 
-all: $(OBJ_DIR) config.h $(CURL_LIB)
+all: $(OBJ_DIR) ../include/curl/curlbuild.h config.h $(CURL_LIB)
 
 $(CURL_LIB): $(OBJECTS)
 	ar rs $@ $?
 
 config.h: config.dos
+	cp $^ $@
+
+../include/curl/curlbuild.h: ../include/curl/curlbuild.h.dist
 	cp $^ $@
 
 clean:

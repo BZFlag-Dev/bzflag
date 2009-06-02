@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,13 +23,13 @@
 
 class FlagWarpSceneNode : public SceneNode {
   public:
-			FlagWarpSceneNode(const GLfloat pos[3]);
-			~FlagWarpSceneNode();
+    FlagWarpSceneNode(const fvec3& pos);
+    ~FlagWarpSceneNode();
 
-    void		setSizeFraction(GLfloat);
+    void		setSizeFraction(float);
 
-    GLfloat		getDistance(const GLfloat*) const;
-    void		move(const GLfloat pos[3]);
+    float		getDistanceSq(const fvec3& eye) const;
+    void		move(const fvec3& pos);
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
@@ -40,17 +40,17 @@ class FlagWarpSceneNode : public SceneNode {
 			FlagWarpRenderNode(const FlagWarpSceneNode*);
 			~FlagWarpRenderNode();
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
       private:
 	const FlagWarpSceneNode* sceneNode;
     };
     friend class FlagWarpRenderNode;
 
   private:
-    GLfloat		size;
+    float		size;
     OpenGLGState	gstate;
     FlagWarpRenderNode	renderNode;
-    static const GLfloat color[7][3];
+    static const fvec4  color[7];
 };
 
 #endif // BZF_FLAG_WARP_SCENE_NODE_H

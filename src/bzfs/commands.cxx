@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -51,6 +51,7 @@
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"
+#include "Reports.h"
 
 #include "BackgroundTask.h"
 
@@ -358,6 +359,15 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class ReportCommand : private ServerCommand
+{
+public:
+  ReportCommand();
+
+  virtual bool operator() (const char *commandLine, GameKeeper::Player *playerData);
+};
+
+
 class PollCommand : public ServerCommand {
 public:
   PollCommand();
@@ -465,6 +475,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class DebugCommand : ServerCommand {
+public:
+  DebugCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand	  partCommand;
@@ -490,7 +508,7 @@ static GameStatsCommand   gameStatsCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
-ReportCommand      reportCommand;	// used by the API
+static ReportCommand      reportCommand;
 static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
 static GroupListCommand   groupListCommand;
@@ -513,6 +531,7 @@ static ReplayCommand      replayCommand;
 static SayCommand	  sayCommand;
 static CmdList		  cmdList;
 static CmdHelp		  cmdHelp;
+static DebugCommand       debugCommand;
 
 CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
 CmdList::CmdList()			 : ServerCommand("/?",
@@ -603,10 +622,12 @@ ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
 							 "[ list [-t|-n] | load <filename|#index> | loop | play | skip [+/-seconds] | stats ] - interact with recorded files") {}
 SayCommand::SayCommand()		 : ServerCommand("/say",
 							 "[message] - generate a public message sent by the server") {}
-ModCountCommand::ModCountCommand()		 : ServerCommand("/modcount",
+ModCountCommand::ModCountCommand()	 : ServerCommand("/modcount",
 								 "[+-seconds] - adjust countdown (if any)") {}
 DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
 TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
+DebugCommand::DebugCommand()		 : ServerCommand("/serverdebug",
+							 "[value] - set debug level for the server or display the current setting") {}
 
 class NoDigit {
 public:
@@ -684,9 +705,9 @@ bool CmdHelp::operator() (const char *message,
 			  GameKeeper::Player *playerData)
 {
 
-  int i;
-  for (i = 0; message[i] && !isspace(message[i]); i++) {};
-  if (!i)
+  int i = TextUtils::firstNonvisible(message);
+
+  if (i <= 0)
     return false;
   i--;
   bool listOnly;
@@ -853,14 +874,10 @@ bool MsgCommand::operator() (const char *message,
   std::string recipient = std::string("");
 
   // skip any leading whitespace
-  callsignStart = 0;
-  while ((callsignStart < arguments.size()) &&
-	 (isspace(arguments[callsignStart]))) {
-    callsignStart++;
-  }
+  callsignStart = TextUtils::firstVisible(arguments);
 
   // make sure there was _some_ whitespace after /msg
-  if (callsignStart == 0) {
+  if (callsignStart <= 0) {
     sendMessage(ServerPlayer, from, "Usage: /msg \"some callsign\" some message");
     return true;
   }
@@ -965,6 +982,7 @@ bool PasswordCommand::operator() (const char *message,
       // Notify plugins of player authentication change
       bz_PlayerAuthEventData_V1 commandData;
       commandData.playerID = t;
+      commandData.password = true;
       worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
     } else {
       sendMessage(ServerPlayer, t, "Wrong Password!");
@@ -1045,6 +1063,7 @@ bool ResetCommand::operator() (const char *message,
 bool ShutdownCommand::operator() (const char *,
 				  GameKeeper::Player *playerData)
 {
+  std::string explanation = "shut down";
   // If no playerData - dont perfom permission check, since it is probably the API
   if (playerData){
     int t = playerData->getIndex();
@@ -1052,8 +1071,10 @@ bool ShutdownCommand::operator() (const char *,
       sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
       return true;
     }
+    explanation += " by " + std::string(playerData->player.getCallSign());
   }
-  done = true;
+  sendMessage(ServerPlayer, AllPlayers, explanation.c_str());
+  serverDone = true;
   return true;
 }
 
@@ -1095,8 +1116,8 @@ bool GameOverCommand::operator() (const char *,
   }
 
   NetMsg  msg = MSGMGR.newMessage();
-  msg->packUByte(t);
-  msg->packUShort(uint16_t(NoTeam));
+  msg->packUInt8(t);
+  msg->packUInt16(uint16_t(NoTeam));
   msg->broadcast(MsgScoreOver);
 
   gameOver = true;
@@ -1247,7 +1268,7 @@ bool FlagCommand::operator() (const char *message,
   }
 
   const char* msg = message + 6;
-  while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+  msg = TextUtils::skipWhitespace(msg);
 
   if (strncasecmp(msg, "up", 2) == 0) {
     for (int i = 0; i < numFlags; i++) {
@@ -1261,17 +1282,22 @@ bool FlagCommand::operator() (const char *message,
 	sendFlagUpdateMessage(flag);
       }
     }
-  } else if (strncasecmp(msg, "show", 4) == 0) {
+  }
+  else if (strncasecmp(msg, "show", 4) == 0)
+  {
     BufferedChatParams *params = new BufferedChatParams(playerData);
-    for (int i = 0; i < numFlags; i++) {
+    for (int i = 0; i < numFlags; i++)
+    {
       char showMessage[MessageLen];
       FlagInfo::get(i)->getTextualInfo(showMessage);
       params->items.push_back(showMessage);
     }
     BGTM.addTask(&bufferChat,params);
-  } else if (strncasecmp(msg, "reset", 5) == 0) {
+  }
+  else if (strncasecmp(msg, "reset", 5) == 0)
+  {
     msg += 5;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    msg = TextUtils::skipWhitespace(msg);
 
     if (*msg == '\0') {
       flagCommandHelp(t);
@@ -1334,7 +1360,7 @@ bool FlagCommand::operator() (const char *message,
     }
 
     msg += 4;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    msg = TextUtils::skipWhitespace(msg);
 
     std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
     if (argv.size() < 1) {
@@ -1360,7 +1386,7 @@ bool FlagCommand::operator() (const char *message,
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
 	       playerData->player.getCallSign(),
-	       fi->flag.type->flagAbbv, fi->getIndex(),
+	       fi->flag.type->flagAbbv.c_str(), fi->getIndex(),
 	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
@@ -1377,7 +1403,7 @@ bool FlagCommand::operator() (const char *message,
     }
 
     msg += 4;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
+    msg = TextUtils::skipWhitespace(msg);
 
     std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
     if (argv.size() < 2) {
@@ -1470,7 +1496,7 @@ bool FlagCommand::operator() (const char *message,
 	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
 	if (fPlayer) {
 	  NetMsg newMsg = MSGMGR.newMessage();
-	  newMsg->packUByte(fi->player);
+	  newMsg->packUInt8(fi->player);
 	  fi->pack(newMsg);
 	  newMsg->broadcast(MsgDropFlag);
 	}
@@ -1484,7 +1510,7 @@ bool FlagCommand::operator() (const char *message,
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
 	       playerData->player.getCallSign(),
-	       fi->flag.type->flagAbbv, fi->getIndex(),
+	       fi->flag.type->flagAbbv.c_str(), fi->getIndex(),
 	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
@@ -1886,7 +1912,6 @@ bool PlayerListCommand::operator() (const char *,
 bool ReportCommand::operator() (const char *message,
 				GameKeeper::Player *playerData)
 {
- 
   int t;
   std::string callsign;
   std::string msg;
@@ -1894,17 +1919,17 @@ bool ReportCommand::operator() (const char *message,
   // If no playerData - dont perfom real player checks, since it is probably the API
   if ( playerData ) {
     t = playerData->getIndex();
-    
+
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
       sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
       return true;
     }
-    
+
     if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
       sendMessage(ServerPlayer, t, "The report command is disabled on this server");
       return true;
     }
-    
+
     if (strlen(message + 1) < 8) {
       sendMessage(ServerPlayer, t, "Nothing reported");
       return true;
@@ -1912,58 +1937,14 @@ bool ReportCommand::operator() (const char *message,
 
     msg = (message + 8);
     callsign = playerData->player.getCallSign();
-  } else { 
+  } else {
     t = ServerPlayer;
     msg = message;
     callsign = "SERVER";
   }
-  
-  time_t now = time(NULL);
-  char* timeStr = ctime(&now);
-  std::string reportStr;
-  reportStr = reportStr + timeStr + "Reported by " + callsign + ": " + msg;
 
-  if (clOptions->reportFile.size() > 0) {
-    std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out | std::ios::app);
-    ofs << reportStr << std::endl << std::endl;
-  }
-
-  if (clOptions->reportPipe.size() > 0) {
-    FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
-    if (pipeWrite != NULL) {
-      fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
-    } else {
-      logDebugMessage(1,"Couldn't write report to the pipe\n");
-    }
-    pclose(pipeWrite);
-  }
-
-  std::string temp = std::string("**\"") + callsign + "\" reports: " + msg;
-  const std::vector<std::string> words = TextUtils::tokenize(temp, " \t");
-  unsigned int cur = 0;
-  const unsigned int wordsize = words.size();
-  std::string temp2;
-
-  while (cur != wordsize) {
-    temp2.clear();
-    while (cur != wordsize &&
-	   (temp2.size() + words[cur].size() + 1 ) < (unsigned) MessageLen) {
-      temp2 += words[cur] + " ";
-      ++cur;
-    }
-    sendMessage (ServerPlayer, AdminPlayers, temp2.c_str());
-  }
-
-  logDebugMessage(1,"Player %s [%d] has filed a report (time: %s).\n", callsign.c_str(), t, timeStr);
-
-  if ( playerData )
+  if(REPORTS.file(callsign,msg))
     sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
-
-  // Notify plugins of the report filed
-  bz_ReportFiledEventData_V1 reportData;
-  reportData.playerID = t;
-  reportData.message = msg;
-  worldEventManager.callEvents(bz_eReportFiledEvent, &reportData);
 
   return true;
 }
@@ -2389,14 +2370,12 @@ bool VoteCommand::operator() (const char *message,
   std::string answer;
 
   /* find the start of the vote answer */
-  size_t startPosition = 0;
-  while ((startPosition < voteCmd.size()) &&
-	 (isspace(voteCmd[startPosition]))) {
-    startPosition++;
-  }
+  int startPosition = TextUtils::firstVisible(voteCmd);
+  if (startPosition < 0)
+    return true;
 
   /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
-  for (size_t i = startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
+  for (size_t i = (size_t)startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++) {
     answer += tolower(voteCmd[i]);
   }
 
@@ -2600,16 +2579,15 @@ bool PollCommand::operator() (const char *message,
   logDebugMessage(3,"The arguments string is [%s]\n", arguments.c_str());
 
   /* find the start of the command */
-  size_t startPosition = 0;
-  while ((startPosition < arguments.size()) &&
-	 (isspace(arguments[startPosition]))) {
-    startPosition++;
+  int startPosition = TextUtils::firstVisible(arguments);
+  if (startPosition < 0) {
+    startPosition = 0;
   }
 
   logDebugMessage(3,"Start position is %d\n", (int)startPosition);
 
   /* find the end of the command */
-  size_t endPosition = startPosition + 1;
+  size_t endPosition = (size_t)startPosition + 1;
   while ((endPosition < arguments.size()) &&
 	 (!isspace(arguments[endPosition]))) {
     endPosition++;
@@ -2618,9 +2596,9 @@ bool PollCommand::operator() (const char *message,
   logDebugMessage(3,"End position is %d\n", (int)endPosition);
 
   /* stash the command ('kick', etc) in lowercase to simplify comparison */
-  if ((startPosition != arguments.size()) &&
-      (endPosition > startPosition)) {
-    for (size_t i = startPosition; i < endPosition; i++) {
+  if (((size_t)startPosition != arguments.size()) &&
+      (endPosition > (size_t)startPosition)) {
+    for (size_t i = (size_t)startPosition; i < endPosition; i++) {
       cmd += tolower(arguments[i]);
     }
   }
@@ -2644,11 +2622,11 @@ bool PollCommand::operator() (const char *message,
     logDebugMessage(3,"Command arguments are [%s]\n", arguments.c_str());
 
     /* find the start of the target (e.g. player name) */
-    startPosition = 0;
-    while ((startPosition < arguments.size()) &&
-	   (isspace(arguments[startPosition]))) {
-      startPosition++;
+    startPosition = TextUtils::firstVisible(arguments);
+    if (startPosition < 0) {
+      startPosition = 0;
     }
+
     // do not include a starting quote, if given
     if (arguments[startPosition] == '"') {
       startPosition++;
@@ -2859,21 +2837,11 @@ bool ViewReportCommand::operator() (const char* message,
     sendMessage(ServerPlayer, t, "You do not have permission to run the viewreports command");
     return true;
   }
-  if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0) {
-    sendMessage(ServerPlayer, t,
-		"The /report command is disabled on this"
-		" server or there are no reports filed.");
-  }
-  std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if (ifs.fail()) {
-    sendMessage(ServerPlayer, t, "Error reading from report file.");
-    return true;
-  }
 
   // setup the glob pattern
   std::string pattern = "*";
   message += commandName.size();
-  while ((*message != '\0') && isspace(*message)) message++;
+  message = TextUtils::skipWhitespace(message);
   if (*message != '\0') {
     pattern = message;
     pattern = TextUtils::toupper(pattern);
@@ -2884,33 +2852,11 @@ bool ViewReportCommand::operator() (const char* message,
 
   BufferedChatParams *params = new BufferedChatParams(playerData);
 
-  // assumes that empty lines separate the reports
-  std::string line;
-  std::vector<std::string> buffers;
-  bool matched = false;
-  while (std::getline(ifs, line)) {
-    buffers.push_back(line);
-    if (line.size() <= 0) {
-      // blank line
-      if (matched) {
-	for (int i = 0; i < (int)buffers.size(); i++) {
-	  params->items.push_back(buffers[i]);
-	}
-      }
-      buffers.clear();
-      matched = false;
-    } else {
-      // non-blank line
-      if (glob_match(pattern, TextUtils::toupper(line))) {
-	matched = true;
-      }
-    }
-  }
-  // in case the file doesn't end with a blank line
-  if (matched) {
-    for (int i = 0; i < (int)buffers.size(); i++) {
-      params->items.push_back(buffers[i]);
-    }
+  if(REPORTS.getLines (params->items, pattern.c_str()) == 0)
+  {
+    sendMessage(ServerPlayer, t, "The /report command is disabled on this server or there are no reports filed.");
+    delete (params);
+    return true;
   }
 
   BGTM.addTask(&bufferChat,params);
@@ -2985,7 +2931,7 @@ bool RecordCommand::operator() (const char *message,
     sendMessage(ServerPlayer, t, "You do not have permission to run the /record command");
     return true;
   }
-  while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+  buf = TextUtils::skipWhitespace(buf);
 
   if (strncasecmp (buf, "start", 5) == 0) {
     Record::start(t);
@@ -2993,7 +2939,7 @@ bool RecordCommand::operator() (const char *message,
     Record::stop(t);
   } else if (strncasecmp (buf, "size", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf);
 
     if (*buf == '\0') {
       Record::sendHelp (t);
@@ -3003,7 +2949,7 @@ bool RecordCommand::operator() (const char *message,
     Record::setSize (t, size);
   } else if (strncasecmp (buf, "rate", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf);
 
     if (*buf == '\0') {
       Record::sendHelp (t);
@@ -3022,7 +2968,7 @@ bool RecordCommand::operator() (const char *message,
     buf = buf + 4;
     char filename[MessageLen];
 
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf);
     if (*buf == '\0') {
       Record::sendHelp (t);
       return true;
@@ -3032,8 +2978,8 @@ bool RecordCommand::operator() (const char *message,
     sscanf (buf, "%128s", filename);
 
     // FIXME - do this a little better? use quotations for strings?
-    while ((*buf != '\0') && !isspace (*buf)) buf++; // eat filename
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipNonWhitespace(buf); // eat filename
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Record::saveBuffer (t, filename, 0);
@@ -3042,7 +2988,7 @@ bool RecordCommand::operator() (const char *message,
     }
   } else if (strncasecmp (buf, "file", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Record::sendHelp (t);
@@ -3071,9 +3017,7 @@ bool ReplayCommand::operator() (const char *message,
 {
   int t = playerData->getIndex();
   const char *buf = message + 7;
-  while ((*buf != '\0') && isspace (*buf)) { // eat whitespace
-    buf++;
-  }
+  buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
   // everyone can use the replay stats command
   if (strncasecmp (buf, "stats", 5) == 0) {
@@ -3093,7 +3037,7 @@ bool ReplayCommand::operator() (const char *message,
     }
   } else if (strncasecmp (buf, "load", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Replay::sendHelp (t);
@@ -3106,7 +3050,7 @@ bool ReplayCommand::operator() (const char *message,
     Replay::loop (t);
   } else if (strncasecmp (buf, "skip", 4) == 0) {
     buf = buf + 4;
-    while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
+    buf = TextUtils::skipWhitespace(buf); // eat whitespace
 
     if (*buf == '\0') {
       Replay::skip (t, 0);
@@ -3127,7 +3071,7 @@ bool ReplayCommand::operator() (const char *message,
 bool SayCommand::operator() (const char *message,
 			     GameKeeper::Player *playerData)
 {
-  size_t messageStart = 0;
+  int messageStart = -1;
   int t = playerData->getIndex();
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::say)) {
@@ -3140,13 +3084,10 @@ bool SayCommand::operator() (const char *message,
   std::string messageText = &message[4];
 
   // skip any leading whitespace
-  while ((messageStart < messageText.size()) &&
-	 (isspace(messageText[messageStart]))) {
-    messageStart++;
-  }
+  messageStart = TextUtils::firstVisible(messageText);
 
   // make sure there was _some_ whitespace after /say
-  if (messageStart == 0) {
+  if (messageStart < 0) {
     sendMessage(ServerPlayer, t, "Usage: /say some message");
     return true;
   }
@@ -3161,10 +3102,11 @@ bool SayCommand::operator() (const char *message,
   return true;
 }
 
-bool ModCountCommand::operator() (const char	*message,
+
+bool ModCountCommand::operator() (const char *message,
 				  GameKeeper::Player *playerData)
 {
-  size_t messageStart = 0;
+  int messageStart = 0;
   int t = playerData->getIndex();
 
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::modCount)) {
@@ -3177,12 +3119,9 @@ bool ModCountCommand::operator() (const char	*message,
   std::string messageText = &message[9];
 
   // skip any leading whitespace
-  while ((messageStart < messageText.size()) &&
-	 (isspace(messageText[messageStart]))) {
-    messageStart++;
-  }
+  messageStart = TextUtils::firstVisible(messageText);
 
-  if (messageStart == messageText.size()) {
+  if ((size_t)messageStart == messageText.size() || messageStart < 0) {
     sendMessage(ServerPlayer, t, "Usage: /modcount {+|-} SECONDS");
     return true;
   }
@@ -3242,7 +3181,7 @@ void parseServerCommand(const char *message, int t)
 
   worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
-  // lets see if if ther is a cusom handler for the event
+  // lets see if if there is a custom handler for the event
   std::vector<std::string> params = TextUtils::tokenize(std::string(message+1),std::string(" "));
 
   if (params.size() == 0)
@@ -3309,6 +3248,33 @@ void removeCustomSlashCommand(std::string command)
     customCommands.erase(itr);
 }
 
+bool DebugCommand::operator() (const char *message,
+			       GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the debug command");
+    logDebugMessage(3,"debug failed by %s\n",playerData->player.getCallSign());
+    return true;
+  }
+  std::string arguments = &message[12]; /* skip "/serverdebug" */
+
+  if (arguments.find_first_not_of(" ") == std::string::npos) {
+    /* No arguments */
+    sendMessage(ServerPlayer, t,
+		TextUtils::format("Debug Level is %d", debugLevel).c_str());
+  } else {
+    int newDebugLevel = atoi(arguments.c_str());
+
+    sendMessage(ServerPlayer, AdminPlayers,
+		TextUtils::format("Debug Level changed from %d to %d by %s",
+				  debugLevel, newDebugLevel,
+				  playerData->player.getCallSign()).c_str());
+    debugLevel = newDebugLevel;
+  }
+
+  return true;
+}
 
 // Local Variables: ***
 // mode: C++ ***

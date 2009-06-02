@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,7 +18,6 @@
 #define	BZF_VIEW_FRUSTUM_H
 
 #include "common.h"
-#include "bzfgl.h"
 #include "Frustum.h"
 
 // FIXME -- will need a means for off center projections for

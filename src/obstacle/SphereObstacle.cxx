@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,19 +33,21 @@ SphereObstacle::SphereObstacle()
 
 
 SphereObstacle::SphereObstacle(const MeshTransform& xform,
-			 const float* _pos, const float* _size,
-			 float _rotation, const float _texsize[2],
+			 const fvec3& _pos, const fvec3& _size,
+			 float _rotation, const fvec2& _texsize,
 			 bool _useNormals, bool _hemisphere,
 			 int _divisions, const BzMaterial* mats[MaterialCount],
-			 int physics, bool bounce, unsigned char drive, unsigned char shoot)
+			 int physics, bool bounce,
+			 unsigned char drive, unsigned char shoot, bool rico)
 {
-  // common obstace parameters
-  memcpy(pos, _pos, sizeof(pos));
-  memcpy(size, _size, sizeof(size));
+  // common obstacle parameters
+  pos = _pos;
+  size = _size;
   angle = _rotation;
-  ZFlip = false;
+  zFlip = false;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
 
   // arc specific parameters
   transform = xform;
@@ -54,7 +56,7 @@ SphereObstacle::SphereObstacle(const MeshTransform& xform,
   phydrv = physics;
   smoothBounce = bounce;
   useNormals = _useNormals;
-  memcpy(texsize, _texsize, sizeof(texsize));
+  texsize = _texsize;
   memcpy(materials, mats, sizeof(materials));
 
   finalize();
@@ -77,7 +79,8 @@ Obstacle* SphereObstacle::copyWithTransform(const MeshTransform& xform) const
   SphereObstacle* copy =
     new SphereObstacle(tmpXform, pos, size, angle, texsize, useNormals,
 		       hemisphere, divisions, (const BzMaterial**)materials,
-		       phydrv, smoothBounce, driveThrough, shootThrough);
+		       phydrv, smoothBounce,
+		       driveThrough, shootThrough, ricochet);
   return copy;
 }
 
@@ -110,7 +113,8 @@ MeshObstacle* SphereObstacle::makeMesh()
 {
   MeshObstacle* mesh;
   int i, j, q;
-  float sz[3], texsz[2];
+  fvec3 sz;
+  fvec2 texsz;
   const float minSize = 1.0e-6f; // cheezy / lazy
   int factor = 2;
 
@@ -120,76 +124,75 @@ MeshObstacle* SphereObstacle::makeMesh()
   }
 
   // absolute the sizes
-  sz[0] = fabsf(size[0]);
-  sz[1] = fabsf(size[1]);
-  sz[2] = fabsf(size[2]);
+  sz.x = fabsf(size.x);
+  sz.y = fabsf(size.y);
+  sz.z = fabsf(size.z);
 
   // adjust the texture sizes
-  memcpy (texsz, texsize, sizeof(float[2]));
-  if (texsz[0] < 0.0f) {
+  texsz = texsize;
+  if (texsz.x < 0.0f) {
     // unless you want to do elliptic integrals, here's
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
     const float circ =
-      (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
-	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+      (float)M_PI * ((3.0f * (sz.x + sz.y)) -
+	      sqrtf ((sz.x + (3.0f * sz.y)) * (sz.y + (3.0f * sz.x))));
     // make sure it's an integral number so that the edges line up
-    texsz[0] = -floorf(circ / texsz[0]);
+    texsz.x = -floorf(circ / texsz.x);
   }
-  if (texsz[1] < 0.0f) {
-    texsz[1] = -((2.0f * sz[2]) / texsz[1]);
+  if (texsz.y < 0.0f) {
+    texsz.y = -((2.0f * sz.z) / texsz.y);
   }
 
 
   // validity checking
-  if ((divisions < 1) || (texsz[0] < minSize) || (texsz[1] < minSize) ||
-      (sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize)) {
+  if ((divisions < 1) ||
+      (texsz.x < minSize) || (texsz.y < minSize) ||
+      (sz.x < minSize) || (sz.y < minSize) || (sz.z < minSize)) {
     return NULL;
   }
 
   // setup the coordinates
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> vertices;
-  std::vector<cfvec3> normals;
-  std::vector<cfvec2> texcoords;
-  cfvec3 v, n;
-  cfvec2 t;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> vertices;
+  std::vector<fvec3> normals;
+  std::vector<fvec2> texcoords;
+
+  fvec3 v;
+  fvec3 n;
+  fvec2 t;
 
   // add the checkpoint (one is sufficient)
-  v[0] = pos[0];
-  v[1] = pos[1];
-  v[2] = pos[2];
+  v = pos;
   if (hemisphere) {
-    v[2] = v[2] + (0.5f * fabsf(size[2]));
+    v.z = v.z + (0.5f * fabsf(size.z));
   }
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 
   // the center vertices
-  v[0] = pos[0];
-  v[1] = pos[1];
-  v[2] = pos[2] + sz[2];
+  v.x = pos.x;
+  v.y = pos.y;
+  v.z = pos.z + sz.z;
   vertices.push_back(v);
   if (!hemisphere) {
-    v[2] = pos[2] - sz[2];
+    v.z = pos.z - sz.z;
     vertices.push_back(v);
   }
   if (useNormals) {
-    n[0] = 0.0f;
-    n[1] = 0.0f;
-    n[2] = 1.0f;
+    n = fvec3(0.0f, 0.0f, 1.0f);
     normals.push_back(n);
     if (!hemisphere) {
-      n[2] = -1.0f;
+      n.z = -1.0f;
       normals.push_back(n);
     }
   }
-  t[0] = 0.5f; // weirdness
-  t[1] = 1.0f;
+  t.x = 0.5f; // weirdness
+  t.y = 1.0f;
   texcoords.push_back(t);
   if (!hemisphere) {
-    t[1] = 0.0f;
+    t.y = 0.0f;
     texcoords.push_back(t);
   }
 
@@ -200,49 +203,42 @@ MeshObstacle* SphereObstacle::makeMesh()
       h_angle = h_angle + getRotation();
       float v_angle = (float)((M_PI / 2.0) *
 		       (divisions - i - 1) / (divisions));
-      float unit[3];
-      unit[0] = cosf(h_angle) * cosf(v_angle);
-      unit[1] = sinf(h_angle) * cosf(v_angle);
-      unit[2] = sinf(v_angle);
+      fvec3 unit;
+      unit.x = cosf(h_angle) * cosf(v_angle);
+      unit.y = sinf(h_angle) * cosf(v_angle);
+      unit.z = sinf(v_angle);
       // vertex
-      v[0] = pos[0] + (sz[0] * unit[0]);
-      v[1] = pos[1] + (sz[1] * unit[1]);
-      v[2] = pos[2] + (sz[2] * unit[2]);
+      v = pos + (sz * unit);
       vertices.push_back(v);
       // normal
       if (useNormals) {
-	n[0] = unit[0] / sz[0];
-	n[1] = unit[1] / sz[1];
-	n[2] = unit[2] / sz[2];
-	const float len = 1.0f / sqrtf(vec3dot(n.data, n.data));
-	n[0] = n[0] * len;
-	n[1] = n[1] * len;
-	n[2] = n[2] * len;
+        n = unit / sz;
+        fvec3::normalize(n);
 	normals.push_back(n);
       }
       // texcoord
-      t[0] = (float)j / (float)(4 * (i + 1));
-      t[0] = t[0] * texsz[0];
-      t[1] = (float)(divisions - i - 1) / (float)divisions;
+      t.x = (float)j / (float)(4 * (i + 1));
+      t.x = t.x * texsz.x;
+      t.y = (float)(divisions - i - 1) / (float)divisions;
       if (!hemisphere) {
-	t[1] = 0.5f + (0.5f * t[1]);
+	t.y = 0.5f + (0.5f * t.y);
       }
-      t[1] = t[1] * texsz[1];
+      t.y = t.y * texsz.y;
       texcoords.push_back(t);
 
       // the bottom hemisphere
       if (!hemisphere) {
 	if (i != (divisions - 1)) {
 	  // vertex
-	  v[2] = (2 * pos[2]) - v[2];
+	  v.z = (2 * pos.z) - v.z;
 	  vertices.push_back(v);
 	  // normal
 	  if (useNormals) {
-	    n[2] = -n[2];
+	    n.z = -n.z;
 	    normals.push_back(n);
 	  }
 	  // texcoord
-	  t[1] = texsz[1] - t[1];
+	  t.y = texsz.y - t.y;
 	  texcoords.push_back(t);
 	}
       }
@@ -251,25 +247,25 @@ MeshObstacle* SphereObstacle::makeMesh()
 
   // the closing strip of texture coordinates
   const int texStripOffset = texcoords.size();
-  t[0] = texsz[0] * 0.5f; // weirdness
-  t[1] = texsz[1] * 1.0f;
+  t.x = texsz.x * 0.5f; // weirdness
+  t.y = texsz.y * 1.0f;
   texcoords.push_back(t);
   if (!hemisphere) {
-    t[1] = 0.0f;
+    t.y = 0.0f;
     texcoords.push_back(t);
   }
   for (i = 0; i < divisions; i++) {
-    t[0] = texsz[0] * 1.0f;
-    t[1] = (float)(divisions - i - 1) / (float)divisions;
+    t.x = texsz.x * 1.0f;
+    t.y = (float)(divisions - i - 1) / (float)divisions;
     if (!hemisphere) {
-      t[1] = 0.5f + (0.5f * t[1]);
+      t.y = 0.5f + (0.5f * t.y);
     }
-    t[1] = texsz[1] * t[1];
+    t.y = texsz.y * t.y;
     texcoords.push_back(t);
     // the bottom hemisphere
     if (!hemisphere) {
       if (i != (divisions - 1)) {
-	t[1] = texsz[1] - t[1];
+	t.y = texsz.y - t.y;
 	texcoords.push_back(t);
       }
     }
@@ -281,8 +277,8 @@ MeshObstacle* SphereObstacle::makeMesh()
     const float astep = (float)((M_PI * 2.0) / (float) (divisions * 4));
     for (i = 0; i < (divisions * 4); i++) {
       float ang = astep * (float)i;
-      t[0] = texsz[0] * (0.5f + (0.5f * cosf(ang)));
-      t[1] = texsz[1] * (0.5f + (0.5f * sinf(ang)));
+      t.x = texsz.x * (0.5f + (0.5f * cosf(ang)));
+      t.y = texsz.y * (0.5f + (0.5f * sinf(ang)));
       texcoords.push_back(t);
     }
   }
@@ -291,7 +287,8 @@ MeshObstacle* SphereObstacle::makeMesh()
   int faceCount = (divisions * divisions) * 8;
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, faceCount,
-			  false, smoothBounce, driveThrough, shootThrough);
+			  false, smoothBounce,
+			  driveThrough, shootThrough, ricochet);
 
   // add the faces to the mesh
   std::vector<int> vlist;
@@ -435,69 +432,67 @@ float SphereObstacle::intersect(const Ray&) const
   return -1.0f;
 }
 
-void SphereObstacle::get3DNormal(const float*, float*) const
+void SphereObstacle::get3DNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
-void SphereObstacle::getNormal(const float*, float*) const
+void SphereObstacle::getNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
-bool SphereObstacle::getHitNormal(const float*, float, const float*, float,
-				float, float, float, float*) const
+bool SphereObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
+				float, float, float, fvec3&) const
 {
   assert(false);
   return false;
 }
 
-bool SphereObstacle::inCylinder(const float*,float, float) const
+bool SphereObstacle::inCylinder(const fvec3&, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool SphereObstacle::inBox(const float*, float, float, float, float) const
+bool SphereObstacle::inBox(const fvec3&, float, float, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool SphereObstacle::inMovingBox(const float*, float, const float*, float,
+bool SphereObstacle::inMovingBox(const fvec3&, float, const fvec3&, float,
 			       float, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool SphereObstacle::isCrossing(const float* /*p*/, float /*angle*/,
+bool SphereObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 			      float /*dx*/, float /*dy*/, float /*height*/,
-			      float* /*_plane*/) const
+			      fvec4* /*_plane*/) const
 {
   assert(false);
   return false;
 }
 
 
-void *SphereObstacle::pack(void *buf) const
+void* SphereObstacle::pack(void *buf) const
 {
   buf = transform.pack(buf);
-  buf = nboPackFloatVector(buf, pos);
-  buf = nboPackFloatVector(buf, size);
+  buf = nboPackFVec3(buf, pos);
+  buf = nboPackFVec3(buf, size);
   buf = nboPackFloat(buf, angle);
-  buf = nboPackInt(buf, divisions);
-  buf = nboPackInt(buf, phydrv);
+  buf = nboPackInt32(buf, divisions);
+  buf = nboPackInt32(buf, phydrv);
 
-  int i;
-  for (i = 0; i < 2; i++) {
-    buf = nboPackFloat(buf, texsize[i]);
-  }
-  for (i = 0; i < MaterialCount; i++) {
+  buf = nboPackFVec2(buf, texsize);
+
+  for (int i = 0; i < MaterialCount; i++) {
     int matindex = MATERIALMGR.getIndex(materials[i]);
-    buf = nboPackInt(buf, matindex);
+    buf = nboPackInt32(buf, matindex);
   }
 
   // pack the state byte
@@ -507,42 +502,42 @@ void *SphereObstacle::pack(void *buf) const
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= useNormals       ? (1 << 3) : 0;
   stateByte |= hemisphere       ? (1 << 4) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  stateByte |= canRicochet()    ? (1 << 5) : 0;
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
 
 
-void *SphereObstacle::unpack(void *buf)
+void* SphereObstacle::unpack(void *buf)
 {
   int32_t inTmp;
   buf = transform.unpack(buf);
-  buf = nboUnpackFloatVector(buf, pos);
-  buf = nboUnpackFloatVector(buf, size);
+  buf = nboUnpackFVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, size);
   buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   divisions = int(inTmp);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   phydrv = int(inTmp);
 
-  int i;
-  for (i = 0; i < 2; i++) {
-    buf = nboUnpackFloat(buf, texsize[i]);
-  }
-  for (i = 0; i < MaterialCount; i++) {
+  buf = nboUnpackFVec2(buf, texsize);
+
+  for (int i = 0; i < MaterialCount; i++) {
     int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt32(buf, matindex);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }
 
   // unpack the state byte
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 2)) != 0;
   useNormals   = (stateByte & (1 << 3)) != 0;
   hemisphere   = (stateByte & (1 << 4)) != 0;
+  ricochet     = (stateByte & (1 << 5)) != 0;
 
   finalize();
 
@@ -553,12 +548,12 @@ void *SphereObstacle::unpack(void *buf)
 int SphereObstacle::packSize() const
 {
   int fullSize = transform.packSize();
-  fullSize += sizeof(float[3]);
-  fullSize += sizeof(float[3]);
+  fullSize += sizeof(fvec3);
+  fullSize += sizeof(fvec3);
   fullSize += sizeof(float);
   fullSize += sizeof(int32_t);
   fullSize += sizeof(int32_t);
-  fullSize += sizeof(float[2]);
+  fullSize += sizeof(fvec2);
   fullSize += sizeof(int32_t[MaterialCount]);
   fullSize += sizeof(unsigned char);
   return fullSize;
@@ -614,11 +609,14 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
   if (shootThrough) {
     out << indent << "  shootThrough" << std::endl;
   }
+  if (ricochet) {
+    out << indent << "  ricochet" << std::endl;
+  }
   if (!useNormals) {
     out << indent << "  flatshading" << std::endl;
   }
 
-  out << indent << "end" << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

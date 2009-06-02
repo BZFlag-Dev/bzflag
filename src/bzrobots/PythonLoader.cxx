@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,7 +17,11 @@
 
 PythonLoader::PythonLoader() :module(NULL), ctor(NULL), robot(NULL), initialized(false)
 {
-  Py_SetProgramName("bzrobots");
+  // Py_SetProgramName() takes a non-const argument in Python 2.5, so
+  // suppress a warning about conversion from string constant to char*
+  // by putting the program name into a variable.
+  char name[] = "bzrobots";
+  Py_SetProgramName(name);
   Py_Initialize();
 }
 
@@ -37,7 +41,7 @@ bool PythonLoader::initialize()
 
   /* TODO:
    * I assume we should make it load (using PyImport_Import) the various
-   * SWIGified APIs, so that they'll be "easily" accessible from the 
+   * SWIGified APIs, so that they'll be "easily" accessible from the
    * loaded modules, whopee. :-) */
 
   initialized = true;
@@ -62,7 +66,7 @@ bool PythonLoader::addSysPath(std::string new_path)
 
   path = PyObject_GetAttrString(sys, "path");
   if (!path) {
-    Py_XDECREF(sys); 
+    Py_XDECREF(sys);
     error = "Could not get 'sys.path'.";
     return false;
   }
@@ -71,7 +75,7 @@ bool PythonLoader::addSysPath(std::string new_path)
   PyList_Append(path, dotString);
   Py_XDECREF(dotString);
 
-  Py_XDECREF(path); Py_XDECREF(sys); 
+  Py_XDECREF(path); Py_XDECREF(sys);
 
   return true;
 }
@@ -87,7 +91,7 @@ bool PythonLoader::load(std::string filepath)
   std::string filename;
 
   /* We check if the passed filepath contains a /, if so we add the
-   * part of the filepath up to the / to sys.path, so that our import 
+   * part of the filepath up to the / to sys.path, so that our import
    * will find the module ("the bot"). */
   std::string::size_type separator_pos = filepath.find_last_of("/");
   if (separator_pos != std::string::npos && separator_pos <= filepath.length()) {
@@ -114,7 +118,7 @@ bool PythonLoader::load(std::string filepath)
   module = PyImport_Import(file);
 
   if (!module) {
-    /* TODO: Do the same as PyErr_Print(), just into a string? 
+    /* TODO: Do the same as PyErr_Print(), just into a string?
      * See PyErr_Fetch()
      * (prints a traceback of the error-stack when Something Bad (tm)
      * happens.) */

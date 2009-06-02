@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -90,42 +90,42 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       std::cout << "discarding incomplete mesh face" << std::endl;
       delete face;
     }
-    face = new CustomMeshFace (material, phydrv, noclusters,
-			       smoothBounce, driveThrough, shootThrough);
+    face = new CustomMeshFace(material, phydrv, noclusters,
+			      smoothBounce, driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "inside") == 0) {
-    cfvec3 inside;
-    if (!(input >> inside[0] >> inside[1] >> inside[2])) {
+    fvec3 inside;
+    if (!(input >> inside.x >> inside.y >> inside.z)) {
       return false;
     }
     checkTypes.push_back(MeshObstacle::CheckInside);
     checkPoints.push_back(inside);
   }
   else if (strcasecmp(cmd, "outside") == 0) {
-    cfvec3 outside;
-    if (!(input >> outside[0] >> outside[1] >> outside[2])) {
+    fvec3 outside;
+    if (!(input >> outside.x >> outside.y >> outside.z)) {
       return false;
     }
     checkTypes.push_back(MeshObstacle::CheckOutside);
     checkPoints.push_back(outside);
   }
   else if (strcasecmp(cmd, "vertex") == 0) {
-    cfvec3 vertex;
-    if (!(input >> vertex[0] >> vertex[1] >> vertex[2])) {
+    fvec3 vertex;
+    if (!(input >> vertex.x >> vertex.y >> vertex.z)) {
       return false;
     }
     vertices.push_back(vertex);
   }
   else if (strcasecmp(cmd, "normal") == 0) {
-    cfvec3 normal;
-    if (!(input >> normal[0] >> normal[1] >> normal[2])) {
+    fvec3 normal;
+    if (!(input >> normal.x >> normal.y >> normal.z)) {
       return false;
     }
     normals.push_back(normal);
   }
   else if (strcasecmp(cmd, "texcoord") == 0) {
-    cfvec2 texcoord;
-    if (!(input >> texcoord[0] >> texcoord[1])) {
+    fvec2 texcoord;
+    if (!(input >> texcoord.x >> texcoord.y)) {
       return false;
     }
     texcoords.push_back(texcoord);
@@ -181,14 +181,14 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 {
   // include the old style parameters
   MeshTransform xform;
-  if ((size[0] != 1.0f) || (size[1] != 1.0f) || (size[2] != 1.0f)) {
+  if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
     xform.addScale(size);
   }
   if (rotation != 0.0f) {
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
+    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
   }
-  if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f)) {
+  if ((pos.x != 0.0f) || (pos.y != 0.0f) || (pos.z != 0.0f)) {
     xform.addShift(pos);
   }
   xform.append(transform);
@@ -196,17 +196,17 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   // hack to invalidate decorative meshes on older clients
   bool forcePassable = false;
   if (drawInfo) {
-    cfvec3 vert;
+    fvec3 vert;
     if (decorative) {
-      vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
+      vert.x = vert.y = vert.z = (Obstacle::maxExtent * 2.0f);
       if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
 	logDebugMessage(0,"WARNING: mesh is supposed to be decorative, setting to passable\n");
 	forcePassable = true;
       }
     } else {
-      vert[0] = vert[1] = vert[2] = 0.0f;
+      vert.x = vert.y = vert.z = 0.0f;
     }
-    ((std::vector<cfvec3>*)&vertices)->push_back(vert);
+    ((std::vector<fvec3>*)&vertices)->push_back(vert);
   }
 
   MeshObstacle* mesh =
@@ -214,7 +214,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 		     vertices, normals, texcoords, faces.size(),
 		     noclusters, smoothBounce,
 		     driveThrough || forcePassable,
-		     shootThrough || forcePassable);
+		     shootThrough || forcePassable,
+		     ricochet);
 
   mesh->setName(name);
 
@@ -236,15 +237,13 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     }
   }
 
-  mesh->setName(name.c_str());
-
   groupdef->addObstacle(mesh);
 
   return;
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

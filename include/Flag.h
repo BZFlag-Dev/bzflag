@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -55,6 +55,7 @@
 #include "global.h"
 #include "Address.h"
 #include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
 
 /** This enum says where a flag is. */
@@ -122,15 +123,16 @@ typedef std::set<FlagType*> FlagSet;
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
 public:
-  FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
-	    ShotType sType, FlagQuality quality, TeamColor team, const char* help,
-	    bool _custom = false ) {
-    flagName = name;
-    flagAbbv = abbv;
+  FlagType( const std::string& name, const std::string& abbv, FlagEndurance _endurance,
+	    ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
+	    bool _custom = false ) :
+    flagName(name),
+    flagAbbv(abbv),
+    flagHelp(help)
+  {
     endurance = _endurance;
     flagShot = sType;
     flagQuality = quality;
-    flagHelp = help;
     flagTeam = team;
     custom = _custom;
 
@@ -149,7 +151,7 @@ public:
   }
 
   /** returns a label of flag name and abbreviation with the flag name
-   * excentuating the abbreviation if relevant.
+   * accentuating the abbreviation if relevant.
    */
   const std::string label() const;
 
@@ -160,7 +162,7 @@ public:
   const std::string information() const;
 
   /** returns the color of the flag */
-  const float* getColor() const;
+  const fvec4& getColor() const;
 
   /** network serialization */
   void* pack(void* buf) const;
@@ -178,10 +180,10 @@ public:
    */
   static FlagTypeMap& getFlagMap();
 
-  const char* flagName;
-  const char* flagAbbv;
+  const std::string flagName;
+  const std::string flagAbbv;
+  const std::string flagHelp;
   FlagEndurance	endurance;
-  const char* flagHelp;
   FlagQuality flagQuality;
   ShotType flagShot;
   TeamColor flagTeam;
@@ -237,12 +239,13 @@ public:
   FlagStatus status;
   FlagEndurance	endurance;
   PlayerId owner;		// who has flag
-  float position[3];		// position on ground
-  float launchPosition[3];	// position flag launched from
-  float landingPosition[3];	// position flag will land
+  fvec3 position;		// position on ground
+  fvec3 launchPosition;		// position flag launched from
+  fvec3 landingPosition;	// position flag will land
   float flightTime;		// flight time so far
   float flightEnd;		// total duration of flight
   float initialVelocity;	// initial launch velocity
+  int id;
 };
 
 /** Flags no longer use enumerated IDs. Over the wire, flags are all
@@ -260,7 +263,7 @@ namespace Flags {
     *BlueTeam,
     *Bouncy,
     *Burrow,
-	*CloakedBullet,
+    *CloakedBullet,
     *Cloaking,
     *Colorblindness,
     *ForwardOnly,

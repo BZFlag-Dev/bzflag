@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,14 +20,14 @@
 
 #include "BzfJoystick.h"
 
-#if !defined(BROKEN_DINPUT)
+#ifndef BROKEN_DINPUT
 
   // only require a runtime that has what we actually use (e.g. force feedback support)
-  #define DIRECTINPUT_VERSION 0x0700
+  #define DIRECTINPUT_VERSION 0x0800
   #include <dinput.h>
 
   // Don't try compile this if we don't have an up-to-date DX
-  #if defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0700)
+  #if defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0800)
     // We can use DInput.  It's not broken, and it's new enough
     #define USE_DINPUT 1
   #else
@@ -40,13 +40,13 @@
 #else
 
   // Make sure we don't use DInput at all (even headers) if it's broken
-  #if defined(USE_DINPUT)
+  #ifdef USE_DINPUT
   #undef USE_DINPUT
   #endif
 
 #endif
 
-#if defined(USE_DINPUT)
+#ifdef USE_DINPUT
 
 #include <vector>
 #include <string>
@@ -99,8 +99,8 @@ class DXJoystick : public BzfJoystick {
     static std::vector<DIDEVICEINSTANCE> devices;
     static EffectMap effectDatabase;
 
-    IDirectInput7* directInput;
-    IDirectInputDevice7* device;
+    IDirectInput8* directInput;
+    IDirectInputDevice8* device;
 
     /* Nasty callbacks 'cause DirectX sucks */
 

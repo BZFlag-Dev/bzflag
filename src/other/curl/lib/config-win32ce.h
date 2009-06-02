@@ -145,11 +145,11 @@
 /* Define if you have the inet_addr function.  */
 #define HAVE_INET_ADDR 1
 
-/* Define if you have the inet_ntoa function.  */
-#define HAVE_INET_NTOA 1
-
-/* Define if you have the ioctlsocket function.  */
+/* Define if you have the ioctlsocket function. */
 #define HAVE_IOCTLSOCKET 1
+
+/* Define if you have a working ioctlsocket FIONBIO function. */
+#define HAVE_IOCTLSOCKET_FIONBIO 1
 
 /* Define if you have the perror function.  */
 #define HAVE_PERROR 1
@@ -172,14 +172,20 @@
 /* Define if you have the strcasecmp function.  */
 /* #define HAVE_STRCASECMP 1 */
 
-/* Define if you have the stricmp function.  */
-/* #define HAVE_STRICMP 1 */
-
 /* Define if you have the strdup function.  */
 /* #define HAVE_STRDUP 1 */
 
 /* Define if you have the strftime function.  */
 /* #define HAVE_STRFTIME 1 */
+
+/* Define if you have the stricmp function. */
+/* #define HAVE_STRICMP 1 */
+
+/* Define if you have the strncasecmp function. */
+/* #define HAVE_STRNCASECMP 1 */
+
+/* Define if you have the strnicmp function. */
+/* #define HAVE_STRNICMP 1 */
 
 /* Define if you have the strstr function.  */
 #define HAVE_STRSTR 1
@@ -234,6 +240,30 @@
 /* Define to the function return type for recv. */
 #define RECV_TYPE_RETV int
 
+/* Define if you have the recvfrom function. */
+#define HAVE_RECVFROM 1
+
+/* Define to the type of arg 1 for recvfrom. */
+#define RECVFROM_TYPE_ARG1 SOCKET
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#define RECVFROM_TYPE_ARG2 char
+
+/* Define to the type of arg 3 for recvfrom. */
+#define RECVFROM_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for recvfrom. */
+#define RECVFROM_TYPE_ARG4 int
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#define RECVFROM_TYPE_ARG6 int
+
+/* Define to the function return type for recvfrom. */
+#define RECVFROM_TYPE_RETV int
+
 /* Define if you have the send function. */
 #define HAVE_SEND 1
 
@@ -283,14 +313,6 @@
 /* The number of bytes in a long long.  */
 /* #define SIZEOF_LONG_LONG 8 */
 
-/* Undef SIZEOF_CURL_OFF_T if already defined. */
-#ifdef SIZEOF_CURL_OFF_T
-#undef SIZEOF_CURL_OFF_T
-#endif
-
-/* Define SIZEOF_CURL_OFF_T as computed by sizeof(curl_off_t) */
-#define SIZEOF_CURL_OFF_T 4
-
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */
 /* ---------------------------------------------------------------- */
@@ -300,6 +322,9 @@
 
 /* Define this if you have struct timeval */
 #define HAVE_STRUCT_TIMEVAL 1
+
+/* Define this if struct sockaddr_in6 has the sin6_scope_id member */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
 
 /* ---------------------------------------------------------------- */
 /*                        COMPILER SPECIFIC                         */
@@ -322,6 +347,22 @@
 #  else
 #    define SIZEOF_TIME_T 4
 #  endif
+#endif
+
+/* ---------------------------------------------------------------- */
+/*                        LARGE FILE SUPPORT                        */
+/* ---------------------------------------------------------------- */
+
+#if defined(_MSC_VER) && !defined(_WIN32_WCE)
+#  if (_MSC_VER >= 900) && (_INTEGRAL_MAX_BITS >= 64)
+#    define USE_WIN32_LARGE_FILES
+#  else
+#    define USE_WIN32_SMALL_FILES
+#  endif
+#endif
+
+#if !defined(USE_WIN32_LARGE_FILES) && !defined(USE_WIN32_SMALL_FILES)
+#  define USE_WIN32_SMALL_FILES
 #endif
 
 /* ---------------------------------------------------------------- */
@@ -350,25 +391,6 @@
 #define CURL_DISABLE_FILE 1
 #define CURL_DISABLE_TELNET 1
 #define CURL_DISABLE_LDAP 1
-#define WITHOUT_MM_LIB 1
-
-#ifdef HAVE_WINDOWS_H
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
-#  endif
-#  include <windows.h>
-#  ifdef HAVE_WINSOCK2_H
-#    include <winsock2.h>
-#    ifdef HAVE_WS2TCPIP_H
-#       include <ws2tcpip.h>
-#    endif
-#  else
-#    ifdef HAVE_WINSOCK_H
-#      include <winsock.h>
-#    endif
-#  endif
-#  include <process.h>
-#endif
 
 #define ENOSPC 1
 #define ENOMEM 2

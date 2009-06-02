@@ -20,9 +20,9 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: writeout.h,v 1.6 2004/01/07 09:19:36 bagder Exp $
+ * $Id: writeout.h,v 1.7 2008-04-17 00:45:34 danf Exp $
  ***************************************************************************/
 
-void ourWriteOut(CURL *curl, char *out);
+void ourWriteOut(CURL *curl, const char *out);
 
 #endif

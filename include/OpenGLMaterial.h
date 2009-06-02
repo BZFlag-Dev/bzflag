@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,25 +31,25 @@
 #define	BZF_OPENGL_MATERIAL_H
 
 #include "common.h"
-#include "bzfgl.h"
+#include "vectors.h"
 
 class OpenGLMaterial {
   public:
-			OpenGLMaterial();
-			OpenGLMaterial(const GLfloat* specularRGB,
-					const GLfloat* emissiveRGB,
-					GLfloat shininess = 0.0f);
-			OpenGLMaterial(const OpenGLMaterial&);
-			~OpenGLMaterial();
+    OpenGLMaterial();
+    OpenGLMaterial(const fvec4& specularRGB,
+                   const fvec4& emissiveRGB,
+                   float shininess = 0.0f);
+    OpenGLMaterial(const OpenGLMaterial&);
+    ~OpenGLMaterial();
     OpenGLMaterial&	operator=(const OpenGLMaterial&);
 
     bool		operator==(const OpenGLMaterial&) const;
     bool		operator!=(const OpenGLMaterial&) const;
     bool		operator<(const OpenGLMaterial&) const;
 
-    const GLfloat*	getSpecularColor() const;
-    const GLfloat*	getEmissiveColor() const;
-    GLfloat		getShininess() const;
+    const fvec4&	getSpecularColor() const;
+    const fvec4&	getEmissiveColor() const;
+    float		getShininess() const;
 
     void		setQuality(bool highQuality);
 
@@ -63,23 +63,23 @@ class OpenGLMaterial {
 	void		ref();
 	void		unref();
 	void		execute();
-	static Rep*	getRep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
+	static Rep*	getRep(const fvec4& specular,
+	                       const fvec4& emissive,
+	                       float shininess);
       private:
-			Rep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
+        Rep(const fvec4& specular,
+            const fvec4& emissive,
+            float shininess);
 	static void	freeContext(void*);
 	static void	initContext(void*);
       public:
 	int		refCount;
 	Rep*		prev;
 	Rep*		next;
-	GLuint		list;
-	GLfloat		specular[4];
-	GLfloat		emissive[4];
-	GLfloat		shininess;
+	unsigned int	list;
+	fvec4		specular;
+	fvec4		emissive;
+	float		shininess;
 	static Rep*	head;
         bool		highQuality;
     };
@@ -90,17 +90,17 @@ class OpenGLMaterial {
 // OpenGLMaterial
 //
 
-inline const GLfloat*	OpenGLMaterial::getSpecularColor() const
+inline const fvec4&	OpenGLMaterial::getSpecularColor() const
 {
   return rep->specular;
 }
 
-inline const GLfloat*	OpenGLMaterial::getEmissiveColor() const
+inline const fvec4&	OpenGLMaterial::getEmissiveColor() const
 {
   return rep->emissive;
 }
 
-inline GLfloat		OpenGLMaterial::getShininess() const
+inline float		OpenGLMaterial::getShininess() const
 {
   return rep->shininess;
 }

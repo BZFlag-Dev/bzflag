@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -48,7 +48,7 @@ messageParseStatus IdentifyBackend::parse(char **arguments, int count)
 void IdentifyBackend::getParameters(std::ostream &stream) const
 {
   stream << version;
-} 
+}
 
 
 messageParseStatus EventReply::parse(char **arguments, int count)
@@ -416,14 +416,14 @@ void ObstacleReply::getParameters(std::ostream &stream) const
       stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
       stream << obs->getRotation() << " " << obs->getWidth() << " ";
       stream << obs->getBreadth() << " " << obs->getHeight() << " ";
-      stream << ((BaseBuilding *)obs)->getTeam();
+      stream << ((BaseBuilding *)obs)->getBaseTeam();
     case teleType:
       pos = obs->getPosition();
       stream << type << " " << pos[0] << " " << pos[1] << " " << pos[2] << " ";
       stream << obs->getRotation() << " " << obs->getWidth() << " ";
       stream << obs->getBreadth() << " " << obs->getHeight() << " ";
       tele = (Teleporter *)obs;
-      stream << tele->getBorder() << " " << tele->isHorizontal() << " ";
+      stream << tele->getBorder() << " ";
       stream << (bool)tele->isDriveThrough() << " ";
       stream << (bool)tele->isShootThrough();
       break;
@@ -447,11 +447,6 @@ void ObstacleReply::getParameters(std::ostream &stream) const
        * TODO: Implement this.
        */
       break;
-    case tetraType:
-      /*
-       * TODO: Implement this.
-       */
-      break;
     default:
       /*
        * TODO: Implement this.
@@ -471,7 +466,7 @@ messageParseStatus ObstacleReply::parse(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[0], t))
     return InvalidArguments;
 
-  type = (ObstacleTypes)t;
+  type = (ObstacleType)t;
 
   switch (type) {
     case boxType:
@@ -509,11 +504,6 @@ messageParseStatus ObstacleReply::parse(char **arguments, int count)
        * TODO: Implement this.
        */
       break;
-    case tetraType:
-      /*
-       * TODO: Implement this.
-       */
-      break;
     default:
       break;
   }
@@ -525,7 +515,7 @@ messageParseStatus ObstacleReply::parseBox(char **arguments, int count)
   if (count != 10)
     return InvalidArgumentCount;
 
-  float p[3];
+  fvec3 p;
   float rot, width, breadth, height;
   bool drive, shoot;
   bool invisible;
@@ -552,7 +542,9 @@ messageParseStatus ObstacleReply::parseBox(char **arguments, int count)
     return InvalidArguments;
 
 
-  obs = new BoxBuilding(p, rot, width, breadth, height, (unsigned char)drive, (unsigned char)shoot, invisible);
+  obs = new BoxBuilding(p, rot, width, breadth, height,
+                        (unsigned char)drive, (unsigned char)shoot, false, invisible);
+                        // FIXME false is for 'ricochet'
   return ParseOk;
 }
 
@@ -560,7 +552,7 @@ messageParseStatus ObstacleReply::parsePyr(char **arguments, int count)
 {
   if (count != 9)
     return InvalidArgumentCount;
-  float p[3];
+  fvec3 p;
   float rot, width, breadth, height;
   bool drive, shoot;
 
@@ -582,8 +574,10 @@ messageParseStatus ObstacleReply::parsePyr(char **arguments, int count)
     return InvalidArguments;
   if (!MessageUtilities::parse(arguments[8], shoot))
     return InvalidArguments;
-  
-  obs = new PyramidBuilding(p, rot, width, breadth, height, (unsigned char)drive, (unsigned char)shoot);
+
+  obs = new PyramidBuilding(p, rot, width, breadth, height,
+                            (unsigned char)drive, (unsigned char)shoot, false);
+                            // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -592,7 +586,7 @@ messageParseStatus ObstacleReply::parseWall(char **arguments, int count)
   if (count != 6)
     return InvalidArgumentCount;
 
-  float p[3];
+  fvec3 p;
   float rot, breadth, height;
 
   if (!MessageUtilities::parse(arguments[0], p[0]))
@@ -608,7 +602,8 @@ messageParseStatus ObstacleReply::parseWall(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[5], height))
     return InvalidArguments;
 
-  obs = new WallObstacle(p, rot, breadth, height);
+  obs = new WallObstacle(p, rot, breadth, height, false);
+                         // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -617,8 +612,8 @@ messageParseStatus ObstacleReply::parseBase(char **arguments, int count)
   if (count != 8)
     return InvalidArgumentCount;
 
-  float p[3];
-  float s[3];
+  fvec3 p;
+  fvec3 s;
   float rot;
   uint32_t team;
 
@@ -639,7 +634,8 @@ messageParseStatus ObstacleReply::parseBase(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[7], team))
     return InvalidArguments;
 
-  obs = new BaseBuilding(p, rot, s, team);
+  obs = new BaseBuilding(p, rot, s, team, false);
+                         // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -648,8 +644,8 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
   if (count != 11)
     return InvalidArgumentCount;
 
-  float p[3];
-  float s[3];
+  fvec3 p;
+  fvec3 s;
   float rot, border;
   bool horiz, drive, shoot;
 
@@ -676,7 +672,10 @@ messageParseStatus ObstacleReply::parseTele(char **arguments, int count)
   if (!MessageUtilities::parse(arguments[10], shoot))
     return InvalidArguments;
 
-  obs = new Teleporter(p, rot, s[0], s[1], s[2], border, horiz, (unsigned char)drive, (unsigned char)shoot);
+  const MeshTransform transform;
+  obs = new Teleporter(transform, p, rot, s[0], s[1], s[2], border, 0.0f,
+                       (unsigned char)drive, (unsigned char)shoot, false);
+                         // FIXME false is for ricochet
   return ParseOk;
 }
 
@@ -744,7 +743,7 @@ void ShotPositionReply::getParameters(std::ostream &stream) const
 bool ShotPositionReply::updateBot(const BZAdvancedRobot *robot) const
 {
   const FrontendShot *shot = robot->getShot(id);
-  
+
   if(!shot)
     return false;
 
@@ -780,7 +779,7 @@ void ShotVelocityReply::getParameters(std::ostream &stream) const
 bool ShotVelocityReply::updateBot(const BZAdvancedRobot *robot) const
 {
   const FrontendShot *shot = robot->getShot(id);
-  
+
   if(!shot)
     return false;
 

@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #ifndef __MATCHMANAGER_H__
 #define __MATCHMANAGER_H__
@@ -43,7 +43,7 @@ private:
   double _currentTime;
   double _previousTime;
   int _startCount, _counter;
-  
+
 };
 
 
@@ -55,8 +55,6 @@ public:
 
   // custom slash
   virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params );
-
-  virtual bool autoDelete ( void ) { return true; }
 
   void init();
 
@@ -97,23 +95,23 @@ private:
   double _matchDuration;
   double _matchEndCountdown;
   double _matchResetTime;
-  
+
   bool _matchDisallowJoins;
   bool _matchResetScoreOnEnd;
   bool _matchReportMatches;
   // end future BZDB vars
- 
+
   // methods
-  void start ( int playerID, bz_APIStringList *params );	
-  void end ( int playerID, bz_APIStringList *params );	
-  void pause ( int playerID, bz_APIStringList *params );	
-  void substitute ( int playerID, bz_APIStringList *params );	
-  
+  void start ( int playerID, bz_APIStringList *params );
+  void end ( int playerID, bz_APIStringList *params );
+  void pause ( int playerID, bz_APIStringList *params );
+  void substitute ( int playerID, bz_APIStringList *params );
+
   void doPregame();
   void doOngame();
   void doPostgame();
   void doReportgame();
-  
+
   void disablePlayerSpawn();
   void resetTeamScores();
   void resetPlayerScores();

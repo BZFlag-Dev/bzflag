@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,30 +24,39 @@
 
 #include "common.h"
 #include <string>
+#include "vectors.h"
 
 
-extern void* nboPackUByte(void*, uint8_t);
-extern void* nboPackShort(void*, int16_t);
-extern void* nboPackInt(void*, int32_t);
-extern void* nboPackUShort(void*, uint16_t);
-extern void* nboPackUInt(void*, uint32_t);
-extern void* nboPackFloat(void*, float);
-extern void* nboPackDouble(void*, double);
-extern void* nboPackFloatVector(void*, const float*);
-extern void* nboPackString(void*, const void*, int len);
-extern void* nboPackStdString(void*, const std::string& str);
+extern void* nboPackUInt8     (void*, uint8_t);
+extern void* nboPackInt16     (void*, int16_t);
+extern void* nboPackInt32     (void*, int32_t);
+extern void* nboPackUInt16    (void*, uint16_t);
+extern void* nboPackUInt32    (void*, uint32_t);
+extern void* nboPackInt64     (void*, int64_t);
+extern void* nboPackUInt64    (void*, uint64_t);
+extern void* nboPackFloat     (void*, float);
+extern void* nboPackDouble    (void*, double);
+extern void* nboPackFVec2     (void*, const fvec2&);
+extern void* nboPackFVec3     (void*, const fvec3&);
+extern void* nboPackFVec4     (void*, const fvec4&);
+extern void* nboPackString    (void*, const void*, int len);
+extern void* nboPackStdString (void*, const std::string& str);
 
-extern void* nboUnpackUByte(void*, uint8_t&);
-extern void* nboUnpackShort(void*, int16_t&);
-extern void* nboUnpackInt(void*, int32_t&);
-extern void* nboUnpackUShort(void*, uint16_t&);
-extern void* nboUnpackUInt(void*, uint32_t&);
-extern void* nboUnpackFloat(void*, float&);
-extern void* nboUnpackDouble(void*, double&);
-extern void* nboUnpackFloatVector(void*, float*);
-extern void* nboUnpackString(void*, void*, int len);
-extern void* nboUnpackStdString(void*, std::string& str);
-extern void* nboUnpackStdStringRaw(void*, std::string& str);
+extern void* nboUnpackUInt8        (void*, uint8_t&);
+extern void* nboUnpackInt16        (void*, int16_t&);
+extern void* nboUnpackInt32        (void*, int32_t&);
+extern void* nboUnpackUInt16       (void*, uint16_t&);
+extern void* nboUnpackUInt32       (void*, uint32_t&);
+extern void* nboUnpackInt64        (void*, int64_t&);
+extern void* nboUnpackUInt64       (void*, uint64_t&);
+extern void* nboUnpackFloat        (void*, float&);
+extern void* nboUnpackDouble       (void*, double&);
+extern void* nboUnpackFVec2        (void*, fvec2&);
+extern void* nboUnpackFVec3        (void*, fvec3&);
+extern void* nboUnpackFVec4        (void*, fvec4&);
+extern void* nboUnpackString       (void*, void*, int len);
+extern void* nboUnpackStdString    (void*, std::string& str);
+extern void* nboUnpackStdStringRaw (void*, std::string& str);
 
 extern unsigned int nboStdStringPackSize(const std::string& str);
 

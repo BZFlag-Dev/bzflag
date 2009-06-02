@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -29,10 +29,10 @@
 
 
 WorldFileLocation::WorldFileLocation()
+: pos(0.0f, 0.0f, 0.0f)
+, size(1.0f, 1.0f, 1.0f)
+, rotation(0.0f)
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  rotation = 0.0f;
-  size[0] = size[1] = size[2] = 1.0f;
 }
 
 
@@ -43,49 +43,57 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
   //
   if ((strcasecmp(cmd, "pos") == 0) ||
       (strcasecmp(cmd, "position") == 0)) {
-    if (!(input >> pos[0] >> pos[1] >> pos[2])) {
+    if (!(input >> pos.x >> pos.y >> pos.z)) {
       return false;
     }
-  } else if (strcasecmp(cmd, "size") == 0) {
-    if (!(input >> size[0] >> size[1] >> size[2])) {
+  }
+  else if (strcasecmp(cmd, "size") == 0) {
+    if (!(input >> size.x >> size.y >> size.z)) {
       return false;
     }
-  } else if ((strcasecmp(cmd, "rot") == 0) ||
+  }
+  else if ((strcasecmp(cmd, "rot") == 0) ||
 	     (strcasecmp(cmd, "rotation") == 0)) {
     if (!(input >> rotation)) {
       return false;
     }
     // convert to radians
     rotation = (float)(rotation * (M_PI / 180.0));
-  } else if (strcasecmp ("shift", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+  }
+  else if (strcasecmp ("shift", cmd) == 0) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addShift(data);
-  } else if (strcasecmp ("scale", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+  }
+  else if (strcasecmp ("scale", cmd) == 0) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addScale(data);
-  } else if (strcasecmp ("shear", cmd) == 0) {
-    float data[3];
-    if (!(input >> data[0] >> data[1] >> data[2])) {
+  }
+  else if (strcasecmp ("shear", cmd) == 0) {
+    fvec3 data;
+    if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addShear(data);
-  } else if (strcasecmp ("spin", cmd) == 0) {
-    float angle, normal[3];
-    if (!(input >> angle >> normal[0] >> normal[1] >> normal[2])) {
+  }
+  else if (strcasecmp ("spin", cmd) == 0) {
+    float angle;
+    fvec3 normal;
+    if (!(input >> angle >> normal.x >> normal.y >> normal.z)) {
       std::cout << "parameters errors " << std::endl;
       return false;
     }
     transform.addSpin(angle, normal);
-  } else if (strcasecmp ("xform", cmd) == 0) {
+  }
+  else if (strcasecmp ("xform", cmd) == 0) {
     std::string _name;
     if (!(input >> _name)) {
       std::cout << "parameters errors " << std::endl;
@@ -94,25 +102,29 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     int xform = TRANSFORMMGR.findTransform(_name);
     if (xform == -1) {
       std::cout << "couldn't find Transform: " << _name << std::endl;
-    } else {
+    }
+    else {
       transform.addReference(xform);
     }
-  } else {
+  }
+  else {
     return WorldFileObject::read(cmd, input);
   }
 
   return true;
 }
 
-void * WorldFileLocation::pack(void *buf) const
+
+void* WorldFileLocation::pack(void *buf) const
 {
-  buf = nboPackFloatVector (buf, pos);
-  buf = nboPackFloatVector (buf, size);
-  buf = nboPackFloat (buf, rotation);
+  buf = nboPackFVec3(buf, pos);
+  buf = nboPackFVec3(buf, size);
+  buf = nboPackFloat(buf, rotation);
   return buf;
 }
 
-// Local variables: ***
+
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

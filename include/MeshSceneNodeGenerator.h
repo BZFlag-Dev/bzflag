@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,11 +13,17 @@
 #ifndef __MESHSCENENODEGENERATOR_H__
 #define __MESHSCENENODEGENERATOR_H__
 
+#include "common.h"
+
+// system headers
+#include <vector>
+
+// common headers
 #include "SceneNode.h"
 #include "MeshFace.h"
 #include "MeshObstacle.h"
 #include "BzMaterial.h"
-#include <vector>
+#include "vectors.h"
 
 class WallSceneNode;
 class MeshPolySceneNode;
@@ -35,9 +41,9 @@ class MeshSceneNodeGenerator {
 				  const BzMaterial* mat);
     static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
 
-    static bool makeTexcoords(const float* plane,
-			      const GLfloat3Array& vertices,
-			      GLfloat2Array& texcoords);
+    static bool makeTexcoords(const fvec4& plane,
+			      const fvec3Array& vertices,
+			      fvec2Array& texcoords);
 
   protected:
     MeshSceneNodeGenerator(const MeshObstacle*);

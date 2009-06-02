@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="serverControl"
 	ProjectGUID="{D2560F9D-5A04-4CED-9D5D-227F9D22F0A0}"
+	RootNamespace="serverControl"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -64,11 +66,13 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/serverControl.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/debug/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/debug/"
 				ModuleDefinitionFile="serverControl.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/serverControl.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/serverControl.lib"
 				TargetMachine="1"
 			/>
@@ -89,9 +93,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -145,13 +146,15 @@
 				AdditionalDependencies="bzfs.lib plugin_utils.lib"
 				OutputFile="$(OutDir)/serverControl.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../;../plugin_utils/vc8/release/"
+				AdditionalLibraryDirectories="../../;../plugin_utils/release/"
 				ModuleDefinitionFile="serverControl.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="Release/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/serverControl.lib"
 				TargetMachine="1"
 			/>
@@ -172,9 +175,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

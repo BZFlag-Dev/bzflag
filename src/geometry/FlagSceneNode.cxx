@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,7 +20,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "vectors.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
@@ -43,15 +44,15 @@ static const int maxFlagVerts = 2 * (maxFlagQuads + 1);
 static bool geoPole = false;	// draw the pole as quads
 static bool realFlag = false;	// don't use billboarding
 
-static const GLfloat Unit = 0.8f;
-static const GLfloat Width = 1.5f * Unit;
-static const GLfloat Height = Unit;
+static const float Unit = 0.8f;
+static const float Width = 1.5f * Unit;
+static const float Height = Unit;
 
-static const GLfloat specular[4] = {0.3f, 0.3f, 0.3f, 1.0f};
-static const GLfloat emission[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+static const fvec4 specular(0.3f, 0.3f, 0.3f, 1.0f);
+static const fvec4 emission(0.0f, 0.0f, 0.0f, 1.0f);
 
 
-/******************************************************************************/
+//============================================================================//
 //
 // FlagPhase  (local class)
 //
@@ -64,7 +65,7 @@ class FlagPhase {
 
     static FlagPhase*	getPhase();
     static void		setTimeStep(float dt);
-    static void		updatePhases();
+    static void		updatePhases(float waveSpeed);
 
     // return the triangle count
     int render(int lod) const;
@@ -85,9 +86,9 @@ class FlagPhase {
     float ripple1;
     float ripple2;
 
-    GLfloat verts[maxFlagVerts][3];
-    GLfloat norms[maxFlagVerts][3];
-    GLfloat txcds[maxFlagVerts][2];
+    fvec3 verts[maxFlagVerts];
+    fvec3 norms[maxFlagVerts];
+    fvec2 txcds[maxFlagVerts];
 
   private:
     static void makeIndices();
@@ -106,7 +107,7 @@ class FlagPhase {
 };
 
 
-/******************************************************************************/
+//============================================================================//
 //
 // FlagPhase static data
 //
@@ -123,7 +124,7 @@ const float FlagPhase::RippleSpeed1 = (float)(2.4 * M_PI);
 const float FlagPhase::RippleSpeed2 = (float)(1.724 * M_PI);
 
 
-/******************************************************************************/
+//============================================================================//
 //
 // FlagPhase static functions
 //
@@ -135,7 +136,7 @@ FlagPhase* FlagPhase::getPhase()
 }
 
 
-void FlagPhase::updatePhases()
+void FlagPhase::updatePhases(float waveSpeed)
 {
   // not really required
   if (BZDBCache::maxFlagLOD < 0) {
@@ -145,7 +146,7 @@ void FlagPhase::updatePhases()
   }
 
   for (int i = 0; i < maxFlagPhases; i++) {
-    phases[i].update(timeStep);
+    phases[i].update(timeStep * waveSpeed);
   }
   return;
 }
@@ -206,7 +207,7 @@ void FlagPhase::freeIndices()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 //
 // FlagPhase member functions
 //
@@ -257,15 +258,10 @@ inline int FlagPhase::render(int lod) const
   glNormalPointer(GL_FLOAT, 0, norms);
   glTexCoordPointer(2, GL_FLOAT, 0, txcds);
 
-#ifdef HAVE_GLEW
-  if (GLEW_EXT_draw_range_elements) {
+  if (GLEW_EXT_draw_range_elements)
     glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-  } else {
-#endif
+  else
     glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
-#ifdef HAVE_GLEW
-  }
-#endif
 
   return count;
 }
@@ -280,15 +276,10 @@ inline int FlagPhase::renderShadow(int lod) const
   const int count = elementCounts[lod];
   glVertexPointer(3, GL_FLOAT, 0, verts);
 
-#ifdef HAVE_GLEW
-  if (GLEW_EXT_draw_range_elements) {
+  if (GLEW_EXT_draw_range_elements)
     glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-  } else {
-#endif
+  else
     glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
-#ifdef HAVE_GLEW
-  }
-#endif
 
   return count;
 }
@@ -344,29 +335,31 @@ void FlagPhase::update(float dt)
     const float x      = float(i) / float(quads);
     const float shift1 = wave0[i];
 
-    const int it = lookup[i*2];
-    const int ib = lookup[i*2+1];
+    const int it = lookup[(i * 2)];
+    const int ib = lookup[(i * 2) + 1];
 
-    verts[it][0] = Width * x;
-    verts[ib][0] = Width * x;
+    verts[it].x = Width * x;
+    verts[ib].x = Width * x;
     if (realFlag) {
       // flag pole is Z axis
-      verts[it][1] = wave1[i];
-      verts[ib][1] = wave2[i];
-      verts[it][2] = base + Height - shift1;
-      verts[ib][2] = base - shift1;
+      verts[it].y = wave1[i];
+      verts[ib].y = wave2[i];
+      verts[it].z = base + Height - shift1;
+      verts[ib].z = base - shift1;
     } else {
       // flag pole is Y axis
-      verts[it][1] = base + Height - shift1;
-      verts[ib][1] = base - shift1;
-      verts[it][2] = wave1[i];
-      verts[ib][2] = wave2[i];
+      verts[it].y = base + Height - shift1;
+      verts[ib].y = base - shift1;
+      verts[it].z = wave1[i];
+      verts[ib].z = wave2[i];
     }
-    txcds[it][0] = x;
-    txcds[ib][0] = x;
-    txcds[it][1] = 1.0f;
-    txcds[ib][1] = 0.0f;
+    txcds[it].x = x;
+    txcds[ib].x = x;
+    txcds[it].y = 1.0f;
+    txcds[ib].y = 0.0f;
   }
+
+  const fvec3 negY(0.0f, -1.0f, 0.0f);
 
   // generate the lighting normals
   if (realFlag && BZDBCache::lighting) {
@@ -374,61 +367,42 @@ void FlagPhase::update(float dt)
     fvec3 topEdges[maxFlagQuads + 1];
     fvec3 botEdges[maxFlagQuads + 1];
     for (i = 0; i < quads; i++) {
-      const int ue = lookup[i * 2];
-      const int us = lookup[i * 2 + 1];
-      vec3sub(upEdges[i], verts[ue], verts[us]);
-      const int ts = lookup[i * 2];
-      const int te = lookup[i * 2 + 2];
-      vec3sub(topEdges[i], verts[te], verts[ts]);
-      const int bs = lookup[i * 2 + 1];
-      const int be = lookup[i * 2 + 2 + 1];
-      vec3sub(botEdges[i], verts[be], verts[bs]);
+      const int ue = lookup[(i * 2)];
+      const int us = lookup[(i * 2) + 1];
+      upEdges[i]  = verts[ue] - verts[us];
+      const int ts = lookup[(i * 2)];
+      const int te = lookup[(i * 2) + 2];
+      topEdges[i] = verts[te] - verts[ts];
+      const int bs = lookup[(i * 2) + 1];
+      const int be = lookup[(i * 2) + 2 + 1];
+      botEdges[i] = verts[be] - verts[bs];
     }
-    norms[0][0] = norms[1][0] = 0.0f;
-    norms[0][1] = norms[1][1] = -1.0f;
-    norms[0][2] = norms[1][2] = 0.0f;
-    const int lastTop = lookup[quads*2];
-    const int lastBot = lookup[quads*2+1];
-    norms[lastTop][0] = norms[lastBot][0] = 0.0f;
-    norms[lastTop][1] = norms[lastBot][1] = -1.0f;
-    norms[lastTop][2] = norms[lastBot][2] = 0.0f;
+    norms[0] = negY;
+    const int lastTop = lookup[(quads * 2)];
+    const int lastBot = lookup[(quads * 2) + 1];
+    norms[lastTop] = negY;
+    norms[lastBot] = negY;
     for (i = 1; i < quads; i++) {
       fvec3 n0, n1, na;
-      vec3cross(n0, topEdges[i-1], upEdges[i]);
-      vec3cross(n1, topEdges[i], upEdges[i]);
-      vec3add(na, n0, n1);
-      const float tlen = sqrtf(vec3dot(na, na));
-      const int it = lookup[i*2];
-      if (tlen > 0.0f) {
-	norms[it][0] = na[0] / tlen;
-	norms[it][1] = na[1] / tlen;
-	norms[it][2] = na[2] / tlen;
-      } else {
-	norms[it][0] = 0.0f;
-	norms[it][1] = -1.0f;
-	norms[it][2] = 0.0f;
-      }
-      vec3cross(n0, botEdges[i-1], upEdges[i]);
-      vec3cross(n1, botEdges[i], upEdges[i]);
-      vec3add(na, n0, n1);
-      const float blen = sqrtf(vec3dot(na, na));
-      const int ib = lookup[i*2+1];
-      if (blen > 0.0f) {
-	norms[ib][0] = na[0] / blen;
-	norms[ib][1] = na[1] / blen;
-	norms[ib][2] = na[2] / blen;
-      } else {
-	norms[ib][0] = 0.0f;
-	norms[ib][1] = -1.0f;
-	norms[ib][2] = 0.0f;
-      }
+
+      n0 = fvec3::cross(topEdges[i - 1], upEdges[i]);
+      n1 = fvec3::cross(topEdges[i],     upEdges[i]);
+      na = n0 + n1;
+      const int it = lookup[(i * 2)];
+      norms[it] = fvec3::normalize(na) ? na : negY;
+
+      n0 = fvec3::cross(botEdges[i - 1], upEdges[i]);
+      n1 = fvec3::cross(botEdges[i],     upEdges[i]);
+      na = n0 + n1;
+      const int ib = lookup[(i * 2) + 1];
+      norms[ib] = fvec3::normalize(na) ? na : negY;
     }
   }
   return;
 }
 
 
-/******************************************************************************/
+//============================================================================//
 //
 // FlagSceneNode
 //
@@ -443,7 +417,7 @@ const float FlagSceneNode::lodLengths[maxFlagLODs] = {
 const int FlagSceneNode::minPoleLOD = 3;
 
 
-FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
+FlagSceneNode::FlagSceneNode(const fvec3& pos) : renderNode(this)
 {
   phase = FlagPhase::getPhase();
 
@@ -458,10 +432,8 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) : renderNode(this)
   texturing = false;
   useColor = true;
   setColor(1.0f, 1.0f, 1.0f, 1.0f);
-  whiteColor[0] = 1.0f;
-  whiteColor[1] = 1.0f;
-  whiteColor[2] = 1.0f;
-  color = realColor;
+  whiteColor = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
+  color = &realColor;
   setCenter(pos);
   setRadius(6.0f * Unit * Unit);
 
@@ -483,42 +455,42 @@ void FlagSceneNode::setTimeStep(float dt)
 }
 
 
-void FlagSceneNode::waveFlags()
+void FlagSceneNode::waveFlags(float waveSpeed)
 {
   // This should be done after the flags
   // have passed through addRenderNodes(),
   // but before they are rendered.
-  FlagPhase::updatePhases();
+  FlagPhase::updatePhases(waveSpeed);
   return;
 }
 
 
-void FlagSceneNode::move(const GLfloat pos[3])
+void FlagSceneNode::move(const fvec3& pos)
 {
   setCenter(pos);
   return;
 }
 
 
-void FlagSceneNode::setAngle(GLfloat _angle)
+void FlagSceneNode::setAngle(float _angle)
 {
-  angle = (float)(_angle * 180.0 / M_PI);
+  angle = (float)(_angle * RAD2DEG);
   tilt = 0.0f;
   hscl = 1.0f;
   return;
 }
 
 
-void FlagSceneNode::setWind(const GLfloat wind[3], float dt)
+void FlagSceneNode::setWind(const fvec3& wind, float dt)
 {
   if (!realFlag) {
-    angle = atan2f(wind[1], wind[0]) * (float)(180.0 / M_PI);
+    angle = atan2f(wind[1], wind[0]) * RAD2DEGf;
     tilt = 0.0f;
     hscl = 1.0f;
   } else {
     // the angle points from the end of the flag to the pole
-    const float cos_val = cosf(angle * (float)(M_PI / 180.0));
-    const float sin_val = sinf(angle * (float)(M_PI / 180.0));
+    const float cos_val = cosf(angle * DEG2RADf);
+    const float sin_val = sinf(angle * DEG2RADf);
     const float force = (wind[0] * sin_val) - (wind[1] * cos_val);
     const float angleScale = 25.0f;
     angle = fmodf(angle + (force * dt * angleScale), 360.0f);
@@ -558,35 +530,29 @@ void FlagSceneNode::setUseColor(bool value)
 }
 
 
-void FlagSceneNode::setAlpha(GLfloat a)
+void FlagSceneNode::setAlpha(float a)
 {
-  realColor[3] = a;
-  whiteColor[3] = a;
+  realColor.a = a;
+  whiteColor.a = a;
   translucent = (a != 1.0f);
   return;
 }
 
 
-void FlagSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void FlagSceneNode::setColor(float r, float g, float b, float a)
 {
-  realColor[0] = r;
-  realColor[1] = g;
-  realColor[2] = b;
-  realColor[3] = a;
-  whiteColor[3] = a;
+  realColor = fvec4(r, g, b, a);
+  whiteColor.a = a;
   translucent = (a != 1.0f);
   return;
 }
 
 
-void FlagSceneNode::setColor(const GLfloat* rgba)
+void FlagSceneNode::setColor(const fvec4& rgba)
 {
-  realColor[0] = rgba[0];
-  realColor[1] = rgba[1];
-  realColor[2] = rgba[2];
-  realColor[3] = rgba[3];
-  whiteColor[3] = rgba[3];
-  translucent = (rgba[3] != 1.0f);
+  realColor = rgba;
+  whiteColor.a = rgba.a;
+  translucent = (rgba.a != 1.0f);
   return;
 }
 
@@ -613,12 +579,12 @@ void FlagSceneNode::notifyStyleChange()
 
   if (texturing) {
     if (useColor) {
-      color = realColor;
+      color = &realColor;
     } else {
-      color = whiteColor;
+      color = &whiteColor;
     }
   } else {
-    color = realColor;
+    color = &realColor;
   }
 
   if (translucent) {
@@ -662,12 +628,10 @@ void FlagSceneNode::notifyStyleChange()
 inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 {
   const ViewFrustum& vf = renderer.getViewFrustum();
-  const float* s = getSphere();
-  const float* e = vf.getEye();
-  const float* d = vf.getDirection();
-  const float dist = (d[0] * (s[0] - e[0])) +
-		     (d[1] * (s[1] - e[1])) +
-		     (d[2] * (s[2] - e[2]));
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& eye = vf.getEye();
+  const fvec3& dir = vf.getDirection();
+  const float dist = fvec3::dot(dir, pos - eye);
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
@@ -683,13 +647,10 @@ inline int FlagSceneNode::calcLOD(const SceneRenderer& renderer)
 
 inline int FlagSceneNode::calcShadowLOD(const SceneRenderer& renderer)
 {
-  const float* s = getSphere();
-  const float* e = renderer.getViewFrustum().getEye();
-  const float* d = renderer.getSunDirection();
-  fvec3 gap, cross;
-  vec3sub(gap, s, e);
-  vec3cross(cross, gap, d);
-  const float dist = sqrtf(vec3dot(cross, cross));
+  const fvec3& pos = getSphere().xyz();
+  const fvec3& eye = renderer.getViewFrustum().getEye();
+  const fvec3* dir = renderer.getSunDirection();
+  const float dist = fvec3::cross(pos - eye, *dir).length();
 
   const float lpp = dist * renderer.getLengthPerPixel();
 
@@ -721,13 +682,12 @@ void FlagSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-bool FlagSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+bool FlagSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 {
-  const float* s = getSphere();
+  const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
-    const float* p = planes[i];
-    const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
-    if ((d < 0.0f) && ((d * d) > s[3])) {
+    const float d = planes[i].planeDist(s.xyz());
+    if ((d < 0.0f) && ((d * d) > s.w)) {
       return true;
     }
   }
@@ -735,7 +695,7 @@ bool FlagSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
 }
 
 
-/******************************************************************************/
+//============================================================================//
 //
 // FlagSceneNode::FlagRenderNode
 //
@@ -769,7 +729,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
 
   // the pole base
   if (!isShadow) {
-    glColor4f(0.25f, 0.25f, 0.5f, sceneNode->color[3]); // blue
+    glColor4f(0.25f, 0.25f, 0.5f, sceneNode->color->a); // blue
   }
   glBegin(GL_QUAD_STRIP);
   {
@@ -801,7 +761,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
 
   // the pole cap
   if (!isShadow) {
-    glColor4f(0.5f, 0.5f, 0.25f, sceneNode->color[3]); // yellow
+    glColor4f(0.5f, 0.5f, 0.25f, sceneNode->color->a); // yellow
     if (lighting) {
       const float yellow[4] = {0.4f, 0.4f, 0.2f, 1.0f};
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, yellow);
@@ -846,7 +806,7 @@ void FlagSceneNode::FlagRenderNode::renderFancyPole()
 
   // the pole
   if (!isShadow) {
-    glColor4f(0.1f, 0.1f, 0.1f, sceneNode->color[3]); // dark grey
+    glColor4f(0.1f, 0.1f, 0.1f, sceneNode->color->a); // dark grey
     if (lighting) {
       const float black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
       glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
@@ -886,20 +846,20 @@ void FlagSceneNode::FlagRenderNode::render()
   const bool flat = sceneNode->flat;
   const bool texturing = sceneNode->texturing;
   const bool translucent = sceneNode->translucent;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   const FlagPhase* phase = sceneNode->phase;
   const int lod = isShadow ? sceneNode->shadowLOD : sceneNode->lod;
 
   if (!isShadow) {
-    glColor4fv(sceneNode->color);
+    glColor4fv(*sceneNode->color);
     if (!BZDBCache::blend && (translucent || texturing)) {
-      myStipple(sceneNode->color[3]);
+      myStipple(sceneNode->color->a);
     }
   }
 
   glPushMatrix();
   {
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
 
     if (realFlag) {
 
@@ -915,10 +875,10 @@ void FlagSceneNode::FlagRenderNode::render()
       }
       const float tilt = sceneNode->tilt;
       const float hscl = sceneNode->hscl;
-      static GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
-				  0.0f, 1.0f, 0.0f, 0.0f,
-				  0.0f, 0.0f, 1.0f, 0.0f,
-				  0.0f, 0.0f, 0.0f, 1.0f};
+      static float shear[16] = { hscl, 0.0f, tilt, 0.0f,
+                                 0.0f, 1.0f, 0.0f, 0.0f,
+                                 0.0f, 0.0f, 1.0f, 0.0f,
+                                 0.0f, 0.0f, 0.0f, 1.0f };
       shear[0] = hscl; // maintains the flag length
       shear[2] = tilt; // pulls the flag up or down
       glPushMatrix();
@@ -972,7 +932,7 @@ void FlagSceneNode::FlagRenderNode::render()
       }
 
       if (!isShadow) {
-	glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
+	glColor4f(0.0f, 0.0f, 0.0f, sceneNode->color->a);
 	if (texturing) {
 	  glDisable(GL_TEXTURE_2D);
 	}

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,33 +23,35 @@
 #include <string.h>
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// local implementation headers
+// local headers
 #include "ViewFrustum.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
-WallSceneNode::WallSceneNode() : numLODs(0),
-				elementAreas(NULL),
-				style(0)
+WallSceneNode::WallSceneNode()
+: numLODs(0)
+, elementAreas(NULL)
+, style(0)
 {
-  noPlane      = false;
+  noPlane = false;
+  order = 0;
   dynamicColor = NULL;
-  color[3] = 1.0f;
-  modulateColor[3] = 1.0f;
-  lightedColor[3] = 1.0f;
-  lightedModulateColor[3] = 1.0f;
-  color[3] = 1.0f;
-  color[3] = 1.0f;
-  color[3] = 1.0f;
+
+  color.a = 1.0f;
+  modulateColor.a = 1.0f;
+  lightedColor.a = 1.0f;
+  lightedModulateColor.a = 1.0f;
+
   setColor(1.0f, 1.0f, 1.0f);
   setModulateColor(1.0f, 1.0f, 1.0f);
   setLightedColor(1.0f, 1.0f, 1.0f);
   setLightedModulateColor(1.0f, 1.0f, 1.0f);
+
   useColorTexture = false;
   noCulling = false;
   noSorting = false;
@@ -57,8 +59,10 @@ WallSceneNode::WallSceneNode() : numLODs(0),
   wantBlending = false;
   wantSphereMap = false;
   alphaThreshold = 0.0f;
+
   return;
 }
+
 
 WallSceneNode::~WallSceneNode()
 {
@@ -66,34 +70,28 @@ WallSceneNode::~WallSceneNode()
   delete[] elementAreas;
 }
 
-void			WallSceneNode::setNumLODs(int num, float* areas)
+
+void WallSceneNode::setNumLODs(int num, float* areas)
 {
   numLODs = num;
   elementAreas = areas;
 }
 
-void			WallSceneNode::setPlane(const GLfloat _plane[4])
-{
-  // get normalization factor
-  const float n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
-					       (_plane[1] * _plane[1]) +
-					       (_plane[2] * _plane[2]));
 
+void WallSceneNode::setPlane(const fvec4& _plane)
+{
   // store normalized plane equation
-  plane[0] = n * _plane[0];
-  plane[1] = n * _plane[1];
-  plane[2] = n * _plane[2];
-  plane[3] = n * _plane[3];
+  plane = _plane;
+  plane *= (1.0f / plane.xyz().length());
 }
 
-bool			WallSceneNode::cull(const ViewFrustum& frustum) const
+
+bool WallSceneNode::cull(const ViewFrustum& frustum) const
 {
   // cull if eye is behind (or on) plane
-  const GLfloat* eye = frustum.getEye();
-  const float eyedot = (eye[0] * plane[0]) +
-		       (eye[1] * plane[1]) +
-		       (eye[2] * plane[2]) + plane[3];
-  if (eyedot <= 0.0f) {
+  const fvec3& eye = frustum.getEye();
+  const float eyeDist = plane.planeDist(eye);
+  if (eyeDist <= 0.0f) {
     return true;
   }
 
@@ -108,16 +106,14 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   const int planeCount = frustum.getPlaneCount();
   int i;
   float d[6], d2[6];
-  const GLfloat* mySphere = getSphere();
+  const fvec4& mySphere = getSphere();
   bool inside = true;
   for (i = 0; i < planeCount; i++) {
-    const GLfloat* norm = frustum.getSide(i);
-    d[i] = (mySphere[0] * norm[0]) +
-	   (mySphere[1] * norm[1]) +
-	   (mySphere[2] * norm[2]) + norm[3];
+    const fvec4& side = frustum.getSide(i);
+    d[i] = side.planeDist(mySphere.xyz());
     if (d[i] < 0.0f) {
       d2[i] = d[i] * d[i];
-      if (d2[i] > mySphere[3]) {
+      if (d2[i] > mySphere.w) {
 	return true;
       }
       inside = false;
@@ -138,9 +134,9 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
     if (d[i] >= 0.0f) {
       continue;
     }
-    const GLfloat* norm = frustum.getSide(i);
-    const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
-    if (d2[i] > mySphere[3] * (1.0f - c*c)) {
+    const fvec4& norm = frustum.getSide(i);
+    const float c = fvec3::dot(norm.xyz(), plane.xyz());
+    if (d2[i] > mySphere.w * (1.0f - (c * c))) {
       return true;
     }
   }
@@ -149,8 +145,8 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
   return false;
 }
 
-int			WallSceneNode::pickLevelOfDetail(
-					const SceneRenderer& renderer) const
+
+int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
 {
   if (!BZDBCache::tesselation) {
     return 0;
@@ -158,25 +154,24 @@ int			WallSceneNode::pickLevelOfDetail(
 
   int bestLOD = 0;
 
-  const GLfloat* mySphere = getSphere();
+  const fvec4& mySphere = getSphere();
   const int numLights = renderer.getNumLights();
   for (int i = 0; i < numLights; i++) {
-    const GLfloat* pos = renderer.getLight(i).getPosition();
+    const fvec4& pos = renderer.getLight(i).getPosition();
 
     // get signed distance from plane
-    GLfloat pd = pos[0] * plane[0] + pos[1] * plane[1] +
-		pos[2] * plane[2] + plane[3];
+    const float pd = plane.planeDist(pos.xyz());
 
     // ignore if behind wall
-    if (pd < 0.0f) continue;
+    if (pd < 0.0f) {
+      continue;
+    }
 
     // get squared distance from center of wall
-    GLfloat ld = (pos[0] - mySphere[0]) * (pos[0] - mySphere[0]) +
-		(pos[1] - mySphere[1]) * (pos[1] - mySphere[1]) +
-		(pos[2] - mySphere[2]) * (pos[2] - mySphere[2]);
+    float ld = (pos.xyz() - mySphere.xyz()).lengthSq();
 
     // pick representative distance
-    GLfloat d = (ld > 1.5f * mySphere[3]) ? ld : pd * pd;
+    float d = (ld > (1.5f * mySphere.w)) ? ld : (pd * pd);
 
     // choose lod based on distance and element areas;
     int j;
@@ -200,141 +195,135 @@ int			WallSceneNode::pickLevelOfDetail(
   return bestLOD;
 }
 
-GLfloat			WallSceneNode::getDistance(const GLfloat* eye) const
+
+float WallSceneNode::getDistanceSq(const fvec3& eye) const
 {
-  const GLfloat d = plane[0] * eye[0] + plane[1] * eye[1] +
-					plane[2] * eye[2] + plane[3];
-  return d * d;
+  const float d = plane.planeDist(eye);
+  return (d * d);
 }
 
-void			WallSceneNode::setColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+
+void WallSceneNode::setColor(float r, float g, float b, float a)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
+  color = fvec4(r, g, b, a);
 }
 
-void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
+
+void WallSceneNode::setOrder(int value)
+{
+  order = value;
+}
+
+
+void WallSceneNode::setDynamicColor(const fvec4* rgba)
 {
   dynamicColor = rgba;
-  return;
 }
 
-void			WallSceneNode::setBlending(bool blend)
+
+void WallSceneNode::setBlending(bool blend)
 {
   wantBlending = blend;
-  return;
 }
 
-void			WallSceneNode::setSphereMap(bool sphereMapping)
+
+void WallSceneNode::setSphereMap(bool sphereMapping)
 {
   wantSphereMap = sphereMapping;
-  return;
 }
 
-void			WallSceneNode::setColor(const GLfloat* rgba)
+
+void WallSceneNode::setColor(const fvec4& rgba)
 {
-  color[0] = rgba[0];
-  color[1] = rgba[1];
-  color[2] = rgba[2];
-  color[3] = rgba[3];
+  color = rgba;
 }
 
-void			WallSceneNode::setModulateColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+
+void WallSceneNode::setModulateColor(
+				float r, float g, float b, float a)
 {
-  modulateColor[0] = r;
-  modulateColor[1] = g;
-  modulateColor[2] = b;
-  modulateColor[3] = a;
+  modulateColor = fvec4(r, g, b, a);
 }
 
-void			WallSceneNode::setModulateColor(const GLfloat* rgba)
+
+void WallSceneNode::setModulateColor(const fvec4& rgba)
 {
-  modulateColor[0] = rgba[0];
-  modulateColor[1] = rgba[1];
-  modulateColor[2] = rgba[2];
-  modulateColor[3] = rgba[3];
+  modulateColor = rgba;
 }
 
-void			WallSceneNode::setLightedColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+
+void WallSceneNode::setLightedColor(float r, float g, float b, float a)
 {
-  lightedColor[0] = r;
-  lightedColor[1] = g;
-  lightedColor[2] = b;
-  lightedColor[3] = a;
+  lightedColor = fvec4(r, g, b, a);
 }
 
-void			WallSceneNode::setLightedColor(const GLfloat* rgba)
+
+void WallSceneNode::setLightedColor(const fvec4& rgba)
 {
-  lightedColor[0] = rgba[0];
-  lightedColor[1] = rgba[1];
-  lightedColor[2] = rgba[2];
-  lightedColor[3] = rgba[3];
+  lightedColor = rgba;
 }
 
-void			WallSceneNode::setLightedModulateColor(
-				GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+
+void WallSceneNode::setLightedModulateColor(float r, float g, float b, float a)
 {
-  lightedModulateColor[0] = r;
-  lightedModulateColor[1] = g;
-  lightedModulateColor[2] = b;
-  lightedModulateColor[3] = a;
+  lightedModulateColor = fvec4(r, g, b, a);
 }
 
-void			WallSceneNode::setLightedModulateColor(
-				const GLfloat* rgba)
+
+void WallSceneNode::setLightedModulateColor(const fvec4& rgba)
 {
-  lightedModulateColor[0] = rgba[0];
-  lightedModulateColor[1] = rgba[1];
-  lightedModulateColor[2] = rgba[2];
-  lightedModulateColor[3] = rgba[3];
+  lightedModulateColor = rgba;
 }
 
-void			WallSceneNode::setAlphaThreshold(float thresh)
+
+void WallSceneNode::setAlphaThreshold(float thresh)
 {
   alphaThreshold = thresh;
 }
 
-void			WallSceneNode::setNoCulling(bool value)
+
+void WallSceneNode::setNoCulling(bool value)
 {
   noCulling = value;
 }
 
-void			WallSceneNode::setNoSorting(bool value)
+
+void WallSceneNode::setNoSorting(bool value)
 {
   noSorting = value;
 }
 
-void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
+
+void WallSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setMaterial(mat, RENDERER.useQuality() > _LOW_QUALITY);
   gstate = builder.getState();
 }
 
-void			WallSceneNode::setTexture(const int tex)
+
+void WallSceneNode::setTexture(const int tex)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(tex);
   gstate = builder.getState();
 }
 
-void			WallSceneNode::setTextureMatrix(const GLfloat* texmat)
+
+void WallSceneNode::setTextureMatrix(const float* texmat)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTextureMatrix(texmat);
   gstate = builder.getState();
 }
 
-void			WallSceneNode::notifyStyleChange()
+
+void WallSceneNode::notifyStyleChange()
 {
   float alpha;
   bool lighted = (BZDBCache::lighting && gstate.isLighted());
   OpenGLGStateBuilder builder(gstate);
+  builder.setOrder(order);
   style = 0;
   if (lighted) {
     style += 1;
@@ -347,12 +336,12 @@ void			WallSceneNode::notifyStyleChange()
     style += 2;
     builder.enableTexture(true);
     builder.enableTextureMatrix(true);
-    alpha = lighted ? lightedModulateColor[3] : modulateColor[3];
+    alpha = lighted ? lightedModulateColor.a : modulateColor.a;
   }
   else {
     builder.enableTexture(false);
     builder.enableTextureMatrix(false);
-    alpha = lighted ? lightedColor[3] : color[3];
+    alpha = lighted ? lightedColor.a : color.a;
   }
   if (BZDB.isTrue("texturereplace")) {
     builder.setTextureEnvMode(GL_REPLACE);
@@ -384,10 +373,12 @@ void			WallSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			WallSceneNode::copyStyle(WallSceneNode* node)
+
+void WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
   useColorTexture = node->useColorTexture;
+  order = node->order;
   dynamicColor = node->dynamicColor;
   setColor(node->color);
   setModulateColor(node->modulateColor);
@@ -398,27 +389,28 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
   wantSphereMap = node->wantSphereMap;
 }
 
-void			WallSceneNode::setColor()
+
+void WallSceneNode::setColor()
 {
   if (BZDBCache::texture && useColorTexture) {
     myColor4f(1,1,1,1);
   }
   else if (dynamicColor != NULL) {
-    myColor4fv(dynamicColor);
+    myColor4fv(*dynamicColor);
   }
   else {
     switch (style) {
-      case 0: myColor4fv(color); break;
-      case 1: myColor4fv(lightedColor); break;
-      case 2: myColor4fv(modulateColor); break;
-      case 3: myColor4fv(lightedModulateColor); break;
+      case 0: { myColor4fv(color);                break; }
+      case 1: { myColor4fv(lightedColor);         break; }
+      case 2: { myColor4fv(modulateColor);        break; }
+      case 3: { myColor4fv(lightedModulateColor); break; }
     }
   }
 }
 
-int WallSceneNode::splitWall(const GLfloat* splitPlane,
-			     const GLfloat3Array& vertices,
-			     const GLfloat2Array& texcoords,
+int WallSceneNode::splitWall(const fvec4& splitPlane,
+			     const fvec3Array& vertices,
+			     const fvec2Array& texcoords,
 			     SceneNode*& front, SceneNode*& back) // const
 {
   int i;
@@ -449,9 +441,7 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   int backCount = 0;
   int frontCount = 0;
   for (i = 0; i < count; i++) {
-    const GLfloat d = (vertices[i][0] * splitPlane[0]) +
-		      (vertices[i][1] * splitPlane[1]) +
-		      (vertices[i][2] * splitPlane[2]) + splitPlane[3];
+    const float d = splitPlane.planeDist(vertices[i]);
     if (d < -fudgeFactor) {
       array[i] = BACK_SIDE;
       backCount++;
@@ -487,7 +477,8 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   }
 
   // get the first old front and back points
-  int firstFront = -1, firstBack = -1;
+  int firstFront = -1;
+  int firstBack  = -1;
 
   for (i = 0; i < count; i++) {
 
@@ -506,8 +497,8 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   }
 
   // get the last old front and back points
-  int lastFront = (firstFront + frontCount - 1) % count;
-  int lastBack = (firstBack + backCount - 1) % count;
+  const int lastFront = (firstFront + frontCount - 1) % count;
+  const int lastBack  = (firstBack  + backCount - 1)  % count;
 
   // add in extra counts for the splitting vertices
   if (firstFront != lastBack) {
@@ -520,54 +511,56 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
   }
 
   // make space for new polygons
-  GLfloat3Array vertexFront(frontCount);
-  GLfloat2Array uvFront(frontCount);
-  GLfloat3Array vertexBack(backCount);
-  GLfloat2Array uvBack(backCount);
+  fvec3Array vertexFront(frontCount);
+  fvec2Array uvFront(frontCount);
+  fvec3Array vertexBack(backCount);
+  fvec2Array uvBack(backCount);
 
   // fill in the splitting vertices
   int frontIndex = 0;
   int backIndex = 0;
   if (firstFront != lastBack) {
-    GLfloat splitVertex[3], splitUV[2];
+    fvec3 splitVertex;
+    fvec2 splitUV;
     splitEdge(dists[firstFront], dists[lastBack],
 	      vertices[firstFront], vertices[lastBack],
 	      texcoords[firstFront], texcoords[lastBack],
 	      splitVertex, splitUV);
-    memcpy(vertexFront[0], splitVertex, sizeof(GLfloat[3]));
-    memcpy(uvFront[0], splitUV, sizeof(GLfloat[2]));
+    vertexFront[0] = splitVertex;
+    uvFront[0] = splitUV;
     frontIndex++; // bump up the head
     const int last = backCount - 1;
-    memcpy(vertexBack[last], splitVertex, sizeof(GLfloat[3]));
-    memcpy(uvBack[last], splitUV, sizeof(GLfloat[2]));
+    vertexBack[last] = splitVertex;
+    uvBack[last] = splitUV;
   }
   if (firstBack != lastFront) {
-    GLfloat splitVertex[3], splitUV[2];
+    fvec3 splitVertex;
+    fvec2 splitUV;
     splitEdge(dists[firstBack], dists[lastFront],
 	      vertices[firstBack], vertices[lastFront],
 	      texcoords[firstBack], texcoords[lastFront],
 	      splitVertex, splitUV);
-    memcpy(vertexBack[0], splitVertex, sizeof(GLfloat[3]));
-    memcpy(uvBack[0], splitUV, sizeof(GLfloat[2]));
+    vertexBack[0] = splitVertex;
+    uvBack[0] = splitUV;
     backIndex++; // bump up the head
     const int last = frontCount - 1;
-    memcpy(vertexFront[last], splitVertex, sizeof(GLfloat[3]));
-    memcpy(uvFront[last], splitUV, sizeof(GLfloat[2]));
+    vertexFront[last] = splitVertex;
+    uvFront[last] = splitUV;
   }
 
   // fill in the old front side vertices
   const int endFront = (lastFront + 1) % count;
   for (i = firstFront; i != endFront; i = (i + 1) % count) {
-    memcpy(vertexFront[frontIndex], vertices[i], sizeof(GLfloat[3]));
-    memcpy(uvFront[frontIndex], texcoords[i], sizeof(GLfloat[2]));
+    vertexFront[frontIndex] = vertices[i];
+    uvFront[frontIndex] = texcoords[i];
     frontIndex++;
   }
 
   // fill in the old back side vertices
   const int endBack = (lastBack + 1) % count;
   for (i = firstBack; i != endBack; i = (i + 1) % count) {
-    memcpy(vertexBack[backIndex], vertices[i], sizeof(GLfloat[3]));
-    memcpy(uvBack[backIndex], texcoords[i], sizeof(GLfloat[2]));
+    vertexBack[backIndex] = vertices[i];
+    uvBack[backIndex] = texcoords[i];
     backIndex++;
   }
 
@@ -586,9 +579,9 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
 
 
 void WallSceneNode::splitEdge(float d1, float d2,
-			      const GLfloat* p1, const GLfloat* p2,
-			      const GLfloat* uv1, const GLfloat* uv2,
-			      GLfloat* p, GLfloat* uv) // const
+			      const fvec3& p1,  const fvec3& p2,
+			      const fvec2& uv1, const fvec2& uv2,
+			      fvec3& p, fvec2& uv) // const
 {
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);
@@ -597,13 +590,10 @@ void WallSceneNode::splitEdge(float d1, float d2,
   }
 
   // compute vertex
-  p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
-  p[1] = p1[1] + (t1 * (p2[1] - p1[1]));
-  p[2] = p1[2] + (t1 * (p2[2] - p1[2]));
+  p = p1 + (t1 * (p2  - p1));
 
   // compute texture coordinate
-  uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
-  uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
+  uv = uv1 + (t1 * (uv2 - uv1));
 }
 
 

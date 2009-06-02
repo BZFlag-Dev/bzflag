@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -54,6 +54,7 @@ class StateDatabase : public Singleton<StateDatabase>
 public:
 
   typedef void (*Callback)(const std::string& name, void* userData);
+
   enum Permission {
     // permission levels
     ReadWrite,
@@ -129,6 +130,14 @@ public:
 					    Callback, void* userData);
   void				removeCallback(const std::string& name,
 					       Callback, void* userData);
+
+  /** add/remove a global callback for all values. invoked when any value
+   * changes (either by being set or unset). each function/userData pair can
+   * only be registered once (i.e. multiple adds have the same effect as a
+   * single add).
+   */
+  void				addGlobalCallback(Callback, void* userData);
+  void				removeGlobalCallback(Callback, void* userData);
 
   /** test if a name is set or not
    */
@@ -234,9 +243,11 @@ public:
   static const std::string	BZDB_FOGSTART;
   static const std::string	BZDB_FOGEND;
   static const std::string	BZDB_FOGCOLOR;
+  static const std::string	BZDB_FORBIDDEBUG;
   static const std::string	BZDB_FREEZETAGRADIUS;
   static const std::string	BZDB_GMACTIVATIONTIME;
   static const std::string	BZDB_GMADLIFE;
+  static const std::string	BZDB_GMADSPEED;
   static const std::string	BZDB_GMTURNANGLE;
   static const std::string	BZDB_GRABOWNFLAG;
   static const std::string	BZDB_GRAVITY;
@@ -260,6 +271,7 @@ public:
   static const std::string	BZDB_LRADRATE;
   static const std::string	BZDB_MAXBUMPHEIGHT;
   static const std::string	BZDB_MAXFLAGGRABS;
+  static const std::string	BZDB_MAXSELFDESTRUCTVEL;
   static const std::string	BZDB_MAXLOD;
   static const std::string	BZDB_MIRROR;
   static const std::string	BZDB_MOMENTUMLINACC;
@@ -282,9 +294,13 @@ public:
   static const std::string	BZDB_RADARLIMIT;
   static const std::string	BZDB_REJOINTIME;
   static const std::string	BZDB_RELOADTIME;
+  static const std::string	BZDB_REJUMPTIME;
   static const std::string	BZDB_RFIREADVEL;
   static const std::string	BZDB_RFIREADRATE;
   static const std::string	BZDB_RFIREADLIFE;
+  static const std::string	BZDB_SCOREBOARDCUSTOMROWNAME;
+  static const std::string	BZDB_SCOREBOARDCUSTOMROWLEN;
+  static const std::string	BZDB_SCOREBOARDCUSTOMFIELD;
   static const std::string	BZDB_SHIELDFLIGHT;
   static const std::string	BZDB_SHOCKADLIFE;
   static const std::string	BZDB_SHOCKINRADIUS;
@@ -298,6 +314,7 @@ public:
   static const std::string	BZDB_SQUISHTIME;
   static const std::string	BZDB_SPEEDCHECKSLOGONLY;
   static const std::string	BZDB_SRRADIUSMULT;
+  static const std::string	BZDB_STARTINGRANK;
   static const std::string	BZDB_SYNCLOCATION;
   static const std::string	BZDB_SYNCTIME;
   static const std::string	BZDB_TANKANGVEL;
@@ -407,8 +424,9 @@ private:
   float				evaluate(Expression e) const;
   typedef std::map<std::string,float> EvalMap;
   EvalMap			evalCache;
-  bool			  debug;
-  bool			  saveDefault;
+  bool				debug;
+  bool				saveDefault;
+  CallbackList<Callback>	globalCallbacks;
 };
 
 inline bool StateDatabase::getDebug() const

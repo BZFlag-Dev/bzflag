@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,43 +23,39 @@
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
 
-#ifndef _WIN32
-typedef int64_t s64;
-#else
-typedef __int64 s64;
-#endif
-
 
 //
 // OpenGLTexture::Rep
 //
 
-const GLenum		OpenGLTexture::minifyFilter[] = {
-				GL_NEAREST,
-				GL_NEAREST,
-				GL_LINEAR,
-				GL_NEAREST_MIPMAP_NEAREST,
-				GL_LINEAR_MIPMAP_NEAREST,
-				GL_NEAREST_MIPMAP_LINEAR,
-				GL_LINEAR_MIPMAP_LINEAR
-			};
-const GLenum		OpenGLTexture::magnifyFilter[] = {
-				GL_NEAREST,
-				GL_NEAREST,
-				GL_LINEAR,
-				GL_NEAREST,
-				GL_LINEAR,
-				GL_NEAREST,
-				GL_LINEAR
-			};
-const char*		OpenGLTexture::configFilterNames[] = {
-				"no",
-				"nearest",
-				"linear",
-				"nearestmipmapnearest",
-				"linearmipmapnearest",
-				"nearestmipmaplinear",
-				"linearmipmaplinear"
+const unsigned int OpenGLTexture::minifyFilter[] = {
+  GL_NEAREST,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST_MIPMAP_NEAREST,
+  GL_LINEAR_MIPMAP_NEAREST,
+  GL_NEAREST_MIPMAP_LINEAR,
+  GL_LINEAR_MIPMAP_LINEAR
+};
+
+const unsigned int OpenGLTexture::magnifyFilter[] = {
+  GL_NEAREST,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST,
+  GL_LINEAR
+};
+
+const char* OpenGLTexture::configFilterNames[] = {
+  "no",
+  "nearest",
+  "linear",
+  "nearestmipmapnearest",
+  "linearmipmapnearest",
+  "nearestmipmaplinear",
+  "linearmipmaplinear"
 };
 
 
@@ -71,9 +67,10 @@ const int OpenGLTexture::filterCount = Max + 1;
 OpenGLTexture::Filter OpenGLTexture::maxFilter = Default;
 
 
-OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
-			     Filter _filter, bool _repeat, int _internalFormat) :
-			   width(_width), height(_height)
+OpenGLTexture::OpenGLTexture(int _width, int _height, const void* pixels,
+			     Filter _filter, bool _repeat, int _internalFormat)
+: width(_width)
+, height(_height)
 {
   alpha = false;
   repeat = _repeat;
@@ -86,7 +83,7 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
     internalFormat = getBestFormat(width, height, pixels);
 
   // copy/scale the original texture image
-  setupImage((const GLubyte*)pixels);
+  setupImage(pixels);
 
   // build and bind the GL texture
   initContext();
@@ -151,15 +148,15 @@ void OpenGLTexture::initContext()
   return;
 }
 
-void OpenGLTexture::replateImageData(const GLvoid* pixels)
+void OpenGLTexture::replateImageData(const void* pixels)
 {
   freeContext();
-  memcpy(image,pixels,internalFormat*scaledWidth*scaledHeight);
+  memcpy(image, pixels, internalFormat * scaledWidth * scaledHeight);
   initContext();
 }
 
 
-bool OpenGLTexture::setupImage(const GLubyte* pixels)
+bool OpenGLTexture::setupImage(const void* pixels)
 {
   // align to a 2^N value
   scaledWidth = 1;
@@ -255,12 +252,6 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
 }
 
 
-OpenGLTexture::Filter OpenGLTexture::getFilter()
-{
-  return filter;
-}
-
-
 void OpenGLTexture::setFilter(Filter _filter)
 {
   filter = _filter;
@@ -284,18 +275,36 @@ void OpenGLTexture::setFilter(Filter _filter)
       }
     }
   }
+  realFilter = (Filter)filterIndex;
+
   GLint binding;
   glGetIntegerv (GL_TEXTURE_BINDING_2D, &binding);
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
-#ifdef HAVE_GLEW
   if (GLEW_EXT_texture_filter_anisotropic) {
     GLint aniso = BZDB.evalInt("aniso");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
   }
-#endif
   glBindTexture(GL_TEXTURE_2D, binding);
+}
+
+
+OpenGLTexture::Filter OpenGLTexture::getFilter()
+{
+  return filter;
+}
+
+
+unsigned int OpenGLTexture::getMinFilter()
+{
+  return minifyFilter[realFilter];
+}
+
+
+unsigned int OpenGLTexture::getMagFilter()
+{
+  return magnifyFilter[realFilter];
 }
 
 
@@ -304,15 +313,16 @@ OpenGLTexture::Filter OpenGLTexture::getMaxFilter()
   return maxFilter;
 }
 
+
 void OpenGLTexture::setMaxFilter(Filter _filter)
 {
   maxFilter = _filter;
 }
 
 
-void OpenGLTexture::execute()
+bool OpenGLTexture::execute()
 {
-  bind();
+  return bind();
 }
 
 
@@ -344,54 +354,59 @@ float OpenGLTexture::getAspectRatio() const
 }
 
 
-void OpenGLTexture::bind()
+bool OpenGLTexture::bind()
 {
   if (list != INVALID_GL_TEXTURE_ID) {
     glBindTexture(GL_TEXTURE_2D, list);
+    return true;
   } else {
-    glBindTexture(GL_TEXTURE_2D, 0); // heh, it's the same call
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return false;
   }
 }
 
 
-int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
+int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels)
 {
   // see if all pixels are achromatic
   const GLubyte* scan = (const GLubyte*)pixels;
   const int size = _width * _height;
   int i;
-  for (i = 0; i < size; scan += 4, i++)
-    if (scan[0] != scan[1] || scan[0] != scan[2])
+  for (i = 0; i < size; scan += 4, i++) {
+    if (scan[0] != scan[1] || scan[0] != scan[2]) {
       break;
+    }
+  }
   const bool useLuminance = (i == size);
 
   // see if all pixels are opaque
   scan = (const GLubyte*)pixels;
-  for (i = 0; i < size; scan += 4, i++)
-    if (scan[3] != 0xff)
+  for (i = 0; i < size; scan += 4, i++) {
+    if (scan[3] != 0xff) {
       break;
+    }
+  }
   const bool useAlpha = (i != size);
-
-  // intensity format defined in 1.1 and an extension in 1.0
-  static const bool hasTextureExt = true;
 
   // see if all pixels are r=g=b=a.  if so return intensity format.
   // SGI IMPACT systems don't support GL_INTENSITY.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
-  static bool noIntensity =
-    ((glRenderer == NULL) ||
-     (strncmp(glRenderer, "IMPACT", 6) == 0));
+  static bool noIntensity = ((glRenderer == NULL) ||
+                             (strncmp(glRenderer, "IMPACT", 6) == 0));
   if (!noIntensity) {
     bool useIntensity = false;
-    if (hasTextureExt && useLuminance) {
+    if (useLuminance) {
       scan = (const GLubyte*)pixels;
-      for (i = 0; i < size; scan += 4, i++)
-	if (scan[3] != scan[0])
+      for (i = 0; i < size; scan += 4, i++) {
+	if (scan[3] != scan[0]) {
 	  break;
+        }
+      }
       useIntensity = (i == size);
     }
-    if (useIntensity)
+    if (useIntensity) {
       return GL_INTENSITY;
+    }
   }
 
   // pick internal format
@@ -401,7 +416,7 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
 }
 
 
-bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
+bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
 {
   if ((image == NULL) || (scaledWidth <= 0) || (scaledHeight <= 0)) {
     return false;
@@ -411,7 +426,7 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
   const int channelCount = alpha ? 4 : 3;
 
   // tally the values
-  s64 rgbaTally[4] = {0, 0, 0, 0};
+  int64_t rgbaTally[4] = { 0, 0, 0, 0 };
   for (int x = 0; x < scaledWidth; x++) {
     for (int y = 0; y < scaledHeight; y++) {
       for (int c = 0; c < channelCount; c++) {
@@ -433,9 +448,9 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
   // calculate the alpha average
   float maxTally = 255.0f * (scaledWidth * scaledHeight);
   if (channelCount == 3) {
-    rgba[3] = 1.0f;
+    rgba.a = 1.0f;
   } else {
-    rgba[3] = (float)rgbaTally[3] / maxTally;
+    rgba.a = (float)rgbaTally[3] / maxTally;
   }
 
   // adjust the maxTally for alpha weighting

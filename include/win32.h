@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -70,6 +70,11 @@ typedef ULONGLONG	uint64_t;
 
 /* stuff specific to visual studio */
 #if defined(_MSC_VER)
+// Visual Studio builds always include GLEW statically
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
+
 // turn off bogus `this used in base member initialization list'
 #  pragma warning(disable: 4786)
 #  pragma warning(disable: 4503)

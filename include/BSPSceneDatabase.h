@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,6 @@
 #include <vector>
 
 // common implementation headers
-#include "bzfgl.h"
 #include "SceneDatabase.h"
 
 
@@ -44,8 +43,12 @@ class BSPSceneDatabase : public SceneDatabase {
 
     void		updateNodeStyles();
     void		addLights(SceneRenderer& renderer);
-    void		addShadowNodes(SceneRenderer &renderer);
-    void		addRenderNodes(SceneRenderer& renderer);
+    void		addShadowNodes(SceneRenderer &renderer,
+                                       bool staticNodes,
+                                       bool dynamicNodes);
+    void		addRenderNodes(SceneRenderer& renderer,
+                                       bool staticNodes,
+                                       bool dynamicNodes);
     void		renderRadarNodes(const ViewFrustum&);
 
     void		drawCuller();
@@ -81,7 +84,7 @@ class BSPSceneDatabase : public SceneDatabase {
     Node*		root;
     int			depth;
     // the following members avoid passing parameters around
-    GLfloat		eye[3];
+    fvec3		eye;
     SceneRenderer*	renderer;
     const ViewFrustum*	frustum;
 

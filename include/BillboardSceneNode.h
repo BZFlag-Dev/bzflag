@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,7 @@
 
 class BillboardSceneNode : public SceneNode {
   public:
-			BillboardSceneNode(const GLfloat pos[3]);
+			BillboardSceneNode(const fvec3& pos);
 			~BillboardSceneNode();
 
     virtual BillboardSceneNode*	copy() const;
@@ -36,22 +36,22 @@ class BillboardSceneNode : public SceneNode {
 
     bool		isLight() const;
     void		setLight(bool = true);
-    void		setLightColor(GLfloat r, GLfloat g, GLfloat b);
-    void		setLightAttenuation(GLfloat c, GLfloat l, GLfloat q);
-    void		setLightScaling(GLfloat intensityScaleFactor);
+    void		setLightColor(float r, float g, float b);
+    void		setLightAttenuation(float c, float l, float q);
+    void		setLightScaling(float intensityScaleFactor);
     void		setLightFadeStartTime(float t);
     void		setGroundLight(bool value);
 
     void		setSize(float side);
     void		setSize(float width, float height);
-    void		setColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
+    void		setColor(float r, float g,
+				float b, float a = 1.0f);
+    void		setColor(const fvec4& rgba);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
-    void		move(const GLfloat pos[3]);
-    void		setAngle(GLfloat);
+    void		move(const fvec3& pos);
+    void		setAngle(float);
     void		addLight(SceneRenderer&);
 
     void		notifyStyleChange();
@@ -62,15 +62,15 @@ class BillboardSceneNode : public SceneNode {
       public:
 			BillboardRenderNode(const BillboardSceneNode*);
 			~BillboardRenderNode();
-	void		setColor(const GLfloat* rgba);
+	void		setColor(const fvec4& rgba);
 	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
 	void		setFrame(float u, float v);
 	void		setFrameSize(float du, float dv);
       private:
 	const BillboardSceneNode* sceneNode;
 	float		u, v;
-	GLfloat		du, dv;
+	float		du, dv;
     };
     friend class BillboardRenderNode;
 
@@ -86,10 +86,10 @@ class BillboardSceneNode : public SceneNode {
     bool		lightSource;
     bool		groundLight;
     float		width, height;
-    GLfloat		color[4];
-    GLfloat		angle;
-    GLfloat		lightColor[3];
-    GLfloat		lightScale;
+    fvec4		color;
+    float		angle;
+    fvec4		lightColor;
+    float		lightScale;
     float		lightCutoffTime;
     int			cu, cv;
     float		t, duration;

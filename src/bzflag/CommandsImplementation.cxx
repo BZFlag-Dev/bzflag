@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -18,23 +18,26 @@
 #include <math.h>
 #include <ctype.h>
 
+#include <vector>
+
 // common implementation headers
-#include "BZDBCache.h"
 #include "AnsiCodes.h"
-#include "TextUtils.h"
+#include "BZDBCache.h"
 #include "CommandsStandard.h"
-#include "TextureManager.h"
 #include "DirectoryNames.h"
 #include "KeyManager.h"
+#include "MapInfo.h"
+#include "TextureManager.h"
+#include "TextUtils.h"
 
 // local implementation headers
-#include "LocalCommand.h"
-#include "Roster.h"
-#include "playing.h"
 #include "bzglob.h"
-#include "Roaming.h"
-#include "ServerLink.h"
+#include "playing.h"
+#include "LocalCommand.h"
 #include "LocalPlayer.h"
+#include "Roaming.h"
+#include "Roster.h"
+#include "ServerLink.h"
 
 // class definitions
 
@@ -122,38 +125,63 @@ class SaveWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class SelfLockCommand : LocalCommand {
+  public:
+    SelfLockCommand();
+    bool operator() (const char *commandLine);
+};
+
+class WorldInfoCommand : LocalCommand {
+  public:
+    WorldInfoCommand();
+    bool operator() (const char *commandLine);
+};
+
+class DebugLevelCommand : LocalCommand {
+  public:
+    DebugLevelCommand();
+    bool operator() (const char *commandLine);
+};
+
+
 // class instantiations
-static CommandList	  commandList;
-static BindCommand	  bindCommand;
+static BindCommand        bindCommand;
+static CommandList        commandList;
+static DebugLevelCommand  debugLevelCommand;
+static DiffCommand        diffCommand;
+static DumpCommand        dumpCommand;
+static HighlightCommand   highlightCommand;
+static LocalSetCommand    localSetCommand;
+static QuitCommand        quitCommand;
+static ReTextureCommand   reTextureCommand;
+static RoamPosCommand     RoamPosCommand;
+static SaveMsgsCommand    saveMsgsCommand;
+static SaveWorldCommand   saveWorldCommand;
+static SelfLockCommand    selfLockCommand;
+static SetCommand         setCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
-static DumpCommand	  dumpCommand;
-static HighlightCommand   highlightCommand;
-static SetCommand	  setCommand;
-static DiffCommand	  diffCommand;
-static LocalSetCommand    localSetCommand;
-static QuitCommand	  quitCommand;
-static RoamPosCommand     RoamPosCommand;
-static ReTextureCommand   reTextureCommand;
-static SaveMsgsCommand	  saveMsgsCommand;
-static SaveWorldCommand   saveWorldCommand;
+static WorldInfoCommand   worldInfoCommand;
 
 
 // class constructors
-BindCommand::BindCommand() :		LocalCommand("/bind") {}
-CommandList::CommandList() :		LocalCommand("/cmds") {}
-DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
-DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
-HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
-LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
-QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
-ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
-SaveMsgsCommand::SaveMsgsCommand() :	LocalCommand("/savemsgs") {}
-SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
-SetCommand::SetCommand() :		LocalCommand("/set") {}
-SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
-UnsilenceCommand::UnsilenceCommand() :	LocalCommand("/unsilence") {}
+BindCommand::BindCommand()             : LocalCommand("/bind")      {}
+CommandList::CommandList()             : LocalCommand("/cmds")      {}
+DebugLevelCommand::DebugLevelCommand() : LocalCommand("/debug")     {}
+DiffCommand::DiffCommand()             : LocalCommand("/diff")      {}
+DumpCommand::DumpCommand()             : LocalCommand("/dumpvars")  {}
+HighlightCommand::HighlightCommand()   : LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand()     : LocalCommand("/localset")  {}
+QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
+ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand()       : LocalCommand("/roampos")   {}
+SaveMsgsCommand::SaveMsgsCommand()     : LocalCommand("/savemsgs")  {}
+SaveWorldCommand::SaveWorldCommand()   : LocalCommand("/saveworld") {}
+SelfLockCommand::SelfLockCommand()     : LocalCommand("/selflock")  {}
+SetCommand::SetCommand()               : LocalCommand("/set")       {}
+SilenceCommand::SilenceCommand()       : LocalCommand("/silence")   {}
+UnsilenceCommand::UnsilenceCommand()   : LocalCommand("/unsilence") {}
+WorldInfoCommand::WorldInfoCommand()   : LocalCommand("/worldinfo") {}
 
 
 // the meat of the matter
@@ -214,12 +242,13 @@ bool CommandList::operator() (const char * /*cmdLine*/)
     addMessage(NULL, buffer);
   }
 
-  addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
-		   "Server-side Commands");
-
-  const char* msg = "/?";
-  strncpy(buffer, msg, MessageLen);
-  serverLink->sendMessage(ServerPlayer, buffer);
+  if (serverLink != NULL) {
+    addMessage(NULL, ANSI_STR_UNDERLINE ANSI_STR_FG_BLACK
+               "Server-side Commands");
+    const char* msg = "/?";
+    strncpy(buffer, msg, MessageLen);
+    serverLink->sendMessage(ServerPlayer, buffer);
+  }
   return true;
 }
 
@@ -234,8 +263,8 @@ static void printBindHelp()
 
 bool BindCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + commandName.size();
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
+  const std::string params = commandLine + commandName.size();
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
   if ((tokens.size() < 1) || (tokens.size() > 3)) {
     printBindHelp();
     return true;
@@ -318,8 +347,8 @@ bool UnsilenceCommand::operator() (const char *commandLine)
 {
   Player *loudmouth = getPlayerByName(commandLine + 11);
   if (loudmouth) {
-    std::vector<std::string>::iterator it = silencePlayers.begin();
-    for (; it != silencePlayers.end(); it++) {
+    std::vector<std::string>::iterator it;
+    for (it = silencePlayers.begin(); it != silencePlayers.end(); ++it) {
       if (*it == commandLine + 10) {
 	silencePlayers.erase(it);
 	std::string unsilenceMessage = "Unsilenced ";
@@ -349,7 +378,7 @@ bool DumpCommand::operator() (const char *)
 bool HighlightCommand::operator() (const char *commandLine)
 {
   const char* c = commandLine + 10;
-  while ((*c != '\0') && isspace(*c)) c++; // skip leading white
+  c = TextUtils::skipWhitespace(c);
   BZDB.set("highlightPattern", std::string(c));
   return true;
 }
@@ -443,26 +472,26 @@ static void listSetVars(const std::string& name, void* varDispPtr)
       snprintf(message, MessageLen, "%s %s <%f> %s", name.c_str(), varDisp->prefix.c_str(),
 	      BZDB.eval(name), BZDB.get(name).c_str());
     }
-    addMessage(LocalPlayer::getMyTank(), message, 2);
+    addMessage(LocalPlayer::getMyTank(), message, ControlPanel::MessageServer);
   }
 }
 
 
 bool SetCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + 4;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  const std::string params = commandLine + 4;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
   if (tokens.size() > 1) {
     return false;
   }
 
   std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
-    pattern = '_' + pattern;
+//FIXME ?    pattern = '_' + pattern;
   }
 
   const std::string header = "/set " + pattern;
-  addMessage(LocalPlayer::getMyTank(), header, 2);
+  addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
   VarDispInfo varDisp(commandName);
   varDisp.server = true;
@@ -471,7 +500,8 @@ bool SetCommand::operator() (const char *commandLine)
   foundVar = false;
   BZDB.iterate(listSetVars, &varDisp);
   if (!foundVar) {
-    addMessage(LocalPlayer::getMyTank(), "no matching variables", 2);
+    addMessage(LocalPlayer::getMyTank(), "no matching variables",
+               ControlPanel::MessageServer);
   }
   return true;
 }
@@ -479,8 +509,8 @@ bool SetCommand::operator() (const char *commandLine)
 
 bool DiffCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + 5;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
+  const std::string params = commandLine + 5;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
 
   std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
   if (pattern[0] != '_') {
@@ -488,7 +518,7 @@ bool DiffCommand::operator() (const char *commandLine)
   }
 
   const std::string header = "/diff " + pattern;
-  addMessage(LocalPlayer::getMyTank(), header, 2);
+  addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
   VarDispInfo varDisp(commandName);
   varDisp.diff = true;
@@ -500,10 +530,11 @@ bool DiffCommand::operator() (const char *commandLine)
   if (!foundVar) {
     if (pattern == "_*") {
       addMessage(LocalPlayer::getMyTank(),
-	"all variables are at defaults", 2);
+	"all variables are at defaults", ControlPanel::MessageServer);
     } else {
       addMessage(LocalPlayer::getMyTank(),
-	"no differing variables with that pattern", 2);
+	"no differing variables with that pattern",
+	ControlPanel::MessageServer);
     }
   }
   return true;
@@ -512,8 +543,8 @@ bool DiffCommand::operator() (const char *commandLine)
 
 bool LocalSetCommand::operator() (const char *commandLine)
 {
-  std::string params = commandLine + 9;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
+  const std::string params = commandLine + 9;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
 #ifdef DEBUG
   const bool debug = true;
 #else
@@ -522,12 +553,13 @@ bool LocalSetCommand::operator() (const char *commandLine)
 
   if (tokens.size() == 1) {
     const std::string header = "/localset " + tokens[0];
-    addMessage(LocalPlayer::getMyTank(), header, 2);
+    addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
 
     if (!debug &&
 	((strstr(tokens[0].c_str(), "*") != NULL) ||
 	 (strstr(tokens[0].c_str(), "?") != NULL))) {
-      addMessage(LocalPlayer::getMyTank(), "undefined client variable", 2);
+      addMessage(LocalPlayer::getMyTank(), "undefined client variable",
+                 ControlPanel::MessageServer);
       return true;
     }
 
@@ -540,10 +572,10 @@ bool LocalSetCommand::operator() (const char *commandLine)
     if (!foundVar) {
       if (debug) {
 	addMessage(LocalPlayer::getMyTank(),
-	  "no matching client variables", 2);
+	  "no matching client variables", ControlPanel::MessageServer);
       } else {
 	addMessage(LocalPlayer::getMyTank(),
-	  "undefined client variable", 2);
+	  "undefined client variable", ControlPanel::MessageServer);
       }
     }
   }
@@ -583,8 +615,8 @@ bool QuitCommand::operator() (const char *commandLine)
 bool RoamPosCommand::operator() (const char *commandLine)
 {
   // change the observer position and orientation
-  std::string params = commandLine + 8;
-  std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
+  const std::string params = commandLine + 8;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ");
 
   if (tokens.size() == 1) {
     Roaming::RoamingCamera cam;
@@ -594,14 +626,14 @@ bool RoamPosCommand::operator() (const char *commandLine)
       LocalPlayer* myTank = LocalPlayer::getMyTank();
       if (myTank != NULL) {
 	const Roaming::RoamingCamera* camPtr = ROAM.getCamera();
-	float fakeVel[3] = { camPtr->theta, camPtr->phi, camPtr->zoom };
+	fvec3 fakeVel(camPtr->theta, camPtr->phi, camPtr->zoom);
 	myTank->move(camPtr->pos, camPtr->theta);
 	myTank->setVelocity(fakeVel);
 	serverLink->sendPlayerUpdate(myTank);
       }
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
-      const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+      const float ws = BZDBCache::worldSize;
       const float radians = degrees * ((float)M_PI/180.0f);
       cam.pos[0] = cosf(radians)* 0.5f * ws * (float)M_SQRT2;
       cam.pos[1] = sinf(radians)* 0.5f * ws * (float)M_SQRT2;
@@ -666,8 +698,7 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     return true;
   }
 
-  std::vector<std::string> args;
-  args = TextUtils::tokenize(commandLine, " ");
+  const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
   bool stripAnsi = false;
@@ -675,11 +706,11 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     stripAnsi = true;
   }
 
-  std::string filename = getConfigDirName() + "msglog.txt";
+  const std::string filename = getConfigDirName() + "msglog.txt";
 
   controlPanel->saveMessages(filename, stripAnsi);
 
-  std::string msg = "Saved messages to: " + filename;
+  const std::string msg = "Saved messages to: " + filename;
   addMessage(NULL, msg);
 
   return true;
@@ -688,7 +719,7 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
 
 static void sendSaveWorldHelp()
 {
-  addMessage(NULL, "/saveworld [-g] [-m] [-o] <filename>");
+  addMessage(NULL, "/saveworld [-g] [-m] [-o] [-d] <filename>");
   addMessage(NULL, "  -g : save ungrouped");
   addMessage(NULL, "  -m : save some primitives as meshes");
   addMessage(NULL, "  -o : save meshes into WaveFront OBJ files");
@@ -697,13 +728,12 @@ static void sendSaveWorldHelp()
 
 bool SaveWorldCommand::operator() (const char *commandLine)
 {
-  bool meshprims = false;
-  bool ungrouped = false;
-  bool wavefront = false;
+  bool meshprims  = false;
+  bool ungrouped  = false;
+  bool wavefront  = false;
 
-  std::string cmdLine = commandLine;
-  std::vector<std::string> args;
-  args = TextUtils::tokenize(commandLine, " ");
+  const std::string cmdLine = commandLine;
+  const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
   if (argCount <= 1) {
@@ -742,7 +772,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     return true;
   }
 
-  char buffer[256] = {0};
+  char buffer[256] = { 0 };
   std::string fullname;
   if (world->writeWorld(filename, fullname)) {
     snprintf(buffer, 256, "World saved:  %s %s%s%s", fullname.c_str(),
@@ -756,6 +786,74 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 
   return true;
 }
+
+bool SelfLockCommand::operator() (const char*)
+{
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank == NULL) {
+    addMessage(NULL, "you do not exist");
+    return true;
+  }
+  myTank->setTarget(myTank);
+  addMessage(NULL, "self-locked");
+  return true;
+}
+
+
+bool WorldInfoCommand::operator() (const char* /*commandLine*/)
+{
+  World* world = World::getWorld();
+  if (world == NULL) {
+    addMessage(NULL, "no world");
+    return true;
+  }
+
+  const std::string indent = ANSI_STR_FG_GREEN "[info]" ANSI_STR_RESET;
+  const MapInfo::InfoVec& infoVec = world->getMapInfo().getVec();
+  if (infoVec.empty()) {
+    addMessage(NULL, "no world info");
+  }
+  else {
+    for (unsigned int i = 0; i < infoVec.size(); i++) {
+      addMessage(NULL, indent + infoVec[i]);
+    }
+    if (false) { // FIXME - test code
+      addMessage(NULL, "and now ... by map<>");
+      const MapInfo::InfoMap& infoMap = world->getMapInfo().getMap();
+      MapInfo::InfoMap::const_iterator it;
+      for (it = infoMap.begin(); it != infoMap.end(); ++it) {
+        addMessage(NULL, indent + it->first);
+        const std::vector<std::string>& values = it->second;
+        for (unsigned int i = 0; i < values.size(); i++) {
+          addMessage(NULL, indent + "  " + values[i]);
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
+
+bool DebugLevelCommand::operator() (const char* cmdLine)
+{
+  const std::vector<std::string> args = TextUtils::tokenize(cmdLine, " ");
+  if (args.size() < 2) {
+    std::string msg = "debug level is ";
+    msg += TextUtils::itoa(debugLevel);
+    addMessage(NULL, msg);
+    return true;
+  }
+
+  BZDB.setInt("debugLevel", atoi(args[1].c_str()));
+
+  char buf[128];
+  snprintf(buf, sizeof(buf), "debug level set to %i", debugLevel);
+  addMessage(NULL, buf);
+
+  return true;
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

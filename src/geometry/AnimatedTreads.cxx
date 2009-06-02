@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -11,11 +11,15 @@
  */
 
 #include "common.h"
+
 // system headers
 #include <assert.h>
 #include <math.h>
 
-// local implementation headers
+// common headers
+#include "bzfgl.h"
+
+// local headers
 #include "TankSceneNode.h"
 #include "TankGeometryMgr.h"
 
@@ -44,9 +48,9 @@ static float wheelInsideTexRad;
 static float wheelOutsideTexRad;
 
 
-void TankGeometryUtils::setTreadStyle(int /* style */)
+void TankGeometryUtils::setTreadStyle(int style)
 {
-  if (0){//(style == TankGeometryUtils::Exposed) {
+  if (style == TankGeometryUtils::Exposed) {
     fullLength = 6.0f;
     treadHeight = 1.2f;
     treadInside = 0.875f;
@@ -385,14 +389,14 @@ static int buildTread(float Yoffset, int divisions)
 }
 
 
-static int buildWheel(const float pos[3], float angle, int divisions)
+static int buildWheel(const fvec3& pos, float angle, int divisions)
 {
   int i;
   int tris = 0;
   const float divs = (float)divisions;
   const float astep = (float)((M_PI * 2.0) / (double)divs);
-  const float yLeft = pos[1] + (0.5f * wheelWidth);
-  const float yRight = pos[1] - (0.5f * wheelWidth);
+  const float yLeft = pos.y + (0.5f * wheelWidth);
+  const float yRight = pos.y - (0.5f * wheelWidth);
   float x, z;
   float tx, ty;
 
@@ -408,8 +412,8 @@ static int buildWheel(const float pos[3], float angle, int divisions)
       tx = 0.5f + (cosf(angle + ang) * wheelInsideTexRad);
       ty = 0.5f + (sinf(angle + ang) * wheelInsideTexRad);
       doTexCoord2f(tx, ty);
-      x = (cos_val * wheelRadius) + pos[0];
-      z = (sin_val * wheelRadius) + pos[2];
+      x = (cos_val * wheelRadius) + pos.x;
+      z = (sin_val * wheelRadius) + pos.z;
       doVertex3f(x, yRight, z);
       tx = 0.5f + (cosf(angle + ang) * wheelOutsideTexRad);
       ty = 0.5f + (sinf(angle + ang) * wheelOutsideTexRad);
@@ -433,8 +437,8 @@ static int buildWheel(const float pos[3], float angle, int divisions)
 	tx = 0.5f + (cosf(angle - ang) * wheelInsideTexRad);
 	ty = 0.5f + (sinf(angle - ang) * wheelInsideTexRad);
 	doTexCoord2f(tx, ty);
-	x = (cos_val * wheelRadius) + pos[0];
-	z = (sin_val * wheelRadius) + pos[2];
+	x = (cos_val * wheelRadius) + pos.x;
+	z = (sin_val * wheelRadius) + pos.z;
 	doVertex3f(x, yLeft, z);
 
       }
@@ -453,8 +457,8 @@ static int buildWheel(const float pos[3], float angle, int divisions)
 	tx = 0.5f + (cosf(angle + ang) * 0.4f);
 	ty = 0.5f + (sinf(angle + ang) * 0.4f);
 	doTexCoord2f(tx, ty);
-	x = (cos_val * wheelRadius) + pos[0];
-	z = (sin_val * wheelRadius) + pos[2];
+	x = (cos_val * wheelRadius) + pos.x;
+	z = (sin_val * wheelRadius) + pos.z;
 	doVertex3f(x, yRight, z);
       }
     }
@@ -473,7 +477,7 @@ int TankGeometryUtils::buildHighLCasingAnim()
 
   tris += buildCasing(+treadYCenter);
 
-  if (1 ){//treadStyle == TankGeometryUtils::Covered) {
+  if (treadStyle == TankGeometryUtils::Covered) {
     glShadeModel(GL_FLAT);
     {
       //draw the left tread cover
@@ -669,7 +673,7 @@ int TankGeometryUtils::buildHighRCasingAnim()
 
   tris += buildCasing(-treadYCenter);
 
-  if (1){//treadStyle == TankGeometryUtils::Covered) {
+  if (treadStyle == TankGeometryUtils::Covered) {
     glShadeModel(GL_FLAT);
     {
       //draw the right tread cover
@@ -882,20 +886,20 @@ int TankGeometryUtils::buildHighRTread(int divs)
 int TankGeometryUtils::buildHighLWheel(int number, float angle, int divs)
 {
   assert ((number >= 0) && (number < 4));
-  float pos[3];
-  pos[0] = wheelSpacing * (-1.5f + (float)number);
-  pos[1] = +treadYCenter;
-  pos[2] = treadRadius;
+  fvec3 pos;
+  pos.x = wheelSpacing * (-1.5f + (float)number);
+  pos.y = +treadYCenter;
+  pos.z = treadRadius;
   return buildWheel(pos, angle, divs);
 }
 
 int TankGeometryUtils::buildHighRWheel(int number, float angle, int divs)
 {
   assert ((number >= 0) && (number < 4));
-  float pos[3];
-  pos[0] = wheelSpacing * (-1.5f + (float)number);
-  pos[1] = -treadYCenter;
-  pos[2] = treadRadius;
+  fvec3 pos;
+  pos.x = wheelSpacing * (-1.5f + (float)number);
+  pos.y = -treadYCenter;
+  pos.z = treadRadius;
   return buildWheel(pos, angle, divs);
 }
 

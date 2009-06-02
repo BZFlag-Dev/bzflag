@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -23,13 +23,13 @@
 #include "Protocol.h"
 
 
-ServerPing::ServerPing() : fd(-1), recieved(0), samples(4),timeout(1), interval(1)
+ServerPing::ServerPing() : fd(-1), received(0), samples(4), timeout(1), interval(1)
 {
-  
+
 }
 
 ServerPing::ServerPing(const Address& addr, int port, size_t _samples, double _interval, double tms) :
-     fd(-1), recieved(0), samples(_samples), timeout(tms), interval(_interval)
+  fd(-1), received(0), samples(_samples), timeout(tms), interval(_interval)
 {
   saddr.sin_family = AF_INET;
   saddr.sin_port = htons(port);
@@ -42,7 +42,7 @@ ServerPing::~ServerPing()
 }
 
 void ServerPing::start()
-{ 
+{
   closeSocket();
   activepings.clear();
   openSocket();
@@ -69,11 +69,11 @@ int ServerPing::calcLag()
   }
 
   return 0;
-} 
+}
 
 bool ServerPing::done()
 {
-  return (recieved == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
+  return (received == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
 }
 
 void ServerPing::setAddress(const Address& addr, int port)
@@ -94,38 +94,38 @@ void ServerPing::setInterval(double _interval)
 }
 
 void ServerPing::doPings()
-{ 
-  if ( activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval) ) {
+{
+  if (activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval)) {
     pingdesc pd;
     pd.senttime = TimeKeeper::getCurrent();
     sendPing((unsigned char)activepings.size());
     activepings.push_back(pd);
   }
-  
-   if (recieved < samples) {
+
+  if (received < samples) {
     timeval timeo = { 0, 0 }; //is this what I want to do?
     fd_set readset;
-    
+
     FD_ZERO(&readset);
     FD_SET(fd, &readset);
-     if (select(fd+1, (fd_set*)&readset, NULL, NULL, &timeo) > 0) {
+    if (select(fd+1, (fd_set*)&readset, NULL, NULL, &timeo) > 0) {
       unsigned char tag;
       uint16_t len, code;
       char buffer[1 + 4];
       void *buf = buffer;
       int n = recvfrom(fd, buffer, 1 + 4, 0, 0, 0);
-      
+
       if (n < 4)
         return;
-      
-      buf = nboUnpackUShort(buf, len);
-      buf = nboUnpackUShort(buf, code);
-      
+
+      buf = nboUnpackUInt16(buf, len);
+      buf = nboUnpackUInt16(buf, code);
+
       if (code == MsgEchoResponse && len == 1) {
-        buf = nboUnpackUByte(buf, tag);
+        buf = nboUnpackUInt8(buf, tag);
         activepings.at(tag).recvtime = TimeKeeper::getCurrent();
-        ++recieved;
-       }
+        ++received;
+      }
     }
   } else {
     closeSocket();
@@ -136,11 +136,11 @@ void ServerPing::sendPing(unsigned char tag)
 {
   char buffer[1 + 4];
   void *buf = buffer;
-  buf = nboPackUShort(buf, 1); //len
-  buf = nboPackUShort(buf, MsgEchoRequest);
-  buf = nboPackUByte(buf, tag);
+  buf = nboPackUInt16(buf, 1); //len
+  buf = nboPackUInt16(buf, MsgEchoRequest);
+  buf = nboPackUInt8(buf, tag);
   sendto(fd, buffer, 1 + 4, 0, (struct sockaddr*)&saddr, sizeof(saddr));
-} 
+}
 
 void ServerPing::openSocket()
 {
@@ -152,7 +152,7 @@ void ServerPing::openSocket()
 void ServerPing::closeSocket()
 {
   if (fd > 0)
-     close(fd);
+    close(fd);
   fd = -1;
 }
 

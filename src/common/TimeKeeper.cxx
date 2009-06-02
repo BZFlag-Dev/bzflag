@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -400,8 +400,8 @@ void TimeKeeper::setProcessorAffinity(int processor)
 #elif defined(WIN32)
   /* windowsy fix for time travel */
   HANDLE hThread = GetCurrentThread();
-  DWORD dwMask = 1 << processor;
-  DWORD dwProcs = 0;
+  DWORD_PTR dwMask = 1 << processor;
+  DWORD_PTR dwProcs = 0;
   GetProcessAffinityMask(NULL, NULL, &dwProcs);
   if (dwMask < dwProcs) {
     logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).\n");

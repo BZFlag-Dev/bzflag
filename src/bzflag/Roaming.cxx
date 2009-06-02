@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,16 +20,21 @@
 /* local headers */
 #include "ScoreboardRenderer.h"
 
+
 // initialize the singleton
 template <>
 Roaming* Singleton<Roaming>::_instance = (Roaming*)0;
 
-Roaming::Roaming() : view(roamViewDisabled),
-		     targetManual(-1),
-		     targetWinner(-1),
-		     targetFlag(-1) {
+
+Roaming::Roaming()
+: view(roamViewDisabled)
+, targetManual(-1)
+, targetWinner(-1)
+, targetFlag(-1)
+{
   resetCamera();
 }
+
 
 void Roaming::resetCamera(void) {
   camera.pos[0] = 0.0f;
@@ -40,30 +45,34 @@ void Roaming::resetCamera(void) {
   camera.phi = -0.0f;
 }
 
-void Roaming::setCamera(RoamingCamera* newCam) {
+
+void Roaming::setCamera(const RoamingCamera* newCam) {
   memcpy(&camera, newCam, sizeof(RoamingCamera));
 }
 
+
 void Roaming::setMode(RoamingView newView) {
-  if (!(LocalPlayer::getMyTank() || devDriving)) {
+  if (!LocalPlayer::getMyTank()) {
     view = newView;
-  } else if (LocalPlayer::getMyTank()->getTeam() == ObserverTeam) {
-    // disallow disabling roaming in observer mode
-    if ((newView == roamViewDisabled) && !devDriving)
+  }
+  else if (LocalPlayer::getMyTank()->getTeam() == ObserverTeam) {
+    // force roaming for observers
+    if ((newView <= roamViewDisabled) || (newView >= roamViewCount)) {
       view = (RoamingView)(roamViewDisabled + 1);
-    else
+    }
+    else {
       view = newView;
-  } else {
+    }
+  }
+  else {
     // don't allow roaming for non-observers
-    if (newView != roamViewDisabled)
-      view = roamViewDisabled;
-    else
-      view = newView;
+    view = roamViewDisabled;
   }
   // make sure we have a valid target
   changeTarget(next);
   changeTarget(previous);
 }
+
 
 void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
   bool found = false;
@@ -76,14 +85,16 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     return;
   }
 
-  if (view == roamViewFree || view == roamViewDisabled) {
+  if ((view == roamViewFree) || (view == roamViewDisabled)) {
     // do nothing
     found = true;
-  } else if (view == roamViewFlag) {
+  }
+  else if (view == roamViewFlag) {
     if (target == explicitSet) {
       targetFlag = explicitIndex;
       found = true;
-    } else {
+    }
+    else {
       int i = 1;
       int j = 1;
       const int maxFlags = world->getMaxFlags();
@@ -101,11 +112,13 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 	}
       }
     }
-  } else {
+  }
+  else {
     if (target == explicitSet) {
       targetManual = targetWinner = explicitIndex;
       found = true;
-    } else {
+    }
+    else {
       int i = 0;
       int j = 0;
       for (i = 0; i < world->getCurMaxPlayers(); ++i) {
@@ -124,11 +137,13 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     }
   }
 
-  if (!found)
+  if (!found) {
     view = roamViewFree;
+  }
 
   buildRoamingLabel();
 }
+
 
 void Roaming::buildRoamingLabel(void) {
   std::string playerString = "";
@@ -158,15 +173,14 @@ void Roaming::buildRoamingLabel(void) {
   }
 
   Player* tracked = NULL;
-  if (!devDriving) {
-    if (world) {
-      tracked = world->getPlayer(targetWinner);
-    }
-  } else {
-    tracked = LocalPlayer::getMyTank();
+  if (world) {
+    tracked = world->getPlayer(targetWinner);
   }
 
-  if (world && tracked) {
+  if (!world || !tracked) {
+    roamingLabel = "Roaming";
+  }
+  else {
     if (BZDBCache::colorful) {
       int color = tracked->getTeam();
       if (color == RabbitTeam || color < 0 || color > LastColor) {
@@ -219,10 +233,9 @@ void Roaming::buildRoamingLabel(void) {
 	break;
       }
     }
-  } else {
-    roamingLabel = "Roaming";
   }
 }
+
 
 void Roaming::updatePosition(RoamingCamera* dc, float dt) {
   World* world = World::getWorld();
@@ -232,14 +245,10 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
   const float* trackPos;
   if (view == roamViewTrack) {
     Player *target;
-    if (!devDriving) {
-      if (world && (targetWinner < world->getCurMaxPlayers())) {
-	target = world->getPlayer(targetWinner);
-      } else {
-	target = NULL;
-      }
+    if (world && (targetWinner < world->getCurMaxPlayers())) {
+      target = world->getPlayer(targetWinner);
     } else {
-      target = LocalPlayer::getMyTank();
+      target = NULL;
     }
     if (target != NULL) {
       trackPos = target->getPosition();
@@ -256,8 +265,8 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
 
   // modify X and Y coords
   if (!tracking) {
-    const float c = cosf(camera.theta * (float)(M_PI / 180.0f));
-    const float s = sinf(camera.theta * (float)(M_PI / 180.0f));
+    const float c = cosf(camera.theta * DEG2RADf);
+    const float s = sinf(camera.theta * DEG2RADf);
     camera.pos[0] += dt * (c * dc->pos[0] - s * dc->pos[1]);
     camera.pos[1] += dt * (c * dc->pos[1] + s * dc->pos[0]);
     camera.theta  += dt * dc->theta;
@@ -293,16 +302,16 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     dy = dy * scale;
     if (fabsf(dx) < 0.001f) dx = 0.001f;
     if (fabsf(dy) < 0.001f) dy = 0.001f;
-    const float dtheta = -(dt * dc->theta * (float)(M_PI / 180.0f));
+    const float dtheta = -(dt * dc->theta * DEG2RADf);
     const float c = cosf(dtheta);
     const float s = sinf(dtheta);
     camera.pos[0] = trackPos[0] + ((c * dx) - (s * dy));
     camera.pos[1] = trackPos[1] + ((c * dy) + (s * dx));
     // setup so that free roam stays in the last state
     camera.theta = atan2f(trackPos[1] - camera.pos[1], trackPos[0] - camera.pos[0]);
-    camera.theta *= (float)(180.0f / M_PI);
+    camera.theta *= RAD2DEGf;
     camera.phi = atan2f(trackPos[2] - camera.pos[2], newDist);
-    camera.phi *= (float)(180.0f / M_PI);
+    camera.phi *= RAD2DEGf;
   }
 
   // modify Z coordinate
@@ -322,6 +331,36 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.zoom = BZDB.eval("roamZoomMax");
   }
 }
+
+
+Roaming::RoamingView Roaming::parseView(const std::string& str) const
+{
+  const char* s = str.c_str();
+       if (strcasecmp(s, "disabled") == 0) { return roamViewDisabled; }
+  else if (strcasecmp(s, "free")     == 0) { return roamViewFree;     }
+  else if (strcasecmp(s, "track")    == 0) { return roamViewTrack;    }
+  else if (strcasecmp(s, "follow")   == 0) { return roamViewFollow;   }
+  else if (strcasecmp(s, "fps")      == 0) { return roamViewFP;       }
+  else if (strcasecmp(s, "flag")     == 0) { return roamViewFlag;     }
+  else if (strcasecmp(s, "count")    == 0) { return roamViewCount;    }
+  else                                     { return roamViewDisabled; }
+}
+
+
+const char* Roaming::getViewName(RoamingView roamView) const
+{
+  switch (roamView) {
+    case roamViewDisabled: { return "disabled"; }
+    case roamViewFree:     { return "free";     }
+    case roamViewTrack:    { return "track";    }
+    case roamViewFollow:   { return "follow";   }
+    case roamViewFP:       { return "fps";      }
+    case roamViewFlag:     { return "flag";     }
+    case roamViewCount:    { return "count";    }
+    default:               { return "unknown";  }
+  }
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

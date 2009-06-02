@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,8 +46,10 @@ class HUDDialog {
     virtual void		dismiss() { }
     virtual void		resize(int _width, int _height);
     virtual void		setFailedMessage(const char *) {;};
-    
+
     HUDuiControl*		getFocus() const { return navList.get(); }
+
+    void reFocus() { navList.set(navList.getIndex()); }
 
   protected:
     void			addControl(HUDuiElement* element);
@@ -76,7 +78,6 @@ class HUDDialog {
      */
     std::vector<HUDuiElement*>	renderList;
     HUDNavigationQueue		navList;
-    HUDuiControl*		focus;
 };
 
 

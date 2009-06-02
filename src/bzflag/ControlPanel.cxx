@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,14 +37,18 @@
 #include "LocalFontFace.h"
 #include "bzUnicode.h"
 
+
+//============================================================================//
 //
 // ControlPanelMessage
 //
 
-ControlPanelMessage::ControlPanelMessage(const std::string& _string) :
-  string(_string), numlines(0)
+ControlPanelMessage::ControlPanelMessage(const std::string& _string)
+: string(_string)
+, numlines(0)
 {
 }
+
 
 void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
 {
@@ -78,7 +82,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
       n = 0;
       while ((n < lineLen) &&
 	     (fm.getStringWidth(fontFace, fontSize,
-				std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)).c_str())
+				std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)))
 	      < maxLength)) {
 	if (msg[n] == ESC_CHAR) {
 	  // clear the cumulative codes when we hit a reset
@@ -134,32 +138,55 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   }
 }
 
+
+const std::deque<ControlPanelMessage>*
+  ControlPanel::getModeMessages(MessageModes mode)
+{
+  if ((mode < 0) || (mode >= MessageModeCount)) {
+    return NULL;
+  }
+  return &(messages[mode]);
+}
+
+
+int ControlPanel::getModeMessageCount(MessageModes mode)
+{
+  if ((mode < 0) || (mode >= MessageModeCount)) {
+    return -1;
+  }
+  return messageCounts[mode];
+}
+
+
+//============================================================================//
 //
 // ControlPanel
 //
 int ControlPanel::messagesOffset = 0;
 
-ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
-  tabsOnRight(true),
-  tabs(NULL),
-  totalTabWidth(0),
-  window(_mainWindow),
-  resized(false),
-  numBuffers(2),
-  changedMessage(0),
-  radarRenderer(NULL),
-  renderer(&_renderer),
-  fontFace(NULL),
-  dimming(1.0f),
-  du(0),
-  dv(0),
-  messageMode(MessageAll)
+ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
+: tabsOnRight(true)
+, tabs(NULL)
+, totalTabWidth(0)
+, window(_mainWindow)
+, resized(false)
+, numBuffers(2)
+, changedMessage(0)
+, radarRenderer(NULL)
+, renderer(&_renderer)
+, fontFace(NULL)
+, dimming(1.0f)
+, du(0)
+, dv(0)
+, messageMode(MessageAll)
+, teamColor(0.0f, 0.0f, 0.0f, 1.0f)
 {
   setControlColor();
 
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
+  BZDB.addCallback("debugLevel",   bzdbCallback, this);
   BZDB.addCallback("displayRadar", bzdbCallback, this);
   BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
 
@@ -174,9 +201,10 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
   messageAreaPixels[3] = 0;
   for (int i = 0; i < MessageModeCount; i++) {
     messages[i].clear();
+    messageCounts[i] = 0;
     unRead[i] = false;
   }
-  teamColor[0] = teamColor[1] = teamColor[2] = (GLfloat)0.0f;
+  teamColor[0] = teamColor[1] = teamColor[2] = (float)0.0f;
 
   maxLines = 30;
 
@@ -189,16 +217,22 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
     tabs->push_back("Chat");
     tabs->push_back("Server");
     tabs->push_back("Misc");
+    tabs->push_back("Debug");
   }
 
   resize(); // need resize to set up font and window dimensions
+
+  // register after we're fully initialized
+  registerLoggingProc(loggingCallback, this);
 }
 
 ControlPanel::~ControlPanel()
 {
   // don't notify me anymore (cos you can't wake the dead!)
+  unregisterLoggingProc(loggingCallback, this);
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
+  BZDB.removeCallback("debugLevel",   bzdbCallback, this);
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
   BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
 
@@ -213,9 +247,40 @@ ControlPanel::~ControlPanel()
     tabs->clear();
     delete tabs;
     tabTextWidth.clear();
-    totalTabWidth=0;
+    totalTabWidth = 0;
   }
 }
+
+
+void ControlPanel::loggingCallback(int level,
+                                   const std::string& rawMsg, void* data)
+{
+// -- always store the debug messages
+//  if (level > debugLevel) {
+//    return;
+//  }
+  std::string msg = rawMsg;
+  while (!msg.empty() && (msg[msg.size() - 1] == '\n')) {
+    msg.resize(msg.size() - 1);
+  }
+  std::string color = "";
+  if (level >= 0) {
+    switch (level) {
+      case 1:  { color = ANSI_STR_FG_GREEN;   break; }
+      case 2:  { color = ANSI_STR_FG_CYAN;    break; }
+      case 3:  { color = ANSI_STR_FG_BLUE;    break; }
+      case 4:  { color = ANSI_STR_FG_YELLOW;  break; }
+      case 5:  { color = ANSI_STR_FG_ORANGE;  break; }
+      case 6:  { color = ANSI_STR_FG_RED;     break; }
+      case 7:  { color = ANSI_STR_FG_MAGENTA; break; }
+      case 8:  { color = ANSI_STR_FG_WHITE;   break; }
+      case 9:  { color = ANSI_STR_FG_BLACK;   break; }
+      default: { color = ANSI_STR_UNDERLINE;  break; }
+    }
+  }
+  ((ControlPanel*)data)->addMessage(color + msg, ControlPanel::MessageDebug);
+}
+
 
 void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
 {
@@ -223,13 +288,25 @@ void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
   return;
 }
 
-void ControlPanel::setControlColor(const GLfloat *color)
+
+void ControlPanel::setControlColor(const fvec4* color)
 {
-  if (color)
-    memcpy(teamColor, color, 3 * sizeof(float));
-  else
-    memset(teamColor, 0, 3 * sizeof(float));
+  if (color != NULL) {
+    teamColor = *color;
+  } else {
+    teamColor = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
+  }
 }
+
+
+bool ControlPanel::isTabVisible(MessageModes mode) const
+{
+  if (debugLevel > 0) {
+    return true;
+  }
+  return (mode != MessageDebug);
+}
+
 
 void ControlPanel::render(SceneRenderer& _renderer)
 {
@@ -252,7 +329,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
-  const int tabStyle = (int)BZDB.eval("showtabs");
+  const int tabStyle = BZDB.evalInt("showtabs");
   const bool showTabs = (tabStyle > 0);
   tabsOnRight = (tabStyle == 2);
 
@@ -275,8 +352,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
   int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
     : int(lineHeight + 4);
 
-  glScissor(x + messageAreaPixels[0] - 1,
-	    y + messageAreaPixels[1],
+  glScissor(messageAreaPixels[0] + x - 1,
+	    messageAreaPixels[1] + y,
 	    messageAreaPixels[2] + 1,
 	    messageAreaPixels[3] + ay);
   OpenGLGState::resetState();
@@ -296,7 +373,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
     // display tabs for chat sections
     if (showTabs) {
       long int drawnTabWidth = 0;
-      for (unsigned int tab = 0; tab < tabs->size(); tab++) {
+      for (size_t tab = 0; tab < tabs->size(); tab++) {
+        if (!isTabVisible((MessageModes)tab)) {
+          continue;
+        }
 
 	// current mode is given a dark background to match the control panel
 	if (messageMode == MessageModes(tab)) {
@@ -349,7 +429,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
   // Draw tab labels
   if (showTabs) {
     long int drawnTabWidth = 0;
-    for (unsigned int tab = 0; tab < tabs->size(); tab++) {
+    for (size_t tab = 0; tab < tabs->size(); tab++) {
+      if (!isTabVisible((MessageModes)tab)) {
+        continue;
+      }
 
       // current mode is bright, others are not so bright
       if (messageMode == MessageModes(tab)) {
@@ -393,8 +476,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
    * parameter.
    */
 
-  glScissor(x + messageAreaPixels[0],
-	    y + messageAreaPixels[1],
+  glScissor(messageAreaPixels[0] + x,
+	    messageAreaPixels[1] + y,
 	    messageAreaPixels[2],
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
@@ -438,7 +521,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
 
     // default to drawing text in white
-    GLfloat whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
+    float whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
     glColor4fv(whiteColor);
 
     bool isTab = false;
@@ -463,14 +546,14 @@ void ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if (j + msgy < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, msg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, msg);
 	} else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg.c_str());
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, newMsg.c_str());
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, newMsg);
 	}
       }
 
@@ -486,8 +569,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
     regfree(&re);
   }
 
-  glScissor(x + messageAreaPixels[0] - 2,
-	    y + messageAreaPixels[1] - 2,
+  glScissor(messageAreaPixels[0] + x - 2,
+	    messageAreaPixels[1] + y - 2,
 	    messageAreaPixels[2] + 3,
 	    messageAreaPixels[3] + 33);
   OpenGLGState::resetState();
@@ -529,7 +612,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
     // across the top from right to left
     long int drawnTabWidth = 0;
     for (int tab = (int)tabs->size() - 1; tab >= 0; tab--) {
-
+      if (!isTabVisible((MessageModes)tab)) {
+        continue;
+      }
       if (messageMode == MessageModes(tab)) {
 	ypos += ay;
 	glVertex2f((float) xpos, (float) ypos);
@@ -565,7 +650,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
     glVertex2f((float) (x + messageAreaPixels[0] - 1),
 	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
     long int tabPosition = 0;
-    for (int tab = 0; tab < (int)tabs->size(); tab++) {
+    for (size_t tab = 0; tab < tabs->size(); tab++) {
+      if (!isTabVisible((MessageModes)tab)) {
+        continue;
+      }
       if (messageMode == MessageModes(tab)) {
 	if (tabsOnRight) {
 	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition),
@@ -592,6 +680,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
   fm.setOpacity(1.0f);
 }
+
 
 void ControlPanel::resize()
 {
@@ -640,7 +729,10 @@ void ControlPanel::resize()
     tabTextWidth.clear();
     totalTabWidth = 0;
     const float charWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, "-");
-    for (unsigned int tab = 0; tab < tabs->size(); tab++) {
+    for (size_t tab = 0; tab < tabs->size(); tab++) {
+      if (!isTabVisible((MessageModes)tab)) {
+        continue;
+      }
       // add space for about 2-chars on each side for padding
       tabTextWidth.push_back(fm.getStringWidth(fontFace->getFMFace(), fontSize, (*tabs)[tab]) + (4.0f * charWidth));
       totalTabWidth += long(tabTextWidth[tab]);
@@ -656,7 +748,8 @@ void ControlPanel::resize()
   // rewrap all the lines
   for (int i = 0; i < MessageModeCount; i++) {
     for (int j = 0; j < (int)messages[i].size(); j++) {
-      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
+      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin,
+                                fontFace->getFMFace(), fontSize);
     }
   }
 
@@ -665,15 +758,18 @@ void ControlPanel::resize()
   invalidate();
 }
 
+
 void ControlPanel::resizeCallback(void* self)
 {
   ((ControlPanel*)self)->resize();
 }
 
+
 void ControlPanel::setNumberOfFrameBuffers(int n)
 {
   numBuffers = n;
 }
+
 
 void ControlPanel::invalidate()
 {
@@ -684,10 +780,12 @@ void ControlPanel::invalidate()
   }
 }
 
+
 void ControlPanel::exposeCallback(void* self)
 {
   ((ControlPanel*)self)->invalidate();
 }
+
 
 void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
 {
@@ -734,19 +832,27 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
   invalidate();
 }
 
-void ControlPanel::setMessagesMode(int _messageMode)
+
+void ControlPanel::setMessagesMode(MessageModes mode)
 {
-  messageMode = _messageMode;
-  if (messageMode == MessageAll)
-    for (int i = 0; i < MessageModeCount; i++)
+  if ((mode == MessageDebug) && (debugLevel <= 0)) {
+    return;
+  }
+  messageMode = mode;
+  if (messageMode == MessageAll) {
+    for (int i = 0; i < MessageModeCount; i++) {
       unRead[i] = false;
-  else if (messageMode >= MessageChat)
+    }
+  }
+  else if (messageMode >= MessageChat) {
     unRead[messageMode] = false;
+  }
   invalidate();
 }
 
+
 void ControlPanel::addMessage(const std::string& line,
-			      const int realmode)
+			      MessageModes realmode)
 {
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
@@ -764,8 +870,9 @@ void ControlPanel::addMessage(const std::string& line,
   for (int tab = MessageAll; tab < MessageModeCount; tab++) {
 
     if ((tab == tabmode) // add to its own mode
-	// add to the All tab, unless using Current mode
-	|| ((tab == MessageAll) && (realmode != MessageCurrent))
+	// add to the All tab, unless using Debug or Current mode
+	|| ((tab == MessageAll) && (realmode != MessageDebug)
+	                        && (realmode != MessageCurrent))
 	// always add to all tabs
 	|| (realmode == MessageAllTabs)) {
 
@@ -778,6 +885,7 @@ void ControlPanel::addMessage(const std::string& line,
 	messages[tab].pop_front();
 	messages[tab].push_back(item);
       }
+      messageCounts[tab]++;
 
       // visible changes, force a console refresh
       if (messageMode == tab) {

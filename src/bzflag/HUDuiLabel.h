@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "BzfEvent.h"
+#include "vectors.h"
 
 class HUDuiLabel : public HUDuiControl {
   public:
@@ -34,7 +35,7 @@ class HUDuiLabel : public HUDuiControl {
     std::string		getString() const;
     void		setString(const std::string&, const std::vector<std::string> *_params = NULL);
     void		setDarker(bool d); // render darker than usual when not in focus
-    void		setColor(GLfloat r, GLfloat g, GLfloat b);
+    void		setColor(float r, float g, float b);
 
   protected:
     void		onSetFont();
@@ -43,10 +44,10 @@ class HUDuiLabel : public HUDuiControl {
     void		doRender();
 
   private:
-    std::string		string;
+    std::string		label;
     std::vector<std::string> *params;
     bool		darker;
-    GLfloat		color[3];
+    fvec4		color;
 };
 
 #endif // __HUDUILABEL_H__

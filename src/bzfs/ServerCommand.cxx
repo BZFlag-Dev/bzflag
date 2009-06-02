@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -36,8 +36,8 @@ bool ServerCommand::execute(const char	 *commandLine,
 			    GameKeeper::Player *playerData)
 {
   MapOfCommands &commandMap = *getMapRef();
-  int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++) {};
+  int i = TextUtils::firstNonvisible(commandLine);
+  if (i < 0) i = strlen(commandLine);
   std::string commandToken(commandLine, i);
 
   MapOfCommands::iterator it

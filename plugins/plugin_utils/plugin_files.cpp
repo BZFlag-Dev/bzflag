@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -252,6 +252,9 @@ std::vector<std::string> getFilesInDir(const char* dir, const char* filter,
 
   std::string directory  = convertPathToDelims(dir);
 
+  if (directory.size() && *(directory.end()-1) == _DirDelim)
+    directory.erase(directory.end()-1);
+
 #ifdef _WIN32
   WindowsAddFileStack(directory.c_str(), realFilter.c_str(),recrusive,list);
 #else
@@ -281,6 +284,14 @@ std::string getPathForOS(const char* file)
   return convertPathToDelims(file);
 }
 
+std::string concatPaths ( const char* path1, const char* path2 )
+{
+  std::string ret = getPathForOS(path1);
+  ret += getPathForOS(path2);
+
+  return ret;
+}
+
 std::string getFileDir(const char* file)
 {
   std::string f = convertPathToDelims(file);
@@ -288,7 +299,7 @@ std::string getFileDir(const char* file)
   char *p = (char*)strrchr(f.c_str(),_DirDelim);
   if (p)
     // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
+    // NUL char so we can set it to NUL again with out worry
     *(p+1) = 0;
 
   return std::string(f.c_str());
@@ -301,7 +312,7 @@ std::string getFileExtension(const char* file)
   char *p = (char*)strrchr(f.c_str(),'.');
   if (!p)
     // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
+    // NUL char so we can set it to NUL again with out worry
     return std::string();
 
   return std::string(p+1);
@@ -315,14 +326,12 @@ std::string getFileTitle(const char* file)
   const char *p = strrchr(f.c_str(),_DirDelim);
   if (p)
     // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
+    // NUL char so we can set it to NUL again with out worry
     temp = p+1;
 
   char *p2 = (char*)strrchr(temp.c_str(),'.');
   if (p2)
-    // it's ok to go one past, cus even if it's the end, that's the
-    // NULL char so we can set it to NULL again with out worry
-    *(p2+1) = 0;
+    *(p2) = 0; // kill the . too
 
   return std::string(temp.c_str());
 }
@@ -370,6 +379,19 @@ unsigned int getFileLen(const char* file)
   fclose(fp);
 
   return i;
+}
+
+bool fileExists ( const char *path )
+{
+  if (!path)
+    return false;
+
+  FILE *fp = fopen(convertPathToDelims(path).c_str(),"rb");
+  if (!fp)
+    return false;
+  fclose(fp);
+
+  return true;
 }
 
 // Local Variables: ***

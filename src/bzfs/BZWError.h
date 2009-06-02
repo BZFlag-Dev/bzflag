@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -22,12 +22,12 @@
 class BZWError {
 
 public:
-  BZWError(std::string _location);
+  BZWError(const std::string& _location);
   ~BZWError();
 
   /* return false if error reporting failed, true otherwise */
-  bool fatalError(std::string errorMsg, int line);
-  bool warning(std::string warningMsg, int line);
+  bool fatalError(const std::string& errorMsg, int line);
+  bool warning(const std::string& warningMsg, int line);
 
   /* status */
   bool hasHadError() {return hadError;};

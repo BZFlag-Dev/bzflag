@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,19 +33,21 @@ ConeObstacle::ConeObstacle()
 
 
 ConeObstacle::ConeObstacle(const MeshTransform& xform,
-			   const float* _pos, const float* _size,
+			   const fvec3& _pos, const fvec3& _size,
 			   float _rotation, float _sweepAngle,
 			   const float _texsize[2], bool _useNormals,
 			   int _divisions, const BzMaterial* mats[MaterialCount],
-			   int physics, bool bounce, unsigned char drive, unsigned char shoot)
+			   int physics, bool bounce,
+			   unsigned char drive, unsigned char shoot, bool rico)
 {
-  // common obstace parameters
-  memcpy(pos, _pos, sizeof(pos));
-  memcpy(size, _size, sizeof(size));
+  // common obstacle parameters
+  pos = _pos;
+  size = _size;
   angle = _rotation;
-  ZFlip = false;
+  zFlip = false;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
 
   // arc specific parameters
   transform = xform;
@@ -78,7 +80,7 @@ Obstacle* ConeObstacle::copyWithTransform(const MeshTransform& xform) const
     new ConeObstacle(tmpXform, pos, size, angle, sweepAngle,
 		    texsize, useNormals, divisions,
 		    (const BzMaterial**)materials, phydrv,
-		    smoothBounce, driveThrough, shootThrough);
+		    smoothBounce, driveThrough, shootThrough, ricochet);
   return copy;
 }
 
@@ -114,13 +116,13 @@ MeshObstacle* ConeObstacle::makeMesh()
   const float minSize = 1.0e-6f; // cheezy / lazy
 
   // absolute the sizes
-  float sz[3];
-  sz[0] = fabsf(size[0]);
-  sz[1] = fabsf(size[1]);
-  sz[2] = fabsf(size[2]);
+  fvec3 sz;
+  sz.x = fabsf(size.x);
+  sz.y = fabsf(size.y);
+  sz.z = fabsf(size.z);
 
   // validity checking
-  if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
+  if ((sz.x < minSize) || (sz.y < minSize) || (sz.z < minSize) ||
       (fabs(texsize[0]) < minSize) || (fabs(texsize[1]) < minSize)) {
     return NULL;
   }
@@ -133,13 +135,13 @@ MeshObstacle* ConeObstacle::makeMesh()
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
     const float circ =
-      (float)M_PI * ((3.0f * (sz[0] + sz[1])) -
-	      sqrtf ((sz[0] + (3.0f * sz[1])) * (sz[1] + (3.0f * sz[0]))));
+      (float)M_PI * ((3.0f * (sz.x + sz.y)) -
+	      sqrtf ((sz.x + (3.0f * sz.y)) * (sz.y + (3.0f * sz.x))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
   }
   if (texsz[1] < 0.0f) {
-    texsz[1] = -(sz[2] / texsz[1]);
+    texsz[1] = -(sz.z / texsz[1]);
   }
 
   // setup the angles
@@ -168,23 +170,23 @@ MeshObstacle* ConeObstacle::makeMesh()
 
   // setup the coordinates
   std::vector<char> checkTypes;
-  std::vector<cfvec3> checkPoints;
-  std::vector<cfvec3> vertices;
-  std::vector<cfvec3> normals;
-  std::vector<cfvec2> texcoords;
-  cfvec3 v, n;
-  cfvec2 t;
+  std::vector<fvec3> checkPoints;
+  std::vector<fvec3> vertices;
+  std::vector<fvec3> normals;
+  std::vector<fvec2> texcoords;
+  fvec3 v, n;
+  fvec2 t;
 
   // add the checkpoint (one is sufficient)
   if (isCircle) {
-    v[0] = pos[0];
-    v[1] = pos[1];
+    v.x = pos.x;
+    v.y = pos.y;
   } else {
     const float dir = r + (0.5f * a);
-    v[0] = pos[0] + (cosf(dir) * sz[0] * 0.25f);
-    v[1] = pos[1] + (sinf(dir) * sz[1] * 0.25f);
+    v.x = pos.x + (cosf(dir) * sz.x * 0.25f);
+    v.y = pos.y + (sinf(dir) * sz.y * 0.25f);
   }
-  v[2] = pos[2] + (0.5f * sz[2]);
+  v.z = pos.z + (0.5f * sz.z);
   checkPoints.push_back(v);
   checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -198,33 +200,33 @@ MeshObstacle* ConeObstacle::makeMesh()
 
     // vertices
     if (!isCircle || (i != divisions)) {
-      float delta[2];
+      fvec2 delta;
       // vertices (around the edge)
-      delta[0] = cos_val * sz[0];
-      delta[1] = sin_val * sz[1];
-      v[0] = pos[0] + delta[0];
-      v[1] = pos[1] + delta[1];
-      v[2] = pos[2];
+      delta.x = cos_val * sz.x;
+      delta.y = sin_val * sz.y;
+      v.x = pos.x + delta.x;
+      v.y = pos.y + delta.y;
+      v.z = pos.z;
       vertices.push_back(v);
       // normals (around the edge)
       if (useNormals) {
 	// the horizontal normals
-	n[0] = cos_val / sz[0];
-	n[1] = sin_val / sz[1];
-	n[2] = 1.0f / sz[2];
+	n.x = cos_val / sz.x;
+	n.y = sin_val / sz.y;
+	n.z = 1.0f / sz.z;
 	// normalize
-	float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
+	float len = (n.x * n.x) + (n.y * n.y) + (n.z * n.z);
 	len = 1.0f / sqrtf(len);
-	n[0] *= len;
-	n[1] *= len;
-	n[2] *= len;
+	n.x *= len;
+	n.y *= len;
+	n.z *= len;
 	normals.push_back(n);
       }
     }
 
     // texture coordinates (around the edge)
-    t[0] = texsz[0] * (0.5f + (0.5f * cosf(ang)));
-    t[1] = texsz[1] * (0.5f + (0.5f * sinf(ang)));
+    t.x = texsz[0] * (0.5f + (0.5f * cosf(ang)));
+    t.y = texsz[1] * (0.5f + (0.5f * sinf(ang)));
     texcoords.push_back(t);
   }
 
@@ -233,43 +235,43 @@ MeshObstacle* ConeObstacle::makeMesh()
     for (i = 0; i < divisions; i++) {
       float ang = r + (astep * (0.5f + (float)i));
       // the horizontal normals
-      n[0] = cosf(ang) / sz[0];
-      n[1] = sinf(ang) / sz[1];
-      n[2] = 1.0f / sz[2];
+      n.x = cosf(ang) / sz.x;
+      n.y = sinf(ang) / sz.y;
+      n.z = 1.0f / sz.z;
       // normalize
-      float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
+      float len = (n.x * n.x) + (n.y * n.y) + (n.z * n.z);
       len = 1.0f / sqrtf(len);
-      n[0] *= len;
-      n[1] *= len;
-      n[2] *= len;
+      n.x *= len;
+      n.y *= len;
+      n.z *= len;
       normals.push_back(n);
     }
   }
 
   // the central coordinates
-  v[0] = pos[0];
-  v[1] = pos[1];
-  v[2] = pos[2];
+  v.x = pos.x;
+  v.y = pos.y;
+  v.z = pos.z;
   vertices.push_back(v); // bottom
-  v[2] = pos[2] + sz[2];
+  v.z = pos.z + sz.z;
   vertices.push_back(v); // top
-  t[0] = texsz[0] * 0.5f;
-  t[1] = texsz[1] * 0.5f;
+  t.x = texsz[0] * 0.5f;
+  t.y = texsz[1] * 0.5f;
   texcoords.push_back(t);
 
   // for the start/end faces
   if (!isCircle) {
-    t[0] = texsz[0] * 0.0f;
-    t[1] = texsz[1] * 0.0f;
+    t.x = texsz[0] * 0.0f;
+    t.y = texsz[1] * 0.0f;
     texcoords.push_back(t);
-    t[0] = texsz[0] * 1.0f;
-    t[1] = texsz[1] * 0.0f;
+    t.x = texsz[0] * 1.0f;
+    t.y = texsz[1] * 0.0f;
     texcoords.push_back(t);
-    t[0] = texsz[0] * 1.0f;
-    t[1] = texsz[1] * 1.0f;
+    t.x = texsz[0] * 1.0f;
+    t.y = texsz[1] * 1.0f;
     texcoords.push_back(t);
-    t[0] = texsz[0] * 0.0f;
-    t[1] = texsz[1] * 1.0f;
+    t.x = texsz[0] * 0.0f;
+    t.y = texsz[1] * 1.0f;
     texcoords.push_back(t);
   }
 
@@ -281,7 +283,8 @@ MeshObstacle* ConeObstacle::makeMesh()
 
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
 			  vertices, normals, texcoords, fcount,
-			  false, smoothBounce, driveThrough, shootThrough);
+			  false, smoothBounce,
+			  driveThrough, shootThrough, ricochet);
 
   // now make the faces
   int vlen;
@@ -351,47 +354,47 @@ float ConeObstacle::intersect(const Ray&) const
   return -1.0f;
 }
 
-void ConeObstacle::get3DNormal(const float*, float*) const
+void ConeObstacle::get3DNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
-void ConeObstacle::getNormal(const float*, float*) const
+void ConeObstacle::getNormal(const fvec3&, fvec3&) const
 {
   assert(false);
   return;
 }
 
-bool ConeObstacle::getHitNormal(const float*, float, const float*, float,
-				float, float, float, float*) const
+bool ConeObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
+				float, float, float, fvec3&) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::inCylinder(const float*,float, float) const
+bool ConeObstacle::inCylinder(const fvec3&, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::inBox(const float*, float, float, float, float) const
+bool ConeObstacle::inBox(const fvec3&, float, float, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::inMovingBox(const float*, float, const float*, float,
+bool ConeObstacle::inMovingBox(const fvec3&, float, const fvec3&, float,
 			       float, float, float) const
 {
   assert(false);
   return false;
 }
 
-bool ConeObstacle::isCrossing(const float* /*p*/, float /*angle*/,
+bool ConeObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 			      float /*dx*/, float /*dy*/, float /*height*/,
-			      float* /*_plane*/) const
+			      fvec4* /*_plane*/) const
 {
   assert(false);
   return false;
@@ -401,12 +404,12 @@ bool ConeObstacle::isCrossing(const float* /*p*/, float /*angle*/,
 void *ConeObstacle::pack(void *buf) const
 {
   buf = transform.pack(buf);
-  buf = nboPackFloatVector(buf, pos);
-  buf = nboPackFloatVector(buf, size);
+  buf = nboPackFVec3(buf, pos);
+  buf = nboPackFVec3(buf, size);
   buf = nboPackFloat(buf, angle);
   buf = nboPackFloat(buf, sweepAngle);
-  buf = nboPackInt(buf, divisions);
-  buf = nboPackInt(buf, phydrv);
+  buf = nboPackInt32(buf, divisions);
+  buf = nboPackInt32(buf, phydrv);
 
   int i;
   for (i = 0; i < 2; i++) {
@@ -414,7 +417,7 @@ void *ConeObstacle::pack(void *buf) const
   }
   for (i = 0; i < MaterialCount; i++) {
     int matindex = MATERIALMGR.getIndex(materials[i]);
-    buf = nboPackInt(buf, matindex);
+    buf = nboPackInt32(buf, matindex);
   }
 
   // pack the state byte
@@ -423,7 +426,8 @@ void *ConeObstacle::pack(void *buf) const
   stateByte |= isShootThrough() ? (1 << 1) : 0;
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= useNormals       ? (1 << 3) : 0;
-  buf = nboPackUByte(buf, stateByte);
+  stateByte |= canRicochet()    ? (1 << 4) : 0;
+  buf = nboPackUInt8(buf, stateByte);
 
   return buf;
 }
@@ -433,13 +437,13 @@ void *ConeObstacle::unpack(void *buf)
 {
   int32_t inTmp;
   buf = transform.unpack(buf);
-  buf = nboUnpackFloatVector(buf, pos);
-  buf = nboUnpackFloatVector(buf, size);
+  buf = nboUnpackFVec3(buf, pos);
+  buf = nboUnpackFVec3(buf, size);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFloat(buf, sweepAngle);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   divisions = int(inTmp);
-  buf = nboUnpackInt(buf, inTmp);
+  buf = nboUnpackInt32(buf, inTmp);
   phydrv = int(inTmp);
 
   int i;
@@ -448,17 +452,18 @@ void *ConeObstacle::unpack(void *buf)
   }
   for (i = 0; i < MaterialCount; i++) {
     int32_t matindex;
-    buf = nboUnpackInt(buf, matindex);
+    buf = nboUnpackInt32(buf, matindex);
     materials[i] = MATERIALMGR.getMaterial(matindex);
   }
 
   // unpack the state byte
   unsigned char stateByte;
-  buf = nboUnpackUByte(buf, stateByte);
+  buf = nboUnpackUInt8(buf, stateByte);
   driveThrough = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
   smoothBounce = (stateByte & (1 << 2)) != 0;
   useNormals   = (stateByte & (1 << 3)) != 0;
+  ricochet     = (stateByte & (1 << 4)) != 0;
 
   finalize();
 
@@ -469,8 +474,8 @@ void *ConeObstacle::unpack(void *buf)
 int ConeObstacle::packSize() const
 {
   int fullSize = transform.packSize();
-  fullSize += sizeof(float[3]);
-  fullSize += sizeof(float[3]);
+  fullSize += sizeof(fvec3);
+  fullSize += sizeof(fvec3);
   fullSize += sizeof(float);
   fullSize += sizeof(float);
   fullSize += sizeof(int32_t);
@@ -488,10 +493,10 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "cone" << std::endl;
 
-  out << indent << "  position " << pos[0] << " " << pos[1] << " "
-				 << pos[2] << std::endl;
-  out << indent << "  size " << size[0] << " " << size[1] << " "
-			     << size[2] << std::endl;
+  out << indent << "  position " << pos.x << " " << pos.y << " "
+				 << pos.z << std::endl;
+  out << indent << "  size " << size.x << " " << size.y << " "
+			     << size.z << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  divisions " << divisions << std::endl;
@@ -529,11 +534,14 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
   if (shootThrough) {
     out << indent << "  shootThrough" << std::endl;
   }
+  if (ricochet) {
+    out << indent << "  ricochet" << std::endl;
+  }
   if (!useNormals) {
     out << indent << "  flatshading" << std::endl;
   }
 
-  out << indent << "end" << std::endl;
+  out << indent << "end" << std::endl << std::endl;
 
   return;
 }

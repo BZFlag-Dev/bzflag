@@ -80,7 +80,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
   bz_registerEvent(bz_ePlayerDieEvent,webStats);
 
   bz_registerEvent(bz_eNetDataSendEvent,webStats);
-  bz_registerEvent(bz_eNetDataReceveEvent,webStats);
+  bz_registerEvent(bz_eNetDataReceiveEvent,webStats);
 
   return 0;
 }
@@ -92,7 +92,7 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   bz_removeEvent(bz_ePlayerDieEvent,webStats);
 
   bz_removeEvent(bz_eNetDataSendEvent,webStats);
-  bz_removeEvent(bz_eNetDataReceveEvent,webStats);
+  bz_removeEvent(bz_eNetDataReceiveEvent,webStats);
 
   if(webStats)
     delete webStats;
@@ -149,7 +149,7 @@ void WebStats::process ( bz_EventData *eventData )
       }
       break;
 
-    case bz_eNetDataReceveEvent:
+    case bz_eNetDataReceiveEvent:
       {
 	bz_NetTransferEventData_V1 *data = (bz_NetTransferEventData_V1*)eventData;
 	dataIn += data->iSize;
@@ -344,11 +344,11 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
     data = format("%d", bz_getPlayerCount());
   } else if (key == "gametype") {
     switch(bz_getGameType()) {
-    case TeamFFAGame:
+    case eTeamFFAGame:
       data = "Team FFA";
       break;
 
-    case ClassicCTFGame:
+    case eClassicCTFGame:
       data = "Team Capture the Flag";
       break;
 
@@ -356,7 +356,7 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
       data = "Rabbit Hunt";
       break;
 
-    case OpenFFAGame:
+    case eOpenFFAGame:
       data = "Open FFA";
       break;
 
@@ -425,6 +425,9 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
   } else if (key == "callsign") {
     if (rec)
       data = rec->callsign.c_str();
+  } else if (key == "rank") {
+    if (rec)
+      data = format("%f%%", rec->rank);
   } else if (key == "wins") {
     if (rec)
       data = format("%d", rec->wins);
@@ -459,7 +462,7 @@ void WebStats::keyCallback(std::string &data, const std::string &key)
       data = format("%d", rec->jitter);
   } else if (key == "packetloss") {
     if (rec)
-      data = format("%f", rec->packetloss);
+      data = format("%f", rec->packetLoss);
   } else if (key == "groupcount") {
     if (rec)
       data = format("%d", rec->groups.size());
@@ -636,11 +639,11 @@ bool WebStats::ifCallback(const std::string &key)
   } else if (key == "rabbitteam") {
     return bz_getTeamCount(eRabbitTeam) > 0;
   } else if (key == "teamffa") {
-    return bz_getGameType() == TeamFFAGame;
+    return bz_getGameType() == eTeamFFAGame;
   } else if (key == "openffa") {
-    return bz_getGameType() == OpenFFAGame;
+    return bz_getGameType() == eOpenFFAGame;
   } else if (key == "ctf") {
-    return bz_getGameType() == ClassicCTFGame;
+    return bz_getGameType() == eClassicCTFGame;
   } else if (key == "rabbitchase") {
     return bz_getGameType() == eRabbitGame;
   } else if (key == "flags") {

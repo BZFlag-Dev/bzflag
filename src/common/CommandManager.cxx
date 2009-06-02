@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -28,19 +28,21 @@
 template <>
 CommandManager* Singleton<CommandManager>::_instance = (CommandManager*)0;
 
+
 CommandManager::CommandManager()
 {
   // do nothing
 }
+
 
 CommandManager::~CommandManager()
 {
   // do nothing
 }
 
-void				CommandManager::add(const std::string& name,
-						    CommandFunction func,
-						    const std::string& help)
+
+void CommandManager::add(const std::string& name, CommandFunction func,
+                         const std::string& help)
 {
   commands.erase(name);
   CmdInfo info;
@@ -49,12 +51,14 @@ void				CommandManager::add(const std::string& name,
   commands.insert(std::make_pair(name, info));
 }
 
-void				CommandManager::remove(const std::string& name)
+
+void CommandManager::remove(const std::string& name)
 {
   commands.erase(name);
 }
 
-std::string			CommandManager::getHelp(const std::string& name) const
+
+std::string CommandManager::getHelp(const std::string& name) const
 {
   // look up command
   Commands::const_iterator index = commands.find(name);
@@ -65,8 +69,9 @@ std::string			CommandManager::getHelp(const std::string& name) const
   return index->second.help;
 }
 
-std::string			CommandManager::run(const std::string& name,
-							    const ArgList& args, bool* ret) const
+
+std::string CommandManager::run(const std::string& name,
+                                const ArgList& args, bool* ret) const
 {
   // look up command
   Commands::const_iterator index = commands.find(name);
@@ -81,28 +86,29 @@ std::string			CommandManager::run(const std::string& name,
   return (*index->second.func)(name, args,ret);
 }
 
-std::string			CommandManager::run(const std::string& cmd,bool *ret) const
+
+std::string CommandManager::run(const std::string& cmd,bool *ret) const
 {
   std::string result;
   const char* scan = cmd.c_str();
 
-  scan = skipWhitespace(scan);
+  scan = TextUtils::skipWhitespace(scan);
   while (scan != NULL && *scan != '\0') {
     std::string name;
     ArgList args;
 
     // parse command name
-    scan = skipWhitespace(scan);
+    scan = TextUtils::skipWhitespace(scan);
     scan = readValue(scan, &name);
     if (scan != NULL)
-      scan = skipWhitespace(scan);
+      scan = TextUtils::skipWhitespace(scan);
 
     // parse arguments
     while (scan != NULL && *scan != '\0' && *scan != ';') {
       std::string value;
       scan = readValue(scan, &value);
       if (scan != NULL) {
-	scan = skipWhitespace(scan);
+	scan = TextUtils::skipWhitespace(scan);
 	args.push_back(value);
       }
     }
@@ -119,7 +125,7 @@ std::string			CommandManager::run(const std::string& cmd,bool *ret) const
     // discard ; and empty commands
     while (scan != NULL && *scan == ';') {
       ++scan;
-      scan = skipWhitespace(scan);
+      scan = TextUtils::skipWhitespace(scan);
     }
   }
 
@@ -127,8 +133,8 @@ std::string			CommandManager::run(const std::string& cmd,bool *ret) const
   return result;
 }
 
-void				CommandManager::iterate(Callback callback,
-							void* userData) const
+
+void CommandManager::iterate(Callback callback, void* userData) const
 {
   assert(callback != NULL);
 
@@ -138,50 +144,49 @@ void				CommandManager::iterate(Callback callback,
 }
 
 
-const char*			CommandManager::readValue(const char* string,
-							  std::string* value)
+const char* CommandManager::readValue(const char* cmd, std::string* value)
 {
-  if (*string == '\"')
-    return readQuoted(string + 1, value);
-  else if (*string != '\0')
-    return readUnquoted(string, value);
+  if (*cmd == '\"')
+    return readQuoted(cmd + 1, value);
+  else if (*cmd != '\0')
+    return readUnquoted(cmd, value);
   else
-    return string;
+    return cmd;
 }
 
-const char*			CommandManager::readUnquoted(const char* string,
-							     std::string* value)
+
+const char* CommandManager::readUnquoted(const char* cmd, std::string* value)
 {
   // read up to next whitespace.  escapes are not interpreted.
-  const char* start = string;
-  while (*string != '\0' && !iswspace(*string) && *string != ';')
-    ++string;
-  *value = std::string(start, string - start);
-  return string;
+  const char* start = cmd;
+  while (*cmd != '\0' && !iswspace(*cmd) && *cmd != ';')
+    ++cmd;
+  *value = std::string(start, cmd - start);
+  return cmd;
 }
 
-const char*			CommandManager::readQuoted(const char* string,
-							   std::string* value)
+
+const char* CommandManager::readQuoted(const char* cmd, std::string* value)
 {
   *value = "";
   bool escaped = false;
-  for (; *string != '\0'; ++string) {
+  for (; *cmd != '\0'; ++cmd) {
     if (escaped) {
-      switch (*string) {
+      switch (*cmd) {
 	case 't': value->append("\t", 1); break;
 	case 'n': value->append("\n", 1); break;
 	case 'r': value->append("\r", 1); break;
 	case '\\': value->append("\\", 1); break;
 	case '\"': value->append("\"", 1); break;
-	default: value->append(string, 1); break;
+	default: value->append(cmd, 1); break;
       }
       escaped = false;
-    } else if (*string == '\\') {
+    } else if (*cmd == '\\') {
       escaped = true;
-    } else if (*string == '\"') {
-      return string + 1;
+    } else if (*cmd == '\"') {
+      return cmd + 1;
     } else {
-      value->append(string, 1);
+      value->append(cmd, 1);
     }
   }
   // closing quote is missing.  if escaped is true the called may have
@@ -189,12 +194,6 @@ const char*			CommandManager::readQuoted(const char* string,
   return NULL;
 }
 
-const char*			CommandManager::skipWhitespace(const char* string)
-{
-  while (*string != '\0' && iswspace(*string))
-    ++string;
-  return string;
-}
 
 // Local Variables: ***
 // mode: C++ ***

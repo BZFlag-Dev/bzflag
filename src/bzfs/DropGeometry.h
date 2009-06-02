@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,20 +14,23 @@
 #define __DROP_GEOMETRY_H__
 
 
+#include "vectors.h"
+
+
 class WorldInfo;
 
 
 namespace DropGeometry
 {
-  bool dropFlag (float pos[3], float minZ, float maxZ);
-  bool dropPlayer (float pos[3], float minZ, float maxZ);
-  bool dropTeamFlag (float pos[3], float minZ, float maxZ, int team);
+  bool dropFlag     (fvec3& pos, float minZ, float maxZ);
+  bool dropPlayer   (fvec3& pos, float minZ, float maxZ);
+  bool dropTeamFlag (fvec3& pos, float minZ, float maxZ, int team);
 }
 
 
 #endif  /* __DROP_GEOMETRY_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

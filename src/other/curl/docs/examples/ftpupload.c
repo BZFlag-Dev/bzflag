@@ -5,10 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: ftpupload.c,v 1.14 2008-02-21 15:02:14 gknauf Exp $
+ * $Id: ftpupload.c,v 1.15 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <curl/curl.h>
 #include <sys/types.h>
@@ -83,7 +84,7 @@ int main(int argc, char **argv)
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
 
     /* enable uploading */
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1) ;
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
     /* specify target */
     curl_easy_setopt(curl,CURLOPT_URL, REMOTE_URL);

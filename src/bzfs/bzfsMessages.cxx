@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // bzflag global header
 #include "bzfsMessages.h"
@@ -25,24 +25,30 @@ void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
     flagRecord->type[0] = 'P';
     flagRecord->type[1] = 'Z';
   } else {
-    strncpy(flagRecord->type,flag.flag.type->flagAbbv,2);
+    strncpy(flagRecord->type,flag.flag.type->flagAbbv.c_str(),2);
   }
 
-  flagRecord->status = flag.flag.status;
-  flagRecord->endurance = flag.flag.endurance;
-  flagRecord->owner = flag.flag.owner;
-  flagRecord->position[0] = flag.flag.position[0];flagRecord->position[1] = flag.flag.position[1];flagRecord->position[2] = flag.flag.position[2];
-  flagRecord->launchPosition[0] = flag.flag.launchPosition[0];flagRecord->launchPosition[1] = flag.flag.launchPosition[1];flagRecord->launchPosition[2] = flag.flag.launchPosition[2];
-  flagRecord->landingPosition[0] = flag.flag.landingPosition[0];flagRecord->landingPosition[1] = flag.flag.landingPosition[1];flagRecord->landingPosition[2] = flag.flag.landingPosition[2];
-  flagRecord->flightTime = flag.flag.flightTime;
-  flagRecord->flightEnd = flag.flag.flightEnd;
-  flagRecord->initialVelocity = flag.flag.initialVelocity;
+  flagRecord->status             = flag.flag.status;
+  flagRecord->endurance          = flag.flag.endurance;
+  flagRecord->owner              = flag.flag.owner;
+  flagRecord->position[0]        = flag.flag.position.x;
+  flagRecord->position[1]        = flag.flag.position.y;
+  flagRecord->position[2]        = flag.flag.position.z;
+  flagRecord->launchPosition[0]  = flag.flag.launchPosition.x;
+  flagRecord->launchPosition[1]  = flag.flag.launchPosition.y;
+  flagRecord->launchPosition[2]  = flag.flag.launchPosition.z;
+  flagRecord->landingPosition[0] = flag.flag.landingPosition.x;
+  flagRecord->landingPosition[1] = flag.flag.landingPosition.y;
+  flagRecord->landingPosition[2] = flag.flag.landingPosition.z;
+  flagRecord->flightTime         = flag.flag.flightTime;
+  flagRecord->flightEnd          = flag.flag.flightEnd;
+  flagRecord->initialVelocity    = flag.flag.initialVelocity;
 }
 
 void sendRemovePlayerMessage ( int playerID )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerID);
+  msg->packUInt8(playerID);
   msg->broadcast(MsgRemovePlayer);
 
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -60,18 +66,20 @@ void sendFlagUpdateMessage ( int playerID )
     return;
 
   std::vector<bz_FlagUpdateRecord*> flagRecordList;
-  if (playerData->playerHandler) {
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+  if (playerData->playerHandler)
+  {
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
+    {
       FlagInfo &flag = *FlagInfo::get(flagIndex);
-      if (flag.exist()) {
+      if (flag.exist())
+      {
 	bz_FlagUpdateRecord *flagRecord = new bz_FlagUpdateRecord;
 	flagToAPIFlag(flag, flagRecord);
 	flagRecordList.push_back(flagRecord);
       }
     }
 
-    bz_FlagUpdateRecord** flagHandle =
-      (bz_FlagUpdateRecord**) malloc(sizeof(bz_FlagUpdateRecord*) * flagRecordList.size());
+    bz_FlagUpdateRecord** flagHandle = (bz_FlagUpdateRecord**) malloc(sizeof(bz_FlagUpdateRecord*) * flagRecordList.size());
     for (unsigned int i = 0; i < flagRecordList.size(); i++)
       flagHandle[i] = flagRecordList[i];
 
@@ -80,32 +88,49 @@ void sendFlagUpdateMessage ( int playerID )
     free(flagHandle);
     for (unsigned int i = 0; i < flagRecordList.size(); i++)
       delete(flagRecordList[i]);
-  } else {
-    int totalFlags = 0;
-    NetMsg msg = MSGMGR.newMessage();
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-      FlagInfo *info = FlagInfo::get(flagIndex);
-      if (info && info->exist())
-	totalFlags++;
-    }
-    msg->packUShort(totalFlags);
+  }
+  else
+  {
+    // first find all the flags we will send and get there pointers
+    std::vector<FlagInfo*> flagsToSend;
 
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-      FlagInfo &flag = *FlagInfo::get(flagIndex);
-      if (flag.exist()) {
-	bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-	flag.pack(msg, hide);
-      }
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
+    {
+      FlagInfo *info = FlagInfo::get(flagIndex);
+      if (info && info->exist() && info->getIndex() < 0xFFFF)
+	flagsToSend.push_back(info);
     }
-   
-    msg->send(playerData->netHandler, MsgFlagUpdate);
+
+    // now send 10 flags at at time so we dont' flood out the guys and send ALL the flags in a nice buffered message
+    size_t flagsSent = 0;
+    while (flagsSent < flagsToSend.size())
+    {
+	 // do 10 at a time
+	size_t flagsToDo = 10;
+	if ( flagsSent + flagsToDo >= flagsToSend.size())
+	  flagsToDo = flagsToSend.size()-flagsSent;
+
+	NetMsg msg = MSGMGR.newMessage();
+
+	msg->packUInt16((unsigned short)flagsToDo);
+
+	for ( size_t i = 0; i < flagsToDo; i++)
+	{
+	  FlagInfo &flag = *flagsToSend[flagsSent+i];
+	  bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
+	  flag.pack(msg, hide);
+	}
+	msg->send(playerData->netHandler, MsgFlagUpdate);
+
+	flagsSent += flagsToDo;
+    }
   }
 }
 
 void sendFlagUpdateMessage(FlagInfo &flag)
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUShort(1);
+  msg->packUInt16(1);
 
   bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
   flag.pack(msg, hide);
@@ -133,6 +158,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
       playerRecord.index = i;
       playerRecord.type = (bz_ePlayerType)otherData->player.getType();
       playerRecord.team = convertTeam(otherData->player.getTeam());
+      playerRecord.score.rank = otherData->score.ranking();
       playerRecord.score.wins = otherData->score.getWins();
       playerRecord.score.losses = otherData->score.getLosses();
       playerRecord.score.tks = otherData->score.getTKs();
@@ -163,9 +189,9 @@ bool sendTeamUpdateMessage( int newPlayer )
       teams[t] = new bz_TeamInfoRecord;
 
       teams[t]->id = t;
-      teams[t]->size = team[t].team.size;
-      teams[t]->wins = team[t].team.won;
-      teams[t]->losses = team[t].team.won;
+      teams[t]->size   = teamInfos[t].team.size;
+      teams[t]->wins   = teamInfos[t].team.won;
+      teams[t]->losses = teamInfos[t].team.won;
     }
     playerData->playerHandler->teamUpdate ( CtfTeams, teams );
 
@@ -189,21 +215,21 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
   NetMsg msg = MSGMGR.newMessage();
 
   if (teamIndex1 == -1) {
-    msg->packUByte(CtfTeams);
+    msg->packUInt8(CtfTeams);
     for (int t = 0; t < CtfTeams; t++) {
-      msg->packUShort(t);
-      team[t].team.pack(msg);
+      msg->packUInt16(t);
+      teamInfos[t].team.pack(msg);
     }
   } else if (teamIndex2 == -1) {
-    msg->packUByte(1);
-    msg->packUShort(teamIndex1);
-    team[teamIndex1].team.pack(msg);
+    msg->packUInt8(1);
+    msg->packUInt16(teamIndex1);
+    teamInfos[teamIndex1].team.pack(msg);
   } else {
-    msg->packUByte(2);
-    msg->packUShort(teamIndex1);
-    team[teamIndex1].team.pack(msg);
-    msg->packUShort(teamIndex2);
-    team[teamIndex2].team.pack(msg);
+    msg->packUInt8(2);
+    msg->packUInt16(teamIndex1);
+    teamInfos[teamIndex1].team.pack(msg);
+    msg->packUInt16(teamIndex2);
+    teamInfos[teamIndex2].team.pack(msg);
   }
 
   msg->broadcast(MsgTeamUpdate,false);
@@ -214,40 +240,39 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
 
   if (teamIndex1 == -1) {
     teamCount = CtfTeams;
-    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*CtfTeams);
+    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
     for (int t = 0; t < CtfTeams; t++) {
       teams[t] = new bz_TeamInfoRecord;
 
       teams[t]->id = t;
-      teams[t]->size = team[t].team.size;
-      teams[t]->wins = team[t].team.won;
-      teams[t]->losses = team[t].team.won;
+      teams[t]->size   = teamInfos[t].team.size;
+      teams[t]->wins   = teamInfos[t].team.won;
+      teams[t]->losses = teamInfos[t].team.won;
     }
   } else if (teamIndex2 == -1) {
     teamCount = 1;
-    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*));
-
-    teams[0] = new bz_TeamInfoRecord;
-
-    teams[0]->id = teamIndex2;
-    teams[0]->size = team[teamIndex2].team.size;
-    teams[0]->wins = team[teamIndex2].team.won;
-  } else {
-    teamCount = 2;
-    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*2);
+    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
 
     teams[0] = new bz_TeamInfoRecord;
 
     teams[0]->id = teamIndex1;
-    teams[0]->size = team[teamIndex1].team.size;
-    teams[0]->wins = team[teamIndex1].team.won;
+    teams[0]->size = teamInfos[teamIndex1].team.size;
+    teams[0]->wins = teamInfos[teamIndex1].team.won;
+  } else {
+    teamCount = 2;
+    teams = (bz_TeamInfoRecord**)malloc(sizeof(bz_TeamInfoRecord*)*teamCount);
+
+    teams[0] = new bz_TeamInfoRecord;
+
+    teams[0]->id = teamIndex1;
+    teams[0]->size = teamInfos[teamIndex1].team.size;
+    teams[0]->wins = teamInfos[teamIndex1].team.won;
 
     teams[1] = new bz_TeamInfoRecord;
 
     teams[1]->id = teamIndex2;
-    teams[1]->size = team[teamIndex2].team.size;
-    teams[1]->wins = team[teamIndex2].team.won;
-
+    teams[1]->size = teamInfos[teamIndex2].team.size;
+    teams[1]->wins = teamInfos[teamIndex2].team.won;
   }
 
   // now do everyone who dosn't have network
@@ -272,7 +297,7 @@ void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason 
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packUShort(code);
+    msg->packUInt16(code);
     msg->packString(reason, strlen(reason) + 1);
     msg->send(playerData->netHandler,MsgReject);
   }
@@ -287,7 +312,7 @@ bool sendAcceptPlayerMessage ( int playerID )
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packUByte(playerID);
+    msg->packUInt8(playerID);
     msg->send(playerData->netHandler, MsgAccept);
     if (!msg->size())
       return false;
@@ -343,14 +368,14 @@ void sendHandicapInfoUpdate(int playerID)
 	}
       }
 
-      msg->packUByte(numHandicaps);
+      msg->packUInt8(numHandicaps);
 
       for (int i = 0; i < curMaxPlayers; i++) {
 	if (i != playerID) {
 	  otherData = GameKeeper::Player::getPlayerByIndex(i);
 	  if (otherData) {
-	    msg->packUByte(i);
-	    msg->packShort(otherData->score.getHandicap());
+	    msg->packUInt8(i);
+	    msg->packInt16(otherData->score.getHandicap());
 	  }
 	}
       }
@@ -366,9 +391,9 @@ void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData )
 
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(1);
-  msg->packUByte(playerData->getIndex());
-  msg->packShort(playerData->score.getHandicap());
+  msg->packUInt8(1);
+  msg->packUInt8(playerData->getIndex());
+  msg->packInt16(playerData->score.getHandicap());
   msg->broadcast(MsgHandicap);
 
   bz_HandicapUpdateRecord *handyData = new bz_HandicapUpdateRecord;
@@ -409,7 +434,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
   NetMsg msg = MSGMGR.newMessage();
 
   if (toPlayerData || record) {
-    msg->packUByte(1);
+    msg->packUInt8(1);
     aboutPlayerData->packAdminInfo(msg);
   }
 
@@ -426,8 +451,8 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(fromPlayer);
-  msg->packUByte(toPlayer);
+  msg->packUInt8(fromPlayer);
+  msg->packUInt8(toPlayer);
 
   GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(toPlayer);
   GameKeeper::Player *fromData = GameKeeper::Player::getPlayerByIndex(fromPlayer);
@@ -440,7 +465,7 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
   toData->player.setFlag(flag.getIndex());
   fromData->player.resetFlag();
   flag.pack(msg);
-  msg->packUByte(toData->efectiveShotType);
+  msg->packUInt8(toData->efectiveShotType);
 
   msg->broadcast(MsgTransferFlag);
 
@@ -452,7 +477,7 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
   }
 }
 
-void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
+void sendClosestFlagMessage(int playerIndex,FlagType *type , const fvec3& pos )
 {
   GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 
@@ -460,11 +485,11 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
     return;
 
   if ( playerData->playerHandler) {
-    playerData->playerHandler->nearestFlag(type->flagName,pos);
+    playerData->playerHandler->nearestFlag(type->flagName.c_str(), pos);
   } else {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packFloatVector(pos);
+    msg->packFVec3(pos);
     msg->packStdString(std::string(type->flagName));
     msg->send(playerData->netHandler,MsgNearFlag);
   }
@@ -478,7 +503,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 
   bz_AllowFlagGrabEventData_V1	allow;
   allow.flagID = flag.getIndex();
-  allow.flagType = flag.flag.type->flagAbbv;
+  allow.flagType = flag.flag.type->flagAbbv.c_str();
   allow.shotType = (bz_eShotType)flag.flag.type->flagShot;
   allow.playerID = playerIndex;
   allow.allow = true;
@@ -494,19 +519,19 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   // send MsgGrabFlag
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(playerIndex);
+  msg->packUInt8(playerIndex);
   flag.pack(msg);
 
   bz_FlagGrabbedEventData_V1	data;
   data.flagID = flag.getIndex();
-  data.flagType = flag.flag.type->flagAbbv;
+  data.flagType = flag.flag.type->flagAbbv.c_str();
   data.shotType = (bz_eShotType)flag.flag.type->flagShot;
   data.playerID = playerIndex;
 
   worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
 
   // pack in the shot type, it may have been modified
-  msg->packUByte(data.shotType);
+  msg->packUInt8(data.shotType);
   playerData->efectiveShotType = (ShotType)data.shotType;
 
   msg->broadcast(MsgGrabFlag);
@@ -515,7 +540,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv,(bz_eShotType)playerData->efectiveShotType);
+      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv.c_str(),(bz_eShotType)playerData->efectiveShotType);
   }
 
   playerData->flagHistory.add(flag.flag.type);
@@ -535,8 +560,8 @@ void sendSetShotType ( int playerIndex, ShotType type )
 
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(playerIndex);
-  msg->packUByte(type);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8(type);
 
   msg->broadcast(MsgSetShot);
 
@@ -551,8 +576,8 @@ void sendSetShotType ( int playerIndex, ShotType type )
 void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(player);
-  msg->packUShort(id);
+  msg->packUInt8(player);
+  msg->packUInt16(id);
   firingInfo.pack(msg);
 
   msg->broadcast(MsgShotBegin);
@@ -568,9 +593,9 @@ void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(player);
-  msg->packShort(id);
-  msg->packUShort(reason);
+  msg->packUInt8(player);
+  msg->packInt16(id);
+  msg->packUInt16(reason);
   msg->broadcast(MsgShotEnd);
 
   // now do everyone who dosn't have network
@@ -584,9 +609,9 @@ void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
 void sendMsgTeleport( int player, unsigned short from, unsigned short to )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(player);
-  msg->packUShort(from);
-  msg->packUShort(to);
+  msg->packUInt8(player);
+  msg->packUInt16(from);
+  msg->packUInt16(to);
   msg->broadcast(MsgTeleport,false);
 
   // now do everyone who dosn't have network
@@ -600,8 +625,8 @@ void sendMsgTeleport( int player, unsigned short from, unsigned short to )
 void sendMsgAutoPilot( int player, unsigned char autopilot )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte( player);
-  msg->packUByte( autopilot);
+  msg->packUInt8( player);
+  msg->packUInt8( autopilot);
   msg->broadcast(MsgAutoPilot);
 
   // now do everyone who dosn't have network
@@ -630,11 +655,11 @@ int sendTeamUpdateDirect(NetHandler *handler)
 {
   // send all teams
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(CtfTeams);
+  msg->packUInt8(CtfTeams);
 
   for (int t = 0; t < CtfTeams; t++) {
-    msg->packUShort(t);
-    team[t].team.pack(msg);
+    msg->packUInt16(t);
+    teamInfos[t].team.pack(msg);
   }
   msg->send(handler,MsgTeamUpdate);
   return (int)msg->size();
@@ -658,13 +683,13 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
   }
 
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt( uint32_t(left));
+  msg->packUInt32( uint32_t(left));
   msg->packString((char*)worldDatabase + ptr, size);
   msg->send(handler, MsgGetWorld);
 }
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
-		     int len, bool recordOnly)
+		     int len, int type, bool recordOnly)
 {
   bool broadcast = false;
   bool toGroup   = false;
@@ -697,23 +722,24 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
     || broadcast || toGroup) {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packUByte(sourcePlayer);
-    msg->packUByte(destPlayer);
+    msg->packUInt8(sourcePlayer);
+    msg->packUInt8(destPlayer);
+	msg->packUInt8(type);
     msg->packString(localtext, len);
-    msg->packUByte(0);
+    msg->packUInt8(0);
 
     if (recordOnly) {
-	Record::addPacket(MsgMessage, (int)msg->size(), msg->buffer(), HiddenPacket);
+      Record::addPacket(MsgMessage, (int)msg->size(), msg->buffer(), HiddenPacket);
     } else {
       if (!broadcast && !toGroup) {
         if (srcPlayerData && (sourcePlayer != destPlayer))
           MSGMGR.newMessage(msg)->send(srcPlayerData->netHandler,MsgMessage);
-  
+
 	msg->send(destPlayerData->netHandler,MsgMessage);
       } else {
         if (broadcast) {
           msg->broadcast(MsgMessage);
- 
+
 	  // now do everyone who isn't a net player
           for (int i = 0; i < curMaxPlayers; i++) {
             GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
@@ -748,12 +774,12 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   free(localtext);
 }
 
-void sendMessageAlive ( int playerID, float pos[3], float rot )
+void sendMessageAlive ( int playerID, const fvec3& pos, float rot )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(playerID);
-  msg->packFloatVector(pos);
+  msg->packUInt8(playerID);
+  msg->packFVec3(pos);
   msg->packFloat(rot);
   msg->broadcast(MsgAlive);
 
@@ -768,9 +794,9 @@ void sendMessageAlive ( int playerID, float pos[3], float rot )
 void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerID);
-  msg->packUByte(allow);
-  
+  msg->packUInt8(playerID);
+  msg->packUInt8(allow);
+
   GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(recipID);
   if(otherData)
     msg->send(otherData->netHandler, MsgAllow);
@@ -779,13 +805,13 @@ void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
 void sendMessageAllow ( int playerID, unsigned char allow )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerID);
-  msg->packUByte(allow);
+  msg->packUInt8(playerID);
+  msg->packUInt8(allow);
   msg->broadcast(MsgAllow);
   // Please note that non-network players do not currently receive the message.
 }
 
-bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
+bool sendPlayerStateMessage( GameKeeper::Player* playerData, bool shortState )
 {
   playerData->doPlayerDR();
 
@@ -794,8 +820,8 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
 
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(playerData->getIndex());
-  msg->packFloat(playerData->stateTimeStamp);
+  msg->packUInt8(playerData->getIndex());
+  msg->packDouble(playerData->stateTimeStamp.getSeconds());
   playerData->lastState.pack(msg,code,false);	// don't increment the order cus this is just a relay
 
   msg->broadcast(code);
@@ -807,7 +833,9 @@ bool sendPlayerStateMessage( GameKeeper::Player *playerData, bool shortState )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler && otherData->player.isPlaying())
-      otherData->playerHandler->playerStateUpdate(playerData->getIndex(),&apiState,playerData->stateTimeStamp);
+      otherData->playerHandler->playerStateUpdate(playerData->getIndex(),
+						  &apiState,
+						  playerData->stateTimeStamp.getSeconds());
   }
   return true;
 }
@@ -817,21 +845,21 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason re
   // send MsgKilled
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(victimIndex);
-  msg->packUByte(killerIndex);
-  msg->packShort(reason);
-  msg->packShort(shotIndex);
+  msg->packUInt8(victimIndex);
+  msg->packUInt8(killerIndex);
+  msg->packInt16(reason);
+  msg->packInt16(shotIndex);
   flagType->pack(msg);
 
   if (reason == PhysicsDriverDeath)
-    msg->packInt(phydrv);
+    msg->packInt32(phydrv);
 
   msg->broadcast(MsgKilled);
 
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler && otherData->player.isPlaying())
-      otherData->playerHandler->playerKilledMessage(victimIndex,killerIndex,(bz_ePlayerDeathReason)reason,shotIndex,flagType->flagAbbv,phydrv);
+      otherData->playerHandler->playerKilledMessage(victimIndex,killerIndex,(bz_ePlayerDeathReason)reason,shotIndex,flagType->flagAbbv.c_str(),phydrv);
   }
 }
 
@@ -839,37 +867,40 @@ void sendPlayerScoreUpdate( GameKeeper::Player *player )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte( 1);
-  msg->packUByte(player->getIndex());
+  msg->packUInt8( 1);
+  msg->packUInt8(player->getIndex());
   player->score.pack(msg);
   msg->broadcast(MsgScore);
 
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->playerScoreUpdate(player->getIndex(),player->score.getWins(),player->score.getLosses(),player->score.getTKs());
+      otherData->playerHandler->playerScoreUpdate(player->getIndex(),
+						  player->score.ranking(),
+						  player->score.getWins(),
+						  player->score.getLosses(),
+						  player->score.getTKs());
   }
 }
 
 void sendScoreOverMessage(int playerID, TeamColor _team)
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerID);
-  msg->packUShort(uint16_t(_team));
+  msg->packUInt8(playerID);
+  msg->packUInt16(uint16_t(_team));
   msg->broadcast(MsgScoreOver);
 
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->scoreLimitReached(playerID,
-      convertTeam(_team));
+      otherData->playerHandler->scoreLimitReached(playerID, convertTeam(_team));
   }
 }
 
 void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerIndex);
+  msg->packUInt8(playerIndex);
   flag.pack(msg);
   msg->broadcast(MsgDropFlag);
 
@@ -888,9 +919,9 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 {
   // send MsgCaptureFlag
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerIndex);
-  msg->packUShort(uint16_t(flagIndex));
-  msg->packUShort(uint16_t(teamCaptured));
+  msg->packUInt8(playerIndex);
+  msg->packUInt16(uint16_t(flagIndex));
+  msg->packUInt16(uint16_t(teamCaptured));
   msg->broadcast(MsgCaptureFlag,false);
 
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -904,8 +935,8 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(playerIndex);
-  msg->packUByte(mode);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8(mode);
   msg->broadcast(MsgNewRabbit);
 }
 
@@ -913,9 +944,9 @@ void sendMsgGMUpdate ( int /*player*/, ShotUpdate *shot, int target )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  //msg->packUByte(player);
+  //msg->packUInt8(player);
   shot->pack(msg);
-  msg->packUByte(target);
+  msg->packUInt8(target);
   msg->broadcast(MsgGMUpdate);
 }
 
@@ -923,25 +954,25 @@ void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
 {
   /* Pack a message with the given time */
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(tag);
+  msg->packUInt8(tag);
   msg->packDouble(time);
   msg->send(handler,MsgWhatTimeIsIt);
 }
 
-void sendMsgTimeUpdate( int timeLimit )
+void sendMsgTimeUpdate( int32_t timeLimit )
 {
   // start client's clock
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packInt(timeLimit); 
+  msg->packInt32(timeLimit);
   msg->broadcast(MsgTimeUpdate);
 }
 
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player )
 {
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt(object);
-  msg->packUByte(tang);
+  msg->packUInt32(object);
+  msg->packUInt8(tang);
 
   if (player == AllPlayers) {
     msg->broadcast(MsgTangibilityUpdate,false);
@@ -970,7 +1001,7 @@ void sendMsgCanSpawn ( int player, bool canSpawn )
 
   if (!p->playerHandler) {
     NetMsg msg = MSGMGR.newMessage();
-    msg->packUByte(t);
+    msg->packUInt8(t);
     msg->send(p->netHandler, MsgAllowSpawn);
   } else {
     p->playerHandler->allowSpawn(canSpawn);
@@ -991,8 +1022,8 @@ void sendSetTeam ( int playerIndex, int _team )
 {
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUByte(playerIndex);
-  msg->packUByte(_team);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8(_team);
   msg->broadcast(MsgSetTeam);
 }
 
@@ -1000,18 +1031,36 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
 {
   char echobuffer[5] = {0};
   void *ebuf = echobuffer;
-  ebuf = nboPackUShort(ebuf, 1);
-  ebuf = nboPackUShort(ebuf, MsgEchoResponse);
-  ebuf = nboPackUByte(ebuf, tag);
+  ebuf = nboPackUInt16(ebuf, 1);
+  ebuf = nboPackUInt16(ebuf, MsgEchoResponse);
+  ebuf = nboPackUInt8(ebuf, tag);
   sendto(NetHandler::getUdpSocket(), echobuffer, 5, 0, (struct sockaddr*)uaddr,
     sizeof(*uaddr));   //Low level - bad - if this could be encapsulated...
+}
+
+void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std::string &value )
+{
+  if (key.size()+value.size() >= MaxPacketLen)
+    return;
+  NetMsg msg = MSGMGR.newMessage();
+
+  msg->packUInt8(playerID);
+  msg->packStdString(key);
+  msg->packStdString(value);
+  msg->broadcast(MsgPlayerData);
+}
+
+void sendPlayerCustomDataPair ( int playerID, const char* key, const char* value )
+{
+  if (key && value)
+    sendPlayerCustomDataPair(playerID,std::string(key),std::string(value));
 }
 
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
 {
-  *buffer = nboUnpackUShort(*buffer, len);
-  *buffer = nboUnpackUShort(*buffer, code);
+  *buffer = nboUnpackUInt16(*buffer, len);
+  *buffer = nboUnpackUInt16(*buffer, code);
 }
 
 PackVars::PackVars(NetHandler* _handler) : handler(_handler)
@@ -1038,14 +1087,14 @@ void PackVars::startMessage()
   count = 0;
   // placeholder
   msg = MSGMGR.newMessage();
-  msg->packUShort(0);
+  msg->packUInt16(0);
 }
 
 void PackVars::endMessage()
 {
-  // repack the placeholder short at the beginning of 
+  // repack the placeholder short at the beginning of
   // the buffer with the total count
-  nboPackUShort(msg->buffer(), count);
+  nboPackUInt16(msg->buffer(), count);
   // send the message
   msg->send(handler, MsgSetVar);
 }
@@ -1069,16 +1118,17 @@ void PackVars::sendPackVars(const std::string &key)
 bool isUDPAttackMessage ( uint16_t &code )
 {
   switch (code) {
-  case MsgShotBegin:
-  case MsgShotEnd:
-  case MsgPlayerUpdate:
-  case MsgPlayerUpdateSmall:
-  case MsgGMUpdate:
-  case MsgUDPLinkRequest:
-  case MsgUDPLinkEstablished:
-  case MsgHit:
-  case MsgWhatTimeIsIt:
-    return false;
+    case MsgShotBegin:
+    case MsgShotEnd:
+    case MsgPlayerUpdate:
+    case MsgPlayerUpdateSmall:
+    case MsgGMUpdate:
+    case MsgUDPLinkRequest:
+    case MsgUDPLinkEstablished:
+    case MsgHit:
+    case MsgWhatTimeIsIt: {
+      return false;
+    }
   }
   return true;
 }
@@ -1086,7 +1136,7 @@ bool isUDPAttackMessage ( uint16_t &code )
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState )
 {
   apiState.status = eAlive;
-  if (playerState.status & PlayerState::DeadStatus)
+  if (playerState.status == PlayerState::DeadStatus) // DeadStatus is 0
     apiState.status = eDead;
   else if (playerState.status & PlayerState::Paused)
     apiState.status = ePaused;
@@ -1111,11 +1161,11 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
 {
   playerState.status = 0;
   switch(apiState.status) {
+    case eDead:
+      playerState.status = PlayerState::DeadStatus; // DeadStatus = 0
+      break;
     case eAlive:
       playerState.status |= PlayerState::Alive;
-      break;
-    case eDead:
-      playerState.status |= PlayerState::DeadStatus;
       break;
     case ePaused:
       playerState.status |= PlayerState::Paused;
@@ -1126,7 +1176,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
     case eTeleporting:
       playerState.status |= PlayerState::Teleporting;
       break;
-      
+
     case eInBuilding:
       playerState.status |= PlayerState::InBuilding;
       break;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0063"
+#  define BZ_PROTO_VERSION	"0085"
 #endif
 // ditto for bzrobots
 #ifndef BZROBOTS_PROTO_VERSION
@@ -42,7 +42,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		05
+#  define BZ_REV		27
 #endif
 
 // DEVEL | STABLE | MAINT
@@ -50,7 +50,7 @@
 #  define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
-const char *bzfcopyright = "Copyright (c) 1993 - 2008 Tim Riker";
+const char *bzfcopyright = "Copyright (c) 1993 - 2009 Tim Riker";
 
 
 //
@@ -70,7 +70,7 @@ const char *bzfcopyright = "Copyright (c) 1993 - 2008 Tim Riker";
 
 #ifndef BZ_BUILD_DATE
 /* to get the version in the right format YYYYMMDD */
-/* yes this is horible but it needs to be done to get it right */
+/* yes this is horrible but it needs to be done to get it right */
 /* windows should pull from a resouce */
 /* *nix gets this from the passed from my the Makefile */
 static const char buildDate[] = {__DATE__};

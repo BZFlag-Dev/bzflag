@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,7 +39,7 @@ class CustomSphere : public WorldFileObstacle {
     static const char* sideNames[MaterialCount];
 
     int divisions;
-    float texsize[2];
+    fvec2 texsize;
     bool hemisphere;
     int phydrv;
     bool useNormals;
@@ -50,7 +50,7 @@ class CustomSphere : public WorldFileObstacle {
 
 #endif  /* __CUSTOM_SPHERE_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

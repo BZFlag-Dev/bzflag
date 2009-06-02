@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,74 +16,165 @@
 // implementation headers
 #include "StateDatabase.h"
 
+#include <string>
+
+
+namespace BZDB_Eval {
+  template <typename T> inline T eval(const std::string&);
+  template <> inline int         eval(const std::string& n) { return BZDB.evalInt(n); }
+  template <> inline bool        eval(const std::string& n) { return BZDB.isTrue(n);  }
+  template <> inline float       eval(const std::string& n) { return BZDB.eval(n);    }
+  template <> inline std::string eval(const std::string& n) { return BZDB.get(n);     }
+}
+
+
 class BZDBCache
 {
-public:
-	static void init();
+  public:
+    static void init();
 
-	static bool  displayMainFlags;
-	static bool  blend;
-	static bool  texture;
-	static bool  shadows;
-	static bool  stencilShadows;
-	static bool  zbuffer;
-	static bool  tesselation;
-	static bool  lighting;
-	static bool  smooth;
-	static bool  colorful;
-	static int   flagChunks;
-	static bool  animatedTreads;
-	static int   radarStyle;
-	static float radarTankPixels;
-	static bool  leadingShotLine;
-	static bool  showShotGuide;
-	static int   linedRadarShots;
-	static int   sizedRadarShots;
-	static float pulseRate;
-	static float pulseDepth;
-	static bool  showCollisionGrid;
-	static bool  showCullingGrid;
-	static int   maxFlagLOD;
+    /** public method to update cached variable
+        has to be called at best opportunity
+        (e.g. at beginnig of main loop)
+     */
+    static void update();
 
-	static bool drawCelestial;
-	static bool drawClouds;
-	static bool drawGround;
-	static bool drawGroundLights;
-	static bool drawMountains;
-	static bool drawSky;
+  public:
+    // prohibit external write access
+    template <class T>
+    class ReadOnly {
+      friend class BZDBCache;
+      public:
+        inline operator const T&() const { return data; }
+      private:
+        ReadOnly() {}
+        ReadOnly& operator=(const T& value) { data = value; return *this; }
+      private:
+        ReadOnly(const ReadOnly&);
+        ReadOnly& operator=(const ReadOnly&);
+      private:
+        T data;
+    };
 
-	static float maxLOD;
-	static float worldSize;
-	static float radarLimit;
-	static float gravity;
-	static float tankWidth;
-	static float tankLength;
-	static float tankHeight;
-	static float tankSpeed;
-	static float tankRadius;
-	static float flagRadius;
-	static float flagPoleSize;
-	static float flagPoleWidth;
+    // the basics types
+    typedef ReadOnly<int>         Int;
+    typedef ReadOnly<bool>        Bool;
+    typedef ReadOnly<float>       Float;
+    typedef ReadOnly<std::string> String;
 
-	static float freezeTagRadius;
-	static float collisionLimit;
-	static float dmzWidth;
+  public:
+    // client-side
+    static Bool  displayMainFlags;
+    static Bool  blend;
+    static Bool  texture;
+    static Bool  shadows;
+    static Bool  stencilShadows;
+    static Bool  zbuffer;
+    static Bool  tesselation;
+    static Bool  lighting;
+    static Bool  smooth;
+    static Bool  colorful;
+    static Int   flagChunks;
+    static Bool  animatedTreads;
+    static Int   radarStyle;
+    static Float radarTankPixels;
+    static Float shadowAlpha;
+    static Bool  leadingShotLine;
+    static Bool  showShotGuide;
+    static Int   linedRadarShots;
+    static Int   sizedRadarShots;
+    static Float shotLength;
+    static Float pulseRate;
+    static Float pulseDepth;
+    static Bool  showCollisionGrid;
+    static Bool  showCullingGrid;
+    static Int   maxFlagLOD;
+    static Int   vsync;
+    static Float hudGUIBorderOpacityFactor;
 
-	static float hudGUIBorderOpacityFactor;
+    // server-side
+    static Bool  forbidDebug;
+    static Bool  drawCelestial;
+    static Bool  drawClouds;
+    static Bool  drawGround;
+    static Bool  drawGroundLights;
+    static Bool  drawMountains;
+    static Bool  drawSky;
 
-public:
-  /** public method to update cached variable
-      has to be called at best opportunity
-      (e.g. at beginnig of main loop)
-   */
-  static void update();
+    static Float flagPoleSize;
+    static Float flagPoleWidth;
+    static Float flagRadius;
+    static Float gravity;
+    static Float maxLOD;
+    static Float radarLimit;
+    static Float muzzleHeight;
+    static Float tankHeight;
+    static Float tankLength;
+    static Float tankRadius;
+    static Float tankSpeed;
+    static Float tankWidth;
+    static Float worldSize;
 
-private:
-	static void clientCallback(const std::string &name, void *);
-	static void serverCallback(const std::string &name, void *);
+    static Float collisionLimit;
+    static Float dmzWidth;
+    static Float freezeTagRadius;
+
+
+  private:
+    static void clientCallback(const std::string &name, void *);
+    static void serverCallback(const std::string &name, void *);
+
+  public:
+    template <typename T>
+    class static_hook {
+      public:
+        static_hook(const std::string& _name) : name(_name) {
+          update();
+          BZDB.addCallback(name, callback, this);
+        }
+
+        ~static_hook() {
+          BZDB.removeCallback(name, callback, this);
+        }
+
+        operator const T&() const { return data; }
+        const T& getData()  const { return data; }
+
+        const std::string& getName() const { return name; }
+
+      private: /* no copying */
+        static_hook(const static_hook&);
+        static_hook& operator=(const static_hook&);
+
+      private:
+        void update() {
+          data = BZDB_Eval::eval<T>(name);
+        }
+        static void callback(const std::string& /*name*/, void* ptr) {
+          ((static_hook*)ptr)->update();
+        }
+
+      private:
+        const std::string name;
+        T data;
+    };
 };
 
+
+//
+// these classes should be used as static variables,
+// and only when the bzdb variable is not being used
+// in several different files.
+//
+typedef BZDBCache::static_hook<int>         BZDB_int;
+typedef BZDBCache::static_hook<bool>        BZDB_bool;
+typedef BZDBCache::static_hook<float>       BZDB_float;
+typedef BZDBCache::static_hook<std::string> BZDB_string;
+
+
+
 #endif
+
 
 // Local Variables: ***
 // mode: C++ ***

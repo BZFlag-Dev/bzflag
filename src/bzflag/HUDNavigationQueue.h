@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,6 +23,7 @@
 
 /* system headers */
 #include <deque>
+#include <list>
 
 class HUDuiControl;
 
@@ -35,6 +36,7 @@ enum HUDNavChangeMethod {
 };
 
 typedef size_t (*HUDNavigationCallback)(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void*);
+typedef std::list< std::pair<HUDNavigationCallback, void*> > HUDuiNavCallbackList;
 
 class HUDNavigationQueue : public std::deque<HUDuiControl*> {
 public:
@@ -46,17 +48,22 @@ public:
   bool set(size_t index);
   bool set(HUDuiControl* control);
 
+  bool setWithoutFocus(size_t index);
+  bool setWithoutFocus(HUDuiControl* control);
+
   HUDuiControl* get() const;
   size_t getIndex() const;
 
-  void setCallback(HUDNavigationCallback, void*);
-  HUDNavigationCallback getCallback() const;
+  void addCallback(HUDNavigationCallback cb, void* data);
+  void removeCallback(HUDNavigationCallback cb, void* data);
+
+  static const size_t SkipSetFocus = ~(size_t)0;
 
 private:
-  size_t focus;
+  bool internal_set(size_t index, HUDNavChangeMethod changeMethod, bool setFocus = true);
 
-  HUDNavigationCallback cb;
-  void*	userData;
+  size_t focus;
+  HUDuiNavCallbackList callbackList;
 };
 
 #endif // __HUDNAVIGATIONQUEUE_H__

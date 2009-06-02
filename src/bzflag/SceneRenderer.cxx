@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,9 +19,10 @@
 // interface header
 #include "SceneRenderer.h"
 
-/* common implementation headers */
+// common headers
 #include "SceneDatabase.h"
 #include "MainWindow.h"
+#include "GameTime.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "TankSceneNode.h"
@@ -31,92 +32,58 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 #include "FlagSceneNode.h"
+#include "LinkManager.h"
+#include "MeshFace.h"
 
-/* FIXME - local implementation dependancies */
+// local headers -- FIXME, local dependencies for a global interface
 #include "BackgroundRenderer.h"
+#include "DynamicWorldText.h"
 #include "LocalPlayer.h"
-#include "daylight.h"
-#include "World.h"
+#include "Roaming.h"
 #include "TrackMarks.h"
+#include "World.h"
+#include "Daylight.h"
 #include "playing.h"
 
-static bool mapFog;
-static bool setupMapFog();
-
-
-#ifdef GL_ABGR_EXT
-static int		strrncmp(const char* s1, const char* s2, int num)
-{
-  int len1 = strlen(s1) - 1;
-  int len2 = strlen(s2) - 1;
-  for (; len1 >= 0 && len2 >= 0 && num > 0; len1--, len2--, num--) {
-    const int d = s1[len1] - s2[len2];
-    if (d != 0) return d;
-  }
-  return 0;
-}
-#endif
-
-//
-// FlareLight
-//
-
-FlareLight::FlareLight(const float* _pos, const float* _color)
-{
-  pos[0] = _pos[0];
-  pos[1] = _pos[1];
-  pos[2] = _pos[2];
-  color[0] = _color[0];
-  color[1] = _color[1];
-  color[2] = _color[2];
-}
-
-FlareLight::~FlareLight()
-{
-  // do nothing
-}
 
 //
 // SceneRenderer
 //
 
-const GLint   SceneRenderer::SunLight = 0;		// also for the moon
-const float   SceneRenderer::dimDensity = 0.75f;
-const GLfloat SceneRenderer::dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-const GLfloat SceneRenderer::blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+const int   SceneRenderer::SunLight = 0;		// also for the moon
+const float SceneRenderer::dimDensity = 0.75f;
+const fvec4 SceneRenderer::dimnessColor(0.0f, 0.0f, 0.0f, 1.0f);
+const fvec4 SceneRenderer::blindnessColor(1.0f, 1.0f, 0.0f, 1.0f);
 
 /* initialize the singleton */
 template <>
 SceneRenderer* Singleton<SceneRenderer>::_instance = (SceneRenderer*)0;
 
-SceneRenderer::SceneRenderer() :
-				window(NULL),
-				blank(false),
-				invert(false),
-				sunBrightness(1.0f),
-				scene(NULL),
-				background(NULL),
-				abgr(false),
-				useQualityValue(_HIGH_QUALITY),
-				useDepthComplexityOn(false),
-				useWireframeOn(false),
-				useHiddenLineOn(false),
-				panelOpacity(0.3f),
-				radarSize(4),
-				maxMotionFactor(5),
-				useFogHack(false),
-				viewType(Normal),
-				inOrder(false),
-				depthRange(0),
-				numDepthRanges(1),
-				depthRangeSize(1.0),
-				useDimming(false),
-				canUseHiddenLine(false),
-				exposed(true),
-				lastFrame(true),
-				sameFrame(false),
-				needStyleUpdate(true),
-				rebuildTanks(true)
+
+SceneRenderer::SceneRenderer()
+: window(NULL)
+, specialMode(NoSpecial)
+, blank(false)
+, invert(false)
+, mirror(false)
+, drawingMirror(false)
+, mapFog(false)
+, sunBrightness(1.0f)
+, scene(NULL)
+, background(NULL)
+, useQualityValue(_HIGH_QUALITY)
+, panelOpacity(0.3f)
+, radarSize(4)
+, maxMotionFactor(5)
+, viewType(Normal)
+, inOrder(false)
+, useDimming(false)
+, canUseHiddenLine(false)
+, exposed(true)
+, lastFrame(true)
+, sameFrame(false)
+, needStyleUpdate(true)
+, rebuildTanks(true)
 {
   lightsSize = 4;
   lights = new OpenGLLight*[lightsSize];
@@ -142,42 +109,12 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   }
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
-
-  // see if abgr extention is available and system is known to be
-  // faster with abgr.
-  const char* vendor = (const char*)glGetString(GL_VENDOR);
-  const char* renderer = (const char*)glGetString(GL_RENDERER);
-  const char* version = (const char*)glGetString(GL_VERSION);
-  const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-  (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
-#ifdef GL_ABGR_EXT
-  if ((extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL) &&
-      (vendor != NULL && strcmp(vendor, "SGI") == 0)) {
-    // old hardware is faster with ABGR.  new hardware isn't.
-    if ((renderer != NULL) &&
-	(strncmp(renderer, "GR1", 3) == 0 ||
-	 strncmp(renderer, "VGX", 3) == 0 ||
-	 strncmp(renderer, "LIGHT", 5) == 0 ||
-	 strrncmp(renderer, "-XS", 3) == 0 ||
-	 strrncmp(renderer, "-XSM", 4) == 0 ||
-	 strrncmp(renderer, "-XS24", 5) == 0 ||
-	 strrncmp(renderer, "-XS24-Z", 7) == 0 ||
-	 strrncmp(renderer, "-XZ", 3) == 0 ||
-	 strrncmp(renderer, "-Elan", 5) == 0 ||
-	 strrncmp(renderer, "-Extreme", 8) == 0))
-      abgr = true;
+  if (!useStencilOn) {
+    BZDB.setBool("stencilShadows", false);
   }
-#endif
 
   // can only do hidden line if polygon offset is available
   canUseHiddenLine = true;
-
-  // check if we're running OpenGL 1.1.  if so we'll use the fog hack
-  // to fade the screen;  otherwise fall back on a full screen blended
-  // polygon.
-  if (version != NULL && strncmp(version, "1.1", 3) == 0) {
-    useFogHack = true;
-  }
 
   // prepare context with stuff that'll never change
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
@@ -186,7 +123,7 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   maxLights -= reservedLights;		// can't use the reserved lights
 
   // prepare sun
-  setTimeOfDay(unixEpoch);
+  setTimeOfDay(Daylight::unixEpoch);
 
   // force nodes to update their styles
   notifyStyleChange();
@@ -206,12 +143,6 @@ SceneRenderer::~SceneRenderer()
 }
 
 
-bool SceneRenderer::useABGR() const
-{
-  return abgr;
-}
-
-
 bool SceneRenderer::useStencil() const
 {
   return useStencilOn;
@@ -221,33 +152,6 @@ bool SceneRenderer::useStencil() const
 SceneRenderer::ViewType	SceneRenderer::getViewType() const
 {
   return viewType;
-}
-
-
-void SceneRenderer::setZBufferSplit(bool on)
-{
-  if (!on) {
-    if (numDepthRanges != 1) {
-      numDepthRanges = 1;
-      depthRangeSize = 1.0;
-      glDepthRange(0.0, 1.0);
-    }
-  }
-  else {
-    GLint bits;
-    glGetIntegerv(GL_DEPTH_BITS, &bits);
-    if (bits > 18) {
-      // number of independent slices to split depth buffer into
-      numDepthRanges = 1 << (bits - 18);
-
-      // size of a single range
-      depthRangeSize = 1.0 / (double)numDepthRanges;
-    }
-    else {
-      numDepthRanges = 1;
-      depthRangeSize = 1.0;
-    }
-  }
 }
 
 
@@ -261,7 +165,7 @@ void SceneRenderer::setQuality(int value)
   if (value < 0) {
     value = 0;
   } else if (value > BZDB.eval("maxQuality")) {
-    value = (int)BZDB.eval("maxQuality");
+    value = BZDB.evalInt("maxQuality");
   }
   if (useQualityValue != value) {
     rebuildTanks = true;
@@ -314,42 +218,56 @@ void SceneRenderer::setQuality(int value)
 
   // this setting helps keep those specular highlights
   // highlighting when applied to a dark textured surface.
-  // It was mainlined in OpenGL Version 1.2
-  // (there's also the GL_EXT_separate_specular_color extension)
-#ifdef GL_LIGHT_MODEL_COLOR_CONTROL
-  if (useQualityValue >= _MEDIUM_QUALITY)
+  if (useQualityValue >= _MEDIUM_QUALITY) {
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-  else
+  } else {
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
-#  else // in case someone includes <GL/glext.h> at some point
-#  ifdef GL_LIGHT_MODEL_COLOR_CONTROL_EXT
-  if (useQualityValue >= _MEDIUM_QUALITY)
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-		  GL_SEPARATE_SPECULAR_COLOR_EXT);
-  else
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-		  GL_SINGLE_COLOR_EXT);
-#  endif
-#endif
+  }
 
   BZDB.set("useQuality", TextUtils::format("%d", value));
 }
 
 
-bool SceneRenderer::useDepthComplexity() const
+void SceneRenderer::setSpecialMode(SpecialMode mode)
 {
-  return useDepthComplexityOn;
+  specialMode = NoSpecial;
+
+  // avoid built-in visibility cheats
+  if (ROAM.isRoaming()) {
+    switch (mode) {
+      case WireFrame: {
+        specialMode = mode;
+        break;
+      }
+      case HiddenLine: {
+        if (BZDBCache::zbuffer) {
+          specialMode = mode;
+        }
+        break;
+      }
+      case DepthComplexity: {
+        GLint bits;
+        glGetIntegerv(GL_STENCIL_BITS, &bits);
+        if (bits >= 3) {
+          specialMode = mode;
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
+  BZDB.setInt("specialMode", specialMode);
+
+  return;
 }
 
 
-void SceneRenderer::setDepthComplexity(bool on)
+SceneRenderer::SpecialMode SceneRenderer::getSpecialMode() const
 {
-  if (on) {
-    GLint bits;
-    glGetIntegerv(GL_STENCIL_BITS, &bits);
-    if (bits < 3) return;
-  }
-  useDepthComplexityOn = on;
+  return specialMode;
 }
 
 
@@ -369,42 +287,13 @@ void SceneRenderer::setupBackgroundMaterials()
 }
 
 
-void SceneRenderer::setWireframe(bool on)
-{
-  useWireframeOn = on;
-}
-
-
-bool SceneRenderer::useWireframe() const
-{
-  return useWireframeOn;
-}
-
-
-void SceneRenderer::setHiddenLine(bool on)
-{
-  useHiddenLineOn = on && BZDBCache::zbuffer && canUseHiddenLine;
-  if (!useHiddenLineOn) {
-    depthRange = 0;
-    return;
-  }
-  glPolygonOffset(1.0f, 2.0f);
-}
-
-
-bool SceneRenderer::useHiddenLine() const
-{
-  return useHiddenLineOn;
-}
-
-
 void SceneRenderer::setPanelOpacity(float opacity)
 {
-  bool needtoresize = opacity == 1.0f || panelOpacity == 1.0f;
+  bool needToResize = opacity == 1.0f || panelOpacity == 1.0f;
 
   panelOpacity = opacity;
   notifyStyleChange();
-  if (needtoresize) {
+  if (needToResize) {
     if (window) {
       window->setFullView(panelOpacity < 1.0f);
       window->getWindow()->callResizeCallbacks();
@@ -437,8 +326,9 @@ int SceneRenderer::getRadarSize() const
 
 void SceneRenderer::setMaxMotionFactor(int factor)
 {
-  if (factor < -11)
+  if (factor < -11) {
     factor = -11;
+  }
   maxMotionFactor = factor;
   notifyStyleChange();
   if (window) {
@@ -509,17 +399,16 @@ void SceneRenderer::setBackground(BackgroundRenderer* br)
 }
 
 
-void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
+void SceneRenderer::getGroundUV(const fvec2& p, fvec2& uv) const
 {
   float repeat = 0.01f;
-    if (BZDB.isSet("groundTexRepeat"))
-      repeat = BZDB.eval("groundTexRepeat");
-
-    if (useQualityValue >= _HIGH_QUALITY)
-      repeat = BZDB.eval("groundHighResTexRepeat");
-
-  uv[0] = repeat * p[0];
-  uv[1] = repeat * p[1];
+  if (useQualityValue >= _HIGH_QUALITY) {
+    repeat = BZDB.eval("groundHighResTexRepeat");
+  }
+  else if (BZDB.isSet("groundTexRepeat")) {
+    repeat = BZDB.eval("groundTexRepeat");
+  }
+  uv = repeat * p;
 }
 
 
@@ -532,7 +421,7 @@ void SceneRenderer::enableLight(int index, bool on)
 void SceneRenderer::enableSun(bool on)
 {
   if (BZDBCache::lighting && sunOrMoonUp) {
-    theSun.enableLight(SunLight, on);
+    OpenGLLight::enableLight(SunLight, on);
   }
 }
 
@@ -561,12 +450,6 @@ void SceneRenderer::addLight(OpenGLLight& light)
 }
 
 
-void SceneRenderer::addFlareLight(const float* pos, const float* color)
-{
-  flareLightList.push_back(FlareLight(pos, color));
-}
-
-
 int SceneRenderer::getNumLights() const
 {
   return dynamicLights;
@@ -591,21 +474,22 @@ void SceneRenderer::setTimeOfDay(double julianDay)
 {
 
   // get position of sun and moon at 0,0 lat/long
-  float sunDir[3], moonDir[3];
+  fvec3 sunDir, moonDir;
   float latitude, longitude;
   if (!BZDB.isTrue(StateDatabase::BZDB_SYNCLOCATION)) {
     // use local (client) settings
-    latitude = BZDB.eval("latitude");
+    latitude  = BZDB.eval("latitude");
     longitude = BZDB.eval("longitude");
   } else {
     // server settings
-    latitude = BZDB.eval(StateDatabase::BZDB_LATITUDE);
+    latitude  = BZDB.eval(StateDatabase::BZDB_LATITUDE);
     longitude = BZDB.eval(StateDatabase::BZDB_LONGITUDE);
   }
 
-  getSunPosition(julianDay, latitude, longitude, sunDir);
-  getMoonPosition(julianDay, latitude, longitude, moonDir);
-  ::getCelestialTransform(julianDay, latitude, longitude, celestialTransform);
+  Daylight::getSunPosition(julianDay, latitude, longitude, sunDir);
+  Daylight::getMoonPosition(julianDay, latitude, longitude, moonDir);
+  Daylight::getCelestialTransform(julianDay, latitude, longitude,
+                                  celestialTransform);
 
   // set sun position
   if (sunDir[2] >= -0.009f) {
@@ -625,20 +509,19 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   }
 
   // set sun and ambient colors
-  ::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
+  Daylight::getSunColor(sunDir, sunColor, ambientColor, sunBrightness);
   theSun.setColor(sunColor);
-  GLfloat maxComponent = sunColor[0];
-  if (sunColor[1] > maxComponent) maxComponent = sunColor[1];
-  if (sunColor[2] > maxComponent) maxComponent = sunColor[2];
-  if (maxComponent <= 0.0f) maxComponent = 1.0f;
-  sunScaledColor[0] = sunColor[0] / maxComponent;
-  sunScaledColor[1] = sunColor[1] / maxComponent;
-  sunScaledColor[2] = sunColor[2] / maxComponent;
-  ambientColor[3] = 1.0f;
+  float maxComponent = sunColor.r;
+  if (sunColor.y > maxComponent) { maxComponent = sunColor.y; }
+  if (sunColor.z > maxComponent) { maxComponent = sunColor.z; }
+  if (maxComponent <= 0.0f)      { maxComponent = 1.0f; }
+  sunScaledColor.rgb() = sunColor.rgb() / maxComponent;
+  ambientColor.a = 1.0f;
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
-  if (background)
+  if (background) {
     background->setCelestial(*this, sunDir, moonDir);
+  }
 }
 
 
@@ -685,13 +568,16 @@ static int sortLights (const void* a, const void* b)
 }
 
 
-void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
-			   bool fullWindow)
+void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
 {
-  lastFrame = _lastFrame;
-  sameFrame = _sameFrame;
+  lastFrame  = _lastFrame;
+  sameFrame  = _sameFrame;
+  fullWindow = _fullWindow;
 
-  setWireframe(BZDB.isTrue("wireframe"));
+  // set the special mode
+  if (!ROAM.isRoaming() && (specialMode != NoSpecial)) {
+    setSpecialMode(NoSpecial);
+  }
 
   triangleCount = 0;
   RenderNode::resetTriangleCount();
@@ -701,14 +587,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // update the SceneNode, Background, and TrackMark styles
   if (needStyleUpdate) {
-    if (scene) {
-      scene->updateNodeStyles();
-    }
-    if (background) {
-      background->notifyStyleChange();
-    }
-    TrackMarks::notifyStyleChange();
-    needStyleUpdate = false;
+    updateNodeStyles();
   }
 
   if (rebuildTanks) {
@@ -739,7 +618,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
     const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;
     const float lpp = (lppx < lppy) ? lppx : lppy;
-    lengthPerPixel = lpp * BZDB.eval("lodScale");
+    static BZDB_float lodScale("lodScale");
+    lengthPerPixel = lpp * lodScale;
   }
 
   // get the track mark sceneNodes (only for BSP)
@@ -756,12 +636,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // fog setup
   mapFog = setupMapFog();
-  const bool reallyUseFogHack = !mapFog && useFogHack &&
-				(useQualityValue >= _MEDIUM_QUALITY);
-  if (reallyUseFogHack) {
-    renderPreDimming();
-  }
-
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
@@ -769,108 +643,19 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   clearZbuffer = true;
   drawGround = true;
 
+  // draw the mirror pass
   if (mirror) {
-    drawGround = false;
-
-    // flip for the reflection drawing
-    frustum.flipVertical();
-    glFrontFace(GL_CW);
-
-    // different occluders for the mirror
-    if (scene) {
-      scene->setOccluderManager(1);
-    }
-
-    // the reflected scene
-    renderScene(_lastFrame, _sameFrame, fullWindow);
-
-    // different occluders for the mirror
-    if (scene) {
-      scene->setOccluderManager(0);
-    }
-
-    // flip back
-    frustum.flipVertical();
-    glFrontFace(GL_CCW);
-
-    float mirrorColor[4];
-    if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
-      mirrorColor[0] = mirrorColor[1] = mirrorColor[2] = 0.0f;
-      mirrorColor[3] = 0.5f;
-    } else if (mirrorColor[3] == 1.0f) {
-      // probably a mistake
-      mirrorColor[3] = 0.5f;
-    }
-    if (invert) {
-      mirrorColor[0] = 1.0f - mirrorColor[0];
-      mirrorColor[2] = 1.0f - mirrorColor[2];
-      mirrorColor[3] = 0.2f;
-    }
-
-    // darken the reflection
-    if (!mapFog) {
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      // if low quality then use stipple -- it's probably much faster
-      if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glColor4fv(mirrorColor);
-	glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-	glDisable(GL_BLEND);
-      } else {
-	float stipple = mirrorColor[3];
-	glColor3fv(mirrorColor);
-	OpenGLGState::setStipple(stipple);
-	glEnable(GL_POLYGON_STIPPLE);
-	glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-	glDisable(GL_POLYGON_STIPPLE);
-      }
-    } else {
-      // need the proper matrices for fog generation
-      // if low quality then use stipple -- it's probably much faster
-      frustum.executeView();
-      frustum.executeProjection();
-      const float extent = BZDBCache::worldSize * 10.0f;
-      if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glColor4fv(mirrorColor);
-	glRectf(-extent, -extent, +extent, +extent);
-	glDisable(GL_BLEND);
-      } else {
-	float stipple = mirrorColor[3];
-	glColor3fv(mirrorColor);
-	OpenGLGState::setStipple(stipple);
-	glEnable(GL_POLYGON_STIPPLE);
-	glRectf(-extent, -extent, +extent, +extent);
-	glDisable(GL_POLYGON_STIPPLE);
-      }
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-    }
-
-    clearZbuffer = false;
+    drawMirror();
   }
 
   // the real scene
-  renderScene(_lastFrame, _sameFrame, fullWindow);
+  renderScene();
 
-  // finalize dimming
+  // finalize
   if (mapFog) {
     glDisable(GL_FOG);
   }
-  if (reallyUseFogHack) {
-    if ((teleporterProximity > 0.0f) || useDimming) {
-      glDisable(GL_FOG);
-    }
-  } else {
-    renderPostDimming();
-  }
+  renderPostDimming();
 
   triangleCount = RenderNode::getTriangleCount();
   if (background) {
@@ -881,8 +666,93 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 }
 
 
-void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
-				bool fullWindow)
+void SceneRenderer::drawMirror()
+{
+  drawingMirror = true;
+  drawGround = false;
+
+  // flip for the reflection drawing
+  frustum.flipVertical();
+  glFrontFace(GL_CW);
+
+  // different occluders for the mirror
+  if (scene) { scene->setOccluderManager(1); }
+
+  // the reflected scene
+  renderScene();
+
+  // different occluders for the mirror
+  if (scene) { scene->setOccluderManager(0); }
+
+  // flip back
+  frustum.flipVertical();
+  glFrontFace(GL_CCW);
+
+  fvec4 mirrorColor;
+  if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
+    mirrorColor.r = mirrorColor.g = mirrorColor.b = 0.0f;
+    mirrorColor.a = 0.5f;
+  } else if (mirrorColor.a == 1.0f) {
+    // probably a mistake
+    mirrorColor.a = 0.5f;
+  }
+  if (invert) {
+    mirrorColor.r = 1.0f - mirrorColor.r;
+    mirrorColor.b = 1.0f - mirrorColor.b;
+    mirrorColor.a = 0.2f;
+  }
+
+  // darken the reflection
+  if (!mapFog) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    // if low quality then use stipple -- it's probably much faster
+    if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glEnable(GL_BLEND);
+      glColor4fv(mirrorColor);
+      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+      glDisable(GL_BLEND);
+    } else {
+      glColor3fv(mirrorColor);
+      OpenGLGState::setStipple(mirrorColor.a);
+      glEnable(GL_POLYGON_STIPPLE);
+      glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+      glDisable(GL_POLYGON_STIPPLE);
+    }
+  } else {
+    // need the proper matrices for fog generation
+    // if low quality then use stipple -- it's probably much faster
+    frustum.executeView();
+    frustum.executeProjection();
+    const float extent = BZDBCache::worldSize * 10.0f;
+    if (BZDBCache::blend && (useQualityValue >= _MEDIUM_QUALITY)) {
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glEnable(GL_BLEND);
+      glColor4fv(mirrorColor);
+      glRectf(-extent, -extent, +extent, +extent);
+      glDisable(GL_BLEND);
+    } else {
+      glColor3fv(mirrorColor);
+      OpenGLGState::setStipple(mirrorColor.a);
+      glEnable(GL_POLYGON_STIPPLE);
+      glRectf(-extent, -extent, +extent, +extent);
+      glDisable(GL_POLYGON_STIPPLE);
+    }
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+  }
+
+  clearZbuffer = false;
+  drawingMirror = false;
+}
+
+
+void SceneRenderer::renderScene()
 {
   int i;
   const bool lightLists = BZDB.isTrue("lightLists");
@@ -898,71 +768,72 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
   // update the required flag phases
   // (after the sceneNodes have been added, before the rendering)
-  FlagSceneNode::waveFlags();
+  float waveSpeed = 1.0f;
+  const World* world = World::getWorld();
+  if (world) {
+    static const fvec3 pos(0.0f, 0.0f, 0.0f);
+    fvec3 wind;
+    world->getWind(wind, pos);
+    const float speed = sqrtf((wind[0] * wind[0]) + (wind[1] * wind[1]));
+    waveSpeed = 1.0f + (speed * 0.1f);
+  }
+  FlagSceneNode::waveFlags(waveSpeed);
 
   // prepare transforms
   // note -- lights should not be positioned before view is set
   frustum.executeDeepProjection();
-  glPushMatrix();
   frustum.executeView();
 
   // turn sunlight on -- the ground needs it
   if (BZDBCache::lighting && sunOrMoonUp) {
     theSun.execute(SunLight, lightLists);
-    theSun.enableLight(SunLight, true);
+    OpenGLLight::enableLight(SunLight, true);
   }
 
   // set scissor
-  glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
-      window->getWidth(), window->getViewHeight());
+  const int windowYOffset = window->getHeight() - window->getViewHeight();
+  glScissor(window->getOriginX(), window->getOriginY() + windowYOffset,
+            window->getWidth(), window->getViewHeight());
 
-  if (useDepthComplexityOn) {
-    if (BZDBCache::stencilShadows) {
-      BZDB.set("stencilShadows", "0");
+  const bool origStencilShadows = BZDBCache::stencilShadows;
+  switch (specialMode) {
+    case DepthComplexity: {
+      if (BZDBCache::stencilShadows) {
+        BZDB.setBool("stencilShadows", false);
+      }
+      glEnable(GL_STENCIL_TEST);
+      if (!mirror || (clearZbuffer)) {
+        glClear(GL_STENCIL_BUFFER_BIT);
+      }
+      glStencilFunc(GL_ALWAYS, 0, 0xf);
+      glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
+      break;
     }
-    glEnable(GL_STENCIL_TEST);
-    if (!mirror || (clearZbuffer)) {
-      glClear(GL_STENCIL_BUFFER_BIT);
+    case HiddenLine: {
+      if (!mirror || (clearZbuffer)) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+      }
+      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+      break;
     }
-    glStencilFunc(GL_ALWAYS, 0, 0xf);
-    glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
-  }
-  if (useHiddenLineOn) {
-    if (!mirror || (clearZbuffer)) {
-      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+    case WireFrame: {
+      if (!mirror || (clearZbuffer)) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+      }
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      break;
     }
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  }
-  else if (useWireframeOn) {
-    if (!mirror || (clearZbuffer)) {
-      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+    default: {
+      // do nothing
+      break;
     }
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   }
 
   // prepare z buffer
-  if (BZDBCache::zbuffer) {
-    if (sameFrame && ++depthRange == numDepthRanges) {
-      depthRange = 0;
-    }
-    if (exposed || useHiddenLineOn || --depthRange < 0) {
-      depthRange = numDepthRanges - 1;
-      if (clearZbuffer) {
-	glClear(GL_DEPTH_BUFFER_BIT);
-      }
-      exposed = false;
-    }
-    if (!sameFrame && numDepthRanges != 1) {
-      if (useHiddenLineOn) {
-	glDepthRange(0.0, 1.0);
-      }
-      else {
-	GLclampd x_near = (GLclampd)depthRange * depthRangeSize;
-	glDepthRange(x_near, x_near + depthRangeSize);
-      }
-    }
+  if (BZDBCache::zbuffer && clearZbuffer) {
+    glClear(GL_DEPTH_BUFFER_BIT);
   }
 
   // draw start of background (no depth testing)
@@ -1013,18 +884,18 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
       glEnable(GL_DEPTH_TEST);
     }
 
-    if (useHiddenLineOn) {
+    if (specialMode == HiddenLine) {
       glEnable(GL_POLYGON_OFFSET_FILL);
     }
 
-    if (scene && BZDBCache::showCullingGrid) {
-      scene->drawCuller();
+    if (ROAM.isRoaming()) {
+      if (scene && BZDBCache::showCullingGrid) {
+        scene->drawCuller();
+      }
+      if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
+        world->drawCollisionGrid();
+      }
     }
-    const World* world = World::getWorld();
-    if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
-      world->drawCollisionGrid();
-    }
-
 
     ///////////////////////
     // THE BIG RENDERING //
@@ -1032,7 +903,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
     doRender();
 
 
-    if (useHiddenLineOn) {
+    if (specialMode == HiddenLine) {
       glDisable(GL_POLYGON_OFFSET_FILL);
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -1044,7 +915,7 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
 
     // shut off lights
     if (BZDBCache::lighting) {
-      theSun.enableLight(SunLight, false);
+      OpenGLLight::enableLight(SunLight, false);
       for (i = 0; i < dynamicLights; i++) {
 	OpenGLLight::enableLight(i + reservedLights, false);
       }
@@ -1062,75 +933,88 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
   }
 
   // back to original state
-  if (!useHiddenLineOn && useWireframeOn) {
+  if (specialMode == WireFrame) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
-  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
   // do depth complexity
-  if (useDepthComplexityOn) {
+  if (specialMode == DepthComplexity) {
     renderDepthComplexity();
+    BZDB.setBool("stencilShadows", origStencilShadows);
   }
 
   return;
 }
 
-void draw3rdPersonTarget ( SceneRenderer*  /* renderer */ )
+
+void draw3rdPersonTarget(SceneRenderer* /*renderer*/)
 {
-	LocalPlayer* myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
 
-	if ( myTank && thirdPersonVars.b3rdPerson )
-	{
-		const float *myTankPos = myTank->getPosition();
-		const float *myTankDir = myTank->getForward();
-		float muzzleHeight = myTank->getMuzzleHeight();
+  if (!myTank || !thirdPersonVars.b3rdPerson) {
+    return;
+  }
 
-		float radCon = 57.295779513082320876798154814105f;
+  const float *myTankPos   = myTank->getPosition();
+  const float *myTankDir   = myTank->getForward();
+  const float muzzleHeight = myTank->getMuzzleHeight();
 
-		glPushMatrix();
-		float distance = thirdPersonVars.nearTargetDistance;
-		glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
-		glRotatef(myTank->getAngle()*radCon,0,0,1);
+  const float radCon = 57.295779513082320876798154814105f;
 
-		float size = thirdPersonVars.nearTargetSize;
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_LIGHTING);
+  glPushMatrix();
+  float distance = thirdPersonVars.nearTargetDistance;
+  glTranslatef(myTankPos[0] + (myTankDir[0] * distance),
+               myTankPos[1] + (myTankDir[1] * distance),
+               myTankPos[2] + muzzleHeight);
+  glRotatef(myTank->getAngle() * radCon, 0.0f, 0.0f, 1.0f);
 
-		glColor4f(1,1,1,0.5f);
-		glBegin(GL_LINES);
-		glVertex3f(0,0,1.0f*size);
-		glVertex3f(0,0,0.25f*size);
-		glVertex3f(0,0,-1.0f*size);
-		glVertex3f(0,0,-0.25f*size);
-		glVertex3f(0,1.0f*size,0);
-		glVertex3f(0,0.25f*size,0);
-		glVertex3f(0,-1.0f*size,0);
-		glVertex3f(0,-0.25f*size,0);
-		glEnd();
-		glPopMatrix();
+  float size = thirdPersonVars.nearTargetSize;
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHTING);
 
-		glPushMatrix();
-		distance = thirdPersonVars.farTargetDistance;
-		glTranslatef(myTankPos[0]+(myTankDir[0]*distance),myTankPos[1]+(myTankDir[1]*distance),myTankPos[2]+muzzleHeight);
-		glRotatef(myTank->getAngle()*radCon,0,0,1);
-		size = thirdPersonVars.farTargetSize;
-		glColor4f(0.5f,0.5f,0.5f,0.25f);
-		glBegin(GL_LINES);
-		glVertex3f(0,0,1.0f*size);
-		glVertex3f(0,0,0.25f*size);
-		glVertex3f(0,0,-1.0f*size);
-		glVertex3f(0,0,-0.25f*size);
-		glVertex3f(0,1.0f*size,0);
-		glVertex3f(0,0.25f*size,0);
-		glVertex3f(0,-1.0f*size,0);
-		glVertex3f(0,-0.25f*size,0);
-		glEnd();
+  glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+  glBegin(GL_LINES);
+  glVertex3f(0.0f,  0.0f,   1.00f * size);
+  glVertex3f(0.0f,  0.0f,   0.25f * size);
+  glVertex3f(0.0f,  0.0f,  -1.00f * size);
+  glVertex3f(0.0f,  0.0f,  -0.25f * size);
+  glVertex3f(0.0f,   1.00f * size,  0.0f);
+  glVertex3f(0.0f,   0.25f * size,  0.0f);
+  glVertex3f(0.0f,  -1.00f * size,  0.0f);
+  glVertex3f(0.0f,  -0.25f * size,  0.0f);
 
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_LIGHTING);
-		glPopMatrix();
-	}
+  glEnd();
+  glPopMatrix();
+
+  glPushMatrix();
+  distance = thirdPersonVars.farTargetDistance;
+  glTranslatef(myTankPos[0] + (myTankDir[0] * distance),
+               myTankPos[1] + (myTankDir[1] * distance),
+               myTankPos[2] + muzzleHeight);
+  glRotatef(myTank->getAngle() * radCon, 0.0f, 0.0f, 1.0f);
+  size = thirdPersonVars.farTargetSize;
+  glColor4f(0.5f, 0.5f, 0.5f, 0.25f);
+  glBegin(GL_LINES);
+  glVertex3f(0.0f,  0.0f,   1.00f * size);
+  glVertex3f(0.0f,  0.0f,   0.25f * size);
+  glVertex3f(0.0f,  0.0f,  -1.00f * size);
+  glVertex3f(0.0f,  0.0f,  -0.25f * size);
+  glVertex3f(0.0f,   1.00f * size,  0.0f);
+  glVertex3f(0.0f,   0.25f * size,  0.0f);
+  glVertex3f(0.0f,  -1.00f * size,  0.0f);
+  glVertex3f(0.0f,  -0.25f * size,  0.0f);
+  glEnd();
+
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_LIGHTING);
+  glPopMatrix();
 }
+
 
 void SceneRenderer::doRender()
 {
@@ -1157,9 +1041,10 @@ void SceneRenderer::doRender()
   // off depth buffer updates for potentially transparent stuff.
   glDepthMask(GL_FALSE);
   orderedList.render();
+  drawLinkDebug();
   glDepthMask(GL_TRUE);
 
-  // render the ground tank tracks
+  // render the obstacle tank tracks
   if (!mirrorPass) {
     TrackMarks::renderObstacleTracks();
   }
@@ -1168,52 +1053,22 @@ void SceneRenderer::doRender()
 }
 
 
-void SceneRenderer::renderPreDimming()
+bool SceneRenderer::setupMapFog()
 {
-  float worldSize = BZDBCache::worldSize;
-
-  if (useDimming) {
-    const float density = dimDensity;
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-    glFogfv(GL_FOG_COLOR, dimnessColor);
-    glEnable(GL_FOG);
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
-  else if (teleporterProximity > 0.0f) {
-    const float density = (teleporterProximity > 0.75f) ? 1.0f
-			  : (teleporterProximity / 0.75f);
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-    glFogfv(GL_FOG_COLOR, blindnessColor);
-    glEnable(GL_FOG);
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
-
-  return;
-}
-
-
-static bool setupMapFog()
-{
-  std::string fogModeStr;
-  if (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none") 
-  {
+  const std::string modeStr = BZDB.get("_fogMode");
+  if (modeStr.empty() || (modeStr == "none")) {
     glDisable(GL_FOG);
     glHint(GL_FOG_HINT, GL_FASTEST);
     return false;
   }
 
-  GLenum fogMode = GL_EXP;
-  GLfloat fogDensity = 0.001f;
-  GLfloat fogStart = 0.5f * BZDBCache::worldSize;
-  GLfloat fogEnd = BZDBCache::worldSize;
-  GLfloat fogColor[4] = {0.25f, 0.25f, 0.25f, 0.25f};
+  GLenum  fogMode    = GL_EXP;
+  float   fogDensity = 0.001f;
+  float   fogStart   = BZDBCache::worldSize * 0.5f;
+  float   fogEnd     = BZDBCache::worldSize;
+  fvec4   fogColor(0.25f, 0.25f, 0.25f, 0.25f);
 
   // parse the values;
-  const std::string modeStr = BZDB.get("_fogMode");
   if (modeStr == "linear") {
     fogMode = GL_LINEAR;
   } else if (modeStr == "exp") {
@@ -1223,12 +1078,13 @@ static bool setupMapFog()
   } else {
     fogMode = GL_EXP;
   }
+
   fogDensity = BZDB.eval(StateDatabase::BZDB_FOGDENSITY);
-  fogStart = BZDB.eval(StateDatabase::BZDB_FOGSTART);
-  fogEnd = BZDB.eval(StateDatabase::BZDB_FOGEND);
+  fogStart   = BZDB.eval(StateDatabase::BZDB_FOGSTART);
+  fogEnd     = BZDB.eval(StateDatabase::BZDB_FOGEND);
   if (!parseColorString(BZDB.get(StateDatabase::BZDB_FOGCOLOR), fogColor)) {
-    fogColor[0] = fogColor[1] = fogColor[2] = 0.1f;
-    fogColor[3] = 0.0f; // has no effect
+    fogColor.r = fogColor.g = fogColor.b = 0.1f;
+    fogColor.a = 0.0f; // has no effect
   }
   if (BZDB.evalInt("fogEffect") >= 1) {
     glHint(GL_FOG_HINT, GL_NICEST);
@@ -1237,11 +1093,11 @@ static bool setupMapFog()
   }
 
   // setup GL fog
-  glFogi(GL_FOG_MODE, fogMode);
+  glFogi(GL_FOG_MODE,    fogMode);
   glFogf(GL_FOG_DENSITY, fogDensity);
-  glFogf(GL_FOG_START, fogStart);
-  glFogf(GL_FOG_END, fogEnd);
-  glFogfv(GL_FOG_COLOR, fogColor);
+  glFogf(GL_FOG_START,   fogStart);
+  glFogf(GL_FOG_END,     fogEnd);
+  glFogfv(GL_FOG_COLOR,  fogColor);
   glEnable(GL_FOG);
 
   return true;
@@ -1251,7 +1107,7 @@ static bool setupMapFog()
 void SceneRenderer::renderPostDimming()
 {
   float density = 0.0f;
-  const GLfloat* color = NULL;
+  const float* color = NULL;
   if (useDimming) {
     density = dimDensity;
     color = dimnessColor;
@@ -1286,15 +1142,15 @@ void SceneRenderer::renderPostDimming()
 
 void SceneRenderer::renderDepthComplexity()
 {
-  static const GLfloat depthColors[][3] = {
-    { 0.0f, 0.0f, 0.0f }, // black -- 0 times
-    { 0.5f, 0.0f, 1.0f }, // purple -- 1 time
-    { 0.0f, 0.0f, 1.0f }, // blue -- 2 times
-    { 0.0f, 1.0f, 1.0f }, // cyan -- 3 times
-    { 0.0f, 1.0f, 0.0f }, // green -- 4 times
-    { 1.0f, 1.0f, 0.0f }, // yellow -- 5 times
-    { 1.0f, 0.5f, 0.0f }, // orange -- 6 times
-    { 1.0f, 0.0f, 0.0f }  // red -- 7 or more
+  static const fvec4 depthColors[] = {
+    fvec4(0.0f, 0.0f, 0.0f, 1.0f), // black -- 0 times
+    fvec4(0.5f, 0.0f, 1.0f, 1.0f), // purple -- 1 time
+    fvec4(0.0f, 0.0f, 1.0f, 1.0f), // blue -- 2 times
+    fvec4(0.0f, 1.0f, 1.0f, 1.0f), // cyan -- 3 times
+    fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green -- 4 times
+    fvec4(1.0f, 1.0f, 0.0f, 1.0f), // yellow -- 5 times
+    fvec4(1.0f, 0.5f, 0.0f, 1.0f), // orange -- 6 times
+    fvec4(1.0f, 0.0f, 0.0f, 1.0f)  // red -- 7 or more
   };
   static const int numColors = countof(depthColors);
 
@@ -1316,90 +1172,99 @@ void SceneRenderer::renderDepthComplexity()
 void SceneRenderer::getRenderNodes()
 {
   // get the nodes to draw
-  if (!blank) {
-    // empty the render node lists in preparation for the next frame
-    OpenGLGState::clearLists();
-    orderedList.clear();
-    shadowList.clear();
-    flareLightList.clear();
-
-    // make the lists of render nodes sorted in optimal rendering order
-    if (scene) {
-      scene->addRenderNodes(*this);
-    }
-
-    // sort ordered list in reverse depth order
-    if (!inOrder) {
-      orderedList.sort(frustum.getEye());
-    }
-
-    // add the shadow rendering nodes
-    if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
-	&& (!mirror || !clearZbuffer)) {
-      scene->addShadowNodes(*this);
-    }
+  if (blank) {
+    return;
   }
+
+  // empty the render node lists in preparation for the next frame
+  OpenGLGState::clearLists();
+  orderedList.clear();
+  shadowList.clear();
+
+  // make the lists of render nodes sorted in optimal rendering order
+  if (scene) {
+    scene->addRenderNodes(*this, true, true);
+  }
+
+  DYNAMICWORLDTEXT.addRenderNodes(*this);
+
+  // sort ordered list in reverse depth order
+  if (!inOrder) {
+    orderedList.sort(frustum.getEye());
+  }
+
+  // add the shadow rendering nodes
+  if (scene && BZDBCache::shadows && (getSunDirection() != NULL) &&
+      (!mirror || !clearZbuffer) && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
+    setupShadowPlanes();
+    scene->addShadowNodes(*this, true, true);
+    DYNAMICWORLDTEXT.addShadowNodes(*this);
+  }
+
   return;
 }
 
 
 void SceneRenderer::getLights()
 {
+  if (sameFrame) {
+    return;
+  }
+
+  lightsCount = 0;
+  dynamicLights = 0;
+
   // get the important lights in the scene
-  if (!sameFrame) {
+  if (scene && !blank && BZDBCache::lighting) {
+    // get the potential dynamic lights
+    scene->addLights(*this);
 
-    lightsCount = 0;
-    dynamicLights = 0;
+    // calculate the light importances
+    int i;
+    for (i = 0; i < lightsCount; i++) {
+      lights[i]->calculateImportance(frustum);
+    }
 
-    if (scene && !blank && BZDBCache::lighting) {
-      // get the potential dynamic lights
-      scene->addLights(*this);
+    // sort by cull state, grounded state, and importance
+    qsort(lights, lightsCount, sizeof(OpenGLLight*), sortLights);
 
-      // calculate the light importances
-      int i;
-      for (i = 0; i < lightsCount; i++) {
-	lights[i]->calculateImportance(frustum);
-      }
-
-      // sort by cull state, grounded state, and importance
-      qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
-
-      // count the unculled valid lights and potential dynamic lights
-      // (negative values indicate culled lights)
-      int unculledCount = 0;
-      for (i = 0; i < lightsCount; i++) {
-	// any value below 0.0f is culled
-	if (lights[i]->getImportance() >= 0.0f) {
-	  unculledCount++;
-	  if (!lights[i]->getOnlyGround()) {
-	    dynamicLights++;
-	  }
-	}
-      }
-
-      // set the total light count to the number of unculled lights
-      lightsCount = unculledCount;
-
-      // limit the dynamic OpenGL light count
-      if (dynamicLights > maxLights) {
-	dynamicLights = maxLights;
+    // count the unculled valid lights and potential dynamic lights
+    // (negative values indicate culled lights)
+    int unculledCount = 0;
+    for (i = 0; i < lightsCount; i++) {
+      // any value below 0.0f is culled
+      if (lights[i]->getImportance() >= 0.0f) {
+        unculledCount++;
+        if (!lights[i]->getOnlyGround()) {
+          dynamicLights++;
+        }
       }
     }
+
+    // set the total light count to the number of unculled lights
+    lightsCount = unculledCount;
+
+    // limit the dynamic OpenGL light count
+    if (dynamicLights > maxLights) {
+      dynamicLights = maxLights;
+    }
   }
+
   return;
 }
 
 
-void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
+void SceneRenderer::disableLights(const Extents& exts)
 {
   // temporarily turn off non-applicable lights for big meshes
   for (int i = 0; i < dynamicLights; i++) {
-    const float* pos = lights[i]->getPosition();
+    const fvec4& pos = lights[i]->getPosition();
     const float dist = lights[i]->getMaxDist();
-    if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
-	(pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
-	(pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist))) {
-      lights[i]->enableLight(i + reservedLights, false);
+
+    if ((pos.x < (exts.mins.x - dist)) || (pos.x > (exts.maxs.x + dist)) ||
+	(pos.y < (exts.mins.y - dist)) || (pos.y > (exts.maxs.y + dist)) ||
+	(pos.z < (exts.mins.z - dist)) || (pos.z > (exts.maxs.z + dist))) {
+      OpenGLLight::enableLight(i + reservedLights, false);
     }
   }
   return;
@@ -1410,7 +1275,7 @@ void SceneRenderer::reenableLights()
 {
   // reenable the disabled lights
   for (int i = 0; i < dynamicLights; i++) {
-    lights[i]->enableLight(i + reservedLights, true);
+    OpenGLLight::enableLight(i + reservedLights, true);
   }
   return;
 }
@@ -1423,13 +1288,29 @@ void SceneRenderer::notifyStyleChange()
 }
 
 
+void SceneRenderer::updateNodeStyles()
+{
+  needStyleUpdate = false;
+  if (scene) {
+    scene->updateNodeStyles();
+  }
+  if (background) {
+    background->notifyStyleChange();
+  }
+  TrackMarks::notifyStyleChange();
+  DYNAMICWORLDTEXT.notifyStyleChange();
+  needStyleUpdate = false;
+  return;
+}
+
+
 const RenderNodeList& SceneRenderer::getShadowList() const
 {
   return shadowList;
 }
 
 
-const GLfloat* SceneRenderer::getSunDirection() const
+const fvec3* SceneRenderer::getSunDirection() const
 {
   if (background) {
     return background->getSunDirection();
@@ -1453,6 +1334,267 @@ int SceneRenderer::getFrameTriangleCount() const
 {
   return triangleCount;
 }
+
+
+int SceneRenderer::getShadowPlanes(const fvec4 **planes) const
+{
+  if (shadowPlaneCount <= 0) {
+    *planes = NULL;
+    return 0;
+  }
+  *planes = shadowPlanes;
+  return shadowPlaneCount;
+}
+
+
+void SceneRenderer::setupShadowPlanes()
+{
+  shadowPlaneCount = 0;
+
+  const fvec3* sunDirPtr = getSunDirection();
+  if (sunDirPtr == NULL) {
+    return; // no sun = no shadows, simple
+  }
+  const fvec3& sunDir = *sunDirPtr;
+
+  // FIXME: As a first cut, we'll assume that
+  //	    the frustum top points towards Z.
+  if (frustum.getUp().z < 0.999f) {
+    return; // tilted views are not supported
+  }
+
+  const fvec3& eye = frustum.getEye();
+
+  // we project the frustum onto the ground plane, and then
+  // use those lines to generate planes in the direction of
+  // the sun's light. that is the potential shadow volume.
+
+  // The frustum planes are as follows:
+  // 0: left
+  // 1: right
+  // 2: bottom
+  fvec4* planes = shadowPlanes;
+
+  shadowPlaneCount = 2;
+
+  fvec2 edge;
+
+  // left edge
+  edge = frustum.getSide(1).xy();
+  planes[0].x = (edge.x * sunDir.z);
+  planes[0].y = (edge.y * sunDir.z);
+  planes[0].z = -fvec2::dot(edge, sunDir.xy());
+  planes[0].w = -fvec2::dot(planes[0].xy(), eye.xy());
+  // right edge
+  edge = frustum.getSide(1).xy();
+  planes[1].x = (edge.x * sunDir.z);
+  planes[1].y = (edge.y * sunDir.z);
+  planes[1].z = -fvec2::dot(edge, sunDir.xy());
+  planes[1].w = -fvec2::dot(planes[1].xy(), eye.xy());
+  // only use the bottom edge if we have some height (about one jump's worth)
+  if (eye.z > 20.0f) {
+    // bottom edge
+    edge = frustum.getSide(3).xy();
+    planes[2].x = (edge.x * sunDir.z);
+    planes[2].y = (edge.y * sunDir.z);
+    planes[2].z = -fvec2::dot(edge, sunDir.xy());
+    const float slope = frustum.getSide(3).z /
+                        frustum.getSide(3).xy().length();
+    const fvec2 point = eye.xy() + (eye.z * slope * frustum.getSide(3).xy());
+    planes[2].w = -fvec2::dot(planes[2].xy(), point);
+    shadowPlaneCount++;
+  }
+}
+
+
+//============================================================================//
+//
+//  drawLinkDebug(), and friends
+//
+
+static void srcSTPPoint(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : (1.0f / scale);
+  glVertex3fv(center + (scale * dir));
+}
+
+
+static void srcSTPLine(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : (1.0f / scale);
+  glVertex3fv(center);
+  glVertex3fv(center + (scale * dir));
+}
+
+
+static void dstSTPPoint(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : scale;
+  glVertex3fv(center + (scale * dir));
+}
+
+
+static void dstSTPLine(const fvec3& center, const fvec3& dir, float scale)
+{
+  scale = (scale == 0.0f) ? 1.0f : scale;
+  glVertex3fv(center);
+  glVertex3fv(center + (scale * dir));
+}
+
+
+void SceneRenderer::drawLinkDebug() const
+{
+  static BZDB_string bzdbStr("debugLinkDraw");
+  const std::string str = bzdbStr;
+  if (str.empty() || (str == "0")) {
+    return;
+  }
+  if (BZDB.isTrue("_forbidDebug")) {
+    return;
+  }
+
+  const std::string::size_type npos = std::string::npos;
+  const bool drawSrc = (str.find('s') != npos) || (str == "1");
+  const bool drawDst = (str.find('d') != npos) || (str == "1");
+  const bool drawCon = (str.find('c') != npos) || (str == "1");
+  if (!drawSrc && !drawDst && !drawCon) {
+    return;
+  }
+
+  const float alpha = 0.3f;
+  const fvec4 colors[3] = {
+    fvec4(0.8f, 0.0f, 0.0f, alpha), // red
+    fvec4(0.0f, 0.6f, 0.0f, alpha), // green
+    fvec4(0.0f, 0.0f, 1.0f, alpha)  // blue
+  };
+  const fvec4 nrmlColor(0.5f, 0.5f, 0.5f, alpha);
+
+  OpenGLGState::resetState();
+
+  glShadeModel(GL_SMOOTH);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+  glEnable(GL_BLEND);
+  glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_POINT_SMOOTH);
+  glPointSize(4.0f);
+  glLineWidth(2.49f);
+
+  if (drawSrc) {
+    const LinkManager::FaceSet& linkSrcs = linkManager.getLinkSrcSet();
+    LinkManager::FaceSet::const_iterator srcIt;
+    for (srcIt = linkSrcs.begin(); srcIt != linkSrcs.end(); ++srcIt) {
+      const MeshFace* face = *srcIt;
+      const MeshFace::SpecialData* sd = face->getSpecialData();
+      const MeshFace::LinkGeometry& geo = sd->linkSrcGeo;
+      const fvec3& normal = face->getPlane().xyz();
+      glBegin(GL_LINES);
+      glColor4fv(nrmlColor); srcSTPLine(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); srcSTPLine(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); srcSTPLine(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); srcSTPLine(geo.center, geo.pDir, geo.pScale);
+      glEnd();
+      glBegin(GL_POINTS);
+      glColor4fv(nrmlColor); srcSTPPoint(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); srcSTPPoint(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); srcSTPPoint(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); srcSTPPoint(geo.center, geo.pDir, geo.pScale);
+      glColor4fv(colors[0]); glVertex3fv(geo.center);
+      glEnd();
+    }
+  }
+
+  if (drawDst) {
+    const LinkManager::FaceSet& linkDsts = linkManager.getLinkSrcSet();
+    LinkManager::FaceSet::const_iterator dstIt;
+    for (dstIt = linkDsts.begin(); dstIt != linkDsts.end(); ++dstIt) {
+      const MeshFace* face = *dstIt;
+      const MeshFace::SpecialData* sd = face->getSpecialData();
+      const MeshFace::LinkGeometry& geo = sd->linkDstGeo;
+      const fvec3& normal = face->getPlane().xyz();
+      glBegin(GL_LINES);
+      glColor4fv(nrmlColor); dstSTPLine(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); dstSTPLine(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); dstSTPLine(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); dstSTPLine(geo.center, geo.pDir, geo.pScale);
+      glEnd();
+      glBegin(GL_POINTS);
+      glColor4fv(nrmlColor); dstSTPPoint(geo.center, normal,   1.0f);
+      glColor4fv(colors[0]); dstSTPPoint(geo.center, geo.sDir, geo.sScale);
+      glColor4fv(colors[1]); dstSTPPoint(geo.center, geo.tDir, geo.tScale);
+      glColor4fv(colors[2]); dstSTPPoint(geo.center, geo.pDir, geo.pScale);
+      glColor4fv(colors[0]); glVertex3fv(geo.center);
+      glEnd();
+    }
+  }
+
+  glPointSize(10.0f);
+
+  if (drawCon) {
+    // load a basic 1D texture
+    const float texData[8] = {
+      1.0f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f
+    };
+    glEnable(GL_TEXTURE_1D);
+    glBindTexture(GL_TEXTURE_1D, 0);
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_ALPHA, countof(texData), 0,
+                 GL_ALPHA, GL_FLOAT, texData);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+    const float texDist = 10.0f;
+    const float texScale = (1.0f / texDist);
+    const float texPeriod = 0.5f;
+    const float phase = (float)fmod(GameTime::getStepTime(), (double)texPeriod);
+    const float offset = phase / texPeriod;
+
+    glBegin(GL_LINES);
+    const LinkManager::LinkMap& linkMap = linkManager.getLinkMap();
+    LinkManager::LinkMap::const_iterator mapIt;
+    for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
+      const MeshFace* src = mapIt->first;
+      std::set<const MeshFace*> doneFaces;
+      const LinkManager::IntVec& dstIDs = mapIt->second.dstIDs;
+      for (size_t d = 0; d < dstIDs.size(); d++) {
+        const MeshFace* dst = linkManager.getLinkDstFace(dstIDs[d]);
+        if (doneFaces.find(dst) == doneFaces.end()) {
+          doneFaces.insert(dst);
+          const fvec3 srcPos = src->calcCenter();
+          const fvec3 dstPos = dst->calcCenter();
+          const float len = (srcPos - dstPos).length();
+          const float txcd0 = offset;
+          const float txcd1 = offset + (len * texScale);
+          glColor4fv(colors[0]); glTexCoord1f(txcd0); glVertex3fv(srcPos);
+          glColor4fv(colors[1]); glTexCoord1f(txcd1); glVertex3fv(dstPos);
+          if (src == dst) {
+            glEnd();
+            glDisable(GL_TEXTURE_1D);
+            glBegin(GL_POINTS);
+            const fvec4 yellow(1.0f, 1.0f, 0.0f, alpha);
+            glColor4fv(yellow); glVertex3fv(src->calcCenter());
+            glEnd();
+            glEnable(GL_TEXTURE_1D);
+            glBegin(GL_LINES);
+          }
+        }
+      }
+    }
+    glEnd();
+
+    glDisable(GL_TEXTURE_1D);
+  }
+
+  glPointSize(1.0f);
+  glLineWidth(1.0f);
+  glDisable(GL_POINT_SMOOTH);
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glShadeModel(GL_FLAT);
+}
+
+
+//============================================================================//
 
 
 // Local Variables: ***

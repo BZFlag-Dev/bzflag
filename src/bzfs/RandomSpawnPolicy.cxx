@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,7 +33,8 @@ RandomSpawnPolicy::~RandomSpawnPolicy()
 {
 }
 
-void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, bool /*notNearEdges*/)
+void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
+                                    bool onGroundOnly, bool /*notNearEdges*/)
 {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
@@ -58,8 +59,8 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
      */
 
     TeamBases &teamBases = bases[t];
-    const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
-    base.getRandomPosition(pos[0], pos[1], pos[2]);
+    const TeamBase &base = teamBases.getRandomBase();
+    base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
 
   } else {
@@ -79,9 +80,9 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getPlayerSpawnPoint(&pi, pos)) {
-	pos[0] = ((float)bzfrand() - 0.5f) * size;
-	pos[1] = ((float)bzfrand() - 0.5f) * size;
-	pos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
+	pos.x = ((float)bzfrand() - 0.5f) * size;
+	pos.y = ((float)bzfrand() - 0.5f) * size;
+	pos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 

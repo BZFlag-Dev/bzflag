@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -281,9 +281,9 @@ bool			XDisplay::getKey(const XEvent& xevent,
   return true;
 }
 
-bool			XDisplay::doSetResolution(int modeIndex)
+bool			XDisplay::doSetResolution(int xModeIndex)
 {
-  return mode->set(modeIndex);
+  return mode->set(xModeIndex);
 }
 
 bool			XDisplay::doSetDefaultResolution()

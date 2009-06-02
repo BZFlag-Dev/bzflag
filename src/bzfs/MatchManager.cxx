@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -77,7 +77,7 @@ MatchManager* Singleton<MatchManager>::_instance = (MatchManager*)0;
  * default constructor, protected because of singleton
  */
 MatchManager::MatchManager() : Singleton<MatchManager>()
-{	
+{
   // start future BZDB vars
   _matchPregameTime = 60;
   _matchDuration = 1800;
@@ -203,15 +203,15 @@ void MatchManager::substitute (int /* playerID */, bz_APIStringList * /* params 
 }
 
 void MatchManager::doPregame()
-{			
+{
   if (preGameTimer.inProgress()) {
     if (preGameTimer.doCountdown())
       bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%d ...", preGameTimer.getCounter());
   } else {
-    matchState = eOn;	
+    matchState = eOn;
     endTimer.setCounter((int) _matchEndCountdown);
     endTimer.doReset();
-    startTime = currentTime;	
+    startTime = currentTime;
 
     bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "The match started");
   }
@@ -222,10 +222,10 @@ void MatchManager::doOngame()
 
   // check if someone unpaused the match, if so resume it
   if (paused && currentTime >= resumeTime && resumeTime != -1) {
-    duration += currentTime - pauseTime; 
+    duration += currentTime - pauseTime;
     paused = false;
 
-    bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Match resumed after %.0f seconds", currentTime - pauseTime); 
+    bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Match resumed after %.0f seconds", currentTime - pauseTime);
 
     resumeTime = -1;
     pauseTime = -1;
@@ -258,7 +258,7 @@ void MatchManager::doPostgame()
 
 void MatchManager::doReportgame()
 {
-  bz_fileReport("report scores to the report channel");
+  bz_fileReport("report scores to the report channel","MatchMaker");
 }
 
 void MatchManager::disablePlayerSpawn()
@@ -268,9 +268,9 @@ void MatchManager::disablePlayerSpawn()
   for (unsigned int i = 0; i < players->size(); i++) {
     if (bz_getPlayerTeam(players->get(i)) != eObservers) {
       if (bz_setPlayerSpawnable(players->get(i), false))
-	bz_debugMessagef(2, "DEBUG :: no spawn success :: player => %d ", players->get(i)); 
+	bz_debugMessagef(2, "DEBUG :: no spawn success :: player => %d ", players->get(i));
       else
-	bz_debugMessagef(2, "DEBUG :: no spawn failed :: player => %d ", players->get(i)); 
+	bz_debugMessagef(2, "DEBUG :: no spawn failed :: player => %d ", players->get(i));
     }
   }
 
@@ -312,10 +312,11 @@ void MatchManager::process (bz_EventData *eventData)
   }
 
 
-  if (eventData->eventType == bz_eReportFiledEvent) {
+  if (eventData->eventType == bz_eReportFiledEvent)
+  {
     bz_ReportFiledEventData_V1 * data = (bz_ReportFiledEventData_V1 *) eventData;
-    bz_debugMessagef(2, "DEBUG :: version => %d reporterID => %d :: message => %s :: time => %.0f", 
-		     data->version, data->playerID, data->message.c_str(), data->eventTime);
+    bz_debugMessagef(2, "DEBUG :: version => %d reporter => %s :: message => %s :: time => %.0f",
+		     data->version, data->from.c_str(), data->message.c_str(), data->eventTime);
   }
 
 }
@@ -339,7 +340,7 @@ bool MatchManager::handle (int playerID, bz_ApiString command, bz_ApiString /* m
 	  break;
 
 	case eOn:
-	  if (!paused)	
+	  if (!paused)
 	    msg = TextUtils::format("Match is in progress, still %.0f seconds to go", (startTime + duration) - now);
 	  else
 	    msg = "Match is paused";
@@ -402,7 +403,7 @@ bool MatchManager::handle (int playerID, bz_ApiString command, bz_ApiString /* m
   return false;
 }
 
-/** 
+/**
  * Init the MatchManager. Should be hooked into bzfs.cxx at some point,
  * but not yet as this is far from finished.
  */

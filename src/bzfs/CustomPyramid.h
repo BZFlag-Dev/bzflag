@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,11 +44,12 @@ class CustomPyramid : public WorldFileObstacle {
 
     bool flipz;
 
-    int phydrv[FaceCount];
-    float texsize[FaceCount][2];
-    float texoffset[FaceCount][2];
-    unsigned char drivethrough[FaceCount];
-    unsigned char shootthrough[FaceCount];
+    int   phyDrvs[FaceCount];
+    float texSizes[FaceCount][2];
+    float texOffsets[FaceCount][2];
+    unsigned char driveThroughs[FaceCount];
+    unsigned char shootThroughs[FaceCount];
+    bool          ricochets[FaceCount];
     BzMaterial materials[FaceCount];
 
     static const char* faceNames[FaceCount];
@@ -57,7 +58,7 @@ class CustomPyramid : public WorldFileObstacle {
 
 #endif  /* __CUSTOM_PYRAMID_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2006 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -40,7 +40,7 @@ std::string PluginConfig::item(const std::string &section, const std::string &ke
   std::string s = section,k = key;
   makelower(s);
   makelower(k);
-  
+
   return sections[s][k];
 }
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,15 +16,20 @@
 // the common header
 #include "common.h"
 
-/* common interface headers */
+// common headers
 #include "BzMaterial.h"
+#include "vectors.h"
 
 
 class Obstacle;
+class WorldText;
 class GroupInstance;
 
 
 class ObstacleModifier {
+  public:
+    typedef std::map<std::string, std::string> TextSwapMap;
+
   public:
     ObstacleModifier();
     ObstacleModifier(const ObstacleModifier& obsMod,
@@ -33,6 +38,7 @@ class ObstacleModifier {
     void init();
 
     void execute(Obstacle* obstacle) const;
+    void execute(WorldText* text) const;
 
     void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
 
@@ -40,15 +46,18 @@ class ObstacleModifier {
     bool modifyTeam; // only for bases
     int team;
     bool modifyColor; // modify by tinting
-    float tint[4];
+    fvec4 tint;
     bool modifyPhysicsDriver; // only replaces valid physics drivers
     int phydrv;
     bool modifyMaterial; // swaps the whole thing
     const BzMaterial* material;
+
     MaterialMap matMap;
+    TextSwapMap textMap;
 
     unsigned char driveThrough;
     unsigned char shootThrough;
+    bool          ricochet;
 };
 
 

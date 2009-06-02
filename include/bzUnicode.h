@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,7 +32,7 @@ public:
     };
 
     /**
-     * Pre-increment operator.  Reads the next unicode character and sets 
+     * Pre-increment operator.  Reads the next unicode character and sets
      * the state appropriately.
      * Note - not protected against overruns.
      */
@@ -65,7 +65,7 @@ public:
      * Assignment operator for const char*s.  Reset the iterator to
      * the location pointed to.
      */
-    inline void operator=(const char* value) 
+    inline void operator=(const char* value)
     {
       curPos = nextPos = value;
       ++(*this);
@@ -81,7 +81,7 @@ public:
 
     /**
      * Buffer-fetching getter.  You can use this to retreive the buffer starting
-     * at the currently-iterated character for functions which require a unicode 
+     * at the currently-iterated character for functions which require a unicode
      * string as input.
      */
     inline const char* getBufferFromHere() const { return curPos; }
@@ -101,7 +101,7 @@ public:
       return ret;
     }
 
-    virtual ~UTF8StringItr() {};     
+    virtual ~UTF8StringItr() {};
 
 private:
     /**
@@ -131,7 +131,7 @@ private:
     static const unsigned long lowSurrogateBase;
 };
 
-/// converts a single wide character to a c-style string containing a UTF8 
+/// converts a single wide character to a c-style string containing a UTF8
 /// representation of the same character.
 class bzUTF8Char {
 public:

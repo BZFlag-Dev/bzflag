@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #include "plugin_HTTP.h"
 #include "plugin_utils.h"
@@ -23,6 +23,17 @@
 BZFSHTTP::BZFSHTTP()
 {
   bz_loadPlugin("HTTPServer",NULL);
+
+  serviceMimeResources = false;
+  resourceRootPath = "./";
+
+  mimeTypes[std::string("htm")]= std::string("text/html");
+  mimeTypes[std::string("html")]= std::string("text/html");
+  mimeTypes[std::string("txt")]= std::string("text/plain");
+  mimeTypes[std::string("css")]= std::string("text/css");
+  mimeTypes[std::string("png")]= std::string("image/png");
+  mimeTypes[std::string("ico")]= std::string("image/vnd.microsoft.icon");
+  mimeTypes[std::string("*")]= std::string("application/octet-stream");
 }
 
 void BZFSHTTP::registerVDir ( void )
@@ -35,6 +46,12 @@ BZFSHTTP::~BZFSHTTP()
 {
   bz_callCallback("RemoveHTTPDVDir",this);
 }
+
+void BZFSHTTP::addMimeType ( const std::string &extension, const std::string &type )
+{
+  mimeTypes[extension] = type;
+}
+
 std::string BZFSHTTP::getBaseURL ( void )
 {
   std::string URL = "http://";
@@ -53,6 +70,50 @@ std::string BZFSHTTP::getBaseURL ( void )
   return URL;
 }
 
+bool BZFSHTTP::handleRequest(const HTTPRequest &request, HTTPReply &reply)
+{
+  if (serviceMimeResources && resourceRootPath.size() && mimeTypes.size())
+  {
+    // parse out the resource and see if we know what it is
+    std::string ext;
+    tolower(getFileExtension(request.resource),ext);
+
+    if (ext.size())
+    {
+      if ( mimeTypes.find(ext) != mimeTypes.end() )
+      {
+	// it's one we do, try and find it
+	std::string filepath = concatPaths(resourceRootPath.c_str(),request.resource.c_str());
+
+	FILE *fp = fopen(filepath.c_str(),"rb");
+	if (fp)
+	{
+	  char buffer[1024];
+	  bool done = false;
+
+	  while (!done)
+	  {
+	    size_t read = fread(buffer,1,1024,fp);
+	    if (read)
+	      reply.addBody(buffer,read);
+
+	    if (read != 1024)
+	      done = true;
+	  }
+	  fclose(fp);
+
+	  reply.docType = HTTPReply::eOther;
+	  reply.otherMimeType = mimeTypes[ext];
+	  reply.returnCode = HTTPReply::e200OK;
+	  return true;
+	}
+      }
+    }
+  }
+
+  return generatePage(request,reply);
+}
+
 bool HTTPRequest::getParam ( const char* param, std::string &val ) const
 {
   val = "";
@@ -68,7 +129,7 @@ bool HTTPRequest::getParam ( const char* param, std::string &val ) const
     if (itr->second.size())
       val = itr->second[itr->second.size()-1];
     return true;
-  } 
+  }
   return false;
 }
 
@@ -85,7 +146,7 @@ bool HTTPRequest::getParam ( const std::string &param, std::string &val ) const
     if (itr->second.size())
       val = itr->second[itr->second.size()-1];
     return true;
-  } 
+  }
   return false;
 }
 
@@ -103,7 +164,7 @@ bool HTTPRequest::getParam ( const char* param, std::vector<std::string> &val ) 
   {
     val = itr->second;
     return true;
-  } 
+  }
   return false;
 }
 
@@ -119,10 +180,63 @@ bool HTTPRequest::getParam ( const std::string &param, std::vector<std::string> 
   {
     val = itr->second;
     return true;
-  } 
+  }
   return false;
 }
 
+bool HTTPRequest::getParam(const char* param) const
+{
+  if (!param)
+    return false;
+
+  std::string p;
+  tolower(param,p);
+
+  return parameters.find(p) != parameters.end();
+}
+
+bool HTTPRequest::getParam(const std::string &param) const
+{
+  std::string p;
+  tolower(param,p);
+
+  return parameters.find(p) != parameters.end();
+}
+
+size_t HTTPReply::addBody ( const char* data, size_t size )
+{
+  if (!bodyData)
+  {
+    bodyData = (char*)malloc(size);
+    memcpy(bodyData,data,size);
+    bodySize = size;
+  }
+  else
+  {
+    char *t = (char*)malloc(bodySize+size);
+    memcpy(t,bodyData,bodySize);
+    memcpy(t+bodySize,data,size);
+    bodySize += size;
+    free(bodyData);
+    bodyData = t;
+  }
+
+  return bodySize;
+}
+size_t HTTPReply::getBodySize ( void )
+{
+  if (bodyData)
+   return bodySize;
+  else return body.size();
+}
+
+const char * HTTPReply::getBody ( void )
+{
+  if (bodyData)
+    return bodyData;
+  else
+    return body.c_str();
+}
 
 class PendingTokenTask : public bz_BaseURLHandler
 {
@@ -219,6 +333,24 @@ void BZFSHTTPAuth::TSURLCallback::keyCallback(std::string &data, const std::stri
     data += URL;
 }
 
+bool ipIsLocal ( const std::string &ip )
+{
+  std::vector<std::string> v = tokenize(ip,std::string("."),0,false);
+  if (v.size()< 4)
+    return true;
+
+  if (v[0] == "127" || v[0] == "10")
+    return true;
+
+  if (v[0] == "192" && v[1]== "168")
+    return true;
+
+  if (v[0] == "172" && ( (atoi(v[1].c_str()) >= 16)  && (atoi(v[1].c_str()) <= 31) ) )
+    return true;
+
+  return false;
+}
+
 bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
 {
   // build up the groups list
@@ -243,7 +375,12 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
       else
 	groupsWithPerm = findGroupsWithPerm(perm);
 
-      groups.insert(groups.end(),groupsWithPerm.begin(),groupsWithPerm.end());
+      // only add groups that are not in the list yet
+      for (size_t g = 0; g < groupsWithPerm.size(); g++)
+      {
+	if (std::find(groups.begin(),groups.end(),groupsWithPerm[g]) == groups.end())
+	  groups.push_back(groupsWithPerm[g]);
+      }
     }
     itr++;
   }
@@ -258,8 +395,9 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
   }
   task->requestID = request.requestID;
   task->URL = "http://my.bzflag.org/db/";
-  task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user) + "@";
-  task->URL += request.ip;
+  task->URL += "?action=CHECKTOKENS&checktokens=" + url_encode(user);
+  if (!ipIsLocal(request.ip))
+    task->URL += "@" + request.ip;
   task->URL += "%3D" + token;
 
   task->URL += "&groups=";
@@ -276,7 +414,7 @@ bool BZFSHTTPAuth::verifyToken ( const HTTPRequest &request, HTTPReply &reply )
   return false;
 }
 
-bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply )
+bool BZFSHTTPAuth::generatePage ( const HTTPRequest &request, HTTPReply &reply )
 {
   if (!authPage.size())
     setupAuth();
@@ -284,6 +422,7 @@ bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply 
   flushTasks();
   int sessionID = request.sessionID;
   reply.docType = HTTPReply::eHTML;
+  reply.returnCode = HTTPReply::e200OK;
 
   std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
   if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
@@ -320,6 +459,8 @@ bool BZFSHTTPAuth::handleRequest ( const HTTPRequest &request, HTTPReply &reply 
 	{
 	  info.username = pendingItr->second->groups[0];
 	  info.level = getLevelFromGroups(pendingItr->second->groups);
+	  info.groups = pendingItr->second->groups;
+	  info.groups.erase(info.groups.begin()); // pull off the first 'group' because it's a name
 	}
 	if (info.level >= 0)
 	  authedSessions[request.sessionID] = info;
@@ -379,6 +520,38 @@ const char* BZFSHTTPAuth::getSessionUser ( int sessionID )
 
   return NULL;
 }
+
+size_t BZFSHTTPAuth::getSessionGroups ( int sessionID, std::vector<std::string> &groups )
+{
+  groups.clear();
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+
+  if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+    groups = authItr->second.groups;
+
+  return groups.size();
+}
+
+bool BZFSHTTPAuth::getSessionPermision ( int sessionID, const char *perm )
+{
+  if (!perm)
+    return false;
+
+  std::map<int,AuthInfo>::iterator authItr = authedSessions.find(sessionID);
+
+  if ( authItr != authedSessions.end() )  // it is one of our authorized users, be nice and forward the request to our child
+  {
+    std::vector<std::string> &groups = authItr->second.groups;
+    for (size_t i = 0; i < groups.size(); i++)
+    {
+      if (bz_groupAllowPerm(groups[i].c_str(),perm))
+	return true;
+    }
+  }
+
+  return false;
+}
+
 
 bool BZFSHTTPAuth::invalidateSession ( int sessionID )
 {
@@ -453,7 +626,7 @@ int BZFSHTTPAuth::getLevelFromGroups (const std::vector<std::string> &groups )
 
       // check the input groups, and see if any of the them are in the groups with this perm
       for (size_t i = 1; i < groups.size(); i++ )
-      {  
+      {
 	if (stringInList(groups[i],groupsWithPerm))
 	  return itr->first;
       }
@@ -482,9 +655,66 @@ void BZFSHTTPAuth::flushTasks ( void )
   }
 }
 
-
-Templateiser::Templateiser()
+bool TemplateMetaData::exists ( const char* key )
 {
+  if (!key)
+    return false;
+
+  std::string keyName = makeupper(key);
+
+  return data.find(keyName) != data.end();
+}
+
+std::vector<std::string> TemplateMetaData::get ( const char* key )
+{
+  std::vector<std::string> vals;
+
+  if (key)
+  {
+    std::string keyName = makeupper(key);
+
+    if ( data.find(keyName) != data.end())
+      vals = data[keyName];
+  }
+
+  return vals;
+}
+
+std::string TemplateMetaData::getFirst ( const char* key )
+{
+  std::string val;
+
+  if (key)
+  {
+    std::string keyName = makeupper(key);
+
+    if ( data.find(keyName) != data.end())
+    {
+      if (data[keyName].size())
+	val = data[keyName][0];
+    }
+  }
+  return val;
+}
+
+void TemplateMetaData::add ( const char* key, const char* val )
+{
+  if (!key || !val)
+    return;
+
+  std::string keyName = makeupper(key);
+
+  if (!exists(key))
+  {
+    std::vector<std::string> t;
+    data[keyName] = t;
+  }
+  data[keyName].push_back(std::string(val));
+}
+
+Templateiser::Templateiser( Templateiser *t )
+{
+  parent = t;
   startTimer();
   setDefaultTokens();
 }
@@ -668,37 +898,52 @@ bool Templateiser::callKey ( std::string &data, const std::string &key )
     return true;
   }
 
+  if (parent)
+    return parent->callKey(data,key);
+
   return false;
 }
 
-bool Templateiser::callLoop ( const std::string &key )
+bool Templateiser::callLoop ( const std::string &key, const std::string &param )
 {
   std::string lowerKey;
   tolower(key,lowerKey);
 
   ClassMap::iterator itr = loopClassCallbacks.find(lowerKey);
   if (itr != loopClassCallbacks.end())
-    return itr->second->loopCallback(key);
+  {
+    itr->second->templateParam = param;
+   return itr->second->loopCallback(key);
+  }
 
   TestMap::iterator itr2 = loopFuncCallbacks.find(lowerKey);
   if (itr2 != loopFuncCallbacks.end())
     return (itr2->second)(key);
 
+  if (parent)
+    return parent->callLoop(key,param);
+
   return false;
 }
 
-bool Templateiser::callIF ( const std::string &key )
+bool Templateiser::callIF ( const std::string &key, const std::string &param )
 {
   std::string lowerKey;
   tolower(key,lowerKey);
 
   ClassMap::iterator itr = ifClassCallbacks.find(lowerKey);
   if (itr != ifClassCallbacks.end())
+  {
+    itr->second->templateParam = param;
     return itr->second->ifCallback(key);
+  }
 
   TestMap::iterator itr2 = ifFuncCallbacks.find(lowerKey);
   if (itr2 != ifFuncCallbacks.end())
     return (itr2->second)(key);
+
+  if (parent)
+    return parent->callIF(key,param);
 
   return false;
 }
@@ -726,7 +971,6 @@ bool Templateiser::processTemplateFile ( std::string &code, const char *file )
   }
   return false;
 }
-
 
 void Templateiser::processTemplate ( std::string &code, const std::string &templateText )
 {
@@ -758,6 +1002,7 @@ void Templateiser::processTemplate ( std::string &code, const std::string &templ
 	  processIF(code,++templateItr,templateText);
 	  break;
 	case '-':
+	case '#': // treat metadata as comments when parsing
 	  processComment(code,++templateItr,templateText);
 	  break;
 	case '!':
@@ -768,6 +1013,55 @@ void Templateiser::processTemplate ( std::string &code, const std::string &templ
     }
   }
 }
+
+void Templateiser::getTemplateMetaData(TemplateMetaData &metadata, const std::string &templateText)
+{
+  size_t pos = 0;
+  while ( pos < templateText.size() && pos != std::string::npos)
+  {
+    pos = find_first_substr(templateText,std::string("[#"),pos);
+    if ( pos < templateText.size() && pos != std::string::npos )
+    {
+      size_t start = pos;
+
+      pos = find_first_substr(templateText,std::string("]"),pos);
+      if ( pos < templateText.size() && pos != std::string::npos )
+      {
+	std::string dataKey = getStringRange(templateText,start+2,pos-1);
+
+	std::vector<std::string> chunks = tokenize(dataKey,std::string(":"),0,true);
+	if (chunks.size() > 1)
+	  metadata.add(chunks[0],chunks[1]);
+      }
+    }
+  }
+}
+
+bool Templateiser::getTemplateFileMetaData(TemplateMetaData &metadata, const char *file)
+{
+  if (!file)
+    return false;
+
+  // find the file
+  for (size_t i = 0; i < filePaths.size(); i++ )
+  {
+    std::string path = filePaths[i] + file;
+    FILE *fp = fopen(getPathForOS(path).c_str(),"rt");
+    std::string val;
+    if (fp)
+    {
+      char c;
+      while(fscanf(fp,"%c",&c) == 1)
+	val += c;
+      fclose(fp);
+
+      getTemplateMetaData(metadata,val);
+      return true;
+    }
+  }
+  return false;
+}
+
 
 void Templateiser::setPluginName ( const char* name, const char* URL )
 {
@@ -813,7 +1107,7 @@ void Templateiser::keyCallback ( std::string &data, const std::string &key )
   } else if (key == "hostname") {
     data = bz_getPublicAddr().c_str();
     if (!data.size())
-      data = format("localhost:%d",bz_getPublicPort());;
+      data = format("localhost:%d",bz_getPublicPort());
   } else if (key == "pagetime") {
     data = format("%.3f",bz_getCurrentTime()-startTime);
   } else if (key == "baseurl") {
@@ -928,7 +1222,7 @@ void Templateiser::replaceVar ( std::string &code, std::string::const_iterator &
 
 void Templateiser::processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str )
 {
-  std::string key;
+  std::string key,loopSection,emptySection,param;
 
   // read the rest of the key
   std::string::const_iterator itr = readKey(key,inItr,str);
@@ -944,14 +1238,14 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   makelower(commandParts[0]);
   makelower(commandParts[1]);
 
+  if (commandParts.size() > 2)
+    param = commandParts[2];
+
   if ( commandParts[0] != "start" )
   {
     inItr = itr;
     return;
   }
-
-  // now get the code for the loop section section
-  std::string loopSection,emptySection;
 
   std::vector<std::string> checkKeys;
   checkKeys.push_back(format("*end %s",commandParts[1].c_str()));
@@ -971,13 +1265,13 @@ void Templateiser::processLoop ( std::string &code, std::string::const_iterator 
   checkKeys.push_back(format("*empty %s",commandParts[1].c_str()));
   itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
 
-  if (callLoop(commandParts[1]))
+  if (callLoop(commandParts[1],param))
   {
     std::string newCode;
     processTemplate(newCode,loopSection);
     code += newCode;
 
-    while(callLoop(commandParts[1]))
+    while(callLoop(commandParts[1],param))
     {
       newCode = "";
       processTemplate(newCode,loopSection);
@@ -1015,6 +1309,10 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
     return;
   }
 
+  std::string param;
+  if (commandParts.size() > 2)
+    param = commandParts[2];
+
   // now get the code for the next section
   std::string trueSection,elseSection;
 
@@ -1037,7 +1335,7 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   }
 
   // test the if, stuff that dosn't exist is false
-  if (callIF(commandParts[1])) {
+  if (callIF(commandParts[1],param)) {
     std::string newCode;
     processTemplate(newCode,trueSection);
     code += newCode;
@@ -1048,7 +1346,6 @@ void Templateiser::processIF ( std::string &code, std::string::const_iterator &i
   }
   inItr = itr;
 }
-
 
 // Local Variables: ***
 // mode: C++ ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,28 +46,28 @@ public:
     turnUpdate,
     updateCount
   } variableUpdates;
-  
+
   void            restart(const double* pos, double azimuth);
   void            explodeTank();
-  
+
   bool            isSteadyState();
-  
+
   bool            pendingUpdates[updateCount];
-  
+
   double          lastTickAt;
   double          tickDuration;
   double           speed, nextSpeed;
   double           turnRate, nextTurnRate;
   bool            shoot;
-  
+
   double          distanceRemaining, nextDistance;
   bool            distanceForward, turnLeft;
   double          turnRemaining, nextTurn;
-  
+
   bool            hasStopped;
   double          stoppedDistance, stoppedTurn;
   bool            stoppedForward, stoppedLeft;
-  
+
 private:
   void            doUpdate(float dt);
   void            doUpdateMotion(float dt);

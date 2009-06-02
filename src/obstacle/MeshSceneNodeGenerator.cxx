@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -83,7 +83,7 @@ static bool translucentMaterial(const BzMaterial* mat)
   if (mat->getTextureCount() > 0) {
     const std::string& texname = mat->getTextureLocal(0);
     if (texname.size() > 0) {
-      faceTexture = tm.getTextureID(texname.c_str());
+      faceTexture = tm.getTextureID(texname);
       if (faceTexture >= 0) {
 	const ImageInfo& imageInfo = tm.getInfo(faceTexture);
 	if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
@@ -120,11 +120,11 @@ static bool translucentMaterial(const BzMaterial* mat)
 
 static bool groundClippedFace(const MeshFace* face)
 {
-  const float* plane = face->getPlane();
-  if (plane[2] < -0.9f) {
+  const fvec4& plane = face->getPlane();
+  if (plane.z < -0.9f) {
     // plane is facing downwards
     const Extents& exts = face->getExtents();
-    if (exts.maxs[2] < 0.001) {
+    if (exts.maxs.z < 0.001) {
       // plane is on or below the ground, ditch it
       return true;
     }
@@ -339,9 +339,9 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
 
   // vertices
   const int vertexCount = face->getVertexCount();
-  GLfloat3Array vertices(vertexCount);
+  fvec3Array vertices(vertexCount);
   for (i = 0; i < vertexCount; i++) {
-    memcpy (vertices[i], face->getVertex(i), sizeof(float[3]));
+    vertices[i] = face->getVertex(i);
   }
 
   // normals
@@ -349,16 +349,16 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   if (face->useNormals()) {
     normalCount = vertexCount;
   }
-  GLfloat3Array normals(normalCount);
+  fvec3Array normals(normalCount);
   for (i = 0; i < normalCount; i++) {
-    memcpy (normals[i], face->getNormal(i), sizeof(float[3]));
+    normals[i] = face->getNormal(i);
   }
 
   // texcoords
-  GLfloat2Array texcoords(vertexCount);
+  fvec2Array texcoords(vertexCount);
   if (face->useTexcoords()) {
     for (i = 0; i < vertexCount; i++) {
-      memcpy (texcoords[i], face->getTexcoord(i), sizeof(float[2]));
+      texcoords[i] = face->getTexcoord(i);
     }
   } else {
     makeTexcoords (face->getPlane(), vertices, texcoords);
@@ -368,7 +368,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   bool noShadow = false;
   const BzMaterial* bzmat = face->getMaterial();
   if (bzmat != NULL) {
-    noRadar = bzmat->getNoRadar();
+    noRadar  = bzmat->getNoRadar();
     noShadow = bzmat->getNoShadow();
   }
   MeshPolySceneNode* node =
@@ -396,7 +396,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   if (userTexture) {
     const std::string& texname = mat->getTextureLocal(0);
     if (texname.size() > 0) {
-      faceTexture = tm.getTextureID(texname.c_str());
+      faceTexture = tm.getTextureID(texname);
     }
     if (faceTexture >= 0) {
       gotSpecifiedTexture = true;
@@ -413,10 +413,11 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   //       could use the ambient color for non-lighted,and diffuse
   //       for lighted
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
-  const GLfloat* dc = NULL;
+  const fvec4* dc = NULL;
   if (dyncol != NULL) {
-    dc = dyncol->getColor();
+    dc = &dyncol->getColor();
   }
+  node->setOrder(mat->getOrder());
   node->setDynamicColor(dc);
   node->setColor(mat->getDiffuse()); // redundant, see below
   node->setModulateColor(mat->getDiffuse());
@@ -434,7 +435,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   const int texMatId = mat->getTextureMatrix(0);
   const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
   if (texmat != NULL) {
-    const GLfloat* matrix = texmat->getMatrix();
+    const float* matrix = texmat->getMatrix();
     if (matrix != NULL) {
       node->setTextureMatrix(matrix);
     }
@@ -454,7 +455,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   // one of these colors is used to set the stipple value.
   // we'll just set it to the middle value.
   if (dyncol) {
-    const float color[4] = { 1.0f, 1.0f, 1.0f, 0.5f }; // alpha value != 1.0f
+    const fvec4 color(1.0f, 1.0f, 1.0f, 0.5f); // alpha value != 1.0f
     if (dyncol->canHaveAlpha()) {
       node->setColor(color); // trigger transparency check
       node->setModulateColor(color);
@@ -469,32 +470,15 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 }
 
 
-bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
-					   const GLfloat3Array& vertices,
-					   GLfloat2Array& texcoords)
+bool MeshSceneNodeGenerator::makeTexcoords(const fvec4& plane,
+					   const fvec3Array& vertices,
+					   fvec2Array& texcoords)
 {
-  float x[3], y[3];
+  fvec3 x = fvec3(vertices[1]) - fvec3(vertices[0]);
+  fvec3 y = fvec3::cross(plane.xyz(), x);
 
-  vec3sub (x, vertices[1], vertices[0]);
-  vec3cross (y, plane, x);
-
-  float len = vec3dot(x, x);
-  if (len > 0.0f) {
-    len = 1.0f / sqrtf(len);
-    x[0] = x[0] * len;
-    x[1] = x[1] * len;
-    x[2] = x[2] * len;
-  } else {
-    return false;
-  }
-
-  len = vec3dot(y, y);
-  if (len > 0.0f) {
-    len = 1.0f / sqrtf(len);
-    y[0] = y[0] * len;
-    y[1] = y[1] * len;
-    y[2] = y[2] * len;
-  } else {
+  if (!fvec3::normalize(x) ||
+      !fvec3::normalize(y)) {
     return false;
   }
 
@@ -504,10 +488,9 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
   texcoords[0][1] = 0.0f;
   const int count = vertices.getSize();
   for (int i = 1; i < count; i++) {
-    float delta[3];
-    vec3sub (delta, vertices[i], vertices[0]);
-    texcoords[i][0] = vec3dot(delta, x) / uvScale;
-    texcoords[i][1] = vec3dot(delta, y) / uvScale;
+    const fvec3 delta = fvec3(vertices[i]) - fvec3(vertices[0]);
+    texcoords[i][0] = fvec3::dot(delta, x) / uvScale;
+    texcoords[i][1] = fvec3::dot(delta, y) / uvScale;
   }
 
   return true;

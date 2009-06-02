@@ -13,26 +13,20 @@ libCommon_la_LIBADD =
 libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
-	BZDBCache.cxx			\
-	BufferedNetworkMessage.cxx 	\
 	Bundle.cxx			\
 	BundleMgr.cxx			\
+	CacheManager.cxx		\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	Country.cxx			\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
-	Flag.cxx			\
-	GameTime.cxx			\
 	KeyManager.cxx			\
 	Language.cxx			\
 	OSFile.cxx			\
 	ParseColor.cxx			\
-	PlayerState.cxx			\
 	PositionTracker.cxx		\
-	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
-	Team.cxx			\
 	TextChunkManager.cxx		\
 	TextUtils.cxx			\
 	TimeBomb.cxx			\

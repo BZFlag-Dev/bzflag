@@ -134,8 +134,8 @@ FTTextureFontImpl::~FTTextureFontImpl()
 
 FTGlyph* FTTextureFontImpl::MakeGlyphImpl(FT_GlyphSlot ftGlyph)
 {
-    glyphHeight = static_cast<int>(charSize.Height() + 0.5);
-    glyphWidth = static_cast<int>(charSize.Width() + 0.5);
+    glyphHeight = static_cast<int>(charSize.Height() + 0.5f);
+    glyphWidth = static_cast<int>(charSize.Width() + 0.5f);
 
     if(glyphHeight < 1) glyphHeight = 1;
     if(glyphWidth < 1) glyphWidth = 1;
@@ -234,8 +234,10 @@ inline FTPoint FTTextureFontImpl::RenderI(const T* string, const int len,
     // Protect GL_TEXTURE_2D, GL_BLEND and blending functions
     glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
+    if ((renderMode & FTGL::RENDER_NOBLEND) == 0) {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
+    }
 
     glEnable(GL_TEXTURE_2D);
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,12 +39,14 @@ std::string globalPluginDir = "./";
 #  endif
 #endif
 
+std::string lastPluginDir;
+
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
 tmCustomPluginMap customPluginMap;
 
 std::vector<std::string> validDirs;
 
-typedef struct {
+struct trPluginRecord {
   std::string foundPath;
   std::string plugin;
 
@@ -53,7 +55,7 @@ typedef struct {
 #else
   void*		handle;
 #endif
-} trPluginRecord;
+};
 
 std::vector<trPluginRecord>	vPluginList;
 
@@ -63,6 +65,27 @@ typedef enum {
   eLoadFailedRuntime,
   eLoadComplete
 } PluginLoadReturn;
+
+std::string getPluginPath ( const std::string & path )
+{
+  if ( path.find('/') == std::string::npos && path.find('\\') == std::string::npos )
+  {
+    return std::string ("./");
+  }
+
+  std::string newPath = path;
+  size_t lastSlash = newPath.find_last_of('/');
+  if (lastSlash != std::string::npos)
+    newPath.erase(newPath.begin()+lastSlash+1,newPath.end());
+  else
+  {
+    lastSlash = newPath.find_last_of('\\');
+    if (lastSlash != std::string::npos)
+      newPath.erase(newPath.begin()+lastSlash+1,newPath.end());
+  }
+
+  return newPath;
+}
 
 bool pluginExists ( std::string plugin )
 {
@@ -186,12 +209,13 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config )
   HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
   if (hLib) {
     if (getPluginVersion(hLib) > BZ_API_VERSION) {
-      logDebugMessage(1,"Plugin:%s found but expects an newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
+      logDebugMessage(1,"Plugin:%s found but expects a newer API version (%d), upgrade your bzfs\n",plugin.c_str(),getPluginVersion(hLib));
       FreeLibrary(hLib);
       return eLoadFailedError;
     } else {
       lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
       if (lpProc) {
+	lastPluginDir = getPluginPath(realPluginName);
 	if (lpProc(config.c_str())!= 0) {
 	  logDebugMessage(1,"Plugin:%s found but bz_Load returned an error\n",plugin.c_str());
 	  FreeLibrary(hLib);
@@ -288,13 +312,14 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config ) {
     }
 
     int version = getPluginVersion(hLib);
-    if (version < BZ_API_VERSION) {
-      logDebugMessage(1,"Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
+    if (version > BZ_API_VERSION) {
+      logDebugMessage(1,"Plugin:%s found but expects a newer API version (%d), upgrade your bzfs", plugin.c_str(), version);
       dlclose(hLib);
       return eLoadFailedError;
     } else {
       lpProc = force_cast<int (*)(const char*)>(dlsym(hLib,"bz_Load"));
       if (lpProc) {
+	lastPluginDir = getPluginPath(realPluginName);
 	if((*lpProc)(config.c_str())) {
 	  logDebugMessage(1,"Plugin:%s found but bz_Load returned an error\n",plugin.c_str());
 	  return eLoadFailedRuntime;
@@ -349,12 +374,16 @@ bool loadPlugin ( std::string plugin, std::string config )
 
   tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
+  bool ret = false;
   if (itr != customPluginMap.end() && itr->second) {
     bz_APIPluginHandler *handler = itr->second;
-    return handler->handle(plugin,config);
+    ret = handler->handle(plugin,config);
   }
   else
-    return load1Plugin(plugin,config) == eLoadComplete;
+    ret = load1Plugin(plugin,config) == eLoadComplete;
+
+  lastPluginDir = "";
+  return ret;
 }
 
 bool unloadPlugin ( std::string plugin )

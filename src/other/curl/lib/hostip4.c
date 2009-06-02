@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip4.c,v 1.42 2007-11-07 09:21:35 bagder Exp $
+ * $Id: hostip4.c,v 1.47 2008-11-06 17:19:57 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -53,10 +53,6 @@
 #include <stdlib.h>
 #endif
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
@@ -72,10 +68,6 @@
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
-
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
 
 #include "memory.h"
 /* The last #include file should be: */
@@ -126,20 +118,18 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 #endif
   Curl_addrinfo *ai = NULL;
   struct hostent *h = NULL;
-  in_addr_t in;
+  struct in_addr in;
   struct hostent *buf = NULL;
 
 #ifdef CURL_DISABLE_VERBOSE_STRINGS
   (void)conn;
 #endif
 
-  (void)port; /* unused in IPv4 code */
-
   *waitp = 0; /* don't wait, we act synchronously */
 
-  if(1 == Curl_inet_pton(AF_INET, hostname, &in))
+  if(Curl_inet_pton(AF_INET, hostname, &in) > 0)
     /* This is a dotted IP address 123.123.123.123-style */
-    return Curl_ip2addr(in, hostname, port);
+    return Curl_ip2addr(AF_INET, &in, hostname, port);
 
 #if defined(HAVE_GETHOSTBYNAME_R)
   /*
@@ -150,7 +140,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
   else {
     int h_errnop;
 
-    buf = (struct hostent *)calloc(CURL_HOSTENT_SIZE, 1);
+    buf = calloc(CURL_HOSTENT_SIZE, 1);
     if(!buf)
       return NULL; /* major failure */
     /*
@@ -306,92 +296,4 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 
 #endif /* CURLRES_SYNCH */
 #endif /* CURLRES_IPV4 */
-
-/*
- * Curl_he2ai() translates from a hostent struct to a Curl_addrinfo struct.
- * The Curl_addrinfo is meant to work like the addrinfo struct does for IPv6
- * stacks, but for all hosts and environments.
- *
- *   Curl_addrinfo defined in "lib/hostip.h"
- *
- *     struct Curl_addrinfo {
- *       int                   ai_flags;
- *       int                   ai_family;
- *       int                   ai_socktype;
- *       int                   ai_protocol;
- *       socklen_t             ai_addrlen;   * Follow rfc3493 struct addrinfo *
- *       char                 *ai_canonname;
- *       struct sockaddr      *ai_addr;
- *       struct Curl_addrinfo *ai_next;
- *     };
- *
- *   hostent defined in <netdb.h>
- *
- *     struct hostent {
- *       char    *h_name;
- *       char    **h_aliases;
- *       int     h_addrtype;
- *       int     h_length;
- *       char    **h_addr_list;
- *     };
- *
- *   for backward compatibility:
- *
- *     #define h_addr  h_addr_list[0]
- */
-
-Curl_addrinfo *Curl_he2ai(const struct hostent *he, int port)
-{
-  Curl_addrinfo *ai;
-  Curl_addrinfo *prevai = NULL;
-  Curl_addrinfo *firstai = NULL;
-  struct sockaddr_in *addr;
-  int i;
-  struct in_addr *curr;
-
-  if(!he)
-    /* no input == no output! */
-    return NULL;
-
-  for(i=0; (curr = (struct in_addr *)he->h_addr_list[i]) != NULL; i++) {
-
-    ai = calloc(1, sizeof(Curl_addrinfo) + sizeof(struct sockaddr_in));
-
-    if(!ai)
-      break;
-
-    if(!firstai)
-      /* store the pointer we want to return from this function */
-      firstai = ai;
-
-    if(prevai)
-      /* make the previous entry point to this */
-      prevai->ai_next = ai;
-
-    ai->ai_family = AF_INET;              /* we only support this */
-
-    /* we return all names as STREAM, so when using this address for TFTP
-       the type must be ignored and conn->socktype be used instead! */
-    ai->ai_socktype = SOCK_STREAM;
-
-    ai->ai_addrlen = sizeof(struct sockaddr_in);
-    /* make the ai_addr point to the address immediately following this struct
-       and use that area to store the address */
-    ai->ai_addr = (struct sockaddr *) ((char*)ai + sizeof(Curl_addrinfo));
-
-    /* FIXME: need to free this eventually */
-    ai->ai_canonname = strdup(he->h_name);
-
-    /* leave the rest of the struct filled with zero */
-
-    addr = (struct sockaddr_in *)ai->ai_addr; /* storage area for this info */
-
-    memcpy((char *)&(addr->sin_addr), curr, sizeof(struct in_addr));
-    addr->sin_family = (unsigned short)(he->h_addrtype);
-    addr->sin_port = htons((unsigned short)port);
-
-    prevai = ai;
-  }
-  return firstai;
-}
 

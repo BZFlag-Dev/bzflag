@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -78,7 +78,7 @@ void			HUDuiFrame::doRender()
 
   FontManager &fm = FontManager::instance();
   const float labelWidth = std::max(getLabelWidth(),
-    fm.getStringWidth(fontFace, fontSize, getLabel().c_str()));
+    fm.getStringWidth(fontFace, fontSize, getLabel()));
   const float labelGap = fm.getStringWidth(fontFace, fontSize, "9");
 
   const float frameY = y;
@@ -157,7 +157,7 @@ void			HUDuiFrame::doRender()
   }
 
   // render label
-  fm.drawString(x, y, 0, fontFace, fontSize, getLabel().c_str());
+  fm.drawString(x, y, 0, fontFace, fontSize, getLabel());
 }
 
 

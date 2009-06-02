@@ -3,6 +3,45 @@ join in and help us correct one or more of these! Also be sure to check the
 changelog of the current development status, as one or more of these problems
 may have been fixed since this was written!
 
+62. CURLOPT_TIMEOUT does not work properly with the regular multi and
+  multi_socket interfaces. The work-around for apps is to simply remove the
+  easy handle once the time is up. See also:
+  http://curl.haxx.se/bug/view.cgi?id=2501457
+
+61. If an upload using Expect: 100-continue receives an HTTP 417 response,
+  it ought to be automatically resent without the Expect:.  A workaround is
+  for the client application to redo the transfer after disabling Expect:.
+  http://curl.haxx.se/mail/archive-2008-02/0043.html
+
+60. libcurl closes the connection if an HTTP 401 reply is received while it
+  is waiting for the the 100-continue response.
+  http://curl.haxx.se/mail/lib-2008-08/0462.html
+
+59. If the CURLOPT_PORT option is used on an FTP URL like
+  "ftp://example.com/file;type=A" the ";type=A" is stripped off.
+
+58. It seems sensible to be able to use CURLOPT_NOBODY and
+  CURLOPT_FAILONERROR with FTP to detect if a file exists or not, but it is
+  not working: http://curl.haxx.se/mail/lib-2008-07/0295.html
+
+57. On VMS-Alpha: When using an http-file-upload the file is not sent to the
+  Server with the correct content-length.  Sending a file with 511 or less
+  bytes, content-length 512 is used.  Sending a file with 513 - 1023 bytes,
+  content-length 1024 is used.  Files with a length of a multiple of 512 Bytes
+  show the correct content-length. Only these files work for upload.
+  http://curl.haxx.se/bug/view.cgi?id=2057858
+
+56. When libcurl sends CURLOPT_POSTQUOTE commands when connected to a SFTP
+  server using the multi interface, the commands are not being sent correctly
+  and instead the connection is "cancelled" (the operation is considered done)
+  prematurely. There is a half-baked (busy-looping) patch provided in the bug
+  report but it cannot be accepted as-is. See
+  http://curl.haxx.se/bug/view.cgi?id=2006544
+
+55. libcurl fails to build with MIT Kerberos for Windows (KfW) due to KfW's
+  library header files exporting symbols/macros that should be kept private
+  to the KfW library. See ticket #5601 at http://krbdev.mit.edu/rt/
+
 52. Gautam Kachroo's issue that identifies a problem with the multi interface
   where a connection can be re-used without actually being properly
   SSL-negoatiated:
@@ -12,19 +51,13 @@ may have been fixed since this was written!
   -y/-Y) the next attempt doesn't resume the transfer properly from what was
   downloaded in the previous attempt but will truncate and restart at the
   original position where it was at before the previous failed attempt. See
-  http://curl.haxx.se/mail/lib-2008-01/0080.html
+  http://curl.haxx.se/mail/lib-2008-01/0080.html and Mandriva bug report
+  https://qa.mandriva.com/show_bug.cgi?id=22565
 
 48. If a CONNECT response-headers are larger than BUFSIZE (16KB) when the
   connection is meant to be kept alive (like for NTLM proxy auth), the
   function will return prematurely and will confuse the rest of the HTTP
   protocol code. This should be very rare.
-
-45. libcurl built to support ipv6 uses getaddrinfo() to resolve host names.
-  getaddrinfo() sorts the response list which effectively kills how libcurl
-  deals with round-robin DNS entries. All details:
-    http://curl.haxx.se/mail/lib-2007-07/0168.html
-  initial suggested function to use for randomizing the response:
-    http://curl.haxx.se/mail/lib-2007-07/0178.html
 
 43. There seems to be a problem when connecting to the Microsoft telnet server.
   http://curl.haxx.se/bug/view.cgi?id=1720605
@@ -131,11 +164,6 @@ may have been fixed since this was written!
 8. Doing resumed upload over HTTP does not work with '-C -', because curl
   doesn't do a HEAD first to get the initial size. This needs to be done
   manually for HTTP PUT resume to work, and then '-C [index]'.
-
-7. CURLOPT_USERPWD and CURLOPT_PROXYUSERPWD have no way of providing user names
-  that contain a colon. This can't be fixed easily in a backwards compatible
-  way without adding new options (and then, they should most probably allow
-  setting user name and password separately).
 
 6. libcurl ignores empty path parts in FTP URLs, whereas RFC1738 states that
   such parts should be sent to the server as 'CWD ' (without an argument).

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -196,7 +196,7 @@ const std::string Address::getHostName(const std::string hostname) // const
 void*			Address::pack(void* _buf) const
 {
   unsigned char* buf = (unsigned char*)_buf;
-  buf = (unsigned char*)nboPackUByte(_buf, 4);
+  buf = (unsigned char*)nboPackUInt8(_buf, 4);
   // everything in InAddr  is already in network byte order
   int32_t hostaddr = int32_t(addr[0].s_addr);
   ::memcpy(buf, &hostaddr, sizeof(int32_t));	buf += sizeof(int32_t);

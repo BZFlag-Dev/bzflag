@@ -157,11 +157,11 @@
 /* Define if you have the inet_addr function.  */
 #define HAVE_INET_ADDR 1
 
-/* Define if you have the inet_ntoa function.  */
-#define HAVE_INET_NTOA 1
-
-/* Define if you have the ioctlsocket function.  */
+/* Define if you have the ioctlsocket function. */
 #define HAVE_IOCTLSOCKET 1
+
+/* Define if you have a working ioctlsocket FIONBIO function. */
+#define HAVE_IOCTLSOCKET_FIONBIO 1
 
 /* Define if you have the perror function.  */
 #define HAVE_PERROR 1
@@ -171,6 +171,10 @@
 
 /* Define if you have the `RAND_status' function when using SSL. */
 #define HAVE_RAND_STATUS 1
+
+/* Define to 1 if you have the `CRYPTO_cleanup_all_ex_data' function.
+   This is present in OpenSSL versions after 0.9.6b */
+#define HAVE_CRYPTO_CLEANUP_ALL_EX_DATA 1
 
 /* Define if you have the select function.  */
 #define HAVE_SELECT 1
@@ -184,14 +188,20 @@
 /* Define if you have the strcasecmp function.  */
 /* #define HAVE_STRCASECMP 1 */
 
-/* Define if you have the stricmp function.  */
-#define HAVE_STRICMP 1
-
 /* Define if you have the strdup function.  */
 #define HAVE_STRDUP 1
 
 /* Define if you have the strftime function.  */
 #define HAVE_STRFTIME 1
+
+/* Define if you have the stricmp function. */
+#define HAVE_STRICMP 1
+
+/* Define if you have the strncasecmp function. */
+/* #define HAVE_STRNCASECMP 1 */
+
+/* Define if you have the strnicmp function. */
+#define HAVE_STRNICMP 1
 
 /* Define if you have the strstr function.  */
 #define HAVE_STRSTR 1
@@ -211,9 +221,6 @@
 #ifndef __BORLANDC__
 #define HAVE_UTIME 1
 #endif
-
-/* Define if you have the getnameinfo function. */
-#define HAVE_GETNAMEINFO 1
 
 /* Define to the type qualifier of arg 1 for getnameinfo. */
 #define GETNAMEINFO_QUAL_ARG1 const
@@ -247,6 +254,30 @@
 
 /* Define to the function return type for recv. */
 #define RECV_TYPE_RETV int
+
+/* Define if you have the recvfrom function. */
+#define HAVE_RECVFROM 1
+
+/* Define to the type of arg 1 for recvfrom. */
+#define RECVFROM_TYPE_ARG1 SOCKET
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#define RECVFROM_TYPE_ARG2 char
+
+/* Define to the type of arg 3 for recvfrom. */
+#define RECVFROM_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for recvfrom. */
+#define RECVFROM_TYPE_ARG4 int
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#define RECVFROM_TYPE_ARG6 int
+
+/* Define to the function return type for recvfrom. */
+#define RECVFROM_TYPE_RETV int
 
 /* Define if you have the send function. */
 #define HAVE_SEND 1
@@ -300,21 +331,6 @@
 /* The number of bytes in a long long.  */
 /* #define SIZEOF_LONG_LONG 8 */
 
-/* Undef SIZEOF_CURL_OFF_T if already defined. */
-#ifdef SIZEOF_CURL_OFF_T
-#undef SIZEOF_CURL_OFF_T
-#endif
-
-/* Define SIZEOF_CURL_OFF_T as computed by sizeof(curl_off_t) */
-/* Borland/PellesC/SalfordC lacks _lseeki64(), so we don't support
- * >2GB files.
- */
-#if defined(__BORLANDC__) || defined(__POCC__) || defined(__SALFORDC__)
-#define SIZEOF_CURL_OFF_T 4
-#else
-#define SIZEOF_CURL_OFF_T 8
-#endif
-
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */
 /* ---------------------------------------------------------------- */
@@ -326,6 +342,30 @@
 
 /* Define this if you have struct timeval */
 #define HAVE_STRUCT_TIMEVAL 1
+
+/* ---------------------------------------------------------------- */
+/*                        Watt-32 tcp/ip SPECIFIC                   */
+/* ---------------------------------------------------------------- */
+
+#ifdef USE_WATT32
+  #include <tcp.h>
+  #undef byte
+  #undef word
+  #undef USE_WINSOCK
+  #undef HAVE_WINSOCK_H
+  #undef HAVE_WINSOCK2_H
+  #undef HAVE_WS2TCPIP_H
+  #define HAVE_GETADDRINFO
+  #define HAVE_GETNAMEINFO
+  #define HAVE_SYS_IOCTL_H
+  #define HAVE_SYS_SOCKET_H
+  #define HAVE_NETINET_IN_H
+  #define HAVE_NETDB_H
+  #define HAVE_ARPA_INET_H
+  #define HAVE_FREEADDRINFO
+  #define SOCKET int
+#endif
+
 
 /* ---------------------------------------------------------------- */
 /*                        COMPILER SPECIFIC                         */
@@ -342,7 +382,7 @@
 #define HAVE_VARIADIC_MACROS_C99 1
 #endif
 
-/* Define if the compiler supports LONGLONG. */
+/* Define if the compiler supports the 'long long' data type. */
 #if defined(__MINGW32__) || defined(__WATCOMC__)
 #define HAVE_LONGLONG 1
 #endif
@@ -363,18 +403,69 @@
 #  endif
 #endif
 
-/* VS2008 does not support Windows build targets prior to WinXP, */
-/* so, if no build target has been defined we will target WinXP. */
+/* Officially, Microsoft's Windows SDK versions 6.X do not support Windows
+   2000 as a supported build target. VS2008 default installations provide an
+   embedded Windows SDK v6.0A along with the claim that Windows 2000 is a
+   valid build target for VS2008. Popular belief is that binaries built using
+   Windows SDK versions 6.X and Windows 2000 as a build target are functional */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#  define VS2008_MINIMUM_TARGET 0x0500
+#endif
+
+/* When no build target is specified VS2008 default build target is Windows
+   Vista, which leaves out even Winsows XP. If no build target has been given
+   for VS2008 we will target the minimum Officially supported build target,
+   which happens to be Windows XP. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#  define VS2008_DEFAULT_TARGET  0x0501
+#endif
+
+/* VS2008 default target settings and minimum build target check */
 #if defined(_MSC_VER) && (_MSC_VER >= 1500)
 #  ifndef _WIN32_WINNT
-#    define _WIN32_WINNT 0x0501
+#    define _WIN32_WINNT VS2008_DEFAULT_TARGET
 #  endif
 #  ifndef WINVER
-#    define WINVER 0x0501
+#    define WINVER VS2008_DEFAULT_TARGET
 #  endif
-#  if (_WIN32_WINNT < 0x0501) || (WINVER < 0x0501)
-#    error VS2008 does not support Windows build targets prior to WinXP
+#  if (_WIN32_WINNT < VS2008_MINIMUM_TARGET) || (WINVER < VS2008_MINIMUM_TARGET)
+#    error VS2008 does not support Windows build targets prior to Windows 2000
 #  endif
+#endif
+
+/* Availability of freeaddrinfo, getaddrinfo and getnameinfo functions is
+   quite convoluted, compiler dependant and in some cases even build target
+   dependant. */
+#if defined(HAVE_WS2TCPIP_H)
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+#    define HAVE_FREEADDRINFO 1
+#    define HAVE_GETADDRINFO  1
+#    define HAVE_GETNAMEINFO  1
+#  elif defined(_MSC_VER) && (_MSC_VER >= 1200)
+#    define HAVE_FREEADDRINFO 1
+#    define HAVE_GETADDRINFO  1
+#    define HAVE_GETNAMEINFO  1
+#  endif
+#endif
+
+/* ---------------------------------------------------------------- */
+/*                        LARGE FILE SUPPORT                        */
+/* ---------------------------------------------------------------- */
+
+#if defined(_MSC_VER) && !defined(_WIN32_WCE)
+#  if (_MSC_VER >= 900) && (_INTEGRAL_MAX_BITS >= 64)
+#    define USE_WIN32_LARGE_FILES
+#  else
+#    define USE_WIN32_SMALL_FILES
+#  endif
+#endif
+
+#if defined(__MINGW32__) && !defined(USE_WIN32_LARGE_FILES)
+#  define USE_WIN32_LARGE_FILES
+#endif
+
+#if !defined(USE_WIN32_LARGE_FILES) && !defined(USE_WIN32_SMALL_FILES)
+#  define USE_WIN32_SMALL_FILES
 #endif
 
 /* ---------------------------------------------------------------- */

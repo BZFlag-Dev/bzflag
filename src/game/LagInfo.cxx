@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -74,10 +74,10 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
   if (isAdmin)
     numchars = sprintf(msg, "[%3d] %-24.24s: %3d", info->getPlayerIndex(),
 
-	  TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
+		       TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
   else
     numchars = sprintf(msg, "%-24.24s: %3d",
-	  TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
+		       TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
 
   if (info->isObserver()) {
     sprintf(msg+numchars, "ms");
@@ -92,7 +92,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 			    bool &jittkick, bool &plosswarn, bool &plosskick) {
   uint16_t _pingseqno;
-  nboUnpackUShort(buf, _pingseqno);
+  nboUnpackUInt16(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
     float timepassed = float(info->now - lastping);
     // time is smoothed exponentially using a dynamic smoothing factor
@@ -163,7 +163,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
   return;
 }
 
-void LagInfo::updateLag(float timestamp, bool ooo) {
+void LagInfo::updateLag(TimeKeeper const& timestamp, bool ooo) {
   if (!info->isPlaying())
     return;
   if (ooo) {
@@ -171,11 +171,11 @@ void LagInfo::updateLag(float timestamp, bool ooo) {
     lostalpha = lostalpha / (0.99f + lostalpha);
   }
   // don't calc jitter if more than 2 seconds between packets
-  if (lasttimestamp > 0.0f && timestamp - lasttimestamp < 2.0f) {
-    const float jitter = fabs((float)(info->now - lastupdate)
-			      - (timestamp - lasttimestamp));
+  if (lasttimestamp && timestamp - lasttimestamp < 2.0f) {
+    const float jitter = fabsf((float)(info->now - lastupdate)
+			       - (float)(timestamp - lasttimestamp));
     // time is smoothed exponentially using a dynamic smoothing factor
-    jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * fabs(jitter);
+    jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * jitter;
     jitteralpha = jitteralpha / (0.99f + jitteralpha);
     lostavg     = lostavg * (1 - lostalpha);
     lostalpha   = lostalpha / (0.99f + lostalpha);

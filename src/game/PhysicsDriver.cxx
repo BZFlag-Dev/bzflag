@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,17 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "PhysicsDriver.h"
 
-/* system implementation headers */
+// system headers
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
 
-/* common implementation headers */
+// common headers
 #include "TimeKeeper.h"
 #include "Pack.h"
+#include "TextUtils.h"
 
 
 // this applies to sinusoid and clamp functions
@@ -54,6 +55,7 @@ void PhysicsDriverManager::clear()
     delete *it;
   }
   drivers.clear();
+  nameMap.clear();
   return;
 }
 
@@ -72,18 +74,24 @@ void PhysicsDriverManager::update()
 
 int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
 {
-  drivers.push_back (driver);
+  const std::string& name = driver->getName();
+  if (!name.empty()) {
+    if (nameMap.find(name) == nameMap.end()) {
+      nameMap[name] = (int)(drivers.size());
+    }
+  }
+  drivers.push_back(driver);
   return ((int)drivers.size() - 1);
 }
 
 
-int PhysicsDriverManager::findDriver(const std::string& dyncol) const
+int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 {
-  if (dyncol.size() <= 0) {
+  if (phydrv.empty()) {
     return -1;
   }
-  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
-    int index = atoi (dyncol.c_str());
+  else if ((phydrv[0] >= '0') && (phydrv[0] <= '9')) {
+    int index = atoi (phydrv.c_str());
     if ((index < 0) || (index >= (int)drivers.size())) {
       return -1;
     } else {
@@ -91,10 +99,9 @@ int PhysicsDriverManager::findDriver(const std::string& dyncol) const
     }
   }
   else {
-    for (int i = 0; i < (int)drivers.size(); i++) {
-      if (drivers[i]->getName() == dyncol) {
-	return i;
-      }
+    std::map<std::string, int>::const_iterator it = nameMap.find(phydrv);
+    if (it != nameMap.end()) {
+      return it->second;
     }
     return -1;
   }
@@ -104,7 +111,7 @@ int PhysicsDriverManager::findDriver(const std::string& dyncol) const
 void * PhysicsDriverManager::pack(void *buf) const
 {
   std::vector<PhysicsDriver*>::const_iterator it;
-  buf = nboPackUInt(buf, (int)drivers.size());
+  buf = nboPackUInt32(buf, (int)drivers.size());
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
     buf = driver->pack(buf);
@@ -117,7 +124,7 @@ void * PhysicsDriverManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt32 (buf, count);
   for (i = 0; i < count; i++) {
     PhysicsDriver* driver = new PhysicsDriver;
     buf = driver->unpack(buf);
@@ -156,19 +163,18 @@ void PhysicsDriverManager::print(std::ostream& out,
 //
 
 PhysicsDriver::PhysicsDriver()
+: name("")
+, linear(0.0f, 0.0f, 0.0f)
+, angularVel(0.0f)
+, angularPos(0.0f, 0.0f)
+, radialVel(0.0f)
+, radialPos(0.0f, 0.0f)
+, slide(false)
+, slideTime(0.0f)
+, death(false)
+, deathMsg("")
 {
-  // initialize
-  name = "";
-  linear[0] = linear[1] = linear[2] = 0.0f;
-  angularVel = 0.0f;
-  angularPos[0] = angularPos[1] = 0.0f;
-  radialVel = 0.0f;
-  radialPos[0] = radialPos[1] = 0.0f;
-  slide = false;
-  slideTime = 0.0f;
-  death = false;
-  deathMsg = "";
-  return;
+  // do nothing
 }
 
 
@@ -197,12 +203,10 @@ bool PhysicsDriver::setName(const std::string& drvname)
   if (drvname.size() <= 0) {
     name = "";
     return false;
-  }
-  else if ((drvname[0] >= '0') && (drvname[0] <= '9')) {
+  } else if ((drvname[0] >= '0') && (drvname[0] <= '9')) {
     name = "";
     return false;
-  }
-  else {
+  } else {
     name = drvname;
   }
   return true;
@@ -215,28 +219,26 @@ const std::string& PhysicsDriver::getName() const
 }
 
 
-void PhysicsDriver::setLinear(const float vel[3])
+void PhysicsDriver::setLinear(const fvec3& vel)
 {
-  memcpy (linear, vel, sizeof(float[3]));
+  linear = vel;
   return;
 }
 
 
-void PhysicsDriver::setAngular(float vel, const float pos[2])
+void PhysicsDriver::setAngular(float vel, const fvec2& pos)
 {
   // convert from (rotations/second) to (radians/second)
   angularVel = (float)(vel * (2.0 * M_PI));
-  angularPos[0] = pos[0];
-  angularPos[1] = pos[1];
+  angularPos = pos;
   return;
 }
 
 
-void PhysicsDriver::setRadial(float vel, const float pos[2])
+void PhysicsDriver::setRadial(float vel, const fvec2& pos)
 {
   radialVel = vel;
-  radialPos[0] = pos[0];
-  radialPos[1] = pos[1];
+  radialPos = pos;
   return;
 }
 
@@ -251,12 +253,10 @@ void PhysicsDriver::setSlideTime(float _slideTime)
 void PhysicsDriver::setDeathMessage(const std::string& msg)
 {
   // strip any leading whitespace
-  int first = 0;
+  int first = TextUtils::firstVisible(msg);
+  if (first < 0) first = 0;
   const char* c = msg.c_str();
-  while ((*c != '\0') && isspace(*c)) {
-    c++;
-    first++;
-  }
+  c = TextUtils::skipWhitespace(c);
   std::string str = msg.substr(first);
 
   // limit the length
@@ -280,15 +280,13 @@ void * PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackFloatVector (buf, linear);
-  buf = nboPackFloat (buf, angularVel);
-  buf = nboPackFloat (buf, angularPos[0]);
-  buf = nboPackFloat (buf, angularPos[1]);
-  buf = nboPackFloat (buf, radialVel);
-  buf = nboPackFloat (buf, radialPos[0]);
-  buf = nboPackFloat (buf, radialPos[1]);
+  buf = nboPackFVec3(buf, linear);
+  buf = nboPackFloat(buf, angularVel);
+  buf = nboPackFVec2(buf, angularPos);
+  buf = nboPackFloat(buf, radialVel);
+  buf = nboPackFVec2(buf, radialPos);
 
-  buf = nboPackFloat (buf, slideTime);
+  buf = nboPackFloat(buf, slideTime);
   buf = nboPackStdString(buf, deathMsg);
 
   return buf;
@@ -299,15 +297,13 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackFloatVector (buf, linear);
-  buf = nboUnpackFloat (buf, angularVel);
-  buf = nboUnpackFloat (buf, angularPos[0]);
-  buf = nboUnpackFloat (buf, angularPos[1]);
-  buf = nboUnpackFloat (buf, radialVel);
-  buf = nboUnpackFloat (buf, radialPos[0]);
-  buf = nboUnpackFloat (buf, radialPos[1]);
+  buf = nboUnpackFVec3(buf, linear);
+  buf = nboUnpackFloat(buf, angularVel);
+  buf = nboUnpackFVec2(buf, angularPos);
+  buf = nboUnpackFloat(buf, radialVel);
+  buf = nboUnpackFVec2(buf, radialPos);
 
-  buf = nboUnpackFloat (buf, slideTime);
+  buf = nboUnpackFloat(buf, slideTime);
   buf = nboUnpackStdString(buf, deathMsg);
 
   finalize();
@@ -320,12 +316,12 @@ int PhysicsDriver::packSize() const
 {
   int fullSize = nboStdStringPackSize(name);
 
-  fullSize += sizeof(float) * 3; // linear velocity
-  fullSize += sizeof(float) * 1; // angular velocity
-  fullSize += sizeof(float) * 2; // angular position
-  fullSize += sizeof(float) * 1; // radial velocity
-  fullSize += sizeof(float) * 2; // radial position
-  fullSize += sizeof(float) * 1; // slide time
+  fullSize += sizeof(fvec3); // linear velocity
+  fullSize += sizeof(float); // angular velocity
+  fullSize += sizeof(fvec2); // angular position
+  fullSize += sizeof(float); // radial velocity
+  fullSize += sizeof(fvec2); // radial position
+  fullSize += sizeof(float); // slide time
 
   fullSize += nboStdStringPackSize(deathMsg);
 
@@ -341,22 +337,22 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
     out << indent << "  name " << name << std::endl;
   }
 
-  const float* v = linear;
-  if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f)) {
+  const fvec3& v = linear;
+  if ((v.x != 0.0f) || (v.y != 0.0f) || (v.z != 0.0f)) {
     out << indent << "  linear "
-		  << v[0] << " " << v[1] << " " << v[2] << std::endl;
+	<< v.x << " " << v.y << " " << v.z << std::endl;
   }
 
   if (angularVel != 0.0f) {
-    const float* ap = angularPos;
+    const fvec2& ap = angularPos;
     out << indent << "  angular " << (angularVel / (M_PI * 2.0f)) << " "
-				  << ap[0] << " " << ap[1] << std::endl;
+	<< ap.x << " " << ap.y << std::endl;
   }
 
   if (radialVel != 0.0f) {
-    const float* rp = radialPos;
+    const fvec2& rp = radialPos;
     out << indent << "  radial "
-		  << radialVel << " " << rp[0] << " " << rp[1] << std::endl;
+	<< radialVel << " " << rp.x << " " << rp.y << std::endl;
   }
 
   if (slide) {

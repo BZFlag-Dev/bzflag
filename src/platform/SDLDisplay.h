@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,6 +34,7 @@ class SDLDisplay : public BzfDisplay {
   bool peekEvent(BzfEvent&) const;
   bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
   void setFullscreen(bool);
+  bool getFullscreen() const;
   void setWindowSize(int width, int height);
   void getWindowSize(int& width, int& height);
   void doSetVideoMode();
@@ -42,14 +43,10 @@ class SDLDisplay : public BzfDisplay {
   void getModState(bool &shift, bool &control, bool &alt);
  private:
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
-  bool fullScreen;
   bool doSetResolution(int) {return true;};
+  bool fullScreen;
   int  base_width;
   int  base_height;
-  int  min_width;
-  int  min_height;
-  int  x;
-  int  y;
   bool canGrabMouse;
   // to avoid flashing we memorize the old values used to build the window
   bool oldFullScreen;

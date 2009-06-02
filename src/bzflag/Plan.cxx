@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,6 +14,7 @@
 #include "BZDBCache.h"
 #include "playing.h"
 #include "LocalPlayer.h"
+#include "WorldPlayer.h"
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
@@ -42,18 +43,18 @@ bool Plan::isValid()
 
 void Plan::execute(float &, float &)
 {
-  float pos[3];
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();
   if (!myTank || !world) {
     return;
   }
-  memcpy(pos, myTank->getPosition(), sizeof(pos));
-  if (pos[2] < 0.0f)
-    pos[2] = 0.01f;
+  fvec3 pos = myTank->getPosition();
+  if (pos.z < 0.0f) {
+    pos.z = 0.01f;
+  }
   float myAzimuth = myTank->getAngle();
 
-  float dir[3] = {cosf(myAzimuth), sinf(myAzimuth), 0.0f};
+  fvec3 dir(cosf(myAzimuth), sinf(myAzimuth), 0.0f);
   pos[2] += myTank->getMuzzleHeight();
   Ray tankRay(pos, dir);
   pos[2] -= myTank->getMuzzleHeight();
@@ -63,25 +64,21 @@ void Plan::execute(float &, float &)
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding()) {
+	if (t != myTank->getId() && remotePlayers[t] &&
+	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+	    !remotePlayers[t]->isNotResponding()) {
 
-	  const float *tp = player[t]->getPosition();
-	  float enemyPos[3];
+	  const fvec3& tp = remotePlayers[t]->getPosition();
+	  const fvec3& tv = remotePlayers[t]->getVelocity();
+	  // toss in some lag adjustment/future prediction - 300 millis
+	  fvec3 enemyPos = tp + (0.3f * tv);
+	  if (enemyPos.z < 0.0f) {
+	    enemyPos.z = 0.0f;
+          }
 
-	  //toss in some lag adjustment/future prediction - 300 millis
-	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
-	  enemyPos[0] += 0.3f * tv[0];
-	  enemyPos[1] += 0.3f * tv[1];
-	  enemyPos[2] += 0.3f * tv[2];
-
-	  if (enemyPos[2] < 0.0f)
-	    enemyPos[2] = 0.0f;
-	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-	    if (!myTank->validTeamTarget(player[t])) {
+	    if (!myTank->validTeamTarget(remotePlayers[t])) {
 	      hasSWTarget = false;
 	      t = curMaxPlayers;
 	    } else {
@@ -103,38 +100,35 @@ void Plan::execute(float &, float &)
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding() &&
-	    myTank->validTeamTarget(player[t])) {
+	if (t != myTank->getId() && remotePlayers[t] &&
+	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+	    !remotePlayers[t]->isNotResponding() &&
+	    myTank->validTeamTarget(remotePlayers[t])) {
 
-	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+	  if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
 	      && (myTank->getFlag() != Flags::SuperBullet))
 	    continue;
 
-	  const float *tp = player[t]->getPosition();
-	  float enemyPos[3];
-	  //toss in some lag adjustment/future prediction - 300 millis
-	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
-	  enemyPos[0] += 0.3f * tv[0];
-	  enemyPos[1] += 0.3f * tv[1];
-	  enemyPos[2] += 0.3f * tv[2];
-	  if (enemyPos[2] < 0.0f)
-	    enemyPos[2] = 0.0f;
+	  const fvec3& tp = remotePlayers[t]->getPosition();
+	  const fvec3& tv = remotePlayers[t]->getVelocity();
+	  // toss in some lag adjustment/future prediction - 300 millis
+	  fvec3 enemyPos = tp + (0.3f * tv);
+	  if (enemyPos.z < 0.0f) {
+	    enemyPos.z = 0.0f;
+          }
 
-	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
+	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 
 	  if ((myTank->getFlag() == Flags::GuidedMissile) ||
 	      (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
 
-	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
+	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
 	    if ((targetDiff < errorLimit) ||
 		((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) &&
 		 (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
 	      if (myTank->getFlag() != Flags::SuperBullet)
-		isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
+		isTargetObscured = TargetingUtils::isLocationObscured(pos, enemyPos);
 	      else
 		isTargetObscured = false;
 
@@ -158,7 +152,7 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   if (!myTank || !world) {
     return false;
   }
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
 
   if ((myTank->getFlag() == Flags::Narrow) ||
       (myTank->getFlag() == Flags::Burrow))
@@ -170,14 +164,12 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   if ((shot == NULL) || (minDistance > 100.0f))
     return false;
 
-  const float *shotPos = shot->getPosition();
-  const float *shotVel = shot->getVelocity();
-  float shotAngle = atan2f(shotVel[1],shotVel[0]);
-  float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
-
-  float trueVec[2] = { (pos[0] - shotPos[0]) / minDistance,
-		       (pos[1] - shotPos[1]) / minDistance };
-  float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+  const fvec3& shotPos = shot->getPosition();
+  const fvec3& shotVel = shot->getVelocity();
+  const float  shotAngle = atan2f(shotVel.y, shotVel.x);
+  const fvec2  shotUnitVec(cosf(shotAngle), sinf(shotAngle));
+  const fvec2  trueVec = (pos.xy() - shotPos.xy()) / minDistance;
+  const float  dotProd = fvec2::dot(trueVec, shotUnitVec);
 
   if ((myTank->canJump()) &&
       (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))) {
@@ -222,17 +214,17 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
   if (!myTank || !world) {
     return NULL;
   }
-  const float *pos = myTank->getPosition();
+  const fvec3& pos = myTank->getPosition();
   ShotPath *minPath = NULL;
 
   minDistance = Infinity;
   for (int t = 0; t < curMaxPlayers; t++) {
-    if (t == myTank->getId() || !player[t])
+    if (t == myTank->getId() || !remotePlayers[t])
       continue;
 
-    const int maxShots = player[t]->getMaxShots();
+    const int maxShots = remotePlayers[t]->getMaxShots();
     for (int s = 0; s < maxShots; s++) {
-      ShotPath* shot = player[t]->getShot(s);
+      ShotPath* shot = remotePlayers[t]->getShot(s);
       if (!shot || shot->isExpired())
 	continue;
 
@@ -240,20 +232,20 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 	   shot->getShotType() == CloakedShot) &&
 	  (myTank->getFlag() != Flags::Seer))
 	continue; //Theoretically Roger could triangulate the sound
-      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+      if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 	continue;
       if ((shot->getShotType() == LaserShot) &&
 	  (myTank->getFlag() == Flags::Cloaking))
 	continue; //cloaked tanks can't die from lasers
 
-      const float* shotPos = shot->getPosition();
+      const fvec3& shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
 	  (shot->getShotType() != GMShot))
 	continue;
 
       const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
       if (dist < minDistance) {
-	const float *shotVel = shot->getVelocity();
+	const fvec3& shotVel = shot->getVelocity();
 	float shotAngle = atan2f(shotVel[1], shotVel[0]);
 	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -281,13 +273,13 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
     if (shot->getShotType() == LaserShot && myTank->getFlag() == Flags::Cloaking)
       continue; //cloaked tanks can't die from lasers
 
-    const float* shotPos = shot->getPosition();
+    const fvec3& shotPos = shot->getPosition();
     if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
       continue;
 
     const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
     if (dist < minDistance) {
-      const float *shotVel = shot->getVelocity();
+      const fvec3& shotVel = shot->getVelocity();
       float shotAngle = atan2f(shotVel[1], shotVel[0]);
       float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
@@ -379,10 +371,10 @@ Plan *TopLevelPlan::createSubPlan()
  * GotoPointPlan
  */
 
-GotoPointPlan::GotoPointPlan(float *pt)
-  : Plan(20.0f)
+GotoPointPlan::GotoPointPlan(const fvec3& pt)
+: Plan(20.0f)
+, gotoPt(pt)
 {
-  memcpy( gotoPt, pt, sizeof( gotoPt ));
 }
 
 bool GotoPointPlan::usesSubPlan()
@@ -423,7 +415,7 @@ bool WeavePlan::isValid()
     return false;
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  const float *pVel = myTank->getVelocity();
+  const fvec3& pVel = myTank->getVelocity();
   if ((pVel[0] == 0.0f) && (pVel[1] == 0.0f) && (pVel[2] == 0.0f))
     return false;
 
@@ -489,7 +481,7 @@ Plan *HuntPlayerPlan::createSubPlan()
   bool isObscured = TargetingUtils::isLocationObscured(myTank->getPosition(),
 						       pPlayer->getPosition());
   if (isObscured) {
-    float pt[3];
+    fvec3 pt;
     // fill in pt with a open spot to go to
     return new GotoPointPlan(pt);
   } else {

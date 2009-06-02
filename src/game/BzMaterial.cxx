@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
+
 #include <string.h>
 
 #include "BzMaterial.h"
@@ -18,7 +20,7 @@
 #include "Pack.h"
 
 
-/****************************************************************************/
+//============================================================================//
 //
 // BzMaterialManager
 //
@@ -124,9 +126,10 @@ int BzMaterialManager::getIndex(const BzMaterial* material) const
 
 void* BzMaterialManager::pack(void* buf)
 {
-  buf = nboPackUInt(buf, (unsigned int)materials.size());
+  buf = nboPackUInt32(buf, (unsigned int)materials.size());
   for (unsigned int i = 0; i < materials.size(); i++) {
     buf = materials[i]->pack(buf);
+    materials[i]->setID(i);
   }
 
   return buf;
@@ -137,11 +140,12 @@ void* BzMaterialManager::unpack(void* buf)
 {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt (buf, count);
+  buf = nboUnpackUInt32 (buf, count);
   for (i = 0; i < count; i++) {
     BzMaterial* mat = new BzMaterial;
     buf = mat->unpack(buf);
     materials.push_back(mat);
+    mat->setID(i);
   }
   return buf;
 }
@@ -227,7 +231,7 @@ void BzMaterialManager::setTextureLocal(const std::string& url,
 }
 
 
-/****************************************************************************/
+//============================================================================//
 //
 // BzMaterial
 //
@@ -238,23 +242,23 @@ std::string BzMaterial::nullString = "";
 
 void BzMaterial::reset()
 {
+  order = 0;
   dynamicColor = -1;
-  const float defAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-  const float defDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  const float defSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  const float defEmission[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  memcpy (ambient, defAmbient, sizeof(ambient));
-  memcpy (diffuse, defDiffuse, sizeof(diffuse));
-  memcpy (specular, defSpecular, sizeof(specular));
-  memcpy (emission, defEmission, sizeof(emission));
+
+  ambient  = fvec4(0.2f, 0.2f, 0.2f, 1.0f);
+  diffuse  = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
+  specular = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
+  emission = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
   shininess = 0.0f;
+
   alphaThreshold = 0.0f;
-  occluder = false;
+
+  occluder   = false;
   groupAlpha = false;
-  noRadar = false;
-  noShadow = false;
-  noCulling = false;
-  noSorting = false;
+  noRadar    = false;
+  noShadow   = false;
+  noCulling  = false;
+  noSorting  = false;
   noLighting = false;
 
   delete[] textures;
@@ -306,6 +310,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   name = m.name;
   aliases = m.aliases;
 
+  order = m.order;
   dynamicColor = m.dynamicColor;
   memcpy (ambient, m.ambient, sizeof(ambient));
   memcpy (diffuse, m.diffuse, sizeof(diffuse));
@@ -351,11 +356,10 @@ bool BzMaterial::operator==(const BzMaterial& m) const
 {
   int i;
 
-  if ((dynamicColor != m.dynamicColor) ||
-      (memcmp (ambient, m.ambient, sizeof(float[4])) != 0) ||
-      (memcmp (diffuse, m.diffuse, sizeof(float[4])) != 0) ||
-      (memcmp (specular, m.specular, sizeof(float[4])) != 0) ||
-      (memcmp (emission, m.emission, sizeof(float[4])) != 0) ||
+  if ((order != m.order) ||
+      (dynamicColor != m.dynamicColor) ||
+      (ambient  != m.ambient)  || (diffuse  != m.diffuse)  ||
+      (specular != m.specular) || (emission != m.emission) ||
       (shininess != m.shininess) || (alphaThreshold != m.alphaThreshold) ||
       (occluder != m.occluder) || (groupAlpha != m.groupAlpha) ||
       (noRadar != m.noRadar) || (noShadow != m.noShadow) ||
@@ -391,26 +395,6 @@ bool BzMaterial::operator==(const BzMaterial& m) const
 }
 
 
-static void* pack4Float(void *buf, const float values[4])
-{
-  int i;
-  for (i = 0; i < 4; i++) {
-    buf = nboPackFloat(buf, values[i]);
-  }
-  return buf;
-}
-
-
-static void* unpack4Float(void *buf, float values[4])
-{
-  int i;
-  for (i = 0; i < 4; i++) {
-    buf = nboUnpackFloat(buf, values[i]);
-  }
-  return buf;
-}
-
-
 void* BzMaterial::pack(void* buf) const
 {
   int i;
@@ -418,30 +402,31 @@ void* BzMaterial::pack(void* buf) const
   buf = nboPackStdString(buf, name);
 
   uint8_t modeByte = 0;
-  if (noCulling)	modeByte |= (1 << 0);
-  if (noSorting)	modeByte |= (1 << 1);
-  if (noRadar)		modeByte |= (1 << 2);
-  if (noShadow)		modeByte |= (1 << 3);
-  if (occluder)	 modeByte |= (1 << 4);
-  if (groupAlpha)       modeByte |= (1 << 5);
-  if (noLighting)       modeByte |= (1 << 6);
-  buf = nboPackUByte(buf, modeByte);
+  if (noCulling)  { modeByte |= (1 << 0); }
+  if (noSorting)  { modeByte |= (1 << 1); }
+  if (noRadar)    { modeByte |= (1 << 2); }
+  if (noShadow)   { modeByte |= (1 << 3); }
+  if (occluder)   { modeByte |= (1 << 4); }
+  if (groupAlpha) { modeByte |= (1 << 5); }
+  if (noLighting) { modeByte |= (1 << 6); }
+  buf = nboPackUInt8(buf, modeByte);
 
-  buf = nboPackInt(buf, dynamicColor);
-  buf = pack4Float(buf, ambient);
-  buf = pack4Float(buf, diffuse);
-  buf = pack4Float(buf, specular);
-  buf = pack4Float(buf, emission);
+  buf = nboPackInt32(buf, order);
+  buf = nboPackInt32(buf, dynamicColor);
+  buf = nboPackFVec4(buf, ambient);
+  buf = nboPackFVec4(buf, diffuse);
+  buf = nboPackFVec4(buf, specular);
+  buf = nboPackFVec4(buf, emission);
   buf = nboPackFloat(buf, shininess);
   buf = nboPackFloat(buf, alphaThreshold);
 
-  buf = nboPackUByte(buf, textureCount);
+  buf = nboPackUInt8(buf, textureCount);
   for (i = 0; i < textureCount; i++) {
     const TextureInfo* texinfo = &textures[i];
 
     buf = nboPackStdString(buf, texinfo->name);
-    buf = nboPackInt(buf, texinfo->matrix);
-    buf = nboPackInt(buf, texinfo->combineMode);
+    buf = nboPackInt32(buf, texinfo->matrix);
+    buf = nboPackInt32(buf, texinfo->combineMode);
     unsigned char stateByte = 0;
     if (texinfo->useAlpha) {
       stateByte = stateByte | (1 << 0);
@@ -452,10 +437,10 @@ void* BzMaterial::pack(void* buf) const
     if (texinfo->useSphereMap) {
       stateByte = stateByte | (1 << 2);
     }
-    buf = nboPackUByte(buf, stateByte);
+    buf = nboPackUInt8(buf, stateByte);
   }
 
-  buf = nboPackUByte(buf, shaderCount);
+  buf = nboPackUInt8(buf, shaderCount);
   for (i = 0; i < shaderCount; i++) {
     buf = nboPackStdString(buf, shaders[i].name);
   }
@@ -472,41 +457,41 @@ void* BzMaterial::unpack(void* buf)
   buf = nboUnpackStdString(buf, name);
 
   uint8_t modeByte;
-  buf = nboUnpackUByte(buf, modeByte);
-  noCulling	= (modeByte & (1 << 0)) != 0;
-  noSorting	= (modeByte & (1 << 1)) != 0;
-  noRadar	= (modeByte & (1 << 2)) != 0;
-  noShadow	= (modeByte & (1 << 3)) != 0;
-  occluder	= (modeByte & (1 << 4)) != 0;
-  groupAlpha    = (modeByte & (1 << 5)) != 0;
-  noLighting    = (modeByte & (1 << 6)) != 0;
+  buf = nboUnpackUInt8(buf, modeByte);
+  noCulling  = (modeByte & (1 << 0)) != 0;
+  noSorting  = (modeByte & (1 << 1)) != 0;
+  noRadar    = (modeByte & (1 << 2)) != 0;
+  noShadow   = (modeByte & (1 << 3)) != 0;
+  occluder   = (modeByte & (1 << 4)) != 0;
+  groupAlpha = (modeByte & (1 << 5)) != 0;
+  noLighting = (modeByte & (1 << 6)) != 0;
 
-  buf = nboUnpackInt(buf, inTmp);
-  dynamicColor = int(inTmp);
-  buf = unpack4Float(buf, ambient);
-  buf = unpack4Float(buf, diffuse);
-  buf = unpack4Float(buf, specular);
-  buf = unpack4Float(buf, emission);
+  buf = nboUnpackInt32(buf, order);
+  buf = nboUnpackInt32(buf, inTmp); dynamicColor = int(inTmp);
+  buf = nboUnpackFVec4(buf, ambient);
+  buf = nboUnpackFVec4(buf, diffuse);
+  buf = nboUnpackFVec4(buf, specular);
+  buf = nboUnpackFVec4(buf, emission);
   buf = nboUnpackFloat(buf, shininess);
   buf = nboUnpackFloat(buf, alphaThreshold);
 
   unsigned char tCount;
-  buf = nboUnpackUByte(buf, tCount);
+  buf = nboUnpackUInt8(buf, tCount);
   textureCount = tCount;
   textures = new TextureInfo[textureCount];
   for (i = 0; i < textureCount; i++) {
     TextureInfo* texinfo = &textures[i];
     buf = nboUnpackStdString(buf, texinfo->name);
     texinfo->localname = texinfo->name;
-    buf = nboUnpackInt(buf, inTmp);
+    buf = nboUnpackInt32(buf, inTmp);
     texinfo->matrix = int(inTmp);
-    buf = nboUnpackInt(buf, inTmp);
+    buf = nboUnpackInt32(buf, inTmp);
     texinfo->combineMode = int(inTmp);
     texinfo->useAlpha = false;
     texinfo->useColor = false;
     texinfo->useSphereMap = false;
     unsigned char stateByte;
-    buf = nboUnpackUByte(buf, stateByte);
+    buf = nboUnpackUInt8(buf, stateByte);
     if (stateByte & (1 << 0)) {
       texinfo->useAlpha = true;
     }
@@ -519,7 +504,7 @@ void* BzMaterial::unpack(void* buf)
   }
 
   unsigned char sCount;
-  buf = nboUnpackUByte(buf, sCount);
+  buf = nboUnpackUInt8(buf, sCount);
   shaderCount = sCount;
   shaders = new ShaderInfo[shaderCount];
   for (i = 0; i < shaderCount; i++) {
@@ -536,7 +521,9 @@ int BzMaterial::packSize() const
 
   const int modeSize = sizeof(uint8_t);
 
-  const int colorSize = sizeof(int32_t) + (4 * sizeof(float[4])) +
+  const int orderSize = sizeof(int32_t);
+
+  const int colorSize = sizeof(int32_t) + (4 * sizeof(fvec4)) +
 			sizeof(float) + sizeof(float);
 
   int textureSize = sizeof(unsigned char);
@@ -552,16 +539,17 @@ int BzMaterial::packSize() const
     shaderSize += nboStdStringPackSize(shaders[i].name);
   }
 
-  return nboStdStringPackSize(name) + modeSize + colorSize + textureSize + shaderSize;
+  return nboStdStringPackSize(name) +
+         modeSize + orderSize + colorSize + textureSize + shaderSize;
 }
 
 
 static void printColor(std::ostream& out, const char *name,
-		       const float color[4], const float reference[4])
+		       const fvec4& color, const fvec4& reference)
 {
-  if (memcmp(color, reference, sizeof(float[4])) != 0) {
-    out << name << color[0] << " " << color[1] << " "
-		<< color[2] << " " << color[3] << std::endl;
+  if (color != reference) {
+    out << name << color.r << " " << color.g << " "
+		<< color.b << " " << color.a << std::endl;
   }
   return;
 }
@@ -575,6 +563,10 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
+  }
+
+  if (order != defaultMaterial.order) {
+    out << indent << "  order " << order << std::endl;
   }
 
   if (dynamicColor != defaultMaterial.dynamicColor) {
@@ -668,17 +660,12 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
   } else {
     out << "illum 2" << std::endl;
   }
-  out << "d " << diffuse[3] << std::endl;
-  const float* c;
-  c = ambient; // not really used
-  out << "#Ka " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-  c = diffuse;
-  out << "Kd " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-  c = emission;
-  out << "Ke " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-  c = specular;
-  out << "Ks " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-  out << "Ns " << (1000.0f * (shininess / 128.0f)) << std::endl;
+  out << "d "   << diffuse.a << std::endl;
+  out << "#Ka " << ambient.rgb().tostring()  << std::endl; // not really used
+  out << "Kd "  << diffuse.rgb().tostring()  << std::endl;
+  out << "Ke "  << emission.rgb().tostring() << std::endl;
+  out << "Ks "  << specular.rgb().tostring() << std::endl;
+  out << "Ns "  << (1000.0f * (shininess / 128.0f)) << std::endl;
   if (textureCount > 0) {
     const TextureInfo* ti = &textures[0];
     const unsigned int nlen = (unsigned int)ti->name.size();
@@ -696,7 +683,7 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
 }
 
 
-/****************************************************************************/
+//============================================================================//
 //
 // Parameter setting
 //
@@ -738,33 +725,39 @@ bool BzMaterial::addAlias(const std::string& alias)
   return true;
 }
 
+void BzMaterial::setOrder(int value)
+{
+  order = value;
+  return;
+}
+
 void BzMaterial::setDynamicColor(int dyncol)
 {
   dynamicColor = dyncol;
   return;
 }
 
-void BzMaterial::setAmbient(const float color[4])
+void BzMaterial::setAmbient(const fvec4& color)
 {
-  memcpy (ambient, color, sizeof(float[4]));
+  ambient = color;
   return;
 }
 
-void BzMaterial::setDiffuse(const float color[4])
+void BzMaterial::setDiffuse(const fvec4& color)
 {
-  memcpy (diffuse, color, sizeof(float[4]));
+  diffuse = color;
   return;
 }
 
-void BzMaterial::setSpecular(const float color[4])
+void BzMaterial::setSpecular(const fvec4& color)
 {
-  memcpy (specular, color, sizeof(float[4]));
+  specular = color;
   return;
 }
 
-void BzMaterial::setEmission(const float color[4])
+void BzMaterial::setEmission(const fvec4& color)
 {
-  memcpy (emission, color, sizeof(float[4]));
+  emission = color;
   return;
 }
 
@@ -948,7 +941,7 @@ void BzMaterial::clearShaders()
 }
 
 
-/****************************************************************************/
+//============================================================================//
 //
 // Parameter retrieval
 //
@@ -963,27 +956,32 @@ const std::vector<std::string>& BzMaterial::getAliases() const
   return aliases;
 }
 
+int BzMaterial::getOrder() const
+{
+  return order;
+}
+
 int BzMaterial::getDynamicColor() const
 {
   return dynamicColor;
 }
 
-const float* BzMaterial::getAmbient() const
+const fvec4& BzMaterial::getAmbient() const
 {
   return ambient;
 }
 
-const float* BzMaterial::getDiffuse() const
+const fvec4& BzMaterial::getDiffuse() const
 {
   return diffuse;
 }
 
-const float* BzMaterial::getSpecular() const
+const fvec4& BzMaterial::getSpecular() const
 {
   return specular;
 }
 
-const float* BzMaterial::getEmission() const
+const fvec4& BzMaterial::getEmission() const
 {
   return emission;
 }
@@ -1121,7 +1119,7 @@ const std::string& BzMaterial::getShader(int shdid) const
 bool BzMaterial::isInvisible() const
 {
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
-  if ((diffuse[3] == 0.0f) && (dyncol == NULL) &&
+  if ((diffuse.a == 0.0f) && (dyncol == NULL) &&
       !((textureCount > 0) && !textures[0].useColor)) {
     return true;
   }

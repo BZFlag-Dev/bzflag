@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,6 +27,7 @@
 
 /* common headers */
 #include "bzfgl.h"
+#include "vectors.h"
 
 class LocalFontFace;
 
@@ -45,12 +46,12 @@ class HUDuiElement {
     const LocalFontFace*	getFontFace() const;
     float		getFontSize() const;
 
-    void		setPosition(float x, float y);
-    void		setSize(float width, float height);
+    virtual void		setPosition(float x, float y);
+    virtual void		setSize(float width, float height);
     void		setLabelWidth(float width);
     void		setLabel(const std::string& label);
-    void		setFontFace(const LocalFontFace* face);
-    void		setFontSize(float size);
+    virtual void		setFontFace(const LocalFontFace* face);
+    virtual void		setFontSize(float size);
 
     virtual void	render();
 
@@ -60,9 +61,9 @@ class HUDuiElement {
 
     void		renderLabel();
 
-    static const GLfloat	dimTextColor[3];
-    static const GLfloat	moreDimTextColor[3];
-    static const GLfloat	textColor[3];
+    static const fvec4	dimTextColor;
+    static const fvec4	moreDimTextColor;
+    static const fvec4	textColor;
 
     bool		skipRenderLabel;
     float		fontHeight;

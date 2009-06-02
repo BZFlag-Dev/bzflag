@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,7 +23,7 @@
 /* common headers */
 #include "TextUtils.h"
 
-/******************************************************************************/
+//============================================================================//
 
 TextChunk::TextChunk() :
   fileName(""),
@@ -115,7 +115,7 @@ const StringVector& TextChunk::getVector() const
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 bool TextChunkManager::parseFile(const std::string &fileName,
 				 const std::string &chunkName,
@@ -168,7 +168,7 @@ void TextChunkManager::reload()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 
 // Local Variables: ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -89,7 +89,7 @@ void EntryZones::calculateQualifierLists()
 }
 
 
-bool EntryZones::getRandomPoint(const std::string &qual, float *pt) const
+bool EntryZones::getRandomPoint(const std::string &qual, fvec3& pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qual);
   if (mit == qmap.end())
@@ -116,8 +116,8 @@ bool EntryZones::getRandomPoint(const std::string &qual, float *pt) const
 }
 
 
-bool EntryZones::getClosePoint(const std::string &qual, const float pos[3],
-			       float *pt) const
+bool EntryZones::getClosePoint(const std::string &qual, const fvec3& pos,
+			       fvec3& pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qual);
   if (mit == qmap.end())
@@ -147,7 +147,7 @@ bool EntryZones::getClosePoint(const std::string &qual, const float pos[3],
 }
 
 
-bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
+bool EntryZones::getZonePoint(const std::string &qualifier, fvec3& pt) const
 {
   QualifierMap::const_iterator mit = qmap.find(qualifier);
   if (mit == qmap.end())
@@ -174,8 +174,8 @@ bool EntryZones::getZonePoint(const std::string &qualifier, float *pt) const
 }
 
 
-bool EntryZones::getSafetyPoint( const std::string &qualifier,
-				 const float *pos, float *pt ) const
+bool EntryZones::getSafetyPoint(const std::string &qualifier,
+				const fvec3& pos, fvec3& pt) const
 {
   std::string safetyString = /*EntryZones::getSafetyPrefix() + */ qualifier;
 
@@ -247,7 +247,7 @@ void EntryZones::makeSplitLists (int zone,
 
 void * EntryZones::pack(void *buf) const
 {
-  buf = nboPackUInt(buf, zones.size());
+  buf = nboPackUInt32(buf, zones.size());
 
   for (unsigned int i = 0; i < zones.size(); i++) {
     const WorldFileLocation& z = (const WorldFileLocation) zones[i];
@@ -256,18 +256,18 @@ void * EntryZones::pack(void *buf) const
     std::vector<TeamColor> safety;
     makeSplitLists (i, flags, teams, safety);
     buf = z.pack (buf);
-    buf = nboPackUShort(buf, flags.size());
-    buf = nboPackUShort(buf, teams.size());
-    buf = nboPackUShort(buf, safety.size());
+    buf = nboPackUInt16(buf, flags.size());
+    buf = nboPackUInt16(buf, teams.size());
+    buf = nboPackUInt16(buf, safety.size());
     unsigned int j;
     for (j = 0; j < flags.size(); j++) {
       buf = flags[j]->pack(buf);
     }
     for (j = 0; j < teams.size(); j++) {
-      buf = nboPackUShort(buf, teams[j]);
+      buf = nboPackUInt16(buf, teams[j]);
     }
     for (j = 0; j < safety.size(); j++) {
-      buf = nboPackUShort(buf, safety[j]);
+      buf = nboPackUInt16(buf, safety[j]);
     }
   }
   return buf;
@@ -285,8 +285,8 @@ int EntryZones::packSize() const
     std::vector<TeamColor> teams;
     std::vector<TeamColor> safety;
     makeSplitLists (i, flags, teams, safety);
-    fullSize += sizeof(float[3]); // pos
-    fullSize += sizeof(float[3]); // size
+    fullSize += sizeof(fvec3); // pos
+    fullSize += sizeof(fvec3); // size
     fullSize += sizeof(float);    // angle
     fullSize += sizeof(uint16_t); // flag count
     fullSize += sizeof(uint16_t); // team count

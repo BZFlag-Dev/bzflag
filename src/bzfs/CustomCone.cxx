@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,7 +44,7 @@ CustomCone::CustomCone(bool pyramid)
 {
   // default to a (radius=10, height=10) cylinder
   divisions = 16;
-  size[0] = size[1] = size[2] = 10.0f;
+  size = fvec3(10.0f, 10.0f, 10.0f);
   texsize[0] = texsize[1] = -8.0f;
   angle = 360.0f;
   phydrv = -1;
@@ -62,8 +62,8 @@ CustomCone::CustomCone(bool pyramid)
     flipz = false;
     divisions = 4;
     useNormals = false;
-    size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
-    size[2] = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+    size.x = size.y = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+    size.z = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
     materials[Edge].setTexture("pyrwall");
     materials[Bottom].setTexture("pyrwall");
     materials[StartFace].setTexture("pyrwall");
@@ -149,27 +149,27 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
   if (!pyramidStyle) {
     cone = new ConeObstacle(transform, pos, size, rotation, angle,
 			    texsize, useNormals, divisions, mats, phydrv,
-			    smoothBounce, driveThrough, shootThrough);
+			    smoothBounce, driveThrough, shootThrough, ricochet);
   } else {
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
-    const float origin[3] = {0.0f, 0.0f, 0.0f};
+    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
+    const fvec3 origin(0.0f, 0.0f, 0.0f);
     MeshTransform xform;
-    if (flipz || (size[2] < 0.0f)) {
-      const float flipScale[3] = {1.0f, 1.0f, -1.0f};
-      const float flipShift[3] = {0.0f, 0.0f, +size[2]};
+    if (flipz || (size.z < 0.0f)) {
+      const fvec3 flipScale(1.0f, 1.0f, -1.0f);
+      const fvec3 flipShift(0.0f, 0.0f, +size.z);
       xform.addScale(flipScale);
       xform.addShift(flipShift);
     }
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);
     xform.append(transform);
-    float newSize[3];
-    newSize[0] = (float)(size[0] * M_SQRT2);
-    newSize[1] = (float)(size[1] * M_SQRT2);
-    newSize[2] = fabsf(size[2]);
+    fvec3 newSize;
+    newSize.x = (float)(size.x * M_SQRT2);
+    newSize.y = (float)(size.y * M_SQRT2);
+    newSize.z = fabsf(size.z);
     cone = new ConeObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle,
 			    texsize, useNormals, divisions, mats, phydrv,
-			    smoothBounce, driveThrough, shootThrough);
+			    smoothBounce, driveThrough, shootThrough, ricochet);
   }
 
   cone->setName(name.c_str());
@@ -184,7 +184,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

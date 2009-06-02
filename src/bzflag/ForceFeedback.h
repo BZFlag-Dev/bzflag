@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,14 +17,13 @@
  * effect if we have a FF-enabled joystick connected and the user
  * has enabled force feedback.
  */
-namespace ForceFeedback {
-
+namespace ForceFeedback
+{
   void death();
   void shotFired();
   void laserFired();
   void shockwaveFired();
   void solidMatterFriction();
-
 }
 
 #endif /* __FORCE_FEEDBACK_H__ */

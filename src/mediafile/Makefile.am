@@ -10,7 +10,6 @@ libMediaFile_la_LDFLAGS = -static
 libMediaFile_la_SOURCES =	\
 	AudioFile.cxx		\
 	AudioFile.h		\
-	CacheManager.cxx	\
 	ImageFile.cxx		\
 	ImageFile.h		\
 	MediaFile.cxx		\

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -406,6 +406,12 @@ void			XWindow::setFullscreen(bool on)
   XSync(display->getDisplay(), false);
 }
 
+bool			XWindow::getFullscreen() const
+{
+  // FIXME
+  return false;
+}
+
 void			XWindow::warpMouse(int x, int y)
 {
   XWarpPointer(display->getDisplay(), None, window, 0, 0, 0, 0, x, y);
@@ -459,8 +465,9 @@ void			XWindow::hideMouse()
       // note we're going to leak the cursor
     }
   }
-  if (cursor != None)
+  if (cursor != None) {
     XDefineCursor(display->getDisplay(), window, cursor);
+  }
 }
 
 void			XWindow::setGamma(float newGamma)

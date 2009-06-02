@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,57 +17,133 @@
 #ifndef	BZF_LINK_MANAGER_H
 #define	BZF_LINK_MANAGER_H
 
-// common goes first
 #include "common.h"
 
 // system headers
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
 #include <iostream>
 
+// common headers
+#include "LinkDef.h"
+#include "LinkPhysics.h"
+
+
+class MeshFace;
+class FlagType;
+
+
 class LinkManager {
+  public:
+    typedef std::vector<int>         IntVec;
+    typedef std::vector<std::string> StringVec;
+
+    struct DstData {
+      DstData() : face(NULL) {}
+      DstData(const MeshFace* f, const LinkPhysics& lp)
+      : face(f)
+      , physics(lp)
+      {}
+      bool operator<(const DstData& dd) const;
+
+      const MeshFace* face;
+      LinkPhysics  physics;
+    };
+
+    struct DstIndexList {
+      DstIndexList() : needTest(false) {}
+      bool needTest;
+      IntVec dstIDs;
+    };
+
+    typedef std::map<const MeshFace*, DstIndexList> LinkMap;
+
+    typedef std::vector<DstData>   DstDataVec;
+    typedef std::map<DstData, int> DstDataIntMap;
+
+    typedef std::vector<const MeshFace*>   FaceVec;
+    typedef std::set<const MeshFace*>      FaceSet;
+    typedef std::map<const MeshFace*, int> FaceIntMap;
+
+    struct NameFace {
+      NameFace(const std::string& n, const MeshFace* f) : name(n), face(f) {}
+      std::string     name;
+      const MeshFace* face;
+    };
+    typedef std::vector<NameFace> NameFaceVec;
 
   public:
-
     LinkManager();
     ~LinkManager();
 
-    void clear();
-
-    void addLink(int src, int dst);
-    void addLink(const std::string& src, const std::string& dst);
-
     void doLinking();
 
-    int getTeleportTarget(int source) const;
-    int getTeleportTarget(int source, unsigned int seed) const;
+    void clear();
 
-    int packSize() const;
-    void* pack(void*) const;
-    void* unpack(void*);
+    void addLinkDef(const LinkDef& linkDef);
 
-    void print(std::ostream& out, const std::string& indent) const;
+    const MeshFace* getShotLinkDst(const MeshFace* srcLink,
+                                   unsigned int seed,
+                                   int& linkSrcID, int& linkDstID,
+                                   const LinkPhysics*& physics,
+                                   const fvec3& pos, const fvec3& vel,
+                                   int team, const FlagType* flagType) const;
+    const MeshFace* getTankLinkDst(const MeshFace* srcLink,
+                                   int& linkSrcID, int& linkDstID,
+                                   const LinkPhysics*& physics,
+                                   const fvec3& pos, const fvec3& vel,
+                                   int team, const FlagType* flagType) const;
+
+    const MeshFace* getLinkSrcFace(int linkSrcID) const;
+    const MeshFace* getLinkDstFace(int linkDstID) const;
+    const DstData*  getLinkDstData(int linkDstID) const;
+
+    int getLinkSrcID(const MeshFace* linkSrc) const;
+    int getLinkDstID(const MeshFace* linkDst, const LinkPhysics& lp) const;
+
+    inline const FaceVec&    getLinkSrcs() const { return linkSrcs; }
+    inline const DstDataVec& getLinkDsts() const { return linkDsts; }
+    inline const LinkMap&    getLinkMap()  const { return linkMap;  }
+
+    inline const FaceSet& getLinkSrcSet()  const { return linkSrcSet;  }
+    inline const FaceSet& getLinkDstSet()  const { return linkDstSet;  }
+    inline const FaceSet& getLinkFaceSet() const { return linkFaceSet; }
 
   private:
+    void buildNameMap();
 
-    void makeLinkName(int number, std::string& name);
-    void findTelesByName(const std::string& name,
-			 std::vector<int>& list) const;
+    bool matchLinks(const StringVec& patterns, FaceSet& faces) const;
+
+    void createLink(const MeshFace* linkSrc,
+                    const MeshFace* linkDst, const LinkPhysics& physics);
+
+    void crossLink(); // make sure that all 'teleporter' sourced
+                      // links are valid (using passthrough links)
+
+    void printDebug();
 
   private:
+    LinkDefVec linkDefs;
 
-    typedef struct {
-      std::string src;
-      std::string dst;
-    } LinkNameSet;
+    LinkMap linkMap;
 
-    typedef struct {
-      std::vector<int> dsts;
-    } LinkNumberSet;
+    FaceVec    linkSrcs;
+    FaceIntMap linkSrcMap;
 
-    std::vector<LinkNameSet>	linkNames;
-    std::vector<LinkNumberSet>	linkNumbers;
+    DstDataVec    linkDsts;
+    DstDataIntMap linkDstMap;
+
+    FaceSet linkSrcSet;
+    FaceSet linkDstSet;
+    FaceSet linkFaceSet;
+
+    NameFaceVec nameFaceVec;
 };
+
+
+extern LinkManager linkManager;
 
 
 #endif // BZF_LINK_MANAGER_H

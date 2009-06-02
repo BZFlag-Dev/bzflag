@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,13 +18,16 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.61 2008-02-10 01:32:43 gknauf Exp $
+# $Id: Makefile.am,v 1.73 2009-02-23 14:34:40 yangtse Exp $
 ###########################################################################
 
 AUTOMAKE_OPTIONS = foreign
 
-EXTRA_DIST = CHANGES COPYING maketgz reconf Makefile.dist curl-config.in \
- curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat libcurl.pc.in
+ACLOCAL_AMFLAGS = -I m4
+
+EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in \
+ curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat 	 \
+ libcurl.pc.in vc6curl.dsw MacOSX-Framework
 
 bin_SCRIPTS = curl-config
 
@@ -52,7 +55,10 @@ pdf:
 check: examples
 
 examples:
-	@(cd docs/examples; $(MAKE) all)
+	@(cd docs/examples; $(MAKE) check)
+
+clean-local:
+	@(cd docs; $(MAKE) clean)
 
 #
 # Build source and binary rpms. For rpm-3.0 and above, the ~/.rpmmacros
@@ -82,7 +88,7 @@ rpm:
 	mv $$RPM_TOPDIR/SRPMS/$(RPMDIST)-*.src.rpm .
 
 #
-# Build a Solaris pkkgadd format file
+# Build a Solaris pkgadd format file
 # run 'make pkgadd' once you've done './configure' and 'make' to make a Solaris pkgadd format
 # file (which ends up back in this directory).
 # The pkgadd file is in 'pkgtrans' format, so to install on Solaris, do
@@ -115,3 +121,7 @@ uninstall-hook:
 ca-bundle: lib/mk-ca-bundle.pl
 	@echo "generate a fresh ca-bundle.crt"
 	@perl $< -b -l -u lib/ca-bundle.crt
+
+ca-firefox: lib/firefox-db2pem.sh
+	@echo "generate a fresh ca-bundle.crt"
+	./lib/firefox-db2pem.sh lib/ca-bundle.crt

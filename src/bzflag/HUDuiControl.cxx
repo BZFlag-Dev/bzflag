@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,8 @@
 // local implementation headers
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "HUDuiNestedContainer.h"
+
 
 
 //
@@ -33,7 +35,7 @@ TimeKeeper		HUDuiControl::lastTime;
 int			HUDuiControl::totalCount = 0;
 
 HUDuiControl::HUDuiControl() : showingFocus(true), navList(NULL), cb(NULL),
-				userData(NULL)
+				userData(NULL), nested(false), parent(NULL)
 {
   if (totalCount == 0) {
     // load arrow texture
@@ -91,6 +93,22 @@ void			HUDuiControl::showFocus(bool _showingFocus)
   showingFocus = _showingFocus;
 }
 
+void HUDuiControl::isNested(bool _nested)
+{
+  nested = _nested;
+}
+
+void HUDuiControl::setParent(HUDuiControl* parentControl)
+{
+  parent = parentControl;
+}
+
+bool HUDuiControl::isAtNavQueueIndex(size_t index)
+{
+  if (!navList) return false;
+  return navList->at(index) == this;
+}
+
 void			HUDuiControl::doCallback()
 {
   if (cb) (*cb)(this, userData);
@@ -106,7 +124,7 @@ void			HUDuiControl::renderFocus()
   const float x = getX();
   const float y = getY();
 
-  if (gstate->isTextured()) { 
+  if (gstate->isTextured()) {
     /* draw a fancy textured/image cursor */
 
     float imageSize = (float)info.y;
@@ -186,7 +204,7 @@ bool			HUDuiControl::doKeyPress(const BzfKeyEvent& key)
       case BzfKeyEvent::Up:
 	navList->prev();
 	return true;
-	
+
       case BzfKeyEvent::Down:
 	navList->next();
 	return true;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,34 +19,35 @@
 // system headers
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "StateDatabase.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local implemenation headers
 #include "ViewFrustum.h"
 #include "ShellSceneNode.h"
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
 #define	ShellRadius1_2	((float)(M_SQRT1_2 * ShellRadius))
 
-const GLfloat		TracerSceneNode::TailLength = 10.0f;
-const GLfloat		TracerSceneNode::tailVertex[9][3] = {
-				{-0.5f * TailLength, 0.0f, 0.0f },
-				{ 0.5f * TailLength, -ShellRadius, 0.0f },
-				{ 0.5f * TailLength, -ShellRadius1_2, -ShellRadius1_2 },
-				{ 0.5f * TailLength, 0.0f, -ShellRadius },
-				{ 0.5f * TailLength, ShellRadius1_2, -ShellRadius1_2 },
-				{ 0.5f * TailLength, ShellRadius, 0.0f },
-				{ 0.5f * TailLength, ShellRadius1_2, ShellRadius1_2 },
-				{ 0.5f * TailLength, 0.0f, ShellRadius },
-				{ 0.5f * TailLength, -ShellRadius1_2, ShellRadius1_2 }
-			};
+const float TracerSceneNode::TailLength = 10.0f;
 
-TracerSceneNode::TracerSceneNode(const GLfloat pos[3],
-				const GLfloat forward[3]) :
-				renderNode(this)
+const fvec3 TracerSceneNode::tailVertex[9] = {
+  fvec3(-0.5f * TailLength, 0.0f, 0.0f),
+  fvec3(0.5f * TailLength, -ShellRadius, 0.0f),
+  fvec3(0.5f * TailLength, -ShellRadius1_2, -ShellRadius1_2),
+  fvec3(0.5f * TailLength, 0.0f, -ShellRadius),
+  fvec3(0.5f * TailLength, ShellRadius1_2, -ShellRadius1_2),
+  fvec3(0.5f * TailLength, ShellRadius, 0.0f),
+  fvec3(0.5f * TailLength, ShellRadius1_2, ShellRadius1_2),
+  fvec3(0.5f * TailLength, 0.0f, ShellRadius),
+  fvec3(0.5f * TailLength, -ShellRadius1_2, ShellRadius1_2)
+};
+
+
+TracerSceneNode::TracerSceneNode(const fvec3& pos, const fvec3& forward)
+: renderNode(this)
 {
   // prepare light
   light.setAttenuation(0, 0.0667f);
@@ -59,31 +60,31 @@ TracerSceneNode::TracerSceneNode(const GLfloat pos[3],
   setRadius(0.25f * TailLength * TailLength);
 }
 
+
 TracerSceneNode::~TracerSceneNode()
 {
   // do nothing
 }
 
-void			TracerSceneNode::move(const GLfloat pos[3],
-						const GLfloat forward[3])
+
+void TracerSceneNode::move(const fvec3& pos, const fvec3& forward)
 {
-  const GLfloat d = 1.0f / sqrtf(forward[0] * forward[0] +
-				forward[1] * forward[1] +
-				forward[2] * forward[2]);
-  azimuth = (GLfloat)(180.0 / M_PI * atan2f(forward[1], forward[0]));
-  elevation = (GLfloat)(-180.0 / M_PI * atan2f(forward[2], hypotf(forward[0],forward[1])));
-  setCenter(pos[0] - 0.5f * TailLength * d * forward[0],
-	    pos[1] - 0.5f * TailLength * d * forward[1],
-	    pos[2] - 0.5f * TailLength * d * forward[2]);
-  light.setPosition(getSphere());
+  setCenter(pos - 0.5f * TailLength * forward.normalize());
+
+  azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, hypotf(forward.x, forward.y)));
+
+  light.setPosition(getSphere().xyz());
 }
 
-void			TracerSceneNode::addLight(SceneRenderer& renderer)
+
+void TracerSceneNode::addLight(SceneRenderer& renderer)
 {
   renderer.addLight(light);
 }
 
-void			TracerSceneNode::notifyStyleChange()
+
+void TracerSceneNode::notifyStyleChange()
 {
   OpenGLGStateBuilder builder(gstate);
   if (BZDB.isTrue("blend")) {
@@ -102,11 +103,12 @@ void			TracerSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			TracerSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+
+void TracerSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // TracerSceneNode::TracerRenderNode
@@ -124,11 +126,12 @@ TracerSceneNode::TracerRenderNode::~TracerRenderNode()
   // do nothing
 }
 
-void			TracerSceneNode::TracerRenderNode::render()
+
+void TracerSceneNode::TracerRenderNode::render()
 {
-  const GLfloat* sphere = sceneNode->getSphere();
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
+    glTranslatef(sphere.x, sphere.y, sphere.z);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
@@ -164,6 +167,7 @@ void			TracerSceneNode::TracerRenderNode::render()
 
   glPopMatrix();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

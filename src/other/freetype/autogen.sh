@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2005, 2006, 2007 by
+# Copyright 2005, 2006, 2007, 2008 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -47,8 +47,8 @@ if test "$HOSTOS"x = Darwinx; then
   LIBTOOLIZE=glibtoolize
 fi
 
-run aclocal -I . # --force
-run $LIBTOOLIZE --force --copy
+run aclocal -I . --force
+run $LIBTOOLIZE --force --copy --install
 run autoconf --force
 
 chmod +x mkinstalldirs

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,6 +17,7 @@
 
 #include "OpenGLTexture.h"
 #include "Singleton.h"
+#include "vectors.h"
 
 
 struct FileTextureInit
@@ -26,15 +27,17 @@ struct FileTextureInit
 };
 
 
-typedef  struct
+struct ImageInfo
 {
+  ImageInfo() {}
+  ImageInfo(int i, OpenGLTexture* t) : id(i), texture(t) {}
   int   id;
   int   x;
   int   y;
   bool  alpha;
   OpenGLTexture *texture;
   std::string   name;
-} ImageInfo;
+};
 
 class TextureManager;
 
@@ -51,6 +54,9 @@ class TextureManager : public Singleton<TextureManager>
 {
 public:
   int getTextureID( const char* name, bool reportFail = true );
+  int getTextureID( const std::string& name, bool reportFail = true ) {
+    return getTextureID(name.c_str(), reportFail);
+  }
 
   bool isLoaded(const std::string& name);
   bool removeTexture(const std::string& name);
@@ -67,7 +73,7 @@ public:
   const ImageInfo& getInfo ( int id );
   const ImageInfo& getInfo ( const char* name );
 
-  bool getColorAverages(int texId, float rgba[4], bool factorAlpha) const;
+  bool getColorAverages(int texId, fvec4& rgba, bool factorAlpha) const;
 
   OpenGLTexture::Filter getMaxFilter ( void );
   std::string getMaxFilterName ( void );
@@ -75,6 +81,8 @@ public:
   void setMaxFilter ( std::string filter );
 
   float GetAspectRatio ( int id );
+
+  void clearLastBoundID() { lastBoundID = -1; }
 
   int newTexture (const char* name, int x, int y, unsigned char* data,
 		  OpenGLTexture::Filter filter, bool repeat = true, int format = 0);

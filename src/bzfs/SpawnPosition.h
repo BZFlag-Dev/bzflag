@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,7 +17,10 @@
 
 #include "common.h"
 
-/* local interface headers */
+// common headers
+#include "vectors.h"
+
+// local headers
 #include "SpawnPolicy.h"
 
 
@@ -43,7 +46,7 @@ public:
 
 private:
   float	      azimuth;
-  float       pos[3];
+  fvec3       pos;
 
   /* class data - determines how the pos and azimuth are determined */
   static SpawnPolicy *policy;
@@ -51,17 +54,17 @@ private:
 
 inline float SpawnPosition::getX() const
 {
-  return pos[0];
+  return pos.x;
 }
 
 inline float SpawnPosition::getY() const
 {
-  return pos[1];
+  return pos.y;
 }
 
 inline float SpawnPosition::getZ() const
 {
-  return pos[2];
+  return pos.z;
 }
 
 /** returns the rotational orientation of this spawn position, from

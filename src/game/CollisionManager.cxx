@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,7 +29,6 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
-#include "Teleporter.h"
 #include "TimeKeeper.h"
 
 
@@ -59,7 +58,7 @@ static ColDetNodeList	EmptyNodeList = { 0, NULL };
 
 /* static functions */
 
-inline static void addToFullList (Obstacle* obs)
+inline static void addToFullList(Obstacle* obs)
 {
   obs->collisionState = false;
   FullList.list[FullList.count] = obs;
@@ -67,21 +66,21 @@ inline static void addToFullList (Obstacle* obs)
   return;
 }
 
-inline static void addToFullPadList (Obstacle* obs)
+inline static void addToFullPadList(Obstacle* obs)
 {
   FullPad.list[FullPad.count] = obs;
   FullPad.count++;
   return;
 }
 
-inline static void addToRayList (ColDetNode* node)
+inline static void addToRayList(ColDetNode* node)
 {
   RayList.list[RayList.count] = node;
   RayList.count++;
   return;
 }
 
-static void squeezeChildren (ColDetNode** children)
+static void squeezeChildren(ColDetNode** children)
 {
   for (int dst = 0; dst < 8; dst++) {
     if (children[dst] == NULL) {
@@ -103,7 +102,7 @@ static void squeezeChildren (ColDetNode** children)
 // CollisionManager
 //
 
-CollisionManager::CollisionManager ()
+CollisionManager::CollisionManager()
 {
   root = NULL;
   FullPad.list = NULL;
@@ -113,13 +112,13 @@ CollisionManager::CollisionManager ()
 }
 
 
-CollisionManager::~CollisionManager ()
+CollisionManager::~CollisionManager()
 {
   clear();
 }
 
 
-void CollisionManager::clear ()
+void CollisionManager::clear()
 {
   delete root;
   root = NULL;
@@ -151,11 +150,11 @@ void CollisionManager::clear ()
 }
 
 
-bool CollisionManager::needReload () const
+bool CollisionManager::needReload() const
 {
-  int newDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
-  int newElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
-  float newWorldSize = BZDB.eval (StateDatabase::BZDB_WORLDSIZE);
+  int newDepth = BZDB.evalInt(StateDatabase::BZDB_COLDETDEPTH);
+  int newElements = BZDB.evalInt(StateDatabase::BZDB_COLDETELEMENTS);
+  float newWorldSize = BZDBCache::worldSize;
   if ((newDepth != maxDepth) || (newElements != minElements) ||
       (newWorldSize != worldSize)) {
     return true;
@@ -165,7 +164,7 @@ bool CollisionManager::needReload () const
 }
 
 
-const ObsList* CollisionManager::axisBoxTest (const Extents& exts)
+const ObsList* CollisionManager::axisBoxTest(const Extents& exts)
 {
   if (root == NULL) {
     return &EmptyList;
@@ -174,7 +173,7 @@ const ObsList* CollisionManager::axisBoxTest (const Extents& exts)
   FullPad.count = 0;
 
   // get the list
-  root->axisBoxTest (exts);
+  root->axisBoxTest(exts);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -185,27 +184,27 @@ const ObsList* CollisionManager::axisBoxTest (const Extents& exts)
 }
 
 
-const ObsList* CollisionManager::cylinderTest (const float *pos,
-					       float radius, float height) const
+const ObsList* CollisionManager::cylinderTest(const fvec3& pos,
+                                              float radius, float height) const
 {
   if (root == NULL) {
     return &EmptyList;
   }
 
-  float tmpMins[3], tmpMaxs[3];
-  tmpMins[0] = pos[0] - radius;
-  tmpMins[1] = pos[1] - radius;
-  tmpMins[2] = pos[2];
-  tmpMaxs[0] = pos[0] + radius;
-  tmpMaxs[1] = pos[1] + radius;
-  tmpMaxs[2] = pos[2] + height;
+  fvec3 tmpMins, tmpMaxs;
+  tmpMins.x = pos.x - radius;
+  tmpMins.y = pos.y - radius;
+  tmpMins.z = pos.z;
+  tmpMaxs.x = pos.x + radius;
+  tmpMaxs.y = pos.y + radius;
+  tmpMaxs.z = pos.z + height;
 
   FullPad.count = 0;
 
   // get the list
   Extents exts;
   exts.set(tmpMins, tmpMaxs);
-  root->axisBoxTest (exts);
+  root->axisBoxTest(exts);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -216,36 +215,35 @@ const ObsList* CollisionManager::cylinderTest (const float *pos,
 }
 
 
-const ObsList* CollisionManager::boxTest (const float* pos, float /*angle*/,
-					  float dx, float dy, float dz) const
+const ObsList* CollisionManager::boxTest(const fvec3& pos, float /*angle*/,
+                                         float dx, float dy, float dz) const
 {
-  float radius = sqrtf (dx*dx + dy*dy);
-  return cylinderTest (pos, radius, dz);
+  float radius = sqrtf(dx*dx + dy*dy);
+  return cylinderTest(pos, radius, dz);
 }
 
 
-const ObsList* CollisionManager::movingBoxTest (
-				  const float* oldPos, float /*oldAngle*/,
-				  const float* pos, float /*angle*/,
+const ObsList* CollisionManager::movingBoxTest(
+				  const fvec3& oldPos, float /*oldAngle*/,
+				  const fvec3& pos, float /*angle*/,
 				  float dx, float dy, float dz) const
 {
-  float newpos[3];
+  fvec3 newpos = pos;
 
   // adjust the Z parameters for the motion
-  memcpy (newpos, pos, sizeof(float[3]));
-  if (oldPos[2] < pos[2]) {
-    newpos[2] = oldPos[2];
-    dz = dz + (pos[2] - oldPos[2]);
+  if (oldPos.z < pos.z) {
+    newpos.z = oldPos.z;
+    dz = dz + (pos.z - oldPos.z);
   } else {
-    dz = dz + (oldPos[2] - pos[2]);
+    dz = dz + (oldPos.z - pos.z);
   }
 
-  float radius = sqrtf (dx*dx + dy*dy);
-  return cylinderTest (newpos, radius, dz);
+  float radius = sqrtf(dx*dx + dy*dy);
+  return cylinderTest(newpos, radius, dz);
 }
 
 
-const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
+const ObsList* CollisionManager::rayTest(const Ray* ray, float timeLeft) const
 {
   if (root == NULL) {
     return &EmptyList;
@@ -255,7 +253,7 @@ const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
   RayList.count = 0;
 
   // get the list
-  root->rayTest (ray, timeLeft + 0.1f);
+  root->rayTest(ray, timeLeft + 0.1f);
 
   // clear the collisionState on the obstacles
   for (int i = 0; i < FullPad.count; i++) {
@@ -266,7 +264,7 @@ const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
 }
 
 
-static int compareRayNodes (const void *a, const void *b)
+static int compareRayNodes(const void *a, const void *b)
 {
   const ColDetNode* nodeA = *((ColDetNode**)a);
   const ColDetNode* nodeB = *((ColDetNode**)b);
@@ -274,8 +272,8 @@ static int compareRayNodes (const void *a, const void *b)
 }
 
 
-const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
-						      float timeLeft) const
+const ColDetNodeList* CollisionManager::rayTestNodes(const Ray* ray,
+                                                     float timeLeft) const
 {
   if (root == NULL) {
     return &EmptyNodeList;
@@ -284,16 +282,16 @@ const ColDetNodeList* CollisionManager::rayTestNodes (const Ray* ray,
   RayList.count = 0;
 
   // get the list
-  root->rayTestNodes (ray, timeLeft + 0.1f);
+  root->rayTestNodes(ray, timeLeft + 0.1f);
 
   // sort the list of node
-  qsort (RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
+  qsort(RayList.list, RayList.count, sizeof(ColDetNode*), compareRayNodes);
 
   return &RayList;
 }
 
 
-void CollisionManager::load ()
+void CollisionManager::load()
 {
   int i;
 
@@ -304,11 +302,9 @@ void CollisionManager::load ()
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
   const ObstacleList& bases = OBSTACLEMGR.getBases();
-  const ObstacleList& teles = OBSTACLEMGR.getTeles();
   const int boxCount = (int)boxes.size();
   const int pyrCount = (int)pyrs.size();
   const int baseCount = (int)bases.size();
-  const int teleCount = (int)teles.size();
   const int meshCount = (int)meshes.size();
 
   // clean out the cell lists
@@ -316,29 +312,28 @@ void CollisionManager::load ()
 
   // setup the octree parameters
   worldSize = BZDBCache::worldSize;
-  maxDepth = BZDB.evalInt (StateDatabase::BZDB_COLDETDEPTH);
-  minElements = BZDB.evalInt (StateDatabase::BZDB_COLDETELEMENTS);
+  maxDepth = BZDB.evalInt(StateDatabase::BZDB_COLDETDEPTH);
+  minElements = BZDB.evalInt(StateDatabase::BZDB_COLDETELEMENTS);
 
   // determine the total number of obstacles
   int fullCount = 0;
   for (i = 0; i < boxCount; i++) {
-    if (!boxes[i]->isPassable()) fullCount++;
+    if (!boxes[i]->isPassable()) { fullCount++; }
   }
   for (i = 0; i < pyrCount; i++) {
-    if (!pyrs[i]->isPassable()) fullCount++;
+    if (!pyrs[i]->isPassable()) { fullCount++; }
   }
   for (i = 0; i < baseCount; i++) {
-    if (!bases[i]->isPassable()) fullCount++;
-  }
-  for (i = 0; i < teleCount; i++) {
-    if (!teles[i]->isPassable()) fullCount++;
+    if (!bases[i]->isPassable()) { fullCount++; }
   }
   for (i = 0; i < meshCount; i++) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     if (!mesh->isPassable()) {
       for (int f = 0; f < mesh->getFaceCount(); f++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(f);
-	if (!face->isPassable()) fullCount++;
+	if (!face->isPassable() || face->isLinkSrc()) {
+	  fullCount++;
+        }
       }
       fullCount++; // one for the mesh itself
     }
@@ -359,16 +354,13 @@ void CollisionManager::load ()
   //
 
   for (i = (boxCount - 1); i >= 0; i--) {
-    if (!boxes[i]->isPassable()) addToFullList(boxes[i]);
+    if (!boxes[i]->isPassable()) { addToFullList(boxes[i]); }
   }
   for (i = (pyrCount - 1); i >= 0; i--) {
-    if (!pyrs[i]->isPassable()) addToFullList(pyrs[i]);
+    if (!pyrs[i]->isPassable())  { addToFullList(pyrs[i]); }
   }
   for (i = (baseCount - 1); i >= 0; i--) {
-    if (!bases[i]->isPassable()) addToFullList(bases[i]);
-  }
-  for (i = (teleCount - 1); i >= 0; i--) {
-    if (!teles[i]->isPassable()) addToFullList(teles[i]);
+    if (!bases[i]->isPassable()) { addToFullList(bases[i]); }
   }
   // add the mesh types last (faces then meshes)
   for (i = (meshCount - 1); i >= 0; i--) {
@@ -377,12 +369,14 @@ void CollisionManager::load ()
       const int meshFaceCount = mesh->getFaceCount();
       for (int f = 0; f < meshFaceCount; f++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(f);
-	if (!face->isPassable()) addToFullList((Obstacle*) face);
+	if (!face->isPassable() || face->isLinkSrc()) {
+	  addToFullList((Obstacle*) face);
+        }
       }
     }
   }
   for (i = (meshCount - 1); i >= 0; i--) {
-    if (!meshes[i]->isPassable()) addToFullList(meshes[i]);
+    if (!meshes[i]->isPassable()) { addToFullList(meshes[i]); }
   }
 
   // do the type/height sort
@@ -390,7 +384,7 @@ void CollisionManager::load ()
 
   // generate the octree
   setExtents (&FullList);
-  root = new ColDetNode (0, gridExtents, &FullList);
+  root = new ColDetNode(0, gridExtents, &FullList);
 
   // tally the stats
   leafNodes = 0;
@@ -433,15 +427,12 @@ void CollisionManager::load ()
   SplitList.named.pyrs.list = listPtr;
   SplitList.named.pyrs.count = (int)pyrs.size();
   listPtr = listPtr + pyrs.size();
-  SplitList.named.teles.list = listPtr;
-  SplitList.named.teles.count = (int)teles.size();
-
 
   return;
 }
 
 
-void CollisionManager::setExtents (ObsList *list)
+void CollisionManager::setExtents(ObsList *list)
 {
   int i;
   worldExtents.reset();
@@ -473,16 +464,16 @@ void CollisionManager::setExtents (ObsList *list)
       gridExtents.maxs[i] = gridExtents.maxs[i] + adjust;
     }
   }
-  gridExtents.maxs[2] = gridExtents.mins[2] + width;
+  gridExtents.maxs.z = gridExtents.mins.z + width;
 
   return;
 }
 
 
-void CollisionManager::draw (DrawLinesFunc drawLinesFunc)
+void CollisionManager::draw(DrawLinesFunc drawLinesFunc)
 {
   if (root != NULL) {
-    root->draw (drawLinesFunc);
+    root->draw(drawLinesFunc);
   }
   return;
 }
@@ -507,8 +498,8 @@ ColDetNode::ColDetNode(unsigned char _depth,
   childCount = 0;
 
   // alloacte enough room for the incoming list
-  const int listBytes = _list->count * sizeof (Obstacle*);
-  fullList.list = (Obstacle**) malloc (listBytes);
+  const int listBytes = _list->count * sizeof(Obstacle*);
+  fullList.list = (Obstacle**) malloc(listBytes);
 
   // copy the extents, and make the testing extents with margin
   extents = exts;
@@ -517,18 +508,18 @@ ColDetNode::ColDetNode(unsigned char _depth,
   testExts.addMargin(testFudge);
 
   // setup some test parameters
-  float pos[3];
-  pos[0] = 0.5f * (testExts.maxs[0] + testExts.mins[0]);
-  pos[1] = 0.5f * (testExts.maxs[1] + testExts.mins[1]);
-  pos[2] = testExts.mins[2];
-  float size[3];
-  size[0] = 0.5f * (testExts.maxs[0] - testExts.mins[0]);
-  size[1] = 0.5f * (testExts.maxs[1] - testExts.mins[1]);
-  size[2] = (testExts.maxs[2] - testExts.mins[2]);
-  float point[3];
-  point[0] = pos[0];
-  point[1] = pos[1];
-  point[2] = 0.5f * (testExts.maxs[2] + testExts.mins[2]);
+  fvec3 pos;
+  pos.x = 0.5f * (testExts.maxs.x + testExts.mins.x);
+  pos.y = 0.5f * (testExts.maxs.y + testExts.mins.y);
+  pos.z = testExts.mins.z;
+  fvec3 size;
+  size.x = 0.5f * (testExts.maxs.x - testExts.mins.x);
+  size.y = 0.5f * (testExts.maxs.y - testExts.mins.y);
+  size.z = (testExts.maxs.z - testExts.mins.z);
+  fvec3 point;
+  point.x = pos.x;
+  point.y = pos.y;
+  point.z = 0.5f * (testExts.maxs.z + testExts.mins.z);
 
   // find all of the intersecting nodes
   //
@@ -538,14 +529,12 @@ ColDetNode::ColDetNode(unsigned char _depth,
   // which must be cleared before leaving).
   //
   fullList.count = 0;
-  const char* faceType = MeshFace::getClassName();
-  const char* meshType = MeshObstacle::getClassName();
   for (i = 0; i < _list->count; i++) {
     Obstacle* obs = _list->list[i];
-    const char* obsType = obs->getType();
+    const ObstacleType obsType = obs->getTypeID();
     if (testExts.touches(obs->getExtents())) {
       if (obsType != meshType) {
-	if (obs->inBox (pos, 0.0f, size[0], size[1], size[2])) {
+	if (obs->inBox(pos, 0.0f, size.x, size.y, size.z)) {
 	  // add this obstacle to the list
 	  fullList.list[fullList.count] = obs;
 	  fullList.count++;
@@ -565,7 +554,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
 	  fullList.count++;
 	  mesh->collisionState = false;
 	}
-	else if (mesh->containsPointNoOctree (point)) {
+	else if (mesh->containsPointNoOctree(point)) {
 	  fullList.list[fullList.count] = (Obstacle*) mesh;
 	  fullList.count++;
 	}
@@ -578,8 +567,8 @@ ColDetNode::ColDetNode(unsigned char _depth,
   count = fullList.count;
 
   // resize the list to save space
-  fullList.list = (Obstacle**) realloc (fullList.list,
-					fullList.count * sizeof (Obstacle*));
+  fullList.list = (Obstacle**) realloc(fullList.list,
+                                       fullList.count * sizeof(Obstacle*));
 
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (fullList.count <= minElements)) {
@@ -593,14 +582,14 @@ ColDetNode::ColDetNode(unsigned char _depth,
   makeChildren();
 
   // non NULLs first
-  squeezeChildren (children);
+  squeezeChildren(children);
 
   // resize this branch cell
   resizeCell();
 
   // clear the list
   fullList.count = 0;
-  free (fullList.list);
+  free(fullList.list);
   fullList.list = NULL;
 
   //logDebugMessage(4,"COLDET BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
@@ -619,33 +608,26 @@ ColDetNode::~ColDetNode()
 }
 
 
-void ColDetNode::makeChildren ()
+void ColDetNode::makeChildren()
 {
   int side[3];    // the axis sides  (0 or 1)
-  float center[3];
   Extents exts;
-
-  // setup the center point
-  for (int i = 0; i < 3; i++) {
-    center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
-  }
-
   childCount = 0;
-  const float* extentSet[3] = { extents.mins, center, extents.maxs };
+  const fvec3 center = 0.5f * (extents.mins + extents.maxs);
+  const fvec3* extentSet[3] = { &extents.mins, &center, &extents.maxs };
 
   for (side[0] = 0; side[0] < 2; side[0]++) {
     for (side[1] = 0; side[1] < 2; side[1]++) {
       for (side[2] = 0; side[2] < 2; side[2]++) {
 
-	// calculate the child's extents
 	for (int a = 0; a < 3; a++) {
-	  exts.mins[a] = extentSet[side[a]+0][a];
-	  exts.maxs[a] = extentSet[side[a]+1][a];
+	  exts.mins[a] = (*extentSet[side[a] + 0])[a];
+	  exts.maxs[a] = (*extentSet[side[a] + 1])[a];
 	}
 
 	int kid = side[0] + (2 * side[1]) + (4 * side[2]);
 
-	children[kid] = new ColDetNode (depth, exts, &fullList);
+	children[kid] = new ColDetNode(depth, exts, &fullList);
 
 	if (children[kid]->getCount() == 0) {
 	  delete children[kid];
@@ -662,7 +644,7 @@ void ColDetNode::makeChildren ()
 }
 
 
-void ColDetNode::resizeCell ()
+void ColDetNode::resizeCell()
 {
   int i;
   Extents absExts;
@@ -693,7 +675,7 @@ void ColDetNode::resizeCell ()
 }
 
 
-void ColDetNode::axisBoxTest (const Extents& exts) const
+void ColDetNode::axisBoxTest(const Extents& exts) const
 {
   int i;
 
@@ -706,13 +688,13 @@ void ColDetNode::axisBoxTest (const Extents& exts) const
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
 	obs->collisionState = true;
-	addToFullPadList (obs);
+	addToFullPadList(obs);
       }
     }
   }
   else {
     for (i = 0; i < childCount; i++) {
-      children[i]->axisBoxTest (exts);
+      children[i]->axisBoxTest(exts);
     }
   }
 
@@ -720,15 +702,15 @@ void ColDetNode::axisBoxTest (const Extents& exts) const
 }
 
 
-void ColDetNode::boxTest (const float* pos, float angle,
-			  float dx, float dy, float dz) const
+void ColDetNode::boxTest(const fvec3& pos, float angle,
+                         float dx, float dy, float dz) const
 {
   int i;
 
 /* FIXME
-  if ((_maxs[0] < mins[0]) || (_mins[0] > maxs[0]) ||
-      (_maxs[1] < mins[1]) || (_mins[1] > maxs[1]) ||
-      (_maxs[2] < mins[2]) || (_mins[2] > maxs[2])) {
+  if ((_maxs.x < mins.x) || (_mins.x > maxs.x) ||
+      (_maxs.y < mins.y) || (_mins.y > maxs.y) ||
+      (_maxs.z < mins.z) || (_mins.z > maxs.z)) {
     return;
   }
 */
@@ -738,13 +720,13 @@ void ColDetNode::boxTest (const float* pos, float angle,
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
 	obs->collisionState = true;
-	addToFullPadList (obs);
+	addToFullPadList(obs);
       }
     }
   }
   else {
     for (i = 0; i < childCount; i++) {
-      children[i]->boxTest (pos, angle, dx, dy, dz);
+      children[i]->boxTest(pos, angle, dx, dy, dz);
     }
   }
 
@@ -752,9 +734,9 @@ void ColDetNode::boxTest (const float* pos, float angle,
 }
 
 
-void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
+void ColDetNode::rayTest(const Ray* ray, float timeLeft) const
 {
-  if (!testRayHitsAxisBox(ray, extents, &inTime) ||
+  if (!Intersect::testRayHitsAxisBox(ray, extents, &inTime) ||
       (inTime > timeLeft)) {
     return;
   }
@@ -764,13 +746,13 @@ void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
       Obstacle* obs = fullList.list[i];
       if (obs->collisionState == false) {
 	obs->collisionState = true;
-	addToFullPadList (obs);
+	addToFullPadList(obs);
       }
     }
   }
   else {
     for (int i = 0; i < childCount; i++) {
-      children[i]->rayTest (ray, timeLeft);
+      children[i]->rayTest(ray, timeLeft);
     }
   }
 
@@ -778,9 +760,9 @@ void ColDetNode::rayTest (const Ray* ray, float timeLeft) const
 }
 
 
-void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
+void ColDetNode::rayTestNodes(const Ray* ray, float timeLeft) const
 {
-  if (!testRayHitsAxisBox(ray, extents, &inTime, &outTime) ||
+  if (!Intersect::testRayHitsAxisBox(ray, extents, &inTime, &outTime) ||
       (inTime > timeLeft)) {
     return;
   }
@@ -799,8 +781,8 @@ void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
 
 
 /*
-void ColDetNode::boxTestSplit (const float* pos, float angle,
-			       float dx, float dy, float dz) const
+void ColDetNode::boxTestSplit(const fvec3& pos, float angle,
+                              float dx, float dy, float dz) const
 {
   pos = pos;
   angle = dx =dy =dz;
@@ -829,14 +811,14 @@ void ColDetNode::tallyStats()
 void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
   int x, y, z, c;
-  float points[5][3];
-  const float* exts[2] = { extents.mins, extents.maxs };
+  fvec3 points[5];
+  const fvec3* exts[2] = { &extents.mins, &extents.maxs };
 
   // pick a color
   int hasMeshObs = 0;
   int hasNormalObs = 0;
   for (x = 0; x < fullList.count; x++) {
-    if (fullList.list[x]->getType() == MeshObstacle::getClassName()) {
+    if (fullList.list[x]->getTypeID() == meshType) {
       hasMeshObs = 1;
     } else {
       hasNormalObs = 1;
@@ -849,12 +831,12 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
     for (c = 0; c < 4; c++) {
       x = ((c + 0) % 4) / 2;
       y = ((c + 1) % 4) / 2;
-      points[c][0] = exts[x][0];
-      points[c][1] = exts[y][1];
-      points[c][2] = exts[z][2];
+      points[c].x = exts[x]->x;
+      points[c].y = exts[y]->y;
+      points[c].z = exts[z]->z;
     }
-    memcpy (points[4], points[0], sizeof (points[4]));
-    drawLinesFunc (5, points, color);
+    points[4] = points[0];
+    drawLinesFunc(5, points, color);
   }
 
   // draw the corner edges
@@ -862,16 +844,16 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
     x = ((c + 0) % 4) / 2;
     y = ((c + 1) % 4) / 2;
     for (z = 0; z < 2; z++) {
-      points[z][0] = exts[x][0];
-      points[z][1] = exts[y][1];
-      points[z][2] = exts[z][2];
+      points[z].x = exts[x]->x;
+      points[z].y = exts[y]->y;
+      points[z].z = exts[z]->z;
     }
-    drawLinesFunc (2, points, color);
+    drawLinesFunc(2, points, color);
   }
 
   // draw the kids
   for (c = 0; c < childCount; c++) {
-    children[c]->draw (drawLinesFunc);
+    children[c]->draw(drawLinesFunc);
   }
 
   return;
@@ -882,7 +864,7 @@ inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB)
 {
   const Extents& eA = obsA->getExtents();
   const Extents& eB = obsB->getExtents();
-  if (eA.maxs[2] > eB.maxs[2]) {
+  if (eA.maxs.z > eB.maxs.z) {
     return -1;
   } else {
     return +1;
@@ -896,11 +878,11 @@ int compareObstacles(const void* a, const void* b)
   // - and finally, the mesh objects (checkpoints really)
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
-  const char* typeA = obsA->getType();
-  const char* typeB = obsB->getType();
+  const ObstacleType typeA = obsA->getTypeID();
+  const ObstacleType typeB = obsB->getTypeID();
 
-  bool isMeshA = (typeA == MeshObstacle::getClassName());
-  bool isMeshB = (typeB == MeshObstacle::getClassName());
+  bool isMeshA = (typeA == meshType);
+  bool isMeshB = (typeB == meshType);
 
   if (isMeshA) {
     if (!isMeshB) {
@@ -918,8 +900,8 @@ int compareObstacles(const void* a, const void* b)
     }
   }
 
-  bool isFaceA = (typeA == MeshFace::getClassName());
-  bool isFaceB = (typeB == MeshFace::getClassName());
+  bool isFaceA = (typeA == faceType);
+  bool isFaceB = (typeB == faceType);
 
   if (isFaceA) {
     if (!isFaceB) {
@@ -940,7 +922,7 @@ int compareObstacles(const void* a, const void* b)
   return compareHeights(obsB, obsA); // reversed
 }
 
-int compareHitNormal (const void* a, const void* b)
+int compareHitNormal(const void* a, const void* b)
 {
   const MeshFace* faceA = *((const MeshFace**) a);
   const MeshFace* faceB = *((const MeshFace**) b);
@@ -955,7 +937,7 @@ int compareHitNormal (const void* a, const void* b)
 
   // highest Up Plane comes first
   if (faceA->isUpPlane() && faceB->isUpPlane()) {
-    if (faceA->getPosition()[2] > faceB->getPosition()[2]) {
+    if (faceA->getPosition().z > faceB->getPosition().z) {
       return -1;
     } else {
       return +1;
@@ -971,6 +953,7 @@ int compareHitNormal (const void* a, const void* b)
 }
 
 
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

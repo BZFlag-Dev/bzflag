@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,11 +15,13 @@
 
 // BZFlag common header
 #include "common.h"
+#include "vectors.h"
 
 class SceneDatabase;
 
-namespace TrackMarks {
 
+namespace TrackMarks
+{
   void init();
   void kill();
   void clear();
@@ -29,7 +31,7 @@ namespace TrackMarks {
   void renderGroundTracks();   // zbuffer is not used
   void renderObstacleTracks(); // zbuffer is used
 
-  bool addMark(const float pos[3], float scale, float angle, int phydrv);
+  bool addMark(const fvec3& pos, float scale, float angle, int phydrv);
 
   void setUserFade(float);
   float getUserFade();

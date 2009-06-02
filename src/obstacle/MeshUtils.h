@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -58,7 +58,7 @@ static inline void addFace(MeshObstacle* mesh,
   // use the mesh defaults for smoothBounce, driveThrough, and shootThough
   const BzMaterial* matref = MATERIALMGR.addMaterial(material);
   mesh->addFace(verticesList, normalsList, texcoordsList, matref, phydrv,
-		false, false, false, false, false);
+		false, false, 0, 0, false, false, NULL);
   verticesList.clear();
   normalsList.clear();
   texcoordsList.clear();
@@ -68,7 +68,7 @@ static inline void addFace(MeshObstacle* mesh,
 
 #endif  /* __MESH_UTILS_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

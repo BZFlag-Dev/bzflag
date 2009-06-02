@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -135,7 +135,7 @@ std::ostream*			FileManager::createDataOutStream(
       struct stat statbuf;
       if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
 	    (S_ISDIR(statbuf.st_mode)))) {
-	successMkdir = mkdir(filename.substr(0, i).c_str(), 0777);
+	successMkdir = mkdir(filename.substr(0, i).c_str(), 0755);
 	if (successMkdir != 0) {
 	  perror("Unable to make directory");
 	  return NULL;

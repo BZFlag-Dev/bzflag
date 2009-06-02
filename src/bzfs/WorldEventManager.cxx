@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -15,10 +15,16 @@
 
 /* system implementation headers */
 #include <string>
+#include <set>
 
 /* common implementation headers */
 #include "global.h"
 #include "bzfsAPI.h"
+
+
+// initialize the singleton
+template <>
+WorldEventManager* Singleton<WorldEventManager>::_instance = (WorldEventManager*)NULL;
 
 
 extern bz_eTeamType convertTeam(TeamColor team);
@@ -31,18 +37,6 @@ WorldEventManager::WorldEventManager()
 
 WorldEventManager::~WorldEventManager()
 {
-  tmEventTypeList::iterator eventItr = eventList.begin();
-  while (eventItr != eventList.end()) {
-    tvEventList::iterator itr = eventItr->second.begin();
-    while (itr != eventItr->second.end()) {
-      if ((*itr) && (*itr)->autoDelete())
-	delete (*itr);
-      *itr = NULL;
-
-      itr++;
-    }
-    eventItr++;
-  }
 }
 
 void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEvent)
@@ -76,9 +70,29 @@ void WorldEventManager::removeEvent(bz_eEventType eventType, bz_EventHandler* th
   }
 }
 
+bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
+{
+  bool foundOne = false;
+
+  tmEventTypeList::iterator typeIt;
+  for (typeIt = eventList.begin(); typeIt != eventList.end(); ++typeIt) {
+    tvEventList& evList = typeIt->second;
+    tvEventList::iterator listIt = evList.begin();
+    while (listIt != evList.end()) {
+      if (*listIt == theEvent) {
+        listIt = evList.erase(listIt);
+        foundOne = true;
+      }
+      listIt++;
+    }
+  }
+
+  return foundOne;
+}
+
 tvEventList WorldEventManager::getEventList (bz_eEventType eventType)
 {
-  tvEventList	eList;
+  tvEventList eList;
 
   tmEventTypeList::iterator itr = eventList.find(eventType);
   if (itr == eventList.end())
@@ -93,6 +107,7 @@ void WorldEventManager::callEvents(bz_eEventType eventType, bz_EventData *eventD
   if (!eventData)
     return;
 
+  eventData->eventType = eventType;
   tvEventList	eList = getEventList(eventType);
 
   for (unsigned int i = 0; i < eList.size(); i++)

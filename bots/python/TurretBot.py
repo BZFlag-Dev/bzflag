@@ -31,10 +31,10 @@ class TurretBot(BZAdvancedRobot):
             if len(self.players) == 0:
                 sleep(2)
                 return
-    
+
             target = self.players[randint(0, len(self.players) - 1)]
             print "Targeting player '%s'" % (target.callsign)
-            
+
             self.setTurnLeft(self.getBearing(target))
             while True:
                 self.execute()

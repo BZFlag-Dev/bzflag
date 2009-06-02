@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 #include <time.h>
+#include <stdio.h>
 #include <sstream>
 
 // implementation-specific bzflag headers
@@ -55,6 +56,8 @@
 #include "AutoAllowTimer.h"
 #include "ServerIntangibilityManager.h"
 
+#include "DirectoryNames.h"
+
 // common implementation headers
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
@@ -63,6 +66,13 @@
 #include "GameTime.h"
 #include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
+
+#include "CollisionManager.h"
+#include "Ray.h"
+
+#include "Stats.h"
+
+StatsLink statsLink;
 
 // auth headers
 #include "../bzAuthCommon/Socket.h"
@@ -76,6 +86,7 @@
 #  define BUFSIZE 2048
 #endif
 
+AutoAllowTimerTickHandler autoAllowTimerTickHandler;
 
 // pass through the SELECT loop
 bool dontWait = true;
@@ -102,13 +113,12 @@ static int wksSocket = -1;
 bool handlePings = true;
 PingPacket pingReply;
 // team info
-TeamInfo team[NumTeams];
+TeamInfo teamInfos[NumTeams];
 // num flags in flag list
 int numFlags = 0;
-bool done = false;
+bool serverDone = false;
 // true if hit time/score limit
 bool gameOver = true;
-static int exitCode = 0;
 // "real" players, i.e. do not count observers
 uint16_t maxRealPlayers = MaxPlayers;
 // players + observers
@@ -149,9 +159,6 @@ VotingArbiter *votingArbiter = NULL;
 
 BasesList bases;
 
-// global keeper of world Events
-WorldEventManager	worldEventManager;
-
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
 // Client does not check for rabbit to be 255, but it still works
@@ -181,7 +188,10 @@ public:
 
   virtual size_t send(NetHandler *handler, void *data, size_t size)
   {
-    return (size_t)bz_pwrite(handler,data,int(size));
+    if (bz_pwrite(handler,data,int(size)) == 0)
+      return size;
+    else
+      return 0;
   }
 
   virtual size_t broadcast(void *data, size_t size, int mask, int code)
@@ -204,24 +214,30 @@ public:
   BZFSNetLogCB() { addNetworkLogCallback(this); }
   virtual ~BZFSNetLogCB() { removeNetworkLogCallback(this); }
 
-  virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void* param = NULL )
+  virtual void networkDataLog(bool send, bool udp, const unsigned char* data,
+                              unsigned int size, void* param = NULL)
   {
     NetHandler *h = (NetHandler*)param;
 
     // let any listeners know we got net data
     bz_NetTransferEventData_V1 eventData;
-    if (send)
+    if (send) {
       eventData.eventType = bz_eNetDataSendEvent;
-    else
-      eventData.eventType = bz_eNetDataReceveEvent;
-    if (!worldEventManager.getEventCount(eventData.eventType))
+    } else {
+      eventData.eventType = bz_eNetDataReceiveEvent;
+    }
+
+    if (!worldEventManager.getEventCount(eventData.eventType)) {
       return;
+    }
+
     eventData.send = send;
     eventData.udp = udp;
     eventData.iSize = size;
     if (h) {
       for(int i=0; i < curMaxPlayers; i++) {
-	if(GameKeeper::Player::getPlayerByIndex(i)->netHandler == h ) {
+        GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+	if(playerData && playerData->netHandler == h ) {
 	  eventData.playerID = i;
 	  i = curMaxPlayers+1;
 	}
@@ -237,32 +253,29 @@ public:
 
 BZFSNetLogCB netLogCB;
 
+
 // Logging to the API
-class APILoggingCallback : public LoggingCallback
+static void apiLoggingProc(int level, const std::string& msg, void* /*data*/)
 {
-public:
-  void log ( int level, const char* message )
-  {
-    bz_LoggingEventData_V1 data;
-    data.level = level;
-    data.message = message;
-
-    worldEventManager.callEvents(bz_eLoggingEvent,&data);
+  bz_LoggingEventData_V1 eventData;
+  eventData.level = level;
+  eventData.message = msg;
+  worldEventManager.callEvents(bz_eLoggingEvent, &eventData);
   }
-};
 
-APILoggingCallback apiLoggingCallback;
 
 int getCurMaxPlayers()
 {
   return curMaxPlayers;
 }
 
+
 static bool realPlayer(const PlayerId& id)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
   return playerData && playerData->player.isPlaying();
 }
+
 
 void dropHandler(NetHandler *handler, const char *reason)
 {
@@ -333,12 +346,16 @@ static void onGlobalChanged(const std::string& name, void*)
   // well, the /set and /reset commands are blocked.
 
   std::string value = BZDB.get(name);
+
   NetMsg msg = MSGMGR.newMessage();
 
-  msg->packUShort(1);
+  msg->packUInt16(1);
   msg->packStdString(name);
   msg->packStdString(value);
   msg->broadcast(MsgSetVar);
+
+  bz_BZDBChangeData_V1 eventData(name, value);
+  worldEventManager.callEvents(eventData);
 }
 
 //
@@ -378,26 +395,27 @@ static float nextGameTime()
     if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && gkPlayer->netHandler) {
       const TimeKeeper& pTime = gkPlayer->getNextGameTime();
       const float pNextTime = (float)(pTime - nowTime);
-      if (pNextTime < nextTime)
+      if (pNextTime < nextTime) {
 	nextTime = pNextTime;
     }
+  }
   }
   return nextTime;
 }
 
 static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
-  if (Replay::enabled() || gkPlayer->playerHandler)
+  if (Replay::enabled() || (gkPlayer == NULL) || gkPlayer->playerHandler) {
     return;
+  }
 
-  if (gkPlayer != NULL) {
     NetMsg msg = MSGMGR.newMessage();
 
     GameTime::pack(msg, gkPlayer->lagInfo.getLagAvg());
     msg->send(gkPlayer->netHandler, MsgGameTime);
 
     gkPlayer->updateNextGameTime();
-  }
+
   return;
 }
 
@@ -406,8 +424,10 @@ static void sendPendingGameTime()
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && (gkPlayer->getNextGameTime() - nowTime) < 0.0f)
+    if ((gkPlayer != NULL) && gkPlayer->player.isHuman() &&
+        ((gkPlayer->getNextGameTime() - nowTime) < 0.0f)) {
       sendGameTime(gkPlayer);
+  }
   }
   return;
 }
@@ -429,9 +449,9 @@ void sendPlayerInfo()
 
   int i, numPlayers = 0;
   for (i = 0; i < int(NumTeams); i++)
-    numPlayers += team[i].team.size;
+    numPlayers += teamInfos[i].team.size;
 
-  msg->packUByte(numPlayers);
+  msg->packUInt8(numPlayers);
   for (i = 0; i < curMaxPlayers; ++i) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
@@ -530,7 +550,7 @@ void resetTeamScores ( void )
 {
   // reset team scores
   for (int i = RedTeam; i <= PurpleTeam; i++) {
-    team[i].team.lost = team[i].team.won = 0;
+    teamInfos[i].team.lost = teamInfos[i].team.won = 0;
   }
   sendTeamUpdateMessageBroadcast();
 }
@@ -771,10 +791,12 @@ static void serverStop()
   close(wksSocket);
 #endif
 
-  // tell players to quit
+  // tell all clients to quit
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(0xff);
+  msg->packUInt8(0xff);
   msg->broadcast(MsgSuperKill);
+  MSGMGR.update();
+  TimeKeeper::sleep(0.5);	// provide some time for message delivery
 
   // clean up Kerberos
   Authentication::cleanUp();
@@ -809,9 +831,9 @@ bool defineWorld ( void )
     delete[] worldDatabase;
 
   bz_GetWorldEventData_V1	worldData;
-  worldData.ctf = clOptions->gameType == ClassicCTF;
-  worldData.rabbit = clOptions->gameType == RabbitChase;
-  worldData.openFFA = clOptions->gameType == OpenFFA;
+  worldData.ctf     = (clOptions->gameType == ClassicCTF);
+  worldData.rabbit  = (clOptions->gameType == RabbitChase);
+  worldData.openFFA = (clOptions->gameType == OpenFFA);
   worldData.worldFile = clOptions->worldFile;
 
   world = new WorldInfo;
@@ -839,15 +861,17 @@ bool defineWorld ( void )
     world = reader->defineWorldFromFile();
     delete reader;
 
-    if (!allBasesDefined()) return false;
-  } else if (clOptions->worldFile.size()) {
+    if (!allBasesDefined()) { return false; }
+  }
+  else if (clOptions->worldFile.size()) {
     logDebugMessage(1,"reading worldfile %s\n",clOptions->worldFile.c_str());
     BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
 
-    if (!allBasesDefined()) return false;
-  } else {
+    if (!allBasesDefined()) { return false; }
+  }
+  else {
     // check and see if anyone wants to define the world from an event
     if (!worldData.generated) {
       logDebugMessage(1,"building random map\n");
@@ -856,7 +880,8 @@ bool defineWorld ( void )
 	world = defineTeamWorld();
       else
 	world = defineRandomWorld();
-    } else {
+    }
+    else {
       logDebugMessage(1,"loading plug-in map\n");
       float worldSize = BZDBCache::worldSize;
       if (pluginWorldSize > 0)
@@ -880,8 +905,9 @@ bool defineWorld ( void )
     }
   }
 
-  if (world == NULL)
+  if (world == NULL) {
     return false;
+  }
 
   maxWorldHeight = world->getMaxWorldHeight();
 
@@ -901,14 +927,14 @@ bool defineWorld ( void )
   memset(worldDatabase, 0, worldDatabaseSize);
 
   void *buf = worldDatabase;
-  buf = nboPackUShort(buf, WorldCodeHeaderSize);
-  buf = nboPackUShort(buf, WorldCodeHeader);
-  buf = nboPackUShort(buf, mapVersion);
-  buf = nboPackUInt(buf, world->getUncompressedSize());
-  buf = nboPackUInt(buf, world->getDatabaseSize());
+  buf = nboPackUInt16(buf, WorldCodeHeaderSize);
+  buf = nboPackUInt16(buf, WorldCodeHeader);
+  buf = nboPackUInt16(buf, mapVersion);
+  buf = nboPackUInt32(buf, world->getUncompressedSize());
+  buf = nboPackUInt32(buf, world->getDatabaseSize());
   buf = nboPackString(buf, world->getDatabase(), world->getDatabaseSize());
-  buf = nboPackUShort(buf, WorldCodeEndSize);
-  buf = nboPackUShort(buf, WorldCodeEnd);
+  buf = nboPackUInt16(buf, WorldCodeEndSize);
+  buf = nboPackUInt16(buf, WorldCodeEnd);
 
   TimeKeeper startTime = TimeKeeper::getCurrent();
   MD5 md5;
@@ -935,9 +961,9 @@ bool defineWorld ( void )
   // reset other stuff
   int i;
   for (i = 0; i < NumTeams; i++) {
-    team[i].team.size = 0;
-    team[i].team.won = 0;
-    team[i].team.lost = 0;
+    teamInfos[i].team.size = 0;
+    teamInfos[i].team.won = 0;
+    teamInfos[i].team.lost = 0;
   }
   FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++)
@@ -975,17 +1001,18 @@ TeamColor whoseBase(float x, float y, float z)
   float highest = -1;
   int highestteam = -1;
 
+  const fvec3 pos(x, y, z);
   for (BasesList::iterator it = bases.begin(); it != bases.end(); ++it) {
-    float baseZ = it->second.findBaseZ(x,y,z);
+    const float baseZ = it->second.findBaseZ(pos);
     if (baseZ > highest) {
       highest = baseZ;
       highestteam = it->second.getTeam();
     }
   }
 
-  if (highestteam == -1)
+  if (highestteam == -1) {
     return NoTeam;
-  else
+  }
     return TeamColor(highestteam);
 }
 
@@ -1000,7 +1027,7 @@ static void dumpScore()
 
   std::cout << "#teams";
   for (int i = int(RedTeam); i < NumTeams; i++)
-    std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' << Team::getName(TeamColor(i));
+    std::cout << ' ' << teamInfos[i].team.won << '-' << teamInfos[i].team.lost << ' ' << Team::getName(TeamColor(i));
 
   GameKeeper::Player::dumpScore();
   std::cout << "#end" << std::endl;
@@ -1014,8 +1041,9 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     return;
   }
 
-  if (!handler)	// WTF?
+  if (!handler)	{ // WTF?
     return;
+  }
 
   // pull off the BZFS code and size that packs all BZFS fomat comunication
   uint16_t len, code;
@@ -1023,30 +1051,44 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
   getGeneralMessageInfo(&buf,code,len);
 
   // make sure it's not an attack
-  if (udp && isUDPAttackMessage(code))
-    logDebugMessage(1,"Received packet type (%x) via udp, possible attack from %s\n", code, handler->getTargetIP());
+  if (udp && isUDPAttackMessage(code)) {
+    logDebugMessage(1,
+      "Received packet type (%x) via udp, possible attack from %s\n",
+      code, handler->getTargetIP());
+  }
 
   // see if we have any registered handlers for this message type
   bool handled = false;
 
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerItr = playerNetworkHandlers.find(code);
+  std::map<uint16_t, PlayerNetworkMessageHandler*>::iterator playerItr =
+    playerNetworkHandlers.find(code);
+
   if (playerItr != playerNetworkHandlers.end()) {
+    PlayerNetworkMessageHandler* playerHandler = playerItr->second;
     // player messages all start with the player ID first
     // so get it, and verify that the sender IS the player.
     // TODO, punish the person who owns handler, as they are up to no good
-    buf = playerItr->second->unpackPlayer(buf,len);
-    if (playerItr->second->getPlayer() && playerItr->second->getPlayer()->netHandler == handler)
-      handled = playerItr->second->execute(code,buf,len);
-  } else {
+    buf = playerHandler->unpackPlayer(buf,len);
+    if (playerHandler->getPlayer() &&
+        playerHandler->getPlayer()->netHandler == handler) {
+      handled = playerHandler->execute(code, buf, len);
+    }
+  }
+  else {
     // try a non player message
     // they don't start with a player
-    std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientItr = clientNetworkHandlers.find(code);
-    if (clientItr != clientNetworkHandlers.end())
+    std::map<uint16_t, ClientNetworkMessageHandler*>::iterator clientItr =
+      clientNetworkHandlers.find(code);
+    if (clientItr != clientNetworkHandlers.end()) {
       handled = clientItr->second->execute(handler,code,buf,len);
   }
+  }
 
-  if (!handled)	// someone got it, don't need to do the old way
-    logDebugMessage(1,"Received an unknown packet type (%x), possible attack from %s\n", code, handler->getTargetIP());
+  if (!handled)	{ // someone got it, don't need to do the old way
+    logDebugMessage(1,
+      "Received an unknown packet type (%x), possible attack from %s\n",
+      code, handler->getTargetIP());
+}
 }
 
 
@@ -1071,22 +1113,22 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
   uint16_t len, code;
   void *buf = netPlayer.getTcpBuffer();
-  buf = nboUnpackUShort(buf, len);
-  buf = nboUnpackUShort(buf, code);
+  buf = nboUnpackUInt16(buf, len);
+  buf = nboUnpackUInt16(buf, code);
 
   // trying to get the real player from the message: bots share tcp
   // connection with the player
   PlayerId t = i;
   switch (code) {
   case MsgShotBegin: {
-    nboUnpackUByte(buf, t);
+    nboUnpackUInt8(buf, t);
     break;
   }
   case MsgPlayerUpdate:
   case MsgPlayerUpdateSmall: {
-    float timestamp;
-    buf = nboUnpackUByte(buf, t);
-    buf = nboUnpackFloat(buf, timestamp);
+    double timestamp;
+    buf = nboUnpackUInt8(buf, t);
+    buf = nboUnpackDouble(buf, timestamp);
     break;
   }
   default:
@@ -1107,17 +1149,10 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
   // simple ruleset, if player sends a MsgShotBegin over TCP he/she
   // must not be using the UDP link
-  if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
+  if (true && playerData != NULL && !playerData->player.isBot()) {
     if (code == MsgShotBegin) {
-      char message[MessageLen];
-      sprintf(message,"Your end is not using UDP, turn on udp");
-      sendMessage(ServerPlayer, i, message);
-
-      sprintf(message,"upgrade your client http://BZFlag.org/ or");
-      sendMessage(ServerPlayer, i, message);
-
-      sprintf(message,"Try another server, Bye!");
-      sendMessage(ServerPlayer, i, message);
+      sendMessage(ServerPlayer, i, "Your end is not using UDP.");
+      sendMessage(ServerPlayer, i, "Turn on UDP on your firewall or router.");
       removePlayer(i, "no UDP", true);
       return;
     }
@@ -1219,7 +1254,8 @@ static void acceptClient()
 
   // they aren't a player yet till they send us the connection string
   NetConnectedPeer	peer;
-  peer.handler = new NetHandler(clientAddr, fd);
+  peer.netHandler = new NetHandler(clientAddr, fd);
+  peer.apiHandler = NULL;
   peer.player = -1;
   peer.socket = fd;
   peer.deleteMe = false;
@@ -1233,12 +1269,12 @@ static void respondToPing(Address addr)
 {
   // reply with current game info
   pingReply.sourceAddr = addr;
-  pingReply.rogueCount = (uint8_t)team[0].team.size;
-  pingReply.redCount = (uint8_t)team[1].team.size;
-  pingReply.greenCount = (uint8_t)team[2].team.size;
-  pingReply.blueCount = (uint8_t)team[3].team.size;
-  pingReply.purpleCount = (uint8_t)team[4].team.size;
-  pingReply.observerCount = (uint8_t)team[5].team.size;
+  pingReply.rogueCount    = (uint8_t)teamInfos[0].team.size;
+  pingReply.redCount      = (uint8_t)teamInfos[1].team.size;
+  pingReply.greenCount    = (uint8_t)teamInfos[2].team.size;
+  pingReply.blueCount     = (uint8_t)teamInfos[3].team.size;
+  pingReply.purpleCount   = (uint8_t)teamInfos[4].team.size;
+  pingReply.observerCount = (uint8_t)teamInfos[5].team.size;
 }
 
 
@@ -1252,10 +1288,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (clOptions->filterChat) {
     strncpy(filtered, message, MessageLen);
 
-    if (clOptions->filterSimple)
-      clOptions->filter.filter(filtered, true);
-    else
-      clOptions->filter.filter(filtered, false);
+    clOptions->filter.filter(filtered, clOptions->filterSimple);
 
     msg = filtered;
 
@@ -1271,6 +1304,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     }
   }
 
+  if (sendingPlayer != ServerPlayer) {
   // check that the player has the talk permission
   GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
 
@@ -1288,20 +1322,22 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
       return;
     }
   }
+  }
 
   bz_ChatEventData_V1 chatData;
   chatData.eventType = bz_eFilteredChatMessageEvent;
   chatData.from = sendingPlayer;
   chatData.to = BZ_NULLUSER;
 
-  if (recipientPlayer == AllPlayers)
+  if (recipientPlayer == AllPlayers) {
     chatData.to = BZ_ALLUSERS;
-  else if ( recipientPlayer == AdminPlayers )
+  } else if (recipientPlayer == AdminPlayers) {
     chatData.team = eAdministrators;
-  else if ( recipientPlayer > LastRealPlayer )
+  } else if (recipientPlayer > LastRealPlayer) {
     chatData.team = convertTeam((TeamColor)(250-recipientPlayer));
-  else
+  } else {
     chatData.to = recipientPlayer;
+  }
 
   chatData.message = msg;
 
@@ -1309,14 +1345,21 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (chatData.message.size())
     worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
 
-  if (chatData.message.size())
+  if (chatData.message.size()) {
+    if (sendingPlayer == BZ_SERVER) {
+      sendingPlayer = ServerPlayer;
+    }
     sendMessage(sendingPlayer, recipientPlayer, chatData.message.c_str());
+  }
 
   // If the message was filtered report it on the admin channel
   if (msgWasFiltered && clOptions->filterAnnounce) {
+    GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
+    if (senderData) {
     snprintf(adminmsg, MessageLen, "Filtered Msg: %s said \"%s\"", senderData->player.getCallSign(), message);
     sendMessage(ServerPlayer, AdminPlayers, adminmsg);
   }
+}
 }
 
 
@@ -1363,8 +1406,8 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // record server commands
     if (Record::enabled()) {
       NetMsg msg = MSGMGR.newMessage();
-      msg->packUByte(srcPlayer);
-      msg->packUByte(dstPlayer);
+      msg->packUInt8(srcPlayer);
+      msg->packUInt8(dstPlayer);
       msg->packString(message, strlen(message) + 1);
       Record::addPacket(MsgMessage, msg->size(), msg->buffer(),HiddenPacket);
     }
@@ -1387,9 +1430,17 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
+  sendChatMessage(srcPlayer, dstPlayer, message);
+}
 
+
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message)
+{
   bz_ChatEventData_V1 chatData;
+  chatData.from = BZ_SERVER;
+  if (srcPlayer != ServerPlayer)
   chatData.from = srcPlayer;
+
   chatData.to = BZ_NULLUSER;
 
   if (dstPlayer == AllPlayers)
@@ -1410,6 +1461,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   if (chatData.message.size())
     sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
 }
+
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
 {
@@ -1469,15 +1521,16 @@ void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 // Team Size is wrong at some time
 static void fixTeamCount() {
   int playerIndex, teamNum;
-  for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++)
-    team[teamNum].team.size = 0;
+  for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++) {
+    teamInfos[teamNum].team.size = 0;
+  }
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (p && p->player.isPlaying()) {
       teamNum = p->player.getTeam();
       if (teamNum == RabbitTeam)
 	teamNum = HunterTeam;
-      team[teamNum].team.size++;
+      teamInfos[teamNum].team.size++;
     }
   }
 }
@@ -1536,7 +1589,7 @@ static TeamColor autoTeamSelect(TeamColor t)
   int numplayers = 0, i = 0;
   for (i = 0; i < int(NumTeams); i++)
     if (i != int(ObserverTeam))
-      numplayers += team[i].team.size;
+      numplayers += teamInfos[i].team.size;
 
   // if no player are available, join as Observer
   if (numplayers == maxRealPlayers)
@@ -1548,7 +1601,7 @@ static TeamColor autoTeamSelect(TeamColor t)
 
   // If tank ask for rogues, and rogues are allowed, give it
   if ((t == RogueTeam)
-      && team[RogueTeam].team.size < clOptions->maxTeam[RogueTeam])
+      && teamInfos[RogueTeam].team.size < clOptions->maxTeam[RogueTeam])
     return RogueTeam;
 
   // If no auto-team, server or client, go back with client choice
@@ -1560,7 +1613,7 @@ static TeamColor autoTeamSelect(TeamColor t)
 
   for (i = (int)RedTeam; i < (int)ObserverTeam; i++) {
     TeamSize currTeam = {(TeamColor)i,
-			 team[i].team.size,
+			 teamInfos[i].team.size,
 			 clOptions->maxTeam[i]};
     if (currTeam.max > 0)
       teams.push_back(currTeam);
@@ -1845,8 +1898,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // count current number of players and players+observers
   int numplayers = 0;
   for (int i = 0; i < int(ObserverTeam); i++)
-    numplayers += team[i].team.size;
-  const int numplayersobs = numplayers + team[ObserverTeam].team.size;
+    numplayers += teamInfos[i].team.size;
+  const int numplayersobs = numplayers + teamInfos[ObserverTeam].team.size;
 
   if (!playerData->playerHandler) {	// locals can rejoin as fast as they want
     // no quick rejoining, make 'em wait
@@ -1888,7 +1941,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     rejectPlayer(playerIndex, RejectServerFull,
 		 "This game is full.  Try again later.");
     return;
-  } else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
+  } else if (teamInfos[int(t)].team.size >= clOptions->maxTeam[int(t)]) {
     rejectPlayer(playerIndex, RejectTeamFull,
 		 "This team is full.  Try another team.");
     return ;
@@ -1905,11 +1958,11 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // update team state and if first player on team, reset it's score
   int teamIndex = int(playerData->player.getTeam());
-  team[teamIndex].team.size++;
-  if (team[teamIndex].team.size == 1
+  teamInfos[teamIndex].team.size++;
+  if (teamInfos[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
-    team[teamIndex].team.won = 0;
-    team[teamIndex].team.lost = 0;
+    teamInfos[teamIndex].team.won = 0;
+    teamInfos[teamIndex].team.lost = 0;
   }
 
   // send new player updates on each player, all existing flags, and all teams.
@@ -1945,9 +1998,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (clOptions->gameType == RabbitChase) {
     NetMsg msg = MSGMGR.newMessage();
 
-    msg->packUByte(rabbitIndex);
+    msg->packUInt8(rabbitIndex);
     // swap mode
-    msg->packUByte(0);
+    msg->packUInt8(0);
     msg->send(playerData->netHandler, MsgNewRabbit);
   }
 
@@ -1955,22 +2008,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
-  // send time update to new player if we're counting down
-  if (countdownActive && clOptions->timeLimit > 0.0f
-      && !playerData->player.isBot()) {
-    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
-    if (timeLeft < 0.0f)
-      // oops
-      timeLeft = 0.0f;
-
-    NetMsg msg = MSGMGR.newMessage();
-
-    msg->packInt((int32_t)timeLeft);
-    msg->send(playerData->netHandler, MsgNewRabbit);
-  }
-
   // if first player on team add team's flag
-  if (team[teamIndex].team.size == 1
+  if (teamInfos[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
     if (clOptions->gameType == ClassicCTF) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamIndex);
@@ -2027,18 +2066,41 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
+  // send time update to new player if we're counting down
+  if (countdownActive && clOptions->timeLimit > 0.0f
+      && !playerData->player.isBot()) {
+    if (countdownPauseStart) {
+      gameStartTime += (TimeKeeper::getCurrent() - countdownPauseStart);
+      countdownPauseStart = TimeKeeper::getNullTime();
+    }
+    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
+    if (timeLeft < 0.0f)
+      // oops
+      timeLeft = 0.0f;
+
+    NetMsg msg = MSGMGR.newMessage();
+    msg->packInt32((int32_t)timeLeft);
+    msg->send(playerData->netHandler, MsgTimeUpdate);
+    // players should know when the countdown is paused
+    if (clOptions->countdownPaused) {
+      long int timeArray[4];
+      TimeKeeper::convertTime(timeLeft, timeArray);
+      std::string remainingTime = TimeKeeper::printTime(timeArray);
+      char reply[MessageLen] = {0};
+      snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
+      sendMessage(ServerPlayer, playerData->getIndex(), reply);
+      msg = MSGMGR.newMessage();
+      msg->packInt32(-1);
+      msg->send(playerData->netHandler, MsgTimeUpdate);
+    }
+  }
+
   playerData->accessInfo.regAtJoin = playerData->accessInfo.isRegistered();
 
-  if (GameKeeper::Player::getPlayerByIndex(playerIndex)
-      && playerData->accessInfo.isRegistered()
-      && playerData->_LSAState != GameKeeper::Player::verified) {
+  if (GameKeeper::Player::getPlayerByIndex(playerIndex) && playerData->accessInfo.isRegistered() && playerData->_LSAState != GameKeeper::Player::verified)
+  {
     // nick is in the DB send him a message to identify.
-    if (playerData->accessInfo.isIdentifyRequired())
-      sendMessage(ServerPlayer, playerIndex,
-		  "This callsign is registered.  "
-		  "You must use global registration.");
-    else
-      sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
+    sendMessage(ServerPlayer, playerIndex, "This callsign is registered. You must use global registration.");
   }
 
   dropAssignedFlag(playerIndex);
@@ -2067,7 +2129,7 @@ void resetFlag(FlagInfo &flag)
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
   // reposition flag (middle of the map might be a bad idea)
-  float flagPos[3] = {0.0f, 0.0f, 0.0f};
+  fvec3 flagPos(0.0f, 0.0f, 0.0f);
 
   int teamIndex = flag.teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
@@ -2076,10 +2138,8 @@ void resetFlag(FlagInfo &flag)
       // return the flag to the center of the top of one of the team
       // bases.. we assume it'll fit.
       TeamBases &teamBases = bases[teamIndex];
-      const TeamBase &base = teamBases.getRandomBase(flag.getIndex());
-      flagPos[0] = base.position[0];
-      flagPos[1] = base.position[1];
-      flagPos[2] = base.position[2] + base.size[2];
+      const TeamBase& base = teamBases.getRandomBase();
+      base.getTopCenter(flagPos);
     }
   } else {
     // random position (not in a building)
@@ -2096,9 +2156,9 @@ void resetFlag(FlagInfo &flag)
     int i;
     for (i = 0; i < 10000; i++) {
       if (!world->getFlagSpawnPoint(&flag, flagPos)) {
-	flagPos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	flagPos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
-	flagPos[2] = world->getMaxWorldHeight() * (float)bzfrand();
+	flagPos.x = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	flagPos.y = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+	flagPos.z = world->getMaxWorldHeight() * (float)bzfrand();
       }
       if (DropGeometry::dropFlag(flagPos, minZ, maxZ))
 	break;
@@ -2110,7 +2170,7 @@ void resetFlag(FlagInfo &flag)
 
   bool teamIsEmpty = true;
   if (teamIndex != ::NoTeam)
-    teamIsEmpty = (team[teamIndex].team.size == 0);
+    teamIsEmpty = (teamInfos[teamIndex].team.size == 0);
 
   bz_FlagResetEventData_V1 eventData;
   memcpy(eventData.pos,flagPos,sizeof(float)*3);
@@ -2121,7 +2181,8 @@ void resetFlag(FlagInfo &flag)
   worldEventManager.callEvents(bz_eFlagResetEvent,&eventData);
 
   // reset a flag's info
-  flag.resetFlag(eventData.pos, teamIsEmpty);
+  const fvec3 pos(eventData.pos[0], eventData.pos[1], eventData.pos[2]);
+  flag.resetFlag(pos, teamIsEmpty);
 
   sendFlagUpdateMessage(flag);
 }
@@ -2227,8 +2288,8 @@ void pausePlayer(int playerIndex, bool paused = true)
     zapFlag(*playerFlag);
 
   NetMsg msg = MSGMGR.newMessage();
-  msg->packUByte(playerIndex);
-  msg->packUByte( paused);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8( paused);
   msg->broadcast(MsgPause);
 
   bz_PlayerPausedEventData_V1	pauseEventData;
@@ -2307,9 +2368,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
       // do not use message system, remove the player NOW
       char tempBuf[5];
       void *buf  = tempBuf;
-      buf	= nboPackUShort(buf, 1);
-      buf	= nboPackUShort(buf, MsgSuperKill);
-      buf	= nboPackUByte(buf, uint8_t(playerIndex));
+      buf	= nboPackUInt16(buf, 1);
+      buf	= nboPackUInt16(buf, MsgSuperKill);
+      buf	= nboPackUInt8(buf, uint8_t(playerIndex));
       playerData->netHandler->pwrite(tempBuf, 5);
     }
   }
@@ -2350,12 +2411,12 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
     // decrease team size
     int teamNum = int(playerData->player.getTeam());
-    --team[teamNum].team.size;
+    --teamInfos[teamNum].team.size;
 
     // if last active player on team then remove team's flag if no one
     // is carrying it
     if (Team::isColorTeam((TeamColor)teamNum)
-	&& team[teamNum].team.size == 0 &&
+	&& teamInfos[teamNum].team.size == 0 &&
 	(clOptions->gameType == ClassicCTF)) {
       int flagid = FlagInfo::lookupFirstTeamFlag(teamNum);
       if (flagid >= 0) {
@@ -2405,8 +2466,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	bases.clear();
 
       if (clOptions->oneGameOnly) {
-	done = true;
-	exitCode = 0;
+	serverDone = true;
       } else {
 	// republicize ourself.  this dereferences the URL chain
 	// again so we'll notice any pointer change when any game
@@ -2417,10 +2477,63 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   }
 }
 
+void spawnPlayer ( int playerIndex )
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData || !playerData->isSpawnable())
+    return;
+
+  // player is coming alive.
+  dropAssignedFlag(playerIndex);
+
+  // get the spawn position
+  SpawnPosition spawnPosition(playerIndex,
+    (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
+    clOptions->gameType == ClassicCTF);
+
+  // see if there is anyone to handle the spawn event, and if they want to change it.
+  bz_GetPlayerSpawnPosEventData_V1 spawnData;
+  spawnData.playerID = playerIndex;
+  spawnData.team     = convertTeam(playerData->player.getTeam());
+  spawnData.pos[0]   = spawnPosition.getX();
+  spawnData.pos[1]   = spawnPosition.getY();
+  spawnData.pos[2]   = spawnPosition.getZ();
+  spawnData.rot      = spawnPosition.getAzimuth();
+
+  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
+
+  // update last position immediately
+  const fvec3 pos(spawnData.pos[0], spawnData.pos[1], spawnData.pos[2]);
+  playerData->setPlayerState(pos, spawnData.rot);
+
+  sendMessageAlive(playerIndex, playerData->currentPos, playerData->currentRot);
+
+  playerData->efectiveShotType = StandardShot;
+  playerData->player.setAllow(AllowAll);
+  sendMessageAllow(playerIndex, AllowAll);
+
+  // call any events for a playerspawn
+  bz_PlayerSpawnEventData_V1 spawnEvent;
+  spawnEvent.playerID = playerIndex;
+  spawnEvent.team = convertTeam(playerData->player.getTeam());
+
+  playerStateToAPIState(spawnEvent.state,playerData->lastState);
+
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
+
+  if (clOptions->gameType == RabbitChase) {
+    playerData->player.wasNotARabbit();
+    if (rabbitIndex == NoPlayer)
+      anointNewRabbit();
+  }
+
+}
+
+
 void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData && !playerData->isSpawnable())
+  if (!playerData || !playerData->isSpawnable())
     return;
 
   if (!playerData->player.isPlaying()) {
@@ -2469,13 +2582,14 @@ void playerAlive(int playerIndex)
 
       if ((pbData->netHandler->getIPAddress().s_addr == playerIP.s_addr) && pbData->player.isBot()) {
 	botsFound++;
-	if (botsFound >= clOptions->botsPerIP)
+	if (botsFound > clOptions->botsPerIP)
 	  break;
       }
     }
-    if (botsFound >= clOptions->botsPerIP) {
-      sendMessage(ServerPlayer, playerIndex, "So sorry.  You are attempting to connect with too many bots.");
-      sendMessage(ServerPlayer, playerIndex,
+    if (botsFound > clOptions->botsPerIP) {
+      sendMessage(ServerPlayer, playerData->botHost,
+		  "So sorry.  You are attempting to connect with too many bots.");
+      sendMessage(ServerPlayer, playerData->botHost,
 		  TextUtils::format("This server only allows a maximum of %d %s per IP address.",
 				    clOptions->botsPerIP,
 				    clOptions->botsPerIP==1?"bot":"bots").c_str());
@@ -2493,62 +2607,23 @@ void playerAlive(int playerIndex)
     return;
   }
 
-  // player is coming alive.
-  dropAssignedFlag(playerIndex);
-
-  // get the spawn position
-  SpawnPosition spawnPosition(playerIndex,
-			      (!clOptions->respawnOnBuildings) || (playerData->player.isBot()),
-			      clOptions->gameType == ClassicCTF);
-
-  // see if there is anyone to handle the spawn event, and if they want to change it.
-  bz_GetPlayerSpawnPosEventData_V1 spawnData;
-  spawnData.playerID = playerIndex;
-  spawnData.team     = convertTeam(playerData->player.getTeam());
-  spawnData.pos[0]   = spawnPosition.getX();
-  spawnData.pos[1]   = spawnPosition.getY();
-  spawnData.pos[2]   = spawnPosition.getZ();
-  spawnData.rot      = spawnPosition.getAzimuth();
-
-  worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
-
-  // update last position immediately
-  playerData->setPlayerState(spawnData.pos, spawnData.rot);
-
-  sendMessageAlive(playerIndex,playerData->currentPos,playerData->currentRot);
-
-  playerData->efectiveShotType = StandardShot;
-  playerData->player.setAllow(AllowAll);
-  sendMessageAllow(playerIndex, AllowAll);
-
-  // call any events for a playerspawn
-  bz_PlayerSpawnEventData_V1 spawnEvent;
-  spawnEvent.playerID = playerIndex;
-  spawnEvent.team = convertTeam(playerData->player.getTeam());
-
-  playerStateToAPIState(spawnEvent.state,playerData->lastState);
-
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
-
-  if (clOptions->gameType == RabbitChase) {
-    playerData->player.wasNotARabbit();
-    if (rabbitIndex == NoPlayer)
-      anointNewRabbit();
-  }
+  spawnPlayer(playerIndex);
 }
+
 
 static void checkTeamScore(int playerIndex, int teamIndex)
 {
   if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex)))
     return;
 
-  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore) {
+  if (teamInfos[teamIndex].team.won - teamInfos[teamIndex].team.lost >= clOptions->maxTeamScore) {
     sendScoreOverMessage(playerIndex, (TeamColor)teamIndex);
 
     gameOver = true;
     if (clOptions->oneGameOnly) {
-      done = true;
-      exitCode = 0;
+      sendMessage(ServerPlayer, AllPlayers,
+		  "automatically shutting down now that the game is over");
+      serverDone = true;
     }
   }
 }
@@ -2582,7 +2657,9 @@ bool checkForTeamKill ( GameKeeper::Player* killer,  GameKeeper::Player* victim,
   return false;
 }
 
-void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer, bool teamkill)
+
+void updateScoresForKill(GameKeeper::Player* victim,
+                         GameKeeper::Player* killer, bool teamkill)
 {
   // change the player score
   if (victim) {
@@ -2590,7 +2667,7 @@ void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer,
     sendPlayerScoreUpdate(victim);
   }
   if (killer) {
-    if (victim->getIndex() != killer->getIndex()) {
+    if (!victim || (victim->getIndex() != killer->getIndex())) {
       if (teamkill && !clOptions->teamKillerDies)
 	killer->score.killedBy();
       else if (!teamkill)
@@ -2599,6 +2676,8 @@ void updateScoresForKill(GameKeeper::Player* victim, GameKeeper::Player* killer,
     sendPlayerScoreUpdate(killer);
   }
 }
+
+
 void updateHandicaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
 {
   if (!(clOptions->gameOptions & HandicapGameStyle))
@@ -2611,6 +2690,7 @@ void updateHandicaps ( GameKeeper::Player* victim, GameKeeper::Player* killer )
     sendSingleHandicapInfoUpdate(victim);
 }
 
+
 void checkForScoreLimit ( GameKeeper::Player* killer )
 {
   // see if the player reached the score limit
@@ -2619,38 +2699,40 @@ void checkForScoreLimit ( GameKeeper::Player* killer )
 
     gameOver = true;
     if (clOptions->oneGameOnly) {
-      done = true;
-      exitCode = 0;
+      sendMessage(ServerPlayer, AllPlayers,
+		  "automatically shutting down now that the game is over");
+      serverDone = true;
     }
   }
 }
 
-const float *closestBase( TeamColor color, float *position )
-{
-  float bestdist = Infinity;
-  const float *bestbase = NULL;
 
-  if (bases.find(color) == bases.end())
+const fvec3* closestBase(TeamColor color, const fvec3& position)
+{
+  float bestDistSq = Infinity;
+  const fvec3* bestBase = NULL;
+
+  if (bases.find(color) == bases.end()) {
     return NULL;
+  }
 
   TeamBases &teamBases = bases[color];
   int count = teamBases.size();
   for (int i=0; i<count; i++) {
-    const float *basepos = teamBases.getBasePosition(i);
-    float dx = position[0] - basepos[0];
-    float dy = position[1] - basepos[1];
-    float dist = sqrt(dx * dx + dy * dy);
-
-    if (dist < bestdist) {
-      bestbase = basepos;
-      bestdist = dist;
+    const fvec3& basepos = teamBases.getBasePosition(i);
+    const float distSq = (position.xy() - basepos.xy()).lengthSq();
+    if (distSq < bestDistSq) {
+      bestBase = &basepos;
+      bestDistSq = distSq;
     }
   }
 
-  return bestbase;
+  return bestBase;
 }
 
-void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] )
+
+void processFreezeTagCollision(GameKeeper::Player *player,
+                               GameKeeper::Player *otherPlayer, const fvec3& pos)
 {
   TeamColor playerTeam = player->player.getTeam();
   TeamColor otherTeam = otherPlayer->player.getTeam();
@@ -2661,28 +2743,25 @@ void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player 
       sendMessageAllow(player->getIndex(), AllowAll);
       player->player.setAllow(AllowAll);
     }
-  } else {
-    float dx, dy, dist, angle, cos_angle;
-    const float *playerBase = closestBase(playerTeam, pos);
-    const float *otherBase = closestBase(otherTeam, pos);
-
-    if (!playerBase || !otherBase)
+  }
+  else {
+    const fvec3* playerBasePtr = closestBase(playerTeam, pos);
+    const fvec3*  otherBasePtr = closestBase(otherTeam,  pos);
+    if (!playerBasePtr || !otherBasePtr) {
       return;
+    }
+    const fvec3& playerBase = *playerBasePtr;
+    const fvec3&  otherBase = *otherBasePtr;
 
-    angle = atan2f(otherBase[1] - playerBase[1], otherBase[0] - playerBase[0]);
-    cos_angle = fabs(cosf(angle));
+    const fvec2 hdiff = otherBase.xy() - playerBase.xy();
 
-    dx = pos[0] - playerBase[0];
-    dy = pos[1] - playerBase[1];
-    dist = sqrt(dx * dx + dy * dy);
-    float playerDist = dist * cos_angle;
+    const float angle = atan2f(hdiff.y, hdiff.x);
+    const float cos_angle = fabs(cosf(angle));
 
-    dx = pos[0] - otherBase[0];
-    dy = pos[1] - otherBase[1];
-    dist = sqrt(dx * dx + dy * dy);
-    float otherDist = dist * cos_angle;
+    const float playerDist = cos_angle * (pos.xy() - playerBase.xy()).length();
+    const float  otherDist = cos_angle * (pos.xy() -  otherBase.xy()).length();
 
-    if ((playerDist - otherDist > 2.0 * BZDBCache::dmzWidth) &&
+    if (((playerDist - otherDist) > (2.0 * BZDBCache::dmzWidth)) &&
 	(player->player.canShoot() || player->player.canMove()) ) {
       sendMessageAllow(player->getIndex(), AllowNone);
       player->player.setAllow(AllowNone);
@@ -2690,7 +2769,8 @@ void processFreezeTagCollision ( GameKeeper::Player *player, GameKeeper::Player 
   }
 }
 
-void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPlayer, float pos[3] )
+void processCollision(GameKeeper::Player *player,
+                      GameKeeper::Player *otherPlayer, const fvec3& pos)
 {
   if (!player || !otherPlayer)
     return;
@@ -2698,7 +2778,7 @@ void processCollision ( GameKeeper::Player *player, GameKeeper::Player *otherPla
   bz_PlayerCollisionEventData_V1  eventData;
   eventData.players[0] = player->getIndex();
   eventData.players[1] = otherPlayer->getIndex();
-  memcpy(eventData.pos,pos,sizeof(float)*3);
+  memcpy(eventData.pos, pos, sizeof(float[3]));
   worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
 
   if (eventData.handled)
@@ -2774,7 +2854,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
 
   // if weTKed, and we didn't suicide, and we are killing TKers, then kill that bastard
   if (teamkill &&  (victimIndex != killerIndex) && clOptions->teamKillerDies)
-    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);;
+    playerKilled(killerIndex, killerIndex, reason, -1, Flags::Null, -1);
 
   if (!respawnOnBase) {
     updateScoresForKill(victimData,killerData,teamkill);
@@ -2786,27 +2866,27 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
     if (victimIndex == rabbitIndex)
       anointNewRabbit(killerIndex);
   } else {
-    // change the team scores -- rogues don't have team scores.  don't
-    // change team scores for individual player's kills in capture the
-    // flag mode.
-    // Team score is even not used on RabbitChase
+    // Change the team scores -- rogues don't have team scores.
+    // Change team scores for individual players' kills only in
+    // the free-for-all modes.
+    // Team score is not used at all on RabbitChase.
     int winningTeam = (int)NoTeam;
-    if ( clOptions->gameType == ClassicCTF || clOptions->gameType == TeamFFA ) {
+    if ( clOptions->gameType == OpenFFA || clOptions->gameType == TeamFFA ) {
       int killerTeam = -1;
       if (killer && victim->getTeam() == killer->getTeam()) {
 	if (!killer->isTeam(RogueTeam)) {
 	  if (killerIndex == victimIndex)
-	    team[int(victim->getTeam())].team.lost += 1;
+	    teamInfos[int(victim->getTeam())].team.lost += 1;
 	  else
-	    team[int(victim->getTeam())].team.lost += 2;
+	    teamInfos[int(victim->getTeam())].team.lost += 2;
 	}
       } else {
 	if (killer && !killer->isTeam(RogueTeam)) {
 	  winningTeam = int(killer->getTeam());
-	  team[winningTeam].team.won++;
+	  teamInfos[winningTeam].team.won++;
 	}
 	if (!victim->isTeam(RogueTeam))
-	  team[int(victim->getTeam())].team.lost++;
+	  teamInfos[int(victim->getTeam())].team.lost++;
 	if (killer)
 	  killerTeam = killer->getTeam();
       }
@@ -2823,83 +2903,121 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
   }
 }
 
+
 void searchFlag(GameKeeper::Player &playerData)
 {
-  if (!playerData.player.isAlive())
+  if (!playerData.player.isAlive()) {
     return;
+  }
 
+  bool identify = false;
   float radius = BZDBCache::tankRadius + BZDBCache::flagRadius;
-  bool id = false;
 
   int flagId = playerData.player.getFlag();
   if (flagId >= 0) {
     FlagInfo &playerFlag = *FlagInfo::get(flagId);
-    if (playerFlag.flag.type != Flags::Identify)
+    if (playerFlag.flag.type != Flags::Identify) {
       return;
-    id = true;
+    }
+    identify = true;
     radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
   }
 
   const PlayerId playerIndex = playerData.getIndex();
 
-  const float *tpos = playerData.lastState.pos;
+  const fvec3& tpos = playerData.lastState.pos;
+
   float radius2 = radius * radius;
 
   int closestFlag = -1;
   for (int i = 0; i < numFlags; i++) {
     FlagInfo &flag = *FlagInfo::get(i);
-    if (!flag.exist())
+    if (!flag.exist() || (flag.flag.status != FlagOnGround)) {
       continue;
-    if (flag.flag.status != FlagOnGround)
-      continue;
+    }
+    const fvec3& fpos = flag.flag.position;
 
-    const float *fpos = flag.flag.position;
-    float dist = (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
-    if (!id && dist >= 0.01f)
+    if (!identify) {
+      // z separation check
+      if (fabsf(tpos.z - fpos.z) >= 0.1f) {
       continue;
-    dist += (tpos[0] - fpos[0]) * (tpos[0] - fpos[0])
-      + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+      }
+    }
 
-    if (dist < radius2) {
-      radius2     = dist;
+    // spherical separation check
+    const float distSq = (tpos - fpos).lengthSq();
+    if (distSq >= radius2) {
+      continue;
+    }
+
+    // check if there is an obstacle between the tank and the flag
+    if (!identify) {
+      fvec3 flagCenter = fpos;
+      fvec3 tankCenter = tpos;
+      flagCenter.z += 0.5f * BZDBCache::flagPoleSize;
+      tankCenter.z += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      const Ray ray(flagCenter, tankCenter - flagCenter);
+      const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
+      const int count = oList->count;
+      int o;
+      for (o = 0; o < count; o++) {
+        const Obstacle* obs = oList->list[o];
+        const float t = obs->intersect(ray);
+        if ((t >= 0.0f) && (t < 1.0f)) {
+          break;
+        }
+      }
+      if (o != count) {
+        continue; // there is a blocking obstacle
+      }
+    }
+
+    radius2 = distSq;
       closestFlag = i;
-      if (!id)
+
+    if (!identify) {
 	break;
     }
   }
 
   if (closestFlag < 0) {
-    if (id)
+    if (identify) {
       playerData.setLastIdFlag(-1);
+    }
     return;
   }
+
   FlagInfo &flag = *FlagInfo::get(closestFlag);
-  if (id) {
+  if (identify) {
     if (closestFlag != playerData.getLastIdFlag()) {
       sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
       playerData.setLastIdFlag(closestFlag);
     }
-  } else {
+  }
+  else {
     if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG)) {
-      if (flag.flag.type->flagTeam != playerData.player.getTeam())
+      if (flag.flag.type->flagTeam != playerData.player.getTeam()) {
 	sendGrabFlagMessage(playerIndex,flag);
     }
-    else
+    }
+    else {
       sendGrabFlagMessage(playerIndex,flag);
-
   }
 }
+}
 
-void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
+
+void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
 {
   assert(world != NULL);
 
   // maximum X or Y coordinate is 1/2 of worldsize
   const float size = BZDBCache::worldSize * 0.5f;
-  float pos[3];
-  pos[0] = ((dropPos[0] < -size) || (dropPos[0] > size)) ? 0.0f : dropPos[0];
-  pos[1] = ((dropPos[1] < -size) || (dropPos[1] > size)) ? 0.0f : dropPos[1];
-  pos[2] = (dropPos[2] > maxWorldHeight) ? maxWorldHeight : dropPos[2];
+  const fvec3 pos(
+    ((dropPos.x < -size) || (dropPos.x > size)) ? 0.0f : dropPos.x,
+    ((dropPos.y < -size) || (dropPos.y > size)) ? 0.0f : dropPos.y,
+    (dropPos.z > maxWorldHeight) ? maxWorldHeight : dropPos.z
+  );
 
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
@@ -2922,7 +3040,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 
   const float maxZ = MAXFLOAT;
 
-  float landing[3] = {pos[0], pos[1], pos[2]};
+  fvec3 landing = pos;
   bool safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
 
   bool vanish;
@@ -2932,7 +3050,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   } else if (--drpFlag.grabs <= 0) {
     vanish = true;
     drpFlag.grabs = 0;
-  } else if (!clOptions->flagsOnBuildings && (landing[2] > 0.0f)) {
+  } else if (!clOptions->flagsOnBuildings && (landing.z > 0.0f)) {
     vanish = true;
   } else {
     vanish = !safelyDropped;
@@ -2947,15 +3065,13 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     std::string teamName = Team::getName((TeamColor) flagTeam);
     if (!world->getFlagDropPoint(&drpFlag, pos, landing)) {
       // try the center
-      landing[0] = landing[1] = landing[2] = 0.0f;
+      landing = fvec3(0.0f, 0.0f, 0.0f);
       safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
       if (!safelyDropped) {
 	// ok, we give up, send it home
 	TeamBases &teamBases = bases[flagTeam];
-	const TeamBase &base = teamBases.getRandomBase(flagIndex);
-	landing[0] = base.position[0];
-	landing[1] = base.position[1];
-	landing[2] = base.position[2] + base.size[2];
+	const TeamBase& base = teamBases.getRandomBase();
+	base.getTopCenter(landing);
       }
     }
   }
@@ -2963,9 +3079,9 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   if (isTeamFlag) {
     // if it is a team flag, check if there are any players left in
     // that team - if not, start the flag timeout
-    if (team[drpFlag.flag.type->flagTeam].team.size == 0) {
-      team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
-      team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+    if (teamInfos[drpFlag.flag.type->flagTeam].team.size == 0) {
+      teamInfos[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
+      teamInfos[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
     }
   }
 
@@ -2979,7 +3095,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 }
 
 
-void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
+void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos)
 {
   const int flagIndex = playerData.player.getFlag();
   if (flagIndex < 0)
@@ -2990,11 +3106,12 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   bz_FlagDroppedEventData_V1 data;
   data.playerID = playerData.getIndex();
   data.flagID = flagIndex;
-  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
+  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv.c_str();
   memcpy(data.pos, dropPos, sizeof(float)*3);
 
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 }
+
 
 void captureFlag(int playerIndex, TeamColor teamCaptured)
 {
@@ -3022,10 +3139,13 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   bz_AllowCTFCaptureEventData_V1  allowData;
 
+  fvec3 posTmp;
+
   allowData.teamCapped = convertTeam((TeamColor)teamIndex);
   allowData.teamCapping = convertTeam(teamCaptured);
   allowData.playerCapping = playerIndex;
-  playerData->getPlayerCurrentPosRot(allowData.pos, allowData.rot);
+  playerData->getPlayerCurrentPosRot(posTmp, allowData.rot);
+  memcpy(allowData.pos, posTmp, sizeof(float[3]));
   allowData.allow = true;
   allowData.killTeam = true;
 
@@ -3045,7 +3165,8 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   eventData.teamCapped = convertTeam((TeamColor)teamIndex);
   eventData.teamCapping = convertTeam(teamCaptured);
   eventData.playerCapping = playerIndex;
-  playerData->getPlayerCurrentPosRot(eventData.pos, eventData.rot);
+  playerData->getPlayerCurrentPosRot(posTmp, eventData.rot);
+  memcpy(eventData.pos, posTmp, sizeof(float[3]));
 
   worldEventManager.callEvents(bz_eCaptureEvent,&eventData);
 
@@ -3064,9 +3185,9 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
   if (teamIndex != int(playerData->player.getTeam())) {
     // player captured enemy flag
     winningTeam = int(playerData->player.getTeam());
-    team[winningTeam].team.won++;
+    teamInfos[winningTeam].team.won++;
   }
-  team[teamIndex].team.lost++;
+  teamInfos[teamIndex].team.lost++;
   sendTeamUpdateMessageBroadcast(winningTeam, teamIndex);
 
   dumpScore();
@@ -3075,7 +3196,7 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState )
+bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, TimeKeeper const& timeStamp, bool shortState )
 {
   // observer updates are not relayed, or checked
   if (playerData->player.isObserver()) {
@@ -3086,7 +3207,7 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, flo
 
   bz_PlayerUpdateEventData_V1 eventData;
   playerStateToAPIState(eventData.state,state);
-  eventData.stateTime = timeStamp;
+  eventData.stateTime = timeStamp.getSeconds();
   eventData.playerID = playerData->getIndex();
   worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
@@ -3195,14 +3316,14 @@ static void adjustTolerances()
   int i = 0;
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
-    const float* v = phydrv->getLinearVel();
+    const fvec3& v = phydrv->getLinearVel();
     const float av = phydrv->getAngularVel();
     if (!phydrv->getIsDeath()) {
       if (!phydrv->getIsSlide() &&
-	  ((v[0] != 0.0f) || (v[1] != 0.0f) || (av != 0.0f))) {
+	  ((v.x != 0.0f) || (v.y != 0.0f) || (av != 0.0f))) {
 	cheatProtectionOptions.doSpeedChecks = false;
       }
-      if (v[2] > 0.0f) {
+      if (v.z > 0.0f) {
 	cheatProtectionOptions.doHeightChecks = false;
       }
     }
@@ -3225,8 +3346,8 @@ static void terminateServer(int /*sig*/)
 {
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
-  exitCode = 0;
-  done = true;
+  sendMessage(ServerPlayer, AllPlayers, "shutting down now");
+  serverDone = true;
 }
 
 static std::string cmdSet(const std::string&, const CommandManager::ArgList& args, bool *worked)
@@ -3388,13 +3509,11 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
     if (nextPingSeqno > 0) {
       NetMsg msg = MSGMGR.newMessage();
-      msg->packUShort(nextPingSeqno);
+      msg->packUInt16(nextPingSeqno);
       msg->send(playerData.netHandler, MsgLagPing);
 
       if (warn) {
-	char message[MessageLen];
-	sprintf(message, "*** Server Warning: your lag is too high (failed to return ping) ***");
-	sendMessage(ServerPlayer, p, message);
+	sendMessage(ServerPlayer, p, "*** Server Warning: your lag is too high (failed to return ping) ***");
 	// Should recheck if player is still available
 	if (!GameKeeper::Player::getPlayerByIndex(p))
 	  return;
@@ -3489,8 +3608,9 @@ void initGroups()
   //  LOCAL.ADMIN
   info.explicitAllows.reset();
   info.groupState.reset();
-  for (int i = 0; i < PlayerAccessInfo::lastPerm; i++)
+  for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
     info.explicitAllows[i] = true;
+  }
   info.groupState[PlayerAccessInfo::isGroup] = true;
   info.groupState[PlayerAccessInfo::isDefault] = true;
   info.explicitAllows[PlayerAccessInfo::hideAdmin] = false;
@@ -3503,11 +3623,10 @@ void initGroups()
 
 static void updatePlayerPositions(void)
 {
-  double now = TimeKeeper::getCurrent().getSeconds();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
     if (player)
-      player->doPlayerDR((float)now);
+      player->doPlayerDR();
   }
 }
 
@@ -3519,10 +3638,13 @@ static void checkForWorldDeaths(void)
     for (int i = 0; i < curMaxPlayers; i++) {
       // kill anyone under the water level
       GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
-      if ( player && player->player.isAlive() && player->lastState.pos[2] <= waterLevel)
-	playerKilled(player->getIndex(), ServerPlayer, WaterDeath, -1, Flags::Null, -1);
+      if (player && player->player.isAlive() &&
+          player->lastState.pos.z <= waterLevel) {
+	playerKilled(player->getIndex(), ServerPlayer,
+	             WaterDeath, -1, Flags::Null, -1);
     }
   }
+}
 }
 
 static bool initNet(void)
@@ -3552,7 +3674,7 @@ static bool initNet(void)
 #endif /* defined(_WIN32) */
 }
 
-static void initStartupPrams(int argc, char **argv)
+static void initStartupParameters(int argc, char **argv)
 {
   Flags::init();
 
@@ -3625,7 +3747,7 @@ static bool prepareWorld(void)
   } else if (clOptions->cacheOut != "") {
     if (!saveWorldCache())
       std::cerr << "ERROR: could not save world cache file: " << clOptions->cacheOut << std::endl;
-    done = true;
+    serverDone = true;
   }
   return true;
 }
@@ -3773,7 +3895,7 @@ static void setupPingReply(void)
   pingReply.maxTeamScore = clOptions->maxTeamScore;
 }
 
-static void setupPermisions(void)
+static void setupPermissions(void)
 {
   // load up the access permissions & stuff
   initGroups();
@@ -3812,12 +3934,13 @@ static void setupPermisions(void)
   // if requested, make it so AllowMovement and AllowShooting eventually
   // get reenabled automatically
   if (BZDB.eval(StateDatabase::BZDB_AUTOALLOWTIME) > 0)
-    bz_registerEvent(bz_eTickEvent, new AutoAllowTimerTickHandler);
+    bz_registerEvent(bz_eTickEvent, &autoAllowTimerTickHandler);
 }
+
 
 static bool initServer(int argc, char **argv)
 {
-  loggingCallback = &apiLoggingCallback;
+  registerLoggingProc(apiLoggingProc, NULL);
 
   /* line buffered output to console */
   setvbuf(stdout, (char *)NULL, _IOLBF, BUFSIZE);
@@ -3843,11 +3966,14 @@ static bool initServer(int argc, char **argv)
 
   bzfsrand((unsigned int)time(0));
 
-  initStartupPrams(argc,argv);
+  initStartupParameters(argc, argv);
 
-  setupPermisions();
+  setupPermissions();
 
   setupPlugins();
+
+  // start up a stats link class, it'll take care of itself.
+  statsLink.init();
 
   if (!prepareWorld())
     return false;
@@ -3915,12 +4041,14 @@ static bool initServer(int argc, char **argv)
   return true;
 }
 
+
 static void doTickEvent(void)
 {
   // fire off a tick event
   bz_TickEventData_V1 tickData;
   worldEventManager.callEvents(bz_eTickEvent,&tickData);
 }
+
 
 float getAPIMaxWaitTime ( void )
 {
@@ -3937,6 +4065,7 @@ float getAPIMaxWaitTime ( void )
   else
     return min;
 }
+
 
 static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
 {
@@ -4005,6 +4134,7 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
   }
 }
 
+
 static void doCountdown(int &readySetGo, TimeKeeper &tm)
 {
   // players see a countdown
@@ -4028,7 +4158,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	gameStartTime = tm;
 	clOptions->timeElapsed = 0.0f;
 
-	sendMsgTimeUpdate((int)clOptions->timeLimit);
+	sendMsgTimeUpdate((int32_t)clOptions->timeLimit);
 
 	// kill any players that are playing already
 	GameKeeper::Player *player;
@@ -4124,7 +4254,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
       countdownPauseStart = TimeKeeper::getNullTime ();
       newTimeElapsed = (float)(tm - gameStartTime);
       timeLeft = clOptions->timeLimit - newTimeElapsed;
-      sendMsgTimeUpdate((int) timeLeft);
+      sendMsgTimeUpdate((int32_t)timeLeft);
     }
 
     if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f) &&
@@ -4148,15 +4278,17 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	clOptions->addedTime = 0.0f; //reset
       }
 
-      sendMsgTimeUpdate((int)timeLeft);
+      sendMsgTimeUpdate((int32_t)timeLeft);
       clOptions->timeElapsed = newTimeElapsed;
       if (clOptions->oneGameOnly && timeLeft == 0.0f) {
-	done = true;
-	exitCode = 0;
+	sendMessage(ServerPlayer, AllPlayers,
+		    "automatically shutting down now that the game is over");
+	serverDone = true;
       }
     }
   }
 }
+
 
 static void doPlayerStuff(void)
 {
@@ -4173,6 +4305,7 @@ static void doPlayerStuff(void)
   if (requestAuthentication)
     listServerLink->queueMessage(ListServerLink::ADD);	// Request the listserver authentication
 }
+
 
 static void doVoteArbiter(TimeKeeper &tm)
 {
@@ -4394,6 +4527,7 @@ static void doVoteArbiter(TimeKeeper &tm)
   } // voting is allowed and an arbiter exists
 }
 
+
 static void doTextBroadcasts ( TimeKeeper &tm )
 {
   // periodic advertising broadcast
@@ -4437,12 +4571,13 @@ static void doTextBroadcasts ( TimeKeeper &tm )
   }
 }
 
+
 static void doTeamFlagTimeouts ( TimeKeeper &tm )
 {
   // check team flag timeouts
   if (clOptions->gameType == ClassicCTF) {
     for (int i = RedTeam; i < CtfTeams; ++i) {
-      if (team[i].flagTimeout - tm < 0 && team[i].team.size == 0) {
+      if (teamInfos[i].flagTimeout - tm < 0 && teamInfos[i].team.size == 0) {
 	int flagid = FlagInfo::lookupFirstTeamFlag(i);
 	if (flagid >= 0) {
 	  for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
@@ -4457,6 +4592,7 @@ static void doTeamFlagTimeouts ( TimeKeeper &tm )
     }
   }
 }
+
 
 static void doSuperFlags ( TimeKeeper &tm )
 {
@@ -4480,6 +4616,7 @@ static void doSuperFlags ( TimeKeeper &tm )
   }
 }
 
+
 static void doListServerUpdate ( TimeKeeper &tm )
 {
   // occasionally add ourselves to the list again (in case we were dropped for some reason).
@@ -4498,19 +4635,19 @@ static void doListServerUpdate ( TimeKeeper &tm )
   }
 }
 
+
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
-  if ( !peer.pendingSendChunks.size() )
+  if (peer.sendChunks.empty()) {
     return;
+  }
 
-  peer.handler->bufferedSend(peer.pendingSendChunks[0].data,peer.pendingSendChunks[0].size);
+  const std::string& chunk = peer.sendChunks.front();
+  peer.netHandler->bufferedSend(chunk.data(), chunk.size());
 
-  free(peer.pendingSendChunks[0].data);
-  peer.pendingSendChunks[0].data = NULL;
-  peer.pendingSendChunks[0].size = 0;
-
-  peer.pendingSendChunks.erase(peer.pendingSendChunks.begin());
+  peer.sendChunks.pop_front();
 }
+
 
 bool updateCurl ( void )
 {
@@ -4531,6 +4668,222 @@ bool updateCurl ( void )
   return cURLManager::perform();
 }
 
+
+static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
+                                 fd_set& read_set, fd_set& write_set)
+{
+  if (peer.deleteMe) {
+    return; // skip it, it's dead to us, we'll close and purge it later
+  }
+
+  NetHandler* netHandler = peer.netHandler;
+
+  if (peer.player != -1) {
+    peer.sent = true;
+    // it's a player now, so treat them with the respect they deserve
+    GameKeeper::Player* playerData =
+      GameKeeper::Player::getPlayerByIndex(peer.player);
+
+    if (playerData && netHandler) {
+      // send whatever we have ... if any
+      if (netHandler->pflush(&write_set) == -1) {
+        removePlayer(peer.player, "ECONNRESET/EPIPE", false);
+      } else {
+        playerData->handleTcpPacket(&read_set);
+      }
+    }
+    // check for any async data to send out
+    sendBufferedNetDataForPeer(peer);
+    return; // player connection has been handled
+  }
+
+  // it's not a player yet (but may be), check for any data to send out
+  sendBufferedNetDataForPeer(peer);
+
+  if (netHandler->pflush(&write_set) == -1) {
+    peer.deleteMe = true; // kill it later
+    return; // disconnected
+  }
+
+  if (!netHandler->isFdSet(&read_set)) {
+    // there is no data, so delete us or move along
+    // ... and it's not a player for god's sake
+    if ((peer.player == -1) && !peer.apiHandler && peer.sendChunks.empty()) {
+      if (peer.sent) {
+        // he has sent some data, but now is dead, let em go.
+        peer.deleteMe = true;
+      }
+    }
+    return;
+  }
+
+  // there is some data for us
+  if (!peer.apiHandler) {
+    // no apiHandler, we are probably new, just read in the first N bits
+    RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
+
+    if ((e != ReadAll) && (e != ReadPart)) {
+      // there was an error but we aren't a player yet
+      if (e == ReadError) {
+        nerror("error on read");
+      }
+      else {
+        if (e == ReadHuge) {
+          logDebugMessage(1,
+            "socket [%d] sent huge packet length, possible attack\n", sockFD);
+        }
+        peer.deleteMe = true;
+      }
+    }
+    else {
+      // the dude has sent SOME data
+      peer.sent = true;
+
+      unsigned int readSize = netHandler->getTcpReadSize();
+      void *buf = netHandler->getTcpBuffer();
+      int fd = sockFD;
+
+      // check for the magic header string
+      const char*  header = BZ_CONNECT_HEADER;
+      const size_t headerLen = strlen(header);
+
+      if ((e == ReadAll) && (strncmp((char*)buf, header, headerLen) == 0)) {
+        // it's a player, it sent us the magic string, get it setup
+        netHandler->flushData();
+
+        // send server version and playerid
+        char buffer[9];
+        memcpy(buffer, getServerVersion(), 8);
+
+        // send 0xff if list is full
+        buffer[8] = (char)0xff;
+
+        PlayerId playerIndex = getNewPlayer(netHandler);
+        peer.player = playerIndex;
+
+        if (playerIndex < 0xff) {
+          logDebugMessage(1,
+            "Player [%d] accept() from %s on %i\n",
+            playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
+
+          buffer[8] = (uint8_t)playerIndex;
+          send(fd, (const char*)buffer, sizeof(buffer), 0);
+        }
+        else {
+          // full? reject by closing socket
+          logDebugMessage(1,
+            "all slots occupied, rejecting accept() from %s on %i\n",
+            inet_ntoa(netHandler->getIPAddress()), fd);
+
+          // send back 0xff before closing
+          send(fd, (const char*)buffer, sizeof(buffer), 0);
+          peer.deleteMe = true; // kill/close later
+        }
+      }
+      else { // not the BZFS header
+        // it's NOT a player but it sent us data,
+        // see if anyone wants to deal with it
+
+        // ok read in all the data we may have waiting
+        void* data = malloc(readSize);
+        memcpy(data, buf, readSize);
+        unsigned int totalSize = readSize;
+
+        while (e == ReadAll) {
+          netHandler->flushData();
+
+          e = netHandler->receive(256);
+          readSize = netHandler->getTcpReadSize();
+          buf = netHandler->getTcpBuffer();
+
+          unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
+          memcpy(temp, data, totalSize);
+          memcpy(temp + totalSize, buf, readSize);
+          free(data);
+          data = temp;
+          totalSize += readSize;
+        }
+
+        // we have a copy of all the data, so we can flush now
+        netHandler->flushData();
+
+        // call an event to let people know we got a new connect
+        bz_NewNonPlayerConnectionEventData_V1 eventData;
+
+        eventData.data = data;
+        eventData.size = totalSize;
+        eventData.connectionID = sockFD;
+
+        worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
+        free(data);
+
+        if (!peer.apiHandler && peer.sendChunks.empty()) {
+          // nobody wanted it and it's got nothing to send so mark it for purge
+          peer.deleteMe = true;
+        }
+      }
+    }
+  }
+  else { // (peer.apiHandler != NULL)
+    // we have an API listener, so lets get all our data,
+    // and send it to him so he can do what he wants with it
+    RxStatus e = netHandler->receive(256);
+
+    if ((e != ReadAll) && (e != ReadPart)) {
+      // we could not read, it must have disconnected, or there was an error
+      if (peer.apiHandler) {
+        peer.apiHandler->disconnect(sockFD);
+      }
+
+      peer.deleteMe = true;
+
+      if (e == ReadError) {
+        nerror("error on read");
+      }
+
+      if (e == ReadHuge) {
+        logDebugMessage(1,
+          "socket [%d] sent huge packet length, possible attack\n", sockFD);
+      }
+    }
+    else {
+      // the dude has sent SOME data
+      peer.sent = true;
+
+      unsigned int readSize = netHandler->getTcpReadSize();
+      void* buf = netHandler->getTcpBuffer();
+
+      void* data = malloc(readSize);
+      memcpy(data, buf, readSize);
+      unsigned int totalSize = readSize;
+
+      while (e == ReadAll) {
+        netHandler->flushData();
+
+        e = netHandler->receive(256);
+        readSize = netHandler->getTcpReadSize();
+        buf = netHandler->getTcpBuffer();
+
+        unsigned char* temp = (unsigned char*)malloc(totalSize + readSize);
+        memcpy(temp, data, totalSize);
+        memcpy(temp + totalSize, buf, readSize);
+        free(data);
+        data = temp;
+        totalSize += readSize;
+      }
+
+      netHandler->flushData();
+
+      if (peer.apiHandler) {
+        peer.apiHandler->pending(sockFD, data, totalSize);
+      }
+
+      free(data);
+    }
+  }
+}
+
+
 static void runMainLoop ( void )
 {
   /* MAIN SERVER RUN LOOP
@@ -4545,7 +4898,7 @@ static void runMainLoop ( void )
 
   int readySetGo = -1; // match countdown timer
   int nfound;
-  while (!done) {
+  while (!serverDone) {
     doTickEvent();
     updatePlayerPositions();
     checkForWorldDeaths();
@@ -4588,22 +4941,25 @@ static void runMainLoop ( void )
     struct timeval timeout;
     timeout.tv_sec = long(floorf(waitTime));
     timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
-    nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
+    nfound = select(maxFileDescriptor + 1,
+                    (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
     //	logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
     // send replay packets
     // (this check and response should follow immediately after the select() call)
     GameKeeper::Player::passTCPMutex();
-    if (Replay::playing())
+    if (Replay::playing()) {
       Replay::sendPackets ();
+    }
 
     // update the listserverlink
     if(listServerLink) listServerLink->update();
 
     // game time updates
-    if (!Replay::enabled())
+    if (!Replay::enabled()) {
       sendPendingGameTime();
+    }
 
     // synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
@@ -4625,8 +4981,9 @@ static void runMainLoop ( void )
     if (nfound > 0) {
       //logDebugMessage(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
-      if (FD_ISSET(wksSocket, &read_set))
+      if (FD_ISSET(wksSocket, &read_set)) {
 	acceptClient();
+      }
 
       // check if we have any UDP packets pending
       if (NetHandler::isUdpFdSet(&read_set)) {
@@ -4647,8 +5004,9 @@ static void runMainLoop ( void )
 	  getGeneralMessageInfo(&buf,code,len);
 
 	  if (code == MsgPingCodeRequest) {
-	    if (len != 2)
+	    if (len != 2) {
 	      continue;
+            }
 	    // if I'm ignoring pings
 	    // then ignore the ping.
 	    if (handlePings) {
@@ -4656,21 +5014,25 @@ static void runMainLoop ( void )
 	      pingReply.write(NetHandler::getUdpSocket(), &uaddr);
 	    }
 	    continue;
-	  } else if (code == MsgEchoRequest) {   // Handle pings of the server from a client
-	    unsigned char tag = 0;               // This could be factored into it's own function
-	    buf = nboUnpackUByte(buf, tag);      // Also, Maybe have an option to ignore pings
+	  }
+	  else if (code == MsgEchoRequest) {
+	    // Handle pings of the server from a client
+	    // This could be factored into it's own function
+	    // Also, Maybe have an option to ignore pings
+	    unsigned char tag = 0;
+	    buf = nboUnpackUInt8(buf, tag);
 
 	    sendEchoResponse(&uaddr, tag);
 
 	    continue;
 	  }
 
-
 	  if (!netHandler && (len == 1) && (code == MsgUDPLinkRequest)) {
 	    // It is a UDP Link Request ... try to match it
 	    uint8_t index;
-	    buf = nboUnpackUByte(buf, index);
-	    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(index);
+	    buf = nboUnpackUInt8(buf, index);
+	    GameKeeper::Player *playerData =
+	      GameKeeper::Player::getPlayerByIndex(index);
 
 	    if (playerData) {
 	      netHandler = playerData->netHandler;
@@ -4683,276 +5045,97 @@ static void runMainLoop ( void )
 		logDebugMessage(2,"Inbound UDP up %s:%d\n",
 				inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 	      } else {
-		logDebugMessage(2,"Inbound UDP rejected %s:%d different IP than original\n",
+		logDebugMessage(2,
+		  "Inbound UDP rejected %s:%d different IP than original\n",
 				inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
 	      }
 	      continue;
 	    }
 	  }
+
 	  // handle the command for UDP
 	  handleCommand(ubuf, true, netHandler);
 
 	  // don't spend more than 250ms receiving udp
 	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
-	    logDebugMessage(2,"Too much UDP traffic, will hope to catch up later\n");
+	    logDebugMessage(2,
+	      "Too much UDP traffic, will hope to catch up later\n");
 	    break;
 	  }
 	}
       }
 
       // process eventual resolver requests
-
       NetHandler::checkDNS(&read_set, &write_set);
 
       // now check our connected peer list, and see if we have any data pending.
+      std::map<int,NetConnectedPeer>::iterator peerItr;
 
-      std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
-
-      // get a list of connections to purge
-      // then purge them
+      // get a list of connections to purge, then purge them
       std::vector<int> toKill;
 
-      while (peerItr != netConnectedPeers.end()) {
-	if (peerItr->second.deleteMe)
+      for (peerItr  = netConnectedPeers.begin();
+           peerItr != netConnectedPeers.end(); ++peerItr) {
+	if (peerItr->second.deleteMe) {
 	  toKill.push_back(peerItr->first);
-
-	peerItr++;
+      }
       }
 
       for (unsigned int i = 0; i < toKill.size(); i++) {
 	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end()) {
 	  NetConnectedPeer &peer = netConnectedPeers[toKill[i]];
-	  if (peer.handler)
-	    delete(peer.handler);
-
-	  peer.handler = NULL;
+	  if (peer.netHandler) {
+	    delete(peer.netHandler);
+          }
+	  peer.netHandler = NULL;
 	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
 	}
       }
 
-      GameKeeper::Player *playerData = NULL;
-      peerItr = netConnectedPeers.begin();
-
-      while (peerItr != netConnectedPeers.end()) {
-	if (peerItr->second.deleteMe) {
-	  // skip it it's dead to us, well close and purge it later
-	  peerItr++;
-	  continue;
+      // process the connections
+      for (peerItr  = netConnectedPeers.begin();
+           peerItr != netConnectedPeers.end(); ++peerItr) {
+	processConnectedPeer(peerItr->second, peerItr->first,
+	                     read_set, write_set);
 	}
-
-	NetHandler *netHandler = peerItr->second.handler;
-	if (peerItr->second.player != -1) {
-	  peerItr->second.sent = true;
-	  // it's a player now, so treat them with the respect they deserve
-	  playerData = GameKeeper::Player::getPlayerByIndex(peerItr->second.player);
-
-	  if (playerData && peerItr->second.handler) {
-	    // send whatever we have ... if any
-	    if (netHandler->pflush(&write_set) == -1)
-	      removePlayer(peerItr->second.player, "ECONNRESET/EPIPE", false);
-	    else
-	      playerData->handleTcpPacket(&read_set);
 	  }
-	  // check for any async data to send out
-	  sendBufferedNetDataForPeer(peerItr->second);
-	} else {
-	  // it's not a player yet ( but may be )
-	  // check for any data to send out
-	  sendBufferedNetDataForPeer(peerItr->second);
-
-	  if (netHandler->pflush(&write_set) == -1)
-	    peerItr->second.deleteMe = true; // kill it later
-	  else {
-	    if (netHandler->isFdSet(&read_set)) {
-	      // there is some data for us
-	      if ( !peerItr->second.notifyList.size() ) {
-		// we have no listeners yet, so we are probably new.
-		// just read in the first N bits
-		RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
-
-		if ( e !=ReadAll && e != ReadPart ) {
-		  // there was an error but we aren't a player yet
-		  if (e == ReadError)
-		    nerror("error on read");
-		  else {
-		    if (e == ReadHuge)
-		      logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-		    peerItr->second.deleteMe = true;
-		  }
-		} else {
-		  // the dude has sent SOME data
-		  peerItr->second.sent = true;
-
-		  unsigned int readSize = netHandler->getTcpReadSize();
-		  void *buf = netHandler->getTcpBuffer();
-		  int fd = peerItr->first;
-
-		  if (e == ReadAll && strncmp((char*)buf,BZ_CONNECT_HEADER,strlen(BZ_CONNECT_HEADER)) == 0 ) {
-		    // it's a player, it sent us the magic string, get it setup
-		    netHandler->flushData();
-
-		    // send server version and playerid
-		    char buffer[9];
-		    memcpy(buffer, getServerVersion(), 8);
-
-		    // send 0xff if list is full
-		    buffer[8] = (char)0xff;
-
-		    PlayerId playerIndex = getNewPlayer(netHandler);
-		    peerItr->second.player = playerIndex;
-
-		    if (playerIndex < 0xff) {
-		      logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
-
-		      buffer[8] = (uint8_t)playerIndex;
-		      send(fd, (const char*)buffer, sizeof(buffer), 0);
-		    } else {
-		      // full? reject by closing socket
-		      logDebugMessage(1,"all slots occupied, rejecting accept() from %s on %i\n", inet_ntoa(netHandler->getIPAddress()), fd);
-
-		      // send back 0xff before closing
-		      send(fd, (const char*)buffer, sizeof(buffer), 0);
-		      peerItr->second.deleteMe = true; // kill/close later
-		    }
-		  } else {
-		    // it's NOT a player but it sent us data, see if anyone wants to deal with it
-
-		    // ok read in all the data we may have waiting
-		    void *data = malloc(readSize);
-		    memcpy(data,buf,readSize);
-		    unsigned int totalSize = readSize;
-
-		    while (e == ReadAll) {
-		      netHandler->flushData();
-
-		      e = netHandler->receive(256);
-		      readSize = netHandler->getTcpReadSize();
-		      buf = netHandler->getTcpBuffer();
-
-		      unsigned char *temp = (unsigned char*)malloc(totalSize + readSize);
-		      memcpy(temp,data,totalSize);
-		      memcpy(temp+totalSize,buf,readSize);
-		      free(data);
-		      data = temp;
-		      totalSize += readSize;
-		    }
-
-		    // we have a copy of all the data, so we can flush now
-		    netHandler->flushData();
-
-		    // call an event to let people know we got a new connect
-		    bz_NewNonPlayerConnectionEventData_V1 eventData;
-
-		    eventData.data = data;
-		    eventData.size = totalSize;
-		    eventData.connectionID = peerItr->first;
-
-		    worldEventManager.callEvents(bz_eNewNonPlayerConnection,&eventData);
-		    free(data);
-
-		    if ( !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-		      peerItr->second.deleteMe = true;// nobody wanted it and it's got nothing to send so mark it for purge
-		  }
-		}
-	      } else {
-		// we have a listener, so lets get all our data, and send it to him so he can do what he wants to do with us.
-		RxStatus e = netHandler->receive(256);
-
-		if (e !=ReadAll && e != ReadPart) {
-		  // we could not read, it must have disconnected
-		  // there ewas an error
-		  for ( unsigned int i = 0; i < peerItr->second.notifyList.size(); i++ )
-		    peerItr->second.notifyList[i]->disconnect(peerItr->first);
-
-		  peerItr->second.deleteMe = true;
-
-		  if (e == ReadError)
-		    nerror("error on read");
-
-		  if (e == ReadHuge)
-		    logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", peerItr->first);
-		} else {
-		  // the dude has sent SOME data
-		  peerItr->second.sent = true;
-
-		  unsigned int readSize = netHandler->getTcpReadSize();
-		  void *buf = netHandler->getTcpBuffer();
-
-		  void *data = malloc(readSize);
-		  memcpy(data,buf,readSize);
-		  unsigned int totalSize = readSize;
-
-		  while ( e == ReadAll ) {
-		    netHandler->flushData();
-
-		    e = netHandler->receive(256);
-		    readSize = netHandler->getTcpReadSize();
-		    buf = netHandler->getTcpBuffer();
-
-		    unsigned char*temp = (unsigned char*)malloc(totalSize + readSize);
-		    memcpy(temp,data,totalSize);
-		    memcpy(temp+totalSize,buf,readSize);
-		    free(data);
-		    data = temp;
-		    totalSize += readSize;
-		  }
-
-		  netHandler->flushData();
-
-		  // it has dudes lets lets call them.
-		  for (unsigned int i = 0; i < peerItr->second.notifyList.size(); i++) {
-		    if (peerItr->second.notifyList[i])
-		      peerItr->second.notifyList[i]->pending(peerItr->first,data,totalSize);
-		  }
-
-		  free(data);
-		}
-	      }
-	    } else {
-	      // there is no data, so delete us or move along and it's not a player for gods sake
-	      if ( peerItr->second.player == -1 && !peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() ) {
-		if (peerItr->second.sent) // he has sent some data, but now is dead, let em go.
-		  peerItr->second.deleteMe = true;
-	      }
-	    }
-	  }
-	}
-
-	peerItr++;
-      }
-    } else if (nfound < 0) {
+    else if (nfound < 0) {
       if (getErrno() != EINTR) {
 	// test code - do not uncomment, will cause big stuttering
 	// TimeKeeper::sleep(1.0f);
       }
-    } else {
-      if (NetHandler::anyUDPPending())
+    }
+    else {
+      if (NetHandler::anyUDPPending()) {
 	NetHandler::flushAllUDP();
     }
+    }
 
-    // go thru all the connected users, see if they need any automatic handlaking
-    std::map<int,NetConnectedPeer>::iterator peerItr = netConnectedPeers.begin();
-
-    while ( peerItr != netConnectedPeers.end() ) {
-      if (!peerItr->second.sent) {
-	// check for any waiting conenctions if they are timed, then see if anyone wants them
-	// little guy hasn't sent us a thing
-	if (now - peerItr->second.startTime > tcpTimeout) {
+    // go thru all the connected users, see if they need any automatic handling
+    std::map<int, NetConnectedPeer>::iterator peerItr;
+    for (peerItr  = netConnectedPeers.begin();
+         peerItr != netConnectedPeers.end(); ++peerItr) {
+      NetConnectedPeer& peer = peerItr->second;
+      if (!peer.sent) { // little guy hasn't sent us a thing
+	// check for any waiting conenctions if they are timed,
+	// then see if anyone wants them
+	if ((now - peer.startTime) > tcpTimeout) {
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
 	  eventData.connectionID = peerItr->first;
 
 	  worldEventManager.callEvents(bz_eIdleNewNonPlayerConnection,&eventData);
-	  peerItr->second.sent = true;
+	  peer.sent = true;
 
 	  // no love for our little connection, let him go.
-	  if (!peerItr->second.notifyList.size() && !peerItr->second.pendingSendChunks.size() )
-	    peerItr->second.deleteMe = true;
+	  if (!peer.apiHandler && peer.sendChunks.empty()) {
+	    peer.deleteMe = true;
 	}
       }
-      peerItr++;
     }
+    }
+
     // Fire world weapons
     world->getWorldWeapons().fire();
 
@@ -4961,13 +5144,15 @@ static void runMainLoop ( void )
     // clean any pending players and rebuild the world if necessary
     if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {
       worldWasSentToAPlayer = false;
-      if ((clOptions->worldFile == "") && !Replay::enabled())
+      if ((clOptions->worldFile == "") && !Replay::enabled()) {
 	defineWorld();
+    }
     }
 
     dontWait = dontWait || updateCurl();
   }
 }
+
 
 static void cleanupServer ( void )
 {
@@ -5000,6 +5185,20 @@ static void cleanupServer ( void )
 #endif /* defined(_WIN32) */
 }
 
+void saveStartupInfo ( void )
+{
+	std::string conf = getConfigDirName();
+	conf += "bzfs.dir";
+	FILE *fp = fopen(conf.c_str(),"wt");
+	if (fp)
+	{
+		std::string exepath = getModuleName();
+		exepath += "\n";
+		fwrite(exepath.c_str(),exepath.size(),1,fp);
+		fclose(fp);
+	}
+}
+
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
  * running and should be ready to process connections and activity.
@@ -5011,6 +5210,8 @@ int main(int argc, char **argv)
     return 1;
 
   registerDefaultHandlers();
+
+  saveStartupInfo();
 
   // start the server
   if (!serverStart()) {
@@ -5032,7 +5233,7 @@ int main(int argc, char **argv)
   cleanupDefaultHandlers();
 
   // done
-  return exitCode;
+  return 0;
 }
 
 bool worldStateChanging ( void )

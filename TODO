@@ -7,9 +7,39 @@ If you wish to do that task, or help on it, please contact the developer
 so that no work is duplicated.
 
 
-----------------------------------------
+--------------------------------------------------------------------------------
+--
+--  Required for release of 3.0:
+--
 
-Required for release of 3.0:
+* A tank spinning at a fixed location experiences no change in the
+  apparent direction of fixed sounds.  However, moving the tank to a
+  different location can make a difference.  Sounds seem to come
+  either from one o'clock (mostly) or eleven o'clock.  Trepan wonders
+  if raw world positions are used and suggests that the receiver's
+  transform may not be performed.
+
+* Canceling a pause command before the 5 second countdown completes
+  causes the client to drop any good flag without notifying the
+  server, so other players will still see a flag on the tank even
+  though it considers itself to have none.  When the flag "dropped"
+  this way is PZ and the player was zoned, other players continue to
+  treat the tank as zoned, and picking up PZ again results in being
+  zoned immediately.  The printing of "MsgPause(FIXME)" in playing.cxx
+  is probably related to this.
+
+* Other players continue to see a white flag on a tank after SH saved
+  it from being killed even though the flag has been dropped from that
+  player's point of view.  The tank blows up normally the next time it
+  is shot.
+
+* fix the Z dead-reckoning issue  (ask JeffM about it)
+
+* fix the '/set _<tab>' crash bug (look in ControlPanel.cxx)
+
+* fix the MsgPause messages
+
+* figure out why there are too many player update messages
 
 * Change countdown stuff to be "/match" functions
    When a match is over, make everyone non shoot and non move
@@ -38,15 +68,14 @@ Required for release of 3.0:
 * bzfs intermittently drops the client (causing a client hang) after
   performing a reverse lookup on the client's IP
 
-* client occasionally crashes on exit in the FontManager destructor if
-  clear(); is performed.  it shouldn't crash. (may be ftgl bug, may be
-  some entirely unrelated bug elsewhere in a static)
 
-
-Should be considered for the release of 3.0:
+--------------------------------------------------------------------------------
+--
+--  Should be considered for the release of 3.0:
+-- 
 
 * send the shot limits to the client so we don't shoot the wrong shot
-  and can do interactive ammo display instead of chat messages.
+  and can do interactive ammo display instead of chat messages. (javawizard2539)
 
 * Change the title image to not have the flag with the version in it. Add
   ether the flag, or some version number to the image at run time using GL
@@ -83,7 +112,16 @@ Should be considered for the release of 3.0:
 
 * Verify player updates with Serer State for movement and death (JeffM2501)
 
-Would be nice to have but are not critical for 3.0
+
+--------------------------------------------------------------------------------
+--
+--  Would be nice to have but are not critical for 3.0
+--
+
+* Reference counting for external resources (textures, sounds, fonts, etc...)
+  Optional features might be deletion holdoff time, not deleting until some
+  sort of resource manager related limit is reached (number of resources, amount
+  of memory consumed by resources, etc...)
 
 * Force feedback joystick support for Mac OS X
   http://developer.apple.com/documentation/DeviceDrivers/Reference/ForceFeedback/index.html
@@ -153,8 +191,7 @@ Would be nice to have but are not critical for 3.0
   ObstacleMgr::makeWorld()  (including materials, physics drivers,
   texture matrices, transforms, and dynamic colors).
 
-* grouping for links (with  relative and absolute names)
-  grouping for weapons and entry zones (with transforms)
+* grouping for weapons and entry zones (with transforms)
   grouping for physics drivers (with transforms and copying)
   grouping for texture matrices, dynamic color, xforms, and materials
     (mostly for keeping a clean namespace)
@@ -330,7 +367,14 @@ Would be nice to have but are not critical for 3.0
   very cool, but very low priority.
 
 
-Future Development
+--------------------------------------------------------------------------------
+--
+--  Future Development
+--
+
+* When a BU flag is dropped, wait until the tank is fully out of the
+  ground before returning its maximum speed and acceleration to
+  normal.
 
 * flags should all be nullflags from client view until
   a) you pick one up
@@ -341,8 +385,6 @@ Future Development
   This is needed for larger maps so we can send sparse player updates.
 
 * server should send less frequent updates for "distant" players
-
-* remove flipz from pyr net code and replace with neg height.
 
 * ipv6 support
 
@@ -380,6 +422,7 @@ Future Development
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
+  (see MsgJoinServer)
 
 * look into doing projected textures for light glows, this would
   get rid of the 8 light limit.
@@ -425,10 +468,13 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 * Create a tab for user defined "favorate" servers ( bookmarks ).
 
 * Create some sort of server "rating" system like the movies use, to let players know what to expect.
-  Provide some way to overide and controll it at a list server level, as well as make it so the client
+  Provide some way to override and control it at a list server level, as well as make it so the client
   can filter out servers with ratings higher then it wants.
 
-//------------------------- BZROBOTS TODO--------------------------------
+--------------------------------------------------------------------------------
+--
+--  BZROBOTS TODO
+-- 
 
 ! Hook up the botCanSpawn boolean to prevent the bots from spawning when they can't
 ? Convert RCLink to use an STL type and not a static buffer (overflows, though handled "gracefully", shouldn't be happening).
@@ -453,3 +499,6 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
+
+
+--------------------------------------------------------------------------------

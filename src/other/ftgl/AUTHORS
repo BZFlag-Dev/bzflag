@@ -1,4 +1,9 @@
 						-*- coding: utf-8 -*-
+Maintainers:
+
+   Sam Hocevar <sam@zoy.org>
+   Christopher Sean Morrison <learner@brlcad.org>
+
 Original author:
 
    Henry Maddocks <ftgl@opengl.geek.nz>
@@ -14,11 +19,10 @@ Contributors:
    Sébastien Barré (containers and optimisations)
    Marcelo E. Magallon <mmagallo@debian.org> (original autoconf, bug fixes)
    Robert Bell (pixmap font modifications)
-   Sam Hocevar <sam@zoy.org> (build system, new maintainer)
    Éric Beets <ericbeets@free.fr> (C bindings)
-   Christopher Sean Morrison <learner@brlcad.org> (bug fixes, new maintainer)
    Jeff Myers (JeffM2501) <JeffM2501@users.sourceforge.net> (Windows fixes)
    Daniel Remenak <dtremenak@users.sourceforge.net> (Windows fixes)
+   Coleman Kane (build system fixes)
 
 Portions derived from ConvertUTF.c Copyright (C) 2001-2004 Unicode, Inc.
 

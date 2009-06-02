@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -78,14 +78,14 @@ ShotPath *searchShot(PlayerId plr, uint16_t shotid)
     return NULL;
   }
 
-  for (int i = 0; i < player[plr]->getMaxShots(); i++) {
-    ShotPath *path = player[plr]->getShot(i);
+  for (int i = 0; i < remotePlayers[plr]->getMaxShots(); i++) {
+    ShotPath *path = remotePlayers[plr]->getShot(i);
     if (!path || path->getFiringInfo().shot.id != shotid)
       continue;
 
     return path;
   }
-  
+
   return NULL;
 }
 
@@ -122,7 +122,7 @@ void Shot::getPosition(double &x, double &y, double &z, double dt) const
 void Shot::getVelocity(double &x, double &y, double &z, double dt) const
 {
   ShotPath *path = searchShot(getPlayerId(), getShotId());
-  
+
   if(path) {
     /*
      * We found the shot.

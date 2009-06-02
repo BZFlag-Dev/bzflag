@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: 10-at-a-time.c,v 1.6 2008-02-27 09:06:15 bagder Exp $
+ * $Id: 10-at-a-time.c,v 1.9 2008-09-22 17:27:24 danf Exp $
  *
  * Example application source code using the multi interface to download many
  * files, but with a capped maximum amount of simultaneous transfers.
@@ -16,11 +16,10 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <curl/multi.h>
-#ifdef WIN32
-#include <windows.h>
+#ifndef WIN32
+#  include <unistd.h>
 #endif
+#include <curl/multi.h>
 
 static const char *urls[] = {
   "http://www.microsoft.com",
@@ -90,10 +89,10 @@ static void init(CURLM *cm, int i)
   CURL *eh = curl_easy_init();
 
   curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, cb);
-  curl_easy_setopt(eh, CURLOPT_HEADER, 0);
+  curl_easy_setopt(eh, CURLOPT_HEADER, 0L);
   curl_easy_setopt(eh, CURLOPT_URL, urls[i]);
   curl_easy_setopt(eh, CURLOPT_PRIVATE, urls[i]);
-  curl_easy_setopt(eh, CURLOPT_VERBOSE, 0);
+  curl_easy_setopt(eh, CURLOPT_VERBOSE, 0L);
 
   curl_multi_add_handle(cm, eh);
 }
@@ -114,7 +113,7 @@ int main(void)
 
   /* we can optionally limit the total amount of connections this multi handle
      uses */
-  curl_multi_setopt(cm, CURLMOPT_MAXCONNECTS, MAX);
+  curl_multi_setopt(cm, CURLMOPT_MAXCONNECTS, (long)MAX);
 
   for (C = 0; C < MAX; ++C) {
     init(cm, C);

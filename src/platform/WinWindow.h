@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,6 +38,7 @@ class WinWindow : public BzfWindow {
     void		setSize(int width, int height);
     void		setMinSize(int width, int height);
     void		setFullscreen(bool on);
+    bool		getFullscreen() const;
 
     void		iconify();
 
@@ -68,6 +69,8 @@ class WinWindow : public BzfWindow {
     static WinWindow*	lookupWindow(HWND);
     static void		deactivateAll();
     static void		reactivateAll();
+
+    bool		isActivating ( void ){return activating;}
 
   private:
     BYTE		getIntensityValue(float) const;
@@ -101,6 +104,7 @@ class WinWindow : public BzfWindow {
     static WinWindow*	first;
     static HPALETTE	colormap;
     bool		mouseGrab;
+    bool		activating;
 };
 
 #endif // BZF_WINWINDOW_H

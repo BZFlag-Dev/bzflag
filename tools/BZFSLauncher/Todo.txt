@@ -1,0 +1,12 @@
+things to do
+
+1) add a button to bring a simple options page.
+2) add an advanced button to bring up more pages.
+3) call the config maker? port the config maker?
+4) have the option to save the current setup as a config, or batch/sh
+5) have bzfs and bzflag write out the exe locations each time they run, so we know what the last run set of apps are.
+   then if the lancher has no custom paths in it's prefs try to use the last run paths. If only the client has been
+   run, infer the server location from the client and see if it exists.
+   
+6) have the option to specify a config.
+7) add the option for a server password

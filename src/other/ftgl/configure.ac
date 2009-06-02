@@ -2,7 +2,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(FTGL, 2.1.3~rc5, [sam@zoy.org], ftgl)
+AC_INIT(FTGL, 2.2.0, [sam@zoy.org], ftgl)
 AC_CONFIG_SRCDIR(src/FTPoint.cpp)
 AC_CONFIG_AUX_DIR(.auto)
 AM_INIT_AUTOMAKE([1.6 no-define dist-zip dist-bzip2])
@@ -13,13 +13,21 @@ AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Use included versio
 FTGL_PROG_CXX
 
 LT_MAJOR="2"
-LT_MINOR="1"
-LT_MICRO="3"
+LT_MINOR="2"
+LT_MICRO="0"
 AC_SUBST(LT_MAJOR)
 AC_SUBST(LT_MINOR)
 AC_SUBST(LT_MICRO)
 LT_VERSION="$LT_MAJOR:$LT_MINOR:$LT_MICRO"
 AC_SUBST(LT_VERSION)
+
+# make sure ECHO and ECHO_N got defined and substituted
+if test "x$ECHO" = "x" ; then
+    ECHO=echo
+    AC_MSG_NOTICE([ECHO was not defined by configure so defining manually])
+fi
+AC_SUBST(ECHO)
+AC_SUBST(ECHO_N)
 
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
@@ -33,6 +41,7 @@ AM_PROG_CC_C_O
 
 # Checks for header files.
 AC_HEADER_STDC
+AC_CHECK_HEADER([stdlib.h])
 
 # Check for system functions
 AC_CHECK_FUNCS(wcsdup)
@@ -60,7 +69,8 @@ FTGL_CHECK_GL
 FTGL_CHECK_GLUT
 FTGL_CHECK_FONT
 
-AC_PATH_PROG(CPPUNIT, cppunit, no)
+PKG_CHECK_MODULES(CPPUNIT, cppunit, [CPPUNIT="yes"], [CPPUNIT="no"])
+AC_MSG_RESULT($CPPUNIT)
 AM_CONDITIONAL(HAVE_CPPUNIT, test "x$CPPUNIT" != "xno")
 
 dnl search the include directory (required for non-srcdir builds).
@@ -82,11 +92,12 @@ AC_PATH_PROG(KPSEWHICH, kpsewhich, no)
 AC_PATH_PROG(DVIPS, dvips, no)
 AC_PATH_PROG(CONVERT, convert, no)
 AC_PATH_PROG(EPSTOPDF, epstopdf, no)
+AC_PATH_TOOL(SED, sed, no)
 if test "${DVIPS}" = "no" -o "${KPSEWHICH}" = "no" -o "${EPSTOPDF}" = "no" \
-     -o "${CONVERT}" = "no"; then
+     -o "${CONVERT}" = "no" -o "${SED}" = "no"; then
   LATEX="no"
 fi
-if test "${LATEX}" != "no"; then
+if test "x${LATEX}" != "xno"; then
   AC_MSG_CHECKING(for a4.sty and a4wide.sty)
   if "${KPSEWHICH}" a4.sty >/dev/null 2>&1; then
     if "${KPSEWHICH}" a4wide.sty >/dev/null 2>&1; then
@@ -100,7 +111,7 @@ if test "${LATEX}" != "no"; then
     AC_MSG_RESULT(no)
   fi
 fi
-AM_CONDITIONAL(HAVE_LATEX, test "${LATEX}" != "no")
+AM_CONDITIONAL(HAVE_LATEX, test "x${LATEX}" != "xno")
 
 AC_CONFIG_FILES([
   ftgl.pc

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,49 +10,55 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "common.h"
 
-/* interface headers */
+// interface header
 #include "MainWindow.h"
 
-/* common implementation headers */
+// common headers
+#include "bzfgl.h"
 #include "global.h"
 #include "SceneRenderer.h"
+#include "StateDatabase.h"
 
 //
 // MainWindow
 //
 
-MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
-				window(_window),
-				joystick(_joystick),
-				quit(false),
-				quadrant(FullWindow),
-				isFullscreen(false),
-				isFullView(true),
-				allowMouseGrab(true),
-				grabEnabled(true),
-				zoomFactor(1),
-				width(0),
-				minWidth(MinX),
-				minHeight(MinY),
-				faulting(false)
+MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick)
+: window(_window)
+, joystick(_joystick)
+, quit(false)
+, quadrant(FullWindow)
+, isFullscreen(false)
+, isFullView(true)
+, allowMouseGrab(true)
+, grabEnabled(true)
+, zoomFactor(1)
+, width(0)
+, minWidth(MinX)
+, minHeight(MinY)
+, faulting(false)
 {
   window->addResizeCallback(resizeCB, this);
   window->addExposeCallback(exposeCB, this);
   //  resize();
 }
 
+
 MainWindow::~MainWindow()
 {
   window->removeResizeCallback(resizeCB, this);
 }
 
-void			MainWindow::setZoomFactor(int _zoomFactor)
+
+void MainWindow::setZoomFactor(int _zoomFactor)
 {
   zoomFactor = _zoomFactor;
 }
 
-void			MainWindow::setMinSize(int _minWidth, int _minHeight)
+
+void MainWindow::setMinSize(int _minWidth, int _minHeight)
 {
   minWidth = _minWidth;
   minHeight = _minHeight;
@@ -60,24 +66,28 @@ void			MainWindow::setMinSize(int _minWidth, int _minHeight)
   // resize();
 }
 
-void			MainWindow::setPosition(int x, int y)
+
+void MainWindow::setPosition(int x, int y)
 {
   window->setPosition(x, y);
 }
 
-void			MainWindow::setSize(int _width, int _height)
+
+void MainWindow::setSize(int _width, int _height)
 {
   window->setSize(_width, _height);
   resize();
 }
 
-void			MainWindow::showWindow(bool on)
+
+void MainWindow::showWindow(bool on)
 {
   window->showWindow(on);
   if (on) resize();
 }
 
-void			MainWindow::warpMouse()
+
+void MainWindow::warpMouse()
 {
   // move mouse to center of view window (zero motion box)
   int y = viewHeight >> 1;
@@ -85,7 +95,8 @@ void			MainWindow::warpMouse()
   window->warpMouse((width >> 1) + xOrigin, y);
 }
 
-void			MainWindow::getMousePosition(int& mx, int& my) const
+
+void MainWindow::getMousePosition(int& mx, int& my) const
 {
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
@@ -93,56 +104,66 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
   if (quadrant != FullWindow) my -= ((trueHeight+1) >> 1) - yOrigin;
 }
 
-void			MainWindow::grabMouse()
+
+void MainWindow::grabMouse()
 {
   if (allowMouseGrab) window->grabMouse();
 }
 
-void			MainWindow::ungrabMouse()
+
+void MainWindow::ungrabMouse()
 {
   if (allowMouseGrab) window->ungrabMouse();
 }
 
-void			MainWindow::enableGrabMouse(bool on)
+
+void MainWindow::enableGrabMouse(bool on)
 {
   window->enableGrabMouse(on);
   grabEnabled = on;
 }
 
-bool			MainWindow::isGrabEnabled(void)
+
+bool MainWindow::isGrabEnabled(void)
 {
   return grabEnabled;
 }
 
-bool			MainWindow::getFullscreen()
+
+bool MainWindow::getFullscreen() const
 {
-  return isFullscreen;
+  return window->getFullscreen();
 }
 
-void			MainWindow::setFullscreen()
-{
-  isFullscreen = false;
-  toggleFullscreen();
-}
 
-void			MainWindow::toggleFullscreen()
+void MainWindow::setFullscreen()
 {
-  isFullscreen = !isFullscreen;
-  window->setFullscreen(isFullscreen);
+  window->setFullscreen(true);
   resize();
 }
 
-void			MainWindow::setFullView(bool _isFullView)
+
+void MainWindow::toggleFullscreen()
+{
+  isFullscreen = window->getFullscreen();
+  window->setFullscreen(!isFullscreen);
+  resize();
+}
+
+
+void MainWindow::setFullView(bool _isFullView)
 {
   isFullView = _isFullView;
 }
 
-void			MainWindow::setNoMouseGrab()
+
+void MainWindow::setNoMouseGrab()
 {
   allowMouseGrab = false;
 }
 
-void			MainWindow::setQuadrant(Quadrant _quadrant)
+
+void MainWindow::setQuadrant(Quadrant _quadrant)
 {
   int inWidth = trueWidth;
   if (inWidth < MinX) inWidth = MinX;
@@ -205,101 +226,111 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
       xOrigin = 0;
       yOrigin = 0;
       break;
-    case ZoomRegion:
-      width = inWidth;
-      height = inHeight;
-      viewHeight = height;
-      xOrigin = 0;
-      yOrigin = 0;
-      break;
-  }
-
-  if (quadrant == ZoomRegion) {
-    width = inWidth / zoomFactor + 1;
-    height = inHeight / zoomFactor + 1;
   }
 
   glViewport(xOrigin, yOrigin, width, height);
 }
 
-void			MainWindow::resize()
+
+void MainWindow::resize()
 {
   window->getSize(trueWidth, trueHeight);
   window->makeCurrent();
   if (!window->create()) {
     faulting = true;
   }
-  OpenGLGState::initContext();
+  if (!BZDB.isTrue("blockResizeRecontext")) {
+    OpenGLGState::initContext();
+  }
   setQuadrant(quadrant);
 }
 
-void			MainWindow::resizeCB(void* _self)
+
+void MainWindow::resizeCB(void* _self)
 {
   MainWindow* self = (MainWindow*)_self;
   self->resize();
 }
 
-void			MainWindow::exposeCB(void* /*_self*/)
+
+void MainWindow::exposeCB(void* /*_self*/)
 {
-  OpenGLGState::initContext();
+  if (!BZDB.isTrue("blockExposeRecontext")) {
+    OpenGLGState::initContext();
+  }
 }
 
-void			MainWindow::iconify()
+
+void MainWindow::iconify()
 {
   window->iconify();
 }
 
 
-bool			MainWindow::haveJoystick() const
+void MainWindow::deiconify()
+{
+  window->deiconify();
+}
+
+
+bool MainWindow::haveJoystick() const
 {
   return joystick->joystick();
 }
 
-void			MainWindow::getJoyPosition(int& jx, int& jy) const
+
+void MainWindow::getJoyPosition(int& jx, int& jy) const
 {
   joystick->getJoy(jx, jy);
 }
 
-unsigned long		  MainWindow::getJoyButtonSet() const
+
+unsigned long MainWindow::getJoyButtonSet() const
 {
   return joystick->getJoyButtons();
 }
 
-unsigned int		  MainWindow::getJoyHatswitch(int switchno) const
+
+unsigned int MainWindow::getJoyHatswitch(int switchno) const
 {
   return joystick->getHatswitch(switchno);
 }
 
-unsigned int		  MainWindow::getJoyDeviceNumHats() const
+
+unsigned int MainWindow::getJoyDeviceNumHats() const
 {
   return joystick->getJoyDeviceNumHats();
 }
 
-void		    MainWindow::getJoyDevices(std::vector<std::string>
-						  &list) const
+
+void MainWindow::getJoyDevices(std::vector<std::string>& list) const
 {
   joystick->getJoyDevices(list);
 }
 
-void		    MainWindow::getJoyDeviceAxes(std::vector<std::string>
-						 &list) const
+
+void MainWindow::getJoyDeviceAxes(std::vector<std::string>& list) const
 {
   joystick->getJoyDeviceAxes(list);
 }
 
-void		    MainWindow::setJoyXAxis(const std::string axis)
+
+void MainWindow::setJoyXAxis(const std::string axis)
 {
   joystick->setXAxis(axis);
 }
 
-void		    MainWindow::setJoyYAxis(const std::string axis)
+
+void MainWindow::setJoyYAxis(const std::string axis)
 {
   joystick->setYAxis(axis);
 }
 
-void			MainWindow::initJoystick(std::string &joystickName) {
+
+void MainWindow::initJoystick(std::string& joystickName) {
   joystick->initJoystick(joystickName.c_str());
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

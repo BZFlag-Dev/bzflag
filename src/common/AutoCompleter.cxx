@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
-
 #include "common.h"
 
 // implementation header
@@ -22,6 +18,9 @@
 // system headers
 #include <ctype.h>
 #include <string.h>
+#include <string>
+#include <vector>
+#include <set>
 #include <algorithm>
 
 
@@ -149,101 +148,56 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
 }
 
 
-DefaultCompleter::DefaultCompleter()
+void AutoCompleter::complete(const std::string& line,
+                             std::set<std::string>& matches)
 {
-  setDefaults();
+  if (line.size() == 0) {
+    return;
+  }
+
+  // from the last space
+  const int lastSpace = line.find_last_of(" \t");
+  const std::string tail = line.substr(lastSpace + 1);
+  if (tail.size() == 0) {
+    return;
+  }
+  const std::string head = line.substr(0, lastSpace + 1);
+
+  // find the first and last word with the prefix str
+  std::vector<WordRecord>::iterator first, last;
+  WordRecord rec(tail, false);
+  first = std::lower_bound(words.begin(), words.end(), rec);
+  if ((first == words.end()) ||
+      (first->word.substr(0, tail.size()) != tail)) {
+    return; // no match
+  }
+  std::string tmp = tail;
+  tmp[tmp.size() - 1]++;
+  last = std::lower_bound(first, words.end(), WordRecord(tmp, false)) - 1;
+
+  // get a list of partial matches
+  std::vector<WordRecord>::iterator it = first;
+  for (it = first; it != (last + 1); it++) {
+    std::string tmp2 = it->word;
+    if (tmp2.size() >= tail.size()) {
+      if (!it->quoteString) {
+        matches.insert(tmp2.substr(tail.size()));
+      }
+      else { // escape the spaces
+        std::string escaped;
+        for (size_t i = 0; i < tmp2.size(); i++) {
+          if (tmp2[i] != ' ') {
+            escaped += tmp2[i];
+          } else {
+            escaped += "\\ ";
+          }
+        }
+        matches.insert(escaped.substr(tail.size()));
+      }
+    }
+  }
 }
 
-void DefaultCompleter::setDefaults()
-{
-  words.clear();
-  registerWord("/ban ");
-  registerWord("/banlist");
-  registerWord("/calc ");
-  registerWord("/checkip ");
-  registerWord("/countdown");
-  registerWord("/clientquery");
-  registerWord("/date");
-  registerWord("/dumpvars");
-  registerWord("/flag ");
-  registerWord("reset");
-  registerWord("up");
-  registerWord("show");
-  registerWord("/flaghistory");
-  registerWord("/gameover");
-  registerWord("/grouplist");
-  registerWord("/groupperms");
-  registerWord("/help");
-  registerWord("/highlight ");
-  registerWord("/hostban ");
-  registerWord("/hostunban ");
-  registerWord("/hostbanlist");
-  registerWord("/idban ");
-  registerWord("/idunban ");
-  registerWord("/idbanlist");
-  registerWord("/idlist");
-  registerWord("/idlestats");
-  registerWord("/jitterdrop");
-  registerWord("/jitterwarn");
-  registerWord("/packetlossdrop");
-  registerWord("/packetlosswarn");
-  registerWord("/kick ");
-  registerWord("/kill ");
-  registerWord("/lagdrop");
-  registerWord("/lagstats");
-  registerWord("/lagwarn ");
-  registerWord("/localset ");
-  registerWord("/mute ");
-  registerWord("/password ");
-  registerWord("/playerlist");
-  registerWord("/poll ");
-  registerWord("ban");
-  registerWord("kick");
-  registerWord("kill");
-  registerWord("/quit");
-  registerWord("/record");
-  registerWord("start");
-  registerWord("stop");
-  registerWord("size");
-  registerWord("rate");
-  registerWord("stats");
-  registerWord("file");
-  registerWord("save");
-  registerWord("/reload");
-  registerWord("/masterban"); // also uses list
-  registerWord("reload");
-  registerWord("flush");
-  registerWord("/removegroup ");
-  registerWord("/replay ");
-  registerWord("list");
-  registerWord("load");
-  registerWord("play");
-  registerWord("skip");
-  registerWord("/report ");
-  registerWord("/reset");
-  registerWord("/retexture");
-  registerWord("/roampos ");
-  registerWord("/saveworld ");
-  registerWord("/serverquery");
-  registerWord("/set");
-  registerWord("/setgroup ");
-  registerWord("/showgroup ");
-  registerWord("/showperms ");
-  registerWord("/shutdownserver");
-  registerWord("/silence ");
-  registerWord("/unsilence ");
-  registerWord("/superkill");
-  registerWord("/time");
-  registerWord("/unban ");
-  registerWord("/unmute ");
-  registerWord("/uptime");
-  registerWord("/veto");
-  registerWord("/viewreports");
-  registerWord("/vote");
-  registerWord("/loadplugin");
-  registerWord("/listplugins");
-  registerWord("/unloadplugin");
-}
 
 // Local Variables: ***
 // mode: C++ ***

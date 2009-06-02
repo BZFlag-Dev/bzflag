@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -23,11 +23,16 @@
 #  include "TimeKeeper.h"
 #endif
 
+// common headers
+#include "bzfio.h"
+
+
 // TODO: wordfilter is no good for multibyte strings
 
 /* private */
 
 /* protected */
+
 
 bool WordFilter::simpleFilter(char *input) const
 {
@@ -75,7 +80,7 @@ bool WordFilter::simpleFilter(char *input) const
 bool WordFilter::aggressiveFilter(char *input) const
 {
 #if defined(DEBUG) && defined(_MSC_VER)
-  // FIXME: disable in debug build on windows to avoid assertions 
+  // FIXME: disable in debug build on windows to avoid assertions
   // thrown by MSVCRT when unicode input goes through regex
   return false;
 #endif
@@ -803,7 +808,7 @@ bool WordFilter::filter(char *input, bool simple) const
   }
 #ifdef DEBUG
   TimeKeeper after = TimeKeeper::getCurrent();
-  std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
+  logDebugMessage(1, "WordFilter: %f seconds\n", after - before);
 #endif
   return filtered;
 }

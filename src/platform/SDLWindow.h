@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,21 +27,23 @@ class SDLWindow : public BzfWindow {
   SDLWindow(const SDLDisplay* _display, SDLVisual*);
   bool  isValid() const {return true;};
   void  showWindow(bool) {;};
-  void  getPosition(int &, int &) {;};
-  void  getSize(int& width, int& height) const;
-  void  setSize(int width, int height);
+  void  getPosition(int& x, int& y);
+  void  getSize(int& _width, int& _height) const;
+  void  setSize(int _width, int _height);
   void  setTitle(const char * title);
   void  setPosition(int, int) {;};
   void  setMinSize(int, int) {;};
   void  setFullscreen(bool);
-  void  iconify(void);
+  bool  getFullscreen() const;
+  void  deiconify();
+  void  iconify();
   void  warpMouse(int x, int y);
   void  getMouse(int& x, int& y) const;
   void  grabMouse() {;};
   void  ungrabMouse() {;};
   void  enableGrabMouse(bool);
-  void  showMouse() {;};
-  void  hideMouse() {;};
+  void  showMouse();
+  void  hideMouse();
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;
@@ -50,10 +52,14 @@ class SDLWindow : public BzfWindow {
   void  makeContext() {;};
   void  freeContext() {;};
   bool  create(void);
+
+  static int mx;
+  static int my;
  private:
-  int	  x;
-  int	  y;
-  bool	 hasGamma;
+  int  width;
+  int  height;
+  bool hasGamma;
+  bool iconified;
 };
 
 #endif // __SDLWINDOW_H__

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,9 +31,9 @@ const float CustomWeapon::minWeaponDelay = 0.1f;
 
 CustomWeapon::CustomWeapon()
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
+  pos = fvec3(0.0f, 0.0f, 0.0f);
+  size = fvec3(1.0f, 1.0f, 1.0f);
   rotation = 0.0f;
-  size[0] = size[1] = size[2] = 1.0f;
   tilt = 0.0f;
   initdelay = 10.0f;
   delay.push_back(10.0f);
@@ -119,14 +119,14 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
 		     teamColor, initdelay, delay, sync);
   } else {
     WorldWeaponGlobalEventHandler* eventHandler =
-      new WorldWeaponGlobalEventHandler(type, pos, rotation, tilt,
+      new WorldWeaponGlobalEventHandler(type, &pos, rotation, tilt,
 					(TeamColor)eventTeam);
     worldEventManager.addEvent(triggerType, eventHandler);
   }
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

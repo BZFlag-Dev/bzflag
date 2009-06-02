@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -131,35 +131,37 @@ static int nodeCompare(const void *a, const void* b)
   const RenderNodeGStateList::Item* itemB =
     (const RenderNodeGStateList::Item*) b;
 
-  // draw from back to front
-  if (itemA->depth > itemB->depth) {
-    return -1;
-  } else {
-    return +1;
+  const float diff = (itemA->depth - itemB->depth);
+
+  // sort from back-to-from
+  if (diff > 0.0f) {
+    return -1; // a is further away, render it first
+  }
+  else if (diff < 0.0f) {
+    return +1; // b is further away, render it first
+  }
+  else {
+    // sort by ascending orders
+    const OpenGLGState* aState = itemA->gstate;
+    const OpenGLGState* bState = itemB->gstate;
+    if (aState->getOrder() < bState->getOrder()) {
+      return -1; // a order is smaller, render it first
+    } else {
+      return +1; // b order is smaller, render it first
+    }
   }
 }
 
-void RenderNodeGStateList::sort(const GLfloat* e)
+void RenderNodeGStateList::sort(const fvec3& eye)
 {
   // calculate distances from the eye (squared)
   for (int i = 0; i < count; i++) {
-    const GLfloat* p = list[i].node->getPosition();
-    if (!p) { // Some nodes don't normally need sorting, so they don't keep a position
-      list[i].depth = 0;
-      continue;
-    }
-    const float dx = (p[0] - e[0]);
-    const float dy = (p[1] - e[1]);
-    const float dz = (p[2] - e[2]);
-    list[i].depth = ((dx * dx) + (dy * dy) + (dz * dz));
-    // FIXME - dirty hack (they are all really getSphere())
-    //if (list[i].depth < p[3]) {
-    //  list[i].depth = -1.0f;
-    //}
+    const fvec3& pos = list[i].node->getPosition();
+    list[i].depth = (pos - eye).lengthSq();
   }
 
   // sort from farthest to closest
-  qsort (list, count, sizeof(Item), nodeCompare);
+  qsort(list, count, sizeof(Item), nodeCompare);
 
   return;
 }

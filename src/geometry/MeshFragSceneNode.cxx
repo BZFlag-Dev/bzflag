@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,8 @@
 #include <math.h>
 #include <string.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "Intersect.h"
 #include "MeshFace.h"
 #include "MeshSceneNodeGenerator.h"
@@ -165,7 +166,7 @@ void MeshFragSceneNode::Geometry::render()
   const bool switchLights = (triangles >= minLightDisabling)
 			    && BZDBCache::lighting;
   if (switchLights) {
-    RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
+    RENDERER.disableLights(sceneNode->extents);
   }
 
   // set the color
@@ -245,7 +246,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
   // disable the plane
   noPlane = true;
-  static const float fakePlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+  static const fvec4 fakePlane(0.0f, 0.0f, 1.0f, 0.0f);
   setPlane(fakePlane);
 
   const BzMaterial* bzmat = faces[0]->getMaterial();
@@ -264,16 +265,8 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
   }
 
   // setup sphere
-  float diffs[3];
-  diffs[0] = extents.maxs[0] - extents.mins[0];
-  diffs[1] = extents.maxs[1] - extents.mins[1];
-  diffs[2] = extents.maxs[2] - extents.mins[2];
-  float mySphere[4];
-  mySphere[0] = 0.5f * (extents.maxs[0] + extents.mins[0]);
-  mySphere[1] = 0.5f * (extents.maxs[1] + extents.mins[1]);
-  mySphere[2] = 0.5f * (extents.maxs[2] + extents.mins[2]);
-  mySphere[3] = 0.25f *
-    ((diffs[0] * diffs[0]) + (diffs[1] * diffs[1]) + (diffs[2] * diffs[2]));
+  fvec4 mySphere(0.50f * (extents.maxs + extents.mins), // midpoint
+                 0.25f * (extents.maxs - extents.mins).lengthSq());
   setSphere(mySphere);
 
   // count the number of actual vertices
@@ -285,9 +278,9 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
   // make the lists
   const int vertexCount = (arrayCount * 3);
-  normals = new GLfloat[vertexCount * 3];
-  vertices = new GLfloat[vertexCount * 3];
-  texcoords = new GLfloat[vertexCount * 2];
+  normals = new float[vertexCount * 3];
+  vertices = new float[vertexCount * 3];
+  texcoords = new float[vertexCount * 2];
 
   // fill in the lists
   int arrayIndex = 0;
@@ -295,11 +288,11 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     const MeshFace* face = faces[i];
 
     // pre-generate the texcoords if required
-    GLfloat2Array t(face->getVertexCount());
+    fvec2Array t(face->getVertexCount());
     if (!face->useTexcoords()) {
-      GLfloat3Array v(face->getVertexCount());
+      fvec3Array v(face->getVertexCount());
       for (j = 0; j < face->getVertexCount(); j++) {
-	memcpy(v[j], face->getVertex(j), sizeof(float[3]));
+	v[j] = face->getVertex(j);
       }
       MeshSceneNodeGenerator::makeTexcoords(face->getPlane(), v, t);
     }
@@ -366,7 +359,7 @@ bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   const Frustum* f = (const Frustum *) &frustum;
-  if (testAxisBoxInFrustum(extents, f) == Outside) {
+  if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
 
@@ -379,17 +372,17 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 {
   // NOTE: it should be OK to use the faces while building
 
-  float pos[3];
-  pos[0] = 0.5f * (exts.maxs[0] + exts.mins[0]);
-  pos[1] = 0.5f * (exts.maxs[1] + exts.mins[1]);
-  pos[2] = exts.mins[2];
-  float size[3];
-  size[0] = 0.5f * (exts.maxs[0] - exts.mins[0]);
-  size[1] = 0.5f * (exts.maxs[1] - exts.mins[1]);
-  size[2] = (exts.maxs[2] - exts.mins[2]);
+  fvec3 pos;
+  pos.x = 0.5f * (exts.maxs.x + exts.mins.x);
+  pos.y = 0.5f * (exts.maxs.y + exts.mins.y);
+  pos.z = exts.mins.z;
+  fvec3 size;
+  size.x = 0.5f * (exts.maxs.x - exts.mins.x);
+  size.y = 0.5f * (exts.maxs.y - exts.mins.y);
+  size.z = (exts.maxs.z - exts.mins.z);
 
   for (int i = 0; i < faceCount; i++) {
-    if (faces[i]->inBox(pos, 0.0f, size[0], size[1], size[2])) {
+    if (faces[i]->inBox(pos, 0.0f, size.x, size.y, size.z)) {
       return true;
     }
   }
@@ -401,8 +394,8 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderNode.setStyle(getStyle());
-  const GLfloat* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+  const fvec4* dyncol = getDynamicColor();
+  if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
     renderer.addRenderNode(&renderNode, getWallGState());
   }
   return;
@@ -412,8 +405,8 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   if (!noShadow) {
-    const GLfloat* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol[3] != 0.0f)) {
+    const fvec4* dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
       renderer.addShadowNode(&renderNode);
     }
   }

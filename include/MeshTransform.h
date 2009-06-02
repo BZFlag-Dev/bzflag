@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,10 +13,14 @@
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
 
+#include "common.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include "vectors.h"
+
 
 enum TransformType {
   ShiftTransform = 0,
@@ -30,7 +34,7 @@ enum TransformType {
 typedef struct {
   TransformType type;
   int index;
-  float data[4];
+  fvec4 data;
 } TransformData;
 
 class MeshTransform {
@@ -43,10 +47,10 @@ class MeshTransform {
     void prepend(const MeshTransform& transform);
 
     bool setName(const std::string& name);
-    void addShift(const float shift[3]);
-    void addScale(const float scale[3]);
-    void addShear(const float shear[3]);
-    void addSpin(const float degrees, const float normal[3]);
+    void addShift(const fvec3& shift);
+    void addScale(const fvec3& scale);
+    void addShear(const fvec3& shear);
+    void addSpin(const float degrees, const fvec3& normal);
     void addReference(int transform);
 
     bool isEmpty() const { return (transforms.size() <= 0); }
@@ -76,9 +80,9 @@ class MeshTransform {
 
 	bool isInverted() const;
 	bool isSkewed() const; // scaled or sheared
-	void modifyVertex(float vertex[3]) const;
-	void modifyNormal(float normal[3]) const;
-	void modifyOldStyle(float pos[3], float size[3],
+	void modifyVertex(fvec3& vertex) const;
+	void modifyNormal(fvec3& normal) const;
+	void modifyOldStyle(fvec3& pos, fvec3& size,
 			    float& angle, bool& flipz) const;
 	const float* getMatrix() const;
 
@@ -88,8 +92,8 @@ class MeshTransform {
 	bool empty;
 	bool inverted;
 	bool skewed;
-	float vertexMatrix[4][4];
-	float normalMatrix[3][3];
+	fvec4 vertexMatrix[4];
+	fvec3 normalMatrix[3];
     };
 
   friend class MeshTransform::Tool;

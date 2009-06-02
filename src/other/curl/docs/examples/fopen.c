@@ -45,7 +45,9 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <sys/time.h>
+#ifndef WIN32
+#  include <sys/time.h>
+#endif
 #include <stdlib.h>
 #include <errno.h>
 
@@ -219,7 +221,7 @@ url_fopen(const char *url,const char *operation)
     URL_FILE *file;
     (void)operation;
 
-    file = (URL_FILE *)malloc(sizeof(URL_FILE));
+    file = malloc(sizeof(URL_FILE));
     if(!file)
         return NULL;
 
@@ -236,7 +238,7 @@ url_fopen(const char *url,const char *operation)
 
         curl_easy_setopt(file->handle.curl, CURLOPT_URL, url);
         curl_easy_setopt(file->handle.curl, CURLOPT_WRITEDATA, file);
-        curl_easy_setopt(file->handle.curl, CURLOPT_VERBOSE, 0);
+        curl_easy_setopt(file->handle.curl, CURLOPT_VERBOSE, 0L);
         curl_easy_setopt(file->handle.curl, CURLOPT_WRITEFUNCTION, write_callback);
 
         if(!multi_handle)
@@ -488,7 +490,7 @@ main(int argc, char *argv[])
     handle = url_fopen(url, "r");
     if(!handle)
     {
-        printf("couldn't url_fopen()\n");
+        printf("couldn't url_fopen() %s\n", url);
         fclose(outf);
         return 2;
     }
@@ -514,7 +516,7 @@ main(int argc, char *argv[])
 
     handle = url_fopen("testfile", "r");
     if(!handle) {
-        printf("couldn't url_fopen()\n");
+        printf("couldn't url_fopen() testfile\n");
         fclose(outf);
         return 2;
     }
@@ -539,7 +541,7 @@ main(int argc, char *argv[])
 
     handle = url_fopen("testfile", "r");
     if(!handle) {
-        printf("couldn't url_fopen()\n");
+        printf("couldn't url_fopen() testfile\n");
         fclose(outf);
         return 2;
     }

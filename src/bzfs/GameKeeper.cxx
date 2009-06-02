@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named LICENSE that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /* interface header */
 #include "GameKeeper.h"
@@ -22,6 +22,7 @@
 #include "GameTime.h"
 #include "FlagInfo.h"
 #include "StateDatabase.h"
+#include "bzfsMessages.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -39,82 +40,104 @@ static void *tcpRx(void* arg) {
 
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 {
-  buf = nboPackUByte(buf, playerIndex);
-  buf = nboPackUByte(buf, properties);
+  buf = nboPackUInt8(buf, playerIndex);
+  buf = nboPackUInt8(buf, properties);
   return buf;
 }
 
 void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t properties )
 {
-  msg->packUByte(playerIndex);
-  msg->packUByte(properties);
+  msg->packUInt8(playerIndex);
+  msg->packUInt8(properties);
 }
 
-GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback):
-player(_playerIndex), netHandler(_netHandler), lagInfo(&player),
-playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-needThisHostbanChecked(false), idFlag(-1)
+GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback)
+  : _LSAState(start)
+  , player(_playerIndex)
+  , netHandler(_netHandler)
+  , lagInfo(&player)
+  , accessInfo()
+  , lastState()
+  , stateTimeStamp(0.0)
+  , efectiveShotType(StandardShot)
+  , canSpawn(true)
+  , botHost(-1)
+  , botID(-1)
+  , currentRot(0)
+  , currentAngVel(0)
+  , gameTimeRate(GameTime::startRate)
+  , gameTimeNext(TimeKeeper::getCurrent())
+  , flagHistory()
+  , score()
+  , authentication()
+  , caps()
+  , isParting(false)
+  , playerHandler(NULL)
+  , playerIndex(_playerIndex)
+  , closed(false)
+  , clientCallback(_clientCallback)
+  , bzIdentifier()
+  , needThisHostbanChecked(false)
+  , idFlag(-1)
+  , agilityTime()
 {
-  playerHandler = NULL;
   playerList[playerIndex] = this;
-  canSpawn = true;
 
   lastState.order  = 0;
-  // Timestamp 0.0 -> not yet available
-  stateTimeStamp   = 0.0f;
-  gameTimeRate = GameTime::startRate;
-  gameTimeNext = TimeKeeper::getCurrent();
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
     std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
-  _LSAState = start;
-  bzIdentifier = "";
 
-  botHost = -1;
-  botID = -1;
-
-  currentPos[0] = currentPos[1] = currentPos[2] = 0;
-  curentVel[0] = curentVel[1] = curentVel[2] = 0;
-  currentRot = 0;
-  currentAngVel =0;
-
-  efectiveShotType = StandardShot;
-  isParting = false;
+  currentPos = fvec3(0.0f, 0.0f, 0.0f);
+  currentVel = fvec3(0.0f, 0.0f, 0.0f);
 }
 
-GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler):
-player(_playerIndex), netHandler(NULL), lagInfo(&player),
-playerIndex(_playerIndex), closed(false), clientCallback(NULL),
-needThisHostbanChecked(false), idFlag(-1)
+GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
+  : _LSAState(start)
+  , player(_playerIndex)
+  , netHandler(NULL)
+  , lagInfo(&player)
+  , accessInfo()
+  , lastState()
+  , stateTimeStamp(0.0)
+  , efectiveShotType(StandardShot)
+  , canSpawn(true)
+  , botHost(-1)
+  , botID(-1)
+  , currentRot(0)
+  , currentAngVel(0)
+  , gameTimeRate(GameTime::startRate)
+  , gameTimeNext(TimeKeeper::getCurrent())
+  , flagHistory()
+  , score()
+  , authentication()
+  , caps()
+  , isParting(false)
+  , playerHandler(handler)
+  , playerIndex(_playerIndex)
+  , closed(false)
+  , clientCallback(NULL)
+  , bzIdentifier()
+  , needThisHostbanChecked(false)
+  , idFlag(-1)
+  , agilityTime()
 {
-  canSpawn = true;
-  playerHandler = handler;
   playerList[playerIndex] = this;
 
   lastState.order  = 0;
-  // Timestamp 0.0 -> not yet available
-  stateTimeStamp   = 0.0f;
-  gameTimeRate = GameTime::startRate;
-  gameTimeNext = TimeKeeper::getCurrent();
+
 #if defined(USE_THREADS)
   int result = pthread_create(&thread, NULL, tcpRx, (void *)this);
   if (result)
     std::cerr << "Could not create thread" << std::endl;
   refCount	 = 1;
 #endif
-  _LSAState = start;
-  bzIdentifier = "";
 
-  botHost = -1;
-  botID = -1;
-
-  currentPos[0] = currentPos[1] = currentPos[2] = 0;
-  curentVel[0] = curentVel[1] = curentVel[2] = 0;
-  currentRot = 0;
-  currentAngVel =0;
+  currentPos = fvec3(0.0f, 0.0f, 0.0f);
+  currentVel = fvec3(0.0f, 0.0f, 0.0f);
 }
 
 GameKeeper::Player::~Player()
@@ -183,38 +206,39 @@ void GameKeeper::Player::dumpScore()
 
 int GameKeeper::Player::anointRabbit(int oldRabbit)
 {
-  float topRatio    = -100000.0f;
-  int   rabbitIndex = NoPlayer;
+  float topRatio = -100000.0f;
+  int   newIndex = NoPlayer;
 
   Player *playerData;
   int     i;
   bool    goodRabbitSelected = false;
 
   for (i = 0; i < PlayerSlot; i++)
-    if ((playerData = playerList[i]) && !playerData->closed
-      && playerData->player.canBeRabbit(true)) {
-	bool  goodRabbit = i != oldRabbit && playerData->player.isAlive();
-	float ratio      = playerData->score.ranking();
-	bool  select     = false;
-	if (goodRabbitSelected) {
-	  if (goodRabbit && (ratio > topRatio)) {
-	    select = true;
-	  }
-	} else {
-	  if (goodRabbit) {
-	    select	     = true;
-	    goodRabbitSelected = true;
-	  } else {
-	    if (ratio > topRatio)
-	      select = true;
-	  }
-	}
-	if (select) {
-	  topRatio = ratio;
-	  rabbitIndex = i;
-	}
-    }
-    return rabbitIndex;
+    if ((playerData = playerList[i]) && !playerData->closed &&
+        playerData->player.canBeRabbit(true)) {
+      bool  goodRabbit = (i != oldRabbit) && playerData->player.isAlive();
+      float ratio      = playerData->score.ranking();
+      bool  select     = false;
+      if (goodRabbitSelected) {
+        if (goodRabbit && (ratio > topRatio)) {
+          select = true;
+        }
+      } else {
+        if (goodRabbit) {
+          select	     = true;
+          goodRabbitSelected = true;
+        } else {
+          if (ratio > topRatio) {
+            select = true;
+          }
+        }
+      }
+      if (select) {
+        topRatio = ratio;
+        newIndex = i;
+      }
+  }
+  return newIndex;
 }
 
 void GameKeeper::Player::updateNextGameTime()
@@ -233,16 +257,16 @@ void GameKeeper::Player::updateNextGameTime()
 
 void *GameKeeper::Player::packAdminInfo(void *buf)
 {
-  buf = nboPackUByte(buf, netHandler->sizeOfIP());
-  buf = nboPackUByte(buf, playerIndex);
+  buf = nboPackUInt8(buf, netHandler->sizeOfIP());
+  buf = nboPackUInt8(buf, playerIndex);
   buf = netHandler->packAdminInfo(buf);
   return buf;
 }
 
 void GameKeeper::Player::packAdminInfo(BufferedNetworkMessage *msg)
 {
-  msg->packUByte(netHandler->sizeOfIP());
-  msg->packUByte(playerIndex);
+  msg->packUInt8(netHandler->sizeOfIP());
+  msg->packUInt8(playerIndex);
   char temp[128];
   char* p = (char*)netHandler->packAdminInfo(temp);
   msg->addPackedData(temp,p-temp);
@@ -259,34 +283,13 @@ void GameKeeper::Player::packPlayerInfo(BufferedNetworkMessage *msg)
   PackPlayerInfo(msg,playerIndex, accessInfo.getPlayerProperties());
 }
 
-void *GameKeeper::Player::packPlayerUpdate(void *buf)
-{
-  buf = nboPackUByte(buf, playerIndex);
-  buf = player.packUpdate(buf);
-  buf = score.pack(buf);
-  buf = player.packId(buf);
-  return buf;
-}
-
 void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
 {
-  msg->packUByte(playerIndex);
+  msg->packUInt8(playerIndex);
   player.packUpdate(msg);
   score.pack(msg);
   player.packId(msg);
 }
-
-void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
-{
-  msg.playerID = playerIndex;
-  msg.team = player.getTeam();
-  msg.type = player.getType();
-  msg.wins = score.getWins();
-  msg.losses = score.getLosses();
-  msg.tks = score.getTKs();
-  msg.callsign =  player.getCallSign();
-}
-
 
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 					     int targetPlayer)
@@ -439,64 +442,67 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
 
 #endif
 
-void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
+void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
 {
-  memcpy(lastState.pos, pos, sizeof(float) * 3);
+  lastState.pos = pos;
   lastState.azimuth = azimuth;
   // Set Speeds to 0 too
   memset(lastState.velocity, 0, sizeof(float) * 3);
   lastState.angVel = 0.0f;
-  stateTimeStamp   = (float)TimeKeeper::getCurrent().getSeconds();
+  stateTimeStamp   = TimeKeeper::getCurrent();
 
-  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR(stateTimeStamp);
 
   // player is alive.
   player.setAlive();
 
+  lastState.status = eAlive;
 }
 
-void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
+void GameKeeper::Player::setPlayerState(PlayerState state, TimeKeeper const& timestamp)
 {
   lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
   player.updateIdleTime();
   lastState      = state;
   stateTimeStamp = timestamp;
 
-  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR(); // or should it be timestamp?
 }
 
-void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
+void GameKeeper::Player::getPlayerState(fvec3& pos, float &azimuth)
 {
   memcpy(pos, lastState.pos, sizeof(float) * 3);
   azimuth = lastState.azimuth;
 }
 
-void GameKeeper::Player::getPlayerCurrentPosRot(float pos[3], float &rot)
+void GameKeeper::Player::getPlayerCurrentPosRot(fvec3& pos, float &rot)
 {
-  doPlayerDR((float)TimeKeeper::getCurrent().getSeconds());
+  doPlayerDR();
 
-  memcpy(pos, currentPos, sizeof(float) * 3);
+  pos = currentPos;
   rot = currentRot;
 }
 
-void GameKeeper::Player::doPlayerDR ( float time )
+void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
 {
-  float delta = time - stateTimeStamp;
+  float delta = static_cast<float>(time - stateTimeStamp);
 
-  currentPos[0] = lastState.pos[0] + (lastState.velocity[0] * delta);
-  currentPos[1] = lastState.pos[1] + (lastState.velocity[1] * delta);
-  currentPos[2] = lastState.pos[2] + (lastState.velocity[2] * delta);
-  if ( currentPos[2] < 0 )
-    currentPos[2] = 0;	// burrow depth maybe?
+  currentPos = lastState.pos + (delta * lastState.velocity);
+  if (currentPos.z < 0.0f) {
+    currentPos.z = 0.0f; // burrow depth maybe?
+  }
 
   currentRot = lastState.azimuth + (lastState.angVel * delta);
 
-  // clamp us to +- 180, makes math easy
-  while (currentRot > 180.0)
-    currentRot -= 180.0;
-
-  while (currentRot < -180.0)
-    currentRot += 180.0;
+  // clamp currentRot to [ -M_PI, +M_PI ]
+  const float m_pi   = (float)(M_PI);
+  const float m_pi_2 = (float)(M_PI * 2.0);
+  currentRot = fmodf(currentRot, m_pi_2);
+  if (currentRot < -m_pi) {
+    currentRot += m_pi_2;
+  } else if (currentRot > +m_pi) {
+    currentRot -= m_pi_2;
+  }
 }
 
 PlayerState GameKeeper::Player::getCurrentStateAsState ( void )
@@ -515,6 +521,14 @@ void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool incr
   return getCurrentStateAsState().pack(buf,code,increment);
 }
 
+void GameKeeper::Player::setAutoPilot( bool autopilot )
+{
+  player.setAutoPilot(autopilot);
+  sendMsgAutoPilot(getIndex(),autopilot);
+
+  bz_AutoPilotChangeData_V1 evnt(autopilot, true,getIndex());
+  worldEventManager.callEvents(bz_eAutoPilotChangeEvent,&evnt);
+}
 
 int GameKeeper::Player::maxShots = 0;
 void GameKeeper::Player::setMaxShots(int _maxShots)
@@ -659,7 +673,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   else if (flagType == Flags::Thief)
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-  else if ((flagType == Flags::Burrow) && (lastState.pos[2] < 0.0f))
+  else if ((flagType == Flags::Burrow) && (lastState.pos.z < 0.0f))
     fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
   else if ((flagType == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
     fracOfMaxSpeed = 0.0f;

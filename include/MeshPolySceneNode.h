@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,20 +23,20 @@
 
 class MeshPolySceneNode : public WallSceneNode {
   public:
-    MeshPolySceneNode(const float plane[4],
+    MeshPolySceneNode(const fvec4& plane,
 		      bool noRadar, bool noShadow,
-		      const GLfloat3Array& vertices,
-		      const GLfloat3Array& normals,
-		      const GLfloat2Array& texcoords);
+		      const fvec3Array& vertices,
+		      const fvec3Array& normals,
+		      const fvec2Array& texcoords);
     ~MeshPolySceneNode();
 
     bool cull(const ViewFrustum& frustum) const;
     bool inAxisBox (const Extents& exts) const;
     int getVertexCount () const;
-    const GLfloat* getVertex (int vertex) const;
-    const GLfloat (*getVertices() const)[3];
+    const fvec3& getVertex(int vertex) const;
+    const fvec3* getVertices() const;
 
-    int split(const float* plane, SceneNode*&, SceneNode*&) const;
+    int split(const fvec4& plane, SceneNode*&, SceneNode*&) const;
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
@@ -49,10 +49,10 @@ class MeshPolySceneNode : public WallSceneNode {
     class Geometry : public RenderNode {
       public:
 	Geometry(MeshPolySceneNode*,
-		 const GLfloat3Array& vertices,
-		 const GLfloat3Array& normals,
-		 const GLfloat2Array& texcoords,
-		 const GLfloat* normal);
+		 const fvec3Array& vertices,
+		 const fvec3Array& normals,
+		 const fvec2Array& texcoords,
+		 const fvec3& normal);
 	~Geometry();
 	void setStyle(int _style) { style = _style; }
 	bool getNoRadar() const;
@@ -60,10 +60,10 @@ class MeshPolySceneNode : public WallSceneNode {
 	void render();
 	void renderRadar();
 	void renderShadow();
-	const GLfloat* getVertex(int i) const;
-	const GLfloat (*getVertices() const)[3];
+	const fvec3& getVertex(int i) const;
+	const fvec3* getVertices() const;
 	int getVertexCount() const;
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+	const fvec3& getPosition() const { return sceneNode->getCenter(); }
       private:
 	void drawV() const; // draw with just vertices
 	void drawVT() const; // draw with texcoords
@@ -74,35 +74,35 @@ class MeshPolySceneNode : public WallSceneNode {
 	int style;
 	bool drawRadar;
 	bool draw;
-	const GLfloat* normal;
+	const fvec3& normal;
       public:
-	GLfloat3Array vertices;
-	GLfloat3Array normals;
-	GLfloat2Array texcoords;
+	fvec3Array vertices;
+	fvec3Array normals;
+	fvec2Array texcoords;
     };
 
   private:
-    int splitWallVTN(const GLfloat* plane,
-		     const GLfloat3Array& vertices,
-		     const GLfloat3Array& normals,
-		     const GLfloat2Array& texcoords,
+    int splitWallVTN(const fvec4& plane,
+		     const fvec3Array& vertices,
+		     const fvec3Array& normals,
+		     const fvec2Array& texcoords,
 		     SceneNode*& front, SceneNode*& back) const;
 
     void splitEdgeVTN(float d1, float d2,
-		      const GLfloat* p1, const GLfloat* p2,
-		      const GLfloat* n1, const GLfloat* n2,
-		      const GLfloat* uv1, const GLfloat* uv2,
-		      GLfloat* p, GLfloat* n, GLfloat* uv) const;
+		      const fvec3& p1,  const fvec3& p2,
+		      const fvec3& n1,  const fvec3& n2,
+		      const fvec2& uv1, const fvec2& uv2,
+		      fvec3& p, fvec3& n, fvec2& uv) const;
 
-    int splitWallVT(const GLfloat* plane,
-		    const GLfloat3Array& vertices,
-		    const GLfloat2Array& texcoords,
+    int splitWallVT(const fvec4& plane,
+		    const fvec3Array& vertices,
+		    const fvec2Array& texcoords,
 		    SceneNode*& front, SceneNode*& back) const;
 
     void splitEdgeVT(float d1, float d2,
-		     const GLfloat* p1, const GLfloat* p2,
-		     const GLfloat* uv1, const GLfloat* uv2,
-		     GLfloat* p, GLfloat* uv) const;
+		     const fvec3& p1,  const fvec3& p2,
+		     const fvec2& uv1, const fvec2& uv2,
+		     fvec3& p, fvec2& uv) const;
 
     Geometry node;
     bool noRadar;
@@ -119,22 +119,22 @@ inline int MeshPolySceneNode::getVertexCount () const
   return node.getVertexCount();
 }
 
-inline const GLfloat* MeshPolySceneNode::Geometry::getVertex(int i) const
+inline const fvec3& MeshPolySceneNode::Geometry::getVertex(int i) const
 {
   return vertices[i];
 }
 
-inline const GLfloat (*MeshPolySceneNode::Geometry::getVertices() const)[3]
+inline const fvec3* MeshPolySceneNode::Geometry::getVertices() const
 {
   return vertices.getArray();
 }
 
-inline const GLfloat* MeshPolySceneNode::getVertex(int i) const
+inline const fvec3& MeshPolySceneNode::getVertex(int i) const
 {
   return node.getVertex(i);
 }
 
-inline const GLfloat (*MeshPolySceneNode::getVertices() const)[3]
+inline const fvec3* MeshPolySceneNode::getVertices() const
 {
   return node.getVertices();
 }

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -143,7 +143,7 @@ void			HUDuiList::doRender()
     glColor3fv(hasFocus() ? textColor : dimTextColor);
     FontManager &fm = FontManager::instance();
     fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(),
-      getFontSize(), bdl->getLocalString(list[index]).c_str());
+      getFontSize(), bdl->getLocalString(list[index]));
   }
 }
 

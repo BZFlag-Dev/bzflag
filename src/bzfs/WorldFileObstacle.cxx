@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -24,23 +24,31 @@ WorldFileObstacle::WorldFileObstacle()
 {
   driveThrough = 0;
   shootThrough = 0;
+  ricochet = false;
 }
 
 
 bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "drivethrough") == 0)
+  if (strcasecmp(cmd, "drivethrough") == 0) {
     driveThrough = 0xFF;
-  else if (strcasecmp(cmd, "shootthrough") == 0)
+  }
+  else if (strcasecmp(cmd, "shootthrough") == 0) {
     shootThrough = 0xFF;
-  else if (strcasecmp(cmd, "passable") == 0)
+  }
+  else if (strcasecmp(cmd, "passable") == 0) {
     driveThrough = shootThrough = 0xFF;
-  else
+  }
+  else if (strcasecmp(cmd, "ricochet") == 0) {
+    ricochet = true;
+  }
+  else {
     return WorldFileLocation::read(cmd, input);
+  }
   return true;
 }
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

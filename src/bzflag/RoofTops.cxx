@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,10 +18,9 @@
 #include "Obstacle.h"
 #include "Ray.h"
 #include "CollisionManager.h"
-#include "Teleporter.h"
 
 
-/****************************************************************************/
+//============================================================================//
 
 // NOTE - this could also be used with a 'rain on windshield' effect
 
@@ -49,8 +48,8 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
   const float zSpeed = -1.0f;
 
   // setup the test ray
-  const float dir[3] = { 0.0f, 0.0f, zSpeed };
-  const float org[3] = { x, y, maxHeight };
+  const fvec3 dir(0.0f, 0.0f, zSpeed);
+  const fvec3 org(x, y, maxHeight);
   Ray ray(org, dir);
 
   // get the obstacle list
@@ -61,11 +60,7 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     const float t = obs->intersect(ray);
-    if (obs->getType() == Teleporter::getClassName()) {
-      // the physics for teles is whacked, imho
-      continue;
-    }
-    else if ((t > 0.0f) && (t < minTime)) {
+    if ((t > 0.0f) && (t < minTime)) {
       minTime = t;
     }
   }

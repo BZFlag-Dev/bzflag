@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -57,32 +57,59 @@ void CustomWorld::writeToWorld(WorldInfo* world) const
 {
   if (createWalls) {
     float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
-    float worldSize = BZDBCache::worldSize * 0.5f;
-    world->addWall(0.0f, worldSize, 0.0f, 1.5f*(float)M_PI, worldSize, wallHeight);
-    world->addWall(worldSize, 0.0f, 0.0f, (float)M_PI, worldSize, wallHeight);
-    world->addWall(0.0f, -worldSize, 0.0f, 0.5f*(float)M_PI, worldSize, wallHeight);
-    world->addWall(-worldSize, 0.0f, 0.0f, 0.0f, worldSize, wallHeight);
+    float ws = BZDBCache::worldSize * 0.5f;
+    world->addWall(0.0f, +ws,  0.0f, 1.5f * (float)M_PI, ws, wallHeight);
+    world->addWall(+ws,  0.0f, 0.0f,        (float)M_PI, ws, wallHeight);
+    world->addWall(0.0f, -ws,  0.0f, 0.5f * (float)M_PI, ws, wallHeight);
+    world->addWall(-ws,  0.0f, 0.0f, 0.0f,               ws, wallHeight);
   }
 }
 
-std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
 
-void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
+//============================================================================//
+
+std::map<std::string, CustomObjectMapData> customObjectMap;
+
+
+bool registerCustomMapObject(const char* object, const char* end,
+                             bz_CustomMapObjectHandler* handler)
 {
-	std::string objectName = object;
+  const std::string objectName = TextUtils::toupper(object);
+  std::string endToken;
+  if (end != NULL) {
+    endToken = TextUtils::toupper(end);
+  }
 
-	customObjectMap[TextUtils::toupper(objectName)] = handler;
+  if (customObjectMap.find(objectName) != customObjectMap.end()) {
+    return false;
+  }
+
+  customObjectMap[objectName] = CustomObjectMapData(handler, endToken);
+
+  return true;
 }
 
-void removeCustomMapObject ( const char* object )
-{
-	std::string objectName = object;
 
-	if ( customObjectMap.find(TextUtils::toupper(objectName)) != customObjectMap.end() )
-		customObjectMap.erase(customObjectMap.find(TextUtils::toupper(objectName)));
+bool removeCustomMapObject(const char* object)
+{
+  std::string objectName = TextUtils::toupper(object);
+
+  CustomObjectMap::iterator itr =  customObjectMap.find(objectName);
+
+  if (itr != customObjectMap.end()) {
+    customObjectMap.erase(itr);
+  } else {
+    return false;
+  }
+
+  return true;
 }
 
-// Local variables: ***
+
+//============================================================================//
+
+
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

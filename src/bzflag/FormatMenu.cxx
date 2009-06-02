@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,10 +21,11 @@
 /* local implementation headers */
 #include "FontSizer.h"
 #include "MainMenu.h"
-#include "playing.h"
 #include "HUDui.h"
 #include "HUDNavigationQueue.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 const int FormatMenu::NumReadouts = 4;
 const int FormatMenu::NumItems = 30;
@@ -79,7 +80,7 @@ size_t FormatMenu::navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChan
       // we have wrapped
       fm->setPage(fm->page + 1);
     } else if (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "") {
-      // there was an odd number of items on the last page, and 
+      // there was an odd number of items on the last page, and
       // we have run off the end of the list...wrap early
       fm->setPage(0);
       proposedFocus = 0;
@@ -92,6 +93,10 @@ size_t FormatMenu::navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChan
       while (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "")
 	--proposedFocus;
     }
+  } else {
+    // switched pages - if this entry is empty, find the last non-empty entry
+    while (proposedFocus > 0 && ((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "")
+      --proposedFocus;
   }
   return proposedFocus;
 }
@@ -125,12 +130,13 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
     HUDuiLabel* label = (HUDuiLabel*)(getElements()[NumReadouts - 3]);
     label->setString("Press Enter to select and T to test a format. Esc to exit.");
     initNavigation();
-    getNav().setCallback(&navCallback, this);
+    getNav().addCallback(&navCallback, this);
   }
 }
 
 FormatMenu::~FormatMenu()
 {
+  getNav().removeCallback(&navCallback, this);
   delete[] badFormats;
 }
 
@@ -236,7 +242,7 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+    const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
     const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
     x = 0.5f * ((float)_width - titleWidth);
     y = (float)_height - titleHeight;
@@ -249,7 +255,7 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString().c_str());
+    const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString());
     x = 0.5f * ((float)_width - stringWidth);
     y -= 1.5f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
     label->setPosition(x, y);
@@ -266,7 +272,7 @@ void FormatMenu::resize(int _width, int _height)
   {
     HUDuiLabel* label = pageLabel;
     label->setFontSize(fontSize);
-    const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString().c_str());
+    const float stringWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString());
     x = 0.5f * ((float)_width - stringWidth);
     y -= 2.0f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
     label->setPosition(x, y);

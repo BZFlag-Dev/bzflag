@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -58,7 +58,7 @@ class BzfMedia {
     // pairs.  rate is in frames per second.  use delete[] to release
     // the returned memory.
     float*		readSound(const std::string& filename,
-				int& numFrames, int& rate) const;
+				int& numFrames, int& rate, bool dataDir = true) const;
 
     // sleep for given number of seconds
     virtual double	stopwatch(bool start);

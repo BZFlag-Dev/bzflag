@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,8 +28,10 @@
 #include "HUDuiLabel.h"
 #include "ScoreboardRenderer.h"
 #include "SceneRenderer.h"
-#include "playing.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
+
 
 GUIOptionsMenu::GUIOptionsMenu()
 {
@@ -226,6 +228,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Right"));
   option->update();
   addControl(option);
+
   // GUI coloring
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -236,6 +239,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("On"));
   option->update();
   addControl(option);
+
   // Underline color
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -247,6 +251,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Text"));
   option->update();
   addControl(option);
+
   // Killer Highlight
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -258,6 +263,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Underline"));
   option->update();
   addControl(option);
+
   // Pulsate Rate
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -266,6 +272,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(9);
   option->update();
   addControl(option);
+
   // Pulsate Depth
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -274,6 +281,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(9);
   option->update();
   addControl(option);
+
   // Time/date display settings
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -285,6 +293,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("both"));
   option->update();
   addControl(option);
+
   // HUD Reload timer
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -299,15 +308,18 @@ GUIOptionsMenu::GUIOptionsMenu()
   initNavigation();
 }
 
+
 GUIOptionsMenu::~GUIOptionsMenu()
 {
 }
 
-void			GUIOptionsMenu::execute()
+
+void GUIOptionsMenu::execute()
 {
 }
 
-void			GUIOptionsMenu::resize(int _width, int _height)
+
+void GUIOptionsMenu::resize(int _width, int _height)
 {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
@@ -326,7 +338,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
@@ -344,26 +356,24 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   }
 
   // load current settings
- 
+
   int i = 1;
   ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
   ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
   ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("scoreFontSize") / 8));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("consoleFontSize") / 8));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showVelocities")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("scoreFontSize") / 8);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("consoleFontSize") / 8);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("showVelocities"));
   ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * RENDERER.getPanelOpacity() + 0.5));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("linedradarshots")));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("sizedradarshots")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("linedradarshots"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("sizedradarshots"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showShotGuide ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.getRadarSize());
   ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.getMaxMotionFactor() + 11);
   i++; // locale
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("showtabs")));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("showtabs"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
   // underline color - find index of mode string in options
@@ -372,158 +382,128 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex((int)(std::find(opts.begin(), opts.end(), uColor) -
 					 opts.begin()));
 
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("killerhighlight")));
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("pulseRate") * 5) - 1);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("pulseDepth") * 10) - 1);
-  ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("timedate")));
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
-					 : 0);  
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("killerhighlight"));
+  ((HUDuiList*)listHUD[i++])->setIndex((BZDB.evalInt("pulseRate") * 5) - 1);
+  ((HUDuiList*)listHUD[i++])->setIndex((BZDB.evalInt("pulseDepth") * 10) - 1);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("timedate"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1 : 0);
 }
 
-void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
+
+void GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 {
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
-    case 'e':
+    case 'e': {
       BZDB.setInt("radarStyle", list->getIndex());
       break;
-
-    case 'C':
-      {
-	BZDB.setInt("consoleFontSize", list->getIndex() * 8);
-	getMainWindow()->getWindow()->callResizeCallbacks();
-	break;
-      }
-
-    case 'h':
-      {
-	BZDB.setInt("timedate", list->getIndex());
-	break;
-      }
-
-    case 'S':
-      {
-	BZDB.setInt("scoreFontSize", list->getIndex() * 8);
-	getMainWindow()->getWindow()->callResizeCallbacks();
-	break;
-      }
-
-    case 'O':
-      {
-        BZDB.setInt("showVelocities", list->getIndex());
-        getMainWindow()->getWindow()->callResizeCallbacks();
-        break;
-      }
-
-    case 'y':
-      {
-	RENDERER.setPanelOpacity(((float)list->getIndex()) / 10.0f);
-	break;
-      }
-
-    case 'z':
+    }
+    case 'C': {
+      BZDB.setInt("consoleFontSize", list->getIndex() * 8);
+      getMainWindow()->getWindow()->callResizeCallbacks();
+      break;
+    }
+    case 'h': {
+      BZDB.setInt("timedate", list->getIndex());
+      break;
+    }
+    case 'S': {
+      BZDB.setInt("scoreFontSize", list->getIndex() * 8);
+      getMainWindow()->getWindow()->callResizeCallbacks();
+      break;
+    }
+    case 'O': {
+      BZDB.setInt("showVelocities", list->getIndex());
+      getMainWindow()->getWindow()->callResizeCallbacks();
+      break;
+    }
+    case 'y': {
+      RENDERER.setPanelOpacity(((float)list->getIndex()) / 10.0f);
+      break;
+    }
+    case 'z': {
       BZDB.set("coloredradarshots", list->getIndex() ? "1" : "0");
       break;
-
-    case 'l':
+    }
+    case 'l': {
       BZDB.set("linedradarshots", TextUtils::format("%d", list->getIndex()));
       break;
-
-    case 's':
+    }
+    case 's': {
       BZDB.set("sizedradarshots", TextUtils::format("%d", list->getIndex()));
       break;
-
-    case 'F':
+    }
+    case 'F': {
       BZDB.set("leadingShotLine", list->getIndex() ? "1" : "0");
       break;
-
-    case 'G':
+    }
+    case 'G': {
       BZDB.set("showShotGuide", list->getIndex() ? "1" : "0");
       break;
+    }
+    case 'R': {
+      RENDERER.setRadarSize(list->getIndex());
+      break;
+    }
+    case 'M': {
+      RENDERER.setMaxMotionFactor(list->getIndex() - 11);
+      break;
+    }
+    case 'c': {
+      BZDB.set("colorful", list->getIndex() ? "1" : "0");
+      break;
+    }
+    case 't': {
+      BZDB.set("showtabs", TextUtils::format("%d", list->getIndex()));
+      break;
+    }
+    case 'u': {
+      std::vector<std::string>* options = &list->getList();
+      std::string color = (*options)[list->getIndex()];
+      BZDB.set("underlineColor", color);
+      break;
+    }
+    case 'k': {
+      BZDB.set("killerhighlight", TextUtils::format("%d", list->getIndex()));
+      break;
+    }
+    case 'L': {
+      std::vector<std::string>* options = &list->getList();
+      std::string locale = (*options)[list->getIndex()];
 
-    case 'R':
-      {
-	RENDERER.setRadarSize(list->getIndex());
-	break;
+      World::setLocale(locale);
+      BZDB.set("locale", locale);
+      World::getBundleMgr()->getBundle(locale, true);
+
+      GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
+      if (menu) {
+        menu->resize(menu->getWidth(), menu->getHeight());
       }
-
-    case 'M':
-      {
-	RENDERER.setMaxMotionFactor(list->getIndex() - 11);
-	break;
-      }
-
-    case 'c':
-      {
-	BZDB.set("colorful", list->getIndex() ? "1" : "0");
-	break;
-      }
-
-    case 't':
-      {
-	BZDB.set("showtabs", TextUtils::format("%d", list->getIndex()));
-	break;
-      }
-
-    case 'u':
-      {
-	std::vector<std::string>* options = &list->getList();
-	std::string color = (*options)[list->getIndex()];
-	BZDB.set("underlineColor", color);
-	break;
-      }
-
-    case 'k':
-      {
-	BZDB.set("killerhighlight", TextUtils::format("%d", list->getIndex()));
-	break;
-      }
-
-    case 'L':
-      {
-	std::vector<std::string>* options = &list->getList();
-	std::string locale = (*options)[list->getIndex()];
-
-	World::setLocale(locale);
-	BZDB.set("locale", locale);
-	World::getBundleMgr()->getBundle(locale, true);
-
-	GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
-	if (menu)
-	  menu->resize(menu->getWidth(), menu->getHeight());
-	break;
-      }
-
-    case 'r':
-      {
-	BZDB.set("pulseRate", TextUtils::format("%f", (float)(list->getIndex() + 1) / 5.0f));
-	break;
-      }
-
-    case 'd':
-      {
-	BZDB.set("pulseDepth", TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
-	break;
-      }
-
-    case 'T':
-      {
-	BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
-	break;
-      }
-
-    case 'p':
+      break;
+    }
+    case 'r': {
+      BZDB.set("pulseRate",
+               TextUtils::format("%f", (float)(list->getIndex() + 1) / 5.0f));
+      break;
+    }
+    case 'd': {
+      BZDB.set("pulseDepth",
+               TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
+      break;
+    }
+    case 'T': {
+      BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
+      break;
+    }
+    case 'p': {
       ScoreboardRenderer::setSort(list->getIndex());
       break;
-
-    case 'q':
+    }
+    case 'q': {
       ScoreboardRenderer::setAlwaysTeamScore(list->getIndex() ? true : false);
       break;
-
+    }
   }
 }
 

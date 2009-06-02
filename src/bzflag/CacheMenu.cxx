@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -171,7 +171,7 @@ void CacheMenu::setFailedMessage(const char* msg)
 
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(),
-					 failedMessage->getFontSize(), failedMessage->getString().c_str());
+					 failedMessage->getFontSize(), failedMessage->getString());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
@@ -198,7 +198,7 @@ void CacheMenu::resize(int _width, int _height)
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
   const float titleWidth =
-    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+    fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight =
     fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);

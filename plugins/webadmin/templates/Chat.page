@@ -1,0 +1,58 @@
+[#RequirePerm:viewReports]
+[#RequirePerm:playerList]
+
+[!header1.tmpl]
+[-split this up so we can do a meta refresh]
+  <meta http-equiv="refresh" content="60">
+[!header2.tmpl]
+
+	<div>&nbsp;</div>
+	<table class="titleBox"><tr><td>Chat</td></tr></table>
+	<table class="chatTable">
+	<tr><th>Timestamp</th><th>From</th><th>To</th><th>Message</th></tr>
+	[*START ChatLines]
+	<tr>
+	<td>[$ChatLineTime]</td><td>[$ChatLineUser]
+	[?IF ChatLineIsToTeam]
+		([$ChatLineTeam])
+	[?END ChatLineIsToTeam]
+	</td>
+	<td>[$ChatLineTo]</td>
+	<td>[$ChatLineText]</td>
+	</tr>
+	[*END ChatLines]
+	  <tr><td>No chat</td></tr>
+	[*EMPTY ChatLines]
+	</table>
+	Show 
+	
+	[?IF ChatLimit 5]
+	<b>5</b>
+	[?ELSE ChatLimit]
+	<a href="[$BaseURL][$CurrentPageTitle]?chatlimit=5">5</a>
+	[?END ChatLimit]
+	
+	[?IF ChatLimit 20]
+	<b>20</b>
+	[?ELSE ChatLimit]
+	<a href="[$BaseURL][$CurrentPageTitle]?chatlimit=20">20</a>
+	[?END ChatLimit]
+
+	[?IF ChatLimit 50]
+	<b>50</b>
+	[?ELSE ChatLimit]
+	<a href="[$BaseURL][$CurrentPageTitle]?chatlimit=50">50</a>
+	[?END ChatLimit]
+	
+	[?IF ChatLimit 0]
+	<b>ALL</b>
+	[?ELSE ChatLimit]
+	<a href="[$BaseURL][$CurrentPageTitle]?chatlimit=0">ALL</a>
+	[?END ChatLimit]	
+	
+  <form id="send_chat_message" action="[$BaseURL][$CurrentPageTitle]" method="post">
+  <input type="hidden" name="action" value="sendchatmessage">
+   Message<input type="text" name="message">
+    <input type="submit" value="send">
+  </form>
+[!footer.tmpl]

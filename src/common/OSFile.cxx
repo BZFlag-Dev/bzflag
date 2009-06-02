@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -487,7 +487,7 @@ void OSDir::makeStdDir(const std::string &DirName)
 #ifdef _WIN32
   mkdir(info->baseOSDir.c_str());
 #else
-  mkdir(info->baseOSDir.c_str(), 0777);
+  mkdir(info->baseOSDir.c_str(), 0755);
 #endif
 }
 
@@ -497,7 +497,7 @@ void OSDir::makeOSDir(const std::string &DirName)
 #ifdef _WIN32
   mkdir(info->baseOSDir.c_str());
 #else
-  mkdir(info->baseOSDir.c_str(), 0777);
+  mkdir(info->baseOSDir.c_str(), 0755);
 #endif
 }
 
@@ -774,3 +774,11 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
   return true;
 #endif// !Win32
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

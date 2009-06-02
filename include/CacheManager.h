@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,19 +30,20 @@
 class CacheManager : public Singleton<CacheManager> {
  public:
 
-  typedef struct {
+  struct CacheRecord {
     std::string url;
     time_t usedDate;
     std::string name;
     int size;
     time_t date;
     std::string key;
-  } CacheRecord;
+  };
 
   static bool isCacheFileType(const std::string name);
 
   void setCacheDirectory(const std::string dir);
-  std::string getLocalName(const std::string name) const;
+  std::string getLocalName(const std::string url) const;
+  std::string getPathURL(const std::string path) const;
 
   bool loadIndex();
   bool saveIndex();
@@ -70,12 +71,10 @@ class CacheManager : public Singleton<CacheManager> {
 
 #endif  /* __CACHEMANAGER_H__ */
 
-/*
- * Local Variables: ***
- * mode: C++ ***
- * tab-width: 8 ***
- * c-basic-offset: 2 ***
- * indent-tabs-mode: t ***
- * End: ***
- * ex: shiftwidth=2 tabstop=8
- */
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

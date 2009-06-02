@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,22 +16,24 @@
 #include "common.h"
 #include "Address.h"
 #include "BufferedNetworkMessage.h"
+#include "vectors.h"
 
-// 54 bytes
+// 58 bytes
 const int PlayerUpdatePLenMax =
-			sizeof(float)		+ // timestamp
-			PlayerIdPLen		+ // player id
-			sizeof(int32_t)	+ // order
-			sizeof(int16_t)	+ // status
-			sizeof(float) * 3	+ // position			(or int16_t * 3)
-			sizeof(float) * 3	+ // velocity			(or int16_t * 3)
-			sizeof(float)		+ // angle			(or int16_t)
-			sizeof(float)		+ // angular velocity		(or int16_t)
-			sizeof(int16_t)	+ // jump jets			(conditional)
-			sizeof(int32_t)	+ // physics driver		(conditional)
-			sizeof(int16_t)	+ // user speed			(conditional)
-			sizeof(int16_t)	+ // user angular velocity	(conditional)
-			sizeof(uint8_t);	  // sounds			(conditional)
+  sizeof(double)	+ // timestamp
+  PlayerIdPLen		+ // player id
+  sizeof(int32_t)	+ // order
+  sizeof(int16_t)	+ // status
+  sizeof(fvec3)		+ // position			(or int16_t * 3)
+  sizeof(fvec3)		+ // velocity			(or int16_t * 3)
+  sizeof(float)		+ // angle			(or int16_t)
+  sizeof(float)		+ // angular velocity		(or int16_t)
+  sizeof(int16_t)	+ // jump jets			(conditional)
+  sizeof(int32_t)	+ // physics driver		(conditional)
+  sizeof(int16_t)	+ // user speed			(conditional)
+  sizeof(int16_t)	+ // user angular velocity	(conditional)
+  sizeof(uint8_t);	  // sounds			(conditional)
+
 
 class PlayerState
 {
@@ -69,13 +71,15 @@ class PlayerState
 
     long	order;		// packet ordering
     short	status;		// see PStatus enum
-    float	pos[3];		// position of tank
-    float	velocity[3];	// velocity of tank
+    fvec3	pos;		// position of tank
+    fvec3	velocity;	// velocity of tank
     float	azimuth;	// orientation of tank
     float	angVel;		// angular velocity of tank
     int		phydrv;		// physics driver
 
-    float	apparentVelocity[3];	// velocity of tank as derived from it's last positional update
+    fvec3	apparentVelocity;	// velocity of tank as derived from
+                                        // its last positional update
+
     float	lastUpdateTime;		// the time of the last update
 
     // the following are to be used only for drawing

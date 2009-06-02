@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: select.c,v 1.50 2008-03-06 03:48:34 yangtse Exp $
+ * $Id: select.c,v 1.52 2008-05-26 15:09:28 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -34,7 +34,7 @@
 #error "We can't compile without select() or poll() support."
 #endif
 
-#ifdef __BEOS__
+#if defined(__BEOS__) && !defined(__HAIKU__)
 /* BeOS has FD_SET defined in socket.h */
 #include <socket.h>
 #endif
@@ -184,7 +184,7 @@ int Curl_socket_ready(curl_socket_t readfd, curl_socket_t writefd,
     return r;
   }
 
-  /* Avoid initial timestamp, avoid gettimeofday() call, when elapsed
+  /* Avoid initial timestamp, avoid curlx_tvnow() call, when elapsed
      time in this function does not need to be measured. This happens
      when function is called with a zero timeout or a negative timeout
      value indicating a blocking call should be performed. */
@@ -368,7 +368,7 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
     return r;
   }
 
-  /* Avoid initial timestamp, avoid gettimeofday() call, when elapsed
+  /* Avoid initial timestamp, avoid curlx_tvnow() call, when elapsed
      time in this function does not need to be measured. This happens
      when function is called with a zero timeout or a negative timeout
      value indicating a blocking call should be performed. */

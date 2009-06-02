@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,7 +35,7 @@ class RCLinkFrontend : public RCLink
 private:
   RCReply *replies;
   bool hasReply(const std::string command) const;
-  
+
 public:
   RCLinkFrontend() : RCLink(FrontendLogger::pInstance()), replies(NULL) { isFrontEnd = true; }
   bool update();

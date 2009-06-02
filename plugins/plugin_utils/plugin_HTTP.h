@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,6 +29,26 @@ typedef void (*TemplateKeyCallback)(std::string &data, const std::string &key);
 // for if test called to determine true or false
 typedef bool (*TemplateTestCallback)(const std::string &key);
 
+class TemplateMetaData
+{
+public:
+  bool exists ( const char* key );
+  bool exists ( const std::string &key ){return exists(key.c_str());}
+
+  std::vector<std::string> get ( const char* key );
+  std::vector<std::string> get ( const std::string &key ){return get(key.c_str());}
+
+  std::string getFirst ( const char* key );
+  std::string getFirst ( const std::string &key ){return getFirst(key.c_str());}
+
+  void add ( const char* key, const char* val );
+  void add ( const std::string &key, const std::string &val ){add(key.c_str(),val.c_str());}
+
+protected:
+
+  std::map< std::string, std::vector<std::string> > data;
+};
+
 class TemplateCallbackClass
 {
 public:
@@ -36,12 +56,14 @@ public:
   virtual void keyCallback(std::string & /* data */, const std::string & /* key */) {};
   virtual bool loopCallback(const std::string &/* key */) { return false; }
   virtual bool ifCallback(const std::string &/* key */) { return false; }
+
+  std::string templateParam;
 };
 
 class Templateiser : public TemplateCallbackClass
 {
 public:
-  Templateiser();
+  Templateiser(Templateiser * t = NULL);
   virtual ~Templateiser();
 
   void addKey(const char *key, TemplateKeyCallback callback);
@@ -62,6 +84,9 @@ public:
   void processTemplate(std::string &code, const std::string &templateText);
   bool processTemplateFile(std::string &code, const char *file);
 
+  void getTemplateMetaData(TemplateMetaData &metadata, const std::string &templateText);
+  bool getTemplateFileMetaData(TemplateMetaData &metadata, const char *file);
+
   // for the default template tokens
   virtual void keyCallback(std::string &data, const std::string &key);
   virtual bool loopCallback(const std::string &key);
@@ -72,6 +97,8 @@ public:
 
   void addSearchPath(const char* path);
   void flushSearchPaths(void);
+
+  std::vector<std::string> getSearchPaths ( void ) { return filePaths;}
 
 protected:
   typedef std::map<std::string,TemplateKeyCallback> KeyMap;
@@ -86,8 +113,8 @@ protected:
   ClassMap ifClassCallbacks;
 
   bool callKey(std::string &data, const std::string &key);
-  bool callLoop(const std::string &key);
-  bool callIF(const std::string &key);
+  bool callLoop(const std::string &key, const std::string &param);
+  bool callIF(const std::string &key,const std::string& param);
 
   void setDefaultTokens(void);
 
@@ -110,6 +137,8 @@ private:
   std::string pluginName,baseURL;
 
   std::vector<std::string> filePaths;
+
+  Templateiser *parent;
 };
 
 typedef enum {
@@ -128,7 +157,7 @@ typedef enum {
 class HTTPRequest
 {
 public:
-  HTTPRequest() : requestID(-1), request(eUnknown) {};
+  HTTPRequest() : requestID(-1), request(eUnknown){};
 
   int		  sessionID;
   int		  requestID;
@@ -137,7 +166,6 @@ public:
   std::string vdir;
   std::string resource;
   std::map<std::string, std::vector<std::string> > parameters;
-
 
   std::map<std::string, std::string> headers;
   std::map<std::string, std::string> cookies;
@@ -162,18 +190,25 @@ public:
   bool getParam(const char* param, std::vector<std::string> &val) const;
   bool getParam(const std::string &param, std::vector<std::string> &val) const;
 
+  bool getParam(const char* param) const;
+  bool getParam(const std::string &param) const;
+
 };
 
 class HTTPReply
 {
 public:
-  HTTPReply(): docType(eText), returnCode(e404NotFound), forceNoCache(true) {};
+  HTTPReply(): docType(eText), returnCode(e404NotFound), forceNoCache(true), bodyData(NULL), bodySize(0) {};
+  virtual ~HTTPReply(){if (bodyData)free(bodyData);}
 
   typedef enum {
     eText,
     eOctetStream,
     eBinary,
     eHTML,
+    eCSS,
+    eXML,
+    eJSON,
     eOther
   } DocumentType;
 
@@ -195,6 +230,10 @@ public:
 
   std::string body;
 
+  size_t addBody ( const char* data, size_t size );
+  size_t getBodySize ( void );
+  const char * getBody ( void );
+
   // authentication method
   std::string authType;
   std::string authRealm;
@@ -206,6 +245,10 @@ public:
   std::string md5;
 
   std::string redirectLoc;
+
+protected:
+  char *bodyData;
+  size_t bodySize;
 };
 
 class BZFSHTTP
@@ -226,12 +269,24 @@ public:
   virtual const char * getDescription(void) { return ""; }
   virtual bool supportPut(void) { return false; }
 
-  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply) = 0;
+  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply);
 
   virtual bool resumeTask(int /*requestID*/) {return true; }
 
 protected:
+  virtual bool generatePage(const HTTPRequest &/*request*/, HTTPReply &/*reply*/){return true;}
+
   std::string getBaseURL(void);
+
+  void addMimeType ( const std::string &extension, const std::string &type );
+  void addMimeType ( const char* extension, const char* type ){addMimeType(std::string(extension),std::string(type));}
+
+  void clearMimeTypes ( void ){mimeTypes.clear();}
+
+  bool serviceMimeResources;
+  std::string resourceRootPath;
+
+  std::map<std::string,std::string> mimeTypes;
 };
 
 #define UNAUTHENTICATED -1
@@ -248,17 +303,26 @@ public:
 
   virtual const char * getVDir(void) { return NULL; }
 
-  // do not overide these, they are used buy the auth system
-  // use the 2 variants below
-  virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply);
+  // do not override this, they are used by the auth system
   virtual bool resumeTask(int requestID);
 
   // authed versions of the main callbacks
   virtual bool handleAuthedRequest(int level, const HTTPRequest &request, HTTPReply &reply) = 0;
   virtual bool resumeAuthedTask(int /*requestID*/) { return true; }
 
+  const char* getSessionUser ( int sessionID );
+  size_t getSessionGroups ( int sessionID, std::vector<std::string> &groups );
+
+  bool getSessionPermision ( int sessionID, const char *perm );
+  inline bool getSessionPermision ( int sessionID, const std::string &perm ){return getSessionPermision(sessionID,perm.c_str());}
+
+  bool invalidateSession ( int sessionID );
+
 protected:
-  Templateiser	templateSystem;
+  // do not override this, they are used by the auth system
+  virtual bool generatePage(const HTTPRequest &request, HTTPReply &reply);
+
+ Templateiser	templateSystem;
 
   class TSURLCallback : public TemplateCallbackClass
   {
@@ -287,9 +351,6 @@ protected:
 
   int getLevelFromGroups(const std::vector<std::string> &groups);
 
-  const char* getSessionUser ( int sessionID );
-  bool invalidateSession ( int sessionID );
-
 private:
   void flushTasks(void);
   bool verifyToken(const HTTPRequest &request, HTTPReply &reply);
@@ -298,6 +359,7 @@ private:
     double time;
     int level;
     std::string username;
+    std::vector<std::string> groups;
   } AuthInfo;
 
   std::map<int,AuthInfo> authedSessions;

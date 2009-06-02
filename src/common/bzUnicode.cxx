@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -91,7 +91,7 @@ bzUTF8Char::bzUTF8Char(unsigned int ch)
 
 const unsigned char bzUTF8Char::firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 const unsigned int bzUTF8Char::byteMask = 0xBF;
-const unsigned int bzUTF8Char::byteMark = 0x80; 
+const unsigned int bzUTF8Char::byteMark = 0x80;
 
 // Local Variables: ***
 // mode: C++ ***

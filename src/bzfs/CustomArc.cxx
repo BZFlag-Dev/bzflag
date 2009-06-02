@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,7 +44,7 @@ const char* CustomArc::sideNames[MaterialCount] = {
 CustomArc::CustomArc(bool box)
 {
   divisions = 16;
-  size[0] = size[1] = size[2] = 10.0f;
+  size = fvec3(10.0f, 10.0f, 10.0f);
   ratio = 1.0f;
   angle = 360.0f;
   texsize[0] = texsize[1] = texsize[2] = texsize[3] = -8.0f;
@@ -56,8 +56,8 @@ CustomArc::CustomArc(bool box)
   if (boxStyle) {
     divisions = 4;
     useNormals = false;
-    size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    size[2] = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+    size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
   }
 
   // setup the default textures
@@ -149,21 +149,22 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
   if (!boxStyle) {
     arc = new ArcObstacle(transform, pos, size, rotation, angle, ratio,
 			  texsize, useNormals, divisions, mats, phydrv,
-			  smoothBounce, driveThrough, shootThrough);
-  } else {
-    const float zAxis[3] = {0.0f, 0.0f, 1.0f};
-    const float origin[3] = {0.0f, 0.0f, 0.0f};
+			  smoothBounce, driveThrough, shootThrough, ricochet);
+  }
+  else {
+    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
+    const fvec3 origin(0.0f, 0.0f, 0.0f);
     MeshTransform xform;
     xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
     xform.addShift(pos);
     xform.append(transform);
-    float newSize[3];
-    newSize[0] = (float)(size[0] * M_SQRT2);
-    newSize[1] = (float)(size[1] * M_SQRT2);
-    newSize[2] = size[2];
+    fvec3 newSize;
+    newSize.x = (float)(size.x * M_SQRT2);
+    newSize.y = (float)(size.y * M_SQRT2);
+    newSize.z = size.z;
     arc = new ArcObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle, ratio,
 			  texsize, useNormals, divisions, mats, phydrv,
-			  smoothBounce, driveThrough, shootThrough);
+			  smoothBounce, driveThrough, shootThrough, ricochet);
   }
 
   arc->setName(name.c_str());
@@ -178,7 +179,7 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

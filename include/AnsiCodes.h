@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,8 +15,12 @@
 
 #include "common.h"
 
+// system headers
 #include <assert.h>
 #include <string.h>
+
+// common headers
+#include "vectors.h"
 
 // Escape character to begin ANSI codes
 #define ESC_CHAR	((char) 0x1B)
@@ -31,8 +35,8 @@
 #define ANSI_STR_NO_UNDERLINE	"\033[24m"
 #define ANSI_STR_PULSATING	"\033[5m"
 #define ANSI_STR_NO_PULSATE	"\033[25m"
-#define ANSI_STR_REVERSE	"\033[7m"	// unimplemented
-#define ANSI_STR_NO_REVERSE	"\033[27m"	// unimplemented
+#define ANSI_STR_REVERSE	"\033[7m"
+#define ANSI_STR_NO_REVERSE	"\033[27m"
 
 #define ANSI_STR_FG_BLACK	"\033[30m"	// grey
 #define ANSI_STR_FG_RED		"\033[31m"
@@ -100,34 +104,41 @@ static int ColorStringsLength = sizeof(ColorStrings);
 static bool quellAnsiCodesWarning = ColorStringsLength > 0 ? quellAnsiCodesWarning : false;
 
 // These RGB float values have to line up with the colors above
-static const float BrightColors[9][3] = {
-  {1.0f,1.0f,0.0f}, // yellow
-  {1.0f,0.0f,0.0f}, // red
-  {0.0f,1.0f,0.0f}, // green
-  {0.1f,0.2f,1.0f}, // blue
-  {1.0f,0.0f,1.0f}, // purple
-  {1.0f,1.0f,1.0f}, // white
-  {0.5f,0.5f,0.5f}, // grey
-  {1.0f,0.5f,0.0f}, // orange (nonstandard)
-  {0.0f,1.0f,1.0f}  // cyan
+static const fvec4 BrightColors[9] = {
+  fvec4(1.0f, 1.0f, 0.0f, 1.0f), // yellow
+  fvec4(1.0f, 0.0f, 0.0f, 1.0f), // red
+  fvec4(0.0f, 1.0f, 0.0f, 1.0f), // green
+  fvec4(0.1f, 0.2f, 1.0f, 1.0f), // blue
+  fvec4(1.0f, 0.0f, 1.0f, 1.0f), // purple
+  fvec4(1.0f, 1.0f, 1.0f, 1.0f), // white
+  fvec4(0.5f, 0.5f, 0.5f, 1.0f), // grey
+  fvec4(1.0f, 0.5f, 0.0f, 1.0f), // orange (nonstandard)
+  fvec4(0.0f, 1.0f, 1.0f, 1.0f)  // cyan
 };
 
 
 // strip ANSI codes from a string
-inline const char *stripAnsiCodes(const char *text)
+inline const char* stripAnsiCodes(const char* text)
 {
-#define SAC_MAX 1024
-  static char str[SAC_MAX] = {0};
-  int j = 0;
+  static char* str = NULL;
+  static size_t strSize = 0;
 
-  if (!text) {
+  if (text == NULL) {
+    delete[] str;
+    strSize = 0;
+    str = NULL;
     return NULL;
   }
 
-  int length = (int)strlen(text);
-  assert(length+1 < SAC_MAX && "stripAnsiCodes string is too long");
+  const size_t length = strlen(text);
+  if ((length + 1) > strSize) {
+    delete[] str;
+    strSize = length + 1;
+    str = new char[strSize];
+  }
 
-  for (int i = 0; i < length; i++) {
+  size_t j = 0;
+  for (size_t i = 0; i < length; i++) {
     if (text[i] == ESC_CHAR) {
       i++;
       if ((i < length) && (text[i] == '[')) {

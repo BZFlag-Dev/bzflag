@@ -72,20 +72,35 @@
 /*                             FUNCTIONS                            */
 /* ---------------------------------------------------------------- */
 
-/* Define if you have the setmode function. */
-#define HAVE_SETMODE 1
-
 /* Define if you have the ftruncate function.  */
 #define HAVE_FTRUNCATE 1
 
+/* Define if you have the ioctlsocket function. */
+#define HAVE_IOCTLSOCKET 1
+
+/* Define if you have a working ioctlsocket FIONBIO function. */
+#define HAVE_IOCTLSOCKET_FIONBIO 1
+
 /* Define if you have the setlocale function.  */
 #define HAVE_SETLOCALE 1
+
+/* Define if you have the setmode function. */
+#define HAVE_SETMODE 1
+
+/* Define if you have the strcasecmp function. */
+/* #define HAVE_STRCASECMP 1 */
 
 /* Define if you have the strdup function.  */
 #define HAVE_STRDUP 1
 
 /* Define if you have the stricmp function.  */
 #define HAVE_STRICMP 1
+
+/* Define if you have the strncasecmp function. */
+/* #define HAVE_STRNCASECMP 1 */
+
+/* Define if you have the strnicmp function. */
+#define HAVE_STRNICMP 1
 
 /* Define if you have the utime function */
 #ifndef __BORLANDC__
@@ -109,6 +124,30 @@
 
 /* Define to the function return type for recv. */
 #define RECV_TYPE_RETV int
+
+/* Define if you have the recvfrom function. */
+#define HAVE_RECVFROM 1
+
+/* Define to the type of arg 1 for recvfrom. */
+#define RECVFROM_TYPE_ARG1 SOCKET
+
+/* Define to the type pointed by arg 2 for recvfrom. */
+#define RECVFROM_TYPE_ARG2 char
+
+/* Define to the type of arg 3 for recvfrom. */
+#define RECVFROM_TYPE_ARG3 int
+
+/* Define to the type of arg 4 for recvfrom. */
+#define RECVFROM_TYPE_ARG4 int
+
+/* Define to the type pointed by arg 5 for recvfrom. */
+#define RECVFROM_TYPE_ARG5 struct sockaddr
+
+/* Define to the type pointed by arg 6 for recvfrom. */
+#define RECVFROM_TYPE_ARG6 int
+
+/* Define to the function return type for recvfrom. */
+#define RECVFROM_TYPE_RETV int
 
 /* Define if you have the send function. */
 #define HAVE_SEND 1
@@ -161,6 +200,33 @@
 /* Define this if you have struct timeval */
 #define HAVE_STRUCT_TIMEVAL 1
 
+/* Define this if struct sockaddr_in6 has the sin6_scope_id member */
+#define HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID 1
+
+/* ---------------------------------------------------------------- */
+/*                        Watt-32 tcp/ip SPECIFIC                   */
+/* ---------------------------------------------------------------- */
+
+#ifdef USE_WATT32
+  #include <tcp.h>
+  #undef byte
+  #undef word
+  #undef USE_WINSOCK
+  #undef HAVE_WINSOCK_H
+  #undef HAVE_WINSOCK2_H
+  #undef HAVE_WS2TCPIP_H
+  #define HAVE_GETADDRINFO
+  #define HAVE_GETNAMEINFO
+  #define HAVE_SYS_IOCTL_H
+  #define HAVE_SYS_SOCKET_H
+  #define HAVE_NETINET_IN_H
+  #define HAVE_NETDB_H
+  #define HAVE_ARPA_INET_H
+  #define HAVE_FREEADDRINFO
+  #define SOCKET int
+#endif
+
+
 /* ---------------------------------------------------------------- */
 /*                        COMPILER SPECIFIC                         */
 /* ---------------------------------------------------------------- */
@@ -176,7 +242,7 @@
 #define HAVE_VARIADIC_MACROS_C99 1
 #endif
 
-/* Define if the compiler supports LONGLONG. */
+/* Define if the compiler supports the 'long long' data type. */
 #if defined(__MINGW32__) || defined(__WATCOMC__)
 #define HAVE_LONGLONG 1
 #endif
@@ -197,18 +263,69 @@
 #  endif
 #endif
 
-/* VS2008 does not support Windows build targets prior to WinXP, */
-/* so, if no build target has been defined we will target WinXP. */
+/* Officially, Microsoft's Windows SDK versions 6.X do not support Windows
+   2000 as a supported build target. VS2008 default installations provide an
+   embedded Windows SDK v6.0A along with the claim that Windows 2000 is a
+   valid build target for VS2008. Popular belief is that binaries built using
+   Windows SDK versions 6.X and Windows 2000 as a build target are functional */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#  define VS2008_MINIMUM_TARGET 0x0500
+#endif
+
+/* When no build target is specified VS2008 default build target is Windows
+   Vista, which leaves out even Winsows XP. If no build target has been given
+   for VS2008 we will target the minimum Officially supported build target,
+   which happens to be Windows XP. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#  define VS2008_DEFAULT_TARGET  0x0501
+#endif
+
+/* VS2008 default target settings and minimum build target check */
 #if defined(_MSC_VER) && (_MSC_VER >= 1500)
 #  ifndef _WIN32_WINNT
-#    define _WIN32_WINNT 0x0501
+#    define _WIN32_WINNT VS2008_DEFAULT_TARGET
 #  endif
 #  ifndef WINVER
-#    define WINVER 0x0501
+#    define WINVER VS2008_DEFAULT_TARGET
 #  endif
-#  if (_WIN32_WINNT < 0x0501) || (WINVER < 0x0501)
-#    error VS2008 does not support Windows build targets prior to WinXP
+#  if (_WIN32_WINNT < VS2008_MINIMUM_TARGET) || (WINVER < VS2008_MINIMUM_TARGET)
+#    error VS2008 does not support Windows build targets prior to Windows 2000
 #  endif
+#endif
+
+/* Availability of freeaddrinfo, getaddrinfo and getnameinfo functions is
+   quite convoluted, compiler dependant and in some cases even build target
+   dependant. */
+#if defined(HAVE_WS2TCPIP_H)
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+#    define HAVE_FREEADDRINFO 1
+#    define HAVE_GETADDRINFO  1
+#    define HAVE_GETNAMEINFO  1
+#  elif defined(_MSC_VER) && (_MSC_VER >= 1200)
+#    define HAVE_FREEADDRINFO 1
+#    define HAVE_GETADDRINFO  1
+#    define HAVE_GETNAMEINFO  1
+#  endif
+#endif
+
+/* ---------------------------------------------------------------- */
+/*                        LARGE FILE SUPPORT                        */
+/* ---------------------------------------------------------------- */
+
+#if defined(_MSC_VER) && !defined(_WIN32_WCE)
+#  if (_MSC_VER >= 900) && (_INTEGRAL_MAX_BITS >= 64)
+#    define USE_WIN32_LARGE_FILES
+#  else
+#    define USE_WIN32_SMALL_FILES
+#  endif
+#endif
+
+#if defined(__MINGW32__) && !defined(USE_WIN32_LARGE_FILES)
+#  define USE_WIN32_LARGE_FILES
+#endif
+
+#if !defined(USE_WIN32_LARGE_FILES) && !defined(USE_WIN32_SMALL_FILES)
+#  define USE_WIN32_SMALL_FILES
 #endif
 
 /* ---------------------------------------------------------------- */

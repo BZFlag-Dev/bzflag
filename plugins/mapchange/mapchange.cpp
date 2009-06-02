@@ -24,7 +24,7 @@ typedef enum
   eTimedGame,
   eMaxKillScore,
   eMaxCapScore,
-  eNoPlayers, 
+  eNoPlayers,
   eManual
 }EndCond;
 
@@ -34,7 +34,7 @@ typedef enum
   eRandomInf,
   eRandomOnce,
   eNoLoop
-}CycleMode; 
+}CycleMode;
 
 EndCond		    endCond;
 double		    timeLimit;
@@ -113,7 +113,7 @@ const char* cycleToString ( CycleMode mode )
     return "Random";
   else if ( mode == eRandomOnce )
     return "OneRand";
-  
+
   return "NoLoop";
 }
 
@@ -127,7 +127,7 @@ bool loadGamesFromFile ( const char* config )
   currentIndex = -1;
   cycleMode = eLoopInf;
 
-  std::vector<std::string> lines = getFileTextLines(config); 
+  std::vector<std::string> lines = getFileTextLines(config);
   if (!lines.size())
     return false;
 
@@ -275,11 +275,19 @@ void sendMapChangeMessage ( bool end )
   std::string message = "Map change!\n";
   bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
 
-  if (end)
+  if (end) {
     message = "Good bye!\n";
-  else
-     message = "Please Rejoin!\n";
-  bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,message.c_str());
+  } else {
+    message = "Please Rejoin!\n";
+  }
+
+  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
+
+  if (!end) {
+    bz_sendJoinServer(BZ_ALLUSERS, bz_getPublicAddr().c_str(),
+                      bz_getPublicPort(), eNoTeam,
+                      bz_getPublicAddr().c_str(), "Map change");
+  }
 }
 
 void nextMap ( void )
@@ -345,7 +353,7 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
     case bz_ePlayerPartEvent:
     {
       bz_PlayerJoinPartEventData_V1 *joinPart = (bz_PlayerJoinPartEventData_V1*)eventData;
-      
+
       if ( joinPart->eventType == bz_ePlayerJoinEvent )
       {
 	if (startTime < 0)
@@ -400,7 +408,7 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
       {
 	if (currentIndex < 0 )
 	  break;
-    
+
 	bz_GetWorldEventData_V1 *world =(bz_GetWorldEventData_V1*)eventData;
 
 	world->generated = false;
@@ -573,16 +581,16 @@ void MapChangeEventHandler::process ( bz_EventData *eventData )
    if (cmd == "mapnext")
      text = "Usage /mapNext; Changes to the next map in the rotation";
    if (cmd == "mapreset")
-     text = "Usage /mapReset; Resets the map rotation back to it's inital state";
+     text = "Usage /mapReset; Resets the map rotation back to it's initial state";
    if (cmd == "mapcyclemode")
-     text = "Usage /mapCycleMode (MODE); Changes to the cycle mode for map rotation\n  Valid params are Loop, Random, OneRand, and NoLoop\n  If no paramater is given thent he current mode is listed";
+     text = "Usage /mapCycleMode (MODE); Changes to the cycle mode for map rotation\n  Valid params are Loop, Random, OneRand, and NoLoop\n  If no parameter is given then the current mode is listed";
    if (cmd == "mapendmode")
-     text = "Usage /mapEndMode (MODE); Changes to the end condition mode for map rotation\n  Valid params are Timed, MaxKill, MaxCap, Manual, and Empty\n  If no paramater is given thent he current mode is listed";
+     text = "Usage /mapEndMode (MODE); Changes to the end condition mode for map rotation\n  Valid params are Timed, MaxKill, MaxCap, Manual, and Empty\n  If no parameter is given then the current mode is listed";
    if (cmd == "maplist")
      text = "Usage /mapList; lists all the maps in the rotation";
    if (cmd == "maplimit")
-     text = "Usage /mapLimit (LIMIT); Changes the current limit to the specified value, minuets for timed games, score for others.\n  If no paramater is given thent he current limit is listed";
-  
+     text = "Usage /mapLimit (LIMIT); Changes the current limit to the specified value, minutes for timed games, score for others.\n  If no parameter is given then the current limit is listed";
+
    return text.c_str();
  }
 

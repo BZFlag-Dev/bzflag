@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: httpput.c,v 1.10 2007-07-16 21:22:12 danf Exp $
+ * $Id: httpput.c,v 1.11 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
@@ -76,14 +76,14 @@ int main(int argc, char **argv)
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
 
     /* enable uploading */
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1) ;
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
     /* HTTP PUT please */
-    curl_easy_setopt(curl, CURLOPT_PUT, 1);
+    curl_easy_setopt(curl, CURLOPT_PUT, 1L);
 
     /* specify target URL, and note that this URL should include a file
        name, not only a directory */
-    curl_easy_setopt(curl,CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
 
     /* now specify which file to upload */
     curl_easy_setopt(curl, CURLOPT_READDATA, hd_src);

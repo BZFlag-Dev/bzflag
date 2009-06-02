@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,42 +18,57 @@
 #define	BZF_OPENGL_GSTATE_H
 
 #include "common.h"
-#include "bzfgl.h"
+
+
+// copied from glew.h, instead of including bzfgl.h
+#define BZ_GL_MODULATE             0x2100
+#define BZ_GL_SRC_ALPHA            0x0302
+#define BZ_GL_ONE_MINUS_SRC_ALPHA  0x0303
+#define BZ_GL_SMOOTH               0x1D01
+#define BZ_GL_GEQUAL               0x0206
+
 
 class OpenGLMaterial;
 class OpenGLGStateRep;
 class OpenGLGStateState;
 class RenderNode;
 
-typedef void		(*OpenGLContextFunction)(void* userData);
+
+typedef void (*OpenGLContextFunction)(void* userData);
+
 
 class OpenGLGState {
   friend class OpenGLGStateBuilder;
   friend class ContextInitializer;
-  public:
-			OpenGLGState();
-			OpenGLGState(const OpenGLGState&);
-			OpenGLGState(const OpenGLGStateState&);
-			~OpenGLGState();
-    OpenGLGState&	operator=(const OpenGLGState& state);
-    void		setState() const;
-    bool		getNeedsSorting() const;
-    bool		isBlended() const;
-    bool		isTextured() const;
-    bool		isTextureMatrix() const;
-    bool		isSphereMap() const;
-    bool		isLighted() const;
-    void		addRenderNode(RenderNode* node) const;
-    static void		resetState();
-    static void		clearLists();
-    static void		renderLists();
-    static void		setStipple(GLfloat alpha);
-    static void		setStippleIndex(int index);
-    static int		getStippleIndex(float alpha);
-    static int		getOpaqueStippleIndex();
 
-    static void		init();
-    static bool		haveGLContext();
+  public:
+    OpenGLGState();
+    OpenGLGState(const OpenGLGState&);
+    OpenGLGState(const OpenGLGStateState&);
+    ~OpenGLGState();
+    OpenGLGState&	operator=(const OpenGLGState& state);
+
+    void setState() const;
+    int  getOrder() const;
+    bool getNeedsSorting() const;
+    bool isBlended() const;
+    bool isTextured() const;
+    bool isTextureMatrix() const;
+    bool isSphereMap() const;
+    bool isLighted() const;
+    void addRenderNode(RenderNode* node) const;
+
+  public:
+    static void resetState();
+    static void clearLists();
+    static void renderLists();
+    static void setStipple(float alpha);
+    static void setStippleIndex(int index);
+    static int  getStippleIndex(float alpha);
+    static int  getOpaqueStippleIndex();
+
+    static void init();
+    static bool haveGLContext();
 
     // these are in OpenGLGState for lack of a better place.  register...
     // is for clients to add a function to call when the OpenGL context
@@ -79,24 +94,22 @@ class OpenGLGState {
     // most OpenGL drivers to crash unless we destroy the context before
     // the switch and recreate it afterwards.
     //
-    static void		registerContextInitializer(
-				OpenGLContextFunction freeFunc,
-				OpenGLContextFunction initFunc,
-				void* userData);
+    static void registerContextInitializer(OpenGLContextFunction freeFunc,
+                                           OpenGLContextFunction initFunc,
+                                           void* userData);
 
-    static void		unregisterContextInitializer(
-				OpenGLContextFunction freeFunc,
-				OpenGLContextFunction initFunc,
-				void* userData);
+    static void unregisterContextInitializer(OpenGLContextFunction freeFunc,
+                                             OpenGLContextFunction initFunc,
+                                             void* userData);
 
-    static void		initContext();
-    static bool		getExecutingFreeFuncs();
-    static bool		getExecutingInitFuncs();
+    static void initContext();
+    static bool isExecutingFreeFuncs();
+    static bool isExecutingInitFuncs();
 
   private:
-    static void		initGLState();
-    static void		freeStipple(void*);
-    static void		initStipple(void*);
+    static void initGLState();
+    static void freeStipple(void*);
+    static void initStipple(void*);
 
     class ContextInitializer {
       public:
@@ -106,13 +119,6 @@ class OpenGLGState {
 			   void* data);
 	~ContextInitializer();
 
-	static void executeFreeFuncs();
-	static void executeInitFuncs();
-
-	static ContextInitializer* find(OpenGLContextFunction freeFunc,
-					OpenGLContextFunction initFunc,
-					void* data);
-
       public:
 	OpenGLContextFunction freeCallback;
 	OpenGLContextFunction initCallback;
@@ -120,23 +126,32 @@ class OpenGLGState {
 
 	ContextInitializer* prev;
 	ContextInitializer* next;
+
+      public:
+	static void executeFreeFuncs();
+	static void executeInitFuncs();
+
+	static ContextInitializer* find(OpenGLContextFunction freeFunc,
+					OpenGLContextFunction initFunc,
+					void* data);
 	static ContextInitializer* head;
 	static ContextInitializer* tail;
     };
 
   private:
-    OpenGLGStateRep*	rep;
-    static GLuint	stipples;
+    OpenGLGStateRep*    rep;
+    static unsigned int stipples;
+
   public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
 };
 
-inline bool OpenGLGState::getExecutingFreeFuncs()
+inline bool OpenGLGState::isExecutingFreeFuncs()
 {
   return executingFreeFuncs;
 }
-inline bool OpenGLGState::getExecutingInitFuncs()
+inline bool OpenGLGState::isExecutingInitFuncs()
 {
   return executingInitFuncs;
 }
@@ -144,39 +159,41 @@ inline bool OpenGLGState::getExecutingInitFuncs()
 
 class OpenGLGStateBuilder {
   public:
-			OpenGLGStateBuilder();
-			OpenGLGStateBuilder(const OpenGLGState&);
-			~OpenGLGStateBuilder();
+    OpenGLGStateBuilder();
+    OpenGLGStateBuilder(const OpenGLGState&);
+    ~OpenGLGStateBuilder();
+
     OpenGLGStateBuilder &operator=(const OpenGLGState&);
 
-    void		reset();
-    void		enableTexture(bool = true);
-    void		enableTextureMatrix(bool = true);
-    void		enableSphereMap(bool = true);
-    void		enableMaterial(bool = true);
-    void		resetBlending();
-    void		resetSmoothing();
-    void		resetAlphaFunc();
-    void		setTexture(const int texture);
-    void		setTextureMatrix(const GLfloat* matrix);
-    void		setTextureEnvMode(GLenum mode = GL_MODULATE);
-    void		setMaterial(const OpenGLMaterial& material, bool highQuality);
-    void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
-				    GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);
-    void		setStipple(float alpha);
-    void		setSmoothing(bool smooth = true);
-    void		setCulling(GLenum culling);
-    void		setShading(GLenum shading = GL_SMOOTH);
-    void		setAlphaFunc(GLenum func = GL_GEQUAL,
-				     GLclampf ref = 0.1f);
-    void		setNeedsSorting(bool);
-    OpenGLGState	getState() const;
+    void reset();
+    void setOrder(int);
+    void enableTexture(bool = true);
+    void enableTextureMatrix(bool = true);
+    void enableSphereMap(bool = true);
+    void enableMaterial(bool = true);
+    void resetBlending();
+    void resetSmoothing();
+    void resetAlphaFunc();
+    void setTexture(const int texture);
+    void setTextureMatrix(const float* matrix);
+    void setTextureEnvMode(unsigned int mode = BZ_GL_MODULATE);
+    void setMaterial(const OpenGLMaterial& material, bool highQuality);
+    void setBlending(unsigned int sFactor = BZ_GL_SRC_ALPHA,
+                     unsigned int dFactor = BZ_GL_ONE_MINUS_SRC_ALPHA);
+    void setStipple(float alpha);
+    void setSmoothing(bool smooth = true);
+    void setCulling(unsigned int culling);
+    void setShading(unsigned int shading = BZ_GL_SMOOTH);
+    void setAlphaFunc(unsigned int func = BZ_GL_GEQUAL, float ref = 0.1f);
+    void setNeedsSorting(bool);
+
+    OpenGLGState getState() const;
 
   private:
-    void		init(const OpenGLGState&);
+    void init(const OpenGLGState&);
 
   private:
-    OpenGLGStateState*	state;
+    OpenGLGStateState* state;
 };
 
 

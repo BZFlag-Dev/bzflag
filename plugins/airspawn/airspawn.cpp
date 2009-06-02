@@ -16,34 +16,32 @@ public:
   airspawn();
   virtual ~airspawn();
 
-  virtual void process ( bz_EventData *eventData );
-
-  virtual bool autoDelete ( void ) { return false;} // this will be used for more then one event
+  virtual void process(bz_EventData *eventData);
 
   float spawnRange;
 };
 
 airspawn airspawnHandler;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 {
-  bz_debugMessage(4,"airspawn plugin loaded");
+  bz_debugMessage(4, "airspawn plugin loaded");
 
   float range = 0;
-  if ( commandLine )
+  if (commandLine)
     range = (float)atof(commandLine);
-  if ( range < 0.001f )
+  if (range < 0.001f)
     range = 10.0f;
 
   airspawnHandler.spawnRange = range;
-  bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandler);
+  bz_registerEvent(bz_eGetPlayerSpawnPosEvent, &airspawnHandler);
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+BZF_PLUGIN_CALL int bz_Unload(void)
 {
-  bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&airspawnHandler);
-  bz_debugMessage(4,"airspawn plugin unloaded");
+  bz_removeEvent(bz_eGetPlayerSpawnPosEvent, &airspawnHandler);
+  bz_debugMessage(4, "airspawn plugin unloaded");
   return 0;
 }
 
@@ -55,23 +53,21 @@ airspawn::~airspawn()
 {
 }
 
-void airspawn::process ( bz_EventData *eventData )
+void airspawn::process (bz_EventData *eventData)
 {
-  switch (eventData->eventType)
-  {
-  default:
-    // really WTF!!!!
-    break;
+  switch (eventData->eventType) {
+    default:
+      // really WTF!!!!
+      break;
 
-  case bz_eGetPlayerSpawnPosEvent:
-    {
+    case bz_eGetPlayerSpawnPosEvent: {
       bz_GetPlayerSpawnPosEventData_V1 *spawn = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
 
       float randPos = rand()/(float)RAND_MAX;
       spawn->pos[2] += randPos * spawnRange;
       spawn->handled = true;
     }
-    break;
+      break;
   }
 }
 

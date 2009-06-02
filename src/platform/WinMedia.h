@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,6 +42,8 @@ class WinMedia : public BzfMedia {
     bool		isAudioTooEmpty() const;
     void		writeAudioFrames(const float* samples, int numFrames);
     void		audioSleep(bool checkLowWater, double maxTime);
+
+	virtual void	audioDriver(std::string& driverName);
 
   private:
     static DWORD WINAPI	audioThreadInit(void*);

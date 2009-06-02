@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,6 +18,7 @@
 
 void packWorldSettings ( void );
 
+
 class PlayerNetworkMessageHandler
 {
 public:
@@ -26,13 +27,14 @@ public:
   virtual void *unpackPlayer ( void * buf, int len ) = 0;
   virtual bool execute ( uint16_t &code, void * buf, int len ) = 0;
 
-  GameKeeper::Player *getPlayer(void) {return player;}
+  GameKeeper::Player *getPlayer(void) { return player; }
 
 protected:
   GameKeeper::Player *player;
 };
 
-extern std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
+
+extern std::map<uint16_t, PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
 class ClientNetworkMessageHandler
 {
@@ -41,13 +43,17 @@ public:
   virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len ) = 0;
 };
 
-extern std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
+
+extern std::map<uint16_t, ClientNetworkMessageHandler*> clientNetworkHandlers;
+
 
 void registerDefaultHandlers ( void );
 void cleanupDefaultHandlers ( void );
 
+
 // util functions
-bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state, float timeStamp, bool shortState);
+bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state,
+                       float timeStamp, bool shortState);
 
 
 #endif //_BZFS_CLIENT_MESSAGES_H_

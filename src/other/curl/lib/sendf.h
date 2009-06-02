@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.h,v 1.42 2007-10-29 20:57:03 danf Exp $
+ * $Id: sendf.h,v 1.46 2008-09-29 11:13:37 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -58,15 +58,27 @@ CURLcode Curl_client_write(struct connectdata *conn, int type, char *ptr,
 void Curl_read_rewind(struct connectdata *conn,
                       size_t extraBytesRead);
 
+/* internal read-function, does plain socket only */
+int Curl_read_plain(curl_socket_t sockfd,
+                    char *buf,
+                    size_t bytesfromsocket,
+                    ssize_t *n);
+
 /* internal read-function, does plain socket, SSL and krb4 */
 int Curl_read(struct connectdata *conn, curl_socket_t sockfd,
               char *buf, size_t buffersize,
               ssize_t *n);
-/* internal write-function, does plain socket, SSL and krb4 */
+/* internal write-function, does plain socket, SSL, SCP, SFTP and krb4 */
 CURLcode Curl_write(struct connectdata *conn,
                     curl_socket_t sockfd,
-                    void *mem, size_t len,
+                    const void *mem, size_t len,
                     ssize_t *written);
+
+/* internal write-function, does plain sockets ONLY */
+CURLcode Curl_write_plain(struct connectdata *conn,
+                          curl_socket_t sockfd,
+                          const void *mem, size_t len,
+                          ssize_t *written);
 
 /* the function used to output verbose information */
 int Curl_debug(struct SessionHandle *handle, curl_infotype type,

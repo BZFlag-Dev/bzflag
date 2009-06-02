@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,9 +20,10 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: ssluse.h,v 1.29 2007-07-29 12:54:05 bagder Exp $
+ * $Id: ssluse.h,v 1.32 2008-09-05 14:29:21 bagder Exp $
  ***************************************************************************/
 
+#ifdef USE_SSLEAY
 /*
  * This header should only be needed to get included by sslgen.c and ssluse.c
  */
@@ -58,7 +59,7 @@ void Curl_ossl_cleanup(void);
 
 ssize_t Curl_ossl_send(struct connectdata *conn,
                        int sockindex,
-                       void *mem,
+                       const void *mem,
                        size_t len);
 ssize_t Curl_ossl_recv(struct connectdata *conn, /* connection data */
                        int num,                  /* socketindex */
@@ -71,5 +72,26 @@ int Curl_ossl_check_cxn(struct connectdata *cxn);
 int Curl_ossl_seed(struct SessionHandle *data);
 
 int Curl_ossl_shutdown(struct connectdata *conn, int sockindex);
+bool Curl_ossl_data_pending(const struct connectdata *conn,
+                            int connindex);
 
-#endif
+/* API setup for OpenSSL */
+#define curlssl_init Curl_ossl_init
+#define curlssl_cleanup Curl_ossl_cleanup
+#define curlssl_connect Curl_ossl_connect
+#define curlssl_connect_nonblocking Curl_ossl_connect_nonblocking
+#define curlssl_session_free(x) Curl_ossl_session_free(x)
+#define curlssl_close_all Curl_ossl_close_all
+#define curlssl_close Curl_ossl_close
+#define curlssl_shutdown(x,y) Curl_ossl_shutdown(x,y)
+#define curlssl_set_engine(x,y) Curl_ossl_set_engine(x,y)
+#define curlssl_set_engine_default(x) Curl_ossl_set_engine_default(x)
+#define curlssl_engines_list(x) Curl_ossl_engines_list(x)
+#define curlssl_send Curl_ossl_send
+#define curlssl_recv Curl_ossl_recv
+#define curlssl_version Curl_ossl_version
+#define curlssl_check_cxn Curl_ossl_check_cxn
+#define curlssl_data_pending(x,y) Curl_ossl_data_pending(x,y)
+
+#endif /* USE_SSLEAY */
+#endif /* __SSLUSE_H */

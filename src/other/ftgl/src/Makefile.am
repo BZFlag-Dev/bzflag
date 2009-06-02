@@ -1,11 +1,13 @@
 
-lib_LTLIBRARIES = libftgl.la
+noinst_LTLIBRARIES = libftgl.la
 
 libftgl_la_SOURCES = \
     FTBuffer.cpp \
     FTCharmap.cpp \
     FTCharmap.h \
     FTCharToGlyphIndexMap.h \
+    FTCleanup.cpp \
+    FTCleanup.h \
     FTContour.cpp \
     FTContour.h \
     FTFace.cpp \
@@ -28,18 +30,20 @@ libftgl_la_SOURCES = \
     $(ftlayout_sources) \
     $(ftgl_headers) \
     $(NULL)
-
-# per-target CPPFLAGS wasn't added until automake 1.7
-AM_CPPFLAGS = -IFTGlyph -IFTFont -IFTLayout $(FT2_CPPFLAGS)
-
+libftgl_la_CPPFLAGS = -IFTGlyph -IFTFont -IFTLayout $(FT2_CPPFLAGS)
 libftgl_la_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 libftgl_la_LDFLAGS = \
         -no-undefined -version-number $(LT_VERSION)
 libftgl_la_LIBADD = \
 	$(FT2_LIBS) $(GL_LIBS)
 
+# automake 1.6.3, as included in XCode 3.4.1 on MacOS 10.4, uses
+# AM_CPPFLAGS where newer automake versions use libftgl_la_CPPFLAGS.
+# Setting AM_CPPFLAGS this way is a no-op for automake 1.10.
+AM_CPPFLAGS = $(libftgl_la_CPPFLAGS)
+
 ftgldir = $(includedir)/FTGL
-ftgl_HEADERS = $(ftgl_headers)
+noinst_HEADERS = $(ftgl_headers)
 
 ftgl_headers = \
     FTGL/ftgl.h \

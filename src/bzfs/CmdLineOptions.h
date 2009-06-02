@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -48,9 +48,6 @@ enum RabbitSelection {
 typedef std::map<FlagType*, int> FlagNumberMap;
 typedef std::map<FlagType*,bool> FlagOptionMap;
 
-#define _DEFAULT_LIN_ACCEL 0.0f
-#define _DEFAULT_ANGLE_ACCELL 0.0f
-
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
  */
@@ -72,7 +69,7 @@ struct CmdLineOptions
     lagwarnthresh(-1.0f), jitterwarnthresh(-1.0f), packetlosswarnthresh(-1.0f),
     idlekickthresh(-1.0f), timeLimit(0.0f), timeElapsed(0.0f), addedTime(0.0f),
     useGivenPort(false),
-    useFallbackPort(false), requireUDP(false), randomBoxes(false),
+    useFallbackPort(false), randomBoxes(false),
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
     useTeleporters(false), teamKillerDies(true), printScore(false),
@@ -81,7 +78,7 @@ struct CmdLineOptions
     filterFilename(""), filterAnnounce(false), filterCallsigns(false), filterChat(false), filterSimple(false),
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
-    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(2)
+    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(1)
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -149,7 +146,6 @@ struct CmdLineOptions
 
   bool			useGivenPort;
   bool			useFallbackPort;
-  bool			requireUDP;
   bool			randomBoxes;
   bool			randomCTF;
   bool			flagsOnBuildings;
@@ -175,7 +171,7 @@ struct CmdLineOptions
 
   AccessControlList	acl;
   TextChunkManager	textChunker;
-  
+
   std::list<OSDir> helpDirs;
 
   /* inappropriate language filter */
@@ -206,8 +202,8 @@ struct CmdLineOptions
   int			citySize;
   int			numTeamFlags[NumTeams];
 
-  std::string	   cacheURL;
-  std::string	   cacheOut;
+  std::string		cacheURL;
+  std::string		cacheOut;
 
   /* freezetag options */
   bool			freezeTag;
@@ -218,9 +214,9 @@ struct CmdLineOptions
   // plugins
   typedef struct
   {
-	  std::string plugin;
-	  std::string command;
-  }pluginDef;
+    std::string plugin;
+    std::string command;
+  } pluginDef;
 
   std::vector<pluginDef>	pluginList;
 };

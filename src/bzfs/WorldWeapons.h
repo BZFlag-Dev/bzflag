@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,6 +22,7 @@
 /* common interface headers */
 #include "Flag.h"
 #include "TimeKeeper.h"
+#include "vectors.h"
 
 #include "WorldEventManager.h"
 
@@ -36,7 +37,7 @@ public:
   WorldWeapons();
   ~WorldWeapons();
   void fire();
-  void add(const FlagType *type, const float *origin,
+  void add(const FlagType *type, const fvec3& origin,
 	   float direction, float tilt, TeamColor teamColor,
 	   float initdelay, const std::vector<float> &delay,
 	   TimeKeeper &sync);
@@ -51,12 +52,12 @@ public:
 private:
   struct Weapon
   {
-    const FlagType	*type;
+    const FlagType*	type;
     TeamColor		teamColor;
-    float		origin[3];
+    fvec3		origin;
     float		direction;
     float		tilt;
-    float	initDelay;
+    float		initDelay;
     std::vector<float>  delay;
     TimeKeeper		nextTime;
     int			nextDelay;
@@ -72,22 +73,28 @@ private:
 class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
+	WorldWeaponGlobalEventHandler(FlagType *type, const fvec3* origin,
+	                              float direction, float tilt,
+	                              TeamColor teamColor);
 	virtual ~WorldWeaponGlobalEventHandler();
 
 	virtual void process ( bz_EventData *eventData );
 
 protected:
-	FlagType	*type;
-	float		origin[3];
+	FlagType*	type;
+	fvec3		origin;
 	float		direction;
 	float		tilt;
 	bz_eTeamType	team;
 };
 
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt );
+int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
+                 const fvec3& pos, float tilt, float direction,
+                 int shotID, float dt);
 
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt);
+int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
+                PlayerId player, const fvec3& pos, float tilt, float direction,
+                int shotID, float dt);
 
 #endif
 

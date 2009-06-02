@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -21,14 +21,20 @@
 #include "WorldGenerators.h"
 
 // system headers
-#include <iostream>
 #include <math.h>
+#include <string>
+#include <vector>
+#include <iostream>
 
 // common headers
 #include "WorldInfo.h"
 #include "ObstacleMgr.h"
+#include "BaseBuilding.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "TimeKeeper.h"
+#include "vectors.h"
+#include "version.h"
 
 // local headers
 #include "CustomZone.h"
@@ -36,11 +42,29 @@
 #include "bzfs.h"
 
 
-WorldInfo *defineRandomWorld()
+static void CreateMapInfo(const std::string& type,
+                          std::vector<std::string>& mapInfo)
+{
+  mapInfo.push_back(std::string("author:  ") + "bzfs <random>");
+  mapInfo.push_back(std::string("version: ") + getAppVersion());
+  mapInfo.push_back(std::string("maptype: ") + type);
+  mapInfo.push_back(std::string("date:    ") + TimeKeeper::timestamp());
+
+// NOTE: add the relevant BZDB and clOptions values?
+}
+
+
+WorldInfo* defineRandomWorld()
 {
   WorldInfo* myWorld = new WorldInfo();
-  if (!myWorld)
+  if (!myWorld) {
     return NULL;
+  }
+
+  // mapinfo
+  std::vector<std::string> mapInfo;
+  CreateMapInfo("random", mapInfo);
+  myWorld->setMapInfo(mapInfo);
 
   // make walls
   float worldSize = BZDBCache::worldSize;
@@ -67,9 +91,9 @@ WorldInfo *defineRandomWorld()
     if (clOptions->randomHeights)
       h = boxHeight * ( 2.0f * (float)bzfrand() + 0.5f);
     myWorld->addBox(worldSize * ((float)bzfrand() - 0.5f),
-	worldSize * ((float)bzfrand() - 0.5f),
-	0.0f, (float)(2.0 * M_PI * bzfrand()),
-	boxBase, boxBase, h);
+                    worldSize * ((float)bzfrand() - 0.5f),
+	            0.0f, (float)(2.0 * M_PI * bzfrand()),
+	            boxBase, boxBase, h);
   }
 
   // make pyramids
@@ -81,9 +105,9 @@ WorldInfo *defineRandomWorld()
     if (clOptions->randomHeights)
       h = pyrHeight * ( 2.0f * (float)bzfrand() + 0.5f);
     myWorld->addPyramid(worldSize * ((float)bzfrand() - 0.5f),
-	worldSize * ((float)bzfrand() - 0.5f),
-	0.0f, (float)(2.0 * M_PI * bzfrand()),
-	pyrBase, pyrBase, h);
+                        worldSize * ((float)bzfrand() - 0.5f),
+                        0.0f, (float)(2.0 * M_PI * bzfrand()),
+                        pyrBase, pyrBase, h);
   }
 
   if (clOptions->useTeleporters) {
@@ -104,7 +128,8 @@ WorldInfo *defineRandomWorld()
 	continue;
 
       myWorld->addTeleporter(x, y, 0.0f, rotation,
-	  0.5f*teleWidth, teleBreadth, 2.0f*teleHeight, teleWidth, false);
+                             0.5f * teleWidth, teleBreadth,
+                             2.0f * teleHeight, teleWidth);
       linked[i][0] = linked[i][1] = 0;
       i++;
     }
@@ -142,26 +167,40 @@ WorldInfo *defineRandomWorld()
 }
 
 
-WorldInfo *defineTeamWorld()
+WorldInfo* defineTeamWorld()
 {
   WorldInfo *myWorld = new WorldInfo();
-  if (!myWorld)
+  if (!myWorld) {
     return NULL;
+  }
+
+  const bool haveRed    = clOptions->maxTeam[RedTeam] > 0;
+  const bool haveBlue   = clOptions->maxTeam[BlueTeam] > 0;
+  const bool haveGreen  = clOptions->maxTeam[GreenTeam] > 0;
+  const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
+
+  // mapinfo
+  std::vector<std::string> mapInfo;
+  CreateMapInfo("team", mapInfo);
+  if (haveRed)    { mapInfo.push_back("team:    red"); }
+  if (haveBlue)   { mapInfo.push_back("team:    blue"); }
+  if (haveGreen)  { mapInfo.push_back("team:    green"); }
+  if (havePurple) { mapInfo.push_back("team:    purple"); }
+  myWorld->setMapInfo(mapInfo);
 
   const float worldSize = BZDBCache::worldSize;
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
   const int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
   const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+  const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
 
-  // set team base and team flag safety positions
-  int t;
-  for (t = RedTeam; t <= PurpleTeam; t++)
-    bases[t] = TeamBases((TeamColor)t, true);
-
-  const bool haveRed    = clOptions->maxTeam[RedTeam] > 0;
-  const bool haveGreen  = clOptions->maxTeam[GreenTeam] > 0;
-  const bool haveBlue   = clOptions->maxTeam[BlueTeam] > 0;
-  const bool havePurple = clOptions->maxTeam[PurpleTeam] > 0;
+  // setup the default base positions
+  const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+  const float baseDist = 0.5f * (worldSize - baseSize);
+  const fvec3 redPosition    (-baseDist, 0.0f, 0.0f);
+  const fvec3 greenPosition  (+baseDist, 0.0f, 0.0f);
+  const fvec3 bluePosition   (0.0f, -baseDist, 0.0f);
+  const fvec3 purplePosition (0.0f, +baseDist, 0.0f);
 
   // make walls
   const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
@@ -174,12 +213,10 @@ WorldInfo *defineTeamWorld()
   myWorld->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize,
 		   wallHeight);
 
-  const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
-  const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
   // make pyramids
   if (haveRed) {
     // around red base
-    const float *pos = bases[RedTeam].getBasePosition(0);
+    const fvec3& pos = redPosition;
     myWorld->addPyramid(
 	pos[0] + 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -200,7 +237,7 @@ WorldInfo *defineTeamWorld()
 
   if (haveGreen) {
     // around green base
-    const float *pos = bases[GreenTeam].getBasePosition(0);
+    const fvec3& pos = greenPosition;
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize + pyrBase,
 	pos[1] - 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -221,7 +258,7 @@ WorldInfo *defineTeamWorld()
 
   if (haveBlue) {
     // around blue base
-    const float *pos = bases[BlueTeam].getBasePosition(0);
+    const fvec3& pos = bluePosition;
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] + 0.5f * baseSize - pyrBase, 0.0f, 0.0f,
@@ -242,7 +279,7 @@ WorldInfo *defineTeamWorld()
 
   if (havePurple) {
     // around purple base
-    const float *pos = bases[PurpleTeam].getBasePosition(0);
+    const fvec3& pos = purplePosition;
     myWorld->addPyramid(
 	pos[0] - 0.5f * baseSize - pyrBase,
 	pos[1] - 0.5f * baseSize + pyrBase, 0.0f, 0.0f,
@@ -271,10 +308,6 @@ WorldInfo *defineTeamWorld()
       std::cerr << "need some teams, use -mp" << std::endl;
       exit(20);
     }
-    const float *redPosition = bases[RedTeam].getBasePosition(0);
-    const float *greenPosition = bases[GreenTeam].getBasePosition(0);
-    const float *bluePosition = bases[BlueTeam].getBasePosition(0);
-    const float *purplePosition = bases[PurpleTeam].getBasePosition(0);
 
     int numBoxes = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize);
     float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
@@ -310,13 +343,13 @@ WorldInfo *defineTeamWorld()
 
       float angle = (float)(2.0 * M_PI * bzfrand());
       if (redGreen) {
-	myWorld->addBox(x, y, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox( x,  y, 0.0f, angle, boxBase, boxBase, h);
 	myWorld->addBox(-x, -y, 0.0f, angle, boxBase, boxBase, h);
 	i += 2;
       }
       if (bluePurple) {
-	myWorld->addBox(y, -x, 0.0f, angle, boxBase, boxBase, h);
-	myWorld->addBox(-y, x, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox( y, -x, 0.0f, angle, boxBase, boxBase, h);
+	myWorld->addBox(-y,  x, 0.0f, angle, boxBase, boxBase, h);
 	i += 2;
       }
     }
@@ -400,24 +433,22 @@ WorldInfo *defineTeamWorld()
 
 	linked[i / teamFactor][0] = linked[i / teamFactor][1] = 0;
 	if (redGreen) {
-	  myWorld->addTeleporter(x,   y, 0.0f, rotation, 0.5f * teleWidth,
-				 teleBreadth, 2.0f * teleHeight, teleWidth,
-				 false);
+	  myWorld->addTeleporter(x, y, 0.0f, rotation,
+	                         0.5f * teleWidth, teleBreadth,
+	                         2.0f * teleHeight, teleWidth);
 	  myWorld->addTeleporter(-x, -y, 0.0f, (float)(rotation + M_PI),
 				 0.5f * teleWidth, teleBreadth,
-				 2.0f * teleHeight, teleWidth, false);
+				 2.0f * teleHeight, teleWidth);
 	  i += 2;
 	}
 	if (bluePurple) {
 	  myWorld->addTeleporter(y, -x, 0.0f, (float)(rotation + M_PI / 2.0),
 				 0.5f * teleWidth, teleBreadth,
-				 2.0f * teleWidth,
-				 teleWidth, false);
+				 2.0f * teleWidth, teleWidth);
 	  myWorld->addTeleporter(-y, x, 0.0f,
 				 (float)(rotation + M_PI * 3.0 / 2.0),
 				 0.5f * teleWidth, teleBreadth,
-				 2.0f * teleWidth,
-				 teleWidth, false);
+				 2.0f * teleWidth, teleWidth);
 	  i += 2;
 	}
       }
@@ -505,7 +536,7 @@ WorldInfo *defineTeamWorld()
     myWorld->addPyramid(-(3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f,
 			0.0f, pyrBase, pyrBase, pyrHeight);
     myWorld->addPyramid( (3.0f * boxBase + 1.5f * avenueSize), 0.0f, 0.0f,
-			 0.0f, pyrBase, pyrBase, pyrHeight);
+			0.0f, pyrBase, pyrBase, pyrHeight);
     // add boxes, four at once with same height so no team has an advantage
     const float xmin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
     const float ymin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
@@ -548,30 +579,34 @@ WorldInfo *defineTeamWorld()
       const float yoff = boxBase + 0.5f * avenueSize;
 
       myWorld->addTeleporter( xmin-xoff,  ymin-yoff, 0.0f, (float)(1.25*M_PI),
-			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
-			     teleWidth, false);
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
       myWorld->addTeleporter( xmin-xoff, -ymin+yoff, 0.0f, (float)(0.75*M_PI),
-			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
-			     teleWidth, false);
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
       myWorld->addTeleporter(-xmin+xoff,  ymin-yoff, 0.0f, (float)(1.75*M_PI),
-			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
-			     teleWidth, false);
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
       myWorld->addTeleporter(-xmin+xoff, -ymin+yoff, 0.0f, (float)(0.25*M_PI),
-			     0.5f*teleWidth, teleBreadth, 2.0f*teleHeight,
-			     teleWidth, false);
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
 
       myWorld->addTeleporter(-3.5f*teleBreadth, -3.5f*teleBreadth, 0.0f,
-			     (float)(1.25*M_PI), 0.5f*teleWidth, teleBreadth,
-			     2.0f*teleHeight, teleWidth, false);
+			     (float)(1.25*M_PI),
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
       myWorld->addTeleporter(-3.5f*teleBreadth,  3.5f*teleBreadth, 0.0f,
-			     (float)(0.75*M_PI), 0.5f*teleWidth, teleBreadth,
-			     2.0f*teleHeight, teleWidth, false);
+			     (float)(0.75*M_PI),
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
       myWorld->addTeleporter( 3.5f*teleBreadth, -3.5f*teleBreadth, 0.0f,
-			     (float)(1.75*M_PI), 0.5f*teleWidth, teleBreadth,
-			     2.0f*teleHeight, teleWidth, false);
+			     (float)(1.75*M_PI),
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
       myWorld->addTeleporter( 3.5f*teleBreadth,  3.5f*teleBreadth, 0.0f,
-			     (float)(0.25*M_PI), 0.5f*teleWidth, teleBreadth,
-			     2.0f*teleHeight, teleWidth, false);
+			     (float)(0.25*M_PI),
+			     0.5f * teleWidth, teleBreadth,
+			     2.0f * teleHeight, teleWidth);
 
       myWorld->addLink(0, 14);
       myWorld->addLink(1, 7);
@@ -593,45 +628,46 @@ WorldInfo *defineTeamWorld()
   }
 
   // generate the required bases
-  for (t = RedTeam; t <= PurpleTeam; t++) {
+  for (int t = RedTeam; t <= PurpleTeam; t++) {
     if (clOptions->maxTeam[t] == 0) {
       bases.erase(t);
-    } else {
+    }
+    else {
       CustomZone zone;
-      float p[3] = {0.0f, 0.0f, 0.0f};
-      const float size[3] = {baseSize * 0.5f, baseSize * 0.5f, 0.0f};
+      fvec3 pos(0.0f, 0.0f, 0.0f);
+      const fvec3 size(baseSize * 0.5f, baseSize * 0.5f, 0.0f);
       const float safeOff = 0.5f * (baseSize + pyrBase);
       switch (t) {
 	case RedTeam: {
-	  p[0] = (-worldSize + baseSize) / 2.0f;
-	  p[1] = 0.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
+	  pos[0] = (-worldSize + baseSize) / 2.0f;
+	  pos[1] = 0.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] - safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] + safeOff, myWorld);
 	  break;
 	}
 	case GreenTeam: {
-	  p[0] = (worldSize - baseSize) / 2.0f;
-	  p[1] = 0.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
+	  pos[0] = (worldSize - baseSize) / 2.0f;
+	  pos[1] = 0.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] - safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] + safeOff, myWorld);
 	  break;
 	}
 	case BlueTeam: {
-	  p[0] = 0.0f;
-	  p[1] = (-worldSize + baseSize) / 2.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
+	  pos[0] = 0.0f;
+	  pos[1] = (-worldSize + baseSize) / 2.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] + safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] + safeOff, myWorld);
 	  break;
 	}
 	case PurpleTeam: {
-	  p[0] = 0.0f;
-	  p[1] = (worldSize - baseSize) / 2.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
-	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
-	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
+	  pos[0] = 0.0f;
+	  pos[1] = (worldSize - baseSize) / 2.0f;
+	  myWorld->addBase(pos, 0.0f, size, t);
+	  zone.addFlagSafety(pos[0] - safeOff, pos[1] - safeOff, myWorld);
+	  zone.addFlagSafety(pos[0] + safeOff, pos[1] - safeOff, myWorld);
 	  break;
 	}
       }
@@ -639,6 +675,19 @@ WorldInfo *defineTeamWorld()
   }
 
   OBSTACLEMGR.makeWorld();
+
+  // make local bases
+  unsigned int i;
+  const ObstacleList& baseList = OBSTACLEMGR.getBases();
+  for (i = 0; i < baseList.size(); i++) {
+    const BaseBuilding* base = (const BaseBuilding*) baseList[i];
+    TeamColor color = (TeamColor)base->getBaseTeam();
+    if (bases.find(color) == bases.end()) {
+      bases[color] = TeamBases((TeamColor)color);
+    }
+    bases[color].addBase(base);
+  }
+
   myWorld->finishWorld();
 
   return myWorld;

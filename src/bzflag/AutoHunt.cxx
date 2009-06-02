@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -158,7 +158,7 @@ static Player* findEnemyLeader();
 static void printConfig();
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void resetArrays()
 {
@@ -177,7 +177,7 @@ static void resetArrays()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void parse(const std::string& cmd)
 {
@@ -418,11 +418,11 @@ static void parse(const std::string& cmd)
   if (errors.size() > 0) {
     std::string parseError = "AutoHunt: ";
     parseError += cmd;
-    controlPanel->addMessage(parseError, -1);
+    controlPanel->addMessage(parseError, ControlPanel::MessageCurrent);
     for (int i = 0; i < (int)errors.size(); i++) {
       std::string error = "  Bad Token: ";
       error += errors[i];
-      controlPanel->addMessage(error, -1);
+      controlPanel->addMessage(error, ControlPanel::MessageCurrent);
     }
   }
 
@@ -440,7 +440,7 @@ static void parse(const std::string& cmd)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void setupHuntInfoRange(HuntInfo& hi, const HuntRange& hr)
 {
@@ -464,7 +464,7 @@ static void setupHuntInfoRange(HuntInfo& hi, const HuntRange& hr)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void copyToIntArray(int array[LevelCount], const HuntInfo& hi)
 {
@@ -478,7 +478,7 @@ static void copyToIntArray(int array[LevelCount], const HuntInfo& hi)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void copyToFloatArray(float array[LevelCount], const HuntInfo& hi)
 {
@@ -492,7 +492,7 @@ static void copyToFloatArray(float array[LevelCount], const HuntInfo& hi)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void printConfig()
 {
@@ -505,11 +505,11 @@ static void printConfig()
   std::map<int, float>::const_iterator cit;
   FlagPairMap::const_iterator it;
   for (it = FlagPairs.begin(); it != FlagPairs.end(); it++) {
-    logDebugMessage(2,"  %s\n", (it->first == Flags::Null) ? "NULL" : it->first->flagAbbv);
+    logDebugMessage(2,"  %s\n", (it->first == Flags::Null) ? "NULL" : it->first->flagAbbv.c_str());
     const FlagHuntInfoMap& fhim = it->second;
     FlagHuntInfoMap::const_iterator fhim_it;
     for (fhim_it = fhim.begin(); fhim_it != fhim.end(); fhim_it++) {
-      logDebugMessage(2,"    %s\n", fhim_it->first->flagAbbv);
+      logDebugMessage(2,"    %s\n", fhim_it->first->flagAbbv.c_str());
       const HuntInfo& hi = fhim_it->second;
       for (cit = hi.coords.begin(); cit != hi.coords.end(); cit++) {
 	logDebugMessage(2,"      level: %i, dist: %f\n", cit->first, cit->second);
@@ -551,7 +551,7 @@ static void printConfig()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static Player* findEnemyLeader()
 {
@@ -582,7 +582,7 @@ static Player* findEnemyLeader()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 // FIXME: rabbits?
 
@@ -611,7 +611,7 @@ static bool isEnemy(const Player* p)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static bool isBeatingMe(const Player* p)
 {
@@ -622,7 +622,7 @@ static bool isBeatingMe(const Player* p)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static bool isTeamKiller(const Player* p, float tkRatio)
 {
@@ -636,7 +636,7 @@ static bool isTeamKiller(const Player* p, float tkRatio)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void clearPlayers()
 {
@@ -662,20 +662,17 @@ static void clearPlayers()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static float distBetweenPlayers(const Player* p0, const Player* p1)
 {
-  const float* pos0 = p0->getPosition();
-  const float* pos1 = p1->getPosition();
-  const float dx = pos0[0] - pos1[0];
-  const float dy = pos0[1] - pos1[1];
-  const float dz = pos0[2] - pos1[2];
-  return sqrtf((dx * dx) + (dy * dy) + (dz * dz));
+  const fvec3& pos0 = p0->getPosition();
+  const fvec3& pos1 = p1->getPosition();
+  return (pos1 - pos0).length();
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static int getHuntInfoLevel(const HuntInfo& hi, float dist)
 {
@@ -690,7 +687,7 @@ static int getHuntInfoLevel(const HuntInfo& hi, float dist)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void huntPlayers()
 {
@@ -798,7 +795,7 @@ static void huntPlayers()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static std::string getExpandedString(const std::string& varname)
 {
@@ -831,8 +828,8 @@ static std::string getExpandedString(const std::string& varname)
 }
 
 
-/******************************************************************************/
-/******************************************************************************/
+//============================================================================//
+//============================================================================//
 
 void AutoHunt::update()
 {
@@ -857,7 +854,7 @@ void AutoHunt::update()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 const char* AutoHunt::getColorString(int level)
 {
@@ -876,7 +873,7 @@ const char* AutoHunt::getColorString(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 int AutoHunt::getChevronCount(int level)
 {
@@ -888,7 +885,7 @@ int AutoHunt::getChevronCount(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getChevronSpace(int level)
 {
@@ -900,7 +897,7 @@ float AutoHunt::getChevronSpace(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getChevronDelta(int level)
 {
@@ -912,7 +909,7 @@ float AutoHunt::getChevronDelta(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getChevronInnerAlpha(int level)
 {
@@ -924,7 +921,7 @@ float AutoHunt::getChevronInnerAlpha(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getChevronOuterAlpha(int level)
 {
@@ -936,7 +933,7 @@ float AutoHunt::getChevronOuterAlpha(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getBlinkPeriod(int level)
 {
@@ -948,7 +945,7 @@ float AutoHunt::getBlinkPeriod(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getInnerBlinkThreshold(int level)
 {
@@ -960,7 +957,7 @@ float AutoHunt::getInnerBlinkThreshold(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 float AutoHunt::getOuterBlinkThreshold(int level)
 {
@@ -972,7 +969,7 @@ float AutoHunt::getOuterBlinkThreshold(int level)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 // Local Variables: ***
 // mode: C++ ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,8 +25,9 @@
 #include "ActionBinding.h"
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
-#include "playing.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
@@ -199,7 +200,6 @@ void KeyboardMapMenu::execute()
   const HUDuiControl* const _focus = getNav().get();
   if (_focus == reset) {
     ActionBinding::instance().resetBindings();
-    update();
   } else if (_focus == quickKeys) {
     if (!quickKeysMenu) quickKeysMenu = new QuickKeysMenu;
     HUDDialogStack::get()->push(quickKeysMenu);
@@ -247,7 +247,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
@@ -256,7 +256,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   // reposition help
   HUDuiLabel* help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(bigFontSize);
-  const float helpWidth = fm.getStringWidth(fontFace->getFMFace(), bigFontSize, help->getString().c_str());
+  const float helpWidth = fm.getStringWidth(fontFace->getFMFace(), bigFontSize, help->getString());
   x = 0.5f * ((float)_width - helpWidth);
   y -= 1.1f * fm.getStringHeight(fontFace->getFMFace(), bigFontSize);
   help->setPosition(x, y);

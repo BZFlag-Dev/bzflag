@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag Plugins
-dnl Copyright (c) 1993 - 2008 Tim Riker
+dnl Copyright (c) 1993 - 2009 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -39,7 +39,7 @@ AC_PREREQ(2.52)
 
 AC_INIT(BZFlag Plugins, 14, [http://BZFlag.org], bzflag-plugins)
 AC_CONFIG_SRCDIR(SAMPLE_PLUGIN/SAMPLE_PLUGIN.cpp)
-AC_REVISION($Revision $)
+AC_REVISION($Revision$)
 
 AC_CONFIG_AUX_DIR([.])
 
@@ -273,7 +273,7 @@ if test x$enable_debug = xyes ; then
 else
     case $host_os in
 	linux*|cygwin|mingw32*)
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fno-exceptions"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    ;;
 	solaris*)
 	    CONF_CFLAGS="$CONF_CFLAGS -O"
@@ -282,7 +282,7 @@ else
 	macos|darwin*)
 	    CONF_CFLAGS="$CONF_CFLAGS -O3"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O3"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fomit-frame-pointer"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fexpensive-optimizations"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    if test x$enable_profiling = xyes ; then
@@ -292,7 +292,7 @@ else
 	    ;;
 	irix)
 	    if test x$host_cpu = xmips64 ; then
-		FLAGS="-O3 -ffast-math -fomit-frame-pointer"
+		FLAGS="-O3 -fomit-frame-pointer"
 		FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
 		CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 		CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
@@ -303,7 +303,7 @@ else
 	    ;;
 	beos)
 	    CONF_CFLAGS="$CONF_CFLAGS -O2"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -fomit-frame-pointer"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    ;;
     esac
@@ -336,8 +336,6 @@ dnl **************************************
 
 AC_CONFIG_FILES([
 	HoldTheFlag/Makefile
-	MSVC/Makefile
-	MSVC/VC8/Makefile
 	Makefile
 	Phoenix/Makefile
 	RogueGenocide/Makefile
@@ -361,7 +359,6 @@ AC_CONFIG_FILES([
 	nagware/Makefile
 	playHistoryTracker/Makefile
 	plugin_utils/Makefile
-	plugin_utils/VC8/Makefile
 	python/Makefile
 	rabidRabbit/Makefile
 	recordmatch/Makefile

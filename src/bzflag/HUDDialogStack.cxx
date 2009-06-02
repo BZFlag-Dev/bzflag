@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,6 +15,7 @@
 
 /* local implementation headers */
 #include "playing.h"
+#include "guiplaying.h"
 #include "HUDui.h"
 #include "HUDDialog.h"
 
@@ -59,7 +60,7 @@ void HUDDialogStack::push(HUDDialog* dialog)
   }
   stack.push_back(dialog);
   HUDui::setDefaultKey(dialog->getDefaultKey());
-  HUDui::setFocus(dialog->getFocus());
+  dialog->reFocus();
   dialog->resize(getMainWindow()->getWidth(), getMainWindow()->getHeight());
   dialog->show();
 }
@@ -75,7 +76,7 @@ void HUDDialogStack::pop()
     if (index > 0) {
       HUDDialog* dialog = stack[index - 1];
       HUDui::setDefaultKey(dialog->getDefaultKey());
-      HUDui::setFocus(dialog->getFocus());
+	  dialog->reFocus();
       dialog->resize(getMainWindow()->getWidth(),
 		     getMainWindow()->getHeight());
       dialog->show();

@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993 - 2008 Tim Riker
+dnl Copyright (c) 1993 - 2009 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -46,9 +46,14 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.5, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.27, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
+
+# When --libdir has not been used put plugins in bzflag's own directory.
+if test "x$libdir" = 'x${exec_prefix}/lib' ; then
+	libdir="$libdir/bzflag"
+fi
 
 AC_CONFIG_AUX_DIR(misc)
 
@@ -93,14 +98,8 @@ AC_SUBST(BZFLAG_VERSION)
 AC_SUBST(BZFLAG_DATE)
 AC_SUBST(CONF_TIME)
 
-# Let the C++ code know about OS and user
+# Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
-AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
-if test $HASWHOAMI = yes; then
-    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
-else
-    AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
-fi
 
 # automatically enable and load our configure cache file if available
 BZ_CONFIG_CACHE([config.cache.${host_os}.${ac_hostname}])
@@ -122,7 +121,7 @@ if test x$with_SDL != xno; then
 fi
 
 # check whether plugins are desired
-AC_ARG_ENABLE(plugins, [  --enable-plugins          turn on compilation of plugins])
+AC_ARG_ENABLE(plugins,  [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
     AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
@@ -183,6 +182,9 @@ AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Force compilation o
 # compile our own ftgl
 AC_ARG_ENABLE(ftgl_build, [  --enable-ftgl-build     Force compilation of ftgl])
 
+# compile our own glew
+AC_ARG_ENABLE(glew_build, [  --enable-glew-build     Force compilation of glew])
+
 # compile our own regex
 AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
 
@@ -198,6 +200,7 @@ if test "x$enable_all_builds" = "xyes" ; then
     enable_curl_build=yes
     enable_freetype_build=yes
     enable_ftgl_build=yes
+    enable_glew_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
 fi
@@ -268,7 +271,7 @@ BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 
 dnl detect a usable system zlib compression library
 if test "x$enable_zlib_build" != "xyes" ; then
-    AC_CHECK_LIB(z, compress, LIBZ="-lz", LIBZ="")
+    AC_CHECK_LIB(z, compressBound, LIBZ="-lz", LIBZ="")
 fi
 
 dnl detect a usable system c-ares lookup library
@@ -316,6 +319,22 @@ AC_CHECK_LIB([m], [sinf], [AC_DEFINE([HAVE_SINF],[1],[libm includes sinf])])
 AC_CHECK_LIB([m], [sqrtf], [AC_DEFINE([HAVE_SQRTF],[1],[libm includes sqrtf])])
 AC_CHECK_LIB([m], [tanf], [AC_DEFINE([HAVE_TANF],[1],[libm includes tanf])])
 
+AC_MSG_CHECKING([for numeric type sizes])
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(short int)
+AC_CHECK_SIZEOF(long int)
+AC_CHECK_SIZEOF(long long int)
+AC_CHECK_SIZEOF(float)
+AC_CHECK_SIZEOF(double)
+AC_CHECK_SIZEOF(long double)
+AC_DEFINE_UNQUOTED(SIZEOF_INT,           $ac_cv_sizeof_int,           [sizeof int])
+AC_DEFINE_UNQUOTED(SIZEOF_SHORT_INT,     $ac_cv_sizeof_short_int,     [sizeof short int])
+AC_DEFINE_UNQUOTED(SIZEOF_LONG_INT,      $ac_cv_sizeof_long_int,      [sizeof long int])
+AC_DEFINE_UNQUOTED(SIZEOF_LONG_LONG_INT, $ac_cv_sizeof_long_long_int, [sizeof long long int])
+AC_DEFINE_UNQUOTED(SIZEOF_FLOAT,         $ac_cv_sizeof_float,         [sizeof float])
+AC_DEFINE_UNQUOTED(SIZEOF_DOUBLE,        $ac_cv_sizeof_double,        [sizeof double])
+AC_DEFINE_UNQUOTED(SIZEOF_LONG_DOUBLE,   $ac_cv_sizeof_long_double,   [sizeof long double])
+
 
 dnl *************************
 dnl *** Check for headers ***
@@ -337,6 +356,7 @@ AC_CHECK_HEADERS( \
 	bstring.h \
 	dlfcn.h \
 	dsound.h \
+	fcntl.h \
 	inttypes.h \
 	linux/input.h \
 	process.h \
@@ -352,7 +372,6 @@ AC_CHECK_HEADERS( \
 if test "x$enable_regex_build" != "xyes" ; then
     AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]) )
 fi
-
 
 dnl **********************************
 dnl *** Check for types/structures ***
@@ -470,15 +489,20 @@ case $host_os in
     beos*)
 	;;
     *)
+	CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 	if test x$no_x = x; then
 	    GLIBS="$X_PRE_LIBS -lX11 $EXTRA_LIBS $GLIBS"
 	fi
 
 	AC_CHECK_LIB(Xext, XextAddDisplay, [GLIBS="-lXext $GLIBS"], [], $GLIBS)
 
-	if test x$host_os = xlinux-gnu -o x$host_os = xlinux ; then
-	    AC_CHECK_LIB(Xxf86vm, XF86VidModeGetAllModeLines, [GLIBS="-lXxf86vm $GLIBS"], [], $GLIBS)
-	fi
+	AC_CHECK_HEADERS(X11/extensions/xf86vmode.h,
+	    [AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension,
+		[ AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
+		  GLIBS="-lXxf86vm $GLIBS"
+		],,
+	    )],,[#include <X11/Xlib.h>]
+	)
 	;;
 esac
 
@@ -534,22 +558,6 @@ if test "x$enable_threads" != "xno" ; then
     AC_MSG_RESULT([$pthread_check])
 fi
 
-# Check for the GLEW library (GL Extension Wrangler)
-AC_MSG_CHECKING([for GLEW library])
-tmpLIBS=$LIBS
-GLEW_LIBS="-lGLEW"
-LIBS=$GLEW_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-				[[glewInit()]])],
-	       [glew_check="yes"], [glew_check="no"])
-if test $glew_check = "yes"; then
-    AC_DEFINE(HAVE_GLEW, 1, [GLEW library is available])
-else
-    GLEW_LIBS=""
-fi
-AC_MSG_RESULT([$glew_check])
-AC_SUBST(GLEW_LIBS)
-LIBS=$tmpLIBS
 
 case $host_os in
     mingw32*)
@@ -602,7 +610,7 @@ if test x$with_SDL = xyes; then
     fi
 
     if test x$with_SDL = xno ; then
-	AM_PATH_SDL(1.2.5, with_SDL=yes, with_SDL=no)
+	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
 	if test x$with_SDL = xno; then
 	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
 	fi
@@ -615,22 +623,6 @@ if test x$with_SDL = xyes; then
 fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
 
-# Check for the SDL_image library
-AC_MSG_CHECKING([for SDL_image library])
-tmpLIBS=$LIBS
-SDL_IMAGE_LIBS="-lSDL_image"
-LIBS=$SDL_IMAGE_LIBS
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_image.h>]],
-				[[IMG_Load(NULL)]])],
-	       [sdl_image_check="yes"], [sdl_image_check="no"])
-if test "x$sdl_image_check" = "xyes"; then
-    AC_DEFINE(HAVE_SDL_IMAGE, 1, [SDL_image library is available])
-else
-    SDL_IMAGE_LIBS=""
-fi
-AC_MSG_RESULT([$sdl_image_check])
-AC_SUBST(SDL_IMAGE_LIBS)
-LIBS=$tmpLIBS
 
 # dumb temp hacks to add missing linkage stuff
 case $host_os in
@@ -676,9 +668,9 @@ AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
-	FLAGS="-Wall -W -Wundef -Wshadow"
+	# time to use -Wextra instead of -W ? (gcc 3.4+)
+	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
@@ -703,7 +695,6 @@ case $host_os in
 	esac;;
      cygwin)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	AC_DEFINE(XF86VIDMODE_EXT, 1, [XFree86 Video Mode Extension])
 	FLAGS="-Wall -W -mcpu=$host_cpu"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
@@ -767,7 +758,7 @@ if test x$enable_debug = xyes ; then
 else
     case $host_os in
 	linux*|cygwin|mingw32*)
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fno-exceptions"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    ;;
 	solaris*)
 	    CONF_CFLAGS="$CONF_CFLAGS -O"
@@ -776,7 +767,7 @@ else
 	macos|darwin*)
 	    CONF_CFLAGS="$CONF_CFLAGS -O3"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O3"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fomit-frame-pointer"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fexpensive-optimizations"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    if test x$enable_profiling = xyes ; then
@@ -786,7 +777,7 @@ else
 	    ;;
 	irix)
 	    if test x$host_cpu = xmips64 ; then
-		FLAGS="-O3 -ffast-math -fomit-frame-pointer"
+		FLAGS="-O3 -fomit-frame-pointer"
 		FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
 		CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 		CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
@@ -797,7 +788,7 @@ else
 	    ;;
 	beos)
 	    CONF_CFLAGS="$CONF_CFLAGS -O2"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -ffast-math -fomit-frame-pointer"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -O2 -fomit-frame-pointer"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    ;;
     esac
@@ -936,8 +927,7 @@ if test x$enable_client != xno; then
     have_gl=no
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
-	[Client build is enabled, but OpenGL does not seem to be fully available
-... disabling BZFlag client])
+	[Client build is enabled, but OpenGL does not seem to be fully available ... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
     else
@@ -962,8 +952,7 @@ if test x$enable_bzrobots = xno; then
 else
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
-	[BZRobots build is enabled, but OpenGL does not seem to be fully available
-... disabling BZRobots client])
+	[BZRobots build is enabled, but OpenGL does not seem to be fully available ... disabling BZRobots client])
 	AM_CONDITIONAL(BZROBOTS_INCLUDED, false)
 	enable_bzrobots=no
 	AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
@@ -1085,6 +1074,9 @@ fi
 AC_SUBST(LIBZ)
 AC_MSG_RESULT($BUILD_ZLIB)
 AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
+if test "x$BUILD_ZLIB" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/zlib"
+fi
 
 
 dnl figure out whether we need to build the included curl library
@@ -1126,13 +1118,13 @@ fi
 AC_SUBST(LIBFREETYPE)
 AC_MSG_RESULT($BUILD_FREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, test "x$BUILD_FREETYPE" = "xyes")
-else # have_gl
+else # enable_client
 dnl clients are not being built
 BUILD_FREETYPE="no (clients disabled)"
 AC_MSG_NOTICE([Freetype2 is disabled because no clients are being built])
 AC_SUBST(LIBFREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, false)
-fi # have_gl
+fi # enable_client
 if test "x$BUILD_FREETYPE" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
 fi
@@ -1143,12 +1135,13 @@ if test "x$enable_client" != "xno" ; then
 dnl figure out whether we need to build the included ftgl library
 BUILD_FTGL="no (using system)"
 if test "x$enable_ftgl_build" != "xyes" ; then
-dnl test for required feature first present in FTGL 2.1.3
+dnl test for required feature first present in FTGL 2.2.0
     AC_TRY_COMPILE(
 	[#include <FTGL/ftgl.h>],
 	[FTFont* xyz = new FTTextureFont("xyz.ttf");
 	 double d = xyz->Advance("xyz");
-	 xyz->Render("xyz");],
+	 // make sure we have the FTGL::RENDER_NOBLEND value
+	 xyz->Render("xyz", -1, FTPoint(), FTPoint(), FTGL::RENDER_NOBLEND);],
 	LIBFTGL=-lftgl
 	)
 fi
@@ -1161,16 +1154,49 @@ fi
 AC_SUBST(LIBFTGL)
 AC_MSG_RESULT($BUILD_FTGL)
 AM_CONDITIONAL(BUILD_FTGL, test "x$BUILD_FTGL" = "xyes")
-else # have_gl
+else # enable_client
 dnl clients are not being built
 BUILD_FTGL="no (clients disabled)"
 AC_MSG_NOTICE([FTGL is disabled because no clients are being built])
 AC_SUBST(LIBFTGL)
 AM_CONDITIONAL(BUILD_FTGL, false)
-fi # have_gl
+fi # enable_client
 if test "x$BUILD_FTGL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
 fi
+
+
+# GLEW
+if test "x$enable_client" != "xno" ; then
+# Check for the GLEW library (GL Extension Wrangler)
+if test "x$enable_glew_build" != "xyes" ; then
+    AC_MSG_CHECKING([for GLEW library])
+    tmpLIBS=$LIBS
+    GLEW_LIBS="-lGLEW"
+    LIBS=$GLEW_LIBS
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
+				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
+		   [glew_check="yes"],
+		   [glew_check="no  (missing, or older than version 1.5.1)"])
+    if test "x$glew_check" != "xyes"; then
+	GLEW_LIBS=""
+    fi
+    AC_MSG_RESULT([$glew_check])
+    AC_SUBST(GLEW_LIBS)
+    LIBS=$tmpLIBS
+fi
+AC_MSG_CHECKING(whether to build the included GLEW library)
+BUILD_GLEW="no (using system)"
+if test "x$GLEW_LIBS" = "x" ; then
+    BUILD_GLEW="yes"
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
+fi
+AC_MSG_RESULT($BUILD_GLEW)
+else # enable_client
+BUILD_GLEW="no (clients disabled)"
+AC_MSG_NOTICE([GLEW is disabled because no clients are being built])
+fi # enable_client
+AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
 
 
 # make sure ECHO and ECHO_N got defined and substituted
@@ -1197,9 +1223,15 @@ bz_configure_args="$ac_configure_args"
 
 if test x$enable_plugins != xno ; then
     AC_CONFIG_SUBDIRS(plugins)
+    # install plugins where bzfs expects them to be
+    ac_configure_args="$ac_configure_args --libdir=$libdir"
 fi
 if test "x$BUILD_FTGL" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ftgl)
+    if test "x$BUILD_FREETYPE" = "xyes" ; then
+	# instruct FTGL to use the included freetype
+	ac_configure_args="$ac_configure_args --enable-freetype-build"
+    fi
 fi
 if test "x$BUILD_ARES" = "xyes" ; then
     AC_CONFIG_SUBDIRS(src/other/ares)
@@ -1230,6 +1262,7 @@ AC_CONFIG_FILES([
 	data/skins/rabbit/Makefile
 	data/skins/rogue/Makefile
 	data/skins/observer/Makefile
+	data/sounds/Makefile
 	debian/Makefile
 	doc/Makefile
 	doc/faq/Makefile
@@ -1261,6 +1294,7 @@ AC_CONFIG_FILES([
 	src/bzflag/Makefile
 	src/bzfs/Makefile
 	src/bzrobots/Makefile
+	src/clientbase/Makefile
 	src/common/Makefile
 	src/date/Makefile
 	src/game/Makefile
@@ -1280,12 +1314,14 @@ AC_CONFIG_FILES([
 	src/platform/Makefile
 	src/scene/Makefile
 	tools/Makefile
+	tools/StartBZFS/Makefile
+	tools/StartBZFS/Properties/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/vc8/Makefile
 	tools/tankview/Makefile
 	tools/tankview/vc8/Makefile
 	MSVC/Makefile
-	MSVC/VC8/Makefile
+	MSVC/build/Makefile
 ])
 AC_OUTPUT
 
@@ -1378,6 +1414,7 @@ else
     fi
 fi
 
+
 dnl
 dnl Expand the variables for summary reporting
 dnl
@@ -1385,6 +1422,8 @@ prefix=`eval "echo $prefix"`
 prefix=`eval "echo $prefix"`
 bindir=`eval "echo $bindir"`
 bindir=`eval "echo $bindir"`
+libdir=`eval "echo $libdir"`
+libdir=`eval "echo $libdir"`
 sysconfdir=`eval "echo $sysconfdir"`
 sysconfdir=`eval "echo $sysconfdir"`
 mandir=`eval "echo $mandir"`
@@ -1408,6 +1447,7 @@ BZ_UNBOLD
 AC_MSG_RESULT([])
 AC_MSG_RESULT([             Prefix: ${prefix}])
 AC_MSG_RESULT([           Binaries: ${bindir}])
+AC_MSG_RESULT([            Plugins: ${libdir}])
 AC_MSG_RESULT([Configuration files: ${sysconfdir}])
 AC_MSG_RESULT([       Manual pages: ${mandir}])
 AC_MSG_RESULT([])
@@ -1423,6 +1463,7 @@ AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
 AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
 AC_MSG_RESULT([Build freetype2 ...: $BUILD_FREETYPE])
 AC_MSG_RESULT([Build ftgl ........: $BUILD_FTGL])
+AC_MSG_RESULT([Build glew ........: $BUILD_GLEW])
 AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
 AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
 AC_MSG_RESULT([])

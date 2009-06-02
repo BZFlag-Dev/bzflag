@@ -18,7 +18,7 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip.c,v 1.191 2008-03-11 22:55:24 bagder Exp $
+ * $Id: hostip.c,v 1.214 2008-11-06 17:19:57 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -55,6 +55,9 @@
 #ifdef HAVE_SETJMP_H
 #include <setjmp.h>
 #endif
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 
 #ifdef HAVE_PROCESS_H
 #include <process.h>
@@ -72,13 +75,15 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
-#if defined(HAVE_INET_NTOA_R) && !defined(HAVE_INET_NTOA_R_DECL)
-#include "inet_ntoa_r.h"
-#endif
-
 #include "memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
+
+#if defined(HAVE_ALARM) && defined(SIGALRM) && defined(HAVE_SIGSETJMP) \
+    && !defined(USE_ARES)
+/* alarm-based timeouts can only be used with all the dependencies satisfied */
+#define USE_ALARM_TIMEOUT
+#endif
 
 /*
  * hostip.c explained
@@ -158,31 +163,46 @@ void Curl_global_host_cache_dtor(void)
  */
 int Curl_num_addresses(const Curl_addrinfo *addr)
 {
-  int i;
-  for (i = 0; addr; addr = addr->ai_next, i++)
-    ;  /* empty loop */
+  int i = 0;
+  while(addr) {
+    addr = addr->ai_next;
+    i++;
+  }
   return i;
 }
 
 /*
  * Curl_printable_address() returns a printable version of the 1st address
- * given in the 'ip' argument. The result will be stored in the buf that is
+ * given in the 'ai' argument. The result will be stored in the buf that is
  * bufsize bytes big.
  *
  * If the conversion fails, it returns NULL.
  */
-const char *Curl_printable_address(const Curl_addrinfo *ip,
-                                   char *buf, size_t bufsize)
+const char *
+Curl_printable_address(const Curl_addrinfo *ai, char *buf, size_t bufsize)
 {
-  const void *ip4 = &((const struct sockaddr_in*)ip->ai_addr)->sin_addr;
-  int af = ip->ai_family;
-#ifdef CURLRES_IPV6
-  const void *ip6 = &((const struct sockaddr_in6*)ip->ai_addr)->sin6_addr;
-#else
-  const void *ip6 = NULL;
+  const struct sockaddr_in *sa4;
+  const struct in_addr *ipaddr4;
+#ifdef ENABLE_IPV6
+  const struct sockaddr_in6 *sa6;
+  const struct in6_addr *ipaddr6;
 #endif
 
-  return Curl_inet_ntop(af, af == AF_INET ? ip4 : ip6, buf, bufsize);
+  switch (ai->ai_family) {
+    case AF_INET:
+      sa4 = (const void *)ai->ai_addr;
+      ipaddr4 = &sa4->sin_addr;
+      return Curl_inet_ntop(ai->ai_family, (const void *)ipaddr4, buf, bufsize);
+#ifdef ENABLE_IPV6
+    case AF_INET6:
+      sa6 = (const void *)ai->ai_addr;
+      ipaddr6 = &sa6->sin6_addr;
+      return Curl_inet_ntop(ai->ai_family, (const void *)ipaddr6, buf, bufsize);
+#endif
+    default:
+      break;
+  }
+  return NULL;
 }
 
 /*
@@ -332,7 +352,7 @@ Curl_cache_addr(struct SessionHandle *data,
   entry_len = strlen(entry_id);
 
   /* Create a new cache entry */
-  dns = (struct Curl_dns_entry *) calloc(sizeof(struct Curl_dns_entry), 1);
+  dns = calloc(sizeof(struct Curl_dns_entry), 1);
   if(!dns) {
     free(entry_id);
     return NULL;
@@ -392,19 +412,8 @@ int Curl_resolv(struct connectdata *conn,
   struct SessionHandle *data = conn->data;
   CURLcode result;
   int rc = CURLRESOLV_ERROR; /* default to failure */
-  *entry = NULL;
 
-#ifdef HAVE_SIGSETJMP
-  /* this allows us to time-out from the name resolver, as the timeout
-     will generate a signal and we will siglongjmp() from that here */
-  if(!data->set.no_signal) {
-    if(sigsetjmp(curl_jmpenv, 1)) {
-      /* this is coming from a siglongjmp() */
-      failf(data, "name lookup timed out");
-      return rc;
-    }
-  }
-#endif
+  *entry = NULL;
 
   /* Create an entry id, based upon the hostname and port */
   entry_id = create_hostcache_id(hostname, port);
@@ -488,6 +497,177 @@ int Curl_resolv(struct connectdata *conn,
   return rc;
 }
 
+#ifdef USE_ALARM_TIMEOUT 
+/*
+ * This signal handler jumps back into the main libcurl code and continues
+ * execution.  This effectively causes the remainder of the application to run
+ * within a signal handler which is nonportable and could lead to problems.
+ */
+static
+RETSIGTYPE alarmfunc(int sig)
+{
+  /* this is for "-ansi -Wall -pedantic" to stop complaining!   (rabe) */
+  (void)sig;
+  siglongjmp(curl_jmpenv, 1);
+  return;
+}
+#endif /* USE_ALARM_TIMEOUT */
+
+/*
+ * Curl_resolv_timeout() is the same as Curl_resolv() but specifies a
+ * timeout.  This function might return immediately if we're using asynch
+ * resolves. See the return codes.
+ *
+ * The cache entry we return will get its 'inuse' counter increased when this
+ * function is used. You MUST call Curl_resolv_unlock() later (when you're
+ * done using this struct) to decrease the counter again.
+ *
+ * If built with a synchronous resolver and use of signals is not
+ * disabled by the application, then a nonzero timeout will cause a
+ * timeout after the specified number of milliseconds. Otherwise, timeout
+ * is ignored.
+ *
+ * Return codes:
+ *
+ * CURLRESOLV_TIMEDOUT(-2) = warning, time too short or previous alarm expired
+ * CURLRESOLV_ERROR   (-1) = error, no pointer
+ * CURLRESOLV_RESOLVED (0) = OK, pointer provided
+ * CURLRESOLV_PENDING  (1) = waiting for response, no pointer
+ */
+
+int Curl_resolv_timeout(struct connectdata *conn,
+                        const char *hostname,
+                        int port,
+                        struct Curl_dns_entry **entry,
+                        long timeoutms)
+{
+#ifdef USE_ALARM_TIMEOUT 
+#ifdef HAVE_SIGACTION
+  struct sigaction keep_sigact;   /* store the old struct here */
+  bool keep_copysig=FALSE;        /* did copy it? */
+  struct sigaction sigact;
+#else
+#ifdef HAVE_SIGNAL
+  void (*keep_sigact)(int);       /* store the old handler here */
+#endif /* HAVE_SIGNAL */
+#endif /* HAVE_SIGACTION */
+  volatile long timeout;
+  unsigned int prev_alarm=0;
+  struct SessionHandle *data = conn->data;
+#endif /* USE_ALARM_TIMEOUT */
+  int rc;
+
+  *entry = NULL;
+
+#ifdef USE_ALARM_TIMEOUT 
+  if (data->set.no_signal)
+    /* Ignore the timeout when signals are disabled */
+    timeout = 0;
+  else
+    timeout = timeoutms;
+
+  if(timeout && timeout < 1000)
+    /* The alarm() function only provides integer second resolution, so if
+       we want to wait less than one second we must bail out already now. */
+    return CURLRESOLV_TIMEDOUT;
+
+  if (timeout > 0) {
+    /* This allows us to time-out from the name resolver, as the timeout
+       will generate a signal and we will siglongjmp() from that here.
+       This technique has problems (see alarmfunc). */
+      if(sigsetjmp(curl_jmpenv, 1)) {
+        /* this is coming from a siglongjmp() after an alarm signal */
+        failf(data, "name lookup timed out");
+        return CURLRESOLV_ERROR;
+      }
+
+    /*************************************************************
+     * Set signal handler to catch SIGALRM
+     * Store the old value to be able to set it back later!
+     *************************************************************/
+#ifdef HAVE_SIGACTION
+    sigaction(SIGALRM, NULL, &sigact);
+    keep_sigact = sigact;
+    keep_copysig = TRUE; /* yes, we have a copy */
+    sigact.sa_handler = alarmfunc;
+#ifdef SA_RESTART
+    /* HPUX doesn't have SA_RESTART but defaults to that behaviour! */
+    sigact.sa_flags &= ~SA_RESTART;
+#endif
+    /* now set the new struct */
+    sigaction(SIGALRM, &sigact, NULL);
+#else /* HAVE_SIGACTION */
+    /* no sigaction(), revert to the much lamer signal() */
+#ifdef HAVE_SIGNAL
+    keep_sigact = signal(SIGALRM, alarmfunc);
+#endif
+#endif /* HAVE_SIGACTION */
+
+    /* alarm() makes a signal get sent when the timeout fires off, and that
+       will abort system calls */
+    prev_alarm = alarm((unsigned int) (timeout/1000L));
+  }
+
+#else
+#ifndef CURLRES_ASYNCH
+  if(timeoutms)
+    infof(conn->data, "timeout on name lookup is not supported\n");
+#else
+  (void)timeoutms; /* timeoutms not used with an async resolver */
+#endif
+#endif /* USE_ALARM_TIMEOUT */
+
+  /* Perform the actual name resolution. This might be interrupted by an
+   * alarm if it takes too long.
+   */
+  rc = Curl_resolv(conn, hostname, port, entry);
+
+#ifdef USE_ALARM_TIMEOUT 
+  if (timeout > 0) {
+
+#ifdef HAVE_SIGACTION
+    if(keep_copysig) {
+      /* we got a struct as it looked before, now put that one back nice
+         and clean */
+      sigaction(SIGALRM, &keep_sigact, NULL); /* put it back */
+    }
+#else
+#ifdef HAVE_SIGNAL
+    /* restore the previous SIGALRM handler */
+    signal(SIGALRM, keep_sigact);
+#endif
+#endif /* HAVE_SIGACTION */
+
+    /* switch back the alarm() to either zero or to what it was before minus
+       the time we spent until now! */
+    if(prev_alarm) {
+      /* there was an alarm() set before us, now put it back */
+      unsigned long elapsed_ms = Curl_tvdiff(Curl_tvnow(), conn->created);
+
+      /* the alarm period is counted in even number of seconds */
+      unsigned long alarm_set = prev_alarm - elapsed_ms/1000;
+
+      if(!alarm_set ||
+         ((alarm_set >= 0x80000000) && (prev_alarm < 0x80000000)) ) {
+        /* if the alarm time-left reached zero or turned "negative" (counted
+           with unsigned values), we should fire off a SIGALRM here, but we
+           won't, and zero would be to switch it off so we never set it to
+           less than 1! */
+        alarm(1);
+        rc = CURLRESOLV_TIMEDOUT;
+        failf(data, "Previous alarm fired off!");
+      }
+      else
+        alarm((unsigned int)alarm_set);
+    }
+    else
+      alarm(0); /* just shut it off */
+  }
+#endif /* USE_ALARM_TIMEOUT */
+
+  return rc;
+}
+
 /*
  * Curl_resolv_unlock() unlocks the given cached DNS entry. When this has been
  * made, the struct may be destroyed due to pruning. It is important that only
@@ -513,9 +693,10 @@ static void freednsentry(void *freethis)
 {
   struct Curl_dns_entry *p = (struct Curl_dns_entry *) freethis;
 
-  Curl_freeaddrinfo(p->addr);
-
-  free(p);
+  if(p) {
+    Curl_freeaddrinfo(p->addr);
+    free(p);
+  }
 }
 
 /*
@@ -543,93 +724,3 @@ Curl_addrinfo *Curl_addrinfo_copy(const void *org, int port)
   return Curl_he2ai(orig, port);
 }
 #endif /* CURLRES_ADDRINFO_COPY */
-
-/***********************************************************************
- * Only for plain-ipv4 and c-ares builds
- **********************************************************************/
-
-#if defined(CURLRES_IPV4) || defined(CURLRES_ARES)
-/*
- * This is a function for freeing name information in a protocol independent
- * way.
- */
-void Curl_freeaddrinfo(Curl_addrinfo *ai)
-{
-  Curl_addrinfo *next;
-
-  /* walk over the list and free all entries */
-  while(ai) {
-    next = ai->ai_next;
-    if(ai->ai_canonname)
-      free(ai->ai_canonname);
-    free(ai);
-    ai = next;
-  }
-}
-
-struct namebuf {
-  struct hostent hostentry;
-  char *h_addr_list[2];
-  struct in_addr addrentry;
-  char h_name[16]; /* 123.123.123.123 = 15 letters is maximum */
-};
-
-/*
- * Curl_ip2addr() takes a 32bit ipv4 internet address as input parameter
- * together with a pointer to the string version of the address, and it
- * returns a Curl_addrinfo chain filled in correctly with information for this
- * address/host.
- *
- * The input parameters ARE NOT checked for validity but they are expected
- * to have been checked already when this is called.
- */
-Curl_addrinfo *Curl_ip2addr(in_addr_t num, const char *hostname, int port)
-{
-  Curl_addrinfo *ai;
-
-#if defined(VMS) && \
-    defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
-#pragma pointer_size save
-#pragma pointer_size short
-#pragma message disable PTRMISMATCH
-#endif
-
-  struct hostent *h;
-  struct in_addr *addrentry;
-  struct namebuf buffer;
-  struct namebuf *buf = &buffer;
-
-  h = &buf->hostentry;
-  h->h_addr_list = &buf->h_addr_list[0];
-  addrentry = &buf->addrentry;
-#ifdef _CRAYC
-  /* On UNICOS, s_addr is a bit field and for some reason assigning to it
-   * doesn't work.  There must be a better fix than this ugly hack.
-   */
-  memcpy(addrentry, &num, SIZEOF_in_addr);
-#else
-  addrentry->s_addr = num;
-#endif
-  h->h_addr_list[0] = (char*)addrentry;
-  h->h_addr_list[1] = NULL;
-  h->h_addrtype = AF_INET;
-  h->h_length = sizeof(*addrentry);
-  h->h_name = &buf->h_name[0];
-  h->h_aliases = NULL;
-
-  /* Now store the dotted version of the address */
-  snprintf((char *)h->h_name, 16, "%s", hostname);
-
-#if defined(VMS) && \
-    defined(__INITIAL_POINTER_SIZE) && (__INITIAL_POINTER_SIZE == 64)
-#pragma pointer_size restore
-#pragma message enable PTRMISMATCH
-#endif
-
-  ai = Curl_he2ai(h, port);
-
-  return ai;
-}
-#endif /* CURLRES_IPV4 || CURLRES_ARES */
-
-

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,37 +23,35 @@
 
 class WallObstacle : public Obstacle {
   public:
-			WallObstacle();
-			WallObstacle(const float* pos, float rotation,
-				     float breadth, float height);
-			~WallObstacle();
+    WallObstacle();
+    WallObstacle(const fvec3& pos, float rotation,
+                 float breadth, float height, bool ricochet);
+    ~WallObstacle();
 
     const char*		getType() const;
+    ObstacleType	getTypeID() const { return wallType; }
+
     static const char*	getClassName(); // const
 
     float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
+    void		getNormal(const fvec3& p, fvec3& n) const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
+    bool		inCylinder(const fvec3& p, float radius, float height) const;
+    bool		inBox(const fvec3& p, float angle,
 			      float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
+    bool		inMovingBox(const fvec3& oldP, float oldAngle,
+				    const fvec3& newP, float newAngle,
 				    float halfWidth, float halfBreadth, float height) const;
-
-    bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float* normal) const;
+    bool		getHitNormal(const fvec3& pos1, float azimuth1,
+                                     const fvec3& pos2, float azimuth2,
+                                     float halfWidth, float halfBreadth,
+                                     float height, fvec3& normal) const;
 
     int packSize() const;
     void *pack(void*) const;
     void *unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
-    virtual int getTypeID() const {return wallType;}
 
     std::string		userTextures[1];
 
@@ -61,7 +59,7 @@ class WallObstacle : public Obstacle {
     void finalize();
 
   private:
-    float		plane[4];
+    fvec4		plane;
     static const char*	typeName;
 };
 

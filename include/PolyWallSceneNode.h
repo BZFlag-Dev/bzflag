@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -23,11 +23,11 @@
 
 class PolyWallSceneNode : public WallSceneNode {
   public:
-			PolyWallSceneNode(const GLfloat3Array& vertices,
-					const GLfloat2Array& uvs);
+			PolyWallSceneNode(const fvec3Array& vertices,
+					const fvec2Array& uvs);
 			~PolyWallSceneNode();
 
-    int			split(const float*, SceneNode*&, SceneNode*&) const;
+    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
     void		addRenderNodes(SceneRenderer&);
     void		addShadowNodes(SceneRenderer&);
@@ -39,23 +39,23 @@ class PolyWallSceneNode : public WallSceneNode {
     class Geometry : public RenderNode {
       public:
 			Geometry(PolyWallSceneNode*,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
-				const GLfloat* normal);
+				const fvec3Array& vertices,
+				const fvec2Array& uvs,
+				const float* normal);
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
+	const fvec3&	getPosition() const { return wall->getCenter(); }
       private:
 	void		drawV() const;
 	void		drawVT() const;
       private:
 	PolyWallSceneNode* wall;
 	int		style;
-	const GLfloat*	normal;
+	const float*	normal;
       public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
+	fvec3Array	vertex;
+	fvec2Array	uv;
     };
 
   private:

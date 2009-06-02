@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,7 @@
 
 
 /** The ServerListCache is a simple aging container of server entries.
- * The class can load from and safe to file.  Entries are culled based
+ * The class can load from and save to file.  Entries are culled based
  * on a specified cache age.
  */
 class ServerListCache {
@@ -77,6 +77,10 @@ public:
 
   /** is given server in cache and marked as favorite? */
   bool		  isFavorite(const std::string &serverAddress) const;
+
+  /** is given server in cache and marked as recent? */
+  bool		  isRecent(const std::string &serverAddress) const;
+
 
 private:
   /** the full path of the file the cache is stored in **/

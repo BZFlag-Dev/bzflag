@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,22 +10,30 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+/* MeshFace:
+ *        Encapsulates an individual mesh face in the game environment.
  */
 
-#ifndef	BZF_MESH_FACE_OBSTACLE_H
-#define	BZF_MESH_FACE_OBSTACLE_H
+#ifndef BZF_MESH_FACE_OBSTACLE_H
+#define BZF_MESH_FACE_OBSTACLE_H
 
 #include "common.h"
+
+// system headers
 #include <string>
+#include <set>
 #include <iostream>
+
+// common headers
+#include "global.h"
 #include "vectors.h"
 #include "Ray.h"
 #include "Obstacle.h"
-#include "global.h"
 #include "BzMaterial.h"
-//#include "PhysicsDrive.h"
+
+
+class FlagType;
+class LinkPhysics;
 
 
 class MeshFace : public Obstacle {
@@ -34,235 +42,295 @@ class MeshFace : public Obstacle {
   friend class ObstacleModifier;
 
   public:
-    MeshFace(class MeshObstacle* mesh);
-    MeshFace(MeshObstacle* mesh, int vertexCount,
-	     float** vertices, float** normals, float** texcoords,
-	     const BzMaterial* material, int physics,
-	     bool noclusters, bool smoothBounce, unsigned char drive, unsigned char shoot);
-    ~MeshFace();
-
-    const char* getType() const;
     static const char* getClassName(); // const
-    bool isValid() const;
-    bool isFlatTop() const;
-
-    float intersect(const Ray&) const;
-    void getNormal(const float* p, float* n) const;
-    void get3DNormal(const float* p, float* n) const;
-
-    bool inCylinder(const float* p, float radius, float height) const;
-    bool inBox(const float* p, float angle,
-	       float halfWidth, float halfBreadth, float height) const;
-    bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
-		     float halfWidth, float halfBreadth, float height) const;
-    bool isCrossing(const float* p, float angle,
-		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
-
-    bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
-		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
-
-    MeshObstacle* getMesh() const;
-    int getVertexCount() const;
-    bool useNormals() const;
-    bool useTexcoords() const;
-    const float* getVertex(int index) const;
-    const float* getNormal(int index) const;
-    const float* getTexcoord(int index) const;
-    const float* getPlane() const;
-    const BzMaterial* getMaterial() const;
-    int getPhysicsDriver() const;
-    bool noClusters() const;
-    bool isSmoothBounce() const;
-
-    bool isSpecial() const;
-    bool isBaseFace() const;
-    bool isLinkToFace() const;
-    bool isLinkFromFace() const;
-    bool isZPlane() const;
-    bool isUpPlane() const;
-    bool isDownPlane() const;
-
-    void setLink(const MeshFace* link);
-    const MeshFace* getLink() const;
-
-    int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
-
-    void print(std::ostream& out, const std::string& indent) const;
-    virtual int getTypeID() const {return meshType;}
-
-
-  public:
-    mutable float scratchPad;
-
-  private:
-    void finalize();
-
   private:
     static const char* typeName;
 
-    class MeshObstacle* mesh;
-    int vertexCount;
-    float** vertices;
-    float** normals;
-    float** texcoords;
-    const BzMaterial* bzMaterial;
-    bool smoothBounce;
-    bool noclusters;
-    int phydrv;
+  //==========================================================================//
 
-    fvec4 plane;
-    fvec4* edgePlanes;
+  public:
+    enum SpecialBits {
+      LinkSrcFace       = (1 << 0),
+      LinkDstFace       = (1 << 1),
+      LinkSrcRebound    = (1 << 2),
+      LinkSrcNoGlow     = (1 << 3),
+      LinkSrcNoRadar    = (1 << 4),
+      LinkSrcNoSound    = (1 << 5),
+      LinkSrcNoEffect   = (1 << 6)
+    };
 
-    MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
-		     // not currently used for anything
+    enum LinkGeoBits {
+      LinkAutoSscale = (1 << 0),
+      LinkAutoTscale = (1 << 1),
+      LinkAutoPscale = (1 << 2)
+    };
 
-    enum {
+    struct LinkGeometry {
+      LinkGeometry()
+      : centerIndex(-1) // index to a vertex
+      , sDirIndex(-1)   // index to a normal
+      , tDirIndex(-1)   // index to a normal
+      , pDirIndex(-1)   // index to a normal
+      , sScale(1.0f)
+      , tScale(1.0f)
+      , pScale(0.0f) // note the 0.0f
+      , angle(0.0f)
+      , bits(LinkAutoSscale | LinkAutoTscale | LinkAutoPscale)
+      {}
+      int centerIndex;
+      int sDirIndex;
+      int tDirIndex;
+      int pDirIndex;
+      fvec3 center;
+      fvec3 sDir; // usually points right,   looking towards the plane
+      fvec3 tDir; // usually points upwards, looking towards the plane
+      fvec3 pDir; // usually the -plane.xyz() for srcs, +plane.xyz() for dsts
+      float sScale;
+      float tScale;
+      float pScale;
+      float angle;   // calculated
+      uint8_t bits; // uses LinkGeoBits enum
+    };
+
+    struct SpecialData {
+      SpecialData()
+      : stateBits(0)
+      , baseTeam(-1)
+      {}
+
+      uint16_t stateBits; // uses SpecialBits enum
+
+      int baseTeam;
+
+      std::string  linkName;
+      LinkGeometry linkSrcGeo;
+      LinkGeometry linkDstGeo;
+      std::string  linkSrcShotFail;
+      std::string  linkSrcTankFail;
+
+      int   packSize() const;
+      void* pack(void*) const;
+      void* unpack(void*);
+
+      void print(std::ostream& out, const std::string& indent) const;
+    };
+
+  //==========================================================================//
+
+  private:
+    enum PlaneBits {
       XPlane    = (1 << 0),
       YPlane    = (1 << 1),
       ZPlane    = (1 << 2),
       UpPlane   = (1 << 3),
       DownPlane = (1 << 4),
       WallPlane = (1 << 5)
-    } PlaneBits;
+    };
+
+  //==========================================================================//
+
+  public:
+    MeshFace(class MeshObstacle* mesh);
+    MeshFace(MeshObstacle* mesh, int vertexCount,
+             const fvec3** vertices,
+             const fvec3** normals,
+             const fvec2** texcoords,
+             const BzMaterial* material, int physics,
+             bool noclusters, bool smoothBounce,
+             unsigned char drive, unsigned char shoot, bool ricochet,
+             const SpecialData* special);
+    ~MeshFace();
+
+    void setSpecialData(const SpecialData* data);
+
+    const char*  getType() const;
+    ObstacleType getTypeID() const { return faceType; }
+
+    bool isValid() const;
+    bool isFlatTop() const;
+
+    void clearBaseTeam() {
+      if (specialData) {
+        specialData->baseTeam = -1;
+      }
+    }
+
+    // collision routines
+    float intersect(const Ray&) const;
+    void  getNormal(const fvec3& p, fvec3& n) const;
+    void  get3DNormal(const fvec3& p, fvec3& n) const;
+
+    bool  inCylinder(const fvec3& p, float radius, float height) const;
+    bool  inBox(const fvec3& p, float angle,
+                float halfWidth, float halfBreadth, float height) const;
+    bool  inMovingBox(const fvec3& oldPos, float oldAngle,
+                      const fvec3& newPos, float newAngle,
+                      float halfWidth, float halfBreadth, float height) const;
+    bool  isCrossing(const fvec3& p, float angle,
+                     float halfWidth, float halfBreadth, float height,
+                     fvec4* plane) const;
+    bool  getHitNormal(const fvec3& pos1, float azimuth1,
+                       const fvec3& pos2, float azimuth2,
+                       float halfWidth, float halfBreadth,
+                       float height, fvec3& normal) const;
+
+    // team base routines
+    fvec3 getRandomPoint() const;
+
+    // teleportation routines
+    float getProximity(const fvec3& p, float radius) const;
+    float isTeleported(const Ray&) const;
+    bool  hasCrossed(const fvec3& oldPos, const fvec3& newPos) const;
+    bool  shotCanCross(const LinkPhysics& physics,
+                       const fvec3& pos, const fvec3& vel,
+                       int team, const FlagType* flagType) const;
+    bool  tankCanCross(const LinkPhysics& physics,
+                       const fvec3& pos, const fvec3& vel,
+                       int team, const FlagType* flagType) const;
+    bool  teleportShot(const MeshFace& dstFace, const LinkPhysics&,
+                       const fvec3& srcPos, fvec3& dstPos,
+                       const fvec3& srcVel, fvec3& dstVel) const;
+    bool  teleportTank(const MeshFace& dstFace, const LinkPhysics&,
+                       const fvec3& srcPos,    fvec3& dstPos,
+                       const fvec3& srcVel,    fvec3& dstVel,
+                       const float& srcAngle,  float& dstAngle,
+                       const float& srcAngVel, float& dstAngVel) const;
+
+    // query functions
+    inline MeshObstacle* getMesh() const { return mesh; }
+    inline int  getID()            const { return faceID; }
+    inline int  getVertexCount()   const { return vertexCount;  }
+    inline bool useNormals()       const { return normals   != NULL; }
+    inline bool useTexcoords()     const { return texcoords != NULL; }
+    inline int  getPhysicsDriver() const { return phydrv; }
+    inline bool noClusters()       const { return noclusters; }
+    inline bool isSmoothBounce()   const { return smoothBounce; }
+    inline const fvec4& getPlane() const { return plane; }
+
+    inline const fvec3& getVertex(int i)   const { return *vertices[i];  }
+    inline const fvec3& getNormal(int i)   const { return *normals[i];   }
+    inline const fvec2& getTexcoord(int i) const { return *texcoords[i]; }
+
+    inline bool isZPlane()    const { return ((planeBits & ZPlane)    != 0); }
+    inline bool isUpPlane()   const { return ((planeBits & UpPlane)   != 0); }
+    inline bool isDownPlane() const { return ((planeBits & DownPlane) != 0); }
+
+    inline const BzMaterial*  getMaterial()    const { return bzMaterial;  }
+    inline const SpecialData* getSpecialData() const { return specialData; }
+
+    inline bool isValidVertex(int index) {
+      return ((index >= 0) && (index < vertexCount));
+    }
+    inline bool isValidNormal(int index) {
+      return (isValidVertex(index) && (normals != NULL));
+    }
+    inline bool isValidTexcoord(int index) {
+      return (isValidVertex(index) && (texcoords != NULL));
+    }
+
+    inline bool isSpecial() const {
+      return (specialData != NULL);
+    }
+    inline bool isBaseFace() const {
+      return isSpecial() && (specialData->baseTeam >= 0);
+    }
+    inline bool isLinkSrc() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcFace) != 0);
+    }
+    inline bool isLinkDst() const {
+      return isSpecial() && ((specialData->stateBits & LinkDstFace) != 0);
+    }
+    inline bool isLinkFace() const {
+      return isSpecial() &&
+             ((specialData->stateBits & (LinkSrcFace | LinkDstFace)) != 0);
+    }
+    inline bool linkSrcRebound() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcRebound) != 0);
+    }
+    inline bool linkSrcNoGlow() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcNoGlow) != 0);
+    }
+    inline bool linkSrcNoRadar() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcNoRadar) != 0);
+    }
+    inline bool linkSrcNoSound() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcNoSound) != 0);
+    }
+    inline bool linkSrcNoEffect() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcNoEffect) != 0);
+    }
+
+    inline std::string getLinkName() const {
+      if (!isSpecial() || (mesh == NULL)) { return ""; }
+      return ((Obstacle*)mesh)->getName() + ":" + specialData->linkName;
+    }
+
+    static inline const MeshFace* getShotLinkSrc(const Obstacle* obs) {
+      if ((obs == NULL) || (obs->getTypeID() != faceType)) { return NULL; }
+      const MeshFace* face = (const MeshFace*) obs;
+      if (!face->isLinkSrc())          { return NULL; }
+      if (face->isShootThrough() == 0) { return NULL; } // NOTE
+      return face;
+    }
+
+    static inline const MeshFace* getTankLinkSrc(const Obstacle* obs) {
+      if ((obs == NULL) || (obs->getTypeID() != faceType)) { return NULL; }
+      const MeshFace* face = (const MeshFace*) obs;
+      if (!face->isLinkSrc())          { return NULL; }
+      if (face->isDriveThrough() == 0) { return NULL; } // NOTE
+      return face;
+    }
+
+    // geometry utilities
+    fvec3 calcCenter() const;
+    void  calcAxisSpan(const fvec3& point, const fvec3& dir,
+                       float& minDist, float& maxDist) const;
+
+    // overrides the Obstacle virtual function
+    int getBaseTeam() const {
+      return isBaseFace() ? specialData->baseTeam : -1;
+    }
+
+    int   packSize() const;
+    void* pack(void*) const;
+    void* unpack(void*);
+
+    void print(std::ostream& out, const std::string& indent) const;
+
+  //==========================================================================//
+
+  public:
+    mutable float scratchPad;
+
+  private:
+    void finalize();
+    void setupSpecialData();
+    void setupSpecialGeometry(LinkGeometry& geo, bool isSrc);
+    inline void setID(int id) { faceID = id; }
+
+  private:
+    class MeshObstacle* mesh;
+    int faceID;
+    int vertexCount;
+    const fvec3** vertices;
+    const fvec3** normals;
+    const fvec2** texcoords;
+    const BzMaterial* bzMaterial;
+    bool  smoothBounce;
+    bool  noclusters;
+    int   phydrv;
+
+    fvec4  plane;
+    fvec4* edgePlanes;
+
+    MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
+                     // not currently used for anything
 
     char planeBits;
 
-
-    enum {
-      LinkToFace      = (1 << 0),
-      LinkFromFace    = (1 << 1),
-      BaseFace	      = (1 << 2),
-      IcyFace	 = (1 << 3),
-      StickyFace      = (1 << 5),
-      DeathFace       = (1 << 6),
-      PortalFace      = (1 << 7)
-    } SpecialBits;
-
-    // combining all types into one struct, because I'm lazy
-    typedef struct {
-      // linking data
-      const MeshFace* linkFace;
-      bool linkFromFlat;
-      float linkFromSide[3]; // sideways vector
-      float linkFromDown[3]; // downwards vector
-      float linkFromCenter[3];
-      bool linkToFlat;
-      float linkToSide[3]; // sideways vector
-      float linkToDown[3]; // downwards vector
-      float linkToCenter[3];
-      // base data
-      TeamColor teamColor;
-    } SpecialData;
-
-    uint16_t specialState;
     SpecialData* specialData;
 };
 
-inline MeshObstacle* MeshFace::getMesh() const
-{
-  return mesh;
-}
-
-inline const BzMaterial* MeshFace::getMaterial() const
-{
-  return bzMaterial;
-}
-
-inline int MeshFace::getPhysicsDriver() const
-{
-  return phydrv;
-}
-
-inline const float* MeshFace::getPlane() const
-{
-  return plane;
-}
-
-inline int MeshFace::getVertexCount() const
-{
-  return vertexCount;
-}
-
-inline const float* MeshFace::getVertex(int index) const
-{
-  return (const float*)vertices[index];
-}
-
-inline const float* MeshFace::getNormal(int index) const
-{
-  return (const float*)normals[index];
-}
-
-inline const float* MeshFace::getTexcoord(int index) const
-{
-  return (const float*)texcoords[index];
-}
-
-inline bool MeshFace::useNormals() const
-{
-  return (normals != NULL);
-}
-
-inline bool MeshFace::useTexcoords() const
-{
-  return (texcoords != NULL);
-}
-
-inline bool MeshFace::noClusters() const
-{
-  return noclusters;
-}
-
-inline bool MeshFace::isSmoothBounce() const
-{
-  return smoothBounce;
-}
-
-inline bool MeshFace::isSpecial() const
-{
-  return (specialState != 0);
-}
-
-inline bool MeshFace::isBaseFace() const
-{
-  return (specialState & BaseFace) != 0;
-}
-
-inline bool MeshFace::isLinkToFace() const
-{
-  return (specialState & LinkToFace) != 0;
-}
-
-inline bool MeshFace::isLinkFromFace() const
-{
-  return (specialState & LinkFromFace) != 0;
-}
-
-inline const MeshFace* MeshFace::getLink() const
-{
-  return specialData->linkFace;
-}
-
-inline bool MeshFace::isZPlane() const
-{
-  return ((planeBits & ZPlane) != 0);
-}
-
-inline bool MeshFace::isUpPlane() const
-{
-  return ((planeBits & UpPlane) != 0);
-}
-
-inline bool MeshFace::isDownPlane() const
-{
-  return ((planeBits & DownPlane) != 0);
-}
 
 
 #endif // BZF_MESH_FACE_OBSTACLE_H

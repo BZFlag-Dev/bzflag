@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,7 +19,7 @@
 // Don't try compile this if we don't have an up-to-date, working DX
 #if defined(USE_DINPUT)
 
-#pragma comment(lib, "dinput.lib")
+#pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
 /* system headers */
@@ -39,7 +39,7 @@ std::map<std::string, LPDIRECTINPUTEFFECT> DXJoystick::effectDatabase;
 DXJoystick::DXJoystick() : device(NULL)
 {
   HINSTANCE hinst = GetModuleHandle(NULL);
-  HRESULT success = DirectInputCreateEx(hinst, DIRECTINPUT_VERSION, IID_IDirectInput7,
+  HRESULT success = DirectInput8Create(hinst, DIRECTINPUT_VERSION, IID_IDirectInput8,
 					(void**)&directInput, NULL);
 
   if (success != DI_OK) {
@@ -85,9 +85,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
       break;
     }
   }
-  HRESULT success = directInput->CreateDeviceEx(thisDevice,
-						IID_IDirectInputDevice7,
-						(void**)&device, NULL);
+  HRESULT success = directInput->CreateDevice(thisDevice,&device, NULL);
 
   if (success != DI_OK) {
     DXError("Could not initialize device", success);
@@ -707,7 +705,7 @@ void DXJoystick::enumerateDevices()
 
   devices.clear();
 
-  HRESULT success = directInput->EnumDevices(DIDEVTYPE_JOYSTICK,
+  HRESULT success = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL ,
 					     &deviceEnumCallback, NULL,
 					     DIEDFL_ATTACHEDONLY);
 
@@ -751,7 +749,7 @@ void DXJoystick::resetFF()
 void DXJoystick::DXError(const char* situation, HRESULT problem)
 {
   // uh-oh, no worky
-  char buffer[40] = {0};
+  std::string msg;
 
   // some stuff we can handle
   if (problem == (HRESULT)DIERR_UNPLUGGED) {
@@ -772,34 +770,34 @@ void DXJoystick::DXError(const char* situation, HRESULT problem)
 
   // print error messages
   if (problem == (HRESULT)DIERR_DEVICENOTREG)
-    sprintf(buffer, "Device not registered");
+    msg = "Device not registered";
   else if (problem == (HRESULT)DIERR_INVALIDPARAM)
-    sprintf(buffer, "Invalid parameter");
+    msg = "Invalid parameter";
   else if (problem == (HRESULT)DIERR_NOTINITIALIZED)
-    sprintf(buffer, "Device not initialized");
+    msg = "Device not initialized";
   else if (problem == (HRESULT)DI_BUFFEROVERFLOW)
-    sprintf(buffer, "Buffer overflow");
+    msg = "Buffer overflow";
   else if (problem == (HRESULT)DIERR_BADDRIVERVER)
-    sprintf(buffer, "Bad or incompatible device driver");
+    msg = "Bad or incompatible device driver";
   else if (problem == (HRESULT)DIERR_EFFECTPLAYING)
-    sprintf(buffer, "Effect already playing");
+    msg = "Effect already playing";
   else if (problem == (HRESULT)DIERR_INCOMPLETEEFFECT)
-    sprintf(buffer, "Incomplete effect");
+    msg = "Incomplete effect";
   else if (problem == (HRESULT)DIERR_MOREDATA)
-    sprintf(buffer, "Return buffer not large enough");
+    msg = "Return buffer not large enough";
   else if (problem == (HRESULT)DIERR_NOTACQUIRED)
-    sprintf(buffer, "Device not acquired");
+    msg = "Device not acquired";
   else if (problem == (HRESULT)DIERR_NOTDOWNLOADED)
-    sprintf(buffer, "Effect not downloaded");
+    msg = "Effect not downloaded";
   else if (problem == (HRESULT)DIERR_NOTINITIALIZED)
-    sprintf(buffer, "Device not initialized");
+    msg = "Device not initialized";
   else if (problem == (HRESULT)DIERR_OUTOFMEMORY)
-    sprintf(buffer, "Out of memory");
+    msg = "Out of memory";
   else if (problem == (HRESULT)DIERR_UNSUPPORTED)
-    sprintf(buffer, "Action not supported by driver");
+    msg = "Action not supported by driver";
   else
-    sprintf(buffer, "Unknown error (%d)", (int)problem);
-  printError(TextUtils::format("%s (%s).", situation, buffer));
+    msg = TextUtils::format("Unknown error (%d)", (int)problem);
+  printError(TextUtils::format("%s (%s).", situation, msg.c_str()));
 }
 
 /* Nasty callbacks 'cause DirectX sucks */

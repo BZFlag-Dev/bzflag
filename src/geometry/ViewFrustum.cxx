@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,7 +17,7 @@
 #include "Frustum.h"
 #include "ViewFrustum.h"
 
-// common implementation headers
+// common headers
 #include "bzfgl.h"
 
 ViewFrustum::ViewFrustum()
@@ -51,7 +51,7 @@ void			ViewFrustum::executeView() const
 void			ViewFrustum::executeOrientation() const
 {
   glMultMatrixf(viewMatrix);
-  glTranslatef(eye[0], eye[1], eye[2]);
+  glTranslatef(eye.x, eye.y, eye.z);
 }
 
 void			ViewFrustum::executeBillboard() const

@@ -18,7 +18,6 @@ else
 plugin_files =
 endif
 
-
 bzfs_LDFLAGS = -export-dynamic -static
 bzfs_SOURCES = \
 	${plugin_files}	\
@@ -56,8 +55,8 @@ bzfs_SOURCES = \
 	CustomCone.h \
 	CustomDynamicColor.cxx \
 	CustomDynamicColor.h \
-	CustomGate.cxx \
-	CustomGate.h \
+	CustomTeleporter.cxx \
+	CustomTeleporter.h \
 	CustomGroup.cxx \
 	CustomGroup.h \
 	CustomLink.cxx \
@@ -86,6 +85,8 @@ bzfs_SOURCES = \
 	CustomWeapon.h \
 	CustomWorld.cxx \
 	CustomWorld.h \
+	CustomWorldText.cxx \
+	CustomWorldText.h \
 	CustomZone.cxx \
 	CustomZone.h \
 	DangerousSpawnPolicy.cxx \
@@ -120,6 +121,8 @@ bzfs_SOURCES = \
 	RecordReplay.h \
 	RejoinList.cxx \
 	RejoinList.h \
+	Reports.cxx \
+	Reports.h \
 	Score.h \
 	Score.cxx \
 	ServerCommand.cxx \
@@ -132,6 +135,8 @@ bzfs_SOURCES = \
 	SpawnPolicyFactory.h \
 	SpawnPosition.cxx \
 	SpawnPosition.h \
+	Stats.h \
+	Stats.cxx \
 	TeamBases.cxx \
 	TeamBases.h \
 	WorldFileLocation.cxx \
@@ -151,7 +156,6 @@ bzfs_SOURCES = \
 	commands.h \
 	bzfs.cxx \
 	bzfs.h
-
 
 LDADD = \
 	../obstacle/libObstacle.la	\

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,7 @@
 #include "PlayerInfo.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "vectors.h"
 
 /* server headers */
 #include "bzfs.h"
@@ -33,7 +34,8 @@ DangerousSpawnPolicy::~DangerousSpawnPolicy()
 {
 }
 
-void DangerousSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges)
+void DangerousSpawnPolicy::getPosition(fvec3& pos, int playerId,
+                                       bool onGroundOnly, bool notNearEdges)
 {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
@@ -58,8 +60,8 @@ void DangerousSpawnPolicy::getPosition(float pos[3], int playerId, bool onGround
      */
 
     TeamBases &teamBases = bases[t];
-    const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
-    base.getRandomPosition(pos[0], pos[1], pos[2]);
+    const TeamBase &base = teamBases.getRandomBase();
+    base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
 
   } else {
@@ -86,13 +88,13 @@ void DangerousSpawnPolicy::getPosition(float pos[3], int playerId, bool onGround
       if (!world->getPlayerSpawnPoint(&pi, testPos)) {
 	if (notNearEdges) {
 	  // don't spawn close to map edges in CTF mode
-	  testPos[0] = ((float)bzfrand() - 0.5f) * size * 0.5f;
-	  testPos[1] = ((float)bzfrand() - 0.5f) * size * 0.5f;
+	  testPos.x = ((float)bzfrand() - 0.5f) * size * 0.5f;
+	  testPos.y = ((float)bzfrand() - 0.5f) * size * 0.5f;
 	} else {
-	  testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-	  testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+	  testPos.x = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+	  testPos.y = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
 	}
-	testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
+	testPos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 
@@ -116,9 +118,9 @@ void DangerousSpawnPolicy::getPosition(float pos[3], int playerId, bool onGround
 	if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
 	  if (bestDist < 0.0f) { // haven't found a single spot
 	    //Just drop the sucka in, and pray
-	    pos[0] = testPos[0];
-	    pos[1] = testPos[1];
-	    pos[2] = maxHeight;
+	    pos.x = testPos.x;
+	    pos.y = testPos.y;
+	    pos.z = maxHeight;
 	    logDebugMessage(1,"Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
 	  }
 	  break;
@@ -132,9 +134,7 @@ void DangerousSpawnPolicy::getPosition(float pos[3], int playerId, bool onGround
 	float dist = enemyProximityCheck(enemyAngle);
 	if (dist < bestDist) { // best so far
 	  bestDist = dist;
-	  pos[0] = testPos[0];
-	  pos[1] = testPos[1];
-	  pos[2] = testPos[2];
+	  pos = testPos;
 	}
 	if (bestDist < minProximity) { // close enough, stop looking
 	  foundspot = true;

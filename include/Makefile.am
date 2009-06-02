@@ -4,35 +4,34 @@ all-local:
 noinst_HEADERS =			\
 	AccessList.h			\
 	Address.h			\
-	AresHandler.h			\
 	AnsiCodes.h			\
 	ArcObstacle.h			\
+	AresHandler.h			\
 	AutoCompleter.h			\
-	BufferedNetworkMessage.h	\
-	BaseSceneNodeGenerator.h	\
-	BoxSceneNodeGenerator.h		\
-	BSPSceneDatabase.h		\
-	BZDBCache.h			\
 	BaseBuilding.h			\
 	BaseResources.h			\
+	BaseSceneNodeGenerator.h	\
 	BillboardSceneNode.h		\
 	BoltSceneNode.h			\
 	BoxBuilding.h			\
+	BoxSceneNodeGenerator.h		\
+	BufferedNetworkMessage.h	\
 	Bundle.h			\
 	BundleMgr.h			\
-	BzMaterial.h			\
+	BSPSceneDatabase.h		\
+	BZDBCache.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\
 	BzfJoystick.h			\
 	BzfMedia.h			\
 	BzfVisual.h			\
 	BzfWindow.h			\
-	bzfsAPI.h			\
+	BzMaterial.h			\
 	CacheManager.h			\
 	CallbackList.h			\
 	CollisionManager.h		\
+	CommandCompleter.h		\
 	CommandManager.h		\
-	CommandsStandard.h		\
 	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\
@@ -48,20 +47,23 @@ noinst_HEADERS =			\
 	Extents.h			\
 	Factory.h			\
 	FileManager.h			\
-	FontManager.h			\
 	Flag.h				\
 	FlagSceneNode.h			\
 	FlagWarpSceneNode.h		\
+	FontManager.h			\
 	Frustum.h			\
 	GameTime.h			\
-	GLCollect.h			\
+	GfxBlock.h			\
 	Intersect.h			\
 	KeyManager.h			\
 	LagInfo.h			\
 	Language.h			\
 	LaserSceneNode.h		\
+	LinkDef.h			\
 	LinkManager.h			\
+	LinkPhysics.h			\
 	ListServer.h			\
+	MapInfo.h			\
 	MathUtils.h			\
 	MediaFile.h			\
 	MeshDrawInfo.h			\
@@ -74,7 +76,7 @@ noinst_HEADERS =			\
 	MeshSceneNodeGenerator.h	\
 	MeshTransform.h			\
 	Model.h				\
-	MotionUtils.h				\
+	MotionUtils.h			\
 	MsgStrings.h			\
 	NetHandler.h			\
 	Obstacle.h			\
@@ -89,7 +91,6 @@ noinst_HEADERS =			\
 	OpenGLTexture.h			\
 	OpenGLUtils.h			\
 	OSFile.h			\
-	PTSceneNode.h			\
 	Pack.h				\
 	ParseColor.h			\
 	PhysicsDriver.h			\
@@ -125,9 +126,8 @@ noinst_HEADERS =			\
 	TankSceneNode.h			\
 	Team.h				\
 	Teleporter.h			\
-	TeleporterSceneNodeGenerator.h	\
-	TetraBuilding.h			\
 	TextChunkManager.h		\
+	TextSceneNode.h			\
 	TextUtils.h			\
 	TextureManager.h		\
 	TextureMatrix.h			\
@@ -135,6 +135,7 @@ noinst_HEADERS =			\
 	TimeKeeper.h			\
 	TracerSceneNode.h		\
 	TriWallSceneNode.h		\
+	VerticalSync.h			\
 	ViewFrustum.h			\
 	VotingArbiter.h			\
 	VotingBooth.h			\
@@ -143,6 +144,7 @@ noinst_HEADERS =			\
 	WallSceneNodeGenerator.h	\
 	WordFilter.h			\
 	WorldEventManager.h		\
+	WorldText.h			\
 	ZSceneDatabase.h		\
 	bz_Locale.h			\
 	bzares.h			\
@@ -150,6 +152,7 @@ noinst_HEADERS =			\
 	bzfgl.h				\
 	bzfio.h				\
 	bzfstream.h			\
+	bzfsAPI.h			\
 	bzglob.h			\
 	bzsignal.h			\
 	bzUnicode.h			\

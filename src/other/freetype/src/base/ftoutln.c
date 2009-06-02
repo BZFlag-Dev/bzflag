@@ -83,7 +83,9 @@
       FT_Int  last;  /* index of last point in contour */
 
 
-      last  = outline->contours[n];
+      last = outline->contours[n];
+      if ( last < 0 )
+        goto Invalid_Outline;
       limit = outline->points + last;
 
       v_start = outline->points[first];
@@ -472,11 +474,13 @@
                         FT_Pos             yOffset )
   {
     FT_UShort   n;
-    FT_Vector*  vec = outline->points;
+    FT_Vector*  vec;
 
 
     if ( !outline )
       return;
+
+    vec = outline->points;
 
     for ( n = 0; n < outline->n_points; n++ )
     {
@@ -624,13 +628,13 @@
   }
 
 
-  /* documentation is in ftoutln.h */
+  /* documentation is in freetype.h */
 
   FT_EXPORT_DEF( void )
   FT_Vector_Transform( FT_Vector*        vector,
                        const FT_Matrix*  matrix )
   {
-    FT_Pos xz, yz;
+    FT_Pos  xz, yz;
 
 
     if ( !vector || !matrix )

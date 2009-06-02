@@ -1,15 +1,15 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 #ifndef	__SERVERPING_H__
 #define	__SERVERPING_H__
 
@@ -47,24 +47,24 @@ private:
   void closeSocket();
   void sendPing(unsigned char tag);
   struct sockaddr_in saddr;
-  
+
   struct pingdesc
   {
     TimeKeeper senttime;
     TimeKeeper recvtime;
   };
-  
+
   std::vector<pingdesc> activepings;
-  
+
   int fd;
-  
-  size_t recieved;
-  
+
+  size_t received;
+
   const size_t samples;
-  
+
   double timeout;
   double interval;
-  
+
   TimeKeeper starttime;
 };
 

@@ -1,5 +1,5 @@
-LIBRARY	webstats
-DESCRIPTION  'webstats Windows Dynamic Link Library'
+LIBRARY	webReport
+DESCRIPTION  'webReport Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

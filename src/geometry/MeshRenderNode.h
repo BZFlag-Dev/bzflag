@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,16 +7,17 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 #ifndef _MESH_RENDER_NODE_H
 #define _MESH_RENDER_NODE_H
 
 
-// common implementation headers
+// common headers
 #include "bzfgl.h"
 #include "RenderNode.h"
+#include "vectors.h"
 
 
 class Extents;
@@ -27,12 +28,12 @@ class OpaqueRenderNode : public RenderNode {
   public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
 		     GLuint* xformList, bool normalize,
-		     const GLfloat* color, int lod, int set,
+		     const fvec4* color, int lod, int set,
 		     const Extents* exts, int triangles);
     void render();
     void renderRadar();
     void renderShadow();
-    virtual const GLfloat* getPosition() const { return NULL;}
+    virtual const fvec3& getPosition() const { return junk; }
   private:
     void drawV() const;
     void drawVN() const;
@@ -43,9 +44,11 @@ class OpaqueRenderNode : public RenderNode {
     GLuint* xformList;
     bool normalize;
     int lod, set;
-    const GLfloat* color;
+    const fvec4* color;
     const Extents* exts;
     int triangles;
+  private:
+    static fvec3 junk;
 };
 
 
@@ -53,13 +56,13 @@ class AlphaGroupRenderNode : public OpaqueRenderNode {
   public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
 			 GLuint* xformList, bool normalize,
-			 const GLfloat* color, int lod, int set,
-			 const Extents* exts, const float pos[3],
+			 const fvec4* color, int lod, int set,
+			 const Extents* exts, const fvec3& pos,
 			 int triangles);
-    const GLfloat* getPosition() const { return pos; }
-    void setPosition(const GLfloat* pos);
+    const fvec3& getPosition() const { return pos; }
+    void setPosition(const fvec3& pos);
   private:
-    float pos[3];
+    fvec3 pos;
 };
 
 

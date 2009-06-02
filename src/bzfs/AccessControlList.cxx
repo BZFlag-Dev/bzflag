@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -264,7 +264,8 @@ static std::string makeGlobPattern(const char* str)
   if (str == NULL) {
     return "*";
   }
-  while ((*str != '\0') && isspace(*str)) str++;
+  str = TextUtils::skipWhitespace(str);
+
   if (*str == '\0') {
     return "*";
   }
@@ -278,7 +279,7 @@ static std::string makeGlobPattern(const char* str)
 }
 
 
-static std::string getBanMaskString(in_addr mask)
+std::string AccessControlList::getBanMaskString(in_addr mask)
 {
   std::ostringstream os;
   os << (ntohl(mask.s_addr) >> 24) << '.';

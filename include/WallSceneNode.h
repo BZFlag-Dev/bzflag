@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -26,36 +26,38 @@
 
 #include "common.h"
 #include "SceneNode.h"
+#include "vectors.h"
 
 class WallSceneNode : public SceneNode {
   public:
 			WallSceneNode();
 			~WallSceneNode();
 
-    const GLfloat*	getColor() const;
-    const GLfloat*	getDynamicColor() const;
-    const GLfloat*	getModulateColor() const;
-    const GLfloat*	getLightedColor() const;
-    const GLfloat*	getLightedModulateColor() const;
-    GLfloat		getDistance(const GLfloat*) const;
+    const fvec4&	getColor() const;
+    const fvec4*	getDynamicColor() const;
+    const fvec4&	getModulateColor() const;
+    const fvec4&	getLightedColor() const;
+    const fvec4&	getLightedModulateColor() const;
+    float		getDistanceSq(const fvec3& eye) const;
     virtual bool	inAxisBox (const Extents& exts) const;
 
-    void		setColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		setModulateColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
-    void		setModulateColor(const GLfloat* rgba);
-    void		setLightedColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
-    void		setLightedColor(const GLfloat* rgba);
-    void		setLightedModulateColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
-    void		setLightedModulateColor(const GLfloat* rgba);
+    void		setColor(float r, float g,
+				float b, float a = 1.0f);
+    void		setColor(const fvec4& rgba);
+    void		setModulateColor(float r, float g,
+				float b, float a = 1.0f);
+    void		setModulateColor(const fvec4& rgba);
+    void		setLightedColor(float r, float g,
+				float b, float a = 1.0f);
+    void		setLightedColor(const fvec4& rgba);
+    void		setLightedModulateColor(float r, float g,
+				float b, float a = 1.0f);
+    void		setLightedModulateColor(const fvec4& rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
-    void		setTextureMatrix(const GLfloat* texmat);
-    void		setDynamicColor(const float* color);
+    void		setTextureMatrix(const float* texmat);
+    void		setOrder(int);
+    void		setDynamicColor(const fvec4* color);
     void		setBlending(bool);
     void		setSphereMap(bool);
     void		setNoCulling(bool);
@@ -74,32 +76,33 @@ class WallSceneNode : public SceneNode {
   protected:
     int			getNumLODs() const;
     void		setNumLODs(int, float* elementAreas);
-    void		setPlane(const GLfloat[4]);
+    void		setPlane(const fvec4&);
     int			pickLevelOfDetail(const SceneRenderer&) const;
 
     int			getStyle() const;
     const OpenGLGState*	getGState() const { return &gstate; }
     const OpenGLGState*	getWallGState() const;
 
-    static int		splitWall(const GLfloat* plane,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
-				SceneNode*& front, SceneNode*& back); // const
+    static int		splitWall(const fvec4& plane,
+			          const fvec3Array& vertices,
+			          const fvec2Array& uvs,
+			          SceneNode*& front, SceneNode*& back); // const
 
   private:
     static void splitEdge(float d1, float d2,
-			  const GLfloat* p1, const GLfloat* p2,
-			  const GLfloat* uv1, const GLfloat* uv2,
-			  GLfloat* p, GLfloat* uv); //const
+			  const fvec3& p1, const fvec3& p2,
+			  const fvec2& uv1, const fvec2& uv2,
+			  fvec3& p, fvec2& uv); //const
 
   private:
     int			numLODs;
     float*		elementAreas;
-    const GLfloat*	dynamicColor;
-    GLfloat		color[4];
-    GLfloat		modulateColor[4];
-    GLfloat		lightedColor[4];
-    GLfloat		lightedModulateColor[4];
+    int			order;
+    const fvec4*	dynamicColor;
+    fvec4		color;
+    fvec4		modulateColor;
+    fvec4		lightedColor;
+    fvec4		lightedModulateColor;
     float		alphaThreshold;
     int			style;
     bool		noCulling;
@@ -120,23 +123,23 @@ inline int WallSceneNode::getNumLODs() const
   return numLODs;
 }
 
-inline const GLfloat* WallSceneNode::getColor() const
+inline const fvec4& WallSceneNode::getColor() const
 {
   return color;
 }
-inline const GLfloat* WallSceneNode::getDynamicColor() const
+inline const fvec4* WallSceneNode::getDynamicColor() const
 {
   return dynamicColor;
 }
-inline const GLfloat* WallSceneNode::getModulateColor() const
+inline const fvec4& WallSceneNode::getModulateColor() const
 {
   return modulateColor;
 }
-inline const GLfloat* WallSceneNode::getLightedColor() const
+inline const fvec4& WallSceneNode::getLightedColor() const
 {
   return lightedColor;
 }
-inline const GLfloat* WallSceneNode::getLightedModulateColor() const
+inline const fvec4& WallSceneNode::getLightedModulateColor() const
 {
   return lightedModulateColor;
 }

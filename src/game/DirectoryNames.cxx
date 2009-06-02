@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -51,6 +51,33 @@ void			setCustomConfigDir(const char *str)
 {
   std::string temp = TextUtils::replace_all(std::string(str),std::string("\""),std::string(""));
   configDir(1, temp.c_str());
+}
+
+
+std::string getModuleDir ( void )
+{
+#ifdef _WIN32
+	char exePath[MAX_PATH];
+	GetModuleFileName(NULL,exePath,MAX_PATH);
+	char *last = strrchr(exePath,'\\');
+	if (last+1)
+		*last = '\0';
+
+	return std::string(exePath);
+#else
+	return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
+#endif
+}
+
+std::string getModuleName ( void )
+{
+#ifdef _WIN32
+	char exePath[MAX_PATH];
+	GetModuleFileName(NULL,exePath,MAX_PATH);
+	return std::string(exePath);
+#else
+	return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
+#endif
 }
 
 

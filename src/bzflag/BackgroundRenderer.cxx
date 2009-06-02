@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -26,57 +26,59 @@
 #include "BZDBCache.h"
 
 // local headers
-#include "daylight.h"
+#include "Daylight.h"
 #include "stars.h"
 #include "MainWindow.h"
 #include "SceneNode.h"
-#include "effectsRenderer.h"
+#include "EffectsRenderer.h"
 
-static const GLfloat	squareShape[4][2] =
-  { {  1.0f,  1.0f }, { -1.0f,  1.0f },
-    { -1.0f, -1.0f }, {  1.0f, -1.0f } };
+static const fvec3 squareShape[4] = {
+  fvec3(+1.0f, +1.0f, 0.0f),
+  fvec3(-1.0f, +1.0f, 0.0f),
+  fvec3(-1.0f, -1.0f, 0.0f),
+  fvec3(+1.0f, -1.0f, 0.0f)
+};
 
 
-GLfloat			BackgroundRenderer::skyPyramid[5][3];
-const GLfloat		BackgroundRenderer::cloudRepeats = 3.0f;
+fvec3			BackgroundRenderer::skyPyramid[5];
+const float		BackgroundRenderer::cloudRepeats = 3.0f;
 static const int	NumMountainFaces = 16;
 
-GLfloat			BackgroundRenderer::groundColor[4][4];
-GLfloat			BackgroundRenderer::groundColorInv[4][4];
+fvec4 BackgroundRenderer::groundColor[4];
+fvec4 BackgroundRenderer::groundColorInv[4];
 
-const GLfloat		BackgroundRenderer::defaultGroundColor[4][4] = {
-  { 0.0f, 0.35f, 0.0f, 1.0f },
-  { 0.0f, 0.20f, 0.0f, 1.0f },
-  { 1.0f, 1.00f, 1.0f, 1.0f },
-  { 1.0f, 1.00f, 1.0f, 1.0f }
+const fvec4 BackgroundRenderer::defaultGroundColor[4] = {
+  fvec4(0.0f, 0.35f, 0.0f, 1.0f),
+  fvec4(0.0f, 0.20f, 0.0f, 1.0f),
+  fvec4(1.0f, 1.00f, 1.0f, 1.0f),
+  fvec4(1.0f, 1.00f, 1.0f, 1.0f)
 };
-const GLfloat		BackgroundRenderer::defaultGroundColorInv[4][4] = {
-  { 0.35f, 0.00f, 0.35f, 1.0f },
-  { 0.20f, 0.00f, 0.20f, 1.0f },
-  { 1.00f, 1.00f, 1.00f, 1.0f },
-  { 1.00f, 1.00f, 1.00f, 1.0f }
+const fvec4 BackgroundRenderer::defaultGroundColorInv[4] = {
+  fvec4(0.35f, 0.00f, 0.35f, 1.0f),
+  fvec4(0.20f, 0.00f, 0.20f, 1.0f),
+  fvec4(1.00f, 1.00f, 1.00f, 1.0f),
+  fvec4(1.00f, 1.00f, 1.00f, 1.0f)
 };
-const GLfloat		BackgroundRenderer::receiverColor[3] =
-  { 0.3f, 0.55f, 0.3f };
-const GLfloat		BackgroundRenderer::receiverColorInv[3] =
-  { 0.55f, 0.3f, 0.55f };
+const fvec4 BackgroundRenderer::receiverColor    = fvec4(0.3f, 0.55f, 0.3f, 1.0f);
+const fvec4 BackgroundRenderer::receiverColorInv = fvec4(0.55f, 0.3f, 0.55f, 1.0f);
 
-BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
-  blank(false),
-  invert(false),
-  style(0),
-  gridSpacing(60.0f),	// meters
-  gridCount(4.0f),
-  mountainsAvailable(false),
-  numMountainTextures(0),
-  mountainsGState(NULL),
-  cloudDriftU(0.0f),
-  cloudDriftV(0.0f)
+
+BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
+: blank(false)
+, invert(false)
+, style(0)
+, gridSpacing(60.0f)	// meters
+, gridCount(4.0f)
+, mountainsAvailable(false)
+, numMountainTextures(0)
+, mountainsGState(NULL)
+, cloudDriftU(0.0f)
+, cloudDriftV(0.0f)
 {
   static bool init = false;
   OpenGLGStateBuilder gstate;
-  static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
+  static const fvec4 white(1.0f, 1.0f, 1.0f, 1.0f);
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
   OpenGLMaterial rainMaterial(white, white, 0.0f);
 
@@ -98,9 +100,9 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   }
 
   // initialize the celestial vectors
-  static const float up[3] = { 0.0f, 0.0f, 1.0f };
-  memcpy(sunDirection, up, sizeof(float[3]));
-  memcpy(moonDirection, up, sizeof(float[3]));
+  static const fvec3 up(0.0f, 0.0f, 1.0f);
+  sunDirection = up;
+  moonDirection = up;
 
   // make ground materials
   setupSkybox();
@@ -230,6 +232,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   notifyStyleChange();
 }
 
+
 BackgroundRenderer::~BackgroundRenderer()
 {
   DisplayListSystem &ds = DisplayListSystem::Instance();
@@ -260,6 +263,7 @@ void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
   return;
 }
 
+
 void BackgroundRenderer::resetCloudList()
 {
   if (cloudsList > 0) {
@@ -267,6 +271,7 @@ void BackgroundRenderer::resetCloudList()
     cloudsList = DisplayListSystem::Instance().newList(this);
   }
 }
+
 
 void BackgroundRenderer::setupGroundMaterials()
 {
@@ -280,20 +285,20 @@ void BackgroundRenderer::setupGroundMaterials()
 
   if (bzmat == NULL) {
     // default ground material
-    memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
-    groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+    memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
+    groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
   } else {
     // map specified material
     ((BzMaterial*)bzmat)->setReference();
     for (int i = 0; i < 4; i++) {
-      memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
+      groundColor[i] = bzmat->getDiffuse();
     }
     if (bzmat->getTextureCount() > 0) {
-      groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
+      groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0), false);
       if (groundTextureID < 0) {
 	// use the default as a backup (default color too)
-	memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
-	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+	memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
+	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
       } else {
 	// only apply the texture matrix if the texture is valid
 	const int texMatId = bzmat->getTextureMatrix(0);
@@ -305,7 +310,7 @@ void BackgroundRenderer::setupGroundMaterials()
     }
   }
 
-  static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
   OpenGLGStateBuilder gb;
@@ -330,9 +335,9 @@ void BackgroundRenderer::setupGroundMaterials()
 
   // default inverted ground material
   int groundInvTextureID = -1;
-  memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4][4]));
+  memcpy(groundColorInv, defaultGroundColorInv, sizeof(fvec4[4]));
   if (groundInvTextureID < 0) {
-    groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture").c_str(), false);
+    groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture"), false);
   }
 
   // inverted ground gstates
@@ -353,18 +358,12 @@ void BackgroundRenderer::setupGroundMaterials()
 }
 
 
-void			BackgroundRenderer::notifyStyleChange()
+void BackgroundRenderer::notifyStyleChange()
 {
   if (BZDBCache::texture) {
-    if (BZDBCache::lighting)
-      styleIndex = 3;
-    else
-      styleIndex = 2;
+    styleIndex = BZDBCache::lighting ? 3 : 2;
   } else {
-    if (BZDBCache::lighting)
-      styleIndex = 1;
-    else
-      styleIndex = 0;
+    styleIndex = BZDBCache::lighting ? 1 : 0;
   }
 
   // some stuff is drawn only for certain states
@@ -384,7 +383,8 @@ void			BackgroundRenderer::notifyStyleChange()
 }
 
 
-void		BackgroundRenderer::resize() {
+void BackgroundRenderer::resize()
+{
   resizeSky();
 }
 
@@ -406,11 +406,12 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
   return;
 }
 
-void BackgroundRenderer::buildMountan( unsigned int index )
+
+void BackgroundRenderer::buildMountain(unsigned int index)
 {
   if (numMountainTextures == 0)
     return;
-  
+
   float worldSize = BZDBCache::worldSize;
 
   // prepare display lists.  need at least NumMountainFaces, but
@@ -440,10 +441,10 @@ void BackgroundRenderer::buildMountan( unsigned int index )
     for (i = 0; i <= numFacesPerTexture; i++) {
       const float angle = (float)(M_PI + angleScale * (double)(i + n));
       float frac = (float)i / (float)numFacesPerTexture;
-      
+
       if (numMountainTextures != 1)
 	frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
-    
+
       glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
       glTexCoord2f(frac, 0.02f);
       glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle),  0.0f);
@@ -453,116 +454,101 @@ void BackgroundRenderer::buildMountan( unsigned int index )
   } glEnd();
 }
 
+
 void BackgroundRenderer::setSkyColors()
 {
   // change sky colors according to the sun position
-  GLfloat colors[4][3];
-  getSkyColor(sunDirection, colors);
-
-  skyZenithColor[0] = colors[0][0];
-  skyZenithColor[1] = colors[0][1];
-  skyZenithColor[2] = colors[0][2];
-  skySunDirColor[0] = colors[1][0];
-  skySunDirColor[1] = colors[1][1];
-  skySunDirColor[2] = colors[1][2];
-  skyAntiSunDirColor[0] = colors[2][0];
-  skyAntiSunDirColor[1] = colors[2][1];
-  skyAntiSunDirColor[2] = colors[2][2];
-  skyCrossSunDirColor[0] = colors[3][0];
-  skyCrossSunDirColor[1] = colors[3][1];
-  skyCrossSunDirColor[2] = colors[3][2];
-
+  fvec4 colors[4];
+  Daylight::getSkyColor(sunDirection, colors);
+  skyZenithColor      = colors[0];
+  skySunDirColor      = colors[1];
+  skyAntiSunDirColor  = colors[2];
+  skyCrossSunDirColor = colors[3];
   return;
 }
 
-void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
+
+void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 {
-  if (!lastRenderer)
+  if (!lastRenderer) {
     return;
+  }
 
   // compute display list for moon
-  float coverage = (moonDirection[0] * sunDirection[0]) +
-    (moonDirection[1] * sunDirection[1]) +
-    (moonDirection[2] * sunDirection[2]);
+  float coverage = fvec3::dot(moonDirection, sunDirection);
   // hack coverage to lean towards full
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
-  float worldSize = BZDBCache::worldSize;
-  const float moonRadius = 2.0f * worldSize *
-    atanf((float)((60.0 * M_PI / 180.0) / 60.0));
+  const float worldSize = BZDBCache::worldSize;
+  const float moonRadius = 2.0f * worldSize * atanf(1.0f * DEG2RADf);
   // limbAngle is dependent on moon position but sun is so much farther
   // away that the moon's position is negligible.  rotate sun and moon
   // so that moon is on the horizon in the +x direction, then compute
   // the angle to the sun position in the yz plane.
-  float sun2[3];
-  const float moonAzimuth = atan2f(moonDirection[1], moonDirection[0]);
-  const float moonAltitude = asinf(moonDirection[2]);
-  sun2[0] = sunDirection[0] * cosf(moonAzimuth) + sunDirection[1] * sinf(moonAzimuth);
-  sun2[1] = sunDirection[1] * cosf(moonAzimuth) - sunDirection[0] * sinf(moonAzimuth);
-  sun2[2] = sunDirection[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
-  const float limbAngle = atan2f(sun2[2], sun2[1]);
+  fvec3 sun2;
+  const float moonAzimuth = atan2f(moonDirection.y, moonDirection.x);
+  const float moonAltitude = asinf(moonDirection.z);
+  sun2.x = sunDirection.x * cosf(moonAzimuth) + sunDirection.y * sinf(moonAzimuth);
+  sun2.y = sunDirection.y * cosf(moonAzimuth) - sunDirection.x * sinf(moonAzimuth);
+  sun2.z = sunDirection.z * cosf(moonAltitude) - sun2.x * sinf(moonAltitude);
+  const float limbAngle = atan2f(sun2.z, sun2.y);
+  const float sunRadius = 2.0f * worldSize * atanf(1.0f * DEG2RADf);
 
-  const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
-
-  const GLfloat groundSize = 10.0f * worldSize;
-  const GLfloat gameSize = 0.5f * worldSize;
-  GLfloat groundPlane[4][3];
-  GLfloat gameArea[4][3];
+  const float gameSize   = 0.5f  * worldSize;
+  const float groundSize = 10.0f * worldSize;
+  fvec3 gameArea[4];
+  fvec3 groundPlane[4];
   for (int i = 0; i < 4; i++) {
-    groundPlane[i][0] = groundSize * squareShape[i][0];
-    groundPlane[i][1] = groundSize * squareShape[i][1];
-    groundPlane[i][2] = 0.0f;
-    gameArea[i][0] = gameSize * squareShape[i][0];
-    gameArea[i][1] = gameSize * squareShape[i][1];
-    gameArea[i][2] = 0.0f;
+    gameArea[i]    = gameSize   * squareShape[i];
+    groundPlane[i] = groundSize * squareShape[i];
   }
 
-  GLfloat xmin, xmax;
-  GLfloat ymin, ymax;
-  GLfloat xdist, ydist;
-  GLfloat xtexmin, xtexmax;
-  GLfloat ytexmin, ytexmax;
-  GLfloat xtexdist, ytexdist;
-  float vec[2];
+  float xmin, xmax;
+  float ymin, ymax;
+  float xdist, ydist;
+  float xtexmin, xtexmax;
+  float ytexmin, ytexmax;
+  float xtexdist, ytexdist;
+  fvec2 vec;
 
 #define GROUND_DIVS	(4)	//FIXME -- seems to be enough
 
-  xmax = groundPlane[0][0];
-  ymax = groundPlane[0][1];
-  xmin = groundPlane[2][0];
-  ymin = groundPlane[2][1];
+  xmax = groundPlane[0].x;
+  ymax = groundPlane[0].y;
+  xmin = groundPlane[2].x;
+  ymin = groundPlane[2].y;
   xdist = (xmax - xmin) / (float)GROUND_DIVS;
   ydist = (ymax - ymin) / (float)GROUND_DIVS;
 
-  lastRenderer->getGroundUV(groundPlane[0], vec);
+  lastRenderer->getGroundUV(groundPlane[0].xy(), vec);
   xtexmax = vec[0];
   ytexmax = vec[1];
-  lastRenderer->getGroundUV(groundPlane[2], vec);
+  lastRenderer->getGroundUV(groundPlane[2].xy(), vec);
   xtexmin = vec[0];
   ytexmin = vec[1];
   xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
   ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
 
-  GLfloat cloudsOuter[4][3], cloudsInner[4][3];
-  const GLfloat uvScale = 0.25f;
+  fvec3 cloudsOuter[4];
+  fvec3 cloudsInner[4];
+  const float uvScale = 0.25f;
+  const float cloudHeightMult = BZDB.eval("_cloudHeightMult");
   for (int i = 0; i < 4; i++) {
-    cloudsOuter[i][0] = groundPlane[i][0];
-    cloudsOuter[i][1] = groundPlane[i][1];
-    cloudsOuter[i][2] = groundPlane[i][2] + BZDB.eval("_cloudHeightMult") * BZDBCache::tankHeight;
-    cloudsInner[i][0] = uvScale * cloudsOuter[i][0];
-    cloudsInner[i][1] = uvScale * cloudsOuter[i][1];
-    cloudsInner[i][2] = cloudsOuter[i][2];
+    cloudsOuter[i] = groundPlane[i];
+    cloudsOuter[i].z += (cloudHeightMult * BZDBCache::tankHeight);
+    cloudsInner[i].xy() = uvScale * cloudsOuter[i].xy();
+    cloudsInner[i].z = cloudsOuter[i].z;
   }
 
   // make cloud display list.  RIVA 128 doesn't interpolate alpha,
   // so on that system use full alpha everywhere.
-  GLfloat minAlpha = 0.0f;
+  float minAlpha = 0.0f;
 
   if (displayList == sunXFormList) {
     glPushMatrix();
-    glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
+    glRotatef((float)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
 	      0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    
+    glRotatef((float)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+
     glBegin(GL_TRIANGLE_FAN); {
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (int i = 0; i < 20; i++) {
@@ -573,13 +559,14 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     } glEnd();
 
     glPopMatrix();
-  } else if ( displayList == moonList ) {
-    int moonSegements = (int)BZDB.eval("moonSegments");
-   
+  }
+  else if (displayList == moonList) {
+    int moonSegements = BZDB.evalInt("moonSegments");
+
     glPushMatrix();
-    glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    glRotatef((float)(limbAngle * 180.0 / M_PI), 1.0f, 0.0f, 0.0f);
+    glRotatef((float)(atan2f(moonDirection[1], moonDirection[0]) * RAD2DEG), 0.0f, 0.0f, 1.0f);
+    glRotatef((float)(asinf(moonDirection[2]) * RAD2DEG), 0.0f, -1.0f, 0.0f);
+    glRotatef((float)(limbAngle * RAD2DEG), 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP); {
       // glTexCoord2f(0,-1);
       glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
@@ -589,7 +576,7 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 	float cosAngle = cosf(angle);
 	// glTexCoord2f(coverage*cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
-	  
+
 	// glTexCoord2f(cosAngle,sinAngle);
 	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
       }
@@ -597,7 +584,8 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
       glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
     } glEnd();
     glPopMatrix();
-  } else if ( displayList == starXFormList ) {
+  }
+  else if (displayList == starXFormList) {
     // make pretransformed display list for stars
     glPushMatrix();
     glMultMatrixf(lastRenderer->getCelestialTransform());
@@ -611,12 +599,13 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
     } glEnd();
 
     glPopMatrix();
-  } else if ( displayList == mediumGroundList ) {
+  }
+  else if (displayList == mediumGroundList) {
     for (int i = 0; i < GROUND_DIVS; i++) {
-      GLfloat yoff, ytexoff;
+      float yoff, ytexoff;
 
-      yoff = ymin + ydist * (GLfloat)i;
-      ytexoff = ytexmin + ytexdist * (GLfloat)i;
+      yoff = ymin + ydist * (float)i;
+      ytexoff = ytexmin + ytexdist * (float)i;
 
       glBegin(GL_TRIANGLE_STRIP); {
 
@@ -626,11 +615,11 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 	glVertex2f(xmin, yoff);
 
 	for (int j = 0; j < GROUND_DIVS; j++) {
-	  GLfloat xoff, xtexoff;
-	  
-	  xoff = xmin + xdist * (GLfloat)(j + 1);
-	  xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
-	  
+	  float xoff, xtexoff;
+
+	  xoff = xmin + xdist * (float)(j + 1);
+	  xtexoff = xtexmin + xtexdist * (float)(j + 1);
+
 	  glTexCoord2f(xtexoff, ytexoff + ytexdist);
 	  glVertex2f(xoff, yoff + ydist);
 	  glTexCoord2f(xtexoff, ytexoff);
@@ -638,89 +627,60 @@ void BackgroundRenderer::buildGeometry ( GLDisplayList displayList )
 	}
       } glEnd();
     }
-  } else if ( displayList == lowGroundList ) {
+  }
+  else if (displayList == lowGroundList) {
     glBegin(GL_TRIANGLE_STRIP); {
       glVertex2fv(groundPlane[0]);
       glVertex2fv(groundPlane[1]);
       glVertex2fv(groundPlane[3]);
       glVertex2fv(groundPlane[2]);
     } glEnd();
-  } else if ( displayList == cloudsList ) {
+  }
+  else if (displayList == cloudsList) {
     glNormal3f(0.0f, 0.0f, 1.0f);
     // inner clouds -- full opacity
     glBegin(GL_QUADS); {
+      const float scale = uvScale * cloudRepeats;
       glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
-		   uvScale * cloudRepeats * squareShape[3][1]);
-      glVertex3fv(cloudsInner[3]);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
-		   uvScale * cloudRepeats * squareShape[2][1]);
-      glVertex3fv(cloudsInner[2]);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-		   uvScale * cloudRepeats * squareShape[1][1]);
-      glVertex3fv(cloudsInner[1]);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
-		   uvScale * cloudRepeats * squareShape[0][1]);
-      glVertex3fv(cloudsInner[0]);
-    } glEnd();
+      glTexCoord2fv(scale * squareShape[3].xy()); glVertex3fv(cloudsInner[3]);
+      glTexCoord2fv(scale * squareShape[2].xy()); glVertex3fv(cloudsInner[2]);
+      glTexCoord2fv(scale * squareShape[1].xy()); glVertex3fv(cloudsInner[1]);
+      glTexCoord2fv(scale * squareShape[0].xy()); glVertex3fv(cloudsInner[0]);
+    }
+    glEnd();
 
     // outer clouds -- fade to zero opacity at outer edge
     glBegin(GL_TRIANGLE_STRIP); {
-      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-      glTexCoord2f(cloudRepeats * squareShape[1][0],
-		   cloudRepeats * squareShape[1][1]);
-      glVertex3fv(cloudsOuter[1]);
-      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-		   uvScale * cloudRepeats * squareShape[1][1]);
-      glVertex3fv(cloudsInner[1]);
-
-      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-      glTexCoord2f(cloudRepeats * squareShape[2][0],
-		   cloudRepeats * squareShape[2][1]);
-      glVertex3fv(cloudsOuter[2]);
-      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
-		   uvScale * cloudRepeats * squareShape[2][1]);
-      glVertex3fv(cloudsInner[2]);
-      
-      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-      glTexCoord2f(cloudRepeats * squareShape[3][0],
-		   cloudRepeats * squareShape[3][1]);
-      glVertex3fv(cloudsOuter[3]);
-      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
-		   uvScale * cloudRepeats * squareShape[3][1]);
-      glVertex3fv(cloudsInner[3]);
-
-      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-      glTexCoord2f(cloudRepeats * squareShape[0][0],
-		   cloudRepeats * squareShape[0][1]);
-      glVertex3fv(cloudsOuter[0]);
-      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
-		   uvScale * cloudRepeats * squareShape[0][1]);
-      glVertex3fv(cloudsInner[0]);
-      
-      glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
-      glTexCoord2f(cloudRepeats * squareShape[1][0],
-		   cloudRepeats * squareShape[1][1]);
-      glVertex3fv(cloudsOuter[1]);
-      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-		   uvScale * cloudRepeats * squareShape[1][1]);
-      glVertex3fv(cloudsInner[1]);
-    } glEnd();
-  } else {
+      const fvec4 opaque(1.0f, 1.0f, 1.0f, 1.0f);
+      const fvec4 faded(1.0f, 1.0f, 1.0f, minAlpha);
+      const float cr   = cloudRepeats;
+      const float crUV = cloudRepeats * uvScale;
+      const fvec3* ss = squareShape;
+      const fvec3* co = cloudsOuter;
+      const fvec3* ci = cloudsInner;
+      glColor4fv(faded);  glTexCoord2fv(cr   * ss[1].xy()); glVertex3fv(co[1]);
+      glColor4fv(opaque); glTexCoord2fv(crUV * ss[1].xy()); glVertex3fv(ci[1]);
+      glColor4fv(faded);  glTexCoord2fv(cr   * ss[2].xy()); glVertex3fv(co[2]);
+      glColor4fv(opaque); glTexCoord2fv(crUV * ss[2].xy()); glVertex3fv(ci[2]);
+      glColor4fv(faded);  glTexCoord2fv(cr   * ss[3].xy()); glVertex3fv(co[3]);
+      glColor4fv(opaque); glTexCoord2fv(crUV * ss[3].xy()); glVertex3fv(ci[3]);
+      glColor4fv(faded);  glTexCoord2fv(cr   * ss[0].xy()); glVertex3fv(co[0]);
+      glColor4fv(opaque); glTexCoord2fv(crUV * ss[0].xy()); glVertex3fv(ci[0]);
+      glColor4fv(faded);  glTexCoord2fv(cr   * ss[1].xy()); glVertex3fv(co[1]);
+      glColor4fv(opaque); glTexCoord2fv(crUV * ss[1].xy()); glVertex3fv(ci[1]);
+    }
+    glEnd();
+  }
+  else {
     // check for mountans
-    for ( unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
-      if ( displayList == mountanLists[i] ) {
-	buildMountan(i);
+    for (unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
+      if (displayList == mountanLists[i]) {
+	buildMountain(i);
       }
     }
   }
-
 }
+
 
 void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 {
@@ -729,13 +689,13 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   lastRenderer = (SceneRenderer*)&renderer;
 
   // get a few other things concerning the sky
-  doShadows = areShadowsCast(sunDirection);
-  doStars = areStarsVisible(sunDirection);
-  doSunset = getSunsetTop(sunDirection, sunsetTop);
+  doShadows = Daylight::areShadowsCast(sunDirection);
+  doStars   = Daylight::areStarsVisible(sunDirection);
+  doSunset  = Daylight::getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
   DisplayListSystem &ds = DisplayListSystem::Instance();
-  
+
   ds.freeList(sunXFormList);
   sunXFormList = ds.newList(this);
 
@@ -749,7 +709,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
+void BackgroundRenderer::addCloudDrift(float uDrift, float vDrift)
 {
   cloudDriftU += 0.01f * uDrift / cloudRepeats;
   cloudDriftV += 0.01f * vDrift / cloudRepeats;
@@ -787,7 +747,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw ground -- first get the color (assume it's all green)
-    GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+    float _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
     if (fullWindow && viewType == SceneRenderer::ThreeChannel)
       glScissor(x, y, width, height >> 1);
     else if (fullWindow && viewType == SceneRenderer::Stacked)
@@ -806,55 +766,66 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 
     // back to normal
     glPopAttrib();
-    if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+    if (BZDB.isTrue("dither")) {
+      glEnable(GL_DITHER);
+    }
   }
 }
 
 
-void BackgroundRenderer::renderGround(SceneRenderer& renderer,
-				      bool fullWindow)
+void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow)
 {
   if (renderer.useQuality() > _LOW_QUALITY) {
     drawGround();
-  } else {
-    // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
-    // to draw solid color sky and ground.
-    MainWindow& window = renderer.getWindow();
-    const int x = window.getOriginX();
-    const int y = window.getOriginY();
-    const int width = window.getWidth();
-    const int height = window.getHeight();
-    const int viewHeight = window.getViewHeight();
-    const SceneRenderer::ViewType viewType = renderer.getViewType();
+    return;
+  }
 
-    // draw sky
-    glDisable(GL_DITHER);
-    glPushAttrib(GL_SCISSOR_BIT);
-    glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
-    glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+  // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
+  // to draw solid color sky and ground.
+  MainWindow& window = renderer.getWindow();
+  const int x = window.getOriginX();
+  const int y = window.getOriginY();
+  const int width = window.getWidth();
+  const int height = window.getHeight();
+  const int viewHeight = window.getViewHeight();
+  const SceneRenderer::ViewType viewType = renderer.getViewType();
 
-    // draw ground -- first get the color (assume it's all green)
-    GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-    if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-      glScissor(x, y, width, height >> 1);
-    else if (fullWindow && viewType == SceneRenderer::Stacked)
-      glScissor(x, y, width, height >> 1);
+  // draw sky
+  glDisable(GL_DITHER);
+  glPushAttrib(GL_SCISSOR_BIT);
+  glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
+  glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // draw ground -- first get the color (assume it's all green)
+  float _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
+  if (fullWindow && viewType == SceneRenderer::ThreeChannel) {
+    glScissor(x, y, width, height >> 1);
+  }
+  else if (fullWindow && viewType == SceneRenderer::Stacked) {
+    glScissor(x, y, width, height >> 1);
+  }
 #ifndef USE_GL_STEREO
-    else if (fullWindow && viewType == SceneRenderer::Stereo)
-      glScissor(x, y, width, height >> 1);
+  else if (fullWindow && viewType == SceneRenderer::Stereo) {
+    glScissor(x, y, width, height >> 1);
+  }
 #endif
-    else
-      glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-    if (invert)
-      glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
-    else
-      glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+  else {
+    glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
+  }
 
-    // back to normal
-    glPopAttrib();
-    if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
+  if (invert) {
+    glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
+  } else {
+    glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
+  }
+
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // back to normal
+  glPopAttrib();
+  if (BZDB.isTrue("dither")) {
+    glEnable(GL_DITHER);
   }
 }
 
@@ -919,25 +890,28 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 
 void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 {
-  if (!blank) {
-    if (update) {
-      weather.update();
-      EFFECTS.update();
-    }
-    EFFECTS.draw(renderer);
-    weather.draw(renderer);
+  if (blank) {
+    return;
   }
+
+  if (update) {
+    weather.update();
+  }
+  weather.draw(renderer);
+
+  if (update) {
+    EFFECTS.update();
+  }
+  EFFECTS.draw(renderer);
 }
 
 
 void BackgroundRenderer::resizeSky() {
   // sky pyramid must fit inside far clipping plane
   // (adjusted for the deepProjection matrix)
-  const GLfloat skySize = 3.0f * BZDBCache::worldSize;
+  const float skySize = 3.0f * BZDBCache::worldSize;
   for (int i = 0; i < 4; i++) {
-    skyPyramid[i][0] = skySize * squareShape[i][0];
-    skyPyramid[i][1] = skySize * squareShape[i][1];
-    skyPyramid[i][2] = 0.0f;
+    skyPyramid[i] = skySize * squareShape[i];
   }
   skyPyramid[4][0] = 0.0f;
   skyPyramid[4][1] = 0.0f;
@@ -967,7 +941,7 @@ void BackgroundRenderer::setupSkybox()
     if ((bzmats[i] == NULL) || (bzmats[i]->getTextureCount() <= 0)) {
       break;
     }
-    skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0).c_str());
+    skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0));
     if (skyboxTexID[i] < 0) {
       break;
     }
@@ -978,7 +952,7 @@ void BackgroundRenderer::setupSkybox()
     while (i >= 0) {
       if ((bzmats[i] != NULL) && (bzmats[i]->getTextureCount() > 0)) {
 	// NOTE: this could delete textures the might be used elsewhere
-	tm.removeTexture(bzmats[i]->getTextureLocal(0).c_str());
+	tm.removeTexture(bzmats[i]->getTextureLocal(0));
       }
       i--;
     }
@@ -991,13 +965,7 @@ void BackgroundRenderer::setupSkybox()
   }
 
   // setup the wrap mode
-  skyboxWrapMode = GL_CLAMP;
-#ifdef GL_VERSION_1_2
-  const char* extStr = (const char*) glGetString(GL_EXTENSIONS);
-  if (strstr(extStr, "GL_EXT_texture_edge_clamp") != NULL) {
-    skyboxWrapMode = GL_CLAMP_TO_EDGE;
-  }
-#endif
+  skyboxWrapMode = GL_CLAMP_TO_EDGE;
 
   // setup the corner colors
   const int cornerFaces[8][3] = {
@@ -1025,11 +993,11 @@ void BackgroundRenderer::drawSkybox()
   // sky box must fit inside far clipping plane
   // (adjusted for the deepProjection matrix)
   const float d = 3.0f * BZDBCache::worldSize;
-  const GLfloat verts[8][3] = {
+  const float verts[8][3] = {
     {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
     {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
   };
-  const GLfloat txcds[4][2] = {
+  const float txcds[4][2] = {
     {1.0f, 0.0f}, {0.0f, 0.0f},
     {0.0f, 1.0f}, {1.0f, 1.0f}
   };
@@ -1038,7 +1006,7 @@ void BackgroundRenderer::drawSkybox()
 
   OpenGLGState::resetState();
 
-  const GLfloat (*color)[4] = skyboxColor;
+  const fvec4* color = skyboxColor;
 
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_CULL_FACE);
@@ -1121,7 +1089,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   if (!doSkybox) {
     // rotate sky so that horizon-point-toward-sun-color is actually
     // toward the sun
-    glRotatef((GLfloat)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
+    glRotatef((float)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
 	      0.0f, 0.0f, 1.0f);
 
     // draw sky
@@ -1129,61 +1097,41 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     if (!doSunset) {
       // just a pyramid
       glBegin(GL_TRIANGLE_FAN); {
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);
-	glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
     } else {
       // overall shape is a pyramid, but the solar sides are two
       // triangles each.  the top triangle is all zenith color,
       // the bottom goes from zenith to sun-dir color.
       glBegin(GL_TRIANGLE_FAN); {
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);
-	glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
 
-      GLfloat sunsetTopPoint[3];
+      float sunsetTopPoint[3];
       sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
       glBegin(GL_TRIANGLES); {
-	glColor3fv(skyZenithColor);
-	glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glVertex3fv(skyPyramid[4]);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor);
-	glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);
-	glVertex3fv(sunsetTopPoint);
-	glColor3fv(skySunDirColor);
-	glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+	                                 glVertex3fv(skyPyramid[4]);
+	                                 glVertex3fv(sunsetTopPoint);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
       } glEnd();
     }
   }
@@ -1192,7 +1140,8 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
-  const bool useClipPlane = (mirror && (doSkybox || BZDBCache::drawCelestial));
+  const bool drawCelestial = BZDBCache::drawCelestial;
+  const bool useClipPlane = (mirror && (doSkybox || drawCelestial));
 
   if (useClipPlane) {
     glEnable(GL_CLIP_PLANE0);
@@ -1206,7 +1155,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
   DisplayListSystem &ds = DisplayListSystem::Instance();
 
-  if (BZDBCache::drawCelestial) {
+  if (drawCelestial) {
     if (sunDirection[2] > -0.009f) {
       sunGState.setState();
       glColor3fv(renderer.getSunScaledColor());
@@ -1223,7 +1172,6 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       glColor3f(1.0f, 1.0f, 1.0f);
       ds.callList(moonList);
     }
-
   }
 
 
@@ -1238,87 +1186,96 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
 void BackgroundRenderer::drawGround()
 {
-  if (BZDBCache::drawGround) {
-    // draw ground
-    glNormal3f(0.0f, 0.0f, 1.0f);
-    if (invert) {
-      glColor4fv(groundColorInv[styleIndex]);
-      invGroundGState[styleIndex].setState();
+  if (!BZDBCache::drawGround) {
+    return;
+  }
+  // draw ground
+  glNormal3f(0.0f, 0.0f, 1.0f);
+  if (invert) {
+    glColor4fv(groundColorInv[styleIndex]);
+    invGroundGState[styleIndex].setState();
+  } else {
+    fvec4 color;
+    if (BZDB.isSet("groundOverrideColor") &&
+        parseColorString(BZDB.get("groundOverrideColor"), color)) {
+      glColor4fv(color);
     } else {
-      float color[4];
-      if (BZDB.isSet("GroundOverideColor") &&
-	  parseColorString(BZDB.get("GroundOverideColor"), color)) {
-	glColor4fv(color);
-      } else {
-	glColor4fv(groundColor[styleIndex]);
-      }
-      groundGState[styleIndex].setState();
+      glColor4fv(groundColor[styleIndex]);
     }
+    groundGState[styleIndex].setState();
+  }
 
-    if (RENDERER.useQuality() >= _HIGH_QUALITY)
-      drawGroundCentered();
-    else if (RENDERER.useQuality() == _LOW_QUALITY)
-      DisplayListSystem::Instance().callList(lowGroundList);
-    else 
-      DisplayListSystem::Instance().callList(mediumGroundList);
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
+    drawGroundCentered();
+  }
+  else if (RENDERER.useQuality() == _LOW_QUALITY) {
+    DisplayListSystem::Instance().callList(lowGroundList);
+  }
+  else {
+    DisplayListSystem::Instance().callList(mediumGroundList);
   }
 }
 
+
 void BackgroundRenderer::drawGroundCentered()
 {
-  const ViewFrustum& frustum = RENDERER.getViewFrustum();
-  const float* center = frustum.getEye();
-
   const float groundSize = 10.0f * BZDBCache::worldSize;
+  const float centerSize = 128.0f;
+
+  const ViewFrustum& frustum = RENDERER.getViewFrustum();
+  fvec2 center = frustum.getEye().xy();
+  const float minDist = -groundSize + centerSize;
+  const float maxDist = +groundSize - centerSize;
+  if (center.x < minDist) { center.x = minDist; }
+  if (center.x > maxDist) { center.x = maxDist; }
+  if (center.y < minDist) { center.y = minDist; }
+  if (center.y > maxDist) { center.y = maxDist; }
+
+  const fvec2 vertices[8] = {
+    fvec2(-groundSize, -groundSize),
+    fvec2(+groundSize, -groundSize),
+    fvec2(+groundSize, +groundSize),
+    fvec2(-groundSize, +groundSize),
+    fvec2(center.x - centerSize, center.y - centerSize),
+    fvec2(center.x + centerSize, center.y - centerSize),
+    fvec2(center.x + centerSize, center.y + centerSize),
+    fvec2(center.x - centerSize, center.y + centerSize),
+  };
+
   const float repeat = BZDB.eval("groundHighResTexRepeat");
-
-  // vertices
-  const float vXmin = -groundSize;
-  const float vXmax = +groundSize;
-  const float vYmin = -groundSize;
-  const float vYmax = +groundSize;
-  const GLfloat vertices[5][2] = {
-    {center[0], center[1]},
-    {vXmin, vYmin}, {vXmax, vYmin}, {vXmax, vYmax}, {vXmin, vYmax}
+  const int indices[5][4] = {
+    { 4, 5, 6, 7 },
+    { 0, 1, 5, 4 },
+    { 1, 2, 6, 5 },
+    { 2, 3, 7, 6 },
+    { 3, 0, 4, 7 },
   };
-
-  // texcoords
-  const float tcenterX = center[0] * repeat;
-  const float tcenterY = center[1] * repeat;
-  const float tXmin = -groundSize * repeat;
-  const float tXmax = +groundSize * repeat;
-  const float tYmin = -groundSize * repeat;
-  const float tYmax = +groundSize * repeat;
-  const GLfloat texcoords[5][2] = {
-    {tcenterX, tcenterY},
-    {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
-  };
-
-  //  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
 
   glNormal3f(0.0f, 0.0f, 1.0f);
-  glBegin(GL_TRIANGLE_FAN); {
-    for (int i = 0; i < 5; i++) {
-      glTexCoord2fv(texcoords[i]);
-      glVertex2fv(vertices[i]);
+  glBegin(GL_QUADS);
+  {
+    for (int q = 0; q < 5; q++) {
+      for (int c = 0; c < 4; c++) {
+        const int index = indices[q][c];
+        glTexCoord2fv(vertices[index] * repeat);
+        glVertex2fv(vertices[index]);
+      }
     }
-    glTexCoord2fv(texcoords[1]);
-    glVertex2fv(vertices[1]);
-  } glEnd();
+  }
+  glEnd();
 
   return;
 }
 
 
-void			BackgroundRenderer::drawGroundGrid(
-							   SceneRenderer& renderer)
+void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
 {
-  const GLfloat* pos = renderer.getViewFrustum().getEye();
-  const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
-  const GLfloat yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
-  const GLfloat x0 = floorf(pos[0] / gridSpacing) * gridSpacing;
-  const GLfloat y0 = floorf(pos[1] / gridSpacing) * gridSpacing;
-  GLfloat i;
+  const fvec3& pos = renderer.getViewFrustum().getEye();
+  const float xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
+  const float yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
+  const float x0 = floorf(pos[0] / gridSpacing) * gridSpacing;
+  const float y0 = floorf(pos[1] / gridSpacing) * gridSpacing;
+  float i;
 
   gridGState.setState();
 
@@ -1332,7 +1289,7 @@ void			BackgroundRenderer::drawGroundGrid(
     }
   } glEnd();
 
-  /* z lines */
+  // z lines
   if (doShadows) glColor3f(0.5f, 0.75f, 0.0f);
   else glColor3f(0.3f, 0.4f, 0.0f);
   glBegin(GL_LINES); {
@@ -1343,23 +1300,28 @@ void			BackgroundRenderer::drawGroundGrid(
   } glEnd();
 }
 
-void			BackgroundRenderer::drawGroundShadows(
-							      SceneRenderer& renderer)
+
+void BackgroundRenderer::multShadowMatrix() const
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
-  GLfloat shadowProjection[16];
-  shadowProjection[0] = shadowProjection[5] = shadowProjection[15] = 1.0f;
+  static float shadowProjection[16] = {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    8888, 9999, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
   shadowProjection[8] = -sunDirection[0] / sunDirection[2];
   shadowProjection[9] = -sunDirection[1] / sunDirection[2];
-  shadowProjection[1] = shadowProjection[2] =
-    shadowProjection[3] = shadowProjection[4] =
-    shadowProjection[6] = shadowProjection[7] =
-    shadowProjection[10] = shadowProjection[11] =
-    shadowProjection[12] = shadowProjection[13] =
-    shadowProjection[14] = 0.0f;
-  glPushMatrix();
   glMultMatrixf(shadowProjection);
+}
+
+
+void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
+{
+  // draw sun shadows -- always stippled so overlapping shadows don't
+  // accumulate darkness.  make and multiply by shadow projection matrix.
+  multShadowMatrix();
 
   // disable color updates
   SceneNode::setColorOverride(true);
@@ -1368,27 +1330,31 @@ void			BackgroundRenderer::drawGroundShadows(
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  if (BZDBCache::stencilShadows) {
-    OpenGLGState::resetState();
-    const float shadowAlpha = BZDB.eval("shadowAlpha");
-    glColor4f(0.0f, 0.0f, 0.0f, shadowAlpha);
-    if (shadowAlpha < 1.0f) {
-      // use the stencil to avoid overlapping shadows
-      glClearStencil(0);
-      glClear(GL_STENCIL_BUFFER_BIT);
-      glStencilFunc(GL_NOTEQUAL, 1, 1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-      glEnable(GL_STENCIL_TEST);
-
-      // turn on blending, and kill culling
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glEnable(GL_BLEND);
-      glDisable(GL_CULL_FACE);
-    }
-  } else {
+  if (!BZDBCache::stencilShadows) {
     // use stippling to avoid overlapping shadows
     sunShadowsGState.setState();
     glColor3f(0.0f, 0.0f, 0.0f);
+  }
+  else { // use the stencil to avoid overlapping shadows
+    // setup blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
+    if (GLEW_ARB_imaging) {
+      // better for alpha-thresh input fragments
+      glBlendColor(0.0f, 0.0f, 0.0f, BZDBCache::shadowAlpha);
+      glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+    }
+
+    // setup the stencil
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glStencilFunc(GL_NOTEQUAL, 1, 1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glEnable(GL_STENCIL_TEST);
+
+    // setup culling
+    glDisable(GL_CULL_FACE);
   }
 
   // render those nodes
@@ -1396,10 +1362,10 @@ void			BackgroundRenderer::drawGroundShadows(
 
   // revert to OpenGLGState defaults
   if (BZDBCache::stencilShadows) {
-    glEnable(GL_CULL_FACE);
+    glBlendFunc(GL_ONE, GL_ZERO);
     glDisable(GL_BLEND);
     glDisable(GL_STENCIL_TEST);
-    glBlendFunc(GL_ONE, GL_ZERO);
+    glEnable(GL_CULL_FACE);
   }
 
   // enable color updates
@@ -1411,7 +1377,8 @@ void			BackgroundRenderer::drawGroundShadows(
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glPopMatrix();
+  glLoadIdentity();
+  renderer.getViewFrustum().executeView();
 }
 
 
@@ -1450,20 +1417,19 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       continue;
     }
 
-    const GLfloat* pos = light.getPosition();
-    const GLfloat* lightColor = light.getColor();
-    const GLfloat* atten = light.getAttenuation();
+    const fvec4& pos = light.getPosition();
+    const fvec4& lightColor = light.getColor();
+    const fvec3& atten = light.getAttenuation();
 
     // point under light
     float d = pos[2];
     float I = B / (atten[0] + d * (atten[1] + d * atten[2]));
 
     // maximum value
-    const float maxVal = (lightColor[0] > lightColor[1]) ?
-      ((lightColor[0] > lightColor[2]) ?
-       lightColor[0] : lightColor[2]) :
-      ((lightColor[1] > lightColor[2]) ?
-       lightColor[1] : lightColor[2]);
+    const float maxVal =
+      (lightColor.r > lightColor.g) ?
+       ((lightColor.r > lightColor.b) ? lightColor.r : lightColor.b) :
+       ((lightColor.g > lightColor.b) ? lightColor.g : lightColor.b);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < 0.02f) {
@@ -1471,14 +1437,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     }
 
     // move to the light's position
-    glTranslatef(pos[0], pos[1], 0.0f);
+    glTranslatef(pos.x, pos.y, 0.0f);
 
     // set the main lighting color
-    float color[4];
-    color[0] = lightColor[0];
-    color[1] = lightColor[1];
-    color[2] = lightColor[2];
-    color[3] = I;
+    fvec4 color(lightColor.rgb(), I);
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
@@ -1489,7 +1451,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       d = hypotf(receiverRingSize, pos[2]);
       I = B / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d;
-      color[3] = I;
+      color.a = I;
       glColor4fv(color);
       for (j = 0; j <= receiverSlices; j++) {
 	glVertex2f(receiverRingSize * angle[j][0],
@@ -1499,8 +1461,8 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     triangleCount += receiverSlices;
 
     for (i = 1; i < receiverRings; i++) {
-      const GLfloat innerSize = receiverRingSize * GLfloat(i * i);
-      const GLfloat outerSize = receiverRingSize * GLfloat((i + 1) * (i + 1));
+      const float innerSize = receiverRingSize * float(i * i);
+      const float outerSize = receiverRingSize * float((i + 1) * (i + 1));
 
       // compute inner and outer lit colors
       d = hypotf(innerSize, pos[2]);
@@ -1519,10 +1481,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
       glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {
-	  color[3] = innerAlpha;
+	  color.a = innerAlpha;
 	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
-	  color[3] = outerAlpha;
+	  color.a = outerAlpha;
 	  glColor4fv(color);
 	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
 	}
@@ -1559,11 +1521,11 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   }
 
   // setup the ground tint
-  const GLfloat* gndColor = groundColor[styleIndex];
-  GLfloat overrideColor[4];
-  if (BZDB.isSet("GroundOverideColor") &&
-      parseColorString(BZDB.get("GroundOverideColor"), overrideColor)) {
-    gndColor = overrideColor;
+  const fvec4* gndColor = &groundColor[styleIndex];
+  fvec4 overrideColor;
+  if (BZDB.isSet("groundOverrideColor") &&
+      parseColorString(BZDB.get("groundOverrideColor"), overrideColor)) {
+    gndColor = &overrideColor;
   }
 
   const bool useTexture = BZDBCache::texture && (groundTextureID >= 0);
@@ -1600,31 +1562,25 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     }
 
     // get the light parameters
-    const GLfloat* pos = light.getPosition();
-    const GLfloat* lightColor = light.getColor();
-    const GLfloat* atten = light.getAttenuation();
+    const fvec4& pos = light.getPosition();
+    const fvec4& lightColor = light.getColor();
+    const fvec3& atten = light.getAttenuation();
 
     // point under light
     float d = pos[2];
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
 
     // set the main lighting color
-    float baseColor[3];
-    baseColor[0] = gndColor[0] * lightColor[0];
-    baseColor[1] = gndColor[1] * lightColor[1];
-    baseColor[2] = gndColor[2] * lightColor[2];
+    fvec3 baseColor = gndColor->rgb() * lightColor.rgb();
     if (invert) { // beats me, should just color logic op the static nodes
-      baseColor[0] = 1.0f - baseColor[0];
-      baseColor[1] = 1.0f - baseColor[1];
-      baseColor[2] = 1.0f - baseColor[2];
+      baseColor = 1.0f - baseColor;
     }
 
     // maximum value
-    const float maxVal = (baseColor[0] > baseColor[1]) ?
-      ((baseColor[0] > baseColor[2]) ?
-       baseColor[0] : baseColor[2]) :
-      ((baseColor[1] > baseColor[2]) ?
-       baseColor[1] : baseColor[2]);
+    const float maxVal =
+       (baseColor.r > baseColor.g) ?
+      ((baseColor.r > baseColor.b) ? baseColor.r : baseColor.b) :
+      ((baseColor.g > baseColor.b) ? baseColor.g : baseColor.b);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < minLuminance) {
@@ -1635,16 +1591,15 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     glTranslatef(pos[0], pos[1], 0.0f);
 
     float innerSize;
-    float innerColor[3];
+    fvec3 innerColor;
     float outerSize;
-    float outerColor[3];
+    fvec3 outerColor;
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
       // center point
-      innerColor[0] = I * baseColor[0];
-      innerColor[1] = I * baseColor[1];
-      innerColor[2] = I * baseColor[2];
+
+      innerColor = I * baseColor;
       glColor3fv(innerColor);
       glVertex2f(0.0f, 0.0f);
 
@@ -1652,9 +1607,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       d = hypotf(receiverRingSize, pos[2]);
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
-      outerColor[0] = I * baseColor[0];
-      outerColor[1] = I * baseColor[1];
-      outerColor[2] = I * baseColor[2];
+      outerColor = I * baseColor;
       glColor3fv(outerColor);
       outerSize = receiverRingSize;
       for (j = 0; j <= receiverSlices; j++) {
@@ -1671,7 +1624,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       memcpy(innerColor, outerColor, sizeof(float[3]));
 
       // outer ring
-      outerSize = receiverRingSize * GLfloat(i * i);
+      outerSize = receiverRingSize * float(i * i);
       d = hypotf(outerSize, pos[2]);
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
@@ -1679,9 +1632,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 	I = 0.0f;
 	moreRings = false; // bail after this ring
       }
-      outerColor[0] = I * baseColor[0];
-      outerColor[1] = I * baseColor[1];
-      outerColor[2] = I * baseColor[2];
+      outerColor = I * baseColor;
 
       glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {
@@ -1714,14 +1665,16 @@ void BackgroundRenderer::drawMountains(void)
   }
 }
 
-const GLfloat*	BackgroundRenderer::getSunDirection() const
+
+const fvec3* BackgroundRenderer::getSunDirection() const
 {
-  if (areShadowsCast(sunDirection)) {
-    return sunDirection;
+  if (Daylight::areShadowsCast(sunDirection)) {
+    return &sunDirection;
   } else {
     return NULL;
   }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

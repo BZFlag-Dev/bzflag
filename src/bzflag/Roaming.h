@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,6 +20,7 @@
 #include "Singleton.h"
 #include "Player.h"
 #include "Flag.h"
+#include "vectors.h"
 
 /* local headers */
 #include "World.h"
@@ -44,6 +45,9 @@ public:
   RoamingView getMode(void) const;
   void setMode(RoamingView newView);
 
+  RoamingView parseView(const std::string& view) const;
+  const char* getViewName(RoamingView) const;
+
   enum RoamingTarget {
     next = 0,
     previous,
@@ -61,12 +65,12 @@ public:
   std::string getRoamingLabel(void) const;
 
   struct RoamingCamera {
-    float pos[3];
+    fvec3 pos;
     float theta;
     float phi;
     float zoom;
   };
-  void setCamera(RoamingCamera* newCam);
+  void setCamera(const RoamingCamera* newCam);
   void resetCamera(void);
   /* note that dc is a camera structure of *changes* (thus dc)
      not new values */
@@ -130,7 +134,6 @@ inline const Roaming::RoamingCamera* Roaming::getCamera() const {
   return &camera;
 }
 
-const bool devDriving = false;
 
 // Local Variables: ***
 // mode: C++ ***

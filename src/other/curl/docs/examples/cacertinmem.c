@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: cacertinmem.c,v 1.2 2007-07-12 21:11:10 danf Exp $
+ * $Id: cacertinmem.c,v 1.3 2008-05-22 21:20:08 danf Exp $
  *
  * Example using a "in core" PEM certificate to retrieve a https page.
  * Written by Theo Borm
@@ -102,16 +102,16 @@ int main(void)
 
   rv=curl_global_init(CURL_GLOBAL_ALL);
   ch=curl_easy_init();
-  rv=curl_easy_setopt(ch,CURLOPT_VERBOSE, 0);
-  rv=curl_easy_setopt(ch,CURLOPT_HEADER, 0);
-  rv=curl_easy_setopt(ch,CURLOPT_NOPROGRESS, 1);
-  rv=curl_easy_setopt(ch,CURLOPT_NOSIGNAL, 1);
+  rv=curl_easy_setopt(ch,CURLOPT_VERBOSE, 0L);
+  rv=curl_easy_setopt(ch,CURLOPT_HEADER, 0L);
+  rv=curl_easy_setopt(ch,CURLOPT_NOPROGRESS, 1L);
+  rv=curl_easy_setopt(ch,CURLOPT_NOSIGNAL, 1L);
   rv=curl_easy_setopt(ch,CURLOPT_WRITEFUNCTION, *writefunction);
   rv=curl_easy_setopt(ch,CURLOPT_WRITEDATA, stdout);
   rv=curl_easy_setopt(ch,CURLOPT_HEADERFUNCTION, *writefunction);
   rv=curl_easy_setopt(ch,CURLOPT_WRITEHEADER, stderr);
   rv=curl_easy_setopt(ch,CURLOPT_SSLCERTTYPE,"PEM");
-  rv=curl_easy_setopt(ch,CURLOPT_SSL_VERIFYPEER,1);
+  rv=curl_easy_setopt(ch,CURLOPT_SSL_VERIFYPEER,1L);
   rv=curl_easy_setopt(ch, CURLOPT_URL, "https://www.cacert.org/");
 
   /* first try: retrieve page without cacerts' certificate -> will fail

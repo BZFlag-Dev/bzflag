@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,8 +35,8 @@ const char* CustomSphere::sideNames[MaterialCount] = { "edge", "bottom" };
 CustomSphere::CustomSphere()
 {
   divisions = 4;
-  pos[2] = 10.0f;
-  size[0] = size[1] = size[2] = 10.0f;
+  pos.z = 10.0f;
+  size = fvec3(10.0f, 10.0f, 10.0f);
   materials[Edge].setTexture("boxwall");
   materials[Bottom].setTexture("roof");
   texsize[0] = texsize[1] = -4.0f;
@@ -68,7 +68,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     if (!(input >> radius)) {
       return false;
     }
-    size[0] = size[1] = size[2] = radius;
+    size = fvec3(radius, radius, radius);
   }
   else if ((strcasecmp(cmd, "hemi") == 0) ||
 	   (strcasecmp(cmd, "hemisphere") == 0)) {
@@ -124,8 +124,8 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
   }
   SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
 					      useNormals, hemisphere, divisions, mats,
-					      phydrv,
-					      smoothBounce, driveThrough, shootThrough);
+					      phydrv, smoothBounce,
+					      driveThrough, shootThrough, ricochet);
 
   sphere->setName(name.c_str());
 
@@ -139,7 +139,7 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
 }
 
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

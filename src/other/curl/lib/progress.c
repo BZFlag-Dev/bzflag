@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,19 +18,11 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: progress.c,v 1.85 2007-11-24 23:16:55 bagder Exp $
+ * $Id: progress.c,v 1.92 2008-10-11 01:56:04 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
-#include <string.h>
-#include <time.h>
-
-#if defined(__EMX__)
-#include <stdlib.h>
-#endif
-
-#include <curl/curl.h>
 #include "urldata.h"
 #include "sendf.h"
 #include "progress.h"
@@ -40,26 +32,29 @@
 
 /* Provide a string that is 2 + 1 + 2 + 1 + 2 = 8 letters long (plus the zero
    byte) */
-static void time2str(char *r, long t)
+static void time2str(char *r, curl_off_t seconds)
 {
-  long h;
-  if(!t) {
+  curl_off_t d, h, m, s;
+  if(seconds <= 0) {
     strcpy(r, "--:--:--");
     return;
   }
-  h = (t/3600);
-  if(h <= 99) {
-    long m = (t-(h*3600))/60;
-    long s = (t-(h*3600)-(m*60));
-    snprintf(r, 9, "%2ld:%02ld:%02ld",h,m,s);
+  h = seconds / CURL_OFF_T_C(3600);
+  if(h <= CURL_OFF_T_C(99)) {
+    m = (seconds - (h*CURL_OFF_T_C(3600))) / CURL_OFF_T_C(60);
+    s = (seconds - (h*CURL_OFF_T_C(3600))) - (m*CURL_OFF_T_C(60));
+    snprintf(r, 9, "%2" FORMAT_OFF_T ":%02" FORMAT_OFF_T ":%02" FORMAT_OFF_T,
+             h, m, s);
   }
   else {
     /* this equals to more than 99 hours, switch to a more suitable output
        format to fit within the limits. */
-    if(h/24 <= 999)
-      snprintf(r, 9, "%3ldd %02ldh", h/24, h-(h/24)*24);
+    d = seconds / CURL_OFF_T_C(86400);
+    h = (seconds - (d*CURL_OFF_T_C(86400))) / CURL_OFF_T_C(3600);
+    if(d <= CURL_OFF_T_C(999))
+      snprintf(r, 9, "%3" FORMAT_OFF_T "d %02" FORMAT_OFF_T "h", d, h);
     else
-      snprintf(r, 9, "%7ldd", h/24);
+      snprintf(r, 9, "%7" FORMAT_OFF_T "d", d);
   }
 }
 
@@ -68,53 +63,56 @@ static void time2str(char *r, long t)
    Add suffix k, M, G when suitable... */
 static char *max5data(curl_off_t bytes, char *max5)
 {
-#define ONE_KILOBYTE 1024
-#define ONE_MEGABYTE (1024* ONE_KILOBYTE)
-#define ONE_GIGABYTE (1024* ONE_MEGABYTE)
-#define ONE_TERABYTE ((curl_off_t)1024* ONE_GIGABYTE)
-#define ONE_PETABYTE ((curl_off_t)1024* ONE_TERABYTE)
+#define ONE_KILOBYTE  CURL_OFF_T_C(1024)
+#define ONE_MEGABYTE (CURL_OFF_T_C(1024) * ONE_KILOBYTE)
+#define ONE_GIGABYTE (CURL_OFF_T_C(1024) * ONE_MEGABYTE)
+#define ONE_TERABYTE (CURL_OFF_T_C(1024) * ONE_GIGABYTE)
+#define ONE_PETABYTE (CURL_OFF_T_C(1024) * ONE_TERABYTE)
 
-  if(bytes < 100000) {
+  if(bytes < CURL_OFF_T_C(100000))
     snprintf(max5, 6, "%5" FORMAT_OFF_T, bytes);
-  }
-  else if(bytes < (10000*ONE_KILOBYTE)) {
-    snprintf(max5, 6, "%4" FORMAT_OFF_T "k", (curl_off_t)(bytes/ONE_KILOBYTE));
-  }
-  else if(bytes < (100*ONE_MEGABYTE)) {
+
+  else if(bytes < CURL_OFF_T_C(10000) * ONE_KILOBYTE)
+    snprintf(max5, 6, "%4" FORMAT_OFF_T "k", bytes/ONE_KILOBYTE);
+
+  else if(bytes < CURL_OFF_T_C(100) * ONE_MEGABYTE)
     /* 'XX.XM' is good as long as we're less than 100 megs */
-    snprintf(max5, 6, "%2d.%0dM",
-             (int)(bytes/ONE_MEGABYTE),
-             (int)(bytes%ONE_MEGABYTE)/(ONE_MEGABYTE/10) );
-  }
-#if SIZEOF_CURL_OFF_T > 4
-  else if(bytes < ( (curl_off_t)10000*ONE_MEGABYTE))
+    snprintf(max5, 6, "%2" FORMAT_OFF_T ".%0" FORMAT_OFF_T "M",
+              bytes/ONE_MEGABYTE,
+             (bytes%ONE_MEGABYTE) / (ONE_MEGABYTE/CURL_OFF_T_C(10)) );
+
+#if (CURL_SIZEOF_CURL_OFF_T > 4)
+
+  else if(bytes < CURL_OFF_T_C(10000) * ONE_MEGABYTE)
     /* 'XXXXM' is good until we're at 10000MB or above */
-    snprintf(max5, 6, "%4" FORMAT_OFF_T "M", (curl_off_t)(bytes/ONE_MEGABYTE));
+    snprintf(max5, 6, "%4" FORMAT_OFF_T "M", bytes/ONE_MEGABYTE);
 
-  else if(bytes < (curl_off_t)100*ONE_GIGABYTE)
+  else if(bytes < CURL_OFF_T_C(100) * ONE_GIGABYTE)
     /* 10000 MB - 100 GB, we show it as XX.XG */
-    snprintf(max5, 6, "%2d.%0dG",
-             (int)(bytes/ONE_GIGABYTE),
-             (int)(bytes%ONE_GIGABYTE)/(ONE_GIGABYTE/10) );
+    snprintf(max5, 6, "%2" FORMAT_OFF_T ".%0" FORMAT_OFF_T "G",
+              bytes/ONE_GIGABYTE,
+             (bytes%ONE_GIGABYTE) / (ONE_GIGABYTE/CURL_OFF_T_C(10)) );
 
-  else if(bytes < (curl_off_t)10000 * ONE_GIGABYTE)
+  else if(bytes < CURL_OFF_T_C(10000) * ONE_GIGABYTE)
     /* up to 10000GB, display without decimal: XXXXG */
-    snprintf(max5, 6, "%4dG", (int)(bytes/ONE_GIGABYTE));
+    snprintf(max5, 6, "%4" FORMAT_OFF_T "G", bytes/ONE_GIGABYTE);
 
-  else if(bytes < (curl_off_t)10000 * ONE_TERABYTE)
+  else if(bytes < CURL_OFF_T_C(10000) * ONE_TERABYTE)
     /* up to 10000TB, display without decimal: XXXXT */
-    snprintf(max5, 6, "%4dT", (int)(bytes/ONE_TERABYTE));
-  else {
-    /* up to 10000PB, display without decimal: XXXXP */
-    snprintf(max5, 6, "%4dP", (int)(bytes/ONE_PETABYTE));
+    snprintf(max5, 6, "%4" FORMAT_OFF_T "T", bytes/ONE_TERABYTE);
 
-    /* 16384 petabytes (16 exabytes) is maximum a 64 bit number can hold,
-       but this type is signed so 8192PB will be max.*/
-  }
+  else
+    /* up to 10000PB, display without decimal: XXXXP */
+    snprintf(max5, 6, "%4" FORMAT_OFF_T "P", bytes/ONE_PETABYTE);
+
+    /* 16384 petabytes (16 exabytes) is the maximum a 64 bit unsigned number
+       can hold, but our data type is signed so 8192PB will be the maximum. */
 
 #else
+
   else
-    snprintf(max5, 6, "%4" FORMAT_OFF_T "M", (curl_off_t)(bytes/ONE_MEGABYTE));
+    snprintf(max5, 6, "%4" FORMAT_OFF_T "M", bytes/ONE_MEGABYTE);
+
 #endif
 
   return max5;
@@ -170,6 +168,10 @@ void Curl_pgrsTime(struct SessionHandle *data, timerid timer)
     break;
   case TIMER_CONNECT:
     data->progress.t_connect =
+      Curl_tvdiff_secs(Curl_tvnow(), data->progress.t_startsingle);
+    break;
+  case TIMER_APPCONNECT:
+    data->progress.t_appconnect =
       Curl_tvdiff_secs(Curl_tvnow(), data->progress.t_startsingle);
     break;
   case TIMER_PRETRANSFER:
@@ -229,12 +231,12 @@ int Curl_pgrsUpdate(struct connectdata *conn)
   struct timeval now;
   int result;
   char max5[6][10];
-  int dlpercen=0;
-  int ulpercen=0;
-  int total_percen=0;
+  curl_off_t dlpercen=0;
+  curl_off_t ulpercen=0;
+  curl_off_t total_percen=0;
   curl_off_t total_transfer;
   curl_off_t total_expected_transfer;
-  long timespent;
+  curl_off_t timespent;
   struct SessionHandle *data = conn->data;
   int nowindex = data->progress.speeder_c% CURR_TIME;
   int checkindex;
@@ -242,9 +244,9 @@ int Curl_pgrsUpdate(struct connectdata *conn)
   char time_left[10];
   char time_total[10];
   char time_spent[10];
-  long ulestimate=0;
-  long dlestimate=0;
-  long total_estimate;
+  curl_off_t ulestimate=0;
+  curl_off_t dlestimate=0;
+  curl_off_t total_estimate;
   bool shownow=FALSE;
 
   now = Curl_tvnow(); /* what time is it */
@@ -253,7 +255,7 @@ int Curl_pgrsUpdate(struct connectdata *conn)
   data->progress.timespent =
     (double)(now.tv_sec - data->progress.start.tv_sec) +
     (double)(now.tv_usec - data->progress.start.tv_usec)/1000000.0;
-  timespent = (long)data->progress.timespent;
+  timespent = (curl_off_t)data->progress.timespent;
 
   /* The average download speed this far */
   data->progress.dlspeed = (curl_off_t)
@@ -312,7 +314,7 @@ int Curl_pgrsUpdate(struct connectdata *conn)
         curl_off_t amount = data->progress.speeder[nowindex]-
           data->progress.speeder[checkindex];
 
-        if(amount > 4294967 /* 0xffffffff/1000 */)
+        if(amount > CURL_OFF_T_C(4294967) /* 0xffffffff/1000 */)
           /* the 'amount' value is bigger than would fit in 32 bits if
              multiplied with 1000, so we use the double math for this */
           data->progress.current_speed = (curl_off_t)
@@ -320,7 +322,7 @@ int Curl_pgrsUpdate(struct connectdata *conn)
         else
           /* the 'amount' value is small enough to fit within 32 bits even
              when multiplied with 1000 */
-          data->progress.current_speed = amount*1000/span_ms;
+          data->progress.current_speed = amount*CURL_OFF_T_C(1000)/span_ms;
       }
     }
     else
@@ -369,20 +371,20 @@ int Curl_pgrsUpdate(struct connectdata *conn)
 
     /* Figure out the estimated time of arrival for the upload */
     if((data->progress.flags & PGRS_UL_SIZE_KNOWN) &&
-       (data->progress.ulspeed>0) &&
-       (data->progress.size_ul > 100) ) {
-      ulestimate = (long)(data->progress.size_ul / data->progress.ulspeed);
-      ulpercen = (int)(100*(data->progress.uploaded/100) /
-                        (data->progress.size_ul/100) );
+       (data->progress.ulspeed > CURL_OFF_T_C(0)) &&
+       (data->progress.size_ul > CURL_OFF_T_C(100)) ) {
+      ulestimate = data->progress.size_ul / data->progress.ulspeed;
+      ulpercen = data->progress.uploaded /
+                (data->progress.size_ul/CURL_OFF_T_C(100));
     }
 
     /* ... and the download */
     if((data->progress.flags & PGRS_DL_SIZE_KNOWN) &&
-       (data->progress.dlspeed>0) &&
-       (data->progress.size_dl>100)) {
-      dlestimate = (long)(data->progress.size_dl / data->progress.dlspeed);
-      dlpercen = (int)(100*(data->progress.downloaded/100) /
-                        (data->progress.size_dl/100));
+       (data->progress.dlspeed > CURL_OFF_T_C(0)) &&
+       (data->progress.size_dl > CURL_OFF_T_C(100))) {
+      dlestimate = data->progress.size_dl / data->progress.dlspeed;
+      dlpercen = data->progress.downloaded /
+                (data->progress.size_dl/CURL_OFF_T_C(100));
     }
 
     /* Now figure out which of them is slower and use that one for the
@@ -405,12 +407,15 @@ int Curl_pgrsUpdate(struct connectdata *conn)
     total_transfer = data->progress.downloaded + data->progress.uploaded;
 
     /* Get the percentage of data transfered so far */
-    if(total_expected_transfer > 100)
-      total_percen=(int)(100*(total_transfer/100) /
-                         (total_expected_transfer/100) );
+    if(total_expected_transfer > CURL_OFF_T_C(100))
+      total_percen = total_transfer /
+                    (total_expected_transfer/CURL_OFF_T_C(100));
 
     fprintf(data->set.err,
-            "\r%3d %s  %3d %s  %3d %s  %s  %s %s %s %s %s",
+            "\r"
+            "%3" FORMAT_OFF_T " %s  "
+            "%3" FORMAT_OFF_T " %s  "
+            "%3" FORMAT_OFF_T " %s  %s  %s %s %s %s %s",
             total_percen,  /* 3 letters */                /* total % */
             max5data(total_expected_transfer, max5[2]),   /* total size */
             dlpercen,      /* 3 letters */                /* rcvd % */

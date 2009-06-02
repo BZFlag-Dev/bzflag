@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,7 +30,7 @@ public:
   virtual bool read(const char *cmd, std::istream&);
   virtual void writeToWorld(WorldInfo*) const;
   virtual bool usesGroupDef() { return false; }
-  
+
 protected:
   bool createWalls;
   double _size;
@@ -38,13 +38,28 @@ protected:
 };
 
 
-extern std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+struct CustomObjectMapData {
+  CustomObjectMapData() : handler(NULL) {}
+  CustomObjectMapData(bz_CustomMapObjectHandler* h,
+                      const std::string& end)
+  : handler(h)
+  , endToken(end)
+  {}
+  bz_CustomMapObjectHandler* handler;
+  std::string endToken;
+};
+typedef std::map<std::string, CustomObjectMapData> CustomObjectMap;
+extern CustomObjectMap customObjectMap;
 
-void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
-void removeCustomMapObject ( const char* object );
+
+bool registerCustomMapObject(const char* object, const char* end,
+                             bz_CustomMapObjectHandler *handler);
+bool removeCustomMapObject ( const char* object );
+
+
 #endif  /* __CUSTOMWORLD_H__ */
 
-// Local variables: ***
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

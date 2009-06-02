@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,6 +27,7 @@
 
 //common headers
 #include "bzfgl.h"
+#include "vectors.h"
 
 // local headers
 #include "MainWindow.h"
@@ -35,48 +36,19 @@ class RadarRenderer;
 class SceneRenderer;
 class LocalFontFace;
 
-struct ControlPanelMessage {
-			ControlPanelMessage(const std::string&);
-    void		breakLines(float maxLength, int fontFace, float fontSize);
 
-    std::string		string;
-    std::vector<std::string>	lines;
-    int numlines;
+struct ControlPanelMessage {
+  ControlPanelMessage(const std::string&);
+  void breakLines(float maxLength, int fontFace, float fontSize);
+
+  std::string string;
+  std::vector<std::string> lines;
+  int numlines;
 };
+
 
 class ControlPanel {
   public:
-			ControlPanel(MainWindow&, SceneRenderer&);
-			~ControlPanel();
-
-    void		setControlColor(const GLfloat *color = NULL);
-    void		render(SceneRenderer&);
-    void		resize();
-    void		invalidate();
-
-    void		setNumberOfFrameBuffers(int);
-
-    void		addMessage(const std::string&, const int mode = 3);
-    void		setMessagesOffset(int offset, int whence, bool paged);
-    void		setMessagesMode(int _messageMode);
-    int		getMessagesMode() {return messageMode;};
-    void		setStatus(const char*);
-    void		setRadarRenderer(RadarRenderer*);
-
-    void		setDimming(float dimming);
-
-    void		saveMessages(const std::string& filename,
-				     bool stripAnsi) const;
-
-  private:
-    // no copying!
-			ControlPanel(const ControlPanel&);
-    ControlPanel&	operator=(const ControlPanel&);
-
-    static void		resizeCallback(void*);
-    static void		exposeCallback(void*);
-    static void		bzdbCallback(const std::string& name, void* data);
-
     enum MessageModes {
       MessageAllTabs = -2,
       MessageCurrent = -1,
@@ -84,13 +56,53 @@ class ControlPanel {
       MessageChat    = 1,
       MessageServer  = 2,
       MessageMisc    = 3,
+      MessageDebug   = 4,
       MessageModeCount
     };
+
+  public:
+    ControlPanel(MainWindow&, SceneRenderer&);
+    ~ControlPanel();
+
+    void setControlColor(const fvec4* color = NULL);
+    void render(SceneRenderer&);
+    void resize();
+    void invalidate();
+
+    void setNumberOfFrameBuffers(int);
+
+    void addMessage(const std::string&, MessageModes mode = MessageMisc);
+    void setMessagesOffset(int offset, int whence, bool paged);
+    void setMessagesMode(MessageModes messageMode);
+    void setStatus(const char*);
+    void setRadarRenderer(RadarRenderer*);
+    MessageModes getMessagesMode() const { return messageMode; }
+
+    void setDimming(float dimming);
+
+    void saveMessages(const std::string& filename,
+				     bool stripAnsi) const;
+
+    int getModeMessageCount(MessageModes mode);
+    const std::deque<ControlPanelMessage>* getModeMessages(MessageModes mode);
+
+  private:
+    // no copying!
+    ControlPanel(const ControlPanel&);
+    ControlPanel& operator=(const ControlPanel&);
+
+    static void resizeCallback(void*);
+    static void exposeCallback(void*);
+    static void bzdbCallback(const std::string& name, void* data);
+    static void loggingCallback(int level, const std::string& msg, void* data);
+
+    bool isTabVisible(MessageModes mode) const;
+
+  private:
     bool tabsOnRight;
     std::vector<const char *> *tabs;
     std::vector<float> tabTextWidth;
     long totalTabWidth;
-
 
     MainWindow&		window;
     bool		resized;
@@ -108,16 +120,18 @@ class ControlPanel {
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
     std::deque<ControlPanelMessage>	messages[MessageModeCount];
-    int messageMode;
-    GLfloat		teamColor[3];
-    static int		messagesOffset;
-    static const int	maxScrollPages;
+    MessageModes	messageMode;
+    fvec4		teamColor;
     int			maxLines;
     float		margin;
     float		lineHeight;
     bool		unRead[MessageModeCount];
+    int			messageCounts[MessageModeCount];
 
+    static int		messagesOffset;
+    static const int	maxScrollPages;
 };
+
 
 inline void ControlPanel::setDimming(float newDimming)
 {

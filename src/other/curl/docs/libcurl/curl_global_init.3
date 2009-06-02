@@ -1,6 +1,6 @@
 .\" You can view this file with:
 .\" nroff -man [file]
-.\" $Id: curl_global_init.3,v 1.6 2006-07-26 22:19:42 bagder Exp $
+.\" $Id: curl_global_init.3,v 1.7 2008-12-28 21:56:56 bagder Exp $
 .\"
 .TH curl_global_init 3 "11 May 2004" "libcurl 7.12" "libcurl Manual"
 .SH NAME
@@ -23,7 +23,7 @@ effect as one call.
 The flags option is a bit pattern that tells libcurl exactly what features to
 init, as described below. Set the desired bits by ORing the values together.
 In normal operation, you must specify CURL_GLOBAL_ALL.  Don't use any other
-value unless you are familiar with and mean to control internal operations of
+value unless you are familiar with it and mean to control internal operations of
 libcurl.
 
 \fBThis function is not thread safe.\fP You must not call it when any other

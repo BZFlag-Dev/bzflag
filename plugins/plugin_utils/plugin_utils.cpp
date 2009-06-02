@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -387,18 +387,22 @@ std::string url_decode(const std::string &text)
 
   std::string::const_iterator itr = text.begin();
   while (itr != text.end()) {
-    if (*itr != '%') {
+    if (*itr != '%' && *itr != '+')
       destination += *itr++;
-    } else {
+    else if (*itr == '+') {
+      destination += " ";
+      itr++;
+    }
+    else {
       char hex[5] = "0x00";
 
-      itr++;;
+      itr++;
       if (itr == text.end())
 	return destination;
 
       hex[2] = *itr;
 
-      itr++;;
+      itr++;
       if (itr == text.end())
 	return destination;
 
@@ -436,6 +440,20 @@ size_t find_first_substr(const std::string &findin, const std::string findwhat, 
   return std::string::npos;
 }
 
+std::string getStringRange ( const std::string &find, size_t start, size_t end )
+{
+  std::string ret;
+
+  if (end <= start || start > find.size() || end > find.size())
+    return ret;
+
+  for ( size_t p = start; p <= end; p++)
+    ret += find[p];
+
+  return ret;
+}
+
+
 void trimLeadingWhitespace(std::string &text)
 {
   for(size_t s = 0; s < text.size(); s++) {
@@ -459,63 +477,66 @@ std::vector<std::string> perms;
 const std::vector<std::string> bzu_standardPerms (void)
 {
   if (perms.empty()){
-  	perms.push_back("actionMessage");
-  	perms.push_back("adminMessageReceive");
-  	perms.push_back("adminMessageSend");
-  	perms.push_back("antiban");
-  	perms.push_back("antikick");
-  	perms.push_back("antikill");
-  	perms.push_back("antipoll");
-  	perms.push_back("antipollban");
-  	perms.push_back("antipollkick");
-  	perms.push_back("antipollkill");
-  	perms.push_back("ban");
-  	perms.push_back("banlist");
-  	perms.push_back("countdown");
-  	perms.push_back("date");
-  	perms.push_back("endGame");
-  	perms.push_back("flagHistory");
-  	perms.push_back("flagMod");
-  	perms.push_back("hideAdmin");
-  	perms.push_back("idleStats");
-  	perms.push_back("info");
-  	perms.push_back("kick");
-  	perms.push_back("kill");
-  	perms.push_back("lagStats");
-  	perms.push_back("lagwarn");
-  	perms.push_back("listPlugins");
-  	perms.push_back("listPerms");
-  	perms.push_back("masterban");
-  	perms.push_back("mute");
-  	perms.push_back("playerList");
-  	perms.push_back("poll");
-  	perms.push_back("pollBan");
-  	perms.push_back("pollKick");
-  	perms.push_back("pollKill");
-  	perms.push_back("pollSet");
-  	perms.push_back("pollFlagReset");
-  	perms.push_back("privateMessage");
-  	perms.push_back("record");
-  	perms.push_back("rejoin");
-  	perms.push_back("removePerms");
-  	perms.push_back("replay");
-  	perms.push_back("requireIdentify");
-  	perms.push_back("say");
-  	perms.push_back("sendHelp");
-  	perms.push_back("setAll");
-  	perms.push_back("setPerms");
-  	perms.push_back("setVar");
-  	perms.push_back("showOthers");
-  	perms.push_back("shortBan");
-  	perms.push_back("shutdownServer");
-  	perms.push_back("spawn");
-  	perms.push_back("superKill");
-  	perms.push_back("talk");
-  	perms.push_back("unban");
-  	perms.push_back("unmute");
-  	perms.push_back("veto");
-  	perms.push_back("viewReports");
-  	perms.push_back("vote");
+    perms.push_back("actionMessage");
+    perms.push_back("adminMessageReceive");
+    perms.push_back("adminMessageSend");
+    perms.push_back("antiban");
+    perms.push_back("antikick");
+    perms.push_back("antikill");
+    perms.push_back("antipoll");
+    perms.push_back("antipollban");
+    perms.push_back("antipollkick");
+    perms.push_back("antipollkill");
+    perms.push_back("ban");
+    perms.push_back("banlist");
+    perms.push_back("countdown");
+    perms.push_back("date");
+    perms.push_back("endGame");
+    perms.push_back("flagHistory");
+    perms.push_back("flagMaster");
+    perms.push_back("flagMod");
+    perms.push_back("hideAdmin");
+    perms.push_back("idleStats");
+    perms.push_back("info");
+    perms.push_back("jitter_warn");
+    perms.push_back("kick");
+    perms.push_back("kill");
+    perms.push_back("lagStats");
+    perms.push_back("lagwarn");
+    perms.push_back("listPlugins");
+    perms.push_back("listPerms");
+    perms.push_back("masterBan");
+    perms.push_back("modCount");
+    perms.push_back("mute");
+    perms.push_back("packetlosswarn");
+    perms.push_back("playerList");
+    perms.push_back("poll");
+    perms.push_back("pollBan");
+    perms.push_back("pollKick");
+    perms.push_back("pollKill");
+    perms.push_back("pollSet");
+    perms.push_back("pollFlagReset");
+    perms.push_back("privateMessage");
+    perms.push_back("record");
+    perms.push_back("rejoin");
+    perms.push_back("removePerms");
+    perms.push_back("replay");
+    perms.push_back("say");
+    perms.push_back("sendHelp");
+    perms.push_back("setAll");
+    perms.push_back("setPerms");
+    perms.push_back("setVar");
+    perms.push_back("showOthers");
+    perms.push_back("shortBan");
+    perms.push_back("shutdownServer");
+    perms.push_back("spawn");
+    perms.push_back("superKill");
+    perms.push_back("talk");
+    perms.push_back("unban");
+    perms.push_back("unmute");
+    perms.push_back("veto");
+    perms.push_back("viewReports");
+    perms.push_back("vote");
   }
   return perms;
 }

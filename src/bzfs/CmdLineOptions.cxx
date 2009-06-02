@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -52,7 +52,7 @@
 
 const char *usageString =
   "[-admsg <text>] "
-  "[-advertise <group,group...>]"
+  "[-advertise <group,group...>] "
   "[-autoTeam] "
   "[-b] "
   "[-badwords <filename>] "
@@ -80,7 +80,7 @@ const char *usageString =
   "[-groupdb <group file>] "
   "[-h] "
   "[-handicap] "
-  "[-helpdir <dir>]"
+  "[-helpdir <dir>] "
   "[-helpmsg <file> <name>] "
   "[-i interface] "
   "[-j] "
@@ -89,14 +89,14 @@ const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
-  "[-masterBanURL <URL>]"
+  "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
   "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
   "[-mps <score>] "
   "[-ms <shots>] "
   "[-mts <score>] "
-  "[-noMasterBanlist]"
-  "[-noradar]"
+  "[-noMasterBanlist] "
+  "[-noradar] "
   "[-offa] "
   "[-p <port>] "
   "[-packetlossdrop <num>] "
@@ -118,7 +118,6 @@ const char *usageString =
   "[-replay] "
   "[-reportfile <filename>] "
   "[-reportpipe <filename>] "
-  "[-requireudp] "
   "[+s <flag-count>] "
   "[-s <flag-count>] "
   "[-sa] "
@@ -191,7 +190,6 @@ const char *extraUsageString =
   "\t-jitterdrop: drop player after this many jitter warnings\n"
   "\t-jitterwarn: jitter warning threshhold time [ms]\n"
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
-  "\t\tstring\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
   "\t-mp: maximum players total or per team\n"
@@ -221,7 +219,6 @@ const char *extraUsageString =
   "\t-replay: setup the server to replay a previously saved game\n"
   "\t-reportfile <filename>: the file to store reports in\n"
   "\t-reportpipe <filename>: the program to pipe reports through\n"
-  "\t-requireudp: require clients to use udp\n"
   "\t+s: always have <num> super flags (default=16)\n"
   "\t-s: allow up to <num> super flags (default=16)\n"
   "\t-sa: insert antidote superflags\n"
@@ -301,7 +298,7 @@ static void extraUsage(const char *pname)
   std::cout << std::endl << "Usage: " << pname << ' ' << usageString << std::endl;
   std::cout << std::endl << extraUsageString << std::endl << "Flag codes:" << std::endl;
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
-    snprintf(buffer, 64, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
+    snprintf(buffer, 64, "\t%2.2s %s\n", (*it->second).flagAbbv.c_str(), (*it->second).flagName.c_str());
     std::cout << buffer;
   }
   exit(0);
@@ -441,7 +438,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
   return true;
 }
 
-static char **parseConfFile( const char *file, int &ac)
+static char **parseConfFile(const char *file, int &ac)
 {
   std::vector<std::string> tokens;
   ac = 0;
@@ -721,7 +718,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
 	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
 	usage(argv[0]);
-      } else logDebugMessage(3, "Loaded help message: %s");
+      } else {
+	logDebugMessage(3, ("Loaded help message: %s\n"), argv[i]);
+      }
       i++;
     } else if (strcmp(argv[i], "-i") == 0) {
       // use a different interface
@@ -812,7 +811,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       options.masterBanListURL.push_back(argv[i]);
     } else if (strcmp(argv[i], "-noTeamKills") == 0) {
-      // allow jumping
+      // forbid team kills
       options.gameOptions |= int(NoTeamKills);
     } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
@@ -918,7 +917,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // rabbit chase style
       if (options.gameType == ClassicCTF) {
 	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
-	std::cerr << "Rabbit Chase assumed" << std::endl;;
+	std::cerr << "Rabbit Chase assumed" << std::endl;
       }
       options.gameType = RabbitChase;
 
@@ -958,9 +957,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.reportPipe = argv[i];
     } else if (strcmp(argv[i], "-tkannounce") == 0) {
       options.tkAnnounce = true;
-    } else if (strcmp(argv[i], "-requireudp") == 0) {
-      std::cerr << "require UDP clients!" << std::endl;
-      options.requireUDP = true;
     } else if (strcmp(argv[i], "+s") == 0 || strcmp(argv[i], "-s") == 0) {
       // with +s all flags are required to exist all the time
       allFlagsOut = argv[i][0] == '+' ? true : false;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,32 +16,31 @@
 #include "SceneNode.h"
 #include "Frustum.h"
 #include "Extents.h"
+#include "vectors.h"
 
 
 class OctreeNode;
 
 
 class Octree {
-
   public:
-
     Octree();
     ~Octree();
 
     void clear ();
 
-    void addNodes (SceneNode** list, int listSize, int depth, int elements);
+    void addNodes(SceneNode** list, int listSize, int depth, int elements);
 
-    int getFrustumList (SceneNode** list, int listSize,
-			const Frustum* frustum) const;
-    int getShadowList (SceneNode** list, int listSize,
-		       int planeCount, const float (*planes)[4]) const;
-    int getRadarList (SceneNode** list, int listSize,
-		      const Frustum* frustum) const;
+    int getFrustumList(SceneNode** list, int listSize,
+                       const Frustum* frustum) const;
+    int getShadowList(SceneNode** list, int listSize,
+                      int planeCount, const fvec4* planes) const;
+    int getRadarList(SceneNode** list, int listSize,
+                     const Frustum* frustum) const;
 
     void setOccluderManager(int);
 
-    void draw () const;
+    void draw() const;
 
     const Extents* getVisualExtents() const;
 
@@ -57,20 +56,18 @@ class Octree {
 
 
 class OctreeNode {
-
   public:
-
     OctreeNode(unsigned char depth, const Extents& exts,
-	       SceneNode** list, int listSize);
+	             SceneNode** list, int listSize);
     ~OctreeNode();
 
-    void getFrustumList () const;
-    void getShadowList () const;
-    void getRadarList () const;
-    void getFullyVisible () const;
-    void getFullyVisibleOcclude () const;
-    void getFullyShadow () const;
-    OctreeNode* getChild (int child);
+    void getFrustumList() const;
+    void getShadowList() const;
+    void getRadarList() const;
+    void getFullyVisible() const;
+    void getFullyVisibleOcclude() const;
+    void getFullyShadow() const;
+    OctreeNode* getChild(int child);
 
     int getCount() const;    // number of nodes in this and subnodes
     int getChildren() const; // number of children
@@ -79,12 +76,11 @@ class OctreeNode {
     const Extents& getExtents() const;
 
     void tallyStats();
-    void draw ();
+    void draw();
 
   private:
-
-    void makeChildren ();
-    void resizeCell ();
+    void makeChildren();
+    void resizeCell();
 
     enum CullLevel {
       NoCull,
@@ -123,7 +119,7 @@ inline int OctreeNode::getChildren() const
   return childCount;
 }
 
-inline OctreeNode* OctreeNode::getChild (int child)
+inline OctreeNode* OctreeNode::getChild(int child)
 {
   return children[child];
 }

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,8 +22,9 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "LocalPlayer.h"
-#include "playing.h"
 #include "LocalFontFace.h"
+#include "playing.h"
+#include "guiplaying.h"
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL)
 {
@@ -43,8 +44,6 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   addControl(keyMapping);
 
   HUDuiList* option = new HUDuiList;
-
-  option = new HUDuiList;
   std::vector<std::string>* options = &option->getList();
   // set joystick Device
   option->setFontFace(fontFace);
@@ -119,7 +118,8 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
   options->push_back(std::string("No"));
-  options->push_back(std::string("Yes"));
+  options->push_back(std::string("Window"));
+  options->push_back(std::string("MotionBox"));
   option->setIndex(getMainWindow()->isGrabEnabled() ? 1 : 0);
   option->update();
   addControl(option);
@@ -253,9 +253,12 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     /* Grab mouse */
     case 'G':
       {
-	bool grabbing = (selectedOption == "Yes");
+	const bool grabbing = (selectedOption == "Window");
 	BZDB.set("mousegrab", grabbing ? "true" : "false");
 	getMainWindow()->enableGrabMouse(grabbing);
+
+	const bool clamped = (selectedOption == "MotionBox");
+        BZDB.set("mouseClamp", clamped ? "true" : "false");
       }
       break;
 
@@ -304,7 +307,7 @@ void			InputMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString().c_str());
+  const float titleWidth = fm.getStringWidth(fontFace->getFMFace(), titleFontSize, title->getString());
   const float titleHeight = fm.getStringHeight(fontFace->getFMFace(), titleFontSize);
   float x = 0.5f * ((float)_width - titleWidth);
   float y = (float)_height - titleHeight;
@@ -330,6 +333,20 @@ void			InputMenu::resize(int _width, int _height)
   }
   if (BZDB.isTrue("allowInputChange"))
     activeInput->setIndex(0);
+
+  for (i = 1; i < count; i++) {
+    if (listHUD[i]->getLabel() == "Confine mouse:") {
+      HUDuiList* list = reinterpret_cast<HUDuiList*>(listHUD[i]);      
+      if (BZDB.isTrue("mousegrab")) {
+        list->setIndex(1);
+      } else if (BZDB.isTrue("mouseClamp")) {
+        list->setIndex(2);
+      } else {
+        list->setIndex(0);
+      }
+      break;
+    }
+  }
 }
 
 

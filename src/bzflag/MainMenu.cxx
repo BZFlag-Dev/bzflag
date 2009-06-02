@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -89,11 +89,11 @@ void	  MainMenu::createControls()
   initNavigation();
 }
 
-HUDuiControl* MainMenu::createLabel(const char* string)
+HUDuiControl* MainMenu::createLabel(const char* label)
 {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFontFace(getFontFace());
-  control->setString(string);
+  control->setString(label);
   return control;
 }
 
@@ -105,7 +105,7 @@ MainMenu::~MainMenu()
   delete quitMenu;
   HelpMenu::done();
   /* release font
-   * note that it is NOT valid to call getFontFace if there is not an active 
+   * note that it is NOT valid to call getFontFace if there is not an active
    * instance of MainMenu, even though it's static. */
   LocalFontFace::release(fontFace);
 }
@@ -181,7 +181,7 @@ void			MainMenu::resize(int _width, int _height)
 
   // reposition instructions
   hint->setFontSize(tinyFontSize);
-  const float hintWidth = fm.getStringWidth(fontFace->getFMFace(), tinyFontSize, hint->getString().c_str());
+  const float hintWidth = fm.getStringWidth(fontFace->getFMFace(), tinyFontSize, hint->getString());
   y -= 1.25f * fm.getStringHeight(fontFace->getFMFace(), tinyFontSize);
   hint->setPosition(0.5f * ((float)_width - hintWidth), y);
   y -= 1.5f * fm.getStringHeight(fontFace->getFMFace(), fontSize);
@@ -189,7 +189,7 @@ void			MainMenu::resize(int _width, int _height)
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
     = fm.getStringWidth(fontFace->getFMFace(), fontSize,
-		      ((HUDuiLabel*)listHUD[3])->getString().c_str());
+		      ((HUDuiLabel*)listHUD[3])->getString());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {

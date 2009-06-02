@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -40,6 +40,7 @@ public:
 
   void setTimeout(long timeout);
   void setNoBody();
+  void setFailOnError();
   void setGetMode();
   void setHTTPPostMode();
   void setPostMode(std::string postData);
@@ -50,33 +51,33 @@ public:
   void setInterface(const std::string interfaceIP);
   void setUserAgent(const std::string userAgent);
   void setDNSCachingTime(int time);
+  void setDeleteOnDone();
 
   void addFormData(const char *key, const char *value);
 
   bool getFileTime(time_t &t);
   bool getFileSize(double &size);
+  bool getHttpCode(long   &code);
 
   virtual void collectData(char *ptr, int len);
-  virtual void finalization(char *data, unsigned int length, bool good);
+  virtual void finalization(char *data, unsigned int length, bool good) = 0;
 
-  static int	fdset(fd_set &read, fd_set &write);
+  void performWait();
+
   static bool	perform();
-  void		performWait();
+  static int	fdset(fd_set &read, fd_set &write);
 
 protected:
   void	       *theData;
   unsigned int  theLen;
-private:
 
+private:
   void		infoComplete(CURLcode result);
 
-  static bool   inited;
-  static bool   justCalled;
+private:
   CURL	       *easyHandle;
-  static int	refs;
-  static CURLM *multiHandle;
-  static char   errorBuffer[CURL_ERROR_SIZE];
   bool		added;
+  bool          deleteOnDone;
   std::string   usedUrl;
   std::string   interfaceIP;
   std::string   userAgent;
@@ -85,52 +86,61 @@ private:
   struct curl_httppost* formPost;
   struct curl_httppost* formLast;
 
+private:
   static void   setup();
 
   static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
 			      void *stream);
 
-  static std::map<CURL*, cURLManager*> cURLMap;
+  static bool   inited;
+  static bool   justCalled;
+  static int	refs;
+  static CURLM *multiHandle;
+  static char   errorBuffer[CURL_ERROR_SIZE];
+
+  static std::map<CURL*, cURLManager*> *pcURLMap;
 };
 
 
-typedef enum
-{
-	eImage,
-	eSound,
-	eFont,
-	eFile,
-	eUnknown
-}teResourceType;
+typedef enum {
+  eImage,
+  eSound,
+  eFont,
+  eFile,
+  eUnknown
+} teResourceType;
 
-typedef struct
-{
-	teResourceType	resType;
-	std::string		URL;
-	std::string		filePath;
-	std::string		fileName;
-}trResourceItem;
+
+typedef struct {
+  teResourceType resType;
+  std::string URL;
+  std::string filePath;
+  std::string fileName;
+} trResourceItem;
+
 
 class ResourceGetter :  private cURLManager
 {
 public:
-	ResourceGetter();
-	virtual ~ResourceGetter();
+  ResourceGetter();
+  virtual ~ResourceGetter();
 
-	void addResource ( trResourceItem &item );
-	void flush ( void );
+  void addResource ( trResourceItem &item );
+  void flush ( void );
 
-	virtual void finalization(char *data, unsigned int length, bool good);
+  virtual void finalization(char *data, unsigned int length, bool good);
 
 protected:
-	bool itemExists ( trResourceItem &item );
-	void getResource ( void );
+  bool itemExists ( trResourceItem &item );
+  void getResource ( void );
 
-	std::vector<trResourceItem>	resources;
-	bool doingStuff;
+  std::vector<trResourceItem> resources;
+  bool doingStuff;
 };
 
+
 #endif // CURL_MANAGER_H
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -61,7 +61,7 @@ static std::string strFlag (u16 id);
 static std::string strFlagStatus (FlagStatus status);
 static std::string strTeam (u16 id);
 static std::string strPlayer (u16 id);
-static std::string strVector (float *vector);
+static std::string strVector (const fvec3& vector);
 static std::string strKillReason (int16_t reason);
 static std::string strAddress (Address& address);
 
@@ -95,6 +95,7 @@ static MsgStringList handleMsgGameSettings(PacketInfo *pi);
 static MsgStringList handleMsgGameTime(PacketInfo *pi);
 static MsgStringList handleMsgHandicap(PacketInfo *pi);
 static MsgStringList handleMsgHit(PacketInfo *pi);
+static MsgStringList handleMsgJoinServer(PacketInfo *pi);
 static MsgStringList handleMsgKilled(PacketInfo *pi);
 static MsgStringList handleMsgLagState(PacketInfo *pi);
 static MsgStringList handleMsgLimboMessage(PacketInfo *pi);
@@ -130,9 +131,6 @@ static MsgStringList handleMsgTransferFlag(PacketInfo *pi);
 static MsgStringList handleMsgTeamUpdate(PacketInfo *pi);
 static MsgStringList handleMsgWantWHash(PacketInfo *pi);
 static MsgStringList handleMsgWantSettings(PacketInfo *pi);
-static MsgStringList handleMsgPortalAdd(PacketInfo *pi);
-static MsgStringList handleMsgPortalRemove(PacketInfo *pi);
-static MsgStringList handleMsgPortalUpdate(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
 static MsgStringList handleMsgServerControl(PacketInfo *pi);
@@ -178,6 +176,7 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgGameTime),
   PACKET_LIST_ENTRY (MsgHandicap),
   PACKET_LIST_ENTRY (MsgHit),
+  PACKET_LIST_ENTRY (MsgJoinServer),
   PACKET_LIST_ENTRY (MsgKilled),
   PACKET_LIST_ENTRY (MsgLagState),
   PACKET_LIST_ENTRY (MsgLimboMessage),
@@ -213,9 +212,6 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgTeamUpdate),
   PACKET_LIST_ENTRY (MsgWantWHash),
   PACKET_LIST_ENTRY (MsgWantSettings),
-  PACKET_LIST_ENTRY (MsgPortalAdd),
-  PACKET_LIST_ENTRY (MsgPortalRemove),
-  PACKET_LIST_ENTRY (MsgPortalUpdate),
   PACKET_LIST_ENTRY (MsgUDPLinkRequest),
   PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
   PACKET_LIST_ENTRY (MsgServerControl),
@@ -229,7 +225,7 @@ static PacketListEntry PacketList[] = {
 static const int PacketListCount = sizeof (PacketList) / sizeof (PacketList[0]);
 
 
-/******************************************************************************/
+//============================================================================//
 
 void MsgStrings::init ()
 {
@@ -310,8 +306,7 @@ const char * MsgStrings::strMsgCode (uint16_t code)
   }
   if (i < PacketListCount) {
     return PacketList[i].label;
-  }
-  else {
+  } else {
     static char buf[32];
     sprintf (buf, "MsgUnknown(0x%04X)", code);
     return buf;
@@ -330,8 +325,7 @@ MsgStringList MsgStrings::msgFromServer (u16 len, u16 code, const void *data)
   if (i < PacketListCount) {
     PacketInfo pi = {len, code, data};
     return PacketList[i].handler (&pi);
-  }
-  else {
+  } else {
     MsgStringList badcode;
     listPush (badcode, 0, "Unknown message code: 0x%04X\n", code);
     return badcode;
@@ -352,8 +346,7 @@ MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
     MsgStringList list = listMsgBasics (&pi);
     list[0].text += "  << client to server messages unimplemented >>";
     return list;
-  }
-  else {
+  } else {
     MsgStringList list;
     listPush (list, 0, "Unknown message code: 0x%04X\n", code);
     list[0].text += "  << client to server messages unimplemented >>";
@@ -362,7 +355,7 @@ MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 static void listPush (MsgStringList &list, int level, const char *fmt, ...)
 {
@@ -370,6 +363,10 @@ static void listPush (MsgStringList &list, int level, const char *fmt, ...)
   MsgString mstr = { level, "", "" };
   char buffer[256];
   va_list args;
+
+  if (!fmt)
+    return;
+
   va_start(args, fmt);
   vsnprintf (buffer, 256, fmt, args);
   va_end(args);
@@ -446,15 +443,14 @@ static std::string strPlayer (u16 id)
   std::string name;
   if (it != PlayerList.end()) {
     name = (*it).second;
-  }
-  else {
+  } else {
     name = "UnTracked";
   }
   return TextUtils::format ("%s [%i]", name.c_str(), id);
 }
 
 
-static std::string strVector (float *vector)
+static std::string strVector (const fvec3& vector)
 {
   std::string str = TextUtils::format ("(%8.3f, %8.3f, %8.3f)",
     vector[0], vector[1], vector[2]);
@@ -488,7 +484,7 @@ static std::string strKillReason (int16_t reason)
   }
 }
 
-/******************************************************************************/
+//============================================================================//
 
 static MsgStringList handleMsgNull (PacketInfo *pi)
 {
@@ -514,11 +510,11 @@ static MsgStringList handleMsgAdminInfo (PacketInfo *pi)
   u8 count, ipsize, player;
   Address address;
   u16 i;
-  d = nboUnpackUByte (d, count);
+  d = nboUnpackUInt8 (d, count);
   listPush (list, 1, "count: %i", count);
   for (i=0 ; i < count; i++) {
-    d = nboUnpackUByte (d, ipsize);
-    d = nboUnpackUByte (d, player);
+    d = nboUnpackUInt8 (d, ipsize);
+    d = nboUnpackUInt8 (d, player);
     d = address.unpack (d);
 
     listPush (list, 2, "player:     %s", strPlayer(player).c_str());
@@ -536,13 +532,14 @@ static MsgStringList handleMsgAlive (PacketInfo *pi)
 
   void *d = (void*)pi->data;
   u8 player;
-  float pos[3], azimuth;
-  d = nboUnpackUByte (d, player);
-  d = nboUnpackFloatVector (d, pos);
-  d = nboUnpackFloat (d, azimuth);
-  listPush (list, 1, "player: %s", strPlayer(player).c_str());
-  listPush (list, 2, "pos:    %s", strVector(pos).c_str());
-  listPush (list, 2, "angle:  %-8.3f = %8.3f deg",
+  fvec3 pos;
+  float azimuth;
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackFVec3(d, pos);
+  d = nboUnpackFloat(d, azimuth);
+  listPush(list, 1, "player: %s", strPlayer(player).c_str());
+  listPush(list, 2, "pos:    %s", strVector(pos).c_str());
+  listPush(list, 2, "angle:  %-8.3f = %8.3f deg",
 	   azimuth, azimuth * (180.0f / M_PI));
 
   return list;
@@ -566,13 +563,13 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
   u16 type, team, wins, losses, tks;
   char callsign[CallSignLen];
 
-  d = nboUnpackUByte (d, index);
-  d = nboUnpackUShort (d, type);
-  d = nboUnpackUShort (d, team);
-  d = nboUnpackUShort (d, wins);
-  d = nboUnpackUShort (d, losses);
-  d = nboUnpackUShort (d, tks);
-  d = nboUnpackString (d, callsign, CallSignLen);
+  d = nboUnpackUInt8(d, index);
+  d = nboUnpackUInt16(d, type);
+  d = nboUnpackUInt16(d, team);
+  d = nboUnpackUInt16(d, wins);
+  d = nboUnpackUInt16(d, losses);
+  d = nboUnpackUInt16(d, tks);
+  d = nboUnpackString(d, callsign, CallSignLen);
 
   if (TrackState) {
     PlayerList[index] = callsign;
@@ -618,7 +615,7 @@ static MsgStringList handleMsgCaptureFlag (PacketInfo *pi)
 
   void *d = (void*)pi->data;
   u16 team;
-  d = nboUnpackUShort (d, team);
+  d = nboUnpackUInt16 (d, team);
   listPush (list, 1, "team: %s", strTeam (team).c_str());
 
   return list;
@@ -657,8 +654,8 @@ static MsgStringList handleMsgDropFlag (PacketInfo *pi)
   Flag flag;
   u8 player;
   u16 flagid;
-  d = nboUnpackUByte (d, player);
-  d = nboUnpackUShort (d, flagid);
+  d = nboUnpackUInt8 (d, player);
+  d = nboUnpackUInt16 (d, flagid);
   d = flag.unpack (d);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "flag: %s", strFlag (flagid).c_str());
@@ -698,11 +695,11 @@ static MsgStringList handleMsgFlagUpdate (PacketInfo *pi)
   void *d = (void*)pi->data;
   u16 count, index;
   int i;
-  d = nboUnpackUShort (d, count);
+  d = nboUnpackUInt16 (d, count);
   listPush (list, 1, "count: %i", count);
   for (i = 0; i < (int) count; i++) {
     Flag flag;
-    d = nboUnpackUShort (d, index);
+    d = nboUnpackUInt16 (d, index);
     d = flag.unpack (d);
     if (TrackState) {
       FlagList[index] = flag.type->flagAbbv;
@@ -733,8 +730,8 @@ static MsgStringList handleMsgGrabFlag (PacketInfo *pi)
   Flag flag;
   u8 player;
   u16 flagid;
-  d = nboUnpackUByte (d, player);
-  d = nboUnpackUShort (d, flagid);
+  d = nboUnpackUInt8 (d, player);
+  d = nboUnpackUInt16 (d, flagid);
   d = flag.unpack (d);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "flag: %s", strFlag (flagid).c_str());
@@ -751,13 +748,13 @@ static MsgStringList handleMsgGMUpdate (PacketInfo *pi)
   u8 target;
   ShotUpdate shot;
   d = shot.unpack (d);
-  d = nboUnpackUByte (d, target);
+  d = nboUnpackUInt8 (d, target);
   listPush (list, 1, "player:   %s", strPlayer(shot.player).c_str());
   listPush (list, 1, "target:   %s", strPlayer(target).c_str());
   listPush (list, 2, "id:       %i", shot.id);
   listPush (list, 2, "team:     %s", strTeam(shot.team).c_str());
-  listPush (list, 2, "pos:      %s", strVector((float*)shot.pos).c_str());
-  listPush (list, 2, "vel:      %s", strVector((float*)shot.vel).c_str());
+  listPush (list, 2, "pos:      %s", strVector(shot.pos).c_str());
+  listPush (list, 2, "vel:      %s", strVector(shot.vel).c_str());
 
   return list;
 }
@@ -812,13 +809,13 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
   int16_t reason, shot;
   FlagType* flagType;
   int32_t phydrv;
-  d = nboUnpackUByte(d, victim);
-  d = nboUnpackUByte(d, killer);
-  d = nboUnpackShort(d, reason);
-  d = nboUnpackShort(d, shot);
+  d = nboUnpackUInt8(d, victim);
+  d = nboUnpackUInt8(d, killer);
+  d = nboUnpackInt16(d, reason);
+  d = nboUnpackInt16(d, shot);
   d = FlagType::unpack(d, flagType);
   if (reason == PhysicsDriverDeath) {
-    d = nboUnpackInt(d, phydrv);
+    d = nboUnpackInt32(d, phydrv);
   }
   listPush (list, 1, "victim: %s", strPlayer(victim).c_str());
   listPush (list, 1, "killer: %s", strPlayer(killer).c_str());
@@ -826,13 +823,41 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
   listPush (list, 1, "shotid: %i", shot);
 
   if (flagType != Flags::Null) {
-    listPush (list, 1, "flag:   %s", flagType->flagAbbv);
+    listPush (list, 1, "flag:   %s", flagType->flagAbbv.c_str());
   } else {
     listPush (list, 1, "flag:   Null");
   }
   if (reason == PhysicsDriverDeath) {
     listPush (list, 1, "phydrv: %i", phydrv);
   }
+
+  return list;
+}
+
+
+static MsgStringList handleMsgJoinServer (PacketInfo *pi)
+{
+  MsgStringList list = listMsgBasics (pi);
+
+  void *d = (void*)pi->data;
+
+  std::string addr;
+  int32_t port;
+  int32_t team;
+  std::string referrer;
+  std::string message;
+
+  d = nboUnpackStdString(d, addr);
+  d = nboUnpackInt32(d, port);
+  d = nboUnpackInt32(d, team);
+  d = nboUnpackStdString(d, referrer);
+  d = nboUnpackStdString(d, message);
+
+  listPush (list, 1, "addr: \"%s\"", addr.c_str());
+  listPush (list, 1, "port: %i", port);
+  listPush (list, 1, "team: %i", team);
+  listPush (list, 1, "referrer: \"%s\"", referrer.c_str());
+  listPush (list, 1, "message: \"%s\"", message.c_str());
 
   return list;
 }
@@ -860,8 +885,8 @@ static MsgStringList handleMsgMessage (PacketInfo *pi)
 
   void *d = (void*)pi->data;
   u8 src, dst;
-  d = nboUnpackUByte (d, src);
-  d = nboUnpackUByte (d, dst);
+  d = nboUnpackUInt8 (d, src);
+  d = nboUnpackUInt8 (d, dst);
   listPush (list, 1, "src: %s", strPlayer(src).c_str());
   listPush (list, 1, "dst: %s", strPlayer(dst).c_str());
   listPush (list, 1, "message: \"%s\"", (char*) d);
@@ -892,8 +917,8 @@ static MsgStringList handleMsgNewRabbit (PacketInfo *pi)
 
   void *d = (void*)pi->data;
   u8 player, paused;
-  d = nboUnpackUByte (d, player);
-  d = nboUnpackUByte (d, paused);
+  d = nboUnpackUInt8 (d, player);
+  d = nboUnpackUInt8 (d, paused);
 
   return list;
 }
@@ -913,8 +938,8 @@ static MsgStringList handleMsgPause (PacketInfo *pi)
 
   void *d = (void*)pi->data;
   u8 player, paused;
-  d = nboUnpackUByte (d, player);
-  d = nboUnpackUByte (d, paused);
+  d = nboUnpackUInt8 (d, player);
+  d = nboUnpackUInt8 (d, paused);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "paused: %i", paused);
 
@@ -930,11 +955,11 @@ static MsgStringList handleMsgPlayerInfo (PacketInfo *pi)
   u8 count, player, properties;
   Address address;
   u16 i;
-  d = nboUnpackUByte (d, count);
+  d = nboUnpackUInt8 (d, count);
   listPush (list, 1, "count: %i", count);
   for (i=0 ; i < count; i++) {
-    d = nboUnpackUByte (d, player);
-    d = nboUnpackUByte (d, properties);
+    d = nboUnpackUInt8 (d, player);
+    d = nboUnpackUInt8 (d, properties);
 
     std::string props;
     if (properties & IsRegistered) {
@@ -964,7 +989,7 @@ static MsgStringList handleMsgPlayerUpdate (PacketInfo *pi)
   u8 index;
   PlayerState state;
   d = nboUnpackFloat (d, timestamp);
-  d = nboUnpackUByte (d, index);
+  d = nboUnpackUInt8 (d, index);
   d = state.unpack (d, pi->code);
 
   listPush (list, 1, "player: %s", strPlayer(index).c_str());
@@ -1017,7 +1042,7 @@ static MsgStringList handleMsgRemovePlayer (PacketInfo *pi)
 
   void *d = (void*)pi->data;
   u8 index;
-  d = nboUnpackUByte (d, index);
+  d = nboUnpackUInt8 (d, index);
   listPush (list, 1, "player: %s", strPlayer(index).c_str());
   if (TrackState) {
     PlayerList.erase (index);
@@ -1044,11 +1069,11 @@ static MsgStringList handleMsgShotBegin (PacketInfo *pi)
   d = finfo.unpack (d);
   const ShotUpdate& shot = finfo.shot;
   listPush (list, 1, "player:   %s", strPlayer(shot.player).c_str());
-  listPush (list, 1, "type:     %.2s", finfo.flagType->flagAbbv); // FIXME ?
+  listPush (list, 1, "type:     %.2s", finfo.flagType->flagAbbv.c_str()); // FIXME ?
   listPush (list, 2, "id:       %i", shot.id);
   listPush (list, 2, "team:     %s", strTeam(shot.team).c_str());
-  listPush (list, 2, "pos:      %s", strVector((float*)shot.pos).c_str());
-  listPush (list, 2, "vel:      %s", strVector((float*)shot.vel).c_str());
+  listPush (list, 2, "pos:      %s", strVector(shot.pos).c_str());
+  listPush (list, 2, "vel:      %s", strVector(shot.vel).c_str());
   listPush (list, 2, "lifetime: %-8.3f", finfo.lifetime);
 
   return list;
@@ -1078,13 +1103,13 @@ static MsgStringList handleMsgScore (PacketInfo *pi)
   void *d = (void*)pi->data;
   u8 count, player;
   u16 wins, losses, tks, i;
-  d = nboUnpackUByte (d, count);
+  d = nboUnpackUInt8 (d, count);
   listPush (list, 1, "count: %i", count);
   for (i=0; i < count; i++) {
-    d = nboUnpackUByte (d, player);
-    d = nboUnpackUShort (d, wins);
-    d = nboUnpackUShort (d, losses);
-    d = nboUnpackUShort (d, tks);
+    d = nboUnpackUInt8 (d, player);
+    d = nboUnpackUInt16 (d, wins);
+    d = nboUnpackUInt16 (d, losses);
+    d = nboUnpackUInt16 (d, tks);
     listPush (list, 2, "player: %s", strPlayer(player).c_str());
     listPush (list, 3, "wins: %i  losses: %i  tks: %i", wins, losses, tks);
   }
@@ -1100,8 +1125,8 @@ static MsgStringList handleMsgScoreOver (PacketInfo *pi)
   void *d = (void*)pi->data;
   u8 player;
   u16 team;
-  d = nboUnpackUByte(d, player);
-  d = nboUnpackUShort(d, team);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt16(d, team);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "team:   %i", strTeam(team).c_str());
 
@@ -1117,9 +1142,9 @@ static MsgStringList handleMsgShotEnd (PacketInfo *pi)
   u8 player;
   u16 shotid;
   int16_t reason;
-  d = nboUnpackUByte(d, player);
-  d = nboUnpackUShort(d, shotid);
-  d = nboUnpackShort(d, reason);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt16(d, shotid);
+  d = nboUnpackInt16(d, reason);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "shotid: %i", shotid);
   listPush (list, 1, "reason: %i", reason); // FIXME
@@ -1159,7 +1184,7 @@ static MsgStringList handleMsgSetVar (PacketInfo *pi)
   void *d = (void*)pi->data;
   u16 i;
   u16 count;
-  d = nboUnpackUShort(d, count);
+  d = nboUnpackUInt16(d, count);
   listPush (list, 1, "count: %i", count);
 
   std::string name;
@@ -1199,7 +1224,7 @@ static MsgStringList handleMsgTimeUpdate (PacketInfo *pi)
   MsgStringList list = listMsgBasics (pi);
   void *d = (void*)pi->data;
   int32_t timeLeft;
-  d = nboUnpackInt(d, timeLeft);
+  d = nboUnpackInt32(d, timeLeft);
   listPush (list, 1, "timeLeft: %i", timeLeft);
 
   return list;
@@ -1213,9 +1238,9 @@ static MsgStringList handleMsgTeleport (PacketInfo *pi)
   void *d = (void*)pi->data;
   u8 player;
   u16 to, from;
-  d = nboUnpackUByte(d, player);
-  d = nboUnpackUShort(d, from);
-  d = nboUnpackUShort(d, to);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt16(d, from);
+  d = nboUnpackUInt16(d, to);
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 1, "from:   %i", from);
   listPush (list, 1, "to:     %i", to);
@@ -1232,9 +1257,9 @@ static MsgStringList handleMsgTransferFlag (PacketInfo *pi)
   u8 to, from;
   u16 flagid;
   Flag flag;
-  d = nboUnpackUByte(d, from);
-  d = nboUnpackUByte(d, to);
-  d = nboUnpackUShort(d, flagid);
+  d = nboUnpackUInt8(d, from);
+  d = nboUnpackUInt8(d, to);
+  d = nboUnpackUInt16(d, flagid);
   d = flag.unpack (d);
   listPush (list, 1, "from: %s", strPlayer(from).c_str());
   listPush (list, 1, "to:   %s", strPlayer(to).c_str());
@@ -1251,13 +1276,13 @@ static MsgStringList handleMsgTeamUpdate (PacketInfo *pi)
   void *d = (void*)pi->data;
   u8 count;
   u16 i, team, size, won, lost;
-  d = nboUnpackUByte(d, count);
+  d = nboUnpackUInt8(d, count);
   listPush (list, 1, "count: %i", count);
   for (i=0; i<count; i++) {
-    d = nboUnpackUShort(d, team);
-    d = nboUnpackUShort(d, size);
-    d = nboUnpackUShort(d, won);
-    d = nboUnpackUShort(d, lost);
+    d = nboUnpackUInt16(d, team);
+    d = nboUnpackUInt16(d, size);
+    d = nboUnpackUInt16(d, won);
+    d = nboUnpackUInt16(d, lost);
     listPush (list, 2, "team: %s", strTeam(team).c_str());
     listPush (list, 3, "size = %i, won = %i, lost = %i", size, won, lost);
   }
@@ -1275,30 +1300,6 @@ static MsgStringList handleMsgWantWHash (PacketInfo *pi)
 
 
 static MsgStringList handleMsgWantSettings (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgPortalAdd (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgPortalRemove (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgPortalUpdate (PacketInfo *pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics (pi);
@@ -1367,7 +1368,7 @@ static MsgStringList handleMsgEchoResponse(PacketInfo *pi)
 
 
 
-/******************************************************************************/
+//============================================================================//
 
 // Local Variables: ***
 // mode: C++ ***

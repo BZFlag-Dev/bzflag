@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,31 +24,31 @@
 #include <vector>
 
 // common headers
-#include "bzfgl.h"
+#include "vectors.h"
 #include "ViewFrustum.h"
 
 
 class OpenGLLight {
   public:
-			OpenGLLight();
-			OpenGLLight(const OpenGLLight&);
-			~OpenGLLight();
-    OpenGLLight&	operator=(const OpenGLLight&);
+    OpenGLLight();
+    OpenGLLight(const OpenGLLight&);
+    OpenGLLight& operator=(const OpenGLLight&);
+    ~OpenGLLight();
 
-    const GLfloat*	getPosition() const;
-    const GLfloat*	getColor() const;
-    const GLfloat*	getAttenuation() const;
-    GLfloat		getMaxDist() const;
+    const fvec4&	getPosition() const;
+    const fvec4&	getColor() const;
+    const fvec3&	getAttenuation() const;
+    float		getMaxDist() const;
 
-    void		setDirection(const GLfloat* xyz);
-    void		setPosition(const GLfloat* xyz);
-    void		setColor(GLfloat r, GLfloat g, GLfloat b);
-    void		setColor(const GLfloat* rgb);
-    void		setAttenuation(const GLfloat* clq);
-    void		setAttenuation(int index, GLfloat value);
+    void		setDirection(const fvec3& xyz);
+    void		setPosition(const fvec3& xyz);
+    void		setColor(float r, float g, float b);
+    void		setColor(const fvec4& rgba);
+    void		setAttenuation(const fvec3& clq);
+    void		setAttenuation(int index, float value);
 
     void		calculateImportance(const ViewFrustum& frustum);
-    GLfloat		getImportance() const;
+    float		getImportance() const;
 
     void		setOnlyReal(bool value);
     bool		getOnlyReal() const;
@@ -57,55 +57,55 @@ class OpenGLLight {
 
     void		execute(int index, bool useList) const;
 
-    static GLint	getMaxLights();
+    static int		getMaxLights();
     static void		enableLight(int index, bool on); // const
 
   protected:
     void		makeLists();
     void		freeLists();
-    void		genLight(GLenum light) const;
+    void		genLight(unsigned int light) const;
 
   private:
     static void		freeContext(void*);
     static void		initContext(void*);
 
   private:
-    GLfloat		pos[4];
-    GLfloat		color[4];
-    GLfloat		atten[3];
-    GLfloat		maxDist;
-    GLfloat		importance;
+    fvec4		pos;
+    fvec4		color;
+    fvec3		atten;
+    float		maxDist;
+    float		importance;
     bool		onlyReal;
     bool		onlyGround;
-    GLuint*		lists;
-    static GLint	maxLights;
+    unsigned int*	lists;
+    static int		maxLights;
 };
 
 //
 // OpenGLLight
 //
 
-inline const GLfloat*	OpenGLLight::getPosition() const
+inline const fvec4&	OpenGLLight::getPosition() const
 {
   return pos;
 }
 
-inline const GLfloat*	OpenGLLight::getColor() const
+inline const fvec4&	OpenGLLight::getColor() const
 {
   return color;
 }
 
-inline const GLfloat*	OpenGLLight::getAttenuation() const
+inline const fvec3&	OpenGLLight::getAttenuation() const
 {
   return atten;
 }
 
-inline GLfloat		OpenGLLight::getMaxDist() const
+inline float		OpenGLLight::getMaxDist() const
 {
   return maxDist;
 }
 
-inline GLfloat		 OpenGLLight::getImportance() const
+inline float		 OpenGLLight::getImportance() const
 {
   return importance;
 }

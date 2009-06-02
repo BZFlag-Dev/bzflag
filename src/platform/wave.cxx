@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -67,7 +67,7 @@ static int		skipChunk(FILE* file, int size)
   return fseek(file, size, SEEK_CUR);
 }
 
-static int		findChunk(FILE* file, char *tag, int32_t *size)
+static int		findChunk(FILE* file, const char *tag, int32_t *size)
 {
   char curtag[4];
 

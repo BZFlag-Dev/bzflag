@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993 - 2008 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993 - 2009 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // bzflag common header
 #include "common.h"
@@ -19,23 +19,25 @@
 // system headers
 #include <math.h>
 
-// common implementation headers
+// common headers
+#include "bzfgl.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
-// FIXME (SceneRenderer.cxx is in src/bzflag)
-#include "SceneRenderer.h"
 
-const GLfloat		LaserRadius = 0.1f;
+const float LaserRadius = 0.1f;
 
-LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-texturing(false),
-renderNode(this)
+
+LaserSceneNode::LaserSceneNode(const fvec3& pos, const fvec3& forward)
+  : texturing(false)
+  , renderNode(this)
 {
   // prepare rendering info
-  azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
-  elevation = (float)(-180.0 / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1])));
-  length = hypotf(forward[0], hypotf(forward[1], forward[2]));
+  azimuth   = (float)( RAD2DEG * atan2f(forward.y, forward.x));
+  elevation = (float)(-RAD2DEG * atan2f(forward.z, forward.xy().length()));
+
+  length = forward.length();
 
   // setup sphere
   setCenter(pos);
@@ -50,40 +52,42 @@ renderNode(this)
   setCenterColor(1,1,1);
 }
 
+
 LaserSceneNode::~LaserSceneNode()
 {
   // do nothing
 }
 
-void	LaserSceneNode::setColor ( GLfloat r, GLfloat g, GLfloat b )
+
+void LaserSceneNode::setColor(float r, float g, float b)
 {
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
+  color = fvec4(r, g, b, 1.0f);
 }
 
-void		LaserSceneNode::setCenterColor ( GLfloat r, GLfloat g, GLfloat b )
+
+void LaserSceneNode::setCenterColor(float r, float g, float b)
 {
-  centerColor[0] = r;
-  centerColor[1] = g;
-  centerColor[2] = b;
+  centerColor = fvec4(r, g, b, 1.0f);
 }
 
-void			LaserSceneNode::setTexture(const int texture)
+
+void LaserSceneNode::setTexture(const int texture)
 {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
-  builder.enableTexture(texture>=0);
+  builder.enableTexture(texture >= 0);
   gstate = builder.getState();
 }
 
-bool			LaserSceneNode::cull(const ViewFrustum&) const
+
+bool LaserSceneNode::cull(const ViewFrustum&) const
 {
   // no culling
   return false;
 }
 
-void			LaserSceneNode::notifyStyleChange()
+
+void LaserSceneNode::notifyStyleChange()
 {
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
@@ -100,21 +104,22 @@ void			LaserSceneNode::notifyStyleChange()
   gstate = builder.getState();
 }
 
-void			LaserSceneNode::addRenderNodes(
-  SceneRenderer& renderer)
+
+void LaserSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderer.addRenderNode(&renderNode, &gstate);
 }
+
 
 //
 // LaserSceneNode::LaserRenderNode
 //
 
-GLfloat			LaserSceneNode::LaserRenderNode::geom[6][2];
+float LaserSceneNode::LaserRenderNode::geom[6][2];
 
-LaserSceneNode::LaserRenderNode::LaserRenderNode(
-  const LaserSceneNode* _sceneNode) :
-sceneNode(_sceneNode)
+
+LaserSceneNode::LaserRenderNode::LaserRenderNode(const LaserSceneNode* _sceneNode)
+  : sceneNode(_sceneNode)
 {
   // initialize geometry if first instance
   static bool init = false;
@@ -127,12 +132,14 @@ sceneNode(_sceneNode)
   }
 }
 
+
 LaserSceneNode::LaserRenderNode::~LaserRenderNode()
 {
   // do nothing
 }
 
-void			LaserSceneNode::LaserRenderNode::render()
+
+void LaserSceneNode::LaserRenderNode::render()
 {
   if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
     renderGeoLaser();
@@ -141,12 +148,12 @@ void			LaserSceneNode::LaserRenderNode::render()
 }
 
 
-void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
+void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
-  const GLfloat length = sceneNode->length;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const float length = sceneNode->length;
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glTranslatef(sphere.x, sphere.y, sphere.z);
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
   glRotatef(90, 0.0f, 1.0f, 0.0f);
@@ -155,33 +162,32 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
 
   GLUquadric *q = gluNewQuadric();
 
-  //myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.85f);
-  myColor4f(sceneNode->centerColor[0], sceneNode->centerColor[1], sceneNode->centerColor[2], 0.85f);
-  gluCylinder(q,0.0625f,0.0625f,length,10,1);
+  const fvec4& centerColor = sceneNode->centerColor;
+  const fvec4& color       = sceneNode->color;
+
+  myColor4fv(fvec4(centerColor.rgb(), 0.85f));
+  gluCylinder(q, 0.0625f, 0.0625f, length, 10, 1);
   addTriangleCount(20);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  gluCylinder(q,0.1f,0.1f,length,16,1);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
+  gluCylinder(q, 0.1f, 0.1f, length, 16, 1);
   addTriangleCount(32);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  gluCylinder(q,0.2f,0.2f,length,24,1);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
+  gluCylinder(q, 0.2f, 0.2f, length, 24, 1);
   addTriangleCount(48);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  gluCylinder(q,0.4f,0.4f,length,32,1);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
+  gluCylinder(q, 0.4f, 0.4f, length, 32, 1);
   addTriangleCount(64);
 
-  myColor4f(sceneNode->color[0], sceneNode->color[1], sceneNode->color[2], 0.125f);
-  if (sceneNode->first)
-  {
-    gluSphere(q,0.5f,32,32);
-    addTriangleCount(32*32*2);
-  }
-  else
-  {
-    gluSphere(q,0.5f,12,12);
-    addTriangleCount(12*12*2);
+  myColor4fv(fvec4(color.rgb(), 0.125f));
+  if (sceneNode->first) {
+    gluSphere(q, 0.5f, 32, 32);
+    addTriangleCount(32 * 32 * 2);
+  } else {
+    gluSphere(q, 0.5f, 12, 12);
+    addTriangleCount(12 * 12 * 2);
   }
 
   gluDeleteQuadric(q);
@@ -190,12 +196,13 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser ( void )
   glPopMatrix();
 }
 
-void			LaserSceneNode::LaserRenderNode::renderFlatLaser()
+
+void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
-  const GLfloat length = sceneNode->length;
-  const GLfloat* sphere = sceneNode->getSphere();
+  const float length = sceneNode->length;
+  const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glTranslatef(sphere.x, sphere.y, sphere.z);
   glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
   glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
@@ -272,6 +279,7 @@ void			LaserSceneNode::LaserRenderNode::renderFlatLaser()
 
   glPopMatrix();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

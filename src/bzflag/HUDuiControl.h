@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -48,12 +48,24 @@ class HUDuiControl : public HUDuiElement {
     HUDuiCallback	getCallback() const;
     void*		getUserData() const;
 
+    bool isNested() { return nested; }
+    void isNested(bool _nested);
+
+    virtual bool isContainer() { return false; }
+
+    HUDuiControl* getParent() { return parent; }
+    void setParent(HUDuiControl* parentControl);
+
+    HUDNavigationQueue* getNavList() { return navList; }
+
     bool		hasFocus() const;
     void		showFocus(bool);
 
-    void		setNavQueue(HUDNavigationQueue*);
+    virtual void		setNavQueue(HUDNavigationQueue*);
 
     void		render();
+
+    bool isAtNavQueueIndex(size_t index);
 
     static int  getArrow() { return arrow; }
 
@@ -75,6 +87,9 @@ class HUDuiControl : public HUDuiElement {
     static int		arrowFrame;
     static TimeKeeper	lastTime;
     static int		totalCount;
+
+    bool nested;
+    HUDuiControl* parent;
 };
 
 #endif // __HUDUICONTROL_H__

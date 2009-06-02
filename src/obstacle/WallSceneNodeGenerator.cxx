@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,10 +37,10 @@ WallSceneNode*		WallSceneNodeGenerator::getNextNode(
 {
   if (getNodeNumber() == 1) return NULL;
 
-  GLfloat base[3];
-  GLfloat sEdge[3];
-  GLfloat tEdge[3];
-  const float* pos = wall->getPosition();
+  fvec3 base;
+  fvec3 sEdge;
+  fvec3 tEdge;
+  const fvec3& pos = wall->getPosition();
   const float c = cosf(wall->getRotation());
   const float s = sinf(wall->getRotation());
   const float h = wall->getBreadth();
@@ -59,3 +59,11 @@ WallSceneNode*		WallSceneNodeGenerator::getNextNode(
   }
   return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

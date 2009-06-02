@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 /* MeshSceneNode:
@@ -20,7 +20,7 @@
 #define	BZF_MESH_SCENE_NODE_H
 
 #include "common.h"
-#include "bzfgl.h"
+#include "vectors.h"
 #include "SceneNode.h"
 
 //
@@ -78,13 +78,13 @@ class MeshSceneNode : public SceneNode {
     bool animRepos;
 
     // transform display list
-    GLuint xformList;
+    unsigned int xformList;
 
     struct MeshMaterial {
       const BzMaterial* bzmat;
       OpenGLGState gstate;
-      GLfloat color[4];
-      const GLfloat* colorPtr;
+      fvec4 color;
+      const fvec4* colorPtr;
       bool drawRadar;
       bool drawShadow;
       bool needsSorting;

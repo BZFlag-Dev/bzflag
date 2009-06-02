@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,10 +15,14 @@
 
 #include "common.h"
 
-/* system interface headers */
+// system headers
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
+
+// common headers
+#include "vectors.h"
 
 
 class PhysicsDriver {
@@ -27,9 +31,9 @@ class PhysicsDriver {
     ~PhysicsDriver();
 
     bool setName(const std::string& name);
-    void setLinear(const float vel[3]);
-    void setAngular(float angleVel, const float pos[2]);
-    void setRadial(float radialVel, const float pos[2]);
+    void setLinear(const fvec3& vel);
+    void setAngular(float angleVel, const fvec2& pos);
+    void setRadial(float radialVel, const fvec2& pos);
     void setSlideTime(float slideTime);
     void setDeathMessage(const std::string& msg);
 
@@ -37,11 +41,11 @@ class PhysicsDriver {
     void update(float time);
 
     const std::string& getName() const;
-    const float* getLinearVel() const;
+    const fvec3& getLinearVel() const;
     float getAngularVel() const;
-    const float* getAngularPos() const;
+    const fvec2& getAngularPos() const;
     float getRadialVel() const;
-    const float* getRadialPos() const;
+    const fvec2& getRadialPos() const;
     bool getIsSlide() const;
     float getSlideTime() const;
     bool getIsDeath() const;
@@ -57,18 +61,18 @@ class PhysicsDriver {
     static const float minPeriod;
 
     std::string name;
-    float linear[3];
+    fvec3 linear;
     float angularVel;
-    float angularPos[2];
+    fvec2 angularPos;
     float radialVel;
-    float radialPos[2];
-    bool slide;
+    fvec2 radialPos;
+    bool  slide;
     float slideTime;
-    bool death;
+    bool  death;
     std::string deathMsg;
 };
 
-inline const float* PhysicsDriver::getLinearVel() const
+inline const fvec3& PhysicsDriver::getLinearVel() const
 {
   return linear;
 }
@@ -76,7 +80,7 @@ inline float PhysicsDriver::getAngularVel() const
 {
   return angularVel;
 }
-inline const float* PhysicsDriver::getAngularPos() const
+inline const fvec2& PhysicsDriver::getAngularPos() const
 {
   return angularPos;
 }
@@ -84,7 +88,7 @@ inline float PhysicsDriver::getRadialVel() const
 {
   return radialVel;
 }
-inline const float* PhysicsDriver::getRadialPos() const
+inline const fvec2& PhysicsDriver::getRadialPos() const
 {
   return radialPos;
 }
@@ -124,7 +128,9 @@ class PhysicsDriverManager {
 
   private:
     std::vector<PhysicsDriver*> drivers;
+    std::map<std::string, int>  nameMap;
 };
+
 
 inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
 {

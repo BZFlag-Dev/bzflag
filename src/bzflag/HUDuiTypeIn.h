@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,8 +33,8 @@
 class CountUTF8StringItr : public UTF8StringItr
 {
 public:
-  CountUTF8StringItr(const char* string) :
-    UTF8StringItr(string), counter(0) {}
+  CountUTF8StringItr(const char* data) :
+    UTF8StringItr(data), counter(0) {}
 
   inline CountUTF8StringItr& operator++()
   {
@@ -49,10 +49,10 @@ public:
     UTF8StringItr::operator=(value);
   }
 
-  inline int getCount() const { return counter; }
+  inline size_t getCount() const { return counter; }
 
 private:
-  int counter;
+  size_t counter;
 };
 
 class HUDuiTypeIn : public HUDuiControl {
@@ -61,10 +61,10 @@ class HUDuiTypeIn : public HUDuiControl {
 			~HUDuiTypeIn();
 
     void		setObfuscation(bool on);
-    int			getMaxLength() const;
+    size_t		getMaxLength() const;
     std::string		getString() const;
 
-    void		setMaxLength(int);
+    void		setMaxLength(size_t);
     void		setString(const std::string&);
     void		setEditing(bool _allowEdit);
 
@@ -74,8 +74,8 @@ class HUDuiTypeIn : public HUDuiControl {
     void		doRender();
 
   private:
-    int			maxLength;
-    std::string		string;
+    size_t		maxLength;
+    std::string		data;
     CountUTF8StringItr	cursorPos;
     bool		allowEdit;
     bool		obfuscate;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,14 +24,20 @@
 #include "ServerItem.h"
 #include "ServerListCache.h"
 #include "cURLManager.h"
+#include "Singleton.h"
 
 class AuthConnectSocket;
+
+typedef void (*ServerListCallback)(ServerItem* addedServer, void*);
+
+typedef std::list< std::pair<ServerListCallback, void*> > ServerCallbackList;
+typedef std::map<std::string, std::vector<std::pair<ServerListCallback, void*> > > ServerKeyCallbackList;
 
 /** The ServerList class contains links to the list server as well as
  * any fetched list of servers.  The list handles cacheing of those
  * server entries in case of list server unavailability.
  */
-class ServerList : private cURLManager {
+class ServerList : private cURLManager, public Singleton<ServerList> {
 
 public:
   ServerList();
@@ -41,17 +47,43 @@ public:
   void startServerPings(StartupInfo *_info);
   bool searchActive() const;
   bool serverFound() const;
-  const std::vector<ServerItem>& getServers();
-  std::vector<ServerItem>::size_type size();
+  const std::map<std::string, ServerItem>& getServers();
+  std::map<std::string, ServerItem>::size_type size();
+  ServerItem* lookupServer(std::string key);
   int updateFromCache();
   void collectData(char *ptr, int len);
   void finalization(char *data, unsigned int length, bool good);
 
+  ServerItem* getServerAt(size_t index);
+
+  void addServerCallback(ServerListCallback cb, void* data);
+  void removeServerCallback(ServerListCallback cb, void* data);
+
+  void addServerKeyCallback(std::string key, ServerListCallback cb, void* data);
+  void removeServerKeyCallback(std::string key, ServerListCallback cb, void* data);
+
+  void addFavoriteServerCallback(ServerListCallback cb, void* data);
+  void removeFavoriteServerCallback(ServerListCallback cb, void* data);
+
+  void addRecentServerCallback(ServerListCallback cb, void* data);
+  void removeRecentServerCallback(ServerListCallback cb, void* data);
+
+  void addClearedListCallback(ServerListCallback cb, void* data);
+  void removeClearedListCallback(ServerListCallback cb, void* data);
+
 public:
+  void markAsFavorite(ServerItem* item);
+  void markAsRecent(ServerItem* item);
+  void unmarkAsFavorite(ServerItem* item);
+  void unmarkAsRecent(ServerItem* item);
+
   void addToList(ServerItem, bool doCache=false);
-  void markFav(const std::string &, bool);
+  //void markFav(const std::string &, bool);
   void clear();
   void sort();
+
+protected:
+  friend class Singleton<ServerList>;
 
 private:
   void readServerList();
@@ -65,11 +97,17 @@ private:
   bool addedCacheToList;
   int phase;
   int auth_phase;
-  std::vector<ServerItem> servers;
+  std::map<std::string, ServerItem> servers;
   ServerListCache* serverCache;
   int pingBcastSocket;
   struct sockaddr_in pingBcastAddr;
   StartupInfo *startupInfo;
+  ServerCallbackList serverCallbackList;
+  ServerKeyCallbackList serverKeyCallbackList;
+  ServerCallbackList favoritesCallbackList;
+  ServerCallbackList recentCallbackList;
+  ServerCallbackList clearedCallbacklist;
+
   AuthConnectSocket *authSocket;
 };
 

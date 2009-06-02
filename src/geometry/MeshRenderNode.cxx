@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -7,7 +7,7 @@
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
 #include "common.h"
@@ -15,7 +15,10 @@
 // implementation header
 #include "MeshRenderNode.h"
 
-// common implementation headers
+// system headers
+#include <string.h>
+
+// common headers
 #include "RenderNode.h"
 #include "MeshDrawMgr.h"
 #include "OpenGLGState.h"
@@ -27,12 +30,15 @@
 #include "BZDBCache.h"
 
 
-/******************************************************************************/
+fvec3 OpaqueRenderNode::junk(0.0f, 0.0f, 0.0f);
+
+
+//============================================================================//
 
 
 OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 				   GLuint* _xformList, bool _normalize,
-				   const GLfloat* _color,
+				   const fvec4* _color,
 				   int _lod, int _set,
 				   const Extents* _exts, int tris)
 {
@@ -51,11 +57,11 @@ void OpaqueRenderNode::render()
 {
   const bool switchLights = (exts != NULL);
   if (switchLights) {
-    RENDERER.disableLights(exts->mins, exts->maxs);
+    RENDERER.disableLights(*exts);
   }
 
   // set the color
-  myColor4fv(color);
+  myColor4fv(*color);
 
   // do the transformation
   if (*xformList != INVALID_GL_LIST_ID) {
@@ -121,32 +127,32 @@ void OpaqueRenderNode::renderShadow()
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
 					   GLuint* _xformList,
 					   bool _normalize,
-					   const GLfloat* _color,
+					   const fvec4* _color,
 					   int _lod, int _set,
 					   const Extents* _exts,
-					   const GLfloat _pos[3],
-					   int _triangles) :
-    OpaqueRenderNode(_drawMgr, _xformList, _normalize,
-		     _color, _lod, _set, _exts, _triangles)
+					   const fvec3& _pos,
+					   int _triangles)
+: OpaqueRenderNode(_drawMgr, _xformList, _normalize,
+		   _color, _lod, _set, _exts, _triangles)
 {
-  memcpy(pos, _pos, sizeof(GLfloat[3]));
+  pos = _pos;
   return;
 }
 
 
-void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
+void AlphaGroupRenderNode::setPosition(const fvec3& _pos)
 {
-  memcpy(pos, _pos, sizeof(GLfloat[3]));
+  pos = _pos;
   return;
 }
 
 
-/******************************************************************************/
+//============================================================================//
 
 
 // Local Variables: ***

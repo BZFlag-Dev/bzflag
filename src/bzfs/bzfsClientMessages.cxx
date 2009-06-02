@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,8 +17,8 @@
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
 
-std::map<uint16_t,ClientNetworkMessageHandler*> clientNetworkHandlers;
-std::map<uint16_t,PlayerNetworkMessageHandler*> playerNetworkHandlers;
+std::map<uint16_t, ClientNetworkMessageHandler*> clientNetworkHandlers;
+std::map<uint16_t, PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
 
 void packWorldSettings ( void )
@@ -27,14 +27,14 @@ void packWorldSettings ( void )
 
   // the settings
   buffer = nboPackFloat  (buffer, BZDBCache::worldSize);
-  buffer = nboPackUShort (buffer, clOptions->gameType);
-  buffer = nboPackUShort (buffer, clOptions->gameOptions);
+  buffer = nboPackUInt16 (buffer, clOptions->gameType);
+  buffer = nboPackUInt16 (buffer, clOptions->gameOptions);
   // An hack to fix a bug on the client
-  buffer = nboPackUShort (buffer, PlayerSlot);
-  buffer = nboPackUShort (buffer, clOptions->maxShots);
-  buffer = nboPackUShort (buffer, numFlags);
-  buffer = nboPackUShort (buffer, clOptions->shakeTimeout);
-  buffer = nboPackUShort (buffer, clOptions->shakeWins);
+  buffer = nboPackUInt16 (buffer, PlayerSlot);
+  buffer = nboPackUInt16 (buffer, clOptions->maxShots);
+  buffer = nboPackUInt16 (buffer, numFlags);
+  buffer = nboPackUInt16 (buffer, clOptions->shakeTimeout);
+  buffer = nboPackUInt16 (buffer, clOptions->shakeWins);
 }
 
 
@@ -52,7 +52,7 @@ public:
     // time, so everyone can go and compensate for some lag.
     unsigned char tag = 0;
     if (len >= 1)
-      buf = nboUnpackUByte(buf,tag);
+      buf = nboUnpackUInt8(buf,tag);
 
     double time = TimeKeeper::getCurrent().getSeconds();
 
@@ -62,6 +62,7 @@ public:
     return true;
   }
 };
+
 
 class SetVarHandler : public ClientNetworkMessageHandler
 {
@@ -74,6 +75,7 @@ public:
     return true;
   }
 };
+
 
 class NegotiateFlagHandler : public ClientNetworkMessageHandler
 {
@@ -115,7 +117,7 @@ public:
 	  flagMsg->send(handler, MsgFlagType);
 	} else {
 	  // they should already know about this one, dump it back to them
-	  (*m_it)->pack(msg); 
+	  (*m_it)->pack(msg);
 	}
       }
     }
@@ -123,6 +125,7 @@ public:
     return true;
   }
 };
+
 
 class GetWorldHandler : public ClientNetworkMessageHandler
 {
@@ -133,13 +136,14 @@ public:
       return false;
 
     uint32_t ptr;	// data: count (bytes read so far)
-    buf = nboUnpackUInt(buf, ptr);
+    buf = nboUnpackUInt32(buf, ptr);
 
     sendWorldChunk(handler, ptr);
 
     return true;
   }
 };
+
 
 class WantSettingsHandler : public ClientNetworkMessageHandler
 {
@@ -153,6 +157,7 @@ public:
     return true;
   }
 };
+
 
 class WantWHashHandler : public ClientNetworkMessageHandler
 {
@@ -171,6 +176,7 @@ public:
   }
 };
 
+
 class QueryGameHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -180,29 +186,29 @@ public:
     // the server address, which must already be known, and the
     // server version, which was already sent).
     NetMsg   msg = MSGMGR.newMessage();
-    msg->packUShort(pingReply.gameType);
-    msg->packUShort(pingReply.gameOptions);
-    msg->packUShort(pingReply.maxPlayers);
-    msg->packUShort(pingReply.maxShots);
-    msg->packUShort(team[0].team.size);
-    msg->packUShort(team[1].team.size);
-    msg->packUShort(team[2].team.size);
-    msg->packUShort(team[3].team.size);
-    msg->packUShort(team[4].team.size);
-    msg->packUShort(team[5].team.size);
-    msg->packUShort(pingReply.rogueMax);
-    msg->packUShort(pingReply.redMax);
-    msg->packUShort(pingReply.greenMax);
-    msg->packUShort(pingReply.blueMax);
-    msg->packUShort(pingReply.purpleMax);
-    msg->packUShort(pingReply.observerMax);
-    msg->packUShort(pingReply.shakeWins);
+    msg->packUInt16(pingReply.gameType);
+    msg->packUInt16(pingReply.gameOptions);
+    msg->packUInt16(pingReply.maxPlayers);
+    msg->packUInt16(pingReply.maxShots);
+    msg->packUInt16(teamInfos[0].team.size);
+    msg->packUInt16(teamInfos[1].team.size);
+    msg->packUInt16(teamInfos[2].team.size);
+    msg->packUInt16(teamInfos[3].team.size);
+    msg->packUInt16(teamInfos[4].team.size);
+    msg->packUInt16(teamInfos[5].team.size);
+    msg->packUInt16(pingReply.rogueMax);
+    msg->packUInt16(pingReply.redMax);
+    msg->packUInt16(pingReply.greenMax);
+    msg->packUInt16(pingReply.blueMax);
+    msg->packUInt16(pingReply.purpleMax);
+    msg->packUInt16(pingReply.observerMax);
+    msg->packUInt16(pingReply.shakeWins);
     // 1/10ths of second
-    msg->packUShort(pingReply.shakeTimeout);
-    msg->packUShort(pingReply.maxPlayerScore);
-    msg->packUShort(pingReply.maxTeamScore);
-    msg->packUShort(pingReply.maxTime);
-    msg->packUShort((uint16_t)clOptions->timeElapsed);
+    msg->packUInt16(pingReply.shakeTimeout);
+    msg->packUInt16(pingReply.maxPlayerScore);
+    msg->packUInt16(pingReply.maxTeamScore);
+    msg->packUInt16(pingReply.maxTime);
+    msg->packUInt16((uint16_t)clOptions->timeElapsed);
 
     // send it
     msg->send(handler, MsgQueryGame);
@@ -210,6 +216,7 @@ public:
     return true;
   }
 };
+
 
 class QueryPlayersHandler : public ClientNetworkMessageHandler
 {
@@ -222,8 +229,8 @@ public:
     // first send number of teams and players being sent
     NetMsg   msg = MSGMGR.newMessage();
 
-    msg->packUShort(NumTeams);
-    msg->packUShort(numPlayers);
+    msg->packUInt16(NumTeams);
+    msg->packUInt16(numPlayers);
 
     msg->send(handler, MsgQueryPlayers);
 
@@ -244,6 +251,7 @@ public:
   }
 };
 
+
 class UDPLinkEstablishedHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -254,8 +262,8 @@ public:
   }
 };
 
-// messages that have players
 
+// messages that have players
 class PlayerFirstHandler : public PlayerNetworkMessageHandler
 {
 public:
@@ -266,7 +274,7 @@ public:
     // byte * 3
     if ( len >= 1 ) {
       unsigned char temp = 0;
-      buf  = nboUnpackUByte(buf, temp);
+      buf  = nboUnpackUInt8(buf, temp);
       player = GameKeeper::Player::getPlayerByIndex(temp);
 
       return buf;
@@ -274,6 +282,7 @@ public:
     return buf;
   }
 };
+
 
 class NewPlayerHandler : public PlayerFirstHandler
 {
@@ -285,7 +294,7 @@ public:
     if ( len < 1)
       return false;
 
-    buf = nboUnpackUByte(buf, botID);
+    buf = nboUnpackUInt8(buf, botID);
 
     PlayerId id = getNewBot(player->getIndex(),botID);
     if (id == 0xff)
@@ -293,12 +302,13 @@ public:
 
     NetMsg   msg = MSGMGR.newMessage();
 
-    msg->packUByte(id);
+    msg->packUInt8(id);
     msg->send(player->netHandler, MsgNewPlayer);
 
     return true;
   }
 };
+
 
 class CapBitsHandler : public PlayerFirstHandler
 {
@@ -310,15 +320,16 @@ public:
 
     unsigned char temp = 0;
 
-    buf = nboUnpackUByte(buf,temp);
+    buf = nboUnpackUInt8(buf,temp);
     player->caps.canDownloadResources = temp != 0;
 
-    buf = nboUnpackUByte(buf,temp);
+    buf = nboUnpackUInt8(buf,temp);
     player->caps.canPlayRemoteSounds = temp != 0;
 
     return true;
   }
 };
+
 
 class EnterHandler : public PlayerFirstHandler
 {
@@ -346,6 +357,10 @@ public:
 		    player->player.getCallSign(),
 		    player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
 		    player->player.getToken());
+    const char* referrer = player->player.getReferrer();
+    if (referrer && referrer[0]) {
+      logDebugMessage(1,"  referred by \"%s\"\n", referrer);
+    }
 
     if (!clOptions->publicizeServer)
       player->_LSAState = GameKeeper::Player::notRequired;
@@ -358,6 +373,7 @@ public:
   }
 };
 
+
 class ExitHandler : public PlayerFirstHandler
 {
 public:
@@ -369,6 +385,7 @@ public:
     return true;
   }
 };
+
 
 class AliveHandler : public PlayerFirstHandler
 {
@@ -401,6 +418,7 @@ public:
   }
 };
 
+
 class KilledHandler : public PlayerFirstHandler
 {
 public:
@@ -418,14 +436,14 @@ public:
     int16_t shot, reason;
     int phydrv = -1;
 
-    buf = nboUnpackUByte(buf, killer);
-    buf = nboUnpackShort(buf, reason);
-    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackUInt8(buf, killer);
+    buf = nboUnpackInt16(buf, reason);
+    buf = nboUnpackInt16(buf, shot);
     buf = FlagType::unpack(buf, flagType);
 
     if (reason == PhysicsDriverDeath) {
       int32_t inPhyDrv;
-      buf = nboUnpackInt(buf, inPhyDrv);
+      buf = nboUnpackInt32(buf, inPhyDrv);
       phydrv = int(inPhyDrv);
     }
 
@@ -445,6 +463,7 @@ public:
   }
 };
 
+
 class DropFlagHandler : public PlayerFirstHandler
 {
 public:
@@ -454,15 +473,16 @@ public:
       return false;
 
     // data: position of drop
-    float pos[3];
-    buf = nboUnpackFloatVector(buf, pos);
+    fvec3 pos;
+    buf = nboUnpackFVec3(buf, pos);
 
     const float halfSize = BZDBCache::worldSize * 0.5f;
-    if (fabsf(pos[0]) > halfSize || fabsf(pos[1]) > halfSize) {
+    if ((fabsf(pos.x) > halfSize) ||
+        (fabsf(pos.y) > halfSize)) {
       // client may be cheating
       const PlayerId id = player->getIndex();
-      logDebugMessage(1,"Player %s [%d] dropped flag out of bounds to %f %f %f\n",
-		      player->player.getCallSign(), id, pos[0], pos[1], pos[2]);
+      logDebugMessage(1, "Player %s [%d] dropped flag out of bounds to %f %f %f\n",
+		      player->player.getCallSign(), id, pos.x, pos.y, pos.z);
       sendMessage(ServerPlayer, id, "Autokick: Flag dropped out of bounds.");
     }
 
@@ -471,6 +491,7 @@ public:
     return true;
   }
 };
+
 
 class CaptureFlagHandler : public PlayerFirstHandler
 {
@@ -482,12 +503,13 @@ public:
 
     // data: team whose territory flag was brought to
     uint16_t _team;
-    buf = nboUnpackUShort(buf, _team);
+    buf = nboUnpackUInt16(buf, _team);
 
     captureFlag(player->getIndex(), TeamColor(_team));
     return true;
   }
 };
+
 
 class CollideHandler : public PlayerFirstHandler
 {
@@ -498,15 +520,16 @@ public:
       return false;
 
     PlayerId otherPlayer;
-    buf = nboUnpackUByte(buf, otherPlayer);
-    float collpos[3];
-    buf = nboUnpackFloatVector(buf, collpos);
+    buf = nboUnpackUInt8(buf, otherPlayer);
+    fvec3 collpos;
+    buf = nboUnpackFVec3(buf, collpos);
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(otherPlayer);
 
     processCollision(player,otherData,collpos);
     return true;
   }
 };
+
 
 class ShotBeginHandler : public PlayerFirstHandler
 {
@@ -521,7 +544,7 @@ public:
     uint16_t		id;
     void		*bufTmp;
 
-    bufTmp = nboUnpackUShort(buf, id);
+    bufTmp = nboUnpackUInt16(buf, id);
 
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
@@ -567,12 +590,8 @@ public:
 	  if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)) {
 	    // drop flag at last known position of player
 	    // also handle case where limit was set to 0
-	    float lastPos [3];
-	    for (int i = 0; i < 3; i ++)
-	      lastPos[i] = player->currentPos[i];
-
 	    fInfo.grabs = 0; // recycle this flag now
-	    dropPlayerFlag(*player, lastPos);
+	    dropPlayerFlag(*player, player->currentPos);
 	  } else {
 	    // more shots fired than allowed
 	    // do nothing for now -- could return and not allow shot
@@ -584,9 +603,9 @@ public:
     // ask the API if it wants to modify this shot
     bz_ShotFiredEventData_V1 shotEvent;
 
-    shotEvent.pos[0] = firingInfo.shot.pos[0];
-    shotEvent.pos[1] = firingInfo.shot.pos[1];
-    shotEvent.pos[2] = firingInfo.shot.pos[2];
+    shotEvent.pos[0] = firingInfo.shot.pos.x;
+    shotEvent.pos[1] = firingInfo.shot.pos.y;
+    shotEvent.pos[2] = firingInfo.shot.pos.z;
     shotEvent.playerID = (int)player->getIndex();
 
     shotEvent.type = firingInfo.flagType->flagAbbv;
@@ -598,6 +617,7 @@ public:
     return true;
   }
 };
+
 
 class ShotEndHandler : public PlayerFirstHandler
 {
@@ -612,8 +632,8 @@ public:
 
     int16_t shot;
     uint16_t reason;
-    buf = nboUnpackShort(buf, shot);
-    buf = nboUnpackUShort(buf, reason);
+    buf = nboUnpackInt16(buf, shot);
+    buf = nboUnpackUInt16(buf, reason);
 
     // ask the API if it wants to modify this shot
     bz_ShotEndedEventData_V1 shotEvent;
@@ -631,6 +651,7 @@ public:
   }
 };
 
+
 class HitHandler : public PlayerFirstHandler
 {
 public:
@@ -647,8 +668,8 @@ public:
     FiringInfo firingInfo;
     int16_t shot;
 
-    buf = nboUnpackUByte(buf, shooterPlayer);
-    buf = nboUnpackShort(buf, shot);
+    buf = nboUnpackUInt8(buf, shooterPlayer);
+    buf = nboUnpackInt16(buf, shot);
     GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
 
     if (!shooterData)
@@ -672,6 +693,8 @@ public:
     return true;
   }
 };
+
+
 class TeleportHandler : public PlayerFirstHandler
 {
 public:
@@ -685,13 +708,21 @@ public:
     if (invalidPlayerAction(player->player, player->getIndex(), "teleport"))
       return true;
 
-    buf = nboUnpackUShort(buf, from);
-    buf = nboUnpackUShort(buf, to);
+    buf = nboUnpackUInt16(buf, from);
+    buf = nboUnpackUInt16(buf, to);
+
+    bz_TeleportEventData_V1 eventData;
+    eventData.playerID = player->getIndex();
+    eventData.from = from;
+    eventData.to = to;
+
+    worldEventManager.callEvents(eventData);
 
     sendMsgTeleport(player->getIndex(), from, to);
     return true;
   }
 };
+
 
 class MessageHandler : public PlayerFirstHandler
 {
@@ -705,7 +736,7 @@ public:
     PlayerId dstPlayer;
     char message[MessageLen];
 
-    buf = nboUnpackUByte(buf, dstPlayer);
+    buf = nboUnpackUInt8(buf, dstPlayer);
     buf = nboUnpackString(buf, message, sizeof(message));
     message[MessageLen - 1] = '\0';
 
@@ -735,6 +766,7 @@ public:
   }
 };
 
+
 class TransferFlagHandler : public PlayerFirstHandler
 {
 public:
@@ -747,7 +779,7 @@ public:
 
     from = player->getIndex();
 
-    buf = nboUnpackUByte(buf, to);
+    buf = nboUnpackUInt8(buf, to);
 
     int flagIndex = player->player.getFlag();
     if (to == ServerPlayer) {
@@ -785,6 +817,7 @@ public:
   }
 };
 
+
 class NewRabbitHandler : public PlayerFirstHandler
 {
 public:
@@ -799,6 +832,7 @@ public:
     return true;
   }
 };
+
 
 class PauseHandler : public PlayerFirstHandler
 {
@@ -830,6 +864,7 @@ public:
   }
 };
 
+
 class AutoPilotHandler : public PlayerFirstHandler
 {
 public:
@@ -839,15 +874,21 @@ public:
       return false;
 
     uint8_t autopilot;
-    nboUnpackUByte(buf, autopilot);
+    nboUnpackUInt8(buf, autopilot);
 
-    player->player.setAutoPilot(autopilot != 0);
+	bool allow = !BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS);
 
-    sendMsgAutoPilot(player->getIndex(),autopilot);
+	bz_AutoPilotChangeData_V1 evnt(autopilot != 0, allow,player->getIndex());
+
+	worldEventManager.callEvents(bz_eAllowAutoPilotChangeEvent,&evnt);
+
+	if (evnt.allow)
+		player->setAutoPilot(autopilot != 0);
 
     return true;
   }
 };
+
 
 class LagPingHandler : public PlayerFirstHandler
 {
@@ -889,6 +930,7 @@ public:
   }
 };
 
+
 class PlayerUpdateHandler : public PlayerFirstHandler
 {
 public:
@@ -902,17 +944,47 @@ public:
     else if(len < 27)
       return false;
 
-    float       timestamp;
+    double      timestamp;
     PlayerState state;
 
-    buf = nboUnpackFloat(buf, timestamp);
+    buf = nboUnpackDouble(buf, timestamp);
     buf = state.unpack(buf, code);
 
-    updatePlayerState(player, state, timestamp, code == MsgPlayerUpdateSmall);
+    updatePlayerState(player, state, TimeKeeper(timestamp), code == MsgPlayerUpdateSmall);
 
     return true;
   }
 };
+
+
+class PlayerDataHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t & /*code*/, void * buf, int /*len*/ )
+  {
+    if (!player)
+      return false;
+
+    std::string key,value;
+    buf = nboUnpackStdString(buf, key);
+    buf = nboUnpackStdString(buf, value);
+
+    // let the API change the value
+    bz_PlayerSentCustomData_V1 data;
+    data.playerID = player->getIndex();
+    data.key = key;
+    data.data = value;
+    worldEventManager.callEvents(data);
+
+    // if the key is still coo, go and set the change, notify all clients, and the API that it changed
+    if (data.key.size()) {
+      bz_setPlayerCustomData(player->getIndex(), data.key.c_str(), data.data.c_str());
+    }
+
+    return true;
+  }
+};
+
 
 class PlayerFirstNoBumpHandler : public PlayerFirstHandler
 {
@@ -924,7 +996,7 @@ public:
     // byte * 3
     if ( len >= 1 ) {
       unsigned char temp = 0;
-      nboUnpackUByte(buf, temp);
+      nboUnpackUInt8(buf, temp);
       player = GameKeeper::Player::getPlayerByIndex(temp);
 
       return buf;
@@ -932,6 +1004,7 @@ public:
     return buf;
   }
 };
+
 
 class GMUpdateHandler : public PlayerFirstNoBumpHandler
 {
@@ -945,7 +1018,7 @@ public:
     buf = shot.unpack(buf);
 
     unsigned char temp = 0;
-    nboUnpackUByte(buf, temp);
+    nboUnpackUInt8(buf, temp);
 
     PlayerId target = temp;
 
@@ -957,56 +1030,62 @@ public:
   }
 };
 
+
 void registerDefaultHandlers ( void )
 {
-  clientNetworkHandlers[MsgWhatTimeIsIt] = new WhatTimeIsItHandler;
-  clientNetworkHandlers[MsgSetVar] = new SetVarHandler;
-  clientNetworkHandlers[MsgNegotiateFlags] = new NegotiateFlagHandler;
-  clientNetworkHandlers[MsgGetWorld] = new GetWorldHandler;
-  clientNetworkHandlers[MsgWantSettings] = new WantSettingsHandler;
-  clientNetworkHandlers[MsgWantWHash] = new WantWHashHandler;
-  clientNetworkHandlers[MsgQueryGame] = new QueryGameHandler;
-  clientNetworkHandlers[MsgQueryPlayers] = new QueryPlayersHandler;
+  clientNetworkHandlers[MsgWhatTimeIsIt]       = new WhatTimeIsItHandler;
+  clientNetworkHandlers[MsgSetVar]             = new SetVarHandler;
+  clientNetworkHandlers[MsgNegotiateFlags]     = new NegotiateFlagHandler;
+  clientNetworkHandlers[MsgGetWorld]           = new GetWorldHandler;
+  clientNetworkHandlers[MsgWantSettings]       = new WantSettingsHandler;
+  clientNetworkHandlers[MsgWantWHash]          = new WantWHashHandler;
+  clientNetworkHandlers[MsgQueryGame]          = new QueryGameHandler;
+  clientNetworkHandlers[MsgQueryPlayers]       = new QueryPlayersHandler;
   clientNetworkHandlers[MsgUDPLinkEstablished] = new UDPLinkEstablishedHandler;
-  
-  playerNetworkHandlers[MsgNewPlayer] = new NewPlayerHandler;
-  playerNetworkHandlers[MsgCapBits] = new CapBitsHandler;
-  playerNetworkHandlers[MsgEnter] = new EnterHandler;
-  playerNetworkHandlers[MsgExit] = new ExitHandler;
-  playerNetworkHandlers[MsgAlive] = new AliveHandler;
-  playerNetworkHandlers[MsgKilled] = new KilledHandler;
-  playerNetworkHandlers[MsgDropFlag] = new DropFlagHandler;
-  playerNetworkHandlers[MsgCaptureFlag] = new CaptureFlagHandler;
-  playerNetworkHandlers[MsgCollide] = new CollideHandler;
-  playerNetworkHandlers[MsgShotBegin] = new ShotBeginHandler;
-  playerNetworkHandlers[MsgShotEnd] = new ShotEndHandler;
-  playerNetworkHandlers[MsgHit] = new HitHandler;
-  playerNetworkHandlers[MsgTeleport] = new TeleportHandler;
-  playerNetworkHandlers[MsgMessage] = new MessageHandler;
-  playerNetworkHandlers[MsgTransferFlag] = new TransferFlagHandler;
-  playerNetworkHandlers[MsgNewRabbit] = new NewRabbitHandler;
-  playerNetworkHandlers[MsgPause] = new PauseHandler;
-  playerNetworkHandlers[MsgAutoPilot] = new AutoPilotHandler;
-  playerNetworkHandlers[MsgLagPing] = new LagPingHandler;
-  playerNetworkHandlers[MsgPlayerUpdate] = new PlayerUpdateHandler;
+
+  playerNetworkHandlers[MsgNewPlayer]         = new NewPlayerHandler;
+  playerNetworkHandlers[MsgCapBits]           = new CapBitsHandler;
+  playerNetworkHandlers[MsgEnter]             = new EnterHandler;
+  playerNetworkHandlers[MsgExit]              = new ExitHandler;
+  playerNetworkHandlers[MsgAlive]             = new AliveHandler;
+  playerNetworkHandlers[MsgKilled]            = new KilledHandler;
+  playerNetworkHandlers[MsgDropFlag]          = new DropFlagHandler;
+  playerNetworkHandlers[MsgCaptureFlag]       = new CaptureFlagHandler;
+  playerNetworkHandlers[MsgCollide]           = new CollideHandler;
+  playerNetworkHandlers[MsgShotBegin]         = new ShotBeginHandler;
+  playerNetworkHandlers[MsgShotEnd]           = new ShotEndHandler;
+  playerNetworkHandlers[MsgHit]               = new HitHandler;
+  playerNetworkHandlers[MsgTeleport]          = new TeleportHandler;
+  playerNetworkHandlers[MsgMessage]           = new MessageHandler;
+  playerNetworkHandlers[MsgTransferFlag]      = new TransferFlagHandler;
+  playerNetworkHandlers[MsgNewRabbit]         = new NewRabbitHandler;
+  playerNetworkHandlers[MsgPause]             = new PauseHandler;
+  playerNetworkHandlers[MsgAutoPilot]         = new AutoPilotHandler;
+  playerNetworkHandlers[MsgLagPing]           = new LagPingHandler;
+  playerNetworkHandlers[MsgPlayerUpdate]      = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
-  playerNetworkHandlers[MsgGMUpdate] = new GMUpdateHandler;
+  playerNetworkHandlers[MsgGMUpdate]          = new GMUpdateHandler;
+  playerNetworkHandlers[MsgPlayerData]        = new PlayerDataHandler;
 }
+
 
 void cleanupDefaultHandlers ( void )
 {
-  std::map<uint16_t,PlayerNetworkMessageHandler*>::iterator playerIter = playerNetworkHandlers.begin();
+  std::map<uint16_t, PlayerNetworkMessageHandler*>::iterator playerIter =
+    playerNetworkHandlers.begin();
   while(playerIter != playerNetworkHandlers.end())
     delete((playerIter++)->second);
 
   playerNetworkHandlers.clear();
 
-  std::map<uint16_t,ClientNetworkMessageHandler*>::iterator clientIter = clientNetworkHandlers.begin();
+  std::map<uint16_t, ClientNetworkMessageHandler*>::iterator clientIter =
+    clientNetworkHandlers.begin();
   while(clientIter != clientNetworkHandlers.end())
     delete((clientIter++)->second);
 
   clientNetworkHandlers.clear();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

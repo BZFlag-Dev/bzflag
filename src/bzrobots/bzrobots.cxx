@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -56,6 +56,7 @@
 #include "TextUtils.h"
 #include "TextureManager.h"
 #include "TimeBomb.h"
+#include "TimeKeeper.h"
 #include "WordFilter.h"
 #include "World.h"
 #include "bzfio.h"
@@ -88,9 +89,6 @@ static bool		noAudio = false;
 struct tm		userTime;
 bool			echoToConsole = false;
 bool			echoAnsi = false;
-WordFilter*	     wordFilter = NULL;
-
-BzfDisplay*		display = NULL;
 
 // Function in botplaying.cxx:
 void botStartPlaying();
@@ -115,7 +113,7 @@ int bail ( int returnCode )
 
 static void		setTeamColor(TeamColor team, const std::string& str)
 {
-  float color[4];
+  fvec4 color;
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, color, Team::getRadarColor(team));
@@ -123,7 +121,7 @@ static void		setTeamColor(TeamColor team, const std::string& str)
 
 static void		setRadarColor(TeamColor team, const std::string& str)
 {
-  float color[4];
+  fvec4 color;
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, Team::getTankColor(team), color);
@@ -671,11 +669,12 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   // count number of arguments
   int argc = 1;
   char* scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
+  scan = TextUtils::skipWhitespace(scan);
+
   while (*scan) {
     argc++;
-    while (!isspace(*scan) && *scan != 0) scan++;
-    while (isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipNonWhitespace(scan);
+    scan = TextUtils::skipWhitespace(scan);
   }
 
   // get path to application.  this is ridiculously simple.
@@ -687,12 +686,14 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   argc = 0;
   argv[argc++] = appName;
   scan = cmdLine;
-  while (isspace(*scan) && *scan != 0) scan++;
+  scan = TextUtils::skipWhitespace(scan);
+
   while (*scan) {
     argv[argc++] = scan;
-    while (!isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipNonWhitespace(scan);
+
     if (*scan) *scan++ = 0;
-    while (isspace(*scan) && *scan != 0) scan++;
+    scan = TextUtils::skipWhitespace(scan);
   }
 
   const int exitCode = myMain(argc, argv);

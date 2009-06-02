@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,10 +37,7 @@
  */
 class TimeKeeper {
 public:
-  TimeKeeper();
-  TimeKeeper(const TimeKeeper&);
-  ~TimeKeeper();
-  TimeKeeper&		operator=(const TimeKeeper&);
+  explicit TimeKeeper(double secs=0.0);
 
   double		operator-(const TimeKeeper&) const;
   bool			operator<=(const TimeKeeper&) const;
@@ -120,27 +117,11 @@ private:
 // TimeKeeper
 //
 
-inline TimeKeeper::TimeKeeper() : seconds(0.0)
+inline TimeKeeper::TimeKeeper(double secs) : seconds(secs)
 {
   // do nothing
 }
 
-inline TimeKeeper::TimeKeeper(const TimeKeeper& t) :
-  seconds(t.seconds)
-{
-  // do nothing
-}
-
-inline TimeKeeper::~TimeKeeper()
-{
-  // do nothing
-}
-
-inline TimeKeeper&	TimeKeeper::operator=(const TimeKeeper& t)
-{
-  seconds = t.seconds;
-  return *this;
-}
 
 inline double		TimeKeeper::operator-(const TimeKeeper& t) const
 {

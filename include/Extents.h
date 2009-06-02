@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,52 +20,48 @@
 
 #include "common.h"
 
+#include "vectors.h"
+
 
 class Extents {
   public:
     Extents();
-    Extents(const float mins[3], const float maxs[3]);
+    Extents(const Extents&);
+    Extents(const fvec3& mins, const fvec3& maxs);
 
     void reset();
 
     Extents& operator=(const Extents&);
-    void set(const float mins[3], const float maxs[3]);
+    void set(const fvec3& mins, const fvec3& maxs);
 
     void expandToBox(const Extents& box); // expand to contain the box
-    void expandToPoint(const float[3]); // expand to contain the point
+    void expandToPoint(const fvec3&); // expand to contain the point
     void addMargin(float margin);     // widen the extents by "margin"
 
     float getWidth(int axis) const;
 
     bool touches(const Extents& orig) const;
     bool contains(const Extents& orig) const;
-
-  private:
-    // force passing by reference
-    Extents(const Extents& orig);
+    bool contains(const fvec3& point) const;
 
   public:
-    float mins[3];
-    float maxs[3];
+    fvec3 mins;
+    fvec3 maxs;
 };
 
 
 inline void Extents::reset()
 {
-  mins[0] = mins[1] = mins[2] = +MAXFLOAT;
-  maxs[0] = maxs[1] = maxs[2] = -MAXFLOAT;
+  mins.x = mins.y = mins.z = +MAXFLOAT;
+  maxs.x = maxs.y = maxs.z = -MAXFLOAT;
   return;
 }
 
 
-inline void Extents::set(const float _mins[3], const float _maxs[3])
+inline void Extents::set(const fvec3& _mins, const fvec3& _maxs)
 {
-  mins[0] = _mins[0];
-  mins[1] = _mins[1];
-  mins[2] = _mins[2];
-  maxs[0] = _maxs[0];
-  maxs[1] = _maxs[1];
-  maxs[2] = _maxs[2];
+  mins = _mins;
+  maxs = _maxs;
   return;
 }
 
@@ -77,21 +73,24 @@ inline Extents::Extents()
 }
 
 
-inline Extents::Extents(const float _mins[3], const float _maxs[3])
+inline Extents::Extents(const Extents& e)
 {
-  set(_mins, _maxs);
-  return;
+  mins = e.mins;
+  maxs = e.maxs;
+}
+
+
+inline Extents::Extents(const fvec3& _mins, const fvec3& _maxs)
+{
+  mins = _mins;
+  maxs = _maxs;
 }
 
 
 inline Extents& Extents::operator=(const Extents& orig)
 {
-  mins[0] = orig.mins[0];
-  mins[1] = orig.mins[1];
-  mins[2] = orig.mins[2];
-  maxs[0] = orig.maxs[0];
-  maxs[1] = orig.maxs[1];
-  maxs[2] = orig.maxs[2];
+  mins = orig.mins;
+  maxs = orig.maxs;
   return *this;
 }
 
@@ -99,60 +98,36 @@ inline Extents& Extents::operator=(const Extents& orig)
 inline void Extents::expandToBox(const Extents& test)
 {
   // test mins
-  if (test.mins[0] < mins[0]) {
-    mins[0] = test.mins[0];
-  }
-  if (test.mins[1] < mins[1]) {
-    mins[1] = test.mins[1];
-  }
-  if (test.mins[2] < mins[2]) {
-    mins[2] = test.mins[2];
-  }
+  if (test.mins.x < mins.x) { mins.x = test.mins.x; }
+  if (test.mins.y < mins.y) { mins.y = test.mins.y; }
+  if (test.mins.z < mins.z) { mins.z = test.mins.z; }
   // test maxs
-  if (test.maxs[0] > maxs[0]) {
-    maxs[0] = test.maxs[0];
-  }
-  if (test.maxs[1] > maxs[1]) {
-    maxs[1] = test.maxs[1];
-  }
-  if (test.maxs[2] > maxs[2]) {
-    maxs[2] = test.maxs[2];
-  }
+  if (test.maxs.x > maxs.x) { maxs.x = test.maxs.x; }
+  if (test.maxs.y > maxs.y) { maxs.y = test.maxs.y; }
+  if (test.maxs.z > maxs.z) { maxs.z = test.maxs.z; }
   return;
 }
 
 
-inline void Extents::expandToPoint(const float point[3])
+inline void Extents::expandToPoint(const fvec3& point)
 {
   // test mins
-  if (point[0] < mins[0]) {
-    mins[0] = point[0];
-  }
-  if (point[1] < mins[1]) {
-    mins[1] = point[1];
-  }
-  if (point[2] < mins[2]) {
-    mins[2] = point[2];
-  }
+  if (point.x < mins.x) { mins.x = point.x; }
+  if (point.y < mins.y) { mins.y = point.y; }
+  if (point.z < mins.z) { mins.z = point.z; }
   // test maxs
-  if (point[0] > maxs[0]) {
-    maxs[0] = point[0];
-  }
-  if (point[1] > maxs[1]) {
-    maxs[1] = point[1];
-  }
-  if (point[2] > maxs[2]) {
-    maxs[2] = point[2];
-  }
+  if (point.x > maxs.x) { maxs.x = point.x; }
+  if (point.y > maxs.y) { maxs.y = point.y; }
+  if (point.z > maxs.z) { maxs.z = point.z; }
   return;
 }
 
 
 inline bool Extents::touches(const Extents& test) const
 {
-  if ((mins[0] > test.maxs[0]) || (maxs[0] < test.mins[0]) ||
-      (mins[1] > test.maxs[1]) || (maxs[1] < test.mins[1]) ||
-      (mins[2] > test.maxs[2]) || (maxs[2] < test.mins[2])) {
+  if ((mins.x > test.maxs.x) || (maxs.x < test.mins.x) ||
+      (mins.y > test.maxs.y) || (maxs.y < test.mins.y) ||
+      (mins.z > test.maxs.z) || (maxs.z < test.mins.z)) {
     return false;
   }
   return true;
@@ -161,9 +136,20 @@ inline bool Extents::touches(const Extents& test) const
 
 inline bool Extents::contains(const Extents& test) const
 {
-  if ((mins[0] < test.mins[0]) && (maxs[0] > test.maxs[0]) &&
-      (mins[1] < test.mins[1]) && (maxs[1] > test.maxs[1]) &&
-      (mins[2] < test.mins[2]) && (maxs[2] > test.maxs[2])) {
+  if ((mins.x < test.mins.x) && (maxs.x > test.maxs.x) &&
+      (mins.y < test.mins.y) && (maxs.y > test.maxs.y) &&
+      (mins.z < test.mins.z) && (maxs.z > test.maxs.z)) {
+    return true;
+  }
+  return false;
+}
+
+
+inline bool Extents::contains(const fvec3& point) const
+{
+  if ((mins.x < point.x) && (maxs.x > point.x) &&
+      (mins.y < point.y) && (maxs.y > point.y) &&
+      (mins.z < point.z) && (maxs.z > point.z)) {
     return true;
   }
   return false;
@@ -172,14 +158,8 @@ inline bool Extents::contains(const Extents& test) const
 
 inline void Extents::addMargin(float margin)
 {
-  // subtract from the mins
-  mins[0] -= margin;
-  mins[1] -= margin;
-  mins[2] -= margin;
-  // add to the maxs
-  maxs[0] += margin;
-  maxs[1] += margin;
-  maxs[2] += margin;
+  mins -= margin;
+  maxs += margin;
   return;
 }
 

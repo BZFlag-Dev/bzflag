@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -47,6 +47,13 @@ private:
 		       bool& gotWorld);
   void finalization(char *data, unsigned int length, bool good);
 
+  bool parseNormalObject(const char* token, WorldFileObject** object);
+  bool parseCustomObject(const char* token, bool& error, int& lineNum,
+                         std::vector<WorldFileObject*>& wlist,
+                         GroupDefinition* groupDef, bool& gotWorld);
+  bool readRawLines(std::string& args, std::vector<std::string>& lines,
+                    const std::string& endToken, int& lineNum);
+
   // stream to open
   std::string location;
   std::istream *input;
@@ -61,6 +68,9 @@ private:
 
   // states if we read from a blob
   bool fromBlob;
+
+  // mapinfo text lines
+  std::vector<std::string> mapInfoLines;
 };
 
 #endif

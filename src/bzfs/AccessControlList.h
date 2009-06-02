@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -261,9 +261,11 @@ public:
       presumably so it can be remerged */
   void purgeMasters(void);
 
+  /** This function simply formats a mask as a string */
+  std::string getBanMaskString(in_addr mask);
+
   std::vector<std::pair<std::string, std::string> > listMasterBans(void) const;
 
-private:
   /** This function converts a <code>char*</code> containing an IP mask to an
       @c in_addr. */
   bool convert(char *ip, in_addr &mask);

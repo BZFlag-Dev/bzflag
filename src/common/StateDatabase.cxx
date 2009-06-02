@@ -1,9 +1,9 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
- * named LICENSE that should have accompanied this file.
+ * named COPYING that should have accompanied this file.
  *
  * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
@@ -31,17 +31,18 @@
 #include "ErrorHandler.h"
 #include "TextUtils.h"
 
+
 #if defined(DEBUG) || defined(_DEBUG)
 // headers needed only for _debugLookups()
 #include <map>
 #include "TimeKeeper.h"
 
-void	_debugLookups(const std::string &name)
+void _debugLookups(const std::string &name)
 {
   if (!BZDB.getDebug())
     return;
 
-  typedef std::map<std::string,int> EvalCntMap;
+  typedef std::map<std::string, int> EvalCntMap;
   static const float interval = 20.0f;
 
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
@@ -56,25 +57,26 @@ void	_debugLookups(const std::string &name)
 
   TimeKeeper now = TimeKeeper::getCurrent();
   if (now - last > interval) {
-    std::multimap<int,std::string> order;
+    std::multimap<int, std::string> order;
     for (it = cnts.begin(); it != cnts.end(); it++) {
-      order.insert(std::pair<int,std::string>(-it->second, it->first));
+      order.insert(std::pair<int, std::string>(-it->second, it->first));
       it->second = 0;
     }
 
-    for (std::multimap<int,std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
+    for (std::multimap<int, std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
       if (-it2->first / interval < 1.0f)
 	break;
-      logDebugMessage(1,"%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
+      logDebugMessage(1, "%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
     }
     last = now;
   }
 }
 
-  #define debugLookups(name) _debugLookups(name)
+#  define debugLookups(name) _debugLookups(name)
 #else
-  #define debugLookups(name)
-#endif
+#  define debugLookups(name)
+#endif // defined(DEBUG) || defined(_DEBUG)
+
 
 // initialize the singleton
 template <>
@@ -124,11 +126,13 @@ const std::string StateDatabase::BZDB_FOGDENSITY	= std::string("_fogDensity");
 const std::string StateDatabase::BZDB_FOGSTART		= std::string("_fogStart");
 const std::string StateDatabase::BZDB_FOGEND		= std::string("_fogEnd");
 const std::string StateDatabase::BZDB_FOGCOLOR		= std::string("_fogColor");
+const std::string StateDatabase::BZDB_FORBIDDEBUG	= std::string("_forbidDebug");
 const std::string StateDatabase::BZDB_GRABOWNFLAG	= std::string("_grabOwnFlag");
 const std::string StateDatabase::BZDB_FREEZETAGRADIUS	= std::string("_freezeTagRadius");
 const std::string StateDatabase::BZDB_FRICTION		= std::string("_friction");
 const std::string StateDatabase::BZDB_GMACTIVATIONTIME	= std::string("_gmActivationTime");
 const std::string StateDatabase::BZDB_GMADLIFE		= std::string("_gmAdLife");
+const std::string StateDatabase::BZDB_GMADSPEED		= std::string("_gmAdSpeed");
 const std::string StateDatabase::BZDB_GMTURNANGLE	= std::string("_gmTurnAngle");
 const std::string StateDatabase::BZDB_GRAVITY		= std::string("_gravity");
 const std::string StateDatabase::BZDB_HANDICAPSCOREDIFF = std::string("_handicapScoreDiff");
@@ -150,6 +154,7 @@ const std::string StateDatabase::BZDB_LONGITUDE		= std::string("_longitude");
 const std::string StateDatabase::BZDB_LRADRATE		= std::string("_lRAdRate");
 const std::string StateDatabase::BZDB_MAXBUMPHEIGHT     = std::string("_maxBumpHeight");
 const std::string StateDatabase::BZDB_MAXFLAGGRABS      = std::string("_maxFlagGrabs");
+const std::string StateDatabase::BZDB_MAXSELFDESTRUCTVEL= std::string("_maxSelfDestructVel");
 const std::string StateDatabase::BZDB_MAXLOD		= std::string("_maxLOD");
 const std::string StateDatabase::BZDB_MIRROR		= std::string("_mirror");
 const std::string StateDatabase::BZDB_MOMENTUMLINACC	= std::string("_momentumLinAcc");
@@ -172,9 +177,13 @@ const std::string StateDatabase::BZDB_PYRHEIGHT		= std::string("_pyrHeight");
 const std::string StateDatabase::BZDB_RADARLIMIT	= std::string("_radarLimit");
 const std::string StateDatabase::BZDB_REJOINTIME	= std::string("_rejoinTime");
 const std::string StateDatabase::BZDB_RELOADTIME	= std::string("_reloadTime");
+const std::string StateDatabase::BZDB_REJUMPTIME	= std::string("_rejumpTime");
 const std::string StateDatabase::BZDB_RFIREADVEL	= std::string("_rFireAdVel");
 const std::string StateDatabase::BZDB_RFIREADRATE       = std::string("_rFireAdRate");
 const std::string StateDatabase::BZDB_RFIREADLIFE       = std::string("_rFireAdLife");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME = std::string("_scoreboardCustomRowName");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN  = std::string("_scoreboardCustomRowLen");
+const std::string StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD   = std::string("_scoreboardCustomRowField");
 const std::string StateDatabase::BZDB_SHIELDFLIGHT      = std::string("_shieldFlight");
 const std::string StateDatabase::BZDB_SHOCKADLIFE       = std::string("_shockAdLife");
 const std::string StateDatabase::BZDB_SHOCKINRADIUS     = std::string("_shockInRadius");
@@ -185,9 +194,10 @@ const std::string StateDatabase::BZDB_SHOTSPEED		= std::string("_shotSpeed");
 const std::string StateDatabase::BZDB_SHOTTAILLENGTH	= std::string("_shotTailLength");
 const std::string StateDatabase::BZDB_SHOTSKEEPVERTICALV= std::string("_shotsKeepVerticalVelocity");
 const std::string StateDatabase::BZDB_SPEEDCHECKSLOGONLY= std::string("_speedChecksLogOnly");
-const std::string StateDatabase::BZDB_SRRADIUSMULT	= std::string("_srRadiusMult");
 const std::string StateDatabase::BZDB_SQUISHFACTOR	= std::string("_squishFactor");
 const std::string StateDatabase::BZDB_SQUISHTIME	= std::string("_squishTime");
+const std::string StateDatabase::BZDB_SRRADIUSMULT	= std::string("_srRadiusMult");
+const std::string StateDatabase::BZDB_STARTINGRANK	= std::string("_startingRank");
 const std::string StateDatabase::BZDB_SYNCTIME		= std::string("_syncTime");
 const std::string StateDatabase::BZDB_SYNCLOCATION      = std::string("_syncLocation");
 const std::string StateDatabase::BZDB_TANKANGVEL	= std::string("_tankAngVel");
@@ -226,12 +236,13 @@ const std::string StateDatabase::BZDB_WORLDSIZE		= std::string("_worldSize");
 // StateDatabase::Item
 //
 
-StateDatabase::Item::Item() : value(),
-			      defValue(),
-			      isSet(false),
-			      isTrue(false),
-			      save(true), // FIXME -- false by default?
-			      permission(ReadWrite)
+StateDatabase::Item::Item()
+: value()
+, defValue()
+, isSet(false)
+, isTrue(false)
+, save(true) // FIXME -- false by default?
+, permission(ReadWrite)
 {
   // do nothing
 }
@@ -247,17 +258,19 @@ StateDatabase::StateDatabase() : debug(false), saveDefault(false)
   // do nothing
 }
 
+
 StateDatabase::~StateDatabase()
 {
   // do nothing
 }
 
-void			StateDatabase::set(const std::string& name,
-					   const std::string& value,
-					   Permission access)
+
+void StateDatabase::set(const std::string& name,
+			const std::string& value,
+			Permission accessLevel)
 {
   Map::iterator index = lookup(name);
-  if (access >= index->second.permission) {
+  if (accessLevel >= index->second.permission) {
     index->second.value  = value;
     index->second.isSet  = true;
     index->second.isTrue = (index->second.value != "0" &&
@@ -269,38 +282,38 @@ void			StateDatabase::set(const std::string& name,
 			    index->second.value != "NO" &&
 			    index->second.value != "disable");
 
-	if (saveDefault)
-		index->second.defValue = value;
+    if (saveDefault)
+      index->second.defValue = value;
     notify(index);
   }
 }
 
-void		     StateDatabase::setInt(const std::string& name,
-					   const int& value,
-					   Permission access)
+
+void StateDatabase::setInt(const std::string& name, const int& value,
+			   Permission accessLevel)
 {
-  set(name,TextUtils::format("%d",value),access);
+  set(name, TextUtils::format("%d", value), accessLevel);
 }
 
-void		    StateDatabase::setBool(const std::string& name,
-					   const bool& value,
-					   Permission access)
+
+void StateDatabase::setBool(const std::string& name, const bool& value,
+			    Permission accessLevel)
 {
-  set(name,value ? std::string("1") : std::string("0"),access);
+  set(name, value ? std::string("1") : std::string("0"), accessLevel);
 }
 
-void		   StateDatabase::setFloat(const std::string& name,
-					   const float& value,
-					   Permission access)
+
+void StateDatabase::setFloat(const std::string& name, const float& value,
+			     Permission accessLevel)
 {
-  set(name,TextUtils::format("%f",value),access);
+  set(name, TextUtils::format("%f", value), accessLevel);
 }
 
-void			StateDatabase::unset(const std::string& name,
-					     Permission access)
+
+void StateDatabase::unset(const std::string& name, Permission accessLevel)
 {
   Map::iterator index = lookup(name);
-  if (access >= index->second.permission) {
+  if (accessLevel >= index->second.permission) {
     index->second.value  = "";
     index->second.isSet  = false;
     index->second.isTrue = false;
@@ -308,62 +321,75 @@ void			StateDatabase::unset(const std::string& name,
   }
 }
 
-void			StateDatabase::touch(const std::string& name,
-					     Permission access)
+
+void StateDatabase::touch(const std::string& name, Permission accessLevel)
 {
   Map::iterator index = lookup(name);
-  if (access >= index->second.permission)
+  if (accessLevel >= index->second.permission)
     notify(index);
 }
 
-void			StateDatabase::setPersistent(
-					const std::string& name, bool save)
+
+void StateDatabase::setPersistent(const std::string& name, bool save)
 {
   Map::iterator index = lookup(name);
   index->second.save = save;
 }
 
-void			StateDatabase::setDefault(
-					const std::string& name, const std::string& value)
+
+void StateDatabase::setDefault(const std::string& name,
+                               const std::string& value)
 {
   Map::iterator index = lookup(name);
   index->second.defValue = value;
 }
 
-void			StateDatabase::setPermission(
-					const std::string& name,
-					Permission permission)
+
+void StateDatabase::setPermission(const std::string& name,
+                                  Permission permission)
 {
   Map::iterator index = lookup(name);
   index->second.permission = permission;
 }
 
-void			StateDatabase::addCallback(
-					const std::string& name,
-					Callback callback,
-					void* userData)
+
+void StateDatabase::addCallback(const std::string& name,
+				Callback callback, void* userData)
 {
   Map::iterator index = lookup(name);
   index->second.callbacks.add(callback, userData);
 }
 
-void			StateDatabase::removeCallback(
-					const std::string& name,
-					Callback callback,
-					void* userData)
+
+void StateDatabase::removeCallback(const std::string& name,
+				   Callback callback, void* userData)
 {
   Map::iterator index = lookup(name);
   index->second.callbacks.remove(callback, userData);
 }
 
-bool			StateDatabase::isSet(const std::string& name) const
+
+void StateDatabase::addGlobalCallback(Callback callback, void* userData)
+{
+  globalCallbacks.add(callback, userData);
+}
+
+
+void StateDatabase::removeGlobalCallback(Callback callback, void* userData)
+{
+  globalCallbacks.remove(callback, userData);
+}
+
+
+bool StateDatabase::isSet(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
   return !(index == items.end() || !index->second.isSet);
 }
 
-std::string		StateDatabase::get(const std::string& name) const
+
+std::string StateDatabase::get(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -373,7 +399,9 @@ std::string		StateDatabase::get(const std::string& name) const
     return index->second.value;
 }
 
-int		StateDatabase::getIntClamped(const std::string& name, const int min, const int max) const
+
+int StateDatabase::getIntClamped(const std::string& name,
+                                 const int min, const int max) const
 {
   int val;
   debugLookups(name);
@@ -389,50 +417,62 @@ int		StateDatabase::getIntClamped(const std::string& name, const int min, const 
   return val;
 }
 
-float			StateDatabase::eval(const std::string& name)
+
+static float getNaN()
 {
-  typedef std::set<std::string> VariableSet;
-  debugLookups(name);
-
-  EvalMap::const_iterator cit = evalCache.find(name);
-  if (cit != evalCache.end())
-    return cit->second;
-
-  //this is to catch recursive definitions
-  static VariableSet variables;
   // ugly hack, since gcc 2.95 doesn't have <limits>
   float NaN;
   memset(&NaN, 0xff, sizeof(float));
+  return NaN;
+}
 
-  if (variables.find(name) != variables.end())
-    return NaN;
+
+float StateDatabase::eval(const std::string& name)
+{
+  // this is to catch recursive definitions
+  typedef std::set<std::string> VariableSet;
+  static VariableSet variables;
+
+  debugLookups(name);
+
+  EvalMap::const_iterator cit = evalCache.find(name);
+  if (cit != evalCache.end()) {
+    return cit->second;
+  }
+
+  if (variables.find(name) != variables.end()) {
+    return getNaN();
+  }
 
   VariableSet::iterator ins_it = variables.insert(name).first;
 
   Map::const_iterator index = items.find(name);
-  if (index == items.end() || !index->second.isSet || index->second.value.empty()) {
+  if ((index == items.end()) ||
+      !index->second.isSet || index->second.value.empty()) {
     variables.erase(ins_it);
-    return NaN;
+    return getNaN();
   }
-  Expression pre, inf;
-  std::string value = index->second.value;
-  if (!value.size())
-	  return NaN;
-  value >> inf;
-  pre = infixToPrefix(inf);
-  float retn = evaluate(pre);
-  variables.erase(ins_it);
 
-  evalCache[name] = retn;
-  return retn;
+  Expression infix;
+  std::string input = index->second.value;
+  input >> infix;
+
+  Expression prefix = infixToPrefix(infix);
+  const float value = evaluate(prefix);
+  evalCache[name] = value;
+
+  variables.erase(ins_it);
+  return value;
 }
 
-int			StateDatabase::evalInt(const std::string& name)
+
+int StateDatabase::evalInt(const std::string& name)
 {
   return (int)eval(name);
 }
 
-bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
+
+bool StateDatabase::evalTriplet(const std::string& name, float data[4])
 {
   if (!isSet(name) || !data)
     return false;
@@ -441,7 +481,8 @@ bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
   return true;
 }
 
-bool		StateDatabase::evalPair(const std::string& name, float data[2])
+
+bool StateDatabase::evalPair(const std::string& name, float data[2])
 {
   if (!isSet(name) || !data)
     return false;
@@ -450,14 +491,16 @@ bool		StateDatabase::evalPair(const std::string& name, float data[2])
   return true;
 }
 
-bool			StateDatabase::isTrue(const std::string& name) const
+
+bool StateDatabase::isTrue(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
   return !(index == items.end() || !index->second.isTrue);
 }
 
-bool			StateDatabase::isEmpty(const std::string& name) const
+
+bool StateDatabase::isEmpty(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -465,14 +508,16 @@ bool			StateDatabase::isEmpty(const std::string& name) const
 	  index->second.value.empty());
 }
 
-bool			StateDatabase::isPersistent(const std::string& name) const
+
+bool StateDatabase::isPersistent(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
   return (index != items.end() && index->second.save);
 }
 
-std::string		StateDatabase::getDefault(const std::string& name) const
+
+std::string StateDatabase::getDefault(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -482,8 +527,9 @@ std::string		StateDatabase::getDefault(const std::string& name) const
     return "";
 }
 
+
 StateDatabase::Permission
-			StateDatabase::getPermission(const std::string& name) const
+  StateDatabase::getPermission(const std::string& name) const
 {
   debugLookups(name);
   Map::const_iterator index = items.find(name);
@@ -493,8 +539,8 @@ StateDatabase::Permission
     return ReadWrite;
 }
 
-StateDatabase::Map::iterator
-			StateDatabase::lookup(const std::string& name)
+
+StateDatabase::Map::iterator StateDatabase::lookup(const std::string& name)
 {
   debugLookups(name);
   Map::iterator index = items.find(name);
@@ -506,21 +552,26 @@ StateDatabase::Map::iterator
   }
 }
 
-void			StateDatabase::notify(Map::iterator index)
+
+void StateDatabase::notify(Map::iterator index)
 {
   evalCache.erase(index->first);
-  index->second.callbacks.iterate(&onCallback, const_cast<void*>(static_cast<const void*>(&index->first)));
+  globalCallbacks.iterate(&onCallback,
+    const_cast<void*>(static_cast<const void*>(&index->first)));
+  index->second.callbacks.iterate(&onCallback,
+    const_cast<void*>(static_cast<const void*>(&index->first)));
 }
 
-bool			StateDatabase::onCallback(Callback callback,
-						  void* userData,
-						  void* iterateData)
+
+bool StateDatabase::onCallback(Callback callback,
+                               void* userData, void* iterateData)
 {
   callback(*static_cast<std::string*>(iterateData), userData);
   return true;
 }
 
-void			StateDatabase::iterate(Callback callback, void* userData) const
+
+void StateDatabase::iterate(Callback callback, void* userData) const
 {
   assert(callback != NULL);
 
@@ -531,7 +582,8 @@ void			StateDatabase::iterate(Callback callback, void* userData) const
   }
 }
 
-void			StateDatabase::write(Callback callback, void* userData) const
+
+void StateDatabase::write(Callback callback, void* userData) const
 {
   assert(callback != NULL);
 
@@ -542,19 +594,23 @@ void			StateDatabase::write(Callback callback, void* userData) const
   }
 }
 
-void		     StateDatabase::setDebug(bool print) {
+
+void StateDatabase::setDebug(bool print) {
   debug = print;
 }
 
-void		     StateDatabase::setSaveDefault(bool save) {
-	saveDefault = save;
+
+void StateDatabase::setSaveDefault(bool save) {
+  saveDefault = save;
 }
+
 
 StateDatabase::ExpressionToken::ExpressionToken()
 {
   tokenType = number;
   tokenContents.number = 0;
 }
+
 
 StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
 {
@@ -571,11 +627,13 @@ StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
   }
 }
 
+
 StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType, Contents _tokenContents)
 {
   tokenType = _tokenType;
   tokenContents = _tokenContents;
 }
+
 
 void StateDatabase::ExpressionToken::setType(Type _tokenType)
 {
@@ -592,10 +650,12 @@ void StateDatabase::ExpressionToken::setType(Type _tokenType)
   }
 }
 
+
 void StateDatabase::ExpressionToken::setContents(Contents _tokenContents)
 {
   tokenContents = _tokenContents;
 }
+
 
 void StateDatabase::ExpressionToken::setNumber(double num)
 {
@@ -603,11 +663,13 @@ void StateDatabase::ExpressionToken::setNumber(double num)
   tokenContents.number = num;
 }
 
+
 void StateDatabase::ExpressionToken::setVariable(std::string var)
 {
   tokenType = variable;
   tokenContents.variable = var;
 }
+
 
 void StateDatabase::ExpressionToken::setOper(Operator op)
 {
@@ -615,15 +677,18 @@ void StateDatabase::ExpressionToken::setOper(Operator op)
   tokenContents.oper = op;
 }
 
+
 StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType() const
 {
   return tokenType;
 }
 
+
 StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents() const
 {
   return tokenContents;
 }
+
 
 double StateDatabase::ExpressionToken::getNumber() const
 {
@@ -631,17 +696,20 @@ double StateDatabase::ExpressionToken::getNumber() const
   return tokenContents.number;
 }
 
-std::string	StateDatabase::ExpressionToken::getVariable() const
+
+std::string StateDatabase::ExpressionToken::getVariable() const
 {
   // note that the necessary type check must be done first
   return tokenContents.variable;
 }
+
 
 StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator() const
 {
   // note that the necessary type check must be done first
   return tokenContents.oper;
 }
+
 
 int StateDatabase::ExpressionToken::getPrecedence() const
 {
@@ -662,6 +730,7 @@ int StateDatabase::ExpressionToken::getPrecedence() const
   }
 }
 
+
 std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst)
 {
   char temp;
@@ -678,7 +747,9 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
       temp = src.peek();
     }
     dst.setNumber(atof(tempname.c_str()));
-  } else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == '^' || temp == '(' || temp == ')') {
+  }
+  else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' ||
+           temp == '^' || temp == '(' || temp == ')') {
     // operator
     switch(temp) {
       case '+':
@@ -718,6 +789,7 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
   }
   return src;
 }
+
 
 std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
 {
@@ -775,6 +847,7 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
   return src;
 }
 
+
 std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionToken& src)
 {
   switch (src.getTokenType()) {
@@ -815,6 +888,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionTok
   return dst;
 }
 
+
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
 {
   StateDatabase::ExpressionToken temp;
@@ -833,6 +907,7 @@ std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
   return src;
 }
 
+
 std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
 {
   StateDatabase::ExpressionToken temp;
@@ -850,6 +925,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
   return src;
 }
 
+
 std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src)
 {
   if (src.size()) {
@@ -860,6 +936,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& s
   }
   return dst;
 }
+
 
 StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
 {
@@ -873,15 +950,15 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
       if (i->getOperator() == ExpressionToken::lparen) {
 	operators.push(*i);
       } else if (i->getOperator() == ExpressionToken::rparen) {
-	// unstack operators until a matching ( is found
-	while((operators.size() > 0) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	// unstack operators until a matching (is found
+	while ((operators.size() > 0) && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
 	}
 	// discard (
 	if (operators.size() > 0) // handle extra-rparen case
 	  operators.pop();
       } else {
-	while((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	while ((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
 	}
 	operators.push(*i);
@@ -896,6 +973,7 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
     prefix.push_back(*ri);
   return prefix;
 }
+
 
 float StateDatabase::evaluate(Expression e) const
 {
@@ -917,7 +995,7 @@ float StateDatabase::evaluate(Expression e) const
       case ExpressionToken::oper:
 	if ((i->getOperator() == ExpressionToken::lparen) ||
 	    (i->getOperator() == ExpressionToken::rparen)) {
-	    break;  // should not have any parens here, skip them
+	  break;  // should not have any parens here, skip them
 	}
 	if (evaluationStack.size() == 0) {
 	  // syntax error
@@ -954,16 +1032,16 @@ float StateDatabase::evaluate(Expression e) const
 	    tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
 	    evaluationStack.push(tok);
 	    break;
-	default:
-	  // lparen and rparen should have been stripped out
-	  // throw something here, too
-	  break;
+	  default:
+	    // lparen and rparen should have been stripped out
+	    // throw something here, too
+	    break;
 	}
 	break;
     }
   }
   if (!evaluationStack.size())
-	  return 0; // yeah we are screwed. TODO, don't let us get this far
+    return 0; // yeah we are screwed. TODO, don't let us get this far
   return (float)evaluationStack.top().getNumber();
 }
 

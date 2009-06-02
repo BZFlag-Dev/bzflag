@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,6 +31,7 @@
 
 // common headers
 #include "Extents.h"
+#include "vectors.h"
 
 class Ray;
 class SceneNode;
@@ -42,7 +43,7 @@ class MeshTransform;
     All these functions have to be implemented in concrete subclasses.
 */
 
-enum ObstacleTypes {
+enum ObstacleType {
   wallType = 0,
   boxType,
   pyrType,
@@ -52,17 +53,21 @@ enum ObstacleTypes {
   arcType,
   coneType,
   sphereType,
-  tetraType,
-  ObstacleTypeCount
+
+  ObstacleTypeCount,
+
+  faceType // a mesh sub-object
 };
 
+
 #define _PASSABLE_MASK     0
-#define _INTANGIBLE        0x01
-#define _RED_PASSABLE      0x02
-#define _GREEN_PASSABLE    0x04
-#define _BLUE_PASSABLE     0x08
-#define _PURPLE_PASSABLE   0x10
-#define _ROGUE_PASSABLE    0x20
+#define _ROGUE_PASSABLE    (1 << 0)
+#define _RED_PASSABLE      (1 << 1)
+#define _GREEN_PASSABLE    (1 << 2)
+#define _BLUE_PASSABLE     (1 << 3)
+#define _PURPLE_PASSABLE   (1 << 4)
+#define _INTANGIBLE        (1 << 7)
+
 
 class Obstacle {
   friend class ObstacleModifier;
@@ -84,8 +89,9 @@ class Obstacle {
       @param shoot       @c true if the obstacle is shootthrough, i.e. bullets
 			 can pass through it
   */
-  Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
-	   float height, unsigned char drive = 0, unsigned char shoot = 0);
+  Obstacle(const fvec3& pos, float rotation,
+           float hwidth, float hbreadth, float height,
+           unsigned char drive, unsigned char shoot, bool rico);
 
   /** This function makes a copy using the given transform */
   virtual Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -95,10 +101,11 @@ class Obstacle {
 
   /** This function returns a string describing what kind of obstacle this is.
    */
-  virtual const char* getType() const = 0;
+  virtual const char*  getType() const = 0;
+  virtual ObstacleType getTypeID() const = 0;
 
-  const char* getName() {return name.c_str();}
-  void setName( const char* n) {if (n) name = n; else name = "";}
+  const std::string& getName() const { return name; }
+  void setName(const std::string& n) { name = n; }
 
   /** This function calculates extents from pos, size, and rotation */
   void setExtents();
@@ -124,14 +131,14 @@ class Obstacle {
   /** This function prints the obstacle in Alias Wavefront format to the stream */
   virtual void printOBJ(std::ostream&, const std::string&) const { return; }
 
-  /** This function returns the position of this obstacle. */
+  /** This function returns the extents of this obstacle. */
   const Extents& getExtents() const;
 
   /** This function returns the position of this obstacle. */
-  const float* getPosition() const;
+  const fvec3& getPosition() const;
 
   /** This function returns the sizes of this obstacle. */
-  const float* getSize() const;
+  const fvec3& getSize() const;
 
   /** This function returns the obstacle's rotation around its own Y axis. */
   float getRotation() const;
@@ -145,22 +152,13 @@ class Obstacle {
   /** This function returns the obstacle's full height. */
   float getHeight() const;
 
-  virtual int getTypeID() const = 0;
 
-  unsigned short getListID ( void ) const { return listID;}
-  void setListID ( unsigned short id ) {listID = id;}
- 
-  unsigned int getGUID ( void ) const
-  {
-    union {
-      unsigned short s[2];
-      unsigned int i;
-    } p;
+  unsigned short getListID() const { return listID;}
+  void setListID(unsigned short id) { listID = id; }
 
-    p.s[0] = getTypeID();
-    p.s[1] = getListID();
-    return p.i;
-  }
+  unsigned int getGUID() const { return (getTypeID() << 16) | getListID(); }
+
+  virtual int getBaseTeam() const { return -1; }
 
   /** This function returns the time of intersection between the obstacle
       and a Ray object. If the ray does not intersect this obstacle -1 is
@@ -169,26 +167,26 @@ class Obstacle {
 
   /** This function computes the two-dimensional surface normal of this
       obstacle at the point @c p. The normal is stored in @c n. */
-  virtual void getNormal(const float* p, float* n) const = 0;
+  virtual void getNormal(const fvec3& p, fvec3& n) const = 0;
 
   /** This function computes the three-dimensional surface normal of this
       obstacle at the point @c p. The normal is stored in @c n. */
-  virtual void get3DNormal(const float* p, float* n) const;
+  virtual void get3DNormal(const fvec3& p, fvec3& n) const;
 
   /** This function checks if a tank, approximated as a cylinder with base
       centre in point @c p and radius @c radius, intersects this obstacle. */
-  virtual bool inCylinder(const float* p, float radius, float height) const = 0;
+  virtual bool inCylinder(const fvec3& p, float radius, float height) const = 0;
 
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. */
-  virtual bool inBox(const float* p, float angle,
+  virtual bool inBox(const fvec3& p, float angle,
 		     float halfWidth, float halfBreadth, float height) const = 0;
 
   /** This function checks if a tank, approximated as a box rotated around its
       Z axis, intersects this obstacle. It also factors in the difference
       between the old Z location and the new Z location */
-  virtual bool inMovingBox(const float* oldP, float oldAngle,
-			   const float* newP, float newAngle,
+  virtual bool inMovingBox(const fvec3& oldP, float oldAngle,
+			   const fvec3& newP, float newAngle,
 			   float halfWidth, float halfBreadth, float height) const = 0;
 
   /** This function checks if a horizontal rectangle crosses the surface of
@@ -200,9 +198,9 @@ class Obstacle {
       @param plane       The tangent plane of the obstacle where it's
 			 intersected by the rectangle will be stored here
   */
-  virtual bool isCrossing(const float* p, float angle,
+  virtual bool isCrossing(const fvec3& p, float angle,
 			  float halfWidth, float halfBreadth, float height,
-			  float* plane) const;
+			  fvec4* plane) const;
 
   /** This function checks if a box moving from @c pos1 to @c pos2 will hit
       this obstacle, and if it does what the surface normal at the hitpoint is.
@@ -218,34 +216,38 @@ class Obstacle {
       @returns	    @c true if the box hits this obstacle, @c false
 			  otherwise
   */
-  virtual bool getHitNormal(const float* pos1, float azimuth1,
-			    const float* pos2, float azimuth2,
+  virtual bool getHitNormal(const fvec3& pos1, float azimuth1,
+			    const fvec3& pos2, float azimuth2,
 			    float halfWidth, float halfBreadth,
-			    float height, float* normal) const = 0;
+			    float height, fvec3& normal) const = 0;
 
   /** This function returns @c true if tanks can pass through this object,
       @c false if they can't. */
-  unsigned char  isDriveThrough() const;
+  unsigned char isDriveThrough() const;
 
   /** This function returns @c true if bullets can pass through this object,
       @c false if they can't. */
-  unsigned char  isShootThrough() const;
+  unsigned char isShootThrough() const;
 
-  void setDriveThrough ( unsigned char f ) {driveThrough = f;}
-  void setShootThrough ( unsigned char f ) {shootThrough = f;}
+  void setDriveThrough(unsigned char f) { driveThrough = f; }
+  void setShootThrough(unsigned char f) { shootThrough = f; }
 
   /** This function returns @c true if tanks and bullets can pass through
       this object, @c false if either can not */
   bool isPassable() const;
 
+  /** This function returns @c true if bullets will bounce off of this
+      object, @c false if they simply die on contact */
+  bool canRicochet() const;
+
   /** This function sets the "zFlip" flag of this obstacle, i.e. if it's
       upside down. */
-  void setZFlip(void);
+  void setZFlip();
 
   /** This function returns the "zFlip" flag of this obstacle.
       @see setZFlip()
   */
-  bool getZFlip(void) const;
+  bool getZFlip() const;
 
   // where did the object come from?
   enum SourceBits {
@@ -256,7 +258,7 @@ class Obstacle {
   void setSource(char);
   char getSource() const;
   bool isFromWorldFile() const;
-  bool isFromGroupDef() const;
+  bool isFromGroupDef()  const;
   bool isFromContainer() const;
 
   /** This function resets the object ID counter for printing OBJ files */
@@ -282,45 +284,46 @@ class Obstacle {
   /** This function checks if a moving horizontal rectangle will hit a
       box-shaped obstacle, and if it does, computes the obstacle's normal
       at the hitpoint.
-      @param pos1	The original position of the rectangle
+      @param pos1        The original position of the rectangle
       @param azimuth1    The original rotation of the rectangle
-      @param pos2	The final position of the rectangle
+      @param pos2        The final position of the rectangle
       @param azimuth2    The final rotation of the rectangle
       @param halfWidth   Half the width of the rectangle
       @param halfBreadth Half the breadth of the rectangle
-      @param oPos	The position of the obstacle
+      @param oPos        The position of the obstacle
       @param oAzimuth    The rotation of the obstacle
       @param oWidth      Half the width of the obstacle
       @param oBreadth    Half the breadth of the obstacle
       @param oHeight     The height of the obstacle
       @param normal      The surface normal of the obstacle at the hitpoint
-			 will be stored here
-      @returns	   The time of the hit, where 0 is the time when the
+                         will be stored here
+      @returns           The time of the hit, where 0 is the time when the
 			 rectangle is at @c pos1 and 1 is the time when it's
 			 at @c pos2, and -1 means "no hit"
   */
-  float getHitNormal(const float* pos1, float azimuth1,
-		     const float* pos2, float azimuth2,
+  float getHitNormal(const fvec3& pos1, float azimuth1,
+		     const fvec3& pos2, float azimuth2,
 		     float halfWidth, float halfBreadth,
-		     const float* oPos, float oAzimuth,
+		     const fvec3& oPos, float oAzimuth,
 		     float oWidth, float oBreadth, float oHeight,
-		     float* normal) const;
+		     fvec3& normal) const;
 
   protected:
-    static int getObjCounter();
+    static int  getObjCounter();
     static void incObjCounter();
 
   protected:
     Extents extents;
-    float pos[3];
-    float size[3]; // width, breadth, height
+    fvec3 pos;
+    fvec3 size; // width, breadth, height
     float angle;
     unsigned char driveThrough;
     unsigned char shootThrough;
-    bool ZFlip;
+    bool ricochet;
+    bool zFlip;
     char source;
     std::string name;
-    unsigned short  listID;
+    unsigned short listID;
 
   private:
     int insideNodeCount;
@@ -329,6 +332,7 @@ class Obstacle {
   private:
     static int objCounter;
 };
+
 
 //
 // Obstacle
@@ -339,12 +343,12 @@ inline const Extents& Obstacle::getExtents() const
   return extents;
 }
 
-inline const float* Obstacle::getPosition() const
+inline const fvec3& Obstacle::getPosition() const
 {
   return pos;
 }
 
-inline const float* Obstacle::getSize() const
+inline const fvec3& Obstacle::getSize() const
 {
   return size;
 }
@@ -356,23 +360,25 @@ inline float Obstacle::getRotation() const
 
 inline float Obstacle::getWidth() const
 {
-  return size[0];
+  return size.x;
 }
 
 inline float Obstacle::getBreadth() const
 {
-  return size[1];
+  return size.y;
 }
 
 inline float Obstacle::getHeight() const
 {
-  return size[2];
+  return size.z;
 }
 
-inline void Obstacle::get3DNormal(const float *p, float *n) const
+
+inline void Obstacle::get3DNormal(const fvec3& p, fvec3& n) const
 {
   getNormal(p, n);
 }
+
 
 inline unsigned char Obstacle::isDriveThrough() const
 {
@@ -388,6 +394,12 @@ inline bool Obstacle::isPassable() const
 {
   return (driveThrough && shootThrough);
 }
+
+inline bool Obstacle::canRicochet() const
+{
+  return ricochet;
+}
+
 
 inline void Obstacle::setSource(char _source)
 {
@@ -415,6 +427,7 @@ inline bool Obstacle::isFromContainer() const
   return ((source & ContainerSource) != 0);
 }
 
+
 inline int Obstacle::getObjCounter()
 {
   return objCounter;
@@ -428,7 +441,9 @@ inline void Obstacle::resetObjCounter()
   objCounter = 0;
 }
 
+
 #endif // BZF_OBSTACLE_H
+
 
 // Local Variables: ***
 // mode: C++ ***

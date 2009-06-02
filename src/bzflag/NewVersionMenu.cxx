@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -48,9 +48,9 @@ cURLManager(), byteTransferred(0)
   // prep for possible download
   setURL(url);
 #ifdef AUTOUPGRADE
-  long timeout = 15;
+  int timeout = 15;
   if (BZDB.isSet("httpTimeout")) {
-    timeout = (long)BZDB.eval("httpTimeout");
+    timeout = BZDB.evalInt("httpTimeout");
   }
   setTimeout(timeout);
 #endif
@@ -212,10 +212,12 @@ void NewVersionMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   int i = 0;
 
+  const int faceID = fontFace->getFMFace();
+
   // status
   HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
   label->setFontSize(smallFontSize);
-  float labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, "Downloading update: 8888/8888 KB");
+  float labelWidth = fm.getStringWidth(faceID, smallFontSize, "Downloading update: 8888/8888 KB");
   x = 0.5f * ((float)_width - labelWidth);
   y = 2.0f * fontHeight;
   label->setPosition(x, y);
@@ -223,7 +225,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // announcement
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(fontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, fontSize, label->getString());
   x = 0.5f * ((float)_width - labelWidth);
   y = (float)_height - fontHeight - 1.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -231,7 +233,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // release-notice
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, smallFontSize, label->getString());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 3.0f * smallFontHeight;
   label->setPosition(x, y);
@@ -239,7 +241,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // release-date
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, smallFontSize, label->getString());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 1.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -247,7 +249,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // user request
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, smallFontSize, label->getString());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 4.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -256,7 +258,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // download details
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, smallFontSize, label->getString());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 1.5f * smallFontHeight;
   label->setPosition(x, y);
@@ -265,7 +267,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // first user option
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, smallFontSize, label->getString());
   x = 0.5f * ((float)_width - labelWidth);
   y -= 1.0f * fontHeight;
   label->setPosition(x, y);
@@ -274,7 +276,7 @@ void NewVersionMenu::resize(int _width, int _height)
   // second user option
   label = (HUDuiLabel*)listHUD[++i];
   label->setFontSize(smallFontSize);
-  labelWidth = fm.getStringWidth(fontFace->getFMFace(), smallFontSize, label->getString().c_str());
+  labelWidth = fm.getStringWidth(faceID, smallFontSize, label->getString());
   y -= 1.5f * smallFontHeight;
   label->setPosition(x, y);
 #endif

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -122,13 +122,20 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
     case WM_ACTIVATE: {
       WinWindow* window = WinWindow::lookupWindow(hwnd);
       if (window) {
-	if (LOWORD(wparam) == WA_INACTIVE) {
-	  if (window->deactivate())
-	    PostMessage(hwnd, WM_APP + 1, (WPARAM)0, (LPARAM)0);
+	if (LOWORD(wparam) == WA_INACTIVE)
+	{
+	  if (!window->isActivating())
+	  {
+	    if (window->deactivate())
+	      PostMessage(hwnd, WM_APP + 1, (WPARAM)0, (LPARAM)0);
+	  }
 	}
 	else {
-	  if (window->activate())
-	    PostMessage(hwnd, WM_APP + 0, (WPARAM)0, (LPARAM)0);
+	  if (!window->isActivating())
+	  {
+	    if (window->activate())
+	      PostMessage(hwnd, WM_APP + 0, (WPARAM)0, (LPARAM)0);
+	  }
 	}
       }
       break;
@@ -192,21 +199,13 @@ WinDisplay::WinDisplay(const char* displayName, const char*) :
     // register modes
     initResolutions(resInfo, numModes, currentMode);
   }
-
-  addFatalErrorCallback(this);
 }
 
 WinDisplay::~WinDisplay()
 {
-  removeFatalErrorCallback(this);
   setDefaultResolution();
   delete[] resolutions;
   rep->unref();
-}
-
-void WinDisplay::error ( const char* title, const char* message )
-{
-  MessageBoxA(hwnd,message,title,MB_OK | MB_ICONERROR | MB_TASKMODAL);
 }
 
 bool			WinDisplay::isFullScreenOnly() const
@@ -388,8 +387,10 @@ bool			WinDisplay::getKey(const MSG& msg,
       GetMessage(&cmsg, NULL, 0, 0);
       // charCode is in UTF-16, so convert it to a codepoint
       charCode = cmsg.wParam;
-      if (UNICODE_IS_HIGH_SURROGATE(charCode >> 16) && UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF))
+      if (UNICODE_IS_HIGH_SURROGATE(charCode >> 16) &&
+          UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF)) {
 	charCode = UNICODE_SURROGATE_TO_UTF32(charCode >> 16, charCode & 0xFFFF);
+      }
     }
     else {
       charCode = 0;

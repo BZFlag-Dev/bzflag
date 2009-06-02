@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993 - 2008 Tim Riker
+ * Copyright (c) 1993 - 2009 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,22 +21,28 @@
 #include <map>
 
 class LocalCommand {
- public:
+  public:
 
-  static bool execute(const char *commandToken);
+    static bool execute(const char *commandToken);
 
- protected:
+    static void setFallback(bool (*func)(const char*)) { fallback = func; }
 
-  LocalCommand(std::string _commandName);
-  virtual ~LocalCommand();
+  protected:
 
-  virtual bool operator () (const char *commandToken);
+    LocalCommand(std::string _commandName);
+    virtual ~LocalCommand();
 
-  std::string commandName;
+    virtual bool operator () (const char *commandToken);
 
-  typedef std::map<std::string, LocalCommand *> MapOfCommands;
+    std::string commandName;
 
-  static MapOfCommands *mapOfCommands;
+  protected:
+
+    static bool (*fallback)(const char* command);
+
+    typedef std::map<std::string, LocalCommand *> MapOfCommands;
+
+    static MapOfCommands* mapOfCommands;
 };
 
 #endif

@@ -53,8 +53,12 @@ UNIX
 
         ./configure --with-ssl
 
-   If you have OpenSSL installed somewhere else (for example, /opt/OpenSSL,)
-   you can run configure like this:
+   If you have OpenSSL installed somewhere else (for example, /opt/OpenSSL)
+   and you have pkg-config installed, set the pkg-config path first, like this:
+
+        env PKG_CONFIG_PATH=/opt/OpenSSL/lib/pkgconfig ./configure --with-ssl
+
+   Without pkg-config installed, use this:
 
         ./configure --with-ssl=/opt/OpenSSL
 
@@ -70,22 +74,23 @@ UNIX
 
      (with the Bourne shell and its clones):
 
-       CPPFLAGS="-I/path/to/ssl/include" LDFLAGS="-L/path/to/ssl/lib" \
+        CPPFLAGS="-I/path/to/ssl/include" LDFLAGS="-L/path/to/ssl/lib" \
            ./configure
 
      (with csh, tcsh and their clones):
 
-       env CPPFLAGS="-I/path/to/ssl/include" LDFLAGS="-L/path/to/ssl/lib" \
-       ./configure
+        env CPPFLAGS="-I/path/to/ssl/include" LDFLAGS="-L/path/to/ssl/lib" \
+           ./configure
 
    If you have shared SSL libs installed in a directory where your run-time
    linker doesn't find them (which usually causes configure failures), you can
    provide the -R option to ld on some operating systems to set a hard-coded
    path to the run-time linker:
 
-        LDFLAGS=-R/usr/local/ssl/lib ./configure --with-ssl
+        env LDFLAGS=-R/usr/local/ssl/lib ./configure --with-ssl
 
    MORE OPTIONS
+   ------------
 
      To force configure to use the standard cc compiler if both cc and gcc are
      present, run configure like
@@ -127,7 +132,7 @@ UNIX
      To build with GnuTLS support instead of OpenSSL for SSL/TLS, note that
      you need to use both --without-ssl and --with-gnutls.
 
-     To build with yassl support instead of OpenSSL or GunTLS, you must build
+     To build with yassl support instead of OpenSSL or GnuTLS, you must build
      yassl with its OpenSSL emulation enabled and point to that directory root
      with configure --with-ssl.
 
@@ -140,6 +145,16 @@ UNIX
      To get support for SCP and SFTP, build with --with-libssh2 and have
      libssh2 0.16 or later installed.
      
+   SPECIAL CASES
+   -------------
+   Some versions of uClibc require configuring with CPPFLAGS=-D_GNU_SOURCE=1
+   to get correct large file support.
+
+   The Open Watcom C compiler on Linux requires configuring with the variables:
+
+       ./configure CC=owcc AR="$WATCOM/binl/wlib" AR_FLAGS=-q \
+           RANLIB=/bin/true STRIP="$WATCOM/binl/wstrip" CFLAGS=-Wextra
+
 
 Win32
 =====
@@ -272,6 +287,37 @@ Win32
    at runtime.
    Run 'nmake vc-ssl-zlib' to build with both ssl and zlib support.
 
+   MSVC 6 IDE
+   ----------
+
+   A minimal VC++ 6.0 reference workspace (vc6curl.dsw) is available with the
+   source distribution archive to allow proper building of the two included
+   projects, the libcurl library and the curl tool.
+
+   1) Open the vc6curl.dsw workspace with MSVC6's IDE.
+   2) Select 'Build' from top menu.
+   3) Select 'Batch Build' from dropdown menu.
+   4) Make sure that the eight project configurations are 'checked'.
+   5) Click on the 'Build' button.
+   6) Once the eight project configurations are built you are done.
+
+   Dynamic and static libcurl libraries are built in debug and release flavours,
+   and can be located each one in its own subdirectory, DLL-Debug, DLL-Release,
+   LIB-Debug and LIB-Release, all of them below the 'lib' subdirectory.
+
+   In the same way four curl executables are created, each using its respective
+   library. The resulting curl executables are located in its own subdirectory,
+   DLL-Debug, DLL-Release, LIB-Debug and LIB-Release, below the 'src' subdir.
+
+   These reference VC++ 6.0 configurations are generated using the dynamic CRT.
+
+   Intentionally, these reference VC++ 6.0 projects and configurations don't use
+   third party libraries, such as OpenSSL or Zlib, to allow proper compilation
+   and configuration for all new users without further requirements.
+
+   If you need something more 'involved' you might adjust them for your own use,
+   or explore the world of makefiles described above 'MSVC from command line'.
+
    Borland C++ compiler
    ---------------------
 
@@ -300,9 +346,8 @@ Win32
                                  -L c:\openssl\out32\ssleay32.lib
                                  simplessl.c
 
-
-   MSVC IDE
-   --------
+   OTHER MSVC IDEs
+   ---------------
 
    If you use VC++, Borland or similar compilers. Include all lib source
    files in a static lib "project" (all .c and .h files that is).
@@ -310,9 +355,6 @@ Win32
 
    Make the sources in the src/ drawer be a "win32 console application"
    project. Name it curl.
-
-   For VC++ 6, there's an included Makefile.vc6 that should be possible
-   to use out-of-the-box.
 
 
    Disabling Specific Protocols in Win32 builds
@@ -332,14 +374,16 @@ Win32
    CURL_DISABLE_DICT     disables DICT
    CURL_DISABLE_FILE     disables FILE
    CURL_DISABLE_TFTP     disables TFTP
+   CURL_DISABLE_HTTP     disables HTTP
 
    If you want to set any of these defines you have the following
    possibilities:
 
+   - Modify lib/config-win32.h
    - Modify lib/setup.h
    - Modify lib/Makefile.vc6
    - Add defines to Project/Settings/C/C++/General/Preprocessor Definitions
-     in the curllib.dsw/curllib.dsp Visual C++ 6 IDE project.
+     in the libcurl.dsw/libcurl.dsp Visual C++ 6 IDE project.
 
 
    Important static libcurl usage note
@@ -618,41 +662,45 @@ eCos
 Minix
 =====
    curl can be compiled on Minix 3 using gcc or ACK (starting with
-   ver. 3.1.3).  The default heap size allocated to several required
-   programs is inadequate for configuring and compiling curl and will
-   result in strange errors unless fixed (which only needs to be done
-   once).
+   ver. 3.1.3).
    
    ACK
    ---
-   Increase heap sizes with the commands:
+   Increase the heap sizes of the compiler with the command:
 
-     chmem =1024000 /usr/lib/em_cemcom.ansi
-     chmem =512000 /usr/lib/i386/as
-
-   If you have bash installed:
-
-     chmem =2048000 /usr/local/bin/bash
+     binsizes xxl
 
    Configure and compile with:
 
-     ./configure CC=cc LD=cc GREP=grep CPPFLAGS=-D_POSIX_SOURCE=1
+     ./configure CONFIG_SHELL=/bin/bigsh CC=cc LD=cc AR=/usr/bin/aal \
+                 GREP=grep CPPFLAGS='-D_POSIX_SOURCE=1 -I/usr/local/include'
      make
+     chmem =256000 src/curl
 
    GCC
    ---
-   If you have bash installed:
-
-     chmem =2048000 /usr/local/bin/bash
-
    Make sure gcc is in your PATH with the command:
    
      export PATH=/usr/gnu/bin:$PATH
    
    then configure and compile curl with:
 
-     ./configure CC=gcc GREP=grep AR=/usr/gnu/bin/gar
+     ./configure CONFIG_SHELL=/bin/bigsh CC=gcc AR=/usr/gnu/bin/gar GREP=grep
      make
+     chmem =256000 src/curl
+
+
+Symbian OS
+==========
+   The Symbian OS port uses the Symbian build system to compile.  From the
+   packages/Symbian/group/ directory, run:
+
+      bldmake bldfiles
+      abld build
+
+   to compile and install curl and libcurl. If your Symbian SDK doesn't
+   include support for P.I.P.S., you will need to contact your SDK vendor
+   to obtain that first.
 
 
 CROSS COMPILE
@@ -660,7 +708,7 @@ CROSS COMPILE
    (This section was graciously brought to us by Jim Duey, with additions by
    Dan Fandrich)
 
-   Download and unpack the cURL package.  Version should be 7.9.1 or later.
+   Download and unpack the cURL package.
 
    'cd' to the new directory. (e.g. cd curl-7.12.3)
 
@@ -709,13 +757,13 @@ REDUCING SIZE
    size of libcurl for embedded applications where binary size is an
    important factor.  First, be sure to set the CFLAGS variable when
    configuring with any relevant compiler optimization flags to reduce the
-   size of the binary.  For gcc, this would mean at minimum the -Os option
-   and probably the -march=X option as well, e.g.:
+   size of the binary.  For gcc, this would mean at minimum the -Os option,
+   and potentially the -march=X and -mdynamic-no-pic options as well, e.g.
 
       ./configure CFLAGS='-Os' ...
 
    Note that newer compilers often produce smaller code than older versions
-   due to better optimization.
+   due to improved optimization.
 
    Be sure to specify as many --disable- and --without- flags on the configure
    command-line as you can to disable all the libcurl features that you
@@ -724,31 +772,49 @@ REDUCING SIZE
    will not use, here are some other flags that can reduce the size of the
    library:
 
-     --disable-ares (disables support for the ARES DNS library)
+     --disable-ares (disables support for the C-ARES DNS library)
      --disable-cookies (disables support for HTTP cookies)
      --disable-crypto-auth (disables HTTP cryptographic authentication)
      --disable-ipv6 (disables support for IPv6)
+     --disable-manual (disables support for the built-in documentation)
+     --disable-proxy (disables support for HTTP and SOCKS proxies)
      --disable-verbose (eliminates debugging strings and error code strings)
      --enable-hidden-symbols (eliminates unneeded symbols in the shared library)
      --without-libidn (disables support for the libidn DNS library)
      --without-ssl (disables support for SSL/TLS)
      --without-zlib (disables support for on-the-fly decompression)
 
-   The GNU linker has a number of options to reduce the size of the libcurl
-   dynamic libraries on some platforms even further. Specify them by giving
-   the options -Wl,-Bsymbolic and -Wl,-s on the gcc command-line.  
+   The GNU compiler and linker have a number of options that can reduce the
+   size of the libcurl dynamic libraries on some platforms even further.
+   Specify them by providing appropriate CFLAGS and LDFLAGS variables on the
+   configure command-line:
+     CFLAGS="-ffunction-sections -fdata-sections" \
+     LDFLAGS="-Wl,-s -Wl,-Bsymbolic -Wl,--gc-sections"
+
    Be sure also to strip debugging symbols from your binaries after
    compiling using 'strip' (or the appropriate variant if cross-compiling).
    If space is really tight, you may be able to remove some unneeded
    sections of the shared library using the -R option to objcopy (e.g. the
    .comment section).
 
-   Using these techniques it is possible to create an HTTP-only shared libcurl
-   library for i386 Linux platforms that is only 96 KiB in size (as of libcurl
-   version 7.17.1, using gcc 4.2.2).
+   Using these techniques it is possible to create a basic HTTP-only shared
+   libcurl library for i386 Linux platforms that is only 94 KiB in size, and
+   an FTP-only library that is 87 KiB in size (as of libcurl version 7.19.1,
+   using gcc 4.2.2).
 
    You may find that statically linking libcurl to your application will
-   result in a lower total size.
+   result in a lower total size than dynamically linking.
+
+   Note that the curl test harness can detect the use of some, but not all, of
+   the --disable statements suggested above. Use will cause tests relying on
+   those features to fail.  The test harness can be manually forced to skip
+   the relevant tests by specifying certain key words on the runtests.pl
+   command line.  Following is a list of appropriate key words:
+
+     --disable-cookies          !cookies
+     --disable-crypto-auth      !HTTP\ Digest\ auth !HTTP\ proxy\ Digest\ auth
+     --disable-manual           !--manual
+     --disable-proxy            !HTTP\ proxy !proxytunnel !SOCKS4 !SOCKS5
 
 
 PORTS
@@ -765,19 +831,27 @@ PORTS
         - Alpha OpenBSD 3.0
         - Alpha OpenVMS V7.1-1H2
         - Alpha Tru64 v5.0 5.1
+        - AVR32 Linux
+        - ARM INTEGRITY
+        - ARM iPhone OS
+        - Cell Linux
+        - Cell Cell OS
         - HP-PA HP-UX 9.X 10.X 11.X
         - HP-PA Linux
         - HP3000 MPE/iX
+        - MicroBlaze uClinux
         - MIPS IRIX 6.2, 6.5
         - MIPS Linux
         - OS/400
         - Pocket PC/Win CE 3.0
         - Power AIX 3.2.5, 4.2, 4.3.1, 4.3.2, 5.1, 5.2
         - PowerPC Darwin 1.0
+        - PowerPC INTEGRITY
         - PowerPC Linux
         - PowerPC Mac OS 9
         - PowerPC Mac OS X
-        - SuperH4 Linux 2.6.X
+        - SH4 Linux 2.6.X
+        - SH4 OS21
         - SINIX-Z v5
         - Sparc Linux
         - Sparc Solaris 2.4, 2.5, 2.5.1, 2.6, 7, 8, 9, 10
@@ -785,6 +859,7 @@ PORTS
         - StrongARM (and other ARM) RISC OS 3.1, 4.02
         - StrongARM/ARM7/ARM9 Linux 2.4, 2.6
         - StrongARM NetBSD 1.4.1
+        - Symbian OS (P.I.P.S.) 9.x
         - TPF
         - Ultrix 4.3a
         - UNICOS 9.0
@@ -794,16 +869,17 @@ PORTS
         - i386 Esix 4.1
         - i386 FreeBSD
         - i386 HURD
+        - i386 Haiku OS
         - i386 Linux 1.3, 2.0, 2.2, 2.3, 2.4, 2.6
         - i386 MINIX 3.1
         - i386 NetBSD
         - i386 Novell NetWare
         - i386 OS/2
         - i386 OpenBSD
+        - i386 QNX 6
         - i386 SCO unix
         - i386 Solaris 2.7
         - i386 Windows 95, 98, ME, NT, 2000, XP, 2003
-        - i386 QNX 6
         - i486 ncr-sysv4.3.03 (NCR MP-RAS)
         - ia64 Linux 2.3.99
         - m68k AmigaOS 3
@@ -812,6 +888,7 @@ PORTS
         - m68k OpenBSD
         - m88k dg-dgux5.4R3.00
         - s390 Linux
+        - x86_64 Linux
         - XScale/PXA250 Linux 2.4
         - Nios II uClinux
 
