@@ -360,23 +360,39 @@ void ServerMenu::updateStatus()
 void ServerMenu::playingCB(void* _self)
 {
   ServerList &list = ServerList::instance();
-  for (PingsMap::iterator i = ServerMenu::activePings.begin();
-       i != ServerMenu::activePings.end(); i++) {
-    i->second.first->doPings();
-    if (i->second.first->done()) {
-      ServerItem* server = list.lookupServer(i->first);
-      if (server == NULL)
-	break;
-      server->ping.pingTime = i->second.first->calcLag();
-      server->ping.pinging = false;
-      for (size_t j=0; j<(i->second.second.size()); j++) {
-	i->second.second[j]->addItem(server);
-      }
-      delete i->second.first;
-      ServerMenu::activePings.erase(i);
-    }
-  }
+  PingsMap::iterator itr = ServerMenu::activePings.begin();
 
+  std::vector<std::string> itemsToBoot;
+
+  while (itr != ServerMenu::activePings.end())
+  {
+	  itr->second.first->doPings();
+	  if (itr->second.first->done())
+	  {
+		  ServerItem* server = list.lookupServer(itr->first);
+		  if (server != NULL)
+		  {
+			  server->ping.pingTime = itr->second.first->calcLag();
+			  server->ping.pinging = false;
+			  for (size_t j=0; j<(itr->second.second.size()); j++) 
+				  itr->second.second[j]->addItem(server);
+			  itemsToBoot.push_back(itr->first);
+		  }
+	  }
+	  itr++;
+  }
+  
+  std::vector<std::string>::iterator delItr = itemsToBoot.begin();
+  while (delItr != itemsToBoot.end())
+  {
+	  PingsMap::iterator i = ServerMenu::activePings.find(*delItr);
+
+	  delete i->second.first;
+	  ServerMenu::activePings.erase(i);
+
+	  delItr++;
+  }
+   
   static_cast<ServerMenu*>(_self)->serverList.checkEchos(getStartupInfo());
   static_cast<ServerMenu*>(_self)->updateStatus();
 }
