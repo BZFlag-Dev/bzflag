@@ -670,7 +670,7 @@ case $host_os in
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	# time to use -Wextra instead of -W ? (gcc 3.4+)
-	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic"
+	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic -Wno-long-long"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
@@ -714,7 +714,7 @@ case $host_os in
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      macos|darwin*)
-	FLAGS="-pipe -pedantic -fno-exceptions -W -Wall -Wundef -Wno-import"
+	FLAGS="-pipe -pedantic -Wno-long-long -fno-exceptions -W -Wall -Wundef -Wno-import"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      irix)
