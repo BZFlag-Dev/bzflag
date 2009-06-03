@@ -32,6 +32,34 @@
 #include "playing.h"
 #include "clientvars.h"
 
+WorldDownLoader::WorldDownLoader() :
+  worldUrl(""),
+  worldHash(""),
+  worldCachePath(""),
+  md5Digest(""),
+  worldPtr(0),
+  worldDatabase(NULL),
+  isCacheTemp(false),
+  cacheOut(NULL),
+	cURLManager()
+{
+}
+
+WorldDownLoader::~WorldDownLoader()
+{
+  if (worldBuilder) {
+    delete worldBuilder;
+    worldBuilder = NULL;
+  }
+  if (worldDatabase) {
+    delete[] worldDatabase;
+    worldDatabase = NULL;
+  }
+  if (cacheOut) {
+    delete cacheOut;
+    cacheOut = NULL;
+  }
+}
 
 void WorldDownLoader::start(char *hexDigest)
 {
