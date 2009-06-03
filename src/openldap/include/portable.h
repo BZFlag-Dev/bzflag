@@ -1107,8 +1107,7 @@
 /* #undef volatile */
 
 /* define to snprintf routine */
-#define vsnprintf _vsnprintf
-
+/* #define vsnprintf _vsnprintf */
 
 /* begin of portable.h.post */
 

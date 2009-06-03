@@ -16,7 +16,7 @@
 #ifdef TEST_NET
 
 #include "../bzAuthCommon/Socket.h"
-#include "../bzAuthCommon/Protocol.h"
+#include "../bzAuthCommon/AuthProtocol.h"
 #include <RSA.h>
 
 int sleep_var;

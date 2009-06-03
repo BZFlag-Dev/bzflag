@@ -3,13 +3,16 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="libgcrypt"
-	ProjectGUID="{E848E27A-90AF-4B66-978A-5445581BCFBA}"
-	Keyword="Win32Proj"
+	ProjectGUID="{BE265D8D-7EF7-482B-AEEA-60DFADA3332C}"
+	RootNamespace="libgcrypt"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
 			Name="Win32"
+		/>
+		<Platform
+			Name="x64"
 		/>
 	</Platforms>
 	<ToolFiles>
@@ -17,10 +20,12 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./libgcrypt_debug"
-			IntermediateDirectory="./libgcrypt_debug"
+			OutputDirectory="./libgcrypt_debug/"
+			IntermediateDirectory="./libgcrypt_debug/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
 			<Tool
@@ -41,17 +46,19 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
-				MinimalRebuild="false"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
+				PrecompiledHeaderFile="./libgcrypt_debug/libgcrypt.pch"
 				AssemblerListingLocation="./libgcrypt_debug/"
 				ObjectFile="./libgcrypt_debug/"
 				ProgramDataBaseFileName="./libgcrypt_debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
 				CompileAs="0"
 			/>
@@ -60,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -67,6 +75,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="./libgcrypt_debug/libgcrypt.lib"
+				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -85,11 +94,72 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Debug|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./libgcrypt_release"
-			IntermediateDirectory="./libgcrypt_release"
+			OutputDirectory="./libgcrypt_release/"
+			IntermediateDirectory="./libgcrypt_release/"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
 			<Tool
@@ -109,26 +179,37 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="libgcrypt.h"
+				PrecompiledHeaderFile="./libgcrypt_release/libgcrypt.pch"
+				AssemblerListingLocation="./libgcrypt_release/"
+				ObjectFile="./libgcrypt_release/"
+				ProgramDataBaseFileName="./libgcrypt_release/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				SuppressStartupBanner="true"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libgcrypt.lib"
+				OutputFile="./libgcrypt_release/libgcrypt.lib"
+				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -146,102 +227,335 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_Distribution|Win32"
+			OutputDirectory="./libgcrypt_release/"
+			IntermediateDirectory="./libgcrypt_release/"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
+				StringPooling="true"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				PrecompiledHeaderFile="./libgcrypt_release/libgcrypt.pch"
+				AssemblerListingLocation="./libgcrypt_release/"
+				ObjectFile="./libgcrypt_release/"
+				ProgramDataBaseFileName="./libgcrypt_release/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="./libgcrypt_release/libgcrypt.lib"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_Distribution|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Distribution|Win32"
+			OutputDirectory="./libgcrypt_debug/"
+			IntermediateDirectory="./libgcrypt_debug/"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				WholeProgramOptimization="false"
+				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile="./libgcrypt_debug/libgcrypt.pch"
+				AssemblerListingLocation="./libgcrypt_debug/"
+				ObjectFile="./libgcrypt_debug/"
+				ProgramDataBaseFileName="./libgcrypt_debug/"
+				BrowseInformation="1"
+				WarningLevel="3"
+				WarnAsError="false"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="./libgcrypt_debug/libgcrypt.lib"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Distribution|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="src"
-			>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\ath.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\ath.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\cipher.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\dumpsexp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\g10lib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\gcrypt-module.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\gcrypt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\global.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\hwfeatures.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\misc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\missing-string.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\module.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\mpi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\secmem.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\secmem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\sexp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\stdmem.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\stdmem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\types.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\visibility.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libgcrypt\src\visibility.h"
-				>
-			</File>
-		</Filter>
 		<Filter
 			Name="cipher"
 			>
@@ -391,6 +705,98 @@
 			</File>
 			<File
 				RelativePath="..\..\src\libgcrypt\cipher\whirlpool.c"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="src"
+			>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\ath.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\ath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\cipher.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\dumpsexp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\g10lib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\gcrypt-module.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\gcrypt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\global.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\hwfeatures.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\misc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\missing-string.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\module.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\mpi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\secmem.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\secmem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\sexp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\stdmem.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\stdmem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\visibility.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\libgcrypt\src\visibility.h"
 				>
 			</File>
 		</Filter>

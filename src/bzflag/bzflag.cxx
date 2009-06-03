@@ -182,7 +182,7 @@ static void setVisual(BzfVisual *visual)
 static void usage()
 {
   printFatalError("usage: %s [options] [callsign[:password]@]server[:port]\n"
-		  "  -authd <auth-daemon-url>\
+		  "  -authd <auth-daemon-url>\n"
 		  "  -badwords <filterfile>\n"
 		  "  -configdir <config dir name>\n"
 		  "  -d | -debug\n"
