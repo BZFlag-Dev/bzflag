@@ -48,6 +48,33 @@ bool CustomTeleporter::read(const char *cmd, std::istream& input)
 }
 
 
+static std::string cleanName(const std::string& n)
+{
+  std::string name = n;
+
+  if (name.empty()) {
+    return "";
+  }
+
+  if (name[0] == '/') {
+    name = name.substr(1); // strip the leading '/' for backwards compatibility
+    printf("WARNING: stripped teleporter leading '/'  (/%s)\n", name.c_str());
+  }
+
+  if (name.find('/') != std::string::npos) { // groupDef separator
+    printf("WARNING: teleporter name contains '/'  (%s)\n", name.c_str());
+  }
+  if (name.find(':') != std::string::npos) { // sub-object separator
+    printf("WARNING: teleporter name contains ':'  (%s)\n", name.c_str());
+  }
+  if (name.find('$') != std::string::npos) { // system named objects
+    printf("WARNING: teleporter name contains '$'  (%s)\n", name.c_str());
+  }
+
+  return name;
+}
+
+
 void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 {
   Teleporter* tele =
@@ -56,10 +83,12 @@ void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 		   border, texSize,
 		   driveThrough, shootThrough, ricochet);
 
-  if (!telename.size() && name.size()) {
-    tele->setName(name);
-  } else {
-    tele->setName(telename);
+  std::string finalName = !telename.empty() ? telename : name;
+
+  finalName = cleanName(finalName);
+
+  if (!finalName.empty()) {
+    tele->setName(finalName);
   }
 
   groupdef->addObstacle(tele);
