@@ -26,13 +26,16 @@
 #include "MotionUtils.h"
 
 // local implementation headers
-#include "playing.h"
 #include "World.h"
 #include "TrackMarks.h"
 #include "sound.h"
 #include "EffectsRenderer.h"
 #include "Roaming.h"
 #include "SyncClock.h"
+
+#include "playing.h"
+// FIXME: Shouldn't need to depend on GUI elements
+#include "guiplaying.h"
 
 // for dead reckoning
 static const float MaxUpdateTime = 1.0f; // seconds

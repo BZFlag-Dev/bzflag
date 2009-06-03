@@ -25,6 +25,7 @@
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "LocalCommand.h"
+#include "guiplaying.h"
 #include "playing.h"
 #include "HUDui.h"
 

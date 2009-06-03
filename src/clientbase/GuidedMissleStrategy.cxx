@@ -24,7 +24,10 @@
 // local headers
 #include "LocalPlayer.h"
 #include "World.h"
+
 #include "playing.h"
+// FIXME: Shouldn't need to depend on GUI elements
+#include "guiplaying.h"
 
 
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :

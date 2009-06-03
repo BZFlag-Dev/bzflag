@@ -66,11 +66,12 @@
 #include "StateDatabase.h"
 
 // local headers
-#include "playing.h"
 #include "World.h"
 #include "Player.h"
 #include "LocalPlayer.h"
 #include "ControlPanel.h"
+#include "guiplaying.h"
+#include "playing.h"
 
 
 // typedefs / local classes

@@ -30,8 +30,10 @@
 #include "vectors.h"
 
 /* local headers */
-#include "MainWindow.h"
 #include "ControlPanel.h"
+#include "HUDRenderer.h"
+#include "MainWindow.h"
+#include "ThirdPersonVars.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 
@@ -42,13 +44,25 @@ void notifyBzfKeyMapChanged();
 bool setVideoFormat(int, bool test = false);
 void forceControls(bool enabled, float speed, float angVel);
 
-std::vector<std::string>& getSilenceList();
+bool addExplosion(const fvec3& pos, float size, float duration);
+void addTankExplosion(const fvec3& pos);
+void addShotExplosion(const fvec3& pos);
+void addShotPuff(const fvec3& pos, const fvec3& vel);
 
-int curlProgressFunc(void* clientp,  double dltotal, double dlnow,  double ultotal, double ulnow);
+std::vector<std::string>& getSilenceList();
 
 void setRoamingLabel();
 void drawFrame(const float dt);
 void injectMessages(uint16_t code, uint16_t len, void *msg);
+
+extern BzfDisplay* display;
+extern ControlPanel* controlPanel;
+extern HUDRenderer* hud;
+extern MainWindow* mainWindow;
+extern float roamDZoom;
+extern int savedVolume;
+extern bool fireButton;
+extern bool roamButton;
 
 #endif // BZF_GUIPLAYING_H
 

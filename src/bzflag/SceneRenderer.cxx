@@ -44,6 +44,7 @@
 #include "World.h"
 #include "Daylight.h"
 #include "playing.h"
+#include "guiplaying.h"
 
 
 //

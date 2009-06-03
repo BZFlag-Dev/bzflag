@@ -32,10 +32,10 @@
 #include "sound.h"
 #include "ForceFeedback.h"
 #include "EffectsRenderer.h"
-#include "playing.h"
 #include "SyncClock.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
+#include "playing.h"
 
 
 static BZDB_int debugTele  ("debugTele");

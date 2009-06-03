@@ -18,6 +18,7 @@
 #include "TextUtils.h"
 #include "KeyManager.h"
 #include "playing.h"
+#include "guiplaying.h"
 #include "HUDui.h"
 
 namespace {

@@ -23,7 +23,7 @@
 #include "CacheManager.h"
 #include "ServerListCache.h"
 #include "HUDuiList.h"
-#include "playing.h"
+#include "guiplaying.h"
 #include "LocalFontFace.h"
 
 CacheMenu::CacheMenu()

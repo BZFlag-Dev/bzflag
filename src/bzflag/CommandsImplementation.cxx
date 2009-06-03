@@ -32,6 +32,7 @@
 
 // local implementation headers
 #include "bzglob.h"
+#include "guiplaying.h"
 #include "playing.h"
 #include "LocalCommand.h"
 #include "LocalPlayer.h"

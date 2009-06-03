@@ -64,6 +64,8 @@ libClientBase_la_SOURCES =		\
 	World.h				\
 	WorldBuilder.cxx		\
 	WorldBuilder.h			\
+	WorldDownLoader.cxx		\
+	WorldDownLoader.h		\
 	WorldPlayer.cxx			\
 	WorldPlayer.h			\
 	callbacks.cxx			\
@@ -168,6 +170,7 @@ libClientBase_la_SOURCES =		\
 	$(top_srcdir)/src/bzflag/sound.h		\
 	$(top_srcdir)/src/bzflag/stars.cxx		\
 	$(top_srcdir)/src/bzflag/stars.h
+
 
 EXTRA_DIST = \
 	README

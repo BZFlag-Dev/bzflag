@@ -23,7 +23,7 @@
 #include "version.h"
 
 // local implementation headers
-#include "playing.h"
+#include "guiplaying.h"
 #include "NewVersionMenu.h"
 #include "HUDDialogStack.h"
 

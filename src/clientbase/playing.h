@@ -24,17 +24,47 @@
 #include <vector>
 
 // common headers
+#include "DirectoryNames.h"
+#include "FileManager.h"
 #include "ServerLink.h"
 #include "StartupInfo.h"
 #include "WordFilter.h"
+#include "bz_md5.h"
 
+// common client headers
+#include "FlashClock.h"
+#include "RobotPlayer.h"
+#include "WorldBuilder.h"
+#include "WorldDownLoader.h"
 
-// FIXME: These headers should not be needed in the clientbase
-#include "CommandCompleter.h"
+#include "motd.h"
+
+// FIXME: The following should not be in the clientbase
 #include "ControlPanel.h"
-#include "HUDRenderer.h"
+#include "CommandCompleter.h"
 #include "ThirdPersonVars.h"
+
+void warnAboutMainFlags();
+void warnAboutRadarFlags();
+void warnAboutRadar();
+void warnAboutConsole();
+
+void handleFlagDropped(Player* tank);
+void setTarget();
+bool shouldGrabMouse();
+
+void setSceneDatabase();
+
+void selectNextRecipient(bool forward, bool robotIn);
+
+extern const float FlagHelpDuration;
+extern CommandCompleter	completer;
+extern ThirdPersonVars thirdPersonVars;
 // END FIXME
+
+// FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
+// it's operating in a context where graphics and sound are available.
+extern bool		headless;
 
 #define MAX_DT_LIMIT 0.1f
 #define MIN_DT_LIMIT 0.001f
@@ -50,32 +80,38 @@ struct PlayingCallbackItem {
     void*		data;
 };
 
-
-// FIXME: These should not need to be linked in the clientbase
-//        note: most of these are from clientCommands and shot strategies
-void warnAboutMainFlags();
-void warnAboutRadarFlags();
-void warnAboutRadar();
-void warnAboutConsole();
-
-void handleFlagDropped(Player* tank);
-void setTarget();
-bool shouldGrabMouse();
-
-bool addExplosion(const fvec3& pos, float size, float duration);
-void addTankExplosion(const fvec3& pos);
-void addShotExplosion(const fvec3& pos);
-void addShotPuff(const fvec3& pos, const fvec3& vel);
-
-void setSceneDatabase();
-
-void selectNextRecipient(bool forward, bool robotIn);
-// END FIXME
-
-
 void showError(const char *msg, bool flush = false);
 void showMessage(const std::string& line);
 void showMessage(const std::string& line, ControlPanel::MessageModes mode);
+
+int curlProgressFunc(void* clientp,  double dltotal, double dlnow,  double ultotal, double ulnow);
+
+bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
+			const ShotPath *hit = NULL, int physicsDriver = -1);
+
+void suicide(int sig);
+void hangup(int sig);
+
+void joinInternetGame(const struct in_addr *inAddress);
+void handlePendingJoins(void);
+bool checkSquishKill(const Player* victim, const Player* killer, bool localKiller = false);
+bool dnsLookupDone(struct in_addr &inAddress);
+void setTankFlags();
+void updateShots(const float dt);
+void enteringServer(void *buf);
+void updateNumPlayers();
+void joinInternetGame2();
+
+#ifdef ROBOT
+void addObstacle(std::vector<BzfRegion*> &rgnList, const Obstacle &obstacle);
+void makeObstacleList();
+void setRobotTarget(RobotPlayer *robot);
+void updateRobots(float dt);
+void sendRobotUpdates();
+void addRobots();
+#endif
+
+void doNetworkStuff(void);
 
 StartupInfo* getStartupInfo();
 
@@ -84,6 +120,7 @@ void startPlaying();
 
 void addPlayingCallback(PlayingCallback, void* data);
 void removePlayingCallback(PlayingCallback, void* data);
+void callPlayingCallbacks();
 
 void updateEvents();
 
@@ -153,31 +190,32 @@ void addMessage(const Player* player,
 bool handleServerMessage(bool human, BufferedNetworkMessage *msg);
 void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg);
 
+void doMessages();
 
-// FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
-// it's operating in a context where graphics and sound are available.
-extern bool		headless;
-
-
-// FIXME: Variables like 'hud' should not need to be linked in the client base
-//        note: many of these are linked only in clientCommands.cxx
 extern StartupInfo startupInfo;
-extern BzfDisplay* display;
-extern ControlPanel* controlPanel;
-extern HUDRenderer* hud;
-extern MainWindow* mainWindow;
-extern CommandCompleter	completer;
-extern ThirdPersonVars thirdPersonVars;
-extern float roamDZoom;
-extern int savedVolume;
-extern bool fireButton;
-extern bool roamButton;
-// End FIXME
-
+extern FlashClock pulse;
 extern ServerLink *serverLink;
-extern WordFilter* wordFilter;
+extern WordFilter *wordFilter;
+
+extern WorldBuilder *worldBuilder;
+extern WorldDownLoader* worldDownLoader;
+extern MessageOfTheDay *motd;
 extern PlayerId msgDestination;
 
+extern bool downloadingData;
+
+extern bool serverDied;
+extern bool joinRequested;
+extern bool waitingDNS;
+extern bool serverError;
+extern bool entered;
+extern bool joiningGame;
+
+extern double epochOffset;
+extern double lastEpochOffset;
+extern double userTimeEpochOffset;
+
+extern bool justJoined;
 extern bool canSpawn;
 extern bool gameOver;
 
@@ -188,7 +226,8 @@ extern bool pausedByUnmap;
 extern float pauseCountdown;
 extern float destructCountdown;
 
-extern std::string customLimboMessage;
+extern const char *blowedUpMessage[];
+
 
 
 #endif // BZF_PLAYING_H

@@ -25,6 +25,7 @@
 #include "HUDui.h"
 #include "Roster.h"
 #include "playing.h" // THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
+#include "guiplaying.h" // THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
 
 //
 // Choose person to silence

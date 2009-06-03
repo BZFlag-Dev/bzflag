@@ -17,14 +17,14 @@
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "playing.h"
-
+// FIXME: Shouldn't need to depend on GUI elements
+#include "guiplaying.h"
 
 void Callbacks::setFlagHelp(const std::string& name, void*)
 {
   if (LocalPlayer::getMyTank() == NULL) {
     return;
   }
-  static const float FlagHelpDuration = 60.0f;
   if (BZDB.isTrue(name)) {
     hud->setFlagHelp(LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration);
   } else {

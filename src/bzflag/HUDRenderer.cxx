@@ -27,10 +27,11 @@
 #include "World.h"
 #include "HUDui.h"
 #include "Roaming.h"
-#include "playing.h"
 #include "TextUtils.h"
 #include "CrackedGlass.h"
 #include "LocalFontFace.h"
+#include "guiplaying.h"
+#include "playing.h"
 
 
 //
@@ -46,6 +47,7 @@ std::string HUDRenderer::restartLabelFormat("Press %s to start");
 std::string HUDRenderer::resumeLabel("Press Pause to resume");
 std::string HUDRenderer::autoPilotLabel("AutoPilot on");
 std::string HUDRenderer::gameOverLabel("GAME OVER");
+std::string HUDRenderer::customLimboMessage("");
 
 
 HUDRenderer::HUDRenderer(const BzfDisplay* _display,
@@ -465,6 +467,12 @@ void HUDRenderer::setFlagHelp(FlagType* desc, float duration)
 
   // Generate the formatted help for this flag
   flagHelpText = makeHelpString(desc->flagHelp.c_str());
+}
+
+
+void HUDRenderer::setLimboMessage(const std::string &message) const
+{
+  customLimboMessage = message;
 }
 
 

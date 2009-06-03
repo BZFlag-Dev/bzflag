@@ -43,7 +43,8 @@
 #include "SilenceDefaultKey.h"
 #include "sound.h"
 #include "playing.h"
-
+// FIXME: Shouldn't need to depend on GUI elements
+#include "guiplaying.h"
 
 typedef CommandManager::ArgList CmdArgList;
 

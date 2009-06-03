@@ -121,6 +121,8 @@ public:
   void setComposing(const std::string& prompt);
   void setComposing(const std::string& prompt, bool allowEdit);
 
+  void setLimboMessage(const std::string& message) const;
+
   void render(void);
   ScoreboardRenderer *getScoreboard();
 
@@ -265,6 +267,7 @@ private:
   static std::string	resumeLabel;
   static std::string	gameOverLabel;
   static std::string	autoPilotLabel;
+  static std::string    customLimboMessage;
 };
 
 
