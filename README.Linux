@@ -33,6 +33,10 @@ BZFlag.  Known requirements include:
     libcurl3-dev
     libsdl-sound1.2-dev (may have to add this yourself as well)
 
+    In order to build bzrobot with python support, you will need:
+    python-dev
+    swig
+
   Fedora:
 
     A "yum install SDL-devel curl-devel ftgl-devel ncurses-devel"
