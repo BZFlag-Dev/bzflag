@@ -1462,17 +1462,55 @@ void enteringServer(void *buf)
 {
 #if defined(ROBOT)
   int i;
-  for (i = 0; i < numRobotTanks; i++) {
-    if(robots[i])
-      serverLink->sendNewPlayer(robots[i]->getId());
-  }
+  for (i = 0; i < numRobotTanks; i++)
+    serverLink->sendNewPlayer(i);
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
-  uint16_t team, type;
+  uint16_t team, type, wins, losses, tks;
+  float rank;
   tmpbuf = nboUnpackUInt16(tmpbuf, type);
   tmpbuf = nboUnpackUInt16(tmpbuf, team);
+  tmpbuf = nboUnpackFloat(tmpbuf, rank);
+  tmpbuf = nboUnpackUInt16(tmpbuf, wins);
+  tmpbuf = nboUnpackUInt16(tmpbuf, losses);
+  tmpbuf = nboUnpackUInt16(tmpbuf, tks);
+
+  myTank->changeScore(rank, wins, losses, tks);
+
+  const TeamColor teamColor = (TeamColor)team;
+  const char* teamName = Team::getName(teamColor);
+
+  // if server assigns us a different team, display a message
+  std::string teamMsg;
+  if (myTank->getTeam() != AutomaticTeam) {
+    teamMsg = TextUtils::format("%s team was unavailable, you were joined ",
+                                Team::getName(myTank->getTeam()));
+    if (teamColor == ObserverTeam) {
+      teamMsg += "as an Observer";
+    } else {
+      teamMsg += TextUtils::format("to the %s", teamName);
+    }
+  }
+  else {
+    if (teamColor == ObserverTeam) {
+      teamMsg = "You were joined as an observer";
+    }
+    else {
+      if (team != RogueTeam) {
+	teamMsg = TextUtils::format("You joined the %s", teamName);
+      } else {
+	teamMsg = TextUtils::format("You joined as a %s", teamName);
+      }
+    }
+  }
+
+  if (myTank->getTeam() != teamColor) {
+    myTank->setTeam(teamColor);
+    //hud->setAlert(1, teamMsg.c_str(), 8.0f, teamColor == ObserverTeam);
+    addMessage(NULL, teamMsg.c_str(), ControlPanel::MessageMisc, true);
+  }
 
   setTankFlags();
 
