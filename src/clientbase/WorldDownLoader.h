@@ -24,6 +24,9 @@
 
 class WorldDownLoader : private cURLManager {
   public:
+    WorldDownLoader();
+    ~WorldDownLoader();
+
     void start(char *hexDigest);
     void stop();
     void setCacheURL(char *cacheURL);

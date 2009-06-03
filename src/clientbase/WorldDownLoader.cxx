@@ -33,6 +33,7 @@
 #include "clientvars.h"
 
 WorldDownLoader::WorldDownLoader() :
+  cURLManager(),
   worldUrl(""),
   worldHash(""),
   worldCachePath(""),
@@ -40,8 +41,7 @@ WorldDownLoader::WorldDownLoader() :
   worldPtr(0),
   worldDatabase(NULL),
   isCacheTemp(false),
-  cacheOut(NULL),
-	cURLManager()
+  cacheOut(NULL)
 {
 }
 
