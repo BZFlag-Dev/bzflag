@@ -747,6 +747,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\clientbase\WorldDownLoader.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\XfireGameClient.cxx"
 				>
 			</File>

@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* local implementation headers */
+#include "WorldDownLoader.h"
 
 // system includes
 #include <sys/types.h>
