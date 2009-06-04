@@ -121,38 +121,44 @@ if test x$with_SDL != xno; then
 fi
 
 # check whether plugins are desired
-AC_ARG_ENABLE(plugins,  [  --enable-plugins          turn on compilation of plugins])
+AC_ARG_ENABLE(plugins,          [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
     AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
 # check whether threads are desired
-AC_ARG_ENABLE(threads, [  --disable-threads        build without threading])
+AC_ARG_ENABLE(threads,	        [  --disable-threads         build without threading])
 
 # do we want bzadmin?
-AC_ARG_ENABLE(bzadmin, [  --disable-bzadmin       do not build text client])
+AC_ARG_ENABLE(bzadmin,	        [  --disable-bzadmin         do not build text client])
 
 # do we want bzrobots?
-AC_ARG_ENABLE(bzrobots, [  --disable-bzrobots       build bzrobots client])
+AC_ARG_ENABLE(bzrobots,	        [  --disable-bzrobots        build bzrobots client])
 
 # do we want bzrobots python support?
-AC_ARG_ENABLE(bzrobots_python, [  --enable-bzrobots-python       build bzrobots client w/ python support])
+AC_ARG_ENABLE(bzrobots_python,  [  --enable-bzrobots-python  build bzrobots client w/ python support])
+
+# do we want bzauthd?
+AC_ARG_ENABLE(bzauthd,          [  --enable-bzauthd          build bzauthd])
+
+# do we want bzauthd tests?
+AC_ARG_ENABLE(bzauthd_test,     [  --enable-bzauthd-test     build bzauthd tests])
 
 # build a binary set to stop functioning after some date
-AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
+AC_ARG_ENABLE(timebomb,	        [  --enable-timebomb         build exp Date])
 if test x$enable_timebomb = xyes; then
     AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
 fi
 
-AC_ARG_ENABLE(robots, [  --disable-robots        disable robots])
+AC_ARG_ENABLE(robots,           [  --disable-robots          disable robots])
 if test x$enable_robots != xno; then
     AC_DEFINE(ROBOT, 1, [Enabling Robots])
 fi
 
 # debugging and profiling
-AC_ARG_ENABLE(debug,     [  --enable-debug          turn on debugging])
-AC_ARG_ENABLE(profiling, [  --enable-profiling      turn on profiling])
+AC_ARG_ENABLE(debug,            [  --enable-debug            turn on debugging])
+AC_ARG_ENABLE(profiling,        [  --enable-profiling        turn on profiling])
 # profiling requires debugging
 if test x$enable_profiling = xyes; then
     enable_debug=yes
@@ -163,7 +169,7 @@ if test x$enable_debug = xyes; then
 fi
 
 # do we want the bzflag  client?
-AC_ARG_ENABLE(client, [  --disable-client        server-only build])
+AC_ARG_ENABLE(client,           [  --disable-client          server-only build])
 if test "x$enable_client" = "xno" ; then
     # sympathetic disabling since bzrobots is presently tied to all of the same dependencies as the client
     AC_MSG_WARN([Disabling the client presently also disables bzrobots too])
@@ -171,28 +177,37 @@ if test "x$enable_client" = "xno" ; then
 fi
 
 # compile our own ares
-AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
+AC_ARG_ENABLE(ares_build,       [  --enable-ares-build       Force compilation of ares])
 
 # compile our own curl
-AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
+AC_ARG_ENABLE(curl_build,       [  --enable-curl-build       Force compilation of curl])
 
 # compile our own freetype
-AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Force compilation of freetype2])
+AC_ARG_ENABLE(freetype_build,   [  --enable-freetype-build   Force compilation of freetype2])
 
 # compile our own ftgl
-AC_ARG_ENABLE(ftgl_build, [  --enable-ftgl-build     Force compilation of ftgl])
+AC_ARG_ENABLE(ftgl_build,       [  --enable-ftgl-build       Force compilation of ftgl])
+
+# compile our own gpg-error
+AC_ARG_ENABLE(gpg_error_build,  [  --enable-gpg-error-build  Force compilation of gpg-error])
 
 # compile our own glew
-AC_ARG_ENABLE(glew_build, [  --enable-glew-build     Force compilation of glew])
+AC_ARG_ENABLE(glew_build,       [  --enable-glew-build       Force compilation of glew])
+
+# compile our own gcrypt
+AC_ARG_ENABLE(gcrypt_build,     [  --enable-gcrypt-build     Force compilation of gcrypt])
+
+# compile our own openldap
+AC_ARG_ENABLE(openldap_build,   [  --enable-openldap-build   Force compilation of openldap])
 
 # compile our own regex
-AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
+AC_ARG_ENABLE(regex_build,      [  --enable-regex-build      Force compilation of regex])
 
 # compile our own zlib
-AC_ARG_ENABLE(zlib_build, [  --enable-zlib-build     Force compilation of zlib])
+AC_ARG_ENABLE(zlib_build,       [  --enable-zlib-build       Force compilation of zlib])
 
 # compile everything bz provides
-AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all dependencies])
+AC_ARG_ENABLE(all_builds,       [  --enable-all-builds       Force compilation of all dependencies])
 
 # enable compilation of all bundled external dependencies
 if test "x$enable_all_builds" = "xyes" ; then
@@ -203,6 +218,9 @@ if test "x$enable_all_builds" = "xyes" ; then
     enable_glew_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
+    enable_openldap_build=yes
+    enable_gpg_error_build=yes
+    enable_gcrypt_build=yes
 fi
 
 
@@ -1098,6 +1116,17 @@ if test "x$BUILD_CURL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/curl/include"
 fi
 
+dnl figure out whether we need to build the included openldap library
+BUILD_OPENLDAP="no (using system)"
+LIBLDAP=""
+
+dnl figure out whether we need to build the included gpg-error library
+BUILD_GPG_ERROR="no (using system)"
+LIBGPG_ERROR=""
+
+dnl figure out whether we need to build the included gcrypt library
+BUILD_GCRYPT="no (using system)"
+LIBGCRYPT=""
 
 LIBFREETYPE=""
 if test "x$enable_client" != "xno"; then
@@ -1463,7 +1492,10 @@ AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
 AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
 AC_MSG_RESULT([Build freetype2 ...: $BUILD_FREETYPE])
 AC_MSG_RESULT([Build ftgl ........: $BUILD_FTGL])
+AC_MSG_RESULT([Build gcrypt ......: $BUILD_GCRYPT])
 AC_MSG_RESULT([Build glew ........: $BUILD_GLEW])
+AC_MSG_RESULT([Build gpg-error ...: $BUILD_GPG_ERROR])
+AC_MSG_RESULT([Build openldap.....: $BUILD_OPENLDAP])
 AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
 AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
 AC_MSG_RESULT([])
