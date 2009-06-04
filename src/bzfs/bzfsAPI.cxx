@@ -5079,11 +5079,6 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
   return NULL;
 }
 
-bool closeFloat ( float f1, float f2 )
-{
-  return fabs(f1)-fabs(f2) < 0.0001f;
-}
-
 bool checkBounds ( float pos[3], float rad )
 {
   float x,y;
