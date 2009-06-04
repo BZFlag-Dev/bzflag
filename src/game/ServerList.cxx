@@ -60,8 +60,8 @@ public:
       case DMSG_AUTH_CHALLENGE: {
         // receive the RSA key components (n,e)
         uint8_t *key_n;
-        uint32_t e;
-        uint16_t n_len;
+        uint32_t e = 0;
+        uint16_t n_len = 0;
         assert(packet >> n_len);
         key_n = new uint8_t[n_len];
         packet.read(key_n, (size_t)n_len);
@@ -94,22 +94,22 @@ public:
         serverList->auth_phase = 2;
         delete[] key_n;
       } break;
-      case DMSG_AUTH_SUCCESS:
-        uint32_t token;
+      case DMSG_AUTH_SUCCESS: {
+        uint32_t token = 0;
         packet >> token;
         logDebugMessage(0, "Auth successful, token %d\n", token);
         snprintf(serverList->startupInfo->token, TokenLen, "%d", token);
         disconnect();
         serverList->auth_phase = 3;
-        break;
-      case DMSG_AUTH_FAIL:
-        uint32_t reason;
+      } break;
+      case DMSG_AUTH_FAIL: {
+        uint32_t reason = 0;
         packet >> reason;
         logDebugMessage(0, "Auth failed, reason %d\n", reason);
         snprintf(serverList->startupInfo->token, TokenLen, "badtoken");
         disconnect();
         serverList->auth_phase = 3;
-        break; 
+      } break;
       default:
         logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
         disconnect();
@@ -128,11 +128,11 @@ private:
 };
 
 ServerList::ServerList() :
-	phase(-1),
+  phase(-1),
   auth_phase(-1),
-  authSocket(NULL),
-	serverCache(ServerListCache::get()),
-	pingBcastSocket(-1)
+  serverCache(ServerListCache::get()),
+  pingBcastSocket(-1),
+  authSocket(NULL)
 {
 }
 

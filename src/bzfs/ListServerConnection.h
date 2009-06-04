@@ -70,7 +70,7 @@ private:
 
   virtual void finalization(char *data, unsigned int length, bool good);
   std::string verifyGroupPermissions(const std::string& groups);
-  void ListServerLink::processAuthReply(bool registered, bool verified, char *callsign, char *group);
+  void processAuthReply(bool registered, bool verified, const char *callsign, const char *group);
 
   // messages to send, used by sendQueuedMessages
   void addMe(PingPacket pingInfo, std::string publicizedAddress,

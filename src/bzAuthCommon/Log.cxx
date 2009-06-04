@@ -10,10 +10,11 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "Common.h"
+#include "common.h"
 #include "Log.h"
+#include <stdarg.h>
 
-INSTANTIATE_SINGLETON(Log);
+INSTANTIATE_SINGLETON(Log)
 
 Log::Log()
 {

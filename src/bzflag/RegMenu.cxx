@@ -42,9 +42,9 @@ public:
     switch(packet.getOpcode()) {
       case DMSG_REGISTER_CHALLENGE: {
         // receive the RSA key components (n,e)
-        uint8_t *key_n;
-        uint32_t e;
-        uint16_t n_len;
+        uint8_t *key_n = NULL;
+        uint32_t e = 0;
+        uint16_t n_len = 0;
         if(!(packet >> n_len)) { disconnect(); break; }
         key_n = new uint8_t[n_len];
         packet.read(key_n, (size_t)n_len);
@@ -60,7 +60,7 @@ public:
         message += menu->password->getString();
 
         uint8_t *cipher = NULL;
-        size_t cipher_len;
+        size_t cipher_len = 0;
 
         sRSAManager.getPublicKey().encrypt((uint8_t*)message.c_str(), message.size(), cipher, cipher_len);
 

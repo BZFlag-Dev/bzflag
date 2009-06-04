@@ -52,13 +52,14 @@ ServerLink.cxx: @top_srcdir@/src/clientbase/ServerLink.cxx
 	cp -pR @top_srcdir@/src/clientbase/ServerLink.cxx .
 
 LDADD = \
-	../date/libDate.la	\
-	../game/libGame.la	\
-	../net/libNet.la	\
-	../common/libCommon.la	\
-	$(CURSES_LIB)		\
-	$(LIBCURL)		\
-	$(LIBCARES)		\
+	../date/libDate.la			\
+	../game/libGame.la			\
+	../net/libNet.la			\
+	../common/libCommon.la			\
+	../bzAuthCommon/libbzAuthCommon.la 	\
+	$(CURSES_LIB)				\
+	$(LIBCURL)				\
+	$(LIBCARES)				\
 	$(LIBREGEX)
 
 MAINTAINERCLEANFILES = \

@@ -34,13 +34,34 @@ else
 FREETYPE_DIR =
 endif
 
+if BUILD_GCRYPT
+GCRYPT_DIR = gcrypt
+else
+GCRYPT_DIR =
+endif
+
+if BUILD_GPG_ERROR
+GPG_ERROR_DIR = gpg-error
+else
+GPG_ERROR_DIR =
+endif
+
+if BUILD_OPENLDAP
+OPENLDAP_DIR = openldap
+else
+OPENLDAP_DIR =
+endif
+
 SUBDIRS = \
 	${ZLIB_DIR} \
 	${ARES_DIR} \
 	${CURL_DIR} \
 	${FREETYPE_DIR} \
 	${FTGL_DIR} \
-	${REGEX_DIR}
+	${REGEX_DIR} \
+	${GCRYPT_DIR} \
+	${GPG_ERROR_DIR} \
+	${OPENLDAP_DIR}
 
 DIST_SUBDIRS = \
 	regex \

@@ -71,6 +71,12 @@ public:
     return (*this);
   }
 
+  Packet & operator << (const std::string &x)
+  {
+    append((const uint8_t*)x.c_str(), x.size());
+    return (*this);
+  }
+
   Packet &operator << (const uint8_t * &x)
   {
     // get string length and protect against overflow
@@ -79,13 +85,6 @@ public:
     while(len < 4096) if(!x[len++]) break;
     
     append(x, len);
-    return (*this);
-  }
-
-  template <>
-  Packet &operator << (const std::string &x)
-  {
-    append((const uint8_t*)x.c_str(), x.size());
     return (*this);
   }
 
@@ -271,7 +270,9 @@ private:
   uint32_t maxUsers;
   bool is_init;
 
+  void removeSocket(SocketMapType::iterator const &itr);
   void removeSocket(SocketMapType::iterator &itr);
+  void _removeSocket(SocketMapType::iterator const &itr);
 };
 
 #endif

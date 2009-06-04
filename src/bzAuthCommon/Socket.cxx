@@ -42,14 +42,25 @@ void SocketHandler::removeSocket(Socket *socket)
   removeSocket(socketMap.find(socket));
 }
 
+void SocketHandler::removeSocket(SocketMapType::iterator const &itr)
+{
+  _removeSocket(itr);
+  socketMap.erase(itr);
+}
+
 void SocketHandler::removeSocket(SocketMapType::iterator &itr)
+{
+  _removeSocket(itr);
+  socketMap.erase(itr++);
+}
+
+void SocketHandler::_removeSocket(SocketMapType::iterator const &itr)
 {
   if(itr == socketMap.end()) return;
   net_TCP_DelSocket(socketSet, itr->first->getSocket());
   net_TCP_Close(itr->first->getSocket());
   delete itr->first;
   if(itr->second) delete itr->second;
-  socketMap.erase(itr++);
 }
 
 bool SocketHandler::global_init()
@@ -71,7 +82,6 @@ teTCPError ListenSocket::listen(uint16_t port)
   if ( socket == NULL )
     return eTCPConnectionFailed;
 
-  IPaddress serverIP;
   net_ResolveHost(&serverIP, NULL, getPort());
   socket = net_TCP_Open(&serverIP);
 
@@ -99,8 +109,8 @@ bool ListenSocket::update(PacketHandlerBase *&)
   {
     TCPsocket newsock;
     while ((newsock = net_TCP_Accept(socket)) != NULL)
-      if(ConnectSocket *socket = onConnect(newsock))
-        sockHandler->addSocket(socket);
+      if(ConnectSocket *clisock = onConnect(newsock))
+        sockHandler->addSocket(clisock);
       else
         net_TCP_Close(newsock);
   }

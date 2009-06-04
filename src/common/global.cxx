@@ -15,7 +15,7 @@
 #endif
 
 #include "global.h"
-#include "protocol.h"
+#include "Protocol.h"
 
 
 const struct GlobalDBItem globalDBItems[] = {

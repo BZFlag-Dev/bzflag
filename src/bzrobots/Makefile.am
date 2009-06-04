@@ -104,28 +104,29 @@ NACLIB = ../platform/MacOSX/libMac.la
 endif
 
 LDADD =	\
-	../obstacle/libObstacle.la	\
-	../clientbase/libClientBase.la	\
-	../game/libGame.la		\
-	../geometry/libGeometry.la	\
-	../3D/lib3D.la			\
-	../net/libNet.la		\
-	$(NACLIB)			\
-	../platform/libPlatform.la	\
-	../ogl/libGLKit.la		\
-	../scene/libSceneDB.la		\
-	../mediafile/libMediaFile.la	\
-	../common/libCommon.la		\
-	$(LIBFTGL)			\
-	$(LIBFREETYPE)			\
-	$(LIBCURL)			\
-	$(LIBCARES)			\
-	$(LIBREGEX)			\
-	$(LIBZ)				\
-	$(RESOURCE)			\
-	$(SDL_LIBS)			\
-	$(GLIBS)			\
-	$(GLEW_LIBS)			\
+	../obstacle/libObstacle.la		\
+	../clientbase/libClientBase.la		\
+	../game/libGame.la			\
+	../geometry/libGeometry.la		\
+	../3D/lib3D.la				\
+	../net/libNet.la			\
+	$(NACLIB)				\
+	../platform/libPlatform.la		\
+	../ogl/libGLKit.la			\
+	../scene/libSceneDB.la			\
+	../mediafile/libMediaFile.la		\
+	../common/libCommon.la			\
+	../bzAuthCommon/libbzAuthCommon.la	\
+	$(LIBFTGL)				\
+	$(LIBFREETYPE)				\
+	$(LIBCURL)				\
+	$(LIBCARES)				\
+	$(LIBREGEX)				\
+	$(LIBZ)					\
+	$(RESOURCE)				\
+	$(SDL_LIBS)				\
+	$(GLIBS)				\
+	$(GLEW_LIBS)				\
 	../date/libDate.la
 
 TestRobot_la_LDFLAGS = -module -avoid-version

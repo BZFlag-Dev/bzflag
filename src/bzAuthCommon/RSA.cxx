@@ -16,7 +16,7 @@
 #include <gcrypt.h>
 #include "Log.h"
 
-INSTANTIATE_SINGLETON(RSAManager);
+INSTANTIATE_SINGLETON(RSAManager)
 
 RSAKey::RSAKey()
 {

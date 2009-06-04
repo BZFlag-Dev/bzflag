@@ -172,7 +172,6 @@ tvPacketList& TCPClientConnection::getPackets ( void )
 void TCPClientConnection::readData ( void )
 {
   unsigned char buffer[2048];
-  int offset = 0;
   int read;
 
   read = net_TCP_Recv(socket,buffer,4);
@@ -405,7 +404,6 @@ bool TCPServerConnectedPeer::readData ( void )
     return false;
 
   unsigned char buffer[2048];
-  int offset = 0;
   int read;
 
   read = net_TCP_Recv(socket,buffer,4);
@@ -477,7 +475,6 @@ teTCPError TCPServerConnection::listen ( unsigned short port, unsigned int conne
   if (!socketSet)
     return setError(eTCPSocketNFG);
 
-  IPaddress serverIP;
   net_ResolveHost(&serverIP, NULL, getPort());
   socket = net_TCP_Open(&serverIP);
   net_TCP_AddSocket(socketSet,socket);
@@ -780,10 +777,10 @@ teTCPError TCPConnection::update ( void )
   return selectError ? eTCPSelectFailed : eTCPNoError;
 }
 
-void TCPConnection::setUpdateTimeout ( int timeout )
+void TCPConnection::setUpdateTimeout ( int time_out )
 {
-  if (timeout > 0)
-    timeout = timeout;
+  if (time_out > 0)
+    time_out = time_out;
 }
 
 TCPClientConnection* TCPConnection::newClientConnection ( std::string server, unsigned short port )

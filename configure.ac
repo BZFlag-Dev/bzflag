@@ -1010,6 +1010,26 @@ AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
 
 
+#if bzauthd was enabled, make sure we have openldap
+if test "x$enable_bzauthd" = "xyes"; then
+    build_bzauthd = "yes"
+    AM_CONDITIONAL(BZAUTHD_INCLUDED, true)
+else
+    build_bzauthd = "no"
+    AM_CONDITIONAL(BZAUTHD_INCLUDED, false)
+fi
+
+
+#if bzauthd_test was enabled, make sure we have openldap
+if test "x$enable_bzauthd_test" != "xno"; then
+    build_bzauthd_test = "yes"
+    AM_CONDITIONAL(BZAUTHD_TEST_INCLUDED, true)
+else
+    build_bzauthd_test = "no"
+    AM_CONDITIONAL(BZAUTHD_TEST_INCLUDED, false)
+fi
+
+
 # see if our ares callbacks match (they won't on ares <1.5)
 ares_works=no
 if test "x$enable_ares_build" != "xyes" ; then
@@ -1116,17 +1136,51 @@ if test "x$BUILD_CURL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/curl/include"
 fi
 
+
 dnl figure out whether we need to build the included openldap library
 BUILD_OPENLDAP="no (using system)"
 LIBLDAP=""
+AM_CONDITIONAL(BUILD_OPENLDAP, test "x$BUILD_OPENLDAP" = "xyes")
+
 
 dnl figure out whether we need to build the included gpg-error library
 BUILD_GPG_ERROR="no (using system)"
-LIBGPG_ERROR=""
+GPG_ERROR_LIBS=""
+if test "x$enable_gpg_error_build" != "xyes" ; then
+    AM_PATH_GPG_ERROR(1.4)
+fi
+AC_MSG_CHECKING(whether to build the included gpg-error library)
+if test "x$GPG_ERROR_LIBS" = "x" ; then
+    AC_DEFINE(BUILD_GPG_ERROR, 1, [Build the included gpg-error library])
+    BUILD_GPG_ERROR="yes"
+    GPG_ERROR_LIBS='${top_builddir}/src/other/gpg-error/lib/gpg-error.la'
+fi
+dnl ??? LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
+AC_MSG_RESULT($BUILD_GPG_ERROR)
+AM_CONDITIONAL(BUILD_GPG_ERROR, test "x$BUILD_GPG_ERROR" = "xyes")
+if test "x$BUILD_GPG_ERROR" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/gpg-error/include"
+fi
+
 
 dnl figure out whether we need to build the included gcrypt library
 BUILD_GCRYPT="no (using system)"
-LIBGCRYPT=""
+LIBGCRYPT_LIBS=""
+if test "x$enable_gcrypt_build" != "xyes" ; then
+    AM_PATH_LIBGCRYPT(1:1.4.0)
+fi
+AC_MSG_CHECKING(whether to build the included gcrypt library)
+if test "x$LIBGCRYPT_LIBS" = "x" ; then
+    AC_DEFINE(BUILD_GCRYPT, 1, [Build the included gcrypt library])
+    BUILD_GCRYPT="yes"
+    LIBGCRYPT_LIBS='${top_builddir}/src/other/gcrypt/lib/libgcrypt.la'
+fi
+dnl ??? LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
+AC_MSG_RESULT($BUILD_GCRYPT)
+AM_CONDITIONAL(BUILD_GCRYPT, test "x$BUILD_GCRYPT" = "xyes")
+if test "x$BUILD_GCRYPT" = "xyes" ; then
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/gcrypt/include"
+fi
 
 LIBFREETYPE=""
 if test "x$enable_client" != "xno"; then
@@ -1320,6 +1374,9 @@ AC_CONFIG_FILES([
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
+	src/bzAuthCommon/Makefile
+	src/bzauthd/Makefile
+	src/bzauthd_test/Makefile
 	src/bzflag/Makefile
 	src/bzfs/Makefile
 	src/bzrobots/Makefile
@@ -1503,6 +1560,8 @@ AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
 AC_MSG_RESULT([BZAdmin client ....: $build_bzadmin])
 AC_MSG_RESULT([BZRobots client ...: $build_bzrobots])
+AC_MSG_RESULT([BZAuthd daemon ....: $build_bzauthd])
+AC_MSG_RESULT([BZAuthd tests .....: $build_bzauthd_test])
 AC_MSG_RESULT([])
 if test "x$time_elapsed" != "xunknown" ; then
 AC_MSG_RESULT([Elapsed configuration time: $time_elapsed])

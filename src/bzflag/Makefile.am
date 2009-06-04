@@ -138,6 +138,8 @@ bzflag_SOURCES =			\
 	QuitMenu.h			\
 	RadarRenderer.cxx		\
 	RadarRenderer.h			\
+	RegMenu.cxx			\
+	RegMenu.h			\
 	Roaming.cxx			\
 	Roaming.h			\
 	RoofTops.cxx			\
@@ -194,28 +196,29 @@ NACLIB = ../platform/MacOSX/libMac.la
 endif
 
 LDADD =	\
-	../obstacle/libObstacle.la	\
-	../clientbase/libClientBase.la	\
-	../game/libGame.la		\
-	../geometry/libGeometry.la	\
-	../3D/lib3D.la			\
-	../net/libNet.la		\
-	$(NACLIB)			\
-	../platform/libPlatform.la	\
-	../ogl/libGLKit.la		\
-	../scene/libSceneDB.la		\
-	../mediafile/libMediaFile.la	\
-	../common/libCommon.la		\
-	$(LIBFTGL)			\
-	$(LIBFREETYPE)			\
-	$(LIBCURL)			\
-	$(LIBCARES)			\
-	$(LIBREGEX)			\
-	$(LIBZ)				\
-	$(RESOURCE)			\
-	$(SDL_LIBS)			\
-	$(GLIBS)			\
-	$(GLEW_LIBS)			\
+	../obstacle/libObstacle.la		\
+	../clientbase/libClientBase.la		\
+	../game/libGame.la			\
+	../geometry/libGeometry.la		\
+	../3D/lib3D.la				\
+	../net/libNet.la			\
+	$(NACLIB)				\
+	../platform/libPlatform.la		\
+	../ogl/libGLKit.la			\
+	../scene/libSceneDB.la			\
+	../mediafile/libMediaFile.la		\
+	../common/libCommon.la			\
+	../bzAuthCommon/libbzAuthCommon.la	\
+	$(LIBFTGL)				\
+	$(LIBFREETYPE)				\
+	$(LIBCURL)				\
+	$(LIBCARES)				\
+	$(LIBREGEX)				\
+	$(LIBZ)					\
+	$(RESOURCE)				\
+	$(SDL_LIBS)				\
+	$(GLIBS)				\
+	$(GLEW_LIBS)				\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)

@@ -158,14 +158,15 @@ bzfs_SOURCES = \
 	bzfs.h
 
 LDADD = \
-	../obstacle/libObstacle.la	\
-	../game/libGame.la		\
-	../net/libNet.la		\
-	../common/libCommon.la		\
-	$(LIBCURL)			\
-	$(LIBCARES)			\
-	$(LIBREGEX)			\
-	$(LIBZ)				\
+	../obstacle/libObstacle.la		\
+	../game/libGame.la			\
+	../net/libNet.la			\
+	../common/libCommon.la			\
+	../bzAuthCommon/libbzAuthCommon.la	\
+	$(LIBCURL)		   		\
+	$(LIBCARES)				\
+	$(LIBREGEX)		 		\
+	$(LIBZ)					\
 	../date/libDate.la
 
 EXTRA_DIST = TimerStrategy.h

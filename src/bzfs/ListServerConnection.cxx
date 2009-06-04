@@ -48,14 +48,14 @@ public:
     switch(packet.getOpcode()) {
       case DMSG_TOKEN_VALIDATE:
       {
-        uint8_t count;
+        uint8_t count = 0;
 
         if(!(packet >> count)) { disconnect(); break; }
         for(int i = 0; i < count; i++) {
           // TODO: use proper max callsign len
           char callsign[1024];
           if(!packet.read_string((uint8_t*)callsign, 1024)) { disconnect(); break; }
-          uint32_t valid_state;
+          uint32_t valid_state = 0;
           if(!(packet >> valid_state)) { disconnect(); break; }
           link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, "");
         }
@@ -247,7 +247,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
   }
 }
 
-void ListServerLink::processAuthReply(bool registered, bool verified, char *callsign, char *group)
+void ListServerLink::processAuthReply(bool registered, bool verified, const char *callsign, const char *group)
 {
   if(!publicizeServer) return;
 
@@ -278,13 +278,13 @@ void ListServerLink::processAuthReply(bool registered, bool verified, char *call
 	      playerData->_LSAState = GameKeeper::Player::verified;
 	      playerData->accessInfo.setPermissionRights();
 	      while (group && *group) {
-		char *nextgroup = group;
-		if (nextgroup) {
-		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
+		char nextgroup[1024], *p = nextgroup;
+		while (*group && (*group != ':') && (p-nextgroup+1 < 1024)) { 
+		  *p = *group;
+		  p++, group++;
 		}
-		playerData->accessInfo.addGroup(group);
-		group = nextgroup;
+		*p = '\0';
+		playerData->accessInfo.addGroup(nextgroup);
 	      }
 	      playerData->authentication.global(true);
 	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");

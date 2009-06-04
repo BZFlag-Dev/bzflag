@@ -26,6 +26,7 @@ endif
 core_dirs = \
 	date \
 	common \
+	bzAuthCommon \
 	net \
 	obstacle \
 	game
@@ -52,6 +53,18 @@ endif # BZROBOTS_INCLUDED
 
 endif # CLIENT_INCLUDED
 
+if BZAUTHD_INCLUDED
+BZAUTHD_DIR = bzauthd
+else
+BZAUTHD_DIR = 
+endif
+
+if BZAUTHD_TEST_INCLUDED
+BZAUTHD_TEST_DIR = bzauthd_test
+else
+BZAUTHD_TEST_DIR = 
+endif
+
 # the order matters
 SUBDIRS = \
 	other \
@@ -60,7 +73,9 @@ SUBDIRS = \
 	${BZFS_DIR} \
 	${BZFLAG_DIR} \
 	${BZROBOTS_DIR} \
-	${BZADMIN_DIR}
+	${BZADMIN_DIR} \
+	${BZAUTHD_DIR} \
+	${BZAUTHD_TEST_DIR}
 
 EXTRA_DIST = \
 	world

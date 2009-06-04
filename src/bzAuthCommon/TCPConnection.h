@@ -199,7 +199,8 @@ public:
   virtual ~TCPServerDataPendingListener(){return;};
   virtual bool connect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer ) = 0;
   virtual void pending ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, unsigned int count ) = 0;
-  virtual void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false ){};
+  virtual void disconnect ( TCPServerConnection *connection, TCPServerConnectedPeer *peer, bool forced = false )
+  { /*avoid warning*/ connection = connection; peer = peer; forced = forced; };
 };
 
 typedef std::vector<TCPServerDataPendingListener*> tvServerDataPendingListenerList;

@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include "Common.h"
+#include "common.h"
 #include "AuthProtocol.h"
 
 const char *bzAuthOpcodeNames[NUM_OPCODES] = {
