@@ -806,7 +806,7 @@ void handleTeleport(void *msg)
 }
 
 
-void handleMessage(void*/*msg*/)
+void handleMessage(void* /*msg*/)
 {
 }
 

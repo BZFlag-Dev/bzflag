@@ -17,12 +17,9 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdarg.h>
-#ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-#  include <arpa/inet.h>
-#endif
 
 /* common implementation headers */
+#include "network.h"
 #include "NetHandler.h"
 
 /* local implementation headers */

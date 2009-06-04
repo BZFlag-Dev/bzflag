@@ -16,8 +16,6 @@
 #include "SharedObjectLoader.h"
 
 /* system headers */
-#include <sys/types.h>
-#include <stdint.h>
 #ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
 #endif

@@ -58,9 +58,9 @@ void RCRobotPlayer::doUpdateMotion(float dt)
       distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
       if (distanceRemaining > 0.0) {
         if (distanceForward)
-          setDesiredSpeed(speed);
+          setDesiredSpeed((float)speed);
         else
-          setDesiredSpeed(-speed);
+          setDesiredSpeed((float)-speed);
       } else {
         setDesiredSpeed(0);
       }
@@ -72,17 +72,17 @@ void RCRobotPlayer::doUpdateMotion(float dt)
           if (turnRemaining <= 0.0)
             setDesiredAngVel(0);
           else if (turnRate * dt > turnRemaining)
-            setDesiredAngVel(turnRemaining/dt);
+            setDesiredAngVel((float)turnRemaining/dt);
           else
-            setDesiredAngVel(turnRate);
+            setDesiredAngVel((float)turnRate);
         } else {
           turnRemaining += getAngularVelocity() * dt;
           if (turnRemaining <= 0.0)
             setDesiredAngVel(0);
           else if (turnRate * dt > turnRemaining)
-            setDesiredAngVel(-turnRemaining/dt);
+            setDesiredAngVel((float)-turnRemaining/dt);
           else
-            setDesiredAngVel(-turnRate);
+            setDesiredAngVel((float)-turnRate);
         }
       } else {
         setDesiredAngVel(0);

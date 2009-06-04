@@ -38,7 +38,7 @@ Shot::~Shot() {}
 
 PlayerId Shot::getPlayerId(void) const
 {
-  return id >> 16;
+  return (PlayerId)(id >> 16);
 }
 
 uint16_t Shot::getShotId(void) const

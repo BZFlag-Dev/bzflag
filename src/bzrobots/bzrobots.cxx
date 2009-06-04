@@ -354,8 +354,8 @@ static void createCacheSignature ()
   cacheTagName += "CACHEDIR.TAG";
   std::ostream* cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
   if (cacheTag != NULL) {
-    cacheTag->write(cacheSignature, strlen(cacheSignature));
-    cacheTag->write(cacheComment, strlen(cacheComment));
+    cacheTag->write(cacheSignature, (std::streamsize)strlen(cacheSignature));
+    cacheTag->write(cacheComment, (std::streamsize)strlen(cacheComment));
   }
   delete cacheTag;
 
@@ -669,12 +669,12 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   // count number of arguments
   int argc = 1;
   char* scan = cmdLine;
-  scan = TextUtils::skipWhitespace(scan);
+  scan = (char *)TextUtils::skipWhitespace(scan);
 
   while (*scan) {
     argc++;
-    scan = TextUtils::skipNonWhitespace(scan);
-    scan = TextUtils::skipWhitespace(scan);
+    scan = (char *)TextUtils::skipNonWhitespace(scan);
+    scan = (char *)TextUtils::skipWhitespace(scan);
   }
 
   // get path to application.  this is ridiculously simple.
@@ -686,14 +686,14 @@ int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   argc = 0;
   argv[argc++] = appName;
   scan = cmdLine;
-  scan = TextUtils::skipWhitespace(scan);
+  scan = (char *)TextUtils::skipWhitespace(scan);
 
   while (*scan) {
-    argv[argc++] = scan;
-    scan = TextUtils::skipNonWhitespace(scan);
+    argv[argc++] = (char *)scan;
+    scan = (char *)TextUtils::skipNonWhitespace(scan);
 
     if (*scan) *scan++ = 0;
-    scan = TextUtils::skipWhitespace(scan);
+    scan = (char *)TextUtils::skipWhitespace(scan);
   }
 
   const int exitCode = myMain(argc, argv);
