@@ -105,25 +105,33 @@ void WorldDownLoader::setCacheTemp(bool cacheTemp)
 
 uint32_t WorldDownLoader::processChunk(void *buf, uint16_t len, int bytesLeft)
 {
-  int totalSize = worldPtr + len + bytesLeft;
-  int doneSize  = worldPtr + len;
-  if (cacheOut)
+  if (cacheOut) {
     cacheOut->write((char *)buf, len);
+  }
   
-  showError(TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
-    (100 * doneSize / totalSize),bytesLeft / 1024).c_str());
+  worldPtr += len;
+
+  const int totalSize = worldPtr + bytesLeft;
+  const int doneSize  = worldPtr;
+  const int complete  = (100 * doneSize) / totalSize;
+  const int remaining = bytesLeft / 1024;
+
+  showError(
+    TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
+                      complete, remaining).c_str());
   
-  if(bytesLeft == 0) {
+  if (bytesLeft == 0) {
     if (cacheOut) {
       delete cacheOut;
       cacheOut = NULL;
     }
     loadCached();
-    if (isCacheTemp)
+    if (isCacheTemp) {
       markOld(worldCachePath);
+    }
   }
-  
-  return worldPtr;
+
+  return (bytesLeft > 0) ? worldPtr : 0;
 }
 
 

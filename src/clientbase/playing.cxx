@@ -1208,11 +1208,12 @@ void handleWantHash(void *msg, uint16_t len)
 
 void handleGetWorld(void *msg, uint16_t len)
 {
-  uint32_t bytesLeft;
-  uint32_t worldPtr;
-  void *buf = nboUnpackUInt32(msg, bytesLeft);
-  worldPtr = worldDownLoader->processChunk(buf, len - 4, bytesLeft);
-  if (bytesLeft > 0) {
+  int32_t bytesLeft;
+  msg = nboUnpackInt32(msg, bytesLeft);
+  const uint32_t worldPtr =
+    worldDownLoader->processChunk(msg, len - 4, bytesLeft);
+  if (worldPtr > 0) {
+    // ask for more
     char message[MaxPacketLen];
     nboPackUInt32(message, worldPtr);
     serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
