@@ -73,6 +73,7 @@ libClientBase_la_SOURCES =		\
 	clientCommands.cxx		\
 	clientConfig.cxx		\
 	clientConfig.h			\
+	clientvars.h			\
 	defaultBZDB.cxx			\
 	defaultBZDB.h			\
 	playing.cxx			\
