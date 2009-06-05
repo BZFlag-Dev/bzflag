@@ -76,8 +76,13 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
   // set class property
   XClassHint* classHint = XAllocClassHint();
   if (classHint) {
-    classHint->res_name = "bzflag";
-    classHint->res_class = "BZFlag";
+    // XSetClassHint() does not modify these strings, but the
+    // compiler doesn't know that.  Avoid a pedantic warning by
+    // putting them in arrays before calling XSetClassHint().
+    char rn[] = "bzflag",
+	 rc[] = "BZFlag";
+    classHint->res_name = rn;
+    classHint->res_class = rc;
     XSetClassHint(display->getDisplay(), window, classHint);
     XFree(classHint);
   }
