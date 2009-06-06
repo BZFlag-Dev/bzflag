@@ -44,7 +44,6 @@ libGame_la_SOURCES =			\
 	Team.cxx			\
 	TextureMatrix.cxx		\
 	VotingArbiter.cxx		\
-	WorldContentInfo.cxx		\
 	WorldText.cxx
 
 

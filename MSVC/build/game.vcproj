@@ -659,10 +659,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\WorldContentInfo.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\game\WorldText.cxx"
 				>
 			</File>
@@ -790,10 +786,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\VotingArbiter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\WorldContentInfo.h"
 				>
 			</File>
 			<File
