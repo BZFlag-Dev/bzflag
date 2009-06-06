@@ -736,15 +736,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     glEnable(GL_POINT_SMOOTH);
   }
 
+  const float muzzleHeight = BZDBCache::muzzleHeight;
+
   // draw my shots
   int maxShots = world->getMaxShots();
   int i;
-  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   for (i = 0; i < maxShots; i++) {
     const ShotPath* shot = myTank->getShot(i);
     if (shot) {
       const float cs = colorScale(shot->getPosition().z, muzzleHeight);
-      glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+      glColor3f(cs, cs, cs);
       shot->radarRender();
     }
   }
@@ -756,7 +757,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     const ShotPath* shot = worldWeapons->getShot(i);
     if (shot) {
       const float cs = colorScale(shot->getPosition().z, muzzleHeight);
-      glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+      glColor3f(cs, cs, cs);
       shot->radarRender();
     }
   }
@@ -840,7 +841,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
           const TeamColor visTeam = colorblind ? RogueTeam : player->getTeam();
           glColor3fv(Team::getRadarColor(visTeam).rgb() * cs);
         } else {
-          glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+          glColor3f(cs, cs, cs);
         }
         shot->radarRender();
       }
