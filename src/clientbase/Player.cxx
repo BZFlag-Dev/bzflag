@@ -246,15 +246,14 @@ void Player::getMuzzle(fvec3& m) const
   m.x = state.pos.x + (front * forward.x);
   m.y = state.pos.y + (front * forward.y);
 
-  const float height = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  m.z = state.pos.z + (height * dimensionsScale.z);
+  m.z = state.pos.z + (BZDBCache::muzzleHeight * dimensionsScale.z);
   return;
 }
 
 
 float Player::getMuzzleHeight() const
 {
-  return (dimensionsScale.z * BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+  return (dimensionsScale.z * BZDBCache::muzzleHeight);
 }
 
 
