@@ -17,6 +17,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 
 template <typename T> T typed_cos(T rads);
@@ -137,6 +138,9 @@ template <typename T> vec2<T> operator+(T d, const vec2<T>& in) { vec2<T> v(in);
 template <typename T> vec2<T> operator-(T d, const vec2<T>& in) { vec2<T> v(d, d); v -= in; return v; }
 template <typename T> vec2<T> operator*(T d, const vec2<T>& in) { vec2<T> v(in); v *= d; return v; }
 template <typename T> vec2<T> operator/(T d, const vec2<T>& in) { vec2<T> v(d, d); v /= in; return v; }
+template <typename T> std::ostream& operator<<(std::ostream& out, const vec2<T>& v) {
+  out << " " << v.tostring(); return out;
+}
 
 
 //
@@ -294,8 +298,9 @@ template <typename T> vec3<T> operator+(T d, const vec3<T>& in) { vec3<T> v(in);
 template <typename T> vec3<T> operator-(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v -= in; return v; }
 template <typename T> vec3<T> operator*(T d, const vec3<T>& in) { vec3<T> v(in); v *= d; return v; }
 template <typename T> vec3<T> operator/(T d, const vec3<T>& in) { vec3<T> v(d, d, d); v /= in; return v; }
-
-
+template <typename T> std::ostream& operator<<(std::ostream& out, const vec3<T>& v) {
+  out << " " << v.tostring(); return out;
+}
 
 
 //
@@ -402,6 +407,9 @@ template <typename T> vec4<T> operator+(T d, const vec4<T>& in) { vec4<T> v(in);
 template <typename T> vec4<T> operator-(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v -= in; return v; }
 template <typename T> vec4<T> operator*(T d, const vec4<T>& in) { vec4<T> v(in); v *= d; return v; }
 template <typename T> vec4<T> operator/(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v /= in; return v; }
+template <typename T> std::ostream& operator<<(std::ostream& out, const vec4<T>& v) {
+  out << " " << v.tostring(); return out;
+}
 
 
 //
