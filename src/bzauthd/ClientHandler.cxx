@@ -20,8 +20,8 @@
 
 PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *socket)
 {
-  uint8_t peerType;
-  uint16_t protoVersion;
+  uint8_t peerType = 0;
+  uint16_t protoVersion = 0;
   if(!(packet >> peerType >> protoVersion)) return NULL;
 
   PacketHandler *handler = new PacketHandler(socket);
@@ -30,8 +30,8 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
   switch (peerType) {
     case BZAUTHD_PEER_CLIENT: {
       sLog.outLog("received %s: client using protocol %d", getOpcodeName(packet), protoVersion);
-      uint32_t cliVersion;
-      uint8_t commType;
+      uint32_t cliVersion = 0;
+      uint8_t commType = 0;
       if(!(packet >> cliVersion >> commType)) { success = false; break; }
       sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
       switch (commType) {
@@ -64,7 +64,7 @@ PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *soc
     return handler;
 }
 
-bool PacketHandler::handleAuthRequest(Packet &packet)
+bool PacketHandler::handleAuthRequest(Packet &/*packet*/)
 {
   if(m_authSession)
   {
@@ -97,7 +97,7 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
     return true;
   }
 
-  uint16_t cipher_len;
+  uint16_t cipher_len = 0;
   if(!(packet >> cipher_len)) return false;
   uint8_t *cipher = new uint8_t[cipher_len+1];
   if(!packet.read(cipher, cipher_len)) { delete[] cipher; return false; }
@@ -180,14 +180,14 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
 }
 
 
-bool PacketHandler::handleRegisterGetForm(Packet &packet)
+bool PacketHandler::handleRegisterGetForm(Packet &/*packet*/)
 {
   // currently not implemented
   assert(false);
   return true;
 }
 
-bool PacketHandler::handleRegisterRequest(Packet &packet)
+bool PacketHandler::handleRegisterRequest(Packet &/*packet*/)
 {
   if(m_regSession)
   {
@@ -220,7 +220,7 @@ bool PacketHandler::handleRegisterResponse(Packet &packet)
     return true;
   }
 
-  uint16_t cipher_len;
+  uint16_t cipher_len = 0;
   if(!(packet >> cipher_len)) return false;
   uint8_t *cipher = new uint8_t[cipher_len+1];
   if(!packet.read(cipher, cipher_len)) { delete[] cipher; return false; }

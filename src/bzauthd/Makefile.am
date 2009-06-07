@@ -16,6 +16,7 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 bzauthd_DFLAGS = -static
 bzauthd_SOURCES = \
+	bzauthd.cxx \
 	ClientHandler.cxx \
 	Common.cxx \
 	ConfigMgr.cxx \
@@ -33,9 +34,9 @@ bzauthd_SOURCES = \
 	UserStorage.h
 
 LDADD = \
-	../bzAuthCommon/bzAuthCommon.la \
-	../common/libCommon.la \
-	${LIBLDAP}
+	../bzAuthCommon/libbzAuthCommon.la 	\
+	../common/libCommon.la 			\
+	$(OPENLDAP_LIBS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

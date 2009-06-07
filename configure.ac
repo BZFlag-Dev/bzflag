@@ -1012,20 +1012,20 @@ AC_SUBST(CURSES_LIB)
 
 #if bzauthd was enabled, make sure we have openldap
 if test "x$enable_bzauthd" = "xyes"; then
-    build_bzauthd = "yes"
+    build_bzauthd="yes"
     AM_CONDITIONAL(BZAUTHD_INCLUDED, true)
 else
-    build_bzauthd = "no"
+    build_bzauthd="no"
     AM_CONDITIONAL(BZAUTHD_INCLUDED, false)
 fi
 
 
 #if bzauthd_test was enabled, make sure we have openldap
-if test "x$enable_bzauthd_test" != "xno"; then
-    build_bzauthd_test = "yes"
+if test "x$enable_bzauthd_test" = "xyes"; then
+    build_bzauthd_test="yes"
     AM_CONDITIONAL(BZAUTHD_TEST_INCLUDED, true)
 else
-    build_bzauthd_test = "no"
+    build_bzauthd_test="no"
     AM_CONDITIONAL(BZAUTHD_TEST_INCLUDED, false)
 fi
 
@@ -1139,7 +1139,19 @@ fi
 
 dnl figure out whether we need to build the included openldap library
 BUILD_OPENLDAP="no (using system)"
-LIBLDAP=""
+OPENLDAP_LIBS=""
+if test "x$enable_openldap_build" != "xyes" ; then
+     AM_OPENLDAP_PATH
+fi
+AC_MSG_CHECKING(whether to build the included openldap library)
+if test "x$OPENLDAP_LIBS" = "x"; then
+    AC_DEFINE(BUILD_OPENLDAP, 1, [Build the included openldap library])
+    BUILD_OPENLDAP="yes"
+    OPENLDAP_LIBS='${top_builddir}/src/other/openldap/lib/openldap.la'
+    OPENLDAP_CFLAGS=""
+fi
+dnl AM_OPENLDAP_PATH already specified AC_SUBSTs
+AC_MSG_RESULT($BUILD_OPENLDAP)
 AM_CONDITIONAL(BUILD_OPENLDAP, test "x$BUILD_OPENLDAP" = "xyes")
 
 

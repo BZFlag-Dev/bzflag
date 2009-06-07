@@ -14,7 +14,7 @@
 #include "EventHandler.h"
 #include "TimeKeeper.h"
 
-INSTANTIATE_SINGLETON(EventHandler);
+INSTANTIATE_SINGLETON(EventHandler)
 
 EventHandler::EventHandler()
 {
@@ -45,7 +45,7 @@ void EventHandler::addDelta(CBFunc func, void * data, double delta)
 }
 
 EventHandler::Event::Event(CBFunc f, void *d, TimeMapType::iterator &i)
-  : func(f), data(d), itr(i), refCounter(1)
+  : refCounter(1), func(f), data(d), itr(i)
 {
 }
 

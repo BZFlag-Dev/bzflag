@@ -14,7 +14,6 @@
 #define __BZAUTHD_TEST_COMMON_H__
 
 #include <common.h>
-#include <conio.h>
 
 // the net test will use windows threads, disable it when doing builds for other platforms
 #define TEST_NET

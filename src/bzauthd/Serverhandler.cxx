@@ -24,7 +24,7 @@ bool PacketHandler::handleTokenValidate(Packet &packet)
   response << n;
   for(int i = 0; i < n; i++) {
     uint8_t callsign[MAX_CALLSIGN_LEN+1];
-    uint32_t token;
+    uint32_t token = 0;
     if(!(packet >> token)) return false;
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 

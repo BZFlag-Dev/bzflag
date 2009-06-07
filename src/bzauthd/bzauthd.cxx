@@ -18,7 +18,7 @@
 #include "UserStorage.h"
 #include "TimeKeeper.h"
 #include "EventHandler.h"
-#include <conio.h>
+//#include <conio.h>
 
 int main()
 {
@@ -39,7 +39,8 @@ int main()
     return 1;
 
   /* main loop */
-  while(!kbhit()) {
+  //while(!kbhit()) {
+  while(1) {
     TimeKeeper::setTick();
     sNetHandler.update();
     sEventHandler.update();

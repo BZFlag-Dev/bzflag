@@ -18,8 +18,8 @@
 #ifndef __BZAUTHD_TOKENMGR_H__
 #define __BZAUTHD_TOKENMGR_H__
 
+#include <string>
 #include "Singleton.h"
-#include <hash_map>
 
 class TokenMgr : public Singleton<TokenMgr>
 {
@@ -33,7 +33,7 @@ public:
   static void expireCallback(void *data);
 private:
   uint32_t nextToken;
-  typedef HM_NAMESPACE::hash_map<uint32_t, std::string> TokenMapType;
+  typedef UNORDERED_MAP<uint32_t, std::string> TokenMapType;
   TokenMapType tokenMap;
   void removeToken(TokenMapType::iterator &itr);
 };

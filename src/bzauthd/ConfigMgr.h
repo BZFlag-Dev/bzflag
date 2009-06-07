@@ -20,7 +20,6 @@
 
 #include <vector>
 #include <string>
-#include <hash_map>
 #include <Singleton.h>
 
 enum ConfTypes
@@ -59,7 +58,7 @@ public:
   uint16_t lookupKey(std::string stringKey);
   uint8_t lookupType(uint16_t key);
 protected:
-  typedef HM_NAMESPACE::hash_map<std::string, uint16_t /*key*/> KeyRegisterType;
+  typedef UNORDERED_MAP<std::string, uint16_t /*key*/> KeyRegisterType;
   typedef std::vector<uint8_t /*type*/> TypeRegisterType;
   typedef std::vector<void *> ValuesType;
 

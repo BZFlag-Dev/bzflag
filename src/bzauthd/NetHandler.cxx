@@ -15,7 +15,7 @@
 #include "ConfigMgr.h"
 #include "Log.h"
 
-INSTANTIATE_SINGLETON(NetHandler);
+INSTANTIATE_SINGLETON(NetHandler)
 
 PHFunc handlerTable[NUM_OPCODES];
 

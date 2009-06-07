@@ -12,9 +12,10 @@
 
 #include <common.h>
 #include <assert.h>
+#include <string.h>
 #include "ConfigMgr.h"
 
-INSTANTIATE_SINGLETON(Config);
+INSTANTIATE_SINGLETON(Config)
 
 void Config::initialize()
 {

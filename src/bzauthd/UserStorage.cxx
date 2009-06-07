@@ -10,7 +10,7 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <Common.h>
+#include <common.h>
 #include "UserStorage.h"
 #define LDAP_DEPRECATED 1
 #include <ldap.h>
@@ -122,7 +122,7 @@ bool UserStore::isRegistered(std::string callsign)
 {
   std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
-  char *attrs[2] = { LDAP_NO_ATTRS, NULL };
+  char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
   LDAPMessage *res, *msg;
   LDAP_FCHECK( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", attrs, 0, &res) );
 
