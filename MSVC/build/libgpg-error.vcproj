@@ -47,7 +47,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="../../src/libgpg-error/src"
+				AdditionalIncludeDirectories="../../src/other/gpg-error/src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -181,7 +181,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../src/libgpg-error/src"
+				AdditionalIncludeDirectories="../../src/other/gpg-error/src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -315,7 +315,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../src/libgpg-error/src"
+				AdditionalIncludeDirectories="../../src/other/gpg-error/src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -447,7 +447,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="../../src/libgpg-error/src"
+				AdditionalIncludeDirectories="../../src/other/gpg-error/src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -560,79 +560,79 @@
 			Name="src"
 			>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\code-from-errno.c"
+				RelativePath="..\..\src\other\gpg-error\src\code-from-errno.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\code-from-errno.h"
+				RelativePath="..\..\src\other\gpg-error\src\code-from-errno.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\code-to-errno.c"
+				RelativePath="..\..\src\other\gpg-error\src\code-to-errno.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\code-to-errno.h"
+				RelativePath="..\..\src\other\gpg-error\src\code-to-errno.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\config.h"
+				RelativePath="..\..\src\other\gpg-error\src\config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\err-codes-sym.h"
+				RelativePath="..\..\src\other\gpg-error\src\err-codes-sym.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\err-codes.h"
+				RelativePath="..\..\src\other\gpg-error\src\err-codes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\err-sources-sym.h"
+				RelativePath="..\..\src\other\gpg-error\src\err-sources-sym.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\err-sources.h"
+				RelativePath="..\..\src\other\gpg-error\src\err-sources.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\errnos-sym.h"
+				RelativePath="..\..\src\other\gpg-error\src\errnos-sym.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\gettext.h"
+				RelativePath="..\..\src\other\gpg-error\src\gettext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\gpg-error.h"
+				RelativePath="..\..\src\other\gpg-error\src\gpg-error.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\init.c"
+				RelativePath="..\..\src\other\gpg-error\src\init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\strerror-sym.c"
+				RelativePath="..\..\src\other\gpg-error\src\strerror-sym.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\strerror.c"
+				RelativePath="..\..\src\other\gpg-error\src\strerror.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\strsource-sym.c"
+				RelativePath="..\..\src\other\gpg-error\src\strsource-sym.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\strsource.c"
+				RelativePath="..\..\src\other\gpg-error\src\strsource.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\w32-gettext.c"
+				RelativePath="..\..\src\other\gpg-error\src\w32-gettext.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgpg-error\src\w32-gettext.h"
+				RelativePath="..\..\src\other\gpg-error\src\w32-gettext.h"
 				>
 			</File>
 		</Filter>

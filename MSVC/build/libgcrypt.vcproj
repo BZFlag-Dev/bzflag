@@ -47,7 +47,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
+				AdditionalIncludeDirectories="../../src/other/gcrypt;../../src/other/gcrypt/src/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -181,7 +181,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
+				AdditionalIncludeDirectories="../../src/other/gcrypt;../../src/other/gcrypt/src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -315,7 +315,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
+				AdditionalIncludeDirectories="../../src/other/gcrypt;../../src/other/gcrypt/src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_VC_NET"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -447,7 +447,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="../../src/libgcrypt;../../src/libgcrypt/src/"
+				AdditionalIncludeDirectories="../../src/other/gcrypt;../../src/other/gcrypt/src/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_VC_NET"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -560,151 +560,151 @@
 			Name="cipher"
 			>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\ac.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\ac.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\arcfour.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\arcfour.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\bithelp.h"
+				RelativePath="..\..\src\other\gcrypt\cipher\bithelp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\blowfish.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\blowfish.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\camellia-glue.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\camellia-glue.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\camellia.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\camellia.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\camellia.h"
+				RelativePath="..\..\src\other\gcrypt\cipher\camellia.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\cast5.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\cast5.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\cipher.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\cipher.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\crc.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\crc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\des.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\des.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\dsa.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\dsa.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\ecc.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\ecc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\elgamal.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\elgamal.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\md.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\md.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\md4.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\md4.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\md5.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\md5.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\primegen.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\primegen.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\pubkey.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\pubkey.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rand-internal.h"
+				RelativePath="..\..\src\other\gcrypt\cipher\rand-internal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\random.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\random.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\random.h"
+				RelativePath="..\..\src\other\gcrypt\cipher\random.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rfc2268.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\rfc2268.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rijndael.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\rijndael.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rmd.h"
+				RelativePath="..\..\src\other\gcrypt\cipher\rmd.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rmd160.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\rmd160.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rndhw.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\rndhw.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rndw32.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\rndw32.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\rsa.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\rsa.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\seed.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\seed.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\serpent.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\serpent.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\sha1.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\sha1.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\sha256.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\sha256.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\sha512.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\sha512.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\tiger.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\tiger.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\twofish.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\twofish.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\cipher\whirlpool.c"
+				RelativePath="..\..\src\other\gcrypt\cipher\whirlpool.c"
 				>
 			</File>
 		</Filter>
@@ -712,91 +712,91 @@
 			Name="src"
 			>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\ath.c"
+				RelativePath="..\..\src\other\gcrypt\src\ath.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\ath.h"
+				RelativePath="..\..\src\other\gcrypt\src\ath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\cipher.h"
+				RelativePath="..\..\src\other\gcrypt\src\cipher.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\config.h"
+				RelativePath="..\..\src\other\gcrypt\src\config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\dumpsexp.c"
+				RelativePath="..\..\src\other\gcrypt\src\dumpsexp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\g10lib.h"
+				RelativePath="..\..\src\other\gcrypt\src\g10lib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\gcrypt-module.h"
+				RelativePath="..\..\src\other\gcrypt\src\gcrypt-module.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\gcrypt.h"
+				RelativePath="..\..\src\other\gcrypt\src\gcrypt.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\global.c"
+				RelativePath="..\..\src\other\gcrypt\src\global.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\hwfeatures.c"
+				RelativePath="..\..\src\other\gcrypt\src\hwfeatures.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\misc.c"
+				RelativePath="..\..\src\other\gcrypt\src\misc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\missing-string.c"
+				RelativePath="..\..\src\other\gcrypt\src\missing-string.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\module.c"
+				RelativePath="..\..\src\other\gcrypt\src\module.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\mpi.h"
+				RelativePath="..\..\src\other\gcrypt\src\mpi.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\secmem.c"
+				RelativePath="..\..\src\other\gcrypt\src\secmem.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\secmem.h"
+				RelativePath="..\..\src\other\gcrypt\src\secmem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\sexp.c"
+				RelativePath="..\..\src\other\gcrypt\src\sexp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\stdmem.c"
+				RelativePath="..\..\src\other\gcrypt\src\stdmem.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\stdmem.h"
+				RelativePath="..\..\src\other\gcrypt\src\stdmem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\types.h"
+				RelativePath="..\..\src\other\gcrypt\src\types.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\visibility.c"
+				RelativePath="..\..\src\other\gcrypt\src\visibility.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\src\visibility.h"
+				RelativePath="..\..\src\other\gcrypt\src\visibility.h"
 				>
 			</File>
 		</Filter>
@@ -804,131 +804,131 @@
 			Name="mpi"
 			>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\asm-syntax.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\asm-syntax.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\ec.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\ec.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\longlong.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\longlong.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mod-source-info.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\mod-source-info.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-add.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-add.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-asm-defs.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-asm-defs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-bit.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-bit.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-cmp.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-cmp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-div.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-div.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-gcd.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-gcd.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-inline.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-inline.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-inline.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-inline.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-internal.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-internal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-inv.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-inv.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-mod.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-mod.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-mpow.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-mpow.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-mul.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-mul.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-pow.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-pow.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpi-scan.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpi-scan.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpicoder.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpicoder.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-add1.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-add1.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-div.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-div.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-lshift.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-lshift.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-mul.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-mul.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-mul1.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-mul1.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-mul2.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-mul2.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-mul3.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-mul3.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-rshift.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-rshift.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpih-sub1.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpih-sub1.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\mpiutil.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\mpiutil.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\sysdep.h"
+				RelativePath="..\..\src\other\gcrypt\mpi\sysdep.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\libgcrypt\mpi\udiv-w-sdiv.c"
+				RelativePath="..\..\src\other\gcrypt\mpi\udiv-w-sdiv.c"
 				>
 			</File>
 		</Filter>

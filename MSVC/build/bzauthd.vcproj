@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../../include;../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include;../../src/bzAuthCommon/"
+				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -121,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;../../include;../../src/libgcrypt/src;&quot;../../src/libgpg-error/src&quot;;../../src/openldap/include;../../src/bzAuthCommon/"
+				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"

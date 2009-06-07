@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src\openldap\include"
+				AdditionalIncludeDirectories="..\..\src\other\openldap\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\openldap\include"
+				AdditionalIncludeDirectories="..\..\src\other\openldap\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -151,219 +151,219 @@
 			Name="libldap"
 			>
 			<File
-				RelativePath="..\..\src\openldap\libldap\abandon.c"
+				RelativePath="..\..\src\other\openldap\libldap\abandon.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\add.c"
+				RelativePath="..\..\src\other\openldap\libldap\add.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\bind.c"
+				RelativePath="..\..\src\other\openldap\libldap\bind.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\cancel.c"
+				RelativePath="..\..\src\other\openldap\libldap\cancel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\charray.c"
+				RelativePath="..\..\src\other\openldap\libldap\charray.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\compare.c"
+				RelativePath="..\..\src\other\openldap\libldap\compare.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\controls.c"
+				RelativePath="..\..\src\other\openldap\libldap\controls.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\cyrus.c"
+				RelativePath="..\..\src\other\openldap\libldap\cyrus.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\delete.c"
+				RelativePath="..\..\src\other\openldap\libldap\delete.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\dnssrv.c"
+				RelativePath="..\..\src\other\openldap\libldap\dnssrv.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\error.c"
+				RelativePath="..\..\src\other\openldap\libldap\error.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\extended.c"
+				RelativePath="..\..\src\other\openldap\libldap\extended.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\filter.c"
+				RelativePath="..\..\src\other\openldap\libldap\filter.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\free.c"
+				RelativePath="..\..\src\other\openldap\libldap\free.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\getattr.c"
+				RelativePath="..\..\src\other\openldap\libldap\getattr.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\getdn.c"
+				RelativePath="..\..\src\other\openldap\libldap\getdn.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\getentry.c"
+				RelativePath="..\..\src\other\openldap\libldap\getentry.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\getvalues.c"
+				RelativePath="..\..\src\other\openldap\libldap\getvalues.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\groupings.c"
+				RelativePath="..\..\src\other\openldap\libldap\groupings.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\init.c"
+				RelativePath="..\..\src\other\openldap\libldap\init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\kbind.c"
+				RelativePath="..\..\src\other\openldap\libldap\kbind.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\ldap-int.h"
+				RelativePath="..\..\src\other\openldap\libldap\ldap-int.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\messages.c"
+				RelativePath="..\..\src\other\openldap\libldap\libldap_options.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\modify.c"
+				RelativePath="..\..\src\other\openldap\libldap\messages.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\modrdn.c"
+				RelativePath="..\..\src\other\openldap\libldap\modify.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\open.c"
+				RelativePath="..\..\src\other\openldap\libldap\modrdn.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\options.c"
+				RelativePath="..\..\src\other\openldap\libldap\open.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\os-ip.c"
+				RelativePath="..\..\src\other\openldap\libldap\os-ip.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\os-local.c"
+				RelativePath="..\..\src\other\openldap\libldap\os-local.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\passwd.c"
+				RelativePath="..\..\src\other\openldap\libldap\passwd.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\ppolicy.c"
+				RelativePath="..\..\src\other\openldap\libldap\ppolicy.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\print.c"
+				RelativePath="..\..\src\other\openldap\libldap\print.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\references.c"
+				RelativePath="..\..\src\other\openldap\libldap\references.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\request.c"
+				RelativePath="..\..\src\other\openldap\libldap\request.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\result.c"
+				RelativePath="..\..\src\other\openldap\libldap\result.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\sasl.c"
+				RelativePath="..\..\src\other\openldap\libldap\sasl.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\sbind.c"
+				RelativePath="..\..\src\other\openldap\libldap\sbind.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\schema.c"
+				RelativePath="..\..\src\other\openldap\libldap\schema.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\search.c"
+				RelativePath="..\..\src\other\openldap\libldap\search.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\sort.c"
+				RelativePath="..\..\src\other\openldap\libldap\sort.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\sortctrl.c"
+				RelativePath="..\..\src\other\openldap\libldap\sortctrl.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\string.c"
+				RelativePath="..\..\src\other\openldap\libldap\string.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\t61.c"
+				RelativePath="..\..\src\other\openldap\libldap\t61.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\tls.c"
+				RelativePath="..\..\src\other\openldap\libldap\tls.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\turn.c"
+				RelativePath="..\..\src\other\openldap\libldap\turn.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\txn.c"
+				RelativePath="..\..\src\other\openldap\libldap\txn.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\unbind.c"
+				RelativePath="..\..\src\other\openldap\libldap\unbind.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\url.c"
+				RelativePath="..\..\src\other\openldap\libldap\url.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\utf-8-conv.c"
+				RelativePath="..\..\src\other\openldap\libldap\utf-8-conv.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\utf-8.c"
+				RelativePath="..\..\src\other\openldap\libldap\utf-8.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\util-int.c"
+				RelativePath="..\..\src\other\openldap\libldap\util-int.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\version.c"
+				RelativePath="..\..\src\other\openldap\libldap\version.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\vlvctrl.c"
+				RelativePath="..\..\src\other\openldap\libldap\vlvctrl.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\libldap\whoami.c"
+				RelativePath="..\..\src\other\openldap\libldap\whoami.c"
 				>
 			</File>
 		</Filter>
@@ -371,226 +371,226 @@
 			Name="include"
 			>
 			<File
-				RelativePath="..\..\src\openldap\include\avl.h"
+				RelativePath="..\..\src\other\openldap\include\avl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\getopt-compat.h"
+				RelativePath="..\..\src\other\openldap\include\getopt-compat.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lber.h"
+				RelativePath="..\..\src\other\openldap\include\lber.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lber_pvt.h"
+				RelativePath="..\..\src\other\openldap\include\lber_pvt.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lber_types.h"
+				RelativePath="..\..\src\other\openldap\include\lber_types.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap.h"
+				RelativePath="..\..\src\other\openldap\include\ldap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_cdefs.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_cdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_config.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_defaults.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_defaults.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_features.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_features.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_int_thread.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_int_thread.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_log.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_log.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_pvt.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_pvt.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_pvt_thread.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_pvt_thread.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_pvt_uc.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_pvt_uc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_queue.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_queue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_rq.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_rq.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_schema.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_schema.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldap_utf8.h"
+				RelativePath="..\..\src\other\openldap\include\ldap_utf8.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\ldif.h"
+				RelativePath="..\..\src\other\openldap\include\ldif.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lutil.h"
+				RelativePath="..\..\src\other\openldap\include\lutil.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lutil_hash.h"
+				RelativePath="..\..\src\other\openldap\include\lutil_hash.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lutil_ldap.h"
+				RelativePath="..\..\src\other\openldap\include\lutil_ldap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lutil_lockf.h"
+				RelativePath="..\..\src\other\openldap\include\lutil_lockf.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lutil_md5.h"
+				RelativePath="..\..\src\other\openldap\include\lutil_md5.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\lutil_sha1.h"
+				RelativePath="..\..\src\other\openldap\include\lutil_sha1.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\portable.h"
+				RelativePath="..\..\src\other\openldap\include\portable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\rewrite.h"
+				RelativePath="..\..\src\other\openldap\include\rewrite.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\slapi-plugin.h"
+				RelativePath="..\..\src\other\openldap\include\slapi-plugin.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\include\sysexits-compat.h"
+				RelativePath="..\..\src\other\openldap\include\sysexits-compat.h"
 				>
 			</File>
 			<Filter
 				Name="ac"
 				>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\alloca.h"
+					RelativePath="..\..\src\other\openldap\include\ac\alloca.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\assert.h"
+					RelativePath="..\..\src\other\openldap\include\ac\assert.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\bytes.h"
+					RelativePath="..\..\src\other\openldap\include\ac\bytes.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\crypt.h"
+					RelativePath="..\..\src\other\openldap\include\ac\crypt.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\ctype.h"
+					RelativePath="..\..\src\other\openldap\include\ac\ctype.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\dirent.h"
+					RelativePath="..\..\src\other\openldap\include\ac\dirent.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\errno.h"
+					RelativePath="..\..\src\other\openldap\include\ac\errno.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\fdset.h"
+					RelativePath="..\..\src\other\openldap\include\ac\fdset.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\krb.h"
+					RelativePath="..\..\src\other\openldap\include\ac\krb.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\krb5.h"
+					RelativePath="..\..\src\other\openldap\include\ac\krb5.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\localize.h"
+					RelativePath="..\..\src\other\openldap\include\ac\localize.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\param.h"
+					RelativePath="..\..\src\other\openldap\include\ac\param.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\regex.h"
+					RelativePath="..\..\src\other\openldap\include\ac\regex.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\setproctitle.h"
+					RelativePath="..\..\src\other\openldap\include\ac\setproctitle.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\signal.h"
+					RelativePath="..\..\src\other\openldap\include\ac\signal.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\socket.h"
+					RelativePath="..\..\src\other\openldap\include\ac\socket.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\stdarg.h"
+					RelativePath="..\..\src\other\openldap\include\ac\stdarg.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\stdlib.h"
+					RelativePath="..\..\src\other\openldap\include\ac\stdlib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\string.h"
+					RelativePath="..\..\src\other\openldap\include\ac\string.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\sysexits.h"
+					RelativePath="..\..\src\other\openldap\include\ac\sysexits.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\syslog.h"
+					RelativePath="..\..\src\other\openldap\include\ac\syslog.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\termios.h"
+					RelativePath="..\..\src\other\openldap\include\ac\termios.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\time.h"
+					RelativePath="..\..\src\other\openldap\include\ac\time.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\unistd.h"
+					RelativePath="..\..\src\other\openldap\include\ac\unistd.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\openldap\include\ac\wait.h"
+					RelativePath="..\..\src\other\openldap\include\ac\wait.h"
 					>
 				</File>
 			</Filter>
@@ -599,92 +599,56 @@
 			Name="liblber"
 			>
 			<File
-				RelativePath="..\..\src\openldap\liblber\assert.c"
+				RelativePath="..\..\src\other\openldap\liblber\assert.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\bprint.c"
+				RelativePath="..\..\src\other\openldap\liblber\bprint.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\debug.c"
+				RelativePath="..\..\src\other\openldap\liblber\debug.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\decode.c"
+				RelativePath="..\..\src\other\openldap\liblber\decode.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\encode.c"
+				RelativePath="..\..\src\other\openldap\liblber\encode.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\io.c"
+				RelativePath="..\..\src\other\openldap\liblber\io.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\lber-int.h"
+				RelativePath="..\..\src\other\openldap\liblber\lber-int.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\memory.c"
+				RelativePath="..\..\src\other\openldap\liblber\memory.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\nt_err.c"
+				RelativePath="..\..\src\other\openldap\liblber\nt_err.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\options.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\openldap\liblber\sockbuf.c"
+				RelativePath="..\..\src\other\openldap\liblber\options.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\stdio.c"
+				RelativePath="..\..\src\other\openldap\liblber\sockbuf.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\openldap\liblber\version.c"
+				RelativePath="..\..\src\other\openldap\liblber\stdio.c"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\other\openldap\liblber\version.c"
+				>
 			</File>
 		</Filter>
 	</Files>
