@@ -78,7 +78,7 @@ world types consists of:
 .br
 .B world
 .br
-.B mapinfo
+.B info
 .br
 .B options
 .br
@@ -168,11 +168,11 @@ Header for the world.
 .br
 
 
-.B The MapInfo object
+.B The Info object
 .br
 A block of text to provide information about the world.
 
-\fBmapinfo\fR
+\fBinfo\fR
 .br
   author:  bob
 .br
@@ -1268,7 +1268,7 @@ worldStream :=
 .br
 	| "teleporter" <name>?
 .br
-	| "mapinfo"
+	| "info"
 .br
 	| "options"
 .br
