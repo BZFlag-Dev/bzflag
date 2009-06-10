@@ -53,8 +53,9 @@ typedef std::map<FlagType*,bool> FlagOptionMap;
  */
 struct CmdLineOptions
 {
-  CmdLineOptions()
-  : wksPort(ServerPort), gameType(TeamFFA), gameOptions(0),
+  CmdLineOptions(const std::string& _execName)
+  : execName(_execName),
+    wksPort(ServerPort), gameType(TeamFFA), gameOptions(0),
     rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
@@ -82,10 +83,10 @@ struct CmdLineOptions
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
-	 it != FlagType::getFlagMap().end(); ++it) {
-	flagCount[it->second] = 0;
-	flagLimit[it->second] = -1;
-	flagDisallowed[it->second] = false;
+         it != FlagType::getFlagMap().end(); ++it) {
+      flagCount[it->second] = 0;
+      flagLimit[it->second] = -1;
+      flagDisallowed[it->second] = false;
     }
 
     for (i = 0; i < NumTeams; i++) {
@@ -96,6 +97,21 @@ struct CmdLineOptions
     listServerURL.push_back(DefaultListServerURL);
     masterBanListURL.push_back(DefaultMasterBanURL);
   }
+
+  // member functions
+  void parseArgOptions(int argc, char **argv);
+  void parseFileOptions(const std::string& filePath);
+  void parseWorldOptions(const std::vector<std::string>& lines);
+
+  void parse(const std::vector<std::string>& tokens, bool fromWorldFile);
+  void finalizeParsing(EntryZones& ez);
+
+  bool checkCommaList(const std::string& list, int maxLen);
+  bool parsePlayerCount(const std::string& list);
+  void tokenizeLines(const std::vector<std::string>& lines,
+                           std::vector<std::string>& tokens);
+
+  const std::string execName; // AKA: argv[0]
 
   int			wksPort;
   GameType		gameType;
@@ -222,9 +238,6 @@ struct CmdLineOptions
 };
 
 
-void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile = false);
-void finalizeParsing(int argc, char **argv, CmdLineOptions &options, EntryZones& ez);
-bool checkCommaList (const char *list, int maxlen);
 
 #else
 struct CmdLineOptions;

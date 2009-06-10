@@ -3676,7 +3676,7 @@ static void initStartupParameters(int argc, char **argv)
 {
   Flags::init();
 
-  clOptions = new CmdLineOptions();
+  clOptions = new CmdLineOptions(argv[0]);
 
   // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
@@ -3699,7 +3699,7 @@ static void initStartupParameters(int argc, char **argv)
   BZDB.setSaveDefault(true);
 
   // parse arguments  (finalized later)
-  parse(argc, argv, *clOptions);
+  clOptions->parseArgOptions(argc, argv);
   setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
 
 
@@ -3978,7 +3978,7 @@ static bool initServer(int argc, char **argv)
 
   // make flags, check sanity, etc...
   // (do this after the world has been loaded)
-  finalizeParsing(argc, argv, *clOptions, world->getEntryZones());
+  clOptions->finalizeParsing(world->getEntryZones());
   FlagInfo::setNoFlagInAir();
   for (int i = 0; i < numFlags; i++)
     resetFlag(*FlagInfo::get(i));

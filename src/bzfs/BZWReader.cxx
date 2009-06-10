@@ -60,10 +60,11 @@
 #include "bzfs.h"
 
 
-BZWReader::BZWReader(const std::string &filename) : cURLManager(),
-					     location(filename),
-					     input(NULL),
-					     fromBlob(false)
+BZWReader::BZWReader(const std::string &filename)
+: cURLManager()
+, location(filename)
+, input(NULL)
+, fromBlob(false)
 {
   static const std::string httpProtocol("http://");
   static const std::string ftpProtocol("ftp://");
@@ -338,6 +339,17 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     else if (buffer[0] == '#') {
       // ignore comment
     }
+    else if (strncmp(buffer, "//", 2) == 0) {
+      // ignore comment
+    }
+    else if (strncmp(buffer, "/*", 2) == 0) {
+      std::string args;
+      std::vector<std::string> commentLines;
+      if (!readRawLines(args, commentLines, "*/", lineNum)) {
+        errorHandler->fatalError("missing block comment termination, \"*/\"", lineNum);
+        return false;
+      }
+    }
     else if (strcasecmp(buffer, "end") == 0) {
       if (!object) {
 	errorHandler->fatalError("unexpected \"end\" token", lineNum);
@@ -430,6 +442,11 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
         errorHandler->fatalError("missing \"end\" for \"options\"", lineNum);
         return false;
       }
+      if (clOptions == NULL) {
+        errorHandler->fatalError("INTERNAL ERROR: options without clOptions", lineNum);
+        return false;
+      }
+      clOptions->parseWorldOptions(optionLines);
     }
     else if (strcasecmp(buffer, "info") == 0) {
       std::string args;
@@ -468,6 +485,10 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  TextUtils::format("including \"%s\" within an obstacle, skipping",
 			    incName.c_str()), lineNum);
       }
+    }
+    else {
+      errorHandler->warning(
+        TextUtils::format("unknown token \"%s\"", buffer), lineNum);
     }
 
     // discard remainder of line

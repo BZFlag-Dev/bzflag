@@ -50,7 +50,7 @@
 #include "SpawnPolicyFactory.h"
 
 
-const char *usageString =
+static const char *usageString =
   "[-admsg <text>] "
   "[-advertise <group,group...>] "
   "[-autoTeam] "
@@ -148,7 +148,7 @@ const char *usageString =
   "[-world <filename>] "
   "[-worldsize <world size>] ";
 
-const char *extraUsageString =
+static const char *extraUsageString =
   "\n"
   "BZFS Option Descriptions\n"
   "\n"
@@ -274,63 +274,103 @@ static std::vector<std::string> storedFlagDisallows;
 static std::vector<std::string> storedFlagCounts;
 static std::map<std::string, int> storedFlagLimits;
 
+// with +s all flags are required to exist all the time
+static bool allFlagsOut = false;
+
+
+//============================================================================//
 /* private */
 
 static void printVersion()
 {
-  std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
-    ") http://BZFlag.org/" << std::endl;
+  std::cout << "BZFlag server " << getAppVersion()
+            << " (protocol " << getProtocolVersion()
+            << ") http://BZFlag.org/" << std::endl;
   std::cout << bzfcopyright << std::endl;
   std::cout.flush();
 }
 
-static void usage(const char *pname)
+
+static void usage(const std::string& pname)
 {
   printVersion();
   std::cerr << std::endl << "Usage: " << pname << ' ' << usageString << std::endl;
   exit(1);
 }
 
-static void extraUsage(const char *pname)
+
+static void extraUsage(const std::string& pname)
 {
   char buffer[64];
   printVersion();
   std::cout << std::endl << "Usage: " << pname << ' ' << usageString << std::endl;
   std::cout << std::endl << extraUsageString << std::endl << "Flag codes:" << std::endl;
-  for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
-    snprintf(buffer, 64, "\t%2.2s %s\n", (*it->second).flagAbbv.c_str(), (*it->second).flagName.c_str());
+  const FlagTypeMap& flagMap = FlagType::getFlagMap();
+  FlagTypeMap::const_iterator it;
+  for (it = flagMap.begin(); it != flagMap.end(); ++it) {
+    snprintf(buffer, 64, "\t%2.2s %s\n",
+             (*it->second).flagAbbv.c_str(), (*it->second).flagName.c_str());
     std::cout << buffer;
   }
   exit(0);
 }
 
-static void checkArgc(int count, int& i, int argc, const char* option, const char *type = NULL)
-{
-  if ((i+count) >= argc) {
-    if (count > 1) {
-      std::cerr << "ERROR: " << count << " argument(s) expected for " << option << std::endl;
-    } else if (type != NULL) {
-      std::cerr << "ERROR: " << type << " argument expected for " << option << std::endl;
-    } else {
-      std::cerr << "ERROR: argument expected for " << option << std::endl;
-    }
-    usage("bzfs");
-  }
 
-  i++; // just skip the option argument string
-}
-
-static void checkFromWorldFile (const char *option, bool fromWorldFile)
+static void checkFromWorldFile(const std::string& option, bool fromWorldFile)
 {
   if (fromWorldFile) {
-    std::cerr << "ERROR: option [" << option << "] cannot be set within a world file" << std::endl;
+    std::cerr << "ERROR: option [" << option
+              << "] cannot be set within a world file" << std::endl;
     usage("bzfs");
   }
 }
 
 
-static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
+static int parseIntArg(int& i, const std::vector<std::string>& tokens,
+                       int offset = 0)
 {
+  if ((i + 1) >= (int)tokens.size()) {
+    std::cerr << "ERROR: integer argument expected for "
+              << tokens[i - offset] << std::endl;
+    usage("bzfs");
+  }
+  i++; // skip the option argument string
+  return atoi(tokens[i].c_str());
+}
+
+
+static float parseFloatArg(int& i, const std::vector<std::string>& tokens,
+                           int offset = 0)
+{
+  if ((i + 1) >= (int)tokens.size()) {
+    std::cerr << "ERROR: float argument expected for "
+              << tokens[i - offset] << std::endl;
+    usage("bzfs");
+  }
+  i++; // skip the option argument string
+  return (float)atof(tokens[i].c_str());
+}
+
+
+static std::string parseStringArg(int& i, const std::vector<std::string>& tokens,
+                                  int offset = 0)
+{
+  if ((i + 1) >= (int)tokens.size()) {
+    std::cerr << "ERROR: string argument expected for "
+              << tokens[i - offset] << std::endl;
+    usage("bzfs");
+  }
+  i++; // skip the option argument string
+  return tokens[i];
+}
+
+
+//============================================================================//
+
+bool CmdLineOptions::parsePlayerCount(const std::string& arg)
+{
+  const char* argv = arg.c_str();
+
   /* either a single number or 5 or 6 optional numbers separated by
    * 4 or 5 (mandatory) commas.
    */
@@ -352,10 +392,10 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     // no team size limit by default for real teams, set it to max players
     int i;
     for (i = 0; i < CtfTeams ; i++) {
-      options.maxTeam[i] = maxRealPlayers;
+      maxTeam[i] = maxRealPlayers;
     }
     // allow 5 Observers by default
-    options.maxTeam[ObserverTeam] = 5;
+    maxTeam[ObserverTeam] = 5;
 
     // now get the new counts
 
@@ -370,15 +410,15 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 	// got a number
 	countCount++;
 	if (count < 0) {
-	  options.maxTeam[i] = 0;
+	  maxTeam[i] = 0;
 	} else {
 	  if (count > maxRealPlayers) {
 	    if (i == ObserverTeam && count > MaxPlayers)
-	      options.maxTeam[i] = MaxPlayers;
+	      maxTeam[i] = MaxPlayers;
 	    else
-	      options.maxTeam[i] = maxRealPlayers;
+	      maxTeam[i] = maxRealPlayers;
 	  } else {
-	    options.maxTeam[i] = uint8_t(count);
+	    maxTeam[i] = uint8_t(count);
 	  }
 	}
       } // end if tail != scan
@@ -389,12 +429,12 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     // if no/zero players were specified, allow a bunch of rogues
     bool allZero = true;
     for (i = 0; i < CtfTeams; i++) {
-      if (options.maxTeam[i] != 0) {
+      if (maxTeam[i] != 0) {
 	allZero = false;
       }
     }
     if (allZero) {
-      options.maxTeam[RogueTeam] = MaxPlayers;
+      maxTeam[RogueTeam] = MaxPlayers;
     }
 
     // if all counts explicitly listed then add 'em up and set maxRealPlayers
@@ -402,7 +442,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     if (countCount >= CtfTeams && maxRealPlayers == MaxPlayers) {
       maxRealPlayers = 0;
       for (i = 0; i < CtfTeams ; i++) {
-	maxRealPlayers += options.maxTeam[i];
+	maxRealPlayers += maxTeam[i];
       }
     }
 
@@ -425,12 +465,12 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
     }
     // limit max team size to max players
     for (int i = 0; i < CtfTeams ; i++) {
-      if (options.maxTeam[i] > maxRealPlayers)
-	options.maxTeam[i] = maxRealPlayers;
+      if (maxTeam[i] > maxRealPlayers)
+	maxTeam[i] = maxRealPlayers;
     }
   } // end check if comm-separated list
 
-  maxPlayers = maxRealPlayers + options.maxTeam[ObserverTeam];
+  maxPlayers = maxRealPlayers + maxTeam[ObserverTeam];
   if (maxPlayers > MaxPlayers) {
     maxPlayers = MaxPlayers;
   }
@@ -438,403 +478,413 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
   return true;
 }
 
-static char **parseConfFile(const char *file, int &ac)
+
+void CmdLineOptions::tokenizeLines(const std::vector<std::string>& lines,
+                                         std::vector<std::string>& tokens)
 {
+  for (size_t i = 0; i < lines.size(); i++) {
+    const std::string& line = lines[i];
+
+    int startPos = line.find_first_not_of(" \t\r\n");
+
+    while ((startPos >= 0) && (line.at(startPos) != '#')) {
+      int endPos;
+      if (line.at(startPos) == '"') {
+        startPos++;
+        endPos = line.find_first_of('"', startPos);
+      } else {
+        endPos = line.find_first_of("\t \r\n", startPos+1);
+      }
+      if (endPos < 0) {
+        endPos = line.length();
+      }
+      tokens.push_back(line.substr(startPos,endPos-startPos));
+      startPos = line.find_first_not_of("\t \r\n", endPos+1);
+    }
+  }
+}
+
+
+void CmdLineOptions::parseArgOptions(int argc, char** argv)
+{
+  // FIXME -- hack to clear static vars
+  storedFlagDisallows.clear();
+  storedFlagCounts.clear();
+  storedFlagLimits.clear();
+  allFlagsOut = false;
+
   std::vector<std::string> tokens;
-  ac = 0;
+  for (int i = 1; i < argc; i++) {
+    tokens.push_back(argv[i]);
+    // clear the password memory
+    if ((strcmp(argv[i - 1], "-passwd") == 0) ||
+        (strcmp(argv[i - 1], "-password") == 0)) {
+      memset(argv[i], 0, strlen(argv[i]));
+    }
+  }
+  parse(tokens, false);
+}
+
+
+void CmdLineOptions::parseFileOptions(const std::string& filePath)
+{
   char delim = '\n';
 
-  BZWError errorHandler(file);
+  BZWError errorHandler(filePath);
 
-  std::ifstream confStrm(file);
-  if (confStrm.is_open()) {
-    char buffer[1024];
-    confStrm.getline(buffer,1024,delim);
-
-    if (!confStrm.good()) {
-      //maybe its a Mac file and delim is \r
-      delim = '\r';
-      confStrm.seekg(0, std::ifstream::beg);
-      confStrm.clear();
-      confStrm.getline(buffer,1024,delim);
-      if(!confStrm.good()) {
-	errorHandler.fatalError(std::string("could not find bzflag configuration file on open"), 0);
-	exit(1);
-      }
-    }
-
-    confStrm.seekg(0, std::ifstream::beg);
-    while (confStrm.good()) {
-      confStrm.getline(buffer,1024,delim);
-      std::string line = buffer;
-      int startPos = line.find_first_not_of("\t \r\n");
-      while ((startPos >= 0) && (line.at(startPos) != '#')) {
-	int endPos;
-	if (line.at(startPos) == '"') {
-	  startPos++;
-	  endPos = line.find_first_of('"', startPos);
-	} else {
-	  endPos = line.find_first_of("\t \r\n", startPos+1);
-	}
-	if (endPos < 0)
-	  endPos = line.length();
-	tokens.push_back(line.substr(startPos,endPos-startPos));
-	startPos = line.find_first_not_of("\t \r\n", endPos+1);
-      }
-    }
-  } else {
+  std::ifstream confStrm(filePath.c_str());
+  if (!confStrm.is_open()) {
     errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
     exit(1);
   }
 
-  const char **av = new const char*[tokens.size()+1];
-  av[0] = strdup("bzfs");
-  ac = 1;
-  for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
-    av[ac++] = strdup((*it).c_str());
-  return (char **)av;
-}
 
-static char **parseWorldOptions (const char *file, int &ac)
-{
-  std::vector<std::string> tokens;
-  ac = 0;
+  char buffer[4096];
 
-  std::ifstream confStrm(file);
-  if (confStrm.is_open()) {
-    char buffer[1024];
-    confStrm.getline(buffer,1024);
-
+  confStrm.getline(buffer, sizeof(buffer), delim);
+  if (!confStrm.good()) {
+    // maybe it's a Mac file and delim is \r
+    delim = '\r';
+    confStrm.seekg(0, std::ifstream::beg);
+    confStrm.clear();
+    confStrm.getline(buffer, sizeof(buffer), delim);
     if (!confStrm.good()) {
-      std::cerr << "ERROR: world file [" << file << "] not found" << std::endl;
-      usage("bzfs");
-    }
-
-    while (confStrm.good()) {
-      std::string line = buffer;
-      int startPos = line.find_first_not_of("\t \r\n");
-      if (strncasecmp ("options", line.c_str() + startPos, 7) == 0) {
-	confStrm.getline(buffer,1024);
-	break;
-      }
-      confStrm.getline(buffer,1024);
-    }
-
-    while (confStrm.good()) {
-      std::string line = buffer;
-      int startPos = line.find_first_not_of("\t \r\n");
-      if (strncasecmp ("end", line.c_str() + startPos, 3) == 0) {
-	break;
-      }
-
-      while ((startPos >= 0) && (line.at(startPos) != '#')) {
-	int endPos;
-	if (line.at(startPos) == '"') {
-	  startPos++;
-	  endPos = line.find_first_of('"', startPos);
-	} else {
-	  endPos = line.find_first_of("\t \r\n", startPos+1);
-	}
-	if (endPos < 0)
-	  endPos = line.length();
-	tokens.push_back(line.substr(startPos,endPos-startPos));
-	startPos = line.find_first_not_of("\t \r\n", endPos+1);
-      }
-      confStrm.getline(buffer,1024);
+      errorHandler.fatalError(
+        std::string("could not find bzflag configuration file on open"), 0);
+      exit(1);
     }
   }
+  confStrm.seekg(0, std::ifstream::beg);
 
-  char **av = new char*[tokens.size()+1];
-  av[0] = strdup("bzfs");
-  ac = 1;
-  for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it)
-    av[ac++] = strdup((*it).c_str());
+  std::vector<std::string> lines;
 
-  return av;
+
+  while (confStrm.good()) {
+    confStrm.getline(buffer, sizeof(buffer), delim);
+    lines.push_back(buffer);
+  }
+
+  std::vector<std::string> tokens;
+  tokenizeLines(lines, tokens);
+
+  parse(tokens, false);
 }
 
 
-static bool allFlagsOut = false;
-
-void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
+void CmdLineOptions::parseWorldOptions(const std::vector<std::string>& lines)
 {
-  // prepare flag counts
-  int i;
+  std::vector<std::string> tokens;
+  tokenizeLines(lines, tokens);
+  parse(tokens, true);
+}
 
+
+//============================================================================//
+
+void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorldFile)
+{
   // InertiaGameStyle maintained just for compatibility
   // Same effect is achieved setting linear/angular Acceleration
-  options.gameOptions |= int(InertiaGameStyle);
+  gameOptions |= int(InertiaGameStyle);
 
   // parse command line
-  int playerCountArg = 0,playerCountArg2 = 0;
-  for (i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-admsg") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      if ((options.advertisemsg != "") || (strlen (argv[i]) == 0)) {
-	options.advertisemsg += "\\n";
+  int playerCountArg  = 0;
+  int playerCountArg2 = 0;
+
+  int argc = tokens.size();
+
+  for (int i = 0; i < (int)tokens.size(); i++) {
+
+    const std::string& token = tokens[i];
+
+    if (token == "-admsg") {
+      const std::string msg = parseStringArg(i, tokens);
+      if ((advertisemsg != "") || msg.empty()) {
+	advertisemsg += "\\n";
       }
-      options.advertisemsg += argv[i];
-    } else if (strcmp(argv[i], "-advertise") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      if (checkCommaList (argv[i], 2048))
+      advertisemsg += msg;
+    }
+    else if (token == "-advertise") {
+      const std::string adList = parseStringArg(i, tokens);
+      if (checkCommaList(adList, 2048)) {
 	std::cerr << "Invalid group list for -advertise" << std::endl;
-      else
-	options.advertiseGroups = argv[i];
-    } else if (strcmp(argv[i], "-autoTeam") == 0) {
-      options.autoTeam = true;
-    } else if (strcmp(argv[i], "-b") == 0) {
-      // random rotation to boxes in capture-the-flag game
-      options.randomBoxes = true;
-    } else if (strcmp(argv[i], "-badwords") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.filterFilename = argv[i];
-    } else if (strcmp(argv[i], "-ban") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.acl.ban(argv[i]);
-    } else if (strcmp(argv[i], "-banfile") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.acl.setBanFile(argv[i]);
-      if (!options.acl.load()) {
-	std::cerr << "ERROR: could not load banfile [" << argv[i] << "]" << std::endl;
-	usage(argv[0]);
-      }
-    } else if (TextUtils::compare_nocase(argv[i], "-botsPerIP") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.botsPerIP = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-c") == 0) {
-      // capture the flag style
-      if (options.gameType == RabbitChase) {
-	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-	std::cerr << "Capture the flag assumed" << std::endl;
-      }
-      options.gameType = ClassicCTF;
-    } else if (strcmp(argv[i], "-cache") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.cacheURL = argv[i];
-    } else if (strcmp(argv[i], "-cacheout") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.cacheOut = argv[i];
-    } else if (strcmp(argv[i], "-conf") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      int ac;
-      char **av;
-      av = parseConfFile(argv[i], ac);
-      // Theoretically we could merge the options specified in the conf file after parsing
-      // the cmd line options. But for now just override them on the spot
-      parse(ac, av, options);
-      for (int j = 0; j < ac; j++)
-	free(av[j]);
-      delete[] av;
-      options.numAllowedFlags = 0;
-    } else if (strcmp(argv[i], "-cr") == 0)  {
-      // CTF with random world
-      options.randomCTF = true;
-      // capture the flag style
-      if (options.gameType == RabbitChase)  {
-	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-	std::cerr << "Capture the flag assumed" << std::endl;
-      }
-      options.gameType = ClassicCTF;
-    } else if (strcmp(argv[i], "-density") ==0) {
-      if (i+1 != argc && isdigit(*argv[i+1])) {
-	options.citySize = atoi(argv[i+1]);
-	i++;
       } else {
-	checkArgc(1, i, argc, argv[i], "integer");
+	advertiseGroups = adList;
       }
-    } else if (strcmp(argv[i], "-disableBots") == 0) {
+    }
+    else if (token == "-autoTeam") {
+      autoTeam = true;
+    }
+    else if (token == "-b") {
+      // random rotation to boxes in capture-the-flag game
+      randomBoxes = true;
+    }
+    else if (token == "-badwords") {
+      filterFilename = parseStringArg(i, tokens);
+    }
+    else if (token == "-ban") {
+      acl.ban(parseStringArg(i, tokens).c_str());
+    }
+    else if (token == "-banfile") {
+      const std::string banFile = parseStringArg(i, tokens);
+      acl.setBanFile(banFile);
+      if (!acl.load()) {
+	std::cerr << "ERROR: could not load banfile ["
+	          << banFile << "]" << std::endl;
+	usage(execName);
+      }
+    }
+    else if (token == "-botsPerIP") {
+      botsPerIP = parseIntArg(i, tokens);
+    }
+    else if (token == "-c") {
+      // capture the flag style
+      if (gameType == RabbitChase) {
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
+      }
+      gameType = ClassicCTF;
+    }
+    else if (token == "-cache") {
+      cacheURL = parseStringArg(i, tokens);
+    }
+    else if (token == "-cacheout") {
+      cacheOut = parseStringArg(i, tokens);
+    }
+    else if (token == "-conf") {
+      checkFromWorldFile(token, fromWorldFile);
+      parseFileOptions(parseStringArg(i, tokens));
+      numAllowedFlags = 0; // FIXME - Huh, does a reset?
+    }
+    else if (token == "-cr")  {
+      // CTF with random world
+      randomCTF = true;
+      // capture the flag style
+      if (gameType == RabbitChase)  {
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
+      }
+      gameType = ClassicCTF;
+    }
+    else if (token == "-density") {
+      citySize = parseIntArg(i, tokens);
+    }
+    else if (token == "-disableBots") {
       // disallow clients from using autopilot or bots
       BZDB.set(StateDatabase::BZDB_DISABLEBOTS, "true");
-    } else if (strncmp(argv[i], "-d", 2) == 0) {
+    }
+    else if (strncmp(token.c_str(), "-d", 2) == 0) {
       // increase debug level - this must be the last
       // option beginning with -d so that -dd, -ddd, etc. work
       int count = 0;
-      char *scan;
-      for (scan = argv[i]+1; *scan == 'd'; scan++) count++;
+      const char *scan;
+      for (scan = token.c_str() + 1; *scan == 'd'; scan++) {
+        count++;
+      }
       if (*scan != '\0') {
-	std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
-	usage(argv[0]);
+	std::cerr << "ERROR: bad argument [" << token << "]" << std::endl;
+	usage(execName);
       }
       debugLevel += count;
       // std::cout << "Debug level is now " << debugLevel << "" << std::endl;
-    } else if (strcmp(argv[i], "-f") == 0) {
+    }
+    else if (token == "-f") {
       // disallow given flag
-      checkArgc(1, i, argc, argv[i]);
-      storedFlagDisallows.push_back(argv[i]);
-    } else if (strcmp(argv[i], "+f") == 0) {
+      storedFlagDisallows.push_back(parseStringArg(i, tokens));
+    }
+    else if (token == "+f") {
       // add required flag
-      checkArgc(1, i, argc, argv[i]);
-      storedFlagCounts.push_back(argv[i]);
-    } else if (strcmp(argv[i], "-fb") == 0) {
+      storedFlagCounts.push_back(parseStringArg(i, tokens));
+    }
+    else if (token == "-fb") {
       // flags on buildings
-      options.flagsOnBuildings = true;
-    } else if (strcmp(argv[i], "-filterAnnounce") == 0) {
-      options.filterAnnounce = true;
-    } else if (strcmp(argv[i], "-filterCallsigns") == 0) {
-      options.filterCallsigns = true;
-    } else if (strcmp(argv[i], "-filterChat") == 0) {
-      options.filterChat = true;
-    } else if (strcmp(argv[i], "-filterSimple") == 0) {
-      options.filterSimple = true;
-    } else if (strcmp(argv[i], "-freezeTag") == 0) {
-      options.gameOptions |= int(FreezeTagGameStyle);
-    } else if (strcmp(argv[i], "-g") == 0) {
-      options.oneGameOnly = true;
-    } else if (strcmp(argv[i], "-gndtex") == 0) {
-      checkArgc(1, i, argc, argv[i]);
+      flagsOnBuildings = true;
+    }
+    else if (token == "-filterAnnounce") {
+      filterAnnounce = true;
+    }
+    else if (token == "-filterCallsigns") {
+      filterCallsigns = true;
+    }
+    else if (token == "-filterChat") {
+      filterChat = true;
+    }
+    else if (token == "-filterSimple") {
+      filterSimple = true;
+    }
+    else if (token == "-freezeTag") {
+      gameOptions |= int(FreezeTagGameStyle);
+    }
+    else if (token == "-g") {
+      oneGameOnly = true;
+    }
+    else if (token == "-gndtex") {
+      const std::string texName = parseStringArg(i, tokens);
       BzMaterial material;
       material.setName("GroundMaterial");
-      material.setTexture(argv[i]);
+      material.setTexture(texName);
       MATERIALMGR.addMaterial(&material);
-    } else if (strcmp(argv[i], "-groupdb") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      groupsFile = argv[i];
-      std::cerr << "using group file \"" << argv[i] << "\"" << std::endl;
-    } else if (strcmp(argv[i], "-h") == 0) {
-      options.randomHeights = true;
-    } else if (strcmp(argv[i], "-help") == 0) {
-      extraUsage(argv[0]);
-    } else if (strcmp(argv[i], "-helpdir") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      OSDir d(argv[i]);
+    }
+    else if (token == "-groupdb") {
+      groupsFile = parseStringArg(i, tokens);
+      std::cerr << "using group file \"" << groupsFile << "\"" << std::endl;
+    }
+    else if (token == "-h") {
+      randomHeights = true;
+    }
+    else if (token == "-help") {
+      extraUsage(execName);
+    }
+    else if (token == "-helpdir") {
+      const std::string dirName = parseStringArg(i, tokens);
+      OSDir d(dirName);
       OSFile f;
-      options.helpDirs.push_back(d);
+      helpDirs.push_back(d);
       bool first;
       for(first = true; d.getNextFile(f, "*.txt", false); first = false) {
 	std::string path = f.getFullOSPath(), name = f.getFileName();
-	if (!options.textChunker.parseFile(path, name, 50, MessageLen))
+	if (!textChunker.parseFile(path, name, 50, MessageLen))
 	  std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
 	else
 	  logDebugMessage(3, "Loaded help message: %s", name.c_str());
       }
       if (first)
-	std::cerr << "WARNING: empty or inaccessible helpdir [" << argv[i] << "]" << std::endl;
-    } else if (strcmp(argv[i], "-helpmsg") == 0) {
-      checkArgc(2, i, argc, argv[i]);
-      if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
-	std::cerr << "ERROR: couldn't read helpmsg file [" << argv[i] << "]" << std::endl;
-	usage(argv[0]);
+	std::cerr << "WARNING: empty or inaccessible helpdir [" << dirName << "]" << std::endl;
+    }
+    else if (token == "-helpmsg") {
+      const std::string fileName = parseStringArg(i, tokens);
+      const std::string chunkName = parseStringArg(i, tokens, 1);
+      if (!textChunker.parseFile(fileName, chunkName, 50, MessageLen)) {
+	std::cerr << "ERROR: couldn't read helpmsg file ["
+	          << fileName << "]" << std::endl;
+	usage(execName);
       } else {
-	logDebugMessage(3, ("Loaded help message: %s\n"), argv[i]);
+	logDebugMessage(3, ("Loaded help message: %s\n"), chunkName.c_str());
       }
       i++;
-    } else if (strcmp(argv[i], "-i") == 0) {
+    }
+    else if (token == "-i") {
       // use a different interface
-      checkArgc(1, i, argc, argv[i]);
-      options.pingInterface = argv[i];
-    } else if (strcmp(argv[i], "-j") == 0) {
+      pingInterface = parseStringArg(i, tokens);
+    }
+    else if (token == "-j") {
       // allow jumping
-      options.gameOptions |= int(JumpingGameStyle);
-    } else if (strcmp(argv[i], "-handicap") == 0) {
+      gameOptions |= int(JumpingGameStyle);
+    }
+    else if (token == "-handicap") {
       // allow handicap advantage
-      options.gameOptions |= int(HandicapGameStyle);
-    } else if (strcmp(argv[i], "-jitterdrop") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.maxjitterwarn = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-jitterwarn") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.jitterwarnthresh = atoi(argv[i])/1000.0f;
-    } else if (strcmp(argv[i], "-lagdrop") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.maxlagwarn = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-lagwarn") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.lagwarnthresh = atoi(argv[i])/1000.0f;
-    } else if (strcmp(argv[i], "-loadplugin") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);
+      gameOptions |= int(HandicapGameStyle);
+    }
+    else if (token == "-jitterdrop") {
+      maxjitterwarn = parseIntArg(i, tokens);
+    }
+    else if (token == "-jitterwarn") {
+      jitterwarnthresh = (float)parseIntArg(i, tokens) / 1000.0f;
+    }
+    else if (token == "-lagdrop") {
+      maxlagwarn = parseIntArg(i, tokens);
+    }
+    else if (token == "-lagwarn") {
+      lagwarnthresh = (float)parseIntArg(i, tokens) / 1000.0f;
+    }
+    else if (token == "-loadplugin") {
+      const std::string pluginPath = parseStringArg(i, tokens);
+      std::vector<std::string> a =
+        TextUtils::tokenize(pluginPath, std::string(","), 2);
       CmdLineOptions::pluginDef	pDef;
       if (a.size() >= 1)
 	pDef.plugin = a[0];
       if (a.size() >= 2)
 	pDef.command = a[1];
       if (pDef.plugin.size())
-	options.pluginList.push_back(pDef);
-    } else if (strcmp(argv[i], "-maxidle") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.idlekickthresh = (float) atoi(argv[i]);
-    } else if (strcmp(argv[i], "-mp") == 0) {
+	pluginList.push_back(pDef);
+    }
+    else if (token == "-maxidle") {
+      idlekickthresh = (float)parseIntArg(i, tokens);
+    }
+    else if (token == "-mp") {
       // set maximum number of players
-      checkArgc(1, i, argc, argv[i]);
+      const int count = parseIntArg(i, tokens);
       // FIXME: lame var hacking
-      if (playerCountArg == 0)
-	playerCountArg = i;
-      else
-	playerCountArg2 = i;
-    } else if (strcmp(argv[i], "-mps") == 0) {
-      // set maximum player score
-      checkArgc(1, i, argc, argv[i]);
-      options.maxPlayerScore = atoi(argv[i]);
-      if (options.maxPlayerScore < 1) {
-	std::cerr << "disabling player score limit" << std::endl;
-	options.maxPlayerScore = 0;
+      if (playerCountArg == 0) {
+	playerCountArg = count;
+      } else {
+	playerCountArg2 = count;
       }
-    } else if (strcmp(argv[i], "-ms") == 0) {
+    }
+    else if (token == "-mps") {
+      // set maximum player score
+      maxPlayerScore = parseIntArg(i, tokens);
+      if (maxPlayerScore < 1) {
+	std::cerr << "disabling player score limit" << std::endl;
+	maxPlayerScore = 0;
+      }
+    }
+    else if (token == "-ms") {
       // set maximum number of shots
-      checkArgc(1, i, argc, argv[i]);
-      int newMaxShots = atoi(argv[i]);
+      const int newMaxShots = parseIntArg(i, tokens);
       if (newMaxShots == 0) {
 	std::cerr << "WARNING: tanks will not be able to shoot" << std::endl;
-	options.maxShots = 0;
+	maxShots = 0;
       } else if (newMaxShots < 1) {
 	std::cerr << "using minimum number of shots of 1" << std::endl;
-	options.maxShots = 1;
+	maxShots = 1;
       } else if (newMaxShots > MaxShots) {
 	std::cerr << "using maximum number of shots of " << MaxShots << std::endl;
-	options.maxShots = uint16_t(MaxShots);
+	maxShots = uint16_t(MaxShots);
       }
-      else options.maxShots = uint16_t(newMaxShots);
-    } else if (strcmp(argv[i], "-mts") == 0) {
+      else maxShots = uint16_t(newMaxShots);
+    }
+    else if (token == "-mts") {
       // set maximum team score
-      checkArgc(1, i, argc, argv[i]);
-      options.maxTeamScore = atoi(argv[i]);
-      if (options.maxTeamScore < 1) {
+      maxTeamScore = parseIntArg(i, tokens);
+      if (maxTeamScore < 1) {
 	std::cerr << "disabling team score limit" << std::endl;
-	options.maxTeamScore = 0;
+	maxTeamScore = 0;
       }
-    } else if (strcmp(argv[i],"-noMasterBanlist") == 0) {
-      options.suppressMasterBanList = true;
-    } else if (strcmp(argv[i],"-noradar") == 0) {
+    }
+    else if (token == "-noMasterBanlist") {
+      suppressMasterBanList = true;
+    }
+    else if (token == "-noradar") {
       BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
-    } else if (strcmp(argv[i],"-masterBanURL") == 0) {
-      /* if this is the first master ban url, override the default
-       * list.  otherwise just keep adding urls.
-       */
-      if (!options.masterBanListOverridden) {
-	options.masterBanListURL.clear();
-	options.masterBanListOverridden = true;
+    }
+    else if (token == "-masterBanURL") {
+      // if this is the first master ban url, override the default
+      // list.  otherwise just keep adding urls.
+      if (!masterBanListOverridden) {
+	masterBanListURL.clear();
+	masterBanListOverridden = true;
       }
-      checkArgc(1, i, argc, argv[i]);
-      options.masterBanListURL.push_back(argv[i]);
-    } else if (strcmp(argv[i], "-noTeamKills") == 0) {
+      masterBanListURL.push_back(parseStringArg(i, tokens));
+    }
+    else if (token == "-noTeamKills") {
       // forbid team kills
-      options.gameOptions |= int(NoTeamKills);
-    } else if (strcmp(argv[i], "-p") == 0) {
+      gameOptions |= int(NoTeamKills);
+    }
+    else if (token == "-p") {
       // use a different port
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      options.wksPort = atoi(argv[i]);
-      if (options.wksPort < 1 || options.wksPort > 65535)
-	options.wksPort = ServerPort;
-      else
-	options.useGivenPort = true;
-    } else if (strcmp(argv[i], "-packetlossdrop") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.maxpacketlosswarn = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-packetlosswarn") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
-    }  else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      // at least put password someplace that ps won't see
-      options.password = argv[i];
-      memset(argv[i], ' ', options.password.size());
-    } else if (strcmp(argv[i], "-pidfile") == 0) {
+      checkFromWorldFile(token, fromWorldFile);
+      wksPort = parseIntArg(i, tokens);
+      if (wksPort < 1 || wksPort > 65535) {
+	wksPort = ServerPort;
+      } else {
+	useGivenPort = true;
+      }
+    }
+    else if (token == "-packetlossdrop") {
+      maxpacketlosswarn = parseIntArg(i, tokens);
+    }
+    else if (token == "-packetlosswarn") {
+      packetlosswarnthresh = (float)parseIntArg(i, tokens) / 1000.0f;
+    }  else if (token == "-passwd" || token == "-password") {
+      checkFromWorldFile(token, fromWorldFile);
+      password = parseStringArg(i, tokens);
+    }
+    else if (token == "-pidfile") {
       unsigned int pid = 0;
-      checkArgc(1, i, argc, argv[i]);
-      FILE *fp = fopen(argv[i], "wt");
+      const std::string pidFile = parseStringArg(i, tokens);
+      FILE *fp = fopen(pidFile.c_str(), "wt");
 #ifndef HAVE_PROCESS_H
       pid = getpid();
 #else
@@ -844,151 +894,161 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	fprintf(fp, "%d", pid);
 	fclose(fp);
       }
-    }  else if (strcmp(argv[i], "-pf") == 0) {
+    }  else if (token == "-pf") {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
-      options.useFallbackPort = true;
-    } else if (strcmp(argv[i], "-poll") == 0) {
+      useFallbackPort = true;
+    }
+    else if (token == "-poll") {
       // parse the variety of poll system variables
-      checkArgc(1, i, argc, argv[i]);
-
-      std::vector<std::string> args = TextUtils::tokenize(argv[i], std::string("="), 2, true);
+      std::vector<std::string> args =
+        TextUtils::tokenize(parseStringArg(i, tokens), "=", 2, true);
       if (args.size() != 2) {
 	std::cerr << "ERROR: expected -poll variable=value" << std::endl;
-	usage(argv[0]);
+	usage(execName);
       }
 
-      if (TextUtils::compare_nocase(args[0], "bantime") == 0) {
-	options.banTime = (unsigned short int)atoi(args[1].c_str());
-      } else if (TextUtils::compare_nocase(args[0], "vetotime") == 0) {
-	options.vetoTime = (unsigned short int)atoi(args[1].c_str());
-      } else if (TextUtils::compare_nocase(args[0], "votepercentage") == 0) {
-	options.votePercentage = (float)atof(args[1].c_str());
-      } else if (TextUtils::compare_nocase(args[0], "voterepeattime") == 0) {
-	options.voteRepeatTime = (unsigned short int)atoi(args[1].c_str());
-      } else if (TextUtils::compare_nocase(args[0], "votesrequired") == 0) {
-	options.votesRequired = (unsigned short int)atoi(args[1].c_str());
-      } else if (TextUtils::compare_nocase(args[0], "votetime") == 0) {
-	options.voteTime = (unsigned short int)atoi(args[1].c_str());
+      const std::string lower = TextUtils::tolower(args[0]);
+      const unsigned short int uint16Value = atoi(args[1].c_str());
+      if (lower == "bantime") {
+	banTime = uint16Value;
+      } else if (lower == "vetotime") {
+	vetoTime = uint16Value;
+      } else if (lower == "voterepeattime") {
+	voteRepeatTime = uint16Value;
+      } else if (lower == "votesrequired") {
+	votesRequired = uint16Value;
+      } else if (lower == "votetime") {
+	voteTime = uint16Value;
+      } else if (lower == "votepercentage") {
+	votePercentage = (float)atof(args[1].c_str());
       } else {
 	std::cerr << "ERROR: unknown variable for -poll, skipping";
       }
-    } else if (strcmp(argv[i], "-printscore") == 0) {
+    }
+    else if (token == "-printscore") {
       // dump score whenever it changes
-      options.printScore = true;
-    } else if (strcmp(argv[i], "-processor") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.processorAffinity = atoi(argv[i]);
-    } else if (strcmp(argv[i], "-public") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.publicizeServer = true;
-      options.publicizedTitle = argv[i];
-      if (options.publicizedTitle.length() > 127) {
-	argv[i][127] = '\0';
+      printScore = true;
+    }
+    else if (token == "-processor") {
+      processorAffinity = parseIntArg(i, tokens);
+    }
+    else if (token == "-public") {
+      publicizeServer = true;
+      publicizedTitle = parseStringArg(i, tokens);
+      if (publicizedTitle.length() > 127) {
+	publicizedTitle.resize(127);
 	std::cerr << "description too long... truncated" << std::endl;
       }
-    } else if (strcmp(argv[i], "-publicaddr") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      options.publicizedAddress = argv[i];
-      options.publicizeServer = true;
-    } else if (strcmp(argv[i], "-publiclist") == 0) {
-      /* if this is the first -publiclist, override the default list
-       * server.  otherwise just keep adding urls.
-       */
-      if (!options.listServerOverridden) {
-	options.listServerURL.clear();
-	options.listServerOverridden = true;
+    }
+    else if (token == "-publicaddr") {
+      checkFromWorldFile(token, fromWorldFile);
+      publicizedAddress = parseStringArg(i, tokens);
+      publicizeServer = true;
+    }
+    else if (token == "-publiclist") {
+      // if this is the first -publiclist, override the default list
+      // server.  otherwise just keep adding urls.
+      if (!listServerOverridden) {
+	listServerURL.clear();
+	listServerOverridden = true;
       }
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      options.listServerURL.push_back(argv[i]);
-    } else if (strcmp(argv[i], "-q") == 0) {
+      checkFromWorldFile(token, fromWorldFile);
+      listServerURL.push_back(parseStringArg(i, tokens));
+    }
+    else if (token == "-q") {
       // don't handle pings
-      checkFromWorldFile(argv[i], fromWorldFile);
+      checkFromWorldFile(token, fromWorldFile);
       handlePings = false;
-    } else if (strcmp(argv[i], "+r") == 0) {
+    }
+    else if (token == "+r") {
       // all shots ricochet style
-      options.gameOptions |= int(RicochetGameStyle);
-    } else if (strcmp(argv[i], "-rabbit") == 0)	{
+      gameOptions |= int(RicochetGameStyle);
+    }
+    else if (token == "-rabbit")	{
       // rabbit chase style
-      if (options.gameType == ClassicCTF) {
+      if (gameType == ClassicCTF) {
 	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
 	std::cerr << "Rabbit Chase assumed" << std::endl;
       }
-      options.gameType = RabbitChase;
+      gameType = RabbitChase;
 
       // default selection style
-      options.rabbitSelection = ScoreRabbitSelection;
+      rabbitSelection = ScoreRabbitSelection;
 
       // if there are any arguments following, see if they are a
       // rabbit selection styles.
-      if (i+1 != argc) {
-	if (strcmp(argv[i+1], "score") == 0) {
-	  options.rabbitSelection = ScoreRabbitSelection;
+      if ((i + 1) != argc) {
+        const std::string& style = tokens[i + 1];
+	if (style == "score") {
+	  rabbitSelection = ScoreRabbitSelection;
 	  i++;
-	} else if (strcmp(argv[i+1], "killer") == 0) {
-	  options.rabbitSelection = KillerRabbitSelection;
+	} else if (style == "killer") {
+	  rabbitSelection = KillerRabbitSelection;
 	  i++;
-	} else if (strcmp(argv[i+1], "random") == 0) {
-	  options.rabbitSelection = RandomRabbitSelection;
+	} else if (style == "random") {
+	  rabbitSelection = RandomRabbitSelection;
 	  i++;
 	}
       }
-    } else if (strcmp(argv[i], "-recbuf") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      Record::setSize (ServerPlayer, atoi(argv[i]));
-      options.startRecording = true;
-    } else if (strcmp(argv[i], "-recbufonly") == 0) {
-      Record::setAllowFileRecs (false);
-    } else if (strcmp(argv[i], "-recdir") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      Record::setDirectory (argv[i]);
-    } else if (strcmp(argv[i], "-replay") == 0) {
-      options.replayServer = true;
-    } else if (strcmp(argv[i], "-reportfile") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.reportFile = argv[i];
-    } else if (strcmp(argv[i], "-reportpipe") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.reportPipe = argv[i];
-    } else if (strcmp(argv[i], "-tkannounce") == 0) {
-      options.tkAnnounce = true;
-    } else if (strcmp(argv[i], "+s") == 0 || strcmp(argv[i], "-s") == 0) {
+    }
+    else if (token == "-recbuf") {
+      Record::setSize(ServerPlayer, parseIntArg(i, tokens));
+      startRecording = true;
+    }
+    else if (token == "-recbufonly") {
+      Record::setAllowFileRecs(false);
+    }
+    else if (token == "-recdir") {
+      Record::setDirectory(parseStringArg(i, tokens).c_str());
+    }
+    else if (token == "-replay") {
+      replayServer = true;
+    }
+    else if (token == "-reportfile") {
+      reportFile = parseStringArg(i, tokens);
+    }
+    else if (token == "-reportpipe") {
+      reportPipe = parseStringArg(i, tokens);
+    }
+    else if (token == "-tkannounce") {
+      tkAnnounce = true;
+    }
+    else if (token == "+s" || token == "-s") {
       // with +s all flags are required to exist all the time
-      allFlagsOut = argv[i][0] == '+' ? true : false;
+      allFlagsOut = token[0] == '+' ? true : false;
       // set number of random flags
-      if (i+1 < argc && isdigit(argv[i+1][0])) {
-	++i;
-	if ((options.numExtraFlags = atoi(argv[i])) == 0)
-	  options.numExtraFlags = 16;
+      if (((i + 1) < argc) && isdigit(tokens[i + 1][0])) {
+        numExtraFlags = parseIntArg(i, tokens);
+	if (numExtraFlags  == 0) {
+	  numExtraFlags = 16;
+        }
       } else {
-	options.numExtraFlags = 16;
+	numExtraFlags = 16;
       }
-    } else if (strcmp(argv[i], "-sa") == 0) {
+    }
+    else if (token == "-sa") {
       // insert antidote flags
-      options.gameOptions |= int(AntidoteGameStyle);
-    } else if (strcmp(argv[i], "-sb") == 0) {
+      gameOptions |= int(AntidoteGameStyle);
+    }
+    else if (token == "-sb") {
       // respawns on buildings
-      options.respawnOnBuildings = true;
-    } else if (strcmp(argv[i], "-set") == 0) {
-      const char *name, *value;
-      checkArgc(2, i, argc, argv[i]);
-      name = argv[i];
+      respawnOnBuildings = true;
+    }
+    else if (token == "-set") {
+      const std::string name = parseStringArg(i, tokens);
+      const std::string value = parseStringArg(i, tokens, 1);
       if (!BZDB.isSet(name)) {
 	std::cerr << "ERROR: unknown BZDB variable specified [" << name << "]" << std::endl;
 	exit(1);
       }
-      i++;
-      value = argv[i];
       BZDB.set(name, value);
-      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
-    } else if (strcmp(argv[i], "-setforced") == 0) {
-      const char *name, *value;
-      checkArgc(2, i, argc, argv[i]);
-      name = argv[i];
-      i++;
-      value = argv[i];
+      logDebugMessage(1, "set variable: %s = %s\n",
+                      name.c_str(), BZDB.get(name).c_str());
+    }
+    else if (token == "-setforced") {
+      const std::string name = parseStringArg(i, tokens);
+      const std::string value = parseStringArg(i, tokens, 1);
       const bool exists = BZDB.isSet(name);
       if (exists) {
 	std::cerr << "-setforced: " << name << " already exists" << std::endl;
@@ -996,111 +1056,124 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	addBzfsCallback(name, NULL);
       }
       BZDB.set(name, value);
-      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
-    } else if (strcmp(argv[i], "-sl") == 0) {
+      logDebugMessage(1, "set variable: %s = %s\n",
+                      name.c_str(), BZDB.get(name).c_str());
+    }
+    else if (token == "-sl") {
       // shot limits
-      checkArgc(2, i, argc, argv[i]);
-      i++; // move past the flag descriptor for now (we'll store it in a bit)
+      const std::string flagType = parseStringArg(i, tokens);
+      const std::string limitStr = parseStringArg(i, tokens, 1);
       int x = 1;
-      if (isdigit(argv[i][0])) {
-	x = atoi(argv[i]);
+      if (isdigit(limitStr[0])) {
+	x = atoi(limitStr.c_str());
 	if (x < 1) {
 	  std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
 	  x = 1;
 	}
       } else {
-	std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
-	usage(argv[0]);
+	std::cerr << "ERROR: invalid shot limit [" << limitStr << "]" << std::endl;
+	usage(execName);
       }
-      storedFlagLimits[argv[i-1]] = x;
-    } else if (strcmp(argv[i], "-spamtime") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.msgTimer = atoi(argv[i]);
-      std::cerr << "using spam time of " << options.msgTimer << std::endl;
-    } else if (strcmp(argv[i], "-spamwarn") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.spamWarnMax = atoi(argv[i]);
-      std::cerr << "using spam warn amount of " << options.spamWarnMax << std::endl;
-    } else if (TextUtils::compare_nocase(argv[i], "-spawnPolicy") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      bool validPolicy = SPAWNPOLICY.IsRegistered(argv[i]);
+      storedFlagLimits[flagType] = x;
+    }
+    else if (token == "-spamtime") {
+      msgTimer = parseIntArg(i, tokens);
+      std::cerr << "using spam time of " << msgTimer << std::endl;
+    }
+    else if (token == "-spamwarn") {
+      spamWarnMax = parseIntArg(i, tokens);
+      std::cerr << "using spam warn amount of " << spamWarnMax << std::endl;
+    }
+    else if (token == "-spawnPolicy") {
+      const std::string policy = parseStringArg(i, tokens);
+      bool validPolicy = SPAWNPOLICY.IsRegistered(policy);
       if (validPolicy) {
-	SPAWNPOLICY.setDefault(argv[i]);
-	std::cerr << "using " << argv[i] << " spawn policy" << std::endl;
+	SPAWNPOLICY.setDefault(policy);
+	std::cerr << "using " << policy << " spawn policy" << std::endl;
       } else {
-	std::cerr << "ERROR: unknown spawn policy specified [" << argv[i] << "]" << std::endl;
+	std::cerr << "ERROR: unknown spawn policy specified [" << policy << "]" << std::endl;
 	std::cerr << std::endl << "Available Policies" << std::endl << "------------------" << std::endl;
 	SPAWNPOLICY.Print(std::cerr);
 	std::cerr << std::endl;
-	usage(argv[0]);
+	usage(execName);
       }
-    } else if (strcmp(argv[i], "-speedtol") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      speedTolerance = (float) atof(argv[i]);
+    }
+    else if (token == "-speedtol") {
+      speedTolerance = parseFloatArg(i, tokens);
       std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"" << std::endl;
-    } else if (strcmp(argv[i], "-srvmsg") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      if ((options.servermsg != "") || (strlen (argv[i]) == 0)) {
-	options.servermsg += "\\n";
+    }
+    else if (token == "-srvmsg") {
+      const std::string msg = parseStringArg(i, tokens);
+      if ((servermsg != "") || msg.empty()) {
+	servermsg += "\\n";
       }
-      options.servermsg += argv[i];
-    } else if (strcmp(argv[i], "-st") == 0) {
+      servermsg += msg;
+    }
+    else if (token == "-st") {
       // set shake timeout
-      checkArgc(1, i, argc, argv[i]);
-      float timeout = (float)atof(argv[i]);
+      const float timeout = parseFloatArg(i, tokens);
       if (timeout < 0.1f) {
-	options.shakeTimeout = 1;
-	std::cerr << "using minimum shake timeout of " << 0.1f * (float)options.shakeTimeout << std::endl;
+	shakeTimeout = 1;
+	std::cerr << "using minimum shake timeout of " << 0.1f * (float)shakeTimeout << std::endl;
       } else if (timeout > 300.0f) {
-	options.shakeTimeout = 3000;
-	std::cerr << "using maximum shake timeout of " << 0.1f * (float)options.shakeTimeout << std::endl;
+	shakeTimeout = 3000;
+	std::cerr << "using maximum shake timeout of " << 0.1f * (float)shakeTimeout << std::endl;
       } else {
-	options.shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
+	shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
       }
-      options.gameOptions |= int(ShakableGameStyle);
-    } else if (strcmp(argv[i], "-sw") == 0) {
+      gameOptions |= int(ShakableGameStyle);
+    }
+    else if (token == "-sw") {
       // set shake win count
-      checkArgc(1, i, argc, argv[i]);
-      int count = atoi(argv[i]);
+      const int count = parseIntArg(i, tokens);
       if (count < 1) {
-	options.shakeWins = 1;
-	std::cerr << "using minimum shake win count of " << options.shakeWins << std::endl;
+	shakeWins = 1;
+	std::cerr << "using minimum shake win count of " << shakeWins << std::endl;
       } else if (count > 20) {
-	options.shakeWins = 20;
-	std::cerr << "using maximum ttl of " << options.shakeWins << std::endl;
+	shakeWins = 20;
+	std::cerr << "using maximum ttl of " << shakeWins << std::endl;
       } else {
-	options.shakeWins = uint16_t(count);
+	shakeWins = uint16_t(count);
       }
-      options.gameOptions |= int(ShakableGameStyle);
-    } else if (strcmp(argv[i], "-synctime") == 0) {
+      gameOptions |= int(ShakableGameStyle);
+    }
+    else if (token == "-synctime") {
       // client clocks should be synchronized to server clock
       BZDB.set(StateDatabase::BZDB_SYNCTIME, "1.0"); // any positive number
-    } else if (strcmp(argv[i], "-synclocation") == 0) {
+    }
+    else if (token == "-synclocation") {
       // client coordinates should be set to server coordinates
       BZDB.set(StateDatabase::BZDB_SYNCLOCATION, "true");
-    } else if (strcmp(argv[i], "-t") == 0) {
+    }
+    else if (token == "-t") {
       // allow teleporters
-      options.useTeleporters = true;
-      if (options.worldFile != "")
+      useTeleporters = true;
+      if (worldFile != "")
 	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
-    } else if (strcmp(argv[i], "-offa") == 0) {
+    }
+    else if (token == "-offa") {
       // teamless ffa style
-      if (options.gameType == RabbitChase || options.gameType == ClassicCTF) {
+      if (gameType == RabbitChase || gameType == ClassicCTF) {
 	std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
 	std::cerr << "Open Free-for-all assumed" << std::endl;
       }
-      options.gameType = OpenFFA;
-    } else if (strcmp(argv[i], "-tftimeout") == 0) {
+      gameType = OpenFFA;
+    }
+    else if (token == "-tftimeout") {
       // use team flag timeout
-      checkArgc(1, i, argc, argv[i]);
-      options.teamFlagTimeout = atoi(argv[i]);
-      if (options.teamFlagTimeout < 0)
-	options.teamFlagTimeout = 0;
-      std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds" << std::endl;
-    } else if (strcmp(argv[i], "-time") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      if (strchr(argv[i], ':')) {
-	std::vector<std::string> endTime = TextUtils::tokenize(argv[i], std::string(":"));
+      teamFlagTimeout = parseIntArg(i, tokens);
+      if (teamFlagTimeout < 0) {
+	teamFlagTimeout = 0;
+      }
+      std::cerr << "using team flag timeout of " << teamFlagTimeout << " seconds" << std::endl;
+    }
+    else if (token == "-time") {
+      const std::string timeStr = parseStringArg(i, tokens);
+      if (timeStr.find(':') == std::string::npos) {
+	timeLimit = (float)atof(timeStr.c_str());
+      }
+      else {
+	std::vector<std::string> endTime = TextUtils::tokenize(timeStr, std::string(":"));
 	{
 	  unsigned int sizer = endTime.size();
 	  while (sizer != 3) {
@@ -1109,7 +1182,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	  }
 	  if (sizer > 3) {
 	    std::cerr << "ERROR: too many arguments to -time" << std::endl;
-	    usage(argv[0]);
+	    usage(execName);
 	  }
 	}
 	time_t tnow = time(0);
@@ -1120,86 +1193,84 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	  cmdSec = atoi(endTime[2].c_str());
 	unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
 	  secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
-	if (secsToday > secsTill) //if the requested time has already past
-	  options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
-	else
-	  options.timeLimit = (float)(secsTill - secsToday);
-      } else {
-	options.timeLimit = (float)atof(argv[i]);
+	if (secsToday > secsTill) { //if the requested time has already past
+	  timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
+	} else {
+	  timeLimit = (float)(secsTill - secsToday);
+        }
       }
-      if (options.timeLimit <= 0.0f) {
+      if (timeLimit <= 0.0f) {
 	// league matches are 30 min
-	options.timeLimit = 1800.0f;
+	timeLimit = 1800.0f;
       }
-      std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
-      options.timeElapsed = options.timeLimit;
-    } else if (strcmp(argv[i], "-timemanual") == 0) {
-      options.timeManualStart = true;
-    } else if (strcmp(argv[i], "-tk") == 0) {
+      std::cerr << "using time limit of " << (int)timeLimit << " seconds" << std::endl;
+      timeElapsed = timeLimit;
+    }
+    else if (token == "-timemanual") {
+      timeManualStart = true;
+    }
+    else if (token == "-tk") {
       // team killer does not die
-      options.teamKillerDies = false;
-    } else if (strcmp(argv[i], "-tkkr") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.teamKillerKickRatio = atoi(argv[i]);
-      if (options.teamKillerKickRatio < 0) {
-	options.teamKillerKickRatio = 0;
+      teamKillerDies = false;
+    }
+    else if (token == "-tkkr") {
+      teamKillerKickRatio = parseIntArg(i, tokens);
+      if (teamKillerKickRatio < 0) {
+	teamKillerKickRatio = 0;
 	std::cerr << "disabling team killer kick ratio";
       }
-    } else if (strcmp(argv[i], "-ts") == 0) {
+    }
+    else if (token == "-ts") {
       // timestamp output
-      options.timestampLog = true;
+      timestampLog = true;
       // if there is an argument following, see if it is 'micros'
-      if (i+1 != argc) {
-	if (TextUtils::compare_nocase(argv[i+1], "micros") == 0) {
-	  options.timestampMicros = true;
+      if ((i + 1) != argc) {
+	if (TextUtils::compare_nocase(tokens[i + 1], "micros") == 0) {
+	  timestampMicros = true;
 	  i++;
 	}
       }
-    } else if (strcmp(argv[i], "-userdb") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      userDatabaseFile = argv[i];
-      std::cerr << "using userDB file \"" << argv[i] << "\"" << std::endl;
-    } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
+    }
+    else if (token == "-userdb") {
+      userDatabaseFile = parseStringArg(i, tokens);
+      std::cerr << "using userDB file \"" << userDatabaseFile << "\"" << std::endl;
+    }
+    else if (token == "-v" || token == "-version") {
       printVersion();
       exit(0);
-    } else if (strcmp(argv[i], "-vars") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      options.bzdbVars = argv[i];
-    } else if (strcmp(argv[i], "-world") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      options.worldFile = argv[i];
-      int ac;
-      char **av = parseWorldOptions(argv[i], ac);
-      parse(ac, av, options, true); // true - from a world file
+    }
+    else if (token == "-vars") {
+      bzdbVars = parseStringArg(i, tokens);
+    }
+    else if (token == "-world") {
+      checkFromWorldFile(token, fromWorldFile);
+      worldFile = parseStringArg(i, tokens);
 
-      for (int j = 0; j < ac; j++)
-	free(av[j]);
-      delete[] av;
+      numAllowedFlags = 0; // FIXME - Huh, does a reset?
 
-      options.numAllowedFlags = 0; // FIXME - Huh, does a reset?
-
-      if (options.useTeleporters)
+      if (useTeleporters) {
 	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
-    } else if (strcmp(argv[i], "-worldsize") == 0) {
-      checkArgc(1, i, argc, argv[i]);
-      BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
+      }
+    }
+    else if (token == "-worldsize") {
+      BZDB.set(StateDatabase::BZDB_WORLDSIZE,
+               TextUtils::format("%d", parseIntArg(i, tokens) * 2));
       std::cerr << "using world size of [" << BZDBCache::worldSize << "]" << std::endl;
     } else {
-      std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
-      usage(argv[0]);
+      std::cerr << "ERROR: bad argument [" << token << "]" << std::endl;
+      usage(execName);
     }
   }
 
   // get player counts.  done after other arguments because we need
   // to ignore counts for rogues if rogues aren't allowed.
-  if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options)) {
+  if ((playerCountArg > 0) && !parsePlayerCount(tokens[playerCountArg])) {
     std::cerr << "ERROR: unable to parse the player count (check -mp option)" << std::endl;
-    usage(argv[0]);
+    usage(execName);
   }
-  if ((playerCountArg2 > 0) && !parsePlayerCount(argv[playerCountArg2], options)) {
+  if ((playerCountArg2 > 0) && !parsePlayerCount(tokens[playerCountArg2])) {
     std::cerr << "ERROR: unable to parse the player count (check -mp option)" << std::endl;
-    usage(argv[0]);
+    usage(execName);
   }
 
   return;
@@ -1254,20 +1325,19 @@ static int addZoneTeamFlags(int startIndex,
 }
 
 
-void finalizeParsing(int /*argc*/, char **argv,
-		     CmdLineOptions &options, EntryZones& entryZones)
+void CmdLineOptions::finalizeParsing(EntryZones& entryZones)
 {
-  if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {
+  if (flagsOnBuildings && !(gameOptions & JumpingGameStyle)) {
     std::cout << "WARNING: flags on boxes without jumping is potentially unsafe" << std::endl;
   }
 
-  if (options.gameType == RabbitChase) {
+  if (gameType == RabbitChase) {
     for (int j = RedTeam; j <= PurpleTeam; j++) {
-      if (options.maxTeam[j] > 0
-	  && options.maxTeam[RogueTeam] != maxRealPlayers)
+      if (maxTeam[j] > 0
+	  && maxTeam[RogueTeam] != maxRealPlayers)
 	std::cout << "only rogues are allowed in Rabbit Chase; zeroing out "
 		  << Team::getName((TeamColor) j) << std::endl;
-      options.maxTeam[j] = 0;
+      maxTeam[j] = 0;
     }
   }
 
@@ -1277,18 +1347,18 @@ void finalizeParsing(int /*argc*/, char **argv,
     if (strcmp(vsitr->c_str(), "bad") == 0) {
       FlagSet badFlags = Flag::getBadFlags();
       for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-	options.flagDisallowed[*it] = true;
+	flagDisallowed[*it] = true;
     } else if (strcmp(vsitr->c_str(), "good") == 0) {
       FlagSet goodFlags = Flag::getGoodFlags();
       for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-	options.flagDisallowed[*it] = true;
+	flagDisallowed[*it] = true;
     } else {
       FlagType* fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
       if (fDesc == Flags::Null) {
 	std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
-	usage(argv[0]);
+	usage(execName);
       }
-      options.flagDisallowed[fDesc] = true;
+      flagDisallowed[fDesc] = true;
     }
   }
   storedFlagDisallows.clear();
@@ -1306,23 +1376,23 @@ void finalizeParsing(int /*argc*/, char **argv,
     if (strcmp(vsitr->c_str(), "good") == 0) {
       FlagSet goodFlags = Flag::getGoodFlags();
       for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-	options.flagCount[*it] += rptCnt;
+	flagCount[*it] += rptCnt;
     } else if (strcmp(vsitr->c_str(), "bad") == 0) {
       FlagSet badFlags = Flag::getBadFlags();
       for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-	options.flagCount[*it] += rptCnt;
+	flagCount[*it] += rptCnt;
     } else if (strcmp(vsitr->c_str(), "team") == 0) {
       for (int t = RedTeam; t <= PurpleTeam; t++)
-	options.numTeamFlags[t] += rptCnt;
+	numTeamFlags[t] += rptCnt;
     } else {
       FlagType *fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
       if (fDesc == Flags::Null) {
 	std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
-	usage(argv[0]);
+	usage(execName);
       } else if (fDesc->flagTeam != NoTeam) {
-	options.numTeamFlags[fDesc->flagTeam] += rptCnt;
+	numTeamFlags[fDesc->flagTeam] += rptCnt;
       } else {
-	options.flagCount[fDesc] += rptCnt;
+	flagCount[fDesc] += rptCnt;
       }
     }
   }
@@ -1331,7 +1401,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   // do we have any team flags?
   bool hasTeam = false;
   for (int p = RedTeam; p <= PurpleTeam; p++) {
-    if (options.maxTeam[p] > 1) {
+    if (maxTeam[p] > 1) {
       hasTeam = true;
       break;
     }
@@ -1341,15 +1411,15 @@ void finalizeParsing(int /*argc*/, char **argv,
   forbidden.insert(Flags::Null);
 
   // first disallow flags inconsistent with game style
-  if (options.gameOptions & JumpingGameStyle) {
+  if (gameOptions & JumpingGameStyle) {
     forbidden.insert(Flags::Jumping);
   } else {
     forbidden.insert(Flags::NoJumping);
   }
-  if (options.gameOptions & RicochetGameStyle)
+  if (gameOptions & RicochetGameStyle)
     forbidden.insert(Flags::Ricochet);
 
-  if (!options.useTeleporters && (options.worldFile == ""))
+  if (!useTeleporters && (worldFile == ""))
     forbidden.insert(Flags::PhantomZone);
 
   if (!hasTeam) {
@@ -1357,30 +1427,30 @@ void finalizeParsing(int /*argc*/, char **argv,
     forbidden.insert(Flags::Colorblindness);
     forbidden.insert(Flags::Masquerade);
   }
-  if ((options.gameType == ClassicCTF) == 0) {
+  if ((gameType == ClassicCTF) == 0) {
     forbidden.insert(Flags::RedTeam);
     forbidden.insert(Flags::GreenTeam);
     forbidden.insert(Flags::BlueTeam);
     forbidden.insert(Flags::PurpleTeam);
   }
-  if (options.maxTeam[RedTeam] <= 0)
+  if (maxTeam[RedTeam] <= 0)
     forbidden.insert(Flags::RedTeam);
 
-  if (options.maxTeam[GreenTeam] <= 0)
+  if (maxTeam[GreenTeam] <= 0)
     forbidden.insert(Flags::GreenTeam);
 
-  if (options.maxTeam[BlueTeam] <= 0)
+  if (maxTeam[BlueTeam] <= 0)
     forbidden.insert(Flags::BlueTeam);
 
-  if (options.maxTeam[PurpleTeam] <= 0)
+  if (maxTeam[PurpleTeam] <= 0)
     forbidden.insert(Flags::PurpleTeam);
 
   // void the forbidden flags
   std::set<FlagType*>::const_iterator sit;
   for (sit = forbidden.begin(); sit != forbidden.end(); sit++) {
     FlagType* ft = *sit;
-    options.flagCount[ft] = 0;
-    options.flagDisallowed[ft] = true;
+    flagCount[ft] = 0;
+    flagDisallowed[ft] = true;
   }
 
   // zone team flag counts
@@ -1393,28 +1463,28 @@ void finalizeParsing(int /*argc*/, char **argv,
   };
 
   // make sure there is at least one team flag for each active team
-  if (options.gameType == ClassicCTF) {
+  if (gameType == ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
-      if ((options.maxTeam[col] > 0) &&
-	  (options.numTeamFlags[col] <= 0) &&
+      if ((maxTeam[col] > 0) &&
+	  (numTeamFlags[col] <= 0) &&
 	  (zoneTeamFlagCounts[col] <= 0)) {
-	options.numTeamFlags[col] = 1;
+	numTeamFlags[col] = 1;
       }
     }
   }
 
   // make table of allowed extra flags
-  if (options.numExtraFlags > 0) {
+  if (numExtraFlags > 0) {
     // now count how many aren't disallowed
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
 	 it != FlagType::getFlagMap().end(); ++it) {
-      if (!options.flagDisallowed[it->second]) {
-	options.numAllowedFlags++;
+      if (!flagDisallowed[it->second]) {
+	numAllowedFlags++;
       }
     }
     // if none allowed then no extra flags either
-    if (options.numAllowedFlags == 0) {
-      options.numExtraFlags = 0;
+    if (numAllowedFlags == 0) {
+      numExtraFlags = 0;
     } else {
       // types of extra flags allowed
       std::vector<FlagType*> allowedFlags;
@@ -1424,7 +1494,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 	FlagType *fDesc = it->second;
 	if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
 	  continue;
-	if (!options.flagDisallowed[it->second])
+	if (!flagDisallowed[it->second])
 	  allowedFlags.push_back(it->second);
       }
       // Loading allowedFlags vector
@@ -1435,19 +1505,19 @@ void finalizeParsing(int /*argc*/, char **argv,
   const ZoneList& zl = entryZones.getZoneList();
 
   // allocate space for extra flags
-  numFlags = options.numExtraFlags;
+  numFlags = numExtraFlags;
   // allocate space for team flags
-  if (options.gameType & ClassicCTF) {
+  if (gameType & ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
-      if (options.maxTeam[col] > 0) {
-	numFlags += options.numTeamFlags[col];
+      if (maxTeam[col] > 0) {
+	numFlags += numTeamFlags[col];
       }
     }
   }
   // allocate space for normal flags
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
        it != FlagType::getFlagMap().end(); ++it) {
-    numFlags += options.flagCount[it->second];
+    numFlags += flagCount[it->second];
   }
   // allocate space for zone flags (including teams flags)
   for (int z = 0; z < (int)zl.size(); z++) {
@@ -1465,32 +1535,32 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // add team flags (ordered)
   int f = 0;
-  if (options.gameType == ClassicCTF) {
-    if (options.maxTeam[RedTeam] > 0) {
+  if (gameType == ClassicCTF) {
+    if (maxTeam[RedTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[RedTeam]; n++)
+      for (int n = 0; n < numTeamFlags[RedTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
     }
-    if (options.maxTeam[GreenTeam] > 0) {
+    if (maxTeam[GreenTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::GreenTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++)
+      for (int n = 0; n < numTeamFlags[GreenTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
     }
-    if (options.maxTeam[BlueTeam] > 0) {
+    if (maxTeam[BlueTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::BlueTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++)
+      for (int n = 0; n < numTeamFlags[BlueTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::BlueTeam);
     }
-    if (options.maxTeam[PurpleTeam] > 0) {
+    if (maxTeam[PurpleTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::PurpleTeam, entryZones, forbidden);
-      for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++)
+      for (int n = 0; n < numTeamFlags[PurpleTeam]; n++)
 	FlagInfo::get(f++)->setRequiredFlag(Flags::PurpleTeam);
     }
   }
 
   // super flags?
   if (f < numFlags)
-    options.gameOptions |= int(SuperFlagGameStyle);
+    gameOptions |= int(SuperFlagGameStyle);
 
   // shot limits
   std::map<std::string, int>::iterator msiitr;
@@ -1498,10 +1568,10 @@ void finalizeParsing(int /*argc*/, char **argv,
     FlagType *fDesc = Flag::getDescFromAbbreviation(msiitr->first.c_str());
     if (fDesc == Flags::Null) {
       std::cerr << "ERROR: invalid flag [" << msiitr->first << "]" << std::endl;
-      usage(argv[0]);
+      usage(execName);
     } else {
       // this parameter has already been validated
-      options.flagLimit[fDesc] = msiitr->second;
+      flagLimit[fDesc] = msiitr->second;
     }
   }
   storedFlagLimits.clear();
@@ -1512,7 +1582,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     FlagType *fDesc = it2->second;
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
-      for (int j = 0; j < options.flagCount[fDesc]; j++)
+      for (int j = 0; j < flagCount[fDesc]; j++)
 	FlagInfo::get(f++)->setRequiredFlag(fDesc);
     }
   }
@@ -1538,40 +1608,40 @@ void finalizeParsing(int /*argc*/, char **argv,
     FlagInfo::get(f)->required = allFlagsOut;
 
   // sum the sources of team flags
-  if (options.gameType & ClassicCTF) {
+  if (gameType & ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++)
-      options.numTeamFlags[col] += zoneTeamFlagCounts[col];
+      numTeamFlags[col] += zoneTeamFlagCounts[col];
   }
 
   // processor affinity
-  if (options.processorAffinity >= 0) {
-    logDebugMessage(2, "Setting process affinity to processor %d\n", options.processorAffinity);
-    TimeKeeper::setProcessorAffinity(options.processorAffinity);
+  if (processorAffinity >= 0) {
+    logDebugMessage(2, "Setting process affinity to processor %d\n", processorAffinity);
+    TimeKeeper::setProcessorAffinity(processorAffinity);
   } else {
     logDebugMessage(2, "Processor affinity is floating (managed by OS)\n");
   }
 
 
   // debugging
-  logDebugMessage(1,"type: %d\n", options.gameType);
-  if (options.gameType == ClassicCTF)
+  logDebugMessage(1,"type: %d\n", gameType);
+  if (gameType == ClassicCTF)
     logDebugMessage(1,"  capture the flag\n");
-  if (options.gameType == RabbitChase)
+  if (gameType == RabbitChase)
     logDebugMessage(1,"  rabbit chase\n");
 
-  logDebugMessage(1,"options: %X\n", options.gameOptions);
-  if (options.gameOptions & int(SuperFlagGameStyle))
+  logDebugMessage(1,"options: %X\n", gameOptions);
+  if (gameOptions & int(SuperFlagGameStyle))
     logDebugMessage(1,"  super flags allowed\n");
-  if (options.gameOptions & int(JumpingGameStyle))
+  if (gameOptions & int(JumpingGameStyle))
     logDebugMessage(1,"  jumping allowed\n");
-  if (options.gameOptions & int(RicochetGameStyle))
+  if (gameOptions & int(RicochetGameStyle))
     logDebugMessage(1,"  all shots ricochet\n");
-  if (options.gameOptions & int(ShakableGameStyle))
+  if (gameOptions & int(ShakableGameStyle))
     logDebugMessage(1,"  shakable bad flags: timeout=%f, wins=%i\n",
-		    0.1f * float(options.shakeTimeout), options.shakeWins);
-  if (options.gameOptions & int(HandicapGameStyle))
+		    0.1f * float(shakeTimeout), shakeWins);
+  if (gameOptions & int(HandicapGameStyle))
     logDebugMessage(1,"  handicap mode on\n");
-  if (options.gameOptions & int(AntidoteGameStyle))
+  if (gameOptions & int(AntidoteGameStyle))
     logDebugMessage(1,"  antidote flags\n");
 
   return;
@@ -1579,16 +1649,23 @@ void finalizeParsing(int /*argc*/, char **argv,
 
 
 // simple syntax check of comma-seperated list of group names (returns true if error)
-bool checkCommaList (const char *list, int maxlen) {
-  int x = strlen (list);
-  unsigned char c;
-  if (x > maxlen)
+bool CmdLineOptions::checkCommaList(const std::string& list, int maxLen)
+{
+  if ((int)list.size() > maxLen) {
     return true;
-  if (*list==',' || list[x-1]==',')
+  }
+  if (list.empty()) {
+    return false;
+  }
+  if ((list[0] == ',') || (list[list.size() - 1] == ',')) {
     return true;
-  while ((c=*list++) != '\0')
-    if (c<' ' || c>'z' ||  c=='\'' || c=='"')
+  }
+  for (size_t i = 0; i < list.size(); i++) {
+    const unsigned char c = list[i];
+    if ((c < ' ') || (c > 'z') || (c == '\'') || (c == '"')) {
       return true;
+    }
+  }
   return false;
 }
 
