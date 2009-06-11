@@ -761,7 +761,6 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       } else {
 	logDebugMessage(3, ("Loaded help message: %s\n"), chunkName.c_str());
       }
-      i++;
     }
     else if (token == "-i") {
       // use a different interface
