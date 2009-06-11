@@ -129,7 +129,6 @@ MeshObstacle* Teleporter::makeMesh()
     texScale = -texSize;
   }
 
-
   // setup the transform
   MeshTransform tmpXform;
   tmpXform.addSpin((angle * RAD2DEGf), fvec3(0.0f, 0.0f, 1.0f));
@@ -250,14 +249,15 @@ MeshObstacle* Teleporter::makeMesh()
   std::vector<int> nlist;
   std::vector<int> tlist;
 
-  const BzMaterial* linkMat   = getLinkMaterial();
-  const BzMaterial* borderMat = getTeleMaterial();
+  const BzMaterial* linkMat = getLinkMaterial();
+  const BzMaterial* teleMat = getTeleMaterial();
 
   MeshFace::SpecialData sd;
 
   // back face
   sd.linkName = "b";
-  push4Ints(vlist, 0, 1, 2, 3); push4Ints(tlist, 0, 1, 2, 3);
+  push4Ints(vlist, 0, 1, 2, 3); // vertices
+  push4Ints(tlist, 0, 1, 2, 3); // texcoords
   mesh->addFace(vlist, nlist, tlist,
                 linkMat, -1, false, false,
                 0xFF, 0xFF, false, false, &sd);
@@ -265,51 +265,66 @@ MeshObstacle* Teleporter::makeMesh()
 
   // front face
   sd.linkName = "f";
-  push4Ints(vlist, 4, 5, 6, 7); push4Ints(tlist, 0, 1, 2, 3);
+  push4Ints(vlist, 4, 5, 6, 7); // vertices
+  push4Ints(tlist, 0, 1, 2, 3); // texcoords
   mesh->addFace(vlist, nlist, tlist,
                 linkMat, -1, false, false,
                 0xFF, 0xFF, false, false, &sd);
   vlist.clear(); tlist.clear();
 
   // -x faces
-  push4Ints(vlist,  8,  9, 10, 15); push4Ints(tlist, 4, 5,  6, 11);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
-  push4Ints(vlist, 10, 11, 14, 15); push4Ints(tlist, 6, 7, 10, 11);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
-  push4Ints(vlist, 12, 13, 14, 11); push4Ints(tlist, 8, 9, 10, 7);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist,  8,  9, 10, 15); // vertices
+  push4Ints(tlist,  4,  5,  6, 11); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
+  push4Ints(vlist, 10, 11, 14, 15); // vertices
+  push4Ints(tlist,  6,  7, 10, 11); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
+  push4Ints(vlist, 12, 13, 14, 11); // vertices
+  push4Ints(tlist,  8,  9, 10,  7); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // +x faces
-  push4Ints(vlist, 16, 17, 18, 23); push4Ints(tlist, 4, 5,  6, 11);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
-  push4Ints(vlist, 18, 19, 22, 23); push4Ints(tlist, 6, 7, 10, 11);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
-  push4Ints(vlist, 20, 21, 22, 19); push4Ints(tlist, 8, 9, 10, 7);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 16, 17, 18, 23); // vertices
+  push4Ints(tlist,  4,  5,  6, 11); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
+  push4Ints(vlist, 18, 19, 22, 23); // vertices
+  push4Ints(tlist,  6,  7, 10, 11); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
+  push4Ints(vlist, 20, 21, 22, 19); // vertices
+  push4Ints(tlist,  8,  9, 10,  7); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
 
   // +y outside
-  push4Ints(vlist, 21,  8, 15, 22); push4Ints(tlist, 13, 14, 12,  0);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 21,  8, 15, 22); // vertices
+  push4Ints(tlist, 13, 14, 12,  0); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // -y outside
-  push4Ints(vlist, 13, 16, 23, 14); push4Ints(tlist, 13, 14, 12,  0);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 13, 16, 23, 14); // vertices
+  push4Ints(tlist, 13, 14, 12,  0); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // +y inside
-  push4Ints(vlist,  9, 20, 19, 10); push4Ints(tlist, 13, 14, 16, 15);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist,  9, 20, 19, 10); // vertices
+  push4Ints(tlist, 13, 14, 16, 15); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // -y inside
-  push4Ints(vlist, 17, 12, 11, 18); push4Ints(tlist, 13, 14, 16, 15);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 17, 12, 11, 18); // vertices
+  push4Ints(tlist, 13, 14, 16, 15); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // crossbar top
-  push4Ints(vlist, 14, 23, 22, 15); push4Ints(tlist,  0, 18, 19, 17);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 14, 23, 22, 15); // vertices
+  push4Ints(tlist,  0, 18, 19, 17); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // crossbar bottom
-  push4Ints(vlist, 10, 19, 18, 11); push4Ints(tlist, 20, 21, 23, 22);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 10, 19, 18, 11); // vertices
+  push4Ints(tlist, 20, 21, 23, 22); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // +y pillar cap
-  push4Ints(vlist,  8, 21, 20,  9); push4Ints(tlist,  0, 18, 21, 20);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist,  8, 21, 20,  9); // vertices
+  push4Ints(tlist,  0, 18, 21, 20); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
   // -y pillar cap
-  push4Ints(vlist, 12, 17, 16, 13); push4Ints(tlist,  0, 18, 21, 20);
-  addFace(mesh, vlist, nlist, tlist, borderMat, -1);
+  push4Ints(vlist, 12, 17, 16, 13); // vertices
+  push4Ints(tlist,  0, 18, 21, 20); // texcoords
+  addFace(mesh, vlist, nlist, tlist, teleMat, -1);
 
   // wrap it up
   mesh->finalize();
