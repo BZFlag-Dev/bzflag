@@ -591,8 +591,6 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
   int playerCountArg  = 0;
   int playerCountArg2 = 0;
 
-  int argc = tokens.size();
-
   for (int i = 0; i < (int)tokens.size(); i++) {
 
     const std::string& token = tokens[i];
@@ -977,7 +975,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 
       // if there are any arguments following, see if they are a
       // rabbit selection styles.
-      if ((i + 1) != argc) {
+      if ((i + 1) != (int)tokens.size()) {
         const std::string& style = tokens[i + 1];
 	if (style == "score") {
 	  rabbitSelection = ScoreRabbitSelection;
@@ -1017,7 +1015,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       // with +s all flags are required to exist all the time
       allFlagsOut = token[0] == '+' ? true : false;
       // set number of random flags
-      if (((i + 1) < argc) && isdigit(tokens[i + 1][0])) {
+      if (((i + 1) < (int)tokens.size()) && isdigit(tokens[i + 1][0])) {
         numExtraFlags = parseIntArg(i, tokens);
 	if (numExtraFlags  == 0) {
 	  numExtraFlags = 16;
@@ -1223,7 +1221,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       // timestamp output
       timestampLog = true;
       // if there is an argument following, see if it is 'micros'
-      if ((i + 1) != argc) {
+      if ((i + 1) != (int)tokens.size()) {
 	if (TextUtils::compare_nocase(tokens[i + 1], "micros") == 0) {
 	  timestampMicros = true;
 	  i++;
