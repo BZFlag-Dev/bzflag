@@ -105,8 +105,8 @@ class MeshFace : public Obstacle {
       std::string  linkName;
       LinkGeometry linkSrcGeo;
       LinkGeometry linkDstGeo;
-      std::string  linkSrcShotFail;
-      std::string  linkSrcTankFail;
+      std::string  linkSrcShotFailText;
+      std::string  linkSrcTankFailText;
 
       int   packSize() const;
       void* pack(void*) const;

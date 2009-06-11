@@ -941,9 +941,18 @@ Adds a route to teleport between a linkSrc and a linkDst.
 \fB  tankAllowFlags\fR GM ST OO
 .br
   # BZDB variable blocks
+\fB  blockVar\fR varName
+.br
 \fB  shotBlockVar\fR varName
 .br
 \fB  tankBlockVar\fR varName
+.br
+  # Pass messages
+\fB  passText\fR pass message for shots and tanks
+.br
+\fB  shotPassText\fR pass message for shots
+.br
+\fB  tankPassText\fR pass message for tanks
 .br
 \fBend\fR
 .br
@@ -1636,6 +1645,10 @@ link :=
 	| "shotBlockVar" <varName>
 .br
 	| "tankBlockVar" <varName>
+.br
+	| "shotPassText" <varName>
+.br
+	| "tankPassText" <varName>
 .br
 	| object
 .br

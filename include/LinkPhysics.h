@@ -103,6 +103,10 @@ class LinkPhysics {
     // BZDB blocks
     std::string shotBlockVar;
     std::string tankBlockVar;
+
+    // Pass messages
+    std::string shotPassText;
+    std::string tankPassText;
 };
 
 

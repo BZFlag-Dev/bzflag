@@ -18,6 +18,7 @@
 
 /* common implementation headers */
 #include "BZDBCache.h"
+#include "TextUtils.h"
 #include "TextureManager.h"
 #include "Intersect.h"
 #include "LinkManager.h"
@@ -501,7 +502,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         if (!teleFail) {
           if ((startTime - shotPath.getStartTime() + (double)t) < 1.0) {
             const MeshFace::SpecialData* sd = linkSrc->getSpecialData();
-            const std::string& failMsg = sd->linkSrcShotFail;
+            const std::string& failMsg = sd->linkSrcShotFailText;
             if (!failMsg.empty()) {
               addMessage(NULL, failMsg);
               teleFail = true; // only one message per shot
@@ -530,6 +531,9 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       orig = nextOrig;
       // entered teleporter -- teleport it
       linkSrc->teleportShot(*linkDst, *physics, orig, orig, vel, vel);
+      if (!physics->shotPassText.empty()) {
+        addMessage(NULL, TextUtils::unescape_colors(physics->shotPassText));
+      }
       reason = ShotPathSegment::Teleport;
       dstFace = linkDst;
       noEffect = linkSrc->linkSrcNoEffect();

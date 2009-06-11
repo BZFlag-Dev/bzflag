@@ -1325,8 +1325,8 @@ int MeshFace::SpecialData::packSize() const
     fullSize += sizeof(float);   // linkDstGeo.tScale
     fullSize += sizeof(float);   // linkDstGeo.pScale
     // fail messages
-    fullSize += nboStdStringPackSize(linkSrcShotFail);
-    fullSize += nboStdStringPackSize(linkSrcTankFail);
+    fullSize += nboStdStringPackSize(linkSrcShotFailText);
+    fullSize += nboStdStringPackSize(linkSrcTankFailText);
   }
   return fullSize;
 }
@@ -1361,8 +1361,8 @@ void* MeshFace::SpecialData::pack(void* buf) const
     buf = nboPackFloat(buf, linkDstGeo.tScale);
     buf = nboPackFloat(buf, linkDstGeo.pScale);
     // fail messages
-    buf = nboPackStdString(buf, linkSrcShotFail);
-    buf = nboPackStdString(buf, linkSrcTankFail);
+    buf = nboPackStdString(buf, linkSrcShotFailText);
+    buf = nboPackStdString(buf, linkSrcTankFailText);
   }
 
   return buf;
@@ -1399,8 +1399,8 @@ void* MeshFace::SpecialData::unpack(void* buf)
     buf = nboUnpackFloat(buf, linkDstGeo.tScale);
     buf = nboUnpackFloat(buf, linkDstGeo.pScale);
     // fail messages
-    buf = nboUnpackStdString(buf, linkSrcShotFail);
-    buf = nboUnpackStdString(buf, linkSrcTankFail);
+    buf = nboUnpackStdString(buf, linkSrcShotFailText);
+    buf = nboUnpackStdString(buf, linkSrcTankFailText);
   }
 
   return buf;
@@ -1612,11 +1612,11 @@ void MeshFace::SpecialData::print(std::ostream& out,
   }
 
   // fail messages
-  if (!linkSrcShotFail.empty()) {
-    out << prefix << "linkSrcShotFail " << linkSrcShotFail << std::endl;
+  if (!linkSrcShotFailText.empty()) {
+    out << prefix << "linkSrcShotFailText " << linkSrcShotFailText << std::endl;
   }
-  if (!linkSrcTankFail.empty()) {
-    out << prefix << "linkSrcTankFail " << linkSrcTankFail << std::endl;
+  if (!linkSrcTankFailText.empty()) {
+    out << prefix << "linkSrcTankFailText " << linkSrcTankFailText << std::endl;
   }
 }
 

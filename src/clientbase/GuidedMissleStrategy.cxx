@@ -19,6 +19,7 @@
 #include "LinkManager.h"
 #include "MeshFace.h"
 #include "Roster.h"
+#include "TextUtils.h"
 #include "TextureManager.h"
 
 // local headers
@@ -373,7 +374,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     if (linkDst == NULL) {
       if ((currentTime - getPath().getStartTime() + (double)t) < 1.0) {
         const MeshFace::SpecialData* sd = linkSrc->getSpecialData();
-        const std::string& failMsg = sd->linkSrcShotFail;
+        const std::string& failMsg = sd->linkSrcShotFailText;
         if (!failMsg.empty()) {
           addMessage(NULL, failMsg);
         }
@@ -388,6 +389,9 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     fvec3 vel = getPath().getVelocity();
     linkSrc->teleportShot(*linkDst, *physics, nextPos, nextPos,
                                               nextVel, nextVel);
+    if (!physics->shotPassText.empty()) {
+      addMessage(NULL, TextUtils::unescape_colors(physics->shotPassText));
+    }
     return t;
   }
   else if (building) {

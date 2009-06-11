@@ -889,7 +889,7 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
                                                        getTeam(), getFlag());
   // no link, no love; bail out
   if (!linkDst) {
-    const std::string& failMsg = linkSrc->getSpecialData()->linkSrcTankFail;
+    const std::string& failMsg = linkSrc->getSpecialData()->linkSrcTankFailText;
     if (!failMsg.empty()) {
       addMessage(NULL, failMsg);
     }
@@ -979,6 +979,11 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
 
   // send teleport info
   server->sendTeleport(linkSrcID, linkDstID);
+
+  // print the pass message
+  if (!linkPhysics->tankPassText.empty()) {
+    addMessage(NULL, TextUtils::unescape_colors(linkPhysics->tankPassText));
+  }
 
   // play the music, if desired
   if (gettingSound && !linkSrc->linkSrcNoSound()) {

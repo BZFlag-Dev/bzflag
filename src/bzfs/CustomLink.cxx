@@ -500,6 +500,43 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     }
     linkDef.physics.tankBlockVar = value;
   }
+  //
+  //  Pass messages
+  //
+  else if (strcasecmp(cmd, "passText") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    line = TextUtils::trim(line);
+    if (line.empty()) {
+      std::cout << "missing passText parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotPassText = line;
+    linkDef.physics.tankPassText = line;
+  }
+  else if (strcasecmp(cmd, "shotPassText") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    line = TextUtils::trim(line);
+    if (line.empty()) {
+      std::cout << "missing shotPassText parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.shotPassText = line;
+  }
+  else if (strcasecmp(cmd, "tankPassText") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    line = TextUtils::trim(line);
+    if (line.empty()) {
+      std::cout << "missing tankPassText parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankPassText = line;
+  }
   else {
     return WorldFileObject::read(cmd, input);
   }

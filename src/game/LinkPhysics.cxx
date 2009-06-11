@@ -55,6 +55,8 @@ LinkPhysics::LinkPhysics()
 , tankBlockTeams(0)
 , shotBlockVar("")
 , tankBlockVar("")
+, shotPassText("")
+, tankPassText("")
 {
   // do nothing
 }
@@ -123,8 +125,10 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
   if (tankBlockTeams   != lp.tankBlockTeams)   { return false; }
   if (shotBlockFlags   != lp.shotBlockFlags)   { return false; }
   if (tankBlockFlags   != lp.tankBlockFlags)   { return false; }
-  if (shotBlockVar    != lp.shotBlockVar)    { return false; }
-  if (tankBlockVar    != lp.tankBlockVar)    { return false; }
+  if (shotBlockVar     != lp.shotBlockVar)     { return false; }
+  if (tankBlockVar     != lp.tankBlockVar)     { return false; }
+  if (shotPassText     != lp.shotPassText)     { return false; }
+  if (tankPassText     != lp.tankPassText)     { return false; }
   return true;
 }
 
@@ -218,6 +222,12 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
   if (tankBlockVar < lp.tankBlockVar) { return true;  }
   if (lp.tankBlockVar < tankBlockVar) { return false; }
 
+  if (shotPassText < lp.shotPassText) { return true;  }
+  if (lp.shotPassText < shotPassText) { return false; }
+
+  if (tankPassText < lp.tankPassText) { return true;  }
+  if (lp.tankPassText < tankPassText) { return false; }
+
   return false;
 }
 
@@ -284,6 +294,9 @@ void* LinkPhysics::pack(void* buf) const
   buf = nboPackStdString(buf, shotBlockVar);
   buf = nboPackStdString(buf, tankBlockVar);
 
+  buf = nboPackStdString(buf, shotPassText);
+  buf = nboPackStdString(buf, tankPassText);
+
   return buf;
 }
 
@@ -345,6 +358,9 @@ void* LinkPhysics::unpack(void* buf)
   buf = nboUnpackStdString(buf, shotBlockVar);
   buf = nboUnpackStdString(buf, tankBlockVar);
 
+  buf = nboUnpackStdString(buf, shotPassText);
+  buf = nboUnpackStdString(buf, tankPassText);
+
   return buf;
 }
 
@@ -400,6 +416,9 @@ int LinkPhysics::packSize() const
 
   fullSize += nboStdStringPackSize(shotBlockVar);
   fullSize += nboStdStringPackSize(tankBlockVar);
+
+  fullSize += nboStdStringPackSize(shotPassText);
+  fullSize += nboStdStringPackSize(tankPassText);
 
   return fullSize;
 }
@@ -553,6 +572,15 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
 
   if (!tankBlockVar.empty()) {
     out << indent << "  tankBlockVar " << tankBlockVar << std::endl;
+  }
+
+  // pass messages
+  if (!shotPassText.empty()) {
+    out << indent << "  shotPassText " << shotPassText << std::endl;
+  }
+
+  if (!tankPassText.empty()) {
+    out << indent << "  tankPassText " << tankPassText << std::endl;
   }
 
   return;

@@ -277,17 +277,17 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   //
   //  Link failure messages
   //
-  else if (strcasecmp(cmd, "linkSrcShotFail") == 0) {
+  else if (strcasecmp(cmd, "linkSrcShotFailText") == 0) {
     std::string line;
     std::getline(input, line);
     input.putback('\n');
-    specialData.linkSrcShotFail = TextUtils::trim(line);
+    specialData.linkSrcShotFailText = TextUtils::trim(line);
   }
-  else if (strcasecmp(cmd, "linkSrcTankFail") == 0) {
+  else if (strcasecmp(cmd, "linkSrcTankFailText") == 0) {
     std::string line;
     std::getline(input, line);
     input.putback('\n');
-    specialData.linkSrcTankFail = TextUtils::trim(line);
+    specialData.linkSrcTankFailText = TextUtils::trim(line);
   }
   //
   //  Material
