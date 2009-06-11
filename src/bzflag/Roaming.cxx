@@ -39,7 +39,7 @@ Roaming::Roaming()
 void Roaming::resetCamera(void) {
   camera.pos[0] = 0.0f;
   camera.pos[1] = 0.0f;
-  camera.pos[2] = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  camera.pos[2] = BZDBCache::muzzleHeight;
   camera.theta = 0.0f;
   camera.zoom = 60.0f;
   camera.phi = -0.0f;
@@ -314,11 +314,18 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.phi *= RAD2DEGf;
   }
 
+  // clamp phi
+  const float phiLimit = 90.0f - 1.0e-3f;
+  if (camera.phi > phiLimit) {
+    camera.phi = phiLimit;
+  } else if (camera.phi < -phiLimit) {
+    camera.phi = -phiLimit;
+  }
+
   // modify Z coordinate
   camera.pos[2] += dt * dc->pos[2];
-  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-  if (camera.pos[2] < muzzleHeight) {
-    camera.pos[2] = muzzleHeight;
+  if (camera.pos[2] < BZDBCache::muzzleHeight) {
+    camera.pos[2] = BZDBCache::muzzleHeight;
     dc->pos[2] = 0.0f;
   }
 
