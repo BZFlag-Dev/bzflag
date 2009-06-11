@@ -68,9 +68,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   if (isWordCompletion(key)) {
     const std::string line = hud->getComposeString();
     std::set<std::string> partials;
-    if (!BZDB.isTrue("noDefaultWordComplete")) {
-      completer.complete(line, partials);
-    }
+    completer.complete(line, partials); 
     if (!partials.empty()) {
       // find the longest common string
       const std::string first = *(partials.begin());
