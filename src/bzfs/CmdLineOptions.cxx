@@ -975,7 +975,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 
       // if there are any arguments following, see if they are a
       // rabbit selection styles.
-      if ((i + 1) != (int)tokens.size()) {
+      if ((i + 1) < (int)tokens.size()) {
         const std::string& style = tokens[i + 1];
 	if (style == "score") {
 	  rabbitSelection = ScoreRabbitSelection;
@@ -1221,7 +1221,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       // timestamp output
       timestampLog = true;
       // if there is an argument following, see if it is 'micros'
-      if ((i + 1) != (int)tokens.size()) {
+      if ((i + 1) < (int)tokens.size()) {
 	if (TextUtils::compare_nocase(tokens[i + 1], "micros") == 0) {
 	  timestampMicros = true;
 	  i++;

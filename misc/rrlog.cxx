@@ -75,7 +75,6 @@ typedef struct {
   u32 flagsSize;                // size of the flags data
   u32 worldSize;                // size of world database
   char callSign[CallSignLen];   // player's callsign
-//FIXME  char email[EmailLen];         // player's email
   char serverVersion[8];        // BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];            // hash of worldDatabase
@@ -110,7 +109,6 @@ int main(int argc, char **argv)
   RRpacket *p;
   const char *execName = argv[0];
   bool useColor = true;
-//FIXME  bool useEmail = true;
   bool onlyMessages = false;
 
   printf("\nRRLOG-%s\nProtocol BZFS%s:  %i known packet types\n\n",
@@ -145,7 +143,6 @@ int main(int argc, char **argv)
       argv++;
     }
     else if (strcmp("-e", argv[1]) == 0) {
-//FIXME      useEmail = false;
       argc--;
       argv++;
     }
@@ -206,7 +203,6 @@ int main(int argc, char **argv)
        days, hours, minutes, secs, usecs);
   printf("start:     %s", ctime(&startTime));
   printf("end:       %s", ctime(&endTime));
-//FIXME  printf("author:    %s  (%s)\n", header.callSign, header.email);
   printf("bzfs:      bzfs-%s\n", header.appVersion);
   printf("protocol:  %.8s\n", header.serverVersion);
   printf("flagSize:  %i\n", header.flagsSize);
@@ -217,7 +213,6 @@ int main(int argc, char **argv)
 
   MsgStrings::init();
   MsgStrings::colorize(useColor);
-//FIXME  MsgStrings::showEmail(useEmail);
   // MsgStrings::colorize(false);
   bool needUpdate = true;
 
@@ -307,7 +302,6 @@ static bool loadHeader(ReplayHeader * h, FILE * f)
   buf = nboUnpackUInt32(buf, h->flagsSize);
   buf = nboUnpackUInt32(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
-//FIXME  buf = nboUnpackString(buf, h->email, sizeof(h->email));
   buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
   buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
   buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));
