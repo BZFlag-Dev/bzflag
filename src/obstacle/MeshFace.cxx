@@ -1031,6 +1031,21 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
 }
 
 
+static float clampRadians(float rads)
+{
+  const float m_pi   = (float)(M_PI);
+  const float m_pi_2 = (float)(M_PI * 2.0);
+  rads = fmodf(rads, m_pi_2);
+  if (rads > m_pi) {
+    rads -= m_pi;
+  }
+  else if (rads < m_pi) {
+    rads += m_pi;
+  }
+  return rads;
+}
+
+
 bool MeshFace::teleportTank(const MeshFace& dstFace,
                             const LinkPhysics& linkPhysics,
                             const fvec3& srcPos,    fvec3& dstPos,
@@ -1111,15 +1126,17 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   if (linkPhysics.tankForceAngle) {
     dstAngle = linkPhysics.tankAngle;
   } else {
-    dstAngle = srcAngle + (dstGeo.angle - srcGeo.angle);
+    const float angleDiff = clampRadians(srcAngle - srcGeo.angle);
+    dstAngle = dstGeo.angle + (angleDiff * linkPhysics.tankAngleScale);
     dstAngle += linkPhysics.tankAngleOffset;
+    dstAngle = clampRadians(dstAngle);
   }
 
   // angular velocity
   if (linkPhysics.tankForceAngVel) {
     dstAngVel = linkPhysics.tankAngVel;
   } else {
-    dstAngVel = linkPhysics.tankAngVelScale * srcAngVel ;
+    dstAngVel = srcAngVel *  linkPhysics.tankAngVelScale;
     dstAngVel += linkPhysics.tankAngVelOffset;
   }
 

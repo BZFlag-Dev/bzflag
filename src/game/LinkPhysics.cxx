@@ -39,8 +39,9 @@ LinkPhysics::LinkPhysics()
 , tankForceAngle(false)
 , tankForceAngVel(false)
 , tankAngle(0.0f)
-, tankAngVel(0.0f)
 , tankAngleOffset(0.0f)
+, tankAngleScale(1.0f)
+, tankAngVel(0.0f)
 , tankAngVelOffset(0.0f)
 , tankAngVelScale(1.0f)
 , shotMinSpeed(0.0f)
@@ -111,6 +112,7 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
   if (tankAngle        != lp.tankAngle)        { return false; }
   if (tankAngVel       != lp.tankAngVel)       { return false; }
   if (tankAngleOffset  != lp.tankAngleOffset)  { return false; }
+  if (tankAngleScale   != lp.tankAngleScale)   { return false; }
   if (tankAngVelOffset != lp.tankAngVelOffset) { return false; }
   if (tankAngVelScale  != lp.tankAngVelScale)  { return false; }
   if (shotMinSpeed     != lp.shotMinSpeed)     { return false; }
@@ -173,6 +175,9 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
 
   if (tankAngleOffset < lp.tankAngleOffset) { return true;  }
   if (lp.tankAngleOffset < tankAngleOffset) { return false; }
+
+  if (tankAngleScale < lp.tankAngleScale) { return true;  }
+  if (lp.tankAngleScale < tankAngleScale) { return false; }
 
   if (tankAngVelOffset < lp.tankAngVelOffset) { return true;  }
   if (lp.tankAngVelOffset < tankAngVelOffset) { return false; }
@@ -260,6 +265,7 @@ void* LinkPhysics::pack(void* buf) const
   buf = nboPackFloat(buf, tankAngle);
   buf = nboPackFloat(buf, tankAngVel);
   buf = nboPackFloat(buf, tankAngleOffset);
+  buf = nboPackFloat(buf, tankAngleScale);
   buf = nboPackFloat(buf, tankAngVelOffset);
   buf = nboPackFloat(buf, tankAngVelScale);
 
@@ -324,6 +330,7 @@ void* LinkPhysics::unpack(void* buf)
   buf = nboUnpackFloat(buf, tankAngle);
   buf = nboUnpackFloat(buf, tankAngVel);
   buf = nboUnpackFloat(buf, tankAngleOffset);
+  buf = nboUnpackFloat(buf, tankAngleScale);
   buf = nboUnpackFloat(buf, tankAngVelOffset);
   buf = nboUnpackFloat(buf, tankAngVelScale);
 
@@ -386,6 +393,7 @@ int LinkPhysics::packSize() const
   fullSize += sizeof(float); // tankAngle
   fullSize += sizeof(float); // tankAngVel
   fullSize += sizeof(float); // tankAngleOffset
+  fullSize += sizeof(float); // tankAngleScale
   fullSize += sizeof(float); // tankAngVelOffset
   fullSize += sizeof(float); // tankAngVelScale
 
@@ -501,6 +509,9 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
                   << (tankAngleOffset * RAD2DEGf) << std::endl;
   }
 
+  if (tankAngleScale != 1.0f) {
+    out << indent << "  tankAngleScale " << tankAngleScale << std::endl;
+  }
   if (tankAngVelScale != 1.0f) {
     out << indent << "  tankAngVelScale " << tankAngVelScale << std::endl;
   }

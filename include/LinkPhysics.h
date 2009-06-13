@@ -75,8 +75,9 @@ class LinkPhysics {
     bool  tankForceAngle;  // for tankAngle
     bool  tankForceAngVel; // for tankAngVel
     float tankAngle;
-    float tankAngVel;
     float tankAngleOffset;
+    float tankAngleScale;
+    float tankAngVel;
     float tankAngVelOffset;
     float tankAngVelScale;
 

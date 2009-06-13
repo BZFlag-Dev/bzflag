@@ -309,6 +309,14 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     }
     linkDef.physics.tankAngleOffset = (v * DEG2RADf);
   }
+  else if (strcasecmp(cmd, "tankAngleScale") == 0) {
+    float scale;
+    if (!(input >> scale)) {
+      std::cout << "missing tankAngleScale parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankAngleScale = scale;
+  }
   else if (strcasecmp(cmd, "tankAngVel") == 0) {
     float v;
     if (!(input >> v)) {
@@ -327,12 +335,12 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     linkDef.physics.tankAngVelOffset = (v * DEG2RADf);
   }
   else if (strcasecmp(cmd, "tankAngVelScale") == 0) {
-    float v;
-    if (!(input >> v)) {
+    float scale;
+    if (!(input >> scale)) {
       std::cout << "missing tankAngVelScale parameter" << std::endl;
       return false;
     }
-    linkDef.physics.tankAngVelScale = v;
+    linkDef.physics.tankAngVelScale = scale;
   }
   //
   //  speed blocks
