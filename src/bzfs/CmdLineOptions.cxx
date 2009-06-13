@@ -814,13 +814,18 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     }
     else if (token == "-mp") {
       // set maximum number of players
-      const int count = parseIntArg(i, tokens);
+      const int mpArgIndex = i + 1;
+      if (mpArgIndex >= (int)tokens.size()) {
+	std::cerr << "ERROR: missing -mp argument" << std::endl;
+	usage(execName);
+      }
       // FIXME: lame var hacking
       if (playerCountArg == 0) {
-	playerCountArg = count;
+	playerCountArg = mpArgIndex;
       } else {
-	playerCountArg2 = count;
+	playerCountArg2 = mpArgIndex;
       }
+      i++;
     }
     else if (token == "-mps") {
       // set maximum player score
