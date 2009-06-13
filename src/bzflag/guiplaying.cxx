@@ -4486,7 +4486,7 @@ void drawFrame(const float dt)
       clipPos.z = eye.z;
       const Obstacle *obs;
       obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
-      if (obs != NULL) {
+      if ((obs != NULL) && !obs->isPassable()) {
         insideDim = true;
       }
     }
