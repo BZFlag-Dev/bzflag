@@ -23,7 +23,7 @@ tmpfile=$root/$myname.tmp
 rm -f $tmpfile
 # FIXME: only touch files that have the Subversion svn:eol-style property set.
 # touch myself last
-files="`find $root -type f -not -regex '.*\.svn.*' -not -name \*.png -not -name \*.wav -not -regex '.*src/other/.*' | grep -v misc/$myname` misc/$myname"
+files="`find $root -type f -not -regex '.*\.svn.*' -not -name \*.png -not -name \*.wav -not -name \*.icns -not -regex '.*src/other/.*' | grep -v misc/$myname` misc/$myname"
 
 # do replacement
 for file in $files; do
