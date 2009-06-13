@@ -890,11 +890,15 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
 \fB  tankAngle\fR  degrees
 .br
-\fB  tankAngVel\fR degrees
+\fB  tankAngleOffset\fR degrees
 .br
-\fB  tankAngleOffset\fR d egrees
+\fB  tankAngleScale\fR scale
 .br
-\fB  tankAngVelOffset\fR degrees
+\fB  tankAngVel\fR degrees_per_second
+.br
+\fB  tankAngVelOffset\fR degrees_per_second
+.br
+\fB  tankAngVelScale\fR scale
 .br
   # speed blocks
 .br
@@ -1598,11 +1602,15 @@ link :=
 .br
 	| "tankAngle" <float>
 .br
-	| "tankAngVel" <float>
-.br
 	| "tankAngleOffset" <float>
 .br
+	| "tankAngleScale" <float>
+.br
+	| "tankAngVel" <float>
+.br
 	| "tankAngVelOffset" <float>
+.br
+	| "tankAngVelScale" <float>
 .br
 	| "shotMinSpeed" <float>
 .br
