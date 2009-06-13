@@ -326,32 +326,40 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   }
 
   // add the texture coordinates
-  const int txcdAxis[6][2] = {
-    {1, 2}, // XP
-    {1, 2}, // XN
-    {0, 2}, // YP
-    {0, 2}, // YN
-    {0, 1}, // ZP
-    {0, 1}  // ZN
-  };
-  const fvec2 txcdData[4] = {
-    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f),
-    fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f)
-  };
+  bool needTexCoords = false;
   for (int face = 0; face < FaceCount; face++) {
-    for (int corner = 0; corner < 4; corner++) {
-      fvec2 txcd;
-      for (int a = 0; a < 2; a++) {
-	float scale;
-	if (texSizes[face][a] >= 0.0f) {
-	  scale = texSizes[face][a];
-	} else {
-	  const int axis = txcdAxis[face][a];
-	  scale = (edgeLengths[axis] / -texSizes[face][a]);
-	}
-	txcd[a] = (txcdData[corner][a] - texOffsets[face][a]) * scale;
+    if ((texSizes[face][0] != 0.0f) || (texSizes[face][1] != 0.0f)) {
+      needTexCoords = true;
+    }
+  }
+  if (needTexCoords) {
+    const int txcdAxis[6][2] = {
+      {1, 2}, // XP
+      {1, 2}, // XN
+      {0, 2}, // YP
+      {0, 2}, // YN
+      {0, 1}, // ZP
+      {0, 1}  // ZN
+    };
+    const fvec2 txcdData[4] = {
+      fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f),
+      fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f)
+    };
+    for (int face = 0; face < FaceCount; face++) {
+      for (int corner = 0; corner < 4; corner++) {
+        fvec2 txcd;
+        for (int a = 0; a < 2; a++) {
+          float scale;
+          if (texSizes[face][a] >= 0.0f) {
+            scale = texSizes[face][a];
+          } else {
+            const int axis = txcdAxis[face][a];
+            scale = (edgeLengths[axis] / -texSizes[face][a]);
+          }
+          txcd[a] = (txcdData[corner][a] - texOffsets[face][a]) * scale;
+        }
+        txcds.push_back(txcd);
       }
-      txcds.push_back(txcd);
     }
   }
 

@@ -607,6 +607,7 @@ public:
     shotEvent.pos[1] = firingInfo.shot.pos.y;
     shotEvent.pos[2] = firingInfo.shot.pos.z;
     shotEvent.playerID = (int)player->getIndex();
+    shotEvent.shotID = (int)firingInfo.shot.id;
 
     shotEvent.type = firingInfo.flagType->flagAbbv;
 
@@ -651,6 +652,69 @@ public:
   }
 };
 
+
+class ShotInfoHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
+  {
+    if (!player || len < 16) {
+      return false;
+    }
+
+    if (player->player.isObserver()) {
+      return true;
+    }
+
+    int16_t shotID;  
+    uint8_t infoType;
+    fvec3 pos;
+    uint16_t linkSrcID, linkDstID;
+    
+    buf = nboUnpackInt16(buf, shotID);  
+    buf = nboUnpackUInt8(buf, infoType);
+    buf = nboUnpackFVec3(buf, pos);
+    if (infoType == ShotInfoTeleport) {
+      if (len < 20) {
+        return false;
+      }
+      buf = nboUnpackUInt16(buf, linkSrcID);
+      buf = nboUnpackUInt16(buf, linkDstID);
+    }
+
+    // NOTE: not broadcasting/relaying to the clients
+
+    switch (infoType) {
+      case ShotInfoExpired: {
+        bz_ShotExpiredEventData_V1 event(player->getIndex(), shotID,
+                                         pos.x, pos.y, pos.z);
+        worldEventManager.callEvents(bz_eShotExpiredEvent, &event);
+        break;
+      }
+      case ShotInfoStopped: {
+        bz_ShotStoppedEventData_V1 event(player->getIndex(), shotID,
+                                         pos.x, pos.y, pos.z);
+        worldEventManager.callEvents(bz_eShotStoppedEvent, &event);
+        break;
+      }
+      case ShotInfoRicochet: {
+        bz_ShotRicochetEventData_V1 event(player->getIndex(), shotID,
+                                          pos.x, pos.y, pos.z);
+        worldEventManager.callEvents(bz_eShotRicochetEvent, &event);
+        break;
+      }
+      case ShotInfoTeleport: {
+        bz_ShotTeleportEventData_V1 event(player->getIndex(), shotID,
+                                          pos.x, pos.y, pos.z,
+                                          linkSrcID, linkDstID);
+        worldEventManager.callEvents(bz_eShotTeleportEvent, &event);
+        break;
+      }
+    }
+
+    return true;
+  } 
+};
 
 class HitHandler : public PlayerFirstHandler
 {
@@ -1054,6 +1118,7 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgCollide]           = new CollideHandler;
   playerNetworkHandlers[MsgShotBegin]         = new ShotBeginHandler;
   playerNetworkHandlers[MsgShotEnd]           = new ShotEndHandler;
+  playerNetworkHandlers[MsgShotInfo]          = new ShotInfoHandler;
   playerNetworkHandlers[MsgHit]               = new HitHandler;
   playerNetworkHandlers[MsgTeleport]          = new TeleportHandler;
   playerNetworkHandlers[MsgMessage]           = new MessageHandler;

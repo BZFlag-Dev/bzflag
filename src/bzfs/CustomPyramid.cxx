@@ -339,44 +339,51 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   }
 
   // add the texture coordinates
-  const int txcdAxis[6][2] = {
-    {1, 2}, // XP
-    {1, 3}, // XN
-    {0, 4}, // YP
-    {0, 5}, // YN
-    {0, 1}  // ZN
-  };
-  const fvec2 txcdData[7] = {
-    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(0.5f, 1.0f), // triangles
-    fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f) // quad
-  };
+  bool needTexCoords = false;
   for (int face = 0; face < FaceCount; face++) {
-    int cornerCount;
-    int cornerOffset;
-    if (face < 4) {
-      cornerCount = 3;
-      cornerOffset = 0;
-    } else {
-      cornerCount = 4;
-      cornerOffset = 3;
-    }
-    for (int corner = 0; corner < cornerCount; corner++) {
-      fvec2 txcd;
-      for (int a = 0; a < 2; a++) {
-	float scale;
-	if (texSizes[face][a] >= 0.0f) {
-	  scale = texSizes[face][a];
-	} else {
-	  const int axis = txcdAxis[face][a];
-	  scale = (edgeLengths[axis] / -texSizes[face][a]);
-	}
-	const int realCorner = corner + cornerOffset;
-	txcd[a] = (txcdData[realCorner][a] - texOffsets[face][a]) * scale;
-      }
-      txcds.push_back(txcd);
+    if ((texSizes[face][0] != 0.0f) || (texSizes[face][1] != 0.0f)) {
+      needTexCoords = true;
     }
   }
-
+  if (needTexCoords) {
+    const int txcdAxis[6][2] = {
+      {1, 2}, // XP
+      {1, 3}, // XN
+      {0, 4}, // YP
+      {0, 5}, // YN
+      {0, 1}  // ZN
+    };
+    const fvec2 txcdData[7] = {
+      fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(0.5f, 1.0f), // triangles
+      fvec2(0.0f, 0.0f), fvec2(1.0f, 0.0f), fvec2(1.0f, 1.0f), fvec2(0.0f, 1.0f) // quad
+    };
+    for (int face = 0; face < FaceCount; face++) {
+      int cornerCount;
+      int cornerOffset;
+      if (face < 4) {
+        cornerCount = 3;
+        cornerOffset = 0;
+      } else {
+        cornerCount = 4;
+        cornerOffset = 3;
+      }
+      for (int corner = 0; corner < cornerCount; corner++) {
+        fvec2 txcd;
+        for (int a = 0; a < 2; a++) {
+    float scale;
+    if (texSizes[face][a] >= 0.0f) {
+      scale = texSizes[face][a];
+    } else {
+      const int axis = txcdAxis[face][a];
+      scale = (edgeLengths[axis] / -texSizes[face][a]);
+    }
+    const int realCorner = corner + cornerOffset;
+    txcd[a] = (txcdData[realCorner][a] - texOffsets[face][a]) * scale;
+        }
+        txcds.push_back(txcd);
+      }
+    }
+  }
 
   MeshObstacle* mesh = new MeshObstacle(xform, checkTypes, checkPoints,
 					verts, norms, txcds, FaceCount,
