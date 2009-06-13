@@ -1053,6 +1053,22 @@ void ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
+void ServerLink::sendShotInfo(int shotID, char type, const fvec3& pos,
+                              int linkSrcID, int linkDstID)
+{
+  char msg[64];
+  void* buf = msg;
+  buf = nboPackUInt8(buf, uint8_t(getId()));
+  buf = nboPackInt16(buf, int16_t(shotID));
+  buf = nboPackUInt8(buf, uint8_t(type));
+  buf = nboPackFVec3(buf, pos);
+  if (type == ShotInfoTeleport) {
+    buf = nboPackUInt16(buf, uint16_t(linkSrcID));
+    buf = nboPackUInt16(buf, uint16_t(linkDstID));
+  }
+  send(MsgShotInfo, (char*)buf - msg, msg);
+}
+
 void ServerLink::sendCustomData ( const std::string &key, const std::string &value )
 {
   if (key.size()+value.size() >= MaxPacketLen)

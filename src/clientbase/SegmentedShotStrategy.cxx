@@ -25,6 +25,7 @@
 #include "MeshFace.h"
 #include "Roster.h"
 #include "WallObstacle.h"
+#include "Protocol.h"
 
 /* local implementation headers */
 #include "sound.h"
@@ -103,10 +104,23 @@ SegmentedShotStrategy::~SegmentedShotStrategy()
 }
 
 
+static bool wantShotInfo(char type)
+{
+  static BZDB_string sendShotInfo("_sendShotInfo");
+  const std::string& si = sendShotInfo;
+  if (si == "1") {
+    return true;
+  }
+  return (si.find(type) != std::string::npos);
+}
+
+
 void SegmentedShotStrategy::update(float dt)
 {
   prevTime = currentTime;
   currentTime += dt;
+
+  const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
 
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
@@ -135,7 +149,6 @@ void SegmentedShotStrategy::update(float dt)
 	  case ShotPathSegment::Ricochet: {
             // play ricochet sound.  ricochet of local player's shots
             // are important, others are not.
-            const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
             const bool important = (getPath().getPlayer() == myTankId);
             const fvec3& pos = segm.ray.getOrigin();
             SOUNDSYSTEM.play(SFX_RICOCHET, pos, important, false);
@@ -148,6 +161,11 @@ void SegmentedShotStrategy::update(float dt)
             if (!segm.noEffect) {
               EFFECTS.addRicoEffect(pos, normal);
             }
+            if (wantShotInfo(ShotInfoRicochet) &&
+                (getPath().getPlayer() == myTankId)) {
+              serverLink->sendShotInfo(getPath().getShotId(),
+                                       ShotInfoRicochet, pos);
+            }
             break;
           }
           case ShotPathSegment::Teleport: {
@@ -156,6 +174,15 @@ void SegmentedShotStrategy::update(float dt)
               EFFECTS.addShotTeleportEffect(segm.ray.getOrigin(),
                                             segm.ray.getDirection(),
                                             clipPlane);
+            }
+            if (wantShotInfo(ShotInfoTeleport) &&
+                (getPath().getPlayer() == myTankId)) {
+              const ShotPathSegment& prevSeg = segments[segment - 1];
+              const float timeDiff = (float)(prevSeg.end - prevSeg.start);
+              const fvec3 prevPos = prevSeg.ray.getPoint(timeDiff);
+              serverLink->sendShotInfo(getPath().getShotId(),
+                                       ShotInfoTeleport, prevPos,
+                                       segm.linkSrcID, segm.linkDstID);
             }
 	    break;
           }
@@ -172,6 +199,11 @@ void SegmentedShotStrategy::update(float dt)
       fvec3 pos;
       segm.ray.getPoint(float(segm.end - segm.start), pos);
       addShotExplosion(pos);
+      if (wantShotInfo(ShotInfoExpired) &&
+          (getPath().getPlayer() == myTankId)) {
+        serverLink->sendShotInfo(getPath().getShotId(),
+                                 ShotInfoExpired, pos);
+      }
     }
   }
   else {

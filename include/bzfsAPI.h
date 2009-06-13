@@ -141,6 +141,10 @@ typedef enum {
   bz_eFlagGrabbedEvent,
   bz_eFlagDroppedEvent,
   bz_eShotEndedEvent,
+  bz_eShotExpiredEvent,
+  bz_eShotStoppedEvent,
+  bz_eShotRicochetEvent,
+  bz_eShotTeleportEvent,
   bz_eNewNonPlayerConnection,
   bz_eIdleNewNonPlayerConnection,
   bz_ePlayerCollision,
@@ -846,6 +850,7 @@ public:
   bz_ShotFiredEventData_V1() : bz_EventData(bz_eShotFiredEvent)
     , changed(false)
     , playerID(-1)
+    , shotID(-1)
   {
     pos[0] = pos[1] = pos[2] = 0;
   }
@@ -854,6 +859,80 @@ public:
   float pos[3];
   bz_ApiString type;
   int playerID;
+  int shotID;
+};
+
+class BZF_API bz_ShotExpiredEventData_V1 : public bz_EventData
+{
+public:
+  bz_ShotExpiredEventData_V1(int pID, int sID, float x, float y, float z)
+  : bz_EventData(bz_eShotExpiredEvent)
+  , playerID(pID)
+  , shotID(sID)
+  {
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+  }
+  int playerID;
+  int shotID;
+  float pos[3];
+};
+
+class BZF_API bz_ShotStoppedEventData_V1 : public bz_EventData
+{
+public:
+  bz_ShotStoppedEventData_V1(int pID, int sID, float x, float y, float z)
+  : bz_EventData(bz_eShotStoppedEvent)
+  , playerID(pID)
+  , shotID(sID)
+  {
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+  }
+  int playerID;
+  int shotID;
+  float pos[3];
+};
+
+class BZF_API bz_ShotRicochetEventData_V1 : public bz_EventData
+{
+public:
+  bz_ShotRicochetEventData_V1(int pID, int sID, float x, float y, float z)
+  : bz_EventData(bz_eShotRicochetEvent)
+  , playerID(pID)
+  , shotID(sID)
+  {
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+  }
+  int playerID;
+  int shotID;
+  float pos[3];
+};
+
+class BZF_API bz_ShotTeleportEventData_V1 : public bz_EventData
+{
+public:
+  bz_ShotTeleportEventData_V1(int pID, int sID, float x, float y, float z,
+                              int _linkSrcID, int _linkDstID)
+  : bz_EventData(bz_eShotTeleportEvent)
+  , playerID(pID)
+  , shotID(sID)
+  , linkSrcID(_linkSrcID)
+  , linkDstID(_linkDstID)
+  {
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+  }
+  int playerID;
+  int shotID;
+  float pos[3];
+  int linkSrcID;
+  int linkDstID;
 };
 
 class BZF_API bz_AnointRabbitEventData_V1 : public bz_EventData

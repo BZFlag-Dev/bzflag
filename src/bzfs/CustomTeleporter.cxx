@@ -83,9 +83,9 @@ void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 		   border, texSize,
 		   driveThrough, shootThrough, ricochet);
 
-  std::string finalName = !telename.empty() ? telename : name;
+//  std::string finalName = !telename.empty() ? telename : name;
 
-  finalName = cleanName(finalName);
+  std::string finalName = cleanName(telename);
 
   if (!finalName.empty()) {
     tele->setName(finalName);

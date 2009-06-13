@@ -97,6 +97,7 @@ const uint16_t MsgWhatTimeIsIt      = 0x7774; // 'wt'
 const uint16_t MsgScore             = 0x7363; // 'sc'
 const uint16_t MsgScoreOver         = 0x736f; // 'so'
 const uint16_t MsgShotEnd           = 0x7365; // 'se'
+const uint16_t MsgShotInfo          = 0x7369; // 'si'
 const uint16_t MsgSuperKill         = 0x736b; // 'sk'
 const uint16_t MsgSetShot           = 0x7373; // 'ss'
 const uint16_t MsgSetTeam           = 0x7374; // 'st'
@@ -181,6 +182,11 @@ enum BlowedUpReason {
 	PhysicsDriverDeath,
 	LastReason
 };
+
+const uint8_t ShotInfoExpired  = 'e';
+const uint8_t ShotInfoStopped  = 's';
+const uint8_t ShotInfoRicochet = 'r';
+const uint8_t ShotInfoTeleport = 't';
 
 // request for additional UDP link
 const uint16_t MsgUDPLinkRequest     = 0x6f66; // 'of'
