@@ -294,7 +294,8 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
       for (j = 0; j < face->getVertexCount(); j++) {
 	v[j] = face->getVertex(j);
       }
-      MeshSceneNodeGenerator::makeTexcoords(face->getPlane(), v, t);
+      const fvec2& autoScale = bzmat->getTextureAutoScale(0);
+      MeshSceneNodeGenerator::makeTexcoords(autoScale, face->getPlane(), v, t);
     }
 
     // number of triangles

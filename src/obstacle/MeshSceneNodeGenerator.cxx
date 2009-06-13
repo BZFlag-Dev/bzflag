@@ -361,7 +361,8 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
       texcoords[i] = face->getTexcoord(i);
     }
   } else {
-    makeTexcoords (face->getPlane(), vertices, texcoords);
+    const fvec2& autoScale = face->getMaterial()->getTextureAutoScale(0);
+    makeTexcoords(autoScale, face->getPlane(), vertices, texcoords);
   }
 
   bool noRadar = false;
@@ -470,10 +471,15 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 }
 
 
-bool MeshSceneNodeGenerator::makeTexcoords(const fvec4& plane,
-					   const fvec3Array& vertices,
-					   fvec2Array& texcoords)
+bool MeshSceneNodeGenerator::makeTexcoords(const fvec2& autoScale,
+                                           const fvec4& plane,
+                                           const fvec3Array& vertices,
+                                           fvec2Array& texcoords)
 {
+  const float defScale = 1.0f / 8.0f;
+  const float sScale = (autoScale.s == 0.0f) ? defScale : 1.0f / autoScale.s;
+  const float tScale = (autoScale.t == 0.0f) ? defScale : 1.0f / autoScale.t;
+
   fvec3 x = fvec3(vertices[1]) - fvec3(vertices[0]);
   fvec3 y = fvec3::cross(plane.xyz(), x);
 
@@ -482,15 +488,36 @@ bool MeshSceneNodeGenerator::makeTexcoords(const fvec4& plane,
     return false;
   }
 
-  const float uvScale = 8.0f;
+  const bool horizontal = fabsf(plane[2]) > 0.999f;
 
-  texcoords[0][0] = 0.0f;
-  texcoords[0][1] = 0.0f;
   const int count = vertices.getSize();
-  for (int i = 1; i < count; i++) {
-    const fvec3 delta = fvec3(vertices[i]) - fvec3(vertices[0]);
-    texcoords[i][0] = fvec3::dot(delta, x) / uvScale;
-    texcoords[i][1] = fvec3::dot(delta, y) / uvScale;
+  for (int i = 0; i < count; i++) {
+    const fvec3& v = vertices[i];
+    const fvec3 delta = fvec3(v) - vertices[0];
+    const fvec2 nh = fvec2(plane.x, plane.y).normalize();
+    const float vs = 1.0f / sqrtf(1.0f - (plane.z * plane.z));
+
+    if (sScale < 0.0f) {
+      texcoords[i].s = -sScale * fvec3::dot(delta, x);
+    }
+    else {
+      if (horizontal) {
+        texcoords[i].s = sScale * v.x;
+      } else {
+        texcoords[i].s = sScale * ((nh.x * v.y) - (nh.y * v.x));
+      }
+    }
+
+    if (tScale < 0.0f) {
+      texcoords[i].t = -tScale * fvec3::dot(delta, y);
+    }
+    else {
+      if (horizontal) {
+        texcoords[i].t = tScale * v.y;
+      } else {
+        texcoords[i].t = tScale * (v.z * vs);
+      }
+    }
   }
 
   return true;

@@ -25,7 +25,7 @@
 
 class CustomPyramid : public WorldFileObstacle {
   public:
-    CustomPyramid();
+    CustomPyramid(bool meshed);
     ~CustomPyramid();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;

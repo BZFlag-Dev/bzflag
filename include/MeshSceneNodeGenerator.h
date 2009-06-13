@@ -41,9 +41,10 @@ class MeshSceneNodeGenerator {
 				  const BzMaterial* mat);
     static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
 
-    static bool makeTexcoords(const fvec4& plane,
-			      const fvec3Array& vertices,
-			      fvec2Array& texcoords);
+    static bool makeTexcoords(const fvec2& autoScale,
+                              const fvec4& plane,
+                              const fvec3Array& vertices,
+                              fvec2Array& texcoords);
 
   protected:
     MeshSceneNodeGenerator(const MeshObstacle*);

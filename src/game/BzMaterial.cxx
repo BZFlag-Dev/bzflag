@@ -377,7 +377,8 @@ bool BzMaterial::operator==(const BzMaterial& m) const
 	(textures[i].combineMode != m.textures[i].combineMode) ||
 	(textures[i].useAlpha != m.textures[i].useAlpha) ||
 	(textures[i].useColor != m.textures[i].useColor) ||
-	(textures[i].useSphereMap != m.textures[i].useSphereMap)) {
+	(textures[i].useSphereMap != m.textures[i].useSphereMap) ||
+	(textures[i].autoScale != m.textures[i].autoScale)) {
       return false;
     }
   }
@@ -427,6 +428,7 @@ void* BzMaterial::pack(void* buf) const
     buf = nboPackStdString(buf, texinfo->name);
     buf = nboPackInt32(buf, texinfo->matrix);
     buf = nboPackInt32(buf, texinfo->combineMode);
+    buf = nboPackFVec2(buf, texinfo->autoScale);
     unsigned char stateByte = 0;
     if (texinfo->useAlpha) {
       stateByte = stateByte | (1 << 0);
@@ -487,6 +489,7 @@ void* BzMaterial::unpack(void* buf)
     texinfo->matrix = int(inTmp);
     buf = nboUnpackInt32(buf, inTmp);
     texinfo->combineMode = int(inTmp);
+    buf = nboUnpackFVec2(buf, texinfo->autoScale);
     texinfo->useAlpha = false;
     texinfo->useColor = false;
     texinfo->useSphereMap = false;
@@ -531,6 +534,7 @@ int BzMaterial::packSize() const
     textureSize += nboStdStringPackSize(textures[i].name);
     textureSize += sizeof(int32_t);
     textureSize += sizeof(int32_t);
+    textureSize += sizeof(fvec2);
     textureSize += sizeof(unsigned char);
   }
 
@@ -633,6 +637,9 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
     }
     if (texinfo->useSphereMap) {
       out << indent << "    spheremap" << std::endl;
+    }
+    if ((texinfo->autoScale.x != 0.0f) || (texinfo->autoScale.y != 0.0f)) {
+      out << indent << "    texautoscale " << texinfo->autoScale << std::endl;
     }
   }
 
@@ -834,6 +841,7 @@ void BzMaterial::addTexture(const std::string& texname)
   texinfo->useAlpha = true;
   texinfo->useColor = true;
   texinfo->useSphereMap = false;
+  texinfo->autoScale = fvec2(0.0f, 0.0f);
 
   return;
 }
@@ -893,6 +901,14 @@ void BzMaterial::setUseSphereMap(bool value)
 {
   if (textureCount > 0) {
     textures[textureCount - 1].useSphereMap = value;
+  }
+  return;
+}
+
+void BzMaterial::setTextureAutoScale(const fvec2& scale)
+{
+  if (textureCount > 0) {
+    textures[textureCount - 1].autoScale = scale;
   }
   return;
 }
@@ -1097,6 +1113,16 @@ bool BzMaterial::getUseSphereMap(int texid) const
     return textures[texid].useSphereMap;
   } else {
     return false;
+  }
+}
+
+const fvec2& BzMaterial::getTextureAutoScale(int texid) const
+{
+  static const fvec2 defScale(0.0f, 0.0f);
+  if ((texid >= 0) && (texid < textureCount)) {
+    return textures[texid].autoScale;
+  } else {
+    return defScale;
   }
 }
 

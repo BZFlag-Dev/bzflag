@@ -43,10 +43,9 @@ const char* CustomBox::faceNames[FaceCount] = {
 };
 
 
-CustomBox::CustomBox()
+CustomBox::CustomBox(bool meshed)
+: isOldBox(!meshed)
 {
-  isOldBox = true;
-
   size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
   size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
 
@@ -57,10 +56,18 @@ CustomBox::CustomBox()
   materials[ZP].setTexture("roof");
   materials[ZN].setTexture("roof");
 
+  const float wallScale = 8.0f;
+  const float roofScale = 4.0f;
+  materials[XP].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[XN].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[YP].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[YN].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[ZP].setTextureAutoScale(fvec2(roofScale, roofScale));
+  materials[ZN].setTextureAutoScale(fvec2(roofScale, roofScale));
+
   for (int i = 0; i < FaceCount; i++) {
-    const float defScale = (i >= ZP) ? -2.0f : -8.0f;
-    texSizes[i][0] = defScale;
-    texSizes[i][1] = defScale;
+    texSizes[i][0] = 0.0f;
+    texSizes[i][1] = 0.0f;
     texOffsets[i][0] = 0.0f;
     texOffsets[i][1] = 0.0f;
     phyDrvs[i] = -1;
@@ -370,7 +377,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   // XP
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(2); iv.push_back(6); iv.push_back(5);
-  it.push_back(0); it.push_back(1); it.push_back(2); it.push_back(3);
+  if ((texSizes[XP][0] != 0.0f) || (texSizes[XP][1] != 0.0f)) {
+    it.push_back(0); it.push_back(1); it.push_back(2); it.push_back(3);
+  }
   mesh->addFace(iv, in, it, mats[XP], phyDrvs[XP], false, false,
 		driveThroughs[XP], shootThroughs[XP], ricochets[XP],
 		false, NULL);
@@ -378,7 +387,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   // XN
   iv.clear(); it.clear();
   iv.push_back(3); iv.push_back(0); iv.push_back(4); iv.push_back(7);
-  it.push_back(4); it.push_back(5); it.push_back(6); it.push_back(7);
+  if ((texSizes[XN][0] != 0.0f) || (texSizes[XN][1] != 0.0f)) {
+    it.push_back(4); it.push_back(5); it.push_back(6); it.push_back(7);
+  }
   mesh->addFace(iv, in, it, mats[XN], phyDrvs[XN], false, false,
 		driveThroughs[XN], shootThroughs[XN], ricochets[XN],
 		false, NULL);
@@ -386,7 +397,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   // YP
   iv.clear(); it.clear();
   iv.push_back(2); iv.push_back(3); iv.push_back(7); iv.push_back(6);
-  it.push_back(8); it.push_back(9); it.push_back(10); it.push_back(11);
+  if ((texSizes[YP][0] != 0.0f) || (texSizes[YP][1] != 0.0f)) {
+    it.push_back(8); it.push_back(9); it.push_back(10); it.push_back(11);
+  }
   mesh->addFace(iv, in, it, mats[YP], phyDrvs[YP], false, false,
 		driveThroughs[YP], shootThroughs[YP], ricochets[YP],
 		false, NULL);
@@ -394,7 +407,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   // YN
   iv.clear(); it.clear();
   iv.push_back(0); iv.push_back(1); iv.push_back(5); iv.push_back(4);
-  it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
+  if ((texSizes[YN][0] != 0.0f) || (texSizes[YN][1] != 0.0f)) {
+    it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
+  }
   mesh->addFace(iv, in, it, mats[YN], phyDrvs[YN], false, false,
 		driveThroughs[YN], shootThroughs[YN], ricochets[YN],
 		false, NULL);
@@ -402,7 +417,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   // ZP
   iv.clear(); it.clear();
   iv.push_back(4); iv.push_back(5); iv.push_back(6); iv.push_back(7);
-  it.push_back(16); it.push_back(17); it.push_back(18); it.push_back(19);
+  if ((texSizes[ZP][0] != 0.0f) || (texSizes[ZP][1] != 0.0f)) {
+    it.push_back(16); it.push_back(17); it.push_back(18); it.push_back(19);
+  }
   mesh->addFace(iv, in, it, mats[ZP], phyDrvs[ZP], false, false,
 		driveThroughs[ZP], shootThroughs[ZP], ricochets[ZP],
 		false, NULL);
@@ -410,7 +427,9 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   // ZN
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(0); iv.push_back(3); iv.push_back(2);
-  it.push_back(20); it.push_back(21); it.push_back(22); it.push_back(23);
+  if ((texSizes[ZN][0] != 0.0f) || (texSizes[ZN][1] != 0.0f)) {
+    it.push_back(20); it.push_back(21); it.push_back(22); it.push_back(23);
+  }
   mesh->addFace(iv, in, it, mats[ZN], phyDrvs[ZN], false, false,
 		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
 		false, NULL);

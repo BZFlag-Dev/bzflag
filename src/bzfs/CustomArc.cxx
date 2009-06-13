@@ -41,7 +41,7 @@ const char* CustomArc::sideNames[MaterialCount] = {
 };
 
 
-CustomArc::CustomArc(bool box)
+CustomArc::CustomArc()
 {
   divisions = 16;
   size = fvec3(10.0f, 10.0f, 10.0f);
@@ -51,14 +51,6 @@ CustomArc::CustomArc(bool box)
   phydrv = -1;
   useNormals = true;
   smoothBounce = false;
-
-  boxStyle = box;
-  if (boxStyle) {
-    divisions = 4;
-    useNormals = false;
-    size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-  }
 
   // setup the default textures
   materials[Top].setTexture("roof");
@@ -145,28 +137,10 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
   for (i = 0; i < MaterialCount; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
-  ArcObstacle* arc;
-  if (!boxStyle) {
-    arc = new ArcObstacle(transform, pos, size, rotation, angle, ratio,
-			  texsize, useNormals, divisions, mats, phydrv,
-			  smoothBounce, driveThrough, shootThrough, ricochet);
-  }
-  else {
-    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
-    const fvec3 origin(0.0f, 0.0f, 0.0f);
-    MeshTransform xform;
-    xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
-    xform.addShift(pos);
-    xform.append(transform);
-    fvec3 newSize;
-    newSize.x = (float)(size.x * M_SQRT2);
-    newSize.y = (float)(size.y * M_SQRT2);
-    newSize.z = size.z;
-    arc = new ArcObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle, ratio,
-			  texsize, useNormals, divisions, mats, phydrv,
-			  smoothBounce, driveThrough, shootThrough, ricochet);
-  }
-
+  ArcObstacle* arc =
+    new ArcObstacle(transform, pos, size, rotation, angle, ratio,
+                    texsize, useNormals, divisions, mats, phydrv,
+                    smoothBounce, driveThrough, shootThrough, ricochet);
   arc->setName(name.c_str());
 
   if (arc->isValid()) {

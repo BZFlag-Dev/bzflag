@@ -169,27 +169,27 @@ bool BZWReader::parseNormalObject(const char* token, WorldFileObject** object)
 
   WorldFileObject*& obj = *object;
 
-       if (lower == "box")           { obj = new CustomBox;           }
-  else if (lower == "pyramid")       { obj = new CustomPyramid();     }
-  else if (lower == "base")          { obj = new CustomBase;          }
-  else if (lower == "link")          { obj = new CustomLink(false);   }
-  else if (lower == "linkset")       { obj = new CustomLink(true);    }
-  else if (lower == "mesh")          { obj = new CustomMesh;          }
-  else if (lower == "arc")           { obj = new CustomArc(false);    }
-  else if (lower == "meshbox")       { obj = new CustomArc(true);     }
-  else if (lower == "cone")          { obj = new CustomCone(false);   }
-  else if (lower == "meshpyr")       { obj = new CustomCone(true);    }
-  else if (lower == "sphere")        { obj = new CustomSphere;        }
-  else if (lower == "tetra")         { obj = new CustomTetra();       }
-  else if (lower == "weapon")        { obj = new CustomWeapon;        }
-  else if (lower == "zone")          { obj = new CustomZone;          }
-  else if (lower == "waterlevel")    { obj = new CustomWaterLevel;    }
-  else if (lower == "dynamiccolor")  { obj = new CustomDynamicColor;  }
-  else if (lower == "texturematrix") { obj = new CustomTextureMatrix; }
-  else if (lower == "material")      { obj = new CustomMaterial;      }
-  else if (lower == "physics")       { obj = new CustomPhysicsDriver; }
-  else if (lower == "transform")     { obj = new CustomMeshTransform; }
-  else if (lower == "text")          { obj = new CustomWorldText;     }
+       if (lower == "box")           { obj = new CustomBox(false);     }
+  else if (lower == "meshbox")       { obj = new CustomBox(true);      }
+  else if (lower == "pyramid")       { obj = new CustomPyramid(false); }
+  else if (lower == "meshpyr")       { obj = new CustomPyramid(true);  }
+  else if (lower == "base")          { obj = new CustomBase;           }
+  else if (lower == "link")          { obj = new CustomLink(false);    }
+  else if (lower == "linkset")       { obj = new CustomLink(true);     }
+  else if (lower == "mesh")          { obj = new CustomMesh;           }
+  else if (lower == "arc")           { obj = new CustomArc;            }
+  else if (lower == "cone")          { obj = new CustomCone;           }
+  else if (lower == "sphere")        { obj = new CustomSphere;         }
+  else if (lower == "tetra")         { obj = new CustomTetra();        }
+  else if (lower == "weapon")        { obj = new CustomWeapon;         }
+  else if (lower == "zone")          { obj = new CustomZone;           }
+  else if (lower == "waterlevel")    { obj = new CustomWaterLevel;     }
+  else if (lower == "dynamiccolor")  { obj = new CustomDynamicColor;   }
+  else if (lower == "texturematrix") { obj = new CustomTextureMatrix;  }
+  else if (lower == "material")      { obj = new CustomMaterial;       }
+  else if (lower == "physics")       { obj = new CustomPhysicsDriver;  }
+  else if (lower == "transform")     { obj = new CustomMeshTransform;  }
+  else if (lower == "text")          { obj = new CustomWorldText;      }
   else {
     return false; // no match found
   }

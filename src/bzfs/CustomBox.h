@@ -25,7 +25,7 @@
 
 class CustomBox : public WorldFileObstacle {
   public:
-    CustomBox();
+    CustomBox(bool meshed);
     ~CustomBox();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;

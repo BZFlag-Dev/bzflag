@@ -81,6 +81,7 @@ class BzMaterial {
     void setTexture(const std::string&);
     void setTextureLocal(int texid, const std::string& localname);
     void setTextureMatrix(int);
+    void setTextureAutoScale(const fvec2& scales);
     void setCombineMode(int);
     void setUseTextureAlpha(bool);
     void setUseColorOnTexture(bool);
@@ -123,6 +124,7 @@ class BzMaterial {
     bool getUseTextureAlpha(int) const;
     bool getUseColorOnTexture(int) const;
     bool getUseSphereMap(int) const;
+    const fvec2& getTextureAutoScale(int) const;
 
     int getShaderCount() const;
     const std::string& getShader(int) const;
@@ -185,6 +187,7 @@ class BzMaterial {
       bool useAlpha;
       bool useColor;
       bool useSphereMap;
+      fvec2 autoScale;
     } TextureInfo;
     TextureInfo* textures;
 

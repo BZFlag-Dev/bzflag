@@ -239,6 +239,16 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setUseSphereMap(true);
     }
   }
+  else if (strcasecmp(cmd, "texautoscale") == 0) {
+    fvec2 scale;
+    if (!(input >> scale.x >> scale.y)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setTextureAutoScale(scale);
+    }
+  }
   else if (strcasecmp(cmd, "shader") == 0) {
     std::string name;
     if (!(input >> name)) {

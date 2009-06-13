@@ -40,7 +40,7 @@ const char* CustomCone::sideNames[MaterialCount] = {
 };
 
 
-CustomCone::CustomCone(bool pyramid)
+CustomCone::CustomCone()
 {
   // default to a (radius=10, height=10) cylinder
   divisions = 16;
@@ -56,19 +56,6 @@ CustomCone::CustomCone(bool pyramid)
   materials[Bottom].setTexture("roof");
   materials[StartFace].setTexture("wall");
   materials[EndFace].setTexture("wall");
-
-  pyramidStyle = pyramid;
-  if (pyramidStyle) {
-    flipz = false;
-    divisions = 4;
-    useNormals = false;
-    size.x = size.y = BZDB.eval(StateDatabase::BZDB_PYRBASE);
-    size.z = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
-    materials[Edge].setTexture("pyrwall");
-    materials[Bottom].setTexture("pyrwall");
-    materials[StartFace].setTexture("pyrwall");
-    materials[EndFace].setTexture("pyrwall");
-  }
 
   return;
 }
@@ -127,9 +114,6 @@ bool CustomCone::read(const char *cmd, std::istream& input)
       return false;
     }
   }
-  else if (pyramidStyle && (strcasecmp(cmd, "flipz") == 0)) {
-    flipz = true;
-  }
   else {
     return WorldFileObstacle::read(cmd, input);
   }
@@ -145,33 +129,10 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
   for (i = 0; i < MaterialCount; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
-  ConeObstacle* cone;
-  if (!pyramidStyle) {
-    cone = new ConeObstacle(transform, pos, size, rotation, angle,
-			    texsize, useNormals, divisions, mats, phydrv,
-			    smoothBounce, driveThrough, shootThrough, ricochet);
-  } else {
-    const fvec3 zAxis(0.0f, 0.0f, 1.0f);
-    const fvec3 origin(0.0f, 0.0f, 0.0f);
-    MeshTransform xform;
-    if (flipz || (size.z < 0.0f)) {
-      const fvec3 flipScale(1.0f, 1.0f, -1.0f);
-      const fvec3 flipShift(0.0f, 0.0f, +size.z);
-      xform.addScale(flipScale);
-      xform.addShift(flipShift);
-    }
-    xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
-    xform.addShift(pos);
-    xform.append(transform);
-    fvec3 newSize;
-    newSize.x = (float)(size.x * M_SQRT2);
-    newSize.y = (float)(size.y * M_SQRT2);
-    newSize.z = fabsf(size.z);
-    cone = new ConeObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle,
-			    texsize, useNormals, divisions, mats, phydrv,
-			    smoothBounce, driveThrough, shootThrough, ricochet);
-  }
-
+  ConeObstacle* cone =
+    new ConeObstacle(transform, pos, size, rotation, angle,
+                     texsize, useNormals, divisions, mats, phydrv,
+                     smoothBounce, driveThrough, shootThrough, ricochet);
   cone->setName(name.c_str());
 
   if (cone->isValid()) {

@@ -42,10 +42,9 @@ const char* CustomPyramid::faceNames[FaceCount] = {
 };
 
 
-CustomPyramid::CustomPyramid()
+CustomPyramid::CustomPyramid(bool meshed)
+: isOldPyramid(!meshed)
 {
-  isOldPyramid = true;
-
   flipz = false;
 
   size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
@@ -57,9 +56,17 @@ CustomPyramid::CustomPyramid()
   materials[YN].setTexture("pyrwall");
   materials[ZN].setTexture("pyrwall");
 
+  const float wallScale = 8.0f;
+  const float roofScale = 8.0f;
+  materials[XP].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[XN].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[YP].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[YN].setTextureAutoScale(fvec2(wallScale, wallScale));
+  materials[ZN].setTextureAutoScale(fvec2(roofScale, roofScale));
+
   for (int i = 0; i < FaceCount; i++) {
-    texSizes[i][0] = -8.0f;
-    texSizes[i][1] = -8.0f;
+    texSizes[i][0] = 0.0f;
+    texSizes[i][1] = 0.0f;
     texOffsets[i][0] = 0.0f;
     texOffsets[i][1] = 0.0f;
     phyDrvs[i] = -1;
@@ -392,7 +399,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // XP
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(2); iv.push_back(4);
-  it.push_back(0); it.push_back(1); it.push_back(2);
+  if ((texSizes[XP][0] != 0.0f) || (texSizes[XP][1] != 0.0f)) {
+    it.push_back(0); it.push_back(1); it.push_back(2);
+  }
   mesh->addFace(iv, in, it, mats[XP], phyDrvs[XP], false, false,
 		driveThroughs[XP], shootThroughs[XP], ricochets[XP],
 		false, NULL);
@@ -400,7 +409,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // XN
   iv.clear(); it.clear();
   iv.push_back(3); iv.push_back(0); iv.push_back(4);
-  it.push_back(3); it.push_back(4); it.push_back(5);
+  if ((texSizes[XN][0] != 0.0f) || (texSizes[XN][1] != 0.0f)) {
+    it.push_back(3); it.push_back(4); it.push_back(5);
+  }
   mesh->addFace(iv, in, it, mats[XN], phyDrvs[XN], false, false,
 		driveThroughs[XN], shootThroughs[XN], ricochets[XN],
 		false, NULL);
@@ -408,7 +419,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // YP
   iv.clear(); it.clear();
   iv.push_back(2); iv.push_back(3); iv.push_back(4);
-  it.push_back(6); it.push_back(7); it.push_back(8);
+  if ((texSizes[YP][0] != 0.0f) || (texSizes[YP][1] != 0.0f)) {
+    it.push_back(6); it.push_back(7); it.push_back(8);
+  }
   mesh->addFace(iv, in, it, mats[YP], phyDrvs[YP], false, false,
 		driveThroughs[YP], shootThroughs[YP], ricochets[YP],
 		false, NULL);
@@ -416,7 +429,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // YN
   iv.clear(); it.clear();
   iv.push_back(0); iv.push_back(1); iv.push_back(4);
-  it.push_back(9); it.push_back(10); it.push_back(11);
+  if ((texSizes[YN][0] != 0.0f) || (texSizes[YN][1] != 0.0f)) {
+    it.push_back(9); it.push_back(10); it.push_back(11);
+  }
   mesh->addFace(iv, in, it, mats[YN], phyDrvs[YN], false, false,
 		driveThroughs[YN], shootThroughs[YN], ricochets[YN],
 		false, NULL);
@@ -424,7 +439,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // ZN
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(0); iv.push_back(3); iv.push_back(2);
-  it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
+  if ((texSizes[ZN][0] != 0.0f) || (texSizes[ZN][1] != 0.0f)) {
+    it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
+  }
   mesh->addFace(iv, in, it, mats[ZN], phyDrvs[ZN], false, false,
 		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
 		false, NULL);
