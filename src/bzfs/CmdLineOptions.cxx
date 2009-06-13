@@ -43,6 +43,7 @@
 
 /* local implementation headers */
 #include "bzfs.h"
+#include "bzfsPlugins.h"
 #include "RecordReplay.h"
 #include "BZWError.h"
 #include "Permissions.h"
@@ -793,8 +794,20 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 	pDef.plugin = a[0];
       if (a.size() >= 2)
 	pDef.command = a[1];
-      if (pDef.plugin.size())
-	pluginList.push_back(pDef);
+      if (pDef.plugin.size()) {
+        if (!fromWorldFile) {
+	  pluginList.push_back(pDef);
+        }
+#ifdef BZ_PLUGINS
+        else {
+          if (!loadPlugin(pDef.plugin, pDef.command)) {
+            std::string text = "WARNING: unable to load the plugin; ";
+            text += pDef.plugin + "\n";
+            logDebugMessage(0, text.c_str());
+          }
+        }
+#endif // BZ_PLUGINS
+      }
     }
     else if (token == "-maxidle") {
       idlekickthresh = (float)parseIntArg(i, tokens);
