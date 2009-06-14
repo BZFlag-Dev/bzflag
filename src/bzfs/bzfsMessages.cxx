@@ -457,15 +457,15 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
   GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(toPlayer);
   GameKeeper::Player *fromData = GameKeeper::Player::getPlayerByIndex(fromPlayer);
 
-  toData->efectiveShotType = fromData->efectiveShotType;
-  fromData->efectiveShotType = StandardShot;
+  toData->effectiveShotType = fromData->effectiveShotType;
+  fromData->effectiveShotType = StandardShot;
   flag.flag.owner = toPlayer;
   flag.player = toPlayer;
   toData->player.resetFlag();
   toData->player.setFlag(flag.getIndex());
   fromData->player.resetFlag();
   flag.pack(msg);
-  msg->packUInt8(toData->efectiveShotType);
+  msg->packUInt8(toData->effectiveShotType);
 
   msg->broadcast(MsgTransferFlag);
 
@@ -473,7 +473,7 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->flagTransfer(fromData->getIndex(),toData->getIndex(),flag.getIndex(),(bz_eShotType)toData->efectiveShotType);
+      otherData->playerHandler->flagTransfer(fromData->getIndex(),toData->getIndex(),flag.getIndex(),(bz_eShotType)toData->effectiveShotType);
   }
 }
 
@@ -532,7 +532,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 
   // pack in the shot type, it may have been modified
   msg->packUInt8(data.shotType);
-  playerData->efectiveShotType = (ShotType)data.shotType;
+  playerData->effectiveShotType = (ShotType)data.shotType;
 
   msg->broadcast(MsgGrabFlag);
 
@@ -540,7 +540,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv.c_str(),(bz_eShotType)playerData->efectiveShotType);
+      otherData->playerHandler->grabFlag(playerIndex,flag.getIndex(),flag.flag.type->flagAbbv.c_str(),(bz_eShotType)playerData->effectiveShotType);
   }
 
   playerData->flagHistory.add(flag.flag.type);
@@ -553,10 +553,10 @@ void sendSetShotType ( int playerIndex, ShotType type )
   if (!playerData)
     return;
 
-  if (type == playerData->efectiveShotType )
+  if (type == playerData->effectiveShotType )
     return; // it's the same as what they have
 
-  playerData->efectiveShotType = type;
+  playerData->effectiveShotType = type;
 
   NetMsg msg = MSGMGR.newMessage();
 
@@ -569,7 +569,7 @@ void sendSetShotType ( int playerIndex, ShotType type )
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler)
-      otherData->playerHandler->setShotType(playerIndex,(bz_eShotType)playerData->efectiveShotType);
+      otherData->playerHandler->setShotType(playerIndex,(bz_eShotType)playerData->effectiveShotType);
   }
 }
 

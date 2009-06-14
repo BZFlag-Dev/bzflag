@@ -2506,7 +2506,7 @@ void spawnPlayer ( int playerIndex )
 
   sendMessageAlive(playerIndex, playerData->currentPos, playerData->currentRot);
 
-  playerData->efectiveShotType = StandardShot;
+  playerData->effectiveShotType = StandardShot;
   playerData->player.setAllow(AllowAll);
   sendMessageAllow(playerIndex, AllowAll);
 
@@ -3099,7 +3099,7 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos)
   if (flagIndex < 0)
     return;
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
-  playerData.efectiveShotType = StandardShot;
+  playerData.effectiveShotType = StandardShot;
 
   bz_FlagDroppedEventData_V1 data;
   data.playerID = playerData.getIndex();

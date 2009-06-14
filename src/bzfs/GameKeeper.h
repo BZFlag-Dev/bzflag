@@ -190,7 +190,7 @@ public:
     PlayerState       lastState;
     TimeKeeper	      stateTimeStamp;
 
-    ShotType	      efectiveShotType;
+    ShotType	      effectiveShotType;
 
     bool	      canSpawn;
     int		      botHost;

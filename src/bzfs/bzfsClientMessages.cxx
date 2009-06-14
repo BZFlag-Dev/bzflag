@@ -550,7 +550,7 @@ public:
     firingInfo.shot.player = player->getIndex();
     firingInfo.shot.id     = id;
 
-    firingInfo.shotType = player->efectiveShotType;
+    firingInfo.shotType = player->effectiveShotType;
 
     const PlayerInfo &shooter = player->player;
     if (!shooter.isAlive() || shooter.isObserver())

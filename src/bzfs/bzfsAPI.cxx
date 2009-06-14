@@ -5395,7 +5395,7 @@ bool bz_ServerSidePlayerHandler::falling (void)
 
 bz_eShotType bz_ServerSidePlayerHandler::getShotType(void)
 {
-  return (bz_eShotType)GameKeeper::Player::getPlayerByIndex(playerID)->efectiveShotType;
+  return (bz_eShotType)GameKeeper::Player::getPlayerByIndex(playerID)->effectiveShotType;
 }
 
 void bz_ServerSidePlayerHandler::getPosition ( float *p )
