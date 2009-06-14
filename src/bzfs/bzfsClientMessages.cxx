@@ -603,9 +603,15 @@ public:
     // ask the API if it wants to modify this shot
     bz_ShotFiredEventData_V1 shotEvent;
 
-    shotEvent.pos[0] = firingInfo.shot.pos.x;
-    shotEvent.pos[1] = firingInfo.shot.pos.y;
-    shotEvent.pos[2] = firingInfo.shot.pos.z;
+    fvec3 shotPos = player->currentPos;
+    if (firingInfo.shotType != ShockWaveShot) {
+      // FIXME -- does not account for dynamic tank dimensions
+      shotPos.z += BZDBCache::muzzleHeight;
+      shotPos.xy() += fvec2(BZDBCache::tankRadius, 0.0f).rotate(player->currentRot);
+    }
+    shotEvent.pos[0] = shotPos.x;
+    shotEvent.pos[1] = shotPos.y;
+    shotEvent.pos[2] = shotPos.z;
     shotEvent.playerID = (int)player->getIndex();
     shotEvent.shotID = (int)firingInfo.shot.id;
 

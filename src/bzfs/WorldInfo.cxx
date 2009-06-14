@@ -32,6 +32,7 @@
 #include "MeshDrawInfo.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
+#include "LinkManager.h"
 
 /* obstacle implementation headers */
 #include "ObstacleMgr.h"
@@ -67,7 +68,7 @@ WorldInfo::WorldInfo() :
   gravity = -9.81f;
   waterLevel = -1.0f;
   waterMatRef = NULL;
-	finished = false;
+  finished = false;
 }
 
 WorldInfo::~WorldInfo()
@@ -76,7 +77,17 @@ WorldInfo::~WorldInfo()
   database = NULL;
   databaseSize = 0;
   uncompressedSize = 0;
+
+  // clear the managers
+  DYNCOLORMGR.clear();
+  TEXMATRIXMGR.clear();
+  MATERIALMGR.clear();
+  PHYDRVMGR.clear();
+  TRANSFORMMGR.clear();
   OBSTACLEMGR.clear();
+  COLLISIONMGR.clear();
+  linkManager.clear();  
+                  
   finished = false;
 }
 
