@@ -12,11 +12,16 @@
 
 #include "common.h"
 
+// implementation header
+#include "BzMaterial.h"
+
+// system headers
 #include <string.h>
 
-#include "BzMaterial.h"
-#include "TextureMatrix.h"
+// common headers
 #include "DynamicColor.h"
+#include "TextureMatrix.h"
+#include "BZDBCache.h"
 #include "Pack.h"
 
 
@@ -682,7 +687,8 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
       if ((nlen < 4) || (strcasecmp(cname + (nlen - 4), ".png") != 0)) {
 	texname += ".png";
       }
-      out << "map_Kd " << texname << std::endl;
+      static BZDB_string prefix("objTexturePrefix");
+      out << "map_Kd " << ((std::string)prefix + texname) << std::endl;
     }
   }
   out << std::endl;

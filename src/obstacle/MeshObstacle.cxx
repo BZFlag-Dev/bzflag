@@ -786,15 +786,6 @@ void *MeshObstacle::unpack(void *buf)
 }
 
 
-static void outputFloat(std::ostream& out, float value)
-{
-  char buffer[32];
-  snprintf(buffer, 30, " %.8g", value);
-  out << buffer;
-  return;
-}
-
-
 void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "mesh" << std::endl;
@@ -835,38 +826,22 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     out << indent << "  ricochet" << std::endl;
   }
 
-  int i, j;
+  int i;
   for (i = 0; i < checkCount; i++) {
     if (checkTypes[i] == CheckInside) {
-      out << indent << "  inside";
+      out << indent << "  inside"  << checkPoints[i] << std::endl;
     } else {
-      out << indent << "  outside";
+      out << indent << "  outside" << checkPoints[i] << std::endl;
     }
-    for (j = 0; j < 3; j++) {
-      outputFloat(out, checkPoints[i][j]);
-    }
-    out << std::endl;
   }
   for (i = 0; i < vertexCount; i++) {
-    out << indent << "  vertex";
-    for (j = 0; j < 3; j++) {
-      outputFloat(out, vertices[i][j]);
-    }
-    out << std::endl;
+    out << indent << "  vertex"   << vertices[i]  << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << indent << "  normal";
-    for (j = 0; j < 3; j++) {
-      outputFloat(out, normals[i][j]);
-    }
-    out << std::endl;
+    out << indent << "  normal"   << normals[i]   << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
-    out << indent << "  texcoord";
-    for (j = 0; j < 2; j++) {
-      outputFloat(out, texcoords[i][j]);
-    }
-    out << std::endl;
+    out << indent << "  texcoord" << texcoords[i] << std::endl;
   }
 
   for (int f = 0; f < faceCount; f++) {
@@ -885,6 +860,61 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 }
 
 
+bool MeshObstacle::makeTexcoords(const fvec2& autoScale,
+                                 const fvec4& plane,
+                                 const std::vector<fvec3>& vertices,
+                                 std::vector<fvec2>& texcoords)
+{
+  const float defScale = 1.0f / 8.0f;
+  const float sScale = (autoScale.s == 0.0f) ? defScale : 1.0f / autoScale.s;
+  const float tScale = (autoScale.t == 0.0f) ? defScale : 1.0f / autoScale.t;
+
+  fvec3 x = fvec3(vertices[1]) - fvec3(vertices[0]);
+  fvec3 y = fvec3::cross(plane.xyz(), x);
+
+  if (!fvec3::normalize(x) ||
+      !fvec3::normalize(y)) {
+    return false;
+  }
+
+  texcoords.resize(vertices.size());
+
+  const bool horizontal = fabsf(plane[2]) > 0.999f;
+
+  const int count = (int)vertices.size();
+  for (int i = 0; i < count; i++) {
+    const fvec3& v = vertices[i];
+    const fvec3 delta = fvec3(v) - vertices[0];
+    const fvec2 nh = fvec2(plane.x, plane.y).normalize();
+    const float vs = 1.0f / sqrtf(1.0f - (plane.z * plane.z));
+
+    if (sScale < 0.0f) {
+      texcoords[i].s = -sScale * fvec3::dot(delta, x);
+    }
+    else {
+      if (horizontal) {
+        texcoords[i].s = sScale * v.x;
+      } else {
+        texcoords[i].s = sScale * ((nh.x * v.y) - (nh.y * v.x));
+      }
+    }
+
+    if (tScale < 0.0f) {
+      texcoords[i].t = -tScale * fvec3::dot(delta, y);
+    }
+    else {
+      if (horizontal) {
+        texcoords[i].t = tScale * v.y;
+      } else {
+        texcoords[i].t = tScale * (v.z * vs);
+      }
+    }
+  }
+
+  return true;
+}
+
+
 void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) const
 {
   // save as OBJ
@@ -897,41 +927,79 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
     out << "o unnamed_" << getObjCounter() << std::endl;
   }
 
-  out << "# faces = " << faceCount << std::endl;
-  out << "# vertices = " << vertexCount << std::endl;
-  out << "# normals = " << normalCount << std::endl;
-  out << "# texcoords = " << texcoordCount << std::endl;
+  int f;
+  const MeshFace* face;
 
-  const fvec3* tmp;
-  tmp = &extents.mins;
-  out << "# mins = " << tmp->x << " " << tmp->y << " " << tmp->z << std::endl;
-  tmp = &extents.maxs;
-  out << "# maxs = " << tmp->x << " " << tmp->y << " " << tmp->z << std::endl;
+  std::vector<fvec3> extraNormals;
+  std::vector<fvec2> extraTexcoords;
+
+  // generate missing texcoords and normals
+  for (f = 0; f < faceCount; f++) {
+    face = faces[f];
+    if (!face->useNormals()) {
+      extraNormals.push_back(face->getPlane().xyz());
+    }
+    if (!face->useTexcoords()) {
+      const BzMaterial* bzmat = face->getMaterial();
+      const int vertCount = face->getVertexCount();
+      std::vector<fvec3> vertArray;
+      std::vector<fvec2> txcdArray;
+      for (int v = 0; v < vertCount; v++) {
+        vertArray.push_back(face->getVertex(v));
+      }
+      const fvec2& autoScale = bzmat->getTextureAutoScale(0);
+      makeTexcoords(autoScale, face->getPlane(), vertArray, txcdArray);
+      if ((int)txcdArray.size() != vertCount) {
+        printf("WARNING: messed up generated texcoords\n");
+      }
+      for (size_t t = 0; t < txcdArray.size(); t++) {
+        extraTexcoords.push_back(txcdArray[t]);
+      }
+    }
+  }
+
+  const int fullNormCount = normalCount   + (int)extraNormals.size();
+  const int fullTxcdCount = texcoordCount + (int)extraTexcoords.size();
+
+  // informative comment block
+  out << "# faces = "     << faceCount     << std::endl;
+  out << "# vertices = "  << vertexCount   << std::endl;
+  out << "# normals = "   << normalCount   << std::endl;
+  out << "# texcoords = " << texcoordCount << std::endl;
+  if (!extraNormals.empty()) {
+    out << "# generated normals = " << extraNormals.size() << std::endl;
+  }
+  if (!extraTexcoords.empty()) {
+    out << "# generated texcoords = " << extraTexcoords.size() << std::endl;
+  }
+  out << "# mins = " << extents.mins << std::endl;
+  out << "# maxs = " << extents.maxs << std::endl;
 
 
   for (i = 0; i < vertexCount; i++) {
-    out << "v";
-    outputFloat(out, vertices[i].x);
-    outputFloat(out, vertices[i].y);
-    outputFloat(out, vertices[i].z);
-    out << std::endl;
+    out << "v" << vertices[i] << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << "vn";
-    outputFloat(out, normals[i].x);
-    outputFloat(out, normals[i].y);
-    outputFloat(out, normals[i].z);
-    out << std::endl;
+    out << "vn" << normals[i] << std::endl;
+  }
+  for (size_t j = 0; j < extraNormals.size(); j++) {
+    out << "vn" << extraNormals[j] << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
-    out << "vt";
-    outputFloat(out, texcoords[i].x);
-    outputFloat(out, texcoords[i].y);
-    out << std::endl;
+    out << "vt" << texcoords[i] << std::endl;
   }
+  for (size_t j = 0; j < extraTexcoords.size(); j++) {
+    out << "vt" << extraTexcoords[j] << std::endl;
+  }
+
+  int usedExtraNorms = 0;
+  int usedExtraTxcds = 0;
+
   const BzMaterial* bzmat = NULL;
-  for (int f = 0; f < faceCount; f++) {
-    const MeshFace* face = faces[f];
+
+  for (f = 0; f < faceCount; f++) {
+    face = faces[f];
+
     const BzMaterial* nextMat = face->getMaterial();
     if (bzmat != nextMat) {
       bzmat = nextMat;
@@ -939,28 +1007,44 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
       MATERIALMGR.printReference(out, bzmat);
       out << std::endl;
     }
+
     const int vCount = face->getVertexCount();
     const bool useNormals = face->useNormals();
     const bool useTexcoords = face->useTexcoords();
+
     out << "f";
+
     for (i = 0; i < vCount; i++) {
+      // vertices
       int vIndex = &face->getVertex(i) - vertices;
       vIndex = vIndex - vertexCount;
       out << " " << vIndex;
+
+      // texcoords
       if (useTexcoords) {
 	int tIndex = &face->getTexcoord(i) - texcoords;
-	tIndex = tIndex - texcoordCount;
+	tIndex = tIndex - fullTxcdCount;
 	out << "/" << tIndex;
+      } else {
+        out << "/" << usedExtraTxcds - (int)extraTexcoords.size();
+        usedExtraTxcds++;
       }
+
+      // normals
       if (useNormals) {
-	if (!useTexcoords) {
-	  out << "/";
-	}
 	int nIndex = &face->getNormal(i) - normals;
-	nIndex = nIndex - normalCount;
+	nIndex = nIndex - fullNormCount;
 	out << "/" << nIndex;
       }
+      else {
+        out << "/" << usedExtraNorms - (int)extraNormals.size();
+      }
     }
+
+    if (!useNormals) {
+      usedExtraNorms++;
+    }
+
     out << std::endl;
   }
 

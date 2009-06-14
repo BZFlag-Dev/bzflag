@@ -31,6 +31,12 @@ class MeshDrawInfo;
 
 class MeshObstacle : public Obstacle {
   public:
+    static bool makeTexcoords(const fvec2& autoScale,
+                              const fvec4& plane,
+                              const std::vector<fvec3>& vertices,
+                              std::vector<fvec2>& texcoords);
+
+  public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
 		 const std::vector<char>& checkTypes,
