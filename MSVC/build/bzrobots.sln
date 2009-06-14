@@ -88,6 +88,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzrobots", "bzrobots.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clientbase", "clientbase.vcproj", "{5313C0E6-13C7-43E0-8D74-B019BB7BB359}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testbot", "testbot.vcproj", "{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Distribution|Win32 = Debug_Distribution|Win32
@@ -385,6 +387,18 @@ Global
 		{5313C0E6-13C7-43E0-8D74-B019BB7BB359}.Release|Win32.ActiveCfg = Release|Win32
 		{5313C0E6-13C7-43E0-8D74-B019BB7BB359}.Release|Win32.Build.0 = Release|Win32
 		{5313C0E6-13C7-43E0-8D74-B019BB7BB359}.Release|x64.ActiveCfg = Release|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Debug_Distribution|Win32.ActiveCfg = Debug|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Debug_Distribution|Win32.Build.0 = Debug|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Debug_Distribution|x64.ActiveCfg = Debug|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Debug|Win32.Build.0 = Debug|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Debug|x64.ActiveCfg = Debug|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Release_Distribution|Win32.ActiveCfg = Release|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Release_Distribution|Win32.Build.0 = Release|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Release_Distribution|x64.ActiveCfg = Release|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Release|Win32.ActiveCfg = Release|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Release|Win32.Build.0 = Release|Win32
+		{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
