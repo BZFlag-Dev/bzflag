@@ -482,12 +482,7 @@ void setupConfigs ( void )
 //	initialize application and enter event loop
 //
 
-int
-#if defined(_WIN32)
-myMain(int argc, char** argv)
-#else /* defined(_WIN32) */
-  main(int argc, char** argv)
-#endif /* defined(_WIN32) */
+int main(int argc, char **argv)
 {
 #ifdef _WIN32
   // startup winsock
@@ -650,61 +645,6 @@ myMain(int argc, char** argv)
   return 0;
 }
 //
-#if defined(_WIN32)
-
-//
-// WinMain()
-//	windows entry point.  forward to main()
-//
-
-int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
-{
-  // convert command line to argc and argv.  note that it's too late
-  // to do this right because spaces that were embedded in a single
-  // argument now look like like normal spaces.  not much we can do
-  // about that.
-  // FIXME -- argc and argv can be accessible;  use them instead of this.
-  char* cmdLine = strdup(_cmdLine);
-
-  // count number of arguments
-  int argc = 1;
-  char* scan = cmdLine;
-  scan = (char *)TextUtils::skipWhitespace(scan);
-
-  while (*scan) {
-    argc++;
-    scan = (char *)TextUtils::skipNonWhitespace(scan);
-    scan = (char *)TextUtils::skipWhitespace(scan);
-  }
-
-  // get path to application.  this is ridiculously simple.
-  char appName[MAX_PATH];
-  GetModuleFileName(instance,appName,MAX_PATH);
-
-  // make argument list and assign arguments
-  char** argv = new char*[argc];
-  argc = 0;
-  argv[argc++] = appName;
-  scan = cmdLine;
-  scan = (char *)TextUtils::skipWhitespace(scan);
-
-  while (*scan) {
-    argv[argc++] = (char *)scan;
-    scan = (char *)TextUtils::skipNonWhitespace(scan);
-
-    if (*scan) *scan++ = 0;
-    scan = (char *)TextUtils::skipWhitespace(scan);
-  }
-
-  const int exitCode = myMain(argc, argv);
-
-  // clean up and return exit code
-  delete[] argv;
-  free(cmdLine);
-  return exitCode;
-}
-
-#endif /* defined(_WIN32) */
 
 
 // Local Variables: ***

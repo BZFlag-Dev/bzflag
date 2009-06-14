@@ -556,7 +556,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="c;cxx"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath="..\..\src\clientbase\ActionBinding.cxx"
@@ -572,6 +572,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\clientbase\clientCommands.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\clientConfig.cxx"
 				>
 			</File>
 			<File
@@ -592,6 +596,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\clientbase\FlashClock.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\GuidedMissleStrategy.cxx"
 				>
 			</File>
 			<File
@@ -627,11 +635,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\clientbase\SegmentedShotStrategy.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\clientbase\ServerLink.cxx"
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\clientbase\ShockWaveStrategy.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotPath.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotPathSegment.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\clientbase\ShotStatistics.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotStrategy.cxx"
 				>
 			</File>
 			<File
@@ -655,16 +683,152 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\clientbase\WorldDownLoader.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\clientbase\WorldPlayer.cxx"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath="..\..\src\clientbase\ActionBinding.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\BaseLocalPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\callbacks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\clientConfig.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ClientIntangibilityManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\clientvars.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\CommandsStandard.h"
+				>
+			</File>
+			<File
 				RelativePath=".\config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\defaultBZDB.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\EntryZone.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\FlashClock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\GuidedMissleStrategy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\LocalPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\Player.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\playing.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\Region.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\RegionPriorityQueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\RemotePlayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\RobotPlayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\Roster.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\SegmentedShotStrategy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ServerLink.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShockWaveStrategy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotPath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotPathSegment.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotStatistics.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\ShotStrategy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\SyncClock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\TargetingUtils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\Weapon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\World.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\WorldBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\WorldDownLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\WorldPlayer.h"
 				>
 			</File>
 		</Filter>
