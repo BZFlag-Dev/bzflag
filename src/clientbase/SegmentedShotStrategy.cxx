@@ -42,6 +42,7 @@ static BZDB_int debugShotSegments("debugShotSegments");
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
                                              bool useSuperTexture, bool faint)
 : ShotStrategy(_path)
+, endObstacle(NULL)
 {
   // initialize times
   prevTime = getPath().getStartTime();
@@ -158,19 +159,21 @@ void SegmentedShotStrategy::update(float dt)
             const fvec3& oldDir = segments[segment - 1].ray.getDirection();
             const fvec3 normal = (newDir - oldDir).normalize();
 
-            if (!segm.noEffect) {
+            const MeshFace* srcFace = linkManager.getLinkSrcFace(segm.linkSrcID);
+            if ((srcFace == NULL) || !srcFace->linkSrcNoEffect()) {
               EFFECTS.addRicoEffect(pos, normal);
             }
             if (wantShotInfo(ShotInfoRicochet) &&
                 (getPath().getPlayer() == myTankId)) {
-              serverLink->sendShotInfo(getPath().getShotId(),
-                                       ShotInfoRicochet, pos);
+              serverLink->sendShotInfo(getPath(), ShotInfoRicochet, pos);
             }
             break;
           }
           case ShotPathSegment::Teleport: {
-            if (!segm.noEffect) {
-              const fvec4* clipPlane = &segm.dstFace->getPlane();
+            const MeshFace* srcFace = linkManager.getLinkSrcFace(segm.linkSrcID);
+            if ((srcFace == NULL) || !srcFace->linkSrcNoEffect()) {
+              const MeshFace* dstFace = linkManager.getLinkDstFace(segm.linkDstID);
+              const fvec4* clipPlane = &dstFace->getPlane();
               EFFECTS.addShotTeleportEffect(segm.ray.getOrigin(),
                                             segm.ray.getDirection(),
                                             clipPlane);
@@ -180,8 +183,7 @@ void SegmentedShotStrategy::update(float dt)
               const ShotPathSegment& prevSeg = segments[segment - 1];
               const float timeDiff = (float)(prevSeg.end - prevSeg.start);
               const fvec3 prevPos = prevSeg.ray.getPoint(timeDiff);
-              serverLink->sendShotInfo(getPath().getShotId(),
-                                       ShotInfoTeleport, prevPos,
+              serverLink->sendShotInfo(getPath(), ShotInfoTeleport, prevPos,
                                        segm.linkSrcID, segm.linkDstID);
             }
 	    break;
@@ -196,13 +198,18 @@ void SegmentedShotStrategy::update(float dt)
     setExpiring();
     if (numSegments > 0) {
       const ShotPathSegment& segm = segments[numSegments - 1];
-      fvec3 pos;
-      segm.ray.getPoint(float(segm.end - segm.start), pos);
+      const fvec3 pos = segm.ray.getPoint(float(segm.end - segm.start));
       addShotExplosion(pos);
-      if (wantShotInfo(ShotInfoExpired) &&
-          (getPath().getPlayer() == myTankId)) {
-        serverLink->sendShotInfo(getPath().getShotId(),
-                                 ShotInfoExpired, pos);
+      if (getPath().getPlayer() == myTankId) {
+        if (endObstacle == NULL) {
+          if (wantShotInfo(ShotInfoExpired)) {
+            serverLink->sendShotInfo(getPath(), ShotInfoExpired, pos);
+          }
+        } else {
+          if (wantShotInfo(ShotInfoStopped)) {
+            serverLink->sendShotInfo(getPath(), ShotInfoStopped, pos);
+          }
+        }
       }
     }
   }
@@ -465,10 +472,9 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   fvec3 orig = shotPath.getPosition();
 
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
+  const Obstacle* ricoObstacle = NULL;
   int linkSrcID = -1;
   int linkDstID = -1;
-  const MeshFace* dstFace = NULL;
-  bool noEffect = false;
 
   const int   maxSegment = 100;
   const float worldSize = (BZDBCache::worldSize * 0.5f) - 0.01f;
@@ -497,18 +503,16 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const double endTime = startTime + double((t < 0.0f) ? Epsilon : t);
     const Ray startRay(orig, vel);
     ShotPathSegment segm(startTime, endTime, startRay, reason);
+    segm.ricoObstacle = ricoObstacle;
     if (reason == ShotPathSegment::Teleport) {
       segm.linkSrcID = linkSrcID;
       segm.linkDstID = linkDstID;
-      segm.dstFace   = dstFace;
-      segm.noEffect  = noEffect;
     }
     segments.push_back(segm);
     startTime = endTime;
+    ricoObstacle = NULL;
     linkSrcID = -1;
     linkDstID = -1;
-    dstFace = NULL;
-    noEffect = false;
 
     const fvec3 nextOrig = (orig + (t * vel));
 
@@ -557,6 +561,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       orig = nextOrig;
       reason = ShotPathSegment::Boundary;
       timeLeft = 0.0f;
+      endObstacle = building;
     }
     else if (linkSrc) {
       // move origin to point of teleport
@@ -567,8 +572,6 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         addMessage(NULL, TextUtils::unescape_colors(physics->shotPassText));
       }
       reason = ShotPathSegment::Teleport;
-      dstFace = linkDst;
-      noEffect = linkSrc->linkSrcNoEffect();
     }
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
@@ -576,6 +579,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	case Stop: {
 	  if (!building->canRicochet()) {
             timeLeft = 0.0f;
+            endObstacle = building;
             break;
           } else {
             // pass-through to the Reflect case
@@ -584,6 +588,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         case Reflect: {
           // move origin to point of reflection
           orig = nextOrig;
+          ricoObstacle = building;
 
           // reflect direction about normal to building
           fvec3 normal;
@@ -639,18 +644,19 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       const ShotPathSegment& sps = segments[s];
       const fvec3 endPos = sps.ray.getPoint((float)(sps.end - sps.start));
       const std::string reasonStr = ShotPathSegment::getReasonString(sps.reason).c_str();
-      logDebugMessage(0, "  segment %i\n", (int)s);
-      logDebugMessage(0, "    start  %f\n", sps.start);
-      logDebugMessage(0, "    end    %f\n", sps.end);
-      logDebugMessage(0, "    orig   %s\n", sps.ray.getOrigin().tostring().c_str());
-      logDebugMessage(0, "    endPos %s\n", endPos.tostring().c_str());
-      logDebugMessage(0, "    dir    %s\n", sps.ray.getDirection().tostring().c_str());
-      logDebugMessage(0, "    reason %s\n", reasonStr.c_str());
-      logDebugMessage(0, "    mins   %s\n", sps.bbox.mins.tostring().c_str());
-      logDebugMessage(0, "    maxs   %s\n", sps.bbox.maxs.tostring().c_str());
+      logDebugMessage(0, "  segment   %i\n", (int)s);
+      logDebugMessage(0, "    start   %f\n", sps.start);
+      logDebugMessage(0, "    end     %f\n", sps.end);
+      logDebugMessage(0, "    orig    %s\n", sps.ray.getOrigin().tostring().c_str());
+      logDebugMessage(0, "    endPos  %s\n", endPos.tostring().c_str());
+      logDebugMessage(0, "    dir     %s\n", sps.ray.getDirection().tostring().c_str());
+      logDebugMessage(0, "    reason  %s\n", reasonStr.c_str());
+      logDebugMessage(0, "    ricoObs %p\n", sps.ricoObstacle);
+      logDebugMessage(0, "    mins    %s\n", sps.bbox.mins.tostring().c_str());
+      logDebugMessage(0, "    maxs    %s\n", sps.bbox.maxs.tostring().c_str());
     }
-    logDebugMessage(0, "  path mins: %s\n", bbox.mins.tostring().c_str());
-    logDebugMessage(0, "  path maxs: %s\n", bbox.maxs.tostring().c_str());
+    logDebugMessage(0, "  path mins:  %s\n", bbox.mins.tostring().c_str());
+    logDebugMessage(0, "  path maxs:  %s\n", bbox.maxs.tostring().c_str());
   }
 }
 

@@ -20,6 +20,7 @@
 
 
 class MeshFace;
+class Obstacle;
 
 
 class ShotPathSegment {
@@ -49,10 +50,9 @@ class ShotPathSegment {
     Ray    ray;
     Reason reason;
     Extents bbox;
+    const Obstacle* ricoObstacle;
     int linkSrcID;
     int linkDstID;
-    const MeshFace* dstFace;
-    bool noEffect;
 };
 
 

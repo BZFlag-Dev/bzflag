@@ -1053,16 +1053,18 @@ void ServerLink::sendTeleport(int from, int to)
   send(MsgTeleport, sizeof(msg), msg);
 }
 
-void ServerLink::sendShotInfo(int shotID, char type, const fvec3& pos,
+void ServerLink::sendShotInfo(const ShotPath& shotPath,
+                              char infoType, const fvec3& pos,
                               int linkSrcID, int linkDstID)
 {
   char msg[64];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
-  buf = nboPackInt16(buf, int16_t(shotID));
-  buf = nboPackUInt8(buf, uint8_t(type));
+  buf = nboPackInt16(buf, int16_t(shotPath.getShotId()));
+  buf = shotPath.getFlag()->pack(buf);
+  buf = nboPackUInt8(buf, uint8_t(infoType));
   buf = nboPackFVec3(buf, pos);
-  if (type == ShotInfoTeleport) {
+  if (infoType == ShotInfoTeleport) {
     buf = nboPackUInt16(buf, uint16_t(linkSrcID));
     buf = nboPackUInt16(buf, uint16_t(linkDstID));
   }

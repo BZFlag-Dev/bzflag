@@ -26,10 +26,9 @@ ShotPathSegment::ShotPathSegment(const double _start, const double _end,
 , end(_end)
 , ray(_ray)
 , reason(_reason)
+, ricoObstacle(NULL)
 , linkSrcID(-1)
 , linkDstID(-1)
-, dstFace(NULL)
-, noEffect(false)
 {
   // compute bounding box
   bbox.expandToPoint(ray.getOrigin());             // start
@@ -43,10 +42,9 @@ ShotPathSegment::ShotPathSegment(const ShotPathSegment& segment)
 , ray(segment.ray)
 , reason(segment.reason)
 , bbox(segment.bbox)
+, ricoObstacle(segment.ricoObstacle)
 , linkSrcID(segment.linkSrcID)
 , linkDstID(segment.linkDstID)
-, dstFace(segment.dstFace)
-, noEffect(segment.noEffect)
 {
 }
 
@@ -59,10 +57,9 @@ ShotPathSegment& ShotPathSegment::operator=(const ShotPathSegment& segment)
     ray = segment.ray;
     reason = segment.reason;
     bbox = segment.bbox;
+    ricoObstacle = segment.ricoObstacle;
     linkSrcID = segment.linkSrcID;
     linkDstID = segment.linkDstID;
-    dstFace = segment.dstFace;
-    noEffect = segment.noEffect;
   }
   return *this;
 }

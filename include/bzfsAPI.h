@@ -865,10 +865,12 @@ public:
 class BZF_API bz_ShotExpiredEventData_V1 : public bz_EventData
 {
 public:
-  bz_ShotExpiredEventData_V1(int pID, int sID, float x, float y, float z)
+  bz_ShotExpiredEventData_V1(int pID, int sID, const char* t,
+                             float x, float y, float z)
   : bz_EventData(bz_eShotExpiredEvent)
   , playerID(pID)
   , shotID(sID)
+  , type(t)
   {
     pos[0] = x;
     pos[1] = y;
@@ -876,16 +878,19 @@ public:
   }
   int playerID;
   int shotID;
+  bz_ApiString type;
   float pos[3];
 };
 
 class BZF_API bz_ShotStoppedEventData_V1 : public bz_EventData
 {
 public:
-  bz_ShotStoppedEventData_V1(int pID, int sID, float x, float y, float z)
+  bz_ShotStoppedEventData_V1(int pID, int sID, const char* t,
+                             float x, float y, float z)
   : bz_EventData(bz_eShotStoppedEvent)
   , playerID(pID)
   , shotID(sID)
+  , type(t)
   {
     pos[0] = x;
     pos[1] = y;
@@ -893,16 +898,19 @@ public:
   }
   int playerID;
   int shotID;
+  bz_ApiString type;
   float pos[3];
 };
 
 class BZF_API bz_ShotRicochetEventData_V1 : public bz_EventData
 {
 public:
-  bz_ShotRicochetEventData_V1(int pID, int sID, float x, float y, float z)
+  bz_ShotRicochetEventData_V1(int pID, int sID, const char* t,
+                              float x, float y, float z)
   : bz_EventData(bz_eShotRicochetEvent)
   , playerID(pID)
   , shotID(sID)
+  , type(t)
   {
     pos[0] = x;
     pos[1] = y;
@@ -910,17 +918,20 @@ public:
   }
   int playerID;
   int shotID;
+  bz_ApiString type;
   float pos[3];
 };
 
 class BZF_API bz_ShotTeleportEventData_V1 : public bz_EventData
 {
 public:
-  bz_ShotTeleportEventData_V1(int pID, int sID, float x, float y, float z,
+  bz_ShotTeleportEventData_V1(int pID, int sID, const char* t,
+                              float x, float y, float z,
                               int _linkSrcID, int _linkDstID)
   : bz_EventData(bz_eShotTeleportEvent)
   , playerID(pID)
   , shotID(sID)
+  , type(t)
   , linkSrcID(_linkSrcID)
   , linkDstID(_linkDstID)
   {
@@ -930,6 +941,7 @@ public:
   }
   int playerID;
   int shotID;
+  bz_ApiString type;
   float pos[3];
   int linkSrcID;
   int linkDstID;

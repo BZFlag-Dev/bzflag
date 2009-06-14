@@ -614,7 +614,6 @@ public:
     shotEvent.pos[2] = shotPos.z;
     shotEvent.playerID = (int)player->getIndex();
     shotEvent.shotID = (int)firingInfo.shot.id;
-
     shotEvent.type = firingInfo.flagType->flagAbbv;
 
     worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
@@ -676,8 +675,10 @@ public:
     uint8_t infoType;
     fvec3 pos;
     uint16_t linkSrcID, linkDstID;
+    FlagType* flagType;
     
     buf = nboUnpackInt16(buf, shotID);  
+    buf = FlagType::unpack(buf, flagType);
     buf = nboUnpackUInt8(buf, infoType);
     buf = nboUnpackFVec3(buf, pos);
     if (infoType == ShotInfoTeleport) {
@@ -690,27 +691,29 @@ public:
 
     // NOTE: not broadcasting/relaying to the clients
 
+    const char* shotFlag = flagType->flagAbbv.c_str();
+
     switch (infoType) {
       case ShotInfoExpired: {
-        bz_ShotExpiredEventData_V1 event(player->getIndex(), shotID,
+        bz_ShotExpiredEventData_V1 event(player->getIndex(), shotID, shotFlag,
                                          pos.x, pos.y, pos.z);
         worldEventManager.callEvents(bz_eShotExpiredEvent, &event);
         break;
       }
       case ShotInfoStopped: {
-        bz_ShotStoppedEventData_V1 event(player->getIndex(), shotID,
+        bz_ShotStoppedEventData_V1 event(player->getIndex(), shotID, shotFlag,
                                          pos.x, pos.y, pos.z);
         worldEventManager.callEvents(bz_eShotStoppedEvent, &event);
         break;
       }
       case ShotInfoRicochet: {
-        bz_ShotRicochetEventData_V1 event(player->getIndex(), shotID,
+        bz_ShotRicochetEventData_V1 event(player->getIndex(), shotID, shotFlag,
                                           pos.x, pos.y, pos.z);
         worldEventManager.callEvents(bz_eShotRicochetEvent, &event);
         break;
       }
       case ShotInfoTeleport: {
-        bz_ShotTeleportEventData_V1 event(player->getIndex(), shotID,
+        bz_ShotTeleportEventData_V1 event(player->getIndex(), shotID, shotFlag,
                                           pos.x, pos.y, pos.z,
                                           linkSrcID, linkDstID);
         worldEventManager.callEvents(bz_eShotTeleportEvent, &event);

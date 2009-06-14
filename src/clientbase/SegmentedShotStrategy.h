@@ -31,6 +31,9 @@
 #include "BoltSceneNode.h"
 
 
+class Obstacle;
+
+
 class SegmentedShotStrategy : public ShotStrategy {
   public:
 			SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
@@ -67,6 +70,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     BoltSceneNode*	boltSceneNode;
     Extents bbox;
     int    firstSegment;
+    const Obstacle* endObstacle;
 };
 
 class NormalShotStrategy : public SegmentedShotStrategy {

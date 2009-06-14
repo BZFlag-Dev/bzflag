@@ -88,7 +88,8 @@ public:
 
   void		sendAlive(const PlayerId playerId);
   void		sendTeleport(int from, int to);
-  void		sendShotInfo(int shotID, char type, const fvec3& pos,
+  void		sendShotInfo(const ShotPath& shotPath,
+                             char infoType, const fvec3& pos,
                              int linkSrcID = -1, int linkDstID = -1);
   void		sendTransferFlag(const PlayerId&, const PlayerId&);
   void		sendNewRabbit();
