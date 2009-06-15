@@ -1081,7 +1081,7 @@ void GroupDefinition::printFlatFile(std::ostream& out,
     }
   }
 
-  // print the texts -- FIXME -- not right...
+  // print the texts
   for (unsigned int i = 0; i < texts.size(); i++) {
     texts[i]->print(out, indent);
   }
