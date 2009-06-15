@@ -3403,6 +3403,9 @@ void enteringServer(void* buf)
   BZDB.setBool("displayRadarFlags", true);
   BZDB.setBool("displayRadar", true);
   BZDB.setBool("displayConsole", true);
+  if (myTank->getTeam() != ObserverTeam) {
+    BZDB.setBool("slowMotion", false);
+  }
 
   entered = true;
 }
