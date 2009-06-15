@@ -19,8 +19,6 @@
 #include <ostream>
 
 /* local interface headers */
-#include "RemotePlayer.h"
-#include "RCMessage.h"
 #include "BZAdvancedRobot.h"
 
 
