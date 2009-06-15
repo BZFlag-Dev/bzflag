@@ -18,8 +18,6 @@
 
 /* local implementation headers */
 #include "MessageUtilities.h"
-#include "Team.h"
-#include "Flag.h"
 #include "RCRequest.h"
 #include "RCRequests.h"
 

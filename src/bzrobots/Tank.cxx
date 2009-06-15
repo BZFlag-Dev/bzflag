@@ -15,9 +15,6 @@
 
 /* local implementation headers */
 #include "MessageUtilities.h"
-#include "Team.h"
-#include "Flag.h"
-
 
 std::ostream& operator<<(std::ostream& os, const Tank& tank)
 {

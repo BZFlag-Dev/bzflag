@@ -329,6 +329,58 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="API"
+			>
+			<File
+				RelativePath="..\..\src\bzrobots\AdvancedRobot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\AdvancedRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZRobot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Robot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Robot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Shot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Shot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Tank.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Tank.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

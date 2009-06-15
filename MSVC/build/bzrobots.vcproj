@@ -638,19 +638,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\botplaying.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobot.h"
 				>
 			</File>
 			<File
@@ -714,10 +702,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Robot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\ScriptLoader.h"
 				>
 			</File>
@@ -730,14 +714,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Shot.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Tank.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\TestRobot.h"
 				>
 			</File>
@@ -747,19 +723,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\botplaying.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobot.cxx"
 				>
 			</File>
 			<File
@@ -815,23 +779,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Robot.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\ScriptLoaderFactory.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\SharedObjectLoader.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Shot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Tank.cxx"
 				>
 			</File>
 		</Filter>
@@ -1496,6 +1448,58 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\XfireGameClient.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="API"
+			>
+			<File
+				RelativePath="..\..\src\bzrobots\AdvancedRobot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\AdvancedRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZRobot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Robot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Robot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Shot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Shot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Tank.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\Tank.h"
 				>
 			</File>
 		</Filter>
