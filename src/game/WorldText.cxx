@@ -48,6 +48,7 @@ WorldText::WorldText()
 , bzMaterial(NULL)
 , poFactor(0.0f)
 , poUnits(0.0f)
+, fromGroup(false)
 {
 }
 
@@ -66,6 +67,7 @@ WorldText::WorldText(const WorldText& wt)
 , bzMaterial(wt.bzMaterial)
 , poFactor(wt.poFactor)
 , poUnits(wt.poUnits)
+, fromGroup(wt.fromGroup)
 {
   xform = wt.xform;
 }

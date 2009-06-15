@@ -646,10 +646,10 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
   }
 
   // add the texts
-  for (size_t i = 0; i < texts.size(); i++) {
-    if (!isWorld) {
+  if (!isWorld) {
+    for (size_t i = 0; i < texts.size(); i++) {
       WorldText* text = texts[i]->copyWithTransform(xform);
-      // FIXME -- text source ?
+      text->setFromGroup();
       obsMod.execute(text);
       OBSTACLEMGR.addWorldText(text);
     }
@@ -869,7 +869,9 @@ int GroupDefinition::packSize() const
   // texts
   fullSize += sizeof(uint32_t);
   for (size_t i = 0; i < texts.size(); i++) {
-    fullSize += texts[i]->packSize();
+    if (!texts[i]->getFromGroup()) {
+      fullSize += texts[i]->packSize();
+    }
   }
 
   // link definitions
@@ -911,9 +913,17 @@ void* GroupDefinition::pack(void* buf) const
   }
 
   // texts
-  buf = nboPackUInt32(buf, texts.size());
+  uint32_t textCount = 0;
   for (i = 0; i < texts.size(); i++) {
-    buf = texts[i]->pack(buf);
+    if (!texts[i]->getFromGroup()) {
+      textCount++;
+    }
+  }
+  buf = nboPackUInt32(buf, textCount);
+  for (i = 0; i < texts.size(); i++) {
+    if (!texts[i]->getFromGroup()) {
+      buf = texts[i]->pack(buf);
+    }
   }
 
   // link definitions
@@ -1019,7 +1029,9 @@ void GroupDefinition::printGrouped(std::ostream& out,
 
   // print the texts
   for (unsigned int i = 0; i < texts.size(); i++) {
-    texts[i]->print(out, myIndent);
+    if (!isWorld || !texts[i]->getFromGroup()) {
+      texts[i]->print(out, myIndent);
+    }
   }
 
   // print the groups

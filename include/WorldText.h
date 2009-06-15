@@ -47,6 +47,9 @@ class WorldText {
 
     void print(std::ostream& out, const std::string& indent) const;
 
+    inline void setFromGroup()       { fromGroup = true; }
+    inline bool getFromGroup() const { return fromGroup; }
+
   public:
     std::string name;
     std::string data;
@@ -68,6 +71,8 @@ class WorldText {
     // polygon offset
     float poFactor;
     float poUnits;
+
+    bool fromGroup;
 };
 
 
