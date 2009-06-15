@@ -383,6 +383,10 @@ void Player::changeTeam(TeamColor _team)
   // set team
   team = _team;
 
+  if (team == ObserverTeam) {
+    state.status = PlayerState::DeadStatus;
+  }
+
   // set the scene node
   if (!headless) {
     setVisualTeam(team);
@@ -1041,7 +1045,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   const fvec4 groundPlane(0.0f, 0.0f, 1.0f, 0.0f);
 
   if (!isAlive() && !isExploding()) {
-    return; // don't draw anythinge
+    return; // don't draw anything
   }
 
   World *world = World::getWorld();

@@ -5604,9 +5604,9 @@ BZF_API void bz_changeTeam(int player, bz_eTeamType _team)
   if(!playerRec)
     return ;
 
-  TeamColor realTeam=convertTeam(_team);
+  TeamColor realTeam = convertTeam(_team);
   playerRec->player.setTeam(realTeam);
-
+  playerRec->lastState.status = PlayerState::DeadStatus;
   sendSetTeam(playerIndex, realTeam);
 }
 

@@ -4556,7 +4556,17 @@ void drawFrame(const float dt)
   hud->setDim(HUDDialogStack::get()->isActive());
   hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
   hud->setRoaming(ROAM.isRoaming());
-  hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
+  if (!ROAM.isRoaming()) {
+    hud->setCracks(myTank && !myTank->isAlive() && !firstLife && !justJoined);
+  }
+  else {
+    if (ROAM.getMode() != Roaming::roamViewFP) {
+      hud->setCracks(false);
+    } else {
+      const Player* target = ROAM.getTargetTank();
+      hud->setCracks(target && !target->isAlive());
+    }
+  }
 
   // get frame start time
   if (showDrawTime) {
