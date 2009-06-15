@@ -31,27 +31,38 @@ std::ostream& operator<<(std::ostream& os, const Tank& tank)
 
 Tank::Tank() {}
 
-Tank::Tank(RemotePlayer *tank) :
-  callsign(tank->getCallSign()),
-  team(Team::getShortName(tank->getTeam())),
-  flag(tank->getFlag()->flagName),
-  paused(tank->isPaused()),
-  alive(tank->isAlive()),
-  frozen(tank->canMove()),
-  super(tank->isFlagActive()),
-  angle(tank->getAngle()*180.0/M_PI),
-  angularVelocity(tank->getAngularVelocity())
+Tank::Tank(
+	std::string ncallsign,
+	std::string nteam,
+	std::string nflag,
+	bool npaused,
+	bool nalive,
+	bool nfrozen,
+	bool nsuper,
+	fvec3 nposition,
+	double nangle,
+	fvec3 nvelocity,
+	double nangularVelocity
+	) :
+	callsign(ncallsign),
+	team(nteam),
+	flag(nflag),
+	paused(npaused),
+	alive(nalive),
+	frozen(nfrozen),
+	super(nsuper),
+	angle(nangle),
+	angularVelocity(nangularVelocity)
 {
-  const float *pos = tank->getPosition();
-  position[0] = pos[0];
-  position[1] = pos[1];
-  position[2] = pos[2];
+  position[0] = nposition.x;
+  position[1] = nposition.y;
+  position[2] = nposition.z;
 
-  const float *vel = tank->getVelocity();
-  velocity[0] = vel[0];
-  velocity[1] = vel[1];
-  velocity[2] = vel[2];
+  velocity[0] = nvelocity.x;
+  velocity[1] = nvelocity.y;
+  velocity[2] = nvelocity.z;
 }
+
 
 messageParseStatus Tank::parse(char **arguments, int count)
 {

@@ -17,16 +17,28 @@
 
 /* system interface headers */
 #include <ostream>
+#include <string>
 
 /* local interface headers */
-#include "RemotePlayer.h"
 #include "RCMessage.h"
 
 
 class Tank {
 public:
   Tank();
-  Tank(RemotePlayer *tank);
+  Tank(
+		std::string ncallsign,
+		std::string nteam,
+		std::string nflag,
+    bool npaused,
+	  bool nalive,
+		bool nfrozen,
+		bool nsuper,
+		fvec3 nposition,
+		double nangle,
+		fvec3 nvelocity,
+		double nangularVelocity
+	);
 
   messageParseStatus parse(char **arguments, int count);
 

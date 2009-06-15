@@ -294,7 +294,21 @@ bool GetPlayersReq::process(RCRobotPlayer *)
     if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
       continue;
 
-    link->send(PlayersReply(remotePlayers[i]));
+		Tank tank(
+			remotePlayers[i]->getCallSign(),
+			Team::getShortName(remotePlayers[i]->getTeam()),
+			remotePlayers[i]->getFlag()->flagName,
+			remotePlayers[i]->isPaused(),
+			remotePlayers[i]->isAlive(),
+			remotePlayers[i]->canMove(),
+			remotePlayers[i]->isFlagActive(),
+			remotePlayers[i]->getPosition(),
+			(remotePlayers[i]->getAngle()*180.0/M_PI),
+			remotePlayers[i]->getVelocity(),
+			remotePlayers[i]->getAngularVelocity()
+			);
+
+    link->send(PlayersReply(tank));
   }
 
   return true;

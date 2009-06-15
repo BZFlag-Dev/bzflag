@@ -309,7 +309,7 @@ class PlayersReply : public RCReply
 {
 public:
   PlayersReply() {}
-  PlayersReply(RemotePlayer *_tank) : tank(_tank) {}
+  PlayersReply(Tank _tank) : tank(_tank) {}
 
   std::string getType() const { return "Players"; }
 
