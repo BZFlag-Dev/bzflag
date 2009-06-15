@@ -1039,8 +1039,22 @@ void handleSetTeam(void *msg, uint16_t len)
   msg = nboUnpackUInt8(msg, team);
 
   Player *p = lookupPlayer(id);
+  if (p == NULL) {
+    return;
+  }
 
-  p->changeTeam((TeamColor)team);
+  const TeamColor newTeam = (TeamColor)team;
+  if ((newTeam < RogueTeam) || (newTeam > HunterTeam)) {
+    return;
+  }
+
+  const TeamColor oldTeam = p->getTeam();
+  if ((oldTeam == ObserverTeam) &&
+      (newTeam != ObserverTeam)) {
+    BZDB.setBool("slowMotion", false);
+  }
+
+  p->changeTeam(newTeam);
 }
 
 
