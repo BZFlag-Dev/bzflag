@@ -1047,11 +1047,13 @@ void handleSetTeam(void *msg, uint16_t len)
   if ((newTeam < RogueTeam) || (newTeam > HunterTeam)) {
     return;
   }
-
   const TeamColor oldTeam = p->getTeam();
-  if ((oldTeam == ObserverTeam) &&
-      (newTeam != ObserverTeam)) {
-    BZDB.setBool("slowMotion", false);
+
+  if (p == myTank) {
+    if ((oldTeam == ObserverTeam) &&
+        (newTeam != ObserverTeam)) {
+      BZDB.setBool("slowMotion", false);
+    }
   }
 
   p->changeTeam(newTeam);
