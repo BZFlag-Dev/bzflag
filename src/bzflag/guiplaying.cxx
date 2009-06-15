@@ -3280,6 +3280,51 @@ static void checkEnvironmentForRobots()
 #endif
 
 
+static void changePlayerTeam(Player* player, TeamColor oldTeam,
+                                             TeamColor newTeam)
+{
+  if (player != myTank) {
+    return;
+  }
+
+  // FIXME -- player location 
+
+  // change the roaming state
+  if (newTeam != ObserverTeam) {
+    ROAM.setMode(Roaming::roamViewDisabled);
+  }
+  else if (!ROAM.isRoaming()) {
+    const std::string roamStr = BZDB.get("roamView");
+    Roaming::RoamingView roamView = ROAM.parseView(BZDB.get("roamView"));
+    if (roamView <= Roaming::roamViewDisabled) {
+      roamView = Roaming::roamViewFP;
+    }
+    ROAM.setMode(roamView);
+  }
+
+  if ((oldTeam == ObserverTeam) &&
+      (newTeam != ObserverTeam)) {
+    BZDB.setBool("slowMotion", false);
+  }
+
+  // observer colors are actually cyan, make them black
+  const bool observer = (newTeam == ObserverTeam);
+  const fvec4* borderColor;
+  if (observer) {
+    static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
+    borderColor = &black;
+  } else {
+    borderColor = &Team::getRadarColor(myTank->getTeam());
+  }
+  if (controlPanel) {
+    controlPanel->setControlColor(borderColor);
+  }
+  if (radar) {
+    radar->setControlColor(borderColor);
+  }
+}
+
+
 void enteringServer(void* buf)
 {
 #if defined(ROBOT)
@@ -3399,10 +3444,10 @@ void enteringServer(void* buf)
   fireButton = false;
   firstLife = true;
 
-  BZDB.setBool("displayMainFlags", true);
+  BZDB.setBool("displayMainFlags",  true);
   BZDB.setBool("displayRadarFlags", true);
-  BZDB.setBool("displayRadar", true);
-  BZDB.setBool("displayConsole", true);
+  BZDB.setBool("displayRadar",      true);
+  BZDB.setBool("displayConsole",    true);
   if (myTank->getTeam() != ObserverTeam) {
     BZDB.setBool("slowMotion", false);
   }
@@ -5539,6 +5584,8 @@ void startPlaying()
   for (size_t c = 0; c < commandList.size(); ++c) {
     CMDMGR.add(commandList[c].name, commandList[c].func, commandList[c].help);
   }
+
+  setChangePlayerTeamCallback(changePlayerTeam);
 
   // initialize the tank display lists
   // (do this before calling SceneRenderer::render())

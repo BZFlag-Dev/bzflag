@@ -54,7 +54,6 @@
 
 
 #include "motd.h"
-
 #include "clientvars.h"
 
 
@@ -91,6 +90,8 @@ WorldBuilder *worldBuilder = NULL;
 WorldDownLoader* worldDownLoader = NULL;
 MessageOfTheDay *motd = NULL;
 PlayerId msgDestination;
+
+static ChangePlayerTeamCallback changePlayerTeamCallback = NULL;
 
 bool downloadingData = false;
 
@@ -167,6 +168,12 @@ std::vector<BzfRegion*> obstacleList;  // for robots
 StartupInfo *getStartupInfo()
 {
   return &startupInfo;
+}
+
+
+void setChangePlayerTeamCallback(ChangePlayerTeamCallback cb)
+{
+  changePlayerTeamCallback = cb;
 }
 
 
@@ -1049,14 +1056,11 @@ void handleSetTeam(void *msg, uint16_t len)
   }
   const TeamColor oldTeam = p->getTeam();
 
-  if (p == myTank) {
-    if ((oldTeam == ObserverTeam) &&
-        (newTeam != ObserverTeam)) {
-      BZDB.setBool("slowMotion", false);
-    }
-  }
-
   p->changeTeam(newTeam);
+
+  if (changePlayerTeamCallback) {
+    changePlayerTeamCallback(p, oldTeam, newTeam);
+  }
 }
 
 

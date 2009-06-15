@@ -73,6 +73,8 @@ extern bool		headless;
 typedef void (*JoinGameCallback)(bool success, void* data);
 typedef void (*ConnectStatusCallback)(std::string& str);
 typedef void (*PlayingCallback)(void*);
+typedef void (*ChangePlayerTeamCallback)(Player*, TeamColor oldTeam,
+                                                  TeamColor newTeam);
 
 struct PlayingCallbackItem {
   public:
@@ -101,6 +103,8 @@ void updateShots(const float dt);
 void enteringServer(void *buf);
 void updateNumPlayers();
 void joinInternetGame2();
+
+extern void setChangePlayerTeamCallback(ChangePlayerTeamCallback);
 
 #ifdef ROBOT
 void addObstacle(std::vector<BzfRegion*> &rgnList, const Obstacle &obstacle);
@@ -227,8 +231,6 @@ extern float pauseCountdown;
 extern float destructCountdown;
 
 extern const char *blowedUpMessage[];
-
-
 
 #endif // BZF_PLAYING_H
 
