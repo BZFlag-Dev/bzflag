@@ -734,8 +734,8 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
       if (!broadcast && !toGroup) {
         if (srcPlayerData && (sourcePlayer != destPlayer))
           MSGMGR.newMessage(msg)->send(srcPlayerData->netHandler,MsgMessage);
-
-	msg->send(destPlayerData->netHandler,MsgMessage);
+        if (destPlayerData->player.getType() != ComputerPlayer)
+          MSGMGR.newMessage(msg)->send(destPlayerData->netHandler,MsgMessage);
       } else {
         if (broadcast) {
           msg->broadcast(MsgMessage);
@@ -754,14 +754,14 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 	      std::vector<int> admins  = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
 	      for (unsigned int i = 0; i < admins.size(); ++i) {
 	        GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(admins[i]);
-	        if (admins[i] != sourcePlayer)
+	        if (admins[i] != sourcePlayer && otherData->player.getType() != ComputerPlayer)
 	          MSGMGR.newMessage(msg)->send(otherData->netHandler,MsgMessage);
 	      }
 	    } else { // to a team
 	      TeamColor destTeam = TeamColor(250 - destPlayer);	// FIXME this teamcolor <-> player id conversion is in several files now
 	      for (int i = 0; i < curMaxPlayers; i++) {
 	        GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-	        if (otherData && otherData->player.isPlaying() && otherData->player.isTeam(destTeam))
+			if (otherData && otherData->player.isPlaying() && otherData->player.getType() != ComputerPlayer && otherData->player.isTeam(destTeam))
 	          MSGMGR.newMessage(msg)->send(otherData->netHandler,MsgMessage);
 	      }
 	    }
