@@ -1202,22 +1202,24 @@ void GroupDefinitionMgr::makeWorld()
       const ObstacleList& obsList = world.getList(type);
       for (unsigned int i = 0; i < obsList.size(); i++) {
 	Obstacle* obs = obsList[i];
-	logDebugMessage(dbg, "  '/%-40s  <%s>\n",
-			(obs->getName() + "'").c_str(), obs->getType());
-	if (obs->getTypeID() == meshType) {
-	  const MeshObstacle* mesh = (const MeshObstacle*)obs;
-	  const int faceCount = mesh->getFaceCount();
-	  for (int f = 0; f < faceCount; f++) {
-	    const MeshFace* face = mesh->getFace(f);
-	    if (face->isSpecial()) {
-	      const MeshFace::SpecialData* sd = face->getSpecialData();
-	      if (!sd->linkName.empty()) {
-		logDebugMessage(dbg, "  '/%-40s  <MeshFace #%i>\n",
-				(face->getLinkName() + "'").c_str(), f);
-	      }
-	    }
-	  }
-	}
+	if (!obs->getName().empty()) {
+          logDebugMessage(dbg, "  '/%-40s  <%s>\n",
+                          (obs->getName() + "'").c_str(), obs->getType());
+          if (obs->getTypeID() == meshType) {
+            const MeshObstacle* mesh = (const MeshObstacle*)obs;
+            const int faceCount = mesh->getFaceCount();
+            for (int f = 0; f < faceCount; f++) {
+              const MeshFace* face = mesh->getFace(f);
+              if (face->isSpecial()) {
+                const MeshFace::SpecialData* sd = face->getSpecialData();
+                if (!sd->linkName.empty()) {
+                  logDebugMessage(dbg, "  '/%-40s  <MeshFace #%i>\n",
+                                  (face->getLinkName() + "'").c_str(), f);
+                }
+              }
+            }
+          }
+        }
       }
     }
     logDebugMessage(dbg, "\n");
