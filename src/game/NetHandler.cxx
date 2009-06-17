@@ -164,7 +164,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     // Error receiving data (or no data)
     if (udpLen < 0)
       return -1;
-    logDebugMessage(5, "uread() len %d from %s:%d on %i\n",
+    logDebugMessage(8, "uread() len %d from %s:%d on %i\n",
 		    udpLen,
 		    inet_ntoa(lastUDPRxaddr.sin_addr),
 		    ntohs(lastUDPRxaddr.sin_port),
