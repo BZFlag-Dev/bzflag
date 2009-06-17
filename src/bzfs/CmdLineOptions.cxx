@@ -675,17 +675,23 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     else if (strncmp(token.c_str(), "-d", 2) == 0) {
       // increase debug level - this must be the last
       // option beginning with -d so that -dd, -ddd, etc. work
-      int count = 0;
-      const char *scan;
-      for (scan = token.c_str() + 1; *scan == 'd'; scan++) {
-        count++;
+      const char num = token[2];
+      if ((num >= '0') && (num <= '9') && (token[3] == 0)) {
+        debugLevel = num - '0';
       }
-      if (*scan != '\0') {
-	std::cerr << "ERROR: bad argument [" << token << "]" << std::endl;
-	usage(execName);
+      else {
+        int count = 0;
+        const char *scan;
+        for (scan = token.c_str() + 1; *scan == 'd'; scan++) {
+          count++;
+        }
+        if (*scan != '\0') {
+          std::cerr << "ERROR: bad argument [" << token << "]" << std::endl;
+          usage(execName);
+        }
+        debugLevel += count;
+        // std::cout << "Debug level is now " << debugLevel << "" << std::endl;
       }
-      debugLevel += count;
-      // std::cout << "Debug level is now " << debugLevel << "" << std::endl;
     }
     else if (token == "-f") {
       // disallow given flag
