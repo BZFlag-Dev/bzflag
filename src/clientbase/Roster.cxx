@@ -50,6 +50,15 @@ Player* lookupPlayer(PlayerId id)
   return NULL;
 }
 
+RobotPlayer* lookupRobotPlayer(PlayerId id)
+{
+  for (int i = 0; i < numRobots; i++)
+    if (robots[i]->getId() == id)
+      return robots[i];
+
+  return NULL;
+}
+
 int lookupPlayerIndex(PlayerId id)
 {
   // check my tank first

@@ -1702,6 +1702,12 @@ void handleGrabFlag(void *msg)
   tank->setFlag(flag.type);
   tank->setShotType((ShotType)shot);
 
+  if (tank->getPlayerType() == ComputerPlayer) {
+    RobotPlayer *robot = lookupRobotPlayer(id);
+    robot->setFlag(flag.type);
+    robot->setShotType((ShotType)shot);
+  }
+
   if (tank == myTank) {
     SOUNDSYSTEM.play(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
     updateFlag(myTank->getFlag());
@@ -2086,6 +2092,18 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
   fromTank->setFlag(Flags::Null);
   toTank->setShotType(shotType);
   toTank->setFlag(f.type);
+
+  if (fromTank->getPlayerType() == ComputerPlayer) {
+    RobotPlayer *robot = lookupRobotPlayer(fromTank->getId());
+    robot->setShotType(StandardShot);
+    robot->setFlag(Flags::Null);
+  }
+
+  if (toTank->getPlayerType() == ComputerPlayer) {
+    RobotPlayer *robot = lookupRobotPlayer(toTank->getId());
+    robot->setShotType(shotType);
+    robot->setFlag(f.type);
+  }
 
   if ((fromTank == myTank) || (toTank == myTank))
     updateFlag(myTank->getFlag());
@@ -2573,6 +2591,11 @@ void handleLimboMessage(void *msg)
 void handleFlagDropped(Player *tank)
 {
   tank->setShotType(StandardShot);
+
+  if (tank->getPlayerType() == ComputerPlayer) {
+    RobotPlayer *robot = lookupRobotPlayer(tank->getId());
+    robot->setShotType(StandardShot);
+  }
 
   // skip it if player doesn't actually have a flag
   if (tank->getFlag() == Flags::Null) return;
