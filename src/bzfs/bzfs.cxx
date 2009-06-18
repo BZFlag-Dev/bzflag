@@ -2914,7 +2914,7 @@ void searchFlag(GameKeeper::Player &playerData)
   int flagId = playerData.player.getFlag();
   if (flagId >= 0) {
     FlagInfo &playerFlag = *FlagInfo::get(flagId);
-    if (playerFlag.flag.type != Flags::Identify) {
+    if (playerFlag.flag.type != Flags::Identify || playerData.player.isBot()) {
       return;
     }
     identify = true;
