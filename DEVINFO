@@ -161,6 +161,11 @@ source code serves for examples of the following rules.
 	// End: ***
 	// ex: shiftwidth=2 tabstop=8
 
+      In emacs the the indent-region command (bound to C-M-\ by
+      default) does a good job of making the needed changes to conform
+      to this convention.  Installing exTabSettings in MSVC will make
+      it conform.
+
   2)  The opening brace of all blocks goes on the same line as the
       statement introducing it except for functions and classes where
       it goes on the following line.  The closing brace is indented
