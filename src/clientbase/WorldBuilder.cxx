@@ -229,6 +229,7 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   buf = nboUnpackUInt16(buf, maxFlags);
   setMaxFlags(int(maxFlags));
   buf = nboUnpackUInt16(buf, botsPerIP);
+  setBotsPerIP(botsPerIP);
   uint16_t shakeTimeout = 0, shakeWins;
   buf = nboUnpackUInt16(buf, shakeTimeout);
   setShakeTimeout(0.1f * float(shakeTimeout));
