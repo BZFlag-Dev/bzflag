@@ -36,6 +36,7 @@ class BaseLocalPlayer : public Player {
   Ray getLastMotion() const;
   const Extents& getLastMotionBBox() const;
 
+  virtual void changeTeam(TeamColor newTeam) { Player::changeTeam(newTeam); }
   virtual void explodeTank() = 0;
   virtual bool checkHit(const Player* source,
 			const ShotPath*& hit, float& minTime) const = 0;

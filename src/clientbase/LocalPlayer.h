@@ -76,6 +76,7 @@ public:
   const std::vector<const Obstacle*>& getInsideBuildings() const;
 
   void setTeam(TeamColor);
+  void changeTeam(TeamColor newTeam);
   void setDesiredSpeed(float fracOfMaxSpeed);
   void setDesiredAngVel(float fracOfMaxAngVel);
   void setPause(bool = true);

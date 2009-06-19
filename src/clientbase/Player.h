@@ -165,7 +165,7 @@ public:
   void		setRelativeMotion();
   void		setUserSpeed(float speed);
   void		setUserAngVel(float angvel);
-  void		changeTeam(TeamColor);
+  virtual void	changeTeam(TeamColor);
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);

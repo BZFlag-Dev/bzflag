@@ -1251,6 +1251,16 @@ void LocalPlayer::setTeam(TeamColor _team)
 }
 
 
+void LocalPlayer::changeTeam(TeamColor newTeam)
+{
+  if (newTeam == ObserverTeam) {
+    location = Dead;
+    spawning = false;
+  }
+  BaseLocalPlayer::changeTeam(newTeam);
+}
+
+
 void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
