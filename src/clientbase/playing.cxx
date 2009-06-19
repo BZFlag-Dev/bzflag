@@ -1058,6 +1058,10 @@ void handleSetTeam(void *msg, uint16_t len)
 
   p->changeTeam(newTeam);
 
+  if ((p == myTank) && (newTeam == ObserverTeam)) {
+    myTank->setSpawning(false);
+  }
+
   if (changePlayerTeamCallback) {
     changePlayerTeamCallback(p, oldTeam, newTeam);
   }

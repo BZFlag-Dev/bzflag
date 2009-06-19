@@ -122,38 +122,38 @@ namespace TankGeometryUtils {
   //
 
   // lowtank geometry builder
-  int buildLowBody (void);
-  int buildLowTurret (void);
-  int buildLowLCasing (void);
-  int buildLowRCasing (void);
-  int buildLowBarrel (void);
+  int buildLowBody();
+  int buildLowTurret();
+  int buildLowLCasing();
+  int buildLowRCasing();
+  int buildLowBarrel();
 
   // medtank geometry builder
-  int buildMedBody (void);
-  int buildMedTurret (void);
-  int buildMedLCasing (void);
-  int buildMedRCasing (void);
-  int buildMedBarrel (void);
+  int buildMedBody();
+  int buildMedTurret();
+  int buildMedLCasing();
+  int buildMedRCasing();
+  int buildMedBarrel();
 
   // hightank geometry builder
-  int buildHighBody (void);
-  int buildHighBarrel (void);
-  int buildHighTurret (void);
-  int buildHighLCasing (void);
-  int buildHighRCasing (void);
+  int buildHighBody();
+  int buildHighBarrel();
+  int buildHighTurret();
+  int buildHighLCasing();
+  int buildHighRCasing();
 
   // animated geometry builder
-  int buildHighLCasingAnim (void);
-  int buildHighRCasingAnim (void);
-  int buildHighLTread (int divs);
-  int buildHighRTread (int divs);
-  int buildHighLWheel (int wheel, float angle, int divs);
-  int buildHighRWheel (int wheel, float angle, int divs);
+  int buildHighLCasingAnim();
+  int buildHighRCasingAnim();
+  int buildHighLTread(int divs);
+  int buildHighRTread(int divs);
+  int buildHighLWheel(int wheel, float angle, int divs);
+  int buildHighRWheel(int wheel, float angle, int divs);
 
   extern const fvec3* currentScaleFactor;
   extern TankGeometryEnums::TankShadow shadowMode;
 
-  bool buildGeoFromObj ( const char* path, int &count );
+  bool buildGeoFromObj(const char* path, int &count);
 
 }
 

@@ -257,7 +257,7 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
   if (args.size() != 0)
     return "usage: restart";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank != NULL && canSpawn) {
+  if ((myTank != NULL) && canSpawn) {
     if (!gameOver && !myTank->isSpawning() &&
         (myTank->getTeam() != ObserverTeam) &&
         !myTank->isAlive() && !myTank->isExploding()) {
