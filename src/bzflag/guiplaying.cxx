@@ -3354,8 +3354,9 @@ void enteringServer(void* buf)
   int maxBots = world->getBotsPerIP();
   if (numRobotTanks > maxBots) {
     showMessage(
-	TextUtils::format("You are trying to add too many bots. Only adding %d %s!",
-	  maxBots, (maxBots == 1 ? "bot" : "bots")));
+	TextUtils::format("The server only allows %d robot %s.",
+	  maxBots, (maxBots == 1 ? "player" : "players")));
+    showMessage("Additional robot players have been removed.");
     numRobotTanks = maxBots;
   }
   int i;
