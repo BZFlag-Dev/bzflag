@@ -213,7 +213,7 @@ void* WorldBuilder::unpack(void* buf)
 void* WorldBuilder::unpackGameSettings(void* buf)
 {
   // read style
-  uint16_t gameType, gameOptions, maxPlayers, maxShots, maxFlags;
+  uint16_t gameType, gameOptions, maxPlayers, maxShots, botsPerIP, maxFlags;
 
   float worldSize;
   buf = nboUnpackFloat(buf, worldSize);
@@ -228,6 +228,7 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   setMaxShots(int(maxShots));
   buf = nboUnpackUInt16(buf, maxFlags);
   setMaxFlags(int(maxFlags));
+  buf = nboUnpackUInt16(buf, botsPerIP);
   uint16_t shakeTimeout = 0, shakeWins;
   buf = nboUnpackUInt16(buf, shakeTimeout);
   setShakeTimeout(0.1f * float(shakeTimeout));
@@ -309,6 +310,11 @@ void WorldBuilder::setMaxShots(int maxShots)
 void WorldBuilder::setMaxFlags(int maxFlags)
 {
   world->maxFlags = maxFlags;
+}
+
+void WorldBuilder::setBotsPerIP(int botsPerIP)
+{
+    world->botsPerIP = botsPerIP;
 }
 
 void WorldBuilder::setShakeTimeout(float timeout) const

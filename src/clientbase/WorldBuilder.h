@@ -43,6 +43,7 @@ class WorldBuilder {
     void		setMaxPlayers(int maxPlayers);
     void		setMaxShots(int maxSimultaneousShots);
     void		setMaxFlags(int maxFlags);
+    void		setBotsPerIP(int botsPerIP);
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
     void		setBase(const Obstacle* obs);

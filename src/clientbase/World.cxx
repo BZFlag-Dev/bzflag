@@ -63,6 +63,7 @@ World::World() :
   curMaxPlayers(0),
   maxShots(1),
   maxFlags(0),
+  botsPerIP(1),
   players(NULL),
   flags(NULL),
   flagNodes(NULL),

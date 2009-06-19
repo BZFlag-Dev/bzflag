@@ -33,6 +33,7 @@ void packWorldSettings ( void )
   buffer = nboPackUInt16 (buffer, PlayerSlot);
   buffer = nboPackUInt16 (buffer, clOptions->maxShots);
   buffer = nboPackUInt16 (buffer, numFlags);
+  buffer = nboPackUInt16 (buffer, clOptions->botsPerIP);
   buffer = nboPackUInt16 (buffer, clOptions->shakeTimeout);
   buffer = nboPackUInt16 (buffer, clOptions->shakeWins);
 }

@@ -3351,6 +3351,13 @@ static void changePlayerTeam(Player* player, TeamColor oldTeam,
 void enteringServer(void* buf)
 {
 #if defined(ROBOT)
+  int maxBots = world->getBotsPerIP();
+  if (numRobotTanks > maxBots) {
+    showMessage(
+	TextUtils::format("You are trying to add too many bots. Only adding %d %s!",
+	  maxBots, (maxBots == 1 ? "bot" : "bots")));
+    numRobotTanks = maxBots;
+  }
   int i;
   for (i = 0; i < numRobotTanks; i++)
     serverLink->sendNewPlayer(i);

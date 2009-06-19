@@ -75,6 +75,7 @@ class World {
     void		setCurMaxPlayers(int curMaxPlayers);
     int			getMaxShots() const;
     int			getMaxFlags() const;
+    int			getBotsPerIP() const;
     float		getShakeTimeout() const;
     int			getShakeWins() const;
     const Team*		getTeams() const;
@@ -162,6 +163,7 @@ class World {
     int			curMaxPlayers;
     int			maxShots;
     int			maxFlags;
+    int			botsPerIP;
     float		shakeTimeout;
     int			shakeWins;
     float		waterLevel;
@@ -308,6 +310,11 @@ inline int		World::getMaxShots() const
 inline int		World::getMaxFlags() const
 {
   return maxFlags;
+}
+
+inline int		World::getBotsPerIP() const
+{
+  return botsPerIP;
 }
 
 inline float		World::getShakeTimeout() const
