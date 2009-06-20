@@ -4417,7 +4417,7 @@ static void drawFakeCursor(int type)
       glColor4fv(teamColor); glVertex2i(mx, my);
       glEnd();
       glLineWidth(1.0f);
-     }
+    }
     else {
       // draw a cross
       const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.0f);
