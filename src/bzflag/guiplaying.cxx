@@ -3590,7 +3590,7 @@ void leaveGame()
   fvec3 eyePoint, targetPoint;
   eyePoint.x = 0.0f;
   eyePoint.y = 0.0f;
-  eyePoint.z = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  eyePoint.z = 0.0f + BZDBCache::muzzleHeight;
   targetPoint.x = eyePoint.x - 1.0f;
   targetPoint.y = eyePoint.y + 0.0f;
   targetPoint.z = eyePoint.z + 0.0f;
@@ -4221,8 +4221,7 @@ static void setupRoamingCamera(float muzzleHeight,
       if (targetFlag->status != FlagOnTank) {
         targetPoint.z += muzzleHeight;
       } else {
-        targetPoint.z -= (BZDBCache::tankHeight -
-                          BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+        targetPoint.z -= (BZDBCache::tankHeight - BZDBCache::muzzleHeight);
       }
     }
     const fvec2 delta2d = targetPoint.xy() - eyePoint.xy();
@@ -4406,21 +4405,38 @@ static void drawFakeCursor(int type)
     glEnable(GL_POINT_SMOOTH);
     glShadeModel(GL_SMOOTH);
 
-    if (myTank) {
-      const TeamColor myTeam = myTank->getTeam();
-      if (myTeam != ObserverTeam) {
-        // draw the drag bar
-        const fvec4  fadeWhite(1.0f, 1.0f, 1.0f, 0.2f);
-        const fvec4& teamColor = Team::getRadarColor(myTeam);
-        glLineWidth(1.49f);
-        glBegin(GL_LINES);
-        glColor4fv(fadeWhite); glVertex2i(xc, yc);
-        glColor4fv(teamColor); glVertex2i(mx, my);
-        glEnd();
-        glLineWidth(1.0f);
-      }
+    const TeamColor myTeam = (myTank != NULL) ? myTank->getTeam()
+                                              : ObserverTeam;
+    if (myTeam != ObserverTeam) {
+      // draw a drag bar
+      const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.2f);
+      const fvec4& teamColor = Team::getRadarColor(myTeam);
+      glLineWidth(1.49f);
+      glBegin(GL_LINES);
+      glColor4fv(fadeWhite); glVertex2i(xc, yc);
+      glColor4fv(teamColor); glVertex2i(mx, my);
+      glEnd();
+      glLineWidth(1.0f);
+     }
+    else {
+      // draw a cross
+      const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.0f);
+      const fvec4 fullWhite(1.0f, 1.0f, 1.0f, 1.0f);
+      const float dist = 16.0f;
+      glLineWidth(1.49f);
+      glBegin(GL_LINES);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i(mx - dist, my);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i(mx + dist, my);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i(mx, my - dist);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i(mx, my + dist);
+      glEnd();
+      glLineWidth(1.0f);
     }
-
+ 
     glPointSize(6.0f);
     glBegin(GL_POINTS);
     glColor3f(1.0f, 1.0f, 1.0f); glVertex2i(mx, my);
@@ -4504,7 +4520,7 @@ void drawFrame(const float dt)
   if (!myTank) {
     myTankPos = &defaultPos;
     myTankDir = &defaultDir;
-    muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    muzzleHeight = BZDBCache::muzzleHeight;
     fov = BZDB.eval("defaultFOV");
   }
   else {
@@ -5556,7 +5572,7 @@ static void findFastConfiguration()
   // across invocations.
 
   // setup projection
-  float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+  float muzzleHeight = BZDBCache::muzzleHeight;
   static const fvec3 eyePoint(0.0f, 0.0f, muzzleHeight);
   static const fvec3 targetPoint(0.0f, 10.0f, muzzleHeight);
   RENDERER.getViewFrustum().setProjection((float)(45.0 * DEG2RAD),
