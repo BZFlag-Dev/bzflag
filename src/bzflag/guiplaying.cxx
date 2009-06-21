@@ -1704,6 +1704,8 @@ void handleGrabFlag(void *msg)
 
   if (tank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(id);
+    if (!robot)
+      return;
     robot->setFlag(flag.type);
     robot->setShotType((ShotType)shot);
   }
@@ -2095,12 +2097,16 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
 
   if (fromTank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(fromTank->getId());
+    if (!robot)
+      return;
     robot->setShotType(StandardShot);
     robot->setFlag(Flags::Null);
   }
 
   if (toTank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(toTank->getId());
+    if (!robot)
+      return;
     robot->setShotType(shotType);
     robot->setFlag(f.type);
   }
@@ -2594,6 +2600,8 @@ void handleFlagDropped(Player *tank)
 
   if (tank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(tank->getId());
+    if (!robot)
+      return;
     robot->setShotType(StandardShot);
   }
 
