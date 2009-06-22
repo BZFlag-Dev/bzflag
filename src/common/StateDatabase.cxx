@@ -998,6 +998,7 @@ float StateDatabase::evaluate(Expression e) const
 	}
 	if (evaluationStack.size() == 0) {
 	  // syntax error
+	  return getNaN();
 	}
 	// rvalue and lvalue are switched, since we're reversed
 	rvalue = evaluationStack.top(); evaluationStack.pop();
