@@ -3460,7 +3460,7 @@ void enteringServer(void* buf)
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)
   RENDERER.getBackground()->resize();
-  float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
+  static BZDB_float syncTime(StateDatabase::BZDB_SYNCTIME);
   if (syncTime < 0.0f) {
     updateDaylight(epochOffset);
   } else {
@@ -3549,9 +3549,9 @@ void leaveGame()
   myTank = NULL;
 
   // reset the daylight time
-  const bool syncTime = (BZDB.eval(StateDatabase::BZDB_SYNCTIME) >= 0.0f);
+  static const BZDB_float syncTime(StateDatabase::BZDB_SYNCTIME);
   const bool fixedTime = BZDB.isSet("fixedTime");
-  if (syncTime) {
+  if (syncTime >= 0.0f) {
     // return to the desired user time
     epochOffset = userTimeEpochOffset;
   }
@@ -5005,7 +5005,7 @@ void handleJoyStick(void)
 void updateTimeOfDay(const float dt)
 {
   // update time of day -- update sun and sky every few seconds
-  float syncTime = BZDB.eval(StateDatabase::BZDB_SYNCTIME);
+  static BZDB_float syncTime(StateDatabase::BZDB_SYNCTIME);
   if (syncTime < 0.0f) {
     if (!BZDB.isSet("fixedTime"))
       epochOffset += (double)dt;
