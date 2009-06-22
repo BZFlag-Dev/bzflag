@@ -148,6 +148,9 @@ static float FarPlane = FarPlaneDefault;
 static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
+// cache _syncTime BZDB value
+static BZDB_float bzdbSyncTime("_syncTime"); // AKA StateDatabase::BZDB_SYNCTIME
+
 #ifdef ROBOT
 void handleMyTankKilled(int reason);
 #endif
@@ -3460,11 +3463,10 @@ void enteringServer(void* buf)
   // resize background and adjust time (this is needed even if we
   // don't sync with the server)
   RENDERER.getBackground()->resize();
-  static BZDB_float syncTime(StateDatabase::BZDB_SYNCTIME);
-  if (syncTime < 0.0f) {
+  if (bzdbSyncTime < 0.0f) {
     updateDaylight(epochOffset);
   } else {
-    epochOffset = (double)syncTime;
+    epochOffset = (double)bzdbSyncTime;
     updateDaylight(epochOffset);
   }
   lastEpochOffset = epochOffset;
@@ -3549,9 +3551,8 @@ void leaveGame()
   myTank = NULL;
 
   // reset the daylight time
-  static const BZDB_float syncTime(StateDatabase::BZDB_SYNCTIME);
   const bool fixedTime = BZDB.isSet("fixedTime");
-  if (syncTime >= 0.0f) {
+  if (bzdbSyncTime >= 0.0f) {
     // return to the desired user time
     epochOffset = userTimeEpochOffset;
   }
@@ -5005,14 +5006,13 @@ void handleJoyStick(void)
 void updateTimeOfDay(const float dt)
 {
   // update time of day -- update sun and sky every few seconds
-  static BZDB_float syncTime(StateDatabase::BZDB_SYNCTIME);
-  if (syncTime < 0.0f) {
+  if (bzdbSyncTime < 0.0f) {
     if (!BZDB.isSet("fixedTime"))
       epochOffset += (double)dt;
 
     epochOffset += (double)(50.0f * dt * clockAdjust);
   } else {
-    epochOffset = (double)syncTime;
+    epochOffset = (double)bzdbSyncTime;
     lastEpochOffset += (double)dt;
   }
   if (fabs(epochOffset - lastEpochOffset) >= 4.0) {
