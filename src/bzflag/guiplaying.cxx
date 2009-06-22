@@ -2596,38 +2596,40 @@ void handleLimboMessage(void *msg)
 
 void handleFlagDropped(Player *tank)
 {
-  tank->setShotType(StandardShot);
 
   if (tank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(tank->getId());
     if (!robot)
       return;
     robot->setShotType(StandardShot);
+    robot->setFlag(Flags::Null);
+  } else {
+    tank->setShotType(StandardShot);
+
+    // skip it if player doesn't actually have a flag
+    if (tank->getFlag() == Flags::Null) return;
+
+    if (tank == myTank) {
+      // make sure the player must reload after theft
+      if (tank->getFlag() == Flags::Thief)
+	myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
+
+      // update display and play sound effects
+      SOUNDSYSTEM.play(SFX_DROP_FLAG);
+      updateFlag(Flags::Null);
+    } else if (isViewTank(tank)) {
+      SOUNDSYSTEM.play(SFX_DROP_FLAG);
+    }
+
+    // add message
+    std::string message("dropped ");
+    message += tank->getFlag()->flagName;
+    message += " flag";
+    addMessage(tank, message);
+
+    // player no longer has flag
+    tank->setFlag(Flags::Null);
   }
-
-  // skip it if player doesn't actually have a flag
-  if (tank->getFlag() == Flags::Null) return;
-
-  if (tank == myTank) {
-    // make sure the player must reload after theft
-    if (tank->getFlag() == Flags::Thief)
-      myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
-
-    // update display and play sound effects
-    SOUNDSYSTEM.play(SFX_DROP_FLAG);
-    updateFlag(Flags::Null);
-  } else if (isViewTank(tank)) {
-    SOUNDSYSTEM.play(SFX_DROP_FLAG);
-  }
-
-  // add message
-  std::string message("dropped ");
-  message += tank->getFlag()->flagName;
-  message += " flag";
-  addMessage(tank, message);
-
-  // player no longer has flag
-  tank->setFlag(Flags::Null);
 }
 
 
