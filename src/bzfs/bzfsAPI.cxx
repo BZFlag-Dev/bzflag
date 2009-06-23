@@ -153,10 +153,6 @@ bz_eTeamType convertTeam(TeamColor _team)
 
 TeamColor convertTeam(bz_eTeamType _team)
 {
-  if (_team > eObservers) {
-    return NoTeam;
-  }
-
   switch(_team) {
     case eRogueTeam:     { return RogueTeam;     }
     case eRedTeam:       { return RedTeam;       }
