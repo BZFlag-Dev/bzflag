@@ -117,7 +117,7 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   handicap->update();
 
   createNew = new HUDuiLabel();
-  createNew->setString("Create Tab");
+  createNew->setString("-> Create Tab");
 
   addControl(tabName);
   addControl(domainName);
