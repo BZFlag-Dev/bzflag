@@ -144,6 +144,8 @@ class BzMaterial {
 
     static const BzMaterial* getDefault();
 
+    static std::string convertTexture(const std::string& oldTex);
+
     // data
   private:
     std::string name;

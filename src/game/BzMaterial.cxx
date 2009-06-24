@@ -17,8 +17,11 @@
 
 // system headers
 #include <string.h>
+#include <string>
+#include <map>
 
 // common headers
+#include "bzfio.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BZDBCache.h"
@@ -243,6 +246,51 @@ void BzMaterialManager::setTextureLocal(const std::string& url,
 
 BzMaterial BzMaterial::defaultMaterial;
 std::string BzMaterial::nullString = "";
+
+
+std::string BzMaterial::convertTexture(const std::string& oldTex)
+{
+  static std::map<std::string, std::string> nameMap;
+
+  if (nameMap.empty()) {
+    const char* colors[] = {
+      "rogue", "red", "green", "blue", "purple", "rabbit", "hunter", "observer"
+    };
+    const char* types[] = {
+      "tank", "icon", "bolt", "super_bolt", "laser", "basewall", "basetop"
+    };
+    const int colorCount = countof(colors);
+    const int typeCount  = countof(types);
+    for (int c = 0; c < colorCount; c++) {
+      for (int t = 0; t < typeCount; t++) {
+        std::string oldName = colors[c];
+        oldName += "_";
+        oldName += types[t];
+        std::string newName = "skins/";
+        newName += colors[c];
+        newName += "/";
+        newName += types[t];
+        newName += ".png";
+        nameMap[oldName] = newName;
+        logDebugMessage(4, "TEXTURE MAP: '%s' => '%s'\n",
+                           oldName.c_str(), newName.c_str());
+        oldName += ".png";
+        nameMap[oldName] = newName;
+        logDebugMessage(4, "TEXTURE MAP: '%s' => '%s'\n",
+                           oldName.c_str(), newName.c_str());
+      }
+    }
+  }
+
+  std::map<std::string, std::string>::const_iterator it = nameMap.find(oldTex);
+  if (it != nameMap.end()) {
+    logDebugMessage(0, "WARNING: converted texture '%s' to '%s'\n",
+                       oldTex.c_str(), it->second.c_str());
+    return it->second;
+  }
+
+  return oldTex;
+}
 
 
 void BzMaterial::reset()
@@ -838,10 +886,11 @@ void BzMaterial::addTexture(const std::string& texname)
   }
   delete[] textures;
   textures = tmpinfo;
-
+  
   TextureInfo* texinfo = &textures[textureCount - 1];
-  texinfo->name = texname;
-  texinfo->localname = texname;
+  const std::string newName = convertTexture(texname);
+  texinfo->name = newName;
+  texinfo->localname = newName;
   texinfo->matrix = -1;
   texinfo->combineMode = decal;
   texinfo->useAlpha = true;
@@ -857,7 +906,7 @@ void BzMaterial::setTexture(const std::string& texname)
   if (textureCount <= 0) {
     addTexture(texname);
   } else {
-    textures[textureCount - 1].name = texname;
+    textures[textureCount - 1].name = convertTexture(texname);
   }
 
   return;
