@@ -440,15 +440,26 @@ void ListServerLink::addMe(PingPacket pingInfo,
   if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, &authSockHandler);
   token_phase = 0;
 
+  Packet groupListMsg(SMSG_GROUP_LIST);
+  Packet::PlaceHolder group_count = groupListMsg.append_placeholder(sizeof(int));
+  int group_counter = 0;
+
   msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
+
   PlayerAccessMap::iterator itr = groupAccess.begin();
-  for ( ; itr != groupAccess.end(); itr++) {
+  for (itr = groupAccess.begin() ; itr != groupAccess.end(); itr++) {
     if (itr->first.substr(0, 6) != "LOCAL.") {
       msg += itr->first.c_str();
       msg += "%0D%0A";
+
+      groupListMsg << itr->first.c_str();
+      group_counter++;
     }
   }
+  
+  group_count.write((const uint8_t*)&group_counter);
+  tokenSocket->sendData(groupListMsg);
 
   msg += "&advertgroups=";
   msg += TextUtils::url_encode(_advertiseGroups);

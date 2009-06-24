@@ -44,9 +44,29 @@ protected:
 class Packet
 {
 public:
+  friend class PlaceHolder;
   Packet(uint16_t opcode, uint8_t *data, size_t size) { init(data, size, opcode); }
   Packet(uint16_t opcode, size_t size = 1024) { init(size, opcode); }
   Packet(Packet & packet) { init(packet.m_data, packet.m_size, packet.m_opcode); }
+
+  /** placeholder for information that can be added after subsequent appends */
+  class PlaceHolder {
+    public:
+      friend class Packet;
+      PlaceHolder(PlaceHolder const &p) 
+        : m_packet(p.m_packet), m_size(p.m_size), m_wpoz(p.m_wpoz) {}
+
+      void write(const uint8_t * x) {
+        memcpy(m_packet.m_data + m_wpoz, x, m_size);
+      }
+
+    private:
+      PlaceHolder(Packet & packet, size_t size, size_t wpoz) 
+        : m_packet(m_packet), m_size(size), m_wpoz(wpoz) {}
+      Packet &m_packet;
+      size_t m_size;
+      size_t m_wpoz;
+  };
 
   ~Packet() { free(m_data); }
 
@@ -90,14 +110,18 @@ public:
 
   void append(const uint8_t *x, size_t size)
   {
-    while(m_wpoz + size >= m_size)
-    {
-      m_data = (uint8_t*)realloc((void*)m_data, 2*m_size);
-      m_size *= 2;
-    }
+    ensure_wpoz_inc(size);
 
     memcpy(m_data + m_wpoz, x, size);
     m_wpoz += size;
+  }
+
+  PlaceHolder append_placeholder(size_t size)
+  {
+    int wpoz = m_wpoz;
+    ensure_wpoz_inc(size);
+    m_wpoz += size;
+    return PlaceHolder(*this, size, wpoz);
   }
 
   bool read(uint8_t *x, size_t size)
@@ -152,6 +176,15 @@ protected:
     init(size, opcode);
     memcpy(m_data, data, size);
     m_wpoz = size;
+  }
+
+  void ensure_wpoz_inc(size_t size)
+  {
+    while(m_wpoz + size >= m_size)
+    {
+      m_data = (uint8_t*)realloc((void*)m_data, 2*m_size);
+      m_size *= 2;
+    }
   }
 
   uint16_t m_opcode;

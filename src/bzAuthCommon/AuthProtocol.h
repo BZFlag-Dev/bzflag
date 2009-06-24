@@ -34,6 +34,7 @@ enum BzAuthOpcodes
   DMSG_REGISTER_SUCCESS     = 12,
   SMSG_TOKEN_VALIDATE       = 13,
   DMSG_TOKEN_VALIDATE       = 14,
+  SMSG_GROUP_LIST           = 15,
   NUM_OPCODES
 };
 
