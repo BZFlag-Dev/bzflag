@@ -74,6 +74,7 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
   if (findMaterial(newMat->getName()) != NULL) {
     newMat->setName("");
   }
+  newMat->setID(materials.size());
   materials.push_back(newMat);
   return newMat;
 }
@@ -137,7 +138,6 @@ void* BzMaterialManager::pack(void* buf)
   buf = nboPackUInt32(buf, (unsigned int)materials.size());
   for (unsigned int i = 0; i < materials.size(); i++) {
     buf = materials[i]->pack(buf);
-    materials[i]->setID(i);
   }
 
   return buf;
@@ -263,20 +263,24 @@ std::string BzMaterial::convertTexture(const std::string& oldTex)
     const int typeCount  = countof(types);
     for (int c = 0; c < colorCount; c++) {
       for (int t = 0; t < typeCount; t++) {
-        std::string oldName = colors[c];
+        std::string oldName, newName;
+
+        oldName += colors[c];
         oldName += "_";
         oldName += types[t];
-        std::string newName = "skins/";
+
+        newName += "skins/";
         newName += colors[c];
         newName += "/";
         newName += types[t];
         newName += ".png";
+
         nameMap[oldName] = newName;
-        logDebugMessage(4, "TEXTURE MAP: '%s' => '%s'\n",
+        logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
                            oldName.c_str(), newName.c_str());
         oldName += ".png";
         nameMap[oldName] = newName;
-        logDebugMessage(4, "TEXTURE MAP: '%s' => '%s'\n",
+        logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
                            oldName.c_str(), newName.c_str());
       }
     }
@@ -616,7 +620,7 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 {
   int i;
 
-  out << indent << "material" << std::endl;
+  out << indent << "material # " << id << std::endl;
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
