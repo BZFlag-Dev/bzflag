@@ -493,43 +493,45 @@ properties:
 .br
     # special parameters
 .br
-\fB    baseTeam 1
+\fB    baseTeam\fR 1  # the base team number
 .br
     # link parameters
 .br
-\fB    linkName yourName
+\fB    linkName\fR myLink  # the name use for linkage
 .br
-\fB    linkSrcRebound
+\fB    linkSrcRebound\fR   # tanks rebound when the link 
 .br
-\fB    linkSrcNoGlow
+                     # is not crossed (instead of dropping)
 .br
-\fB    linkSrcNoRadar
+\fB    linkSrcNoGlow\fR    # do not render the foggy 'glow'
 .br
-\fB    linkSrcNoSound
+\fB    linkSrcNoRadar\fR   # do not render as a teleporter in the radar
 .br
-\fB    linkSrcNoEffect
+\fB    linkSrcNoSound\fR   # do not play the teleport sound
 .br
-\fB    linkSrcCenter 0 0 0
+\fB    linkSrcNoEffect\fR  # do not render shot or tank teleported effects
 .br
-\fB    linkSrcSdir 0 +1 0
+\fB    linkSrcCenter\fR 0  # vertex index
 .br
-\fB    linkSrcTdir 0 0 +1
+\fB    linkSrcSdir\fR   0  # normal index
 .br
-\fB    linkSrcPdir +1 0 0
+\fB    linkSrcTdir\fR   0  # normal index
 .br
-\fB    linkSrcSscale 1.0
+\fB    linkSrcPdir\fR   0  # normal index
 .br
-\fB    linkSrcTscale 1.0
+\fB    linkSrcSscale\fR 1.0
 .br
-\fB    linkSrcPscale 0.0
+\fB    linkSrcTscale\fR 1.0
 .br
-\fB    linkDstCenter 0 0 0
+\fB    linkSrcPscale\fR 0.0
 .br
-\fB    linkDstSdir 0 -1 0
+\fB    linkDstCenter\fR 0  # vertex index
 .br
-\fB    linkDstTdir 0 0 +1
+\fB    linkDstSdir\fR   0  # normal index
 .br
-\fB    linkDstPdir -1 0 0
+\fB    linkDstTdir\fR   0  # normal index
+.br
+\fB    linkDstPdir\fR   0  # normal index
 .br
 \fB    linkDstSscale 1.0
 .br
