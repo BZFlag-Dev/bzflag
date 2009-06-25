@@ -1387,15 +1387,15 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
   static const int receiverRings = 4;
   static const int receiverSlices = 8;
   static const float receiverRingSize = 1.2f;	// meters
-  static float angle[receiverSlices + 1][2];
+  static fvec2 angle[receiverSlices + 1];
 
   static bool init = false;
   if (!init) {
     init = true;
     const float receiverSliceAngle = (float)(2.0 * M_PI / double(receiverSlices));
     for (int i = 0; i <= receiverSlices; i++) {
-      angle[i][0] = cosf((float)i * receiverSliceAngle);
-      angle[i][1] = sinf((float)i * receiverSliceAngle);
+      angle[i].x = cosf((float)i * receiverSliceAngle);
+      angle[i].y = sinf((float)i * receiverSliceAngle);
     }
   }
 
@@ -1454,8 +1454,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       color.a = I;
       glColor4fv(color);
       for (j = 0; j <= receiverSlices; j++) {
-	glVertex2f(receiverRingSize * angle[j][0],
-		   receiverRingSize * angle[j][1]);
+	glVertex2fv(receiverRingSize * angle[j]);
       }
     } glEnd();
     triangleCount += receiverSlices;
@@ -1483,10 +1482,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 	for (j = 0; j <= receiverSlices; j++) {
 	  color.a = innerAlpha;
 	  glColor4fv(color);
-	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
+	  glVertex2fv(innerSize * angle[j]);
 	  color.a = outerAlpha;
 	  glColor4fv(color);
-	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
+	  glVertex2fv(outerSize * angle[j]);
 	}
       } glEnd();
     }
@@ -1503,15 +1502,15 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   const float minLuminance = 0.02f;
   static const int receiverSlices = 32;
   static const float receiverRingSize = 0.5f;	// meters
-  static float angle[receiverSlices + 1][2];
+  static fvec2 angle[receiverSlices + 1];
 
   static bool init = false;
   if (!init) {
     init = true;
     const float receiverSliceAngle = (float)(2.0 * M_PI / double(receiverSlices));
     for (int i = 0; i <= receiverSlices; i++) {
-      angle[i][0] = cosf((float)i * receiverSliceAngle);
-      angle[i][1] = sinf((float)i * receiverSliceAngle);
+      angle[i].x = cosf((float)i * receiverSliceAngle);
+      angle[i].y = sinf((float)i * receiverSliceAngle);
     }
   }
 
@@ -1566,6 +1565,11 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     const fvec4& lightColor = light.getColor();
     const fvec3& atten = light.getAttenuation();
 
+    if (isnan(pos.x) || isnan(pos.y) || isnan(pos.z)) {
+      printf("FIXME: NaN light pos: %s:%i\n", __FILE__, __LINE__);
+      continue;
+    }
+
     // point under light
     float d = pos[2];
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
@@ -1611,8 +1615,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       glColor3fv(outerColor);
       outerSize = receiverRingSize;
       for (j = 0; j <= receiverSlices; j++) {
-	glVertex2f(outerSize * angle[j][0],
-		   outerSize * angle[j][1]);
+	glVertex2fv(outerSize * angle[j]);
       }
     } glEnd();
     triangleCount += receiverSlices;
@@ -1637,9 +1640,9 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       glBegin(GL_QUAD_STRIP); {
 	for (j = 0; j <= receiverSlices; j++) {
 	  glColor3fv(innerColor);
-	  glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
+	  glVertex2fv(innerSize * angle[j]);
 	  glColor3fv(outerColor);
-	  glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
+	  glVertex2fv(outerSize * angle[j]);
 	}
       } glEnd();
     }
