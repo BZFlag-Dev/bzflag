@@ -395,6 +395,8 @@ properties:
 .br
   # the color will be used (untextured)
 .br
+\fB  texautoscale\fR 8 8     # world view generated texcoord scales
+.br
 \fB  spheremap\fR            # use spherical texture coordinate mapping
 .br
 \fB  texmat\fR \-1            # texture matrix  (\-1 for none)
@@ -1320,6 +1322,8 @@ material :=
 	| "notextures"
 .br
 	| "addtexture" <texture_name>
+.br
+	| "texautoscale" <float> <float>
 .br
 	| "texmat" <matrix_name>
 .br
