@@ -35,8 +35,6 @@ so that no work is duplicated.
 
 * fix the Z dead-reckoning issue  (ask JeffM about it)
 
-* fix the '/set _<tab>' crash bug (look in ControlPanel.cxx)
-
 * fix the MsgPause messages
 
 * figure out why there are too many player update messages
