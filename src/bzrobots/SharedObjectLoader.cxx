@@ -25,7 +25,22 @@ bool SharedObjectLoader::load(std::string filename)
 {
 
 #ifdef _WIN32
-  return false;
+
+	soHandle = LoadLibrary(filename.c_str());
+	if(soHandle == NULL) {
+		return false;
+	}
+
+	createFunction = (createHandle) ( GetProcAddress( soHandle, "create" ) );
+	if(createFunction == NULL) {
+		return false;
+	}
+
+	destroyFunction = (destroyHandle) ( GetProcAddress( soHandle, "destroy" ) );
+	if(destroyFunction == NULL) {
+		return false;
+	}
+
 #else
 
   char *err;
@@ -89,14 +104,16 @@ bool SharedObjectLoader::load(std::string filename)
       return false;
   }
 
-  return true;
 #endif /* _WIN32 */
+  return true;
 }
 
 
 SharedObjectLoader::~SharedObjectLoader()
 {
-#ifndef _WIN32
+#ifdef _WIN32
+  FreeLibrary(soHandle);
+#else
   dlclose(soHandle);
 #endif /* _WIN32 */
 }
@@ -104,21 +121,13 @@ SharedObjectLoader::~SharedObjectLoader()
 
 BZAdvancedRobot *SharedObjectLoader::create(void)
 {
-#ifdef _WIN32
-  return NULL;
-#else
   return (*createFunction)();
-#endif /* _WIN32 */
 }
 
 
 void SharedObjectLoader::destroy(BZAdvancedRobot *instance)
 {
-#ifdef _WIN32
-  return;
-#else
   (*destroyFunction)(instance);
-#endif /* _WIN32 */
 }
 
 // Local Variables: ***

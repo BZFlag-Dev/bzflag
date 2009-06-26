@@ -36,7 +36,11 @@ ScriptLoaderFactory::scriptLoader(std::string extension)
 
 void ScriptLoaderFactory::initialize()
 {
+#if defined(_WIN32)
+  SCRIPTLOADER.Register<SharedObjectLoader>("dll");
+#else
   SCRIPTLOADER.Register<SharedObjectLoader>("so");
+#endif /* defined(_WIN32) */
 #ifdef WITH_PYTHONLOADER
   SCRIPTLOADER.Register<PythonLoader>("py");
 #endif

@@ -75,7 +75,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib Advapi32.lib"
 				OutputFile="./testbot_debug/$(ProjectName).dll"
-				ModuleDefinitionFile=""
+				ModuleDefinitionFile="..\..\bots\testbot\TestRobot.def"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -325,7 +325,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\TestRobot.h"
+				RelativePath="..\..\bots\testbot\TestRobot.h"
 				>
 			</File>
 		</Filter>
@@ -357,14 +357,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\MessageUtilities.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\MessageUtilities.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\Robot.cxx"
 				>
 			</File>
@@ -386,6 +378,50 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\Tank.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="BZRobots"
+			>
+			<File
+				RelativePath="..\..\src\bzrobots\MessageUtilities.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\MessageUtilities.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCLink.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCLink.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCLinkFrontend.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCLinkFrontend.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCRequest.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCRequests.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCRequests.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RCRequests_ProcessSWIG.cxx"
 				>
 			</File>
 		</Filter>

@@ -717,10 +717,6 @@
 				RelativePath="..\..\src\bzrobots\SharedObjectLoader.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\TestRobot.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Source Files"

@@ -89,6 +89,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clientbase", "clientbase.vcproj", "{5313C0E6-13C7-43E0-8D74-B019BB7BB359}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testbot", "testbot.vcproj", "{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}"
+	ProjectSection(ProjectDependencies) = postProject
+		{93772A78-3C80-4635-AC84-983B8E0FECF3} = {93772A78-3C80-4635-AC84-983B8E0FECF3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

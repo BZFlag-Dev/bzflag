@@ -31,7 +31,11 @@ class SharedObjectLoader : public ScriptLoader
   createHandle createFunction;
   destroyHandle destroyFunction;
 
-  void *soHandle;
+#ifdef _WIN32
+	HINSTANCE soHandle;
+#else
+	void *soHandle;
+#endif /* _WIN32 */
 
   public:
     ~SharedObjectLoader();
