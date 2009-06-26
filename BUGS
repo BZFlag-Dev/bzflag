@@ -20,9 +20,6 @@ Bots
 * Bots only spawn at ground level. Complex maps that have tunnels may not like
   this (bots may spawn out of bounds)
 
-* Client is disconnected with no message when the -botsPerIP parameter is
-  exceeded
-
 * Server crashes when player with bots leaves
 
 Crashes
@@ -186,17 +183,10 @@ bzfs
   while the player who stayed was on the original random map.  Each player was
   seen interacting with their own map.  Very confusing.
 
-* ANSI codes can be used in the server -public messages.  The best solution is
-  probably to strip the codes at the listserver
-
 * bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
 * maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
-
-* Bad BZDB: some BZDB variables are not range checked: "/set _syncTime -" goes
-  boom on the client side.
-  (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
 
 Gameplay
 --------
