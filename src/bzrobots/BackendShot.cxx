@@ -38,7 +38,7 @@ ShotPath *searchShot(PlayerId plr, uint16_t shotid)
   return NULL;
 }
 
-void BackendShot::getPosition(double &x, double &y, double &z, double dt) const
+void BackendShot::getPosition(double &sx, double &sy, double &sz, double dt) const
 {
   ShotPath *path = searchShot(getPlayerId(), getShotId());
 
@@ -49,9 +49,9 @@ void BackendShot::getPosition(double &x, double &y, double &z, double dt) const
 
     if (dt == 0) {
       const float *pos = path->getPosition();
-      x = pos[0];
-      y = pos[1];
-      z = pos[2];
+      sx = pos[0];
+      sy = pos[1];
+      sz = pos[2];
     } else {
       //Make a copy of the ShotPath/ShotStrategy, run update(dt) and check the new position
       //TODO: Find a way to do this, we can easily copy ShotPath but to get ShotStrategy
@@ -61,14 +61,14 @@ void BackendShot::getPosition(double &x, double &y, double &z, double dt) const
       //
 
       const float *pos = path->getPosition();
-      x = pos[0];
-      y = pos[1];
-      z = pos[2];
+      sx = pos[0];
+      sy = pos[1];
+      sz = pos[2];
     }
   }
 }
 
-void BackendShot::getVelocity(double &x, double &y, double &z, double dt) const
+void BackendShot::getVelocity(double &sx, double &sy, double &sz, double dt) const
 {
   ShotPath *path = searchShot(getPlayerId(), getShotId());
 
@@ -79,9 +79,9 @@ void BackendShot::getVelocity(double &x, double &y, double &z, double dt) const
 
     if (dt == 0) {
       const float *pos = path->getVelocity();
-      x = pos[0];
-      y = pos[1];
-      z = pos[2];
+      sx = pos[0];
+      sy = pos[1];
+      sz = pos[2];
     } else {
       //Make a copy of the ShotPath/ShotStrategy, run update(dt) and check the new velocity
       //TODO: Find a way to do this, we can easily copy ShotPath but to get ShotStrategy
@@ -91,9 +91,9 @@ void BackendShot::getVelocity(double &x, double &y, double &z, double dt) const
       //
 
       const float *pos = path->getVelocity();
-      x = pos[0];
-      y = pos[1];
-      z = pos[2];
+      sx = pos[0];
+      sy = pos[1];
+      sz = pos[2];
     }
   }
 }

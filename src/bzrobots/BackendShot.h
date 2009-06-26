@@ -29,8 +29,8 @@ class BackendShot : public Shot
     BackendShot(uint64_t _id) : Shot(_id) {}
     BackendShot(const Shot &s) : Shot(s) {}
 
-		void getPosition(double &x, double &y, double &z, double dt = 0) const; //Return the shots position in dt seconds
-		void getVelocity(double &x, double &y, double &z, double dt = 0) const;
+		void getPosition(double &sx, double &sy, double &sz, double dt = 0) const; //Return the shots position in dt seconds
+		void getVelocity(double &sx, double &sy, double &sz, double dt = 0) const;
 };
 
 #else
