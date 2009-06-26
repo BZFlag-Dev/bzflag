@@ -27,7 +27,7 @@
 #include "BZAdvancedRobot.h"
 #include "MessageUtilities.h"
 #include "Tank.h"
-#include "Shot.h"
+#include "FrontendShot.h"
 
 
 messageParseStatus IdentifyBackend::parse(char **arguments, int count)
@@ -742,7 +742,7 @@ void ShotPositionReply::getParameters(std::ostream &stream) const
 
 bool ShotPositionReply::updateBot(const BZAdvancedRobot *robot) const
 {
-  const FrontendShot *shot = robot->getShot(id);
+  const Shot *shot = robot->getShot(id);
 
   if(!shot)
     return false;
@@ -778,7 +778,7 @@ void ShotVelocityReply::getParameters(std::ostream &stream) const
 
 bool ShotVelocityReply::updateBot(const BZAdvancedRobot *robot) const
 {
-  const FrontendShot *shot = robot->getShot(id);
+  const Shot *shot = robot->getShot(id);
 
   if(!shot)
     return false;

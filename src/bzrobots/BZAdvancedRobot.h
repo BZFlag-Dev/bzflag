@@ -116,16 +116,16 @@ public:
   double getDistance(double x, double y) const;
 
   /* This returns the shot by given id */
-  const FrontendShot *getShot(uint64_t id) const;
+  const Shot *getShot(uint64_t id) const;
 
   mutable double gunHeat, distanceRemaining, turnRemaining;
   mutable double battleFieldSize;
   mutable double yPosition, xPosition, zPosition;
   mutable double tankWidth, tankLength, tankHeight;
   mutable double heading;
-  mutable std::vector<Tank> players;
   mutable std::vector<Obstacle *> obstacles;
-  mutable std::vector<FrontendShot> shots;
+  mutable std::vector<Tank> players;
+  mutable std::vector<Shot> shots;
 };
 
 #else

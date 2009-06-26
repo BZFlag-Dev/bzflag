@@ -26,6 +26,7 @@
 #include "RCReplies.h"
 #include "RCRobotPlayer.h"
 #include "MessageUtilities.h"
+#include "BackendShot.h"
 
 
 bool ExecuteReq::process(RCRobotPlayer *rrp)
@@ -352,10 +353,11 @@ bool GetObstaclesReq::process(RCRobotPlayer *)
 
 bool GetShotPositionReq::process(RCRobotPlayer *)
 {
-  Shot shot(id);
+	Shot shot(id);
+  BackendShot bshot(shot);
   double x, y, z;
 
-  shot.getPosition(x, y, z, dt);
+  bshot.getPosition(x, y, z, dt);
 
   link->send(ShotPositionReply(id, x, y, z));
   return true;
@@ -363,10 +365,11 @@ bool GetShotPositionReq::process(RCRobotPlayer *)
 
 bool GetShotVelocityReq::process(RCRobotPlayer *)
 {
-  Shot shot(id);
+	Shot shot(id);
+  BackendShot bshot(shot);
   double x, y, z;
 
-  shot.getVelocity(x, y, z, dt);
+  bshot.getVelocity(x, y, z, dt);
 
   link->send(ShotVelocityReply(id, x, y, z));
   return true;

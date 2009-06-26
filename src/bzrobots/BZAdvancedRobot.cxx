@@ -226,7 +226,7 @@ double BZAdvancedRobot::getDistance(double x, double y) const
   return sqrt(x0*x0 + y0*y0);
 }
 
-const FrontendShot *BZAdvancedRobot::getShot(uint64_t id) const
+const Shot *BZAdvancedRobot::getShot(uint64_t id) const
 {
   for (unsigned int i = 0; i < shots.size(); i++) {
     if (shots[i].getId() == id)

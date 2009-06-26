@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __SHOT_H__
-#define __SHOT_H__
+#ifndef __BACKENDSHOT_H__
+#define __BACKENDSHOT_H__
 
 #include "common.h"
 
@@ -20,35 +20,24 @@
 
 /* local interface headers */
 #include "BZAdvancedRobot.h"
+#include "Shot.h"
 
+class BackendShot : public Shot
+{
+  public:
+		BackendShot() : Shot() {}
+    BackendShot(uint64_t _id) : Shot(_id) {}
+    BackendShot(const Shot &s) : Shot(s) {}
 
-class Shot {
-public:
-  Shot();
-  Shot(uint64_t _id);
-  Shot(PlayerId _plr, uint16_t _sid);
-  virtual ~Shot();
-
-  PlayerId getPlayerId(void) const;
-  uint16_t getShotId(void) const;
-
-  uint64_t getId(void) const;
-  void setId(uint64_t id);
-
-  messageParseStatus parse(char **arguments, int count);
-
-	mutable double x, y, z;
-	mutable double vx, vy, vz;
-
-protected:
-  uint64_t id;
+		void getPosition(double &x, double &y, double &z, double dt = 0) const; //Return the shots position in dt seconds
+		void getVelocity(double &x, double &y, double &z, double dt = 0) const;
 };
 
 #else
 
-class Shot;
+class BackendShot;
 
-#endif /* __SHOT_H__ */
+#endif /* __BACKENDSHOT_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

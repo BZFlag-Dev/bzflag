@@ -54,7 +54,7 @@ void TestRobot::update()
 
 void TestRobot::onHitWall(const HitWallEvent &/*hwe*/)
 {
-  FRONTENDLOGGER << "Got a hitWallEvent, stopping!" << std::endl;
+  //FRONTENDLOGGER << "Got a hitWallEvent, stopping!" << std::endl;
   setAhead(0);
 }
 

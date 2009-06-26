@@ -638,6 +638,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath="..\..\src\bzrobots\BackendShot.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzrobots\botplaying.h"
 				>
 			</File>
@@ -722,6 +726,10 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
+			<File
+				RelativePath="..\..\src\bzrobots\BackendShot.cxx"
+				>
+			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\botplaying.cxx"
 				>
@@ -1476,6 +1484,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\BZRobot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\FrontendShot.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\FrontendShot.h"
 				>
 			</File>
 			<File

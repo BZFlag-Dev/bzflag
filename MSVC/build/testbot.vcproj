@@ -357,6 +357,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzrobots\MessageUtilities.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\MessageUtilities.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzrobots\Robot.cxx"
 				>
 			</File>

@@ -11,62 +11,43 @@
  */
 
 /* interface header */
-#include "Shot.h"
+#include "FrontendShot.h"
+
+/* bzflag implementation headers */
+#include "Roster.h"
 
 /* local implementation headers */
 #include "MessageUtilities.h"
 #include "RCRequest.h"
 #include "RCRequests.h"
 
-Shot::Shot() {}
-
-Shot::Shot(uint64_t _id) : id(_id)
+FrontendShot::FrontendShot() : Shot()
 {
+  robot = NULL;
 }
 
-Shot::Shot(PlayerId _plr, uint16_t _id)
+void FrontendShot::setRobot(const BZAdvancedRobot *_robot)
 {
-  id = ((uint64_t)_plr << 16) + _id;
+  robot = _robot;
 }
 
-Shot::~Shot() {}
-
-PlayerId Shot::getPlayerId(void) const
+void FrontendShot::getPosition(double &tox, double &toy, double &toz, double dt) const
 {
-  return (PlayerId)(id >> 16);
+  RCLinkFrontend *link = robot->getLink();
+  link->sendAndProcess(GetShotPositionReq(id,dt), robot);
+  tox = x;
+  toy = y;
+  toz = z;
 }
 
-uint16_t Shot::getShotId(void) const
+void FrontendShot::getVelocity(double &tox, double &toy, double &toz, double dt) const
 {
-  return id & 0xffff;
+  RCLinkFrontend *link = robot->getLink();
+  link->sendAndProcess(GetShotVelocityReq(id,dt), robot);
+  tox = vx;
+  toy = vy;
+  toz = vz;
 }
-
-uint64_t Shot::getId(void) const
-{
-  return id;
-}
-
-void Shot::setId(uint64_t _id)
-{
-  id = _id;
-}
-
-std::ostream& operator<<(std::ostream& os, const Shot& shot)
-{
-  return os << shot.getId();
-}
-
-messageParseStatus Shot::parse(char **arguments, int count)
-{
-  if (count != 1)
-    return InvalidArgumentCount;
-
-  if (!MessageUtilities::parse(arguments[0], id))
-    return InvalidArguments;
-
-  return ParseOk;
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

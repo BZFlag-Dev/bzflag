@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __SHOT_H__
-#define __SHOT_H__
+#ifndef __FRONTENDSHOT_H__
+#define __FRONTENDSHOT_H__
 
 #include "common.h"
 
@@ -20,35 +20,33 @@
 
 /* local interface headers */
 #include "BZAdvancedRobot.h"
+#include "Shot.h"
 
+class FrontendShot : public Shot
+{
+  public:
+    FrontendShot();
+    FrontendShot(uint64_t _id) : Shot(_id), robot(NULL) {}
+    FrontendShot(const Shot &s) : Shot(s), robot(NULL) {}
 
-class Shot {
-public:
-  Shot();
-  Shot(uint64_t _id);
-  Shot(PlayerId _plr, uint16_t _sid);
-  virtual ~Shot();
+    void setRobot(const BZAdvancedRobot *_robot);
 
-  PlayerId getPlayerId(void) const;
-  uint16_t getShotId(void) const;
+    void getPosition(double &x, double &y, double &z, double dt = 0) const;
+    void getVelocity(double &x, double &y, double &z, double dt = 0) const;
 
-  uint64_t getId(void) const;
-  void setId(uint64_t id);
-
-  messageParseStatus parse(char **arguments, int count);
-
-	mutable double x, y, z;
-	mutable double vx, vy, vz;
-
-protected:
-  uint64_t id;
+	protected:
+    const BZAdvancedRobot *robot;
 };
+
+std::ostream& operator<<(std::ostream& os, const Shot& shot);
 
 #else
 
 class Shot;
+class FrontendShot;
+class BackendShot;
 
-#endif /* __SHOT_H__ */
+#endif /* __FRONTENDSHOT_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
