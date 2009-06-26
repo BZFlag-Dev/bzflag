@@ -43,6 +43,10 @@ genericfiles =				\
 	RCMessage.h			\
 	RCRequest.h			\
 	RCRequests.cxx			\
+	BackendShot.h			\
+	BackendShot.cxx			\
+	FrontendShot.h			\
+	FrontendShot.cxx		\
 	RCRequests_Process.cxx		\
 	RCRequests.h			\
 	RCReply.h			\
