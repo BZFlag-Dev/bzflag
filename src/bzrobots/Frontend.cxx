@@ -26,7 +26,6 @@
 
 /* local implementation headers */
 #include "RCMessageFactory.h"
-#include "TestRobot.h"
 #include "ScriptLoaderFactory.h"
 #include "Logger.h"
 
