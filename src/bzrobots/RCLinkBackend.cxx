@@ -99,6 +99,7 @@ RCLinkBackend::sendPacket( const char *data, unsigned int size, bool killit )
 void
 RCLinkBackend::update()
 {
+	//printf("RCBStatus: %d\n",status);
   if (status != Connected && status != Connecting) {
     return;
   }
@@ -115,6 +116,7 @@ RCLinkBackend::update()
     updateParse();
   } else if (status == Connecting) {
     int ncommands = updateParse(1);
+		printf("RCBNC: %d\n",ncommands);
     if (ncommands) {
       RCRequest *req = popRequest();
       if (req && req->getType() == "IdentifyFrontend") {

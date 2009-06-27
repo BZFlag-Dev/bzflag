@@ -29,9 +29,26 @@
 #include "ScriptLoaderFactory.h"
 #include "Logger.h"
 
+class StartData
+{
+public:
+	Frontend		frontend;
+	std::string filename;
+};
+
+/* static entry point for threading */
+static void starter(void *data) {
+	StartData	*sd = (StartData *)data;
+	sd->frontend.start(sd->filename);
+}
+
 
 bool Frontend::run(std::string filename, const char *host, int port)
 {
+	StartData	*sd = new StartData();	// FIXME: This may leak
+
+	sd->filename = filename;
+
 #ifndef _USE_FAKE_NET
   pid_t pid = fork();
   if (pid < 0)
@@ -43,16 +60,26 @@ bool Frontend::run(std::string filename, const char *host, int port)
   fclose(stdin); // Shouldn't mess around with that here ;-)
   bzSignal(SIGINT, SIG_DFL);
 
-  Frontend frontend;
-  if (!frontend.connect(host, port)) {
-    FRONTENDLOGGER << "Frontend failed to connect! Bailing! (" << frontend.getError() << ")" << std::endl;
+  if (!sd->frontend.connect(host, port)) {
+    FRONTENDLOGGER << "Frontend failed to connect! Bailing! (" << sd->frontend.getError() << ")" << std::endl;
     return false;
   }
 
   FRONTENDLOGGER << "Frontend initialized, " << host << ":" << port << std::endl;
-  frontend.start(filename);
-  FRONTENDLOGGER << "Frontend disconnected / failed! (" << frontend.getError() << ")" << std::endl;
+
+#ifndef _USE_FAKE_NET
+	sd->frontend.start(filename);
+	FRONTENDLOGGER << "Frontend disconnected / failed! (" << sd->frontend.getError() << ")" << std::endl;
+	delete sd;
   return false;
+#else
+#ifdef _WIN32
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) starter, sd, 0, 0);
+	return true;
+#else
+	return false;
+#endif // _WIN32
+#endif // _USE_FAKE_NET
 }
 
 

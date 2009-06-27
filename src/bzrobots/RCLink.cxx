@@ -56,7 +56,7 @@ bool RCLink::waitForData()
   if(isFrontEnd)
     return fakeNetPendingFrontEnd() > 0;
   else
-    return fakeNetPendingFrontEnd() > 0;
+    return fakeNetPendingBackEnd() > 0;
 #else
 
   if (status != Connected) {
@@ -202,14 +202,13 @@ bool RCLink::connect(const char *host, int port)
   BzfNetwork::setNonBlocking(connfd);
   setNoDelay(connfd);
 
+  input_toolong = false;
+#else
+	fakeNetConnect = true;
+#endif
   status = Connecting;
   send_amount = recv_amount = 0;
-  input_toolong = false;
-
   return true;
-#else
-  return true;
-#endif
 }
 
 bool RCLink::send(const char* message)
@@ -361,8 +360,10 @@ int RCLink::updateRead()
   int prev_recv_amount = recv_amount;
 
 #ifdef _USE_FAKE_NET
-  if (!fakeNetConnect)
+	if (!fakeNetConnect) {
+		printf("bad fakenet\n");
     return -1;
+	}
 
   if (isFrontEnd)
     {

@@ -65,7 +65,9 @@ public:
   int updateRead();
   void detachAgents();
   bool waitForData();
-  State getStatus() const { return status; }
+
+	State getStatus() const { return status; }
+
   const std::string &getError() const { return error; }
 
   virtual bool send(const char *message);
@@ -113,14 +115,16 @@ public:
       data = (char*)malloc(size);
       memcpy(data,_data,size);
     } else {
-    data = NULL;
+			data = NULL;
     }
   }
 
   ~CLocalTransferPacket()
   {
-    if (data)
+		if (data) {
       free(data);
+			data = NULL;
+		}
   }
 
   CLocalTransferPacket(const CLocalTransferPacket& r)

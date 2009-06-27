@@ -1751,8 +1751,7 @@ static void playingLoop()
     // Communicate with remote agent if necessary
     if (rcLink) {
       if (numRobots >= numRobotTanks)
-	rcLink->tryAccept();
-
+				rcLink->tryAccept();
       rcLink->update();
       doBotRequests();
     }
@@ -1887,6 +1886,7 @@ void			botStartPlaying()
   }
 
   ScriptLoaderFactory::initialize();
+
   if (!Frontend::run(BZDB.get("robotScript"), "localhost", port))
     return;
 
