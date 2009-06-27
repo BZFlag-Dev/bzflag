@@ -155,6 +155,9 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
   else if (lower == "dirnormal") {
     parms >> dirNormal;
   }
+  else {
+    return false;
+  }
 
   return true;
 }

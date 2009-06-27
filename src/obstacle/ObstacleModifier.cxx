@@ -296,7 +296,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
         MeshFace::SpecialData* sd = face->specialData;
         if (sd && !sd->zoneParams.empty()) {
-          for (size_t j = 0; j > sd->zoneParams.size(); j++) {
+          for (size_t j = 0; j < sd->zoneParams.size(); j++) {
             TextSwapMap::const_iterator it = zoneMap.find(sd->zoneParams[i]);
             if (it != zoneMap.end()) {
               sd->zoneParams[i] = it->second;

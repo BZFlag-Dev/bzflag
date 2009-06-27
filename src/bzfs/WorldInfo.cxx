@@ -478,11 +478,11 @@ void WorldInfo::createFaceZones()
                 if (line.size() > 4) {
                   line = line.substr(4); // remove the leading 'zone'
                   std::string cmd, args;
-                  if (parseLine(line, cmd, args)) {
-                    zone.readLine(cmd, args);
-                  } else {
-                    logDebugMessage(0, "WARNING: invalid face zone parameter: %s\n",
-                                       line.c_str());
+                  if (!parseLine(line, cmd, args) ||
+                      !zone.readLine(cmd, args)) {
+                    logDebugMessage(0,
+                      "WARNING: invalid face zone parameter: %s\n",
+                      sd->zoneParams[i].c_str());
                   }
                 }
               }
@@ -507,9 +507,8 @@ void WorldInfo::createMeshWeapons()
       const std::vector<std::string>& lines = weapons[w];
       for (size_t i = 0; i < lines.size(); i++) {
         std::string cmd, args;
-        if (parseLine(lines[i], cmd, args)) {
-          weapon->readLine(cmd, args);
-        } else {
+        if (!parseLine(lines[i], cmd, args) ||
+            !weapon->readLine(cmd, args)) {
           logDebugMessage(0, "WARNING: invalid mesh weapon parameter: %s\n",
                              lines[i].c_str());
         }

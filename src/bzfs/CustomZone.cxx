@@ -242,6 +242,9 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line)
   else if (lower == "center") {
     useCenter = true;
   }
+  else {
+    return false;
+  }
 
   return true;
 }

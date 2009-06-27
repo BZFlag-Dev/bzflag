@@ -497,6 +497,16 @@ properties:
 .br
 \fB    baseTeam\fR 1  # the base team number
 .br
+    # zone parameters
+.br
+\fB    zoneTeam\fR 1  # equivalent to the zone 'team' parameter
+.br
+\fB    zoneSafety\fR 0 1 2 3  # equivalent to the zone 'safety' parameter
+.br
+\fB    zoneFlag\fR SW  # equivalent to the zone 'flag' parameter
+.br
+\fB    zoneFixedFlag\fR 1 GM # equivalent to the zone 'fixedFlag' parameter
+.br
     # link parameters
 .br
 \fB    linkName\fR myLink  # the name use for linkage
@@ -542,6 +552,18 @@ properties:
 \fB    linkDstPscale 0.0
 .br
 \fB  endface\fR  # end the face
+.br
+  #
+.br
+  #  Mesh weapons
+.br
+  #
+.br
+\fB  weapon\fR
+.br
+\fB    <weapon lines>\fR
+.br
+\fB  endweapon\fR # end the weapon
 .br
   #
 .br
