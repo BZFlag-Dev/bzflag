@@ -24,10 +24,7 @@
 #include "TextUtils.h"
 
 
-// this applies to sinusoid and clamp functions
-const float PhysicsDriver::minPeriod = 0.1f;
-
-
+//============================================================================//
 //
 // Physics Driver Manager
 //
@@ -158,6 +155,7 @@ void PhysicsDriverManager::print(std::ostream& out,
 }
 
 
+//============================================================================//
 //
 // Physics Driver
 //

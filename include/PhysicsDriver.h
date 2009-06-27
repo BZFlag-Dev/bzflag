@@ -58,8 +58,6 @@ class PhysicsDriver {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
-    static const float minPeriod;
-
     std::string name;
     fvec3 linear;
     float angularVel;
