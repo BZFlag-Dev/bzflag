@@ -22,6 +22,7 @@ typedef struct ldap LDAP;
 #define MAX_CALLSIGN_LEN 32
 #define MIN_PASSWORD_LEN 2
 #define MIN_CALLSIGN_LEN 2
+#define MAX_GROUPNAME_LEN 20 /* TODO */
 
 struct UserInfo
 {

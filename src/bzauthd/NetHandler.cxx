@@ -12,25 +12,60 @@
 
 #include <common.h>
 #include "NetHandler.h"
+#include "ClientHandler.h"
+#include "ServerHandler.h"
 #include "ConfigMgr.h"
 #include "Log.h"
 
 INSTANTIATE_SINGLETON(NetHandler)
 
-PHFunc handlerTable[NUM_OPCODES];
-
-void PacketHandler::initHandlerTable()
+PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *socket)
 {
-  for(int i = 0; i < NUM_OPCODES; i++)
-    handlerTable[i] = &PacketHandler::handleInvalid;
+  uint8_t peerType = 0;
+  uint16_t protoVersion = 0;
+  if(!(packet >> peerType >> protoVersion)) return NULL;
 
-  handlerTable[CMSG_AUTH_REQUEST]       = &PacketHandler::handleAuthRequest;
-  handlerTable[CMSG_AUTH_RESPONSE]      = &PacketHandler::handleAuthResponse;
-  handlerTable[CMSG_REGISTER_GET_FORM]  = &PacketHandler::handleRegisterGetForm;
-  handlerTable[CMSG_REGISTER_REQUEST]   = &PacketHandler::handleRegisterRequest;
-  handlerTable[CMSG_REGISTER_RESPONSE]  = &PacketHandler::handleRegisterResponse;
-  handlerTable[SMSG_TOKEN_VALIDATE]     = &PacketHandler::handleTokenValidate;
+  PacketHandler *handler = NULL;
+
+  switch (peerType) {
+    case BZAUTHD_PEER_CLIENT: {
+      sLog.outLog("received %s: client using protocol %d", getOpcodeName(packet), protoVersion);
+      uint32_t cliVersion = 0;
+      uint8_t commType = 0;
+      if(!(packet >> cliVersion >> commType)) break;
+
+      handler = new ClientHandler(socket);
+      sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
+      
+      bool success = false;
+      switch (commType) {
+        case 0: success = ((ClientHandler*)handler)->handleAuthRequest(packet); break;
+        case 1: success = ((ClientHandler*)handler)->handleRegisterGetForm(packet); break;
+        case 2: success = ((ClientHandler*)handler)->handleRegisterRequest(packet); break;
+        default:
+          sLog.outError("Handshake: invalid commType received : %d", commType);
+      }
+      if(!success) {
+        delete handler;
+        handler = NULL;
+      }
+    } break;
+    case BZAUTHD_PEER_SERVER: {
+      sLog.outLog("received %s: server using protocol %d", getOpcodeName(packet), protoVersion);
+      handler = new ServerHandler(socket);
+    } break;
+    case BZAUTHD_PEER_DAEMON: {
+      sLog.outLog("received %s: daemon using protocol %d", getOpcodeName(packet), protoVersion);
+      handler = NULL/*new DaemonHandler(socket)*/;
+    } break;
+    default: {
+      sLog.outError("received %s: unknown peer type %d", getOpcodeName(packet));
+    }
+  }
+
+  return handler;
 }
+
 
 const char *getOpcodeName(Packet &packet)
 {
@@ -64,7 +99,7 @@ void NetConnectSocket::onReadData(PacketHandlerBase *&handler, Packet &packet)
   }
   else
   {
-    if(!(((PacketHandler*)handler)->*handlerTable[packet.getOpcode()])(packet))
+    if(!((PacketHandler*)handler)->handle(packet))
     {
       sLog.outError("received %s: invalid packet format (length: %d)", getOpcodeName(packet), (uint16_t)packet.getLength());
       disconnect();
@@ -109,7 +144,8 @@ bool NetHandler::initialize()
     return false;
   }
 
-  PacketHandler::initHandlerTable();
+  ClientHandler::initHandlerTable();
+  ServerHandler::initHandlerTable();
 
   sLog.outLog("NetHandler: initialized");
   return true;

@@ -118,7 +118,7 @@ public:
 
   PlaceHolder append_placeholder(size_t size)
   {
-    int wpoz = m_wpoz;
+    size_t wpoz = m_wpoz;
     ensure_wpoz_inc(size);
     m_wpoz += size;
     return PlaceHolder(*this, size, wpoz);

@@ -11,60 +11,28 @@
 */
 
 #include <common.h>
-#include "NetHandler.h"
+#include "ClientHandler.h"
 #include "Log.h"
 #include "RSA.h"
 #include "UserStorage.h"
 #include "TokenMgr.h"
 #include <assert.h>
 
-PacketHandler* PacketHandler::handleHandshake(Packet &packet, ConnectSocket *socket)
+INSTANTIATE_PACKETHANDLER(ClientHandler)
+
+void ClientHandler::initHandlerTable()
 {
-  uint8_t peerType = 0;
-  uint16_t protoVersion = 0;
-  if(!(packet >> peerType >> protoVersion)) return NULL;
+  for(int i = 0; i < NUM_OPCODES; i++)
+    handlerTable[i] = &PacketHandler::handleInvalid;
 
-  PacketHandler *handler = new PacketHandler(socket);
-  bool success = true;
-
-  switch (peerType) {
-    case BZAUTHD_PEER_CLIENT: {
-      sLog.outLog("received %s: client using protocol %d", getOpcodeName(packet), protoVersion);
-      uint32_t cliVersion = 0;
-      uint8_t commType = 0;
-      if(!(packet >> cliVersion >> commType)) { success = false; break; }
-      sLog.outLog("Handshake: client (%d) connected, requesting comm type %d", cliVersion, commType);
-      switch (commType) {
-        case 0: success = handler->handleAuthRequest(packet); break;
-        case 1: success = handler->handleRegisterGetForm(packet); break;
-        case 2: success = handler->handleRegisterRequest(packet); break;
-        default:
-          sLog.outError("Handshake: invalid commType received : %d", commType);
-          success = false;
-      }
-    } break;
-    case BZAUTHD_PEER_SERVER: {
-      sLog.outLog("received %s: server using protocol %d", getOpcodeName(packet), protoVersion);
-    } break;
-    case BZAUTHD_PEER_DAEMON: {
-      sLog.outLog("received %s: daemon using protocol %d", getOpcodeName(packet), protoVersion);
-    } break;
-    default: {
-      sLog.outError("received %s: unknown peer type %d", getOpcodeName(packet));
-      success = false;
-    }
-  }
-
-  if(!success)
-  {
-    delete handler;
-    return NULL;
-  }
-  else
-    return handler;
+  handlerTable[CMSG_AUTH_REQUEST]       = &ClientHandler::handleAuthRequest;
+  handlerTable[CMSG_AUTH_RESPONSE]      = &ClientHandler::handleAuthResponse;
+  handlerTable[CMSG_REGISTER_GET_FORM]  = &ClientHandler::handleRegisterGetForm;
+  handlerTable[CMSG_REGISTER_REQUEST]   = &ClientHandler::handleRegisterRequest;
+  handlerTable[CMSG_REGISTER_RESPONSE]  = &ClientHandler::handleRegisterResponse;
 }
 
-bool PacketHandler::handleAuthRequest(Packet &/*packet*/)
+bool ClientHandler::handleAuthRequest(Packet &/*packet*/)
 {
   if(m_authSession)
   {
@@ -89,7 +57,7 @@ bool PacketHandler::handleAuthRequest(Packet &/*packet*/)
   return true;
 }
 
-bool PacketHandler::handleAuthResponse(Packet &packet)
+bool ClientHandler::handleAuthResponse(Packet &packet)
 {
   if(!m_authSession)
   {
@@ -180,14 +148,14 @@ bool PacketHandler::handleAuthResponse(Packet &packet)
 }
 
 
-bool PacketHandler::handleRegisterGetForm(Packet &/*packet*/)
+bool ClientHandler::handleRegisterGetForm(Packet &/*packet*/)
 {
   // currently not implemented
   assert(false);
   return true;
 }
 
-bool PacketHandler::handleRegisterRequest(Packet &/*packet*/)
+bool ClientHandler::handleRegisterRequest(Packet &/*packet*/)
 {
   if(m_regSession)
   {
@@ -212,7 +180,7 @@ bool PacketHandler::handleRegisterRequest(Packet &/*packet*/)
   return true;
 }
 
-bool PacketHandler::handleRegisterResponse(Packet &packet)
+bool ClientHandler::handleRegisterResponse(Packet &packet)
 {
   if(!m_regSession)
   {

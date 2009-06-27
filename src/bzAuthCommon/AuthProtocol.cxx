@@ -29,6 +29,7 @@ const char *bzAuthOpcodeNames[NUM_OPCODES] = {
   "DMSG_REGISTER_SUCCESS",
   "SMSG_TOKEN_VALIDATE",
   "DMSG_TOKEN_VALIDATE",
+  "SMSG_GROUP_LIST"
 };
 
 // Local Variables: ***

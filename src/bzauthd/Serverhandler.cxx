@@ -11,11 +11,23 @@
 */
 
 #include <common.h>
-#include "NetHandler.h"
+#include "ServerHandler.h"
 #include "TokenMgr.h"
 #include "UserStorage.h"
 
-bool PacketHandler::handleTokenValidate(Packet &packet)
+INSTANTIATE_PACKETHANDLER(ServerHandler)
+
+void ServerHandler::initHandlerTable()
+{
+  for(int i = 0; i < NUM_OPCODES; i++)
+    handlerTable[i] = &PacketHandler::handleInvalid;
+
+  handlerTable[SMSG_TOKEN_VALIDATE]     = &ServerHandler::handleTokenValidate;
+  handlerTable[SMSG_GROUP_LIST]         = &ServerHandler::handleGroupList;
+}
+
+
+bool ServerHandler::handleTokenValidate(Packet &packet)
 {
   char n;
   if(!(packet >> n)) return false;
@@ -39,6 +51,23 @@ bool PacketHandler::handleTokenValidate(Packet &packet)
   m_socket->sendData(response);
 
   return true;
+}
+
+bool ServerHandler::handleGroupList(Packet &packet)
+{
+    int nr;
+    if(!(packet >> nr)) return false;
+
+    m_groups.clear();
+    for(int i = 0; i < nr; i++)
+    {
+        uint8_t group[MAX_GROUPNAME_LEN+1];
+        if(!packet.read_string(group, MAX_GROUPNAME_LEN+1)) return false;
+        /* TODO: validate group name */
+        m_groups.push_back((char*)group);
+    }
+
+    return true;
 }
 
 // Local Variables: ***

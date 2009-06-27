@@ -55,44 +55,45 @@ class RegisterSession : public Session
 public:
 };
 
-class ServerSession : public Session
-{
-public:
-};
-
 /* Main packet handler for the daemon */
 class PacketHandler : public PacketHandlerBase
 {
 public:
   PacketHandler(ConnectSocket *socket) 
-    : PacketHandlerBase(socket), m_peer(NULL), m_authSession(NULL), m_regSession(NULL) {}
-  ~PacketHandler() { delete m_peer; delete m_authSession; delete m_regSession; }
+    : PacketHandlerBase(socket) {}
+  virtual ~PacketHandler() {}
 
-  static void initHandlerTable();
+  virtual bool handle(Packet &packet) = 0;
 
   static PacketHandler* handleHandshake(Packet &packet, ConnectSocket *socket);
 
   bool handleNull(Packet &packet);
   bool handleInvalid(Packet &packet);
-  bool handleAuthRequest(Packet &packet);
-  bool handleRegisterGetForm(Packet &packet);
-  bool handleRegisterRequest(Packet &packet);
-  bool handleRegisterResponse(Packet &packet);
-  bool handleAuthResponse(Packet &packet);
-  bool handleTokenValidate(Packet &packet);
-private:
-  Peer *m_peer;
-  AuthSession *m_authSession;
-  RegisterSession *m_regSession;
 };
 
-typedef bool (PacketHandler::*PHFunc)(Packet &packet);
-
-struct OpcodeEntry
+/* Helper class for the specific packet handlers
+   which defines the packet handler table */
+template < class T >
+class PacketHandlerTemplate : public PacketHandler
 {
-  const char * name;
-  PHFunc handler;
+public:
+  typedef bool (T::*PHFunc)(Packet &packet);
+
+  PacketHandlerTemplate(ConnectSocket *socket)
+    : PacketHandler(socket) {}
+  
+  bool handle(Packet &packet)
+  {
+    ((static_cast<T*>(this))->*handlerTable[packet.getOpcode()])(packet);
+    return true;
+  }
+
+protected:
+  static PHFunc handlerTable[NUM_OPCODES];
 };
+
+#define INSTANTIATE_PACKETHANDLER(Handler) \
+  Handler::PHFunc PacketHandlerTemplate<Handler>::handlerTable[NUM_OPCODES];
 
 const char *getOpcodeName(Packet &packet);
 
