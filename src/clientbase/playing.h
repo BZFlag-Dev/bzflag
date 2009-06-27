@@ -183,6 +183,7 @@ void handleAllowSpawn(uint16_t len, void *msg);
 void handleLimboMessage(void *msg);
 void handlePlayerData(void *msg);
 
+void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType);
 void updateHighScores();
 
 void addMessage(const Player* player,

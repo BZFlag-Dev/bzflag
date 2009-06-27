@@ -828,20 +828,6 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
 }
 
 
-void handleTransferFlag(void *msg)
-{
-  PlayerId fromId, toId;
-  unsigned short flagIndex;
-  msg = nboUnpackUInt8(msg, fromId);
-  msg = nboUnpackUInt8(msg, toId);
-  msg = nboUnpackUInt16(msg, flagIndex);
-  msg = world->getFlag(int(flagIndex)).unpack(msg);
-  unsigned char t = 0;
-  msg = nboUnpackUInt8(msg, t);
-  Player *fromTank = lookupPlayer(fromId);
-  Player *toTank = lookupPlayer(toId);
-  handleFlagTransferred(fromTank, toTank, flagIndex, (ShotType)t);
-}
 
 
 void handleGMUpdate(void *msg)
@@ -874,71 +860,73 @@ void handleGMUpdate(void *msg)
 
 
 
-void handleMsgSetVars(void *msg)
+
+void handleLimboMessage(void *msg)
 {
-  uint16_t numVars;
-  uint8_t nameLen, valueLen;
+  std::string limboMessage;
+  nboUnpackStdString(msg, limboMessage);
+  //hud->setLimboMessage(limboMessage);
+}
 
-  char name[MaxPacketLen];
-  char value[MaxPacketLen];
 
-  msg = nboUnpackUInt16(msg, numVars);
-  for (int i = 0; i < numVars; i++) {
-    msg = nboUnpackUInt8(msg, nameLen);
-    msg = nboUnpackString(msg, name, nameLen);
-    name[nameLen] = '\0';
+void handleFlagDropped(Player *tank)
+{
 
-    msg = nboUnpackUInt8(msg, valueLen);
-    msg = nboUnpackString(msg, value, valueLen);
-    value[valueLen] = '\0';
+  if (tank->getPlayerType() == ComputerPlayer) {
+    RobotPlayer *robot = lookupRobotPlayer(tank->getId());
+    if (!robot)
+      return;
+    robot->setShotType(StandardShot);
+    robot->setFlag(Flags::Null);
+  } else {
+    tank->setShotType(StandardShot);
 
-    BZDB.set(name, value);
-    BZDB.setPersistent(name, false);
-    BZDB.setPermission(name, StateDatabase::Locked);
+    // skip it if player doesn't actually have a flag
+    if (tank->getFlag() == Flags::Null) return;
+
+    if (tank == myTank) {
+      // make sure the player must reload after theft
+      if (tank->getFlag() == Flags::Thief)
+	myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
+
+      // update display and play sound effects
+      //SOUNDSYSTEM.play(SFX_DROP_FLAG);
+      //updateFlag(Flags::Null);
+    }
+
+    // add message
+    std::string message("dropped ");
+    message += tank->getFlag()->flagName;
+    message += " flag";
+    addMessage(tank, message);
+
+    // player no longer has flag
+    tank->setFlag(Flags::Null);
   }
 }
 
 
-void handleLimboMessage(void *)
+bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
+			const ShotPath *hit, int phydrv)
 {
-}
-
-
-void handleFlagDropped(Player* tank)
-{
-  // skip it if player doesn't actually have a flag
-  if (tank->getFlag() == Flags::Null) return;
-
-  // add message
-  std::string message("dropped ");
-  message += tank->getFlag()->flagName;
-  message += " flag";
-  addMessage(tank, message);
-
-  // player no longer has flag
-  tank->setFlag(Flags::Null);
-}
-
-
-bool gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason, PlayerId killer,
-			const ShotPath* hit, int phydrv)
-{
-  if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
+  if (!tank || (tank->getTeam() == ObserverTeam || !tank->isAlive()))
     return false;
 
   int shotId = -1;
-  FlagType* flagType = Flags::Null;
+  FlagType *flagType = Flags::Null;
   if (hit) {
     shotId = hit->getShotId();
     flagType = hit->getFlag();
   }
 
   // you can't take it with you
-  const FlagType* flag = tank->getFlag();
+  const FlagType *flag = tank->getFlag();
   if (flag != Flags::Null) {
+
 
     // tell other players I've dropped my flag
     serverLink->sendDropFlag(tank->getPosition());
+    tank->setShotType(StandardShot);
 
     // drop it
     handleFlagDropped(tank);
@@ -978,43 +966,24 @@ bool gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason, PlayerId killer,
 // some robot stuff
 //
 
-
 static void checkEnvironment(RobotPlayer *tank)
 {
   // skip this if i'm dead or paused
   if (!tank->isAlive() || tank->isPaused()) return;
 
   // see if i've been shot
-  const ShotPath* hit = NULL;
+  const ShotPath *hit = NULL;
   float minTime = Infinity;
+  tank->checkHit(myTank, hit, minTime);
   int i;
   for (i = 0; i < curMaxPlayers; i++) {
-    if (remotePlayers[i]) {
+    if (remotePlayers[i] && remotePlayers[i]->getId() != tank->getId()) {
       tank->checkHit(remotePlayers[i], hit, minTime);
     }
   }
 
   // Check Server Shots
-  tank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
-
-  // Check if I've been tagged (freeze tag).  Note that we alternate the
-  // direction that we go through the list to avoid a pathological case.
-  static int upwards = 1;
-  for (i = 0; i < curMaxPlayers; i ++) {
-    int tankid;
-    if (upwards)
-      tankid = i;
-    else
-      tankid = curMaxPlayers - 1 - i;
-
-    Player *othertank = lookupPlayer(tankid);
-
-    if (othertank && othertank->getTeam() != ObserverTeam &&
-	tankid != tank->getId())
-      tank->checkCollision(othertank);
-  }
-  // swap direction for next time:
-  upwards = upwards ? 0 : 1;
+  tank->checkHit(World::getWorld()->getWorldWeapons(), hit, minTime);
 
   float waterLevel = World::getWorld()->getWaterLevel();
 
@@ -1026,55 +995,49 @@ static void checkEnvironment(RobotPlayer *tank)
     if (hit->isStoppedByHit())
       serverLink->sendHit(tank->getId(), hit->getPlayer(), hit->getShotId());
 
-    FlagType* killerFlag = hit->getFlag();
+    FlagType *killerFlag = hit->getFlag();
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
       if (tank->getFlag() != Flags::Null)
 	serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
-
       stopShot = true;
     } else {
       stopShot = gotBlowedUp(tank, GotShot, hit->getPlayer(), hit);
     }
 
     if (stopShot || hit->isStoppedByHit()) {
-      Player* hitter = lookupPlayer(hit->getPlayer());
-      if (hitter)
-	hitter->endShot(hit->getShotId());
+      Player *hitter = lookupPlayer(hit->getPlayer());
+      if (hitter) hitter->endShot(hit->getShotId());
     }
-  } else if (tank->getDeathPhysicsDriver() >= 0) {
+  }
+  else if (tank->getDeathPhysicsDriver() >= 0) {
     // if not dead yet, see if i'm sitting on death
     gotBlowedUp(tank, PhysicsDriverDeath, ServerPlayer, NULL,
-		tank->getDeathPhysicsDriver());
-  } else if ((waterLevel > 0.0f) && (tank->getPosition()[2] <= waterLevel)) {
+      tank->getDeathPhysicsDriver());
+  }
+  else if ((waterLevel > 0.0f) && (tank->getPosition().z <= waterLevel)) {
     // if not dead yet, see if the robot dropped below the death level
     gotBlowedUp(tank, WaterDeath, ServerPlayer);
-  } else {
-    // if not dead yet, see if i got run over by the steamroller
-    bool dead = false;
-    const float* myPos = tank->getPosition();
-    const float myRadius = tank->getRadius();
-    for (i = 0; !dead && i < curMaxPlayers; i++) {
-      if (remotePlayers[i] && !remotePlayers[i]->isPaused() &&
-	  ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
-	   ((tank->getFlag() == Flags::Burrow) && remotePlayers[i]->isAlive() &&
-	    !remotePlayers[i]->isPhantomZoned()))) {
-	const float* pos = remotePlayers[i]->getPosition();
-	if (pos[2] < 0.0f) continue;
-	const float radius = myRadius +
-	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius());
-	const float distSquared =
-	  hypotf(hypotf(myPos[0] - pos[0],
-			myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	if (distSquared < radius) {
-	  gotBlowedUp(tank, GotRunOver, remotePlayers[i]->getId());
-	  dead = true;
-	}
+  }
+  else { // if not dead yet, see if i got run over by the steamroller
+    // robot vs. myTank
+    if (checkSquishKill(tank, myTank, true)) {
+      gotBlowedUp(tank, GotRunOver, myTank->getId());
+    }
+    else {
+      // robot vs. remote tanks
+      for (i = 0; i < curMaxPlayers; i++) {
+        const Player* remote = remotePlayers[i];
+        if (checkSquishKill(tank, remote)) {
+          gotBlowedUp(tank, GotRunOver, remotePlayers[i]->getId());
+          break;
+        }
       }
     }
   }
 }
+
 
 static void checkEnvironmentForRobots()
 {
@@ -1458,9 +1421,17 @@ static void doBotRequests()
   }
 }
 
-void enteringServer(void *buf)
+void enteringServer(void* buf)
 {
 #if defined(ROBOT)
+  int maxBots = world->getBotsPerIP();
+  if (numRobotTanks > maxBots) {
+    showMessage(
+	TextUtils::format("The server only allows %d robot %s.",
+	  maxBots, (maxBots == 1 ? "player" : "players")));
+    showMessage("Additional robot players have been removed.");
+    numRobotTanks = maxBots;
+  }
   int i;
   for (i = 0; i < numRobotTanks; i++)
     serverLink->sendNewPlayer(i);

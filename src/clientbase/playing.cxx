@@ -1445,6 +1445,40 @@ void handleHandicap(void *msg)
 }
 
 
+void handleTransferFlag(void *msg)
+{
+  PlayerId fromId, toId;
+  unsigned short flagIndex;
+  msg = nboUnpackUInt8(msg, fromId);
+  msg = nboUnpackUInt8(msg, toId);
+  msg = nboUnpackUInt16(msg, flagIndex);
+  msg = world->getFlag(int(flagIndex)).unpack(msg);
+  unsigned char t = 0;
+  msg = nboUnpackUInt8(msg, t);
+  Player *fromTank = lookupPlayer(fromId);
+  Player *toTank = lookupPlayer(toId);
+  handleFlagTransferred(fromTank, toTank, flagIndex, (ShotType)t);
+}
+
+
+void handleMsgSetVars(void *msg)
+{
+  uint16_t numVars;
+  std::string name;
+  std::string value;
+
+  msg = nboUnpackUInt16(msg, numVars);
+  for (int i = 0; i < numVars; i++) {
+    msg = nboUnpackStdString(msg, name);
+    msg = nboUnpackStdString(msg, value);
+
+    BZDB.set(name, value);
+    BZDB.setPersistent(name, false);
+    BZDB.setPermission(name, StateDatabase::Locked);
+  }
+}
+
+
 void handleReplayReset(void *msg, bool &checkScores)
 {
   int i;
