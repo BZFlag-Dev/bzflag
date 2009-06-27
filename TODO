@@ -12,8 +12,6 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* remove this note, welcome to SVN R20000 !!!
-
 * A tank spinning at a fixed location experiences no change in the
   apparent direction of fixed sounds.  However, moving the tank to a
   different location can make a difference.  Sounds seem to come
