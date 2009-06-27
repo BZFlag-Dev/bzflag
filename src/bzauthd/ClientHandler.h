@@ -20,7 +20,7 @@ class ClientHandler : public PacketHandlerTemplate<ClientHandler>
 {
 public:
   ClientHandler(ConnectSocket *socket) 
-    : PacketHandlerTemplate(socket), m_authSession(NULL), m_regSession(NULL) {}
+    : PacketHandlerTemplate<ClientHandler>(socket), m_authSession(NULL), m_regSession(NULL) {}
   ~ClientHandler() { delete m_authSession; delete m_regSession; }
 
   static void initHandlerTable();

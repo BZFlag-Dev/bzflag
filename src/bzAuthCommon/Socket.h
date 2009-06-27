@@ -62,7 +62,7 @@ public:
 
     private:
       PlaceHolder(Packet & packet, size_t size, size_t wpoz) 
-        : m_packet(m_packet), m_size(size), m_wpoz(wpoz) {}
+        : m_packet(packet), m_size(size), m_wpoz(wpoz) {}
       Packet &m_packet;
       size_t m_size;
       size_t m_wpoz;

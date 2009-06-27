@@ -22,7 +22,7 @@ class ServerHandler : public PacketHandlerTemplate<ServerHandler>
 {
 public:
   ServerHandler(ConnectSocket *socket)
-    : PacketHandlerTemplate(socket) {}
+    : PacketHandlerTemplate<ServerHandler>(socket) {}
 
   static void initHandlerTable();
 

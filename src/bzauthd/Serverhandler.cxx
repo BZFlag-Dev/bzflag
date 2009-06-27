@@ -55,7 +55,7 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
 
 bool ServerHandler::handleGroupList(Packet &packet)
 {
-    int nr;
+    int nr = 0;
     if(!(packet >> nr)) return false;
 
     m_groups.clear();

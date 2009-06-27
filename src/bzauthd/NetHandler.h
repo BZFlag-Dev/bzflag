@@ -93,7 +93,7 @@ protected:
 };
 
 #define INSTANTIATE_PACKETHANDLER(Handler) \
-  Handler::PHFunc PacketHandlerTemplate<Handler>::handlerTable[NUM_OPCODES];
+  template<> PacketHandlerTemplate<Handler>::PHFunc PacketHandlerTemplate<Handler>::handlerTable[NUM_OPCODES] = {};
 
 const char *getOpcodeName(Packet &packet);
 
