@@ -29,14 +29,14 @@
 class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager>
 {
 public:
-  void setWorldObjectTangibility(unsigned int objectGUID, unsigned char tangible);
+  void setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible);
 
   void sendNewPlayerWorldTangibility(int playerID);
 
   void resetTangibility(void);
 
   unsigned char getWorldObjectTangibility( const Obstacle *obs );
-  unsigned char getWorldObjectTangibility(unsigned int objectGUID);
+  unsigned char getWorldObjectTangibility(uint32_t objectGUID);
 
 protected:
   friend class Singleton<ServerIntangibilityManager>;
@@ -45,7 +45,9 @@ private:
   ServerIntangibilityManager(){};
   ~ServerIntangibilityManager(){};
 
-  std::map<unsigned int, unsigned char> tangibilityMap;
+  // obstacle id to tangilibilty map
+  typedef std::map<uint32_t, unsigned char> TangibilityMap;
+  TangibilityMap tangibilityMap;
 };
 
 #endif  /*__SERVERINTANGIBILITYMANAGER_H__ */

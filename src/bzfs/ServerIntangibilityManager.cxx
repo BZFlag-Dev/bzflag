@@ -19,7 +19,8 @@
 template <>
 ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance = (ServerIntangibilityManager*)0;
 
-void ServerIntangibilityManager::setWorldObjectTangibility(unsigned int objectGUID, unsigned char tangible)
+void ServerIntangibilityManager::setWorldObjectTangibility(uint32_t objectGUID,
+                                                           unsigned char tangible)
 {
   tangibilityMap[objectGUID] = tangible;
   sendMsgTangibilityUpdate(objectGUID,tangible);
@@ -27,37 +28,42 @@ void ServerIntangibilityManager::setWorldObjectTangibility(unsigned int objectGU
 
 void ServerIntangibilityManager::sendNewPlayerWorldTangibility(int playerID)
 {
-  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.begin();
+  TangibilityMap::iterator itr = tangibilityMap.begin();
   while (itr != tangibilityMap.end()) {
     // send out the tangibility update message
-    sendMsgTangibilityUpdate(itr->first,itr->second,playerID);
+    sendMsgTangibilityUpdate(itr->first, itr->second, playerID);
     itr++;
   }
 }
 
-unsigned char ServerIntangibilityManager::getWorldObjectTangibility(unsigned int objectGUID)
+unsigned char ServerIntangibilityManager::getWorldObjectTangibility(uint32_t objectGUID)
 {
-  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(objectGUID);
-  if (itr != tangibilityMap.end())
+  TangibilityMap::iterator itr = tangibilityMap.find(objectGUID);
+  if (itr != tangibilityMap.end()) {
     return itr->second;
+  }
 
-  Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
-  if (!obs)
+  const Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
+  if (!obs) {
     return _INVALID_TANGIBILITY;
+  }
 
-  return obs->isDriveThrough();
+  return obs->isDriveThrough() ? _INVALID_TANGIBILITY : 0;
 }
 
-unsigned char ServerIntangibilityManager::getWorldObjectTangibility( const Obstacle *obs )
+unsigned char ServerIntangibilityManager::getWorldObjectTangibility(const Obstacle *obs)
 {
   if (!obs)
     return _INVALID_TANGIBILITY;
 
-  std::map<unsigned int, unsigned char>::iterator itr = tangibilityMap.find(obs->getGUID());
-  if (itr != tangibilityMap.end())
-    return itr->second;
+  if (false) {
+    // FIXME -- obstacle GUID's are broken, meshFaces are not accounted for
+    TangibilityMap::iterator itr = tangibilityMap.find(obs->getGUID());
+    if (itr != tangibilityMap.end())
+      return itr->second;
+  }
 
-  return obs->isDriveThrough();
+  return obs->isDriveThrough() ? _INVALID_TANGIBILITY : 0;
 }
 
 

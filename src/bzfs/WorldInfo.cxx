@@ -350,7 +350,7 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
   }
   switch (obstacle->getTypeID()) {
     case boxType: {
-      if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle->getGUID()) != 0) {
+      if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle) != 0) {
         return IN_BOX_DRIVETHROUGH;
       } else {
         return IN_BOX_NOTDRIVETHROUGH;
@@ -752,9 +752,6 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
   }
   if (i == olist->count)
     return NULL; // no more obstacles, we are done
-
-  // JeffM, I have NO clue why we do this again, we just got done checking all the faces in the thing
-  // all this seems to do is screw us up by testing the same thing again with worse paramaters
 
   // check mesh obstacles
   for (; i < olist->count; i++) {

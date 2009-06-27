@@ -3311,7 +3311,7 @@ void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obsta
   memcpy(object.maxAABBox,extents.maxs,sizeof(float)*3);
   memcpy(object.minAABBox,extents.mins,sizeof(float)*3);
 
-  readTangibilityMask(ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle.getGUID()),object.driveThru);
+  readTangibilityMask(ServerIntangibilityManager::instance().getWorldObjectTangibility(&obstacle), object.driveThru);
   readTangibilityMask(obstacle.isShootThrough(),object.shootThru);
 }
 
@@ -3545,7 +3545,7 @@ BZF_API const char*  bz_getPhyDrvName(unsigned int phyDrvID)
 
 BZF_API bool bz_SetWorldObjectTangibility ( int id, const bz_SolidObjectPassableAtributes &atribs )
 {
-  ServerIntangibilityManager::instance().instance().setWorldObjectTangibility(id,makeTangibilityMask(atribs));
+  ServerIntangibilityManager::instance().setWorldObjectTangibility(id,makeTangibilityMask(atribs));
   return true;
 }
 
@@ -3553,7 +3553,7 @@ BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtribu
 {
   atribs.setAll(false);
 
-  unsigned char val =  ServerIntangibilityManager::instance().instance().getWorldObjectTangibility(id);
+  unsigned char val =  ServerIntangibilityManager::instance().getWorldObjectTangibility(id);
   if ( val == _INVALID_TANGIBILITY )
     return false;
 

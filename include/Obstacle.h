@@ -153,10 +153,10 @@ class Obstacle {
   float getHeight() const;
 
 
-  unsigned short getListID() const { return listID;}
-  void setListID(unsigned short id) { listID = id; }
+  uint16_t getListID() const { return listID;}
+  void setListID(uint16_t id) { listID = id; }
 
-  unsigned int getGUID() const { return (getTypeID() << 16) | getListID(); }
+  uint32_t getGUID() const { return (getTypeID() << 16) | getListID(); }
 
   virtual int getBaseTeam() const { return -1; }
 
@@ -323,7 +323,7 @@ class Obstacle {
     bool zFlip;
     char source;
     std::string name;
-    unsigned short listID;
+    uint16_t listID;
 
   private:
     int insideNodeCount;

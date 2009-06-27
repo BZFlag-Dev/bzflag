@@ -2143,12 +2143,14 @@ void resetFlag(FlagInfo &flag)
     // random position (not in a building)
     const float waterLevel = world->getWaterLevel();
     float minZ = 0.0f;
-    if (waterLevel > minZ)
+    if (waterLevel > minZ) {
       minZ = waterLevel;
+    }
 
     float maxZ = MAXFLOAT;
-    if (!clOptions->flagsOnBuildings)
+    if (!clOptions->flagsOnBuildings) {
       maxZ = 0.0f;
+    }
 
     float worldSize = BZDBCache::worldSize;
     int i;
@@ -2158,12 +2160,15 @@ void resetFlag(FlagInfo &flag)
 	flagPos.y = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
 	flagPos.z = world->getMaxWorldHeight() * (float)bzfrand();
       }
-      if (DropGeometry::dropFlag(flagPos, minZ, maxZ))
-	break;
 
+      if (DropGeometry::dropFlag(flagPos, minZ, maxZ)) {
+	break;
+      }
     }
-    if (i == 10000)
+
+    if (i == 10000) {
       std::cerr << "Unable to position flags on this world." << std::endl;
+    }
   }
 
   bool teamIsEmpty = true;
