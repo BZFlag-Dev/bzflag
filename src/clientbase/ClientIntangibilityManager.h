@@ -25,7 +25,7 @@
 class ClientIntangibilityManager : public Singleton<ClientIntangibilityManager>
 {
 public:
-  void setWorldObjectTangibility(unsigned int objectGUID, unsigned char tangible);
+  void setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible);
 
   void resetTangibility(void);
 
@@ -38,7 +38,8 @@ private:
   ClientIntangibilityManager() {};
   ~ClientIntangibilityManager() {};
 
-  std::map<unsigned int, unsigned char> tangibilityMap;
+  typedef std::map<uint32_t, unsigned char> TangibilityMap;
+  TangibilityMap tangibilityMap;
 };
 
 #endif  /*__CLIENTINTANGIBILITYMANAGER_H__ */
