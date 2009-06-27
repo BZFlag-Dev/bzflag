@@ -29,10 +29,16 @@
 #include "WorldEventManager.h"
 
 
+class MeshObstacle;
+
+
 class CustomWeapon : public WorldFileLocation
 {
 public:
-  CustomWeapon();
+  CustomWeapon(const MeshObstacle* mesh = NULL);
+
+  bool readLine(const std::string& cmd, const std::string& line);
+
   virtual bool read(const char *cmd, std::istream&);
   virtual void writeToWorld(WorldInfo*) const;
   virtual bool usesGroupDef() { return false; }
@@ -40,7 +46,6 @@ public:
   static const float minWeaponDelay;
 
 protected:
-
   FlagType *type;
 
   float initdelay;
@@ -53,6 +58,10 @@ protected:
   bz_eEventType triggerType;
 
   static TimeKeeper sync;
+
+  const MeshObstacle* mesh;
+  int posVertex;
+  int dirNormal;
 };
 
 #endif  /* __CUSTOMWEAPON_H__ */

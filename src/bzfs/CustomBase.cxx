@@ -63,7 +63,7 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
   if (triggerWorldWep) {
     FlagType* flagType = Flag::getDescFromAbbreviation(worldWepType.c_str());
     WorldWeaponGlobalEventHandler* handler =
-      new WorldWeaponGlobalEventHandler(flagType, &pos, rotation, 0, (TeamColor)color);
+      new WorldWeaponGlobalEventHandler(flagType, pos, rotation, 0, (TeamColor)color);
     worldEventManager.addEvent(bz_eCaptureEvent, handler);
   }
 }

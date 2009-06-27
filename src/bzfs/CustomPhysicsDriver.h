@@ -21,7 +21,7 @@
 
 class CustomPhysicsDriver : public WorldFileObject {
   public:
-    CustomPhysicsDriver();
+    CustomPhysicsDriver(const char* phydrvName);
     ~CustomPhysicsDriver();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;

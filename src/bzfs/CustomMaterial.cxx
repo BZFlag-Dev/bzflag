@@ -26,8 +26,9 @@
 #include "BzMaterial.h"
 
 
-CustomMaterial::CustomMaterial()
+CustomMaterial::CustomMaterial(const char* matName)
 {
+  name = matName;
   return;
 }
 

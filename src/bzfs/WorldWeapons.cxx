@@ -175,7 +175,7 @@ void WorldWeapons::fire()
 void WorldWeapons::add(const FlagType *type, const fvec3& origin,
 		       float direction, float tilt, TeamColor teamColor,
 		       float initdelay, const std::vector<float> &delay,
-		       TimeKeeper &sync)
+		       TimeKeeper &sync, bool fromMesh)
 {
   Weapon *w = new Weapon();
   w->type = type;
@@ -188,6 +188,7 @@ void WorldWeapons::add(const FlagType *type, const fvec3& origin,
   w->initDelay = initdelay;
   w->nextDelay = 0;
   w->delay = delay;
+  w->fromMesh = fromMesh;
 
   weapons.push_back(w);
 }
@@ -201,10 +202,21 @@ unsigned int WorldWeapons::count(void)
 
 void* WorldWeapons::pack(void *buf) const
 {
-  buf = nboPackUInt32(buf, weapons.size());
+  uint32_t count = 0;
+  for (unsigned int i=0 ; i < weapons.size(); i++) {
+    const Weapon *w = (const Weapon *) weapons[i];
+    if (!w->fromMesh) {
+      count++;
+    }
+  }
+
+  buf = nboPackUInt32(buf, count);
 
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
+    if (w->fromMesh) {
+      continue;
+    }
     buf = w->type->pack (buf);
     buf = nboPackFVec3(buf, w->origin);
     buf = nboPackFloat(buf, w->direction);
@@ -226,6 +238,9 @@ int WorldWeapons::packSize(void) const
 
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
+    if (w->fromMesh) {
+      continue;
+    }
     fullSize += FlagType::packSize; // flag type
     fullSize += sizeof(fvec3); // pos
     fullSize += sizeof(float);    // direction
@@ -253,13 +268,13 @@ int WorldWeapons::getNewWorldShotID(void)
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 
 WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,
-							     const fvec3* _origin,
+							     const fvec3& _origin,
 							     float _direction,
 							     float _tilt,
 							     TeamColor teamColor )
 {
   type = _type;
-  origin = (_origin != NULL) ? *_origin : fvec3(0.0f, 0.0f, 0.0f);
+  origin = _origin;
   direction = _direction;
   tilt = _tilt;
   team = convertTeam(teamColor);

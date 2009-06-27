@@ -10,18 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "CustomWeapon.h"
 
 
-/* system headers */
+// system headers
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <string.h>
 #include <math.h>
 
-/* local implementation headers */
+// common headers
+#include "MeshObstacle.h"
+
+// local headers
 #include "WorldWeapons.h"
 #include "TextUtils.h"
 
@@ -29,7 +32,7 @@ TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
 
 const float CustomWeapon::minWeaponDelay = 0.1f;
 
-CustomWeapon::CustomWeapon()
+CustomWeapon::CustomWeapon(const MeshObstacle* _mesh)
 {
   pos = fvec3(0.0f, 0.0f, 0.0f);
   size = fvec3(1.0f, 1.0f, 1.0f);
@@ -42,18 +45,53 @@ CustomWeapon::CustomWeapon()
 
   triggerType = bz_eNullEvent;
   eventTeam = -1;
+
+  mesh = _mesh;
+  posVertex = -1;
+  dirNormal = -1;
 }
 
-bool CustomWeapon::read(const char *cmd, std::istream& input) {
-  if (strcasecmp(cmd, "initdelay") == 0) {
-    input >> initdelay;
-  } else if (strcasecmp(cmd, "delay") == 0) {
+
+bool CustomWeapon::read(const char *cmd, std::istream& input)
+{
+  const std::string lower = TextUtils::tolower(cmd);
+
+  if ((lower == "type")      ||
+      (lower == "color")     ||
+      (lower == "tilt")      ||
+      (lower == "initdelay") ||
+      (lower == "delay")     ||
+      (lower == "trigger")   ||
+      (lower == "eventteam") ||
+      (lower == "posvertex") ||
+      (lower == "dirnormal")) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    return readLine(cmd, line);
+  }  
+  else if (!mesh) {
+    return WorldFileLocation::read(cmd, input);
+  }
+
+  return false;
+}
+
+
+bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
+{
+  const std::string lower = TextUtils::tolower(cmd);
+
+  std::istringstream parms(line);
+
+  if (lower == "initdelay") {
+    parms >> initdelay;
+  }
+  else if (lower == "delay") {
     std::string args;
     float d;
 
     delay.clear();
-    std::getline(input, args);
-    std::istringstream  parms(args);
 
     while (parms >> d) {
       if (d < minWeaponDelay) {
@@ -63,31 +101,35 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 	delay.push_back(d);
       }
     }
-    input.putback('\n');
-    if (delay.size() == 0)
+    if (delay.empty()) {
       return false;
-  } else if (strcasecmp(cmd, "type") == 0) {
+    }
+  }
+  else if (lower == "type") {
     std::string abbv;
-    input >> abbv;
+    parms >> abbv;
     type = Flag::getDescFromAbbreviation(abbv.c_str());
     if (type == NULL)
       return false;
-  } else if (strcasecmp(cmd, "color") == 0) {
+  }
+  else if (lower == "color") {
     int team;
-    if (!(input >> team)) {
+    if (!(parms >> team)) {
       std::cout << "weapon color requires a team number" << std::endl;
     } else {
       teamColor = (TeamColor)team;
     }
-  } else if (strcasecmp(cmd, "tilt") == 0) {
-    if (!(input >> tilt)) {
+  }
+  else if (lower == "tilt") {
+    if (!(parms >> tilt)) {
       std::cout << "weapon tilt requires a value" << std::endl;
     }
     // convert to radians
-    tilt = (float)(tilt * (M_PI / 180.0));
-  } else if (strcasecmp(cmd, "trigger") == 0) {
+    tilt *= DEG2RADf;
+  }
+  else if (lower == "trigger") {
     std::string triggerName;
-    input >> triggerName;
+    parms >> triggerName;
 
     triggerType = bz_eNullEvent;
 
@@ -103,10 +145,15 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
       return true;
     }
     logDebugMessage(4,"Adding world weapon triggered '%s'\n", triggerName.c_str());
-  } else if (strcasecmp(cmd, "eventteam") == 0) {
-    input >> eventTeam;
-  } else if (!WorldFileLocation::read(cmd, input)) {
-    return false;
+  }
+  else if (lower == "eventteam") {
+    parms >> eventTeam;
+  }
+  else if (lower == "posvertex") {
+    parms >> posVertex;
+  }
+  else if (lower == "dirnormal") {
+    parms >> dirNormal;
   }
 
   return true;
@@ -114,13 +161,27 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
 
 void CustomWeapon::writeToWorld(WorldInfo* world) const
 {
+  fvec3 p = pos;
+  float r = rotation;
+  float t = tilt;
+
+  if (mesh) {
+    if ((posVertex >= 0) && (posVertex < mesh->getVertexCount())) {
+      p = mesh->getVertices()[posVertex];
+    }
+    if ((dirNormal >= 0) && (dirNormal < mesh->getNormalCount())) {
+      const fvec3& dir = mesh->getNormals()[dirNormal];
+      r = atan2f(dir.y, dir.x);
+      t = atan2f(dir.z, dir.xy().length());
+    }
+  }
+
   if (triggerType == bz_eNullEvent) {
-    world->addWeapon(type, pos, rotation, tilt,
-		     teamColor, initdelay, delay, sync);
+    const bool fromMesh = (mesh != NULL);
+    world->addWeapon(type, p, r, t, teamColor, initdelay, delay, sync, fromMesh);
   } else {
     WorldWeaponGlobalEventHandler* eventHandler =
-      new WorldWeaponGlobalEventHandler(type, &pos, rotation, tilt,
-					(TeamColor)eventTeam);
+      new WorldWeaponGlobalEventHandler(type, p, r, t, (TeamColor)eventTeam);
     worldEventManager.addEvent(triggerType, eventHandler);
   }
 }

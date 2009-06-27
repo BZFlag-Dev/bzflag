@@ -21,7 +21,9 @@
 
 // system headers
 #include <string>
+#include <vector>
 #include <set>
+#include <map>
 #include <iostream>
 
 // common headers
@@ -49,6 +51,20 @@ class MeshFace : public Obstacle {
   //==========================================================================//
 
   public:
+    struct Edge {
+      const fvec3* v0;
+      const fvec3* v1;
+      const MeshFace* f0;
+      const MeshFace* f1;
+      mutable signed char polarity;
+    };
+    struct EdgeRef {
+      EdgeRef() : edge(NULL), polarity(0) {}
+      EdgeRef(const Edge* e, signed char p) : edge(e), polarity(p) {}
+      const Edge* edge;
+      signed char polarity;
+    };
+
     enum SpecialBits {
       LinkSrcFace       = (1 << 0),
       LinkDstFace       = (1 << 1),
@@ -107,6 +123,9 @@ class MeshFace : public Obstacle {
       LinkGeometry linkDstGeo;
       std::string  linkSrcShotFailText;
       std::string  linkSrcTankFailText;
+      std::string  linkExtra;
+
+      std::vector<std::string> zoneParams;
 
       int   packSize() const;
       void* pack(void*) const;
@@ -282,6 +301,7 @@ class MeshFace : public Obstacle {
     }
 
     // geometry utilities
+    float calcArea() const;
     fvec3 calcCenter() const;
     void  calcAxisSpan(const fvec3& point, const fvec3& dir,
                        float& minDist, float& maxDist) const;
@@ -323,8 +343,8 @@ class MeshFace : public Obstacle {
     fvec4  plane;
     fvec4* edgePlanes;
 
-    MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
-                     // not currently used for anything
+    
+    EdgeRef* edges;
 
     char planeBits;
 

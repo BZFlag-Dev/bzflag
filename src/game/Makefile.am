@@ -46,6 +46,5 @@ libGame_la_SOURCES =			\
 	VotingArbiter.cxx		\
 	WorldText.cxx
 
-
 EXTRA_DIST = \
 	README

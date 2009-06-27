@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 // common headers
+#include "bzfio.h"
 #include "global.h"
 #include "Pack.h"
 #include "MeshFace.h"
@@ -40,6 +41,7 @@ MeshObstacle::MeshObstacle()
 {
   faceCount = faceSize = 0;
   faces = NULL;
+  edges = NULL;
   checkCount = 0;
   checkTypes = NULL;
   checkPoints = NULL;
@@ -52,7 +54,7 @@ MeshObstacle::MeshObstacle()
   driveThrough = 0;
   shootThrough = 0;
   ricochet = false;
-  inverted = false;
+  invertedTransform = false;
   hasSpecialFaces = false;
   drawInfo = NULL;
   return;
@@ -94,7 +96,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
 
   // get the transform tool
   MeshTransform::Tool xformtool(transform);
-  inverted = xformtool.isInverted();
+  invertedTransform = xformtool.isInverted();
 
   // copy the info
   checkTypes = new char[checkTypesL.size()];
@@ -127,6 +129,8 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   faceCount = 0;
   faces = new MeshFace*[faceSize];
 
+  edges = NULL;
+
   noclusters = _noclusters;
   smoothBounce = bounce;
   driveThrough = drive;
@@ -138,6 +142,13 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   drawInfo = NULL;
 
   return;
+}
+
+
+bool MeshObstacle::addWeapon(const std::vector<std::string>& lines)
+{
+  weapons.push_back(lines);
+  return true;
 }
 
 
@@ -295,7 +306,7 @@ void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
 
   for (int i = 0; i < count; i++) {
     // invert the vertices if required
-    const int index = (inverted ? ((count - 1) - i) : i);
+    const int index = (invertedTransform ? ((count - 1) - i) : i);
     v[index] = &vertices[_vertices[i]];
     if (n != NULL) {
       n[index] = &normals[_normals[i]];
@@ -364,6 +375,10 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     }
   }
 
+  for (size_t w = 0; w < weapons.size(); w++) {
+    copy->addWeapon(weapons[w]);
+  }
+
   copy->finalize();
 
   return copy;
@@ -410,9 +425,7 @@ void MeshObstacle::finalize()
   }
 
   // cross-link the face edges - FIXME
-  for (int f = 0; f < faceCount; f++) {
-    faces[f]->edges = NULL;
-  }
+  makeEdges();
 
   // set the extents
   for (int f = 0; f < faceCount; f++) {
@@ -434,6 +447,120 @@ void MeshObstacle::finalize()
 }
 
 
+struct VertPair {
+  VertPair() : v0(NULL), v1(NULL) {}
+  VertPair(const fvec3* _v0, const fvec3* _v1) : v0(_v0), v1(_v1) {}
+  const fvec3* v0;
+  const fvec3* v1;
+  bool operator<(const VertPair& vp) const {
+    if (v0 < vp.v0) { return true; }
+    if (vp.v0 < v0) { return false; }
+    if (v1 < vp.v1) { return true; }
+    if (vp.v1 < v1) { return false; }
+    return false;
+  }
+};
+
+struct FacePair {
+  FacePair() : f0(NULL), f1(NULL) {}
+  FacePair(MeshFace* _f0, MeshFace* _f1) : f0(_f0), f1(_f1) {}
+  MeshFace* f0;
+  MeshFace* f1;
+};
+
+typedef std::map<VertPair, FacePair> EdgeMap;
+
+typedef std::map<MeshFace*, std::vector<MeshFace::EdgeRef> > FaceEdges;
+
+
+void MeshObstacle::makeEdges() // FIXME -- incomplete
+{
+  if (isPassable()) {
+    return;
+  }
+
+  EdgeMap edgeMap;
+  for (int f = 0; f < faceCount; f++) {
+    MeshFace* face = faces[f];
+    const int vertCount = face->getVertexCount();
+    const fvec3** verts = face->vertices;
+    for (int v = 0; v < vertCount; v++) {
+      const fvec3* v0 = verts[v];
+      const fvec3* v1 = verts[(v + 1) % vertCount];
+      bool useFace0 = true;
+      if (v0 > v1) {
+        const fvec3* vt = v1;
+        v1 = v0;
+        v0 = vt;
+        useFace0 = false;
+      }
+      FacePair& facePair = edgeMap[VertPair(v0, v1)];
+      if (useFace0) {
+        if (facePair.f0 == NULL) {
+          facePair.f0 = face;
+        } else {
+          logDebugMessage(4, "non-manifold mesh -- f0 overlap\n");
+          return;
+        }
+      } else {
+        if (facePair.f1 == NULL) {
+          facePair.f1 = face;
+        } else {
+          logDebugMessage(4, "non-manifold mesh -- f1 overlap\n");
+          return;
+        }
+      }
+    }
+  }
+
+  EdgeMap::const_iterator edgeIt;
+  for (edgeIt = edgeMap.begin(); edgeIt != edgeMap.end(); ++edgeIt) {
+    const FacePair& facePair = edgeIt->second;
+    if (facePair.f0 == NULL) {
+      logDebugMessage(4, "non-manifold mesh -- missing f0\n");
+      return;
+    }
+    if (facePair.f1 == NULL) {
+      logDebugMessage(4, "non-manifold mesh -- missing f1\n");
+      return;
+    }
+  }
+
+  edgeCount = (int)edgeMap.size();
+  edges = new MeshFace::Edge[edgeCount];
+
+  FaceEdges faceEdges;
+
+  int e = 0;
+  for (edgeIt = edgeMap.begin(); edgeIt != edgeMap.end(); ++edgeIt, ++e) {
+    const VertPair& vertPair = edgeIt->first;
+    const FacePair& facePair = edgeIt->second;
+    MeshFace::Edge& edge = edges[e];
+    edge.v0 = vertPair.v0;
+    edge.v1 = vertPair.v1;
+    edge.f0 = facePair.f0;
+    edge.f1 = facePair.f1;
+    edge.polarity = 0; // clear it
+
+    faceEdges[facePair.f0].push_back(MeshFace::EdgeRef(&edge, +1));
+    faceEdges[facePair.f1].push_back(MeshFace::EdgeRef(&edge, -1));
+  }
+
+/* FIXME
+  FaceEdges::const_iterator feIt;
+  for (feIt = faceEdges.begin(); feIt != faceEdges.end(); ++feIt) {
+    MeshFace* face = feIt->first;
+    face->edges = new MeshFace::EdgeRef[face->getVertexCount()];
+    const std::vector<MeshFace::EdgeRef>& refs = feIt->second;
+    std::vector<MeshFace::EdgeRef>::const_iterator refIt;
+    for (size_t r = 0; r < refs.size(); r++) {
+      face->edges[r] = refs[r];
+    }
+  }
+*/
+}
+
+
 const char* MeshObstacle::getType() const
 {
   return typeName;
@@ -449,7 +576,8 @@ const char* MeshObstacle::getClassName() // const
 void MeshObstacle::setDrawInfo(MeshDrawInfo* di)
 {
   if (drawInfo != NULL) {
-    printf("MeshObstacle::setMeshDrawInfo() already exists\n");
+    logDebugMessage(0,
+                    "ERROR: MeshObstacle::setMeshDrawInfo() already exists\n");
     exit(1);
   } else {
     drawInfo = di;
@@ -485,7 +613,6 @@ bool MeshObstacle::isValid() const
 bool MeshObstacle::containsPoint(const fvec3& point) const
 {
   // this should use the CollisionManager's rayTest function
-//  const ObsList* olist = COLLISIONMGR.rayTest (&ray, t);
   return containsPointNoOctree(point);
 }
 
@@ -535,7 +662,8 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
       }
     }
     else {
-      printf ("checkType (%i) is not supported yet\n", checkTypes[c]);
+      logDebugMessage(0, "checkType (%i) is not supported yet\n",
+                         checkTypes[c]);
       exit (1);
     }
   }
@@ -642,6 +770,14 @@ int MeshObstacle::packSize() const
     fullSize += drawInfo->packSize();
   }
 
+  fullSize += sizeof(uint32_t); // weaponCount
+  for (size_t w = 0; w < weapons.size(); w++) {
+    fullSize += sizeof(uint32_t); // lineCount
+    for (size_t l = 0; l < weapons[w].size(); l++) {
+      fullSize += nboStdStringPackSize(weapons[w][l]);
+    }
+  }
+
   return fullSize;
 }
 
@@ -693,6 +829,14 @@ void *MeshObstacle::pack(void *buf) const
 
   if (drawInfoOwner) {
     buf = drawInfo->pack(buf);
+  }
+
+  buf = nboPackUInt32(buf, weapons.size());
+  for (size_t w = 0; w < weapons.size(); w++) {
+    buf = nboPackUInt32(buf, weapons[w].size());
+    for (size_t l = 0; l < weapons[w].size(); l++) {
+      buf = nboPackStdString(buf, weapons[w][l]);
+    }
   }
 
   return buf;
@@ -780,6 +924,19 @@ void *MeshObstacle::unpack(void *buf)
     }
   }
 
+  uint32_t weaponCount, lineCount;
+  buf = nboUnpackUInt32(buf, weaponCount);
+  for (size_t w = 0; w < weaponCount; w++) {
+    std::vector<std::string> lines;
+    buf = nboUnpackUInt32(buf, lineCount);
+    for (size_t l = 0; l < lineCount; l++) {
+      std::string line;
+      buf = nboUnpackStdString(buf, line);
+      lines.push_back(line);
+    }
+    weapons.push_back(lines);
+  }
+
   finalize();
 
   return buf;
@@ -844,6 +1001,16 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     out << indent << "  texcoord" << texcoords[i] << std::endl;
   }
 
+  // weapons
+  for (size_t w = 0; w < weapons.size(); w++) {
+    out << indent << "  weapon" << std::endl;
+    for (size_t l = 0; l < weapons[w].size(); l++) {
+      out << indent << "    " << weapons[w][l] << std::endl;
+    }
+    out << indent << "  endweapon" << std::endl;
+  }
+
+  // faces
   for (int f = 0; f < faceCount; f++) {
     faces[f]->print(out, indent);
   }
@@ -950,7 +1117,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
       const fvec2& autoScale = bzmat->getTextureAutoScale(0);
       makeTexcoords(autoScale, face->getPlane(), vertArray, txcdArray);
       if ((int)txcdArray.size() != vertCount) {
-        printf("WARNING: messed up generated texcoords\n");
+        logDebugMessage(0, "WARNING: messed up generated texcoords\n");
       }
       for (size_t t = 0; t < txcdArray.size(); t++) {
         extraTexcoords.push_back(txcdArray[t]);

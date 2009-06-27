@@ -21,7 +21,7 @@
 
 class CustomMaterial : public WorldFileObject {
   public:
-    CustomMaterial();
+    CustomMaterial(const char* matName);
     ~CustomMaterial();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;

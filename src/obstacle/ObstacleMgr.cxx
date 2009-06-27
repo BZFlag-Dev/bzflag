@@ -187,6 +187,22 @@ void GroupInstance::addTextSwap(const std::string& srcText,
 }
 
 
+void GroupInstance::addZoneSwap(const std::string& srcText,
+				const std::string& dstText)
+{
+  zoneMap[srcText] = dstText;
+  return;
+}
+
+
+void GroupInstance::addWeaponSwap(const std::string& srcText,
+				  const std::string& dstText)
+{
+  weaponMap[srcText] = dstText;
+  return;
+}
+
+
 const std::string& GroupInstance::getGroupDef() const
 {
   return groupDef;
@@ -235,6 +251,20 @@ int GroupInstance::packSize() const
     fullSize += nboStdStringPackSize(textIt->second);
   }
 
+  fullSize += sizeof(int32_t); // zoneMap count
+  TextSwapMap::const_iterator zoneIt;
+  for (zoneIt = zoneMap.begin(); zoneIt != zoneMap.end(); ++zoneIt) {
+    fullSize += nboStdStringPackSize(zoneIt->first);
+    fullSize += nboStdStringPackSize(zoneIt->second);
+  }
+
+  fullSize += sizeof(int32_t); // weaponMap count
+  TextSwapMap::const_iterator weaponIt;
+  for (weaponIt = weaponMap.begin(); weaponIt != weaponMap.end(); ++weaponIt) {
+    fullSize += nboStdStringPackSize(weaponIt->first);
+    fullSize += nboStdStringPackSize(weaponIt->second);
+  }
+
   return fullSize;
 }
 
@@ -270,6 +300,7 @@ void* GroupInstance::pack(void* buf) const
     buf = nboPackInt32(buf, (int32_t) matindex);
   }
 
+  // matMap
   buf = nboPackInt32(buf, matMap.size());
   MaterialMap::const_iterator matIt;
   for (matIt = matMap.begin(); matIt != matMap.end(); matIt++) {
@@ -279,11 +310,28 @@ void* GroupInstance::pack(void* buf) const
     buf = nboPackInt32(buf, dstIndex);
   }
 
+  // textMap
   buf = nboPackInt32(buf, textMap.size());
   TextSwapMap::const_iterator textIt;
   for (textIt = textMap.begin(); textIt != textMap.end(); ++textIt) {
     buf = nboPackStdString(buf, textIt->first);
     buf = nboPackStdString(buf, textIt->second);
+  }
+
+  // zoneMap
+  buf = nboPackInt32(buf, zoneMap.size());
+  TextSwapMap::const_iterator zoneIt;
+  for (zoneIt = zoneMap.begin(); zoneIt != zoneMap.end(); ++zoneIt) {
+    buf = nboPackStdString(buf, zoneIt->first);
+    buf = nboPackStdString(buf, zoneIt->second);
+  }
+
+  // weaponMap
+  buf = nboPackInt32(buf, weaponMap.size());
+  TextSwapMap::const_iterator weaponIt;
+  for (weaponIt = weaponMap.begin(); weaponIt != weaponMap.end(); ++weaponIt) {
+    buf = nboPackStdString(buf, weaponIt->first);
+    buf = nboPackStdString(buf, weaponIt->second);
   }
 
   return buf;
@@ -328,6 +376,7 @@ void* GroupInstance::unpack(void* buf)
 
   int32_t count;
 
+  // matMap
   buf = nboUnpackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     int32_t srcIndex, dstIndex;
@@ -338,6 +387,7 @@ void* GroupInstance::unpack(void* buf)
     matMap[srcMat] = dstMat;
   }
 
+  // textMap
   buf = nboUnpackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     std::string srcText, dstText;
@@ -346,11 +396,39 @@ void* GroupInstance::unpack(void* buf)
     textMap[srcText] = dstText;
   }
 
+  // zoneMap
+  buf = nboUnpackInt32(buf, count);
+  for (int i = 0; i < count; i++) {
+    std::string srcText, dstText;
+    buf = nboUnpackStdString(buf, srcText);
+    buf = nboUnpackStdString(buf, dstText);
+    zoneMap[srcText] = dstText;
+  }
+
+  // weaponMap
+  buf = nboUnpackInt32(buf, count);
+  for (int i = 0; i < count; i++) {
+    std::string srcText, dstText;
+    buf = nboUnpackStdString(buf, srcText);
+    buf = nboUnpackStdString(buf, dstText);
+    weaponMap[srcText] = dstText;
+  }
+
   return buf;
 }
 
 
 //============================================================================//
+
+static std::string quotedString(const std::string& in)
+{
+  if (in.find(' ') == std::string::npos) {
+    return in;
+  } else {
+    return std::string("\"") + in + "\"";
+  }
+}
+
 
 void GroupInstance::print(std::ostream& out, const std::string& indent) const
 {
@@ -407,8 +485,23 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
 
   TextSwapMap::const_iterator textIt;
   for (textIt = textMap.begin(); textIt != textMap.end(); textIt++) {
-    out << indent << "  textswap " << textIt->first << " "
-                                   << textIt->second << std::endl;
+    out << indent << "  textswap "
+                  << quotedString(textIt->first)  << " "
+                  << textIt->second << std::endl;
+  }
+
+  TextSwapMap::const_iterator zoneIt;
+  for (zoneIt = zoneMap.begin(); zoneIt != zoneMap.end(); zoneIt++) {
+    out << indent << "  zoneswap "
+                  << quotedString(zoneIt->first)  << " "
+                  << zoneIt->second << std::endl;
+  }
+
+  TextSwapMap::const_iterator weaponIt;
+  for (weaponIt = weaponMap.begin(); weaponIt != weaponMap.end(); weaponIt++) {
+    out << indent << "  weaponswap "
+                  << quotedString(weaponIt->first)  << " "
+                  << weaponIt->second << std::endl;
   }
 
   out << indent << "end" << std::endl << std::endl;
@@ -539,7 +632,7 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
   else {
     // make the default name
     int count = 0;
-    for (unsigned int i = 0; i < groups.size(); i++) {
+    for (size_t i = 0; i < groups.size(); i++) {
       const GroupInstance* g = groups[i];
       if (g == group) {
 	break;
@@ -669,7 +762,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
   }
 
   // make more groups instances
-  for (unsigned int i = 0; i < groups.size(); i++) {
+  for (size_t i = 0; i < groups.size(); i++) {
     const GroupInstance* group = groups[i];
     const GroupDefinition* groupDef =
       OBSTACLEMGR.findGroupDef(group->getGroupDef());
@@ -739,7 +832,7 @@ void GroupDefinition::clear()
     oList.clear();
   }
 
-  for (unsigned int i = 0; i < groups.size(); i++) {
+  for (size_t i = 0; i < groups.size(); i++) {
     delete groups[i];
   }
   groups.clear();
@@ -821,7 +914,7 @@ void GroupDefinition::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
     }
   }
 
-  for (unsigned int i = 0; i < groups.size(); i++) {
+  for (size_t i = 0; i < groups.size(); i++) {
     const GroupInstance* group = groups[i];
     const GroupDefinition* groupDef =
       OBSTACLEMGR.findGroupDef(group->getGroupDef());
@@ -862,7 +955,7 @@ int GroupDefinition::packSize() const
 
   // group instances
   fullSize += sizeof(uint32_t);
-  for (unsigned int i = 0; i < groups.size(); i++) {
+  for (size_t i = 0; i < groups.size(); i++) {
     fullSize += groups[i]->packSize();
   }
 
@@ -1028,19 +1121,19 @@ void GroupDefinition::printGrouped(std::ostream& out,
   }
 
   // print the texts
-  for (unsigned int i = 0; i < texts.size(); i++) {
+  for (size_t i = 0; i < texts.size(); i++) {
     if (!isWorld || !texts[i]->getFromGroup()) {
       texts[i]->print(out, myIndent);
     }
   }
 
   // print the groups
-  for (unsigned int i = 0; i < groups.size(); i++) {
+  for (size_t i = 0; i < groups.size(); i++) {
     groups[i]->print(out, myIndent);
   }
 
   // print the links
-  for (unsigned int i = 0; i < linkDefs.size(); i++) {
+  for (size_t i = 0; i < linkDefs.size(); i++) {
     linkDefs[i]->print(out, myIndent);
   }
 
@@ -1082,12 +1175,12 @@ void GroupDefinition::printFlatFile(std::ostream& out,
   }
 
   // print the texts
-  for (unsigned int i = 0; i < texts.size(); i++) {
+  for (size_t i = 0; i < texts.size(); i++) {
     texts[i]->print(out, indent);
   }
 
   // print the links -- FIXME -- use linkManager ?
-  for (unsigned int i = 0; i < linkDefs.size(); i++) {
+  for (size_t i = 0; i < linkDefs.size(); i++) {
     linkDefs[i]->print(out, indent);
   }
 

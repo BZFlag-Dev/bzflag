@@ -269,7 +269,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   }
   World* world = World::getWorld();
   if (!world) {
-    return; /* no world, no motion */
+    return; // no world, no motion
   }
 
   // if was teleporting and exceeded teleport time then not teleporting anymore
@@ -292,7 +292,8 @@ void LocalPlayer::doUpdateMotion(float dt)
       // skip location computation as it's not needed
       setAngularVelocity(0.0f);
       return;
-    } else if (location == Exploding) {
+    }
+    else if (location == Exploding) {
       // see if explosing time has expired
       if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {
 	dt -= float((lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
@@ -309,8 +310,9 @@ void LocalPlayer::doUpdateMotion(float dt)
       // can't control explosion motion
       newVelocity.z += BZDBCache::gravity * dt;
       newAngVel = 0.0f;	// or oldAngVel to spin while exploding
-    } else if ((location == OnGround) || (location == OnBuilding) ||
-	       ((location == InBuilding) && (oldPosition.z == groundLimit))) {
+    }
+    else if ((location == OnGround) || (location == OnBuilding) ||
+             ((location == InBuilding) && (oldPosition.z == groundLimit))) {
       // full control
       float speed = desiredSpeed;
 
@@ -577,7 +579,6 @@ void LocalPlayer::doUpdateMotion(float dt)
     if (oldPosition.z < groundLimit) {
       newVelocity.z = std::max(newVelocity.z, -oldPosition.z / 2.0f + 0.5f);
     }
-
 
     // record how much time is left in time step
     timeStep -= searchTime;

@@ -10,20 +10,24 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* the common header */
+// the common header
 #include "common.h"
 
-/* interface header */
+// interface header
 #include "CustomZone.h"
 
-/* system headers */
+// system headers
 #include <stdlib.h>
 #include <string>
 #include <string.h>
 #include <sstream>
 #include <math.h>
 
-/* local implementation headers */
+// common headers
+#include "MeshFace.h"
+#include "TextUtils.h"
+
+// local headers
 //#include "EntryZones.h"
 #include "WorldInfo.h"
 #include "Flag.h"
@@ -32,6 +36,19 @@
 
 CustomZone::CustomZone()
 {
+  pos = fvec3(0.0f, 0.0f, 0.0f);
+  size = fvec3(1.0f, 1.0f, 1.0f);
+  rotation = 0.0f;
+  useCenter = 0.0f;
+  face = NULL;
+  faceHeight = 1.0f;
+  faceWeight = 0.0f;
+}
+
+
+CustomZone::CustomZone(const MeshFace* f)
+{
+  face = f;
   pos = fvec3(0.0f, 0.0f, 0.0f);
   size = fvec3(1.0f, 1.0f, 1.0f);
   rotation = 0.0f;
@@ -75,12 +92,33 @@ void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
 
 bool CustomZone::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "flag") == 0) {
-    std::string args, flag;
+  const std::string lower = TextUtils::tolower(cmd);
+  if ((lower == "flag") ||
+      (lower == "zoneflag") || (lower == "fixedflag") ||
+      (lower == "team") || (lower == "safety") ||
+      (lower == "height") || (lower == "weight") || (lower == "center")) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    return readLine(cmd, line);
+  }  
+  else if (!face) {
+    return WorldFileLocation::read(cmd, input);
+  }
+  else {
+    return false;
+  }
+}
 
-    std::getline(input, args);
-    std::istringstream parms(args);
+  
+bool CustomZone::readLine(const std::string& cmd, const std::string& line)
+{
+  const std::string lower = TextUtils::tolower(cmd);
 
+  std::istringstream parms(line);
+
+  if (lower == "flag") {
+    std::string flag;
     while (parms >> flag) {
       if (flag == "good") {
 	FlagSet &fs = Flag::getGoodFlags();
@@ -109,13 +147,11 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       else {
 	FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
 	if (f == Flags::Null) {
-	  logDebugMessage(1, "WARNING: bad flag type: %s\n", flag.c_str());
-	  input.putback('\n');
+	  logDebugMessage(0, "WARNING: bad flag type: %s\n", flag.c_str());
 	  return false;
 	}
 	if (f->endurance == FlagNormal) {
-	  logDebugMessage(1, "WARNING: you probably want a safety: %s\n", flag.c_str());
-	  input.putback('\n');
+	  logDebugMessage(0, "WARNING: you probably want a safety: %s\n", flag.c_str());
 	  return false;
 	}
 	const std::string& qual = getFlagTypeQualifier(f);
@@ -125,15 +161,12 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       }
     }
 
-    input.putback('\n');
     if (qualifiers.size() == 0) {
       return false;
     }
   }
-  else if (strcasecmp(cmd, "zoneflag") == 0) {
-    std::string args, flag;
-    std::getline(input, args);
-    std::istringstream parms(args);
+  else if ((lower == "zoneflag") || (lower == "fixedflag")) {
+    std::string flag;
     int count;
 
     if (!(parms >> flag)) {
@@ -166,26 +199,18 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       if (f != Flags::Null) {
 	addZoneFlagCount(f, count);
       } else {
-	logDebugMessage(1, "WARNING: bad zoneflag type: %s\n", flag.c_str());
-	input.putback('\n');
+	logDebugMessage(0, "WARNING: bad zoneflag type: %s\n", flag.c_str());
 	return false;
       }
     }
-    input.putback('\n');
   }
-  else if ((strcasecmp(cmd, "team") == 0) ||
-           (strcasecmp(cmd, "safety") == 0)) {
-    std::string args;
-    std::getline(input, args);
-    std::istringstream  parms(args);
-
+  else if ((lower == "team") || (lower == "safety")) {
     int color;
-    const bool safety = (strcasecmp(cmd, "safety") == 0);
+    const bool safety = (lower == "safety");
 
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams)) {
-	input.putback('\n');
-	logDebugMessage(1, "WARNING: bad team number: %i\n", color);
+	logDebugMessage(0, "WARNING: bad team number: %i\n", color);
 	return false;
       }
       std::string qual;
@@ -198,13 +223,24 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 	qualifiers.push_back(qual);
       }
     }
-    input.putback('\n');
     if (qualifiers.size() == 0) {
       return false;
     }
   }
-  else if (!WorldFileLocation::read(cmd, input)) {
-    return false;
+  else if ((face != NULL) && (lower == "height")) {
+    if (!(parms >> faceHeight)) {
+      logDebugMessage(0, "WARNING: invalid zone height\n");
+      return false;
+    }
+  }
+  else if ((face != NULL) && (lower == "weight")) {
+    if (!(parms >> faceWeight)) {
+      logDebugMessage(0, "WARNING: invalid zone weight\n");
+      return false;
+    }
+  }
+  else if (lower == "center") {
+    useCenter = true;
   }
 
   return true;
@@ -219,6 +255,16 @@ void CustomZone::writeToWorld(WorldInfo* worldInfo) const
 
 void CustomZone::getRandomPoint(fvec3& pt) const
 {
+  if (face) {
+    pt = useCenter ? face->calcCenter() : face->getRandomPoint();
+    return;
+  }
+
+  if (useCenter) {
+    pt = pos;
+    return;
+  }
+
   const float x = (float)((bzfrand() * (2.0f * size.x)) - size.x);
   const float y = (float)((bzfrand() * (2.0f * size.y)) - size.y);
 
@@ -233,6 +279,9 @@ void CustomZone::getRandomPoint(fvec3& pt) const
 
 float CustomZone::getDistToPoint (const fvec3& _pos) const
 {
+  if (face) {
+    return (face->calcCenter() - _pos).length();
+  }
   // FIXME - should use proper minimum distance from
   // the zone edge, and maybe -1.0f if its inside the zone
   return (pos - _pos).length();
@@ -331,6 +380,25 @@ int CustomZone::getPlayerTeamFromQualifier(const std::string& qual)
 {
   return checkIntQualifier('t', qual);
 }
+
+
+float CustomZone::getWeight() const
+{
+  if (face) {
+    if (faceWeight > 0.0f) {
+      return faceWeight;
+    }
+    float area = face->calcArea();
+    area *= (faceHeight >= 1.0f) ? faceHeight : 1.0f;
+    return (area >= 1.0f) ? area : 1.0f;
+  }
+  const float x = (size.x >= 1.0f) ? size.x : 1.0f;
+  const float y = (size.y >= 1.0f) ? size.y : 1.0f;
+  const float z = (size.z >= 1.0f) ? size.z : 1.0f;
+  return (x * y * z);
+}
+
+
 
 
 // Local Variables: ***

@@ -122,6 +122,7 @@ void CollisionManager::clear()
 {
   delete root;
   root = NULL;
+  loaded = false;
 
   worldSize = 0.0f;
 
@@ -427,6 +428,8 @@ void CollisionManager::load()
   SplitList.named.pyrs.list = listPtr;
   SplitList.named.pyrs.count = (int)pyrs.size();
   listPtr = listPtr + pyrs.size();
+
+  loaded = true;
 
   return;
 }
@@ -818,10 +821,16 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
   int hasMeshObs = 0;
   int hasNormalObs = 0;
   for (x = 0; x < fullList.count; x++) {
-    if (fullList.list[x]->getTypeID() == meshType) {
-      hasMeshObs = 1;
-    } else {
-      hasNormalObs = 1;
+    switch (fullList.list[x]->getTypeID()) {
+      case meshType:
+      case faceType: {
+        hasMeshObs = 1;
+        break;
+      }
+      default: {
+        hasNormalObs = 1;
+        break;
+      }
     }
   }
   int color = hasNormalObs + (2 * hasMeshObs);

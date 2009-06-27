@@ -21,7 +21,7 @@
 
 class CustomDynamicColor : public WorldFileObject {
   public:
-    CustomDynamicColor();
+    CustomDynamicColor(const char* dyncolName);
     ~CustomDynamicColor();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;

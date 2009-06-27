@@ -554,7 +554,6 @@ bool CustomLink::read(const char *cmd, std::istream& input)
 
 //============================================================================//
 
-
 void CustomLink::writeToGroupDef(GroupDefinition *groupDef) const
 {
   if (!linkSet) {

@@ -26,8 +26,11 @@
 #include "ParseColor.h"
 
 
-CustomDynamicColor::CustomDynamicColor()
+//============================================================================//
+
+CustomDynamicColor::CustomDynamicColor(const char* dyncolName)
 {
+  name = dyncolName;
   dyncol = new DynamicColor;
   return;
 }
@@ -39,6 +42,8 @@ CustomDynamicColor::~CustomDynamicColor()
   return;
 }
 
+
+//============================================================================//
 
 bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 {
@@ -104,6 +109,8 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 }
 
 
+//============================================================================//
+
 void CustomDynamicColor::writeToManager() const
 {
   dyncol->setName(name);
@@ -118,7 +125,9 @@ void CustomDynamicColor::writeToManager() const
 }
 
 
-// Local Variables: ***
+//============================================================================//
+
+
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***

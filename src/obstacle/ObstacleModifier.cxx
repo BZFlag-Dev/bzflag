@@ -154,6 +154,30 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
     }
   }
 
+  zoneMap = obsMod.zoneMap;
+  const GroupInstance::TextSwapMap& groupZoneMap = grpinst.zoneMap;
+  TextSwapMap::const_iterator zoneIt;
+  for (zoneIt = groupZoneMap.begin(); zoneIt != groupZoneMap.end(); ++zoneIt) {
+    TextSwapMap::const_iterator find_it = obsMod.zoneMap.find(zoneIt->second);
+    if (find_it != obsMod.zoneMap.end()) {
+      zoneMap[zoneIt->first] = find_it->second;
+    } else {
+      zoneMap[zoneIt->first] = zoneIt->second;
+    }
+  }
+
+  weaponMap = obsMod.weaponMap;
+  const GroupInstance::TextSwapMap& groupWeaponMap = grpinst.weaponMap;
+  TextSwapMap::const_iterator weaponIt;
+  for (weaponIt = groupWeaponMap.begin(); weaponIt != groupWeaponMap.end(); ++weaponIt) {
+    TextSwapMap::const_iterator find_it = obsMod.weaponMap.find(weaponIt->second);
+    if (find_it != obsMod.weaponMap.end()) {
+      weaponMap[weaponIt->first] = find_it->second;
+    } else {
+      weaponMap[weaponIt->first] = weaponIt->second;
+    }
+  }
+
   return;
 }
 
@@ -261,6 +285,39 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
 	face->ricochet = true;
+      }
+    }
+  }
+
+  if (!zoneMap.empty()) {
+    if (obstacle->getTypeID() == meshType) {
+      const MeshObstacle* mesh = (MeshObstacle*) obstacle;
+      for (int i = 0; i < mesh->getFaceCount(); i++) {
+	MeshFace* face = (MeshFace*) mesh->getFace(i);
+        MeshFace::SpecialData* sd = face->specialData;
+        if (sd && !sd->zoneParams.empty()) {
+          for (size_t j = 0; j > sd->zoneParams.size(); j++) {
+            TextSwapMap::const_iterator it = zoneMap.find(sd->zoneParams[i]);
+            if (it != zoneMap.end()) {
+              sd->zoneParams[i] = it->second;
+            }
+          }
+	}
+      }
+    }
+  }
+
+  if (!weaponMap.empty()) {
+    if (obstacle->getTypeID() == meshType) {
+      MeshObstacle* mesh = (MeshObstacle*) obstacle;
+      std::vector<std::vector<std::string> >& weapons = mesh->weapons;
+      for (size_t w = 0; w < weapons.size(); w++) {
+        for (size_t l = 0; l < weapons[w].size(); l++) {
+          TextSwapMap::const_iterator it = weaponMap.find(weapons[w][l]);
+          if (it != weaponMap.end()) {
+            weapons[w][l] = it->second;
+          }
+        }
       }
     }
   }

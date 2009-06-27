@@ -78,7 +78,7 @@ void EntryZones::calculateQualifierLists()
     for (vit = qPairList.begin(); vit != qPairList.end(); ++vit) {
       std::pair<int,float> &p = *vit;
       int zoneIndex = p.first;
-      p.second = zones[zoneIndex].getArea();
+      p.second = zones[zoneIndex].getWeight();
       total += p.second;
     }
     for (vit = qPairList.begin(); vit != qPairList.end(); ++vit) {
@@ -247,9 +247,18 @@ void EntryZones::makeSplitLists (int zone,
 
 void * EntryZones::pack(void *buf) const
 {
-  buf = nboPackUInt32(buf, zones.size());
+  uint32_t plainCount = 0;
+  for (unsigned int i = 0; i < zones.size(); i++) {
+    if (!zones[i].faceZone()) {
+      plainCount++;
+    }
+  }
+  buf = nboPackUInt32(buf, plainCount);
 
   for (unsigned int i = 0; i < zones.size(); i++) {
+    if (zones[i].faceZone()) {
+      continue;
+    }
     const WorldFileLocation& z = (const WorldFileLocation) zones[i];
     std::vector<FlagType*> flags;
     std::vector<TeamColor> teams;
@@ -281,6 +290,9 @@ int EntryZones::packSize() const
   fullSize += sizeof(uint32_t); // zone count
 
   for (unsigned int i = 0; i < zones.size(); i++) {
+    if (zones[i].faceZone()) {
+      continue;
+    }
     std::vector<FlagType*> flags;
     std::vector<TeamColor> teams;
     std::vector<TeamColor> safety;

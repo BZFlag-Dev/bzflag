@@ -248,6 +248,7 @@ class BzMaterialManager {
 
   private:
     std::vector<BzMaterial*> materials;
+    std::map<std::string, int> nameMap;
 };
 
 

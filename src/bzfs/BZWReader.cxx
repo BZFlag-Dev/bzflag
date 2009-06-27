@@ -169,29 +169,45 @@ bool BZWReader::parseNormalObject(const char* token, WorldFileObject** object)
 
   WorldFileObject*& obj = *object;
 
-       if (lower == "box")           { obj = new CustomBox(false);     }
-  else if (lower == "meshbox")       { obj = new CustomBox(true);      }
-  else if (lower == "pyramid")       { obj = new CustomPyramid(false); }
-  else if (lower == "meshpyr")       { obj = new CustomPyramid(true);  }
-  else if (lower == "base")          { obj = new CustomBase;           }
-  else if (lower == "link")          { obj = new CustomLink(false);    }
-  else if (lower == "linkset")       { obj = new CustomLink(true);     }
-  else if (lower == "mesh")          { obj = new CustomMesh;           }
-  else if (lower == "arc")           { obj = new CustomArc;            }
-  else if (lower == "cone")          { obj = new CustomCone;           }
-  else if (lower == "sphere")        { obj = new CustomSphere;         }
-  else if (lower == "tetra")         { obj = new CustomTetra();        }
-  else if (lower == "weapon")        { obj = new CustomWeapon;         }
-  else if (lower == "zone")          { obj = new CustomZone;           }
-  else if (lower == "waterlevel")    { obj = new CustomWaterLevel;     }
-  else if (lower == "dynamiccolor")  { obj = new CustomDynamicColor;   }
-  else if (lower == "texturematrix") { obj = new CustomTextureMatrix;  }
-  else if (lower == "material")      { obj = new CustomMaterial;       }
-  else if (lower == "physics")       { obj = new CustomPhysicsDriver;  }
-  else if (lower == "transform")     { obj = new CustomMeshTransform;  }
-  else if (lower == "text")          { obj = new CustomWorldText;      }
+  char name[256];
+  readToken(name, sizeof(name));
+
+       if (lower == "box")           { obj = new CustomBox(false);          }
+  else if (lower == "meshbox")       { obj = new CustomBox(true);           }
+  else if (lower == "pyramid")       { obj = new CustomPyramid(false);      }
+  else if (lower == "meshpyr")       { obj = new CustomPyramid(true);       }
+  else if (lower == "base")          { obj = new CustomBase;                }
+  else if (lower == "arc")           { obj = new CustomArc;                 }
+  else if (lower == "cone")          { obj = new CustomCone;                }
+  else if (lower == "sphere")        { obj = new CustomSphere;              }
+  else if (lower == "tetra")         { obj = new CustomTetra;               }
+  else if (lower == "waterlevel")    { obj = new CustomWaterLevel;          }
+  else if (lower == "text")          { obj = new CustomWorldText;           }
+  else if (lower == "link")          { obj = new CustomLink(false);         }
+  else if (lower == "linkset")       { obj = new CustomLink(true);          }
+  else if (lower == "weapon")        { obj = new CustomWeapon;              }
+  else if (lower == "zone")          { obj = new CustomZone;                }
+  else if (lower == "transform")     { obj = new CustomMeshTransform;       }
+  else if (lower == "mesh")          { obj = new CustomMesh(name);          }
+  else if (lower == "teleporter")    { obj = new CustomTeleporter(name);    }
+  else if (lower == "dynamiccolor")  { obj = new CustomDynamicColor(name);  }
+  else if (lower == "texturematrix") { obj = new CustomTextureMatrix(name); }
+  else if (lower == "material")      { obj = new CustomMaterial(name);      }
+  else if (lower == "physics")       { obj = new CustomPhysicsDriver(name); }
   else {
+    // put the name token back into the stream
+    const int nameLen = (int)strlen(name);
+    for (int i = (nameLen - 1); i >= 0; i--) {
+      input->putback(name[i]);
+    }
+    if (nameLen > 0) {
+      input->putback(' ');
+    }
     return false; // no match found
+  }
+
+  if (obj != NULL) {
+    obj->typeName = lower;
   }
 
   return true;
@@ -374,7 +390,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       if (!object->read(buffer, *input)) {
         // unknown token
         errorHandler->warning(
-          std::string("unknown object parameter \"") +
+          std::string("unknown ") + object->typeName +
+          std::string(" parameter \"") +
           std::string(buffer) + std::string("\" - skipping"), lineNum);
         // delete object;
         // return false;
@@ -388,10 +405,6 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     }
     else if (parseNormalObject(buffer, &newObject)) {
       // newObject has been assigned
-    }
-    else if (strcasecmp(buffer, "teleporter") == 0) {
-      readToken(buffer, sizeof(buffer));
-      newObject = new CustomTeleporter(buffer);
     }
     else if (strcasecmp(buffer, "define") == 0) {
       if (groupDef != worldDef) {
@@ -425,11 +438,15 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
       if (strlen(buffer) <= 0) {
 	errorHandler->warning("missing group definition reference", lineNum);
       }
-      newObject = new CustomGroup(buffer);
+      char nameBuf[256];
+      readToken(nameBuf, sizeof(nameBuf));
+      newObject = new CustomGroup(buffer, nameBuf);
+      newObject->typeName = "group";
     }
     else if (strcasecmp(buffer, "world") == 0) {
       if (!gotWorld) {
 	newObject = new CustomWorld();
+	newObject->typeName = "world";
 	gotWorld = true;
       } else {
 	errorHandler->warning("multiple \"world\" sections found", lineNum);
@@ -443,7 +460,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
         return false;
       }
       if (clOptions == NULL) {
-        errorHandler->fatalError("INTERNAL ERROR: options without clOptions", lineNum);
+        errorHandler->fatalError("INTERNAL ERROR: options without clOptions",
+                                 lineNum);
         return false;
       }
       clOptions->parseWorldOptions(optionLines);
@@ -587,7 +605,6 @@ WorldInfo* BZWReader::defineWorldFromFile()
       }
     }
   }
-
 
   // add objects
   const unsigned int n = list.size();

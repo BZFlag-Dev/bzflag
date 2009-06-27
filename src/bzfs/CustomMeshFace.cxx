@@ -114,6 +114,21 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
     ricochet = true;
   }
   //
+  //  Zone parameters
+  //
+  else if (strncasecmp(cmd, "zone", 4) == 0) {
+    if (strlen(cmd) <= 4) {
+      return false;
+    }
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+
+    line = std::string(cmd) + line;
+    line = TextUtils::trim(line);
+    specialData.zoneParams.push_back(line);
+  }
+  //
   //  Team parameters
   //
   else if (strcasecmp(cmd, "baseTeam") == 0) {
@@ -312,7 +327,9 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 
   // does this face need special data?
   const MeshFace::SpecialData* sd = NULL;
-  if (!specialData.linkName.empty() || (specialData.baseTeam >= 0)) {
+  if ((specialData.baseTeam >= 0)   ||
+      !specialData.linkName.empty() ||
+      !specialData.zoneParams.empty()) {
     sd = &specialData;
   }
 

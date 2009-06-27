@@ -29,12 +29,14 @@
 #include "BzMaterial.h"
 
 
-CustomGroup::CustomGroup(const std::string& groupdef)
+CustomGroup::CustomGroup(const std::string& groupDef,
+                         const std::string& groupName)
 {
-  group = new GroupInstance(groupdef);
-  if (groupdef.size() <= 0) {
+  group = new GroupInstance(groupDef);
+  if (groupDef.empty()) {
     std::cout << "WARNING: group instance has no group definition" << std::endl;
   }
+  name = groupName;
   return;
 }
 
@@ -114,12 +116,34 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     std::string line;
     std::getline(input, line);
     input.putback('\n');
-    std::vector<std::string> tokens = TextUtils::tokenize(line, " \t", 2);
+    std::vector<std::string> tokens = TextUtils::tokenize(line, " \t", 2, true);
     if (tokens.size() != 2) {
       std::cout << "invalid textswap parameters" << std::endl;
       return false;
     }
     group->addTextSwap(tokens[0], tokens[1]);
+  }
+  else if (strcasecmp(cmd, "zoneswap") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    std::vector<std::string> tokens = TextUtils::tokenize(line, " \t", 2, true);
+    if (tokens.size() != 2) {
+      std::cout << "invalid zoneswap parameters" << std::endl;
+      return false;
+    }
+    group->addZoneSwap(tokens[0], tokens[1]);
+  }
+  else if (strcasecmp(cmd, "weaponswap") == 0) {
+    std::string line;
+    std::getline(input, line);
+    input.putback('\n');
+    std::vector<std::string> tokens = TextUtils::tokenize(line, " \t", 2, true);
+    if (tokens.size() != 2) {
+      std::cout << "invalid weaponswap parameters" << std::endl;
+      return false;
+    }
+    group->addWeaponSwap(tokens[0], tokens[1]);
   }
   else if (!WorldFileObstacle::read(cmd, input)) {
     return false;

@@ -21,7 +21,7 @@
 
 class CustomTextureMatrix : public WorldFileObject {
   public:
-    CustomTextureMatrix();
+    CustomTextureMatrix(const char* texmatName);
     ~CustomTextureMatrix();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;

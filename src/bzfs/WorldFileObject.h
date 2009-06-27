@@ -38,6 +38,8 @@ public:
   virtual void writeToManager() const;
   virtual void writeToGroupDef(GroupDefinition*) const;
 
+  std::string typeName;
+
 protected:
   std::string name;
 };

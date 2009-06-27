@@ -27,9 +27,14 @@
 #include "MeshFace.h"
 #include "MeshTransform.h"
 
+
 class MeshDrawInfo;
 
+
 class MeshObstacle : public Obstacle {
+
+  friend class ObstacleModifier;
+
   public:
     static bool makeTexcoords(const fvec2& autoScale,
                               const fvec4& plane,
@@ -54,6 +59,8 @@ class MeshObstacle : public Obstacle {
                  bool noclusters, bool bounce,
                  unsigned char drive, unsigned char shoot, bool ricochet,
                  bool triangulate, const MeshFace::SpecialData* sd);
+
+    bool addWeapon(const std::vector<std::string>& weaponLines);
 
     ~MeshObstacle();
 
@@ -123,8 +130,12 @@ class MeshObstacle : public Obstacle {
     inline bool isValidTexcoord(int index) {
       return (isValidVertex(index) && (texcoords != NULL));
     }
+    inline const std::vector<std::vector<std::string> >& getWeapons() const {
+      return weapons;
+    }
 
     void setDrawInfo(MeshDrawInfo*);
+    
 
     int packSize() const;
     void *pack(void*) const;
@@ -139,6 +150,7 @@ class MeshObstacle : public Obstacle {
 			  const std::vector<int>& _normals,
 			  const std::vector<int>& _texcoords,
 			  const fvec3**& v, const fvec3**& n, const fvec2**& t);
+    void makeEdges();
 
   private:
     static const char* typeName;
@@ -154,12 +166,15 @@ class MeshObstacle : public Obstacle {
     fvec2* texcoords;
     int faceCount, faceSize;
     MeshFace** faces;
+    int edgeCount;
+    MeshFace::Edge* edges;
     bool smoothBounce;
     bool noclusters;
-    bool inverted; // used during building. can be ditched if
-		   // edge tables are setup with bi-directional
-		   // ray-vs-face tests and parity counts.
+    bool invertedTransform; // used during building. can be ditched if
+		            // edge tables are setup with bi-directional
+		            // ray-vs-face tests and parity counts.
     bool hasSpecialFaces;
+    std::vector<std::vector<std::string> > weapons;
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
 };
 

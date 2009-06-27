@@ -32,7 +32,7 @@
 
 class CustomMesh : public WorldFileObstacle {
   public:
-    CustomMesh();
+    CustomMesh(const char* meshName);
     ~CustomMesh();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
@@ -54,6 +54,9 @@ class CustomMesh : public WorldFileObstacle {
 
     std::vector<std::string> lodOptions;
     class MeshDrawInfo* drawInfo;
+
+    std::vector<std::string>* weapon;
+    std::vector<std::vector<std::string>*> weapons;
 
     CustomMeshFace* face;
     std::vector<CustomMeshFace*> faces;

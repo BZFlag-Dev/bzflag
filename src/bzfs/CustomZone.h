@@ -24,7 +24,7 @@
 //#include "WorldInfo.h"
 class WorldInfo;
 class FlagType;
-
+class MeshFace;
 
 typedef std::vector<std::string> QualifierList;
 typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
@@ -34,6 +34,9 @@ class CustomZone : public WorldFileLocation
 {
   public:
     CustomZone();
+    CustomZone(const MeshFace* face);
+
+    bool readLine(const std::string& cmd, const std::string& line);
 
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
@@ -45,9 +48,11 @@ class CustomZone : public WorldFileLocation
     const QualifierList &getQualifiers() const;
     const ZoneFlagMap& getZoneFlagMap() const;
 
-    float getArea() const;
+    float getWeight() const;
     void getRandomPoint(fvec3& pt) const;
     float getDistToPoint(const fvec3& pos) const;
+
+    inline bool faceZone() const { return (face != NULL); }
 
   public:
     static const std::string& getFlagIdQualifier(int flagId);
@@ -68,6 +73,12 @@ class CustomZone : public WorldFileLocation
   private:
     ZoneFlagMap zoneFlagMap;
     QualifierList qualifiers;
+
+    bool useCenter;
+
+    const MeshFace* face;
+    float faceHeight; // equivalent to the Z size component
+    float faceWeight; // direct value, area is not considered
 };
 
 
@@ -80,15 +91,6 @@ inline const QualifierList& CustomZone::getQualifiers() const
 inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
 {
   return zoneFlagMap;
-}
-
-
-inline float CustomZone::getArea() const
-{
-  const float x = (size.x >= 1.0f) ? size.x : 1.0f;
-  const float y = (size.y >= 1.0f) ? size.y : 1.0f;
-  const float z = (size.z >= 1.0f) ? size.z : 1.0f;
-  return (x * y * z);
 }
 
 

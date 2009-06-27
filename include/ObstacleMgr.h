@@ -78,6 +78,10 @@ class GroupInstance {
 			 const BzMaterial* dst);
     void addTextSwap(const std::string& src,
                      const std::string& dst);
+    void addZoneSwap(const std::string& src,
+                     const std::string& dst);
+    void addWeaponSwap(const std::string& src,
+                       const std::string& dst);
 
     const std::string& getName() const;
 
@@ -109,6 +113,8 @@ class GroupInstance {
 
     MaterialMap matMap;
     TextSwapMap textMap;
+    TextSwapMap zoneMap;
+    TextSwapMap weaponMap;
 };
 
 

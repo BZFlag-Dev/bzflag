@@ -353,6 +353,21 @@ void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
 }
 
 
+float MeshFace::calcArea() const
+{
+  float area = 0.0f;
+  const fvec3& v0 = *vertices[0];
+  for (int v = 0; v < (vertexCount - 2); v++) {
+    const fvec3& v1 = *vertices[v + 1];
+    const fvec3& v2 = *vertices[v + 2];
+    const fvec3 e1 = v1 - v0;
+    const fvec3 e2 = v2 - v0;
+    area += fvec3::cross(e1, e2).length();
+  }
+  return area * 0.5f;
+}
+
+
 fvec3 MeshFace::calcCenter() const
 {
   fvec3 center(0.0f, 0.0f, 0.0f);
@@ -381,8 +396,8 @@ MeshFace::~MeshFace()
   delete[] vertices;
   delete[] normals;
   delete[] texcoords;
-  delete[] edges;
   delete[] edgePlanes;
+  delete[] edges;
   delete specialData;
   return;
 }
@@ -1345,6 +1360,11 @@ int MeshFace::SpecialData::packSize() const
     fullSize += nboStdStringPackSize(linkSrcShotFailText);
     fullSize += nboStdStringPackSize(linkSrcTankFailText);
   }
+  // zone parameters
+  fullSize += sizeof(uint32_t); // the count
+  for (size_t i = 0; i < zoneParams.size(); i++) {
+    fullSize += nboStdStringPackSize(zoneParams[i]);
+  }
   return fullSize;
 }
 
@@ -1381,7 +1401,11 @@ void* MeshFace::SpecialData::pack(void* buf) const
     buf = nboPackStdString(buf, linkSrcShotFailText);
     buf = nboPackStdString(buf, linkSrcTankFailText);
   }
-
+  // zone parameters
+  buf = nboPackUInt32(buf, zoneParams.size());
+  for (size_t i = 0; i < zoneParams.size(); i++) {
+    buf = nboPackStdString(buf, zoneParams[i]);
+  }
   return buf;
 }
 
@@ -1418,6 +1442,17 @@ void* MeshFace::SpecialData::unpack(void* buf)
     // fail messages
     buf = nboUnpackStdString(buf, linkSrcShotFailText);
     buf = nboUnpackStdString(buf, linkSrcTankFailText);
+
+  }
+
+  uint32_t count;
+  std::string param;
+
+  // zone parameters
+  buf = nboUnpackUInt32(buf, count);
+  for (uint32_t i = 0; i < count; i++) {
+    buf = nboUnpackStdString(buf, param);
+    zoneParams.push_back(param);
   }
 
   return buf;
@@ -1634,6 +1669,11 @@ void MeshFace::SpecialData::print(std::ostream& out,
   }
   if (!linkSrcTankFailText.empty()) {
     out << prefix << "linkSrcTankFailText " << linkSrcTankFailText << std::endl;
+  }
+
+  // zone parameters
+  for (size_t i = 0; i < zoneParams.size(); i++) {
+    out << prefix << zoneParams[i] << std::endl;
   }
 }
 

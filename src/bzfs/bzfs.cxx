@@ -859,7 +859,7 @@ bool defineWorld ( void )
     if (!allBasesDefined()) { return false; }
   }
   else if (clOptions->worldFile.size()) {
-    logDebugMessage(1,"reading worldfile %s\n",clOptions->worldFile.c_str());
+    logDebugMessage(1, "reading worldfile %s\n", clOptions->worldFile.c_str());
     BZWReader* reader = new BZWReader(clOptions->worldFile);
     world = reader->defineWorldFromFile();
     delete reader;
@@ -2953,7 +2953,7 @@ void searchFlag(GameKeeper::Player &playerData)
       fvec3 flagCenter = fpos;
       fvec3 tankCenter = tpos;
       flagCenter.z += 0.5f * BZDBCache::flagPoleSize;
-      tankCenter.z += BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      tankCenter.z += BZDBCache::muzzleHeight;
       const Ray ray(flagCenter, tankCenter - flagCenter);
       const ObsList* oList = COLLISIONMGR.rayTest(&ray, 1.0f);
       const int count = oList->count;

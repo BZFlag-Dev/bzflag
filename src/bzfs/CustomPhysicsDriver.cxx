@@ -24,8 +24,9 @@
 #include "PhysicsDriver.h"
 
 
-CustomPhysicsDriver::CustomPhysicsDriver()
+CustomPhysicsDriver::CustomPhysicsDriver(const char* phydrvName)
 {
+  name = phydrvName;
   driver = new PhysicsDriver;
   return;
 }

@@ -40,7 +40,7 @@ public:
   void add(const FlagType *type, const fvec3& origin,
 	   float direction, float tilt, TeamColor teamColor,
 	   float initdelay, const std::vector<float> &delay,
-	   TimeKeeper &sync);
+	   TimeKeeper &sync, bool fromMesh = false);
   float nextTime();
   void clear();
   unsigned int count(); // returns the number of world weapons
@@ -49,9 +49,8 @@ public:
 
   int getNewWorldShotID ( void );
 
-private:
-  struct Weapon
-  {
+public:
+  struct Weapon {
     const FlagType*	type;
     TeamColor		teamColor;
     fvec3		origin;
@@ -61,7 +60,11 @@ private:
     std::vector<float>  delay;
     TimeKeeper		nextTime;
     int			nextDelay;
+    bool		fromMesh;
   };
+  const std::vector<Weapon*>& getWeapons() const { return weapons; }
+
+private:
 
   std::vector<Weapon*> weapons;
   int worldShotId;
@@ -73,7 +76,7 @@ private:
 class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-	WorldWeaponGlobalEventHandler(FlagType *type, const fvec3* origin,
+	WorldWeaponGlobalEventHandler(FlagType *type, const fvec3& origin,
 	                              float direction, float tilt,
 	                              TeamColor teamColor);
 	virtual ~WorldWeaponGlobalEventHandler();

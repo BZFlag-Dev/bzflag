@@ -54,6 +54,8 @@ class ObstacleModifier {
 
     MaterialMap matMap;
     TextSwapMap textMap;
+    TextSwapMap zoneMap;
+    TextSwapMap weaponMap;
 
     unsigned char driveThrough;
     unsigned char shootThrough;

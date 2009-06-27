@@ -12,20 +12,21 @@
 
 #include "common.h"
 
-/* interface header */
+// interface header
 #include "CustomTextureMatrix.h"
 
-/* system implementation headers */
+// system headers
 #include <iostream>
 #include <string.h>
 #include <math.h>
 
-/* common implementation headers */
+// common headers
 #include "TextureMatrix.h"
 
 
-CustomTextureMatrix::CustomTextureMatrix()
+CustomTextureMatrix::CustomTextureMatrix(const char* texmatName)
 {
+  name = texmatName;
   texmat = new TextureMatrix;
   return;
 }
@@ -46,49 +47,57 @@ bool CustomTextureMatrix::read(const char *cmd, std::istream& input)
       return false;
     }
     texmat->setStaticShift (u, v);
-  } else if (strcasecmp ("fixedscale", cmd) == 0) {
+  }
+  else if (strcasecmp ("fixedscale", cmd) == 0) {
     float u, v;
     if (!(input >> u >> v)) {
       return false;
     }
     texmat->setStaticScale (u, v);
-  } else if (strcasecmp ("fixedspin", cmd) == 0) {
+  }
+  else if (strcasecmp ("fixedspin", cmd) == 0) {
     float angle;
     if (!(input >> angle)) {
       return false;
     }
     texmat->setStaticSpin (angle);
-  } else if (strcasecmp ("fixedcenter", cmd) == 0) {
+  }
+  else if (strcasecmp ("fixedcenter", cmd) == 0) {
     float u, v;
     if (!(input >> u >> v)) {
       return false;
     }
     texmat->setStaticCenter (u, v);
-  } else if (strcasecmp ("shift", cmd) == 0) {
+  }
+  else if (strcasecmp ("shift", cmd) == 0) {
     float uFreq, vFreq;
     if (!(input >> uFreq >> vFreq)) {
       return false;
     }
     texmat->setDynamicShift (uFreq, vFreq);
-  } else if (strcasecmp ("spin", cmd) == 0) {
+  }
+  else if (strcasecmp ("spin", cmd) == 0) {
     float freq;
     if (!(input >> freq)) {
       return false;
     }
     texmat->setDynamicSpin (freq);
-  } else if (strcasecmp ("scale", cmd) == 0) {
+  }
+  else if (strcasecmp ("scale", cmd) == 0) {
     float uFreq, vFreq, uScale, vScale;
     if (!(input >> uFreq >> vFreq >> uScale >> vScale)) {
       return false;
     }
     texmat->setDynamicScale (uFreq, vFreq, uScale, vScale);
-  } else if (strcasecmp ("center", cmd) == 0) {
+  }
+  else if (strcasecmp ("center", cmd) == 0) {
     float u, v;
     if (!(input >> u >> v)) {
       return false;
     }
     texmat->setDynamicCenter (u, v);
-  } else {
+  }
+  else {
     // NOTE: we don't use a WorldFileObstacle
     return WorldFileObject::read(cmd, input);
   }

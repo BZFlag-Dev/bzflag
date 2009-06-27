@@ -10,13 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "WorldInfo.h"
 
-/* system headers */
+// system headers
 #include <ctype.h>
 
-/* common implementation headers */
+// common headers
 #include "global.h"
 #include "Pack.h"
 #include "Protocol.h"
@@ -27,14 +27,17 @@
 #include "TextureMatrix.h"
 #include "BzMaterial.h"
 #include "LinkDef.h"
+#include "LinkManager.h"
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
 #include "MeshDrawInfo.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
-#include "LinkManager.h"
+#include "BZDBCache.h"
+#include "FileManager.h"
+#include "DirectoryNames.h"
 
-/* obstacle implementation headers */
+// obstacle headers
 #include "ObstacleMgr.h"
 #include "Obstacle.h"
 #include "BoxBuilding.h"
@@ -49,13 +52,14 @@
 #include "ServerIntangibilityManager.h"
 #include "CollisionManager.h"
 
-/* local implementation headers */
+// local headers
 #include "bzfs.h"
 #include "FlagInfo.h"
 #include "PlayerInfo.h"
 #include "CustomZone.h"
+#include "CustomWeapon.h"
 
-/* compression library header */
+// compression library header
 #include "zlib.h"
 
 
@@ -109,10 +113,10 @@ void WorldInfo::addZone(const CustomZone *zone)
 void WorldInfo::addWeapon(const FlagType *type, const fvec3& origin,
 			  float direction, float tilt, TeamColor teamColor,
 			  float initdelay, const std::vector<float> &delay,
-			  TimeKeeper &sync)
+			  TimeKeeper &sync, bool fromMesh)
 {
   worldWeapons.add(type, origin, direction, tilt,
-		   teamColor, initdelay, delay, sync);
+		   teamColor, initdelay, delay, sync, fromMesh);
 }
 
 void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
@@ -366,7 +370,9 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
     }
     default: {
       // FIXME - choke here?
-      printf ("*** Unknown obstacle type in WorldInfo::classifyHit()\n");
+      logDebugMessage(0,
+        "*** Unknown obstacle type in WorldInfo::classifyHit(): %i\n",
+        obstacle->getTypeID());
       return IN_BASE;
     }
   }
@@ -437,8 +443,88 @@ bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, fvec3& pt) const
 }
 
 
+static bool parseLine(const std::string& line,
+                      std::string& cmd, std::string& args)
+{
+  const char* s = TextUtils::skipWhitespace(line.c_str());
+  const char* e = TextUtils::skipNonWhitespace(s);
+  if (e == s) {
+    return false;
+  }
+  cmd = std::string(s, e - s);
+  args = TextUtils::skipWhitespace(e);
+  return true;
+}
+
+
+void WorldInfo::createFaceZones()
+{
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  for (size_t m = 0; m < meshes.size(); m++) {
+    const MeshObstacle* mesh = (const MeshObstacle*) meshes[m];
+    if (mesh->getHasSpecialFaces()) {
+      for (int f = 0; f < mesh->getFaceCount(); f++) {
+        const MeshFace* face = mesh->getFace(f);
+        const MeshFace::SpecialData* sd = face->getSpecialData();
+        if (sd) {
+          if (!sd->zoneParams.empty()) {
+            if (!face->isFlatTop()) {
+              logDebugMessage(0, "WARNING: face zones must be flat tops\n");
+            }
+            else {
+              CustomZone zone(face);
+              for (size_t i = 0; i < sd->zoneParams.size(); i++) {
+                std::string line = sd->zoneParams[i];
+                if (line.size() > 4) {
+                  line = line.substr(4); // remove the leading 'zone'
+                  std::string cmd, args;
+                  if (parseLine(line, cmd, args)) {
+                    zone.readLine(cmd, args);
+                  } else {
+                    logDebugMessage(0, "WARNING: invalid face zone parameter: %s\n",
+                                       line.c_str());
+                  }
+                }
+              }
+              entryZones.addZone(&zone);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+void WorldInfo::createMeshWeapons()
+{
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  for (size_t m = 0; m < meshes.size(); m++) {
+    const MeshObstacle* mesh = (const MeshObstacle*) meshes[m];
+    const std::vector<std::vector<std::string> >& weapons = mesh->getWeapons();
+    for (size_t w = 0; w < weapons.size(); w++) {
+      CustomWeapon* weapon = new CustomWeapon(mesh);
+      const std::vector<std::string>& lines = weapons[w];
+      for (size_t i = 0; i < lines.size(); i++) {
+        std::string cmd, args;
+        if (parseLine(lines[i], cmd, args)) {
+          weapon->readLine(cmd, args);
+        } else {
+          logDebugMessage(0, "WARNING: invalid mesh weapon parameter: %s\n",
+                             lines[i].c_str());
+        }
+      }
+      weapon->writeToWorld(this);
+    }
+  }
+}
+
+
 void WorldInfo::finishWorld()
 {
+  createFaceZones();
+  createMeshWeapons();
+
   entryZones.calculateQualifierLists();
 
   loadCollisionManager();

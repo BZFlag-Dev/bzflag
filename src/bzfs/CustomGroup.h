@@ -28,7 +28,7 @@ class GroupInstance;
 
 class CustomGroup : public WorldFileObstacle {
   public:
-    CustomGroup(const std::string& groupdef);
+    CustomGroup(const std::string& groupDef, const std::string& groupName);
     ~CustomGroup();
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToGroupDef(GroupDefinition*) const;

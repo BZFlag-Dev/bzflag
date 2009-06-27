@@ -28,9 +28,11 @@
 #include "MeshDrawInfo.h"
 
 
-CustomMesh::CustomMesh()
+CustomMesh::CustomMesh(const char* meshName)
 {
+  name = meshName;
   face = NULL;
+  weapon = NULL;
   phydrv = -1;
   noclusters = false;
   smoothBounce = false;
@@ -51,12 +53,22 @@ CustomMesh::~CustomMesh()
     delete face;
   }
 
-  std::vector<CustomMeshFace*>::iterator face_it;
-  for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
-    CustomMeshFace* _face = *face_it;
+  std::vector<CustomMeshFace*>::iterator faceIt;
+  for (faceIt = faces.begin(); faceIt != faces.end(); faceIt++) {
+    CustomMeshFace* _face = *faceIt;
     delete _face;
   }
 
+  if (weapon != NULL) {
+    std::cout << "discarded incomplete mesh weapon" << std::endl;
+    delete face;
+  }
+
+  std::vector<std::vector<std::string>*>::iterator weaponIt;
+  for (weaponIt = weapons.begin(); weaponIt != weapons.end(); weaponIt++) {
+    std::vector<std::string>* w = *weaponIt;
+    delete w;
+  }
   return;
 }
 
@@ -81,9 +93,25 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       face = NULL;
     }
   }
+  else if (strcasecmp(cmd, "endweapon") == 0) {
+    if (weapon == NULL) {
+      std::cout << "extra 'endweapon' keyword found" << std::endl;
+    } else {
+      weapons.push_back(weapon);
+      weapon = NULL;
+    }
+  }
   else if (face) {
     // currently processing a face
     return face->read(cmd, input);
+  }
+  else if (weapon) {
+    // currently processing a weapon
+    std::string line, option;
+    std::getline(input, line);
+    input.putback('\n');
+    line = cmd + line;
+    weapon->push_back(line);
   }
   else if (strcasecmp(cmd, "face") == 0) {
     if (face != NULL) {
@@ -92,6 +120,13 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     }
     face = new CustomMeshFace(material, phydrv, noclusters,
 			      smoothBounce, driveThrough, shootThrough);
+  }
+  else if (strcasecmp(cmd, "weapon") == 0) {
+    if (weapon != NULL) {
+      std::cout << "discarding incomplete mesh weapon" << std::endl;
+      delete weapon;
+    }
+    weapon = new std::vector<std::string>;
   }
   else if (strcasecmp(cmd, "inside") == 0) {
     fvec3 inside;
@@ -220,10 +255,16 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
   mesh->setName(name);
 
   // add the faces
-  std::vector<CustomMeshFace*>::const_iterator face_it;
-  for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
-    const CustomMeshFace* customFace = *face_it;
+  std::vector<CustomMeshFace*>::const_iterator faceIt;
+  for (faceIt = faces.begin(); faceIt != faces.end(); faceIt++) {
+    const CustomMeshFace* customFace = *faceIt;
     customFace->write(mesh);
+  }
+
+  // add the weapons
+  std::vector<std::vector<std::string>*>::const_iterator weaponIt;
+  for (weaponIt = weapons.begin(); weaponIt != weapons.end(); weaponIt++) {
+    mesh->addWeapon(**weaponIt);
   }
 
   mesh->finalize();

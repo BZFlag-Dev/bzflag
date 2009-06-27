@@ -66,11 +66,12 @@ class CollisionManager {
     void load();
     void clear();
 
-    // some basics
-    bool needReload() const;	 // octree parameter has changed
-    int getObstacleCount() const;    // total number of obstacles
-    const Extents& getWorldExtents() const;
+    inline bool isLoaded() const { return loaded; }
 
+    // some basics
+    bool needReload() const;      // octree parameter has changed
+    int getObstacleCount() const; // total number of obstacles
+    const Extents& getWorldExtents() const;
 
     // test against an axis aligned bounding box
     const ObsList* axisBoxTest(const Extents& extents);
@@ -104,6 +105,7 @@ class CollisionManager {
 
     class ColDetNode* root;   // the root of the octree
 
+    bool loaded;
     float worldSize;
     Extents gridExtents;
     Extents worldExtents;

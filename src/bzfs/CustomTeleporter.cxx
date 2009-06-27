@@ -53,7 +53,7 @@ static std::string cleanName(const std::string& n)
   std::string name = n;
 
   if (name.empty()) {
-    return "";
+    return name;
   }
 
   if (name[0] == '/') {
@@ -86,7 +86,7 @@ void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 //  std::string finalName = !telename.empty() ? telename : name;
 
   std::string finalName = cleanName(telename);
-
+   
   if (!finalName.empty()) {
     tele->setName(finalName);
   }

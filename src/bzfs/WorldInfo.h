@@ -78,7 +78,7 @@ public:
   void addWeapon(const FlagType *type, const fvec3& origin,
                  float direction, float tilt, TeamColor teamColor,
                  float initdelay, const std::vector<float> &delay,
-                 TimeKeeper &sync);
+                 TimeKeeper &sync, bool fromMesh = false);
   void addWaterLevel (float level, const BzMaterial* matref);
 
   // for WorldGenerators
@@ -116,6 +116,8 @@ public:
 
   bool isFinished() { return finished;}
 
+  bool saveWorldFile(const std::string& filename, std::string& fullname);
+
   const Obstacle* hitBuilding(const fvec3& oldPos, float oldAngle,
                               const fvec3& pos, float angle,
                               float tankWidth, float tankBreadth,
@@ -128,6 +130,8 @@ private:
   void loadCollisionManager();
   InBuildingType classifyHit(const Obstacle* obstacle) const;
   void makeWaterMaterial();
+  void createFaceZones();
+  void createMeshWeapons();
 
 public:
 
