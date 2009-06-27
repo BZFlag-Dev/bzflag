@@ -280,14 +280,14 @@ void CustomZone::getRandomPoint(fvec3& pt) const
 }
 
 
-float CustomZone::getDistToPoint (const fvec3& _pos) const
+float CustomZone::getDistToPoint(const fvec3& point) const
 {
   if (face) {
-    return (face->calcCenter() - _pos).length();
+    return (face->calcCenter() - point).length();
   }
   // FIXME - should use proper minimum distance from
   // the zone edge, and maybe -1.0f if its inside the zone
-  return (pos - _pos).length();
+  return (pos - point).length();
 }
 
 
