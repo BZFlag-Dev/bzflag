@@ -202,15 +202,15 @@ unsigned int WorldWeapons::count(void)
 
 void* WorldWeapons::pack(void *buf) const
 {
-  uint32_t count = 0;
+  uint32_t realCount = 0;
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
     if (!w->fromMesh) {
-      count++;
+      realCount++;
     }
   }
 
-  buf = nboPackUInt32(buf, count);
+  buf = nboPackUInt32(buf, realCount);
 
   for (unsigned int i=0 ; i < weapons.size(); i++) {
     const Weapon *w = (const Weapon *) weapons[i];
