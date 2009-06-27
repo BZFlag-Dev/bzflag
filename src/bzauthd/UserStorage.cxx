@@ -159,7 +159,7 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
      what a particular server is interested in) */
 
   std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
-  std::string filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|"
+  std::string filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|";
   for(std::list<std::string>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
     filter += "(cn=" + *itr + ")";
   filter += "))";

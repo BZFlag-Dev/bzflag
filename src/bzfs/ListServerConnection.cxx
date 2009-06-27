@@ -42,51 +42,52 @@ extern SocketHandler authSockHandler;
 class GroupStringParser : public ListServerLink::GroupParser
 {
 public:
-  GroupStringParser(char *group) : group(group) {}
+  GroupStringParser(char *group) : m_group(group) {}
   const char *getNext() {
-    if(group && *group) {
-      char *ret = group, *p = group;
-      while (*p && (*p != ':') && (p-group+1 < 1024))
+    if(m_group && *m_group) {
+      char *ret = m_group, *p = m_group;
+      while (*p && (*p != ':') && (p-m_group+1 < 1024))
         p++;
       if(!*p)
-        group = p;
+        m_group = p;
       else {
         *p = '\0';
-        group = ++p;
-        while(*group == ':') group++;
+        m_group = ++p;
+        while(*m_group == ':') m_group++;
       }
       return ret;
     }
     return false;
   }
 private:
-  char *group;
+  char *m_group;
 };
 
 class GroupPacketParser : public ListServerLink::GroupParser
 {
 public:
-  GroupPacketParser(Packet &packet) : packet(packet), error(false) {
-    if(!(packet >> count))
-      error = true;
+  GroupPacketParser(Packet &packet) : m_packet(packet), m_error(false) {
+    if(!(m_packet >> m_count))
+      m_error = true;
   }
 
   const char *getNext()
   {
-    if(!error && count--)
-      if(!packet.read_string((uint8_t*)group, 1024))
-        error = true;
+    if(!m_error && m_count--) {
+      if(!m_packet.read_string((uint8_t*)m_group, 1024))
+        m_error = true;
       else
-        return group;
+        return m_group;
+    }
     return NULL;
   }
 
-  bool hasError() { return error; }
+  bool hasError() { return m_error; }
 private:
-  Packet &packet;
-  uint32_t count;
-  char group[1024];
-  bool error;
+  Packet &m_packet;
+  uint32_t m_count;
+  char m_group[1024];
+  bool m_error;
 };
 
 /* The socket that is used to connect to the auth daemon */
@@ -109,7 +110,7 @@ public:
           if(!(packet >> valid_state)) { disconnect(); break; }
           GroupPacketParser parser(packet);
           link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, parser);
-          while(parser.getNext()); // read groups until end in case parsing was interrupted
+          while(parser.getNext()) {} // read groups until end in case parsing was interrupted
           if(parser.hasError()) { disconnect(); break; }
         }
         link->token_phase = 2;
@@ -330,7 +331,7 @@ void  ListServerLink::processAuthReply(bool registered, bool verified, const cha
         playerData->_LSAState = GameKeeper::Player::verified;
         playerData->accessInfo.setPermissionRights();
         const char *group;
-        while(group = parser.getNext()) 
+        while((group = parser.getNext())) 
           playerData->accessInfo.addGroup(group);
 
         playerData->authentication.global(true);

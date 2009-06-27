@@ -15,6 +15,7 @@
 
 #include <Singleton.h>
 #include <string>
+#include <list>
 
 typedef struct ldap LDAP;
 
