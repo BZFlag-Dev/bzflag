@@ -34,24 +34,15 @@
 #include "Team.h"
 
 
-CustomZone::CustomZone()
-{
-  pos = fvec3(0.0f, 0.0f, 0.0f);
-  size = fvec3(1.0f, 1.0f, 1.0f);
-  rotation = 0.0f;
-  useCenter = 0.0f;
-  face = NULL;
-  faceHeight = 1.0f;
-  faceWeight = 0.0f;
-}
-
-
 CustomZone::CustomZone(const MeshFace* f)
 {
   face = f;
   pos = fvec3(0.0f, 0.0f, 0.0f);
   size = fvec3(1.0f, 1.0f, 1.0f);
   rotation = 0.0f;
+  useCenter = false;
+  faceHeight = 1.0f;
+  faceWeight = 0.0f;
 }
 
 

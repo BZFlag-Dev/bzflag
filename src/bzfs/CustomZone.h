@@ -33,8 +33,7 @@ typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
 class CustomZone : public WorldFileLocation
 {
   public:
-    CustomZone();
-    CustomZone(const MeshFace* face);
+    CustomZone(const MeshFace* face = NULL);
 
     bool readLine(const std::string& cmd, const std::string& line);
 
