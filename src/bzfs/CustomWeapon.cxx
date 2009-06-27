@@ -140,6 +140,8 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
       triggerType = bz_ePlayerSpawnEvent;
     } else if (triggerName == "ondie") {
       triggerType = bz_ePlayerDieEvent;
+    } else if (triggerName == "none") {
+      triggerType = bz_eNullEvent;
     } else {
       std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
       return true;
@@ -182,7 +184,8 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
   if (triggerType == bz_eNullEvent) {
     const bool fromMesh = (mesh != NULL);
     world->addWeapon(type, p, r, t, teamColor, initdelay, delay, sync, fromMesh);
-  } else {
+  }
+  else {
     WorldWeaponGlobalEventHandler* eventHandler =
       new WorldWeaponGlobalEventHandler(type, p, r, t, (TeamColor)eventTeam);
     worldEventManager.addEvent(triggerType, eventHandler);
