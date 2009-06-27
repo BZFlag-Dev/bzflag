@@ -26,7 +26,6 @@ void ServerHandler::initHandlerTable()
   handlerTable[SMSG_GROUP_LIST]         = &ServerHandler::handleGroupList;
 }
 
-
 bool ServerHandler::handleTokenValidate(Packet &packet)
 {
   char n;
@@ -41,9 +40,14 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
     response.append(callsign, strlen((char*)callsign)+1);
-    if(sTokenMgr.checkToken((char *)callsign, token))
+    if(sTokenMgr.checkToken((char *)callsign, token)) {
       response << (uint32_t)2;                          // registered, verified
-    else if(sUserStore.isRegistered((char*)callsign))
+      // send list of groups
+      std::list<std::string> groups = sUserStore.intersectGroupList((char*)callsign, m_groups);
+      response << (uint32_t)groups.size();
+      for(std::list<std::string>::iterator itr = groups.begin(); itr != groups.end(); ++itr)
+        response.append((const uint8_t*)itr->c_str(), itr->size()+1);
+    } else if(sUserStore.isRegistered((char*)callsign))
       response << (uint32_t)1;                          // registered, not verified
     else
       response << (uint32_t)0;                          // not registered

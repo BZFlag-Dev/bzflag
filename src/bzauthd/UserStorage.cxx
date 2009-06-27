@@ -146,6 +146,50 @@ bool UserStore::isRegistered(std::string callsign)
   return found;
 }
 
+std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool filter_groups)
+{
+  std::list<std::string> ret;
+
+  /* It seems here is no memberOf attribute for users in OpenLdap, but the groupOfUniqueNames
+     objectClass has a member attribute. So getting the groups is still possible but slower. */
+  /* It is also possible to retrieve all of the user's groups from the directory
+     and intersect it with the interest list on the daemon, but (unless the overhead
+     of sending more data is too much) LDAP should be able to find the groups faster if
+     it only needs to check a subset for membership (there are likely many more groups than
+     what a particular server is interested in) */
+
+  std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  std::string filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|"
+  for(std::list<std::string>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
+    filter += "(cn=" + *itr + ")";
+  filter += "))";
+  
+  char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
+  LDAPMessage *res, *msg;
+
+  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_BASE, filter.c_str(), attrs, 0, &res) ))
+    return ret;
+
+  for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
+    if(ldap_msgtype(msg) == LDAP_RES_SEARCH_RESULT) {
+      int errcode;
+      char *errmsg;
+      if(!ldap_check( ldap_parse_result(rootld, msg, &errcode, NULL, &errmsg, NULL, NULL, 0) ))
+        continue;
+      if(errmsg) {
+        if(errmsg[0]) printf("ERROR: %s\n", errmsg);
+        ldap_memfree(errmsg);
+      }
+      if(errcode == LDAP_SUCCESS) {
+
+      }
+    }
+  }
+
+  ldap_msgfree(msg);
+  return ret;
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

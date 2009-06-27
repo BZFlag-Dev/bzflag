@@ -46,6 +46,14 @@ public:
   void queueMessage(MessageType type);
 
   void update();
+
+  // helper class for reading the group from either the http reply or a packet from the daemon
+  class GroupParser
+  {
+    public:
+      virtual const char *getNext() = 0;
+  };
+
 private:
   friend class TokenConnectSocket;
 
@@ -70,7 +78,8 @@ private:
 
   virtual void finalization(char *data, unsigned int length, bool good);
   std::string verifyGroupPermissions(const std::string& groups);
-  void processAuthReply(bool registered, bool verified, const char *callsign, const char *group);
+
+  void processAuthReply(bool registered, bool verified, const char *callsign, GroupParser &parser);
 
   // messages to send, used by sendQueuedMessages
   void addMe(PingPacket pingInfo, std::string publicizedAddress,

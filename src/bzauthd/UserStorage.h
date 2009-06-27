@@ -42,6 +42,7 @@ public:
   bool authUser(UserInfo &info);
   bool isRegistered(std::string callsign);
   void update();
+  std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool filter_groups = false);
 
   size_t hashLen();
   void hash(uint8_t *message, size_t message_len, uint8_t *digest);

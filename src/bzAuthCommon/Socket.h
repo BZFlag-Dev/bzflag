@@ -154,6 +154,10 @@ public:
     return false;
   }
 
+  void read_end()
+  {
+    m_rpoz = m_size; 
+  }
 
   operator bool() const { return m_rpoz <= m_size; }
 

@@ -39,6 +39,56 @@
 
 extern SocketHandler authSockHandler;
 
+class GroupStringParser : public ListServerLink::GroupParser
+{
+public:
+  GroupStringParser(char *group) : group(group) {}
+  const char *getNext() {
+    if(group && *group) {
+      char *ret = group, *p = group;
+      while (*p && (*p != ':') && (p-group+1 < 1024))
+        p++;
+      if(!*p)
+        group = p;
+      else {
+        *p = '\0';
+        group = ++p;
+        while(*group == ':') group++;
+      }
+      return ret;
+    }
+    return false;
+  }
+private:
+  char *group;
+};
+
+class GroupPacketParser : public ListServerLink::GroupParser
+{
+public:
+  GroupPacketParser(Packet &packet) : packet(packet), error(false) {
+    if(!(packet >> count))
+      error = true;
+  }
+
+  const char *getNext()
+  {
+    if(!error && count--)
+      if(!packet.read_string((uint8_t*)group, 1024))
+        error = true;
+      else
+        return group;
+    return NULL;
+  }
+
+  bool hasError() { return error; }
+private:
+  Packet &packet;
+  uint32_t count;
+  char group[1024];
+  bool error;
+};
+
 /* The socket that is used to connect to the auth daemon */
 class TokenConnectSocket : public ConnectSocket
 {
@@ -57,7 +107,10 @@ public:
           if(!packet.read_string((uint8_t*)callsign, 1024)) { disconnect(); break; }
           uint32_t valid_state = 0;
           if(!(packet >> valid_state)) { disconnect(); break; }
-          link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, "");
+          GroupPacketParser parser(packet);
+          link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, parser);
+          while(parser.getNext()); // read groups until end in case parsing was interrupted
+          if(parser.hasError()) { disconnect(); break; }
         }
         link->token_phase = 2;
         disconnect();
@@ -229,7 +282,8 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	    while (*group && (*group == ':')) *group++ = 0;
 	  }
 	}
-        processAuthReply(registered, verified, callsign, group);
+        GroupStringParser parser(group);
+        processAuthReply(registered, verified, callsign, parser);
       }
 
       // next reply
@@ -247,61 +301,55 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
   }
 }
 
-void ListServerLink::processAuthReply(bool registered, bool verified, const char *callsign, const char *group)
+/* returns false only if the packet structure is incorrect */
+void  ListServerLink::processAuthReply(bool registered, bool verified, const char *callsign, GroupParser &parser)
 {
   if(!publicizeServer) return;
 
-	GameKeeper::Player *playerData = NULL;
-	int playerIndex;
-	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData)
-	    continue;
-	  if (playerData->_LSAState != GameKeeper::Player::checking)
-	    continue;
-	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
-					 callsign))
-	    break;
-	}
-	logDebugMessage(3,"[%d]\n", playerIndex);
+  GameKeeper::Player *playerData = NULL;
+  int playerIndex;
+  for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
+    playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (!playerData)
+      continue;
+    if (playerData->_LSAState != GameKeeper::Player::checking)
+      continue;
+    if (!TextUtils::compare_nocase(playerData->player.getCallSign(), callsign))
+      break;
+  }
+  logDebugMessage(3,"[%d]\n", playerIndex);
 
-	if (playerIndex < curMaxPlayers) {
-	  if (registered) {
+  if (playerIndex < curMaxPlayers) {
+    if (registered) {
+      bz_PlayerAuthEventData_V1 commandData;
+      commandData.playerID = playerIndex;
+      commandData.globalAuth = verified;
+      worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
+      if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
+      if (verified) {
+        playerData->_LSAState = GameKeeper::Player::verified;
+        playerData->accessInfo.setPermissionRights();
+        const char *group;
+        while(group = parser.getNext()) 
+          playerData->accessInfo.addGroup(group);
 
-	    bz_PlayerAuthEventData_V1 commandData;
-	    commandData.playerID = playerIndex;
-	    commandData.globalAuth = verified;
-	    worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
-
-	    if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
-	    if (verified) {
-	      playerData->_LSAState = GameKeeper::Player::verified;
-	      playerData->accessInfo.setPermissionRights();
-	      while (group && *group) {
-		char nextgroup[1024], *p = nextgroup;
-		while (*group && (*group != ':') && (p-nextgroup+1 < 1024)) { 
-		  *p = *group;
-		  p++, group++;
-		}
-		*p = '\0';
-		playerData->accessInfo.addGroup(nextgroup);
-	      }
-	      playerData->authentication.global(true);
-	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	    } else {
-	      playerData->_LSAState = GameKeeper::Player::failed;
-	      sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
-	    }
-	  } else {
-	    playerData->_LSAState = GameKeeper::Player::notRequired;
-	    if (!playerData->player.isBot()) {
-	      sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
-	      sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
-	    }
-	  }
-	  playerData->player.clearToken();
-	}
+        playerData->authentication.global(true);
+        sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+      } else {
+        playerData->_LSAState = GameKeeper::Player::failed;
+        sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
       }
+    } else {
+      playerData->_LSAState = GameKeeper::Player::notRequired;
+      if (!playerData->player.isBot()) {
+        sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
+        sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
+      }
+    }
+    playerData->player.clearToken();
+  }
+  return;
+}
 
 void ListServerLink::finalizeLSA()
 {
