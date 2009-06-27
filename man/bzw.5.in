@@ -1157,9 +1157,11 @@ Creates a world weapon, or a weapon fired automatically by the world. The weapon
 Timed weapons should use the initdelay and delay fields.
 Event driven weapons need to use the trigger option to define what the trigger event is.
 Valid trigger events are;
-OnCap, for flag capture events.
-OnSpawn, for player spawn events.
-OnDie, for player death events.
+  OnCap,   for flag capture events.
+  OnSpawn, for player spawn events.
+  OnDie,   for player death events.
+  None,    no trigger is used.
+.br
 If the weapon is to be triggered only for a specific team then the eventteam option should be used with a team number (1 to 4).
 A eventteam value of -1 will trigger this weapon for any team. -1 is the default eventteam value.
 
