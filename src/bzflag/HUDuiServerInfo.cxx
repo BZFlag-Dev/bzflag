@@ -160,6 +160,7 @@ void HUDuiServerInfo::resize()
   }
 }
 
+
 void HUDuiServerInfo::fillReadouts()
 {
   ServerItem* itemPointer = ServerList::instance().lookupServer(serverKey);
@@ -173,6 +174,8 @@ void HUDuiServerInfo::fillReadouts()
   // update server readouts
   char buf[60];
   std::vector<HUDuiLabel*>& listHUD = readouts;
+
+  const std::string disabledColor = ANSI_STR_DIM ANSI_STR_FG_BLACK;
 
   //const uint8_t maxes [] = { ping.maxPlayers, ping.rogueMax, ping.redMax, ping.greenMax,
 	//		     ping.blueMax, ping.purpleMax, ping.observerMax };
@@ -258,12 +261,12 @@ void HUDuiServerInfo::fillReadouts()
   if (ping.gameOptions & SuperFlagGameStyle)
     (listHUD[9])->setString("Super Flags");
   else
-    (listHUD[9])->setString("");
+    (listHUD[9])->setString(disabledColor + "Super Flags");
 
   if (ping.gameOptions & AntidoteGameStyle)
     (listHUD[10])->setString("Antidote Flags");
   else
-    (listHUD[10])->setString("");
+    (listHUD[10])->setString(disabledColor + "Antidote Flags");
 
   if ((ping.gameOptions & ShakableGameStyle) && ping.shakeTimeout != 0) {
     std::vector<std::string> dropArgs;
@@ -276,7 +279,7 @@ void HUDuiServerInfo::fillReadouts()
       (listHUD[11])->setString("{1} secs To Drop Bad Flag",
 			       &dropArgs);
   } else {
-    (listHUD[11])->setString("");
+    (listHUD[11])->setString(disabledColor + "0.0 secs to Drop Bad Flag");
   }
 
   if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0) {
@@ -291,23 +294,23 @@ void HUDuiServerInfo::fillReadouts()
       (listHUD[12])->setString("{1} Wins Drops Bad Flag",
 			       &dropArgs);
   } else {
-    (listHUD[12])->setString("");
+    (listHUD[12])->setString(disabledColor + "0 Wins Drops Bad Flag");
   }
 
   if (ping.gameOptions & JumpingGameStyle)
     (listHUD[13])->setString("Jumping");
   else
-    (listHUD[13])->setString("");
+    (listHUD[13])->setString(disabledColor + "Jumping");
 
   if (ping.gameOptions & RicochetGameStyle)
     (listHUD[14])->setString("Ricochet");
   else
-    (listHUD[14])->setString("");
+    (listHUD[14])->setString(disabledColor + "Ricochet");
 
   if (ping.gameOptions & HandicapGameStyle)
     (listHUD[15])->setString("Handicap");
   else
-    (listHUD[15])->setString("");
+    (listHUD[15])->setString(disabledColor + "Handicap");
 
   if (ping.maxTime != 0) {
     std::vector<std::string> pingArgs;
@@ -320,7 +323,7 @@ void HUDuiServerInfo::fillReadouts()
     pingArgs.push_back(buf);
     (listHUD[16])->setString("Time limit: {1}", &pingArgs);
   } else {
-    (listHUD[16])->setString("");
+    (listHUD[16])->setString(disabledColor + "Time limit");
   }
 
   if (ping.maxTeamScore != 0) {
@@ -329,7 +332,7 @@ void HUDuiServerInfo::fillReadouts()
     scoreArgs.push_back(buf);
     (listHUD[17])->setString("Max team score: {1}", &scoreArgs);
   } else {
-    (listHUD[17])->setString("");
+    (listHUD[17])->setString(disabledColor + "Max team score");
   }
 
   if (ping.maxPlayerScore != 0) {
@@ -338,7 +341,7 @@ void HUDuiServerInfo::fillReadouts()
     scoreArgs.push_back(buf);
     (listHUD[18])->setString("Max player score: {1}", &scoreArgs);
   } else {
-    (listHUD[18])->setString("");
+    (listHUD[18])->setString(disabledColor + "Max player score");
   }
 
   if (ping.pingTime > 0) {
@@ -350,17 +353,18 @@ void HUDuiServerInfo::fillReadouts()
     pingArgs.push_back(buf);
     ((HUDuiLabel*)listHUD[19])->setString("Ping: {1}", &pingArgs);
   } else {
-    ((HUDuiLabel*)listHUD[19])->setString("");
+    ((HUDuiLabel*)listHUD[19])->setString(disabledColor + "Ping");
   }
 
   if (item.cached) {
     (listHUD[20])->setString("Cached");
     (listHUD[21])->setString(item.getAgeString());
   } else {
-    (listHUD[20])->setString("");
+    (listHUD[20])->setString(disabledColor + "Cached");
     (listHUD[21])->setString("");
   }
 }
+
 
 void HUDuiServerInfo::doRender()
 {
