@@ -152,6 +152,22 @@ bool MeshObstacle::addWeapon(const std::vector<std::string>& lines)
 }
 
 
+static bool hasZoneFixedFlag(const MeshFace::SpecialData* sd)
+{
+  if ((sd == NULL) || sd->zoneParams.empty()) {
+    return false;
+  }
+  for (size_t i = 0; i < sd->zoneParams.size(); i++) {
+    const std::string& line = sd->zoneParams[i];
+    if ((strncasecmp(line.c_str(), "zonezoneflag",  12) == 0) ||
+        (strncasecmp(line.c_str(), "zonefixedflag", 13) == 0)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 			   const std::vector<int>& _normals,
 			   const std::vector<int>& _texcoords,
@@ -237,7 +253,15 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     const unsigned int triSize = triIndices.size();
     if (triSize <= 0) {
       return false;
-    } else {
+    }
+    else {
+      // 
+      logDebugMessage(1,
+        "WARNING: face triangulated into %u new faces\n", triSize);
+      // warn if a zone with fixedFlag was split
+      if (hasZoneFixedFlag(sd)) {
+        logDebugMessage(0, "WARNING: face zone with fixedFlags was split\n");
+      }
       // prepare array for extra faces
       const int extra = (int)(triIndices.size() - 1);
       MeshFace** tmp = new MeshFace*[faceSize + extra];
