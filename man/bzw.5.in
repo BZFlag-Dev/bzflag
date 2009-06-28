@@ -493,19 +493,31 @@ properties:
 .br
 \fB    phydrv\fR example_phydrv  # assign a physics driver
 .br
+
+.br
     # special parameters
 .br
 \fB    baseTeam\fR 1  # the base team number
 .br
+
+.br
     # zone parameters
 .br
-\fB    zoneTeam\fR 1  # equivalent to the zone 'team' parameter
+\fB    zoneTeam\fR 1          # equivalent to the zone 'team' parameter
 .br
 \fB    zoneSafety\fR 0 1 2 3  # equivalent to the zone 'safety' parameter
 .br
-\fB    zoneFlag\fR SW  # equivalent to the zone 'flag' parameter
+\fB    zoneFlag\fR SW         # equivalent to the zone 'flag' parameter
 .br
-\fB    zoneFixedFlag\fR 1 GM # equivalent to the zone 'fixedFlag' parameter
+\fB    zoneFixedFlag\fR 1 GM  # equivalent to the zone 'fixedFlag' parameter
+.br
+\fB    zoneHeight\fR 1.0 GM   # specify the zone's height (for weight factor)
+.br
+\fB    zoneWeight\fR 0.0 GM   # directly the zone's weight
+.br
+\fB    zoneCenter\fR          # spawns always occur in the zone's center
+.br
+
 .br
     # link parameters
 .br
@@ -525,11 +537,11 @@ properties:
 .br
 \fB    linkSrcCenter\fR 0  # vertex index
 .br
-\fB    linkSrcSdir\fR   0  # normal index
+\fB    linkSrcSdir\fR   0  # normal index  ("Side"  normal)
 .br
-\fB    linkSrcTdir\fR   0  # normal index
+\fB    linkSrcTdir\fR   0  # normal index  ("Top"   normal)
 .br
-\fB    linkSrcPdir\fR   0  # normal index
+\fB    linkSrcPdir\fR   0  # normal index  ("Plane" normal)
 .br
 \fB    linkSrcSscale\fR 1.0
 .br
@@ -539,11 +551,11 @@ properties:
 .br
 \fB    linkDstCenter\fR 0  # vertex index
 .br
-\fB    linkDstSdir\fR   0  # normal index
+\fB    linkDstSdir\fR   0  # normal index  ("Side"  normal)
 .br
-\fB    linkDstTdir\fR   0  # normal index
+\fB    linkDstTdir\fR   0  # normal index  ("Top"   normal)
 .br
-\fB    linkDstPdir\fR   0  # normal index
+\fB    linkDstPdir\fR   0  # normal index  ("Plane" normal)
 .br
 \fB    linkDstSscale 1.0
 .br
@@ -553,17 +565,33 @@ properties:
 .br
 \fB  endface\fR  # end the face
 .br
+
+.br
   #
 .br
   #  Mesh weapons
 .br
+  #    You can attach weapon's to mesh geometry. All of the normal
+.br
+  #    weapon parameters can be used, but the position, rotation,
+.br
+  #    and tilt parameters will be ignored (posVertex and dirNormal
+.br
+  #    are used instead).
+.br
   #
 .br
-\fB  weapon\fR
+\fB  weapon\fR  (\fBrepeatable\fR)
 .br
-\fB    <weapon lines>\fR
+\fB    <weapon parameters: type, color, initdelay, delay, etc...>\fR
+.br
+\fB    posVertex\fR 0  # vertex index for the weapon's position
+.br
+\fB    dirNormal\fR 0  # normal index for the weapon's direction
 .br
 \fB  endweapon\fR # end the weapon
+.br
+
 .br
   #
 .br
@@ -1217,6 +1245,8 @@ Specifies a certain range in the world, and what attributes that range has.
 .br
 # attach a flag to this zone (always spawn in this zone)
 .br
+#   (the 'fixedFlag' keyword is a synonym)
+.br
 \fB  zoneflag\fR GM 3  # type, count (type can be a team flag, ex: R*)
 .br
 \fBend\fR
@@ -1868,6 +1898,20 @@ face :=
 .br
 	| "linkDstPscale" <float>
 .br
+	| "zoneTeam" <integer>{1..*}
+.br
+	| "zoneSafety" <integer>{1..*}
+.br
+	| "zoneFlag" ("good" | "bad" | <flag_short_name>){1..*}
+.br
+	| "zoneFixedFlag" <"good" | "bad" | flag_short_name> <integer>?
+.br
+	| "zoneHeight" <float>
+.br
+	| "zoneWeight" <float>
+.br
+	| "zoneCenter"
+.br
 	| material
 .br
 .TP
@@ -2063,11 +2107,17 @@ zone :=
 .br
 	  "team" <integer>{1..*}
 .br
-	  "flag" ("good" | "bad" | <flag_short_name>){1..*}
-.br
 	| "safety" <integer>{1..*}
 .br
-	| "zoneflag" <flag_short_name> <integer>?
+	| "flag" ("good" | "bad" | <flag_short_name>){1..*}
+.br
+	| ("fixedFlag" | "zoneflag") <"good" | "bad" | flag_short_name> <integer>?
+.br
+	| "height" <float>
+.br
+	| "weight" <float>
+.br
+	| "center"
 .br
 	| location
 .br
