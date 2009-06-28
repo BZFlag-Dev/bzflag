@@ -37,11 +37,12 @@ public:
 };
 
 /* static entry point for threading */
+/* FIXME -- unused
 static void starter(void *data) {
 	StartData	*sd = (StartData *)data;
 	sd->frontend.start(sd->filename);
 }
-
+*/
 
 bool Frontend::run(std::string filename, const char *host, int port)
 {
