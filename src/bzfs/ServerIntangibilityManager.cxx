@@ -17,24 +17,30 @@
 #include "bzfsMessages.h"
 
 template <>
-ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance = (ServerIntangibilityManager*)0;
+ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance =
+  (ServerIntangibilityManager*) NULL;
+
 
 void ServerIntangibilityManager::setWorldObjectTangibility(uint32_t objectGUID,
                                                            unsigned char tangible)
 {
   tangibilityMap[objectGUID] = tangible;
-  sendMsgTangibilityUpdate(objectGUID,tangible);
+  sendMsgTangibilityUpdate(objectGUID, tangible);
 }
+
 
 void ServerIntangibilityManager::sendNewPlayerWorldTangibility(int playerID)
 {
-  TangibilityMap::iterator itr = tangibilityMap.begin();
-  while (itr != tangibilityMap.end()) {
-    // send out the tangibility update message
-    sendMsgTangibilityUpdate(itr->first, itr->second, playerID);
-    itr++;
+  if (false) {
+    // FIXME -- disabled sendNewPlayerWorldTangibility until meshFaces are fixed
+    TangibilityMap::iterator itr;
+    for (itr = tangibilityMap.begin(); itr != tangibilityMap.end(); ++itr) {
+      // send out the tangibility update message
+      sendMsgTangibilityUpdate(itr->first, itr->second, playerID);
+    }
   }
 }
+
 
 unsigned char ServerIntangibilityManager::getWorldObjectTangibility(uint32_t objectGUID)
 {
@@ -50,6 +56,7 @@ unsigned char ServerIntangibilityManager::getWorldObjectTangibility(uint32_t obj
 
   return obs->isDriveThrough() ? _INVALID_TANGIBILITY : 0;
 }
+
 
 unsigned char ServerIntangibilityManager::getWorldObjectTangibility(const Obstacle *obs)
 {

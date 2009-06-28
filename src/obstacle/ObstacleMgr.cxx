@@ -1219,6 +1219,7 @@ void GroupDefinitionMgr::clear()
     delete groupDefs[i];
   }
   groupDefs.clear();
+  meshFaces.clear();
   return;
 }
 
@@ -1245,8 +1246,8 @@ static int compareHeights(const void* a, const void* b)
   if (zMaxA > zMaxB) { return -1; }
   if (zMaxA < zMaxB) { return +1; }
 
-  const int listIDA = obsA->getListID();
-  const int listIDB = obsB->getListID();
+  const uint32_t listIDA = obsA->getListID();
+  const uint32_t listIDB = obsB->getListID();
   if (listIDA < listIDB) { return -1; }
   if (listIDA > listIDB) { return +1; }
 
@@ -1266,18 +1267,28 @@ void GroupDefinitionMgr::makeWorld()
 
   world.deleteInvalidObstacles();
 
+  // sort from top to bottom for enhanced radar
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    world.sort(compareHeights);
+  }
+
   // assign the listIDs
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& obsList = world.getList(type);
-    for (unsigned int i = 0; i < obsList.size(); i++) {
+    for (uint32_t i = 0; i < obsList.size(); i++) {
       Obstacle* obs = obsList[i];
       obs->setListID(i);
     }
   }
-
-  // sort from top to bottom for enhanced radar
-  for (int type = 0; type < ObstacleTypeCount; type++) {
-    world.sort(compareHeights);
+  // also assign the face listIDs
+  const ObstacleList& meshes = getMeshes();
+  for (unsigned int m = 0; m < meshes.size(); m++) {
+    const MeshObstacle* mesh = (const MeshObstacle*)meshes[m];
+    for (int f = 0; f < mesh->getFaceCount(); f++) {
+      MeshFace* face = const_cast<MeshFace*>(mesh->getFace(f));
+      face->setListID(meshFaces.size());
+      meshFaces.push_back(face);
+    }
   }
 
   // free unused memory at the end of the arrays

@@ -445,10 +445,10 @@ void MeshObstacle::finalize()
 {
   // set the face IDs
   for (int f = 0; f < faceCount; f++) {
-    faces[f]->setID(f);
+    faces[f]->setFaceID(f);
   }
 
-  // cross-link the face edges - FIXME
+  // setup the face edges
   makeEdges();
 
   // set the extents

@@ -77,6 +77,7 @@ int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
       nameMap[name] = (int)(drivers.size());
     }
   }
+  driver->id = (int)drivers.size();
   drivers.push_back(driver);
   return ((int)drivers.size() - 1);
 }
@@ -162,14 +163,12 @@ void PhysicsDriverManager::print(std::ostream& out,
 
 PhysicsDriver::PhysicsDriver()
 : name("")
-, linear(0.0f, 0.0f, 0.0f)
+, linearVel(0.0f, 0.0f, 0.0f)
 , angularVel(0.0f)
 , angularPos(0.0f, 0.0f)
 , radialVel(0.0f)
 , radialPos(0.0f, 0.0f)
-, slide(false)
 , slideTime(0.0f)
-, death(false)
 , deathMsg("")
 {
   // do nothing
@@ -181,17 +180,33 @@ PhysicsDriver::~PhysicsDriver()
 }
 
 
+bool PhysicsDriver::operator<(const PhysicsDriver& pd) const
+{
+  if (linearVel < pd.linearVel) { return true;  }
+  if (pd.linearVel < linearVel) { return false; }
+
+  if (angularVel < pd.angularVel) { return true;  }
+  if (pd.angularVel < angularVel) { return false; }
+  if (angularPos < pd.angularPos) { return true;  }
+  if (pd.angularPos < angularPos) { return false; }
+
+  if (radialVel < pd.radialVel) { return true;  }
+  if (pd.radialVel < radialVel) { return false; }
+  if (radialPos < pd.radialPos) { return true;  }
+  if (pd.radialPos < radialPos) { return false; }
+
+  if (slideTime < pd.slideTime) { return true;  }
+  if (pd.slideTime < slideTime) { return false; }
+
+  if (deathMsg < pd.deathMsg) { return true;  }
+  if (pd.deathMsg < deathMsg) { return false; }
+
+  return false;
+}
+
+
 void PhysicsDriver::finalize()
 {
-  if (slideTime > 0.0f) {
-    slide = true;
-  } else {
-    slide = false;
-    slideTime = 0.0f;
-  }
-  if (deathMsg.size() > 0) {
-    death = true;
-  }
   return;
 }
 
@@ -211,15 +226,9 @@ bool PhysicsDriver::setName(const std::string& drvname)
 }
 
 
-const std::string& PhysicsDriver::getName() const
-{
-  return name;
-}
-
-
 void PhysicsDriver::setLinear(const fvec3& vel)
 {
-  linear = vel;
+  linearVel = vel;
   return;
 }
 
@@ -278,7 +287,7 @@ void * PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
-  buf = nboPackFVec3(buf, linear);
+  buf = nboPackFVec3(buf, linearVel);
   buf = nboPackFloat(buf, angularVel);
   buf = nboPackFVec2(buf, angularPos);
   buf = nboPackFloat(buf, radialVel);
@@ -295,7 +304,7 @@ void * PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 
-  buf = nboUnpackFVec3(buf, linear);
+  buf = nboUnpackFVec3(buf, linearVel);
   buf = nboUnpackFloat(buf, angularVel);
   buf = nboUnpackFVec2(buf, angularPos);
   buf = nboUnpackFloat(buf, radialVel);
@@ -335,7 +344,7 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
     out << indent << "  name " << name << std::endl;
   }
 
-  const fvec3& v = linear;
+  const fvec3& v = linearVel;
   if ((v.x != 0.0f) || (v.y != 0.0f) || (v.z != 0.0f)) {
     out << indent << "  linear "
 	<< v.x << " " << v.y << " " << v.z << std::endl;
@@ -353,11 +362,11 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
 	<< radialVel << " " << rp.x << " " << rp.y << std::endl;
   }
 
-  if (slide) {
+  if (slideTime > 0.0f) {
     out << indent << "  slide " << slideTime << std::endl;
   }
 
-  if (death) {
+  if (!deathMsg.empty()) {
     out << indent << "  death " << deathMsg << std::endl;
   }
 

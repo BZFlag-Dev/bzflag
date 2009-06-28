@@ -62,21 +62,44 @@ static void getIntList(std::istream& input, std::vector<int>& list)
 }
 
 
-static void getStringSet(std::istream& input, std::set<std::string>& list)
+static void getStringSet(std::istream& input, std::set<std::string>& stringSet)
 {
   std::string args;
   std::string value;
 
-  list.clear();
+  stringSet.clear();
   std::getline(input, args);
   std::istringstream parms(args);
   input.putback('\n');
 
   while (parms >> value) {
-    list.insert(value);
+    stringSet.insert(value);
   }
 
   return;
+}
+
+
+static void convertNoFlag(std::set<std::string>& flagSet)
+{
+  std::vector<std::string> removals;
+  std::set<std::string>::iterator it;
+  for (it = flagSet.begin(); it != flagSet.end(); ++it) {
+    if (TextUtils::tolower(*it) == "noflag") {
+      flagSet.insert("");
+      removals.push_back(*it);
+    }
+  }
+  for (size_t i = 0; i < removals.size(); i++) {
+    flagSet.erase(removals[i]);
+  }
+}
+
+
+static void getBlockFlags(std::istream& input, std::set<std::string>& blocked)
+{
+  getStringSet(input, blocked);
+  convertNoFlag(blocked);
 }
 
 
@@ -104,6 +127,8 @@ static void getAllowFlags(std::istream& input, std::set<std::string>& blocked)
       blocked.insert(abbv);
     }
   }
+
+  convertNoFlag(blocked);
 }
 
 
@@ -469,10 +494,10 @@ bool CustomLink::read(const char *cmd, std::istream& input)
   //  flag blocks
   //
   else if (strcasecmp(cmd, "shotBlockFlags") == 0) {
-    getStringSet(input, linkDef.physics.shotBlockFlags);
+    getBlockFlags(input, linkDef.physics.shotBlockFlags);
   }
   else if (strcasecmp(cmd, "tankBlockFlags") == 0) {
-    getStringSet(input, linkDef.physics.tankBlockFlags);
+    getBlockFlags(input, linkDef.physics.tankBlockFlags);
   }
   else if (strcasecmp(cmd, "shotAllowFlags") == 0) {
     getAllowFlags(input, linkDef.physics.shotBlockFlags);

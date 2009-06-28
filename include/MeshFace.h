@@ -217,7 +217,7 @@ class MeshFace : public Obstacle {
 
     // query functions
     inline MeshObstacle* getMesh() const { return mesh; }
-    inline int  getID()            const { return faceID; }
+    inline int  getFaceID()        const { return faceID; }
     inline int  getVertexCount()   const { return vertexCount;  }
     inline bool useNormals()       const { return normals   != NULL; }
     inline bool useTexcoords()     const { return texcoords != NULL; }
@@ -326,7 +326,7 @@ class MeshFace : public Obstacle {
     void finalize();
     void setupSpecialData();
     void setupSpecialGeometry(LinkGeometry& geo, bool isSrc);
-    inline void setID(int id) { faceID = id; }
+    inline void setFaceID(int id) { faceID = id; }
 
   private:
     class MeshObstacle* mesh;

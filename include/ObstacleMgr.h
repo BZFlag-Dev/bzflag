@@ -234,6 +234,7 @@ class GroupDefinitionMgr {
     inline const ObstacleList& getArcs()    const { return world.getList(arcType);    }
     inline const ObstacleList& getCones()   const { return world.getList(coneType);   }
     inline const ObstacleList& getSpheres() const { return world.getList(sphereType); }
+    inline const ObstacleList& getFaces()   const { return meshFaces; }
     inline const std::vector<WorldText*>& getTexts() const { return world.getTexts(); }
 
     int   packSize() const;
@@ -248,14 +249,15 @@ class GroupDefinitionMgr {
 
     std::vector<GroupDefinition*> groupDefs;
 
+    ObstacleList meshFaces;
+
     std::set<void*> copies;
 };
 
 
-inline Obstacle* GroupDefinitionMgr::getObstacleFromID(unsigned int id)
+inline Obstacle* GroupDefinitionMgr::getObstacleFromID(uint32_t guid)
 {
-  const unsigned short type   = (id >> 16);
-  const unsigned short listID = (id & 0xffff);
+  const ObstacleType type = Obstacle::getTypeIDFromGUID(guid);
 
   const ObstacleList* oList;
   switch (type) {
@@ -268,11 +270,13 @@ inline Obstacle* GroupDefinitionMgr::getObstacleFromID(unsigned int id)
     case arcType:    { oList = &getArcs();    break; }
     case coneType:   { oList = &getCones();   break; }
     case sphereType: { oList = &getSpheres(); break; }
+    case faceType:   { oList = &getFaces();   break; }
     default: {
       return NULL;
     }
   }
 
+  const uint32_t listID = Obstacle::getListIDFromGUID(guid);
   if (listID >= oList->size()) {
     return NULL;
   }

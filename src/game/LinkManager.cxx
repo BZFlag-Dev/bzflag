@@ -52,8 +52,8 @@ bool LinkManager::DstData::operator<(const DstData& dd) const
   if (myMeshID < ddMeshID) { return true;  }
   if (ddMeshID < myMeshID) { return false; }
 
-  const int myFaceID = face->getID();
-  const int ddFaceID = dd.face->getID();
+  const int myFaceID = face->getFaceID();
+  const int ddFaceID = dd.face->getFaceID();
   if (myFaceID < ddFaceID) { return true;  }
   if (ddFaceID < myFaceID) { return false; }
 

@@ -3231,73 +3231,50 @@ bz_eSolidWorldObjectType solidTypeFromObstacleType ( int type )
 
 unsigned int buildObjectIDFromObstacle ( const Obstacle &obstacle )
 {
-  return (obstacle.getTypeID() << 16) | obstacle.getListID();
+  return obstacle.getGUID();
 }
 
-const ObstacleList* obstacleListFromObstacleType ( int type )
-{
-  switch(type)
-  {
-  case wallType:
-    return &OBSTACLEMGR.getWalls();
-  case boxType:
-    return &OBSTACLEMGR.getBoxes();
-  case pyrType:
-    return &OBSTACLEMGR.getPyrs();
-  case baseType:
-    return &OBSTACLEMGR.getBases();
-  case meshType:
-    return &OBSTACLEMGR.getMeshes();
-  case arcType:
-    return &OBSTACLEMGR.getArcs();
-  case coneType:
-    return &OBSTACLEMGR.getCones();
-  case sphereType:
-    return &OBSTACLEMGR.getSpheres();
-  }
-  return NULL;
-}
 
-unsigned char makeTangibilityMask ( const bz_SolidObjectPassableAtributes &atribs )
+unsigned char makeTangibilityMask ( const bz_SolidObjectPassableAtributes &attribs )
 {
-  if (atribs.allFalse())
+  if (attribs.allFalse())
     return 0;
 
-  if ( atribs.allTrue())
+  if ( attribs.allTrue())
     return 1;
 
   unsigned char m = 0;
-  if ( atribs.red )
+  if ( attribs.red )
     m |= _RED_PASSABLE;
-  if ( atribs.green )
+  if ( attribs.green )
     m |= _GREEN_PASSABLE;
-  if ( atribs.blue )
+  if ( attribs.blue )
     m |= _BLUE_PASSABLE;
-  if ( atribs.purple )
+  if ( attribs.purple )
     m |= _PURPLE_PASSABLE;
-  if ( atribs.rogue )
+  if ( attribs.rogue )
     m |= _ROGUE_PASSABLE;
 
   return m;
 }
 
-void readTangibilityMask ( unsigned char m, bz_SolidObjectPassableAtributes &atribs )
+void readTangibilityMask ( unsigned char m, bz_SolidObjectPassableAtributes &attribs )
 {
-  atribs.setAll(false);
+  attribs.setAll(false);
   if (m == 0)
     return;
 
   if ( m == 1)
   {
-    atribs.setAll(true);
+    attribs.setAll(true);
     return;
   }
 
-  atribs.red = ((m & _RED_PASSABLE) != 0);
-  atribs.green = ((m & _GREEN_PASSABLE) != 0);
-  atribs.blue = ((m & _BLUE_PASSABLE) != 0);
-  atribs.purple = ((m & _PURPLE_PASSABLE) != 0);
-  atribs.rogue = ((m & _ROGUE_PASSABLE) != 0);
+  attribs.red    = ((m & _RED_PASSABLE)    != 0);
+  attribs.green  = ((m & _GREEN_PASSABLE)  != 0);
+  attribs.blue   = ((m & _BLUE_PASSABLE)   != 0);
+  attribs.purple = ((m & _PURPLE_PASSABLE) != 0);
+  attribs.rogue  = ((m & _ROGUE_PASSABLE)  != 0);
 }
 
 void setSolidObjectFromObstacle ( bz_APISolidWorldObject_V1 &object, const Obstacle &obstacle )
@@ -3391,74 +3368,50 @@ bz_CTFBaseWorldObject_V1::~bz_CTFBaseWorldObject_V1()
 {
 }
 
-unsigned int findFirstNameInList ( const ObstacleList &list, unsigned short baseType, const std::string &name )
+const Obstacle* findFirstNameInList ( const ObstacleList &list, const std::string &name )
 {
-  unsigned short p[2];
-
-  p[0] = baseType;
   for ( unsigned int i = 0; i < list.size(); i++ )
   {
-    p[1] = (unsigned short)i;
-
-    Obstacle *obstacle = list[i];
-    if (obstacle->getName() == name )
-      return *force_cast<unsigned int *>(&p[0]);
+    const Obstacle* obstacle = list[i];
+    if (obstacle->getName() == name) {
+      return obstacle;
+    }
   }
-  return 0;
+  return NULL;
 }
 
 BZF_API unsigned int bz_findWorldObject ( const char *name )
 {
   if (!name)
-    return 0;
+    return -1;
 
   std::string nameStr = name;
-  unsigned int id = findFirstNameInList(OBSTACLEMGR.getWalls(),eWallObject,nameStr);
-  if (id)
-    return id;
+  for (int type = wallType; type < ObstacleTypeCount; type++) {
+    const ObstacleList& oList = OBSTACLEMGR.getWorld().getList(type);
+    const Obstacle* obs = findFirstNameInList(oList, nameStr);
+    if (obs != NULL) {
+      return obs->getGUID();
+    }
+  }
 
-  id = findFirstNameInList(OBSTACLEMGR.getBoxes(),eBoxObject,nameStr);
-  if (id)
-    return id;
+  const Obstacle* obs = findFirstNameInList(OBSTACLEMGR.getFaces(), nameStr);
+  if (obs != NULL) {
+    return obs->getGUID();
+  }
 
-  id = findFirstNameInList(OBSTACLEMGR.getPyrs(),ePyramidObject,nameStr);
-  if (id)
-    return id;
-
-  id = findFirstNameInList(OBSTACLEMGR.getBases(),eBaseObject,nameStr);
-  if (id)
-    return id;
-
-  id = findFirstNameInList(OBSTACLEMGR.getMeshes(),eMeshObject,nameStr);
-  if (id)
-    return id;
-
-  id = findFirstNameInList(OBSTACLEMGR.getArcs(),eArcObject,nameStr);
-  if (id)
-    return id;
-
-  id = findFirstNameInList(OBSTACLEMGR.getSpheres(),eSphereObject,nameStr);
-  if (id)
-    return id;
-
-  return 0;
+  return -1;
 }
 
 BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
 {
-  if (id == 0)
+  const Obstacle* obs = OBSTACLEMGR.getObstacleFromID(id);
+  if (obs == NULL) {
     return NULL;
-
-  unsigned short p[2];
-  memcpy(p,&id,sizeof(int));
-  const ObstacleList  *list = obstacleListFromObstacleType(p[0]);
-  if ( p[1] >= list->size())
-    return NULL;
+  }
 
   bz_APISolidWorldObject_V1 *solid = new bz_APISolidWorldObject_V1;
   solid->id = id;
-  Obstacle *obj = (*list)[p[1]];
-  setSolidObjectFromObstacle(*solid,*obj);
+  setSolidObjectFromObstacle(*solid, *obs);
 
   return solid;
 }
@@ -3543,21 +3496,21 @@ BZF_API const char*  bz_getPhyDrvName(unsigned int phyDrvID)
 }
 
 
-BZF_API bool bz_SetWorldObjectTangibility ( int id, const bz_SolidObjectPassableAtributes &atribs )
+BZF_API bool bz_SetWorldObjectTangibility ( int id, const bz_SolidObjectPassableAtributes &attribs )
 {
-  ServerIntangibilityManager::instance().setWorldObjectTangibility(id,makeTangibilityMask(atribs));
+  ServerIntangibilityManager::instance().setWorldObjectTangibility(id,makeTangibilityMask(attribs));
   return true;
 }
 
-BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtributes &atribs )
+BZF_API bool bz_GetWorldObjectTangibility ( int id, bz_SolidObjectPassableAtributes &attribs )
 {
-  atribs.setAll(false);
+  attribs.setAll(false);
 
   unsigned char val =  ServerIntangibilityManager::instance().getWorldObjectTangibility(id);
   if ( val == _INVALID_TANGIBILITY )
     return false;
 
-  readTangibilityMask(val,atribs);
+  readTangibilityMask(val,attribs);
 
   return true;
 }

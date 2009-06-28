@@ -26,6 +26,9 @@
 
 
 class PhysicsDriver {
+
+  friend class PhysicsDriverManager;
+
   public:
     PhysicsDriver();
     ~PhysicsDriver();
@@ -40,16 +43,19 @@ class PhysicsDriver {
     void finalize();
     void update(float time);
 
-    const std::string& getName() const;
-    const fvec3& getLinearVel() const;
-    float getAngularVel() const;
-    const fvec2& getAngularPos() const;
-    float getRadialVel() const;
-    const fvec2& getRadialPos() const;
-    bool getIsSlide() const;
-    float getSlideTime() const;
-    bool getIsDeath() const;
-    const std::string& getDeathMsg() const;
+    inline const std::string& getName() const { return name; }
+    inline int                getID()   const { return id; }
+    inline const fvec3& getLinearVel()  const { return linearVel; }
+    inline float        getAngularVel() const { return angularVel; }
+    inline const fvec2& getAngularPos() const { return angularPos; }
+    inline float        getRadialVel()  const { return radialVel; }
+    inline const fvec2& getRadialPos()  const { return radialPos; }
+    inline bool         getIsSlide()    const { return slideTime > 0.0f; }
+    inline float        getSlideTime()  const { return slideTime; }
+    inline bool         getIsDeath()    const { return !deathMsg.empty(); }
+    inline const std::string& getDeathMsg() const { return deathMsg; }
+
+    bool operator<(const PhysicsDriver& pd) const;    
 
     int packSize() const;
     void* pack(void*) const;
@@ -59,53 +65,15 @@ class PhysicsDriver {
 
   private:
     std::string name;
-    fvec3 linear;
+    int id;
+    fvec3 linearVel;
     float angularVel;
     fvec2 angularPos;
     float radialVel;
     fvec2 radialPos;
-    bool  slide;
     float slideTime;
-    bool  death;
     std::string deathMsg;
 };
-
-inline const fvec3& PhysicsDriver::getLinearVel() const
-{
-  return linear;
-}
-inline float PhysicsDriver::getAngularVel() const
-{
-  return angularVel;
-}
-inline const fvec2& PhysicsDriver::getAngularPos() const
-{
-  return angularPos;
-}
-inline float PhysicsDriver::getRadialVel() const
-{
-  return radialVel;
-}
-inline const fvec2& PhysicsDriver::getRadialPos() const
-{
-  return radialPos;
-}
-inline bool PhysicsDriver::getIsSlide() const
-{
-  return slide;
-}
-inline float PhysicsDriver::getSlideTime() const
-{
-  return slideTime;
-}
-inline bool PhysicsDriver::getIsDeath() const
-{
-  return death;
-}
-inline const std::string& PhysicsDriver::getDeathMsg() const
-{
-  return deathMsg;
-}
 
 
 class PhysicsDriverManager {
