@@ -244,6 +244,9 @@ class GroupDefinitionMgr {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
+    void assignListIDs();
+
+  private:
     GroupDefinition world;    // world instances
     GroupDefinition worldDef; // world definition
 
