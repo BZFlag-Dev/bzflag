@@ -21,10 +21,13 @@
 
 namespace BZDB_Eval {
   template <typename T> inline T eval(const std::string&);
-  template <> inline int         eval(const std::string& n) { return BZDB.evalInt(n); }
-  template <> inline bool        eval(const std::string& n) { return BZDB.isTrue(n);  }
-  template <> inline float       eval(const std::string& n) { return BZDB.eval(n);    }
-  template <> inline std::string eval(const std::string& n) { return BZDB.get(n);     }
+  template <> inline int         eval(const std::string& n) { return BZDB.evalInt(n);   }
+  template <> inline bool        eval(const std::string& n) { return BZDB.isTrue(n);    }
+  template <> inline float       eval(const std::string& n) { return BZDB.eval(n);      }
+  template <> inline fvec2       eval(const std::string& n) { return BZDB.evalFVec2(n); }
+  template <> inline fvec3       eval(const std::string& n) { return BZDB.evalFVec3(n); }
+  template <> inline fvec4       eval(const std::string& n) { return BZDB.evalFVec4(n); }
+  template <> inline std::string eval(const std::string& n) { return BZDB.get(n);       }
 }
 
 
@@ -148,10 +151,14 @@ class BZDBCache
 
       protected:
         void setName(const std::string& newName) {
-          if (name.empty() && !newName.empty()) {
-            BZDB.addCallback(newName, callback, this);
-          } else if (!name.empty() && newName.empty()) {
+          if (name == newName) {
+            return;
+          }
+          if (!name.empty()) {
             BZDB.removeCallback(name, callback, this);
+          }
+          if (!newName.empty()) {
+            BZDB.addCallback(newName, callback, this);
           }
           name = newName;
           update();
@@ -187,6 +194,9 @@ class BZDBCache
 typedef BZDBCache::static_hook<int>         BZDB_int;
 typedef BZDBCache::static_hook<bool>        BZDB_bool;
 typedef BZDBCache::static_hook<float>       BZDB_float;
+typedef BZDBCache::static_hook<fvec2>       BZDB_fvec2;
+typedef BZDBCache::static_hook<fvec3>       BZDB_fvec3;
+typedef BZDBCache::static_hook<fvec4>       BZDB_fvec4;
 typedef BZDBCache::static_hook<std::string> BZDB_string;
 
 
