@@ -1300,7 +1300,7 @@ void GroupDefinitionMgr::makeWorld()
     }
   }
   // also assign the face listIDs
-  const ObstacleList& meshes = getMeshes();
+  meshFaces.clear();
   for (unsigned int m = 0; m < meshes.size(); m++) {
     const MeshObstacle* mesh = (const MeshObstacle*)meshes[m];
     for (int f = 0; f < mesh->getFaceCount(); f++) {
