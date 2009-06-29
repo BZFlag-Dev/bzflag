@@ -136,7 +136,7 @@ TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
 	BZAdvancedRobot.h \
 	../../bots/testbot/TestRobot.cxx \
-	TestRobot.h
+	../../bots/testbot/TestRobot.h
 
 if BZROBOTS_PYTHON_ENABLED
 libbzrobot = bzrobot_pyext.la
