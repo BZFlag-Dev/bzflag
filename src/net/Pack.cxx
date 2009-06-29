@@ -84,10 +84,10 @@ unsigned int nboGetBufferLength()
 // Packers
 //
 
-void* nboPackUInt8(void* b, uint8_t v)
+void* nboPackInt8(void* b, int8_t v)
 {
-  ::memcpy(b, &v, sizeof(uint8_t));
-  return ADV(b, uint8_t);
+  ::memcpy(b, &v, sizeof(int8_t));
+  return ADV(b, int8_t);
 }
 
 
@@ -107,6 +107,21 @@ void* nboPackInt32(void* b, int32_t v)
 }
 
 
+void* nboPackInt64(void* b, int64_t v)
+{
+  // not really htond(), but they are the same size
+  htond((unsigned char*)b, (const unsigned char *)&v, 1);
+  return ADV(b, int64_t);
+}
+
+
+void* nboPackUInt8(void* b, uint8_t v)
+{
+  ::memcpy(b, &v, sizeof(uint8_t));
+  return ADV(b, uint8_t);
+}
+
+
 void* nboPackUInt16(void* b, uint16_t v)
 {
   const uint16_t x = (uint16_t)htons(v);
@@ -120,14 +135,6 @@ void* nboPackUInt32(void* b, uint32_t v)
   const uint32_t x = (uint32_t)htonl(v);
   ::memcpy(b, &x, sizeof(uint32_t));
   return ADV(b, uint32_t);
-}
-
-
-void* nboPackInt64(void* b, int64_t v)
-{
-  // not really htond(), but they are the same size
-  htond((unsigned char*)b, (const unsigned char *)&v, 1);
-  return ADV(b, int64_t);
 }
 
 
@@ -237,19 +244,19 @@ void* nboPackStdString(void* b, const std::string& str)
 // UnPackers
 //
 
-void* nboUnpackUInt8(void* b, uint8_t& v)
+void* nboUnpackInt8(void* b, int8_t& v)
 {
   if (ErrorChecking) {
-    if (Length < sizeof(uint8_t)) {
+    if (Length < sizeof(int8_t)) {
       Error = true;
       v = 0;
       return b;
     } else {
-      Length -= sizeof(uint8_t);
+      Length -= sizeof(int8_t);
     }
   }
-  ::memcpy(&v, b, sizeof(uint8_t));
-  return ADV(b, uint8_t);
+  ::memcpy(&v, b, sizeof(int8_t));
+  return ADV(b, int8_t);
 }
 
 
@@ -289,6 +296,40 @@ void* nboUnpackInt32(void* b, int32_t& v)
 }
 
 
+void* nboUnpackInt64(void* b, int64_t& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(int64_t)) {
+      Error = true;
+      v = 0;
+      return b;
+    } else {
+      Length -= sizeof(int64_t);
+    }
+  }
+
+  // not really ntohd(), but they are the same size
+  ntohd((unsigned char *)&v, (unsigned char *)b, 1);
+  return ADV(b, int64_t);
+}
+
+
+void* nboUnpackUInt8(void* b, uint8_t& v)
+{
+  if (ErrorChecking) {
+    if (Length < sizeof(uint8_t)) {
+      Error = true;
+      v = 0;
+      return b;
+    } else {
+      Length -= sizeof(uint8_t);
+    }
+  }
+  ::memcpy(&v, b, sizeof(uint8_t));
+  return ADV(b, uint8_t);
+}
+
+
 void* nboUnpackUInt16(void* b, uint16_t& v)
 {
   if (ErrorChecking) {
@@ -322,24 +363,6 @@ void* nboUnpackUInt32(void* b, uint32_t& v)
   ::memcpy(&x, b, sizeof(uint32_t));
   v = (uint32_t)ntohl(x);
   return ADV(b, uint32_t);
-}
-
-
-void* nboUnpackInt64(void* b, int64_t& v)
-{
-  if (ErrorChecking) {
-    if (Length < sizeof(int64_t)) {
-      Error = true;
-      v = 0;
-      return b;
-    } else {
-      Length -= sizeof(int64_t);
-    }
-  }
-
-  // not really ntohd(), but they are the same size
-  ntohd((unsigned char *)&v, (unsigned char *)b, 1);
-  return ADV(b, int64_t);
 }
 
 
