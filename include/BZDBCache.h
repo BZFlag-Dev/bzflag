@@ -149,7 +149,7 @@ class BZDBCache
       protected:
         void setName(const std::string& newName) {
           if (name.empty() && !newName.empty()) {
-            BZDB.addCallback(name, callback, this);
+            BZDB.addCallback(newName, callback, this);
           } else if (!name.empty() && newName.empty()) {
             BZDB.removeCallback(name, callback, this);
           }
