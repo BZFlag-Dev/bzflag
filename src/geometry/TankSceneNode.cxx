@@ -328,7 +328,7 @@ void TankSceneNode::setNormal()
 void TankSceneNode::setObese()
 {
   tankSize = Obese;
-  float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  float factor = BZDB.eval(BZDBNAMES.OBESEFACTOR);
   setRadius(factor*factor*baseRadius);
   useDimensions = false;
 }
@@ -337,7 +337,7 @@ void TankSceneNode::setObese()
 void TankSceneNode::setTiny()
 {
   tankSize = Tiny;
-  float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  float factor = BZDB.eval(BZDBNAMES.TINYFACTOR);
   setRadius(factor*factor*baseRadius);
   useDimensions = false;
 }
@@ -354,7 +354,7 @@ void TankSceneNode::setNarrow()
 void TankSceneNode::setThief()
 {
   tankSize = Thief;
-  float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  float factor = BZDB.eval(BZDBNAMES.THIEFTINYFACTOR);
   setRadius(factor*factor*baseRadius);
   useDimensions = false;
 }

@@ -423,7 +423,7 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh)
 bool PlayerInfo::hasStartedToNotRespond()
 {
   const float notRespondingTime =
-    BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
+    BZDB.eval(BZDBNAMES.NOTRESPONDINGTIME);
   bool startingToNotRespond = false;
   if (state > PlayerInLimbo) {
     bool oldnr = notResponding;

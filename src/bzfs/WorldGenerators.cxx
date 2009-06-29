@@ -68,7 +68,7 @@ WorldInfo* defineRandomWorld()
 
   // make walls
   float worldSize = BZDBCache::worldSize;
-  float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+  float wallHeight = BZDB.eval(BZDBNAMES.WALLHEIGHT);
   myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
 		   0.5f * worldSize, wallHeight);
   myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
@@ -81,10 +81,10 @@ WorldInfo* defineRandomWorld()
   float worldfactor = worldSize / (float)DEFAULT_WORLD;
   int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
   int numTeleporters = 8 + int(8 * (float)bzfrand() * worldfactor);
-  float boxBase = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  float boxBase = BZDB.eval(BZDBNAMES.BOXBASE);
   // make boxes
   int i;
-  float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  float boxHeight = BZDB.eval(BZDBNAMES.BOXHEIGHT);
   float h = boxHeight;
   const int numBoxes = int((0.5f + 0.7f * bzfrand()) * actCitySize * actCitySize);
   for (i = 0; i < numBoxes; i++) {
@@ -97,8 +97,8 @@ WorldInfo* defineRandomWorld()
   }
 
   // make pyramids
-  float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
-  float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
+  float pyrHeight = BZDB.eval(BZDBNAMES.PYRHEIGHT);
+  float pyrBase = BZDB.eval(BZDBNAMES.PYRBASE);
   h = pyrHeight;
   const int numPyrs = int((0.5f + 0.7f * bzfrand()) * actCitySize * actCitySize);
   for (i = 0; i < numPyrs; i++) {
@@ -112,9 +112,9 @@ WorldInfo* defineRandomWorld()
 
   if (clOptions->useTeleporters) {
     // make teleporters
-    float teleBreadth = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
-    float teleWidth = BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
-    float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+    float teleBreadth = BZDB.eval(BZDBNAMES.TELEBREADTH);
+    float teleWidth = BZDB.eval(BZDBNAMES.TELEWIDTH);
+    float teleHeight = BZDB.eval(BZDBNAMES.TELEHEIGHT);
     int (*linked)[2] = new int[numTeleporters][2];
     for (i = 0; i < numTeleporters;) {
       const float x = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
@@ -191,11 +191,11 @@ WorldInfo* defineTeamWorld()
   const float worldSize = BZDBCache::worldSize;
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
   const int actCitySize = int(clOptions->citySize * worldfactor + 0.5f);
-  const float pyrBase = BZDB.eval(StateDatabase::BZDB_PYRBASE);
-  const float pyrHeight = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+  const float pyrBase = BZDB.eval(BZDBNAMES.PYRBASE);
+  const float pyrHeight = BZDB.eval(BZDBNAMES.PYRHEIGHT);
 
   // setup the default base positions
-  const float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+  const float baseSize = BZDB.eval(BZDBNAMES.BASESIZE);
   const float baseDist = 0.5f * (worldSize - baseSize);
   const fvec3 redPosition    (-baseDist, 0.0f, 0.0f);
   const fvec3 greenPosition  (+baseDist, 0.0f, 0.0f);
@@ -203,7 +203,7 @@ WorldInfo* defineTeamWorld()
   const fvec3 purplePosition (0.0f, +baseDist, 0.0f);
 
   // make walls
-  const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+  const float wallHeight = BZDB.eval(BZDBNAMES.WALLHEIGHT);
   myWorld->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI),
 		   0.5f * worldSize, wallHeight);
   myWorld->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize,
@@ -301,7 +301,7 @@ WorldInfo* defineTeamWorld()
   // create symmetric map of random buildings for random CTF mode
   if (clOptions->randomCTF) {
     int i;
-    float h = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+    float h = BZDB.eval(BZDBNAMES.BOXHEIGHT);
     const bool redGreen = haveRed || haveGreen;
     const bool bluePurple = haveBlue || havePurple;
     if (!redGreen && !bluePurple) {
@@ -310,8 +310,8 @@ WorldInfo* defineTeamWorld()
     }
 
     int numBoxes = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize);
-    float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-    float boxBase = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+    float boxHeight = BZDB.eval(BZDBNAMES.BOXHEIGHT);
+    float boxBase = BZDB.eval(BZDBNAMES.BOXBASE);
 
     for (i = 0; i < numBoxes;) {
       if (clOptions->randomHeights)
@@ -355,7 +355,7 @@ WorldInfo* defineTeamWorld()
     }
 
     // make pyramids
-    h = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+    h = BZDB.eval(BZDBNAMES.PYRHEIGHT);
     const int numPyrs = int((0.5 + 0.4 * bzfrand()) * actCitySize * actCitySize * 2);
     for (i = 0; i < numPyrs; i++) {
       if (clOptions->randomHeights)
@@ -403,9 +403,9 @@ WorldInfo* defineTeamWorld()
       const int teamFactor = redGreen && bluePurple ? 4 : 2;
       const int numTeleporters = (8 + int(8 * (float)bzfrand())) / teamFactor * teamFactor;
       const int numLinks = 2 * numTeleporters / teamFactor;
-      float teleBreadth = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
-      float teleWidth = BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
-      float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+      float teleBreadth = BZDB.eval(BZDBNAMES.TELEBREADTH);
+      float teleWidth = BZDB.eval(BZDBNAMES.TELEWIDTH);
+      float teleHeight = BZDB.eval(BZDBNAMES.TELEHEIGHT);
       int (*linked)[2] = new int[numLinks][2];
       for (i = 0; i < numTeleporters;) {
 	const float x = (worldSize - 4.0f * teleBreadth) * ((float)bzfrand() - 0.5f);
@@ -500,8 +500,8 @@ WorldInfo* defineTeamWorld()
 
   } else {
 
-    float boxBase = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-    float avenueSize = BZDB.eval(StateDatabase::BZDB_AVENUESIZE);
+    float boxBase = BZDB.eval(BZDBNAMES.BOXBASE);
+    float avenueSize = BZDB.eval(BZDBNAMES.AVENUESIZE);
     // pyramids in center
     myWorld->addPyramid(
 	-(boxBase + 0.25f * avenueSize),
@@ -540,7 +540,7 @@ WorldInfo* defineTeamWorld()
     // add boxes, four at once with same height so no team has an advantage
     const float xmin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
     const float ymin = -0.5f * ((2.0f * boxBase + avenueSize) * (actCitySize - 1));
-    const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+    const float boxHeight = BZDB.eval(BZDBNAMES.BOXHEIGHT);
     for (int j = 0; j <= actCitySize / 2; j++) {
       for (int i = 0; i < actCitySize / 2; i++) {
 	if (i != actCitySize / 2 || j != actCitySize / 2) {
@@ -572,9 +572,9 @@ WorldInfo* defineTeamWorld()
     }
     // add teleporters
     if (clOptions->useTeleporters) {
-      float teleWidth = BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
-      float teleBreadth = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
-      float teleHeight = BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+      float teleWidth = BZDB.eval(BZDBNAMES.TELEWIDTH);
+      float teleBreadth = BZDB.eval(BZDBNAMES.TELEBREADTH);
+      float teleHeight = BZDB.eval(BZDBNAMES.TELEHEIGHT);
       const float xoff = boxBase + 0.5f * avenueSize;
       const float yoff = boxBase + 0.5f * avenueSize;
 

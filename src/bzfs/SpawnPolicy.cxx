@@ -59,7 +59,7 @@ bool SpawnPolicy::isFacing(const fvec3& selfPos, const fvec3& enemyPos,
 bool SpawnPolicy::isImminentlyDangerous(const fvec3& selfPos) const
 {
   const float tankRadius = BZDBCache::tankRadius;
-  const float safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * BZDB.eval("_spawnSafeSWMod"));
+  const float safeSWRadius = (float)((BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS) + BZDBCache::tankRadius) * BZDB.eval("_spawnSafeSWMod"));
   const float safeSRRadius = tankRadius * BZDB.eval("_spawnSafeSRMod");
   const float safeDistance = tankRadius * BZDB.eval("_spawnSafeRadMod");
 

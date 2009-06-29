@@ -20,6 +20,7 @@ noinst_HEADERS =			\
 	BundleMgr.h			\
 	BSPSceneDatabase.h		\
 	BZDBCache.h			\
+	BZDBNames.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\
 	BzfJoystick.h			\

@@ -183,7 +183,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   }
 
   // adjust with height box size
-  const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  const float boxHeight = BZDB.eval(BZDBNAMES.BOXHEIGHT);
   const float hbSize = size * (1.0f + (0.5f * (pos.z / boxHeight)));
 
   // draw the height box

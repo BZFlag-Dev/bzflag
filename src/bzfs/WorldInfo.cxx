@@ -529,7 +529,7 @@ void WorldInfo::finishWorld()
   loadCollisionManager();
 
   maxHeight = COLLISIONMGR.getWorldExtents().maxs.z;
-  const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+  const float wallHeight = BZDB.eval(BZDBNAMES.WALLHEIGHT);
   if (maxHeight < wallHeight) {
     maxHeight = wallHeight;
   }

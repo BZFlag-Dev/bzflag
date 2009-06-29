@@ -16,7 +16,7 @@
 // common headers
 #include "TimeKeeper.h"
 #include "PlayerInfo.h"
-#include "StateDatabase.h"  // for StateDatabase::BZDB_REJOINTIME
+#include "StateDatabase.h"  // for BZDBNAMES.REJOINTIME
 
 // bzfs specific headers
 #include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers
@@ -94,7 +94,7 @@ float RejoinList::waitTime(int playerIndex)
 
   std::list<struct RejoinNode*>::iterator it;
   TimeKeeper thenTime = TimeKeeper::getCurrent();
-  thenTime += -BZDB.eval(StateDatabase::BZDB_REJOINTIME);
+  thenTime += -BZDB.eval(BZDBNAMES.REJOINTIME);
 
   // remove old entries
   it = queue.begin();

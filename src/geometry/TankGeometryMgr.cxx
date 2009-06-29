@@ -123,9 +123,9 @@ void TankGeometryMgr::init()
 
   // install the BZDB callbacks
   // This MUST be done after BZDB has been initialized in main()
-  BZDB.addCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.OBESEFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.TINYFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
   BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
   BZDB.addCallback ("treadStyle", bzdbCallback, NULL);
 
@@ -142,9 +142,9 @@ void TankGeometryMgr::init()
 void TankGeometryMgr::kill()
 {
   // remove the BZDB callbacks
-  BZDB.removeCallback (StateDatabase::BZDB_OBESEFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback (StateDatabase::BZDB_TINYFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback (StateDatabase::BZDB_THIEFTINYFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.OBESEFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.TINYFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
   BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
   BZDB.removeCallback ("treadStyle", bzdbCallback, NULL);
 
@@ -405,28 +405,28 @@ static void setupScales()
   float scale;
 
   scaleFactors[Normal].x = BZDBCache::tankLength;
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKLENGTH).c_str());
+  scale = (float)atof(BZDB.getDefault(BZDBNAMES.TANKLENGTH).c_str());
   scaleFactors[Normal].x /= scale;
 
   scaleFactors[Normal].y = BZDBCache::tankWidth;
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKWIDTH).c_str());
+  scale = (float)atof(BZDB.getDefault(BZDBNAMES.TANKWIDTH).c_str());
   scaleFactors[Normal].y /= scale;
 
   scaleFactors[Normal].z = BZDBCache::tankHeight;
-  scale = (float)atof(BZDB.getDefault(StateDatabase::BZDB_TANKHEIGHT).c_str());
+  scale = (float)atof(BZDB.getDefault(BZDBNAMES.TANKHEIGHT).c_str());
   scaleFactors[Normal].z /= scale;
 
-  scale = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+  scale = BZDB.eval(BZDBNAMES.OBESEFACTOR);
   scaleFactors[Obese].x = scale * scaleFactors[Normal].x;
   scaleFactors[Obese].y = scale * scaleFactors[Normal].y;
   scaleFactors[Obese].z = scaleFactors[Normal].z;
 
-  scale = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+  scale = BZDB.eval(BZDBNAMES.TINYFACTOR);
   scaleFactors[Tiny].x = scale * scaleFactors[Normal].x;
   scaleFactors[Tiny].y = scale * scaleFactors[Normal].y;
   scaleFactors[Tiny].z = scaleFactors[Normal].z;
 
-  scale = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+  scale = BZDB.eval(BZDBNAMES.THIEFTINYFACTOR);
   scaleFactors[Thief].x = scale * scaleFactors[Normal].x;
   scaleFactors[Thief].y = scale * scaleFactors[Normal].y;
   scaleFactors[Thief].z = scaleFactors[Normal].z;

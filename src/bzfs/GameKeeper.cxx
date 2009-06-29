@@ -554,19 +554,19 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
   shotsInfo.resize(maxShots);
 
-  float lifeTime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  float lifeTime = BZDB.eval(BZDBNAMES.RELOADTIME);
   if (firingInfo.flagType == Flags::RapidFire)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
+    lifeTime *= BZDB.eval(BZDBNAMES.RFIREADLIFE);
   else if (firingInfo.flagType == Flags::MachineGun)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
+    lifeTime *= BZDB.eval(BZDBNAMES.MGUNADLIFE);
   else if (firingInfo.flagType == Flags::GuidedMissile)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
+    lifeTime *= BZDB.eval(BZDBNAMES.GMADLIFE);
   else if (firingInfo.flagType == Flags::Laser)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+    lifeTime *= BZDB.eval(BZDBNAMES.LASERADLIFE);
   else if (firingInfo.flagType == Flags::ShockWave)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
+    lifeTime *= BZDB.eval(BZDBNAMES.SHOCKADLIFE);
   else if (firingInfo.flagType == Flags::Thief)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
+    lifeTime *= BZDB.eval(BZDBNAMES.THIEFADLIFE);
 
   ShotInfo myShot;
   myShot.firingInfo  = firingInfo;
@@ -670,18 +670,18 @@ float GameKeeper::Player::getRealSpeed ( float input )
 
   // boost speed for certain flags
   if (flagType == Flags::Velocity)
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.VELOCITYAD);
   else if (flagType == Flags::Thief)
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.THIEFVELAD);
   else if ((flagType == Flags::Burrow) && (lastState.pos.z < 0.0f))
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.BURROWSPEEDAD);
   else if ((flagType == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
     fracOfMaxSpeed = 0.0f;
   else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
     fracOfMaxSpeed = 0.0f;
   else if (flagType == Flags::Agility) {
-    /*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+    /*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(BZDBNAMES.AGILITYTIMEWINDOW))
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
     else {
     float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
     if (oldFrac > 1.0f)
@@ -689,12 +689,12 @@ float GameKeeper::Player::getRealSpeed ( float input )
     else if (oldFrac < -0.5f)
     oldFrac = -0.5f;
 
-    float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
+    float limit = BZDB.eval(BZDBNAMES.AGILITYVELDELTA);
 
     if (fracOfMaxSpeed < 0.0f)
     limit /= 2.0f;
     if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
     agilityTime = TimeKeeper::getCurrent();
     }
     } */
@@ -702,10 +702,10 @@ float GameKeeper::Player::getRealSpeed ( float input )
   float handicap = 1.0f;
 
   // apply handicap advantage to tank speed
-  fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
+  fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPVELAD) - 1.0f)));
 
   // set desired speed
-  return BZDB.eval(StateDatabase::BZDB_TANKSPEED) * fracOfMaxSpeed;
+  return BZDB.eval(BZDBNAMES.TANKSPEED) * fracOfMaxSpeed;
 }
 
 // Local Variables: ***

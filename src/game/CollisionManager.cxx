@@ -153,8 +153,8 @@ void CollisionManager::clear()
 
 bool CollisionManager::needReload() const
 {
-  int newDepth = BZDB.evalInt(StateDatabase::BZDB_COLDETDEPTH);
-  int newElements = BZDB.evalInt(StateDatabase::BZDB_COLDETELEMENTS);
+  int newDepth = BZDB.evalInt(BZDBNAMES.COLDETDEPTH);
+  int newElements = BZDB.evalInt(BZDBNAMES.COLDETELEMENTS);
   float newWorldSize = BZDBCache::worldSize;
   if ((newDepth != maxDepth) || (newElements != minElements) ||
       (newWorldSize != worldSize)) {
@@ -313,8 +313,8 @@ void CollisionManager::load()
 
   // setup the octree parameters
   worldSize = BZDBCache::worldSize;
-  maxDepth = BZDB.evalInt(StateDatabase::BZDB_COLDETDEPTH);
-  minElements = BZDB.evalInt(StateDatabase::BZDB_COLDETELEMENTS);
+  maxDepth = BZDB.evalInt(BZDBNAMES.COLDETDEPTH);
+  minElements = BZDB.evalInt(BZDBNAMES.COLDETELEMENTS);
 
   // determine the total number of obstacles
   int fullCount = 0;

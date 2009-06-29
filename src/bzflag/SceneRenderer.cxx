@@ -477,14 +477,14 @@ void SceneRenderer::setTimeOfDay(double julianDay)
   // get position of sun and moon at 0,0 lat/long
   fvec3 sunDir, moonDir;
   float latitude, longitude;
-  if (!BZDB.isTrue(StateDatabase::BZDB_SYNCLOCATION)) {
+  if (!BZDB.isTrue(BZDBNAMES.SYNCLOCATION)) {
     // use local (client) settings
     latitude  = BZDB.eval("latitude");
     longitude = BZDB.eval("longitude");
   } else {
     // server settings
-    latitude  = BZDB.eval(StateDatabase::BZDB_LATITUDE);
-    longitude = BZDB.eval(StateDatabase::BZDB_LONGITUDE);
+    latitude  = BZDB.eval(BZDBNAMES.LATITUDE);
+    longitude = BZDB.eval(BZDBNAMES.LONGITUDE);
   }
 
   Daylight::getSunPosition(julianDay, latitude, longitude, sunDir);
@@ -638,7 +638,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   // fog setup
   mapFog = setupMapFog();
 
-  mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
+  mirror = (BZDB.get(BZDBNAMES.MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
 
   clearZbuffer = true;
@@ -690,7 +690,7 @@ void SceneRenderer::drawMirror()
   glFrontFace(GL_CCW);
 
   fvec4 mirrorColor;
-  if (!parseColorString(BZDB.get(StateDatabase::BZDB_MIRROR), mirrorColor)) {
+  if (!parseColorString(BZDB.get(BZDBNAMES.MIRROR), mirrorColor)) {
     mirrorColor.r = mirrorColor.g = mirrorColor.b = 0.0f;
     mirrorColor.a = 0.5f;
   } else if (mirrorColor.a == 1.0f) {
@@ -1080,10 +1080,10 @@ bool SceneRenderer::setupMapFog()
     fogMode = GL_EXP;
   }
 
-  fogDensity = BZDB.eval(StateDatabase::BZDB_FOGDENSITY);
-  fogStart   = BZDB.eval(StateDatabase::BZDB_FOGSTART);
-  fogEnd     = BZDB.eval(StateDatabase::BZDB_FOGEND);
-  if (!parseColorString(BZDB.get(StateDatabase::BZDB_FOGCOLOR), fogColor)) {
+  fogDensity = BZDB.eval(BZDBNAMES.FOGDENSITY);
+  fogStart   = BZDB.eval(BZDBNAMES.FOGSTART);
+  fogEnd     = BZDB.eval(BZDBNAMES.FOGEND);
+  if (!parseColorString(BZDB.get(BZDBNAMES.FOGCOLOR), fogColor)) {
     fogColor.r = fogColor.g = fogColor.b = 0.1f;
     fogColor.a = 0.0f; // has no effect
   }
@@ -1196,7 +1196,7 @@ void SceneRenderer::getRenderNodes()
 
   // add the shadow rendering nodes
   if (scene && BZDBCache::shadows && (getSunDirection() != NULL) &&
-      (!mirror || !clearZbuffer) && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)) {
+      (!mirror || !clearZbuffer) && !BZDB.isTrue(BZDBNAMES.NOSHADOWS)) {
     setupShadowPlanes();
     scene->addShadowNodes(*this, true, true);
     DYNAMICWORLDTEXT.addShadowNodes(*this);

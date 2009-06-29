@@ -46,8 +46,8 @@ const char* CustomBox::faceNames[FaceCount] = {
 CustomBox::CustomBox(bool meshed)
 : isOldBox(!meshed)
 {
-  size.x = size.y = BZDB.eval(StateDatabase::BZDB_BOXBASE);
-  size.z = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  size.x = size.y = BZDB.eval(BZDBNAMES.BOXBASE);
+  size.z = BZDB.eval(BZDBNAMES.BOXHEIGHT);
 
   materials[XP].setTexture("boxwall");
   materials[XN].setTexture("boxwall");

@@ -173,7 +173,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
   int oc;
 
   // see if our limit has changed
-  int max = BZDB.evalInt(StateDatabase::BZDB_CULLOCCLUDERS);
+  int max = BZDB.evalInt(BZDBNAMES.CULLOCCLUDERS);
   if (max != allowedOccluders) {
     setMaxOccluders(max);
   }

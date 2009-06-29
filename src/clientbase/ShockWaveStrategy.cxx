@@ -25,12 +25,12 @@
 
 ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   ShotStrategy(_path),
-  radius(BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)),
+  radius(BZDB.eval(BZDBNAMES.SHOCKINRADIUS)),
   radius2(radius * radius)
 {
   // setup shot
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
+  f.lifetime *= BZDB.eval(BZDBNAMES.SHOCKADLIFE);
 
   // make scene node
   const fvec3& pos = _path->getPosition();
@@ -68,8 +68,8 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void ShockWaveStrategy::update(float dt)
 {
-  const float shockIn  = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
-  const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
+  const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
+  const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
 
   radius += dt * (shockOut - shockIn) / getPath().getLifetime();
   radius2 = radius * radius;
@@ -98,14 +98,14 @@ void ShockWaveStrategy::update(float dt)
   }
 
   // expire when full size
-  if (radius >= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) setExpired();
+  if (radius >= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) setExpired();
 }
 
 
 bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
 {
-  const float shockIn  = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
-  const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
+  const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
+  const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
 
   const float r = radius + dt * (shockOut - shockIn) / getPath().getLifetime();
   if (r >= shockOut) {
@@ -121,8 +121,8 @@ bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
 
 bool        ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
 {
-  const float shockIn  = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
-  const float shockOut = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS);
+  const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
+  const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
 
   const float r = radius + dt * (shockOut - shockIn) / getPath().getLifetime();
   if (r >= shockOut) {

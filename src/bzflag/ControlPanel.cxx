@@ -188,7 +188,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
   window.getWindow()->addExposeCallback(exposeCallback, this);
   BZDB.addCallback("debugLevel",   bzdbCallback, this);
   BZDB.addCallback("displayRadar", bzdbCallback, this);
-  BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
+  BZDB.addCallback(BZDBNAMES.RADARLIMIT, bzdbCallback, this);
 
   // other initialization
   radarAreaPixels[0] = 0;
@@ -234,7 +234,7 @@ ControlPanel::~ControlPanel()
   window.getWindow()->removeExposeCallback(exposeCallback, this);
   BZDB.removeCallback("debugLevel",   bzdbCallback, this);
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
-  BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
+  BZDB.removeCallback(BZDBNAMES.RADARLIMIT, bzdbCallback, this);
 
   // release font face
   if (fontFace)

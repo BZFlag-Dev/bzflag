@@ -1253,7 +1253,7 @@ void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
-		 pl->getPosition()[2]/*+BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)*3*/, model, proj, view, &x, &y, &z);
+		 pl->getPosition()[2]/*+BZDB.eval(BZDBNAMES.MUZZLEHEIGHT)*3*/, model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {
 	FontManager &fm = FontManager::instance();
 	fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, name) / 2.0f,
@@ -1676,7 +1676,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(BZDBNAMES.BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
 
   // draw shot reload status
@@ -1819,7 +1819,7 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(BZDBNAMES.BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
   }
 
   // draw shot reload status

@@ -77,7 +77,7 @@ bool DropGeometry::dropPlayer(fvec3& pos, float minZ, float maxZ)
 
 bool DropGeometry::dropFlag(fvec3& pos, float minZ, float maxZ)
 {
-  const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+  const float flagHeight = BZDB.eval(BZDBNAMES.FLAGHEIGHT);
   return dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, flagHeight, -1);
 }
 
@@ -89,7 +89,7 @@ bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ,
   // if you want to put some smarts in to check for wedging
   // (flag is stuck amongst obstacles), then add the code into
   // isValidClearance().
-  const float flagHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+  const float flagHeight = BZDB.eval(BZDBNAMES.FLAGHEIGHT);
   return dropIt(pos, minZ, maxZ, 0.0f, flagHeight, team);
 }
 

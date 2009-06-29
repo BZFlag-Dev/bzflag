@@ -311,7 +311,7 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   te.sceneNode = NULL;
 
   // determine the track mark type
-  if ((pos.z <= 0.1f) && BZDB.get(StateDatabase::BZDB_MIRROR) != "none") {
+  if ((pos.z <= 0.1f) && BZDB.get(BZDBNAMES.MIRROR) != "none") {
     type = PuddleTrack;
     if (pos.z < 0.0f) {
       scale = 0.0f; // single puddle, like Narrow tanks
@@ -501,7 +501,7 @@ static void updateList(TrackList& list, float dt)
 
 void TrackMarks::update(float dt)
 {
-  TrackFadeTime = BZDB.eval(StateDatabase::BZDB_TRACKFADE);
+  TrackFadeTime = BZDB.eval(BZDBNAMES.TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
 
   if (TrackFadeTime <= 0.0f) {

@@ -49,11 +49,11 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   // get initial shot info
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
+  f.lifetime *= BZDB.eval(BZDBNAMES.GMADLIFE);
 
   // setup shot
-  speed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED) *
-          BZDB.eval(StateDatabase::BZDB_GMADSPEED);
+  speed = BZDB.eval(BZDBNAMES.SHOTSPEED) *
+          BZDB.eval(BZDBNAMES.GMADSPEED);
   const fvec3 dir = getPath().getVelocity().normalize();
   f.shot.vel = speed * dir;
   const fvec3& vel = getPath().getVelocity();
@@ -72,7 +72,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   nextVel = f.shot.vel;
 
   // check that first segment doesn't start inside a building
-  float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
+  float muzzleFront = BZDB.eval(BZDBNAMES.MUZZLEFRONT);
   const fvec3 startPos = f.shot.pos - (muzzleFront * dir);
 
   Ray firstRay = Ray(startPos, vel);
@@ -168,7 +168,7 @@ void GuidedMissileStrategy::update(float dt)
     float crossLen = cross.length();
     if (crossLen > 0.0f) {
       cross *= (1.0f / crossLen); // normalize
-      const float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
+      const float gmissileAng = BZDB.eval(BZDBNAMES.GMTURNANGLE);
       const float radDiff = asinf(crossLen);
       float radians = (gmissileAng * dt);
       if (radians > radDiff) {
@@ -286,7 +286,7 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
     float crossLen = cross.length();
     if (crossLen > 0.0f) {
       cross *= (1.0f / crossLen); // normalize
-      const float gmissileAng = BZDB.eval(StateDatabase::BZDB_GMTURNANGLE);
+      const float gmissileAng = BZDB.eval(BZDBNAMES.GMTURNANGLE);
       const float radDiff = asinf(crossLen);
       float radians = (gmissileAng * dt);
       if (radians > radDiff) {
@@ -412,7 +412,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   }
 
   // GM is not active until activation time passes (for any tank)
-  const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
+  const float activationTime = BZDB.eval(BZDBNAMES.GMACTIVATIONTIME);
 
   if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime)
     return minTime;
@@ -420,7 +420,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   // get tank radius
   const float radius2 = tank.radius * tank.radius;
 
-  float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+  float shotRadius = BZDB.eval(BZDBNAMES.SHOTRADIUS);
 
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
@@ -544,7 +544,7 @@ void GuidedMissileStrategy::radarRender() const
   const int length = BZDBCache::linedRadarShots;
   const int size   = BZDBCache::sizedRadarShots;
 
-  const float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
+  const float shotTailLength = BZDB.eval(BZDBNAMES.SHOTTAILLENGTH);
   // Display leading lines
   if (length > 0) {
     const fvec3& vel = getPath().getVelocity();

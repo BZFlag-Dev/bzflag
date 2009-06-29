@@ -149,7 +149,7 @@ static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
 // cache _syncTime BZDB value
-static BZDB_float bzdbSyncTime("_syncTime"); // AKA StateDatabase::BZDB_SYNCTIME
+static BZDB_float bzdbSyncTime("_syncTime"); // AKA BZDBNAMES.SYNCTIME
 
 #ifdef ROBOT
 void handleMyTankKilled(int reason);
@@ -2470,7 +2470,7 @@ bool addExplosion(const fvec3& _pos,
 
 void addTankExplosion(const fvec3& pos)
 {
-  addExplosion(pos, BZDB.eval(StateDatabase::BZDB_TANKEXPLOSIONSIZE), 1.2f, false);
+  addExplosion(pos, BZDB.eval(BZDBNAMES.TANKEXPLOSIONSIZE), 1.2f, false);
 }
 
 
@@ -2584,7 +2584,7 @@ void handleFlagDropped(Player *tank)
     if (tank == myTank) {
       // make sure the player must reload after theft
       if (tank->getFlag() == Flags::Thief)
-	myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
+	myTank->forceReload(BZDB.eval(BZDBNAMES.THIEFDROPTIME));
 
       // update display and play sound effects
       SOUNDSYSTEM.play(SFX_DROP_FLAG);
@@ -2876,7 +2876,7 @@ bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *
   if (player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth)
     return false; // can't lock to paused, NR, or stealth
 
-  if (angle >=  BZDB.eval(StateDatabase::BZDB_LOCKONANGLE))
+  if (angle >=  BZDB.eval(BZDBNAMES.LOCKONANGLE))
     return false;
 
   if (distance >= bestDistance)
@@ -2889,7 +2889,7 @@ bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *
 bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *player)
 {
   // usually about 17 degrees
-  if (angle >= BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE))
+  if (angle >= BZDB.eval(BZDBNAMES.TARGETINGANGLE))
     return false;
 
   if (distance > bestDistance)
@@ -3030,7 +3030,7 @@ void setTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&	// about 8.5 degrees
+    if (a < BZDB.eval(BZDBNAMES.LOCKONANGLE) &&	// about 8.5 degrees
       ((myTank->getFlag() == Flags::GuidedMissile) ||		// am i locking on?
       tankHasShotType(myTank, Flags::GuidedMissile)) &&
       remotePlayers[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
@@ -3040,7 +3040,7 @@ void setTarget()
 	bestTarget = remotePlayers[i];
 	bestDistance = d;
 	lockedOn = true;
-    } else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) && // about 17 degrees
+    } else if (a < BZDB.eval(BZDBNAMES.TARGETINGANGLE) && // about 17 degrees
       ((remotePlayers[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) && // can't "see" stealth unless have seer
       d < bestDistance && !lockedOn) { // is it better?
 	bestTarget = remotePlayers[i];
@@ -3139,7 +3139,7 @@ static void setHuntTarget()
     const float a = fabsf(y / d);
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
-    if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) && // about 8.5 degrees
+    if (a < BZDB.eval(BZDBNAMES.LOCKONANGLE) && // about 8.5 degrees
       myTank->getFlag() == Flags::GuidedMissile && // am i locking on?
       remotePlayers[i]->getFlag() != Flags::Stealth && // can't lock on stealth
       !remotePlayers[i]->isPaused() && // can't lock on paused
@@ -3148,7 +3148,7 @@ static void setHuntTarget()
 	bestTarget = remotePlayers[i];
 	bestDistance = d;
 	lockedOn = true;
-    } else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) && // about 17 degrees
+    } else if (a < BZDB.eval(BZDBNAMES.TARGETINGANGLE) && // about 17 degrees
       ((remotePlayers[i]->getFlag() != Flags::Stealth) ||
       (myTank->getFlag() == Flags::Seer)) && // can't "see" stealth unless have seer
       d < bestDistance && !lockedOn) { // is it better?
@@ -3536,8 +3536,8 @@ void leaveGame()
 
   updateDaylight(epochOffset);
   lastEpochOffset = epochOffset;
-  BZDB.set(StateDatabase::BZDB_SYNCTIME,
-           BZDB.getDefault(StateDatabase::BZDB_SYNCTIME));
+  BZDB.set(BZDBNAMES.SYNCTIME,
+           BZDB.getDefault(BZDBNAMES.SYNCTIME));
 
   // flush downloaded textures (before the BzMaterials are nuked)
   Downloads::instance().removeTextures();
@@ -3869,7 +3869,7 @@ static void setupFarPlane()
   FarPlaneCull = false;
   FarDeepPlane = FarPlane * FarDeepPlaneScale;
 
-  const bool mapFog = BZDB.get(StateDatabase::BZDB_FOGMODE) != "none";
+  const bool mapFog = BZDB.get(BZDBNAMES.FOGMODE) != "none";
 
   float farDist = FarPlane;
 
@@ -3975,7 +3975,7 @@ static void drawStacked()
   ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
   float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  float FocalPlane = BZDB.eval(BZDBNAMES.BOXBASE);
   if (BZDB.isSet("eyesep")) {
     EyeDisplacement = BZDB.eval("eyesep");
   }
@@ -4012,7 +4012,7 @@ static void drawStereo()
   ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
   float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  float FocalPlane = BZDB.eval(BZDBNAMES.BOXBASE);
   if (BZDB.isSet("eyesep"))
     EyeDisplacement = BZDB.eval("eyesep");
   if (BZDB.isSet("focal"))
@@ -4064,7 +4064,7 @@ static void drawAnaglyph()
   ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
   float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  float FocalPlane = BZDB.eval(BZDBNAMES.BOXBASE);
   if (BZDB.isSet("eyesep"))
     EyeDisplacement = BZDB.eval("eyesep");
   if (BZDB.isSet("focal"))
@@ -4097,7 +4097,7 @@ static void drawInterlaced()
   ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
   float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-  float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);
+  float FocalPlane = BZDB.eval(BZDBNAMES.BOXBASE);
   const int width = mainWindow->getWidth();
   const int height = mainWindow->getHeight();
   if (BZDB.isSet("eyesep"))

@@ -180,7 +180,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder()
 
   // make box styles
   int boxTexture = tm.getTextureID( "boxwall" );
-  boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
+  boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(BZDBNAMES.BOXHEIGHT);
   if (boxTexture>=0)
     boxTexWidth = tm.GetAspectRatio(boxTexture) * boxTexHeight;
 

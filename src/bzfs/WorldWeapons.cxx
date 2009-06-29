@@ -49,7 +49,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   firingInfo.shotType = type->flagShot;
   firingInfo.shot.player = player;
   firingInfo.shot.pos = pos;
-  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+  const float shotSpeed = BZDB.eval(BZDBNAMES.SHOTSPEED);
   const float tiltFactor = cosf(tilt);
   firingInfo.shot.vel.x = shotSpeed * tiltFactor * cosf(dir);
   firingInfo.shot.vel.y = shotSpeed * tiltFactor * sinf(dir);
@@ -62,7 +62,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   NetMsg msg = MSGMGR.newMessage();
   firingInfo.pack(msg);
 
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
+  if (BZDB.isTrue(BZDBNAMES.WEAPONS))
     msg->broadcast(MsgWShotBegin);
 
   return shotID;
@@ -78,7 +78,7 @@ static int fireWorldGMReal(FlagType* type, PlayerId targetPlayerID, float
     firingInfo.lifetime = lifetime;
     firingInfo.shot.player = player;
     firingInfo.shot.pos = pos;
-    const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+    const float shotSpeed = BZDB.eval(BZDBNAMES.SHOTSPEED);
     const float tiltFactor = cosf(tilt);
     firingInfo.shot.vel.x = shotSpeed * tiltFactor * cosf(dir);
     firingInfo.shot.vel.y = shotSpeed * tiltFactor * sinf(dir);
@@ -91,7 +91,7 @@ static int fireWorldGMReal(FlagType* type, PlayerId targetPlayerID, float
     NetMsg msg = MSGMGR.newMessage();
     firingInfo.pack(msg);
 
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
+    if (BZDB.isTrue(BZDBNAMES.WEAPONS))
 	msg->broadcast(MsgShotBegin);
 
     // Target the gm.
@@ -101,7 +101,7 @@ static int fireWorldGMReal(FlagType* type, PlayerId targetPlayerID, float
 
     firingInfo.shot.pack(msg);
     msg->packUInt8(targetPlayerID);
-    if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
+    if (BZDB.isTrue(BZDBNAMES.WEAPONS))
       msg->broadcast(MsgGMUpdate);
 
     return shotID;
@@ -154,7 +154,7 @@ void WorldWeapons::fire()
     Weapon *w = *it;
     if (w->nextTime <= nowTime) {
 
-      const float reloadTime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+      const float reloadTime = BZDB.eval(BZDBNAMES.RELOADTIME);
       fireWorldWepReal((FlagType*)w->type, reloadTime, ServerPlayer,
                        w->teamColor, w->origin, w->tilt, w->direction,
 		       getNewWorldShotID(), 0);
@@ -309,7 +309,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
     }
   }
 
-  fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+  fireWorldWepReal(type, BZDB.eval(BZDBNAMES.RELOADTIME),
 		   ServerPlayer, convertTeam(team), origin, tilt, direction,
 		   world->getWorldWeapons().getNewWorldShotID(), 0);
 }

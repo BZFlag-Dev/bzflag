@@ -32,7 +32,7 @@ bool doSpeedChecks(GameKeeper::Player *playerData, PlayerState &state)
     int pFlag = playerData->player.getFlag();
 
     // check for highspeed cheat; if inertia is enabled, skip test for now
-    if (BZDB.eval(StateDatabase::BZDB_INERTIALINEAR) == 0.0f) {
+    if (BZDB.eval(BZDBNAMES.INERTIALINEAR) == 0.0f) {
       // Doesn't account for going fast backwards, or jumping/falling
       float curPlanarSpeedSqr = state.velocity.xy().lengthSq();
 
@@ -51,19 +51,19 @@ bool doSpeedChecks(GameKeeper::Player *playerData, PlayerState &state)
       if (pFlag >= 0) {
 	FlagInfo &flag = *FlagInfo::get(pFlag);
 	if (flag.flag.type == Flags::Velocity)
-	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+	  maxPlanarSpeed *= BZDB.eval(BZDBNAMES.VELOCITYAD);
 	else if (flag.flag.type == Flags::Thief)
-	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+	  maxPlanarSpeed *= BZDB.eval(BZDBNAMES.THIEFVELAD);
 	else if (flag.flag.type == Flags::Agility)
-	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+	  maxPlanarSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
 	else if ((flag.flag.type == Flags::Burrow) &&
 	         (playerData->lastState.pos.z == state.pos.z) &&
 	         (playerData->lastState.velocity.z == state.velocity.z) &&
-	         (state.pos.z <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH))) {
+	         (state.pos.z <= BZDB.eval(BZDBNAMES.BURROWDEPTH))) {
 	  // if we have burrow and are not actively burrowing.
 	  // You may have burrow and still be above ground. Must
 	  // check z in ground!!
-	  maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+	  maxPlanarSpeed *= BZDB.eval(BZDBNAMES.BURROWSPEEDAD);
 	}
       }
 
@@ -123,9 +123,9 @@ bool doBoundsChecks(GameKeeper::Player *playerData, PlayerState &state)
   }
 
   static const float burrowFudge = 1.0f; /* linear distance */
-  if (state.pos.z < BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
+  if (state.pos.z < BZDB.eval(BZDBNAMES.BURROWDEPTH) - burrowFudge) {
     std::cout << "z depth (" << state.pos.z << ") is less than burrow depth ("
-              << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - "
+              << BZDB.eval(BZDBNAMES.BURROWDEPTH) << " - "
               << burrowFudge << ")" << std::endl;
     InBounds = false;
   }
@@ -185,9 +185,9 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &state)
 
 bool doHeightChecks(GameKeeper::Player *playerData, PlayerState &state)
 {
-  float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
+  float wingsGravity = BZDB.eval(BZDBNAMES.WINGSGRAVITY);
   float normalGravity = BZDBCache::gravity;
-  float lgGravity = BZDB.eval(StateDatabase::BZDB_LGGRAVITY);
+  float lgGravity = BZDB.eval(BZDBNAMES.LGGRAVITY);
 
   // All tanks with wings are flying away or they do without a flag
   if (((wingsGravity >= 0.0f) && (normalGravity >= 0.0f)) ||
@@ -204,7 +204,7 @@ bool doHeightChecks(GameKeeper::Player *playerData, PlayerState &state)
     playerData->player.jumpStartPos = state.pos.z;
   }
 
-  float heightFudge = BZDB.eval(StateDatabase::BZDB_HEIGHTCHECKTOL);
+  float heightFudge = BZDB.eval(BZDBNAMES.HEIGHTCHECKTOL);
   if (heightFudge < 1.0f) {
     // Skip the check because the server owners disabled it
     return true;
@@ -224,16 +224,16 @@ bool doHeightChecks(GameKeeper::Player *playerData, PlayerState &state)
   }
 
   if (hasWings) {
-    wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+    wingsMaxHeight = BZDB.eval(BZDBNAMES.WINGSJUMPVELOCITY);
     wingsMaxHeight *= wingsMaxHeight;
-    wingsMaxHeight *= BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
+    wingsMaxHeight *= BZDB.eval(BZDBNAMES.WINGSJUMPCOUNT);
     wingsMaxHeight /= (-wingsGravity * 2.0f);
   } else if (hasLG) {
-    lgMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+    lgMaxHeight = BZDB.eval(BZDBNAMES.JUMPVELOCITY);
     lgMaxHeight *= lgMaxHeight;
     lgMaxHeight /= (-lgGravity * 2.0f);
   } else {
-    normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+    normalMaxHeight = BZDB.eval(BZDBNAMES.JUMPVELOCITY);
     normalMaxHeight *= normalMaxHeight;
     normalMaxHeight /= (-normalGravity * 2.0f);
   }

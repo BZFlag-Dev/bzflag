@@ -72,7 +72,7 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
   buf = nboPackInt32(buf, int32_t(order));
   buf = nboPackInt16(buf, int16_t(status));
 
-  if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
+  if ((BZDB.eval(BZDBNAMES.NOSMALLPACKETS) > 0.0f) ||
       (fabsf(pos.x) >= smallMaxDist)      ||
       (fabsf(pos.y) >= smallMaxDist)      ||
       (fabsf(pos.z) >= smallMaxDist)      ||
@@ -155,7 +155,7 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
   msg->packInt32(int32_t(order));
   msg->packInt16(int16_t(status));
 
-  if ((BZDB.eval(StateDatabase::BZDB_NOSMALLPACKETS) > 0.0f) ||
+  if ((BZDB.eval(BZDBNAMES.NOSMALLPACKETS) > 0.0f) ||
       (fabsf(pos.x) >= smallMaxDist)      ||
       (fabsf(pos.y) >= smallMaxDist)      ||
       (fabsf(pos.z) >= smallMaxDist)      ||

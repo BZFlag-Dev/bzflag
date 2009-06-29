@@ -1962,7 +1962,7 @@ BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, f
     realShotID=world->getWorldWeapons().getNewWorldShotID();
 
   if (lifetime <= 0)
-    lifetime =BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+    lifetime =BZDB.eval(BZDBNAMES.RELOADTIME);
 
   if (dt <= 0)
     dt = 0;

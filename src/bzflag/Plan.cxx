@@ -77,7 +77,7 @@ void Plan::execute(float &, float &)
           }
 
 	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
-	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	  if (dist <= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) {
 	    if (!myTank->validTeamTarget(remotePlayers[t])) {
 	      hasSWTarget = false;
 	      t = curMaxPlayers;
@@ -96,7 +96,7 @@ void Plan::execute(float &, float &)
     TimeKeeper now = TimeKeeper::getTick();
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
-      float errorLimit = world->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+      float errorLimit = world->getMaxShots() * BZDB.eval(BZDBNAMES.LOCKONANGLE) / 8.0f;
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {
@@ -124,7 +124,7 @@ void Plan::execute(float &, float &)
 
 	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
 	    if ((targetDiff < errorLimit) ||
-		((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) &&
+		((dist < (2.0f * BZDB.eval(BZDBNAMES.SHOTSPEED))) &&
 		 (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
 	      if (myTank->getFlag() != Flags::SuperBullet)

@@ -47,8 +47,8 @@ CustomPyramid::CustomPyramid(bool meshed)
 {
   flipz = false;
 
-  size[0] = size[1] = BZDB.eval(StateDatabase::BZDB_PYRBASE);
-  size.z = BZDB.eval(StateDatabase::BZDB_PYRHEIGHT);
+  size[0] = size[1] = BZDB.eval(BZDBNAMES.PYRBASE);
+  size.z = BZDB.eval(BZDBNAMES.PYRHEIGHT);
 
   materials[XP].setTexture("pyrwall");
   materials[XN].setTexture("pyrwall");

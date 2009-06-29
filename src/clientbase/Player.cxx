@@ -224,9 +224,9 @@ float Player::getMaxSpeed ( void ) const
   const FlagType* flag = getFlag();
   float maxSpeed = BZDBCache::tankSpeed;
   if (flag == Flags::Velocity)
-    maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    maxSpeed *= BZDB.eval(BZDBNAMES.VELOCITYAD);
   else if (flag == Flags::Thief)
-    maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+    maxSpeed *= BZDB.eval(BZDBNAMES.THIEFVELAD);
   return maxSpeed;
 }
 
@@ -652,7 +652,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
 	if (((inputStatus & PlayerState::Falling) == 0) && obstacle->isFlatTop() &&
 	(obstacleTop != tmpPos.z) &&
-	(obstacleTop < (tmpPos.z + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
       newPos.x = startPos.x;
       newPos.y = startPos.y;
       newPos.z = obstacleTop;
@@ -931,7 +931,7 @@ void Player::setFlag(FlagType* _flag)
 
 void Player::updateFlagEffect(FlagType* effectFlag)
 {
-  float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
+  float FlagEffectTime = BZDB.eval(BZDBNAMES.FLAGEFFECTTIME);
   if (FlagEffectTime <= 0.0f) {
     FlagEffectTime = 0.001f; // safety
   }
@@ -939,17 +939,17 @@ void Player::updateFlagEffect(FlagType* effectFlag)
   // set the dimension targets
   dimensionsTarget = fvec3(1.0f, 1.0f, 1.0f);
   if (effectFlag == Flags::Obesity) {
-    const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+    const float factor = BZDB.eval(BZDBNAMES.OBESEFACTOR);
     dimensionsTarget.x = factor;
     dimensionsTarget.y = factor;
   }
   else if (effectFlag == Flags::Tiny) {
-    const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+    const float factor = BZDB.eval(BZDBNAMES.TINYFACTOR);
     dimensionsTarget.x = factor;
     dimensionsTarget.y = factor;
   }
   else if (effectFlag == Flags::Thief) {
-    const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+    const float factor = BZDB.eval(BZDBNAMES.THIEFTINYFACTOR);
     dimensionsTarget.x = factor;
     dimensionsTarget.y = factor;
   }
@@ -1160,7 +1160,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   else if (isExploding() && (state.pos.z > ZERO_TOLERANCE)) {
     // isAlive()
     float t = float((TimeKeeper::getTick() - explodeTime) /
-		    BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
+		    BZDB.eval(BZDBNAMES.EXPLODETIME));
     if (t > 1.0f) {
       // FIXME - setStatus(DeadStatus);
       t = 1.0f;
@@ -1201,11 +1201,11 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 void Player::setLandingSpeed(float velocity)
 {
-  float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
+  float squishiness = BZDB.eval(BZDBNAMES.SQUISHFACTOR);
   if (squishiness < 0.001f) {
     return;
   }
-  float squishTime = BZDB.eval(StateDatabase::BZDB_SQUISHTIME);
+  float squishTime = BZDB.eval(BZDBNAMES.SQUISHTIME);
   if (squishTime < 0.001) {
     return;
   }
@@ -1247,9 +1247,9 @@ void Player::setLandingSpeed(float velocity)
 
 void Player::spawnEffect()
 {
-  const float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
+  const float squishiness = BZDB.eval(BZDBNAMES.SQUISHFACTOR);
   if (squishiness > 0.0f) {
-    const float effectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
+    const float effectTime = BZDB.eval(BZDBNAMES.FLAGEFFECTTIME);
     const float factor = (1.0f / effectTime);
     dimensionsRate = fvec3(factor, factor, factor);
     dimensionsScale = fvec3(0.01f, 0.01f, 0.01f);
@@ -1435,21 +1435,21 @@ bool Player::isDeadReckoningWrong() const
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
   if (getFlag() == Flags::Burrow) {
-    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+    groundLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
   if (predictedPos.z < groundLimit) {
     return true;
   }
 
   // client side throttling
-  const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
+  const int throttleRate = int(BZDB.eval(BZDBNAMES.UPDATETHROTTLERATE));
   const float minUpdateTime = (throttleRate > 0) ? (1.0f / throttleRate) : 0.0f;
   if (dt < minUpdateTime) {
     return false;
   }
 
   // see if position and azimuth are close enough
-  float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
+  float positionTolerance = BZDB.eval(BZDBNAMES.POSITIONTOLERANCE);
   if ((fabsf(state.pos.x - predictedPos.x) > positionTolerance) ||
       (fabsf(state.pos.y - predictedPos.y) > positionTolerance) ||
       (fabsf(state.pos.z - predictedPos.z) > positionTolerance)) {
@@ -1470,7 +1470,7 @@ bool Player::isDeadReckoningWrong() const
     return true;
   }
 
-  float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
+  float angleTolerance = BZDB.eval(BZDBNAMES.ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
     logDebugMessage(4,"state.azimuth = %f, predictedAzimuth = %f\n",
 		    state.azimuth, predictedAzimuth);
@@ -1499,7 +1499,7 @@ void Player::doDeadReckoning()
   if (!isAlive())
     notResponding = false;
   else
-    notResponding = (dt > BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
+    notResponding = (dt > BZDB.eval(BZDBNAMES.NOTRESPONDINGTIME));
 
   bool hitWorld = false;
   bool ZHit = false;
@@ -1507,7 +1507,7 @@ void Player::doDeadReckoning()
   // if the tanks hits something in Z then update input state (we don't want to fall anymore)
   float zLimit = 0.0f;
   if (getFlag() == Flags::Burrow )
-    zLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+    zLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
 
   // check for collisions and correct accordingly
   World *world = World::getWorld();
@@ -1697,7 +1697,7 @@ ShotPath* Player::getShot(int index) const
 void Player::prepareShotInfo(FiringInfo &firingInfo)
 {
   firingInfo.shot.dt = 0.0f;
-  firingInfo.lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  firingInfo.lifetime = BZDB.eval(BZDBNAMES.RELOADTIME);
 
   firingInfo.flagType = getFlag();
   // wee bit o hack -- if phantom flag but not phantomized
@@ -1718,11 +1718,11 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
 
     const fvec3& dir     = getForward();
     const fvec3& tankVel = getVelocity();
-    float shotSpeed      = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+    float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
 
     if (handicap > 0.0f) {
       // apply any handicap advantage to shot speed
-      const float speedAd = 1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD) - 1.0f));
+      const float speedAd = 1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPSHOTAD) - 1.0f));
       shotSpeed *= speedAd;
     }
 
@@ -1731,7 +1731,7 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
     // Set _shotsKeepVerticalVelocity on the server if you want shots
     // to have the same vertical velocity as the tank when fired.
     // keeping shots moving horizontally makes the game more playable.
-    if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV))
+    if (!BZDB.isTrue(BZDBNAMES.SHOTSKEEPVERTICALV))
       firingInfo.shot.vel.z = 0.0f;
   }
 }

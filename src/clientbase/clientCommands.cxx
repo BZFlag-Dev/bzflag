@@ -285,7 +285,7 @@ static std::string cmdDestruct(const std::string&, const CmdArgList& args, bool*
       destructCountdown = 0.0f;
       hud->setAlert(1, "Self Destruct canceled", 1.5f, true);
     } else {
-      static BZDB_float maxVelocity(StateDatabase::BZDB_MAXSELFDESTRUCTVEL);
+      static BZDB_float maxVelocity(BZDBNAMES.MAXSELFDESTRUCTVEL);
       if (myTank->getVelocity().length() > maxVelocity) {
         hud->setAlert(1, "No Self Destruct while moving", 1.0f, false);
       }
@@ -365,7 +365,7 @@ static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && !myTank->isAutoPilot()) {
+  if (BZDB.isTrue(BZDBNAMES.DISABLEBOTS) && !myTank->isAutoPilot()) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
     return std::string();
   }

@@ -412,7 +412,7 @@ static bool chasePlayer(float &rotation, float &speed)
   rotation = TargetingUtils::getTargetRotation( myAzimuth, enemyAzimuth );
 
   //If we are driving relatively towards our target and a building pops up jump over it
-  if (fabs(rotation) < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE)) {
+  if (fabs(rotation) < BZDB.eval(BZDBNAMES.LOCKONANGLE)) {
     const Obstacle *building = NULL;
     float d = distance - 5.0f; //Make sure building is REALLY in front of player (-5)
 
@@ -441,7 +441,7 @@ static bool chasePlayer(float &rotation, float &speed)
       //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
       if ((d > 20.0f) && (d < 50.0f) &&
 	  (building->getTypeID() == boxType)) {
-	float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+	float jumpVel = BZDB.eval(BZDBNAMES.JUMPVELOCITY);
 	float maxJump = (jumpVel * jumpVel) / (2 * -BZDBCache::gravity);
 
 	if (((building->getPosition()[2] - pos[2] + building->getHeight())) < maxJump) {
@@ -455,7 +455,7 @@ static bool chasePlayer(float &rotation, float &speed)
 
   // weave towards the player
   const Player *target = myTank->getTarget();
-  if ((distance > (BZDB.eval(StateDatabase::BZDB_SHOTSPEED) /2.0f))
+  if ((distance > (BZDB.eval(BZDBNAMES.SHOTSPEED) /2.0f))
       ||  (myTank->getFiringStatus() != LocalPlayer::Ready)) {
     float enemyUnitVec[2] = { cosf(enemyAzimuth), sinf(enemyAzimuth) };
     float myUnitVec[2] = { cosf(myAzimuth), sinf(myAzimuth) };
@@ -688,7 +688,7 @@ static bool fireAtTank()
 	if (enemyPos[2] < 0.0f)
 	  enemyPos[2] = 0.0f;
 	float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
-	if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
+	if (dist <= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) {
 	  if (!myTank->validTeamTarget(remotePlayers[t])) {
 	    hasSWTarget = false;
 	    t = curMaxPlayers;
@@ -711,7 +711,7 @@ static bool fireAtTank()
   TimeKeeper now = TimeKeeper::getTick();
   if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
-    float errorLimit = world->getMaxShots() * BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) / 8.0f;
+    float errorLimit = world->getMaxShots() * BZDB.eval(BZDBNAMES.LOCKONANGLE) / 8.0f;
     float closeErrorLimit = errorLimit * 2.0f;
 
     for (int t = 0; t < curMaxPlayers; t++) {
@@ -751,7 +751,7 @@ static bool fireAtTank()
 	/* are they within range? */
 	float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
 	if ((targetDiff < errorLimit) ||
-	    ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
+	    ((dist < (2.0f * BZDB.eval(BZDBNAMES.SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
 
 	  /* shoot at them if I can see them */
 	  if ((myTank->getFlag() != Flags::SuperBullet) &&

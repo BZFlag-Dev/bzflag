@@ -672,7 +672,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     }
     else if (token == "-disableBots") {
       // disallow clients from using autopilot or bots
-      BZDB.set(StateDatabase::BZDB_DISABLEBOTS, "true");
+      BZDB.set(BZDBNAMES.DISABLEBOTS, "true");
     }
     else if (strncmp(token.c_str(), "-d", 2) == 0) {
       // increase debug level - this must be the last
@@ -870,7 +870,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       suppressMasterBanList = true;
     }
     else if (token == "-noradar") {
-      BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
+      BZDB.set(BZDBNAMES.RADARLIMIT, "-1.0");
     }
     else if (token == "-masterBanURL") {
       // if this is the first master ban url, override the default
@@ -1162,11 +1162,11 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     }
     else if (token == "-synctime") {
       // client clocks should be synchronized to server clock
-      BZDB.set(StateDatabase::BZDB_SYNCTIME, "1.0"); // any positive number
+      BZDB.set(BZDBNAMES.SYNCTIME, "1.0"); // any positive number
     }
     else if (token == "-synclocation") {
       // client coordinates should be set to server coordinates
-      BZDB.set(StateDatabase::BZDB_SYNCLOCATION, "true");
+      BZDB.set(BZDBNAMES.SYNCLOCATION, "true");
     }
     else if (token == "-t") {
       // allow teleporters
@@ -1276,7 +1276,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       }
     }
     else if (token == "-worldsize") {
-      BZDB.set(StateDatabase::BZDB_WORLDSIZE,
+      BZDB.set(BZDBNAMES.WORLDSIZE,
                TextUtils::format("%d", parseIntArg(i, tokens) * 2));
       std::cerr << "using world size of [" << BZDBCache::worldSize << "]" << std::endl;
     } else {

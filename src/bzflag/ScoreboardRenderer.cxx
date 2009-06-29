@@ -441,9 +441,9 @@ void ScoreboardRenderer::renderScoreboard(void)
 
   std::string psLabel = bdl->getLocalString(playerLabel);
 
-  if (BZDB.isSet(StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME)) {
+  if (BZDB.isSet(BZDBNAMES.SCOREBOARDCUSTOMROWNAME)) {
     psLabel += " (";
-    psLabel += BZDB.get(StateDatabase::BZDB_SCOREBOARDCUSTOMROWNAME);
+    psLabel += BZDB.get(BZDBNAMES.SCOREBOARDCUSTOMROWNAME);
     psLabel += ")";
   }
 
@@ -654,12 +654,12 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   // callsign
   playerInfo += player->getCallSign();
 
-  if (BZDB.isSet(StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD)) {
-    std::string customRowField = BZDB.get(StateDatabase::BZDB_SCOREBOARDCUSTOMFIELD);
+  if (BZDB.isSet(BZDBNAMES.SCOREBOARDCUSTOMFIELD)) {
+    std::string customRowField = BZDB.get(BZDBNAMES.SCOREBOARDCUSTOMFIELD);
     if (customRowField.size() && player->hasCustomField(customRowField)) {
       int len = 64;
-      if (BZDB.isSet(StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN)) {
-	int dbLen = BZDB.evalInt(StateDatabase::BZDB_SCOREBOARDCUSTOMROWLEN);
+      if (BZDB.isSet(BZDBNAMES.SCOREBOARDCUSTOMROWLEN)) {
+	int dbLen = BZDB.evalInt(BZDBNAMES.SCOREBOARDCUSTOMROWLEN);
 	if(dbLen > 1) {
 	  len = dbLen;
         }

@@ -471,6 +471,8 @@ void MeshObstacle::finalize()
 }
 
 
+//============================================================================//
+
 struct VertPair {
   VertPair() : v0(NULL), v1(NULL) {}
   VertPair(const fvec3* _v0, const fvec3* _v1) : v0(_v0), v1(_v1) {}
@@ -570,7 +572,7 @@ void MeshObstacle::makeEdges() // FIXME -- incomplete
     faceEdges[facePair.f1].push_back(MeshFace::EdgeRef(&edge, -1));
   }
 
-/* FIXME
+/* FIXME -- add the edges to the faces
   FaceEdges::const_iterator feIt;
   for (feIt = faceEdges.begin(); feIt != faceEdges.end(); ++feIt) {
     MeshFace* face = feIt->first;
@@ -584,6 +586,8 @@ void MeshObstacle::makeEdges() // FIXME -- incomplete
 */
 }
 
+
+//============================================================================//
 
 const char* MeshObstacle::getType() const
 {

@@ -26,7 +26,7 @@
 
 ShotPath::ShotPath(const FiringInfo& info, double now)
 : firingInfo(info)
-, reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME))
+, reloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
 , expiring(false)
 , expired(false)
 {

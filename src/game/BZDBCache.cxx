@@ -134,50 +134,50 @@ void BZDBCache::init()
   BZDB.addCallback("vsync",                     clientCallback, NULL);
 
   // Server-side variables
-  BZDB.addCallback(StateDatabase::BZDB_DRAWCELESTIAL,    serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_DRAWCLOUDS,       serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_DRAWGROUND,       serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_DRAWGROUNDLIGHTS, serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_DRAWMOUNTAINS,    serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_DRAWSKY,          serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_FLAGRADIUS,       serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_FLAGPOLESIZE,     serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_FLAGPOLEWIDTH,    serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_FORBIDDEBUG,      serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_GRAVITY,          serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_MAXLOD,           serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_WORLDSIZE,        serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT,       serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_TANKWIDTH,        serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_TANKLENGTH,       serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_TANKHEIGHT,       serverCallback, NULL);
-  BZDB.addCallback(StateDatabase::BZDB_TANKSPEED,        serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.DRAWCELESTIAL,    serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.DRAWCLOUDS,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.DRAWGROUND,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.DRAWGROUNDLIGHTS, serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.DRAWMOUNTAINS,    serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.DRAWSKY,          serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.FLAGRADIUS,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.FLAGPOLESIZE,     serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.FLAGPOLEWIDTH,    serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.FORBIDDEBUG,      serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.GRAVITY,          serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.MAXLOD,           serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.WORLDSIZE,        serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.RADARLIMIT,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKWIDTH,        serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKLENGTH,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKHEIGHT,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKSPEED,        serverCallback, NULL);
 
-  forbidDebug      = BZDB.isTrue(StateDatabase::BZDB_FORBIDDEBUG);
-  drawCelestial    = BZDB.isTrue(StateDatabase::BZDB_DRAWCELESTIAL);
-  drawClouds       = BZDB.isTrue(StateDatabase::BZDB_DRAWCLOUDS);
-  drawGround       = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUND);
-  drawGroundLights = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUNDLIGHTS);
-  drawMountains    = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
-  drawSky          = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
+  forbidDebug      = BZDB.isTrue(BZDBNAMES.FORBIDDEBUG);
+  drawCelestial    = BZDB.isTrue(BZDBNAMES.DRAWCELESTIAL);
+  drawClouds       = BZDB.isTrue(BZDBNAMES.DRAWCLOUDS);
+  drawGround       = BZDB.isTrue(BZDBNAMES.DRAWGROUND);
+  drawGroundLights = BZDB.isTrue(BZDBNAMES.DRAWGROUNDLIGHTS);
+  drawMountains    = BZDB.isTrue(BZDBNAMES.DRAWMOUNTAINS);
+  drawSky          = BZDB.isTrue(BZDBNAMES.DRAWSKY);
 
-  maxLOD           = BZDB.eval(StateDatabase::BZDB_MAXLOD);
-  radarLimit       = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
-  flagPoleSize     = getGoodPosValue(flagPoleSize,    StateDatabase::BZDB_FLAGPOLESIZE);
-  flagPoleWidth    = getGoodPosValue(flagPoleWidth,   StateDatabase::BZDB_FLAGPOLEWIDTH);
-  flagRadius       = getGoodPosValue(flagRadius,      StateDatabase::BZDB_FLAGRADIUS);
-  gravity          = getGoodNonZeroValue(gravity,     StateDatabase::BZDB_GRAVITY);
-  muzzleHeight     = getGoodPosValue(muzzleHeight,    StateDatabase::BZDB_MUZZLEHEIGHT);
-  tankHeight       = getGoodPosValue(tankHeight,      StateDatabase::BZDB_TANKHEIGHT);
-  tankLength       = getGoodPosValue(tankLength,      StateDatabase::BZDB_TANKLENGTH);
-  tankRadius       = getGoodPosValue(tankRadius,      StateDatabase::BZDB_TANKRADIUS);
-  tankSpeed        = getGoodPosValue(tankSpeed,       StateDatabase::BZDB_TANKSPEED);
-  tankWidth        = getGoodPosValue(tankWidth,       StateDatabase::BZDB_TANKWIDTH);
-  worldSize        = getGoodPosValue(worldSize,       StateDatabase::BZDB_WORLDSIZE);
+  maxLOD           = BZDB.eval(BZDBNAMES.MAXLOD);
+  radarLimit       = BZDB.eval(BZDBNAMES.RADARLIMIT);
+  flagPoleSize     = getGoodPosValue(flagPoleSize,    BZDBNAMES.FLAGPOLESIZE);
+  flagPoleWidth    = getGoodPosValue(flagPoleWidth,   BZDBNAMES.FLAGPOLEWIDTH);
+  flagRadius       = getGoodPosValue(flagRadius,      BZDBNAMES.FLAGRADIUS);
+  gravity          = getGoodNonZeroValue(gravity,     BZDBNAMES.GRAVITY);
+  muzzleHeight     = getGoodPosValue(muzzleHeight,    BZDBNAMES.MUZZLEHEIGHT);
+  tankHeight       = getGoodPosValue(tankHeight,      BZDBNAMES.TANKHEIGHT);
+  tankLength       = getGoodPosValue(tankLength,      BZDBNAMES.TANKLENGTH);
+  tankRadius       = getGoodPosValue(tankRadius,      BZDBNAMES.TANKRADIUS);
+  tankSpeed        = getGoodPosValue(tankSpeed,       BZDBNAMES.TANKSPEED);
+  tankWidth        = getGoodPosValue(tankWidth,       BZDBNAMES.TANKWIDTH);
+  worldSize        = getGoodPosValue(worldSize,       BZDBNAMES.WORLDSIZE);
 
-  collisionLimit   = getGoodPosValue(collisionLimit,  StateDatabase::BZDB_COLLISIONLIMIT);
-  dmzWidth         = getGoodPosValue(dmzWidth,        StateDatabase::BZDB_DMZWIDTH);
-  freezeTagRadius  = getGoodPosValue(freezeTagRadius, StateDatabase::BZDB_FREEZETAGRADIUS);
+  collisionLimit   = getGoodPosValue(collisionLimit,  BZDBNAMES.COLLISIONLIMIT);
+  dmzWidth         = getGoodPosValue(dmzWidth,        BZDBNAMES.DMZWIDTH);
+  freezeTagRadius  = getGoodPosValue(freezeTagRadius, BZDBNAMES.FREEZETAGRADIUS);
 
   update();
 }
@@ -244,63 +244,63 @@ void BZDBCache::clientCallback(const std::string& name, void *)
 
 void BZDBCache::serverCallback(const std::string& name, void *)
 {
-  if (name == StateDatabase::BZDB_FORBIDDEBUG) {
-    forbidDebug = BZDB.isTrue(StateDatabase::BZDB_FORBIDDEBUG);
+  if (name == BZDBNAMES.FORBIDDEBUG) {
+    forbidDebug = BZDB.isTrue(BZDBNAMES.FORBIDDEBUG);
   }
-  else if (name == StateDatabase::BZDB_DRAWCELESTIAL) {
-    drawCelestial = BZDB.isTrue(StateDatabase::BZDB_DRAWCELESTIAL);
+  else if (name == BZDBNAMES.DRAWCELESTIAL) {
+    drawCelestial = BZDB.isTrue(BZDBNAMES.DRAWCELESTIAL);
   }
-  else if (name == StateDatabase::BZDB_DRAWCLOUDS) {
-    drawClouds = BZDB.isTrue(StateDatabase::BZDB_DRAWCLOUDS);
+  else if (name == BZDBNAMES.DRAWCLOUDS) {
+    drawClouds = BZDB.isTrue(BZDBNAMES.DRAWCLOUDS);
   }
-  else if (name == StateDatabase::BZDB_DRAWGROUND) {
-    drawGround = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUND);
+  else if (name == BZDBNAMES.DRAWGROUND) {
+    drawGround = BZDB.isTrue(BZDBNAMES.DRAWGROUND);
   }
-  else if (name == StateDatabase::BZDB_DRAWGROUNDLIGHTS) {
-    drawGroundLights = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUNDLIGHTS);
+  else if (name == BZDBNAMES.DRAWGROUNDLIGHTS) {
+    drawGroundLights = BZDB.isTrue(BZDBNAMES.DRAWGROUNDLIGHTS);
   }
-  else if (name == StateDatabase::BZDB_DRAWMOUNTAINS) {
-    drawMountains = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
+  else if (name == BZDBNAMES.DRAWMOUNTAINS) {
+    drawMountains = BZDB.isTrue(BZDBNAMES.DRAWMOUNTAINS);
   }
-  else if (name == StateDatabase::BZDB_DRAWSKY) {
-    drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
+  else if (name == BZDBNAMES.DRAWSKY) {
+    drawSky = BZDB.isTrue(BZDBNAMES.DRAWSKY);
   }
-  else if (name == StateDatabase::BZDB_MAXLOD) {
-    maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
+  else if (name == BZDBNAMES.MAXLOD) {
+    maxLOD = BZDB.eval(BZDBNAMES.MAXLOD);
   }
-  else if (name == StateDatabase::BZDB_WORLDSIZE) {
-    worldSize = getGoodPosValue(worldSize,StateDatabase::BZDB_WORLDSIZE);
+  else if (name == BZDBNAMES.WORLDSIZE) {
+    worldSize = getGoodPosValue(worldSize,BZDBNAMES.WORLDSIZE);
   }
-  else if (name == StateDatabase::BZDB_RADARLIMIT) {
-    radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
+  else if (name == BZDBNAMES.RADARLIMIT) {
+    radarLimit = BZDB.eval(BZDBNAMES.RADARLIMIT);
   }
-  else if (name == StateDatabase::BZDB_GRAVITY) {
-    gravity = getGoodNonZeroValue(gravity,StateDatabase::BZDB_GRAVITY);
+  else if (name == BZDBNAMES.GRAVITY) {
+    gravity = getGoodNonZeroValue(gravity,BZDBNAMES.GRAVITY);
   }
-  else if (name == StateDatabase::BZDB_MUZZLEHEIGHT) {
-    muzzleHeight = getGoodNonZeroValue(gravity,StateDatabase::BZDB_MUZZLEHEIGHT);
+  else if (name == BZDBNAMES.MUZZLEHEIGHT) {
+    muzzleHeight = getGoodNonZeroValue(gravity,BZDBNAMES.MUZZLEHEIGHT);
   }
-  else if (name == StateDatabase::BZDB_TANKWIDTH) {
-    tankWidth = getGoodPosValue(tankWidth,StateDatabase::BZDB_TANKWIDTH);
+  else if (name == BZDBNAMES.TANKWIDTH) {
+    tankWidth = getGoodPosValue(tankWidth,BZDBNAMES.TANKWIDTH);
   }
-  else if (name == StateDatabase::BZDB_TANKLENGTH) {
-    tankLength = getGoodPosValue(tankLength,StateDatabase::BZDB_TANKLENGTH);
+  else if (name == BZDBNAMES.TANKLENGTH) {
+    tankLength = getGoodPosValue(tankLength,BZDBNAMES.TANKLENGTH);
   }
-  else if (name == StateDatabase::BZDB_TANKHEIGHT) {
-    tankHeight = getGoodPosValue(tankHeight,StateDatabase::BZDB_TANKHEIGHT);
+  else if (name == BZDBNAMES.TANKHEIGHT) {
+    tankHeight = getGoodPosValue(tankHeight,BZDBNAMES.TANKHEIGHT);
   }
-  else if (name == StateDatabase::BZDB_TANKSPEED) {
-    tankSpeed = getGoodPosValue(tankSpeed,StateDatabase::BZDB_TANKSPEED);
+  else if (name == BZDBNAMES.TANKSPEED) {
+    tankSpeed = getGoodPosValue(tankSpeed,BZDBNAMES.TANKSPEED);
   }
 // Why only in update() ?
-//  else if (name == StateDatabase::BZDB_FLAGRADIUS) {
-//    flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
+//  else if (name == BZDBNAMES.FLAGRADIUS) {
+//    flagRadius = BZDB.eval(BZDBNAMES.FLAGRADIUS);
 //  }
-  else if (name == StateDatabase::BZDB_FLAGPOLESIZE) {
-    flagPoleSize = getGoodPosValue(flagPoleSize,StateDatabase::BZDB_FLAGPOLESIZE);
+  else if (name == BZDBNAMES.FLAGPOLESIZE) {
+    flagPoleSize = getGoodPosValue(flagPoleSize,BZDBNAMES.FLAGPOLESIZE);
   }
-  else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH) {
-    flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
+  else if (name == BZDBNAMES.FLAGPOLEWIDTH) {
+    flagPoleWidth = getGoodPosValue(flagPoleWidth,BZDBNAMES.FLAGPOLEWIDTH);
   }
 }
 
@@ -308,7 +308,7 @@ void BZDBCache::serverCallback(const std::string& name, void *)
 //============================================================================//
 
 void BZDBCache::update() {
-  tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+  tankRadius = BZDB.eval(BZDBNAMES.TANKRADIUS);
   linedRadarShots = static_cast<int>(BZDB.eval("linedradarshots"));
   sizedRadarShots = static_cast<int>(BZDB.eval("sizedradarshots"));
 }

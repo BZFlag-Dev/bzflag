@@ -583,7 +583,7 @@ inline bool		Player::canMove() const
 
 inline bool		Player::canJump() const
 {
-  if (TimeKeeper::getCurrent().getSeconds() - lastLanding < BZDB.eval(StateDatabase::BZDB_REJUMPTIME))
+  if (TimeKeeper::getCurrent().getSeconds() - lastLanding < BZDB.eval(BZDBNAMES.REJUMPTIME))
     return false;
 
   return (allow & AllowJump) != 0;

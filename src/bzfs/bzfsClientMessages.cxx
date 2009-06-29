@@ -950,7 +950,7 @@ public:
     uint8_t autopilot;
     nboUnpackUInt8(buf, autopilot);
 
-	bool allow = !BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS);
+	bool allow = !BZDB.isTrue(BZDBNAMES.DISABLEBOTS);
 
 	bz_AutoPilotChangeData_V1 evnt(autopilot != 0, allow,player->getIndex());
 

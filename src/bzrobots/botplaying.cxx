@@ -887,7 +887,7 @@ void handleFlagDropped(Player *tank)
     if (tank == myTank) {
       // make sure the player must reload after theft
       if (tank->getFlag() == Flags::Thief)
-	myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
+	myTank->forceReload(BZDB.eval(BZDBNAMES.THIEFDROPTIME));
 
       // update display and play sound effects
       //SOUNDSYSTEM.play(SFX_DROP_FLAG);

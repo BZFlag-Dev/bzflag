@@ -35,7 +35,7 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
   if (!eventData || eventData->eventType != bz_eTickEvent)
     return;
 
-  float autoallowtime = BZDB.eval(StateDatabase::BZDB_AUTOALLOWTIME);
+  float autoallowtime = BZDB.eval(BZDBNAMES.AUTOALLOWTIME);
   TimeKeeper now = TimeKeeper::getCurrent();
 
   for (int i=0; i < curMaxPlayers; i++) {

@@ -522,7 +522,7 @@ void resumeCountdown ( const char *resumedBy )
     return;
 
   clOptions->countdownPaused = false;
-  countdownResumeTime = BZDB.evalInt(StateDatabase::BZDB_COUNTDOWNRESTIME);
+  countdownResumeTime = BZDB.evalInt(BZDBNAMES.COUNTDOWNRESTIME);
 
   if (countdownResumeTime <= 0) {
     // resume instantly
@@ -884,7 +884,7 @@ bool defineWorld ( void )
       else
 	pluginWorldSize = worldSize;
 
-      float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
+      float wallHeight = BZDB.eval(BZDBNAMES.WALLHEIGHT);
       if (pluginWorldHeight > 0)
 	wallHeight = pluginWorldHeight;
       else
@@ -2124,7 +2124,7 @@ void resetFlag(FlagInfo &flag)
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
 
-  float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+  float baseSize = BZDB.eval(BZDBNAMES.BASESIZE);
 
   // reposition flag (middle of the map might be a bad idea)
   fvec3 flagPos(0.0f, 0.0f, 0.0f);
@@ -2569,7 +2569,7 @@ void playerAlive(int playerIndex)
   }
 
   if (playerData->player.isBot()) {
-    if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) || (clOptions->botsPerIP == 0)) {
+    if (BZDB.isTrue(BZDBNAMES.DISABLEBOTS) || (clOptions->botsPerIP == 0)) {
       sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
       removePlayer(playerIndex, "ComputerPlayer", true);
       return;
@@ -2923,7 +2923,7 @@ void searchFlag(GameKeeper::Player &playerData)
       return;
     }
     identify = true;
-    radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
+    radius = BZDB.eval(BZDBNAMES.IDENTIFYRANGE);
   }
 
   const PlayerId playerIndex = playerData.getIndex();
@@ -2998,7 +2998,7 @@ void searchFlag(GameKeeper::Player &playerData)
     }
   }
   else {
-    if (!BZDB.isTrue(StateDatabase::BZDB_GRABOWNFLAG)) {
+    if (!BZDB.isTrue(BZDBNAMES.GRABOWNFLAG)) {
       if (flag.flag.type->flagTeam != playerData.player.getTeam()) {
 	sendGrabFlagMessage(playerIndex, flag);
       }
@@ -3308,7 +3308,7 @@ static void adjustTolerances()
 {
   // check for handicap adjustment
   if ((clOptions->gameOptions & HandicapGameStyle) != 0) {
-    const float speedAdj = BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
+    const float speedAdj = BZDB.eval(BZDBNAMES.HANDICAPVELAD);
     speedTolerance *= speedAdj * speedAdj;
   }
 
@@ -3936,7 +3936,7 @@ static void setupPermissions(void)
 
   // if requested, make it so AllowMovement and AllowShooting eventually
   // get reenabled automatically
-  if (BZDB.eval(StateDatabase::BZDB_AUTOALLOWTIME) > 0)
+  if (BZDB.eval(BZDBNAMES.AUTOALLOWTIME) > 0)
     bz_registerEvent(bz_eTickEvent, &autoAllowTimerTickHandler);
 }
 
@@ -4931,7 +4931,7 @@ static void runMainLoop ( void )
     checkWaitTime(tm,waitTime);
 
     double now = tm.getSeconds();
-    double tcpTimeout = BZDB.eval(StateDatabase::BZDB_TCPTIMEOUT);
+    double tcpTimeout = BZDB.eval(BZDBNAMES.TCPTIMEOUT);
 
     /**************
      *  SELECT()  *

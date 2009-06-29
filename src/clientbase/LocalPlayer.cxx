@@ -295,8 +295,8 @@ void LocalPlayer::doUpdateMotion(float dt)
     }
     else if (location == Exploding) {
       // see if explosing time has expired
-      if (lastTime - getExplodeTime() >= BZDB.eval(StateDatabase::BZDB_EXPLODETIME)) {
-	dt -= float((lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
+      if (lastTime - getExplodeTime() >= BZDB.eval(BZDBNAMES.EXPLODETIME)) {
+	dt -= float((lastTime - getExplodeTime()) - BZDB.eval(BZDBNAMES.EXPLODETIME));
 	if (dt < 0.0f) {
 	  dt = 0.0f;
 	}
@@ -333,7 +333,7 @@ void LocalPlayer::doUpdateMotion(float dt)
 
       // reset our flap count if we have wings
       if (getFlag() == Flags::Wings) {
-	wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
+	wingsFlapCount = (int) BZDB.eval(BZDBNAMES.WINGSJUMPCOUNT);
       }
 
       if ((oldPosition.z < 0.0f) && (getFlag() == Flags::Burrow)) {
@@ -354,7 +354,7 @@ void LocalPlayer::doUpdateMotion(float dt)
 	newAngVel = getNewAngVel(oldAngVel, desiredAngVel, dt);
 
 	// compute horizontal velocity so far
-	const float slideTime = BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME);
+	const float slideTime = BZDB.eval(BZDBNAMES.WINGSSLIDETIME);
 	if (slideTime > 0.0) {
 	  doSlideMotion(dt, slideTime, newAngVel, newVelocity);
 	} else {
@@ -363,10 +363,10 @@ void LocalPlayer::doUpdateMotion(float dt)
 	  newVelocity.y = speed * sinf(angle);
 	}
 
-	newVelocity.z += BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY) * dt;
+	newVelocity.z += BZDB.eval(BZDBNAMES.WINGSGRAVITY) * dt;
 	lastSpeed = speed;
       } else if (getFlag() == Flags::LowGravity) {
-  	newVelocity.z += BZDB.eval(StateDatabase::BZDB_LGGRAVITY) * dt;
+  	newVelocity.z += BZDB.eval(BZDBNAMES.LGGRAVITY) * dt;
 	newAngVel = oldAngVel;
       } else {
 	newVelocity.z += BZDBCache::gravity * dt;
@@ -389,7 +389,7 @@ void LocalPlayer::doUpdateMotion(float dt)
     if (!wantJump) {
       newVelocity.z = oldVelocity.z;
       if ((lastObstacle != NULL) && !lastObstacle->isFlatTop()
-	  && BZDB.isTrue(StateDatabase::BZDB_NOCLIMB)) {
+	  && BZDB.isTrue(BZDBNAMES.NOCLIMB)) {
 	newVelocity.x = 0.0f;
 	newVelocity.y = 0.0f;
       }
@@ -519,7 +519,7 @@ void LocalPlayer::doUpdateMotion(float dt)
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
     if ((oldLocation != InAir) && obstacle->isFlatTop() &&
 	(obstacleTop != tmpPos.z) &&
-	(obstacleTop < (tmpPos.z + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT)))) {
+	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
       newPos.x = oldPosition.x;
       newPos.y = oldPosition.y;
       newPos.z = obstacleTop;
@@ -759,7 +759,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   const PhysicsDriver* phydrv2 = PHYDRVMGR.getDriver(getPhysicsDriver());
   if (((phydrv2 != NULL) && phydrv2->getIsSlide()) ||
       ((getFlag() == Flags::Wings) && (location == InAir) &&
-       (BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME) > 0.0f))) {
+       (BZDB.eval(BZDBNAMES.WINGSSLIDETIME) > 0.0f))) {
     setStatus(getStatus() | short(PlayerState::UserInputs));
   } else {
     setStatus(getStatus() & ~short(PlayerState::UserInputs));
@@ -1285,36 +1285,36 @@ void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
   // boost speed for certain flags
   if (flag == Flags::Velocity) {
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.VELOCITYAD);
   } else if (flag == Flags::Thief) {
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.THIEFVELAD);
   } else if ((flag == Flags::Burrow) && (getPosition().z < 0.0f)) {
-    fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+    fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.BURROWSPEEDAD);
   } else if ((flag == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0)) {
     fracOfMaxSpeed = 0.0f;
   } else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0)) {
     fracOfMaxSpeed = 0.0f;
   } else if (flag == Flags::Agility) {
-    if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW)) {
-      fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+    if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(BZDBNAMES.AGILITYTIMEWINDOW)) {
+      fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
     } else {
       float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
       if (oldFrac > 1.0f)
 	oldFrac = 1.0f;
       else if (oldFrac < -0.5f)
 	oldFrac = -0.5f;
-      float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
+      float limit = BZDB.eval(BZDBNAMES.AGILITYVELDELTA);
       if (fracOfMaxSpeed < 0.0f)
 	limit /= 2.0f;
       if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
-	fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+	fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
 	agilityTime = TimeKeeper::getCurrent();
       }
     }
   }
 
   // apply handicap advantage to tank speed
-  fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
+  fracOfMaxSpeed *= (1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPVELAD) - 1.0f)));
 
   // set desired speed
   desiredSpeed = BZDBCache::tankSpeed * fracOfMaxSpeed;
@@ -1340,16 +1340,16 @@ void LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 
   // boost turn speed for other flags
   if (flag == Flags::QuickTurn) {
-    fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
+    fracOfMaxAngVel *= BZDB.eval(BZDBNAMES.ANGULARAD);
   } else if ((flag == Flags::Burrow) && (getPosition().z < 0.0f)) {
-    fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
+    fracOfMaxAngVel *= BZDB.eval(BZDBNAMES.BURROWANGULARAD);
   }
 
   // apply handicap advantage to tank speed
-  fracOfMaxAngVel *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPANGAD) - 1.0f)));
+  fracOfMaxAngVel *= (1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPANGAD) - 1.0f)));
 
   // set desired turn speed
-  desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+  desiredAngVel = fracOfMaxAngVel * BZDB.eval(BZDBNAMES.TANKANGVEL);
   Player::setUserAngVel(desiredAngVel);
 
   return;
@@ -1461,7 +1461,7 @@ bool LocalPlayer::fireShot()
 
   if (getFlag() == Flags::TriggerHappy) {
     // make sure all the shots don't go off at once
-    forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
+    forceReload(BZDB.eval(BZDBNAMES.RELOADTIME) / numShots);
   }
   return true;
 }
@@ -1557,12 +1557,12 @@ void LocalPlayer::doJump()
   newVelocity.x = oldVelocity.x;
   newVelocity.y = oldVelocity.y;
   if (flag == Flags::Wings) {
-    newVelocity.z = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+    newVelocity.z = BZDB.eval(BZDBNAMES.WINGSJUMPVELOCITY);
   } else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
-    newVelocity.z = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+    newVelocity.z = factor * BZDB.eval(BZDBNAMES.JUMPVELOCITY);
   }  else {
-    newVelocity.z = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+    newVelocity.z = BZDB.eval(BZDBNAMES.JUMPVELOCITY);
   }
 
   /* better realism .. make it so that if you're falling, wings will
@@ -1614,7 +1614,7 @@ void LocalPlayer::explodeTank()
 {
   if (location == Dead || location == Exploding) return;
   const float gravity    = BZDBCache::gravity;
-  const float explodeTim = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+  const float explodeTim = BZDB.eval(BZDBNAMES.EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());
@@ -1796,7 +1796,7 @@ void LocalPlayer::setFlag(FlagType* flag)
 
     if (world->allowAntidote()) {
       float tankRadius = BZDBCache::tankRadius;
-      float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+      float baseSize = BZDB.eval(BZDBNAMES.BASESIZE);
 
       do {
 	if (world->allowTeamFlags()) {

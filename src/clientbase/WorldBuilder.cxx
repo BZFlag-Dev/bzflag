@@ -217,7 +217,7 @@ void* WorldBuilder::unpackGameSettings(void* buf)
 
   float worldSize;
   buf = nboUnpackFloat(buf, worldSize);
-  BZDB.setFloat(StateDatabase::BZDB_WORLDSIZE, worldSize);
+  BZDB.setFloat(BZDBNAMES.WORLDSIZE, worldSize);
   buf = nboUnpackUInt16(buf, gameType);
   setGameType(short(gameType));
   buf = nboUnpackUInt16(buf, gameOptions);

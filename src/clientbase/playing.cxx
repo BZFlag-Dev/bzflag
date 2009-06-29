@@ -420,7 +420,7 @@ void handlePendingJoins(void)
 // check for Steamroller and Burrow kills
 bool checkSquishKill(const Player* victim, const Player* killer, bool localKiller)
 {
-  static BZDB_float srRadiusMult(StateDatabase::BZDB_SRRADIUSMULT);
+  static BZDB_float srRadiusMult(BZDBNAMES.SRRADIUSMULT);
 
   if (!victim || !victim->isAlive() || victim->isPaused() ||
       !killer || !killer->isAlive() || killer->isPaused()) {
@@ -1427,7 +1427,7 @@ void handleHandicap(void *msg)
     if (sPlayer) {
       // a relative score of -50 points will provide maximum handicap
       float normalizedHandicap = float(handicap)
-	/ BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+	/ BZDB.eval(BZDBNAMES.HANDICAPSCOREDIFF);
 
       /* limit how much of a handicap is afforded, and only provide
       * handicap advantages instead of disadvantages.

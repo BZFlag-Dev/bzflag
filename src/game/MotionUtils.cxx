@@ -65,13 +65,13 @@ float computeAngleVelocity(float old, float desired, float dt)
 
 float computeMaxAngleVelocity(FlagType *flag, float z)
 {
-  float angvel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+  float angvel = BZDB.eval(BZDBNAMES.TANKANGVEL);
 
   if (flag) {
     if (flag == Flags::QuickTurn)
-      return angvel * BZDB.eval(StateDatabase::BZDB_ANGULARAD);
+      return angvel * BZDB.eval(BZDBNAMES.ANGULARAD);
     else if (flag == Flags::QuickTurn && z < 0.0f)
-      return angvel * BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
+      return angvel * BZDB.eval(BZDBNAMES.BURROWANGULARAD);
   }
 
   return angvel;
@@ -80,15 +80,15 @@ float computeMaxAngleVelocity(FlagType *flag, float z)
 
 float computeMaxLinVelocity(FlagType *flag, float z)
 {
-  float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+  float speed = BZDB.eval(BZDBNAMES.TANKSPEED);
 
   if (flag) {
     if (flag == Flags::Velocity)
-      return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+      return speed * BZDB.eval(BZDBNAMES.VELOCITYAD);
     else if (flag == Flags::Thief)
-      return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+      return speed * BZDB.eval(BZDBNAMES.THIEFVELAD);
     else if (flag == Flags::QuickTurn && z < 0.0f)
-      return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+      return speed * BZDB.eval(BZDBNAMES.BURROWSPEEDAD);
   }
 
   return speed;
@@ -99,10 +99,10 @@ void computeMomentum(float dt, FlagType *flag,
                      float& speed, float& angVel,
                      const float lastSpeed, const float lastAngVel)
 {
-  static BZDB_float bzdbLinearMomentum(StateDatabase::BZDB_MOMENTUMLINACC);
-  static BZDB_float bzdbLinearInertia(StateDatabase::BZDB_INERTIALINEAR);
-  static BZDB_float bzdbAngularMomentum(StateDatabase::BZDB_MOMENTUMANGACC);
-  static BZDB_float bzdbAngularInertia(StateDatabase::BZDB_INERTIAANGULAR);
+  static BZDB_float bzdbLinearMomentum(BZDBNAMES.MOMENTUMLINACC);
+  static BZDB_float bzdbLinearInertia(BZDBNAMES.INERTIALINEAR);
+  static BZDB_float bzdbAngularMomentum(BZDBNAMES.MOMENTUMANGACC);
+  static BZDB_float bzdbAngularInertia(BZDBNAMES.INERTIAANGULAR);
 
   // get maximum linear and angular accelerations
   const float linearAcc = (flag == Flags::Momentum) ? bzdbLinearMomentum
@@ -134,8 +134,8 @@ void computeMomentum(float dt, FlagType *flag,
 void computeFriction(float dt, FlagType *flag,
                      const fvec3& oldVelocity, fvec3& newVelocity)
 {
-  static BZDB_float bzdbFriction(StateDatabase::BZDB_FRICTION);
-  static BZDB_float bzdbMomentumFriction(StateDatabase::BZDB_MOMENTUMFRICTION);
+  static BZDB_float bzdbFriction(BZDBNAMES.FRICTION);
+  static BZDB_float bzdbMomentumFriction(BZDBNAMES.MOMENTUMFRICTION);
 
   const float friction = (flag == Flags::Momentum) ? bzdbFriction
                                                    : bzdbMomentumFriction;
@@ -160,9 +160,9 @@ void computeFriction(float dt, FlagType *flag,
 float computeJumpVelocity(FlagType *flag)
 {
   if (flag == Flags::Wings)
-    return BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+    return BZDB.eval(BZDBNAMES.WINGSJUMPVELOCITY);
 
-  return BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+  return BZDB.eval(BZDBNAMES.JUMPVELOCITY);
 }
 
 
@@ -170,7 +170,7 @@ float computeGroundLimit(FlagType *flag)
 {
   float groundLimit = 0.0f;
   if (flag == Flags::Burrow)
-    groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+    groundLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
 
   return groundLimit;
 }

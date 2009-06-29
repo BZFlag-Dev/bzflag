@@ -94,12 +94,12 @@ void RobotPlayer::getProjectedPosition(const Player *targ, fvec3& projpos) const
   double hisy = targ->getPosition()[1];
   double deltax = hisx - myx;
   double deltay = hisy - myy;
-  double distance = hypotf(deltax,deltay) - BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - BZDBCache::tankRadius;
+  double distance = hypotf(deltax,deltay) - BZDB.eval(BZDBNAMES.MUZZLEFRONT) - BZDBCache::tankRadius;
   if (distance <= 0) distance = 0;
-  double shotspeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)*
-    (getFlag() == Flags::Laser ? BZDB.eval(StateDatabase::BZDB_LASERADVEL) :
-     getFlag() == Flags::RapidFire ? BZDB.eval(StateDatabase::BZDB_RFIREADVEL) :
-     getFlag() == Flags::MachineGun ? BZDB.eval(StateDatabase::BZDB_MGUNADVEL) : 1) +
+  double shotspeed = BZDB.eval(BZDBNAMES.SHOTSPEED)*
+    (getFlag() == Flags::Laser ? BZDB.eval(BZDBNAMES.LASERADVEL) :
+     getFlag() == Flags::RapidFire ? BZDB.eval(BZDBNAMES.RFIREADVEL) :
+     getFlag() == Flags::MachineGun ? BZDB.eval(BZDBNAMES.MGUNADVEL) : 1) +
       hypotf(getVelocity()[0], getVelocity()[1]);
 
   double errdistance = 1.0;
@@ -127,8 +127,8 @@ void			RobotPlayer::doUpdate(float dt)
   LocalPlayer::doUpdate(dt);
 
   float tankRadius = BZDBCache::tankRadius;
-  const float shotRange  = BZDB.eval(StateDatabase::BZDB_SHOTRANGE);
-  const float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+  const float shotRange  = BZDB.eval(BZDBNAMES.SHOTRANGE);
+  const float shotRadius = BZDB.eval(BZDBNAMES.SHOTRADIUS);
 
   World *world = World::getWorld();
   if (!world) {
@@ -161,7 +161,7 @@ void			RobotPlayer::doUpdate(float dt)
 	azimuthDiff += (float)(2.0 * M_PI);
 
     const float targetdistance = hypotf(p1[0] - p2[0], p1[1] - p2[1]) -
-      BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - tankRadius;
+      BZDB.eval(BZDBNAMES.MUZZLEFRONT) - tankRadius;
 
     const float missby = fabs(azimuthDiff) *
       (targetdistance - BZDBCache::tankLength);
@@ -169,7 +169,7 @@ void			RobotPlayer::doUpdate(float dt)
     if (missby < 0.5f * BZDBCache::tankLength &&
 	p1[2] < shotRadius) {
       fvec3 pos = getPosition();
-      pos.z +=  BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+      pos.z +=  BZDB.eval(BZDBNAMES.MUZZLEHEIGHT);
       fvec3 dir(cosf(azimuth), sinf(azimuth), 0.0f);
       Ray tankRay(pos, dir);
       float maxdistance = targetdistance;
@@ -214,7 +214,7 @@ void			RobotPlayer::doUpdateMotion(float dt)
     const fvec3& oldPosition = getPosition();
     fvec3 position = oldPosition;
     float azimuth = oldAzimuth;
-    float tankAngVel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+    float tankAngVel = BZDB.eval(BZDBNAMES.TANKANGVEL);
     float tankSpeed = BZDBCache::tankSpeed;
 
     World *world = World::getWorld();

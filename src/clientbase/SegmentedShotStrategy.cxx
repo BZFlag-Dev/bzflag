@@ -296,7 +296,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     return minTime;
   }
 
-  float shotRadius = BZDB.eval(StateDatabase::BZDB_SHOTRADIUS);
+  float shotRadius = BZDB.eval(BZDBNAMES.SHOTRADIUS);
 
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
@@ -393,7 +393,7 @@ void SegmentedShotStrategy::radarRender() const
   const int length  = BZDBCache::linedRadarShots;
   const int size    = BZDBCache::sizedRadarShots;
 
-  float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
+  float shotTailLength = BZDB.eval(BZDBNAMES.SHOTTAILLENGTH);
 
   // Display leading lines
   if (length > 0) {
@@ -460,7 +460,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   float minTime = 0.0f;
   const float speed = vel.length();
   if (speed > 0.0f) {
-    minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / speed;
+    minTime = BZDB.eval(BZDBNAMES.MUZZLEFRONT) / speed;
   }
 
   // if all shots ricochet and obstacle effect is stop, then make it ricochet
@@ -694,11 +694,11 @@ RapidFireStrategy::RapidFireStrategy(ShotPath* _path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
-  float fireAdVel = BZDB.eval(StateDatabase::BZDB_RFIREADVEL);
+  f.lifetime *= BZDB.eval(BZDBNAMES.RFIREADLIFE);
+  float fireAdVel = BZDB.eval(BZDBNAMES.RFIREADVEL);
   f.shot.vel *= fireAdVel;
   setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(StateDatabase::BZDB_RFIREADRATE));
+		/ BZDB.eval(BZDBNAMES.RFIREADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -720,11 +720,11 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
-  float thiefAdVel = BZDB.eval(StateDatabase::BZDB_THIEFADSHOTVEL);
+  f.lifetime *= BZDB.eval(BZDBNAMES.THIEFADLIFE);
+  float thiefAdVel = BZDB.eval(BZDBNAMES.THIEFADSHOTVEL);
   f.shot.vel *= thiefAdVel;
   setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(StateDatabase::BZDB_THIEFADRATE));
+		/ BZDB.eval(BZDBNAMES.THIEFADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -822,11 +822,11 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* _path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
-  float mgunAdVel = BZDB.eval(StateDatabase::BZDB_MGUNADVEL);
+  f.lifetime *= BZDB.eval(BZDBNAMES.MGUNADLIFE);
+  float mgunAdVel = BZDB.eval(BZDBNAMES.MGUNADVEL);
   f.shot.vel *= mgunAdVel;
   setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(StateDatabase::BZDB_MGUNADRATE));
+		/ BZDB.eval(BZDBNAMES.MGUNADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -900,11 +900,11 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
-  float laserAdVel = BZDB.eval(StateDatabase::BZDB_LASERADVEL);
+  f.lifetime *= BZDB.eval(BZDBNAMES.LASERADLIFE);
+  float laserAdVel = BZDB.eval(BZDBNAMES.LASERADVEL);
   f.shot.vel *= laserAdVel;
   setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(StateDatabase::BZDB_LASERADRATE));
+		/ BZDB.eval(BZDBNAMES.LASERADRATE));
 
   // make segments
   makeSegments(Stop);

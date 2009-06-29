@@ -25,9 +25,9 @@
 CustomTeleporter::CustomTeleporter(const char* _telename)
 {
   telename = _telename;
-  size.x = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
-  size.y = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
-  size.z = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+  size.x = 0.5f * BZDB.eval(BZDBNAMES.TELEWIDTH);
+  size.y = BZDB.eval(BZDBNAMES.TELEBREADTH);
+  size.z = 2.0f * BZDB.eval(BZDBNAMES.TELEHEIGHT);
   border = size.x * 2.0f;
   texSize = 0.0f; // use the default
 }

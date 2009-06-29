@@ -854,7 +854,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     if (BZDBCache::blend && BZDBCache::lighting &&
 	!drawingMirror && BZDBCache::drawGroundLights) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= _HIGH_QUALITY)) {
-	//	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
+	//	  (BZDB.get(BZDBNAMES.FOGMODE) == "none")) {
 	// not really tesselation, but it is tied to the "Best" lighting,
 	// avoid on foggy maps, because the blending function accumulates
 	// too much brightness.
