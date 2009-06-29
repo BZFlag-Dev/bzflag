@@ -1267,6 +1267,25 @@ void GroupDefinitionMgr::makeWorld()
 
   world.deleteInvalidObstacles();
 
+  // assign the listIDs
+  for (int type = 0; type < ObstacleTypeCount; type++) {
+    const ObstacleList& obsList = world.getList(type);
+    for (uint32_t i = 0; i < obsList.size(); i++) {
+      Obstacle* obs = obsList[i];
+      obs->setListID(i);
+    }
+  }
+  // also assign the face listIDs
+  const ObstacleList& meshes = getMeshes();
+  for (unsigned int m = 0; m < meshes.size(); m++) {
+    const MeshObstacle* mesh = (const MeshObstacle*)meshes[m];
+    for (int f = 0; f < mesh->getFaceCount(); f++) {
+      MeshFace* face = const_cast<MeshFace*>(mesh->getFace(f));
+      face->setListID(meshFaces.size());
+      meshFaces.push_back(face);
+    }
+  }
+
   // sort from top to bottom for enhanced radar
   for (int type = 0; type < ObstacleTypeCount; type++) {
     world.sort(compareHeights);
