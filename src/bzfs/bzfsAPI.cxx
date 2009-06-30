@@ -3383,7 +3383,7 @@ const Obstacle* findFirstNameInList ( const ObstacleList &list, const std::strin
 BZF_API unsigned int bz_findWorldObject ( const char *name )
 {
   if (!name)
-    return -1;
+    return (unsigned int)-1;
 
   std::string nameStr = name;
   for (int type = wallType; type < ObstacleTypeCount; type++) {
@@ -3399,7 +3399,7 @@ BZF_API unsigned int bz_findWorldObject ( const char *name )
     return obs->getGUID();
   }
 
-  return -1;
+  return (unsigned int)-1;
 }
 
 BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID ( unsigned int id )
