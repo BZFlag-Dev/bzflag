@@ -1215,7 +1215,7 @@ void RadarRenderer::buildMeshGeo(const MeshObstacle* mesh, RadarObjectType type)
 
     // draw death faces with a soupcon of red
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
-    const bool isDeath = (phydrv != NULL) && phydrv->getIsDeath();
+    const bool isDeath = (phydrv != NULL) && phydrv->getPossibleDeath();
 
     if (isDeath != (type == eMeshDeathFaces)) {
       continue;

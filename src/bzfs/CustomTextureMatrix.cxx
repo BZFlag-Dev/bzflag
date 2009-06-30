@@ -97,6 +97,24 @@ bool CustomTextureMatrix::read(const char *cmd, std::istream& input)
     }
     texmat->setDynamicCenter (u, v);
   }
+  else if (strcasecmp ("spinVar", cmd) == 0) {
+    std::string varName;
+    if (input >> varName) {
+      texmat->setDynamicSpinVar(varName);
+    }
+  }
+  else if (strcasecmp ("scaleVar", cmd) == 0) {
+    std::string varName;
+    if (input >> varName) {
+      texmat->setDynamicScaleVar(varName);
+    }
+  }
+  else if (strcasecmp ("shiftVar", cmd) == 0) {
+    std::string varName;
+    if (input >> varName) {
+      texmat->setDynamicShiftVar(varName);
+    }
+  }
   else {
     // NOTE: we don't use a WorldFileObstacle
     return WorldFileObject::read(cmd, input);

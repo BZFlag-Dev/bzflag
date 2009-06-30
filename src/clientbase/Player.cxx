@@ -352,21 +352,27 @@ void Player::calcRelativeMotion(fvec2& vel, float& speed, float& angVel)
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
   if (phydrv != NULL) {
-    const fvec3& v = phydrv->getLinearVel();
-    const float av = phydrv->getAngularVel();
-    const fvec2& ap = phydrv->getAngularPos();
-
     // adjust for driver velocity
+    const fvec3& v = phydrv->getLinearVel();
     vel.x -= v.x;
     vel.y -= v.y;
 
     // adjust for driver angular velocity
+    const float av = phydrv->getAngularVel();
     if (av != 0.0f) {
+      const fvec2& ap = phydrv->getAngularPos();
       const float dx = state.pos.x - ap.x;
       const float dy = state.pos.y - ap.y;
       vel.x += av * dy;
       vel.y -= av * dx;
       angVel = state.angVel - av;
+    }
+
+    // adjust for driver radial velocity
+    const float rv = phydrv->getRadialVel();
+    if (rv != 0.0f) {
+      const fvec2& rp = phydrv->getRadialPos();
+      vel += rv * (state.pos.xy() - rp).normalize();
     }
   }
 

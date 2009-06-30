@@ -29,20 +29,25 @@ class TextureMatrix {
     void finalize();
 
     const float* getMatrix() const;
-    bool setName (const std::string& name);
+    bool setName(const std::string& name);
 
     // the static parameters
-    void setStaticSpin (float rotation);
-    void setStaticShift (float u, float v);
-    void setStaticScale (float u, float v);
-    void setStaticCenter (float u, float v);
+    void setStaticSpin(float rotation);
+    void setStaticShift(float u, float v);
+    void setStaticScale(float u, float v);
+    void setStaticCenter(float u, float v);
 
     // the dynamic parameters
-    void setDynamicSpin (float freq);
-    void setDynamicShift (float uFreq, float vFreq);
-    void setDynamicScale (float uFreq, float vFreq,
-			  float uSize, float vSize);
-    void setDynamicCenter (float u, float v);
+    void setDynamicSpin(float freq);
+    void setDynamicShift(float uFreq, float vFreq);
+    void setDynamicScale(float uFreq, float vFreq,
+                         float uSize, float vSize);
+    void setDynamicCenter(float u, float v);
+
+    // dynamic parameter variables
+    void setDynamicSpinVar(const std::string& var);
+    void setDynamicShiftVar(const std::string& var);
+    void setDynamicScaleVar(const std::string& var);
 
     void update(double time);
     void setMatrix(const float matrix[4][4]);
@@ -54,6 +59,14 @@ class TextureMatrix {
     void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
+
+  private:
+    static void staticSpinCallback(const std::string& name, void* data);
+    static void staticShiftCallback(const std::string& name, void* data);
+    static void staticScaleCallback(const std::string& name, void* data);
+    void spinCallback(const std::string& name);
+    void shiftCallback(const std::string& name);
+    void scaleCallback(const std::string& name);
 
   private:
     std::string name;
@@ -71,6 +84,9 @@ class TextureMatrix {
     float uScaleFreq, vScaleFreq;
     float uScale, vScale;
     float uCenter, vCenter;
+    std::string spinVar;
+    std::string shiftVar;
+    std::string scaleVar;
     // the final result
     float matrix[4][4];
 };

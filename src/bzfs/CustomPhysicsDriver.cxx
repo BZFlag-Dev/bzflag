@@ -84,6 +84,36 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
       std::cout << "Physics Driver: empty death message, pacifying" << std::endl;
     }
   }
+  else if (strcasecmp ("linearVar", cmd) == 0) {
+    std::string var;
+    if (input >> var) {
+      driver->setLinearVar(var);
+    }
+  }
+  else if (strcasecmp ("angularVar", cmd) == 0) {
+    std::string var;
+    if (input >> var) {
+      driver->setAngularVar(var);
+    }
+  }
+  else if (strcasecmp ("radialVar", cmd) == 0) {
+    std::string var;
+    if (input >> var) {
+      driver->setRadialVar(var);
+    }
+  }
+  else if (strcasecmp ("slideVar", cmd) == 0) {
+    std::string var;
+    if (input >> var) {
+      driver->setSlideVar(var);
+    }
+  }
+  else if (strcasecmp ("deathVar", cmd) == 0) {
+    std::string var;
+    if (input >> var) {
+      driver->setDeathVar(var);
+    }
+  }
   else {
     // NOTE: we don't use a WorldFileObstacle
     return WorldFileObject::read(cmd, input);

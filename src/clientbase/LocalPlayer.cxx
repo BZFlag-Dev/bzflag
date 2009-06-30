@@ -407,21 +407,30 @@ void LocalPlayer::doUpdateMotion(float dt)
     if (phydrv->getIsSlide()) {
       const float slideTime = phydrv->getSlideTime();
       doSlideMotion(dt, slideTime, newAngVel, newVelocity);
-    } else {
+    }
+    else {
       // adjust the horizontal velocity
       newVelocity.x += v.x;
       newVelocity.y += v.y;
 
       const float av = phydrv->getAngularVel();
-      const fvec2& ap = phydrv->getAngularPos();
-
       if (av != 0.0f) {
 	// the angular velocity is in radians/sec
 	newAngVel += av;
+        const fvec2& ap = phydrv->getAngularPos();
 	const float dx = oldPosition.x - ap.x;
 	const float dy = oldPosition.y - ap.y;
 	newVelocity.x -= av * dy;
 	newVelocity.y += av * dx;
+      }
+
+      const float rv = phydrv->getRadialVel();
+      if (rv != 0.0f) {
+	// the radial velocity is in meters/sec
+        const fvec2& rp = phydrv->getRadialPos();
+        const fvec2 diff = oldPosition.xy() - rp;
+        const float distSq = diff.lengthSq() + 0.1f;
+	newVelocity.xy() += (rv / distSq) * diff.normalize();
       }
     }
   }

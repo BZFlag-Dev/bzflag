@@ -18,6 +18,7 @@
 // system headers
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 #include <iostream>
 
@@ -34,11 +35,21 @@ class PhysicsDriver {
     ~PhysicsDriver();
 
     bool setName(const std::string& name);
+
     void setLinear(const fvec3& vel);
+    void setLinearVar(const std::string& varName);
+
     void setAngular(float angleVel, const fvec2& pos);
+    void setAngularVar(const std::string& varName);
+
     void setRadial(float radialVel, const fvec2& pos);
+    void setRadialVar(const std::string& varName);
+
     void setSlideTime(float slideTime);
+    void setSlideVar(const std::string& varName);
+
     void setDeathMessage(const std::string& msg);
+    void setDeathVar(const std::string& varName);
 
     void finalize();
     void update(float time);
@@ -53,6 +64,9 @@ class PhysicsDriver {
     inline bool         getIsSlide()    const { return slideTime > 0.0f; }
     inline float        getSlideTime()  const { return slideTime; }
     inline bool         getIsDeath()    const { return !deathMsg.empty(); }
+    inline bool         getPossibleDeath() const {
+      return !deathMsg.empty() || !deathVar.empty();
+    }
     inline const std::string& getDeathMsg() const { return deathMsg; }
 
     bool operator<(const PhysicsDriver& pd) const;    
@@ -64,15 +78,37 @@ class PhysicsDriver {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
+    static void staticLinearCallback(const std::string& name, void* data);
+    static void staticAngularCallback(const std::string& name, void* data);
+    static void staticRadialCallback(const std::string& name, void* data);
+    static void staticSlideCallback(const std::string& name, void* data);
+    static void staticDeathCallback(const std::string& name, void* data);
+    void linearCallback(const std::string& name);
+    void angularCallback(const std::string& name);
+    void radialCallback(const std::string& name);
+    void slideCallback(const std::string& name);
+    void deathCallback(const std::string& name);
+
+  private:
     std::string name;
     int id;
+
     fvec3 linearVel;
+    std::string linearVar;
+
     float angularVel;
     fvec2 angularPos;
+    std::string angularVar;
+
     float radialVel;
     fvec2 radialPos;
+    std::string radialVar;
+
     float slideTime;
+    std::string slideVar;
+    
     std::string deathMsg;
+    std::string deathVar;
 };
 
 
@@ -93,8 +129,18 @@ class PhysicsDriverManager {
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
-    std::vector<PhysicsDriver*> drivers;
-    std::map<std::string, int>  nameMap;
+    typedef std::map<std::string, PhysicsDriver*> NameMap;
+    struct PointerCompare {
+      bool operator()(const PhysicsDriver* a, const PhysicsDriver* b) const {
+        return *a < *b;
+      }
+    };
+    typedef std::set<PhysicsDriver*, PointerCompare> DriverSet;
+    typedef std::vector<PhysicsDriver*> DriverVec;
+
+    DriverVec drivers;
+    DriverSet driverSet;
+    NameMap   nameMap;
 };
 
 

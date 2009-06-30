@@ -344,7 +344,8 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   } else {
     const fvec3& v = driver->getLinearVel();
     const float av = driver->getAngularVel();
-    if ((v.x == 0.0f) && (v.y == 0.0f) && (av == 0.0f)) {
+    const float rv = driver->getRadialVel();
+    if ((v.x == 0.0f) && (v.y == 0.0f) && (av == 0.0f) && (rv == 0.0f)) {
       te.phydrv = -1;
     } else {
       te.phydrv = phydrv;
@@ -441,8 +442,7 @@ static void updateList(TrackList& list, float dt)
     if (phydrv != NULL) {
 
       const fvec3& v = phydrv->getLinearVel();
-      te.pos.x += (v.x * dt);
-      te.pos.y += (v.y * dt);
+      te.pos.xy() += dt * v.xy();
 
       const float av = phydrv->getAngularVel();
       if (av != 0.0f) {
@@ -455,6 +455,14 @@ static void updateList(TrackList& list, float dt)
 	te.pos.x = ap.x + ((cos_val * dx) - (sin_val * dy));
 	te.pos.y = ap.y + ((cos_val * dy) + (sin_val * dx));
 	te.angle += (float)(da * (180.0 / M_PI));
+      }
+
+      const float rv = phydrv->getRadialVel();
+      if (rv != 0.0f) {
+	const fvec2& rp = phydrv->getRadialPos();
+        const fvec2 diff = te.pos.xy() - rp;
+        const float distSq = diff.lengthSq() + 0.1f;
+	te.pos.xy() += dt * (rv / distSq) * diff.normalize();
       }
 
       if ((AirCull & PhyDrvAirCull) != 0) {

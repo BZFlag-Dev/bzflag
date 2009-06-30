@@ -131,40 +131,19 @@ class BZDBCache
     template <typename T>
     class static_hook {
       public:
-        static_hook() {
-          setName("");
-        }
-        static_hook(const std::string& varName) {
-          setName(varName);
+        static_hook(const std::string& _name) : name(_name) {
+          update();
+          BZDB.addCallback(name, callback, this);
         }
 
-        virtual ~static_hook() {
-          if (!name.empty()) {
-            BZDB.removeCallback(name, callback, this);
-          }
+        ~static_hook() {
+          BZDB.removeCallback(name, callback, this);
         }
 
         inline operator const T&() const { return data; }
         inline const T& getData()  const { return data; }
 
         inline const std::string& getName() const { return name; }
-
-      protected:
-        void setName(const std::string& newName) {
-          if (name != newName) {
-            if (!name.empty()) {
-              BZDB.removeCallback(name, callback, this);
-            }
-            if (!newName.empty()) {
-              BZDB.addCallback(newName, callback, this);
-            }
-            name = newName;
-          }
-          update();
-        }
-        void setData(const T& value) {
-          data = value;
-        }
 
       private: /* no copying */
         static_hook(const static_hook&);
@@ -179,7 +158,7 @@ class BZDBCache
         }
 
       private:
-        std::string name;
+        const std::string name;
         T data;
     };
 };

@@ -20,8 +20,11 @@
 /* common implemnetation headers */
 #include "GameTime.h"
 #include "Pack.h"
+#include "StateDatabase.h"
 
 
+//============================================================================//
+//============================================================================//
 //
 // Texture Matrix Manager
 //
@@ -160,6 +163,8 @@ void TextureMatrixManager::print(std::ostream& out,
 }
 
 
+//============================================================================//
+//============================================================================//
 //
 // Texture Matrix
 //
@@ -266,9 +271,69 @@ TextureMatrix::TextureMatrix()
 
 TextureMatrix::~TextureMatrix()
 {
+  if (!spinVar.empty()) {
+    BZDB.removeCallback(spinVar, staticSpinCallback, this);
+  }
+  if (!scaleVar.empty()) {
+    BZDB.removeCallback(scaleVar, staticScaleCallback, this);
+  }
+  if (!shiftVar.empty()) {
+    BZDB.removeCallback(shiftVar, staticShiftCallback, this);
+  }
   return;
 }
 
+
+//============================================================================//
+
+void TextureMatrix::staticSpinCallback(const std::string& name, void* data)
+{
+  ((TextureMatrix*)data)->spinCallback(name);
+}
+
+void TextureMatrix::staticScaleCallback(const std::string& name, void* data)
+{
+  ((TextureMatrix*)data)->scaleCallback(name);
+}
+
+void TextureMatrix::staticShiftCallback(const std::string& name, void* data)
+{
+  ((TextureMatrix*)data)->shiftCallback(name);
+}
+
+
+void TextureMatrix::spinCallback(const std::string& /*name*/)
+{
+  const float value = BZDB.eval(spinVar);
+  if (!isnan(value)) {
+    spinFreq = value;
+  }
+}
+
+
+void TextureMatrix::scaleCallback(const std::string& /*name*/)
+{
+  const fvec4 values = BZDB.evalFVec4(scaleVar);
+  if (!isnan(values.x)) {
+    uScaleFreq = values.x;
+    vScaleFreq = values.y;
+    uScale     = values.z;
+    vScale     = values.w;
+  }
+}
+
+
+void TextureMatrix::shiftCallback(const std::string& /*name*/)
+{
+  const fvec2 values = BZDB.evalFVec2(shiftVar);
+  if (!isnan(values.x)) {
+    uShiftFreq = values.x;
+    vShiftFreq = values.y;
+  }
+}
+
+
+//============================================================================//
 
 void TextureMatrix::finalize()
 {
@@ -283,7 +348,8 @@ void TextureMatrix::finalize()
 
   if ((spinFreq != 0.0f) ||
       (uShiftFreq != 0.0f) || (vShiftFreq != 0.0f) ||
-      (uScaleFreq != 0.0f) || (vScaleFreq != 0.0f)) {
+      (uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
+      !spinVar.empty() || !scaleVar.empty() || !shiftVar.empty()) {
     useDynamic = true;
   }
 
@@ -403,6 +469,42 @@ void TextureMatrix::setDynamicCenter (float u, float v)
 }
 
 
+void TextureMatrix::setDynamicSpinVar(const std::string& var)
+{
+  if (!spinVar.empty()) {
+    BZDB.removeCallback(spinVar, staticSpinCallback, this);
+  }
+  spinVar = var;
+  if (!spinVar.empty()) {
+    BZDB.addCallback(spinVar, staticSpinCallback, this);
+  }
+}
+
+
+void TextureMatrix::setDynamicScaleVar(const std::string& var)
+{
+  if (!scaleVar.empty()) {
+    BZDB.removeCallback(scaleVar, staticScaleCallback, this);
+  }
+  scaleVar = var;
+  if (!scaleVar.empty()) {
+    BZDB.addCallback(scaleVar, staticScaleCallback, this);
+  }
+}
+
+
+void TextureMatrix::setDynamicShiftVar(const std::string& var)
+{
+  if (!shiftVar.empty()) {
+    BZDB.removeCallback(shiftVar, staticShiftCallback, this);
+  }
+  shiftVar = var;
+  if (!shiftVar.empty()) {
+    BZDB.addCallback(shiftVar, staticShiftCallback, this);
+  }
+}
+
+
 void TextureMatrix::update (double t)
 {
   if (!useDynamic) {
@@ -445,6 +547,38 @@ void TextureMatrix::update (double t)
 }
 
 
+int TextureMatrix::packSize() const
+{
+  int fullSize = 0;
+  fullSize += nboStdStringPackSize(name);
+  fullSize += sizeof(uint8_t);
+  if (useStatic) {
+    fullSize += sizeof(float); // rotation
+    fullSize += sizeof(float); // uFixedShift
+    fullSize += sizeof(float); // vFixedShift
+    fullSize += sizeof(float); // uFixedScale
+    fullSize += sizeof(float); // vFixedScale
+    fullSize += sizeof(float); // uFixedCenter
+    fullSize += sizeof(float); // vFixedCenter
+  }
+  if (useDynamic) {
+    fullSize += sizeof(float); // spinFreq
+    fullSize += sizeof(float); // uShiftFreq
+    fullSize += sizeof(float); // vShiftFreq
+    fullSize += sizeof(float); // uScaleFreq
+    fullSize += sizeof(float); // vScaleFreq
+    fullSize += sizeof(float); // uScale
+    fullSize += sizeof(float); // vScale
+    fullSize += sizeof(float); // uCenter
+    fullSize += sizeof(float); // vCenter
+    fullSize += nboStdStringPackSize(spinVar);
+    fullSize += nboStdStringPackSize(scaleVar);
+    fullSize += nboStdStringPackSize(shiftVar);
+  }
+  return fullSize;
+}
+
+
 void * TextureMatrix::pack(void *buf) const
 {
   buf = nboPackStdString (buf, name);
@@ -452,28 +586,31 @@ void * TextureMatrix::pack(void *buf) const
   uint8_t state = 0;
   if (useStatic)  state |= (1 << 0);
   if (useDynamic) state |= (1 << 1);
-  buf = nboPackUInt8 (buf, state);
+  buf = nboPackUInt8(buf, state);
 
   if (useStatic) {
-    buf = nboPackFloat (buf, rotation);
-    buf = nboPackFloat (buf, uFixedShift);
-    buf = nboPackFloat (buf, vFixedShift);
-    buf = nboPackFloat (buf, uFixedScale);
-    buf = nboPackFloat (buf, vFixedScale);
-    buf = nboPackFloat (buf, uFixedCenter);
-    buf = nboPackFloat (buf, vFixedCenter);
+    buf = nboPackFloat(buf, rotation);
+    buf = nboPackFloat(buf, uFixedShift);
+    buf = nboPackFloat(buf, vFixedShift);
+    buf = nboPackFloat(buf, uFixedScale);
+    buf = nboPackFloat(buf, vFixedScale);
+    buf = nboPackFloat(buf, uFixedCenter);
+    buf = nboPackFloat(buf, vFixedCenter);
   }
 
   if (useDynamic) {
-    buf = nboPackFloat (buf, spinFreq);
-    buf = nboPackFloat (buf, uShiftFreq);
-    buf = nboPackFloat (buf, vShiftFreq);
-    buf = nboPackFloat (buf, uScaleFreq);
-    buf = nboPackFloat (buf, vScaleFreq);
-    buf = nboPackFloat (buf, uScale);
-    buf = nboPackFloat (buf, vScale);
-    buf = nboPackFloat (buf, uCenter);
-    buf = nboPackFloat (buf, vCenter);
+    buf = nboPackFloat(buf, spinFreq);
+    buf = nboPackFloat(buf, uShiftFreq);
+    buf = nboPackFloat(buf, vShiftFreq);
+    buf = nboPackFloat(buf, uScaleFreq);
+    buf = nboPackFloat(buf, vScaleFreq);
+    buf = nboPackFloat(buf, uScale);
+    buf = nboPackFloat(buf, vScale);
+    buf = nboPackFloat(buf, uCenter);
+    buf = nboPackFloat(buf, vCenter);
+    buf = nboPackStdString(buf, spinVar);
+    buf = nboPackStdString(buf, scaleVar);
+    buf = nboPackStdString(buf, shiftVar);
   }
 
   return buf;
@@ -490,45 +627,34 @@ void * TextureMatrix::unpack(void *buf)
   useDynamic = (state & (1 << 1)) != 0;
 
   if (useStatic) {
-    buf = nboUnpackFloat (buf, rotation);
-    buf = nboUnpackFloat (buf, uFixedShift);
-    buf = nboUnpackFloat (buf, vFixedShift);
-    buf = nboUnpackFloat (buf, uFixedScale);
-    buf = nboUnpackFloat (buf, vFixedScale);
-    buf = nboUnpackFloat (buf, uFixedCenter);
-    buf = nboUnpackFloat (buf, vFixedCenter);
+    buf = nboUnpackFloat(buf, rotation);
+    buf = nboUnpackFloat(buf, uFixedShift);
+    buf = nboUnpackFloat(buf, vFixedShift);
+    buf = nboUnpackFloat(buf, uFixedScale);
+    buf = nboUnpackFloat(buf, vFixedScale);
+    buf = nboUnpackFloat(buf, uFixedCenter);
+    buf = nboUnpackFloat(buf, vFixedCenter);
   }
 
   if (useDynamic) {
-    buf = nboUnpackFloat (buf, spinFreq);
-    buf = nboUnpackFloat (buf, uShiftFreq);
-    buf = nboUnpackFloat (buf, vShiftFreq);
-    buf = nboUnpackFloat (buf, uScaleFreq);
-    buf = nboUnpackFloat (buf, vScaleFreq);
-    buf = nboUnpackFloat (buf, uScale);
-    buf = nboUnpackFloat (buf, vScale);
-    buf = nboUnpackFloat (buf, uCenter);
-    buf = nboUnpackFloat (buf, vCenter);
+    buf = nboUnpackFloat(buf, spinFreq);
+    buf = nboUnpackFloat(buf, uShiftFreq);
+    buf = nboUnpackFloat(buf, vShiftFreq);
+    buf = nboUnpackFloat(buf, uScaleFreq);
+    buf = nboUnpackFloat(buf, vScaleFreq);
+    buf = nboUnpackFloat(buf, uScale);
+    buf = nboUnpackFloat(buf, vScale);
+    buf = nboUnpackFloat(buf, uCenter);
+    buf = nboUnpackFloat(buf, vCenter);
+    std::string varName;
+    buf = nboUnpackStdString(buf, varName); setDynamicSpinVar(varName);
+    buf = nboUnpackStdString(buf, varName); setDynamicScaleVar(varName);
+    buf = nboUnpackStdString(buf, varName); setDynamicShiftVar(varName);
   }
 
   finalize();
 
   return buf;
-}
-
-
-int TextureMatrix::packSize() const
-{
-  int fullSize = 0;
-  fullSize += nboStdStringPackSize(name);
-  fullSize += sizeof(uint8_t);
-  if (useStatic) {
-    fullSize += sizeof(float[7]);
-  }
-  if (useDynamic) {
-    fullSize += sizeof(float[9]);
-  }
-  return fullSize;
 }
 
 
@@ -569,6 +695,15 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
     }
     if (uCenter != 0.5f) {
       out << indent << "  center " << uCenter << " " << vCenter << std::endl;
+    }
+    if (!spinVar.empty()) {
+      out << indent << "  spinVar " << spinVar << std::endl;
+    }
+    if (!scaleVar.empty()) {
+      out << indent << "  scaleVar " << scaleVar << std::endl;
+    }
+    if (!shiftVar.empty()) {
+      out << indent << "  shiftVar " << shiftVar << std::endl;
     }
   }
 
