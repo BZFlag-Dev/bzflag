@@ -57,6 +57,7 @@ class GroupInstance {
   friend class ObstacleModifier;
 
   public:
+    typedef std::map<int, int>                  IntSwapMap;
     typedef std::map<std::string, std::string> TextSwapMap;
 
   public:
@@ -76,6 +77,7 @@ class GroupInstance {
     void setCanRicochet();
     void addMaterialSwap(const BzMaterial* src,
 			 const BzMaterial* dst);
+    void addPhydrvSwap(int srcID, int dstID);
     void addTextSwap(const std::string& src,
                      const std::string& dst);
     void addZoneSwap(const std::string& src,
@@ -112,6 +114,7 @@ class GroupInstance {
     bool          ricochet;
 
     MaterialMap matMap;
+    IntSwapMap  phydrvMap;
     TextSwapMap textMap;
     TextSwapMap zoneMap;
     TextSwapMap weaponMap;

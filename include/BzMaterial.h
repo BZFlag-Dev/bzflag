@@ -74,6 +74,7 @@ class BzMaterial {
     void setNoShadow(bool);
     void setNoCulling(bool);
     void setNoSorting(bool);
+    void setNoBlending(bool);
     void setAlphaThreshold(const float);
 
     // the following set()'s operate on the last added texture
@@ -113,6 +114,7 @@ class BzMaterial {
     bool getNoShadow() const;
     bool getNoCulling() const;
     bool getNoSorting() const;
+    bool getNoBlending() const;
     bool getNoLighting() const;
     float getAlphaThreshold() const;
 
@@ -169,6 +171,7 @@ class BzMaterial {
     bool noShadow;
     bool noCulling;
     bool noSorting;
+    bool noBlending;
     bool noLighting;
     float alphaThreshold;
 

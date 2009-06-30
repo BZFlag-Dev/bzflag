@@ -103,13 +103,31 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     const BzMaterial* srcMat = MATERIALMGR.findMaterial(srcName);
     const BzMaterial* dstMat = MATERIALMGR.findMaterial(dstName);
     if (srcMat == NULL) {
-      std::cout << "couldn't find matswap source: " << srcName
-		<< std::endl;
+      std::cout << "couldn't find matswap source: "
+                << srcName << std::endl;
     } else if (dstMat == NULL) {
-      std::cout << "couldn't find matswap destination: " << dstName
-		<< std::endl;
+      std::cout << "couldn't find matswap destination: "
+                << dstName << std::endl;
     } else {
       group->addMaterialSwap(srcMat, dstMat);
+    }
+  }
+  else if (strcasecmp(cmd, "phydrvswap") == 0) {
+    std::string srcName;
+    std::string dstName;
+    if (!(input >> srcName) || !(input >> dstName)) {
+      std::cout << "missing phydrvswap parameter" << std::endl;
+    }
+    int srcDrv = PHYDRVMGR.findDriver(srcName);
+    int dstDrv = PHYDRVMGR.findDriver(dstName);
+    if ((srcDrv < 0) && (srcName != "-1")) {
+      std::cout << "couldn't find phydrvswap source: "
+                << srcName << std::endl;
+    } else if ((dstDrv < 0) && (dstName != "-1")) {
+      std::cout << "couldn't find phydrvswap destination: "
+                << srcName << std::endl;
+    } else {
+      group->addPhydrvSwap(srcDrv, dstDrv);
     }
   }
   else if (strcasecmp(cmd, "textswap") == 0) {

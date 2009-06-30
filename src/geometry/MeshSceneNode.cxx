@@ -517,6 +517,9 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
       }
     }
   }
+  if (bzmat->getNoBlending()) {
+    builder.resetBlending();
+  }
 
   // sorting  (do this after using setBlending())
   //

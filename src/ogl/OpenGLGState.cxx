@@ -397,8 +397,7 @@ void OpenGLGStateState::setOrder(int value)
   sorted.order = value;
 }
 
-void OpenGLGStateState::setBlending(
-					GLenum sFactor, GLenum dFactor)
+void OpenGLGStateState::setBlending(GLenum sFactor, GLenum dFactor)
 {
   unsorted.hasBlending = (sFactor != GL_ONE || dFactor != GL_ZERO);
   unsorted.needsSorting = unsorted.hasBlending;

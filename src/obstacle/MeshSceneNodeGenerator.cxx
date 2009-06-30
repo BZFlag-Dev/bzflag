@@ -468,6 +468,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   node->setAlphaThreshold(mat->getAlphaThreshold());
   node->setNoCulling(mat->getNoCulling());
   node->setNoSorting(mat->getNoSorting());
+  node->setNoBlending(mat->getNoBlending());
 }
 
 

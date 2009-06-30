@@ -35,6 +35,7 @@
 #include "LinkDef.h"
 #include "LinkManager.h"
 #include "WorldText.h"
+#include "TextUtils.h"
 #include "vectors.h"
 #include "bzfio.h"
 
@@ -203,6 +204,13 @@ void GroupInstance::addWeaponSwap(const std::string& srcText,
 }
 
 
+void GroupInstance::addPhydrvSwap(int srcID, int dstID)
+{
+  phydrvMap[srcID] = dstID;
+  return;
+}
+
+
 const std::string& GroupInstance::getGroupDef() const
 {
   return groupDef;
@@ -243,6 +251,9 @@ int GroupInstance::packSize() const
 
   fullSize += sizeof(int32_t); // matMap count
   fullSize += matMap.size() * 2 * sizeof(int32_t);
+
+  fullSize += sizeof(int32_t); // phydrvMap count
+  fullSize += phydrvMap.size() * 2 * sizeof(int32_t);
 
   fullSize += sizeof(int32_t); // textMap count
   TextSwapMap::const_iterator textIt;
@@ -308,6 +319,14 @@ void* GroupInstance::pack(void* buf) const
     const int dstIndex = MATERIALMGR.getIndex(matIt->second);
     buf = nboPackInt32(buf, srcIndex);
     buf = nboPackInt32(buf, dstIndex);
+  }
+
+  // phydrvMap -- FIXME -- named printing
+  buf = nboPackInt32(buf, phydrvMap.size());
+  IntSwapMap::const_iterator phydrvIt;
+  for (phydrvIt = phydrvMap.begin(); phydrvIt != phydrvMap.end(); phydrvIt++) {
+    buf = nboPackInt32(buf, (int32_t)phydrvIt->first);
+    buf = nboPackInt32(buf, (int32_t)phydrvIt->second);
   }
 
   // textMap
@@ -387,6 +406,15 @@ void* GroupInstance::unpack(void* buf)
     matMap[srcMat] = dstMat;
   }
 
+  // phydrvMap
+  buf = nboUnpackInt32(buf, count);
+  for (int i = 0; i < count; i++) {
+    int32_t srcID, dstID;
+    buf = nboUnpackInt32(buf, srcID);
+    buf = nboUnpackInt32(buf, dstID);
+    phydrvMap[srcID] = dstID;
+  }
+
   // textMap
   buf = nboUnpackInt32(buf, count);
   for (int i = 0; i < count; i++) {
@@ -430,6 +458,16 @@ static std::string quotedString(const std::string& in)
 }
 
 
+static std::string getPhydrvName(int index)
+{
+  const PhysicsDriver* driver = PHYDRVMGR.getDriver(index);
+  if ((driver == NULL) || driver->getName().empty()) {
+    return TextUtils::itoa(index);
+  }
+  return driver->getName();
+ }
+
+
 void GroupInstance::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "group " << groupDef << std::endl;
@@ -439,19 +477,6 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
   }
 
   transform.printTransforms(out, indent);
-
-  if (modifyPhysicsDriver) {
-    const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
-    if (driver != NULL) {
-      out << indent << "  phydrv ";
-      if (driver->getName().size() > 0) {
-	out << driver->getName();
-      } else {
-	out << phydrv;
-      }
-      out << std::endl;
-    }
-  }
 
   if (driveThrough) { out << indent << "  driveThrough" << std::endl; }
   if (shootThrough) { out << indent << "  shootThrough" << std::endl; }
@@ -468,7 +493,7 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     MATERIALMGR.printReference(out, material);
     out << std::endl;
   }
-  else if (matMap.size() > 0) {
+  else if (!matMap.empty()) {
     MaterialMap::const_iterator it;
     for (it = matMap.begin(); it != matMap.end(); it++) {
       out << indent << "  matswap ";
@@ -476,6 +501,18 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
       out << " ";
       MATERIALMGR.printReference(out, it->second);
       out << std::endl;
+    }
+  }
+
+  if (modifyPhysicsDriver) {
+    out << indent << "  phydrv " << getPhydrvName(phydrv) << std::endl;
+  }
+  else if (!phydrvMap.empty()) {
+    IntSwapMap::const_iterator phydrvIt;
+    for (phydrvIt = phydrvMap.begin(); phydrvIt != phydrvMap.end(); phydrvIt++) {
+      const std::string srcName = getPhydrvName(phydrvIt->first);
+      const std::string dstName = getPhydrvName(phydrvIt->second);
+      out << indent << "  phydrvswap " << srcName << " " << dstName << std::endl;
     }
   }
 

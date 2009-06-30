@@ -55,6 +55,7 @@ WallSceneNode::WallSceneNode()
   useColorTexture = false;
   noCulling = false;
   noSorting = false;
+  noBlending = false;
   isBlended = false;
   wantBlending = false;
   wantSphereMap = false;
@@ -294,6 +295,12 @@ void WallSceneNode::setNoSorting(bool value)
 }
 
 
+void WallSceneNode::setNoBlending(bool value)
+{
+  noBlending = value;
+}
+
+
 void WallSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
   OpenGLGStateBuilder builder(gstate);
@@ -366,6 +373,9 @@ void WallSceneNode::notifyStyleChange()
   }
   if (noSorting) {
     builder.setNeedsSorting(false);
+  }
+  if (noBlending) {
+    builder.resetBlending();
   }
   if (wantSphereMap) {
     builder.enableSphereMap(true);

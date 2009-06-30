@@ -235,6 +235,9 @@ void TextSceneNode::notifyStyleChange()
 
   // blending
   builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  if (bzmat->getNoBlending()) {
+    builder.resetBlending();
+  }
 
   // alpha thresholding
   if (bzmat->getAlphaThreshold() != 0.0f) {

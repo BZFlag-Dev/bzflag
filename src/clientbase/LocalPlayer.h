@@ -118,11 +118,8 @@ public:
   void setSpawning( bool spawn );
   bool hasHitWall();
 
-
-  const Obstacle*	getHitBuilding(const fvec3& pos, float angle,
-                                 bool phased, bool& expel) const;
-  const Obstacle*	getHitBuilding(const fvec3& oldPos, float oldAngle,
-                                 const fvec3& pos, float angle,
+  const Obstacle* getHitBuilding(const fvec3& oldPos, float oldAngle,
+                                 const fvec3& newPos, float newAngle,
                                  bool phased, bool& expel);
   bool getHitNormal(const Obstacle* o,
                     const fvec3& pos1, float azimuth1,

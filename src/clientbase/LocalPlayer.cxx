@@ -1032,39 +1032,6 @@ bool LocalPlayer::canJump() const
 }
 
 
-const Obstacle* LocalPlayer::getHitBuilding(const fvec3& p, float a,
-					    bool phased, bool& expel) const
-{
-  const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
-  const fvec3& dims = getDimensions();
-  World *world = World::getWorld();
-  if (!world) {
-    return NULL;
-  }
-  const Obstacle* obstacle = world->hitBuilding(p, a, dims.x, dims.y, dims.z);
-
-  expel = (obstacle != NULL);
-  if (expel && phased) {
-    // set expel
-    if (obstacle->getTypeID() == wallType) {
-      expel = true;
-    }
-    else if ((obstacle->getTypeID() == faceType) &&
-             (((const MeshFace*)obstacle)->isLinkFace())) {
-      expel = true;
-    }
-    else if (hasOOflag && (desiredSpeed < 0.0f) &&
-             NEAR_ZERO(p.z, ZERO_TOLERANCE)) {
-      expel = true;
-    }
-    else {
-      expel = false;
-    }
-  }
-  return obstacle;
-}
-
-
 const Obstacle* LocalPlayer::getHitBuilding(const fvec3& oldP, float oldA,
 					    const fvec3& p, float a,
 					    bool phased, bool& expel)

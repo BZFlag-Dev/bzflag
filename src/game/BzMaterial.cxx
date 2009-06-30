@@ -316,6 +316,7 @@ void BzMaterial::reset()
   noShadow   = false;
   noCulling  = false;
   noSorting  = false;
+  noBlending = false;
   noLighting = false;
 
   delete[] textures;
@@ -381,6 +382,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   noShadow = m.noShadow;
   noCulling = m.noCulling;
   noSorting = m.noSorting;
+  noBlending = m.noBlending;
   noLighting = m.noLighting;
 
   delete[] textures;
@@ -421,7 +423,7 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (occluder != m.occluder) || (groupAlpha != m.groupAlpha) ||
       (noRadar != m.noRadar) || (noShadow != m.noShadow) ||
       (noCulling != m.noCulling) || (noSorting != m.noSorting) ||
-      (noLighting != m.noLighting)) {
+      (noBlending != m.noBlending) || (noLighting != m.noLighting)) {
     return false;
   }
 
@@ -467,6 +469,7 @@ void* BzMaterial::pack(void* buf) const
   if (occluder)   { modeByte |= (1 << 4); }
   if (groupAlpha) { modeByte |= (1 << 5); }
   if (noLighting) { modeByte |= (1 << 6); }
+  if (noBlending) { modeByte |= (1 << 7); }
   buf = nboPackUInt8(buf, modeByte);
 
   buf = nboPackInt32(buf, order);
@@ -524,6 +527,7 @@ void* BzMaterial::unpack(void* buf)
   occluder   = (modeByte & (1 << 4)) != 0;
   groupAlpha = (modeByte & (1 << 5)) != 0;
   noLighting = (modeByte & (1 << 6)) != 0;
+  noBlending = (modeByte & (1 << 7)) != 0;
 
   buf = nboUnpackInt32(buf, order);
   buf = nboUnpackInt32(buf, inTmp); dynamicColor = int(inTmp);
@@ -667,6 +671,9 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
   }
   if (noSorting) {
     out << indent << "  nosorting" << std::endl;
+  }
+  if (noBlending) {
+    out << indent << "  noblending" << std::endl;
   }
   if (noLighting) {
     out << indent << "  nolighting" << std::endl;
@@ -871,6 +878,12 @@ void BzMaterial::setNoCulling(bool value)
 void BzMaterial::setNoSorting(bool value)
 {
   noSorting = value;
+  return;
+}
+
+void BzMaterial::setNoBlending(bool value)
+{
+  noBlending = value;
   return;
 }
 
@@ -1099,6 +1112,11 @@ bool BzMaterial::getNoCulling() const
 bool BzMaterial::getNoSorting() const
 {
   return noSorting;
+}
+
+bool BzMaterial::getNoBlending() const
+{
+  return noBlending;
 }
 
 bool BzMaterial::getNoLighting() const

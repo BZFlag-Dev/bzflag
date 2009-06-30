@@ -26,6 +26,7 @@
 #include "Singleton.h"
 #include "CallbackList.h"
 #include "bzfio.h"
+#include "vectors.h"
 #include "BZDBNames.h" // FIXME -- this should not be included here
 
 
@@ -159,8 +160,11 @@ public:
    */
   float				eval(const std::string& name);
   int				evalInt(const std::string& name);
-  bool				evalTriplet(const std::string& name, float data[3]);
   bool				evalPair(const std::string& name, float data[2]);
+  bool				evalTriplet(const std::string& name, float data[3]);
+  fvec2				evalFVec2(const std::string& name);
+  fvec3				evalFVec3(const std::string& name);
+  fvec4				evalFVec4(const std::string& name);
 
   /** return true if the value associated with a name indicates
    * logical true, which is when the value is not empty and not

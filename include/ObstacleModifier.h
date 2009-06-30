@@ -28,6 +28,7 @@ class GroupInstance;
 
 class ObstacleModifier {
   public:
+    typedef std::map<int, int>                  IntSwapMap;
     typedef std::map<std::string, std::string> TextSwapMap;
 
   public:
@@ -53,6 +54,7 @@ class ObstacleModifier {
     const BzMaterial* material;
 
     MaterialMap matMap;
+    IntSwapMap  phydrvMap;
     TextSwapMap textMap;
     TextSwapMap zoneMap;
     TextSwapMap weaponMap;

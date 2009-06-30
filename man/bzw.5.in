@@ -282,9 +282,15 @@ Instantiates a group, and possibly modifies subobjects
 \fB  matref\fR example_material   # set material properties
                             # (except for the color)
 .br
-\fB  matswap\fR  oldMat  newMat   # replace materials in the instance
+\fB  matswap\fR  oldMat  newMat     # replace materials in the instance
 .br
-\fB  textswap\fR oldData newData  # replace the 'data' in text objects
+\fB  phydrvswap\fR oldDrv newDrv    # replace physicsDrivers in face objects
+.br
+\fB  textswap\fR oldData newData    # replace 'data' in text objects
+.br
+\fB  zoneswap\fR oldText newText    # replace lines in face zone objects
+.br
+\fB  weaponswap\fR oldText newText  # replace lines in mesh weapon objects
 .br
 \fBend\fR
 .br

@@ -93,15 +93,6 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
     }
   }
 
-  if (grpinst.modifyPhysicsDriver || obsMod.modifyPhysicsDriver) {
-    modifyPhysicsDriver = true;
-    if (obsMod.modifyPhysicsDriver) {
-      phydrv = obsMod.phydrv;
-    } else {
-      phydrv = grpinst.phydrv;
-    }
-  }
-
   if (obsMod.modifyMaterial) {
     modifyMaterial = true;
     material = obsMod.material;
@@ -136,6 +127,27 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
   }
   else if (grpinst.matMap.size() > 0) {
     matMap = grpinst.matMap;
+  }
+
+  if (grpinst.modifyPhysicsDriver || obsMod.modifyPhysicsDriver) {
+    modifyPhysicsDriver = true;
+    if (obsMod.modifyPhysicsDriver) {
+      phydrv = obsMod.phydrv;
+    } else {
+      phydrv = grpinst.phydrv;
+    }
+  }
+
+  phydrvMap = obsMod.phydrvMap;
+  const GroupInstance::IntSwapMap& groupPhydrvMap = grpinst.phydrvMap;
+  IntSwapMap::const_iterator phydrvIt;
+  for (phydrvIt = groupPhydrvMap.begin(); phydrvIt != groupPhydrvMap.end(); ++phydrvIt) {
+    IntSwapMap::const_iterator find_it = obsMod.phydrvMap.find(phydrvIt->second);
+    if (find_it != obsMod.phydrvMap.end()) {
+      phydrvMap[phydrvIt->first] = find_it->second;
+    } else {
+      phydrvMap[phydrvIt->first] = phydrvIt->second;
+    }
   }
 
   driveThrough = grpinst.driveThrough | obsMod.driveThrough;
@@ -255,6 +267,19 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       }
     }
   }
+  else if (!phydrvMap.empty()) {
+    if (obstacle->getTypeID() == meshType) {
+      MeshObstacle* mesh = (MeshObstacle*) obstacle;
+      for (int i = 0; i < mesh->getFaceCount(); i++) {
+	MeshFace* face = (MeshFace*) mesh->getFace(i);
+        IntSwapMap::const_iterator it = phydrvMap.find(face->phydrv);
+        if (it != phydrvMap.end()) {
+          face->phydrv = it->second;
+        }
+      }
+    }
+  }
+
 
   if (driveThrough) {
     obstacle->driveThrough = 0xFF;

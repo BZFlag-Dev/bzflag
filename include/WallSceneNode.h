@@ -62,6 +62,7 @@ class WallSceneNode : public SceneNode {
     void		setSphereMap(bool);
     void		setNoCulling(bool);
     void		setNoSorting(bool);
+    void		setNoBlending(bool);
     void		setAlphaThreshold(float);
     void		setRadarColor(const float color[4]);
 
@@ -107,6 +108,7 @@ class WallSceneNode : public SceneNode {
     int			style;
     bool		noCulling;
     bool		noSorting;
+    bool		noBlending;
     bool		isBlended;
     bool		wantBlending;
     bool		wantSphereMap;

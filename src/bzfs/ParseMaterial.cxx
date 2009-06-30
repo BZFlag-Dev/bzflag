@@ -158,6 +158,11 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setNoSorting(true);
     }
   }
+  else if (strcasecmp(cmd, "noblending") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoBlending(true);
+    }
+  }
   else if (strcasecmp(cmd, "noradar") == 0) {
     for (i = 0; i < materialCount; i++) {
       materials[i].setNoRadar(true);
