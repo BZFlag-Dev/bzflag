@@ -15,8 +15,8 @@
 
 /* system implementation headers */
 #include <fcntl.h>
-#include <errno.h>
 #include <stdarg.h>
+#include <errno.h>
 
 /* common implementation headers */
 #include "network.h"
@@ -26,7 +26,6 @@
 #include "Roster.h"
 #include "RCRobotPlayer.h"
 #include "RCMessage.h"
-
 
 /**
  * Only valid in member methods.  This is so derived classes calling
@@ -74,8 +73,8 @@ bool RCLink::waitForData()
     socks = select(connfd + 1, &fds, NULL, NULL, NULL);
     if (socks < 0) {
       status = SocketError;
-      error = strerror(errno);
-      SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(errno) << std::endl;
+      error = strerror(getErrno());
+      SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(getErrno()) << std::endl;
       return false;
     } else if (socks > 0) {
       return true;
@@ -107,7 +106,7 @@ void RCLink::startListening(int port)
  /* Used so we can re-bind to our port while a previous connection is
   * still in TIME_WAIT state.
   */
-  int reuse_addr = 1;
+  const char reuse_addr = 1;
 
   setsockopt(connfd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
 
@@ -121,8 +120,9 @@ void RCLink::startListening(int port)
     return;
   }
 
-  int flags = fcntl(listenfd, F_GETFL);
-  fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
+	// Note: BzfNetwork::setNonBlocking() appears to do the same thing
+  //int flags = fcntl(listenfd, F_GETFL);
+  //fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 
   BzfNetwork::setNonBlocking(listenfd);
   setNoDelay(listenfd);
@@ -144,12 +144,13 @@ bool RCLink::tryAccept()
   // O_NONBLOCK is set so we'll probably return immediately.
   connfd = accept(listenfd, NULL, 0);
   if (connfd == -1) {
-    error = strerror(errno);
+    error = strerror(getErrno());
     return false;
   }
 
-  int flags = fcntl(connfd, F_GETFL);
-  fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
+	// Note: BzfNetwork::setNonBlocking() appears to do the same thing
+  //int flags = fcntl(connfd, F_GETFL);
+  //fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
   BzfNetwork::setNonBlocking(connfd);
   setNoDelay(connfd);
@@ -174,7 +175,7 @@ bool RCLink::connect(const char *host, int port)
   connfd = socket(AF_INET, SOCK_STREAM, 0);
   if (connfd < 0)
     {
-      error = strerror(errno);
+      error = strerror(getErrno());
       return false;
     }
 
@@ -184,20 +185,22 @@ bool RCLink::connect(const char *host, int port)
 
   hostent *hostdata = gethostbyname(host);
   if (hostdata == NULL)
-    {
-      error = hstrerror(h_errno);
-      return false;
-    }
+  {
+		char	buffer[256];
+		error = sprintf(&buffer[0],"gethostbyname error: %d",h_errno);
+    return false;
+  }
   memcpy(&remote.sin_addr.s_addr, hostdata->h_addr_list[0], hostdata->h_length);
 
   if (::connect(connfd, (sockaddr *)&remote, sizeof(remote)) < 0)
-    {
-      error = strerror(errno);
-      return false;
-    }
+  {
+    error = strerror(getErrno());
+    return false;
+  }
 
-  int flags = fcntl(connfd, F_GETFL);
-  fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
+	// Note: BzfNetwork::setNonBlocking() appears to do the same thing
+  //int flags = fcntl(connfd, F_GETFL);
+  //fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
   BzfNetwork::setNonBlocking(connfd);
   setNoDelay(connfd);
@@ -211,7 +214,7 @@ bool RCLink::connect(const char *host, int port)
   return true;
 }
 
-bool RCLink::send(const char* message)
+bool RCLink::ssend(const char* message)
 {
   unsigned int messagelen = (unsigned int)strlen(message);
 #ifdef _USE_FAKE_NET
@@ -330,8 +333,8 @@ int RCLink::updateWrite()
       break;
     }
 
-    int nwritten = write(connfd, bufptr, send_amount);
-    if (nwritten == -1 && errno == EAGAIN) {
+    int nwritten = send(connfd, bufptr, send_amount,0);
+    if (nwritten == -1 && getErrno() == EAGAIN) {
       break;
     } else if (nwritten == -1) {
       SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(errno) << std::endl;
@@ -396,13 +399,14 @@ int RCLink::updateRead()
     if (recv_amount == RC_LINK_RECVBUFLEN)
       break;
 
-    int nread = read(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount);
+    int nread = recv(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount,0);
+		int	errnum = getErrno();
     if (nread == 0) {
       SPECIFICLOGGER << "RCLink: Remote host closed connection." << std::endl;
       status = getDisconnectedState();
       return -1;
-    } else if (nread == -1 && errno != EAGAIN) {
-      SPECIFICLOGGER << "RCLink: Read failed. Error: " << strerror(errno) << std::endl;
+    } else if (nread == -1 && errnum != 0 && errnum != EAGAIN && errnum != EWOULDBLOCK) {
+      SPECIFICLOGGER << "RCLink: Read failed. Error: " << strerror(errnum) << std::endl;
       status = SocketError;
       return -1;
     } else if (nread == -1) {

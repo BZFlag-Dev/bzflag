@@ -29,7 +29,7 @@
 #include "ScriptLoaderFactory.h"
 #include "Logger.h"
 
-class StartData
+class StartBotData
 {
 public:
 	Frontend		frontend;
@@ -37,50 +37,46 @@ public:
 };
 
 /* static entry point for threading */
-/* FIXME -- unused
-static void starter(void *data) {
-	StartData	*sd = (StartData *)data;
+#ifdef _WIN32
+static void startBot(void *data) {
+	StartBotData	*sd = (StartBotData *)data;
 	sd->frontend.start(sd->filename);
 }
-*/
+#endif // _WIN32
 
 bool Frontend::run(std::string filename, const char *host, int port)
 {
-	StartData	*sd = new StartData();	// FIXME: This may leak
+	StartBotData	*startdata = new StartBotData();	// FIXME: This isn't freed on Win32
 
-	sd->filename = filename;
+	startdata->filename = filename;
 
-#ifndef _USE_FAKE_NET
+#ifndef _WIN32
   pid_t pid = fork();
   if (pid < 0)
     return false;
   else if (pid > 0)
     return true;
-#endif
 
   fclose(stdin); // Shouldn't mess around with that here ;-)
   bzSignal(SIGINT, SIG_DFL);
+#endif
 
-  if (!sd->frontend.connect(host, port)) {
-    FRONTENDLOGGER << "Frontend failed to connect! Bailing! (" << sd->frontend.getError() << ")" << std::endl;
+  if (!startdata->frontend.connect(host, port)) {
+    FRONTENDLOGGER << "Frontend failed to connect! Bailing! (" << startdata->frontend.getError() << ")" << std::endl;
     return false;
   }
 
   FRONTENDLOGGER << "Frontend initialized, " << host << ":" << port << std::endl;
 
-#ifndef _USE_FAKE_NET
-	sd->frontend.start(filename);
-	FRONTENDLOGGER << "Frontend disconnected / failed! (" << sd->frontend.getError() << ")" << std::endl;
-	delete sd;
+#ifndef _WIN32
+	startdata->frontend.start(filename);
+	FRONTENDLOGGER << "Frontend disconnected / failed! (" << startdata->frontend.getError() << ")" << std::endl;
+	delete startdata;
   return false;
 #else
-#ifdef _WIN32
-	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) starter, sd, 0, 0);
+	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, startdata, 0, 0);
 	return true;
-#else
-	return false;
 #endif // _WIN32
-#endif // _USE_FAKE_NET
 }
 
 
@@ -127,7 +123,7 @@ void Frontend::start(std::string filename)
 
   while (link->getStatus() != RCLink::Connected) {
     link->update();
-    TimeKeeper::sleep(0.5);
+    TimeKeeper::sleep(0.2);
   }
 
   FRONTENDLOGGER << "Loaded script " << filename << ", starting the bot! :-)" << std::endl;

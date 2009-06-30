@@ -330,7 +330,7 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\include;..\..\win32;..\..\src\other\zlib;.\;..\..\src\other\curl\include;..\..\src\clientbase;..\..\src\bzflag;..\..\src\other\glew\include"
-				PreprocessorDefinitions="WIN32;_CONSOLE;_DEBUG;_USE_FAKE_NET"
+				PreprocessorDefinitions="WIN32;_CONSOLE;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile="./bzrobots_debug/bzrobots.pch"
@@ -389,7 +389,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copying BZFS to root..."
+				Description="Copying BZRobots to root..."
 				CommandLine="copy .\bzrobots_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzrobots_debug\*.lib ..\..\*.lib&#x0D;&#x0A;"
 			/>
 		</Configuration>

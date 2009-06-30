@@ -70,18 +70,18 @@ public:
 
   const std::string &getError() const { return error; }
 
-  virtual bool send(const char *message);
+  virtual bool ssend(const char *message);
   virtual bool sendf(const char *format, ...) BZ_ATTR_23;
 
   template<class C>
-  bool send(const RCMessage<C> *message)
+  bool sendm(const RCMessage<C> *message)
   {
     return sendf("%s\n", message->asString().c_str());
   }
   template<class C>
-  bool send(const RCMessage<C> &message)
+  bool sendm(const RCMessage<C> &message)
   {
-    return send(&message);
+    return sendm(&message);
   }
 
 protected:

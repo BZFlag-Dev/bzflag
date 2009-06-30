@@ -51,7 +51,7 @@ public:
   void sendAck(RCRequest *req);
   void sendPacket ( const char *data, unsigned int size, bool killit = false );
 
-  bool send(const char *message);
+  bool ssend(const char *message);
   bool sendf(const char *format, ...) BZ_ATTR_23;
 };
 

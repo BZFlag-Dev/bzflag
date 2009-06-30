@@ -14,7 +14,6 @@
 #include "RCLinkBackend.h"
 
 /* system implementation headers */
-#include <errno.h>
 #include <stdarg.h>
 #ifdef HAVE_SYS_SOCKET_H
 #  include <sys/socket.h>
@@ -22,6 +21,7 @@
 #endif
 
 /* common implementation headers */
+#include "network.h"
 #include "version.h"
 
 /* local implementation headers */
@@ -89,7 +89,7 @@ RCLinkBackend::sendPacket( const char *data, unsigned int size, bool killit )
 	if (killit)
 		fakenetDisconect();
 #else
-	write(connfd, data, size);
+	send(connfd, data, size,0);
 	if (killit)
 		close(connfd);
 #endif
@@ -99,13 +99,17 @@ RCLinkBackend::sendPacket( const char *data, unsigned int size, bool killit )
 void
 RCLinkBackend::update()
 {
-	//printf("RCBStatus: %d\n",status);
+	if(status != Listening)
+		printf("RCBStatus: %d\n",status);
+
   if (status != Connected && status != Connecting) {
     return;
   }
 
   updateWrite();
   int amount = updateRead();
+
+	printf("RCBAmount: %d\n",amount);
 
   if (amount == -1) {
     status = Listening;
@@ -213,7 +217,7 @@ RCLinkBackend::tryAccept()
 void
 RCLinkBackend::sendAck(RCRequest *req)
 {
-  RCLink::send(CommandDoneReply(req->getType()));
+  RCLink::sendm(CommandDoneReply(req->getType()));
 }
 
 /**
@@ -228,16 +232,16 @@ RCLinkBackend::sendEvent()
   RCEvent *event = popEvent();
   if (event != NULL)
   {
-    RCLink::send(EventReply(event));
+    RCLink::sendm(EventReply(event));
     delete event;
   }
 }
 
 bool
-RCLinkBackend::send(const char *message)
+RCLinkBackend::ssend(const char *message)
 {
   sendEvent();
-  return RCLink::send(message);
+  return RCLink::ssend(message);
 }
 
 bool

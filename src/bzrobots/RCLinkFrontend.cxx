@@ -18,10 +18,10 @@
 #  include <sys/socket.h>
 #  include <arpa/inet.h>
 #endif
-#include <errno.h>
 #include <stdarg.h>
 
 /* common implementation headers */
+#include "network.h"
 #include "version.h"
 
 /* local implementation headers */
@@ -35,7 +35,7 @@ RCLink::State RCLinkFrontend::getDisconnectedState()
 
 bool RCLinkFrontend::sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot)
 {
-  if (!send(request))
+  if (!sendm(request))
     return false;
   waitForReply(request.getType());
 
@@ -91,6 +91,8 @@ bool RCLinkFrontend::update()
   updateWrite();
   int amount = updateRead();
 
+	printf("RCFAmount: %d\n",amount);
+
   if (amount == -1) {
     status = Disconnected;
     return false;
@@ -104,7 +106,7 @@ bool RCLinkFrontend::update()
     if (ncommands) {
       RCReply *rep = popReply();
       if (rep && rep->getType() == "IdentifyBackend") {
-        send(IdentifyFrontend(getRobotsProtocolVersion()));
+        sendm(IdentifyFrontend(getRobotsProtocolVersion()));
         status = Connected;
       } else {
         FRONTENDLOGGER << "RCLink: Expected an 'IdentifyBackend'." << std::endl;
