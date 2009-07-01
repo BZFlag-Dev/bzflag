@@ -348,6 +348,12 @@ Instantiates a group, and possibly modifies subobjects
 .br
 \fB  fixedshift\fR 0.0 0.0     # time invariant u/v shift
 .br
+\fB  spinVar\fR varName        # BZDB variable name, "freq"
+.br
+\fB  scaleVar\fR varName       # BZDB variable name, "scaleU scaleV freqU freqV"
+.br
+\fB  shiftVar\fR varName       # BZDB variable name, "freqU freqV"
+.br
 \fBend\fR
 .br
 
@@ -444,6 +450,14 @@ properties:
 \fB  death\fR Message goes here.
 .br
   # the 'death' property requires a non\-blank message
+.br
+\fB  linearVar\fR  varName   # BZDB variable, "vx vy vz"
+.br
+\fB  angularVar\fR varName   # BZDB variable, "av [px py]"
+.br
+\fB  slideVar\fR   varName   # BZDB variable, "slideTime"
+.br
+\fB  deathVar\fR   varName   # BZDB variable, "[deathMsg]"
 .br
 \fBend\fR
 .br
@@ -1954,6 +1968,14 @@ physics :=
 .br
 	| "death" <string>
 .br
+	| "linearVar" <string>
+.br
+	| "angularVar" <string>
+.br
+	| "slideVar" <string>
+.br
+	| "deathVar" <string>
+.br
 	| object
 .br
 .TP
@@ -2034,6 +2056,12 @@ textureMatrix :=
 	| "scale" <float> <float> <float> <float>
 .br
 	| "center" 2dpoint
+.br
+	| "spinVar" <string>
+.br
+	| "scaleVar" <string>
+.br
+	| "shiftVar" <string>
 .br
 	| object
 .br
