@@ -111,6 +111,8 @@ class LinkManager {
     inline const FaceSet& getLinkDstSet()  const { return linkDstSet;  }
     inline const FaceSet& getLinkFaceSet() const { return linkFaceSet; }
 
+    void getVariables(std::set<std::string>& vars) const;
+
   private:
     void buildNameMap();
 

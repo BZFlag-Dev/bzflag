@@ -535,6 +535,21 @@ void LinkManager::createLink(const MeshFace* linkSrc,
 
 //============================================================================//
 
+void LinkManager::getVariables(std::set<std::string>& vars) const
+{
+  for (size_t i = 0; i < linkDefs.size(); i++) {
+    const LinkDef& linkDef = linkDefs[i];
+    if (!linkDef.physics.shotBlockVar.empty()) {
+      vars.insert(linkDef.physics.shotBlockVar);
+    }
+    if (!linkDef.physics.tankBlockVar.empty()) {
+      vars.insert(linkDef.physics.tankBlockVar);
+    }
+  }
+}
+
+
+//============================================================================//
 
 void LinkManager::printDebug()
 {

@@ -558,6 +558,7 @@ void WorldInfo::finishWorld()
   PHYDRVMGR.getVariables(vars);    variableWarning("physics", vars);
   DYNCOLORMGR.getVariables(vars);  variableWarning("dyncol",  vars);
   TEXMATRIXMGR.getVariables(vars); variableWarning("texmat",  vars);
+  linkManager.getVariables(vars);  variableWarning("link",    vars);
   const std::vector<WorldText*>& texts = OBSTACLEMGR.getTexts();
   for (size_t t = 0; t < texts.size(); t++) {
     const WorldText* text = texts[t];
