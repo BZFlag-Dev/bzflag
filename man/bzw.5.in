@@ -348,11 +348,11 @@ Instantiates a group, and possibly modifies subobjects
 .br
 \fB  fixedshift\fR 0.0 0.0     # time invariant u/v shift
 .br
-\fB  spinVar\fR  varName  # BZDB variable name, "freq"
+\fB  spinVar\fR  varName  # BZDB variable, "freq"
 .br
-\fB  scaleVar\fR varName  # BZDB variable name, "scaleU scaleV freqU freqV"
+\fB  scaleVar\fR varName  # BZDB variable, "scaleU scaleV freqU freqV"
 .br
-\fB  shiftVar\fR varName  # BZDB variable name, "freqU freqV"
+\fB  shiftVar\fR varName  # BZDB variable, "freqU freqV"
 .br
 \fBend\fR
 .br
@@ -445,6 +445,8 @@ properties:
 .br
 \fB  angular\fR 0.0 0.0 0.0  # rotation freq, x/y coordinates
 .br
+\fB  radial\fR  0.0 0.0 0.0  # outwards speed, x/y coordinates
+.br
 \fB  slide\fR 0.0            # time until max velocity  (> 0.0 enables)
 .br
 \fB  death\fR Message goes here.
@@ -454,6 +456,8 @@ properties:
 \fB  linearVar\fR  varName   # BZDB variable, "vx vy vz"
 .br
 \fB  angularVar\fR varName   # BZDB variable, "av [px py]"
+.br
+\fB  radialVar\fR varName    # BZDB variable, "rv [px py]"
 .br
 \fB  slideVar\fR   varName   # BZDB variable, "slideTime"
 .br
@@ -1962,7 +1966,7 @@ physics :=
 .br
 	| "angular" <float> 2dpoint
 .br
-	| "radial" <float> 2dpoint  # NOT IMPLEMENTED
+	| "radial" <float> 2dpoint
 .br
 	| "slide" <float>
 .br
@@ -1971,6 +1975,8 @@ physics :=
 	| "linearVar" <string>
 .br
 	| "angularVar" <string>
+.br
+	| "radialVar" <string>
 .br
 	| "slideVar" <string>
 .br

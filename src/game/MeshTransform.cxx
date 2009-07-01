@@ -438,6 +438,18 @@ void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
 }
 
 
+bool MeshTransform::Tool::operator<(const Tool& t) const
+{
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      if (vertexMatrix[i][j] < t.vertexMatrix[i][j]) { return true;  }
+      if (t.vertexMatrix[i][j] < vertexMatrix[i][j]) { return false; }
+    }
+  }
+  return false;
+}
+
+
 //============================================================================//
 //
 // Mesh Transform

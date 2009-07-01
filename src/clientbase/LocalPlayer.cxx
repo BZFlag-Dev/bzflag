@@ -410,8 +410,7 @@ void LocalPlayer::doUpdateMotion(float dt)
     }
     else {
       // adjust the horizontal velocity
-      newVelocity.x += v.x;
-      newVelocity.y += v.y;
+      newVelocity.xy() += v.xy();
 
       const float av = phydrv->getAngularVel();
       if (av != 0.0f) {
@@ -428,9 +427,7 @@ void LocalPlayer::doUpdateMotion(float dt)
       if (rv != 0.0f) {
 	// the radial velocity is in meters/sec
         const fvec2& rp = phydrv->getRadialPos();
-        const fvec2 diff = oldPosition.xy() - rp;
-        const float distSq = diff.lengthSq() + 0.1f;
-	newVelocity.xy() += (rv / distSq) * diff.normalize();
+	newVelocity.xy() += rv * (oldPosition.xy() - rp).normalize();
       }
     }
   }

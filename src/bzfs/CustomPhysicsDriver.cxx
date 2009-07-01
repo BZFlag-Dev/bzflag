@@ -41,7 +41,10 @@ CustomPhysicsDriver::~CustomPhysicsDriver()
 
 bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp ("linear", cmd) == 0) {
+  if (strcasecmp ("relative", cmd) == 0) {
+    driver->setRelative(true);
+  }
+  else if (strcasecmp ("linear", cmd) == 0) {
     fvec3 vel;
     if (!(input >> vel.x >> vel.y >> vel.z)) {
       std::cout << "parameters errors " << std::endl;

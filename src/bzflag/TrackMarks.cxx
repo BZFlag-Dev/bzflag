@@ -460,9 +460,7 @@ static void updateList(TrackList& list, float dt)
       const float rv = phydrv->getRadialVel();
       if (rv != 0.0f) {
 	const fvec2& rp = phydrv->getRadialPos();
-        const fvec2 diff = te.pos.xy() - rp;
-        const float distSq = diff.lengthSq() + 0.1f;
-	te.pos.xy() += dt * (rv / distSq) * diff.normalize();
+	te.pos.xy() += dt * rv * (te.pos.xy() - rp).normalize();
       }
 
       if ((AirCull & PhyDrvAirCull) != 0) {

@@ -23,6 +23,7 @@
 #include "Pack.h"
 #include "TextUtils.h"
 #include "StateDatabase.h"
+#include "MeshTransform.h"
 
 
 //============================================================================//
@@ -75,6 +76,11 @@ void PhysicsDriverManager::update()
 int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
 {
   const std::string name = driver->getName();
+
+  if (name == "-1") {
+    delete driver;
+    return -1;
+  }
 
   bool replaced = false;
   DriverSet::iterator it = driverSet.find(driver);
@@ -191,6 +197,7 @@ PhysicsDriver::PhysicsDriver()
 , radialPos(0.0f, 0.0f)
 , slideTime(0.0f)
 , deathMsg("")
+, xformTool(NULL)
 {
   // do nothing
 }
@@ -198,6 +205,8 @@ PhysicsDriver::PhysicsDriver()
 
 PhysicsDriver::~PhysicsDriver()
 {
+  delete xformTool;
+
   if (!linearVar.empty()) {
     BZDB.removeCallback(linearVar, staticLinearCallback, this);
   }
@@ -218,6 +227,17 @@ PhysicsDriver::~PhysicsDriver()
 
 bool PhysicsDriver::operator<(const PhysicsDriver& pd) const
 {
+  if ((xformTool == NULL) && (pd.xformTool != NULL)) { return true;  }
+  if ((xformTool != NULL) && (pd.xformTool == NULL)) { return false; }
+
+  if (xformTool != NULL) {
+    if (*xformTool < *pd.xformTool) { return true;  }
+    if (*pd.xformTool < *xformTool) { return false; }
+  }
+
+  if (!relative && pd.relative) { return true;  }
+  if (relative && !pd.relative) { return false; }
+
   if (linearVel < pd.linearVel) { return true;  }
   if (pd.linearVel < linearVel) { return false; }
   if (linearVar < pd.linearVar) { return true;  }
@@ -354,6 +374,13 @@ bool PhysicsDriver::setName(const std::string& drvname)
 }
 
 
+void PhysicsDriver::setRelative(bool value)
+{
+  relative = value;
+  return;
+}
+
+
 void PhysicsDriver::setLinear(const fvec3& vel)
 {
   linearVel = vel;
@@ -482,6 +509,8 @@ int PhysicsDriver::packSize() const
   
   fullSize += nboStdStringPackSize(name);
 
+  fullSize += sizeof(int8_t); // bits
+
   fullSize += sizeof(fvec3); // linearVel
   fullSize += nboStdStringPackSize(linearVar);
   fullSize += sizeof(float); // angularVel
@@ -502,6 +531,10 @@ int PhysicsDriver::packSize() const
 void* PhysicsDriver::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
+
+  int8_t bits = 0;
+  bits |= relative ? 1 : 0;
+  buf = nboPackInt8(buf, bits);
 
   std::string varName;
 
@@ -529,6 +562,10 @@ void* PhysicsDriver::pack(void *buf) const
 void* PhysicsDriver::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
+
+  int8_t bits;
+  buf = nboUnpackInt8(buf, bits);
+  relative = (bits & (1 << 0)) != 0;
 
   std::string varName;
 
@@ -566,6 +603,10 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
 
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
+  }
+
+  if (relative) {
+    out << indent << "  relative" << std::endl;
   }
 
   if (linearVel != fvec3(0.0f, 0.0f, 0.0f)) {

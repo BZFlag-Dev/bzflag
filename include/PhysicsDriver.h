@@ -24,6 +24,7 @@
 
 // common headers
 #include "vectors.h"
+#include "MeshTransform.h"
 
 
 class PhysicsDriver {
@@ -35,6 +36,8 @@ class PhysicsDriver {
     ~PhysicsDriver();
 
     bool setName(const std::string& name);
+
+    void setRelative(bool);
 
     void setLinear(const fvec3& vel);
     void setLinearVar(const std::string& varName);
@@ -56,6 +59,7 @@ class PhysicsDriver {
 
     inline const std::string& getName() const { return name; }
     inline int                getID()   const { return id; }
+    inline bool         getRelative()   const { return relative; }
     inline const fvec3& getLinearVel()  const { return linearVel; }
     inline float        getAngularVel() const { return angularVel; }
     inline const fvec2& getAngularPos() const { return angularPos; }
@@ -93,6 +97,8 @@ class PhysicsDriver {
     std::string name;
     int id;
 
+    bool relative;
+
     fvec3 linearVel;
     std::string linearVar;
 
@@ -109,6 +115,8 @@ class PhysicsDriver {
     
     std::string deathMsg;
     std::string deathVar;
+
+    MeshTransform::Tool* xformTool;
 };
 
 

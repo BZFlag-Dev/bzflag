@@ -3319,11 +3319,12 @@ static void adjustTolerances()
   int i = 0;
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
-    const fvec3& v = phydrv->getLinearVel();
-    const float av = phydrv->getAngularVel();
     if (!phydrv->getIsDeath()) {
+      const fvec3& v = phydrv->getLinearVel();
+      const float av = phydrv->getAngularVel();
+      const float rv = phydrv->getRadialVel();
       if (!phydrv->getIsSlide() &&
-	  ((v.x != 0.0f) || (v.y != 0.0f) || (av != 0.0f))) {
+	  ((v.x != 0.0f) || (v.y != 0.0f) || (av != 0.0f) || (rv != 0.0f))) {
 	cheatProtectionOptions.doSpeedChecks = false;
       }
       if (v.z > 0.0f) {

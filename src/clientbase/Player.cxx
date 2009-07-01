@@ -1371,6 +1371,14 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 	predictedPos.x = inputPos.x + (dt * inputRelVel.x);
 	predictedPos.y = inputPos.y + (dt * inputRelVel.y);
       } else {
+	// radial velocity adjustment
+	const float pdRadVel = phydrv->getRadialVel();
+	if (pdRadVel != 0.0f) {
+	  const fvec2& pdRadPos = phydrv->getRadialPos();
+	  const fvec2 dir = (predictedPos.xy() - pdRadPos).normalize();
+	  predictedPos.xy() += dt * pdRadVel * dir;
+	  predictedVel.xy() += pdRadVel * dir;
+	}
 	// angular velocity adjustment
 	const float pdAngVel = phydrv->getAngularVel();
 	if (pdAngVel != 0.0f) {
@@ -1388,10 +1396,8 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 	}
 	// linear velocity adjustment
 	const fvec3& pdVel = phydrv->getLinearVel();
-	predictedPos.x += (dt * pdVel.x);
-	predictedPos.y += (dt * pdVel.y);
-	predictedVel.x += pdVel.x;
-	predictedVel.y += pdVel.y;
+	predictedPos.xy() += dt * pdVel.xy();
+	predictedVel.xy() += pdVel.xy();
       }
     }
   }

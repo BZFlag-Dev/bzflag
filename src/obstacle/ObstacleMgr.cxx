@@ -703,6 +703,26 @@ static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
 }
 
 
+static void makeRelativePhyDrv(Obstacle* obs, const MeshTransform& xform)
+{
+  if (obs->getTypeID() != meshType) {
+    return;
+  }
+  MeshObstacle* mesh = (MeshObstacle*) obs;
+
+  MeshTransform::Tool xformTool(xform);
+
+  for (int f = 0; f < mesh->getFaceCount(); f++) {
+    MeshFace* face = mesh->getFace(f);
+    const int drvID = face->getPhysicsDriver();
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(drvID);
+    if (phydrv && phydrv->getRelative()) {
+      // FIXME -- finish makeRelativePhyDrv()
+    }
+  }
+}
+
+
 void GroupDefinition::makeGroups(const MeshTransform& xform,
 				 const ObstacleModifier& obsMod) const
 {
@@ -744,6 +764,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 	  // (this will also add container obstacles into the world group)
 	  obs->setSource(Obstacle::GroupDefSource);
 	  obsMod.execute(obs);
+	  makeRelativePhyDrv(obs, xform);
 	  OBSTACLEMGR.addWorldObstacle(obs);
 
 	  // add a modified MeshDrawInfo to the new mesh, if applicable
@@ -769,6 +790,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 	if ((mesh != NULL) && mesh->isValid()) {
 	  mesh->setSource(Obstacle::ContainerSource | groupDefBit);
 	  obsMod.execute(mesh);
+	  makeRelativePhyDrv(obs, xform);
 	  OBSTACLEMGR.addWorldObstacle(mesh);
 	}
       }

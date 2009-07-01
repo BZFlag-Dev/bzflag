@@ -86,6 +86,8 @@ class MeshTransform {
 			    float& angle, bool& flipz) const;
 	const float* getMatrix() const;
 
+	bool operator<(const Tool&) const;
+
       private:
 	void processTransforms(const std::vector<TransformData>& transforms);
 
