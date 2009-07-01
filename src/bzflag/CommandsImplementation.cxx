@@ -486,10 +486,7 @@ bool SetCommand::operator() (const char *commandLine)
     return false;
   }
 
-  std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
-  if (pattern[0] != '_') {
-//FIXME ?    pattern = '_' + pattern;
-  }
+  const std::string pattern = (tokens.size() == 1) ? tokens[0] : "*";
 
   const std::string header = "/set " + pattern;
   addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);

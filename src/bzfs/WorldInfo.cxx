@@ -530,10 +530,6 @@ static void variableWarning(const std::string& type,
       printf("WARNING: %s variable '%s' is not set\n",
              type.c_str(), name.c_str());
     }
-    else if (BZDB.getPermission(name) != StateDatabase::Server) {
-      printf("WARNING: %s variable '%s' has the wrong permission\n",
-             type.c_str(), name.c_str());
-    }
   }
   vars.clear();
 }
