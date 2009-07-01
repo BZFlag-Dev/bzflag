@@ -348,11 +348,11 @@ Instantiates a group, and possibly modifies subobjects
 .br
 \fB  fixedshift\fR 0.0 0.0     # time invariant u/v shift
 .br
-\fB  spinVar\fR varName        # BZDB variable name, "freq"
+\fB  spinVar\fR  varName  # BZDB variable name, "freq"
 .br
-\fB  scaleVar\fR varName       # BZDB variable name, "scaleU scaleV freqU freqV"
+\fB  scaleVar\fR varName  # BZDB variable name, "scaleU scaleV freqU freqV"
 .br
-\fB  shiftVar\fR varName       # BZDB variable name, "freqU freqV"
+\fB  shiftVar\fR varName  # BZDB variable name, "freqU freqV"
 .br
 \fBend\fR
 .br
