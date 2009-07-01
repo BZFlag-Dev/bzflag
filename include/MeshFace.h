@@ -161,6 +161,7 @@ class MeshFace : public Obstacle {
     ~MeshFace();
 
     void setSpecialData(const SpecialData* data);
+    void setPhysicsDriver(int drvID) { phydrv = drvID; }
 
     const char*  getType() const;
     ObstacleType getTypeID() const { return faceType; }

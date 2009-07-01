@@ -717,7 +717,10 @@ static void makeRelativePhyDrv(Obstacle* obs, const MeshTransform& xform)
     const int drvID = face->getPhysicsDriver();
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(drvID);
     if (phydrv && phydrv->getRelative()) {
-      // FIXME -- finish makeRelativePhyDrv()
+      const PhysicsDriver* relDrv = PHYDRVMGR.relativeDriver(phydrv, xform);
+      if (relDrv != NULL) {
+        face->setPhysicsDriver(relDrv->getID());
+      }
     }
   }
 }
@@ -790,7 +793,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
 	if ((mesh != NULL) && mesh->isValid()) {
 	  mesh->setSource(Obstacle::ContainerSource | groupDefBit);
 	  obsMod.execute(mesh);
-	  makeRelativePhyDrv(obs, xform);
+	  makeRelativePhyDrv(mesh, xform);
 	  OBSTACLEMGR.addWorldObstacle(mesh);
 	}
       }

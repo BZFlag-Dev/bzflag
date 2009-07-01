@@ -76,6 +76,7 @@ class MeshTransform {
     class Tool {
       public:
 	Tool(const MeshTransform& transform);
+	Tool(const Tool&);
 	~Tool();
 
 	bool isInverted() const;

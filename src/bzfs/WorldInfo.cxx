@@ -50,6 +50,7 @@
 #include "ConeObstacle.h"
 #include "SphereObstacle.h"
 #include "ServerIntangibilityManager.h"
+#include "WorldText.h"
 #include "CollisionManager.h"
 
 // local headers
@@ -519,6 +520,21 @@ void WorldInfo::createMeshWeapons()
 }
 
 
+static void variableWarning(const std::string& type,
+                            std::set<std::string>& vars)
+{
+  std::set<std::string>::const_iterator it;
+  for (it = vars.begin(); it != vars.end(); ++it) {
+    const std::string& name = *it;
+    if (!BZDB.isSet(name)) {
+      printf("WARNING: %s variable '%s' is not set\n",
+             type.c_str(), name.c_str());
+    }
+  }
+  vars.clear();
+}
+
+
 void WorldInfo::finishWorld()
 {
   createFaceZones();
@@ -536,6 +552,20 @@ void WorldInfo::finishWorld()
   if (maxHeight < 0.0f) {
     maxHeight = 0.0f;
   }
+
+  // warn about unset control variables
+  std::set<std::string> vars;
+  PHYDRVMGR.getVariables(vars);    variableWarning("physics", vars);
+  DYNCOLORMGR.getVariables(vars);  variableWarning("dyncol",  vars);
+  TEXMATRIXMGR.getVariables(vars); variableWarning("texmat",  vars);
+  const std::vector<WorldText*>& texts = OBSTACLEMGR.getTexts();
+  for (size_t t = 0; t < texts.size(); t++) {
+    const WorldText* text = texts[t];
+    if (text->isBZDB() && !text->getData().empty()) {
+      vars.insert(text->getData());
+    }
+  }
+  variableWarning("text",  vars);  
 
   finished = true;
 

@@ -55,6 +55,7 @@ class PhysicsDriver {
     void setDeathVar(const std::string& varName);
 
     void finalize();
+
     void update(float time);
 
     inline const std::string& getName() const { return name; }
@@ -93,6 +94,15 @@ class PhysicsDriver {
     void slideCallback(const std::string& name);
     void deathCallback(const std::string& name);
 
+    void transformLinearVel();
+    void transformAngularPos();
+    void transformRadialPos();
+
+  private:
+    PhysicsDriver(const PhysicsDriver&);
+    PhysicsDriver& operator=(const PhysicsDriver&);
+    void addCallbacks();
+
   private:
     std::string name;
     int id;
@@ -100,20 +110,21 @@ class PhysicsDriver {
     bool relative;
 
     fvec3 linearVel;
-    std::string linearVar;
 
     float angularVel;
     fvec2 angularPos;
-    std::string angularVar;
 
     float radialVel;
     fvec2 radialPos;
-    std::string radialVar;
 
     float slideTime;
-    std::string slideVar;
     
     std::string deathMsg;
+
+    std::string linearVar;
+    std::string angularVar;
+    std::string radialVar;
+    std::string slideVar;
     std::string deathVar;
 
     MeshTransform::Tool* xformTool;
@@ -127,8 +138,12 @@ class PhysicsDriverManager {
     void update();
     void clear();
     int addDriver(PhysicsDriver* driver);
+    const PhysicsDriver* relativeDriver(const PhysicsDriver* phydrv,
+                                        const MeshTransform::Tool& tool);
     int findDriver(const std::string& name) const;
     const PhysicsDriver* getDriver(int id) const;
+
+    void getVariables(std::set<std::string>& vars) const;
 
     int packSize() const;
     void* pack(void*) const;

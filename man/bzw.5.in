@@ -451,13 +451,15 @@ properties:
 .br
 \fB  death\fR Message goes here.
 .br
+\fB  relative\fR  # make relative to group transformations
+.br
   # the 'death' property requires a non\-blank message
 .br
 \fB  linearVar\fR  varName   # BZDB variable, "vx vy vz"
 .br
 \fB  angularVar\fR varName   # BZDB variable, "av [px py]"
 .br
-\fB  radialVar\fR varName    # BZDB variable, "rv [px py]"
+\fB  radialVar\fR  varName   # BZDB variable, "rv [px py]"
 .br
 \fB  slideVar\fR   varName   # BZDB variable, "slideTime"
 .br

@@ -292,6 +292,16 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
 }
 
 
+MeshTransform::Tool::Tool(const Tool& tool)
+: empty(tool.empty)
+, inverted(tool.inverted)
+, skewed(tool.skewed)
+{
+  memcpy(vertexMatrix, tool.vertexMatrix, sizeof(vertexMatrix));
+  memcpy(normalMatrix, tool.normalMatrix, sizeof(normalMatrix));
+}
+
+
 MeshTransform::Tool::~Tool()
 {
   return;

@@ -117,6 +117,30 @@ const DynamicColor* DynamicColorManager::getColor(int id) const
 }
 
 
+void DynamicColorManager::getVariables(std::set<std::string>& vars) const
+{
+  std::vector<DynamicColor*>::const_iterator it;
+  for (it = colors.begin(); it != colors.end(); it++) {
+    DynamicColor* color = *it;
+    if (color->varName.empty()) {
+      vars.insert(color->varName);
+    }
+  }
+}
+
+
+int DynamicColorManager::packSize() const
+{
+  int fullSize = sizeof (uint32_t);
+  std::vector<DynamicColor*>::const_iterator it;
+  for (it = colors.begin(); it != colors.end(); it++) {
+    DynamicColor* color = *it;
+    fullSize = fullSize + color->packSize();
+  }
+  return fullSize;
+}
+
+
 void * DynamicColorManager::pack(void *buf) const
 {
   std::vector<DynamicColor*>::const_iterator it;
@@ -140,18 +164,6 @@ void * DynamicColorManager::unpack(void *buf)
     addColor(color);
   }
   return buf;
-}
-
-
-int DynamicColorManager::packSize() const
-{
-  int fullSize = sizeof (uint32_t);
-  std::vector<DynamicColor*>::const_iterator it;
-  for (it = colors.begin(); it != colors.end(); it++) {
-    DynamicColor* color = *it;
-    fullSize = fullSize + color->packSize();
-  }
-  return fullSize;
 }
 
 

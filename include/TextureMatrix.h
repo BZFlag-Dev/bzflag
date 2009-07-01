@@ -18,10 +18,14 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <set>
 #include <iostream>
 
 
 class TextureMatrix {
+
+  friend class TextureMatrixManager;
+
   public:
     TextureMatrix();
     ~TextureMatrix();
@@ -101,11 +105,15 @@ class TextureMatrixManager {
   public:
     TextureMatrixManager();
     ~TextureMatrixManager();
+
     void update();
     void clear();
+
     int addMatrix(TextureMatrix* matrix);
     int findMatrix(const std::string& name) const;
     const TextureMatrix* getMatrix(int id) const;
+
+    void getVariables(std::set<std::string>& vars) const;
 
     int packSize() const;
     void* pack(void*) const;

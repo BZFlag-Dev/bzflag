@@ -41,6 +41,9 @@ class WorldText {
 
     bool isValid() const;
 
+    inline bool isBZDB() const { return useBZDB; }
+    inline const std::string& getData() const { return data; }
+
     int packSize() const;
     void *pack(void* buf) const;
     void *unpack(void* buf);

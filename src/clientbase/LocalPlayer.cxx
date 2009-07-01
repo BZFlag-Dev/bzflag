@@ -227,7 +227,7 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 
 float LocalPlayer::getNewAngVel(float old, float desired, float dt)
 {
-  if (getPhysicsDriver() >= 0) {
+  if (PHYDRVMGR.getDriver(getPhysicsDriver()) == NULL) {
     return desired;
   }
   return computeAngleVelocity(old, desired, dt);
@@ -320,7 +320,9 @@ void LocalPlayer::doUpdateMotion(float dt)
       newAngVel = getNewAngVel(oldAngVel, desiredAngVel, dt);
 
       // limit acceleration
-      doMomentum(dt, speed, newAngVel);
+      if (PHYDRVMGR.getDriver(getPhysicsDriver()) == NULL) {
+        doMomentum(dt, speed, newAngVel);
+      }
 
       // compute velocity so far
       const float angle = oldAzimuth + 0.5f * dt * newAngVel;

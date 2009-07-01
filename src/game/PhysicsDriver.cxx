@@ -106,6 +106,45 @@ int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
 }
 
 
+const PhysicsDriver* PhysicsDriverManager::relativeDriver(
+                       const PhysicsDriver* phydrv,
+                       const MeshTransform::Tool& tool)
+{
+  PhysicsDriver withXForm(*phydrv);
+  withXForm.xformTool = const_cast<MeshTransform::Tool*>(&tool);
+  withXForm.transformLinearVel();
+  withXForm.transformAngularPos();
+  withXForm.transformRadialPos();
+
+  const DriverSet::const_iterator it = driverSet.find(&withXForm);
+
+  // make it safe for destruction
+  withXForm.xformTool = NULL;
+  withXForm.linearVar.clear();
+  withXForm.angularVar.clear();
+  withXForm.radialVar.clear();
+  withXForm.slideVar.clear();
+  withXForm.deathVar.clear();
+
+  if (it != driverSet.end()) {
+    return *it;
+  }
+
+  PhysicsDriver* copy = new PhysicsDriver(*phydrv);
+  copy->addCallbacks();
+  copy->xformTool = new MeshTransform::Tool(tool);
+  copy->transformLinearVel();
+  copy->transformAngularPos();
+  copy->transformRadialPos();
+
+  copy->id = (int)drivers.size();
+  drivers.push_back(copy);
+  driverSet.insert(copy);
+
+  return copy;
+}
+                                            
+
 int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 {
   if (phydrv.empty()) {
@@ -132,19 +171,57 @@ int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 }
 
 
-void * PhysicsDriverManager::pack(void *buf) const
+void PhysicsDriverManager::getVariables(std::set<std::string>& vars) const
 {
   DriverVec::const_iterator it;
-  buf = nboPackUInt32(buf, (int)drivers.size());
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
-    buf = driver->pack(buf);
+    if (!driver->linearVar.empty())  { vars.insert(driver->linearVar);  }
+    if (!driver->angularVar.empty()) { vars.insert(driver->angularVar); }
+    if (!driver->radialVar.empty())  { vars.insert(driver->radialVar);  }
+    if (!driver->slideVar.empty())   { vars.insert(driver->slideVar);   }
+    if (!driver->deathVar.empty())   { vars.insert(driver->deathVar);   }
+  }
+}
+
+
+int PhysicsDriverManager::packSize() const
+{
+  int fullSize = sizeof (uint32_t);
+  DriverVec::const_iterator it;
+  for (it = drivers.begin(); it != drivers.end(); it++) {
+    PhysicsDriver* driver = *it;
+    if (driver->xformTool == NULL) {
+      fullSize = fullSize + driver->packSize();
+    }
+  }
+  return fullSize;
+}
+
+
+void* PhysicsDriverManager::pack(void *buf) const
+{
+  uint32_t count;
+  DriverVec::const_iterator it;
+  for (it = drivers.begin(); it != drivers.end(); it++) {
+    PhysicsDriver* driver = *it;
+    if (driver->xformTool == NULL) {
+      count++;
+    }
+  }
+
+  buf = nboPackUInt32(buf, count);
+  for (it = drivers.begin(); it != drivers.end(); it++) {
+    PhysicsDriver* driver = *it;
+    if (driver->xformTool == NULL) {
+      buf = driver->pack(buf);
+    }
   }
   return buf;
 }
 
 
-void * PhysicsDriverManager::unpack(void *buf)
+void* PhysicsDriverManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
@@ -158,25 +235,15 @@ void * PhysicsDriverManager::unpack(void *buf)
 }
 
 
-int PhysicsDriverManager::packSize() const
-{
-  int fullSize = sizeof (uint32_t);
-  DriverVec::const_iterator it;
-  for (it = drivers.begin(); it != drivers.end(); it++) {
-    PhysicsDriver* driver = *it;
-    fullSize = fullSize + driver->packSize();
-  }
-  return fullSize;
-}
-
-
 void PhysicsDriverManager::print(std::ostream& out,
 				 const std::string& indent) const
 {
   DriverVec::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     const PhysicsDriver* driver = *it;
-    driver->print(out, indent);
+    if ((driver->xformTool == NULL) || (debugLevel >= 5)) {
+      driver->print(out, indent);
+    }
   }
   return;
 }
@@ -190,14 +257,42 @@ void PhysicsDriverManager::print(std::ostream& out,
 
 PhysicsDriver::PhysicsDriver()
 : name("")
-, linearVel(0.0f, 0.0f, 0.0f)
-, angularVel(0.0f)
-, angularPos(0.0f, 0.0f)
-, radialVel(0.0f)
-, radialPos(0.0f, 0.0f)
-, slideTime(0.0f)
-, deathMsg("")
-, xformTool(NULL)
+, id(-1)
+, relative   (false)
+, linearVel  (0.0f, 0.0f, 0.0f)
+, angularVel (0.0f)
+, angularPos (0.0f, 0.0f)
+, radialVel  (0.0f)
+, radialPos  (0.0f, 0.0f)
+, slideTime  (0.0f)
+, deathMsg   ("")
+, linearVar  ("")
+, angularVar ("")
+, radialVar  ("")
+, slideVar   ("")
+, deathVar   ("")
+, xformTool  (NULL)
+{
+  // do nothing
+}
+
+
+PhysicsDriver::PhysicsDriver(const PhysicsDriver& pd)
+: name("")
+, relative   (pd.relative)
+, linearVel  (pd.linearVel)
+, angularVel (pd.angularVel)
+, angularPos (pd.angularPos)
+, radialVel  (pd.radialVel)
+, radialPos  (pd.radialPos)
+, slideTime  (pd.slideTime)
+, deathMsg   (pd.deathMsg)
+, linearVar  (pd.linearVar)
+, angularVar (pd.angularVar)
+, radialVar  (pd.radialVar)
+, slideVar   (pd.slideVar)
+, deathVar   (pd.deathVar)
+, xformTool  (NULL)
 {
   // do nothing
 }
@@ -259,8 +354,8 @@ bool PhysicsDriver::operator<(const PhysicsDriver& pd) const
 
   if (slideTime < pd.slideTime) { return true;  }
   if (pd.slideTime < slideTime) { return false; }
-  if (slideVar < pd.slideVar) { return true;  }
-  if (pd.slideVar < slideVar) { return false; }
+  if (slideVar < pd.slideVar)   { return true;  }
+  if (pd.slideVar < slideVar)   { return false; }
 
   if (deathMsg < pd.deathMsg) { return true;  }
   if (pd.deathMsg < deathMsg) { return false; }
@@ -300,6 +395,7 @@ void PhysicsDriver::linearCallback(const std::string& /*varName*/)
   const fvec3 values = BZDB.evalFVec3(linearVar);
   if (!isnan(values.x)) {
     linearVel = values;
+    transformLinearVel();
   }
 }
 
@@ -310,7 +406,8 @@ void PhysicsDriver::angularCallback(const std::string& /*varName*/)
   if (!isnan(values.x)) {
     angularVel = values.x * float(M_PI * 2.0);
     angularPos = values.yz();
-  }
+    transformAngularPos();
+    }
   else {
     const float value = BZDB.eval(angularVar);
     if (!isnan(value)) {
@@ -326,6 +423,7 @@ void PhysicsDriver::radialCallback(const std::string& /*varName*/)
   if (!isnan(values.x)) {
     radialVel = values.x;
     radialPos = values.yz();
+    transformRadialPos();
   }
   else {
     const float value = BZDB.eval(radialVar);
@@ -351,6 +449,26 @@ void PhysicsDriver::deathCallback(const std::string& /*varName*/)
 }
 
 
+void PhysicsDriver::addCallbacks()
+{
+  const std::string tmpLinearVar  = linearVar;
+  const std::string tmpAngularVar = angularVar;
+  const std::string tmpRadialVar  = radialVar;
+  const std::string tmpSlideVar   = slideVar;
+  const std::string tmpDeathVar   = deathVar;
+  linearVar.clear();
+  angularVar.clear();
+  radialVar.clear();
+  slideVar.clear();
+  deathVar.clear();
+  setLinearVar(tmpLinearVar);
+  setAngularVar(tmpAngularVar);
+  setRadialVar(tmpRadialVar);
+  setSlideVar(tmpSlideVar);
+  setDeathVar(tmpDeathVar);
+}
+
+
 //============================================================================//
 
 void PhysicsDriver::finalize()
@@ -358,6 +476,8 @@ void PhysicsDriver::finalize()
   return;
 }
 
+
+//============================================================================//
 
 bool PhysicsDriver::setName(const std::string& drvname)
 {
@@ -432,6 +552,8 @@ void PhysicsDriver::setDeathMessage(const std::string& msg)
 }
 
 
+//============================================================================//
+
 void PhysicsDriver::setLinearVar(const std::string& var)
 {
   if (!linearVar.empty()) {
@@ -497,11 +619,48 @@ void PhysicsDriver::setDeathVar(const std::string& var)
 }
 
 
+//============================================================================//
+
 void PhysicsDriver::update (float /*t*/)
 {
   return;
 }
 
+
+void PhysicsDriver::transformLinearVel()
+{
+  if (xformTool == NULL) {
+    return;
+  }
+  const float speed = linearVel.length();
+  xformTool->modifyNormal(linearVel);
+  linearVel = linearVel.normalize() * speed;
+}
+
+
+void PhysicsDriver::transformAngularPos()
+{
+  if (xformTool == NULL) {
+    return;
+  }
+  fvec3 pos(angularPos.x, angularPos.y, 0.0f);
+  xformTool->modifyVertex(pos);
+  angularPos = pos.xy();
+}
+
+
+void PhysicsDriver::transformRadialPos()
+{
+  if (xformTool == NULL) {
+    return;
+  }
+  fvec3 pos(radialPos.x, radialPos.y, 0.0f);
+  xformTool->modifyVertex(pos);
+  radialPos = pos.xy();
+}
+
+            
+//============================================================================//
 
 int PhysicsDriver::packSize() const
 {

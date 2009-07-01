@@ -18,6 +18,7 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 #include <iostream>
 
@@ -27,6 +28,9 @@
 
 
 class DynamicColor {
+
+  friend class DynamicColorManager;
+
   public:
     DynamicColor();
     ~DynamicColor();
@@ -122,6 +126,8 @@ class DynamicColorManager {
     int addColor(DynamicColor* dyncolor);
     int findColor(const std::string& name) const;
     const DynamicColor* getColor(int id) const;
+
+    void getVariables(std::set<std::string>& vars) const;
 
     int packSize() const;
     void* pack(void*) const;

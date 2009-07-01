@@ -113,6 +113,30 @@ const TextureMatrix* TextureMatrixManager::getMatrix(int id) const
 }
 
 
+void TextureMatrixManager::getVariables(std::set<std::string>& vars) const
+{
+  std::vector<TextureMatrix*>::const_iterator it;
+  for (it = matrices.begin(); it != matrices.end(); it++) {
+    TextureMatrix* texmat = *it;
+    if (!texmat->spinVar.empty())  { vars.insert(texmat->spinVar);  }
+    if (!texmat->scaleVar.empty()) { vars.insert(texmat->scaleVar); }
+    if (!texmat->shiftVar.empty()) { vars.insert(texmat->shiftVar); }
+  }    
+}
+
+
+int TextureMatrixManager::packSize() const
+{
+  int fullSize = sizeof (uint32_t);
+  std::vector<TextureMatrix*>::const_iterator it;
+  for (it = matrices.begin(); it != matrices.end(); it++) {
+    TextureMatrix* texmat = *it;
+    fullSize = fullSize + texmat->packSize();
+  }
+  return fullSize;
+}
+
+
 void * TextureMatrixManager::pack(void *buf) const
 {
   std::vector<TextureMatrix*>::const_iterator it;
@@ -136,18 +160,6 @@ void * TextureMatrixManager::unpack(void *buf)
     addMatrix(texmat);
   }
   return buf;
-}
-
-
-int TextureMatrixManager::packSize() const
-{
-  int fullSize = sizeof (uint32_t);
-  std::vector<TextureMatrix*>::const_iterator it;
-  for (it = matrices.begin(); it != matrices.end(); it++) {
-    TextureMatrix* texmat = *it;
-    fullSize = fullSize + texmat->packSize();
-  }
-  return fullSize;
 }
 
 
@@ -478,6 +490,7 @@ void TextureMatrix::setDynamicSpinVar(const std::string& var)
   if (!spinVar.empty()) {
     BZDB.addCallback(spinVar, staticSpinCallback, this);
   }
+  spinCallback(spinVar);
 }
 
 
@@ -490,6 +503,7 @@ void TextureMatrix::setDynamicScaleVar(const std::string& var)
   if (!scaleVar.empty()) {
     BZDB.addCallback(scaleVar, staticScaleCallback, this);
   }
+  scaleCallback(spinVar);
 }
 
 
@@ -502,6 +516,7 @@ void TextureMatrix::setDynamicShiftVar(const std::string& var)
   if (!shiftVar.empty()) {
     BZDB.addCallback(shiftVar, staticShiftCallback, this);
   }
+  shiftCallback(spinVar);
 }
 
 
