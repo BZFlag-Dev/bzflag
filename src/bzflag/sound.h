@@ -103,7 +103,13 @@ public:
     return getID(_name.c_str());
   }
 
+protected:
+  bool setStandardSoundIDs();
+
+private:
+  int getStandardSoundID(const std::string& filename);
 };
+
 
 class SoundManager : public Singleton<SoundManager>
 {

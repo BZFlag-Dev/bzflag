@@ -139,7 +139,6 @@ protected:
   bool usingSameThread;
   bool soundStarted;
 
-  bool setStandardSoundIDs ( void );
   int  loadAudioSample( const std::string& fileName );
   void freeAudioSamples( void );
   void sendSound(SoundCommand* s);

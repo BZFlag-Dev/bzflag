@@ -376,45 +376,6 @@ int PlatformSound::getID ( const char* _name )
 }
 
 
-bool PlatformSound::setStandardSoundIDs ( void )
-{
-  SFX_SHOT_BOOM       = getID("boom");
-  SFX_BOUNCE          = getID("bounce");
-  SFX_BURROW          = getID("burrow");
-  SFX_DIE             = getID("explosion");
-  SFX_EXPLOSION       = getID("explosion");
-  SFX_FIRE            = getID("fire");
-  SFX_ALERT           = getID("flag_alert");
-  SFX_DROP_FLAG       = getID("flag_drop");
-  SFX_GRAB_BAD        = getID("flag_grab");
-  SFX_GRAB_FLAG       = getID("flag_grab");
-  SFX_LOSE            = getID("flag_lost");
-  SFX_CAPTURE         = getID("flag_won");
-  SFX_FLAP            = getID("flap");
-  SFX_HIT             = getID("hit");
-  SFX_HUNT            = getID("hunt");
-  SFX_HUNT_SELECT     = getID("hunt_select");
-  SFX_JUMP            = getID("jump");
-  SFX_KILL_TEAM       = getID("killteam");
-  SFX_LAND            = getID("land");
-  SFX_LASER           = getID("laser");
-  SFX_LOCK            = getID("lock");
-  SFX_MESSAGE_ADMIN   = getID("message_admin");
-  SFX_MESSAGE_PRIVATE = getID("message_team");
-  SFX_MESSAGE_TEAM    = getID("message_team");
-  SFX_MISSILE         = getID("missile");
-  SFX_PHANTOM         = getID("phantom");
-  SFX_POP             = getID("pop");
-  SFX_RICOCHET        = getID("ricochet");
-  SFX_SHOCK           = getID("shock");
-  SFX_RUNOVER         = getID("steamroller");
-  SFX_TEAMGRAB        = getID("teamgrab");
-  SFX_TELEPORT        = getID("teleport");
-  SFX_THIEF           = getID("thief");
-
-  return !idMap.empty();
-}
-
 int PlatformSound::resampleAudio(const float* in, int frames, int rate, PlatformSound::AudioSamples* out)
 {
   // attenuation on all sounds
