@@ -549,9 +549,13 @@ properties:
 .br
 \fB    linkName\fR myLink  # the name use for linkage
 .br
-\fB    linkSrcRebound\fR   # tanks rebound when the link 
+\fB    linkSrcTouch\fR     # touching the face will cause teleportation
 .br
-                     # is not crossed (instead of dropping)
+                     # (tanks do not have to pass through the face)
+.br
+\fB    linkSrcRebound\fR   # tanks rebound when the far side of the
+.br
+                     # link is blocked (instead of dropping)
 .br
 \fB    linkSrcNoGlow\fR    # do not render the foggy 'glow'
 .br
