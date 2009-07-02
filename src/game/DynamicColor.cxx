@@ -122,7 +122,7 @@ void DynamicColorManager::getVariables(std::set<std::string>& vars) const
   std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
-    if (color->varName.empty()) {
+    if (!color->varName.empty()) {
       vars.insert(color->varName);
     }
   }
