@@ -3678,16 +3678,25 @@ BZF_API const char* bz_pluginBinPath(void)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName)
+BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName,
+                                         const float* pos)
 {
   if(playerID==BZ_SERVER || !soundName)
     return false;
 
   NetMsg   msg = MSGMGR.newMessage();
 
-  msg->packUInt16(LocalCustomSound);
-  msg->packUInt16((unsigned short)strlen(soundName));
-  msg->packString(soundName, strlen(soundName));
+  uint8_t bits = 0;
+  if (pos != NULL) {
+    bits |= SoundPosition;
+  }
+
+  msg->packUInt8(LocalCustomSound); // sound type
+  msg->packUInt8(bits);
+  msg->packStdString(std::string(soundName));
+  if (pos != NULL) {
+    msg->packFVec3(fvec3(pos[0], pos[1], pos[2]));
+  }
 
   if(playerID==BZ_ALLUSERS)
   {

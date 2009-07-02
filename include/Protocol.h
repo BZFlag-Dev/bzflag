@@ -169,7 +169,18 @@ const uint16_t RejectHostBanned     = 0x000A;
 const uint16_t RejectIDBanned       = 0x000B;
 
 // sound type codes
-const uint16_t LocalCustomSound = 0x0001;
+const uint8_t LocalCustomSound = 0x0001;
+
+// sound parameter bits
+enum CustomSoundBits {
+  SoundGain      = (1 << 0), // a float specifies the gain
+  SoundPitch     = (1 << 1), // a float specifies the pitch
+  SoundPosition  = (1 << 2), // a fvec3 specifies the source position
+  SoundVelocity  = (1 << 3), // a fvec3 specifies the source velocity
+  SoundDirection = (1 << 4)  // a fvec3 specifies the direction, followed
+                             // by two floats for the inner/outer cone angles,
+                             // and one float for the outer cone gain
+};
 
 enum BlowedUpReason {
 	GotKilledMsg,

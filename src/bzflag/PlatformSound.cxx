@@ -125,7 +125,6 @@ PlatformSound::~PlatformSound()
 bool PlatformSound::startup ( void )
 {
   platformSound = this;
-  sampleNames = SoundManager::instance().getStdSounds();
 
   unsigned int i;
 
@@ -139,7 +138,7 @@ bool PlatformSound::startup ( void )
   soundStarted = true;
 
   // open audio data files
-  if (!allocAudioSamples())
+  if (!setStandardSoundIDs())
   {
     media->closeAudio();
 #ifndef DEBUG
@@ -190,8 +189,6 @@ bool PlatformSound::startup ( void )
 
   setVolume(1.0f);
 
-  setStandardSoundIDs();
-
   return active();
 }
 
@@ -230,35 +227,36 @@ bool PlatformSound::active ( void )
   return soundStarted;
 }
 
-bool PlatformSound::allocAudioSamples( void )
-{
-  bool anyFile = false;
 
-  // load the default samples
-  for (size_t i = 0; i < sampleNames.size(); i++)
-  {
-    // read it
-    int numFrames, rate;
-    float* samples = PlatformFactory::getMedia()->readSound(sampleNames[i].c_str(), numFrames, rate,true);
-    AudioSamples *newSample = new AudioSamples;
-    if (samples && resampleAudio(samples, numFrames, rate, newSample))
-    {
-      anyFile = true;
-      soundSamples.push_back(newSample);
-    }
-    else
-      delete newSample;
-    delete[] samples;
+int PlatformSound::loadAudioSample( const std::string& fileName )
+{
+  int soundCode = -1;
+  int numFrames, rate;
+
+  float* samples = PlatformFactory::getMedia()->readSound(fileName.c_str(),
+                                                          numFrames, rate,
+                                                          true);
+  AudioSamples* newSample = new AudioSamples;
+  if (samples && resampleAudio(samples, numFrames, rate, newSample)) {
+    soundCode = (int)soundSamples.size();
+    soundSamples.push_back(newSample);
+    idMap[fileName] = soundCode;
+  }
+  else {
+    delete newSample;
   }
 
-  return anyFile;
+  delete[] samples;
+
+  return soundCode;
 }
+
 
 void PlatformSound::freeAudioSamples( void )
 {
-  for ( unsigned int i = 0; i < soundSamples.size(); i++ )
+  for (unsigned int i = 0; i < soundSamples.size(); i++) {
     delete(soundSamples[i]);
-
+  }
   soundSamples.clear();
 }
 
@@ -360,77 +358,61 @@ bool PlatformSound::update ( double /*time*/ )
   return true;
 }
 
+
 int PlatformSound::getID ( const char* _name )
 {
-  int  soundCode = -1;
-
-  std::string sound = _name;
-  sound = TextUtils::tolower(sound);
-
-  for (int i = 0; i < (int)sampleNames.size(); i++)
-  {
-    if (sampleNames[i] == sound)
-      return i;
+  if (_name == NULL) {
+    return -1;
   }
 
-  std::map<std::string,int>::iterator itr = customSamples.find(sound);
-  if (itr == customSamples.end())
-  {
-    int numFrames, rate;
-    float* samples = PlatformFactory::getMedia()->readSound(TextUtils::tolower(sound).c_str(), numFrames, rate,false);
-    AudioSamples *newSample = new AudioSamples;
-    if (samples && resampleAudio(samples, numFrames, rate, newSample))
-    {
-      soundSamples.push_back(newSample);
-      soundCode = (int)soundSamples.size()-1;
-      customSamples[TextUtils::tolower(sound)] = soundCode;
-    }
-    else
-      delete newSample;
+  const std::string sound = TextUtils::tolower(_name);
 
-    delete[] samples;
+  IdMap::const_iterator it = idMap.find(sound);
+  if (it != idMap.end()) {
+    return it->second;
   }
-  else
-    soundCode = itr->second;
 
-  return soundCode;
+  return loadAudioSample(sound);
 }
 
-void PlatformSound::setStandardSoundIDs ( void )
+
+bool PlatformSound::setStandardSoundIDs ( void )
 {
-  SFX_FIRE = getID("fire");
-  SFX_EXPLOSION = getID("explosion");
-  SFX_RICOCHET = getID("ricochet");
-  SFX_GRAB_FLAG = getID("flag_grab");
-  SFX_DROP_FLAG = getID("flag_drop");
-  SFX_CAPTURE = getID("flag_won");
-  SFX_LOSE = getID("flag_lost");
-  SFX_ALERT = getID("flag_alert");
-  SFX_JUMP = getID("jump");
-  SFX_LAND = getID("land");
-  SFX_TELEPORT = getID("teleport");
-  SFX_LASER = getID("laser");
-  SFX_SHOCK = getID("shock");
-  SFX_POP = getID("pop");
-  SFX_DIE = getID("explosion");
-  SFX_GRAB_BAD = getID("flag_grab");
-  SFX_SHOT_BOOM = getID("boom");
-  SFX_KILL_TEAM = getID("killteam");
-  SFX_PHANTOM = getID("phantom");
-  SFX_MISSILE = getID("missile");
-  SFX_LOCK = getID("lock");
-  SFX_TEAMGRAB = getID("teamgrab");
-  SFX_HUNT = getID("hunt");
-  SFX_HUNT_SELECT = getID("hunt_select");
-  SFX_RUNOVER = getID("steamroller");
-  SFX_THIEF = getID("thief");
-  SFX_BURROW = getID("burrow");
+  SFX_SHOT_BOOM       = getID("boom");
+  SFX_BOUNCE          = getID("bounce");
+  SFX_BURROW          = getID("burrow");
+  SFX_DIE             = getID("explosion");
+  SFX_EXPLOSION       = getID("explosion");
+  SFX_FIRE            = getID("fire");
+  SFX_ALERT           = getID("flag_alert");
+  SFX_DROP_FLAG       = getID("flag_drop");
+  SFX_GRAB_BAD        = getID("flag_grab");
+  SFX_GRAB_FLAG       = getID("flag_grab");
+  SFX_LOSE            = getID("flag_lost");
+  SFX_CAPTURE         = getID("flag_won");
+  SFX_FLAP            = getID("flap");
+  SFX_HIT             = getID("hit");
+  SFX_HUNT            = getID("hunt");
+  SFX_HUNT_SELECT     = getID("hunt_select");
+  SFX_JUMP            = getID("jump");
+  SFX_KILL_TEAM       = getID("killteam");
+  SFX_LAND            = getID("land");
+  SFX_LASER           = getID("laser");
+  SFX_LOCK            = getID("lock");
+  SFX_MESSAGE_ADMIN   = getID("message_admin");
   SFX_MESSAGE_PRIVATE = getID("message_team");
-  SFX_MESSAGE_TEAM = getID("message_team");
-  SFX_MESSAGE_ADMIN = getID("message_admin");
-  SFX_FLAP = getID("flap");
-  SFX_BOUNCE = getID("bounce");
-  SFX_HIT = getID("hit");
+  SFX_MESSAGE_TEAM    = getID("message_team");
+  SFX_MISSILE         = getID("missile");
+  SFX_PHANTOM         = getID("phantom");
+  SFX_POP             = getID("pop");
+  SFX_RICOCHET        = getID("ricochet");
+  SFX_SHOCK           = getID("shock");
+  SFX_RUNOVER         = getID("steamroller");
+  SFX_TEAMGRAB        = getID("teamgrab");
+  SFX_TELEPORT        = getID("teleport");
+  SFX_THIEF           = getID("thief");
+
+  return !idMap.empty();
 }
 
 int PlatformSound::resampleAudio(const float* in, int frames, int rate, PlatformSound::AudioSamples* out)

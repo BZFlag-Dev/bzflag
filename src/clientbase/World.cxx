@@ -413,9 +413,8 @@ float World::getProximity(const fvec3& p, float radius) const
     const Obstacle* obs = oList->list[i];
     if (obs->getTypeID() == faceType) {
       const MeshFace* face = (const MeshFace*)obs;
-      if (face->isLinkSrc() &&
-          face->isDriveThrough() &&
-          !face->linkSrcNoGlow()) {
+      if (face->isLinkSrc() && !face->linkSrcNoGlow() &&
+          (face->isDriveThrough() || face->linkSrcTouch())) {
         const float proximity = face->getProximity(p, r);
         if (proximity > bestProximity) {
           bestProximity = proximity;

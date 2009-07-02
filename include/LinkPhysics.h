@@ -108,6 +108,9 @@ class LinkPhysics {
     // Pass messages
     std::string shotPassText;
     std::string tankPassText;
+
+    // Custom Sound
+    std::string tankPassSound;
 };
 
 

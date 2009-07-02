@@ -58,6 +58,7 @@ LinkPhysics::LinkPhysics()
 , tankBlockVar("")
 , shotPassText("")
 , tankPassText("")
+, tankPassSound("")
 {
   // do nothing
 }
@@ -131,6 +132,7 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
   if (tankBlockVar     != lp.tankBlockVar)     { return false; }
   if (shotPassText     != lp.shotPassText)     { return false; }
   if (tankPassText     != lp.tankPassText)     { return false; }
+  if (tankPassSound    != lp.tankPassSound)    { return false; }
   return true;
 }
 
@@ -233,11 +235,75 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
   if (tankPassText < lp.tankPassText) { return true;  }
   if (lp.tankPassText < tankPassText) { return false; }
 
+  if (tankPassSound < lp.tankPassSound) { return true;  }
+  if (lp.tankPassSound < tankPassSound) { return false; }
+
   return false;
 }
 
 
 //============================================================================//
+
+int LinkPhysics::packSize() const
+{
+  int fullSize = 0;
+
+  fullSize += sizeof(uint8_t); // state bits
+
+  if (*this == defLinkPhysics) {
+    return fullSize;
+  }
+
+  fullSize += sizeof(fvec3); // shotSrcPosScale
+  fullSize += sizeof(fvec3); // shotSrcVelScale
+  fullSize += sizeof(fvec3); // shotDstVelOffset
+
+  fullSize += sizeof(fvec3); // tankSrcPosScale
+  fullSize += sizeof(fvec3); // tankSrcVelScale
+  fullSize += sizeof(fvec3); // tankDstVelOffset
+
+  fullSize += sizeof(float); // tankAngle
+  fullSize += sizeof(float); // tankAngVel
+  fullSize += sizeof(float); // tankAngleOffset
+  fullSize += sizeof(float); // tankAngleScale
+  fullSize += sizeof(float); // tankAngVelOffset
+  fullSize += sizeof(float); // tankAngVelScale
+
+  fullSize += sizeof(float); // shotMinSpeed
+  fullSize += sizeof(float); // shotMaxSpeed
+  fullSize += sizeof(float); // tankMinSpeed
+  fullSize += sizeof(float); // tankMaxSpeed
+
+  fullSize += sizeof(float); // shotMinAngle
+  fullSize += sizeof(float); // shotMaxAngle
+  fullSize += sizeof(float); // tankMinAngle
+  fullSize += sizeof(float); // tankMaxAngle
+
+  fullSize += sizeof(uint8_t); // shotBlockTeams
+  fullSize += sizeof(uint8_t); // tankBlockTeams
+
+  std::set<std::string>::const_iterator it;
+
+  fullSize += sizeof(uint16_t); // shotBlockFlags count
+  for (it = shotBlockFlags.begin(); it != shotBlockFlags.end(); ++it) {
+    fullSize += nboStdStringPackSize(*it);
+  }
+
+  fullSize += sizeof(uint16_t); // tankBlockFlags count
+  for (it = tankBlockFlags.begin(); it != tankBlockFlags.end(); ++it) {
+    fullSize += nboStdStringPackSize(*it);
+  }
+
+  fullSize += nboStdStringPackSize(shotBlockVar);
+  fullSize += nboStdStringPackSize(tankBlockVar);
+
+  fullSize += nboStdStringPackSize(shotPassText);
+  fullSize += nboStdStringPackSize(tankPassText);
+  fullSize += nboStdStringPackSize(tankPassSound);
+
+  return fullSize;
+}
+
 
 void* LinkPhysics::pack(void* buf) const
 {
@@ -302,6 +368,7 @@ void* LinkPhysics::pack(void* buf) const
 
   buf = nboPackStdString(buf, shotPassText);
   buf = nboPackStdString(buf, tankPassText);
+  buf = nboPackStdString(buf, tankPassSound);
 
   return buf;
 }
@@ -367,68 +434,9 @@ void* LinkPhysics::unpack(void* buf)
 
   buf = nboUnpackStdString(buf, shotPassText);
   buf = nboUnpackStdString(buf, tankPassText);
+  buf = nboUnpackStdString(buf, tankPassSound);
 
   return buf;
-}
-
-
-int LinkPhysics::packSize() const
-{
-  int fullSize = 0;
-
-  fullSize += sizeof(uint8_t); // state bits
-
-  if (*this == defLinkPhysics) {
-    return fullSize;
-  }
-
-  fullSize += sizeof(fvec3); // shotSrcPosScale
-  fullSize += sizeof(fvec3); // shotSrcVelScale
-  fullSize += sizeof(fvec3); // shotDstVelOffset
-
-  fullSize += sizeof(fvec3); // tankSrcPosScale
-  fullSize += sizeof(fvec3); // tankSrcVelScale
-  fullSize += sizeof(fvec3); // tankDstVelOffset
-
-  fullSize += sizeof(float); // tankAngle
-  fullSize += sizeof(float); // tankAngVel
-  fullSize += sizeof(float); // tankAngleOffset
-  fullSize += sizeof(float); // tankAngleScale
-  fullSize += sizeof(float); // tankAngVelOffset
-  fullSize += sizeof(float); // tankAngVelScale
-
-  fullSize += sizeof(float); // shotMinSpeed
-  fullSize += sizeof(float); // shotMaxSpeed
-  fullSize += sizeof(float); // tankMinSpeed
-  fullSize += sizeof(float); // tankMaxSpeed
-
-  fullSize += sizeof(float); // shotMinAngle
-  fullSize += sizeof(float); // shotMaxAngle
-  fullSize += sizeof(float); // tankMinAngle
-  fullSize += sizeof(float); // tankMaxAngle
-
-  fullSize += sizeof(uint8_t); // shotBlockTeams
-  fullSize += sizeof(uint8_t); // tankBlockTeams
-
-  std::set<std::string>::const_iterator it;
-
-  fullSize += sizeof(uint16_t); // shotBlockFlags count
-  for (it = shotBlockFlags.begin(); it != shotBlockFlags.end(); ++it) {
-    fullSize += nboStdStringPackSize(*it);
-  }
-
-  fullSize += sizeof(uint16_t); // tankBlockFlags count
-  for (it = tankBlockFlags.begin(); it != tankBlockFlags.end(); ++it) {
-    fullSize += nboStdStringPackSize(*it);
-  }
-
-  fullSize += nboStdStringPackSize(shotBlockVar);
-  fullSize += nboStdStringPackSize(tankBlockVar);
-
-  fullSize += nboStdStringPackSize(shotPassText);
-  fullSize += nboStdStringPackSize(tankPassText);
-
-  return fullSize;
 }
 
 
@@ -592,6 +600,10 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
 
   if (!tankPassText.empty()) {
     out << indent << "  tankPassText " << tankPassText << std::endl;
+  }
+
+  if (!tankPassSound.empty()) {
+    out << indent << "  tankPassSound " << tankPassSound << std::endl;
   }
 
   return;

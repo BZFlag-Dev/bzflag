@@ -22,9 +22,10 @@
 #include "BzfMedia.h"
 #include "TimeKeeper.h"
 
-#include <map>
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
 
 class PlatformSound: public SoundSystem
 {
@@ -58,7 +59,12 @@ public:
   bool audioInnerLoop();
 
 protected:
-  std::map<std::string,int> dataDirSounds;
+
+  // the fileName to ID map
+  // (IDs are indices into the soundSamples vector)
+  typedef std::map<std::string, int> IdMap;
+  IdMap idMap;
+
   BzfMedia* media;
 
   struct SoundCommand
@@ -87,9 +93,7 @@ protected:
     double  duration;  /* time to play sound */
   };
 
-  std::vector<AudioSamples*>	soundSamples;
-
-  std::map<std::string, int> customSamples;
+  std::vector<AudioSamples*> soundSamples;
 
   long audioBufferSize;
   int  soundLevel;
@@ -135,12 +139,12 @@ protected:
   bool usingSameThread;
   bool soundStarted;
 
-  void setStandardSoundIDs ( void );
-  bool allocAudioSamples( void );
+  bool setStandardSoundIDs ( void );
+  int  loadAudioSample( const std::string& fileName );
   void freeAudioSamples( void );
   void sendSound(SoundCommand* s);
 
-  std::vector<std::string> sampleNames;
+  std::set<std::string> sampleNames;
 
   // thread stuff
   int  findBestLocalSlot();

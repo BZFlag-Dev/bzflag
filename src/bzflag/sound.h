@@ -21,7 +21,7 @@
 #include "Singleton.h"
 #include <string>
 #include <vector>
-#include <string>
+#include <set>
 
 extern int  SFX_FIRE;		  /* shell fired */
 extern int  SFX_EXPLOSION;	  /* something other than me blew up */
@@ -119,7 +119,6 @@ public:
     if (name) activateSoundSystem(std::string(name));
   }
 
-  std::vector<std::string> getStdSounds(void);
 protected:
   friend class Singleton<SoundManager>;
 
@@ -128,10 +127,6 @@ protected:
 
   std::vector<SoundSystem*> soundSystems;
   SoundSystem* currentSystem;
-
-private:
-  void addStandardSound(const char* name);
-  std::vector<std::string> standardSounds;
 };
 
 #define SOUNDSYSTEM SoundManager::instance().getSystem()

@@ -442,7 +442,7 @@ bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const
     // insert the matches
     NameFaceVec::const_iterator it;
     for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
-      if (debugLinks >= 3) {
+      if (debugLinks >= 4) {
         logDebugMessage(0, "link glob_match:  %s  vs.  %s\n",
                            glob.c_str(), it->name.c_str());
       }
@@ -553,10 +553,7 @@ void LinkManager::getVariables(std::set<std::string>& vars) const
 
 void LinkManager::printDebug()
 {
-  if (debugLinks < 2) {
-    logDebugMessage(0, "\n");
-  }
-  else {
+  if (debugLinks >= 2) {
     logDebugMessage(0, "\n");
     for (size_t i = 0; i < linkDefs.size(); i++) {
       linkDefs[i].print(std::cout, "linkdefs: ");
@@ -574,8 +571,8 @@ void LinkManager::printDebug()
       logDebugMessage(0, "  linkDst %i: /%s\n", i,
                       linkDsts[i].face->getLinkName().c_str());
     }
-    logDebugMessage(0, "\n");
   }
+  logDebugMessage(0, "\n");
 
   logDebugMessage(0, "Potential Links:\n");
   NameFaceVec::const_iterator nameIt;
@@ -595,6 +592,9 @@ void LinkManager::printDebug()
       const DstData* dd = getLinkDstData(dstID);
       const MeshFace* linkDst = dd->face;
       logDebugMessage(0, "    dst %s\n", linkDst->getLinkName().c_str());
+      if (debugLinks >= 3) {
+        dd->physics.print(std::cout, "    ");
+      }
     }
   }
   logDebugMessage(0, "\n");

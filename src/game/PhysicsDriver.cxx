@@ -279,6 +279,7 @@ PhysicsDriver::PhysicsDriver()
 
 PhysicsDriver::PhysicsDriver(const PhysicsDriver& pd)
 : name("")
+, id(-1)
 , relative   (pd.relative)
 , linearVel  (pd.linearVel)
 , angularVel (pd.angularVel)

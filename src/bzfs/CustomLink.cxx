@@ -570,6 +570,14 @@ bool CustomLink::read(const char *cmd, std::istream& input)
     }
     linkDef.physics.tankPassText = line;
   }
+  else if (strcasecmp(cmd, "tankPassSound") == 0) {
+    std::string sound;
+    if (!(input >> sound)) {
+      std::cout << "missing tankPassSound parameter" << std::endl;
+      return false;
+    }
+    linkDef.physics.tankPassSound = sound;
+  }
   else {
     return WorldFileObject::read(cmd, input);
   }

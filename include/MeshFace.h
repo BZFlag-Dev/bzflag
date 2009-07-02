@@ -297,14 +297,6 @@ class MeshFace : public Obstacle {
       return face;
     }
 
-    static inline const MeshFace* getTankLinkSrc(const Obstacle* obs) {
-      if ((obs == NULL) || (obs->getTypeID() != faceType)) { return NULL; }
-      const MeshFace* face = (const MeshFace*) obs;
-      if (!face->isLinkSrc())          { return NULL; }
-      if (face->isDriveThrough() == 0) { return NULL; } // NOTE
-      return face;
-    }
-
     // geometry utilities
     float calcArea() const;
     fvec3 calcCenter() const;

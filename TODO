@@ -12,13 +12,6 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* A tank spinning at a fixed location experiences no change in the
-  apparent direction of fixed sounds.  However, moving the tank to a
-  different location can make a difference.  Sounds seem to come
-  either from one o'clock (mostly) or eleven o'clock.  Trepan wonders
-  if raw world positions are used and suggests that the receiver's
-  transform may not be performed.
-
 * Canceling a pause command before the 5 second countdown completes
   causes the client to drop any good flag without notifying the
   server, so other players will still see a flag on the tank even

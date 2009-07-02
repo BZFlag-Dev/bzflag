@@ -1023,7 +1023,13 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
 
   // play the music, if desired
   if (gettingSound && !linkSrc->linkSrcNoSound()) {
-    SOUNDSYSTEM.play(SFX_TELEPORT);
+    const std::string& customSound = linkPhysics->tankPassSound;
+    if (customSound.empty()) {
+      SOUNDSYSTEM.play(SFX_TELEPORT);
+    }
+    else if (customSound != "none") {
+      SOUNDSYSTEM.play(customSound);
+    }
   }
 
   return true;

@@ -1271,30 +1271,58 @@ void handleCustomSound(void *msg)
     return;
   }
 
-  void *buf;
-  char buffer[MessageLen];
-  uint16_t soundType;
-  uint16_t stringLen;
+  uint8_t soundType;
+  uint8_t bits;
   std::string soundName;
 
-  buf = nboUnpackUInt16(msg, soundType);
-  buf = nboUnpackUInt16(buf, stringLen);
-  buf = nboUnpackString(buf, buffer, stringLen);
-
-  buffer[stringLen] = '\0';
-  soundName = buffer;
-
-  if (soundType == LocalCustomSound) {
-    if (CACHEMGR.isCacheFileType(soundName)) {
-      SOUNDSYSTEM.play(CACHEMGR.getLocalName(soundName));
-    } else {
-      SOUNDSYSTEM.play(soundName);
-    }
+  msg = nboUnpackUInt8(msg, soundType);
+  if (soundType != LocalCustomSound) {
+    return;
   }
+
+  msg = nboUnpackUInt8(msg, bits);
+
+  msg = nboUnpackStdString(msg, soundName);
+
+  // sound parameters
+  float gain  = 1.0f;
+  float pitch = 1.0f;
+  fvec3 pos, vel, dir;
+  const float* posPtr = NULL;
+  const float* velPtr = NULL;
+  const float* dirPtr = NULL;
+  float innerCone = 0.0f;
+  float outerCone = 360.0f;
+  float outerGain = 1.0;
+
+  if ((bits & SoundGain) != 0) {
+    msg = nboUnpackFloat(msg, gain);
+  }
+  if ((bits & SoundPitch) != 0) {
+    msg = nboUnpackFloat(msg, pitch);
+  }
+  if ((bits & SoundPosition) != 0) {
+    posPtr = pos;
+    msg = nboUnpackFVec3(msg, pos);
+  }
+  if ((bits & SoundVelocity) != 0) {
+    velPtr = vel;
+    msg = nboUnpackFVec3(msg, vel);
+  }
+  if ((bits & SoundDirection) != 0) {
+    dirPtr = dir;
+    msg = nboUnpackFVec3(msg, dir);
+    msg = nboUnpackFloat(msg, innerCone);
+    msg = nboUnpackFloat(msg, outerCone);
+    msg = nboUnpackFloat(msg, outerGain);
+  }
+
+  std::string localName = soundName;
+  if (CACHEMGR.isCacheFileType(soundName)) {
+    localName = CACHEMGR.getLocalName(soundName);
+  }
+  SOUNDSYSTEM.play(localName, posPtr, false, (posPtr == NULL));
 }
-
-
-
 
 
 void handleTimeUpdate(void *msg)
@@ -4255,7 +4283,10 @@ static void setupCamera(const fvec3& myTankPos, const fvec3& myTankDir,
     }
   }
 
-  SOUNDSYSTEM.setReceiver(eyePoint.x, eyePoint.y, eyePoint.z, 0.0, false);
+  // also set the position and rotation for the sound system
+  const fvec2 dir = (targetPoint.xy() - eyePoint.xy());
+  const float theta = atan2f(dir.y, dir.x);
+  SOUNDSYSTEM.setReceiver(eyePoint.x, eyePoint.y, eyePoint.z, theta, false);
 }
 
 

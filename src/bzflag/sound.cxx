@@ -65,40 +65,6 @@ SoundManager::SoundManager()
 {
   currentSystem = new PlatformSound();
   registerSystem(currentSystem);
-
-  addStandardSound("fire");
-  addStandardSound("explosion");
-  addStandardSound("ricochet");
-  addStandardSound("flag_grab");
-  addStandardSound("flag_drop");
-  addStandardSound("flag_won");
-  addStandardSound("flag_lost");
-  addStandardSound("flag_alert");
-  addStandardSound("jump");
-  addStandardSound("land");
-  addStandardSound("teleport");
-  addStandardSound("laser");
-  addStandardSound("shock");
-  addStandardSound("pop");
-  addStandardSound("explosion");
-  addStandardSound("flag_grab");
-  addStandardSound("boom");
-  addStandardSound("killteam");
-  addStandardSound("phantom");
-  addStandardSound("missile");
-  addStandardSound("lock");
-  addStandardSound("teamgrab");
-  addStandardSound("hunt");
-  addStandardSound("hunt_select");
-  addStandardSound("steamroller");
-  addStandardSound("thief");
-  addStandardSound("burrow");
-  addStandardSound("message_private");
-  addStandardSound("message_team");
-  addStandardSound("message_admin");
-  addStandardSound("flap");
-  addStandardSound("bounce");
-  addStandardSound("hit");
 }
 
 SoundManager::~SoundManager()
@@ -109,18 +75,6 @@ SoundManager::~SoundManager()
     if (soundSystems[i])
       delete(soundSystems[i]);
   }
-}
-
-void SoundManager::addStandardSound(const char* name)
-{
-  if (!name)
-    return;
-
-  std::string n = name;
-  n = TextUtils::tolower(n);
-
-  if (std::find(standardSounds.begin(), standardSounds.end(), n) == standardSounds.end())
-    standardSounds.push_back(std::string(name));
 }
 
 SoundSystem& SoundManager::getSystem(void)
@@ -178,12 +132,6 @@ void SoundManager::activateSoundSystem(const std::string &name)
     }
   }
 }
-
-std::vector<std::string> SoundManager::getStdSounds(void)
-{
-  return standardSounds;
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

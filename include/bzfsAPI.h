@@ -1785,7 +1785,8 @@ BZF_API const char* bz_pluginBinPath(void);
 
 
 // custom client sounds
-BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char* soundName);
+BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char* soundName,
+                                         const float* pos = NULL);
 
 class bz_APIPluginHandler
 {
