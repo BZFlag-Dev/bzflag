@@ -201,7 +201,7 @@ int PhysicsDriverManager::packSize() const
 
 void* PhysicsDriverManager::pack(void *buf) const
 {
-  uint32_t count;
+  uint32_t count = 0;
   DriverVec::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
