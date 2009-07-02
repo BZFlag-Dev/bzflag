@@ -29,6 +29,7 @@
 #include "Player.h"
 #include "ServerLink.h"
 
+class MeshFace;
 class FlagSceneNode;
 
 class LocalPlayer : public BaseLocalPlayer {
@@ -146,7 +147,8 @@ protected:
 private:
   void		doSlideMotion(float dt, float slideTime,
                               float newAngVel, fvec3& newVelocity);
-  bool		tryTeleporting(const fvec3& oldPos,    fvec3& newPos,
+  bool		tryTeleporting(const MeshFace* linkSrc,
+                               const fvec3& oldPos,    fvec3& newPos,
                                const fvec3& oldVel,    fvec3& newVel,
                                const float  oldAngle,  float& newAngle,
                                const float  oldAngVel, float& newAngVel,

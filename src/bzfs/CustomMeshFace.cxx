@@ -153,6 +153,9 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   //
   //  Link source parameters
   //
+  else if (strcasecmp(cmd, "linkSrcTouch") == 0) {
+    specialData.stateBits |=  MeshFace::LinkSrcTouch;
+  }
   else if (strcasecmp(cmd, "linkSrcRebound") == 0) {
     specialData.stateBits |=  MeshFace::LinkSrcRebound;
   }

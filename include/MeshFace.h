@@ -66,13 +66,14 @@ class MeshFace : public Obstacle {
     };
 
     enum SpecialBits {
-      LinkSrcFace       = (1 << 0),
-      LinkDstFace       = (1 << 1),
-      LinkSrcRebound    = (1 << 2),
-      LinkSrcNoGlow     = (1 << 3),
-      LinkSrcNoRadar    = (1 << 4),
-      LinkSrcNoSound    = (1 << 5),
-      LinkSrcNoEffect   = (1 << 6)
+      LinkDstFace       = (1 << 0),
+      LinkSrcFace       = (1 << 1),
+      LinkSrcTouch      = (1 << 2),
+      LinkSrcRebound    = (1 << 3),
+      LinkSrcNoGlow     = (1 << 4),
+      LinkSrcNoRadar    = (1 << 5),
+      LinkSrcNoSound    = (1 << 6),
+      LinkSrcNoEffect   = (1 << 7)
     };
 
     enum LinkGeoBits {
@@ -263,6 +264,9 @@ class MeshFace : public Obstacle {
     inline bool isLinkFace() const {
       return isSpecial() &&
              ((specialData->stateBits & (LinkSrcFace | LinkDstFace)) != 0);
+    }
+    inline bool linkSrcTouch() const {
+      return isSpecial() && ((specialData->stateBits & LinkSrcTouch) != 0);
     }
     inline bool linkSrcRebound() const {
       return isSpecial() && ((specialData->stateBits & LinkSrcRebound) != 0);

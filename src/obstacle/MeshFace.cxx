@@ -1597,6 +1597,10 @@ void MeshFace::SpecialData::print(std::ostream& out,
     out << prefix << "linkName " << linkName << std::endl;
   }
 
+  if ((stateBits & LinkSrcTouch) != 0) {
+    out << prefix << "linkSrcTouch" << std::endl;
+  }
+
   if ((stateBits & LinkSrcRebound) != 0) {
     out << prefix << "linkSrcRebound" << std::endl;
   }

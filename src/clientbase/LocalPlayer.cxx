@@ -445,6 +445,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   // by only allowing a maximum number of repeats.
   bool expel;
   const Obstacle* obstacle;
+  const Obstacle* lastTouched = NULL;
   float timeStep = dt;
   static bool stuck = false;
   if (location != Dead && location != Exploding) {
@@ -524,10 +525,15 @@ void LocalPlayer::doUpdateMotion(float dt)
       break;
     }
 
+    if (obstacle) {
+      lastTouched = obstacle;
+    }
+
+    static BZDB_float maxBumpHeight(BZDBNAMES.MAXBUMPHEIGHT);
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
     if ((oldLocation != InAir) && obstacle->isFlatTop() &&
 	(obstacleTop != tmpPos.z) &&
-	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
+	(obstacleTop < (tmpPos.z + maxBumpHeight))) {
       newPos.x = oldPosition.x;
       newPos.y = oldPosition.y;
       newPos.z = obstacleTop;
@@ -574,6 +580,7 @@ void LocalPlayer::doUpdateMotion(float dt)
       } else if (searchObstacle) {
 	// if we hit a building then record which one and where
 	obstacle = searchObstacle;
+	lastTouched = obstacle;
 
 	expel = searchExpel;
 	hitAzimuth = newAzimuth;
@@ -692,12 +699,29 @@ void LocalPlayer::doUpdateMotion(float dt)
     newVelocity = (newPos - oldPosition) * oodt;
   }
 
-  // teleportation
-  const bool teleported = tryTeleporting(oldPosition, newPos,
-                                         oldVelocity, newVelocity,
-                                         oldAzimuth,  newAzimuth,
-                                         oldAngVel,   newAngVel,
-                                         phased, expel);
+  // touch teleportation
+  bool teleported = false;
+  if ((lastTouched != NULL) &&
+      (lastTouched->getTypeID() == faceType)) {
+    const MeshFace* face = (const MeshFace*)lastTouched;
+    if (face->isLinkSrc() && face->linkSrcTouch()) {
+      teleported = tryTeleporting(face,
+                                  oldPosition, newPos,
+                                  oldVelocity, newVelocity,
+                                  oldAzimuth,  newAzimuth,
+                                  oldAngVel,   newAngVel,
+                                  phased, expel);
+    }
+  }
+  // crossing teleportation
+  if (!teleported) {
+    teleported = tryTeleporting(NULL,
+                                oldPosition, newPos,
+                                oldVelocity, newVelocity,
+                                oldAzimuth,  newAzimuth,
+                                oldAngVel,   newAngVel,
+                                phased, expel);
+  }
 
   // setup the physics driver
   setPhysicsDriver(-1);
@@ -860,7 +884,8 @@ void LocalPlayer::doUpdateMotion(float dt)
 
 //============================================================================//
 
-bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
+bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
+                                 const fvec3& oldPos,   fvec3& newPos,
                                  const fvec3& oldVel,   fvec3& newVel,
                                  const float oldAngle,  float& newAngle,
                                  const float oldAngVel, float& newAngVel,
@@ -871,10 +896,12 @@ bool LocalPlayer::tryTeleporting(const fvec3& oldPos,   fvec3& newPos,
   }
 
   // see if we crossed a link source
-  World* world = World::getWorld();
-  const MeshFace* linkSrc = world->crossesTeleporter(oldPos, newPos);
   if (linkSrc == NULL) {
-    return false;
+    World* world = World::getWorld();
+    linkSrc = world->crossesTeleporter(oldPos, newPos);
+    if (linkSrc == NULL) {
+      return false;
+    }
   }
 
   // PhantomZone tanks just change phase
