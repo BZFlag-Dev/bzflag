@@ -1042,6 +1042,8 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
 \fB  tankPassText\fR pass message for tanks
 .br
+\fB  tankPassSound\fR soundFile  # pass sound for tanks ('none' to disable)
+.br
 \fBend\fR
 .br
 
@@ -1747,6 +1749,8 @@ link :=
 	| "shotPassText" <varName>
 .br
 	| "tankPassText" <varName>
+.br
+	| "tankPassSound" <fileName>
 .br
 	| object
 .br
