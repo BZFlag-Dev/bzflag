@@ -518,15 +518,11 @@ properties:
 \fB    texcoords\fR 0 3 2 4 9  # list of texture coordinates  (optional)
 .br
 \fB    phydrv\fR example_phydrv  # assign a physics driver
-.br
 
-.br
     # special parameters
 .br
 \fB    baseTeam\fR 1  # the base team number
-.br
 
-.br
     # zone parameters
 .br
 \fB    zoneTeam\fR 1          # equivalent to the zone 'team' parameter
@@ -544,7 +540,6 @@ properties:
 \fB    zoneCenter\fR          # spawns always occur in the zone's center
 .br
 
-.br
     # link parameters
 .br
 \fB    linkName\fR myLink  # the name use for linkage
@@ -596,7 +591,6 @@ properties:
 \fB  endface\fR  # end the face
 .br
 
-.br
   #
 .br
   #  Mesh weapons
@@ -622,7 +616,6 @@ properties:
 \fB  endweapon\fR # end the weapon
 .br
 
-.br
   #
 .br
   #  This next element can be added to increase the rendering speed
@@ -1213,10 +1206,10 @@ BZDB variable), can use the following escape characters:
 
 .B The Weapon object
 .br
-Creates a world weapon, or a weapon fired automatically by the world. The weapon can either be timed or be event driven.
-Timed weapons should use the initdelay and delay fields.
-Event driven weapons need to use the trigger option to define what the trigger event is.
-Valid trigger events are;
+Creates a world weapon, or a weapon fired automatically by the world. The weapon
+can either be timed or be event driven. Timed weapons should use the initdelay
+and delay fields. Event driven weapons need to use the trigger option to define
+what the trigger event is. Valid trigger events are;
   OnCap,   for flag capture events.
   OnSpawn, for player spawn events.
   OnDie,   for player death events.
@@ -1224,6 +1217,8 @@ Valid trigger events are;
 .br
 If the weapon is to be triggered only for a specific team then the eventteam option should be used with a team number (1 to 4).
 A eventteam value of -1 will trigger this weapon for any team. -1 is the default eventteam value.
+
+NOTE: see 'The Mesh object', it accepts weapon/endweapon blocks
 
 \fBweapon\fR
 .br
@@ -1252,6 +1247,8 @@ A eventteam value of -1 will trigger this weapon for any team. -1 is the default
 .B The Zone object
 .br
 Specifies a certain range in the world, and what attributes that range has.
+
+NOTE: see 'The Mesh object', its faces can be used to specify zones.
 
 \fBzone\fR
 .br
