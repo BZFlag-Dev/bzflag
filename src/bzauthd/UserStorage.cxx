@@ -148,7 +148,10 @@ bool UserStore::isRegistered(std::string callsign)
 
 std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool filter_groups)
 {
+  sLog.outDebug("getting group list for %s", callsign.c_str());
+
   std::list<std::string> ret;
+  if(groups.empty()) return ret;
 
   /* It seems here is no memberOf attribute for users in OpenLdap, but the groupOfUniqueNames
      objectClass has a member attribute. So getting the groups is still possible but slower. */
@@ -167,21 +170,40 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
   char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
   LDAPMessage *res, *msg;
 
-  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_BASE, filter.c_str(), attrs, 0, &res) ))
+  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_ONELEVEL, filter.c_str(), attrs, 0, &res) ))
     return ret;
 
   for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
-    if(ldap_msgtype(msg) == LDAP_RES_SEARCH_RESULT) {
-      int errcode;
-      char *errmsg;
-      if(!ldap_check( ldap_parse_result(rootld, msg, &errcode, NULL, &errmsg, NULL, NULL, 0) ))
-        continue;
-      if(errmsg) {
-        if(errmsg[0]) printf("ERROR: %s\n", errmsg);
-        ldap_memfree(errmsg);
-      }
-      if(errcode == LDAP_SUCCESS) {
-
+    switch(ldap_msgtype(msg)) {
+      case LDAP_RES_SEARCH_ENTRY: {
+        char *dn = ldap_get_dn(rootld, msg);
+        if(!dn) 
+          sLog.outError("null dn in search result");
+        else {
+          // TODO: maybe use ldap_str2dn
+          char *cn = strstr(dn, "cn=");
+          if(cn != NULL) {
+            char *comma = strchr(cn, ',');
+            if(comma) *comma = NULL;
+            ret.push_back(cn+3);
+          } else
+            sLog.outError("found group with no cn, dn=%s", dn);
+          
+          ldap_memfree(dn);
+        }
+      } break;
+      case LDAP_RES_SEARCH_RESULT: {
+        int errcode;
+        char *errmsg;
+        if(!ldap_check( ldap_parse_result(rootld, msg, &errcode, NULL, &errmsg, NULL, NULL, 0) ))
+          continue;
+        if(errmsg) {
+          if(errmsg[0]) printf("ERROR: %s\n", errmsg);
+          ldap_memfree(errmsg);
+        }
+        if(errcode != LDAP_SUCCESS) {
+          // TODO: handle this
+        }
       }
     }
   }

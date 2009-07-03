@@ -39,14 +39,14 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
     if(!(packet >> token)) return false;
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
-    response.append(callsign, strlen((char*)callsign)+1);
+    response << callsign;
     if(sTokenMgr.checkToken((char *)callsign, token)) {
       response << (uint32_t)2;                          // registered, verified
       // send list of groups
       std::list<std::string> groups = sUserStore.intersectGroupList((char*)callsign, m_groups);
       response << (uint32_t)groups.size();
       for(std::list<std::string>::iterator itr = groups.begin(); itr != groups.end(); ++itr)
-        response.append((const uint8_t*)itr->c_str(), itr->size()+1);
+        response << itr->c_str();
     } else if(sUserStore.isRegistered((char*)callsign))
       response << (uint32_t)1;                          // registered, not verified
     else

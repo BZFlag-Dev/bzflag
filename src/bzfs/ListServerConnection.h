@@ -27,6 +27,7 @@
 #include "TimeKeeper.h"
 
 class TokenConnectSocket;
+class Packet;
 
 class ListServerLink : private cURLManager {
 public:
@@ -87,6 +88,7 @@ private:
   void removeMe(std::string publicizedAddress);
   void sendQueuedMessages();
 
+  int fillGroupListMsg(std::string *pMsg, Packet *packet);
   void checkTokens(std::string *pMsg);
   void buildTokenMsg(std::string &msg);
   void finalizeLSA();

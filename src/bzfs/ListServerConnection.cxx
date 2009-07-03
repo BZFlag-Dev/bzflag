@@ -39,6 +39,9 @@
 
 extern SocketHandler authSockHandler;
 
+/* Parser for the string format group1:group2:.. 
+   which does not duplicate the original string but 
+   replaces the delimiters with '\0' */
 class GroupStringParser : public ListServerLink::GroupParser
 {
 public:
@@ -63,6 +66,8 @@ private:
   char *m_group;
 };
 
+/* Parser for the list of groups in the received packet
+   which also stores the error state for later use */
 class GroupPacketParser : public ListServerLink::GroupParser
 {
 public:
@@ -489,26 +494,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
   if(!tokenSocket) tokenSocket = new TokenConnectSocket(this, &authSockHandler);
   token_phase = 0;
 
-  Packet groupListMsg(SMSG_GROUP_LIST);
-  Packet::PlaceHolder group_count = groupListMsg.append_placeholder(sizeof(int));
-  int group_counter = 0;
-
   msg += "&groups=";
-  // *groups=GROUP0%0D%0AGROUP1%0D%0A
-
-  PlayerAccessMap::iterator itr = groupAccess.begin();
-  for (itr = groupAccess.begin() ; itr != groupAccess.end(); itr++) {
-    if (itr->first.substr(0, 6) != "LOCAL.") {
-      msg += itr->first.c_str();
-      msg += "%0D%0A";
-
-      groupListMsg << itr->first.c_str();
-      group_counter++;
-    }
-  }
-  
-  group_count.write((const uint8_t*)&group_counter);
-  tokenSocket->sendData(groupListMsg);
+  fillGroupListMsg(&msg, NULL);
 
   msg += "&advertgroups=";
   msg += TextUtils::url_encode(_advertiseGroups);
@@ -517,6 +504,27 @@ void ListServerLink::addMe(PingPacket pingInfo,
 
   setPostMode(msg);
   addHandle();
+}
+
+int ListServerLink::fillGroupListMsg(std::string *pMsg, Packet *packet)
+{
+  int group_counter = 0;
+
+  // *groups=GROUP0%0D%0AGROUP1%0D%0A
+  PlayerAccessMap::iterator itr = groupAccess.begin();
+  for (itr = groupAccess.begin() ; itr != groupAccess.end(); itr++) {
+    if (itr->first.substr(0, 6) != "LOCAL.") {
+      if(pMsg) {
+        (*pMsg) += itr->first.c_str();
+        (*pMsg) += "%0D%0A";
+      }
+      if(packet)
+        (*packet) << itr->first.c_str();
+      group_counter++;
+    }
+  }
+
+  return group_counter;
 }
 
 void ListServerLink::removeMe(std::string publicizedAddress)
@@ -532,10 +540,11 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 
 void ListServerLink::checkTokens(std::string *pMsg)
 {
+  // TODO: rename "token socket" to "daemon connection"
+  //       split / rename this function
+
   assert(pMsg || (token_phase == 0 && tokenSocket));
 
-  if(pMsg) *pMsg += "&checktokens=";
-  
   typedef std::map<std::string, GameKeeper::Player *> CallSignMap;
   CallSignMap callSigns;
 
@@ -554,18 +563,31 @@ void ListServerLink::checkTokens(std::string *pMsg)
     packetLen += strlen(playerData->player.getCallSign()) + 5;
   }
 
-  uint8_t peerType = BZAUTHD_PEER_SERVER;
-  uint16_t protoVersion = 1;
-  Packet handshakeMsg(MSG_HANDSHAKE, 3);
-  handshakeMsg << peerType << protoVersion;
-  tokenSocket->sendData(handshakeMsg);
-
+  // don't bother sending any packets if there are no players
   if(!callSigns.size()) {
     authSockHandler.removeSocket(tokenSocket);
     tokenSocket = NULL;
     token_phase = -1;
     return;
   }
+
+  uint8_t peerType = BZAUTHD_PEER_SERVER;
+  uint16_t protoVersion = 1;
+  Packet handshakeMsg(MSG_HANDSHAKE, 3);
+  handshakeMsg << peerType << protoVersion;
+  tokenSocket->sendData(handshakeMsg);
+
+  // send the group list
+  Packet groupListMsg(SMSG_GROUP_LIST);
+  Packet::PlaceHolder group_count = groupListMsg.append_placeholder(sizeof(int));
+
+  int group_counter = fillGroupListMsg(NULL, &groupListMsg);
+
+  group_count.write((const uint8_t*)&group_counter);
+  tokenSocket->sendData(groupListMsg);
+
+  // validate the tokens
+  if(pMsg) *pMsg += "&checktokens=";
 
   Packet tokenMsg(SMSG_TOKEN_VALIDATE, packetLen);
   tokenMsg << (uint8_t)callSigns.size();
@@ -574,7 +596,7 @@ void ListServerLink::checkTokens(std::string *pMsg)
     playerData->_LSAState = GameKeeper::Player::checking;
     NetHandler *handler = playerData->netHandler;
     tokenMsg << (uint32_t)atoi(playerData->player.getToken());
-    tokenMsg.append((const uint8_t*)itr->first.c_str(), itr->first.size());
+    tokenMsg << itr->first.c_str();
     tokenMsg << '\0';
 
     if(pMsg) {
@@ -591,6 +613,7 @@ void ListServerLink::checkTokens(std::string *pMsg)
     }
   }
   tokenSocket->sendData(tokenMsg);
+
   token_phase = 1;
 }
 

@@ -97,14 +97,39 @@ public:
     return (*this);
   }
 
-  Packet &operator << (const uint8_t * &x)
+  Packet &operator << (const unsigned char * const &x)
   {
-    // get string length and protect against overflow
+    return operator << ((const char *)x);
+  }
+
+  Packet &operator << (const signed char * const &x)
+  {
+    return operator << ((const char *)x);
+  }
+
+  Packet &operator << (unsigned char * const &x)
+  {
+    return operator << ((const char *)x);
+  }
+
+  Packet &operator << (signed char * const &x)
+  {
+    return operator << ((const char *)x);
+  }
+
+  Packet &operator << (char * const &x)
+  {
+    return operator << ((const char *)x);
+  }
+
+  Packet &operator << (const char * const &x)
+  {
+    // get string length + 1 and protect against overflow
     size_t len = 0;
     // TODO: replace with a constant
     while(len < 4096) if(!x[len++]) break;
     
-    append(x, len);
+    append((const uint8_t *)x, len);
     return (*this);
   }
 
