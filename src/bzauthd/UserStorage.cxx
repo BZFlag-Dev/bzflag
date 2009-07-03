@@ -146,7 +146,7 @@ bool UserStore::isRegistered(std::string callsign)
   return found;
 }
 
-std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool filter_groups)
+std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups)
 {
   sLog.outDebug("getting group list for %s", callsign.c_str());
 
@@ -176,20 +176,21 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
   for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
     switch(ldap_msgtype(msg)) {
       case LDAP_RES_SEARCH_ENTRY: {
-        char *dn = ldap_get_dn(rootld, msg);
-        if(!dn) 
+	// found the dn of a group, extract its cn
+        char *dn_str = ldap_get_dn(rootld, msg);
+        if(!dn_str) 
           sLog.outError("null dn in search result");
         else {
           // TODO: maybe use ldap_str2dn
-          char *cn = strstr(dn, "cn=");
+          char *cn = strstr(dn_str, "cn=");
           if(cn != NULL) {
             char *comma = strchr(cn, ',');
             if(comma) *comma = NULL;
             ret.push_back(cn+3);
           } else
-            sLog.outError("found group with no cn, dn=%s", dn);
+            sLog.outError("found group with no cn, dn=%s", dn_str);
           
-          ldap_memfree(dn);
+          ldap_memfree(dn_str);
         }
       } break;
       case LDAP_RES_SEARCH_RESULT: {
