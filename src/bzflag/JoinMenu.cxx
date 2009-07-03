@@ -267,8 +267,8 @@ void JoinMenu::updateTeamTexture()
   int id = tm.getTextureID(texture);
   teamIcon->setTexture(id);
 
-  // make it big enough
-  const float iconSize = team->getFontSize() * 1.5f;
+  // leave the icon the same size as the text so it doesn't overlap other lines
+  const float iconSize = team->getFontSize();
   teamIcon->setSize(iconSize, iconSize);
 
   // put it at the end of the text
