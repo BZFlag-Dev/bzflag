@@ -243,9 +243,9 @@ must be used to generate world objects from a group definition.
 .br
   #   physics
 .br
-  #   weapon
+  #   weapon  (use mesh weapons instead)
 .br
-  #   zone
+  #   zone    (use mesh face zones instead)
 .br
 \fBenddef\fR
 .br
