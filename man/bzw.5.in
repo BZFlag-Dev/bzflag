@@ -132,21 +132,22 @@ world types consists of:
 Each object is described by placing the type on one line, the word
 \fIend\fR on a following line, and a list of attributes for that
 object, one per line, in between. The exceptions to the rule are
-\fIdefine\fR and \fIface\fR, which are concluded with \fIenddef\fR and
-\fIendface\fR.  Attributes may be listed in any order. Attributes have
-default values, and if that is good enough, the attribute need not be
-listed.
+\fIdefine\fR, \fIface\fR, and \fImesh weapons\fR; which are concluded
+with \fIenddef\fR, \fIendface\fR, and \fIendweapon\fR. Attributes may
+be listed in any order. Attributes have default values, and if that is
+good enough, the attribute need not be listed.
 
 Words are always specified in lowercase. Line comments can be
 specified by placing a # sign at the start of the line.
 
 For documentation purposes, you can tag each object by adding a name
 attribute. There is no set limit to the number of times you may use
-any of the objects except for the world, options, and waterLevel
-objects, they can only be specified once. The options object contains
-command line arguments that are used to configure the server's game
-mode, but can not contain server specific options such as \-p, \-passwd,
-and \-conf.
+any of the objects except for the world, and waterLevel objects, they
+can only be specified once.
+
+The options object contains command line arguments that are used to
+configure the server's game mode, but can not contain server specific
+options such as \-p, \-passwd, and \-conf.
 
 .br
 In the following examples, the values are the defaults.
@@ -282,13 +283,13 @@ Instantiates a group, and possibly modifies subobjects
 \fB  matref\fR example_material   # set material properties
                             # (except for the color)
 .br
-\fB  matswap\fR  oldMat  newMat     # replace materials in the instance
+\fB  matswap\fR    oldMat  newMat   # replace materials in the instance
 .br
-\fB  phydrvswap\fR oldDrv newDrv    # replace physicsDrivers in face objects
+\fB  phydrvswap\fR oldDrv  newDrv   # replace physicsDrivers in face objects
 .br
-\fB  textswap\fR oldData newData    # replace 'data' in text objects
+\fB  textswap\fR   oldData newData  # replace 'data' in text objects
 .br
-\fB  zoneswap\fR oldText newText    # replace lines in face zone objects
+\fB  zoneswap\fR   oldText newText  # replace lines in face zone objects
 .br
 \fB  weaponswap\fR oldText newText  # replace lines in mesh weapon objects
 .br
@@ -425,6 +426,8 @@ properties:
 .br
 \fB  nolighting\fR           # disable lighting
 .br
+\fB  noblending\fR           # disable blending
+.br
 \fB  alphathresh 0.0\fR      # alpha thresholding value
 .br
 \fB  groupalpha\fR           # sort translucent faces as a group
@@ -441,6 +444,8 @@ properties:
 .br
 \fB  name\fR example_phydrv
 .br
+\fB  relative\fR  # make relative to group transformations
+.br
 \fB  linear\fR  0.0 0.0 0.0  # x/y/z linear velocities
 .br
 \fB  angular\fR 0.0 0.0 0.0  # rotation freq, x/y coordinates
@@ -450,8 +455,6 @@ properties:
 \fB  slide\fR 0.0            # time until max velocity  (> 0.0 enables)
 .br
 \fB  death\fR Message goes here.
-.br
-\fB  relative\fR  # make relative to group transformations
 .br
   # the 'death' property requires a non\-blank message
 .br
@@ -595,7 +598,7 @@ properties:
 .br
   #  Mesh weapons
 .br
-  #    You can attach weapon's to mesh geometry. All of the normal
+  #    You can attach weapons to mesh geometry. All of the normal
 .br
   #    weapon parameters can be used, but the position, rotation,
 .br
@@ -911,7 +914,7 @@ Adds a route to teleport between a linkSrc and a linkDst.
 # '/other_group/shinyTele:f').
 .br
 
-# NOTE: bzfs -setforced debugLinks 3 will print the linkage table.
+# NOTE: "bzfs -setforced debugLinks 3" will print the linkage table.
 
 \fBlink\fR
 .br
@@ -1843,6 +1846,12 @@ mesh :=
 .br
 	| "endface"
 .br
+	| "weapon"
+.br
+	| meshWeapon
+.br
+	| "endweapon"
+.br
 	| "inside" 3dpoint
 .br
 	| "outside" 3dpoint
@@ -1944,6 +1953,18 @@ face :=
 	| "zoneCenter"
 .br
 	| material
+.br
+.TP
+.B (CustomWeapon.cxx/CustomWeapon::read)
+.br
+.TP
+meshWeapon :=
+.br
+	  weapon
+.br
+	| "posVertex" <integer>
+.br
+	| "dirNormal" <integer>
 .br
 .TP
 .B (CustomMeshTransform.cxx/CustomMeshTransform::read)
