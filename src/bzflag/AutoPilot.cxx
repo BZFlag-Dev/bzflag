@@ -754,8 +754,8 @@ static bool fireAtTank()
 	    ((dist < (2.0f * BZDB.eval(BZDBNAMES.SHOTSPEED))) && (targetDiff < closeErrorLimit))) {
 
 	  /* shoot at them if I can see them */
-	  if ((myTank->getFlag() != Flags::SuperBullet) &&
-	      TargetingUtils::isLocationObscured( pos, enemyPos )) {
+	  if ((myTank->getFlag() == Flags::SuperBullet) ||
+	      !TargetingUtils::isLocationObscured( pos, enemyPos )) {
 	    myTank->fireShot();
 	    lastShot = now;
 	    t = curMaxPlayers;
