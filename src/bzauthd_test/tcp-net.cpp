@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "assert.h"
+#include <conio.h>
 
 #ifdef TEST_NET
 

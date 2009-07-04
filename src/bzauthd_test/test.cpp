@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include <math.h>
+#include <conio.h>
 
 int main(int argc, char* argv[])
 {
