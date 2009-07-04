@@ -741,7 +741,7 @@ void ServerList::_shutDown()
   // close broadcast socket
   closeBroadcast(pingBcastSocket);
   pingBcastSocket = -1;
-  if(auth_phase >= 1) authSockHandler.removeSocket(authSocket);
+  if(auth_phase >= 1) delete authSocket;
 }
 
 // Local Variables: ***

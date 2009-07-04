@@ -102,6 +102,7 @@ class NetListenSocket : public ListenSocket
 {
 public:
   NetListenSocket(SocketHandler *h) : ListenSocket(h) {}
+  ~NetListenSocket() {}
   ConnectSocket* onConnect(TCPsocket &socket);
 };
 

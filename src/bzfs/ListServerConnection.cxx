@@ -186,7 +186,7 @@ ListServerLink::ListServerLink()
 ListServerLink::~ListServerLink()
 {
   // cancel the token validation request
-  if(tokenSocket) authSockHandler.removeSocket(tokenSocket);
+  if(tokenSocket) delete tokenSocket;
 
   // now tell the list server that we're going away.  this can
   // take some time but we don't want to wait too long.  we do
@@ -565,7 +565,7 @@ void ListServerLink::checkTokens(std::string *pMsg)
 
   // don't bother sending any packets if there are no players
   if(!callSigns.size()) {
-    authSockHandler.removeSocket(tokenSocket);
+    delete tokenSocket;
     tokenSocket = NULL;
     token_phase = -1;
     return;

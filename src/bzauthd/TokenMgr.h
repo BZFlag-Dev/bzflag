@@ -19,7 +19,7 @@
 #define __BZAUTHD_TOKENMGR_H__
 
 #include <string>
-#include "Singleton.h"
+#include <Singleton.h>
 
 class TokenMgr : public Singleton<TokenMgr>
 {

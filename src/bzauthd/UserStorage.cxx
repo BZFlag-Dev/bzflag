@@ -148,7 +148,7 @@ bool UserStore::isRegistered(std::string callsign)
 
 std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups)
 {
-  sLog.outDebug("getting group list for %s", callsign.c_str());
+  sLog.outLog("getting group list for %s", callsign.c_str());
 
   std::list<std::string> ret;
   if(groups.empty()) return ret;

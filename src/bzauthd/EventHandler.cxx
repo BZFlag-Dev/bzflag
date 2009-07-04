@@ -22,6 +22,12 @@ EventHandler::EventHandler()
 
 EventHandler::~EventHandler()
 {
+  // the events delink themselves when deleted
+  while(!timeMap.empty()) {
+    TimeMapType::iterator itr = timeMap.begin();
+    itr->second->cancel();
+    delete itr->second;
+  }
 }
 
 void EventHandler::update()
@@ -36,16 +42,16 @@ void EventHandler::update()
   }
 }
 
-void EventHandler::addDelta(CBFunc func, void * data, double delta)
+void EventHandler::addDelta(CBFunc execFunc, void * data, double delta, CBFunc cancelFunc)
 {
   double now = TimeKeeper::getTick().getSeconds();
   TimeMapType::iterator itr = timeMap.lower_bound(now + delta);
   itr = timeMap.insert(itr, TimeMapType::value_type(now + delta, NULL));
-  itr->second = new Event(func, data, itr);
+  itr->second = new Event(execFunc, cancelFunc, data, itr);
 }
 
-EventHandler::Event::Event(CBFunc f, void *d, TimeMapType::iterator &i)
-  : refCounter(1), func(f), data(d), itr(i)
+EventHandler::Event::Event(CBFunc ef, CBFunc cf, void *d, TimeMapType::iterator &i)
+  : refCounter(1), execFunc(ef), cancelFunc(cf), data(d), itr(i)
 {
 }
 
@@ -65,7 +71,17 @@ EventHandler::Event::~Event()
 
 void EventHandler::Event::call()
 {
-  (*func)(data);
+  (*execFunc)(data);
+}
+
+void EventHandler::Event::cancel()
+{
+  (*cancelFunc)(data);
+}
+
+void EventHandler::cancelEvent(void * data)
+{
+  delete data;
 }
 
 // Local Variables: ***

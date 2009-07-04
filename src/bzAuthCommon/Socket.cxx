@@ -12,6 +12,9 @@
 
 #include "common.h"
 #include "Socket.h"
+#include <assert.h>
+
+/** ---- SocketHandler ---- **/
 
 SocketHandler::~SocketHandler()
 {
@@ -31,35 +34,28 @@ teTCPError SocketHandler::initialize(uint32_t connections)
   return eTCPNoError;
 }
 
-void SocketHandler::addSocket(Socket *socket)
+bool SocketHandler::addSocket(Socket *socket)
 {
   net_TCP_AddSocket(socketSet,socket->getSocket());
+  if(updating == socket) return false;
   socketMap[socket] = NULL;
+  return true;
 }
 
-void SocketHandler::removeSocket(Socket *socket)
+bool SocketHandler::removeSocket(Socket *socket)
 {
-  removeSocket(socketMap.find(socket));
-}
-
-void SocketHandler::removeSocket(SocketMapType::iterator const &itr)
-{
-  _removeSocket(itr);
-  socketMap.erase(itr);
-}
-
-void SocketHandler::removeSocket(SocketMapType::iterator &itr)
-{
-  _removeSocket(itr);
-  socketMap.erase(itr++);
+  SocketMapType::iterator const &itr = socketMap.find(socket);
+  if(itr != socketMap.end()) {
+     _removeSocket(itr);
+    if(updating == socket) return false;
+    socketMap.erase(itr);
+  }
+  return true;
 }
 
 void SocketHandler::_removeSocket(SocketMapType::iterator const &itr)
 {
-  if(itr == socketMap.end()) return;
   net_TCP_DelSocket(socketSet, itr->first->getSocket());
-  net_TCP_Close(itr->first->getSocket());
-  delete itr->first;
   if(itr->second) delete itr->second;
 }
 
@@ -68,9 +64,60 @@ bool SocketHandler::global_init()
   return net_Init() == 0;
 }
 
+/** update all active sockets in the handler */
+void SocketHandler::update()
+{
+  if (net_CheckSockets(socketSet, 1) < 1)
+    return;
+
+  for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end();) {
+    // mark the socket that is currently being updated
+    updating = itr->first;
+    if(!itr->first->update(itr->second)) {
+      // avoid searching for the socket again
+      itr->first->_disconnect();
+      delete itr->first;
+      socketMap.erase(itr++);
+    } else
+      ++itr;
+  }
+  updating = NULL;
+}
+
+/** ---- Socket ---- **/
+
+/** deleting the socket is the same as disconnecting it,
+    but it must not be done during a socket update */
+Socket::~Socket() {
+  if(socket) {
+    if(sockHandler) assert(sockHandler->removeSocket(this));
+    _disconnect();
+  }
+}
+
+/** disconnect the underlying socket and remove from the socket handler,
+    if called during an update, the socket will be deleted afterwards,
+    unless the socket is reconnected in the same update */
+void Socket::disconnect()
+{
+  if(socket) {
+    if(sockHandler) sockHandler->removeSocket(this);
+    _disconnect();
+  }
+}
+
+/** disconnect without removing from the handler */
+void Socket::_disconnect()
+{
+  if(socket) { net_TCP_Close(socket); socket = NULL; }
+}
+
+/** ---- ListenSocket ---- **/
+
+/** listen for incoming connections */
 teTCPError ListenSocket::listen(uint16_t port)
 {
-  //disconnect();
+  disconnect();
 
   if ( port == 0)
     return eTCPBadPort;
@@ -78,74 +125,45 @@ teTCPError ListenSocket::listen(uint16_t port)
   serverIP.host = INADDR_ANY;
   serverIP.port = port;
 
+  net_ResolveHost(&serverIP, NULL, getPort());
   socket = net_TCP_Open(&serverIP);
   if ( socket == NULL )
     return eTCPConnectionFailed;
 
-  net_ResolveHost(&serverIP, NULL, getPort());
-  socket = net_TCP_Open(&serverIP);
-
-  sockHandler->addSocket(this);
+  if(sockHandler)
+    sockHandler->addSocket(this);
 
   return eTCPNoError;
 }
 
-void SocketHandler::update()
-{
-  if (net_CheckSockets(socketSet, 1) < 1)
-    return;
-
-  for(SocketMapType::iterator itr = socketMap.begin(); itr != socketMap.end();)
-    if(!itr->first->update(itr->second))
-      removeSocket(itr);
-    else
-      ++itr;
-}
-
+/** check for new connections */
 bool ListenSocket::update(PacketHandlerBase *&)
 {
-  // check for new connections
   if ( net_SocketReady(socket) )
   {
     TCPsocket newsock;
-    while ((newsock = net_TCP_Accept(socket)) != NULL)
-      if(ConnectSocket *clisock = onConnect(newsock))
+    while ((newsock = net_TCP_Accept(socket)) != NULL) {
+      if(ConnectSocket *clisock = onConnect(newsock)) {
         sockHandler->addSocket(clisock);
-      else
+        // inherit the socket handler from parent
+        clisock->sockHandler = sockHandler;
+      } else
         net_TCP_Close(newsock);
+    }
   }
   return true;
 }
 
-bool ConnectSocket::update(PacketHandlerBase *& handler)
-{
-  Packet *packet;
-  while((packet = readData()) != NULL)
-  {
-    onReadData(handler, *packet);
-    delete packet;
-  }
-
-  if(!isConnected()) {
-    onDisconnect();
-    return false;
-  } else
-    return true;
-}
-
-void ListenSocket::disconnect()
-{
-  if(socket) { net_TCP_Close(socket); socket = NULL; } // but it still seems to leave a mem leak :(
-}
+/** ---- ConnectSocket ---- **/
 
 ConnectSocket::ConnectSocket(SocketHandler *h, const TCPsocket &s)
-  : Socket(h, s), connected(true)
+  : Socket(h, s)
 {
   initRead();
 }
 
 ConnectSocket::ConnectSocket(SocketHandler *h)
-  : Socket(h), connected(true)
+  : Socket(h)
 {
   initRead();
 }
@@ -155,11 +173,6 @@ void ConnectSocket::initRead()
   remainingHeader = 4;
   remainingData = 0;
   poz = 0;
-}
-
-void ConnectSocket::disconnect()
-{
-  connected = false;
 }
 
 teTCPError ConnectSocket::connect(std::string server_and_port)
@@ -176,10 +189,10 @@ teTCPError ConnectSocket::connect(std::string server, uint16_t port)
   if ( net_ResolveHost(&serverIP, server.c_str(), port))
     return eTCPUnknownError;
 
+  disconnect();
+
   if ( serverIP.host == INADDR_NONE )
     return eTCPBadAddress;
-
-  disconnect();
 
   if ( serverIP.host == 0 || serverIP.port == 0 || serverIP.host == INADDR_NONE )
     return eTCPBadAddress;
@@ -188,10 +201,26 @@ teTCPError ConnectSocket::connect(std::string server, uint16_t port)
   if ( socket == NULL )
     return eTCPConnectionFailed;
 
-  sockHandler->addSocket(this);
-  connected = true;
+  if(sockHandler)
+    sockHandler->addSocket(this);
 
   return eTCPNoError;
+}
+
+bool ConnectSocket::update(PacketHandlerBase *& handler)
+{
+  Packet *packet;
+  while((packet = readData()) != NULL)
+  {
+    onReadData(handler, *packet);
+    delete packet;
+  }
+
+  if(!isConnected()) {
+    onDisconnect();
+    return false;
+  } else
+    return true;
 }
 
 Packet * ConnectSocket::readData()

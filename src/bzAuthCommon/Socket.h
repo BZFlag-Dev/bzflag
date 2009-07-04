@@ -13,7 +13,7 @@
 #ifndef __BZAUTHD_SOCKET_H__
 #define __BZAUTHD_SOCKET_H__
 
-#include "Singleton.h"
+#include <Singleton.h>
 #include <string.h>
 #include <string>
 #include <map>
@@ -245,16 +245,22 @@ class Socket
 {
 public:
   friend class SocketHandler;
+  friend class ListenSocket;
+
   Socket(SocketHandler *h, const TCPsocket &s) : socket(s), sockHandler(h) {}
   Socket(SocketHandler *h) : socket(NULL), sockHandler(h) {}
-  virtual ~Socket() {}
+  virtual ~Socket();
   uint16_t getPort() const { return serverIP.port; }
-  virtual void disconnect() = 0;
+
   TCPsocket &getSocket() { return socket; }
 
   virtual void onDisconnect() = 0;
+
+  void disconnect();
+  bool isConnected() { return socket != NULL; }
 protected:
   virtual bool update(PacketHandlerBase *& handler) = 0;
+  void _disconnect();
   IPaddress serverIP;
   TCPsocket socket;
   SocketHandler *sockHandler;
@@ -266,6 +272,7 @@ class ConnectSocket : public Socket
 public:
   ConnectSocket(SocketHandler *h, const TCPsocket &s);
   ConnectSocket(SocketHandler *h);
+  ~ConnectSocket() {}
 
   Packet * readData();
   teTCPError sendData(Packet &packet);
@@ -273,24 +280,15 @@ public:
   teTCPError connect(std::string server_and_port);
   teTCPError connect(std::string server, uint16_t port);
 
-  /* Set/get the connected state
-   * The socket will only be really disconnected
-   * when removed from the handler.
-   * That can happen if the connected state is changed is changed
-   * during an update or if the RemoveSocket is called explicitly
-   */
-  void disconnect();
-  bool isConnected() { return connected; }
-
   virtual void onReadData(PacketHandlerBase *&handler, Packet &packet) = 0;
 private:
   bool update(PacketHandlerBase *& handler);
   void initRead();
+  void disconnect_noremove();
   uint8_t buffer[MAX_PACKET_SIZE];
   uint16_t poz;
   uint16_t remainingHeader;
   uint16_t remainingData;
-  bool connected;
 };
 
 /** Socket that listens for incoming connections */
@@ -298,13 +296,10 @@ class ListenSocket : public Socket
 {
 public:
   ListenSocket(SocketHandler *h) : Socket(h) {}
-  ~ListenSocket() { disconnect(); }
+  ~ListenSocket() {}
   teTCPError listen(uint16_t port);
 
-  void disconnect();
-  
   virtual ConnectSocket* onConnect(TCPsocket &socket) = 0;
-
   void onDisconnect() {}
 private:
   bool update(PacketHandlerBase *&);
@@ -314,26 +309,30 @@ private:
 class SocketHandler
 {
 public:
-  SocketHandler() : socketSet(NULL), is_init(false) {}
+  friend class ListenSocket;
+  friend class ConnectSocket;
+  friend class Socket;
+
+  SocketHandler() : socketSet(NULL), is_init(false), updating(NULL) {}
   ~SocketHandler();
   static bool global_init();
   teTCPError initialize(uint32_t connections);
   void update();
-  void addSocket(Socket *socket);
-  void removeSocket(Socket *socket);
 
   // accept at most this many sockets
   uint32_t getMaxConnections () const { return maxUsers; }
   bool isInitialized() const { return is_init; }
 private:
+  bool addSocket(Socket *socket);
+  bool removeSocket(Socket *socket);
+
   net_SocketSet socketSet;
   typedef std::map<Socket *, PacketHandlerBase *> SocketMapType;
   SocketMapType socketMap;
   uint32_t maxUsers;
   bool is_init;
+  Socket *updating;
 
-  void removeSocket(SocketMapType::iterator const &itr);
-  void removeSocket(SocketMapType::iterator &itr);
   void _removeSocket(SocketMapType::iterator const &itr);
 };
 

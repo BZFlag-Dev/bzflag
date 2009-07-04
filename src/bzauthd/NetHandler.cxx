@@ -159,6 +159,7 @@ void NetHandler::update()
 NetHandler::~NetHandler()
 {
   delete localServer;
+  delete sockHandler;
 }
 
 // Local Variables: ***

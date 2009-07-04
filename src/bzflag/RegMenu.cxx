@@ -185,7 +185,7 @@ void RegMenu::dismiss()
   loadInfo();
   removePlayingCallback(&playingCB, this);
   if(phase == 0) delete regSocket;
-  if(phase >= 1) authSockHandler.removeSocket(regSocket);
+  if(phase >= 1) delete regSocket;
   regSocket = NULL;
   phase = -1;
 }

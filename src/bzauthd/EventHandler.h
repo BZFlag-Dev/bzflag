@@ -24,14 +24,16 @@
 class EventHandler : public Singleton<EventHandler>
 {
 public:
-  typedef void (*CBFunc)(void *);
+  typedef void (*CBFunc)(void *); // call back function with a data parameter
   friend class EventPtr;
   EventHandler();
   ~EventHandler();
   void update();
 
   /** Add an event to the handler that will occur in delta seconds */
-  void addDelta(CBFunc func, void * data, double delta);
+  void addDelta(CBFunc execFunc, void * data, double delta, CBFunc cancelFunc = &cancelEvent);
+
+  static void cancelEvent(void *);
 private:
   class Event;
   typedef std::multimap<double, Event *> TimeMapType;
@@ -39,12 +41,14 @@ private:
   {
   public:
     ~Event();
-    Event(CBFunc f, void *d, TimeMapType::iterator &i);
+    Event(CBFunc ef, CBFunc cf, void *d, TimeMapType::iterator &i);
     void call();
+    void cancel();
     void delink();
   
     uint16_t refCounter;
-    CBFunc func;
+    CBFunc execFunc;
+    CBFunc cancelFunc;
     void *data;
     TimeMapType::iterator itr;
   };
