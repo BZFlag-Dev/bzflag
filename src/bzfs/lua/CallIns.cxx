@@ -75,11 +75,11 @@ class CallIn : public bz_EventHandler {
 
     bool PushCallIn(int argCount)
     {
-      if (!lua_checkstack(L, argCount + 2)) {
-        return false; // FIXME -- add a message for lua_checkstack()?
-      }
       if (L == NULL) {
         return false;
+      }
+      if (!lua_checkstack(L, argCount + 2)) {
+        return false; // FIXME -- add a message for lua_checkstack()?
       }
       lua_rawgeti(L, LUA_CALLINSINDEX, code);
       if (!lua_isfunction(L, -1)) {
@@ -304,6 +304,16 @@ class CI_Shutdown : public CallIn {
 static CI_Shutdown ciShutdown;
 
 
+class RecvCommandData : public bz_EventData {
+  public:
+    RecvCommandData(const string& _cmdLine, int player)
+    : cmdLine(_cmdLine)
+    , playerID(player)
+    {}
+    string cmdLine;
+    int playerID;
+};
+
 // lua plugin custom call-in
 class CI_RecvCommand : public CallIn {
   public:
@@ -325,8 +335,6 @@ static CI_RecvCommand ciRecvCommand;
   };                                         \
   static CI_ ## lua  ci ## lua
 
-
-// FIXME -- setup the loopTypes
 
 //     bz_e <C++ enum name>        lua call-in name            loop type        difference
 //     --------------------        ----------------            ---------        ----------
@@ -1434,15 +1442,16 @@ bool CI_RawChatMessage::execute(bz_EventData* eventData)
 
 bool CI_RecvCommand::execute(bz_EventData* eventData)
 {
-  const string* cmd = (string*)eventData;
-  printf("CI_RecvCommand: %s\n", cmd->c_str());
-  if (!PushCallIn(1)) {
+  const RecvCommandData* recvCmdData = (RecvCommandData*)eventData;
+
+  if (!PushCallIn(2)) {
     return false;
   }
 
-  lua_pushstdstring(L, *cmd);
+  lua_pushstdstring(L, recvCmdData->cmdLine);
+  lua_pushinteger(L,   recvCmdData->playerID); 
 
-  return RunCallIn(1, 0);
+  return RunCallIn(2, 0);
 }
 
 
@@ -1730,7 +1739,7 @@ bool CallIns::Shutdown()
 }
 
 
-bool CallIns::RecvCommand(const string& cmdLine)
+bool CallIns::RecvCommand(const string& cmdLine, int playerIndex)
 {
   const string prefix = "/luaserver ";
   if ((cmdLine.size() < prefix.size()) ||
@@ -1738,7 +1747,8 @@ bool CallIns::RecvCommand(const string& cmdLine)
     return false;
   }
   const string cmd = cmdLine.substr(prefix.size());
-  return ciRecvCommand.execute((bz_EventData*)&cmd);
+  RecvCommandData recvCmdData(cmd, playerIndex);
+  return ciRecvCommand.execute((bz_EventData*)&recvCmdData);
 }
 
 

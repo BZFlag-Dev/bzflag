@@ -1655,9 +1655,8 @@ bool LagDropCommand::operator() (const char      *message,
 
 
 bool LuaServerCommand::operator() (const char *message,
-                            GameKeeper::Player *playerData)
+				   GameKeeper::Player *playerData)
 {
-  printf("LuaServerCommand::operator() %s\n", message); // FIXME
   LuaServer::recvCommand(message, playerData->getIndex());
   return true;
 }

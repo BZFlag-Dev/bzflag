@@ -819,9 +819,9 @@ void *MeshObstacle::pack(void *buf) const
   uint8_t stateByte = 0;
   stateByte |= isDriveThrough() ? (1 << 0) : 0;
   stateByte |= isShootThrough() ? (1 << 1) : 0;
-  stateByte |= smoothBounce     ? (1 << 2) : 0;
-  stateByte |= noclusters       ? (1 << 3) : 0;
-  stateByte |= canRicochet()    ? (1 << 4) : 0;
+  stateByte |= canRicochet()    ? (1 << 2) : 0;
+  stateByte |= smoothBounce     ? (1 << 3) : 0;
+  stateByte |= noclusters       ? (1 << 4) : 0;
   stateByte |= drawInfoOwner    ? (1 << 5) : 0;
 
   buf = nboPackUInt8(buf, stateByte);
@@ -882,9 +882,9 @@ void *MeshObstacle::unpack(void *buf)
   bool drawInfoOwner;
   driveThrough  = (stateByte & (1 << 0)) != 0 ? 0xFF : 0;
   shootThrough  = (stateByte & (1 << 1)) != 0 ? 0xFF : 0;
-  smoothBounce  = (stateByte & (1 << 2)) != 0;
-  noclusters    = (stateByte & (1 << 3)) != 0;
-  ricochet      = (stateByte & (1 << 4)) != 0;
+  ricochet      = (stateByte & (1 << 2)) != 0;
+  smoothBounce  = (stateByte & (1 << 3)) != 0;
+  noclusters    = (stateByte & (1 << 4)) != 0;
   drawInfoOwner = (stateByte & (1 << 5)) != 0;
 
   buf = nboUnpackStdString(buf, name);

@@ -348,4 +348,3 @@ do
   script.SetCallIn('Tick', HandleTick)
 end
 
-@#&*$^@*#&$*&error('FIXME')

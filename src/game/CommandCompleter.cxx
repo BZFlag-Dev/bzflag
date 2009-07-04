@@ -52,6 +52,7 @@ void CommandCompleter::reset()
   registerWord("/idlestats");
   registerWord("/jitterdrop");
   registerWord("/jitterwarn");
+  registerWord("/luaserver ");
   registerWord("/packetlossdrop");
   registerWord("/packetlosswarn");
   registerWord("/kick ");

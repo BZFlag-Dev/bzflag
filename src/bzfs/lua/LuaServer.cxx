@@ -247,7 +247,7 @@ void LuaServer::recvCommand(const string& cmdLine, int playerIndex)
   }
 
   if (L != NULL) {
-    CallIns::RecvCommand(cmdLine);
+    CallIns::RecvCommand(cmdLine, playerIndex);
   }
 
   return;

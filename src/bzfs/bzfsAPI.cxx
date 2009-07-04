@@ -3987,7 +3987,7 @@ class URLFetch : private cURLManager {
       }
 
       maxJobID++; // 0 is reserved as 'invalid'
-      maxJobID = (maxJobID == 0) ? 1: maxJobID;
+      maxJobID = (maxJobID == 0) ? 1 : maxJobID;
 
       id = maxJobID;
       url = URL;

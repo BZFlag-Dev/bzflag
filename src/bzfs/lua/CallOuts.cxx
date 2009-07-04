@@ -1744,8 +1744,8 @@ static int FireWeapon(lua_State* L)
   pos.x                = luaL_checkfloat(L, 2);
   pos.y                = luaL_checkfloat(L, 3);
   pos.z                = luaL_checkfloat(L, 4);
-  const float rot      = luaL_optfloat(L, 5, 0.0f);
-  const float tilt     = luaL_optfloat(L, 6, 0.0f);
+  const float rot      = luaL_optfloat(L, 5,  0.0f);
+  const float tilt     = luaL_optfloat(L, 6,  0.0f);
   const float lifeTime = luaL_optfloat(L, 7, -1.0f);
   const float dt       = luaL_optfloat(L, 8, -1.0f);
   const int   shotID   = luaL_optint(L, 9, -1);
@@ -1759,14 +1759,21 @@ static int FireWeapon(lua_State* L)
 static int FireMissile(lua_State* L)
 {
   fvec3 pos;
-  const int   targetID = luaL_checkint(L, 1);
-  pos.x                = luaL_checkfloat(L, 2);
-  pos.y                = luaL_checkfloat(L, 3);
-  pos.z                = luaL_checkfloat(L, 4);
-  const float rot      = luaL_checkfloat(L, 5);
-  const float tilt     = luaL_checkfloat(L, 6);
-  const float lifeTime = luaL_checkfloat(L, 7);
-  const float dt       = luaL_checkfloat(L, 8);
+  int targetID   = luaL_checkint(L, 1);
+  pos.x          = luaL_checkfloat(L, 2);
+  pos.y          = luaL_checkfloat(L, 3);
+  pos.z          = luaL_checkfloat(L, 4);
+  float rot      = luaL_checkfloat(L, 5);
+  float tilt     = luaL_optfloat(L, 6,  0.0f);
+  float lifeTime = luaL_optfloat(L, 7, -1.0f);
+  float dt       = luaL_optfloat(L, 8, -1.0f);
+  
+  if (lifeTime <= 0.0f) {
+    lifeTime = BZDB.eval(BZDBNAMES.RELOADTIME);
+  }
+  if (dt < 0.0f) {
+    dt = 0.0f;
+  }
 
   lua_pushinteger(L, bz_fireWorldGM(targetID, lifeTime, pos, tilt, rot, dt));
   return 1;

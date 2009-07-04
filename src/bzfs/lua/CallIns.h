@@ -25,7 +25,7 @@ namespace CallIns {
 
   // lua plugin custom call-ins
   bool Shutdown();
-  bool RecvCommand(const std::string& cmd);
+  bool RecvCommand(const std::string& cmd, int playerIndex);
 }
 
 #endif // CALLINS_H

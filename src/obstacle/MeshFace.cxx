@@ -47,6 +47,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   smoothBounce = false;
   driveThrough = 0;
   shootThrough = 0;
+  ricochet = false;
   edges = NULL;
   edgePlanes = NULL;
   specialData = NULL;
@@ -1214,9 +1215,9 @@ void* MeshFace::pack(void *buf) const
   stateBytes |= useTexcoords()   ? (1 << 1) : 0;
   stateBytes |= isDriveThrough() ? (1 << 2) : 0;
   stateBytes |= isShootThrough() ? (1 << 3) : 0;
-  stateBytes |= smoothBounce     ? (1 << 4) : 0;
-  stateBytes |= noclusters       ? (1 << 5) : 0;
-  stateBytes |= canRicochet()    ? (1 << 6) : 0;
+  stateBytes |= canRicochet()    ? (1 << 4) : 0;
+  stateBytes |= smoothBounce     ? (1 << 5) : 0;
+  stateBytes |= noclusters       ? (1 << 6) : 0;
   stateBytes |= specialData      ? (1 << 7) : 0;
   buf = nboPackUInt16(buf, stateBytes);
 
@@ -1264,7 +1265,6 @@ void* MeshFace::pack(void *buf) const
 void* MeshFace::unpack(void *buf)
 {
   int32_t inTmp;
-  driveThrough = shootThrough = smoothBounce = false;
   // state byte
   bool tmpNormals, tmpTexcoords, hasSpecial;
   uint16_t stateBytes = 0;
@@ -1273,9 +1273,9 @@ void* MeshFace::unpack(void *buf)
   tmpTexcoords =  (stateBytes & (1 << 1)) != 0;
   driveThrough = ((stateBytes & (1 << 2)) != 0) ? 0xFF : 0;
   shootThrough = ((stateBytes & (1 << 3)) != 0) ? 0xFF : 0;
-  smoothBounce =  (stateBytes & (1 << 4)) != 0;
-  noclusters   =  (stateBytes & (1 << 5)) != 0;
-  ricochet     =  (stateBytes & (1 << 6)) != 0;
+  ricochet     =  (stateBytes & (1 << 4)) != 0;
+  smoothBounce =  (stateBytes & (1 << 5)) != 0;
+  noclusters   =  (stateBytes & (1 << 6)) != 0;
   hasSpecial   =  (stateBytes & (1 << 7)) != 0;
 
   buf = nboUnpackStdString(buf, name);
