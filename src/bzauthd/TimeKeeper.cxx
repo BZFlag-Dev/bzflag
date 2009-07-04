@@ -414,7 +414,7 @@ void TimeKeeper::setProcessorAffinity(int processor)
   }
   SetThreadAffinityMask(hThread, dwMask);
 #else
-  logDebugMessage(1, "Unable to set processor affinity to %d - function not implemented on this platform.\n", processor);
+  sLog.outDebug("Unable to set processor affinity to %d - function not implemented on this platform.\n", processor);
 #endif
 }
 

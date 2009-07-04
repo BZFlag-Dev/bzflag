@@ -390,7 +390,13 @@ namespace __gnu_cxx
     {
         size_t operator()(T * const &__x) const { return (size_t)__x; }
     };
-
+    template<> struct hash< std::string >
+    {
+        size_t operator()( const std::string& x ) const
+        {
+            return hash< const char* >()( x.c_str() );
+        }
+    };
 };
 
 #else
