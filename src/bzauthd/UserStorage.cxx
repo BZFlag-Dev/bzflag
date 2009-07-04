@@ -115,7 +115,9 @@ bool UserStore::authUser(UserInfo &info)
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
   LDAP *ld = NULL;
-  return bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8_t*)dn.c_str(), (const uint8_t*)info.password.c_str()); 
+  bool ret = bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8_t*)dn.c_str(), (const uint8_t*)info.password.c_str()); 
+  unbind(ld);
+  return ret;
 }
 
 bool UserStore::isRegistered(std::string callsign)
@@ -123,8 +125,11 @@ bool UserStore::isRegistered(std::string callsign)
   std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
   char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
-  LDAPMessage *res, *msg;
-  LDAP_FCHECK( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", attrs, 0, &res) );
+  LDAPMessage *res = NULL, *msg;
+  if(!ldap_check( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", attrs, 0, &res) )) {
+    if(res) ldap_msgfree(ldap_first_message(rootld, res));
+    return false;
+  }
 
   bool found = false;
   for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
@@ -142,7 +147,7 @@ bool UserStore::isRegistered(std::string callsign)
     }
   }
 
-  ldap_msgfree(msg);
+  ldap_msgfree(ldap_first_message(rootld, res));
   return found;
 }
 
@@ -170,8 +175,10 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
   char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
   LDAPMessage *res, *msg;
 
-  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_ONELEVEL, filter.c_str(), attrs, 0, &res) ))
+  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_ONELEVEL, filter.c_str(), attrs, 0, &res) )) {
+    if(res) ldap_msgfree(ldap_first_message(rootld, res));
     return ret;
+  }
 
   for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
     switch(ldap_msgtype(msg)) {
@@ -209,7 +216,7 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
     }
   }
 
-  ldap_msgfree(msg);
+  ldap_msgfree(ldap_first_message(rootld, res));
   return ret;
 }
 

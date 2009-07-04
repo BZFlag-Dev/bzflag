@@ -313,7 +313,7 @@ public:
   friend class ConnectSocket;
   friend class Socket;
 
-  SocketHandler() : socketSet(NULL), is_init(false), updating(NULL) {}
+  SocketHandler() : socketSet(NULL), maxUsers(0), is_init(false), updating(NULL) {}
   ~SocketHandler();
   static bool global_init();
   teTCPError initialize(uint32_t connections);

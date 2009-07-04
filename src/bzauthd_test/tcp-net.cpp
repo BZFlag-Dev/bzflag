@@ -19,6 +19,7 @@
 #include "../bzAuthCommon/Socket.h"
 #include "../bzAuthCommon/AuthProtocol.h"
 #include <RSA.h>
+#include <conio.h>
 
 int sleep_var;
 
