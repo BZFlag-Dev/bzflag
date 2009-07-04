@@ -788,7 +788,6 @@ int MeshObstacle::packSize() const
   fullSize += normalCount   * sizeof(fvec3);
   fullSize += texcoordCount * sizeof(fvec2);
 
-
   fullSize += sizeof(int32_t); // faceCount
   for (int f = 0; f < faceCount; f++) {
     fullSize += faces[f]->packSize();

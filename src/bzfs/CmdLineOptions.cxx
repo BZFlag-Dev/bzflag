@@ -49,6 +49,7 @@
 #include "Permissions.h"
 #include "EntryZones.h"
 #include "SpawnPolicyFactory.h"
+#include "lua/LuaServer.h"
 
 
 static const char *usageString =
@@ -90,6 +91,7 @@ static const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
+  "[-luaserver <filepath>] "
   "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
   "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
@@ -192,6 +194,7 @@ static const char *extraUsageString =
   "\t-jitterdrop: drop player after this many jitter warnings\n"
   "\t-jitterwarn: jitter warning threshhold time [ms]\n"
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
+  "\t-luaserver: path to the LuaServer entry source file\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
   "\t-mp: maximum players total or per team\n"
@@ -815,6 +818,16 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
           }
         }
 #endif // BZ_PLUGINS
+      }
+    }
+    else if (token == "-luaserver") {
+      const std::string filePath = parseStringArg(i, tokens);
+      if (LuaServer::isActive()) {   
+        std::cerr << "WARNING: ignoring extra '-luaserver "
+                  << filePath << "' argument" << std::endl; 
+      } else {
+        luaServer = filePath;
+        LuaServer::init(luaServer);
       }
     }
     else if (token == "-maxidle") {

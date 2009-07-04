@@ -27,6 +27,7 @@
 template <>
 SoundManager* Singleton<SoundManager>::_instance =(SoundManager*)0;
 
+
 int SFX_FIRE = -1;
 int SFX_EXPLOSION = -1;
 int SFX_RICOCHET = -1;
@@ -61,6 +62,8 @@ int SFX_FLAP = -1;
 int SFX_BOUNCE = -1;
 int SFX_HIT = -1;
 
+
+//============================================================================//
 
 SoundManager::SoundManager()
 {

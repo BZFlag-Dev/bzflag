@@ -69,6 +69,7 @@ public:
     lagwarn,
     listPlugins,
     listPerms,
+    luaServer,
     masterBan,
     modCount,
     mute,

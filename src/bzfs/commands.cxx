@@ -52,6 +52,7 @@
 #include "RecordReplay.h"
 #include "bzfs.h"
 #include "Reports.h"
+#include "lua/LuaServer.h"
 
 #include "BackgroundTask.h"
 
@@ -218,6 +219,14 @@ public:
 class LagDropCommand : public ServerCommand {
 public:
   LagDropCommand();
+
+  virtual bool operator() (const char *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+class LuaServerCommand : public ServerCommand {
+public:
+  LuaServerCommand();
 
   virtual bool operator() (const char *commandLine,
 			   GameKeeper::Player *playerData);
@@ -498,6 +507,7 @@ static CountdownCommand   countdownCommand;
 static FlagCommand	  flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagDropCommand     lagDropCommand;
+static LuaServerCommand   luaServerCommand;
 static JitterWarnCommand  jitterWarnCommand;
 static JitterDropCommand  jitterDropCommand;
 static PacketLossWarnCommand  packetLossWarnCommand;
@@ -564,8 +574,10 @@ FlagCommand::FlagCommand()		 : ServerCommand("/flag",
 							 "<reset|up|show> - reset, remove or show the flags") {}
 LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
 							 "[milliseconds] - display or set the maximum allowed lag time") {}
-LagDropCommand::LagDropCommand()       : ServerCommand("/lagdrop",
+LagDropCommand::LagDropCommand()	 : ServerCommand("/lagdrop",
 						       "[count] - display or set the number of lag warnings before a player is kicked") {}
+LuaServerCommand::LuaServerCommand()	 : ServerCommand("/luaserver",
+						       "<reload | disable | customCommand> - luaServer control") {}
 JitterWarnCommand::JitterWarnCommand()	 : ServerCommand("/jitterwarn",
 							 "<milliseconds> - change the maximum allowed jitter time") {}
 JitterDropCommand::JitterDropCommand()	 : ServerCommand("/jitterdrop",
@@ -1640,6 +1652,16 @@ bool LagDropCommand::operator() (const char      *message,
   sendMessage(ServerPlayer, t, reply);
   return true;
 }
+
+
+bool LuaServerCommand::operator() (const char *message,
+                            GameKeeper::Player *playerData)
+{
+  printf("LuaServerCommand::operator() %s\n", message); // FIXME
+  LuaServer::recvCommand(message, playerData->getIndex());
+  return true;
+}
+
 
 bool JitterDropCommand::operator() (const char  *message,
 				    GameKeeper::Player *playerData)

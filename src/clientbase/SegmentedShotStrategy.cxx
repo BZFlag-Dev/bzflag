@@ -296,7 +296,7 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     return minTime;
   }
 
-  float shotRadius = BZDB.eval(BZDBNAMES.SHOTRADIUS);
+  static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
 
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
@@ -314,7 +314,8 @@ float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
     if (currentTime <= segments[i].start) break;
 */
 
-    // if shot segment and tank bboxes don't overlap then no hit, or if it's a shot that is out of the world boundry
+    // if shot segment and tank bboxes don't overlap then no hit,
+    // or if it's a shot that is out of the world boundary
     const ShotPathSegment& s = segments[i];
     if (!s.bbox.touches(tankBBox) || (s.reason == ShotPathSegment::Boundary)) {
       continue;

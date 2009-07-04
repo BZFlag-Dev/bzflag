@@ -26,9 +26,9 @@ so that no work is duplicated.
   player's point of view.  The tank blows up normally the next time it
   is shot.
 
-* fix the Z dead-reckoning issue  (ask JeffM about it)
-
 * fix the MsgPause messages
+
+* fix the Z dead-reckoning issue  (ask JeffM about it)
 
 * figure out why there are too many player update messages
 
