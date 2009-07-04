@@ -627,10 +627,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\global.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\KeyManager.cxx"
 				>
 			</File>
