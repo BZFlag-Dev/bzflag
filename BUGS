@@ -28,9 +28,6 @@ Crashes
 * Segfault - two clients connecting to the server then leaving causes the server
   to crash
 
-* starting for the first time on a new install seems to geek on the config
-  creation on at least 2 OSs, ( linux and OSX ).
-
 * reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a teleporter
   (and landing in front of the teleporter, albeit dead).  i didn't respawn,

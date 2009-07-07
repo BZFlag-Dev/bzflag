@@ -165,9 +165,9 @@ static void realLogDebugMessage(int level, const char* text)
     std::cout << text;
     fflush(stdout);
 #endif
-  }
 
-  callProcs(level, text);
+    callProcs(level, text);
+  }
 }
 
 
