@@ -248,8 +248,9 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
 	if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
 	  unsigned short* array = (unsigned short*)drawCmd.indices;
 	  for (int idx = 0; idx < drawCmd.count; idx++) {
-	    if (array[idx] >= cornerCount && array[idx] < vCount) {
-	      logDebugMessage(0,"ERROR: Bad cmd\n");
+	    if ((int)array[idx] >= cornerCount) {
+	      logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
+	                      array[idx], cornerCount);
 	      return false;
 	    }
 	  }
@@ -257,8 +258,9 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
 	else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
 	  unsigned int* array = (unsigned int*)drawCmd.indices;
 	  for (int idx = 0; idx < drawCmd.count; idx++) {
-	    if ((int)array[idx] >= cornerCount && (int)array[idx] < vCount) {
-	      logDebugMessage(0,"ERROR: Bad cmd\n");
+	    if ((int)array[idx] >= cornerCount) {
+	      logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
+	                      array[idx], cornerCount);
 	      return false;
 	    }
 	  }
@@ -372,19 +374,18 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 	  if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
 	    unsigned short* array = (unsigned short*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      if (array[idx] >= vCount) {
-	        printf("array[idx] = %i, vCount = %i\n", array[idx], vCount);
-              }
-	      assert(array[idx] < vCount && "ERROR: UShort Vertex out of bounds");
-	      const fvec3& v = verts[array[idx]];
+	      const unsigned short cIndex = array[idx];
+	      const Corner& corner = corners[cIndex];
+	      const fvec3& v = verts[corner.vertex];
 	      exts.expandToPoint(v);
 	    }
 	  }
 	  else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
 	    unsigned int* array = (unsigned int*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      assert(array[idx] < (unsigned int)vCount && "ERROR: UInt Vertex out of bounds");
-	      const fvec3& v = verts[array[idx]];
+	      const unsigned int cIndex = array[idx];
+	      const Corner& corner = corners[cIndex];
+	      const fvec3& v = verts[corner.vertex];
 	      exts.expandToPoint(v);
 	    }
 	  }
@@ -1372,8 +1373,8 @@ Corner::~Corner()
 
 int Corner::packSize() const
 {
-  if ((vertex > MaxUShort) || (vertex < 0) ||
-      (normal > MaxUShort) || (normal < 0) ||
+  if ((vertex   > MaxUShort) || (vertex   < 0) ||
+      (normal   > MaxUShort) || (normal   < 0) ||
       (texcoord > MaxUShort) || (texcoord < 0)) {
     return sizeof(uint8_t) + (3 * sizeof(int32_t));
   } else {
@@ -1446,8 +1447,6 @@ void DrawCmd::finalize()
 
   int i;
   const unsigned int* tmp = (unsigned int*)indices;
-  unsigned short* shortArray = new unsigned short[count];
-  bool leaveAsUInt = false;
 
   // setup the minimum and maximum indices
   minIndex = 0xFFFFFFFF;
@@ -1460,21 +1459,18 @@ void DrawCmd::finalize()
     if (value > maxIndex) {
       maxIndex = value;
     }
-    if (value > (unsigned int)MaxUShort) {
-      leaveAsUInt = true;
-    }
-    if (!leaveAsUInt) {
-      shortArray[i] = tmp[i];
-    }
   }
 
-  // check if they can be convert to unsigned shorts
-  if (leaveAsUInt) {
-    delete[] shortArray; // don't need it
-    return; // leave them as unsigned ints
+  // check if they can be converted to unsigned shorts
+  if (maxIndex > (unsigned int)MaxUShort) {
+    return;
   }
 
   // convert to unsigned shorts
+  unsigned short* shortArray = new unsigned short[count];
+  for (i = 0; i < count; i++) {
+    shortArray[i] = tmp[i];
+  }
   indexType = DrawIndexUShort;
   delete[] (unsigned int*)indices;
   indices = shortArray;
