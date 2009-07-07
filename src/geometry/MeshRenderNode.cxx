@@ -30,17 +30,14 @@
 #include "BZDBCache.h"
 
 
-fvec3 OpaqueRenderNode::junk(0.0f, 0.0f, 0.0f);
-
-
 //============================================================================//
 
 
-OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
-				   GLuint* _xformList, bool _normalize,
-				   const fvec4* _color,
-				   int _lod, int _set,
-				   const Extents* _exts, int tris)
+MeshRenderNode::MeshRenderNode(MeshDrawMgr* _drawMgr,
+			       GLuint* _xformList, bool _normalize,
+			       const fvec4* _color,
+			       int _lod, int _set,
+			       const Extents* _exts, int tris)
 {
   drawMgr = _drawMgr;
   xformList = _xformList;
@@ -53,7 +50,7 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
 }
 
 
-void OpaqueRenderNode::render()
+void MeshRenderNode::render()
 {
   const bool switchLights = (exts != NULL);
   if (switchLights) {
@@ -93,7 +90,7 @@ void OpaqueRenderNode::render()
 }
 
 
-void OpaqueRenderNode::renderRadar()
+void MeshRenderNode::renderRadar()
 {
   if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
@@ -110,7 +107,7 @@ void OpaqueRenderNode::renderRadar()
 }
 
 
-void OpaqueRenderNode::renderShadow()
+void MeshRenderNode::renderShadow()
 {
   if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
@@ -123,31 +120,6 @@ void OpaqueRenderNode::renderShadow()
 
   addTriangleCount(triangles);
 
-  return;
-}
-
-
-//============================================================================//
-
-AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
-					   GLuint* _xformList,
-					   bool _normalize,
-					   const fvec4* _color,
-					   int _lod, int _set,
-					   const Extents* _exts,
-					   const fvec3& _pos,
-					   int _triangles)
-: OpaqueRenderNode(_drawMgr, _xformList, _normalize,
-		   _color, _lod, _set, _exts, _triangles)
-{
-  pos = _pos;
-  return;
-}
-
-
-void AlphaGroupRenderNode::setPosition(const fvec3& _pos)
-{
-  pos = _pos;
   return;
 }
 

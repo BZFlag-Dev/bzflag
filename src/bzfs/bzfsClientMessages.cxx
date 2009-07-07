@@ -459,7 +459,9 @@ public:
     playerKilled(player->getIndex(), lookupPlayer(killer), (BlowedUpReason)reason, shot, flagType, phydrv);
 
     // stop pausing attempts as you can not pause when being dead
-    player->player.pauseRequestTime = TimeKeeper::getNullTime();
+    player->pauseRequested = false;
+    player->pauseActiveTime = TimeKeeper::getNullTime();
+    player->player.setPaused(false);
     return true;
   }
 };
@@ -507,26 +509,6 @@ public:
     buf = nboUnpackUInt16(buf, _team);
 
     captureFlag(player->getIndex(), TeamColor(_team));
-    return true;
-  }
-};
-
-
-class CollideHandler : public PlayerFirstHandler
-{
-public:
-  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
-  {
-    if (!player || len < 13)
-      return false;
-
-    PlayerId otherPlayer;
-    buf = nboUnpackUInt8(buf, otherPlayer);
-    fvec3 collpos;
-    buf = nboUnpackFVec3(buf, collpos);
-    GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(otherPlayer);
-
-    processCollision(player,otherData,collpos);
     return true;
   }
 };
@@ -911,29 +893,40 @@ public:
 class PauseHandler : public PlayerFirstHandler
 {
 public:
-  virtual bool execute ( uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
+  virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player)
+    if (!player || (len < 2)) {
       return false;
-
-    if (player->player.pauseRequestTime - TimeKeeper::getNullTime() != 0) {
-      // player wants to unpause
-      player->player.pauseRequestTime = TimeKeeper::getNullTime();
-      pausePlayer(player->getIndex(), false);
-    } else {
-      // player wants to pause
-      player->player.pauseRequestTime = TimeKeeper::getCurrent();
-
-      // adjust pauseRequestTime according to players lag to avoid kicking innocent players
-      int requestLag = player->lagInfo.getLag();
-      if (requestLag < 100)
-	requestLag = 250;
-      else
-	requestLag *= 2;
-
-      player->player.pauseRequestLag = requestLag;
     }
 
+    uint8_t pauseFlag;
+    nboUnpackUInt8(buf, pauseFlag);
+    const bool wantPause = (pauseFlag != 0);
+
+    // notify plugins, and let them block the request
+    const int playerIndex = player->player.getPlayerIndex();
+    bz_PlayerPauseRequestData_V1 eventData(playerIndex, wantPause);
+    worldEventManager.callEvents(bz_ePlayerPauseRequestEvent, &eventData);
+    if (eventData.allow == false) {
+      return true;
+    }
+
+    if (!wantPause) {
+      // unpause immediately
+      player->pauseRequested = false;
+      player->player.setPaused(false);
+    }
+    else {
+      if (!player->pauseRequested) {
+        // delayed pausing
+        TimeKeeper activeTime = TimeKeeper::getCurrent();
+        activeTime += 5.0f;
+        player->pauseActiveTime = activeTime;
+        player->pauseRequested   = true;
+      }
+    }
+
+    
     return true;
   }
 };
@@ -1125,7 +1118,6 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgKilled]            = new KilledHandler;
   playerNetworkHandlers[MsgDropFlag]          = new DropFlagHandler;
   playerNetworkHandlers[MsgCaptureFlag]       = new CaptureFlagHandler;
-  playerNetworkHandlers[MsgCollide]           = new CollideHandler;
   playerNetworkHandlers[MsgShotBegin]         = new ShotBeginHandler;
   playerNetworkHandlers[MsgShotEnd]           = new ShotEndHandler;
   playerNetworkHandlers[MsgShotInfo]          = new ShotInfoHandler;

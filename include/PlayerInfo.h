@@ -113,7 +113,7 @@ public:
   bool	isARabbitKill(PlayerInfo &victim) const;
   void	resetFlag();
   bool	haveFlag() const;
-  int	 getFlag() const;
+  int	getFlag() const;
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
   const char *getClientVersion();
@@ -128,8 +128,7 @@ public:
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
-  int	pauseRequestLag;
-  TimeKeeper	pauseRequestTime;	// time used to determine whether a player pauses too fast
+
   float	jumpStartPos;
   float	allowedHeightAtJumpStart;
 
@@ -229,6 +228,7 @@ private:
   static bool	simpleFiltering;
 };
 
+
 inline bool PlayerInfo::isPlaying() const {
   return state > PlayerInLimbo;
 }
@@ -274,48 +274,48 @@ inline bool PlayerInfo::isPaused() const {
   return paused;
 }
 
-inline bool		PlayerInfo::canMove() const
+inline bool PlayerInfo::canMove() const
 {
   return (canTurnLeft() && canTurnRight() && canMoveForward() && canMoveBackward());
 }
 
-inline bool		PlayerInfo::canJump() const
+inline bool PlayerInfo::canJump() const
 {
   return (allow & AllowJump) != 0;
 }
 
-inline bool		PlayerInfo::canTurnLeft() const
+inline bool PlayerInfo::canTurnLeft() const
 {
   return (allow & AllowTurnLeft) != 0;
 }
 
-inline bool		PlayerInfo::canTurnRight() const
+inline bool PlayerInfo::canTurnRight() const
 {
   return (allow & AllowTurnRight) != 0;
 }
 
-inline bool		PlayerInfo::canMoveForward() const
+inline bool PlayerInfo::canMoveForward() const
 {
   return (allow & AllowMoveForward) != 0;
 }
 
-inline bool		PlayerInfo::canMoveBackward() const
+inline bool PlayerInfo::canMoveBackward() const
 {
   return (allow & AllowMoveBackward) != 0;
 }
 
-inline bool		PlayerInfo::canShoot() const
+inline bool PlayerInfo::canShoot() const
 {
   return (allow & AllowShoot) != 0;
 }
 
-inline void		PlayerInfo::setAllow(unsigned char _allow)
+inline void PlayerInfo::setAllow(unsigned char _allow)
 {
   allow = _allow;
   allowChangeTime = now;
 }
 
-inline unsigned char		PlayerInfo::getAllow()
+inline unsigned char PlayerInfo::getAllow()
 {
   return allow;
 }

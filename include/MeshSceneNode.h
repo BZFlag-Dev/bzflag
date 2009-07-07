@@ -35,6 +35,7 @@
 class MeshObstacle;
 class MeshDrawInfo;
 class MeshDrawMgr;
+class MeshRenderNode;
 class BzMaterial;
 class OpenGLGState;
 class SceneRenderer;
@@ -95,8 +96,8 @@ class MeshSceneNode : public SceneNode {
       int set;
       MeshMaterial meshMat;
       // basic render nodes
-      RenderNode* node;
-      RenderNode* radarNode;
+      MeshRenderNode* node;
+      MeshRenderNode* radarNode;
     };
 
     struct LodNode {

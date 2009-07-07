@@ -39,28 +39,27 @@ class PlayerState
 {
   public:
     enum PStatus {			// bit masks
-      DeadStatus =      0,		// not alive, not paused, etc.
-      Alive =		(1 << 0),	// player is alive
-//    Paused =		(1 << 1),	// player is paused -- FIXME -- unused bit
-      Exploding =       (1 << 2),	// currently blowing up
-      Teleporting =     (1 << 3),	// teleported recently
-      FlagActive =      (1 << 4),	// flag special powers active
-      CrossingWall =    (1 << 5),	// tank crossing building wall
-      Falling =		(1 << 6),	// tank accel'd by gravity
-      OnDriver =	(1 << 7),	// tank is on a physics driver
-      UserInputs =	(1 << 8),	// user speed and angvel are sent
-      JumpJets =	(1 << 9),	// tank has jump jets on
-      PlaySound =	(1 << 10),	// play one or more sounds
-      PhantomZoned =	(1 << 11),	// tank is phantom-zoned
-      InBuilding =	(1 << 12),	// tank inside a building
-      BackedOff =	(1 << 13)	// tank hit building and backed off
+      DeadStatus	= 0,		// not alive, not paused, etc.
+      Alive		= (1 << 0),	// player is alive
+      Exploding       	= (1 << 1),	// currently blowing up
+      Teleporting	= (1 << 2),	// teleported recently
+      FlagActive	= (1 << 3),	// flag special powers active
+      CrossingWall	= (1 << 4),	// tank crossing building wall
+      Falling		= (1 << 5),	// tank accel'd by gravity
+      OnDriver		= (1 << 6),	// tank is on a physics driver
+      UserInputs	= (1 << 7),	// user speed and angvel are sent
+      JumpJets		= (1 << 8),	// tank has jump jets on
+      PlaySound		= (1 << 9),	// play one or more sounds
+      PhantomZoned	= (1 << 10),	// tank is phantom-zoned
+      InBuilding	= (1 << 11),	// tank inside a building
+      BackedOff		= (1 << 12)	// tank hit building and backed off
     };
 
     enum PStatusSounds {
-      NoSounds =	0,
-      JumpSound =	(1 << 0),
-      WingsSound =	(1 << 1),
-      BounceSound =	(1 << 2)
+      NoSounds		= 0,
+      JumpSound		= (1 << 0),
+      WingsSound	= (1 << 1),
+      BounceSound	= (1 << 2)
     };
 
 

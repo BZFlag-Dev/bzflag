@@ -71,10 +71,6 @@ BZDBCache::Float BZDBCache::flagPoleSize;
 BZDBCache::Float BZDBCache::flagPoleWidth;
 BZDBCache::Float BZDBCache::maxLOD;
 
-BZDBCache::Float BZDBCache::freezeTagRadius;
-BZDBCache::Float BZDBCache::collisionLimit;
-BZDBCache::Float BZDBCache::dmzWidth;
-
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
 
@@ -174,10 +170,6 @@ void BZDBCache::init()
   tankSpeed        = getGoodPosValue(tankSpeed,       BZDBNAMES.TANKSPEED);
   tankWidth        = getGoodPosValue(tankWidth,       BZDBNAMES.TANKWIDTH);
   worldSize        = getGoodPosValue(worldSize,       BZDBNAMES.WORLDSIZE);
-
-  collisionLimit   = getGoodPosValue(collisionLimit,  BZDBNAMES.COLLISIONLIMIT);
-  dmzWidth         = getGoodPosValue(dmzWidth,        BZDBNAMES.DMZWIDTH);
-  freezeTagRadius  = getGoodPosValue(freezeTagRadius, BZDBNAMES.FREEZETAGRADIUS);
 
   update();
 }

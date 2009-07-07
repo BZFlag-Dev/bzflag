@@ -118,11 +118,6 @@ class BZDBCache
     static Float tankWidth;
     static Float worldSize;
 
-    static Float collisionLimit;
-    static Float dmzWidth;
-    static Float freezeTagRadius;
-
-
   private:
     static void clientCallback(const std::string &name, void *);
     static void serverCallback(const std::string &name, void *);

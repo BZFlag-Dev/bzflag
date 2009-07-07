@@ -1139,19 +1139,6 @@ void ServerLink::sendExit()
   flush();
 }
 
-void ServerLink::sendCollide(const PlayerId playerId,
-                             const PlayerId otherId, const fvec3& pos)
-{
-  char msg[14];
-
-  void* buf = msg;
-  buf = nboPackUInt8(buf, uint8_t(playerId));
-  buf = nboPackUInt8(buf, uint8_t(otherId));
-  buf = nboPackFVec3(buf, pos);
-
-  send(MsgCollide, sizeof(msg), msg);
-}
-
 void ServerLink::sendAutoPilot(bool autopilot)
 {
   char msg[2];

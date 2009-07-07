@@ -256,7 +256,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 	if (xformTool != NULL) {
 	  xformTool->modifyVertex(pos);
 	}
-	((AlphaGroupRenderNode*)set.node)->setPosition(pos);
+	set.node->setPosition(pos);
       }
     }
   }
@@ -364,9 +364,9 @@ void MeshSceneNode::notifyStyleChange()
 
       if (!mat.needsSorting) {
 	setNode.node =
-	  new OpaqueRenderNode(drawMgr, &xformList, normalize,
-			       mat.colorPtr, lod, set, extPtr,
-			       drawSet.triangleCount);
+	  new MeshRenderNode(drawMgr, &xformList, normalize,
+			     mat.colorPtr, lod, set, extPtr,
+			     drawSet.triangleCount);
 	mat.animRepos = false;
       } else {
 	fvec3 setPos;
@@ -375,9 +375,10 @@ void MeshSceneNode::notifyStyleChange()
 	  xformTool->modifyVertex(setPos);
 	}
 	setNode.node =
-	  new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
-				   mat.colorPtr, lod, set, extPtr, setPos,
-				   drawSet.triangleCount);
+	  new MeshRenderNode(drawMgr, &xformList, normalize,
+			     mat.colorPtr, lod, set, extPtr,
+			     drawSet.triangleCount);
+        setNode.node->setPosition(setPos);
 	if ((fabsf(drawSet.sphere.x) > 0.001f) &&
 	    (fabsf(drawSet.sphere.y) > 0.001f) &&
 	    (mat.color.a != 0.0f) &&
@@ -390,9 +391,9 @@ void MeshSceneNode::notifyStyleChange()
       }
 
       setNode.radarNode =
-	new OpaqueRenderNode(drawMgr, &xformList, normalize,
-			     mat.colorPtr, lod, set, extPtr,
-			     drawSet.triangleCount);
+	new MeshRenderNode(drawMgr, &xformList, normalize,
+			   mat.colorPtr, lod, set, extPtr,
+			   drawSet.triangleCount);
     }
   }
   return;

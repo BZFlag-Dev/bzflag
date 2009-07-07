@@ -2278,29 +2278,34 @@ void pausePlayer(int playerIndex, bool paused = true)
   if (!playerData)
     return;
 
+  playerData->pauseRequested = false;
+  playerData->pauseActiveTime = TimeKeeper::getNullTime();
   playerData->player.setPaused(paused);
+
   if (clOptions->gameType == RabbitChase) {
-    if (paused && (rabbitIndex == playerIndex))
+    if (paused && (rabbitIndex == playerIndex)) {
       anointNewRabbit();
-    else if (!paused && (rabbitIndex == NoPlayer))
+    } else if (!paused && (rabbitIndex == NoPlayer)) {
       anointNewRabbit();
+    }
   }
 
   FlagInfo* playerFlag = FlagInfo::get(playerData->player.getFlag());
 
-  if (playerFlag && playerFlag->flag.type->flagQuality != FlagBad)
+  if (playerFlag && playerFlag->flag.type->flagQuality != FlagBad) {
     zapFlag(*playerFlag);
+  }
 
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt8(playerIndex);
-  msg->packUInt8( paused);
+  msg->packUInt8(paused ? 1 : 0);
   msg->broadcast(MsgPause);
 
   bz_PlayerPausedEventData_V1	pauseEventData;
   pauseEventData.playerID = playerIndex;
   pauseEventData.pause = paused;
 
-  worldEventManager.callEvents(bz_ePlayerPausedEvent,&pauseEventData);
+  worldEventManager.callEvents(bz_ePlayerPausedEvent, &pauseEventData);
 }
 
 void zapFlagByPlayer(int playerIndex)
@@ -2735,63 +2740,6 @@ const fvec3* closestBase(TeamColor color, const fvec3& position)
 }
 
 
-void processFreezeTagCollision(GameKeeper::Player *player,
-                               GameKeeper::Player *otherPlayer, const fvec3& pos)
-{
-  TeamColor playerTeam = player->player.getTeam();
-  TeamColor otherTeam = otherPlayer->player.getTeam();
-
-  if (playerTeam == otherTeam) {
-    // unfreeze
-    if (!player->player.canShoot() || !player->player.canMove()) {
-      sendMessageAllow(player->getIndex(), AllowAll);
-      player->player.setAllow(AllowAll);
-    }
-  }
-  else {
-    const fvec3* playerBasePtr = closestBase(playerTeam, pos);
-    const fvec3*  otherBasePtr = closestBase(otherTeam,  pos);
-    if (!playerBasePtr || !otherBasePtr) {
-      return;
-    }
-    const fvec3& playerBase = *playerBasePtr;
-    const fvec3&  otherBase = *otherBasePtr;
-
-    const fvec2 hdiff = otherBase.xy() - playerBase.xy();
-
-    const float angle = atan2f(hdiff.y, hdiff.x);
-    const float cos_angle = fabs(cosf(angle));
-
-    const float playerDist = cos_angle * (pos.xy() - playerBase.xy()).length();
-    const float  otherDist = cos_angle * (pos.xy() -  otherBase.xy()).length();
-
-    if (((playerDist - otherDist) > (2.0 * BZDBCache::dmzWidth)) &&
-	(player->player.canShoot() || player->player.canMove())) {
-      sendMessageAllow(player->getIndex(), AllowNone);
-      player->player.setAllow(AllowNone);
-    }
-  }
-}
-
-void processCollision(GameKeeper::Player *player,
-                      GameKeeper::Player *otherPlayer, const fvec3& pos)
-{
-  if (!player || !otherPlayer)
-    return;
-
-  bz_PlayerCollisionEventData_V1  eventData;
-  eventData.players[0] = player->getIndex();
-  eventData.players[1] = otherPlayer->getIndex();
-  memcpy(eventData.pos, pos, sizeof(float[3]));
-  worldEventManager.callEvents(bz_ePlayerCollision,&eventData);
-
-  if (eventData.handled)
-    return;
-
-  if (clOptions->gameOptions & FreezeTagGameStyle)
-    processFreezeTagCollision(player, otherPlayer, pos);
-}
-
 // FIXME - needs extra checks for killerIndex=ServerPlayer (world weapons)
 // (was broken before); it turns out that killerIndex=-1 for world weapon?
 // No need to check on victimIndex.
@@ -2903,7 +2851,8 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
       checkTeamScore(killerIndex, winningTeam);
 
     victimData->player.setPaused(false);
-    victimData->player.pauseRequestTime = TimeKeeper::getNullTime();
+    victimData->pauseRequested = false;
+    victimData->pauseActiveTime = TimeKeeper::getNullTime();
   }
 }
 

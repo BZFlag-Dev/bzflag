@@ -222,9 +222,6 @@ struct CmdLineOptions
   std::string		cacheURL;
   std::string		cacheOut;
 
-  /* freezetag options */
-  bool			freezeTag;
-
   /** how many client-side bots are allowed per IP address */
   int			botsPerIP;
 

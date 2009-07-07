@@ -123,6 +123,7 @@ typedef enum {
   bz_eKickEvent,
   bz_eKillEvent,
   bz_ePlayerPausedEvent,
+  bz_ePlayerPauseRequestEvent,
   bz_eMessageFilteredEvent,
   bz_eGameStartEvent,
   bz_eGameEndEvent,
@@ -777,6 +778,21 @@ class BZF_API bz_PlayerPausedEventData_V1 : public bz_EventData
 
   int playerID;
   bool pause;
+};
+
+class BZF_API bz_PlayerPauseRequestData_V1 : public bz_EventData
+{
+ public:
+  bz_PlayerPauseRequestData_V1(int id, bool p)
+  : bz_EventData(bz_ePlayerPauseRequestEvent)
+  , playerID(id)
+  , pause(p)
+  , allow(true)
+  {
+  }
+  int playerID;
+  bool pause;
+  bool allow;
 };
 
 class BZF_API bz_MessageFilteredEventData_V1 : public bz_EventData

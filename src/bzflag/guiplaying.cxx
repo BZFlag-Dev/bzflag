@@ -2838,23 +2838,6 @@ static void checkEnvironment()
   // Check Server Shots
   myTank->checkHit(World::getWorld()->getWorldWeapons(), hit, minTime);
 
-  // Check if I've been tagged (freeze tag).  Note that we alternate the
-  // direction that we go through the list to avoid a pathological case.
-  static int upwards = 1;
-  for (i = 0; i < curMaxPlayers; i ++) {
-    int tankid;
-    if (upwards)
-      tankid = i;
-    else
-      tankid = curMaxPlayers - 1 - i;
-
-    if (remotePlayers[tankid])
-      myTank->checkCollision(remotePlayers[tankid]);
-  }
-
-  // swap direction for next time:
-  upwards = upwards ? 0 : 1;
-
   // used later
   //	float waterLevel = World::getWorld()->getWaterLevel();
 

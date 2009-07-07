@@ -48,6 +48,24 @@ static int GetURL(lua_State* L);
 static int GetPostData(lua_State* L);
 
 
+class FetchHandler;
+
+
+//============================================================================//
+//============================================================================//
+
+static inline FetchHandler* CheckHandler(lua_State* L, int index)
+{
+  return (FetchHandler*) luaL_checkudata(L, index, metaName);
+}
+
+
+static inline FetchHandler* TestHandler(lua_State* L, int index)
+{
+  return (FetchHandler*) luaL_testudata(L, index, metaName);
+}
+
+
 //============================================================================//
 //============================================================================//
 
@@ -81,6 +99,8 @@ class FetchHandler : public bz_BaseURLHandler {
     int selfRef; // reference to this userdata object
 };
 
+
+//============================================================================//
 
 FetchHandler::FetchHandler(lua_State* L, const char* url, const char* post)
 : fetchID(0)
@@ -178,7 +198,7 @@ bool FetchHandler::Handle(const char* /*URL*/, void* data, unsigned int size,
   }
 
   lua_rawgeti(L, LUA_REGISTRYINDEX, selfRef);
-  if (lua_getuserdataextra(L, -1) != metaName) {
+  if (TestHandler(L, -1) == NULL) {
     lua_pop(L, 2);
     return false;
   }
@@ -271,7 +291,6 @@ static int FetchURL_callout(lua_State* L)
 
   void* data = lua_newuserdata(L, sizeof(FetchHandler));
   FetchHandler* fetch = new(data) FetchHandler(L, urlText, postData);
-  lua_setuserdataextra(L, -1, (void*)metaName);
   luaL_getmetatable(L, metaName);
   lua_setmetatable(L, -2);
 
@@ -281,17 +300,6 @@ static int FetchURL_callout(lua_State* L)
 
   return 1;
 }
-
-//============================================================================//
-
-static inline FetchHandler* CheckHandler(lua_State* L, int index)
-{
-  if (lua_getuserdataextra(L, index) != metaName) {
-    luaL_argerror(L, index, "expected FetchURL");
-  }
-  return (FetchHandler*)lua_touserdata(L, index);
-}
-
 
 //============================================================================//
 

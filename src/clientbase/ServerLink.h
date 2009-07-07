@@ -95,8 +95,6 @@ public:
   void		sendNewRabbit();
   void		sendPaused(bool paused);
   void		sendNewPlayer( int botID);
-  void		sendCollide(const PlayerId playerId,
-			    const PlayerId otherId, const fvec3& pos);
 
   void		sendExit();
   void		sendAutoPilot(bool autopilot);

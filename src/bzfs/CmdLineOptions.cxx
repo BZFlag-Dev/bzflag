@@ -76,7 +76,6 @@ static const char *usageString =
   "[-filterCallsigns] "
   "[-filterChat] "
   "[-filterSimple] "
-  "[-freezeTag] "
   "[-g] "
   "[-gndtex <texture name>] "
   "[-groupdb <group file>] "
@@ -179,7 +178,6 @@ static const char *extraUsageString =
   "\t-filterCallsigns: filter callsigns to disallow inappropriate user names\n"
   "\t-filterChat: filter chat messages\n"
   "\t-filterSimple: perform simple exact matches with the bad word list\n"
-  "\t-freezeTag: collisions freeze the player who is farther from home base\n"
   "\t-g: serve one game and then exit\n"
   "\t-gndtex: specify ground texture\n"
   "\t-groupdb: file to read for group permissions\n"
@@ -721,9 +719,6 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     }
     else if (token == "-filterSimple") {
       filterSimple = true;
-    }
-    else if (token == "-freezeTag") {
-      gameOptions |= int(FreezeTagGameStyle);
     }
     else if (token == "-g") {
       oneGameOnly = true;

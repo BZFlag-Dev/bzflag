@@ -79,7 +79,6 @@ static MsgStringList handleMsgAllowSpawn(PacketInfo *pi);
 static MsgStringList handleMsgAutoPilot(PacketInfo *pi);
 static MsgStringList handleMsgCapBits(PacketInfo *pi);
 static MsgStringList handleMsgCaptureFlag(PacketInfo *pi);
-static MsgStringList handleMsgCollide(PacketInfo *pi);
 static MsgStringList handleMsgCustomSound(PacketInfo *pi);
 static MsgStringList handleMsgCacheURL(PacketInfo *pi);
 static MsgStringList handleMsgDropFlag(PacketInfo *pi);
@@ -160,7 +159,6 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgAutoPilot),
   PACKET_LIST_ENTRY (MsgCapBits),
   PACKET_LIST_ENTRY (MsgCaptureFlag),
-  PACKET_LIST_ENTRY (MsgCollide),
   PACKET_LIST_ENTRY (MsgCustomSound),
   PACKET_LIST_ENTRY (MsgCacheURL),
   PACKET_LIST_ENTRY (MsgDropFlag),
@@ -618,14 +616,6 @@ static MsgStringList handleMsgCaptureFlag (PacketInfo *pi)
   d = nboUnpackUInt16 (d, team);
   listPush (list, 1, "team: %s", strTeam (team).c_str());
 
-  return list;
-}
-
-
-static MsgStringList handleMsgCollide (PacketInfo *pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics (pi);
   return list;
 }
 

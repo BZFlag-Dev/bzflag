@@ -65,6 +65,8 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
   , botID(-1)
   , currentRot(0)
   , currentAngVel(0)
+  , pauseRequested(false)
+  , pauseActiveTime(TimeKeeper::getSunGenesisTime())
   , gameTimeRate(GameTime::startRate)
   , gameTimeNext(TimeKeeper::getCurrent())
   , flagHistory()

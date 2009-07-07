@@ -100,7 +100,6 @@ public:
 
   void restart(const fvec3& pos, float azimuth);
   bool checkHit(const Player* source, const ShotPath*& hit, float& minTime) const;
-  bool checkCollision(const Player* otherTank);
   void setFlag(FlagType*);
   void changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
 

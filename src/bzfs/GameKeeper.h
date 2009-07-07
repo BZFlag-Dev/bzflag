@@ -207,17 +207,25 @@ public:
 
     void*	packCurrentState (void* buf, uint16_t& code, bool increment);
 
+    // Pause control
+    bool		pauseRequested;
+    TimeKeeper		pauseActiveTime;
+
     // GameTime update
-    float	      gameTimeRate;
-    TimeKeeper	      gameTimeNext;
+    float		gameTimeRate;
+    TimeKeeper		gameTimeNext;
+
     // FlagHistory
-    FlagHistory       flagHistory;
+    FlagHistory		flagHistory;
+
     // Score
-    Score	      score;
+    Score		score;
+
     // Authentication
-    Authentication    authentication;
+    Authentication	authentication;
+
     // Capabilities
-    PlayerCaps			caps;
+    PlayerCaps		caps;
 
     // flag to let us know the player is on it's way out
     bool isParting;
@@ -238,12 +246,12 @@ public:
 #endif
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
-    static bool       allNeedHostbanChecked;
-    static int	     maxShots;
+    static bool		allNeedHostbanChecked;
+    static int		maxShots;
     std::vector<ShotInfo> shotsInfo;
 
-    int						idFlag;
-	TimeKeeper				agilityTime;
+    int			idFlag;
+    TimeKeeper		agilityTime;
   };
 
   class Flag {

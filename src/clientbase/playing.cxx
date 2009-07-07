@@ -1337,7 +1337,6 @@ void handleAllow(void *msg)
 #endif
     if (!tank)
       tank = lookupPlayer(id);
-
   }
   if (!tank) return;
 

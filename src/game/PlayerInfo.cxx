@@ -42,8 +42,6 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
   memset(referrer, 0, ReferrerLen);
-  pauseRequestLag = 0;
-  pauseRequestTime = TimeKeeper::getNullTime();
   allowChangeTime = TimeKeeper::getNullTime();
   jumpStartPos = 0.0f;
   allowedHeightAtJumpStart = -1.0f;

@@ -547,8 +547,6 @@ function bzfdump($server)
         echo" Antidote";
       if ($server['gameOptions'] & 0x0100)
         echo" Handicap";
-      if ($server['gameOptions'] & 0x0200)
-        echo" Freeze Tag";
       echo"\n";
       echo"maxPlayers: " . $server['maxPlayers'] . "\n";
       echo"maxShots: " . $server['maxShots'] . "\n";

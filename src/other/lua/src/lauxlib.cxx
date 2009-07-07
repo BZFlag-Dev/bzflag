@@ -137,6 +137,25 @@ LUALIB_API void *luaL_checkudata (lua_State *L, int ud, const char *tname) {
 }
 
 
+LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) {
+  void *p = lua_touserdata(L, ud);
+  if (p == NULL) {
+    return NULL; /* not a value is a userdata */
+  }
+  if (!lua_getmetatable(L, ud)) {
+    lua_pop(L, 1);
+    return NULL; /* does not have a metatable */
+  }
+  lua_getfield(L, LUA_REGISTRYINDEX, tname); /* the type metatable */
+  if (lua_rawequal(L, -1, -2)) {
+    lua_pop(L, 2);  /* remove both metatables */
+    return p; /* it's a match, return the pointer */
+  }
+  lua_pop(L, 2);  /* remove both metatables */
+  return NULL;
+}
+
+
 LUALIB_API void luaL_checkrawset (lua_State *L, int tbl) {
   if (luaL_getmetafield(L, tbl, "__rawset")) {
     const int type = lua_type(L, -1);

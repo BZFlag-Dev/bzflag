@@ -144,18 +144,30 @@ bool doBoundsChecks(GameKeeper::Player *playerData, PlayerState &state)
 }
 
 
-bool doPauseChecks(GameKeeper::Player */*playerData*/, PlayerState &/*state*/)
+bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &/*state*/)
 {
+  // FIXME -- do pause state checks here
+
+  if (!playerData->pauseRequested) {
+    return true;
+  }
+
+  const float timeLeft = playerData->pauseActiveTime - TimeKeeper::getCurrent();
+  if (timeLeft < 0.0f) {
+    pausePlayer(playerData->player.getPlayerIndex(), true);
+  }
+
+  return true;
 /* FIXME -- doPauseChecks
   // make sure the player only pauses after the waiting time for pause is over
-  // we need some inaccuracy here that is computed using pauseRequestTime and pauseRequestLag
+  // we need some inaccuracy here that is computed using pauseActiveTime and pauseRequestLag
   // lag will cause all players to pause sooner than 5 seconds
   if (state.status & PlayerState::Paused) {
-    TimeKeeper pauseDelay = playerData->player.pauseRequestTime;
+    TimeKeeper pauseDelay = playerData->player.pauseActiveTime;
     pauseDelay += (- playerData->player.pauseRequestLag / 1000.0);
 
     if ((TimeKeeper::getCurrent() - pauseDelay) < 5.0f
-	&& (playerData->player.pauseRequestTime - TimeKeeper::getNullTime() != 0)) {
+	&& (playerData->player.pauseActiveTime - TimeKeeper::getNullTime() != 0)) {
       // we have one of those players all love
       logDebugMessage(1,"Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
 		      playerData->getIndex());

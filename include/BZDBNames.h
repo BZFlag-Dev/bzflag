@@ -47,13 +47,11 @@ class BZDBNames : public Singleton<BZDBNames> {
     const std::string BURROWSPEEDAD;
     const std::string COLDETDEPTH;
     const std::string COLDETELEMENTS;
-    const std::string COLLISIONLIMIT;
     const std::string COUNTDOWNRESTIME;
     const std::string CULLDEPTH;
     const std::string CULLELEMENTS;
     const std::string CULLOCCLUDERS;
     const std::string DISABLEBOTS;
-    const std::string DMZWIDTH;
     const std::string DRAWCELESTIAL;
     const std::string DRAWCLOUDS;
     const std::string DRAWGROUND;
@@ -74,7 +72,6 @@ class BZDBNames : public Singleton<BZDBNames> {
     const std::string FOGMODE;
     const std::string FOGSTART;
     const std::string FORBIDDEBUG;
-    const std::string FREEZETAGRADIUS;
     const std::string FRICTION;
     const std::string GMACTIVATIONTIME;
     const std::string GMADLIFE;

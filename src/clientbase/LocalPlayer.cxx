@@ -1755,35 +1755,6 @@ bool LocalPlayer::checkHit(const Player* source,
 }
 
 
-bool LocalPlayer::checkCollision(const Player* otherTank)
-{
-  if (!otherTank) {
-    return false;
-  }
-
-  TimeKeeper current = TimeKeeper::getTick();
-  // Don't flood the network with MsgCollide
-  if (current - lastCollisionTime < BZDBCache::collisionLimit) {
-    return false;
-  }
-
-  const fvec3& myPosition = getPosition();
-  const fvec3& otherPosition = otherTank->getPosition();
-
-  const float distSq2D = (otherPosition.xy() - myPosition.xy()).lengthSq();
-
-  const float r = BZDBCache::freezeTagRadius;
-
-  if (distSq2D < (r * r)) {
-    server->sendCollide(getId(), otherTank->getId(), myPosition);
-    lastCollisionTime = current;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-
 void LocalPlayer::setFlag(FlagType* flag)
 {
   Player::setFlag(flag);

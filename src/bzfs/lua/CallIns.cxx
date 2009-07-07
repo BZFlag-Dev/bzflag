@@ -69,9 +69,9 @@ class CallIn : public bz_EventHandler {
     virtual bool execute(bz_EventData* eventData) = 0;
     void process(bz_EventData* eventData) { execute(eventData); }
 
-    int           GetCode()     const { return code; }
-    const string& GetName()     const { return name; }
-    const string& GetLoopType() const { return loopType; }
+    inline int           GetCode()     const { return code; }
+    inline const string& GetName()     const { return name; }
+    inline const string& GetLoopType() const { return loopType; }
 
     bool PushCallIn(int argCount)
     {
@@ -116,7 +116,7 @@ class CallIn : public bz_EventHandler {
     bool Unregister()
     {
       if (code > bz_eLastEvent) {
-        return true; // no need to register
+        return true; // no need to remove
       }
       if (bzRegistered) {
         bz_removeEvent((bz_eEventType)code, this);
@@ -380,6 +380,7 @@ CALLIN(PlayerDieEvent,             PlayerDied,                 "BASIC");        
 CALLIN(PlayerJoinEvent,            PlayerJoined,               "BASIC");        // -Event+ed
 CALLIN(PlayerPartEvent,            PlayerParted,               "BASIC");        // -Event+ed
 CALLIN(PlayerPausedEvent,          PlayerPaused,               "BASIC");        // -Event
+CALLIN(PlayerPauseRequestEvent,    PlayerPauseRequest,         "FIRST_FALSE");  // -Event
 CALLIN(PlayerSentCustomData,       PlayerSentCustomData,       "BASIC");
 CALLIN(PlayerSpawnEvent,           PlayerSpawned,              "BASIC");        // -Event+ed
 CALLIN(PlayerUpdateEvent,          PlayerUpdate,               "BASIC");        // -Event
@@ -1338,6 +1339,32 @@ bool CI_PlayerPaused::execute(bz_EventData* eventData)
   lua_pushboolean(L, ed->pause);
 
   return RunCallIn(2, 0);
+}
+
+
+bool CI_PlayerPauseRequest::execute(bz_EventData* eventData)
+{
+  bz_PlayerPauseRequestData_V1* ed =
+    (bz_PlayerPauseRequestData_V1*)eventData;
+
+  if (!PushCallIn(2)) {
+    return false;
+  }
+
+  lua_pushinteger(L, ed->playerID);
+  lua_pushboolean(L, ed->pause);
+
+  if (!RunCallIn(2, 1)) {
+    return false;
+  }
+
+  if (lua_isboolean(L, -1)) {
+    ed->allow = lua_tobool(L, -1);
+  }
+
+  lua_pop(L, 1);
+
+  return true;
 }
 
 

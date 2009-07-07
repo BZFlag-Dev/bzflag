@@ -24,21 +24,24 @@ class Extents;
 class MeshDrawMgr;
 
 
-class OpaqueRenderNode : public RenderNode {
+class MeshRenderNode : public RenderNode {
   public:
-    OpaqueRenderNode(MeshDrawMgr* drawMgr,
-		     GLuint* xformList, bool normalize,
-		     const fvec4* color, int lod, int set,
-		     const Extents* exts, int triangles);
+    MeshRenderNode(MeshDrawMgr* drawMgr,
+		   GLuint* xformList, bool normalize,
+		   const fvec4* color, int lod, int set,
+		   const Extents* exts, int triangles);
     void render();
     void renderRadar();
     void renderShadow();
-    virtual const fvec3& getPosition() const { return junk; }
+    const fvec3& getPosition() const { return pos; }
+    void setPosition(const fvec3& p) { pos = p; }
+
   private:
     void drawV() const;
     void drawVN() const;
     void drawVT() const;
     void drawVTN() const;
+
   private:
     MeshDrawMgr* drawMgr;
     GLuint* xformList;
@@ -47,20 +50,7 @@ class OpaqueRenderNode : public RenderNode {
     const fvec4* color;
     const Extents* exts;
     int triangles;
-  private:
-    static fvec3 junk;
-};
 
-
-class AlphaGroupRenderNode : public OpaqueRenderNode {
-  public:
-    AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
-			 GLuint* xformList, bool normalize,
-			 const fvec4* color, int lod, int set,
-			 const Extents* exts, const fvec3& pos,
-			 int triangles);
-    const fvec3& getPosition() const { return pos; }
-    void setPosition(const fvec3& pos);
   private:
     fvec3 pos;
 };
