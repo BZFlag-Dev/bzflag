@@ -1639,8 +1639,8 @@ void handleMovementUpdate(uint16_t code, void *msg)
   tank->unpack(msg, code); // now read
   short newStatus = tank->getStatus();
 
-  if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
-    addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
+//FIXME  if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
+//FIXME    addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
 
   if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
     // player has started exploding and we haven't gotten killed
@@ -1696,6 +1696,26 @@ void handlePlayerData(void *msg)
   Player *p = lookupPlayer(id);
   if (p && key.size())
     p->customData[key] = value;
+}
+
+
+void handlePause(void *msg)
+{
+  PlayerId id, state;
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt8(msg, state);
+  const bool paused = (state != 0);
+
+  printf("handlePause: %i - paused=%s\n", id, paused ? "true" : "false");//FIXME
+
+  Player *player = lookupPlayer(id);
+  if (player) {
+    const bool oldState = player->isPaused();
+    if (state != oldState) {
+      addMessage(player, state ? "Paused" : "Resumed");
+    }
+    player->setPause(paused);
+  }
 }
 
 
@@ -1933,7 +1953,7 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
       break;
     }
     case MsgPause: {
-      printf("MsgPause(FIXME) %s:%i\n", __FILE__, __LINE__);
+      handlePause(msg);
       break;
     }
   }

@@ -511,48 +511,48 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
   if (!smoothBounce || !useNormals()) {
     // just use the plain normal
     n = plane.xyz();
+    return;
   }
-  else {
-    // FIXME: this isn't quite right
-    // normal smoothing to fake curved surfaces
-    int i;
-    // calculate the triangle ares
-    float totalArea = 0.0f;
-    float* areas = new float[vertexCount];
-    for (i = 0; i < vertexCount; i++) {
-      int next = (i + 1) % vertexCount;
-      const fvec3 ea = p - *vertices[i];
-      const fvec3 eb = *vertices[next] - *vertices[i];
-      const fvec3 cross = fvec3::cross(ea, eb);
-      areas[i] = cross.length();
-      totalArea = totalArea + areas[i];
-    }
-    float smallestArea = MAXFLOAT;
-    float* twinAreas = new float[vertexCount];
-    for (i = 0; i < vertexCount; i++) {
-      int next = (i + 1) % vertexCount;
-      twinAreas[i] = areas[i] + areas[next];
-      if (twinAreas[i] < 1.0e-10f) {
-	n = *normals[next];
-	delete[] areas;
-	delete[] twinAreas;
-	return;
-      }
-      if (twinAreas[i] < smallestArea) {
-	smallestArea = twinAreas[i];
-      }
-    }
-    fvec3 normal(0.0f, 0.0f, 0.0f);
-    for (i = 0; i < vertexCount; i++) {
-      int next = (i + 1) % vertexCount;
-      float factor = smallestArea / twinAreas[i];
-      normal += (*normals[next] * factor);
-    }
-    n = normal.normalize();
 
-    delete[] areas;
-    delete[] twinAreas;
+  // FIXME: this isn't quite right
+  // normal smoothing to fake curved surfaces
+  int i;
+  // calculate the triangle ares
+  float totalArea = 0.0f;
+  float* areas = new float[vertexCount];
+  for (i = 0; i < vertexCount; i++) {
+    int next = (i + 1) % vertexCount;
+    const fvec3 ea = p - *vertices[i];
+    const fvec3 eb = *vertices[next] - *vertices[i];
+    const fvec3 cross = fvec3::cross(ea, eb);
+    areas[i] = cross.length();
+    totalArea = totalArea + areas[i];
   }
+  float smallestArea = MAXFLOAT;
+  float* twinAreas = new float[vertexCount];
+  for (i = 0; i < vertexCount; i++) {
+    int next = (i + 1) % vertexCount;
+    twinAreas[i] = areas[i] + areas[next];
+    if (twinAreas[i] < 1.0e-10f) {
+      n = *normals[next];
+      delete[] areas;
+      delete[] twinAreas;
+      return;
+    }
+    if (twinAreas[i] < smallestArea) {
+      smallestArea = twinAreas[i];
+    }
+  }
+  fvec3 normal(0.0f, 0.0f, 0.0f);
+  for (i = 0; i < vertexCount; i++) {
+    int next = (i + 1) % vertexCount;
+    float factor = smallestArea / twinAreas[i];
+    normal += (*normals[next] * factor);
+  }
+  n = normal.normalize();
+
+  delete[] areas;
+  delete[] twinAreas;
 
   return;
 }

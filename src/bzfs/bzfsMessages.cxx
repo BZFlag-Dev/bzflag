@@ -1138,8 +1138,8 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &
   apiState.status = eAlive;
   if (playerState.status == PlayerState::DeadStatus) // DeadStatus is 0
     apiState.status = eDead;
-  else if (playerState.status & PlayerState::Paused)
-    apiState.status = ePaused;
+//FIXME  else if (playerState.status & PlayerState::Paused)
+//FIXME    apiState.status = ePaused;
   else if (playerState.status & PlayerState::Exploding)
     apiState.status = eExploding;
   else if (playerState.status & PlayerState::Teleporting)
@@ -1168,7 +1168,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
       playerState.status |= PlayerState::Alive;
       break;
     case ePaused:
-      playerState.status |= PlayerState::Paused;
+//FIXME      playerState.status |= PlayerState::Paused;
       break;
     case eExploding:
       playerState.status |= PlayerState::Exploding;

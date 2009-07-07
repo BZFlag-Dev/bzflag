@@ -263,7 +263,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
-    if (set.meshMat.colorPtr->a != 0.0f) {
+    if (set.meshMat.colorPtr->a > 0.0f) {
       renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
   }
@@ -332,6 +332,9 @@ void MeshSceneNode::notifyStyleChange()
   const DrawLod* drawLods = drawInfo->getDrawLods();
 
   animRepos = false;
+
+  // FIXME -- render nodes should be created in the constructor
+  //          (for EightDim node viewing)
 
   for (int lod = 0; lod < lodCount; lod++) {
     LodNode& lodNode = lods[lod];

@@ -144,8 +144,9 @@ bool doBoundsChecks(GameKeeper::Player *playerData, PlayerState &state)
 }
 
 
-bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &state)
+bool doPauseChecks(GameKeeper::Player */*playerData*/, PlayerState &/*state*/)
 {
+/* FIXME -- doPauseChecks
   // make sure the player only pauses after the waiting time for pause is over
   // we need some inaccuracy here that is computed using pauseRequestTime and pauseRequestLag
   // lag will cause all players to pause sooner than 5 seconds
@@ -178,6 +179,7 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &state)
       return false;
     }
   }
+*/
 
   return true;
 }

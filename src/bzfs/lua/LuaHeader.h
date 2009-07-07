@@ -54,45 +54,47 @@ inline int lua_checkgeti(lua_State* L, int idx, int n)
 }
 
 
-inline int lua_toint(lua_State* L, int idx)
-{
+inline int lua_toint(lua_State* L, int idx) {
   return (int)lua_tointeger(L, idx);
 }
 
-
-inline bool lua_tobool(lua_State* L, int index)
-{
+inline bool lua_tobool(lua_State* L, int index) {
   return lua_toboolean(L, index) != 0;
 }
 
-
-inline float lua_tofloat(lua_State* L, int idx)
-{
+inline float lua_tofloat(lua_State* L, int idx) {
   return (float)lua_tonumber(L, idx);
 }
 
+inline double lua_todouble(lua_State* L, int idx) {
+  return (double)lua_tonumber(L, idx);
+}
 
-inline float luaL_checkfloat(lua_State* L, int idx)
-{
+
+inline void lua_pushfloat(lua_State* L, float value) {
+  lua_pushnumber(L, (lua_Number)value);
+}
+
+inline void lua_pushdouble(lua_State* L, double value) {
+  lua_pushnumber(L, (lua_Number)value);
+}
+
+
+inline float luaL_checkfloat(lua_State* L, int idx) {
   return (float)luaL_checknumber(L, idx);
 }
 
+inline double luaL_checkdouble(lua_State* L, int idx) {
+  return (double)luaL_checknumber(L, idx);
+}
 
-inline float luaL_optfloat(lua_State* L, int idx, float def)
-{
+
+inline float luaL_optfloat(lua_State* L, int idx, float def) {
   return (float)luaL_optnumber(L, idx, def);
 }
 
-
-inline void lua_pushfloat(lua_State* L, float value)
-{
-  lua_pushnumber(L, (lua_Number)value);
-}
-
-
-inline void lua_pushdouble(lua_State* L, double value)
-{
-  lua_pushnumber(L, (lua_Number)value);
+inline double luaL_optdouble(lua_State* L, int idx, double def) {
+  return (double)luaL_optnumber(L, idx, def);
 }
 
 

@@ -55,7 +55,7 @@ class CallIn : public bz_EventHandler {
     : code(_code)
     , name(_name)
     , loopType(_loopType)
-    , registered(false)
+    , bzRegistered(false)
     {
       codeMap[code] = this;
       nameMap[name] = this;
@@ -105,9 +105,9 @@ class CallIn : public bz_EventHandler {
       if (code > bz_eLastEvent) {
         return true; // no need to register
       }
-      if (!registered) {
+      if (!bzRegistered) {
         bz_registerEvent((bz_eEventType)code, this);
-        registered = true;
+        bzRegistered = true;
         return true;
       }
       return false;
@@ -118,22 +118,22 @@ class CallIn : public bz_EventHandler {
       if (code > bz_eLastEvent) {
         return true; // no need to register
       }
-      if (registered) {
+      if (bzRegistered) {
         bz_removeEvent((bz_eEventType)code, this);
-        registered = false;
+        bzRegistered = false;
         return true;
       }
       return false;
     }
 
-    bool IsActive() const { return registered; }
+    bool IsActive() const { return bzRegistered; }
 
   protected:
     const int    code;
     const string name;
     const string loopType;
 
-    bool registered;
+    bool bzRegistered;
 
   protected:
     static lua_State* L;
@@ -451,10 +451,10 @@ bool CI_AllowCTFCapture::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->teamCapped);
   lua_pushinteger(L, ed->teamCapping);
   lua_pushinteger(L, ed->playerCapping);
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
-  lua_pushnumber(L,  ed->rot);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->rot);
 
   if (!RunCallIn(7, 2)) {
     return false;
@@ -490,9 +490,9 @@ bool CI_AllowFlagGrab::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
   lua_pushinteger(L, ed->shotType);
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
 
   if (!RunCallIn(7, 1)) {
     return false;
@@ -685,10 +685,10 @@ bool CI_Capture::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->teamCapped);
   lua_pushinteger(L, ed->teamCapping);
   lua_pushinteger(L, ed->playerCapping);
-  lua_pushnumber(L, ed->pos[0]);
-  lua_pushnumber(L, ed->pos[1]);
-  lua_pushnumber(L, ed->pos[2]);
-  lua_pushnumber(L, ed->rot);
+  lua_pushfloat(L, ed->pos[0]);
+  lua_pushfloat(L, ed->pos[1]);
+  lua_pushfloat(L, ed->pos[2]);
+  lua_pushfloat(L, ed->rot);
 
   return RunCallIn(7, 0);
 }
@@ -721,9 +721,9 @@ bool CI_FlagDropped::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
 
   return RunCallIn(6, 0);
 }
@@ -741,9 +741,9 @@ bool CI_FlagGrabbed::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
   lua_pushinteger(L, ed->shotType);
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
 
   return RunCallIn(7, 0);
 }
@@ -759,9 +759,9 @@ bool CI_FlagReset::execute(bz_EventData* eventData)
 
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
   lua_pushboolean(L, ed->teamIsEmpty);
 //  lua_pushboolean(L, ed->changed); // FIXME - output, unused ?
 
@@ -889,10 +889,10 @@ bool CI_GetPlayerSpawnPos::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->team);
 
-  lua_pushnumber(L, ed->pos[0]);
-  lua_pushnumber(L, ed->pos[1]);
-  lua_pushnumber(L, ed->pos[2]);
-  lua_pushnumber(L, ed->rot);
+  lua_pushfloat(L, ed->pos[0]);
+  lua_pushfloat(L, ed->pos[1]);
+  lua_pushfloat(L, ed->pos[2]);
+  lua_pushfloat(L, ed->rot);
 
   if (!RunCallIn(6, 4)) {
     return false;
@@ -1232,9 +1232,9 @@ bool CI_PlayerCollision::execute(bz_EventData* eventData)
 
   lua_pushinteger(L, ed->players[0]);
   lua_pushinteger(L, ed->players[1]);
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
 
   if (!RunCallIn(5, 1)) {
     return false;
@@ -1280,10 +1280,10 @@ bool CI_PlayerDied::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->killerTeam);
   lua_pushstring(L,  ed->flagKilledWith.c_str());
   lua_pushinteger(L, ed->shotID);
-  lua_pushnumber(L,  ed->state.pos[0]);
-  lua_pushnumber(L,  ed->state.pos[1]);
-  lua_pushnumber(L,  ed->state.pos[2]);
-  lua_pushnumber(L,  ed->state.rotation);
+  lua_pushfloat(L,  ed->state.pos[0]);
+  lua_pushfloat(L,  ed->state.pos[1]);
+  lua_pushfloat(L,  ed->state.pos[2]);
+  lua_pushfloat(L,  ed->state.rotation);
   // bz_PlayerUpdateState state; -- FIXME?
 
   return RunCallIn(10, 0);
@@ -1369,10 +1369,10 @@ bool CI_PlayerSpawned::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->team);
 
   const bz_PlayerUpdateState& state = ed->state;
-  lua_pushnumber(L, state.pos[0]);
-  lua_pushnumber(L, state.pos[1]);
-  lua_pushnumber(L, state.pos[2]);
-  lua_pushnumber(L, state.rotation);
+  lua_pushfloat(L, state.pos[0]);
+  lua_pushfloat(L, state.pos[1]);
+  lua_pushfloat(L, state.pos[2]);
+  lua_pushfloat(L, state.rotation);
 
   // bz_PlayerUpdateState state; -- FIXME?
 
@@ -1398,15 +1398,15 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
   lua_pushboolean(L, state.crossingWall);
   lua_pushboolean(L, state.inPhantomZone);
 
-  lua_pushnumber(L, state.pos[0]);
-  lua_pushnumber(L, state.pos[1]);
-  lua_pushnumber(L, state.pos[2]);
-  lua_pushnumber(L, state.rotation);
+  lua_pushfloat(L, state.pos[0]);
+  lua_pushfloat(L, state.pos[1]);
+  lua_pushfloat(L, state.pos[2]);
+  lua_pushfloat(L, state.rotation);
 
-  lua_pushnumber(L, state.velocity[0]);
-  lua_pushnumber(L, state.velocity[1]);
-  lua_pushnumber(L, state.velocity[2]);
-  lua_pushnumber(L, state.angVel);
+  lua_pushfloat(L, state.velocity[0]);
+  lua_pushfloat(L, state.velocity[1]);
+  lua_pushfloat(L, state.velocity[2]);
+  lua_pushfloat(L, state.angVel);
 
   // FIXME double stateTime;
 
@@ -1527,9 +1527,9 @@ bool CI_ShotFired::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
   lua_pushstring(L,  ed->type.c_str());
-  lua_pushnumber(L,  ed->pos[0]);
-  lua_pushnumber(L,  ed->pos[1]);
-  lua_pushnumber(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->pos[0]);
+  lua_pushfloat(L,  ed->pos[1]);
+  lua_pushfloat(L,  ed->pos[2]);
 
   //lua_pushboolean(L, ed->changed); // FIXME - output? used?
 

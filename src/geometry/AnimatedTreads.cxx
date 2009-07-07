@@ -48,6 +48,18 @@ static float wheelInsideTexRad;
 static float wheelOutsideTexRad;
 
 
+const float& TankGeometryUtils::getTreadInside()
+{
+  return treadInside;
+}
+
+
+const float& TankGeometryUtils::getTreadOutside()
+{
+  return treadOutside;
+}
+
+
 void TankGeometryUtils::setTreadStyle(int style)
 {
   if (style == TankGeometryUtils::Exposed) {

@@ -11,8 +11,6 @@
 #include <limits.h>
 #include <stddef.h>
 
-#include "lua_extra.h"
-
 
 /*
 ** ==================================================================
@@ -335,16 +333,14 @@
 ** CHANGE it to undefined as soon as your programs use only '...' to
 ** access vararg parameters (instead of the old 'arg' table).
 */
-/*BZ #define LUA_COMPAT_VARARG */
-#undef LUA_COMPAT_VARARG
+#define LUA_COMPAT_VARARG
 
 /*
 @@ LUA_COMPAT_MOD controls compatibility with old math.mod function.
 ** CHANGE it to undefined as soon as your programs use 'math.fmod' or
 ** the new '%' operator instead of 'math.mod'.
 */
-/*BZ #define LUA_COMPAT_MOD */
-#undef LUA_COMPAT_MOD
+#define LUA_COMPAT_MOD
 
 /*
 @@ LUA_COMPAT_LSTR controls compatibility with old long string nesting
@@ -352,16 +348,14 @@
 ** CHANGE it to 2 if you want the old behaviour, or undefine it to turn
 ** off the advisory error when nesting [[...]].
 */
-/*BZ #define LUA_COMPAT_LSTR		1 */
-#undef LUA_COMPAT_LSTR
+#define LUA_COMPAT_LSTR		1
 
 /*
 @@ LUA_COMPAT_GFIND controls compatibility with old 'string.gfind' name.
 ** CHANGE it to undefined as soon as you rename 'string.gfind' to
 ** 'string.gmatch'.
 */
-/*BZ #define LUA_COMPAT_GFIND */
-#undef LUA_COMPAT_GFIND
+#define LUA_COMPAT_GFIND
 
 /*
 @@ LUA_COMPAT_OPENLIB controls compatibility with old 'luaL_openlib'
@@ -369,8 +363,7 @@
 ** CHANGE it to undefined as soon as you replace to 'luaL_register'
 ** your uses of 'luaL_openlib'
 */
-/*BZ #define LUA_COMPAT_OPENLIB */
-#undef LUA_COMPAT_OPENLIB
+#define LUA_COMPAT_OPENLIB
 
 
 
@@ -508,10 +501,8 @@
 ** ===================================================================
 */
 
-/*BZ #define LUA_NUMBER_DOUBLE */
-/*BZ #define LUA_NUMBER	double */
-#define LUA_NUMBER	float
-#undef LUA_NUMBER_DOUBLE
+#define LUA_NUMBER_DOUBLE
+#define LUA_NUMBER	double
 
 /*
 @@ LUAI_UACNUMBER is the result of an 'usual argument conversion'
@@ -527,8 +518,7 @@
 @@ LUAI_MAXNUMBER2STR is maximum size of previous conversion.
 @@ lua_str2number converts a string to a number.
 */
-/*BZ #define LUA_NUMBER_SCAN		"%lf" */
-#define LUA_NUMBER_SCAN		"%f"
+#define LUA_NUMBER_SCAN		"%lf"
 #define LUA_NUMBER_FMT		"%.14g"
 #define lua_number2str(s,n)	sprintf((s), LUA_NUMBER_FMT, (n))
 #define LUAI_MAXNUMBER2STR	32 /* 16 digits, sign, point, and \0 */
@@ -722,7 +712,7 @@ union luai_Cast { double l_d; long l_l; };
 ** CHANGE (define) this if you really need that. This value must be
 ** a multiple of the maximum alignment required for your machine.
 */
-#define LUAI_EXTRASPACE BZ_LUA_EXTRASPACE
+#define LUAI_EXTRASPACE 0
 
 
 /*

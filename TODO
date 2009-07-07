@@ -186,6 +186,7 @@ so that no work is duplicated.
   grouping for physics drivers (with transforms and copying)
   grouping for texture matrices, dynamic color, xforms, and materials
     (mostly for keeping a clean namespace)
+  => NOTE: mesh weapons and zones can already be used instead
 
 * sdl build does not set the application icon .. kinda important for
   the folks with icons
@@ -404,8 +405,6 @@ so that no work is duplicated.
 
 * find some way to limit tank skins to team colors.
 
-* implement one way cross server teleporters
-
 * implement a visual "server list" game server
 
 * pre-game waiting room:
@@ -413,7 +412,7 @@ so that no work is duplicated.
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
-  (see MsgJoinServer)
+  => NOTE: see MsgJoinServer
 
 * look into doing projected textures for light glows, this would
   get rid of the 8 light limit.

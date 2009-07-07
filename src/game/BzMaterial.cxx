@@ -25,6 +25,8 @@
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "BZDBCache.h"
+#include "CacheManager.h"
+#include "TextUtils.h"
 #include "Pack.h"
 
 
@@ -738,13 +740,18 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
   out << "Ks "  << specular.rgb().tostring() << std::endl;
   out << "Ns "  << (1000.0f * (shininess / 128.0f)) << std::endl;
   if (textureCount > 0) {
-    const TextureInfo* ti = &textures[0];
-    const unsigned int nlen = (unsigned int)ti->name.size();
-    if (nlen > 0) {
-      std::string texname = ti->name;
-      const char* cname = texname.c_str();
-      if ((nlen < 4) || (strcasecmp(cname + (nlen - 4), ".png") != 0)) {
-	texname += ".png";
+    std::string texname = textures[0].name;
+    const std::string pngExt = ".png";
+    if (!texname.empty() && !CacheManager::isCacheFileType(texname)) {
+      if (texname.size() < pngExt.size()) {
+        texname += pngExt;
+      }
+      else {
+        std::string ext = texname.substr(texname.size() - pngExt.size());
+        ext = TextUtils::tolower(ext);
+        if (ext != pngExt) {
+          texname += pngExt;
+        }
       }
       static BZDB_string prefix("objTexturePrefix");
       out << "map_Kd " << ((std::string)prefix + texname) << std::endl;

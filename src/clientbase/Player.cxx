@@ -75,6 +75,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , localWins(0)
 , localLosses(0)
 , localTks(0)
+, paused(false)
 , autoPilot(false)
 , deltaTime(0.0)
 , offset(0.0)
@@ -416,8 +417,8 @@ void Player::setExplode(const TimeKeeper& t)
 
   const short setBits = short(PlayerState::Exploding)
                       | short(PlayerState::Falling);
-  const short clearBits = short(PlayerState::Alive)
-                        | short(PlayerState::Paused);
+  const short clearBits = short(PlayerState::Alive);
+// FIXME                        | short(PlayerState::Paused);
   setStatus((getStatus() | setBits) & ~clearBits);
 
   if (avatar) {
@@ -1315,7 +1316,7 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 {
   predictedAzimuth = inputAzimuth;
 
-  if (inputStatus & PlayerState::Paused) {
+  if (paused) { // FIXME inputStatus & PlayerState::Paused) {
     // don't move when paused
     predictedPos = inputPos;
     predictedVel = fvec3(0.0f, 0.0f, 0.0f);
@@ -1408,8 +1409,8 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 
 bool Player::isDeadReckoningWrong() const
 {
-  const uint16_t checkStates =
-    (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
+  const uint16_t checkStates = (PlayerState::Alive | PlayerState::Falling);
+//FIXME    (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
   // always send a new packet when some kinds of status change
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
     return true;

@@ -13,7 +13,6 @@ noinst_HEADERS =      \
 	CallIns.h     \
 	CallOuts.h    \
 	Constants.h   \
-	Double.h      \
 	FetchURL.h    \
 	LuaServer.h   \
 	LuaHeader.h   \
@@ -26,7 +25,6 @@ libLuaServer_la_SOURCES = \
 	CallIns.cxx   \
 	CallOuts.cxx  \
 	Constants.cxx \
-	Double.cxx    \
 	FetchURL.cxx  \
 	LuaServer.cxx \
 	MapObject.cxx \

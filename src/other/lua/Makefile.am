@@ -71,7 +71,6 @@ noinst_HEADERS =       \
 	src/ltm.h      \
 	src/luaconf.h  \
 	src/lua.h      \
-	src/lua_extra.h \
 	src/lualib.h   \
 	src/lundump.h  \
 	src/lvm.h      \

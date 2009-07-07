@@ -94,6 +94,8 @@ libClientBase_la_SOURCES =		\
 	$(top_srcdir)/src/bzflag/Daylight.cxx		\
 	$(top_srcdir)/src/bzflag/Daylight.h		\
 	$(top_srcdir)/src/bzflag/Downloads.cxx		\
+	$(top_srcdir)/src/bzflag/DebugDrawing.cxx	\
+	$(top_srcdir)/src/bzflag/DebugDrawing.h		\
 	$(top_srcdir)/src/bzflag/Downloads.h		\
 	$(top_srcdir)/src/bzflag/DynamicWorldText.cxx	\
 	$(top_srcdir)/src/bzflag/DynamicWorldText.h	\

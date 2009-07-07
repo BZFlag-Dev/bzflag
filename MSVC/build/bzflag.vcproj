@@ -774,6 +774,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\DebugDrawing.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\effectsRenderer.cxx"
 					>
 				</File>
@@ -1141,6 +1145,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\daylight.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\DebugDrawing.h"
 				>
 			</File>
 			<File

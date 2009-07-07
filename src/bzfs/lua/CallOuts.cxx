@@ -46,7 +46,6 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
-#include "Double.h"
 
 
 extern const string& GetLuaDirectory(); // from lua.cpp
@@ -298,8 +297,6 @@ static int SetMaxWaitTime(lua_State* L);
 static int ClearMaxWaitTime(lua_State* L);
 
 static int GetTime(lua_State* L);
-static int GetTimer(lua_State* L);
-static int DiffTimers(lua_State* L);
 
 static int DirList(lua_State* L);
 static int CalcMD5(lua_State* L);
@@ -507,8 +504,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, ClearMaxWaitTime);
 
   PUSH_LUA_CFUNC(L, GetTime);
-  PUSH_LUA_CFUNC(L, GetTimer);
-  PUSH_LUA_CFUNC(L, DiffTimers);
 
   PUSH_LUA_CFUNC(L, DirList);
   PUSH_LUA_CFUNC(L, CalcMD5);
@@ -643,7 +638,7 @@ static int GetWallHeight(lua_State* L)
 {
   float size, height;
   bz_getWorldSize(&size, &height);
-  lua_pushnumber(L, height);
+  lua_pushfloat(L, height);
   return 1;
 }
 
@@ -652,7 +647,7 @@ static int GetWorldSize(lua_State* L)
 {
   float size, height;
   bz_getWorldSize(&size, &height);
-  lua_pushnumber(L, size);
+  lua_pushfloat(L, size);
   return 1;
 }
 
@@ -883,10 +878,10 @@ static int GetStandardSpawn(lua_State* L)
   if (!bz_getStandardSpawn(playerID, pos, &rot)) {
     return 0;
   }
-  lua_pushnumber(L, pos.x);
-  lua_pushnumber(L, pos.y);
-  lua_pushnumber(L, pos.z);
-  lua_pushnumber(L, rot);
+  lua_pushfloat(L, pos.x);
+  lua_pushfloat(L, pos.y);
+  lua_pushfloat(L, pos.z);
+  lua_pushfloat(L, rot);
   return 4;
 }
 
@@ -1071,9 +1066,9 @@ static int GetPlayerPosition(lua_State* L)
     player->getPlayerCurrentPosRot(pos, rotation);
   }
 
-  lua_pushnumber(L, pos.x);
-  lua_pushnumber(L, pos.y);
-  lua_pushnumber(L, pos.z);
+  lua_pushfloat(L, pos.x);
+  lua_pushfloat(L, pos.y);
+  lua_pushfloat(L, pos.z);
   return 3;
 }
 
@@ -1096,9 +1091,9 @@ static int GetPlayerVelocity(lua_State* L)
   }
 
   const fvec3& vel = statePtr->velocity;
-  lua_pushnumber(L, vel.x);
-  lua_pushnumber(L, vel.y);
-  lua_pushnumber(L, vel.z);
+  lua_pushfloat(L, vel.x);
+  lua_pushfloat(L, vel.y);
+  lua_pushfloat(L, vel.z);
   return 3;
 }
 
@@ -1120,7 +1115,7 @@ static int GetPlayerRotation(lua_State* L)
     player->getPlayerCurrentPosRot(pos, rotation);
   }
 
-  lua_pushnumber(L, rotation);
+  lua_pushfloat(L, rotation);
   return 1;
 }
 
@@ -1142,7 +1137,7 @@ static int GetPlayerAngVel(lua_State* L)
     state = player->getCurrentStateAsState();
   }
 
-  lua_pushnumber(L, statePtr->angVel);
+  lua_pushfloat(L, statePtr->angVel);
   return 1;
 }
 
@@ -1300,7 +1295,7 @@ static int GetPlayerRank(lua_State* L)
   if (player == NULL) {
     return 0;
   }
-  lua_pushnumber(L, player->score.ranking());
+  lua_pushfloat(L, player->score.ranking());
   return 1;
 }
 
@@ -1368,7 +1363,7 @@ static int GetPlayerJitter(lua_State* L)
 static int GetPlayerPacketLoss(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
-  lua_pushnumber(L, bz_getPlayerPacketLoss(playerID));
+  lua_pushfloat(L, bz_getPlayerPacketLoss(playerID));
   return 1;
 }
 
@@ -1608,9 +1603,9 @@ static int GetFlagPosition(lua_State* L)
   if (!bz_getFlagPosition(flagID, pos)) {
     return 0;
   }
-  lua_pushnumber(L, pos.x);
-  lua_pushnumber(L, pos.y);
-  lua_pushnumber(L, pos.z);
+  lua_pushfloat(L, pos.x);
+  lua_pushfloat(L, pos.y);
+  lua_pushfloat(L, pos.z);
   return 3;
 }
 
@@ -1671,7 +1666,7 @@ static int ResetFlags(lua_State* L)
 static int GetTeamName(lua_State* L)
 {
   bz_eTeamType teamID = ParseTeam(L, 1);
-  lua_pushstring(L, "FIXME"); teamID = teamID; // FIXME bzu_GetTeamName(teamID));
+  lua_pushliteral(L, "FIXME"); teamID = teamID; // FIXME bzu_GetTeamName(teamID));
   return 1;
 }
 
@@ -2042,7 +2037,7 @@ static int ManualTimeLimit(lua_State* L)
 
 static int GetTimeLimit(lua_State* L)
 {
-  lua_pushnumber(L, bz_getTimeLimit());
+  lua_pushfloat(L, bz_getTimeLimit());
   return 1;
 }
 
@@ -2153,9 +2148,9 @@ static int GetBanEntry(lua_State* L, bz_eBanListType listType)
   lua_pushstring(L, bz_getBanItemSource(listType, entry));
   lua_rawset(L, -3);
   lua_pushliteral(L, "duration");
-  lua_pushnumber(L, (lua_Number)bz_getBanItemDuration(listType, entry));
+  lua_pushdouble(L, bz_getBanItemDuration(listType, entry));
   lua_rawset(L, -3);
-  lua_pushstring(L, "fromMaster");
+  lua_pushliteral(L, "fromMaster");
   lua_pushboolean(L, bz_getBanItemIsFromMaster(listType, entry));
   lua_rawset(L, -3);
 
@@ -2176,7 +2171,7 @@ static int GetHostBanEntry(lua_State* L) { return GetBanEntry(L, eHostList); }
 static int GetMaxWaitTime(lua_State* L)
 {
   const char* name = luaL_checkstring(L, 1);
-  lua_pushnumber(L, bz_getMaxWaitTime(name));
+  lua_pushfloat(L, bz_getMaxWaitTime(name));
   return 1;
 }
 
@@ -2203,34 +2198,7 @@ static int ClearMaxWaitTime(lua_State* L)
 
 static int GetTime(lua_State* L)
 {
-  const double nowTime = bz_getCurrentTime();
-  LuaDouble::PushDouble(L, nowTime);
-  return 1;
-}
-
-
-static int GetTimer(lua_State* L)
-{
-  const double nowTime = bz_getCurrentTime();
-  const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
-  lua_pushlightuserdata(L, (void*)millisecs);
-  return 1;
-}
-
-
-static int DiffTimers(lua_State* L)
-{
-  const int args = lua_gettop(L); // number of arguments
-  if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
-    luaL_error(L, "Incorrect arguments to DiffTimers()");
-  }
-  const void* p1 = lua_touserdata(L, 1);
-  const void* p2 = lua_touserdata(L, 2);
-  const uint32_t t1 = *((const uint32_t*)(const void*)&p1);
-  const uint32_t t2 = *((const uint32_t*)(const void*)&p2);
-  const uint32_t milliSecs = (t1 - t2);
-  const float seconds = (float)milliSecs * 0.001f;
-  lua_pushnumber(L, (lua_Number)seconds);
+  lua_pushdouble(L, bz_getCurrentTime());
   return 1;
 }
 

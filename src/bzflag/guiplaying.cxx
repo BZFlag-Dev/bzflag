@@ -937,12 +937,12 @@ static void doEvent(BzfDisplay *disply)
       // window has been mapped.  this normally occurs when the game
       // is uniconified.  if the player was paused because of an unmap
       // then resume.
-      if (pausedByUnmap) {
+      if (pausedByUnmap && BZDB.isTrue("unpauseForMinimize")) {
         pausedByUnmap = false;
         pauseCountdown = 0.0f;
         if (myTank && myTank->isAlive() && myTank->isPaused()) {
           myTank->setPause(false);
-          showMessage("Resumed");
+//FIXME          showMessage("Resumed");
         }
       }
 
@@ -4209,8 +4209,8 @@ static void setupRoamingCamera(float muzzleHeight,
       if (!trackPlayerShot(target, eyePoint, targetPoint)) {
         targetPoint = target->getPosition();
         eyePoint    = target->getPosition();
-        eyePoint.x -= targetTankDir.x * 40.0f;
-        eyePoint.y -= targetTankDir.y * 60.0f;
+        eyePoint.x -= targetTankDir.x * 20.0f;
+        eyePoint.y -= targetTankDir.y * 30.0f;
         eyePoint.z += muzzleHeight * 6.0f;
       }
     }
@@ -4860,8 +4860,8 @@ static void updatePauseCountdown(float dt)
 
 	// now actually pause
 	myTank->setPause(true);
-	hud->setAlert(1, NULL, 0.0f, true);
-	showMessage("Paused");
+//FIXME	hud->setAlert(1, NULL, 0.0f, true);
+//FIXME	showMessage("Paused");
 
 	// turn off the sound
 	if (savedVolume == -1) {

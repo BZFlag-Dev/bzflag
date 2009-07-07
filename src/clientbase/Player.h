@@ -148,6 +148,8 @@ public:
   bool		hasPlayerList() const;
   void		setPlayerList(bool = true);
 
+  virtual void	setPause(bool value) { paused = value; }
+
   bool		validTeamTarget(const Player *possibleTarget) const;
 
   // returns true iff dead reckoning is too different from the
@@ -313,6 +315,7 @@ private:
   PlayerState		state;
 
   // additional state
+  bool			paused;
   bool			autoPilot;
 
   // computable highly dynamic data
@@ -532,7 +535,7 @@ inline bool		Player::isAlive() const
 
 inline bool		Player::isPaused() const
 {
-  return (state.status & short(PlayerState::Paused)) != 0;
+  return paused;
 }
 
 inline bool		Player::isAutoPilot() const

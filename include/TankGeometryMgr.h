@@ -109,6 +109,9 @@ namespace TankGeometryUtils {
   // texcoords
   float getTreadTexLen();
 
+  const float& getTreadInside();
+  const float& getTreadOutside();
+
   // help to scale vertices and normals
   void doVertex3f(float x, float y, float z);
   void doVertex(const fvec3&);

@@ -34,6 +34,8 @@ bzflag_SOURCES =			\
 	CrackedGlass.h			\
 	Daylight.cxx			\
 	Daylight.h			\
+	DebugDrawing.cxx		\
+	DebugDrawing.h			\
 	DisplayMenu.cxx			\
 	DisplayMenu.h			\
 	Downloads.cxx			\

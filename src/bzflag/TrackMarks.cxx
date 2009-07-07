@@ -20,6 +20,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "Obstacle.h"
+#include "TankGeometryMgr.h"
 #include "CollisionManager.h"
 #include "PhysicsDriver.h"
 #include "Ray.h"
@@ -171,11 +172,10 @@ static float UserFadeScale = 1.0f;
 static AirCullStyle AirCull = FullAirCull;
 
 // FIXME - get these from AnimatedTreads
-static const float TreadOutside = 1.4f;
-static const float TreadInside = 0.875f;
-
-static const float TreadMiddle = 0.5f * (TreadOutside + TreadInside);
 static const float TreadMarkWidth = 0.2f;
+static float TreadInside  = TankGeometryUtils::getTreadInside();
+static float TreadOutside = TankGeometryUtils::getTreadOutside();
+static float TreadMiddle = 0.5f * (TreadOutside + TreadInside);
 
 static OpenGLGState smokeGState;
 static const char smokeTexture[] = "puddle"; // FIXME - not implemented
@@ -335,7 +335,7 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
     te.pos.z = pos.z + TextureHeightOffset;
   }
   te.scale = scale;
-  te.angle = (float)(angle * (180.0 / M_PI)); // in degress, for glRotatef()
+  te.angle = angle * RAD2DEGf; // in degress, for glRotatef()
 
   // only use the physics driver if it matters
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
@@ -507,6 +507,15 @@ static void updateList(TrackList& list, float dt)
 
 void TrackMarks::update(float dt)
 {
+  // update the tread inside/outside/middle distances
+  const std::string defString = BZDB.getDefault(BZDBNAMES.TANKWIDTH);
+  const float defWidth = (float)atof(defString.c_str());
+  static BZDB_float curWidth(BZDBNAMES.TANKWIDTH);
+  const float curScale = (curWidth / defWidth);
+  TreadInside  = curScale * TankGeometryUtils::getTreadInside() ;
+  TreadOutside = curScale * TankGeometryUtils::getTreadOutside();
+  TreadMiddle = 0.5f * (TreadOutside + TreadInside);
+
   TrackFadeTime = BZDB.eval(BZDBNAMES.TRACKFADE);
   TrackFadeTime = TrackFadeTime * UserFadeScale;
 

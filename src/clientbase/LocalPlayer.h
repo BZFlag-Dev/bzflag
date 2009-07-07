@@ -80,7 +80,7 @@ public:
   void changeTeam(TeamColor newTeam);
   void setDesiredSpeed(float fracOfMaxSpeed);
   void setDesiredAngVel(float fracOfMaxAngVel);
-  void setPause(bool = true);
+  void setPause(bool = true); // virtual
   void requestAutoPilot(bool = true);
   bool fireShot();
   void explodeTank();

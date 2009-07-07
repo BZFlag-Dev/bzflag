@@ -12,39 +12,20 @@ made to the lua-5.1.4 sources for BZFlag.
 
 2. Added Makefile.am  (svn r18913)
 
-3. Made the following adjustments in luaconf.h:  (svn r18915)
-     /* BZ#define LUA_NUMBER_DOUBLE */
-     #undef LUA_NUMBER_DOUBLE
+3. Applied the lua_pushhstring patch  (svn r18916)
 
-     /*BZ #define LUA_NUMBER  double */
-     #define LUA_NUMBER  float                                               
+4. Applied the LUA_CALLINSINDEX patch  (svn r18917)
 
-     /*BZ #define LUA_NUMBER_SCAN "%lf" */
-     #define LUA_NUMBER_SCAN "%f"
-
-4. Undefined (in luaconf.h):  (svn r18915)
-       LUA_COMPAT_VARARG
-       LUA_COMPAT_MOD
-       LUA_COMPAT_LSTR
-       LUA_COMPAT_GFIND
-       LUA_COMPAT_OPENLIB
-
-5. Applied the lua_pushhstring patch  (svn r18916)
-
-6. Applied the LUA_CALLINSINDEX patch  (svn r18917)
-
-7. Added lua_setuserdataextra() and lua_getuserdataextra() for
+5. Added lua_setuserdataextra() and lua_getuserdataextra() for
    faster userdata type checking  (svn r19238)
 
-8. Renamed the source files from .c to .cxx for g++ compilation  (svn r19274)
+6. Renamed the source files from .c to .cxx for g++ compilation  (svn r19274)
 
-9. Applied the __usedindex metamethod patch  (svn r19401)
+7. Applied the __usedindex metamethod patch  (svn r19401)
 
-10. Added the __rawset metamethod  (svn r19402)
+8. Added the __rawset metamethod  (svn r19402)
 
-11. Added the lpeg library  (svn r19430)
-
-12. Disabled precompiled chunks in luaU_undump()  (svn r19459)
+9. Added the lpeg library  (svn r19430)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

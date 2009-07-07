@@ -41,7 +41,7 @@ class PlayerState
     enum PStatus {			// bit masks
       DeadStatus =      0,		// not alive, not paused, etc.
       Alive =		(1 << 0),	// player is alive
-      Paused =		(1 << 1),	// player is paused
+//    Paused =		(1 << 1),	// player is paused -- FIXME -- unused bit
       Exploding =       (1 << 2),	// currently blowing up
       Teleporting =     (1 << 3),	// teleported recently
       FlagActive =      (1 << 4),	// flag special powers active

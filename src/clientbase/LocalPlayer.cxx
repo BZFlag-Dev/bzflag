@@ -287,7 +287,7 @@ void LocalPlayer::doUpdateMotion(float dt)
 
   // get linear and angular speed at start of time step
   if (!NEAR_ZERO(dt, ZERO_TOLERANCE)) {
-    if (location == Dead || isPaused()) {
+    if ((location == Dead) || isPaused()) {
       // can't move if paused or dead -- don't move the player
       // skip location computation as it's not needed
       setAngularVelocity(0.0f);
@@ -1373,6 +1373,8 @@ void LocalPlayer::setDeadStop(void)
 
 void LocalPlayer::setPause(bool pause)
 {
+  Player::setPause(pause);
+/* FIXME
   if (isAlive()) {
     if (pause && !isPaused()) {
       setStatus(getStatus() | short(PlayerState::Paused));
@@ -1383,6 +1385,7 @@ void LocalPlayer::setPause(bool pause)
       server->sendPaused(false);
     }
   }
+*/
 }
 
 

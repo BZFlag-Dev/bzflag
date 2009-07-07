@@ -26,8 +26,10 @@ using std::vector;
 
 // common headers
 #include "bzfsAPI.h"
-#include "TextUtils.h"
 #include "bzfio.h"
+#include "DirectoryNames.h"
+#include "TextUtils.h"
+#include "version.h"
 
 // bzfs headers
 #include "../bzfs.h"
@@ -43,7 +45,6 @@ using std::vector;
 #include "MapObject.h"
 #include "RawLink.h"
 #include "SlashCmd.h"
-#include "Double.h"
 
 
 //============================================================================//
@@ -114,8 +115,9 @@ bool LuaServer::init(const string& cmdLine)
   scriptFile = EnvExpand(scriptFile);
 
   if (!fileExists(scriptFile)) {
-    scriptFile = string(bz_pluginBinPath()) + "/" + scriptFile;
+    scriptFile = getConfigDirName(BZ_CONFIG_DIR_VERSION) + scriptFile;
   }
+
   if (!fileExists(scriptFile)) {
     logDebugMessage(1, "LuaServer: could not find the script file\n");
     if (dieHard) {
@@ -281,18 +283,15 @@ static bool CreateLuaState(const string& script)
   L = luaL_newstate();
   luaL_openlibs(L);
 
-  const string path  = directory + "?.lua";
-  const string cpath = directory + "?.so;" + directory + "?.dll";
+  const string lualib = directory + "lualib/";
+  const string path   = lualib + "?.lua";
+  const string cpath  = lualib + "?.so;" + lualib + "?.dll";
   lua_getglobal(L, "package");
   lua_pushstdstring(L, path);  lua_setfield(L, -2, "path");
   lua_pushstdstring(L, cpath); lua_setfield(L, -2, "cpath");
   lua_pop(L, 1);
 
   CallIns::PushEntries(L);
-
-  lua_pushvalue(L, LUA_GLOBALSINDEX);
-  LuaDouble::PushEntries(L);
-  lua_pop(L, 1);
 
   lua_pushliteral(L, "bz");
   lua_newtable(L); {
@@ -331,7 +330,6 @@ static bool CreateLuaState(const string& script)
 
 static string EnvExpand(const string& path)
 {
-
   string::size_type pos = path.find('$');
   if (pos == string::npos) {
     return path;

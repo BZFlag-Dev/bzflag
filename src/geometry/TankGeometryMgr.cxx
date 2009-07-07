@@ -123,11 +123,14 @@ void TankGeometryMgr::init()
 
   // install the BZDB callbacks
   // This MUST be done after BZDB has been initialized in main()
-  BZDB.addCallback (BZDBNAMES.OBESEFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback (BZDBNAMES.TINYFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.TANKWIDTH,       bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.TANKHEIGHT,      bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.TANKLENGTH,      bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.OBESEFACTOR,     bzdbCallback, NULL);
+  BZDB.addCallback (BZDBNAMES.TINYFACTOR,      bzdbCallback, NULL);
   BZDB.addCallback (BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback ("animatedTreads", bzdbCallback, NULL);
-  BZDB.addCallback ("treadStyle", bzdbCallback, NULL);
+  BZDB.addCallback ("animatedTreads",          bzdbCallback, NULL);
+  BZDB.addCallback ("treadStyle",              bzdbCallback, NULL);
 
   // install the context initializer
   OpenGLGState::registerContextInitializer (freeContext, initContext, NULL);
@@ -142,11 +145,14 @@ void TankGeometryMgr::init()
 void TankGeometryMgr::kill()
 {
   // remove the BZDB callbacks
-  BZDB.removeCallback (BZDBNAMES.OBESEFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback (BZDBNAMES.TINYFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.TANKWIDTH,       bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.TANKHEIGHT,      bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.TANKLENGTH,      bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.OBESEFACTOR,     bzdbCallback, NULL);
+  BZDB.removeCallback (BZDBNAMES.TINYFACTOR,      bzdbCallback, NULL);
   BZDB.removeCallback (BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback ("animatedTreads", bzdbCallback, NULL);
-  BZDB.removeCallback ("treadStyle", bzdbCallback, NULL);
+  BZDB.removeCallback ("animatedTreads",          bzdbCallback, NULL);
+  BZDB.removeCallback ("treadStyle",              bzdbCallback, NULL);
 
   // remove the context initializer callback
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, NULL);
