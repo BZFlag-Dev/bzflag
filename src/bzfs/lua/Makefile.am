@@ -34,5 +34,4 @@ libLuaServer_la_SOURCES = \
 	SlashCmd.cxx
 
 EXTRA_DIST =       \
-	README.txt \
-	example
+	README.txt
