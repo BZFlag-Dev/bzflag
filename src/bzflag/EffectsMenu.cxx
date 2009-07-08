@@ -316,7 +316,7 @@ void EffectsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 3) || (i == 4) || (i == 5) || (i == 7)) {
+    if ((i == 3) || (i == 4) || (i == 6) || (i == 8)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
