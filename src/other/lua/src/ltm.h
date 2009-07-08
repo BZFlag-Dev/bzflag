@@ -18,11 +18,11 @@
 typedef enum {
   TM_INDEX,
   TM_NEWINDEX,
-  TM_USEDINDEX, /*BZ*/
+  TM_USEDINDEX,
   TM_GC,
   TM_MODE,
   TM_EQ,  /* last tag method with `fast' access */
-  TM_RAWSET, /* BZ */
+  TM_RAWSET,
   TM_ADD,
   TM_SUB,
   TM_MUL,

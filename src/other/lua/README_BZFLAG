@@ -12,20 +12,15 @@ made to the lua-5.1.4 sources for BZFlag.
 
 2. Added Makefile.am  (svn r18913)
 
-3. Applied the lua_pushhstring patch  (svn r18916)
+3. Renamed the source files from .c to .cxx for g++ compilation  (svn r19274)
 
-4. Applied the LUA_CALLINSINDEX patch  (svn r18917)
+4. Fixed a casting problem in loadlib.cxx/ll_sym()
 
-5. Added lua_setuserdataextra() and lua_getuserdataextra() for
-   faster userdata type checking  (svn r19238)
+5. Added the __usedindex metamethod  (svn r19401)
 
-6. Renamed the source files from .c to .cxx for g++ compilation  (svn r19274)
+6. Added the __rawset metamethod and luaL_checkrawset() funciton  (svn r19402)
 
-7. Applied the __usedindex metamethod patch  (svn r19401)
-
-8. Added the __rawset metamethod  (svn r19402)
-
-9. Added the lpeg library  (svn r19430)
+7. Added the luaL_testudata() function
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

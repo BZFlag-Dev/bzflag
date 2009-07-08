@@ -46,19 +46,32 @@ static char* worldBlob = NULL; // FIXME -- free() in WorldFinalize? ...
 //============================================================================//
 //============================================================================//
 
+static int MapEventToCallIn(int eventCode)
+{
+  // LUA_REFNIL is -1
+  // LUA_NOREF  is -2
+  return -(eventCode + 1000);
+}
+
+
+//============================================================================//
+//============================================================================//
+
 class CallIn : public bz_EventHandler {
   public:
     static void SetL(lua_State* _L) { L = _L; }
 
   public:
-    CallIn(int _code, const string& _name, const string& _loopType)
-    : code(_code)
-    , name(_name)
+    CallIn(int _bzCode, const string& _name, const string& _loopType)
+    : name(_name)
+    , bzCode(_bzCode)
+    , ciCode(MapEventToCallIn(bzCode))
+    , customEvent(bzCode > bz_eLastEvent)
     , loopType(_loopType)
     , bzRegistered(false)
     {
-      codeMap[code] = this;
-      nameMap[name] = this;
+      bzCodeMap[bzCode] = this;
+      nameMap[name]   = this;
     }
 
     virtual ~CallIn()
@@ -69,7 +82,8 @@ class CallIn : public bz_EventHandler {
     virtual bool execute(bz_EventData* eventData) = 0;
     void process(bz_EventData* eventData) { execute(eventData); }
 
-    inline int           GetCode()     const { return code; }
+    inline int           GetBZCode()   const { return bzCode; }
+    inline int           GetCICode()   const { return ciCode; }
     inline const string& GetName()     const { return name; }
     inline const string& GetLoopType() const { return loopType; }
 
@@ -81,7 +95,7 @@ class CallIn : public bz_EventHandler {
       if (!lua_checkstack(L, argCount + 2)) {
         return false; // FIXME -- add a message for lua_checkstack()?
       }
-      lua_rawgeti(L, LUA_CALLINSINDEX, code);
+      lua_rawgeti(L, LUA_REGISTRYINDEX, ciCode);
       if (!lua_isfunction(L, -1)) {
         lua_pop(L, 1);
         return false;
@@ -102,11 +116,11 @@ class CallIn : public bz_EventHandler {
 
     bool Register()
     {
-      if (code > bz_eLastEvent) {
+      if (customEvent) {
         return true; // no need to register
       }
       if (!bzRegistered) {
-        bz_registerEvent((bz_eEventType)code, this);
+        bz_registerEvent((bz_eEventType)bzCode, this);
         bzRegistered = true;
         return true;
       }
@@ -115,11 +129,11 @@ class CallIn : public bz_EventHandler {
 
     bool Unregister()
     {
-      if (code > bz_eLastEvent) {
+      if (customEvent) {
         return true; // no need to remove
       }
       if (bzRegistered) {
-        bz_removeEvent((bz_eEventType)code, this);
+        bz_removeEvent((bz_eEventType)bzCode, this);
         bzRegistered = false;
         return true;
       }
@@ -129,8 +143,10 @@ class CallIn : public bz_EventHandler {
     bool IsActive() const { return bzRegistered; }
 
   protected:
-    const int    code;
     const string name;
+    const int    bzCode; // bzfsAPI event code
+    const int    ciCode; // lua call-in registry index
+    const bool   customEvent;
     const string loopType;
 
     bool bzRegistered;
@@ -144,19 +160,19 @@ class CallIn : public bz_EventHandler {
       map<string, CallIn*>::iterator it = nameMap.find(name);
       return (it == nameMap.end()) ? NULL : it->second;
     }
-    static const map<int,    CallIn*>& GetCodeMap() { return codeMap; }
-    static const map<string, CallIn*>& GetNameMap() { return nameMap; }
+    static const map<string, CallIn*>& GetNameMap()   { return nameMap; }
+    static const map<int,    CallIn*>& GetBzCodeMap() { return bzCodeMap; }
 
   private:
-    static map<int,    CallIn*> codeMap;
+    static map<int,    CallIn*> bzCodeMap;
     static map<string, CallIn*> nameMap;
 };
 
 
 lua_State* CallIn::L = NULL;
 
-map<int,    CallIn*> CallIn::codeMap;
 map<string, CallIn*> CallIn::nameMap;
+map<int,    CallIn*> CallIn::bzCodeMap;
 
 
 //============================================================================//
@@ -204,14 +220,14 @@ static int SetCallIn(lua_State* L)
   if (lua_isfunction(L, 2)) {
     // register
     lua_pushvalue(L, 2);
-    lua_rawseti(L, LUA_CALLINSINDEX, ci->GetCode());
+    lua_rawseti(L, LUA_REGISTRYINDEX, ci->GetCICode());
 
     ci->Register();
   }
   else if (lua_isnil(L, 2)) {
     // unregister
     lua_pushnil(L);
-    lua_rawseti(L, LUA_CALLINSINDEX, ci->GetCode());
+    lua_rawseti(L, LUA_REGISTRYINDEX, ci->GetCICode());
 
     ci->Unregister();
   }
@@ -236,7 +252,7 @@ static int GetCallInInfo(lua_State* L)
     lua_pushstring(L, ci->GetName().c_str());
     lua_newtable(L); {
       lua_pushliteral(L, "func");
-      lua_rawgeti(L, LUA_CALLINSINDEX, ci->GetCode());
+      lua_rawgeti(L, LUA_REGISTRYINDEX, ci->GetCICode());
       if (!lua_isfunction(L, -1)) {
         lua_pop(L, 1);
         lua_pushboolean(L, false);
@@ -275,9 +291,9 @@ bool CallIns::PushEntries(lua_State* L)
 
 bool CallIns::CleanUp(lua_State* /*L*/)
 {
-  const map<int, CallIn*>& codeMap = CallIn::GetCodeMap();
+  const map<int, CallIn*>& bzCodeMap = CallIn::GetBzCodeMap();
   map<int, CallIn*>::const_iterator it;
-  for (it = codeMap.begin(); it != codeMap.end(); ++it) {
+  for (it = bzCodeMap.begin(); it != bzCodeMap.end(); ++it) {
     CallIn* ci = it->second;
     ci->Unregister();
   }

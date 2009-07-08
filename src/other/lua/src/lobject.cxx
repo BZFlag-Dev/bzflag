@@ -107,7 +107,7 @@ static void pushstr (lua_State *L, const char *str) {
 }
 
 
-/* this function handles only `%d', `%i', `%c', `%f', `%p', and `%s' formats */
+/* this function handles only `%d', `%c', %f, %p, and `%s' formats */
 const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
   int n = 1;
   pushstr(L, "");
@@ -130,7 +130,6 @@ const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
         pushstr(L, buff);
         break;
       }
-      case 'i':
       case 'd': {
         setnvalue(L->top, cast_num(va_arg(argp, int)));
         incr_top(L);

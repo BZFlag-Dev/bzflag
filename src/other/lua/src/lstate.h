@@ -24,9 +24,6 @@ struct lua_longjmp;  /* defined in ldo.c */
 /* registry */
 #define registry(L)	(&G(L)->l_registry)
 
-/* callins */
-#define callins(L)	(&G(L)->l_callins)
-
 
 /* extra stack space to handle TM calls and some other extras */
 #define EXTRA_STACK   5
@@ -90,7 +87,6 @@ typedef struct global_State {
   int gcstepmul;  /* GC `granularity' */
   lua_CFunction panic;  /* to be called in unprotected errors */
   TValue l_registry;
-  TValue l_callins;
   struct lua_State *mainthread;
   UpVal uvhead;  /* head of double-linked list of all open upvalues */
   struct Table *mt[NUM_TAGS];  /* metatables for basic types */

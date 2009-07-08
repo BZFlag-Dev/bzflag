@@ -184,7 +184,7 @@ static void collectvalidlines (lua_State *L, Closure *f) {
     int i;
     for (i=0; i<f->l.p->sizelineinfo; i++)
       setbvalue(luaH_setnum(L, t, lineinfo[i]), 1);
-    sethvalue(L, L->top, t);
+    sethvalue(L, L->top, t); 
   }
   incr_top(L);
 }
@@ -550,7 +550,8 @@ static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name) {
   if (GET_OPCODE(i) == OP_CALL || GET_OPCODE(i) == OP_TAILCALL ||
       GET_OPCODE(i) == OP_TFORLOOP)
     return getobjname(L, ci, GETARG_A(i), name);
-  return NULL;  /* no useful name can be found */
+  else
+    return NULL;  /* no useful name can be found */
 }
 
 

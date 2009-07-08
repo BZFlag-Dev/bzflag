@@ -59,7 +59,6 @@ static TValue *index2adr (lua_State *L, int idx) {
   }
   else switch (idx) {  /* pseudo-indices */
     case LUA_REGISTRYINDEX: return registry(L);
-    case LUA_CALLINSINDEX:  return callins(L);
     case LUA_ENVIRONINDEX: {
       Closure *func = curr_func(L);
       sethvalue(L, &L->env, func->c.env);
@@ -212,7 +211,7 @@ LUA_API void lua_replace (lua_State *L, int idx) {
   api_checkvalidindex(L, o);
   if (idx == LUA_ENVIRONINDEX) {
     Closure *func = curr_func(L);
-    api_check(L, ttistable(L->top - 1));
+    api_check(L, ttistable(L->top - 1)); 
     func->c.env = hvalue(L->top - 1);
     luaC_barrier(L, func, L->top - 1);
   }
@@ -359,27 +358,6 @@ LUA_API const char *lua_tolstring (lua_State *L, int idx, size_t *len) {
 }
 
 
-LUA_API const char *lua_tohstring (lua_State *L,
-                                   int idx, size_t *len, lua_Hash *hash) {
-  StkId o = index2adr(L, idx);
-  if (!ttisstring(o)) {
-    lua_lock(L);  /* `luaV_tostring' may create a new string */
-    if (!luaV_tostring(L, o)) {  /* conversion failed? */
-      if (len  != NULL) *len = 0;
-      if (hash != NULL) *hash = 0;
-      lua_unlock(L);
-      return NULL;
-    }
-    luaC_checkGC(L);
-    o = index2adr(L, idx);  /* previous call may reallocate the stack */
-    lua_unlock(L);
-  }
-  if (len  != NULL) *len  = tsvalue(o)->len;
-  if (hash != NULL) *hash = tsvalue(o)->hash;
-  return svalue(o);
-}
-
-
 LUA_API size_t lua_objlen (lua_State *L, int idx) {
   StkId o = index2adr(L, idx);
   switch (ttype(o)) {
@@ -468,16 +446,6 @@ LUA_API void lua_pushlstring (lua_State *L, const char *s, size_t len) {
   lua_lock(L);
   luaC_checkGC(L);
   setsvalue2s(L, L->top, luaS_newlstr(L, s, len));
-  api_incr_top(L);
-  lua_unlock(L);
-}
-
-
-LUA_API void lua_pushhstring (lua_State *L,
-                              lua_Hash h, const char *s, size_t len) {
-  lua_lock(L);
-  luaC_checkGC(L);
-  setsvalue2s(L, L->top, luaS_newhstr(L, h, s, len));
   api_incr_top(L);
   lua_unlock(L);
 }
@@ -803,7 +771,7 @@ LUA_API int lua_setfenv (lua_State *L, int idx) {
 
 #define checkresults(L,na,nr) \
      api_check(L, (nr) == LUA_MULTRET || (L->ci->top - L->top >= (nr) - (na)))
-
+	
 
 LUA_API void lua_call (lua_State *L, int nargs, int nresults) {
   StkId func;
@@ -1115,25 +1083,5 @@ LUA_API const char *lua_setupvalue (lua_State *L, int funcindex, int n) {
   }
   lua_unlock(L);
   return name;
-}
-
-
-LUA_API int lua_setuserdataextra (lua_State* L, int idx, void* extra) {
-  StkId o = index2adr(L, idx);
-  if (ttype(o) != LUA_TUSERDATA) {
-    return 0;
-  }
-  uvalue(o)->extra = extra;
-  return 1;
-}
-
-
-LUA_API void* lua_getuserdataextra (lua_State* L, int idx) {
-  StkId o = index2adr(L, idx);
-  if (ttype(o) != LUA_TUSERDATA) {
-    return NULL;
-  } else {
-    return uvalue(o)->extra;
-  }
 }
 
