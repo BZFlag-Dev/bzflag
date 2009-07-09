@@ -18,7 +18,7 @@ AC_ARG_WITH(openldap-prefix,
 		OPENLDAP_LIBS="-lldap"
 	])
 
-
+openldap_all_ok="no"
 
 ac_save_CPPFLAGS="$CPPFLAGS"
 ac_save_LIBS="$LIBS"
@@ -26,20 +26,40 @@ CPPFLAGS="$CPPFLAGS $OPENLDAP_CFLAGS"
 LIBS="$OPENLDAP_LIBS $LIBS"
 
 dnl
-dnl Check for OpenLDAP version compatility
-AC_CACHE_CHECK([OpenLDAP api], [cmu_cv_openldap_api],[
-    AC_EGREP_CPP(__openldap_api,[
+dnl Check for OpenLDAP header, library and basic functionality
+AC_CACHE_CHECK([OpenLDAP header and library], [cmu_cv_openldap_hl], [
+	AC_RUN_IFELSE([
+		AC_LANG_SOURCE([[
 #include <ldap.h>
 
-#ifdef LDAP_API_FEATURE_X_OPENLDAP
-char *__openldap_api = LDAP_API_FEATURE_X_OPENLDAP;
-#endif
-],      [cmu_cv_openldap_api=yes], [cmu_cv_openldap_api=no])])
+int main() {
+	LDAP *ld;
+	return ldap_initialize(&ld, "ldap://127.0.0.1");
+}
+		]])],
+		[cmu_cv_openldap_hl="yes"],
+		[cmu_cv_openldap_hl="no"],
+		[echo $ECHO_N "cross compiling; assuming OK... $ECHO_C"]
+	)
+])
 
-dnl
-dnl Check for OpenLDAP version compatility
-AC_CACHE_CHECK([OpenLDAP version], [cmu_cv_openldap_compat],[
-    AC_EGREP_CPP(__openldap_compat,[
+if test "$cmu_cv_openldap_hl" = "yes"; then
+	dnl
+	dnl Check for OpenLDAP version compatility
+	AC_CACHE_CHECK([OpenLDAP api], [cmu_cv_openldap_api],[
+	    AC_COMPILE_IFELSE([ AC_LANG_SOURCE([[
+#include <ldap.h>
+
+#ifndef LDAP_API_FEATURE_X_OPENLDAP
+#error not openldap
+#endif
+	]])],  [cmu_cv_openldap_api=yes], [cmu_cv_openldap_api=no])])
+
+	if test "$cmu_cv_openldap_api" = "yes"; then
+		dnl
+		dnl Check for OpenLDAP version compatility
+		AC_CACHE_CHECK([OpenLDAP version], [cmu_cv_openldap_compat],[
+		    AC_COMPILE_IFELSE([ AC_LANG_SOURCE([[
 #include <ldap.h>
 
 /* Require 2.3.39+ */
@@ -47,33 +67,22 @@ AC_CACHE_CHECK([OpenLDAP version], [cmu_cv_openldap_compat],[
 char *__openldap_compat = "2.3.39 or better okay";
 #elif LDAP_VENDOR_VERSION_MAJOR == 2  && LDAP_VENDOR_VERSION_MINOR >= 4
 char *__openldap_compat = "2.4.0 or better okay";
+#else
+#error version mismatch
 #endif
-],      [cmu_cv_openldap_compat=yes], [cmu_cv_openldap_compat=no])])
+		]])],  [cmu_cv_openldap_compat=yes], [cmu_cv_openldap_compat=no])])
 
-dnl make sure it links too if the initial tests succeeded
-if test "$cmu_cv_openldap_api" = "yes"; then
-	if test "$cmu_cv_openldap_compat" = "yes"; then
-		AC_RUN_IFELSE([
-			AC_LANG_SOURCE([[
-#include <ldap.h>
-
-int main() {
-	LDAP *ld;
-	return ldap_initialize(&ld, "ldap://127.0.0.1");
-}
-				]])
-			],
-			[openldap_all_ok="yes"],
-			[],
-			[echo $ECHO_N "cross compiling; assuming OK... $ECHO_C"]
-		)
+		if test "$cmu_cv_openldap_compat" = "yes"; then
+			openldap_all_ok="yes"
+		fi
 	fi
+		
 fi
 
 CPPFLAGS="$ac_save_CPPFLAGS"
 LIBS="$ac_save_LIBS"
 
-dnl if something failed, reset the flags
+dnl if something went wrong, reset the flags
 if test "$openldap_all_ok" != "yes"; then
 	OPENLDAP_LIBS=""
 	OPENLDAP_CFLAGS=""
