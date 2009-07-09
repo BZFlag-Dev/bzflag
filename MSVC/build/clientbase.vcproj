@@ -83,7 +83,7 @@
 			OutputDirectory="./clientbase_release/"
 			IntermediateDirectory="./clientbase_release/"
 			ConfigurationType="4"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
