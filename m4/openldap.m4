@@ -10,8 +10,8 @@ AC_ARG_WITH(openldap-prefix,
             AC_HELP_STRING([--with-openldap-prefix=PFX],
                            [prefix where OPENLDAP is installed (optional)]),
 	[
-		OPENLDAP_CFLAGS="-I$withval_prefix/include"
-		OPENLDAP_LIBS="-L$withval_prefix/lib -lldap"
+		OPENLDAP_CFLAGS="-I$withval/include"
+		OPENLDAP_LIBS="-L$withval/lib -lldap"
 	],
 	[
 		OEPNLDAP_CFLAGS=""
@@ -59,17 +59,28 @@ if test "$cmu_cv_openldap_hl" = "yes"; then
 		dnl
 		dnl Check for OpenLDAP version compatility
 		AC_CACHE_CHECK([OpenLDAP version], [cmu_cv_openldap_compat],[
-		    AC_COMPILE_IFELSE([ AC_LANG_SOURCE([[
+		    AC_RUN_IFELSE([ AC_LANG_SOURCE([[
 #include <ldap.h>
+#include <stdio.h>
 
-/* Require 2.3.39+ */
-#if LDAP_VENDOR_VERSION_MAJOR == 2  && LDAP_VENDOR_VERSION_MINOR == 3 && LDAP_VENDOR_VERSION_PATCH >= 39
-char *__openldap_compat = "2.3.39 or better okay";
-#elif LDAP_VENDOR_VERSION_MAJOR == 2  && LDAP_VENDOR_VERSION_MINOR >= 4
-char *__openldap_compat = "2.4.0 or better okay";
-#else
-#error version mismatch
-#endif
+// the defines are not required to be integer type (e.g patch = 40-beta)
+// so scan integers from them
+
+#define Q(x) #x
+#define GET(x, y) int x; sscanf(Q(y), "%d", &x);
+
+int main()
+{
+        GET(major, LDAP_VENDOR_VERSION_MAJOR);
+        GET(minor, LDAP_VENDOR_VERSION_MINOR);
+        GET(patch, LDAP_VENDOR_VERSION_PATCH);
+
+        if((major == 2 && minor == 3 && patch >= 39) ||
+           (major == 2 && minor >= 4))
+                return 0;
+        else
+		return 1;
+}
 		]])],  [cmu_cv_openldap_compat=yes], [cmu_cv_openldap_compat=no])])
 
 		if test "$cmu_cv_openldap_compat" = "yes"; then
