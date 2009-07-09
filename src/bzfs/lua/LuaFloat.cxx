@@ -13,7 +13,7 @@
 #include "common.h"
 
 // interface header
-#include "Float.h"
+#include "LuaFloat.h"
 
 // system headers
 #include <math.h>
@@ -254,24 +254,24 @@ int LuaFloat::IsFloat(lua_State* L)
 
 int LuaFloat::CreateFloat(lua_State* L)
 {
-  float value = 0.0f;
+  float _value = 0.0f;
   if (lua_israwnumber(L, 1)) {
-    value = lua_tofloat(L, 1);
+    _value = lua_tofloat(L, 1);
   }
   else if (lua_israwstring(L, 1)) {
     const char* start = lua_tostring(L, 1);
     char* end;
-    value = strtod(start, &end);
+    _value = (float)strtod(start, &end);
     if (start == end) {
       luaL_argerror(L, 1, "invalid numeric string");
     }
   }
   else {
-    value = CheckFloat(L, 1);
+    _value = CheckFloat(L, 1);
   }
 
   float* floatPtr = (float*)lua_newuserdata(L, sizeof(float));
-  *floatPtr = value;
+  *floatPtr = _value;
 
   luaL_getmetatable(L, metaName);
   lua_setmetatable(L, -2);

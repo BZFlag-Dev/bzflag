@@ -42,7 +42,7 @@ using std::vector;
 #include "CallOuts.h"
 #include "Constants.h"
 #include "FetchURL.h"
-#include "Float.h"
+#include "LuaFloat.h"
 #include "MapObject.h"
 #include "Obstacles.h"
 #include "RawLink.h"
