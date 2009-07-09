@@ -32,7 +32,7 @@
 
 
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
-  ShotStrategy(_path),
+  PointShotStrategy(_path),
   renderTimes(0),
   needUpdate(true)
 {
@@ -217,6 +217,9 @@ void GuidedMissileStrategy::update(float dt)
   ShotPathSegment nextSegment(prevTime, segmentEndTime, ray);
   segments.insert(segments.begin(), nextSegment);
   segments.pop_back();
+
+  //update the bbox for the current segment, that's all we really care about for this test
+  bbox = nextSegment.bbox;
 
   // update shot
   setPosition(nextPos);
@@ -406,82 +409,14 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 
 float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position) const
 {
-  float minTime = Infinity;
-  if (getPath().isExpired()) {
-    return minTime;
-  }
-
   // GM is not active until activation time passes (for any tank)
   static BZDB_float activationTime(BZDBNAMES.GMACTIVATIONTIME);
-
-  if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime)
-    return minTime;
-
-  // get tank radius
-  const float radius2 = tank.radius * tank.radius;
-
   static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
 
-  // tank is positioned from it's bottom so shift position up by
-  // half a tank height.
-  const float tankHeight = tank.size[2];
+  if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime)
+    return Infinity;
 
-  fvec3 lastTankPositionRaw = tank.motion.getOrigin();
-  lastTankPositionRaw.z += (0.5f * tankHeight);
-
-  Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
-
-  // check each segment
-  const size_t numSegments = segments.size();
-  size_t i = 0;
-  // only test most recent segment if shot is from my tank
-  if ((numSegments > 1) && tank.testLastSegment) {
-    i = numSegments - 1;
-  }
-  for (; i < numSegments; i++) {
-    const Ray& ray = segments[i].ray;
-
-    // construct relative shot ray:  origin and velocity relative to
-    // my tank as a function of time (t=0 is start of the interval).
-    Ray relativeRay(Intersect::rayMinusRay(ray, 0.0, tankLastMotion, 0.0));
-
-    // get closest approach time
-    float t;
-    if (tank.test2D) {
-      // find closest approach to narrow box around tank.  width of box
-      // is shell radius so you can actually hit narrow tank head on.
-      static const fvec3 tankBase(0.0f, 0.0f, -0.5f * tankHeight);
-      t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
-                                      0.5f * tank.length, shotRadius, tankHeight);
-    } else {
-      // find time when shot hits sphere around tank
-      t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
-    }
-
-    if (t > minTime) {
-      continue;
-    }
-
-    // if not in shot segment times then no hit
-    if ((t < 0.0f) || (t > (segments[i].end - segments[i].start))) {
-      continue;
-    }
-
-    // check if shot hits tank -- get position at time t, see if in radius
-    fvec3 closestPos = relativeRay.getPoint(t);
-    if (closestPos.lengthSq() < radius2) {
-      // save best time so far
-      minTime = t;
-
-      // compute location of tank at time of hit
-      fvec3 tankPos = tank.motion.getPoint(t);
-
-      // compute position of intersection
-      position = tankPos + closestPos;
-    }
-  }
-
-  return minTime;
+  return checkShotHit(tank,position,shotRadius);
 }
 
 

@@ -14,7 +14,7 @@
 #define __SEGMENTEDSHOTSTRATEGY_H__
 
 /* interface header */
-#include "ShotStrategy.h"
+#include "PointShotStrategy.h"
 
 /* system interface headers */
 #include <vector>
@@ -34,7 +34,7 @@
 class Obstacle;
 
 
-class SegmentedShotStrategy : public ShotStrategy {
+class SegmentedShotStrategy : public PointShotStrategy {
   public:
 			SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
 			~SegmentedShotStrategy();
@@ -62,13 +62,7 @@ class SegmentedShotStrategy : public ShotStrategy {
     void setCurrentSegment(int segment);
 
   private:
-    double prevTime;
-    double currentTime;
-    double lastTime;
-    int    segment, lastSegment;
-    std::vector<ShotPathSegment>	segments;
     BoltSceneNode*	boltSceneNode;
-    Extents bbox;
     int    firstSegment;
     const Obstacle* endObstacle;
 };

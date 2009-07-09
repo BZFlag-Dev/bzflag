@@ -1710,7 +1710,7 @@ void handlePause(void *msg)
   Player *player = lookupPlayer(id);
   if (player) {
     const bool oldState = player->isPaused();
-    if (state != oldState) {
+    if ((state!= 0) != oldState) {
       addMessage(player, state ? "Paused" : "Resumed");
     }
     player->setPause(paused);

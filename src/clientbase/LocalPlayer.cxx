@@ -1724,6 +1724,16 @@ bool LocalPlayer::checkHit(const Player* source,
     // test myself against shot
     fvec3 position;
 
+	static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
+
+	const fvec3 &proxySize = shotProxy.getData();
+	Extents shotBox(bbox);
+	shotBox.mins.x -= proxySize.x;
+	shotBox.maxs.x += proxySize.x;
+	shotBox.mins.y -= proxySize.y;
+	shotBox.maxs.y += proxySize.y;
+	shotBox.maxs.z += proxySize.z;
+
     ShotCollider collider;
     collider.position = getPosition();
     collider.angle    = getAngle();
@@ -1732,7 +1742,7 @@ bool LocalPlayer::checkHit(const Player* source,
     collider.radius   = this->getRadius();
     collider.size     = getDimensions();
     collider.test2D   = (this->getFlag() == Flags::Narrow);
-    collider.bbox     = bbox;
+    collider.bbox     = shotBox;
     collider.testLastSegment = (getId() == shot->getPlayer());
 
     const float t = shot->checkHit(collider, position);

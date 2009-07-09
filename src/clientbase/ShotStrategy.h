@@ -92,7 +92,6 @@ class ShotStrategy {
     void		setExpiring() const;
     void		setExpired() const;
 
-
   private:
     ShotPath* path;
 };

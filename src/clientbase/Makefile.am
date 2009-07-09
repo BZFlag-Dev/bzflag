@@ -30,6 +30,8 @@ libClientBase_la_SOURCES =		\
 	LocalPlayer.h			\
 	Player.cxx			\
 	Player.h			\
+	PointShotStrategy.cxx		\
+	PointShotStrategy.h		\
 	Region.cxx			\
 	Region.h			\
 	RegionPriorityQueue.cxx		\

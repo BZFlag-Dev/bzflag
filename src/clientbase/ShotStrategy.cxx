@@ -200,7 +200,6 @@ bool ShotStrategy::getGround(const Ray& r, float min, float &t)
   return false;
 }
 
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

@@ -14,7 +14,7 @@
 #define __GUIDEDMISSLESTRATEGY_H__
 
 /* interface header */
-#include "ShotStrategy.h"
+#include "PointShotStrategy.h"
 
 /* system interface headers */
 #include <vector>
@@ -29,7 +29,7 @@
 #include "ShotPathSegment.h"
 
 
-class GuidedMissileStrategy : public ShotStrategy {
+class GuidedMissileStrategy : public PointShotStrategy {
   public:
 			GuidedMissileStrategy(ShotPath*);
 			~GuidedMissileStrategy();
@@ -54,8 +54,6 @@ class GuidedMissileStrategy : public ShotStrategy {
 
     std::vector<ShotPathSegment> segments;
 
-    double prevTime;
-    double currentTime;
     double lastPuff;
 
     float speed;

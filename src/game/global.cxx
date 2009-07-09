@@ -169,6 +169,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_tankHeight",		"2.05",				false, StateDatabase::Locked },
   { "_tankLength",		"6.0",				false, StateDatabase::Locked },
   { "_tankRadius",		"0.72 * _tankLength",		false, StateDatabase::Locked },
+  { "_tankShotProximity",		"0.25 0.35 0.25",				false, StateDatabase::Locked },
   { "_tankSpeed",		"25.0",				false, StateDatabase::Locked },
   { "_tankWidth",		"2.8",				false, StateDatabase::Locked },
   { "_targetingAngle",		"0.3",				false, StateDatabase::Locked },
