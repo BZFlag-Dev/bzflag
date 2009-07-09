@@ -61,11 +61,11 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   // initialize segments
   currentTime = getPath().getStartTime();
   Ray ray = Ray(f.shot.pos, vel);
-  ShotPathSegment segment(currentTime, currentTime, ray);
-  segments.push_back(segment);
-  segments.push_back(segment);
-  segments.push_back(segment);
-  segments.push_back(segment);
+  ShotPathSegment seg(currentTime, currentTime, ray);
+  segments.push_back(seg);
+  segments.push_back(seg);
+  segments.push_back(seg);
+  segments.push_back(seg);
 
   // set next position to starting position
   nextPos = f.shot.pos;
