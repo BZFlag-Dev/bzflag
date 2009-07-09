@@ -42,7 +42,9 @@ using std::vector;
 #include "CallOuts.h"
 #include "Constants.h"
 #include "FetchURL.h"
+#include "Float.h"
 #include "MapObject.h"
+#include "Obstacles.h"
 #include "RawLink.h"
 #include "SlashCmd.h"
 
@@ -293,6 +295,10 @@ static bool CreateLuaState(const string& script)
 
   CallIns::PushEntries(L);
 
+  lua_pushvalue(L, LUA_GLOBALSINDEX);
+  LuaFloat::PushEntries(L);         
+  lua_pop(L, 1); 
+      
   lua_pushliteral(L, "bz");
   lua_newtable(L); {
     CallOuts::PushEntries(L);
@@ -300,6 +306,7 @@ static bool CreateLuaState(const string& script)
     SlashCmd::PushEntries(L);
     FetchURL::PushEntries(L);
     RawLink::PushEntries(L);
+    LuaObstacle::PushEntries(L);
   }
   lua_rawset(L, LUA_GLOBALSINDEX);
 

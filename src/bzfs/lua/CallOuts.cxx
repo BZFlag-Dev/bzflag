@@ -30,6 +30,7 @@ using std::set;
 using std::map;
 
 // common headers
+#include "bzfio.h"
 #include "TextUtils.h"
 #include "PlayerState.h"
 #include "LinkManager.h"
@@ -147,6 +148,7 @@ static int GetPhyDrvName(lua_State* L);
 
 static int DebugMessage(lua_State* L);
 static int GetDebugLevel(lua_State* L);
+static int SetDebugLevel(lua_State* L);
 
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
@@ -349,6 +351,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, DebugMessage);
   PUSH_LUA_CFUNC(L, GetDebugLevel);
+  PUSH_LUA_CFUNC(L, SetDebugLevel);
 
   PUSH_LUA_CFUNC(L, SendMessage);
   PUSH_LUA_CFUNC(L, SendTeamMessage);
@@ -389,7 +392,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetPlayerGlobalUser);
   PUSH_LUA_CFUNC(L, GetPlayerFlagHistory);
   PUSH_LUA_CFUNC(L, GetPlayerRank);
-
 
   PUSH_LUA_CFUNC(L, GetPlayerLag);
   PUSH_LUA_CFUNC(L, GetPlayerJitter);
@@ -801,6 +803,13 @@ static int GetDebugLevel(lua_State* L)
 {
   lua_pushinteger(L, bz_getDebugLevel());
   return 1;
+}
+
+
+static int SetDebugLevel(lua_State* L)
+{
+  debugLevel = luaL_checkint(L, 1);
+  return 0;
 }
 
 

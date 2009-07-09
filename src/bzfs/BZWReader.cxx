@@ -570,11 +570,16 @@ WorldInfo* BZWReader::defineWorldFromFile()
     myWorld->setMapInfo(mapInfoLines);
   }
 
+  unsigned int i;
+
+  // add objects
+  const unsigned int n = list.size();
+  for (i = 0; i < n; ++i) {
+    list[i]->writeToWorld(myWorld);
+  }
+
   // generate group instances
   OBSTACLEMGR.makeWorld();
-
-  // make local bases
-  unsigned int i;
 
   // BaseBuilding bases
   const ObstacleList& baseList = OBSTACLEMGR.getBases();
@@ -586,6 +591,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
     }
     bases[color].addBase(base);
   }
+
   // MeshFace bases
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (i = 0; i < meshes.size(); i++) {
@@ -604,12 +610,6 @@ WorldInfo* BZWReader::defineWorldFromFile()
         bases[color].addBase(face);
       }
     }
-  }
-
-  // add objects
-  const unsigned int n = list.size();
-  for (i = 0; i < n; ++i) {
-    list[i]->writeToWorld(myWorld);
   }
 
   // clean up

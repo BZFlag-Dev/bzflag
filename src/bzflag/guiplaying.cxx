@@ -4192,8 +4192,8 @@ static void setupRoamingCamera(float muzzleHeight,
       if (!trackPlayerShot(target, eyePoint, targetPoint)) {
         targetPoint = target->getPosition();
         eyePoint    = target->getPosition();
-        eyePoint.x -= targetTankDir.x * 20.0f;
-        eyePoint.y -= targetTankDir.y * 30.0f;
+        eyePoint.x -= targetTankDir.x * 40.0f;
+        eyePoint.y -= targetTankDir.y * 40.0f;
         eyePoint.z += muzzleHeight * 6.0f;
       }
     }
@@ -4788,8 +4788,9 @@ static void prepareTheHUD()
 
 static void updatePauseCountdown(float dt)
 {
-  if (!myTank)
+  if (!myTank) {
     pauseCountdown = 0.0f;
+  }
 
   if (pauseCountdown > 0.0f && !myTank->isAlive()) {
     pauseCountdown = 0.0f;

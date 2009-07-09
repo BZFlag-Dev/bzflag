@@ -151,12 +151,12 @@ static const char AutoJoinContent[] = // FIXME
   "#\n"
   "\n"
   "#\n"
-  "# To authorize all servers, remove the last 3 lines.\n"
+  "# Example lines  (the default is to authorize all auto-joins)\n"
   "#\n"
   "\n"
-  "allow *.bzflag.bz\n"
-  "allow *.bzflag.org\n"
-  "deny *\n";
+  "#allow *.bzflag.bz\n"
+  "#allow *.bzflag.org\n"
+  "#deny *\n";
 static AccessList autoJoinAccessList("AutoJoinAccess.txt", AutoJoinContent);
 
 

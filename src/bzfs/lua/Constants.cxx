@@ -21,6 +21,7 @@
 
 // common headers
 #include "bzfsAPI.h"
+#include "Obstacle.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -140,15 +141,16 @@ static bool PushObstacles(lua_State* L)
   lua_pushliteral(L, "OBSTACLE");
   lua_newtable(L);
 
-  PushDualPair(L, "WALL",    eWallObject);
-  PushDualPair(L, "BOX",     eBoxObject);
-  PushDualPair(L, "BASE",    eBaseObject);
-  PushDualPair(L, "PYRAMID", ePyramidObject);
-  PushDualPair(L, "MESH",    eMeshObject);
-  PushDualPair(L, "ARC",     eArcObject);
-  PushDualPair(L, "CONE",    eConeObject);
-  PushDualPair(L, "SPHERE",  eSphereObject);
-  PushDualPair(L, "UNKNOWN", eUnknownObject);
+  PushDualPair(L, "WALL",    wallType);
+  PushDualPair(L, "BOX",     boxType);
+  PushDualPair(L, "PYRAMID", pyrType);
+  PushDualPair(L, "BASE",    baseType);
+  PushDualPair(L, "TELE",    teleType);
+  PushDualPair(L, "MESH",    meshType);
+  PushDualPair(L, "ARC",     arcType);
+  PushDualPair(L, "CONE",    coneType);
+  PushDualPair(L, "SPHERE",  sphereType);
+  PushDualPair(L, "FACE",    faceType);
 
   lua_rawset(L, -3);
 

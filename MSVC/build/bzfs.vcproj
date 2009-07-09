@@ -1287,6 +1287,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\lua\Float.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\Float.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\lua\LuaHeader.h"
 				>
 			</File>
@@ -1304,6 +1312,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\lua\MapObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\Obstacles.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\Obstacles.h"
 				>
 			</File>
 			<File

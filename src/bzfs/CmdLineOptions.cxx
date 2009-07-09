@@ -992,7 +992,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       checkFromWorldFile(token, fromWorldFile);
       handlePings = false;
     }
-    else if (token == "+r") {
+    else if ((token == "+r") || (token == "-r")) {
       // all shots ricochet style
       gameOptions |= int(RicochetGameStyle);
     }
