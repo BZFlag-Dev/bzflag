@@ -44,6 +44,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
 : PointShotStrategy(_path)
 , endObstacle(NULL)
 {
+	doBoxTest = true;
+
   // initialize times
   prevTime = getPath().getStartTime();
   lastTime = currentTime = prevTime;

@@ -42,6 +42,8 @@ class PointShotStrategy : public ShotStrategy {
 	std::vector<ShotPathSegment>	segments;
 
     Extents bbox;
+
+	bool doBoxTest;
 };
 
 

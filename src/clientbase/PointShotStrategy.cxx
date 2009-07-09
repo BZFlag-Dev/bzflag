@@ -28,6 +28,7 @@
 PointShotStrategy::PointShotStrategy(ShotPath* _path)
 : ShotStrategy(_path)
 {
+	doBoxTest = false;
 }
 
 
@@ -54,13 +55,16 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
   fvec3 lastTankPositionRaw = tank.motion.getOrigin();
   lastTankPositionRaw.z += 0.5f * tankHeight;
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
+  
+  const Extents& tankBBox = tank.bbox;
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
-
-  // should this be a box that is actually enclosing the entire hit volume?
-  const Extents& tankBBox = tank.bbox;
-  if (!bbox.touches(tankBBox))
-    return minTime;
+  // we only do this for shots that keep the bbox updated
+  if (doBoxTest)
+  {
+	  if (!bbox.touches(tankBBox))
+		  return minTime;
+  }
 
   float shotRadius = radius;
 
