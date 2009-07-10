@@ -58,20 +58,6 @@ bool NetHandler::pendingUDP = false;
 TimeKeeper NetHandler::now = TimeKeeper::getCurrent();
 std::list<NetHandler*> NetHandler::netConnections;
 
-void setNoDelay(int fd)
-{
-  // turn off TCP delay (collection).  we want packets sent immediately.
-#if defined(_WIN32)
-  BOOL on = TRUE;
-#else
-  int on = 1;
-#endif
-  struct protoent *p = getprotobyname("tcp");
-  if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0) {
-    nerror("enabling TCP_NODELAY");
-  }
-}
-
 bool NetHandler::initHandlers(struct sockaddr_in addr)
 {
   // udp socket

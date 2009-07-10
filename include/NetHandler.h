@@ -58,8 +58,6 @@ public:
 void addNetworkLogCallback(NetworkDataLogCallback * cb );
 void removeNetworkLogCallback(NetworkDataLogCallback * cb );
 
-void setNoDelay(int fd);
-
 /** This class is a client that connects to a BZFlag client and has
     functions for sending and receiving messages.
 */

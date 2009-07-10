@@ -87,10 +87,10 @@ extern "C" {
 
 #define herror(_x)	bzfherror(_x)
 
-  void			nerror(const char* msg);
-  void			bzfherror(const char* msg);
-  int			getErrno();
-
+  void nerror(const char* msg);
+  void bzfherror(const char* msg);
+  int getErrno();
+	void setNoDelay(int fd);
 }
 
 /* BeOS net_server has closesocket(), which _must_ be used in place of close() */
@@ -118,10 +118,11 @@ inline int close(SOCKET s) { return closesocket(s); }
 
 extern "C" {
 
-  int			inet_aton(const char* cp, struct in_addr* pin);
-  void			nerror(const char* msg);
-  void			herror(const char* msg);
-  int			getErrno();
+  int inet_aton(const char* cp, struct in_addr* pin);
+  void nerror(const char* msg);
+  void herror(const char* msg);
+  int getErrno();
+	void setNoDelay(int fd);
 
 }
 

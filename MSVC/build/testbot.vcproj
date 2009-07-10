@@ -45,7 +45,7 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories=".\;..\..\include;..\..\src\bzrobots;..\..\src\clientbase;..\..\src\bzflag;..\..\src\other\curl\include;..\..\src\other\glew\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_USE_FAKE_NET"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -269,6 +269,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\MessageUtilities.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\PrintError.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\PrintError.h"
 				>
 			</File>
 			<File

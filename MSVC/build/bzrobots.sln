@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common.vcproj", "{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CC93828F-7156-4021-9C77-9951FDADEE83} = {CC93828F-7156-4021-9C77-9951FDADEE83}
@@ -90,6 +90,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clientbase", "clientbase.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testbot", "testbot.vcproj", "{A6B1EAD6-DC5E-42E7-84C1-9D82DBB59E16}"
 	ProjectSection(ProjectDependencies) = postProject
+		{342E114A-D368-46F5-8FD8-C1D4D712CBBD} = {342E114A-D368-46F5-8FD8-C1D4D712CBBD}
 		{93772A78-3C80-4635-AC84-983B8E0FECF3} = {93772A78-3C80-4635-AC84-983B8E0FECF3}
 	EndProjectSection
 EndProject

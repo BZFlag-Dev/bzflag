@@ -84,14 +84,11 @@ bool RCLinkFrontend::waitForReply(const std::string command)
  */
 bool RCLinkFrontend::update()
 {
-	printf("RCFStatus: %d\n",status);
   if (status != Connected && status != Connecting)
     return false;
 
   updateWrite();
   int amount = updateRead();
-
-	printf("RCFAmount: %d\n",amount);
 
   if (amount == -1) {
     status = Disconnected;
@@ -102,7 +99,6 @@ bool RCLinkFrontend::update()
     updateParse();
   } else if (status == Connecting) {
     int ncommands = updateParse(1);
-		printf("RCFNC: %d\n",ncommands);
     if (ncommands) {
       RCReply *rep = popReply();
       if (rep && rep->getType() == "IdentifyBackend") {

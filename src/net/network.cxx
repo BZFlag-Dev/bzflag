@@ -279,6 +279,20 @@ bool			BzfNetwork::parseURL(const std::string& url,
   return true;
 }
 
+void setNoDelay(int fd)
+{
+  // turn off TCP delay (collection).  we want packets sent immediately.
+#if defined(_WIN32)
+  BOOL on = TRUE;
+#else
+  int on = 1;
+#endif
+  struct protoent *p = getprotobyname("tcp");
+  if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0) {
+    nerror("enabling TCP_NODELAY");
+  }
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
