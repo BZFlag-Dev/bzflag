@@ -18,6 +18,7 @@
 #include <Log.h>
 #include <gcrypt.h>
 #include "base64.h"
+#include <AuthProtocol.h>
 
 INSTANTIATE_SINGLETON(UserStore)
 
@@ -97,17 +98,112 @@ struct LDAPMod1
   char *values[2];
 };
 
-void UserStore::registerUser(UserInfo &info)
+struct LDAPModN
 {
-  std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  LDAPModN(int op, const char *type, char **values)
+  {
+    mod.mod_op = op;
+    mod.mod_type = (char*)type;
+    mod.mod_values = values; 
+  }
 
-  LDAPMod1 attr_oc (LDAP_MOD_ADD, "objectClass", "person");
-  LDAPMod1 attr_cn (LDAP_MOD_ADD, "cn", info.name.c_str());
-  LDAPMod1 attr_sn (LDAP_MOD_ADD, "sn", info.name.c_str());
-  LDAPMod1 attr_pwd(LDAP_MOD_ADD, "userPassword", info.password.c_str());
-  LDAPMod *attrs[5] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, NULL };
+  LDAPMod mod;
+};
 
-  LDAP_VCHECK( ldap_add_ext_s(rootld, dn.c_str(), attrs, NULL, NULL) );
+
+BzRegErrors UserStore::registerUser(UserInfo &info)
+{
+  /* If multiple sources are allowed to register users,
+     the highest uid must be atomically fetch/incremented.
+     First the value stored in cn=NextUID's uid is retrieved then
+     that value is deleted and the incremented value is added in one atomic operation.
+     If the operation fails it is because someone changed the value of next uid
+     between the search and modify operation and the fetch/increment is retried */
+
+  std::string dn = "cn=NextUID," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  char *search_attrs[2] = { "uid", NULL };
+
+  int nextuid = 0;
+  for(int i = 0; i < 4; i++) {
+    LDAPMessage *res = NULL, *msg;
+    if(!ldap_check( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", search_attrs, 0, &res) )) {
+      if(res) ldap_msgfree(ldap_first_message(rootld, res));
+      sLog.outError("cannot find NextUID");
+      continue;
+    }
+
+    for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
+      if(ldap_msgtype(msg) == LDAP_RES_SEARCH_ENTRY) {
+        char **values = ldap_get_values(rootld, msg, "uid");
+        int nrvalues = ldap_count_values(values);
+
+        if(nrvalues != 1) {
+          sLog.outError("invalid number of values for uid of NextUID");
+          ldap_value_free(values);
+          break;
+        }
+        
+        if(strnlen(values[0], 20) >= 20) {
+          sLog.outError("invalid uid value in NextUID, potential buffer overflow");
+          ldap_value_free(values);
+          break;
+        }
+
+        sscanf(values[0], "%d", &nextuid);
+        if(nextuid < 1) {
+          sLog.outError("invalid nextuid found: %d", nextuid);
+          ldap_value_free(values);
+          break;
+        }
+
+        char newvalue[20];
+        sprintf(newvalue, "%d", nextuid + 1);
+
+        LDAPMod1 attr_old(LDAP_MOD_DELETE, "uid", values[0]);
+        LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
+        LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
+        if(!ldap_check( ldap_modify_s(rootld, dn.c_str(), mod_attrs) )) {
+          sLog.outDebug("nextuid modify failed");
+          nextuid = 0;
+        }
+
+        ldap_value_free(values);
+        break;  // don't care about any other messages
+      }
+    }
+    ldap_msgfree(ldap_first_message(rootld, res));
+
+    if(nextuid < 1) {
+      sLog.outDebug("cannot fetch-increment NextUID, retry number %d", i + 1);
+      nextuid = 0;
+    } else
+      break;
+  }
+
+  if(nextuid < 1)
+    return REG_FAIL_GENERIC;
+
+  // insert the user with the next uid
+  dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+
+  char *oc_vals[4] = {"pilotPerson", "uidObject", "shadowAccount", NULL};
+  LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
+  LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
+  LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
+  LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", info.password.c_str());
+  char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid);
+  LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
+  LDAPMod1 attr_mail  (LDAP_MOD_ADD, "rfc822Mailbox", "nobody@nowhere.com");
+  LDAPMod *add_attrs[7] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, NULL };
+
+  int ret = ldap_add_ext_s(rootld, dn.c_str(), add_attrs, NULL, NULL);
+  switch(ret) {
+    case LDAP_SUCCESS:
+      return REG_SUCCESS; 
+    default:
+      sLog.outError("LDAP %d: %s", ret, ldap_err2string(ret));
+      return REG_FAIL_GENERIC;
+  }
 }
 
 bool UserStore::authUser(UserInfo &info)

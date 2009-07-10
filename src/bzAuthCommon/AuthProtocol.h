@@ -56,7 +56,10 @@ enum BzAuthErrors
 
 enum BzRegErrors
 {
-  REG_INVALID_MESSAGE = 0
+  REG_SUCCESS,
+  REG_INVALID_MESSAGE,
+  REG_USER_EXISTS,
+  REG_FAIL_GENERIC
 };
 
 enum BzAuthdPeerType

@@ -31,6 +31,8 @@ struct UserInfo
   std::string password;
 };
 
+enum BzRegErrors;
+
 /** The UserStore abstracts the method used for storing users */
 class UserStore : public Singleton<UserStore>
 {
@@ -39,7 +41,7 @@ public:
   ~UserStore();
   bool initialize();
   
-  void registerUser(UserInfo &info);
+  BzRegErrors registerUser(UserInfo &info);
   bool authUser(UserInfo &info);
   bool isRegistered(std::string callsign);
   void update();

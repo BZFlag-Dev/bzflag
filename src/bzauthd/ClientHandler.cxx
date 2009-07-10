@@ -250,10 +250,15 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
     info.name = std::string ((const char*)message, callsign_len);
     info.password = std::string((const char*)digest, digest_len);
 
-    sUserStore.registerUser(info);
-
-    Packet success(DMSG_REGISTER_SUCCESS, 0);
-    m_socket->sendData(success);
+    BzRegErrors error = sUserStore.registerUser(info);
+    if(error != REG_SUCCESS) {
+      Packet fail(DMSG_REGISTER_FAIL, 4);
+      fail << (uint32_t)error;
+      m_socket->sendData(fail);
+    } else {
+      Packet success(DMSG_REGISTER_SUCCESS, 0);
+      m_socket->sendData(success);
+    }
     
     delete[] digest;
   } else {
