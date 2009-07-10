@@ -44,7 +44,10 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
     return minTime;
 
   static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
-  const fvec3 &proxySize = shotProxy.getData();
+  static fvec3 zeroMargin(0,0,0);
+  fvec3 &proxySize = zeroMargin;
+  if (!isnan(shotProxy.getData().x) && !isnan(shotProxy.getData().y) && !isnan(shotProxy.getData().z))
+	  proxySize = shotProxy.getData();
 
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
