@@ -103,6 +103,9 @@ void DebugDrawing::drawTanks()
   if (!bzdbDrawTanks) {
     return;
   }
+  if (BZDB.isTrue("_forbidDebug")) {
+    return;
+  }
 
   OpenGLGState::resetState();
 
