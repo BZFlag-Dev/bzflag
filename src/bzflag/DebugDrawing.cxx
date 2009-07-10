@@ -23,6 +23,7 @@
 #include "LocalPlayer.h"
 #include "LinkManager.h"
 #include "MeshFace.h"
+#include "Flag.h"
 #include "Roster.h"
 #include "GameTime.h"
 
@@ -38,25 +39,28 @@ static void drawTankHitZone(const Player* tank)
     return;
   }
 
-  const fvec3& pos   = tank->getPosition();
-//  const fvec3& dims  = tank->getDimensions();
+  fvec3 pos          = tank->getPosition();
+  fvec3 dims         = tank->getDimensions();
   const float  angle = tank->getAngle();
   const fvec4& color = tank->getColor();
 
+  static BZDB_fvec3 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
+  const fvec3& sp = shotProxim;
+  if (!isnan(sp.x)) {
+    dims += sp;
+  }
+
+  if (tank->getFlag() == Flags::Narrow) {
+    static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
+    dims.y = shotRadius;
+  }
+
   glColor4f(color.r, color.g, color.b, 0.8f);
 
+  glTranslatef(pos.x, pos.y, pos.z);
+  glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
   glPushMatrix();
 
-  glTranslatef(pos.x, pos.y, pos.z + (0.5f * tank->getDimensions().z));
-  glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
-
-  GLUquadric* quadric = gluNewQuadric();
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  gluSphere(quadric, tank->getRadius(), 16, 8);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  gluDeleteQuadric(quadric);
-
-/*
   const fvec3 corners[8] = {
     fvec3(-dims.x, -dims.y, 0.0f),
     fvec3(+dims.x, -dims.y, 0.0f),
@@ -88,7 +92,6 @@ static void drawTankHitZone(const Player* tank)
     glVertex3fv(corners[2]); glVertex3fv(corners[6]);
     glVertex3fv(corners[3]); glVertex3fv(corners[7]);
   } glEnd();
-*/
 
   glPopMatrix();
 }
