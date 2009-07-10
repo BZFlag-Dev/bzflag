@@ -218,9 +218,6 @@ void GuidedMissileStrategy::update(float dt)
   segments.insert(segments.begin(), nextSegment);
   segments.pop_back();
 
-  //update the bbox for the current segment, that's all we really care about for this test
-  bbox = nextSegment.bbox;
-
   // update shot
   setPosition(nextPos);
   setVelocity(nextVel);

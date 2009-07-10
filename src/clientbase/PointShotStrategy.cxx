@@ -127,19 +127,16 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
     // check if shot hits tank -- get position at time t, see if in radius
     fvec3 closestPos;
     relativeRay.getPoint(t, closestPos);
-    if (closestPos.lengthSq() < radius2)
-	{
-      // save best time so far
-      minTime = t;
+	// save best time so far
+	minTime = t;
 
-      // compute location of tank at time of hit
-      fvec3 tankPos;
-      tank.motion.getPoint(t, tankPos);
+	// compute location of tank at time of hit
+	fvec3 tankPos;
+	tank.motion.getPoint(t, tankPos);
 
-      // compute position of intersection
-      position = tankPos + closestPos + fvec3(0,0,0.5f * tankHeight);
-      //printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
-    }
+	// compute position of intersection
+	position = tankPos + closestPos + fvec3(0,0,0.5f * tankHeight);
+	//printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
   }
 
   return minTime;
