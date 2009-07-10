@@ -28,13 +28,13 @@ class MeshRenderNode : public RenderNode {
   public:
     MeshRenderNode(MeshDrawMgr* drawMgr,
 		   GLuint* xformList, bool normalize,
-		   const fvec4* color, int lod, int set,
-		   const Extents* exts, int triangles);
+		   const fvec4* color, int lod, int set, int triangles);
     void render();
     void renderRadar();
     void renderShadow();
     const fvec3& getPosition() const { return pos; }
     void setPosition(const fvec3& p) { pos = p; }
+    void setExtents(const Extents* extPtr) { exts = extPtr; }
 
   private:
     void drawV() const;

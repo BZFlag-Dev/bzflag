@@ -158,7 +158,59 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
   makeXFormList();
   OpenGLGState::registerContextInitializer(freeContext, initContext, this);
 
-  // build gstates and render nodes
+  animRepos = false;
+
+  // how shall we normalize?
+  bool normalize = false;
+  if (xformTool != NULL) {
+    normalize = xformTool->isSkewed();
+  }
+
+  // setup the render nodes
+  for (int lod = 0; lod < lodCount; lod++) {
+    LodNode& lodNode = lods[lod];
+    for (int set = 0; set < lodNode.count; set++) {
+      SetNode& setNode = lodNode.sets[set];
+      MeshMaterial& mat = setNode.meshMat;
+      const DrawSet& drawSet = drawLods[lod].sets[set];
+
+      // calculate the node's position
+      fvec3 setPos = drawSet.sphere.xyz();
+      if (xformTool != NULL) {
+        xformTool->modifyVertex(setPos);
+      }
+
+      // setup the color pointer
+      updateMaterial(&mat);
+
+      setNode.node =
+        new MeshRenderNode(drawMgr, &xformList, normalize,
+                           mat.colorPtr, lod, set, drawSet.triangleCount);
+      setNode.node->setPosition(setPos);
+
+      setNode.radarNode =
+	new MeshRenderNode(drawMgr, &xformList, normalize,
+			   mat.colorPtr, lod, set, drawSet.triangleCount);
+      setNode.radarNode->setPosition(setPos);
+
+
+      if (!mat.needsSorting) {
+	mat.animRepos = false;
+      }
+      else {
+	if ((drawInfo->getAnimationInfo() != NULL) &&
+	    (fabsf(drawSet.sphere.x) > 0.001f) &&
+	    (fabsf(drawSet.sphere.y) > 0.001f)) {
+	  animRepos = true;
+	  mat.animRepos = true;
+	} else {
+	  mat.animRepos = false;
+	}
+      }
+    }
+  }
+
+  // build gstates
   notifyStyleChange();
 
   return;
@@ -331,71 +383,25 @@ void MeshSceneNode::notifyStyleChange()
 {
   const DrawLod* drawLods = drawInfo->getDrawLods();
 
-  animRepos = false;
-
-  // FIXME -- render nodes should be created in the constructor
-  //          (for EightDim node viewing)
-
   for (int lod = 0; lod < lodCount; lod++) {
     LodNode& lodNode = lods[lod];
     for (int set = 0; set < lodNode.count; set++) {
       SetNode& setNode = lodNode.sets[set];
       MeshMaterial& mat = setNode.meshMat;
-      const DrawSet& drawSet = drawLods[lod].sets[set];
-
-      delete setNode.node;
-      delete setNode.radarNode;
 
       updateMaterial(&mat);
 
-      // how shall we normalize?
-      bool normalize = false;
-      const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
-      if (xformTool != NULL) {
-	normalize = xformTool->isSkewed();
-      }
-
       // enough elements to warrant disabling lights?
+      const DrawSet& drawSet = drawLods[lod].sets[set];
       const Extents* extPtr = &extents;
       if ((drawSet.triangleCount < 100) ||
 	  !BZDBCache::lighting || mat.bzmat->getNoLighting()) {
 	extPtr = NULL;
       }
-
-      if (!mat.needsSorting) {
-	setNode.node =
-	  new MeshRenderNode(drawMgr, &xformList, normalize,
-			     mat.colorPtr, lod, set, extPtr,
-			     drawSet.triangleCount);
-	mat.animRepos = false;
-      } else {
-	fvec3 setPos;
-	memcpy(setPos, drawSet.sphere, sizeof(fvec3));
-	if (xformTool != NULL) {
-	  xformTool->modifyVertex(setPos);
-	}
-	setNode.node =
-	  new MeshRenderNode(drawMgr, &xformList, normalize,
-			     mat.colorPtr, lod, set, extPtr,
-			     drawSet.triangleCount);
-        setNode.node->setPosition(setPos);
-	if ((fabsf(drawSet.sphere.x) > 0.001f) &&
-	    (fabsf(drawSet.sphere.y) > 0.001f) &&
-	    (mat.color.a != 0.0f) &&
-	    (drawInfo->getAnimationInfo() != NULL)) {
-	  animRepos = true;
-	  mat.animRepos = true;
-	} else {
-	  mat.animRepos = false;
-	}
-      }
-
-      setNode.radarNode =
-	new MeshRenderNode(drawMgr, &xformList, normalize,
-			   mat.colorPtr, lod, set, extPtr,
-			   drawSet.triangleCount);
+      setNode.node->setExtents(extPtr);
     }
   }
+
   return;
 }
 

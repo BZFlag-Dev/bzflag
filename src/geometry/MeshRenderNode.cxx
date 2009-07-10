@@ -36,8 +36,7 @@
 MeshRenderNode::MeshRenderNode(MeshDrawMgr* _drawMgr,
 			       GLuint* _xformList, bool _normalize,
 			       const fvec4* _color,
-			       int _lod, int _set,
-			       const Extents* _exts, int tris)
+			       int _lod, int _set, int tris)
 {
   drawMgr = _drawMgr;
   xformList = _xformList;
@@ -45,8 +44,8 @@ MeshRenderNode::MeshRenderNode(MeshDrawMgr* _drawMgr,
   lod = _lod;
   set = _set;
   color = _color;
-  exts = _exts;
   triangles = tris;
+  exts = NULL;
 }
 
 
