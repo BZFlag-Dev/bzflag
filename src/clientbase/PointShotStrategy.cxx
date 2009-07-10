@@ -43,17 +43,10 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
   if (getPath().isExpired()) 
     return minTime;
 
-  static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
-  static fvec3 zeroMargin(0,0,0);
-  fvec3 &proxySize = zeroMargin;
-  if (!isnan(shotProxy.getData().x) && !isnan(shotProxy.getData().y) && !isnan(shotProxy.getData().z))
-	  proxySize = shotProxy.getData();
-
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
-  const float tankHeight = tank.size.z;
   fvec3 lastTankPositionRaw = tank.motion.getOrigin();
-  lastTankPositionRaw.z += 0.5f * tankHeight;
+  lastTankPositionRaw.z += 0.5f * tank.size.z;
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
   
   const Extents& tankBBox = tank.bbox;
@@ -94,30 +87,13 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
     Ray relativeRay(Intersect::rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
+	
+	static fvec3 tankBase(0.0f, 0.0f, -0.5f * tank.size.z);
 
     // get hit time
-    float t;
-	if (tank.test2D) // for now just test as a box, the box -> sphere test does not use the same volume and may cause more problems then it tries to solve by being fast
-	{
-      // find closest approach to narrow box around tank.  width of box
-      // is shell radius so you can actually hit narrow tank head on.
-      static fvec3 tankBase(0.0f, 0.0f, -0.5f * tankHeight);
-      t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
-			(0.5f * tank.length) + proxySize.x, shotRadius, tankHeight + proxySize.z);
-    }
-	else// find time when shot hits sphere around tank
-	{
-		// old sphere code, has problems when the hit is inside the smaller "prehit" box
- //     t = Intersect::rayAtDistanceFromOrigin(relativeRay, 0.99f * tank.radius);
-	
-		// find closest approach to wide box around tank.  width of box
-		// is tank radius so you get a little fudge factor on the side
-		static fvec3 tankBase(0.0f, 0.0f, -0.5f * tankHeight);
-		t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle,
-			tank.size.x + proxySize.x, tank.size.y + proxySize.y, tankHeight + proxySize.z);
-	}
+    // find closest approach to narrow box around tank.  width of box is small if we have narrow
+	float t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle, tank.size.x, tank.test2D ? shotRadius : tank.size.y, tank.size.z);
 
-    // short circuit if time is greater then smallest time so far
     if (t > minTime)
 		continue;
 
@@ -138,7 +114,7 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
 	tank.motion.getPoint(t, tankPos);
 
 	// compute position of intersection
-	position = tankPos + closestPos + fvec3(0,0,0.5f * tankHeight);
+	position = tankPos + closestPos + fvec3(0,0,0.5f * tank.size.z);
 	//printf("%u:%u %u:%u\n", tank->getId().port, tank->getId().number, getPath().getPlayer().port, getPath().getPlayer().number);
   }
 
