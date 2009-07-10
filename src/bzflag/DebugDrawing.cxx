@@ -104,7 +104,10 @@ void DebugDrawing::drawTanks()
     return;
   }
   if (BZDB.isTrue("_forbidDebug")) {
-    return;
+    LocalPlayer* myTank = LocalPlayer::getMyTank();
+    if (!myTank || (myTank->getTeam() != ObserverTeam)) {
+      return; // debug forbidden, not an observer, no boxes for you!
+    }
   }
 
   OpenGLGState::resetState();
