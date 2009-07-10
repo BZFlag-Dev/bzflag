@@ -146,6 +146,7 @@ static const char *usageString =
   "[-tkkr <percent>] "
   "[-ts [micros]] "
   "[-userdb <user permissions file>] "
+  "[-utc] "
   "[-vars <filename>] "
   "[-version] "
   "[-world <filename>] "
@@ -253,6 +254,7 @@ static const char *extraUsageString =
   "\t-ts [micros]: timestamp all console output, [micros] to include\n"
   "\t\tmicroseconds\n"
   "\t-userdb: file to read for user access permissions\n"
+  "\t-utc: timestamp console output in UTC instead of local time, implies -ts\n"
   "\t-vars: file to read for worlds configuration variables\n"
   "\t-version: print version and exit\n"
   "\t-world: world file to load\n"
@@ -1265,6 +1267,11 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     else if (token == "-userdb") {
       userDatabaseFile = parseStringArg(i, tokens);
       std::cerr << "using userDB file \"" << userDatabaseFile << "\"" << std::endl;
+    }
+    else if (token == "-utc") {
+      // timestamp output in universal time
+      timestampLog = true;
+      timestampUTC = true;
     }
     else if (token == "-v" || token == "-version") {
       printVersion();

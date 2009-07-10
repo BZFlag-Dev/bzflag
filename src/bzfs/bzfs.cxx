@@ -3656,7 +3656,7 @@ static void initStartupParameters(int argc, char **argv)
 
   // parse arguments  (finalized later)
   clOptions->parseArgOptions(argc, argv);
-  setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
+  setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros, clOptions->timestampUTC);
 
 
   if (clOptions->bzdbVars.length() > 0) {

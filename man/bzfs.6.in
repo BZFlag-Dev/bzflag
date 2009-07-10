@@ -105,6 +105,7 @@ bzfs \- BZFlag game server
 [\fB\-trackplayhistory\fR]
 [\fB\-ts [\fImicros\fR]]
 [\fB\-userdb \fIfile\fR]
+[\fB\-utc\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
 [\fB\-world \fIworld\-file\fR]
@@ -540,6 +541,10 @@ If \fImicros\fR is specified, microseconds will be added to the timestamp.
 .TP 
 \fB\-userdb \fIfile\fR
 Load group associations from file
+.TP
+\fB\-utc
+Include timestamp information in DEBUG output in Universal Time instead
+of local time.  Implies -ts.
 .TP 
 \fB\-vars \fIfile\fR
 Loads values for game configurable variables from \fIfile\fR. Entries are
