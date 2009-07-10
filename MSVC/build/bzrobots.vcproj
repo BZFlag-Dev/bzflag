@@ -139,8 +139,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib"
-				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib;..\..\src\clientbase;..\..\src\other\glew\include;..\..\src\bzflag"
+				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile="./bzrobots_debug/bzrobots.pch"
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib user32.lib shell32.lib Advapi32.lib glu32.lib opengl32.lib dsound.lib"
 				OutputFile="./bzrobots_debug/bzrobots.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
