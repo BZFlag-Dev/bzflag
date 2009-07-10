@@ -46,9 +46,6 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
   static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
   const fvec3 &proxySize = shotProxy.getData();
 
-  // get tank radius
-  const float radius2 = tank.radius * tank.radius;
-
   // tank is positioned from it's bottom so shift position up by
   // half a tank height.
   const float tankHeight = tank.size.z;
