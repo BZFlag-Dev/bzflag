@@ -82,11 +82,14 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank, fvec3& position,
     if (currentTime <= segments[i].start) break;
 */
 
-    // if shot segment and tank bboxes don't overlap then no hit,
-    // or if it's a shot that is out of the world boundary
-    const ShotPathSegment& s = segments[i];
-    if (!s.bbox.touches(tankBBox) || (s.reason == ShotPathSegment::Boundary))
-      continue;
+	const ShotPathSegment& s = segments[i];
+	if (doBoxTest)
+	{
+		// if shot segment and tank bboxes don't overlap then no hit,
+		// or if it's a shot that is out of the world boundary
+		if (!s.bbox.touches(tankBBox) || (s.reason == ShotPathSegment::Boundary))
+		  continue;
+	}
 
     // construct relative shot ray:  origin and velocity relative to
     // my tank as a function of time (t=0 is start of the interval).
