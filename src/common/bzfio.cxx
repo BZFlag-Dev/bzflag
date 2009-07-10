@@ -119,7 +119,7 @@ void setDebugTimestamp(bool enable, bool micros)
 }
 
 
-static const int tsBufferSize = 26;
+static const int tsBufferSize = 29;
 
 static char *timestamp(char *buf, bool micros)
 {
