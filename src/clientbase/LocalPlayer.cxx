@@ -1724,11 +1724,11 @@ bool LocalPlayer::checkHit(const Player* source,
     // test myself against shot
     fvec3 position;
 
-    static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
-    static fvec3 zeroMargin(0,0,0);
-    fvec3 &proxySize = zeroMargin; // FIXME -- pointer instead?
-    if (!isnan(shotProxy.getData().x) && !isnan(shotProxy.getData().y) && !isnan(shotProxy.getData().z))
-        proxySize = shotProxy.getData();
+	static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
+	static fvec3 zeroMargin(0,0,0);
+	const fvec3 *proxySize = &zeroMargin;
+	if (!isnan(shotProxy.getData().x) && !isnan(shotProxy.getData().y) && !isnan(shotProxy.getData().z))
+		proxySize = &shotProxy.getData();
 
     ShotCollider collider;
     collider.position = getPosition();
@@ -1736,15 +1736,15 @@ bool LocalPlayer::checkHit(const Player* source,
     collider.length   = BZDBCache::tankLength;
     collider.motion   = getLastMotion();
     collider.radius   = this->getRadius();
-    collider.size     = getDimensions() + proxySize;
+    collider.size     = getDimensions() + *proxySize;
     collider.test2D   = (this->getFlag() == Flags::Narrow);
     collider.bbox     = bbox;
-    collider.bbox.mins.x -= proxySize.x;
-    collider.bbox.maxs.x += proxySize.x;
-    collider.bbox.mins.y -= proxySize.y;
-    collider.bbox.maxs.y += proxySize.y;
-    collider.bbox.maxs.z += proxySize.z;
-    collider.testLastSegment = (getId() == shot->getPlayer());
+	collider.bbox.mins.x -= proxySize->x;
+	collider.bbox.maxs.x += proxySize->x;
+	collider.bbox.mins.y -= proxySize->y;
+	collider.bbox.maxs.y += proxySize->y;
+	collider.bbox.maxs.z += proxySize->z;
+	collider.testLastSegment = (getId() == shot->getPlayer());
 
     const float t = shot->checkHit(collider, position);
     if (t >= minTime) {
