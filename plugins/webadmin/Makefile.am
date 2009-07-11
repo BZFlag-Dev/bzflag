@@ -5,8 +5,6 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 webadmin_la_SOURCES = \
 		webadmin.cpp \
-		pages.cpp \
-		pages.h \
 		loops.cpp \
 		loops.h \
 		logs.cpp \
