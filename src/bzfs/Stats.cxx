@@ -121,7 +121,7 @@ void StatsLink::buildHTMLPlayer ( std::string &params, int playerID, int index )
     if (player->hasCustomField("motto") && player->customData["motto"].size())
       params += TextUtils::format("&motto%d=%s",index, TextUtils::url_encode(player->customData["motto"]).c_str());
 
-    params += TextUtils::format("&team%d=%s",index,TextUtils::url_encode(std::string(getTeamName(player->player.getTeam()))));
+    params += TextUtils::format("&team%d=%s",index,TextUtils::url_encode(std::string(getTeamName(player->player.getTeam()))).c_str());
 
     std::string BZID = player->getBzIdentifier();
     if (!BZID.size())
@@ -239,28 +239,28 @@ void StatsLink::buildStateHash(std::string &params)
   int hash = sumString(mapFile);
 
   int i = 0;
-  i+= bz_getTeamScore(eRedTeam);
-  i+= bz_getTeamWins(eRedTeam);
-  i+= bz_getTeamLosses(eRedTeam);
-  i+= bz_getTeamScore(eGreenTeam);
-  i+= bz_getTeamWins(eGreenTeam);
-  i+= bz_getTeamLosses(eGreenTeam);
-  i+= bz_getTeamScore(eBlueTeam);
-  i+= bz_getTeamWins(eBlueTeam);
-  i+= bz_getTeamLosses(eBlueTeam);
-  i+= bz_getTeamScore(ePurpleTeam);
-  i+= bz_getTeamWins(ePurpleTeam);
-  i+= bz_getTeamLosses(ePurpleTeam);
+  i += bz_getTeamScore(eRedTeam);
+  i += bz_getTeamScore(eGreenTeam);
+  i += bz_getTeamScore(eBlueTeam);
+  i += bz_getTeamScore(ePurpleTeam);
+  i += bz_getTeamWins(eRedTeam);
+  i += bz_getTeamWins(eGreenTeam);
+  i += bz_getTeamWins(eBlueTeam);
+  i += bz_getTeamWins(ePurpleTeam);
+  i += bz_getTeamLosses(eRedTeam);
+  i += bz_getTeamLosses(eGreenTeam);
+  i += bz_getTeamLosses(eBlueTeam);
+  i += bz_getTeamLosses(ePurpleTeam);
 
-  hash += i * 1000;
+  hash += (i * 1000);
 
   i = 0;
   bz_APIIntList *players = bz_getPlayerIndexList();
   if (players && players->size())
   {
-    for( unsigned int i = 0; i < players->size(); i++ )
+    for (size_t p = 0; p < players->size(); p++ )
     {
-      int playerID = players->get(i);
+      int playerID = players->get(p);
       GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
       if (player)
       {
@@ -280,7 +280,7 @@ void StatsLink::buildStateHash(std::string &params)
   }
   bz_deleteIntList(players);
 
-  hash += i * 100000;
+  hash += (i * 100000);
 
   params += TextUtils::format("&hash=%d",hash);
 }
