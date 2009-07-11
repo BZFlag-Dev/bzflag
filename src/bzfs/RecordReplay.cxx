@@ -1651,12 +1651,12 @@ static bool savePlayersState()
   if (infoPtr != (infoBuf + sizeof(unsigned char))) {
     nboPackUInt8(infoBuf, count);
     routePacket(MsgPlayerInfo,
-		 (char*)infoPtr - (char*)infoBuf, infoBuf, StatePacket);
+		(char*)infoPtr - (char*)infoBuf, infoBuf, StatePacket);
   }
   if (adminPtr != (adminBuf + sizeof(unsigned char))) {
     nboPackUInt8(adminBuf, count);
     routePacket(MsgAdminInfo,
-		 (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
+		(char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
     // use a hidden packet for the IPs
   }
 
@@ -1666,14 +1666,21 @@ static bool savePlayersState()
       continue;
     }
     PlayerInfo *pi = &gkPlayer->player;
+
+    // complete MsgPause
+    buf = nboPackUInt8(bufStart, i);
+    buf = nboPackUInt8(buf, pi->isPaused() ? 1 : 0);
+    routePacket(MsgPause,
+                (char*)buf - (char*)bufStart, bufStart, StatePacket);
+
     if (pi->isAlive()) {
       fvec3 pos(0.0f, 0.0f, 0.0f);
-      // Complete MsgAlive
+      // complete MsgAlive
       buf = nboPackUInt8(bufStart, i);
       buf = nboPackFVec3(buf, pos);
       buf = nboPackFloat(buf, 0.0f); // azimuth
       routePacket(MsgAlive,
-		   (char*)buf - (char*)bufStart, bufStart, StatePacket);
+		  (char*)buf - (char*)bufStart, bufStart, StatePacket);
     }
   }
 
@@ -2564,6 +2571,7 @@ static const char *msgString(u16 code)
       STRING_CASE (MsgScore);
       STRING_CASE (MsgScoreOver);
       STRING_CASE (MsgShotEnd);
+      STRING_CASE (MsgShotInfo);
       STRING_CASE (MsgSuperKill);
       STRING_CASE (MsgSetVar);
       STRING_CASE (MsgTimeUpdate);
