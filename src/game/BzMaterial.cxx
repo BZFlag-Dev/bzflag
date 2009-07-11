@@ -76,7 +76,7 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
   if (findMaterial(newMat->getName()) != NULL) {
     newMat->setName("");
   }
-  newMat->setID(materials.size());
+  newMat->setID((int)materials.size());
   materials.push_back(newMat);
   return newMat;
 }
