@@ -305,9 +305,9 @@ Instantiates a group, and possibly modifies subobjects
 .br
   # States control
 .br
-\fB  ramp\fR  2.0 red 0.5  # duration, startColor  (\fBrepeatable\fR)
+\fB  ramp\fR  2.0 0.1 0.2 0.3 0.5  # duration, startColor  (\fBrepeatable\fR)
 .br
-\fB  level\fR 3.0 red 0.5  # duration, levelColor  (\fBrepeatable\fR)
+\fB  level\fR 3.0 0.1 0.2 0.3 0.5  # duration, levelColor  (\fBrepeatable\fR)
 .br
 \fB  delay\fR 0.0          # delay seconds for color states
 .br
