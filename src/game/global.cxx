@@ -161,7 +161,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_squishTime",		"1.0",				false, StateDatabase::Locked },
   { "_srRadiusMult",		"2.0",				false, StateDatabase::Locked },
   { "_startingRank",		"0.5",				false, StateDatabase::Locked },
-  { "_statURL",			"http://stattrack.bzflag.bz:88",false, StateDatabase::Locked },
+  { "_statURL",			"http://stattrack.bzflag.org/track/",false, StateDatabase::Locked },
   { "_syncLocation",		"0",				false, StateDatabase::Locked },
   { "_syncTime",		"-1.0",				false, StateDatabase::Locked },
   { "_tankAngVel",		"0.785398",			false, StateDatabase::Locked },

@@ -31,8 +31,15 @@ public:
 private:
   void buildXMLPlayerList(std::string &params);
   void buildXMLPlayer(std::string &params, int playerID);
+  void buildHTMLPlayerList(std::string &params, int skip = -1);
+  void buildHTMLPlayer(std::string &params, int playerID, int index);
+  bool getPushHeader(std::string &header);
+  void buildStateHash(std::string &params);
+
   std::string url;
   bool sentAdd;
+
+  std::string mapFile;
 };
 
 #endif //__BZFS_STATS_H__
