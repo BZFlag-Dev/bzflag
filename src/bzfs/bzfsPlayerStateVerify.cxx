@@ -152,10 +152,8 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &/*state*/)
     return true;
   }
 
-  const float timeLeft = playerData->pauseActiveTime - TimeKeeper::getCurrent();
-  if (timeLeft < 0.0f) {
+  if ((playerData->pauseActiveTime) - TimeKeeper::getCurrent() < 0.0)
     pausePlayer(playerData->player.getPlayerIndex(), true);
-  }
 
   return true;
 /* FIXME -- doPauseChecks
