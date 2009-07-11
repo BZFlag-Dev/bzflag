@@ -4422,13 +4422,13 @@ static void drawFakeCursor(int type)
       glLineWidth(1.49f);
       glBegin(GL_LINES);
       glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i(mx - dist, my);
+      glColor4fv(fadeWhite); glVertex2i((int)(mx - dist), my);
       glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i(mx + dist, my);
+      glColor4fv(fadeWhite); glVertex2i((int)(mx + dist), my);
       glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i(mx, my - dist);
+      glColor4fv(fadeWhite); glVertex2i(mx, (int)(my - dist));
       glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i(mx, my + dist);
+      glColor4fv(fadeWhite); glVertex2i(mx, (int)(my + dist));
       glEnd();
       glLineWidth(1.0f);
     }
