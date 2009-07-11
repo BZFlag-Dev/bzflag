@@ -599,10 +599,12 @@ void HTTPServer::generateIndex(int connectionID, const HTTPRequest &request)
   VirtualDirs::iterator dirItr = virtualDirs.begin();
 
   while (dirItr != virtualDirs.end()) {
-    std::string vdirName = dirItr->second->getVDir();
-    std::string vDirDescription = dirItr->second->getDescription();
-    reply.body += "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>";
-    dirItr++;
+	if (!dirItr->second->hide()){
+		std::string vdirName = dirItr->second->getVDir();
+		std::string vDirDescription = dirItr->second->getDescription();
+		reply.body += "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br>";
+		dirItr++;
+	}
   }
 
   reply.body += "</body></html>";
