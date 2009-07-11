@@ -310,19 +310,21 @@ static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
   if (!pausedByUnmap && myTank && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       // already paused, so unpause
-      myTank->setPause(false);
-      controlPanel->addMessage("Resumed");
+//FIXME      myTank->setPause(false);
+//FIXME      controlPanel->addMessage("Resumed");
+
+      server->sendPaused(false);
 
       // restore the sound
-      if (savedVolume != -1) {
-        SOUNDSYSTEM.setVolume(savedVolume*0.1f);
-        savedVolume = -1;
-      }
+//FIXME      if (savedVolume != -1) {
+//FIXME        SOUNDSYSTEM.setVolume(savedVolume*0.1f);
+//FIXME        savedVolume = -1;
+//FIXME      }
 
       // grab mouse
-      if (shouldGrabMouse()) {
-        mainWindow->grabMouse();
-      }
+//FIXME      if (shouldGrabMouse()) {
+//FIXME        mainWindow->grabMouse();
+//FIXME      }
 
     } else if (pauseCountdown > 0.0f) {
       // player aborted pause

@@ -651,6 +651,13 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
     return false;
   }
 
+  const CheckType ct0 = (CheckType)checkTypes[0];
+  if (ct0 == ParityInside) {
+    return parityCheckNoOctree(point, true);
+  } else if (ct0 == ParityOutside) {
+    return parityCheckNoOctree(point, false);
+  }
+
   int c, f;
   fvec3 dir;
   bool hasOutsides = false;
@@ -697,6 +704,20 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
   }
 
   return hasOutsides;
+}
+
+
+bool MeshObstacle::parityCheck(const fvec3& point, bool inside) const
+{
+  
+  return inside && point.x != 0.0f; // FIXME
+}
+
+
+bool MeshObstacle::parityCheckNoOctree(const fvec3& point, bool inside) const
+{
+  
+  return inside && point.x != 0.0f; // FIXME
 }
 
 

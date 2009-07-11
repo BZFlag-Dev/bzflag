@@ -196,8 +196,8 @@ float Intersect::rayAtDistanceFromOrigin(const Ray& r, float radius)
 
 
 // block covers interval x=[-dx, dx], y=[-dy, dy], z=[0.0, dz]
-static float timeRayHitsOrigBox(const fvec3& p, const fvec3& v,
-				float dx, float dy, float dz)
+float Intersect::timeRayHitsOrigBox(const fvec3& p, const fvec3& v,
+                                    float dx, float dy, float dz)
 {
   float tx, ty, tz;
 
@@ -289,6 +289,13 @@ static float timeRayHitsOrigBox(const fvec3& p, const fvec3& v,
       return ty;
     return tz;
   }
+}
+
+
+// block covers interval x=[-dx, dx], y=[-dy, dy], z=[0.0, dz]
+float Intersect::timeRayHitsOrigBox(const Ray& ray, float dx, float dy, float dz)
+{
+  return timeRayHitsOrigBox(ray.getOrigin(), ray.getDirection(), dx, dy, dz);
 }
 
 

@@ -70,10 +70,10 @@ class MeshObstacle : public Obstacle {
     void copyFace(int face, MeshObstacle* mesh) const;
 
     enum CheckType {
-      CheckInside =  0,
-      CheckOutside = 1,
-      InsideParity = 2,
-      OutsidePartiy = 3
+      CheckInside   = 0,
+      CheckOutside  = 1,
+      ParityInside  = 2,
+      ParityOutside = 3
     };
 
     const char*  getType() const;
@@ -151,6 +151,8 @@ class MeshObstacle : public Obstacle {
 			  const std::vector<int>& _texcoords,
 			  const fvec3**& v, const fvec3**& n, const fvec2**& t);
     void makeEdges();
+    bool parityCheck(const fvec3& point, bool inside) const;
+    bool parityCheckNoOctree(const fvec3& point, bool inside) const;
 
   private:
     static const char* typeName;

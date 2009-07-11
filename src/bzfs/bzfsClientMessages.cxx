@@ -659,17 +659,28 @@ public:
     fvec3 pos;
     uint16_t linkSrcID, linkDstID;
     FlagType* flagType;
+    uint32_t obstacleGUID = (uint32_t)-1;
     
     buf = nboUnpackInt16(buf, shotID);  
     buf = FlagType::unpack(buf, flagType);
     buf = nboUnpackUInt8(buf, infoType);
     buf = nboUnpackFVec3(buf, pos);
-    if (infoType == ShotInfoTeleport) {
-      if (len < 20) {
-        return false;
+    switch (infoType) {
+      case ShotInfoTeleport: {
+        if (len < 20) { return false; }
+        buf = nboUnpackUInt16(buf, linkSrcID);
+        buf = nboUnpackUInt16(buf, linkDstID);
+        break;
       }
-      buf = nboUnpackUInt16(buf, linkSrcID);
-      buf = nboUnpackUInt16(buf, linkDstID);
+      case ShotInfoStopped:
+      case ShotInfoRicochet: {
+        if (len < 20) { return false; }
+        buf = nboUnpackUInt32(buf, obstacleGUID);
+        break;
+      }
+      case ShotInfoExpired: {
+        break;
+      }
     }
 
     // NOTE: not broadcasting/relaying to the clients
@@ -685,13 +696,13 @@ public:
       }
       case ShotInfoStopped: {
         bz_ShotStoppedEventData_V1 event(player->getIndex(), shotID, shotFlag,
-                                         pos.x, pos.y, pos.z);
+                                         pos.x, pos.y, pos.z, obstacleGUID);
         worldEventManager.callEvents(bz_eShotStoppedEvent, &event);
         break;
       }
       case ShotInfoRicochet: {
         bz_ShotRicochetEventData_V1 event(player->getIndex(), shotID, shotFlag,
-                                          pos.x, pos.y, pos.z);
+                                          pos.x, pos.y, pos.z, obstacleGUID);
         worldEventManager.callEvents(bz_eShotRicochetEvent, &event);
         break;
       }
@@ -913,8 +924,7 @@ public:
 
     if (!wantPause) {
       // unpause immediately
-      player->pauseRequested = false;
-      player->player.setPaused(false);
+      pausePlayer(playerIndex, false);
     }
     else {
       if (!player->pauseRequested) {
@@ -922,10 +932,9 @@ public:
         TimeKeeper activeTime = TimeKeeper::getCurrent();
         activeTime += 5.0f;
         player->pauseActiveTime = activeTime;
-        player->pauseRequested   = true;
+        player->pauseRequested  = true;
       }
     }
-
     
     return true;
   }

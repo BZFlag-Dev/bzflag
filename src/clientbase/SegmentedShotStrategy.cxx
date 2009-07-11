@@ -167,7 +167,9 @@ void SegmentedShotStrategy::update(float dt)
             }
             if (wantShotInfo(ShotInfoRicochet) &&
                 (getPath().getPlayer() == myTankId)) {
-              serverLink->sendShotInfo(getPath(), ShotInfoRicochet, pos);
+              const uint32_t guid =
+                segm.hitObstacle ? segm.hitObstacle->getGUID() : (uint32_t)-1;
+              serverLink->sendShotInfo(getPath(), ShotInfoRicochet, pos, guid);
             }
             break;
           }
@@ -186,6 +188,7 @@ void SegmentedShotStrategy::update(float dt)
               const float timeDiff = (float)(prevSeg.end - prevSeg.start);
               const fvec3 prevPos = prevSeg.ray.getPoint(timeDiff);
               serverLink->sendShotInfo(getPath(), ShotInfoTeleport, prevPos,
+                                       (uint32_t)-1,
                                        segm.linkSrcID, segm.linkDstID);
             }
 	    break;
@@ -209,7 +212,8 @@ void SegmentedShotStrategy::update(float dt)
           }
         } else {
           if (wantShotInfo(ShotInfoStopped)) {
-            serverLink->sendShotInfo(getPath(), ShotInfoStopped, pos);
+            serverLink->sendShotInfo(getPath(), ShotInfoStopped, pos,
+                                     endObstacle->getGUID());
           }
         }
       }
@@ -388,7 +392,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   fvec3 orig = shotPath.getPosition();
 
   ShotPathSegment::Reason reason = ShotPathSegment::Initial;
-  const Obstacle* ricoObstacle = NULL;
+  const Obstacle* hitObstacle = NULL;
   int linkSrcID = -1;
   int linkDstID = -1;
 
@@ -419,14 +423,14 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const double endTime = startTime + double((t < 0.0f) ? Epsilon : t);
     const Ray startRay(orig, vel);
     ShotPathSegment segm(startTime, endTime, startRay, reason);
-    segm.ricoObstacle = ricoObstacle;
+    segm.hitObstacle = hitObstacle;
     if (reason == ShotPathSegment::Teleport) {
       segm.linkSrcID = linkSrcID;
       segm.linkDstID = linkDstID;
     }
     segments.push_back(segm);
     startTime = endTime;
-    ricoObstacle = NULL;
+    hitObstacle = NULL;
     linkSrcID = -1;
     linkDstID = -1;
 
@@ -491,6 +495,9 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     }
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
+
+      hitObstacle = building;
+
       switch (e) {
 	case Stop: {
 	  if (!building->canRicochet()) {
@@ -504,7 +511,6 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         case Reflect: {
           // move origin to point of reflection
           orig = nextOrig;
-          ricoObstacle = building;
 
           // reflect direction about normal to building
           fvec3 normal;
@@ -567,7 +573,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       logDebugMessage(0, "    endPos  %s\n", endPos.tostring().c_str());
       logDebugMessage(0, "    dir     %s\n", sps.ray.getDirection().tostring().c_str());
       logDebugMessage(0, "    reason  %s\n", reasonStr.c_str());
-      logDebugMessage(0, "    ricoObs %p\n", sps.ricoObstacle);
+      logDebugMessage(0, "    hitObs  %p\n", sps.hitObstacle);
       logDebugMessage(0, "    mins    %s\n", sps.bbox.mins.tostring().c_str());
       logDebugMessage(0, "    maxs    %s\n", sps.bbox.maxs.tostring().c_str());
     }

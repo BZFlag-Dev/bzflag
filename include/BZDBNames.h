@@ -149,7 +149,7 @@ class BZDBNames : public Singleton<BZDBNames> {
     const std::string TANKHEIGHT;
     const std::string TANKLENGTH;
     const std::string TANKRADIUS;
-	const std::string TANKSHOTPROXIMITY;
+    const std::string TANKSHOTPROXIMITY;
     const std::string TANKSPEED;
     const std::string TANKWIDTH;
     const std::string TARGETINGANGLE;

@@ -26,7 +26,7 @@ ShotPathSegment::ShotPathSegment(const double _start, const double _end,
 , end(_end)
 , ray(_ray)
 , reason(_reason)
-, ricoObstacle(NULL)
+, hitObstacle(NULL)
 , linkSrcID(-1)
 , linkDstID(-1)
 {
@@ -42,7 +42,7 @@ ShotPathSegment::ShotPathSegment(const ShotPathSegment& segment)
 , ray(segment.ray)
 , reason(segment.reason)
 , bbox(segment.bbox)
-, ricoObstacle(segment.ricoObstacle)
+, hitObstacle(segment.hitObstacle)
 , linkSrcID(segment.linkSrcID)
 , linkDstID(segment.linkDstID)
 {
@@ -57,7 +57,7 @@ ShotPathSegment& ShotPathSegment::operator=(const ShotPathSegment& segment)
     ray = segment.ray;
     reason = segment.reason;
     bbox = segment.bbox;
-    ricoObstacle = segment.ricoObstacle;
+    hitObstacle = segment.hitObstacle;
     linkSrcID = segment.linkSrcID;
     linkDstID = segment.linkDstID;
   }

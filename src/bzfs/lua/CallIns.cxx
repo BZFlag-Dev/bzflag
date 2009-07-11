@@ -1603,7 +1603,7 @@ bool CI_ShotStopped::execute(bz_EventData* eventData)
 {
   bz_ShotStoppedEventData_V1* ed = (bz_ShotStoppedEventData_V1*)eventData;
 
-  if (!PushCallIn(6)) {
+  if (!PushCallIn(7)) {
     return false;
   }
 
@@ -1614,7 +1614,13 @@ bool CI_ShotStopped::execute(bz_EventData* eventData)
   lua_pushfloat(L, ed->pos[1]);
   lua_pushfloat(L, ed->pos[2]);
 
-  return RunCallIn(6, 0);
+  if (ed->obstacleGUID == (uint32_t)-1) {
+    lua_pushnil(L);
+  } else {
+    lua_pushinteger(L, ed->obstacleGUID);
+  }
+
+  return RunCallIn(7, 0);
 }
 
 
@@ -1622,7 +1628,7 @@ bool CI_ShotRicochet::execute(bz_EventData* eventData)
 {
   bz_ShotRicochetEventData_V1* ed = (bz_ShotRicochetEventData_V1*)eventData;
 
-  if (!PushCallIn(6)) {
+  if (!PushCallIn(7)) {
     return false;
   }
 
@@ -1633,7 +1639,13 @@ bool CI_ShotRicochet::execute(bz_EventData* eventData)
   lua_pushfloat(L, ed->pos[1]);
   lua_pushfloat(L, ed->pos[2]);
 
-  return RunCallIn(6, 0);
+  if (ed->obstacleGUID == (uint32_t)-1) {
+    lua_pushnil(L);
+  } else {
+    lua_pushinteger(L, ed->obstacleGUID);
+  }
+
+  return RunCallIn(7, 0);
 }
 
 

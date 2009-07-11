@@ -902,11 +902,13 @@ class BZF_API bz_ShotStoppedEventData_V1 : public bz_EventData
 {
 public:
   bz_ShotStoppedEventData_V1(int pID, int sID, const char* t,
-                             float x, float y, float z)
+                             float x, float y, float z,
+                             unsigned int obsGUID)
   : bz_EventData(bz_eShotStoppedEvent)
   , playerID(pID)
   , shotID(sID)
   , type(t)
+  , obstacleGUID(obsGUID)
   {
     pos[0] = x;
     pos[1] = y;
@@ -916,17 +918,20 @@ public:
   int shotID;
   bz_ApiString type;
   float pos[3];
+  unsigned int obstacleGUID;
 };
 
 class BZF_API bz_ShotRicochetEventData_V1 : public bz_EventData
 {
 public:
   bz_ShotRicochetEventData_V1(int pID, int sID, const char* t,
-                              float x, float y, float z)
+                              float x, float y, float z,
+                              unsigned int obsGUID)
   : bz_EventData(bz_eShotRicochetEvent)
   , playerID(pID)
   , shotID(sID)
   , type(t)
+  , obstacleGUID(obsGUID)
   {
     pos[0] = x;
     pos[1] = y;
@@ -936,6 +941,7 @@ public:
   int shotID;
   bz_ApiString type;
   float pos[3];
+  unsigned int obstacleGUID;
 };
 
 class BZF_API bz_ShotTeleportEventData_V1 : public bz_EventData

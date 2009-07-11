@@ -2271,15 +2271,26 @@ void anointNewRabbit( int killerId )
 }
 
 
-void pausePlayer(int playerIndex, bool paused = true)
+void pausePlayer(int playerIndex, bool paused)
 {
+  printf("pausePlayer %i %s\n", playerIndex, paused ? "true" : "false");//FIXME
+
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
+  if (!playerData) {
     return;
+  }
 
+  // always reset these parameters
   playerData->pauseRequested = false;
   playerData->pauseActiveTime = TimeKeeper::getNullTime();
+
+  // if the state is being changed, leave
+  if (paused == playerData->player.isPaused()) {
+    return;
+  }
+
+  // change the PlayerInfo state
   playerData->player.setPaused(paused);
 
   if (clOptions->gameType == RabbitChase) {
@@ -2290,9 +2301,9 @@ void pausePlayer(int playerIndex, bool paused = true)
     }
   }
 
+  // drop flags
   FlagInfo* playerFlag = FlagInfo::get(playerData->player.getFlag());
-
-  if (playerFlag && playerFlag->flag.type->flagQuality != FlagBad) {
+  if (playerFlag && (playerFlag->flag.type->flagQuality != FlagBad)) {
     zapFlag(*playerFlag);
   }
 
@@ -2301,7 +2312,7 @@ void pausePlayer(int playerIndex, bool paused = true)
   msg->packUInt8(paused ? 1 : 0);
   msg->broadcast(MsgPause);
 
-  bz_PlayerPausedEventData_V1	pauseEventData;
+  bz_PlayerPausedEventData_V1 pauseEventData;
   pauseEventData.playerID = playerIndex;
   pauseEventData.pause = paused;
 

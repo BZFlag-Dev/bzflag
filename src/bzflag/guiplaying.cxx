@@ -4843,7 +4843,7 @@ static void updatePauseCountdown(float dt)
 	  serverLink->sendNewRabbit();
 
 	// now actually pause
-	myTank->setPause(true);
+//FIXME	myTank->setPause(true);
 //FIXME	hud->setAlert(1, NULL, 0.0f, true);
 //FIXME	showMessage("Paused");
 

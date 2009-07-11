@@ -23,10 +23,13 @@
 #include "global.h"
 #include "Address.h"
 #include "Protocol.h"
-#include "ShotPath.h"
 #include "Flag.h"
+#include "ShotPath.h"
 #include "BufferedNetworkMessage.h"
 #include "vectors.h"
+
+class ShotPath;
+
 
 class ServerLink {
 public:
@@ -90,6 +93,7 @@ public:
   void		sendTeleport(int from, int to);
   void		sendShotInfo(const ShotPath& shotPath,
                              char infoType, const fvec3& pos,
+                             uint32_t obstacleGUID = (uint32_t)-1,
                              int linkSrcID = -1, int linkDstID = -1);
   void		sendTransferFlag(const PlayerId&, const PlayerId&);
   void		sendNewRabbit();

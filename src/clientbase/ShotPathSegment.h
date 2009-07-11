@@ -50,7 +50,7 @@ class ShotPathSegment {
     Ray    ray;
     Reason reason;
     Extents bbox;
-    const Obstacle* ricoObstacle;
+    const Obstacle* hitObstacle;
     int linkSrcID;
     int linkDstID;
 };

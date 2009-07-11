@@ -1055,8 +1055,10 @@ void ServerLink::sendTeleport(int from, int to)
 
 void ServerLink::sendShotInfo(const ShotPath& shotPath,
                               char infoType, const fvec3& pos,
+                              uint32_t obstacleGUID,
                               int linkSrcID, int linkDstID)
 {
+  obstacleGUID = obstacleGUID; // FIXME
   char msg[64];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
@@ -1064,9 +1066,20 @@ void ServerLink::sendShotInfo(const ShotPath& shotPath,
   buf = shotPath.getFlag()->pack(buf);
   buf = nboPackUInt8(buf, uint8_t(infoType));
   buf = nboPackFVec3(buf, pos);
-  if (infoType == ShotInfoTeleport) {
-    buf = nboPackUInt16(buf, uint16_t(linkSrcID));
-    buf = nboPackUInt16(buf, uint16_t(linkDstID));
+  switch (infoType) {
+    case ShotInfoTeleport: {
+      buf = nboPackUInt16(buf, uint16_t(linkSrcID));
+      buf = nboPackUInt16(buf, uint16_t(linkDstID));
+      break;
+    }
+    case ShotInfoStopped:
+    case ShotInfoRicochet: {
+      buf = nboPackUInt32(buf, obstacleGUID);
+      break;
+    }
+    case ShotInfoExpired: {
+      break;
+    }
   }
   send(MsgShotInfo, (char*)buf - msg, msg);
 }
