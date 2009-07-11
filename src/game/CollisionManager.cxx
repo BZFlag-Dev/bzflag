@@ -329,13 +329,15 @@ void CollisionManager::load()
   }
   for (i = 0; i < meshCount; i++) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
-    if (!mesh->isPassable()) {
+    if (!mesh->isPassable() || mesh->getHasSpecialFaces()) {
       for (int f = 0; f < mesh->getFaceCount(); f++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(f);
 	if (!face->isPassable() || face->isLinkSrc()) {
 	  fullCount++;
         }
       }
+    }
+    if (!mesh->isPassable()) {
       fullCount++; // one for the mesh itself
     }
   }
@@ -366,7 +368,7 @@ void CollisionManager::load()
   // add the mesh types last (faces then meshes)
   for (i = (meshCount - 1); i >= 0; i--) {
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
-    if (!mesh->isPassable()) {
+    if (!mesh->isPassable() || mesh->getHasSpecialFaces()) {
       const int meshFaceCount = mesh->getFaceCount();
       for (int f = 0; f < meshFaceCount; f++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(f);
@@ -376,6 +378,7 @@ void CollisionManager::load()
       }
     }
   }
+  // add the meshes after the mesh faces
   for (i = (meshCount - 1); i >= 0; i--) {
     if (!meshes[i]->isPassable()) { addToFullList(meshes[i]); }
   }
