@@ -218,10 +218,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\pages.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\webadmin.cpp"
 				>
 			</File>
@@ -261,10 +257,6 @@
 			</File>
 			<File
 				RelativePath=".\loops.h"
-				>
-			</File>
-			<File
-				RelativePath=".\pages.h"
 				>
 			</File>
 		</Filter>
