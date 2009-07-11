@@ -158,13 +158,11 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
   makeXFormList();
   OpenGLGState::registerContextInitializer(freeContext, initContext, this);
 
+  // default to no animation
   animRepos = false;
 
   // how shall we normalize?
-  bool normalize = false;
-  if (xformTool != NULL) {
-    normalize = xformTool->isSkewed();
-  }
+  const bool normalize = (xformTool != NULL) && xformTool->isSkewed();
 
   // setup the render nodes
   for (int lod = 0; lod < lodCount; lod++) {
@@ -192,7 +190,6 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 	new MeshRenderNode(drawMgr, &xformList, normalize,
 			   mat.colorPtr, lod, set, drawSet.triangleCount);
       setNode.radarNode->setPosition(setPos);
-
 
       if (!mat.needsSorting) {
 	mat.animRepos = false;
