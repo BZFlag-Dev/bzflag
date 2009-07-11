@@ -43,7 +43,7 @@ class PointShotStrategy : public ShotStrategy {
 
     Extents bbox;
 
-	bool doBoxTest;
+	bool GMTest;
 };
 
 
