@@ -34,6 +34,7 @@ public:
   };
 
   virtual const char * getVDir(void) { return "fastmap"; }
+  virtual bool hide(void) { return true; }
 
   virtual bool handleRequest(const HTTPRequest &request, HTTPReply &reply)
   {
