@@ -147,29 +147,43 @@ void sendExistingPlayerUpdates ( int newPlayer )
 
   GameKeeper::Player *otherData;
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (i == newPlayer)
+    if (i == newPlayer) {
       continue;
+    }
+
     otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!otherData ||!otherData->player.isPlaying())
+
+    if (!otherData || !otherData->player.isPlaying()) {
       continue;
-    if (playerData->playerHandler) {
+    }
+
+    if (!playerData->playerHandler) {
+      if (sendPlayerUpdateDirect(playerData->netHandler, otherData) < 0) {
+	break;
+      }
+      if (otherData->player.isPaused()) {
+        NetMsg pauseMsg = MSGMGR.newMessage();
+        pauseMsg->packUInt8(otherData->getIndex());
+        pauseMsg->packUInt8(1);
+        pauseMsg->send(playerData->netHandler, MsgPause);
+      }
+    }
+    else {
       bz_PlayerInfoUpdateRecord	playerRecord;
 
       playerRecord.index = i;
       playerRecord.type = (bz_ePlayerType)otherData->player.getType();
       playerRecord.team = convertTeam(otherData->player.getTeam());
-      playerRecord.score.rank = otherData->score.ranking();
-      playerRecord.score.wins = otherData->score.getWins();
+      playerRecord.score.rank   = otherData->score.ranking();
+      playerRecord.score.wins   = otherData->score.getWins();
       playerRecord.score.losses = otherData->score.getLosses();
-      playerRecord.score.tks = otherData->score.getTKs();
-      memset(playerRecord.callsign,32,0);
-      strncpy(playerRecord.callsign,otherData->player.getCallSign(),31);
+      playerRecord.score.tks    = otherData->score.getTKs();
+      memset(playerRecord.callsign, 32, 0);
+      strncpy(playerRecord.callsign, otherData->player.getCallSign(), 31);
 
       playerData->playerHandler->playerInfoUpdate(&playerRecord);
-    } else {
-      if (sendPlayerUpdateDirect(playerData->netHandler,otherData) < 0)
-	break;
     }
+
     sendMessageAllow(newPlayer, i, otherData->player.getAllow());
   }
 }
@@ -644,10 +658,9 @@ int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
     return 0;
 
   NetMsg msg = MSGMGR.newMessage();
-
   otherData->packPlayerUpdate(msg);
+  msg->send(handler, MsgAddPlayer);
 
-  msg->send(handler,MsgAddPlayer);
   return (int)msg->size();
 }
 
