@@ -188,6 +188,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy man2html_release\man2html.exe ..\..\man\"
 			/>
 		</Configuration>
 	</Configurations>

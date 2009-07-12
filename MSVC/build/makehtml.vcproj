@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="makehtml"
 	ProjectGUID="{91198429-3669-4C40-A294-B8593D7C4987}"
+	RootNamespace="makehtml"
 	Keyword="MakeFileProj"
 	TargetFrameworkVersion="131072"
 	>
@@ -68,16 +69,56 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\man\bzadmin.6s"
+			RelativePath="..\..\man\bzadmin.6"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html.exe &lt; ..\..\man\$(InputFileName).in &gt; ..\..\man\$(InputName).html"
+					Outputs="..\..\man\$(InputName).html"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\man\bzflag.6s"
+			RelativePath="..\..\man\bzflag.6"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html.exe &lt; ..\..\man\$(InputFileName).in &gt; ..\..\man\$(InputName).html"
+					Outputs="..\..\man\$(InputName).html"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\man\bzfs.6s"
+			RelativePath="..\..\man\bzfs.6"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html.exe &lt; ..\..\man\$(InputFileName).in &gt; ..\..\man\$(InputName).html"
+					Outputs="..\..\man\$(InputName).html"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\man\bzw.5"
+			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="..\..\man\man2html.exe &lt; ..\..\man\$(InputFileName).in &gt; ..\..\man\$(InputName).html"
+					Outputs="..\..\man\$(InputName).html"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\include\global.h"
