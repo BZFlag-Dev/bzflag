@@ -77,7 +77,7 @@ int LuaFloat::MetaIndex(lua_State* L)
   const string key = luaL_checkstring(L, 2);
 
   if (key == "number") {
-    lua_pushnumber(L, (lua_Number)f1);
+    lua_pushfloat(L, f1);
     return 1;
   }
   else if (key == "string") {

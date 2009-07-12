@@ -33,6 +33,7 @@ using std::vector;
 #include "SphereObstacle.h"
 #include "WallObstacle.h"
 #include "LinkManager.h"
+#include "PhysicsDriver.h"
 #include "CollisionManager.h"
 
 // local headers
@@ -156,6 +157,9 @@ static bool PushObstacleList(lua_State* L, int type, int& index)
 
 //============================================================================//
 //============================================================================//
+//
+//  Obstacle lists
+//
 
 int LuaObstacle::GetObstacleList(lua_State* L)
 {
@@ -215,6 +219,9 @@ int LuaObstacle::GetObstaclesInBox(lua_State* L)
 
 //============================================================================//
 //============================================================================//
+//
+//  Obstacle properties
+//
 
 int LuaObstacle::GetObstacleName(lua_State* L)
 {
@@ -305,7 +312,7 @@ int LuaObstacle::GetObstacleRotation(lua_State* L)
   if (obs == NULL) {
     return 0;
   }
-  lua_pushnumber(L, obs->getRotation());
+  lua_pushfloat(L, obs->getRotation());
   return 1;
 }
 
@@ -368,6 +375,9 @@ int LuaObstacle::GetObstacleFlipZ(lua_State* L)
 
 //============================================================================//
 //============================================================================//
+//
+//  MeshFaces
+//
 
 int LuaObstacle::GetMeshFaceCount(lua_State* L)
 {
@@ -442,9 +452,9 @@ int LuaObstacle::GetFaceVerts(lua_State* L)
   for (int i = 0; i < elements; i++) {
     const fvec3& vec = face->getVertex(i);
     lua_createtable(L, 3, 0);
-    lua_pushnumber(L, vec.x); lua_rawseti(L, -2, 1);
-    lua_pushnumber(L, vec.y); lua_rawseti(L, -2, 2);
-    lua_pushnumber(L, vec.z); lua_rawseti(L, -2, 3);
+    lua_pushfloat(L, vec.x); lua_rawseti(L, -2, 1);
+    lua_pushfloat(L, vec.y); lua_rawseti(L, -2, 2);
+    lua_pushfloat(L, vec.z); lua_rawseti(L, -2, 3);
     lua_rawseti(L, -2, i + 1);
   }
   return 1;
@@ -465,9 +475,9 @@ int LuaObstacle::GetFaceNorms(lua_State* L)
   for (int i = 0; i < elements; i++) {
     const fvec3& vec = face->getNormal(i);
     lua_createtable(L, 3, 0);
-    lua_pushnumber(L, vec.x); lua_rawseti(L, -2, 1);
-    lua_pushnumber(L, vec.y); lua_rawseti(L, -2, 2);
-    lua_pushnumber(L, vec.z); lua_rawseti(L, -2, 3);
+    lua_pushfloat(L, vec.x); lua_rawseti(L, -2, 1);
+    lua_pushfloat(L, vec.y); lua_rawseti(L, -2, 2);
+    lua_pushfloat(L, vec.z); lua_rawseti(L, -2, 3);
     lua_rawseti(L, -2, i + 1);
   }
   return 1;
@@ -488,8 +498,8 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
     for (int i = 0; i < elements; i++) {
       const fvec2& vec = face->getTexcoord(i);
       lua_createtable(L, 2, 0);
-      lua_pushnumber(L, vec.s); lua_rawseti(L, -2, 1);
-      lua_pushnumber(L, vec.t); lua_rawseti(L, -2, 2);
+      lua_pushfloat(L, vec.s); lua_rawseti(L, -2, 1);
+      lua_pushfloat(L, vec.t); lua_rawseti(L, -2, 2);
       lua_rawseti(L, -2, i + 1);
     }
     return 1;
@@ -512,8 +522,8 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
     for (int i = 0; i < elements; i++) {
       const fvec2& vec = txcdArray[i];
       lua_createtable(L, 2, 0);
-      lua_pushnumber(L, vec.s); lua_rawseti(L, -2, 1);
-      lua_pushnumber(L, vec.t); lua_rawseti(L, -2, 2);
+      lua_pushfloat(L, vec.s); lua_rawseti(L, -2, 1);
+      lua_pushfloat(L, vec.t); lua_rawseti(L, -2, 2);
       lua_rawseti(L, -2, i + 1);
     }
     return 1;
@@ -531,10 +541,10 @@ int LuaObstacle::GetFacePlane(lua_State* L)
   }
   const fvec4& vec = face->getPlane();
   lua_createtable(L, 4, 0);
-  lua_pushnumber(L, vec.x); lua_rawseti(L, -2, 1);
-  lua_pushnumber(L, vec.y); lua_rawseti(L, -2, 2);
-  lua_pushnumber(L, vec.z); lua_rawseti(L, -2, 3);
-  lua_pushnumber(L, vec.w); lua_rawseti(L, -2, 4);
+  lua_pushfloat(L, vec.x); lua_rawseti(L, -2, 1);
+  lua_pushfloat(L, vec.y); lua_rawseti(L, -2, 2);
+  lua_pushfloat(L, vec.z); lua_rawseti(L, -2, 3);
+  lua_pushfloat(L, vec.w); lua_rawseti(L, -2, 4);
   return 1;
 }
 
@@ -578,6 +588,9 @@ int LuaObstacle::GetFaceLinkName(lua_State* L)
 
 //============================================================================//
 //============================================================================//
+//
+//  links
+//
 
 int LuaObstacle::GetLinkSrcIDs(lua_State* L)
 {
@@ -686,11 +699,14 @@ int LuaObstacle::GetLinkDestinations(lua_State* L)
 
 //============================================================================//
 //============================================================================//
+//
+//  physics drivers
+//
 
 int LuaObstacle::GetPhyDrvID(lua_State* L)
 {
   const char* name = luaL_checkstring(L, 1);
-  const int id = bz_getPhyDrvID(name);
+  const int id = PHYDRVMGR.findDriver(name);
   if (id < 0) {
     return 0;
   }
@@ -702,11 +718,11 @@ int LuaObstacle::GetPhyDrvID(lua_State* L)
 int LuaObstacle::GetPhyDrvName(lua_State* L)
 {
   const int id = luaL_checkint(L, 1);
-  const char* name = bz_getPhyDrvName(id);
-  if (name == NULL) {
+  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(id);
+  if (phydrv == NULL) {
     return 0;
   }
-  lua_pushstring(L, name);
+  lua_pushstdstring(L, phydrv->getName());
   return 1;
 }
 
