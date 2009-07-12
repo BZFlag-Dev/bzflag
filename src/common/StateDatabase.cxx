@@ -334,6 +334,9 @@ fvec2 StateDatabase::evalFVec2(const std::string& name)
              &data[0], &data[1]) != 2) {
     return nanValue;
   }
+  if (isnan(data[0]) || isnan(data[1])) {
+    return nanValue;
+  }
   return fvec2(data[0], data[1]);
 }
 
@@ -349,6 +352,9 @@ fvec3 StateDatabase::evalFVec3(const std::string& name)
              &data[0], &data[1], &data[2]) != 3) {
     return nanValue;
   }
+  if (isnan(data[0]) || isnan(data[1]) || isnan(data[2])) {
+    return nanValue;
+  }
   return fvec3(data[0], data[1], data[2]);
 }
 
@@ -362,6 +368,9 @@ fvec4 StateDatabase::evalFVec4(const std::string& name)
   float data[4];
   if (sscanf(get(name).c_str(), "%f %f %f %f",
              &data[0], &data[1], &data[2], &data[3]) != 4) {
+    return nanValue;
+  }
+  if (isnan(data[0]) || isnan(data[1]) || isnan(data[2]) || isnan(data[3])) {
     return nanValue;
   }
   return fvec4(data[0], data[1], data[2], data[3]);
