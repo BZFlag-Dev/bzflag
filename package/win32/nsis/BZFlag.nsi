@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.99
-  !define VER_MINOR .27.20090531
+  !define VER_MINOR .40.20090712
 
 ;--------------------------------
 ;Compression options
@@ -67,7 +67,7 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nPlease note that you must have the Visual C++ 2008 Redistributable Package to run BZFlag, it can be downloaded from Microsoft.\r\n\r\nClick Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nClick Next to continue."
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
@@ -161,10 +161,6 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\data\sounds
   File ..\..\..\data\sounds\*.wav
 
-  ; make the LuaUser dir 
-  ;SetOutPath $INSTDIR\data\LuaUser
-  ;File ..\..\..\data\LuaUser\*.*
-
   ; make the doc dir
   SetOutPath $INSTDIR\doc
   File ..\ReadMe.win32.html
@@ -175,10 +171,15 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
 
-
-  ; need to change this to just install the MSVC9 runtimes
-  ;File ..\..\..\msvcr80.dll
-  ;File ..\..\..\msvcp80.dll
+  ; This requires the Visual C++ 2008 SP1 runtime file to be located in
+  ; the same directory as the NSIS script
+  ; http://www.microsoft.com/downloads/details.aspx?FamilyID=a5c84275-3b97-4ab7-a40d-3802b2af5fc2
+  SetOutPath $TEMP
+  DetailPrint "Installing Visual C++ 2008 SP1 runtime"         
+  File vcredist_x86.exe  
+  ExecWait "$TEMP\vcredist_x86.exe /q"         
+  DetailPrint "Cleaning up"         
+  Delete $TEMP\vcredist_x86.exe
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
@@ -241,15 +242,14 @@ SectionGroup "BZFlag Server" BZFlagServer
     SetOutPath $INSTDIR
     ; Put file there
     File ..\..\..\bzfs.exe
-    File ..\..\..\misc\bzfs.conf
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
-    File ..\..\..\misc\hix.bzw
-    File ..\..\..\misc\bzfs.conf
-    File ..\..\..\misc\bzfs_conf.html
-    File ..\..\..\misc\groups.conf
-    File ..\..\..\misc\vars.txt
+    File ..\..\..\misc\maps\hix.bzw
+    File ..\..\..\misc\samples\bzfs.conf
+    File ..\..\..\misc\samples\bzfs_conf.html
+    File ..\..\..\misc\samples\groups.conf
+    File ..\..\..\misc\samples\vars.txt
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
