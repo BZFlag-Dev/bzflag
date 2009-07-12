@@ -40,6 +40,7 @@ static int FetchURL_callout(lua_State* L);
 
 static bool CreateMetatble(lua_State* L);
 static int MetaGC(lua_State* L);
+static int MetaToString(lua_State* L);
 
 static int Cancel(lua_State* L);
 static int Success(lua_State* L);
@@ -311,6 +312,10 @@ static bool CreateMetatble(lua_State* L)
   lua_pushcfunction(L, MetaGC);
   lua_rawset(L, -3);
 
+  lua_pushliteral(L, "__tostring");
+  lua_pushcfunction(L, MetaToString);
+  lua_rawset(L, -3);
+
   lua_pushliteral(L, "__index");
   lua_newtable(L);
   {
@@ -336,6 +341,14 @@ static int MetaGC(lua_State* L)
   FetchHandler* fetch = CheckHandler(L, 1);
   fetch->~FetchHandler();
   return 0;
+}
+
+
+static int MetaToString(lua_State* L)
+{
+  FetchHandler* fetch = CheckHandler(L, 1);
+  lua_pushfstring(L, "%s %p", metaName, (void*)fetch);
+  return 1;
 }
 
 

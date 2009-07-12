@@ -323,7 +323,7 @@ static bool CreateLuaState(const string& script)
   lua_rawset(L, LUA_GLOBALSINDEX);
 
   if (luaL_dofile(L, script.c_str()) != 0) {
-    logDebugMessage(1, "lua init error: %s\n", lua_tostring(L, -1));
+    logDebugMessage(0, "lua init error: %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }

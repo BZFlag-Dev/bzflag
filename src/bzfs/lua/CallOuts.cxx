@@ -142,6 +142,8 @@ static int GetLinkSrcIDs(lua_State* L);
 static int GetLinkDstIDs(lua_State* L);
 static int GetLinkSrcName(lua_State* L);
 static int GetLinkDstName(lua_State* L);
+static int GetLinkSrcFace(lua_State* L);
+static int GetLinkDstFace(lua_State* L);
 
 static int GetPhyDrvID(lua_State* L);
 static int GetPhyDrvName(lua_State* L);
@@ -345,6 +347,8 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetLinkDstIDs);
   PUSH_LUA_CFUNC(L, GetLinkSrcName);
   PUSH_LUA_CFUNC(L, GetLinkDstName);
+  PUSH_LUA_CFUNC(L, GetLinkSrcFace);
+  PUSH_LUA_CFUNC(L, GetLinkDstFace);
 
   PUSH_LUA_CFUNC(L, GetPhyDrvID);
   PUSH_LUA_CFUNC(L, GetPhyDrvName);
@@ -759,6 +763,30 @@ static int GetLinkDstName(lua_State* L)
     return 0;
   }
   lua_pushstdstring(L, face->getLinkName());
+  return 1;
+}
+
+
+static int GetLinkSrcFace(lua_State* L)
+{
+  const int linkSrcID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushdouble(L, face->getGUID());
+  return 1;
+}
+
+
+static int GetLinkDstFace(lua_State* L)
+{
+  const int linkDstID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushdouble(L, face->getGUID());
   return 1;
 }
 

@@ -49,8 +49,9 @@ class LuaObstacle {
     static int GetFacePlane(lua_State* L);
     static int GetFacePhyDrv(lua_State* L);
     static int GetFaceSmoothBounce(lua_State* L);
+    static int GetFaceLinkName(lua_State* L);
 
-    static int GetLinkDestinations(lua_State* L); // FIXME ?
+    static int GetLinkDestinations(lua_State* L);
 
     static int GetObstaclesInBox(lua_State* L);
 };

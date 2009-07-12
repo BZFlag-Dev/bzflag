@@ -72,6 +72,7 @@ bool LuaObstacle::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetFacePlane);
   PUSH_LUA_CFUNC(L, GetFacePhyDrv);
   PUSH_LUA_CFUNC(L, GetFaceSmoothBounce);
+  PUSH_LUA_CFUNC(L, GetFaceLinkName);
 
   PUSH_LUA_CFUNC(L, GetLinkDestinations);
 
@@ -525,6 +526,21 @@ int LuaObstacle::GetFaceSmoothBounce(lua_State* L)
     return 0;
   }
   lua_pushboolean(L, face->isSmoothBounce());
+  return 1;
+}
+
+
+int LuaObstacle::GetFaceLinkName(lua_State* L)
+{
+  const MeshFace* face = ParseMeshFace(L, 1);
+  if (face == NULL) {
+    return 0;
+  }
+  const std::string linkName = face->getLinkName();
+  if (linkName.empty()) {
+    return 0;
+  }
+  lua_pushstdstring(L, linkName);
   return 1;
 }
 
