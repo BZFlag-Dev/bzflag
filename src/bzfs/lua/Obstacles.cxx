@@ -45,6 +45,8 @@ using std::vector;
 bool LuaObstacle::PushEntries(lua_State* L)
 {
   PUSH_LUA_CFUNC(L, GetObstacleList);
+  PUSH_LUA_CFUNC(L, GetObstaclesInBox);
+
   PUSH_LUA_CFUNC(L, GetObstacleName);
   PUSH_LUA_CFUNC(L, GetObstacleType);
 
@@ -74,9 +76,16 @@ bool LuaObstacle::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetFaceSmoothBounce);
   PUSH_LUA_CFUNC(L, GetFaceLinkName);
 
+  PUSH_LUA_CFUNC(L, GetLinkSrcIDs);
+  PUSH_LUA_CFUNC(L, GetLinkDstIDs);
+  PUSH_LUA_CFUNC(L, GetLinkSrcName);
+  PUSH_LUA_CFUNC(L, GetLinkDstName);
+  PUSH_LUA_CFUNC(L, GetLinkSrcFace);
+  PUSH_LUA_CFUNC(L, GetLinkDstFace);
   PUSH_LUA_CFUNC(L, GetLinkDestinations);
 
-  PUSH_LUA_CFUNC(L, GetObstaclesInBox);
+  PUSH_LUA_CFUNC(L, GetPhyDrvID);
+  PUSH_LUA_CFUNC(L, GetPhyDrvName);
 
   return true;
 }
@@ -184,6 +193,28 @@ int LuaObstacle::GetObstacleList(lua_State* L)
   return 1;
 }
 
+
+int LuaObstacle::GetObstaclesInBox(lua_State* L)
+{
+  Extents exts;
+  exts.mins.x = luaL_checkfloat(L, 1);
+  exts.mins.y = luaL_checkfloat(L, 2);
+  exts.mins.z = luaL_checkfloat(L, 3);
+  exts.maxs.x = luaL_checkfloat(L, 4);
+  exts.maxs.y = luaL_checkfloat(L, 5);
+  exts.maxs.z = luaL_checkfloat(L, 6);
+  const ObsList* obsList = COLLISIONMGR.axisBoxTest(exts);
+  lua_createtable(L, obsList->count, 0);
+  for (int i = 0; i < obsList->count; i++) {
+    lua_pushdouble(L, obsList->list[i]->getGUID());
+    lua_rawseti(L, -2, i + 1);
+  }
+  return 1;
+}
+
+
+//============================================================================//
+//============================================================================//
 
 int LuaObstacle::GetObstacleName(lua_State* L)
 {
@@ -548,6 +579,88 @@ int LuaObstacle::GetFaceLinkName(lua_State* L)
 //============================================================================//
 //============================================================================//
 
+int LuaObstacle::GetLinkSrcIDs(lua_State* L)
+{
+  const string srcName = luaL_checkstring(L, 1);
+
+  lua_newtable(L);
+  const LinkManager::FaceVec& linkSrcs = linkManager.getLinkSrcs();
+  for (size_t i = 0; i < linkSrcs.size(); i++) {
+    const MeshFace* face = linkSrcs[i];
+    if (face->getLinkName() == srcName) {
+      lua_pushinteger(L, i);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  return 1;
+}
+
+
+int LuaObstacle::GetLinkDstIDs(lua_State* L)
+{
+  const string dstName = luaL_checkstring(L, 1);
+
+  lua_newtable(L);
+  const LinkManager::DstDataVec& linkDsts = linkManager.getLinkDsts();
+  for (size_t i = 0; i < linkDsts.size(); i++) {
+    const MeshFace* face = linkDsts[i].face;
+    if (face->getLinkName() == dstName) {
+      lua_pushinteger(L, i);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  return 1;
+}
+
+
+int LuaObstacle::GetLinkSrcName(lua_State* L)
+{
+  const int linkSrcID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushstdstring(L, face->getLinkName());
+  return 1;
+}
+
+
+int LuaObstacle::GetLinkDstName(lua_State* L)
+{
+  const int linkDstID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushstdstring(L, face->getLinkName());
+  return 1;
+}
+
+
+int LuaObstacle::GetLinkSrcFace(lua_State* L)
+{
+  const int linkSrcID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushdouble(L, face->getGUID());
+  return 1;
+}
+
+
+int LuaObstacle::GetLinkDstFace(lua_State* L)
+{
+  const int linkDstID = luaL_checkint(L, 1);
+  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
+  if (face == NULL) {
+    return 0;
+  }
+  lua_pushdouble(L, face->getGUID());
+  return 1;
+}
+
+
 int LuaObstacle::GetLinkDestinations(lua_State* L)
 {
   L = L;
@@ -574,21 +687,26 @@ int LuaObstacle::GetLinkDestinations(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaObstacle::GetObstaclesInBox(lua_State* L)
+int LuaObstacle::GetPhyDrvID(lua_State* L)
 {
-  Extents exts;
-  exts.mins.x = luaL_checkfloat(L, 1);
-  exts.mins.y = luaL_checkfloat(L, 2);
-  exts.mins.z = luaL_checkfloat(L, 3);
-  exts.maxs.x = luaL_checkfloat(L, 4);
-  exts.maxs.y = luaL_checkfloat(L, 5);
-  exts.maxs.z = luaL_checkfloat(L, 6);
-  const ObsList* obsList = COLLISIONMGR.axisBoxTest(exts);
-  lua_createtable(L, obsList->count, 0);
-  for (int i = 0; i < obsList->count; i++) {
-    lua_pushdouble(L, obsList->list[i]->getGUID());
-    lua_rawseti(L, -2, i + 1);
+  const char* name = luaL_checkstring(L, 1);
+  const int id = bz_getPhyDrvID(name);
+  if (id < 0) {
+    return 0;
   }
+  lua_pushinteger(L, id);
+  return 1;
+}
+
+
+int LuaObstacle::GetPhyDrvName(lua_State* L)
+{
+  const int id = luaL_checkint(L, 1);
+  const char* name = bz_getPhyDrvName(id);
+  if (name == NULL) {
+    return 0;
+  }
+  lua_pushstring(L, name);
   return 1;
 }
 

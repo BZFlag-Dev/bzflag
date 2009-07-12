@@ -138,16 +138,6 @@ static int GetWorldURL(lua_State* L);
 static int SetWorldURL(lua_State* L);
 static int GetWorldCache(lua_State* L);
 
-static int GetLinkSrcIDs(lua_State* L);
-static int GetLinkDstIDs(lua_State* L);
-static int GetLinkSrcName(lua_State* L);
-static int GetLinkDstName(lua_State* L);
-static int GetLinkSrcFace(lua_State* L);
-static int GetLinkDstFace(lua_State* L);
-
-static int GetPhyDrvID(lua_State* L);
-static int GetPhyDrvName(lua_State* L);
-
 static int DebugMessage(lua_State* L);
 static int GetDebugLevel(lua_State* L);
 static int SetDebugLevel(lua_State* L);
@@ -342,16 +332,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetWallHeight);
   PUSH_LUA_CFUNC(L, SetWorldSize);
   PUSH_LUA_CFUNC(L, SetWorldURL);
-
-  PUSH_LUA_CFUNC(L, GetLinkSrcIDs);
-  PUSH_LUA_CFUNC(L, GetLinkDstIDs);
-  PUSH_LUA_CFUNC(L, GetLinkSrcName);
-  PUSH_LUA_CFUNC(L, GetLinkDstName);
-  PUSH_LUA_CFUNC(L, GetLinkSrcFace);
-  PUSH_LUA_CFUNC(L, GetLinkDstFace);
-
-  PUSH_LUA_CFUNC(L, GetPhyDrvID);
-  PUSH_LUA_CFUNC(L, GetPhyDrvName);
 
   PUSH_LUA_CFUNC(L, DebugMessage);
   PUSH_LUA_CFUNC(L, GetDebugLevel);
@@ -703,115 +683,6 @@ static int SetWorldURL(lua_State* L)
 {
   clOptions->cacheURL = luaL_checkstring(L, 1);
   return 0;
-}
-
-
-//============================================================================//
-//============================================================================//
-
-static int GetLinkSrcIDs(lua_State* L)
-{
-  const string srcName = luaL_checkstring(L, 1);
-
-  lua_newtable(L);
-  const LinkManager::FaceVec& linkSrcs = linkManager.getLinkSrcs();
-  for (size_t i = 0; i < linkSrcs.size(); i++) {
-    const MeshFace* face = linkSrcs[i];
-    if (face->getLinkName() == srcName) {
-      lua_pushinteger(L, i);
-      lua_rawseti(L, -2, i + 1);
-    }
-  }
-  return 1;
-}
-
-
-static int GetLinkDstIDs(lua_State* L)
-{
-  const string dstName = luaL_checkstring(L, 1);
-
-  lua_newtable(L);
-  const LinkManager::DstDataVec& linkDsts = linkManager.getLinkDsts();
-  for (size_t i = 0; i < linkDsts.size(); i++) {
-    const MeshFace* face = linkDsts[i].face;
-    if (face->getLinkName() == dstName) {
-      lua_pushinteger(L, i);
-      lua_rawseti(L, -2, i + 1);
-    }
-  }
-  return 1;
-}
-
-
-static int GetLinkSrcName(lua_State* L)
-{
-  const int linkSrcID = luaL_checkint(L, 1);
-  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
-  if (face == NULL) {
-    return 0;
-  }
-  lua_pushstdstring(L, face->getLinkName());
-  return 1;
-}
-
-
-static int GetLinkDstName(lua_State* L)
-{
-  const int linkDstID = luaL_checkint(L, 1);
-  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
-  if (face == NULL) {
-    return 0;
-  }
-  lua_pushstdstring(L, face->getLinkName());
-  return 1;
-}
-
-
-static int GetLinkSrcFace(lua_State* L)
-{
-  const int linkSrcID = luaL_checkint(L, 1);
-  const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
-  if (face == NULL) {
-    return 0;
-  }
-  lua_pushdouble(L, face->getGUID());
-  return 1;
-}
-
-
-static int GetLinkDstFace(lua_State* L)
-{
-  const int linkDstID = luaL_checkint(L, 1);
-  const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
-  if (face == NULL) {
-    return 0;
-  }
-  lua_pushdouble(L, face->getGUID());
-  return 1;
-}
-
-
-static int GetPhyDrvID(lua_State* L)
-{
-  const char* name = luaL_checkstring(L, 1);
-  const int id = bz_getPhyDrvID(name);
-  if (id < 0) {
-    return 0;
-  }
-  lua_pushinteger(L, id);
-  return 1;
-}
-
-
-static int GetPhyDrvName(lua_State* L)
-{
-  const int id = luaL_checkint(L, 1);
-  const char* name = bz_getPhyDrvName(id);
-  if (name == NULL) {
-    return 0;
-  }
-  lua_pushstring(L, name);
-  return 1;
 }
 
 

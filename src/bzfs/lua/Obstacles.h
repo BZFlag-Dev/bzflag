@@ -21,6 +21,7 @@ class LuaObstacle {
 
   private: // call-outs
     static int GetObstacleList(lua_State* L);
+    static int GetObstaclesInBox(lua_State* L);
 
     static int GetObstacleName(lua_State* L);
     static int GetObstacleType(lua_State* L);
@@ -51,9 +52,16 @@ class LuaObstacle {
     static int GetFaceSmoothBounce(lua_State* L);
     static int GetFaceLinkName(lua_State* L);
 
+    static int GetLinkSrcIDs(lua_State* L);
+    static int GetLinkDstIDs(lua_State* L);
+    static int GetLinkSrcName(lua_State* L);
+    static int GetLinkDstName(lua_State* L);
+    static int GetLinkSrcFace(lua_State* L);
+    static int GetLinkDstFace(lua_State* L);
     static int GetLinkDestinations(lua_State* L);
 
-    static int GetObstaclesInBox(lua_State* L);
+    static int GetPhyDrvID(lua_State* L);
+    static int GetPhyDrvName(lua_State* L);
 };
 
 
