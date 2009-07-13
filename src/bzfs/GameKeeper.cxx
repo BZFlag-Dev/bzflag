@@ -401,10 +401,9 @@ bool GameKeeper::Player::clean()
       } else {
 	empty = false;
       }
-      return empty && ICleaned;
-    }
+	}
   }
-  return false;
+  return empty && ICleaned;
 }
 
 int GameKeeper::Player::getFreeIndex(int min, int max)
