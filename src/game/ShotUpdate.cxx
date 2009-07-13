@@ -23,7 +23,7 @@
 // ShotUpdate
 //
 
-void*			ShotUpdate::pack(void* buf) const
+void* ShotUpdate::pack(void* buf) const
 {
   buf = nboPackUInt8(buf, player);
   buf = nboPackUInt16(buf, id);
@@ -34,7 +34,8 @@ void*			ShotUpdate::pack(void* buf) const
   return buf;
 }
 
-void			ShotUpdate::pack(BufferedNetworkMessage *msg) const
+
+void ShotUpdate::pack(BufferedNetworkMessage *msg) const
 {
   msg->packUInt8(player);
   msg->packUInt16(id);
@@ -44,18 +45,20 @@ void			ShotUpdate::pack(BufferedNetworkMessage *msg) const
   msg->packInt16(team);
 }
 
-void*			ShotUpdate::unpack(void* buf)
+
+void* ShotUpdate::unpack(void* buf)
 {
   buf = nboUnpackUInt8(buf, player);
   buf = nboUnpackUInt16(buf, id);
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFVec3(buf, vel);
   buf = nboUnpackFloat(buf, dt);
-  short temp;
+  int16_t temp;
   buf = nboUnpackInt16(buf, temp);
   team = (TeamColor)temp;
   return buf;
 }
+
 
 //
 // FiringInfo
@@ -66,7 +69,8 @@ FiringInfo::FiringInfo()
   // do nothing -- must be prepared before use by unpack() or assignment
 }
 
-void*			FiringInfo::pack(void* buf) const
+
+void* FiringInfo::pack(void* buf) const
 {
   buf = nboPackDouble(buf, timeSent);
   buf = shot.pack(buf);
@@ -76,7 +80,8 @@ void*			FiringInfo::pack(void* buf) const
   return buf;
 }
 
-void			FiringInfo::pack(BufferedNetworkMessage *msg) const
+
+void FiringInfo::pack(BufferedNetworkMessage *msg) const
 {
   msg->packDouble(timeSent);
   shot.pack(msg);
@@ -85,29 +90,19 @@ void			FiringInfo::pack(BufferedNetworkMessage *msg) const
   msg->packUInt8(shotType);
 }
 
-void*			FiringInfo::unpack(void* buf)
+
+void* FiringInfo::unpack(void* buf)
 {
   buf = nboUnpackDouble(buf, timeSent);
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
-  unsigned char t = 0 ;
+  uint8_t t = 0;
   buf = nboUnpackUInt8(buf, t);
   shotType = (ShotType)t;
   return buf;
 }
 
-void*			FiringInfo::unpackW(void* buf)
-{
-  buf = nboUnpackDouble(buf, timeSent);
-  buf = shot.unpack(buf);
-  buf = FlagType::unpack(buf, flagType);
-  buf = nboUnpackFloat(buf, lifetime);
-  unsigned char t = 0;
-  buf = nboUnpackUInt8(buf, t);
-  shotType = (ShotType)t;
-  return buf;
-}
 
 // Local Variables: ***
 // mode: C++ ***

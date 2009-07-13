@@ -45,7 +45,6 @@ struct ShotUpdate {
     void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
 
-
   public:
     PlayerId		player;			// who's shot
     uint16_t		id;			// shot id unique to player
@@ -64,7 +63,6 @@ struct FiringInfo {
     void*		pack(void*) const;
     void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
-    void*		unpackW(void*);
 
   public:
     double		timeSent;
