@@ -41,6 +41,7 @@
 #include "ServerList.h"
 #include "TextUtils.h"
 #include "bzsignal.h"
+#include "MsgStrings.h"
 
 
 // common client headers
@@ -117,9 +118,12 @@ bool gameOver = false;
 int numFlags = 0;
 
 float clockAdjust = 0.0f;
-bool pausedByUnmap = false;
+
+bool  pausedByUnmap = false;
 float pauseCountdown = 0.0f;
+
 float destructCountdown = 0.0f;
+
 
 const char *blowedUpMessage[] = {
   NULL,
@@ -1638,9 +1642,6 @@ void handleMovementUpdate(uint16_t code, void *msg)
   tank->unpack(msg, code); // now read
   short newStatus = tank->getStatus();
 
-//FIXME  if ((oldStatus & short(PlayerState::Paused)) != (newStatus & short(PlayerState::Paused)))
-//FIXME    addMessage(tank, (tank->getStatus() & PlayerState::Paused) ? "Paused" : "Resumed");
-
   if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
     // player has started exploding and we haven't gotten killed
     // message yet -- set explosion now, play sound later (when we
@@ -1709,11 +1710,16 @@ void handlePause(void *msg)
 
   Player *player = lookupPlayer(id);
   if (player) {
-    const bool oldState = player->isPaused();
-    if ((state!= 0) != oldState) {
+    if (paused != player->isPaused()) {
       addMessage(player, state ? "Paused" : "Resumed");
     }
+
     player->setPause(paused);
+
+    if (player == LocalPlayer::getMyTank()) {
+      pauseCountdown = 0.0f;
+      pausedByUnmap = false;
+    }
   }
 }
 
@@ -1737,13 +1743,32 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
   std::vector<std::string> args;
   bool checkScores = false;
 
-  static BZDB_bool debugMesages("debugNetMesg");
-  static BZDB_bool debugUpdateMesages("debugNetUpdMesg");
-  if (debugMesages.getData())
-  {
+  // network message debugging
+  static BZDB_int debugMessages("debugNetMesg");
+  static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
+  if (debugMessages >= 1) {
     char *p = (char*)&code;
-    if (code != MsgPlayerUpdateSmall || (code != MsgPlayerUpdateSmall && debugUpdateMesages))
-      showMessage(TextUtils::format("%s: Net Message \"%c%c\": Size %d",TimeKeeper::getCurrent().timestamp(),p[1],p[0],len));
+    if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
+      if (debugMessages <= 1) {
+        showMessage(TextUtils::format("%s: Net Message \"%c%c\": Size %d  <%s>",
+                                      TimeKeeper::getCurrent().timestamp(),
+                                      p[1], p[0], len,
+                                      MsgStrings::strMsgCode(code)));
+      }
+      else {
+        // use the fancier MsgStrings setup
+        const int msgLevel = (debugMessages - 2);
+        MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
+        for (size_t i = 0; i < msgList.size(); i++) {
+          if (msgList[i].level <= msgLevel) {
+            std::string prefix = "netdbg: ";
+            prefix += TimeKeeper::getCurrent().timestamp();
+            prefix += (i == 0) ? " " : "   ";
+            showMessage(prefix + msgList[i].color + msgList[i].text);
+          }
+        }
+      }
+    }
   }
 
   switch (code) {

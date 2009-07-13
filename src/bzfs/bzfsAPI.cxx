@@ -1868,13 +1868,17 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
 
   std::vector < std::string > temp=TextUtils::tokenize(TextUtils::tolower(std::string(URL)), std::string("."));
 
-  std::string ext=temp[temp.size()-1];
-  if(ext=="wav")
-    resType=eSound;
+  std::string ext = temp[temp.size() - 1];
+  if (ext == "wav") {
+    resType = eSound;
+  } else if (ext == "png") {
+    resType = eImage;
+  }
 
-  NetMsg   msg = MSGMGR.newMessage();
+  NetMsg msg = MSGMGR.newMessage();
 
   msg->packUInt16(1); // the count
+  msg->packUInt8(1); // overwrite
   msg->packUInt16((short)resType);
   msg->packUInt16((unsigned short)strlen(URL));
   msg->packString(URL, strlen(URL));

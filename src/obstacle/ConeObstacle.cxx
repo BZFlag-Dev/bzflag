@@ -188,7 +188,7 @@ MeshObstacle* ConeObstacle::makeMesh()
   }
   v.z = pos.z + (0.5f * sz.z);
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckInside);
+  checkTypes.push_back(MeshObstacle::InsideCheck);
 
   int i;
   const float astep = a / (float) divisions;

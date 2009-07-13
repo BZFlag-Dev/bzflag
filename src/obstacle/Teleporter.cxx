@@ -191,8 +191,8 @@ MeshObstacle* Teleporter::makeMesh()
     //
     //                -Z
 
-    checkTypes.push_back(MeshObstacle::CheckInside);
-    checkTypes.push_back(MeshObstacle::CheckInside);
+    checkTypes.push_back(MeshObstacle::InsideCheck);
+    checkTypes.push_back(MeshObstacle::InsideCheck);
     checkPoints.push_back(fvec3(0.0f, +ym, +zm));
     checkPoints.push_back(fvec3(0.0f, -ym, +zm));
 

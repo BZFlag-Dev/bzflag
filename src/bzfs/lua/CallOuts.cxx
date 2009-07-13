@@ -49,10 +49,9 @@ using std::map;
 #include "LuaHeader.h"
 
 
-extern const string& GetLuaDirectory(); // from lua.cpp
+extern const string& GetLuaDir(); // from lua.cpp
 
 // FIXME: TODO
-// * obstacle queries, tangibility
 // - plugin management  (not part of the plan...)
 // - logging
 // - polls
@@ -507,7 +506,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
 static int GetLuaDirectory(lua_State* L)
 {
-  lua_pushstdstring(L, GetLuaDirectory()); // FIXME -- ew, see func name
+  lua_pushstdstring(L, GetLuaDir());
   return 1;
 }
 

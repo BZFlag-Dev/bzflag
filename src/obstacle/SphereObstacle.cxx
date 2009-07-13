@@ -169,7 +169,7 @@ MeshObstacle* SphereObstacle::makeMesh()
     v.z = v.z + (0.5f * fabsf(size.z));
   }
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckInside);
+  checkTypes.push_back(MeshObstacle::InsideCheck);
 
   // the center vertices
   v.x = pos.x;

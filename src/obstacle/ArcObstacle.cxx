@@ -241,7 +241,7 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
   }
   v.z = pos.z + (0.5f * fabsf(size.z));
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckInside);
+  checkTypes.push_back(MeshObstacle::InsideCheck);
 
   // setup the texsize across the disc
   if (texsz[2] < 0.0f) {
@@ -410,39 +410,39 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
     // down
     v.z = pos.z - (1.0f * height);
     checkPoints.push_back(v);
-    checkTypes.push_back(MeshObstacle::CheckOutside);
+    checkTypes.push_back(MeshObstacle::OutsideCheck);
     // up
     v.z = pos.z + (2.0f * height);
     checkPoints.push_back(v);
-    checkTypes.push_back(MeshObstacle::CheckOutside);
+    checkTypes.push_back(MeshObstacle::OutsideCheck);
   } else {
     // up
     v.z = pos.z + (2.0f * height);
     checkPoints.push_back(v);
-    checkTypes.push_back(MeshObstacle::CheckOutside);
+    checkTypes.push_back(MeshObstacle::OutsideCheck);
     // down
     v.z = pos.z - (1.0f * height);
     checkPoints.push_back(v);
-    checkTypes.push_back(MeshObstacle::CheckOutside);
+    checkTypes.push_back(MeshObstacle::OutsideCheck);
   }
   // east
   v.z = pos.z + (0.5f * height);
   v.x = pos.x + (outrad * 2.0f);
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckOutside);
+  checkTypes.push_back(MeshObstacle::OutsideCheck);
   // west
   v.x = pos.x - (outrad * 2.0f);
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckOutside);
+  checkTypes.push_back(MeshObstacle::OutsideCheck);
   // north
   v.x = pos.x;
   v.y = pos.y + (outrad * squish * 2.0f);
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckOutside);
+  checkTypes.push_back(MeshObstacle::OutsideCheck);
   // south
   v.y = pos.y - (outrad * squish * 2.0f);
   checkPoints.push_back(v);
-  checkTypes.push_back(MeshObstacle::CheckOutside);
+  checkTypes.push_back(MeshObstacle::OutsideCheck);
 
   int i;
   const float astep = a / (float) divisions;

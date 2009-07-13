@@ -15,6 +15,7 @@
 #include "PlayerState.h"
 #include <assert.h>
 
+
 void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
 {
   bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
@@ -45,6 +46,7 @@ void flagToAPIFlag ( FlagInfo &flag, bz_FlagUpdateRecord *flagRecord )
   flagRecord->initialVelocity    = flag.flag.initialVelocity;
 }
 
+
 void sendRemovePlayerMessage ( int playerID )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -58,6 +60,7 @@ void sendRemovePlayerMessage ( int playerID )
     p->playerHandler->playerRemoved(playerID);
   }
 }
+
 
 void sendFlagUpdateMessage ( int playerID )
 {
@@ -127,6 +130,7 @@ void sendFlagUpdateMessage ( int playerID )
   }
 }
 
+
 void sendFlagUpdateMessage(FlagInfo &flag)
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -137,6 +141,7 @@ void sendFlagUpdateMessage(FlagInfo &flag)
 
   msg->broadcast(MsgFlagUpdate,false);
 }
+
 
 void sendExistingPlayerUpdates ( int newPlayer )
 {
@@ -188,6 +193,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
   }
 }
 
+
 bool sendTeamUpdateMessage( int newPlayer )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(newPlayer);
@@ -216,6 +222,7 @@ bool sendTeamUpdateMessage( int newPlayer )
   }
   return true;
 }
+
 
 void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
 {
@@ -302,6 +309,7 @@ void sendTeamUpdateMessageBroadcast( int teamIndex1, int teamIndex2 )
   free(teams);
 }
 
+
 void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerID);
@@ -316,6 +324,7 @@ void sendRejectPlayerMessage ( int playerID, uint16_t code , const char* reason 
     msg->send(playerData->netHandler,MsgReject);
   }
 }
+
 
 bool sendAcceptPlayerMessage ( int playerID )
 {
@@ -334,6 +343,7 @@ bool sendAcceptPlayerMessage ( int playerID )
 
   return true;
 }
+
 
 void sendHandicapInfoUpdate(int playerID)
 {
@@ -398,6 +408,7 @@ void sendHandicapInfoUpdate(int playerID)
   }
 }
 
+
 void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData )
 {
   if (!playerData)
@@ -422,6 +433,7 @@ void sendSingleHandicapInfoUpdate ( GameKeeper::Player* playerData )
   }
   delete(handyData);
 }
+
 
 void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
 {
@@ -461,6 +473,7 @@ void sendAdminInfoMessage ( int aboutPlayer, int toPlayer, bool record )
     Record::addPacket(MsgAdminInfo,(int)msg->size(), msg->buffer(), HiddenPacket);
 }
 
+
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -491,6 +504,7 @@ void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag )
   }
 }
 
+
 void sendClosestFlagMessage(int playerIndex,FlagType *type , const fvec3& pos )
 {
   GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -508,6 +522,7 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type , const fvec3& pos )
     msg->send(playerData->netHandler,MsgNearFlag);
   }
 }
+
 
 bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
 {
@@ -561,6 +576,7 @@ bool sendGrabFlagMessage (int playerIndex, FlagInfo &flag )
   return true;
 }
 
+
 void sendSetShotType ( int playerIndex, ShotType type )
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -587,6 +603,7 @@ void sendSetShotType ( int playerIndex, ShotType type )
   }
 }
 
+
 void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -604,6 +621,7 @@ void sendMsgShotBegin ( int player, unsigned short id, FiringInfo &firingInfo )
   }
 }
 
+
 void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -619,6 +637,7 @@ void sendMsgShotEnd ( int player, unsigned short id, unsigned short reason )
       otherData->playerHandler->shotEnded(player,id,reason);
   }
 }
+
 
 void sendMsgTeleport( int player, unsigned short from, unsigned short to )
 {
@@ -651,6 +670,7 @@ void sendMsgAutoPilot( int player, unsigned char autopilot )
   }
 }
 
+
 // network only messages
 int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 {
@@ -663,6 +683,7 @@ int sendPlayerUpdateDirect(NetHandler *handler, GameKeeper::Player *otherData)
 
   return (int)msg->size();
 }
+
 
 int sendTeamUpdateDirect(NetHandler *handler)
 {
@@ -677,6 +698,7 @@ int sendTeamUpdateDirect(NetHandler *handler)
   msg->send(handler,MsgTeamUpdate);
   return (int)msg->size();
 }
+
 
 void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
 {
@@ -700,6 +722,7 @@ void sendWorldChunk(NetHandler *handler, uint32_t &ptr)
   msg->packString((char*)worldDatabase + ptr, size);
   msg->send(handler, MsgGetWorld);
 }
+
 
 void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 		     int len, int type, bool recordOnly)
@@ -787,6 +810,7 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   free(localtext);
 }
 
+
 void sendMessageAlive ( int playerID, const fvec3& pos, float rot )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -804,6 +828,7 @@ void sendMessageAlive ( int playerID, const fvec3& pos, float rot )
   }
 }
 
+
 void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -815,6 +840,7 @@ void sendMessageAllow ( int recipID, int playerID, unsigned char allow )
     msg->send(otherData->netHandler, MsgAllow);
 }
 
+
 void sendMessageAllow ( int playerID, unsigned char allow )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -823,6 +849,7 @@ void sendMessageAllow ( int playerID, unsigned char allow )
   msg->broadcast(MsgAllow);
   // Please note that non-network players do not currently receive the message.
 }
+
 
 bool sendPlayerStateMessage( GameKeeper::Player* playerData, bool shortState )
 {
@@ -853,6 +880,7 @@ bool sendPlayerStateMessage( GameKeeper::Player* playerData, bool shortState )
   return true;
 }
 
+
 void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType*flagType, int phydrv)
 {
   // send MsgKilled
@@ -876,6 +904,7 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex, BlowedUpReason re
   }
 }
 
+
 void sendPlayerScoreUpdate( GameKeeper::Player *player )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -896,6 +925,7 @@ void sendPlayerScoreUpdate( GameKeeper::Player *player )
   }
 }
 
+
 void sendScoreOverMessage(int playerID, TeamColor _team)
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -909,6 +939,7 @@ void sendScoreOverMessage(int playerID, TeamColor _team)
       otherData->playerHandler->scoreLimitReached(playerID, convertTeam(_team));
   }
 }
+
 
 void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
 {
@@ -928,6 +959,7 @@ void sendDropFlagMessage ( int playerIndex, FlagInfo &flag )
   delete(flagRecord);
 }
 
+
 void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
 {
   // send MsgCaptureFlag
@@ -944,6 +976,7 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
   }
 }
 
+
 void sendRabbitUpdate ( int playerIndex, unsigned char mode )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -952,6 +985,7 @@ void sendRabbitUpdate ( int playerIndex, unsigned char mode )
   msg->packUInt8(mode);
   msg->broadcast(MsgNewRabbit);
 }
+
 
 void sendMsgGMUpdate ( int /*player*/, ShotUpdate *shot, int target )
 {
@@ -963,6 +997,7 @@ void sendMsgGMUpdate ( int /*player*/, ShotUpdate *shot, int target )
   msg->broadcast(MsgGMUpdate);
 }
 
+
 void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
 {
   /* Pack a message with the given time */
@@ -972,6 +1007,7 @@ void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
   msg->send(handler,MsgWhatTimeIsIt);
 }
 
+
 void sendMsgTimeUpdate( int32_t timeLimit )
 {
   // start client's clock
@@ -980,6 +1016,7 @@ void sendMsgTimeUpdate( int32_t timeLimit )
   msg->packInt32(timeLimit);
   msg->broadcast(MsgTimeUpdate);
 }
+
 
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player )
 {
@@ -996,11 +1033,13 @@ void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int pla
   }
 }
 
+
 void sendMsgTangibilityReset ( void )
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->broadcast(MsgTangibilityReset,false);
 }
+
 
 void sendMsgCanSpawn ( int player, bool canSpawn )
 {
@@ -1021,6 +1060,7 @@ void sendMsgCanSpawn ( int player, bool canSpawn )
   }
 }
 
+
 void sendMsgLimboMessage ( int player, const std::string  &text )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -1031,6 +1071,7 @@ void sendMsgLimboMessage ( int player, const std::string  &text )
     msg->send(otherData->netHandler, MsgLimboMessage);
 }
 
+
 void sendSetTeam ( int playerIndex, int _team )
 {
   NetMsg msg = MSGMGR.newMessage();
@@ -1039,6 +1080,7 @@ void sendSetTeam ( int playerIndex, int _team )
   msg->packUInt8(_team);
   msg->broadcast(MsgSetTeam);
 }
+
 
 void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
 {
@@ -1050,6 +1092,7 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
   sendto(NetHandler::getUdpSocket(), echobuffer, 5, 0, (struct sockaddr*)uaddr,
     sizeof(*uaddr));   //Low level - bad - if this could be encapsulated...
 }
+
 
 void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std::string &value )
 {
@@ -1063,11 +1106,13 @@ void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std:
   msg->broadcast(MsgPlayerData);
 }
 
+
 void sendPlayerCustomDataPair ( int playerID, const char* key, const char* value )
 {
   if (key && value)
     sendPlayerCustomDataPair(playerID,std::string(key),std::string(value));
 }
+
 
 //messages sent TO the server
 void getGeneralMessageInfo ( void **buffer, uint16_t &code, uint16_t &len )
@@ -1088,11 +1133,13 @@ PackVars::~PackVars()
   endMessage();
 }
 
+
 // callback forwarder
 void PackVars::packIt(const std::string &key, void *pv)
 {
   reinterpret_cast<PackVars*>(pv)->sendPackVars(key);
 }
+
 
 void PackVars::startMessage()
 {
@@ -1103,6 +1150,7 @@ void PackVars::startMessage()
   msg->packUInt16(0);
 }
 
+
 void PackVars::endMessage()
 {
   // repack the placeholder short at the beginning of
@@ -1111,6 +1159,7 @@ void PackVars::endMessage()
   // send the message
   msg->send(handler, MsgSetVar);
 }
+
 
 void PackVars::sendPackVars(const std::string &key)
 {
@@ -1146,6 +1195,7 @@ bool isUDPAttackMessage ( uint16_t &code )
   return true;
 }
 
+
 void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &playerState )
 {
   apiState.status = eAlive;
@@ -1169,6 +1219,7 @@ void playerStateToAPIState ( bz_PlayerUpdateState &apiState, const PlayerState &
   memcpy(apiState.pos,playerState.pos,sizeof(float)*3);
   memcpy(apiState.velocity,playerState.velocity,sizeof(float)*3);
 }
+
 
 void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateState &apiState )
 {

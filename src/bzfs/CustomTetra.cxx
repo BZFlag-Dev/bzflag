@@ -146,7 +146,7 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
       center += vertices[v];
     }
     center *= 0.25f;
-    checkTypes.push_back(MeshObstacle::CheckInside);
+    checkTypes.push_back(MeshObstacle::InsideCheck);
     checkPoints.push_back(center);
   }
 

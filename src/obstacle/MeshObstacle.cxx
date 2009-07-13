@@ -652,9 +652,9 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
   }
 
   const CheckType ct0 = (CheckType)checkTypes[0];
-  if (ct0 == ParityInside) {
+  if (ct0 == InsideParity) {
     return parityCheckNoOctree(point, true);
-  } else if (ct0 == ParityOutside) {
+  } else if (ct0 == OutsideParity) {
     return parityCheckNoOctree(point, false);
   }
 
@@ -663,7 +663,7 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
   bool hasOutsides = false;
 
   for (c = 0; c < checkCount; c++) {
-    if (checkTypes[c] == CheckInside) {
+    if (checkTypes[c] == InsideCheck) {
       dir = checkPoints[c] - point;
       Ray ray(point, dir);
       bool hitFace = false;
@@ -679,7 +679,7 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
 	return true;
       }
     }
-    else if (checkTypes[c] == CheckOutside) {
+    else if (checkTypes[c] == OutsideCheck) {
       hasOutsides = true;
       dir = point - checkPoints[c];
       Ray ray(checkPoints[c], dir);
@@ -1033,7 +1033,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 
   int i;
   for (i = 0; i < checkCount; i++) {
-    if (checkTypes[i] == CheckInside) {
+    if (checkTypes[i] == InsideCheck) {
       out << indent << "  inside"  << checkPoints[i] << std::endl;
     } else {
       out << indent << "  outside" << checkPoints[i] << std::endl;

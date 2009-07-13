@@ -324,7 +324,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   std::vector<fvec2> txcds;
 
   // add the checkpoint
-  checkTypes.push_back(MeshObstacle::CheckInside);
+  checkTypes.push_back(MeshObstacle::InsideCheck);
   const fvec3 middle(0.0f, 0.0f, 0.5f);
   checkPoints.push_back(middle);
 

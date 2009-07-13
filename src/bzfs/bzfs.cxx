@@ -1803,7 +1803,10 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
 
   // no need to ban local players, if they arn't suposed to be here, don't load them
-  if (!playerData->playerHandler) {
+  if (playerData->playerHandler) {
+    playerData->setNeedThisHostbanChecked(false);
+  }
+  else {
     // check against the ip ban list
     in_addr playerIP = playerData->netHandler->getIPAddress();
     BanInfo info(playerIP);
@@ -1861,8 +1864,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     // check against id and hostname ban lists (on the next cycle)
     playerData->setNeedThisHostbanChecked(true);
   }
-  else
-    playerData->setNeedThisHostbanChecked(false);
 
   // see if any watchers don't want this guy
   bz_AllowPlayerEventData_V1 allowData;
@@ -2285,7 +2286,7 @@ void pausePlayer(int playerIndex, bool paused)
   playerData->pauseRequested = false;
   playerData->pauseActiveTime = TimeKeeper::getNullTime();
 
-  // if the state is being changed, leave
+  // if the state is not being changed, leave
   if (paused == playerData->player.isPaused()) {
     return;
   }

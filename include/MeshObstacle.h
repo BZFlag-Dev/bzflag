@@ -70,10 +70,14 @@ class MeshObstacle : public Obstacle {
     void copyFace(int face, MeshObstacle* mesh) const;
 
     enum CheckType {
-      CheckInside   = 0,
-      CheckOutside  = 1,
-      ParityInside  = 2,
-      ParityOutside = 3
+      InsideCheck      = 0,
+      OutsideCheck     = 1,
+      InsideCheckAll   = 2,
+      OutsideCheckAll  = 3,
+      InsideParity     = 4,
+      OutsideParity    = 5,
+      InsideParityAll  = 6,
+      OutsideParityAll = 7
     };
 
     const char*  getType() const;

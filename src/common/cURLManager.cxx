@@ -542,90 +542,97 @@ void cURLManager::setDeleteOnDone()
 }
 
 
-//**************************ResourceGetter*************************
+//============================================================================//
+//
+//  ResourceGetter
+//
 
 ResourceGetter::ResourceGetter() : cURLManager()
 {
-	doingStuff = false;
+  doingStuff = false;
 }
 
 
 ResourceGetter::~ResourceGetter()
 {
-
 }
 
 
 void ResourceGetter::addResource ( trResourceItem &item )
 {
-	resources.push_back(item);
+  resources.push_back(item);
 
-	if (!doingStuff)
-		getResource();
+  if (!doingStuff) {
+    getResource();
+  }
 }
 
 
 void ResourceGetter::flush ( void )
 {
-	resources.clear();
-	doingStuff = false;
+  resources.clear();
+  doingStuff = false;
 }
 
 
 void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 {
-	if (!resources.size() || !doingStuff)
-		return;	// we are suposed to be done
+  printf("FIXME -- ResourceGetter::finalization, %i\n", good ? 1 : 0);
 
-	// this is who we are suposed to be geting
-	trResourceItem item = resources[0];
-	resources.erase(resources.begin());
-	if (good)
-	{
-		// save the thing
-		FILE *fp = fopen(item.filePath.c_str(),"wb");
-		if (fp)
-		{
-			fwrite(data,length,1,fp);
-			fclose(fp);
-		}
+  if (!resources.size() || !doingStuff) {
+    return;  // we are suposed to be done
+  }
 
-		// maybe send a message here saying we did it?
-	}
+  // this is who we are suposed to be geting
+  trResourceItem item = resources[0];
+  resources.erase(resources.begin());
+  if (good) {
+    // save the thing
+    FILE *fp = fopen(item.filePath.c_str(),"wb");
+    if (fp) {
+      fwrite(data,length,1,fp);
+      fclose(fp);
+    }
 
-	// do the next one if we must
-	getResource();
+  }
+
+  if (item.doneFunc != NULL) {
+    item.doneFunc(item, good);
+  }
+
+  // do the next one if we must
+  getResource();
 }
 
 
 bool ResourceGetter::itemExists ( trResourceItem &item )
 {
-	// save the thing
-	FILE *fp = fopen(item.filePath.c_str(),"rb");
-	if (fp)
-	{
-		fclose(fp);
-		return true;
-	}
-	return false;
+  // save the thing
+  FILE *fp = fopen(item.filePath.c_str(),"rb");
+  if (fp) {
+    fclose(fp);
+    return true;
+  }
+  return false;
 }
 
 
 void ResourceGetter::getResource ( void )
 {
-	while ( resources.size() && itemExists(resources[0]) )
-		resources.erase(resources.begin());
+  while (resources.size() && itemExists(resources[0])) {
+    resources.erase(resources.begin());
+  }
 
-	if ( !resources.size() )
-		doingStuff = false;
-	else
-	{
-		trResourceItem item = resources[0];
+  if (!resources.size()) {
+    doingStuff = false;
+  }
+  else {
+    trResourceItem item = resources[0];
 
-		doingStuff = true;
-		setURL(item.URL);
-		addHandle();
-	}
+    doingStuff = true;
+    setURL(item.URL);
+    addHandle();
+  }
 }
 
 

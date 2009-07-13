@@ -310,9 +310,6 @@ static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
   if (!pausedByUnmap && myTank && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       // already paused, so unpause
-//FIXME      myTank->setPause(false);
-//FIXME      controlPanel->addMessage("Resumed");
-
       server->sendPaused(false);
 
       // restore the sound
@@ -351,9 +348,9 @@ static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
       pauseCountdown = 5.0f;
       server->sendPaused(true);
 
-      char msgBuf[40];
-      sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
-      hud->setAlert(1, msgBuf, 1.0f, false);
+//FIXME      char msgBuf[40];
+//FIXME      sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
+//FIXME      hud->setAlert(1, msgBuf, 1.0f, false);
     }
   }
   return std::string();

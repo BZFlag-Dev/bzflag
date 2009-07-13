@@ -1058,7 +1058,6 @@ void ServerLink::sendShotInfo(const ShotPath& shotPath,
                               uint32_t obstacleGUID,
                               int linkSrcID, int linkDstID)
 {
-  obstacleGUID = obstacleGUID; // FIXME
   char msg[64];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
@@ -1120,7 +1119,7 @@ void ServerLink::sendPaused(bool paused)
   char msg[2];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
-  buf = nboPackUInt8(buf, uint8_t(paused));
+  buf = nboPackUInt8(buf, paused ? 1 : 0);
   send(MsgPause, sizeof(msg), msg);
 }
 

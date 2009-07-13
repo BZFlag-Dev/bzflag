@@ -32,6 +32,10 @@ static int currentTex = 0;
 static int runs = 0;
 
 
+template <>
+Downloads* Singleton<Downloads>::_instance = (Downloads*)NULL;
+
+
 // FIXME - someone write a better explanation
 static const char DownloadContent[] =
   "#\n"
@@ -69,9 +73,8 @@ static const char DownloadContent[] =
   "deny *\n";
 
 
-template <>
-Downloads* Singleton<Downloads>::_instance = (Downloads*)NULL;
-
+//============================================================================//
+//============================================================================//
 
 class CachedTexture : private cURLManager {
   public:
@@ -96,8 +99,8 @@ class CachedTexture : private cURLManager {
 
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
-int CachedTexture::textureCounter = 0;
-int CachedTexture::byteTransferred = 0;
+int  CachedTexture::textureCounter  = 0;
+int  CachedTexture::byteTransferred = 0;
 
 
 CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
@@ -192,11 +195,13 @@ void CachedTexture::collectData(char* ptr, int len)
   cURLManager::collectData(ptr, len);
   byteTransferred += len;
 
-  //Make it so it counts textures in reverse order (0 to max instead of max to 0)
+  // make it so it counts textures in reverse order
+  // (0 to max instead of max to 0)
   currentTex = totalTex - textureCounter + 1;
 
-  //Turn bytes into kilobytes
-  sprintf (buffer, "Downloading texture (%d of %d): %d KB", currentTex, totalTex, byteTransferred/1024);
+  // turn bytes into kilobytes
+  sprintf (buffer, "Downloading texture (%d of %d): %d KB",
+                   currentTex, totalTex, byteTransferred / 1024);
   runs++;
 
   HUDDialogStack::get()->setFailedMessage(buffer);
@@ -205,6 +210,9 @@ void CachedTexture::collectData(char* ptr, int len)
 
 static std::vector<CachedTexture*> cachedTexVector;
 
+
+//============================================================================//
+//============================================================================//
 
 Downloads::Downloads()
 {

@@ -65,7 +65,7 @@ static string directory = "./";
 
 static bool SetupLuaDirectory(const string& fileName);
 
-extern const string& GetLuaDirectory() { return directory; } // extern
+extern const string& GetLuaDir() { return directory; } // extern
 
 
 //============================================================================//

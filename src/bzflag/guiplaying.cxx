@@ -939,10 +939,9 @@ static void doEvent(BzfDisplay *disply)
       // then resume.
       if (pausedByUnmap && BZDB.isTrue("unpauseForMinimize")) {
         pausedByUnmap = false;
-        pauseCountdown = 0.0f;
+        pauseCountdown = 5.0f;
         if (myTank && myTank->isAlive() && myTank->isPaused()) {
-          myTank->setPause(false);
-//FIXME          showMessage("Resumed");
+          serverLink->sendPaused(false);
         }
       }
 
@@ -957,7 +956,7 @@ static void doEvent(BzfDisplay *disply)
 
       // restore the sound
       if (savedVolume != -1) {
-        SOUNDSYSTEM.setVolume(savedVolume*0.1f);
+        SOUNDSYSTEM.setVolume(savedVolume * 0.1f);
         savedVolume = -1;
       }
 
@@ -973,18 +972,12 @@ static void doEvent(BzfDisplay *disply)
       // paused because of an unmap (shouldn't happen), we're not
       // already counting down to pausing, we're alive, and we're not
       // already paused.
-      if (!pausedByUnmap &&
-        (pauseCountdown == 0.0f) &&
-        myTank && myTank->isAlive() &&
-        !myTank->isPaused() &&
-        !myTank->isAutoPilot() &&
-        BZDB.isTrue("pauseOnMinimize")) {
-
-          // get ready to pause (no cheating through instantaneous pausing)
-          pauseCountdown = 5.0f;
-
-          // set this even though we haven't really paused yet
-          pausedByUnmap = true;
+      if (!pausedByUnmap && (pauseCountdown == 0.0f) &&
+          myTank && myTank->isAlive() && !myTank->isPaused() &&
+          !myTank->isAutoPilot() && BZDB.isTrue("pauseOnMinimize")) {
+        pauseCountdown = 5.0f;
+        pausedByUnmap = true;
+        serverLink->sendPaused(true);
       }
 
       // ungrab the mouse if we're running full screen
@@ -1215,12 +1208,22 @@ int curlProgressFunc(void * /*clientp*/,
 }
 
 
+static void textureDoneFunc(const trResourceItem& item, bool success)
+{
+  printf("FIXME -  textureDoneFunc() for %s, %s\n", item.URL.c_str(),
+          success ? "true" : "false");
+  if (!success) {
+    return;
+  }
+  TextureManager::instance().reloadTextureImage(item.filePath);
+}
 
 
 void handleResourceFetch (void *msg)
 {
-  if (BZDB.isSet ("_noRemoteFiles") && BZDB.isTrue ("_noRemoteFiles"))
+  if (BZDB.isTrue("_noRemoteFiles")) {
     return;
+  }
 
   uint16_t numItems;
   void *buf;
@@ -1231,10 +1234,18 @@ void handleResourceFetch (void *msg)
     uint16_t itemType;
     char buffer[MessageLen];
     uint16_t stringLen;
+    uint8_t overwriteChar;
+
     trResourceItem item;
+
+    buf = nboUnpackUInt8 (buf, overwriteChar);
+    item.overwrite = (overwriteChar != 0);
 
     buf = nboUnpackUInt16 (buf, itemType);
     item.resType = (teResourceType) itemType;
+    if (item.resType == eImage) {
+      item.doneFunc = textureDoneFunc;
+    }
 
     // URL
     buf = nboUnpackUInt16 (buf, stringLen);
@@ -1259,6 +1270,9 @@ void handleResourceFetch (void *msg)
 	resourceDownloader = new ResourceGetter;
 
       resourceDownloader->addResource (item);
+      printf("FIXME - fetch started for %s, %s\n", item.URL.c_str(),
+             item.doneFunc ? "doneFunc" : "no-doneFunc");
+      
     }
   }
 }
@@ -3706,8 +3720,7 @@ void joinInternetGame2()
 
   // send all our custom data pairs
   std::map<std::string, std::string>::iterator itr = myTank->customData.begin();
-  while (itr != myTank->customData.end())
-  {
+  while (itr != myTank->customData.end()) {
     serverLink->sendCustomData(itr->first, itr->second);
     itr++;
   }
@@ -4800,13 +4813,11 @@ static void updatePauseCountdown(float dt)
     const int oldPauseCountdown = (int)(pauseCountdown + 0.99f);
     pauseCountdown -= dt;
     if (pauseCountdown <= 0.0f) {
-
-      /* make sure it is really safe to pause..  since the server
-      * might make us drop our flag, make sure the player is on the
-      * ground and not in a building.  prevents getting kicked
-      * later for being in places we shouldn't without holding the
-      * right flags.
-      */
+      // make sure it is really safe to pause..  since the server
+      // might make us drop our flag, make sure the player is on the
+      // ground and not in a building.  prevents getting kicked
+      // later for being in places we shouldn't without holding the
+      // right flags.
       ServerLink *server = ServerLink::getServer();
       if (myTank->getLocation() == LocalPlayer::InBuilding) {
 	// custom message when trying to pause while in a building
@@ -5308,8 +5319,9 @@ static void playingLoop()
     // have the synced clock do anything it has to do
     syncedClock.update(serverLink);
 
-    if (world)
-      world->checkCollisionManager(); // see if the world collision grid needs to be updated
+    if (world) { // udpate the world collision grid if required
+      world->checkCollisionManager();
+    }
 
     mainWindow->getWindow()->yieldCurrent();
 
@@ -5335,8 +5347,9 @@ static void playingLoop()
 
     mainWindow->getWindow()->yieldCurrent();
 
-    if (CommandsStandard::isQuit())     // quick out
-      break;
+    if (CommandsStandard::isQuit()) {
+      break; // quick out
+    }
 
     checkForServerBail();
 
@@ -5349,8 +5362,7 @@ static void playingLoop()
     if (!unmapped) {
       drawFrame(dt);
     }
-    else {
-      // wait around a little to avoid spinning the CPU when iconified
+    else { // wait around a little to avoid spinning the CPU when iconified
       TimeKeeper::sleep(0.05f);
     }
 
@@ -5359,14 +5371,15 @@ static void playingLoop()
 
     doNetworkStuff();
 
-    if (checkForCompleteDownloads())
+    if (checkForCompleteDownloads()) {
       joinInternetGame2(); // we did the inital downloads, so we should join
+    }
 
     doFPSLimit();
 
-    if (serverLink)
+    if (serverLink) {
       serverLink->flush();
-
+    }
   } // end main client loop
 
 

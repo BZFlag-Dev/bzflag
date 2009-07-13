@@ -123,8 +123,6 @@ void LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
   const int numShots = getMaxShots();
-  static TimeKeeper pauseTime = TimeKeeper::getNullTime();
-  static bool wasPaused = false;
 
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
@@ -135,16 +133,6 @@ void LocalPlayer::doUpdate(float dt)
 	shots[i]->boostReloadTime(dt);
       }
     }
-
-    // if we've been paused for a long time, drop our flag
-    if (!wasPaused) {
-      pauseTime = TimeKeeper::getCurrent();
-      wasPaused = true;
-    }
-  }
-  else {
-    pauseTime = TimeKeeper::getNullTime();
-    wasPaused = false;
   }
 
   // reap dead (reloaded) shots
@@ -1374,18 +1362,6 @@ void LocalPlayer::setDeadStop(void)
 void LocalPlayer::setPause(bool pause)
 {
   Player::setPause(pause);
-/* FIXME
-  if (isAlive()) {
-    if (pause && !isPaused()) {
-      setStatus(getStatus() | short(PlayerState::Paused));
-      // sendPaused is done in clientCommands
-    }
-    else if (!pause && isPaused()) {
-      setStatus(getStatus() & ~short(PlayerState::Paused));
-      server->sendPaused(false);
-    }
-  }
-*/
 }
 
 

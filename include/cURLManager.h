@@ -102,21 +102,24 @@ private:
 };
 
 
-typedef enum {
+enum teResourceType {
   eImage,
   eSound,
   eFont,
   eFile,
   eUnknown
-} teResourceType;
+};
 
 
-typedef struct {
+struct trResourceItem {
+  trResourceItem() : resType(eFile), overwrite(false), doneFunc(NULL) {}
   teResourceType resType;
+  bool overwrite;
   std::string URL;
   std::string filePath;
   std::string fileName;
-} trResourceItem;
+  void (*doneFunc)(const trResourceItem& item, bool success);
+};
 
 
 class ResourceGetter :  private cURLManager

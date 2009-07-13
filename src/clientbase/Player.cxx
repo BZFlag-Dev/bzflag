@@ -418,8 +418,9 @@ void Player::setExplode(const TimeKeeper& t)
   const short setBits = short(PlayerState::Exploding)
                       | short(PlayerState::Falling);
   const short clearBits = short(PlayerState::Alive);
-// FIXME                        | short(PlayerState::Paused);
   setStatus((getStatus() | setBits) & ~clearBits);
+
+  paused = false;
 
   if (avatar) {
     avatar->explode();
@@ -1208,12 +1209,12 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 void Player::setLandingSpeed(float velocity)
 {
-  float squishiness = BZDB.eval(BZDBNAMES.SQUISHFACTOR);
+  static BZDB_float squishiness(BZDBNAMES.SQUISHFACTOR);
   if (squishiness < 0.001f) {
     return;
   }
-  float squishTime = BZDB.eval(BZDBNAMES.SQUISHTIME);
-  if (squishTime < 0.001) {
+  static BZDB_float squishTime(BZDBNAMES.SQUISHTIME);
+  if (squishTime < 0.001f) {
     return;
   }
   const float gravity = BZDBCache::gravity;
@@ -1255,7 +1256,7 @@ void Player::setLandingSpeed(float velocity)
 void Player::spawnEffect()
 {
   const float squishiness = BZDB.eval(BZDBNAMES.SQUISHFACTOR);
-  if (squishiness > 0.0f) {
+  if (squishiness >= 0.001f) {
     const float effectTime = BZDB.eval(BZDBNAMES.FLAGEFFECTTIME);
     const float factor = (1.0f / effectTime);
     dimensionsRate = fvec3(factor, factor, factor);
@@ -1316,7 +1317,7 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 {
   predictedAzimuth = inputAzimuth;
 
-  if (paused) { // FIXME inputStatus & PlayerState::Paused) {
+  if (paused) {
     // don't move when paused
     predictedPos = inputPos;
     predictedVel = fvec3(0.0f, 0.0f, 0.0f);
@@ -1409,9 +1410,8 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 
 bool Player::isDeadReckoningWrong() const
 {
-  const uint16_t checkStates = (PlayerState::Alive | PlayerState::Falling);
-//FIXME    (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
   // always send a new packet when some kinds of status change
+  const uint16_t checkStates = (PlayerState::Alive | PlayerState::Falling);
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
     return true;
   }

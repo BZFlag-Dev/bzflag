@@ -133,7 +133,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     if (!(input >> inside.x >> inside.y >> inside.z)) {
       return false;
     }
-    checkTypes.push_back(MeshObstacle::CheckInside);
+    checkTypes.push_back(MeshObstacle::InsideCheck);
     checkPoints.push_back(inside);
   }
   else if (strcasecmp(cmd, "outside") == 0) {
@@ -141,7 +141,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     if (!(input >> outside.x >> outside.y >> outside.z)) {
       return false;
     }
-    checkTypes.push_back(MeshObstacle::CheckOutside);
+    checkTypes.push_back(MeshObstacle::OutsideCheck);
     checkPoints.push_back(outside);
   }
   else if (strcasecmp(cmd, "vertex") == 0) {

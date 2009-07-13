@@ -167,6 +167,14 @@ const uint16_t RejectIPBanned       = 0x0009;
 const uint16_t RejectHostBanned     = 0x000A;
 const uint16_t RejectIDBanned       = 0x000B;
 
+// pause codes
+enum PauseCodes {
+  PauseCodeDisable     = 0,
+  PauseCodeEnable      = 1,
+  PauseCodeCancel      = 2,
+  PauseCodeAcknowledge = 3
+};
+
 // sound type codes
 const uint8_t LocalCustomSound = 0x0001;
 
@@ -177,9 +185,8 @@ enum CustomSoundBits {
   SoundPosition  = (1 << 2), // a fvec3 specifies the source position
   SoundVelocity  = (1 << 3), // a fvec3 specifies the source velocity
   SoundDirection = (1 << 4)  // a fvec3 specifies the direction, followed
-                             // by two floats for the inner/outer cone angles,
+};                           // by two floats for the inner/outer cone angles,
                              // and one float for the outer cone gain
-};
 
 enum BlowedUpReason {
 	GotKilledMsg,
