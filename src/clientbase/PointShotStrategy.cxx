@@ -36,7 +36,9 @@ PointShotStrategy::~PointShotStrategy()
 {
 }
 
-bool RayTest (const ShotCollider& tank, Ray &relativeRay, fvec3 &position, float &minTime, const ShotPathSegment &s, const float dt, const double &prevTime, const float shotRadius )
+static bool RayTest (const ShotCollider& tank, Ray &relativeRay,
+                     fvec3 &position, float &minTime, const ShotPathSegment &s,
+                     const float dt, const double &prevTime, const float shotRadius )
 {
 	static fvec3 tankBase(0.0f, 0.0f, -0.5f * tank.size.z);
 
