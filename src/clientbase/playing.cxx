@@ -1737,6 +1737,15 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
   std::vector<std::string> args;
   bool checkScores = false;
 
+  static BZDB_bool debugMesages("debugNetMesg");
+  static BZDB_bool debugUpdateMesages("debugNetUpdMesg");
+  if (debugMesages.getData())
+  {
+    char *p = (char*)&code;
+    if (code != MsgPlayerUpdateSmall || (code != MsgPlayerUpdateSmall && debugUpdateMesages))
+      showMessage(TextUtils::format("%s: Net Message \"%c%c\": Size %d",TimeKeeper::getCurrent().timestamp(),p[1],p[0],len));
+  }
+
   switch (code) {
     case MsgWhatTimeIsIt: {
       handleWhatTimeIsIt(msg);
