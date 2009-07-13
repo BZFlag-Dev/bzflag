@@ -189,6 +189,8 @@ EXTRA_DIST = \
 	$(BUILT_SOURCES) \
 	$(PYTHON_LOADER) \
 	OpenGLUtils.cxx	\
+	PrintError.cxx \
+	PrintError.h \
 	RCRequests_ProcessSWIG.cxx \
 	bzrobot.i
 
