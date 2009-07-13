@@ -426,7 +426,7 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   ((GuidedMissileStrategy*)this)->needUpdate = false;
 
   // construct and send packet
-  char packet[ShotUpdatePLen + PlayerIdPLen];
+  char packet[MaxPacketLen];
   void *buf = (void*)packet;
   buf = firingInfo.shot.pack(buf);
   buf = nboPackUInt8(buf, lastTarget);

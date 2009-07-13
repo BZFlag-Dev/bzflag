@@ -68,7 +68,7 @@ FiringInfo::FiringInfo()
 
 void*			FiringInfo::pack(void* buf) const
 {
-  buf = nboPackFloat(buf, timeSent);
+  buf = nboPackDouble(buf, timeSent);
   buf = shot.pack(buf);
   buf = flagType->pack(buf);
   buf = nboPackFloat(buf, lifetime);
@@ -78,7 +78,7 @@ void*			FiringInfo::pack(void* buf) const
 
 void			FiringInfo::pack(BufferedNetworkMessage *msg) const
 {
-  msg->packFloat(timeSent);
+  msg->packDouble(timeSent);
   shot.pack(msg);
   flagType->pack(msg);
   msg->packFloat(lifetime);
@@ -87,7 +87,7 @@ void			FiringInfo::pack(BufferedNetworkMessage *msg) const
 
 void*			FiringInfo::unpack(void* buf)
 {
-  buf = nboUnpackFloat(buf, timeSent);
+  buf = nboUnpackDouble(buf, timeSent);
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);
@@ -99,7 +99,7 @@ void*			FiringInfo::unpack(void* buf)
 
 void*			FiringInfo::unpackW(void* buf)
 {
-  buf = nboUnpackFloat(buf, timeSent);
+  buf = nboUnpackDouble(buf, timeSent);
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
   buf = nboUnpackFloat(buf, lifetime);

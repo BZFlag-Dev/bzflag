@@ -36,7 +36,6 @@ template <>
 Downloads* Singleton<Downloads>::_instance = (Downloads*)NULL;
 
 
-// FIXME - someone write a better explanation
 static const char DownloadContent[] =
   "#\n"
   "# This file controls the access to servers for downloads.\n"

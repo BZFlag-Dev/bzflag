@@ -43,7 +43,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 			    float dir, int shotID, float dt)
 {
   FiringInfo firingInfo;
-  firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
+  firingInfo.timeSent = TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
   firingInfo.lifetime = lifetime;
   firingInfo.shotType = type->flagShot;
@@ -73,7 +73,7 @@ static int fireWorldGMReal(FlagType* type, PlayerId targetPlayerID, float
                            float tilt, float dir, int shotID, float dt)
 {
     FiringInfo firingInfo;
-    firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
+    firingInfo.timeSent = TimeKeeper::getCurrent().getSeconds();
     firingInfo.flagType = type;
     firingInfo.lifetime = lifetime;
     firingInfo.shot.player = player;

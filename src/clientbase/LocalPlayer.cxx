@@ -1396,7 +1396,7 @@ bool LocalPlayer::fireShot()
 
   // prepare shot
   FiringInfo firingInfo;
-  firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
+  firingInfo.timeSent = syncedClock.GetServerSeconds();
   firingInfo.shotType = getShotType();
   firingInfo.shot.player = getId();
   firingInfo.shot.id     = uint16_t(i + getSalt());
@@ -1405,7 +1405,7 @@ bool LocalPlayer::fireShot()
   addShot(new LocalShotPath(firingInfo,syncedClock.GetServerSeconds()), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
-  firingInfo.timeSent = (float)syncedClock.GetServerSeconds();
+  firingInfo.timeSent = syncedClock.GetServerSeconds();
 
   // always send a player-update message. To synchronize movement and
   // shot start. They should generally travel on the same frame, when

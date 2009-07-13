@@ -1744,12 +1744,12 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
   bool checkScores = false;
 
   // network message debugging
-  static BZDB_int debugMessages("debugNetMesg");
+  static BZDB_int  debugMessages("debugNetMesg");
   static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
   if ((debugMessages >= 1) && !BZDB.isTrue("_forbidDebug")) {
-    char *p = (char*)&code;
     if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
       if (debugMessages <= 1) {
+        const char *p = (const char*)&code;
         showMessage(TextUtils::format("%s: Net Message \"%c%c\": Size %d  <%s>",
                                       TimeKeeper::getCurrent().timestamp(),
                                       p[1], p[0], len,
@@ -1763,7 +1763,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
           if (msgList[i].level <= msgLevel) {
             std::string prefix = "netdbg: ";
             prefix += TimeKeeper::getCurrent().timestamp();
-            prefix += (i == 0) ? " " : "   ";
+            prefix += " ";
+            for (int lvl = 0; lvl < msgList[i].level; lvl++) {
+              prefix += "  ";
+            }
             showMessage(prefix + msgList[i].color + msgList[i].text);
           }
         }

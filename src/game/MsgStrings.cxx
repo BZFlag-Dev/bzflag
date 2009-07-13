@@ -1081,11 +1081,14 @@ static MsgStringList handleMsgShotBegin(PacketInfo *pi)
   d = finfo.unpack (d);
   const ShotUpdate& shot = finfo.shot;
   listPush(list, 1, "player:   %s", strPlayer(shot.player).c_str());
-  listPush(list, 1, "type:     %.2s", finfo.flagType->flagAbbv.c_str()); // FIXME ?
   listPush(list, 2, "id:       %i", shot.id);
+  listPush(list, 2, "timeSent: %f", finfo.timeSent);
+  listPush(list, 3, "shotPlayer: %s", strPlayer(shot.player).c_str());
+  listPush(list, 3, "shotID:     %i", shot.id);
   listPush(list, 2, "team:     %s", strTeam(shot.team).c_str());
   listPush(list, 2, "pos:      %s", strVector(shot.pos).c_str());
   listPush(list, 2, "vel:      %s", strVector(shot.vel).c_str());
+  listPush(list, 1, "type:     %.2s", finfo.flagType->flagAbbv.c_str()); // FIXME ?
   listPush(list, 2, "lifetime: %-8.3f", finfo.lifetime);
 
   return list;

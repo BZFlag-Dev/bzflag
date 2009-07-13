@@ -34,19 +34,17 @@
 #include "vectors.h"
 
 
-const int ShotUpdatePLen = PlayerIdPLen + 32;
-const int FiringInfoPLen = ShotUpdatePLen + 10;
-
-
 class BaseLocalPlayer;
 class BufferedNetworkMessage;
 
 
 struct ShotUpdate {
   public:
+    int			packSize() const;
     void*		pack(void*) const;
     void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
+
 
   public:
     PlayerId		player;			// who's shot
@@ -62,13 +60,14 @@ struct FiringInfo {
   public:
     FiringInfo();
 
+    int			packSize() const;
     void*		pack(void*) const;
     void		pack(BufferedNetworkMessage *msg) const;
     void*		unpack(void*);
     void*		unpackW(void*);
 
   public:
-    float		timeSent;
+    double		timeSent;
     ShotUpdate		shot;
     ShotType		shotType;
     FlagType*		flagType;			// flag when fired

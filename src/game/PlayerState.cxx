@@ -87,7 +87,8 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     buf = nboPackFVec3(buf, velocity);
     buf = nboPackFloat(buf, azimuth);
     buf = nboPackFloat(buf, angVel);
-  } else {
+  }
+  else {
 
     code = MsgPlayerUpdateSmall;
 
