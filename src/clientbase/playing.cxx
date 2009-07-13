@@ -1746,7 +1746,7 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
   // network message debugging
   static BZDB_int debugMessages("debugNetMesg");
   static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
-  if (debugMessages >= 1) {
+  if ((debugMessages >= 1) && !BZDB.isTrue("_forbidDebug")) {
     char *p = (char*)&code;
     if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
       if (debugMessages <= 1) {
