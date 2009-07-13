@@ -302,7 +302,7 @@ bool NetHandler::isFdSet(fd_set *set)
 int NetHandler::send(const void *buffer, size_t length) {
 
   callNetworkDataLog(true, false, (unsigned char*)buffer, (unsigned int)length, this);
-  int n = ::send(fd, (const char *)buffer, (int)length, MSG_NOSIGNAL);
+  int n = ::send(fd, (const char *)buffer, (int)length, 0);
   if (n >= 0)
     return n;
 
