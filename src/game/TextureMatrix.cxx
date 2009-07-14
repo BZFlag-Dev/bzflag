@@ -489,8 +489,8 @@ void TextureMatrix::setDynamicSpinVar(const std::string& var)
   spinVar = var;
   if (!spinVar.empty()) {
     BZDB.addCallback(spinVar, staticSpinCallback, this);
+    spinCallback(spinVar);
   }
-  spinCallback(spinVar);
 }
 
 
@@ -502,8 +502,8 @@ void TextureMatrix::setDynamicScaleVar(const std::string& var)
   scaleVar = var;
   if (!scaleVar.empty()) {
     BZDB.addCallback(scaleVar, staticScaleCallback, this);
+    scaleCallback(spinVar);
   }
-  scaleCallback(spinVar);
 }
 
 
@@ -515,8 +515,8 @@ void TextureMatrix::setDynamicShiftVar(const std::string& var)
   shiftVar = var;
   if (!shiftVar.empty()) {
     BZDB.addCallback(shiftVar, staticShiftCallback, this);
+    shiftCallback(spinVar);
   }
-  shiftCallback(spinVar);
 }
 
 

@@ -563,8 +563,8 @@ void PhysicsDriver::setLinearVar(const std::string& var)
   linearVar = var;
   if (!linearVar.empty()) {
     BZDB.addCallback(linearVar, staticLinearCallback, this);
+    linearCallback(linearVar);
   }
-  linearCallback(linearVar);
 }
 
 
@@ -576,8 +576,8 @@ void PhysicsDriver::setAngularVar(const std::string& var)
   angularVar = var;
   if (!angularVar.empty()) {
     BZDB.addCallback(angularVar, staticAngularCallback, this);
+    angularCallback(angularVar);
   }
-  angularCallback(angularVar);
 }
 
 
@@ -589,8 +589,8 @@ void PhysicsDriver::setRadialVar(const std::string& var)
   radialVar = var;
   if (!radialVar.empty()) {
     BZDB.addCallback(radialVar, staticRadialCallback, this);
+    radialCallback(radialVar);
   }
-  radialCallback(radialVar);
 }
 
 
@@ -602,8 +602,8 @@ void PhysicsDriver::setSlideVar(const std::string& var)
   slideVar = var;
   if (!slideVar.empty()) {
     BZDB.addCallback(slideVar, staticSlideCallback, this);
+    slideCallback(slideVar);
   }
-  slideCallback(slideVar);
 }
 
 
@@ -615,8 +615,8 @@ void PhysicsDriver::setDeathVar(const std::string& var)
   deathVar = var;
   if (!deathVar.empty()) {
     BZDB.addCallback(deathVar, staticDeathCallback, this);
+    deathCallback(deathVar);
   }
-  deathCallback(deathVar);
 }
 
 
