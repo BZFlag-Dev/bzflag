@@ -4889,18 +4889,23 @@ static void updateDestructCountdown(float dt)
     hud->setAlert(1, NULL, 0.0f, true);
   }
   if (destructCountdown > 0.0f) {
-    const int oldDestructCountdown = (int)(destructCountdown + 0.99f);
-    destructCountdown -= dt;
-    if (destructCountdown <= 0.0f) {
-      // now actually destruct
-      gotBlowedUp(myTank, SelfDestruct, myTank->getId());
-
-      hud->setAlert(1, NULL, 0.0f, true);
-    } else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
-      // update countdown alert
-      char msgBuf[40];
-      sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-      hud->setAlert(1, msgBuf, 1.0f, false);
+    static BZDB_float maxVelocity(BZDBNAMES.MAXSELFDESTRUCTVEL);
+    if (myTank->getVelocity().length() > maxVelocity) {
+      destructCountdown = 0.0f;
+      hud->setAlert(1, "No Self Destruct while moving", 1.0f, false);
+    } else {
+      const int oldDestructCountdown = (int)(destructCountdown + 0.99f + 1);
+      destructCountdown -= dt;
+      if (destructCountdown <= 0.0f) {
+	// now actually destruct
+	gotBlowedUp(myTank, SelfDestruct, myTank->getId());
+	hud->setAlert(1, NULL, 0.0f, true);
+      } else if ((int)(destructCountdown + 0.99f) != oldDestructCountdown) {
+	// update countdown alert
+	char msgBuf[40];
+	sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
+	hud->setAlert(1, msgBuf, 1.0f, false);
+      }
     }
   }
   return;

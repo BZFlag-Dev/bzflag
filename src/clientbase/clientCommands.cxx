@@ -275,8 +275,6 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
 
 static std::string cmdDestruct(const std::string&, const CmdArgList& args, bool*)
 {
-  char msgBuf[40];
-
   if (args.size() != 0)
     return "usage: destruct";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -285,16 +283,8 @@ static std::string cmdDestruct(const std::string&, const CmdArgList& args, bool*
       destructCountdown = 0.0f;
       hud->setAlert(1, "Self Destruct canceled", 1.5f, true);
     } else {
-      static BZDB_float maxVelocity(BZDBNAMES.MAXSELFDESTRUCTVEL);
-      if (myTank->getVelocity().length() > maxVelocity) {
-        hud->setAlert(1, "No Self Destruct while moving", 1.0f, false);
-      }
-      else {
         destructCountdown = 5.0f;
-        sprintf(msgBuf, "Self Destructing in %d", (int)(destructCountdown + 0.99f));
-        hud->setAlert(1, msgBuf, 1.0f, false);
       }
-    }
   }
   return std::string();
 }
