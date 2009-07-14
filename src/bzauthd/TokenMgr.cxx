@@ -29,23 +29,27 @@ TokenMgr::~TokenMgr()
 
 }
 
-void TokenMgr::addToken(std::string name, uint32_t token)
+void TokenMgr::addToken(std::string name, uint32_t bzid, uint32_t token)
 {
   sLog.outLog("TokenMgr: adding token %d (%s)", token, name.c_str());
-  tokenMap[nextToken] = name;
+  tokenMap[nextToken] = TokenType(name, bzid);
   sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32_t(token), sConfig.getIntValue(CONFIG_TOKEN_EXPIRE_DELAY) / 1000.0);
 }
 
-uint32_t TokenMgr::newToken(std::string name)
+uint32_t TokenMgr::newToken(std::string name, uint32_t bzid)
 {
-  addToken(name, nextToken);
+  // TODO: share tokens between daemons
+  addToken(name, bzid, nextToken);
   return nextToken++;
 }
 
-bool TokenMgr::checkToken(std::string name, uint32_t token)
+uint32_t TokenMgr::checkToken(std::string name, uint32_t token)
 {
   TokenMapType::iterator itr = tokenMap.find(token);
-  return itr != tokenMap.end() && itr->second == name;
+  if(itr != tokenMap.end() && itr->second.first == name)
+    return itr->second.second;
+  else
+    return 0;
 }
 
 void TokenMgr::removeToken(uint32_t token)

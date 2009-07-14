@@ -125,68 +125,49 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
 
   int nextuid = 0;
   for(int i = 0; i < 4; i++) {
-    LDAPMessage *res = NULL, *msg;
-    if(!ldap_check( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", search_attrs, 0, &res) )) {
-      if(res) ldap_msgfree(ldap_first_message(rootld, res));
-      sLog.outError("cannot find NextUID");
-      continue;
+    nextuid = getuid(rootld, dn.c_str());
+    if(nextuid > 0) {
+      char curvalue[20];
+      sprintf(curvalue, "%d", nextuid);
+      char newvalue[20];
+      sprintf(newvalue, "%d", nextuid + 1);
+
+      LDAPMod1 attr_old(LDAP_MOD_DELETE, "uid", curvalue);
+      LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
+      LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
+      if(!ldap_check( ldap_modify_s(rootld, dn.c_str(), mod_attrs) )) {
+        sLog.outDebug("nextuid modify failed");
+        nextuid = 0;
+      } else
+        break;
     }
 
-    for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
-      if(ldap_msgtype(msg) == LDAP_RES_SEARCH_ENTRY) {
-        char **values = ldap_get_values(rootld, msg, "uid");
-        int nrvalues = ldap_count_values(values);
-
-        if(nrvalues != 1) {
-          sLog.outError("invalid number of values for uid of NextUID");
-          ldap_value_free(values);
-          break;
-        }
-        
-        if(strnlen(values[0], 20) >= 20) {
-          sLog.outError("invalid uid value in NextUID, potential buffer overflow");
-          ldap_value_free(values);
-          break;
-        }
-
-        sscanf(values[0], "%d", &nextuid);
-        if(nextuid < 1) {
-          sLog.outError("invalid nextuid found: %d", nextuid);
-          ldap_value_free(values);
-          break;
-        }
-
-        char newvalue[20];
-        sprintf(newvalue, "%d", nextuid + 1);
-
-        LDAPMod1 attr_old(LDAP_MOD_DELETE, "uid", values[0]);
-        LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
-        LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
-        if(!ldap_check( ldap_modify_s(rootld, dn.c_str(), mod_attrs) )) {
-          sLog.outDebug("nextuid modify failed");
-          nextuid = 0;
-        }
-
-        ldap_value_free(values);
-        break;  // don't care about any other messages
-      }
-    }
-    ldap_msgfree(ldap_first_message(rootld, res));
-
-    if(nextuid < 1) {
-      sLog.outDebug("cannot fetch-increment NextUID, retry number %d", i + 1);
-      nextuid = 0;
-    } else
-      break;
+    sLog.outDebug("cannot fetch-increment NextUID, retry number %d", i + 1);
   }
 
   if(nextuid < 1)
     return REG_FAIL_GENERIC;
 
+  /* NOTE: If the server crashes, the connection to ldap is lost
+     or simply the user already exists (!),
+     the new bzid will have been generated with no user associated to it (holes).
+     I haven't found any good way to fix that. 
+     Wherever we move the atomic fetch-increment, the add/modify right after it can fail.
+     It is possible to fix by using locks i.e using the  same test and set idea to change
+     a value from RELEASED to ACQUIRED at the start of the registration, spinning if not 
+     possible and setting back to RELEASED at the end but someone may forget to do that.
+     You could put a timer on the lock and use have some way to roll back if need to be
+     interrupted but that's all too complicated.
+     The key observation is that we don't really need autoincremented hole-free values,
+     just to keep the values unique and preferably stop the value from growing to infinity
+     too fast during an attack.
+  */
+
   // insert the user with the next uid
   dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
-  char *oc_vals[4] = {"pilotPerson", "uidObject", "shadowAccount", NULL};
+  // pilotPerson has rfc822Mailbox, uidObject has uid
+  char *oc_vals[3] = {"pilotPerson", "uidObject", NULL};
   LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
   LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
   LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
@@ -200,20 +181,84 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   switch(ret) {
     case LDAP_SUCCESS:
       return REG_SUCCESS; 
+    case LDAP_ALREADY_EXISTS:
+      sLog.outDebug("User %s already exists, wasted bzid %d", info.name.c_str(), nextuid);
+      return REG_USER_EXISTS;
     default:
       sLog.outError("LDAP %d: %s", ret, ldap_err2string(ret));
       return REG_FAIL_GENERIC;
   }
+
+  /* NOTE: the "active state" of the account is determined by whether the password is
+    given a valid hash. This means that no additional attributes and no additional checks
+    are needed during authentication. */
+
+  /* TODO: To fix the above mentioned problem and at the same time make this process much
+    more efficient, the following could be done. Each separate entitry that wishes to do
+    registration can acquire a lock on certain range of BZIDs. E.g one server locks ids 1-1000
+    another 1001-2000 and so on. When a server owns  a range it can hand them out to new users 
+    without needing to check with LDAP. This could be done by putting the ranges as multiple
+    values of some attribute and atomically appending LOCKED-timestamp to the value. Each lock 
+    will have say a 5 minute timeout... (todo: finish the todo, or maybe just do it) 
+  */
 }
 
-bool UserStore::authUser(UserInfo &info)
+// find the uid for a given ldap connection and dn
+uint32_t UserStore::getuid(LDAP *ld, const char *dn)
 {
+  char *search_attrs[2] = { "uid", NULL };
+
+  LDAPMessage *res = NULL, *msg;
+  if(!ldap_check( ldap_search_s(ld, dn, LDAP_SCOPE_BASE, "(objectClass=*)", search_attrs, 0, &res) )) {
+    if(res) ldap_msgfree(ldap_first_message(rootld, res));
+    sLog.outError("cannot find uid for %s", dn);
+    unbind(ld);
+    return 0;
+  }
+
+  uint32_t uid = 0;
+  for (msg = ldap_first_message(ld, res); msg; msg = ldap_next_message(ld, msg)) {
+    if(ldap_msgtype(msg) == LDAP_RES_SEARCH_ENTRY) {
+      char **values = ldap_get_values(ld, msg, "uid");
+      int nrvalues = ldap_count_values(values);
+
+      if(nrvalues != 1) {
+        sLog.outError("invalid number of uids for %s", dn);
+        break;
+      }
+      
+      if(strnlen(values[0], 20) >= 20) {
+        sLog.outError("invalid uid value in %s, potential buffer overflow", dn);
+        break;
+      }
+
+      sscanf(values[0], "%d", &uid);
+      if(uid < 1) {
+        sLog.outError("invalid uid found for %s: %d", dn, uid);
+        uid = 0;
+        break;
+      }
+
+      break;  // don't care about any other messages
+    }
+  }
+  ldap_msgfree(ldap_first_message(ld, res));
+  return uid;
+}
+
+uint32_t UserStore::authUser(UserInfo &info)
+{
+  // bind to the user's dn
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
   LDAP *ld = NULL;
-  bool ret = bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8_t*)dn.c_str(), (const uint8_t*)info.password.c_str()); 
+  if(!bind(ld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), (const uint8_t*)dn.c_str(), (const uint8_t*)info.password.c_str()))
+    return 0;
+
+  uint32_t uid = getuid(ld, dn.c_str());
   unbind(ld);
-  return ret;
+
+  return uid;
 }
 
 bool UserStore::isRegistered(std::string callsign)

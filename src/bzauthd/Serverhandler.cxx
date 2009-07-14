@@ -40,13 +40,18 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
     response << callsign;
-    if(sTokenMgr.checkToken((char *)callsign, token)) {
+    uint32_t bzid = sTokenMgr.checkToken((char *)callsign, token);
+    if(bzid) {
       response << (uint32_t)2;                          // registered, verified
       // send list of groups
       std::list<std::string> groups = sUserStore.intersectGroupList((char*)callsign, m_groups);
       response << (uint32_t)groups.size();
       for(std::list<std::string>::iterator itr = groups.begin(); itr != groups.end(); ++itr)
         response << itr->c_str();
+      // send bzid as string for future flexibility
+      char bzid_str[32];
+      sprintf(bzid_str, "%d", bzid);
+      response << bzid_str;
     } else if(sUserStore.isRegistered((char*)callsign))
       response << (uint32_t)1;                          // registered, not verified
     else

@@ -26,14 +26,15 @@ class TokenMgr : public Singleton<TokenMgr>
 public:
   TokenMgr();
   ~TokenMgr();
-  uint32_t newToken(std::string name);
-  void addToken(std::string name, uint32_t token);
-  bool checkToken(std::string name, uint32_t token);
+  uint32_t newToken(std::string name, uint32_t bzid);
+  void addToken(std::string name, uint32_t bzid, uint32_t token);
+  uint32_t checkToken(std::string name, uint32_t token);
   void removeToken(uint32_t token);
   static void expireCallback(void *data);
 private:
   uint32_t nextToken;
-  typedef UNORDERED_MAP<uint32_t, std::string> TokenMapType;
+  typedef std::pair<std::string, uint32_t> TokenType;
+  typedef UNORDERED_MAP<uint32_t, TokenType> TokenMapType;
   TokenMapType tokenMap;
   void removeToken(TokenMapType::iterator &itr);
 };

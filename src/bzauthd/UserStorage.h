@@ -42,7 +42,7 @@ public:
   bool initialize();
   
   BzRegErrors registerUser(UserInfo &info);
-  bool authUser(UserInfo &info);
+  uint32_t authUser(UserInfo &info);
   bool isRegistered(std::string callsign);
   void update();
   std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups);
@@ -52,6 +52,7 @@ public:
 private:
   bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
   void unbind(LDAP *&ld);
+  uint32_t getuid(LDAP *ld, const char *dn);
   LDAP *rootld;
 };
 

@@ -81,6 +81,7 @@ private:
   std::string verifyGroupPermissions(const std::string& groups);
 
   void processAuthReply(bool registered, bool verified, const char *callsign, GroupParser &parser);
+  void setBZIDfor(const char *nick, const std::string &bzid);
 
   // messages to send, used by sendQueuedMessages
   void addMe(PingPacket pingInfo, std::string publicizedAddress,

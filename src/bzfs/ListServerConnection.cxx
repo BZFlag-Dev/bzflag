@@ -78,7 +78,8 @@ public:
 
   const char *getNext()
   {
-    if(!m_error && m_count--) {
+    if(!m_error && m_count) {
+      m_count--;
       if(!m_packet.read_string((uint8_t*)m_group, 1024))
         m_error = true;
       else
@@ -111,12 +112,20 @@ public:
           // TODO: use proper max callsign len
           char callsign[1024];
           if(!packet.read_string((uint8_t*)callsign, 1024)) { disconnect(); break; }
+
           uint32_t valid_state = 0;
           if(!(packet >> valid_state)) { disconnect(); break; }
+
           GroupPacketParser parser(packet);
           link->processAuthReply(valid_state >= 1, valid_state >= 2, callsign, parser);
           while(parser.getNext()) {} // read groups until end in case parsing was interrupted
           if(parser.hasError()) { disconnect(); break; }
+
+          if(valid_state == 2) {
+            char bzid[1024];
+            if(!packet.read_string((uint8_t*)bzid, 1024)) { disconnect(); break; }
+            link->setBZIDfor(callsign, bzid);
+          }
         }
         link->token_phase = 2;
         disconnect();
@@ -261,18 +270,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	} else {
 	  const std::string& bzId = args[1];
 	  const std::string& nick = args[2];
-	  logDebugMessage(4,"Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
-	  for (int i = 0; i < curMaxPlayers; i++) {
-	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
-	    if ((gkp != NULL) &&
-		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) &&
-		(gkp->_LSAState == GameKeeper::Player::verified)) {
-	      gkp->setBzIdentifier(bzId);
-	      logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n",
-		     nick.c_str(), i, bzId.c_str());
-	      break;
-	    }
-	  }
+          setBZIDfor(nick.c_str(), bzId);
 	}
       }
 
@@ -304,6 +302,23 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     // There was a pending request arrived after we write:
     // we should redo all the stuff
     sendQueuedMessages();
+  }
+}
+
+void ListServerLink::setBZIDfor(const char *nick, const std::string &bzid)
+{
+  logDebugMessage(4,"Got BZID: \"%d\" || \"%s\"\n", bzid.c_str(), nick);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
+    if ((gkp != NULL) &&
+      (TextUtils::compare_nocase(gkp->player.getCallSign(), nick) == 0) &&
+      (gkp->_LSAState == GameKeeper::Player::verified)) 
+    {
+      gkp->setBzIdentifier(bzid);
+      logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n",
+        nick, i, bzid.c_str());
+      break;
+    }
   }
 }
 
