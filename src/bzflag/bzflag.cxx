@@ -1505,14 +1505,14 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 
   while (*scan) {
     argc++;
-    // If we have a double quote (ASCII 34) then read the whole quoted string
+    // If we have a double quote then read the whole quoted string
     // as one argument
-    if (*scan == 34) {
+    if (*scan == '"') {
       // Move past the starting double quote
       scan++;
       // Keep going until we reach the end, or we hit another double quote
       // FIXME: Support escaping the double quotes
-      while (*scan != 0 && *scan != 34)
+      while (*scan != 0 && *scan != '"')
 	scan++;
       // Move past the ending double quote
       scan++;
@@ -1537,9 +1537,9 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
   scan = const_cast<char*>(TextUtils::skipWhitespace(scan));
 
   while (*scan) {
-    // If we have a double quote (ASCII 34) then read the whole quoted string
+    // If we have a double quote then read the whole quoted string
     // as one argument
-    if (*scan == 34) {
+    if (*scan == '"') {
       // Move past the starting double quote
       // Set the double quote to null just in case
       *scan++ = 0;
@@ -1547,7 +1547,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
       argv[argc++] = scan;
       // Keep going until we reach the end, or we hit another double quote
       // FIXME: Support escaping the double quotes
-      while (*scan != 0 && *scan != 34)
+      while (*scan != 0 && *scan != '"')
 	scan++;
       // Move past the ending double quote
       // Set it to null so we end this paramater
