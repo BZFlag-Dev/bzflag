@@ -1249,7 +1249,7 @@ static void acceptClient()
     nerror("couldn't set keepalive");
 
   // they aren't a player yet till they send us the connection string
-  NetConnectedPeer	peer;
+  NetConnectedPeer peer;
   peer.netHandler = new NetHandler(clientAddr, fd);
   peer.apiHandler = NULL;
   peer.player = -1;
@@ -2871,7 +2871,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
 
 void searchFlag(GameKeeper::Player &playerData)
 {
-  if (!playerData.player.isAlive()) {
+  if (!playerData.player.isAlive() || playerData.player.isPaused()) {
     return;
   }
 
