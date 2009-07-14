@@ -238,9 +238,18 @@ void Player::getMuzzle(fvec3& m) const
   //       as well, we do not use BZDB_MUZZLEFRONT, but the
   //       0.1f value listed in global.cxx is added on to the
   //       scaled version of tankRadius.
-  float front = (dimensionsScale.x * BZDBCache::tankRadius);
-  if (dimensionsRate.x > 0.0f)
+
+  float front = dimensions.x;
+
+  static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
+  const fvec3& sp = shotProxy;
+  if (!isnan(sp.x)) {
+    front += sp.x;
+  }
+
+  if (dimensionsRate.x > 0.0f) {
     front = front + (dimensionsRate.x * 0.1f);
+  }
 
   front = front + 0.1f;
 

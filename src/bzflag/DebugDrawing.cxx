@@ -39,27 +39,46 @@ static void drawTankHitZone(const Player* tank)
     return;
   }
 
-  fvec3 pos          = tank->getPosition();
-  fvec3 dims         = tank->getDimensions();
+  const bool isNarrow = (tank->getFlag() == Flags::Narrow);
+
+  static BZDB_bool tankShotSpherical("_tankShotSpherical");
+  static BZDB_fvec3 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
+  const fvec3& sp = shotProxim;
+
+  fvec3        pos   = tank->getPosition();
+  fvec3        dims  = tank->getDimensions();
   const float  angle = tank->getAngle();
   const fvec4& color = tank->getColor();
 
-  static BZDB_fvec3 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
-  const fvec3& sp = shotProxim;
+  if (tankShotSpherical && !isNarrow) {
+    GLUquadric* quad = gluNewQuadric();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glColor4f(color.r, color.g, color.b, 0.8f);
+    glPushMatrix();
+    glTranslatef(pos.x, pos.y, pos.z + (dims.z * 0.5));
+    glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
+    glScalef(sp.x, sp.y, sp.z);
+    gluSphere(quad, 1.0f, 16, 8);
+    glPopMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    gluDeleteQuadric(quad);
+    return;
+  }
+
   if (!isnan(sp.x)) {
     dims += sp;
   }
 
-  if (tank->getFlag() == Flags::Narrow) {
+  if (isNarrow) {
     static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
     dims.y = shotRadius;
   }
 
   glColor4f(color.r, color.g, color.b, 0.8f);
 
+  glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
-  glPushMatrix();
 
   const fvec3 corners[8] = {
     fvec3(-dims.x, -dims.y, 0.0f),
