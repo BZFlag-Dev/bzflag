@@ -1001,10 +1001,12 @@ if test "x$enable_ares_build" != "xyes" ; then
     AC_MSG_CHECKING(for ares DNS lookup functionality)
     PRELDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS $LIBCARES"
-    AC_TRY_LINK([#include <ares.h>
-  void callback(void * /*arg*/, int /*callbackStatus*/,
-                int /*timeouts*/, struct hostent * /*hostent*/) {}
-    ], [
+    AC_TRY_LINK([
+#include <stdio.h>
+#include <ares.h>
+void callback(void * /*arg*/, int /*callbackStatus*/,
+              int /*timeouts*/, struct hostent * /*hostent*/) {}
+], [
   ares_channel aresChannel;
   in_addr requestedAddress;
   
