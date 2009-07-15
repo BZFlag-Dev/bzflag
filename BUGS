@@ -13,20 +13,11 @@ This may include short term issues that are in active development as well as
 long term and on-going issues.  These notes are completely independent of any
 bugs formally reported on the bug tracker.
 
-
-Bots
-----
-
-* Bots only spawn at ground level. Complex maps that have tunnels may not like
-  this (bots may spawn out of bounds)
-
-* Server crashes when player with bots leaves
-
 Crashes
 -------
 
-* Segfault - two clients connecting to the server then leaving causes the server
-  to crash
+* Tanks only spawn at ground level. Complex maps that have tunnels or platforms
+  may not like this (spawn out of bounds happens)
 
 * reached assertion on either World::getTeleportTarget() or
   World::getTeleporter() after getting killed while jumping towards a teleporter
@@ -169,8 +160,6 @@ Platform (Windows)
 bzfs
 ----
 
-* Jumping backward into a building with OO incorrectly triggers cheat detection.
-
 * After about 28 minutes with 4 players on the map there was an unexplained
   minute of everyone rapidly toggling between NR and okay.  Chat messages were
   queued and delivered to the server after things returned to normal.  Lag
@@ -192,7 +181,8 @@ Gameplay
   is dropped by the server?)...e.g. if I have G, limited to 5 shots, and kill
   someone with the fifth shot, only that player dies because the flag was
   dropped by the time the kill was scored...  even though the shot was fired
-  while I still had the flag.
+  while I still had the flag (may be fixed: remove this item if you can
+  confirm).
 
 * dropping a team flag, when the related team is empty, start a timeout.  The
   related code does not take into account that we can have now multiple team
