@@ -819,7 +819,7 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
   }
   else {
     for (unsigned int i = 0; i < infoVec.size(); i++) {
-      addMessage(NULL, indent + infoVec[i]);
+      addMessage(NULL, indent + TextUtils::replace_all(infoVec[i], "\t", "  "));
     }
     if (false) { // FIXME - test code
       addMessage(NULL, "and now ... by map<>");
