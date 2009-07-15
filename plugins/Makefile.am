@@ -14,6 +14,7 @@ SUBDIRS = \
 	logDetail \
 	nagware \
 	playHistoryTracker \
+	pushstats \
 	python \
 	rabbitTimer \
 	rabidRabbit \
