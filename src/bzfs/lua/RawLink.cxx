@@ -168,12 +168,9 @@ bool RawLink::PushEntries(lua_State* L)
 
 bool RawLink::CleanUp(lua_State* /*L*/)
 {
-  LinkMap::iterator it, next;
-  for (it = linkMap.begin(); it != linkMap.end(); /* no-op */) {
-    next = it;
-    next++;
+  LinkMap::iterator it;
+  for (it = linkMap.begin(); it != linkMap.end(); ++it) {
     delete it->second;
-    it = next;
   }
   linkMap.clear();
 
@@ -244,9 +241,6 @@ static int DisconnectRawLink(lua_State* L)
 static int GetRawLinkIP(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (linkMap.find(linkID) == linkMap.end()) {
-    return 0;
-  }
   lua_pushstring(L, bz_getNonPlayerConnectionIP(linkID));
   return 1;
 }
@@ -255,9 +249,6 @@ static int GetRawLinkIP(lua_State* L)
 static int GetRawLinkHost(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (linkMap.find(linkID) == linkMap.end()) {
-    return 0;
-  }
   lua_pushstring(L, bz_getNonPlayerConnectionHost(linkID));
   return 1;
 }
@@ -266,9 +257,6 @@ static int GetRawLinkHost(lua_State* L)
 static int GetRawLinkQueued(lua_State* L)
 {
   const int linkID = luaL_checkint(L, 1);
-  if (linkMap.find(linkID) == linkMap.end()) {
-    return 0;
-  }
   lua_pushinteger(L, bz_getNonPlayerConnectionOutboundPacketCount(linkID));
   return 1;
 }

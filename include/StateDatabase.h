@@ -27,7 +27,7 @@
 #include "CallbackList.h"
 #include "bzfio.h"
 #include "vectors.h"
-#include "BZDBNames.h" // FIXME -- this should not be included here
+#include "BZDBNames.h"
 
 
 #define BZDB (StateDatabase::instance())

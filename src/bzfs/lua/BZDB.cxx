@@ -20,12 +20,17 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <map>
 using std::string;
 using std::vector;
+using std::map;
 
 // common headers
-#include "bzfsAPI.h"
 #include "StateDatabase.h"
+#include "Protocol.h"
+
+// bzfs headers
+#include "../GameKeeper.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -52,6 +57,8 @@ static int SetBool(lua_State* L);
 static int SetFloat(lua_State* L);
 static int SetString(lua_State* L);
 
+static int SendPlayerVariables(lua_State* L);
+
 
 //============================================================================//
 
@@ -76,6 +83,8 @@ bool LuaBZDB::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetString);
 
   PUSH_LUA_CFUNC(L, SetPersistent);
+
+  PUSH_LUA_CFUNC(L, SendPlayerVariables);
 
   lua_pushliteral(L, "PERMISSIONS");
   lua_newtable(L); {
@@ -314,6 +323,49 @@ static int SetString(lua_State* L)
   BZDB.set(key, value, (StateDatabase::Permission) perms);
 
   lua_pushboolean(L, true);
+  return 1;
+}
+
+
+//============================================================================//
+
+static int SendPlayerVariables(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playerID);
+  if ((gkPlayer == NULL) || (gkPlayer->netHandler == NULL)) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  const int tableIndex = 2;
+  luaL_checktype(L, tableIndex, LUA_TTABLE);
+
+  map<string, string> varMap;
+  for (lua_pushnil(L); lua_next(L, tableIndex) != 0; lua_pop(L, 1)) {
+    if (lua_israwstring(L, -2) && lua_isstring(L, -1)) {
+      const string key = lua_tostring(L, -2);
+      if (!key.empty()) {
+        varMap[key] = lua_tostring(L, -1);
+      }
+    }
+  }
+
+  if (varMap.empty()) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUInt16(varMap.size());
+  map<string, string>::const_iterator it;
+  for (it = varMap.begin(); it != varMap.end(); ++it) {
+    msg->packStdString(it->first);
+    msg->packStdString(it->second);
+  }
+  msg->send(gkPlayer->netHandler, MsgSetVar);
+
+  lua_pushinteger(L, (int)varMap.size());
   return 1;
 }
 

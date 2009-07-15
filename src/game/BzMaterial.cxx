@@ -57,6 +57,7 @@ void BzMaterialManager::clear()
     delete materials[i];
   }
   materials.clear();
+  nameMap.clear();
   return;
 }
 
@@ -96,6 +97,10 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
     }
   }
   else {
+//FIXME    NameMap::const_iterator it = nameMap.find(target);
+//    if (it != nameMap.end()) {
+//      return it->second;
+//    }
     for (unsigned int i = 0; i < materials.size(); i++) {
       const BzMaterial* mat = materials[i];
       // check the base name
@@ -252,9 +257,9 @@ std::string BzMaterial::nullString = "";
 
 std::string BzMaterial::convertTexture(const std::string& oldTex)
 {
-  static std::map<std::string, std::string> nameMap;
+  static std::map<std::string, std::string> convMap;
 
-  if (nameMap.empty()) {
+  if (convMap.empty()) {
     const char* colors[] = {
       "rogue", "red", "green", "blue", "purple", "rabbit", "hunter", "observer"
     };
@@ -277,19 +282,19 @@ std::string BzMaterial::convertTexture(const std::string& oldTex)
         newName += types[t];
         newName += ".png";
 
-        nameMap[oldName] = newName;
+        convMap[oldName] = newName;
         logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
                            oldName.c_str(), newName.c_str());
         oldName += ".png";
-        nameMap[oldName] = newName;
+        convMap[oldName] = newName;
         logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
                            oldName.c_str(), newName.c_str());
       }
     }
   }
 
-  std::map<std::string, std::string>::const_iterator it = nameMap.find(oldTex);
-  if (it != nameMap.end()) {
+  std::map<std::string, std::string>::const_iterator it = convMap.find(oldTex);
+  if (it != convMap.end()) {
     logDebugMessage(0, "WARNING: converted texture '%s' to '%s'\n",
                        oldTex.c_str(), it->second.c_str());
     return it->second;
@@ -462,6 +467,10 @@ void* BzMaterial::pack(void* buf) const
   int i;
 
   buf = nboPackStdString(buf, name);
+  buf = nboPackInt32(buf, (int32_t)aliases.size());
+  for (size_t a = 0; a < aliases.size(); a++) {
+    buf = nboPackStdString(buf, aliases[a]);
+  }
 
   uint8_t modeByte = 0;
   if (noCulling)  { modeByte |= (1 << 0); }
@@ -492,15 +501,9 @@ void* BzMaterial::pack(void* buf) const
     buf = nboPackInt32(buf, texinfo->combineMode);
     buf = nboPackFVec2(buf, texinfo->autoScale);
     unsigned char stateByte = 0;
-    if (texinfo->useAlpha) {
-      stateByte = stateByte | (1 << 0);
-    }
-    if (texinfo->useColor) {
-      stateByte = stateByte | (1 << 1);
-    }
-    if (texinfo->useSphereMap) {
-      stateByte = stateByte | (1 << 2);
-    }
+    if (texinfo->useAlpha)     { stateByte = stateByte | (1 << 0); }
+    if (texinfo->useColor)     { stateByte = stateByte | (1 << 1); }
+    if (texinfo->useSphereMap) { stateByte = stateByte | (1 << 2); }
     buf = nboPackUInt8(buf, stateByte);
   }
 
@@ -519,6 +522,12 @@ void* BzMaterial::unpack(void* buf)
   int32_t inTmp;
 
   buf = nboUnpackStdString(buf, name);
+  buf = nboUnpackInt32(buf, inTmp);
+  for (i = 0; i < inTmp; i++) {
+    std::string alias;
+    buf = nboUnpackStdString(buf, alias);
+    aliases.push_back(alias);
+  }
 
   uint8_t modeByte;
   buf = nboUnpackUInt8(buf, modeByte);
@@ -558,15 +567,9 @@ void* BzMaterial::unpack(void* buf)
     texinfo->useSphereMap = false;
     unsigned char stateByte;
     buf = nboUnpackUInt8(buf, stateByte);
-    if (stateByte & (1 << 0)) {
-      texinfo->useAlpha = true;
-    }
-    if (stateByte & (1 << 1)) {
-      texinfo->useColor = true;
-    }
-    if (stateByte & (1 << 2)) {
-      texinfo->useSphereMap = true;
-    }
+    if (stateByte & (1 << 0)) { texinfo->useAlpha     = true; }
+    if (stateByte & (1 << 1)) { texinfo->useColor     = true; }
+    if (stateByte & (1 << 2)) { texinfo->useSphereMap = true; }
   }
 
   unsigned char sCount;
@@ -584,6 +587,13 @@ void* BzMaterial::unpack(void* buf)
 int BzMaterial::packSize() const
 {
   int i;
+
+  int nameSize = 0;
+  nameSize += nboStdStringPackSize(name);
+  nameSize += sizeof(int32_t);
+  for (size_t a = 0; a < aliases.size(); a++) {
+    nameSize += nboStdStringPackSize(aliases[a]);
+  }
 
   const int modeSize = sizeof(uint8_t);
 
@@ -606,8 +616,7 @@ int BzMaterial::packSize() const
     shaderSize += nboStdStringPackSize(shaders[i].name);
   }
 
-  return nboStdStringPackSize(name) +
-         modeSize + orderSize + colorSize + textureSize + shaderSize;
+  return nameSize + modeSize + orderSize + colorSize + textureSize + shaderSize;
 }
 
 
@@ -628,8 +637,13 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "material # " << id << std::endl;
 
-  if (name.size() > 0) {
+  if (!name.empty()) {
     out << indent << "  name " << name << std::endl;
+  }
+  for (size_t a = 0; a < aliases.size(); a++) {
+    if (!aliases[a].empty()) {
+      out << indent << "  # alias " << aliases[a] << std::endl;
+    }
   }
 
   if (order != defaultMaterial.order) {

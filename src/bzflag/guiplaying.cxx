@@ -938,6 +938,8 @@ static void doEvent(BzfDisplay *disply)
       // is uniconified.  if the player was paused because of an unmap
       // then resume.
       if (pausedByUnmap && BZDB.isTrue("unpauseForMinimize")) {
+        // FIXME -- send a MsgPause to cancle pauseOnMinimize initiated pauses
+        //          if not paused, and the counter is running
         pausedByUnmap = false;
         pauseCountdown = 5.0f;
         if (myTank && myTank->isAlive() && myTank->isPaused()) {

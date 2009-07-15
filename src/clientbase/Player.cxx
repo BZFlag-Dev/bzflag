@@ -240,7 +240,6 @@ void Player::getMuzzle(fvec3& m) const
   //       scaled version of tankRadius.
 
   float front = dimensions.x;
-
   static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
   const fvec3& sp = shotProxy;
   if (!isnan(sp.x)) {
@@ -248,15 +247,15 @@ void Player::getMuzzle(fvec3& m) const
   }
 
   if (dimensionsRate.x > 0.0f) {
-    front = front + (dimensionsRate.x * 0.1f);
+    front += (dimensionsRate.x * 0.1f);
   }
 
-  front = front + 0.1f;
+  front += 0.1f;
 
-  m.x = state.pos.x + (front * forward.x);
-  m.y = state.pos.y + (front * forward.y);
+  m = state.pos;
+  m.xy() += front * forward.xy();
+  m.z    += (BZDBCache::muzzleHeight * dimensionsScale.z);
 
-  m.z = state.pos.z + (BZDBCache::muzzleHeight * dimensionsScale.z);
   return;
 }
 
