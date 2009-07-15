@@ -46,6 +46,15 @@ static bool isWordCompletion(const BzfKeyEvent& key)
 }
 
 
+static void localVarIterator(const std::string& name, void* data)
+{
+  if (BZDB.getPermission(name) != StateDatabase::Server) {
+    AutoCompleter* ac = (AutoCompleter*) data;
+    ac->registerWord(name);
+  }
+}
+
+
 bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
@@ -68,7 +77,17 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
   if (isWordCompletion(key)) {
     const std::string line = hud->getComposeString();
     std::set<std::string> partials;
-    completer.complete(line, partials); 
+
+    // use a custom AutoCompleter for local variables
+    const std::string tag = "/localset";
+    if ((line.size() < tag.size()) || (line.substr(0, tag.size()) != tag)) {
+      completer.complete(line, partials);
+    } else {
+      AutoCompleter ac;
+      BZDB.iterate(localVarIterator, &ac);
+      ac.complete(line, partials);
+    }
+
     if (!partials.empty()) {
       // find the longest common string
       const std::string first = *(partials.begin());
@@ -80,7 +99,8 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
           break;
         }
       }
-      hud->setComposeString(line + first.substr(0, i));
+      const std::string longest = first.substr(0, i);
+      hud->setComposeString(line + longest);
 
       if (partials.size() >= 2) {
         const size_t lastSpace = line.find_last_of(" \t");
@@ -90,7 +110,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
         std::set<std::string>::const_iterator it;
         for (it = partials.begin(); it != partials.end(); ++it) {
           matches += "  ";
-          matches += lastWord + it->substr(i);
+          matches += lastWord + longest + it->substr(longest.size());
         }
         controlPanel->addMessage(matches, ControlPanel::MessageCurrent);
       }
