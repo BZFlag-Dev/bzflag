@@ -72,6 +72,7 @@ bzfs \- BZFlag game server
 [\fB\-public \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
+[\fB\-publicuser \fIusername password\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
@@ -400,6 +401,9 @@ A built\-in url is used by default.  The \fBBZFlag\fR clients use the
 same built\-in url so, by default, clients will see public servers
 automatically.  This argument may be provided multiple times to
 publicize a server to multiple list servers.
+.TP 
+\fB\-publicuser \fIusername password\fR
+Advertise this server using the username as the server owner.
 .TP 
 .B \-q
 If specified, the server will not listen for nor respond to ``pings''.
