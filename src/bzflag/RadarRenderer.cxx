@@ -35,6 +35,7 @@
 #include "World.h"
 #include "ShotPath.h"
 #include "AutoHunt.h"
+#include "DebugDrawing.h"
 
 
 const float RadarRenderer::colorFactor = 40.0f;
@@ -873,6 +874,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     glColor3f(1.0f, 1.0f, 0.0f);
     drawFlag(*antidotePos);
   }
+
+  // draw tank collision outlines
+  DebugDrawing::drawTanks();
 
   // draw these markers above all others always centered
   glPopMatrix(); // depth = 2

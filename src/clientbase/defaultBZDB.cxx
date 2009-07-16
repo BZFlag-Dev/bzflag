@@ -191,7 +191,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "landEffect",		"1",			true,  DefPerm, NULL },
   { "ricoEffect",		"1",			true,  DefPerm, NULL },
   { "shotEffect",		"1",			true,  DefPerm, NULL },
-  { "shotLength",		"0",			true,  DefPerm, NULL },
+  { "shotLength",		"4",			true,  DefPerm, NULL },
   { "spawnEffect",		"1",			true,  DefPerm, NULL },
   { "tpEffect",			"1",			true,  DefPerm, NULL },
   { "useFancyEffects",		"1",			true,  DefPerm, NULL },

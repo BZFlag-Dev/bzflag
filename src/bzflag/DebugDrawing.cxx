@@ -129,6 +129,7 @@ void DebugDrawing::drawTanks()
     }
   }
 
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
   OpenGLGState::resetState();
 
   glShadeModel(GL_SMOOTH);
@@ -149,6 +150,7 @@ void DebugDrawing::drawTanks()
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_CULL_FACE);
   glShadeModel(GL_FLAT);
+  glPopAttrib();
 }
 
 
@@ -214,6 +216,7 @@ void DebugDrawing::drawLinks()
   };
   const fvec4 nrmlColor(0.5f, 0.5f, 0.5f, alpha);
 
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
   OpenGLGState::resetState();
 
   glShadeModel(GL_SMOOTH);
@@ -336,6 +339,7 @@ void DebugDrawing::drawLinks()
   glDisable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glShadeModel(GL_FLAT);
+  glPopAttrib();
 }
 
 
