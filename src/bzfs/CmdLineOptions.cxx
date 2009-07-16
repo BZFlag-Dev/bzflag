@@ -112,7 +112,7 @@ static const char *usageString =
   "[-public <server-description>] "
   "[-publicaddr <server-hostname>[:<server-port>]] "
   "[-publiclist <list-server-url>] "
-  "[-publicauth <username> <password>] "
+  "[-publicuser <username> <password>] "
   "[-q] "
   "[+r] "
   "[-rabbit [score|killer|random]] "
@@ -216,7 +216,7 @@ static const char *extraUsageString =
   "\t-public <server-description>\n"
   "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
   "\t-publiclist <list-server-url>\n"
-  "\t-publicauth <username> <password>\n"
+  "\t-publicuser <username> <password>\n"
   "\t-q: don't listen for or respond to pings\n"
   "\t+r: all shots ricochet\n"
   "\t-rabbit [score|killer|random]: rabbit chase style\n"
@@ -992,7 +992,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       checkFromWorldFile(token, fromWorldFile);
       listServerURL.push_back(parseStringArg(i, tokens));
     }
-    else if (token == "-publicauth") {
+    else if (token == "-publicuser") {
       checkFromWorldFile(token, fromWorldFile);
       publicizedUsername = parseStringArg(i, tokens);
       publicizedPassword = parseStringArg(i, tokens);
