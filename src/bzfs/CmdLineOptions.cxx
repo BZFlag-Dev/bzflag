@@ -523,13 +523,23 @@ void CmdLineOptions::parseArgOptions(int argc, char** argv)
 
   std::vector<std::string> tokens;
   for (int i = 1; i < argc; i++) {
+    // push the token (never argv[0])
     tokens.push_back(argv[i]);
+
     // clear the password memory
-    if ((strcmp(argv[i - 1], "-passwd") == 0) ||
-        (strcmp(argv[i - 1], "-password") == 0)) {
+    if ((i >= 1) &&
+        ((strcmp(argv[i - 1], "-passwd") == 0) ||
+         (strcmp(argv[i - 1], "-password") == 0))) {
+      memset(argv[i], 0, strlen(argv[i]));
+    }
+
+    // clear the publicuser password memory  (the second argument)
+    if ((i >= 2) &&
+        (strcmp(argv[i - 2], "-publicuser") == 0)) {
       memset(argv[i], 0, strlen(argv[i]));
     }
   }
+
   parse(tokens, false);
 }
 
