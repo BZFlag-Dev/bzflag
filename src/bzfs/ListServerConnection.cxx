@@ -376,17 +376,11 @@ void ListServerLink::addMe(PingPacket pingInfo,
 
   if (clOptions) {
     const std::string& username = clOptions->publicizedUsername;
-    if (!username.empty()) {
-      msg += "&username=";
-      msg += username;
-    }
     const std::string& password = clOptions->publicizedPassword;
-    if (!password.empty()) {
-      msg += "&password=";
-      msg += password;
+    if (!username.empty()) {
+      msg += "&username=" + username + "&password=" + password;
     }
   }
-
 
   msg += "&checktokens=";
   std::set<std::string> callSigns;
