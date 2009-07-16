@@ -32,6 +32,7 @@
 
 /* local implementation headers */
 #include "bzfs.h"
+#include "CmdLineOptions.h"
 
 const int ListServerLink::NotConnected = -1;
 
@@ -276,7 +277,10 @@ void ListServerLink::sendQueuedMessages()
 
     worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
 
-    addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
+    addMe(getTeamCounts(),
+          std::string(updateEvent.address.c_str()),
+          std::string(updateEvent.description.c_str()),
+          std::string(updateEvent.groups.c_str()));
     lastAddTime = TimeKeeper::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     logDebugMessage(3,"Queuing REMOVE message to list server\n");
@@ -369,8 +373,22 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += gameInfo;
   msg += "&build=";
   msg += getAppVersion();
-  msg += "&checktokens=";
 
+  if (clOptions) {
+    const std::string& username = clOptions->publicizedUsername;
+    if (!username.empty()) {
+      msg += "&username=";
+      msg += username;
+    }
+    const std::string& password = clOptions->publicizedPassword;
+    if (!password.empty()) {
+      msg += "&password=";
+      msg += password;
+    }
+  }
+
+
+  msg += "&checktokens=";
   std::set<std::string> callSigns;
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -410,6 +428,8 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += TextUtils::url_encode(_advertiseGroups);
   msg += "&title=";
   msg += TextUtils::url_encode(publicizedTitle);
+
+  logDebugMessage(4, "ADD postData: %s\n", msg.c_str());
 
   setPostMode(msg);
   addHandle();
