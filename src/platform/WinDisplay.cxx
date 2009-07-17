@@ -391,8 +391,12 @@ bool			WinDisplay::getKey(const MSG& msg,
           UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF)) {
 	charCode = UNICODE_SURROGATE_TO_UTF32(charCode >> 16, charCode & 0xFFFF);
       }
-    }
-    else {
+      savedCharCode = charCode;
+      keyPressed = true;
+    } else if (keyPressed) {
+      charCode = savedCharCode;
+      keyPressed = false;
+    } else {
       charCode = 0;
     }
   }

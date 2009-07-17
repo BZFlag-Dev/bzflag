@@ -89,6 +89,8 @@ private:
   // for key to character translations
   mutable bool	translated;
   mutable int	charCode;
+  mutable bool	keyPressed;
+  mutable int	savedCharCode;
 
   // keyboard mapping
   static const int	buttonMap[];
