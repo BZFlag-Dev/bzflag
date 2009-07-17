@@ -855,7 +855,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   char *endTimeString = rtrimctime(
-      (time_t)(header.filetime + ReplayPos->timestamp) / 1000000);
+      (time_t)((header.filetime + ReplayPos->timestamp) / 1000000));
   snprintf(buffer, MessageLen, "  end:        %s", endTimeString);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
