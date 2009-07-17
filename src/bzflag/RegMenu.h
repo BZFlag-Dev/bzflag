@@ -60,6 +60,7 @@ class RegMenu : public HUDDialog {
     HUDuiLabel*   reg_label;
     HUDuiTypeIn*	callsign;
     HUDuiTypeIn*	password;
+    HUDuiTypeIn*	email;
     HUDuiLabel*		status;
     HUDuiLabel*		failedMessage;
 

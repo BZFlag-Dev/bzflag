@@ -35,6 +35,7 @@ const int VersionLen    = 60;  // including terminating NUL
 const int MessageLen    = 128; // including terminating NUL
 const int ServerNameLen = 80;
 const int ReferrerLen   = 256; // including terminating NUL
+const int EmailLen      = 128; // including terminating NUL
 
 // types of things we can be
 enum PlayerType {

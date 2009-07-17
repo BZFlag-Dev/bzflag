@@ -23,12 +23,15 @@ typedef struct ldap LDAP;
 #define MAX_CALLSIGN_LEN 32
 #define MIN_PASSWORD_LEN 2
 #define MIN_CALLSIGN_LEN 2
+#define MIN_EMAIL_LEN 3
+#define MAX_EMAIL_LEN 254 // RFC
 #define MAX_GROUPNAME_LEN 20 /* TODO */
 
 struct UserInfo
 {
   std::string name;
   std::string password;
+  std::string email;
 };
 
 enum BzRegErrors;
@@ -52,8 +55,14 @@ public:
 private:
   bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
   void unbind(LDAP *&ld);
+
   uint32_t getuid(LDAP *ld, const char *dn);
+  BzRegErrors registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn);
+  BzRegErrors updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn);
+  BzRegErrors tmp(std::string &user_dn);
+
   LDAP *rootld;
+  uint32_t nextuid;
 };
 
 #define sUserStore UserStore::instance()

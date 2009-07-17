@@ -19,10 +19,11 @@
 #include <gcrypt.h>
 #include "base64.h"
 #include <AuthProtocol.h>
+#include <assert.h>
 
 INSTANTIATE_SINGLETON(UserStore)
 
-UserStore::UserStore() : rootld(NULL)
+UserStore::UserStore() : rootld(NULL), nextuid(0)
 {
 }
 
@@ -110,6 +111,166 @@ struct LDAPModN
   LDAPMod mod;
 };
 
+class LDAPAttr
+{
+public:
+  friend class LDAPBaseSearch;
+  LDAPAttr() {}
+  
+  LDAPAttr(int req_value_cnt, int max_value_len, char *attr_name) {
+    init(req_value_cnt, max_value_len, attr_name);
+  }
+
+  void init(int req_value_cnt, int max_value_len, char *attr_name) {
+    val_req_cnt = req_value_cnt;
+    val_max_len = max_value_len;
+    cur_val = 0;
+    values = NULL;
+    attr = attr_name;
+  }
+
+  ~LDAPAttr() {
+    ldap_value_free(values);
+  }
+
+  int count() {
+    return ldap_count_values(values); 
+  }
+
+  char * getNext() {
+    while(values && values[cur_val] != NULL) {
+      if((int)strnlen(values[cur_val], val_max_len) < val_max_len)
+        return values[cur_val];
+      sLog.outError("invalid value for %s, potential buffer overflow", attr);
+      cur_val++;
+    }
+    return NULL;
+  }
+
+private:
+  void setValues(char **vals) {
+    values = vals;
+    if(val_req_cnt != -1) {
+      int cnt = count();
+      if(cnt != val_req_cnt) {
+        sLog.outError("value count for %s is %d != %d", attr, cnt, val_req_cnt);
+        ldap_value_free(values);
+        values = NULL;
+      }
+    }
+
+  }
+
+  char *attr;
+  char **values;
+  int cur_val;
+  int val_max_len;
+  int val_req_cnt;
+};
+
+class LDAPBaseSearch
+{
+public:
+  LDAPBaseSearch(LDAP *ldap, const char *dn, const char *filter, int attr_count, char **attrs, LDAPAttr *ldap_attrs)
+  {
+    ld = ldap;
+    result = NULL;
+    attr_cnt = attr_count;
+
+    err = ldap_search_s(ld, dn, LDAP_SCOPE_BASE, filter, attrs, 0, &result);
+    
+    if(err != LDAP_SUCCESS) {
+      sLog.outError("LDAP %d: %s (at search)", err, ldap_err2string(err));
+    } else {
+      for (LDAPMessage *msg = ldap_first_message(ld, result); msg; msg = ldap_next_message(ld, msg)) {
+        if(ldap_msgtype(msg) == LDAP_RES_SEARCH_ENTRY) {
+          for(int i = 0; i < attr_cnt; i++)
+            attr_results[i].setValues(ldap_get_values(ld, msg, attrs[i]));
+
+          break; // don't care about other messages
+        }
+      }
+    }
+  }
+
+  int getError() {
+    return err;
+  }
+
+  LDAPAttr& getResult(int i) {
+    assert(i < attr_cnt);
+    return attr_results[i];
+  }
+
+  ~LDAPBaseSearch()
+  {
+    ldap_msgfree(ldap_first_message(ld, result));
+  }
+
+private:
+  LDAP *ld;
+  LDAPMessage *result;
+  LDAPAttr *attr_results;
+  int attr_cnt;
+  int err;
+};
+
+template< int N >
+class LDAPBaseSearchN {
+};
+
+template<>
+class LDAPBaseSearchN<1> : public LDAPAttr, public LDAPBaseSearch {
+public:
+  LDAPBaseSearchN(LDAP *ld, const char *dn, const char *filter,
+    char *attr, int req_value_cnt, int max_value_len) :
+    LDAPAttr(req_value_cnt, max_value_len, attr),
+    LDAPBaseSearch(ld, dn, filter, 1, init_attrs(attr), (LDAPAttr*)this)
+  {
+  }
+    
+private:
+  char **init_attrs(char *attr)
+  {
+    attrs[0] = attr;
+    attrs[1] = NULL;
+    return attrs;
+  }
+
+  char* attrs[2];
+};
+
+template<>
+class LDAPBaseSearchN<2> : public LDAPBaseSearch {
+public:
+  LDAPBaseSearchN(LDAP *ld, const char *dn, const char *filter, 
+    char *attr1, int req_value_cnt1, int max_value_len1,
+    char *attr2, int req_value_cnt2, int max_value_len2) :
+    LDAPBaseSearch(ld, dn, filter, 2, init_attrs(attr1, attr2), init_result(
+      req_value_cnt1, max_value_len1, attr1,
+      req_value_cnt2, max_value_len2, attr2))
+  {
+  }
+    
+private:
+  char **init_attrs(char *attr1, char *attr2)
+  {
+    attrs[0] = attr1;
+    attrs[1] = attr2;
+    attrs[2] = NULL;
+    return attrs;
+  }
+
+  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, char *attr1, int req_value_cnt2, int max_value_len2, char *attr2)
+  {
+    attr_res[0].init(req_value_cnt1, max_value_len1, attr1);
+    attr_res[1].init(req_value_cnt2, max_value_len2, attr2);
+    return attr_res;
+  }
+
+  char* attrs[3];
+  LDAPAttr attr_res[2];
+};
 
 BzRegErrors UserStore::registerUser(UserInfo &info)
 {
@@ -118,89 +279,179 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
      First the value stored in cn=NextUID's uid is retrieved then
      that value is deleted and the incremented value is added in one atomic operation.
      If the operation fails it is because someone changed the value of next uid
-     between the search and modify operation and the fetch/increment is retried */
+     between the search and modify operation and the fetch/increment is retried
+  */
+    
+  /* NOTE: If the server crashes or the connection to ldap is lost
+     the new bzid will have been generated with no user associated to it (holes). 
+     To ensure that simply trying to register with an existing callsign/email
+     doesn't create holes, the generated nextuid is saved and reused for subsequent
+     registrations.
+  */
 
-  std::string dn = "cn=NextUID," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
-  char *search_attrs[2] = { "uid", NULL };
+  std::string nextuid_dn = "cn=NextUID," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
-  int nextuid = 0;
-  for(int i = 0; i < 4; i++) {
-    nextuid = getuid(rootld, dn.c_str());
-    if(nextuid > 0) {
-      char curvalue[20];
-      sprintf(curvalue, "%d", nextuid);
-      char newvalue[20];
-      sprintf(newvalue, "%d", nextuid + 1);
+  if(nextuid == 0) {
+    for(int i = 0; i < 4; i++) {
+      nextuid = getuid(rootld, nextuid_dn.c_str());
+      if(nextuid > 0) {
+        char curvalue[20];
+        sprintf(curvalue, "%d", nextuid);
+        char newvalue[20];
+        sprintf(newvalue, "%d", nextuid + 1);
 
-      LDAPMod1 attr_old(LDAP_MOD_DELETE, "uid", curvalue);
-      LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
-      LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
-      if(!ldap_check( ldap_modify_s(rootld, dn.c_str(), mod_attrs) )) {
-        sLog.outDebug("nextuid modify failed");
-        nextuid = 0;
-      } else
-        break;
+        LDAPMod1 attr_old(LDAP_MOD_DELETE, "uid", curvalue);
+        LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
+        LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
+        if(!ldap_check( ldap_modify_s(rootld, nextuid_dn.c_str(), mod_attrs) )) {
+          sLog.outDebug("nextuid modify failed");
+          nextuid = 0;
+        } else
+          break;
+      }
+
+      sLog.outDebug("cannot fetch-increment NextUID, retry number %d", i + 1);
     }
 
-    sLog.outDebug("cannot fetch-increment NextUID, retry number %d", i + 1);
+    if(nextuid < 1) {
+      nextuid = 0;
+      return REG_FAIL_GENERIC;
+    }
   }
 
-  if(nextuid < 1)
-    return REG_FAIL_GENERIC;
+  /* NOTE: the "active state" of the account is determined by whether the password is
+     given a valid hash. This means that no additional attributes and no additional checks
+     are needed during authentication. */
 
-  /* NOTE: If the server crashes, the connection to ldap is lost
-     or simply the user already exists (!),
-     the new bzid will have been generated with no user associated to it (holes).
-     I haven't found any good way to fix that. 
-     Wherever we move the atomic fetch-increment, the add/modify right after it can fail.
-     It is possible to fix by using locks i.e using the  same test and set idea to change
-     a value from RELEASED to ACQUIRED at the start of the registration, spinning if not 
-     possible and setting back to RELEASED at the end but someone may forget to do that.
-     You could put a timer on the lock and use have some way to roll back if need to be
-     interrupted but that's all too complicated.
-     The key observation is that we don't really need autoincremented hole-free values,
-     just to keep the values unique and preferably stop the value from growing to infinity
-     too fast during an attack.
+  /* Because mails need to be unique the following algorithms is used:
+     - insert the user with an invalidated password (append something to the end)
+       (since we need multiple modifications this makes sure that the account cannot
+        be used until everything is finishes)
+     if (succeeded) {
+       - insert the entry having mail=email and uid=user's bzid
+       if(failed) {
+         - delete the user
+         if(with already exists)
+           - fail with email exits
+         else
+           - fail
+       }
+       - change the user's password to the real value
+     } else if(failed because it already exists) {
+       - fail with user exists
+       (The user entry may come from an unfinished registration and if so, ideally 
+        the registration should continue by replacing the entry with the new information.
+        However this causes a whole range of concurrency problems with no known solutions
+        so far. The effects of this bug can be made more acceptable by periodically
+        cleaning out the invalid users.)
+     } else if(failed for some other reason) {
+        - fail;
+     } 
+
+     NOTE: As long as all the changes succeed or only fail when expected to (user/mail
+     already exits), this should run without concurrency problems and will clean itself up.
+     To clean out corrupted user/email entries periodically without shutting down
+     registration, after searching for the invalid passwords/emails, the entries should 
+     not be deleted immediately but only at the next period. The period should be big enough
+     to ensure that any ongoing registration at the previous period has been finished, 
+     and small enough for minimal discomfort to the user in such events.
   */
 
   // insert the user with the next uid
-  dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  std::string user_dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
   // pilotPerson has rfc822Mailbox, uidObject has uid
   char *oc_vals[3] = {"pilotPerson", "uidObject", NULL};
   LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
   LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
   LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
-  LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", info.password.c_str());
-  char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid);
+  LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", (info.password+"::::").c_str());
+  char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid + 1);
   LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
-  LDAPMod1 attr_mail  (LDAP_MOD_ADD, "rfc822Mailbox", "nobody@nowhere.com");
-  LDAPMod *add_attrs[7] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, NULL };
+  LDAPMod1 attr_mail  (LDAP_MOD_ADD, "rfc822Mailbox", info.email.c_str());
+  LDAPMod *user_mods[7] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, NULL };
 
-  int ret = ldap_add_ext_s(rootld, dn.c_str(), add_attrs, NULL, NULL);
-  switch(ret) {
-    case LDAP_SUCCESS:
-      return REG_SUCCESS; 
+  int user_add_ret = ldap_add_ext_s(rootld, user_dn.c_str(), user_mods, NULL, NULL);
+  if(user_add_ret != LDAP_SUCCESS) {
+    switch(user_add_ret) {
     case LDAP_ALREADY_EXISTS:
-      sLog.outDebug("User %s already exists, wasted bzid %d", info.name.c_str(), nextuid);
+      sLog.outDebug("User %s already exists", info.name.c_str());
       return REG_USER_EXISTS;
     default:
-      sLog.outError("LDAP %d: %s", ret, ldap_err2string(ret));
+      ldap_check(user_add_ret);
       return REG_FAIL_GENERIC;
+    }
   }
 
-  /* NOTE: the "active state" of the account is determined by whether the password is
-    given a valid hash. This means that no additional attributes and no additional checks
-    are needed during authentication. */
+  std::string mail_dn = "mail=" + info.email + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  
+  BzRegErrors err = registerMail(info, nextuid + 1, user_dn, mail_dn);
+  if(err != REG_SUCCESS)
+    return err;
 
-  /* TODO: To fix the above mentioned problem and at the same time make this process much
-    more efficient, the following could be done. Each separate entitry that wishes to do
-    registration can acquire a lock on certain range of BZIDs. E.g one server locks ids 1-1000
-    another 1001-2000 and so on. When a server owns  a range it can hand them out to new users 
-    without needing to check with LDAP. This could be done by putting the ranges as multiple
-    values of some attribute and atomically appending LOCKED-timestamp to the value. Each lock 
-    will have say a 5 minute timeout... (todo: finish the todo, or maybe just do it) 
+  err = updatePassword(info, user_dn, mail_dn);
+  if(err == REG_SUCCESS)
+    nextuid = 0;
+
+  return err;
+
+  /* TODO: The above mentioned solution to the holes problem can be further improved.
+    Each separate entitry that wishes to do registration can acquire a lock on certain range 
+    of BZIDs. E.g one server locks ids 1-1000 another 1001-2000 and so on. When a server owns
+    a range it can hand them out to new users without needing to check with LDAP. This could
+    be done by putting the ranges as multiple values of some attribute and atomically 
+    appending LOCKED-timestamp to the value. Each lock will have say a 5 minute timeout...
+    (todo: finish the todo, or maybe just do it)
   */
+}
+
+BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn)
+{
+  // atomically replace the invalidated password
+  LDAPMod1 attr_pwd1 (LDAP_MOD_DELETE, "userPassword", (info.password+"::::").c_str());
+  LDAPMod1 attr_pwd2 (LDAP_MOD_ADD, "userPassword", info.password.c_str());
+  LDAPMod *pwd_mods[3] = { &attr_pwd1.mod, &attr_pwd2.mod, NULL };
+
+  if(!ldap_check(ldap_modify_ext_s(rootld, user_dn.c_str(), pwd_mods, NULL, NULL))) {
+    // undo in reverse order
+    if(ldap_check(ldap_delete_ext_s(rootld, mail_dn.c_str(), NULL, NULL)))
+      // should only fail if multiple daemons are undoing at the same time
+      ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));
+      // only one of them will succeed in doing both
+
+    return REG_FAIL_GENERIC;
+  }
+
+  return REG_SUCCESS;
+}
+
+BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn)
+{
+  LDAPMod1 attr_oc1 (LDAP_MOD_ADD, "objectClass", "account");
+  /* TODO: for some reason adding extensibleObject (for the mail attribute)
+     causes the operation to fail with LDAP_TYPE_OR_VALUE_EXISTS.
+     Equally strange is that it works if simply omitted, looks like the attributes
+     in the DN don't need to be actually available.
+  */
+  // LDAPMod1 attr_oc2 (LDAP_MOD_ADD, "objectClass", "extensibleObject");
+  char uid_str[20]; sprintf(uid_str, "%d", uid);
+  LDAPMod1 attr_uid (LDAP_MOD_ADD, "uid", uid_str);
+  LDAPMod *mail_mods[3] = { &attr_oc1.mod, /*&attr_oc2.mod, */&attr_uid.mod, NULL };
+
+  int mail_ret = ldap_add_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
+  if(mail_ret != LDAP_SUCCESS) {
+    // delete the user
+    ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));
+
+    if(mail_ret == LDAP_ALREADY_EXISTS) {
+      sLog.outDebug("Email %s already exists", info.email.c_str());
+      return REG_MAIL_EXISTS;
+    } else {
+      ldap_check(mail_ret);
+      return REG_FAIL_GENERIC;
+    }
+  }
+  return REG_SUCCESS;
 }
 
 // find the uid for a given ldap connection and dn
@@ -210,9 +461,8 @@ uint32_t UserStore::getuid(LDAP *ld, const char *dn)
 
   LDAPMessage *res = NULL, *msg;
   if(!ldap_check( ldap_search_s(ld, dn, LDAP_SCOPE_BASE, "(objectClass=*)", search_attrs, 0, &res) )) {
-    if(res) ldap_msgfree(ldap_first_message(rootld, res));
+    if(res) ldap_msgfree(ldap_first_message(ld, res));
     sLog.outError("cannot find uid for %s", dn);
-    unbind(ld);
     return 0;
   }
 

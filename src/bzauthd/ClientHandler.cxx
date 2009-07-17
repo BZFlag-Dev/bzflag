@@ -213,32 +213,37 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
 
   int32_t callsign_len = -1;
   int32_t password_len = -1;
+  int32_t email_len = -1;
 
-  if(message_len >= MIN_PASSWORD_LEN + MIN_CALLSIGN_LEN + 1 && message_len <= MAX_PASSWORD_LEN + MAX_CALLSIGN_LEN + 1)
+  if(message_len >= MIN_PASSWORD_LEN + MIN_CALLSIGN_LEN + MIN_EMAIL_LEN + 2 && message_len <= MAX_PASSWORD_LEN + MAX_CALLSIGN_LEN + MAX_EMAIL_LEN + 2)
   {
-	size_t i;
-    // it has to contain exactly one space
+    size_t i;
+    // it has to contain exactly two spaces
     for(i = 0; i < message_len; i++)
     {
       // TODO: better checking for characters
       if(!isprint(message[i])) break;
       if(message[i] == ' ')
       {
-        if(callsign_len != -1) break;
-        callsign_len = (int32_t)i;
+        if(callsign_len != -1) {
+          if(password_len != -1) break;
+          password_len = (int32_t)i - callsign_len - 1;
+        } else
+          callsign_len = (int32_t)i;
       }
     }
 
-    if(i == message_len && callsign_len != -1)
+    if(i == message_len && callsign_len != -1 &&
+      callsign_len >= MIN_CALLSIGN_LEN && callsign_len <= MAX_CALLSIGN_LEN &&
+      password_len >= MIN_PASSWORD_LEN && password_len <= MAX_PASSWORD_LEN)
     {
-      if(callsign_len >= MIN_CALLSIGN_LEN && callsign_len <= MAX_CALLSIGN_LEN)
-      {
-        password_len = (int32_t)message_len - callsign_len - 1;
-        if(password_len >= MIN_PASSWORD_LEN && password_len <= MAX_PASSWORD_LEN)
-          valid = true;
-      }
+      email_len = (int32_t)message_len - (callsign_len + password_len + 2);
+      if(email_len >= MIN_EMAIL_LEN && email_len <= MAX_EMAIL_LEN)
+        valid = true;
     }
   }
+
+  // TODO: check for proper email address
 
   if(valid)
   {
@@ -250,6 +255,7 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
     UserInfo info;
     info.name = std::string ((const char*)message, callsign_len);
     info.password = std::string((const char*)digest, digest_len);
+    info.email = std::string((const char*)message, callsign_len + password_len + 2, email_len);
 
     BzRegErrors error = sUserStore.registerUser(info);
     if(error != REG_SUCCESS) {

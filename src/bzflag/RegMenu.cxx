@@ -58,6 +58,8 @@ public:
         std::string message = menu->callsign->getString();
         message += " ";
         message += menu->password->getString();
+        message += " ";
+        message += menu->email->getString();
 
         uint8_t *cipher = NULL;
         size_t cipher_len = 0;
@@ -139,6 +141,13 @@ RegMenu::RegMenu()
   password->setMaxLength(CallSignLen - 1);
   password->setString(info->password);
   addControl(password);
+
+  email = new HUDuiTypeIn;
+  email->setFontFace(fontFace);
+  email->setLabel("Email:");
+  email->setMaxLength(EmailLen - 1);
+  email->setString("");
+  addControl(email);
 
   status = new HUDuiLabel;
   status->setFontFace(fontFace);
