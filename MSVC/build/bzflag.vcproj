@@ -605,6 +605,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\SaveMenu.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\SaveMenu.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\SaveWorldMenu.cxx"
 					>
 				</File>
