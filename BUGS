@@ -36,6 +36,10 @@ Crashes
 
 * The WebAdmin plugin segfaults the server on shutdown.
 
+* After joining then leaving a server with at least one solo bot, the bzfs
+  will crash reasonably predictably at NetHandler:578 (toBeKickedReason is a
+  bad ptr) This happens at least on Windows
+  
 Regressions
 -----------
 
@@ -199,6 +203,16 @@ Gameplay
 * world weapons seem to lag the server when there are many players joined.
   might be related to a rapidly repeating world weapon as well (like once a
   second, use _weapons BZDB var to test...)
+
+Solo Bots
+--------------
+
+* the team which solo bots join should be predictable, probably the same team
+  as the player when playing on a team, and have some way of choosing when the
+  player is an observer
+  
+* bots shots are currently exploding as soon as they are fired. this is a
+  pretty recent development, probably some time July '09
 
 3rd party libs
 --------------
