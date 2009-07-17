@@ -10,19 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// TODO
-// - convert to packet lists to  STL lists ?
-// - compression (piped and/or inline)
-// - modify bzflag client to search for highest PlayerID first
-//   for name matching (so that messages aren't sent to ghosts)
-// - improve skipping
-
-
-// OOPS, get rid of these during the next protocol change
-static const int PACKET_SIZE_STUFFING = 8;
-static const int HEADER_SIZE_STUFFING = 0;
-
-
 // interface header
 #include "RecordReplay.h"
 
@@ -60,9 +47,22 @@ static const int HEADER_SIZE_STUFFING = 0;
 #include "bz_md5.h"
 #include "Score.h"
 #include "version.h"
+#include "TextUtils.h"
 
 // bzfs specific headers
 #include "bzfs.h"
+
+
+// TODO
+// - convert to packet lists to  STL lists ?
+// - compression (piped and/or inline)
+// - modify bzflag client to search for highest PlayerID first
+//   for name matching (so that messages aren't sent to ghosts)
+// - improve skipping
+
+// OOPS, get rid of these during the next protocol change
+static const int PACKET_SIZE_STUFFING = 8;
+static const int HEADER_SIZE_STUFFING = 0;
 
 
 // Type Definitions
@@ -739,12 +739,6 @@ static bool preloadVariables()
   return true;
 }
 
-char* rtrimctime(time_t time) {
-  char *timeString = ctime(&time);
-  /* removing ctime's trailing \n */
-  timeString[strlen(timeString)-1] = '\0';
-  return timeString;
-}
 
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
@@ -850,13 +844,14 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 	    (float)header.filetime/1000000.0f);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  char *startTimeString = rtrimctime((time_t)(ReplayPos->timestamp / 1000000));
-  snprintf(buffer, MessageLen, "  start:      %s", startTimeString);
+  time_t startTime = (time_t)(ReplayPos->timestamp / 1000000);
+  std::string startTimeString = TextUtils::trim(ctime(&startTime));
+  snprintf(buffer, MessageLen, "  start:      %s", startTimeString.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  char *endTimeString = rtrimctime(
-      (time_t)((header.filetime + ReplayPos->timestamp) / 1000000));
-  snprintf(buffer, MessageLen, "  end:        %s", endTimeString);
+  time_t endTime = (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
+  std::string endTimeString = TextUtils::trim(ctime(&endTime));
+  snprintf(buffer, MessageLen, "  end:        %s", endTimeString.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
