@@ -150,7 +150,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
   if (success != DI_OK) {
     // couldn't set x axis range, what to do now?
-    DXError("Could not set X-axis range", success);
+    DXError("Could not set turn value (X axis range)", success);
     device = NULL;
     return;
   }
@@ -166,7 +166,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
       yAxis = "Slider 1";
     } else {
       // couldn't set y axis range, what to do now?
-      DXError("Could not set Y-axis range", success);
+      DXError("Could not set speed (Y axis range)", success);
       device = NULL;
       return;
     }

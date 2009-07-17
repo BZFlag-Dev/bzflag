@@ -152,7 +152,7 @@ void	      WinJoystick::getJoy(int& x, int& y)
     case JOY_RETURNR: xRet = joyInfo.dwRpos; break;
     case JOY_RETURNU: xRet = joyInfo.dwUpos; break;
     case JOY_RETURNV: xRet = joyInfo.dwVpos; break;
-    default: printError("Failed to get Joystick X axis information"); break;
+    default: printError("Failed to get turn rate from joystick (X axis)"); break;
   }
   switch (axes[yIndex].requestFlag) {
     case JOY_RETURNX: yRet = joyInfo.dwXpos; break;
@@ -161,7 +161,7 @@ void	      WinJoystick::getJoy(int& x, int& y)
     case JOY_RETURNR: yRet = joyInfo.dwRpos; break;
     case JOY_RETURNU: yRet = joyInfo.dwUpos; break;
     case JOY_RETURNV: yRet = joyInfo.dwVpos; break;
-    default: printError("Failed to get Joystick Y axis information"); break;
+    default: printError("Failed to get speed from joystick (Y axis)"); break;
   }
 
   // adjust X and Y to scale

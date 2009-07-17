@@ -100,13 +100,13 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   // axis settings
   jsx = option;
   option->setFontFace(fontFace);
-  option->setLabel("Joystick X Axis:");
+  option->setLabel("Joystick Turn Axis (X):");
   option->setCallback(callback, (void*)"X");
   addControl(option);
   option = new HUDuiList;
   jsy = option;
   option->setFontFace(fontFace);
-  option->setLabel("Joystick Y Axis:");
+  option->setLabel("Joystick Speed Axis (Y):");
   option->setCallback(callback, (void*)"Y");
   addControl(option);
   fillJSOptions();
