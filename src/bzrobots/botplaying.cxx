@@ -105,29 +105,16 @@ void showError(const char *msg, bool flush)
 }
 
 
-void printout(const std::string& line)
-{
-#ifdef _WIN32
-  FILE *fp = fopen ("stdout.txt", "a+");
-  if (fp) {
-    fprintf(fp,"%s\n", stripAnsiCodes(line.c_str()));
-    fclose(fp);
-  }
-#else
-  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
-#endif
-}
-
 // - in bzrobots, this shows the error on the console
 void showMessage(const std::string& line)
 {
-  printout(line);
+  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
 }
 
 
 void showMessage(const std::string& line, ControlPanel::MessageModes)
 {
-  printout(line);
+  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
 }
 // access silencePlayers from bzflag.cxx
 std::vector<std::string> &getSilenceList()
@@ -1574,7 +1561,7 @@ void joinInternetGame2()
 {
   justJoined = true;
 
-  printout("Entering game...");
+  showMessage("Entering game...");
 
   ServerLink::setServer(serverLink);
   World::setWorld(world);
@@ -1603,7 +1590,7 @@ void joinInternetGame2()
   LocalPlayer::setMyTank(myTank);
 
   // tell the server that the observer tank wants to join
-  serverLink->sendEnter(myTank->getId(), TankPlayer, NoUpdates, 
+  serverLink->sendEnter(myTank->getId(), TankPlayer, AllUpdates, 
 			myTank->getTeam(), myTank->getCallSign(),
 			startupInfo.token, startupInfo.referrer);
   startupInfo.token[0] = '\0';
@@ -1642,6 +1629,33 @@ void doTankMotions(const float /*dt*/)
 	addMessage(remotePlayers[i], "okay");
     }
   }
+  
+  // do motion
+  if (myTank) {
+    if (myTank->isAlive() && !myTank->isPaused()) {
+      /*doMotion();
+      if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED)
+	setHuntTarget(); //spot hunt target
+
+      if (myTank->getTeam() != ObserverTeam &&
+	((fireButton && myTank->getFlag() == Flags::MachineGun) ||
+	(myTank->getFlag() == Flags::TriggerHappy)))
+	myTank->fireShot();
+
+      setLookAtMarker();
+
+      // see if we have a target, if so lock on to the bastage
+      if (myTank->getTarget())
+	hud->AddLockOnMarker(myTank->getTarget()->getPosition(),
+	myTank->getTarget()->getCallSign(),
+	!isKillable(myTank->getTarget()));
+	
+    } else {
+      int mx, my;
+      mainWindow->getMousePosition(mx, my);*/
+    }
+    myTank->update();
+  }
 }
 
 void updatePositions ( const float dt )
@@ -1662,9 +1676,25 @@ void checkEnvironment ( const float )
 
 void doUpdates ( const float dt )
 {
-  updatePositions(dt);
-  checkEnvironment(dt);
+  float doneDT = dt;
+  float dtLimit = MAX_DT_LIMIT;
+  float realDT = dt;
 
+  if (doneDT > dtLimit) {
+    realDT = dtLimit;
+    doneDT -= dtLimit;
+  }
+  
+  while (doneDT > 0) {
+    updatePositions(dt);
+    checkEnvironment(dt);
+
+    doneDT -= dtLimit;
+
+    if (doneDT < dtLimit) // if we only have a nubby left, don't do a full dt.
+      realDT = doneDT;
+  }
+  
   // update AutoHunt
   AutoHunt::update();
 }
@@ -1892,7 +1922,7 @@ void			botStartPlaying()
 
   // enter game if we have all the info we need, otherwise
   joinRequested    = true;
-  printout("Trying...");
+  showMessage("Trying...");
 
   // start game loop
   playingLoop();

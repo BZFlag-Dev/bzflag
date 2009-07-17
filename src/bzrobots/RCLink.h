@@ -34,7 +34,7 @@
 #define RC_LINK_MAXARGS 50
 #define RC_LINK_OVERFLOW_MSG "\nerror Connection Stalled.  RC stopped reading data!\n"
 
-#define PROTOCOL_DEBUG
+//#define PROTOCOL_DEBUG
 
 
 /**

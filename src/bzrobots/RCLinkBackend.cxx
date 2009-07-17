@@ -99,17 +99,12 @@ RCLinkBackend::sendPacket( const char *data, unsigned int size, bool killit )
 void
 RCLinkBackend::update()
 {
-	if(status != Listening)
-		printf("RCBStatus: %d\n",status);
-
   if (status != Connected && status != Connecting) {
     return;
   }
 
   updateWrite();
   int amount = updateRead();
-
-	printf("RCBAmount: %d\n",amount);
 
   if (amount == -1) {
     status = Listening;
@@ -120,14 +115,13 @@ RCLinkBackend::update()
     updateParse();
   } else if (status == Connecting) {
     int ncommands = updateParse(1);
-		printf("RCBNC: %d\n",ncommands);
     if (ncommands) {
       RCRequest *req = popRequest();
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
       } else {
         BACKENDLOGGER << "RCLink: Expected an 'IdentifyFrontend'." << std::endl;
-		sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
+        sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
         status = Listening;
       }
     }
