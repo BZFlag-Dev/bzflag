@@ -13,7 +13,6 @@ EXTRA_DIST =				\
 	mrtg-bzflag.pl			\
 	pingtimes.sh			\
 	query				\
-	rrlog.cxx			\
 	samples				\
 	serverstats.sh			\
 	shtool				\
@@ -46,11 +45,3 @@ MAINTAINERCLEANFILES =	\
 	missing \
 	mkinstalldirs
 
-rrlog:	rrlog.cxx
-	$(LIBTOOL) --tag=CXX --mode=link $(CXX) $(CXXFLAGS) \
-	  -o rrlog rrlog.cxx		\
-	  -I../include -I../src/bzfs	\
-	  ../src/date/libDate.la	\
-	  ../src/game/libGame.la	\
-	  ../src/net/libNet.la		\
-	  ../src/common/libCommon.la
