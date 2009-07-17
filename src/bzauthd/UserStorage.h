@@ -57,12 +57,13 @@ private:
   void unbind(LDAP *&ld);
 
   uint32_t getuid(LDAP *ld, const char *dn);
-  BzRegErrors registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn);
-  BzRegErrors updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn);
-  BzRegErrors tmp(std::string &user_dn);
+  BzRegErrors registerMail(UserInfo &info, uint32_t uid, std::string &user_dn);
+  BzRegErrors updatePassword(UserInfo &info, std::string &user_dn);
+  BzRegErrors userExists(std::string &user_dn, uint32_t uid);
 
   LDAP *rootld;
   uint32_t nextuid;
+  std::string mail_dn;
 };
 
 #define sUserStore UserStore::instance()

@@ -25,6 +25,7 @@ void Config::initialize()
   registerKey("ldap_rootdn", CONFIG_LDAP_ROOTDN, "cn=Manager,dc=my-domain,dc=com");
   registerKey("ldap_password", CONFIG_LDAP_ROOTPW, "secret");
   registerKey("token_expire_delay", CONFIG_TOKEN_EXPIRE_DELAY, 5 * 60 * 1000);
+  registerKey("reg_period", CONFIG_REG_PERIOD, 5 * 60);
 }
 
 Config::Config()

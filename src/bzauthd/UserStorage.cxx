@@ -66,6 +66,7 @@ bool UserStore::bind(LDAP *& ld, const uint8_t *addr, const uint8_t *dn, const u
 
 bool UserStore::initialize()
 {
+  mail_dn = "cn=MailMaster," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
   return bind(rootld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
 
@@ -272,6 +273,42 @@ private:
   LDAPAttr attr_res[2];
 };
 
+template<>
+class LDAPBaseSearchN<3> : public LDAPBaseSearch {
+public:
+  LDAPBaseSearchN(LDAP *ld, const char *dn, const char *filter, 
+    char *attr1, int req_value_cnt1, int max_value_len1,
+    char *attr2, int req_value_cnt2, int max_value_len2,
+    char *attr3, int req_value_cnt3, int max_value_len3) :
+    LDAPBaseSearch(ld, dn, filter, 2, init_attrs(attr1, attr2, attr3), init_result(
+      req_value_cnt1, max_value_len1, attr1,
+      req_value_cnt2, max_value_len2, attr2,
+      req_value_cnt3, max_value_len3, attr3))
+  {
+  }
+    
+private:
+  char **init_attrs(char *attr1, char *attr2, char *attr3)
+  {
+    attrs[0] = attr1;
+    attrs[1] = attr2;
+    attrs[2] = attr3;
+    attrs[3] = NULL;
+    return attrs;
+  }
+
+  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, char *attr1, int req_value_cnt2, int max_value_len2, char *attr2, int req_value_cnt3, int max_value_len3, char *attr3)
+  {
+    attr_res[0].init(req_value_cnt1, max_value_len1, attr1);
+    attr_res[1].init(req_value_cnt2, max_value_len2, attr2);
+    attr_res[3].init(req_value_cnt3, max_value_len3, attr3);
+    return attr_res;
+  }
+
+  char* attrs[4];
+  LDAPAttr attr_res[3];
+};
+
 BzRegErrors UserStore::registerUser(UserInfo &info)
 {
   /* If multiple sources are allowed to register users,
@@ -326,7 +363,7 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   /* Because mails need to be unique the following algorithms is used:
      - insert the user with an invalidated password (append something to the end)
        (since we need multiple modifications this makes sure that the account cannot
-        be used until everything is finishes)
+        be used until everything is finishes) ...
      if (succeeded) {
        - insert the entry having mail=email and uid=user's bzid
        if(failed) {
@@ -336,14 +373,9 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
          else
            - fail
        }
-       - change the user's password to the real value
+       - change the user's password and shadowLastChange to the real value
      } else if(failed because it already exists) {
-       - fail with user exists
-       (The user entry may come from an unfinished registration and if so, ideally 
-        the registration should continue by replacing the entry with the new information.
-        However this causes a whole range of concurrency problems with no known solutions
-        so far. The effects of this bug can be made more acceptable by periodically
-        cleaning out the invalid users.)
+       ...
      } else if(failed for some other reason) {
         - fail;
      } 
@@ -359,41 +391,52 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
 
   // insert the user with the next uid
   std::string user_dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  BzRegErrors err;
 
-  // pilotPerson has rfc822Mailbox, uidObject has uid
-  char *oc_vals[3] = {"pilotPerson", "uidObject", NULL};
-  LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
-  LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
-  LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
-  LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", (info.password+"::::").c_str());
-  char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid + 1);
-  LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
-  LDAPMod1 attr_mail  (LDAP_MOD_ADD, "rfc822Mailbox", info.email.c_str());
-  LDAPMod *user_mods[7] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, NULL };
+  while(1) {
+    char *oc_vals[3] = {"person", "extensibleObject", NULL};
+    LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
+    LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
+    LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
+    LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", (info.password+"::::").c_str());
+    char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid + 1);
+    LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
+    LDAPMod1 attr_mail  (LDAP_MOD_ADD, "mail", info.email.c_str());
+    // use a negative value as a flag for unfinished registration
+    char time_str[30]; sprintf(time_str, "-%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
+    LDAPMod1 attr_time  (LDAP_MOD_ADD, "shadowLastChange", time_str);
+    LDAPMod *user_mods[8] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, &attr_time.mod, NULL };
 
-  int user_add_ret = ldap_add_ext_s(rootld, user_dn.c_str(), user_mods, NULL, NULL);
-  if(user_add_ret != LDAP_SUCCESS) {
-    switch(user_add_ret) {
-    case LDAP_ALREADY_EXISTS:
-      sLog.outDebug("User %s already exists", info.name.c_str());
-      return REG_USER_EXISTS;
-    default:
-      ldap_check(user_add_ret);
-      return REG_FAIL_GENERIC;
+    int user_add_ret = ldap_add_ext_s(rootld, user_dn.c_str(), user_mods, NULL, NULL);
+    if(user_add_ret != LDAP_SUCCESS) {
+      switch(user_add_ret) {
+      case LDAP_ALREADY_EXISTS:
+        err = userExists(user_dn, nextuid+1);
+        // if the function succeeded in deleting the existing user and its email
+        // try inserting again
+        if(err == REG_SUCCESS)
+          continue;
+        if(err == REG_USER_EXISTS) {
+          sLog.outDebug("User %s already exists", info.name.c_str());
+          return REG_USER_EXISTS;
+        }
+        return err;
+      default:
+        ldap_check(user_add_ret);
+        return REG_FAIL_GENERIC;
+      }
     }
-  }
+    
+    err = registerMail(info, nextuid + 1, user_dn);
+    if(err != REG_SUCCESS)
+      return err;
 
-  std::string mail_dn = "mail=" + info.email + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
-  
-  BzRegErrors err = registerMail(info, nextuid + 1, user_dn, mail_dn);
-  if(err != REG_SUCCESS)
+    err = updatePassword(info, user_dn);
+    if(err == REG_SUCCESS)
+      nextuid = 0;
+
     return err;
-
-  err = updatePassword(info, user_dn, mail_dn);
-  if(err == REG_SUCCESS)
-    nextuid = 0;
-
-  return err;
+  }
 
   /* TODO: The above mentioned solution to the holes problem can be further improved.
     Each separate entitry that wishes to do registration can acquire a lock on certain range 
@@ -405,19 +448,95 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   */
 }
 
-BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn)
+BzRegErrors UserStore::userExists(std::string &user_dn, uint32_t uid)
+{
+  /*char buf[100]; 
+  // TODO: TimeKeeper + 64bit
+  sprintf(time_str, "(shadowLastChange>=%d)", (int)time(NULL) - sConfig.getIntValue(CONFIG_REG_PERIOD)); */
+ 
+  LDAPBaseSearchN<2> user_search(rootld, user_dn.c_str(), "(objectClass=*)",
+    "shadowLastChange", 1, 30,
+    "mail", 1, MAX_EMAIL_LEN);
+
+  /*
+  if(user_search.getResultCount() == 0) {
+    // 
+    return REG_USER_EXISTS;
+  }
+  */
+
+  char *lastchange = user_search.getResult(0).getNext();
+  char *mail = user_search.getResult(1).getNext();
+
+  if(!lastchange || !mail) {
+    // without the timestamp, cannot delete email due to concurrency issue
+    return REG_FAIL_GENERIC;
+  }
+
+  if(lastchange[0] != '-') {
+    // a positive timestamp means the registration was finished
+    return REG_USER_EXISTS;
+  }
+
+  int change_time; // todo 64bit
+  sscanf(lastchange, "-%d", &change_time);
+  if(change_time >= (int)time(NULL) - (int)sConfig.getIntValue(CONFIG_REG_PERIOD)) {
+    // the user's registration may not have finished
+    // if the last change was not too long ago
+    // assume it was successful
+    return REG_USER_EXISTS;
+  }
+
+  // "soft lock" the current player by changing the timestamp to "-NOW"
+  LDAPMod1 attr_time1 (LDAP_MOD_DELETE, "shadowLastChange", lastchange);
+  char time_str[30]; sprintf(time_str, "-%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
+  LDAPMod1 attr_time2 (LDAP_MOD_ADD, "shadowLastChange", time_str);
+  LDAPMod *time_mods[3] = { &attr_time1.mod, &attr_time2.mod, NULL };
+
+  int ret = ldap_modify_ext_s(rootld, user_dn.c_str(), time_mods, NULL, NULL);
+  if(ret != LDAP_SUCCESS) {
+    if(ret == LDAP_NO_SUCH_ATTRIBUTE) {
+      // some other daemon already locked the password
+      // assume it will finish the registration
+      return REG_USER_EXISTS;
+    } else {
+      ldap_check(ret);
+      return REG_FAIL_GENERIC;
+    }
+  }
+  
+  LDAPMod1 attr_mail (LDAP_MOD_DELETE, "mail", mail);
+  char uid_str[20]; sprintf(uid_str, "%d", uid);
+  LDAPMod1 attr_uid (LDAP_MOD_DELETE, "mail", uid_str);
+  LDAPMod *mail_mods[3] = { &attr_mail.mod, &attr_uid.mod, NULL };
+
+  int mail_ret = ldap_modify_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
+  // both values present => the mail was registered and now it was successfully removed
+  // only uid or both absent => the registration was interrupted before registering the mail
+  // only email is present => somebody registered the mail to another uid since then
+  if(mail_ret != LDAP_SUCCESS && mail_ret != LDAP_NO_SUCH_ATTRIBUTE) {
+    ldap_check(mail_ret);
+    return REG_FAIL_GENERIC;
+  }
+
+  // delete the user and try inserting again
+  ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));
+  return REG_SUCCESS;
+}
+
+BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn)
 {
   // atomically replace the invalidated password
   LDAPMod1 attr_pwd1 (LDAP_MOD_DELETE, "userPassword", (info.password+"::::").c_str());
   LDAPMod1 attr_pwd2 (LDAP_MOD_ADD, "userPassword", info.password.c_str());
-  LDAPMod *pwd_mods[3] = { &attr_pwd1.mod, &attr_pwd2.mod, NULL };
+  char time_str[30]; sprintf(time_str, "%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
+  LDAPMod1 attr_time  (LDAP_MOD_REPLACE, "shadowLastChange", time_str);
+  LDAPMod *pwd_mods[4] = { &attr_pwd1.mod, &attr_pwd2.mod, &attr_time.mod, NULL };
 
   if(!ldap_check(ldap_modify_ext_s(rootld, user_dn.c_str(), pwd_mods, NULL, NULL))) {
-    // undo in reverse order
+    // undo in reverse order, both should succeed under normal circumstances
     if(ldap_check(ldap_delete_ext_s(rootld, mail_dn.c_str(), NULL, NULL)))
-      // should only fail if multiple daemons are undoing at the same time
       ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));
-      // only one of them will succeed in doing both
 
     return REG_FAIL_GENERIC;
   }
@@ -425,20 +544,14 @@ BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn, std:
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn)
+BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &user_dn)
 {
-  LDAPMod1 attr_oc1 (LDAP_MOD_ADD, "objectClass", "account");
-  /* TODO: for some reason adding extensibleObject (for the mail attribute)
-     causes the operation to fail with LDAP_TYPE_OR_VALUE_EXISTS.
-     Equally strange is that it works if simply omitted, looks like the attributes
-     in the DN don't need to be actually available.
-  */
-  // LDAPMod1 attr_oc2 (LDAP_MOD_ADD, "objectClass", "extensibleObject");
+  LDAPMod1 attr_mail (LDAP_MOD_ADD, "mail", info.email.c_str());
   char uid_str[20]; sprintf(uid_str, "%d", uid);
-  LDAPMod1 attr_uid (LDAP_MOD_ADD, "uid", uid_str);
-  LDAPMod *mail_mods[3] = { &attr_oc1.mod, /*&attr_oc2.mod, */&attr_uid.mod, NULL };
+  LDAPMod1 attr_uid (LDAP_MOD_ADD, "mail", uid_str);
+  LDAPMod *mail_mods[3] = { &attr_mail.mod, &attr_uid.mod, NULL };
 
-  int mail_ret = ldap_add_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
+  int mail_ret = ldap_modify_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
   if(mail_ret != LDAP_SUCCESS) {
     // delete the user
     ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));

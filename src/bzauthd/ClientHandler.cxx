@@ -225,6 +225,7 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
       if(!isprint(message[i])) break;
       if(message[i] == ' ')
       {
+        // TODO: "Username must be between 2 and 20 chars long and use letter, number, space or -+_[] characters"
         if(callsign_len != -1) {
           if(password_len != -1) break;
           password_len = (int32_t)i - callsign_len - 1;
