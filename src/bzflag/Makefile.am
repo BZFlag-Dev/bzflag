@@ -136,6 +136,8 @@ bzflag_SOURCES =			\
 	PlayerAvatarManager.h		\
 	QuickKeysMenu.cxx		\
 	QuickKeysMenu.h			\
+	SaveMenu.cxx			\
+	SaveMenu.h			\
 	QuitMenu.cxx			\
 	QuitMenu.h			\
 	RadarRenderer.cxx		\

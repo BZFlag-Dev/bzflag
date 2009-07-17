@@ -29,7 +29,7 @@
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 			     cacheMenu(NULL), saveWorldMenu(NULL),
 			     inputMenu(NULL), audioMenu(NULL),
-			     displayMenu(NULL)
+			     displayMenu(NULL) , saveMenu(NULL)
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -116,6 +116,7 @@ OptionsMenu::~OptionsMenu()
   delete inputMenu;
   delete audioMenu;
   delete displayMenu;
+  delete saveMenu;
 }
 
 void OptionsMenu::execute()
@@ -136,10 +137,16 @@ void OptionsMenu::execute()
   } else if (_focus == saveSettings) {
     // save resources
     dumpResources();
-    if (alternateConfig == "")
-      CFGMGR.write(getCurrentConfigFileName());
-    else
+    if (!saveMenu) saveMenu = new SaveMenu;
+    if (alternateConfig == "") {
+      std::string fname = getCurrentConfigFileName();
+      CFGMGR.write(fname);
+      saveMenu->setFileName(fname);
+    } else {
       CFGMGR.write(alternateConfig);
+      saveMenu->setFileName(alternateConfig);
+    }
+    HUDDialogStack::get()->push(saveMenu);
   } else if (_focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;
     HUDDialogStack::get()->push(inputMenu);

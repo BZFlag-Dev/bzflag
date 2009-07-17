@@ -27,6 +27,7 @@
 #include "InputMenu.h"
 #include "AudioMenu.h"
 #include "DisplayMenu.h"
+#include "SaveMenu.h"
 
 class OptionsMenu : public HUDDialog {
 public:
@@ -58,6 +59,7 @@ private:
   InputMenu*		inputMenu;
   AudioMenu*		audioMenu;
   DisplayMenu*		displayMenu;
+  SaveMenu*		saveMenu;
 };
 
 
