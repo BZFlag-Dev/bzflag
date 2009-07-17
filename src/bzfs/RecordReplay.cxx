@@ -739,6 +739,12 @@ static bool preloadVariables()
   return true;
 }
 
+char* rtrimctime(time_t time) {
+  char *timeString = ctime(&time);
+  /* removing ctime's trailing \n */
+  timeString[strlen(timeString)-1] = '\0';
+  return timeString;
+}
 
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
@@ -844,13 +850,13 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 	    (float)header.filetime/1000000.0f);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  time_t startTime = (time_t)(ReplayPos->timestamp / 1000000);
-  snprintf(buffer, MessageLen, "  start:      %s", ctime(&startTime));
+  char *startTimeString = rtrimctime((time_t)(ReplayPos->timestamp / 1000000));
+  snprintf(buffer, MessageLen, "  start:      %s", startTimeString);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  time_t endTime =
-    (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
-  snprintf(buffer, MessageLen, "  end:	%s", ctime(&endTime));
+  char *endTimeString = rtrimctime(
+      (time_t)(header.filetime + ReplayPos->timestamp) / 1000000);
+  snprintf(buffer, MessageLen, "  end:        %s", endTimeString);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
   return true;
