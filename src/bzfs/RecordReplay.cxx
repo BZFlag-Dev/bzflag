@@ -1378,27 +1378,18 @@ static bool setVariables(void *data)
   // copied this function from [playing.cxx]
 
   uint16_t numVars;
-  uint8_t nameLen, valueLen;
-
-  char name[MaxPacketLen];
-  char value[MaxPacketLen];
+  std::string key, value;
 
   data = nboUnpackUInt16(data, numVars);
   for (int i = 0; i < numVars; i++) {
-    data = nboUnpackUInt8(data, nameLen);
-    data = nboUnpackString(data, name, nameLen);
-    name[nameLen] = '\0';
-
-    data = nboUnpackUInt8(data, valueLen);
-    data = nboUnpackString(data, value, valueLen);
-    value[valueLen] = '\0';
-
-    if (strcmp(name, "poll") != 0) {
+    data = nboUnpackStdString(data, key);
+    data = nboUnpackStdString(data, value);
+    if (key == "poll") {
       // do not save the poll state, it can
       // lead to SEGV's when players leave
       // and there is no ongoing poll
       // [see bzfs.cxx removePlayer()]
-      BZDB.set(name, value);
+      BZDB.set(key, value);
     }
   }
   return true;
