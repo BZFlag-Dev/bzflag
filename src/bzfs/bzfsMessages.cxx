@@ -183,7 +183,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
       playerRecord.score.wins   = otherData->score.getWins();
       playerRecord.score.losses = otherData->score.getLosses();
       playerRecord.score.tks    = otherData->score.getTKs();
-      memset(playerRecord.callsign, 32, 0);
+      memset(playerRecord.callsign, 0, 32);
       strncpy(playerRecord.callsign, otherData->player.getCallSign(), 31);
 
       playerData->playerHandler->playerInfoUpdate(&playerRecord);
