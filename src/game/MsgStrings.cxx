@@ -36,223 +36,159 @@
 #include "ShotUpdate.h"
 
 
-typedef uint8_t  u8;
-typedef uint16_t u16;
-
-typedef std::map<u16, std::string> FlagListType;
-typedef std::map<u16, std::string> PlayerListType;
-
-typedef struct {
-  u16 len;
-  u16 code;
-  const void *data;
-} PacketInfo;
-
-
-static FlagListType   FlagList;
-static PlayerListType PlayerList;
 // static bool UseDNS = true;
-static bool Colorize = true;
-static bool TrackState = true;
+static bool useColor = true;
+static bool useStateTracking = true;
 
-static MsgStringList listMsgBasics (PacketInfo *pi);
-static void listPush (MsgStringList &list, int level, const char *fmt, ...);
-static std::string strFlag (u16 id);
-static std::string strFlagStatus (FlagStatus status);
-static std::string strTeam (u16 id);
-static std::string strPlayer (u16 id);
-static std::string strVector (const fvec3& vector);
-static std::string strKillReason (int16_t reason);
-static std::string strAddress (Address& address);
 
-/*
-static std::string strHostName (); // ew, ADNS ?
-*/
+struct PacketInfo {
+  PacketInfo(uint16_t l, uint16_t c, const void* d) : len(l), code(c), data(d) {}
+  uint16_t len;
+  uint16_t code;
+  const void *data;
+};
 
-static MsgStringList handleMsgNull(PacketInfo *pi); // fake packet type
 
-static MsgStringList handleMsgAccept(PacketInfo *pi);
-static MsgStringList handleMsgAddPlayer(PacketInfo *pi);
-static MsgStringList handleMsgAdminInfo(PacketInfo *pi);
-static MsgStringList handleMsgAlive(PacketInfo *pi);
-static MsgStringList handleMsgAllow(PacketInfo *pi);
-static MsgStringList handleMsgAllowSpawn(PacketInfo *pi);
-static MsgStringList handleMsgAutoPilot(PacketInfo *pi);
-static MsgStringList handleMsgCacheURL(PacketInfo *pi);
-static MsgStringList handleMsgCapBits(PacketInfo *pi);
-static MsgStringList handleMsgCaptureFlag(PacketInfo *pi);
-static MsgStringList handleMsgCustomSound(PacketInfo *pi);
-static MsgStringList handleMsgDropFlag(PacketInfo *pi);
-static MsgStringList handleMsgEchoRequest(PacketInfo *pi);
-static MsgStringList handleMsgEchoResponse(PacketInfo *pi);
-static MsgStringList handleMsgEnter(PacketInfo *pi);
-static MsgStringList handleMsgExit(PacketInfo *pi);
-static MsgStringList handleMsgFetchResources(PacketInfo *pi);
-static MsgStringList handleMsgFlagType(PacketInfo *pi);
-static MsgStringList handleMsgFlagUpdate(PacketInfo *pi);
-static MsgStringList handleMsgGameSettings(PacketInfo *pi);
-static MsgStringList handleMsgGameTime(PacketInfo *pi);
-static MsgStringList handleMsgGetWorld(PacketInfo *pi);
-static MsgStringList handleMsgGMUpdate(PacketInfo *pi);
-static MsgStringList handleMsgGrabFlag(PacketInfo *pi);
-static MsgStringList handleMsgHandicap(PacketInfo *pi);
-static MsgStringList handleMsgHit(PacketInfo *pi);
-static MsgStringList handleMsgJoinServer(PacketInfo *pi);
-static MsgStringList handleMsgKilled(PacketInfo *pi);
-static MsgStringList handleMsgLagPing(PacketInfo *pi);
-static MsgStringList handleMsgLagState(PacketInfo *pi);
-static MsgStringList handleMsgLimboMessage(PacketInfo *pi);
-static MsgStringList handleMsgMessage(PacketInfo *pi);
-static MsgStringList handleMsgNearFlag(PacketInfo *pi);
-static MsgStringList handleMsgNegotiateFlags(PacketInfo *pi);
-static MsgStringList handleMsgNewPlayer(PacketInfo *pi);
-static MsgStringList handleMsgNewRabbit(PacketInfo *pi);
-static MsgStringList handleMsgPause(PacketInfo *pi);
-static MsgStringList handleMsgPingCodeReply(PacketInfo *pi);
-static MsgStringList handleMsgPingCodeRequest(PacketInfo *pi);
-static MsgStringList handleMsgPlayerData(PacketInfo *pi);
-static MsgStringList handleMsgPlayerInfo(PacketInfo *pi);
-static MsgStringList handleMsgPlayerUpdate(PacketInfo *pi);
-static MsgStringList handleMsgPlayerUpdateSmall(PacketInfo *pi);
-static MsgStringList handleMsgQueryGame(PacketInfo *pi);
-static MsgStringList handleMsgQueryPlayers(PacketInfo *pi);
-static MsgStringList handleMsgReject(PacketInfo *pi);
-static MsgStringList handleMsgRemovePlayer(PacketInfo *pi);
-static MsgStringList handleMsgReplayReset(PacketInfo *pi);
-static MsgStringList handleMsgScoreOver(PacketInfo *pi);
-static MsgStringList handleMsgScore(PacketInfo *pi);
-static MsgStringList handleMsgServerControl(PacketInfo *pi);
-static MsgStringList handleMsgSetShot(PacketInfo *pi);
-static MsgStringList handleMsgSetTeam(PacketInfo *pi);
-static MsgStringList handleMsgSetVar(PacketInfo *pi);
-static MsgStringList handleMsgShotBegin(PacketInfo *pi);
-static MsgStringList handleMsgShotEnd(PacketInfo *pi);
-static MsgStringList handleMsgSuperKill(PacketInfo *pi);
-static MsgStringList handleMsgTangibilityReset(PacketInfo *pi);
-static MsgStringList handleMsgTangibilityUpdate(PacketInfo *pi);
-static MsgStringList handleMsgTeamUpdate(PacketInfo *pi);
-static MsgStringList handleMsgTeleport(PacketInfo *pi);
-static MsgStringList handleMsgTimeUpdate(PacketInfo *pi);
-static MsgStringList handleMsgTransferFlag(PacketInfo *pi);
-static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
-static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi);
-static MsgStringList handleMsgWantSettings(PacketInfo *pi);
-static MsgStringList handleMsgWantWHash(PacketInfo *pi);
-static MsgStringList handleMsgWhatTimeIsIt(PacketInfo *pi);
-static MsgStringList handleMsgWShotBegin(PacketInfo *pi);
+typedef std::map<uint16_t, std::string> FlagList;
+static FlagList flagList;
 
-typedef struct {
+typedef std::map<uint16_t, std::string> PlayerList;
+static PlayerList playerList;
+
+typedef std::map<uint16_t, const struct PacketListEntry*> PacketCodeMap;
+static PacketCodeMap packetCodeMap;
+
+
+struct PacketListEntry {
+  PacketListEntry(uint16_t _code, const char* _label,
+                  MsgStringList (*_handler)(const PacketInfo&))
+  : code(_code)
+  , label(_label)
+  , handler(_handler)
+  {
+    packetCodeMap[code] = this;
+  }
   uint16_t code;
   const char *label;
-  MsgStringList (*handler)(PacketInfo *pi);
-} PacketListEntry;
-
-// ick, a #define, but it cleans this up nicely
-#define PACKET_LIST_ENTRY(x) {x, #x, handle ##x}
-static PacketListEntry PacketList[] = {
-  PACKET_LIST_ENTRY (MsgNull),
-  PACKET_LIST_ENTRY (MsgAccept),
-  PACKET_LIST_ENTRY (MsgAdminInfo),
-  PACKET_LIST_ENTRY (MsgAlive),
-  PACKET_LIST_ENTRY (MsgAllow),
-  PACKET_LIST_ENTRY (MsgAddPlayer),
-  PACKET_LIST_ENTRY (MsgAllowSpawn),
-  PACKET_LIST_ENTRY (MsgAutoPilot),
-  PACKET_LIST_ENTRY (MsgCapBits),
-  PACKET_LIST_ENTRY (MsgCaptureFlag),
-  PACKET_LIST_ENTRY (MsgCustomSound),
-  PACKET_LIST_ENTRY (MsgCacheURL),
-  PACKET_LIST_ENTRY (MsgDropFlag),
-  PACKET_LIST_ENTRY (MsgEnter),
-  PACKET_LIST_ENTRY (MsgExit),
-  PACKET_LIST_ENTRY (MsgFlagType),
-  PACKET_LIST_ENTRY (MsgFlagUpdate),
-  PACKET_LIST_ENTRY (MsgFetchResources),
-  PACKET_LIST_ENTRY (MsgGrabFlag),
-  PACKET_LIST_ENTRY (MsgGMUpdate),
-  PACKET_LIST_ENTRY (MsgGetWorld),
-  PACKET_LIST_ENTRY (MsgGameSettings),
-  PACKET_LIST_ENTRY (MsgGameTime),
-  PACKET_LIST_ENTRY (MsgHandicap),
-  PACKET_LIST_ENTRY (MsgHit),
-  PACKET_LIST_ENTRY (MsgJoinServer),
-  PACKET_LIST_ENTRY (MsgKilled),
-  PACKET_LIST_ENTRY (MsgLagState),
-  PACKET_LIST_ENTRY (MsgLimboMessage),
-  PACKET_LIST_ENTRY (MsgMessage),
-  PACKET_LIST_ENTRY (MsgNewPlayer),
-  PACKET_LIST_ENTRY (MsgNearFlag),
-  PACKET_LIST_ENTRY (MsgNewRabbit),
-  PACKET_LIST_ENTRY (MsgNegotiateFlags),
-  PACKET_LIST_ENTRY (MsgPause),
-  PACKET_LIST_ENTRY (MsgPlayerData),
-  PACKET_LIST_ENTRY (MsgPlayerInfo),
-  PACKET_LIST_ENTRY (MsgPlayerUpdate),
-  PACKET_LIST_ENTRY (MsgPlayerUpdateSmall),
-  PACKET_LIST_ENTRY (MsgQueryGame),
-  PACKET_LIST_ENTRY (MsgQueryPlayers),
-  PACKET_LIST_ENTRY (MsgReject),
-  PACKET_LIST_ENTRY (MsgRemovePlayer),
-  PACKET_LIST_ENTRY (MsgReplayReset),
-  PACKET_LIST_ENTRY (MsgShotBegin),
-  PACKET_LIST_ENTRY (MsgWShotBegin),
-  PACKET_LIST_ENTRY (MsgWhatTimeIsIt),
-  PACKET_LIST_ENTRY (MsgScore),
-  PACKET_LIST_ENTRY (MsgScoreOver),
-  PACKET_LIST_ENTRY (MsgShotEnd),
-  PACKET_LIST_ENTRY (MsgSuperKill),
-  PACKET_LIST_ENTRY (MsgSetShot),
-  PACKET_LIST_ENTRY (MsgSetTeam),
-  PACKET_LIST_ENTRY (MsgSetVar),
-  PACKET_LIST_ENTRY (MsgTangibilityUpdate),
-  PACKET_LIST_ENTRY (MsgTangibilityReset),
-  PACKET_LIST_ENTRY (MsgTimeUpdate),
-  PACKET_LIST_ENTRY (MsgTeleport),
-  PACKET_LIST_ENTRY (MsgTransferFlag),
-  PACKET_LIST_ENTRY (MsgTeamUpdate),
-  PACKET_LIST_ENTRY (MsgWantWHash),
-  PACKET_LIST_ENTRY (MsgWantSettings),
-  PACKET_LIST_ENTRY (MsgUDPLinkRequest),
-  PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
-  PACKET_LIST_ENTRY (MsgServerControl),
-  PACKET_LIST_ENTRY (MsgLagPing),
-
-  PACKET_LIST_ENTRY (MsgPingCodeReply),
-  PACKET_LIST_ENTRY (MsgPingCodeRequest),
-  PACKET_LIST_ENTRY (MsgEchoRequest),
-  PACKET_LIST_ENTRY (MsgEchoResponse)
+  MsgStringList (*handler)(const PacketInfo& pi);
 };
-static const int PacketListCount = sizeof (PacketList) / sizeof (PacketList[0]);
+
+
+static MsgStringList listMsgBasics(const PacketInfo& pi);
+static void listPush(MsgStringList &list, int level, const char *fmt, ...);
+static std::string strFlag(uint16_t id);
+static std::string strFlagStatus(FlagStatus status);
+static std::string strTeam(uint16_t id);
+static std::string strPlayer(uint16_t id);
+static std::string strVector(const fvec3& vector);
+static std::string strKillReason(int16_t reason);
+static std::string strAddress(Address& address);
+
+
+// the network packet types
+#define PACKET_LIST_ENTRY(x) \
+  static MsgStringList   handle##x(const PacketInfo& pi); \
+  static PacketListEntry struct##x(x, #x, handle##x);
+
+PACKET_LIST_ENTRY(MsgNull)
+PACKET_LIST_ENTRY(MsgAccept)
+PACKET_LIST_ENTRY(MsgAdminInfo)
+PACKET_LIST_ENTRY(MsgAlive)
+PACKET_LIST_ENTRY(MsgAllow)
+PACKET_LIST_ENTRY(MsgAddPlayer)
+PACKET_LIST_ENTRY(MsgAllowSpawn)
+PACKET_LIST_ENTRY(MsgAutoPilot)
+PACKET_LIST_ENTRY(MsgCapBits)
+PACKET_LIST_ENTRY(MsgCaptureFlag)
+PACKET_LIST_ENTRY(MsgCustomSound)
+PACKET_LIST_ENTRY(MsgCacheURL)
+PACKET_LIST_ENTRY(MsgDropFlag)
+PACKET_LIST_ENTRY(MsgEnter)
+PACKET_LIST_ENTRY(MsgExit)
+PACKET_LIST_ENTRY(MsgFlagType)
+PACKET_LIST_ENTRY(MsgFlagUpdate)
+PACKET_LIST_ENTRY(MsgFetchResources)
+PACKET_LIST_ENTRY(MsgGrabFlag)
+PACKET_LIST_ENTRY(MsgGMUpdate)
+PACKET_LIST_ENTRY(MsgGetWorld)
+PACKET_LIST_ENTRY(MsgGameSettings)
+PACKET_LIST_ENTRY(MsgGameTime)
+PACKET_LIST_ENTRY(MsgHandicap)
+PACKET_LIST_ENTRY(MsgHit)
+PACKET_LIST_ENTRY(MsgJoinServer)
+PACKET_LIST_ENTRY(MsgKilled)
+PACKET_LIST_ENTRY(MsgLagState)
+PACKET_LIST_ENTRY(MsgLimboMessage)
+PACKET_LIST_ENTRY(MsgMessage)
+PACKET_LIST_ENTRY(MsgNewPlayer)
+PACKET_LIST_ENTRY(MsgNearFlag)
+PACKET_LIST_ENTRY(MsgNewRabbit)
+PACKET_LIST_ENTRY(MsgNegotiateFlags)
+PACKET_LIST_ENTRY(MsgPause)
+PACKET_LIST_ENTRY(MsgPlayerData)
+PACKET_LIST_ENTRY(MsgPlayerInfo)
+PACKET_LIST_ENTRY(MsgPlayerUpdate)
+PACKET_LIST_ENTRY(MsgPlayerUpdateSmall)
+PACKET_LIST_ENTRY(MsgQueryGame)
+PACKET_LIST_ENTRY(MsgQueryPlayers)
+PACKET_LIST_ENTRY(MsgReject)
+PACKET_LIST_ENTRY(MsgRemovePlayer)
+PACKET_LIST_ENTRY(MsgReplayReset)
+PACKET_LIST_ENTRY(MsgShotBegin)
+PACKET_LIST_ENTRY(MsgWShotBegin)
+PACKET_LIST_ENTRY(MsgWhatTimeIsIt)
+PACKET_LIST_ENTRY(MsgScore)
+PACKET_LIST_ENTRY(MsgScoreOver)
+PACKET_LIST_ENTRY(MsgShotEnd)
+PACKET_LIST_ENTRY(MsgSuperKill)
+PACKET_LIST_ENTRY(MsgSetShot)
+PACKET_LIST_ENTRY(MsgSetTeam)
+PACKET_LIST_ENTRY(MsgSetVar)
+PACKET_LIST_ENTRY(MsgTangibilityUpdate)
+PACKET_LIST_ENTRY(MsgTangibilityReset)
+PACKET_LIST_ENTRY(MsgTimeUpdate)
+PACKET_LIST_ENTRY(MsgTeleport)
+PACKET_LIST_ENTRY(MsgTransferFlag)
+PACKET_LIST_ENTRY(MsgTeamUpdate)
+PACKET_LIST_ENTRY(MsgWantWHash)
+PACKET_LIST_ENTRY(MsgWantSettings)
+PACKET_LIST_ENTRY(MsgUDPLinkRequest)
+PACKET_LIST_ENTRY(MsgUDPLinkEstablished)
+PACKET_LIST_ENTRY(MsgServerControl)
+PACKET_LIST_ENTRY(MsgLagPing)
+PACKET_LIST_ENTRY(MsgPingCodeReply)
+PACKET_LIST_ENTRY(MsgPingCodeRequest)
+PACKET_LIST_ENTRY(MsgEchoRequest)
+PACKET_LIST_ENTRY(MsgEchoResponse)
 
 
 //============================================================================//
 
-void MsgStrings::init ()
+void MsgStrings::init()
 {
-  Flags::init(); // Initialize the flags - FIXME - check if necessary
   MsgStrings::reset();
   return;
 }
 
 
-void MsgStrings::reset ()
+void MsgStrings::reset()
 {
   unsigned int i;
 
   //  UseDNS = true;
-  Colorize = true;
-  TrackState = true;
+  useColor = true;
+  useStateTracking = true;
 
-  FlagList.clear();
-  PlayerList.clear();
+  flagList.clear();
+  playerList.clear();
 
   // setup default player names
-  PlayerList[ServerPlayer] = "SERVER";
-  PlayerList[AllPlayers] = "ALL";
-  PlayerList[AdminPlayers] = "ADMIN";
-  PlayerList[NoPlayer] = "NOPLAYER";
-  for (i=244 ; i<=250; i++) {
-    PlayerList[i] = Team::getName (TeamColor(250 - i));
+  playerList[ServerPlayer] = "SERVER";
+  playerList[AllPlayers]   = "ALL";
+  playerList[AdminPlayers] = "ADMIN";
+  playerList[NoPlayer]     = "NOPLAYER";
+  for (i = 244 ; i <= 250; i++) {
+    playerList[i] = Team::getName(TeamColor(250 - i));
   }
 
   // set default DB entries
@@ -276,84 +212,73 @@ void MsgStrings::useDNS (bool /*value*/)
   return;
 }
 
-void MsgStrings::colorize (bool value)
+void MsgStrings::colorize(bool value)
 {
-  Colorize = value;
+  useColor = value;
   return;
 }
 
 
-void MsgStrings::trackState (bool value)
+void MsgStrings::trackState(bool value)
 {
-  TrackState = value;
+  useStateTracking = value;
   return;
 }
 
 
-int MsgStrings::knownPacketTypes ()
+int MsgStrings::knownPacketTypes()
 {
-  return (PacketListCount - 1);  // MsgNull doesn't count
+  return packetCodeMap.size() - 1; // MsgNull doesn't count
 }
 
 
-const char * MsgStrings::strMsgCode (uint16_t code)
+const char* MsgStrings::strMsgCode(uint16_t code)
 {
-  int i;
-  for (i = 0; i < PacketListCount; i++) {
-    if (PacketList[i].code == code) {
-      break;
-    }
-  }
-  if (i < PacketListCount) {
-    return PacketList[i].label;
-  } else {
+  PacketCodeMap::const_iterator it = packetCodeMap.find(code);
+  if (it == packetCodeMap.end()) {
     static char buf[32];
-    sprintf (buf, "MsgUnknown(0x%04X)", code);
+    sprintf(buf, "MsgUnknown(0x%04X)", code);
     return buf;
   }
+  const PacketListEntry* entry = it->second;
+  return entry->label;
 }
 
 
-MsgStringList MsgStrings::msgFromServer (u16 len, u16 code, const void *data)
+MsgStringList MsgStrings::msgFromServer(uint16_t len,
+                                        uint16_t code,
+                                        const void *data)
 {
-  int i;
-  for (i = 0; i < PacketListCount; i++) {
-    if (PacketList[i].code == code) {
-      break;
-    }
-  }
-  if (i < PacketListCount) {
-    PacketInfo pi = {len, code, data};
-    return PacketList[i].handler (&pi);
-  } else {
+  PacketCodeMap::const_iterator it = packetCodeMap.find(code);
+  if (it == packetCodeMap.end()) {
     MsgStringList badcode;
     const char* c = (const char*) &code;
     listPush(badcode, 0, "Unknown message code: 0x%04X <%c%c>\n",
                          code, c[1], c[0]);
     return badcode;
   }
+  const PacketListEntry* entry = it->second;
+  return entry->handler(PacketInfo(len, code, data));
 }
 
 
-MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
+MsgStringList MsgStrings::msgFromClient(uint16_t len,
+                                        uint16_t code,
+                                        const void *data)
 {
-  int i;
-  for (i = 0; i < PacketListCount; i++) {
-    if (PacketList[i].code == code) {
-      break;
-    }
+  PacketCodeMap::const_iterator it = packetCodeMap.find(code);
+  if (it == packetCodeMap.end()) {
+    MsgStringList badcode;
+    const char* c = (const char*) &code;
+    listPush(badcode, 0, "Unknown message code: 0x%04X <%c%c>\n",
+                         code, c[1], c[0]);
+    badcode[0].text += "  << client to server messages unimplemented >>";
+    return badcode;
   }
-  if (i < PacketListCount) {
-    PacketInfo pi = {len, code, data};
-    MsgStringList list = listMsgBasics (&pi);
-    list[0].text += "  << client to server messages unimplemented >>";
-    return list;
-  } else {
-    MsgStringList list;
-    listPush(list, 0, "Unknown message code: 0x%04X\n", code);
-    list[0].text += "  << client to server messages unimplemented >>";
-    return list;
-  }
+  //const PacketListEntry* entry = it->second;
+  MsgStringList list = listMsgBasics(PacketInfo(len, code, data));
+  list[0].text += "  << client to server messages unimplemented >>";
+  return list;
 }
 
 
@@ -370,10 +295,10 @@ static void listPush(MsgStringList &list, int level, const char *fmt, ...)
     return;
 
   va_start(args, fmt);
-  vsnprintf (buffer, 256, fmt, args);
+  vsnprintf(buffer, 256, fmt, args);
   va_end(args);
   mstr.text += buffer;
-  if (Colorize) {
+  if (useColor) {
     switch (level) {
       case 0:
 	mstr.color = ANSI_STR_FG_MAGENTA;
@@ -390,32 +315,32 @@ static void listPush(MsgStringList &list, int level, const char *fmt, ...)
     }
   }
 
-  list.push_back (mstr);
+  list.push_back(mstr);
   return;
 }
 
 
-static MsgStringList listMsgBasics (PacketInfo *pi)
+static MsgStringList listMsgBasics(const PacketInfo& pi)
 {
   MsgStringList list;
-  // also include the length and code u16's for the total length
-  listPush(list, 0, "%s <%i>", MsgStrings::strMsgCode (pi->code), pi->len + 4);
+  // also include the length and code uint16_t's for the total length
+  listPush(list, 0, "%s <%i>", MsgStrings::strMsgCode(pi.code), pi.len + 4);
   return list;
 }
 
 
-static std::string strFlag (u16 id)
+static std::string strFlag(uint16_t id)
 {
-  FlagListType::iterator it = FlagList.find (id);
+  FlagList::iterator it = flagList.find(id);
   std::string name = "Invalid";
-  if (it != FlagList.end()) {
+  if (it != flagList.end()) {
     name = (*it).second;
   }
-  return TextUtils::format ("%-2s [%i]", name.c_str(), id);
+  return TextUtils::format("%-2s [%i]", name.c_str(), id);
 }
 
 
-static std::string strFlagStatus (FlagStatus status)
+static std::string strFlagStatus(FlagStatus status)
 {
   std::string str;
 #define STRING_CASE(x)  case (x): str = #x; break
@@ -427,68 +352,63 @@ static std::string strFlagStatus (FlagStatus status)
     STRING_CASE (FlagComing);
     STRING_CASE (FlagGoing);
     default:
-      str = TextUtils::format ("UNKNOWN: 0x04%X", status);
+      str = TextUtils::format("UNKNOWN: 0x04%X", status);
       break;
   }
   return str;
 }
 
-static std::string strTeam (u16 id)
+static std::string strTeam(uint16_t id)
 {
-  return std::string (Team::getName((TeamColor) id));
+  return std::string(Team::getName((TeamColor) id));
 }
 
 
-static std::string strPlayer (u16 id)
+static std::string strPlayer(uint16_t id)
 {
-  PlayerListType::iterator it = PlayerList.find (id);
+  PlayerList::iterator it = playerList.find(id);
   std::string name;
-  if (it != PlayerList.end()) {
+  if (it != playerList.end()) {
     name = (*it).second;
   } else {
     name = "UnTracked";
   }
-  return TextUtils::format ("%s [%i]", name.c_str(), id);
+  return TextUtils::format("%s [%i]", name.c_str(), id);
 }
 
 
-static std::string strVector (const fvec3& vector)
+static std::string strVector(const fvec3& vector)
 {
-  std::string str = TextUtils::format ("(%8.3f, %8.3f, %8.3f)",
+  std::string str = TextUtils::format("(%8.3f, %8.3f, %8.3f)",
     vector[0], vector[1], vector[2]);
   return str;
 }
 
 
-static std::string strAddress (Address& address)
+static std::string strAddress(Address& address)
 {
   return address.getDotNotation();
 }
 
 
-static std::string strKillReason (int16_t reason)
+static std::string strKillReason(int16_t reason)
 {
   switch (reason) {
-    case 0:
-      return std::string ("blowed up");
-    case 1:
-      return std::string ("shot");
-    case 2:
-      return std::string ("runover");
-    case 3:
-      return std::string ("captured");
-    case 4:
-      return std::string ("genocide");
-    case 5:
-      return std::string ("self destruct");
-    default:
-      return TextUtils::format ("unknown: %i", reason);
+    case 0: { return std::string("blowed up");     }
+    case 1: { return std::string("shot");          }
+    case 2: { return std::string("runover");       }
+    case 3: { return std::string("captured");      }
+    case 4: { return std::string("genocide");      }
+    case 5: { return std::string("self destruct"); }
+    default: {
+      return TextUtils::format("unknown: %i", reason);
+    }
   }
 }
 
 //============================================================================//
 
-static MsgStringList handleMsgNull(PacketInfo *pi)
+static MsgStringList handleMsgNull(const PacketInfo& pi)
 {
   // not recorded, never seen?
   MsgStringList list = listMsgBasics(pi);
@@ -496,7 +416,7 @@ static MsgStringList handleMsgNull(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAccept(PacketInfo *pi)
+static MsgStringList handleMsgAccept(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -504,20 +424,20 @@ static MsgStringList handleMsgAccept(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAdminInfo(PacketInfo *pi)
+static MsgStringList handleMsgAdminInfo(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 count, ipsize, player;
+  void *d = (void*)pi.data;
+  uint8_t count, ipsize, player;
   Address address;
-  u16 i;
+  uint16_t i;
   d = nboUnpackUInt8 (d, count);
   listPush(list, 1, "count: %i", count);
   for (i=0 ; i < count; i++) {
     d = nboUnpackUInt8 (d, ipsize);
     d = nboUnpackUInt8 (d, player);
-    d = address.unpack (d);
+    d = address.unpack(d);
 
     listPush(list, 2, "player:     %s", strPlayer(player).c_str());
     listPush(list, 2, "ipsize:     %i", ipsize);
@@ -528,12 +448,12 @@ static MsgStringList handleMsgAdminInfo(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAlive(PacketInfo *pi)
+static MsgStringList handleMsgAlive(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player;
+  void *d = (void*)pi.data;
+  uint8_t player;
   fvec3 pos;
   float azimuth;
   d = nboUnpackUInt8(d, player);
@@ -548,7 +468,7 @@ static MsgStringList handleMsgAlive(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAllow(PacketInfo *pi)
+static MsgStringList handleMsgAllow(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -556,13 +476,13 @@ static MsgStringList handleMsgAllow(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAddPlayer(PacketInfo *pi)
+static MsgStringList handleMsgAddPlayer(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 index;
-  u16 type, team, wins, losses, tks;
+  void *d = (void*)pi.data;
+  uint8_t index;
+  uint16_t type, team, wins, losses, tks;
   char callsign[CallSignLen];
 
   d = nboUnpackUInt8(d, index);
@@ -573,8 +493,8 @@ static MsgStringList handleMsgAddPlayer(PacketInfo *pi)
   d = nboUnpackUInt16(d, tks);
   d = nboUnpackString(d, callsign, CallSignLen);
 
-  if (TrackState) {
-    PlayerList[index] = callsign;
+  if (useStateTracking) {
+    playerList[index] = callsign;
   }
   listPush(list, 1, "player: %s", strPlayer(index).c_str());
   listPush(list, 1, "team:   %s", strTeam(team).c_str());
@@ -587,7 +507,7 @@ static MsgStringList handleMsgAddPlayer(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAllowSpawn(PacketInfo *pi)
+static MsgStringList handleMsgAllowSpawn(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -595,7 +515,7 @@ static MsgStringList handleMsgAllowSpawn(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgAutoPilot(PacketInfo *pi)
+static MsgStringList handleMsgAutoPilot(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -603,7 +523,7 @@ static MsgStringList handleMsgAutoPilot(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgCapBits(PacketInfo *pi)
+static MsgStringList handleMsgCapBits(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -611,20 +531,20 @@ static MsgStringList handleMsgCapBits(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgCaptureFlag(PacketInfo *pi)
+static MsgStringList handleMsgCaptureFlag(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u16 team;
+  void *d = (void*)pi.data;
+  uint16_t team;
   d = nboUnpackUInt16 (d, team);
-  listPush(list, 1, "team: %s", strTeam (team).c_str());
+  listPush(list, 1, "team: %s", strTeam(team).c_str());
 
   return list;
 }
 
 
-static MsgStringList handleMsgCustomSound(PacketInfo *pi)
+static MsgStringList handleMsgCustomSound(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -632,7 +552,7 @@ static MsgStringList handleMsgCustomSound(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgCacheURL(PacketInfo *pi)
+static MsgStringList handleMsgCacheURL(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -640,25 +560,25 @@ static MsgStringList handleMsgCacheURL(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgDropFlag(PacketInfo *pi)
+static MsgStringList handleMsgDropFlag(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
+  void *d = (void*)pi.data;
   Flag flag;
-  u8 player;
-  u16 flagid;
+  uint8_t player;
+  uint16_t flagid;
   d = nboUnpackUInt8 (d, player);
   d = nboUnpackUInt16 (d, flagid);
-  d = flag.unpack (d);
+  d = flag.unpack(d);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
-  listPush(list, 1, "flag: %s", strFlag (flagid).c_str());
+  listPush(list, 1, "flag: %s", strFlag(flagid).c_str());
 
   return list;
 }
 
 
-static MsgStringList handleMsgEnter(PacketInfo *pi)
+static MsgStringList handleMsgEnter(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -666,7 +586,7 @@ static MsgStringList handleMsgEnter(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgExit(PacketInfo *pi)
+static MsgStringList handleMsgExit(const PacketInfo& pi)
 {
   // not recorded, but bzfs will send a MsgRemovePlayer
   MsgStringList list = listMsgBasics(pi);
@@ -674,7 +594,7 @@ static MsgStringList handleMsgExit(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgFlagType(PacketInfo *pi)
+static MsgStringList handleMsgFlagType(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -682,33 +602,33 @@ static MsgStringList handleMsgFlagType(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgFlagUpdate(PacketInfo *pi)
+static MsgStringList handleMsgFlagUpdate(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u16 count, index;
+  void *d = (void*)pi.data;
+  uint16_t count, index;
   int i;
   d = nboUnpackUInt16 (d, count);
   listPush(list, 1, "count: %i", count);
   for (i = 0; i < (int) count; i++) {
     Flag flag;
     d = nboUnpackUInt16 (d, index);
-    d = flag.unpack (d);
-    if (TrackState) {
-      FlagList[index] = flag.type->flagAbbv;
+    d = flag.unpack(d);
+    if (useStateTracking) {
+      flagList[index] = flag.type->flagAbbv;
     }
-    listPush(list, 2, "flag: %s", strFlag (index).c_str());
-    listPush(list, 3, "owner:  %s", strPlayer (flag.owner).c_str());
-    listPush(list, 3, "pos:    %s", strVector (flag.position).c_str());
-    listPush(list, 3, "status: %s", strFlagStatus (flag.status).c_str());
+    listPush(list, 2, "flag: %s", strFlag(index).c_str());
+    listPush(list, 3, "owner:  %s", strPlayer(flag.owner).c_str());
+    listPush(list, 3, "pos:    %s", strVector(flag.position).c_str());
+    listPush(list, 3, "status: %s", strFlagStatus(flag.status).c_str());
   }
 
   return list;
 }
 
 
-static MsgStringList handleMsgFetchResources(PacketInfo *pi)
+static MsgStringList handleMsgFetchResources(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -716,32 +636,32 @@ static MsgStringList handleMsgFetchResources(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgGrabFlag(PacketInfo *pi)
+static MsgStringList handleMsgGrabFlag(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
+  void *d = (void*)pi.data;
   Flag flag;
-  u8 player;
-  u16 flagid;
+  uint8_t player;
+  uint16_t flagid;
   d = nboUnpackUInt8 (d, player);
   d = nboUnpackUInt16 (d, flagid);
-  d = flag.unpack (d);
+  d = flag.unpack(d);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
-  listPush(list, 1, "flag: %s", strFlag (flagid).c_str());
+  listPush(list, 1, "flag: %s", strFlag(flagid).c_str());
 
   return list;
 }
 
 
-static MsgStringList handleMsgGMUpdate(PacketInfo *pi)
+static MsgStringList handleMsgGMUpdate(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 target;
+  void *d = (void*)pi.data;
+  uint8_t target;
   ShotUpdate shot;
-  d = shot.unpack (d);
+  d = shot.unpack(d);
   d = nboUnpackUInt8 (d, target);
   listPush(list, 1, "player:   %s", strPlayer(shot.player).c_str());
   listPush(list, 1, "target:   %s", strPlayer(target).c_str());
@@ -754,7 +674,7 @@ static MsgStringList handleMsgGMUpdate(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgGetWorld(PacketInfo *pi)
+static MsgStringList handleMsgGetWorld(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -762,7 +682,7 @@ static MsgStringList handleMsgGetWorld(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgGameSettings(PacketInfo *pi)
+static MsgStringList handleMsgGameSettings(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -770,7 +690,7 @@ static MsgStringList handleMsgGameSettings(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgGameTime(PacketInfo *pi)
+static MsgStringList handleMsgGameTime(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -778,7 +698,7 @@ static MsgStringList handleMsgGameTime(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgHandicap(PacketInfo *pi)
+static MsgStringList handleMsgHandicap(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -786,7 +706,7 @@ static MsgStringList handleMsgHandicap(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgHit(PacketInfo *pi)
+static MsgStringList handleMsgHit(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -794,12 +714,12 @@ static MsgStringList handleMsgHit(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgKilled(PacketInfo *pi)
+static MsgStringList handleMsgKilled(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 victim, killer;
+  void *d = (void*)pi.data;
+  uint8_t victim, killer;
   int16_t reason, shot;
   FlagType* flagType;
   int32_t phydrv;
@@ -829,11 +749,11 @@ static MsgStringList handleMsgKilled(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgJoinServer(PacketInfo *pi)
+static MsgStringList handleMsgJoinServer(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
+  void *d = (void*)pi.data;
 
   std::string addr;
   int32_t port;
@@ -857,7 +777,7 @@ static MsgStringList handleMsgJoinServer(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgLagState(PacketInfo *pi)
+static MsgStringList handleMsgLagState(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -865,7 +785,7 @@ static MsgStringList handleMsgLagState(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgLimboMessage(PacketInfo *pi)
+static MsgStringList handleMsgLimboMessage(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -873,12 +793,12 @@ static MsgStringList handleMsgLimboMessage(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgMessage(PacketInfo *pi)
+static MsgStringList handleMsgMessage(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 src, dst;
+  void *d = (void*)pi.data;
+  uint8_t src, dst;
   d = nboUnpackUInt8 (d, src);
   d = nboUnpackUInt8 (d, dst);
   listPush(list, 1, "src: %s", strPlayer(src).c_str());
@@ -889,7 +809,7 @@ static MsgStringList handleMsgMessage(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgNewPlayer(PacketInfo *pi)
+static MsgStringList handleMsgNewPlayer(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -897,7 +817,7 @@ static MsgStringList handleMsgNewPlayer(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgNearFlag(PacketInfo *pi)
+static MsgStringList handleMsgNearFlag(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -905,12 +825,12 @@ static MsgStringList handleMsgNearFlag(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgNewRabbit(PacketInfo *pi)
+static MsgStringList handleMsgNewRabbit(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player, paused;
+  void *d = (void*)pi.data;
+  uint8_t player, paused;
   d = nboUnpackUInt8 (d, player);
   d = nboUnpackUInt8 (d, paused);
 
@@ -918,7 +838,7 @@ static MsgStringList handleMsgNewRabbit(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgNegotiateFlags(PacketInfo *pi)
+static MsgStringList handleMsgNegotiateFlags(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -926,12 +846,12 @@ static MsgStringList handleMsgNegotiateFlags(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgPause(PacketInfo *pi)
+static MsgStringList handleMsgPause(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player, paused;
+  void *d = (void*)pi.data;
+  uint8_t player, paused;
   d = nboUnpackUInt8 (d, player);
   d = nboUnpackUInt8 (d, paused);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
@@ -941,12 +861,12 @@ static MsgStringList handleMsgPause(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgPlayerData(PacketInfo *pi)
+static MsgStringList handleMsgPlayerData(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player;
+  void *d = (void*)pi.data;
+  uint8_t player;
   std::string key, value;
   d = nboUnpackUInt8 (d, player);
   d = nboUnpackStdString(d, key);
@@ -959,14 +879,14 @@ static MsgStringList handleMsgPlayerData(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgPlayerInfo(PacketInfo *pi)
+static MsgStringList handleMsgPlayerInfo(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 count, player, properties;
+  void *d = (void*)pi.data;
+  uint8_t count, player, properties;
   Address address;
-  u16 i;
+  uint16_t i;
   d = nboUnpackUInt8 (d, count);
   listPush(list, 1, "count: %i", count);
   for (i=0 ; i < count; i++) {
@@ -992,22 +912,22 @@ static MsgStringList handleMsgPlayerInfo(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgPlayerUpdate(PacketInfo *pi)
+static MsgStringList handleMsgPlayerUpdate(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
+  void *d = (void*)pi.data;
   float timestamp;
-  u8 index;
+  uint8_t index;
   PlayerState state;
-  d = nboUnpackFloat (d, timestamp);
-  d = nboUnpackUInt8 (d, index);
-  d = state.unpack (d, pi->code);
+  d = nboUnpackFloat(d, timestamp);
+  d = nboUnpackUInt8(d, index);
+  d = state.unpack(d, pi.code);
 
   listPush(list, 1, "player: %s", strPlayer(index).c_str());
   listPush(list, 2, "state: 0x%04X  order: %i", state.status, state.order);
-  listPush(list, 3, "pos:    %s", strVector (state.pos).c_str());
-  listPush(list, 3, "vel:    %s", strVector (state.velocity).c_str());
+  listPush(list, 3, "pos:    %s", strVector(state.pos).c_str());
+  listPush(list, 3, "vel:    %s", strVector(state.velocity).c_str());
   listPush(list, 3, "angle:  %-8.3f = %8.3f deg",
 	   state.azimuth, state.azimuth * (180.0f / M_PI));
   listPush(list, 3, "angvel: %-8.3f = %8.3f deg/sec",
@@ -1017,14 +937,14 @@ static MsgStringList handleMsgPlayerUpdate(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgPlayerUpdateSmall(PacketInfo *pi)
+static MsgStringList handleMsgPlayerUpdateSmall(const PacketInfo& pi)
 {
   // call the normal function while maintaining the same 'code' value
-  return handleMsgPlayerUpdate (pi);
+  return handleMsgPlayerUpdate(pi);
 }
 
 
-static MsgStringList handleMsgQueryGame(PacketInfo *pi)
+static MsgStringList handleMsgQueryGame(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1032,7 +952,7 @@ static MsgStringList handleMsgQueryGame(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgQueryPlayers(PacketInfo *pi)
+static MsgStringList handleMsgQueryPlayers(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1040,7 +960,7 @@ static MsgStringList handleMsgQueryPlayers(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgReject(PacketInfo *pi)
+static MsgStringList handleMsgReject(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1048,23 +968,23 @@ static MsgStringList handleMsgReject(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgRemovePlayer(PacketInfo *pi)
+static MsgStringList handleMsgRemovePlayer(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 index;
+  void *d = (void*)pi.data;
+  uint8_t index;
   d = nboUnpackUInt8 (d, index);
   listPush(list, 1, "player: %s", strPlayer(index).c_str());
-  if (TrackState) {
-    PlayerList.erase (index);
+  if (useStateTracking) {
+    playerList.erase(index);
   }
 
   return list;
 }
 
 
-static MsgStringList handleMsgReplayReset(PacketInfo *pi)
+static MsgStringList handleMsgReplayReset(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1072,13 +992,13 @@ static MsgStringList handleMsgReplayReset(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgShotBegin(PacketInfo *pi)
+static MsgStringList handleMsgShotBegin(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
+  void *d = (void*)pi.data;
   FiringInfo finfo;
-  d = finfo.unpack (d);
+  d = finfo.unpack(d);
   const ShotUpdate& shot = finfo.shot;
   listPush(list, 1, "player:   %s", strPlayer(shot.player).c_str());
   listPush(list, 2, "id:       %i", shot.id);
@@ -1095,7 +1015,7 @@ static MsgStringList handleMsgShotBegin(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgWShotBegin(PacketInfo *pi)
+static MsgStringList handleMsgWShotBegin(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1103,7 +1023,7 @@ static MsgStringList handleMsgWShotBegin(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgWhatTimeIsIt(PacketInfo *pi)
+static MsgStringList handleMsgWhatTimeIsIt(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1111,13 +1031,13 @@ static MsgStringList handleMsgWhatTimeIsIt(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgScore(PacketInfo *pi)
+static MsgStringList handleMsgScore(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 count, player;
-  u16 wins, losses, tks, i;
+  void *d = (void*)pi.data;
+  uint8_t count, player;
+  uint16_t wins, losses, tks, i;
   d = nboUnpackUInt8 (d, count);
   listPush(list, 1, "count: %i", count);
   for (i=0; i < count; i++) {
@@ -1133,13 +1053,13 @@ static MsgStringList handleMsgScore(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgScoreOver(PacketInfo *pi)
+static MsgStringList handleMsgScoreOver(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player;
-  u16 team;
+  void *d = (void*)pi.data;
+  uint8_t player;
+  uint16_t team;
   d = nboUnpackUInt8(d, player);
   d = nboUnpackUInt16(d, team);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
@@ -1149,13 +1069,13 @@ static MsgStringList handleMsgScoreOver(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgShotEnd(PacketInfo *pi)
+static MsgStringList handleMsgShotEnd(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player;
-  u16 shotid;
+  void *d = (void*)pi.data;
+  uint8_t player;
+  uint16_t shotid;
   int16_t reason;
   d = nboUnpackUInt8(d, player);
   d = nboUnpackUInt16(d, shotid);
@@ -1168,7 +1088,7 @@ static MsgStringList handleMsgShotEnd(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgSuperKill(PacketInfo *pi)
+static MsgStringList handleMsgSuperKill(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1176,7 +1096,7 @@ static MsgStringList handleMsgSuperKill(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgSetShot(PacketInfo *pi)
+static MsgStringList handleMsgSetShot(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1184,7 +1104,7 @@ static MsgStringList handleMsgSetShot(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgSetTeam(PacketInfo *pi)
+static MsgStringList handleMsgSetTeam(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1192,13 +1112,13 @@ static MsgStringList handleMsgSetTeam(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgSetVar(PacketInfo *pi)
+static MsgStringList handleMsgSetVar(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u16 i;
-  u16 count;
+  void *d = (void*)pi.data;
+  uint16_t i;
+  uint16_t count;
   d = nboUnpackUInt16(d, count);
   listPush(list, 1, "count: %i", count);
 
@@ -1209,8 +1129,8 @@ static MsgStringList handleMsgSetVar(PacketInfo *pi)
     d = nboUnpackStdString(d, value);
     listPush(list, 2, "%-20s = \"%s\"", name.c_str(), value.c_str());
 
-    if (TrackState) {
-      BZDB.set (name, value, StateDatabase::Locked);
+    if (useStateTracking) {
+      BZDB.set(name, value, StateDatabase::Locked);
     }
   }
 
@@ -1218,7 +1138,7 @@ static MsgStringList handleMsgSetVar(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgTangibilityUpdate(PacketInfo *pi)
+static MsgStringList handleMsgTangibilityUpdate(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1226,7 +1146,7 @@ static MsgStringList handleMsgTangibilityUpdate(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgTangibilityReset(PacketInfo *pi)
+static MsgStringList handleMsgTangibilityReset(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1234,10 +1154,10 @@ static MsgStringList handleMsgTangibilityReset(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgTimeUpdate(PacketInfo *pi)
+static MsgStringList handleMsgTimeUpdate(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
-  void *d = (void*)pi->data;
+  void *d = (void*)pi.data;
   int32_t timeLeft;
   d = nboUnpackInt32(d, timeLeft);
   listPush(list, 1, "timeLeft: %i", timeLeft);
@@ -1246,13 +1166,13 @@ static MsgStringList handleMsgTimeUpdate(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgTeleport(PacketInfo *pi)
+static MsgStringList handleMsgTeleport(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 player;
-  u16 to, from;
+  void *d = (void*)pi.data;
+  uint8_t player;
+  uint16_t to, from;
   d = nboUnpackUInt8(d, player);
   d = nboUnpackUInt16(d, from);
   d = nboUnpackUInt16(d, to);
@@ -1264,18 +1184,18 @@ static MsgStringList handleMsgTeleport(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgTransferFlag(PacketInfo *pi)
+static MsgStringList handleMsgTransferFlag(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 to, from;
-  u16 flagid;
+  void *d = (void*)pi.data;
+  uint8_t to, from;
+  uint16_t flagid;
   Flag flag;
   d = nboUnpackUInt8(d, from);
   d = nboUnpackUInt8(d, to);
   d = nboUnpackUInt16(d, flagid);
-  d = flag.unpack (d);
+  d = flag.unpack(d);
   listPush(list, 1, "from: %s", strPlayer(from).c_str());
   listPush(list, 1, "to:   %s", strPlayer(to).c_str());
   listPush(list, 1, "flag: %s", strFlag(flagid).c_str());
@@ -1284,13 +1204,13 @@ static MsgStringList handleMsgTransferFlag(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgTeamUpdate(PacketInfo *pi)
+static MsgStringList handleMsgTeamUpdate(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
 
-  void *d = (void*)pi->data;
-  u8 count;
-  u16 i, team, size, won, lost;
+  void *d = (void*)pi.data;
+  uint8_t count;
+  uint16_t i, team, size, won, lost;
   d = nboUnpackUInt8(d, count);
   listPush(list, 1, "count: %i", count);
   for (i = 0; i < count; i++) {
@@ -1306,7 +1226,7 @@ static MsgStringList handleMsgTeamUpdate(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgWantWHash(PacketInfo *pi)
+static MsgStringList handleMsgWantWHash(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1314,7 +1234,7 @@ static MsgStringList handleMsgWantWHash(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgWantSettings(PacketInfo *pi)
+static MsgStringList handleMsgWantSettings(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1322,7 +1242,7 @@ static MsgStringList handleMsgWantSettings(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi)
+static MsgStringList handleMsgUDPLinkRequest(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1330,7 +1250,7 @@ static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi)
+static MsgStringList handleMsgUDPLinkEstablished(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
@@ -1338,7 +1258,7 @@ static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgServerControl(PacketInfo *pi)
+static MsgStringList handleMsgServerControl(const PacketInfo& pi)
 {
   // packet type hasn't not been implemented
   MsgStringList list = listMsgBasics(pi);
@@ -1346,35 +1266,35 @@ static MsgStringList handleMsgServerControl(PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgLagPing(PacketInfo *pi)
+static MsgStringList handleMsgLagPing(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
   return list;
 }
 
-static MsgStringList handleMsgPingCodeReply(PacketInfo *pi)
+static MsgStringList handleMsgPingCodeReply(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
   return list;
 }
 
-static MsgStringList handleMsgPingCodeRequest(PacketInfo *pi)
+static MsgStringList handleMsgPingCodeRequest(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
   return list;
 }
 
-static MsgStringList handleMsgEchoRequest(PacketInfo *pi)
+static MsgStringList handleMsgEchoRequest(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
   return list;
 }
 
-static MsgStringList handleMsgEchoResponse(PacketInfo *pi)
+static MsgStringList handleMsgEchoResponse(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
