@@ -1700,7 +1700,7 @@ static void packVars(const std::string& key, void *data)
 {
   packVarData& pvd = *((packVarData*) data);
   std::string value = BZDB.get(key);
-  int pairLen = key.length() + 1 + value.length() + 1;
+  const int pairLen = nboStdStringPackSize(key) + nboStdStringPackSize(value); 
   if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
     nboPackUInt16(pvd.bufStart, pvd.count);
     pvd.count = 0;
@@ -1708,11 +1708,8 @@ static void packVars(const std::string& key, void *data)
     pvd.buf = nboPackUInt16(pvd.bufStart, 0); //placeholder
     pvd.len = sizeof(u16);
   }
-
-  pvd.buf = nboPackUInt8(pvd.buf, key.length());
-  pvd.buf = nboPackString(pvd.buf, key.c_str(), key.length());
-  pvd.buf = nboPackUInt8(pvd.buf, value.length());
-  pvd.buf = nboPackString(pvd.buf, value.c_str(), value.length());
+  pvd.buf = nboPackStdString(pvd.buf, key);
+  pvd.buf = nboPackStdString(pvd.buf, value);
   pvd.len += pairLen;
   pvd.count++;
 }
