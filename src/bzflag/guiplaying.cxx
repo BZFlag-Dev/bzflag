@@ -44,6 +44,7 @@
 #include "GameTime.h"
 #include "KeyManager.h"
 #include "LinkManager.h"
+#include "MsgStrings.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
