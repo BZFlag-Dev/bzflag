@@ -48,6 +48,7 @@
 #include "Score.h"
 #include "version.h"
 #include "TextUtils.h"
+#include "MsgStrings.h"
 
 // bzfs specific headers
 #include "bzfs.h"
@@ -239,8 +240,6 @@ static void *nboPackRRtime(void *buf, RRtime value);
 static void *nboUnpackRRtime(void *buf, RRtime& value);
 
 static bool checkReplayMode(int playerIndex);
-
-static const char *msgString(u16 code);
 
 
 //============================================================================//
@@ -600,7 +599,7 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
     p->timestamp = getRRtime();
     addHeadPacket(&RecordBuf, p);
     logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-	    (int)p->mode, p->len, msgString(p->code), p->data);
+	    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
       logDebugMessage(4,"routePacket: deleting until State Update\n");
@@ -616,7 +615,7 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
     initPacket(mode, code, len, data, &p);
     savePacket(&p, RecordFile);
     logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-	    (int)p.mode, p.len, msgString(p.code), p.data);
+	    (int)p.mode, p.len, MsgStrings::strMsgCode(p.code), p.data);
   }
 
   return true;
@@ -1243,7 +1242,7 @@ bool Replay::sendPackets()
     }
 
     logDebugMessage(4,"sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
-	    (int)p->mode, p->len, msgString(p->code), p->data);
+	    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
     if (p->mode != HiddenPacket) {
       // set the database variables if this is MsgSetVar
@@ -1877,7 +1876,7 @@ static RRpacket *loadPacket(FILE *f)
   }
 
   logDebugMessage(4,"loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-	  (int)p->mode, p->len, msgString(p->code), p->data);
+	  (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
   return p;
 }
@@ -2521,68 +2520,6 @@ static void *nboUnpackRRtime(void *buf, RRtime& value)
 
 //============================================================================//
 
-static const char *msgString(u16 code)
-{
-
-#define STRING_CASE(x)  \
-  case x: return #x
-
-  switch (code) {
-      STRING_CASE (MsgNull);
-
-      STRING_CASE (MsgAccept);
-      STRING_CASE (MsgAlive);
-      STRING_CASE (MsgAdminInfo);
-      STRING_CASE (MsgAddPlayer);
-      STRING_CASE (MsgAutoPilot);
-      STRING_CASE (MsgCaptureFlag);
-      STRING_CASE (MsgDropFlag);
-      STRING_CASE (MsgEnter);
-      STRING_CASE (MsgExit);
-      STRING_CASE (MsgFlagUpdate);
-      STRING_CASE (MsgGrabFlag);
-      STRING_CASE (MsgGMUpdate);
-      STRING_CASE (MsgGetWorld);
-      STRING_CASE (MsgKilled);
-      STRING_CASE (MsgMessage);
-      STRING_CASE (MsgNewRabbit);
-      STRING_CASE (MsgNegotiateFlags);
-      STRING_CASE (MsgPause);
-      STRING_CASE (MsgPlayerInfo);
-      STRING_CASE (MsgPlayerUpdate);
-      STRING_CASE (MsgPlayerUpdateSmall);
-      STRING_CASE (MsgQueryGame);
-      STRING_CASE (MsgQueryPlayers);
-      STRING_CASE (MsgReject);
-      STRING_CASE (MsgReplayReset);
-      STRING_CASE (MsgRemovePlayer);
-      STRING_CASE (MsgShotBegin);
-      STRING_CASE (MsgScore);
-      STRING_CASE (MsgScoreOver);
-      STRING_CASE (MsgShotEnd);
-      STRING_CASE (MsgShotInfo);
-      STRING_CASE (MsgSuperKill);
-      STRING_CASE (MsgSetVar);
-      STRING_CASE (MsgTimeUpdate);
-      STRING_CASE (MsgTeleport);
-      STRING_CASE (MsgTransferFlag);
-      STRING_CASE (MsgTeamUpdate);
-      STRING_CASE (MsgWantWHash);
-
-      STRING_CASE (MsgUDPLinkRequest);
-      STRING_CASE (MsgUDPLinkEstablished);
-      STRING_CASE (MsgServerControl);
-      STRING_CASE (MsgLagPing);
-
-    default:
-      static char buf[32];
-      sprintf(buf, "MsgUnknown: 0x%04X", code);
-      return buf;
-  }
-}
-
-
-//============================================================================//
 
 // Local Variables: ***
 // mode: C++ ***
