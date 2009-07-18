@@ -23,17 +23,22 @@ noinst_HEADERS =      \
 	SlashCmd.h
 
 libLuaServer_la_SOURCES = \
-	BZDB.cxx      \
-	CallIns.cxx   \
-	CallOuts.cxx  \
-	Constants.cxx \
-	LuaFloat.cxx  \
-	LuaServer.cxx \
-	LuaURL.cxx    \
-	MapObject.cxx \
-	Obstacles.cxx \
-	RawLink.cxx   \
+	BZDB.cxx       \
+	CallIns.cxx    \
+	CallOuts.cxx   \
+	Constants.cxx  \
+	LuaFloat.cxx   \
+	LuaServer.cxx  \
+	LuaURL.cxx     \
+	MapObject.cxx  \
+	Obstacles.cxx  \
+	RawLink.cxx    \
 	SlashCmd.cxx
 
 EXTRA_DIST =       \
 	README.txt
+
+#
+#	LuaSpatial.h  \
+#	LuaSpatial.cxx \
+#

@@ -134,7 +134,6 @@ static inline bool isValidLanding(const Obstacle* obs)
   // drivethrough buildings are not potential landings
 
   if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obs) != 0) {
-    
     return false;
   }
 

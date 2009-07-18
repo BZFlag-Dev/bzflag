@@ -228,10 +228,7 @@ bool BZWReader::parseCustomObject(const char* token, bool& error, int& lineNum,
     return false;
   }
 
-  std::string endToken = it->second.endToken;
-  if (endToken.empty()) {
-    endToken = "end";
-  }
+  const std::string& endToken = it->second.endToken;
   std::string args;
   std::vector<std::string> customLines;
   if (!readRawLines(args, customLines, endToken, lineNum)) {
@@ -291,6 +288,10 @@ bool BZWReader::readRawLines(std::string& args, std::vector<std::string>& lines,
                              const std::string& endToken, int& lineNum)
 {
   std::getline(*input, args);
+  if (endToken.empty()) {
+    input->putback('\n'); // only read the args, single-line object
+    return true;
+  }
 
   while (!input->eof() && !input->fail() && input->good()) {
     std::string line;

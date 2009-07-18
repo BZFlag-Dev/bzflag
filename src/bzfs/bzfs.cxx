@@ -213,36 +213,36 @@ public:
   virtual void networkDataLog(bool send, bool udp, const unsigned char* data,
                               unsigned int size, void* param = NULL)
   {
-    NetHandler* h = (NetHandler*)param;
 
     // let any listeners know we got net data
-    bz_NetTransferEventData_V1 eventData;
-    if (send) {
-      eventData.eventType = bz_eNetDataSendEvent;
-    } else {
-      eventData.eventType = bz_eNetDataReceiveEvent;
-    }
+    const bz_eEventType eventType = send ? bz_eNetDataSendEvent
+                                         : bz_eNetDataReceiveEvent;
 
-    if (!worldEventManager.getEventCount(eventData.eventType)) {
+    if (!worldEventManager.getEventCount(eventType)) {
       return;
     }
 
-    eventData.send = send;
-    eventData.udp = udp;
+    bz_NetTransferEventData_V1 eventData;
+    eventData.eventType = eventType;
+    eventData.send  = send;
+    eventData.udp   = udp;
     eventData.iSize = size;
+
+    NetHandler* h = (NetHandler*)param;
     if (h) {
-      for(int i=0; i < curMaxPlayers; i++) {
+      for (int i = 0; i < curMaxPlayers; i++) {
         GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-	if(playerData && playerData->netHandler == h ) {
+	if (playerData && (playerData->netHandler == h)) {
 	  eventData.playerID = i;
-	  i = curMaxPlayers + 1;
+	  break;
 	}
       }
     }
+
     // make a copy of the data, just in case any plug-ins decide to MESS with it.
     eventData.data = (unsigned char*)malloc(size);
-    memcpy(eventData.data,data,size);
-    worldEventManager.callEvents(eventData.eventType,&eventData);
+    memcpy(eventData.data, data, size);
+    worldEventManager.callEvents(eventData.eventType, &eventData);
     free(eventData.data);
   }
 };

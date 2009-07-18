@@ -540,12 +540,11 @@ int LuaObstacle::GetFacePlane(lua_State* L)
     return 0;
   }
   const fvec4& vec = face->getPlane();
-  lua_createtable(L, 4, 0);
-  lua_pushfloat(L, vec.x); lua_rawseti(L, -2, 1);
-  lua_pushfloat(L, vec.y); lua_rawseti(L, -2, 2);
-  lua_pushfloat(L, vec.z); lua_rawseti(L, -2, 3);
-  lua_pushfloat(L, vec.w); lua_rawseti(L, -2, 4);
-  return 1;
+  lua_pushfloat(L, vec.x);
+  lua_pushfloat(L, vec.y);
+  lua_pushfloat(L, vec.z);
+  lua_pushfloat(L, vec.w);
+  return 4;
 }
 
 

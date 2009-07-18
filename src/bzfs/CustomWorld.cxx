@@ -75,7 +75,7 @@ bool registerCustomMapObject(const char* object, const char* end,
                              bz_CustomMapObjectHandler* handler)
 {
   const std::string objectName = TextUtils::toupper(object);
-  std::string endToken;
+  std::string endToken = "END";
   if (end != NULL) {
     endToken = TextUtils::toupper(end);
   }
