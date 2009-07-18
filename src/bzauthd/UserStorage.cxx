@@ -66,7 +66,6 @@ bool UserStore::bind(LDAP *& ld, const uint8_t *addr, const uint8_t *dn, const u
 
 bool UserStore::initialize()
 {
-  mail_dn = "cn=MailMaster," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
   return bind(rootld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
 
@@ -140,8 +139,9 @@ public:
 
   char * getNext() {
     while(values && values[cur_val] != NULL) {
+      
       if((int)strnlen(values[cur_val], val_max_len) < val_max_len)
-        return values[cur_val];
+        return values[cur_val++];
       sLog.outError("invalid value for %s, potential buffer overflow", attr);
       cur_val++;
     }
@@ -177,6 +177,7 @@ public:
     ld = ldap;
     result = NULL;
     attr_cnt = attr_count;
+    attr_results = ldap_attrs;
 
     err = ldap_search_s(ld, dn, LDAP_SCOPE_BASE, filter, attrs, 0, &result);
     
@@ -201,6 +202,10 @@ public:
   LDAPAttr& getResult(int i) {
     assert(i < attr_cnt);
     return attr_results[i];
+  }
+
+  int getResultCount() {
+    return err == LDAP_SUCCESS;
   }
 
   ~LDAPBaseSearch()
@@ -363,10 +368,22 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   /* Because mails need to be unique the following algorithms is used:
      - insert the user with an invalidated password (append something to the end)
        (since we need multiple modifications this makes sure that the account cannot
-        be used until everything is finishes) ...
+       be used until everything is finishes) and also a timestamp set to NOW() which
+       is used as a soft timed lock to avoid concurrency problems
+     loop1:
      if (succeeded) {
-       - insert the entry having mail=email and uid=user's bzid
+       loop2:
+       - insert the entry having mail=email and cn=user's callsign
        if(failed) {
+         - run userExists with the mail's cn to delete the mail if it belongs to
+           an unfinished registration
+         if(userExists succeeded)
+           - goto loop2
+         else if(it failed with user exists)
+           - fail with mail exists
+         else 
+           - fail with given error
+
          - delete the user
          if(with already exists)
            - fail with email exits
@@ -375,43 +392,51 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
        }
        - change the user's password and shadowLastChange to the real value
      } else if(failed because it already exists) {
-       ...
+        - run userExists to check for an unfinished registration
+        if(userExists succeeded)
+          - goto loop1
+        else
+          - fail with the given error
      } else if(failed for some other reason) {
         - fail;
      } 
 
      NOTE: As long as all the changes succeed or only fail when expected to (user/mail
      already exits), this should run without concurrency problems and will clean itself up.
-     To clean out corrupted user/email entries periodically without shutting down
-     registration, after searching for the invalid passwords/emails, the entries should 
-     not be deleted immediately but only at the next period. The period should be big enough
-     to ensure that any ongoing registration at the previous period has been finished, 
-     and small enough for minimal discomfort to the user in such events.
+     The userExists procedure also ensures that if after an interrupted registration,
+     the same callsign or email is registered again, it will be superceded. This means
+     that the corruption in the database does not affect the behavior of the registration,
+     apart from the time delay in the soft lock. If however nobody registers the same
+     name/mail again, the entries will accumulate and will need to be cleaned periodically.
+     To do that without shutting down registration, after searching for the invalid
+     passwords/emails, just run the userExists procedure, with the exception of waiting
+     until the time lock expired and trying again if necessary.
   */
 
   // insert the user with the next uid
   std::string user_dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  std::string mail_dn = "mail=" + info.email + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
   BzRegErrors err;
 
-  while(1) {
-    char *oc_vals[3] = {"person", "extensibleObject", NULL};
-    LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
-    LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
-    LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
-    LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", (info.password+"::::").c_str());
-    char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid + 1);
-    LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
-    LDAPMod1 attr_mail  (LDAP_MOD_ADD, "mail", info.email.c_str());
-    // use a negative value as a flag for unfinished registration
-    char time_str[30]; sprintf(time_str, "-%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
-    LDAPMod1 attr_time  (LDAP_MOD_ADD, "shadowLastChange", time_str);
-    LDAPMod *user_mods[8] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, &attr_time.mod, NULL };
+  char *oc_vals[3] = {"person", "extensibleObject", NULL};
+  LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
+  LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
+  LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
+  LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", (info.password+"::::").c_str());
+  char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid + 1);
+  LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
+  LDAPMod1 attr_mail  (LDAP_MOD_ADD, "mail", info.email.c_str());
+  // use a negative value as a flag for unfinished registration
+  char time_str[30]; sprintf(time_str, "-%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
+  LDAPMod1 attr_time  (LDAP_MOD_ADD, "shadowLastChange", time_str);
+  LDAPMod *user_mods[8] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, &attr_time.mod, NULL };
 
+  while(1) {
     int user_add_ret = ldap_add_ext_s(rootld, user_dn.c_str(), user_mods, NULL, NULL);
     if(user_add_ret != LDAP_SUCCESS) {
       switch(user_add_ret) {
       case LDAP_ALREADY_EXISTS:
-        err = userExists(user_dn, nextuid+1);
+        err = userExists(user_dn, info.name);
         // if the function succeeded in deleting the existing user and its email
         // try inserting again
         if(err == REG_SUCCESS)
@@ -426,17 +451,18 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
         return REG_FAIL_GENERIC;
       }
     }
-    
-    err = registerMail(info, nextuid + 1, user_dn);
-    if(err != REG_SUCCESS)
-      return err;
-
-    err = updatePassword(info, user_dn);
-    if(err == REG_SUCCESS)
-      nextuid = 0;
-
-    return err;
+    break;
   }
+
+  err = registerMail(info, nextuid + 1, user_dn, mail_dn);
+  if(err != REG_SUCCESS)
+    return err;
+
+  err = updatePassword(info, user_dn, mail_dn);
+  if(err == REG_SUCCESS)
+    nextuid = 0;
+
+  return err;
 
   /* TODO: The above mentioned solution to the holes problem can be further improved.
     Each separate entitry that wishes to do registration can acquire a lock on certain range 
@@ -448,8 +474,10 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   */
 }
 
-BzRegErrors UserStore::userExists(std::string &user_dn, uint32_t uid)
+BzRegErrors UserStore::userExists(std::string &user_dn, std::string &callsign)
 {
+  // retrieve the last change timestamp of the user and its email
+
   /*char buf[100]; 
   // TODO: TimeKeeper + 64bit
   sprintf(time_str, "(shadowLastChange>=%d)", (int)time(NULL) - sConfig.getIntValue(CONFIG_REG_PERIOD)); */
@@ -496,7 +524,7 @@ BzRegErrors UserStore::userExists(std::string &user_dn, uint32_t uid)
   int ret = ldap_modify_ext_s(rootld, user_dn.c_str(), time_mods, NULL, NULL);
   if(ret != LDAP_SUCCESS) {
     if(ret == LDAP_NO_SUCH_ATTRIBUTE) {
-      // some other daemon already locked the password
+      // some other daemon already locked the timestamp
       // assume it will finish the registration
       return REG_USER_EXISTS;
     } else {
@@ -504,19 +532,23 @@ BzRegErrors UserStore::userExists(std::string &user_dn, uint32_t uid)
       return REG_FAIL_GENERIC;
     }
   }
-  
-  LDAPMod1 attr_mail (LDAP_MOD_DELETE, "mail", mail);
-  char uid_str[20]; sprintf(uid_str, "%d", uid);
-  LDAPMod1 attr_uid (LDAP_MOD_DELETE, "mail", uid_str);
-  LDAPMod *mail_mods[3] = { &attr_mail.mod, &attr_uid.mod, NULL };
 
-  int mail_ret = ldap_modify_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
-  // both values present => the mail was registered and now it was successfully removed
-  // only uid or both absent => the registration was interrupted before registering the mail
-  // only email is present => somebody registered the mail to another uid since then
-  if(mail_ret != LDAP_SUCCESS && mail_ret != LDAP_NO_SUCH_ATTRIBUTE) {
-    ldap_check(mail_ret);
-    return REG_FAIL_GENERIC;
+  std::string mail_dn = "mail=" + std::string(mail) + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  LDAPBaseSearchN<1> mail_search(rootld, mail_dn.c_str(), "(objectClass=*)",
+    "cn", 1, MAX_CALLSIGN_LEN);
+
+  // no mail entry found => the mail was not registered
+  // found and registered to this user => the mail was registered and the entry should be removed
+  // found and registered to another user => the mail was not registered, only later by another user
+  // NOTE: this would have concurrency issues without the "soft lock"
+
+  if(mail_search.getResultCount() != 0) {
+    char *cn = mail_search.getResult(0).getNext();
+    if(!cn) 
+      return REG_FAIL_GENERIC;
+    if(callsign == cn)
+      if(!ldap_check(ldap_delete_ext_s(rootld, mail_dn.c_str(), NULL, NULL)))
+        return REG_FAIL_GENERIC;
   }
 
   // delete the user and try inserting again
@@ -524,7 +556,7 @@ BzRegErrors UserStore::userExists(std::string &user_dn, uint32_t uid)
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn)
+BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn)
 {
   // atomically replace the invalidated password
   LDAPMod1 attr_pwd1 (LDAP_MOD_DELETE, "userPassword", (info.password+"::::").c_str());
@@ -544,27 +576,54 @@ BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn)
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &user_dn)
+BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn)
 {
-  LDAPMod1 attr_mail (LDAP_MOD_ADD, "mail", info.email.c_str());
-  char uid_str[20]; sprintf(uid_str, "%d", uid);
-  LDAPMod1 attr_uid (LDAP_MOD_ADD, "mail", uid_str);
-  LDAPMod *mail_mods[3] = { &attr_mail.mod, &attr_uid.mod, NULL };
+  char *oc_vals[3] = {"applicationProcess", "extensibleObject", NULL};
+  LDAPModN attr_oc (LDAP_MOD_ADD, "objectClass", oc_vals);
+  LDAPMod1 attr_cn (LDAP_MOD_ADD, "cn", info.name.c_str());
+  LDAPMod *mail_mods[3] = { &attr_oc.mod, &attr_cn.mod, NULL };
 
-  int mail_ret = ldap_modify_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
-  if(mail_ret != LDAP_SUCCESS) {
-    // delete the user
-    ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));
+  while(1) {
+    int mail_ret = ldap_add_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
+    if(mail_ret != LDAP_SUCCESS) {
+      if(mail_ret != LDAP_ALREADY_EXISTS) {
+        ldap_check(mail_ret);
+        return REG_FAIL_GENERIC;
+      }
+      
+      // the email may come from an unfinished registration
+      // if so, roll back the registration and continue
 
-    if(mail_ret == LDAP_ALREADY_EXISTS) {
-      sLog.outDebug("Email %s already exists", info.email.c_str());
-      return REG_MAIL_EXISTS;
-    } else {
-      ldap_check(mail_ret);
-      return REG_FAIL_GENERIC;
+      LDAPBaseSearchN<1> mail_search(rootld, mail_dn.c_str(), "(objectClass=*)",
+        "cn", 1, MAX_CALLSIGN_LEN);
+
+      char *cn = mail_search.getResult(0).getNext();
+      if(!cn)
+        return REG_FAIL_GENERIC;
+
+      if(info.name == cn) {
+        sLog.outError("mail=%s already registered to cn=%s?", info.email.c_str(), info.name.c_str());
+        return REG_FAIL_GENERIC;
+      }
+
+      std::string mail_owner_dn = "cn=" + std::string(cn) + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+      BzRegErrors err = userExists(mail_owner_dn, std::string(cn));
+      // if the function succeeded in deleting the existing user and its email
+      // try inserting again 
+      if(err == REG_SUCCESS)
+        continue;
+
+      // if the registration is finished then the email is considered already registered
+      if(err == REG_USER_EXISTS) {
+        // delete the user
+        sLog.outDebug("Email %s already exists", info.email.c_str());
+        ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));
+        return REG_MAIL_EXISTS;
+      } else
+        return err;
     }
+    return REG_SUCCESS;
   }
-  return REG_SUCCESS;
 }
 
 // find the uid for a given ldap connection and dn

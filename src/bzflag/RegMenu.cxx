@@ -84,12 +84,23 @@ public:
         menu->setStatus("Register successful");
         menu->phase = 3;
         break;
-      case DMSG_REGISTER_FAIL:
+      case DMSG_REGISTER_FAIL: {
+        uint32_t err;
+        if(!(packet >> err)) { disconnect(); break; }
         disconnect();
         menu->phase = 3;
         menu->setStatus("");
-        menu->setFailedMessage("Register failed");
-        break; 
+        switch(err) {
+          case REG_USER_EXISTS:
+            menu->setFailedMessage("Register failed, callsign already exists");
+            break;
+          case REG_MAIL_EXISTS:
+            menu->setFailedMessage("Register failed, email already exists");
+            break;
+          default:
+            menu->setFailedMessage("Register failed");
+        }
+      }  break; 
       default:
         logDebugMessage(0, "Unexpected opcode %d\n", packet.getOpcode());
         disconnect();
