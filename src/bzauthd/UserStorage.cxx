@@ -18,7 +18,6 @@
 #include <Log.h>
 #include <gcrypt.h>
 #include "base64.h"
-#include <AuthProtocol.h>
 #include <assert.h>
 
 INSTANTIATE_SINGLETON(UserStore)
@@ -101,11 +100,11 @@ struct LDAPMod1
 
 struct LDAPModN
 {
-  LDAPModN(int op, const char *type, char **values)
+  LDAPModN(int op, const char *type, const char **values)
   {
     mod.mod_op = op;
     mod.mod_type = (char*)type;
-    mod.mod_values = values; 
+    mod.mod_values = (char**)values;
   }
 
   LDAPMod mod;
@@ -117,16 +116,16 @@ public:
   friend class LDAPBaseSearch;
   LDAPAttr() {}
   
-  LDAPAttr(int req_value_cnt, int max_value_len, char *attr_name) {
+  LDAPAttr(int req_value_cnt, int max_value_len, const char *attr_name) {
     init(req_value_cnt, max_value_len, attr_name);
   }
 
-  void init(int req_value_cnt, int max_value_len, char *attr_name) {
+  void init(int req_value_cnt, int max_value_len, const char *attr_name) {
     val_req_cnt = req_value_cnt;
     val_max_len = max_value_len;
     cur_val = 0;
     values = NULL;
-    attr = attr_name;
+    attr = (char*)attr_name;
   }
 
   ~LDAPAttr() {
@@ -172,14 +171,14 @@ private:
 class LDAPBaseSearch
 {
 public:
-  LDAPBaseSearch(LDAP *ldap, const char *dn, const char *filter, int attr_count, char **attrs, LDAPAttr *ldap_attrs)
+  LDAPBaseSearch(LDAP *ldap, const char *dn, const char *filter, int attr_count, const char **attrs, LDAPAttr *ldap_attrs)
   {
     ld = ldap;
     result = NULL;
     attr_cnt = attr_count;
     attr_results = ldap_attrs;
 
-    err = ldap_search_s(ld, dn, LDAP_SCOPE_BASE, filter, attrs, 0, &result);
+    err = ldap_search_s(ld, dn, LDAP_SCOPE_BASE, filter, (char**)attrs, 0, &result);
     
     if(err != LDAP_SUCCESS) {
       sLog.outError("LDAP %d: %s (at search)", err, ldap_err2string(err));
@@ -228,19 +227,19 @@ class LDAPBaseSearchN {
 template<>
 class LDAPBaseSearchN<1> : public LDAPAttr, public LDAPBaseSearch {
 public:
-  LDAPBaseSearchN(LDAP *ld, const char *dn, const char *filter,
-    char *attr, int req_value_cnt, int max_value_len) :
-    LDAPAttr(req_value_cnt, max_value_len, attr),
-    LDAPBaseSearch(ld, dn, filter, 1, init_attrs(attr), (LDAPAttr*)this)
+  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter,
+    const char *attr_name, int req_value_cnt, int max_value_len) :
+    LDAPAttr(req_value_cnt, max_value_len, attr_name),
+    LDAPBaseSearch(ldap, dn, filter, 1, init_attrs(attr_name), (LDAPAttr*)this)
   {
   }
     
 private:
-  char **init_attrs(char *attr)
+  const char **init_attrs(const char *attr_name)
   {
-    attrs[0] = attr;
+    attrs[0] = (char*)attr_name;
     attrs[1] = NULL;
-    return attrs;
+    return (const char**)attrs;
   }
 
   char* attrs[2];
@@ -249,25 +248,25 @@ private:
 template<>
 class LDAPBaseSearchN<2> : public LDAPBaseSearch {
 public:
-  LDAPBaseSearchN(LDAP *ld, const char *dn, const char *filter, 
-    char *attr1, int req_value_cnt1, int max_value_len1,
-    char *attr2, int req_value_cnt2, int max_value_len2) :
-    LDAPBaseSearch(ld, dn, filter, 2, init_attrs(attr1, attr2), init_result(
+  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter, 
+    const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2) :
+    LDAPBaseSearch(ldap, dn, filter, 2, init_attrs(attr1, attr2), init_result(
       req_value_cnt1, max_value_len1, attr1,
       req_value_cnt2, max_value_len2, attr2))
   {
   }
     
 private:
-  char **init_attrs(char *attr1, char *attr2)
+  const char **init_attrs(const char *attr1, const char *attr2)
   {
-    attrs[0] = attr1;
-    attrs[1] = attr2;
+    attrs[0] = (char*)attr1;
+    attrs[1] = (char*)attr2;
     attrs[2] = NULL;
-    return attrs;
+    return (const char**)attrs;
   }
 
-  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, char *attr1, int req_value_cnt2, int max_value_len2, char *attr2)
+  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, const char *attr1, int req_value_cnt2, int max_value_len2, const char *attr2)
   {
     attr_res[0].init(req_value_cnt1, max_value_len1, attr1);
     attr_res[1].init(req_value_cnt2, max_value_len2, attr2);
@@ -281,11 +280,11 @@ private:
 template<>
 class LDAPBaseSearchN<3> : public LDAPBaseSearch {
 public:
-  LDAPBaseSearchN(LDAP *ld, const char *dn, const char *filter, 
-    char *attr1, int req_value_cnt1, int max_value_len1,
-    char *attr2, int req_value_cnt2, int max_value_len2,
-    char *attr3, int req_value_cnt3, int max_value_len3) :
-    LDAPBaseSearch(ld, dn, filter, 2, init_attrs(attr1, attr2, attr3), init_result(
+  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter, 
+    const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2,
+    const char *attr3, int req_value_cnt3, int max_value_len3) :
+    LDAPBaseSearch(ldap, dn, filter, 2, init_attrs(attr1, attr2, attr3), init_result(
       req_value_cnt1, max_value_len1, attr1,
       req_value_cnt2, max_value_len2, attr2,
       req_value_cnt3, max_value_len3, attr3))
@@ -293,16 +292,16 @@ public:
   }
     
 private:
-  char **init_attrs(char *attr1, char *attr2, char *attr3)
+  const char **init_attrs(const char *attr1, const char *attr2, const char *attr3)
   {
-    attrs[0] = attr1;
-    attrs[1] = attr2;
-    attrs[2] = attr3;
+    attrs[0] = (char*)attr1;
+    attrs[1] = (char*)attr2;
+    attrs[2] = (char*)attr3;
     attrs[3] = NULL;
-    return attrs;
+    return (const char**)attrs;
   }
 
-  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, char *attr1, int req_value_cnt2, int max_value_len2, char *attr2, int req_value_cnt3, int max_value_len3, char *attr3)
+  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, const char *attr1, int req_value_cnt2, int max_value_len2, const char *attr2, int req_value_cnt3, int max_value_len3, const char *attr3)
   {
     attr_res[0].init(req_value_cnt1, max_value_len1, attr1);
     attr_res[1].init(req_value_cnt2, max_value_len2, attr2);
@@ -418,7 +417,7 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   std::string mail_dn = "mail=" + info.email + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
   BzRegErrors err;
 
-  char *oc_vals[3] = {"person", "extensibleObject", NULL};
+  const char *oc_vals[3] = {"person", "extensibleObject", NULL};
   LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
   LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
   LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
@@ -454,7 +453,7 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
     break;
   }
 
-  err = registerMail(info, nextuid + 1, user_dn, mail_dn);
+  err = registerMail(info, user_dn, mail_dn);
   if(err != REG_SUCCESS)
     return err;
 
@@ -474,7 +473,7 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   */
 }
 
-BzRegErrors UserStore::userExists(std::string &user_dn, std::string &callsign)
+BzRegErrors UserStore::userExists(std::string const &user_dn, std::string const &callsign)
 {
   // retrieve the last change timestamp of the user and its email
 
@@ -556,7 +555,7 @@ BzRegErrors UserStore::userExists(std::string &user_dn, std::string &callsign)
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn)
+BzRegErrors UserStore::updatePassword(UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
   // atomically replace the invalidated password
   LDAPMod1 attr_pwd1 (LDAP_MOD_DELETE, "userPassword", (info.password+"::::").c_str());
@@ -576,9 +575,9 @@ BzRegErrors UserStore::updatePassword(UserInfo &info, std::string &user_dn, std:
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn)
+BzRegErrors UserStore::registerMail(UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
-  char *oc_vals[3] = {"applicationProcess", "extensibleObject", NULL};
+  const char *oc_vals[3] = {"applicationProcess", "extensibleObject", NULL};
   LDAPModN attr_oc (LDAP_MOD_ADD, "objectClass", oc_vals);
   LDAPMod1 attr_cn (LDAP_MOD_ADD, "cn", info.name.c_str());
   LDAPMod *mail_mods[3] = { &attr_oc.mod, &attr_cn.mod, NULL };
@@ -629,42 +628,13 @@ BzRegErrors UserStore::registerMail(UserInfo &info, uint32_t uid, std::string &u
 // find the uid for a given ldap connection and dn
 uint32_t UserStore::getuid(LDAP *ld, const char *dn)
 {
-  char *search_attrs[2] = { "uid", NULL };
+  LDAPBaseSearchN<1> uid_search(ld, dn, "(objectClass=*)",
+    "uid", 1, 20);
 
-  LDAPMessage *res = NULL, *msg;
-  if(!ldap_check( ldap_search_s(ld, dn, LDAP_SCOPE_BASE, "(objectClass=*)", search_attrs, 0, &res) )) {
-    if(res) ldap_msgfree(ldap_first_message(ld, res));
-    sLog.outError("cannot find uid for %s", dn);
-    return 0;
-  }
+  char *uid_str = uid_search.getResult(0).getNext();
 
   uint32_t uid = 0;
-  for (msg = ldap_first_message(ld, res); msg; msg = ldap_next_message(ld, msg)) {
-    if(ldap_msgtype(msg) == LDAP_RES_SEARCH_ENTRY) {
-      char **values = ldap_get_values(ld, msg, "uid");
-      int nrvalues = ldap_count_values(values);
-
-      if(nrvalues != 1) {
-        sLog.outError("invalid number of uids for %s", dn);
-        break;
-      }
-      
-      if(strnlen(values[0], 20) >= 20) {
-        sLog.outError("invalid uid value in %s, potential buffer overflow", dn);
-        break;
-      }
-
-      sscanf(values[0], "%d", &uid);
-      if(uid < 1) {
-        sLog.outError("invalid uid found for %s: %d", dn, uid);
-        uid = 0;
-        break;
-      }
-
-      break;  // don't care about any other messages
-    }
-  }
-  ldap_msgfree(ldap_first_message(ld, res));
+  sscanf(uid_str, "%u", &uid);
   return uid;
 }
 

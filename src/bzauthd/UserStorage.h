@@ -16,6 +16,7 @@
 #include <Singleton.h>
 #include <string>
 #include <list>
+#include <AuthProtocol.h>
 
 typedef struct ldap LDAP;
 
@@ -33,8 +34,6 @@ struct UserInfo
   std::string password;
   std::string email;
 };
-
-enum BzRegErrors;
 
 /** The UserStore abstracts the method used for storing users */
 class UserStore : public Singleton<UserStore>
@@ -57,9 +56,9 @@ private:
   void unbind(LDAP *&ld);
 
   uint32_t getuid(LDAP *ld, const char *dn);
-  BzRegErrors registerMail(UserInfo &info, uint32_t uid, std::string &user_dn, std::string &mail_dn);
-  BzRegErrors updatePassword(UserInfo &info, std::string &user_dn, std::string &mail_dn);
-  BzRegErrors userExists(std::string &user_dn, std::string &callsign);
+  BzRegErrors registerMail(UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
+  BzRegErrors updatePassword(UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
+  BzRegErrors userExists(std::string const &user_dn, std::string const &callsign);
 
   LDAP *rootld;
   uint32_t nextuid;
