@@ -1381,7 +1381,7 @@ static bool setVariables(void *data)
   std::string key, value;
 
   data = nboUnpackUInt16(data, numVars);
-  for (int i = 0; i < numVars; i++) {
+  for (uint16_t i = 0; i < numVars; i++) {
     data = nboUnpackStdString(data, key);
     data = nboUnpackStdString(data, value);
     if (key == "poll") {
