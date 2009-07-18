@@ -3507,9 +3507,12 @@ static void resetServerVar(const std::string &name, void*)
 
 void leaveGame()
 {
-  thirdPersonVars.clear();
+
   entered = false;
   joiningGame = false;
+
+  thirdPersonVars.clear();
+  MsgStrings::reset();
 
   // -- don't know enough to remove this code, but
   // -- the 'radar' pointer points to '_radar' in startPlaying()
