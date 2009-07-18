@@ -109,7 +109,7 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
   lua_pushstring(L, message.c_str());
 
   if (lua_pcall(L, 3, 1, 0) != 0) {
-    bz_debugMessagef(0, "lua call-in slashcmd error (%s): %s\n",
+    bz_debugMessagef(0, "LuaSlashCmd callback error (%s): %s\n",
                      cmd.c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;

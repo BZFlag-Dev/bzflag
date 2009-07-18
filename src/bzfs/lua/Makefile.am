@@ -13,10 +13,10 @@ noinst_HEADERS =      \
 	CallIns.h     \
 	CallOuts.h    \
 	Constants.h   \
-	FetchURL.h    \
-	LuaFloat.h       \
-	LuaServer.h   \
+	LuaFloat.h    \
 	LuaHeader.h   \
+	LuaServer.h   \
+	LuaURL.h      \
 	MapObject.h   \
 	Obstacles.h   \
 	RawLink.h     \
@@ -27,9 +27,9 @@ libLuaServer_la_SOURCES = \
 	CallIns.cxx   \
 	CallOuts.cxx  \
 	Constants.cxx \
-	FetchURL.cxx  \
-	LuaFloat.cxx     \
+	LuaFloat.cxx  \
 	LuaServer.cxx \
+	LuaURL.cxx    \
 	MapObject.cxx \
 	Obstacles.cxx \
 	RawLink.cxx   \

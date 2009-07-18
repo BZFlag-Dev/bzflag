@@ -853,11 +853,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\FetchURL.cxx"
+				RelativePath="..\..\src\bzfs\lua\LuaURL.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\FetchURL.h"
+				RelativePath="..\..\src\bzfs\lua\LuaURL.h"
 				>
 			</File>
 			<File

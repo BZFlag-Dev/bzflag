@@ -118,6 +118,7 @@ static int GetServerVersion(lua_State* L);
 static int GetServerPort(lua_State* L);
 static int GetServerAddress(lua_State* L);
 static int GetServerDescription(lua_State* L);
+static int GetServerOwner(lua_State* L);
 
 static int UpdateListServer(lua_State* L);
 
@@ -313,6 +314,7 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetServerPort);
   PUSH_LUA_CFUNC(L, GetServerAddress);
   PUSH_LUA_CFUNC(L, GetServerDescription);
+  PUSH_LUA_CFUNC(L, GetServerOwner);
 
   PUSH_LUA_CFUNC(L, UpdateListServer);
 
@@ -552,6 +554,16 @@ static int GetServerDescription(lua_State* L)
     return 0;
   }
   lua_pushstdstring(L, clOptions->publicizedTitle);
+  return 1;
+}
+
+
+static int GetServerOwner(lua_State* L)
+{
+  if (!clOptions->publicizeServer) {
+    return 0;
+  }
+  lua_pushstdstring(L, clOptions->publicizedUsername);
   return 1;
 }
 

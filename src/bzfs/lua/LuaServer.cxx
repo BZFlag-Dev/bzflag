@@ -41,8 +41,8 @@ using std::vector;
 #include "CallIns.h"
 #include "CallOuts.h"
 #include "Constants.h"
-#include "FetchURL.h"
 #include "LuaFloat.h"
+#include "LuaURL.h"
 #include "MapObject.h"
 #include "Obstacles.h"
 #include "RawLink.h"
@@ -153,7 +153,6 @@ bool LuaServer::kill()
   CallIns::Shutdown(); // send the call-in
 
   RawLink::CleanUp(L);
-  FetchURL::CleanUp(L);
   SlashCmd::CleanUp(L);
   MapObject::CleanUp(L);
   CallIns::CleanUp(L);
@@ -304,9 +303,14 @@ static bool CreateLuaState(const string& script)
     CallOuts::PushEntries(L);
     MapObject::PushEntries(L);
     SlashCmd::PushEntries(L);
-    FetchURL::PushEntries(L);
     RawLink::PushEntries(L);
     LuaObstacle::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
+
+  lua_pushliteral(L, "url");
+  lua_newtable(L); {
+    LuaURLMgr::PushEntries(L);
   }
   lua_rawset(L, LUA_GLOBALSINDEX);
 
