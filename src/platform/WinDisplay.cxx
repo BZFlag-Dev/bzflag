@@ -174,8 +174,7 @@ WinDisplay::WinDisplay(const char* displayName, const char*) :
 				fullWidth(0),
 				fullHeight(0),
 				resolutions(NULL),
-				translated(false),
-				charCode(0)
+				translated(false)
 {
   rep = new Rep(displayName);
 
@@ -323,7 +322,6 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 		translated = (bool)(TranslateMessage(&msg) != 0);
-		if (!translated) ((WinDisplay*)this)->charCode = 0;
 		if (isNastyKey(msg)) return false;
 		DispatchMessage(&msg);
 		event.type = BzfEvent::KeyDown;
@@ -375,35 +373,53 @@ void			WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
 bool			WinDisplay::getKey(const MSG& msg,
 					BzfKeyEvent& key) const
 {
-  key.shift = 0;
+  key.shift = key.chr = key.button = 0;
   if (GetKeyState(VK_SHIFT) < 0)	key.shift |= BzfKeyEvent::ShiftKey;
   if (GetKeyState(VK_CONTROL) < 0)	key.shift |= BzfKeyEvent::ControlKey;
   if (GetKeyState(VK_MENU) < 0)		key.shift |= BzfKeyEvent::AltKey;
+
+  // We recieve key messages as follows: WM_KEYDOWN, (translated) WM_CHAR, WM_KEYUP
+  // This means that in order to get a char for WM_KEYUP we must save the CHAR that follows
+  // WM_KEYDOWN.  Things to remember:
+  //  1: not all WM_KEYDOWNs for a particular key will generate the same WM_CHAR (` + a on 
+  //	 German keyboard layouts, for instance).  Therefore we cannot remember WM_CHAR
+  //	 permanently on a per-key basis.
+  //  2: not all WM_KEYDOWNs for a particular key will generate a WM_CHAR AT ALL (` alone
+  //     on German layouts, for instance).  Therefor we cannot generate fake WM_CHARs on
+  //	 WM_KEYUPs whose preceding WM_KEYDOWN did not generate a real WM_CHAR.
+  //  3: if a user holds down one key while pressing another, then lets up on the first one,
+  //	 we may recieve events out of order (WM_KEYDOWN(1), WM_CHAR(1), WM_KEYDOWN(2),
+  //	 WM_CHAR(2), WM_KEYUP(2), WM_KEYUP(1)).
+  //  4: not all WM_KEYDOWNs are followed by a WM_KEYUP.  We get multiple WM_KEYDOWNs if
+  //	 a key is held down.
+  // So, with this in mind, we must store either the WM_CHAR, or the lack of one, during
+  // each WM_KEYDOWN, and read it during WM_KEYUP, such that the KeyUp event gets the
+  // same .chr member as the immediately preceding KeyDown event on the same key.
+
+  key.button = buttonMap[(int)msg.wParam];
 
   if (translated) {
     MSG cmsg;
     if (PeekMessage(&cmsg, NULL, 0, 0, PM_NOREMOVE) &&
 	(cmsg.message == WM_CHAR || cmsg.message == WM_SYSCHAR)) {
       GetMessage(&cmsg, NULL, 0, 0);
-      // charCode is in UTF-16, so convert it to a codepoint
-      charCode = cmsg.wParam;
-      if (UNICODE_IS_HIGH_SURROGATE(charCode >> 16) &&
-          UNICODE_IS_LOW_SURROGATE(charCode & 0xFFFF)) {
-	charCode = UNICODE_SURROGATE_TO_UTF32(charCode >> 16, charCode & 0xFFFF);
+      // chr is in UTF-16, so convert it to a codepoint
+      key.chr = cmsg.wParam;
+      if (UNICODE_IS_HIGH_SURROGATE(key.chr >> 16) &&
+          UNICODE_IS_LOW_SURROGATE(key.chr & 0xFFFF)) {
+	key.chr = UNICODE_SURROGATE_TO_UTF32(key.chr >> 16, key.chr & 0xFFFF);
       }
-      savedCharCode = charCode;
-      keyPressed = true;
-    } else if (keyPressed) {
-      charCode = savedCharCode;
-      keyPressed = false;
-    } else {
-      charCode = 0;
+      keyUpDownMap[key.button] = key.chr;
+    } else if (keyUpDownMap.find(key.button) != keyUpDownMap.end()) {
+      // perhaps we already know this character from WM_KEYDOWN?
+      key.chr = keyUpDownMap[key.button];
+      // each WM_KEYDOWN is only good for one WM_KEYUP (necessary for deadkeys)
+      keyUpDownMap[key.button] = 0;
     }
   }
 
-  key.chr = charCode;
-  key.button = buttonMap[(int)msg.wParam];
   if (key.button == BzfKeyEvent::Delete) key.chr = 0;
+
   return (key.chr != 0 || key.button != 0);
 }
 

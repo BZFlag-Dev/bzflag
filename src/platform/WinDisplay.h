@@ -16,6 +16,8 @@
 
 #ifndef BZF_WINDISPLAY_H
 #define	BZF_WINDISPLAY_H
+#include <map>
+
 #include "common.h"
 #include "BzfDisplay.h"
 #include "bzfgl.h"
@@ -88,9 +90,7 @@ private:
 
   // for key to character translations
   mutable bool	translated;
-  mutable int	charCode;
-  mutable bool	keyPressed;
-  mutable int	savedCharCode;
+  mutable std::map<int, int> keyUpDownMap;
 
   // keyboard mapping
   static const int	buttonMap[];
