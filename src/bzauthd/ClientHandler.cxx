@@ -256,7 +256,7 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
     UserInfo info;
     info.name = std::string ((const char*)message, callsign_len);
     info.password = std::string((const char*)digest, digest_len);
-    info.email = std::string((const char*)message, callsign_len + password_len + 2, email_len);
+    info.email = std::string((const char*)message + callsign_len + password_len + 2, email_len);
 
     BzRegErrors error = sUserStore.registerUser(info);
     if(error != REG_SUCCESS) {
