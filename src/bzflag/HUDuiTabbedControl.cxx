@@ -90,6 +90,9 @@ void HUDuiTabbedControl::removeTab(size_t tabIndex)
 
   if (activeTab >= tabs.size())
     activeTab = tabs.size() - 1;
+
+  setActiveTab(activeTab);
+  getNav().set((size_t)0);
 }
 
 void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
@@ -101,6 +104,9 @@ void HUDuiTabbedControl::removeTab(HUDuiControl* control, std::string tabName)
 
   if (activeTab >= tabs.size())
     activeTab = tabs.size() - 1;
+
+  setActiveTab(activeTab);
+  getNav().set((size_t)0);
 }
 
 void HUDuiTabbedControl::setSize(float width, float height)
