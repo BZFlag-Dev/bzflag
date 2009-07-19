@@ -40,7 +40,8 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
 				gammaVal(1.0f),
 				prev(NULL),
 				next(NULL),
-				mouseGrab(false)
+				mouseGrab(false),
+				fullscreen(false)
 {
   activating = false;
 
@@ -173,6 +174,7 @@ void			WinWindow::setFullscreen(bool on)
 		  GetDeviceCaps(hDC, HORZRES),
 		  GetDeviceCaps(hDC, VERTRES), FALSE);
 
+    fullscreen = true;
   } else if (!display->isFullScreenOnly()) {
     // reset the resolution if we changed it before
     display->setDefaultResolution();
@@ -206,6 +208,8 @@ void			WinWindow::setFullscreen(bool on)
     RECT rect;
     GetWindowRect(NULL, &rect);
     InvalidateRect(NULL, &rect, TRUE);
+
+    fullscreen = false;
   }
 
   // resize child
@@ -225,8 +229,7 @@ bool			WinWindow::getFullscreen() const
   if (display->isFullScreenOnly())
     return true;
 
-  // heh.
-  return false;
+  return fullscreen;
 }
 
 

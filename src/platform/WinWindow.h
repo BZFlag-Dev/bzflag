@@ -105,6 +105,7 @@ class WinWindow : public BzfWindow {
     static HPALETTE	colormap;
     bool		mouseGrab;
     bool		activating;
+    bool		fullscreen;
 };
 
 #endif // BZF_WINWINDOW_H
