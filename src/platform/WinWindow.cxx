@@ -168,8 +168,6 @@ void			WinWindow::setFullscreen(bool on)
     MoveWindow(hwnd, 0, 0,
 	       GetDeviceCaps(hDC, HORZRES),
 	       GetDeviceCaps(hDC, VERTRES), FALSE);
-
-    fullscreen = true;
   } else {
     // reset the resolution if we changed it before
     display->setDefaultResolution();
@@ -203,8 +201,6 @@ void			WinWindow::setFullscreen(bool on)
     RECT rect;
     GetWindowRect(NULL, &rect);
     InvalidateRect(NULL, &rect, TRUE);
-
-    fullscreen = false;
   }
 
   // resize child
@@ -217,6 +213,8 @@ void			WinWindow::setFullscreen(bool on)
     ungrabMouse();
     grabMouse();
   }
+
+  fullscreen = on;
 }
 
 bool			WinWindow::getFullscreen() const
