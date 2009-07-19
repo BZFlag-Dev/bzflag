@@ -1620,6 +1620,59 @@ void handleNewPlayer(void *msg)
 }
 
 
+void handleForceState(void *msg)
+{
+  PlayerId pid;
+
+  void* buf = msg;
+  buf = nboUnpackUInt8(buf, pid);
+  Player* tank = lookupPlayer(pid);
+  if (!tank || (tank != myTank) || !tank->isAlive()) {
+    return;
+  }
+
+  uint8_t bits;
+  buf = nboUnpackUInt8(buf, bits);
+  const bool havePos    = (bits & ForceStatePosBit)    != 0;
+  const bool haveVel    = (bits & ForceStateVelBit)    != 0;
+  const bool haveAngle  = (bits & ForceStateAngleBit)  != 0;
+  const bool haveAngVel = (bits & ForceStateAngVelBit) != 0;
+
+  fvec3 pos, vel;
+  float angle, angvel;
+
+  if (havePos)    { buf = nboUnpackFVec3(buf, pos);    }
+  if (haveVel)    { buf = nboUnpackFVec3(buf, vel);    }
+  if (haveAngle)  { buf = nboUnpackFloat(buf, angle);  }
+  if (haveAngVel) { buf = nboUnpackFloat(buf, angvel); }
+
+  if (havePos || haveAngle) {
+    if (!havePos)   { pos = myTank->getPosition(); }
+    if (!haveAngle) { angle = myTank->getAngle();  }
+    myTank->move(pos, angle);
+  }
+  if (haveVel) {
+    myTank->setVelocity(vel);
+    if (vel.z != 0.0f) {
+      switch (myTank->getLocation()) {
+        case LocalPlayer::OnGround:
+        case LocalPlayer::InBuilding:
+        case LocalPlayer::OnBuilding: {
+          myTank->setLocation(LocalPlayer::InAir);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  }
+  if (haveAngVel) {
+    myTank->setAngularVelocity(angvel);
+  }
+}
+
+
 void handleMovementUpdate(uint16_t code, void *msg)
 {
   double timestamp;
@@ -1943,6 +1996,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
     }
     case MsgNewPlayer: {
       handleNewPlayer(msg);
+      break;
+    }
+    case MsgForceState: {
+      handleForceState(msg);
       break;
     }
     // inter-player relayed message

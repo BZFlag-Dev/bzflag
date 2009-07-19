@@ -67,6 +67,7 @@ public:
               const PlayerType _type=TankPlayer);
   ~LocalPlayer();
 
+  void		setLocation(Location loc) { location = loc; }
   Location      getLocation() const;
   FiringStatus  getFiringStatus() const;
   float         getFlagShakingTime() const;

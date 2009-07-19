@@ -63,6 +63,7 @@ const uint16_t MsgEnter             = 0x656e; // 'en'
 const uint16_t MsgExit              = 0x6578; // 'ex'
 const uint16_t MsgFlagType          = 0x6674; // 'ft'
 const uint16_t MsgFlagUpdate        = 0x6675; // 'fu'
+const uint16_t MsgForceState        = 0x6673; // 'fs'
 const uint16_t MsgFetchResources    = 0x6672; // 'fr'
 const uint16_t MsgGrabFlag          = 0x6766; // 'gf'
 const uint16_t MsgGMUpdate          = 0x676d; // 'gm'
@@ -167,6 +168,14 @@ const uint16_t RejectIPBanned       = 0x0009;
 const uint16_t RejectHostBanned     = 0x000A;
 const uint16_t RejectIDBanned       = 0x000B;
 
+// force state bits
+enum ForceStateBits {
+  ForceStatePosBit    = (1 << 0),
+  ForceStateVelBit    = (1 << 1),
+  ForceStateAngleBit  = (1 << 2),
+  ForceStateAngVelBit = (1 << 3)
+};
+
 // pause codes
 enum PauseCodes {
   PauseCodeDisable     = 0,
@@ -189,15 +198,15 @@ enum CustomSoundBits {
                              // and one float for the outer cone gain
 
 enum BlowedUpReason {
-	GotKilledMsg,
-	GotShot,
-	GotRunOver,
-	GotCaptured,
-	GenocideEffect,
-	SelfDestruct,
-	WaterDeath,
-	PhysicsDriverDeath,
-	LastReason
+  GotKilledMsg,
+  GotShot,
+  GotRunOver,
+  GotCaptured,
+  GenocideEffect,
+  SelfDestruct,
+  WaterDeath,
+  PhysicsDriverDeath,
+  LastReason
 };
 
 const uint8_t ShotInfoExpired  = 'e';

@@ -1383,7 +1383,7 @@ static bool setVariables(void *data)
   for (uint16_t i = 0; i < numVars; i++) {
     data = nboUnpackStdString(data, key);
     data = nboUnpackStdString(data, value);
-	BZDB.set(key, value);
+    BZDB.set(key, value);
   }
   return true;
 }

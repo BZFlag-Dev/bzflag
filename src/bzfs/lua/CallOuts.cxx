@@ -163,7 +163,7 @@ static int GetPlayerBZID(lua_State* L);
 static int GetPlayerPaused(lua_State* L);
 static int GetPlayerPosition(lua_State* L);
 static int GetPlayerVelocity(lua_State* L);
-static int GetPlayerRotation(lua_State* L);
+static int GetPlayerAngle(lua_State* L);
 static int GetPlayerAngVel(lua_State* L);
 static int GetPlayerStatus(lua_State* L);
 static int GetPlayerFalling(lua_State* L);
@@ -198,6 +198,12 @@ static int SetPlayerCustomData(lua_State* L);
 
 static int GetPlayerAutoPilot(lua_State* L);
 static int SetPlayerAutoPilot(lua_State* L);
+
+static int SetPlayerState(lua_State* L);
+static int SetPlayerPosition(lua_State* L);
+static int SetPlayerVelocity(lua_State* L);
+static int SetPlayerAngle(lua_State* L);
+static int SetPlayerAngVel(lua_State* L);
 
 static int ChangePlayerTeam(lua_State* L);
 
@@ -361,7 +367,7 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetPlayerPaused);
   PUSH_LUA_CFUNC(L, GetPlayerPosition);
   PUSH_LUA_CFUNC(L, GetPlayerVelocity);
-  PUSH_LUA_CFUNC(L, GetPlayerRotation);
+  PUSH_LUA_CFUNC(L, GetPlayerAngle);
   PUSH_LUA_CFUNC(L, GetPlayerAngVel);
   PUSH_LUA_CFUNC(L, GetPlayerFalling);
   PUSH_LUA_CFUNC(L, GetPlayerCrossingWall);
@@ -395,6 +401,12 @@ bool CallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, GetPlayerAutoPilot);
   PUSH_LUA_CFUNC(L, SetPlayerAutoPilot);
+
+  PUSH_LUA_CFUNC(L, SetPlayerState);
+  PUSH_LUA_CFUNC(L, SetPlayerPosition);
+  PUSH_LUA_CFUNC(L, SetPlayerVelocity);
+  PUSH_LUA_CFUNC(L, SetPlayerAngle);
+  PUSH_LUA_CFUNC(L, SetPlayerAngVel);
 
   PUSH_LUA_CFUNC(L, ChangePlayerTeam);
 
@@ -1017,7 +1029,7 @@ static int GetPlayerVelocity(lua_State* L)
 }
 
 
-static int GetPlayerRotation(lua_State* L)
+static int GetPlayerAngle(lua_State* L)
 {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
@@ -1389,6 +1401,191 @@ static int SetPlayerAutoPilot(lua_State* L)
   GameKeeper::Player* player = getPlayerByIndex(pid);
   player->setAutoPilot(lua_tobool(L, 2));
   return 0;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+static bool sendForceState(GameKeeper::Player* gkPlayer,
+                           const fvec3* pos,   const fvec3* vel,
+                           const float* angle, const float* angvel)
+{
+  if (!gkPlayer->netHandler) {
+    return false;
+  }
+
+  uint8_t bits = 0;
+  if (pos)    { bits |= ForceStatePosBit;    }
+  if (vel)    { bits |= ForceStateVelBit;    }
+  if (angle)  { bits |= ForceStateAngleBit;  }
+  if (angvel) { bits |= ForceStateAngVelBit; }
+
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUInt8((uint8_t)gkPlayer->getIndex());
+  msg->packUInt8(bits);
+  if (pos)    { msg->packFVec3(*pos);    }
+  if (vel)    { msg->packFVec3(*vel);    }
+  if (angle)  { msg->packFloat(*angle);  }
+  if (angvel) { msg->packFloat(*angvel); }
+
+  msg->send(gkPlayer->netHandler, MsgForceState);
+
+  return true;
+}
+
+
+static fvec3 checkFVec3Table(lua_State* L, int index)
+{
+  index = (index > 0) ? index : (lua_gettop(L) + index + 1);
+
+  luaL_checktype(L, index, LUA_TTABLE);
+
+  fvec3 v(0.0f, 0.0f, 0.0f);
+
+  lua_getfield(L, index, "x");
+  if (lua_israwnumber(L, -1)) {
+                                 v.x = luaL_checkfloat(L, -1); lua_pop(L, 1);
+    lua_getfield(L, index, "y"); v.y = luaL_checkfloat(L, -1); lua_pop(L, 1);
+    lua_getfield(L, index, "z"); v.z = luaL_checkfloat(L, -1); lua_pop(L, 1);
+    
+  }
+  else {
+    lua_pop(L, 1);
+    lua_rawgeti(L, index, 1); v.x = luaL_checkfloat(L, -1); lua_pop(L, 1);
+    lua_rawgeti(L, index, 2); v.y = luaL_checkfloat(L, -1); lua_pop(L, 1);
+    lua_rawgeti(L, index, 3); v.z = luaL_checkfloat(L, -1); lua_pop(L, 1);
+  }
+  return v;
+}
+
+
+static int SetPlayerState(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  const int tableIndex = 2;
+  luaL_checktype(L, tableIndex, LUA_TTABLE);
+
+  bool havePos    = false;
+  bool haveVel    = false;
+  bool haveAngle  = false;
+  bool haveAngVel = false;
+
+  fvec3 pos(0.0f, 0.0f, 0.0f);
+  fvec3 vel(0.0f, 0.0f, 0.0f);
+  float angle = 0.0f;
+  float angvel = 0.0f;;
+
+  lua_getfield(L, tableIndex, "pos");
+  if (!lua_isnil(L, -1)) {
+    pos = checkFVec3Table(L, -1);
+    havePos = true;
+  }
+  lua_pop(L, 1);
+
+  lua_getfield(L, tableIndex, "vel");
+  if (!lua_isnil(L, -1)) {
+    vel = checkFVec3Table(L, -1);
+    haveVel = true;
+  }
+  lua_pop(L, 1);
+
+  lua_getfield(L, tableIndex, "angle");
+  if (!lua_isnil(L, -1)) {
+    angle = luaL_checkfloat(L, -1);
+    haveAngle = true;
+  }
+  lua_pop(L, 1);
+
+  lua_getfield(L, tableIndex, "angvel");
+  if (!lua_isnil(L, -1)) {
+    angvel = luaL_checkfloat(L, -1);
+    haveAngVel = true;
+  }
+  lua_pop(L, 1);
+
+  lua_pushboolean(L, sendForceState(player, havePos    ? &pos    : NULL,
+                                            haveVel    ? &vel    : NULL,
+                                            haveAngle  ? &angle  : NULL,
+                                            haveAngVel ? &angvel : NULL));
+    
+  return 1;
+}
+
+
+static int SetPlayerPosition(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  fvec3 pos(0.0f, 0.0f, 0.0f);
+  pos.x = luaL_checkfloat(L, 2);
+  pos.y = luaL_checkfloat(L, 3);
+  pos.z = luaL_checkfloat(L, 4);
+
+  lua_pushboolean(L, sendForceState(player, &pos, NULL, NULL, NULL));
+  return 1;
+}
+
+
+static int SetPlayerVelocity(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  fvec3 vel(0.0f, 0.0f, 0.0f);
+  vel.x = luaL_checkfloat(L, 2);
+  vel.y = luaL_checkfloat(L, 3);
+  vel.z = luaL_checkfloat(L, 4);
+
+  lua_pushboolean(L, sendForceState(player, NULL, &vel, NULL, NULL));
+  return 1;
+}
+
+
+static int SetPlayerAngle(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  const float angle = luaL_checkfloat(L, 2);
+
+  lua_pushboolean(L, sendForceState(player, NULL, NULL, &angle, NULL));
+  return 1;
+}
+
+
+static int SetPlayerAngVel(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  const float angvel = luaL_checkfloat(L, 2);
+
+  lua_pushboolean(L, sendForceState(player, NULL, NULL, NULL, &angvel));
+  return 1;
 }
 
 

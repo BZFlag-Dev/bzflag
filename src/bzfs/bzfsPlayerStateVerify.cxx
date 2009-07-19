@@ -322,11 +322,18 @@ bool doHeightChecks(GameKeeper::Player *playerData, PlayerState &state)
     maxHeight += playerData->player.jumpStartPos;
   }
 
+
   if (state.pos.z > maxHeight) {
-    logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-		    playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
-    sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was too high.");
-    removePlayer(playerData->getIndex(), "too high", true);
+    if (BZDB.isTrue("_heightChecksLogOnly")) {
+      logDebugMessage(1, "Logging Player %s [%d] jumped too high [max: %f height: %f]\n",
+		      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
+    }
+    else {
+      logDebugMessage(1, "Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
+                      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
+      sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was too high.");
+      removePlayer(playerData->getIndex(), "too high", true);
+    }
     return false;
   }
   return true;

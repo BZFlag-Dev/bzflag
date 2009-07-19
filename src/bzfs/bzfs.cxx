@@ -125,7 +125,7 @@ uint16_t maxPlayers = MaxPlayers;
 uint16_t curMaxPlayers = 0;
 
 float maxWorldHeight = 0.0f;
-CheatProtectionOptions	cheatProtectionOptions;
+CheatProtectionOptions cheatProtectionOptions;
 
 bool publiclyDisconnected = false;
 
@@ -3282,14 +3282,14 @@ static void adjustTolerances()
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(i);
   while (phydrv) {
     if (!phydrv->getIsDeath()) {
-      const fvec3& v = phydrv->getLinearVel();
-      const float av = phydrv->getAngularVel();
-      const float rv = phydrv->getRadialVel();
+      const fvec3& lv = phydrv->getLinearVel();
+      const float  av = phydrv->getAngularVel();
+      const float  rv = phydrv->getRadialVel();
       if (!phydrv->getIsSlide() &&
-	  ((v.x != 0.0f) || (v.y != 0.0f) || (av != 0.0f) || (rv != 0.0f))) {
+	  ((lv != fvec3(0.0f, 0.0f, 0.0f)) || (av != 0.0f) || (rv != 0.0f))) {
 	cheatProtectionOptions.doSpeedChecks = false;
       }
-      if (v.z > 0.0f) {
+      if (lv.z > 0.0f) {
 	cheatProtectionOptions.doHeightChecks = false;
       }
     }

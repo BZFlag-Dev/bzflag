@@ -108,6 +108,7 @@ PACKET_LIST_ENTRY(MsgExit)
 PACKET_LIST_ENTRY(MsgFlagType)
 PACKET_LIST_ENTRY(MsgFlagUpdate)
 PACKET_LIST_ENTRY(MsgFetchResources)
+PACKET_LIST_ENTRY(MsgForceState)
 PACKET_LIST_ENTRY(MsgGrabFlag)
 PACKET_LIST_ENTRY(MsgGMUpdate)
 PACKET_LIST_ENTRY(MsgGetWorld)
@@ -371,9 +372,7 @@ static std::string strPlayer(uint16_t id)
 
 static std::string strVector(const fvec3& vector)
 {
-  std::string str = TextUtils::format("(%8.3f, %8.3f, %8.3f)",
-    vector[0], vector[1], vector[2]);
-  return str;
+  return "(" + vector.tostring(NULL, ", ") + ")";
 }
 
 
@@ -424,11 +423,11 @@ static MsgStringList handleMsgAdminInfo(const PacketInfo& pi)
   uint8_t count, ipsize, player;
   Address address;
   uint16_t i;
-  d = nboUnpackUInt8 (d, count);
+  d = nboUnpackUInt8(d, count);
   listPush(list, 1, "count: %i", count);
   for (i=0 ; i < count; i++) {
-    d = nboUnpackUInt8 (d, ipsize);
-    d = nboUnpackUInt8 (d, player);
+    d = nboUnpackUInt8(d, ipsize);
+    d = nboUnpackUInt8(d, player);
     d = address.unpack(d);
 
     listPush(list, 2, "player:     %s", strPlayer(player).c_str());
@@ -529,7 +528,7 @@ static MsgStringList handleMsgCaptureFlag(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint16_t team;
-  d = nboUnpackUInt16 (d, team);
+  d = nboUnpackUInt16(d, team);
   listPush(list, 1, "team: %s", strTeam(team).c_str());
 
   return list;
@@ -560,8 +559,8 @@ static MsgStringList handleMsgDropFlag(const PacketInfo& pi)
   Flag flag;
   uint8_t player;
   uint16_t flagid;
-  d = nboUnpackUInt8 (d, player);
-  d = nboUnpackUInt16 (d, flagid);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt16(d, flagid);
   d = flag.unpack(d);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
   listPush(list, 1, "flag: %s", strFlag(flagid).c_str());
@@ -601,11 +600,11 @@ static MsgStringList handleMsgFlagUpdate(const PacketInfo& pi)
   void *d = (void*)pi.data;
   uint16_t count, index;
   int i;
-  d = nboUnpackUInt16 (d, count);
+  d = nboUnpackUInt16(d, count);
   listPush(list, 1, "count: %i", count);
   for (i = 0; i < (int) count; i++) {
     Flag flag;
-    d = nboUnpackUInt16 (d, index);
+    d = nboUnpackUInt16(d, index);
     d = flag.unpack(d);
     if (useStateTracking) {
       flagList[index] = flag.type->flagAbbv;
@@ -628,6 +627,38 @@ static MsgStringList handleMsgFetchResources(const PacketInfo& pi)
 }
 
 
+static MsgStringList handleMsgForceState(const PacketInfo& pi)
+{
+  MsgStringList list = listMsgBasics(pi);
+
+  void *d = (void*)pi.data;
+  uint8_t player;
+  uint8_t bits;
+  fvec3 tmpfvec3;
+  float tmpfloat;
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt8(d, bits);
+  if ((bits & ForceStatePosBit) != 0) {
+    d = nboUnpackFVec3(d, tmpfvec3);
+    listPush(list, 1, "pos:    %s", strVector(tmpfvec3).c_str());
+  }
+  if ((bits & ForceStateVelBit) != 0) {
+    d = nboUnpackFVec3(d, tmpfvec3);
+    listPush(list, 1, "vel:    %s", strVector(tmpfvec3).c_str());
+  }
+  if ((bits & ForceStateAngleBit) != 0) {
+    d = nboUnpackFloat(d, tmpfloat);
+    listPush(list, 1, "angle:  %g", tmpfloat);
+  }
+  if ((bits & ForceStateAngVelBit) != 0) {
+    d = nboUnpackFloat(d, tmpfloat);
+    listPush(list, 1, "angvel: %g", tmpfloat);
+  }
+  
+  return list;
+}
+
+
 static MsgStringList handleMsgGrabFlag(const PacketInfo& pi)
 {
   MsgStringList list = listMsgBasics(pi);
@@ -636,8 +667,8 @@ static MsgStringList handleMsgGrabFlag(const PacketInfo& pi)
   Flag flag;
   uint8_t player;
   uint16_t flagid;
-  d = nboUnpackUInt8 (d, player);
-  d = nboUnpackUInt16 (d, flagid);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt16(d, flagid);
   d = flag.unpack(d);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
   listPush(list, 1, "flag: %s", strFlag(flagid).c_str());
@@ -654,7 +685,7 @@ static MsgStringList handleMsgGMUpdate(const PacketInfo& pi)
   uint8_t target;
   ShotUpdate shot;
   d = shot.unpack(d);
-  d = nboUnpackUInt8 (d, target);
+  d = nboUnpackUInt8(d, target);
   listPush(list, 1, "player:   %s", strPlayer(shot.player).c_str());
   listPush(list, 1, "target:   %s", strPlayer(target).c_str());
   listPush(list, 2, "id:       %i", shot.id);
@@ -798,8 +829,8 @@ static MsgStringList handleMsgMessage(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t src, dst;
-  d = nboUnpackUInt8 (d, src);
-  d = nboUnpackUInt8 (d, dst);
+  d = nboUnpackUInt8(d, src);
+  d = nboUnpackUInt8(d, dst);
   listPush(list, 1, "src: %s", strPlayer(src).c_str());
   listPush(list, 1, "dst: %s", strPlayer(dst).c_str());
   listPush(list, 1, "message: \"%s\"", (char*) d);
@@ -830,8 +861,8 @@ static MsgStringList handleMsgNewRabbit(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t player, paused;
-  d = nboUnpackUInt8 (d, player);
-  d = nboUnpackUInt8 (d, paused);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt8(d, paused);
 
   return list;
 }
@@ -851,8 +882,8 @@ static MsgStringList handleMsgPause(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t player, paused;
-  d = nboUnpackUInt8 (d, player);
-  d = nboUnpackUInt8 (d, paused);
+  d = nboUnpackUInt8(d, player);
+  d = nboUnpackUInt8(d, paused);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
   listPush(list, 1, "paused: %i", paused);
 
@@ -867,7 +898,7 @@ static MsgStringList handleMsgPlayerData(const PacketInfo& pi)
   void *d = (void*)pi.data;
   uint8_t player;
   std::string key, value;
-  d = nboUnpackUInt8 (d, player);
+  d = nboUnpackUInt8(d, player);
   d = nboUnpackStdString(d, key);
   d = nboUnpackStdString(d, value);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
@@ -886,11 +917,11 @@ static MsgStringList handleMsgPlayerInfo(const PacketInfo& pi)
   uint8_t count, player, properties;
   Address address;
   uint16_t i;
-  d = nboUnpackUInt8 (d, count);
+  d = nboUnpackUInt8(d, count);
   listPush(list, 1, "count: %i", count);
   for (i=0 ; i < count; i++) {
-    d = nboUnpackUInt8 (d, player);
-    d = nboUnpackUInt8 (d, properties);
+    d = nboUnpackUInt8(d, player);
+    d = nboUnpackUInt8(d, properties);
 
     std::string props;
     if (properties & IsRegistered) {
@@ -973,7 +1004,7 @@ static MsgStringList handleMsgRemovePlayer(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t index;
-  d = nboUnpackUInt8 (d, index);
+  d = nboUnpackUInt8(d, index);
   listPush(list, 1, "player: %s", strPlayer(index).c_str());
   if (useStateTracking) {
     playerList.erase(index);
@@ -1037,13 +1068,13 @@ static MsgStringList handleMsgScore(const PacketInfo& pi)
   void *d = (void*)pi.data;
   uint8_t count, player;
   uint16_t wins, losses, tks, i;
-  d = nboUnpackUInt8 (d, count);
+  d = nboUnpackUInt8(d, count);
   listPush(list, 1, "count: %i", count);
   for (i=0; i < count; i++) {
-    d = nboUnpackUInt8 (d, player);
-    d = nboUnpackUInt16 (d, wins);
-    d = nboUnpackUInt16 (d, losses);
-    d = nboUnpackUInt16 (d, tks);
+    d = nboUnpackUInt8(d, player);
+    d = nboUnpackUInt16(d, wins);
+    d = nboUnpackUInt16(d, losses);
+    d = nboUnpackUInt16(d, tks);
     listPush(list, 2, "player: %s", strPlayer(player).c_str());
     listPush(list, 3, "wins: %i  losses: %i  tks: %i", wins, losses, tks);
   }
