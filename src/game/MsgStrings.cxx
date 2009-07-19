@@ -191,7 +191,7 @@ void MsgStrings::reset()
     playerList[i] = Team::getName(TeamColor(250 - i));
   }
 
-  // set default DB entries
+  // set default DB entries -- FIXME -- this does not belong here?
   for (i = 0; i < numGlobalDBItems; ++i) {
     assert(globalDBItems[i].name != NULL);
     if (globalDBItems[i].value != NULL) {
@@ -300,18 +300,10 @@ static void listPush(MsgStringList &list, int level, const char *fmt, ...)
   mstr.text += buffer;
   if (useColor) {
     switch (level) {
-      case 0:
-	mstr.color = ANSI_STR_FG_MAGENTA;
-	break;
-      case 1:
-	mstr.color = ANSI_STR_FG_BLUE;
-	break;
-      case 2:
-	mstr.color = ANSI_STR_FG_CYAN;
-	break;
-      case 3:
-	mstr.color = ANSI_STR_FG_GREEN;
-	break;
+      case 0: { mstr.color = ANSI_STR_FG_MAGENTA; break; }
+      case 1: { mstr.color = ANSI_STR_FG_BLUE;    break; }
+      case 2: { mstr.color = ANSI_STR_FG_CYAN;    break; }
+      case 3: { mstr.color = ANSI_STR_FG_GREEN;   break; }
     }
   }
 
@@ -692,8 +684,15 @@ static MsgStringList handleMsgGameSettings(const PacketInfo& pi)
 
 static MsgStringList handleMsgGameTime(const PacketInfo& pi)
 {
-  // not recorded
   MsgStringList list = listMsgBasics(pi);
+
+  void *d = (void*)pi.data;
+  uint32_t msb, lsb;
+  d = nboUnpackUInt32(d, msb);
+  d = nboUnpackUInt32(d, lsb);
+  uint64_t netTime = ((uint64_t)msb << 32) | (uint64_t)lsb;
+  listPush(list, 1, "time: %f", (double)netTime * 1.0e-6);
+
   return list;
 }
 
@@ -1268,8 +1267,13 @@ static MsgStringList handleMsgServerControl(const PacketInfo& pi)
 
 static MsgStringList handleMsgLagPing(const PacketInfo& pi)
 {
-  // not recorded
   MsgStringList list = listMsgBasics(pi);
+
+  void *d = (void*)pi.data;
+  uint16_t seqno;
+  d = nboUnpackUInt16(d, seqno);
+  listPush(list, 1, "seqno: %u", seqno);
+
   return list;
 }
 

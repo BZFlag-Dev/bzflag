@@ -108,12 +108,6 @@ void Obstacle::setZFlip()
 }
 
 
-bool Obstacle::getZFlip() const
-{
-  return zFlip;
-}
-
-
 bool Obstacle::isCrossing(const fvec3&, float, float, float, float, fvec4*) const
 {
   // never crossing by default

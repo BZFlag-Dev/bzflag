@@ -1748,27 +1748,18 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
   static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
   if ((debugMessages >= 1) && !BZDB.isTrue("_forbidDebug")) {
     if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
-      if (debugMessages <= 1) {
-        const char *p = (const char*)&code;
-        showMessage(TextUtils::format("%s: Net Message \"%c%c\": Size %d  <%s>",
-                                      TimeKeeper::getCurrent().timestamp(),
-                                      p[1], p[0], len,
-                                      MsgStrings::strMsgCode(code)));
-      }
-      else {
-        // use the fancier MsgStrings setup
-        const int msgLevel = (debugMessages - 2);
-        MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
-        for (size_t i = 0; i < msgList.size(); i++) {
-          if (msgList[i].level <= msgLevel) {
-            std::string prefix = "netdbg: ";
-            prefix += TimeKeeper::getCurrent().timestamp();
-            prefix += " ";
-            for (int lvl = 0; lvl < msgList[i].level; lvl++) {
-              prefix += "  ";
-            }
-            showMessage(prefix + msgList[i].color + msgList[i].text);
+      // use the fancier MsgStrings setup
+      const int msgLevel = (debugMessages - 1);
+      MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
+      for (size_t i = 0; i < msgList.size(); i++) {
+        if (msgList[i].level <= msgLevel) {
+          std::string prefix = "netdbg: ";
+          prefix += TimeKeeper::getCurrent().timestamp();
+          prefix += " ";
+          for (int lvl = 0; lvl < msgList[i].level; lvl++) {
+            prefix += "  ";
           }
+          showMessage(prefix + msgList[i].color + msgList[i].text);
         }
       }
     }

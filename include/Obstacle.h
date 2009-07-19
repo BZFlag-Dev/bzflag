@@ -132,25 +132,25 @@ class Obstacle {
   virtual void printOBJ(std::ostream&, const std::string&) const { return; }
 
   /** This function returns the extents of this obstacle. */
-  const Extents& getExtents() const;
+  inline const Extents& getExtents() const { return extents; }
 
   /** This function returns the position of this obstacle. */
-  const fvec3& getPosition() const;
+  inline const fvec3& getPosition() const { return pos; }
 
   /** This function returns the sizes of this obstacle. */
-  const fvec3& getSize() const;
+  inline const fvec3& getSize() const { return size; }
 
   /** This function returns the obstacle's rotation around its own Y axis. */
-  float getRotation() const;
+  inline float getRotation() const { return angle; }
 
   /** This function returns half the obstacle's X size. */
-  float getWidth() const;
+  inline float getWidth() const { return size.x; }
 
   /** This function returns half the obstacle's Y size. */
-  float getBreadth() const;
+  inline float getBreadth() const { return size.y; }
 
   /** This function returns the obstacle's full height. */
-  float getHeight() const;
+  inline float getHeight() const { return size.z; }
 
 
   uint32_t getListID() const { return listID;}
@@ -177,7 +177,9 @@ class Obstacle {
 
   /** This function computes the three-dimensional surface normal of this
       obstacle at the point @c p. The normal is stored in @c n. */
-  virtual void get3DNormal(const fvec3& p, fvec3& n) const;
+  virtual void get3DNormal(const fvec3& p, fvec3& n) const {
+    return getNormal(p, n);
+  }
 
   /** This function checks if a tank, approximated as a cylinder with base
       centre in point @c p and radius @c radius, intersects this obstacle. */
@@ -229,22 +231,22 @@ class Obstacle {
 
   /** This function returns @c true if tanks can pass through this object,
       @c false if they can't. */
-  unsigned char isDriveThrough() const;
+  inline unsigned char isDriveThrough() const { return driveThrough; }
 
   /** This function returns @c true if bullets can pass through this object,
       @c false if they can't. */
-  unsigned char isShootThrough() const;
+  inline unsigned char isShootThrough() const { return shootThrough; }
 
   void setDriveThrough(unsigned char f) { driveThrough = f; }
   void setShootThrough(unsigned char f) { shootThrough = f; }
 
   /** This function returns @c true if tanks and bullets can pass through
       this object, @c false if either can not */
-  bool isPassable() const;
+  inline bool isPassable() const { return (driveThrough && shootThrough); }
 
   /** This function returns @c true if bullets will bounce off of this
       object, @c false if they simply die on contact */
-  bool canRicochet() const;
+  inline bool canRicochet() const { return ricochet; }
 
   /** This function sets the "zFlip" flag of this obstacle, i.e. if it's
       upside down. */
@@ -253,7 +255,7 @@ class Obstacle {
   /** This function returns the "zFlip" flag of this obstacle.
       @see setZFlip()
   */
-  bool getZFlip() const;
+  inline bool getZFlip() const { return zFlip; }
 
   // where did the object come from?
   enum SourceBits {
@@ -261,14 +263,20 @@ class Obstacle {
     GroupDefSource  = (1 << 0),
     ContainerSource = (1 << 1)
   };
-  void setSource(char);
-  char getSource() const;
-  bool isFromWorldFile() const;
-  bool isFromGroupDef()  const;
-  bool isFromContainer() const;
+  void setSource(char _source) { source = _source; }
+  inline char getSource()       const { return source; }
+  inline bool isFromWorldFile() const {
+    return (source == WorldSource);
+  }
+  inline bool isFromGroupDef()  const {
+    return ((source & GroupDefSource) != 0);
+  }
+  inline bool isFromContainer() const {
+    return ((source & ContainerSource) != 0);
+  }
 
   /** This function resets the object ID counter for printing OBJ files */
-  static void resetObjCounter();
+  static inline void resetObjCounter() { objCounter = 0; }
 
   // inside sceneNodes
   void addInsideSceneNode(SceneNode* node);
@@ -315,8 +323,8 @@ class Obstacle {
 		     fvec3& normal) const;
 
   protected:
-    static int  getObjCounter();
-    static void incObjCounter();
+    static inline int  getObjCounter() { return objCounter; }
+    static inline void incObjCounter() { objCounter++; }
 
   protected:
     Extents extents;
@@ -338,114 +346,6 @@ class Obstacle {
   private:
     static int objCounter;
 };
-
-
-//
-// Obstacle
-//
-
-inline const Extents& Obstacle::getExtents() const
-{
-  return extents;
-}
-
-inline const fvec3& Obstacle::getPosition() const
-{
-  return pos;
-}
-
-inline const fvec3& Obstacle::getSize() const
-{
-  return size;
-}
-
-inline float Obstacle::getRotation() const
-{
-  return angle;
-}
-
-inline float Obstacle::getWidth() const
-{
-  return size.x;
-}
-
-inline float Obstacle::getBreadth() const
-{
-  return size.y;
-}
-
-inline float Obstacle::getHeight() const
-{
-  return size.z;
-}
-
-
-inline void Obstacle::get3DNormal(const fvec3& p, fvec3& n) const
-{
-  getNormal(p, n);
-}
-
-
-inline unsigned char Obstacle::isDriveThrough() const
-{
-  return driveThrough;
-}
-
-inline unsigned char Obstacle::isShootThrough() const
-{
-  return shootThrough;
-}
-
-inline bool Obstacle::isPassable() const
-{
-  return (driveThrough && shootThrough);
-}
-
-inline bool Obstacle::canRicochet() const
-{
-  return ricochet;
-}
-
-
-inline void Obstacle::setSource(char _source)
-{
-  source = _source;
-  return;
-}
-
-inline char Obstacle::getSource() const
-{
-  return source;
-}
-
-inline bool Obstacle::isFromWorldFile() const
-{
-  return (source == WorldSource);
-}
-
-inline bool Obstacle::isFromGroupDef() const
-{
-  return ((source & GroupDefSource) != 0);
-}
-
-inline bool Obstacle::isFromContainer() const
-{
-  return ((source & ContainerSource) != 0);
-}
-
-
-inline int Obstacle::getObjCounter()
-{
-  return objCounter;
-}
-inline void Obstacle::incObjCounter()
-{
-  objCounter++;
-}
-inline void Obstacle::resetObjCounter()
-{
-  objCounter = 0;
-}
 
 
 #endif // BZF_OBSTACLE_H

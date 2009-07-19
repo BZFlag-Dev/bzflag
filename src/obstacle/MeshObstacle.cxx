@@ -640,22 +640,21 @@ bool MeshObstacle::isValid() const
 
 bool MeshObstacle::containsPoint(const fvec3& point) const
 {
-  // this should use the CollisionManager's rayTest function
-  return containsPointNoOctree(point);
-}
-
-
-bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
-{
   if (checkCount <= 0) {
     return false;
   }
 
   const CheckType ct0 = (CheckType)checkTypes[0];
-  if (ct0 == InsideParity) {
-    return parityCheckNoOctree(point, true);
-  } else if (ct0 == OutsideParity) {
-    return parityCheckNoOctree(point, false);
+  switch (ct0) {
+    case Convex:             { return containsPointConvex(point, false); }
+    case ConvexTrace:        { return containsPointConvex(point, true);  }
+    case InsideParity:       { return containsPointParity(point, true,  false); }
+    case OutsideParity:      { return containsPointParity(point, false, false); }
+    case InsideParityTrace:  { return containsPointParity(point, true,  true);  }
+    case OutsideParityTrace: { return containsPointParity(point, false, true);  }
+    default: {
+      break; // pass through
+    }
   }
 
   int c, f;
@@ -707,17 +706,18 @@ bool MeshObstacle::containsPointNoOctree(const fvec3& point) const
 }
 
 
-bool MeshObstacle::parityCheck(const fvec3& point, bool inside) const
+bool MeshObstacle::containsPointConvex(const fvec3& point, bool trace) const
 {
   
-  return inside && point.x != 0.0f; // FIXME
+  return trace && point.x != 0.0f; // FIXME
 }
 
 
-bool MeshObstacle::parityCheckNoOctree(const fvec3& point, bool inside) const
+bool MeshObstacle::containsPointParity(const fvec3& point,
+                                       bool inside, bool trace) const
 {
   
-  return inside && point.x != 0.0f; // FIXME
+  return inside && trace && point.x != 0.0f; // FIXME
 }
 
 
@@ -1033,10 +1033,15 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 
   int i;
   for (i = 0; i < checkCount; i++) {
-    if (checkTypes[i] == InsideCheck) {
-      out << indent << "  inside"  << checkPoints[i] << std::endl;
-    } else {
-      out << indent << "  outside" << checkPoints[i] << std::endl;
+    switch (checkTypes[i]) {
+      case InsideCheck: {
+        out << indent << "  inside"  << checkPoints[i] << std::endl;
+        break;
+      }
+      case OutsideCheck: {
+        out << indent << "  outside"  << checkPoints[i] << std::endl;
+        break;
+      }
     }
   }
   for (i = 0; i < vertexCount; i++) {

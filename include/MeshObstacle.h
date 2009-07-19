@@ -70,15 +70,18 @@ class MeshObstacle : public Obstacle {
     void copyFace(int face, MeshObstacle* mesh) const;
 
     enum CheckType {
-      InsideCheck      = 0,
-      OutsideCheck     = 1,
-      InsideCheckAll   = 2,
-      OutsideCheckAll  = 3,
-      InsideParity     = 4,
-      OutsideParity    = 5,
-      InsideParityAll  = 6,
-      OutsideParityAll = 7
+      InsideCheck        = 0,
+      OutsideCheck       = 1,
+      InsideCheckTrace   = 2,
+      OutsideCheckTrace  = 3,
+      InsideParity       = 4,
+      OutsideParity      = 5,
+      InsideParityTrace  = 6,
+      OutsideParityTrace = 7,
+      Convex             = 8,
+      ConvexTrace        = 9
     };
+    
 
     const char*  getType() const;
     ObstacleType getTypeID() const { return meshType; }
@@ -107,7 +110,6 @@ class MeshObstacle : public Obstacle {
 		      float height, fvec3& normal) const;
 
     bool containsPoint(const fvec3& point) const;
-    bool containsPointNoOctree(const fvec3& point) const;
 
     inline const char*  getCheckTypes()      const { return checkTypes;      }
     inline const fvec3* getCheckPoints()     const { return checkPoints;     }
@@ -155,8 +157,8 @@ class MeshObstacle : public Obstacle {
 			  const std::vector<int>& _texcoords,
 			  const fvec3**& v, const fvec3**& n, const fvec2**& t);
     void makeEdges();
-    bool parityCheck(const fvec3& point, bool inside) const;
-    bool parityCheckNoOctree(const fvec3& point, bool inside) const;
+    bool containsPointConvex(const fvec3& p, bool trace) const;
+    bool containsPointParity(const fvec3& p, bool inside, bool trace) const;
 
   private:
     static const char* typeName;

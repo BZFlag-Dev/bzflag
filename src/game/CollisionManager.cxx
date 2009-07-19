@@ -560,7 +560,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
 	  fullList.count++;
 	  mesh->collisionState = false;
 	}
-	else if (mesh->containsPointNoOctree(point)) {
+	else if (mesh->containsPoint(point)) {
 	  fullList.list[fullList.count] = (Obstacle*) mesh;
 	  fullList.count++;
 	}
