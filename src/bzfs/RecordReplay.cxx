@@ -1383,13 +1383,7 @@ static bool setVariables(void *data)
   for (uint16_t i = 0; i < numVars; i++) {
     data = nboUnpackStdString(data, key);
     data = nboUnpackStdString(data, value);
-    if (key != "poll") {
-      // do not save the poll state, it can
-      // lead to SEGV's when players leave
-      // and there is no ongoing poll
-      // [see bzfs.cxx removePlayer()]
-      BZDB.set(key, value);
-    }
+	BZDB.set(key, value);
   }
   return true;
 }

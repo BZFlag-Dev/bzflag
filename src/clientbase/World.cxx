@@ -856,8 +856,7 @@ static void writeBZDBvar(const std::string& name, void *userData)
 {
   std::ofstream& out = *((std::ofstream*)userData);
   if ((BZDB.getPermission(name) == StateDatabase::Server)
-      && (BZDB.get(name) != BZDB.getDefault(name))
-      && (name != "poll")) {
+      && (BZDB.get(name) != BZDB.getDefault(name))) {
     std::string qmark = "";
     if (BZDB.get(name).find(' ') != std::string::npos) {
       qmark = '"';

@@ -421,7 +421,7 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
 
 static bool varIsEqual(const std::string& name)
 {
-  // avoid "poll"
+  // avoid private variables
   if (name[0] != '_') {
     return true;
   }

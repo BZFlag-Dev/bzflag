@@ -3795,7 +3795,6 @@ static void setupVoteArbiter(void)
 
     // override the default voter count to the max number of players possible
     votingArbiter->setAvailableVoters(maxPlayers);
-    BZDB.setPermission("poll", StateDatabase::ReadOnly);
   }
 }
 

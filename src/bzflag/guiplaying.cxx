@@ -3635,7 +3635,7 @@ void leaveGame()
 static void addVarToAutoComplete(const std::string &name, void* /*userData*/)
 {
   if ((name.size() <= 0) || ((name[0] != '_') && (name[0] != '$'))) {
-    return; // we're skipping "poll"
+    return; // skip private variables
   }
 
   if (BZDB.getPermission(name) == StateDatabase::Server) {
