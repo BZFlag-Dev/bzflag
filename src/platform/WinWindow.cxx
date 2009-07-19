@@ -165,17 +165,12 @@ void			WinWindow::setFullscreen(bool on)
     SetWindowLong(hwnd, GWL_STYLE, style);
 
     // take up the whole screen
-    if (display->isFullScreenOnly())
-      MoveWindow(hwnd, 0, 0,
-		  display->getFullWidth(),
-		  display->getFullHeight(), FALSE);
-    else
-      MoveWindow(hwnd, 0, 0,
-		  GetDeviceCaps(hDC, HORZRES),
-		  GetDeviceCaps(hDC, VERTRES), FALSE);
+    MoveWindow(hwnd, 0, 0,
+	       GetDeviceCaps(hDC, HORZRES),
+	       GetDeviceCaps(hDC, VERTRES), FALSE);
 
     fullscreen = true;
-  } else if (!display->isFullScreenOnly()) {
+  } else {
     // reset the resolution if we changed it before
     display->setDefaultResolution();
 
@@ -226,9 +221,6 @@ void			WinWindow::setFullscreen(bool on)
 
 bool			WinWindow::getFullscreen() const
 {
-  if (display->isFullScreenOnly())
-    return true;
-
   return fullscreen;
 }
 
@@ -410,9 +402,6 @@ void			WinWindow::createChild()
 			0, 0, width, height, hwnd, NULL,
 			display->getRep()->hInstance, NULL);
   if (hwndChild == NULL) return;
-
-  if (display->isFullScreenOnly())
-    setFullscreen(true);
 
   // get DC
   hDCChild = GetDC(hwndChild);

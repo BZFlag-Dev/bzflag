@@ -179,7 +179,7 @@ WinDisplay::WinDisplay(const char* displayName, const char*) :
   rep = new Rep(displayName);
 
   // get resolutions
-  if (isValid() && !isFullScreenOnly()) {
+  if (isValid()) {
     int numModes, currentMode;
     ResInfo** resInfo = getVideoFormats(numModes, currentMode);
 
@@ -205,11 +205,6 @@ WinDisplay::~WinDisplay()
   setDefaultResolution();
   delete[] resolutions;
   rep->unref();
-}
-
-bool			WinDisplay::isFullScreenOnly() const
-{
-  return false;
 }
 
 int			WinDisplay::getFullWidth() const

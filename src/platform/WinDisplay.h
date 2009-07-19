@@ -39,7 +39,6 @@ public:
 
   bool		setDefaultResolution() const;
 
-  bool		isFullScreenOnly() const;
   int		getFullWidth() const;
   int		getFullHeight() const;
 
