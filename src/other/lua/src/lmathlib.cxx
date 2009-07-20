@@ -24,7 +24,7 @@
 
 /* BZ - fix for g++ HUGE_VAL problem */
 /*    - see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=23139 */
-#ifdef __cplusplus
+#if defined(__cplusplus) && defined(__GNUC__)
   #if (__GNUC__ <= 3) || ((__GNUC__ == 4) && (__GNUC_MINOR__ == 0))
     #include <limits>
     #undef  HUGE_VAL
