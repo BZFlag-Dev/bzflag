@@ -113,6 +113,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     const char *tokBadIdentifier = "TOKBAD: ";
     const char *unknownPlayer = "UNK: ";
     const char *bzIdentifier = "BZID: ";
+	const char *ownerIdentifier = "OWNER: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
@@ -137,7 +138,10 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	registered = true;
 	verified   = true;
 	authReply  = true;
-      } else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
+      }else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))){
+		  if (clOptions)
+				  clOptions->publicizedUsername = base + strlen(ownerIdentifier);
+     }else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
 	callsign = base + strlen(tokBadIdentifier);
 	registered = true;
 	authReply  = true;
@@ -377,9 +381,11 @@ void ListServerLink::addMe(PingPacket pingInfo,
   if (clOptions) {
     const std::string& username = clOptions->publicizedUsername;
     const std::string& password = clOptions->publicizedPassword;
-    if (!username.empty()) {
+	const std::string& key = clOptions->publicizedKey;
+    if (!username.empty()) 
       msg += "&username=" + username + "&password=" + password;
-    }
+	if (!key.empty())
+		msg += "&key=" + key;
   }
 
   msg += "&checktokens=";

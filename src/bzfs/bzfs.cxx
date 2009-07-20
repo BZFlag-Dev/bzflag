@@ -3680,12 +3680,12 @@ static void initStartupParameters(int argc, char **argv)
       logDebugMessage(1,"WARNING: unable to load the variable file\n");
   }
 
-  if (clOptions->publicizeServer && clOptions->publicizedUsername.empty()) {
+  if (clOptions->publicizeServer && (clOptions->publicizedUsername.empty() || clOptions->publicizedKey.empty())) {
     logDebugMessage(0,
       "WARNING:\n"
-      "  Publicly listed bzfs servers are associated to BZFlag users.\n"
-      "  This means that if you use '-public <title>', you should also\n"
-      "  be using the '-publicuser <username> <password>' option.\n");
+      "  Publicly listed bzfs servers must login with a registered BZFlag Account.\n"
+      "  This means that if you use '-public <title>', you must also\n"
+      "  be using the '-publicuser <username> <password>', or '-publickey <key>' option.\n");
   }
 
   // no more defaults

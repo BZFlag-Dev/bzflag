@@ -216,6 +216,7 @@ static const char *extraUsageString =
   "\t-public <server-description>\n"
   "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
   "\t-publiclist <list-server-url>\n"
+  "\t-publickey <key>\n"
   "\t-publicuser <username> <password>\n"
   "\t-q: don't listen for or respond to pings\n"
   "\t+r: all shots ricochet\n"
@@ -538,6 +539,12 @@ void CmdLineOptions::parseArgOptions(int argc, char** argv)
         (strcmp(argv[i - 2], "-publicuser") == 0)) {
       memset(argv[i], 0, strlen(argv[i]));
     }
+
+	// clear the publickey key memory  (the first argument)
+	if ((i >= 2) &&
+		(strcmp(argv[i - 1], "-publickey") == 0)) {
+			memset(argv[i], 0, strlen(argv[i]));
+	}
   }
 
   parse(tokens, false);
@@ -1002,6 +1009,10 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       checkFromWorldFile(token, fromWorldFile);
       listServerURL.push_back(parseStringArg(i, tokens));
     }
+	else if (token == "-publickey") {
+		checkFromWorldFile(token, fromWorldFile);
+		publicizedKey = parseStringArg(i, tokens);
+	}
     else if (token == "-publicuser") {
       checkFromWorldFile(token, fromWorldFile);
       publicizedUsername = parseStringArg(i, tokens);
