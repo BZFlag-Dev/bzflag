@@ -22,5 +22,7 @@ made to the lua-5.1.4 sources for BZFlag.
 
 7. Added the luaL_testudata() function
 
+8. Changed HUGE_VAL to std::numeric_limits<lua_Number>::infinity() in lmathlib.cxx
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

@@ -140,7 +140,7 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       TValue *oldval = luaH_set(L, h, key); /* do a primitive set */
       /* oldval is nil=> look for newindex, oldval is not nil => look for usedindex */
       tm = ttisnil(oldval) ? fasttm(L, h->metatable, TM_NEWINDEX)
-                           : fasttm(L, h->metatable, TM_USEDINDEX);
+                           : fasttm(L, h->metatable, TM_USEDINDEX); /*BZ*/
       if (tm == NULL) { /* no tag method, set the value */
         setobj2t(L, oldval, val);
         luaC_barriert(L, h, val);

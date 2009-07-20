@@ -77,7 +77,7 @@ static int getn (lua_State *L) {
 
 static int setn (lua_State *L) {
   luaL_checktype(L, 1, LUA_TTABLE);
-  luaL_checkrawset(L, 1);
+  luaL_checkrawset(L, 1); /*BZ*/
 #ifndef luaL_setn
   luaL_setn(L, 1, luaL_checkint(L, 2));
 #else
@@ -91,7 +91,7 @@ static int setn (lua_State *L) {
 static int tinsert (lua_State *L) {
   int e = aux_getn(L, 1) + 1;  /* first empty element */
   int pos;  /* where to insert new element */
-  luaL_checkrawset(L, 1);
+  luaL_checkrawset(L, 1); /*BZ*/
   switch (lua_gettop(L)) {
     case 2: {  /* called with only 2 arguments */
       pos = e;  /* insert new element at the end */
@@ -120,7 +120,7 @@ static int tinsert (lua_State *L) {
 static int tremove (lua_State *L) {
   int e = aux_getn(L, 1);
   int pos = luaL_optint(L, 2, e);
-  luaL_checkrawset(L, 1);
+  luaL_checkrawset(L, 1); /*BZ*/
   if (!(1 <= pos && pos <= e))  /* position is outside bounds? */
    return 0;  /* nothing to remove */
   luaL_setn(L, 1, e - 1);  /* t.n = n-1 */
@@ -258,7 +258,7 @@ static void auxsort (lua_State *L, int l, int u) {
 
 static int sort (lua_State *L) {
   int n = aux_getn(L, 1);
-  luaL_checkrawset(L, 1);
+  luaL_checkrawset(L, 1); /*BZ*/
   luaL_checkstack(L, 40, "");  /* assume array is smaller than 2^40 */
   if (!lua_isnoneornil(L, 2))  /* is there a 2nd argument? */
     luaL_checktype(L, 2, LUA_TFUNCTION);

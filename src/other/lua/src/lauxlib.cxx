@@ -137,7 +137,7 @@ LUALIB_API void *luaL_checkudata (lua_State *L, int ud, const char *tname) {
 }
 
 
-LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) {
+LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) { /*BZ*/
   void *p = lua_touserdata(L, ud);
   if (p == NULL) {  /* value is a userdata? */
     return NULL;
@@ -162,7 +162,7 @@ LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) {
 }
 
 
-LUALIB_API void luaL_checkrawset (lua_State *L, int tbl) {
+LUALIB_API void luaL_checkrawset (lua_State *L, int tbl) { /*BZ*/
   if (luaL_getmetafield(L, tbl, "__rawset")) {
     const int type = lua_type(L, -1);
     switch (type) {

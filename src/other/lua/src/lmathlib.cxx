@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include <limits>
+#include <limits> /*BZ*/
 
 #define lmathlib_c
 #define LUA_LIB
@@ -253,7 +253,7 @@ LUALIB_API int luaopen_math (lua_State *L) {
   luaL_register(L, LUA_MATHLIBNAME, mathlib);
   lua_pushnumber(L, PI);
   lua_setfield(L, -2, "pi");
-  lua_pushnumber(L, std::numeric_limits<lua_Number>::infinity());
+  lua_pushnumber(L, std::numeric_limits<lua_Number>::infinity()); /*BZ*/
   lua_setfield(L, -2, "huge");
 #if defined(LUA_COMPAT_MOD)
   lua_getfield(L, -1, "fmod");
