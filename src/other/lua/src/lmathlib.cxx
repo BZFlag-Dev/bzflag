@@ -7,7 +7,6 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include <limits> /*BZ*/
 
 #define lmathlib_c
 #define LUA_LIB
@@ -22,6 +21,16 @@
 #define PI (3.14159265358979323846)
 #define RADIANS_PER_DEGREE (PI/180.0)
 
+
+/* BZ - fix for g++ HUGE_VAL problem */
+/*    - see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=23139 */
+#ifdef __cplusplus
+  #if (__GNUC__ <= 3) || ((__GNUC__ == 4) && (__GNUC_MINOR__ == 0))
+    #include <limits>
+    #undef  HUGE_VAL
+    #define HUGE_VAL (std::numeric_limits<lua_Number>::infinity())
+  #endif
+#endif
 
 
 static int math_abs (lua_State *L) {
@@ -253,7 +262,7 @@ LUALIB_API int luaopen_math (lua_State *L) {
   luaL_register(L, LUA_MATHLIBNAME, mathlib);
   lua_pushnumber(L, PI);
   lua_setfield(L, -2, "pi");
-  lua_pushnumber(L, std::numeric_limits<lua_Number>::infinity()); /*BZ*/
+  lua_pushnumber(L, HUGE_VAL);
   lua_setfield(L, -2, "huge");
 #if defined(LUA_COMPAT_MOD)
   lua_getfield(L, -1, "fmod");
