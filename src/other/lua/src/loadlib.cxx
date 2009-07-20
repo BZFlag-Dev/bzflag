@@ -74,9 +74,9 @@ static void *ll_load (lua_State *L, const char *path) {
 }
 
 
-/* BZ
- * ISO C++ 98 doesn't allow casts between
- * pointer-to-object and pointer-to-function
+/*
+ * BZ: ISO C++ 98 doesn't allow casts between
+ *     pointer-to-object and pointer-to-function
  */
 typedef union {
   void* pointer;
