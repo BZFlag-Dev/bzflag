@@ -99,10 +99,10 @@ The script will report whether sufficient versions of the GNU Build
 System tools (i.e. autoconf, automake, and libtool) that were detected
 and if successful, a configure script will be generated.  If the
 script fails, submit a report to the developers containing the output
-of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One of
-the most common failures is having insufficient versions or mismatched
-combinations of the GNU Build System tools, make sure your tools are
-recent.
+of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One
+of the most common failures is having insufficient versions or
+mismatched combinations of the GNU Build System tools, make sure your
+tools are recent.
 
 Now that you have a configure script and presuming the previous step
 was successful, you can configure BZFlag:
@@ -159,12 +159,13 @@ with or without installing:
 
   % src/bzflag/bzflag
 
-BZFlag looks for data files in a path defined during compile, in ./data/ ,
-or in the previously specified data path only.  As part of the tarball/cvs
-checkout, the base data library is located in <installed-locale>/bzflag/data.
-This means that to test in a working directory you need to tell bzflag
-where to find these files if there is not a 'data' directory in your current
-directory.  This can be done with a symlink:
+BZFlag looks for data files in a path defined during compile, in
+./data/ , or in the previously specified data path only.  As part of
+the tarball/cvs checkout, the base data library is located in
+<installed-locale>/bzflag/data.  This means that to test in a working
+directory you need to tell bzflag where to find these files if there
+is not a 'data' directory in your current directory.  This can be done
+with a symbolic link:
 
   % ln -s ./path/to/bzflag/data
 
@@ -353,8 +354,8 @@ following files in the new 'bzflag' directory:
   autogen.sh	- build system preparation script
   configure.ac	- build system configuration script template
   data/		- data files (sounds, images, etc.)
-  debian/	- debian apt files
-  doc/		- partial documentation in doxygen format
+  debian/	- Debian apt files
+  doc/		- partial documentation in Doxygen format
   include/	- include headers for libraries
   man/		- man pages
   misc/		- miscellaneous goo
@@ -414,13 +415,15 @@ report the issue and, if possible, provide a stack trace of the crash
 
 Public Internet Servers and the "list server"
 =============================================
+
 The bzflag project offers a public server listing service that allows
-players to find servers to play on. This service is run for the benifit
-of the project. As of Version 3.0, BZFLS servers that wish to be listed
-on the public list server must provide an authentication key that ties
-the server to a specific global user. This is done to provide contact
-information for players and project staff. Authentication keys are automaticly
-generated at http://my.bzflag.org/listkeys/
+players to find servers to play on. This service is run for the
+benefit of the project. As of Version 3.0, BZFLS servers that wish to
+be listed on the public list server must provide an authentication key
+that ties the server to a specific global user. This is done to
+provide contact information for players and project
+staff. Authentication keys are automatically generated at
+http://my.bzflag.org/listkeys/
 
 Notes on "CHEAT" servers and network abuse
 ==========================================
