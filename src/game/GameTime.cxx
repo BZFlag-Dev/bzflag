@@ -12,8 +12,8 @@
 
 /**
  * GameTime:
- *	Manages the network time.
- *      Time is stored as microseconds since the epoch.
+ *	Manages network timing.
+ *      Time is stored as doubles representing seconds
  */
 
 // the top dog
@@ -23,66 +23,44 @@
 #include "GameTime.h"
 
 // system headers
-#include <time.h>
-#ifndef _WIN32
-#  include <sys/time.h>
-#endif
 #include <list>
 
 // common headers
 #include "Pack.h"
+#include "TimeKeeper.h"
+#include "BZDBCache.h"
 #include "bzfio.h"
 
 
 // type definitions
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef int64_t  i64;
-
 struct TimeRecord {
-  i64 netTime;
-  i64 localTime;
+  double netTime;
+  double localTime;
 };
 
 // local constants
-static const double       filterTime = 10.0;
-static const unsigned int maxRecords = 1024; // safety
-static const unsigned int maxRecordAge = 120 * 1000000;
-static const i64          maxTime = 2345678;
-static const double       minRate = 0.50;
-static const double       maxRate = 2.00;
+static const double filterTime   = 10.0;
+static const double maxRecordAge = 120.0;
+static const double maxTime      = 5.00;
+static const double minRate      = 0.50;
+static const double maxRate      = 2.00;
+static const size_t maxRecords   = 1024; // safety
 
 // local variables
 static std::list<TimeRecord> timeRecs;
-static double     stepSecs = 0.0;
-static i64        stepTime = 0;
+static double     stepTime = 0;
 static double     avgRate  = 1.0;
 static TimeRecord avgPoint = { 0, 0 };
 
 
+static BZDB_int debugGameTime("debugGameTime");
+
+
 //============================================================================//
 
-static i64 getRawTime()
+static double getRawTime()
 {
-#ifndef _WIN32
-
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return ((i64)tv.tv_sec * (i64)1000000) + (i64)tv.tv_usec;
-
-#else //_WIN32
-
-  FILETIME ft;
-  LARGE_INTEGER li;
-
-  GetSystemTimeAsFileTime(&ft);
-  li.LowPart  = ft.dwLowDateTime;
-  li.HighPart = ft.dwHighDateTime;
-
-  /* QuadPart is in 100-nanosecond intervals */
-  return (li.QuadPart / 10);
-
-#endif //_WIN32
+  return TimeKeeper::getCurrent().getSeconds();
 }
 
 
@@ -107,8 +85,8 @@ static void calcAvgRate()
   else {
     const TimeRecord& last = *timeRecs.begin();
     const TimeRecord& first = *timeRecs.rbegin();
-    const i64 netDiff = last.netTime - first.netTime;
-    const i64 locDiff = last.localTime - first.localTime;
+    const double netDiff = last.netTime - first.netTime;
+    const double locDiff = last.localTime - first.localTime;
     if (locDiff != 0.0) {
       avgRate = ((double)netDiff / (double)locDiff);
       avgPoint = last;
@@ -124,7 +102,6 @@ static void calcAvgRate()
 
 void GameTime::reset()
 {
-  stepSecs = 0.0;
   stepTime = 0;
   avgRate = 1.0;
   avgPoint.netTime = 0;
@@ -161,10 +138,10 @@ void GameTime::update()
   else {
     calcAvgRate();
     const TimeRecord& tr = *timeRecs.begin();
-    const i64 diffTime = stepTime - tr.netTime;
+    const double diffTime = stepTime - tr.netTime;
     if ((diffTime < -maxTime) || (diffTime > +maxTime) ||
 	(avgRate < minRate) || (avgRate > maxRate)) {
-      logDebugMessage(4, "GameTime: discontinuity: usecs = %lli, rate = %f\n",
+      logDebugMessage(4, "GameTime: discontinuity: usecs = %f, rate = %f\n",
 		      diffTime, avgRate);
       resetToRecord(tr);
     }
@@ -180,8 +157,8 @@ void GameTime::update()
 
 void GameTime::setStepTime()
 {
-  static i64 lastStep = 0;
-  const i64 thisStep = getRawTime();
+  static double lastStep = 0;
+  const double thisStep = getRawTime();
   if (timeRecs.size() <= 0) {
     stepTime = thisStep;
   }
@@ -193,12 +170,11 @@ void GameTime::setStepTime()
     const double skipTime = (double)(thisStep - lastStep);
     const double shortPred = (double)stepTime + (skipTime * avgRate);
     // filtering
-    const double c = (skipTime * 1.0e-6) / filterTime;
+    const double c = skipTime / filterTime;
     const double a = (c > 0.0) && (c < 1.0) ? c : 0.5;
     const double b = 1.0 - a;
-    stepTime = (i64)((a * longPred) + (b * (double)shortPred));
+    stepTime = (a * longPred) + (b * shortPred);
   }
-  stepSecs = (double)stepTime * 1.0e-6;
   lastStep = thisStep;
 
   return;
@@ -207,7 +183,7 @@ void GameTime::setStepTime()
 
 double GameTime::getStepTime()
 {
-  return stepSecs;
+  return stepTime;
 }
 
 
@@ -215,65 +191,82 @@ double GameTime::getStepTime()
 
 int GameTime::packSize()
 {
-  return (2 * sizeof(u32));
+  return sizeof(double) + sizeof(float);
 }
 
 
 void* GameTime::pack(void *buf, float lag)
 {
-  double halfLag;
+  float halfLag;
   if ((lag <= 0.0f) || (lag > 10.0f)) {
-    halfLag = 0.075; // assume a 150ms delay
+    halfLag = 0.075f; // assume a 150ms delay
   } else {
-    halfLag = (double)(lag * 0.5f);
+    halfLag = (lag * 0.5f);
   }
-  const i64 nowTime = getRawTime() + (i64)(halfLag * 1.0e6);
-  buf = nboPackUInt32(buf, (u32)(nowTime >> 32));        // msb's
-  buf = nboPackUInt32(buf, (u32)(nowTime & 0xFFFFFFFF)); // lsb's
+  const double nowTime = getRawTime() + halfLag;
+  buf = nboPackDouble(buf, nowTime);
+  buf = nboPackFloat(buf, halfLag);
   return buf;
 }
 
 
 void GameTime::pack(BufferedNetworkMessage *msg, float lag)
 {
-  double halfLag;
+  float halfLag;
   if ((lag <= 0.0f) || (lag > 10.0f)) {
-    halfLag = 0.075; // assume a 150ms delay
+    halfLag = 0.075f; // assume a 150ms delay
   } else {
-    halfLag = (double)(lag * 0.5f);
+    halfLag = (lag * 0.5f);
   }
-  const i64 nowTime = getRawTime() + (i64)(halfLag * 1.0e6);
-  msg->packUInt32((u32)(nowTime >> 32));        // msb's
-  msg->packUInt32((u32)(nowTime & 0xFFFFFFFF)); // lsb's
+  const double nowTime = getRawTime() + halfLag;
+  msg->packDouble(nowTime);
+  msg->packFloat(halfLag);
 }
 
 
 void* GameTime::unpack(void *buf)
 {
-  u32 msb, lsb;
-  buf = nboUnpackUInt32(buf, msb);
-  buf = nboUnpackUInt32(buf, lsb);
-  const i64 netTime = ((i64)msb << 32) + (i64)lsb;
+  double netTime;
+  float halfLag;
+  buf = nboUnpackDouble(buf, netTime);
+  buf = nboUnpackFloat(buf, halfLag);
+  netTime += halfLag;
 
   // store the value
-  const TimeRecord tr = { netTime, getRawTime() };
+  const double localTime = getRawTime();
+  const TimeRecord tr = { netTime, localTime };
   timeRecs.push_front(tr);
 
   // clear oversize entries
-  while (timeRecs.size() > maxRecords) {
+  while (timeRecs.size() >= maxRecords) {
     timeRecs.pop_back();
   }
 
   // clear old entries
   if (timeRecs.size() > 0) {
-    i64 nowTime = getRawTime();
     while (timeRecs.size() > 0) {
       TimeRecord back = *timeRecs.rbegin();
-      if ((nowTime - back.localTime) < maxRecordAge) {
+      if ((localTime - back.localTime) < maxRecordAge) {
 	break;
       }
       timeRecs.pop_back();
     }
+  }
+
+  update();
+
+  if (debugGameTime >= 2) {
+    int i = 0;
+    std::list<TimeRecord>::const_iterator it;
+    for (it = timeRecs.begin(); it != timeRecs.end(); ++it, i++) {
+      logDebugMessage(0, "GameTime record %i: netTime=%f, localTime=%f, diff=%f\n",
+                      i, it->netTime, it->localTime, it->netTime - it->localTime);
+    }
+  }
+  if (debugGameTime >= 1) {
+    logDebugMessage(0, "GameTime::unpack()  netTime=%f  localTime=%f  diff=%f  stepTime=%f\n",
+                    netTime, localTime, netTime - localTime, stepTime);
+    logDebugMessage(0, "GameTime:avgRate = %f\n", avgRate);
   }
 
   return buf;

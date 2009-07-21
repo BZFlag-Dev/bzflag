@@ -718,11 +718,12 @@ static MsgStringList handleMsgGameTime(const PacketInfo& pi)
   MsgStringList list = listMsgBasics(pi);
 
   void *d = (void*)pi.data;
-  uint32_t msb, lsb;
-  d = nboUnpackUInt32(d, msb);
-  d = nboUnpackUInt32(d, lsb);
-  uint64_t netTime = ((uint64_t)msb << 32) | (uint64_t)lsb;
-  listPush(list, 1, "time: %f", (double)netTime * 1.0e-6);
+  double netTime;
+  float halfLag;
+  d = nboUnpackDouble(d, netTime);
+  d = nboUnpackFloat(d, halfLag);
+  listPush(list, 1, "netTime: %f", netTime);
+  listPush(list, 1, "halfLag: %f", halfLag);
 
   return list;
 }

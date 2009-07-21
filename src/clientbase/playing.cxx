@@ -1248,7 +1248,6 @@ void handleGetWorld(void *msg, uint16_t len)
 void handleGameTime(void *msg)
 {
   GameTime::unpack(msg);
-  GameTime::update();
 }
 
 

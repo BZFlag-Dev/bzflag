@@ -921,7 +921,8 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     }
     else if (token == "-packetlosswarn") {
       packetlosswarnthresh = (float)parseIntArg(i, tokens) / 1000.0f;
-    }  else if (token == "-passwd" || token == "-password") {
+    }
+    else if (token == "-passwd" || token == "-password") {
       checkFromWorldFile(token, fromWorldFile);
       password = parseStringArg(i, tokens);
     }
@@ -1001,10 +1002,10 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       checkFromWorldFile(token, fromWorldFile);
       listServerURL.push_back(parseStringArg(i, tokens));
     }
-	else if (token == "-publickey") {
-		checkFromWorldFile(token, fromWorldFile);
-		publicizedKey = parseStringArg(i, tokens);
-	}
+    else if (token == "-publickey") {
+      checkFromWorldFile(token, fromWorldFile);
+      publicizedKey = parseStringArg(i, tokens);
+    }
     else if (token == "-q") {
       // don't handle pings
       checkFromWorldFile(token, fromWorldFile);
