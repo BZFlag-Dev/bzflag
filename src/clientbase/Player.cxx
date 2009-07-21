@@ -1646,7 +1646,8 @@ void Player::setDeadReckoning(double timestamp)
 #ifdef DEBUG
   double currentServerTime = syncedClock.GetServerSeconds();
   if (currentServerTime <= timestamp)
-    printf("Player::setDeadReckoning(): currentServerTime %11.4f ought to be greater than timestamp %11.4f\n", currentServerTime, timestamp);
+    printf("Player::setDeadReckoning(): currentServerTime %11.4f ought to be greater than timestamp %11.4f (diff = %g)\n",
+           currentServerTime, timestamp, currentServerTime - timestamp);
 #endif
   updateTimeStamp = timestamp;
 
