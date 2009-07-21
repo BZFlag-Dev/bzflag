@@ -3701,10 +3701,14 @@ static void initStartupParameters(int argc, char **argv)
 
   if (clOptions->publicizeServer && clOptions->publicizedKey.empty()) {
     logDebugMessage(0,
+      "\n"
       "WARNING:\n"
-      "  Publicly listed bzfs servers must login with a registered BZFlag Account.\n"
-      "  This means that if you use '-public <title>', you must also\n"
-      "  be using the '-publickey <key>' option.\n");
+      "  Publicly listed bzfs servers must login using the '-publickey <key>'\n"
+      "  option. A web page describing list-server policies and procedures\n"
+      "  can be found here:\n"
+      "\n"
+      "    http://my.bzflag.org/w/ServerAuthentication\n"
+      "\n");
   }
 
   // no more defaults
