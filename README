@@ -412,6 +412,15 @@ cause of issues on some platforms (e.g. Mac OS X).  Otherwise, please
 report the issue and, if possible, provide a stack trace of the crash
 (these are auto-generated for Windows and Mac OS X platforms).
 
+Public Internet Servers and the "list server"
+=============================================
+The bzflag project offers a public server listing service that allows
+players to find servers to play on. This service is run for the benifit
+of the project. As of Version 3.0, BZFLS servers that wish to be listed
+on the public list server must provide an authentication key that ties
+the server to a specific global user. This is done to provide contact
+information for players and project staff. Authentication keys are automaticly
+generated at http://my.bzflag.org/listkeys/
 
 Notes on "CHEAT" servers and network abuse
 ==========================================
