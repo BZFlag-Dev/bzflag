@@ -103,7 +103,7 @@ public:
   void		sendExit();
   void		sendAutoPilot(bool autopilot);
   void		sendMessage(const PlayerId& to,
-			    char message[MessageLen]);
+			    const char message[MessageLen]);
   void		sendLagPing(char pingRequest[]);
   void		sendUDPlinkRequest();
 

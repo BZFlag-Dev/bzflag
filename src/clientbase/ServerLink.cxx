@@ -1160,7 +1160,7 @@ void ServerLink::sendAutoPilot(bool autopilot)
   send(MsgAutoPilot, sizeof(msg), msg);
 }
 
-void ServerLink::sendMessage(const PlayerId& to, char message[MessageLen])
+void ServerLink::sendMessage(const PlayerId& to, const char message[MessageLen])
 {
   // ensure that we aren't sending a partial multibyte character
   UTF8StringItr itr = message;
