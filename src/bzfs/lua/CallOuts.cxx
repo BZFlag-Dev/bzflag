@@ -40,6 +40,7 @@ using std::map;
 #include "version.h"
 
 // bzfs headers
+#include "../bzfs.h"
 #include "../GameKeeper.h"
 #include "../CmdLineOptions.h"
 #include "../bzfsMessages.h"
@@ -575,7 +576,7 @@ static int GetServerOwner(lua_State* L)
   if (!clOptions->publicizeServer) {
     return 0;
   }
-  lua_pushstdstring(L, clOptions->publicizedUsername);
+  lua_pushstdstring(L, getPublicOwner());
   return 1;
 }
 

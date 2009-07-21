@@ -60,7 +60,7 @@ struct CmdLineOptions
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
     listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
-    publicizedKey(""),publicizedUsername(""), publicizedPassword(""),
+    publicizedKey(""),
     advertiseGroups("EVERYONE"),
     suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
@@ -134,8 +134,6 @@ struct CmdLineOptions
   std::string	publicizedTitle;
   std::string	publicizedAddress;
   std::string	publicizedKey;
-  std::string	publicizedUsername;
-  std::string	publicizedPassword;
   std::string	advertiseGroups;
 
   bool			suppressMasterBanList;

@@ -112,7 +112,6 @@ static const char *usageString =
   "[-public <server-description>] "
   "[-publicaddr <server-hostname>[:<server-port>]] "
   "[-publiclist <list-server-url>] "
-  "[-publicuser <username> <password>] "
   "[-q] "
   "[+r] "
   "[-rabbit [score|killer|random]] "
@@ -217,7 +216,6 @@ static const char *extraUsageString =
   "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
   "\t-publiclist <list-server-url>\n"
   "\t-publickey <key>\n"
-  "\t-publicuser <username> <password>\n"
   "\t-q: don't listen for or respond to pings\n"
   "\t+r: all shots ricochet\n"
   "\t-rabbit [score|killer|random]: rabbit chase style\n"
@@ -531,12 +529,6 @@ void CmdLineOptions::parseArgOptions(int argc, char** argv)
     if ((i >= 1) &&
         ((strcmp(argv[i - 1], "-passwd") == 0) ||
          (strcmp(argv[i - 1], "-password") == 0))) {
-      memset(argv[i], 0, strlen(argv[i]));
-    }
-
-    // clear the publicuser password memory  (the second argument)
-    if ((i >= 2) &&
-        (strcmp(argv[i - 2], "-publicuser") == 0)) {
       memset(argv[i], 0, strlen(argv[i]));
     }
 
@@ -1013,11 +1005,6 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 		checkFromWorldFile(token, fromWorldFile);
 		publicizedKey = parseStringArg(i, tokens);
 	}
-    else if (token == "-publicuser") {
-      checkFromWorldFile(token, fromWorldFile);
-      publicizedUsername = parseStringArg(i, tokens);
-      publicizedPassword = parseStringArg(i, tokens);
-    }
     else if (token == "-q") {
       // don't handle pings
       checkFromWorldFile(token, fromWorldFile);

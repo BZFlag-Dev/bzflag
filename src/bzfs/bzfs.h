@@ -47,6 +47,8 @@
 // to dump score info to stdout
 #define SERVERLOGINMSG true
 
+extern const std::string& getPublicOwner();
+extern void setPublicOwner(const std::string& owner);
 
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,

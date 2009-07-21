@@ -73,7 +73,6 @@ bzfs \- BZFlag game server
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
 [\fB\-publickey \fIkey\fR]
-[\fB\-publicuser \fIusername password\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
 [\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
@@ -405,9 +404,6 @@ publicize a server to multiple list servers.
 .TP 
 \fB\-publicukey \fIkey\fR
 Log-into the public list server using the specified key, owner will be set by the list server.
-.TP 
-\fB\-publicuser \fIusername password\fR
-Log-into the public list server using the username as the server owner.
 .TP 
 .B \-q
 If specified, the server will not listen for nor respond to ``pings''.

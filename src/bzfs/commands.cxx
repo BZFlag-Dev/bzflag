@@ -3311,11 +3311,12 @@ bool OwnerCommand::operator() (const char* /*message*/,
                                GameKeeper::Player *playerData)
 {
   const int playerIndex = playerData->getIndex();
-  if (clOptions->publicizedUsername.empty()) {
+  const std::string& owner = getPublicOwner();
+  if (owner.empty()) {
     sendMessage(ServerPlayer, playerIndex, "server has no registered owner");
   } else {
     std::string msg = "this server's registered owner is: ";
-    msg += clOptions->publicizedUsername;
+    msg += owner;
     sendMessage(ServerPlayer, playerIndex, msg.c_str());
   }
   return true;
