@@ -203,8 +203,7 @@ void* GameTime::pack(void *buf, float lag)
   } else {
     halfLag = (lag * 0.5f);
   }
-  const double nowTime = getRawTime() + halfLag;
-  buf = nboPackDouble(buf, nowTime);
+  buf = nboPackDouble(buf, getRawTime());
   buf = nboPackFloat(buf, halfLag);
   return buf;
 }
@@ -218,8 +217,7 @@ void GameTime::pack(BufferedNetworkMessage *msg, float lag)
   } else {
     halfLag = (lag * 0.5f);
   }
-  const double nowTime = getRawTime() + halfLag;
-  msg->packDouble(nowTime);
+  msg->packDouble(getRawTime());
   msg->packFloat(halfLag);
 }
 
