@@ -198,7 +198,7 @@ int GameTime::packSize()
 void* GameTime::pack(void *buf, float lag)
 {
   float halfLag;
-  if ((lag <= 0.0f) || (lag > 10.0f)) {
+  if ((lag < 0.0f) || (lag > 10.0f)) {
     halfLag = 0.075f; // assume a 150ms delay
   } else {
     halfLag = (lag * 0.5f);
@@ -212,7 +212,7 @@ void* GameTime::pack(void *buf, float lag)
 void GameTime::pack(BufferedNetworkMessage *msg, float lag)
 {
   float halfLag;
-  if ((lag <= 0.0f) || (lag > 10.0f)) {
+  if ((lag < 0.0f) || (lag > 10.0f)) {
     halfLag = 0.075f; // assume a 150ms delay
   } else {
     halfLag = (lag * 0.5f);
@@ -262,9 +262,10 @@ void* GameTime::unpack(void *buf)
     }
   }
   if (debugGameTime >= 1) {
-    logDebugMessage(0, "GameTime::unpack()  netTime=%f  localTime=%f  diff=%f  stepTime=%f\n",
-                    netTime, localTime, netTime - localTime, stepTime);
-    logDebugMessage(0, "GameTime:avgRate = %f\n", avgRate);
+    logDebugMessage(0,
+      "GameTime:unpack()"
+      " net:%.3f local:%.3f diff:%.3f step:%.3f halfLag:%.3f rate:%.6f\n",
+      netTime, localTime, netTime - localTime, stepTime, halfLag, avgRate);
   }
 
   return buf;
