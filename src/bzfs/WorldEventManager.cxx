@@ -82,8 +82,9 @@ bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
       if (*listIt == theEvent) {
         listIt = evList.erase(listIt);
         foundOne = true;
+      } else {
+        listIt++;
       }
-      listIt++;
     }
   }
 
