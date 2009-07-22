@@ -86,7 +86,7 @@ void			HUDuiFrame::doRender()
   const float frameWidth = labelGap * 2 + width;
 
   // set up appearance
-  OpenGLGState::resetState();  // fixme: shouldn't be needed
+  OpenGLGState::resetState();  // FIXME: shouldn't be needed
   glLineWidth(lineWidth);
   glColor4fv(color);
 

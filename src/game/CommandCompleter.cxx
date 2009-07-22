@@ -62,6 +62,7 @@ void CommandCompleter::reset()
   registerWord("/lagwarn ");
   registerWord("/localset ");
   registerWord("/mute ");
+  registerWord("/owner");
   registerWord("/password ");
   registerWord("/playerlist");
   registerWord("/poll ");

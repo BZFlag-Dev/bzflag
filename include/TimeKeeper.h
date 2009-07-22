@@ -45,7 +45,7 @@ public:
   TimeKeeper&		operator+=(const TimeKeeper&);
 
   // make a TimeKeeper with seconds = NULL act like unset
-  // Fixme: must this be defined here? didn't work for me outside the class
+  // FIXME: must this be defined here? didn't work for me outside the class
   inline operator void*()
   {
     if (seconds > 0.0)

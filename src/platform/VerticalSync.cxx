@@ -66,7 +66,7 @@ void verticalSync() {
     newSwapInterval = 0;
   }
   // FIXME -- needs to be updated during context switches!
-  // FiXME -- this seems to cause a bit flicker at the right top
+  // FIXME -- this seems to cause a bit flicker at the right top
   // in fullcreen mode while menu is opened (small horizontal lines)
   CGLSetParameter(cglContext, kCGLCPSwapInterval, &newSwapInterval);
 }
