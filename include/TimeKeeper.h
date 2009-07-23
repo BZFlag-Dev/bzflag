@@ -54,8 +54,8 @@ public: // member functions
   // FIXME: must this be defined here? didn't work for me outside the class
   inline operator void*() { return (seconds > 0.0) ? this : NULL; }
 
-  /** Returns how many seconds have elapsed the first call to getCurrent().
-    * If real times are needed, use TimeKeeper::localTime */
+  /** Returns how many seconds have elapsed since the first call to
+    * getCurrent(). If real times are needed, use TimeKeeper::localTime() */
   inline double getSeconds(void) const { return seconds; }
 
 public: // static functions
